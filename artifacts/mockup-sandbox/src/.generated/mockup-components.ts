@@ -20,6 +20,7 @@ export const modules: ModuleMap = {
   "./components/mockups/bcpl-premium/Phase2PaymentReceipt.tsx": () => import("../components/mockups/bcpl-premium/Phase2PaymentReceipt.tsx"),
   "./components/mockups/bcpl-premium/Phase2Registration.tsx": () => import("../components/mockups/bcpl-premium/Phase2Registration.tsx"),
   "./components/mockups/bcpl-premium/Photos.tsx": () => import("../components/mockups/bcpl-premium/Photos.tsx"),
+  "./components/mockups/bcpl-premium/PlayerProfile.tsx": () => import("../components/mockups/bcpl-premium/PlayerProfile.tsx"),
   "./components/mockups/bcpl-premium/PointsTable.tsx": () => import("../components/mockups/bcpl-premium/PointsTable.tsx"),
   "./components/mockups/bcpl-premium/Privacy.tsx": () => import("../components/mockups/bcpl-premium/Privacy.tsx"),
   "./components/mockups/bcpl-premium/Refunds.tsx": () => import("../components/mockups/bcpl-premium/Refunds.tsx"),
