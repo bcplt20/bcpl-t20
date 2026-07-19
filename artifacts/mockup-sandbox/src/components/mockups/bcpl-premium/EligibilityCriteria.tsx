@@ -1,169 +1,407 @@
 import React from 'react';
 
-const css = `
-.wrap{max-width:1200px;margin:0 auto;padding:0 16px}
-.section{padding:40px 0}
-.h1{font-family:Montserrat,sans-serif;font-weight:900;font-size:36px;line-height:1.05}
-.h2{font-family:Montserrat,sans-serif;font-weight:800;font-size:22px}
-.glass{background:rgba(15,34,71,0.7);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.10);border-radius:16px}
-.btn-primary{background:linear-gradient(135deg,#FF7A29,#E8611A);border:none;border-radius:12px;color:#fff;font-weight:700;font-family:Montserrat,sans-serif;cursor:pointer;box-shadow:0 6px 24px rgba(255,122,41,0.4);transition:transform 0.15s;min-height:48px}
-.btn-primary:active{transform:scale(0.97)}
-.btn-wa{background:#2E9E4F;border:none;border-radius:12px;color:#fff;font-weight:700;cursor:pointer;min-height:48px}
-.input-f{background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.12);border-radius:12px;color:#fff;padding:14px 16px;width:100%;font-family:Inter,sans-serif;font-size:15px;outline:none;transition:border-color 0.2s;appearance:none}
-.input-f:focus{border-color:#FF7A29}
-.input-f::placeholder{color:rgba(255,255,255,0.3)}
-.input-f option{background:#0F2247;color:#fff}
-.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:16px}
-.dtable{width:100%;border-collapse:collapse;min-width:560px}
-.dtable th{background:rgba(255,122,41,0.12);color:rgba(255,255,255,0.55);font-size:11px;text-transform:uppercase;letter-spacing:0.1em;padding:12px 14px;text-align:left;font-family:Inter,sans-serif}
-.dtable td{padding:14px;border-bottom:1px solid rgba(255,255,255,0.05);font-size:14px}
-.grid-2{display:grid;grid-template-columns:1fr;gap:14px}
-.grid-3{display:grid;grid-template-columns:1fr;gap:14px}
-.grid-4{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.nav-links{display:none}
-.ham{display:flex}
-.bot-cta{display:flex}
-.grid-2-3{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
-.toc-sidebar{display:none}
-@media(min-width:768px){.wrap{padding:0 28px}.section{padding:60px 0}.h1{font-size:56px}.grid-2{grid-template-columns:repeat(2,1fr);gap:24px}.grid-3{grid-template-columns:repeat(2,1fr);gap:20px}.grid-4{grid-template-columns:repeat(4,1fr)}.grid-2-3{grid-template-columns:repeat(3,1fr)}}
-@media(min-width:1024px){.section{padding:80px 0}.h1{font-size:80px}.grid-3{grid-template-columns:repeat(3,1fr)}.nav-links{display:flex!important;align-items:center;gap:20px}.ham{display:none!important}.bot-cta{display:none!important}.toc-sidebar{display:block}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-.doc-h2 { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 22px; color: #0F2247; margin-top: 40px; padding-top: 40px; border-top: 1px solid rgba(20,32,63,0.1); margin-bottom: 16px; }
-.doc-h3 { font-family: Inter, sans-serif; font-weight: 700; font-size: 14px; color: #FF7A29; text-transform: uppercase; letter-spacing: 0.08em; margin: 24px 0 12px; }
-.doc-p { font-family: Inter, sans-serif; font-size: 16px; line-height: 1.8; color: #14203F; margin-bottom: 16px; }
-.doc-ul { padding-left: 20px; margin-bottom: 16px; }
-.doc-li { padding: 4px 0; font-family: Inter, sans-serif; font-size: 16px; line-height: 1.8; color: #14203F; }
-.highlight-box { background: rgba(255,122,41,0.08); border-left: 4px solid #FF7A29; border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 24px 0; color: #14203F; font-family: Inter, sans-serif; font-size: 16px; line-height: 1.8; }
-.hero-title { font-family: Montserrat, sans-serif; font-weight: 900; font-size: 32px; color: #fff; line-height: 1.2; margin-bottom: 8px; text-transform: uppercase; text-align: center; }
-.hero-subtitle { font-family: Inter, sans-serif; font-size: 18px; color: rgba(255,255,255,0.8); text-align: center; }
-.hero-meta { font-family: Inter, sans-serif; font-size: 14px; color: #FF7A29; font-weight: 600; margin-top: 16px; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; }
-.toc-link { display: block; color: rgba(255,255,255,0.7); font-family: Inter, sans-serif; font-size: 14px; text-decoration: none; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
-.toc-link:last-child { border-bottom: none; }
-.toc-link:hover { color: #FF7A29; }
-`;
+function AnnBar() {
+  return (
+    <div style={{background:'linear-gradient(90deg,#C94E0E,#FF7A29,#E8611A,#FF7A29,#C94E0E)',backgroundSize:'300% 100%',animation:'gradShift 4s ease infinite',color:'#fff',padding:'11px 20px',textAlign:'center',fontSize:13,fontWeight:700,fontFamily:'Montserrat,sans-serif',zIndex:10,position:'relative',display:'flex',alignItems:'center',justifyContent:'center',gap:0,flexWrap:'wrap'}}>
+      <span>🏏 Season 5 Registrations OPEN</span>
+      <span style={{display:'inline-block',width:1,height:14,background:'rgba(255,255,255,0.4)',margin:'0 14px',verticalAlign:'middle'}}/>
+      <span>75 Cities · 10 Teams · ₹299 Only</span>
+      <span style={{display:'inline-block',width:1,height:14,background:'rgba(255,255,255,0.4)',margin:'0 14px',verticalAlign:'middle'}}/>
+      <span>#OfficeSeStadiumtak</span>
+    </div>
+  );
+}
 
-function Navbar({active=''}) {
-  const [open,setOpen]=React.useState(false);
-  const links=[['Home','home'],['Match Center','matchcenter'],['Teams','teams'],['About','about']];
+function Navbar({open,setOpen}:{open:boolean,setOpen:(v:boolean)=>void}) {
+  const links=[['🏠 Home'],['🔴 Match Center'],['🏏 Teams'],['🤝 Sponsors'],['📷 Photos'],['▶️ Videos'],['ℹ️ About'],['❓ FAQ'],['✉️ Contact']];
   return (
     <>
-      <nav style={{position:'sticky',top:0,zIndex:100,background:'rgba(10,22,40,0.97)',backdropFilter:'blur(24px)',borderBottom:'1px solid rgba(255,255,255,0.08)',boxShadow:'0 2px 0 0 rgba(255,122,41,0.2)'}}>
-        <div className="wrap" style={{height:60,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-          <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:20}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff',marginLeft:3}}>T20</span></div>
-          <div className="nav-links">{links.map(([l,k])=><a key={k} href="#" style={{color:active===k?'#FF7A29':'rgba(255,255,255,0.7)',fontWeight:600,fontSize:13.5,textDecoration:'none',fontFamily:'Inter,sans-serif',borderBottom:active===k?'2px solid #FF7A29':'2px solid transparent',paddingBottom:2}}>{l}</a>)}<button className="btn-primary" style={{padding:'9px 20px',fontSize:13.5,borderRadius:10,minHeight:'auto'}}>Register ₹299</button></div>
-          <button className="ham" onClick={()=>setOpen(o=>!o)} style={{flexDirection:'column',gap:5,background:'none',border:'none',cursor:'pointer',padding:8,zIndex:201}}>
-            <span style={{display:'block',width:22,height:2,background:'#fff',borderRadius:2,transition:'all 0.25s',transform:open?'rotate(45deg) translate(4px,4px)':''}}/>
-            <span style={{display:'block',width:22,height:2,background:'#fff',borderRadius:2,transition:'all 0.25s',opacity:open?0:1}}/>
-            <span style={{display:'block',width:22,height:2,background:'#fff',borderRadius:2,transition:'all 0.25s',transform:open?'rotate(-45deg) translate(4px,-4px)':''}}/>
+      <nav style={{position:'sticky',top:0,zIndex:200,background:'rgba(6,14,28,0.96)',backdropFilter:'blur(24px)',borderBottom:'1px solid rgba(255,255,255,0.07)',boxShadow:'0 1px 0 0 rgba(255,122,41,0.25)'}}>
+        <div className="wrap" style={{height:64,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+          <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,display:'flex',alignItems:'center'}}>
+            <span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff',marginLeft:3}}>T20</span>
+            <span style={{fontSize:10,color:'rgba(255,122,41,0.7)',marginLeft:8,fontWeight:700,letterSpacing:'0.08em'}}>SEASON 5</span>
+          </div>
+          <div className="desk-nav">
+            {['Home','Match Center','Teams','Sponsors','Photos','Videos','About','FAQ','Contact'].map(l=>(
+              <a key={l} href="#" style={{color:'rgba(255,255,255,0.7)',fontWeight:600,fontSize:13,textDecoration:'none',fontFamily:'Inter,sans-serif'}}>{l}</a>
+            ))}
+            <button className="btn-fire" style={{padding:'10px 20px',fontSize:13}}>Register ₹299</button>
+          </div>
+          <button className="ham-btn" onClick={()=>setOpen(!open)} style={{flexDirection:'column',gap:5,background:'none',border:'none',cursor:'pointer',padding:8,zIndex:201,display:'flex'}}>
+            <span style={{display:'block',width:22,height:2,background:'#fff',borderRadius:2,transition:'all 0.25s',transform:open?'rotate(45deg) translate(5px,5px)':''}}/>
+            <span style={{display:'block',width:22,height:2,background:'#fff',borderRadius:2,transition:'all 0.25s',transform:open?'scaleX(0)':''}}/>
+            <span style={{display:'block',width:22,height:2,background:'#fff',borderRadius:2,transition:'all 0.25s',transform:open?'rotate(-45deg) translate(5px,-5px)':''}}/>
           </button>
         </div>
       </nav>
-      {open&&(<div style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'rgba(6,16,30,0.99)',zIndex:200,display:'flex',flexDirection:'column',padding:'72px 24px 40px',overflowY:'auto'}}>
-        <button onClick={()=>setOpen(false)} style={{position:'absolute',top:16,right:16,background:'none',border:'none',color:'rgba(255,255,255,0.5)',fontSize:26,cursor:'pointer',lineHeight:1}}>✕</button>
-        <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,marginBottom:28}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff',marginLeft:3}}>T20</span></div>
-        {[['🏠 Home'],['🔴 Match Center'],['🏏 Teams'],['🤝 Sponsors'],['📷 Photos'],['▶️ Videos'],['ℹ️ About'],['❓ FAQ'],['✉️ Contact']].map(([l])=><a key={l} href="#" onClick={()=>setOpen(false)} style={{color:'rgba(255,255,255,0.85)',fontWeight:700,fontSize:19,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'13px 0',borderBottom:'1px solid rgba(255,255,255,0.07)'}}>{l}</a>)}
-        <button className="btn-primary" style={{marginTop:28,height:52,fontSize:16,borderRadius:14,width:'100%'}}>📝 Register for ₹299 →</button>
-      </div>)}
+      {open&&(
+        <div style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'#06101E',zIndex:199,display:'flex',flexDirection:'column',padding:'80px 24px 40px',overflowY:'auto'}}>
+          <button onClick={()=>setOpen(false)} style={{position:'absolute',top:16,right:16,background:'none',border:'none',color:'rgba(255,255,255,0.5)',fontSize:28,cursor:'pointer',lineHeight:1}}>✕</button>
+          <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,marginBottom:32}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff',marginLeft:3}}>T20</span></div>
+          {links.map(([l])=>(
+            <a key={l} href="#" onClick={()=>setOpen(false)} style={{color:'rgba(255,255,255,0.85)',fontWeight:700,fontSize:18,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'13px 0',borderBottom:'1px solid rgba(255,255,255,0.07)',display:'block'}}>{l}</a>
+          ))}
+          <button className="btn-fire" style={{marginTop:28,height:52,fontSize:16,width:'100%'}}>📝 Register for ₹299 →</button>
+        </div>
+      )}
     </>
   );
 }
 
 function Footer() {
   return (
-    <footer style={{background:'#06101E',borderTop:'1px solid rgba(255,255,255,0.06)'}}>
-      <div className="wrap" style={{paddingTop:40,paddingBottom:40}}>
-        <div className="grid-2" style={{gap:28,marginBottom:28}}>
+    <footer style={{background:'#040C18',borderTop:'1px solid rgba(255,255,255,0.05)',padding:'48px 0 32px'}}>
+      <div className="wrap">
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:32,marginBottom:32}}>
           <div>
-            <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,marginBottom:10}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff',marginLeft:4}}>T20</span></div>
-            <p style={{color:'rgba(255,255,255,0.45)',fontSize:13,lineHeight:1.7,marginBottom:8,maxWidth:280}}>Bharatiya Corporate Premier League — world's largest corporate cricket league for working professionals.</p>
-            <p style={{color:'rgba(255,122,41,0.6)',fontSize:12,fontWeight:600}}>#OfficeSeStadiumtak</p>
+            <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,marginBottom:8}}>
+              <span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff',marginLeft:4}}>T20</span>
+            </div>
+            <div style={{fontSize:11,color:'rgba(255,122,41,0.7)',fontWeight:700,letterSpacing:'0.08em',marginBottom:10}}>SEASON 5 · 2025</div>
+            <p style={{color:'rgba(255,255,255,0.4)',fontSize:13,lineHeight:1.7,marginBottom:8,maxWidth:280}}>Relive the dream. Rediscover the thrill. World's largest corporate cricket league.</p>
+            <p style={{color:'rgba(255,122,41,0.6)',fontSize:12,fontWeight:700}}>#OfficeSeStadiumtak</p>
           </div>
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
-            <div><div style={{color:'rgba(255,255,255,0.3)',fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:12}}>League</div>{['Schedule','Match Center','Teams','Points Table','Photos','Videos'].map(l=><div key={l} style={{marginBottom:8}}><a href="#" style={{color:'rgba(255,255,255,0.55)',fontSize:13,textDecoration:'none'}}>{l}</a></div>)}</div>
-            <div><div style={{color:'rgba(255,255,255,0.3)',fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:12}}>Info</div>{['About','FAQ','Contact','Terms','Privacy','Refunds','Eligibility'].map(l=><div key={l} style={{marginBottom:8}}><a href="#" style={{color:'rgba(255,255,255,0.55)',fontSize:13,textDecoration:'none'}}>{l}</a></div>)}</div>
+            <div>
+              <div style={{color:'rgba(255,255,255,0.3)',fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:12}}>League</div>
+              {['Schedule','Match Center','Teams','Points Table','Photos','Videos'].map(l=>(
+                <div key={l} style={{marginBottom:8}}><a href="#" style={{color:'rgba(255,255,255,0.55)',fontSize:13,textDecoration:'none'}}>{l}</a></div>
+              ))}
+            </div>
+            <div>
+              <div style={{color:'rgba(255,255,255,0.3)',fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:12}}>Info</div>
+              {['About','FAQ','Contact','Terms','Privacy','Refunds','Eligibility'].map(l=>(
+                <div key={l} style={{marginBottom:8}}><a href="#" style={{color:'rgba(255,255,255,0.55)',fontSize:13,textDecoration:'none'}}>{l}</a></div>
+              ))}
+            </div>
           </div>
         </div>
-        <div style={{borderTop:'1px solid rgba(255,255,255,0.06)',paddingTop:20,display:'flex',flexWrap:'wrap',gap:12,justifyContent:'space-between',alignItems:'center'}}>
-          <div style={{display:'flex',gap:8}}>{['📸','▶️','🐦','📘'].map((ic,i)=><a key={i} href="#" style={{width:36,height:36,borderRadius:9,background:'rgba(255,255,255,0.07)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,textDecoration:'none',border:'1px solid rgba(255,255,255,0.07)'}}>{ic}</a>)}</div>
-          <div style={{color:'rgba(255,255,255,0.28)',fontSize:11}}>© 2025 Kriparti Playing11 Pvt. Ltd.</div>
+        <div style={{borderTop:'1px solid rgba(255,255,255,0.05)',paddingTop:20,display:'flex',flexWrap:'wrap',gap:12,justifyContent:'space-between',alignItems:'center'}}>
+          <div style={{color:'rgba(255,255,255,0.28)',fontSize:11}}>© 2025 Kriparti Playing11 Pvt. Ltd. | www.bcpl-t20.com</div>
+          <div style={{color:'rgba(255,255,255,0.28)',fontSize:11}}>All rights reserved</div>
         </div>
       </div>
     </footer>
   );
 }
 
-export function EligibilityCriteria() {
+function MobileCTA() {
   return (
-    <div style={{ background: '#0A1628', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,padding:'10px 16px 18px',background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',gap:10}}>
+      <button className="btn-fire" style={{flex:2,height:52,fontSize:15}}>Register ₹299 →</button>
+      <button className="btn-wa" style={{flex:1,height:52,fontSize:14,borderRadius:14}}>💬 WhatsApp</button>
+    </div>
+  );
+}
+
+const OrangeDot = () => (
+  <span style={{display:'inline-block',width:6,height:6,borderRadius:'50%',background:'#FF7A29',marginRight:10,flexShrink:0,marginTop:7}}/>
+);
+
+export function EligibilityCriteria() {
+  const [open,setOpen]=React.useState(false);
+  const [pro,setPro]=React.useState<boolean|null>(null);
+  const [age,setAge]=React.useState<boolean|null>(null);
+  const [exp,setExp]=React.useState<boolean|null>(null);
+
+  const allYes = pro===true && age===true && exp===true;
+  const anyNo = pro===false || age===false || exp===false;
+  const anyAnswered = pro!==null || age!==null || exp!==null;
+
+  const css = `
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap');
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    .wrap{max-width:1280px;margin:0 auto;padding:0 20px;}
+    .desk-nav{display:none;align-items:center;gap:22px;}
+    .ham-btn{display:flex;}
+    .bot-cta{display:flex;}
+    @media(min-width:768px){.wrap{padding:0 32px}}
+    @media(min-width:1024px){.desk-nav{display:flex!important;}.ham-btn{display:none!important;}.bot-cta{display:none!important;}}
+    .btn-fire{background:linear-gradient(135deg,#FF7A29 0%,#E8611A 60%,#C94E0E 100%);border:none;border-radius:14px;color:#fff;font-family:Montserrat,sans-serif;font-weight:800;cursor:pointer;box-shadow:0 8px 28px rgba(255,122,41,0.45),inset 0 1px 0 rgba(255,255,255,0.2);transition:transform 0.15s,box-shadow 0.2s;letter-spacing:0.02em;animation:pulseGlow 3s ease-in-out infinite;display:inline-flex;align-items:center;justify-content:center;}
+    .btn-fire:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(255,122,41,0.6);}
+    .btn-wa{background:linear-gradient(135deg,#25D366,#1BA851);border:none;border-radius:14px;color:#fff;font-weight:700;cursor:pointer;font-family:Montserrat,sans-serif;transition:transform 0.15s;display:inline-flex;align-items:center;justify-content:center;}
+    .glass-card{background:linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85));backdrop-filter:blur(32px);border:1px solid rgba(255,255,255,0.09);border-radius:20px;box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06);}
+    .shimmer-gold{background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D,#F5C842,#E8B23D);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 3s linear infinite;}
+    .tag-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,122,41,0.12);border:1px solid rgba(255,122,41,0.3);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:700;font-family:Montserrat,sans-serif;color:#FF7A29;letter-spacing:0.1em;}
+    .chip-yes{background:rgba(34,197,94,0.15);border:2px solid rgba(34,197,94,0.5);color:#22C55E;border-radius:10px;padding:8px 20px;font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;cursor:pointer;transition:all 0.2s;}
+    .chip-yes.active{background:rgba(34,197,94,0.3);border-color:#22C55E;box-shadow:0 0 16px rgba(34,197,94,0.4);}
+    .chip-no{background:rgba(232,73,63,0.15);border:2px solid rgba(232,73,63,0.5);color:#E8493F;border-radius:10px;padding:8px 20px;font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;cursor:pointer;transition:all 0.2s;}
+    .chip-no.active{background:rgba(232,73,63,0.3);border-color:#E8493F;box-shadow:0 0 16px rgba(232,73,63,0.4);}
+    @keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    @keyframes pulseGlow{0%,100%{box-shadow:0 0 16px rgba(255,122,41,0.4)}50%{box-shadow:0 0 36px rgba(255,122,41,0.8),0 0 60px rgba(255,122,41,0.3)}}
+    @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+    @keyframes floatParticle{0%{transform:translateY(0) rotate(0deg);opacity:0.4}50%{opacity:0.8}100%{transform:translateY(-80px) rotate(180deg);opacity:0}}
+    @keyframes scanPulse{0%,100%{opacity:0.03}50%{opacity:0.08}}
+    @keyframes fadeSlide{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes borderGlow{0%,100%{border-color:rgba(255,122,41,0.3)}50%{border-color:rgba(255,122,41,0.8)}}
+    @keyframes eligiblePulse{0%,100%{box-shadow:0 0 24px rgba(34,197,94,0.3)}50%{box-shadow:0 0 48px rgba(34,197,94,0.6)}}
+  `;
+
+  const particles = [
+    {top:'15%',left:'8%',color:'#FF7A29',delay:'0s',size:3},
+    {top:'25%',left:'92%',color:'#E8B23D',delay:'1.2s',size:4},
+    {top:'55%',left:'5%',color:'#fff',delay:'0.7s',size:3},
+    {top:'70%',left:'88%',color:'#FF7A29',delay:'2s',size:3},
+    {top:'40%',left:'50%',color:'#E8B23D',delay:'1.5s',size:4},
+    {top:'80%',left:'30%',color:'#fff',delay:'0.3s',size:3},
+    {top:'10%',left:'65%',color:'#FF7A29',delay:'2.5s',size:3},
+    {top:'60%',left:'72%',color:'#E8B23D',delay:'0.9s',size:4},
+  ];
+
+  const questions = [
+    {label:'Working Professional?',val:pro,setVal:setPro},
+    {label:'18 years or older?',val:age,setVal:setAge},
+    {label:'Basic cricket experience?',val:exp,setVal:setExp},
+  ];
+
+  return (
+    <div style={{background:'#060E1C',minHeight:'100vh',fontFamily:'Inter,sans-serif',color:'#F8F4EE',paddingBottom:80}}>
       <style>{css}</style>
-      <Navbar />
-      
-      {/* Hero */}
-      <div style={{ height: 200, background: 'linear-gradient(160deg, #0A1628, #0F2247)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '0 16px' }}>
-        <h1 className="hero-title">ELIGIBILITY CRITERIA</h1>
-        <div className="hero-subtitle">Who Can Play in BCPL T20?</div>
-        <div className="hero-meta">Season 5, 2025</div>
+
+      {/* Ambient */}
+      <div style={{position:'fixed',inset:0,zIndex:0,pointerEvents:'none',overflow:'hidden'}}>
+        <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 80% 60% at 20% 40%, rgba(255,122,41,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 20%, rgba(30,64,175,0.12) 0%, transparent 60%)'}}/>
+        <svg style={{position:'absolute',bottom:0,left:0,right:0,width:'100%',opacity:0.07}} viewBox="0 0 1440 400" preserveAspectRatio="none">
+          <path d="M0,400 L0,200 Q360,80 720,80 Q1080,80 1440,200 L1440,400 Z" fill="#1a2a4a"/>
+          <rect x="680" y="200" width="80" height="200" fill="#0d1a33"/>
+          <line x1="200" y1="0" x2="260" y2="200" stroke="#E8B23D" strokeWidth="3"/>
+          <line x1="200" y1="0" x2="140" y2="200" stroke="#E8B23D" strokeWidth="3"/>
+          <circle cx="200" cy="0" r="8" fill="#E8B23D"/>
+          <line x1="1240" y1="0" x2="1300" y2="200" stroke="#E8B23D" strokeWidth="3"/>
+          <line x1="1240" y1="0" x2="1180" y2="200" stroke="#E8B23D" strokeWidth="3"/>
+          <circle cx="1240" cy="0" r="8" fill="#E8B23D"/>
+        </svg>
+        {particles.map((p,i)=>(
+          <div key={i} style={{position:'absolute',top:p.top,left:p.left,width:p.size,height:p.size,borderRadius:'50%',background:p.color,animation:`floatParticle 4s ease-in-out ${p.delay} infinite`}}/>
+        ))}
+        <div style={{position:'absolute',inset:0,background:'repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,0.015) 2px,rgba(255,255,255,0.015) 4px)',animation:'scanPulse 4s ease-in-out infinite'}}/>
       </div>
 
-      {/* Content Area */}
-      <div style={{ background: '#FAF8F4', flex: 1 }}>
-        <div style={{ maxWidth: 760, margin: '0 auto', padding: '40px 16px' }}>
-          
-          <h2 className="doc-h2" style={{ marginTop: 0, paddingTop: 0, borderTop: 'none' }}>Who is Eligible</h2>
-          <div className="grid-2-3" style={{ marginBottom: 32 }}>
-            {[
-              ["Working Professionals", "Full-time, part-time, or self-employed individuals in any industry"],
-              ["Age 18+", "No upper age limit. Your cricket dream isn't over at 35!"],
-              ["All Roles", "Batsman, Bowler, Wicket-Keeper, All-Rounder — all positions welcome"],
-              ["All Cities", "75+ trial cities across India. We come to you."],
-              ["All Skill Levels", "Office-ground to university/state-level players. All welcome."],
-              ["Both Genders", "Male and female cricketers are equally welcome"]
-            ].map(([title, desc]) => (
-              <div key={title} style={{ background: '#fff', border: '1px solid rgba(46,158,79,0.2)', borderRadius: 12, padding: 16 }}>
-                <div style={{ fontSize: 24, marginBottom: 8 }}>✅</div>
-                <div style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 14, color: '#0F2247', marginBottom: 4 }}>{title}</div>
-                <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: '#14203F', lineHeight: 1.5 }}>{desc}</div>
+      <div style={{position:'relative',zIndex:1}}>
+        <AnnBar/>
+        <Navbar open={open} setOpen={setOpen}/>
+
+        {/* Hero */}
+        <section style={{padding:'72px 0 40px',textAlign:'center',animation:'fadeSlide 0.6s ease both'}}>
+          <div className="wrap">
+            <div className="tag-pill" style={{marginBottom:20}}>✅ AM I ELIGIBLE?</div>
+            <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(36px,7vw,72px)',lineHeight:1.05,marginBottom:8}}>
+              <span style={{color:'#fff',display:'block'}}>ELIGIBILITY</span>
+              <span className="shimmer-gold" style={{display:'block'}}>CRITERIA.</span>
+            </h1>
+            <p style={{color:'rgba(255,255,255,0.5)',fontSize:13,fontWeight:600,letterSpacing:'0.05em',marginTop:16,fontFamily:'Montserrat,sans-serif'}}>Last updated: January 15, 2025</p>
+            <p style={{color:'rgba(255,255,255,0.65)',fontSize:16,lineHeight:1.7,maxWidth:600,margin:'16px auto 0'}}>
+              BCPL T20 Season 5 is open to working professionals across India. Check your eligibility in seconds.
+            </p>
+          </div>
+        </section>
+
+        <div className="wrap" style={{maxWidth:860,margin:'0 auto',paddingBottom:40}}>
+
+          {/* Quick Checker */}
+          <div className="glass-card" style={{padding:'32px 36px',marginBottom:24,animation:'fadeSlide 0.5s ease 0.1s both'}}>
+            <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:6}}>
+              <span style={{fontSize:24}}>⚡</span>
+              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:20,color:'#E8B23D'}}>Quick Eligibility Checker</h2>
+            </div>
+            <p style={{color:'rgba(255,255,255,0.55)',fontSize:13,marginBottom:24}}>Answer 3 quick questions to find out if you qualify for Season 5.</p>
+            <div style={{display:'flex',flexDirection:'column',gap:16}}>
+              {questions.map((q,i)=>(
+                <div key={i} style={{display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:10}}>
+                  <span style={{color:'rgba(255,255,255,0.85)',fontSize:15,fontWeight:600,fontFamily:'Inter,sans-serif'}}>{q.label}</span>
+                  <div style={{display:'flex',gap:8}}>
+                    <button className={`chip-yes${q.val===true?' active':''}`} onClick={()=>q.setVal(true)}>✓ YES</button>
+                    <button className={`chip-no${q.val===false?' active':''}`} onClick={()=>q.setVal(false)}>✗ NO</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {anyAnswered && (
+              <div style={{marginTop:24}}>
+                {allYes ? (
+                  <div style={{background:'rgba(34,197,94,0.12)',border:'2px solid rgba(34,197,94,0.5)',borderRadius:16,padding:'20px 24px',textAlign:'center',animation:'eligiblePulse 2s ease-in-out infinite'}}>
+                    <div style={{fontSize:32,marginBottom:8}}>🎉</div>
+                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:20,color:'#22C55E',marginBottom:8}}>You're Eligible!</div>
+                    <p style={{color:'rgba(255,255,255,0.7)',fontSize:14,marginBottom:16}}>You qualify for BCPL T20 Season 5. Secure your spot now!</p>
+                    <button className="btn-fire" style={{padding:'14px 32px',fontSize:15}}>Register Now →</button>
+                  </div>
+                ) : anyNo ? (
+                  <div style={{background:'rgba(232,73,63,0.1)',border:'2px solid rgba(232,73,63,0.4)',borderRadius:16,padding:'20px 24px',textAlign:'center'}}>
+                    <div style={{fontSize:32,marginBottom:8}}>❌</div>
+                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:18,color:'#E8493F',marginBottom:8}}>Not Eligible for Season 5</div>
+                    <p style={{color:'rgba(255,255,255,0.6)',fontSize:14,marginBottom:16}}>Based on your answers, you don't qualify this season. We'd love to have you in a future edition!</p>
+                    <button style={{background:'rgba(255,255,255,0.08)',border:'1px solid rgba(255,255,255,0.2)',borderRadius:12,color:'rgba(255,255,255,0.7)',padding:'10px 24px',fontSize:14,cursor:'pointer',fontFamily:'Inter,sans-serif'}}>Contact us for future seasons →</button>
+                  </div>
+                ) : null}
               </div>
-            ))}
+            )}
           </div>
 
-          <h2 className="doc-h2">Who is NOT Eligible</h2>
-          <div className="grid-2-3" style={{ marginBottom: 32 }}>
-            {[
-              ["Full-time students", "(unless also employed part-time)"],
-              ["Professional cricketers", "Under BCCI, state, or IPL franchise contracts"],
-              ["Banned Players", "Players previously banned for code of conduct violations"],
-              ["Under 18s", "Anyone under 18 years of age"]
-            ].map(([title, desc]) => (
-              <div key={title} style={{ background: '#fff', border: '1px solid rgba(232,73,63,0.2)', borderRadius: 12, padding: 16 }}>
-                <div style={{ fontSize: 24, marginBottom: 8 }}>❌</div>
-                <div style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 14, color: '#0F2247', marginBottom: 4 }}>{title}</div>
-                <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: '#14203F', lineHeight: 1.5 }}>{desc}</div>
+          {/* Section 1 */}
+          <div className="glass-card" style={{padding:'32px 36px',marginBottom:20,animation:'fadeSlide 0.5s ease 0.2s both'}}>
+            <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18}}>
+              <span style={{fontSize:28}}>💼</span>
+              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:20,color:'#fff'}}>1. Professional Status</h2>
+            </div>
+            <p style={{color:'rgba(255,255,255,0.75)',fontSize:15,lineHeight:1.8,marginBottom:16}}>BCPL T20 is designed exclusively for India's working professionals. If you earn a living, you belong on this field.</p>
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+              <div style={{background:'rgba(34,197,94,0.08)',border:'1px solid rgba(34,197,94,0.2)',borderRadius:12,padding:'14px 16px'}}>
+                <div style={{color:'#22C55E',fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:12,letterSpacing:'0.08em',marginBottom:8}}>✅ ELIGIBLE</div>
+                {['Full-time employees (any sector)','Self-employed professionals','Business owners & entrepreneurs','Freelancers & consultants','Government employees & PSU staff'].map((item,i)=>(
+                  <div key={i} style={{display:'flex',alignItems:'flex-start',gap:6,color:'rgba(255,255,255,0.75)',fontSize:13,lineHeight:1.6,marginBottom:4}}>
+                    <span style={{color:'#22C55E',flexShrink:0}}>✓</span>{item}
+                  </div>
+                ))}
               </div>
-            ))}
+              <div style={{background:'rgba(232,73,63,0.08)',border:'1px solid rgba(232,73,63,0.2)',borderRadius:12,padding:'14px 16px'}}>
+                <div style={{color:'#E8493F',fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:12,letterSpacing:'0.08em',marginBottom:8}}>❌ NOT ELIGIBLE</div>
+                {['Full-time students (college/school)','Retired persons (Season 5)','Unemployed / actively job-seeking','Professional cricketers (Ranji+)','BCPL staff and officials'].map((item,i)=>(
+                  <div key={i} style={{display:'flex',alignItems:'flex-start',gap:6,color:'rgba(255,255,255,0.6)',fontSize:13,lineHeight:1.6,marginBottom:4}}>
+                    <span style={{color:'#E8493F',flexShrink:0}}>✗</span>{item}
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
-          <h2 className="doc-h2">Required Documents</h2>
-          <ul className="doc-ul">
-            <li className="doc-li">Valid government ID (Aadhaar / PAN / Passport / Driving Licence)</li>
-            <li className="doc-li">Proof of employment (offer letter, salary slip, or business registration)</li>
-            <li className="doc-li">Recent passport-size photograph</li>
-            <li className="doc-li">Playing video (2–5 minutes, showing your role in action)</li>
-          </ul>
-
-          <div className="highlight-box">
-            ₹299 is the ONLY fee you will ever pay to BCPL. There is NO auction fee, NO team fee, NO kit fee, and NO tournament fee. What you pay at registration is what you pay — period.
+          {/* Section 2 */}
+          <div className="glass-card" style={{padding:'32px 36px',marginBottom:20,animation:'fadeSlide 0.5s ease 0.25s both'}}>
+            <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18}}>
+              <span style={{fontSize:28}}>🎂</span>
+              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:20,color:'#fff'}}>2. Age Requirements</h2>
+            </div>
+            <div style={{display:'flex',gap:20,flexWrap:'wrap',marginBottom:16}}>
+              <div style={{background:'linear-gradient(135deg,rgba(255,122,41,0.15),rgba(232,178,61,0.1))',border:'1px solid rgba(255,122,41,0.3)',borderRadius:14,padding:'16px 24px',textAlign:'center',flex:1,minWidth:120}}>
+                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:36,color:'#FF7A29',lineHeight:1}}>18+</div>
+                <div style={{color:'rgba(255,255,255,0.6)',fontSize:13,marginTop:4}}>Minimum Age</div>
+              </div>
+              <div style={{background:'linear-gradient(135deg,rgba(34,197,94,0.1),rgba(34,197,94,0.05))',border:'1px solid rgba(34,197,94,0.2)',borderRadius:14,padding:'16px 24px',textAlign:'center',flex:1,minWidth:120}}>
+                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:36,color:'#22C55E',lineHeight:1}}>∞</div>
+                <div style={{color:'rgba(255,255,255,0.6)',fontSize:13,marginTop:4}}>No Maximum Age</div>
+              </div>
+            </div>
+            <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:10}}>
+              {[
+                'Minimum age: 18 years as of the registration date',
+                'No maximum age limit — cricket is for everyone',
+                'Age verified via government-issued Aadhaar card or PAN card',
+                'Date of birth must match across all submitted documents',
+              ].map((item,i)=>(
+                <li key={i} style={{display:'flex',alignItems:'flex-start',color:'rgba(255,255,255,0.75)',fontSize:14,lineHeight:1.7}}>
+                  <OrangeDot/>{item}
+                </li>
+              ))}
+            </ul>
           </div>
 
-          <p className="doc-p" style={{ fontSize: 14, color: 'rgba(20,32,63,0.7)' }}>
-            <strong>NOTE:</strong> BCPL reserves the right to verify employment documents before final selection. Misrepresentation of employment status results in immediate disqualification.
-          </p>
+          {/* Section 3 */}
+          <div className="glass-card" style={{padding:'32px 36px',marginBottom:20,animation:'fadeSlide 0.5s ease 0.3s both'}}>
+            <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18}}>
+              <span style={{fontSize:28}}>🏏</span>
+              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:20,color:'#fff'}}>3. Cricket Experience</h2>
+            </div>
+            <p style={{color:'rgba(255,255,255,0.75)',fontSize:15,lineHeight:1.8,marginBottom:14}}>
+              You don't need a century at Lord's — just a genuine love for the game and the ability to hold your own on a cricket field.
+            </p>
+            <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:10}}>
+              {[
+                'Basic cricket experience is required — colony cricket counts!',
+                'No formal coaching certificates or club membership needed',
+                'Skills assessed via self-uploaded video post-registration',
+                'Video must demonstrate batting, bowling, or keeping depending on your role',
+                'All-rounders should show at least two skills in the video',
+              ].map((item,i)=>(
+                <li key={i} style={{display:'flex',alignItems:'flex-start',color:'rgba(255,255,255,0.75)',fontSize:14,lineHeight:1.7}}>
+                  <OrangeDot/>{item}
+                </li>
+              ))}
+            </ul>
+          </div>
 
+          {/* Section 4 */}
+          <div className="glass-card" style={{padding:'32px 36px',marginBottom:20,animation:'fadeSlide 0.5s ease 0.35s both'}}>
+            <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18}}>
+              <span style={{fontSize:28}}>💪</span>
+              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:20,color:'#fff'}}>4. Physical Fitness</h2>
+            </div>
+            <p style={{color:'rgba(255,255,255,0.75)',fontSize:15,lineHeight:1.8,marginBottom:14}}>
+              Cricket demands physical capability. BCPL requires all participants to be in a state of health that allows safe participation.
+            </p>
+            <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:10}}>
+              {[
+                'Must be medically fit to participate in outdoor cricket activities',
+                'No active injuries that significantly prevent batting, bowling, or fielding',
+                'Players with managed conditions (diabetes, hypertension) may participate with doctor clearance',
+                'BCPL may request a fitness certificate from shortlisted/finalist players',
+                'BCPL is not liable for injuries — players participate at their own risk',
+              ].map((item,i)=>(
+                <li key={i} style={{display:'flex',alignItems:'flex-start',color:'rgba(255,255,255,0.75)',fontSize:14,lineHeight:1.7}}>
+                  <OrangeDot/>{item}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Section 5 */}
+          <div className="glass-card" style={{padding:'32px 36px',marginBottom:20,animation:'fadeSlide 0.5s ease 0.4s both'}}>
+            <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18}}>
+              <span style={{fontSize:28}}>📄</span>
+              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:20,color:'#fff'}}>5. Required Documents</h2>
+            </div>
+            <p style={{color:'rgba(255,255,255,0.75)',fontSize:15,lineHeight:1.8,marginBottom:18}}>
+              Documents are submitted after shortlisting. Keep these ready before registration so you're prepared when scouts call.
+            </p>
+            <div style={{display:'grid',gap:12}}>
+              {[
+                {icon:'🪪',title:'Identity Proof',desc:'Aadhaar Card or PAN Card (any one). Must be government-issued and valid. Name must match registration details exactly.'},
+                {icon:'📸',title:'Passport Photo',desc:'Recent colour photograph (taken within 3 months). Digital copy accepted — minimum 300 DPI resolution.'},
+                {icon:'🏢',title:'Employment Proof',desc:'Offer letter, latest salary slip, or business registration certificate. Freelancers: GST registration or latest ITR.'},
+                {icon:'🎥',title:'Cricket Video',desc:'Uploaded post-registration via the BCPL portal. 2-5 minutes. Clear footage of your cricketing skills in natural light.'},
+              ].map((item,i)=>(
+                <div key={i} style={{background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:12,padding:'14px 16px',display:'flex',gap:12}}>
+                  <span style={{fontSize:22,flexShrink:0}}>{item.icon}</span>
+                  <div>
+                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:13,color:'#E8B23D',marginBottom:4}}>{item.title}</div>
+                    <div style={{color:'rgba(255,255,255,0.7)',fontSize:13,lineHeight:1.6}}>{item.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Orange callout */}
+          <div style={{background:'rgba(255,122,41,0.08)',border:'1px solid rgba(255,122,41,0.4)',borderLeft:'3px solid #FF7A29',borderRadius:16,padding:'20px 24px',marginBottom:20,animation:'borderGlow 3s ease-in-out infinite'}}>
+            <div style={{display:'flex',gap:12,alignItems:'flex-start'}}>
+              <span style={{fontSize:24,flexShrink:0}}>📋</span>
+              <div>
+                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#FF7A29',marginBottom:6}}>Registration Journey</div>
+                <div style={{display:'flex',gap:8,alignItems:'center',flexWrap:'wrap'}}>
+                  {['Register','Upload Video','Get Result','Submit Docs','Done! 🏆'].map((step,i,arr)=>(
+                    <React.Fragment key={i}>
+                      <span style={{background:'rgba(255,122,41,0.15)',border:'1px solid rgba(255,122,41,0.3)',borderRadius:8,padding:'5px 12px',fontSize:12,color:'#FF7A29',fontWeight:700,fontFamily:'Montserrat,sans-serif'}}>{step}</span>
+                      {i<arr.length-1&&<span style={{color:'rgba(255,122,41,0.5)',fontSize:16}}>→</span>}
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* CTA */}
+          <div className="glass-card" style={{padding:'32px',textAlign:'center'}}>
+            <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,marginBottom:8}}>Meet All Criteria?</div>
+            <p style={{color:'rgba(255,255,255,0.6)',fontSize:14,marginBottom:20}}>Join 75 cities, 10 franchise teams, and thousands of corporate cricketers. Your stadium moment awaits.</p>
+            <div style={{display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap'}}>
+              <button className="btn-fire" style={{padding:'14px 36px',fontSize:16}}>Register ₹299 →</button>
+              <button className="btn-wa" style={{padding:'14px 24px',fontSize:15,borderRadius:14}}>💬 Ask on WhatsApp</button>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <Footer />
+        <Footer/>
+      </div>
+      <MobileCTA/>
     </div>
   );
 }

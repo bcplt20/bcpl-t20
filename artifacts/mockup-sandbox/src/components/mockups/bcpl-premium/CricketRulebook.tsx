@@ -1,159 +1,320 @@
 import React from 'react';
 
-const css = `
-.wrap{max-width:1200px;margin:0 auto;padding:0 16px}
-.section{padding:40px 0}
-.h1{font-family:Montserrat,sans-serif;font-weight:900;font-size:36px;line-height:1.05}
-.h2{font-family:Montserrat,sans-serif;font-weight:800;font-size:22px}
-.glass{background:rgba(15,34,71,0.7);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.10);border-radius:16px}
-.btn-primary{background:linear-gradient(135deg,#FF7A29,#E8611A);border:none;border-radius:12px;color:#fff;font-weight:700;font-family:Montserrat,sans-serif;cursor:pointer;box-shadow:0 6px 24px rgba(255,122,41,0.4);transition:transform 0.15s;min-height:48px}
-.btn-primary:active{transform:scale(0.97)}
-.btn-wa{background:#2E9E4F;border:none;border-radius:12px;color:#fff;font-weight:700;cursor:pointer;min-height:48px}
-.input-f{background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.12);border-radius:12px;color:#fff;padding:14px 16px;width:100%;font-family:Inter,sans-serif;font-size:15px;outline:none;transition:border-color 0.2s;appearance:none}
-.input-f:focus{border-color:#FF7A29}
-.input-f::placeholder{color:rgba(255,255,255,0.3)}
-.input-f option{background:#0F2247;color:#fff}
-.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:16px}
-.dtable{width:100%;border-collapse:collapse;min-width:560px}
-.dtable th{background:rgba(255,122,41,0.12);color:rgba(255,255,255,0.55);font-size:11px;text-transform:uppercase;letter-spacing:0.1em;padding:12px 14px;text-align:left;font-family:Inter,sans-serif}
-.dtable td{padding:14px;border-bottom:1px solid rgba(255,255,255,0.05);font-size:14px}
-.grid-2{display:grid;grid-template-columns:1fr;gap:14px}
-.grid-3{display:grid;grid-template-columns:1fr;gap:14px}
-.grid-4{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.nav-links{display:none}
-.ham{display:flex}
-.bot-cta{display:flex}
-.grid-2-3{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
-.toc-sidebar{display:none}
-@media(min-width:768px){.wrap{padding:0 28px}.section{padding:60px 0}.h1{font-size:56px}.grid-2{grid-template-columns:repeat(2,1fr);gap:24px}.grid-3{grid-template-columns:repeat(2,1fr);gap:20px}.grid-4{grid-template-columns:repeat(4,1fr)}.grid-2-3{grid-template-columns:repeat(3,1fr)}}
-@media(min-width:1024px){.section{padding:80px 0}.h1{font-size:80px}.grid-3{grid-template-columns:repeat(3,1fr)}.nav-links{display:flex!important;align-items:center;gap:20px}.ham{display:none!important}.bot-cta{display:none!important}.toc-sidebar{display:block}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-.doc-h2 { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 22px; color: #0F2247; margin-top: 40px; padding-top: 40px; border-top: 1px solid rgba(20,32,63,0.1); margin-bottom: 16px; }
-.doc-h3 { font-family: Inter, sans-serif; font-weight: 700; font-size: 14px; color: #FF7A29; text-transform: uppercase; letter-spacing: 0.08em; margin: 24px 0 12px; }
-.doc-p { font-family: Inter, sans-serif; font-size: 16px; line-height: 1.8; color: #14203F; margin-bottom: 16px; }
-.doc-ul { padding-left: 20px; margin-bottom: 16px; }
-.doc-li { padding: 4px 0; font-family: Inter, sans-serif; font-size: 16px; line-height: 1.8; color: #14203F; }
-.highlight-box { background: rgba(255,122,41,0.08); border-left: 4px solid #FF7A29; border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 24px 0; color: #14203F; font-family: Inter, sans-serif; font-size: 16px; line-height: 1.8; }
-.hero-title { font-family: Montserrat, sans-serif; font-weight: 900; font-size: 32px; color: #fff; line-height: 1.2; margin-bottom: 8px; text-transform: uppercase; text-align: center; }
-.hero-subtitle { font-family: Inter, sans-serif; font-size: 18px; color: rgba(255,255,255,0.8); text-align: center; }
-.hero-meta { font-family: Inter, sans-serif; font-size: 14px; color: #FF7A29; font-weight: 600; margin-top: 16px; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; }
-.toc-link { display: block; color: rgba(255,255,255,0.7); font-family: Inter, sans-serif; font-size: 14px; text-decoration: none; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
-.toc-link:last-child { border-bottom: none; }
-.toc-link:hover { color: #FF7A29; }
-`;
+function AnnBar() {
+  return (
+    <div style={{background:'linear-gradient(90deg,#C94E0E,#FF7A29,#E8611A,#FF7A29,#C94E0E)',backgroundSize:'300% 100%',animation:'gradShift 4s ease infinite',color:'#fff',padding:'11px 20px',textAlign:'center',fontSize:13,fontWeight:700,fontFamily:'Montserrat,sans-serif',zIndex:10,position:'relative',display:'flex',alignItems:'center',justifyContent:'center',gap:0,flexWrap:'wrap'}}>
+      <span>🏏 Season 5 Registrations OPEN</span>
+      <span style={{display:'inline-block',width:1,height:14,background:'rgba(255,255,255,0.4)',margin:'0 14px',verticalAlign:'middle'}}/>
+      <span>75 Cities · 10 Teams · ₹299 Only</span>
+      <span style={{display:'inline-block',width:1,height:14,background:'rgba(255,255,255,0.4)',margin:'0 14px',verticalAlign:'middle'}}/>
+      <span>#OfficeSeStadiumtak</span>
+    </div>
+  );
+}
 
-function Navbar({active=''}) {
-  const [open,setOpen]=React.useState(false);
-  const links=[['Home','home'],['Match Center','matchcenter'],['Teams','teams'],['About','about']];
+function Navbar({open,setOpen}:{open:boolean,setOpen:(v:boolean)=>void}) {
+  const links=[['🏠 Home'],['🔴 Match Center'],['🏏 Teams'],['🤝 Sponsors'],['📷 Photos'],['▶️ Videos'],['ℹ️ About'],['❓ FAQ'],['✉️ Contact']];
   return (
     <>
-      <nav style={{position:'sticky',top:0,zIndex:100,background:'rgba(10,22,40,0.97)',backdropFilter:'blur(24px)',borderBottom:'1px solid rgba(255,255,255,0.08)',boxShadow:'0 2px 0 0 rgba(255,122,41,0.2)'}}>
-        <div className="wrap" style={{height:60,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-          <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:20}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff',marginLeft:3}}>T20</span></div>
-          <div className="nav-links">{links.map(([l,k])=><a key={k} href="#" style={{color:active===k?'#FF7A29':'rgba(255,255,255,0.7)',fontWeight:600,fontSize:13.5,textDecoration:'none',fontFamily:'Inter,sans-serif',borderBottom:active===k?'2px solid #FF7A29':'2px solid transparent',paddingBottom:2}}>{l}</a>)}<button className="btn-primary" style={{padding:'9px 20px',fontSize:13.5,borderRadius:10,minHeight:'auto'}}>Register ₹299</button></div>
-          <button className="ham" onClick={()=>setOpen(o=>!o)} style={{flexDirection:'column',gap:5,background:'none',border:'none',cursor:'pointer',padding:8,zIndex:201}}>
-            <span style={{display:'block',width:22,height:2,background:'#fff',borderRadius:2,transition:'all 0.25s',transform:open?'rotate(45deg) translate(4px,4px)':''}}/>
-            <span style={{display:'block',width:22,height:2,background:'#fff',borderRadius:2,transition:'all 0.25s',opacity:open?0:1}}/>
-            <span style={{display:'block',width:22,height:2,background:'#fff',borderRadius:2,transition:'all 0.25s',transform:open?'rotate(-45deg) translate(4px,-4px)':''}}/>
+      <nav style={{position:'sticky',top:0,zIndex:200,background:'rgba(6,14,28,0.96)',backdropFilter:'blur(24px)',borderBottom:'1px solid rgba(255,255,255,0.07)',boxShadow:'0 1px 0 0 rgba(255,122,41,0.25)'}}>
+        <div className="wrap" style={{height:64,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+          <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,display:'flex',alignItems:'center'}}>
+            <span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff',marginLeft:3}}>T20</span>
+            <span style={{fontSize:10,color:'rgba(255,122,41,0.7)',marginLeft:8,fontWeight:700,letterSpacing:'0.08em'}}>SEASON 5</span>
+          </div>
+          <div className="desk-nav">
+            {['Home','Match Center','Teams','Sponsors','Photos','Videos','About','FAQ','Contact'].map(l=>(
+              <a key={l} href="#" style={{color:'rgba(255,255,255,0.7)',fontWeight:600,fontSize:13,textDecoration:'none',fontFamily:'Inter,sans-serif'}}>{l}</a>
+            ))}
+            <button className="btn-fire" style={{padding:'10px 20px',fontSize:13}}>Register ₹299</button>
+          </div>
+          <button className="ham-btn" onClick={()=>setOpen(!open)} style={{flexDirection:'column',gap:5,background:'none',border:'none',cursor:'pointer',padding:8,zIndex:201,display:'flex'}}>
+            <span style={{display:'block',width:22,height:2,background:'#fff',borderRadius:2,transition:'all 0.25s',transform:open?'rotate(45deg) translate(5px,5px)':''}}/>
+            <span style={{display:'block',width:22,height:2,background:'#fff',borderRadius:2,transition:'all 0.25s',transform:open?'scaleX(0)':''}}/>
+            <span style={{display:'block',width:22,height:2,background:'#fff',borderRadius:2,transition:'all 0.25s',transform:open?'rotate(-45deg) translate(5px,-5px)':''}}/>
           </button>
         </div>
       </nav>
-      {open&&(<div style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'rgba(6,16,30,0.99)',zIndex:200,display:'flex',flexDirection:'column',padding:'72px 24px 40px',overflowY:'auto'}}>
-        <button onClick={()=>setOpen(false)} style={{position:'absolute',top:16,right:16,background:'none',border:'none',color:'rgba(255,255,255,0.5)',fontSize:26,cursor:'pointer',lineHeight:1}}>✕</button>
-        <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,marginBottom:28}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff',marginLeft:3}}>T20</span></div>
-        {[['🏠 Home'],['🔴 Match Center'],['🏏 Teams'],['🤝 Sponsors'],['📷 Photos'],['▶️ Videos'],['ℹ️ About'],['❓ FAQ'],['✉️ Contact']].map(([l])=><a key={l} href="#" onClick={()=>setOpen(false)} style={{color:'rgba(255,255,255,0.85)',fontWeight:700,fontSize:19,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'13px 0',borderBottom:'1px solid rgba(255,255,255,0.07)'}}>{l}</a>)}
-        <button className="btn-primary" style={{marginTop:28,height:52,fontSize:16,borderRadius:14,width:'100%'}}>📝 Register for ₹299 →</button>
-      </div>)}
+      {open&&(
+        <div style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'#06101E',zIndex:199,display:'flex',flexDirection:'column',padding:'80px 24px 40px',overflowY:'auto'}}>
+          <button onClick={()=>setOpen(false)} style={{position:'absolute',top:16,right:16,background:'none',border:'none',color:'rgba(255,255,255,0.5)',fontSize:28,cursor:'pointer',lineHeight:1}}>✕</button>
+          <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,marginBottom:32}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff',marginLeft:3}}>T20</span></div>
+          {links.map(([l])=>(
+            <a key={l} href="#" onClick={()=>setOpen(false)} style={{color:'rgba(255,255,255,0.85)',fontWeight:700,fontSize:18,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'13px 0',borderBottom:'1px solid rgba(255,255,255,0.07)',display:'block'}}>{l}</a>
+          ))}
+          <button className="btn-fire" style={{marginTop:28,height:52,fontSize:16,width:'100%'}}>📝 Register for ₹299 →</button>
+        </div>
+      )}
     </>
   );
 }
 
 function Footer() {
   return (
-    <footer style={{background:'#06101E',borderTop:'1px solid rgba(255,255,255,0.06)'}}>
-      <div className="wrap" style={{paddingTop:40,paddingBottom:40}}>
-        <div className="grid-2" style={{gap:28,marginBottom:28}}>
+    <footer style={{background:'#040C18',borderTop:'1px solid rgba(255,255,255,0.05)',padding:'48px 0 32px'}}>
+      <div className="wrap">
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:32,marginBottom:32}}>
           <div>
-            <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,marginBottom:10}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff',marginLeft:4}}>T20</span></div>
-            <p style={{color:'rgba(255,255,255,0.45)',fontSize:13,lineHeight:1.7,marginBottom:8,maxWidth:280}}>Bharatiya Corporate Premier League — world's largest corporate cricket league for working professionals.</p>
-            <p style={{color:'rgba(255,122,41,0.6)',fontSize:12,fontWeight:600}}>#OfficeSeStadiumtak</p>
+            <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,marginBottom:8}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff',marginLeft:4}}>T20</span></div>
+            <div style={{fontSize:11,color:'rgba(255,122,41,0.7)',fontWeight:700,letterSpacing:'0.08em',marginBottom:10}}>SEASON 5 · 2025</div>
+            <p style={{color:'rgba(255,255,255,0.4)',fontSize:13,lineHeight:1.7,marginBottom:8,maxWidth:280}}>Relive the dream. Rediscover the thrill. World's largest corporate cricket league.</p>
+            <p style={{color:'rgba(255,122,41,0.6)',fontSize:12,fontWeight:700}}>#OfficeSeStadiumtak</p>
           </div>
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
-            <div><div style={{color:'rgba(255,255,255,0.3)',fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:12}}>League</div>{['Schedule','Match Center','Teams','Points Table','Photos','Videos'].map(l=><div key={l} style={{marginBottom:8}}><a href="#" style={{color:'rgba(255,255,255,0.55)',fontSize:13,textDecoration:'none'}}>{l}</a></div>)}</div>
-            <div><div style={{color:'rgba(255,255,255,0.3)',fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:12}}>Info</div>{['About','FAQ','Contact','Terms','Privacy','Refunds','Eligibility'].map(l=><div key={l} style={{marginBottom:8}}><a href="#" style={{color:'rgba(255,255,255,0.55)',fontSize:13,textDecoration:'none'}}>{l}</a></div>)}</div>
+            <div>
+              <div style={{color:'rgba(255,255,255,0.3)',fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:12}}>League</div>
+              {['Schedule','Match Center','Teams','Points Table','Photos','Videos'].map(l=>(
+                <div key={l} style={{marginBottom:8}}><a href="#" style={{color:'rgba(255,255,255,0.55)',fontSize:13,textDecoration:'none'}}>{l}</a></div>
+              ))}
+            </div>
+            <div>
+              <div style={{color:'rgba(255,255,255,0.3)',fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:12}}>Info</div>
+              {['About','FAQ','Contact','Terms','Privacy','Refunds','Eligibility'].map(l=>(
+                <div key={l} style={{marginBottom:8}}><a href="#" style={{color:'rgba(255,255,255,0.55)',fontSize:13,textDecoration:'none'}}>{l}</a></div>
+              ))}
+            </div>
           </div>
         </div>
-        <div style={{borderTop:'1px solid rgba(255,255,255,0.06)',paddingTop:20,display:'flex',flexWrap:'wrap',gap:12,justifyContent:'space-between',alignItems:'center'}}>
-          <div style={{display:'flex',gap:8}}>{['📸','▶️','🐦','📘'].map((ic,i)=><a key={i} href="#" style={{width:36,height:36,borderRadius:9,background:'rgba(255,255,255,0.07)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,textDecoration:'none',border:'1px solid rgba(255,255,255,0.07)'}}>{ic}</a>)}</div>
-          <div style={{color:'rgba(255,255,255,0.28)',fontSize:11}}>© 2025 Kriparti Playing11 Pvt. Ltd.</div>
+        <div style={{borderTop:'1px solid rgba(255,255,255,0.05)',paddingTop:20,display:'flex',flexWrap:'wrap',gap:12,justifyContent:'space-between',alignItems:'center'}}>
+          <div style={{color:'rgba(255,255,255,0.28)',fontSize:11}}>© 2025 Kriparti Playing11 Pvt. Ltd. | www.bcpl-t20.com</div>
+          <div style={{color:'rgba(255,255,255,0.28)',fontSize:11}}>All rights reserved</div>
         </div>
       </div>
     </footer>
   );
 }
 
-export function CricketRulebook() {
+function MobileCTA() {
   return (
-    <div style={{ background: '#0A1628', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,padding:'10px 16px 18px',background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',gap:10}}>
+      <button className="btn-fire" style={{flex:2,height:52,fontSize:15}}>Register ₹299 →</button>
+      <button className="btn-wa" style={{flex:1,height:52,fontSize:14,borderRadius:14}}>💬 WhatsApp</button>
+    </div>
+  );
+}
+
+const OrangeDot = () => (
+  <span style={{display:'inline-block',width:6,height:6,borderRadius:'50%',background:'#FF7A29',marginRight:10,flexShrink:0,marginTop:7}}/>
+);
+
+export function CricketRulebook() {
+  const [open,setOpen]=React.useState(false);
+  const [activeSection,setActiveSection]=React.useState<number|null>(null);
+
+  const css = `
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap');
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    .wrap{max-width:1280px;margin:0 auto;padding:0 20px;}
+    .desk-nav{display:none;align-items:center;gap:22px;}
+    .ham-btn{display:flex;}
+    .bot-cta{display:flex;}
+    @media(min-width:768px){.wrap{padding:0 32px}}
+    @media(min-width:1024px){.desk-nav{display:flex!important;}.ham-btn{display:none!important;}.bot-cta{display:none!important;}}
+    .btn-fire{background:linear-gradient(135deg,#FF7A29 0%,#E8611A 60%,#C94E0E 100%);border:none;border-radius:14px;color:#fff;font-family:Montserrat,sans-serif;font-weight:800;cursor:pointer;box-shadow:0 8px 28px rgba(255,122,41,0.45),inset 0 1px 0 rgba(255,255,255,0.2);transition:transform 0.15s,box-shadow 0.2s;letter-spacing:0.02em;animation:pulseGlow 3s ease-in-out infinite;display:inline-flex;align-items:center;justify-content:center;}
+    .btn-fire:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(255,122,41,0.6);}
+    .btn-wa{background:linear-gradient(135deg,#25D366,#1BA851);border:none;border-radius:14px;color:#fff;font-weight:700;cursor:pointer;font-family:Montserrat,sans-serif;transition:transform 0.15s;display:inline-flex;align-items:center;justify-content:center;}
+    .glass-card{background:linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85));backdrop-filter:blur(32px);border:1px solid rgba(255,255,255,0.09);border-radius:20px;box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06);}
+    .shimmer-gold{background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D,#F5C842,#E8B23D);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 3s linear infinite;}
+    .tag-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,122,41,0.12);border:1px solid rgba(255,122,41,0.3);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:700;font-family:Montserrat,sans-serif;color:#FF7A29;letter-spacing:0.1em;}
+    .toc-link{color:rgba(255,255,255,0.7);text-decoration:none;font-size:13px;font-family:Inter,sans-serif;padding:8px 12px;border-radius:8px;display:flex;align-items:center;gap:8px;transition:all 0.2s;cursor:pointer;background:none;border:none;text-align:left;width:100%;}
+    .toc-link:hover{background:rgba(255,122,41,0.1);color:#FF7A29;}
+    @keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    @keyframes pulseGlow{0%,100%{box-shadow:0 0 16px rgba(255,122,41,0.4)}50%{box-shadow:0 0 36px rgba(255,122,41,0.8),0 0 60px rgba(255,122,41,0.3)}}
+    @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+    @keyframes floatParticle{0%{transform:translateY(0) rotate(0deg);opacity:0.4}50%{opacity:0.8}100%{transform:translateY(-80px) rotate(180deg);opacity:0}}
+    @keyframes scanPulse{0%,100%{opacity:0.03}50%{opacity:0.08}}
+    @keyframes fadeSlide{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes borderGlow{0%,100%{border-color:rgba(255,122,41,0.3)}50%{border-color:rgba(255,122,41,0.8)}}
+  `;
+
+  const particles=[
+    {top:'15%',left:'8%',color:'#FF7A29',delay:'0s',size:3},
+    {top:'25%',left:'92%',color:'#E8B23D',delay:'1.2s',size:4},
+    {top:'55%',left:'5%',color:'#fff',delay:'0.7s',size:3},
+    {top:'70%',left:'88%',color:'#FF7A29',delay:'2s',size:3},
+    {top:'40%',left:'50%',color:'#E8B23D',delay:'1.5s',size:4},
+    {top:'80%',left:'30%',color:'#fff',delay:'0.3s',size:3},
+    {top:'10%',left:'65%',color:'#FF7A29',delay:'2.5s',size:3},
+    {top:'60%',left:'72%',color:'#E8B23D',delay:'0.9s',size:4},
+  ];
+
+  const toc=[
+    {n:1,label:'Match Format',icon:'📅'},
+    {n:2,label:'Team Composition',icon:'👥'},
+    {n:3,label:'Equipment',icon:'🏏'},
+    {n:4,label:'Powerplay',icon:'⚡'},
+    {n:5,label:'Bowling',icon:'🎳'},
+    {n:6,label:'Batting',icon:'🏌️'},
+    {n:7,label:'Fielding',icon:'🧤'},
+    {n:8,label:'Umpiring',icon:'👨‍⚖️'},
+  ];
+
+  const rules=[
+    {n:1,icon:'📅',title:'Match Format',items:[
+      'T20 format: 20 overs per side in all group and knockout matches',
+      'DLS (Duckworth-Lewis-Stern) method applied for all weather interruptions',
+      'Minimum 10 overs per side required for a valid result to be declared',
+      'Super Over used to break ties in all knockout and playoff matches',
+      'Coin toss determines batting/fielding choice; toss result is final',
+      'Matches start at scheduled time; 5-minute grace period for late arrivals, thereafter match forfeited',
+    ]},
+    {n:2,icon:'👥',title:'Team Composition',items:[
+      '12-player squad registered per team; playing XI declared 30 minutes before match',
+      'At least 4 corporate professionals (non-ringers) must be in the playing XI at all times',
+      'One substitute fielder allowed — may only field, not bat or bowl',
+      'Concussion substitute may bat, bowl, and field if approved by on-field umpire',
+      'Team captain must be registered and be a corporate professional',
+      'Ringers policy: maximum 7 non-corporate players per squad',
+    ]},
+    {n:3,icon:'🏏',title:'Equipment Standards',items:[
+      'BCPL-approved bats only: maximum edge thickness 40mm, maximum width 108mm',
+      'Helmets are mandatory for all batsmen and close-in fielders (under 15 yards)',
+      'Shin guards (batting pads) are mandatory for batsmen',
+      'Wicketkeeping gloves and inner gloves mandatory for wicketkeepers',
+      'Spikes/studs allowed; no metal studs on artificial turf surfaces',
+      'White kit mandatory for league stage; team-coloured kits for knockout rounds',
+      'BCPL logo must be visible on jersey; no competing league logos permitted',
+    ]},
+    {n:4,icon:'⚡',title:'Powerplay Rules',items:[
+      'Mandatory powerplay: overs 1 to 6 — maximum 2 fielders outside the 30-yard circle',
+      'Bowling powerplay (optional): 2 additional overs taken by batting team anytime overs 7–16',
+      'Death overs: 17–20 — standard fielding restrictions apply (max 5 outside circle)',
+      'Fielding circle (30 yards) must be marked; umpires may call No-Ball for fielding violations',
+      'Fielding captain must notify umpire before optional powerplay is taken',
+    ]},
+    {n:5,icon:'🎳',title:'Bowling Regulations',items:[
+      'Maximum 4 overs per bowler per innings — no exceptions',
+      'No-beamer rule: first offence = official warning; second = bowler removed from attack',
+      'Front foot no-ball results in a free hit for the batsman on the next delivery',
+      'Wide ball: delivery more than one bat-width outside off or leg stump = wide + extra run',
+      'No-ball: includes overstepping, waist-height full-toss, and fielding violations',
+      'A bowler may bowl from either end but cannot bowl consecutive overs',
+    ]},
+    {n:6,icon:'🏌️',title:'Batting Rules',items:[
+      'Free hit on all no-balls (including wide no-balls): batsman can only be dismissed run out',
+      'LBW law applies in full per standard MCC Laws of Cricket',
+      'Mankad run-out (non-striker backing up): bowler must warn batsman before effecting dismissal',
+      'Obstructing the field: batsman out if intentionally impeding fielder',
+      'Handled the ball: now covered under Obstructing the Field (MCC 2017 Laws)',
+      'Two bouncer rule per over — third beamer results in no-ball warning',
+      'Retired hurt batsman may return; retired out batsman may not',
+    ]},
+    {n:7,icon:'🧤',title:'Fielding Restrictions',items:[
+      'The 30-yard fielding circle must be maintained throughout the innings',
+      'Powerplay: minimum 2 fielders inside the circle (excluding wicketkeeper and bowler)',
+      'Non-powerplay: maximum 5 fielders outside the circle at point of delivery',
+      'Wicketkeeper must remain behind the stumps until ball is delivered',
+      'Fielders must not encroach on the pitch — umpire may call Dead Ball',
+      'Substitute fielder: must not bat, bowl, or keep wicket; may field anywhere',
+    ]},
+    {n:8,icon:'👨‍⚖️',title:'Umpiring & DRS',items:[
+      '2 on-field umpires appointed by BCPL for all group and knockout matches',
+      'Third umpire available for all knockout rounds and finals only',
+      'No DRS (Decision Review System) available in group stage matches',
+      'Ball-tracking and Hawk-Eye technology available for semi-finals and finals',
+      'Umpires\' decisions are final in group stage — no appeals process during match',
+      'Post-match conduct complaints submitted to BCPL Disciplinary Committee within 24 hours',
+    ]},
+  ];
+
+  return (
+    <div style={{background:'#060E1C',minHeight:'100vh',fontFamily:'Inter,sans-serif',color:'#F8F4EE',paddingBottom:80}}>
       <style>{css}</style>
-      <Navbar />
-      
-      {/* Hero */}
-      <div style={{ height: 200, background: 'linear-gradient(160deg, #0A1628, #0F2247)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '0 16px' }}>
-        <h1 className="hero-title">CRICKET RULEBOOK</h1>
-        <div className="hero-subtitle">BCPL Season 5 Official Playing Conditions</div>
+      <div style={{position:'fixed',inset:0,zIndex:0,pointerEvents:'none',overflow:'hidden'}}>
+        <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 80% 60% at 20% 40%, rgba(255,122,41,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 20%, rgba(30,64,175,0.12) 0%, transparent 60%)'}}/>
+        <svg style={{position:'absolute',bottom:0,left:0,right:0,width:'100%',opacity:0.07}} viewBox="0 0 1440 400" preserveAspectRatio="none">
+          <path d="M0,400 L0,200 Q360,80 720,80 Q1080,80 1440,200 L1440,400 Z" fill="#1a2a4a"/>
+          <rect x="680" y="200" width="80" height="200" fill="#0d1a33"/>
+          <line x1="200" y1="0" x2="260" y2="200" stroke="#E8B23D" strokeWidth="3"/>
+          <line x1="200" y1="0" x2="140" y2="200" stroke="#E8B23D" strokeWidth="3"/>
+          <circle cx="200" cy="0" r="8" fill="#E8B23D"/>
+          <line x1="1240" y1="0" x2="1300" y2="200" stroke="#E8B23D" strokeWidth="3"/>
+          <line x1="1240" y1="0" x2="1180" y2="200" stroke="#E8B23D" strokeWidth="3"/>
+          <circle cx="1240" cy="0" r="8" fill="#E8B23D"/>
+        </svg>
+        {particles.map((p,i)=>(
+          <div key={i} style={{position:'absolute',top:p.top,left:p.left,width:p.size,height:p.size,borderRadius:'50%',background:p.color,animation:`floatParticle 4s ease-in-out ${p.delay} infinite`}}/>
+        ))}
+        <div style={{position:'absolute',inset:0,background:'repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,0.015) 2px,rgba(255,255,255,0.015) 4px)',animation:'scanPulse 4s ease-in-out infinite'}}/>
       </div>
 
-      {/* Content Area */}
-      <div style={{ background: '#FAF8F4', flex: 1 }}>
-        <div style={{ maxWidth: 1000, margin: '0 auto', padding: '40px 16px', display: 'flex', gap: 40, alignItems: 'flex-start' }}>
-          
-          {/* TOC - Desktop Only */}
-          <div className="toc-sidebar" style={{ position: 'sticky', top: 100, width: 240, background: '#0F2247', borderRadius: 12, padding: 20, flexShrink: 0 }}>
-            <div style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 16, color: '#fff', marginBottom: 16 }}>Contents</div>
-            <a href="#format" className="toc-link">1. Match Format</a>
-            <a href="#teams" className="toc-link">2. Teams & Squads</a>
-            <a href="#batting" className="toc-link">3. Batting</a>
-            <a href="#bowling" className="toc-link">4. Bowling</a>
-            <a href="#fielding" className="toc-link">5. Fielding</a>
-            <a href="#scoring" className="toc-link">6. Scoring</a>
-            <a href="#drs" className="toc-link">7. DRS</a>
-            <a href="#playoffs" className="toc-link">8. Playoffs</a>
+      <div style={{position:'relative',zIndex:1}}>
+        <AnnBar/>
+        <Navbar open={open} setOpen={setOpen}/>
+
+        <section style={{padding:'72px 0 40px',textAlign:'center',animation:'fadeSlide 0.6s ease both'}}>
+          <div className="wrap">
+            <div className="tag-pill" style={{marginBottom:20}}>📋 OFFICIAL RULES</div>
+            <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(36px,7vw,72px)',lineHeight:1.05,marginBottom:8}}>
+              <span style={{color:'#fff',display:'block'}}>BCPL CRICKET</span>
+              <span className="shimmer-gold" style={{display:'block'}}>RULEBOOK.</span>
+            </h1>
+            <p style={{color:'rgba(255,255,255,0.5)',fontSize:13,fontWeight:600,letterSpacing:'0.05em',marginTop:16,fontFamily:'Montserrat,sans-serif'}}>Official Rules — Season 5 · 2025</p>
+            <p style={{color:'rgba(255,255,255,0.65)',fontSize:16,lineHeight:1.7,maxWidth:600,margin:'16px auto 0'}}>
+              The complete, official BCPL T20 cricket rulebook. All rules are binding on players, team managers, and officials across all 75 cities.
+            </p>
+          </div>
+        </section>
+
+        <div className="wrap" style={{maxWidth:900,margin:'0 auto',paddingBottom:40}}>
+
+          {/* Table of Contents */}
+          <div className="glass-card" style={{padding:'28px 32px',marginBottom:24,animation:'fadeSlide 0.5s ease 0.1s both'}}>
+            <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:16}}>
+              <span style={{fontSize:22}}>📑</span>
+              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:18,color:'#E8B23D'}}>Table of Contents</h2>
+            </div>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))',gap:4,overflowX:'auto'}}>
+              {toc.map(item=>(
+                <button key={item.n} className="toc-link" onClick={()=>setActiveSection(item.n===activeSection?null:item.n)}>
+                  <span style={{width:22,height:22,borderRadius:'50%',background:'rgba(255,122,41,0.2)',border:'1px solid rgba(255,122,41,0.4)',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:'#FF7A29',flexShrink:0,fontFamily:'Montserrat,sans-serif'}}>{item.n}</span>
+                  <span>{item.icon} {item.label}</span>
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div style={{ flex: 1, maxWidth: 760 }}>
-            
-            <h2 id="format" className="doc-h2" style={{ marginTop: 0, paddingTop: 0, borderTop: 'none' }}>1. Match Format</h2>
-            <p className="doc-p">T20 (20 overs per innings). Day and day-night matches. Minimum 6 overs to constitute a match (D/L method applies). Duration: approx 3.5 hours per match.</p>
+          {/* Rule Sections */}
+          {rules.map((rule,idx)=>(
+            <div key={rule.n} className="glass-card" style={{padding:'32px 36px',marginBottom:20,animation:`fadeSlide 0.5s ease ${0.1+idx*0.07}s both`,border:activeSection===rule.n?'1px solid rgba(255,122,41,0.5)':'1px solid rgba(255,255,255,0.09)',transition:'border-color 0.3s'}}>
+              <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18}}>
+                <div style={{width:36,height:36,borderRadius:'50%',background:'linear-gradient(135deg,rgba(255,122,41,0.3),rgba(232,178,61,0.2))',border:'1px solid rgba(255,122,41,0.4)',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:14,color:'#FF7A29',flexShrink:0}}>{rule.n}</div>
+                <span style={{fontSize:24}}>{rule.icon}</span>
+                <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:20,color:'#fff'}}>{rule.title}</h2>
+              </div>
+              <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:10}}>
+                {rule.items.map((item,i)=>(
+                  <li key={i} style={{display:'flex',alignItems:'flex-start',color:'rgba(255,255,255,0.75)',fontSize:14,lineHeight:1.7}}>
+                    <OrangeDot/>{item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
 
-            <h2 id="teams" className="doc-h2">2. Teams & Squads</h2>
-            <p className="doc-p">Each franchise: 15-player registered squad. Playing XI selected by captain + coach. Maximum 3 "wild card" guest players per season. Team must field within 2 minutes of fall of wicket.</p>
-            
-            <h2 id="batting" className="doc-h2">3. Batting Rules</h2>
-            <p className="doc-p">Standard ICC batting rules. Power play: Overs 1–6 (max 2 fielders outside 30-yard circle). Middle overs: 7–16 (max 5 outside). Death: 17–20 (max 5 outside). Helmets strongly recommended but not mandatory in BCPL.</p>
-            
-            <h2 id="bowling" className="doc-h2">4. Bowling Rules</h2>
-            <p className="doc-p">Maximum 4 overs per bowler. Wide: 1 extra run + redeliver. No-ball: 1 extra run + FREE HIT for the next delivery. Beamer: immediate warning; second = removed from attack.</p>
-            
-            <h2 id="fielding" className="doc-h2">5. Fielding Rules</h2>
-            <p className="doc-p">All 11 players must field. No substitute fielders except for injury (with umpire approval). DRS can be reviewed for catch decisions.</p>
-            
-            <h2 id="scoring" className="doc-h2">6. Scoring</h2>
-            <p className="doc-p">Win = 2 pts | Tie or No Result = 1 pt each | Loss = 0 pts. NRR formula: (runs scored / overs faced) - (runs conceded / overs bowled). NRR is tiebreaker for same points.</p>
-            
-            <h2 id="drs" className="doc-h2">7. DRS</h2>
-            <p className="doc-p">Each team gets 1 unsuccessful DRS review per innings. Soft signal from square leg umpire is final for close catches. No ball-tracking in BCPL (Hawkeye not used).</p>
-            
-            <h2 id="playoffs" className="doc-h2">8. Playoffs</h2>
-            <p className="doc-p">Top 2 from Group A + Top 2 from Group B → 2 Semi-Finals → Grand Final. All knockout matches at neutral venue. In case of tie in knockouts: Super Over.</p>
-
+          {/* Callout */}
+          <div style={{background:'rgba(255,122,41,0.08)',border:'1px solid rgba(255,122,41,0.4)',borderLeft:'3px solid #FF7A29',borderRadius:16,padding:'20px 24px',marginBottom:20,animation:'borderGlow 3s ease-in-out infinite'}}>
+            <div style={{display:'flex',gap:12,alignItems:'flex-start'}}>
+              <span style={{fontSize:24,flexShrink:0}}>⚖️</span>
+              <div>
+                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#FF7A29',marginBottom:6}}>MCC Laws Apply</div>
+                <p style={{color:'rgba(255,255,255,0.85)',fontSize:14,lineHeight:1.7}}>
+                  BCPL rules are based on the <strong style={{color:'#E8B23D'}}>MCC Laws of Cricket (2017 edition)</strong>. In any situation not explicitly covered by this rulebook, MCC Laws shall apply. The Tournament Director's ruling is final and binding on all parties.
+                </p>
+              </div>
+            </div>
           </div>
 
+          <div className="glass-card" style={{padding:'32px',textAlign:'center'}}>
+            <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,marginBottom:8}}>Ready to Play?</div>
+            <p style={{color:'rgba(255,255,255,0.6)',fontSize:14,marginBottom:20}}>Register for BCPL T20 Season 5 — where corporate professionals become cricket legends.</p>
+            <button className="btn-fire" style={{padding:'14px 36px',fontSize:16}}>Register for ₹299 →</button>
+          </div>
         </div>
-      </div>
 
-      <Footer />
+        <Footer/>
+      </div>
+      <MobileCTA/>
     </div>
   );
 }

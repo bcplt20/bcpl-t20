@@ -1,441 +1,632 @@
-import React from 'react';
-
-function Navbar({ active = '' }) {
-  const [open, setOpen] = React.useState(false);
-  const links = [['Home', 'home'], ['Match Center', 'matchcenter'], ['Teams', 'teams'], ['Sponsors', 'sponsors'], ['About', 'about']];
-  return (
-    <>
-      <nav style={{ position: 'sticky', top: 0, zIndex: 100, background: 'rgba(10,22,40,0.97)', backdropFilter: 'blur(24px)', borderBottom: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 2px 0 0 rgba(255,122,41,0.2)' }}>
-        <div className="wrap" style={{ height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 20 }}>
-            <span style={{ color: '#FF7A29' }}>BCPL</span><span style={{ color: '#fff', marginLeft: 3 }}>T20</span>
-          </div>
-          <div className="nav-links">
-            {links.map(([l, k]) => <a key={k} href="#" style={{ color: active === k ? '#FF7A29' : 'rgba(255,255,255,0.7)', fontWeight: 600, fontSize: 13.5, textDecoration: 'none', fontFamily: 'Inter,sans-serif', borderBottom: active === k ? '2px solid #FF7A29' : '2px solid transparent', paddingBottom: 2 }}>{l}</a>)}
-            <button className="btn-primary" style={{ padding: '9px 20px', fontSize: 13.5, borderRadius: 10, minHeight: '36px' }}>Register ₹299</button>
-          </div>
-          <button className="ham" onClick={() => setOpen(o => !o)} style={{ flexDirection: 'column', gap: 5, background: 'none', border: 'none', cursor: 'pointer', padding: 8, zIndex: 201 }}>
-            <span style={{ display: 'block', width: 22, height: 2, background: '#fff', borderRadius: 2, transition: 'all 0.25s', transform: open ? 'rotate(45deg) translate(4px,4px)' : '' }} />
-            <span style={{ display: 'block', width: 22, height: 2, background: '#fff', borderRadius: 2, transition: 'all 0.25s', opacity: open ? 0 : 1 }} />
-            <span style={{ display: 'block', width: 22, height: 2, background: '#fff', borderRadius: 2, transition: 'all 0.25s', transform: open ? 'rotate(-45deg) translate(4px,-4px)' : '' }} />
-          </button>
-        </div>
-      </nav>
-      {open && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(6,16,30,0.99)', zIndex: 200, display: 'flex', flexDirection: 'column', padding: '72px 24px 40px', overflowY: 'auto' }}>
-          <button onClick={() => setOpen(false)} style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', fontSize: 26, cursor: 'pointer', lineHeight: 1 }}>✕</button>
-          <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 22, marginBottom: 28 }}><span style={{ color: '#FF7A29' }}>BCPL</span><span style={{ color: '#fff', marginLeft: 3 }}>T20</span></div>
-          {[['🏠 Home', 'home'], ['🔴 Match Center', 'mc'], ['🏏 Teams', 'teams'], ['🤝 Sponsors', 'sp'], ['📷 Photos', 'ph'], ['▶️ Videos', 'vid'], ['ℹ️ About', 'about'], ['❓ FAQ', 'faq'], ['✉️ Contact', 'contact']].map(([l, k]) => (
-            <a key={k} href="#" onClick={() => setOpen(false)} style={{ color: 'rgba(255,255,255,0.85)', fontWeight: 700, fontSize: 19, textDecoration: 'none', fontFamily: 'Montserrat,sans-serif', padding: '13px 0', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>{l}</a>
-          ))}
-          <button className="btn-primary" style={{ marginTop: 28, height: 52, fontSize: 16, borderRadius: 14, width: '100%', minHeight: '48px' }}>📝 Register for ₹299 →</button>
-        </div>
-      )}
-    </>
-  );
-}
-
-function Footer() {
-  return (
-    <footer style={{ background: '#06101E', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-      <div className="wrap" style={{ paddingTop: 40, paddingBottom: 40 }}>
-        <div className="grid-2" style={{ gap: 28, marginBottom: 28 }}>
-          <div>
-            <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 22, marginBottom: 10 }}><span style={{ color: '#FF7A29' }}>BCPL</span><span style={{ color: '#fff', marginLeft: 4 }}>T20</span></div>
-            <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: 13, lineHeight: 1.7, marginBottom: 8, maxWidth: 280, fontFamily: 'Inter,sans-serif' }}>Bharatiya Corporate Premier League — world's largest corporate cricket league for working professionals.</p>
-            <p style={{ color: 'rgba(255,122,41,0.6)', fontSize: 12, fontWeight: 600, fontFamily: 'Inter,sans-serif' }}>#OfficeSeStadiumtak</p>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-            <div>
-              <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12, fontFamily: 'Inter,sans-serif' }}>League</div>
-              {['Schedule', 'Match Center', 'Teams', 'Points Table', 'Photos', 'Videos'].map(l => <div key={l} style={{ marginBottom: 8 }}><a href="#" style={{ color: 'rgba(255,255,255,0.55)', fontSize: 13, textDecoration: 'none', fontFamily: 'Inter,sans-serif' }}>{l}</a></div>)}
-            </div>
-            <div>
-              <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12, fontFamily: 'Inter,sans-serif' }}>Info</div>
-              {['About', 'FAQ', 'Contact', 'Terms', 'Privacy', 'Refunds', 'Eligibility'].map(l => <div key={l} style={{ marginBottom: 8 }}><a href="#" style={{ color: 'rgba(255,255,255,0.55)', fontSize: 13, textDecoration: 'none', fontFamily: 'Inter,sans-serif' }}>{l}</a></div>)}
-            </div>
-          </div>
-        </div>
-        <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 20, display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ display: 'flex', gap: 8 }}>
-            {['📸', '▶️', '🐦', '📘'].map((ic, i) => <a key={i} href="#" style={{ width: 36, height: 36, borderRadius: 9, background: 'rgba(255,255,255,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, textDecoration: 'none', border: '1px solid rgba(255,255,255,0.07)' }}>{ic}</a>)}
-          </div>
-          <div style={{ color: 'rgba(255,255,255,0.28)', fontSize: 11, fontFamily: 'Inter,sans-serif' }}>© 2025 Kriparti Playing11 Pvt. Ltd.</div>
-        </div>
-      </div>
-    </footer>
-  );
-}
+import React, { useState, useEffect } from "react";
 
 export function Home() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [countdown, setCountdown] = useState({ days: 3, hrs: 14, min: 22, sec: 45 });
+
+  useEffect(() => {
+    const target = new Date();
+    target.setDate(target.getDate() + 3);
+    target.setHours(18, 0, 0, 0);
+    const tick = setInterval(() => {
+      const now = Date.now();
+      const diff = target.getTime() - now;
+      if (diff <= 0) { clearInterval(tick); return; }
+      const days = Math.floor(diff / 86400000);
+      const hrs = Math.floor((diff % 86400000) / 3600000);
+      const min = Math.floor((diff % 3600000) / 60000);
+      const sec = Math.floor((diff % 60000) / 1000);
+      setCountdown({ days, hrs, min, sec });
+    }, 1000);
+    return () => clearInterval(tick);
+  }, []);
+
+  const navLinks = ["Home","Match Center","Teams","Sponsors","Photos","Videos","About","FAQ","Contact"];
+  const teams = [
+    { emoji:"🗼", name:"Delhi Dynamos", city:"Delhi", color:"#3B82F6" },
+    { emoji:"🌊", name:"Mumbai Mavericks", city:"Mumbai", color:"#06B6D4" },
+    { emoji:"🐆", name:"Pune Panthers", city:"Pune", color:"#8B5CF6" },
+    { emoji:"♟️", name:"Kolkata Knights", city:"Kolkata", color:"#F59E0B" },
+    { emoji:"🦁", name:"Ahmedabad Lions", city:"Ahmedabad", color:"#EF4444" },
+    { emoji:"🐂", name:"Bangalore Bulls", city:"Bangalore", color:"#10B981" },
+    { emoji:"🌶️", name:"Chennai Chiefs", city:"Chennai", color:"#F97316" },
+    { emoji:"🦅", name:"Hyderabad Hawks", city:"Hyderabad", color:"#6366F1" },
+    { emoji:"🐅", name:"Jaipur Jaguars", city:"Jaipur", color:"#EC4899" },
+    { emoji:"👑", name:"Lucknow Nawabs", city:"Lucknow", color:"#A78BFA" },
+  ];
+  const standings = [
+    { rank:1, emoji:"🐂", name:"Bangalore Bulls", p:8, w:7, l:1, pts:14, nrr:"+1.56", group:"B" },
+    { rank:2, emoji:"🌊", name:"Mumbai Mavericks", p:8, w:6, l:2, pts:12, nrr:"+1.24", group:"A" },
+    { rank:3, emoji:"🗼", name:"Delhi Dynamos", p:8, w:5, l:3, pts:10, nrr:"+0.87", group:"A" },
+    { rank:4, emoji:"🐆", name:"Pune Panthers", p:8, w:5, l:3, pts:10, nrr:"+0.43", group:"A" },
+  ];
+  const results = [
+    { round:"RR4", date:"Jul 20", t1:"DEL", s1:"187/4", t2:"BLR", s2:"165/8", result:"DEL WON", mom:"A. Kumar 87(54)" },
+    { round:"RR4", date:"Jul 19", t1:"PUN", s1:"143/7", t2:"KOL", s2:"139/9", result:"PUN WON", mom:"S. Mehta 45(32)+3wkts" },
+    { round:"RR3", date:"Jul 18", t1:"AHM", s1:"201/3", t2:"CHN", s2:"178/6", result:"AHM WON", mom:"R. Singh 78(48)" },
+  ];
+
   return (
-    <div className="home-wrapper" style={{ background: '#0A1628', color: '#fff', minHeight: '100vh', overflowX: 'hidden' }}>
+    <>
       <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
         *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-        .wrap { max-width:1200px; margin:0 auto; padding:0 16px; }
-        .section { padding:40px 0; }
-        .h1 { font-family:Montserrat,sans-serif; font-weight:900; font-size:36px; line-height:1.05; }
-        .h2 { font-family:Montserrat,sans-serif; font-weight:800; font-size:22px; }
-        .grid-2 { display:grid; grid-template-columns:1fr; gap:14px; }
-        .grid-3 { display:grid; grid-template-columns:1fr; gap:14px; }
-        .grid-4 { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
-        .hide-mob { display:none!important; }
-        .glass { background:rgba(15,34,71,0.7); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.10); border-radius:16px; }
-        .btn-primary { background:linear-gradient(135deg,#FF7A29,#E8611A); border:none; border-radius:12px; color:#fff; font-weight:700; font-family:Montserrat,sans-serif; cursor:pointer; box-shadow:0 6px 24px rgba(255,122,41,0.4); transition:transform 0.15s; }
-        .btn-primary:active { transform:scale(0.97); }
-        .btn-wa { background:#2E9E4F; border:none; border-radius:12px; color:#fff; font-weight:700; cursor:pointer; }
-        .input-f { background:rgba(255,255,255,0.06); border:1.5px solid rgba(255,255,255,0.12); border-radius:12px; color:#fff; padding:14px 16px; width:100%; font-family:Inter,sans-serif; font-size:15px; outline:none; transition:border-color 0.2s; appearance:none; }
-        .input-f:focus { border-color:#FF7A29; }
-        .input-f::placeholder { color:rgba(255,255,255,0.3); }
-        .input-f option { background:#0F2247; color:#fff; }
-        .tscroll { overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:16px; }
-        .dtable { width:100%; border-collapse:collapse; min-width:560px; }
-        .dtable th { background:rgba(255,122,41,0.12); color:rgba(255,255,255,0.55); font-size:11px; text-transform:uppercase; letter-spacing:0.1em; padding:12px 14px; text-align:left; font-family:Inter,sans-serif; }
-        .dtable td { padding:14px; border-bottom:1px solid rgba(255,255,255,0.05); font-size:14px; font-family:Inter,sans-serif; }
-        .nav-links { display:none; }
-        .ham { display:flex; }
+        html { scroll-behavior:smooth; }
+        body { background:#060E1C; font-family:Inter,sans-serif; color:#F8F4EE; overflow-x:hidden; }
+        .wrap { max-width:1280px; margin:0 auto; padding:0 20px; }
+        .desk-nav { display:none; align-items:center; gap:22px; }
+        .ham-btn { display:flex; flex-direction:column; gap:5px; cursor:pointer; padding:8px; background:transparent; border:none; }
+        .ham-bar { width:24px; height:2px; background:#F8F4EE; border-radius:2px; transition:all 0.3s ease; display:block; }
+        .ham-bar.open-0 { transform:rotate(45deg) translate(5px,5px); }
+        .ham-bar.open-1 { transform:scaleX(0); opacity:0; }
+        .ham-bar.open-2 { transform:rotate(-45deg) translate(5px,-5px); }
         .bot-cta { display:flex; }
-        .home-wrapper { padding-bottom: 96px; }
-        @media(min-width:768px){
-          .wrap{padding:0 28px} .section{padding:60px 0} .h1{font-size:56px}
-          .grid-2{grid-template-columns:repeat(2,1fr);gap:24px}
-          .grid-3{grid-template-columns:repeat(2,1fr);gap:20px}
-          .grid-4{grid-template-columns:repeat(4,1fr);gap:16px}
-        }
-        @media(min-width:1024px){
-          .section{padding:80px 0} .h1{font-size:80px}
-          .grid-3{grid-template-columns:repeat(3,1fr)}
-          .hide-mob{display:block!important}
-          .nav-links{display:flex!important;align-items:center;gap:20px}
-          .ham{display:none!important}
-          .bot-cta{display:none!important}
-          .home-wrapper { padding-bottom: 0; }
-        }
-        @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
-        @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-        @keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-        
-        .hero-split { display:flex; flex-direction:column; gap:24px; }
-        .hero-buttons { display:flex; flex-direction:column; gap:12px; width:100%; }
-        @media(min-width:1024px) {
-          .hero-split { flex-direction:row; align-items:center; gap:60px; }
-          .hero-split > div:first-child { flex: 0 0 55%; }
-          .hero-split > div:last-child { flex: 0 0 45%; }
-          .hero-buttons { flex-direction:row; width:auto; }
-        }
+        @media(min-width:768px){ .wrap{padding:0 32px;} }
+        @media(min-width:1024px){ .desk-nav{display:flex!important;} .ham-btn{display:none!important;} .bot-cta{display:none!important;} }
+
+        .btn-fire { background:linear-gradient(135deg,#FF7A29 0%,#E8611A 60%,#C94E0E 100%); border:none; border-radius:14px; color:#fff; font-family:Montserrat,sans-serif; font-weight:800; cursor:pointer; box-shadow:0 8px 28px rgba(255,122,41,0.45),inset 0 1px 0 rgba(255,255,255,0.2); transition:transform 0.15s,box-shadow 0.2s; letter-spacing:0.02em; animation:pulseGlow 3s ease-in-out infinite; }
+        .btn-fire:hover { transform:translateY(-2px); box-shadow:0 14px 40px rgba(255,122,41,0.6); }
+        .btn-fire:active { transform:scale(0.97); }
+        .btn-wa { background:linear-gradient(135deg,#25D366,#1BA851); border:none; border-radius:14px; color:#fff; font-weight:700; cursor:pointer; font-family:Montserrat,sans-serif; transition:transform 0.15s; }
+        .btn-wa:hover { transform:translateY(-2px); }
+        .glass-card { background:linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85)); backdrop-filter:blur(32px); border:1px solid rgba(255,255,255,0.09); border-radius:20px; box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06); }
+        .shimmer-gold { background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D,#F5C842,#E8B23D); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation:shimmer 3s linear infinite; }
+        .tag-pill { display:inline-flex; align-items:center; gap:6px; background:rgba(255,122,41,0.12); border:1px solid rgba(255,122,41,0.3); border-radius:100px; padding:5px 14px; font-size:11px; font-weight:700; font-family:Montserrat,sans-serif; color:#FF7A29; letter-spacing:0.1em; }
+        .inp { width:100%; background:rgba(255,255,255,0.04); border:1.5px solid rgba(255,255,255,0.1); border-radius:14px; color:#F8F4EE; padding:15px 18px; font-family:Inter,sans-serif; font-size:15px; outline:none; transition:all 0.25s; appearance:none; }
+        .inp:focus { border-color:#FF7A29; background:rgba(255,122,41,0.06); box-shadow:0 0 0 4px rgba(255,122,41,0.12); }
+        .inp::placeholder { color:rgba(255,255,255,0.28); }
+        .lbl { font-size:12px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:rgba(255,255,255,0.45); margin-bottom:8px; display:block; }
+        .section-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(255,122,41,0.1); border:1px solid rgba(255,122,41,0.25); border-radius:100px; padding:6px 16px; font-size:11px; font-weight:800; font-family:Montserrat,sans-serif; color:#FF7A29; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:16px; }
+        .section-title { font-family:Montserrat,sans-serif; font-weight:900; line-height:1.05; }
+        .divider-v { width:1px; height:20px; background:rgba(255,255,255,0.18); display:inline-block; margin:0 14px; vertical-align:middle; }
+
+        @keyframes gradShift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+        @keyframes floatUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes pulseGlow { 0%,100%{box-shadow:0 0 16px rgba(255,122,41,0.4),0 8px 28px rgba(255,122,41,0.45),inset 0 1px 0 rgba(255,255,255,0.2)} 50%{box-shadow:0 0 36px rgba(255,122,41,0.8),0 0 60px rgba(255,122,41,0.3),inset 0 1px 0 rgba(255,255,255,0.2)} }
+        @keyframes shimmer { 0%{background-position:-200% center} 100%{background-position:200% center} }
+        @keyframes tickerMove { from{transform:translateX(100%)} to{transform:translateX(-200%)} }
+        @keyframes scanPulse { 0%,100%{opacity:0.03} 50%{opacity:0.08} }
+        @keyframes liveBlip { 0%,100%{opacity:1} 50%{opacity:0.2} }
+        @keyframes floatParticle { 0%{transform:translateY(0) rotate(0deg);opacity:0.4} 50%{opacity:0.8} 100%{transform:translateY(-80px) rotate(180deg);opacity:0} }
+        @keyframes fadeSlide { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes borderGlow { 0%,100%{border-color:rgba(255,122,41,0.3)} 50%{border-color:rgba(255,122,41,0.8)} }
+        @keyframes countUp { 0%{transform:scale(1)} 50%{transform:scale(1.08)} 100%{transform:scale(1)} }
+        @keyframes mobileMenuIn { from{opacity:0;transform:translateY(-16px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes heroIn { from{opacity:0;transform:translateY(32px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes priceCardIn { from{opacity:0;transform:translateX(40px) scale(0.95)} to{opacity:1;transform:translateX(0) scale(1)} }
       `}</style>
 
-      {/* 1. ANNOUNCEMENT BAR */}
-      <div style={{ background: '#FF7A29', color: '#fff', fontSize: '12px', padding: '8px', textAlign: 'center', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Inter,sans-serif', fontWeight: 600, overflow: 'hidden', whiteSpace: 'nowrap' }}>
-        <div style={{ display: 'inline-block', animation: 'marquee 15s linear infinite', paddingLeft: '100%' }}>
-          🏏 SEASON 5 TRIALS OPEN — Register before slots fill · ₹299 · Limited seats · #OfficeSeStadiumtak &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          🏏 SEASON 5 TRIALS OPEN — Register before slots fill · ₹299 · Limited seats · #OfficeSeStadiumtak
-        </div>
+      {/* AMBIENT BACKGROUND */}
+      <div style={{ position:"fixed", inset:0, zIndex:0, pointerEvents:"none", overflow:"hidden" }}>
+        {/* Radial gradients */}
+        <div style={{
+          position:"absolute", inset:0,
+          background:"radial-gradient(ellipse 80% 60% at 20% 40%, rgba(255,122,41,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 20%, rgba(30,64,175,0.12) 0%, transparent 60%)"
+        }} />
+        {/* Stadium SVG */}
+        <svg style={{ position:"absolute", bottom:0, left:0, width:"100%", height:"70%", opacity:0.07 }} viewBox="0 0 1280 500" preserveAspectRatio="xMidYMax meet">
+          {/* Stands curve */}
+          <path d="M0,500 Q640,80 1280,500 Z" fill="#4A6FA5" />
+          <path d="M80,500 Q640,140 1200,500 Z" fill="#2D4A7A" />
+          {/* Pitch rectangle */}
+          <rect x="580" y="300" width="120" height="180" rx="4" fill="none" stroke="#8BAB6A" strokeWidth="2" />
+          <rect x="595" y="310" width="90" height="160" rx="2" fill="none" stroke="#8BAB6A" strokeWidth="1" opacity="0.6" />
+          {/* Floodlight poles */}
+          <line x1="120" y1="500" x2="120" y2="60" stroke="#6B8CAE" strokeWidth="6" />
+          <rect x="100" y="55" width="40" height="10" rx="3" fill="#6B8CAE" />
+          <line x1="1160" y1="500" x2="1160" y2="60" stroke="#6B8CAE" strokeWidth="6" />
+          <rect x="1140" y="55" width="40" height="10" rx="3" fill="#6B8CAE" />
+          {/* Floodlight beams */}
+          {[...Array(5)].map((_,i) => (
+            <line key={i} x1="120" y1="60" x2={400+i*100} y2="300" stroke="rgba(255,255,200,0.3)" strokeWidth="1" />
+          ))}
+          {[...Array(5)].map((_,i) => (
+            <line key={i} x1="1160" y1="60" x2={900-i*100} y2="300" stroke="rgba(255,255,200,0.3)" strokeWidth="1" />
+          ))}
+          {/* Crowd dots */}
+          {[...Array(40)].map((_,i) => (
+            <circle key={i} cx={160+i*24} cy={360+(i%3)*18} r="4" fill={i%3===0?"#FF7A29":i%3===1?"#3B82F6":"#E8B23D"} opacity="0.5" />
+          ))}
+        </svg>
+        {/* 8 floating particles */}
+        {[
+          { left:"8%", top:"20%", color:"#FF7A29", delay:"0s", dur:"6s" },
+          { left:"18%", top:"65%", color:"#E8B23D", delay:"1s", dur:"8s" },
+          { left:"35%", top:"45%", color:"rgba(255,255,255,0.6)", delay:"2s", dur:"7s" },
+          { left:"55%", top:"75%", color:"#FF7A29", delay:"0.5s", dur:"9s" },
+          { left:"68%", top:"30%", color:"#E8B23D", delay:"1.5s", dur:"6.5s" },
+          { left:"78%", top:"60%", color:"rgba(255,255,255,0.6)", delay:"3s", dur:"7.5s" },
+          { left:"88%", top:"40%", color:"#FF7A29", delay:"2.5s", dur:"8.5s" },
+          { left:"92%", top:"80%", color:"#E8B23D", delay:"4s", dur:"6s" },
+        ].map((p, i) => (
+          <div key={i} style={{
+            position:"absolute", left:p.left, top:p.top,
+            width:"3px", height:"3px", borderRadius:"50%", background:p.color,
+            animation:`floatParticle ${p.dur} ${p.delay} ease-in-out infinite`
+          }} />
+        ))}
+        {/* Scanline overlay */}
+        <div style={{
+          position:"absolute", inset:0,
+          background:"repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.015) 2px, rgba(255,255,255,0.015) 4px)",
+          animation:"scanPulse 4s ease-in-out infinite"
+        }} />
       </div>
 
-      {/* 2. NAVBAR */}
-      <Navbar active="home" />
+      {/* ANNOUNCEMENT BAR */}
+      <div style={{
+        position:"relative", zIndex:10,
+        background:"linear-gradient(90deg,#C94E0E,#FF7A29,#E8611A,#FF7A29,#C94E0E)",
+        backgroundSize:"300% 100%",
+        animation:"gradShift 4s ease infinite",
+        color:"#fff", padding:"11px 20px", textAlign:"center",
+        fontSize:"13px", fontWeight:700, fontFamily:"Montserrat,sans-serif", letterSpacing:"0.04em",
+        display:"flex", alignItems:"center", justifyContent:"center", gap:0, flexWrap:"wrap"
+      }}>
+        <span>🏏 SEASON 5 TRIALS LIVE — Register before spots close</span>
+        <span className="divider-v" />
+        <span>Spots filling fast in 75 cities across India</span>
+        <span className="divider-v" />
+        <span>⚡ #OfficeSeStadiumtak</span>
+      </div>
 
-      {/* 3. HERO SECTION */}
-      <section style={{ position: 'relative', background: 'linear-gradient(160deg, #0A1628 0%, #0F2247 50%, #0A1628 100%)', padding: '60px 0 80px', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', right: '-20%', top: '10%', width: '60%', height: '80%', background: 'radial-gradient(ellipse, rgba(255,122,41,0.15), transparent 60%)', zIndex: 0, pointerEvents: 'none' }} />
-        
-        <div className="wrap relative" style={{ zIndex: 1 }}>
-          <div className="hero-split">
-            <div>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(15,34,71,0.7)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: '100px', padding: '8px 16px', marginBottom: '24px', fontFamily: 'Inter,sans-serif', fontSize: '12px', fontWeight: 600 }}>
-                <span>✅ 5,000+ professionals playing</span>
-                <span style={{ color: 'rgba(255,255,255,0.3)' }}>|</span>
-                <span>⭐ Trusted since 2020</span>
-              </div>
-              
-              <h1 className="h1" style={{ marginBottom: '20px', textTransform: 'uppercase' }}>
-                YOUR CRICKET DREAM<br />
-                <span style={{ background: 'linear-gradient(135deg, #FF7A29, #E8B23D)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>ISN'T OVER.</span>
-              </h1>
-              
-              <p style={{ fontFamily: 'Inter,sans-serif', fontSize: '16px', color: 'rgba(255,255,255,0.85)', lineHeight: 1.6, maxWidth: '480px', marginBottom: '32px' }}>
-                Job, family, no time to play — life got in the way. This is your real trial. Send one video. That's it.
-              </p>
-              
-              <div className="hero-buttons">
-                <button className="btn-primary" style={{ height: '52px', padding: '0 32px', fontSize: '15px' }}>Register for ₹299 →</button>
-                <div style={{ display: 'flex', gap: '12px' }}>
-                  <button className="glass" style={{ flex: 1, height: '52px', padding: '0 24px', color: '#fff', border: '1px solid rgba(255,255,255,0.2)', fontWeight: 600, fontFamily: 'Inter,sans-serif', cursor: 'pointer', borderRadius: '12px', minWidth: '120px' }}>📞 Call Us</button>
-                  <button className="btn-wa" style={{ flex: 1, height: '52px', padding: '0 24px', fontFamily: 'Inter,sans-serif', minWidth: '120px' }}>💬 WhatsApp</button>
-                </div>
-              </div>
-            </div>
-            
-            <div>
-              <div className="glass" style={{ padding: '32px', borderTop: '4px solid #FF7A29', position: 'relative' }}>
-                <div style={{ position: 'absolute', top: -12, right: 24, background: '#FF7A29', color: '#fff', fontSize: '11px', fontWeight: 800, padding: '4px 12px', borderRadius: '100px', fontFamily: 'Montserrat,sans-serif' }}>PHASE 1 TRIALS OPEN</div>
-                
-                <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: '56px', color: '#E8B23D', lineHeight: 1 }}>₹299</div>
-                <div style={{ fontFamily: 'Inter,sans-serif', fontSize: '14px', color: 'rgba(255,255,255,0.6)', marginTop: '4px', marginBottom: '20px' }}>to enter Phase 1 trials (Batsman/Bowler/WK)</div>
-                
-                <div style={{ height: '1px', background: 'rgba(255,255,255,0.1)', margin: '20px 0' }} />
-                
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                  <div style={{ fontFamily: 'Inter,sans-serif', fontWeight: 600, fontSize: '15px' }}>All-Rounder</div>
-                  <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: '24px', color: '#E8B23D' }}>₹399</div>
-                </div>
-                
-                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 24px 0', display: 'flex', flexDirection: 'column', gap: '12px', fontFamily: 'Inter,sans-serif', fontSize: '14px', color: 'rgba(255,255,255,0.8)' }}>
-                  <li style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}><span style={{ color: '#2E9E4F' }}>✓</span> No auction fee</li>
-                  <li style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}><span style={{ color: '#2E9E4F' }}>✓</span> No tournament fee</li>
-                  <li style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}><span style={{ color: '#2E9E4F' }}>✓</span> No hidden charges</li>
-                </ul>
-                
-                <button className="btn-primary" style={{ width: '100%', height: '56px', fontSize: '16px' }}>Register Now</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 4. STATS BAR */}
-      <section style={{ background: '#06101E', borderTop: '1px solid rgba(255,255,255,0.07)', borderBottom: '1px solid rgba(255,255,255,0.07)', padding: '40px 0' }}>
-        <div className="wrap">
-          <div className="grid-4">
-            {[
-              { num: '5,000+', label: 'Players Registered' },
-              { num: '200+', label: 'Corporate Teams' },
-              { num: '10', label: 'City Franchises' },
-              { num: '5', label: 'Successful Seasons' }
-            ].map((stat, i) => (
-              <div key={i} style={{ textAlign: 'center' }}>
-                <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: '36px', color: '#E8B23D', lineHeight: 1, marginBottom: '8px' }}>{stat.num}</div>
-                <div style={{ fontFamily: 'Inter,sans-serif', fontSize: '12px', color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>{stat.label}</div>
-              </div>
+      {/* NAVBAR */}
+      <nav style={{
+        position:"sticky", top:0, zIndex:200,
+        background:"rgba(6,14,28,0.96)", backdropFilter:"blur(24px)",
+        borderBottom:"1px solid rgba(255,255,255,0.07)",
+        boxShadow:"0 1px 0 0 rgba(255,122,41,0.25)"
+      }}>
+        <div className="wrap" style={{ display:"flex", alignItems:"center", justifyContent:"space-between", height:"64px" }}>
+          {/* Logo */}
+          <a href="#" style={{ textDecoration:"none", display:"flex", alignItems:"center", gap:6 }}>
+            <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:"22px", color:"#FF7A29", letterSpacing:"-0.02em" }}>BCPL</span>
+            <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:"22px", color:"#fff", letterSpacing:"-0.02em" }}>T20</span>
+            <span style={{ fontSize:"10px", color:"rgba(255,122,41,0.7)", fontWeight:700, fontFamily:"Montserrat,sans-serif", letterSpacing:"0.08em", marginLeft:"4px", background:"rgba(255,122,41,0.1)", border:"1px solid rgba(255,122,41,0.25)", borderRadius:"6px", padding:"2px 7px" }}>SEASON 5</span>
+          </a>
+          {/* Desktop nav */}
+          <div className="desk-nav">
+            {navLinks.map(l => (
+              <a key={l} href="#" style={{ color:"rgba(255,255,255,0.7)", textDecoration:"none", fontSize:"13px", fontWeight:600, fontFamily:"Montserrat,sans-serif", letterSpacing:"0.02em", transition:"color 0.2s" }}
+                onMouseEnter={e=>(e.currentTarget.style.color="#FF7A29")}
+                onMouseLeave={e=>(e.currentTarget.style.color="rgba(255,255,255,0.7)")}
+              >{l}</a>
             ))}
+            <button className="btn-fire" style={{ padding:"10px 22px", fontSize:"13px", borderRadius:"12px" }}>Register ₹299</button>
           </div>
-        </div>
-      </section>
-
-      {/* 5. HOW IT WORKS */}
-      <section className="section">
-        <div className="wrap">
-          <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-            <span style={{ display: 'inline-block', background: 'rgba(255,122,41,0.1)', color: '#FF7A29', fontFamily: 'Montserrat,sans-serif', fontSize: '12px', fontWeight: 800, padding: '6px 12px', borderRadius: '100px', letterSpacing: '0.1em', marginBottom: '12px' }}>HOW IT WORKS</span>
-            <h2 className="h2" style={{ textTransform: 'uppercase' }}>From Registration to the Field</h2>
-          </div>
-          
-          <div className="grid-4" style={{ position: 'relative' }}>
-            {/* Desktop connecting line */}
-            <div className="hide-mob" style={{ position: 'absolute', top: '40px', left: '10%', right: '10%', height: '2px', borderTop: '2px dashed rgba(255,255,255,0.1)', zIndex: 0 }} />
-            
-            {[
-              { icon: '📹', title: 'Upload Video', desc: 'Record a 2-min playing video and submit during registration' },
-              { icon: '📋', title: 'Get Shortlisted', desc: 'Our scout panel reviews all videos within 2–3 weeks' },
-              { icon: '🏟️', title: 'Physical Trial', desc: 'Invited players attend a trial at a BCPL ground in your city' },
-              { icon: '🏆', title: 'Play Season 5', desc: 'Selected players go to auction, get kitted up, and play!' }
-            ].map((step, i) => (
-              <div key={i} className="glass" style={{ padding: '24px 20px', textAlign: 'center', position: 'relative', zIndex: 1 }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '20px', background: 'linear-gradient(135deg, #FF7A29, #E8611A)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: '16px', margin: '0 auto -20px', position: 'relative', top: '-44px', border: '4px solid #0A1628' }}>
-                  {i + 1}
-                </div>
-                <div style={{ fontSize: '32px', marginBottom: '16px' }}>{step.icon}</div>
-                <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 700, fontSize: '16px', marginBottom: '8px' }}>{step.title}</div>
-                <div style={{ fontFamily: 'Inter,sans-serif', fontSize: '13px', color: 'rgba(255,255,255,0.55)', lineHeight: 1.5 }}>{step.desc}</div>
-              </div>
-            ))}
-          </div>
-          
-          <div style={{ textAlign: 'center', marginTop: '32px', fontFamily: 'Inter,sans-serif', fontSize: '14px', color: 'rgba(255,255,255,0.7)' }}>
-            <span style={{ color: '#E8B23D', fontWeight: 700 }}>Note:</span> ₹299 is the ONLY fee. Auction, kit, jersey — all covered.
-          </div>
-        </div>
-      </section>
-
-      {/* 6. UPCOMING MATCH WIDGET & 8. POINTS TABLE (Side by side on desktop) */}
-      <section className="section" style={{ background: '#0F2247' }}>
-        <div className="wrap">
-          <div className="grid-2">
-            
-            {/* MATCH WIDGET */}
-            <div>
-              <h2 className="h2" style={{ marginBottom: '24px' }}>NEXT MATCH</h2>
-              <div className="glass" style={{ padding: '32px 24px', border: '1px solid rgba(255,122,41,0.3)', boxShadow: '0 0 30px rgba(255,122,41,0.05)' }}>
-                <div style={{ display: 'inline-block', background: 'rgba(33,150,243,0.15)', color: '#64B5F6', fontSize: '11px', fontWeight: 800, padding: '4px 10px', borderRadius: '4px', fontFamily: 'Montserrat,sans-serif', letterSpacing: '0.05em', marginBottom: '24px' }}>UPCOMING</div>
-                
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                  <div style={{ textAlign: 'center', flex: 1 }}>
-                    <div style={{ width: '60px', height: '60px', borderRadius: '30px', background: 'rgba(198,40,40,0.1)', border: '2px solid #C62828', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px', margin: '0 auto 12px' }}>🦁</div>
-                    <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: '14px', lineHeight: 1.2 }}>MUMBAI<br/>MAVERICKS</div>
-                  </div>
-                  <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, color: 'rgba(255,255,255,0.2)', fontSize: '24px', padding: '0 16px' }}>VS</div>
-                  <div style={{ textAlign: 'center', flex: 1 }}>
-                    <div style={{ width: '60px', height: '60px', borderRadius: '30px', background: 'rgba(21,101,192,0.1)', border: '2px solid #1565C0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px', margin: '0 auto 12px' }}>👑</div>
-                    <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: '14px', lineHeight: 1.2 }}>DELHI<br/>DYNAMOS</div>
-                  </div>
-                </div>
-                
-                <div style={{ textAlign: 'center', fontFamily: 'Inter,sans-serif', marginBottom: '24px' }}>
-                  <div style={{ color: '#fff', fontWeight: 700, fontSize: '15px', marginBottom: '4px' }}>📅 SAT, 26 JULY 2025 · 6:00 PM IST</div>
-                  <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '13px' }}>🏟️ DY Patil Stadium, Mumbai</div>
-                </div>
-                
-                <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '24px' }}>
-                  {[
-                    { v: '3', l: 'DAYS' },
-                    { v: '14', l: 'HRS' },
-                    { v: '23', l: 'MIN' }
-                  ].map((t, i) => (
-                    <div key={i} style={{ background: 'rgba(0,0,0,0.3)', borderRadius: '8px', padding: '8px 12px', minWidth: '60px', textAlign: 'center' }}>
-                      <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: '18px', color: '#fff' }}>{t.v}</div>
-                      <div style={{ fontFamily: 'Inter,sans-serif', fontSize: '9px', fontWeight: 700, color: 'rgba(255,255,255,0.5)' }}>{t.l}</div>
-                    </div>
-                  ))}
-                </div>
-                
-                <div style={{ textAlign: 'center' }}>
-                  <a href="#" style={{ color: '#FF7A29', fontFamily: 'Inter,sans-serif', fontWeight: 600, fontSize: '14px', textDecoration: 'none' }}>View All Matches →</a>
-                </div>
-              </div>
-            </div>
-
-            {/* POINTS TABLE PREVIEW */}
-            <div>
-              <h2 className="h2" style={{ marginBottom: '24px' }}>SEASON 5 STANDINGS</h2>
-              <div className="glass" style={{ padding: '24px', overflow: 'hidden' }}>
-                <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 700, fontSize: '14px', marginBottom: '16px', color: 'rgba(255,255,255,0.7)' }}>GROUP A - TOP 3</div>
-                
-                <div className="tscroll" style={{ marginBottom: '24px' }}>
-                  <table className="dtable">
-                    <thead>
-                      <tr>
-                        <th style={{ width: '40%' }}>Team</th>
-                        <th>P</th>
-                        <th>W</th>
-                        <th>L</th>
-                        <th>Pts</th>
-                        <th>NRR</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td style={{ fontWeight: 600 }}>🏆 Delhi Dynamos</td>
-                        <td>8</td>
-                        <td>6</td>
-                        <td>2</td>
-                        <td style={{ fontWeight: 700, color: '#E8B23D' }}>12</td>
-                        <td style={{ color: '#2E9E4F' }}>+1.24</td>
-                      </tr>
-                      <tr>
-                        <td style={{ fontWeight: 600 }}>Mumbai Mavericks</td>
-                        <td>8</td>
-                        <td>5</td>
-                        <td>3</td>
-                        <td style={{ fontWeight: 700, color: '#E8B23D' }}>10</td>
-                        <td style={{ color: '#2E9E4F' }}>+0.87</td>
-                      </tr>
-                      <tr>
-                        <td style={{ fontWeight: 600 }}>Pune Panthers</td>
-                        <td>8</td>
-                        <td>4</td>
-                        <td>4</td>
-                        <td style={{ fontWeight: 700, color: '#E8B23D' }}>8</td>
-                        <td style={{ color: '#2E9E4F' }}>+0.12</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                
-                <button className="glass" style={{ width: '100%', height: '48px', color: '#fff', border: '1px solid rgba(255,255,255,0.1)', fontFamily: 'Inter,sans-serif', fontWeight: 600, cursor: 'pointer', borderRadius: '12px' }}>View Full Standings →</button>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* 7. FRANCHISE TEAMS */}
-      <section className="section">
-        <div className="wrap">
-          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-            <h2 className="h2" style={{ marginBottom: '8px' }}>10 CITY FRANCHISES</h2>
-            <p style={{ fontFamily: 'Inter,sans-serif', color: 'rgba(255,255,255,0.6)', fontSize: '15px' }}>Your future team is waiting</p>
-          </div>
-          
-          <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '24px', scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none', margin: '0 -16px', padding: '0 16px 24px' }}>
-            {[
-              { n: 'Delhi Dynamos', c: 'Delhi', i: '👑', co: '#1565C0' },
-              { n: 'Mumbai Mavericks', c: 'Mumbai', i: '🦁', co: '#C62828' },
-              { n: 'Pune Panthers', c: 'Pune', i: '🐆', co: '#7B1FA2' },
-              { n: 'Kolkata Knights', c: 'Kolkata', i: '⚔️', co: '#424242' },
-              { n: 'Ahmedabad Lions', c: 'Ahmedabad', i: '🦁', co: '#FF6F00' },
-              { n: 'Bangalore Bulls', c: 'Bangalore', i: '🐂', co: '#E65100' },
-              { n: 'Chennai Chiefs', c: 'Chennai', i: '🛡️', co: '#F9A825' },
-              { n: 'Hyderabad Hawks', c: 'Hyderabad', i: '🦅', co: '#2E7D32' },
-              { n: 'Jaipur Jaguars', c: 'Jaipur', i: '🐆', co: '#AD1457' },
-              { n: 'Lucknow Nawabs', c: 'Lucknow', i: '👑', co: '#0277BD' }
-            ].map((team, i) => (
-              <div key={i} className="glass" style={{ minWidth: '160px', width: '160px', padding: '20px 16px', scrollSnapAlign: 'start', borderTop: `4px solid ${team.co}`, flexShrink: 0 }}>
-                <div style={{ width: '12px', height: '12px', borderRadius: '6px', background: team.co, marginBottom: '16px' }} />
-                <div style={{ fontSize: '28px', marginBottom: '12px' }}>{team.i}</div>
-                <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 700, fontSize: '15px', lineHeight: 1.2, marginBottom: '4px' }}>{team.n}</div>
-                <div style={{ fontFamily: 'Inter,sans-serif', fontSize: '12px', color: 'rgba(255,255,255,0.5)', marginBottom: '16px' }}>{team.c}</div>
-                <div style={{ background: 'rgba(46,158,79,0.15)', color: '#2E9E4F', fontSize: '10px', fontWeight: 700, padding: '4px 8px', borderRadius: '4px', display: 'inline-block', fontFamily: 'Inter,sans-serif' }}>Season 5 Active</div>
-              </div>
-            ))}
-          </div>
-          
-          <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.4)', fontSize: '13px', fontFamily: 'Inter,sans-serif' }} className="hide-desktop">
-            ← Swipe to see all 10 teams →
-          </div>
-        </div>
-      </section>
-
-      {/* 9. TESTIMONIALS */}
-      <section className="section" style={{ background: '#0F2247' }}>
-        <div className="wrap">
-          <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-            <h2 className="h2">WHAT PLAYERS SAY</h2>
-          </div>
-          
-          <div className="grid-3">
-            {[
-              { q: "I registered in 5 minutes. Got the call in 2 weeks. Now I play for Delhi Dynamos!", a: "Rahul M.", r: "IT Professional, Delhi" },
-              { q: "Never thought I'd play in a real stadium. BCPL made it happen. The auction was surreal!", a: "Priya S.", r: "Marketing Manager, Mumbai" },
-              { q: "From the office to the stadium in one season. BCPL is the real deal. No hidden charges.", a: "Amit K.", r: "Software Engineer, Bangalore" }
-            ].map((t, i) => (
-              <div key={i} className="glass" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div style={{ color: '#E8B23D', fontSize: '14px', letterSpacing: '2px' }}>★★★★★</div>
-                <div style={{ fontFamily: 'Inter,sans-serif', fontSize: '15px', color: 'rgba(255,255,255,0.85)', lineHeight: 1.6, fontStyle: 'italic', flex: 1 }}>"{t.q}"</div>
-                <div>
-                  <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 700, fontSize: '14px' }}>— {t.a}</div>
-                  <div style={{ fontFamily: 'Inter,sans-serif', fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>{t.r}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 10. REGISTRATION CTA BANNER */}
-      <section style={{ padding: '60px 16px', background: 'linear-gradient(135deg, #FF7A29, #E8611A)', textAlign: 'center' }}>
-        <div className="wrap" style={{ maxWidth: '800px' }}>
-          <div style={{ fontFamily: 'Inter,sans-serif', fontWeight: 800, fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '16px', color: 'rgba(255,255,255,0.8)' }}>YOUR CITY NEEDS A PLAYER LIKE YOU</div>
-          <h2 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: '32px', marginBottom: '20px', lineHeight: 1.2 }}>Register for Season 5</h2>
-          <p style={{ fontFamily: 'Inter,sans-serif', fontSize: '16px', color: 'rgba(255,255,255,0.9)', marginBottom: '32px', maxWidth: '500px', margin: '0 auto 32px' }}>
-            ₹299 only. No auction fee. No tournament fee. No hidden charges.
-          </p>
-          <button style={{ background: '#fff', color: '#E8611A', border: 'none', borderRadius: '14px', height: '52px', padding: '0 32px', fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: '16px', cursor: 'pointer', boxShadow: '0 8px 30px rgba(0,0,0,0.15)', transition: 'transform 0.2s', minHeight: '48px' }}>
-            Register Now — ₹299 →
+          {/* Hamburger */}
+          <button className="ham-btn" onClick={() => setMenuOpen(o => !o)} aria-label="Menu">
+            <span className={`ham-bar${menuOpen?" open-0":""}`} />
+            <span className={`ham-bar${menuOpen?" open-1":""}`} />
+            <span className={`ham-bar${menuOpen?" open-2":""}`} />
           </button>
         </div>
-      </section>
+        {/* Mobile menu */}
+        {menuOpen && (
+          <div style={{
+            position:"fixed", inset:0, top:"64px", zIndex:199,
+            background:"#06101E", display:"flex", flexDirection:"column", alignItems:"center",
+            justifyContent:"center", gap:"28px", animation:"mobileMenuIn 0.3s ease"
+          }}>
+            {navLinks.map(l => (
+              <a key={l} href="#" onClick={() => setMenuOpen(false)} style={{ color:"rgba(255,255,255,0.85)", textDecoration:"none", fontSize:"22px", fontWeight:800, fontFamily:"Montserrat,sans-serif" }}>{l}</a>
+            ))}
+            <button className="btn-fire" style={{ padding:"16px 40px", fontSize:"17px", marginTop:"16px" }}>Register ₹299 →</button>
+          </div>
+        )}
+      </nav>
 
-      {/* 12. FOOTER */}
-      <Footer />
+      {/* MAIN CONTENT */}
+      <main style={{ position:"relative", zIndex:1 }}>
 
-      {/* 11. MOBILE STICKY BOTTOM CTA */}
-      <div className="bot-cta" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 199, padding: '10px 16px 16px', background: 'rgba(6,16,30,0.98)', backdropFilter: 'blur(20px)', borderTop: '1px solid rgba(255,255,255,0.08)', gap: 10 }}>
-        <button className="btn-primary" style={{ flex: 2, height: 50, fontSize: 15, minHeight: '48px' }}>Register ₹299 →</button>
-        <button className="btn-wa" style={{ flex: 1, height: 50, fontSize: 14, borderRadius: 12, minHeight: '48px' }}>💬 WhatsApp</button>
+        {/* ── HERO SECTION ── */}
+        <section style={{ position:"relative", minHeight:"92vh", display:"flex", alignItems:"center", overflow:"hidden", padding:"60px 0 80px" }}>
+          {/* Hero stadium SVG bg */}
+          <svg style={{ position:"absolute", inset:0, width:"100%", height:"100%", opacity:0.05, pointerEvents:"none" }} viewBox="0 0 1280 800" preserveAspectRatio="xMidYMid slice">
+            <path d="M0,800 Q640,200 1280,800 Z" fill="#4A6FA5" />
+            <path d="M0,800 Q640,300 1280,800 Z" fill="#2D4A7A" />
+            {/* Floodlight beams from corners */}
+            {[...Array(6)].map((_,i) => <line key={i} x1="0" y1="0" x2={300+i*80} y2="800" stroke="rgba(255,255,200,0.4)" strokeWidth="1.5" />)}
+            {[...Array(6)].map((_,i) => <line key={i} x1="1280" y1="0" x2={980-i*80} y2="800" stroke="rgba(255,255,200,0.4)" strokeWidth="1.5" />)}
+          </svg>
+
+          <div className="wrap" style={{ width:"100%", display:"flex", flexWrap:"wrap", gap:"48px", alignItems:"center", justifyContent:"space-between" }}>
+            {/* Left: hero text */}
+            <div style={{ flex:"1 1 340px", maxWidth:"620px", animation:"heroIn 0.8s ease both" }}>
+              {/* Live pill */}
+              <div style={{ display:"inline-flex", alignItems:"center", gap:"8px", background:"rgba(34,197,94,0.1)", border:"1px solid rgba(34,197,94,0.3)", borderRadius:"100px", padding:"6px 14px", marginBottom:"28px" }}>
+                <span style={{ width:"8px", height:"8px", borderRadius:"50%", background:"#22C55E", display:"inline-block", animation:"liveBlip 1.2s ease-in-out infinite" }} />
+                <span style={{ fontSize:"11px", fontWeight:800, fontFamily:"Montserrat,sans-serif", color:"#22C55E", letterSpacing:"0.1em" }}>PHASE 1 TRIALS OPEN</span>
+              </div>
+
+              <h1 style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, lineHeight:1.02, marginBottom:"24px" }}>
+                <span style={{ display:"block", fontSize:"clamp(40px,8vw,80px)", color:"#fff", letterSpacing:"-0.03em" }}>YOUR CRICKET</span>
+                <span style={{ display:"block", fontSize:"clamp(40px,8vw,80px)", color:"#fff", letterSpacing:"-0.03em" }}>DREAM</span>
+                <span className="shimmer-gold" style={{ display:"block", fontSize:"clamp(40px,8vw,80px)", letterSpacing:"-0.03em" }}>ISN'T OVER.</span>
+              </h1>
+
+              <p style={{ fontSize:"clamp(15px,2vw,18px)", color:"rgba(255,255,255,0.65)", lineHeight:1.7, marginBottom:"32px", maxWidth:"520px" }}>
+                Job, family, no time to play — life got in the way. This is your real trial.<br />
+                <strong style={{ color:"#FF7A29" }}>Send one video. That's it.</strong>
+              </p>
+
+              {/* Trust badges */}
+              <div style={{ display:"flex", alignItems:"center", flexWrap:"wrap", gap:"8px", marginBottom:"36px" }}>
+                <div style={{ display:"flex", alignItems:"center", gap:"6px", background:"rgba(34,197,94,0.08)", border:"1px solid rgba(34,197,94,0.2)", borderRadius:"10px", padding:"8px 14px" }}>
+                  <span style={{ fontSize:"15px" }}>✅</span>
+                  <span style={{ fontSize:"12px", fontWeight:700, fontFamily:"Montserrat,sans-serif", color:"rgba(255,255,255,0.8)" }}>5,000+ professionals registered</span>
+                </div>
+                <span className="divider-v" style={{ height:"28px" }} />
+                <div style={{ display:"flex", alignItems:"center", gap:"6px", background:"rgba(232,178,61,0.08)", border:"1px solid rgba(232,178,61,0.2)", borderRadius:"10px", padding:"8px 14px" }}>
+                  <span style={{ fontSize:"15px" }}>⭐</span>
+                  <span style={{ fontSize:"12px", fontWeight:700, fontFamily:"Montserrat,sans-serif", color:"rgba(255,255,255,0.8)" }}>Trusted since 2020</span>
+                </div>
+              </div>
+
+              {/* Main CTA */}
+              <button className="btn-fire" style={{ width:"100%", maxWidth:"400px", height:"60px", fontSize:"18px", display:"block", marginBottom:"18px" }}>
+                🏏 Register for Season 5 — ₹299 →
+              </button>
+
+              {/* Secondary buttons */}
+              <div style={{ display:"flex", gap:"12px", flexWrap:"wrap" }}>
+                <a href="tel:+918000000000" style={{ display:"flex", alignItems:"center", gap:"8px", padding:"12px 20px", border:"1px solid rgba(255,255,255,0.15)", borderRadius:"12px", color:"rgba(255,255,255,0.75)", textDecoration:"none", fontSize:"14px", fontWeight:600, fontFamily:"Montserrat,sans-serif", transition:"all 0.2s", backdropFilter:"blur(8px)" }}>📞 Call Us</a>
+                <a href="https://wa.me/918000000000" style={{ display:"flex", alignItems:"center", gap:"8px", padding:"12px 20px", background:"rgba(37,211,102,0.12)", border:"1px solid rgba(37,211,102,0.25)", borderRadius:"12px", color:"#25D366", textDecoration:"none", fontSize:"14px", fontWeight:700, fontFamily:"Montserrat,sans-serif", transition:"all 0.2s" }}>💬 WhatsApp</a>
+              </div>
+            </div>
+
+            {/* Right: floating price card */}
+            <div style={{ flex:"0 1 320px", animation:"priceCardIn 1s 0.3s ease both" }}>
+              <div className="glass-card" style={{ padding:"32px", animation:"borderGlow 3s ease-in-out infinite", border:"1px solid rgba(255,122,41,0.4)" }}>
+                {/* Chip */}
+                <div style={{ display:"inline-flex", alignItems:"center", gap:"6px", background:"rgba(255,122,41,0.12)", border:"1px solid rgba(255,122,41,0.3)", borderRadius:"100px", padding:"5px 14px", fontSize:"10px", fontWeight:800, fontFamily:"Montserrat,sans-serif", color:"#FF7A29", letterSpacing:"0.1em", marginBottom:"24px" }}>
+                  <span style={{ width:"6px", height:"6px", borderRadius:"50%", background:"#22C55E", display:"inline-block", animation:"liveBlip 1.2s ease-in-out infinite" }} />
+                  PHASE 1 TRIALS OPEN
+                </div>
+                {/* Price */}
+                <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:"72px", color:"#FF7A29", lineHeight:1, marginBottom:"4px", animation:"countUp 3s ease-in-out infinite" }}>₹299</div>
+                <div style={{ fontSize:"13px", color:"rgba(255,255,255,0.5)", marginBottom:"8px" }}>Bat · Bowl · Wicket-Keeper</div>
+                <div style={{ fontSize:"13px", color:"#E8B23D", fontWeight:700, marginBottom:"24px", fontFamily:"Montserrat,sans-serif" }}>₹399 for All-Rounder</div>
+                {/* Features */}
+                {["BCCI-certified scout evaluation","Results in 15 working days","75 cities across India","Zero fee if selected"].map(f => (
+                  <div key={f} style={{ display:"flex", alignItems:"center", gap:"10px", marginBottom:"12px" }}>
+                    <span style={{ width:"18px", height:"18px", borderRadius:"50%", background:"rgba(34,197,94,0.15)", border:"1px solid rgba(34,197,94,0.4)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"10px", flexShrink:0 }}>✓</span>
+                    <span style={{ fontSize:"13px", color:"rgba(255,255,255,0.7)", fontWeight:500 }}>{f}</span>
+                  </div>
+                ))}
+                <button className="btn-fire" style={{ width:"100%", height:"50px", fontSize:"15px", marginTop:"20px" }}>Register Now →</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── SOCIAL PROOF TICKER ── */}
+        <div style={{ background:"rgba(255,122,41,0.06)", borderTop:"1px solid rgba(255,122,41,0.15)", borderBottom:"1px solid rgba(255,122,41,0.15)", padding:"14px 0", overflow:"hidden", position:"relative" }}>
+          <div style={{ whiteSpace:"nowrap", animation:"tickerMove 20s linear infinite", display:"inline-block" }}>
+            {["🏏 Rahul S. from Pune just registered","🎳 Priya M. shortlisted by DEL Dynamos","⭐ 23 people registering right now","🏆 Arjun K. playing for Delhi Dynamos","🧤 WK slots filling fast in Mumbai","✅ Ravi T. confirmed for Hyderabad trials","🏏 Suresh B. from Chennai just registered","🎳 Ankit P. shortlisted by BLR Bulls"].map((t,i) => (
+              <span key={i} style={{ fontSize:"13px", color:"rgba(255,255,255,0.75)", fontWeight:600, fontFamily:"Montserrat,sans-serif", marginRight:"60px" }}>
+                {t}
+                <span style={{ color:"rgba(255,122,41,0.4)", marginLeft:"60px" }}>·</span>
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* ── HOW IT WORKS ── */}
+        <section style={{ padding:"96px 0" }}>
+          <div className="wrap">
+            <div style={{ textAlign:"center", marginBottom:"64px" }}>
+              <div className="section-badge">THE PROCESS</div>
+              <h2 className="section-title" style={{ fontSize:"clamp(32px,5vw,56px)", color:"#fff" }}>
+                FROM OFFICE<br />
+                <span className="shimmer-gold">TO STADIUM.</span>
+              </h2>
+              <p style={{ color:"rgba(255,255,255,0.5)", fontSize:"16px", marginTop:"16px", maxWidth:"480px", margin:"16px auto 0" }}>Four steps. No gatekeeping. Just cricket.</p>
+            </div>
+            {/* Steps */}
+            <div style={{ display:"flex", flexWrap:"wrap", gap:"0", position:"relative" }}>
+              {[
+                { num:"01", icon:"🏏", title:"Register", sub:"₹299 online, 2 minutes", desc:"Fill form, choose your role (Bat/Bowl/WK/AR), select city, pay securely." },
+                { num:"02", icon:"🎬", title:"Upload Video", sub:"60-second showcase", desc:"Record yourself batting or bowling from your phone. No studio needed." },
+                { num:"03", icon:"📋", title:"Get Evaluated", sub:"BCCI-certified scouts", desc:"Results within 15 working days. Fair. Merit-based. Completely transparent." },
+                { num:"04", icon:"🏟️", title:"Play Live", sub:"Franchise auction + stadium", desc:"If selected, zero further fees. Ever. You play at premier venues across India." },
+              ].map((step, i) => (
+                <div key={i} style={{ flex:"1 1 220px", position:"relative", padding:"32px 24px", textAlign:"center" }}>
+                  {/* Connector line (desktop) */}
+                  {i < 3 && <div style={{ position:"absolute", top:"40px", right:"-1px", width:"2px", height:"calc(100% - 80px)", background:"rgba(255,122,41,0.15)", display:"none" }} />}
+                  {/* Step number circle */}
+                  <div style={{ width:"72px", height:"72px", borderRadius:"50%", background:"linear-gradient(135deg,#FF7A29,#E8611A)", display:"flex", alignItems:"center", justifyContent:"center", margin:"0 auto 20px", boxShadow:"0 8px 24px rgba(255,122,41,0.4)", position:"relative" }}>
+                    <span style={{ fontSize:"28px" }}>{step.icon}</span>
+                    <span style={{ position:"absolute", top:"-6px", right:"-6px", width:"24px", height:"24px", borderRadius:"50%", background:"#0A1628", border:"2px solid #FF7A29", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"9px", fontWeight:900, fontFamily:"Montserrat,sans-serif", color:"#FF7A29" }}>{step.num}</span>
+                  </div>
+                  {/* Horizontal connector for desktop */}
+                  {i < 3 && <div style={{ position:"absolute", top:"54px", right:0, width:"50%", height:"2px", background:"linear-gradient(90deg,rgba(255,122,41,0.4),transparent)", pointerEvents:"none" }} />}
+                  <h3 style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:"20px", color:"#fff", marginBottom:"6px" }}>{step.title}</h3>
+                  <div style={{ fontSize:"12px", color:"#FF7A29", fontWeight:700, fontFamily:"Montserrat,sans-serif", letterSpacing:"0.06em", marginBottom:"12px" }}>{step.sub}</div>
+                  <p style={{ fontSize:"14px", color:"rgba(255,255,255,0.55)", lineHeight:1.6 }}>{step.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── NEXT MATCH WIDGET ── */}
+        <section style={{ padding:"0 0 96px" }}>
+          <div className="wrap">
+            <div className="glass-card" style={{ padding:"36px", borderLeft:"4px solid #FF7A29", position:"relative", overflow:"hidden" }}>
+              {/* Glow bg */}
+              <div style={{ position:"absolute", top:0, right:0, width:"300px", height:"300px", borderRadius:"50%", background:"radial-gradient(circle, rgba(255,122,41,0.06) 0%, transparent 70%)", pointerEvents:"none" }} />
+              <div style={{ display:"flex", flexWrap:"wrap", gap:"32px", alignItems:"center", justifyContent:"space-between" }}>
+                <div>
+                  <div style={{ display:"inline-flex", alignItems:"center", gap:"6px", background:"rgba(255,122,41,0.1)", border:"1px solid rgba(255,122,41,0.25)", borderRadius:"8px", padding:"4px 12px", fontSize:"10px", fontWeight:800, fontFamily:"Montserrat,sans-serif", color:"#FF7A29", letterSpacing:"0.1em", marginBottom:"20px" }}>
+                    🏏 NEXT MATCH
+                  </div>
+                  <h3 style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:"clamp(20px,3vw,32px)", color:"#fff", marginBottom:"12px" }}>
+                    🌊 Mumbai Mavericks <span style={{ color:"#FF7A29" }}>vs</span> 🗼 Delhi Dynamos
+                  </h3>
+                  <div style={{ display:"flex", flexWrap:"wrap", gap:"16px", marginBottom:"24px" }}>
+                    <div style={{ display:"flex", alignItems:"center", gap:"6px", color:"rgba(255,255,255,0.6)", fontSize:"13px", fontWeight:600 }}>
+                      <span>📅</span> SAT, 26 JULY 2025 · 6:00 PM IST
+                    </div>
+                    <div style={{ display:"flex", alignItems:"center", gap:"6px", color:"rgba(255,255,255,0.6)", fontSize:"13px", fontWeight:600 }}>
+                      <span>📍</span> DY Patil Stadium, Mumbai
+                    </div>
+                  </div>
+                  {/* Countdown */}
+                  <div style={{ display:"flex", gap:"12px", flexWrap:"wrap", marginBottom:"28px" }}>
+                    {[
+                      { val: countdown.days, label:"DAYS" },
+                      { val: countdown.hrs, label:"HRS" },
+                      { val: countdown.min, label:"MIN" },
+                      { val: countdown.sec, label:"SEC" },
+                    ].map(c => (
+                      <div key={c.label} className="glass-card" style={{ padding:"16px 20px", textAlign:"center", minWidth:"70px", borderRadius:"14px" }}>
+                        <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:"28px", color:"#FF7A29", lineHeight:1 }}>{String(c.val).padStart(2,"0")}</div>
+                        <div style={{ fontSize:"9px", color:"rgba(255,255,255,0.4)", fontWeight:700, fontFamily:"Montserrat,sans-serif", letterSpacing:"0.1em", marginTop:"4px" }}>{c.label}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ display:"flex", gap:"14px", flexWrap:"wrap" }}>
+                    <button className="btn-fire" style={{ padding:"12px 24px", fontSize:"14px" }}>🔔 Set Reminder →</button>
+                    <a href="#" style={{ display:"flex", alignItems:"center", color:"rgba(255,255,255,0.5)", textDecoration:"none", fontSize:"14px", fontWeight:600, fontFamily:"Montserrat,sans-serif", gap:"6px" }}>📆 Add to Calendar</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── TEAMS CAROUSEL ── */}
+        <section style={{ padding:"0 0 96px" }}>
+          <div className="wrap" style={{ marginBottom:"36px" }}>
+            <div className="section-badge">THE FRANCHISES</div>
+            <h2 className="section-title" style={{ fontSize:"clamp(28px,4vw,48px)", color:"#fff" }}>
+              TEN CITIES.<br />
+              <span className="shimmer-gold">ONE DREAM.</span>
+            </h2>
+          </div>
+          <div style={{ overflowX:"auto", paddingLeft:"20px", paddingBottom:"8px", display:"flex", gap:"14px", scrollbarWidth:"thin", scrollbarColor:"rgba(255,122,41,0.3) transparent" }}>
+            {teams.map(team => (
+              <div key={team.name} className="glass-card" style={{ minWidth:"200px", padding:"24px 20px", borderRadius:"20px", flexShrink:0, borderBottom:`3px solid ${team.color}`, position:"relative", overflow:"hidden" }}>
+                <div style={{ position:"absolute", top:0, right:0, width:"80px", height:"80px", borderRadius:"0 0 0 80px", background:`${team.color}10`, pointerEvents:"none" }} />
+                <div style={{ fontSize:"36px", marginBottom:"12px" }}>{team.emoji}</div>
+                <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:"15px", color:"#fff", marginBottom:"4px" }}>{team.name}</div>
+                <div style={{ fontSize:"12px", color:"rgba(255,255,255,0.45)", marginBottom:"12px" }}>{team.city}</div>
+                <div style={{ fontSize:"11px", color:"rgba(255,255,255,0.35)", marginBottom:"12px" }}>12 Players · Qualified</div>
+                <div style={{ display:"inline-flex", alignItems:"center", gap:"5px", background:"rgba(34,197,94,0.1)", border:"1px solid rgba(34,197,94,0.25)", borderRadius:"8px", padding:"3px 10px", fontSize:"9px", fontWeight:800, fontFamily:"Montserrat,sans-serif", color:"#22C55E", letterSpacing:"0.08em", marginBottom:"14px" }}>
+                  ● SEASON 5 ACTIVE
+                </div>
+                <a href="#" style={{ display:"block", fontSize:"12px", color:"#FF7A29", fontWeight:700, fontFamily:"Montserrat,sans-serif", textDecoration:"none" }}>View Squad →</a>
+              </div>
+            ))}
+            <div style={{ minWidth:"20px", flexShrink:0 }} />
+          </div>
+        </section>
+
+        {/* ── LIVE STANDINGS ── */}
+        <section style={{ padding:"0 0 96px" }}>
+          <div className="wrap">
+            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:"12px", marginBottom:"28px" }}>
+              <div>
+                <div className="section-badge">📊 LIVE STANDINGS</div>
+                <h2 className="section-title" style={{ fontSize:"clamp(24px,3.5vw,40px)", color:"#fff" }}>TOP 4 TEAMS</h2>
+              </div>
+              <a href="#" style={{ color:"#FF7A29", textDecoration:"none", fontSize:"14px", fontWeight:700, fontFamily:"Montserrat,sans-serif" }}>View Full Standings →</a>
+            </div>
+            {/* Table header */}
+            <div style={{ display:"grid", gridTemplateColumns:"40px 1fr 40px 40px 40px 50px 60px", gap:"8px", padding:"10px 20px", fontSize:"10px", fontWeight:800, fontFamily:"Montserrat,sans-serif", color:"rgba(255,255,255,0.3)", letterSpacing:"0.1em", textTransform:"uppercase" }}>
+              <div>#</div><div>TEAM</div><div style={{textAlign:"center"}}>P</div><div style={{textAlign:"center"}}>W</div><div style={{textAlign:"center"}}>L</div><div style={{textAlign:"center"}}>PTS</div><div style={{textAlign:"center"}}>NRR</div>
+            </div>
+            {standings.map((s, i) => (
+              <div key={s.name} className="glass-card" style={{ display:"grid", gridTemplateColumns:"40px 1fr 40px 40px 40px 50px 60px", gap:"8px", padding:"16px 20px", marginBottom:"10px", borderRadius:"16px", alignItems:"center", borderLeft:i===0?"3px solid #E8B23D":"3px solid transparent" }}>
+                <div style={{ width:"28px", height:"28px", borderRadius:"50%", background:i===0?"linear-gradient(135deg,#E8B23D,#FFD700)":"rgba(255,255,255,0.08)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"11px", fontWeight:900, fontFamily:"Montserrat,sans-serif", color:i===0?"#0A1628":"rgba(255,255,255,0.5)" }}>{s.rank}</div>
+                <div style={{ display:"flex", alignItems:"center", gap:"8px" }}>
+                  <span style={{ fontSize:"18px" }}>{s.emoji}</span>
+                  <div>
+                    <div style={{ fontSize:"13px", fontWeight:800, fontFamily:"Montserrat,sans-serif", color:"#fff" }}>{s.name}</div>
+                    <div style={{ fontSize:"10px", color:"rgba(255,255,255,0.3)", fontWeight:600 }}>GROUP {s.group}</div>
+                  </div>
+                </div>
+                {[s.p, s.w, s.l].map((v,j)=>(
+                  <div key={j} style={{ textAlign:"center", fontSize:"14px", fontWeight:700, fontFamily:"Montserrat,sans-serif", color:"rgba(255,255,255,0.6)" }}>{v}</div>
+                ))}
+                <div style={{ textAlign:"center", fontSize:"15px", fontWeight:900, fontFamily:"Montserrat,sans-serif", color:"#FF7A29" }}>{s.pts}</div>
+                <div style={{ textAlign:"center", fontSize:"12px", fontWeight:700, fontFamily:"Montserrat,sans-serif", color:s.nrr.startsWith("+")?"#22C55E":"#E8493F" }}>{s.nrr}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── RECENT RESULTS ── */}
+        <section style={{ padding:"0 0 96px" }}>
+          <div className="wrap">
+            <div className="section-badge">🏆 RECENT RESULTS</div>
+            <h2 className="section-title" style={{ fontSize:"clamp(24px,3.5vw,40px)", color:"#fff", marginBottom:"36px" }}>MATCH WRAP-UP</h2>
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))", gap:"20px" }}>
+              {results.map((r, i) => (
+                <div key={i} className="glass-card" style={{ padding:"24px", borderRadius:"20px" }}>
+                  <div style={{ display:"flex", justifyContent:"space-between", marginBottom:"16px" }}>
+                    <span style={{ fontSize:"10px", fontWeight:800, fontFamily:"Montserrat,sans-serif", color:"rgba(255,255,255,0.35)", letterSpacing:"0.1em" }}>{r.round} · {r.date} JUL</span>
+                    <span style={{ fontSize:"10px", fontWeight:800, fontFamily:"Montserrat,sans-serif", color:"#22C55E", background:"rgba(34,197,94,0.1)", border:"1px solid rgba(34,197,94,0.25)", borderRadius:"6px", padding:"2px 8px", letterSpacing:"0.06em" }}>WON</span>
+                  </div>
+                  <div style={{ marginBottom:"16px" }}>
+                    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"8px" }}>
+                      <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:"18px", color:"#fff" }}>{r.t1}</span>
+                      <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:"22px", color:"#FF7A29" }}>{r.s1}</span>
+                    </div>
+                    <div style={{ height:"1px", background:"rgba(255,255,255,0.06)", marginBottom:"8px" }} />
+                    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                      <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:"18px", color:"rgba(255,255,255,0.5)" }}>{r.t2}</span>
+                      <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:"22px", color:"rgba(255,255,255,0.45)" }}>{r.s2}</span>
+                    </div>
+                  </div>
+                  <div style={{ display:"flex", alignItems:"center", gap:"8px", background:"rgba(232,178,61,0.08)", border:"1px solid rgba(232,178,61,0.2)", borderRadius:"10px", padding:"8px 12px" }}>
+                    <span style={{ fontSize:"12px", color:"#E8B23D", fontWeight:700, fontFamily:"Montserrat,sans-serif" }}>⭐ MOM</span>
+                    <span style={{ fontSize:"12px", color:"rgba(255,255,255,0.65)", fontWeight:600 }}>{r.mom}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── ELIGIBILITY QUICK CHECK ── */}
+        <section style={{ padding:"80px 0", background:"rgba(10,22,40,0.8)", borderTop:"1px solid rgba(255,255,255,0.05)", borderBottom:"1px solid rgba(255,255,255,0.05)" }}>
+          <div className="wrap" style={{ textAlign:"center" }}>
+            <div className="section-badge">ELIGIBILITY</div>
+            <h2 className="section-title" style={{ fontSize:"clamp(28px,4vw,48px)", color:"#fff", marginBottom:"16px" }}>WHO CAN PLAY?</h2>
+            <p style={{ color:"rgba(255,255,255,0.5)", fontSize:"15px", marginBottom:"48px", maxWidth:"480px", margin:"0 auto 48px" }}>Simple criteria. No corporate gatekeeping. Just show us your game.</p>
+            <div style={{ display:"flex", flexWrap:"wrap", justifyContent:"center", gap:"14px", marginBottom:"48px" }}>
+              {[
+                { icon:"💼", text:"Working Professional", desc:"Currently employed or self-employed" },
+                { icon:"🏏", text:"Cricket Experience", desc:"Played at school, college, or club level" },
+                { icon:"📱", text:"Phone Video", desc:"Can record a 60-second cricket video" },
+                { icon:"✅", text:"No Age Limit", desc:"18 to 45+, all are welcome" },
+              ].map(c => (
+                <div key={c.text} className="glass-card" style={{ padding:"24px 28px", borderRadius:"18px", minWidth:"200px", flex:"1 1 200px", maxWidth:"260px", textAlign:"center" }}>
+                  <div style={{ fontSize:"36px", marginBottom:"12px" }}>{c.icon}</div>
+                  <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:"15px", color:"#fff", marginBottom:"6px" }}>{c.text}</div>
+                  <div style={{ fontSize:"12px", color:"rgba(255,255,255,0.45)" }}>{c.desc}</div>
+                </div>
+              ))}
+            </div>
+            <button className="btn-fire" style={{ padding:"16px 36px", fontSize:"15px" }}>Check Full Eligibility →</button>
+          </div>
+        </section>
+
+        {/* ── TESTIMONIALS ── */}
+        <section style={{ padding:"96px 0" }}>
+          <div className="wrap">
+            <div style={{ textAlign:"center", marginBottom:"56px" }}>
+              <div className="section-badge">TESTIMONIALS</div>
+              <h2 className="section-title" style={{ fontSize:"clamp(28px,4vw,48px)", color:"#fff" }}>
+                REAL PLAYERS.<br />
+                <span className="shimmer-gold">REAL STORIES.</span>
+              </h2>
+            </div>
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))", gap:"24px" }}>
+              {[
+                { quote:"Registered on a Tuesday. Played at DY Patil in 6 weeks. I still can't believe it.", name:"Arjun S.", role:"Software Engineer", team:"Delhi Dynamos", emoji:"🗼", delay:"0s" },
+                { quote:"Never thought I'd play franchise cricket. BCPL made it possible. The process is 100% transparent.", name:"Priya M.", role:"Marketing Manager", team:"Mumbai Mavericks", emoji:"🌊", delay:"0.15s" },
+                { quote:"The scouting is genuine. Got shortlisted fairly on merit. No strings, no connections needed.", name:"Ravi K.", role:"Product Manager", team:"Pune Panthers", emoji:"🐆", delay:"0.3s" },
+              ].map((t, i) => (
+                <div key={i} className="glass-card" style={{ padding:"28px", borderRadius:"20px", position:"relative", animation:`fadeSlide 0.6s ${t.delay} ease both` }}>
+                  {/* Quote mark */}
+                  <div style={{ fontSize:"48px", color:"rgba(255,122,41,0.15)", fontFamily:"Georgia,serif", lineHeight:1, marginBottom:"8px" }}>"</div>
+                  <p style={{ fontSize:"15px", color:"rgba(255,255,255,0.75)", lineHeight:1.7, marginBottom:"24px", fontStyle:"italic" }}>"{t.quote}"</p>
+                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end" }}>
+                    <div>
+                      <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:"14px", color:"#fff", marginBottom:"2px" }}>{t.name}</div>
+                      <div style={{ fontSize:"12px", color:"rgba(255,255,255,0.4)", marginBottom:"6px" }}>{t.role}</div>
+                      <div style={{ display:"flex", alignItems:"center", gap:"5px", fontSize:"12px", color:"#FF7A29", fontWeight:700, fontFamily:"Montserrat,sans-serif" }}>
+                        <span>{t.emoji}</span> {t.team}
+                      </div>
+                    </div>
+                    <div style={{ fontSize:"14px", color:"#E8B23D", letterSpacing:"2px" }}>★★★★★</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── FINAL CTA BANNER ── */}
+        <section style={{ background:"linear-gradient(135deg,#C94E0E 0%,#FF7A29 40%,#E8611A 70%,#C94E0E 100%)", padding:"80px 20px", textAlign:"center", position:"relative", overflow:"hidden" }}>
+          <div style={{ position:"absolute", inset:0, background:"repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px)", pointerEvents:"none" }} />
+          <div style={{ position:"relative", zIndex:1 }}>
+            <div style={{ display:"inline-block", background:"rgba(255,255,255,0.15)", borderRadius:"100px", padding:"5px 16px", fontSize:"11px", fontWeight:800, fontFamily:"Montserrat,sans-serif", color:"#fff", letterSpacing:"0.12em", marginBottom:"24px" }}>🏆 SEASON 5 — LIMITED SPOTS</div>
+            <h2 style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:"clamp(28px,5vw,60px)", color:"#fff", lineHeight:1.05, marginBottom:"16px" }}>
+              YOUR CITY NEEDS<br />A PLAYER LIKE YOU
+            </h2>
+            <p style={{ fontSize:"clamp(16px,2vw,20px)", color:"rgba(255,255,255,0.85)", marginBottom:"8px", fontWeight:600 }}>Register for Season 5 — Only ₹299</p>
+            <p style={{ fontSize:"14px", color:"rgba(255,255,255,0.65)", marginBottom:"40px" }}>No auction fee. No tournament fee. No hidden charges. Ever.</p>
+            <button style={{ background:"#fff", border:"none", borderRadius:"14px", color:"#E8611A", fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:"18px", padding:"18px 48px", cursor:"pointer", boxShadow:"0 12px 40px rgba(0,0,0,0.25)", transition:"transform 0.15s, box-shadow 0.2s" }}
+              onMouseEnter={e => { e.currentTarget.style.transform="translateY(-2px)"; e.currentTarget.style.boxShadow="0 20px 60px rgba(0,0,0,0.35)"; }}
+              onMouseLeave={e => { e.currentTarget.style.transform="translateY(0)"; e.currentTarget.style.boxShadow="0 12px 40px rgba(0,0,0,0.25)"; }}
+            >
+              Register Now — ₹299 →
+            </button>
+            <div style={{ marginTop:"24px", fontSize:"13px", color:"rgba(255,255,255,0.55)" }}>
+              🔒 Secure payment · Instant confirmation · 75 cities
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      {/* ── FOOTER ── */}
+      <footer style={{ background:"#040C18", borderTop:"1px solid rgba(255,255,255,0.05)", padding:"48px 0 32px" }}>
+        <div className="wrap">
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(200px,1fr))", gap:"40px", marginBottom:"48px" }}>
+            {/* Brand */}
+            <div>
+              <div style={{ display:"flex", alignItems:"center", gap:"6px", marginBottom:"12px" }}>
+                <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:"24px", color:"#FF7A29" }}>BCPL</span>
+                <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:"24px", color:"#fff" }}>T20</span>
+              </div>
+              <div style={{ fontSize:"11px", color:"rgba(255,122,41,0.7)", fontWeight:700, fontFamily:"Montserrat,sans-serif", letterSpacing:"0.08em", marginBottom:"14px" }}>SEASON 5 · 2025</div>
+              <p style={{ fontSize:"13px", color:"rgba(255,255,255,0.35)", lineHeight:1.7, marginBottom:"12px" }}>India's biggest corporate cricket league. Relive the dream. Rediscover the thrill.</p>
+              <div style={{ fontSize:"12px", color:"#FF7A29", fontWeight:700, fontFamily:"Montserrat,sans-serif" }}>#OfficeSeStadiumtak</div>
+            </div>
+            {/* League links */}
+            <div>
+              <div style={{ fontSize:"11px", fontWeight:800, fontFamily:"Montserrat,sans-serif", color:"rgba(255,255,255,0.3)", letterSpacing:"0.1em", textTransform:"uppercase", marginBottom:"16px" }}>League</div>
+              {["Schedule","Match Center","Teams","Points Table","Photos","Videos"].map(l => (
+                <a key={l} href="#" style={{ display:"block", color:"rgba(255,255,255,0.5)", textDecoration:"none", fontSize:"14px", marginBottom:"10px", transition:"color 0.2s" }}
+                  onMouseEnter={e => e.currentTarget.style.color="#FF7A29"}
+                  onMouseLeave={e => e.currentTarget.style.color="rgba(255,255,255,0.5)"}
+                >{l}</a>
+              ))}
+            </div>
+            {/* Info links */}
+            <div>
+              <div style={{ fontSize:"11px", fontWeight:800, fontFamily:"Montserrat,sans-serif", color:"rgba(255,255,255,0.3)", letterSpacing:"0.1em", textTransform:"uppercase", marginBottom:"16px" }}>Info</div>
+              {["About","FAQ","Contact","Terms","Privacy","Refunds","Eligibility"].map(l => (
+                <a key={l} href="#" style={{ display:"block", color:"rgba(255,255,255,0.5)", textDecoration:"none", fontSize:"14px", marginBottom:"10px", transition:"color 0.2s" }}
+                  onMouseEnter={e => e.currentTarget.style.color="#FF7A29"}
+                  onMouseLeave={e => e.currentTarget.style.color="rgba(255,255,255,0.5)"}
+                >{l}</a>
+              ))}
+            </div>
+          </div>
+          {/* Bottom bar */}
+          <div style={{ borderTop:"1px solid rgba(255,255,255,0.05)", paddingTop:"24px", display:"flex", flexWrap:"wrap", gap:"12px", justifyContent:"space-between", alignItems:"center" }}>
+            <div style={{ fontSize:"12px", color:"rgba(255,255,255,0.25)" }}>© 2025 Kriparti Playing11 Pvt. Ltd. All rights reserved.</div>
+            <a href="https://www.bcpl-t20.com" style={{ fontSize:"12px", color:"#FF7A29", textDecoration:"none", fontWeight:700, fontFamily:"Montserrat,sans-serif" }}>www.bcpl-t20.com</a>
+          </div>
+        </div>
+      </footer>
+
+      {/* MOBILE STICKY BOTTOM CTA */}
+      <div className="bot-cta" style={{
+        position:"fixed", bottom:0, left:0, right:0, zIndex:500,
+        background:"rgba(4,12,24,0.97)", backdropFilter:"blur(24px)",
+        borderTop:"1px solid rgba(255,255,255,0.07)",
+        padding:"10px 16px 18px", gap:"10px"
+      }}>
+        <button className="btn-fire" style={{ flex:2, height:"52px", fontSize:"15px" }}>Register ₹299 →</button>
+        <a href="https://wa.me/918000000000" className="btn-wa" style={{ flex:1, height:"52px", display:"flex", alignItems:"center", justifyContent:"center", gap:"6px", fontSize:"14px", borderRadius:"14px", textDecoration:"none" }}>💬 WhatsApp</a>
       </div>
-      
-    </div>
+    </>
   );
 }
