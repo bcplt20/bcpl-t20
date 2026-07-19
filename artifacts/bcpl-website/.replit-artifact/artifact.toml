@@ -1,0 +1,35 @@
+kind = "web"
+previewPath = "/bcpl-website/"
+title = "BCPL T20 Website"
+version = "1.0.0"
+id = "artifacts/bcpl-website"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/bcpl-website/" ]
+localPort = 20570
+
+[services.development]
+run = "pnpm --filter @workspace/bcpl-website run dev"
+
+[services.production]
+serve = "static"
+publicDir = "artifacts/bcpl-website/dist/public"
+
+[services.production.build]
+args = ["pnpm", "--filter", "@workspace/bcpl-website", "run", "build"]
+
+[services.production.build.env]
+BASE_PATH = "/"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.production.health.startup]
+path = "/"
+
+[services.env]
+PORT = "20570"
+BASE_PATH = "/bcpl-website/"
