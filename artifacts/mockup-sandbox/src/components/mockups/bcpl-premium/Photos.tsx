@@ -50,22 +50,19 @@ function Footer() {
   );
 }
 
-export function Teams() {
-  const groupA = [
-    { name: 'Delhi Dynamos', city: 'Delhi', color: '#1565C0', icon: '🏙️' },
-    { name: 'Mumbai Mavericks', city: 'Mumbai', color: '#C62828', icon: '🌊' },
-    { name: 'Pune Panthers', city: 'Pune', color: '#7B1FA2', icon: '🐾' },
-    { name: 'Kolkata Knights', city: 'Kolkata', color: '#424242', icon: '🌉' },
-    { name: 'Ahmedabad Lions', city: 'Ahmedabad', color: '#FF6F00', icon: '🦁' },
+export function Photos() {
+  const albums = [
+    { title: "Season 5 – Opening Ceremony", count: 32, date: "Jul 2025" },
+    { title: "Season 4 – Grand Final", count: 56, date: "Dec 2024" },
+    { title: "Season 4 – The Auction", count: 84, date: "Nov 2024" },
+    { title: "Season 3 Final – Delhi vs Gujarat", count: 48, date: "Apr 2024" },
+    { title: "Season 3 – Gujarat vs Kolkata", count: 36, date: "Mar 2024" },
+    { title: "Season 3 – Chennai vs Kolkata", count: 40, date: "Mar 2024" },
+    { title: "BCPL Trials – Season 5", count: 62, date: "Jun 2025" },
+    { title: "Player Kitting Day – Season 5", count: 28, date: "Jul 2025" }
   ];
-  
-  const groupB = [
-    { name: 'Bangalore Bulls', city: 'Bangalore', color: '#E65100', icon: '🐂' },
-    { name: 'Chennai Chiefs', city: 'Chennai', color: '#F9A825', icon: '🛡️' },
-    { name: 'Hyderabad Hawks', city: 'Hyderabad', color: '#2E7D32', icon: '🦅' },
-    { name: 'Jaipur Jaguars', city: 'Jaipur', color: '#AD1457', icon: '🐆' },
-    { name: 'Lucknow Nawabs', city: 'Lucknow', color: '#0277BD', icon: '👑' },
-  ];
+
+  const filters = ['All', 'Season 5', 'Season 4', 'Season 3', 'Auction', 'Trials', 'Finals'];
 
   return (
     <div style={{background:'#0A1628',color:'#fff',minHeight:'100vh',fontFamily:'Inter,sans-serif'}}>
@@ -92,113 +89,71 @@ export function Teams() {
         .grid-4{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
         .nav-links{display:none}
         .ham{display:flex}
-        .bot-cta{display:flex}
-        .teams-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-        .teams-grid > div:last-child {grid-column: span 2; max-width: 50%; margin: 0 auto; width: 100%;}
-        .team-card{transition:all 0.25s;}
-        .team-card:hover{transform:translateY(-4px);}
+        
+        .album-card{transition:transform 0.2s; cursor:pointer;}
+        .album-card:hover{transform:translateY(-4px);}
+        .thumb{height:160px;background:radial-gradient(ellipse at top, #1a3a6e, #0A1628);display:flex;align-items:flex-end;padding:16px;}
+        
         @media(min-width:768px){
           .wrap{padding:0 28px}.section{padding:60px 0}.h1{font-size:56px}.grid-2{grid-template-columns:repeat(2,1fr);gap:24px}.grid-3{grid-template-columns:repeat(2,1fr);gap:20px}.grid-4{grid-template-columns:repeat(4,1fr)}
-          .teams-grid{grid-template-columns:repeat(3,1fr);gap:16px}
-          .teams-grid > div:last-child {grid-column: auto; max-width: none; margin: 0; width: 100%;}
+          .thumb{height:200px}
         }
         @media(min-width:1024px){
-          .section{padding:80px 0}.h1{font-size:80px}.grid-3{grid-template-columns:repeat(3,1fr)}.nav-links{display:flex!important;align-items:center;gap:20px}.ham{display:none!important}.bot-cta{display:none!important}
-          .teams-grid{grid-template-columns:repeat(5,1fr);gap:20px}
+          .section{padding:80px 0}.h1{font-size:80px}.grid-3{grid-template-columns:repeat(3,1fr)}.nav-links{display:flex!important;align-items:center;gap:20px}.ham{display:none!important}
         }
         @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
         @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
       `}</style>
-      
-      <Navbar active="teams" />
-      
-      <main style={{paddingBottom:'96px'}}>
-        <div style={{height:260,background:'linear-gradient(160deg,#0A1628,#0F2247)',display:'flex',alignItems:'center',justifyContent:'center',textAlign:'center'}}>
+
+      <Navbar active="about" />
+
+      <main style={{paddingBottom:'40px'}}>
+        <div style={{padding:'60px 0',textAlign:'center'}}>
           <div className="wrap">
-            <div style={{display:'inline-block',background:'rgba(255,122,41,0.15)',color:'#FF7A29',padding:'6px 16px',borderRadius:20,fontSize:12,fontWeight:700,letterSpacing:'0.1em',marginBottom:16}}>THE FRANCHISES</div>
-            <h1 className="h1" style={{marginBottom:12}}>TEN CITIES. ONE DREAM.</h1>
-            <p style={{color:'rgba(255,255,255,0.7)',fontSize:16,maxWidth:600,margin:'0 auto'}}>Get picked and represent your city on the BCPL stage.</p>
+            <h1 className="h1" style={{marginBottom:16}}>📷 PHOTOS</h1>
+            <p style={{color:'rgba(255,255,255,0.7)',fontSize:16,maxWidth:600,margin:'0 auto'}}>Behind the scenes, match moments, and team memories</p>
           </div>
         </div>
 
-        <div className="section wrap">
-          <div style={{marginBottom:60}}>
-            <h2 className="h2" style={{marginBottom:24,fontSize:20,letterSpacing:'0.05em'}}><span style={{color:'rgba(255,255,255,0.5)'}}>GROUP A</span> / FIVE FRANCHISES</h2>
-            <div className="teams-grid">
-              {groupA.map((team,i) => (
-                <div key={i} className="glass team-card" style={{padding:20,position:'relative',overflow:'hidden'}}>
-                  <div style={{position:'absolute',top:0,left:0,right:0,height:4,background:team.color}}></div>
-                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:80,color:team.color,opacity:0.1,position:'absolute',top:8,right:12,lineHeight:1}}>{team.name.charAt(0)}</div>
-                  
-                  <div style={{fontSize:24,marginBottom:8}}>{team.icon}</div>
-                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:16,color:'#fff',marginBottom:4,lineHeight:1.2}}>{team.name}</div>
-                  <div style={{fontFamily:'Inter,sans-serif',fontSize:13,color:'rgba(255,255,255,0.5)',marginBottom:16}}>{team.city}</div>
-                  
-                  <div style={{height:1,background:'rgba(255,255,255,0.1)',marginBottom:16}}></div>
-                  
-                  <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:12}}>
-                    <span style={{fontSize:12,color:'rgba(255,255,255,0.7)'}}>12 Players</span>
-                    <span style={{width:4,height:4,borderRadius:'50%',background:'rgba(255,255,255,0.3)'}}></span>
-                    <span style={{fontSize:12,color:'rgba(255,255,255,0.7)'}}>Qualified</span>
-                  </div>
-                  
-                  <div style={{display:'inline-block',background:'rgba(46,158,79,0.15)',color:'#2E9E4F',padding:'4px 8px',borderRadius:6,fontSize:10,fontWeight:700,marginBottom:16}}>SEASON 5 ACTIVE</div>
-                  
-                  <div style={{marginTop:8}}>
-                    <a href="#" style={{color:'#FF7A29',fontSize:13,textDecoration:'none',fontWeight:600}}>View Squad →</a>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <h2 className="h2" style={{marginBottom:24,fontSize:20,letterSpacing:'0.05em'}}><span style={{color:'rgba(255,255,255,0.5)'}}>GROUP B</span> / FIVE FRANCHISES</h2>
-            <div className="teams-grid">
-              {groupB.map((team,i) => (
-                <div key={i} className="glass team-card" style={{padding:20,position:'relative',overflow:'hidden'}}>
-                  <div style={{position:'absolute',top:0,left:0,right:0,height:4,background:team.color}}></div>
-                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:80,color:team.color,opacity:0.1,position:'absolute',top:8,right:12,lineHeight:1}}>{team.name.charAt(0)}</div>
-                  
-                  <div style={{fontSize:24,marginBottom:8}}>{team.icon}</div>
-                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:16,color:'#fff',marginBottom:4,lineHeight:1.2}}>{team.name}</div>
-                  <div style={{fontFamily:'Inter,sans-serif',fontSize:13,color:'rgba(255,255,255,0.5)',marginBottom:16}}>{team.city}</div>
-                  
-                  <div style={{height:1,background:'rgba(255,255,255,0.1)',marginBottom:16}}></div>
-                  
-                  <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:12}}>
-                    <span style={{fontSize:12,color:'rgba(255,255,255,0.7)'}}>12 Players</span>
-                    <span style={{width:4,height:4,borderRadius:'50%',background:'rgba(255,255,255,0.3)'}}></span>
-                    <span style={{fontSize:12,color:'rgba(255,255,255,0.7)'}}>Qualified</span>
-                  </div>
-                  
-                  <div style={{display:'inline-block',background:'rgba(46,158,79,0.15)',color:'#2E9E4F',padding:'4px 8px',borderRadius:6,fontSize:10,fontWeight:700,marginBottom:16}}>SEASON 5 ACTIVE</div>
-                  
-                  <div style={{marginTop:8}}>
-                    <a href="#" style={{color:'#FF7A29',fontSize:13,textDecoration:'none',fontWeight:600}}>View Squad →</a>
-                  </div>
-                </div>
-              ))}
-            </div>
+        <div className="wrap">
+          <div style={{display:'flex',gap:8,overflowX:'auto',paddingBottom:16,marginBottom:16,WebkitOverflowScrolling:'touch',scrollbarWidth:'none'}}>
+            {filters.map((f,i) => (
+              <button key={f} style={{background:i===0?'#FF7A29':'rgba(255,255,255,0.06)',color:i===0?'#fff':'rgba(255,255,255,0.7)',border:'none',padding:'8px 16px',borderRadius:20,fontSize:14,fontWeight:600,whiteSpace:'nowrap',cursor:'pointer'}}>
+                {f}
+              </button>
+            ))}
           </div>
         </div>
 
-        <div className="wrap section">
-          <div style={{background:'linear-gradient(135deg,#FF7A29,#E8611A)',padding:'48px 24px',textAlign:'center',borderRadius:20}}>
-            <p style={{color:'rgba(255,255,255,0.9)',fontWeight:600,marginBottom:8}}>Want to play for one of these franchises?</p>
-            <h2 className="h2" style={{color:'#fff',marginBottom:24}}>Register for ₹299 — get your shot at the auction</h2>
-            <button style={{background:'#fff',color:'#E8611A',height:52,borderRadius:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,border:'none',padding:'0 32px',fontSize:16,cursor:'pointer',boxShadow:'0 8px 16px rgba(0,0,0,0.1)'}}>Register Now →</button>
+        <div className="wrap section" style={{paddingTop:0}}>
+          <div className="grid-3">
+            {albums.map((album,i) => (
+              <div key={i} className="glass album-card" style={{overflow:'hidden'}}>
+                <div className="thumb">
+                  <div style={{width:'100%',background:'linear-gradient(to top, rgba(10,22,40,0.9), transparent)',position:'absolute',bottom:0,left:0,height:'50%'}}></div>
+                </div>
+                <div style={{padding:16}}>
+                  <h3 style={{fontFamily:'Inter,sans-serif',fontWeight:700,fontSize:15,marginBottom:12,lineHeight:1.3}}>📷 {album.title}</h3>
+                  <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16}}>
+                    <span style={{fontSize:12,color:'rgba(255,255,255,0.5)'}}>{album.count} Photos</span>
+                    <span style={{fontSize:12,color:'rgba(255,255,255,0.5)'}}>{album.date}</span>
+                  </div>
+                  <a href="#" style={{color:'#FF7A29',fontSize:13,textDecoration:'none',fontWeight:600}}>View Album →</a>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="glass" style={{marginTop:60,padding:'40px 24px',textAlign:'center',border:'1px solid rgba(232,178,61,0.3)',background:'rgba(232,178,61,0.05)'}}>
+            <h2 className="h2" style={{marginBottom:12}}>Playing in BCPL? Submit your match photos.</h2>
+            <p style={{color:'rgba(255,255,255,0.6)',fontSize:15,marginBottom:24}}>Help us capture the best moments of the league.</p>
+            <button className="btn-primary" style={{height:48}}>Submit Photos →</button>
           </div>
         </div>
 
       </main>
 
       <Footer />
-
-      <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:199,padding:'10px 16px 16px',background:'rgba(6,16,30,0.98)',backdropFilter:'blur(20px)',borderTop:'1px solid rgba(255,255,255,0.08)',gap:10}}>
-        <button className="btn-primary" style={{flex:2,height:50,fontSize:15}}>Register ₹299 →</button>
-        <button className="btn-wa" style={{flex:1,height:50,fontSize:14,borderRadius:12}}>💬 WhatsApp</button>
-      </div>
     </div>
   );
 }

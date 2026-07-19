@@ -1,46 +1,92 @@
 import React from 'react';
 
-function Navbar({ active = '' }) {
-  const links = [['Home', 'home'], ['Schedule', 'schedule'], ['Match Center', 'matchcenter'], ['Teams', 'teams'], ['Points Table', 'points'], ['About', 'about']];
+const css = `
+.wrap{max-width:1200px;margin:0 auto;padding:0 16px}
+.section{padding:40px 0}
+.h1{font-family:Montserrat,sans-serif;font-weight:900;font-size:36px;line-height:1.05}
+.h2{font-family:Montserrat,sans-serif;font-weight:800;font-size:22px}
+.glass{background:rgba(15,34,71,0.7);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.10);border-radius:16px}
+.btn-primary{background:linear-gradient(135deg,#FF7A29,#E8611A);border:none;border-radius:12px;color:#fff;font-weight:700;font-family:Montserrat,sans-serif;cursor:pointer;box-shadow:0 6px 24px rgba(255,122,41,0.4);transition:transform 0.15s;min-height:48px}
+.btn-primary:active{transform:scale(0.97)}
+.btn-wa{background:#2E9E4F;border:none;border-radius:12px;color:#fff;font-weight:700;cursor:pointer;min-height:48px}
+.input-f{background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.12);border-radius:12px;color:#fff;padding:14px 16px;width:100%;font-family:Inter,sans-serif;font-size:15px;outline:none;transition:border-color 0.2s;appearance:none}
+.input-f:focus{border-color:#FF7A29}
+.input-f::placeholder{color:rgba(255,255,255,0.3)}
+.input-f option{background:#0F2247;color:#fff}
+.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:16px}
+.dtable{width:100%;border-collapse:collapse;min-width:560px}
+.dtable th{background:rgba(255,122,41,0.12);color:rgba(255,255,255,0.55);font-size:11px;text-transform:uppercase;letter-spacing:0.1em;padding:12px 14px;text-align:left;font-family:Inter,sans-serif}
+.dtable td{padding:14px;border-bottom:1px solid rgba(255,255,255,0.05);font-size:14px}
+.grid-2{display:grid;grid-template-columns:1fr;gap:14px}
+.grid-3{display:grid;grid-template-columns:1fr;gap:14px}
+.grid-4{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.nav-links{display:none}
+.ham{display:flex}
+.bot-cta{display:flex}
+.grid-2-3{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.toc-sidebar{display:none}
+@media(min-width:768px){.wrap{padding:0 28px}.section{padding:60px 0}.h1{font-size:56px}.grid-2{grid-template-columns:repeat(2,1fr);gap:24px}.grid-3{grid-template-columns:repeat(2,1fr);gap:20px}.grid-4{grid-template-columns:repeat(4,1fr)}.grid-2-3{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:1024px){.section{padding:80px 0}.h1{font-size:80px}.grid-3{grid-template-columns:repeat(3,1fr)}.nav-links{display:flex!important;align-items:center;gap:20px}.ham{display:none!important}.bot-cta{display:none!important}.toc-sidebar{display:block}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.doc-h2 { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 22px; color: #0F2247; margin-top: 40px; padding-top: 40px; border-top: 1px solid rgba(20,32,63,0.1); margin-bottom: 16px; }
+.doc-h3 { font-family: Inter, sans-serif; font-weight: 700; font-size: 14px; color: #FF7A29; text-transform: uppercase; letter-spacing: 0.08em; margin: 24px 0 12px; }
+.doc-p { font-family: Inter, sans-serif; font-size: 16px; line-height: 1.8; color: #14203F; margin-bottom: 16px; }
+.doc-ul { padding-left: 20px; margin-bottom: 16px; }
+.doc-li { padding: 4px 0; font-family: Inter, sans-serif; font-size: 16px; line-height: 1.8; color: #14203F; }
+.highlight-box { background: rgba(255,122,41,0.08); border-left: 4px solid #FF7A29; border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 24px 0; color: #14203F; font-family: Inter, sans-serif; font-size: 16px; line-height: 1.8; }
+.hero-title { font-family: Montserrat, sans-serif; font-weight: 900; font-size: 32px; color: #fff; line-height: 1.2; margin-bottom: 8px; text-transform: uppercase; text-align: center; }
+.hero-subtitle { font-family: Inter, sans-serif; font-size: 18px; color: rgba(255,255,255,0.8); text-align: center; }
+.hero-meta { font-family: Inter, sans-serif; font-size: 14px; color: #FF7A29; font-weight: 600; margin-top: 16px; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; }
+.toc-link { display: block; color: rgba(255,255,255,0.7); font-family: Inter, sans-serif; font-size: 14px; text-decoration: none; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.toc-link:last-child { border-bottom: none; }
+.toc-link:hover { color: #FF7A29; }
+`;
+
+function Navbar({active=''}) {
+  const [open,setOpen]=React.useState(false);
+  const links=[['Home','home'],['Match Center','matchcenter'],['Teams','teams'],['About','about']];
   return (
-    <nav style={{ position: 'sticky', top: 0, zIndex: 100, background: 'rgba(10,22,40,0.97)', backdropFilter: 'blur(24px)', borderBottom: '1px solid rgba(255,255,255,0.08)', padding: '0 40px' }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 22 }}>
-          <span style={{ color: '#FF7A29' }}>BCPL</span><span style={{ color: '#fff', marginLeft: 4 }}>T20</span>
-          <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: 10, fontWeight: 600, marginLeft: 10, fontFamily: 'Inter,sans-serif', textTransform: 'uppercase', letterSpacing: '0.12em' }}>Bhartiya Corporate Premier League</span>
+    <>
+      <nav style={{position:'sticky',top:0,zIndex:100,background:'rgba(10,22,40,0.97)',backdropFilter:'blur(24px)',borderBottom:'1px solid rgba(255,255,255,0.08)',boxShadow:'0 2px 0 0 rgba(255,122,41,0.2)'}}>
+        <div className="wrap" style={{height:60,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+          <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:20}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff',marginLeft:3}}>T20</span></div>
+          <div className="nav-links">{links.map(([l,k])=><a key={k} href="#" style={{color:active===k?'#FF7A29':'rgba(255,255,255,0.7)',fontWeight:600,fontSize:13.5,textDecoration:'none',fontFamily:'Inter,sans-serif',borderBottom:active===k?'2px solid #FF7A29':'2px solid transparent',paddingBottom:2}}>{l}</a>)}<button className="btn-primary" style={{padding:'9px 20px',fontSize:13.5,borderRadius:10,minHeight:'auto'}}>Register ₹299</button></div>
+          <button className="ham" onClick={()=>setOpen(o=>!o)} style={{flexDirection:'column',gap:5,background:'none',border:'none',cursor:'pointer',padding:8,zIndex:201}}>
+            <span style={{display:'block',width:22,height:2,background:'#fff',borderRadius:2,transition:'all 0.25s',transform:open?'rotate(45deg) translate(4px,4px)':''}}/>
+            <span style={{display:'block',width:22,height:2,background:'#fff',borderRadius:2,transition:'all 0.25s',opacity:open?0:1}}/>
+            <span style={{display:'block',width:22,height:2,background:'#fff',borderRadius:2,transition:'all 0.25s',transform:open?'rotate(-45deg) translate(4px,-4px)':''}}/>
+          </button>
         </div>
-        <div style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
-          {links.map(([label, key]) => (
-            <a key={key} href="#" style={{ color: active === key ? '#FF7A29' : 'rgba(255,255,255,0.7)', fontWeight: 600, fontSize: 13.5, textDecoration: 'none', fontFamily: 'Inter,sans-serif', borderBottom: active === key ? '2px solid #FF7A29' : '2px solid transparent', paddingBottom: 2 }}>{label}</a>
-          ))}
-          <button style={{ background: 'linear-gradient(135deg,#FF7A29,#E8611A)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 22px', fontWeight: 700, fontSize: 13.5, cursor: 'pointer', boxShadow: '0 4px 20px rgba(255,122,41,0.4)', fontFamily: 'Inter,sans-serif' }}>Register ₹299</button>
-        </div>
-      </div>
-    </nav>
+      </nav>
+      {open&&(<div style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'rgba(6,16,30,0.99)',zIndex:200,display:'flex',flexDirection:'column',padding:'72px 24px 40px',overflowY:'auto'}}>
+        <button onClick={()=>setOpen(false)} style={{position:'absolute',top:16,right:16,background:'none',border:'none',color:'rgba(255,255,255,0.5)',fontSize:26,cursor:'pointer',lineHeight:1}}>✕</button>
+        <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,marginBottom:28}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff',marginLeft:3}}>T20</span></div>
+        {[['🏠 Home'],['🔴 Match Center'],['🏏 Teams'],['🤝 Sponsors'],['📷 Photos'],['▶️ Videos'],['ℹ️ About'],['❓ FAQ'],['✉️ Contact']].map(([l])=><a key={l} href="#" onClick={()=>setOpen(false)} style={{color:'rgba(255,255,255,0.85)',fontWeight:700,fontSize:19,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'13px 0',borderBottom:'1px solid rgba(255,255,255,0.07)'}}>{l}</a>)}
+        <button className="btn-primary" style={{marginTop:28,height:52,fontSize:16,borderRadius:14,width:'100%'}}>📝 Register for ₹299 →</button>
+      </div>)}
+    </>
   );
 }
 
 function Footer() {
   return (
-    <footer style={{ background: '#06101E', borderTop: '1px solid rgba(255,255,255,0.07)', padding: '56px 40px 32px', fontFamily: 'Inter,sans-serif' }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr 1fr', gap: 40, marginBottom: 40 }}>
+    <footer style={{background:'#06101E',borderTop:'1px solid rgba(255,255,255,0.06)'}}>
+      <div className="wrap" style={{paddingTop:40,paddingBottom:40}}>
+        <div className="grid-2" style={{gap:28,marginBottom:28}}>
           <div>
-            <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 24, marginBottom: 10 }}><span style={{ color: '#FF7A29' }}>BCPL</span><span style={{ color: '#fff', marginLeft: 4 }}>T20</span></div>
-            <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: 12.5, lineHeight: 1.7, margin: '0 0 20px' }}>Bhartiya Corporate Premier League. World's largest corporate cricket league for working professionals.</p>
-            <div style={{ display: 'flex', gap: 8 }}>
-              {['📸', '▶️', '🐦', '📘'].map((ic, i) => <a key={i} href="#" style={{ width: 34, height: 34, borderRadius: 8, background: 'rgba(255,255,255,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, textDecoration: 'none', border: '1px solid rgba(255,255,255,0.08)' }}>{ic}</a>)}
-            </div>
+            <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,marginBottom:10}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff',marginLeft:4}}>T20</span></div>
+            <p style={{color:'rgba(255,255,255,0.45)',fontSize:13,lineHeight:1.7,marginBottom:8,maxWidth:280}}>Bharatiya Corporate Premier League — world's largest corporate cricket league for working professionals.</p>
+            <p style={{color:'rgba(255,122,41,0.6)',fontSize:12,fontWeight:600}}>#OfficeSeStadiumtak</p>
           </div>
-          {[['League', ['Home', 'Schedule', 'Match Center', 'Teams', 'Points Table']], ['Info', ['About BCPL', 'FAQ', 'Contact Us', 'Eligibility', 'Code of Conduct']], ['Legal', ['Cricket Rulebook', 'Terms of Service', 'Privacy Policy']]].map(([title, links]) => (
-            <div key={title}>
-              <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 14 }}>{title}</div>
-              {links.map(l => <div key={l} style={{ marginBottom: 9 }}><a href="#" style={{ color: 'rgba(255,255,255,0.6)', fontSize: 13, textDecoration: 'none' }}>{l}</a></div>)}
-            </div>
-          ))}
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+            <div><div style={{color:'rgba(255,255,255,0.3)',fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:12}}>League</div>{['Schedule','Match Center','Teams','Points Table','Photos','Videos'].map(l=><div key={l} style={{marginBottom:8}}><a href="#" style={{color:'rgba(255,255,255,0.55)',fontSize:13,textDecoration:'none'}}>{l}</a></div>)}</div>
+            <div><div style={{color:'rgba(255,255,255,0.3)',fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:12}}>Info</div>{['About','FAQ','Contact','Terms','Privacy','Refunds','Eligibility'].map(l=><div key={l} style={{marginBottom:8}}><a href="#" style={{color:'rgba(255,255,255,0.55)',fontSize:13,textDecoration:'none'}}>{l}</a></div>)}</div>
+          </div>
         </div>
-        <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: 12 }}>© 2025 Kriparti Playing 11 Private Limited. All rights reserved.</div>
+        <div style={{borderTop:'1px solid rgba(255,255,255,0.06)',paddingTop:20,display:'flex',flexWrap:'wrap',gap:12,justifyContent:'space-between',alignItems:'center'}}>
+          <div style={{display:'flex',gap:8}}>{['📸','▶️','🐦','📘'].map((ic,i)=><a key={i} href="#" style={{width:36,height:36,borderRadius:9,background:'rgba(255,255,255,0.07)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,textDecoration:'none',border:'1px solid rgba(255,255,255,0.07)'}}>{ic}</a>)}</div>
+          <div style={{color:'rgba(255,255,255,0.28)',fontSize:11}}>© 2025 Kriparti Playing11 Pvt. Ltd.</div>
         </div>
       </div>
     </footer>
@@ -48,86 +94,71 @@ function Footer() {
 }
 
 export function EligibilityCriteria() {
-  const List = ({ items }: { items: string[] }) => (
-    <ul style={{ padding: 0, margin: '16px 0' }}>
-      {items.map((item, i) => (
-        <li key={i} style={{ position: 'relative', paddingLeft: 24, listStyle: 'none', marginBottom: 12 }}>
-          <span style={{ position: 'absolute', left: 0, top: 0, color: '#FF7A29' }}>●</span>
-          {item}
-        </li>
-      ))}
-    </ul>
-  );
-
   return (
     <div style={{ background: '#0A1628', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <style>{css}</style>
       <Navbar />
       
-      {/* Page Hero */}
-      <div style={{ background: '#0A1628', height: 240, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '0 20px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-        <h1 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 42, color: '#fff', margin: '0 0 16px 0', letterSpacing: '-0.02em' }}>ELIGIBILITY CRITERIA</h1>
-        <div style={{ color: '#FF7A29', fontFamily: 'Inter,sans-serif', fontSize: 18, fontWeight: 500, marginBottom: 16 }}>Who Can Play in BCPL T20?</div>
-        <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 13, fontFamily: 'Inter,sans-serif' }}>Last updated: June 2025</div>
+      {/* Hero */}
+      <div style={{ height: 200, background: 'linear-gradient(160deg, #0A1628, #0F2247)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '0 16px' }}>
+        <h1 className="hero-title">ELIGIBILITY CRITERIA</h1>
+        <div className="hero-subtitle">Who Can Play in BCPL T20?</div>
+        <div className="hero-meta">Season 5, 2025</div>
       </div>
 
       {/* Content Area */}
       <div style={{ background: '#FAF8F4', flex: 1 }}>
-        <div style={{ maxWidth: 800, margin: '0 auto', padding: '60px 40px', color: '#14203F', fontFamily: 'Inter,sans-serif', fontSize: 16, lineHeight: 1.8 }}>
+        <div style={{ maxWidth: 760, margin: '0 auto', padding: '40px 16px' }}>
           
-          <p style={{ marginBottom: 40, fontSize: 17 }}>The Bhartiya Corporate Premier League is strictly for working professionals. We maintain high standards of verification to ensure a level playing field for all participating corporate teams.</p>
-
-          <h2 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: 22, color: '#0F2247', margin: '40px 0 24px 0' }}>Who is Eligible to Play</h2>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 20, marginBottom: 48 }}>
+          <h2 className="doc-h2" style={{ marginTop: 0, paddingTop: 0, borderTop: 'none' }}>Who is Eligible</h2>
+          <div className="grid-2-3" style={{ marginBottom: 32 }}>
             {[
-              { title: "Working Professionals", desc: "Full-time, part-time, or self-employed individuals currently working in any industry." },
-              { title: "Age", desc: "18 years and above. No upper age limit — Your Cricket Dream Isn't Over!" },
-              { title: "All Roles", desc: "Batsman, Bowler, Wicket-Keeper, All-Rounder — all positions welcome." },
-              { title: "Any City", desc: "Applications from all 10 BCPL cities and surrounding regions accepted." },
-              { title: "All Skill Levels", desc: "From office-ground players to those who played at university/state level." },
-              { title: "Both Genders", desc: "Male and female cricketers are welcome to participate." }
-            ].map((item, i) => (
-              <div key={i} style={{ background: '#fff', borderRadius: 12, padding: 24, border: '1px solid rgba(46, 158, 79, 0.2)', boxShadow: '0 4px 12px rgba(0,0,0,0.02)' }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                  <div style={{ color: '#2E9E4F', fontSize: 20, lineHeight: 1.2 }}>✅</div>
-                  <div>
-                    <h4 style={{ margin: '0 0 4px 0', fontSize: 16, color: '#0F2247', fontWeight: 700 }}>{item.title}</h4>
-                    <p style={{ margin: 0, color: '#475569', fontSize: 14, lineHeight: 1.5 }}>{item.desc}</p>
-                  </div>
-                </div>
+              ["Working Professionals", "Full-time, part-time, or self-employed individuals in any industry"],
+              ["Age 18+", "No upper age limit. Your cricket dream isn't over at 35!"],
+              ["All Roles", "Batsman, Bowler, Wicket-Keeper, All-Rounder — all positions welcome"],
+              ["All Cities", "75+ trial cities across India. We come to you."],
+              ["All Skill Levels", "Office-ground to university/state-level players. All welcome."],
+              ["Both Genders", "Male and female cricketers are equally welcome"]
+            ].map(([title, desc]) => (
+              <div key={title} style={{ background: '#fff', border: '1px solid rgba(46,158,79,0.2)', borderRadius: 12, padding: 16 }}>
+                <div style={{ fontSize: 24, marginBottom: 8 }}>✅</div>
+                <div style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 14, color: '#0F2247', marginBottom: 4 }}>{title}</div>
+                <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: '#14203F', lineHeight: 1.5 }}>{desc}</div>
               </div>
             ))}
           </div>
 
-          <h2 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: 22, color: '#0F2247', margin: '40px 0 24px 0' }}>Who is NOT Eligible</h2>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 20, marginBottom: 48 }}>
+          <h2 className="doc-h2">Who is NOT Eligible</h2>
+          <div className="grid-2-3" style={{ marginBottom: 32 }}>
             {[
-              "Full-time students (except part-time employed students)",
-              "Professional cricketers under contract with BCCI, state associations, or IPL franchises",
-              "Previous season players who violated code of conduct (banned)",
-              "Individuals below 18 years of age"
-            ].map((item, i) => (
-              <div key={i} style={{ background: '#fff', borderRadius: 12, padding: 20, border: '1px solid rgba(232, 73, 63, 0.15)', display: 'flex', gap: 12, alignItems: 'center' }}>
-                <div style={{ color: '#E8493F', fontSize: 20, flexShrink: 0 }}>❌</div>
-                <div style={{ color: '#0F2247', fontSize: 15, fontWeight: 500 }}>{item}</div>
+              ["Full-time students", "(unless also employed part-time)"],
+              ["Professional cricketers", "Under BCCI, state, or IPL franchise contracts"],
+              ["Banned Players", "Players previously banned for code of conduct violations"],
+              ["Under 18s", "Anyone under 18 years of age"]
+            ].map(([title, desc]) => (
+              <div key={title} style={{ background: '#fff', border: '1px solid rgba(232,73,63,0.2)', borderRadius: 12, padding: 16 }}>
+                <div style={{ fontSize: 24, marginBottom: 8 }}>❌</div>
+                <div style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 14, color: '#0F2247', marginBottom: 4 }}>{title}</div>
+                <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: '#14203F', lineHeight: 1.5 }}>{desc}</div>
               </div>
             ))}
           </div>
 
-          <h2 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: 22, color: '#0F2247', margin: '40px 0 20px 0' }}>Required Documents</h2>
-          <p style={{ marginBottom: 16 }}>Players must upload clear copies of the following documents during registration:</p>
-          <List items={[
-            "Valid Government ID proof (Aadhaar / PAN / Passport)",
-            "Employment proof (Recent offer letter, salary slip, or valid business registration)",
-            "Recent passport-size photograph (High resolution)",
-            "A playing video (Minimum 2 minutes showcasing your skills)"
-          ]} />
+          <h2 className="doc-h2">Required Documents</h2>
+          <ul className="doc-ul">
+            <li className="doc-li">Valid government ID (Aadhaar / PAN / Passport / Driving Licence)</li>
+            <li className="doc-li">Proof of employment (offer letter, salary slip, or business registration)</li>
+            <li className="doc-li">Recent passport-size photograph</li>
+            <li className="doc-li">Playing video (2–5 minutes, showing your role in action)</li>
+          </ul>
 
-          <div style={{ background: 'rgba(255,122,41,0.08)', borderLeft: '4px solid #FF7A29', borderRadius: 8, padding: '24px', margin: '40px 0 20px 0' }}>
-            <h3 style={{ fontFamily: 'Inter,sans-serif', fontWeight: 700, fontSize: 14, color: '#FF7A29', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '0 0 8px 0' }}>Important Note on Fees</h3>
-            <p style={{ margin: 0, fontWeight: 500, color: '#0F2247' }}>The registration fee of ₹299/₹399 is the only payment you will ever make. There is no auction fee, no team fee, and no tournament fee.</p>
+          <div className="highlight-box">
+            ₹299 is the ONLY fee you will ever pay to BCPL. There is NO auction fee, NO team fee, NO kit fee, and NO tournament fee. What you pay at registration is what you pay — period.
           </div>
+
+          <p className="doc-p" style={{ fontSize: 14, color: 'rgba(20,32,63,0.7)' }}>
+            <strong>NOTE:</strong> BCPL reserves the right to verify employment documents before final selection. Misrepresentation of employment status results in immediate disqualification.
+          </p>
 
         </div>
       </div>

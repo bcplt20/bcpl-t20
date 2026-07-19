@@ -50,22 +50,32 @@ function Footer() {
   );
 }
 
-export function Teams() {
-  const groupA = [
-    { name: 'Delhi Dynamos', city: 'Delhi', color: '#1565C0', icon: '🏙️' },
-    { name: 'Mumbai Mavericks', city: 'Mumbai', color: '#C62828', icon: '🌊' },
-    { name: 'Pune Panthers', city: 'Pune', color: '#7B1FA2', icon: '🐾' },
-    { name: 'Kolkata Knights', city: 'Kolkata', color: '#424242', icon: '🌉' },
-    { name: 'Ahmedabad Lions', city: 'Ahmedabad', color: '#FF6F00', icon: '🦁' },
+export function TeamDetail() {
+  const teamColor = '#1565C0';
+  const players = [
+    { name: 'Rohit Sharma', role: 'BAT', company: 'Infosys', loc: 'Delhi', inits: 'RS' },
+    { name: 'Vikas Gupta', role: 'BOWL', company: 'HDFC Bank', loc: 'Delhi', inits: 'VG' },
+    { name: 'Priya Nair', role: 'WK', company: 'Amazon', loc: 'Delhi', inits: 'PN' },
+    { name: 'Arjun Singh', role: 'AR', company: 'Wipro', loc: 'Delhi', inits: 'AS' },
+    { name: 'Karan Mehta', role: 'BAT', company: 'Deloitte', loc: 'Delhi', inits: 'KM' },
+    { name: 'Deepika Roy', role: 'BOWL', company: 'TCS', loc: 'Delhi', inits: 'DR' },
+    { name: 'Suresh Kumar', role: 'BAT', company: 'Accenture', loc: 'Delhi', inits: 'SK' },
+    { name: 'Ankita Joshi', role: 'AR', company: 'Flipkart', loc: 'Delhi', inits: 'AJ' },
+    { name: 'Rajesh Verma', role: 'BOWL', company: 'Reliance', loc: 'Delhi', inits: 'RV' },
+    { name: 'Sneha Patel', role: 'BAT', company: 'ICICI', loc: 'Delhi', inits: 'SP' },
+    { name: 'Mohit Yadav', role: 'WK', company: 'Zomato', loc: 'Delhi', inits: 'MY' },
+    { name: 'Pooja Reddy', role: 'BOWL', company: 'Swiggy', loc: 'Delhi', inits: 'PR' }
   ];
-  
-  const groupB = [
-    { name: 'Bangalore Bulls', city: 'Bangalore', color: '#E65100', icon: '🐂' },
-    { name: 'Chennai Chiefs', city: 'Chennai', color: '#F9A825', icon: '🛡️' },
-    { name: 'Hyderabad Hawks', city: 'Hyderabad', color: '#2E7D32', icon: '🦅' },
-    { name: 'Jaipur Jaguars', city: 'Jaipur', color: '#AD1457', icon: '🐆' },
-    { name: 'Lucknow Nawabs', city: 'Lucknow', color: '#0277BD', icon: '👑' },
-  ];
+
+  const getRoleColor = (role) => {
+    switch(role) {
+      case 'BAT': return '#2E9E4F';
+      case 'BOWL': return '#E8493F';
+      case 'WK': return '#E8B23D';
+      case 'AR': return '#FF7A29';
+      default: return '#555';
+    }
+  };
 
   return (
     <div style={{background:'#0A1628',color:'#fff',minHeight:'100vh',fontFamily:'Inter,sans-serif'}}>
@@ -93,101 +103,87 @@ export function Teams() {
         .nav-links{display:none}
         .ham{display:flex}
         .bot-cta{display:flex}
-        .teams-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-        .teams-grid > div:last-child {grid-column: span 2; max-width: 50%; margin: 0 auto; width: 100%;}
-        .team-card{transition:all 0.25s;}
-        .team-card:hover{transform:translateY(-4px);}
+        
         @media(min-width:768px){
-          .wrap{padding:0 28px}.section{padding:60px 0}.h1{font-size:56px}.grid-2{grid-template-columns:repeat(2,1fr);gap:24px}.grid-3{grid-template-columns:repeat(2,1fr);gap:20px}.grid-4{grid-template-columns:repeat(4,1fr)}
-          .teams-grid{grid-template-columns:repeat(3,1fr);gap:16px}
-          .teams-grid > div:last-child {grid-column: auto; max-width: none; margin: 0; width: 100%;}
+          .wrap{padding:0 28px}.section{padding:60px 0}.h1{font-size:56px}.grid-2{grid-template-columns:repeat(2,1fr);gap:24px}.grid-3{grid-template-columns:repeat(2,1fr);gap:20px}.grid-4{grid-template-columns:repeat(3,1fr)}
         }
         @media(min-width:1024px){
-          .section{padding:80px 0}.h1{font-size:80px}.grid-3{grid-template-columns:repeat(3,1fr)}.nav-links{display:flex!important;align-items:center;gap:20px}.ham{display:none!important}.bot-cta{display:none!important}
-          .teams-grid{grid-template-columns:repeat(5,1fr);gap:20px}
+          .section{padding:80px 0}.h1{font-size:80px}.grid-3{grid-template-columns:repeat(3,1fr)}.grid-4{grid-template-columns:repeat(4,1fr)}.nav-links{display:flex!important;align-items:center;gap:20px}.ham{display:none!important}.bot-cta{display:none!important}
         }
         @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
         @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
       `}</style>
-      
+
       <Navbar active="teams" />
-      
+
       <main style={{paddingBottom:'96px'}}>
-        <div style={{height:260,background:'linear-gradient(160deg,#0A1628,#0F2247)',display:'flex',alignItems:'center',justifyContent:'center',textAlign:'center'}}>
+        <div style={{background:`linear-gradient(135deg,#0A1628,${teamColor} 150%)`,padding:'48px 16px'}}>
           <div className="wrap">
-            <div style={{display:'inline-block',background:'rgba(255,122,41,0.15)',color:'#FF7A29',padding:'6px 16px',borderRadius:20,fontSize:12,fontWeight:700,letterSpacing:'0.1em',marginBottom:16}}>THE FRANCHISES</div>
-            <h1 className="h1" style={{marginBottom:12}}>TEN CITIES. ONE DREAM.</h1>
-            <p style={{color:'rgba(255,255,255,0.7)',fontSize:16,maxWidth:600,margin:'0 auto'}}>Get picked and represent your city on the BCPL stage.</p>
+            <a href="#" style={{color:'#FF7A29',fontSize:13,textDecoration:'none',fontWeight:600,display:'inline-flex',alignItems:'center',gap:4,marginBottom:24}}>← All Teams</a>
+            
+            <div style={{display:'flex',flexDirection:'column',alignItems:'flex-start',gap:16}}>
+              <div style={{width:64,height:64,borderRadius:'50%',background:'#fff',display:'flex',alignItems:'center',justifyContent:'center',fontSize:32,boxShadow:'0 8px 24px rgba(0,0,0,0.2)'}}>🏏</div>
+              
+              <div>
+                <h1 className="h1" style={{fontSize:40,marginBottom:8}}>DELHI DYNAMOS</h1>
+                <div style={{display:'flex',alignItems:'center',gap:12,flexWrap:'wrap'}}>
+                  <span style={{color:'rgba(255,255,255,0.7)',fontSize:14}}>🏙️ Delhi | GROUP A</span>
+                  <span style={{background:'rgba(46,158,79,0.2)',color:'#2E9E4F',padding:'4px 10px',borderRadius:20,fontSize:11,fontWeight:700,border:'1px solid rgba(46,158,79,0.3)'}}>SEASON 5 ACTIVE</span>
+                </div>
+              </div>
+            </div>
+
+            <div style={{display:'flex',gap:12,marginTop:32,flexWrap:'wrap'}}>
+              <div className="glass" style={{padding:'8px 16px',borderRadius:20,fontSize:13,fontWeight:600}}>🏆 Group A Leaders</div>
+              <div className="glass" style={{padding:'8px 16px',borderRadius:20,fontSize:13,fontWeight:600}}>⭐ 12 Points</div>
+              <div className="glass" style={{padding:'8px 16px',borderRadius:20,fontSize:13,fontWeight:600}}>🏏 8 Matches</div>
+            </div>
           </div>
         </div>
 
         <div className="section wrap">
-          <div style={{marginBottom:60}}>
-            <h2 className="h2" style={{marginBottom:24,fontSize:20,letterSpacing:'0.05em'}}><span style={{color:'rgba(255,255,255,0.5)'}}>GROUP A</span> / FIVE FRANCHISES</h2>
-            <div className="teams-grid">
-              {groupA.map((team,i) => (
-                <div key={i} className="glass team-card" style={{padding:20,position:'relative',overflow:'hidden'}}>
-                  <div style={{position:'absolute',top:0,left:0,right:0,height:4,background:team.color}}></div>
-                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:80,color:team.color,opacity:0.1,position:'absolute',top:8,right:12,lineHeight:1}}>{team.name.charAt(0)}</div>
-                  
-                  <div style={{fontSize:24,marginBottom:8}}>{team.icon}</div>
-                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:16,color:'#fff',marginBottom:4,lineHeight:1.2}}>{team.name}</div>
-                  <div style={{fontFamily:'Inter,sans-serif',fontSize:13,color:'rgba(255,255,255,0.5)',marginBottom:16}}>{team.city}</div>
-                  
-                  <div style={{height:1,background:'rgba(255,255,255,0.1)',marginBottom:16}}></div>
-                  
-                  <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:12}}>
-                    <span style={{fontSize:12,color:'rgba(255,255,255,0.7)'}}>12 Players</span>
-                    <span style={{width:4,height:4,borderRadius:'50%',background:'rgba(255,255,255,0.3)'}}></span>
-                    <span style={{fontSize:12,color:'rgba(255,255,255,0.7)'}}>Qualified</span>
-                  </div>
-                  
-                  <div style={{display:'inline-block',background:'rgba(46,158,79,0.15)',color:'#2E9E4F',padding:'4px 8px',borderRadius:6,fontSize:10,fontWeight:700,marginBottom:16}}>SEASON 5 ACTIVE</div>
-                  
-                  <div style={{marginTop:8}}>
-                    <a href="#" style={{color:'#FF7A29',fontSize:13,textDecoration:'none',fontWeight:600}}>View Squad →</a>
+          <h2 className="h2" style={{marginBottom:24,fontSize:20,letterSpacing:'0.05em'}}>SQUAD ROSTER</h2>
+          <div className="grid-4">
+            {players.map((p,i) => (
+              <div key={i} className="glass" style={{padding:16,display:'flex',alignItems:'center',gap:12}}>
+                <div style={{width:48,height:48,borderRadius:'50%',background:teamColor,display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:18,color:'#fff',flexShrink:0}}>
+                  {p.inits}
+                </div>
+                <div>
+                  <div style={{fontFamily:'Inter,sans-serif',fontWeight:700,fontSize:15,color:'#fff',marginBottom:4,lineHeight:1.1}}>{p.name}</div>
+                  <div style={{display:'flex',alignItems:'center',gap:8}}>
+                    <span style={{background:getRoleColor(p.role),color:'#fff',fontSize:10,fontWeight:700,padding:'2px 6px',borderRadius:4,letterSpacing:'0.05em'}}>{p.role}</span>
+                    <span style={{fontSize:12,color:'rgba(255,255,255,0.5)',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{p.company} · {p.loc}</span>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <h2 className="h2" style={{marginBottom:24,fontSize:20,letterSpacing:'0.05em'}}><span style={{color:'rgba(255,255,255,0.5)'}}>GROUP B</span> / FIVE FRANCHISES</h2>
-            <div className="teams-grid">
-              {groupB.map((team,i) => (
-                <div key={i} className="glass team-card" style={{padding:20,position:'relative',overflow:'hidden'}}>
-                  <div style={{position:'absolute',top:0,left:0,right:0,height:4,background:team.color}}></div>
-                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:80,color:team.color,opacity:0.1,position:'absolute',top:8,right:12,lineHeight:1}}>{team.name.charAt(0)}</div>
-                  
-                  <div style={{fontSize:24,marginBottom:8}}>{team.icon}</div>
-                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:16,color:'#fff',marginBottom:4,lineHeight:1.2}}>{team.name}</div>
-                  <div style={{fontFamily:'Inter,sans-serif',fontSize:13,color:'rgba(255,255,255,0.5)',marginBottom:16}}>{team.city}</div>
-                  
-                  <div style={{height:1,background:'rgba(255,255,255,0.1)',marginBottom:16}}></div>
-                  
-                  <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:12}}>
-                    <span style={{fontSize:12,color:'rgba(255,255,255,0.7)'}}>12 Players</span>
-                    <span style={{width:4,height:4,borderRadius:'50%',background:'rgba(255,255,255,0.3)'}}></span>
-                    <span style={{fontSize:12,color:'rgba(255,255,255,0.7)'}}>Qualified</span>
-                  </div>
-                  
-                  <div style={{display:'inline-block',background:'rgba(46,158,79,0.15)',color:'#2E9E4F',padding:'4px 8px',borderRadius:6,fontSize:10,fontWeight:700,marginBottom:16}}>SEASON 5 ACTIVE</div>
-                  
-                  <div style={{marginTop:8}}>
-                    <a href="#" style={{color:'#FF7A29',fontSize:13,textDecoration:'none',fontWeight:600}}>View Squad →</a>
-                  </div>
-                </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
 
-        <div className="wrap section">
-          <div style={{background:'linear-gradient(135deg,#FF7A29,#E8611A)',padding:'48px 24px',textAlign:'center',borderRadius:20}}>
-            <p style={{color:'rgba(255,255,255,0.9)',fontWeight:600,marginBottom:8}}>Want to play for one of these franchises?</p>
-            <h2 className="h2" style={{color:'#fff',marginBottom:24}}>Register for ₹299 — get your shot at the auction</h2>
-            <button style={{background:'#fff',color:'#E8611A',height:52,borderRadius:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,border:'none',padding:'0 32px',fontSize:16,cursor:'pointer',boxShadow:'0 8px 16px rgba(0,0,0,0.1)'}}>Register Now →</button>
+        <div className="section wrap" style={{paddingTop:0}}>
+          <h2 className="h2" style={{marginBottom:24,fontSize:20,letterSpacing:'0.05em'}}>TEAM STATS</h2>
+          <div className="glass tscroll">
+            <table className="dtable">
+              <thead>
+                <tr>
+                  <th>Matches</th>
+                  <th>Wins</th>
+                  <th>Losses</th>
+                  <th>Points</th>
+                  <th>NRR</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>8</td>
+                  <td>6</td>
+                  <td>2</td>
+                  <td style={{fontWeight:700,color:'#FF7A29'}}>12</td>
+                  <td style={{color:'#2E9E4F'}}>+1.24</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
 

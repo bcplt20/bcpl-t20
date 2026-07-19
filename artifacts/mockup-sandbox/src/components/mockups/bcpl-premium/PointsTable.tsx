@@ -1,46 +1,79 @@
 import React from 'react';
 
+const commonStyles = `
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap');
+.wrap{max-width:1200px;margin:0 auto;padding:0 16px}
+.section{padding:40px 0}
+.h1{font-family:'Montserrat',sans-serif;font-weight:900;font-size:36px;line-height:1.05;color:#fff}
+.h2{font-family:'Montserrat',sans-serif;font-weight:800;font-size:22px;color:#fff}
+.glass{background:rgba(15,34,71,0.7);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.10);border-radius:16px}
+.btn-primary{background:linear-gradient(135deg,#FF7A29,#E8611A);border:none;border-radius:12px;color:#fff;font-weight:700;font-family:'Montserrat',sans-serif;cursor:pointer;box-shadow:0 6px 24px rgba(255,122,41,0.4);transition:transform 0.15s;min-height:48px;display:inline-flex;align-items:center;justify-content:center}
+.btn-primary:active{transform:scale(0.97)}
+.btn-wa{background:#2E9E4F;border:none;border-radius:12px;color:#fff;font-weight:700;cursor:pointer;min-height:48px;display:inline-flex;align-items:center;justify-content:center}
+.input-f{background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.12);border-radius:12px;color:#fff;padding:14px 16px;width:100%;font-family:'Inter',sans-serif;font-size:15px;outline:none;transition:border-color 0.2s;appearance:none}
+.input-f:focus{border-color:#FF7A29}
+.input-f::placeholder{color:rgba(255,255,255,0.3)}
+.input-f option{background:#0F2247;color:#fff}
+.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:16px;background:rgba(15,34,71,0.7);border:1px solid rgba(255,255,255,0.10)}
+.dtable{width:100%;border-collapse:collapse;min-width:560px}
+.dtable th{background:rgba(255,122,41,0.12);color:rgba(255,255,255,0.55);font-size:11px;text-transform:uppercase;letter-spacing:0.1em;padding:12px 14px;text-align:left;font-family:'Inter',sans-serif}
+.dtable td{padding:14px;border-bottom:1px solid rgba(255,255,255,0.05);font-size:14px;color:#fff;font-family:'Inter',sans-serif}
+.grid-2{display:grid;grid-template-columns:1fr;gap:14px}
+.grid-3{display:grid;grid-template-columns:1fr;gap:14px}
+.grid-4{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.nav-links{display:none}
+.ham{display:flex}
+.bot-cta{display:flex}
+@media(min-width:768px){.wrap{padding:0 28px}.section{padding:60px 0}.h1{font-size:56px}.grid-2{grid-template-columns:repeat(2,1fr);gap:24px}.grid-3{grid-template-columns:repeat(3,1fr);gap:20px}.grid-4{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:1024px){.section{padding:80px 0}.h1{font-size:80px}.nav-links{display:flex!important;align-items:center;gap:20px}.ham{display:none!important}.bot-cta{display:none!important}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+`;
+
 function Navbar({active=''}) {
-  const links=[['Home','home'],['Schedule','schedule'],['Match Center','matchcenter'],['Teams','teams'],['Points Table','points'],['About','about']];
+  const [open,setOpen]=React.useState(false);
+  const links=[['Home','home'],['Match Center','matchcenter'],['Teams','teams'],['About','about']];
   return (
-    <nav style={{position:'sticky',top:0,zIndex:100,background:'rgba(10,22,40,0.97)',backdropFilter:'blur(24px)',borderBottom:'1px solid rgba(255,255,255,0.08)',padding:'0 40px'}}>
-      <div style={{maxWidth:1200,margin:'0 auto',height:64,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-        <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,display:'flex',alignItems:'center'}}>
-          <span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff',marginLeft:4}}>T20</span>
-          <span style={{color:'rgba(255,255,255,0.3)',fontSize:10,fontWeight:600,marginLeft:10,fontFamily:'Inter,sans-serif',textTransform:'uppercase',letterSpacing:'0.12em'}}>Bhartiya Corporate Premier League</span>
+    <>
+      <nav style={{position:'sticky',top:0,zIndex:100,background:'rgba(10,22,40,0.97)',backdropFilter:'blur(24px)',borderBottom:'1px solid rgba(255,255,255,0.08)',boxShadow:'0 2px 0 0 rgba(255,122,41,0.2)'}}>
+        <div className="wrap" style={{height:60,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+          <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:20}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff',marginLeft:3}}>T20</span></div>
+          <div className="nav-links">{links.map(([l,k])=><a key={k} href="#" style={{color:active===k?'#FF7A29':'rgba(255,255,255,0.7)',fontWeight:600,fontSize:13.5,textDecoration:'none',fontFamily:'Inter,sans-serif',borderBottom:active===k?'2px solid #FF7A29':'2px solid transparent',paddingBottom:2}}>{l}</a>)}<button className="btn-primary" style={{padding:'9px 20px',fontSize:13.5,borderRadius:10,minHeight:'36px'}}>Register ₹299</button></div>
+          <button className="ham" onClick={()=>setOpen(o=>!o)} style={{flexDirection:'column',gap:5,background:'none',border:'none',cursor:'pointer',padding:8,zIndex:201}}>
+            <span style={{display:'block',width:22,height:2,background:'#fff',borderRadius:2,transition:'all 0.25s',transform:open?'rotate(45deg) translate(4px,4px)':''}}/>
+            <span style={{display:'block',width:22,height:2,background:'#fff',borderRadius:2,transition:'all 0.25s',opacity:open?0:1}}/>
+            <span style={{display:'block',width:22,height:2,background:'#fff',borderRadius:2,transition:'all 0.25s',transform:open?'rotate(-45deg) translate(4px,-4px)':''}}/>
+          </button>
         </div>
-        <div style={{display:'flex',gap:24,alignItems:'center'}}>
-          {links.map(([label,key])=>(
-            <a key={key} href="#" style={{color:active===key?'#FF7A29':'rgba(255,255,255,0.7)',fontWeight:600,fontSize:13.5,textDecoration:'none',fontFamily:'Inter,sans-serif',borderBottom:active===key?'2px solid #FF7A29':'2px solid transparent',paddingBottom:2,transition:'color 0.2s'}}>{label}</a>
-          ))}
-          <button style={{background:'linear-gradient(135deg,#FF7A29,#E8611A)',color:'#fff',border:'none',borderRadius:10,padding:'10px 22px',fontWeight:700,fontSize:13.5,cursor:'pointer',boxShadow:'0 4px 20px rgba(255,122,41,0.4)',fontFamily:'Inter,sans-serif'}}>Register ₹299</button>
-        </div>
-      </div>
-    </nav>
+      </nav>
+      {open&&(<div style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'rgba(6,16,30,0.99)',zIndex:200,display:'flex',flexDirection:'column',padding:'72px 24px 40px',overflowY:'auto'}}>
+        <button onClick={()=>setOpen(false)} style={{position:'absolute',top:16,right:16,background:'none',border:'none',color:'rgba(255,255,255,0.5)',fontSize:26,cursor:'pointer',lineHeight:1}}>✕</button>
+        <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,marginBottom:28}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff',marginLeft:3}}>T20</span></div>
+        {[['🏠 Home'],['🔴 Match Center'],['🏏 Teams'],['🤝 Sponsors'],['📷 Photos'],['▶️ Videos'],['ℹ️ About'],['❓ FAQ'],['✉️ Contact']].map(([l])=><a key={l} href="#" onClick={()=>setOpen(false)} style={{color:'rgba(255,255,255,0.85)',fontWeight:700,fontSize:19,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'13px 0',borderBottom:'1px solid rgba(255,255,255,0.07)'}}>{l}</a>)}
+        <button className="btn-primary" style={{marginTop:28,height:52,fontSize:16,borderRadius:14,width:'100%'}}>📝 Register for ₹299 →</button>
+      </div>)}
+    </>
   );
 }
 
 function Footer() {
   return (
-    <footer style={{background:'#06101E',borderTop:'1px solid rgba(255,255,255,0.07)',padding:'56px 40px 32px',fontFamily:'Inter,sans-serif'}}>
-      <div style={{maxWidth:1200,margin:'0 auto'}}>
-        <div style={{display:'grid',gridTemplateColumns:'1.4fr 1fr 1fr 1fr',gap:40,marginBottom:40}}>
+    <footer style={{background:'#06101E',borderTop:'1px solid rgba(255,255,255,0.06)'}}>
+      <div className="wrap" style={{paddingTop:40,paddingBottom:40}}>
+        <div className="grid-2" style={{gap:28,marginBottom:28}}>
           <div>
-            <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,marginBottom:10}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff',marginLeft:4}}>T20</span></div>
-            <p style={{color:'rgba(255,255,255,0.45)',fontSize:12.5,lineHeight:1.7,margin:'0 0 20px'}}>Bhartiya Corporate Premier League. World's largest corporate cricket league for working professionals.</p>
-            <div style={{display:'flex',gap:8}}>
-              {['📸','▶️','🐦','📘'].map((ic,i)=><a key={i} href="#" style={{width:34,height:34,borderRadius:8,background:'rgba(255,255,255,0.07)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:13,textDecoration:'none',border:'1px solid rgba(255,255,255,0.08)'}}>{ic}</a>)}
-            </div>
+            <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,marginBottom:10}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff',marginLeft:4}}>T20</span></div>
+            <p style={{color:'rgba(255,255,255,0.45)',fontSize:13,lineHeight:1.7,marginBottom:8,maxWidth:280,fontFamily:'Inter,sans-serif'}}>Bharatiya Corporate Premier League — world\'s largest corporate cricket league for working professionals.</p>
+            <p style={{color:'rgba(255,122,41,0.6)',fontSize:12,fontWeight:600,fontFamily:'Inter,sans-serif'}}>#OfficeSeStadiumtak</p>
           </div>
-          {[['League',['Home','Schedule','Match Center','Teams','Points Table']],['Info',['About BCPL','FAQ','Contact Us','Eligibility','Code of Conduct']],['Legal',['Cricket Rulebook','Terms of Service','Privacy Policy']]].map(([title,links])=>(
-            <div key={title}>
-              <div style={{color:'rgba(255,255,255,0.3)',fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.12em',marginBottom:14}}>{title}</div>
-              {links.map(l=><div key={l} style={{marginBottom:9}}><a href="#" style={{color:'rgba(255,255,255,0.6)',fontSize:13,textDecoration:'none'}}>{l}</a></div>)}
-            </div>
-          ))}
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,fontFamily:'Inter,sans-serif'}}>
+            <div><div style={{color:'rgba(255,255,255,0.3)',fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:12}}>League</div>{['Schedule','Match Center','Teams','Points Table','Photos','Videos'].map(l=><div key={l} style={{marginBottom:8}}><a href="#" style={{color:'rgba(255,255,255,0.55)',fontSize:13,textDecoration:'none'}}>{l}</a></div>)}</div>
+            <div><div style={{color:'rgba(255,255,255,0.3)',fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:12}}>Info</div>{['About','FAQ','Contact','Terms','Privacy','Refunds','Eligibility'].map(l=><div key={l} style={{marginBottom:8}}><a href="#" style={{color:'rgba(255,255,255,0.55)',fontSize:13,textDecoration:'none'}}>{l}</a></div>)}</div>
+          </div>
         </div>
-        <div style={{borderTop:'1px solid rgba(255,255,255,0.06)',paddingTop:20,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-          <div style={{color:'rgba(255,255,255,0.3)',fontSize:12}}>© 2025 Kriparti Playing 11 Private Limited. All rights reserved.</div>
+        <div style={{borderTop:'1px solid rgba(255,255,255,0.06)',paddingTop:20,display:'flex',flexWrap:'wrap',gap:12,justifyContent:'space-between',alignItems:'center'}}>
+          <div style={{display:'flex',gap:8}}>{['📸','▶️','🐦','📘'].map((ic,i)=><a key={i} href="#" style={{width:36,height:36,borderRadius:9,background:'rgba(255,255,255,0.07)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,textDecoration:'none',border:'1px solid rgba(255,255,255,0.07)'}}>{ic}</a>)}</div>
+          <div style={{color:'rgba(255,255,255,0.28)',fontSize:11,fontFamily:'Inter,sans-serif'}}>© 2025 Kriparti Playing11 Pvt. Ltd.</div>
         </div>
       </div>
     </footer>
@@ -48,147 +81,263 @@ function Footer() {
 }
 
 export function PointsTable() {
-  const groupA = [
-    {rank:1, name:'Delhi Dynamos', city:'Delhi', color:'#1565C0', p:8, w:6, l:2, t:0, nr:0, pts:12, nrr:1.24},
-    {rank:2, name:'Mumbai Mavericks', city:'Mumbai', color:'#C62828', p:8, w:5, l:3, t:0, nr:0, pts:10, nrr:0.87},
-    {rank:3, name:'Pune Panthers', city:'Pune', color:'#6A1B9A', p:8, w:4, l:4, t:0, nr:0, pts:8, nrr:0.12},
-    {rank:4, name:'Kolkata Knights', city:'Kolkata', color:'#424242', p:8, w:3, l:5, t:0, nr:0, pts:6, nrr:-0.45},
-    {rank:5, name:'Ahmedabad Aces', city:'Ahmedabad', color:'#4E342E', p:8, w:2, l:6, t:0, nr:0, pts:4, nrr:-1.78},
-  ];
-
-  const groupB = [
-    {rank:1, name:'Bangalore Bulls', city:'Bangalore', color:'#E65100', p:8, w:7, l:1, t:0, nr:0, pts:14, nrr:1.85},
-    {rank:2, name:'Chennai Chiefs', city:'Chennai', color:'#F9A825', p:8, w:5, l:3, t:0, nr:0, pts:10, nrr:0.54},
-    {rank:3, name:'Hyderabad Hawks', city:'Hyderabad', color:'#2E7D32', p:8, w:4, l:4, t:0, nr:0, pts:8, nrr:-0.11},
-    {rank:4, name:'Jaipur Jaguars', city:'Jaipur', color:'#AD1457', p:8, w:3, l:5, t:0, nr:0, pts:6, nrr:-0.78},
-    {rank:5, name:'Surat Stallions', city:'Surat', color:'#0277BD', p:8, w:1, l:7, t:0, nr:0, pts:2, nrr:-1.52},
-  ];
-
-  const renderTable = (data, title) => (
-    <div style={{marginBottom:60}}>
-      <div style={{display:'flex',alignItems:'center',gap:16,marginBottom:24}}>
-        <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,margin:0,color:'#fff'}}>{title}</h2>
-      </div>
-      
-      <div style={{background:'rgba(15,34,71,0.6)',backdropFilter:'blur(20px)',borderRadius:16,border:'1px solid rgba(255,255,255,0.1)',overflow:'hidden',boxShadow:'0 20px 60px rgba(0,0,0,0.4)'}}>
-        <div style={{display:'grid',gridTemplateColumns:'60px 2fr 1.5fr repeat(6, 1fr) 1.5fr',background:'rgba(255,122,41,0.15)',color:'rgba(255,122,41,0.9)',padding:'16px 20px',fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',borderBottom:'1px solid rgba(255,255,255,0.05)'}}>
-          <div>Rank</div>
-          <div>Team</div>
-          <div>City</div>
-          <div style={{textAlign:'center'}}>P</div>
-          <div style={{textAlign:'center'}}>W</div>
-          <div style={{textAlign:'center'}}>L</div>
-          <div style={{textAlign:'center'}}>T</div>
-          <div style={{textAlign:'center'}}>NR</div>
-          <div style={{textAlign:'center'}}>Pts</div>
-          <div style={{textAlign:'right'}}>NRR</div>
-        </div>
-        
-        {data.map((row, idx) => (
-          <div key={idx} style={{
-            display:'grid',
-            gridTemplateColumns:'60px 2fr 1.5fr repeat(6, 1fr) 1.5fr',
-            padding:'16px 20px',
-            alignItems:'center',
-            fontSize:14,
-            background: row.rank === 1 ? 'rgba(232,178,61,0.08)' : (idx % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.025)'),
-            borderLeft: row.rank === 1 ? '3px solid #E8B23D' : '3px solid transparent',
-            borderBottom: idx < data.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none'
-          }}>
-            <div style={{fontWeight:row.rank===1?800:600,color:row.rank===1?'#E8B23D':'rgba(255,255,255,0.6)'}}>{row.rank}</div>
-            <div style={{display:'flex',alignItems:'center',gap:12,fontWeight:700,color:'#fff'}}>
-              <div style={{width:10,height:10,borderRadius:'50%',background:row.color,boxShadow:`0 0 8px ${row.color}`}}></div>
-              {row.rank === 1 && <span style={{fontSize:16}}>🏆</span>}
-              {row.name}
-            </div>
-            <div style={{color:'rgba(255,255,255,0.6)',fontSize:13}}>{row.city}</div>
-            <div style={{textAlign:'center',color:'rgba(255,255,255,0.8)'}}>{row.p}</div>
-            <div style={{textAlign:'center',color:'rgba(255,255,255,0.8)'}}>{row.w}</div>
-            <div style={{textAlign:'center',color:'rgba(255,255,255,0.8)'}}>{row.l}</div>
-            <div style={{textAlign:'center',color:'rgba(255,255,255,0.4)'}}>{row.t}</div>
-            <div style={{textAlign:'center',color:'rgba(255,255,255,0.4)'}}>{row.nr}</div>
-            <div style={{textAlign:'center',fontWeight:800,color:row.rank===1?'#E8B23D':'#fff',fontSize:15}}>{row.pts}</div>
-            <div style={{textAlign:'right',fontWeight:600,color:row.nrr>0?'#2E9E4F':'#E8493F'}}>{row.nrr>0?'+':''}{row.nrr.toFixed(2)}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  const [activeTab, setActiveTab] = React.useState('Group A');
+  const tabs = ['GROUP A', 'GROUP B'];
 
   return (
-    <div style={{background:'#0A1628',minHeight:'100vh',color:'#fff',fontFamily:'Inter,sans-serif'}}>
-      <Navbar active="points" />
+    <div style={{backgroundColor:'#0A1628',minHeight:'100vh',fontFamily:'Inter,sans-serif',color:'#fff'}}>
+      <style dangerouslySetInnerHTML={{__html: commonStyles}} />
+      <Navbar active="pointstable" />
       
-      <section style={{height:280,background:'linear-gradient(135deg,#0F2247,#1a3a6e)',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center',textAlign:'center',padding:'0 20px',borderBottom:'1px solid rgba(255,255,255,0.05)'}}>
-        <div style={{color:'#FF7A29',fontWeight:800,fontSize:12,letterSpacing:'0.15em',textTransform:'uppercase',marginBottom:16,background:'rgba(255,122,41,0.1)',padding:'4px 12px',borderRadius:20}}>POINTS TABLE</div>
-        <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:52,color:'#fff',margin:'0 0 16px 0',lineHeight:1.1}}>SEASON 5 STANDINGS</h1>
-        <p style={{color:'rgba(255,255,255,0.7)',fontSize:16,maxWidth:600,margin:0,lineHeight:1.6}}>The race to the playoffs. Only the top two teams from each group advance.</p>
-      </section>
-
-      <main style={{maxWidth:1100,margin:'0 auto',padding:'60px 40px'}}>
-        
-        <div style={{display:'flex',gap:12,marginBottom:40}}>
-          <div style={{background:'#FF7A29',color:'#fff',padding:'8px 24px',borderRadius:20,fontWeight:700,fontSize:14,cursor:'default',boxShadow:'0 4px 16px rgba(255,122,41,0.3)'}}>GROUP A</div>
-          <div style={{background:'#FF7A29',color:'#fff',padding:'8px 24px',borderRadius:20,fontWeight:700,fontSize:14,cursor:'default',boxShadow:'0 4px 16px rgba(255,122,41,0.3)'}}>GROUP B</div>
-        </div>
-
-        {renderTable(groupA, "GROUP A")}
-        {renderTable(groupB, "GROUP B")}
-
-        <section style={{background:'#06101E',borderRadius:16,padding:40,border:'1px solid rgba(255,255,255,0.08)',marginTop:20}}>
-          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:32}}>
-            <div>
-              <h3 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,margin:'0 0 8px 0',color:'#fff'}}>PLAYOFF PICTURE</h3>
-              <p style={{margin:0,color:'rgba(255,255,255,0.5)',fontSize:14}}>Top 2 from each group qualify for playoffs</p>
-            </div>
-            <div style={{textAlign:'right'}}>
-              <div style={{color:'#E8B23D',fontWeight:800,fontSize:14,marginBottom:4}}>GRAND FINAL</div>
-              <div style={{color:'rgba(255,255,255,0.7)',fontSize:13}}>Sat 30 Aug • DY Patil Stadium</div>
-            </div>
-          </div>
-          
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:24}}>
-            <div style={{background:'rgba(255,255,255,0.03)',borderRadius:12,padding:24,border:'1px solid rgba(255,255,255,0.05)'}}>
-              <div style={{color:'rgba(255,255,255,0.4)',fontSize:11,fontWeight:700,letterSpacing:'0.1em',marginBottom:16}}>SEMI FINAL 1</div>
-              <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',paddingBottom:16,borderBottom:'1px dashed rgba(255,255,255,0.1)'}}>
-                <div style={{display:'flex',alignItems:'center',gap:12}}>
-                  <div style={{width:32,height:32,background:'#1565C0',borderRadius:6,display:'flex',alignItems:'center',justifyContent:'center',fontWeight:800,fontSize:14}}>D</div>
-                  <span style={{fontWeight:700}}>Delhi Dynamos</span>
-                </div>
-                <div style={{color:'rgba(255,255,255,0.4)',fontSize:12,fontWeight:600}}>A1</div>
-              </div>
-              <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',paddingTop:16}}>
-                <div style={{display:'flex',alignItems:'center',gap:12,color:'rgba(255,255,255,0.4)'}}>
-                  <div style={{width:32,height:32,background:'rgba(255,255,255,0.1)',borderRadius:6,display:'flex',alignItems:'center',justifyContent:'center',fontWeight:800,fontSize:14}}>?</div>
-                  <span style={{fontWeight:600}}>Group B Runner-up</span>
-                </div>
-                <div style={{color:'rgba(255,255,255,0.3)',fontSize:12,fontWeight:600}}>B2</div>
-              </div>
-            </div>
-
-            <div style={{background:'rgba(255,255,255,0.03)',borderRadius:12,padding:24,border:'1px solid rgba(255,255,255,0.05)'}}>
-              <div style={{color:'rgba(255,255,255,0.4)',fontSize:11,fontWeight:700,letterSpacing:'0.1em',marginBottom:16}}>SEMI FINAL 2</div>
-              <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',paddingBottom:16,borderBottom:'1px dashed rgba(255,255,255,0.1)'}}>
-                <div style={{display:'flex',alignItems:'center',gap:12}}>
-                  <div style={{width:32,height:32,background:'#E65100',borderRadius:6,display:'flex',alignItems:'center',justifyContent:'center',fontWeight:800,fontSize:14}}>B</div>
-                  <span style={{fontWeight:700}}>Bangalore Bulls</span>
-                </div>
-                <div style={{color:'rgba(255,255,255,0.4)',fontSize:12,fontWeight:600}}>B1</div>
-              </div>
-              <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',paddingTop:16}}>
-                <div style={{display:'flex',alignItems:'center',gap:12,color:'rgba(255,255,255,0.4)'}}>
-                  <div style={{width:32,height:32,background:'rgba(255,255,255,0.1)',borderRadius:6,display:'flex',alignItems:'center',justifyContent:'center',fontWeight:800,fontSize:14}}>?</div>
-                  <span style={{fontWeight:600}}>Group A Runner-up</span>
-                </div>
-                <div style={{color:'rgba(255,255,255,0.3)',fontSize:12,fontWeight:600}}>A2</div>
-              </div>
-            </div>
+      <div style={{paddingBottom:'96px'}}>
+        <section style={{padding:'40px 0 20px',textAlign:'center'}}>
+          <div className="wrap">
+            <h1 className="h1" style={{fontSize:'32px',marginBottom:'8px'}}>POINTS TABLE</h1>
+            <div style={{color:'rgba(255,255,255,0.6)',fontSize:'16px',fontWeight:500}}>Season 5 Standings</div>
           </div>
         </section>
 
-      </main>
+        {/* Group Tabs */}
+        <div style={{position:'sticky',top:'60px',background:'rgba(10,22,40,0.9)',backdropFilter:'blur(20px)',zIndex:90,padding:'12px 0'}}>
+          <div className="wrap" style={{display:'flex',gap:'8px'}}>
+            {tabs.map(t => (
+              <button 
+                key={t}
+                onClick={() => setActiveTab(t)}
+                className={activeTab === t ? 'btn-primary' : 'glass'}
+                style={{
+                  flex:1,
+                  minHeight:0,
+                  padding:'10px 16px',
+                  borderRadius:'12px',
+                  fontSize:'14px',
+                  fontWeight:700,
+                  color: activeTab === t ? '#fff' : 'rgba(255,255,255,0.7)',
+                  border: activeTab === t ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                  boxShadow: activeTab === t ? '0 4px 12px rgba(255,122,41,0.3)' : 'none',
+                  cursor:'pointer'
+                }}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <section className="section" style={{paddingTop:'24px'}}>
+          <div className="wrap">
+            
+            {/* GROUP A */}
+            <div style={{marginBottom:'40px', display: activeTab === 'GROUP A' ? 'block' : 'none'}}>
+              <h3 style={{color:'#fff',fontWeight:800,fontSize:'16px',marginBottom:'16px',display:'flex',alignItems:'center',gap:'8px'}}>
+                <span style={{display:'block',width:'12px',height:'12px',borderRadius:'50%',background:'#1565C0'}}></span>
+                GROUP A
+              </h3>
+              
+              <div className="tscroll" style={{marginBottom:'16px'}}>
+                <table className="dtable">
+                  <thead>
+                    <tr>
+                      <th style={{width:'32px'}}>#</th>
+                      <th>TEAM</th>
+                      <th>P</th>
+                      <th>W</th>
+                      <th>L</th>
+                      <th>T/NR</th>
+                      <th>PTS</th>
+                      <th>NRR</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr style={{background:'rgba(232,178,61,0.06)',borderLeft:'3px solid #E8B23D'}}>
+                      <td>🏆</td>
+                      <td style={{fontWeight:800}}><span style={{display:'inline-block',width:'8px',height:'8px',borderRadius:'50%',background:'#1565C0',marginRight:'8px'}}></span>Delhi Dynamos</td>
+                      <td>8</td>
+                      <td>6</td>
+                      <td>2</td>
+                      <td>0</td>
+                      <td style={{fontWeight:800,color:'#E8B23D',fontSize:'16px'}}>12</td>
+                      <td style={{color:'#2E9E4F'}}>+1.24</td>
+                    </tr>
+                    <tr>
+                      <td style={{color:'rgba(255,255,255,0.5)'}}>2</td>
+                      <td style={{fontWeight:600}}><span style={{display:'inline-block',width:'8px',height:'8px',borderRadius:'50%',background:'#C62828',marginRight:'8px'}}></span>Mumbai Mavericks</td>
+                      <td>8</td>
+                      <td>5</td>
+                      <td>3</td>
+                      <td>0</td>
+                      <td style={{fontWeight:700,fontSize:'15px'}}>10</td>
+                      <td style={{color:'#2E9E4F'}}>+0.87</td>
+                    </tr>
+                    <tr style={{background:'rgba(255,255,255,0.02)'}}>
+                      <td colSpan={8} style={{padding:'8px 14px',fontSize:'11px',fontWeight:700,color:'rgba(255,255,255,0.4)',textAlign:'center',letterSpacing:'0.1em'}}>
+                        — QUALIFIED FOR PLAYOFFS —
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style={{color:'rgba(255,255,255,0.5)'}}>3</td>
+                      <td style={{fontWeight:500}}><span style={{display:'inline-block',width:'8px',height:'8px',borderRadius:'50%',background:'#7B1FA2',marginRight:'8px'}}></span>Pune Panthers</td>
+                      <td>8</td>
+                      <td>4</td>
+                      <td>4</td>
+                      <td>0</td>
+                      <td style={{fontWeight:600}}>8</td>
+                      <td style={{color:'#2E9E4F'}}>+0.12</td>
+                    </tr>
+                    <tr>
+                      <td style={{color:'rgba(255,255,255,0.5)'}}>4</td>
+                      <td style={{fontWeight:500}}><span style={{display:'inline-block',width:'8px',height:'8px',borderRadius:'50%',background:'#424242',marginRight:'8px'}}></span>Kolkata Knights</td>
+                      <td>8</td>
+                      <td>3</td>
+                      <td>5</td>
+                      <td>0</td>
+                      <td style={{fontWeight:600}}>6</td>
+                      <td style={{color:'#E8493F'}}>-0.45</td>
+                    </tr>
+                    <tr>
+                      <td style={{color:'rgba(255,255,255,0.5)'}}>5</td>
+                      <td style={{fontWeight:500}}><span style={{display:'inline-block',width:'8px',height:'8px',borderRadius:'50%',background:'#FF6F00',marginRight:'8px'}}></span>Ahmedabad Lions</td>
+                      <td>8</td>
+                      <td>2</td>
+                      <td>6</td>
+                      <td>0</td>
+                      <td style={{fontWeight:600}}>4</td>
+                      <td style={{color:'#E8493F'}}>-1.78</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* GROUP B */}
+            <div style={{marginBottom:'40px', display: activeTab === 'GROUP B' ? 'block' : 'none'}}>
+              <h3 style={{color:'#fff',fontWeight:800,fontSize:'16px',marginBottom:'16px',display:'flex',alignItems:'center',gap:'8px'}}>
+                <span style={{display:'block',width:'12px',height:'12px',borderRadius:'50%',background:'#E65100'}}></span>
+                GROUP B
+              </h3>
+              
+              <div className="tscroll" style={{marginBottom:'16px'}}>
+                <table className="dtable">
+                  <thead>
+                    <tr>
+                      <th style={{width:'32px'}}>#</th>
+                      <th>TEAM</th>
+                      <th>P</th>
+                      <th>W</th>
+                      <th>L</th>
+                      <th>T/NR</th>
+                      <th>PTS</th>
+                      <th>NRR</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr style={{background:'rgba(232,178,61,0.06)',borderLeft:'3px solid #E8B23D'}}>
+                      <td>🏆</td>
+                      <td style={{fontWeight:800}}><span style={{display:'inline-block',width:'8px',height:'8px',borderRadius:'50%',background:'#E65100',marginRight:'8px'}}></span>Bangalore Bulls</td>
+                      <td>8</td>
+                      <td>7</td>
+                      <td>1</td>
+                      <td>0</td>
+                      <td style={{fontWeight:800,color:'#E8B23D',fontSize:'16px'}}>14</td>
+                      <td style={{color:'#2E9E4F'}}>+1.85</td>
+                    </tr>
+                    <tr>
+                      <td style={{color:'rgba(255,255,255,0.5)'}}>2</td>
+                      <td style={{fontWeight:600}}><span style={{display:'inline-block',width:'8px',height:'8px',borderRadius:'50%',background:'#F9A825',marginRight:'8px'}}></span>Chennai Chiefs</td>
+                      <td>8</td>
+                      <td>5</td>
+                      <td>3</td>
+                      <td>0</td>
+                      <td style={{fontWeight:700,fontSize:'15px'}}>10</td>
+                      <td style={{color:'#2E9E4F'}}>+0.54</td>
+                    </tr>
+                    <tr style={{background:'rgba(255,255,255,0.02)'}}>
+                      <td colSpan={8} style={{padding:'8px 14px',fontSize:'11px',fontWeight:700,color:'rgba(255,255,255,0.4)',textAlign:'center',letterSpacing:'0.1em'}}>
+                        — QUALIFIED FOR PLAYOFFS —
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style={{color:'rgba(255,255,255,0.5)'}}>3</td>
+                      <td style={{fontWeight:500}}><span style={{display:'inline-block',width:'8px',height:'8px',borderRadius:'50%',background:'#2E7D32',marginRight:'8px'}}></span>Hyderabad Hawks</td>
+                      <td>8</td>
+                      <td>4</td>
+                      <td>4</td>
+                      <td>0</td>
+                      <td style={{fontWeight:600}}>8</td>
+                      <td style={{color:'#E8493F'}}>-0.11</td>
+                    </tr>
+                    <tr>
+                      <td style={{color:'rgba(255,255,255,0.5)'}}>4</td>
+                      <td style={{fontWeight:500}}><span style={{display:'inline-block',width:'8px',height:'8px',borderRadius:'50%',background:'#AD1457',marginRight:'8px'}}></span>Jaipur Jaguars</td>
+                      <td>8</td>
+                      <td>3</td>
+                      <td>5</td>
+                      <td>0</td>
+                      <td style={{fontWeight:600}}>6</td>
+                      <td style={{color:'#E8493F'}}>-0.78</td>
+                    </tr>
+                    <tr>
+                      <td style={{color:'rgba(255,255,255,0.5)'}}>5</td>
+                      <td style={{fontWeight:500}}><span style={{display:'inline-block',width:'8px',height:'8px',borderRadius:'50%',background:'#0277BD',marginRight:'8px'}}></span>Lucknow Nawabs</td>
+                      <td>8</td>
+                      <td>1</td>
+                      <td>7</td>
+                      <td>0</td>
+                      <td style={{fontWeight:600}}>2</td>
+                      <td style={{color:'#E8493F'}}>-1.52</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Playoff Picture */}
+            <div style={{marginBottom:'24px'}}>
+              <h3 style={{color:'#E8B23D',fontWeight:800,fontSize:'14px',letterSpacing:'0.05em',marginBottom:'16px'}}>
+                PLAYOFF PICTURE
+              </h3>
+              
+              <div className="grid-2">
+                <div className="glass" style={{padding:'16px',border:'1px solid rgba(255,255,255,0.15)'}}>
+                  <div style={{color:'rgba(255,255,255,0.5)',fontSize:'11px',fontWeight:700,marginBottom:'8px'}}>SEMI-FINAL 1</div>
+                  <div style={{fontSize:'13px',fontWeight:600}}><span style={{color:'rgba(255,255,255,0.4)'}}>Grp A #1</span> Delhi Dynamos</div>
+                  <div style={{color:'rgba(255,255,255,0.3)',fontSize:'11px',margin:'4px 0'}}>VS</div>
+                  <div style={{fontSize:'13px',fontWeight:600}}><span style={{color:'rgba(255,255,255,0.4)'}}>Grp B #2</span> Chennai Chiefs</div>
+                </div>
+
+                <div className="glass" style={{padding:'16px',border:'1px solid rgba(255,255,255,0.15)'}}>
+                  <div style={{color:'rgba(255,255,255,0.5)',fontSize:'11px',fontWeight:700,marginBottom:'8px'}}>SEMI-FINAL 2</div>
+                  <div style={{fontSize:'13px',fontWeight:600}}><span style={{color:'rgba(255,255,255,0.4)'}}>Grp B #1</span> Bangalore Bulls</div>
+                  <div style={{color:'rgba(255,255,255,0.3)',fontSize:'11px',margin:'4px 0'}}>VS</div>
+                  <div style={{fontSize:'13px',fontWeight:600}}><span style={{color:'rgba(255,255,255,0.4)'}}>Grp A #2</span> Mumbai Mavericks</div>
+                </div>
+              </div>
+
+              <div className="glass" style={{marginTop:'14px',padding:'20px',textAlign:'center',background:'linear-gradient(135deg, rgba(232,178,61,0.1), rgba(15,34,71,0.5))',border:'1px solid rgba(232,178,61,0.3)'}}>
+                <div style={{color:'#E8B23D',fontSize:'12px',fontWeight:800,marginBottom:'8px'}}>GRAND FINAL</div>
+                <div style={{fontSize:'15px',fontWeight:700,marginBottom:'4px'}}>Winner SF1 <span style={{color:'rgba(255,255,255,0.3)',margin:'0 4px',fontSize:'12px'}}>VS</span> Winner SF2</div>
+                <div style={{color:'#E8B23D',fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:'14px',marginTop:'12px'}}>Grand Final Date: 30 August 2025</div>
+              </div>
+            </div>
+
+            {/* How points work */}
+            <div className="glass" style={{padding:'16px',background:'rgba(255,255,255,0.03)',border:'1px dashed rgba(255,255,255,0.15)'}}>
+              <div style={{fontSize:'12px',color:'rgba(255,255,255,0.7)',fontWeight:500,lineHeight:1.6}}>
+                <strong style={{color:'#fff'}}>Points System:</strong> Win = 2 pts | Tie/NR = 1 pt each | Loss = 0 pts<br/>
+                <span style={{color:'rgba(255,255,255,0.5)'}}>Net Run Rate (NRR) determines ranking if points are equal.</span>
+              </div>
+            </div>
+
+          </div>
+        </section>
+      </div>
 
       <Footer />
+
+      <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:199,padding:'10px 16px 16px',background:'rgba(6,16,30,0.98)',backdropFilter:'blur(20px)',borderTop:'1px solid rgba(255,255,255,0.08)',gap:10}}>
+        <button className="btn-primary" style={{flex:2,height:50,fontSize:15}}>Register ₹299 →</button>
+        <button className="btn-wa" style={{flex:1,height:50,fontSize:14,borderRadius:12}}>💬 WhatsApp</button>
+      </div>
     </div>
   );
 }

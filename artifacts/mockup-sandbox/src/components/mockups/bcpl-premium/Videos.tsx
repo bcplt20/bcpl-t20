@@ -50,22 +50,19 @@ function Footer() {
   );
 }
 
-export function Teams() {
-  const groupA = [
-    { name: 'Delhi Dynamos', city: 'Delhi', color: '#1565C0', icon: '🏙️' },
-    { name: 'Mumbai Mavericks', city: 'Mumbai', color: '#C62828', icon: '🌊' },
-    { name: 'Pune Panthers', city: 'Pune', color: '#7B1FA2', icon: '🐾' },
-    { name: 'Kolkata Knights', city: 'Kolkata', color: '#424242', icon: '🌉' },
-    { name: 'Ahmedabad Lions', city: 'Ahmedabad', color: '#FF6F00', icon: '🦁' },
+export function Videos() {
+  const videos = [
+    { title: "Join us in welcoming Ahmedabad Lions for Season 4 of #BCPL", date: "Nov 12, 2025", views: "24K", dur: "2:34" },
+    { title: "Lucknow ke Nawab aa gaye hain! 🔥", date: "Nov 12, 2025", views: "18K", dur: "1:45" },
+    { title: "Punjab de Warriors are ready to take charge! 🔥", date: "Nov 12, 2025", views: "15K", dur: "1:22" },
+    { title: "Introducing the Mumbai Mavericks — Season 4! 🙌", date: "Nov 12, 2025", views: "22K", dur: "2:01" },
+    { title: "BCPL Season 5 — Grand Opening Ceremony", date: "Jul 2025", views: "45K", dur: "45:10" },
+    { title: "Delhi Dynamos vs Bangalore Bulls — Match Highlights", date: "Jul 5, 2025", views: "31K", dur: "12:30" },
+    { title: "Player Auction Season 4 — Full Highlights 🏏", date: "Nov 2024", views: "67K", dur: "1:15:00" },
+    { title: "Season 3 Grand Final — Last Over Thriller!", date: "Apr 2024", views: "89K", dur: "8:45" }
   ];
-  
-  const groupB = [
-    { name: 'Bangalore Bulls', city: 'Bangalore', color: '#E65100', icon: '🐂' },
-    { name: 'Chennai Chiefs', city: 'Chennai', color: '#F9A825', icon: '🛡️' },
-    { name: 'Hyderabad Hawks', city: 'Hyderabad', color: '#2E7D32', icon: '🦅' },
-    { name: 'Jaipur Jaguars', city: 'Jaipur', color: '#AD1457', icon: '🐆' },
-    { name: 'Lucknow Nawabs', city: 'Lucknow', color: '#0277BD', icon: '👑' },
-  ];
+
+  const filters = ['All', 'Season 5', 'Team Announcements', 'Highlights', 'Behind the Scenes'];
 
   return (
     <div style={{background:'#0A1628',color:'#fff',minHeight:'100vh',fontFamily:'Inter,sans-serif'}}>
@@ -92,113 +89,77 @@ export function Teams() {
         .grid-4{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
         .nav-links{display:none}
         .ham{display:flex}
-        .bot-cta{display:flex}
-        .teams-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-        .teams-grid > div:last-child {grid-column: span 2; max-width: 50%; margin: 0 auto; width: 100%;}
-        .team-card{transition:all 0.25s;}
-        .team-card:hover{transform:translateY(-4px);}
+        
+        .vid-card{transition:transform 0.2s; cursor:pointer;}
+        .vid-card:hover{transform:translateY(-4px);}
+        .thumb{height:180px;background:linear-gradient(135deg,#0F2247,#1a3a6e);position:relative;display:flex;align-items:center;justify-content:center;}
+        .play-btn{width:60px;height:60px;background:rgba(255,122,41,0.9);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;padding-left:4px;}
+        
         @media(min-width:768px){
           .wrap{padding:0 28px}.section{padding:60px 0}.h1{font-size:56px}.grid-2{grid-template-columns:repeat(2,1fr);gap:24px}.grid-3{grid-template-columns:repeat(2,1fr);gap:20px}.grid-4{grid-template-columns:repeat(4,1fr)}
-          .teams-grid{grid-template-columns:repeat(3,1fr);gap:16px}
-          .teams-grid > div:last-child {grid-column: auto; max-width: none; margin: 0; width: 100%;}
         }
         @media(min-width:1024px){
-          .section{padding:80px 0}.h1{font-size:80px}.grid-3{grid-template-columns:repeat(3,1fr)}.nav-links{display:flex!important;align-items:center;gap:20px}.ham{display:none!important}.bot-cta{display:none!important}
-          .teams-grid{grid-template-columns:repeat(5,1fr);gap:20px}
+          .section{padding:80px 0}.h1{font-size:80px}.grid-3{grid-template-columns:repeat(3,1fr)}.nav-links{display:flex!important;align-items:center;gap:20px}.ham{display:none!important}
         }
         @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
         @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
       `}</style>
-      
-      <Navbar active="teams" />
-      
-      <main style={{paddingBottom:'96px'}}>
-        <div style={{height:260,background:'linear-gradient(160deg,#0A1628,#0F2247)',display:'flex',alignItems:'center',justifyContent:'center',textAlign:'center'}}>
+
+      <Navbar active="about" />
+
+      <main style={{paddingBottom:'40px'}}>
+        <div style={{padding:'60px 0',textAlign:'center'}}>
           <div className="wrap">
-            <div style={{display:'inline-block',background:'rgba(255,122,41,0.15)',color:'#FF7A29',padding:'6px 16px',borderRadius:20,fontSize:12,fontWeight:700,letterSpacing:'0.1em',marginBottom:16}}>THE FRANCHISES</div>
-            <h1 className="h1" style={{marginBottom:12}}>TEN CITIES. ONE DREAM.</h1>
-            <p style={{color:'rgba(255,255,255,0.7)',fontSize:16,maxWidth:600,margin:'0 auto'}}>Get picked and represent your city on the BCPL stage.</p>
+            <h1 className="h1" style={{marginBottom:16}}>▶️ VIDEOS</h1>
+            <p style={{color:'rgba(255,255,255,0.7)',fontSize:16,maxWidth:600,margin:'0 auto'}}>Team announcements, auction highlights and behind-the-scenes moments</p>
           </div>
         </div>
 
-        <div className="section wrap">
-          <div style={{marginBottom:60}}>
-            <h2 className="h2" style={{marginBottom:24,fontSize:20,letterSpacing:'0.05em'}}><span style={{color:'rgba(255,255,255,0.5)'}}>GROUP A</span> / FIVE FRANCHISES</h2>
-            <div className="teams-grid">
-              {groupA.map((team,i) => (
-                <div key={i} className="glass team-card" style={{padding:20,position:'relative',overflow:'hidden'}}>
-                  <div style={{position:'absolute',top:0,left:0,right:0,height:4,background:team.color}}></div>
-                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:80,color:team.color,opacity:0.1,position:'absolute',top:8,right:12,lineHeight:1}}>{team.name.charAt(0)}</div>
-                  
-                  <div style={{fontSize:24,marginBottom:8}}>{team.icon}</div>
-                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:16,color:'#fff',marginBottom:4,lineHeight:1.2}}>{team.name}</div>
-                  <div style={{fontFamily:'Inter,sans-serif',fontSize:13,color:'rgba(255,255,255,0.5)',marginBottom:16}}>{team.city}</div>
-                  
-                  <div style={{height:1,background:'rgba(255,255,255,0.1)',marginBottom:16}}></div>
-                  
-                  <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:12}}>
-                    <span style={{fontSize:12,color:'rgba(255,255,255,0.7)'}}>12 Players</span>
-                    <span style={{width:4,height:4,borderRadius:'50%',background:'rgba(255,255,255,0.3)'}}></span>
-                    <span style={{fontSize:12,color:'rgba(255,255,255,0.7)'}}>Qualified</span>
-                  </div>
-                  
-                  <div style={{display:'inline-block',background:'rgba(46,158,79,0.15)',color:'#2E9E4F',padding:'4px 8px',borderRadius:6,fontSize:10,fontWeight:700,marginBottom:16}}>SEASON 5 ACTIVE</div>
-                  
-                  <div style={{marginTop:8}}>
-                    <a href="#" style={{color:'#FF7A29',fontSize:13,textDecoration:'none',fontWeight:600}}>View Squad →</a>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <h2 className="h2" style={{marginBottom:24,fontSize:20,letterSpacing:'0.05em'}}><span style={{color:'rgba(255,255,255,0.5)'}}>GROUP B</span> / FIVE FRANCHISES</h2>
-            <div className="teams-grid">
-              {groupB.map((team,i) => (
-                <div key={i} className="glass team-card" style={{padding:20,position:'relative',overflow:'hidden'}}>
-                  <div style={{position:'absolute',top:0,left:0,right:0,height:4,background:team.color}}></div>
-                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:80,color:team.color,opacity:0.1,position:'absolute',top:8,right:12,lineHeight:1}}>{team.name.charAt(0)}</div>
-                  
-                  <div style={{fontSize:24,marginBottom:8}}>{team.icon}</div>
-                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:16,color:'#fff',marginBottom:4,lineHeight:1.2}}>{team.name}</div>
-                  <div style={{fontFamily:'Inter,sans-serif',fontSize:13,color:'rgba(255,255,255,0.5)',marginBottom:16}}>{team.city}</div>
-                  
-                  <div style={{height:1,background:'rgba(255,255,255,0.1)',marginBottom:16}}></div>
-                  
-                  <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:12}}>
-                    <span style={{fontSize:12,color:'rgba(255,255,255,0.7)'}}>12 Players</span>
-                    <span style={{width:4,height:4,borderRadius:'50%',background:'rgba(255,255,255,0.3)'}}></span>
-                    <span style={{fontSize:12,color:'rgba(255,255,255,0.7)'}}>Qualified</span>
-                  </div>
-                  
-                  <div style={{display:'inline-block',background:'rgba(46,158,79,0.15)',color:'#2E9E4F',padding:'4px 8px',borderRadius:6,fontSize:10,fontWeight:700,marginBottom:16}}>SEASON 5 ACTIVE</div>
-                  
-                  <div style={{marginTop:8}}>
-                    <a href="#" style={{color:'#FF7A29',fontSize:13,textDecoration:'none',fontWeight:600}}>View Squad →</a>
-                  </div>
-                </div>
-              ))}
-            </div>
+        <div className="wrap">
+          <div style={{display:'flex',gap:8,overflowX:'auto',paddingBottom:16,marginBottom:16,WebkitOverflowScrolling:'touch',scrollbarWidth:'none'}}>
+            {filters.map((f,i) => (
+              <button key={f} style={{background:i===0?'#FF7A29':'rgba(255,255,255,0.06)',color:i===0?'#fff':'rgba(255,255,255,0.7)',border:'none',padding:'8px 16px',borderRadius:20,fontSize:14,fontWeight:600,whiteSpace:'nowrap',cursor:'pointer'}}>
+                {f}
+              </button>
+            ))}
           </div>
         </div>
 
-        <div className="wrap section">
-          <div style={{background:'linear-gradient(135deg,#FF7A29,#E8611A)',padding:'48px 24px',textAlign:'center',borderRadius:20}}>
-            <p style={{color:'rgba(255,255,255,0.9)',fontWeight:600,marginBottom:8}}>Want to play for one of these franchises?</p>
-            <h2 className="h2" style={{color:'#fff',marginBottom:24}}>Register for ₹299 — get your shot at the auction</h2>
-            <button style={{background:'#fff',color:'#E8611A',height:52,borderRadius:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,border:'none',padding:'0 32px',fontSize:16,cursor:'pointer',boxShadow:'0 8px 16px rgba(0,0,0,0.1)'}}>Register Now →</button>
+        <div className="wrap section" style={{paddingTop:0}}>
+          <div className="grid-3">
+            {videos.map((vid,i) => (
+              <div key={i} className="glass vid-card" style={{overflow:'hidden'}}>
+                <div className="thumb">
+                  <div className="play-btn">▶</div>
+                  <div style={{position:'absolute',bottom:12,right:12,background:'rgba(10,22,40,0.8)',backdropFilter:'blur(4px)',padding:'4px 8px',borderRadius:6,fontSize:11,fontWeight:700}}>{vid.dur}</div>
+                </div>
+                <div style={{padding:16}}>
+                  <div style={{display:'flex',gap:8,alignItems:'flex-start',marginBottom:8}}>
+                    <span style={{background:'rgba(255,122,41,0.15)',color:'#FF7A29',fontSize:10,fontWeight:700,padding:'2px 6px',borderRadius:4,flexShrink:0}}>#BCPL</span>
+                    <h3 style={{fontFamily:'Inter,sans-serif',fontWeight:700,fontSize:14,lineHeight:1.4}}>{vid.title}</h3>
+                  </div>
+                  <div style={{display:'flex',alignItems:'center',gap:12,color:'rgba(255,255,255,0.4)',fontSize:12}}>
+                    <span>{vid.date}</span>
+                    <span>•</span>
+                    <span>{vid.views} views</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="glass" style={{marginTop:60,padding:'48px 24px',textAlign:'center',maxWidth:700,margin:'60px auto 0'}}>
+            <h2 className="h2" style={{marginBottom:12}}>Subscribe to our YouTube channel for live updates & highlights</h2>
+            <p style={{color:'rgba(255,255,255,0.6)',fontSize:15,marginBottom:28}}>Never miss a moment of the action.</p>
+            <button style={{background:'#FF0000',color:'#fff',border:'none',height:48,padding:'0 24px',borderRadius:12,fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:15,cursor:'pointer',display:'inline-flex',alignItems:'center',gap:8}}>
+              ▶️ Subscribe on YouTube
+            </button>
           </div>
         </div>
 
       </main>
 
       <Footer />
-
-      <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:199,padding:'10px 16px 16px',background:'rgba(6,16,30,0.98)',backdropFilter:'blur(20px)',borderTop:'1px solid rgba(255,255,255,0.08)',gap:10}}>
-        <button className="btn-primary" style={{flex:2,height:50,fontSize:15}}>Register ₹299 →</button>
-        <button className="btn-wa" style={{flex:1,height:50,fontSize:14,borderRadius:12}}>💬 WhatsApp</button>
-      </div>
     </div>
   );
 }

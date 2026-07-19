@@ -93,7 +93,7 @@ function Footer() {
   );
 }
 
-export function CodeOfConduct() {
+export function Terms() {
   return (
     <div style={{ background: '#0A1628', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <style>{css}</style>
@@ -101,81 +101,44 @@ export function CodeOfConduct() {
       
       {/* Hero */}
       <div style={{ height: 200, background: 'linear-gradient(160deg, #0A1628, #0F2247)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '0 16px' }}>
-        <h1 className="hero-title">CODE OF CONDUCT</h1>
-        <div className="hero-subtitle">Fair Play. Respect. Integrity.</div>
-        <div className="hero-meta">Effective: Season 5, 2025</div>
+        <h1 className="hero-title">TERMS & CONDITIONS</h1>
+        <div className="hero-subtitle">Please read carefully before registering</div>
+        <div className="hero-meta">Last updated: June 2025</div>
       </div>
 
       {/* Content Area */}
       <div style={{ background: '#FAF8F4', flex: 1 }}>
         <div style={{ maxWidth: 760, margin: '0 auto', padding: '40px 16px' }}>
           
-          <h2 className="doc-h2" style={{ marginTop: 0, paddingTop: 0, borderTop: 'none' }}>Introduction</h2>
-          <p className="doc-p">The BCPL Code of Conduct exists to protect the integrity of cricket and ensure a safe, respectful, and competitive environment for all participants. All players, coaches, umpires, and team officials are expected to follow these guidelines.</p>
-          
-          <h2 className="doc-h2">The Spirit of Cricket</h2>
-          <p className="doc-p">BCPL upholds the spirit of cricket as defined by the Laws of Cricket — a respect for opponents, umpires, and the game itself. Winning matters, but how you win matters more.</p>
-          
-          <h2 className="doc-h2">Player Responsibilities</h2>
-          <ul className="doc-ul">
-            <li className="doc-li">Treat all opponents, teammates, umpires, and officials with respect at all times.</li>
-            <li className="doc-li">Accept umpire decisions gracefully without dissent or argument.</li>
-            <li className="doc-li">Arrive on time for matches and practice sessions.</li>
-            <li className="doc-li">Maintain personal hygiene and present yourself professionally.</li>
-            <li className="doc-li">Do not engage in sledging, verbal abuse, or intimidation.</li>
-          </ul>
+          <h2 className="doc-h2" style={{ marginTop: 0, paddingTop: 0, borderTop: 'none' }}>1. Acceptance</h2>
+          <p className="doc-p">By registering for BCPL Season 5, you agree to these Terms & Conditions.</p>
 
-          <h2 className="doc-h2">On-Field Conduct</h2>
-          <ul className="doc-ul">
-            <li className="doc-li">No deliberate time-wasting or disruption to the game.</li>
-            <li className="doc-li">Fielders must not encroach within 3 yards of the batsman's crease.</li>
-            <li className="doc-li">No ball tampering under any circumstances.</li>
-            <li className="doc-li">Appeals must be made honestly — do not appeal knowing the batsman is not out.</li>
-          </ul>
+          <h2 className="doc-h2">2. Registration</h2>
+          <p className="doc-p">Registration is personal and non-transferable. Only one registration per person per season. False information results in disqualification.</p>
 
-          <h2 className="doc-h2">Off-Field Conduct</h2>
-          <ul className="doc-ul">
-            <li className="doc-li">No negative social media posts about BCPL, other teams, players, or officials.</li>
-            <li className="doc-li">No consumption of alcohol or prohibited substances during BCPL events.</li>
-            <li className="doc-li">Any disputes must be reported to BCPL management — no self-resolution.</li>
-          </ul>
+          <h2 className="doc-h2">3. Fees</h2>
+          <p className="doc-p">The registration fee (₹299 or ₹399) is charged upon registration. It is non-refundable after video upload. See our Refund Policy for details.</p>
 
-          <h2 className="doc-h2">Penalty System</h2>
-          <div className="tscroll" style={{ marginBottom: 24, background: '#fff', border: '1px solid rgba(20,32,63,0.1)', borderRadius: 12, overflow: 'hidden' }}>
-            <table className="dtable" style={{ color: '#14203F' }}>
-              <thead>
-                <tr>
-                  <th style={{ background: 'rgba(20,32,63,0.05)', color: '#0F2247' }}>Card</th>
-                  <th style={{ background: 'rgba(20,32,63,0.05)', color: '#0F2247' }}>Offence</th>
-                  <th style={{ background: 'rgba(20,32,63,0.05)', color: '#0F2247' }}>Consequence</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td style={{ borderBottom: '1px solid rgba(20,32,63,0.05)' }}><span style={{ display: 'inline-block', padding: '4px 8px', background: '#F59E0B', color: '#fff', borderRadius: 4, fontSize: 12, fontWeight: 700 }}>Yellow Card</span></td>
-                  <td style={{ borderBottom: '1px solid rgba(20,32,63,0.05)' }}>Mild misconduct, first warning</td>
-                  <td style={{ borderBottom: '1px solid rgba(20,32,63,0.05)' }}>Official warning on record</td>
-                </tr>
-                <tr>
-                  <td style={{ borderBottom: '1px solid rgba(20,32,63,0.05)' }}><span style={{ display: 'inline-block', padding: '4px 8px', background: '#F97316', color: '#fff', borderRadius: 4, fontSize: 12, fontWeight: 700 }}>Orange Card</span></td>
-                  <td style={{ borderBottom: '1px solid rgba(20,32,63,0.05)' }}>Verbal abuse, dissent, repeated misconduct</td>
-                  <td style={{ borderBottom: '1px solid rgba(20,32,63,0.05)' }}>1-match suspension</td>
-                </tr>
-                <tr>
-                  <td style={{ borderBottom: 'none' }}><span style={{ display: 'inline-block', padding: '4px 8px', background: '#EF4444', color: '#fff', borderRadius: 4, fontSize: 12, fontWeight: 700 }}>Red Card</span></td>
-                  <td style={{ borderBottom: 'none' }}>Physical altercation, cheating, fraud</td>
-                  <td style={{ borderBottom: 'none' }}>Season ban + review for permanent ban</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <h2 className="doc-h2">4. Selection</h2>
+          <p className="doc-p">BCPL does not guarantee selection. The selection process is at the sole discretion of the BCPL scout panel. Decisions are final.</p>
 
-          <h2 className="doc-h2">Reporting Violations</h2>
-          <p className="doc-p">Report violations within 24 hours via WhatsApp (+91 98765 43210) or email (conduct@bcplt20.com). All reports are treated confidentially.</p>
+          <h2 className="doc-h2">5. Code of Conduct</h2>
+          <p className="doc-p">All registrants agree to abide by the BCPL Code of Conduct. Violations may result in suspension or permanent ban without refund.</p>
 
-          <div className="highlight-box">
-            BCPL reserves the right to update this Code of Conduct. Players are expected to check for updates before each season.
-          </div>
+          <h2 className="doc-h2">6. Media</h2>
+          <p className="doc-p">BCPL may photograph or film players during trials, matches, and events for promotional purposes. By registering, you grant BCPL this right.</p>
+
+          <h2 className="doc-h2">7. Liability</h2>
+          <p className="doc-p">BCPL is not liable for injuries sustained during trials or matches. Players participate at their own risk. All grounds have first-aid facilities.</p>
+
+          <h2 className="doc-h2">8. Privacy</h2>
+          <p className="doc-p">Personal data is collected for registration and selection purposes only. It is not shared with third parties except for essential services. See our Privacy Policy.</p>
+
+          <h2 className="doc-h2">9. Amendments</h2>
+          <p className="doc-p">BCPL reserves the right to amend these terms at any time. Continued participation constitutes acceptance of updated terms.</p>
+
+          <h2 className="doc-h2">10. Governing Law</h2>
+          <p className="doc-p">These terms are governed by Indian law. Disputes are subject to the jurisdiction of Pune, Maharashtra courts.</p>
 
         </div>
       </div>

@@ -93,7 +93,7 @@ function Footer() {
   );
 }
 
-export function CodeOfConduct() {
+export function Refunds() {
   return (
     <div style={{ background: '#0A1628', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <style>{css}</style>
@@ -101,80 +101,72 @@ export function CodeOfConduct() {
       
       {/* Hero */}
       <div style={{ height: 200, background: 'linear-gradient(160deg, #0A1628, #0F2247)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '0 16px' }}>
-        <h1 className="hero-title">CODE OF CONDUCT</h1>
-        <div className="hero-subtitle">Fair Play. Respect. Integrity.</div>
-        <div className="hero-meta">Effective: Season 5, 2025</div>
+        <h1 className="hero-title">REFUND POLICY</h1>
+        <div className="hero-subtitle">Transparent and fair cancellation terms</div>
+        <div className="hero-meta">Last updated: June 2025</div>
       </div>
 
       {/* Content Area */}
       <div style={{ background: '#FAF8F4', flex: 1 }}>
         <div style={{ maxWidth: 760, margin: '0 auto', padding: '40px 16px' }}>
           
-          <h2 className="doc-h2" style={{ marginTop: 0, paddingTop: 0, borderTop: 'none' }}>Introduction</h2>
-          <p className="doc-p">The BCPL Code of Conduct exists to protect the integrity of cricket and ensure a safe, respectful, and competitive environment for all participants. All players, coaches, umpires, and team officials are expected to follow these guidelines.</p>
-          
-          <h2 className="doc-h2">The Spirit of Cricket</h2>
-          <p className="doc-p">BCPL upholds the spirit of cricket as defined by the Laws of Cricket — a respect for opponents, umpires, and the game itself. Winning matters, but how you win matters more.</p>
-          
-          <h2 className="doc-h2">Player Responsibilities</h2>
-          <ul className="doc-ul">
-            <li className="doc-li">Treat all opponents, teammates, umpires, and officials with respect at all times.</li>
-            <li className="doc-li">Accept umpire decisions gracefully without dissent or argument.</li>
-            <li className="doc-li">Arrive on time for matches and practice sessions.</li>
-            <li className="doc-li">Maintain personal hygiene and present yourself professionally.</li>
-            <li className="doc-li">Do not engage in sledging, verbal abuse, or intimidation.</li>
-          </ul>
+          <div className="highlight-box" style={{ marginTop: 0 }}>
+            BCPL's ₹299/₹399 registration fee is a trial entry fee — not a tournament or auction fee. It covers the cost of organizing trials, scouting, and shortlisting.
+          </div>
 
-          <h2 className="doc-h2">On-Field Conduct</h2>
-          <ul className="doc-ul">
-            <li className="doc-li">No deliberate time-wasting or disruption to the game.</li>
-            <li className="doc-li">Fielders must not encroach within 3 yards of the batsman's crease.</li>
-            <li className="doc-li">No ball tampering under any circumstances.</li>
-            <li className="doc-li">Appeals must be made honestly — do not appeal knowing the batsman is not out.</li>
-          </ul>
+          <h2 className="doc-h2" style={{ marginTop: 24 }}>1. Full Refund</h2>
+          <p className="doc-p">Cancellation within 7 days of registration AND before video upload: 100% refund within 7 business days.</p>
 
-          <h2 className="doc-h2">Off-Field Conduct</h2>
-          <ul className="doc-ul">
-            <li className="doc-li">No negative social media posts about BCPL, other teams, players, or officials.</li>
-            <li className="doc-li">No consumption of alcohol or prohibited substances during BCPL events.</li>
-            <li className="doc-li">Any disputes must be reported to BCPL management — no self-resolution.</li>
-          </ul>
+          <h2 className="doc-h2">2. No Refund</h2>
+          <p className="doc-p">After video upload: Registration fee is non-refundable, regardless of selection outcome.</p>
 
-          <h2 className="doc-h2">Penalty System</h2>
+          <h2 className="doc-h2">3. BCPL Cancellation</h2>
+          <p className="doc-p">If BCPL cancels a trial due to unforeseen circumstances, a full refund is provided. Rescheduled trials do not qualify for refund.</p>
+
+          <h2 className="doc-h2">4. How to Cancel</h2>
+          <p className="doc-p">Email cancellations@bcplt20.com or WhatsApp +91 98765 43210 within the eligible window with your registered phone number and reason.</p>
+
+          <h2 className="doc-h2">5. Processing Time</h2>
+          <p className="doc-p">Approved refunds are processed within 7 business days to the original payment method.</p>
+
+          <h2 className="doc-h2">6. Not Refundable</h2>
+          <p className="doc-p">Non-selection, change of mind after video upload, failure to attend trial, or code of conduct violations.</p>
+
+          <h2 className="doc-h2">7. Disputes</h2>
+          <p className="doc-p">Refund disputes must be raised within 30 days of the registration date. Email disputes@bcplt20.com.</p>
+
+          <h2 className="doc-h2">Refund Scenarios</h2>
           <div className="tscroll" style={{ marginBottom: 24, background: '#fff', border: '1px solid rgba(20,32,63,0.1)', borderRadius: 12, overflow: 'hidden' }}>
             <table className="dtable" style={{ color: '#14203F' }}>
               <thead>
                 <tr>
-                  <th style={{ background: 'rgba(20,32,63,0.05)', color: '#0F2247' }}>Card</th>
-                  <th style={{ background: 'rgba(20,32,63,0.05)', color: '#0F2247' }}>Offence</th>
-                  <th style={{ background: 'rgba(20,32,63,0.05)', color: '#0F2247' }}>Consequence</th>
+                  <th style={{ background: 'rgba(20,32,63,0.05)', color: '#0F2247' }}>Scenario</th>
+                  <th style={{ background: 'rgba(20,32,63,0.05)', color: '#0F2247' }}>Refund</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td style={{ borderBottom: '1px solid rgba(20,32,63,0.05)' }}><span style={{ display: 'inline-block', padding: '4px 8px', background: '#F59E0B', color: '#fff', borderRadius: 4, fontSize: 12, fontWeight: 700 }}>Yellow Card</span></td>
-                  <td style={{ borderBottom: '1px solid rgba(20,32,63,0.05)' }}>Mild misconduct, first warning</td>
-                  <td style={{ borderBottom: '1px solid rgba(20,32,63,0.05)' }}>Official warning on record</td>
+                  <td style={{ borderBottom: '1px solid rgba(20,32,63,0.05)' }}>Within 7 days, no video uploaded</td>
+                  <td style={{ borderBottom: '1px solid rgba(20,32,63,0.05)' }}>✅ Full refund</td>
                 </tr>
                 <tr>
-                  <td style={{ borderBottom: '1px solid rgba(20,32,63,0.05)' }}><span style={{ display: 'inline-block', padding: '4px 8px', background: '#F97316', color: '#fff', borderRadius: 4, fontSize: 12, fontWeight: 700 }}>Orange Card</span></td>
-                  <td style={{ borderBottom: '1px solid rgba(20,32,63,0.05)' }}>Verbal abuse, dissent, repeated misconduct</td>
-                  <td style={{ borderBottom: '1px solid rgba(20,32,63,0.05)' }}>1-match suspension</td>
+                  <td style={{ borderBottom: '1px solid rgba(20,32,63,0.05)' }}>After 7 days, no video uploaded</td>
+                  <td style={{ borderBottom: '1px solid rgba(20,32,63,0.05)' }}>❌ No refund</td>
                 </tr>
                 <tr>
-                  <td style={{ borderBottom: 'none' }}><span style={{ display: 'inline-block', padding: '4px 8px', background: '#EF4444', color: '#fff', borderRadius: 4, fontSize: 12, fontWeight: 700 }}>Red Card</span></td>
-                  <td style={{ borderBottom: 'none' }}>Physical altercation, cheating, fraud</td>
-                  <td style={{ borderBottom: 'none' }}>Season ban + review for permanent ban</td>
+                  <td style={{ borderBottom: '1px solid rgba(20,32,63,0.05)' }}>Video uploaded</td>
+                  <td style={{ borderBottom: '1px solid rgba(20,32,63,0.05)' }}>❌ No refund</td>
+                </tr>
+                <tr>
+                  <td style={{ borderBottom: '1px solid rgba(20,32,63,0.05)' }}>BCPL cancels trial</td>
+                  <td style={{ borderBottom: '1px solid rgba(20,32,63,0.05)' }}>✅ Full refund</td>
+                </tr>
+                <tr>
+                  <td style={{ borderBottom: 'none' }}>Not selected</td>
+                  <td style={{ borderBottom: 'none' }}>❌ No refund (selection is merit-based)</td>
                 </tr>
               </tbody>
             </table>
-          </div>
-
-          <h2 className="doc-h2">Reporting Violations</h2>
-          <p className="doc-p">Report violations within 24 hours via WhatsApp (+91 98765 43210) or email (conduct@bcplt20.com). All reports are treated confidentially.</p>
-
-          <div className="highlight-box">
-            BCPL reserves the right to update this Code of Conduct. Players are expected to check for updates before each season.
           </div>
 
         </div>

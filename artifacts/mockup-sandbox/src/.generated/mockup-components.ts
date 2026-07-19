@@ -9,9 +9,16 @@ export const modules: ModuleMap = {
   "./components/mockups/bcpl-premium/FAQ.tsx": () => import("../components/mockups/bcpl-premium/FAQ.tsx"),
   "./components/mockups/bcpl-premium/Home.tsx": () => import("../components/mockups/bcpl-premium/Home.tsx"),
   "./components/mockups/bcpl-premium/MatchCenter.tsx": () => import("../components/mockups/bcpl-premium/MatchCenter.tsx"),
+  "./components/mockups/bcpl-premium/Photos.tsx": () => import("../components/mockups/bcpl-premium/Photos.tsx"),
   "./components/mockups/bcpl-premium/PointsTable.tsx": () => import("../components/mockups/bcpl-premium/PointsTable.tsx"),
+  "./components/mockups/bcpl-premium/Privacy.tsx": () => import("../components/mockups/bcpl-premium/Privacy.tsx"),
+  "./components/mockups/bcpl-premium/Refunds.tsx": () => import("../components/mockups/bcpl-premium/Refunds.tsx"),
   "./components/mockups/bcpl-premium/Registration.tsx": () => import("../components/mockups/bcpl-premium/Registration.tsx"),
   "./components/mockups/bcpl-premium/Schedule.tsx": () => import("../components/mockups/bcpl-premium/Schedule.tsx"),
+  "./components/mockups/bcpl-premium/Sponsors.tsx": () => import("../components/mockups/bcpl-premium/Sponsors.tsx"),
+  "./components/mockups/bcpl-premium/TeamDetail.tsx": () => import("../components/mockups/bcpl-premium/TeamDetail.tsx"),
   "./components/mockups/bcpl-premium/Teams.tsx": () => import("../components/mockups/bcpl-premium/Teams.tsx"),
+  "./components/mockups/bcpl-premium/Terms.tsx": () => import("../components/mockups/bcpl-premium/Terms.tsx"),
+  "./components/mockups/bcpl-premium/Videos.tsx": () => import("../components/mockups/bcpl-premium/Videos.tsx"),
   "./components/mockups/bcpl-redesign/Homepage.tsx": () => import("../components/mockups/bcpl-redesign/Homepage.tsx")
 };
