@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Coach Scoring — BCPL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --navy:#0F2247; --navy-deep:#0A1628; --orange:#FF7A29; --orange-deep:#E8611A; --gold:#E8B23D; --green:#34D399; --red:#F0665A; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { margin:0; font-family:'Inter',-apple-system,sans-serif; background:var(--navy-deep); color:#fff; min-height:100vh; }
+  h1,h2,.score-num { font-family:'Space Grotesk',sans-serif; }
+  .wrap { max-width:420px; margin:0 auto; padding:24px 18px 60px; }
+  .header { text-align:center; margin-bottom:22px; }
+  .header-badge { width:52px; height:52px; border-radius:14px; background:linear-gradient(135deg, var(--orange), var(--gold)); display:flex; align-items:center; justify-content:center; font-size:26px; margin:0 auto 14px; box-shadow:0 8px 24px rgba(255,138,61,0.4); }
+  .header h1 { font-size:19px; margin:0 0 4px; }
+  .header p { font-size:12.5px; color:rgba(255,255,255,0.55); margin:0; }
+
+  .card { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:18px; padding:20px; margin-bottom:14px; }
+  label { display:block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:rgba(255,255,255,0.55); margin-bottom:6px; }
+  input, select { width:100%; padding:13px 14px; border-radius:10px; border:1.5px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.06); color:#fff; font-size:15px; margin-bottom:14px; font-family:inherit; }
+  input::placeholder { color:rgba(255,255,255,0.3); }
+  input:focus, select:focus { outline:none; border-color:var(--orange); }
+  select option { background:var(--navy); }
+  button.primary { width:100%; padding:14px; border-radius:10px; border:none; background:linear-gradient(135deg, var(--orange), var(--orange-deep)); color:#1A0E00; font-weight:800; font-size:15px; cursor:pointer; }
+  button.primary:disabled { opacity:0.5; }
+  button.ghost { width:100%; padding:12px; border-radius:10px; border:1.5px solid rgba(255,255,255,0.16); background:none; color:rgba(255,255,255,0.75); font-weight:700; font-size:13px; cursor:pointer; margin-top:8px; }
+
+  .msg { font-size:13px; text-align:center; margin-top:10px; padding:10px; border-radius:10px; }
+  .msg.err { background:rgba(240,102,90,0.14); color:var(--red); }
+  .msg.ok { background:rgba(52,211,153,0.14); color:var(--green); }
+
+  .role-pill { display:inline-block; background:rgba(232,178,61,0.16); border:1px solid rgba(232,178,61,0.4); color:var(--gold); font-weight:700; font-size:12px; padding:5px 14px; border-radius:99px; margin-bottom:14px; }
+  .hidden { display:none; }
+  .privacy-note { font-size:11px; color:rgba(255,255,255,0.4); text-align:center; margin-top:16px; line-height:1.5; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="header">
+    <div class="header-badge">🎯</div>
+    <h1>Coach Trial Scoring</h1>
+    <p>BCPL Season 5 — Physical Trial Evaluation</p>
+  </div>
+
+  <div class="card" id="login-card">
+    <label>Email</label>
+    <input type="email" id="c-email" placeholder="aapka email" />
+    <label>Password</label>
+    <input type="password" id="c-password" placeholder="password" />
+    <button class="primary" onclick="doCoachLogin()">Login</button>
+    <div id="login-msg"></div>
+  </div>
+
+  <div id="scoring-area" class="hidden">
+    <div class="card">
+      <label>Player Registration Number</label>
+      <input type="text" id="c-reg-number" placeholder="e.g. BCPL-MUM-014" style="text-transform:uppercase;" />
+      <button class="primary" onclick="lookupPlayer()">Find Player</button>
+      <div id="lookup-msg"></div>
+    </div>
+
+    <div class="card hidden" id="score-card">
+      <div style="text-align:center;">
+        <div class="role-pill" id="role-pill"></div>
+      </div>
+      <div id="already-scored-note"></div>
+
+      <label id="primary-label">Batting Score (0–100)</label>
+      <input type="number" id="c-primary-score" min="0" max="100" placeholder="0-100" />
+
+      <div id="secondary-score-block" class="hidden">
+        <label>Bowling Score (0–100)</label>
+        <input type="number" id="c-secondary-score" min="0" max="100" placeholder="0-100" />
+      </div>
+
+      <button class="primary" onclick="submitScore()">Submit Score</button>
+      <div id="submit-msg"></div>
+      <button class="ghost" onclick="resetScoringForm()">+ Score Another Player</button>
+    </div>
+
+    <div class="privacy-note">Player ka naam yahaan jaan-boojhkar nahi dikhaya jaata — sirf registration number se scoring hoti hai, taaki koi bhi coach ko naam le kar prabhavit na kar sake.</div>
+  </div>
+</div>
+
+<script>
+  var BACKEND_URL = 'https://bcpl-backend-production.up.railway.app';
+  var authToken = localStorage.getItem('bcpl_coach_token') || '';
+  var currentPlayerId = null;
+  var currentRole = null;
+
+  var _originalFetch = window.fetch;
+  window.fetch = function (url, options) {
+    options = options || {};
+    var isAdminCall = typeof url === 'string' && url.indexOf('/api/admin/') !== -1 && url.indexOf('/api/admin/login') === -1;
+    if (isAdminCall && authToken) {
+      options.headers = options.headers || {};
+      options.headers['Authorization'] = 'Bearer ' + authToken;
+    }
+    return _originalFetch(url, options).then(function (res) {
+      if (isAdminCall && res.status === 401) {
+        authToken = '';
+        localStorage.removeItem('bcpl_coach_token');
+        document.getElementById('scoring-area').classList.add('hidden');
+        document.getElementById('login-card').classList.remove('hidden');
+        alert('Session expire ho gaya. Dobara login karein.');
+      }
+      return res;
+    });
+  };
+
+  function doCoachLogin() {
+    var email = document.getElementById('c-email').value.trim();
+    var password = document.getElementById('c-password').value.trim();
+    var msgEl = document.getElementById('login-msg');
+    if (!email || !password) { msgEl.innerHTML = '<div class="msg err">Email aur password dono zaroori hain</div>'; return; }
+
+    _originalFetch(BACKEND_URL + '/api/admin/login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, password: password }),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { msgEl.innerHTML = '<div class="msg err">' + (r.data.error || 'Login fail ho gaya') + '</div>'; return; }
+        if (!r.data.is_owner && (r.data.permissions || []).indexOf('scoring') === -1) {
+          msgEl.innerHTML = '<div class="msg err">Aapke paas Coach Scoring ka access nahi hai</div>';
+          return;
+        }
+        authToken = r.data.token;
+        localStorage.setItem('bcpl_coach_token', authToken);
+        document.getElementById('login-card').classList.add('hidden');
+        document.getElementById('scoring-area').classList.remove('hidden');
+      })
+      .catch(function () { msgEl.innerHTML = '<div class="msg err">Connection error</div>'; });
+  }
+
+  if (authToken) {
+    document.getElementById('login-card').classList.add('hidden');
+    document.getElementById('scoring-area').classList.remove('hidden');
+  }
+
+  function lookupPlayer() {
+    var regNum = document.getElementById('c-reg-number').value.trim().toUpperCase();
+    var msgEl = document.getElementById('lookup-msg');
+    document.getElementById('score-card').classList.add('hidden');
+    if (!regNum) { msgEl.innerHTML = '<div class="msg err">Registration number daalein</div>'; return; }
+
+    fetch(BACKEND_URL + '/api/admin/coach/lookup/' + encodeURIComponent(regNum))
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { msgEl.innerHTML = '<div class="msg err">' + (r.data.error || 'Player nahi mila') + '</div>'; return; }
+        msgEl.innerHTML = '';
+        currentPlayerId = r.data.user_id;
+        currentRole = (r.data.role || '').toLowerCase();
+
+        document.getElementById('role-pill').textContent = r.data.role + ' — ' + r.data.player_display_id;
+        var isAllRounder = currentRole.indexOf('all') !== -1;
+        var isBowler = currentRole.indexOf('bowl') !== -1;
+
+        document.getElementById('primary-label').textContent = isBowler ? 'Bowling Score (0–100)' : (currentRole.indexOf('keep') !== -1 ? 'Wicket-Keeping Score (0–100)' : 'Batting Score (0–100)');
+        document.getElementById('secondary-score-block').classList.toggle('hidden', !isAllRounder);
+
+        var noteEl = document.getElementById('already-scored-note');
+        if (r.data.already_scored) {
+          noteEl.innerHTML = '<div class="msg ok">Pehle se score hai: ' + r.data.existing_primary_score + (r.data.existing_secondary_score !== null ? ' + ' + r.data.existing_secondary_score : '') + ' — dobara submit karne par overwrite ho jaayega</div>';
+        } else {
+          noteEl.innerHTML = '';
+        }
+
+        document.getElementById('c-primary-score').value = '';
+        document.getElementById('c-secondary-score').value = '';
+        document.getElementById('submit-msg').innerHTML = '';
+        document.getElementById('score-card').classList.remove('hidden');
+      })
+      .catch(function () { msgEl.innerHTML = '<div class="msg err">Connection error</div>'; });
+  }
+
+  function submitScore() {
+    var primary = document.getElementById('c-primary-score').value.trim();
+    var secondary = document.getElementById('c-secondary-score').value.trim();
+    var msgEl = document.getElementById('submit-msg');
+
+    if (!primary) { msgEl.innerHTML = '<div class="msg err">Score bharein</div>'; return; }
+
+    var body = { user_id: currentPlayerId, primary_score: primary };
+    if (!document.getElementById('secondary-score-block').classList.contains('hidden') && secondary) {
+      body.secondary_score = secondary;
+    }
+
+    fetch(BACKEND_URL + '/api/admin/coach/submit-score', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { msgEl.innerHTML = '<div class="msg err">' + (r.data.error || 'Save nahi hua') + '</div>'; return; }
+        msgEl.innerHTML = '<div class="msg ok">✅ ' + r.data.player_display_id + ' ka score save ho gaya</div>';
+      })
+      .catch(function () { msgEl.innerHTML = '<div class="msg err">Connection error</div>'; });
+  }
+
+  function resetScoringForm() {
+    document.getElementById('c-reg-number').value = '';
+    document.getElementById('lookup-msg').innerHTML = '';
+    document.getElementById('score-card').classList.add('hidden');
+    document.getElementById('c-reg-number').focus();
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>BCPL — Admin Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:#0A1628; --navy-elevated:#101F38; --orange:#FF8A3D; --orange-deep:#FF6A1A;
+    --gold:#FFC857; --green:#34D399; --red:#F0665A;
+    --ivory:#EDEAE2; --muted:rgba(237,234,226,0.68); --muted-dim:rgba(237,234,226,0.48);
+    --glass:rgba(255,255,255,0.045); --glass-border:rgba(255,255,255,0.09); --glass-hover:rgba(255,255,255,0.075);
+  }
+  * { box-sizing:border-box; }
+  body {
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
+    background:
+      radial-gradient(ellipse 900px 520px at 15% -10%, rgba(255,138,61,0.13), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 105% 5%, rgba(255,200,87,0.07), transparent 55%),
+      var(--navy);
+    background-attachment:fixed;
+    margin:0; padding:16px; color:var(--ivory); min-height:100vh; letter-spacing:-0.01em;
+  }
+  h1,h2,h3,.topbar-title,.sidebar-header,.stat-value { font-family:'Space Grotesk',-apple-system,sans-serif; letter-spacing:-0.02em; }
+  .wrap { max-width:600px; margin:0 auto; }
+  .warn { background:rgba(255,138,61,0.09); border:1px solid rgba(255,138,61,0.3); color:var(--orange); font-size:12px; font-weight:700; padding:10px 12px; border-radius:10px; margin-bottom:14px; }
+  .card {
+    background:var(--glass); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+    border:1px solid var(--glass-border); border-radius:18px; padding:18px; margin-bottom:12px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04); position:relative; overflow:hidden;
+  }
+  .card h2 { color:var(--ivory); font-weight:600; font-size:16px; margin:0 0 14px 0; }
+  input, select, textarea {
+    width:100%; padding:12px 14px; border-radius:10px; border:1.5px solid rgba(255,255,255,0.16);
+    background:rgba(255,255,255,0.08); color:var(--ivory); font-size:15px; margin-bottom:10px; font-family:inherit;
+  }
+  input::placeholder, textarea::placeholder { color:rgba(237,234,226,0.5); }
+  input:focus, select:focus, textarea:focus { outline:none; border-color:var(--orange); box-shadow:0 0 0 3px rgba(255,138,61,0.16); background:rgba(255,255,255,0.11); }
+  select option { background:var(--navy-elevated); color:var(--ivory); }
+  label { display:block; font-size:10.5px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:var(--muted); margin-bottom:5px; }
+  button.primary {
+    width:100%; padding:13px; border-radius:10px; border:none;
+    background:linear-gradient(135deg, var(--orange), var(--orange-deep)); color:#1A0E00; font-weight:800; font-size:14px;
+    cursor:pointer; box-shadow:0 6px 22px rgba(255,138,61,0.35); transition:transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  button.primary:hover { transform:translateY(-1px); box-shadow:0 8px 28px rgba(255,138,61,0.45); }
+  button.primary:active { transform:translateY(0); }
+  .player-name { font-weight:700; font-size:15px; color:var(--ivory); }
+  .player-meta { color:var(--muted); font-size:12px; margin-top:2px; }
+  .pill { display:inline-block; padding:3px 10px; border-radius:99px; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.03em; margin-top:6px; }
+  .pill.pending { background:rgba(255,255,255,0.08); color:var(--muted); }
+  .pill.selected { background:rgba(52,211,153,0.14); color:var(--green); }
+  .pill.not_selected { background:rgba(240,102,90,0.14); color:var(--red); }
+  .video-link { display:inline-block; margin-top:8px; color:var(--orange); font-weight:700; font-size:12.5px; text-decoration:none; }
+  .action-row { display:flex; gap:8px; margin-top:12px; }
+  .btn-select { flex:1; padding:10px; border-radius:8px; border:none; background:rgba(52,211,153,0.16); color:var(--green); font-weight:700; font-size:12.5px; cursor:pointer; border:1px solid rgba(52,211,153,0.3); }
+  .btn-reject { flex:1; padding:10px; border-radius:8px; border:none; background:rgba(240,102,90,0.14); color:var(--red); font-weight:700; font-size:12.5px; cursor:pointer; border:1px solid rgba(240,102,90,0.28); }
+  .empty-state { text-align:center; padding:30px; color:var(--muted-dim); font-size:13px; }
+  .hidden { display:none; }
+
+  .tab-row { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px; background:var(--glass); backdrop-filter:blur(20px); padding:5px; border-radius:14px; border:1px solid var(--glass-border); }
+  .tab-btn { flex:1 1 30%; min-width:80px; padding:10px 0; border-radius:10px; border:none; background:transparent; color:var(--muted); font-weight:700; font-size:12.5px; cursor:pointer; font-family:'Space Grotesk',sans-serif; transition:all 0.15s ease; }
+  .tab-btn.active { background:linear-gradient(135deg, var(--orange), var(--orange-deep)); color:#1A0E00; box-shadow:0 4px 14px rgba(255,138,61,0.3); }
+  .list-item { display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.06); }
+  .list-item:last-child { border-bottom:none; }
+  .list-item-name { font-weight:700; font-size:13.5px; color:var(--ivory); }
+  .list-item-meta { font-size:11.5px; color:var(--muted); }
+  .small-danger { padding:8px 12px; border-radius:7px; border:1px solid rgba(240,102,90,0.3); background:rgba(240,102,90,0.12); color:var(--red); font-weight:700; font-size:12px; cursor:pointer; }
+  .stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px; }
+  .stat-card {
+    background:var(--glass); backdrop-filter:blur(20px); border:1px solid var(--glass-border); border-radius:16px; padding:16px;
+    box-shadow:0 6px 24px rgba(0,0,0,0.3); position:relative;
+  }
+  .stat-card::before { content:''; position:absolute; top:0; left:16px; right:16px; height:1px; background:linear-gradient(90deg, transparent, rgba(255,200,87,0.35), transparent); }
+  .stat-card .stat-value { font-size:24px; font-weight:700; color:var(--ivory); }
+  .stat-card .stat-label { font-size:10.5px; color:var(--muted); font-weight:700; margin-top:3px; text-transform:uppercase; letter-spacing:0.04em; }
+  .stat-card.money .stat-value { color:var(--gold); text-shadow:0 0 20px rgba(255,200,87,0.3); }
+  .table-row { display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:13px; color:var(--muted); }
+  .table-row:last-child { border-bottom:none; }
+  .table-row .val { font-weight:800; color:var(--ivory); }
+  .refresh-btn { background:var(--glass); border:1.5px solid var(--glass-border); color:var(--ivory); padding:9px 14px; border-radius:9px; font-weight:700; font-size:12px; cursor:pointer; margin-bottom:14px; width:100%; }
+
+  /* Top bar + Sidebar drawer */
+  body { padding:0; }
+  .topbar {
+    background:rgba(10,22,40,0.85); backdrop-filter:blur(20px); border-bottom:1px solid var(--glass-border);
+    padding:14px 16px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:80;
+  }
+  .topbar-title { color:var(--ivory); font-weight:600; font-size:15px; }
+  .hamburger-btn { width:38px; height:38px; border-radius:9px; background:var(--glass); border:1px solid var(--glass-border); color:var(--ivory); font-size:19px; cursor:pointer; }
+  .content-area { max-width:600px; margin:0 auto; padding:16px; }
+  .sidebar-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:90; }
+  .sidebar-overlay.open { display:block; }
+  .sidebar {
+    position:fixed; top:0; left:-260px; width:240px; height:100%; background:var(--navy-elevated); z-index:95;
+    transition:left 0.25s ease; box-shadow:4px 0 30px rgba(0,0,0,0.4); overflow-y:auto; border-right:1px solid var(--glass-border);
+  }
+  .sidebar.open { left:0; }
+  .sidebar-header {
+    background:linear-gradient(135deg, rgba(255,138,61,0.15), rgba(255,200,87,0.06));
+    padding:22px 18px; color:var(--ivory); font-weight:700; font-size:16px; font-family:'Space Grotesk',sans-serif;
+    border-bottom:1px solid var(--glass-border);
+  }
+  .sidebar-item { display:flex; align-items:center; gap:10px; padding:14px 18px; font-weight:600; font-size:13.5px; color:var(--muted); cursor:pointer; border-left:3px solid transparent; transition:all 0.15s ease; }
+  .sidebar-item:hover { background:rgba(255,255,255,0.03); color:var(--ivory); }
+  .sidebar-item.active { background:rgba(255,138,61,0.1); border-left-color:var(--orange); color:var(--orange); }
+  .sync-btn { width:100%; padding:12px; border-radius:9px; border:1px solid rgba(52,211,153,0.3); background:rgba(52,211,153,0.14); color:var(--green); font-weight:700; font-size:13px; cursor:pointer; margin-bottom:10px; }
+  .warn-banner { background:rgba(255,138,61,0.09); border:1px solid rgba(255,138,61,0.3); color:var(--orange); font-size:12px; font-weight:700; padding:10px 12px; border-radius:10px; margin-bottom:12px; }
+
+  /* ============ DESKTOP LAYOUT (laptop/PC use) ============ */
+  @media (min-width: 900px) {
+    body { padding:0; }
+    .topbar { display:none !important; }
+    .hamburger-btn { display:none; }
+    .sidebar-overlay { display:none !important; }
+    .sidebar { left:0; position:fixed; width:240px; box-shadow:none; }
+    .content-area { max-width:1100px; margin-left:240px; margin-right:0; padding:32px 40px; }
+    .stat-grid { grid-template-columns:repeat(4, 1fr); }
+    .card { padding:24px; }
+    .two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:start; }
+  }
+</style>
+
+</head>
+<body>
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">🏏 BCPL Admin</div>
+  <div class="sidebar-item active" data-tab="dashboard" onclick="switchTab('dashboard')">📊 Dashboard</div>
+  <div class="sidebar-item" data-tab="finance" onclick="switchTab('finance')">💰 Finance &amp; Invoices</div>
+  <div class="sidebar-item" data-tab="users" onclick="switchTab('users')">👥 Users &amp; Export</div>
+  <div class="sidebar-item" data-tab="selection" onclick="switchTab('selection')">✅ Selection</div>
+  <div class="sidebar-item" data-tab="kyc" onclick="switchTab('kyc')">🪪 KYC</div>
+  <div class="sidebar-item" data-tab="teams" onclick="switchTab('teams')">🏏 Teams</div>
+  <div class="sidebar-item" data-tab="sponsors" onclick="switchTab('sponsors')">🤝 Sponsors</div>
+  <div class="sidebar-item" data-tab="matches" onclick="switchTab('matches')">🔴 Matches</div>
+  <div class="sidebar-item" data-tab="banners" onclick="switchTab('banners')">🖼️ Banners</div>
+  <div class="sidebar-item" data-tab="photos" onclick="switchTab('photos')">📷 Photos</div>
+  <div class="sidebar-item" data-tab="videos" onclick="switchTab('videos')">▶️ Videos</div>
+  <div class="sidebar-item" data-tab="content" onclick="switchTab('content')">📝 Content Pages</div>
+  <div class="sidebar-item" data-tab="roles" onclick="switchTab('roles')">🔐 Team &amp; Roles</div>
+</div>
+
+<div class="topbar" id="admin-topbar" style="display:none;">
+  <button class="hamburger-btn" onclick="openSidebar()">☰</button>
+  <span class="topbar-title" id="topbar-title">Dashboard</span>
+  <span id="welcome-name" style="font-size:11px; color:var(--muted); margin-right:8px;"></span>
+  <button onclick="doLogout()" style="background:none; border:none; color:#c0392b; font-weight:700; font-size:13px; cursor:pointer; width:60px;">Logout</button>
+</div>
+
+<div class="content-area">
+  <div class="warn">⚠️ Internal admin tool — do not share this link with anyone.</div>
+
+  <div class="card" id="login-card" style="max-width:380px; margin:60px auto 0; text-align:center; padding:32px 28px; background:rgba(16,31,56,0.92); backdrop-filter:blur(28px); border:1px solid rgba(255,255,255,0.14);">
+    <div style="width:52px; height:52px; border-radius:14px; background:linear-gradient(135deg, var(--orange), var(--gold)); display:flex; align-items:center; justify-content:center; font-size:26px; margin:0 auto 18px; box-shadow:0 8px 24px rgba(255,138,61,0.4);">🏏</div>
+    <h2 style="margin:0 0 4px; font-size:19px; color:#FFFFFF;">BCPL Admin</h2>
+    <p style="margin:0 0 22px; font-size:13px; color:rgba(237,234,226,0.75);">Sign in to manage the league</p>
+    <input type="email" id="a-email" placeholder="Email (team members only — owner leave blank)" style="text-align:center;" />
+    <input type="password" id="a-secret" placeholder="Password" style="text-align:center;" />
+    <button class="primary" onclick="doLogin()">Login</button>
+  </div>
+
+  <div id="admin-ui" class="hidden">
+    <div id="tab-dashboard">
+      <button class="refresh-btn" onclick="loadDashboard()">🔄 Refresh</button>
+      <div id="dashboard-content"></div>
+    </div>
+
+    <div id="tab-finance" class="hidden">
+      <button class="refresh-btn" onclick="loadFinanceSummary()">🔄 Refresh</button>
+      <div id="finance-summary"></div>
+
+      <div class="card">
+        <h2 style="margin-top:0;">🧾 Generate GST Invoice</h2>
+        <p style="font-size:12.5px; color:rgba(20,32,63,0.55);">Enter the player's registered phone number to find their payment and generate a printable GST invoice.</p>
+        <label>Phone Number</label>
+        <input type="text" id="inv-phone" placeholder="10-digit phone number" />
+        <button class="primary" onclick="lookupInvoice()">Find Payments</button>
+        <div id="invoice-lookup-result"></div>
+      </div>
+    </div>
+
+    <div id="tab-users" class="hidden">
+      <div class="card">
+        <h2 style="margin-top:0;">🔍 Filters</h2>
+        <label>City</label>
+        <select id="filter-city"><option value="">All cities</option></select>
+        <label>Role</label>
+        <select id="filter-role">
+          <option value="">All roles</option>
+          <option value="Batsman">Batsman</option>
+          <option value="Bowler">Bowler</option>
+          <option value="All-rounder">All-rounder</option>
+          <option value="Wicket-keeper">Wicket-keeper</option>
+        </select>
+        <label>Payment Status</label>
+        <select id="filter-payment">
+          <option value="">All</option>
+          <option value="registered_pending_payment">Registered, Phase 1 payment pending</option>
+          <option value="phase1_paid">Phase 1 paid (Phase 2 pending)</option>
+          <option value="fully_paid">Phase 2 also paid (Fully Paid)</option>
+        </select>
+        <button class="primary" onclick="applyUserFilters()">Apply Filters</button>
+      </div>
+
+      <div class="card">
+        <h2 style="margin-top:0;">📥 Download Users</h2>
+        <p style="font-size:12.5px; color:rgba(20,32,63,0.55);">Based on the filters above — if no filter is applied, all users will be downloaded.</p>
+        <button class="primary" onclick="exportUsersCSV()">⬇️ Download Filtered CSV</button>
+      </div>
+      <div class="card">
+        <h2 style="margin-top:0;">👥 Users (<span id="users-count">0</span>)</h2>
+        <div id="users-list"></div>
+      </div>
+    </div>
+
+    <div id="tab-selection" class="hidden">
+      <div id="player-list"></div>
+    </div>
+
+    <div id="tab-kyc" class="hidden">
+      <div class="card">
+        <h2 style="margin-top:0;">KYC Status</h2>
+        <p style="font-size:12.5px; color:var(--muted);">Sirf Phase 2 (fully paid) players yahan dikhte hain. Yeh unka PAN verification status hai — verify khud user register.html se karta hai, aap sirf status dekh sakte hain.</p>
+      </div>
+      <button class="refresh-btn" onclick="loadKycList()">🔄 Refresh</button>
+      <div id="kyc-list"></div>
+    </div>
+
+    <div id="tab-teams" class="hidden">
+      <div class="card">
+        <h2 style="margin-top:0;">Add New Team</h2>
+        <label>Season</label>
+        <input type="text" id="t-season" placeholder="e.g. Season 5" />
+        <label>Team Name</label>
+        <select id="t-name">
+          <option value="">Select team...</option>
+          <option>Rajasthan Scorchers</option>
+          <option>Punjab Warriors</option>
+          <option>Kolkata Tigers</option>
+          <option>Lucknow Nawabs</option>
+          <option>Mumbai Mavericks</option>
+          <option>Hyderabad Hawks</option>
+          <option>Delhi Suryas</option>
+          <option>Chennai Thalaivas</option>
+          <option>Ahmedabad Lions</option>
+          <option>Bengaluru Rockets</option>
+        </select>
+        <label>Short Name</label>
+        <input type="text" id="t-short" placeholder="e.g. MUM" />
+        <label>Team Logo</label>
+        <input type="file" id="t-logo-file" accept="image/png, image/jpeg" />
+        <input type="hidden" id="t-logo" />
+        <label>Captain Name</label>
+        <input type="text" id="t-captain" placeholder="e.g. Rohit Sharma" />
+        <label>Description</label>
+        <textarea id="t-desc" rows="3" placeholder="About this team..."></textarea>
+        <label>Instagram Handle</label>
+        <input type="text" id="t-insta" placeholder="e.g. @mumbaititans" />
+        <label>Twitter/X Handle</label>
+        <input type="text" id="t-twitter" placeholder="e.g. @mumbaititans" />
+        <button class="primary" onclick="addTeam()">Add Team</button>
+      </div>
+
+      <div class="card">
+        <h2 style="margin-top:0;">Existing Team ka Logo/Detail Update Karein</h2>
+        <p style="font-size:12.5px; color:rgba(20,32,63,0.55);">Yahan aap kisi bhi pehle se maujood team ka logo badal sakte hain — isse nayi team NAHI banegi, sirf usi team ka logo update hoga.</p>
+        <label>Team Chunein</label>
+        <select id="et-team-select"></select>
+        <label>Naya Logo</label>
+        <input type="file" id="et-logo-file" accept="image/png, image/jpeg" />
+        <input type="hidden" id="et-logo" />
+        <button class="primary" onclick="updateTeamLogo()">Logo Save Karein</button>
+        <div id="et-result"></div>
+      </div>
+
+      <div class="card">
+        <h2 style="margin-top:0;">Add Player to Squad</h2>
+        <label>Select Team</label>
+        <select id="tp-team-select"></select>
+        <label>Player Name</label>
+        <input type="text" id="tp-name" placeholder="Player ka naam" />
+        <label>Role</label>
+        <select id="tp-role">
+          <option>Batsman</option>
+          <option>Bowler</option>
+          <option>All-rounder</option>
+          <option>Wicket-keeper</option>
+        </select>
+        <label>Jersey Number</label>
+        <input type="number" id="tp-jersey" placeholder="e.g. 7" />
+        <label>Profile Photo</label>
+        <input type="file" id="tp-photo-file" accept="image/png, image/jpeg" />
+        <input type="hidden" id="tp-photo" />
+        <label>Runs Scored (khaali chhodein agar abhi nahi pata)</label>
+        <input type="number" id="tp-runs" placeholder="e.g. 245" />
+        <label><input type="checkbox" id="tp-captain" style="width:auto; display:inline-block; margin-right:6px;" />Is Captain</label>
+        <button class="primary" onclick="addTeamPlayer()">Add Player</button>
+      </div>
+
+      <div class="card">
+        <h2 style="margin-top:0;">View / Edit Squad (Photo &amp; Runs)</h2>
+        <p style="font-size:12.5px; color:rgba(20,32,63,0.55);">Kisi bhi pehle se maujood player ka photo lagayein ya runs update karein. Runs khaali rakhein to us player ke card par koi stat nahi dikhega.</p>
+        <label>Select Team</label>
+        <select id="sq-team-select" onchange="loadSquadRoster()"></select>
+        <div id="squad-roster-list"></div>
+      </div>
+
+      <div class="card">
+        <h2 style="margin-top:0;">Quick Setup: Fill Squad with Placeholders</h2>
+        <p style="font-size:12.5px; color:rgba(20,32,63,0.55);">Instantly creates 25 placeholder players (Player 1, Player 2...) for a team, so Match Center looks complete right away. Edit names later as real players are confirmed.</p>
+        <label>Select Team</label>
+        <select id="ph-team-select"></select>
+        <button class="primary" onclick="generatePlaceholders()">Generate 25 Placeholder Players</button>
+      </div>
+
+      <div class="card">
+        <h2 style="margin-top:0;">All Teams &amp; Squads</h2>
+        <div id="teams-list"></div>
+      </div>
+
+      <div class="card">
+        <h2 style="margin-top:0;">Points Table &amp; Groups</h2>
+        <p style="font-size:12.5px; color:rgba(20,32,63,0.55);">Har team ko Group A ya Group B mein daalein (5-5 teams), aur unke Matches Played/Won/Lost, Net Run Rate aur Points bharein. Yeh sab home page ke Points Table mein turant dikhega.</p>
+        <button class="refresh-btn" onclick="loadPointsTable()">🔄 Refresh List</button>
+        <div id="points-table-editor"></div>
+      </div>
+    </div>
+
+    <div id="tab-sponsors" class="hidden">
+      <div class="card">
+        <h2 style="margin-top:0;">Add Sponsor</h2>
+        <label>Season</label>
+        <input type="text" id="s-season" placeholder="e.g. Season 5" />
+        <label>Sponsor Name</label>
+        <input type="text" id="s-name" placeholder="e.g. Coca-Cola" />
+        <label>Sponsor Logo</label>
+        <input type="file" id="s-logo-file" accept="image/png, image/jpeg" />
+        <input type="hidden" id="s-logo" />
+        <label>Sponsor Category (khud koi bhi naam type kar sakte hain — jaise "Title Sponsor", "Kit Partner", ya kuch bhi apna naya naam)</label>
+        <input type="text" id="s-tier" list="tier-suggestions" placeholder="e.g. Title Sponsor" />
+        <datalist id="tier-suggestions">
+          <option value="Title Sponsor">
+          <option value="Associate Sponsor">
+          <option value="Hydration Partner">
+          <option value="Official Partner">
+        </datalist>
+        <label>Website URL (optional)</label>
+        <input type="text" id="s-website" placeholder="https://..." />
+        <button class="primary" onclick="addSponsor()">Add Sponsor</button>
+      </div>
+
+      <div class="card">
+        <h2 style="margin-top:0;">All Sponsors</h2>
+        <div id="sponsors-list"></div>
+      </div>
+    </div>
+
+    <div id="tab-matches" class="hidden">
+      <div class="card">
+        <h2 style="margin-top:0;">Full Schedule Builder</h2>
+        <p style="font-size:12.5px; color:rgba(20,32,63,0.55);">Teams hamesha dropdown mein fixed rahengi — sirf select karein aur date/time daalein. Jitne matches chahiye utni rows add kar sakte hain, phir ek saath save kar dein.</p>
+        <label>Season</label>
+        <input type="text" id="sched-season" placeholder="e.g. Season 5" />
+        <div id="sched-rows"></div>
+        <button onclick="addScheduleRow()" style="background:#eef1f7; color:var(--navy); border:none; padding:10px 16px; border-radius:8px; font-weight:700; cursor:pointer; margin-top:6px;">+ Add Another Match</button>
+        <br/><br/>
+        <button class="primary" onclick="saveSchedule()">Save Full Schedule</button>
+        <div id="sched-result"></div>
+      </div>
+
+      <div class="card">
+        <h2 style="margin-top:0;">All Matches</h2>
+        <div id="matches-list"></div>
+      </div>
+    </div>
+
+    <div id="tab-banners" class="hidden">
+      <div class="card">
+        <h2 style="margin-top:0;">Add Banner</h2>
+        <p style="font-size:11.5px; color:rgba(20,32,63,0.5); margin-top:-6px;">Recommended size: 1600 × 900px (JPEG best for fast loading)</p>
+        <label>Banner Image</label>
+        <input type="file" id="b-image-file" accept="image/png, image/jpeg" />
+        <input type="hidden" id="b-image" />
+        <label>Title (for admin reference only, not shown on website)</label>
+        <input type="text" id="b-title" placeholder="e.g. Season 5 Launch Banner" />
+        <label>Click Link (optional)</label>
+        <input type="text" id="b-link" placeholder="e.g. register.html" />
+        <button class="primary" onclick="addBanner()">Add Banner</button>
+      </div>
+
+      <div class="card">
+        <h2 style="margin-top:0;">All Banners</h2>
+        <div id="banners-list"></div>
+      </div>
+    </div>
+
+    <div id="tab-photos" class="hidden">
+      <div class="card">
+        <h2 style="margin-top:0;">Add Photo</h2>
+        <label>Season</label>
+        <input type="text" id="ph-season" placeholder="e.g. Season 4" />
+        <label>Team (optional)</label>
+        <select id="ph-team"><option value="">— No specific team —</option></select>
+        <label>Match / Event Label (optional)</label>
+        <input type="text" id="ph-match" placeholder="e.g. Final vs Mumbai Titans" />
+        <label>Photo</label>
+        <input type="file" id="ph-image-file" accept="image/png, image/jpeg" />
+        <input type="hidden" id="ph-image" />
+        <label>Caption (optional)</label>
+        <input type="text" id="ph-caption" placeholder="Short caption" />
+        <button class="primary" onclick="addPhoto()">Add Photo</button>
+      </div>
+
+      <div class="card">
+        <h2 style="margin-top:0;">All Photos</h2>
+        <div id="photos-list"></div>
+      </div>
+    </div>
+
+    <div id="tab-videos" class="hidden">
+      <div class="card">
+        <h2 style="margin-top:0;">Add Video</h2>
+        <label>Season</label>
+        <input type="text" id="vd-season" placeholder="e.g. Season 4" />
+        <label>Team (optional)</label>
+        <select id="vd-team"><option value="">— No specific team —</option></select>
+        <label>Title</label>
+        <input type="text" id="vd-title" placeholder="e.g. Match Highlights — Final" />
+        <label>Video Link (YouTube/Instagram/any URL)</label>
+        <input type="text" id="vd-url" placeholder="https://youtube.com/watch?v=..." />
+        <label>Thumbnail Image (optional)</label>
+        <input type="file" id="vd-thumb-file" accept="image/png, image/jpeg" />
+        <input type="hidden" id="vd-thumb" />
+        <button class="primary" onclick="addVideo()">Add Video</button>
+      </div>
+
+      <div class="card">
+        <h2 style="margin-top:0;">All Videos</h2>
+        <div id="videos-list"></div>
+      </div>
+    </div>
+
+    <div id="tab-content" class="hidden">
+      <div class="card">
+        <h2 style="margin-top:0;">📝 Website Pages</h2>
+        <p style="font-size:12px; color:rgba(20,32,63,0.55);">Click on any page below to edit its content — Terms, Privacy, Refunds, Code of Conduct, Cricket Rulebook, PMO Guideline, Eligibility Criteria.</p>
+        <div id="content-pages-list"></div>
+      </div>
+
+      <div class="card hidden" id="content-editor-card">
+        <h2 style="margin-top:0;">Edit: <span id="editor-page-name"></span></h2>
+        <label>Page Title (jo header mein dikhega)</label>
+        <input type="text" id="ce-title" />
+        <label>Content (HTML allowed — use &lt;h2&gt;Heading&lt;/h2&gt; and &lt;p&gt;Paragraph&lt;/p&gt;)</label>
+        <textarea id="ce-content" rows="16" style="font-family:monospace; font-size:12.5px;"></textarea>
+        <button class="primary" onclick="saveContentPage()">💾 Save Changes</button>
+        <button class="refresh-btn" onclick="document.getElementById('content-editor-card').classList.add('hidden')">Cancel</button>
+      </div>
+
+      <div class="card">
+        <h2 style="margin-top:0;">❓ Manage FAQ</h2>
+        <label>Question</label>
+        <input type="text" id="faq-q" placeholder="e.g. What is the registration fee?" />
+        <label>Answer</label>
+        <textarea id="faq-a" rows="3" placeholder="Poora jawaab likhein"></textarea>
+        <button class="primary" onclick="addFaqItem()">Add FAQ</button>
+      </div>
+
+      <div class="card">
+        <h2 style="margin-top:0;">All FAQ Items</h2>
+        <div id="faq-items-list"></div>
+      </div>
+    </div>
+
+    <div id="tab-roles" class="hidden">
+      <div class="card">
+        <h2 style="margin-top:0;">Add Team Member</h2>
+        <p style="font-size:12.5px; color:var(--muted);">Naya admin banayein aur unhe sirf zaroori sections ka access dein.</p>
+        <label>Name</label>
+        <input type="text" id="tr-name" placeholder="e.g. Rohan Sharma" />
+        <label>Email (login ke liye)</label>
+        <input type="email" id="tr-email" placeholder="rohan@example.com" />
+        <label>Password</label>
+        <input type="password" id="tr-password" placeholder="Kam se kam 6 characters" />
+        <label>Permissions</label>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px;">
+          <label style="display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.05); padding:8px 12px; border-radius:8px; font-size:12.5px; font-weight:600; text-transform:none; letter-spacing:0; cursor:pointer;"><input type="checkbox" class="tr-perm" value="finance" style="width:16px; height:16px;" /> 💰 Finance</label>
+          <label style="display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.05); padding:8px 12px; border-radius:8px; font-size:12.5px; font-weight:600; text-transform:none; letter-spacing:0; cursor:pointer;"><input type="checkbox" class="tr-perm" value="users" style="width:16px; height:16px;" /> 👥 Users &amp; Selection</label>
+          <label style="display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.05); padding:8px 12px; border-radius:8px; font-size:12.5px; font-weight:600; text-transform:none; letter-spacing:0; cursor:pointer;"><input type="checkbox" class="tr-perm" value="teams" style="width:16px; height:16px;" /> 🏏 Teams</label>
+          <label style="display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.05); padding:8px 12px; border-radius:8px; font-size:12.5px; font-weight:600; text-transform:none; letter-spacing:0; cursor:pointer;"><input type="checkbox" class="tr-perm" value="banners" style="width:16px; height:16px;" /> 🖼️ Banners/Marketing</label>
+          <label style="display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.05); padding:8px 12px; border-radius:8px; font-size:12.5px; font-weight:600; text-transform:none; letter-spacing:0; cursor:pointer;"><input type="checkbox" class="tr-perm" value="matches" style="width:16px; height:16px;" /> 🔴 Matches</label>
+          <label style="display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.05); padding:8px 12px; border-radius:8px; font-size:12.5px; font-weight:600; text-transform:none; letter-spacing:0; cursor:pointer;"><input type="checkbox" class="tr-perm" value="content" style="width:16px; height:16px;" /> 📝 Content</label>
+          <label style="display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.05); padding:8px 12px; border-radius:8px; font-size:12.5px; font-weight:600; text-transform:none; letter-spacing:0; cursor:pointer;"><input type="checkbox" class="tr-perm" value="scoring" style="width:16px; height:16px;" /> 🎯 Coach (Trial Scoring)</label>
+        </div>
+        <button class="primary" onclick="createTeamMember()">+ Add Team Member</button>
+        <div id="tr-result"></div>
+      </div>
+
+      <div class="card">
+        <h2 style="margin-top:0;">Team Members</h2>
+        <div id="team-roles-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Start Match modal-ish inline card -->
+<div class="card hidden" id="start-match-card" style="position:fixed; bottom:0; left:0; right:0; max-width:600px; margin:0 auto; border-radius:16px 16px 0 0; box-shadow:0 -8px 24px rgba(0,0,0,0.15); z-index:100;">
+  <h2 style="margin-top:0;">Start Match</h2>
+  <label>Toss Winner</label>
+  <select id="sm-toss-winner"></select>
+  <label>Toss Decision</label>
+  <select id="sm-toss-decision"><option value="bat">Chose to Bat</option><option value="bowl">Chose to Bowl</option></select>
+  <label>Batting First</label>
+  <select id="sm-batting-team"></select>
+  <button class="primary" onclick="confirmStartMatch()">Start Match →</button>
+  <button class="refresh-btn" onclick="document.getElementById('start-match-card').classList.add('hidden')">Cancel</button>
+</div>
+
+<script>
+  var BACKEND_URL = 'https://bcpl-backend-production.up.railway.app';
+  var authToken = localStorage.getItem('bcpl_admin_token') || '';
+  var teamsCache = [];
+
+  // ---- Global fetch wrapper: har /api/admin/ call mein apne aap token laga deta hai ----
+  // Isse purane 30+ jagah pe likhe "secret: secret" wagera calls ko badalna nahi pada —
+  // yeh unhe as-is chalne deta hai (backend un extra fields ko ignore kar dega),
+  // bas Authorization header sabme add ho jaata hai.
+  var _originalFetch = window.fetch;
+  window.fetch = function (url, options) {
+    options = options || {};
+    var isAdminCall = typeof url === 'string' && url.indexOf('/api/admin/') !== -1 && url.indexOf('/api/admin/login') === -1;
+    if (isAdminCall && authToken) {
+      options.headers = options.headers || {};
+      options.headers['Authorization'] = 'Bearer ' + authToken;
+    }
+    return _originalFetch(url, options).then(function (res) {
+      if (isAdminCall && res.status === 401) {
+        // Session expire ho gaya — dobara login karwao
+        authToken = '';
+        localStorage.removeItem('bcpl_admin_token');
+        document.getElementById('admin-ui').classList.add('hidden');
+        document.getElementById('admin-topbar').style.display = 'none';
+        document.getElementById('login-card').classList.remove('hidden');
+        alert('Session expire ho gaya hai. Kripya dobara login karein.');
+      }
+      return res;
+    });
+  };
+
+  function setupLogoUpload(fileInputId, hiddenInputId) {
+    var fileInput = document.getElementById(fileInputId);
+    if (!fileInput) return;
+    fileInput.addEventListener('change', function () {
+      var file = fileInput.files[0];
+      if (!file) return;
+      var formData = new FormData();
+      formData.append('logo', file);
+
+      var label = fileInput.previousElementSibling;
+      var originalText = label ? label.textContent : '';
+      if (label) label.textContent = 'Uploading...';
+
+      fetch(BACKEND_URL + '/api/admin/upload-logo', { method: 'POST', body: formData })
+        .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+        .then(function (r) {
+          if (label) label.textContent = originalText;
+          if (!r.ok) { alert(r.data.error || 'Upload failed'); return; }
+          document.getElementById(hiddenInputId).value = r.data.url;
+          alert('Logo uploaded successfully ✅');
+        })
+        .catch(function () {
+          if (label) label.textContent = originalText;
+          alert('Connection error — upload failed');
+        });
+    });
+  }
+
+  var isOwner = localStorage.getItem('bcpl_admin_is_owner') === 'true';
+  var myPermissions = JSON.parse(localStorage.getItem('bcpl_admin_permissions') || '[]');
+  var myName = localStorage.getItem('bcpl_admin_name') || '';
+
+  function doLogin() {
+    var email = document.getElementById('a-email').value.trim();
+    var password = document.getElementById('a-secret').value.trim();
+    if (!password) { alert('Please enter the password'); return; }
+
+    var body = { password: password };
+    if (email) body.email = email;
+
+    _originalFetch(BACKEND_URL + '/api/admin/login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { alert(r.data.error || 'Login fail ho gaya'); return; }
+        authToken = r.data.token;
+        isOwner = !!r.data.is_owner;
+        myPermissions = r.data.permissions || [];
+        myName = r.data.name || '';
+        localStorage.setItem('bcpl_admin_token', authToken);
+        localStorage.setItem('bcpl_admin_is_owner', isOwner);
+        localStorage.setItem('bcpl_admin_permissions', JSON.stringify(myPermissions));
+        localStorage.setItem('bcpl_admin_name', myName);
+        enterAdminUI();
+      })
+      .catch(function () { alert('Connection error — login nahi ho paaya'); });
+  }
+
+  // Permission ke hisaab se sidebar mein tabs dikhana/chhupana
+  var TAB_PERMISSIONS = {
+    dashboard: null, finance: 'finance', users: 'users', selection: 'users', kyc: 'users',
+    teams: 'teams', sponsors: 'banners', matches: 'matches', banners: 'banners',
+    photos: 'banners', videos: 'banners', content: 'content', roles: null,
+  };
+
+  function applyPermissionVisibility() {
+    document.querySelectorAll('.sidebar-item').forEach(function (el) {
+      var tab = el.getAttribute('data-tab');
+      var needed = TAB_PERMISSIONS[tab];
+      var visible = isOwner || !needed || myPermissions.indexOf(needed) !== -1;
+      if (tab === 'roles') visible = isOwner; // sirf owner ko Team & Roles dikhe
+      el.classList.toggle('hidden', !visible);
+    });
+    document.getElementById('welcome-name').textContent = myName ? ('👋 ' + myName) : '';
+  }
+
+  function enterAdminUI() {
+    document.getElementById('login-card').classList.add('hidden');
+    document.getElementById('admin-ui').classList.remove('hidden');
+    document.getElementById('admin-topbar').style.display = 'flex';
+    applyPermissionVisibility();
+    if (isOwner || myPermissions.indexOf('finance') !== -1) loadDashboard();
+    if (isOwner || myPermissions.indexOf('users') !== -1) loadPlayers();
+    if (isOwner || myPermissions.indexOf('teams') !== -1) loadTeams();
+    if (isOwner || myPermissions.indexOf('banners') !== -1) { loadSponsors(); loadBanners(); loadPhotos(); loadVideos(); }
+
+  }
+
+  // Page load hote hi — agar pehle se valid (non-expired) token saved hai, seedha andar le jaao
+  if (authToken) { enterAdminUI(); }
+
+  function doLogout() {
+    authToken = '';
+    localStorage.removeItem('bcpl_admin_token');
+    document.getElementById('admin-ui').classList.add('hidden');
+    document.getElementById('admin-topbar').style.display = 'none';
+    document.getElementById('login-card').classList.remove('hidden');
+    document.getElementById('a-secret').value = '';
+  }
+
+  var tabTitles = {
+    dashboard: 'Dashboard', finance: 'Finance & Invoices', users: 'Users & Export', selection: 'Selection',
+    kyc: 'KYC', teams: 'Teams', sponsors: 'Sponsors', matches: 'Matches',
+    banners: 'Banners', photos: 'Photos', videos: 'Videos', content: 'Content Pages', roles: 'Team & Roles',
+  };
+
+  function openSidebar() {
+    document.getElementById('sidebar').classList.add('open');
+    document.getElementById('sidebar-overlay').classList.add('open');
+  }
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('open');
+  }
+
+  function switchTab(tab) {
+    ['dashboard', 'finance', 'users', 'selection', 'kyc', 'teams', 'sponsors', 'matches', 'banners', 'photos', 'videos', 'content', 'roles'].forEach(function (t) {
+      document.getElementById('tab-' + t).classList.toggle('hidden', t !== tab);
+    });
+    document.querySelectorAll('.sidebar-item').forEach(function (el) {
+      el.classList.toggle('active', el.getAttribute('data-tab') === tab);
+    });
+    document.getElementById('topbar-title').textContent = tabTitles[tab] || tab;
+    closeSidebar();
+    if (tab === 'matches') loadMatches();
+    if (tab === 'users') loadUsersList();
+    if (tab === 'content') { loadContentPages(); loadFaqItems(); }
+    if (tab === 'finance') loadFinanceSummary();
+    if (tab === 'kyc') loadKycList();
+    if (tab === 'roles') loadTeamRoles();
+    if (tab === 'teams') loadPointsTable();
+  }
+
+  function loadKycList() {
+    var el = document.getElementById('kyc-list');
+    el.innerHTML = '<div class="empty-state">Loading...</div>';
+    fetch(BACKEND_URL + '/api/admin/kyc-list')
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok || !r.data.users || !r.data.users.length) { el.innerHTML = '<div class="empty-state">Koi Phase 2 paid player nahi mila.</div>'; return; }
+        var statusPill = { verified: '<span class="pill selected">Verified</span>', pending: '<span class="pill pending">Pending</span>', failed: '<span class="pill not_selected">Failed</span>', not_started: '<span class="pill pending">Not Started</span>' };
+        el.innerHTML = r.data.users.map(function (u) {
+          return '<div class="card"><div class="list-item-name">' + u.name + '</div>' +
+            '<div class="list-item-meta">' + (u.player_display_id || '') + ' · ' + u.phone + '</div>' +
+            '<div style="margin-top:8px;">' + (statusPill[u.kyc_status] || statusPill.not_started) + '</div>' +
+            (u.kyc_pan_number ? '<div class="list-item-meta" style="margin-top:6px;">PAN: ' + u.kyc_pan_number + (u.kyc_pan_name ? ' (' + u.kyc_pan_name + ')' : '') + '</div>' : '') +
+            (u.kyc_name_match ? '<div class="list-item-meta">Name match: ' + u.kyc_name_match + '</div>' : '') +
+            (u.kyc_failure_reason ? '<div class="list-item-meta" style="color:var(--red);">' + u.kyc_failure_reason + '</div>' : '') +
+            '</div>';
+        }).join('');
+      })
+      .catch(function () { el.innerHTML = '<div class="empty-state">Connection error</div>'; });
+  }
+
+  function loadPointsTable() {
+    var el = document.getElementById('points-table-editor');
+    el.innerHTML = '<div class="empty-state">Loading...</div>';
+    fetch(BACKEND_URL + '/api/teams')
+      .then(function (res) { return res.json(); })
+      .then(function (r) {
+        if (!r.success || !r.teams || !r.teams.length) { el.innerHTML = '<div class="empty-state">Pehle teams add karein.</div>'; return; }
+        el.innerHTML = r.teams.map(function (t) {
+          return '<div class="card" style="margin-top:12px;">' +
+            '<div class="list-item-name" style="margin-bottom:10px;">' + t.name + '</div>' +
+            '<label>Group</label>' +
+            '<select id="pt-group-' + t.id + '">' +
+              '<option value="" ' + (!t.group_name ? 'selected' : '') + '>-- Abhi tak koi group nahi --</option>' +
+              '<option value="A" ' + (t.group_name === 'A' ? 'selected' : '') + '>Group A</option>' +
+              '<option value="B" ' + (t.group_name === 'B' ? 'selected' : '') + '>Group B</option>' +
+            '</select>' +
+            '<div class="two-col">' +
+              '<div><label>Matches Played</label><input type="number" id="pt-played-' + t.id + '" value="' + (t.matches_played || 0) + '" /></div>' +
+              '<div><label>Matches Won</label><input type="number" id="pt-won-' + t.id + '" value="' + (t.matches_won || 0) + '" /></div>' +
+              '<div><label>Matches Lost</label><input type="number" id="pt-lost-' + t.id + '" value="' + (t.matches_lost || 0) + '" /></div>' +
+              '<div><label>Net Run Rate</label><input type="number" step="0.001" id="pt-nrr-' + t.id + '" value="' + (t.net_run_rate || 0) + '" /></div>' +
+            '</div>' +
+            '<label>Points</label><input type="number" id="pt-points-' + t.id + '" value="' + (t.points || 0) + '" />' +
+            '<button class="primary" onclick="savePointsRow(\'' + t.id + '\')" style="margin-top:8px;">Save</button>' +
+            '<div id="pt-status-' + t.id + '" style="font-size:12px; margin-top:6px;"></div>' +
+          '</div>';
+        }).join('');
+      })
+      .catch(function () { el.innerHTML = '<div class="empty-state">Connection error</div>'; });
+  }
+
+  function savePointsRow(teamId) {
+    var body = {
+      group_name: document.getElementById('pt-group-' + teamId).value || null,
+      matches_played: parseInt(document.getElementById('pt-played-' + teamId).value, 10) || 0,
+      matches_won: parseInt(document.getElementById('pt-won-' + teamId).value, 10) || 0,
+      matches_lost: parseInt(document.getElementById('pt-lost-' + teamId).value, 10) || 0,
+      net_run_rate: parseFloat(document.getElementById('pt-nrr-' + teamId).value) || 0,
+      points: parseInt(document.getElementById('pt-points-' + teamId).value, 10) || 0,
+    };
+    var statusEl = document.getElementById('pt-status-' + teamId);
+    statusEl.textContent = 'Saving...';
+    fetch(BACKEND_URL + '/api/admin/teams/' + teamId + '/update', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        statusEl.textContent = r.ok ? '✅ Saved' : (r.data.error || 'Error');
+      })
+      .catch(function () { statusEl.textContent = 'Connection error'; });
+  }
+
+  function loadTeamRoles() {
+    var el = document.getElementById('team-roles-list');
+    el.innerHTML = '<div class="empty-state">Loading...</div>';
+    fetch(BACKEND_URL + '/api/admin/team-roles')
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { el.innerHTML = '<div class="empty-state">' + (r.data.error || 'Error') + '</div>'; return; }
+        if (!r.data.admins.length) { el.innerHTML = '<div class="empty-state">Abhi tak koi team member add nahi kiya.</div>'; return; }
+        var permLabels = { finance: '💰 Finance', users: '👥 Users', teams: '🏏 Teams', banners: '🖼️ Banners', matches: '🔴 Matches', content: '📝 Content', scoring: '🎯 Coach' };
+        el.innerHTML = r.data.admins.map(function (a) {
+          var perms = Object.keys(permLabels).filter(function (p) { return a['perm_' + p]; }).map(function (p) { return permLabels[p]; }).join(' · ') || 'Koi permission nahi';
+          return '<div class="list-item"><div><div class="list-item-name">' + a.name + (a.active ? '' : ' <span style="color:var(--red);">(Inactive)</span>') + '</div>' +
+            '<div class="list-item-meta">' + a.email + '</div>' +
+            '<div class="list-item-meta" style="margin-top:4px;">' + perms + '</div></div>' +
+            '<button onclick="deleteTeamMember(\'' + a.id + '\', \'' + a.name.replace(/'/g, "\\'") + '\')" style="font-size:12px; color:var(--red); font-weight:700; background:none; border:none; cursor:pointer;">Remove</button>' +
+            '</div>';
+        }).join('');
+      })
+      .catch(function () { el.innerHTML = '<div class="empty-state">Connection error</div>'; });
+  }
+
+  function createTeamMember() {
+    var name = document.getElementById('tr-name').value.trim();
+    var email = document.getElementById('tr-email').value.trim();
+    var password = document.getElementById('tr-password').value.trim();
+    var permissions = Array.from(document.querySelectorAll('.tr-perm:checked')).map(function (cb) { return cb.value; });
+
+    if (!name || !email || !password) { alert('Naam, email aur password zaroori hain'); return; }
+    if (!permissions.length) { alert('Kam se kam ek permission chunein'); return; }
+
+    fetch(BACKEND_URL + '/api/admin/team-roles', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name, email: email, password: password, permissions: permissions }),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        var el = document.getElementById('tr-result');
+        if (!r.ok) { el.innerHTML = '<div class="empty-state">' + (r.data.error || 'Kuch galat ho gaya') + '</div>'; return; }
+        el.innerHTML = '<div class="list-item">✅ ' + name + ' ko add kar diya gaya. Yeh email/password unhe bhej dein.</div>';
+        document.getElementById('tr-name').value = '';
+        document.getElementById('tr-email').value = '';
+        document.getElementById('tr-password').value = '';
+        document.querySelectorAll('.tr-perm').forEach(function (cb) { cb.checked = false; });
+        loadTeamRoles();
+      })
+      .catch(function () { alert('Connection error'); });
+  }
+
+  function deleteTeamMember(id, name) {
+    if (!confirm('"' + name + '" ko team se remove karein? Woh ab login nahi kar payenge.')) return;
+    fetch(BACKEND_URL + '/api/admin/team-roles/' + id + '/delete', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { alert(r.data.error || 'Kuch galat ho gaya'); return; }
+        loadTeamRoles();
+      })
+      .catch(function () { alert('Connection error'); });
+  }
+
+  function loadDashboard() {
+    var el = document.getElementById('dashboard-content');
+    el.innerHTML = '<div class="empty-state">Loading...</div>';
+
+    fetch(BACKEND_URL + '/api/admin/dashboard')
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { el.innerHTML = '<div class="empty-state">' + (r.data.error || 'Error') + '</div>'; return; }
+        var d = r.data;
+
+        var html = '';
+
+        // Sync warning + button — agar koi payment "atki hui" hai (webhook fail hone se)
+        if (d.revenue.stuck_payments_count > 0) {
+          html += '<div class="warn-banner">⚠️ ' + d.revenue.stuck_payments_count + ' payments are still showing as "pending" — some of these may actually be successful. Press "Sync" below to fix this.</div>';
+        }
+        html += '<button class="sync-btn" onclick="syncPayments()">🔄 Sync Payments with Cashfree</button>';
+
+        // Registrations funnel
+        html += '<div class="stat-grid">' +
+          '<div class="stat-card"><div class="stat-value">' + d.registrations.total + '</div><div class="stat-label">TOTAL REGISTRATIONS</div></div>' +
+          '<div class="stat-card"><div class="stat-value">' + d.registrations.phase1_paid + '</div><div class="stat-label">PHASE 1 PAID</div></div>' +
+          '<div class="stat-card"><div class="stat-value">' + d.registrations.phase1_not_paid + '</div><div class="stat-label">PHASE 1 NOT PAID</div></div>' +
+          '<div class="stat-card"><div class="stat-value">' + d.registrations.pending_payment + '</div><div class="stat-label">PAYMENT PENDING</div></div>' +
+          '<div class="stat-card"><div class="stat-value">' + d.registrations.selected + '</div><div class="stat-label">SELECTED (PHASE 2)</div></div>' +
+          '<div class="stat-card"><div class="stat-value">' + d.registrations.not_selected + '</div><div class="stat-label">NOT SELECTED</div></div>' +
+          '<div class="stat-card"><div class="stat-value">' + d.registrations.fully_paid + '</div><div class="stat-label">PHASE 2 PAID</div></div>' +
+          '<div class="stat-card"><div class="stat-value">' + d.registrations.selected_not_yet_paid + '</div><div class="stat-label">SELECTED, PHASE 2 PENDING</div></div>' +
+        '</div>';
+
+        // Revenue
+        html += '<div class="card"><h2 style="margin-top:0;">💰 Revenue</h2>' +
+          '<div class="stat-grid">' +
+            '<div class="stat-card money"><div class="stat-value">₹' + d.revenue.total.toLocaleString('en-IN') + '</div><div class="stat-label">TOTAL COLLECTED</div></div>' +
+            '<div class="stat-card money"><div class="stat-value">₹' + d.revenue.base_amount.toLocaleString('en-IN') + '</div><div class="stat-label">BASE (EXCL. GST)</div></div>' +
+          '</div>' +
+          '<div class="table-row"><span>CGST (9%)</span><span class="val">₹' + d.revenue.cgst.toLocaleString('en-IN') + '</span></div>' +
+          '<div class="table-row"><span>SGST (9%)</span><span class="val">₹' + d.revenue.sgst.toLocaleString('en-IN') + '</span></div>' +
+          '<div class="table-row"><span>Total GST</span><span class="val">₹' + (d.revenue.cgst + d.revenue.sgst).toLocaleString('en-IN') + '</span></div>' +
+          '<div class="table-row"><span>Phase 1 Revenue</span><span class="val">₹' + d.revenue.phase1_revenue.toLocaleString('en-IN') + '</span></div>' +
+          '<div class="table-row"><span>Phase 2 Revenue</span><span class="val">₹' + d.revenue.phase2_revenue.toLocaleString('en-IN') + '</span></div>' +
+        '</div>';
+
+        // Campaign Link Creator — influencer/marketing ke liye naya trackable link banana
+        html += '<div class="card"><h2 style="margin-top:0;">🔗 Create New Marketing Link</h2>' +
+          '<label>Name (e.g. Influencer Rahul, Instagram Ad 1)</label>' +
+          '<input type="text" id="campaign-name" placeholder="e.g. Influencer Rahul" />' +
+          '<button class="primary" onclick="createCampaignLink()">Create Link</button>' +
+          '<div id="campaign-link-result"></div>' +
+        '</div>';
+
+        // Traffic sources (marketing — Instagram/Facebook/Direct) — ab revenue + conversion ke saath
+        html += '<div class="card"><h2 style="margin-top:0;">📡 Traffic Sources — Kaun Sa Link Kitna Kamaata Hai</h2>';
+        if (!d.traffic_sources.length) {
+          html += '<div class="empty-state">No data available</div>';
+        } else {
+          html += '<table style="width:100%; border-collapse:collapse; font-size:12px;"><tr style="text-align:left; color:rgba(20,32,63,0.5); font-size:10.5px;">' +
+            '<th style="padding:6px 4px;">Source</th><th style="padding:6px 4px;">Reg.</th><th style="padding:6px 4px;">Paid</th><th style="padding:6px 4px;">Conv.</th><th style="padding:6px 4px; text-align:right;">Revenue</th></tr>';
+          d.traffic_sources.forEach(function (s) {
+            html += '<tr style="border-top:1px solid rgba(20,32,63,0.06);">' +
+              '<td style="padding:8px 4px; font-weight:700;">' + s.source + '</td>' +
+              '<td style="padding:8px 4px;">' + s.registered + '</td>' +
+              '<td style="padding:8px 4px;">' + s.paid + '</td>' +
+              '<td style="padding:8px 4px;">' + s.conversion_rate + '%</td>' +
+              '<td style="padding:8px 4px; text-align:right; font-weight:800; color:#1B7A3D;">₹' + s.revenue.toLocaleString('en-IN') + '</td>' +
+            '</tr>';
+          });
+          html += '</table>';
+        }
+        html += '</div>';
+
+        // City breakdown
+        html += '<div class="card"><h2 style="margin-top:0;">📍 Top Cities</h2>';
+        if (!d.city_breakdown.length) html += '<div class="empty-state">No data available</div>';
+        d.city_breakdown.forEach(function (c) {
+          html += '<div class="table-row"><span>' + c.city + '</span><span class="val">' + c.count + '</span></div>';
+        });
+        html += '</div>';
+
+        // Role breakdown
+        html += '<div class="card"><h2 style="margin-top:0;">🏏 Role Breakdown</h2>';
+        Object.keys(d.role_breakdown).forEach(function (role) {
+          html += '<div class="table-row"><span>' + role + '</span><span class="val">' + d.role_breakdown[role] + '</span></div>';
+        });
+        html += '</div>';
+
+        // Top referrers (marketing)
+        html += '<div class="card"><h2 style="margin-top:0;">📣 Top Referrers</h2>';
+        if (!d.top_referrers.length) html += '<div class="empty-state">No referrals yet</div>';
+        d.top_referrers.forEach(function (r) {
+          html += '<div class="table-row"><span>' + r.code + '</span><span class="val">' + r.count + ' referrals</span></div>';
+        });
+        html += '</div>';
+
+        // Registration trend
+        html += '<div class="card"><h2 style="margin-top:0;">📈 Last 14 Days</h2>';
+        if (!d.registration_trend.length) html += '<div class="empty-state">No data available</div>';
+        d.registration_trend.forEach(function (t) {
+          html += '<div class="table-row"><span>' + t.date + '</span><span class="val">' + t.count + '</span></div>';
+        });
+        html += '</div>';
+
+        el.innerHTML = html;
+      })
+      .catch(function () { el.innerHTML = '<div class="empty-state">Connection error</div>'; });
+  }
+
+  function loadFinanceSummary() {
+    var el = document.getElementById('finance-summary');
+    el.innerHTML = '<div class="empty-state">Loading...</div>';
+
+    fetch(BACKEND_URL + '/api/admin/dashboard')
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { el.innerHTML = '<div class="empty-state">' + (r.data.error || 'Error') + '</div>'; return; }
+        var d = r.data;
+        var html = '';
+
+        html += '<div class="stat-grid">' +
+          '<div class="stat-card"><div class="stat-value">' + d.registrations.total + '</div><div class="stat-label">TOTAL REGISTERED</div></div>' +
+          '<div class="stat-card"><div class="stat-value">' + d.registrations.phase1_paid + '</div><div class="stat-label">PHASE 1 PAID</div></div>' +
+          '<div class="stat-card"><div class="stat-value">' + d.registrations.phase1_not_paid + '</div><div class="stat-label">PHASE 1 NOT PAID</div></div>' +
+          '<div class="stat-card"><div class="stat-value">' + d.registrations.fully_paid + '</div><div class="stat-label">PHASE 2 PAID</div></div>' +
+          '<div class="stat-card"><div class="stat-value">' + d.registrations.selected_not_yet_paid + '</div><div class="stat-label">PHASE 2 NOT PAID (SELECTED)</div></div>' +
+          '<div class="stat-card"><div class="stat-value">' + d.registrations.pending_payment + '</div><div class="stat-label">NO PAYMENT AT ALL</div></div>' +
+        '</div>';
+
+        html += '<div class="card"><h2 style="margin-top:0;">Revenue &amp; GST Breakdown</h2>' +
+          '<div class="stat-grid">' +
+            '<div class="stat-card money"><div class="stat-value">₹' + d.revenue.total.toLocaleString('en-IN') + '</div><div class="stat-label">TOTAL REVENUE</div></div>' +
+            '<div class="stat-card money"><div class="stat-value">₹' + d.revenue.base_amount.toLocaleString('en-IN') + '</div><div class="stat-label">BASE AMOUNT (EXCL. GST)</div></div>' +
+          '</div>' +
+          '<div class="table-row"><span>CGST (9%)</span><span class="val">₹' + d.revenue.cgst.toLocaleString('en-IN') + '</span></div>' +
+          '<div class="table-row"><span>SGST (9%)</span><span class="val">₹' + d.revenue.sgst.toLocaleString('en-IN') + '</span></div>' +
+          '<div class="table-row"><span>Total GST Collected</span><span class="val">₹' + (d.revenue.cgst + d.revenue.sgst).toLocaleString('en-IN') + '</span></div>' +
+          '<div class="table-row"><span>Phase 1 Revenue</span><span class="val">₹' + d.revenue.phase1_revenue.toLocaleString('en-IN') + '</span></div>' +
+          '<div class="table-row"><span>Phase 2 Revenue</span><span class="val">₹' + d.revenue.phase2_revenue.toLocaleString('en-IN') + '</span></div>' +
+        '</div>';
+
+        el.innerHTML = html;
+      })
+      .catch(function () { el.innerHTML = '<div class="empty-state">Connection error</div>'; });
+  }
+
+  function lookupInvoice() {
+    var phone = document.getElementById('inv-phone').value.trim();
+    if (!phone) { alert('Please enter a phone number'); return; }
+
+    fetch(BACKEND_URL + '/api/admin/invoice-lookup?phone=' + encodeURIComponent(phone))
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        var el = document.getElementById('invoice-lookup-result');
+        if (!r.ok) { el.innerHTML = '<div class="empty-state">' + (r.data.error || 'Not found') + '</div>'; return; }
+        var user = r.data.user;
+        var payments = r.data.payments || [];
+        if (!payments.length) { el.innerHTML = '<div class="empty-state">No successful payments found for this player.</div>'; return; }
+
+        el.innerHTML = '<p style="font-size:12.5px; font-weight:700; margin-top:14px;">' + user.name + ' (' + (user.player_display_id || '') + ')</p>' +
+          payments.map(function (p) {
+            return '<div class="list-item"><div><div class="list-item-name">' + p.phase.toUpperCase() + ' — ₹' + p.amount + '</div>' +
+              '<div class="list-item-meta">' + (p.payment_time ? new Date(p.payment_time).toLocaleDateString('en-IN') : '') + '</div></div>' +
+              '<button class="small-danger" style="background:var(--navy);" onclick=\'generateInvoice(' + JSON.stringify(user) + ',' + JSON.stringify(p) + ')\'>Generate Invoice</button></div>';
+          }).join('');
+      })
+      .catch(function () { document.getElementById('invoice-lookup-result').innerHTML = '<div class="empty-state">Connection error</div>'; });
+  }
+
+  function generateInvoice(user, payment) {
+    var baseAmount = Math.round(payment.amount / 1.18);
+    var totalGst = payment.amount - baseAmount;
+    var cgst = Math.round(totalGst / 2);
+    var sgst = totalGst - cgst;
+    var invoiceNo = 'BCPL-INV-' + payment.id.slice(0, 8).toUpperCase();
+    var invoiceDate = payment.payment_time ? new Date(payment.payment_time).toLocaleDateString('en-IN') : new Date().toLocaleDateString('en-IN');
+
+    var html = '<!DOCTYPE html><html><head><title>Invoice ' + invoiceNo + '</title><style>' +
+      'body{font-family:Arial,sans-serif; padding:40px; color:#14203F;} ' +
+      '.header{display:flex; justify-content:space-between; align-items:start; border-bottom:3px solid #FF5500; padding-bottom:20px; margin-bottom:24px;} ' +
+      '.brand{font-size:24px; font-weight:900;} .muted{color:#666; font-size:12px;} ' +
+      'table{width:100%; border-collapse:collapse; margin-top:20px;} th,td{padding:10px; text-align:left; border-bottom:1px solid #ddd; font-size:13px;} ' +
+      'th{background:#F0F1F5; font-size:11px; text-transform:uppercase;} .total-row td{font-weight:900; font-size:15px; border-top:2px solid #14203F;} ' +
+      '.info-grid{display:flex; justify-content:space-between; margin-bottom:20px;} .info-block{font-size:13px; line-height:1.6;}' +
+      '</style></head><body>' +
+      '<div class="header"><div><div class="brand">BCPL</div><div class="muted">Bhartiya Corporate Premier League</div></div>' +
+      '<div style="text-align:right;"><div style="font-weight:800; font-size:18px;">TAX INVOICE</div><div class="muted">Invoice No: ' + invoiceNo + '</div><div class="muted">Date: ' + invoiceDate + '</div></div></div>' +
+      '<div class="info-grid"><div class="info-block"><b>Billed To:</b><br>' + user.name + '<br>' + user.phone + '<br>' + (user.email || '') + '<br>' + (user.city || '') + '</div>' +
+      '<div class="info-block" style="text-align:right;"><b>Player ID:</b> ' + (user.player_display_id || '-') + '<br><b>Payment ID:</b> ' + (payment.cf_payment_id || '-') + '<br><b>Order ID:</b> ' + payment.cf_order_id + '</div></div>' +
+      '<table><tr><th>Description</th><th style="text-align:right;">Amount</th></tr>' +
+      '<tr><td>BCPL Registration Fee — ' + payment.phase.toUpperCase() + '</td><td style="text-align:right;">₹' + baseAmount + '</td></tr>' +
+      '<tr><td>CGST (9%)</td><td style="text-align:right;">₹' + cgst + '</td></tr>' +
+      '<tr><td>SGST (9%)</td><td style="text-align:right;">₹' + sgst + '</td></tr>' +
+      '<tr class="total-row"><td>Total Paid</td><td style="text-align:right;">₹' + payment.amount + '</td></tr>' +
+      '</table>' +
+      '<p class="muted" style="margin-top:30px;">This is a computer-generated invoice and does not require a signature.</p>' +
+      '<script>window.print();</' + 'script></body></html>';
+
+    var invoiceWindow = window.open('', '_blank');
+    invoiceWindow.document.write(html);
+    invoiceWindow.document.close();
+  }
+
+  function createCampaignLink() {
+    var name = document.getElementById('campaign-name').value.trim();
+    if (!name) { alert('Please enter a name'); return; }
+
+    // Naam ko URL-safe slug mein badalte hain (jaise "Influencer Rahul" -> "influencer-rahul")
+    var slug = name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    var link = 'https://bcplt20.com/?utm_source=' + slug;
+
+    document.getElementById('campaign-link-result').innerHTML =
+      '<div style="background:#F0F1F5; border-radius:10px; padding:12px; margin-top:10px; word-break:break-all; font-size:12.5px; font-weight:700;">' + link + '</div>' +
+      '<button class="refresh-btn" style="margin-top:8px;" onclick="navigator.clipboard.writeText(\'' + link + '\'); alert(\'Copied!\');">📋 Copy Link</button>' +
+      '<p style="font-size:11px; color:rgba(20,32,63,0.5);">Anyone who registers through this link \'' + slug + '\' will be tracked under this name in Traffic Sources above.</p>';
+  }
+
+  function syncPayments() {
+    var btn = event.target;
+    btn.textContent = '⏳ Syncing...';
+    fetch(BACKEND_URL + '/api/admin/sync-payments', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ }),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        btn.textContent = '🔄 Sync Payments with Cashfree';
+        if (!r.ok) { alert(r.data.error || 'Sync failed'); return; }
+        var msg = r.data.checked + ' payments checked, ' + r.data.synced + ' updated (' + r.data.now_success + ' now show SUCCESS).';
+        var errors = (r.data.details || []).filter(function (d) { return d.error; });
+        if (errors.length) {
+          msg += '\n\n⚠️ ' + errors.length + ' had errors:\n' + errors.slice(0, 5).map(function (e) {
+            return e.order_id + ': ' + e.error;
+          }).join('\n');
+        }
+        alert(msg);
+        loadDashboard();
+      })
+      .catch(function () { btn.textContent = '🔄 Sync Payments with Cashfree'; alert('Connection error'); });
+  }
+
+  var allUsersCache = [];
+
+  function loadUsersList() {
+    fetch(BACKEND_URL + '/api/admin/export-users')
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) return;
+        allUsersCache = r.data.users || [];
+
+        // City dropdown ko asli maujood cities se bharte hain
+        var cities = Array.from(new Set(allUsersCache.map(function (u) { return u.city; }).filter(Boolean))).sort();
+        document.getElementById('filter-city').innerHTML = '<option value="">All cities</option>' +
+          cities.map(function (c) { return '<option value="' + c + '">' + c + '</option>'; }).join('');
+
+        renderUsersList(allUsersCache);
+      });
+  }
+
+  function getFilteredUsers() {
+    var city = document.getElementById('filter-city').value;
+    var role = document.getElementById('filter-role').value;
+    var payment = document.getElementById('filter-payment').value;
+
+    return allUsersCache.filter(function (u) {
+      if (city && u.city !== city) return false;
+      if (role && u.role !== role) return false;
+      if (payment && u.status !== payment) return false;
+      return true;
+    });
+  }
+
+  function applyUserFilters() {
+    renderUsersList(getFilteredUsers());
+  }
+
+  function renderUsersList(users) {
+    document.getElementById('users-count').textContent = users.length;
+    var listEl = document.getElementById('users-list');
+    if (!users.length) { listEl.innerHTML = '<div class="empty-state">No users found</div>'; return; }
+    listEl.innerHTML = users.slice(0, 50).map(function (u) {
+      return '<div class="list-item"><div><div class="list-item-name">' + u.name + '</div>' +
+        '<div class="list-item-meta">' + u.phone + ' · ' + (u.status || '') + '</div></div></div>';
+    }).join('') + (users.length > 50 ? '<div class="empty-state">...and ' + (users.length - 50) + ' more users — full data is in the CSV</div>' : '');
+  }
+
+  function exportUsersCSV() {
+    var users = getFilteredUsers();
+    if (!users.length) { alert('No users match these filters'); return; }
+
+    var headers = ['Player ID', 'Name', 'Phone', 'Email', 'Role', 'City', 'Status', 'Selection Status', 'Referral Code', 'Referred By', 'Traffic Source', 'Video Uploaded At', 'Registered At'];
+    var rows = users.map(function (u) {
+      return [
+        u.player_display_id, u.name, u.phone, u.email, u.role, u.city, u.status,
+        u.selection_status, u.referral_code, u.referred_by_code, u.traffic_source,
+        u.video_uploaded_at, u.created_at,
+      ].map(function (v) {
+        var s = (v === null || v === undefined) ? '' : String(v);
+        return '"' + s.replace(/"/g, '""') + '"';
+      }).join(',');
+    });
+    var csv = headers.join(',') + '\n' + rows.join('\n');
+
+    var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'bcpl-users-' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function loadPlayers() {
+    fetch(BACKEND_URL + '/api/admin/awaiting-selection')
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { alert(r.data.error || 'Something went wrong'); return; }
+        renderPlayers(r.data.users || []);
+      })
+      .catch(function () {});
+  }
+
+  function renderPlayers(users) {
+    var listEl = document.getElementById('player-list');
+    if (!users.length) {
+      listEl.innerHTML = '<div class="empty-state">No videos have been uploaded yet.</div>';
+      return;
+    }
+    listEl.innerHTML = users.map(function (u) {
+      var statusClass = u.selection_status || 'pending';
+      var videoUrl = 'https://mvquphemipqshlkndpvl.supabase.co/storage/v1/object/sign/trial-videos/' + u.video_url;
+      var scoreHtml = '';
+      if (u.trial_primary_score !== null && u.trial_primary_score !== undefined) {
+        scoreHtml = '<div class="player-meta" style="color:var(--orange); font-weight:700;">🎯 Trial Score: ' + u.trial_primary_score +
+          (u.trial_secondary_score !== null && u.trial_secondary_score !== undefined ? ' (Batting) + ' + u.trial_secondary_score + ' (Bowling)' : '') + '</div>';
+      }
+      return '<div class="card" id="player-' + u.id + '">' +
+        '<div class="player-name">' + u.name + ' (' + (u.player_display_id || '-') + ')</div>' +
+        '<div class="player-meta">' + u.role + ' · ' + u.city + ' · ' + u.phone + '</div>' +
+        scoreHtml +
+        '<span class="pill ' + statusClass + '">' + statusClass.replace('_', ' ') + '</span><br/>' +
+        '<a class="video-link" href="' + videoUrl + '" target="_blank">🎥 View Video (Supabase login chahiye)</a>' +
+        '<label style="margin-top:10px;">Trial Venue (Select karte waqt bhar dein)</label>' +
+        '<input type="text" id="venue-' + u.id + '" placeholder="e.g. Wankhede Stadium, Mumbai" />' +
+        '<label>Trial Date &amp; Time</label>' +
+        '<input type="datetime-local" id="date-' + u.id + '" />' +
+        '<div class="action-row">' +
+          '<button class="btn-select" onclick="setSelection(\'' + u.id + '\', true)">✅ Select for Phase 2</button>' +
+          '<button class="btn-reject" onclick="setSelection(\'' + u.id + '\', false)">❌ Not Selected</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function setSelection(userId, selected) {
+    if (!confirm(selected ? 'Select this player? An email/SMS will be sent.' : 'Reject this player? An email/SMS will be sent.')) return;
+    var body = { user_id: userId, selected: selected };
+    if (selected) {
+      var venueEl = document.getElementById('venue-' + userId);
+      var dateEl = document.getElementById('date-' + userId);
+      if (venueEl && venueEl.value.trim()) body.trial_venue = venueEl.value.trim();
+      if (dateEl && dateEl.value) body.trial_date = new Date(dateEl.value).toISOString();
+    }
+    fetch(BACKEND_URL + '/api/admin/set-selection', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { alert(r.data.error || 'Something went wrong'); return; }
+        var el = document.getElementById('player-' + userId);
+        if (el) {
+          var pill = el.querySelector('.pill');
+          pill.className = 'pill ' + (selected ? 'selected' : 'not_selected');
+          pill.textContent = selected ? 'selected' : 'not selected';
+        }
+        alert('Done! The player has been notified by email/SMS.');
+      })
+      .catch(function () { alert('Connection error'); });
+  }
+
+  function addTeam() {
+    var body = {
+            season: document.getElementById('t-season').value.trim(),
+      name: document.getElementById('t-name').value.trim(),
+      short_name: document.getElementById('t-short').value.trim(),
+      logo_url: document.getElementById('t-logo').value.trim(),
+      captain_name: document.getElementById('t-captain').value.trim(),
+      description: document.getElementById('t-desc').value.trim(),
+      instagram_handle: document.getElementById('t-insta').value.trim(),
+      twitter_handle: document.getElementById('t-twitter').value.trim(),
+    };
+    if (!body.name || !body.season) { alert('Season and Team Name are required'); return; }
+
+    fetch(BACKEND_URL + '/api/admin/teams', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { alert(r.data.error || 'Something went wrong'); return; }
+        alert('Team added successfully!');
+        ['t-season','t-name','t-short','t-logo','t-logo-file','t-captain','t-desc','t-insta','t-twitter'].forEach(function (id) {
+          document.getElementById(id).value = '';
+        });
+        loadTeams();
+      })
+      .catch(function () { alert('Connection error'); });
+  }
+
+  function loadTeams() {
+    fetch(BACKEND_URL + '/api/teams')
+      .then(function (res) { return res.ok ? res.json() : null; })
+      .then(function (r) {
+        if (!r || !r.success) return;
+        teamsCache = r.teams || [];
+
+        var teamOptions = teamsCache.map(function (t) { return '<option value="' + t.id + '">' + t.name + '</option>'; }).join('');
+
+        document.getElementById('tp-team-select').innerHTML = teamOptions;
+        document.getElementById('sq-team-select').innerHTML = '<option value="">-- Team chunein --</option>' + teamOptions;
+        document.getElementById('et-team-select').innerHTML = teamOptions;
+        var mTeamA = document.getElementById('m-team-a');
+        var mTeamB = document.getElementById('m-team-b');
+        if (mTeamA) mTeamA.innerHTML = teamOptions;
+        if (mTeamB) mTeamB.innerHTML = teamOptions;
+        var phTeam = document.getElementById('ph-team');
+        var vdTeam = document.getElementById('vd-team');
+        var phGenTeam = document.getElementById('ph-team-select');
+        if (phTeam) phTeam.innerHTML = '<option value="">— No specific team —</option>' + teamOptions;
+        if (vdTeam) vdTeam.innerHTML = '<option value="">— No specific team —</option>' + teamOptions;
+        if (phGenTeam) phGenTeam.innerHTML = teamOptions;
+
+        var listEl = document.getElementById('teams-list');
+        if (!teamsCache.length) { listEl.innerHTML = '<div class="empty-state">No teams added yet.</div>'; return; }
+        listEl.innerHTML = teamsCache.map(function (t) {
+          return '<div class="list-item"><div><div class="list-item-name">' + t.name + '</div><div class="list-item-meta">' + t.season + '</div></div>' +
+            '<div style="display:flex; gap:14px; align-items:center;">' +
+            '<a href="team-detail.html?id=' + t.id + '" target="_blank" style="font-size:12px; color:var(--orange); font-weight:700; text-decoration:none;">View →</a>' +
+            '<button onclick="deleteTeam(\'' + t.id + '\', \'' + t.name.replace(/'/g, "\\'") + '\')" style="font-size:12px; color:#c0392b; font-weight:700; background:none; border:none; cursor:pointer; padding:0;">Delete</button>' +
+            '</div></div>';
+        }).join('');
+      });
+  }
+
+  function deleteTeam(teamId, teamName) {
+    if (!confirm('Delete "' + teamName + '"? Iske saare players aur roster bhi delete ho jaayenge. Yeh undo nahi ho sakta.')) return;
+    fetch(BACKEND_URL + '/api/admin/teams/' + teamId + '/delete', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ }),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { alert(r.data.error || 'Something went wrong'); return; }
+        alert('Team deleted');
+        loadTeams();
+      })
+      .catch(function () { alert('Connection error'); });
+  }
+
+  // ============ MATCHES ============
+  var matchesCache = [];
+  var startingMatchId = null;
+  var scheduleRowCount = 0;
+
+  function addScheduleRow() {
+    scheduleRowCount++;
+    var rowId = scheduleRowCount;
+    var teamOptions = teamsCache.map(function (t) { return '<option value="' + t.id + '">' + t.name + '</option>'; }).join('');
+    var row = document.createElement('div');
+    row.id = 'sched-row-' + rowId;
+    row.style.cssText = 'border:1px solid rgba(20,32,63,0.12); border-radius:10px; padding:14px; margin-bottom:10px; position:relative;';
+    row.innerHTML =
+      '<button onclick="document.getElementById(\'sched-row-' + rowId + '\').remove()" style="position:absolute; top:10px; right:10px; background:none; border:none; color:#c0392b; font-weight:700; cursor:pointer;">✕ Remove</button>' +
+      '<label>Team A</label><select id="sr-team-a-' + rowId + '">' + teamOptions + '</select>' +
+      '<label>Team B</label><select id="sr-team-b-' + rowId + '">' + teamOptions + '</select>' +
+      '<label>Venue</label><input type="text" id="sr-venue-' + rowId + '" placeholder="e.g. Wankhede Stadium, Mumbai" />' +
+      '<label>Date &amp; Time</label><input type="datetime-local" id="sr-datetime-' + rowId + '" />';
+    document.getElementById('sched-rows').appendChild(row);
+  }
+
+  function saveSchedule() {
+    var season = document.getElementById('sched-season').value.trim();
+    if (!season) { alert('Season is required (e.g. Season 5)'); return; }
+    var rowsEl = document.getElementById('sched-rows');
+    var rowDivs = rowsEl.children;
+    if (!rowDivs.length) { alert('Please add at least one match row'); return; }
+
+    var matches = [];
+    for (var i = 0; i < rowDivs.length; i++) {
+      var id = rowDivs[i].id.replace('sched-row-', '');
+      var teamA = document.getElementById('sr-team-a-' + id).value;
+      var teamB = document.getElementById('sr-team-b-' + id).value;
+      var venue = document.getElementById('sr-venue-' + id).value.trim();
+      var dt = document.getElementById('sr-datetime-' + id).value;
+      if (teamA === teamB) { alert('Row ' + (i + 1) + ': Team A and Team B must be different'); return; }
+      matches.push({
+        team_a_id: teamA, team_b_id: teamB, venue: venue || null,
+        scheduled_at: dt ? new Date(dt).toISOString() : null,
+      });
+    }
+
+    fetch(BACKEND_URL + '/api/admin/matches/bulk-create-by-id', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ season: season, matches: matches }),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        var el = document.getElementById('sched-result');
+        if (!r.ok) { el.innerHTML = '<div class="empty-state">' + (r.data.error || 'Something went wrong') + '</div>'; return; }
+        el.innerHTML = '<div class="list-item">' + r.data.imported + ' matches saved successfully!</div>';
+        document.getElementById('sched-rows').innerHTML = '';
+        loadMatches();
+      })
+      .catch(function () { alert('Connection error'); });
+  }
+
+
+  function loadMatches() {
+    fetch(BACKEND_URL + '/api/matches')
+      .then(function (res) { return res.ok ? res.json() : null; })
+      .then(function (r) {
+        var listEl = document.getElementById('matches-list');
+        if (!r || !r.success || !r.matches || !r.matches.length) { listEl.innerHTML = '<div class="empty-state">No matches created yet.</div>'; return; }
+        matchesCache = r.matches;
+        listEl.innerHTML = r.matches.map(function (m) {
+          var teamA = m.team_a ? m.team_a.name : '?';
+          var teamB = m.team_b ? m.team_b.name : '?';
+          var actionBtn = m.status === 'upcoming'
+            ? '<button class="small-danger" style="background:var(--orange);" onclick="startMatchPrompt(\'' + m.id + '\')">Start Match</button>'
+            : '<a href="matchcenter.html?id=' + m.id + '" target="_blank" style="font-size:12px; color:var(--orange); font-weight:700; text-decoration:none;">View Live →</a><a href="scorer.html?id=' + m.id + '" target="_blank" style="font-size:12px; color:var(--navy); font-weight:700; text-decoration:none; margin-left:12px;">🏏 Score Karein</a>';
+          var deleteBtn = '<button onclick="deleteMatch(\'' + m.id + '\', \'' + (teamA + ' vs ' + teamB).replace(/'/g, "\\'") + '\')" style="font-size:12px; color:#c0392b; font-weight:700; background:none; border:none; cursor:pointer; margin-left:12px;">Delete</button>';
+          return '<div class="list-item"><div><div class="list-item-name">' + teamA + ' vs ' + teamB + '</div><div class="list-item-meta">' + m.status.toUpperCase() + ' · ' + (m.venue || '') + '</div></div><div style="display:flex; align-items:center;">' + actionBtn + deleteBtn + '</div></div>';
+        }).join('');
+      });
+  }
+
+  function deleteMatch(matchId, matchLabel) {
+    if (!confirm('Delete "' + matchLabel + '"? Iski saari scoring/innings bhi delete ho jaayegi. Yeh undo nahi ho sakta.')) return;
+    fetch(BACKEND_URL + '/api/admin/matches/' + matchId + '/delete', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ }),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { alert(r.data.error || 'Something went wrong'); return; }
+        alert('Match deleted');
+        loadMatches();
+      })
+      .catch(function () { alert('Connection error'); });
+  }
+
+  function startMatchPrompt(matchId) {
+    var match = matchesCache.find(function (m) { return m.id === matchId; });
+    if (!match) return;
+    startingMatchId = matchId;
+
+    var options = '<option value="' + match.team_a_id + '">' + match.team_a.name + '</option><option value="' + match.team_b_id + '">' + match.team_b.name + '</option>';
+    document.getElementById('sm-toss-winner').innerHTML = options;
+    document.getElementById('sm-batting-team').innerHTML = options;
+    document.getElementById('start-match-card').classList.remove('hidden');
+  }
+
+  function confirmStartMatch() {
+    var body = {
+            match_id: startingMatchId,
+      toss_winner_id: document.getElementById('sm-toss-winner').value,
+      toss_decision: document.getElementById('sm-toss-decision').value,
+      batting_team_id: document.getElementById('sm-batting-team').value,
+    };
+    var match = matchesCache.find(function (m) { return m.id === startingMatchId; });
+    body.bowling_team_id = body.batting_team_id === match.team_a_id ? match.team_b_id : match.team_a_id;
+
+    fetch(BACKEND_URL + '/api/admin/start-match', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { alert(r.data.error || 'Something went wrong'); return; }
+        document.getElementById('start-match-card').classList.add('hidden');
+        alert('Match live ho gaya!\n\nScorer ke liye yeh details copy kar lein:\nMatch ID: ' + startingMatchId + '\nInnings ID: ' + r.innings.id + '\n\nAb scorer.html par jaakar yeh IDs daal kar score dalna shuru kar sakte hain. Ya Match Center par jaakar live scoreboard dekhein.');
+        loadMatches();
+      })
+      .catch(function () { alert('Connection error'); });
+  }
+
+
+  function addTeamPlayer() {
+    var body = {
+            team_id: document.getElementById('tp-team-select').value,
+      name: document.getElementById('tp-name').value.trim(),
+      role: document.getElementById('tp-role').value,
+      jersey_number: parseInt(document.getElementById('tp-jersey').value, 10) || null,
+      photo_url: document.getElementById('tp-photo').value.trim() || null,
+      runs_scored: document.getElementById('tp-runs').value.trim(),
+      is_captain: document.getElementById('tp-captain').checked,
+    };
+    if (!body.team_id || !body.name) { alert('Team and Player Name are required'); return; }
+
+    fetch(BACKEND_URL + '/api/admin/team-players', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { alert(r.data.error || 'Something went wrong'); return; }
+        alert('Player added successfully!');
+        document.getElementById('tp-name').value = '';
+        document.getElementById('tp-jersey').value = '';
+        document.getElementById('tp-photo').value = '';
+        document.getElementById('tp-photo-file').value = '';
+        document.getElementById('tp-runs').value = '';
+        document.getElementById('tp-captain').checked = false;
+        if (document.getElementById('sq-team-select').value === body.team_id) loadSquadRoster();
+      })
+      .catch(function () { alert('Connection error'); });
+  }
+
+  function loadSquadRoster() {
+    var teamId = document.getElementById('sq-team-select').value;
+    var listEl = document.getElementById('squad-roster-list');
+    if (!teamId) { listEl.innerHTML = ''; return; }
+    listEl.innerHTML = '<div class="empty-state">Loading...</div>';
+
+    fetch(BACKEND_URL + '/api/teams/' + teamId)
+      .then(function (res) { return res.json(); })
+      .then(function (r) {
+        if (!r.success || !r.players || !r.players.length) { listEl.innerHTML = '<div class="empty-state">Is team mein abhi koi player nahi hai.</div>'; return; }
+        listEl.innerHTML = r.players.map(function (p) {
+          return '<div class="card" style="margin-top:12px;">' +
+            '<div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">' +
+            (p.photo_url ? '<img src="' + p.photo_url + '" style="width:44px; height:44px; border-radius:50%; object-fit:cover;" />' : '<div style="width:44px; height:44px; border-radius:50%; background:#eef1f7; display:flex; align-items:center; justify-content:center; font-size:18px;">🏏</div>') +
+            '<div><div class="list-item-name">' + p.name + '</div><div class="list-item-meta">' + (p.role || '') + (p.jersey_number ? ' · #' + p.jersey_number : '') + '</div></div>' +
+            '</div>' +
+            '<label>Naya Photo</label><input type="file" accept="image/png, image/jpeg" onchange="uploadSquadPhoto(this, \'' + p.id + '\')" />' +
+            '<label>Runs (khaali chhodein agar chupana hai)</label><input type="number" id="sq-runs-' + p.id + '" value="' + (p.runs_scored !== null && p.runs_scored !== undefined ? p.runs_scored : '') + '" placeholder="e.g. 245" />' +
+            '<button class="primary" onclick="saveSquadRuns(\'' + p.id + '\')" style="margin-top:8px;">Save Runs</button>' +
+            '<div id="sq-status-' + p.id + '" style="font-size:12px; margin-top:6px;"></div>' +
+            '</div>';
+        }).join('');
+      })
+      .catch(function () { listEl.innerHTML = '<div class="empty-state">Connection error</div>'; });
+  }
+
+  function uploadSquadPhoto(fileInput, playerId) {
+    var file = fileInput.files[0];
+    if (!file) return;
+    var formData = new FormData();
+    formData.append('logo', file);
+    var statusEl = document.getElementById('sq-status-' + playerId);
+    statusEl.textContent = 'Uploading...';
+
+    fetch(BACKEND_URL + '/api/admin/upload-logo', { method: 'POST', body: formData })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { statusEl.textContent = r.data.error || 'Upload failed'; return; }
+        return fetch(BACKEND_URL + '/api/admin/team-players/' + playerId + '/update', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ photo_url: r.data.url }),
+        });
+      })
+      .then(function (res) { return res && res.json(); })
+      .then(function () {
+        statusEl.textContent = '✅ Photo updated';
+        loadSquadRoster();
+      })
+      .catch(function () { statusEl.textContent = 'Connection error'; });
+  }
+
+  function saveSquadRuns(playerId) {
+    var runsVal = document.getElementById('sq-runs-' + playerId).value.trim();
+    var statusEl = document.getElementById('sq-status-' + playerId);
+    fetch(BACKEND_URL + '/api/admin/team-players/' + playerId + '/update', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ runs_scored: runsVal }),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        statusEl.textContent = r.ok ? '✅ Runs saved' : (r.data.error || 'Error');
+      })
+      .catch(function () { statusEl.textContent = 'Connection error'; });
+  }
+
+  function generatePlaceholders() {
+    var teamId = document.getElementById('ph-team-select').value;
+    if (!teamId) { alert('Please select a team'); return; }
+    if (!confirm('This will add 25 placeholder players to this team. Continue?')) return;
+
+    fetch(BACKEND_URL + '/api/admin/team-players/generate-placeholders', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ team_id: teamId }),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { alert(r.data.error || 'Something went wrong'); return; }
+        alert(r.data.count + ' placeholder players added!');
+      })
+      .catch(function () { alert('Connection error'); });
+  }
+
+  function addSponsor() {
+    var body = {
+            season: document.getElementById('s-season').value.trim(),
+      name: document.getElementById('s-name').value.trim(),
+      logo_url: document.getElementById('s-logo').value.trim(),
+      tier: document.getElementById('s-tier').value,
+      website_url: document.getElementById('s-website').value.trim(),
+    };
+    if (!body.name || !body.season) { alert('Season and Sponsor Name are required'); return; }
+
+    fetch(BACKEND_URL + '/api/admin/sponsors', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { alert(r.data.error || 'Something went wrong'); return; }
+        alert('Sponsor added successfully!');
+        ['s-season','s-name','s-logo','s-logo-file','s-tier','s-website'].forEach(function (id) { document.getElementById(id).value = ''; });
+        loadSponsors();
+      })
+      .catch(function () { alert('Connection error'); });
+  }
+
+  function loadSponsors() {
+    fetch(BACKEND_URL + '/api/sponsors')
+      .then(function (res) { return res.ok ? res.json() : null; })
+      .then(function (r) {
+        var listEl = document.getElementById('sponsors-list');
+        if (!r || !r.success || !r.sponsors || !r.sponsors.length) { listEl.innerHTML = '<div class="empty-state">No sponsors added yet.</div>'; return; }
+        listEl.innerHTML = r.sponsors.map(function (s) {
+          return '<div class="list-item"><div><div class="list-item-name">' + s.name + '</div><div class="list-item-meta">' + s.tier + ' · ' + s.season + '</div></div>' +
+            '<button class="small-danger" onclick="deleteSponsor(\'' + s.id + '\')">Remove</button></div>';
+        }).join('');
+      });
+  }
+
+  function deleteSponsor(id) {
+    if (!confirm('Remove this sponsor?')) return;
+    fetch(BACKEND_URL + '/api/admin/sponsors/' + id + '/delete', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ }),
+    })
+      .then(function () { loadSponsors(); })
+      .catch(function () { alert('Connection error'); });
+  }
+
+  // ============ CONTENT PAGES ============
+  var pageKeyLabels = {
+    'terms': 'Terms & Conditions', 'privacy': 'Privacy Policy', 'refunds': 'Refunds & Cancellations',
+    'code-of-conduct': 'Code of Conduct', 'cricket-rulebook': 'Cricket Rulebook',
+    'pmo-guideline': 'Cricket PMO Guideline', 'eligibility-criteria': 'Eligibility Criteria',
+  };
+  var contentPagesCache = {};
+
+  function loadContentPages() {
+    fetch(BACKEND_URL + '/api/admin/content-all')
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        var listEl = document.getElementById('content-pages-list');
+        if (!r.ok) { listEl.innerHTML = '<div class="empty-state">' + (r.data.error || 'Error') + '</div>'; return; }
+        contentPagesCache = {};
+        (r.data.pages || []).forEach(function (p) { contentPagesCache[p.page_key] = p; });
+
+        listEl.innerHTML = Object.keys(pageKeyLabels).map(function (key) {
+          var page = contentPagesCache[key];
+          var updated = page && page.updated_at ? new Date(page.updated_at).toLocaleDateString('en-IN') : 'Not set yet';
+          return '<div class="list-item"><div><div class="list-item-name">' + pageKeyLabels[key] + '</div>' +
+            '<div class="list-item-meta">Last updated: ' + updated + '</div></div>' +
+            '<button class="small-danger" style="background:var(--navy);" onclick="openContentEditor(\'' + key + '\')">Edit →</button></div>';
+        }).join('');
+      })
+      .catch(function () { document.getElementById('content-pages-list').innerHTML = '<div class="empty-state">Connection error</div>'; });
+  }
+
+  var currentEditingPageKey = null;
+
+  function openContentEditor(pageKey) {
+    currentEditingPageKey = pageKey;
+    var page = contentPagesCache[pageKey] || {};
+    document.getElementById('editor-page-name').textContent = pageKeyLabels[pageKey];
+    document.getElementById('ce-title').value = page.title || pageKeyLabels[pageKey];
+    document.getElementById('ce-content').value = page.content_html || '';
+    document.getElementById('content-editor-card').classList.remove('hidden');
+    document.getElementById('content-editor-card').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function saveContentPage() {
+    var body = {
+            title: document.getElementById('ce-title').value.trim(),
+      content_html: document.getElementById('ce-content').value,
+    };
+    fetch(BACKEND_URL + '/api/admin/content/' + currentEditingPageKey, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { alert(r.data.error || 'Save fail ho gaya'); return; }
+        alert('Saved! This will now appear on the website immediately.');
+        document.getElementById('content-editor-card').classList.add('hidden');
+        loadContentPages();
+      })
+      .catch(function () { alert('Connection error'); });
+  }
+
+  // ============ FAQ ============
+  function loadFaqItems() {
+    fetch(BACKEND_URL + '/api/faq')
+      .then(function (res) { return res.ok ? res.json() : null; })
+      .then(function (r) {
+        var listEl = document.getElementById('faq-items-list');
+        if (!r || !r.success || !r.faq || !r.faq.length) { listEl.innerHTML = '<div class="empty-state">No FAQ items yet.</div>'; return; }
+        listEl.innerHTML = r.faq.map(function (item) {
+          return '<div class="list-item"><div><div class="list-item-name">' + item.question + '</div>' +
+            '<div class="list-item-meta">' + item.answer.slice(0, 60) + '...</div></div>' +
+            '<button class="small-danger" onclick="deleteFaqItem(\'' + item.id + '\')">Remove</button></div>';
+        }).join('');
+      });
+  }
+
+  function addFaqItem() {
+    var body = {
+            question: document.getElementById('faq-q').value.trim(),
+      answer: document.getElementById('faq-a').value.trim(),
+    };
+    if (!body.question || !body.answer) { alert('Question and Answer are both required'); return; }
+
+    fetch(BACKEND_URL + '/api/admin/faq', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { alert(r.data.error || 'Add fail ho gaya'); return; }
+        alert('FAQ added successfully!');
+        document.getElementById('faq-q').value = '';
+        document.getElementById('faq-a').value = '';
+        loadFaqItems();
+      })
+      .catch(function () { alert('Connection error'); });
+  }
+
+  function deleteFaqItem(id) {
+    if (!confirm('Remove this FAQ?')) return;
+    fetch(BACKEND_URL + '/api/admin/faq/' + id + '/delete', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ }),
+    })
+      .then(function () { loadFaqItems(); })
+      .catch(function () { alert('Connection error'); });
+  }
+
+  setupLogoUpload('t-logo-file', 't-logo');
+  setupLogoUpload('et-logo-file', 'et-logo');
+  setupLogoUpload('tp-photo-file', 'tp-photo');
+
+  function updateTeamLogo() {
+    var teamId = document.getElementById('et-team-select').value;
+    var logoUrl = document.getElementById('et-logo').value.trim();
+    if (!teamId) { alert('Pehle team chuniye'); return; }
+    if (!logoUrl) { alert('Pehle logo file chuniye — upload hone tak thoda ruk jaayein'); return; }
+
+    fetch(BACKEND_URL + '/api/admin/teams/' + teamId + '/update', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ logo_url: logoUrl }),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        var el = document.getElementById('et-result');
+        if (!r.ok) { el.innerHTML = '<div class="empty-state">' + (r.data.error || 'Kuch galat ho gaya') + '</div>'; return; }
+        el.innerHTML = '<div class="list-item">✅ ' + r.data.team.name + ' ka logo update ho gaya!</div>';
+        document.getElementById('et-logo').value = '';
+        document.getElementById('et-logo-file').value = '';
+      })
+      .catch(function () { alert('Connection error'); });
+  }
+
+  setupLogoUpload('s-logo-file', 's-logo');
+  setupLogoUpload('b-image-file', 'b-image');
+  setupLogoUpload('ph-image-file', 'ph-image');
+  setupLogoUpload('vd-thumb-file', 'vd-thumb');
+
+  // ============ BANNERS ============
+  function addBanner() {
+    var body = {
+            image_url: document.getElementById('b-image').value,
+      title: document.getElementById('b-title').value.trim(),
+      link_url: document.getElementById('b-link').value.trim(),
+    };
+    if (!body.image_url) { alert('Please upload a banner image first'); return; }
+
+    fetch(BACKEND_URL + '/api/admin/banners', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { alert(r.data.error || 'Something went wrong'); return; }
+        alert('Banner added successfully!');
+        ['b-image', 'b-image-file', 'b-title', 'b-link'].forEach(function (id) { document.getElementById(id).value = ''; });
+        loadBanners();
+      })
+      .catch(function () { alert('Connection error'); });
+  }
+
+  function loadBanners() {
+    fetch(BACKEND_URL + '/api/admin/banners-all')
+      .then(function (res) { return res.ok ? res.json() : null; })
+      .then(function (r) {
+        var listEl = document.getElementById('banners-list');
+        if (!r || !r.success || !r.banners || !r.banners.length) { listEl.innerHTML = '<div class="empty-state">No banners added yet.</div>'; return; }
+        listEl.innerHTML = r.banners.map(function (b) {
+          return '<div class="list-item"><div><div class="list-item-name">' + (b.title || 'Untitled') + '</div><div class="list-item-meta">' + (b.active ? '🟢 Active' : '⚪ Hidden') + '</div></div>' +
+            '<div style="display:flex; gap:6px;">' +
+              '<button class="small-danger" style="background:' + (b.active ? '#6b7280' : '#1B7A3D') + ';" onclick="toggleBanner(\'' + b.id + '\', ' + !b.active + ')">' + (b.active ? 'Hide' : 'Show') + '</button>' +
+              '<button class="small-danger" onclick="deleteBanner(\'' + b.id + '\')">Delete</button>' +
+            '</div></div>';
+        }).join('');
+      });
+  }
+
+  function toggleBanner(id, newActive) {
+    fetch(BACKEND_URL + '/api/admin/banners/' + id + '/toggle', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ active: newActive }),
+    }).then(function () { loadBanners(); }).catch(function () { alert('Connection error'); });
+  }
+
+  function deleteBanner(id) {
+    if (!confirm('Remove this banner?')) return;
+    fetch(BACKEND_URL + '/api/admin/banners/' + id + '/delete', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ }),
+    }).then(function () { loadBanners(); }).catch(function () { alert('Connection error'); });
+  }
+
+  // ============ PHOTOS ============
+  function addPhoto() {
+    var body = {
+            season: document.getElementById('ph-season').value.trim(),
+      team_id: document.getElementById('ph-team').value || null,
+      match_label: document.getElementById('ph-match').value.trim(),
+      photo_url: document.getElementById('ph-image').value,
+      caption: document.getElementById('ph-caption').value.trim(),
+    };
+    if (!body.season || !body.photo_url) { alert('Season and Photo are required'); return; }
+
+    fetch(BACKEND_URL + '/api/admin/photos', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { alert(r.data.error || 'Something went wrong'); return; }
+        alert('Photo add ho gayi!');
+        ['ph-season', 'ph-match', 'ph-image', 'ph-image-file', 'ph-caption'].forEach(function (id) { document.getElementById(id).value = ''; });
+        loadPhotos();
+      })
+      .catch(function () { alert('Connection error'); });
+  }
+
+  function loadPhotos() {
+    fetch(BACKEND_URL + '/api/photos')
+      .then(function (res) { return res.ok ? res.json() : null; })
+      .then(function (r) {
+        var listEl = document.getElementById('photos-list');
+        if (!r || !r.success || !r.photos || !r.photos.length) { listEl.innerHTML = '<div class="empty-state">No photos added yet.</div>'; return; }
+        listEl.innerHTML = r.photos.map(function (p) {
+          return '<div class="list-item"><div><div class="list-item-name">' + p.season + (p.match_label ? ' — ' + p.match_label : '') + '</div><div class="list-item-meta">' + (p.team ? p.team.name : '') + '</div></div>' +
+            '<button class="small-danger" onclick="deletePhoto(\'' + p.id + '\')">Delete</button></div>';
+        }).join('');
+      });
+  }
+
+  function deletePhoto(id) {
+    if (!confirm('Photo hataani hai?')) return;
+    fetch(BACKEND_URL + '/api/admin/photos/' + id + '/delete', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ }),
+    }).then(function () { loadPhotos(); }).catch(function () { alert('Connection error'); });
+  }
+
+  // ============ VIDEOS ============
+  function addVideo() {
+    var body = {
+            season: document.getElementById('vd-season').value.trim(),
+      team_id: document.getElementById('vd-team').value || null,
+      title: document.getElementById('vd-title').value.trim(),
+      video_url: document.getElementById('vd-url').value.trim(),
+      thumbnail_url: document.getElementById('vd-thumb').value,
+    };
+    if (!body.season || !body.title || !body.video_url) { alert('Season, Title and Video Link are required'); return; }
+
+    fetch(BACKEND_URL + '/api/admin/videos', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) { alert(r.data.error || 'Something went wrong'); return; }
+        alert('Video add ho gayi!');
+        ['vd-season', 'vd-title', 'vd-url', 'vd-thumb', 'vd-thumb-file'].forEach(function (id) { document.getElementById(id).value = ''; });
+        loadVideos();
+      })
+      .catch(function () { alert('Connection error'); });
+  }
+
+  function loadVideos() {
+    fetch(BACKEND_URL + '/api/videos')
+      .then(function (res) { return res.ok ? res.json() : null; })
+      .then(function (r) {
+        var listEl = document.getElementById('videos-list');
+        if (!r || !r.success || !r.videos || !r.videos.length) { listEl.innerHTML = '<div class="empty-state">No videos added yet.</div>'; return; }
+        listEl.innerHTML = r.videos.map(function (v) {
+          return '<div class="list-item"><div><div class="list-item-name">' + v.title + '</div><div class="list-item-meta">' + v.season + (v.team ? ' · ' + v.team.name : '') + '</div></div>' +
+            '<button class="small-danger" onclick="deleteVideo(\'' + v.id + '\')">Delete</button></div>';
+        }).join('');
+      });
+  }
+
+  function deleteVideo(id) {
+    if (!confirm('Video hataani hai?')) return;
+    fetch(BACKEND_URL + '/api/admin/videos/' + id + '/delete', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ }),
+    }).then(function () { loadVideos(); }).catch(function () { alert('Connection error'); });
+  }
+</script>
+</body>
+</html>
