@@ -1,0 +1,2077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BCPL — Player Registration</title>
+<link rel="icon" type="image/webp" href="data:image/webp;base64,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">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+Devanagari:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0F2247; --navy-deep:#0A1628; --orange:#FF7A29; --orange-deep:#E8611A;
+    --gold:#E8B23D; --red:#E8493F;
+    --cream:#FAF8F4; --ink:#14203F; --green:#2E9E4F; --line:rgba(20,32,63,0.12);
+  }
+  * { box-sizing:border-box; }
+  body {
+    margin:0; font-family:'Poppins',-apple-system,Arial,sans-serif; color:var(--ink);
+    background:
+      radial-gradient(circle at 12% 0%, rgba(255,85,0,0.10), transparent 42%),
+      radial-gradient(circle at 100% 18%, rgba(29,45,107,0.10), transparent 40%),
+      radial-gradient(circle at 50% 100%, rgba(212,160,23,0.08), transparent 45%),
+      var(--cream);
+    min-height:100vh;
+  }
+  html.lang-hi body, html.lang-hi h1, html.lang-hi h2, html.lang-hi h3, html.lang-hi p, html.lang-hi span, html.lang-hi div, html.lang-hi button, html.lang-hi a, html.lang-hi label, html.lang-hi input, html.lang-hi select { font-family:'Noto Sans Devanagari','Poppins',sans-serif; }
+  [data-hi] { display:none; }
+  html.lang-hi [data-en] { display:none; }
+  html.lang-hi [data-hi] { display:inline; }
+  .wrap { max-width:640px; margin:0 auto; padding:0 20px; }
+  h1,h2,h3 { margin:0; font-family:'Anton',sans-serif; font-weight:400; letter-spacing:0.01em; }
+
+  /* NAV */
+  nav { position:sticky; top:0; z-index:50; background:rgba(11,11,66,0.95); backdrop-filter:blur(10px); border-bottom:1px solid rgba(255,255,255,0.08); box-shadow:0 2px 0 0 rgba(255,85,0,0.35); }
+  nav .row { max-width:640px; margin:0 auto; padding:0 20px; height:60px; display:flex; align-items:center; justify-content:space-between; }
+  .logo-badge { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,#FF7A45,var(--orange)); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:900; font-size:14px; box-shadow:0 0 14px rgba(255,85,0,0.5); }
+  .brand { color:#fff; font-weight:900; font-size:16px; margin-left:8px; }
+  .lang-toggle { display:flex; gap:4px; background:rgba(255,255,255,0.12); border-radius:999px; padding:4px; }
+  .lang-btn { border:none; background:transparent; color:#fff; font-weight:700; font-size:11px; padding:6px 12px; border-radius:999px; cursor:pointer; }
+  .lang-btn.active { background:var(--orange); }
+
+  /* MENU BUTTON + DROPDOWN */
+  .menu-btn { display:flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:10px; background:rgba(255,255,255,0.1); border:none; color:#fff; font-size:19px; cursor:pointer; }
+  .menu-btn:active { background:rgba(255,255,255,0.2); }
+  .menu-dropdown { display:none; position:absolute; top:100%; right:20px; margin-top:8px; background:#fff; border-radius:14px; box-shadow:0 14px 34px rgba(0,0,0,0.22); padding:8px; min-width:200px; z-index:60; }
+  .menu-dropdown.open { display:block; }
+  .menu-dropdown a { display:flex; align-items:center; gap:8px; padding:11px 14px; border-radius:10px; color:var(--navy,#14203F); font-weight:700; font-size:13.5px; text-decoration:none; }
+  .menu-dropdown a:hover { background:rgba(255,85,0,0.08); }
+  .menu-lang-row { display:flex; gap:6px; padding:4px 4px 10px; margin-bottom:6px; border-bottom:1px solid rgba(20,32,63,0.08); }
+  .menu-lang-btn { flex:1; padding:9px 0; border-radius:9px; border:none; background:rgba(20,32,63,0.06); color:var(--navy,#14203F); font-weight:800; font-size:13px; cursor:pointer; }
+  .menu-lang-btn.active { background:var(--navy,#14203F); color:#fff; }
+
+  /* STEPPER */
+  .stepper-band { background:var(--navy); padding:18px 0 20px; }
+  .stepper { display:flex; align-items:center; justify-content:space-between; max-width:520px; margin:0 auto; }
+  .step-node { display:flex; flex-direction:column; align-items:center; gap:6px; flex:1; position:relative; }
+  .step-circle { width:30px; height:30px; border-radius:50%; background:rgba(255,255,255,0.14); border:2px solid rgba(255,255,255,0.25); color:rgba(255,255,255,0.7); font-weight:800; font-size:12px; display:flex; align-items:center; justify-content:center; transition:all .3s; }
+  .step-node.active .step-circle { background:var(--orange); border-color:var(--orange); color:#fff; box-shadow:0 0 0 5px rgba(255,85,0,0.22); }
+  .step-node.done .step-circle { background:var(--green); border-color:var(--green); color:#fff; }
+  .step-label { color:rgba(255,255,255,0.55); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; text-align:center; }
+  .step-node.active .step-label { color:#fff; }
+  .step-connector { position:absolute; top:15px; left:calc(-50% + 15px); right:calc(50% + 15px); height:2px; background:rgba(255,255,255,0.18); z-index:0; }
+  .step-node.done .step-connector, .step-node.active .step-connector { background:var(--green); }
+  .step-node:first-child .step-connector { display:none; }
+
+  /* CARD / SCREEN */
+  .screen { display:none; padding:28px 0 60px; }
+  .screen.active { display:block; animation:fadeUp .35s ease; }
+  @keyframes fadeUp { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+  .card { background:#fff; border-radius:22px; padding:28px 22px 26px; border:1px solid var(--line); box-shadow:0 20px 50px rgba(20,32,63,0.10), 0 2px 8px rgba(20,32,63,0.04); position:relative; overflow:hidden; }
+  .card::before { content:''; position:absolute; top:0; left:0; right:0; height:5px; background:linear-gradient(90deg,var(--orange),var(--gold),var(--navy)); }
+  .screen-eyebrow { color:var(--orange-deep); font-weight:800; font-size:11.5px; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px; }
+  .screen-title { font-size:26px; color:var(--ink); margin-bottom:6px; text-transform:uppercase; }
+  .screen-sub { color:rgba(20,32,63,0.6); font-size:13.5px; line-height:1.6; margin-bottom:22px; }
+
+  /* FORM */
+  .field { margin-bottom:16px; }
+  .field label { display:block; font-size:12.5px; font-weight:700; color:var(--ink); margin-bottom:6px; }
+  .field input, .field select { width:100%; padding:13px 14px; border-radius:12px; border:1.5px solid var(--line); font-size:14.5px; font-family:inherit; background:#fcfcfb; color:var(--ink); }
+  .field input:focus, .field select:focus { outline:none; border-color:var(--orange); background:#fff; }
+  .field-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+  /* ROLE CARDS */
+  .role-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:6px; }
+  .role-card { border:1.5px solid var(--line); border-radius:14px; padding:14px 10px; text-align:center; cursor:pointer; transition:all .15s; background:linear-gradient(160deg,#fff,#fcfcfb); }
+  .role-card .role-icon { font-size:22px; }
+  .role-card .role-name { font-weight:800; font-size:12.5px; color:var(--ink); margin-top:6px; }
+  .role-card .role-fee { font-size:11px; color:rgba(20,32,63,0.5); font-weight:700; margin-top:2px; }
+  .role-card.selected { border-color:var(--orange); background:linear-gradient(160deg,rgba(255,85,0,0.10),rgba(255,85,0,0.02)); box-shadow:0 10px 22px rgba(255,85,0,0.2); transform:translateY(-2px); }
+  .role-card.selected .role-fee { color:var(--orange-deep); }
+
+  /* FEE SUMMARY */
+  .fee-box { display:flex; align-items:center; justify-content:space-between; background:linear-gradient(120deg,var(--navy),var(--navy-deep)); border-radius:16px; padding:16px 18px; margin:20px 0; box-shadow:0 12px 26px rgba(11,11,66,0.25); }
+  .fee-box .fee-lbl { color:rgba(255,255,255,0.65); font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; }
+  .fee-box .fee-role { color:#fff; font-weight:800; font-size:13px; margin-top:3px; }
+  .fee-box .fee-amt { font-family:'Anton',sans-serif; color:var(--gold); font-size:28px; }
+
+  /* BUTTONS */
+  .btn { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; border-radius:14px; font-weight:800; font-size:15px; padding:16px 20px; border:none; cursor:pointer; font-family:inherit; transition:transform .15s, box-shadow .15s; }
+  .btn:active { transform:scale(0.98); }
+  .btn-primary { color:#fff; background:linear-gradient(135deg,#FF7A45,var(--orange)); box-shadow:0 12px 26px rgba(255,85,0,0.4); }
+  .btn-primary:disabled { opacity:0.4; cursor:not-allowed; box-shadow:none; }
+  .btn-outline { color:var(--navy); background:#fff; border:1.5px solid var(--line); margin-top:10px; }
+  .btn-ghost { color:var(--navy); background:rgba(29,45,107,0.06); border:1.5px solid rgba(29,45,107,0.14); margin-top:10px; }
+  .helper-note { text-align:center; font-size:11.5px; color:rgba(20,32,63,0.45); margin-top:12px; line-height:1.5; }
+
+  /* SUCCESS / PROFILE */
+  .success-badge { width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg,#3EC26A,var(--green)); display:flex; align-items:center; justify-content:center; color:#fff; font-size:30px; margin:0 auto 16px; box-shadow:0 10px 24px rgba(46,158,79,0.35); }
+  .player-id-box { background:var(--cream); border:1.5px dashed var(--orange); border-radius:14px; padding:14px; text-align:center; margin:18px 0; }
+  .player-id-box .pid-lbl { font-size:11px; font-weight:700; color:rgba(20,32,63,0.5); text-transform:uppercase; letter-spacing:0.05em; }
+  .player-id-box .pid-val { font-family:'Anton',sans-serif; font-size:22px; color:var(--navy); margin-top:4px; letter-spacing:0.03em; }
+
+  .status-track { display:flex; flex-direction:column; gap:0; margin:22px 0; }
+  .status-item { display:flex; gap:14px; padding-bottom:22px; position:relative; }
+  .status-item:last-child { padding-bottom:0; }
+  .status-dot-col { display:flex; flex-direction:column; align-items:center; }
+  .status-dot { width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:900; flex-shrink:0; }
+  .status-dot.on { background:var(--green); color:#fff; }
+  .status-dot.pending { background:var(--orange); color:#fff; }
+  .status-dot.off { background:var(--line); color:rgba(20,32,63,0.4); }
+  .status-line { width:2px; flex:1; background:var(--line); margin-top:2px; }
+  .status-item:last-child .status-line { display:none; }
+  .status-title { font-weight:800; font-size:13.5px; color:var(--ink); }
+  .status-desc { font-size:12px; color:rgba(20,32,63,0.55); margin-top:2px; line-height:1.5; }
+
+  .upload-box { border:2px dashed var(--line); border-radius:16px; padding:26px 16px; text-align:center; background:var(--cream); cursor:pointer; }
+  .upload-box.uploading { cursor:default; opacity:0.85; }
+  .up-progress-wrap { margin-top:14px; height:8px; background:#E8E1D4; border-radius:6px; overflow:hidden; }
+  .up-progress-bar { height:100%; width:0%; background:linear-gradient(90deg, var(--orange), #FF8A3D); transition:width 0.2s ease; border-radius:6px; }
+  .upload-box.filled { border-color:var(--green); background:rgba(46,158,79,0.06); }
+  .upload-box .up-icon { font-size:28px; }
+  .upload-box .up-text { font-weight:700; font-size:13.5px; color:var(--ink); margin-top:8px; }
+  .upload-box .up-sub { font-size:11.5px; color:rgba(20,32,63,0.5); margin-top:3px; }
+  .deadline-strip { display:flex; align-items:center; gap:10px; background:rgba(255,42,0,0.08); border:1px solid rgba(255,42,0,0.25); border-radius:12px; padding:10px 14px; margin-bottom:18px; font-size:12px; color:var(--orange-deep); font-weight:700; }
+
+  /* RESULT SCREEN */
+  .result-hero { text-align:center; padding:10px 0 6px; }
+  .result-hero .rh-icon { font-size:52px; }
+  .result-hero h2 { font-size:26px; margin-top:10px; }
+  .next-fee-hero { text-align:center; background:linear-gradient(160deg,rgba(255,85,0,0.10),rgba(255,85,0,0.02)); border:1px solid rgba(255,85,0,0.3); border-radius:18px; padding:22px; margin:20px 0; }
+  .next-fee-hero .nf-lbl { font-size:11px; font-weight:800; color:var(--orange-deep); text-transform:uppercase; letter-spacing:0.06em; }
+  .next-fee-hero .nf-amt { font-family:'Anton',sans-serif; font-size:38px; color:var(--ink); margin-top:6px; }
+  .next-fee-hero .nf-sub { font-size:12px; color:rgba(20,32,63,0.55); margin-top:6px; }
+
+  .doc-row { display:flex; align-items:center; justify-content:space-between; border:1.5px solid var(--line); border-radius:14px; padding:14px 16px; margin-bottom:12px; background:#fcfcfb; }
+  .doc-row.filled { border-color:var(--green); background:rgba(46,158,79,0.05); }
+  .doc-left { display:flex; align-items:center; gap:12px; }
+  .doc-icon { width:36px; height:36px; border-radius:10px; background:var(--navy); color:#fff; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+  .doc-name { font-weight:800; font-size:13px; color:var(--ink); }
+  .doc-sub { font-size:11px; color:rgba(20,32,63,0.5); }
+  .doc-btn { border:1.5px solid var(--orange); color:var(--orange-deep); background:#fff; border-radius:10px; padding:8px 14px; font-weight:800; font-size:12px; cursor:pointer; font-family:inherit; flex-shrink:0; }
+  .doc-row.filled .doc-btn { border-color:var(--green); color:var(--green); }
+
+  .final-hero { text-align:center; padding:30px 0 10px; }
+  .final-hero .fh-icon { font-size:60px; }
+  .final-hero h2 { font-size:28px; margin-top:14px; }
+  .final-hero p { color:rgba(20,32,63,0.6); font-size:13.5px; margin-top:10px; line-height:1.65; max-width:420px; margin-left:auto; margin-right:auto; }
+  .summary-list { background:var(--cream); border-radius:14px; padding:16px 18px; margin:20px 0; }
+  .summary-row { display:flex; justify-content:space-between; font-size:12.5px; padding:7px 0; border-bottom:1px solid var(--line); }
+  .summary-row:last-child { border-bottom:none; }
+  .summary-row .sk { color:rgba(20,32,63,0.55); font-weight:600; }
+  .summary-row .sv { color:var(--ink); font-weight:800; text-align:right; }
+
+  /* NAV LOGIN LINK */
+  .nav-login-link { color:rgba(255,255,255,0.8); font-size:11.5px; font-weight:700; text-decoration:none; padding:6px 10px; border:1px solid rgba(255,255,255,0.25); border-radius:999px; margin-right:8px; }
+
+  /* SAMPLE VIDEOS */
+  .sample-block { margin:26px 0 20px; padding:18px 16px; border-radius:16px; background:linear-gradient(160deg,rgba(29,45,107,0.05),rgba(29,45,107,0.01)); border:1px solid rgba(29,45,107,0.12); }
+  .sample-block-title { font-weight:800; font-size:13px; color:var(--navy); display:flex; align-items:center; gap:6px; }
+  .sample-block-sub { font-size:11.5px; color:rgba(20,32,63,0.55); margin-top:3px; margin-bottom:14px; line-height:1.5; }
+  .sample-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .sample-card { border-radius:12px; overflow:hidden; background:#0B0B42; position:relative; cursor:pointer; border:1px solid rgba(29,45,107,0.15); }
+  .sample-thumb { aspect-ratio:4/3; background:linear-gradient(135deg,var(--navy),var(--navy-deep)); display:flex; align-items:center; justify-content:center; position:relative; }
+  .sample-thumb .play-dot { width:34px; height:34px; border-radius:50%; background:var(--orange); color:#fff; display:flex; align-items:center; justify-content:center; font-size:13px; box-shadow:0 6px 14px rgba(255,85,0,0.4); }
+  .sample-thumb .dur-tag { position:absolute; bottom:6px; right:6px; background:rgba(0,0,0,0.55); color:#fff; font-size:9.5px; font-weight:700; padding:2px 6px; border-radius:6px; }
+  .sample-caption { padding:8px 10px; background:#fff; }
+  .sample-caption .sc-name { font-weight:800; font-size:11.5px; color:var(--ink); }
+  .sample-caption .sc-tag { font-size:9.5px; color:var(--orange-deep); font-weight:700; text-transform:uppercase; letter-spacing:0.04em; }
+
+  .resume-note { display:flex; gap:10px; align-items:flex-start; background:rgba(29,45,107,0.05); border:1px solid rgba(29,45,107,0.14); border-radius:14px; padding:14px; margin-top:18px; }
+  .resume-note .rn-icon { font-size:18px; flex-shrink:0; }
+  .resume-note .rn-text { font-size:12px; color:rgba(20,32,63,0.65); line-height:1.55; }
+  .resume-note .rn-text b { color:var(--navy); }
+
+  /* LOGIN SCREEN */
+  .login-icon-badge { width:60px; height:60px; border-radius:50%; background:linear-gradient(135deg,var(--navy),var(--navy-deep)); display:flex; align-items:center; justify-content:center; font-size:26px; margin:0 auto 16px; box-shadow:0 10px 24px rgba(11,11,66,0.3); }
+  .waiting-icon-badge { width:60px; height:60px; border-radius:50%; background:linear-gradient(135deg,var(--orange),#FF8A3D); display:flex; align-items:center; justify-content:center; font-size:26px; margin:0 auto 16px; box-shadow:0 10px 24px rgba(255,85,0,0.3); }
+
+  /* OCCUPATION PICKER */
+  .occ-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:6px; }
+  .occ-card { border:1.5px solid var(--line); border-radius:14px; padding:12px 8px; text-align:center; cursor:pointer; background:linear-gradient(160deg,#fff,#fcfcfb); transition:all .15s; }
+  .occ-card .occ-icon { font-size:19px; }
+  .occ-card .occ-name { font-weight:700; font-size:11px; color:var(--ink); margin-top:5px; line-height:1.3; }
+  .occ-card.selected { border-color:var(--navy); background:linear-gradient(160deg,rgba(29,45,107,0.10),rgba(29,45,107,0.02)); box-shadow:0 8px 18px rgba(29,45,107,0.15); }
+
+  /* SCORECARD */
+  .stamp-wrap { display:flex; justify-content:center; margin:-6px 0 14px; }
+  .stamp { border:3px solid var(--green); color:var(--green); font-weight:900; font-size:12.5px; text-transform:uppercase; letter-spacing:0.05em; padding:8px 16px; border-radius:10px; transform:rotate(-6deg); background:rgba(46,158,79,0.06); }
+  .score-panel { background:linear-gradient(160deg,var(--navy),var(--navy-deep)); border-radius:20px; padding:26px 20px; text-align:center; box-shadow:0 16px 34px rgba(11,11,66,0.3); position:relative; overflow:hidden; }
+  .score-panel::after { content:''; position:absolute; width:200px; height:200px; background:radial-gradient(circle, rgba(255,85,0,0.25), transparent 70%); top:-60px; right:-60px; }
+  .score-role-tag { color:rgba(255,255,255,0.6); font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; position:relative; }
+  .score-num { font-family:'Anton',sans-serif; color:#fff; font-size:54px; line-height:1; margin-top:6px; position:relative; text-shadow:0 6px 18px rgba(0,0,0,0.3); }
+  .score-num span { font-size:22px; color:rgba(255,255,255,0.55); }
+  .score-bar-track { height:10px; border-radius:999px; background:rgba(255,255,255,0.14); margin:16px auto 6px; max-width:280px; position:relative; overflow:visible; }
+  .score-bar-fill { height:100%; border-radius:999px; background:linear-gradient(90deg,var(--gold),var(--orange)); }
+  .score-pass-mark { position:absolute; top:-4px; width:2px; height:18px; background:#fff; }
+  .score-pass-label { color:rgba(255,255,255,0.55); font-size:10px; margin-top:8px; position:relative; }
+  .rank-strip { display:flex; align-items:center; justify-content:center; gap:8px; margin-top:16px; background:rgba(255,255,255,0.08); border-radius:999px; padding:9px 16px; position:relative; }
+  .rank-strip .rk-num { color:var(--gold); font-weight:900; font-size:14px; }
+  .rank-strip .rk-text { color:rgba(255,255,255,0.75); font-size:11.5px; font-weight:600; }
+  .txn-row { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:10px 2px; border-bottom:1px solid rgba(20,32,63,0.08); }
+  .txn-lbl { color:rgba(20,32,63,0.55); font-size:12px; font-weight:700; white-space:nowrap; }
+  .txn-val { color:var(--navy); font-size:12.5px; font-weight:800; text-align:right; word-break:break-all; }
+  .toast { position:fixed; top:16px; left:50%; transform:translateX(-50%) translateY(-40px); background:#1B7A3D; color:#fff; padding:12px 20px; border-radius:12px; font-size:13.5px; font-weight:700; box-shadow:0 10px 26px rgba(0,0,0,0.2); z-index:200; opacity:0; transition:opacity 0.25s ease, transform 0.25s ease; pointer-events:none; max-width:90vw; text-align:center; }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+</style>
+<script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+</head>
+<body>
+<div id="toast" class="toast"></div>
+<div id="debug-badge" style="display:none; position:fixed; top:0; left:0; right:0; background:#000; color:#0F0; font-family:monospace; font-size:10px; padding:5px 8px; z-index:9999; word-break:break-all;"></div>
+<div id="share-sheet-overlay" style="display:none; position:fixed; inset:0; background:rgba(20,32,63,0.55); z-index:300; align-items:flex-end; justify-content:center;" onclick="if(event.target===this) closeShareSheet();">
+  <div style="background:#fff; border-radius:20px 20px 0 0; padding:22px 20px 28px; width:100%; max-width:480px;">
+    <div style="width:40px; height:4px; background:#ddd; border-radius:99px; margin:0 auto 16px;"></div>
+    <p style="margin:0 0 14px; font-weight:800; font-size:15px; color:#14203F; text-align:center;">Share your referral link</p>
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; text-align:center;">
+      <a id="share-whatsapp" href="#" target="_blank" style="text-decoration:none; color:#14203F; font-size:11px; font-weight:700;">
+        <div style="width:52px; height:52px; border-radius:50%; background:#25D366; display:flex; align-items:center; justify-content:center; font-size:24px; margin:0 auto 6px;">💬</div>WhatsApp
+      </a>
+      <a id="share-facebook" href="#" target="_blank" style="text-decoration:none; color:#14203F; font-size:11px; font-weight:700;">
+        <div style="width:52px; height:52px; border-radius:50%; background:#1877F2; display:flex; align-items:center; justify-content:center; font-size:24px; margin:0 auto 6px;">📘</div>Facebook
+      </a>
+      <a id="share-email" href="#" style="text-decoration:none; color:#14203F; font-size:11px; font-weight:700;">
+        <div style="width:52px; height:52px; border-radius:50%; background:#6b7280; display:flex; align-items:center; justify-content:center; font-size:24px; margin:0 auto 6px;">✉️</div>Email
+      </a>
+      <a href="#" onclick="event.preventDefault(); copyReferralLink();" style="text-decoration:none; color:#14203F; font-size:11px; font-weight:700;">
+        <div style="width:52px; height:52px; border-radius:50%; background:#FF5500; display:flex; align-items:center; justify-content:center; font-size:24px; margin:0 auto 6px;">🔗</div>Copy Link
+      </a>
+    </div>
+    <button onclick="closeShareSheet()" style="margin-top:20px; width:100%; padding:12px; border-radius:10px; border:1.5px solid rgba(20,32,63,0.15); background:#fff; color:#14203F; font-weight:700; font-size:14px;">Cancel</button>
+  </div>
+</div>
+
+<nav>
+  <div class="row">
+    <a href="index.html" style="display:flex; align-items:center; text-decoration:none;">
+      <img src="data:image/webp;base64,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" alt="BCPL" style="height:26px; width:auto; display:block;" />
+    </a>
+    <button class="menu-btn" onclick="toggleMenu()" aria-label="Menu">☰</button>
+    <div class="menu-dropdown" id="menu-dropdown">
+      <div class="menu-lang-row">
+        <button class="menu-lang-btn active" id="btn-en" onclick="setLang('en')">English</button>
+        <button class="menu-lang-btn" id="btn-hi" onclick="setLang('hi')">हिंदी</button>
+      </div>
+      <a href="index.html"><span data-en>🏠 Home</span><span data-hi>🏠 होम</span></a>
+      <a href="teams.html"><span data-en>🏏 Teams</span><span data-hi>🏏 टीमें</span></a>
+      <a href="matchcenter.html"><span data-en>🔴 Match Center</span><span data-hi>🔴 मैच सेंटर</span></a>
+      <a href="sponsors.html"><span data-en>🤝 Sponsors</span><span data-hi>🤝 प्रायोजक</span></a>
+      <span id="nav-auth-area"></span>
+    </div>
+  </div>
+</nav>
+
+<div class="stepper-band" id="stepper-band">
+  <div class="wrap">
+    <div class="stepper" id="stepper">
+      <div class="step-node" data-step="1">
+        <div class="step-connector"></div>
+        <div class="step-circle">1</div>
+        <div class="step-label"><span data-en>Register</span><span data-hi>रजिस्टर</span></div>
+      </div>
+      <div class="step-node" data-step="2">
+        <div class="step-connector"></div>
+        <div class="step-circle">2</div>
+        <div class="step-label"><span data-en>Video</span><span data-hi>वीडियो</span></div>
+      </div>
+      <div class="step-node" data-step="3">
+        <div class="step-connector"></div>
+        <div class="step-circle">3</div>
+        <div class="step-label"><span data-en>Result</span><span data-hi>रिज़ल्ट</span></div>
+      </div>
+      <div class="step-node" data-step="4">
+        <div class="step-connector"></div>
+        <div class="step-circle">4</div>
+        <div class="step-label"><span data-en>Docs</span><span data-hi>दस्तावेज़</span></div>
+      </div>
+      <div class="step-node" data-step="5">
+        <div class="step-connector"></div>
+        <div class="step-circle">✓</div>
+        <div class="step-label"><span data-en>Done</span><span data-hi>पूर्ण</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SCREEN LOGIN — RETURNING PLAYER ===================== -->
+<section class="screen" id="screen-login">
+  <div class="wrap">
+    <div class="card" style="text-align:center;">
+      <div class="login-icon-badge">👋</div>
+      <h2 class="screen-title" style="font-size:22px;"><span data-en>Welcome Back</span><span data-hi>वापसी पर स्वागत है</span></h2>
+      <p class="screen-sub"><span data-en>Already registered but didn't upload your video yet? Log in with your phone number to continue.</span><span data-hi>पहले रजिस्टर कर चुके हैं पर वीडियो अपलोड नहीं किया? जारी रखने के लिए अपने फ़ोन नंबर से लॉगिन करें।</span></p>
+      <div class="field" style="text-align:left;" id="login-phone-field">
+        <label><span data-en>Registered Phone Number</span><span data-hi>रजिस्टर्ड फ़ोन नंबर</span></label>
+        <input type="tel" id="login-phone" placeholder="10-digit number" maxlength="10" />
+      </div>
+      <div class="field" style="text-align:left; display:none;" id="login-otp-field">
+        <label><span data-en>Enter OTP</span><span data-hi>OTP डालें</span></label>
+        <input type="tel" id="login-otp" placeholder="6-digit OTP" maxlength="6" />
+        <div style="font-size:12px; color:#888; margin-top:6px;">
+          <span data-en>OTP sent to </span><span data-hi>OTP भेजा गया </span><b id="login-otp-phone-display"></b>
+          &nbsp;·&nbsp;<a href="#" onclick="event.preventDefault(); resetLoginToPhone();" style="color:var(--orange); font-weight:700; text-decoration:none;"><span data-en>Change number</span><span data-hi>नंबर बदलें</span></a>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="login-action-btn" onclick="sendLoginOtp()">
+        <span class="icon">🔓</span><span data-en>Send OTP</span><span data-hi>OTP भेजें</span>
+      </button>
+      <button class="btn btn-ghost" onclick="goStep(1)"><span data-en>New here? Register instead</span><span data-hi>नए हैं? रजिस्टर करें</span></button>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SCREEN 1 — PERSONAL DETAILS + ROLE + CITY + PHASE 1 PAYMENT ===================== -->
+<!-- ===================== SCREEN LOADING — SHOWN BRIEFLY WHILE RESTORING SESSION (AVOIDS FLASH) ===================== -->
+<section class="screen" id="screen-loading">
+  <div class="wrap">
+    <div class="card" style="text-align:center; padding:60px 20px;">
+      <div style="font-size:32px; margin-bottom:12px;">⏳</div>
+      <p class="screen-sub"><span data-en>Loading your profile…</span><span data-hi>आपकी प्रोफ़ाइल लोड हो रही है…</span></p>
+    </div>
+  </div>
+</section>
+
+<section class="screen active" id="screen-1">
+  <div class="wrap">
+    <div class="card">
+      <div style="display:flex; justify-content:center; margin-bottom:14px;">
+        <img src="data:image/webp;base64,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" alt="BCPL" style="width:44px; height:44px;" />
+      </div>
+      <div class="screen-eyebrow" style="text-align:center;"><span data-en>Phase 1 · Trial Registration</span><span data-hi>फेज़ 1 · ट्रायल रजिस्ट्रेशन</span></div>
+      <h2 class="screen-title" style="text-align:center;"><span data-en>Register To Play</span><span data-hi>खेलने के लिए रजिस्टर करें</span></h2>
+      <p class="screen-sub" style="text-align:center;"><span data-en>Fill in your details, pick your playing role and trial city. Fee depends on the role you choose.</span><span data-hi>अपनी जानकारी भरें, अपना रोल और ट्रायल शहर चुनें। फीस आपके चुने गए रोल पर निर्भर करती है।</span></p>
+
+      <div class="field">
+        <label><span data-en>Full Name</span><span data-hi>पूरा नाम</span></label>
+        <input type="text" id="f-name" placeholder="Enter your full name" />
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label><span data-en>Email ID</span><span data-hi>ईमेल आईडी</span></label>
+          <input type="email" id="f-email" placeholder="you@email.com" />
+        </div>
+        <div class="field">
+          <label><span data-en>Phone Number</span><span data-hi>फ़ोन नंबर</span></label>
+          <input type="tel" id="f-phone" placeholder="10-digit number" maxlength="10" />
+        </div>
+      </div>
+      <div class="field">
+        <label><span data-en>Date of Birth</span><span data-hi>जन्म तिथि</span></label>
+        <input type="date" id="f-dob" />
+      </div>
+
+      <div class="field">
+        <label><span data-en>Referral Code (optional)</span><span data-hi>रेफ़रल कोड (वैकल्पिक)</span></label>
+        <input type="text" id="f-referral" placeholder="Have a friend's code? Enter it here" style="text-transform:uppercase;" />
+      </div>
+
+      <div class="field">
+        <label><span data-en>Playing Role</span><span data-hi>प्लेइंग रोल</span></label>
+        <div class="role-grid" id="role-grid">
+          <div class="role-card" data-role="batsman" data-fee="299" onclick="selectRole('batsman', this)">
+            <div class="role-icon"><svg viewBox="0 0 24 24" width="22" height="22"><g transform="rotate(25 12 12)"><rect x="10.3" y="1.5" width="3.4" height="9" rx="1.5" fill="#7A4A24"/><path d="M8.5 10 Q8 15 9.3 20.5 Q12 21.5 14.7 20.5 Q16 15 15.5 10 Q12 8.7 8.5 10 Z" fill="#E8C48A" stroke="#B8863F" stroke-width="0.6"/></g></svg></div>
+            <div class="role-name"><span data-en>Batsman</span><span data-hi>बल्लेबाज़</span></div>
+            <div class="role-fee">₹299</div>
+          </div>
+          <div class="role-card" data-role="bowler" data-fee="299" onclick="selectRole('bowler', this)">
+            <div class="role-icon"><svg viewBox="0 0 24 24" width="22" height="22"><defs><radialGradient id="ballGrad" cx="35%" cy="30%" r="75%"><stop offset="0%" stop-color="#D94A4A"/><stop offset="55%" stop-color="#A6192E"/><stop offset="100%" stop-color="#7A0F1E"/></radialGradient></defs><circle cx="12" cy="12" r="9.5" fill="url(#ballGrad)"/><path d="M12 2.5 Q16 12 12 21.5" stroke="#F5E6C8" stroke-width="0.9" fill="none" stroke-dasharray="1.3 1"/><path d="M12 2.5 Q8 12 12 21.5" stroke="#F5E6C8" stroke-width="0.9" fill="none" stroke-dasharray="1.3 1"/><ellipse cx="9" cy="8.5" rx="2" ry="1.3" fill="#fff" opacity="0.25"/></svg></div>
+            <div class="role-name"><span data-en>Bowler</span><span data-hi>गेंदबाज़</span></div>
+            <div class="role-fee">₹299</div>
+          </div>
+          <div class="role-card" data-role="keeper" data-fee="299" onclick="selectRole('keeper', this)">
+            <div class="role-icon">🧤</div>
+            <div class="role-name"><span data-en>Wicket-Keeper</span><span data-hi>विकेटकीपर</span></div>
+            <div class="role-fee">₹299</div>
+          </div>
+          <div class="role-card" data-role="allrounder" data-fee="399" onclick="selectRole('allrounder', this)">
+            <div class="role-icon">🏏</div>
+            <div class="role-name"><span data-en>All-Rounder</span><span data-hi>ऑल-राउंडर</span></div>
+            <div class="role-fee">₹399</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label><span data-en>Trial City</span><span data-hi>ट्रायल शहर</span></label>
+        <select id="f-city">
+          <option value="">Select trial city / शहर चुनें (75 cities)</option>
+          <option value="Mumbai">Mumbai</option>
+          <option value="Delhi">Delhi</option>
+          <option value="Bengaluru">Bengaluru</option>
+          <option value="Hyderabad">Hyderabad</option>
+          <option value="Ahmedabad">Ahmedabad</option>
+          <option value="Chennai">Chennai</option>
+          <option value="Kolkata">Kolkata</option>
+          <option value="Pune">Pune</option>
+          <option value="Jaipur">Jaipur</option>
+          <option value="Surat">Surat</option>
+          <option value="Lucknow">Lucknow</option>
+          <option value="Kanpur">Kanpur</option>
+          <option value="Nagpur">Nagpur</option>
+          <option value="Indore">Indore</option>
+          <option value="Thane">Thane</option>
+          <option value="Bhopal">Bhopal</option>
+          <option value="Visakhapatnam">Visakhapatnam</option>
+          <option value="Patna">Patna</option>
+          <option value="Vadodara">Vadodara</option>
+          <option value="Ghaziabad">Ghaziabad</option>
+          <option value="Ludhiana">Ludhiana</option>
+          <option value="Agra">Agra</option>
+          <option value="Nashik">Nashik</option>
+          <option value="Faridabad">Faridabad</option>
+          <option value="Meerut">Meerut</option>
+          <option value="Rajkot">Rajkot</option>
+          <option value="Kalyan">Kalyan</option>
+          <option value="Vasai-Virar">Vasai-Virar</option>
+          <option value="Varanasi">Varanasi</option>
+          <option value="Srinagar">Srinagar</option>
+          <option value="Aurangabad">Aurangabad</option>
+          <option value="Dhanbad">Dhanbad</option>
+          <option value="Amritsar">Amritsar</option>
+          <option value="Navi Mumbai">Navi Mumbai</option>
+          <option value="Allahabad">Allahabad</option>
+          <option value="Ranchi">Ranchi</option>
+          <option value="Howrah">Howrah</option>
+          <option value="Coimbatore">Coimbatore</option>
+          <option value="Jabalpur">Jabalpur</option>
+          <option value="Gwalior">Gwalior</option>
+          <option value="Vijayawada">Vijayawada</option>
+          <option value="Jodhpur">Jodhpur</option>
+          <option value="Madurai">Madurai</option>
+          <option value="Raipur">Raipur</option>
+          <option value="Kota">Kota</option>
+          <option value="Guwahati">Guwahati</option>
+          <option value="Chandigarh">Chandigarh</option>
+          <option value="Solapur">Solapur</option>
+          <option value="Hubli-Dharwad">Hubli-Dharwad</option>
+          <option value="Bareilly">Bareilly</option>
+          <option value="Moradabad">Moradabad</option>
+          <option value="Mysuru">Mysuru</option>
+          <option value="Gurgaon">Gurgaon</option>
+          <option value="Aligarh">Aligarh</option>
+          <option value="Jalandhar">Jalandhar</option>
+          <option value="Bhubaneswar">Bhubaneswar</option>
+          <option value="Salem">Salem</option>
+          <option value="Warangal">Warangal</option>
+          <option value="Guntur">Guntur</option>
+          <option value="Bhiwandi">Bhiwandi</option>
+          <option value="Saharanpur">Saharanpur</option>
+          <option value="Gorakhpur">Gorakhpur</option>
+          <option value="Bikaner">Bikaner</option>
+          <option value="Amravati">Amravati</option>
+          <option value="Noida">Noida</option>
+          <option value="Jamshedpur">Jamshedpur</option>
+          <option value="Bhilai">Bhilai</option>
+          <option value="Cuttack">Cuttack</option>
+          <option value="Firozabad">Firozabad</option>
+          <option value="Kochi">Kochi</option>
+          <option value="Nellore">Nellore</option>
+          <option value="Bhavnagar">Bhavnagar</option>
+          <option value="Dehradun">Dehradun</option>
+          <option value="Durgapur">Durgapur</option>
+          <option value="Asansol">Asansol</option>
+        </select>
+      </div>
+
+      <div class="fee-box">
+        <div>
+          <div class="fee-lbl"><span data-en>Registration Fee</span><span data-hi>रजिस्ट्रेशन फीस</span></div>
+          <div class="fee-role" id="fee-role-label"><span data-en>Select a role above</span><span data-hi>ऊपर एक रोल चुनें</span></div>
+        </div>
+        <div class="fee-amt" id="fee-amount">₹—</div>
+      </div>
+      <div id="fee-gst-note" style="font-size:11.5px; color:rgba(20,32,63,0.5); text-align:right; margin-top:-14px; margin-bottom:16px; display:none;"></div>
+
+      <label style="display:flex; align-items:flex-start; gap:9px; cursor:pointer; margin-bottom:16px; font-size:12.5px; color:var(--ink);">
+        <input type="checkbox" id="tnc-checkbox" onchange="onTncChange()" style="width:18px; height:18px; margin-top:1px; flex-shrink:0; accent-color:var(--orange);" />
+        <span>
+          <span data-en>I agree to the <a href="terms.html" target="_blank" style="color:var(--orange); font-weight:700;">Terms &amp; Conditions</a> and <a href="refunds.html" target="_blank" style="color:var(--orange); font-weight:700;">Refund Policy</a>.</span>
+          <span data-hi>मैं <a href="terms.html" target="_blank" style="color:var(--orange); font-weight:700;">नियम एवं शर्तों</a> और <a href="refunds.html" target="_blank" style="color:var(--orange); font-weight:700;">रिफंड पॉलिसी</a> से सहमत हूं।</span>
+        </span>
+      </label>
+
+      <button class="btn btn-primary" id="btn-pay-1" onclick="payPhase1()" disabled>
+        <span class="icon">🔒</span><span id="pay1-label"><span data-en>Select role to continue</span><span data-hi>जारी रखने के लिए रोल चुनें</span></span>
+      </button>
+      <p class="helper-note"><span data-en>Secure payment. This fee is only for Phase 1 trial entry.</span><span data-hi>सुरक्षित भुगतान। यह फीस सिर्फ फेज़ 1 ट्रायल एंट्री के लिए है।</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SCREEN 2 — PLAYER PROFILE / VIDEO UPLOAD ===================== -->
+<section class="screen" id="screen-2">
+  <div class="wrap">
+    <div class="card">
+      <div class="success-badge">✓</div>
+      <div style="text-align:center;">
+        <h2 class="screen-title" style="font-size:22px;"><span data-en>Registration Successful!</span><span data-hi>रजिस्ट्रेशन सफल!</span></h2>
+        <p class="screen-sub" style="margin-bottom:6px;"><span data-en>Welcome to BCPL Season 5. This is your player profile.</span><span data-hi>BCPL सीज़न 5 में आपका स्वागत है। यह आपकी प्लेयर प्रोफ़ाइल है।</span></p>
+      </div>
+
+      <div class="player-id-box">
+        <div class="pid-lbl"><span data-en>Your Player ID</span><span data-hi>आपकी प्लेयर आईडी</span></div>
+        <div class="pid-val" id="player-id-val">BCPL-00000</div>
+      </div>
+
+      <div class="player-id-box" style="margin-top:12px; background:linear-gradient(135deg,#FF7A45,var(--orange));">
+        <div class="pid-lbl" style="color:rgba(255,255,255,0.85);">🎁 <span data-en>Your Referral Code — share &amp; earn</span><span data-hi>आपका रेफ़रल कोड — शेयर करें और कमाएं</span></div>
+        <div class="pid-val" id="referral-code-val" style="color:#fff;">—</div>
+        <button onclick="shareReferral()" style="margin-top:10px; width:100%; padding:11px; border-radius:10px; border:none; background:rgba(255,255,255,0.25); color:#fff; font-weight:800; font-size:13.5px; cursor:pointer;">
+          📤 <span data-en>Share with Friends</span><span data-hi>दोस्तों के साथ शेयर करें</span>
+        </button>
+      </div>
+
+      <div class="deadline-strip">
+        🗓️ <span><span data-en>Please upload your video within 7 days of registration</span><span data-hi>कृपया रजिस्ट्रेशन के 7 दिन के अंदर अपना वीडियो अपलोड करें</span></span>
+      </div>
+
+      <div class="upload-box" id="upload-box" onclick="triggerVideoPicker()">
+        <div class="up-icon">🎥</div>
+        <div class="up-text" id="upload-text"><span data-en>Tap to upload your playing video</span><span data-hi>अपना खेलता हुआ वीडियो अपलोड करने के लिए टैप करें</span></div>
+        <div class="up-sub"><span data-en>MP4 or MOV · Max 50MB · 1-3 minutes</span><span data-hi>MP4 या MOV · अधिकतम 50MB · 1-3 मिनट</span></div>
+        <div class="up-progress-wrap" id="up-progress-wrap" style="display:none;">
+          <div class="up-progress-bar" id="up-progress-bar"></div>
+        </div>
+      </div>
+      <input type="file" id="video-file-input" accept="video/mp4,video/quicktime,video/*" style="display:none;" onchange="handleVideoSelected(event)" />
+      <div id="video-error-msg" style="display:none; color:#D62828; font-size:13px; font-weight:600; text-align:center; margin-top:8px;"></div>
+
+      <div class="sample-block">
+        <div class="sample-block-title">🎬 <span data-en>Not sure what to record?</span><span data-hi>पता नहीं क्या रिकॉर्ड करें?</span></div>
+        <div class="sample-block-sub"><span data-en>Watch a 30-second sample for your role before you shoot your own video.</span><span data-hi>अपना वीडियो बनाने से पहले अपने रोल का 30-सेकंड का सैंपल देखें।</span></div>
+        <div class="sample-grid">
+          <div class="sample-card" onclick="event.stopPropagation();">
+            <div class="sample-thumb"><div class="play-dot">▶</div><div class="dur-tag">0:30</div></div>
+            <div class="sample-caption"><div class="sc-name"><span data-en>Batting Sample</span><span data-hi>बैटिंग सैंपल</span></div><div class="sc-tag"><span data-en>Batsman</span><span data-hi>बल्लेबाज़</span></div></div>
+          </div>
+          <div class="sample-card" onclick="event.stopPropagation();">
+            <div class="sample-thumb"><div class="play-dot">▶</div><div class="dur-tag">0:30</div></div>
+            <div class="sample-caption"><div class="sc-name"><span data-en>Bowling Sample</span><span data-hi>बॉलिंग सैंपल</span></div><div class="sc-tag"><span data-en>Bowler</span><span data-hi>गेंदबाज़</span></div></div>
+          </div>
+          <div class="sample-card" onclick="event.stopPropagation();">
+            <div class="sample-thumb"><div class="play-dot">▶</div><div class="dur-tag">0:30</div></div>
+            <div class="sample-caption"><div class="sc-name"><span data-en>Keeping Sample</span><span data-hi>कीपिंग सैंपल</span></div><div class="sc-tag"><span data-en>Wicket-Keeper</span><span data-hi>विकेटकीपर</span></div></div>
+          </div>
+          <div class="sample-card" onclick="event.stopPropagation();">
+            <div class="sample-thumb"><div class="play-dot">▶</div><div class="dur-tag">0:30</div></div>
+            <div class="sample-caption"><div class="sc-name"><span data-en>All-Rounder Sample</span><span data-hi>ऑल-राउंडर सैंपल</span></div><div class="sc-tag"><span data-en>Batting + Bowling</span><span data-hi>बैटिंग + बॉलिंग</span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="resume-note">
+        <div class="rn-icon">⏰</div>
+        <div class="rn-text">
+          <span data-en><b>No rush.</b> Shooting a video takes time — come back whenever you're ready. Just tap <b>"👤 Login"</b> at the top, enter this same phone number, and you'll land right back here.</span>
+          <span data-hi><b>जल्दी नहीं।</b> वीडियो बनाने में समय लगता है — जब तैयार हों तब वापस आएं। बस ऊपर <b>"👤 Login"</b> पर टैप करें, यही फ़ोन नंबर डालें, और आप सीधे यहीं वापस आ जाएंगे।</span>
+        </div>
+      </div>
+
+
+      <div class="status-track" style="margin-top:24px;">
+        <div class="status-item">
+          <div class="status-dot-col"><div class="status-dot on">✓</div><div class="status-line"></div></div>
+          <div>
+            <div class="status-title"><span data-en>Registered</span><span data-hi>रजिस्टर हो गया</span></div>
+            <div class="status-desc"><span data-en>Phase 1 fee received</span><span data-hi>फेज़ 1 फीस प्राप्त हुई</span></div>
+          </div>
+        </div>
+        <div class="status-item">
+          <div class="status-dot-col"><div class="status-dot pending" id="dot-video">2</div><div class="status-line"></div></div>
+          <div>
+            <div class="status-title" id="video-status-title"><span data-en>Video Pending</span><span data-hi>वीडियो बाकी है</span></div>
+            <div class="status-desc"><span data-en>Upload anytime before Feb 28</span><span data-hi>28 फरवरी से पहले कभी भी अपलोड करें</span></div>
+          </div>
+        </div>
+        <div class="status-item">
+          <div class="status-dot-col"><div class="status-dot off">3</div></div>
+          <div>
+            <div class="status-title"><span data-en>Result In 7 Days</span><span data-hi>7 दिन में रिज़ल्ट</span></div>
+            <div class="status-desc"><span data-en>We'll notify you by Email &amp; WhatsApp (and app, once it's live)</span><span data-hi>हम आपको Email और WhatsApp पर सूचित करेंगे (और भविष्य में app पर भी)</span></div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="btn-goto-result" onclick="goStep('waiting')" disabled>
+        <span data-en>Upload video to continue</span><span data-hi>जारी रखने के लिए वीडियो अपलोड करें</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SCREEN TXN — TRANSACTION DETAIL (SHOWN ONLY AFTER BACKEND-CONFIRMED SUCCESS) ===================== -->
+<section class="screen" id="screen-txn">
+  <div class="wrap">
+    <div class="card" style="text-align:center;">
+      <div class="login-icon-badge">✅</div>
+      <div class="screen-eyebrow" style="text-align:center;"><span data-en>Payment Confirmed</span><span data-hi>भुगतान की पुष्टि हो गई</span></div>
+      <h2 class="screen-title" style="text-align:center;"><span data-en>Payment Successful!</span><span data-hi>भुगतान सफल रहा!</span></h2>
+      <p class="screen-sub" style="text-align:center;"><span data-en>Here's your transaction receipt for your records.</span><span data-hi>यह रहा आपकी जानकारी के लिए भुगतान की रसीद।</span></p>
+
+      <div style="text-align:left; background:#fafafa; border:1px solid rgba(20,32,63,0.1); border-radius:14px; padding:16px; margin-top:16px;">
+        <div class="txn-row"><span class="txn-lbl"><span data-en>Amount Paid</span><span data-hi>भुगतान राशि</span></span><span class="txn-val" id="txn-amount">—</span></div>
+        <div class="txn-row"><span class="txn-lbl"><span data-en>Order ID</span><span data-hi>ऑर्डर आईडी</span></span><span class="txn-val" id="txn-order-id">—</span></div>
+        <div class="txn-row"><span class="txn-lbl"><span data-en>Payment ID</span><span data-hi>पेमेंट आईडी</span></span><span class="txn-val" id="txn-payment-id">—</span></div>
+        <div class="txn-row"><span class="txn-lbl"><span data-en>Payment Method</span><span data-hi>भुगतान माध्यम</span></span><span class="txn-val" id="txn-method">—</span></div>
+        <div class="txn-row"><span class="txn-lbl"><span data-en>Reference No.</span><span data-hi>रेफरेंस नंबर</span></span><span class="txn-val" id="txn-ref">—</span></div>
+        <div class="txn-row" style="border-bottom:none;"><span class="txn-lbl"><span data-en>Date &amp; Time</span><span data-hi>दिनांक व समय</span></span><span class="txn-val" id="txn-time">—</span></div>
+      </div>
+
+      <button class="btn btn-primary" style="margin-top:22px;" id="txn-proceed-btn">
+        <span id="txn-proceed-label"><span data-en>Proceed →</span><span data-hi>आगे बढ़ें →</span></span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SCREEN PAYMENT ISSUE — PENDING / FAILED / DROPPED ===================== -->
+<section class="screen" id="screen-payment-issue">
+  <div class="wrap">
+    <div class="card" style="text-align:center;">
+      <div class="login-icon-badge" id="pi-icon">⏳</div>
+      <h2 class="screen-title" style="text-align:center;" id="pi-title"><span data-en>Payment Pending</span><span data-hi>भुगतान लंबित है</span></h2>
+      <p class="screen-sub" style="text-align:center;" id="pi-message">
+        <span data-en>We haven't received confirmation yet.</span><span data-hi>अभी तक पुष्टि नहीं मिली है।</span>
+      </p>
+      <button class="btn btn-primary" id="pi-check-btn" onclick="piCheckAgain()">
+        <span data-en>Check Again</span><span data-hi>दोबारा जांचें</span>
+      </button>
+      <button class="btn btn-ghost" id="pi-retry-btn" onclick="piRetryPayment()">
+        <span data-en>Try Payment Again</span><span data-hi>दोबारा भुगतान करें</span>
+      </button>
+      <p class="screen-sub" style="text-align:center; margin-top:16px; font-size:11.5px;">
+        <span data-en>If money was deducted from your account, do not pay again immediately — check back in a few minutes or contact us.</span>
+        <span data-hi>अगर आपके अकाउंट से पैसे कट गए हैं, तो तुरंत दोबारा भुगतान न करें — कुछ मिनट बाद दोबारा जांचें या हमसे संपर्क करें।</span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SCREEN USER DATA — READ-ONLY SUMMARY OF WHAT THEY SUBMITTED ===================== -->
+<section class="screen" id="screen-user-data">
+  <div class="wrap">
+    <div class="card">
+      <div class="screen-eyebrow" style="text-align:center;"><span data-en>Your Details</span><span data-hi>आपकी जानकारी</span></div>
+      <h2 class="screen-title" style="text-align:center;"><span data-en>Player Profile</span><span data-hi>प्लेयर प्रोफ़ाइल</span></h2>
+      <p class="screen-sub" style="text-align:center;"><span data-en>This is what you submitted during registration.</span><span data-hi>यह वही जानकारी है जो आपने रजिस्ट्रेशन के समय भरी थी।</span></p>
+
+      <div style="text-align:left; background:#fafafa; border:1px solid rgba(20,32,63,0.1); border-radius:14px; padding:16px; margin-top:16px;">
+        <div class="txn-row"><span class="txn-lbl"><span data-en>Player ID</span><span data-hi>प्लेयर आईडी</span></span><span class="txn-val" id="ud-player-id">—</span></div>
+        <div class="txn-row"><span class="txn-lbl"><span data-en>Full Name</span><span data-hi>पूरा नाम</span></span><span class="txn-val" id="ud-name">—</span></div>
+        <div class="txn-row"><span class="txn-lbl"><span data-en>Email</span><span data-hi>ईमेल</span></span><span class="txn-val" id="ud-email">—</span></div>
+        <div class="txn-row"><span class="txn-lbl"><span data-en>Phone</span><span data-hi>फ़ोन नंबर</span></span><span class="txn-val" id="ud-phone">—</span></div>
+        <div class="txn-row"><span class="txn-lbl"><span data-en>Playing Role</span><span data-hi>प्लेइंग रोल</span></span><span class="txn-val" id="ud-role">—</span></div>
+        <div class="txn-row" style="border-bottom:none;"><span class="txn-lbl"><span data-en>Trial City</span><span data-hi>ट्रायल शहर</span></span><span class="txn-val" id="ud-city">—</span></div>
+      </div>
+
+      <div style="margin-top:16px; background:linear-gradient(135deg,#FF7A45,var(--orange)); border-radius:14px; padding:16px; text-align:center;">
+        <div style="color:rgba(255,255,255,0.85); font-size:12px; font-weight:700;">🎁 <span data-en>Your Referral Code</span><span data-hi>आपका रेफ़रल कोड</span></div>
+        <div style="color:#fff; font-size:20px; font-weight:900; letter-spacing:1px; margin-top:2px;" id="ud-referral-code">—</div>
+        <div style="display:flex; gap:10px; margin-top:12px;">
+          <div style="flex:1; background:rgba(255,255,255,0.18); border-radius:10px; padding:10px;">
+            <div style="color:#fff; font-size:22px; font-weight:900;" id="ud-referral-count">0</div>
+            <div style="color:rgba(255,255,255,0.85); font-size:11px; font-weight:700;"><span data-en>Friends Referred</span><span data-hi>रेफ़र किए गए दोस्त</span></div>
+          </div>
+        </div>
+        <button onclick="shareReferral()" style="margin-top:12px; width:100%; padding:11px; border-radius:10px; border:none; background:rgba(255,255,255,0.25); color:#fff; font-weight:800; font-size:13.5px; cursor:pointer;">
+          📤 <span data-en>Share with Friends</span><span data-hi>दोस्तों के साथ शेयर करें</span>
+        </button>
+      </div>
+
+      <button class="btn btn-ghost" style="margin-top:20px;" onclick="goToProfile();">
+        <span data-en>← Back to My Status</span><span data-hi>← मेरे स्टेटस पर वापस</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SCREEN WAITING — VIDEO SUBMITTED, REVIEW PENDING ===================== -->
+<section class="screen" id="screen-waiting">
+  <div class="wrap">
+    <div class="card" style="text-align:center;">
+      <div class="waiting-icon-badge">⏳</div>
+      <div class="screen-eyebrow" style="text-align:center;"><span data-en>Video Submitted</span><span data-hi>वीडियो जमा हो गया</span></div>
+      <h2 class="screen-title" style="text-align:center;"><span data-en>Thanks — We've Got Your Video!</span><span data-hi>धन्यवाद — आपका वीडियो मिल गया!</span></h2>
+      <p class="screen-sub" style="text-align:center;">
+        <span data-en>Our panel will personally review it and give you the Phase 1 result within 7 days. We'll notify you by Email &amp; WhatsApp — no need to keep checking.</span>
+        <span data-hi>हमारी टीम इसे ध्यान से देखेगी और 7 दिन में आपको फेज़ 1 का रिज़ल्ट देगी। हम आपको Email और WhatsApp पर सूचित करेंगे — बार-बार चेक करने की ज़रूरत नहीं।</span>
+      </p>
+      <div class="player-id-box" style="margin-top:18px;">
+        <div class="pid-lbl"><span data-en>Your Player ID</span><span data-hi>आपकी प्लेयर आईडी</span></div>
+        <div class="pid-val" id="waiting-player-id-val">BCPL-00000</div>
+      </div>
+
+      <div style="text-align:left; background:#fafafa; border:1px solid rgba(20,32,63,0.1); border-radius:14px; padding:16px; margin-top:18px;">
+        <div class="screen-eyebrow" style="margin-bottom:8px;"><span data-en>Your Details</span><span data-hi>आपकी जानकारी</span></div>
+        <div class="txn-row"><span class="txn-lbl"><span data-en>Full Name</span><span data-hi>पूरा नाम</span></span><span class="txn-val" id="pf-name">—</span></div>
+        <div class="txn-row"><span class="txn-lbl"><span data-en>Email</span><span data-hi>ईमेल</span></span><span class="txn-val" id="pf-email">—</span></div>
+        <div class="txn-row"><span class="txn-lbl"><span data-en>Phone</span><span data-hi>फ़ोन नंबर</span></span><span class="txn-val" id="pf-phone">—</span></div>
+        <div class="txn-row"><span class="txn-lbl"><span data-en>Playing Role</span><span data-hi>प्लेइंग रोल</span></span><span class="txn-val" id="pf-role">—</span></div>
+        <div class="txn-row" style="border-bottom:none;"><span class="txn-lbl"><span data-en>Trial City</span><span data-hi>ट्रायल शहर</span></span><span class="txn-val" id="pf-city">—</span></div>
+      </div>
+
+      <div class="resume-note" style="margin-top:20px;">
+        <div class="rn-icon">🔔</div>
+        <div class="rn-text">
+          <span data-en>You can close this page now. When your result is ready, tap <b>"👤 Player Profile"</b> at the top and enter this same phone number to check it anytime.</span>
+          <span data-hi>अब आप इस पेज को बंद कर सकते हैं। रिज़ल्ट तैयार होने पर, ऊपर <b>"👤 Player Profile"</b> पर टैप करें और यही फ़ोन नंबर डालकर कभी भी चेक करें।</span>
+        </div>
+      </div>
+      <a href="index.html" class="btn btn-ghost" style="text-decoration:none; margin-top:20px;"><span data-en>🏠 Back to Home</span><span data-hi>🏠 होम पर वापस जाएं</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SCREEN — NOT SELECTED ===================== -->
+<section class="screen" id="screen-rejected">
+  <div class="wrap">
+    <div class="card" style="text-align:center;">
+      <div class="waiting-icon-badge">🙏</div>
+      <div class="screen-eyebrow" style="text-align:center;"><span data-en>Trial Result</span><span data-hi>ट्रायल रिज़ल्ट</span></div>
+      <h2 class="screen-title" style="text-align:center;"><span data-en>Not Selected This Season</span><span data-hi>इस सीज़न के लिए चयनित नहीं</span></h2>
+      <p class="screen-sub" style="text-align:center;">
+        <span data-en>Thank you for trying out for BCPL. Our panel reviewed your video carefully, but you haven't been selected for Season 5. We'd love to see you try again next season!</span>
+        <span data-hi>BCPL के लिए ट्रायल देने के लिए धन्यवाद। हमारी टीम ने आपका वीडियो ध्यान से देखा, लेकिन इस बार सीज़न 5 के लिए आपका चयन नहीं हुआ। अगले सीज़न में फिर से कोशिश करें!</span>
+      </p>
+      <div class="player-id-box" style="margin-top:18px;">
+        <div class="pid-lbl"><span data-en>Your Player ID</span><span data-hi>आपकी प्लेयर आईडी</span></div>
+        <div class="pid-val" id="rejected-player-id-val">BCPL-00000</div>
+      </div>
+      <a href="index.html" class="btn btn-ghost" style="text-decoration:none; margin-top:20px;"><span data-en>🏠 Back to Home</span><span data-hi>🏠 होम पर वापस जाएं</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SCREEN 3 — SHORTLISTED RESULT + PHASE 2 PAYMENT ===================== -->
+<section class="screen" id="screen-3">
+  <div class="wrap">
+    <div class="card">
+      <div class="stamp-wrap">
+        <div class="stamp">✓ <span data-en>Shortlisted for Phase 2</span><span data-hi>फेज़ 2 के लिए शॉर्टलिस्टेड</span></div>
+      </div>
+
+      <div class="screen-eyebrow" style="margin-top:22px; text-align:center;"><span data-en>Trial Result</span><span data-hi>ट्रायल रिज़ल्ट</span></div>
+      <h2 style="font-size:22px; margin-top:4px; text-align:center;"><span data-en>Great Work — You're Through!</span><span data-hi>बहुत बढ़िया — आप आगे बढ़ गए हैं!</span></h2>
+      <p class="screen-sub" style="margin-top:8px; text-align:center;"><span data-en>Your video impressed our panel. You've advanced to the Phase 2 physical trial.</span><span data-hi>आपके वीडियो ने हमारी टीम को प्रभावित किया। आप फेज़ 2 फिजिकल ट्रायल के लिए आगे बढ़ गए हैं।</span></p>
+
+      <div class="next-fee-hero">
+        <div class="nf-lbl"><span data-en>Phase 2 Trial Fee</span><span data-hi>फेज़ 2 ट्रायल फीस</span></div>
+        <div class="nf-amt" id="phase2-amount">₹—</div>
+        <div id="phase2-gst-note" style="font-size:11.5px; color:rgba(255,255,255,0.6); margin-top:2px;"></div>
+        <div class="nf-sub" id="phase2-role-note"><span data-en>Physical trial — batting, bowling, fielding in front of scouts</span><span data-hi>फिजिकल ट्रायल — स्काउट्स के सामने बल्लेबाज़ी, गेंदबाज़ी, फील्डिंग</span></div>
+      </div>
+
+      <div id="trial-venue-card" class="hidden" style="background:rgba(255,122,41,0.08); border:1.5px solid rgba(255,122,41,0.3); border-radius:16px; padding:16px; margin-top:16px; text-align:center;">
+        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--orange); margin-bottom:8px;">📍 <span data-en>Your Trial Details</span><span data-hi>आपके ट्रायल की जानकारी</span></div>
+        <div id="trial-venue-text" style="font-weight:800; font-size:15px;"></div>
+        <div id="trial-date-text" style="font-size:13px; color:rgba(20,32,63,0.65); margin-top:4px;"></div>
+      </div>
+
+      <button class="btn btn-primary" onclick="payPhase2()">
+        <span class="icon">🔒</span><span data-en>Pay &amp; Confirm Phase 2</span><span data-hi>पे करें और फेज़ 2 कन्फर्म करें</span>
+      </button>
+      <p class="helper-note"><span data-en>Your Phase 2 slot will be confirmed by Email &amp; WhatsApp after payment.</span><span data-hi>भुगतान के बाद आपका फेज़ 2 स्लॉट Email और WhatsApp पर कन्फर्म किया जाएगा।</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SCREEN 4 — EMPLOYMENT DETAILS + DOCUMENTS ===================== -->
+<section class="screen" id="screen-4">
+  <div class="wrap">
+    <div class="card">
+      <div class="screen-eyebrow"><span data-en>Phase 2 · Final Step</span><span data-hi>फेज़ 2 · आख़िरी स्टेप</span></div>
+      <h2 class="screen-title"><span data-en>Tell Us What You Do</span><span data-hi>बताइए आप क्या करते हैं</span></h2>
+      <p class="screen-sub"><span data-en>BCPL is open to every working professional — salaried, self-employed, or anything in between. Pick what fits you best.</span><span data-hi>BCPL हर working professional के लिए खुला है — नौकरीपेशा, स्वरोज़गार, या बीच का कोई भी। जो आप पर लागू हो वो चुनें।</span></p>
+
+      <div class="field">
+        <label><span data-en>What do you do?</span><span data-hi>आप क्या करते हैं?</span></label>
+        <div class="occ-grid" id="occ-grid">
+          <div class="occ-card" data-occ="salaried" onclick="selectOcc('salaried', this)">
+            <div class="occ-icon">💼</div>
+            <div class="occ-name"><span data-en>Salaried Employee</span><span data-hi>नौकरीपेशा</span></div>
+          </div>
+          <div class="occ-card" data-occ="business" onclick="selectOcc('business', this)">
+            <div class="occ-icon">🏪</div>
+            <div class="occ-name"><span data-en>Business / Shopkeeper</span><span data-hi>व्यवसाय / दुकानदार</span></div>
+          </div>
+          <div class="occ-card" data-occ="farmer" onclick="selectOcc('farmer', this)">
+            <div class="occ-icon">🌾</div>
+            <div class="occ-name"><span data-en>Farmer</span><span data-hi>किसान</span></div>
+          </div>
+          <div class="occ-card" data-occ="govt" onclick="selectOcc('govt', this)">
+            <div class="occ-icon">🏛️</div>
+            <div class="occ-name"><span data-en>Government Officer</span><span data-hi>सरकारी अधिकारी</span></div>
+          </div>
+          <div class="occ-card" data-occ="doctor" onclick="selectOcc('doctor', this)">
+            <div class="occ-icon">🩺</div>
+            <div class="occ-name"><span data-en>Doctor / Healthcare</span><span data-hi>डॉक्टर / हेल्थकेयर</span></div>
+          </div>
+          <div class="occ-card" data-occ="intern" onclick="selectOcc('intern', this)">
+            <div class="occ-icon">🎓</div>
+            <div class="occ-name"><span data-en>Intern / PPO</span><span data-hi>इंटर्न / PPO</span></div>
+          </div>
+          <div class="occ-card" data-occ="freelance" onclick="selectOcc('freelance', this)">
+            <div class="occ-icon">🧑‍💻</div>
+            <div class="occ-name"><span data-en>Freelancer</span><span data-hi>फ्रीलांसर</span></div>
+          </div>
+          <div class="occ-card" data-occ="between" onclick="selectOcc('between', this)">
+            <div class="occ-icon">🔎</div>
+            <div class="occ-name"><span data-en>Between Jobs</span><span data-hi>जॉब्स के बीच में</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label id="occ-name-label"><span data-en>Organisation / Nature of Work</span><span data-hi>संस्थान / काम की प्रकृति</span></label>
+          <input type="text" id="f-occ-name" placeholder="e.g. Company, shop, farm, or field of work" />
+        </div>
+        <div class="field">
+          <label><span data-en>Contact Email</span><span data-hi>संपर्क ईमेल</span></label>
+          <input type="email" id="f-occ-email" placeholder="you@email.com" />
+        </div>
+      </div>
+
+      <label style="display:block; font-size:12.5px; font-weight:700; color:var(--ink); margin:20px 0 10px;"><span data-en>Upload Documents</span><span data-hi>दस्तावेज़ अपलोड करें</span></label>
+
+      <div class="doc-row" id="doc-aadhaar" onclick="simulateDoc('doc-aadhaar','doc-aadhaar-btn')">
+        <div class="doc-left">
+          <div class="doc-icon">🪪</div>
+          <div>
+            <div class="doc-name"><span data-en>Aadhaar Card</span><span data-hi>आधार कार्ड</span></div>
+            <div class="doc-sub"><span data-en>Front &amp; back, PDF or image</span><span data-hi>आगे-पीछे, PDF या इमेज</span></div>
+          </div>
+        </div>
+        <button class="doc-btn" id="doc-aadhaar-btn" type="button"><span data-en>Upload</span><span data-hi>अपलोड</span></button>
+      </div>
+
+      <div class="doc-row" id="doc-pan" style="cursor:default; flex-direction:column; align-items:stretch;">
+        <div class="doc-left" style="margin-bottom:10px;">
+          <div class="doc-icon">🪪</div>
+          <div>
+            <div class="doc-name"><span data-en>PAN Verification (KYC)</span><span data-hi>पैन वेरिफ़िकेशन (KYC)</span></div>
+            <div class="doc-sub"><span data-en>Required to confirm your identity</span><span data-hi>पहचान की पुष्टि के लिए ज़रूरी</span></div>
+          </div>
+        </div>
+        <input type="text" id="kyc-pan-input" placeholder="PAN Number (e.g. ABCDE1234F)" maxlength="10" style="text-transform:uppercase;" />
+        <button class="btn btn-outline" type="button" id="kyc-verify-btn" onclick="verifyPan()" style="margin-top:2px;">
+          <span data-en>Verify PAN</span><span data-hi>पैन वेरिफ़ाई करें</span>
+        </button>
+        <div id="kyc-result" style="font-size:12.5px; margin-top:8px;"></div>
+      </div>
+
+      <button class="btn btn-primary" style="margin-top:20px;" onclick="submitFinalRegistration()">
+        <span data-en>Submit &amp; Complete Registration</span><span data-hi>सबमिट करें और रजिस्ट्रेशन पूरा करें</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SCREEN 5 — DONE ===================== -->
+<section class="screen" id="screen-5">
+  <div class="wrap">
+    <div class="card">
+      <div class="final-hero">
+        <div class="fh-icon">🏆</div>
+        <h2><span data-en>You're All Set!</span><span data-hi>आप बिल्कुल तैयार हैं!</span></h2>
+        <p><span data-en>Your registration for BCPL Season 5 is complete. Our team will contact you with your trial slot and venue details.</span><span data-hi>BCPL सीज़न 5 के लिए आपका रजिस्ट्रेशन पूरा हो गया है। हमारी टीम आपके ट्रायल स्लॉट और वेन्यू की जानकारी के साथ आपसे संपर्क करेगी।</span></p>
+      </div>
+
+      <div class="summary-list">
+        <div class="summary-row"><span class="sk"><span data-en>Player ID</span><span data-hi>प्लेयर आईडी</span></span><span class="sv" id="summary-pid">BCPL-00000</span></div>
+        <div class="summary-row"><span class="sk"><span data-en>Trial City</span><span data-hi>ट्रायल शहर</span></span><span class="sv" id="summary-city">—</span></div>
+        <div class="summary-row"><span class="sk"><span data-en>Role</span><span data-hi>रोल</span></span><span class="sv" id="summary-role">—</span></div>
+        <div class="summary-row"><span class="sk"><span data-en>Total Paid</span><span data-hi>कुल भुगतान</span></span><span class="sv" id="summary-paid">—</span></div>
+      </div>
+
+      <button class="btn btn-outline" onclick="location.reload()"><span data-en>Start Another Registration</span><span data-hi>नया रजिस्ट्रेशन शुरू करें</span></button>
+      <a href="index.html" class="btn btn-ghost" style="text-decoration:none;"><span data-en>🏠 Back to Home</span><span data-hi>🏠 होम पर वापस जाएं</span></a>
+    </div>
+  </div>
+</section>
+
+<script>
+  var BACKEND_URL = 'https://bcpl-backend-production.up.railway.app';
+  var state = { role:null, fee1:0, fee2:0, city:'', name:'', email:'', phone:'', playerId:'', userId:'', referralCode:'', referralCount:0, videoUploaded:false, paymentStatus:'', selectionStatus:null, kycVerified:false, phase1OrderId:null, docs:{aadhaar:false, pan:false}, occupation:null, score:null, rank:null, totalPlayers:null };
+
+  var SESSION_KEY = 'bcpl_session';
+
+  function saveSession(phone, token) {
+    try {
+      localStorage.setItem(SESSION_KEY, JSON.stringify({ phone: phone, token: token }));
+    } catch (e) {}
+    renderNavAuth(true);
+  }
+
+  function readSavedSession() {
+    try {
+      var raw = localStorage.getItem(SESSION_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) { return null; }
+  }
+
+  function clearSession() {
+    try { localStorage.removeItem(SESSION_KEY); } catch (e) {}
+    renderNavAuth(false);
+  }
+
+  function renderNavAuth(loggedIn) {
+    var el = document.getElementById('nav-auth-area');
+    if (!el) return;
+    if (loggedIn) {
+      el.innerHTML =
+        '<a href="#" onclick="event.preventDefault(); goToProfile();"><span data-en>📊 My Status</span><span data-hi>📊 मेरा स्टेटस</span></a>' +
+        '<a href="#" onclick="event.preventDefault(); showUserData();"><span data-en>🎽 Player Profile</span><span data-hi>🎽 प्लेयर प्रोफ़ाइल</span></a>' +
+        '<a href="#" onclick="event.preventDefault(); doLogout();"><span data-en>🚪 Log Out</span><span data-hi>🚪 लॉग आउट</span></a>';
+    } else {
+      el.innerHTML =
+        '<a href="#" onclick="event.preventDefault(); goStep(\'login\');"><span data-en>👤 Login</span><span data-hi>👤 लॉगिन</span></a>';
+    }
+  }
+
+  function toggleMenu() {
+    document.getElementById('menu-dropdown').classList.toggle('open');
+  }
+  document.addEventListener('click', function (e) {
+    var dd = document.getElementById('menu-dropdown');
+    var btn = document.querySelector('.menu-btn');
+    if (dd && dd.classList.contains('open') && !dd.contains(e.target) && e.target !== btn) {
+      dd.classList.remove('open');
+    }
+  });
+
+  function goToProfile() {
+    showDebugBadge('goToProfile: videoUploaded=' + state.videoUploaded + ' paymentStatus=' + state.paymentStatus + ' selectionStatus=' + state.selectionStatus + ' userId=' + (state.userId ? 'yes' : 'no'));
+    if (state.videoUploaded && state.selectionStatus === 'selected') {
+      populateTrialVenue();
+      goStep(3);
+    } else if (state.videoUploaded && state.selectionStatus === 'not_selected') {
+      document.getElementById('rejected-player-id-val').textContent = state.playerId;
+      goStep('rejected');
+    } else if (state.videoUploaded) {
+      document.getElementById('waiting-player-id-val').textContent = state.playerId;
+      goStep('waiting');
+    } else if (state.paymentStatus === 'phase1_paid' || state.paymentStatus === 'fully_paid') {
+      showReceiptThenGoToVideoUpload();
+    } else if (state.userId) {
+      // Registered, but Phase 1 payment was never actually confirmed —
+      // do NOT show the "Registration Successful" video-upload screen.
+      pendingPaymentCtx = { orderId: state.phase1OrderId || null, phase: 'phase1', onSuccessProceed: null };
+      showPaymentIssue('incomplete');
+    } else {
+      goStep('login');
+    }
+  }
+
+  function getReferralLink() {
+    var code = state.referralCode || document.getElementById('referral-code-val').textContent;
+    return 'https://bcplt20.com/register.html?ref=' + encodeURIComponent(code);
+  }
+
+  function shareReferral() {
+    var link = getReferralLink();
+    var shareText = langMsg(
+      'Join me for BCPL Season 5 trials! Use my referral code and register here:',
+      'BCPL Season 5 trials के लिए मेरे साथ जुड़ें! मेरा referral code इस्तेमाल करके यहां रजिस्टर करें:'
+    );
+
+    if (navigator.share) {
+      navigator.share({ title: 'BCPL Season 5', text: shareText, url: link }).catch(function () { /* user cancelled — ignore */ });
+      return;
+    }
+
+    // Web Share API available nahi hai (jyadatar desktop browsers) — apna share sheet dikhao
+    var msg = encodeURIComponent(shareText + ' ' + link);
+    document.getElementById('share-whatsapp').href = 'https://wa.me/?text=' + msg;
+    document.getElementById('share-facebook').href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(link);
+    document.getElementById('share-email').href = 'mailto:?subject=' + encodeURIComponent('Join me for BCPL Season 5!') + '&body=' + msg;
+    document.getElementById('share-sheet-overlay').style.display = 'flex';
+  }
+
+  function closeShareSheet() {
+    document.getElementById('share-sheet-overlay').style.display = 'none';
+  }
+
+  function copyReferralLink() {
+    var link = getReferralLink();
+    navigator.clipboard.writeText(link).then(function () {
+      showToast(langMsg('Referral link copied!', 'रेफ़रल लिंक कॉपी हो गया!'));
+      closeShareSheet();
+    }).catch(function () {
+      showToast(langMsg('Could not copy. Please copy manually: ' + link, 'कॉपी नहीं हो सका: ' + link));
+    });
+  }
+
+  function showUserData() {
+    if (!state.userId) { goStep('login'); return; }
+    document.getElementById('ud-player-id').textContent = state.playerId || '—';
+    document.getElementById('ud-name').textContent = state.name || '—';
+    document.getElementById('ud-email').textContent = state.email || '—';
+    document.getElementById('ud-phone').textContent = state.phone || '—';
+    document.getElementById('ud-role').textContent = (state.role && roleNames[state.role])
+      ? (roleNames[state.role].en + ' / ' + roleNames[state.role].hi)
+      : '—';
+    document.getElementById('ud-city').textContent = state.city || '—';
+    document.getElementById('ud-referral-code').textContent = state.referralCode || '—';
+    document.getElementById('ud-referral-count').textContent = state.referralCount || 0;
+    goStep('user-data');
+  }
+
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    if (!t) return;
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function () { t.classList.remove('show'); }, 2800);
+  }
+
+  function doLogout() {
+    clearSession();
+    state = { role:null, fee1:0, fee2:0, city:'', name:'', email:'', phone:'', playerId:'', userId:'', referralCode:'', referralCount:0, videoUploaded:false, paymentStatus:'', phase1OrderId:null, docs:{aadhaar:false, pan:false}, occupation:null, score:null, rank:null, totalPlayers:null };
+    goStep('login');
+    showToast(langMsg('You have successfully logged out.', 'आप सफलतापूर्वक लॉग आउट हो गए हैं।'));
+  }
+
+  function restoreSessionOnLoad() {
+    var saved = readSavedSession();
+    if (!saved || !saved.token) {
+      renderNavAuth(false);
+      if (getUrlParam('login') === '1' || getUrlParam('profile') === '1') {
+        goStep('login');
+      } else if (document.getElementById('screen-loading').classList.contains('active')) {
+        goStep(1);
+      }
+      return;
+    }
+    // Session token exists locally — show logged-in nav immediately (optimistic),
+    // then confirm quietly in the background. Never log the user out just because
+    // this check failed or the backend is momentarily unreachable.
+    renderNavAuth(true);
+    fetch(BACKEND_URL + '/api/session/' + saved.token)
+      .then(function (res) { return res.ok ? res.json() : null; })
+      .then(function (u) {
+        if (!u || !u.success) {
+          // Could not confirm (e.g. backend not updated yet, or a genuine network blip).
+          // Keep the saved session as-is; do not force a logout.
+          if (!hasUsableState() && document.getElementById('screen-loading').classList.contains('active')) {
+            goStep('login');
+          }
+          return;
+        }
+        state.name = u.name;
+        state.email = u.email || state.email;
+        state.phone = u.phone || state.phone;
+        state.city = u.city;
+        state.role = (u.role === 'wicketkeeper') ? 'keeper' : u.role;
+        state.fee1 = (u.role === 'allrounder') ? 399 : 299;
+        state.fee2 = (u.role === 'allrounder') ? 3000 : 2000;
+        state.userId = u.user_id;
+        state.referralCode = u.referral_code;
+        state.referralCount = u.referral_count || 0;
+        state.playerId = u.player_id || state.playerId;
+        state.videoUploaded = !!u.video_uploaded;
+        state.paymentStatus = u.status || '';
+        state.selectionStatus = u.selection_status || null;
+        state.trialVenue = u.trial_venue || null;
+        state.trialDate = u.trial_date || null;
+        if (u.payments && u.payments.length) {
+          var phase1Payments = u.payments.filter(function (p) { return p.phase === 'phase1'; });
+          if (phase1Payments.length) {
+            state.phase1OrderId = phase1Payments[phase1Payments.length - 1].cf_order_id || null;
+          }
+        }
+        renderNavAuth(true);
+        if (getUrlParam('userdata') === '1') {
+          showUserData();
+        } else if (getUrlParam('profile') === '1' || document.getElementById('screen-loading').classList.contains('active')) {
+          goToProfile();
+        }
+      })
+      .catch(function () {
+        // Network hiccup — keep session, but don't leave user stuck on loading screen
+        if (document.getElementById('screen-loading').classList.contains('active')) {
+          goStep('login');
+        }
+      });
+  }
+
+  function hasUsableState() {
+    return !!state.userId;
+  }
+
+  function getUrlParam(name) {
+    var params = new URLSearchParams(window.location.search);
+    return params.get(name);
+  }
+
+  function setLang(lang) {
+    document.documentElement.className = lang === 'hi' ? 'lang-hi' : '';
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    document.getElementById('btn-hi').classList.toggle('active', lang === 'hi');
+  }
+
+  var roleNames = {
+    batsman: {en:'Batsman', hi:'बल्लेबाज़'},
+    bowler: {en:'Bowler', hi:'गेंदबाज़'},
+    keeper: {en:'Wicket-Keeper', hi:'विकेटकीपर'},
+    allrounder: {en:'All-Rounder', hi:'ऑल-राउंडर'}
+  };
+
+  function withGST(amount) {
+    return Math.round(amount * 1.18);
+  }
+
+  function updatePayButtonState() {
+    var btn = document.getElementById('btn-pay-1');
+    var tncChecked = document.getElementById('tnc-checkbox').checked;
+    btn.disabled = !(state.role && tncChecked);
+  }
+
+  function onTncChange() {
+    updatePayButtonState();
+  }
+
+  function selectRole(role, el) {
+    document.querySelectorAll('.role-card').forEach(function(c){ c.classList.remove('selected'); });
+    el.classList.add('selected');
+    state.role = role;
+    state.fee1 = parseInt(el.getAttribute('data-fee'), 10);
+    state.fee2 = (role === 'allrounder') ? 3000 : 2000;
+
+    var total1 = withGST(state.fee1);
+
+    var lang = document.documentElement.className === 'lang-hi' ? 'hi' : 'en';
+    document.getElementById('fee-role-label').innerHTML =
+      '<span data-en>' + roleNames[role].en + '</span><span data-hi>' + roleNames[role].hi + '</span>';
+    document.getElementById('fee-amount').textContent = '₹' + total1;
+
+    var gstNote = document.getElementById('fee-gst-note');
+    gstNote.style.display = 'block';
+    gstNote.innerHTML = langMsg(
+      '₹' + state.fee1 + ' + 18% GST = ₹' + total1,
+      '₹' + state.fee1 + ' + 18% GST = ₹' + total1
+    );
+
+    var btn = document.getElementById('btn-pay-1');
+    document.getElementById('pay1-label').innerHTML =
+      '<span data-en>Pay ₹' + total1 + ' &amp; Register</span><span data-hi>₹' + total1 + ' पे करें और रजिस्टर करें</span>';
+    updatePayButtonState();
+    applyLangToNode(document.getElementById('fee-role-label'));
+    applyLangToNode(document.getElementById('pay1-label'));
+  }
+
+  function applyLangToNode(node) {
+    var lang = document.documentElement.className === 'lang-hi' ? 'hi' : 'en';
+    // no-op helper kept for clarity; CSS handles visibility via data-en/data-hi
+  }
+
+  function selectOcc(occ, el) {
+    document.querySelectorAll('.occ-card').forEach(function(c){ c.classList.remove('selected'); });
+    el.classList.add('selected');
+    state.occupation = occ;
+  }
+
+  function renderPhase2Fee() {
+    var total2 = withGST(state.fee2);
+    document.getElementById('phase2-amount').textContent = '₹' + total2;
+    document.getElementById('phase2-gst-note').textContent = '₹' + state.fee2 + ' + 18% GST = ₹' + total2;
+  }
+
+  function roleKeyForBackend(role) {
+    return role === 'keeper' ? 'wicketkeeper' : role;
+  }
+
+  function langMsg(en, hi) {
+    return document.documentElement.className === 'lang-hi' ? hi : en;
+  }
+
+  function calculateAge(dobStr) {
+    if (!dobStr) return null;
+    var dob = new Date(dobStr);
+    if (isNaN(dob.getTime())) return null;
+    var today = new Date();
+    var age = today.getFullYear() - dob.getFullYear();
+    var m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+      age--;
+    }
+    return age;
+  }
+
+  function showFormError(msg) {
+    alert(msg);
+  }
+
+  function openCashfreeCheckout(sessionId, onDone) {
+    var cashfree = Cashfree({ mode: 'production' }); // ab yeh asli, live payments leta hai
+    cashfree.checkout({ paymentSessionId: sessionId, redirectTarget: '_modal' }).then(function (result) {
+      onDone(result);
+    });
+  }
+
+  // Yeh context yaad rakhta hai ki agar payment "pending/failed/dropped" nikle to
+  // "Try Payment Again" dabane par kaunsa order dobara banana hai.
+  var pendingPaymentCtx = null; // { phase, onSuccessProceed }
+
+  function formatTxnTime(iso) {
+    if (!iso) return '—';
+    try {
+      var d = new Date(iso);
+      return d.toLocaleString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+    } catch (e) { return iso; }
+  }
+
+  function methodLabel(m) {
+    if (!m) return '—';
+    var map = { upi:'UPI', card:'Card', netbanking:'Net Banking', app:'UPI App', wallet:'Wallet', emi:'EMI' };
+    return map[m.toLowerCase()] || m;
+  }
+
+  function showTxnDetail(p, proceedLabelEn, proceedLabelHi, proceedFn) {
+    document.getElementById('txn-amount').textContent = '₹' + p.amount;
+    document.getElementById('txn-order-id').textContent = p.order_id || '—';
+    document.getElementById('txn-payment-id').textContent = p.cf_payment_id || '—';
+    document.getElementById('txn-method').textContent = methodLabel(p.payment_method);
+    document.getElementById('txn-ref').textContent = p.bank_reference || '—';
+    document.getElementById('txn-time').textContent = formatTxnTime(p.payment_time);
+    document.getElementById('txn-proceed-label').innerHTML =
+      '<span data-en>' + proceedLabelEn + '</span><span data-hi>' + proceedLabelHi + '</span>';
+    document.getElementById('txn-proceed-btn').onclick = proceedFn;
+    goStep('txn');
+  }
+
+  // Paid ho chuka hai lekin abhi video upload nahi kiya — chahe abhi-abhi payment
+  // hui ho, ya user "Check Again" se aaya ho, ya baad mein OTP login/"My Profile"
+  // se wapas aaya ho — har baar wahi receipt screen dikhni chahiye, taaki consistent rahe.
+  function showDebugBadge(msg) {
+    if (getUrlParam('debug') !== '1') return; // aam users ko yeh kabhi nahi dikhega
+    var el = document.getElementById('debug-badge');
+    if (!el) return;
+    el.textContent = 'DEBUG: ' + msg;
+    el.style.display = 'block';
+  }
+
+  function showReceiptThenGoToVideoUpload() {
+    var proceedToVideo = function () {
+      document.getElementById('player-id-val').textContent = state.playerId;
+      document.getElementById('referral-code-val').textContent = state.referralCode;
+      document.getElementById('summary-pid').textContent = state.playerId;
+      document.getElementById('summary-city').textContent = state.city;
+      if (state.role && roleNames[state.role]) {
+        document.getElementById('summary-role').innerHTML = roleNames[state.role].en + ' / ' + roleNames[state.role].hi;
+      }
+      goStep(2);
+    };
+
+    if (!state.userId) {
+      showDebugBadge('no state.userId — cannot verify payment, sending to login');
+      goStep('login');
+      return;
+    }
+
+    showDebugBadge('calling /api/latest-payment/' + state.userId + '/phase1 ...');
+
+    fetch(BACKEND_URL + '/api/latest-payment/' + state.userId + '/phase1')
+      .then(function (res) { return res.ok ? res.json() : { __httpStatus: res.status }; })
+      .then(function (p) {
+        if (p && p.success && p.status === 'SUCCESS') {
+          showDebugBadge('SUCCESS found — showing receipt');
+          showTxnDetail(p, 'Proceed to Upload Video →', 'वीडियो अपलोड करने बढ़ें →', proceedToVideo);
+        } else {
+          // Payment asal mein confirm nahi hua tha — "Registration Successful" screen
+          // kabhi mat dikhao, saaf saaf "payment incomplete" dikhao instead.
+          showDebugBadge('no SUCCESS — response was: ' + JSON.stringify(p));
+          pendingPaymentCtx = { orderId: (p && p.order_id) || null, phase: 'phase1', onSuccessProceed: null };
+          showPaymentIssue('incomplete');
+        }
+      })
+      .catch(function (err) {
+        // Network error hone par bhi galti se "successful" mat dikhao — safe fallback
+        // yeh hai ki payment-incomplete screen dikhao, jahan se user "Check Again" kar sake.
+        showDebugBadge('fetch FAILED/threw: ' + err.message);
+        pendingPaymentCtx = { orderId: state.phase1OrderId || null, phase: 'phase1', onSuccessProceed: null };
+        showPaymentIssue('pending');
+      });
+  }
+
+  function showPaymentIssue(kind, failureReason) {
+    var icon = document.getElementById('pi-icon');
+    var title = document.getElementById('pi-title');
+    var msg = document.getElementById('pi-message');
+    if (kind === 'failed') {
+      icon.textContent = '❌';
+      title.innerHTML = '<span data-en>Payment Failed</span><span data-hi>भुगतान असफल रहा</span>';
+      msg.innerHTML = '<span data-en>Your payment could not be completed' + (failureReason ? (': ' + failureReason) : '') + '. Please try again, maybe with a different payment method.</span>' +
+        '<span data-hi>आपका भुगतान पूरा नहीं हो सका' + (failureReason ? (': ' + failureReason) : '') + '। कृपया दोबारा कोशिश करें, हो सके तो किसी दूसरे तरीके से।</span>';
+    } else if (kind === 'dropped') {
+      icon.textContent = '↩️';
+      title.innerHTML = '<span data-en>Payment Cancelled</span><span data-hi>भुगतान रद्द हो गया</span>';
+      msg.innerHTML = '<span data-en>You closed the payment window before it finished. No money was deducted. Please try again to complete your registration.</span>' +
+        '<span data-hi>भुगतान पूरा होने से पहले ही विंडो बंद हो गई। कोई पैसा नहीं कटा। कृपया रजिस्ट्रेशन पूरा करने के लिए दोबारा कोशिश करें।</span>';
+    } else if (kind === 'incomplete') {
+      icon.textContent = '⚠️';
+      title.innerHTML = '<span data-en>Registration Not Complete</span><span data-hi>रजिस्ट्रेशन पूरा नहीं हुआ</span>';
+      msg.innerHTML = '<span data-en>Your Phase 1 payment hasn\'t gone through yet, so your registration isn\'t complete. Please complete your payment to continue.</span>' +
+        '<span data-hi>आपका फेज़ 1 भुगतान अभी तक नहीं हुआ है, इसलिए रजिस्ट्रेशन पूरा नहीं हुआ। कृपया आगे बढ़ने के लिए भुगतान पूरा करें।</span>';
+    } else {
+      icon.textContent = '⏳';
+      title.innerHTML = '<span data-en>Payment Pending</span><span data-hi>भुगतान लंबित है</span>';
+      msg.innerHTML = '<span data-en>We haven\'t received confirmation yet. If money was deducted from your account, please wait a few minutes and check again — do not pay twice.</span>' +
+        '<span data-hi>अभी तक पुष्टि नहीं मिली है। अगर आपके अकाउंट से पैसे कट गए हैं, तो कुछ मिनट रुककर दोबारा जांचें — दो बार भुगतान न करें।</span>';
+    }
+    goStep('payment-issue');
+  }
+
+  function piCheckAgain() {
+    if (!pendingPaymentCtx) { goStep('login'); return; }
+    if (!state.userId) {
+      showPaymentIssue('incomplete');
+      return;
+    }
+    var btn = document.getElementById('pi-check-btn');
+    btn.disabled = true;
+    var phase = pendingPaymentCtx.phase || 'phase1';
+
+    // Fixed order_id par atakne ke bajaye, hamesha is user ka SABSE NAYA payment
+    // record dhoondo — agar beech mein "Try Payment Again" se naya order bana ho,
+    // to yehi sahi tareeka hai use pakadne ka.
+    showDebugBadge('Check Again: fetching latest payment for user ' + state.userId + '/' + phase);
+    fetch(BACKEND_URL + '/api/latest-payment/' + state.userId + '/' + phase)
+      .then(function (res) { return res.ok ? res.json() : { __httpStatus: res.status }; })
+      .then(function (p) {
+        btn.disabled = false;
+        if (!p || !p.success) {
+          showDebugBadge('Check Again: no payment found — ' + JSON.stringify(p));
+          showPaymentIssue('incomplete');
+          return;
+        }
+        showDebugBadge('Check Again: latest order=' + p.order_id + ' status=' + p.status);
+        pendingPaymentCtx.orderId = p.order_id;
+        if (p.status === 'SUCCESS') {
+          var proceedEn = phase === 'phase2' ? 'Proceed to Documents →' : 'Proceed to Upload Video →';
+          var proceedHi = phase === 'phase2' ? 'दस्तावेज़ों की ओर बढ़ें →' : 'वीडियो अपलोड करने बढ़ें →';
+          showTxnDetail(p, proceedEn, proceedHi, function () {
+            if (phase === 'phase2') {
+              document.getElementById('phase2-amount').textContent = '₹' + withGST(state.fee2);
+              document.getElementById('summary-paid').textContent = '₹' + (withGST(state.fee1) + withGST(state.fee2));
+              goStep(4);
+            } else {
+              document.getElementById('player-id-val').textContent = state.playerId;
+              document.getElementById('referral-code-val').textContent = state.referralCode;
+              document.getElementById('summary-pid').textContent = state.playerId;
+              document.getElementById('summary-city').textContent = state.city;
+              document.getElementById('summary-role').innerHTML = roleNames[state.role].en + ' / ' + roleNames[state.role].hi;
+              goStep(2);
+            }
+          });
+        } else if (p.status === 'FAILED') {
+          showPaymentIssue('failed', p.failure_reason);
+        } else if (p.status === 'USER_DROPPED' || p.status === 'VOID') {
+          showPaymentIssue('dropped');
+        } else {
+          showPaymentIssue('pending');
+        }
+      })
+      .catch(function (err) {
+        btn.disabled = false;
+        showDebugBadge('Check Again: fetch failed — ' + err.message);
+        showPaymentIssue('pending');
+      });
+  }
+
+  function piRetryPayment() {
+    if (!pendingPaymentCtx) { goStep('login'); return; }
+    var btn = document.getElementById('pi-retry-btn');
+    btn.disabled = true;
+    fetch(BACKEND_URL + '/api/create-order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: state.userId, phase: pendingPaymentCtx.phase }),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (result) {
+        btn.disabled = false;
+        if (!result.ok) {
+          showFormError(langMsg('Could not start payment. Please try again.', 'पेमेंट शुरू नहीं हो सका। कृपया दोबारा कोशिश करें।'));
+          return;
+        }
+        pendingPaymentCtx.orderId = result.data.order_id;
+        openCashfreeCheckout(result.data.payment_session_id, function (checkoutResult) {
+          if (checkoutResult && checkoutResult.error) {
+            showPaymentIssue('dropped');
+            return;
+          }
+          pollPaymentStatus(pendingPaymentCtx.orderId, pendingPaymentCtx.phase, pendingPaymentCtx.onSuccessProceed);
+        });
+      })
+      .catch(function () {
+        btn.disabled = false;
+        showFormError(langMsg('Connection error. Please check your internet and try again.', 'कनेक्शन में समस्या। कृपया इंटरनेट जांचें और दोबारा कोशिश करें।'));
+      });
+  }
+
+  // Modal band hone ka matlab payment successful nahi hai — Cashfree ka checkout()
+  // resolve hota hai chahe user ne "back" kiya ho ya payment fail ho gayi ho.
+  // Isliye asli status backend se confirm karte hain (jo webhook se update hota hai),
+  // aur SUCCESS/FAILED/USER_DROPPED/PENDING sab alag-alag handle karte hain.
+  function pollPaymentStatus(orderId, phase, onSuccessProceed, onGiveUp) {
+    pendingPaymentCtx = { orderId: orderId, phase: phase, onSuccessProceed: onSuccessProceed };
+    var attempts = 0;
+    var maxAttempts = 7; // ~14 seconds tak try karega
+
+    function poll() {
+      attempts++;
+      showDebugBadge('pollPaymentStatus attempt ' + attempts + ' for order ' + orderId);
+      fetch(BACKEND_URL + '/api/payment-status/' + orderId)
+        .then(function (res) { return res.ok ? res.json() : { __httpStatus: res.status }; })
+        .then(function (p) {
+          if (!p || !p.success) {
+            showDebugBadge('attempt ' + attempts + ': no success flag, response=' + JSON.stringify(p));
+            if (attempts < maxAttempts) { setTimeout(poll, 2000); return; }
+            if (onGiveUp) onGiveUp();
+            showPaymentIssue('pending');
+            return;
+          }
+          if (p.status === 'SUCCESS') {
+            showDebugBadge('attempt ' + attempts + ': status=SUCCESS — showing receipt');
+            if (onGiveUp) onGiveUp();
+            var proceedEn = phase === 'phase2' ? 'Proceed to Documents →' : 'Proceed to Upload Video →';
+            var proceedHi = phase === 'phase2' ? 'दस्तावेज़ों की ओर बढ़ें →' : 'वीडियो अपलोड करने बढ़ें →';
+            showTxnDetail(p, proceedEn, proceedHi, function () {
+              if (phase === 'phase2') {
+                document.getElementById('phase2-amount').textContent = '₹' + withGST(state.fee2);
+                document.getElementById('summary-paid').textContent = '₹' + (withGST(state.fee1) + withGST(state.fee2));
+                goStep(4);
+              } else {
+                document.getElementById('player-id-val').textContent = state.playerId;
+                document.getElementById('referral-code-val').textContent = state.referralCode;
+                document.getElementById('summary-pid').textContent = state.playerId;
+                document.getElementById('summary-city').textContent = state.city;
+                document.getElementById('summary-role').innerHTML = roleNames[state.role].en + ' / ' + roleNames[state.role].hi;
+                goStep(2);
+              }
+            });
+          } else if (p.status === 'FAILED') {
+            showDebugBadge('attempt ' + attempts + ': status=FAILED');
+            if (onGiveUp) onGiveUp();
+            showPaymentIssue('failed', p.failure_reason);
+          } else if (p.status === 'USER_DROPPED' || p.status === 'VOID') {
+            showDebugBadge('attempt ' + attempts + ': status=' + p.status);
+            if (onGiveUp) onGiveUp();
+            showPaymentIssue('dropped');
+          } else if (attempts < maxAttempts) {
+            // 'created' ya 'PENDING' — abhi confirm nahi hua, koshish jaari rakho
+            showDebugBadge('attempt ' + attempts + ': status=' + p.status + ' (not SUCCESS yet, retrying)');
+            setTimeout(poll, 2000);
+          } else {
+            showDebugBadge('attempt ' + attempts + ' (final): status=' + p.status + ' — giving up');
+            if (onGiveUp) onGiveUp();
+            showPaymentIssue('pending');
+          }
+        })
+        .catch(function () {
+          if (attempts < maxAttempts) {
+            setTimeout(poll, 2000);
+          } else {
+            if (onGiveUp) onGiveUp();
+            showPaymentIssue('pending');
+          }
+        });
+    }
+    poll();
+  }
+
+  function payPhase1() {
+    var name = document.getElementById('f-name').value.trim();
+    var email = document.getElementById('f-email').value.trim();
+    var phone = document.getElementById('f-phone').value.trim();
+    var dob = document.getElementById('f-dob').value;
+    var city = document.getElementById('f-city').value;
+    var referralInput = document.getElementById('f-referral').value.trim().toUpperCase();
+
+    if (!name || !email || !phone || !dob || !city || !state.role) {
+      showFormError(document.documentElement.className === 'lang-hi'
+        ? 'कृपया सभी जानकारी भरें और शहर व रोल चुनें।'
+        : 'Please fill all fields and select your city & role.');
+      return;
+    }
+
+    var age = calculateAge(dob);
+    if (age === null) {
+      showFormError(langMsg('Please enter a valid date of birth.', 'कृपया सही जन्मतिथि डालें।'));
+      return;
+    }
+    if (age < 18) {
+      showFormError(langMsg(
+        'You must be at least 18 years old to register for BCPL.',
+        'BCPL के लिए रजिस्टर करने के लिए आपकी उम्र कम से कम 18 साल होनी चाहिए।'
+      ));
+      return;
+    }
+    if (age > 45) {
+      showFormError(langMsg(
+        'The maximum age to register for BCPL is 45 years.',
+        'BCPL के लिए रजिस्टर करने की अधिकतम उम्र 45 साल है।'
+      ));
+      return;
+    }
+
+    state.name = name;
+    state.email = email;
+    state.phone = phone;
+    state.city = city;
+
+    var btn = document.getElementById('btn-pay-1');
+    btn.disabled = true;
+
+    fetch(BACKEND_URL + '/api/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: name, phone: phone, email: email,
+        role: roleKeyForBackend(state.role), city: city,
+        referred_by_code: referralInput || null,
+        traffic_source: localStorage.getItem('bcpl_traffic_source') || 'Direct / Unknown',
+      }),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (result) {
+        if (!result.ok) {
+          var regErr = result.data.error || '';
+          if (regErr.indexOf('email') !== -1) {
+            showFormError(langMsg(
+              'This email is already registered. Please try a different email.',
+              'यह ईमेल पहले से रजिस्टर्ड है। कृपया दूसरी ईमेल इस्तेमाल करें।'
+            ));
+          } else if (regErr.indexOf('phone') !== -1) {
+            showFormError(langMsg(
+              'This phone number is already registered. Try a different number, or log in instead.',
+              'यह फ़ोन नंबर पहले से रजिस्टर्ड है। कृपया दूसरा नंबर इस्तेमाल करें, या लॉगिन करें।'
+            ));
+          } else {
+            showFormError(langMsg(
+              'Registration could not be completed. Please try again.',
+              'रजिस्ट्रेशन पूरा नहीं हो सका। कृपया दोबारा कोशिश करें।'
+            ));
+          }
+          btn.disabled = false;
+          return;
+        }
+        state.userId = result.data.user_id;
+        state.referralCode = result.data.referral_code;
+        state.playerId = result.data.player_id || ('BCPL-' + result.data.user_id.slice(0, 5).toUpperCase());
+        saveSession(phone, result.data.session_token);
+
+        // ab Phase 1 payment order banao
+        return fetch(BACKEND_URL + '/api/create-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_id: state.userId, phase: 'phase1' }),
+        })
+          .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+          .then(function (result2) {
+            btn.disabled = false;
+            if (!result2.ok) {
+              showFormError(langMsg(
+                'Could not start payment. Please try again.',
+                'पेमेंट शुरू नहीं हो सका। कृपया दोबारा कोशिश करें।'
+              ));
+              return;
+            }
+            openCashfreeCheckout(result2.data.payment_session_id, function (checkoutResult) {
+              if (checkoutResult && checkoutResult.error) {
+                btn.disabled = false;
+                showPaymentIssue('dropped');
+                return;
+              }
+              var pay1Label = document.getElementById('pay1-label');
+              if (pay1Label) pay1Label.innerHTML = langMsg('Confirming payment…', 'भुगतान की पुष्टि हो रही है…');
+              pollPaymentStatus(result2.data.order_id, 'phase1', null, function () {
+                btn.disabled = false;
+                if (pay1Label) {
+                  pay1Label.innerHTML =
+                    '<span data-en>Pay ₹' + withGST(state.fee1) + ' &amp; Register</span><span data-hi>₹' + withGST(state.fee1) + ' पे करें और रजिस्टर करें</span>';
+                }
+              });
+            });
+          });
+      })
+      .catch(function (err) {
+        btn.disabled = false;
+        showFormError(langMsg(
+          'Connection error. Please check your internet and try again.',
+          'कनेक्शन में समस्या। कृपया इंटरनेट जांचें और दोबारा कोशिश करें।'
+        ));
+      });
+  }
+
+  function triggerVideoPicker() {
+    if (state.videoUploaded) return;
+    document.getElementById('video-file-input').click();
+  }
+
+  function showVideoError(msg) {
+    var el = document.getElementById('video-error-msg');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  function clearVideoError() {
+    document.getElementById('video-error-msg').style.display = 'none';
+  }
+
+  function handleVideoSelected(event) {
+    var file = event.target.files[0];
+    if (!file) return;
+    clearVideoError();
+
+    // sirf video files allow (MP4, MOV, wagera)
+    if (!file.type.startsWith('video/')) {
+      showVideoError('Kripya sirf video file chuniye (MP4 ya MOV).');
+      event.target.value = '';
+      return;
+    }
+    // bucket ki limit 50MB hai
+    var maxBytes = 50 * 1024 * 1024;
+    if (file.size > maxBytes) {
+      showVideoError('Video 50MB se badi hai. Kripya chhoti video try karein.');
+      event.target.value = '';
+      return;
+    }
+    if (!state.userId) {
+      showVideoError('Pehchana nahi gaya, kripya dobara login karein.');
+      event.target.value = '';
+      return;
+    }
+
+    uploadVideoFile(file);
+  }
+
+  function uploadVideoFile(file) {
+    var box = document.getElementById('upload-box');
+    var progressWrap = document.getElementById('up-progress-wrap');
+    var progressBar = document.getElementById('up-progress-bar');
+
+    box.classList.add('uploading');
+    progressWrap.style.display = 'block';
+    progressBar.style.width = '0%';
+    document.getElementById('upload-text').innerHTML =
+      '<span data-en>Uploading your video…</span><span data-hi>आपका वीडियो अपलोड हो रहा है…</span>';
+
+    var formData = new FormData();
+    formData.append('video', file);
+    formData.append('user_id', state.userId);
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', BACKEND_URL + '/api/upload-video');
+
+    xhr.upload.onprogress = function (e) {
+      if (e.lengthComputable) {
+        var pct = Math.round((e.loaded / e.total) * 100);
+        progressBar.style.width = pct + '%';
+      }
+    };
+
+    xhr.onload = function () {
+      box.classList.remove('uploading');
+      progressWrap.style.display = 'none';
+
+      if (xhr.status >= 200 && xhr.status < 300) {
+        onVideoUploadSuccess();
+      } else {
+        var errMsg = 'Video upload nahi ho paayi, dobara koshish karein.';
+        try {
+          var resp = JSON.parse(xhr.responseText);
+          if (resp && resp.error) errMsg = resp.error;
+        } catch (e) {}
+        showVideoError(errMsg);
+        document.getElementById('upload-text').innerHTML =
+          '<span data-en>Tap to upload your playing video</span><span data-hi>अपना खेलता हुआ वीडियो अपलोड करने के लिए टैप करें</span>';
+      }
+    };
+
+    xhr.onerror = function () {
+      box.classList.remove('uploading');
+      progressWrap.style.display = 'none';
+      showVideoError('Connection error, dobara koshish karein.');
+      document.getElementById('upload-text').innerHTML =
+        '<span data-en>Tap to upload your playing video</span><span data-hi>अपना खेलता हुआ वीडियो अपलोड करने के लिए टैप करें</span>';
+    };
+
+    xhr.send(formData);
+  }
+
+  function onVideoUploadSuccess() {
+    state.videoUploaded = true;
+    var box = document.getElementById('upload-box');
+    box.classList.add('filled');
+    box.onclick = null;
+    box.querySelector('.up-icon').textContent = '✅';
+    document.getElementById('upload-text').innerHTML =
+      '<span data-en>Video uploaded — we\'ll notify you within 7 days</span><span data-hi>वीडियो अपलोड हो गया — 7 दिन में सूचित करेंगे</span>';
+    document.getElementById('dot-video').classList.remove('pending');
+    document.getElementById('dot-video').classList.add('on');
+    document.getElementById('dot-video').textContent = '✓';
+    document.getElementById('video-status-title').innerHTML =
+      '<span data-en>Video Uploaded</span><span data-hi>वीडियो अपलोड हो गया</span>';
+    var btn = document.getElementById('btn-goto-result');
+    btn.disabled = false;
+    btn.innerHTML = '<span data-en>Continue</span><span data-hi>जारी रखें</span>';
+    document.getElementById('waiting-player-id-val').textContent = state.playerId;
+  }
+
+  function payPhase2() {
+    if (!state.userId) {
+      showFormError(langMsg(
+        'Could not identify your account. Please log in again.',
+        'आपका अकाउंट पहचाना नहीं जा सका। कृपया दोबारा लॉगिन करें।'
+      ));
+      return;
+    }
+    var btn = document.getElementById('btn-pay-2') || document.querySelector('#screen-3 button');
+    if (btn) btn.disabled = true;
+
+    fetch(BACKEND_URL + '/api/create-order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: state.userId, phase: 'phase2' }),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (result) {
+        if (!result.ok) {
+          if (btn) btn.disabled = false;
+          showFormError(langMsg(
+            'Could not start payment. Please try again.',
+            'पेमेंट शुरू नहीं हो सका। कृपया दोबारा कोशिश करें।'
+          ));
+          return;
+        }
+        openCashfreeCheckout(result.data.payment_session_id, function (checkoutResult) {
+          if (checkoutResult && checkoutResult.error) {
+            if (btn) btn.disabled = false;
+            showPaymentIssue('dropped');
+            return;
+          }
+          pollPaymentStatus(result.data.order_id, 'phase2', null, function () {
+            if (btn) btn.disabled = false;
+          });
+        });
+      })
+      .catch(function (err) {
+        if (btn) btn.disabled = false;
+        showFormError(langMsg(
+          'Connection error. Please check your internet and try again.',
+          'कनेक्शन में समस्या। कृपया इंटरनेट जांचें और दोबारा कोशिश करें।'
+        ));
+      });
+  }
+
+  function simulateDoc(rowId, btnId) {
+    var row = document.getElementById(rowId);
+    var btn = document.getElementById(btnId);
+    if (row.classList.contains('filled')) return;
+    row.classList.add('filled');
+    btn.innerHTML = '<span data-en>Uploaded ✓</span><span data-hi>अपलोड हुआ ✓</span>';
+  }
+
+  function verifyPan() {
+    var pan = document.getElementById('kyc-pan-input').value.trim().toUpperCase();
+    var resultEl = document.getElementById('kyc-result');
+    var panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
+
+    if (!panRegex.test(pan)) {
+      resultEl.style.color = 'var(--red)';
+      resultEl.textContent = document.documentElement.className === 'lang-hi'
+        ? 'PAN नंबर सही फॉर्मैट में नहीं है (जैसे: ABCDE1234F)'
+        : 'PAN format looks wrong (e.g. ABCDE1234F)';
+      return;
+    }
+
+    var btn = document.getElementById('kyc-verify-btn');
+    btn.disabled = true;
+    resultEl.style.color = 'var(--ink)';
+    resultEl.textContent = document.documentElement.className === 'lang-hi' ? 'जांच रहे हैं...' : 'Verifying...';
+
+    fetch(BACKEND_URL + '/api/kyc/verify-pan', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: state.userId, pan_number: pan }),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        btn.disabled = false;
+        if (!r.ok) {
+          resultEl.style.color = 'var(--red)';
+          resultEl.textContent = r.data.error || (document.documentElement.className === 'lang-hi' ? 'वेरिफ़ाई नहीं हो पाया' : 'Verification failed');
+          return;
+        }
+        resultEl.style.color = 'var(--green)';
+        resultEl.textContent = document.documentElement.className === 'lang-hi' ? 'KYC पूरा हो गया ✅' : 'KYC verified ✅';
+        document.getElementById('doc-pan').classList.add('filled');
+        document.getElementById('kyc-pan-input').disabled = true;
+        btn.style.display = 'none';
+        state.kycVerified = true;
+      })
+      .catch(function () {
+        btn.disabled = false;
+        resultEl.style.color = 'var(--red)';
+        resultEl.textContent = document.documentElement.className === 'lang-hi' ? 'Connection error' : 'Connection error';
+      });
+  }
+
+  var loginOtpSessionId = null;
+
+  function sendLoginOtp() {
+    var phone = document.getElementById('login-phone').value.trim();
+    if (!phone || phone.length < 10) {
+      showFormError(document.documentElement.className === 'lang-hi'
+        ? 'कृपया अपना 10 अंकों का फ़ोन नंबर डालें।'
+        : 'Please enter a valid 10-digit phone number.');
+      return;
+    }
+
+    var btn = document.getElementById('login-action-btn');
+    btn.disabled = true;
+
+    fetch(BACKEND_URL + '/api/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: phone }),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (result) {
+        btn.disabled = false;
+        if (!result.ok) {
+          var rawMsg = result.data.error || '';
+          if (rawMsg.indexOf('registration') !== -1 || rawMsg.indexOf('register') !== -1) {
+            showFormError(langMsg(
+              'No registration found with this number. Please register first.',
+              'इस नंबर से कोई रजिस्ट्रेशन नहीं मिला। कृपया पहले रजिस्टर करें।'
+            ));
+          } else {
+            showFormError(langMsg(
+              'Could not send OTP. Please try again.',
+              'OTP नहीं भेजा जा सका। कृपया दोबारा कोशिश करें।'
+            ));
+          }
+          return;
+        }
+        loginOtpSessionId = result.data.session_id;
+        document.getElementById('login-phone-field').style.display = 'none';
+        document.getElementById('login-otp-field').style.display = 'block';
+        document.getElementById('login-otp-phone-display').textContent = phone;
+        btn.innerHTML = '<span class="icon">🔓</span><span data-en>Verify &amp; Continue</span><span data-hi>वेरिफ़ाई करें और जारी रखें</span>';
+        btn.setAttribute('onclick', 'verifyLoginOtp()');
+      })
+      .catch(function (err) {
+        btn.disabled = false;
+        showFormError(langMsg(
+          'Connection error. Please check your internet and try again.',
+          'कनेक्शन में समस्या। कृपया इंटरनेट जांचें और दोबारा कोशिश करें।'
+        ));
+      });
+  }
+
+  function resetLoginToPhone() {
+    loginOtpSessionId = null;
+    document.getElementById('login-otp-field').style.display = 'none';
+    document.getElementById('login-phone-field').style.display = 'block';
+    document.getElementById('login-otp').value = '';
+    var btn = document.getElementById('login-action-btn');
+    btn.innerHTML = '<span class="icon">🔓</span><span data-en>Send OTP</span><span data-hi>OTP भेजें</span>';
+    btn.setAttribute('onclick', 'sendLoginOtp()');
+  }
+
+  function verifyLoginOtp() {
+    var phone = document.getElementById('login-phone').value.trim();
+    var otp = document.getElementById('login-otp').value.trim();
+
+    if (!otp || otp.length < 4) {
+      showFormError(document.documentElement.className === 'lang-hi'
+        ? 'कृपया सही OTP डालें।'
+        : 'Please enter a valid OTP.');
+      return;
+    }
+    if (!loginOtpSessionId) {
+      showFormError(langMsg(
+        'Session expired. Please request a new OTP.',
+        'सेशन समाप्त हो गया। कृपया नया OTP मंगवाएं।'
+      ));
+      resetLoginToPhone();
+      return;
+    }
+
+    var btn = document.getElementById('login-action-btn');
+    btn.disabled = true;
+
+    fetch(BACKEND_URL + '/api/verify-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: phone, otp: otp, session_id: loginOtpSessionId }),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (result) {
+        btn.disabled = false;
+        if (!result.ok) {
+          var rawMsg = result.data.error || '';
+          if (rawMsg.indexOf('registration') !== -1 || rawMsg.indexOf('register') !== -1) {
+            showFormError(langMsg(
+              'No registration found with this number. Please register first.',
+              'इस नंबर से कोई रजिस्ट्रेशन नहीं मिला। कृपया पहले रजिस्टर करें।'
+            ));
+          } else {
+            showFormError(langMsg(
+              'Incorrect OTP. Please try again.',
+              'गलत OTP। कृपया दोबारा कोशिश करें।'
+            ));
+          }
+          return;
+        }
+        var u = result.data;
+        state.name = u.name;
+        state.email = u.email || state.email;
+        state.phone = u.phone || phone;
+        state.city = u.city;
+        state.role = (u.role === 'wicketkeeper') ? 'keeper' : u.role;
+        state.fee1 = (u.role === 'allrounder') ? 399 : 299;
+        state.fee2 = (u.role === 'allrounder') ? 3000 : 2000;
+        state.userId = u.user_id;
+        state.referralCode = u.referral_code;
+        state.referralCount = u.referral_count || 0;
+        state.playerId = u.player_id || ('BCPL-' + phone.slice(-5));
+        state.videoUploaded = !!u.video_uploaded;
+        state.paymentStatus = u.status || '';
+        state.selectionStatus = u.selection_status || null;
+        state.trialVenue = u.trial_venue || null;
+        state.trialDate = u.trial_date || null;
+        if (u.payments && u.payments.length) {
+          var phase1PaymentsLogin = u.payments.filter(function (p) { return p.phase === 'phase1'; });
+          if (phase1PaymentsLogin.length) {
+            state.phase1OrderId = phase1PaymentsLogin[phase1PaymentsLogin.length - 1].cf_order_id || null;
+          }
+        }
+
+        saveSession(phone, u.session_token);
+
+        document.getElementById('player-id-val').textContent = state.playerId;
+        document.getElementById('referral-code-val').textContent = state.referralCode;
+
+        if (state.videoUploaded && state.selectionStatus === 'selected') {
+          populateTrialVenue();
+          goStep(3);
+        } else if (state.videoUploaded && state.selectionStatus === 'not_selected') {
+          document.getElementById('rejected-player-id-val').textContent = state.playerId;
+          goStep('rejected');
+        } else if (state.videoUploaded) {
+          document.getElementById('waiting-player-id-val').textContent = state.playerId;
+          goStep('waiting');
+        } else if (state.paymentStatus === 'phase1_paid' || state.paymentStatus === 'fully_paid') {
+          showReceiptThenGoToVideoUpload();
+        } else {
+          // Registered, but Phase 1 payment was never confirmed — don't show "Registration Successful"
+          pendingPaymentCtx = { orderId: state.phase1OrderId || null, phase: 'phase1', onSuccessProceed: null };
+          showPaymentIssue('incomplete');
+        }
+      })
+      .catch(function (err) {
+        btn.disabled = false;
+        showFormError(langMsg(
+          'Connection error. Please check your internet and try again.',
+          'कनेक्शन में समस्या। कृपया इंटरनेट जांचें और दोबारा कोशिश करें।'
+        ));
+      });
+  }
+
+  function populateTrialVenue() {
+    var cardEl = document.getElementById('trial-venue-card');
+    if (state.trialVenue) {
+      cardEl.classList.remove('hidden');
+      document.getElementById('trial-venue-text').textContent = state.trialVenue;
+      document.getElementById('trial-date-text').textContent = state.trialDate
+        ? new Date(state.trialDate).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+        : '';
+    } else {
+      cardEl.classList.add('hidden');
+    }
+  }
+
+  function submitFinalRegistration() {
+    if (!state.kycVerified) {
+      var resultEl = document.getElementById('kyc-result');
+      resultEl.style.color = 'var(--red)';
+      resultEl.textContent = document.documentElement.className === 'lang-hi'
+        ? 'आगे बढ़ने से पहले PAN वेरिफ़ाई करना ज़रूरी है'
+        : 'Please verify your PAN before continuing';
+      document.getElementById('kyc-pan-input').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    goStep(5);
+  }
+
+  function goStep(n) {
+    document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+    document.getElementById('screen-' + n).classList.add('active');
+
+    var stepperBand = document.getElementById('stepper-band');
+    if (n === 'login' || n === 'waiting' || n === 'txn' || n === 'payment-issue' || n === 'loading' || n === 'user-data') {
+      stepperBand.style.display = 'none';
+    } else {
+      stepperBand.style.display = 'block';
+      document.querySelectorAll('.step-node').forEach(function(node){
+        var step = parseInt(node.getAttribute('data-step'), 10);
+        node.classList.remove('active','done');
+        if (step < n) node.classList.add('done');
+        if (step === n) node.classList.add('active');
+      });
+    }
+
+    if (n === 3) {
+      renderPhase2Fee();
+    }
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  // init: agar "My Profile" se aaye hain (ya session already saved hai), to
+  // registration form flash mat dikhao — pehle loading screen dikhao, jab tak
+  // pata na chal jaaye ki kis screen par bhejna hai (isse pehle wala "flash bug" theek hota hai)
+  var arrivingWithSession = getUrlParam('profile') === '1' || getUrlParam('userdata') === '1' || !!readSavedSession();
+  if (arrivingWithSession) {
+    document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+    document.getElementById('screen-loading').classList.add('active');
+    document.getElementById('stepper-band').style.display = 'none';
+  } else {
+    goStep(1);
+  }
+  renderNavAuth(false);
+  restoreSessionOnLoad();
+  (function captureTrafficSource() {
+    var src = new URLSearchParams(window.location.search).get('utm_source');
+    if (src) localStorage.setItem('bcpl_traffic_source', src);
+  })();
+
+  (function prefillReferralFromLink() {
+    var refCode = getUrlParam('ref');
+    var refInput = document.getElementById('f-referral');
+    if (refCode && refInput) {
+      refInput.value = refCode.toUpperCase();
+    }
+  })();
+  (function setDobRange() {
+    var dobInput = document.getElementById('f-dob');
+    if (!dobInput) return;
+    var today = new Date();
+    var pad = function (n) { return String(n).padStart(2, '0'); };
+    var maxDob = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+    var minDob = new Date(today.getFullYear() - 45, today.getMonth(), today.getDate());
+    dobInput.max = maxDob.getFullYear() + '-' + pad(maxDob.getMonth() + 1) + '-' + pad(maxDob.getDate());
+    dobInput.min = minDob.getFullYear() + '-' + pad(minDob.getMonth() + 1) + '-' + pad(minDob.getDate());
+  })();
+
+  // Browser "back/forward" se page wapas aane par (bfcache), page ke JS dobara
+  // nahi chalte — isliye purana/galat nav state atka reh sakta hai (My Profile/Logout
+  // dikhna jabki login nahi hua). Yeh dobara check karke turant theek kar deta hai.
+  window.addEventListener('pageshow', function (e) {
+    if (e.persisted) restoreSessionOnLoad();
+  });
+</script>
+</body>
+</html>

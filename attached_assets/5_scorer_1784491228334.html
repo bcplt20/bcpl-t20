@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>BCPL — Scorer Panel (Internal)</title>
+<style>
+  :root { --navy:#14203F; --orange:#FF5500; --gold:#D4A017; }
+  * { box-sizing:border-box; }
+  body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif; background:#F0F1F5; margin:0; padding:16px; color:var(--navy); }
+  .wrap { max-width:480px; margin:0 auto; }
+  .warn { background:#FFF3EC; border:1px solid #FF5500; color:#C94500; font-size:12px; font-weight:700; padding:10px 12px; border-radius:10px; margin-bottom:14px; }
+  .card { background:#fff; border-radius:16px; padding:18px; margin-bottom:14px; box-shadow:0 4px 16px rgba(20,32,63,0.08); }
+  h2 { font-size:16px; margin:0 0 12px; }
+  label { display:block; font-size:12px; font-weight:700; margin-bottom:5px; color:rgba(20,32,63,0.6); }
+  input, select { width:100%; padding:11px 12px; border-radius:9px; border:1.5px solid rgba(20,32,63,0.15); font-size:14px; margin-bottom:12px; font-family:inherit; }
+  .score-display { text-align:center; background:var(--navy); color:#fff; border-radius:14px; padding:18px; margin-bottom:14px; }
+  .score-display .big { font-family:'Courier New',monospace; font-size:32px; font-weight:800; }
+  .score-display .sub { font-size:12px; color:rgba(255,255,255,0.6); margin-top:4px; }
+  .btn-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:10px; }
+  .run-btn { padding:16px 0; border-radius:10px; border:none; background:#EEF0F6; color:var(--navy); font-weight:800; font-size:16px; cursor:pointer; }
+  .run-btn:active { background:var(--gold); color:#fff; }
+  .extra-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:10px; }
+  .extra-btn { padding:12px 0; border-radius:10px; border:1.5px solid rgba(20,32,63,0.15); background:#fff; color:var(--navy); font-weight:700; font-size:13px; cursor:pointer; }
+  .wicket-btn { width:100%; padding:14px 0; border-radius:10px; border:none; background:var(--orange); color:#fff; font-weight:800; font-size:14px; cursor:pointer; margin-bottom:6px; }
+  button.primary { width:100%; padding:14px; border-radius:10px; border:none; background:var(--navy); color:#fff; font-weight:800; font-size:14px; cursor:pointer; }
+  #result { margin-top:12px; padding:10px 12px; border-radius:10px; font-size:12.5px; font-weight:600; display:none; white-space:pre-wrap; }
+  #result.ok { background:#E8F8EE; color:#1B7A3D; display:block; }
+  #result.err { background:#FDEBEB; color:#C0392B; display:block; }
+  .hidden { display:none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="warn">⚠️ Internal scorer tool — sirf authorized scorer istemal karein. Kisi ko link share mat karein.</div>
+
+  <!-- STEP 0: Login -->
+  <div class="card" id="setup-card">
+    <h2>Scorer Setup</h2>
+    <label>Admin Secret</label>
+    <input type="password" id="s-secret" placeholder="ADMIN_SECRET" />
+    <label>Match ID</label>
+    <input type="text" id="s-match-id" placeholder="Match Center se copy karein" />
+    <button class="primary" onclick="loadScorer()">Load Scorer</button>
+    <div id="setup-result"></div>
+  </div>
+
+  <!-- STEP 1: Live scoring -->
+  <div id="scorer-ui" class="hidden">
+    <div class="score-display">
+      <div class="big" id="live-score">0/0</div>
+      <div class="sub" id="live-overs">0.0 overs</div>
+    </div>
+
+    <div class="card">
+      <h2>Ball Details</h2>
+      <label>Over Number</label>
+      <input type="number" id="f-over" value="0" min="0" />
+      <label>Ball in Over (1-6)</label>
+      <input type="number" id="f-ball" value="1" min="1" max="9" />
+      <label>Batsman Name</label>
+      <input type="text" id="f-batsman" placeholder="e.g. Rohit Sharma" />
+      <label>Bowler Name</label>
+      <input type="text" id="f-bowler" placeholder="e.g. Jasprit Bumrah" />
+
+      <label>Runs Scored</label>
+      <div class="btn-grid">
+        <button class="run-btn" onclick="setRuns(0)">0</button>
+        <button class="run-btn" onclick="setRuns(1)">1</button>
+        <button class="run-btn" onclick="setRuns(2)">2</button>
+        <button class="run-btn" onclick="setRuns(3)">3</button>
+        <button class="run-btn" onclick="setRuns(4)">4</button>
+        <button class="run-btn" onclick="setRuns(5)">5</button>
+        <button class="run-btn" onclick="setRuns(6)">6</button>
+        <button class="run-btn" id="runs-selected" style="background:var(--navy); color:#fff;">Runs: 0</button>
+      </div>
+
+      <label>Extra (agar koi ho)</label>
+      <div class="extra-grid">
+        <button class="extra-btn" onclick="setExtra(null)" id="extra-none">None</button>
+        <button class="extra-btn" onclick="setExtra('wide')" id="extra-wide">Wide</button>
+        <button class="extra-btn" onclick="setExtra('noball')" id="extra-noball">No Ball</button>
+        <button class="extra-btn" onclick="setExtra('bye')" id="extra-bye">Bye</button>
+      </div>
+
+      <label>Commentary (optional)</label>
+      <input type="text" id="f-commentary" placeholder="e.g. Driven beautifully through covers!" />
+
+      <button class="wicket-btn" onclick="toggleWicket()" id="wicket-toggle">🎯 Mark as WICKET</button>
+      <div id="wicket-fields" class="hidden">
+        <label>Dismissed Batsman</label>
+        <input type="text" id="f-dismissed" placeholder="Batsman ka naam" />
+        <label>Wicket Type</label>
+        <select id="f-wicket-type">
+          <option value="bowled">Bowled</option>
+          <option value="caught">Caught</option>
+          <option value="lbw">LBW</option>
+          <option value="run out">Run Out</option>
+          <option value="stumped">Stumped</option>
+        </select>
+      </div>
+
+      <button class="primary" onclick="submitBall()" style="margin-top:10px;">✅ Submit Ball</button>
+      <div id="result"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var BACKEND_URL = 'https://bcpl-backend-production.up.railway.app';
+  var state = { token:'', matchId:'', inningsId:'', runs:0, extra:null, isWicket:false };
+
+  // URL se match ID mil jaaye to pehle se bhar dete hain (Admin Panel se "🏏 Score Karein" link se aata hai)
+  (function prefillMatchId() {
+    var urlMatchId = new URLSearchParams(window.location.search).get('id');
+    if (urlMatchId) document.getElementById('s-match-id').value = urlMatchId;
+  })();
+
+  function loadScorer() {
+    var password = document.getElementById('s-secret').value.trim();
+    state.matchId = document.getElementById('s-match-id').value.trim();
+
+    var res = document.getElementById('setup-result');
+    if (!password || !state.matchId) {
+      res.className = 'err'; res.style.display = 'block';
+      res.textContent = 'Admin password aur Match ID dono zaroori hain.';
+      return;
+    }
+
+    fetch(BACKEND_URL + '/api/admin/login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: password }),
+    })
+      .then(function (r) { return r.json().then(function (data) { return { ok: r.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) {
+          res.className = 'err'; res.style.display = 'block';
+          res.textContent = r.data.error || 'Login fail ho gaya.';
+          return;
+        }
+        state.token = r.data.token;
+        fetchInningsAndStart(res);
+      })
+      .catch(function () {
+        res.className = 'err'; res.style.display = 'block';
+        res.textContent = 'Connection error — dobara koshish karein.';
+      });
+  }
+
+  function fetchInningsAndStart(res) {
+    // Innings ID khud fetch kar lete hain — scorer ko yeh manually dhundhna nahi padta
+    fetch(BACKEND_URL + '/api/matches/' + state.matchId)
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.success || !data.innings || !data.innings.length) {
+          res.className = 'err'; res.style.display = 'block';
+          res.textContent = 'Is match ki koi innings nahi mili. Pehle Match Center se "Start Match" karein.';
+          return;
+        }
+        state.inningsId = data.innings[data.innings.length - 1].id; // sabse naya (current) innings
+        res.style.display = 'none';
+        document.getElementById('setup-card').classList.add('hidden');
+        document.getElementById('scorer-ui').classList.remove('hidden');
+        refreshLiveScore();
+      })
+      .catch(function () {
+        res.className = 'err'; res.style.display = 'block';
+        res.textContent = 'Connection error — dobara koshish karein.';
+      });
+  }
+
+  function refreshLiveScore() {
+    fetch(BACKEND_URL + '/api/matches/' + state.matchId)
+      .then(function (r) { return r.json(); })
+      .then(function (r) {
+        if (!r.success) return;
+        var inn = r.innings.find(function (i) { return i.id === state.inningsId; });
+        if (inn) {
+          document.getElementById('live-score').textContent = inn.total_runs + '/' + inn.total_wickets;
+          document.getElementById('live-overs').textContent = Number(inn.total_overs).toFixed(1) + ' overs';
+        }
+      })
+      .catch(function () {});
+  }
+
+  function setRuns(n) {
+    state.runs = n;
+    document.getElementById('runs-selected').textContent = 'Runs: ' + n;
+  }
+
+  function setExtra(type) {
+    state.extra = type;
+    ['none', 'wide', 'noball', 'bye'].forEach(function (id) {
+      document.getElementById('extra-' + id).style.background = '#fff';
+    });
+    document.getElementById('extra-' + (type || 'none')).style.background = 'var(--gold)';
+  }
+  setExtra(null);
+
+  function toggleWicket() {
+    state.isWicket = !state.isWicket;
+    document.getElementById('wicket-fields').classList.toggle('hidden', !state.isWicket);
+    document.getElementById('wicket-toggle').style.background = state.isWicket ? '#8B0000' : 'var(--orange)';
+  }
+
+  function submitBall() {
+    var body = {
+      innings_id: state.inningsId,
+      over_number: parseInt(document.getElementById('f-over').value, 10) || 0,
+      ball_in_over: parseInt(document.getElementById('f-ball').value, 10) || 1,
+      batsman_name: document.getElementById('f-batsman').value.trim(),
+      bowler_name: document.getElementById('f-bowler').value.trim(),
+      runs: state.runs,
+      extra_type: state.extra,
+      is_wicket: state.isWicket,
+      wicket_type: state.isWicket ? document.getElementById('f-wicket-type').value : null,
+      dismissed_batsman: state.isWicket ? document.getElementById('f-dismissed').value.trim() : null,
+      commentary: document.getElementById('f-commentary').value.trim() || null,
+    };
+
+    var result = document.getElementById('result');
+    result.style.display = 'none';
+
+    fetch(BACKEND_URL + '/api/admin/ball', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + state.token },
+      body: JSON.stringify(body),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) {
+        if (!r.ok) {
+          result.className = 'err'; result.style.display = 'block';
+          result.textContent = r.data.error || 'Kuch galat ho gaya.';
+          return;
+        }
+        result.className = 'ok'; result.style.display = 'block';
+        result.textContent = '✅ Ball darj ho gayi!';
+        // Agla ball ke liye ball number badha do, extra na ho to
+        if (!body.extra_type || body.extra_type === 'bye') {
+          var ballNum = parseInt(document.getElementById('f-ball').value, 10) || 1;
+          if (ballNum >= 6) {
+            document.getElementById('f-over').value = (parseInt(document.getElementById('f-over').value, 10) || 0) + 1;
+            document.getElementById('f-ball').value = 1;
+          } else {
+            document.getElementById('f-ball').value = ballNum + 1;
+          }
+        }
+        setRuns(0);
+        setExtra(null);
+        state.isWicket = false;
+        document.getElementById('wicket-fields').classList.add('hidden');
+        document.getElementById('wicket-toggle').style.background = 'var(--orange)';
+        document.getElementById('f-commentary').value = '';
+        refreshLiveScore();
+      })
+      .catch(function () {
+        result.className = 'err'; result.style.display = 'block';
+        result.textContent = 'Connection error.';
+      });
+  }
+</script>
+</body>
+</html>
