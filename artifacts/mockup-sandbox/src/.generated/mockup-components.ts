@@ -2,6 +2,8 @@
 type ModuleMap = Record<string, () => Promise<Record<string, unknown>>>;
 export const modules: ModuleMap = {
   "./components/mockups/bcpl-premium/About.tsx": () => import("../components/mockups/bcpl-premium/About.tsx"),
+  "./components/mockups/bcpl-premium/AuctionLive.tsx": () => import("../components/mockups/bcpl-premium/AuctionLive.tsx"),
+  "./components/mockups/bcpl-premium/AuctionSelected.tsx": () => import("../components/mockups/bcpl-premium/AuctionSelected.tsx"),
   "./components/mockups/bcpl-premium/CodeOfConduct.tsx": () => import("../components/mockups/bcpl-premium/CodeOfConduct.tsx"),
   "./components/mockups/bcpl-premium/Contact.tsx": () => import("../components/mockups/bcpl-premium/Contact.tsx"),
   "./components/mockups/bcpl-premium/CricketRulebook.tsx": () => import("../components/mockups/bcpl-premium/CricketRulebook.tsx"),
@@ -28,6 +30,7 @@ export const modules: ModuleMap = {
   "./components/mockups/bcpl-premium/Schedule.tsx": () => import("../components/mockups/bcpl-premium/Schedule.tsx"),
   "./components/mockups/bcpl-premium/Sponsors.tsx": () => import("../components/mockups/bcpl-premium/Sponsors.tsx"),
   "./components/mockups/bcpl-premium/TeamDetail.tsx": () => import("../components/mockups/bcpl-premium/TeamDetail.tsx"),
+  "./components/mockups/bcpl-premium/TeamSelected.tsx": () => import("../components/mockups/bcpl-premium/TeamSelected.tsx"),
   "./components/mockups/bcpl-premium/Teams.tsx": () => import("../components/mockups/bcpl-premium/Teams.tsx"),
   "./components/mockups/bcpl-premium/Terms.tsx": () => import("../components/mockups/bcpl-premium/Terms.tsx"),
   "./components/mockups/bcpl-premium/Videos.tsx": () => import("../components/mockups/bcpl-premium/Videos.tsx"),
