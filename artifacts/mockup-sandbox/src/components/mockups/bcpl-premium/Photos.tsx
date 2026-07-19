@@ -28,6 +28,11 @@ body { background:#060E1C; }
 .photo-card:hover { transform:scale(1.02); box-shadow:0 20px 60px rgba(0,0,0,0.6); }
 .photo-overlay { position:absolute; inset:0; background:linear-gradient(0deg,rgba(0,0,0,0.75) 0%,transparent 50%); opacity:0; transition:opacity 0.25s; display:flex; flex-direction:column; justify-content:flex-end; padding:16px; }
 .photo-card:hover .photo-overlay { opacity:1; }
+        /* float-reg-btn */
+        .float-reg-btn { position:fixed; bottom:28px; right:28px; z-index:9999; background:linear-gradient(135deg,#FF7A29,#D95E10); border:none; border-radius:2px; color:#fff; font-family:Montserrat,sans-serif; font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:14px 22px; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(255,122,41,0.45); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition:opacity .2s,transform .15s; }
+        .float-reg-btn:hover { opacity:.9; transform:translateY(-2px); }
+        @keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4)} 50%{box-shadow:0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0)} }
+        .float-reg-pulse { animation:floatPulse 2.5s ease-in-out infinite; }
 `;
 
 const GRADIENTS = [
@@ -306,6 +311,8 @@ export function Photos() {
         </div>
       </section>
 
+      {/* ── FLOATING REGISTER BUTTON ── */}
+      <a className='float-reg-btn float-reg-pulse' href='#' style={{textDecoration:'none'}}>🏏 REGISTER NOW &rarr;</a>
       <Footer/>
       <MobileStickyCTA/>
     </div>

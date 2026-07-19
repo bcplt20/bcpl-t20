@@ -3,16 +3,16 @@ import React from 'react';
 const L = "/__mockup/bcpl-assets/logos/";
 
 const ALL_TEAMS = [
-  { name:"Rajasthan Scorchers", abbr:"RS", city:"Jaipur",     color:"#E97B6B", logo:`${L}rajasthan_scorchers.jpg`, pts:14, players:15, form:["W","W","L","W","W"], status:"Qualified" },
-  { name:"Punjab Warriors",     abbr:"PW", city:"Chandigarh", color:"#DC2626", logo:`${L}punjab_warriors.jpg`,     pts:10, players:15, form:["W","L","W","W","L"], status:"Qualified" },
-  { name:"Kolkata Tigers",      abbr:"KT", city:"Kolkata",    color:"#F97316", logo:`${L}kolkata_tigers.jpg`,      pts:12, players:15, form:["W","W","W","L","W"], status:"Qualified" },
-  { name:"Lucknow Nawabs",      abbr:"LN", city:"Lucknow",    color:"#F59E0B", logo:`${L}lucknow_nawabs.jpg`,      pts:8,  players:15, form:["L","W","W","L","W"], status:"Qualified" },
-  { name:"Mumbai Mavericks",    abbr:"MM", city:"Mumbai",     color:"#3B82F6", logo:`${L}mumbai_mavericks.jpg`,    pts:16, players:15, form:["W","W","W","W","L"], status:"Qualified" },
-  { name:"Hyderabad Hawks",     abbr:"HH", city:"Hyderabad",  color:"#16A34A", logo:`${L}hyderabad_hawks.jpg`,     pts:10, players:15, form:["W","L","W","L","W"], status:"Qualified" },
-  { name:"Delhi Suryas",        abbr:"DS", city:"Delhi",      color:"#6366F1", logo:`${L}delhi_suryas.jpg`,        pts:12, players:15, form:["W","W","L","W","W"], status:"Qualified" },
-  { name:"Chennai Thalaivas",   abbr:"CT", city:"Chennai",    color:"#2563EB", logo:`${L}chennai_thalaivas.jpg`,   pts:6,  players:15, form:["L","L","W","L","W"], status:"Qualified" },
-  { name:"Ahmedabad Lions",     abbr:"AL", city:"Ahmedabad",  color:"#B91C1C", logo:`${L}ahmedabad_lions.jpg`,     pts:4,  players:15, form:["L","L","L","W","L"], status:"Eliminated" },
-  { name:"Bengaluru Rockets",   abbr:"BR", city:"Bengaluru",  color:"#EF4444", logo:`${L}bengaluru_rockets.jpg`,   pts:8,  players:15, form:["W","L","L","W","W"], status:"Qualified" },
+  { name:"Rajasthan Scorchers", abbr:"RS", city:"Jaipur",     color:"#E97B6B", logo:`${L}rajasthan_scorchers.png`, pts:14, players:15, form:["W","W","L","W","W"], status:"Qualified" },
+  { name:"Punjab Warriors",     abbr:"PW", city:"Chandigarh", color:"#DC2626", logo:`${L}punjab_warriors.png`,     pts:10, players:15, form:["W","L","W","W","L"], status:"Qualified" },
+  { name:"Kolkata Tigers",      abbr:"KT", city:"Kolkata",    color:"#F97316", logo:`${L}kolkata_tigers.png`,      pts:12, players:15, form:["W","W","W","L","W"], status:"Qualified" },
+  { name:"Lucknow Nawabs",      abbr:"LN", city:"Lucknow",    color:"#F59E0B", logo:`${L}lucknow_nawabs.png`,      pts:8,  players:15, form:["L","W","W","L","W"], status:"Qualified" },
+  { name:"Mumbai Mavericks",    abbr:"MM", city:"Mumbai",     color:"#3B82F6", logo:`${L}mumbai_mavericks.png`,    pts:16, players:15, form:["W","W","W","W","L"], status:"Qualified" },
+  { name:"Hyderabad Hawks",     abbr:"HH", city:"Hyderabad",  color:"#16A34A", logo:`${L}hyderabad_hawks.png`,     pts:10, players:15, form:["W","L","W","L","W"], status:"Qualified" },
+  { name:"Delhi Suryas",        abbr:"DS", city:"Delhi",      color:"#6366F1", logo:`${L}delhi_suryas.png`,        pts:12, players:15, form:["W","W","L","W","W"], status:"Qualified" },
+  { name:"Chennai Thalaivas",   abbr:"CT", city:"Chennai",    color:"#2563EB", logo:`${L}chennai_thalaivas.png`,   pts:6,  players:15, form:["L","L","W","L","W"], status:"Qualified" },
+  { name:"Ahmedabad Lions",     abbr:"AL", city:"Ahmedabad",  color:"#B91C1C", logo:`${L}ahmedabad_lions.png`,     pts:4,  players:15, form:["L","L","L","W","L"], status:"Eliminated" },
+  { name:"Bengaluru Rockets",   abbr:"BR", city:"Bengaluru",  color:"#EF4444", logo:`${L}bengaluru_rockets.png`,   pts:8,  players:15, form:["W","L","L","W","W"], status:"Qualified" },
 ];
 const GROUP_A = ALL_TEAMS.slice(0,5);
 const GROUP_B = ALL_TEAMS.slice(5);
@@ -30,9 +30,9 @@ function TeamCard({ t, i }: { t:typeof ALL_TEAMS[0]; i:number }) {
       {/* Top row: logo badge + name + status */}
       <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", marginBottom:14, position:"relative", zIndex:1 }}>
         <div style={{ display:"flex", alignItems:"center", gap:12 }}>
-          {/* Logo badge */}
-          <div style={{ width:52, height:52, background:"#fff", borderRadius:3, padding:4, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", boxShadow:`0 4px 16px ${t.color}33` }}>
-            <img src={t.logo} alt={t.name} style={{ width:"100%", height:"100%", objectFit:"contain" }} />
+          {/* Logo badge — transparent PNG, no white box */}
+          <div style={{ width:52, height:52, background:`${t.color}18`, borderRadius:3, border:`1.5px solid ${t.color}44`, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", boxShadow:`0 4px 16px ${t.color}33` }}>
+            <img src={t.logo} alt={t.name} style={{ width:"87%", height:"87%", objectFit:"contain" }} />
           </div>
           <div>
             <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:16, color:"#fff", lineHeight:1.2, marginBottom:4 }}>{t.name}</div>
@@ -92,6 +92,12 @@ export function Teams() {
         .btn-orange:hover{opacity:.88;}
         .footer-link{color:rgba(255,255,255,0.45);font-size:13px;font-family:Inter,sans-serif;text-decoration:none;transition:color .2s;}
         .footer-link:hover{color:#FF7A29;}
+      
+        /* ── FLOATING REGISTER BUTTON ── */
+        .float-reg-btn { position:fixed; bottom:28px; right:28px; z-index:9999; background:linear-gradient(135deg,#FF7A29,#D95E10); border:none; border-radius:2px; color:#fff; font-family:'Montserrat',sans-serif; font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:14px 22px; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(255,122,41,0.45); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition:opacity .2s,transform .15s; }
+        .float-reg-btn:hover { opacity:.9; transform:translateY(-2px); }
+        @keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4)} 50%{box-shadow:0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0)} }
+        .float-reg-pulse { animation:floatPulse 2.5s ease-in-out infinite; }
       `}</style>
 
       {/* TICKER */}
@@ -136,8 +142,8 @@ export function Teams() {
           {/* Logo parade */}
           <div style={{ display:"flex", justifyContent:"center", flexWrap:"wrap", gap:10, marginBottom:0 }}>
             {ALL_TEAMS.map(t=>(
-              <div key={t.abbr} style={{ width:48, height:48, background:"#fff", borderRadius:3, padding:4, display:"flex", alignItems:"center", justifyContent:"center", boxShadow:`0 4px 16px ${t.color}33`, border:`1.5px solid ${t.color}22` }}>
-                <img src={t.logo} alt={t.abbr} style={{ width:"100%", height:"100%", objectFit:"contain" }} />
+              <div key={t.abbr} style={{ width:48, height:48, background:`${t.color}18`, borderRadius:3, padding:4, display:"flex", alignItems:"center", justifyContent:"center", boxShadow:`0 4px 16px ${t.color}33`, border:`1.5px solid ${t.color}44` }}>
+                <img src={t.logo} alt={t.abbr} style={{ width:"88%", height:"88%", objectFit:"contain" }} />
               </div>
             ))}
           </div>
@@ -156,8 +162,8 @@ export function Teams() {
               {TOP5.map((t,i)=>(
                 <div key={t.abbr} style={{ background:"#0A1727", border:"1px solid rgba(255,255,255,0.07)", borderRadius:2, padding:"10px 16px", display:"flex", alignItems:"center", gap:10, flexShrink:0 }}>
                   <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:11, color:"rgba(255,255,255,0.28)" }}>#{i+1}</span>
-                  <div style={{ width:28, height:28, background:"#fff", borderRadius:2, padding:2, display:"flex", alignItems:"center", justifyContent:"center" }}>
-                    <img src={t.logo} alt={t.abbr} style={{ width:"100%", height:"100%", objectFit:"contain" }} />
+                  <div style={{ width:28, height:28, background:`${t.color}22`, borderRadius:2, padding:2, display:"flex", alignItems:"center", justifyContent:"center", border:`1px solid ${t.color}44` }}>
+                    <img src={t.logo} alt={t.abbr} style={{ width:"88%", height:"88%", objectFit:"contain" }} />
                   </div>
                   <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:12, color:"#fff" }}>{t.abbr}</span>
                   <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:12, color:t.color }}>{t.pts}pts</span>
@@ -236,6 +242,8 @@ export function Teams() {
           </div>
         </div>
       </footer>
+      {/* ── FLOATING REGISTER BUTTON ── */}
+      <a className="float-reg-btn float-reg-pulse" href="#" style={{textDecoration:"none"}}>🏏 REGISTER NOW →</a>
     </div>
   );
 }

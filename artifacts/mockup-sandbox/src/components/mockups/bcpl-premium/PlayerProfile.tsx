@@ -225,12 +225,12 @@ export function PlayerProfile() {
               {/* Team card — shown when signed */}
               {phase === "signed" && (
                 <div className="card" style={{ padding:"18px 22px", borderTop:`3px solid ${PLAYER.teamColor}`, position:"relative", overflow:"hidden" }}>
-                  <img src={`${L}${PLAYER.teamSlug}.jpg`} alt={PLAYER.team}
+                  <img src={`${L}${PLAYER.teamSlug}.png`} alt={PLAYER.team}
                     style={{ position:"absolute", right:-12, bottom:-12, width:90, height:90, objectFit:"contain", opacity:0.08 }} />
                   <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, color:"rgba(255,255,255,0.3)", letterSpacing:".12em", textTransform:"uppercase", marginBottom:14 }}>Your Franchise</div>
                   <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:12 }}>
                     <div style={{ width:44, height:44, background:"#fff", borderRadius:3, padding:3, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
-                      <img src={`${L}${PLAYER.teamSlug}.jpg`} alt={PLAYER.team} style={{ width:"100%", height:"100%", objectFit:"contain" }} />
+                      <img src={`${L}${PLAYER.teamSlug}.png`} alt={PLAYER.team} style={{ width:"100%", height:"100%", objectFit:"contain" }} />
                     </div>
                     <div>
                       <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:15, color:"#fff" }}>{PLAYER.team}</div>
@@ -415,7 +415,7 @@ export function PlayerProfile() {
                     ].map(t => (
                       <div key={t.slug} style={{ background: t.selected ? "rgba(59,130,246,0.12)" : "rgba(255,255,255,0.03)", border:`1px solid ${t.selected ? "#3B82F6" : "rgba(255,255,255,0.07)"}`, borderRadius:2, padding:"8px", display:"flex", alignItems:"center", justifyContent:"center", flexDirection:"column", gap:4 }}>
                         <div style={{ width:32, height:32, background:"#fff", borderRadius:2, padding:2, display:"flex", alignItems:"center", justifyContent:"center" }}>
-                          <img src={`${L}${t.slug}.jpg`} alt={t.n} style={{ width:"100%", height:"100%", objectFit:"contain" }} />
+                          <img src={`${L}${t.slug}.png`} alt={t.n} style={{ width:"100%", height:"100%", objectFit:"contain" }} />
                         </div>
                         <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:8, color: t.selected ? "#3B82F6" : "rgba(255,255,255,0.3)", letterSpacing:".06em" }}>{t.n}</span>
                       </div>
@@ -429,7 +429,7 @@ export function PlayerProfile() {
                   {phase === "signed" && (
                     <div style={{ background:"rgba(59,130,246,0.08)", border:"1px solid rgba(59,130,246,0.25)", borderRadius:2, padding:"14px 16px", display:"flex", alignItems:"center", gap:14 }}>
                       <div style={{ width:44, height:44, background:"#fff", borderRadius:2, padding:3, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center" }}>
-                        <img src={`${L}mumbai_mavericks.jpg`} alt="MM" style={{ width:"100%", height:"100%", objectFit:"contain" }} />
+                        <img src={`${L}mumbai_mavericks.png`} alt="MM" style={{ width:"100%", height:"100%", objectFit:"contain" }} />
                       </div>
                       <div>
                         <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:15, color:"#fff", marginBottom:2 }}>Mumbai Mavericks signed you!</div>

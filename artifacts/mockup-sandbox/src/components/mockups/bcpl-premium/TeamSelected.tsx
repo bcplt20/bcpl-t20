@@ -5,16 +5,16 @@ const BOOKING_REF = 'BCPL-S5-7432';
 const L = '/__mockup/bcpl-assets/logos/';
 
 const TEAMS = [
-  { name:'Rajasthan Scorchers', city:'Jaipur',     color:'#E97B6B', bg:'#1A0808', logo:`${L}rajasthan_scorchers.jpg`,  abbr:'RS', bid:'₹5,75,000' },
-  { name:'Punjab Warriors',     city:'Chandigarh', color:'#DC2626', bg:'#1A0606', logo:`${L}punjab_warriors.jpg`,     abbr:'PW', bid:'₹4,50,000' },
-  { name:'Kolkata Tigers',      city:'Kolkata',    color:'#F97316', bg:'#1A0A04', logo:`${L}kolkata_tigers.jpg`,      abbr:'KT', bid:'₹6,25,000' },
-  { name:'Lucknow Nawabs',      city:'Lucknow',    color:'#F59E0B', bg:'#1A1204', logo:`${L}lucknow_nawabs.jpg`,      abbr:'LN', bid:'₹7,00,000' },
-  { name:'Mumbai Mavericks',    city:'Mumbai',     color:'#3B82F6', bg:'#040E1A', logo:`${L}mumbai_mavericks.jpg`,    abbr:'MM', bid:'₹8,50,000' },
-  { name:'Hyderabad Hawks',     city:'Hyderabad',  color:'#10B981', bg:'#041A10', logo:`${L}hyderabad_hawks.jpg`,     abbr:'HH', bid:'₹5,25,000' },
-  { name:'Delhi Suryas',        city:'Delhi',      color:'#6366F1', bg:'#080A1A', logo:`${L}delhi_suryas.jpg`,        abbr:'DS', bid:'₹9,00,000' },
-  { name:'Chennai Thalaivas',   city:'Chennai',    color:'#2563EB', bg:'#040B1A', logo:`${L}chennai_thalaivas.jpg`,   abbr:'CT', bid:'₹6,75,000' },
-  { name:'Ahmedabad Lions',     city:'Ahmedabad',  color:'#B91C1C', bg:'#1A0404', logo:`${L}ahmedabad_lions.jpg`,     abbr:'AL', bid:'₹7,50,000' },
-  { name:'Bengaluru Rockets',   city:'Bengaluru',  color:'#EF4444', bg:'#1A0606', logo:`${L}bengaluru_rockets.jpg`,   abbr:'BR', bid:'₹8,00,000' },
+  { name:'Rajasthan Scorchers', city:'Jaipur',     color:'#E97B6B', bg:'#1A0808', logo:`${L}rajasthan_scorchers.png`,  abbr:'RS', bid:'₹5,75,000' },
+  { name:'Punjab Warriors',     city:'Chandigarh', color:'#DC2626', bg:'#1A0606', logo:`${L}punjab_warriors.png`,     abbr:'PW', bid:'₹4,50,000' },
+  { name:'Kolkata Tigers',      city:'Kolkata',    color:'#F97316', bg:'#1A0A04', logo:`${L}kolkata_tigers.png`,      abbr:'KT', bid:'₹6,25,000' },
+  { name:'Lucknow Nawabs',      city:'Lucknow',    color:'#F59E0B', bg:'#1A1204', logo:`${L}lucknow_nawabs.png`,      abbr:'LN', bid:'₹7,00,000' },
+  { name:'Mumbai Mavericks',    city:'Mumbai',     color:'#3B82F6', bg:'#040E1A', logo:`${L}mumbai_mavericks.png`,    abbr:'MM', bid:'₹8,50,000' },
+  { name:'Hyderabad Hawks',     city:'Hyderabad',  color:'#10B981', bg:'#041A10', logo:`${L}hyderabad_hawks.png`,     abbr:'HH', bid:'₹5,25,000' },
+  { name:'Delhi Suryas',        city:'Delhi',      color:'#6366F1', bg:'#080A1A', logo:`${L}delhi_suryas.png`,        abbr:'DS', bid:'₹9,00,000' },
+  { name:'Chennai Thalaivas',   city:'Chennai',    color:'#2563EB', bg:'#040B1A', logo:`${L}chennai_thalaivas.png`,   abbr:'CT', bid:'₹6,75,000' },
+  { name:'Ahmedabad Lions',     city:'Ahmedabad',  color:'#B91C1C', bg:'#1A0404', logo:`${L}ahmedabad_lions.png`,     abbr:'AL', bid:'₹7,50,000' },
+  { name:'Bengaluru Rockets',   city:'Bengaluru',  color:'#EF4444', bg:'#1A0606', logo:`${L}bengaluru_rockets.png`,   abbr:'BR', bid:'₹8,00,000' },
 ];
 
 const ROADMAP = [

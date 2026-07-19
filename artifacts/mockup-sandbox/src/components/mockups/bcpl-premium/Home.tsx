@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from "react";
 
 const L = "/__mockup/bcpl-assets/logos/";
-const G = "/__mockup/bcpl-assets/ganguly_2.jpg";
+const G  = "/__mockup/bcpl-assets/ganguly_shoot.jpg";
+const G2 = "/__mockup/bcpl-assets/ganguly_2.jpg";
 
 const TEAMS = [
-  { name:"Rajasthan Scorchers", city:"Jaipur",     color:"#E97B6B", logo:`${L}rajasthan_scorchers.jpg`  },
-  { name:"Punjab Warriors",     city:"Chandigarh", color:"#DC2626", logo:`${L}punjab_warriors.jpg`      },
-  { name:"Kolkata Tigers",      city:"Kolkata",    color:"#F97316", logo:`${L}kolkata_tigers.jpg`       },
-  { name:"Lucknow Nawabs",      city:"Lucknow",    color:"#F59E0B", logo:`${L}lucknow_nawabs.jpg`       },
-  { name:"Mumbai Mavericks",    city:"Mumbai",     color:"#3B82F6", logo:`${L}mumbai_mavericks.jpg`     },
-  { name:"Hyderabad Hawks",     city:"Hyderabad",  color:"#16A34A", logo:`${L}hyderabad_hawks.jpg`      },
-  { name:"Delhi Suryas",        city:"Delhi",      color:"#6366F1", logo:`${L}delhi_suryas.jpg`         },
-  { name:"Chennai Thalaivas",   city:"Chennai",    color:"#2563EB", logo:`${L}chennai_thalaivas.jpg`    },
-  { name:"Ahmedabad Lions",     city:"Ahmedabad",  color:"#B91C1C", logo:`${L}ahmedabad_lions.jpg`      },
-  { name:"Bengaluru Rockets",   city:"Bengaluru",  color:"#EF4444", logo:`${L}bengaluru_rockets.jpg`    },
+  { name:"Rajasthan Scorchers", city:"Jaipur",     color:"#E97B6B", logo:`${L}rajasthan_scorchers.png`  },
+  { name:"Punjab Warriors",     city:"Chandigarh", color:"#DC2626", logo:`${L}punjab_warriors.png`      },
+  { name:"Kolkata Tigers",      city:"Kolkata",    color:"#F97316", logo:`${L}kolkata_tigers.png`       },
+  { name:"Lucknow Nawabs",      city:"Lucknow",    color:"#F59E0B", logo:`${L}lucknow_nawabs.png`       },
+  { name:"Mumbai Mavericks",    city:"Mumbai",     color:"#3B82F6", logo:`${L}mumbai_mavericks.png`     },
+  { name:"Hyderabad Hawks",     city:"Hyderabad",  color:"#16A34A", logo:`${L}hyderabad_hawks.png`      },
+  { name:"Delhi Suryas",        city:"Delhi",      color:"#6366F1", logo:`${L}delhi_suryas.png`         },
+  { name:"Chennai Thalaivas",   city:"Chennai",    color:"#2563EB", logo:`${L}chennai_thalaivas.png`    },
+  { name:"Ahmedabad Lions",     city:"Ahmedabad",  color:"#B91C1C", logo:`${L}ahmedabad_lions.png`      },
+  { name:"Bengaluru Rockets",   city:"Bengaluru",  color:"#EF4444", logo:`${L}bengaluru_rockets.png`    },
 ];
 
 const NAV_LINKS = ["Home","Match Center","Teams","Sponsors","Photos","Videos","About","FAQ","Contact"];
@@ -189,6 +190,12 @@ export function Home() {
 
         /* SLIDE DOT */
         .slide-dot { width:24px; height:3px; border-radius:2px; cursor:pointer; transition:all .3s; border:none; }
+      
+        /* ── FLOATING REGISTER BUTTON ── */
+        .float-reg-btn { position:fixed; bottom:28px; right:28px; z-index:9999; background:linear-gradient(135deg,#FF7A29,#D95E10); border:none; border-radius:2px; color:#fff; font-family:'Montserrat',sans-serif; font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:14px 22px; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(255,122,41,0.45); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition:opacity .2s,transform .15s; }
+        .float-reg-btn:hover { opacity:.9; transform:translateY(-2px); }
+        @keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4)} 50%{box-shadow:0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0)} }
+        .float-reg-pulse { animation:floatPulse 2.5s ease-in-out infinite; }
       `}</style>
 
       {/* ── TICKER ── */}
@@ -250,17 +257,29 @@ export function Home() {
 
         {/* RIGHT SIDE CONTENT */}
         {slide.imageSide === "photo" && (
-          <div style={{ position:"absolute", right:0, top:0, bottom:0, width:"clamp(200px,40%,420px)", overflow:"hidden" }}>
+          <div style={{ position:"absolute", right:0, top:0, bottom:0, width:"clamp(240px,46%,500px)", overflow:"hidden", background:"#040810" }}>
             {!imgError ? (
               <img src={G} alt="Sourav Ganguly" onError={() => setImgError(true)}
-                style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"top center", filter:"brightness(0.85) contrast(1.1)" }} />
+                style={{ width:"100%", height:"100%", objectFit:"contain", objectPosition:"center bottom", filter:"brightness(0.9) contrast(1.08) saturate(1.1)" }} />
             ) : (
-              /* Fallback if image doesn't load */
-              <div style={{ width:"100%", height:"100%", background:"linear-gradient(180deg,#0A0F1A,#040810)", display:"flex", alignItems:"center", justifyContent:"center", flexDirection:"column", gap:8 }}>
+              <div style={{ width:"100%", height:"100%", background:"linear-gradient(180deg,#0A0F1A,#040810)", display:"flex", alignItems:"center", justifyContent:"center" }}>
                 <div style={{ width:100, height:100, borderRadius:2, background:"linear-gradient(135deg,#E8B23D,#C49A1E)", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:40, color:"#fff" }}>SG</div>
               </div>
             )}
-            <div style={{ position:"absolute", inset:0, background:"linear-gradient(270deg,transparent 40%,#040810 100%)" }} />
+            {/* Left gradient — merges white studio bg into dark slide bg */}
+            <div style={{ position:"absolute", inset:0, background:"linear-gradient(90deg, #040810 0%, rgba(4,8,16,0.82) 16%, rgba(4,8,16,0.15) 38%, transparent 55%)", pointerEvents:"none" }} />
+            {/* Top fade */}
+            <div style={{ position:"absolute", top:0, left:0, right:0, height:"22%", background:"linear-gradient(180deg, #040810, transparent)", pointerEvents:"none" }} />
+            {/* Bottom fade */}
+            <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"28%", background:"linear-gradient(0deg, #040810, transparent)", pointerEvents:"none" }} />
+            {/* Right edge fade */}
+            <div style={{ position:"absolute", top:0, bottom:0, right:0, width:"18%", background:"linear-gradient(270deg, transparent, rgba(4,8,16,0.5))", pointerEvents:"none" }} />
+            {/* BCPL gold glow around figure */}
+            <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 75% 85% at 60% 50%, rgba(232,178,61,0.07) 0%, transparent 65%)", pointerEvents:"none" }} />
+            {/* "BCPL AMBASSADOR" badge */}
+            <div style={{ position:"absolute", top:18, right:18, background:"linear-gradient(135deg,#E8B23D,#C49A1E)", borderRadius:2, padding:"5px 12px", fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:9, color:"#000", letterSpacing:".12em", textTransform:"uppercase" }}>
+              ★ BCPL AMBASSADOR
+            </div>
           </div>
         )}
 
@@ -642,9 +661,9 @@ export function Home() {
           <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))", gap:14 }}>
             {TEAMS.map(team => (
               <div key={team.name} className="team-card" style={{ borderTop:`3px solid ${team.color}` }}>
-                {/* Watermark logo — invert+screen removes white bg on dark cards */}
+                {/* Watermark logo — PNG transparent, direct opacity */}
                 <img src={team.logo} alt={team.name}
-                  style={{ position:"absolute", right:"-6%", bottom:"-6%", width:"78%", height:"78%", objectFit:"contain", opacity:0.12, pointerEvents:"none", filter:"invert(1) grayscale(1) brightness(1.4)", mixBlendMode:"screen" as any }} />
+                  style={{ position:"absolute", right:"-6%", bottom:"-6%", width:"78%", height:"78%", objectFit:"contain", opacity:0.09, pointerEvents:"none", filter:"grayscale(15%)" }} />
                 {/* Color glow corner */}
                 <div style={{ position:"absolute", top:0, right:0, width:80, height:80, background:`radial-gradient(circle at top right,${team.color}18 0%,transparent 70%)`, pointerEvents:"none" }} />
 
@@ -653,8 +672,10 @@ export function Home() {
                     <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:"clamp(13px,1.8vw,16px)", color:"#fff", letterSpacing:".01em", lineHeight:1.2, marginBottom:6 }}>{team.name}</div>
                     <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:11, color:team.color, letterSpacing:".08em", textTransform:"uppercase" }}>{team.city}</div>
                   </div>
-                  {/* Logo badge — background-blend-mode:multiply removes white bg within badge */}
-                  <div style={{ width:54, height:54, borderRadius:4, flexShrink:0, backgroundImage:`url(${team.logo})`, backgroundSize:"88%", backgroundRepeat:"no-repeat", backgroundPosition:"center", backgroundBlendMode:"multiply", backgroundColor:team.color, border:`1.5px solid ${team.color}66`, boxShadow:`0 4px 18px ${team.color}44` }} />
+                  {/* Logo badge — transparent PNG, team-color subtle bg */}
+                  <div style={{ width:54, height:54, borderRadius:4, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", background:`${team.color}18`, border:`1.5px solid ${team.color}55`, boxShadow:`0 4px 18px ${team.color}44` }}>
+                    <img src={team.logo} alt={team.name} style={{ width:"86%", height:"86%", objectFit:"contain" }} />
+                  </div>
                 </div>
 
                 <div style={{ position:"relative", zIndex:1, marginTop:16 }}>
@@ -686,50 +707,87 @@ export function Home() {
         </div>
       </section>
 
-      {/* ══ AMBASSADOR — SOURAV GANGULY (with real photo) ══ */}
+      {/* ══ AMBASSADOR — SOURAV GANGULY · Full photo feature ══ */}
       <section style={{ padding:"clamp(60px,8vw,80px) 0", background:"#06101E", position:"relative", overflow:"hidden" }}>
-        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 70% 80% at 100% 50%,rgba(232,178,61,0.05) 0%,transparent 70%)", pointerEvents:"none" }} />
+        {/* Gold radial */}
+        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 60% 70% at 90% 50%,rgba(232,178,61,0.07) 0%,transparent 65%)", pointerEvents:"none" }} />
+        {/* Diagonal lines */}
+        <svg style={{ position:"absolute", inset:0, width:"100%", height:"100%", pointerEvents:"none", opacity:0.4 }}>
+          <defs><pattern id="diagAmb" width="50" height="50" patternUnits="userSpaceOnUse"><line x1="0" y1="50" x2="50" y2="0" stroke="rgba(232,178,61,0.04)" strokeWidth="1"/></pattern></defs>
+          <rect width="100%" height="100%" fill="url(#diagAmb)"/>
+        </svg>
+
         <div className="wrap" style={{ position:"relative", zIndex:1 }}>
           <div className="section-label">Brand Ambassador</div>
           <h2 className="section-title" style={{ fontSize:"clamp(20px,3.5vw,36px)", color:"#fff", marginBottom:8, textTransform:"uppercase" }}>BACKED BY INDIA'S GREATEST MATCH-WINNER</h2>
-          <p style={{ fontFamily:"Inter,sans-serif", color:"rgba(255,255,255,0.4)", marginBottom:40, fontSize:15 }}>Sourav Ganguly · The Prince of Kolkata · BCPL Brand Ambassador</p>
+          <p style={{ fontFamily:"Inter,sans-serif", color:"rgba(255,255,255,0.4)", marginBottom:40, fontSize:15 }}>Sourav Ganguly · The Prince of Kolkata · BCPL Season 5 Brand Ambassador</p>
 
-          {/* 2-col: quote + photo */}
-          <div style={{ display:"grid", gridTemplateColumns:"1fr", gap:24 }}>
-            <div>
+          {/* 2-col: left = quote+badges, right = Ganguly full photo */}
+          <div style={{ display:"grid", gridTemplateColumns:"1fr", gap:20 }}>
+            {/* Left column */}
+            <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
               {/* Quote card */}
-              <div className="card" style={{ borderLeft:"4px solid #E8B23D", padding:"clamp(24px,4vw,40px) clamp(20px,3vw,36px)", position:"relative", overflow:"hidden" }}>
-                <div style={{ position:"absolute", top:-16, right:8, fontSize:100, opacity:0.04, fontFamily:"Georgia,serif", lineHeight:1, userSelect:"none" }}>"</div>
+              <div className="card" style={{ borderLeft:"4px solid #E8B23D", padding:"clamp(24px,3vw,36px) clamp(20px,3vw,32px)", position:"relative", overflow:"hidden", flex:1 }}>
+                <div style={{ position:"absolute", top:-10, right:12, fontSize:120, opacity:0.035, fontFamily:"Georgia,serif", lineHeight:1, userSelect:"none", color:"#E8B23D" }}>"</div>
                 <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, letterSpacing:".12em", color:"#E8B23D", textTransform:"uppercase", marginBottom:16 }}>Brand Ambassador · BCPL T20 Season 5</div>
-                <blockquote style={{ fontFamily:"Inter,sans-serif", fontSize:"clamp(15px,2vw,19px)", lineHeight:1.72, color:"rgba(255,255,255,0.85)", fontStyle:"italic", marginBottom:28, borderLeft:"none", padding:0 }}>
+                <blockquote style={{ fontFamily:"Inter,sans-serif", fontSize:"clamp(14px,1.8vw,18px)", lineHeight:1.75, color:"rgba(255,255,255,0.85)", fontStyle:"italic", marginBottom:28 }}>
                   "Cricket is not just a sport — it is a way of life. BCPL gives every corporate professional the chance to live that dream. From offices to stadiums, this is where champions are made."
                 </blockquote>
-                <div style={{ display:"flex", alignItems:"center", gap:14, flexWrap:"wrap" }}>
-                  {/* Ganguly photo avatar */}
-                  <div style={{ width:56, height:56, borderRadius:2, overflow:"hidden", border:"2px solid #E8B23D", flexShrink:0 }}>
-                    <img src={G} alt="Sourav Ganguly" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"top center" }} onError={e => { (e.target as HTMLImageElement).style.display='none'; }} />
+                <div style={{ display:"flex", alignItems:"center", gap:14 }}>
+                  {/* Small avatar from ganguly_2 */}
+                  <div style={{ width:52, height:52, borderRadius:2, overflow:"hidden", border:"2px solid #E8B23D", flexShrink:0 }}>
+                    <img src={G2} alt="Sourav Ganguly" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"top center" }} />
                   </div>
                   <div>
-                    <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:17, color:"#E8B23D" }}>Sourav Ganguly</div>
-                    <div style={{ fontFamily:"Inter,sans-serif", fontSize:13, color:"rgba(255,255,255,0.4)" }}>The Prince of Kolkata · Ex-BCCI President · Season 5 Ambassador</div>
+                    <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:16, color:"#E8B23D" }}>Sourav Ganguly</div>
+                    <div style={{ fontFamily:"Inter,sans-serif", fontSize:12, color:"rgba(255,255,255,0.4)", lineHeight:1.5 }}>The Prince of Kolkata<br/>Ex-BCCI President · BCPL Season 5 Ambassador</div>
                   </div>
                 </div>
               </div>
 
               {/* Trust badges */}
-              <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(180px,1fr))", gap:10, marginTop:14 }}>
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(160px,1fr))", gap:8 }}>
                 {[
-                  { icon:"🏆", label:"Former India Captain", sub:"Led India to No.1 ODI ranking" },
-                  { icon:"📜", label:"Ex-BCCI President",    sub:"Governed Indian cricket 2019–22" },
-                  { icon:"🎯", label:"BCPL Champion",         sub:"Believes in grassroots cricket" },
+                  { icon:"🏆", label:"Former India Captain", sub:"Led India to No.1 ODI" },
+                  { icon:"📜", label:"Ex-BCCI President",    sub:"Governed cricket 2019–22" },
+                  { icon:"🏏", label:"BCPL S5 Ambassador",   sub:"Believes in grassroots" },
                 ].map(b => (
-                  <div key={b.label} style={{ background:"rgba(232,178,61,0.05)", border:"1px solid rgba(232,178,61,0.15)", borderRadius:2, padding:"14px 16px" }}>
-                    <div style={{ fontSize:20, marginBottom:6 }}>{b.icon}</div>
-                    <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:12, color:"#E8B23D", marginBottom:3 }}>{b.label}</div>
-                    <div style={{ fontFamily:"Inter,sans-serif", fontSize:12, color:"rgba(255,255,255,0.45)" }}>{b.sub}</div>
+                  <div key={b.label} style={{ background:"rgba(232,178,61,0.04)", border:"1px solid rgba(232,178,61,0.14)", borderRadius:2, padding:"14px 16px" }}>
+                    <div style={{ fontSize:18, marginBottom:6 }}>{b.icon}</div>
+                    <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:11, color:"#E8B23D", marginBottom:3 }}>{b.label}</div>
+                    <div style={{ fontFamily:"Inter,sans-serif", fontSize:11, color:"rgba(255,255,255,0.4)" }}>{b.sub}</div>
                   </div>
                 ))}
               </div>
+            </div>
+
+            {/* Right column — Ganguly shoot photo FULL BODY */}
+            <div style={{ position:"relative", background:"#06101E", borderRadius:2, border:"1px solid rgba(232,178,61,0.18)", overflow:"hidden", minHeight:420 }}>
+              {/* The photo */}
+              <img src={G} alt="Sourav Ganguly - BCPL Ambassador" style={{ width:"100%", height:"100%", objectFit:"contain", objectPosition:"center bottom", filter:"brightness(0.88) contrast(1.08) saturate(1.1)", display:"block" }} />
+              {/* Top gradient — blends white studio bg top edge */}
+              <div style={{ position:"absolute", top:0, left:0, right:0, height:"20%", background:"linear-gradient(180deg, #06101E 0%, transparent 100%)", pointerEvents:"none" }} />
+              {/* Bottom gradient — dark floor blend */}
+              <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"35%", background:"linear-gradient(0deg, #06101E 0%, rgba(6,16,30,0.5) 60%, transparent 100%)", pointerEvents:"none" }} />
+              {/* Left gradient — merge with page bg */}
+              <div style={{ position:"absolute", top:0, bottom:0, left:0, width:"20%", background:"linear-gradient(90deg, #06101E 0%, transparent 100%)", pointerEvents:"none" }} />
+              {/* Right gradient */}
+              <div style={{ position:"absolute", top:0, bottom:0, right:0, width:"20%", background:"linear-gradient(270deg, #06101E 0%, transparent 100%)", pointerEvents:"none" }} />
+              {/* Gold glow around body */}
+              <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 70% 85% at 50% 55%, rgba(232,178,61,0.07) 0%, transparent 65%)", pointerEvents:"none" }} />
+
+              {/* Overlay: name + title at bottom */}
+              <div style={{ position:"absolute", bottom:0, left:0, right:0, padding:"20px 24px", zIndex:2 }}>
+                <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                  <div style={{ background:"#E8B23D", borderRadius:2, padding:"4px 10px", fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:9, color:"#000", letterSpacing:".12em" }}>★ SEASON 5 AMBASSADOR</div>
+                  <div style={{ background:"rgba(255,122,41,0.12)", border:"1px solid rgba(255,122,41,0.3)", borderRadius:2, padding:"4px 10px", fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:9, color:"#FF7A29", letterSpacing:".1em" }}>BCPL T20</div>
+                </div>
+                <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:"clamp(20px,3vw,28px)", color:"#E8B23D", marginTop:8, lineHeight:1.1 }}>SOURAV GANGULY</div>
+                <div style={{ fontFamily:"Inter,sans-serif", fontSize:12, color:"rgba(255,255,255,0.5)", marginTop:3 }}>The Prince of Kolkata · Former India Captain · Ex-BCCI President</div>
+              </div>
+
+              {/* Cricket bat silhouette watermark */}
+              <div style={{ position:"absolute", top:16, right:16, fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:60, color:"rgba(232,178,61,0.05)", lineHeight:1, userSelect:"none" }}>🏏</div>
             </div>
           </div>
         </div>
@@ -804,6 +862,8 @@ export function Home() {
           </div>
         </div>
       </footer>
+      {/* ── FLOATING REGISTER BUTTON ── */}
+      <a className="float-reg-btn float-reg-pulse" href="#" style={{textDecoration:"none"}}>🏏 REGISTER NOW →</a>
     </div>
   );
 }
