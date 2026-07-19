@@ -43,11 +43,11 @@ export function TeamSelected() {
         @media(min-width:1024px){.desk-nav{display:flex;align-items:center;gap:20px}}
         .ham-btn{display:flex;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
         @media(min-width:1024px){.ham-btn{display:none}}
-        .btn-white{background:#fff;border:none;border-radius:2px;color:#06101E;font-family:Montserrat,sans-serif;font-weight:900;letter-spacing:.06em;cursor:pointer;transition:all .2s;text-transform:uppercase}
+        .btn-white{background:#fff;border:none;border-radius:12px;color:#06101E;font-family:Montserrat,sans-serif;font-weight:900;letter-spacing:.06em;cursor:pointer;transition:all .2s;text-transform:uppercase}
         .btn-white:hover{filter:brightness(0.9);transform:translateY(-2px)}
-        .btn-outline{background:transparent;border:2px solid rgba(255,255,255,0.3);border-radius:2px;color:#fff;font-family:Montserrat,sans-serif;font-weight:700;cursor:pointer;transition:all .2s}
+        .btn-outline{background:transparent;border:2px solid rgba(255,255,255,0.3);border-radius:12px;color:#fff;font-family:Montserrat,sans-serif;font-weight:700;cursor:pointer;transition:all .2s}
         .btn-outline:hover{border-color:#fff;background:rgba(255,255,255,0.08)}
-        .team-pill{padding:8px 14px;border-radius:2px;font-family:Montserrat,sans-serif;font-weight:800;font-size:11px;cursor:pointer;transition:all .2s;border:1px solid rgba(255,255,255,0.12);background:#0A1727;color:rgba(255,255,255,0.6);letter-spacing:.04em;white-space:nowrap}
+        .team-pill{padding:8px 14px;border-radius:12px;font-family:Montserrat,sans-serif;font-weight:800;font-size:11px;cursor:pointer;transition:all .2s;border:1px solid rgba(255,255,255,0.12);background:#0A1727;color:rgba(255,255,255,0.6);letter-spacing:.04em;white-space:nowrap}
         .team-pill:hover{border-color:rgba(255,255,255,0.35);color:#fff}
         .team-pill.active{background:#fff;color:#06101E;border-color:#fff}
         @keyframes tickerScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
@@ -62,7 +62,7 @@ export function TeamSelected() {
         .mob-menu{position:fixed;top:0;left:0;right:0;bottom:0;background:#06101E;z-index:999;display:flex;flex-direction:column;padding:80px 32px 32px;gap:24px;overflow-y:auto}
         .mob-menu-link{font-family:Montserrat,sans-serif;font-weight:800;font-size:18px;color:rgba(255,255,255,0.8);text-transform:uppercase;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.06);padding-bottom:20px}
         .close-btn{position:fixed;top:20px;right:24px;background:none;border:none;color:#fff;font-size:28px;cursor:pointer;z-index:1000}
-        .next-card{background:#0A1727;border:1px solid rgba(255,255,255,0.08);border-radius:2px;padding:20px;transition:border-color .2s}
+        .next-card{background:#0A1727;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:20px;transition:border-color .2s}
         .next-card:hover{border-color:rgba(255,255,255,0.2)}
       `}</style>
 
@@ -88,7 +88,7 @@ export function TeamSelected() {
             {NAV.map(l=><a key={l} href="#" style={{ fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:12, color:'rgba(255,255,255,0.6)', textDecoration:'none', letterSpacing:'.08em', textTransform:'uppercase' }}>{l}</a>)}
           </nav>
           <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-            <div style={{ background:`${team.color}18`, border:`1px solid ${team.color}44`, borderRadius:2, padding:'6px 14px', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:11, color:team.color, letterSpacing:'.06em', transition:'all 0.5s' }}>
+            <div style={{ background:`${team.color}18`, border:`1px solid ${team.color}44`, borderRadius:12, padding:'6px 14px', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:11, color:team.color, letterSpacing:'.06em', transition:'all 0.5s' }}>
               🏆 SIGNED · {team.abbr}
             </div>
             <button className="ham-btn" onClick={()=>setMenuOpen(true)}>
@@ -131,7 +131,7 @@ export function TeamSelected() {
             {/* Trophy */}
             <div style={{ fontSize:'clamp(56px,10vw,100px)', animation:'trophyBounce 2s ease-in-out infinite', marginBottom:20, display:'inline-block' }}>🏆</div>
 
-            <div style={{ display:'inline-flex', alignItems:'center', gap:10, background:`${team.color}18`, border:`1px solid ${team.color}44`, borderRadius:2, padding:'8px 20px', marginBottom:20, transition:'all 0.5s' }}>
+            <div style={{ display:'inline-flex', alignItems:'center', gap:10, background:`${team.color}18`, border:`1px solid ${team.color}44`, borderRadius:12, padding:'8px 20px', marginBottom:20, transition:'all 0.5s' }}>
               <span style={{ width:8, height:8, borderRadius:'50%', background:'#22C55E', display:'inline-block', animation:'liveBlip 1.2s infinite' }} />
               <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:11, color:'#22C55E', letterSpacing:'.12em' }}>BCPL SEASON 5 · OFFICIALLY SIGNED</span>
             </div>
@@ -150,7 +150,7 @@ export function TeamSelected() {
           </div>
 
           {/* SIGNED CONTRACT CARD */}
-          <div style={{ maxWidth:560, margin:'0 auto 0', background:`linear-gradient(135deg,${team.bg},#06101E)`, border:`2px solid ${team.color}`, borderRadius:2, padding:'28px 24px', position:'relative', overflow:'hidden', transition:'all 0.5s', animation:'fadeUp 0.5s 0.35s ease both' }}>
+          <div style={{ maxWidth:560, margin:'0 auto 0', background:`linear-gradient(135deg,${team.bg},#06101E)`, border:`2px solid ${team.color}`, borderRadius:12, padding:'28px 24px', position:'relative', overflow:'hidden', transition:'all 0.5s', animation:'fadeUp 0.5s 0.35s ease both' }}>
             {/* Ticket notches */}
             <div style={{ position:'absolute', left:-1, top:'50%', width:16, height:32, background:'#06101E', borderRadius:'0 50% 50% 0', border:`2px solid ${team.color}`, borderLeft:'none', transform:'translateY(-50%)' }} />
             <div style={{ position:'absolute', right:-1, top:'50%', width:16, height:32, background:'#06101E', borderRadius:'50% 0 0 50%', border:`2px solid ${team.color}`, borderRight:'none', transform:'translateY(-50%)' }} />
@@ -191,7 +191,7 @@ export function TeamSelected() {
 
       <div className="wrap">
         {/* JOURNEY RAIL — all complete */}
-        <div style={{ background:'#0A1727', border:'1px solid rgba(34,197,94,0.2)', borderRadius:2, padding:'28px 20px', marginBottom:24 }}>
+        <div style={{ background:'#0A1727', border:'1px solid rgba(34,197,94,0.2)', borderRadius:12, padding:'28px 20px', marginBottom:24 }}>
           <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:11, letterSpacing:'.12em', color:'#22C55E', textTransform:'uppercase', marginBottom:20 }}>🏆 JOURNEY COMPLETE · ALL 6 STAGES CLEARED</div>
           <div style={{ display:'flex', alignItems:'center', overflowX:'auto', paddingBottom:8 }}>
             {ROADMAP.map((step,i)=>(
@@ -229,7 +229,7 @@ export function TeamSelected() {
         </div>
 
         {/* SHARE */}
-        <div style={{ background:`linear-gradient(135deg,${team.bg},#06101E)`, border:`2px solid ${team.color}33`, borderRadius:2, padding:'28px 24px', textAlign:'center', transition:'all 0.5s', position:'relative', overflow:'hidden' }}>
+        <div style={{ background:`linear-gradient(135deg,${team.bg},#06101E)`, border:`2px solid ${team.color}33`, borderRadius:12, padding:'28px 24px', textAlign:'center', transition:'all 0.5s', position:'relative', overflow:'hidden' }}>
           <div style={{ position:'absolute', inset:0, background:`radial-gradient(ellipse 80% 60% at 50% 0%,${team.color}08 0%,transparent 70%)`, pointerEvents:'none' }} />
           <div style={{ position:'relative', zIndex:1 }}>
             <div style={{ fontSize:32, marginBottom:12 }}>🎉</div>

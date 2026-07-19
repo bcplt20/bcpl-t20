@@ -32,11 +32,11 @@ export function Phase2PaymentReceipt() {
         .ticket::before{left:-11px;border:1px solid rgba(232,178,61,0.4)}
         .ticket::after{right:-11px;border:1px solid rgba(232,178,61,0.4)}
         .ticket-dashed{border-top:2px dashed rgba(232,178,61,0.25);margin:0 28px}
-        .next-card{background:#0A1727;border:1px solid rgba(255,255,255,0.07);border-radius:2px;padding:22px 20px;border-top:3px solid #FF7A29;transition:border-color .2s}
+        .next-card{background:#0A1727;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:22px 20px;border-top:3px solid #FF7A29;transition:border-color .2s}
         .next-card:hover{border-top-color:#E8B23D}
-        .btn-outline-gold{background:transparent;border:1px solid rgba(232,178,61,0.5);border-radius:2px;color:#E8B23D;font-family:Montserrat,sans-serif;font-weight:800;font-size:11px;letter-spacing:.1em;cursor:pointer;padding:9px 18px;transition:all .2s;text-transform:uppercase}
+        .btn-outline-gold{background:transparent;border:1px solid rgba(232,178,61,0.5);border-radius:12px;color:#E8B23D;font-family:Montserrat,sans-serif;font-weight:800;font-size:11px;letter-spacing:.1em;cursor:pointer;padding:9px 18px;transition:all .2s;text-transform:uppercase}
         .btn-outline-gold:hover{background:rgba(232,178,61,0.1);border-color:#E8B23D}
-        .chip-pill{display:inline-flex;align-items:center;gap:6px;border-radius:2px;padding:6px 14px;font-size:11px;font-weight:700;font-family:Montserrat,sans-serif;letter-spacing:.06em;border:1px solid}
+        .chip-pill{display:inline-flex;align-items:center;gap:6px;border-radius:12px;padding:6px 14px;font-size:11px;font-weight:700;font-family:Montserrat,sans-serif;letter-spacing:.06em;border:1px solid}
         footer a{color:rgba(255,255,255,0.45);text-decoration:none}
         footer a:hover{color:#FF7A29}
       `}</style>
@@ -62,7 +62,7 @@ export function Phase2PaymentReceipt() {
           </div>
           <div className="desk-nav">{NAV.map(n => <button key={n} className="nav-link">{n}</button>)}</div>
           <button className="ham-btn" onClick={() => setMenuOpen(o => !o)}>
-            {[0,1,2].map(i => <span key={i} style={{ width:24, height:2, background:'#fff', display:'block', borderRadius:2, transition:'all .3s', transform: menuOpen?(i===0?'rotate(45deg) translate(5px,5px)':i===2?'rotate(-45deg) translate(5px,-5px)':'scaleX(0)'):'none', opacity:menuOpen&&i===1?0:1 }} />)}
+            {[0,1,2].map(i => <span key={i} style={{ width:24, height:2, background:'#fff', display:'block', borderRadius:12, transition:'all .3s', transform: menuOpen?(i===0?'rotate(45deg) translate(5px,5px)':i===2?'rotate(-45deg) translate(5px,-5px)':'scaleX(0)'):'none', opacity:menuOpen&&i===1?0:1 }} />)}
           </button>
         </div>
         {menuOpen && (
@@ -171,7 +171,7 @@ export function Phase2PaymentReceipt() {
                 <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:15, color:'#fff', marginBottom:8 }}>{title}</div>
                 <div style={{ fontSize:13, color:'rgba(255,255,255,0.5)', lineHeight:1.6, marginBottom: cta ? 16 : 0 }}>{desc}</div>
                 {cta && (
-                  <button style={{ background:'transparent', border:`1px solid ${ctaColor}60`, borderRadius:2, color:ctaColor, fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:11, letterSpacing:'.1em', cursor:'pointer', padding:'8px 16px', transition:'all .2s' }}>
+                  <button style={{ background:'transparent', border:`1px solid ${ctaColor}60`, borderRadius:12, color:ctaColor, fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:11, letterSpacing:'.1em', cursor:'pointer', padding:'8px 16px', transition:'all .2s' }}>
                     {cta}
                   </button>
                 )}

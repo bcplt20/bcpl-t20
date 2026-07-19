@@ -86,10 +86,10 @@ export function PlayerProfile() {
         @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
         .shimmer-gold{background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimGold 3s linear infinite;}
         .shimmer-orange{background:linear-gradient(90deg,#FF7A29,#FFB347,#FF7A29);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimOrange 3s linear infinite;}
-        .card{background:#0A1727;border:1px solid rgba(255,255,255,0.07);border-radius:2px;}
-        .btn-orange{background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:2px;color:#fff;font-family:Montserrat,sans-serif;font-weight:900;font-size:12px;letter-spacing:.06em;cursor:pointer;padding:10px 18px;transition:opacity .2s;text-transform:uppercase;}
+        .card{background:#0A1727;border:1px solid rgba(255,255,255,0.07);border-radius:12px;}
+        .btn-orange{background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:12px;color:#fff;font-family:Montserrat,sans-serif;font-weight:900;font-size:12px;letter-spacing:.06em;cursor:pointer;padding:10px 18px;transition:opacity .2s;text-transform:uppercase;}
         .btn-orange:hover{opacity:.88;}
-        .btn-ghost{background:transparent;border:1.5px solid rgba(255,255,255,0.18);border-radius:2px;color:rgba(255,255,255,0.65);font-family:Montserrat,sans-serif;font-weight:700;font-size:12px;letter-spacing:.06em;cursor:pointer;padding:10px 18px;text-transform:uppercase;transition:border-color .2s,color .2s;}
+        .btn-ghost{background:transparent;border:1.5px solid rgba(255,255,255,0.18);border-radius:12px;color:rgba(255,255,255,0.65);font-family:Montserrat,sans-serif;font-weight:700;font-size:12px;letter-spacing:.06em;cursor:pointer;padding:10px 18px;text-transform:uppercase;transition:border-color .2s,color .2s;}
         .btn-ghost:hover{border-color:#FF7A29;color:#FF7A29;}
         .row-item{display:flex;justify-content:space-between;align-items:flex-start;gap:12;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
         .row-item:last-child{border-bottom:none;}
@@ -119,7 +119,7 @@ export function PlayerProfile() {
           </div>
           <div style={{ display:"flex", alignItems:"center", gap:10 }}>
             {/* Avatar */}
-            <div style={{ width:36, height:36, borderRadius:2, background:"linear-gradient(135deg,#FF7A29,#D95E10)", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:14, color:"#fff" }}>RS</div>
+            <div style={{ width:36, height:36, borderRadius:12, background:"linear-gradient(135deg,#FF7A29,#D95E10)", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:14, color:"#fff" }}>RS</div>
             <div style={{ display:"none" }}>
               <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:13, color:"#fff" }}>Rahul Sharma</div>
               <div style={{ fontFamily:"Inter,sans-serif", fontSize:11, color:"rgba(255,255,255,0.35)" }}>BCPL-S5-7432</div>
@@ -136,7 +136,7 @@ export function PlayerProfile() {
             <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, color:"rgba(255,255,255,0.3)", letterSpacing:".12em", textTransform:"uppercase", marginRight:4 }}>DEMO · Player State →</span>
             {DEMO_PHASES.map(dp => (
               <button key={dp.id} onClick={() => setPhase(dp.id)}
-                style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, letterSpacing:".06em", padding:"6px 12px", borderRadius:2, cursor:"pointer", textTransform:"uppercase", border:"1.5px solid", transition:"all .2s",
+                style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, letterSpacing:".06em", padding:"6px 12px", borderRadius:12, cursor:"pointer", textTransform:"uppercase", border:"1.5px solid", transition:"all .2s",
                   background: phase===dp.id ? dp.color : "transparent",
                   borderColor: phase===dp.id ? dp.color : "rgba(255,255,255,0.14)",
                   color: phase===dp.id ? "#fff" : "rgba(255,255,255,0.4)" }}>
@@ -151,7 +151,7 @@ export function PlayerProfile() {
         <div className="wrap">
 
           {/* ── STATUS BANNER ── */}
-          <div key={phase} style={{ background:banner.bg, border:`1px solid ${banner.color}33`, borderLeft:`4px solid ${banner.color}`, borderRadius:2, padding:"18px 22px", marginBottom:28, display:"flex", alignItems:"flex-start", gap:16, animation:"fadeUp .35s ease both" }}>
+          <div key={phase} style={{ background:banner.bg, border:`1px solid ${banner.color}33`, borderLeft:`4px solid ${banner.color}`, borderRadius:12, padding:"18px 22px", marginBottom:28, display:"flex", alignItems:"flex-start", gap:16, animation:"fadeUp .35s ease both" }}>
             <span style={{ fontSize:28, flexShrink:0, marginTop:2 }}>{banner.icon}</span>
             <div>
               <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:14, color:banner.color, marginBottom:5, textTransform:"uppercase", letterSpacing:".02em" }}>{banner.title}</div>
@@ -175,7 +175,7 @@ export function PlayerProfile() {
               <div className="card" style={{ padding:"28px 22px", marginBottom:14, textAlign:"center", position:"relative", overflow:"hidden" }}>
                 <div style={{ position:"absolute", top:0, left:0, right:0, height:3, background:`linear-gradient(90deg,#FF7A29,#E8B23D)` }} />
                 {/* Big avatar */}
-                <div style={{ width:84, height:84, borderRadius:2, background:"linear-gradient(135deg,#FF7A29,#D95E10)", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:32, color:"#fff", margin:"0 auto 16px", position:"relative", boxShadow:"0 8px 32px rgba(255,122,41,0.35)" }}>
+                <div style={{ width:84, height:84, borderRadius:12, background:"linear-gradient(135deg,#FF7A29,#D95E10)", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:32, color:"#fff", margin:"0 auto 16px", position:"relative", boxShadow:"0 8px 32px rgba(255,122,41,0.35)" }}>
                   RS
                   {/* Online dot */}
                   <div style={{ position:"absolute", bottom:4, right:4, width:12, height:12, borderRadius:"50%", background:"#22C55E", border:"2px solid #0A1727" }} />
@@ -184,7 +184,7 @@ export function PlayerProfile() {
                 <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:11, color:"#FF7A29", letterSpacing:".1em", textTransform:"uppercase", marginBottom:14 }}>{PLAYER.roleIcon} {PLAYER.role} · {PLAYER.city}</div>
                 
                 {/* Booking ref */}
-                <div style={{ background:"rgba(255,122,41,0.07)", border:"1px solid rgba(255,122,41,0.2)", borderRadius:2, padding:"8px 14px", display:"inline-flex", alignItems:"center", gap:6 }}>
+                <div style={{ background:"rgba(255,122,41,0.07)", border:"1px solid rgba(255,122,41,0.2)", borderRadius:12, padding:"8px 14px", display:"inline-flex", alignItems:"center", gap:6 }}>
                   <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:9, color:"rgba(255,255,255,0.4)", letterSpacing:".1em", textTransform:"uppercase" }}>REF</span>
                   <span style={{ fontFamily:"monospace", fontWeight:700, fontSize:13, color:"#FF7A29", letterSpacing:".06em" }}>{PLAYER.ref}</span>
                 </div>
@@ -267,7 +267,7 @@ export function PlayerProfile() {
                       <div key={i} style={{ display:"flex", gap:16, alignItems:"flex-start" }}>
                         {/* Left: Line + dot */}
                         <div style={{ display:"flex", flexDirection:"column", alignItems:"center", width:28, flexShrink:0 }}>
-                          <div style={{ width:28, height:28, borderRadius:2, background: isDone ? "#22C55E" : isActive ? "#FF7A29" : "rgba(255,255,255,0.06)", border:`1.5px solid ${color}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, fontFamily:"Montserrat,sans-serif", fontWeight:900, color: isDone||isActive ? "#fff" : "rgba(255,255,255,0.2)", flexShrink:0, animation: isActive ? "glowPulse 2s infinite" : "none" }}>
+                          <div style={{ width:28, height:28, borderRadius:12, background: isDone ? "#22C55E" : isActive ? "#FF7A29" : "rgba(255,255,255,0.06)", border:`1.5px solid ${color}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, fontFamily:"Montserrat,sans-serif", fontWeight:900, color: isDone||isActive ? "#fff" : "rgba(255,255,255,0.2)", flexShrink:0, animation: isActive ? "glowPulse 2s infinite" : "none" }}>
                             {isDone ? "✓" : isActive ? "●" : i+1}
                           </div>
                           {i < nodes.length-1 && <div style={{ width:2, height:32, background: isDone ? "#22C55E44" : "rgba(255,255,255,0.07)", margin:"3px 0" }} />}
@@ -289,7 +289,7 @@ export function PlayerProfile() {
               <div className="card" style={{ padding:"22px 24px" }}>
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
                   <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:13, color:"#fff", textTransform:"uppercase", letterSpacing:".05em" }}>Phase 1 · Registration & Payment</div>
-                  <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, padding:"4px 10px", borderRadius:2, background:"rgba(34,197,94,0.1)", border:"1px solid rgba(34,197,94,0.3)", color:"#22C55E", letterSpacing:".08em" }}>PAID ✓</span>
+                  <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, padding:"4px 10px", borderRadius:12, background:"rgba(34,197,94,0.1)", border:"1px solid rgba(34,197,94,0.3)", color:"#22C55E", letterSpacing:".08em" }}>PAID ✓</span>
                 </div>
                 <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(140px,1fr))", gap:10 }}>
                   {[
@@ -300,7 +300,7 @@ export function PlayerProfile() {
                     { label:"Ref No.",    value:PLAYER.ref,                           highlight:false },
                     { label:"Status",     value:"ACTIVE",                             highlight:true  },
                   ].map(f => (
-                    <div key={f.label} style={{ background:"rgba(255,255,255,0.03)", border:"1px solid rgba(255,255,255,0.06)", borderRadius:2, padding:"12px 14px" }}>
+                    <div key={f.label} style={{ background:"rgba(255,255,255,0.03)", border:"1px solid rgba(255,255,255,0.06)", borderRadius:12, padding:"12px 14px" }}>
                       <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:9, color:"rgba(255,255,255,0.3)", letterSpacing:".1em", textTransform:"uppercase", marginBottom:5 }}>{f.label}</div>
                       <div style={{ fontFamily:f.label==="Ref No." ? "monospace" : "Montserrat,sans-serif", fontWeight:800, fontSize:13, color: f.highlight ? "#22C55E" : "rgba(255,255,255,0.8)" }}>{f.value}</div>
                     </div>
@@ -313,11 +313,11 @@ export function PlayerProfile() {
                 <div className="card" style={{ padding:"22px 24px" }}>
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
                     <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:13, color:"#fff", textTransform:"uppercase", letterSpacing:".05em" }}>Phase 1 · Trial Video</div>
-                    <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, padding:"4px 10px", borderRadius:2, background:"rgba(34,197,94,0.1)", border:"1px solid rgba(34,197,94,0.3)", color:"#22C55E", letterSpacing:".08em" }}>SUBMITTED ✓</span>
+                    <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, padding:"4px 10px", borderRadius:12, background:"rgba(34,197,94,0.1)", border:"1px solid rgba(34,197,94,0.3)", color:"#22C55E", letterSpacing:".08em" }}>SUBMITTED ✓</span>
                   </div>
                   {/* Video preview mock */}
-                  <div style={{ background:"#060C18", border:"1px solid rgba(255,255,255,0.07)", borderRadius:2, padding:"18px", display:"flex", alignItems:"center", gap:16, marginBottom:14, cursor:"pointer" }}>
-                    <div style={{ width:72, height:52, background:"linear-gradient(135deg,#1a2a3a,#0a1520)", borderRadius:2, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, border:"1px solid rgba(255,255,255,0.08)", position:"relative" }}>
+                  <div style={{ background:"#060C18", border:"1px solid rgba(255,255,255,0.07)", borderRadius:12, padding:"18px", display:"flex", alignItems:"center", gap:16, marginBottom:14, cursor:"pointer" }}>
+                    <div style={{ width:72, height:52, background:"linear-gradient(135deg,#1a2a3a,#0a1520)", borderRadius:12, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, border:"1px solid rgba(255,255,255,0.08)", position:"relative" }}>
                       <span style={{ fontSize:22 }}>▶</span>
                       <div style={{ position:"absolute", bottom:4, right:4, fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:8, color:"rgba(255,255,255,0.4)" }}>2:00</div>
                     </div>
@@ -327,13 +327,13 @@ export function PlayerProfile() {
                     </div>
                   </div>
                   {phase === "p1_video" && (
-                    <div style={{ background:"rgba(255,122,41,0.06)", border:"1px solid rgba(255,122,41,0.18)", borderRadius:2, padding:"12px 16px", display:"flex", alignItems:"center", gap:10 }}>
+                    <div style={{ background:"rgba(255,122,41,0.06)", border:"1px solid rgba(255,122,41,0.18)", borderRadius:12, padding:"12px 16px", display:"flex", alignItems:"center", gap:10 }}>
                       <span style={{ width:8, height:8, borderRadius:"50%", background:"#FF7A29", display:"inline-block", animation:"liveBlip 1.2s infinite" }} />
                       <span style={{ fontFamily:"Inter,sans-serif", fontSize:12, color:"rgba(255,255,255,0.55)" }}>Under review by BCCI-certified scouts · Result expected by <strong style={{ color:"#FF7A29" }}>28 Feb 2026</strong></span>
                     </div>
                   )}
                   {(phase === "p2_selected" || phase === "auction" || phase === "signed") && (
-                    <div style={{ background:"rgba(34,197,94,0.05)", border:"1px solid rgba(34,197,94,0.2)", borderRadius:2, padding:"12px 16px", display:"flex", alignItems:"center", gap:10 }}>
+                    <div style={{ background:"rgba(34,197,94,0.05)", border:"1px solid rgba(34,197,94,0.2)", borderRadius:12, padding:"12px 16px", display:"flex", alignItems:"center", gap:10 }}>
                       <span style={{ fontSize:16 }}>✅</span>
                       <span style={{ fontFamily:"Inter,sans-serif", fontSize:12, color:"rgba(255,255,255,0.55)" }}>Scout review complete · <strong style={{ color:"#22C55E" }}>PASSED — Selected for Phase 2 trial</strong></span>
                     </div>
@@ -348,7 +348,7 @@ export function PlayerProfile() {
                   <p style={{ fontFamily:"Inter,sans-serif", fontSize:13, color:"rgba(255,255,255,0.45)", lineHeight:1.6, marginBottom:16 }}>
                     Upload a 2-minute video of yourself batting, bowling, or keeping wicket. BCCI-certified scouts will review it within 7 days.
                   </p>
-                  <div style={{ background:"#060C18", border:"2px dashed rgba(255,122,41,0.3)", borderRadius:2, padding:"32px", textAlign:"center", cursor:"pointer", marginBottom:14 }}>
+                  <div style={{ background:"#060C18", border:"2px dashed rgba(255,122,41,0.3)", borderRadius:12, padding:"32px", textAlign:"center", cursor:"pointer", marginBottom:14 }}>
                     <div style={{ fontSize:32, marginBottom:8 }}>🎬</div>
                     <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:13, color:"rgba(255,255,255,0.6)", marginBottom:4 }}>Drag & drop your video here</div>
                     <div style={{ fontFamily:"Inter,sans-serif", fontSize:11, color:"rgba(255,255,255,0.25)", marginBottom:12 }}>MP4, MOV · Max 500MB · Max 2 minutes</div>
@@ -364,8 +364,8 @@ export function PlayerProfile() {
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
                     <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:13, color:"#fff", textTransform:"uppercase", letterSpacing:".05em" }}>Phase 2 · Physical Trial</div>
                     {phase === "p2_selected"
-                      ? <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, padding:"4px 10px", borderRadius:2, background:"rgba(232,178,61,0.12)", border:"1px solid rgba(232,178,61,0.35)", color:"#E8B23D", letterSpacing:".08em" }}>ACTION NEEDED</span>
-                      : <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, padding:"4px 10px", borderRadius:2, background:"rgba(34,197,94,0.1)", border:"1px solid rgba(34,197,94,0.3)", color:"#22C55E", letterSpacing:".08em" }}>CLEARED ✓</span>
+                      ? <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, padding:"4px 10px", borderRadius:12, background:"rgba(232,178,61,0.12)", border:"1px solid rgba(232,178,61,0.35)", color:"#E8B23D", letterSpacing:".08em" }}>ACTION NEEDED</span>
+                      : <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, padding:"4px 10px", borderRadius:12, background:"rgba(34,197,94,0.1)", border:"1px solid rgba(34,197,94,0.3)", color:"#22C55E", letterSpacing:".08em" }}>CLEARED ✓</span>
                     }
                   </div>
                   <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(150px,1fr))", gap:10, marginBottom:14 }}>
@@ -375,14 +375,14 @@ export function PlayerProfile() {
                       { label:"Phase 2 Fee", value:"₹2,000"       },
                       { label:"Status",      value: phase==="p2_selected" ? "PAYMENT PENDING" : "TRIAL CLEARED ✓" },
                     ].map(f => (
-                      <div key={f.label} style={{ background:"rgba(232,178,61,0.04)", border:"1px solid rgba(232,178,61,0.1)", borderRadius:2, padding:"12px 14px" }}>
+                      <div key={f.label} style={{ background:"rgba(232,178,61,0.04)", border:"1px solid rgba(232,178,61,0.1)", borderRadius:12, padding:"12px 14px" }}>
                         <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:9, color:"rgba(255,255,255,0.3)", letterSpacing:".1em", textTransform:"uppercase", marginBottom:5 }}>{f.label}</div>
                         <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:12, color: f.label==="Status" && phase==="p2_selected" ? "#E8B23D" : f.label==="Status" ? "#22C55E" : "rgba(255,255,255,0.8)" }}>{f.value}</div>
                       </div>
                     ))}
                   </div>
                   {phase === "p2_selected" && (
-                    <button style={{ background:"linear-gradient(135deg,#E8B23D,#C49A1E)", border:"none", borderRadius:2, color:"#000", fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:13, letterSpacing:".06em", padding:"14px 28px", cursor:"pointer", width:"100%", textTransform:"uppercase" }}>
+                    <button style={{ background:"linear-gradient(135deg,#E8B23D,#C49A1E)", border:"none", borderRadius:12, color:"#000", fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:13, letterSpacing:".06em", padding:"14px 28px", cursor:"pointer", width:"100%", textTransform:"uppercase" }}>
                       PAY ₹2,000 NOW TO CONFIRM TRIAL →
                     </button>
                   )}
@@ -396,7 +396,7 @@ export function PlayerProfile() {
                     <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:13, color:"#fff", textTransform:"uppercase", letterSpacing:".05em" }}>Franchise Auction</div>
                     {phase === "auction"
                       ? <div style={{ display:"flex", alignItems:"center", gap:6 }}><span style={{ width:7, height:7, borderRadius:"50%", background:"#FF7A29", display:"inline-block", animation:"liveBlip 1s infinite" }}/><span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, color:"#FF7A29" }}>LIVE</span></div>
-                      : <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, padding:"4px 10px", borderRadius:2, background:"rgba(34,197,94,0.1)", border:"1px solid rgba(34,197,94,0.3)", color:"#22C55E", letterSpacing:".08em" }}>SIGNED ✓</span>
+                      : <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, padding:"4px 10px", borderRadius:12, background:"rgba(34,197,94,0.1)", border:"1px solid rgba(34,197,94,0.3)", color:"#22C55E", letterSpacing:".08em" }}>SIGNED ✓</span>
                     }
                   </div>
                   {/* Franchise logos mini-grid */}
@@ -413,8 +413,8 @@ export function PlayerProfile() {
                       {slug:"ahmedabad_lions",    n:"AL",  selected: false },
                       {slug:"bengaluru_rockets",  n:"BR",  selected: false },
                     ].map(t => (
-                      <div key={t.slug} style={{ background: t.selected ? "rgba(59,130,246,0.12)" : "rgba(255,255,255,0.03)", border:`1px solid ${t.selected ? "#3B82F6" : "rgba(255,255,255,0.07)"}`, borderRadius:2, padding:"8px", display:"flex", alignItems:"center", justifyContent:"center", flexDirection:"column", gap:4 }}>
-                        <div style={{ width:32, height:32, background:"#fff", borderRadius:2, padding:2, display:"flex", alignItems:"center", justifyContent:"center" }}>
+                      <div key={t.slug} style={{ background: t.selected ? "rgba(59,130,246,0.12)" : "rgba(255,255,255,0.03)", border:`1px solid ${t.selected ? "#3B82F6" : "rgba(255,255,255,0.07)"}`, borderRadius:12, padding:"8px", display:"flex", alignItems:"center", justifyContent:"center", flexDirection:"column", gap:4 }}>
+                        <div style={{ width:32, height:32, background:"#fff", borderRadius:12, padding:2, display:"flex", alignItems:"center", justifyContent:"center" }}>
                           <img src={`${L}${t.slug}.png`} alt={t.n} style={{ width:"100%", height:"100%", objectFit:"contain" }} />
                         </div>
                         <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:8, color: t.selected ? "#3B82F6" : "rgba(255,255,255,0.3)", letterSpacing:".06em" }}>{t.n}</span>
@@ -422,13 +422,13 @@ export function PlayerProfile() {
                     ))}
                   </div>
                   {phase === "auction" && (
-                    <div style={{ background:"rgba(255,122,41,0.06)", border:"1px solid rgba(255,122,41,0.2)", borderRadius:2, padding:"12px 16px" }}>
+                    <div style={{ background:"rgba(255,122,41,0.06)", border:"1px solid rgba(255,122,41,0.2)", borderRadius:12, padding:"12px 16px" }}>
                       <div style={{ fontFamily:"Inter,sans-serif", fontSize:12, color:"rgba(255,255,255,0.55)" }}>Current highest bid: <strong style={{ color:"#FF7A29" }}>₹8,50,000</strong> by Mumbai Mavericks · 3 franchises bidding</div>
                     </div>
                   )}
                   {phase === "signed" && (
-                    <div style={{ background:"rgba(59,130,246,0.08)", border:"1px solid rgba(59,130,246,0.25)", borderRadius:2, padding:"14px 16px", display:"flex", alignItems:"center", gap:14 }}>
-                      <div style={{ width:44, height:44, background:"#fff", borderRadius:2, padding:3, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center" }}>
+                    <div style={{ background:"rgba(59,130,246,0.08)", border:"1px solid rgba(59,130,246,0.25)", borderRadius:12, padding:"14px 16px", display:"flex", alignItems:"center", gap:14 }}>
+                      <div style={{ width:44, height:44, background:"#fff", borderRadius:12, padding:3, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center" }}>
                         <img src={`${L}mumbai_mavericks.png`} alt="MM" style={{ width:"100%", height:"100%", objectFit:"contain" }} />
                       </div>
                       <div>

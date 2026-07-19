@@ -94,7 +94,7 @@ function PlayerCard({ name, role, city, step }:{ name:string; role:typeof ROLES[
         </div>
 
         {/* Holographic strip */}
-        <div style={{ height:3, borderRadius:2, background: role ? `linear-gradient(90deg, ${cardColor}, #E8B23D, ${cardColor})` : 'rgba(255,255,255,0.08)', backgroundSize:'200% 100%', animation: role ? 'shimmerCard 2s linear infinite' : 'none', marginBottom:12, transition:'all 0.4s' }} />
+        <div style={{ height:3, borderRadius:12, background: role ? `linear-gradient(90deg, ${cardColor}, #E8B23D, ${cardColor})` : 'rgba(255,255,255,0.08)', backgroundSize:'200% 100%', animation: role ? 'shimmerCard 2s linear infinite' : 'none', marginBottom:12, transition:'all 0.4s' }} />
 
         {/* Completeness bar */}
         <div style={{ marginBottom:8 }}>
@@ -102,8 +102,8 @@ function PlayerCard({ name, role, city, step }:{ name:string; role:typeof ROLES[
             <span style={{ fontSize:9, color:'rgba(255,255,255,0.35)', fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase' }}>Card Status</span>
             <span style={{ fontSize:9, color: completeness >= 75 ? '#22C55E' : completeness >= 40 ? '#F59E0B' : 'rgba(255,255,255,0.35)', fontWeight:700 }}>{completeness}%</span>
           </div>
-          <div style={{ height:3, background:'rgba(255,255,255,0.08)', borderRadius:2, overflow:'hidden' }}>
-            <div style={{ height:'100%', width:`${completeness}%`, background: completeness >= 75 ? 'linear-gradient(90deg,#22C55E,#16A34A)' : 'linear-gradient(90deg,#FF7A29,#E8B23D)', transition:'width 0.6s ease, background 0.4s', borderRadius:2 }} />
+          <div style={{ height:3, background:'rgba(255,255,255,0.08)', borderRadius:12, overflow:'hidden' }}>
+            <div style={{ height:'100%', width:`${completeness}%`, background: completeness >= 75 ? 'linear-gradient(90deg,#22C55E,#16A34A)' : 'linear-gradient(90deg,#FF7A29,#E8B23D)', transition:'width 0.6s ease, background 0.4s', borderRadius:12 }} />
           </div>
         </div>
 
@@ -195,7 +195,7 @@ export function RegVariantA() {
             <button className="btn-fire" style={{ padding:'10px 22px', fontSize:13 }}>Register ₹299 →</button>
           </div>
           <button className="ham-btn" onClick={()=>setOpen(o=>!o)} style={{ background:'none', border:'none', cursor:'pointer', padding:8, flexDirection:'column', gap:5, zIndex:300 }}>
-            {[0,1,2].map(i=><span key={i} style={{ display:'block', width:24, height:2, background:'#fff', borderRadius:2, transition:'all 0.25s', transform:i===0&&open?'rotate(45deg) translate(5px,5px)':i===1&&open?'scaleX(0)':i===2&&open?'rotate(-45deg) translate(5px,-5px)':'' }} />)}
+            {[0,1,2].map(i=><span key={i} style={{ display:'block', width:24, height:2, background:'#fff', borderRadius:12, transition:'all 0.25s', transform:i===0&&open?'rotate(45deg) translate(5px,5px)':i===1&&open?'scaleX(0)':i===2&&open?'rotate(-45deg) translate(5px,-5px)':'' }} />)}
           </button>
         </div>
       </nav>

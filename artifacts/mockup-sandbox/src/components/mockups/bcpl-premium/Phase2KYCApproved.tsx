@@ -26,13 +26,13 @@ export function Phase2KYCApproved() {
         @media(min-width:1024px){.desk-nav{display:flex;align-items:center;gap:20px}}
         .ham-btn{display:flex;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
         @media(min-width:1024px){.ham-btn{display:none}}
-        .btn-primary{background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:2px;color:#fff;font-family:Montserrat,sans-serif;font-weight:900;letter-spacing:.06em;cursor:pointer;transition:all .2s}
+        .btn-primary{background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:12px;color:#fff;font-family:Montserrat,sans-serif;font-weight:900;letter-spacing:.06em;cursor:pointer;transition:all .2s}
         .btn-primary:hover{filter:brightness(1.15);transform:translateY(-2px)}
-        .btn-outline{background:transparent;border:1px solid rgba(255,255,255,0.2);border-radius:2px;color:rgba(255,255,255,0.7);font-family:Montserrat,sans-serif;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.04em}
+        .btn-outline{background:transparent;border:1px solid rgba(255,255,255,0.2);border-radius:12px;color:rgba(255,255,255,0.7);font-family:Montserrat,sans-serif;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.04em}
         .btn-outline:hover{border-color:#FF7A29;color:#FF7A29}
-        .notice-card{background:#0A1727;border:1px solid rgba(255,255,255,0.08);padding:20px 24px;border-radius:2px;transition:border-color .2s}
+        .notice-card{background:#0A1727;border:1px solid rgba(255,255,255,0.08);padding:20px 24px;border-radius:12px;transition:border-color .2s}
         .notice-card:hover{border-color:rgba(255,122,41,0.3)}
-        .chip{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;font-size:12px;font-weight:700;font-family:Montserrat,sans-serif;border-radius:2px}
+        .chip{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;font-size:12px;font-weight:700;font-family:Montserrat,sans-serif;border-radius:12px}
         @keyframes tickerScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
         @keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
         @keyframes shimGold{0%{background-position:-200% center}100%{background-position:200% center}}
@@ -98,7 +98,7 @@ export function Phase2KYCApproved() {
               { label:'KYC ✓',     color:'#22C55E', bg:'rgba(34,197,94,0.1)', border:'rgba(34,197,94,0.3)' },
               { label:'Trial: Upcoming', color:'#FF7A29', bg:'rgba(255,122,41,0.1)', border:'rgba(255,122,41,0.3)' },
             ].map(c => (
-              <div key={c.label} style={{ background:c.bg, border:`1px solid ${c.border}`, padding:'6px 16px', fontSize:12, fontWeight:700, color:c.color, fontFamily:'Montserrat,sans-serif', borderRadius:2 }}>{c.label}</div>
+              <div key={c.label} style={{ background:c.bg, border:`1px solid ${c.border}`, padding:'6px 16px', fontSize:12, fontWeight:700, color:c.color, fontFamily:'Montserrat,sans-serif', borderRadius:12 }}>{c.label}</div>
             ))}
           </div>
         </div>
@@ -224,7 +224,7 @@ export function Phase2KYCApproved() {
               <div style={{ fontSize:28, marginBottom:10 }}>{card.icon}</div>
               <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:15, color:'#fff', marginBottom:6 }}>{card.title}</div>
               <div style={{ fontSize:12, color:'rgba(255,255,255,0.45)', lineHeight:1.6, marginBottom:16 }}>{card.body}</div>
-              <button style={{ background:'none', border:`1px solid ${card.color}40`, color:card.color, padding:'8px 16px', fontSize:11, fontWeight:700, fontFamily:'Montserrat,sans-serif', cursor:'pointer', borderRadius:2, letterSpacing:'.04em', transition:'all .2s' }}>
+              <button style={{ background:'none', border:`1px solid ${card.color}40`, color:card.color, padding:'8px 16px', fontSize:11, fontWeight:700, fontFamily:'Montserrat,sans-serif', cursor:'pointer', borderRadius:12, letterSpacing:'.04em', transition:'all .2s' }}>
                 {card.cta}
               </button>
             </div>

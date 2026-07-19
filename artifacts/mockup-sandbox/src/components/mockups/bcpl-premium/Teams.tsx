@@ -23,7 +23,7 @@ function TeamCard({ t, i }: { t:typeof ALL_TEAMS[0]; i:number }) {
   const elim = t.status === "Eliminated";
   return (
     <div onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
-      style={{ background:"#0A1727", border:`1.5px solid ${hov ? t.color : "rgba(255,255,255,0.07)"}`, borderRadius:2, borderTop:`3px solid ${t.color}`, padding:"20px 18px", transition:"all 0.25s", boxShadow:hov?`0 12px 40px ${t.color}22,0 0 0 1px ${t.color}33`:"none", opacity:elim?0.6:1, cursor:"pointer", position:"relative", overflow:"hidden" }}>
+      style={{ background:"#0A1727", border:`1.5px solid ${hov ? t.color : "rgba(255,255,255,0.07)"}`, borderRadius:12, borderTop:`3px solid ${t.color}`, padding:"20px 18px", transition:"all 0.25s", boxShadow:hov?`0 12px 40px ${t.color}22,0 0 0 1px ${t.color}33`:"none", opacity:elim?0.6:1, cursor:"pointer", position:"relative", overflow:"hidden" }}>
       {/* Watermark logo */}
       <img src={t.logo} alt={t.name} style={{ position:"absolute", right:"-6%", bottom:"-6%", width:"72%", height:"72%", objectFit:"contain", opacity:0.055, pointerEvents:"none", transition:"opacity 0.3s", filter:"grayscale(20%)" }} />
 
@@ -31,7 +31,7 @@ function TeamCard({ t, i }: { t:typeof ALL_TEAMS[0]; i:number }) {
       <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", marginBottom:14, position:"relative", zIndex:1 }}>
         <div style={{ display:"flex", alignItems:"center", gap:12 }}>
           {/* Logo badge — transparent PNG, no white box */}
-          <div style={{ width:52, height:52, background:`${t.color}18`, borderRadius:3, border:`1.5px solid ${t.color}44`, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", boxShadow:`0 4px 16px ${t.color}33` }}>
+          <div style={{ width:52, height:52, background:"rgba(255,255,255,0.96)", borderRadius:14, border:`2px solid ${t.color}55`, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", boxShadow:`0 6px 20px ${t.color}44` }}>
             <img src={t.logo} alt={t.name} style={{ width:"87%", height:"87%", objectFit:"contain" }} />
           </div>
           <div>
@@ -40,8 +40,8 @@ function TeamCard({ t, i }: { t:typeof ALL_TEAMS[0]; i:number }) {
           </div>
         </div>
         {elim
-          ? <span style={{ background:"rgba(232,73,63,0.12)", border:"1px solid rgba(232,73,63,0.35)", borderRadius:2, color:"#E8493F", fontSize:9, fontWeight:800, padding:"3px 8px", fontFamily:"Montserrat,sans-serif", letterSpacing:".08em", whiteSpace:"nowrap" }}>ELIMINATED</span>
-          : <span style={{ background:"rgba(34,197,94,0.1)", border:"1px solid rgba(34,197,94,0.3)", borderRadius:2, color:"#22C55E", fontSize:9, fontWeight:800, padding:"3px 8px", fontFamily:"Montserrat,sans-serif", letterSpacing:".08em", whiteSpace:"nowrap" }}>ACTIVE</span>
+          ? <span style={{ background:"rgba(232,73,63,0.12)", border:"1px solid rgba(232,73,63,0.35)", borderRadius:12, color:"#E8493F", fontSize:9, fontWeight:800, padding:"3px 8px", fontFamily:"Montserrat,sans-serif", letterSpacing:".08em", whiteSpace:"nowrap" }}>ELIMINATED</span>
+          : <span style={{ background:"rgba(34,197,94,0.1)", border:"1px solid rgba(34,197,94,0.3)", borderRadius:12, color:"#22C55E", fontSize:9, fontWeight:800, padding:"3px 8px", fontFamily:"Montserrat,sans-serif", letterSpacing:".08em", whiteSpace:"nowrap" }}>ACTIVE</span>
         }
       </div>
 
@@ -55,7 +55,7 @@ function TeamCard({ t, i }: { t:typeof ALL_TEAMS[0]; i:number }) {
       <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:14, position:"relative", zIndex:1 }}>
         <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:9, color:"rgba(255,255,255,0.28)", letterSpacing:".08em", textTransform:"uppercase", marginRight:4 }}>Form</span>
         {t.form.map((r,j)=>(
-          <div key={j} style={{ width:22, height:22, borderRadius:2, background:r==="W"?"rgba(34,197,94,0.18)":"rgba(232,73,63,0.18)", border:`1.5px solid ${r==="W"?"#22C55E":"#E8493F"}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, fontWeight:800, color:r==="W"?"#22C55E":"#E8493F", fontFamily:"Montserrat,sans-serif" }}>{r}</div>
+          <div key={j} style={{ width:22, height:22, borderRadius:12, background:r==="W"?"rgba(34,197,94,0.18)":"rgba(232,73,63,0.18)", border:`1.5px solid ${r==="W"?"#22C55E":"#E8493F"}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, fontWeight:800, color:r==="W"?"#22C55E":"#E8493F", fontFamily:"Montserrat,sans-serif" }}>{r}</div>
         ))}
       </div>
 
@@ -88,13 +88,13 @@ export function Teams() {
         .shimmer-gold{background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimGold 3s linear infinite;}
         .nav-link{font-family:Montserrat,sans-serif;font-weight:700;font-size:12px;letter-spacing:.08em;color:rgba(255,255,255,0.55);text-decoration:none;text-transform:uppercase;transition:color .2s;}
         .nav-link:hover,.nav-link.active{color:#FF7A29;}
-        .btn-orange{background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:2px;color:#fff;font-family:Montserrat,sans-serif;font-weight:900;font-size:12px;letter-spacing:.06em;cursor:pointer;padding:10px 18px;transition:opacity .2s;text-transform:uppercase;}
+        .btn-orange{background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:12px;color:#fff;font-family:Montserrat,sans-serif;font-weight:900;font-size:12px;letter-spacing:.06em;cursor:pointer;padding:10px 18px;transition:opacity .2s;text-transform:uppercase;}
         .btn-orange:hover{opacity:.88;}
         .footer-link{color:rgba(255,255,255,0.45);font-size:13px;font-family:Inter,sans-serif;text-decoration:none;transition:color .2s;}
         .footer-link:hover{color:#FF7A29;}
       
         /* ── FLOATING REGISTER BUTTON ── */
-        .float-reg-btn { position:fixed; bottom:28px; right:28px; z-index:9999; background:linear-gradient(135deg,#FF7A29,#D95E10); border:none; border-radius:2px; color:#fff; font-family:'Montserrat',sans-serif; font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:14px 22px; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(255,122,41,0.45); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition:opacity .2s,transform .15s; }
+        .float-reg-btn { position:fixed; bottom:28px; right:28px; z-index:9999; background:linear-gradient(135deg,#FF7A29,#D95E10); border:none; border-radius:12px; color:#fff; font-family:'Montserrat',sans-serif; font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:14px 22px; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(255,122,41,0.45); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition:opacity .2s,transform .15s; }
         .float-reg-btn:hover { opacity:.9; transform:translateY(-2px); }
         @keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4)} 50%{box-shadow:0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0)} }
         .float-reg-pulse { animation:floatPulse 2.5s ease-in-out infinite; }
@@ -142,7 +142,7 @@ export function Teams() {
           {/* Logo parade */}
           <div style={{ display:"flex", justifyContent:"center", flexWrap:"wrap", gap:10, marginBottom:0 }}>
             {ALL_TEAMS.map(t=>(
-              <div key={t.abbr} style={{ width:48, height:48, background:`${t.color}18`, borderRadius:3, padding:4, display:"flex", alignItems:"center", justifyContent:"center", boxShadow:`0 4px 16px ${t.color}33`, border:`1.5px solid ${t.color}44` }}>
+              <div key={t.abbr} style={{ width:48, height:48, background:"rgba(255,255,255,0.96)", borderRadius:14, padding:5, display:"flex", alignItems:"center", justifyContent:"center", boxShadow:`0 4px 16px ${t.color}44`, border:`2px solid ${t.color}55` }}>
                 <img src={t.logo} alt={t.abbr} style={{ width:"88%", height:"88%", objectFit:"contain" }} />
               </div>
             ))}
@@ -155,14 +155,14 @@ export function Teams() {
         <div className="wrap">
           <div style={{ overflowX:"auto", paddingBottom:6 }}>
             <div style={{ display:"inline-flex", gap:10, minWidth:"max-content" }}>
-              <div style={{ background:"rgba(255,122,41,0.08)", border:"1px solid rgba(255,122,41,0.2)", borderRadius:2, padding:"10px 16px", display:"flex", alignItems:"center", gap:8, flexShrink:0 }}>
+              <div style={{ background:"rgba(255,122,41,0.08)", border:"1px solid rgba(255,122,41,0.2)", borderRadius:12, padding:"10px 16px", display:"flex", alignItems:"center", gap:8, flexShrink:0 }}>
                 <div style={{ width:6, height:6, borderRadius:"50%", background:"#22C55E", animation:"none" }}/>
                 <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:11, color:"#FF7A29", letterSpacing:".1em" }}>STANDINGS</span>
               </div>
               {TOP5.map((t,i)=>(
-                <div key={t.abbr} style={{ background:"#0A1727", border:"1px solid rgba(255,255,255,0.07)", borderRadius:2, padding:"10px 16px", display:"flex", alignItems:"center", gap:10, flexShrink:0 }}>
+                <div key={t.abbr} style={{ background:"#0A1727", border:"1px solid rgba(255,255,255,0.07)", borderRadius:12, padding:"10px 16px", display:"flex", alignItems:"center", gap:10, flexShrink:0 }}>
                   <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:11, color:"rgba(255,255,255,0.28)" }}>#{i+1}</span>
-                  <div style={{ width:28, height:28, background:`${t.color}22`, borderRadius:2, padding:2, display:"flex", alignItems:"center", justifyContent:"center", border:`1px solid ${t.color}44` }}>
+                  <div style={{ width:28, height:28, background:"rgba(255,255,255,0.96)", borderRadius:10, padding:3, display:"flex", alignItems:"center", justifyContent:"center", border:`1px solid ${t.color}44` }}>
                     <img src={t.logo} alt={t.abbr} style={{ width:"88%", height:"88%", objectFit:"contain" }} />
                   </div>
                   <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:12, color:"#fff" }}>{t.abbr}</span>
@@ -205,7 +205,7 @@ export function Teams() {
       {/* CTA */}
       <section style={{ padding:"0 0 80px" }}>
         <div className="wrap">
-          <div style={{ background:"#0A1727", border:"1px solid rgba(255,122,41,0.2)", borderRadius:2, borderTop:"3px solid #FF7A29", padding:"clamp(32px,5vw,52px)", textAlign:"center" }}>
+          <div style={{ background:"#0A1727", border:"1px solid rgba(255,122,41,0.2)", borderRadius:12, borderTop:"3px solid #FF7A29", padding:"clamp(32px,5vw,52px)", textAlign:"center" }}>
             <h2 style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:"clamp(20px,3.5vw,36px)", color:"#fff", marginBottom:10, textTransform:"uppercase" }}>Want to play for one of these franchises?</h2>
             <p style={{ fontFamily:"Inter,sans-serif", color:"rgba(255,255,255,0.45)", fontSize:15, lineHeight:1.7, maxWidth:460, margin:"0 auto 28px" }}>
               Register today and get your shot at Season 5. 21 trial cities, all roles open.

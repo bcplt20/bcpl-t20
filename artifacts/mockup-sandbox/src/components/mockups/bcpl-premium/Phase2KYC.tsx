@@ -28,13 +28,13 @@ export function Phase2KYC() {
         @media(min-width:1024px){.desk-nav{display:flex;align-items:center;gap:20px}}
         .ham-btn{display:flex;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
         @media(min-width:1024px){.ham-btn{display:none}}
-        .btn-primary{background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:2px;color:#fff;font-family:Montserrat,sans-serif;font-weight:900;letter-spacing:.06em;cursor:pointer;transition:all .2s}
+        .btn-primary{background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:12px;color:#fff;font-family:Montserrat,sans-serif;font-weight:900;letter-spacing:.06em;cursor:pointer;transition:all .2s}
         .btn-primary:hover{filter:brightness(1.15);transform:translateY(-2px)}
         .btn-primary:disabled{opacity:.35;cursor:not-allowed;filter:none;transform:none}
-        .upload-zone{border:2px dashed rgba(255,255,255,0.15);background:#0C1A2E;padding:28px;text-align:center;cursor:pointer;transition:all .2s;border-radius:2px}
+        .upload-zone{border:2px dashed rgba(255,255,255,0.15);background:#0C1A2E;padding:28px;text-align:center;cursor:pointer;transition:all .2s;border-radius:12px}
         .upload-zone:hover{border-color:rgba(255,122,41,0.5);background:#0E1F35}
         .upload-zone.done{border-color:#22C55E;border-style:solid;background:rgba(34,197,94,0.06)}
-        .doc-card{background:#0A1727;border:1px solid rgba(255,255,255,0.08);padding:24px;border-radius:2px}
+        .doc-card{background:#0A1727;border:1px solid rgba(255,255,255,0.08);padding:24px;border-radius:12px}
         .doc-card.verified-card{border-color:rgba(34,197,94,0.3)}
         @keyframes tickerScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
         @keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
@@ -90,7 +90,7 @@ export function Phase2KYC() {
             <span style={{ color:'rgba(255,255,255,0.35)' }}>→ KYC PENDING</span>
           </div>
           {/* Design toggle */}
-          <div style={{ marginLeft:'auto', display:'flex', borderRadius:2, overflow:'hidden', border:'1px solid rgba(255,255,255,0.1)' }}>
+          <div style={{ marginLeft:'auto', display:'flex', borderRadius:12, overflow:'hidden', border:'1px solid rgba(255,255,255,0.1)' }}>
             <button onClick={() => setKycState('pending')} style={{ padding:'6px 16px', fontSize:11, fontWeight:800, fontFamily:'Montserrat,sans-serif', border:'none', cursor:'pointer', background: kycState==='pending'?'rgba(255,122,41,0.2)':'rgba(255,255,255,0.04)', color: kycState==='pending'?'#FF7A29':'rgba(255,255,255,0.4)' }}>⏳ PENDING</button>
             <button onClick={() => setKycState('verified')} style={{ padding:'6px 16px', fontSize:11, fontWeight:800, fontFamily:'Montserrat,sans-serif', border:'none', borderLeft:'1px solid rgba(255,255,255,0.1)', cursor:'pointer', background: kycState==='verified'?'rgba(34,197,94,0.2)':'rgba(255,255,255,0.04)', color: kycState==='verified'?'#22C55E':'rgba(255,255,255,0.4)' }}>✅ VERIFIED</button>
           </div>

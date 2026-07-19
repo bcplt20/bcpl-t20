@@ -164,7 +164,7 @@ export function RegVariantB() {
             <button className="btn-fire" style={{ padding:'8px 18px', fontSize:12 }}>Register ₹299 →</button>
           </div>
           <button className="ham-btn" onClick={()=>setOpen(o=>!o)} style={{ background:'none', border:'none', cursor:'pointer', padding:6, flexDirection:'column', gap:4 }}>
-            {[0,1,2].map(i=><span key={i} style={{ display:'block', width:20, height:2, background:'#fff', borderRadius:2, transition:'all 0.25s', transform:i===0&&open?'rotate(45deg) translate(4px,4px)':i===1&&open?'scaleX(0)':i===2&&open?'rotate(-45deg) translate(4px,-4px)':'' }} />)}
+            {[0,1,2].map(i=><span key={i} style={{ display:'block', width:20, height:2, background:'#fff', borderRadius:12, transition:'all 0.25s', transform:i===0&&open?'rotate(45deg) translate(4px,4px)':i===1&&open?'scaleX(0)':i===2&&open?'rotate(-45deg) translate(4px,-4px)':'' }} />)}
           </button>
         </div>
       </nav>

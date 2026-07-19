@@ -18,9 +18,9 @@ export function Phase1Result() {
         @media(min-width:1024px){.desk-nav{display:flex;align-items:center;gap:20px}}
         .ham-btn{display:flex;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
         @media(min-width:1024px){.ham-btn{display:none}}
-        .btn-primary{background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:2px;color:#fff;font-family:Montserrat,sans-serif;font-weight:900;letter-spacing:.06em;cursor:pointer;transition:transform .15s,filter .2s}
+        .btn-primary{background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:12px;color:#fff;font-family:Montserrat,sans-serif;font-weight:900;letter-spacing:.06em;cursor:pointer;transition:transform .15s,filter .2s}
         .btn-primary:hover{filter:brightness(1.15);transform:translateY(-2px)}
-        .btn-gold{background:linear-gradient(135deg,#E8B23D,#C49A1E);border:none;border-radius:2px;color:#fff;font-family:Montserrat,sans-serif;font-weight:900;letter-spacing:.06em;cursor:pointer;transition:all .2s}
+        .btn-gold{background:linear-gradient(135deg,#E8B23D,#C49A1E);border:none;border-radius:12px;color:#fff;font-family:Montserrat,sans-serif;font-weight:900;letter-spacing:.06em;cursor:pointer;transition:all .2s}
         .btn-gold:hover{filter:brightness(1.1);transform:translateY(-2px)}
         .field-inp{width:100%;background:#0C1A2E;border:none;border-bottom:2px solid rgba(255,122,41,0.4);color:#F0EDE8;padding:13px 16px;font-family:Inter,sans-serif;font-size:15px;outline:none;transition:border-color .2s}
         .field-inp:focus{border-bottom-color:#FF7A29}
@@ -75,7 +75,7 @@ export function Phase1Result() {
       <div style={{ background:'#040C18', borderBottom:'1px solid rgba(255,255,255,0.07)', padding:'12px 0' }}>
         <div className="wrap" style={{ display:'flex', alignItems:'center', gap:0 }}>
           <span style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.35)', letterSpacing:'.1em', marginRight:16, fontFamily:'Montserrat,sans-serif' }}>PHASE 1 RESULT:</span>
-          <div style={{ display:'flex', borderRadius:2, overflow:'hidden', border:'1px solid rgba(255,255,255,0.1)' }}>
+          <div style={{ display:'flex', borderRadius:12, overflow:'hidden', border:'1px solid rgba(255,255,255,0.1)' }}>
             <button
               onClick={() => setResult('selected')}
               style={{ padding:'8px 20px', fontSize:12, fontWeight:800, fontFamily:'Montserrat,sans-serif', border:'none', cursor:'pointer', letterSpacing:'.06em', background: result==='selected' ? '#22C55E' : 'rgba(255,255,255,0.04)', color: result==='selected' ? '#fff' : 'rgba(255,255,255,0.4)', transition:'all .2s' }}
@@ -116,7 +116,7 @@ export function Phase1Result() {
               {/* Player chips */}
               <div style={{ display:'flex', justifyContent:'center', gap:10, flexWrap:'wrap', marginBottom:24 }}>
                 {['🏏 Batsman','📍 Mumbai','🎟 BCPL-S5-MUM-BAT-7432'].map(c => (
-                  <div key={c} style={{ background:'rgba(255,255,255,0.07)', border:'1px solid rgba(255,255,255,0.12)', borderRadius:2, padding:'6px 14px', fontSize:12, fontWeight:700, color:'rgba(255,255,255,0.8)', fontFamily:'Montserrat,sans-serif' }}>{c}</div>
+                  <div key={c} style={{ background:'rgba(255,255,255,0.07)', border:'1px solid rgba(255,255,255,0.12)', borderRadius:12, padding:'6px 14px', fontSize:12, fontWeight:700, color:'rgba(255,255,255,0.8)', fontFamily:'Montserrat,sans-serif' }}>{c}</div>
                 ))}
               </div>
             </div>
@@ -182,7 +182,7 @@ export function Phase1Result() {
                     <button className="btn-gold" style={{ flex:2, padding:'18px 0', fontSize:16, letterSpacing:'.06em', minWidth:280 }}>
                       CLAIM YOUR PHASE 2 SPOT — PAY ₹2,000 →
                     </button>
-                    <div style={{ flex:1, minWidth:200, background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.25)', padding:'10px 16px', borderRadius:2 }}>
+                    <div style={{ flex:1, minWidth:200, background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.25)', padding:'10px 16px', borderRadius:12 }}>
                       <div style={{ fontSize:10, fontWeight:800, fontFamily:'Montserrat,sans-serif', color:'#EF4444', letterSpacing:'.12em', marginBottom:2 }}>⚠️ TIME SENSITIVE</div>
                       <div style={{ fontSize:12, color:'rgba(255,255,255,0.55)' }}>Phase 2 spot reserved for <strong style={{ color:'#fff' }}>7 days</strong> only</div>
                     </div>
@@ -210,7 +210,7 @@ export function Phase1Result() {
               </p>
               <div style={{ display:'flex', justifyContent:'center', gap:10, flexWrap:'wrap' }}>
                 {['🏏 Batsman','📍 Mumbai','Season 5 Participant'].map(c => (
-                  <div key={c} style={{ background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:2, padding:'6px 14px', fontSize:12, fontWeight:700, color:'rgba(255,255,255,0.5)', fontFamily:'Montserrat,sans-serif' }}>{c}</div>
+                  <div key={c} style={{ background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:12, padding:'6px 14px', fontSize:12, fontWeight:700, color:'rgba(255,255,255,0.5)', fontFamily:'Montserrat,sans-serif' }}>{c}</div>
                 ))}
               </div>
             </div>

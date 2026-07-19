@@ -140,9 +140,9 @@ export function Home() {
         .close-btn { position:fixed; top:20px; right:24px; background:none; border:none; color:#fff; font-size:28px; cursor:pointer; z-index:1000; }
 
         /* BUTTONS */
-        .btn-orange { background:linear-gradient(135deg,#FF7A29,#D95E10); border:none; border-radius:2px; color:#fff; font-family:Montserrat,sans-serif; font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:12px 22px; transition:opacity .2s,transform .15s; text-transform:uppercase; }
+        .btn-orange { background:linear-gradient(135deg,#FF7A29,#D95E10); border:none; border-radius:12px; color:#fff; font-family:Montserrat,sans-serif; font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:12px 22px; transition:opacity .2s,transform .15s; text-transform:uppercase; }
         .btn-orange:hover { opacity:.9; transform:translateY(-1px); }
-        .btn-ghost { background:transparent; border:1.5px solid rgba(255,255,255,0.3); border-radius:2px; color:rgba(255,255,255,0.8); font-family:Montserrat,sans-serif; font-weight:700; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:12px 22px; transition:border-color .2s,color .2s; text-transform:uppercase; }
+        .btn-ghost { background:transparent; border:1.5px solid rgba(255,255,255,0.3); border-radius:12px; color:rgba(255,255,255,0.8); font-family:Montserrat,sans-serif; font-weight:700; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:12px 22px; transition:border-color .2s,color .2s; text-transform:uppercase; }
         .btn-ghost:hover { border-color:#FF7A29; color:#FF7A29; }
 
         /* SECTION LABELS */
@@ -155,33 +155,33 @@ export function Home() {
         .shimmer-orange { background:linear-gradient(90deg,#FF7A29,#FFB347,#FF7A29,#FFB347,#FF7A29); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation:shimOrange 3s linear infinite; }
 
         /* COUNTDOWN */
-        .countdown-box { background:#060C18; border:1px solid rgba(255,122,41,0.2); border-radius:2px; padding:14px 12px; text-align:center; min-width:64px; }
+        .countdown-box { background:#060C18; border:1px solid rgba(255,122,41,0.2); border-radius:12px; padding:14px 12px; text-align:center; min-width:64px; }
         .countdown-num { font-family:Montserrat,sans-serif; font-weight:900; font-size:clamp(24px,5vw,36px); color:#FF7A29; line-height:1; display:block; }
         .countdown-label { font-family:Montserrat,sans-serif; font-weight:700; font-size:10px; letter-spacing:.12em; color:rgba(255,255,255,0.4); text-transform:uppercase; margin-top:4px; display:block; }
 
         /* STAT BOX */
-        .stat-box { background:#0A1727; border:1px solid rgba(255,255,255,0.07); border-radius:2px; padding:18px 20px; position:relative; overflow:hidden; }
+        .stat-box { background:#0A1727; border:1px solid rgba(255,255,255,0.07); border-radius:12px; padding:18px 20px; position:relative; overflow:hidden; }
         .stat-val { font-family:Montserrat,sans-serif; font-weight:900; font-size:clamp(20px,3vw,28px); color:#FF7A29; }
         .stat-lbl { font-family:Montserrat,sans-serif; font-weight:700; font-size:10px; letter-spacing:.1em; color:rgba(255,255,255,0.4); text-transform:uppercase; margin-top:5px; }
 
         /* CARDS */
-        .card { background:#0A1727; border:1px solid rgba(255,255,255,0.07); border-radius:2px; }
+        .card { background:#0A1727; border:1px solid rgba(255,255,255,0.07); border-radius:12px; }
 
         /* STEP CARD */
-        .step-card { background:#0A1727; border:1px solid rgba(255,255,255,0.07); border-radius:2px; padding:20px 18px; display:flex; flex-direction:column; gap:10px; position:relative; transition:border-color .2s,transform .2s; }
+        .step-card { background:#0A1727; border:1px solid rgba(255,255,255,0.07); border-radius:12px; padding:20px 18px; display:flex; flex-direction:column; gap:10px; position:relative; transition:border-color .2s,transform .2s; }
         .step-card:hover { transform:translateY(-2px); }
         .step-card.active-step { border-color:rgba(255,122,41,0.5); animation:glowPulse 2.5s ease-in-out infinite; }
 
         /* TEAM CARD */
-        .team-card { background:#0A1727; border:1px solid rgba(255,255,255,0.07); border-radius:2px; padding:18px 16px; position:relative; overflow:hidden; transition:transform .2s,border-color .2s; cursor:default; display:flex; flex-direction:column; justify-content:space-between; min-height:130px; }
+        .team-card { background:#0A1727; border:1px solid rgba(255,255,255,0.07); border-radius:12px; padding:18px 16px; position:relative; overflow:hidden; transition:transform .2s,border-color .2s; cursor:default; display:flex; flex-direction:column; justify-content:space-between; min-height:130px; }
         .team-card:hover { transform:translateY(-3px); }
 
         /* ROADMAP */
-        .roadmap-block { background:#0A1727; border:1px solid rgba(255,255,255,0.07); border-radius:2px; min-width:200px; padding:22px 18px; flex-shrink:0; }
+        .roadmap-block { background:#0A1727; border:1px solid rgba(255,255,255,0.07); border-radius:12px; min-width:200px; padding:22px 18px; flex-shrink:0; }
         .roadmap-block.active { border-color:rgba(255,122,41,0.6); animation:glowPulse 2.5s ease-in-out infinite; }
 
         /* PRICING CARD */
-        .pricing-card { background:#0A1727; border:1px solid rgba(255,255,255,0.07); border-radius:2px; padding:22px 18px; text-align:center; transition:border-color .2s,transform .2s; }
+        .pricing-card { background:#0A1727; border:1px solid rgba(255,255,255,0.07); border-radius:12px; padding:22px 18px; text-align:center; transition:border-color .2s,transform .2s; }
         .pricing-card:hover { border-color:rgba(255,122,41,0.35); transform:translateY(-2px); }
 
         /* FOOTER LINK */
@@ -189,10 +189,10 @@ export function Home() {
         .footer-link:hover { color:#FF7A29; }
 
         /* SLIDE DOT */
-        .slide-dot { width:24px; height:3px; border-radius:2px; cursor:pointer; transition:all .3s; border:none; }
+        .slide-dot { width:24px; height:3px; border-radius:12px; cursor:pointer; transition:all .3s; border:none; }
       
         /* ── FLOATING REGISTER BUTTON ── */
-        .float-reg-btn { position:fixed; bottom:28px; right:28px; z-index:9999; background:linear-gradient(135deg,#FF7A29,#D95E10); border:none; border-radius:2px; color:#fff; font-family:'Montserrat',sans-serif; font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:14px 22px; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(255,122,41,0.45); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition:opacity .2s,transform .15s; }
+        .float-reg-btn { position:fixed; bottom:28px; right:28px; z-index:9999; background:linear-gradient(135deg,#FF7A29,#D95E10); border:none; border-radius:12px; color:#fff; font-family:'Montserrat',sans-serif; font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:14px 22px; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(255,122,41,0.45); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition:opacity .2s,transform .15s; }
         .float-reg-btn:hover { opacity:.9; transform:translateY(-2px); }
         @keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4)} 50%{box-shadow:0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0)} }
         .float-reg-pulse { animation:floatPulse 2.5s ease-in-out infinite; }
@@ -263,7 +263,7 @@ export function Home() {
                 style={{ width:"100%", height:"100%", objectFit:"contain", objectPosition:"center bottom", filter:"brightness(0.9) contrast(1.08) saturate(1.1)" }} />
             ) : (
               <div style={{ width:"100%", height:"100%", background:"linear-gradient(180deg,#0A0F1A,#040810)", display:"flex", alignItems:"center", justifyContent:"center" }}>
-                <div style={{ width:100, height:100, borderRadius:2, background:"linear-gradient(135deg,#E8B23D,#C49A1E)", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:40, color:"#fff" }}>SG</div>
+                <div style={{ width:100, height:100, borderRadius:12, background:"linear-gradient(135deg,#E8B23D,#C49A1E)", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:40, color:"#fff" }}>SG</div>
               </div>
             )}
             {/* Left gradient — merges white studio bg into dark slide bg */}
@@ -277,7 +277,7 @@ export function Home() {
             {/* BCPL gold glow around figure */}
             <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 75% 85% at 60% 50%, rgba(232,178,61,0.07) 0%, transparent 65%)", pointerEvents:"none" }} />
             {/* "BCPL AMBASSADOR" badge */}
-            <div style={{ position:"absolute", top:18, right:18, background:"linear-gradient(135deg,#E8B23D,#C49A1E)", borderRadius:2, padding:"5px 12px", fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:9, color:"#000", letterSpacing:".12em", textTransform:"uppercase" }}>
+            <div style={{ position:"absolute", top:18, right:18, background:"linear-gradient(135deg,#E8B23D,#C49A1E)", borderRadius:12, padding:"5px 12px", fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:9, color:"#000", letterSpacing:".12em", textTransform:"uppercase" }}>
               ★ BCPL AMBASSADOR
             </div>
           </div>
@@ -303,7 +303,7 @@ export function Home() {
         {/* LEFT: Main Slide Content */}
         <div className="wrap" style={{ position:"relative", zIndex:2, paddingTop:56, paddingBottom:64, maxWidth:680 }}>
           {/* Tag */}
-          <div style={{ display:"inline-flex", alignItems:"center", gap:8, background:`${slide.accent}18`, border:`1px solid ${slide.accent}44`, borderRadius:2, padding:"6px 14px", marginBottom:22, transition:"all 0.5s" }}>
+          <div style={{ display:"inline-flex", alignItems:"center", gap:8, background:`${slide.accent}18`, border:`1px solid ${slide.accent}44`, borderRadius:12, padding:"6px 14px", marginBottom:22, transition:"all 0.5s" }}>
             {slide.id === 1 && <span style={{ width:7, height:7, borderRadius:"50%", background:"#E8B23D", display:"inline-block" }} />}
             <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:11, color:slide.accent, letterSpacing:".12em", textTransform:"uppercase", transition:"color 0.5s" }}>{slide.tag}</span>
           </div>
@@ -349,7 +349,7 @@ export function Home() {
           {/* Ganguly attribution — slide 1 */}
           {slide.id === 1 && (
             <div style={{ display:"flex", alignItems:"center", gap:12, marginTop:8 }}>
-              <div style={{ width:36, height:36, borderRadius:2, background:"linear-gradient(135deg,#E8B23D,#C49A1E)", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:14, color:"#fff" }}>SG</div>
+              <div style={{ width:36, height:36, borderRadius:12, background:"linear-gradient(135deg,#E8B23D,#C49A1E)", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:14, color:"#fff" }}>SG</div>
               <div>
                 <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:15, color:"#E8B23D" }}>Sourav Ganguly</div>
                 <div style={{ fontFamily:"Inter,sans-serif", fontSize:12, color:"rgba(255,255,255,0.4)" }}>The Prince of Kolkata · BCPL Brand Ambassador</div>
@@ -361,7 +361,7 @@ export function Home() {
           {slide.id === 2 && (
             <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginTop:8 }}>
               {[{v:"4",l:"Seasons Done"},{v:"400+",l:"Players Auctioned"},{v:"₹14Cr+",l:"Total Distributed"}].map(s => (
-                <div key={s.l} style={{ background:"rgba(34,197,94,0.08)", border:"1px solid rgba(34,197,94,0.2)", borderRadius:2, padding:"10px 14px" }}>
+                <div key={s.l} style={{ background:"rgba(34,197,94,0.08)", border:"1px solid rgba(34,197,94,0.2)", borderRadius:12, padding:"10px 14px" }}>
                   <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:18, color:"#22C55E" }}>{s.v}</div>
                   <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:9, color:"rgba(255,255,255,0.4)", letterSpacing:".08em", marginTop:2 }}>{s.l}</div>
                 </div>
@@ -381,7 +381,7 @@ export function Home() {
           <div style={{ width:1, height:16, background:"rgba(255,255,255,0.15)" }} />
           {/* Admin: Add Banner (concept button) */}
           <button onClick={() => alert("Admin banner upload — connect to CMS/backend")}
-            style={{ background:"rgba(255,255,255,0.08)", border:"1px solid rgba(255,255,255,0.18)", borderRadius:2, color:"rgba(255,255,255,0.5)", fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:10, letterSpacing:".08em", padding:"5px 12px", cursor:"pointer", textTransform:"uppercase" }}>
+            style={{ background:"rgba(255,255,255,0.08)", border:"1px solid rgba(255,255,255,0.18)", borderRadius:12, color:"rgba(255,255,255,0.5)", fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:10, letterSpacing:".08em", padding:"5px 12px", cursor:"pointer", textTransform:"uppercase" }}>
             + Add Banner
           </button>
         </div>
@@ -395,11 +395,11 @@ export function Home() {
             <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:"clamp(20px,4vw,36px)", color:"#fff", marginBottom:8, textTransform:"uppercase" }}>⚡ PHASE 1 TRIALS NOW OPEN</div>
             <div style={{ fontFamily:"Inter,sans-serif", fontSize:"clamp(14px,2vw,16px)", color:"rgba(255,255,255,0.9)", marginBottom:24, lineHeight:1.5 }}>Send your 2-min video. BCCI-certified scouts review in 7 days.</div>
             <div style={{ display:"flex", justifyContent:"center", flexWrap:"wrap", gap:10, marginBottom:16 }}>
-              <div style={{ background:"rgba(0,0,0,0.22)", border:"1px solid rgba(255,255,255,0.22)", borderRadius:2, padding:"10px 18px", fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:13, color:"#fff" }}>🏏 Bat / 🎳 Bowl / 🧤 WK — <span style={{ color:"#FFE8A0" }}>₹299</span></div>
-              <div style={{ background:"rgba(0,0,0,0.22)", border:"1px solid rgba(255,255,255,0.22)", borderRadius:2, padding:"10px 18px", fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:13, color:"#fff" }}>⭐ All-Rounder — <span style={{ color:"#FFE8A0" }}>₹399</span></div>
+              <div style={{ background:"rgba(0,0,0,0.22)", border:"1px solid rgba(255,255,255,0.22)", borderRadius:12, padding:"10px 18px", fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:13, color:"#fff" }}>🏏 Bat / 🎳 Bowl / 🧤 WK — <span style={{ color:"#FFE8A0" }}>₹299</span></div>
+              <div style={{ background:"rgba(0,0,0,0.22)", border:"1px solid rgba(255,255,255,0.22)", borderRadius:12, padding:"10px 18px", fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:13, color:"#fff" }}>⭐ All-Rounder — <span style={{ color:"#FFE8A0" }}>₹399</span></div>
             </div>
             <div style={{ fontFamily:"Inter,sans-serif", fontSize:13, color:"rgba(255,255,255,0.75)", marginBottom:24 }}>If selected for Phase 2 — pay only then (₹2,000 / ₹3,000). No upfront commitment.</div>
-            <button style={{ background:"#060C18", border:"2px solid rgba(255,255,255,0.3)", borderRadius:2, color:"#fff", fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:14, letterSpacing:".06em", padding:"14px 32px", cursor:"pointer", textTransform:"uppercase" }}>REGISTER NOW →</button>
+            <button style={{ background:"#060C18", border:"2px solid rgba(255,255,255,0.3)", borderRadius:12, color:"#fff", fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:14, letterSpacing:".06em", padding:"14px 32px", cursor:"pointer", textTransform:"uppercase" }}>REGISTER NOW →</button>
           </div>
         </div>
       </section>
@@ -421,7 +421,7 @@ export function Home() {
 
           {/* ─ PHASE 1 BAND ─ */}
           <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:20 }}>
-            <div style={{ background:"linear-gradient(90deg,#FF7A29,#D95E10)", borderRadius:2, padding:"5px 14px", display:"flex", alignItems:"center", gap:8 }}>
+            <div style={{ background:"linear-gradient(90deg,#FF7A29,#D95E10)", borderRadius:12, padding:"5px 14px", display:"flex", alignItems:"center", gap:8 }}>
               <span style={{ width:6, height:6, borderRadius:"50%", background:"#fff", display:"inline-block", animation:"liveBlip 1.2s infinite" }} />
               <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:11, color:"#fff", letterSpacing:".12em" }}>PHASE 1 · ONLINE</span>
             </div>
@@ -435,7 +435,7 @@ export function Home() {
             <div style={{ position:"absolute", top:60, left:"15%", right:"15%", height:2, background:"linear-gradient(90deg,transparent,rgba(255,122,41,0.2),rgba(255,122,41,0.5),rgba(255,122,41,0.2),transparent)", pointerEvents:"none", zIndex:0 }} />
 
             {STEPS_P1.map((step) => (
-              <div key={step.num} style={{ background:"#0A1727", border:`1px solid ${step.active ? "rgba(255,122,41,0.55)" : "rgba(255,255,255,0.07)"}`, borderTop:`3px solid ${step.color}`, borderRadius:2, padding:"24px 22px 22px", position:"relative", overflow:"hidden", animation:step.active ? "glowPulse 2.5s ease-in-out infinite" : "none", zIndex:1, transition:"transform .2s" }}>
+              <div key={step.num} style={{ background:"#0A1727", border:`1px solid ${step.active ? "rgba(255,122,41,0.55)" : "rgba(255,255,255,0.07)"}`, borderTop:`3px solid ${step.color}`, borderRadius:12, padding:"24px 22px 22px", position:"relative", overflow:"hidden", animation:step.active ? "glowPulse 2.5s ease-in-out infinite" : "none", zIndex:1, transition:"transform .2s" }}>
                 {/* Giant bg step number */}
                 <div style={{ position:"absolute", right:-10, bottom:-24, fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:110, lineHeight:1, color:`${step.color}09`, userSelect:"none", pointerEvents:"none" }}>{step.num}</div>
                 {/* Glow corner */}
@@ -456,7 +456,7 @@ export function Home() {
                 <div style={{ fontFamily:"Inter,sans-serif", fontSize:12, color:"rgba(255,255,255,0.42)", lineHeight:1.65 }}>{step.sub}</div>
 
                 {step.active && (
-                  <div style={{ marginTop:14, display:"inline-flex", alignItems:"center", gap:6, background:"rgba(34,197,94,0.08)", border:"1px solid rgba(34,197,94,0.25)", borderRadius:2, padding:"4px 10px" }}>
+                  <div style={{ marginTop:14, display:"inline-flex", alignItems:"center", gap:6, background:"rgba(34,197,94,0.08)", border:"1px solid rgba(34,197,94,0.25)", borderRadius:12, padding:"4px 10px" }}>
                     <span style={{ width:5, height:5, borderRadius:"50%", background:"#22C55E", display:"inline-block", animation:"liveBlip 1s infinite" }} />
                     <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:9, color:"#22C55E", letterSpacing:".1em" }}>OPEN NOW</span>
                   </div>
@@ -468,7 +468,7 @@ export function Home() {
           {/* ─ P1 → P2 TRANSITION ─ */}
           <div style={{ display:"flex", alignItems:"center", gap:14, marginBottom:24 }}>
             <div style={{ flex:1, height:1, background:"linear-gradient(90deg,rgba(255,122,41,0.4),rgba(232,178,61,0.4))" }} />
-            <div style={{ background:"linear-gradient(135deg,#FF7A29 0%,#E8B23D 100%)", borderRadius:2, padding:"8px 18px", display:"flex", alignItems:"center", gap:8, boxShadow:"0 4px 20px rgba(232,178,61,0.2)" }}>
+            <div style={{ background:"linear-gradient(135deg,#FF7A29 0%,#E8B23D 100%)", borderRadius:12, padding:"8px 18px", display:"flex", alignItems:"center", gap:8, boxShadow:"0 4px 20px rgba(232,178,61,0.2)" }}>
               <span style={{ fontSize:14 }}>⭐</span>
               <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:10, color:"#fff", letterSpacing:".1em" }}>IF SELECTED → ADVANCE TO PHASE 2</span>
               <span style={{ fontSize:14 }}>→</span>
@@ -478,7 +478,7 @@ export function Home() {
 
           {/* ─ PHASE 2 BAND ─ */}
           <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:20 }}>
-            <div style={{ background:"linear-gradient(90deg,#E8B23D,#C49A1E)", borderRadius:2, padding:"5px 14px" }}>
+            <div style={{ background:"linear-gradient(90deg,#E8B23D,#C49A1E)", borderRadius:12, padding:"5px 14px" }}>
               <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:11, color:"#000", letterSpacing:".12em" }}>PHASE 2 · PHYSICAL</span>
             </div>
             <div style={{ flex:1, height:1, background:"linear-gradient(90deg,rgba(232,178,61,0.5),transparent)" }} />
@@ -488,7 +488,7 @@ export function Home() {
           {/* P2 Steps — wider cards side by side */}
           <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(320px,1fr))", gap:2, marginBottom:24 }}>
             {STEPS_P2.map((step) => (
-              <div key={step.num} style={{ background:"#0A1727", border:"1px solid rgba(255,255,255,0.07)", borderTop:`3px solid ${step.color}`, borderRadius:2, padding:"24px 22px", position:"relative", overflow:"hidden" }}>
+              <div key={step.num} style={{ background:"#0A1727", border:"1px solid rgba(255,255,255,0.07)", borderTop:`3px solid ${step.color}`, borderRadius:12, padding:"24px 22px", position:"relative", overflow:"hidden" }}>
                 <div style={{ position:"absolute", right:-10, bottom:-24, fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:110, lineHeight:1, color:`${step.color}09`, userSelect:"none" }}>{step.num}</div>
                 <div style={{ position:"absolute", top:0, right:0, width:80, height:80, background:`radial-gradient(circle at top right,${step.color}0E 0%,transparent 70%)` }} />
 
@@ -501,7 +501,7 @@ export function Home() {
                     <div style={{ position:"absolute", top:-4, right:-4, width:22, height:22, borderRadius:"50%", background:step.color, border:"2px solid #06101E", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:11, color: step.num===5 ? "#000" : "#fff" }}>{step.num}</div>
                     {/* Auction SOLD visual */}
                     {step.num===5 && (
-                      <div style={{ position:"absolute", bottom:-10, left:"50%", transform:"translateX(-50%)", background:"#E8B23D", borderRadius:2, padding:"2px 8px", fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:9, color:"#000", letterSpacing:".08em", whiteSpace:"nowrap" }}>GAVEL ↓</div>
+                      <div style={{ position:"absolute", bottom:-10, left:"50%", transform:"translateX(-50%)", background:"#E8B23D", borderRadius:12, padding:"2px 8px", fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:9, color:"#000", letterSpacing:".08em", whiteSpace:"nowrap" }}>GAVEL ↓</div>
                     )}
                   </div>
                   <div style={{ flex:1 }}>
@@ -516,7 +516,7 @@ export function Home() {
           {/* ─ P2 → FINAL TRANSITION ─ */}
           <div style={{ display:"flex", alignItems:"center", gap:14, marginBottom:24 }}>
             <div style={{ flex:1, height:1, background:"linear-gradient(90deg,rgba(232,178,61,0.4),rgba(34,197,94,0.4))" }} />
-            <div style={{ background:"linear-gradient(135deg,#E8B23D 0%,#22C55E 100%)", borderRadius:2, padding:"8px 18px", display:"flex", alignItems:"center", gap:8, boxShadow:"0 4px 20px rgba(34,197,94,0.15)" }}>
+            <div style={{ background:"linear-gradient(135deg,#E8B23D 0%,#22C55E 100%)", borderRadius:12, padding:"8px 18px", display:"flex", alignItems:"center", gap:8, boxShadow:"0 4px 20px rgba(34,197,94,0.15)" }}>
               <span style={{ fontSize:14 }}>🏆</span>
               <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:10, color:"#fff", letterSpacing:".1em" }}>SIGNED BY A FRANCHISE → PLAY BCPL S5</span>
             </div>
@@ -524,7 +524,7 @@ export function Home() {
           </div>
 
           {/* ─ STEP 6 · FINAL — Celebration card ─ */}
-          <div style={{ background:"linear-gradient(135deg,rgba(34,197,94,0.06) 0%,rgba(10,23,39,0.97) 60%)", border:"1px solid rgba(34,197,94,0.22)", borderTop:"3px solid #22C55E", borderRadius:2, padding:"clamp(24px,4vw,44px)", position:"relative", overflow:"hidden" }}>
+          <div style={{ background:"linear-gradient(135deg,rgba(34,197,94,0.06) 0%,rgba(10,23,39,0.97) 60%)", border:"1px solid rgba(34,197,94,0.22)", borderTop:"3px solid #22C55E", borderRadius:12, padding:"clamp(24px,4vw,44px)", position:"relative", overflow:"hidden" }}>
             {/* Huge 6 watermark */}
             <div style={{ position:"absolute", right:-20, top:"50%", transform:"translateY(-50%)", fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:"clamp(100px,16vw,200px)", color:"rgba(34,197,94,0.04)", lineHeight:1, userSelect:"none" }}>6</div>
             <div style={{ position:"absolute", top:0, right:0, width:240, height:240, background:"radial-gradient(circle at top right,rgba(34,197,94,0.08) 0%,transparent 70%)" }} />
@@ -547,8 +547,8 @@ export function Home() {
 
               <div style={{ flex:1, minWidth:200 }}>
                 <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:10, flexWrap:"wrap" }}>
-                  <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, background:"rgba(34,197,94,0.12)", border:"1px solid rgba(34,197,94,0.3)", borderRadius:2, padding:"3px 10px", color:"#22C55E", letterSpacing:".1em" }}>FINAL STEP</span>
-                  <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, background:"rgba(34,197,94,0.06)", border:"1px solid rgba(34,197,94,0.15)", borderRadius:2, padding:"3px 10px", color:"rgba(34,197,94,0.6)", letterSpacing:".1em" }}>PHASE FINAL</span>
+                  <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, background:"rgba(34,197,94,0.12)", border:"1px solid rgba(34,197,94,0.3)", borderRadius:12, padding:"3px 10px", color:"#22C55E", letterSpacing:".1em" }}>FINAL STEP</span>
+                  <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, background:"rgba(34,197,94,0.06)", border:"1px solid rgba(34,197,94,0.15)", borderRadius:12, padding:"3px 10px", color:"rgba(34,197,94,0.6)", letterSpacing:".1em" }}>PHASE FINAL</span>
                 </div>
                 <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:"clamp(20px,3vw,32px)", color:"#fff", textTransform:"uppercase", lineHeight:1.1, marginBottom:10 }}>
                   PLAY BCPL <span style={{ color:"#22C55E" }}>SEASON 5</span>
@@ -585,7 +585,7 @@ export function Home() {
         </svg>
         {/* Top progress bar */}
         <div style={{ position:"absolute", top:0, left:0, right:0, height:3, background:"rgba(255,255,255,0.04)" }}>
-          <div style={{ height:"100%", width:"20%", background:"linear-gradient(90deg,#FF7A29,#E8B23D)", borderRadius:2 }} />
+          <div style={{ height:"100%", width:"20%", background:"linear-gradient(90deg,#FF7A29,#E8B23D)", borderRadius:12 }} />
         </div>
 
         <div className="wrap" style={{ position:"relative", zIndex:1 }}>
@@ -603,7 +603,7 @@ export function Home() {
               { num:5, icon:"🏆", milestone:"TOURNAMENT",     dates:"Sep – Oct 2026",      statusColor:"#22C55E", status:"UPCOMING", active:false, bg:"linear-gradient(135deg,rgba(34,197,94,0.06) 0%,rgba(10,23,39,0.97) 100%)", desc:"BCPL Season 5 T20 tournament across India. ₹6 Crore prize pool.", cta:null },
             ].map((block, i, arr) => (
               <React.Fragment key={i}>
-                <div style={{ background:block.bg, border:`1.5px solid ${block.active ? "rgba(255,122,41,0.55)" : "rgba(255,255,255,0.07)"}`, borderTop:`3px solid ${block.statusColor}`, borderRadius:2, minWidth:220, maxWidth:240, padding:"24px 20px 22px", flexShrink:0, position:"relative", overflow:"hidden", animation:block.active ? "glowPulse 2.5s ease-in-out infinite" : "none", display:"flex", flexDirection:"column" }}>
+                <div style={{ background:block.bg, border:`1.5px solid ${block.active ? "rgba(255,122,41,0.55)" : "rgba(255,255,255,0.07)"}`, borderTop:`3px solid ${block.statusColor}`, borderRadius:12, minWidth:220, maxWidth:240, padding:"24px 20px 22px", flexShrink:0, position:"relative", overflow:"hidden", animation:block.active ? "glowPulse 2.5s ease-in-out infinite" : "none", display:"flex", flexDirection:"column" }}>
                   {/* Giant milestone number watermark */}
                   <div style={{ position:"absolute", right:-14, bottom:-20, fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:120, lineHeight:1, color:`${block.statusColor}07`, userSelect:"none" }}>{block.num}</div>
                   {/* Corner glow */}
@@ -622,7 +622,7 @@ export function Home() {
                   <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:18, color:"#fff", textTransform:"uppercase", letterSpacing:".02em", marginBottom:10, position:"relative", zIndex:1, lineHeight:1.1 }}>{block.milestone}</div>
 
                   {/* Status badge */}
-                  <div style={{ display:"inline-flex", alignItems:"center", gap:6, background: block.active ? "rgba(255,122,41,0.1)" : "rgba(255,255,255,0.04)", border:`1px solid ${block.active ? "rgba(255,122,41,0.35)" : "rgba(255,255,255,0.08)"}`, borderRadius:2, padding:"4px 10px", marginBottom:12, position:"relative", zIndex:1, alignSelf:"flex-start" }}>
+                  <div style={{ display:"inline-flex", alignItems:"center", gap:6, background: block.active ? "rgba(255,122,41,0.1)" : "rgba(255,255,255,0.04)", border:`1px solid ${block.active ? "rgba(255,122,41,0.35)" : "rgba(255,255,255,0.08)"}`, borderRadius:12, padding:"4px 10px", marginBottom:12, position:"relative", zIndex:1, alignSelf:"flex-start" }}>
                     {block.active && <span style={{ width:6, height:6, borderRadius:"50%", background:"#FF7A29", display:"inline-block", animation:"liveBlip 1.2s infinite" }} />}
                     <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, color:block.statusColor, letterSpacing:".1em" }}>{block.status}</span>
                   </div>
@@ -673,7 +673,7 @@ export function Home() {
                     <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:11, color:team.color, letterSpacing:".08em", textTransform:"uppercase" }}>{team.city}</div>
                   </div>
                   {/* Logo badge — transparent PNG, team-color subtle bg */}
-                  <div style={{ width:54, height:54, borderRadius:4, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", background:`${team.color}18`, border:`1.5px solid ${team.color}55`, boxShadow:`0 4px 18px ${team.color}44` }}>
+                  <div style={{ width:54, height:54, borderRadius:4, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", background:"rgba(255,255,255,0.96)", border:`2px solid ${team.color}55`, boxShadow:`0 4px 18px ${team.color}44` }}>
                     <img src={team.logo} alt={team.name} style={{ width:"86%", height:"86%", objectFit:"contain" }} />
                   </div>
                 </div>
@@ -735,7 +735,7 @@ export function Home() {
                 </blockquote>
                 <div style={{ display:"flex", alignItems:"center", gap:14 }}>
                   {/* Small avatar from ganguly_2 */}
-                  <div style={{ width:52, height:52, borderRadius:2, overflow:"hidden", border:"2px solid #E8B23D", flexShrink:0 }}>
+                  <div style={{ width:52, height:52, borderRadius:12, overflow:"hidden", border:"2px solid #E8B23D", flexShrink:0 }}>
                     <img src={G2} alt="Sourav Ganguly" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"top center" }} />
                   </div>
                   <div>
@@ -752,7 +752,7 @@ export function Home() {
                   { icon:"📜", label:"Ex-BCCI President",    sub:"Governed cricket 2019–22" },
                   { icon:"🏏", label:"BCPL S5 Ambassador",   sub:"Believes in grassroots" },
                 ].map(b => (
-                  <div key={b.label} style={{ background:"rgba(232,178,61,0.04)", border:"1px solid rgba(232,178,61,0.14)", borderRadius:2, padding:"14px 16px" }}>
+                  <div key={b.label} style={{ background:"rgba(232,178,61,0.04)", border:"1px solid rgba(232,178,61,0.14)", borderRadius:12, padding:"14px 16px" }}>
                     <div style={{ fontSize:18, marginBottom:6 }}>{b.icon}</div>
                     <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:11, color:"#E8B23D", marginBottom:3 }}>{b.label}</div>
                     <div style={{ fontFamily:"Inter,sans-serif", fontSize:11, color:"rgba(255,255,255,0.4)" }}>{b.sub}</div>
@@ -762,7 +762,7 @@ export function Home() {
             </div>
 
             {/* Right column — Ganguly shoot photo FULL BODY */}
-            <div style={{ position:"relative", background:"#06101E", borderRadius:2, border:"1px solid rgba(232,178,61,0.18)", overflow:"hidden", minHeight:420 }}>
+            <div style={{ position:"relative", background:"#06101E", borderRadius:12, border:"1px solid rgba(232,178,61,0.18)", overflow:"hidden", minHeight:420 }}>
               {/* The photo */}
               <img src={G} alt="Sourav Ganguly - BCPL Ambassador" style={{ width:"100%", height:"100%", objectFit:"contain", objectPosition:"center bottom", filter:"brightness(0.88) contrast(1.08) saturate(1.1)", display:"block" }} />
               {/* Top gradient — blends white studio bg top edge */}
@@ -779,8 +779,8 @@ export function Home() {
               {/* Overlay: name + title at bottom */}
               <div style={{ position:"absolute", bottom:0, left:0, right:0, padding:"20px 24px", zIndex:2 }}>
                 <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-                  <div style={{ background:"#E8B23D", borderRadius:2, padding:"4px 10px", fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:9, color:"#000", letterSpacing:".12em" }}>★ SEASON 5 AMBASSADOR</div>
-                  <div style={{ background:"rgba(255,122,41,0.12)", border:"1px solid rgba(255,122,41,0.3)", borderRadius:2, padding:"4px 10px", fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:9, color:"#FF7A29", letterSpacing:".1em" }}>BCPL T20</div>
+                  <div style={{ background:"#E8B23D", borderRadius:12, padding:"4px 10px", fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:9, color:"#000", letterSpacing:".12em" }}>★ SEASON 5 AMBASSADOR</div>
+                  <div style={{ background:"rgba(255,122,41,0.12)", border:"1px solid rgba(255,122,41,0.3)", borderRadius:12, padding:"4px 10px", fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:9, color:"#FF7A29", letterSpacing:".1em" }}>BCPL T20</div>
                 </div>
                 <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:"clamp(20px,3vw,28px)", color:"#E8B23D", marginTop:8, lineHeight:1.1 }}>SOURAV GANGULY</div>
                 <div style={{ fontFamily:"Inter,sans-serif", fontSize:12, color:"rgba(255,255,255,0.5)", marginTop:3 }}>The Prince of Kolkata · Former India Captain · Ex-BCCI President</div>

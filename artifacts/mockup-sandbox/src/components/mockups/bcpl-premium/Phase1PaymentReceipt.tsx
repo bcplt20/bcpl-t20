@@ -29,7 +29,7 @@ export function Phase1PaymentReceipt() {
 
         .btn-primary{
           background:linear-gradient(135deg,#FF7A29,#D95E10);
-          border:none;border-radius:2px;color:#fff;
+          border:none;border-radius:12px;color:#fff;
           font-family:Montserrat,sans-serif;font-weight:900;
           letter-spacing:0.06em;cursor:pointer;
           transition:transform .15s,filter .2s;
@@ -46,7 +46,7 @@ export function Phase1PaymentReceipt() {
         .receipt-val{color:#F0EDE8;font-weight:700;text-align:right}
 
         .next-card{
-          background:#0A1727;border:1px solid rgba(255,255,255,0.08);border-radius:2px;
+          background:#0A1727;border:1px solid rgba(255,255,255,0.08);border-radius:12px;
           padding:22px 20px;flex:1;min-width:200px;
           transition:border-color .2s,transform .2s;
         }
@@ -54,7 +54,7 @@ export function Phase1PaymentReceipt() {
 
         .share-btn{
           display:flex;align-items:center;justify-content:center;gap:8px;
-          padding:14px 22px;border-radius:2px;font-family:Montserrat,sans-serif;
+          padding:14px 22px;border-radius:12px;font-family:Montserrat,sans-serif;
           font-weight:800;font-size:13px;letter-spacing:.06em;cursor:pointer;
           border:none;transition:filter .2s,transform .15s;
         }
@@ -140,14 +140,14 @@ export function Phase1PaymentReceipt() {
               { label:'📍 Mumbai', color:'#FF7A29' },
               { label:'BCPL Season 5', color:'#E8B23D' },
             ].map(c => (
-              <span key={c.label} style={{ padding:'6px 16px', background:`rgba(255,255,255,0.05)`, border:`1px solid ${c.color}44`, borderRadius:2, fontSize:12, fontWeight:700, fontFamily:'Montserrat,sans-serif', color:c.color, letterSpacing:'.06em' }}>
+              <span key={c.label} style={{ padding:'6px 16px', background:`rgba(255,255,255,0.05)`, border:`1px solid ${c.color}44`, borderRadius:12, fontSize:12, fontWeight:700, fontFamily:'Montserrat,sans-serif', color:c.color, letterSpacing:'.06em' }}>
                 {c.label}
               </span>
             ))}
           </div>
 
           {/* Booking ref */}
-          <div className="fade-up fade-up-4" style={{ display:'inline-block', background:'#060C18', border:'1px solid rgba(255,122,41,0.4)', padding:'12px 24px', borderRadius:2, marginBottom:0 }}>
+          <div className="fade-up fade-up-4" style={{ display:'inline-block', background:'#060C18', border:'1px solid rgba(255,122,41,0.4)', padding:'12px 24px', borderRadius:12, marginBottom:0 }}>
             <div style={{ fontSize:9, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.18em', color:'rgba(255,255,255,0.35)', marginBottom:4 }}>BOOKING REFERENCE</div>
             <div style={{ fontFamily:'monospace', fontSize:18, fontWeight:700, color:'#FF7A29', letterSpacing:'.12em' }}>BCPL-S5-MUM-BAT-7432</div>
           </div>
@@ -167,7 +167,7 @@ export function Phase1PaymentReceipt() {
               <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:13, letterSpacing:'.14em', color:'#fff', textTransform:'uppercase' }}>PHASE 1 TRIAL ENTRY</div>
               <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:10, letterSpacing:'.12em', color:'rgba(255,255,255,0.75)', marginTop:2 }}>PAYMENT CONFIRMED</div>
             </div>
-            <div style={{ display:'flex', alignItems:'center', gap:6, background:'rgba(255,255,255,0.15)', padding:'6px 14px', borderRadius:2 }}>
+            <div style={{ display:'flex', alignItems:'center', gap:6, background:'rgba(255,255,255,0.15)', padding:'6px 14px', borderRadius:12 }}>
               <span style={{ width:7, height:7, borderRadius:'50%', background:'#fff', display:'inline-block', animation:'liveBlip 1.2s ease-in-out infinite' }} />
               <span style={{ fontSize:10, fontWeight:900, fontFamily:'Montserrat,sans-serif', color:'#fff', letterSpacing:'.1em' }}>CONFIRMED</span>
             </div>
@@ -199,7 +199,7 @@ export function Phase1PaymentReceipt() {
               <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:11, letterSpacing:'.14em', color:'rgba(255,255,255,0.5)', textTransform:'uppercase' }}>PHASE 2 STATUS</div>
               <div style={{ fontSize:13, color:'rgba(255,255,255,0.6)', marginTop:3 }}>🔒 Locked — You'll be notified if selected by scouts</div>
             </div>
-            <span style={{ background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', padding:'5px 12px', borderRadius:2, fontSize:10, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.12em', color:'rgba(255,255,255,0.4)' }}>PENDING</span>
+            <span style={{ background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', padding:'5px 12px', borderRadius:12, fontSize:10, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.12em', color:'rgba(255,255,255,0.4)' }}>PENDING</span>
           </div>
 
           {/* Decorative barcode */}
@@ -255,7 +255,7 @@ export function Phase1PaymentReceipt() {
 
       {/* ── SHARE SECTION ── */}
       <div className="wrap" style={{ marginTop:48 }}>
-        <div style={{ background:'#0A1727', border:'1px solid rgba(255,255,255,0.08)', borderRadius:2, padding:'28px', textAlign:'center' }}>
+        <div style={{ background:'#0A1727', border:'1px solid rgba(255,255,255,0.08)', borderRadius:12, padding:'28px', textAlign:'center' }}>
           <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:13, letterSpacing:'.16em', color:'rgba(255,255,255,0.4)', marginBottom:6, textTransform:'uppercase' }}>Share Your Achievement</div>
           <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'#fff', marginBottom:24 }}>Tell the world you're in the trials! 🏏</div>
           <div style={{ display:'flex', gap:12, justifyContent:'center', flexWrap:'wrap' }}>

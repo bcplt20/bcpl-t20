@@ -23,7 +23,7 @@ export function Phase2Payment() {
         @media(min-width:1024px){.ham-btn{display:none}}
         .btn-gold{
           background:linear-gradient(135deg,#E8B23D,#B8860B);
-          border:none;border-radius:2px;color:#000;
+          border:none;border-radius:12px;color:#000;
           font-family:Montserrat,sans-serif;font-weight:900;
           letter-spacing:0.08em;cursor:pointer;
           clip-path:polygon(0 0,calc(100% - 14px) 0,100% 100%,0 100%);
@@ -67,7 +67,7 @@ export function Phase2Payment() {
           </div>
           <div className="desk-nav">{NAV.map(n => <button key={n} className="nav-link">{n}</button>)}</div>
           <button className="ham-btn" onClick={() => setMenuOpen(o => !o)}>
-            {[0,1,2].map(i => <span key={i} style={{ width:24, height:2, background:'#fff', display:'block', borderRadius:2, transition:'all .3s', transform: menuOpen ? (i===0?'rotate(45deg) translate(5px,5px)':i===2?'rotate(-45deg) translate(5px,-5px)':'scaleX(0)') : 'none', opacity: menuOpen && i===1 ? 0 : 1 }} />)}
+            {[0,1,2].map(i => <span key={i} style={{ width:24, height:2, background:'#fff', display:'block', borderRadius:12, transition:'all .3s', transform: menuOpen ? (i===0?'rotate(45deg) translate(5px,5px)':i===2?'rotate(-45deg) translate(5px,-5px)':'scaleX(0)') : 'none', opacity: menuOpen && i===1 ? 0 : 1 }} />)}
           </button>
         </div>
         {menuOpen && (
@@ -79,7 +79,7 @@ export function Phase2Payment() {
 
       <div className="wrap" style={{ paddingTop:32 }}>
         {/* ACHIEVEMENT BANNER */}
-        <div style={{ background:'#060C18', border:'1px solid rgba(232,178,61,0.5)', borderLeft:'4px solid #E8B23D', padding:'14px 20px', marginBottom:32, display:'flex', alignItems:'center', gap:16, flexWrap:'wrap', borderRadius:2 }}>
+        <div style={{ background:'#060C18', border:'1px solid rgba(232,178,61,0.5)', borderLeft:'4px solid #E8B23D', padding:'14px 20px', marginBottom:32, display:'flex', alignItems:'center', gap:16, flexWrap:'wrap', borderRadius:12 }}>
           <span style={{ fontSize:20 }}>✅</span>
           <div>
             <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:13, color:'#E8B23D', letterSpacing:'.1em' }}>PHASE 1 CLEARED</span>
@@ -88,7 +88,7 @@ export function Phase2Payment() {
             <span style={{ color:'rgba(255,255,255,0.3)', margin:'0 10px' }}>|</span>
             <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:12, color:'rgba(255,255,255,0.7)' }}>🏏 Batsman · Mumbai</span>
           </div>
-          <div style={{ marginLeft:'auto', background:'rgba(34,197,94,0.12)', border:'1px solid rgba(34,197,94,0.35)', borderRadius:2, padding:'4px 12px', fontSize:10, fontWeight:900, fontFamily:'Montserrat,sans-serif', color:'#22C55E', letterSpacing:'.12em' }}>SELECTED ✓</div>
+          <div style={{ marginLeft:'auto', background:'rgba(34,197,94,0.12)', border:'1px solid rgba(34,197,94,0.35)', borderRadius:12, padding:'4px 12px', fontSize:10, fontWeight:900, fontFamily:'Montserrat,sans-serif', color:'#22C55E', letterSpacing:'.12em' }}>SELECTED ✓</div>
         </div>
 
         {/* PAGE TITLE */}
@@ -138,7 +138,7 @@ export function Phase2Payment() {
         </div>
 
         {/* INCLUSIONS */}
-        <div style={{ maxWidth:680, margin:'0 auto 32px', background:'#0A1727', border:'1px solid rgba(255,255,255,0.07)', borderRadius:2, padding:'24px 28px' }}>
+        <div style={{ maxWidth:680, margin:'0 auto 32px', background:'#0A1727', border:'1px solid rgba(255,255,255,0.07)', borderRadius:12, padding:'24px 28px' }}>
           <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:13, letterSpacing:'.12em', color:'rgba(255,255,255,0.55)', marginBottom:16, textTransform:'uppercase' }}>What ₹2,000 Gets You</div>
           {[
             { icon:'✅', text:'Reserved physical trial slot at your city ground', ok:true },
@@ -159,9 +159,9 @@ export function Phase2Payment() {
         <div style={{ maxWidth:680, margin:'0 auto' }}>
           <div
             onClick={() => setAgreed(a => !a)}
-            style={{ display:'flex', alignItems:'flex-start', gap:14, cursor:'pointer', padding:'16px 20px', background: agreed ? 'rgba(232,178,61,0.06)' : '#0A1727', border: agreed ? '1px solid rgba(232,178,61,0.4)' : '1px solid rgba(255,255,255,0.08)', borderRadius:2, marginBottom:20, transition:'all .2s' }}
+            style={{ display:'flex', alignItems:'flex-start', gap:14, cursor:'pointer', padding:'16px 20px', background: agreed ? 'rgba(232,178,61,0.06)' : '#0A1727', border: agreed ? '1px solid rgba(232,178,61,0.4)' : '1px solid rgba(255,255,255,0.08)', borderRadius:12, marginBottom:20, transition:'all .2s' }}
           >
-            <div style={{ width:20, height:20, border: agreed ? '2px solid #E8B23D' : '2px solid rgba(255,255,255,0.2)', borderRadius:2, flexShrink:0, display:'flex', alignItems:'center', justifyContent:'center', marginTop:1, background: agreed ? '#E8B23D' : 'transparent', transition:'all .2s' }}>
+            <div style={{ width:20, height:20, border: agreed ? '2px solid #E8B23D' : '2px solid rgba(255,255,255,0.2)', borderRadius:12, flexShrink:0, display:'flex', alignItems:'center', justifyContent:'center', marginTop:1, background: agreed ? '#E8B23D' : 'transparent', transition:'all .2s' }}>
               {agreed && <span style={{ color:'#000', fontSize:12, fontWeight:900 }}>✓</span>}
             </div>
             <span style={{ fontSize:13, color:'rgba(255,255,255,0.65)', lineHeight:1.55 }}>
@@ -178,7 +178,7 @@ export function Phase2Payment() {
           </button>
 
           {/* Security strip */}
-          <div style={{ marginTop:20, display:'flex', justifyContent:'center', alignItems:'center', gap:20, flexWrap:'wrap', padding:'14px 20px', background:'#060C18', border:'1px solid rgba(255,255,255,0.06)', borderRadius:2 }}>
+          <div style={{ marginTop:20, display:'flex', justifyContent:'center', alignItems:'center', gap:20, flexWrap:'wrap', padding:'14px 20px', background:'#060C18', border:'1px solid rgba(255,255,255,0.06)', borderRadius:12 }}>
             {[
               { icon:'🔒', label:'Razorpay Secured' },
               { icon:'🛡', label:'256-bit SSL' },

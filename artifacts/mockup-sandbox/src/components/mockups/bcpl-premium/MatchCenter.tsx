@@ -135,10 +135,10 @@ export function MatchCenter() {
         .nav-link:hover { color: #FF7A29; }
         .nav-link.active { color: #FF7A29; }
 
-        .btn-orange { background: linear-gradient(135deg,#FF7A29,#D95E10); border: none; border-radius: 2px; color: #fff; font-family: Montserrat, sans-serif; font-weight: 800; font-size: 13px; letter-spacing: 0.06em; cursor: pointer; padding: 11px 22px; transition: opacity 0.2s, transform 0.15s; text-transform: uppercase; }
+        .btn-orange { background: linear-gradient(135deg,#FF7A29,#D95E10); border: none; border-radius:12px; color: #fff; font-family: Montserrat, sans-serif; font-weight: 800; font-size: 13px; letter-spacing: 0.06em; cursor: pointer; padding: 11px 22px; transition: opacity 0.2s, transform 0.15s; text-transform: uppercase; }
         .btn-orange:hover { opacity: 0.9; transform: translateY(-1px); }
 
-        .card { background: #0A1727; border: 1px solid rgba(255,255,255,0.08); border-radius: 2px; }
+        .card { background: #0A1727; border: 1px solid rgba(255,255,255,0.08); border-radius:12px; }
 
         .section-label { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 11px; letter-spacing: 0.15em; color: #FF7A29; text-transform: uppercase; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
         .section-label::before { content: ''; display: inline-block; width: 24px; height: 2px; background: #FF7A29; }
@@ -148,17 +148,17 @@ export function MatchCenter() {
         .roadmap-scroll { display: flex; overflow-x: auto; padding-bottom: 16px; gap: 0; align-items: stretch; }
         .roadmap-scroll::-webkit-scrollbar { height: 4px; }
         .roadmap-scroll::-webkit-scrollbar-track { background: #060C18; }
-        .roadmap-scroll::-webkit-scrollbar-thumb { background: #FF7A29; border-radius: 2px; }
+        .roadmap-scroll::-webkit-scrollbar-thumb { background: #FF7A29; border-radius:12px; }
 
-        .roadmap-block { background: #0A1727; border: 1px solid rgba(255,255,255,0.08); border-radius: 2px; min-width: 230px; padding: 24px 20px; flex-shrink: 0; position: relative; }
+        .roadmap-block { background: #0A1727; border: 1px solid rgba(255,255,255,0.08); border-radius:12px; min-width: 230px; padding: 24px 20px; flex-shrink: 0; position: relative; }
         .roadmap-block.active { border-color: rgba(255,122,41,0.6); animation: glowPulse 2.5s ease-in-out infinite; }
         .roadmap-connector { width: 36px; height: 2px; background: rgba(255,255,255,0.1); align-self: center; flex-shrink: 0; position: relative; }
         .roadmap-connector::after { content: '▶'; position: absolute; right: -8px; top: -8px; color: rgba(255,255,255,0.18); font-size: 10px; }
 
-        .city-chip { background: #0A1727; border: 1px solid rgba(255,255,255,0.1); border-radius: 2px; padding: 8px 14px; font-family: Montserrat, sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 0.05em; color: rgba(255,255,255,0.7); text-transform: uppercase; transition: border-color 0.2s, color 0.2s; cursor: default; display: flex; align-items: center; gap: 8px; }
+        .city-chip { background: #0A1727; border: 1px solid rgba(255,255,255,0.1); border-radius:12px; padding: 8px 14px; font-family: Montserrat, sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 0.05em; color: rgba(255,255,255,0.7); text-transform: uppercase; transition: border-color 0.2s, color 0.2s; cursor: default; display: flex; align-items: center; gap: 8px; }
         .city-chip:hover { border-color: rgba(255,122,41,0.6); color: #FF7A29; }
 
-        .result-card { background: #0A1727; border: 1px solid rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; transition: transform 0.2s, border-color 0.2s; }
+        .result-card { background: #0A1727; border: 1px solid rgba(255,255,255,0.08); border-radius:12px; overflow: hidden; transition: transform 0.2s, border-color 0.2s; }
         .result-card:hover { transform: translateY(-3px); border-color: rgba(255,122,41,0.25); }
 
         .pts-row { display: grid; grid-template-columns: 28px 1fr 48px 28px 28px 48px 68px; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.15s; }
@@ -179,7 +179,7 @@ export function MatchCenter() {
         .footer-link:hover { color: #FF7A29; }
       
         /* ── FLOATING REGISTER BUTTON ── */
-        .float-reg-btn { position:fixed; bottom:28px; right:28px; z-index:9999; background:linear-gradient(135deg,#FF7A29,#D95E10); border:none; border-radius:2px; color:#fff; font-family:'Montserrat',sans-serif; font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:14px 22px; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(255,122,41,0.45); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition:opacity .2s,transform .15s; }
+        .float-reg-btn { position:fixed; bottom:28px; right:28px; z-index:9999; background:linear-gradient(135deg,#FF7A29,#D95E10); border:none; border-radius:12px; color:#fff; font-family:'Montserrat',sans-serif; font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:14px 22px; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(255,122,41,0.45); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition:opacity .2s,transform .15s; }
         .float-reg-btn:hover { opacity:.9; transform:translateY(-2px); }
         @keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4)} 50%{box-shadow:0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0)} }
         .float-reg-pulse { animation:floatPulse 2.5s ease-in-out infinite; }
@@ -247,7 +247,7 @@ export function MatchCenter() {
         <div className="wrap">
           <div style={{ animation: "fadeUp 0.7s ease both" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20, flexWrap: "wrap" }}>
-              <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 2, padding: "5px 12px" }}>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.3)", borderRadius:12, padding: "5px 12px" }}>
                 <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#EF4444", display: "inline-block", animation: "liveBlip 1.2s ease-in-out infinite" }} />
                 <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 10, letterSpacing: "0.1em", color: "#EF4444", textTransform: "uppercase" }}>Phase 1 Open</span>
               </div>
@@ -292,7 +292,7 @@ export function MatchCenter() {
                     {block.milestone}
                   </div>
 
-                  <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: block.active ? "rgba(255,122,41,0.12)" : "rgba(255,255,255,0.04)", border: `1px solid ${block.active ? "rgba(255,122,41,0.35)" : "rgba(255,255,255,0.08)"}`, borderRadius: 2, padding: "4px 10px", marginBottom: 14 }}>
+                  <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: block.active ? "rgba(255,122,41,0.12)" : "rgba(255,255,255,0.04)", border: `1px solid ${block.active ? "rgba(255,122,41,0.35)" : "rgba(255,255,255,0.08)"}`, borderRadius:12, padding: "4px 10px", marginBottom: 14 }}>
                     {block.active && (
                       <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#FF7A29", display: "inline-block", animation: "liveBlip 1.2s infinite" }} />
                     )}
@@ -333,7 +333,7 @@ export function MatchCenter() {
             {CITIES.map(city => (
               <div key={city} className="city-chip">
                 <span>{city}</span>
-                <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 9, letterSpacing: "0.1em", color: "#FF7A29", background: "rgba(255,122,41,0.12)", border: "1px solid rgba(255,122,41,0.2)", borderRadius: 2, padding: "2px 6px", textTransform: "uppercase" }}>Open</span>
+                <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 9, letterSpacing: "0.1em", color: "#FF7A29", background: "rgba(255,122,41,0.12)", border: "1px solid rgba(255,122,41,0.2)", borderRadius:12, padding: "2px 6px", textTransform: "uppercase" }}>Open</span>
               </div>
             ))}
           </div>
@@ -357,7 +357,7 @@ export function MatchCenter() {
                 {/* Orange header gradient */}
                 <div style={{ background: "linear-gradient(135deg,#0D1E35,#0A1727)", borderBottom: "1px solid rgba(255,255,255,0.06)", padding: "12px 18px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 10, letterSpacing: "0.1em", color: "rgba(255,255,255,0.3)", textTransform: "uppercase" }}>Exhibition Match {i + 1}</span>
-                  <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 10, letterSpacing: "0.1em", color: "#22C55E", background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 2, padding: "3px 8px", textTransform: "uppercase" }}>COMPLETED</span>
+                  <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 10, letterSpacing: "0.1em", color: "#22C55E", background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)", borderRadius:12, padding: "3px 8px", textTransform: "uppercase" }}>COMPLETED</span>
                 </div>
 
                 <div style={{ padding: "20px 18px" }}>

@@ -45,17 +45,17 @@ export function Phase2Registration() {
         @media(min-width:1024px){.main-grid{grid-template-columns:1fr 340px}}
         .btn-primary{
           background:linear-gradient(135deg,#FF7A29,#D95E10);
-          border:none;border-radius:2px;color:#fff;
+          border:none;border-radius:12px;color:#fff;
           font-family:Montserrat,sans-serif;font-weight:900;
           letter-spacing:0.06em;cursor:pointer;
           clip-path:polygon(0 0,calc(100% - 12px) 0,100% 100%,0 100%);
           transition:filter .2s,transform .15s;
         }
         .btn-primary:hover{filter:brightness(1.15);transform:translateY(-2px)}
-        .btn-primary:disabled{opacity:.35;cursor:not-allowed;filter:none;transform:none;clip-path:none;border-radius:2px}
+        .btn-primary:disabled{opacity:.35;cursor:not-allowed;filter:none;transform:none;clip-path:none;border-radius:12px}
         .btn-back{
           background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);
-          border-radius:2px;color:rgba(255,255,255,0.6);
+          border-radius:12px;color:rgba(255,255,255,0.6);
           font-family:Montserrat,sans-serif;font-weight:700;cursor:pointer;transition:all .2s;
         }
         .btn-back:hover{background:rgba(255,255,255,0.09);color:#fff}
@@ -71,7 +71,7 @@ export function Phase2Registration() {
         .field-inp[readonly]{opacity:.6;cursor:not-allowed}
         .field-lbl{display:block;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,0.38);margin-bottom:6px;font-family:Montserrat,sans-serif}
         .chip-btn{
-          border:1px solid rgba(255,255,255,0.12);border-radius:2px;
+          border:1px solid rgba(255,255,255,0.12);border-radius:12px;
           padding:8px 16px;font-size:12px;font-weight:700;font-family:Montserrat,sans-serif;
           cursor:pointer;transition:all .15s;background:transparent;color:rgba(255,255,255,0.55);
           letter-spacing:.04em;
@@ -95,10 +95,10 @@ export function Phase2Registration() {
         .ticket::before{left:-10px;border:1px solid rgba(255,122,41,0.3)}
         .ticket::after{right:-10px;border:1px solid rgba(255,122,41,0.3)}
         .ticket-dashed{border-top:2px dashed rgba(255,122,41,0.22);margin:0 24px}
-        .check-row{display:flex;align-items:flex-start;gap:14px;cursor:pointer;padding:16px;border:1px solid rgba(255,255,255,0.07);background:#0A1727;transition:border-color .2s;border-radius:2px}
+        .check-row{display:flex;align-items:flex-start;gap:14px;cursor:pointer;padding:16px;border:1px solid rgba(255,255,255,0.07);background:#0A1727;transition:border-color .2s;border-radius:12px}
         .check-row:hover{border-color:rgba(255,122,41,0.3)}
         .check-row.checked{border-color:rgba(34,197,94,0.4);background:rgba(34,197,94,0.04)}
-        .custom-check{width:20px;height:20px;border:2px solid rgba(255,255,255,0.2);border-radius:2px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-top:1px}
+        .custom-check{width:20px;height:20px;border:2px solid rgba(255,255,255,0.2);border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-top:1px}
         .custom-check.checked{background:#22C55E;border-color:#22C55E}
         .nav-link{font-size:12px;font-weight:700;font-family:Montserrat,sans-serif;letter-spacing:.08em;color:rgba(255,255,255,0.65);text-decoration:none;text-transform:uppercase;cursor:pointer;transition:color .2s;background:none;border:none}
         .nav-link:hover{color:#FF7A29}
@@ -132,7 +132,7 @@ export function Phase2Registration() {
             <button className="btn-primary" style={{ padding:'9px 22px', fontSize:12 }}>REGISTER</button>
           </div>
           <button className="ham-btn" onClick={() => setMenuOpen(o => !o)}>
-            {[0,1,2].map(i => <span key={i} style={{ width:24, height:2, background:'#fff', display:'block', borderRadius:2, transition:'all .3s', transform: menuOpen ? (i===0?'rotate(45deg) translate(5px,5px)':i===2?'rotate(-45deg) translate(5px,-5px)':'scaleX(0)') : 'none', opacity: menuOpen && i===1 ? 0 : 1 }} />)}
+            {[0,1,2].map(i => <span key={i} style={{ width:24, height:2, background:'#fff', display:'block', borderRadius:12, transition:'all .3s', transform: menuOpen ? (i===0?'rotate(45deg) translate(5px,5px)':i===2?'rotate(-45deg) translate(5px,-5px)':'scaleX(0)') : 'none', opacity: menuOpen && i===1 ? 0 : 1 }} />)}
           </button>
         </div>
         {menuOpen && (
@@ -144,7 +144,7 @@ export function Phase2Registration() {
 
       <div className="wrap" style={{ paddingTop:32 }}>
         {/* ACHIEVEMENT BANNER */}
-        <div style={{ background:'#060C18', border:'1px solid rgba(232,178,61,0.5)', borderLeft:'4px solid #E8B23D', padding:'14px 20px', marginBottom:32, display:'flex', alignItems:'center', gap:16, flexWrap:'wrap', borderRadius:2 }}>
+        <div style={{ background:'#060C18', border:'1px solid rgba(232,178,61,0.5)', borderLeft:'4px solid #E8B23D', padding:'14px 20px', marginBottom:32, display:'flex', alignItems:'center', gap:16, flexWrap:'wrap', borderRadius:12 }}>
           <span style={{ fontSize:20 }}>✅</span>
           <div>
             <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:13, color:'#E8B23D', letterSpacing:'.1em' }}>PHASE 1 CLEARED</span>
@@ -153,7 +153,7 @@ export function Phase2Registration() {
             <span style={{ color:'rgba(255,255,255,0.3)', margin:'0 10px' }}>|</span>
             <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:12, color:'rgba(255,255,255,0.7)' }}>🏏 Batsman · Mumbai</span>
           </div>
-          <div style={{ marginLeft:'auto', background:'rgba(34,197,94,0.12)', border:'1px solid rgba(34,197,94,0.35)', borderRadius:2, padding:'4px 12px', fontSize:10, fontWeight:900, fontFamily:'Montserrat,sans-serif', color:'#22C55E', letterSpacing:'.12em' }}>SELECTED ✓</div>
+          <div style={{ marginLeft:'auto', background:'rgba(34,197,94,0.12)', border:'1px solid rgba(34,197,94,0.35)', borderRadius:12, padding:'4px 12px', fontSize:10, fontWeight:900, fontFamily:'Montserrat,sans-serif', color:'#22C55E', letterSpacing:'.12em' }}>SELECTED ✓</div>
         </div>
 
         {/* PAGE TITLE */}
@@ -166,7 +166,7 @@ export function Phase2Registration() {
         </div>
 
         {/* STEP INDICATOR */}
-        <div style={{ background:'#0A1727', border:'1px solid rgba(255,255,255,0.07)', borderRadius:2, padding:'20px 24px', marginBottom:32 }}>
+        <div style={{ background:'#0A1727', border:'1px solid rgba(255,255,255,0.07)', borderRadius:12, padding:'20px 24px', marginBottom:32 }}>
           <div style={{ display:'flex', alignItems:'center' }}>
             {STEPS.map((s, i) => (
               <React.Fragment key={i}>
@@ -185,7 +185,7 @@ export function Phase2Registration() {
           <div>
             {/* STEP 1 */}
             {step === 1 && (
-              <div className="step-enter" style={{ background:'#0A1727', border:'1px solid rgba(255,255,255,0.07)', borderRadius:2, padding:28 }}>
+              <div className="step-enter" style={{ background:'#0A1727', border:'1px solid rgba(255,255,255,0.07)', borderRadius:12, padding:28 }}>
                 <div style={{ borderLeft:'3px solid #FF7A29', paddingLeft:14, marginBottom:24 }}>
                   <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:16, color:'#fff' }}>STEP 1 — Professional Details</div>
                 </div>
@@ -231,7 +231,7 @@ export function Phase2Registration() {
 
             {/* STEP 2 */}
             {step === 2 && (
-              <div className="step-enter" style={{ background:'#0A1727', border:'1px solid rgba(255,255,255,0.07)', borderRadius:2, padding:28 }}>
+              <div className="step-enter" style={{ background:'#0A1727', border:'1px solid rgba(255,255,255,0.07)', borderRadius:12, padding:28 }}>
                 <div style={{ borderLeft:'3px solid #FF7A29', paddingLeft:14, marginBottom:24 }}>
                   <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:16, color:'#fff' }}>STEP 2 — Emergency Contact</div>
                 </div>
@@ -270,7 +270,7 @@ export function Phase2Registration() {
 
             {/* STEP 3 */}
             {step === 3 && (
-              <div className="step-enter" style={{ background:'#0A1727', border:'1px solid rgba(255,255,255,0.07)', borderRadius:2, padding:28 }}>
+              <div className="step-enter" style={{ background:'#0A1727', border:'1px solid rgba(255,255,255,0.07)', borderRadius:12, padding:28 }}>
                 <div style={{ borderLeft:'3px solid #FF7A29', paddingLeft:14, marginBottom:24 }}>
                   <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:16, color:'#fff' }}>STEP 3 — Declaration</div>
                   <div style={{ color:'rgba(255,255,255,0.45)', fontSize:13, marginTop:4 }}>Please read and confirm each statement carefully</div>
@@ -288,7 +288,7 @@ export function Phase2Registration() {
                   ))}
                 </div>
                 {canNext && (
-                  <div style={{ marginTop:16, background:'rgba(34,197,94,0.08)', border:'1px solid rgba(34,197,94,0.25)', borderRadius:2, padding:'12px 16px', display:'flex', alignItems:'center', gap:10 }}>
+                  <div style={{ marginTop:16, background:'rgba(34,197,94,0.08)', border:'1px solid rgba(34,197,94,0.25)', borderRadius:12, padding:'12px 16px', display:'flex', alignItems:'center', gap:10 }}>
                     <span style={{ fontSize:16 }}>✅</span>
                     <span style={{ fontSize:12, fontWeight:700, fontFamily:'Montserrat,sans-serif', color:'#22C55E' }}>All declarations confirmed. You may proceed.</span>
                   </div>
@@ -339,7 +339,7 @@ export function Phase2Registration() {
             </div>
 
             {/* Info box */}
-            <div style={{ marginTop:16, background:'#060C18', border:'1px solid rgba(255,255,255,0.07)', borderRadius:2, padding:'16px' }}>
+            <div style={{ marginTop:16, background:'#060C18', border:'1px solid rgba(255,255,255,0.07)', borderRadius:12, padding:'16px' }}>
               <div style={{ fontSize:10, fontWeight:900, fontFamily:'Montserrat,sans-serif', letterSpacing:'.12em', color:'rgba(255,255,255,0.35)', marginBottom:10, textTransform:'uppercase' }}>What Phase 2 includes</div>
               {['Reserved physical trial slot','Franchise coaching staff evaluation','Live auction participation rights','BCPL Season 5 player profile'].map(item => (
                 <div key={item} style={{ display:'flex', gap:8, alignItems:'flex-start', marginBottom:8 }}>

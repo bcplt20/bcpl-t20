@@ -45,9 +45,9 @@ export function AuctionLive() {
         @media(min-width:1024px){.desk-nav{display:flex;align-items:center;gap:20px}}
         .ham-btn{display:flex;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
         @media(min-width:1024px){.ham-btn{display:none}}
-        .btn-gold{background:linear-gradient(135deg,#E8B23D,#C49A1E);border:none;border-radius:2px;color:#060C18;font-family:Montserrat,sans-serif;font-weight:900;letter-spacing:.06em;cursor:pointer;transition:all .2s;text-transform:uppercase}
+        .btn-gold{background:linear-gradient(135deg,#E8B23D,#C49A1E);border:none;border-radius:12px;color:#060C18;font-family:Montserrat,sans-serif;font-weight:900;letter-spacing:.06em;cursor:pointer;transition:all .2s;text-transform:uppercase}
         .btn-gold:hover{filter:brightness(1.1);transform:translateY(-2px)}
-        .bid-row{display:flex;align-items:center;gap:12;padding:14px 16px;border-radius:2px;transition:all .2s}
+        .bid-row{display:flex;align-items:center;gap:12;padding:14px 16px;border-radius:12px;transition:all .2s}
         @keyframes tickerScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
         @keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
         @keyframes shimGold{0%{background-position:-200% center}100%{background-position:200% center}}
@@ -86,7 +86,7 @@ export function AuctionLive() {
             {NAV.map(l=><a key={l} href="#" style={{ fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:12, color:'rgba(255,255,255,0.6)', textDecoration:'none', letterSpacing:'.08em', textTransform:'uppercase' }}>{l}</a>)}
           </nav>
           <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-            <div style={{ display:'flex', alignItems:'center', gap:8, background:'rgba(239,68,68,0.12)', border:'1px solid rgba(239,68,68,0.35)', borderRadius:2, padding:'6px 14px' }}>
+            <div style={{ display:'flex', alignItems:'center', gap:8, background:'rgba(239,68,68,0.12)', border:'1px solid rgba(239,68,68,0.35)', borderRadius:12, padding:'6px 14px' }}>
               <span style={{ width:8, height:8, borderRadius:'50%', background:'#EF4444', display:'inline-block', animation:'liveBlip 0.8s infinite' }} />
               <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:11, color:'#EF4444', letterSpacing:'.08em' }}>AUCTION LIVE</span>
             </div>
@@ -111,7 +111,7 @@ export function AuctionLive() {
 
         <div className="wrap" style={{ position:'relative', zIndex:1 }}>
           <div style={{ textAlign:'center', marginBottom:40, animation:'fadeUp 0.5s ease both' }}>
-            <div style={{ display:'inline-flex', alignItems:'center', gap:10, background:'rgba(239,68,68,0.12)', border:'1px solid rgba(239,68,68,0.4)', borderRadius:2, padding:'8px 20px', marginBottom:20, animation:'livePulse 1.5s infinite' }}>
+            <div style={{ display:'inline-flex', alignItems:'center', gap:10, background:'rgba(239,68,68,0.12)', border:'1px solid rgba(239,68,68,0.4)', borderRadius:12, padding:'8px 20px', marginBottom:20, animation:'livePulse 1.5s infinite' }}>
               <span style={{ width:9, height:9, borderRadius:'50%', background:'#EF4444', display:'inline-block', animation:'liveBlip 0.8s infinite' }} />
               <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:12, color:'#EF4444', letterSpacing:'.14em' }}>🔴 AUCTION LIVE NOW</span>
             </div>
@@ -127,11 +127,11 @@ export function AuctionLive() {
           </div>
 
           {/* CURRENT BID HERO */}
-          <div style={{ maxWidth:480, margin:'0 auto 48px', background:'linear-gradient(135deg,#0A1828,#06101E)', border:'2px solid #3B82F6', borderRadius:2, padding:'28px 24px', textAlign:'center', position:'relative', overflow:'hidden', animation:'glowBlue 3s ease-in-out infinite' }}>
+          <div style={{ maxWidth:480, margin:'0 auto 48px', background:'linear-gradient(135deg,#0A1828,#06101E)', border:'2px solid #3B82F6', borderRadius:12, padding:'28px 24px', textAlign:'center', position:'relative', overflow:'hidden', animation:'glowBlue 3s ease-in-out infinite' }}>
             <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse 80% 60% at 50% 0%,rgba(59,130,246,0.1) 0%,transparent 70%)', pointerEvents:'none' }} />
             <div style={{ position:'relative', zIndex:1 }}>
               <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:10, marginBottom:12 }}>
-                <div style={{ width:36, height:36, borderRadius:2, background:'rgba(59,130,246,0.2)', border:'1px solid rgba(59,130,246,0.5)', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:12, color:'#3B82F6' }}>MM</div>
+                <div style={{ width:36, height:36, borderRadius:12, background:'rgba(59,130,246,0.2)', border:'1px solid rgba(59,130,246,0.5)', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:12, color:'#3B82F6' }}>MM</div>
                 <div style={{ textAlign:'left' }}>
                   <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:11, color:'rgba(255,255,255,0.4)', letterSpacing:'.08em' }}>CURRENT LEADER</div>
                   <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:15, color:'#fff' }}>Mumbai Mavericks</div>
@@ -147,7 +147,7 @@ export function AuctionLive() {
 
       <div className="wrap">
         {/* JOURNEY RAIL */}
-        <div style={{ background:'#0A1727', border:'1px solid rgba(255,255,255,0.07)', borderRadius:2, padding:'24px 20px', marginBottom:24, overflowX:'auto' }}>
+        <div style={{ background:'#0A1727', border:'1px solid rgba(255,255,255,0.07)', borderRadius:12, padding:'24px 20px', marginBottom:24, overflowX:'auto' }}>
           <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:11, letterSpacing:'.12em', color:'rgba(255,255,255,0.35)', textTransform:'uppercase', marginBottom:20 }}>JOURNEY PROGRESS</div>
           <div style={{ display:'flex', alignItems:'center', minWidth:440 }}>
             {ROADMAP.map((step,i)=>(
@@ -167,13 +167,13 @@ export function AuctionLive() {
         </div>
 
         {/* BID HISTORY */}
-        <div style={{ background:'#0A1727', border:'1px solid rgba(255,255,255,0.07)', borderRadius:2, padding:'24px 20px', marginBottom:24 }}>
+        <div style={{ background:'#0A1727', border:'1px solid rgba(255,255,255,0.07)', borderRadius:12, padding:'24px 20px', marginBottom:24 }}>
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:20, flexWrap:'wrap', gap:8 }}>
             <div>
               <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(16px,2.5vw,20px)', color:'#fff', textTransform:'uppercase' }}>Bid History</div>
               <div style={{ fontFamily:'Inter,sans-serif', fontSize:13, color:'rgba(255,255,255,0.4)', marginTop:2 }}>5 franchises have bid on your profile</div>
             </div>
-            <div style={{ display:'flex', alignItems:'center', gap:8, background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.25)', borderRadius:2, padding:'6px 14px' }}>
+            <div style={{ display:'flex', alignItems:'center', gap:8, background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.25)', borderRadius:12, padding:'6px 14px' }}>
               <span style={{ width:7, height:7, borderRadius:'50%', background:'#EF4444', display:'inline-block', animation:'liveBlip 0.8s infinite' }} />
               <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:11, color:'#EF4444', letterSpacing:'.08em' }}>LIVE</span>
             </div>
@@ -181,22 +181,22 @@ export function AuctionLive() {
 
           <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
             {BIDS.map((bid,i)=>(
-              <div key={i} style={{ display:'flex', alignItems:'center', gap:12, padding:'14px 16px', borderRadius:2, background:bid.current ? 'rgba(59,130,246,0.08)' : i===0 ? 'rgba(59,130,246,0.08)' : 'rgba(255,255,255,0.02)', border:`1px solid ${bid.current ? 'rgba(59,130,246,0.4)' : 'rgba(255,255,255,0.06)'}`, animation: i===0 ? 'bidSlide 0.3s ease both' : 'none' }}>
+              <div key={i} style={{ display:'flex', alignItems:'center', gap:12, padding:'14px 16px', borderRadius:12, background:bid.current ? 'rgba(59,130,246,0.08)' : i===0 ? 'rgba(59,130,246,0.08)' : 'rgba(255,255,255,0.02)', border:`1px solid ${bid.current ? 'rgba(59,130,246,0.4)' : 'rgba(255,255,255,0.06)'}`, animation: i===0 ? 'bidSlide 0.3s ease both' : 'none' }}>
                 <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:12, color:'rgba(255,255,255,0.25)', width:24, flexShrink:0 }}>#{BIDS.length-i}</div>
-                <div style={{ width:36, height:36, borderRadius:2, background:`${bid.color}22`, border:`1px solid ${bid.color}44`, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:11, color:bid.color, flexShrink:0 }}>{bid.abbr}</div>
+                <div style={{ width:36, height:36, borderRadius:12, background:`${bid.color}22`, border:`1px solid ${bid.color}44`, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:11, color:bid.color, flexShrink:0 }}>{bid.abbr}</div>
                 <div style={{ flex:1 }}>
                   <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:13, color:bid.current ? '#fff' : 'rgba(255,255,255,0.65)' }}>{bid.team}</div>
                   <div style={{ fontFamily:'Inter,sans-serif', fontSize:11, color:'rgba(255,255,255,0.3)', marginTop:2 }}>{bid.time}</div>
                 </div>
                 <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(14px,2vw,18px)', color:bid.current ? '#3B82F6' : 'rgba(255,255,255,0.5)' }}>{bid.amount}</div>
-                {bid.current && <div style={{ background:'#3B82F6', borderRadius:2, padding:'3px 8px', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:9, color:'#fff', letterSpacing:'.08em', flexShrink:0 }}>LEADING</div>}
+                {bid.current && <div style={{ background:'#3B82F6', borderRadius:12, padding:'3px 8px', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:9, color:'#fff', letterSpacing:'.08em', flexShrink:0 }}>LEADING</div>}
               </div>
             ))}
           </div>
         </div>
 
         {/* NOTICE */}
-        <div style={{ background:'rgba(59,130,246,0.06)', border:'1px solid rgba(59,130,246,0.2)', borderRadius:2, padding:'18px 20px', display:'flex', gap:14 }}>
+        <div style={{ background:'rgba(59,130,246,0.06)', border:'1px solid rgba(59,130,246,0.2)', borderRadius:12, padding:'18px 20px', display:'flex', gap:14 }}>
           <span style={{ fontSize:20, flexShrink:0 }}>⏳</span>
           <div>
             <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:12, color:'#3B82F6', marginBottom:4, letterSpacing:'.06em' }}>AUCTION CLOSING SOON</div>

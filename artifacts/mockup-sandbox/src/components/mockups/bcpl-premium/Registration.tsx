@@ -177,7 +177,7 @@ export function Registration() {
 
         /* ── CITY CHIP ── */
         .city-chip{
-          border:1px solid rgba(255,255,255,0.1);border-radius:2px;
+          border:1px solid rgba(255,255,255,0.1);border-radius:12px;
           padding:8px 14px;font-size:13px;font-weight:600;
           cursor:pointer;transition:all .15s;background:transparent;color:rgba(255,255,255,0.65);
         }
@@ -307,7 +307,7 @@ export function Registration() {
         <div className="wrap">
           {/* Live badge */}
           <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:16 }}>
-            <div style={{ display:'flex', alignItems:'center', gap:6, background:'rgba(255,122,41,0.12)', border:'1px solid rgba(255,122,41,0.35)', padding:'5px 14px', borderRadius:2 }}>
+            <div style={{ display:'flex', alignItems:'center', gap:6, background:'rgba(255,122,41,0.12)', border:'1px solid rgba(255,122,41,0.35)', padding:'5px 14px', borderRadius:12 }}>
               <span style={{ width:7, height:7, borderRadius:'50%', background:'#FF7A29', display:'inline-block', animation:'liveBlip 1.2s ease-in-out infinite' }} />
               <span style={{ fontSize:10, fontWeight:800, fontFamily:'Montserrat,sans-serif', color:'#FF7A29', letterSpacing:'.14em' }}>PHASE 1 OPEN NOW</span>
             </div>
@@ -645,7 +645,7 @@ export function Registration() {
                 <button
                   className="btn-primary"
                   disabled={!agreed}
-                  style={{ width:'100%', padding:'20px 0', fontSize:17, clipPath:'none', borderRadius:2, letterSpacing:'.08em' }}
+                  style={{ width:'100%', padding:'20px 0', fontSize:17, clipPath:'none', borderRadius:12, letterSpacing:'.08em' }}
                 >
                   🏏 &nbsp;PAY ₹{price} · ENTER PHASE 1 TRIALS
                 </button>
@@ -665,7 +665,7 @@ export function Registration() {
                 </button>
               )}
               {step < 4 && (
-                <button className="btn-primary" disabled={!canNext} onClick={() => canNext && setStep(s => s + 1)} style={{ flex:2, padding:'14px 0', fontSize:14, clipPath:'none', borderRadius:2, letterSpacing:'.06em' }}>
+                <button className="btn-primary" disabled={!canNext} onClick={() => canNext && setStep(s => s + 1)} style={{ flex:2, padding:'14px 0', fontSize:14, clipPath:'none', borderRadius:12, letterSpacing:'.06em' }}>
                   CONTINUE →
                 </button>
               )}
@@ -714,11 +714,11 @@ export function Registration() {
           className="btn-primary"
           disabled={!canNext}
           onClick={() => canNext && (step < 4 ? setStep(s => s + 1) : null)}
-          style={{ flex:2, padding:'15px 0', fontSize:14, clipPath:'none', borderRadius:2, letterSpacing:'.06em' }}
+          style={{ flex:2, padding:'15px 0', fontSize:14, clipPath:'none', borderRadius:12, letterSpacing:'.06em' }}
         >
           {step < 4 ? 'CONTINUE →' : `PAY ₹${price} · ENTER TRIALS`}
         </button>
-        <button style={{ flex:1, padding:'15px 0', background:'linear-gradient(135deg,#25D366,#1BA851)', border:'none', borderRadius:2, color:'#fff', fontWeight:700, cursor:'pointer', fontSize:13, fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em' }}>
+        <button style={{ flex:1, padding:'15px 0', background:'linear-gradient(135deg,#25D366,#1BA851)', border:'none', borderRadius:12, color:'#fff', fontWeight:700, cursor:'pointer', fontSize:13, fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em' }}>
           💬 WHATSAPP
         </button>
       </div>
