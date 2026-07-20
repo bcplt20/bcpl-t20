@@ -319,11 +319,14 @@ export default function LiveScoringView() {
 
     if (!isExtra) setCurrentOverBalls(b => [...b, isWicket ? "W" : outcome]);
 
+    // Compute over-completion from current inn state (before the updater runs)
+    const overComplete = !isExtra && (inn.balls + 1) === 6;
+
     setInn(prev => {
       const newBalls = isExtra ? prev.balls : prev.balls + 1;
-      const overComplete = !isExtra && newBalls === 6;
-      const newOvers = overComplete ? prev.overs + 1 : prev.overs;
-      const finalBalls = overComplete ? 0 : newBalls;
+      const _overComplete = !isExtra && newBalls === 6;
+      const newOvers = _overComplete ? prev.overs + 1 : prev.overs;
+      const finalBalls = _overComplete ? 0 : newBalls;
 
       // Update batting
       const newBatting = prev.batting.map((b, i) => {

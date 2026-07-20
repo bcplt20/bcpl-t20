@@ -23,10 +23,10 @@ const RTES: Record<string,string> = {
 };
 
 const STATS = [
-  { value:"₹6 Cr", label:"Prize Pool",      color:"#FF7A29" },
-  { value:"10",    label:"Franchise Teams", color:"#E8B23D" },
-  { value:"21",    label:"Trial Cities",    color:"#22C55E" },
-  { value:"4",     label:"Seasons Done",    color:"#3B82F6" },
+  { value:"₹6 Cr+", label:"Prize Pool",      color:"#FF7A29" },
+  { value:"10",     label:"Franchise Teams", color:"#E8B23D" },
+  { value:"50+",    label:"Trial Cities",    color:"#22C55E" },
+  { value:"4",      label:"Seasons Done",    color:"#3B82F6" },
 ];
 
 const STEPS = [
@@ -43,7 +43,7 @@ const FAQS = [
   { q:"Do I pay extra for Phase 2?",           a:"Only if selected. Phase 2 fee is ₹2,000 (Bat/Bowl/WK) or ₹3,000 (All-rounder). Not selected = pay nothing more." },
   { q:"Are there hidden costs?",               a:"Zero. Maximum total cost is ₹2,299–₹3,399 for your entire BCPL journey — registration to franchise auction." },
   { q:"Who reviews my Phase 1 video?",         a:"BCCI-certified cricket scouts review every video. Results sent within 7 working days of submission." },
-  { q:"Which cities have physical trials?",    a:"21 cities including Mumbai, Delhi, Bengaluru, Hyderabad, Chennai, Kolkata, Ahmedabad, Jaipur, Lucknow, Pune, and more." },
+  { q:"Which cities have physical trials?",    a:"50+ cities including Mumbai, Delhi, Bengaluru, Hyderabad, Chennai, Kolkata, Ahmedabad, Jaipur, Lucknow, Pune, Surat, Nagpur, Indore, Bhopal, Patna, Kochi, and many more." },
   { q:"What if I'm not selected for Phase 2?", a:"You simply don't pay for Phase 2. Your Phase 1 fee covers the scout review and there is no further obligation." },
 ];
 
@@ -51,16 +51,39 @@ const FAQS = [
 const BANNERS = [
   { text:"🎁 Refer a friend and get ₹50 cashback on your next phase fee!", cta:"Refer Now", color:"#1a3a1a", border:"#22C55E", textCol:"#22C55E", ctaCol:"#22C55E" },
   { text:"⏰ Last date for Phase 1 registration is 28th February 2026 — Don't miss out!", cta:"Register Now", color:"#1a1a0a", border:"#FF7A29", textCol:"#FF7A29", ctaCol:"#FF7A29" },
-  { text:"🏏 New cities added! Trials now in 21 cities across India. Check your city →", cta:"View Cities", color:"#0a1a2e", border:"#3B82F6", textCol:"#60A5FA", ctaCol:"#60A5FA" },
+  { text:"🏏 New cities added! Trials now in 50+ cities across India. Check your city →", cta:"View Cities", color:"#0a1a2e", border:"#3B82F6", textCol:"#60A5FA", ctaCol:"#60A5FA" },
 ];
 
 /* Season timeline */
 const TIMELINE = [
   { month:"Oct – Feb", label:"Registrations", icon:"📋", desc:"Online Phase 1 registrations open. Pay ₹299. Upload trial video.", color:"#FF7A29", done:true },
-  { month:"Mar – Jun", label:"Trials",         icon:"🏟", desc:"Physical trials across 21 cities. BCCI scouts evaluate players live.", color:"#E8B23D", done:false },
+  { month:"Mar – Jun", label:"Trials",         icon:"🏟", desc:"Physical trials across 50+ cities. BCCI scouts evaluate players live.", color:"#E8B23D", done:false },
   { month:"Jul – Aug", label:"Results",        icon:"📣", desc:"Selection results announced. Shortlisted players notified directly.", color:"#22C55E", done:false },
   { month:"August",    label:"Auction",        icon:"🔨", desc:"IPL-style live franchise auction. 10 teams bid for top players.", color:"#3B82F6", done:false },
   { month:"Sep – Oct", label:"Tournament",     icon:"🏆", desc:"BCPL T20 Season 5 kicks off. ₹6 Crore prize pool up for grabs.", color:"#6366F1", done:false },
+];
+
+/* Matches */
+const MATCHES = [
+  { status:"LIVE",     team1:"Mumbai Mavericks",   t1Slug:"mumbai_mavericks",   t1Color:"#3B82F6", team2:"Kolkata Tigers",     t2Slug:"kolkata_tigers",     t2Color:"#F97316", score1:"124/4 (14.2 ov)", score2:"172/6 (20 ov)",   info:"Match 12 · Wankhede, Mumbai",    winner:""                 },
+  { status:"UPCOMING", team1:"Rajasthan Scorchers", t1Slug:"rajasthan_scorchers",t1Color:"#E97B6B", team2:"Punjab Warriors",    t2Slug:"punjab_warriors",    t2Color:"#DC2626", score1:"",                score2:"",                info:"Match 13 · 22 Jul · SMS Stadium, Jaipur", winner:"" },
+  { status:"UPCOMING", team1:"Delhi Suryas",         t1Slug:"delhi_suryas",       t1Color:"#6366F1", team2:"Chennai Thalaivas",  t2Slug:"chennai_thalaivas",  t2Color:"#2563EB", score1:"",                score2:"",                info:"Match 14 · 23 Jul · Feroz Shah Kotla",    winner:"" },
+  { status:"RESULT",   team1:"Hyderabad Hawks",      t1Slug:"hyderabad_hawks",    t1Color:"#16A34A", team2:"Bengaluru Rockets",  t2Slug:"bengaluru_rockets",  t2Color:"#EF4444", score1:"168/5 (20 ov)",   score2:"142/8 (20 ov)",   info:"Match 11 · 19 Jul · Rajiv Gandhi Stadium", winner:"Hyderabad Hawks" },
+  { status:"RESULT",   team1:"Ahmedabad Lions",      t1Slug:"ahmedabad_lions",    t1Color:"#B91C1C", team2:"Lucknow Nawabs",    t2Slug:"lucknow_nawabs",     t2Color:"#F59E0B", score1:"155/6 (20 ov)",   score2:"158/4 (18.3 ov)", info:"Match 10 · 18 Jul · Motera, Ahmedabad",    winner:"Lucknow Nawabs"  },
+];
+
+/* Points Table */
+const POINTS_TABLE = [
+  { rank:1,  team:"Kolkata Tigers",       slug:"kolkata_tigers",      color:"#F97316", p:12, w:9, l:2, nr:1, pts:19, nrr:"+1.245" },
+  { rank:2,  team:"Mumbai Mavericks",     slug:"mumbai_mavericks",    color:"#3B82F6", p:12, w:8, l:3, nr:1, pts:17, nrr:"+0.876" },
+  { rank:3,  team:"Lucknow Nawabs",       slug:"lucknow_nawabs",      color:"#F59E0B", p:12, w:7, l:4, nr:1, pts:15, nrr:"+0.543" },
+  { rank:4,  team:"Hyderabad Hawks",      slug:"hyderabad_hawks",     color:"#16A34A", p:12, w:7, l:5, nr:0, pts:14, nrr:"+0.321" },
+  { rank:5,  team:"Delhi Suryas",         slug:"delhi_suryas",        color:"#6366F1", p:12, w:6, l:5, nr:1, pts:13, nrr:"+0.112" },
+  { rank:6,  team:"Chennai Thalaivas",    slug:"chennai_thalaivas",   color:"#2563EB", p:12, w:5, l:6, nr:1, pts:11, nrr:"-0.088" },
+  { rank:7,  team:"Rajasthan Scorchers",  slug:"rajasthan_scorchers", color:"#E97B6B", p:12, w:4, l:7, nr:1, pts:9,  nrr:"-0.234" },
+  { rank:8,  team:"Punjab Warriors",      slug:"punjab_warriors",     color:"#DC2626", p:11, w:4, l:7, nr:0, pts:8,  nrr:"-0.456" },
+  { rank:9,  team:"Bengaluru Rockets",    slug:"bengaluru_rockets",   color:"#EF4444", p:12, w:3, l:8, nr:1, pts:7,  nrr:"-0.678" },
+  { rank:10, team:"Ahmedabad Lions",      slug:"ahmedabad_lions",     color:"#B91C1C", p:11, w:2, l:9, nr:0, pts:4,  nrr:"-1.234" },
 ];
 
 /* Sponsors */
@@ -206,12 +229,14 @@ export function Home() {
         .banner-out{animation:bannerOut .35s ease forwards;}
 
         /* Timeline card pop */
-        .tl-card{animation:tlPop .5s ease forwards;opacity:0;}
+        .tl-card{animation:tlPop .5s ease forwards;opacity:0;display:flex;flex-direction:column;}
         .tl-card:nth-child(1){animation-delay:.1s;}
         .tl-card:nth-child(2){animation-delay:.2s;}
         .tl-card:nth-child(3){animation-delay:.3s;}
         .tl-card:nth-child(4){animation-delay:.4s;}
         .tl-card:nth-child(5){animation-delay:.5s;}
+        /* Equal-height timeline inner cards */
+        .tl-inner{flex:1;display:flex;flex-direction:column;}
 
         /* Sponsor hover */
         .sp-card{transition:transform .2s,border-color .2s;}
@@ -227,7 +252,7 @@ export function Home() {
         <div style={{ display:"flex", whiteSpace:"nowrap", animation:"ticker 36s linear infinite" }}>
           {[0,1].map(i=>(
             <span key={i} className="mont" style={{ fontSize:11, fontWeight:800, letterSpacing:".1em", color:"#fff", paddingRight:80 }}>
-              🏏 SEASON 5 OPEN &nbsp;·&nbsp; ₹6 CR PRIZE POOL &nbsp;·&nbsp; 10 FRANCHISE TEAMS &nbsp;·&nbsp; 21 CITIES &nbsp;·&nbsp; REGISTER AT ₹299 &nbsp;·&nbsp; SOURAV GANGULY &nbsp;·&nbsp; #OfficeSeStadiumtak &nbsp;&nbsp;&nbsp;
+              🏏 SEASON 5 OPEN &nbsp;·&nbsp; ₹6 CR+ PRIZE POOL &nbsp;·&nbsp; 10 FRANCHISE TEAMS &nbsp;·&nbsp; 50+ CITIES &nbsp;·&nbsp; REGISTER AT ₹299 &nbsp;·&nbsp; SOURAV GANGULY &nbsp;·&nbsp; #OfficeSeStadiumtak &nbsp;&nbsp;&nbsp;
             </span>
           ))}
         </div>
@@ -253,10 +278,33 @@ export function Home() {
 
           {/* Logo */}
           <div style={{ display:"flex", alignItems:"center", gap:10, flexShrink:0, cursor:"pointer" }} onClick={()=>navigate("/")}>
-            {/* Hexagonal BCPL badge */}
-            <div className="bcpl-logo" style={{ width:38, height:38, borderRadius:10, background:"linear-gradient(135deg,#FF7A29,#C94E0E)", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 0 12px rgba(255,122,41,.35)", flexShrink:0 }}>
-              <span className="mont" style={{ fontWeight:900, fontSize:14, color:"#fff", letterSpacing:"-.02em", lineHeight:1 }}>B</span>
-            </div>
+            {/* BCPL Shield Crest */}
+            <svg width="44" height="48" viewBox="0 0 44 48" fill="none" style={{ flexShrink:0, filter:"drop-shadow(0 0 10px rgba(255,122,41,.4))" }}>
+              <defs>
+                <linearGradient id="shGrad" x1="0" y1="0" x2="44" y2="48" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stopColor="#FF8C40"/>
+                  <stop offset="60%" stopColor="#FF6B00"/>
+                  <stop offset="100%" stopColor="#C94E0E"/>
+                </linearGradient>
+                <linearGradient id="shShine" x1="0" y1="0" x2="0" y2="48" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stopColor="rgba(255,255,255,0.28)"/>
+                  <stop offset="55%" stopColor="rgba(255,255,255,0)"/>
+                </linearGradient>
+              </defs>
+              {/* Shield body */}
+              <path d="M22 1 L43 9.5 L43 28 Q43 42 22 47 Q1 42 1 28 L1 9.5 Z" fill="url(#shGrad)" stroke="rgba(255,200,80,0.25)" strokeWidth="0.8"/>
+              {/* Shine */}
+              <path d="M22 1 L43 9.5 L43 28 Q43 42 22 47 Q1 42 1 28 L1 9.5 Z" fill="url(#shShine)"/>
+              {/* Inner border ring */}
+              <path d="M22 4 L40 11.5 L40 28 Q40 40 22 44 Q4 40 4 28 L4 11.5 Z" fill="none" stroke="rgba(255,210,100,0.22)" strokeWidth="1"/>
+              {/* Cricket ball seam arcs */}
+              <path d="M13 20 Q22 15 31 20" stroke="rgba(255,255,255,0.18)" strokeWidth="1.2" fill="none"/>
+              <path d="M13 20 Q22 25 31 20" stroke="rgba(255,255,255,0.18)" strokeWidth="1.2" fill="none"/>
+              {/* BCPL text */}
+              <text x="22" y="21" textAnchor="middle" dominantBaseline="middle" fontFamily="'Montserrat',Arial Black,sans-serif" fontWeight="900" fontSize="12.5" fill="white" letterSpacing="0.8">BCPL</text>
+              {/* T20 subtitle */}
+              <text x="22" y="34" textAnchor="middle" dominantBaseline="middle" fontFamily="'Montserrat',Arial Black,sans-serif" fontWeight="800" fontSize="8.5" fill="rgba(255,218,100,0.95)" letterSpacing="2.5">T20</text>
+            </svg>
             <div>
               <div style={{ display:"flex", alignItems:"baseline", gap:2 }}>
                 <span className="mont" style={{ fontWeight:900, fontSize:20, color:"#FF7A29", lineHeight:1 }}>BCPL</span>
@@ -331,7 +379,7 @@ export function Home() {
               </h1>
 
               <p style={{ fontSize:"clamp(15px,2vw,18px)", color:"rgba(255,255,255,.6)", lineHeight:1.7, marginBottom:28, maxWidth:500 }}>
-                10 franchise teams. 21 cities. ₹6 Crore prize pool. Open to every working professional. <strong style={{ color:"rgba(255,255,255,.85)" }}>Office se Stadium tak.</strong>
+                10 franchise teams. 50+ cities. ₹6 Crore+ prize pool. Open to every working professional. <strong style={{ color:"rgba(255,255,255,.85)" }}>Office se Stadium tak.</strong>
               </p>
 
               {/* Price pills */}
@@ -582,7 +630,7 @@ export function Home() {
                 )}
 
                 {/* Card */}
-                <div style={{ margin:"0 6px", background:"linear-gradient(135deg,#0A1727,#060C18)", border:`1.5px solid ${t.color}33`, borderTop:`3px solid ${t.color}`, borderRadius:16, padding:"20px 16px", textAlign:"center", position:"relative", overflow:"hidden" }}>
+                <div className="tl-inner" style={{ margin:"0 6px", background:"linear-gradient(135deg,#0A1727,#060C18)", border:`1.5px solid ${t.color}33`, borderTop:`3px solid ${t.color}`, borderRadius:16, padding:"20px 16px", textAlign:"center", position:"relative", overflow:"hidden" }}>
                   {/* Shimmer bg */}
                   <div style={{ position:"absolute", inset:0, background:`radial-gradient(ellipse 80% 60% at 50% 0%,${t.color}08 0%,transparent 70%)`, pointerEvents:"none" }}/>
 
@@ -624,7 +672,7 @@ export function Home() {
           {/* Mobile: vertical timeline */}
           <style>{`
             @media(min-width:768px){
-              .tl-grid{position:relative;}
+              .tl-grid{position:relative;align-items:stretch;}
               .tl-grid::before{content:'';position:absolute;top:50%;left:0;right:0;height:2px;background:linear-gradient(90deg,#FF7A29,#E8B23D,#22C55E,#3B82F6,#6366F1);transform:translateY(-50%);z-index:0;border-radius:2px;opacity:.3;}
             }
             @media(max-width:767px){
@@ -647,6 +695,137 @@ export function Home() {
       </section>
 
       {/* ══════════════════════════════════════
+          MATCH CENTER + POINTS TABLE
+      ══════════════════════════════════════ */}
+      <section style={{ padding:"clamp(60px,7vw,88px) 0", background:"#060C18", position:"relative", overflow:"hidden" }}>
+        <div style={{ position:"absolute", inset:0, backgroundImage:"linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px)", backgroundSize:"48px 48px", pointerEvents:"none" }}/>
+        <div className="W" style={{ position:"relative", zIndex:1 }}>
+          <div className="slbl">Live Season</div>
+          <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4vw,44px)", color:"#fff", textTransform:"uppercase", marginBottom:8 }}>Match Center & Standings</h2>
+          <p style={{ fontSize:15, color:"rgba(255,255,255,.45)", marginBottom:40, maxWidth:520 }}>Live scores, upcoming fixtures, and the Season 5 points table — all in one place.</p>
+
+          <div style={{ display:"grid", gridTemplateColumns:"1fr", gap:24 }}>
+            <style>{`@media(min-width:900px){.mc-grid{grid-template-columns:1fr 1fr!important;}}`}</style>
+            <div className="mc-grid" style={{ display:"grid", gridTemplateColumns:"1fr", gap:24 }}>
+
+              {/* ── Matches column ── */}
+              <div>
+                <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16 }}>
+                  <div className="mont" style={{ fontSize:11, fontWeight:800, letterSpacing:".12em", color:"rgba(255,255,255,.4)", textTransform:"uppercase" }}>Recent &amp; Upcoming</div>
+                  <a href="/match-center" style={{ fontSize:12, color:"#FF7A29", textDecoration:"none", fontWeight:700 }}>View all →</a>
+                </div>
+                <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+                  {MATCHES.map((m,i)=>{
+                    const isLive    = m.status === "LIVE";
+                    const isUpcoming = m.status === "UPCOMING";
+                    const isResult   = m.status === "RESULT";
+                    return (
+                      <div key={i} style={{ background:"linear-gradient(135deg,#0A1727,#060C18)", border:`1px solid ${isLive?"rgba(239,68,68,.35)":"rgba(255,255,255,.07)"}`, borderRadius:14, padding:"14px 16px", position:"relative", overflow:"hidden", cursor:"pointer", transition:"transform .2s,border-color .2s" }}
+                        onMouseEnter={e=>{ (e.currentTarget as HTMLElement).style.transform="translateY(-2px)"; (e.currentTarget as HTMLElement).style.borderColor=isLive?"rgba(239,68,68,.5)":"rgba(255,255,255,.14)"; }}
+                        onMouseLeave={e=>{ (e.currentTarget as HTMLElement).style.transform=""; (e.currentTarget as HTMLElement).style.borderColor=isLive?"rgba(239,68,68,.35)":"rgba(255,255,255,.07)"; }}>
+                        {isLive && <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 80% 60% at 50% 0%,rgba(239,68,68,.06) 0%,transparent 70%)", pointerEvents:"none" }}/>}
+                        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:12 }}>
+                          {/* Status badge */}
+                          {isLive && (
+                            <div style={{ display:"inline-flex", alignItems:"center", gap:5, background:"rgba(239,68,68,.15)", border:"1px solid rgba(239,68,68,.35)", borderRadius:20, padding:"2px 10px" }}>
+                              <span style={{ width:6, height:6, borderRadius:"50%", background:"#EF4444", display:"inline-block", animation:"blip 1s infinite" }}/>
+                              <span className="mont" style={{ fontSize:9, fontWeight:800, color:"#EF4444", letterSpacing:".1em" }}>LIVE</span>
+                            </div>
+                          )}
+                          {isUpcoming && (
+                            <div style={{ display:"inline-flex", alignItems:"center", gap:5, background:"rgba(59,130,246,.12)", border:"1px solid rgba(59,130,246,.25)", borderRadius:20, padding:"2px 10px" }}>
+                              <span className="mont" style={{ fontSize:9, fontWeight:800, color:"#60A5FA", letterSpacing:".1em" }}>UPCOMING</span>
+                            </div>
+                          )}
+                          {isResult && (
+                            <div style={{ display:"inline-flex", alignItems:"center", gap:5, background:"rgba(34,197,94,.1)", border:"1px solid rgba(34,197,94,.25)", borderRadius:20, padding:"2px 10px" }}>
+                              <span className="mont" style={{ fontSize:9, fontWeight:800, color:"#22C55E", letterSpacing:".1em" }}>RESULT</span>
+                            </div>
+                          )}
+                          <span style={{ fontSize:10, color:"rgba(255,255,255,.3)" }}>{m.info}</span>
+                        </div>
+                        {/* Teams & scores */}
+                        <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                          {/* Team 1 */}
+                          <div style={{ flex:1, display:"flex", alignItems:"center", gap:8 }}>
+                            <img src={`${L}${m.t1Slug}.png`} alt={m.team1} style={{ width:28, height:28, objectFit:"contain", flexShrink:0 }} onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
+                            <div>
+                              <div className="mont" style={{ fontSize:"clamp(11px,2vw,13px)", fontWeight:800, color: m.winner===m.team1?"#FF7A29":"#E2E8F0" }}>{m.team1.split(" ")[0]}</div>
+                              {m.score1 && <div style={{ fontSize:12, fontWeight:700, color: m.winner===m.team1?"#FF7A29":"#94A3B8" }}>{m.score1}</div>}
+                            </div>
+                          </div>
+                          {/* VS */}
+                          <div style={{ textAlign:"center", flexShrink:0 }}>
+                            <div className="mont" style={{ fontSize:12, fontWeight:900, color:"rgba(255,255,255,.25)" }}>VS</div>
+                            {isResult && m.winner && (
+                              <div style={{ fontSize:9, color:"#22C55E", fontWeight:700, marginTop:2 }}>WON</div>
+                            )}
+                          </div>
+                          {/* Team 2 */}
+                          <div style={{ flex:1, display:"flex", alignItems:"center", gap:8, flexDirection:"row-reverse", textAlign:"right" }}>
+                            <img src={`${L}${m.t2Slug}.png`} alt={m.team2} style={{ width:28, height:28, objectFit:"contain", flexShrink:0 }} onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
+                            <div>
+                              <div className="mont" style={{ fontSize:"clamp(11px,2vw,13px)", fontWeight:800, color: m.winner===m.team2?"#FF7A29":"#E2E8F0" }}>{m.team2.split(" ")[0]}</div>
+                              {m.score2 && <div style={{ fontSize:12, fontWeight:700, color: m.winner===m.team2?"#FF7A29":"#94A3B8" }}>{m.score2}</div>}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* ── Points Table column ── */}
+              <div>
+                <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16 }}>
+                  <div className="mont" style={{ fontSize:11, fontWeight:800, letterSpacing:".12em", color:"rgba(255,255,255,.4)", textTransform:"uppercase" }}>Points Table — Season 5</div>
+                  <a href="/points-table" style={{ fontSize:12, color:"#FF7A29", textDecoration:"none", fontWeight:700 }}>Full table →</a>
+                </div>
+                <div style={{ background:"linear-gradient(135deg,#0A1727,#060C18)", border:"1px solid rgba(255,255,255,.07)", borderRadius:14, overflow:"hidden" }}>
+                  {/* Table header */}
+                  <div style={{ display:"grid", gridTemplateColumns:"28px 1fr 30px 30px 30px 44px 50px", gap:0, padding:"10px 14px", borderBottom:"1px solid rgba(255,255,255,.07)" }}>
+                    {["#","Team","P","W","L","Pts","NRR"].map(h=>(
+                      <div key={h} className="mont" style={{ fontSize:9, fontWeight:800, color:"rgba(255,255,255,.3)", letterSpacing:".1em", textAlign: h==="Team"?"left":"center" }}>{h}</div>
+                    ))}
+                  </div>
+                  {/* Rows */}
+                  {POINTS_TABLE.map((row, i)=>(
+                    <div key={i} style={{ display:"grid", gridTemplateColumns:"28px 1fr 30px 30px 30px 44px 50px", gap:0, padding:"9px 14px", borderBottom: i<POINTS_TABLE.length-1?"1px solid rgba(255,255,255,.04)":"none", background: i<4?"rgba(255,122,41,.025)":"transparent", position:"relative" }}>
+                      {/* Qualification indicator */}
+                      {i<4 && <div style={{ position:"absolute", left:0, top:0, bottom:0, width:2, background:`${row.color}60`, borderRadius:"0 2px 2px 0" }}/>}
+                      {/* Rank */}
+                      <div className="mont" style={{ fontSize:11, fontWeight:900, color: i===0?"#FFD700":i===1?"#C0C0C0":i===2?"#CD7F32":"rgba(255,255,255,.3)", textAlign:"center" }}>
+                        {i===0?"🥇":i===1?"🥈":i===2?"🥉":row.rank}
+                      </div>
+                      {/* Team name with mini logo */}
+                      <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+                        <img src={`${L}${row.slug}.png`} alt={row.team} style={{ width:18, height:18, objectFit:"contain", flexShrink:0 }} onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
+                        <span className="mont" style={{ fontSize:11, fontWeight:700, color: i<4?"#E2E8F0":"#94A3B8", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{row.team.split(" ").slice(0,1).join(" ")} {row.team.split(" ").slice(1).join(" ")}</span>
+                      </div>
+                      {[row.p, row.w, row.l].map((v,j)=>(
+                        <div key={j} style={{ fontSize:11, color:"#64748B", textAlign:"center", display:"flex", alignItems:"center", justifyContent:"center" }}>{v}</div>
+                      ))}
+                      {/* Points */}
+                      <div className="mont" style={{ fontSize:13, fontWeight:900, color: i<4?"#FF7A29":"#94A3B8", textAlign:"center", display:"flex", alignItems:"center", justifyContent:"center" }}>{row.pts}</div>
+                      {/* NRR */}
+                      <div className="mont" style={{ fontSize:10, fontWeight:700, color: row.nrr.startsWith("+")?i<4?"#22C55E":"#16A34A":"#EF4444", textAlign:"center", display:"flex", alignItems:"center", justifyContent:"center" }}>{row.nrr}</div>
+                    </div>
+                  ))}
+                  {/* Playoff qualification note */}
+                  <div style={{ padding:"9px 14px", background:"rgba(255,122,41,.04)", borderTop:"1px solid rgba(255,122,41,.1)", display:"flex", alignItems:"center", gap:6 }}>
+                    <div style={{ width:10, height:10, background:"rgba(255,122,41,.4)", borderRadius:2, flexShrink:0 }}/>
+                    <span style={{ fontSize:10, color:"rgba(255,255,255,.3)" }}>Top 4 qualify for playoffs</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
           10 FRANCHISE TEAMS
       ══════════════════════════════════════ */}
       <section style={{ padding:"clamp(60px,7vw,88px) 0", background:"#060C18" }}>
@@ -656,12 +835,19 @@ export function Home() {
           <p style={{ fontSize:15, color:"rgba(255,255,255,.4)", marginBottom:36 }}>Get auctioned to one of these franchises. Your city, your team, your glory.</p>
           <div className="team-grid">
             {TEAMS.map(t=>(
-              <div key={t.name} className="card" style={{ padding:"16px 12px", display:"flex", flexDirection:"column", gap:8, cursor:"pointer", transition:"transform .2s,border-color .2s", borderTop:`3px solid ${t.color}` }}
+              <div key={t.name} className="card" style={{ padding:"16px 12px", display:"flex", flexDirection:"column", gap:8, cursor:"pointer", transition:"transform .2s,border-color .2s", borderTop:`3px solid ${t.color}`, position:"relative", overflow:"hidden" }}
                 onMouseEnter={e=>(e.currentTarget.style.transform="translateY(-3px)")}
                 onMouseLeave={e=>(e.currentTarget.style.transform="")}>
+                {/* Watermark logo behind content */}
+                <img
+                  src={`${L}${t.slug}.png`}
+                  alt=""
+                  aria-hidden="true"
+                  style={{ position:"absolute", bottom:-8, right:-8, width:72, height:72, objectFit:"contain", opacity:0.08, pointerEvents:"none", userSelect:"none" }}
+                />
                 {/* Team logo — try image, fallback to colored initials */}
                 <TeamLogo slug={t.slug} name={t.name} color={t.color}/>
-                <div>
+                <div style={{ position:"relative", zIndex:1 }}>
                   <div className="mont" style={{ fontWeight:800, fontSize:"clamp(11px,1.5vw,13px)", color:"#F1F5F9", lineHeight:1.2 }}>{t.name}</div>
                   <div style={{ fontSize:11, color:"rgba(255,255,255,.35)", marginTop:3 }}>{t.city}</div>
                 </div>
