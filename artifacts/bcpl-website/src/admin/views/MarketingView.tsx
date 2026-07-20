@@ -1,77 +1,129 @@
 import { useState } from "react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from "recharts";
+
+const referralLinks = [
+  { code: "BCPL-INF01", name: "Rohit_Cricket22", platform: "Instagram", clicks: 4821, signups: 1243, revenue: "₹1,24,300", active: true },
+  { code: "BCPL-INF02", name: "BCPLOfficial", platform: "YouTube", clicks: 3200, signups: 987, revenue: "₹98,700", active: true },
+  { code: "BCPL-INF03", name: "CricketDhamaka", platform: "WhatsApp", clicks: 2890, signups: 743, revenue: "₹74,300", active: true },
+  { code: "BCPL-INF04", name: "SportsBhai", platform: "Instagram", clicks: 1980, signups: 412, revenue: "₹41,200", active: false },
+  { code: "BCPL-INF05", name: "RajCricket", platform: "YouTube", clicks: 1540, signups: 289, revenue: "₹28,900", active: true },
+];
+
+const platformPerf = [
+  { platform: "WhatsApp", signups: 3200, revenue: 320000 },
+  { platform: "Instagram", signups: 2100, revenue: 210000 },
+  { platform: "YouTube", signups: 1800, revenue: 180000 },
+  { platform: "Twitter", signups: 420, revenue: 42000 },
+  { platform: "Facebook", signups: 310, revenue: 31000 },
+  { platform: "Direct", signups: 600, revenue: 60000 },
+];
+
+const conversionTrend = [
+  { day: "Jul 14", rate: 14 }, { day: "Jul 15", rate: 17 }, { day: "Jul 16", rate: 15 },
+  { day: "Jul 17", rate: 22 }, { day: "Jul 18", rate: 19 }, { day: "Jul 19", rate: 26 }, { day: "Jul 20", rate: 24 },
+];
+
+const platformColor: Record<string, string> = {
+  Instagram: "#E1306C", YouTube: "#FF0000", WhatsApp: "#25D366",
+  Twitter: "#1DA1F2", Facebook: "#1877F2", Direct: "#6366F1",
+};
 
 export default function MarketingView() {
-  const [tab, setTab] = useState<"campaigns" | "referrals" | "whatsapp" | "email" | "sms">("campaigns");
+  const [tab, setTab] = useState<"referrals" | "platforms" | "campaigns">("referrals");
+  const [showCreate, setShowCreate] = useState(false);
+  const [newLink, setNewLink] = useState({ name: "", platform: "Instagram", code: "" });
 
-  const card: React.CSSProperties = { background: "#0D1526", border: "1px solid #1E293B", borderRadius: 16, padding: "20px 22px" };
-
-  const campaigns = [
-    { name: "Phase 2 Open – Final Push", channel: "WhatsApp + Email", sent: 1284, opened: 934, clicked: 612, conv: "47.7%", status: "active" },
-    { name: "KYC Reminder – Pending Users", channel: "SMS + WhatsApp", sent: 272, opened: 198, clicked: 143, conv: "52.6%", status: "active" },
-    { name: "Early Bird Registration", channel: "Email", sent: 5420, opened: 1840, clicked: 920, conv: "17.0%", status: "completed" },
-    { name: "Referral Bonus Announcement", channel: "WhatsApp", sent: 847, opened: 712, clicked: 534, conv: "63.0%", status: "completed" },
-    { name: "Video Upload Reminder", channel: "SMS", sent: 1101, opened: 850, clicked: 610, conv: "55.4%", status: "completed" },
-  ];
-
-  const referrals = [
-    { code: "ARJUN50", name: "Arjun Sharma", uses: 14, earned: "₹700", status: "active" },
-    { code: "RAHUL30", name: "Rahul Patel", uses: 9, earned: "₹450", status: "active" },
-    { code: "VIKAS25", name: "Vikas Singh", uses: 6, earned: "₹300", status: "active" },
-    { code: "PRIYA40", name: "Priya Nair", uses: 11, earned: "₹550", status: "active" },
-    { code: "MOHIT15", name: "Mohit Yadav", uses: 2, earned: "₹100", status: "paused" },
-  ];
+  const card: React.CSSProperties = {
+    background: "linear-gradient(135deg, #0D1526 0%, #0A1020 100%)",
+    border: "1px solid #1E293B", borderRadius: 16, padding: 20,
+  };
 
   return (
-    <div style={{ padding: 28, fontFamily: "'Inter', sans-serif" }}>
-      {/* Stats */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginBottom: 24 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+
+      {/* Header */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div>
+          <div style={{ fontSize: 20, fontWeight: 800, color: "#F1F5F9" }}>Marketing & Growth</div>
+          <div style={{ fontSize: 12, color: "#64748B", marginTop: 2 }}>Track referrals, influencers, and acquisition channels</div>
+        </div>
+        <button onClick={() => setShowCreate(true)} style={{ padding: "10px 20px", borderRadius: 10, border: "none", background: "linear-gradient(135deg,#FF6B00,#FF8C40)", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
+          + Create Referral Link
+        </button>
+      </div>
+
+      {/* Summary Cards */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
         {[
-          { label: "Total Campaigns", value: "12", color: "#3B82F6", icon: "📣" },
-          { label: "Messages Sent", value: "8,924", color: "#8B5CF6", icon: "📨" },
-          { label: "Avg Open Rate", value: "68.3%", color: "#10B981", icon: "👁" },
-          { label: "Conversions", value: "612", color: "#FF6B00", icon: "🎯" },
-        ].map((s, i) => (
-          <div key={i} style={{ ...card, borderLeft: `3px solid ${s.color}` }}>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <div>
-                <div style={{ fontSize: 10, fontWeight: 700, color: "#475569", letterSpacing: 0.5, textTransform: "uppercase" }}>{s.label}</div>
-                <div style={{ fontSize: 26, fontWeight: 900, color: "#E2E8F0", margin: "6px 0 0" }}>{s.value}</div>
-              </div>
-              <div style={{ fontSize: 26 }}>{s.icon}</div>
-            </div>
+          { label: "Total Referral Clicks", value: "14,431", icon: "🔗", color: "#6366F1" },
+          { label: "Signups via Referral", value: "3,674", icon: "👥", color: "#10B981" },
+          { label: "Referral Revenue", value: "₹3,67,400", icon: "💰", color: "#FF6B00" },
+          { label: "Avg Conversion", value: "25.5%", icon: "📈", color: "#F59E0B" },
+        ].map(s => (
+          <div key={s.label} style={{ ...card, borderLeft: `3px solid ${s.color}` }}>
+            <div style={{ fontSize: 22 }}>{s.icon}</div>
+            <div style={{ fontSize: 22, fontWeight: 800, color: "#F1F5F9", marginTop: 8 }}>{s.value}</div>
+            <div style={{ fontSize: 11, color: "#64748B", marginTop: 3 }}>{s.label}</div>
           </div>
         ))}
       </div>
 
       {/* Tabs */}
-      <div style={{ display: "flex", gap: 6, marginBottom: 18 }}>
-        {(["campaigns", "referrals", "whatsapp", "email", "sms"] as const).map(t => (
-          <button key={t} onClick={() => setTab(t)} style={{ padding: "8px 18px", borderRadius: 10, border: tab === t ? "none" : "1px solid #1E293B", background: tab === t ? "#FF6B00" : "#0D1526", color: tab === t ? "#fff" : "#475569", fontSize: 12, fontWeight: 700, cursor: "pointer", textTransform: "capitalize" } as React.CSSProperties}>{t}</button>
+      <div style={{ display: "flex", gap: 6 }}>
+        {(["referrals", "platforms", "campaigns"] as const).map(t => (
+          <button key={t} onClick={() => setTab(t)} style={{
+            padding: "9px 20px", borderRadius: 10, border: "1px solid",
+            borderColor: tab === t ? "#FF6B00" : "#1E293B",
+            background: tab === t ? "#FF6B0022" : "transparent",
+            color: tab === t ? "#FF6B00" : "#64748B",
+            fontSize: 12, fontWeight: 700, cursor: "pointer", textTransform: "capitalize",
+          }}>{t}</button>
         ))}
-        <button style={{ marginLeft: "auto", padding: "8px 18px", borderRadius: 10, border: "none", background: "linear-gradient(135deg, #FF6B00, #FF8C40)", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>+ New Campaign</button>
       </div>
 
-      {tab === "campaigns" && (
+      {/* Referrals Tab */}
+      {tab === "referrals" && (
         <div style={card}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+            <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Active Referral Links</div>
+            <span style={{ fontSize: 11, color: "#64748B" }}>{referralLinks.filter(r => r.active).length} active links</span>
+          </div>
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ borderBottom: "1px solid #1E293B" }}>
-                {["Campaign", "Channel", "Sent", "Opened", "Clicked", "Conv. Rate", "Status", ""].map(h => (
-                  <th key={h} style={{ padding: "8px 12px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#475569", letterSpacing: 0.5 }}>{h}</th>
+                {["Ref Code", "Influencer", "Platform", "Clicks", "Signups", "Revenue", "Conv %", "Status", "Actions"].map(h => (
+                  <th key={h} style={{ padding: "8px 12px", textAlign: "left", fontSize: 11, color: "#475569", fontWeight: 700, textTransform: "uppercase" }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {campaigns.map((c, i) => (
-                <tr key={i} style={{ borderBottom: "1px solid #0F172A" }}>
-                  <td style={{ padding: "12px 12px", color: "#E2E8F0", fontWeight: 600, maxWidth: 200 }}>{c.name}</td>
-                  <td style={{ padding: "12px 12px", color: "#64748B", fontSize: 11 }}>{c.channel}</td>
-                  <td style={{ padding: "12px 12px", color: "#94A3B8" }}>{c.sent.toLocaleString()}</td>
-                  <td style={{ padding: "12px 12px", color: "#94A3B8" }}>{c.opened.toLocaleString()}</td>
-                  <td style={{ padding: "12px 12px", color: "#94A3B8" }}>{c.clicked.toLocaleString()}</td>
-                  <td style={{ padding: "12px 12px", color: "#10B981", fontWeight: 700 }}>{c.conv}</td>
-                  <td style={{ padding: "12px 12px" }}><span style={{ background: c.status === "active" ? "#10B98120" : "#1E293B", color: c.status === "active" ? "#10B981" : "#475569", padding: "2px 8px", borderRadius: 6, fontSize: 10, fontWeight: 700 }}>{c.status}</span></td>
-                  <td style={{ padding: "12px 12px" }}><button style={{ background: "none", border: "none", color: "#FF6B00", cursor: "pointer", fontSize: 11, fontWeight: 600 }}>View</button></td>
+              {referralLinks.map(r => (
+                <tr key={r.code} style={{ borderBottom: "1px solid #0F1B2D" }}>
+                  <td style={{ padding: "14px 12px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <span style={{ fontFamily: "monospace", fontSize: 12, color: "#FF6B00", background: "#FF6B0015", padding: "3px 8px", borderRadius: 6, fontWeight: 700 }}>{r.code}</span>
+                      <button onClick={() => navigator.clipboard?.writeText(`https://bcplt20.com/r/${r.code}`)} title="Copy" style={{ background: "none", border: "none", cursor: "pointer", fontSize: 12, color: "#475569" }}>📋</button>
+                    </div>
+                  </td>
+                  <td style={{ padding: "14px 12px", fontSize: 13, color: "#F1F5F9", fontWeight: 600 }}>@{r.name}</td>
+                  <td style={{ padding: "14px 12px" }}>
+                    <span style={{ padding: "3px 10px", borderRadius: 20, fontSize: 10, fontWeight: 700, background: (platformColor[r.platform] || "#6366F1") + "22", color: platformColor[r.platform] || "#6366F1" }}>{r.platform}</span>
+                  </td>
+                  <td style={{ padding: "14px 12px", fontSize: 13, color: "#94A3B8" }}>{r.clicks.toLocaleString()}</td>
+                  <td style={{ padding: "14px 12px", fontSize: 13, color: "#F1F5F9", fontWeight: 600 }}>{r.signups.toLocaleString()}</td>
+                  <td style={{ padding: "14px 12px", fontSize: 13, color: "#10B981", fontWeight: 700 }}>{r.revenue}</td>
+                  <td style={{ padding: "14px 12px", fontSize: 13, color: "#F59E0B", fontWeight: 700 }}>
+                    {Math.round((r.signups / r.clicks) * 100)}%
+                  </td>
+                  <td style={{ padding: "14px 12px" }}>
+                    <span style={{ padding: "3px 10px", borderRadius: 20, fontSize: 10, fontWeight: 700, background: r.active ? "#10B98122" : "#64748B22", color: r.active ? "#10B981" : "#64748B" }}>{r.active ? "Active" : "Paused"}</span>
+                  </td>
+                  <td style={{ padding: "14px 12px" }}>
+                    <div style={{ display: "flex", gap: 6 }}>
+                      <button style={{ padding: "5px 10px", borderRadius: 6, border: "1px solid #1E293B", background: "transparent", color: "#94A3B8", fontSize: 11, cursor: "pointer" }}>Edit</button>
+                      <button style={{ padding: "5px 10px", borderRadius: 6, border: "1px solid #1E293B", background: "transparent", color: "#EF4444", fontSize: 11, cursor: "pointer" }}>Pause</button>
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -79,70 +131,123 @@ export default function MarketingView() {
         </div>
       )}
 
-      {tab === "referrals" && (
+      {/* Platforms Tab */}
+      {tab === "platforms" && (
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
           <div style={card}>
-            <div style={{ fontSize: 11, fontWeight: 800, color: "#94A3B8", letterSpacing: 0.5, marginBottom: 16, textTransform: "uppercase" }}>Active Referral Codes</div>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
-              <thead>
-                <tr style={{ borderBottom: "1px solid #1E293B" }}>
-                  {["Code", "Player", "Uses", "Earned", "Status"].map(h => (
-                    <th key={h} style={{ padding: "6px 10px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#475569" }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {referrals.map((r, i) => (
-                  <tr key={i} style={{ borderBottom: "1px solid #0F172A" }}>
-                    <td style={{ padding: "9px 10px", color: "#FF6B00", fontFamily: "monospace", fontWeight: 700 }}>{r.code}</td>
-                    <td style={{ padding: "9px 10px", color: "#E2E8F0" }}>{r.name}</td>
-                    <td style={{ padding: "9px 10px", color: "#94A3B8" }}>{r.uses}</td>
-                    <td style={{ padding: "9px 10px", color: "#10B981", fontWeight: 700 }}>{r.earned}</td>
-                    <td style={{ padding: "9px 10px" }}><span style={{ background: r.status === "active" ? "#10B98120" : "#EF444420", color: r.status === "active" ? "#10B981" : "#EF4444", padding: "2px 7px", borderRadius: 6, fontSize: 10, fontWeight: 700 }}>{r.status}</span></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 16 }}>Signups by Platform</div>
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={platformPerf} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" horizontal={false} />
+                <XAxis type="number" stroke="#334155" tick={{ fill: "#64748B", fontSize: 11 }} />
+                <YAxis dataKey="platform" type="category" stroke="#334155" tick={{ fill: "#94A3B8", fontSize: 12 }} width={80} />
+                <Tooltip contentStyle={{ background: "#0D1526", border: "1px solid #1E293B", borderRadius: 8 }} />
+                <Bar dataKey="signups" fill="#FF6B00" radius={[0, 6, 6, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
           <div style={card}>
-            <div style={{ fontSize: 11, fontWeight: 800, color: "#94A3B8", letterSpacing: 0.5, marginBottom: 16, textTransform: "uppercase" }}>Referral Stats</div>
-            {[
-              { label: "Total Referral Signups", value: "42", color: "#3B82F6" },
-              { label: "Bonus Paid Out", value: "₹2,100", color: "#10B981" },
-              { label: "Conversion from Referral", value: "71.4%", color: "#FF6B00" },
-              { label: "Top Referrer", value: "Arjun Sharma (14)", color: "#F59E0B" },
-            ].map((s, i) => (
-              <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "10px 0", borderBottom: "1px solid #0F172A", fontSize: 13 }}>
-                <span style={{ color: "#64748B" }}>{s.label}</span>
-                <span style={{ color: s.color, fontWeight: 700 }}>{s.value}</span>
-              </div>
-            ))}
-            <button style={{ width: "100%", marginTop: 16, padding: "10px", borderRadius: 10, border: "none", background: "linear-gradient(135deg, #FF6B00, #FF8C40)", color: "#fff", fontWeight: 700, fontSize: 13, cursor: "pointer" }}>Generate New Code</button>
+            <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 16 }}>7-Day Conversion Rate Trend</div>
+            <ResponsiveContainer width="100%" height={250}>
+              <LineChart data={conversionTrend}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" />
+                <XAxis dataKey="day" stroke="#334155" tick={{ fill: "#64748B", fontSize: 11 }} />
+                <YAxis stroke="#334155" tick={{ fill: "#64748B", fontSize: 11 }} unit="%" />
+                <Tooltip contentStyle={{ background: "#0D1526", border: "1px solid #1E293B", borderRadius: 8 }} formatter={(v: any) => [`${v}%`, "Conversion"]} />
+                <Line type="monotone" dataKey="rate" stroke="#10B981" strokeWidth={2.5} dot={{ fill: "#10B981", r: 4 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={{ ...card, gridColumn: "1 / -1" }}>
+            <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 14 }}>Platform Breakdown</div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 12 }}>
+              {platformPerf.map(p => (
+                <div key={p.platform} style={{ textAlign: "center", padding: "14px 8px", background: "#060B18", borderRadius: 12, border: "1px solid #1E293B" }}>
+                  <div style={{ fontSize: 20, marginBottom: 6 }}>
+                    {p.platform === "WhatsApp" ? "💬" : p.platform === "Instagram" ? "📸" : p.platform === "YouTube" ? "▶️" : p.platform === "Twitter" ? "🐦" : p.platform === "Facebook" ? "👥" : "🔗"}
+                  </div>
+                  <div style={{ fontSize: 16, fontWeight: 800, color: "#F1F5F9" }}>{p.signups.toLocaleString()}</div>
+                  <div style={{ fontSize: 10, color: "#64748B" }}>{p.platform}</div>
+                  <div style={{ fontSize: 11, color: "#10B981", marginTop: 4, fontWeight: 600 }}>₹{(p.revenue / 100).toFixed(0)}k</div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}
 
-      {(tab === "whatsapp" || tab === "email" || tab === "sms") && (
-        <div style={card}>
-          <div style={{ fontSize: 11, fontWeight: 800, color: "#94A3B8", letterSpacing: 0.5, marginBottom: 20, textTransform: "uppercase" }}>New {tab.toUpperCase()} Campaign</div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+      {/* Campaigns Tab */}
+      {tab === "campaigns" && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {[
+            { name: "BCPL Season 5 Launch", type: "WhatsApp Blast", sent: "12,400", opens: "9,840", clicks: "4,212", status: "Completed" },
+            { name: "Phase 1 Reminder", type: "SMS", sent: "5,200", opens: "—", clicks: "1,820", status: "Completed" },
+            { name: "Phase 2 Open Now", type: "Email", sent: "3,812", opens: "2,190", clicks: "891", status: "Running" },
+            { name: "Finals Ticket Sale", type: "WhatsApp", sent: "—", opens: "—", clicks: "—", status: "Draft" },
+          ].map(c => (
+            <div key={c.name} style={{ ...card, display: "flex", alignItems: "center", gap: 16 }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>{c.name}</div>
+                <div style={{ fontSize: 11, color: "#64748B", marginTop: 2 }}>{c.type}</div>
+              </div>
+              <div style={{ display: "flex", gap: 24 }}>
+                {[{ label: "Sent", value: c.sent }, { label: "Opens", value: c.opens }, { label: "Clicks", value: c.clicks }].map(m => (
+                  <div key={m.label} style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9" }}>{m.value}</div>
+                    <div style={{ fontSize: 10, color: "#64748B" }}>{m.label}</div>
+                  </div>
+                ))}
+              </div>
+              <span style={{
+                padding: "5px 14px", borderRadius: 20, fontSize: 11, fontWeight: 700,
+                background: c.status === "Running" ? "#10B98122" : c.status === "Completed" ? "#6366F122" : "#64748B22",
+                color: c.status === "Running" ? "#10B981" : c.status === "Completed" ? "#818CF8" : "#64748B",
+              }}>{c.status}</span>
+              <div style={{ display: "flex", gap: 8 }}>
+                <button style={{ padding: "7px 14px", borderRadius: 8, border: "1px solid #1E293B", background: "transparent", color: "#94A3B8", fontSize: 12, cursor: "pointer" }}>View</button>
+                {c.status === "Draft" && <button style={{ padding: "7px 14px", borderRadius: 8, border: "none", background: "linear-gradient(135deg,#FF6B00,#FF8C40)", color: "#fff", fontSize: 12, cursor: "pointer", fontWeight: 700 }}>Launch</button>}
+              </div>
+            </div>
+          ))}
+          <button style={{ padding: "14px", borderRadius: 12, border: "2px dashed #1E293B", background: "transparent", color: "#475569", fontSize: 13, cursor: "pointer", fontWeight: 600 }}>
+            + Create New Campaign
+          </button>
+        </div>
+      )}
+
+      {/* Create Link Modal */}
+      {showCreate && (
+        <div style={{ position: "fixed", inset: 0, background: "#00000088", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999 }}>
+          <div style={{ background: "#0D1526", border: "1px solid #1E293B", borderRadius: 20, padding: 28, width: 420 }}>
+            <div style={{ fontSize: 18, fontWeight: 800, color: "#F1F5F9", marginBottom: 20 }}>Create Referral Link</div>
             {[
-              { label: "Campaign Name", placeholder: "e.g. Phase 2 Final Reminder" },
-              { label: "Target Audience", placeholder: "e.g. Phase 1 Paid, KYC Pending" },
-            ].map((f, i) => (
-              <div key={i}>
-                <label style={{ fontSize: 11, fontWeight: 700, color: "#475569", letterSpacing: 0.5 }}>{f.label.toUpperCase()}</label>
-                <input placeholder={f.placeholder} style={{ width: "100%", marginTop: 6, padding: "10px 12px", borderRadius: 8, border: "1px solid #1E293B", background: "#080E1C", color: "#E2E8F0", fontSize: 13, outline: "none", boxSizing: "border-box" }} />
+              { label: "Influencer / Channel Name", key: "name", placeholder: "e.g. Rohit_Cricket22" },
+              { label: "Referral Code (leave blank to auto-generate)", key: "code", placeholder: "e.g. BCPL-INF06" },
+            ].map(f => (
+              <div key={f.key} style={{ marginBottom: 14 }}>
+                <label style={{ fontSize: 11, color: "#64748B", fontWeight: 700, display: "block", marginBottom: 6 }}>{f.label}</label>
+                <input value={(newLink as any)[f.key]} onChange={e => setNewLink(p => ({ ...p, [f.key]: e.target.value }))}
+                  placeholder={f.placeholder}
+                  style={{ width: "100%", padding: "10px 14px", background: "#060B18", border: "1px solid #1E293B", borderRadius: 10, color: "#F1F5F9", fontSize: 13, outline: "none", boxSizing: "border-box" }} />
               </div>
             ))}
-          </div>
-          <div style={{ marginTop: 16 }}>
-            <label style={{ fontSize: 11, fontWeight: 700, color: "#475569", letterSpacing: 0.5 }}>MESSAGE CONTENT</label>
-            <textarea rows={5} placeholder={`Write your ${tab} message here...`} style={{ width: "100%", marginTop: 6, padding: "10px 12px", borderRadius: 8, border: "1px solid #1E293B", background: "#080E1C", color: "#E2E8F0", fontSize: 13, outline: "none", resize: "vertical", boxSizing: "border-box" }} />
-          </div>
-          <div style={{ display: "flex", gap: 10, marginTop: 16 }}>
-            <button style={{ padding: "10px 24px", borderRadius: 10, border: "1px solid #1E293B", background: "transparent", color: "#94A3B8", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Save Draft</button>
-            <button style={{ padding: "10px 24px", borderRadius: 10, border: "none", background: "linear-gradient(135deg, #FF6B00, #FF8C40)", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>🚀 Send Campaign</button>
+            <div style={{ marginBottom: 14 }}>
+              <label style={{ fontSize: 11, color: "#64748B", fontWeight: 700, display: "block", marginBottom: 6 }}>Platform</label>
+              <select value={newLink.platform} onChange={e => setNewLink(p => ({ ...p, platform: e.target.value }))}
+                style={{ width: "100%", padding: "10px 14px", background: "#060B18", border: "1px solid #1E293B", borderRadius: 10, color: "#F1F5F9", fontSize: 13, outline: "none" }}>
+                {["Instagram", "YouTube", "WhatsApp", "Twitter", "Facebook", "Other"].map(p => <option key={p}>{p}</option>)}
+              </select>
+            </div>
+            <div style={{ background: "#060B18", borderRadius: 10, padding: "12px 14px", marginBottom: 18, border: "1px solid #1E293B" }}>
+              <div style={{ fontSize: 10, color: "#475569", marginBottom: 4 }}>Generated Link Preview:</div>
+              <div style={{ fontSize: 12, color: "#FF6B00", fontFamily: "monospace" }}>
+                https://bcplt20.com/r/{newLink.code || "BCPL-INF06"}
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: 10 }}>
+              <button onClick={() => setShowCreate(false)} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: "1px solid #1E293B", background: "transparent", color: "#64748B", fontSize: 13, cursor: "pointer" }}>Cancel</button>
+              <button onClick={() => setShowCreate(false)} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: "none", background: "linear-gradient(135deg,#FF6B00,#FF8C40)", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>Create Link</button>
+            </div>
           </div>
         </div>
       )}

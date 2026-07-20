@@ -1,115 +1,172 @@
 import { useState } from "react";
 
-const PLAYERS = [
-  { id: "BCPL001", name: "Arjun Sharma", role: "Batsman", city: "Mumbai", video: "uploaded", kyc: "verified", score: 94, status: "selected" },
-  { id: "BCPL002", name: "Rahul Patel", role: "Bowler", city: "Ahmedabad", video: "uploaded", kyc: "verified", score: 91, status: "selected" },
-  { id: "BCPL003", name: "Vikas Singh", role: "All-Rounder", city: "Delhi", video: "uploaded", kyc: "pending", score: 87, status: "shortlisted" },
-  { id: "BCPL004", name: "Priya Nair", role: "WK-Batsman", city: "Kochi", video: "uploaded", kyc: "verified", score: 85, status: "shortlisted" },
-  { id: "BCPL005", name: "Mohit Yadav", role: "Bowler", city: "Lucknow", video: "uploaded", kyc: "rejected", score: 72, status: "rejected" },
-  { id: "BCPL006", name: "Suresh Kumar", role: "Batsman", city: "Chennai", video: "pending", kyc: "pending", score: 0, status: "pending" },
-  { id: "BCPL007", name: "Deepak Verma", role: "All-Rounder", city: "Pune", video: "uploaded", kyc: "verified", score: 88, status: "shortlisted" },
-  { id: "BCPL008", name: "Ankita Joshi", role: "WK-Batsman", city: "Bangalore", video: "uploaded", kyc: "verified", score: 90, status: "selected" },
-  { id: "BCPL009", name: "Kartik Mehra", role: "Batsman", city: "Hyderabad", video: "uploaded", kyc: "pending", score: 76, status: "pending" },
-  { id: "BCPL010", name: "Neha Gupta", role: "Bowler", city: "Jaipur", video: "uploaded", kyc: "verified", score: 89, status: "selected" },
-];
-
-const STATUS_C: Record<string, { bg: string; color: string }> = {
-  selected: { bg: "#10B98120", color: "#10B981" },
-  shortlisted: { bg: "#3B82F620", color: "#3B82F6" },
-  rejected: { bg: "#EF444420", color: "#EF4444" },
-  pending: { bg: "#F59E0B20", color: "#F59E0B" },
+type Player = {
+  id: number; name: string; phone: string; state: string; city: string;
+  role: string; age: number; score: number; video: boolean;
+  status: "pending" | "selected" | "rejected" | "watchlist";
+  phase: 1 | 2;
 };
 
+const players: Player[] = [
+  { id: 1, name: "Arjun Sharma", phone: "9876543210", state: "Rajasthan", city: "Jaipur", role: "Batsman", age: 23, score: 87, video: true, status: "selected", phase: 2 },
+  { id: 2, name: "Priya Patel", phone: "9123456789", state: "Gujarat", city: "Ahmedabad", role: "All-rounder", age: 22, score: 79, video: true, status: "selected", phase: 2 },
+  { id: 3, name: "Rahul Kumar", phone: "8765432109", state: "Maharashtra", city: "Mumbai", role: "Bowler", age: 24, score: 73, video: true, status: "watchlist", phase: 1 },
+  { id: 4, name: "Sneha Verma", phone: "7654321098", state: "UP", city: "Lucknow", role: "Batsman", age: 21, score: 68, video: false, status: "pending", phase: 1 },
+  { id: 5, name: "Vikas Singh", phone: "6543210987", state: "Punjab", city: "Amritsar", role: "Wicket-keeper", age: 25, score: 82, video: true, status: "selected", phase: 2 },
+  { id: 6, name: "Anjali Rao", phone: "9012345678", state: "Karnataka", city: "Bangalore", role: "Bowler", age: 22, score: 61, video: false, status: "rejected", phase: 1 },
+  { id: 7, name: "Deepak Gupta", phone: "8901234567", state: "Delhi", city: "New Delhi", role: "All-rounder", age: 27, score: 91, video: true, status: "selected", phase: 2 },
+  { id: 8, name: "Meena Joshi", phone: "7890123456", state: "MP", city: "Bhopal", role: "Batsman", age: 20, score: 65, video: true, status: "pending", phase: 1 },
+  { id: 9, name: "Sanjay Yadav", phone: "6789012345", state: "Bihar", city: "Patna", role: "Bowler", age: 23, score: 58, video: false, status: "pending", phase: 1 },
+  { id: 10, name: "Kavita Nair", phone: "5678901234", state: "Kerala", city: "Kochi", role: "All-rounder", age: 24, score: 85, video: true, status: "selected", phase: 2 },
+];
+
+const statusConfig = {
+  pending: { label: "Pending", color: "#F59E0B", bg: "#F59E0B22" },
+  selected: { label: "Selected ✓", color: "#10B981", bg: "#10B98122" },
+  rejected: { label: "Rejected", color: "#EF4444", bg: "#EF444422" },
+  watchlist: { label: "Watchlist", color: "#6366F1", bg: "#6366F122" },
+};
+
+const roleColor = (r: string) =>
+  r === "Batsman" ? "#3B82F6" : r === "Bowler" ? "#EF4444" : r === "All-rounder" ? "#FF6B00" : "#10B981";
+
 export default function SelectionView() {
-  const [filter, setFilter] = useState("all");
-  const [statuses, setStatuses] = useState<Record<string, string>>(
-    Object.fromEntries(PLAYERS.map(p => [p.id, p.status]))
-  );
+  const [phase, setPhase] = useState<1 | 2>(1);
+  const [statusFilter, setStatusFilter] = useState<"all" | Player["status"]>("all");
+  const [list, setList] = useState<Player[]>(players);
+  const [videoPlayer, setVideoPlayer] = useState<Player | null>(null);
 
-  const filtered = filter === "all" ? PLAYERS : PLAYERS.filter(p => statuses[p.id] === filter);
-  const card: React.CSSProperties = { background: "#0D1526", border: "1px solid #1E293B", borderRadius: 16, padding: "20px 22px" };
+  const phaseList = list.filter(p => p.phase === phase);
+  const filtered = statusFilter === "all" ? phaseList : phaseList.filter(p => p.status === statusFilter);
 
-  const counts = {
-    selected: PLAYERS.filter(p => statuses[p.id] === "selected").length,
-    shortlisted: PLAYERS.filter(p => statuses[p.id] === "shortlisted").length,
-    rejected: PLAYERS.filter(p => statuses[p.id] === "rejected").length,
-    pending: PLAYERS.filter(p => statuses[p.id] === "pending").length,
+  const setStatus = (id: number, status: Player["status"]) => {
+    setList(prev => prev.map(p => p.id === id ? { ...p, status } : p));
   };
 
-  return (
-    <div style={{ padding: 28, fontFamily: "'Inter', sans-serif" }}>
-      {/* Stats */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 14, marginBottom: 24 }}>
-        {[
-          { label: "Total Applicants", value: PLAYERS.length, color: "#3B82F6", icon: "👥" },
-          { label: "Selected", value: counts.selected, color: "#10B981", icon: "✅" },
-          { label: "Shortlisted", value: counts.shortlisted, color: "#3B82F6", icon: "📋" },
-          { label: "Rejected", value: counts.rejected, color: "#EF4444", icon: "❌" },
-          { label: "Pending Review", value: counts.pending, color: "#F59E0B", icon: "⏳" },
-        ].map((s, i) => (
-          <div key={i} style={{ ...card, borderLeft: `3px solid ${s.color}` }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: "#475569", letterSpacing: 0.5, textTransform: "uppercase" }}>{s.label}</div>
-            <div style={{ fontSize: 24, fontWeight: 900, color: "#E2E8F0", margin: "6px 0 0" }}>{s.value}</div>
-          </div>
-        ))}
-      </div>
+  const card: React.CSSProperties = {
+    background: "linear-gradient(135deg, #0D1526 0%, #0A1020 100%)",
+    border: "1px solid #1E293B", borderRadius: 16, padding: 20,
+  };
 
-      {/* Filters */}
-      <div style={{ display: "flex", gap: 8, marginBottom: 18, alignItems: "center" }}>
-        {["all", "selected", "shortlisted", "pending", "rejected"].map(f => (
-          <button key={f} onClick={() => setFilter(f)} style={{ padding: "7px 16px", borderRadius: 8, border: filter === f ? "none" : "1px solid #1E293B", background: filter === f ? "#FF6B00" : "transparent", color: filter === f ? "#fff" : "#475569", fontSize: 11, fontWeight: 700, cursor: "pointer", textTransform: "capitalize" }}>{f}</button>
-        ))}
-        <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
-          <button style={{ padding: "7px 16px", borderRadius: 8, border: "none", background: "#10B98120", color: "#10B981", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>✉ Notify Selected</button>
-          <button style={{ padding: "7px 16px", borderRadius: 8, border: "none", background: "#3B82F620", color: "#3B82F6", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>⬇ Export List</button>
+  const summary = (ph: 1 | 2) => ({
+    total: list.filter(p => p.phase === ph).length,
+    selected: list.filter(p => p.phase === ph && p.status === "selected").length,
+    pending: list.filter(p => p.phase === ph && p.status === "pending").length,
+    rejected: list.filter(p => p.phase === ph && p.status === "rejected").length,
+  });
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+
+      {/* Phase Toggle */}
+      <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+        <div style={{ fontSize: 20, fontWeight: 800, color: "#F1F5F9", flex: 1 }}>Player Selection</div>
+        <div style={{ display: "flex", gap: 0, background: "#060B18", borderRadius: 12, border: "1px solid #1E293B", overflow: "hidden" }}>
+          {([1, 2] as const).map(p => (
+            <button key={p} onClick={() => setPhase(p)} style={{
+              padding: "10px 28px", border: "none", cursor: "pointer",
+              background: phase === p ? "linear-gradient(135deg,#FF6B00,#FF8C40)" : "transparent",
+              color: phase === p ? "#fff" : "#64748B",
+              fontSize: 13, fontWeight: 800,
+            }}>Phase {p}</button>
+          ))}
         </div>
       </div>
 
-      {/* Table */}
-      <div style={card}>
-        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+      {/* Phase Stats */}
+      {([1, 2] as const).map(ph => ph === phase && (
+        <div key={ph} style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
+          {[
+            { label: "Total Players", value: summary(ph).total, color: "#6366F1" },
+            { label: "Selected", value: summary(ph).selected, color: "#10B981" },
+            { label: "Pending Review", value: summary(ph).pending, color: "#F59E0B" },
+            { label: "Rejected", value: summary(ph).rejected, color: "#EF4444" },
+          ].map(s => (
+            <div key={s.label} style={{ ...card, borderLeft: `3px solid ${s.color}`, display: "flex", alignItems: "center", gap: 14 }}>
+              <div>
+                <div style={{ fontSize: 30, fontWeight: 800, color: s.color }}>{s.value}</div>
+                <div style={{ fontSize: 11, color: "#64748B" }}>{s.label}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ))}
+
+      {/* Status Filter */}
+      <div style={{ display: "flex", gap: 6 }}>
+        {(["all", "pending", "selected", "rejected", "watchlist"] as const).map(s => (
+          <button key={s} onClick={() => setStatusFilter(s)} style={{
+            padding: "7px 16px", borderRadius: 8, border: "1px solid",
+            borderColor: statusFilter === s ? (s === "all" ? "#FF6B00" : statusConfig[s]?.color || "#FF6B00") : "#1E293B",
+            background: statusFilter === s ? ((s === "all" ? "#FF6B00" : statusConfig[s]?.color || "#FF6B00") + "22") : "transparent",
+            color: statusFilter === s ? (s === "all" ? "#FF6B00" : statusConfig[s]?.color) : "#64748B",
+            fontSize: 11, fontWeight: 700, cursor: "pointer", textTransform: "capitalize",
+          }}>
+            {s === "all" ? "All" : statusConfig[s].label}
+            {s !== "all" && <span style={{ marginLeft: 6, fontSize: 10, opacity: 0.7 }}>
+              ({phaseList.filter(p => p.status === s).length})
+            </span>}
+          </button>
+        ))}
+      </div>
+
+      {/* Player Table */}
+      <div style={{ ...card, padding: 0, overflow: "hidden" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
-            <tr style={{ borderBottom: "1px solid #1E293B" }}>
-              {["ID", "Player", "Role", "City", "Video", "KYC", "Score", "Status", "Actions"].map(h => (
-                <th key={h} style={{ padding: "8px 12px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#475569", letterSpacing: 0.5 }}>{h}</th>
+            <tr style={{ borderBottom: "1px solid #1E293B", background: "#060E1C" }}>
+              {["Player", "Role", "Location", "Age", "Score", "Video", "Status", "Actions"].map(h => (
+                <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontSize: 11, color: "#475569", fontWeight: 700, textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {filtered.map(p => (
-              <tr key={p.id} style={{ borderBottom: "1px solid #0F172A" }}>
-                <td style={{ padding: "11px 12px", color: "#475569", fontFamily: "monospace", fontSize: 11 }}>{p.id}</td>
-                <td style={{ padding: "11px 12px", color: "#E2E8F0", fontWeight: 600 }}>{p.name}</td>
-                <td style={{ padding: "11px 12px", color: "#94A3B8" }}>{p.role}</td>
-                <td style={{ padding: "11px 12px", color: "#64748B" }}>{p.city}</td>
-                <td style={{ padding: "11px 12px" }}>
-                  <span style={{ background: p.video === "uploaded" ? "#10B98120" : "#F59E0B20", color: p.video === "uploaded" ? "#10B981" : "#F59E0B", padding: "2px 8px", borderRadius: 6, fontSize: 10, fontWeight: 700 }}>
-                    {p.video === "uploaded" ? "✓ Done" : "⏳ Pending"}
-                  </span>
-                </td>
-                <td style={{ padding: "11px 12px" }}>
-                  <span style={{ background: p.kyc === "verified" ? "#10B98120" : p.kyc === "rejected" ? "#EF444420" : "#F59E0B20", color: p.kyc === "verified" ? "#10B981" : p.kyc === "rejected" ? "#EF4444" : "#F59E0B", padding: "2px 8px", borderRadius: 6, fontSize: 10, fontWeight: 700, textTransform: "capitalize" }}>
-                    {p.kyc}
-                  </span>
-                </td>
-                <td style={{ padding: "11px 12px" }}>
-                  {p.score > 0 ? (
-                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                      <div style={{ width: 40, height: 5, background: "#1E293B", borderRadius: 3 }}>
-                        <div style={{ width: `${p.score}%`, height: "100%", background: p.score >= 90 ? "#10B981" : p.score >= 75 ? "#F59E0B" : "#EF4444", borderRadius: 3 }} />
-                      </div>
-                      <span style={{ color: "#E2E8F0", fontWeight: 700 }}>{p.score}</span>
+            {filtered.sort((a, b) => b.score - a.score).map(p => (
+              <tr key={p.id} style={{ borderBottom: "1px solid #0F1B2D" }}>
+                <td style={{ padding: "14px 16px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <div style={{ width: 36, height: 36, borderRadius: 10, background: `hsl(${p.id * 37}, 60%, 35%)`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, fontWeight: 700, color: "#fff" }}>
+                      {p.name[0]}
                     </div>
-                  ) : <span style={{ color: "#334155" }}>—</span>}
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: "#F1F5F9" }}>{p.name}</div>
+                      <div style={{ fontSize: 10, color: "#475569" }}>{p.phone}</div>
+                    </div>
+                  </div>
                 </td>
-                <td style={{ padding: "11px 12px" }}>
-                  <span style={{ background: STATUS_C[statuses[p.id]].bg, color: STATUS_C[statuses[p.id]].color, padding: "2px 8px", borderRadius: 6, fontSize: 10, fontWeight: 700, textTransform: "capitalize" }}>{statuses[p.id]}</span>
+                <td style={{ padding: "14px 16px" }}>
+                  <span style={{ padding: "3px 9px", borderRadius: 6, fontSize: 11, fontWeight: 700, background: roleColor(p.role) + "22", color: roleColor(p.role) }}>{p.role}</span>
                 </td>
-                <td style={{ padding: "11px 12px" }}>
-                  <div style={{ display: "flex", gap: 4 }}>
-                    <button onClick={() => setStatuses(s => ({ ...s, [p.id]: "selected" }))} style={{ padding: "4px 8px", borderRadius: 6, border: "none", background: "#10B98115", color: "#10B981", fontSize: 10, fontWeight: 700, cursor: "pointer" }}>✓</button>
-                    <button onClick={() => setStatuses(s => ({ ...s, [p.id]: "rejected" }))} style={{ padding: "4px 8px", borderRadius: 6, border: "none", background: "#EF444415", color: "#EF4444", fontSize: 10, fontWeight: 700, cursor: "pointer" }}>✗</button>
-                    <button style={{ padding: "4px 8px", borderRadius: 6, border: "none", background: "#3B82F615", color: "#3B82F6", fontSize: 10, fontWeight: 700, cursor: "pointer" }}>▶</button>
+                <td style={{ padding: "14px 16px" }}>
+                  <div style={{ fontSize: 12, color: "#94A3B8" }}>{p.city}</div>
+                  <div style={{ fontSize: 10, color: "#475569" }}>{p.state}</div>
+                </td>
+                <td style={{ padding: "14px 16px", fontSize: 13, color: "#94A3B8" }}>{p.age}y</td>
+                <td style={{ padding: "14px 16px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <div style={{ flex: 1, height: 5, background: "#1E293B", borderRadius: 3, overflow: "hidden", minWidth: 50 }}>
+                      <div style={{ height: "100%", width: `${p.score}%`, background: p.score >= 80 ? "#10B981" : p.score >= 65 ? "#F59E0B" : "#EF4444", borderRadius: 3 }} />
+                    </div>
+                    <span style={{ fontSize: 13, fontWeight: 800, color: p.score >= 80 ? "#10B981" : p.score >= 65 ? "#F59E0B" : "#EF4444", minWidth: 28 }}>{p.score}</span>
+                  </div>
+                </td>
+                <td style={{ padding: "14px 16px" }}>
+                  {p.video ? (
+                    <button onClick={() => setVideoPlayer(p)} style={{ padding: "5px 12px", borderRadius: 6, border: "none", background: "#3B82F622", color: "#3B82F6", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>▶ Watch</button>
+                  ) : (
+                    <span style={{ fontSize: 12, color: "#334155" }}>No video</span>
+                  )}
+                </td>
+                <td style={{ padding: "14px 16px" }}>
+                  <span style={{ padding: "4px 10px", borderRadius: 20, fontSize: 10, fontWeight: 700, background: statusConfig[p.status].bg, color: statusConfig[p.status].color }}>
+                    {statusConfig[p.status].label}
+                  </span>
+                </td>
+                <td style={{ padding: "14px 16px" }}>
+                  <div style={{ display: "flex", gap: 6 }}>
+                    <button onClick={() => setStatus(p.id, "selected")} disabled={p.status === "selected"} style={{ padding: "5px 10px", borderRadius: 6, border: "1px solid #10B98155", background: p.status === "selected" ? "#10B98122" : "transparent", color: "#10B981", fontSize: 11, cursor: "pointer", fontWeight: 700, opacity: p.status === "selected" ? 0.5 : 1 }}>✓</button>
+                    <button onClick={() => setStatus(p.id, "watchlist")} style={{ padding: "5px 10px", borderRadius: 6, border: "1px solid #6366F155", background: p.status === "watchlist" ? "#6366F122" : "transparent", color: "#818CF8", fontSize: 11, cursor: "pointer" }}>👁</button>
+                    <button onClick={() => setStatus(p.id, "rejected")} disabled={p.status === "rejected"} style={{ padding: "5px 10px", borderRadius: 6, border: "1px solid #EF444455", background: p.status === "rejected" ? "#EF444422" : "transparent", color: "#EF4444", fontSize: 11, cursor: "pointer", opacity: p.status === "rejected" ? 0.5 : 1 }}>✕</button>
                   </div>
                 </td>
               </tr>
@@ -117,6 +174,32 @@ export default function SelectionView() {
           </tbody>
         </table>
       </div>
+
+      {/* Video Modal */}
+      {videoPlayer && (
+        <div style={{ position: "fixed", inset: 0, background: "#000000CC", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999 }}>
+          <div style={{ background: "#0D1526", border: "1px solid #1E293B", borderRadius: 20, padding: 24, width: 520 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+              <div>
+                <div style={{ fontSize: 16, fontWeight: 700, color: "#F1F5F9" }}>{videoPlayer.name}</div>
+                <div style={{ fontSize: 11, color: "#64748B" }}>Selection Video · {videoPlayer.role}</div>
+              </div>
+              <button onClick={() => setVideoPlayer(null)} style={{ background: "none", border: "none", color: "#64748B", cursor: "pointer", fontSize: 20 }}>✕</button>
+            </div>
+            <div style={{ background: "#060B18", borderRadius: 12, aspectRatio: "16/9", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid #1E293B", marginBottom: 16 }}>
+              <div style={{ textAlign: "center" }}>
+                <div style={{ fontSize: 48, marginBottom: 8 }}>🎥</div>
+                <div style={{ fontSize: 12, color: "#64748B" }}>Video preview</div>
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: 10 }}>
+              <button onClick={() => { setStatus(videoPlayer.id, "selected"); setVideoPlayer(null); }} style={{ flex: 1, padding: "10px 0", borderRadius: 10, border: "none", background: "#10B98122", color: "#10B981", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>✓ Select Player</button>
+              <button onClick={() => { setStatus(videoPlayer.id, "watchlist"); setVideoPlayer(null); }} style={{ flex: 1, padding: "10px 0", borderRadius: 10, border: "none", background: "#6366F122", color: "#818CF8", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>👁 Watchlist</button>
+              <button onClick={() => { setStatus(videoPlayer.id, "rejected"); setVideoPlayer(null); }} style={{ flex: 1, padding: "10px 0", borderRadius: 10, border: "none", background: "#EF444422", color: "#EF4444", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>✕ Reject</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
