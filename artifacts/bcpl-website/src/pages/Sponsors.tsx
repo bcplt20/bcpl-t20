@@ -56,11 +56,11 @@ function Footer() {
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
             <div>
               <div style={{color:'rgba(255,255,255,0.3)',fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:12,fontFamily:'Montserrat,sans-serif'}}>League</div>
-              {['Schedule','Match Center','Teams','Points Table','Photos','Videos'].map(l=><div key={l} style={{marginBottom:8}}><a href="#" style={{color:'rgba(255,255,255,0.55)',fontSize:13,textDecoration:'none',fontFamily:'Inter,sans-serif'}}>{l}</a></div>)}
+              {[['Schedule','/schedule'],['Match Center','/match-center'],['Teams','/teams'],['Points Table','/points-table'],['Photos','/photos'],['Videos','/videos']].map(([l,h])=><div key={l} style={{marginBottom:8}}><a href={h} style={{color:'rgba(255,255,255,0.55)',fontSize:13,textDecoration:'none',fontFamily:'Inter,sans-serif'}}>{l}</a></div>)}
             </div>
             <div>
               <div style={{color:'rgba(255,255,255,0.3)',fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:12,fontFamily:'Montserrat,sans-serif'}}>Info</div>
-              {['About','FAQ','Contact','Terms','Privacy','Refunds','Eligibility'].map(l=><div key={l} style={{marginBottom:8}}><a href="#" style={{color:'rgba(255,255,255,0.55)',fontSize:13,textDecoration:'none',fontFamily:'Inter,sans-serif'}}>{l}</a></div>)}
+              {[['About','/about'],['FAQ','/faq'],['Contact','/contact'],['Terms','/terms'],['Privacy','/privacy'],['Refunds','/refunds'],['Eligibility','/eligibility']].map(([l,h])=><div key={l} style={{marginBottom:8}}><a href={h} style={{color:'rgba(255,255,255,0.55)',fontSize:13,textDecoration:'none',fontFamily:'Inter,sans-serif'}}>{l}</a></div>)}
             </div>
           </div>
         </div>
@@ -75,23 +75,11 @@ function Footer() {
   );
 }
 
-const TIER1 = [
-  {name:'MegaStar Sports',cat:'Title Sponsor',desc:'Premium cricket equipment partner powering every boundary and wicket in BCPL Season 5.',gradA:'#FF7A29',gradB:'#E8B23D',icon:'🏏'},
-  {name:'CorporateEdge',cat:'Co-Title Sponsor',desc:'Connecting corporate talent to the cricket field — HR & corporate services for Season 5.',gradA:'#3B82F6',gradB:'#8B5CF6',icon:'💼'},
-];
-const TIER2 = [
-  {name:'PlayBold Energy',desc:'Official energy drink partner — fuel your game.',gradA:'#22C55E',gradB:'#16A34A',icon:'⚡'},
-  {name:'FitPro Supplements',desc:'Nutrition science for peak athletic performance.',gradA:'#F59E0B',gradB:'#D97706',icon:'💪'},
-  {name:'CrickGear Equipment',desc:'Professional cricket equipment for every role.',gradA:'#EF4444',gradB:'#DC2626',icon:'🦺'},
-  {name:'ProStadium Apparel',desc:'Official kit supplier — look sharp, play sharper.',gradA:'#6366F1',gradB:'#4F46E5',icon:'👕'},
-];
-const TIER3 = [
-  {name:'SweatHouse Gym',gradA:'#FF7A29',gradB:'#E8611A',icon:'🏋️'},
-  {name:'TeamKit India',gradA:'#06B6D4',gradB:'#0891B2',icon:'🎽'},
-  {name:'BallBridge',gradA:'#10B981',gradB:'#059669',icon:'🏏'},
-  {name:'FieldVision',gradA:'#8B5CF6',gradB:'#7C3AED',icon:'📹'},
-  {name:'ScoutPro',gradA:'#F59E0B',gradB:'#D97706',icon:'🔍'},
-  {name:'CricLife',gradA:'#EC4899',gradB:'#DB2777',icon:'🌟'},
+// Sponsor data will be added once partnerships are confirmed
+const SPONSOR_TIERS = [
+  { label:'TITLE SPONSOR', color:'#E8B23D', desc:'Exclusive brand visibility across all Season 5 matches, jerseys, and digital platforms.' },
+  { label:'PRESENTING SPONSOR', color:'#FF7A29', desc:'Premium partner status with prominent placement at all trial cities and match venues.' },
+  { label:'ASSOCIATE SPONSOR', color:'rgba(255,255,255,0.4)', desc:'Targeted brand exposure across BCPL digital channels and city-level events.' },
 ];
 
 
@@ -189,77 +177,25 @@ export function Sponsors() {
           </div>
         </section>
 
-        {/* TIER 1 — TITLE SPONSORS */}
+        {/* SPONSORSHIP TIERS */}
         <section style={{padding:'0 0 64px'}}>
           <div className="wrap">
-            <div style={{display:'flex',alignItems:'center',gap:16,marginBottom:32}}>
-              <div style={{flex:1,height:1,background:'linear-gradient(90deg,rgba(232,178,61,0.8),transparent)'}}/>
-              <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:13,color:'#E8B23D',letterSpacing:'0.15em'}}>TITLE SPONSORS</div>
-              <div style={{flex:1,height:1,background:'linear-gradient(270deg,rgba(232,178,61,0.8),transparent)'}}/>
+            <div style={{textAlign:'center',marginBottom:40}}>
+              <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:16,color:'#fff',marginBottom:8}}>Sponsorship Opportunities — Season 5</div>
+              <p style={{color:'rgba(255,255,255,0.45)',fontSize:14,fontFamily:'Inter,sans-serif',maxWidth:480,margin:'0 auto'}}>
+                We are actively seeking brand partners for BCPL Season 5. Reach 5,000+ active cricketers across India.
+              </p>
             </div>
-            <div className="tier1-grid" style={{display:'grid',gridTemplateColumns:'1fr',gap:24}}>
-              {TIER1.map((s,i)=>(
-                <div key={s.name} style={{background:'linear-gradient(135deg,rgba(20,38,75,0.95),rgba(10,22,46,0.9))',backdropFilter:'blur(32px)',border:'1.5px solid rgba(232,178,61,0.35)',borderRadius:24,padding:'36px 32px',animation:`fadeSlide 0.5s ease ${i*0.1}s both,goldShimmer 3s ease-in-out ${i*0.5}s infinite`,position:'relative',overflow:'hidden'}}>
-                  <div style={{position:'absolute',top:0,right:0,width:200,height:200,background:`radial-gradient(circle,${s.gradA}12,transparent 70%)`,pointerEvents:'none'}}/>
-                  <div style={{display:'flex',alignItems:'flex-start',gap:20,flexWrap:'wrap'}}>
-                    <div style={{width:80,height:80,borderRadius:'50%',background:`linear-gradient(135deg,${s.gradA},${s.gradB})`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:36,flexShrink:0,boxShadow:`0 8px 32px ${s.gradA}55`}}>
-                      {s.icon}
+            <div style={{display:'grid',gridTemplateColumns:'1fr',gap:20}}>
+              {SPONSOR_TIERS.map((tier,i)=>(
+                <div key={tier.label} style={{background:'linear-gradient(135deg,rgba(15,34,71,0.92),rgba(10,22,46,0.88))',backdropFilter:'blur(24px)',border:`1.5px dashed ${tier.color}55`,borderRadius:20,padding:'28px 24px',display:'flex',alignItems:'center',gap:20,flexWrap:'wrap'}}>
+                  <div style={{width:60,height:60,borderRadius:'50%',background:`${tier.color}15`,border:`2px dashed ${tier.color}44`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:26,flexShrink:0}}>🤝</div>
+                  <div style={{flex:1,minWidth:200}}>
+                    <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:8,flexWrap:'wrap'}}>
+                      <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:14,color:tier.color,letterSpacing:'0.1em'}}>{tier.label}</span>
+                      <span style={{background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.1)',color:'rgba(255,255,255,0.35)',fontSize:9,fontWeight:700,padding:'2px 8px',borderRadius:100,fontFamily:'Montserrat,sans-serif'}}>SLOT AVAILABLE</span>
                     </div>
-                    <div style={{flex:1,minWidth:200}}>
-                      <div style={{display:'flex',alignItems:'center',gap:10,flexWrap:'wrap',marginBottom:8}}>
-                        <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:24,color:'#F8F4EE'}}>{s.name}</h2>
-                        <span style={{background:'linear-gradient(135deg,rgba(232,178,61,0.2),rgba(232,178,61,0.08))',border:'1px solid rgba(232,178,61,0.5)',color:'#E8B23D',fontSize:9,fontWeight:800,padding:'4px 10px',borderRadius:100,fontFamily:'Montserrat,sans-serif',letterSpacing:'0.1em',whiteSpace:'nowrap'}}>TITLE SPONSOR SEASON 5</span>
-                      </div>
-                      <div style={{color:'rgba(255,255,255,0.4)',fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',fontFamily:'Montserrat,sans-serif',marginBottom:10}}>{s.cat}</div>
-                      <p style={{color:'rgba(255,255,255,0.6)',fontSize:14,lineHeight:1.7,fontFamily:'Inter,sans-serif',maxWidth:420}}>{s.desc}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* TIER 2 — PRESENTING SPONSORS */}
-        <section style={{padding:'0 0 64px'}}>
-          <div className="wrap">
-            <div style={{display:'flex',alignItems:'center',gap:16,marginBottom:32}}>
-              <div style={{flex:1,height:1,background:'linear-gradient(90deg,rgba(255,122,41,0.8),transparent)'}}/>
-              <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:13,color:'#FF7A29',letterSpacing:'0.15em'}}>PRESENTING SPONSORS</div>
-              <div style={{flex:1,height:1,background:'linear-gradient(270deg,rgba(255,122,41,0.8),transparent)'}}/>
-            </div>
-            <div className="tier2-grid" style={{display:'grid',gridTemplateColumns:'1fr',gap:18}}>
-              {TIER2.map((s,i)=>(
-                <div key={s.name} style={{background:'linear-gradient(135deg,rgba(15,34,71,0.92),rgba(10,22,46,0.88))',backdropFilter:'blur(24px)',border:'1px solid rgba(255,122,41,0.2)',borderRadius:18,padding:'24px 20px',animation:`fadeSlide 0.4s ease ${i*0.08}s both,orangeGlow 3s ease-in-out ${i*0.4}s infinite`,textAlign:'center'}}>
-                  <div style={{width:56,height:56,borderRadius:'50%',background:`linear-gradient(135deg,${s.gradA},${s.gradB})`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:24,margin:'0 auto 14px',boxShadow:`0 6px 24px ${s.gradA}44`}}>
-                    {s.icon}
-                  </div>
-                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:16,color:'#F8F4EE',marginBottom:6}}>{s.name}</div>
-                  <p style={{color:'rgba(255,255,255,0.5)',fontSize:12,lineHeight:1.6,fontFamily:'Inter,sans-serif',marginBottom:10}}>{s.desc}</p>
-                  <span style={{background:'rgba(255,122,41,0.12)',border:'1px solid rgba(255,122,41,0.3)',color:'#FF7A29',fontSize:9,fontWeight:800,padding:'3px 10px',borderRadius:100,fontFamily:'Montserrat,sans-serif',letterSpacing:'0.1em'}}>PRESENTING PARTNER</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* TIER 3 — ASSOCIATE SPONSORS */}
-        <section style={{padding:'0 0 64px'}}>
-          <div className="wrap">
-            <div style={{display:'flex',alignItems:'center',gap:16,marginBottom:32}}>
-              <div style={{flex:1,height:1,background:'linear-gradient(90deg,rgba(255,255,255,0.2),transparent)'}}/>
-              <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:13,color:'rgba(255,255,255,0.4)',letterSpacing:'0.15em'}}>ASSOCIATE SPONSORS</div>
-              <div style={{flex:1,height:1,background:'linear-gradient(270deg,rgba(255,255,255,0.2),transparent)'}}/>
-            </div>
-            <div className="tier3-grid" style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:14}}>
-              {TIER3.map((s,i)=>(
-                <div key={s.name} style={{background:'linear-gradient(135deg,rgba(15,34,71,0.85),rgba(10,22,46,0.8))',backdropFilter:'blur(16px)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:14,padding:'18px 16px',animation:`fadeSlide 0.4s ease ${i*0.07}s both`,display:'flex',alignItems:'center',gap:12,transition:'border-color 0.2s'}}>
-                  <div style={{width:44,height:44,borderRadius:'50%',background:`linear-gradient(135deg,${s.gradA},${s.gradB})`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:20,flexShrink:0,boxShadow:`0 4px 16px ${s.gradA}44`}}>
-                    {s.icon}
-                  </div>
-                  <div>
-                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:13,color:'#F8F4EE',marginBottom:4}}>{s.name}</div>
-                    <span style={{background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.1)',color:'rgba(255,255,255,0.4)',fontSize:9,fontWeight:700,padding:'2px 8px',borderRadius:100,fontFamily:'Montserrat,sans-serif',letterSpacing:'0.08em'}}>ASSOCIATE PARTNER</span>
+                    <p style={{color:'rgba(255,255,255,0.5)',fontSize:13,lineHeight:1.6,fontFamily:'Inter,sans-serif',margin:0}}>{tier.desc}</p>
                   </div>
                 </div>
               ))}

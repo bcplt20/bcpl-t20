@@ -65,40 +65,15 @@ const TIMELINE = [
 ];
 
 /* Matches */
-const MATCHES = [
-  { status:"LIVE",     team1:"Mumbai Mavericks",   t1Slug:"mumbai_mavericks",   t1Color:"#3B82F6", team2:"Kolkata Tigers",     t2Slug:"kolkata_tigers",     t2Color:"#F97316", score1:"124/4 (14.2 ov)", score2:"172/6 (20 ov)",   info:"Match 12 · Wankhede, Mumbai",    winner:""                 },
-  { status:"UPCOMING", team1:"Rajasthan Scorchers", t1Slug:"rajasthan_scorchers",t1Color:"#E97B6B", team2:"Punjab Warriors",    t2Slug:"punjab_warriors",    t2Color:"#DC2626", score1:"",                score2:"",                info:"Match 13 · 22 Jul · SMS Stadium, Jaipur", winner:"" },
-  { status:"UPCOMING", team1:"Delhi Suryas",         t1Slug:"delhi_suryas",       t1Color:"#6366F1", team2:"Chennai Thalaivas",  t2Slug:"chennai_thalaivas",  t2Color:"#2563EB", score1:"",                score2:"",                info:"Match 14 · 23 Jul · Feroz Shah Kotla",    winner:"" },
-  { status:"RESULT",   team1:"Hyderabad Hawks",      t1Slug:"hyderabad_hawks",    t1Color:"#16A34A", team2:"Bengaluru Rockets",  t2Slug:"bengaluru_rockets",  t2Color:"#EF4444", score1:"168/5 (20 ov)",   score2:"142/8 (20 ov)",   info:"Match 11 · 19 Jul · Rajiv Gandhi Stadium", winner:"Hyderabad Hawks" },
-  { status:"RESULT",   team1:"Ahmedabad Lions",      t1Slug:"ahmedabad_lions",    t1Color:"#B91C1C", team2:"Lucknow Nawabs",    t2Slug:"lucknow_nawabs",     t2Color:"#F59E0B", score1:"155/6 (20 ov)",   score2:"158/4 (18.3 ov)", info:"Match 10 · 18 Jul · Motera, Ahmedabad",    winner:"Lucknow Nawabs"  },
-];
+const MATCHES: typeof POINTS_TABLE = [];
 
 /* Points Table */
-const POINTS_TABLE = [
-  { rank:1,  team:"Kolkata Tigers",       slug:"kolkata_tigers",      color:"#F97316", p:12, w:9, l:2, nr:1, pts:19, nrr:"+1.245" },
-  { rank:2,  team:"Mumbai Mavericks",     slug:"mumbai_mavericks",    color:"#3B82F6", p:12, w:8, l:3, nr:1, pts:17, nrr:"+0.876" },
-  { rank:3,  team:"Lucknow Nawabs",       slug:"lucknow_nawabs",      color:"#F59E0B", p:12, w:7, l:4, nr:1, pts:15, nrr:"+0.543" },
-  { rank:4,  team:"Hyderabad Hawks",      slug:"hyderabad_hawks",     color:"#16A34A", p:12, w:7, l:5, nr:0, pts:14, nrr:"+0.321" },
-  { rank:5,  team:"Delhi Suryas",         slug:"delhi_suryas",        color:"#6366F1", p:12, w:6, l:5, nr:1, pts:13, nrr:"+0.112" },
-  { rank:6,  team:"Chennai Thalaivas",    slug:"chennai_thalaivas",   color:"#2563EB", p:12, w:5, l:6, nr:1, pts:11, nrr:"-0.088" },
-  { rank:7,  team:"Rajasthan Scorchers",  slug:"rajasthan_scorchers", color:"#E97B6B", p:12, w:4, l:7, nr:1, pts:9,  nrr:"-0.234" },
-  { rank:8,  team:"Punjab Warriors",      slug:"punjab_warriors",     color:"#DC2626", p:11, w:4, l:7, nr:0, pts:8,  nrr:"-0.456" },
-  { rank:9,  team:"Bengaluru Rockets",    slug:"bengaluru_rockets",   color:"#EF4444", p:12, w:3, l:8, nr:1, pts:7,  nrr:"-0.678" },
-  { rank:10, team:"Ahmedabad Lions",      slug:"ahmedabad_lions",     color:"#B91C1C", p:11, w:2, l:9, nr:0, pts:4,  nrr:"-1.234" },
+const POINTS_TABLE: {rank:number,team:string,slug:string,color:string,p:number,w:number,l:number,nr:number,pts:number,nrr:string}[] = [
+  // Empty — will be populated from live API when tournament begins (Sep 2026)
 ];
 
-/* Sponsors */
-const SPONSORS = [
-  { tier:"Title Sponsor",    name:"TechCorp India",     logo:"TC",  color:"#FF7A29" },
-  { tier:"Title Sponsor",    name:"SportsMax",           logo:"SM",  color:"#FF7A29" },
-  { tier:"Associate",        name:"HealthFirst",         logo:"HF",  color:"#E8B23D" },
-  { tier:"Associate",        name:"PowerDrink Pro",      logo:"PD",  color:"#E8B23D" },
-  { tier:"Associate",        name:"FastTrack Jobs",      logo:"FT",  color:"#E8B23D" },
-  { tier:"Official Partner", name:"CricEquip",           logo:"CE",  color:"#64748B" },
-  { tier:"Official Partner", name:"SportswearX",         logo:"SX",  color:"#64748B" },
-  { tier:"Official Partner", name:"FlightEasy",          logo:"FE",  color:"#64748B" },
-  { tier:"Official Partner", name:"HotelNow",            logo:"HN",  color:"#64748B" },
-];
+/* Sponsors — empty until real sponsors confirmed */
+const SPONSORS: {tier:string,name:string,logo:string,color:string}[] = [];
 
 /* ═══════════════════════════════════════════════════════════ */
 export function Home() {
@@ -710,7 +685,7 @@ export function Home() {
               <div className="mont" style={{ fontWeight:900, fontSize:16, color:"#FF7A29", marginBottom:4 }}>Phase 1 Registrations Are Open Now!</div>
               <div style={{ fontSize:13, color:"rgba(255,255,255,.5)" }}>Join before 28th February 2026. Start your journey for just ₹299.</div>
             </div>
-            <button className="btn-cta" style={{ fontSize:14, padding:"13px 28px", flexShrink:0 }} onClick={()=>navigate("/registration")}>Register Now — ₹299 →</button>
+            <button className="btn-cta" style={{ fontSize:14, padding:"13px 28px", flexShrink:0 }} onClick={()=>navigate("/register")}>Register Now — ₹299 →</button>
           </div>
         </div>
       </section>
@@ -1090,8 +1065,8 @@ export function Home() {
             <div style={{ flex:1, minWidth:120 }}>
               <div className="mont" style={{ fontWeight:800, fontSize:10, letterSpacing:".1em", color:"rgba(255,255,255,.35)", textTransform:"uppercase", marginBottom:12 }}>League</div>
               <div style={{ display:"flex", flexDirection:"column", gap:7 }}>
-                {["About","Teams","Schedule","Points Table","Sponsors"].map(l=>(
-                  <a key={l} href="#" style={{ fontSize:13, color:"rgba(255,255,255,.38)", textDecoration:"none" }}
+                {[["About","/about"],["Teams","/teams"],["Schedule","/schedule"],["Points Table","/points-table"],["Sponsors","/sponsors"]].map(([l,h])=>(
+                  <a key={l} href={h} style={{ fontSize:13, color:"rgba(255,255,255,.38)", textDecoration:"none" }}
                     onMouseEnter={e=>(e.currentTarget.style.color="#FF7A29")}
                     onMouseLeave={e=>(e.currentTarget.style.color="rgba(255,255,255,.38)")}>{l}</a>
                 ))}
@@ -1102,8 +1077,8 @@ export function Home() {
             <div style={{ flex:1, minWidth:120 }}>
               <div className="mont" style={{ fontWeight:800, fontSize:10, letterSpacing:".1em", color:"rgba(255,255,255,.35)", textTransform:"uppercase", marginBottom:12 }}>Register</div>
               <div style={{ display:"flex", flexDirection:"column", gap:7 }}>
-                {["Phase 1 Registration","Eligibility Criteria","FAQ","Cricket Rules","Code of Conduct"].map(l=>(
-                  <a key={l} href="#" style={{ fontSize:13, color:"rgba(255,255,255,.38)", textDecoration:"none" }}
+                {[["Phase 1 Registration","/register"],["Eligibility Criteria","/eligibility"],["FAQ","/faq"],["Cricket Rules","/cricket-rulebook"],["Code of Conduct","/code-of-conduct"]].map(([l,h])=>(
+                  <a key={l} href={h} style={{ fontSize:13, color:"rgba(255,255,255,.38)", textDecoration:"none" }}
                     onMouseEnter={e=>(e.currentTarget.style.color="#FF7A29")}
                     onMouseLeave={e=>(e.currentTarget.style.color="rgba(255,255,255,.38)")}>{l}</a>
                 ))}
@@ -1114,8 +1089,8 @@ export function Home() {
             <div style={{ flex:1, minWidth:120 }}>
               <div className="mont" style={{ fontWeight:800, fontSize:10, letterSpacing:".1em", color:"rgba(255,255,255,.35)", textTransform:"uppercase", marginBottom:12 }}>Legal</div>
               <div style={{ display:"flex", flexDirection:"column", gap:7 }}>
-                {["Privacy Policy","Terms & Conditions","Refund Policy","Contact Us"].map(l=>(
-                  <a key={l} href="#" style={{ fontSize:13, color:"rgba(255,255,255,.38)", textDecoration:"none" }}
+                {[["Privacy Policy","/privacy"],["Terms & Conditions","/terms"],["Refund Policy","/refunds"],["Contact Us","/contact"]].map(([l,h])=>(
+                  <a key={l} href={h} style={{ fontSize:13, color:"rgba(255,255,255,.38)", textDecoration:"none" }}
                     onMouseEnter={e=>(e.currentTarget.style.color="#FF7A29")}
                     onMouseLeave={e=>(e.currentTarget.style.color="rgba(255,255,255,.38)")}>{l}</a>
                 ))}
@@ -1128,15 +1103,15 @@ export function Home() {
             <div className="foot-bottom">
               <p className="mont" style={{ fontSize:11, color:"rgba(255,255,255,.2)", fontWeight:600 }}>© 2026 BCPL T20 · Kriparti Playing11 Pvt. Ltd. · All Rights Reserved.</p>
               <div className="foot-legal-links">
-                <a href="#" style={{ fontSize:11, color:"rgba(255,255,255,.2)", textDecoration:"none" }}
+                <a href="/privacy" style={{ fontSize:11, color:"rgba(255,255,255,.2)", textDecoration:"none" }}
                   onMouseEnter={e=>(e.currentTarget.style.color="#FF7A29")}
                   onMouseLeave={e=>(e.currentTarget.style.color="rgba(255,255,255,.2)")}>Privacy Policy</a>
                 <span style={{ color:"rgba(255,255,255,.1)", fontSize:10 }}>|</span>
-                <a href="#" style={{ fontSize:11, color:"rgba(255,255,255,.2)", textDecoration:"none" }}
+                <a href="/terms" style={{ fontSize:11, color:"rgba(255,255,255,.2)", textDecoration:"none" }}
                   onMouseEnter={e=>(e.currentTarget.style.color="#FF7A29")}
                   onMouseLeave={e=>(e.currentTarget.style.color="rgba(255,255,255,.2)")}>Terms</a>
                 <span style={{ color:"rgba(255,255,255,.1)", fontSize:10 }}>|</span>
-                <a href="#" style={{ fontSize:11, color:"rgba(255,255,255,.2)", textDecoration:"none" }}
+                <a href="/refunds" style={{ fontSize:11, color:"rgba(255,255,255,.2)", textDecoration:"none" }}
                   onMouseEnter={e=>(e.currentTarget.style.color="#FF7A29")}
                   onMouseLeave={e=>(e.currentTarget.style.color="rgba(255,255,255,.2)")}>Refund Policy</a>
                 <span style={{ color:"rgba(255,255,255,.1)", fontSize:10 }}>|</span>
@@ -1149,7 +1124,7 @@ export function Home() {
 
       {/* Floating CTA */}
       <div className="float-btn">
-        <button className="btn-cta" style={{ fontSize:13, padding:"13px 22px", borderRadius:12, boxShadow:"0 8px 32px rgba(255,122,41,.5)" }} onClick={()=>navigate("/registration")}>
+        <button className="btn-cta" style={{ fontSize:13, padding:"13px 22px", borderRadius:12, boxShadow:"0 8px 32px rgba(255,122,41,.5)" }} onClick={()=>navigate("/register")}>
           🏏 Register — ₹299
         </button>
       </div>

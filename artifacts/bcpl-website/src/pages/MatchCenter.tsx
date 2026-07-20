@@ -58,55 +58,11 @@ const TIMELINE = [
   },
 ];
 
-const RESULTS = [
-  {
-    team1: "Mumbai Mavericks",
-    score1: "187/4",
-    overs1: "19.2ov",
-    team2: "Bengaluru Rockets",
-    score2: "165/8",
-    overs2: "20ov",
-    result: "Mumbai Mavericks WON by 22 runs",
-    winner: "Mumbai Mavericks",
-    mom: "A. Sharma 87*(54)",
-    color1: "#3B82F6",
-    color2: "#22C55E",
-  },
-  {
-    team1: "Delhi Suryas",
-    score1: "143/7",
-    overs1: "20ov",
-    team2: "Kolkata Tigers",
-    score2: "139/9",
-    overs2: "20ov",
-    result: "Delhi Suryas WON by 4 runs",
-    winner: "Delhi Suryas",
-    mom: "S. Mehta 45(32) + 3 wkts",
-    color1: "#FF7A29",
-    color2: "#F97316",
-  },
-  {
-    team1: "Chennai Thalaivas",
-    score1: "201/3",
-    overs1: "18.4ov",
-    team2: "Hyderabad Hawks",
-    score2: "178/6",
-    overs2: "20ov",
-    result: "Chennai Thalaivas WON by 7 wkts",
-    winner: "Chennai Thalaivas",
-    mom: "R. Kumar 78*(48)",
-    color1: "#10B981",
-    color2: "#06B6D4",
-  },
-];
+// Match results will be populated by admin when tournament begins (Sep 2026)
+const RESULTS: any[] = [];
 
-const POINTS = [
-  { rank: 1, name: "Bengaluru Rockets", color: "#22C55E", p: 8, w: 7, l: 1, pts: 14, nrr: "+1.56" },
-  { rank: 2, name: "Mumbai Mavericks", color: "#3B82F6", p: 8, w: 6, l: 2, pts: 12, nrr: "+1.24" },
-  { rank: 3, name: "Delhi Suryas", color: "#FF7A29", p: 8, w: 5, l: 3, pts: 10, nrr: "+0.87" },
-  { rank: 4, name: "Chennai Thalaivas", color: "#10B981", p: 8, w: 5, l: 3, pts: 10, nrr: "+0.43" },
-  { rank: 5, name: "Rajasthan Scorchers", color: "#EF4444", p: 8, w: 4, l: 4, pts: 8, nrr: "+0.12" },
-];
+// Points table will be populated when tournament begins (Sep 2026)
+const POINTS: any[] = [];
 
 
 const ROUTE_MAP: Record<string,string> = {
@@ -166,10 +122,17 @@ export function MatchCenter() {
         .roadmap-scroll::-webkit-scrollbar-track { background: #060C18; }
         .roadmap-scroll::-webkit-scrollbar-thumb { background: #FF7A29; border-radius:12px; }
 
-        .roadmap-block { background: #0A1727; border: 1px solid rgba(255,255,255,0.08); border-radius:12px; min-width: 220px; padding: 24px 18px; flex-shrink: 0; position: relative; }
+        .roadmap-block { background: #0A1727; border: 1px solid rgba(255,255,255,0.08); border-radius:12px; min-width: 180px; max-width: 200px; padding: 20px 16px; flex-shrink: 0; position: relative; }
         .roadmap-block.active { border-color: rgba(255,122,41,0.6); animation: glowPulse 2.5s ease-in-out infinite; }
-        .roadmap-connector { width: 28px; height: 2px; background: rgba(255,255,255,0.1); align-self: center; flex-shrink: 0; position: relative; }
+        .roadmap-connector { width: 20px; height: 2px; background: rgba(255,255,255,0.1); align-self: center; flex-shrink: 0; position: relative; }
         .roadmap-connector::after { content: '▶'; position: absolute; right: -8px; top: -8px; color: rgba(255,255,255,0.18); font-size: 10px; }
+        @media(max-width:639px){
+          .roadmap-scroll { flex-direction: column; overflow-x: visible; padding-bottom: 0; gap: 0; }
+          .roadmap-block { min-width: unset; max-width: unset; width: 100%; display: flex; gap: 14px; align-items: flex-start; padding: 16px; border-radius: 12px; margin-bottom: 0; }
+          .roadmap-block > * { flex-shrink: 0; }
+          .roadmap-connector { width: 2px; height: 20px; margin: 0 auto; align-self: unset; }
+          .roadmap-connector::after { content: '▼'; top: unset; right: unset; left: -4px; bottom: -10px; }
+        }
 
         .city-chip { background: #0A1727; border: 1px solid rgba(255,255,255,0.1); border-radius:12px; padding: 8px 14px; font-family: Montserrat, sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 0.05em; color: rgba(255,255,255,0.7); text-transform: uppercase; transition: border-color 0.2s, color 0.2s; cursor: default; display: flex; align-items: center; gap: 8px; }
         .city-chip:hover { border-color: rgba(255,122,41,0.6); color: #FF7A29; }
@@ -376,56 +339,17 @@ export function MatchCenter() {
         <div className="wrap">
           <div className="section-label">Results</div>
           <h2 className="section-title" style={{ fontSize: "clamp(20px, 4vw, 40px)", color: "#fff", marginBottom: 8, textTransform: "uppercase" }}>
-            RECENT RESULTS — SEASON 5 EXHIBITION
+            MATCH RESULTS — SEASON 5
           </h2>
           <p style={{ fontFamily: "Inter, sans-serif", color: "rgba(255,255,255,0.4)", marginBottom: 36, fontSize: 15 }}>
-            Exhibition matches from Season 5 showcase events.
+            Match results will appear here once the tournament begins.
           </p>
-
-          <div className="results-grid">
-            {RESULTS.map((match, i) => (
-              <div key={i} className="result-card">
-                {/* Orange header gradient */}
-                <div style={{ background: "linear-gradient(135deg,#0D1E35,#0A1727)", borderBottom: "1px solid rgba(255,255,255,0.06)", padding: "12px 18px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 10, letterSpacing: "0.1em", color: "rgba(255,255,255,0.3)", textTransform: "uppercase" }}>Exhibition Match {i + 1}</span>
-                  <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 10, letterSpacing: "0.1em", color: "#22C55E", background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)", borderRadius:12, padding: "3px 8px", textTransform: "uppercase" }}>COMPLETED</span>
-                </div>
-
-                <div style={{ padding: "20px 18px" }}>
-                  {/* Teams + Scores */}
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                    {/* Team 1 */}
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 13, color: match.winner === match.team1 ? "#fff" : "rgba(255,255,255,0.5)", lineHeight: 1.2, marginBottom: 4 }}>{match.team1}</div>
-                      <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 22, color: match.winner === match.team1 ? match.color1 : "rgba(255,255,255,0.4)", lineHeight: 1 }}>{match.score1}</div>
-                      <div style={{ fontFamily: "Inter, sans-serif", fontSize: 11, color: "rgba(255,255,255,0.3)", marginTop: 2 }}>({match.overs1})</div>
-                    </div>
-
-                    {/* VS */}
-                    <div style={{ padding: "0 14px", textAlign: "center" }}>
-                      <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 11, color: "rgba(255,255,255,0.2)", letterSpacing: "0.1em" }}>VS</div>
-                    </div>
-
-                    {/* Team 2 */}
-                    <div style={{ flex: 1, textAlign: "right" }}>
-                      <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 13, color: match.winner === match.team2 ? "#fff" : "rgba(255,255,255,0.5)", lineHeight: 1.2, marginBottom: 4 }}>{match.team2}</div>
-                      <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 22, color: match.winner === match.team2 ? match.color2 : "rgba(255,255,255,0.4)", lineHeight: 1 }}>{match.score2}</div>
-                      <div style={{ fontFamily: "Inter, sans-serif", fontSize: 11, color: "rgba(255,255,255,0.3)", marginTop: 2 }}>({match.overs2})</div>
-                    </div>
-                  </div>
-
-                  {/* Dashed divider */}
-                  <div style={{ borderTop: "1px dashed rgba(255,255,255,0.1)", margin: "0 0 14px" }} />
-
-                  {/* Result */}
-                  <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 13, color: "#FF7A29", marginBottom: 6 }}>{match.result}</div>
-                  <div style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: "rgba(255,255,255,0.35)" }}>
-                    <span style={{ color: "rgba(255,255,255,0.25)" }}>MOM: </span>
-                    <span style={{ color: "#E8B23D", fontWeight: 600 }}>{match.mom}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
+          <div style={{ textAlign: "center", padding: "48px 20px", background: "#0A1727", borderRadius: 16, border: "1px solid rgba(255,255,255,0.07)" }}>
+            <div style={{ fontSize: 48, marginBottom: 16 }}>🏏</div>
+            <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 20, color: "#fff", marginBottom: 8 }}>No Matches Played Yet</div>
+            <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 14, fontFamily: "Inter, sans-serif", maxWidth: 360, margin: "0 auto" }}>
+              Season 5 tournament kicks off Sep 2026. Live scores and match results will update here automatically.
+            </p>
           </div>
         </div>
       </section>
@@ -435,46 +359,17 @@ export function MatchCenter() {
         <div className="wrap">
           <div className="section-label">Standings</div>
           <h2 className="section-title" style={{ fontSize: "clamp(20px, 4vw, 40px)", color: "#fff", marginBottom: 8, textTransform: "uppercase" }}>
-            POINTS TABLE — TOP 5
+            POINTS TABLE — SEASON 5
           </h2>
           <p style={{ fontFamily: "Inter, sans-serif", color: "rgba(255,255,255,0.4)", marginBottom: 32, fontSize: 15 }}>
-            Exhibition series standings. Season 5 league table begins Sep 2026.
+            Season 5 league table begins Sep 2026.
           </p>
-
-          <div className="card" style={{ overflow: "hidden" }}>
-            <div className="pts-table-wrap">
-              <div className="pts-table-inner">
-                {/* Header */}
-                <div className="pts-header">
-                  <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.08em" }}>#</span>
-                  <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Team</span>
-                  <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "center" }}>P</span>
-                  <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "center" }}>W</span>
-                  <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "center" }}>L</span>
-                  <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "center" }}>PTS</span>
-                  <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "right" }}>NRR</span>
-                </div>
-
-                {POINTS.map((row, i) => (
-                  <div key={i} className="pts-row">
-                    <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 13, color: i === 0 ? "#E8B23D" : "rgba(255,255,255,0.4)" }}>{row.rank}</span>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <div style={{ width: 3, height: 18, background: row.color, borderRadius: 1, flexShrink: 0 }} />
-                      <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 13, color: "#fff" }}>{row.name}</span>
-                    </div>
-                    <span style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: "rgba(255,255,255,0.5)", textAlign: "center" }}>{row.p}</span>
-                    <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 700, fontSize: 13, color: "#22C55E", textAlign: "center" }}>{row.w}</span>
-                    <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 700, fontSize: 13, color: "#EF4444", textAlign: "center" }}>{row.l}</span>
-                    <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 14, color: "#FF7A29", textAlign: "center" }}>{row.pts}</span>
-                    <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 700, fontSize: 13, color: "#22C55E", textAlign: "right" }}>{row.nrr}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div style={{ marginTop: 20, textAlign: "right" }}>
-            <a href="#" style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 12, color: "#FF7A29", textDecoration: "none", letterSpacing: "0.06em", textTransform: "uppercase" }}>VIEW FULL TABLE →</a>
+          <div style={{ textAlign: "center", padding: "48px 20px", background: "#0A1727", borderRadius: 16, border: "1px solid rgba(255,255,255,0.07)" }}>
+            <div style={{ fontSize: 48, marginBottom: 16 }}>🏆</div>
+            <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 20, color: "#fff", marginBottom: 8 }}>Tournament Begins Sep 2026</div>
+            <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 14, fontFamily: "Inter, sans-serif", maxWidth: 360, margin: "0 auto" }}>
+              Points table will update in real time once Season 5 matches begin. Register now to be part of it!
+            </p>
           </div>
         </div>
       </section>
@@ -496,15 +391,15 @@ export function MatchCenter() {
             </div>
 
             {[
-              { header: "League", links: ["About", "Teams", "Sponsors", "Schedule"] },
-              { header: "Help", links: ["FAQ", "Contact", "Eligibility Criteria", "Cricket Rulebook"] },
-              { header: "Legal", links: ["Terms", "Privacy", "Refunds", "Code of Conduct"] },
+              { header: "League", links: [["About","/about"],["Teams","/teams"],["Sponsors","/sponsors"],["Schedule","/schedule"]] },
+              { header: "Help", links: [["FAQ","/faq"],["Contact","/contact"],["Eligibility Criteria","/eligibility"],["Cricket Rulebook","/cricket-rulebook"]] },
+              { header: "Legal", links: [["Terms","/terms"],["Privacy","/privacy"],["Refunds","/refunds"],["Code of Conduct","/code-of-conduct"]] },
             ].map(col => (
               <div key={col.header}>
                 <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 11, letterSpacing: "0.12em", color: "rgba(255,255,255,0.35)", textTransform: "uppercase", marginBottom: 16 }}>{col.header}</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                  {col.links.map(link => (
-                    <a key={link} href="#" className="footer-link">{link}</a>
+                  {col.links.map(([link,href]) => (
+                    <a key={link} href={href} className="footer-link">{link}</a>
                   ))}
                 </div>
               </div>

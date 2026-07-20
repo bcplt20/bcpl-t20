@@ -3,60 +3,42 @@ import React from 'react';
 const L = import.meta.env.BASE_URL + "bcpl-assets/logos/";
 
 const ALL_TEAMS = [
-  { name:"Rajasthan Scorchers", abbr:"RS", city:"Jaipur",     color:"#E97B6B", logo:`${L}rajasthan_scorchers.png`, pts:14, players:15, form:["W","W","L","W","W"], status:"Qualified" },
-  { name:"Punjab Warriors",     abbr:"PW", city:"Chandigarh", color:"#DC2626", logo:`${L}punjab_warriors.png`,     pts:10, players:15, form:["W","L","W","W","L"], status:"Qualified" },
-  { name:"Kolkata Tigers",      abbr:"KT", city:"Kolkata",    color:"#F97316", logo:`${L}kolkata_tigers.png`,      pts:12, players:15, form:["W","W","W","L","W"], status:"Qualified" },
-  { name:"Lucknow Nawabs",      abbr:"LN", city:"Lucknow",    color:"#F59E0B", logo:`${L}lucknow_nawabs.png`,      pts:8,  players:15, form:["L","W","W","L","W"], status:"Qualified" },
-  { name:"Mumbai Mavericks",    abbr:"MM", city:"Mumbai",     color:"#3B82F6", logo:`${L}mumbai_mavericks.png`,    pts:16, players:15, form:["W","W","W","W","L"], status:"Qualified" },
-  { name:"Hyderabad Hawks",     abbr:"HH", city:"Hyderabad",  color:"#16A34A", logo:`${L}hyderabad_hawks.png`,     pts:10, players:15, form:["W","L","W","L","W"], status:"Qualified" },
-  { name:"Delhi Suryas",        abbr:"DS", city:"Delhi",      color:"#6366F1", logo:`${L}delhi_suryas.png`,        pts:12, players:15, form:["W","W","L","W","W"], status:"Qualified" },
-  { name:"Chennai Thalaivas",   abbr:"CT", city:"Chennai",    color:"#2563EB", logo:`${L}chennai_thalaivas.png`,   pts:6,  players:15, form:["L","L","W","L","W"], status:"Qualified" },
-  { name:"Ahmedabad Lions",     abbr:"AL", city:"Ahmedabad",  color:"#B91C1C", logo:`${L}ahmedabad_lions.png`,     pts:4,  players:15, form:["L","L","L","W","L"], status:"Eliminated" },
-  { name:"Bengaluru Rockets",   abbr:"BR", city:"Bengaluru",  color:"#EF4444", logo:`${L}bengaluru_rockets.png`,   pts:8,  players:15, form:["W","L","L","W","W"], status:"Qualified" },
+  { name:"Rajasthan Scorchers", abbr:"RS", city:"Jaipur",     color:"#E97B6B", logo:`${L}rajasthan_scorchers.png` },
+  { name:"Punjab Warriors",     abbr:"PW", city:"Chandigarh", color:"#DC2626", logo:`${L}punjab_warriors.png`     },
+  { name:"Kolkata Tigers",      abbr:"KT", city:"Kolkata",    color:"#F97316", logo:`${L}kolkata_tigers.png`      },
+  { name:"Lucknow Nawabs",      abbr:"LN", city:"Lucknow",    color:"#F59E0B", logo:`${L}lucknow_nawabs.png`      },
+  { name:"Mumbai Mavericks",    abbr:"MM", city:"Mumbai",     color:"#3B82F6", logo:`${L}mumbai_mavericks.png`    },
+  { name:"Hyderabad Hawks",     abbr:"HH", city:"Hyderabad",  color:"#16A34A", logo:`${L}hyderabad_hawks.png`     },
+  { name:"Delhi Suryas",        abbr:"DS", city:"Delhi",      color:"#6366F1", logo:`${L}delhi_suryas.png`        },
+  { name:"Chennai Thalaivas",   abbr:"CT", city:"Chennai",    color:"#2563EB", logo:`${L}chennai_thalaivas.png`   },
+  { name:"Ahmedabad Lions",     abbr:"AL", city:"Ahmedabad",  color:"#B91C1C", logo:`${L}ahmedabad_lions.png`     },
+  { name:"Bengaluru Rockets",   abbr:"BR", city:"Bengaluru",  color:"#EF4444", logo:`${L}bengaluru_rockets.png`   },
 ];
 const GROUP_A = ALL_TEAMS.slice(0,5);
 const GROUP_B = ALL_TEAMS.slice(5);
-const TOP5    = [...ALL_TEAMS].sort((a,b)=>b.pts-a.pts).slice(0,5);
 
 function TeamCard({ t, i }: { t:typeof ALL_TEAMS[0]; i:number }) {
   const [hov, setHov] = React.useState(false);
-  const elim = t.status === "Eliminated";
   return (
     <div onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
-      style={{ background:"#0A1727", border:`1.5px solid ${hov ? t.color : "rgba(255,255,255,0.07)"}`, borderRadius:12, borderTop:`3px solid ${t.color}`, padding:"20px 18px", transition:"all 0.25s", boxShadow:hov?`0 12px 40px ${t.color}22,0 0 0 1px ${t.color}33`:"none", opacity:elim?0.6:1, cursor:"pointer", position:"relative", overflow:"hidden" }}>
+      style={{ background:"#0A1727", border:`1.5px solid ${hov ? t.color : "rgba(255,255,255,0.07)"}`, borderRadius:12, borderTop:`3px solid ${t.color}`, padding:"20px 18px", transition:"all 0.25s", boxShadow:hov?`0 12px 40px ${t.color}22,0 0 0 1px ${t.color}33`:"none", cursor:"pointer", position:"relative", overflow:"hidden" }}>
       {/* Watermark logo */}
       <img src={t.logo} alt={t.name} style={{ position:"absolute", right:"-6%", bottom:"-6%", width:"72%", height:"72%", objectFit:"contain", opacity:0.055, pointerEvents:"none", transition:"opacity 0.3s", filter:"grayscale(20%)" }} />
 
-      {/* Top row: logo badge + name + status */}
-      <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", marginBottom:14, position:"relative", zIndex:1 }}>
-        <div style={{ display:"flex", alignItems:"center", gap:12 }}>
-          {/* Logo badge — transparent PNG, no white box */}
-          <div style={{ width:52, height:52, background:"rgba(255,255,255,0.96)", borderRadius:14, border:`2px solid ${t.color}55`, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", boxShadow:`0 6px 20px ${t.color}44` }}>
-            <img src={t.logo} alt={t.name} style={{ width:"87%", height:"87%", objectFit:"contain" }} />
-          </div>
-          <div>
-            <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:16, color:"#fff", lineHeight:1.2, marginBottom:4 }}>{t.name}</div>
-            <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:11, color:t.color, letterSpacing:".08em", textTransform:"uppercase" }}>{t.city}</div>
-          </div>
+      {/* Top row: logo badge + name */}
+      <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:16, position:"relative", zIndex:1 }}>
+        <div style={{ width:52, height:52, background:"rgba(255,255,255,0.96)", borderRadius:14, border:`2px solid ${t.color}55`, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", boxShadow:`0 6px 20px ${t.color}44` }}>
+          <img src={t.logo} alt={t.name} style={{ width:"87%", height:"87%", objectFit:"contain" }} />
         </div>
-        {elim
-          ? <span style={{ background:"rgba(232,73,63,0.12)", border:"1px solid rgba(232,73,63,0.35)", borderRadius:12, color:"#E8493F", fontSize:9, fontWeight:800, padding:"3px 8px", fontFamily:"Montserrat,sans-serif", letterSpacing:".08em", whiteSpace:"nowrap" }}>ELIMINATED</span>
-          : <span style={{ background:"rgba(34,197,94,0.1)", border:"1px solid rgba(34,197,94,0.3)", borderRadius:12, color:"#22C55E", fontSize:9, fontWeight:800, padding:"3px 8px", fontFamily:"Montserrat,sans-serif", letterSpacing:".08em", whiteSpace:"nowrap" }}>ACTIVE</span>
-        }
+        <div>
+          <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:16, color:"#fff", lineHeight:1.2, marginBottom:4 }}>{t.name}</div>
+          <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:11, color:t.color, letterSpacing:".08em", textTransform:"uppercase" }}>{t.city}</div>
+        </div>
       </div>
 
-      {/* Points + Players */}
-      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12, position:"relative", zIndex:1 }}>
-        <span style={{ fontFamily:"Inter,sans-serif", fontSize:12, color:"rgba(255,255,255,0.35)" }}>{t.players} Players · Season 5</span>
-        <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:16, color:t.color }}>{t.pts} pts</span>
-      </div>
-
-      {/* Form */}
-      <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:14, position:"relative", zIndex:1 }}>
-        <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:9, color:"rgba(255,255,255,0.28)", letterSpacing:".08em", textTransform:"uppercase", marginRight:4 }}>Form</span>
-        {t.form.map((r,j)=>(
-          <div key={j} style={{ width:22, height:22, borderRadius:12, background:r==="W"?"rgba(34,197,94,0.18)":"rgba(232,73,63,0.18)", border:`1.5px solid ${r==="W"?"#22C55E":"#E8493F"}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, fontWeight:800, color:r==="W"?"#22C55E":"#E8493F", fontFamily:"Montserrat,sans-serif" }}>{r}</div>
-        ))}
+      {/* Season tag */}
+      <div style={{ marginBottom:14, position:"relative", zIndex:1 }}>
+        <span style={{ background:`${t.color}12`, border:`1px solid ${t.color}30`, borderRadius:8, color:t.color, fontSize:10, fontWeight:700, padding:"3px 10px", fontFamily:"Montserrat,sans-serif", letterSpacing:".06em" }}>SEASON 5 FRANCHISE</span>
       </div>
 
       {/* View squad link */}
@@ -206,26 +188,14 @@ export function Teams() {
         </div>
       </section>
 
-      {/* LIVE STANDINGS STRIP */}
+      {/* SEASON INFO STRIP */}
       <section style={{ padding:"0 0 48px" }}>
         <div className="wrap">
-          <div className="standings-scroll">
-            <div style={{ display:"inline-flex", gap:10, minWidth:"max-content" }}>
-              <div style={{ background:"rgba(255,122,41,0.08)", border:"1px solid rgba(255,122,41,0.2)", borderRadius:12, padding:"10px 16px", display:"flex", alignItems:"center", gap:8, flexShrink:0 }}>
-                <div style={{ width:6, height:6, borderRadius:"50%", background:"#22C55E" }}/>
-                <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:11, color:"#FF7A29", letterSpacing:".1em" }}>STANDINGS</span>
-              </div>
-              {TOP5.map((t,i)=>(
-                <div key={t.abbr} style={{ background:"#0A1727", border:"1px solid rgba(255,255,255,0.07)", borderRadius:12, padding:"10px 16px", display:"flex", alignItems:"center", gap:10, flexShrink:0 }}>
-                  <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:11, color:"rgba(255,255,255,0.28)" }}>#{i+1}</span>
-                  <div style={{ width:28, height:28, background:"rgba(255,255,255,0.96)", borderRadius:10, padding:3, display:"flex", alignItems:"center", justifyContent:"center", border:`1px solid ${t.color}44` }}>
-                    <img src={t.logo} alt={t.abbr} style={{ width:"88%", height:"88%", objectFit:"contain" }} />
-                  </div>
-                  <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:12, color:"#fff" }}>{t.abbr}</span>
-                  <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:12, color:t.color }}>{t.pts}pts</span>
-                </div>
-              ))}
-            </div>
+          <div style={{ background:"rgba(255,122,41,0.06)", border:"1px solid rgba(255,122,41,0.15)", borderRadius:12, padding:"14px 20px", display:"flex", alignItems:"center", gap:12, flexWrap:"wrap" }}>
+            <div style={{ width:8, height:8, borderRadius:"50%", background:"#FF7A29", flexShrink:0 }}/>
+            <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:13, color:"#FF7A29" }}>SEASON 5</span>
+            <span style={{ color:"rgba(255,255,255,0.3)", fontSize:12 }}>·</span>
+            <span style={{ fontFamily:"Inter,sans-serif", fontSize:13, color:"rgba(255,255,255,0.6)" }}>10 franchise teams · Squads announced after auction in Aug 2026 · Tournament begins Sep 2026</span>
           </div>
         </div>
       </section>
@@ -283,11 +253,15 @@ export function Teams() {
               <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, color:"#E8B23D", letterSpacing:".12em", textTransform:"uppercase", marginBottom:8 }}>#OfficeSeStadiumtak</div>
               <div style={{ fontFamily:"Inter,sans-serif", fontSize:13, color:"rgba(255,255,255,0.3)", lineHeight:1.6 }}>India's biggest corporate T20 league.<br/>Season 5 · Kriparti Playing 11 Pvt. Ltd.</div>
             </div>
-            {[{h:"League",links:["About","Teams","Sponsors","Schedule"]},{h:"Help",links:["FAQ","Contact","Eligibility","Rulebook"]},{h:"Legal",links:["Terms","Privacy","Refunds","Code of Conduct"]}].map(col=>(
+            {[
+              {h:"League",links:[["About","/about"],["Teams","/teams"],["Sponsors","/sponsors"],["Schedule","/schedule"]]},
+              {h:"Help",links:[["FAQ","/faq"],["Contact","/contact"],["Eligibility","/eligibility"],["Rulebook","/cricket-rulebook"]]},
+              {h:"Legal",links:[["Terms","/terms"],["Privacy","/privacy"],["Refunds","/refunds"],["Code of Conduct","/code-of-conduct"]]}
+            ].map(col=>(
               <div key={col.h}>
                 <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:9, letterSpacing:".12em", color:"rgba(255,255,255,0.25)", textTransform:"uppercase", marginBottom:12 }}>{col.h}</div>
                 <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
-                  {col.links.map(l=><a key={l} href="#" className="footer-link">{l}</a>)}
+                  {col.links.map(([l,href])=><a key={l} href={href} className="footer-link">{l}</a>)}
                 </div>
               </div>
             ))}
