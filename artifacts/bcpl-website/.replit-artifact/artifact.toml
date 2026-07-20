@@ -21,10 +21,10 @@ args = ["pnpm", "--filter", "@workspace/bcpl-website", "run", "build"]
 [services.production.build.env]
 BASE_PATH = "/"
 
-# Production run: node server.mjs serves the built SPA
-# PORT must match localPort (20570) — pid1 owns the Cloud Run external PORT
+# Production run: node directly (same pattern as api-server) — bypasses pnpm
+# which can break after pnpm store prune in the build container.
 [services.production.run]
-args = ["pnpm", "--filter", "@workspace/bcpl-website", "run", "serve"]
+args = ["node", "artifacts/bcpl-website/server.mjs"]
 
 [services.production.run.env]
 PORT = "20570"
