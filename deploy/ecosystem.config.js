@@ -6,7 +6,7 @@ module.exports = {
     {
       name:        "bcpl-api",
       script:      "./dist/index.mjs",
-      cwd:         "/home/bcpl/app/artifacts/api-server",
+      cwd:         "/home/ubuntu/app/artifacts/api-server",
       instances:   2,           // 2 CPU cores for t3.medium
       exec_mode:   "cluster",   // load balance across instances
       env: {
