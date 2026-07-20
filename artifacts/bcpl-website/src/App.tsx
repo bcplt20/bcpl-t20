@@ -33,6 +33,7 @@ import { AuctionSelected }     from '@/pages/AuctionSelected';
 import { AuctionLive }         from '@/pages/AuctionLive';
 import { TeamSelected }        from '@/pages/TeamSelected';
 import { PlayerProfile }       from '@/pages/PlayerProfile';
+import AdminPanel              from '@/admin/AdminPanel';
 
 // Scroll to top on every route change
 function ScrollToTop() {
@@ -96,6 +97,9 @@ function Router() {
         <Route path="/auction/live"     component={AuctionLive} />
         <Route path="/team-selected"    component={TeamSelected} />
         <Route path="/profile"          component={PlayerProfile} />
+
+        {/* Admin panel */}
+        <Route path="/admin" component={AdminPanel} />
 
         {/* 404 fallback */}
         <Route component={NotFound} />
