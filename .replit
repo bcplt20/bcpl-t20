@@ -18,3 +18,13 @@ expertMode = true
 [postMerge]
 path = "scripts/post-merge.sh"
 timeoutMs = 20000
+
+[userenv]
+
+[userenv.shared]
+API_URL = "https://elite-user-experience.replit.app"
+AWS_REGION = "ap-south-1"
+AWS_S3_BUCKET = "bcpl-trial-videos"
+BREVO_FROM_EMAIL = "noreply@bcplt20.com"
+CASHFREE_ENV = "TEST"
+SITE_URL = "https://elite-user-experience.replit.app/bcpl-website"
