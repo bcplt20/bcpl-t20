@@ -1,168 +1,220 @@
 import { useState } from "react";
-import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import {
+  AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid,
+  Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line
+} from "recharts";
 
+/* ─── Constants ─────────────────────────────────────────────── */
+const GST_RATE   = 0.18;
+const CF_FEE     = 0.02;   // Cashfree 2% gateway fee
+const TDS_RATE   = 0.10;   // TDS on prizes
+const BCPL_GSTIN = "07AABCK9234P1ZX";
+const BCPL_ADDR  = "Kriparti Playing11 Pvt. Ltd., 4th Floor, Sector-44, Gurugram, Haryana - 122003";
+
+/* ─── Data ───────────────────────────────────────────────────── */
 const dailyRevenue = [
-  { day:"Jul 14", p1:12400, p2:4200 }, { day:"Jul 15", p1:18700, p2:7800 },
-  { day:"Jul 16", p1:14200, p2:5600 }, { day:"Jul 17", p1:22100, p2:9400 },
-  { day:"Jul 18", p1:28900, p2:14200 }, { day:"Jul 19", p1:31400, p2:18700 },
-  { day:"Jul 20", p1:24800, p2:11200 },
+  { day:"Jul 14", p1:12400, p2:4200,  refunds:600  },
+  { day:"Jul 15", p1:18700, p2:7800,  refunds:299  },
+  { day:"Jul 16", p1:14200, p2:5600,  refunds:900  },
+  { day:"Jul 17", p1:22100, p2:9400,  refunds:0    },
+  { day:"Jul 18", p1:28900, p2:14200, refunds:1197 },
+  { day:"Jul 19", p1:31400, p2:18700, refunds:598  },
+  { day:"Jul 20", p1:24800, p2:11200, refunds:299  },
+];
+
+const monthlyPL = [
+  { month:"Apr", revenue:82400,  gatewayCost:1648, gstPaid:12870, net:67882 },
+  { month:"May", revenue:118600, gatewayCost:2372, gstPaid:18540, net:97688 },
+  { month:"Jun", revenue:154200, gatewayCost:3084, gstPaid:24116, net:127000 },
+  { month:"Jul", revenue:198900, gatewayCost:3978, gstPaid:31100, net:163822 },
 ];
 
 const paymentMethods = [
-  { name:"UPI", value:62, color:"#6366F1" }, { name:"Net Banking", value:19, color:"#FF6B00" },
-  { name:"Card", value:14, color:"#10B981" }, { name:"Wallet", value:5, color:"#F59E0B" },
+  { name:"UPI",         value:62, color:"#6366F1" },
+  { name:"Net Banking", value:19, color:"#FF6B00" },
+  { name:"Card",        value:14, color:"#10B981" },
+  { name:"Wallet",      value:5,  color:"#F59E0B" },
 ];
-
-const transactions = [
-  { id:"TXN001", name:"Arjun Sharma",  email:"arjun@gmail.com",  phone:"9876543210", gstin:"27AADCA2009R1Z7", type:"Phase 2", amount:2000, method:"UPI",         time:"Today 8:24 PM",  status:"success" },
-  { id:"TXN002", name:"Priya Patel",   email:"priya@gmail.com",  phone:"9812345678", gstin:"",              type:"Phase 1", amount:299,  method:"Card",        time:"Today 7:51 PM",  status:"success" },
-  { id:"TXN003", name:"Rahul Kumar",   email:"rahul@gmail.com",  phone:"9898989898", gstin:"",              type:"Phase 2", amount:2000, method:"Net Banking",  time:"Today 6:38 PM",  status:"pending" },
-  { id:"TXN004", name:"Sneha Verma",   email:"sneha@gmail.com",  phone:"9811223344", gstin:"",              type:"Phase 1", amount:299,  method:"UPI",         time:"Today 5:12 PM",  status:"failed"  },
-  { id:"TXN005", name:"Vikas Singh",   email:"vikas@gmail.com",  phone:"9900112233", gstin:"07AAACR0038E1Z2", type:"Phase 1", amount:399, method:"UPI",        time:"Today 4:44 PM",  status:"success" },
-  { id:"TXN006", name:"Deepak Gupta",  email:"deepak@gmail.com", phone:"9867453210", gstin:"",              type:"Phase 2", amount:3000, method:"Wallet",       time:"Today 3:29 PM",  status:"success" },
-  { id:"TXN007", name:"Meena Joshi",   email:"meena@gmail.com",  phone:"9701234567", gstin:"",              type:"Phase 1", amount:299,  method:"UPI",         time:"Today 2:11 PM",  status:"refunded"},
-  { id:"TXN008", name:"Kavita Nair",   email:"kavita@gmail.com", phone:"9845671230", gstin:"32AAFCN0258Q1ZO", type:"Phase 2", amount:2000, method:"Card",      time:"Today 1:05 PM",  status:"success" },
-];
-
-const gstRate = 0.18;
-const BCPL_GSTIN = "07AABCK9234P1ZX";
-const BCPL_ADDRESS = "BCPL T20, Kriparti Playing11 Pvt. Ltd., 4th Floor, Sector-44, Gurugram, Haryana - 122003";
-
-const statusConfig: Record<string,{color:string;bg:string}> = {
-  success:  { color:"#10B981", bg:"#10B98122" },
-  pending:  { color:"#F59E0B", bg:"#F59E0B22" },
-  failed:   { color:"#EF4444", bg:"#EF444422" },
-  refunded: { color:"#6366F1", bg:"#6366F122" },
-};
 
 const gstMonthly = [
-  { month:"Apr", collected:18400, remitted:18400 }, { month:"May", collected:24200, remitted:24200 },
-  { month:"Jun", collected:31800, remitted:28000 }, { month:"Jul", collected:42100, remitted:0 },
+  { month:"Apr", collected:14832, remitted:14832, due:"Paid" },
+  { month:"May", collected:21348, remitted:21348, due:"Paid" },
+  { month:"Jun", collected:27756, remitted:24000, due:"Partial" },
+  { month:"Jul", collected:35802, remitted:0,     due:"Pending" },
 ];
 
-const CustomTooltip = ({ active, payload, label }:any) => {
-  if(active&&payload?.length) return (
-    <div style={{ background:"#0D1526", border:"1px solid #1E293B", borderRadius:10, padding:"10px 16px" }}>
-      <p style={{ color:"#94A3B8", fontSize:11, margin:"0 0 6px" }}>{label}</p>
-      {payload.map((p:any)=>(
-        <p key={p.name} style={{ color:p.color, fontSize:14, fontWeight:700, margin:"2px 0" }}>
-          {p.name==="p1"?"Phase 1":"Phase 2"}: ₹{p.value.toLocaleString()}
-        </p>
-      ))}
-    </div>
-  );
-  return null;
+type Txn = typeof TRANSACTIONS[0];
+const TRANSACTIONS = [
+  { id:"TXN001", name:"Arjun Sharma",  email:"arjun@gmail.com",  phone:"9876543210", gstin:"27AADCA2009R1Z7", type:"Phase 2" as const, amount:2000, method:"UPI",          time:"Today 8:24 PM",  status:"success"  as const },
+  { id:"TXN002", name:"Priya Patel",   email:"priya@gmail.com",  phone:"9812345678", gstin:"",              type:"Phase 1" as const, amount:299,  method:"Card",         time:"Today 7:51 PM",  status:"success"  as const },
+  { id:"TXN003", name:"Rahul Kumar",   email:"rahul@gmail.com",  phone:"9898989898", gstin:"",              type:"Phase 2" as const, amount:2000, method:"Net Banking",   time:"Today 6:38 PM",  status:"pending"  as const },
+  { id:"TXN004", name:"Sneha Verma",   email:"sneha@gmail.com",  phone:"9811223344", gstin:"",              type:"Phase 1" as const, amount:299,  method:"UPI",          time:"Today 5:12 PM",  status:"failed"   as const },
+  { id:"TXN005", name:"Vikas Singh",   email:"vikas@gmail.com",  phone:"9900112233", gstin:"07AAACR0038E1Z2",type:"Phase 1"as const, amount:399,  method:"UPI",          time:"Today 4:44 PM",  status:"success"  as const },
+  { id:"TXN006", name:"Deepak Gupta",  email:"deepak@gmail.com", phone:"9867453210", gstin:"",              type:"Phase 2" as const, amount:3000, method:"Wallet",        time:"Today 3:29 PM",  status:"success"  as const },
+  { id:"TXN007", name:"Meena Joshi",   email:"meena@gmail.com",  phone:"9701234567", gstin:"",              type:"Phase 1" as const, amount:299,  method:"UPI",          time:"Today 2:11 PM",  status:"refunded" as const },
+  { id:"TXN008", name:"Kavita Nair",   email:"kavita@gmail.com", phone:"9845671230", gstin:"32AAFCN0258Q1ZO",type:"Phase 2"as const, amount:2000, method:"Card",         time:"Today 1:05 PM",  status:"success"  as const },
+  { id:"TXN009", name:"Anil Reddy",    email:"anil@gmail.com",   phone:"9811001122", gstin:"",              type:"Phase 1" as const, amount:299,  method:"UPI",          time:"Yesterday 9:30 PM",status:"success" as const },
+  { id:"TXN010", name:"Sonia Mehta",   email:"sonia@gmail.com",  phone:"9788776655", gstin:"",              type:"Phase 1" as const, amount:299,  method:"Card",         time:"Yesterday 7:20 PM",status:"failed"  as const },
+];
+
+const REFUNDS = [
+  { id:"REF001", txnId:"TXN007", name:"Meena Joshi",  amount:299,  reason:"Player withdrew before review",   status:"processed", date:"Jul 18", method:"UPI",    days:2 },
+  { id:"REF002", txnId:"TXN-X1", name:"Karan Mehta",  amount:299,  reason:"Duplicate payment",               status:"processed", date:"Jul 16", method:"Card",   days:3 },
+  { id:"REF003", txnId:"TXN-X2", name:"Divya Rao",    amount:399,  reason:"Ineligible profile rejected",     status:"pending",   date:"Jul 20", method:"UPI",    days:0 },
+  { id:"REF004", txnId:"TXN-X3", name:"Suresh Kumar", amount:2000, reason:"Phase 2 fee — not selected error",status:"pending",   date:"Jul 20", method:"Net Banking", days:0 },
+];
+
+const TDS_PRIZES = [
+  { player:"Arjun Sharma",   prize:"₹50,000",  tds:"₹5,000",  net:"₹45,000", pan:"ABCPS1234D", status:"Deducted" },
+  { player:"Rahul Patel",    prize:"₹30,000",  tds:"₹3,000",  net:"₹27,000", pan:"XYZPR5678F", status:"Deducted" },
+  { player:"Priya Singh",    prize:"₹20,000",  tds:"₹2,000",  net:"₹18,000", pan:"MNOPQ9012G", status:"Pending"  },
+  { player:"Team MVP Bonus", prize:"₹1,00,000",tds:"₹10,000", net:"₹90,000", pan:"BCPLT20TEAM", status:"Pending" },
+];
+
+const SC: Record<string,{color:string;bg:string;label:string}> = {
+  success:  { color:"#10B981", bg:"#10B98122", label:"Success"  },
+  pending:  { color:"#F59E0B", bg:"#F59E0B22", label:"Pending"  },
+  failed:   { color:"#EF4444", bg:"#EF444422", label:"Failed"   },
+  refunded: { color:"#6366F1", bg:"#6366F122", label:"Refunded" },
 };
 
-function InvoiceModal({ txn, onClose }:{ txn:typeof transactions[0]; onClose:()=>void }) {
-  const [email, setEmail] = useState(txn.email);
-  const [sent,  setSent]  = useState(false);
+/* ─── Invoice Modal ──────────────────────────────────────────── */
+function InvoiceModal({ txn, onClose }: { txn: Txn; onClose: () => void }) {
+  const [email,   setEmail]   = useState(txn.email);
+  const [sent,    setSent]    = useState(false);
   const [loading, setLoading] = useState(false);
   const base = txn.amount;
-  const gstAmt = Math.round(base * gstRate);
-  const total  = base + gstAmt;
-  const cgst = gstAmt/2, sgst = gstAmt/2;
+  const gst  = Math.round(base * GST_RATE);
+  const cgst = gst / 2, sgst = gst / 2;
+  const total = base + gst;
   const invoiceNo = `BCPL/25-26/${txn.id}`;
-  const today = new Date().toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"});
-
-  const handleSend = () => {
-    setLoading(true);
-    setTimeout(()=>{ setLoading(false); setSent(true); },1600);
-  };
+  const today = new Date().toLocaleDateString("en-IN", { day:"2-digit", month:"long", year:"numeric" });
 
   return (
-    <div style={{ position:"fixed", inset:0, background:"#000000CC", display:"flex", alignItems:"center", justifyContent:"center", zIndex:1000, padding:16 }}>
-      <div style={{ background:"#0D1526", border:"1px solid #1E293B", borderRadius:20, width:"100%", maxWidth:600, maxHeight:"92vh", overflowY:"auto" }}>
-        {/* Invoice preview */}
-        <div style={{ background:"#060B18", borderRadius:"20px 20px 0 0", padding:28, borderBottom:"1px solid #1E293B" }}>
-          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:24 }}>
+    <div style={{ position:"fixed", inset:0, background:"#000000CC", display:"flex", alignItems:"center", justifyContent:"center", zIndex:1000, padding:16 }} onClick={onClose}>
+      <div style={{ background:"#0D1526", border:"1px solid #1E293B", borderRadius:20, width:"100%", maxWidth:620, maxHeight:"92vh", overflowY:"auto" }} onClick={e=>e.stopPropagation()}>
+
+        {/* Top action bar */}
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"16px 24px", borderBottom:"1px solid #1E293B" }}>
+          <div style={{ fontSize:15, fontWeight:800, color:"#F1F5F9" }}>📄 GST Tax Invoice</div>
+          <div style={{ display:"flex", gap:8 }}>
+            <button style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontSize:12, cursor:"pointer" }}>⬇ PDF</button>
+            <button style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontSize:12, cursor:"pointer" }}>📋 Copy Link</button>
+            <button onClick={onClose} style={{ padding:"6px 12px", borderRadius:8, border:"none", background:"#1E293B", color:"#64748B", fontSize:12, cursor:"pointer" }}>✕</button>
+          </div>
+        </div>
+
+        {/* Invoice body */}
+        <div style={{ padding:"24px 28px" }}>
+          {/* Header */}
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:24, paddingBottom:20, borderBottom:"1px solid #1E293B" }}>
             <div>
-              <div style={{ display:"flex", alignItems:"baseline", gap:4, marginBottom:4 }}>
-                <span style={{ fontWeight:900, fontSize:22, color:"#FF6B00" }}>BCPL</span>
-                <span style={{ fontWeight:900, fontSize:22, color:"#F1F5F9" }}>T20</span>
+              <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:6 }}>
+                <div style={{ width:36, height:36, borderRadius:9, background:"linear-gradient(135deg,#FF6B00,#C94E0E)", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                  <span style={{ fontWeight:900, fontSize:14, color:"#fff" }}>B</span>
+                </div>
+                <div>
+                  <span style={{ fontWeight:900, fontSize:18, color:"#FF6B00" }}>BCPL</span>
+                  <span style={{ fontWeight:900, fontSize:18, color:"#F1F5F9" }}>T20</span>
+                </div>
               </div>
-              <div style={{ fontSize:11, color:"#64748B" }}>Kriparti Playing11 Pvt. Ltd.</div>
-              <div style={{ fontSize:11, color:"#475569", maxWidth:220, marginTop:3 }}>{BCPL_ADDRESS}</div>
-              <div style={{ fontSize:11, color:"#475569", marginTop:3 }}>GSTIN: <span style={{ color:"#F59E0B", fontWeight:700 }}>{BCPL_GSTIN}</span></div>
+              <div style={{ fontSize:12, color:"#64748B" }}>Kriparti Playing11 Pvt. Ltd.</div>
+              <div style={{ fontSize:11, color:"#475569", maxWidth:240, marginTop:3, lineHeight:1.5 }}>{BCPL_ADDR}</div>
+              <div style={{ fontSize:11, color:"#475569", marginTop:4 }}>GSTIN: <span style={{ color:"#F59E0B", fontWeight:700 }}>{BCPL_GSTIN}</span></div>
+              <div style={{ fontSize:11, color:"#475569" }}>HSN: <span style={{ color:"#94A3B8" }}>999299 — Sports Event Services</span></div>
             </div>
             <div style={{ textAlign:"right" }}>
-              <div style={{ background:"linear-gradient(135deg,#FF6B00,#D95E10)", borderRadius:10, padding:"6px 16px", display:"inline-block", marginBottom:8 }}>
-                <span style={{ fontSize:12, fontWeight:900, color:"#fff" }}>GST INVOICE</span>
+              <div style={{ background:"linear-gradient(135deg,#FF6B00,#D95E10)", borderRadius:10, padding:"6px 16px", display:"inline-block", marginBottom:10 }}>
+                <span style={{ fontSize:12, fontWeight:900, color:"#fff", letterSpacing:.5 }}>TAX INVOICE</span>
               </div>
-              <div style={{ fontSize:12, color:"#94A3B8" }}>Invoice No: <strong style={{ color:"#F1F5F9" }}>{invoiceNo}</strong></div>
-              <div style={{ fontSize:12, color:"#94A3B8", marginTop:4 }}>Date: {today}</div>
+              <div style={{ fontSize:12, color:"#94A3B8" }}>Invoice No</div>
+              <div style={{ fontSize:13, fontWeight:800, color:"#F1F5F9", marginBottom:8 }}>{invoiceNo}</div>
+              <div style={{ fontSize:12, color:"#94A3B8" }}>Date: {today}</div>
+              <div style={{ fontSize:11, color:"#475569", marginTop:4 }}>Place of Supply: All India</div>
             </div>
           </div>
 
-          {/* Bill to */}
-          <div style={{ background:"#0A1020", borderRadius:12, padding:"14px 16px", marginBottom:20, border:"1px solid #1E293B" }}>
-            <div style={{ fontSize:10, color:"#475569", fontWeight:700, textTransform:"uppercase", letterSpacing:.5, marginBottom:8 }}>BILL TO</div>
-            <div style={{ fontSize:15, fontWeight:700, color:"#F1F5F9" }}>{txn.name}</div>
-            <div style={{ fontSize:12, color:"#64748B", marginTop:2 }}>{txn.email} · {txn.phone}</div>
-            {txn.gstin&&<div style={{ fontSize:12, color:"#F59E0B", marginTop:2 }}>GSTIN: {txn.gstin}</div>}
+          {/* Bill To */}
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:16, marginBottom:20 }}>
+            <div style={{ background:"#060B18", borderRadius:12, padding:"14px 16px", border:"1px solid #1E293B" }}>
+              <div style={{ fontSize:10, color:"#475569", fontWeight:700, textTransform:"uppercase", letterSpacing:.5, marginBottom:8 }}>Bill To</div>
+              <div style={{ fontSize:15, fontWeight:700, color:"#F1F5F9" }}>{txn.name}</div>
+              <div style={{ fontSize:12, color:"#64748B", marginTop:3 }}>{txn.email}</div>
+              <div style={{ fontSize:12, color:"#64748B" }}>{txn.phone}</div>
+              {txn.gstin && <div style={{ fontSize:12, color:"#F59E0B", marginTop:4, fontWeight:600 }}>GSTIN: {txn.gstin}</div>}
+            </div>
+            <div style={{ background:"#060B18", borderRadius:12, padding:"14px 16px", border:"1px solid #1E293B" }}>
+              <div style={{ fontSize:10, color:"#475569", fontWeight:700, textTransform:"uppercase", letterSpacing:.5, marginBottom:8 }}>Payment Info</div>
+              <div style={{ fontSize:12, color:"#94A3B8" }}>Method: <span style={{ color:"#F1F5F9", fontWeight:600 }}>{txn.method}</span></div>
+              <div style={{ fontSize:12, color:"#94A3B8", marginTop:4 }}>TXN ID: <span style={{ color:"#F1F5F9", fontWeight:600, fontFamily:"monospace" }}>{txn.id}</span></div>
+              <div style={{ fontSize:12, color:"#94A3B8", marginTop:4 }}>Time: <span style={{ color:"#F1F5F9" }}>{txn.time}</span></div>
+              <div style={{ marginTop:8 }}><span style={{ fontSize:10, padding:"3px 10px", borderRadius:6, background:"#10B98122", color:"#10B981", fontWeight:700 }}>✓ Payment Confirmed</span></div>
+            </div>
           </div>
 
-          {/* Line items */}
+          {/* Line Items */}
           <table style={{ width:"100%", borderCollapse:"collapse", marginBottom:16 }}>
             <thead>
-              <tr style={{ background:"#1E293B" }}>
-                {["Description","HSN","Rate","Qty","Amount"].map(h=>(
-                  <th key={h} style={{ padding:"8px 12px", textAlign:h==="Amount"?"right":"left", fontSize:10, color:"#94A3B8", fontWeight:700, textTransform:"uppercase" }}>{h}</th>
+              <tr style={{ background:"#0A1020", borderBottom:"1px solid #1E293B" }}>
+                {["Description","HSN Code","Rate","Qty","Taxable Amt"].map(h=>(
+                  <th key={h} style={{ padding:"9px 12px", textAlign:h==="Taxable Amt"?"right":"left", fontSize:10, color:"#94A3B8", fontWeight:700, textTransform:"uppercase" }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               <tr style={{ borderBottom:"1px solid #1E293B" }}>
-                <td style={{ padding:"12px 12px", fontSize:13, color:"#F1F5F9" }}>BCPL T20 Season 5 — {txn.type} Registration ({txn.type==="Phase 1"?"Online Scout Review":"Physical Trial Entry"})</td>
-                <td style={{ padding:"12px 12px", fontSize:12, color:"#64748B" }}>999299</td>
-                <td style={{ padding:"12px 12px", fontSize:13, color:"#94A3B8" }}>₹{base.toLocaleString()}</td>
-                <td style={{ padding:"12px 12px", fontSize:13, color:"#94A3B8" }}>1</td>
-                <td style={{ padding:"12px 12px", fontSize:13, color:"#F1F5F9", textAlign:"right" }}>₹{base.toLocaleString()}</td>
+                <td style={{ padding:"13px 12px", fontSize:12, color:"#F1F5F9", lineHeight:1.5 }}>
+                  BCPL T20 Season 5 — {txn.type} Registration<br/>
+                  <span style={{ fontSize:11, color:"#475569" }}>{txn.type==="Phase 1" ? "Online Scout Review & Video Submission" : "Physical Trial Entry & Franchise Auction Eligibility"}</span>
+                </td>
+                <td style={{ padding:"13px 12px", fontSize:11, color:"#64748B", fontFamily:"monospace" }}>999299</td>
+                <td style={{ padding:"13px 12px", fontSize:12, color:"#94A3B8" }}>₹{base.toLocaleString()}</td>
+                <td style={{ padding:"13px 12px", fontSize:12, color:"#94A3B8" }}>1</td>
+                <td style={{ padding:"13px 12px", fontSize:12, color:"#F1F5F9", textAlign:"right", fontWeight:600 }}>₹{base.toLocaleString()}</td>
               </tr>
             </tbody>
           </table>
 
-          {/* Tax breakdown */}
-          <div style={{ display:"flex", justifyContent:"flex-end" }}>
-            <div style={{ width:260 }}>
-              {[{l:"Subtotal",v:`₹${base.toLocaleString()}`},{l:"CGST @ 9%",v:`₹${cgst.toFixed(2)}`},{l:"SGST @ 9%",v:`₹${sgst.toFixed(2)}`}].map(r=>(
+          {/* Tax Breakdown */}
+          <div style={{ display:"flex", justifyContent:"flex-end", marginBottom:20 }}>
+            <div style={{ width:280, background:"#060B18", borderRadius:12, padding:"14px 16px", border:"1px solid #1E293B" }}>
+              {[
+                { l:"Subtotal (Base)", v:`₹${base.toLocaleString()}`, bold:false },
+                { l:"CGST @ 9%",      v:`₹${cgst.toFixed(2)}`,       bold:false, color:"#6366F1" },
+                { l:"SGST @ 9%",      v:`₹${sgst.toFixed(2)}`,       bold:false, color:"#6366F1" },
+              ].map(r=>(
                 <div key={r.l} style={{ display:"flex", justifyContent:"space-between", padding:"5px 0", borderBottom:"1px solid #1E293B" }}>
                   <span style={{ fontSize:12, color:"#64748B" }}>{r.l}</span>
-                  <span style={{ fontSize:12, color:"#94A3B8" }}>{r.v}</span>
+                  <span style={{ fontSize:12, color:(r as any).color||"#94A3B8" }}>{r.v}</span>
                 </div>
               ))}
-              <div style={{ display:"flex", justifyContent:"space-between", padding:"10px 0", borderTop:"2px solid #FF6B0044", marginTop:2 }}>
+              <div style={{ display:"flex", justifyContent:"space-between", padding:"10px 0 0", marginTop:4, borderTop:"2px solid #FF6B0044" }}>
                 <span style={{ fontSize:14, fontWeight:800, color:"#F1F5F9" }}>Total</span>
-                <span style={{ fontSize:16, fontWeight:800, color:"#FF6B00" }}>₹{total.toLocaleString()}</span>
+                <span style={{ fontSize:18, fontWeight:900, color:"#FF6B00" }}>₹{total.toLocaleString()}</span>
+              </div>
+              <div style={{ fontSize:10, color:"#334155", marginTop:6, lineHeight:1.5 }}>
+                Amount in words: <span style={{ color:"#475569" }}>Rupees {total === 353 ? "Three Hundred Fifty Three" : total === 470 ? "Four Hundred Seventy" : total === 2360 ? "Two Thousand Three Hundred Sixty" : total === 3540 ? "Three Thousand Five Hundred Forty" : total} Only</span>
               </div>
             </div>
           </div>
 
-          <div style={{ marginTop:16, padding:"10px 14px", background:"#0A1020", borderRadius:10, border:"1px solid #1E293B" }}>
-            <div style={{ fontSize:10, color:"#334155", lineHeight:1.6 }}>
-              This is a computer-generated invoice. No signature required. Payment received via {txn.method} on {txn.time}. TXN ID: {txn.id}.
-            </div>
+          <div style={{ padding:"12px 14px", background:"#0A1020", borderRadius:10, border:"1px solid #1E293B", fontSize:10, color:"#334155", lineHeight:1.6, marginBottom:20 }}>
+            This is a computer-generated invoice and does not require a physical signature. Subject to Gurugram, Haryana jurisdiction.
           </div>
-        </div>
 
-        {/* Send section */}
-        <div style={{ padding:"20px 28px" }}>
-          <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9", marginBottom:12 }}>📧 Send Invoice via Email</div>
-          {sent
-            ? <div style={{ background:"#10B98122", border:"1px solid #10B98144", borderRadius:12, padding:"16px 20px", color:"#10B981", fontWeight:700, textAlign:"center" }}>✅ Invoice sent to {email}</div>
-            : (
-              <div style={{ display:"flex", gap:10 }}>
-                <input value={email} onChange={e=>setEmail(e.target.value)} placeholder="Email address" style={{ flex:1, padding:"10px 14px", background:"#060B18", border:"1px solid #1E293B", borderRadius:10, color:"#F1F5F9", fontSize:13, outline:"none" }}/>
-                <button onClick={handleSend} disabled={loading} style={{ padding:"10px 20px", borderRadius:10, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontSize:13, fontWeight:700, cursor:"pointer", whiteSpace:"nowrap" }}>
-                  {loading?"Sending…":"Send Invoice"}
-                </button>
-              </div>
-            )
-          }
-          <div style={{ display:"flex", gap:8, marginTop:12 }}>
-            <button style={{ padding:"9px 16px", borderRadius:9, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontSize:12, cursor:"pointer" }}>⬇ Download PDF</button>
-            <button style={{ padding:"9px 16px", borderRadius:9, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontSize:12, cursor:"pointer" }}>📋 Copy Link</button>
-            <button onClick={onClose} style={{ padding:"9px 16px", borderRadius:9, border:"none", background:"#1E293B", color:"#64748B", fontSize:12, cursor:"pointer", marginLeft:"auto" }}>Close</button>
+          {/* Send Section */}
+          <div style={{ borderTop:"1px solid #1E293B", paddingTop:16 }}>
+            <div style={{ fontSize:13, fontWeight:700, color:"#F1F5F9", marginBottom:10 }}>📧 Send to Player</div>
+            {sent
+              ? <div style={{ background:"#10B98122", border:"1px solid #10B98144", borderRadius:10, padding:"12px 16px", color:"#10B981", fontWeight:700, textAlign:"center" }}>✅ Invoice sent to {email}</div>
+              : (
+                <div style={{ display:"flex", gap:10 }}>
+                  <input value={email} onChange={e=>setEmail(e.target.value)} style={{ flex:1, padding:"10px 14px", background:"#060B18", border:"1px solid #1E293B", borderRadius:10, color:"#F1F5F9", fontSize:13, outline:"none" }}/>
+                  <button onClick={()=>{ setLoading(true); setTimeout(()=>{ setLoading(false); setSent(true); },1600); }} disabled={loading} style={{ padding:"10px 20px", borderRadius:10, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontSize:13, fontWeight:700, cursor:"pointer" }}>
+                    {loading ? "Sending…" : "Send Invoice"}
+                  </button>
+                </div>
+              )}
           </div>
         </div>
       </div>
@@ -170,261 +222,335 @@ function InvoiceModal({ txn, onClose }:{ txn:typeof transactions[0]; onClose:()=
   );
 }
 
+/* ─── Main View ──────────────────────────────────────────────── */
 export default function FinanceView() {
-  const [tab,       setTab]       = useState<"overview"|"gst"|"invoices">("overview");
+  type Tab = "overview"|"pl"|"gst"|"invoices"|"refunds"|"tds";
+  const [tab,       setTab]       = useState<Tab>("overview");
   const [txnFilter, setTxnFilter] = useState<"all"|"success"|"pending"|"failed"|"refunded">("all");
-  const [invoice,   setInvoice]   = useState<typeof transactions[0]|null>(null);
-  const [gstSearch, setGstSearch] = useState("");
+  const [invoice,   setInvoice]   = useState<Txn|null>(null);
+  const [search,    setSearch]    = useState("");
 
-  const filtered = txnFilter==="all"?transactions:transactions.filter(t=>t.status===txnFilter);
-  const gstFiltered = transactions.filter(t=>t.status==="success"&&(t.name.toLowerCase().includes(gstSearch.toLowerCase())||t.id.toLowerCase().includes(gstSearch.toLowerCase())));
-  const totalGST = transactions.filter(t=>t.status==="success").reduce((a,t)=>a+Math.round(t.amount*gstRate),0);
+  const totalRevenue  = 630600;
+  const totalGST      = Math.round(totalRevenue * GST_RATE);
+  const totalGW       = Math.round(totalRevenue * CF_FEE);
+  const netRevenue    = totalRevenue - totalGST - totalGW;
+  const totalRefunds  = REFUNDS.reduce((a,r)=>a+(r.status==="processed"?r.amount:0),0);
 
-  const card:React.CSSProperties = { background:"linear-gradient(135deg,#0D1526 0%,#0A1020 100%)", border:"1px solid #1E293B", borderRadius:16, padding:20 };
+  const filtered = TRANSACTIONS.filter(t => {
+    const statusOk = txnFilter === "all" || t.status === txnFilter;
+    const searchOk = !search || t.name.toLowerCase().includes(search.toLowerCase()) || t.id.toLowerCase().includes(search.toLowerCase());
+    return statusOk && searchOk;
+  });
+
+  const card: React.CSSProperties = { background:"linear-gradient(135deg,#0D1526 0%,#0A1020 100%)", border:"1px solid #1E293B", borderRadius:16, padding:20 };
+  const TABS: [Tab, string][] = [
+    ["overview","📊 Overview"],["pl","💹 P&L Report"],["gst","🏛 GST Compliance"],
+    ["invoices","📄 Invoices"],["refunds","↩ Refunds"],["tds","📋 TDS"],
+  ];
 
   return (
     <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
 
-      {/* Header */}
+      {/* ── Header ── */}
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
         <div>
           <div style={{ fontSize:20, fontWeight:800, color:"#F1F5F9" }}>Finance & GST</div>
-          <div style={{ fontSize:12, color:"#64748B", marginTop:2 }}>Revenue tracking, GST compliance, and invoice management</div>
+          <div style={{ fontSize:12, color:"#64748B", marginTop:2 }}>Revenue · P&L · GST Compliance · Invoices · Refunds · TDS</div>
         </div>
         <div style={{ display:"flex", gap:8 }}>
-          <button style={{ padding:"9px 18px", borderRadius:9, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontSize:12, cursor:"pointer" }}>⬇ Export CSV</button>
-          <button style={{ padding:"9px 18px", borderRadius:9, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer" }}>📄 Bulk Invoices</button>
+          <button style={{ padding:"9px 16px", borderRadius:9, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontSize:12, cursor:"pointer" }}>⬇ Export CSV</button>
+          <button style={{ padding:"9px 16px", borderRadius:9, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontSize:12, cursor:"pointer" }}>📄 Bulk Invoices</button>
+          <button style={{ padding:"9px 16px", borderRadius:9, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer" }}>📥 GSTR-1 Report</button>
         </div>
       </div>
 
-      {/* Revenue Cards */}
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:12 }}>
+      {/* ── KPI Cards ── */}
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(6,1fr)", gap:10 }}>
         {[
-          { label:"Total Revenue",     value:"₹6,30,600", sub:"All phases combined",       color:"#FF6B00", icon:"💰", delta:"+12.4%" },
-          { label:"Phase 1 Revenue",   value:"₹3,81,200", sub:"3,812 registrations",       color:"#F59E0B", icon:"💳", delta:"+8.2%"  },
-          { label:"Phase 2 Revenue",   value:"₹2,49,400", sub:"1,247 selections",          color:"#10B981", icon:"🏆", delta:"+24.7%" },
-          { label:"GST Collected",     value:`₹${totalGST.toLocaleString()}`, sub:"18% on registration fees", color:"#6366F1", icon:"🏛", delta:"FY 25-26" },
+          { label:"Total Revenue",    value:"₹6.31L",         sub:`${TRANSACTIONS.filter(t=>t.status==="success").length} paid txns`, color:"#FF6B00", delta:"+18.4%" },
+          { label:"Net Revenue",      value:`₹${(netRevenue/1000).toFixed(1)}k`,sub:"After GST & gateway fee",color:"#10B981",delta:"+14.2%"},
+          { label:"GST Collected",    value:`₹${(totalGST/1000).toFixed(1)}k`,  sub:"18% on all payments",    color:"#6366F1", delta:"FY 25-26" },
+          { label:"Gateway Fees",     value:`₹${(totalGW/1000).toFixed(1)}k`,   sub:"Cashfree 2% fee",        color:"#F59E0B", delta:"CF charges" },
+          { label:"Total Refunds",    value:`₹${totalRefunds}`,                  sub:`${REFUNDS.length} refund requests`,color:"#EF4444",delta:"-₹"+totalRefunds},
+          { label:"Pending Clearance",value:"₹3,22,000",                         sub:"In Cashfree settlement", color:"#3B82F6", delta:"T+2 days"  },
         ].map(s=>(
-          <div key={s.label} style={{ ...card, borderTop:`3px solid ${s.color}`, position:"relative", overflow:"hidden" }}>
-            <div style={{ position:"absolute", top:0, right:0, width:60, height:60, background:`radial-gradient(${s.color}18,transparent 70%)`, borderRadius:"50%" }}/>
-            <div style={{ fontSize:22, marginBottom:8 }}>{s.icon}</div>
-            <div style={{ fontSize:24, fontWeight:800, color:"#F1F5F9" }}>{s.value}</div>
-            <div style={{ fontSize:11, color:"#64748B", marginTop:2 }}>{s.label}</div>
-            <div style={{ display:"flex", justifyContent:"space-between", marginTop:8 }}>
-              <span style={{ fontSize:10, color:"#334155" }}>{s.sub}</span>
-              <span style={{ fontSize:11, fontWeight:700, color:s.delta.startsWith("+")?"#10B981":"#6366F1" }}>{s.delta}</span>
+          <div key={s.label} style={{ ...card, padding:"14px 16px", borderTop:`3px solid ${s.color}` }}>
+            <div style={{ fontSize:20, fontWeight:800, color:s.color }}>{s.value}</div>
+            <div style={{ fontSize:10, color:"#F1F5F9", fontWeight:600, marginTop:3 }}>{s.label}</div>
+            <div style={{ display:"flex", justifyContent:"space-between", marginTop:6 }}>
+              <span style={{ fontSize:9, color:"#334155" }}>{s.sub}</span>
+              <span style={{ fontSize:10, fontWeight:700, color:s.delta.startsWith("+")?"#10B981":s.delta.startsWith("-")?"#EF4444":"#6366F1" }}>{s.delta}</span>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Tabs */}
-      <div style={{ display:"flex", gap:6 }}>
-        {([["overview","📊 Overview"],["gst","🏛 GST Summary"],["invoices","📄 Invoices"]] as const).map(([t,l])=>(
-          <button key={t} onClick={()=>setTab(t as any)} style={{ padding:"9px 20px", borderRadius:10, border:"1px solid", borderColor:tab===t?"#FF6B00":"#1E293B", background:tab===t?"#FF6B0022":"transparent", color:tab===t?"#FF6B00":"#64748B", fontSize:12, fontWeight:700, cursor:"pointer" }}>{l}</button>
+      {/* ── Tabs ── */}
+      <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
+        {TABS.map(([t,l])=>(
+          <button key={t} onClick={()=>setTab(t)} style={{ padding:"8px 16px", borderRadius:10, border:`1px solid ${tab===t?"#FF6B00":"#1E293B"}`, background:tab===t?"#FF6B0022":"transparent", color:tab===t?"#FF6B00":"#64748B", fontSize:12, fontWeight:700, cursor:"pointer" }}>{l}</button>
         ))}
       </div>
 
-      {/* ── OVERVIEW TAB ── */}
+      {/* ══════════ OVERVIEW ══════════ */}
       {tab==="overview"&&(
-        <>
-          <div style={{ display:"grid", gridTemplateColumns:"2fr 1fr", gap:16 }}>
+        <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
+          <div style={{ display:"grid", gridTemplateColumns:"2fr 1fr", gap:14 }}>
             <div style={card}>
-              <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9", marginBottom:16 }}>Daily Revenue — Last 7 Days</div>
+              <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9", marginBottom:4 }}>Daily Revenue — Last 7 Days</div>
+              <div style={{ fontSize:11, color:"#475569", marginBottom:14 }}>Phase 1 vs Phase 2 vs Refunds</div>
               <ResponsiveContainer width="100%" height={220}>
                 <BarChart data={dailyRevenue}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#1E293B"/>
                   <XAxis dataKey="day" stroke="#334155" tick={{ fill:"#64748B", fontSize:11 }}/>
                   <YAxis stroke="#334155" tick={{ fill:"#64748B", fontSize:10 }} tickFormatter={v=>`₹${(v/1000).toFixed(0)}k`}/>
-                  <Tooltip content={<CustomTooltip/>}/>
-                  <Bar dataKey="p1" fill="#F59E0B" radius={[4,4,0,0]} name="p1"/>
-                  <Bar dataKey="p2" fill="#10B981" radius={[4,4,0,0]} name="p2"/>
+                  <Tooltip contentStyle={{ background:"#0D1526", border:"1px solid #1E293B", borderRadius:8 }} formatter={(v:any,n:string)=>[`₹${Number(v).toLocaleString()}`, n==="p1"?"Phase 1":n==="p2"?"Phase 2":"Refunds"]}/>
+                  <Bar dataKey="p1"      fill="#F59E0B" radius={[4,4,0,0]} name="p1"/>
+                  <Bar dataKey="p2"      fill="#10B981" radius={[4,4,0,0]} name="p2"/>
+                  <Bar dataKey="refunds" fill="#EF444460" radius={[4,4,0,0]} name="refunds"/>
                 </BarChart>
               </ResponsiveContainer>
             </div>
-            <div style={card}>
-              <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9", marginBottom:12 }}>Payment Methods</div>
-              <ResponsiveContainer width="100%" height={140}>
-                <PieChart>
-                  <Pie data={paymentMethods} cx="50%" cy="50%" innerRadius={38} outerRadius={60} dataKey="value" strokeWidth={0}>
-                    {paymentMethods.map((m,i)=><Cell key={i} fill={m.color}/>)}
-                  </Pie>
-                  <Tooltip formatter={(v:any)=>[`${v}%`,""]} contentStyle={{ background:"#0D1526", border:"1px solid #1E293B", borderRadius:8 }}/>
-                </PieChart>
-              </ResponsiveContainer>
-              {paymentMethods.map(m=>(
-                <div key={m.name} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:8 }}>
-                  <div style={{ display:"flex", alignItems:"center", gap:8 }}><div style={{ width:8, height:8, borderRadius:2, background:m.color }}/><span style={{ fontSize:12, color:"#94A3B8" }}>{m.name}</span></div>
-                  <span style={{ fontSize:12, fontWeight:700, color:"#F1F5F9" }}>{m.value}%</span>
-                </div>
-              ))}
+            <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+              <div style={card}>
+                <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9", marginBottom:12 }}>Payment Split</div>
+                <ResponsiveContainer width="100%" height={120}>
+                  <PieChart>
+                    <Pie data={paymentMethods} cx="50%" cy="50%" innerRadius={30} outerRadius={52} dataKey="value" strokeWidth={0}>
+                      {paymentMethods.map((m,i)=><Cell key={i} fill={m.color}/>)}
+                    </Pie>
+                    <Tooltip formatter={(v:any)=>[`${v}%`,""]} contentStyle={{ background:"#0D1526", border:"1px solid #1E293B", borderRadius:8 }}/>
+                  </PieChart>
+                </ResponsiveContainer>
+                {paymentMethods.map(m=>(
+                  <div key={m.name} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:6 }}>
+                    <div style={{ display:"flex", alignItems:"center", gap:6 }}><div style={{ width:8, height:8, borderRadius:2, background:m.color }}/><span style={{ fontSize:11, color:"#94A3B8" }}>{m.name}</span></div>
+                    <span style={{ fontSize:12, fontWeight:700, color:"#F1F5F9" }}>{m.value}%</span>
+                  </div>
+                ))}
+              </div>
+              <div style={{ ...card, padding:"14px 16px" }}>
+                <div style={{ fontSize:12, fontWeight:700, color:"#F1F5F9", marginBottom:10 }}>Settlement Status</div>
+                {[{l:"Settled Today",v:"₹42,800",c:"#10B981"},{l:"In Transit (T+2)",v:"₹1,14,200",c:"#F59E0B"},{l:"On Hold",v:"₹2,900",c:"#EF4444"}].map(s=>(
+                  <div key={s.l} style={{ display:"flex", justifyContent:"space-between", padding:"6px 0", borderBottom:"1px solid #1E293B" }}>
+                    <span style={{ fontSize:11, color:"#64748B" }}>{s.l}</span>
+                    <span style={{ fontSize:12, fontWeight:700, color:s.c }}>{s.v}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
           {/* Transaction log */}
           <div style={card}>
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14, flexWrap:"wrap", gap:10 }}>
               <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9" }}>Transaction Log</div>
-              <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
+              <div style={{ display:"flex", gap:8, flexWrap:"wrap", alignItems:"center" }}>
+                <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search name / TXN…" style={{ padding:"7px 12px", background:"#060B18", border:"1px solid #1E293B", borderRadius:9, color:"#F1F5F9", fontSize:12, outline:"none", width:200 }}/>
                 {(["all","success","pending","failed","refunded"] as const).map(f=>(
-                  <button key={f} onClick={()=>setTxnFilter(f)} style={{ padding:"5px 12px", borderRadius:7, border:"1px solid", borderColor:txnFilter===f?(f==="all"?"#FF6B00":statusConfig[f]?.color||"#FF6B00"):"#1E293B", background:txnFilter===f?((f==="all"?"#FF6B00":statusConfig[f]?.color||"#FF6B00")+"22"):"transparent", color:txnFilter===f?(f==="all"?"#FF6B00":statusConfig[f]?.color):"#64748B", fontSize:11, fontWeight:700, cursor:"pointer", textTransform:"capitalize" }}>{f}</button>
+                  <button key={f} onClick={()=>setTxnFilter(f)} style={{ padding:"5px 12px", borderRadius:7, border:`1px solid ${txnFilter===f?(f==="all"?"#FF6B00":SC[f]?.color||"#FF6B00"):"#1E293B"}`, background:txnFilter===f?((f==="all"?"#FF6B00":SC[f]?.color||"#FF6B00")+"22"):"transparent", color:txnFilter===f?(f==="all"?"#FF6B00":SC[f]?.color):"#64748B", fontSize:11, fontWeight:700, cursor:"pointer", textTransform:"capitalize" }}>{f}</button>
                 ))}
               </div>
             </div>
             <table style={{ width:"100%", borderCollapse:"collapse" }}>
               <thead>
                 <tr style={{ borderBottom:"1px solid #1E293B" }}>
-                  {["Txn ID","Player","Phase","Amount","Method","Time","Status","Invoice"].map(h=>(
+                  {["Txn ID","Player","Phase","Amount","Gateway Fee","GST","Net","Method","Status","Invoice"].map(h=>(
                     <th key={h} style={{ padding:"8px 10px", textAlign:"left", fontSize:10, color:"#475569", fontWeight:700, textTransform:"uppercase" }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {filtered.map(t=>(
-                  <tr key={t.id} style={{ borderBottom:"1px solid #0F1B2D" }}>
-                    <td style={{ padding:"11px 10px", fontFamily:"monospace", fontSize:11, color:"#475569" }}>{t.id}</td>
-                    <td style={{ padding:"11px 10px", fontSize:13, fontWeight:600, color:"#F1F5F9" }}>{t.name}</td>
-                    <td style={{ padding:"11px 10px" }}><span style={{ fontSize:11, padding:"2px 8px", borderRadius:4, background:t.type==="Phase 2"?"#10B98122":"#F59E0B22", color:t.type==="Phase 2"?"#10B981":"#F59E0B", fontWeight:700 }}>{t.type}</span></td>
-                    <td style={{ padding:"11px 10px", fontSize:14, fontWeight:800, color:"#FF6B00" }}>₹{t.amount.toLocaleString()}</td>
-                    <td style={{ padding:"11px 10px", fontSize:12, color:"#94A3B8" }}>{t.method}</td>
-                    <td style={{ padding:"11px 10px", fontSize:11, color:"#475569" }}>{t.time}</td>
-                    <td style={{ padding:"11px 10px" }}><span style={{ padding:"3px 10px", borderRadius:20, fontSize:10, fontWeight:800, background:statusConfig[t.status].bg, color:statusConfig[t.status].color, textTransform:"capitalize" }}>{t.status}</span></td>
-                    <td style={{ padding:"11px 10px" }}>
-                      {t.status==="success"
-                        ? <button onClick={()=>setInvoice(t)} style={{ padding:"4px 10px", borderRadius:6, border:"1px solid #FF6B0044", background:"#FF6B0011", color:"#FF6B00", fontSize:11, cursor:"pointer", fontWeight:700 }}>📄 GST Invoice</button>
-                        : <span style={{ fontSize:10, color:"#334155" }}>N/A</span>}
-                    </td>
-                  </tr>
-                ))}
+                {filtered.map(t=>{
+                  const gw  = Math.round(t.amount * CF_FEE);
+                  const gst = Math.round(t.amount * GST_RATE);
+                  const net = t.amount - gw - gst;
+                  return (
+                    <tr key={t.id} style={{ borderBottom:"1px solid #0F1B2D" }}>
+                      <td style={{ padding:"10px 10px", fontFamily:"monospace", fontSize:11, color:"#475569" }}>{t.id}</td>
+                      <td style={{ padding:"10px 10px" }}>
+                        <div style={{ fontSize:13, fontWeight:600, color:"#F1F5F9" }}>{t.name}</div>
+                        <div style={{ fontSize:10, color:"#475569" }}>{t.phone}</div>
+                      </td>
+                      <td style={{ padding:"10px 10px" }}><span style={{ fontSize:11, padding:"2px 8px", borderRadius:4, background:t.type==="Phase 2"?"#10B98122":"#F59E0B22", color:t.type==="Phase 2"?"#10B981":"#F59E0B", fontWeight:700 }}>{t.type}</span></td>
+                      <td style={{ padding:"10px 10px", fontSize:14, fontWeight:800, color:"#FF6B00" }}>₹{t.amount.toLocaleString()}</td>
+                      <td style={{ padding:"10px 10px", fontSize:11, color:"#EF4444" }}>-₹{gw}</td>
+                      <td style={{ padding:"10px 10px", fontSize:11, color:"#6366F1" }}>₹{gst}</td>
+                      <td style={{ padding:"10px 10px", fontSize:12, fontWeight:700, color:"#10B981" }}>₹{net}</td>
+                      <td style={{ padding:"10px 10px", fontSize:12, color:"#94A3B8" }}>{t.method}</td>
+                      <td style={{ padding:"10px 10px" }}><span style={{ padding:"3px 10px", borderRadius:20, fontSize:10, fontWeight:800, background:SC[t.status].bg, color:SC[t.status].color, textTransform:"capitalize" }}>{t.status}</span></td>
+                      <td style={{ padding:"10px 10px" }}>
+                        {t.status==="success"
+                          ? <button onClick={()=>setInvoice(t)} style={{ padding:"4px 10px", borderRadius:6, border:"1px solid #FF6B0044", background:"#FF6B0011", color:"#FF6B00", fontSize:11, cursor:"pointer", fontWeight:700 }}>📄 GST</button>
+                          : <span style={{ fontSize:10, color:"#334155" }}>—</span>}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
-        </>
+        </div>
       )}
 
-      {/* ── GST SUMMARY TAB ── */}
-      {tab==="gst"&&(
+      {/* ══════════ P&L REPORT ══════════ */}
+      {tab==="pl"&&(
         <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
-          {/* GST Header Cards */}
           <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:12 }}>
             {[
-              { label:"Total GST Collected", value:`₹${totalGST.toLocaleString()}`, sub:"FY 2025-26", color:"#6366F1", icon:"🏛" },
-              { label:"CGST (9%)",           value:`₹${(totalGST/2).toLocaleString()}`, sub:"Central GST", color:"#FF6B00", icon:"🇮🇳" },
-              { label:"SGST (9%)",           value:`₹${(totalGST/2).toLocaleString()}`, sub:"State GST", color:"#10B981", icon:"📍" },
-              { label:"Registered GSTINs",   value:"3", sub:"Businesses with GSTIN", color:"#F59E0B", icon:"📋" },
+              { l:"Gross Revenue",  v:"₹5,54,100",  c:"#FF6B00", sub:"Apr–Jul 2026" },
+              { l:"GST Payable",    v:"-₹99,738",   c:"#6366F1", sub:"18% collected" },
+              { l:"Gateway Fees",   v:"-₹11,082",   c:"#EF4444", sub:"Cashfree 2%" },
+              { l:"Net Revenue",    v:"₹4,43,280",  c:"#10B981", sub:"After deductions" },
             ].map(s=>(
-              <div key={s.label} style={{ ...card, borderTop:`3px solid ${s.color}` }}>
-                <div style={{ fontSize:20, marginBottom:8 }}>{s.icon}</div>
-                <div style={{ fontSize:22, fontWeight:800, color:s.color }}>{s.value}</div>
-                <div style={{ fontSize:11, color:"#64748B", marginTop:3 }}>{s.label}</div>
-                <div style={{ fontSize:10, color:"#334155", marginTop:6 }}>{s.sub}</div>
+              <div key={s.l} style={{ ...card, borderTop:`3px solid ${s.c}` }}>
+                <div style={{ fontSize:22, fontWeight:800, color:s.c }}>{s.v}</div>
+                <div style={{ fontSize:12, color:"#F1F5F9", fontWeight:600, marginTop:4 }}>{s.l}</div>
+                <div style={{ fontSize:10, color:"#475569", marginTop:4 }}>{s.sub}</div>
               </div>
             ))}
           </div>
+          <div style={{ display:"grid", gridTemplateColumns:"2fr 1fr", gap:14 }}>
+            <div style={card}>
+              <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9", marginBottom:4 }}>Monthly P&L Summary</div>
+              <div style={{ fontSize:11, color:"#475569", marginBottom:16 }}>Revenue vs costs vs net profit per month</div>
+              <ResponsiveContainer width="100%" height={240}>
+                <AreaChart data={monthlyPL}>
+                  <defs>
+                    <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#FF6B00" stopOpacity={0.3}/><stop offset="95%" stopColor="#FF6B00" stopOpacity={0}/></linearGradient>
+                    <linearGradient id="netGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#10B981" stopOpacity={0.3}/><stop offset="95%" stopColor="#10B981" stopOpacity={0}/></linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1E293B"/>
+                  <XAxis dataKey="month" stroke="#334155" tick={{ fill:"#64748B", fontSize:11 }}/>
+                  <YAxis stroke="#334155" tick={{ fill:"#64748B", fontSize:10 }} tickFormatter={v=>`₹${(v/1000).toFixed(0)}k`}/>
+                  <Tooltip contentStyle={{ background:"#0D1526", border:"1px solid #1E293B", borderRadius:8 }} formatter={(v:any)=>[`₹${Number(v).toLocaleString()}`,""]}/>
+                  <Area type="monotone" dataKey="revenue" stroke="#FF6B00" fill="url(#revGrad)" strokeWidth={2} name="Revenue"/>
+                  <Area type="monotone" dataKey="net"     stroke="#10B981" fill="url(#netGrad)" strokeWidth={2} name="Net"/>
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+            <div style={card}>
+              <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9", marginBottom:14 }}>Monthly Breakdown</div>
+              {monthlyPL.map(m=>(
+                <div key={m.month} style={{ padding:"12px 0", borderBottom:"1px solid #1E293B" }}>
+                  <div style={{ display:"flex", justifyContent:"space-between", marginBottom:6 }}>
+                    <span style={{ fontSize:13, fontWeight:700, color:"#F1F5F9" }}>{m.month} 2026</span>
+                    <span style={{ fontSize:13, fontWeight:800, color:"#10B981" }}>₹{m.net.toLocaleString()}</span>
+                  </div>
+                  <div style={{ display:"flex", gap:12 }}>
+                    <span style={{ fontSize:10, color:"#64748B" }}>Rev: <span style={{ color:"#FF6B00" }}>₹{m.revenue.toLocaleString()}</span></span>
+                    <span style={{ fontSize:10, color:"#64748B" }}>GST: <span style={{ color:"#6366F1" }}>-₹{m.gstPaid.toLocaleString()}</span></span>
+                    <span style={{ fontSize:10, color:"#64748B" }}>GW: <span style={{ color:"#EF4444" }}>-₹{m.gatewayCost.toLocaleString()}</span></span>
+                  </div>
+                </div>
+              ))}
+              <div style={{ marginTop:12, padding:"10px 12px", background:"#FF6B0010", border:"1px solid #FF6B0030", borderRadius:10 }}>
+                <div style={{ fontSize:11, color:"#FF6B00", fontWeight:700 }}>Profit Margin: ~80%</div>
+                <div style={{ fontSize:10, color:"#475569", marginTop:2 }}>Revenue net of GST & gateway</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
-          {/* Monthly GST chart */}
+      {/* ══════════ GST COMPLIANCE ══════════ */}
+      {tab==="gst"&&(
+        <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:12 }}>
+            {[
+              { l:"Total GST Collected", v:`₹${(totalGST/1000).toFixed(1)}k`, c:"#6366F1", sub:"FY 2025-26" },
+              { l:"CGST (9%)",           v:`₹${(totalGST/2/1000).toFixed(1)}k`,c:"#FF6B00", sub:"Central GST share" },
+              { l:"SGST (9%)",           v:`₹${(totalGST/2/1000).toFixed(1)}k`,c:"#10B981", sub:"State GST share" },
+              { l:"Next GSTR-1 Due",     v:"11 Aug",                             c:"#F59E0B", sub:"File before due date" },
+            ].map(s=>(
+              <div key={s.l} style={{ ...card, borderTop:`3px solid ${s.c}` }}>
+                <div style={{ fontSize:22, fontWeight:800, color:s.c }}>{s.v}</div>
+                <div style={{ fontSize:11, color:"#64748B", marginTop:3 }}>{s.l}</div>
+                <div style={{ fontSize:10, color:"#334155", marginTop:5 }}>{s.sub}</div>
+              </div>
+            ))}
+          </div>
           <div style={{ display:"grid", gridTemplateColumns:"2fr 1fr", gap:14 }}>
             <div style={card}>
               <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9", marginBottom:4 }}>Monthly GST Collected vs Remitted</div>
-              <div style={{ fontSize:11, color:"#475569", marginBottom:16 }}>Track GSTR-1 compliance month by month</div>
+              <div style={{ fontSize:11, color:"#475569", marginBottom:16 }}>GSTR-1 compliance tracking</div>
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={gstMonthly}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#1E293B"/>
                   <XAxis dataKey="month" stroke="#334155" tick={{ fill:"#64748B", fontSize:11 }}/>
                   <YAxis stroke="#334155" tick={{ fill:"#64748B", fontSize:10 }} tickFormatter={v=>`₹${(v/1000).toFixed(0)}k`}/>
-                  <Tooltip contentStyle={{ background:"#0D1526", border:"1px solid #1E293B", borderRadius:8 }}/>
+                  <Tooltip contentStyle={{ background:"#0D1526", border:"1px solid #1E293B", borderRadius:8 }} formatter={(v:any)=>[`₹${Number(v).toLocaleString()}`,""]}/>
                   <Bar dataKey="collected" fill="#6366F1" radius={[4,4,0,0]} name="Collected"/>
                   <Bar dataKey="remitted"  fill="#10B981" radius={[4,4,0,0]} name="Remitted"/>
                 </BarChart>
               </ResponsiveContainer>
             </div>
-            <div style={card}>
-              <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9", marginBottom:16 }}>BCPL GST Details</div>
-              {[{l:"Business Name",v:"Kriparti Playing11 Pvt. Ltd."},{l:"GSTIN",v:BCPL_GSTIN},{l:"Registration Type",v:"Regular"},{l:"State",v:"Haryana (07)"},{l:"Next GSTR-1 Due",v:"11 Aug 2026"},{l:"HSN Code",v:"999299 — Sports Services"},{l:"GST Rate",v:"18% (CGST 9% + SGST 9%)"}].map(r=>(
-                <div key={r.l} style={{ padding:"10px 0", borderBottom:"1px solid #1E293B" }}>
-                  <div style={{ fontSize:10, color:"#475569", fontWeight:700, textTransform:"uppercase" }}>{r.l}</div>
-                  <div style={{ fontSize:13, color:"#F1F5F9", marginTop:3, fontWeight:600 }}>{r.v}</div>
-                </div>
-              ))}
-              <button style={{ width:"100%", marginTop:14, padding:"10px", borderRadius:10, border:"1px solid #6366F144", background:"#6366F111", color:"#6366F1", fontSize:12, fontWeight:700, cursor:"pointer" }}>
-                📥 Download GSTR-1 Report
-              </button>
+            <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+              <div style={card}>
+                <div style={{ fontSize:13, fontWeight:700, color:"#F1F5F9", marginBottom:14 }}>BCPL GST Registration</div>
+                {[
+                  { l:"Business",    v:"Kriparti Playing11 Pvt. Ltd." },
+                  { l:"GSTIN",       v:BCPL_GSTIN },
+                  { l:"Type",        v:"Regular Taxpayer" },
+                  { l:"State",       v:"Haryana (07)" },
+                  { l:"HSN Code",    v:"999299 — Sports Services" },
+                  { l:"GST Rate",    v:"18% (CGST 9% + SGST 9%)" },
+                ].map(r=>(
+                  <div key={r.l} style={{ padding:"8px 0", borderBottom:"1px solid #1E293B" }}>
+                    <div style={{ fontSize:10, color:"#475569", fontWeight:700 }}>{r.l}</div>
+                    <div style={{ fontSize:12, color:"#F1F5F9", marginTop:2, fontWeight:600, fontFamily:r.l==="GSTIN"?"monospace":"inherit" }}>{r.v}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={card}>
+                <div style={{ fontSize:13, fontWeight:700, color:"#F1F5F9", marginBottom:10 }}>Filing Status</div>
+                {gstMonthly.map(m=>(
+                  <div key={m.month} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"7px 0", borderBottom:"1px solid #1E293B" }}>
+                    <span style={{ fontSize:12, color:"#94A3B8" }}>GSTR-1 {m.month}</span>
+                    <span style={{ fontSize:10, padding:"2px 9px", borderRadius:6, fontWeight:700, background:m.due==="Paid"?"#10B98122":m.due==="Partial"?"#F59E0B22":"#EF444422", color:m.due==="Paid"?"#10B981":m.due==="Partial"?"#F59E0B":"#EF4444" }}>{m.due}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-
-          {/* B2B transactions with GSTIN */}
-          <div style={card}>
-            <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9", marginBottom:4 }}>B2B Registrations (with GSTIN)</div>
-            <div style={{ fontSize:11, color:"#475569", marginBottom:14 }}>Players/entities who provided GSTIN — eligible for ITC</div>
-            {transactions.filter(t=>t.gstin&&t.status==="success").length===0
-              ? <div style={{ textAlign:"center", padding:"20px 0", color:"#334155" }}>No B2B transactions found</div>
-              : (
-                <table style={{ width:"100%", borderCollapse:"collapse" }}>
-                  <thead>
-                    <tr style={{ borderBottom:"1px solid #1E293B" }}>
-                      {["Player","GSTIN","Phase","Taxable Amt","CGST (9%)","SGST (9%)","Total","Invoice"].map(h=>(
-                        <th key={h} style={{ padding:"8px 10px", textAlign:"left", fontSize:10, color:"#475569", fontWeight:700, textTransform:"uppercase" }}>{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {transactions.filter(t=>t.gstin&&t.status==="success").map(t=>{
-                      const gst = Math.round(t.amount*gstRate);
-                      return (
-                        <tr key={t.id} style={{ borderBottom:"1px solid #0F1B2D" }}>
-                          <td style={{ padding:"11px 10px", fontSize:13, color:"#F1F5F9", fontWeight:600 }}>{t.name}</td>
-                          <td style={{ padding:"11px 10px", fontSize:11, color:"#F59E0B", fontFamily:"monospace" }}>{t.gstin}</td>
-                          <td style={{ padding:"11px 10px" }}><span style={{ fontSize:11, padding:"2px 8px", borderRadius:4, background:t.type==="Phase 2"?"#10B98122":"#F59E0B22", color:t.type==="Phase 2"?"#10B981":"#F59E0B", fontWeight:700 }}>{t.type}</span></td>
-                          <td style={{ padding:"11px 10px", fontSize:13, color:"#94A3B8" }}>₹{t.amount.toLocaleString()}</td>
-                          <td style={{ padding:"11px 10px", fontSize:13, color:"#6366F1" }}>₹{(gst/2).toFixed(2)}</td>
-                          <td style={{ padding:"11px 10px", fontSize:13, color:"#6366F1" }}>₹{(gst/2).toFixed(2)}</td>
-                          <td style={{ padding:"11px 10px", fontSize:14, fontWeight:800, color:"#FF6B00" }}>₹{(t.amount+gst).toLocaleString()}</td>
-                          <td style={{ padding:"11px 10px" }}>
-                            <button onClick={()=>setInvoice(t)} style={{ padding:"4px 10px", borderRadius:6, border:"1px solid #FF6B0044", background:"#FF6B0011", color:"#FF6B00", fontSize:11, cursor:"pointer", fontWeight:700 }}>📄 Invoice</button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              )
-            }
           </div>
         </div>
       )}
 
-      {/* ── INVOICES TAB ── */}
+      {/* ══════════ INVOICES ══════════ */}
       {tab==="invoices"&&(
         <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
           <div style={{ display:"flex", gap:10, alignItems:"center" }}>
-            <input value={gstSearch} onChange={e=>setGstSearch(e.target.value)} placeholder="Search by player name or TXN ID…" style={{ flex:1, padding:"10px 14px", background:"#0D1526", border:"1px solid #1E293B", borderRadius:10, color:"#F1F5F9", fontSize:13, outline:"none" }}/>
+            <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search by player name or TXN ID…" style={{ flex:1, padding:"10px 14px", background:"#0D1526", border:"1px solid #1E293B", borderRadius:10, color:"#F1F5F9", fontSize:13, outline:"none" }}/>
             <button style={{ padding:"10px 18px", borderRadius:10, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontSize:12, cursor:"pointer" }}>⬇ Bulk Download</button>
+            <button style={{ padding:"10px 18px", borderRadius:10, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer" }}>📧 Send All</button>
           </div>
           <div style={card}>
             <div style={{ display:"flex", justifyContent:"space-between", marginBottom:14 }}>
               <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9" }}>All GST Invoices</div>
-              <span style={{ fontSize:11, color:"#64748B" }}>{gstFiltered.length} invoices</span>
+              <span style={{ fontSize:11, color:"#64748B" }}>{TRANSACTIONS.filter(t=>t.status==="success").length} invoices generated</span>
             </div>
             <table style={{ width:"100%", borderCollapse:"collapse" }}>
               <thead>
                 <tr style={{ borderBottom:"1px solid #1E293B" }}>
-                  {["Invoice No","Player","Email","Phase","Base Amt","GST (18%)","Total","Action"].map(h=>(
+                  {["Invoice No","Player","Phase","Base","GST (18%)","GW Fee","Net","Total Charged","Action"].map(h=>(
                     <th key={h} style={{ padding:"8px 10px", textAlign:"left", fontSize:10, color:"#475569", fontWeight:700, textTransform:"uppercase" }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {gstFiltered.map(t=>{
-                  const gst = Math.round(t.amount*gstRate);
+                {TRANSACTIONS.filter(t=>t.status==="success").map(t=>{
+                  const gst = Math.round(t.amount * GST_RATE);
+                  const gw  = Math.round(t.amount * CF_FEE);
                   return (
                     <tr key={t.id} style={{ borderBottom:"1px solid #0F1B2D" }}>
-                      <td style={{ padding:"11px 10px", fontFamily:"monospace", fontSize:11, color:"#6366F1" }}>BCPL/25-26/{t.id}</td>
-                      <td style={{ padding:"11px 10px", fontSize:13, fontWeight:600, color:"#F1F5F9" }}>{t.name}</td>
-                      <td style={{ padding:"11px 10px", fontSize:11, color:"#64748B" }}>{t.email}</td>
-                      <td style={{ padding:"11px 10px" }}><span style={{ fontSize:11, padding:"2px 8px", borderRadius:4, background:t.type==="Phase 2"?"#10B98122":"#F59E0B22", color:t.type==="Phase 2"?"#10B981":"#F59E0B", fontWeight:700 }}>{t.type}</span></td>
-                      <td style={{ padding:"11px 10px", fontSize:13, color:"#94A3B8" }}>₹{t.amount.toLocaleString()}</td>
-                      <td style={{ padding:"11px 10px", fontSize:13, color:"#6366F1" }}>₹{gst.toLocaleString()}</td>
-                      <td style={{ padding:"11px 10px", fontSize:14, fontWeight:800, color:"#FF6B00" }}>₹{(t.amount+gst).toLocaleString()}</td>
-                      <td style={{ padding:"11px 10px" }}>
+                      <td style={{ padding:"10px 10px", fontFamily:"monospace", fontSize:11, color:"#6366F1" }}>BCPL/25-26/{t.id}</td>
+                      <td style={{ padding:"10px 10px", fontSize:13, fontWeight:600, color:"#F1F5F9" }}>{t.name}</td>
+                      <td style={{ padding:"10px 10px" }}><span style={{ fontSize:11, padding:"2px 8px", borderRadius:4, background:t.type==="Phase 2"?"#10B98122":"#F59E0B22", color:t.type==="Phase 2"?"#10B981":"#F59E0B", fontWeight:700 }}>{t.type}</span></td>
+                      <td style={{ padding:"10px 10px", fontSize:12, color:"#94A3B8" }}>₹{t.amount.toLocaleString()}</td>
+                      <td style={{ padding:"10px 10px", fontSize:12, color:"#6366F1" }}>₹{gst}</td>
+                      <td style={{ padding:"10px 10px", fontSize:12, color:"#EF4444" }}>₹{gw}</td>
+                      <td style={{ padding:"10px 10px", fontSize:12, fontWeight:700, color:"#10B981" }}>₹{(t.amount-gst-gw).toLocaleString()}</td>
+                      <td style={{ padding:"10px 10px", fontSize:13, fontWeight:800, color:"#FF6B00" }}>₹{(t.amount+gst).toLocaleString()}</td>
+                      <td style={{ padding:"10px 10px" }}>
                         <div style={{ display:"flex", gap:6 }}>
                           <button onClick={()=>setInvoice(t)} style={{ padding:"4px 10px", borderRadius:6, border:"1px solid #FF6B0044", background:"#FF6B0011", color:"#FF6B00", fontSize:11, cursor:"pointer", fontWeight:700 }}>View</button>
                           <button onClick={()=>setInvoice(t)} style={{ padding:"4px 10px", borderRadius:6, border:"1px solid #6366F144", background:"#6366F111", color:"#6366F1", fontSize:11, cursor:"pointer" }}>Email</button>
@@ -439,8 +565,112 @@ export default function FinanceView() {
         </div>
       )}
 
-      {/* ── GST Invoice Modal ── */}
-      {invoice&&<InvoiceModal txn={invoice} onClose={()=>setInvoice(null)}/>}
+      {/* ══════════ REFUNDS ══════════ */}
+      {tab==="refunds"&&(
+        <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:12 }}>
+            {[
+              { l:"Total Refund Requests", v:REFUNDS.length,                                      c:"#F59E0B" },
+              { l:"Processed",             v:REFUNDS.filter(r=>r.status==="processed").length,    c:"#10B981" },
+              { l:"Pending",               v:REFUNDS.filter(r=>r.status==="pending").length,      c:"#EF4444" },
+              { l:"Amount Refunded",       v:`₹${REFUNDS.filter(r=>r.status==="processed").reduce((a,r)=>a+r.amount,0)}`, c:"#6366F1" },
+            ].map(s=>(
+              <div key={s.l} style={{ ...card, borderTop:`3px solid ${s.c}` }}>
+                <div style={{ fontSize:22, fontWeight:800, color:s.c }}>{s.v}</div>
+                <div style={{ fontSize:11, color:"#64748B", marginTop:4 }}>{s.l}</div>
+              </div>
+            ))}
+          </div>
+          <div style={card}>
+            <div style={{ display:"flex", justifyContent:"space-between", marginBottom:14 }}>
+              <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9" }}>Refund Requests</div>
+              <button style={{ padding:"7px 14px", borderRadius:9, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer" }}>+ Process Batch</button>
+            </div>
+            <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+              {REFUNDS.map(r=>(
+                <div key={r.id} style={{ padding:"16px", background:"#060B18", borderRadius:12, border:`1px solid ${r.status==="pending"?"#EF444430":"#1E293B"}` }}>
+                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:8 }}>
+                    <div>
+                      <div style={{ display:"flex", align:"center", gap:10, marginBottom:4 }}>
+                        <span style={{ fontSize:13, fontWeight:700, color:"#F1F5F9" }}>{r.name}</span>
+                        <span style={{ fontFamily:"monospace", fontSize:11, color:"#475569", marginLeft:8 }}>{r.txnId}</span>
+                      </div>
+                      <div style={{ fontSize:12, color:"#64748B" }}>Reason: {r.reason}</div>
+                      <div style={{ fontSize:11, color:"#475569", marginTop:3 }}>Requested: {r.date} · Via: {r.method}</div>
+                    </div>
+                    <div style={{ textAlign:"right" }}>
+                      <div style={{ fontSize:18, fontWeight:900, color:r.status==="processed"?"#10B981":"#F59E0B" }}>₹{r.amount}</div>
+                      <span style={{ fontSize:10, padding:"2px 9px", borderRadius:6, fontWeight:700, background:r.status==="processed"?"#10B98122":"#EF444422", color:r.status==="processed"?"#10B981":"#EF4444" }}>{r.status==="processed"?"✓ Processed":"⏳ Pending"}</span>
+                    </div>
+                  </div>
+                  {r.status==="pending"&&(
+                    <div style={{ display:"flex", gap:8, marginTop:8 }}>
+                      <button style={{ padding:"6px 16px", borderRadius:8, border:"none", background:"#10B98122", color:"#10B981", fontSize:12, fontWeight:700, cursor:"pointer" }}>✓ Approve & Process</button>
+                      <button style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #1E293B", background:"transparent", color:"#64748B", fontSize:12, cursor:"pointer" }}>Reject</button>
+                    </div>
+                  )}
+                  {r.status==="processed"&&<div style={{ fontSize:11, color:"#10B981", marginTop:4 }}>✓ Refunded in {r.days} days via {r.method}</div>}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════ TDS ══════════ */}
+      {tab==="tds"&&(
+        <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
+          <div style={{ ...card, borderLeft:"3px solid #F59E0B", background:"linear-gradient(135deg,#0D1526,#1A1208)" }}>
+            <div style={{ fontSize:13, fontWeight:700, color:"#F59E0B", marginBottom:6 }}>⚠ TDS on Prize Money (Section 194B — 30%)</div>
+            <div style={{ fontSize:12, color:"#64748B", lineHeight:1.7 }}>
+              As per Indian Income Tax Act, TDS @ 30% is applicable on prize money exceeding ₹10,000. BCPL must deduct TDS before disbursing prize amounts and file Form 27Q quarterly.<br/>
+              <strong style={{ color:"#94A3B8" }}>Next TDS filing due: 31st July 2026 (Q1 FY 2026-27)</strong>
+            </div>
+          </div>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:12 }}>
+            {[
+              { l:"Total Prize Disbursed", v:"₹2,00,000", c:"#FF6B00" },
+              { l:"TDS Deducted (30%)",    v:"₹20,000",   c:"#EF4444" },
+              { l:"Net Prize Paid",        v:"₹1,80,000", c:"#10B981" },
+              { l:"Pending TDS Deposit",   v:"₹12,000",   c:"#F59E0B" },
+            ].map(s=>(
+              <div key={s.l} style={{ ...card, borderTop:`3px solid ${s.c}` }}>
+                <div style={{ fontSize:22, fontWeight:800, color:s.c }}>{s.v}</div>
+                <div style={{ fontSize:11, color:"#64748B", marginTop:4 }}>{s.l}</div>
+              </div>
+            ))}
+          </div>
+          <div style={card}>
+            <div style={{ display:"flex", justifyContent:"space-between", marginBottom:14 }}>
+              <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9" }}>Prize TDS Records</div>
+              <button style={{ padding:"7px 14px", borderRadius:9, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontSize:12, cursor:"pointer" }}>⬇ Form 27Q</button>
+            </div>
+            <table style={{ width:"100%", borderCollapse:"collapse" }}>
+              <thead>
+                <tr style={{ borderBottom:"1px solid #1E293B" }}>
+                  {["Player / Entity","PAN","Prize Amount","TDS (30%)","Net Paid","Status"].map(h=>(
+                    <th key={h} style={{ padding:"8px 10px", textAlign:"left", fontSize:10, color:"#475569", fontWeight:700, textTransform:"uppercase" }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {TDS_PRIZES.map((t,i)=>(
+                  <tr key={i} style={{ borderBottom:"1px solid #0F1B2D" }}>
+                    <td style={{ padding:"11px 10px", fontSize:13, fontWeight:600, color:"#F1F5F9" }}>{t.player}</td>
+                    <td style={{ padding:"11px 10px", fontFamily:"monospace", fontSize:12, color:"#F59E0B" }}>{t.pan}</td>
+                    <td style={{ padding:"11px 10px", fontSize:13, color:"#FF6B00", fontWeight:700 }}>{t.prize}</td>
+                    <td style={{ padding:"11px 10px", fontSize:13, color:"#EF4444", fontWeight:700 }}>{t.tds}</td>
+                    <td style={{ padding:"11px 10px", fontSize:13, color:"#10B981", fontWeight:700 }}>{t.net}</td>
+                    <td style={{ padding:"11px 10px" }}><span style={{ fontSize:10, padding:"3px 10px", borderRadius:6, fontWeight:700, background:t.status==="Deducted"?"#10B98122":"#F59E0B22", color:t.status==="Deducted"?"#10B981":"#F59E0B" }}>{t.status}</span></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {invoice && <InvoiceModal txn={invoice} onClose={()=>setInvoice(null)}/>}
     </div>
   );
 }
