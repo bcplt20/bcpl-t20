@@ -1,5 +1,1 @@
-import AdminShell from "./AdminShell";
-
-export default function AdminPanel() {
-  return <AdminShell />;
-}
+export { default } from "./AdminShell";
