@@ -28,6 +28,8 @@ AWS_S3_BUCKET = "bcpl-trial-videos"
 BREVO_FROM_EMAIL = "noreply@bcplt20.com"
 CASHFREE_ENV = "TEST"
 SITE_URL = "https://elite-user-experience.replit.app/bcpl-website"
+VITE_ADMIN_KEY = ""
+VITE_API_URL = "https://elite-user-experience.replit.app"
 
 [nix]
 channel = "stable-25_05"
