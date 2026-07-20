@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getPointsTable, updatePointsRow } from "../../lib/api";
 
 const PLAYERS = [
   { rank:1,  name:"Arjun Patel",    team:"Rajasthan Scorchers",  role:"Batsman",    runs:420, avg:52.5, sr:142.3, wickets:0,  economy:0,   matches:9, hs:"98*", fours:45, sixes:18 },
@@ -42,6 +43,20 @@ export default function LeaderboardView() {
   const [tableData, setTableData] = useState<PtRow[]>(INIT_TABLE);
   const [editMode,  setEditMode]  = useState(false);
   const [editRows,  setEditRows]  = useState<PtRow[]>(INIT_TABLE);
+
+  // Load points table from API on mount
+  useEffect(()=>{
+    getPointsTable(5).then(res=>{
+      if(!res.table?.length) return;
+      const rows: PtRow[] = res.table.map((r:any)=>({
+        team: r.team, p:r.played, w:r.won, l:r.lost, nr:r.no_result,
+        pts: r.points,
+        nrr: (r.nrr>=0?"+":"")+Number(r.nrr).toFixed(3),
+        form: (r.form as string[]) ?? [],
+      }));
+      setTableData(rows); setEditRows(rows);
+    }).catch(()=>{});
+  },[]);
   const [groups,    setGroups]    = useState<Group[]>([]);
   const [newGName,  setNewGName]  = useState("");
   const [assigning, setAssigning] = useState<string|null>(null); // group id being assigned
@@ -55,9 +70,16 @@ export default function LeaderboardView() {
   /* ── Points table helpers ── */
   const startEdit = () => { setEditRows([...tableData]); setEditMode(true); };
   const saveEdit  = () => {
-    // Auto-recalculate pts and sort by pts desc
     const recalc = editRows.map(r=>({ ...r, pts:r.w*2+r.nr })).sort((a,b)=>b.pts-a.pts||b.nrr.localeCompare(a.nrr));
     setTableData(recalc); setEditMode(false);
+    // Persist each row to API
+    recalc.forEach(r=>{
+      updatePointsRow(r.team,{
+        played:r.p, won:r.w, lost:r.l, noResult:r.nr,
+        nrr: parseFloat(r.nrr.replace("+","")),
+        form: r.form,
+      }).catch(console.error);
+    });
   };
   const updateRow = (i:number, field:keyof PtRow, val:string|number) =>
     setEditRows(rows=>rows.map((r,j)=>j===i?{...r,[field]:typeof val==="number"?val:val}:r));

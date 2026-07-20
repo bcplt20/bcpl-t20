@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getMatches, createMatch, recordToss, setPlayingXI, recordBall } from "../../lib/api";
 
 /* ─── Types ─────────────────────────────────────────── */
 type Role = "BAT"|"BOWL"|"AR"|"WK";
@@ -18,7 +19,7 @@ interface InningsState {
   strikerIdx:number; nonStrikerIdx:number; bowlerIdx:number;
   target?:number;
 }
-interface MatchDef { id:number; matchNo:number; team1:string; team2:string; venue:string; date:string; status:"scheduled"|"live"|"completed"; }
+interface MatchDef { id:number; dbId?:string; matchNo:number; team1:string; team2:string; venue:string; date:string; status:"scheduled"|"live"|"completed"; }
 interface LiveMatch {
   def:MatchDef;
   tossWinner:string; tossDec:"bat"|"field";
@@ -105,6 +106,24 @@ const PILL = (c:string): React.CSSProperties => ({ display:"inline-flex", alignI
 export default function LiveScoringView() {
   const [matches,    setMatches]    = useState<MatchDef[]>(INIT_MATCHES);
   const [live,       setLive]       = useState<LiveMatch|null>(null);
+  const [currentDbId, setCurrentDbId] = useState<string|null>(null);
+
+  // Fetch matches from API on mount — merge with local list
+  useEffect(()=>{
+    getMatches(5).then(res=>{
+        const apiMatches: MatchDef[] = res.matches.map((m:any, i:number)=>({
+          id: -(i+1), // negative IDs for DB-sourced matches to avoid collision
+          dbId: m.id,
+          matchNo: m.match_no,
+          team1: m.team1, team2: m.team2,
+          venue: m.venue,
+          date: m.scheduled_at ? new Date(m.scheduled_at).toLocaleString("en-IN",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}) : "TBD",
+          status: (m.status==="live"||m.status==="innings2") ? "live" : m.status==="completed"||m.status==="abandoned" ? "completed" : "scheduled",
+        }));
+        // Merge: DB matches first, then hardcoded ones not already in DB
+        setMatches(apiMatches.length>0 ? apiMatches : INIT_MATCHES);
+      }).catch(()=>{}); // silently fall back to INIT_MATCHES
+  },[]);
   const [mainTab,    setMainTab]    = useState<"live"|"scorecard">("live");
   const [scTab,      setScTab]      = useState<"bat1"|"bowl1"|"bat2"|"bowl2">("bat1");
   const [commentary, setCommentary] = useState<string[]>([]);
@@ -122,6 +141,7 @@ export default function LiveScoringView() {
   /* ── Start a match (open toss screen) ── */
   const openMatch = (m:MatchDef) => {
     if(m.status==="completed") return;
+    setCurrentDbId(m.dbId||null);
     setLive({ def:m, tossWinner:m.team1, tossDec:"bat", xi1:[], xi2:[], currentInnings:1, inn1:null as any, inn2:null, phase:"toss" });
     setXi1sel([]); setXi2sel([]);
     setCommentary([]);
@@ -132,6 +152,9 @@ export default function LiveScoringView() {
   const confirmToss = () => {
     if(!live) return;
     setLive(l=>l?{...l, phase:"xi"}:l);
+    if(currentDbId){
+      recordToss(currentDbId,{ tossWinner:live.tossWinner, tossDecision:live.tossDec }).catch(console.error);
+    }
   };
 
   /* ── Confirm XI → start innings ── */
@@ -146,6 +169,16 @@ export default function LiveScoringView() {
     inn1.batScores[1].batting = true;
     setLive(l=>l?{...l, xi1:xi1sel, xi2:xi2sel, inn1, currentInnings:1, phase:"live"}:l);
     setMatches(ms=>ms.map(m=>m.id===live.def.id?{...m,status:"live"}:m));
+    // Persist to API
+    if(currentDbId){
+      const squad1 = SQUADS[live.def.team1]||[];
+      const squad2 = SQUADS[live.def.team2]||[];
+      setPlayingXI(currentDbId,{
+        xi1: xi1sel.map(n=>({ name:n, role:squad1.find(p=>p.name===n)?.role||"BAT" })),
+        xi2: xi2sel.map(n=>({ name:n, role:squad2.find(p=>p.name===n)?.role||"BAT" })),
+        battingTeam: bat,
+      }).catch(console.error);
+    }
   };
 
   /* ── Current innings helper ── */
@@ -164,9 +197,29 @@ export default function LiveScoringView() {
     applyBall({ outcome, runs, isExtra, isWide, isNB, isWicket:false, dismissal:"" });
   };
 
-  const applyBall = ({ outcome, runs, isExtra, isWide, isNB, isWicket, dismissal, nonStrikerOut=false }:
-    { outcome:string; runs:number; isExtra:boolean; isWide:boolean; isNB:boolean; isWicket:boolean; dismissal:string; nonStrikerOut?:boolean }) => {
+  const DIS_TYPE_MAP: Record<string,string> = {
+    "b":"bowled","c":"caught","lbw":"lbw","ro":"run_out",
+    "st":"stumped","hw":"hit_wicket","cb":"caught_and_bowled","rh":"retired_hurt",
+  };
+
+  const applyBall = ({ outcome, runs, isExtra, isWide, isNB, isWicket, dismissal, nonStrikerOut=false, dismissalTypeKey, fielderName, dismissedBatter }:
+    { outcome:string; runs:number; isExtra:boolean; isWide:boolean; isNB:boolean; isWicket:boolean; dismissal:string; nonStrikerOut?:boolean; dismissalTypeKey?:string; fielderName?:string; dismissedBatter?:string; }) => {
     if(!live || !inn) return;
+
+    // Fire-and-forget API persistence
+    if(currentDbId){
+      const striker  = inn.batScores[inn.strikerIdx]?.name  || "";
+      const bowler   = inn.bowlScores[inn.bowlerIdx]?.name  || "";
+      const apiOutcome = isWide?"WD":isNB?"NB":outcome==="."?"0":outcome;
+      recordBall(currentDbId,{
+        outcome: apiOutcome,
+        batterName: striker, bowlerName: bowler,
+        dismissalType: dismissalTypeKey ? DIS_TYPE_MAP[dismissalTypeKey] : undefined,
+        dismissedBatter: dismissedBatter||undefined,
+        fielderName: fielderName||undefined,
+        nonStrikerOut,
+      }).catch(console.error);
+    }
 
     setLive(prev=>{
       if(!prev) return prev;
@@ -289,6 +342,7 @@ export default function LiveScoringView() {
     const disStr  = getDisStr(dm.type, dm.fielder||keeper, bowler, dm.nonStrikerOut);
     const outIdx  = dm.nonStrikerOut ? inn.nonStrikerIdx : inn.strikerIdx;
     const outName = inn.batScores[outIdx]?.name||"";
+    const fielder = dm.fielder || (["c","st","ro"].includes(dm.type)?keeper:"");
 
     // Apply dismissal then ball
     setLive(prev=>{
@@ -314,8 +368,8 @@ export default function LiveScoringView() {
     setCommentary(c=>[`${inn.overs}.${inn.balls} — 💥 WICKET! ${outName} ${disStr}.`,...c].slice(0,30));
     setDm(null);
 
-    // Now actually process the ball (no runs scored on wicket)
-    applyBall({ outcome:"W", runs:0, isExtra:false, isWide:false, isNB:false, isWicket:true, dismissal:disStr, nonStrikerOut:dm.nonStrikerOut });
+    // Process the ball — pass dismissal info for API persistence
+    applyBall({ outcome:"W", runs:0, isExtra:false, isWide:false, isNB:false, isWicket:true, dismissal:disStr, nonStrikerOut:dm.nonStrikerOut, dismissalTypeKey:dm.type, fielderName:fielder, dismissedBatter:outName });
   };
 
   /* ═══════════════════════════════ RENDER ═════════════ */
@@ -359,9 +413,14 @@ export default function LiveScoringView() {
             </div>
             <div style={{ display:"flex", gap:10 }}>
               <button onClick={()=>setShowAdd(false)} style={{ flex:1, padding:11, borderRadius:8, border:"1px solid #1E293B", background:"transparent", color:"#64748B", cursor:"pointer" }}>Cancel</button>
-              <button onClick={()=>{
-                const newMatch:MatchDef = { id:Date.now(), matchNo:matches.length+1, team1:addForm.team1, team2:addForm.team2, venue:addForm.venue, date:addForm.date||"TBD", status:"scheduled" };
+              <button onClick={async ()=>{
+                const localId = Date.now();
+                const newMatch:MatchDef = { id:localId, matchNo:matches.length+1, team1:addForm.team1, team2:addForm.team2, venue:addForm.venue, date:addForm.date||"TBD", status:"scheduled" };
                 setMatches(m=>[...m, newMatch]); setShowAdd(false);
+                try {
+                  const res = await createMatch({ matchNo:matches.length+1, team1:addForm.team1, team2:addForm.team2, venue:addForm.venue, scheduledAt:addForm.date||undefined });
+                  setMatches(ms=>ms.map(m=>m.id===localId?{...m, dbId:res.match.id}:m));
+                } catch(e){ console.error("Save match failed:",e); }
               }} style={{ flex:1, padding:11, borderRadius:8, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontWeight:700, cursor:"pointer" }}>Schedule →</button>
             </div>
           </div>

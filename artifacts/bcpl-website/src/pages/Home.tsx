@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
+import { getMatches, getPointsTable } from "../lib/api";
 
 const L = import.meta.env.BASE_URL + "bcpl-assets/logos/";
 
@@ -107,6 +108,26 @@ export function Home() {
   const [bannerIdx, setBannerIdx] = useState(0);
   const [bannerOut, setBannerOut] = useState(false);
   const [, navigate] = useLocation();
+
+  /* Live data from API */
+  const [liveMatches,  setLiveMatches]  = useState<any[]>([]);
+  const [liveTable,    setLiveTable]    = useState<any[]>([]);
+  const pollRef = useRef<ReturnType<typeof setInterval>|null>(null);
+
+  const fetchLiveData = () => {
+    getMatches(5)
+      .then(r => setLiveMatches(r.matches))
+      .catch(()=>{});
+    getPointsTable(5)
+      .then(r => setLiveTable(r.table))
+      .catch(()=>{});
+  };
+
+  useEffect(()=>{
+    fetchLiveData();
+    pollRef.current = setInterval(fetchLiveData, 8000); // poll every 8s
+    return ()=>{ if(pollRef.current) clearInterval(pollRef.current); };
+  },[]);
 
   /* Countdown */
   useEffect(()=>{
@@ -715,7 +736,17 @@ export function Home() {
                   <a href="/match-center" style={{ fontSize:12, color:"#FF7A29", textDecoration:"none", fontWeight:700 }}>View all →</a>
                 </div>
                 <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
-                  {MATCHES.map((m,i)=>{
+                  {(liveMatches.length > 0
+                    ? liveMatches.slice(0,5).map((m:any) => ({
+                        status:  m.status==="live"||m.status==="innings2" ? "LIVE" : m.status==="completed"||m.status==="abandoned" ? "RESULT" : "UPCOMING",
+                        team1:   m.team1, t1Slug: TEAMS.find(t=>t.name===m.team1)?.slug||"", t1Color: TEAMS.find(t=>t.name===m.team1)?.color||"#64748B",
+                        team2:   m.team2, t2Slug: TEAMS.find(t=>t.name===m.team2)?.slug||"", t2Color: TEAMS.find(t=>t.name===m.team2)?.color||"#64748B",
+                        score1: "", score2: "",
+                        info:    `Match ${m.match_no} · ${m.venue}`,
+                        winner:  m.winner||"",
+                      }))
+                    : MATCHES
+                  ).map((m,i)=>{
                     const isLive    = m.status === "LIVE";
                     const isUpcoming = m.status === "UPCOMING";
                     const isResult   = m.status === "RESULT";
@@ -790,8 +821,19 @@ export function Home() {
                     ))}
                   </div>
                   {/* Rows */}
-                  {POINTS_TABLE.map((row, i)=>(
-                    <div key={i} style={{ display:"grid", gridTemplateColumns:"28px 1fr 30px 30px 30px 44px 50px", gap:0, padding:"9px 14px", borderBottom: i<POINTS_TABLE.length-1?"1px solid rgba(255,255,255,.04)":"none", background: i<4?"rgba(255,122,41,.025)":"transparent", position:"relative" }}>
+                  {(liveTable.length > 0
+                    ? liveTable.map((r:any, i:number) => ({
+                        rank: i+1,
+                        team: r.team,
+                        slug: TEAMS.find(t=>t.name===r.team)?.slug||"",
+                        color: TEAMS.find(t=>t.name===r.team)?.color||"#64748B",
+                        p: r.played, w: r.won, l: r.lost, nr: r.no_result,
+                        pts: r.points,
+                        nrr: (r.nrr>=0?"+":"")+Number(r.nrr).toFixed(3),
+                      }))
+                    : POINTS_TABLE
+                  ).map((row, i, arr)=>(
+                    <div key={i} style={{ display:"grid", gridTemplateColumns:"28px 1fr 30px 30px 30px 44px 50px", gap:0, padding:"9px 14px", borderBottom: i<arr.length-1?"1px solid rgba(255,255,255,.04)":"none", background: i<4?"rgba(255,122,41,.025)":"transparent", position:"relative" }}>
                       {/* Qualification indicator */}
                       {i<4 && <div style={{ position:"absolute", left:0, top:0, bottom:0, width:2, background:`${row.color}60`, borderRadius:"0 2px 2px 0" }}/>}
                       {/* Rank */}
