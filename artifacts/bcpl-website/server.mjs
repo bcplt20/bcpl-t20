@@ -38,9 +38,19 @@ async function exists(p) {
   try { await stat(p); return true; } catch { return false; }
 }
 
+// The proxy routes /bcpl-website/* → this server.
+// Vite builds assets with base="/bcpl-website/" so all URLs start with that prefix.
+// Strip it before resolving files inside dist/public/.
+const BASE_PREFIX = '/bcpl-website';
+
 const server = createServer(async (req, res) => {
   // Strip query string
-  const url = req.url.split('?')[0];
+  const rawUrl = req.url.split('?')[0];
+
+  // Strip the /bcpl-website prefix so file lookups work inside dist/public/
+  const url = rawUrl.startsWith(BASE_PREFIX)
+    ? rawUrl.slice(BASE_PREFIX.length) || '/'
+    : rawUrl;
 
   // Try the exact path first, then fall back to index.html (SPA routing)
   const candidates = [

@@ -14,12 +14,12 @@ localPort = 20570
 [services.development]
 run = "PORT=20570 BASE_PATH=/bcpl-website/ pnpm --filter @workspace/bcpl-website run dev"
 
-# Production build: BASE_PATH=/ so asset URLs resolve at the domain root
+# Production build: BASE_PATH=/bcpl-website/ so asset URLs resolve under the proxy prefix
 [services.production.build]
 args = ["pnpm", "--filter", "@workspace/bcpl-website", "run", "build"]
 
 [services.production.build.env]
-BASE_PATH = "/"
+BASE_PATH = "/bcpl-website/"
 
 # Production run: node directly (same pattern as api-server) — bypasses pnpm
 # which can break after pnpm store prune in the build container.
