@@ -1,4 +1,4 @@
-modules = ["nodejs-24", "python-base-3.13"]
+modules = ["nodejs-24", "python-base-3.13", "postgresql-16"]
 
 [deployment]
 router = "application"
@@ -28,3 +28,6 @@ AWS_S3_BUCKET = "bcpl-trial-videos"
 BREVO_FROM_EMAIL = "noreply@bcplt20.com"
 CASHFREE_ENV = "TEST"
 SITE_URL = "https://elite-user-experience.replit.app/bcpl-website"
+
+[nix]
+channel = "stable-25_05"

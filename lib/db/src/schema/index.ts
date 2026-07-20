@@ -6,3 +6,9 @@ export * from "./phase1_videos";
 export * from "./phase2_payments";
 export * from "./kyc_records";
 export * from "./notification_logs";
+// League / match scoring
+export * from "./matches";
+export * from "./innings";
+export * from "./deliveries";
+export * from "./match_xi";
+export * from "./points_table";
