@@ -1,130 +1,128 @@
 import { useState } from "react";
 
 const SPONSORS = [
-  { id: 1, name: "TechCorp India",    tier: "Title",    logo: "🏢", contact: "sponsor@techcorp.in",    amount: "₹50L",  status: "Active",  since: "Jan 2025" },
-  { id: 2, name: "SportZone",         tier: "Platinum", logo: "⚡", contact: "deals@sportzone.com",    amount: "₹25L",  status: "Active",  since: "Feb 2025" },
-  { id: 3, name: "HealthPlus",        tier: "Gold",     logo: "💊", contact: "pr@healthplus.in",       amount: "₹10L",  status: "Active",  since: "Mar 2025" },
-  { id: 4, name: "FoodFest",          tier: "Silver",   logo: "🍔", contact: "hello@foodfest.co",      amount: "₹5L",   status: "Active",  since: "Mar 2025" },
-  { id: 5, name: "AutoDrive",         tier: "Silver",   logo: "🚗", contact: "mkt@autodrive.com",      amount: "₹5L",   status: "Pending", since: "Jul 2025" },
-  { id: 6, name: "EduWorld",          tier: "Bronze",   logo: "📚", contact: "partners@eduworld.in",   amount: "₹2L",   status: "Active",  since: "Apr 2025" },
+  { id: "S01", name: "Gujarat Titan Paints", tier: "Title", logo: "🏭", amount: "₹25L", status: "active", contract: "Mar 2025", visibility: "Jersey, Ground, Digital" },
+  { id: "S02", name: "Baroda Beverages Co.", tier: "Platinum", logo: "🥤", amount: "₹12L", status: "active", contract: "Mar 2025", visibility: "Ground Hoarding, Website" },
+  { id: "S03", name: "Excel Steel Ltd", tier: "Platinum", logo: "🔩", amount: "₹10L", status: "active", contract: "Feb 2025", visibility: "Boundary Boards, App" },
+  { id: "S04", name: "StarPlex Cinemas", tier: "Gold", logo: "🎬", amount: "₹5L", status: "active", contract: "Mar 2025", visibility: "Scoreboard, Social" },
+  { id: "S05", name: "TechFin Solutions", tier: "Gold", logo: "💻", amount: "₹4.5L", status: "active", contract: "Jan 2025", visibility: "App Banner, Email" },
+  { id: "S06", name: "Mehta Motors", tier: "Silver", logo: "🚗", amount: "₹2L", status: "negotiating", contract: "—", visibility: "TBD" },
+  { id: "S07", name: "Patel Dairy Fresh", tier: "Silver", logo: "🥛", amount: "₹1.5L", status: "active", contract: "Feb 2025", visibility: "Social Media" },
 ];
 
-const TIER_COLOR: Record<string, string> = {
-  Title:    "#FF7A29",
-  Platinum: "#E8F0FE",
-  Gold:     "#F59E0B",
-  Silver:   "#7A8EA8",
-  Bronze:   "#CD7F32",
+const TIERS = ["Title", "Platinum", "Gold", "Silver", "Bronze"];
+const TIER_C: Record<string, { bg: string; color: string; border: string }> = {
+  Title: { bg: "#FF6B0020", color: "#FF6B00", border: "#FF6B0050" },
+  Platinum: { bg: "#E2E8F020", color: "#E2E8F0", border: "#E2E8F050" },
+  Gold: { bg: "#F59E0B20", color: "#F59E0B", border: "#F59E0B50" },
+  Silver: { bg: "#94A3B820", color: "#94A3B8", border: "#94A3B850" },
+  Bronze: { bg: "#CD7F3220", color: "#CD7F32", border: "#CD7F3250" },
 };
 
 export default function SponsorsView() {
   const [showAdd, setShowAdd] = useState(false);
+  const [form, setForm] = useState({ name: "", tier: "Gold", amount: "", contact: "" });
 
-  const totalRevenue = SPONSORS.filter(s => s.status === "Active")
-    .reduce((sum, s) => {
-      const n = parseFloat(s.amount.replace("₹", "").replace("L", "")) * 100000;
-      return sum + n;
-    }, 0);
+  const card: React.CSSProperties = { background: "#0D1526", border: "1px solid #1E293B", borderRadius: 16, padding: "20px 22px" };
+
+  const total = SPONSORS.filter(s => s.status === "active").reduce((acc, s) => {
+    const n = parseFloat(s.amount.replace("₹", "").replace("L", "")) || 0;
+    return acc + n;
+  }, 0);
 
   return (
-    <div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-        <div style={{ color: "#7A8EA8", fontSize: 14 }}>
-          Total Sponsorship: <span style={{ color: "#22C55E", fontWeight: 900 }}>
-            ₹{(totalRevenue / 100000).toFixed(0)}L
-          </span>
-        </div>
-        <button onClick={() => setShowAdd(true)} style={{
-          padding: "10px 20px", background: "linear-gradient(135deg,#FF7A29,#FF4500)",
-          color: "#fff", border: "none", borderRadius: 8, fontWeight: 700,
-          cursor: "pointer", fontSize: 13, fontFamily: "'Montserrat', sans-serif",
-        }}>
-          + Add Sponsor
-        </button>
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(300px,1fr))", gap: 14 }}>
-        {SPONSORS.map(s => (
-          <div key={s.id} style={{
-            background: "#0D1B2E", borderRadius: 14,
-            border: `1px solid ${TIER_COLOR[s.tier]}33`,
-            padding: "20px",
-          }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 14 }}>
-              <div style={{
-                width: 48, height: 48, borderRadius: 12,
-                background: `${TIER_COLOR[s.tier]}22`,
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: 22, flexShrink: 0,
-              }}>
-                {s.logo}
-              </div>
+    <div style={{ padding: 28, fontFamily: "'Inter', sans-serif" }}>
+      {/* Stats */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginBottom: 24 }}>
+        {[
+          { label: "Total Sponsorship", value: `₹${total}L`, color: "#10B981", icon: "💰" },
+          { label: "Active Sponsors", value: SPONSORS.filter(s => s.status === "active").length, color: "#3B82F6", icon: "🤝" },
+          { label: "In Negotiation", value: SPONSORS.filter(s => s.status === "negotiating").length, color: "#F59E0B", icon: "🔄" },
+          { label: "Tier Slots Open", value: "3", color: "#8B5CF6", icon: "🔓" },
+        ].map((s, i) => (
+          <div key={i} style={{ ...card, borderLeft: `3px solid ${s.color}` }}>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
               <div>
-                <div style={{ color: "#fff", fontWeight: 900, fontSize: 15 }}>{s.name}</div>
-                <span style={{
-                  background: `${TIER_COLOR[s.tier]}22`,
-                  color: TIER_COLOR[s.tier],
-                  borderRadius: 6, padding: "2px 8px", fontSize: 11, fontWeight: 700,
-                }}>
-                  {s.tier} Sponsor
-                </span>
+                <div style={{ fontSize: 10, fontWeight: 700, color: "#475569", letterSpacing: 0.5, textTransform: "uppercase" }}>{s.label}</div>
+                <div style={{ fontSize: 24, fontWeight: 900, color: "#E2E8F0", margin: "6px 0 0" }}>{s.value}</div>
               </div>
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              {[
-                ["Amount", s.amount],
-                ["Contact", s.contact],
-                ["Since", s.since],
-              ].map(([k, v]) => (
-                <div key={k} style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ color: "#7A8EA8", fontSize: 12 }}>{k}</span>
-                  <span style={{ color: "#E8F0FE", fontSize: 12, fontWeight: 700 }}>{v}</span>
-                </div>
-              ))}
-              <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4 }}>
-                <span style={{ color: "#7A8EA8", fontSize: 12 }}>Status</span>
-                <span style={{
-                  background: s.status === "Active" ? "#22C55E22" : "#F59E0B22",
-                  color: s.status === "Active" ? "#22C55E" : "#F59E0B",
-                  borderRadius: 6, padding: "2px 8px", fontSize: 11, fontWeight: 700,
-                }}>
-                  {s.status}
-                </span>
-              </div>
+              <div style={{ fontSize: 26 }}>{s.icon}</div>
             </div>
           </div>
         ))}
       </div>
 
+      {/* Tier Summary */}
+      <div style={{ display: "flex", gap: 10, marginBottom: 24 }}>
+        {TIERS.map(tier => {
+          const count = SPONSORS.filter(s => s.tier === tier).length;
+          const tc = TIER_C[tier];
+          return (
+            <div key={tier} style={{ flex: 1, background: tc.bg, border: `1px solid ${tc.border}`, borderRadius: 12, padding: "14px 16px", textAlign: "center" }}>
+              <div style={{ fontSize: 13, fontWeight: 800, color: tc.color }}>{tier}</div>
+              <div style={{ fontSize: 22, fontWeight: 900, color: "#E2E8F0", margin: "4px 0" }}>{count}</div>
+              <div style={{ fontSize: 10, color: "#475569" }}>sponsors</div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Toolbar */}
+      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 14 }}>
+        <button onClick={() => setShowAdd(s => !s)} style={{ padding: "9px 20px", borderRadius: 10, border: "none", background: "linear-gradient(135deg, #FF6B00, #FF8C40)", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>+ Add Sponsor</button>
+      </div>
+
+      {/* Add Form */}
       {showAdd && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.7)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999 }}
-          onClick={() => setShowAdd(false)}>
-          <div style={{ background: "#0D1B2E", borderRadius: 16, padding: 32, width: 420, border: "1px solid rgba(255,255,255,.1)" }}
-            onClick={e => e.stopPropagation()}>
-            <div style={{ fontWeight: 900, color: "#fff", fontSize: 18, marginBottom: 20 }}>Add Sponsor</div>
+        <div style={{ ...card, marginBottom: 16, borderColor: "#FF6B0030" }}>
+          <div style={{ fontSize: 13, fontWeight: 800, color: "#FF6B00", marginBottom: 16 }}>New Sponsor</div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 12 }}>
             {[
-              { label: "Company Name", placeholder: "e.g. TechCorp India" },
-              { label: "Contact Email", placeholder: "sponsor@company.com" },
-              { label: "Amount (₹)", placeholder: "e.g. 500000" },
+              { key: "name", label: "COMPANY NAME", placeholder: "e.g. Gujarat Titan Paints" },
+              { key: "amount", label: "AMOUNT", placeholder: "e.g. ₹5L" },
+              { key: "contact", label: "CONTACT EMAIL", placeholder: "sponsor@company.com" },
             ].map(f => (
-              <div key={f.label} style={{ marginBottom: 14 }}>
-                <label style={{ color: "#7A8EA8", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".06em" }}>{f.label}</label>
-                <input placeholder={f.placeholder} style={{ display: "block", width: "100%", marginTop: 8, padding: "11px 14px", background: "#06101E", border: "1px solid rgba(255,255,255,.12)", borderRadius: 8, color: "#fff", fontSize: 13, boxSizing: "border-box", fontFamily: "'Montserrat', sans-serif" }} />
+              <div key={f.key}>
+                <label style={{ fontSize: 10, fontWeight: 700, color: "#475569", letterSpacing: 0.5 }}>{f.label}</label>
+                <input value={(form as any)[f.key]} onChange={e => setForm(fm => ({ ...fm, [f.key]: e.target.value }))} placeholder={f.placeholder} style={{ width: "100%", marginTop: 5, padding: "9px 10px", borderRadius: 8, border: "1px solid #1E293B", background: "#080E1C", color: "#E2E8F0", fontSize: 12, outline: "none", boxSizing: "border-box" }} />
               </div>
             ))}
-            <div style={{ marginBottom: 20 }}>
-              <label style={{ color: "#7A8EA8", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".06em" }}>Tier</label>
-              <select style={{ display: "block", width: "100%", marginTop: 8, padding: "11px 14px", background: "#06101E", border: "1px solid rgba(255,255,255,.12)", borderRadius: 8, color: "#fff", fontSize: 13, fontFamily: "'Montserrat', sans-serif" }}>
-                {["Title","Platinum","Gold","Silver","Bronze"].map(t => <option key={t}>{t}</option>)}
+            <div>
+              <label style={{ fontSize: 10, fontWeight: 700, color: "#475569", letterSpacing: 0.5 }}>TIER</label>
+              <select value={form.tier} onChange={e => setForm(f => ({ ...f, tier: e.target.value }))} style={{ width: "100%", marginTop: 5, padding: "9px 10px", borderRadius: 8, border: "1px solid #1E293B", background: "#080E1C", color: "#E2E8F0", fontSize: 12, outline: "none", boxSizing: "border-box" }}>
+                {TIERS.map(t => <option key={t} value={t}>{t}</option>)}
               </select>
             </div>
-            <div style={{ display: "flex", gap: 10 }}>
-              <button style={{ flex: 1, padding: 12, background: "linear-gradient(135deg,#FF7A29,#FF4500)", color: "#fff", border: "none", borderRadius: 8, fontWeight: 700, cursor: "pointer" }}>Add</button>
-              <button onClick={() => setShowAdd(false)} style={{ flex: 1, padding: 12, background: "rgba(255,255,255,.06)", color: "#7A8EA8", border: "1px solid rgba(255,255,255,.12)", borderRadius: 8, cursor: "pointer", fontWeight: 700 }}>Cancel</button>
-            </div>
+          </div>
+          <div style={{ display: "flex", gap: 10, marginTop: 14 }}>
+            <button style={{ padding: "9px 22px", borderRadius: 8, border: "none", background: "linear-gradient(135deg, #FF6B00, #FF8C40)", color: "#fff", fontWeight: 700, fontSize: 13, cursor: "pointer" }}>Save Sponsor</button>
+            <button onClick={() => setShowAdd(false)} style={{ padding: "9px 22px", borderRadius: 8, border: "1px solid #1E293B", background: "transparent", color: "#64748B", fontSize: 13, cursor: "pointer" }}>Cancel</button>
           </div>
         </div>
       )}
+
+      {/* Sponsor Cards */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        {SPONSORS.map(s => {
+          const tc = TIER_C[s.tier];
+          return (
+            <div key={s.id} style={{ ...card, borderLeft: `3px solid ${tc.color}` }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                <div style={{ width: 44, height: 44, borderRadius: 12, background: tc.bg, border: `1.5px solid ${tc.border}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>{s.logo}</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 14, fontWeight: 800, color: "#E2E8F0" }}>{s.name}</div>
+                  <div style={{ fontSize: 11, color: "#475569", marginTop: 3 }}>📍 {s.visibility}</div>
+                </div>
+                <span style={{ background: tc.bg, color: tc.color, padding: "3px 10px", borderRadius: 8, fontSize: 10, fontWeight: 800 }}>{s.tier}</span>
+                <span style={{ fontSize: 16, fontWeight: 900, color: "#10B981", minWidth: 60, textAlign: "right" }}>{s.amount}</span>
+                <span style={{ fontSize: 10, color: "#475569" }}>until {s.contract}</span>
+                <span style={{ background: s.status === "active" ? "#10B98120" : "#F59E0B20", color: s.status === "active" ? "#10B981" : "#F59E0B", padding: "3px 10px", borderRadius: 8, fontSize: 10, fontWeight: 700, textTransform: "capitalize" }}>{s.status}</span>
+                <button style={{ background: "none", border: "1px solid #1E293B", borderRadius: 7, padding: "5px 12px", color: "#64748B", fontSize: 11, cursor: "pointer" }}>Edit</button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

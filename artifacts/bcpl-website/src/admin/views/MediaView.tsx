@@ -1,176 +1,130 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 
-type MediaItem = {
-  id: number;
-  name: string;
-  type: "image" | "video";
-  size: string;
-  uploaded: string;
-  url: string;
-};
-
-const MEDIA: MediaItem[] = [
-  { id: 1, name: "hero-banner.jpg",       type: "image", size: "1.2 MB", uploaded: "15 Jul 2025", url: "" },
-  { id: 2, name: "team-mumbai.jpg",       type: "image", size: "840 KB", uploaded: "14 Jul 2025", url: "" },
-  { id: 3, name: "auction-promo.mp4",     type: "video", size: "24 MB",  uploaded: "12 Jul 2025", url: "" },
-  { id: 4, name: "sponsor-techcorp.png",  type: "image", size: "210 KB", uploaded: "10 Jul 2025", url: "" },
-  { id: 5, name: "bcpl-logo.svg",         type: "image", size: "18 KB",  uploaded: "01 Jul 2025", url: "" },
-  { id: 6, name: "promo-video.mp4",       type: "video", size: "56 MB",  uploaded: "28 Jun 2025", url: "" },
-  { id: 7, name: "trial-guide.jpg",       type: "image", size: "560 KB", uploaded: "25 Jun 2025", url: "" },
-  { id: 8, name: "players-collage.jpg",   type: "image", size: "2.1 MB", uploaded: "20 Jun 2025", url: "" },
+const MEDIA = [
+  { id: "M01", name: "match_highlights_m19.mp4", type: "video", size: "48.2 MB", uploaded: "20 Jul", by: "Admin", tag: "Highlights" },
+  { id: "M02", name: "bcpl_opening_ceremony.jpg", type: "image", size: "2.1 MB", uploaded: "15 Jul", by: "Admin", tag: "Event" },
+  { id: "M03", name: "arjun_sharma_batting.mp4", type: "video", size: "31.7 MB", uploaded: "14 Jul", by: "Arjun Sharma", tag: "Player" },
+  { id: "M04", name: "team_baroda_bulls.jpg", type: "image", size: "1.4 MB", uploaded: "13 Jul", by: "Admin", tag: "Team" },
+  { id: "M05", name: "promo_phase2_open.mp4", type: "video", size: "18.4 MB", uploaded: "12 Jul", by: "Admin", tag: "Promo" },
+  { id: "M06", name: "ground_alembic.jpg", type: "image", size: "3.2 MB", uploaded: "10 Jul", by: "Admin", tag: "Ground" },
+  { id: "M07", name: "rahul_patel_bowling.mp4", type: "video", size: "27.5 MB", uploaded: "9 Jul", by: "Rahul Patel", tag: "Player" },
+  { id: "M08", name: "sponsor_banner_gtp.jpg", type: "image", size: "0.8 MB", uploaded: "8 Jul", by: "Admin", tag: "Sponsor" },
+  { id: "M09", name: "award_night_photos.jpg", type: "image", size: "4.1 MB", uploaded: "5 Jul", by: "Admin", tag: "Event" },
+  { id: "M10", name: "bcpl_logo_season5.png", type: "image", size: "0.3 MB", uploaded: "1 Jul", by: "Admin", tag: "Brand" },
+  { id: "M11", name: "all_teams_group.jpg", type: "image", size: "5.8 MB", uploaded: "30 Jun", by: "Admin", tag: "Team" },
+  { id: "M12", name: "promo_registration_reel.mp4", type: "video", size: "22.1 MB", uploaded: "28 Jun", by: "Admin", tag: "Promo" },
 ];
 
+const TAG_C: Record<string, string> = {
+  Highlights: "#EF4444",
+  Event: "#8B5CF6",
+  Player: "#3B82F6",
+  Team: "#F59E0B",
+  Promo: "#FF6B00",
+  Ground: "#10B981",
+  Sponsor: "#06B6D4",
+  Brand: "#EC4899",
+};
+
+const EMOJI: Record<string, string> = { video: "🎬", image: "🖼", png: "🖼" };
+
 export default function MediaView() {
-  const [items, setItems]   = useState<MediaItem[]>(MEDIA);
-  const [filter, setFilter] = useState<"all" | "image" | "video">("all");
-  const [view, setView]     = useState<"grid" | "list">("grid");
-  const fileRef             = useRef<HTMLInputElement>(null);
+  const [view, setView] = useState<"grid" | "list">("grid");
+  const [filter, setFilter] = useState("all");
+  const [search, setSearch] = useState("");
 
-  const filtered = filter === "all" ? items : items.filter(i => i.type === filter);
+  const tags = ["all", ...Array.from(new Set(MEDIA.map(m => m.tag)))];
+  const filtered = MEDIA.filter(m => {
+    const matchTag = filter === "all" || m.tag === filter;
+    const matchSearch = !search || m.name.toLowerCase().includes(search.toLowerCase());
+    return matchTag && matchSearch;
+  });
 
-  const handleFiles = (files: FileList | null) => {
-    if (!files) return;
-    const newItems: MediaItem[] = Array.from(files).map((f, idx) => ({
-      id: items.length + idx + 1,
-      name: f.name,
-      type: f.type.startsWith("video") ? "video" : "image",
-      size: f.size > 1024 * 1024 ? `${(f.size / (1024 * 1024)).toFixed(1)} MB` : `${(f.size / 1024).toFixed(0)} KB`,
-      uploaded: new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }),
-      url: URL.createObjectURL(f),
-    }));
-    setItems(prev => [...newItems, ...prev]);
-  };
+  const card: React.CSSProperties = { background: "#0D1526", border: "1px solid #1E293B", borderRadius: 16, padding: "20px 22px" };
+  const totalSize = MEDIA.reduce((acc, m) => acc + parseFloat(m.size), 0).toFixed(0);
 
   return (
-    <div>
-      {/* Toolbar */}
-      <div style={{ display: "flex", gap: 10, marginBottom: 20, flexWrap: "wrap", alignItems: "center" }}>
-        {(["all","image","video"] as const).map(f => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            style={{
-              padding: "7px 14px",
-              background: filter === f ? "#FF7A29" : "#0D1B2E",
-              color: filter === f ? "#fff" : "#7A8EA8",
-              border: `1px solid ${filter === f ? "#FF7A29" : "rgba(255,255,255,.12)"}`,
-              borderRadius: 7, cursor: "pointer", fontWeight: 700, fontSize: 12,
-              fontFamily: "'Montserrat', sans-serif", textTransform: "capitalize",
-            }}
-          >
-            {f === "all" ? "All" : f === "image" ? "🖼 Images" : "🎬 Videos"}
-          </button>
+    <div style={{ padding: 28, fontFamily: "'Inter', sans-serif" }}>
+      {/* Stats */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginBottom: 24 }}>
+        {[
+          { label: "Total Files", value: MEDIA.length, color: "#3B82F6", icon: "📁" },
+          { label: "Videos", value: MEDIA.filter(m => m.type === "video").length, color: "#EF4444", icon: "🎬" },
+          { label: "Images", value: MEDIA.filter(m => m.type === "image").length, color: "#10B981", icon: "🖼" },
+          { label: "Total Size", value: `~${totalSize} MB`, color: "#F59E0B", icon: "💾" },
+        ].map((s, i) => (
+          <div key={i} style={{ ...card, borderLeft: `3px solid ${s.color}` }}>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <div>
+                <div style={{ fontSize: 10, fontWeight: 700, color: "#475569", letterSpacing: 0.5, textTransform: "uppercase" }}>{s.label}</div>
+                <div style={{ fontSize: 24, fontWeight: 900, color: "#E2E8F0", margin: "6px 0 0" }}>{s.value}</div>
+              </div>
+              <div style={{ fontSize: 26 }}>{s.icon}</div>
+            </div>
+          </div>
         ))}
-        <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
-          {(["grid","list"] as const).map(v => (
-            <button
-              key={v}
-              onClick={() => setView(v)}
-              style={{
-                padding: "7px 12px",
-                background: view === v ? "rgba(255,122,41,.2)" : "#0D1B2E",
-                color: view === v ? "#FF7A29" : "#7A8EA8",
-                border: `1px solid ${view === v ? "#FF7A29" : "rgba(255,255,255,.12)"}`,
-                borderRadius: 7, cursor: "pointer", fontSize: 14,
-              }}
-            >
-              {v === "grid" ? "⊞" : "☰"}
-            </button>
+      </div>
+
+      {/* Toolbar */}
+      <div style={{ display: "flex", gap: 10, marginBottom: 18, alignItems: "center", flexWrap: "wrap" }}>
+        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="🔍  Search files..." style={{ width: 200, padding: "8px 12px", borderRadius: 10, border: "1px solid #1E293B", background: "#0D1526", color: "#E2E8F0", fontSize: 12, outline: "none" }} />
+        <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
+          {tags.map(t => (
+            <button key={t} onClick={() => setFilter(t)} style={{ padding: "6px 12px", borderRadius: 7, border: filter === t ? "none" : "1px solid #1E293B", background: filter === t ? (TAG_C[t] || "#FF6B00") : "transparent", color: filter === t ? "#fff" : "#475569", fontSize: 10, fontWeight: 700, cursor: "pointer" }}>{t}</button>
           ))}
-          <button
-            onClick={() => fileRef.current?.click()}
-            style={{
-              padding: "7px 16px", background: "linear-gradient(135deg,#FF7A29,#FF4500)",
-              color: "#fff", border: "none", borderRadius: 7, fontWeight: 700,
-              cursor: "pointer", fontSize: 13, fontFamily: "'Montserrat', sans-serif",
-            }}
-          >
-            ⬆ Upload
-          </button>
-          <input
-            ref={fileRef}
-            type="file"
-            multiple
-            accept="image/*,video/*"
-            style={{ display: "none" }}
-            onChange={e => handleFiles(e.target.files)}
-          />
+        </div>
+        <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
+          <button onClick={() => setView("grid")} style={{ padding: "7px 12px", borderRadius: 8, border: "1px solid #1E293B", background: view === "grid" ? "#FF6B0020" : "transparent", color: view === "grid" ? "#FF6B00" : "#475569", fontSize: 13, cursor: "pointer" }}>⊞</button>
+          <button onClick={() => setView("list")} style={{ padding: "7px 12px", borderRadius: 8, border: "1px solid #1E293B", background: view === "list" ? "#FF6B0020" : "transparent", color: view === "list" ? "#FF6B00" : "#475569", fontSize: 13, cursor: "pointer" }}>☰</button>
+          <button style={{ padding: "7px 16px", borderRadius: 8, border: "none", background: "linear-gradient(135deg, #FF6B00, #FF8C40)", color: "#fff", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>⬆ Upload</button>
         </div>
       </div>
 
-      {/* Upload drop zone */}
-      <div
-        onDragOver={e => e.preventDefault()}
-        onDrop={e => { e.preventDefault(); handleFiles(e.dataTransfer.files); }}
-        style={{
-          border: "2px dashed rgba(255,122,41,.3)", borderRadius: 12,
-          padding: "24px", textAlign: "center", marginBottom: 20,
-          color: "#7A8EA8", fontSize: 13, cursor: "pointer",
-        }}
-        onClick={() => fileRef.current?.click()}
-      >
-        📁 Drag & drop files here, or click to upload
-      </div>
-
-      {/* Grid view */}
-      {view === "grid" && (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(160px,1fr))", gap: 12 }}>
-          {filtered.map(item => (
-            <div key={item.id} style={{
-              background: "#0D1B2E", borderRadius: 10,
-              border: "1px solid rgba(255,255,255,.07)",
-              overflow: "hidden",
-            }}>
-              <div style={{
-                height: 110, background: "rgba(255,255,255,.04)",
-                display: "flex", alignItems: "center", justifyContent: "center", fontSize: 40,
-              }}>
-                {item.url
-                  ? <img src={item.url} alt={item.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                  : item.type === "video" ? "🎬" : "🖼️"
-                }
+      {view === "grid" ? (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 12 }}>
+          {filtered.map(m => (
+            <div key={m.id} style={{ ...card, padding: 0, overflow: "hidden", cursor: "pointer" }}>
+              <div style={{ height: 110, background: m.type === "video" ? "#1A0A00" : "#0A1A2E", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 40, borderBottom: "1px solid #0F172A" }}>
+                {EMOJI[m.type] || "📄"}
               </div>
               <div style={{ padding: "10px 12px" }}>
-                <div style={{ color: "#E8F0FE", fontSize: 11, fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.name}</div>
-                <div style={{ color: "#7A8EA8", fontSize: 10, marginTop: 3 }}>{item.size} · {item.uploaded}</div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: "#CBD5E1", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{m.name}</div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 6 }}>
+                  <span style={{ background: `${TAG_C[m.tag] || "#FF6B00"}20`, color: TAG_C[m.tag] || "#FF6B00", padding: "2px 6px", borderRadius: 5, fontSize: 9, fontWeight: 700 }}>{m.tag}</span>
+                  <span style={{ fontSize: 10, color: "#334155" }}>{m.size}</span>
+                </div>
               </div>
             </div>
           ))}
         </div>
-      )}
-
-      {/* List view */}
-      {view === "list" && (
-        <div style={{ background: "#0D1B2E", borderRadius: 14, border: "1px solid rgba(255,255,255,.07)", overflow: "hidden" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+      ) : (
+        <div style={card}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
             <thead>
-              <tr style={{ background: "rgba(255,255,255,.04)" }}>
-                {["File","Type","Size","Uploaded","Actions"].map(h => (
-                  <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: "#7A8EA8", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".06em", borderBottom: "1px solid rgba(255,255,255,.07)" }}>{h}</th>
+              <tr style={{ borderBottom: "1px solid #1E293B" }}>
+                {["File", "Type", "Size", "Tag", "Uploaded", "By", ""].map(h => (
+                  <th key={h} style={{ padding: "8px 12px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#475569", letterSpacing: 0.5 }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {filtered.map((item, i) => (
-                <tr key={item.id} style={{ borderBottom: i < filtered.length - 1 ? "1px solid rgba(255,255,255,.05)" : "none" }}>
-                  <td style={{ padding: "12px 16px", color: "#fff", fontWeight: 700, fontSize: 13 }}>
-                    <span style={{ marginRight: 8 }}>{item.type === "video" ? "🎬" : "🖼️"}</span>
-                    {item.name}
+              {filtered.map(m => (
+                <tr key={m.id} style={{ borderBottom: "1px solid #0F172A" }}>
+                  <td style={{ padding: "10px 12px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <span style={{ fontSize: 18 }}>{EMOJI[m.type]}</span>
+                      <span style={{ color: "#CBD5E1", fontWeight: 500 }}>{m.name}</span>
+                    </div>
                   </td>
-                  <td style={{ padding: "12px 16px" }}>
-                    <span style={{ background: item.type === "video" ? "#A855F722" : "#3B9EFF22", color: item.type === "video" ? "#A855F7" : "#3B9EFF", borderRadius: 6, padding: "3px 8px", fontSize: 11, fontWeight: 700 }}>
-                      {item.type}
-                    </span>
-                  </td>
-                  <td style={{ padding: "12px 16px", color: "#7A8EA8", fontSize: 13 }}>{item.size}</td>
-                  <td style={{ padding: "12px 16px", color: "#7A8EA8", fontSize: 12 }}>{item.uploaded}</td>
-                  <td style={{ padding: "12px 16px" }}>
+                  <td style={{ padding: "10px 12px", color: "#64748B", textTransform: "capitalize" }}>{m.type}</td>
+                  <td style={{ padding: "10px 12px", color: "#64748B" }}>{m.size}</td>
+                  <td style={{ padding: "10px 12px" }}><span style={{ background: `${TAG_C[m.tag] || "#FF6B00"}20`, color: TAG_C[m.tag] || "#FF6B00", padding: "2px 7px", borderRadius: 5, fontSize: 10, fontWeight: 700 }}>{m.tag}</span></td>
+                  <td style={{ padding: "10px 12px", color: "#475569" }}>{m.uploaded}</td>
+                  <td style={{ padding: "10px 12px", color: "#475569" }}>{m.by}</td>
+                  <td style={{ padding: "10px 12px" }}>
                     <div style={{ display: "flex", gap: 6 }}>
-                      <button style={{ padding: "5px 10px", background: "rgba(59,158,255,.12)", color: "#3B9EFF", border: "1px solid #3B9EFF", borderRadius: 6, cursor: "pointer", fontSize: 11, fontWeight: 700 }}>Copy URL</button>
-                      <button style={{ padding: "5px 10px", background: "rgba(239,68,68,.12)", color: "#EF4444", border: "1px solid #EF4444", borderRadius: 6, cursor: "pointer", fontSize: 11, fontWeight: 700 }}
-                        onClick={() => setItems(prev => prev.filter(it => it.id !== item.id))}>
-                        Delete
-                      </button>
+                      <button style={{ background: "none", border: "1px solid #1E293B", borderRadius: 6, padding: "4px 9px", color: "#64748B", fontSize: 10, cursor: "pointer" }}>⬇</button>
+                      <button style={{ background: "none", border: "1px solid #EF444430", borderRadius: 6, padding: "4px 9px", color: "#EF4444", fontSize: 10, cursor: "pointer" }}>🗑</button>
                     </div>
                   </td>
                 </tr>

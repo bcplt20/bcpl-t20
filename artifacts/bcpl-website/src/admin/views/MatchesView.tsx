@@ -1,113 +1,102 @@
 import { useState } from "react";
 
-type Tab = "Upcoming" | "Live" | "Completed";
-
 const MATCHES = [
-  { id: 1, team1: "Mumbai Mavericks",    team2: "Delhi Dynamos",       date: "25 Jul 2025", time: "7:00 PM", venue: "Wankhede Stadium, Mumbai",   status: "Upcoming", score1: "",        score2: "" },
-  { id: 2, team1: "Chennai Challengers", team2: "Bengaluru Blasters",  date: "26 Jul 2025", time: "7:00 PM", venue: "MA Chidambaram, Chennai",    status: "Upcoming", score1: "",        score2: "" },
-  { id: 3, team1: "Kolkata Knights",     team2: "Hyderabad Heroes",    date: "20 Jul 2025", time: "7:00 PM", venue: "Eden Gardens, Kolkata",      status: "Live",     score1: "124/3",   score2: "87/6" },
-  { id: 4, team1: "Pune Panthers",       team2: "Ahmedabad Avengers",  date: "18 Jul 2025", time: "7:00 PM", venue: "MCA Stadium, Pune",          status: "Completed",score1: "168/5",  score2: "154/8" },
-  { id: 5, team1: "Mumbai Mavericks",    team2: "Chennai Challengers", date: "15 Jul 2025", time: "7:00 PM", venue: "Wankhede Stadium, Mumbai",   status: "Completed",score1: "142/7",  score2: "145/4" },
+  { id: "M001", team1: "Mumbai Mavericks", team2: "Pune Panthers", venue: "Alembic Ground, Vadodara", date: "22 Jul 2025", time: "07:00 PM", status: "scheduled", result: "" },
+  { id: "M002", team1: "Delhi Dynamos", team2: "Baroda Bulls", venue: "Polo Ground, Vadodara", date: "23 Jul 2025", time: "03:00 PM", status: "scheduled", result: "" },
+  { id: "M003", team1: "Rajkot Royals", team2: "Surat Strikers", venue: "Alembic Ground, Vadodara", date: "23 Jul 2025", time: "07:00 PM", status: "scheduled", result: "" },
+  { id: "M004", team1: "Ahmedabad Aces", team2: "Gandhinagar Giants", venue: "Polo Ground, Vadodara", date: "20 Jul 2025", time: "07:00 PM", status: "live", result: "ACA 124/4 (14 ov) vs GGA" },
+  { id: "M005", team1: "Baroda Bulls", team2: "Mumbai Mavericks", venue: "Alembic Ground, Vadodara", date: "19 Jul 2025", time: "07:00 PM", status: "completed", result: "BB 156/7 beat MM 143/9 by 13 runs" },
+  { id: "M006", team1: "Pune Panthers", team2: "Delhi Dynamos", venue: "Polo Ground, Vadodara", date: "18 Jul 2025", time: "03:00 PM", status: "completed", result: "PP 178/5 beat DD 165/8 by 13 runs" },
 ];
 
-const STATUS_COLOR: Record<Tab, string> = {
-  Upcoming:  "#3B9EFF",
-  Live:      "#EF4444",
-  Completed: "#22C55E",
+const STATUS_C: Record<string, { bg: string; color: string; label: string }> = {
+  scheduled: { bg: "#3B82F620", color: "#3B82F6", label: "Scheduled" },
+  live: { bg: "#EF444420", color: "#EF4444", label: "🔴 Live" },
+  completed: { bg: "#10B98120", color: "#10B981", label: "Completed" },
 };
 
 export default function MatchesView() {
-  const [tab, setTab] = useState<Tab>("Upcoming");
+  const [tab, setTab] = useState<"all" | "scheduled" | "live" | "completed">("all");
+  const [showAdd, setShowAdd] = useState(false);
+  const [addForm, setAddForm] = useState({ team1: "", team2: "", venue: "", date: "", time: "07:00 PM" });
 
-  const filtered = MATCHES.filter(m => m.status === tab);
+  const filtered = tab === "all" ? MATCHES : MATCHES.filter(m => m.status === tab);
+  const card: React.CSSProperties = { background: "#0D1526", border: "1px solid #1E293B", borderRadius: 16, padding: "20px 22px" };
 
   return (
-    <div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-        <div style={{ display: "flex", gap: 8 }}>
-          {(["Upcoming","Live","Completed"] as Tab[]).map(t => (
-            <button
-              key={t}
-              onClick={() => setTab(t)}
-              style={{
-                padding: "8px 18px",
-                background: tab === t ? STATUS_COLOR[t] : "#0D1B2E",
-                color: tab === t ? "#fff" : "#7A8EA8",
-                border: `1px solid ${tab === t ? STATUS_COLOR[t] : "rgba(255,255,255,.12)"}`,
-                borderRadius: 8, cursor: "pointer", fontWeight: 700, fontSize: 13,
-                fontFamily: "'Montserrat', sans-serif",
-              }}
-            >
-              {t === "Live" ? "🔴 Live" : t}
-            </button>
-          ))}
-        </div>
-        <button style={{
-          padding: "10px 20px", background: "linear-gradient(135deg,#FF7A29,#FF4500)",
-          color: "#fff", border: "none", borderRadius: 8, fontWeight: 700,
-          cursor: "pointer", fontSize: 13, fontFamily: "'Montserrat', sans-serif",
-        }}>
-          + Schedule Match
-        </button>
+    <div style={{ padding: 28, fontFamily: "'Inter', sans-serif" }}>
+      {/* Stats */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginBottom: 24 }}>
+        {[
+          { label: "Total Matches", value: "64", color: "#3B82F6", icon: "🏏" },
+          { label: "Completed", value: "18", color: "#10B981", icon: "✅" },
+          { label: "Upcoming", value: "45", color: "#F59E0B", icon: "📅" },
+          { label: "Live Now", value: "1", color: "#EF4444", icon: "🔴" },
+        ].map((s, i) => (
+          <div key={i} style={{ ...card, borderLeft: `3px solid ${s.color}` }}>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <div>
+                <div style={{ fontSize: 10, fontWeight: 700, color: "#475569", letterSpacing: 0.5, textTransform: "uppercase" }}>{s.label}</div>
+                <div style={{ fontSize: 26, fontWeight: 900, color: "#E2E8F0", margin: "6px 0 0" }}>{s.value}</div>
+              </div>
+              <div style={{ fontSize: 26 }}>{s.icon}</div>
+            </div>
+          </div>
+        ))}
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        {filtered.length === 0 && (
-          <div style={{ textAlign: "center", color: "#7A8EA8", padding: "60px 0", fontSize: 15 }}>
-            No {tab.toLowerCase()} matches
+      {/* Toolbar */}
+      <div style={{ display: "flex", gap: 8, marginBottom: 18, alignItems: "center" }}>
+        {(["all", "live", "scheduled", "completed"] as const).map(t => (
+          <button key={t} onClick={() => setTab(t)} style={{ padding: "8px 18px", borderRadius: 10, border: tab === t ? "none" : "1px solid #1E293B", background: tab === t ? "#FF6B00" : "transparent", color: tab === t ? "#fff" : "#475569", fontSize: 12, fontWeight: 700, cursor: "pointer", textTransform: "capitalize" }}>{t}</button>
+        ))}
+        <button onClick={() => setShowAdd(s => !s)} style={{ marginLeft: "auto", padding: "8px 20px", borderRadius: 10, border: "none", background: "linear-gradient(135deg, #FF6B00, #FF8C40)", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>+ Add Match</button>
+      </div>
+
+      {/* Add Match Form */}
+      {showAdd && (
+        <div style={{ ...card, marginBottom: 16, borderColor: "#FF6B0030" }}>
+          <div style={{ fontSize: 13, fontWeight: 800, color: "#FF6B00", marginBottom: 16 }}>Add New Match</div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr", gap: 12 }}>
+            {[
+              { key: "team1", label: "TEAM 1", placeholder: "e.g. Mumbai Mavericks" },
+              { key: "team2", label: "TEAM 2", placeholder: "e.g. Pune Panthers" },
+              { key: "venue", label: "VENUE", placeholder: "e.g. Alembic Ground" },
+              { key: "date", label: "DATE", placeholder: "e.g. 25 Jul 2025" },
+              { key: "time", label: "TIME", placeholder: "07:00 PM" },
+            ].map(f => (
+              <div key={f.key}>
+                <label style={{ fontSize: 10, fontWeight: 700, color: "#475569", letterSpacing: 0.5 }}>{f.label}</label>
+                <input value={(addForm as any)[f.key]} onChange={e => setAddForm(fm => ({ ...fm, [f.key]: e.target.value }))} placeholder={f.placeholder} style={{ width: "100%", marginTop: 5, padding: "9px 10px", borderRadius: 8, border: "1px solid #1E293B", background: "#080E1C", color: "#E2E8F0", fontSize: 12, outline: "none", boxSizing: "border-box" }} />
+              </div>
+            ))}
           </div>
-        )}
+          <div style={{ display: "flex", gap: 10, marginTop: 14 }}>
+            <button style={{ padding: "9px 22px", borderRadius: 8, border: "none", background: "linear-gradient(135deg, #FF6B00, #FF8C40)", color: "#fff", fontWeight: 700, fontSize: 13, cursor: "pointer" }}>Save Match</button>
+            <button onClick={() => setShowAdd(false)} style={{ padding: "9px 22px", borderRadius: 8, border: "1px solid #1E293B", background: "transparent", color: "#64748B", fontSize: 13, cursor: "pointer" }}>Cancel</button>
+          </div>
+        </div>
+      )}
+
+      {/* Matches */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         {filtered.map(m => (
-          <div key={m.id} style={{
-            background: "#0D1B2E", borderRadius: 14,
-            border: "1px solid rgba(255,255,255,.07)",
-            padding: "20px 24px",
-          }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
-              {/* Status badge */}
-              <span style={{
-                background: `${STATUS_COLOR[m.status as Tab]}22`,
-                color: STATUS_COLOR[m.status as Tab],
-                borderRadius: 6, padding: "3px 10px",
-                fontSize: 11, fontWeight: 700, flexShrink: 0,
-              }}>
-                {m.status === "Live" ? "🔴 LIVE" : m.status.toUpperCase()}
-              </span>
-
-              {/* Teams */}
-              <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 16 }}>
-                <div style={{ textAlign: "right", flex: 1 }}>
-                  <div style={{ color: "#fff", fontWeight: 900, fontSize: 15 }}>{m.team1}</div>
-                  {m.score1 && <div style={{ color: "#FF7A29", fontWeight: 700, fontSize: 20 }}>{m.score1}</div>}
+          <div key={m.id} style={{ ...card, borderLeft: `3px solid ${STATUS_C[m.status].color}` }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+              <div style={{ fontSize: 10, fontFamily: "monospace", color: "#334155", background: "#0F172A", padding: "4px 8px", borderRadius: 6 }}>{m.id}</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <span style={{ fontSize: 14, fontWeight: 800, color: "#E2E8F0" }}>{m.team1}</span>
+                  <span style={{ fontSize: 11, fontWeight: 900, color: "#FF6B00", background: "#FF6B0015", padding: "3px 10px", borderRadius: 8 }}>VS</span>
+                  <span style={{ fontSize: 14, fontWeight: 800, color: "#E2E8F0" }}>{m.team2}</span>
                 </div>
-                <div style={{ color: "#7A8EA8", fontWeight: 900, fontSize: 13 }}>VS</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ color: "#fff", fontWeight: 900, fontSize: 15 }}>{m.team2}</div>
-                  {m.score2 && <div style={{ color: "#3B9EFF", fontWeight: 700, fontSize: 20 }}>{m.score2}</div>}
-                </div>
+                <div style={{ fontSize: 11, color: "#475569", marginTop: 4 }}>📍 {m.venue} &nbsp;·&nbsp; 📅 {m.date} &nbsp;·&nbsp; ⏰ {m.time}</div>
+                {m.result && <div style={{ marginTop: 5, fontSize: 12, color: "#10B981", fontWeight: 600 }}>🏆 {m.result}</div>}
               </div>
-
-              {/* Meta */}
-              <div style={{ flexShrink: 0, textAlign: "right" }}>
-                <div style={{ color: "#fff", fontSize: 13, fontWeight: 700 }}>{m.date}</div>
-                <div style={{ color: "#7A8EA8", fontSize: 12 }}>{m.time}</div>
-                <div style={{ color: "#7A8EA8", fontSize: 11, marginTop: 2 }}>📍 {m.venue}</div>
-              </div>
-
-              {/* Actions */}
-              <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
-                {m.status === "Live" && (
-                  <button style={{
-                    padding: "7px 14px", background: "#EF444422",
-                    color: "#EF4444", border: "1px solid #EF4444",
-                    borderRadius: 7, cursor: "pointer", fontSize: 12, fontWeight: 700,
-                  }}>Score</button>
-                )}
-                <button style={{
-                  padding: "7px 14px", background: "rgba(255,255,255,.06)",
-                  color: "#7A8EA8", border: "1px solid rgba(255,255,255,.12)",
-                  borderRadius: 7, cursor: "pointer", fontSize: 12, fontWeight: 700,
-                }}>Edit</button>
+              <span style={{ background: STATUS_C[m.status].bg, color: STATUS_C[m.status].color, padding: "4px 12px", borderRadius: 8, fontSize: 11, fontWeight: 800 }}>{STATUS_C[m.status].label}</span>
+              <div style={{ display: "flex", gap: 6 }}>
+                <button style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #1E293B", background: "transparent", color: "#64748B", fontSize: 11, fontWeight: 600, cursor: "pointer" }}>Edit</button>
+                {m.status === "live" && <button style={{ padding: "6px 14px", borderRadius: 8, border: "none", background: "#EF444420", color: "#EF4444", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>Score</button>}
               </div>
             </div>
           </div>

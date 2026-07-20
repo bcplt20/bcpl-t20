@@ -1,166 +1,133 @@
-import { useEffect, useState } from "react";
-
-const API = import.meta.env.BASE_URL.replace(/\/$/, "") + "/api";
-
-interface Stats {
-  totalUsers: number;
-  phase1Paid: number;
-  phase2Paid: number;
-  videoSubmitted: number;
-  totalRevenue: number;
-  kycApproved: number;
-}
-
-function StatCard({ label, value, sub, color }: { label: string; value: string | number; sub?: string; color: string }) {
-  return (
-    <div style={{
-      background: "#0D1B2E", borderRadius: 14,
-      border: `1px solid ${color}33`,
-      padding: "24px 20px",
-      borderTop: `3px solid ${color}`,
-    }}>
-      <div style={{ color: "#7A8EA8", fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".06em" }}>{label}</div>
-      <div style={{ color: "#fff", fontWeight: 900, fontSize: 32, marginTop: 8 }}>{value}</div>
-      {sub && <div style={{ color: "#7A8EA8", fontSize: 12, marginTop: 4 }}>{sub}</div>}
-    </div>
-  );
-}
-
-const RECENT = [
-  { name: "Rahul Sharma", city: "Mumbai", time: "2 min ago", status: "Phase 1 Paid" },
-  { name: "Priya Patel",  city: "Ahmedabad", time: "8 min ago", status: "Video Uploaded" },
-  { name: "Amit Singh",   city: "Delhi", time: "15 min ago", status: "Phase 2 Paid" },
-  { name: "Sneha Reddy",  city: "Hyderabad", time: "22 min ago", status: "KYC Approved" },
-  { name: "Karan Mehta",  city: "Pune", time: "31 min ago", status: "Phase 1 Paid" },
-];
-
-const STATUS_COLOR: Record<string, string> = {
-  "Phase 1 Paid":    "#3B9EFF",
-  "Video Uploaded":  "#A855F7",
-  "Phase 2 Paid":    "#FF7A29",
-  "KYC Approved":    "#22C55E",
-};
-
 export default function DashboardView() {
-  const [stats, setStats] = useState<Stats | null>(null);
+  const stats = [
+    { label: "Total Registrations", value: "1,284", change: "+124 today", up: true, icon: "👥", color: "#3B82F6" },
+    { label: "Revenue Collected", value: "₹38.4L", change: "+₹2.1L today", up: true, icon: "💰", color: "#10B981" },
+    { label: "KYC Verified", value: "847", change: "66% complete", up: true, icon: "🪪", color: "#8B5CF6" },
+    { label: "Teams Formed", value: "12 / 16", change: "4 slots left", up: false, icon: "👕", color: "#F59E0B" },
+    { label: "Live Users", value: "247", change: "right now", up: true, icon: "🟢", color: "#10B981" },
+    { label: "Pending Payments", value: "63", change: "₹9.4L due", up: false, icon: "⏳", color: "#EF4444" },
+  ];
 
-  useEffect(() => {
-    // Try live API; fall back to mock
-    fetch(`${API}/user/admin-stats`)
-      .then(r => r.ok ? r.json() : null)
-      .then(d => d && setStats(d))
-      .catch(() => {});
+  const funnel = [
+    { label: "Visited", value: 8420, pct: 100, color: "#3B82F6" },
+    { label: "Registered", value: 1284, pct: 15.2, color: "#8B5CF6" },
+    { label: "Phase 1 Paid", value: 1101, pct: 85.7, color: "#F59E0B" },
+    { label: "Video Submitted", value: 934, pct: 84.8, color: "#10B981" },
+    { label: "KYC Done", value: 847, pct: 90.6, color: "#06B6D4" },
+    { label: "Phase 2 Paid", value: 612, pct: 72.3, color: "#FF6B00" },
+  ];
 
-    // Mock after small delay if API not ready
-    const t = setTimeout(() => {
-      setStats(s => s ?? {
-        totalUsers: 1842,
-        phase1Paid: 1245,
-        phase2Paid: 387,
-        videoSubmitted: 903,
-        totalRevenue: 24675000,
-        kycApproved: 241,
-      });
-    }, 800);
-    return () => clearTimeout(t);
-  }, []);
+  const recent = [
+    { name: "Arjun Sharma", action: "Phase 2 Payment ₹5,999", time: "12s ago", status: "success", avatar: "AS" },
+    { name: "Rahul Patel", action: "KYC Verified", time: "1m ago", status: "success", avatar: "RP" },
+    { name: "Vikas Singh", action: "Video Uploaded — Batsman", time: "3m ago", status: "info", avatar: "VS" },
+    { name: "Priya Nair", action: "Phase 1 Payment ₹499", time: "7m ago", status: "success", avatar: "PN" },
+    { name: "Mohit Yadav", action: "KYC Rejected — Doc unclear", time: "12m ago", status: "error", avatar: "MY" },
+    { name: "Suresh Kumar", action: "Registered (Phase 1)", time: "18m ago", status: "info", avatar: "SK" },
+    { name: "Deepak Verma", action: "Phase 2 Payment Failed", time: "25m ago", status: "error", avatar: "DV" },
+  ];
 
-  const fmt = (n: number) =>
-    n >= 1_00_00_000 ? `₹${(n / 1_00_00_000).toFixed(2)}Cr`
-    : n >= 1_00_000  ? `₹${(n / 1_00_000).toFixed(1)}L`
-    : `₹${n.toLocaleString("en-IN")}`;
+  const topStates = [
+    { state: "Maharashtra", count: 312, pct: 24 },
+    { state: "Delhi", count: 198, pct: 15 },
+    { state: "Karnataka", count: 167, pct: 13 },
+    { state: "Gujarat", count: 143, pct: 11 },
+    { state: "Tamil Nadu", count: 128, pct: 10 },
+    { state: "Others", count: 336, pct: 27 },
+  ];
+
+  const s = {
+    page: { padding: 28, fontFamily: "'Inter', sans-serif" } as React.CSSProperties,
+    grid: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, marginBottom: 24 } as React.CSSProperties,
+    card: { background: "#0D1526", border: "1px solid #1E293B", borderRadius: 16, padding: "20px 22px" } as React.CSSProperties,
+    label: { fontSize: 11, fontWeight: 700, color: "#475569", letterSpacing: 0.5, textTransform: "uppercase" as const },
+    value: { fontSize: 28, fontWeight: 900, color: "#E2E8F0", margin: "6px 0 4px" },
+    change: { fontSize: 12, color: "#64748B" },
+    sectionTitle: { fontSize: 13, fontWeight: 800, color: "#94A3B8", letterSpacing: 0.5, marginBottom: 14, textTransform: "uppercase" as const },
+    row2: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 24 } as React.CSSProperties,
+    row3: { display: "grid", gridTemplateColumns: "2fr 1fr", gap: 16 } as React.CSSProperties,
+  };
 
   return (
-    <div>
-      {/* Stats grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(200px,1fr))", gap: 16, marginBottom: 32 }}>
-        <StatCard label="Total Registrations" value={stats ? stats.totalUsers.toLocaleString() : "…"} color="#3B9EFF" />
-        <StatCard label="Phase 1 Paid"   value={stats ? stats.phase1Paid.toLocaleString() : "…"} color="#FF7A29" sub="₹499 each" />
-        <StatCard label="Phase 2 Paid"   value={stats ? stats.phase2Paid.toLocaleString() : "…"} color="#A855F7" sub="₹1,999 each" />
-        <StatCard label="Videos Submitted" value={stats ? stats.videoSubmitted.toLocaleString() : "…"} color="#22C55E" />
-        <StatCard label="KYC Approved"   value={stats ? stats.kycApproved.toLocaleString() : "…"} color="#F59E0B" />
-        <StatCard label="Total Revenue"  value={stats ? fmt(stats.totalRevenue) : "…"} color="#EF4444" sub="Phase 1 + Phase 2" />
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-        {/* Revenue breakdown */}
-        <div style={{ background: "#0D1B2E", borderRadius: 14, border: "1px solid rgba(255,255,255,.07)", padding: 24 }}>
-          <div style={{ fontWeight: 900, color: "#fff", marginBottom: 20 }}>Revenue Breakdown</div>
-          {[
-            { label: "Phase 1 Registration", amount: stats ? stats.phase1Paid * 499 : 0, color: "#FF7A29" },
-            { label: "Phase 2 Registration", amount: stats ? stats.phase2Paid * 1999 : 0, color: "#A855F7" },
-          ].map(row => (
-            <div key={row.label} style={{ marginBottom: 16 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                <span style={{ color: "#7A8EA8", fontSize: 13 }}>{row.label}</span>
-                <span style={{ color: "#fff", fontWeight: 700, fontSize: 13 }}>{fmt(row.amount)}</span>
-              </div>
-              <div style={{ background: "rgba(255,255,255,.06)", borderRadius: 4, height: 6 }}>
-                <div style={{
-                  background: row.color, borderRadius: 4, height: 6,
-                  width: `${Math.min(100, (row.amount / (stats ? stats.totalRevenue || 1 : 1)) * 100)}%`,
-                }} />
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Recent activity */}
-        <div style={{ background: "#0D1B2E", borderRadius: 14, border: "1px solid rgba(255,255,255,.07)", padding: 24 }}>
-          <div style={{ fontWeight: 900, color: "#fff", marginBottom: 20 }}>Recent Activity</div>
-          {RECENT.map((r, i) => (
-            <div key={i} style={{
-              display: "flex", alignItems: "center", gap: 12,
-              padding: "10px 0",
-              borderBottom: i < RECENT.length - 1 ? "1px solid rgba(255,255,255,.05)" : "none",
-            }}>
-              <div style={{
-                width: 36, height: 36, borderRadius: "50%",
-                background: "rgba(255,122,41,.2)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: 14, flexShrink: 0,
-              }}>
-                {r.name[0]}
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ color: "#fff", fontWeight: 700, fontSize: 13, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                  {r.name}
+    <div style={s.page}>
+      {/* Stats Grid */}
+      <div style={s.grid}>
+        {stats.map((stat, i) => (
+          <div key={i} style={{ ...s.card, borderLeft: `3px solid ${stat.color}` }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+              <div>
+                <div style={s.label}>{stat.label}</div>
+                <div style={s.value}>{stat.value}</div>
+                <div style={{ ...s.change, color: stat.up ? "#10B981" : "#EF4444" }}>
+                  {stat.up ? "↑" : "↓"} {stat.change}
                 </div>
-                <div style={{ color: "#7A8EA8", fontSize: 11 }}>{r.city} · {r.time}</div>
               </div>
-              <div style={{
-                background: `${STATUS_COLOR[r.status] ?? "#7A8EA8"}22`,
-                color: STATUS_COLOR[r.status] ?? "#7A8EA8",
-                borderRadius: 6, padding: "3px 8px",
-                fontSize: 11, fontWeight: 700, whiteSpace: "nowrap",
-              }}>
-                {r.status}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Funnel */}
-      <div style={{ background: "#0D1B2E", borderRadius: 14, border: "1px solid rgba(255,255,255,.07)", padding: 24, marginTop: 20 }}>
-        <div style={{ fontWeight: 900, color: "#fff", marginBottom: 20 }}>Registration Funnel</div>
-        {[
-          { label: "Visited Registration", pct: 100, color: "#3B9EFF", count: stats ? Math.round(stats.totalUsers * 2.1) : 0 },
-          { label: "Completed Phase 1",    pct: 68,  color: "#FF7A29", count: stats?.phase1Paid ?? 0 },
-          { label: "Uploaded Video",       pct: 49,  color: "#A855F7", count: stats?.videoSubmitted ?? 0 },
-          { label: "Completed Phase 2",    pct: 21,  color: "#22C55E", count: stats?.phase2Paid ?? 0 },
-          { label: "KYC Approved",         pct: 13,  color: "#F59E0B", count: stats?.kycApproved ?? 0 },
-        ].map(row => (
-          <div key={row.label} style={{ marginBottom: 14 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-              <span style={{ color: "#E8F0FE", fontSize: 13 }}>{row.label}</span>
-              <span style={{ color: "#7A8EA8", fontSize: 12 }}>{row.count.toLocaleString()} ({row.pct}%)</span>
-            </div>
-            <div style={{ background: "rgba(255,255,255,.06)", borderRadius: 4, height: 8 }}>
-              <div style={{ background: row.color, borderRadius: 4, height: 8, width: `${row.pct}%`, transition: "width .5s" }} />
+              <div style={{ fontSize: 28, opacity: 0.8 }}>{stat.icon}</div>
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Funnel + Recent Activity */}
+      <div style={s.row3}>
+        {/* Registration Funnel */}
+        <div style={s.card}>
+          <div style={s.sectionTitle}>Registration Funnel</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {funnel.map((f, i) => (
+              <div key={i}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                  <span style={{ fontSize: 12, color: "#94A3B8" }}>{f.label}</span>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: "#E2E8F0" }}>{f.value.toLocaleString()} <span style={{ color: "#475569", fontWeight: 400 }}>({f.pct}%)</span></span>
+                </div>
+                <div style={{ height: 6, background: "#1E293B", borderRadius: 4, overflow: "hidden" }}>
+                  <div style={{ width: `${f.pct}%`, height: "100%", background: f.color, borderRadius: 4, transition: "width 0.5s" }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Top States */}
+        <div style={s.card}>
+          <div style={s.sectionTitle}>Top States</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {topStates.map((st, i) => (
+              <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#FF6B00", opacity: 1 - i * 0.13 }} />
+                  <span style={{ fontSize: 12, color: "#94A3B8" }}>{st.state}</span>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "#E2E8F0" }}>{st.count}</div>
+                  <div style={{ fontSize: 10, color: "#475569" }}>{st.pct}%</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Recent Activity */}
+      <div style={{ ...s.card, marginTop: 16 }}>
+        <div style={s.sectionTitle}>Live Activity Feed</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          {recent.map((r, i) => (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: 14, padding: "10px 0", borderBottom: i < recent.length - 1 ? "1px solid #0F172A" : "none" }}>
+              <div style={{ width: 34, height: 34, borderRadius: 10, background: "#1E293B", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 800, color: "#94A3B8", flexShrink: 0 }}>{r.avatar}</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 13, fontWeight: 600, color: "#CBD5E1" }}>{r.name}</div>
+                <div style={{ fontSize: 11, color: "#475569" }}>{r.action}</div>
+              </div>
+              <div style={{ textAlign: "right" }}>
+                <div style={{ fontSize: 10, color: "#334155" }}>{r.time}</div>
+                <div style={{ marginTop: 3, display: "inline-block", fontSize: 9, fontWeight: 700, padding: "2px 7px", borderRadius: 6, background: r.status === "success" ? "#10B98120" : r.status === "error" ? "#EF444420" : "#3B82F620", color: r.status === "success" ? "#10B981" : r.status === "error" ? "#EF4444" : "#3B82F6" }}>
+                  {r.status === "success" ? "✓ Success" : r.status === "error" ? "✗ Failed" : "ℹ Info"}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

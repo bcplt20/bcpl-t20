@@ -1,124 +1,104 @@
 import { useState } from "react";
 
 const TEAMS = [
-  { id: 1, name: "Mumbai Mavericks",     city: "Mumbai",    captain: "Rohit K.", players: 15, maxPlayers: 20, color: "#3B9EFF", status: "Active" },
-  { id: 2, name: "Delhi Dynamos",        city: "Delhi",     captain: "Vikas S.", players: 12, maxPlayers: 20, color: "#FF7A29", status: "Active" },
-  { id: 3, name: "Chennai Challengers",  city: "Chennai",   captain: "Arjun R.", players: 18, maxPlayers: 20, color: "#22C55E", status: "Active" },
-  { id: 4, name: "Bengaluru Blasters",   city: "Bengaluru", captain: "Kiran M.", players: 11, maxPlayers: 20, color: "#A855F7", status: "Active" },
-  { id: 5, name: "Kolkata Knights",      city: "Kolkata",   captain: "Saurav D.",players: 9,  maxPlayers: 20, color: "#F59E0B", status: "Active" },
-  { id: 6, name: "Hyderabad Heroes",     city: "Hyderabad", captain: "Raj P.",   players: 14, maxPlayers: 20, color: "#EF4444", status: "Active" },
-  { id: 7, name: "Pune Panthers",        city: "Pune",      captain: "Nikhil T.",players: 7,  maxPlayers: 20, color: "#06B6D4", status: "Active" },
-  { id: 8, name: "Ahmedabad Avengers",   city: "Ahmedabad", captain: "Hardik P.",players: 13, maxPlayers: 20, color: "#10B981", status: "Active" },
+  { id: "T01", name: "Baroda Bulls", city: "Vadodara", captain: "Arjun Sharma", coach: "Rajiv Mehta", players: 15, color: "#EF4444", logo: "🐂", wins: 4, loss: 1, nrr: "+1.24" },
+  { id: "T02", name: "Mumbai Mavericks", city: "Mumbai", captain: "Virat Singh", coach: "Sunil Joshi", players: 14, color: "#3B82F6", logo: "🌊", wins: 3, loss: 2, nrr: "+0.87" },
+  { id: "T03", name: "Pune Panthers", city: "Pune", captain: "Rahul Patel", coach: "Anil Sharma", players: 15, color: "#F59E0B", logo: "🐆", wins: 3, loss: 2, nrr: "+0.45" },
+  { id: "T04", name: "Delhi Dynamos", city: "Delhi", captain: "Kapil Dev Jr.", coach: "Ravi Kumar", players: 15, color: "#8B5CF6", logo: "⚡", wins: 3, loss: 2, nrr: "+0.12" },
+  { id: "T05", name: "Ahmedabad Aces", city: "Ahmedabad", captain: "Yusuf Khan", coach: "Dilip Shah", players: 14, color: "#10B981", logo: "🃏", wins: 2, loss: 3, nrr: "-0.18" },
+  { id: "T06", name: "Surat Strikers", city: "Surat", captain: "Pradeep Rao", coach: "Nitin Patel", players: 13, color: "#FF6B00", logo: "🎯", wins: 2, loss: 3, nrr: "-0.42" },
+  { id: "T07", name: "Rajkot Royals", city: "Rajkot", captain: "Sandeep More", coach: "Vijay Singh", players: 14, color: "#06B6D4", logo: "👑", wins: 1, loss: 4, nrr: "-0.96" },
+  { id: "T08", name: "Gandhinagar Giants", city: "Gandhinagar", captain: "Manoj Tiwari", coach: "Prakash Jha", players: 12, color: "#EC4899", logo: "🏔", wins: 1, loss: 4, nrr: "-1.12" },
 ];
 
 export default function TeamsView() {
-  const [selected, setSelected] = useState<typeof TEAMS[0] | null>(null);
+  const [selected, setSelected] = useState<string | null>(null);
+  const selTeam = TEAMS.find(t => t.id === selected);
+  const card: React.CSSProperties = { background: "#0D1526", border: "1px solid #1E293B", borderRadius: 16, padding: "20px 22px" };
 
   return (
-    <div>
-      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 20 }}>
-        <button style={{
-          padding: "10px 20px", background: "linear-gradient(135deg,#FF7A29,#FF4500)",
-          color: "#fff", border: "none", borderRadius: 8, fontWeight: 700,
-          cursor: "pointer", fontSize: 13, fontFamily: "'Montserrat', sans-serif",
-        }}>
-          + Add Team
-        </button>
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(280px,1fr))", gap: 16 }}>
-        {TEAMS.map(team => (
-          <div
-            key={team.id}
-            onClick={() => setSelected(team)}
-            style={{
-              background: "#0D1B2E", borderRadius: 14,
-              border: `1px solid ${team.color}44`,
-              borderTop: `4px solid ${team.color}`,
-              padding: 20, cursor: "pointer",
-              transition: "transform .15s, box-shadow .15s",
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.transform = "translateY(-2px)";
-              e.currentTarget.style.boxShadow = `0 8px 32px ${team.color}22`;
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "none";
-            }}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+    <div style={{ padding: 28, fontFamily: "'Inter', sans-serif" }}>
+      {/* Stats */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginBottom: 24 }}>
+        {[
+          { label: "Total Teams", value: "8 / 16", color: "#3B82F6", icon: "👕" },
+          { label: "Total Players", value: "112", color: "#10B981", icon: "👥" },
+          { label: "Slots Remaining", value: "8 teams", color: "#F59E0B", icon: "🔓" },
+          { label: "Auction Done", value: "8 teams", color: "#8B5CF6", icon: "🔨" },
+        ].map((s, i) => (
+          <div key={i} style={{ ...card, borderLeft: `3px solid ${s.color}` }}>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
               <div>
-                <div style={{ fontWeight: 900, color: "#fff", fontSize: 15 }}>{team.name}</div>
-                <div style={{ color: "#7A8EA8", fontSize: 12, marginTop: 2 }}>📍 {team.city}</div>
+                <div style={{ fontSize: 10, fontWeight: 700, color: "#475569", letterSpacing: 0.5, textTransform: "uppercase" }}>{s.label}</div>
+                <div style={{ fontSize: 24, fontWeight: 900, color: "#E2E8F0", margin: "6px 0 0" }}>{s.value}</div>
               </div>
-              <span style={{
-                background: `${team.color}22`, color: team.color,
-                borderRadius: 6, padding: "3px 8px", fontSize: 11, fontWeight: 700,
-              }}>
-                {team.status}
-              </span>
-            </div>
-            <div style={{ marginTop: 16 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                <span style={{ color: "#7A8EA8", fontSize: 12 }}>Players</span>
-                <span style={{ color: "#fff", fontWeight: 700, fontSize: 12 }}>{team.players}/{team.maxPlayers}</span>
-              </div>
-              <div style={{ background: "rgba(255,255,255,.06)", borderRadius: 4, height: 6 }}>
-                <div style={{
-                  background: team.color, borderRadius: 4, height: 6,
-                  width: `${(team.players / team.maxPlayers) * 100}%`,
-                }} />
-              </div>
-            </div>
-            <div style={{ marginTop: 12, color: "#7A8EA8", fontSize: 12 }}>
-              Captain: <span style={{ color: "#E8F0FE", fontWeight: 700 }}>{team.captain}</span>
+              <div style={{ fontSize: 26 }}>{s.icon}</div>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Modal */}
-      {selected && (
-        <div
-          style={{
-            position: "fixed", inset: 0, background: "rgba(0,0,0,.7)",
-            display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999,
-          }}
-          onClick={() => setSelected(null)}
-        >
-          <div
-            style={{
-              background: "#0D1B2E", borderRadius: 16, padding: 32, width: 400,
-              border: `2px solid ${selected.color}44`,
-            }}
-            onClick={e => e.stopPropagation()}
-          >
-            <div style={{ fontWeight: 900, color: "#fff", fontSize: 20, marginBottom: 20 }}>
-              {selected.name}
+      <div style={{ display: "grid", gridTemplateColumns: selected ? "1fr 340px" : "1fr", gap: 16 }}>
+        {/* Team Grid */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 14 }}>
+          {TEAMS.map(team => (
+            <div key={team.id} onClick={() => setSelected(selected === team.id ? null : team.id)} style={{ ...card, cursor: "pointer", borderColor: selected === team.id ? team.color : "#1E293B", borderLeft: `3px solid ${team.color}`, transition: "border-color 0.15s" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
+                <div style={{ width: 44, height: 44, borderRadius: 12, background: `${team.color}20`, border: `2px solid ${team.color}40`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>{team.logo}</div>
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 800, color: "#E2E8F0" }}>{team.name}</div>
+                  <div style={{ fontSize: 11, color: "#475569" }}>{team.city}</div>
+                </div>
+                <div style={{ marginLeft: "auto", fontSize: 10, fontFamily: "monospace", color: "#334155" }}>{team.id}</div>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 12 }}>
+                {[
+                  { label: "Wins", value: team.wins, color: "#10B981" },
+                  { label: "Loss", value: team.loss, color: "#EF4444" },
+                  { label: "NRR", value: team.nrr, color: Number(team.nrr) >= 0 ? "#10B981" : "#EF4444" },
+                ].map((s, i) => (
+                  <div key={i} style={{ background: "#080E1C", borderRadius: 8, padding: "8px", textAlign: "center" }}>
+                    <div style={{ fontSize: 14, fontWeight: 900, color: s.color }}>{s.value}</div>
+                    <div style={{ fontSize: 9, color: "#475569", marginTop: 2 }}>{s.label}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ fontSize: 11, color: "#64748B" }}>👤 {team.captain} &nbsp;·&nbsp; 👥 {team.players} players</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Team Detail */}
+        {selTeam && (
+          <div style={{ ...card, height: "fit-content", borderColor: selTeam.color }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
+              <div style={{ fontSize: 13, fontWeight: 800, color: "#E2E8F0" }}>Team Details</div>
+              <button onClick={() => setSelected(null)} style={{ background: "none", border: "none", color: "#475569", cursor: "pointer", fontSize: 18 }}>×</button>
+            </div>
+            <div style={{ textAlign: "center", marginBottom: 18 }}>
+              <div style={{ width: 60, height: 60, borderRadius: 16, background: `${selTeam.color}20`, border: `2px solid ${selTeam.color}60`, display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 28 }}>{selTeam.logo}</div>
+              <div style={{ marginTop: 10, fontSize: 16, fontWeight: 900, color: "#E2E8F0" }}>{selTeam.name}</div>
+              <div style={{ fontSize: 12, color: "#475569" }}>{selTeam.city}</div>
             </div>
             {[
-              ["City", selected.city],
-              ["Captain", selected.captain],
-              ["Players", `${selected.players} / ${selected.maxPlayers}`],
-              ["Status", selected.status],
+              ["Captain", selTeam.captain],
+              ["Coach", selTeam.coach],
+              ["Players", `${selTeam.players} registered`],
+              ["Wins / Loss", `${selTeam.wins} / ${selTeam.loss}`],
+              ["NRR", selTeam.nrr],
             ].map(([k, v]) => (
-              <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "10px 0", borderBottom: "1px solid rgba(255,255,255,.06)" }}>
-                <span style={{ color: "#7A8EA8" }}>{k}</span>
-                <span style={{ color: "#fff", fontWeight: 700 }}>{v}</span>
+              <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "9px 0", borderBottom: "1px solid #0F172A", fontSize: 12 }}>
+                <span style={{ color: "#475569" }}>{k}</span>
+                <span style={{ color: "#CBD5E1", fontWeight: 600 }}>{v}</span>
               </div>
             ))}
-            <div style={{ display: "flex", gap: 10, marginTop: 20 }}>
-              <button style={{ flex: 1, padding: 10, background: "rgba(255,122,41,.15)", color: "#FF7A29", border: "1px solid #FF7A29", borderRadius: 8, cursor: "pointer", fontWeight: 700 }}>
-                Edit
-              </button>
-              <button onClick={() => setSelected(null)} style={{ flex: 1, padding: 10, background: "rgba(255,255,255,.06)", color: "#7A8EA8", border: "1px solid rgba(255,255,255,.12)", borderRadius: 8, cursor: "pointer", fontWeight: 700 }}>
-                Close
-              </button>
+            <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
+              <button style={{ flex: 1, padding: "9px", borderRadius: 8, border: "none", background: "#3B82F620", color: "#3B82F6", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>View Roster</button>
+              <button style={{ flex: 1, padding: "9px", borderRadius: 8, border: "1px solid #1E293B", background: "transparent", color: "#94A3B8", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Edit Team</button>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

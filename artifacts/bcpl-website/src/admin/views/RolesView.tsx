@@ -1,181 +1,154 @@
 import { useState } from "react";
 
-const ROLES = [
-  {
-    id: 1, name: "Super Admin", color: "#FF7A29",
-    permissions: ["dashboard","users","finance","teams","matches","selection","live-scoring","marketing","seo","sponsors","banners","cms","roles","media"],
-  },
-  {
-    id: 2, name: "Scorer", color: "#3B9EFF",
-    permissions: ["dashboard","matches","live-scoring"],
-  },
-  {
-    id: 3, name: "Content Manager", color: "#A855F7",
-    permissions: ["dashboard","cms","banners","seo","media","marketing"],
-  },
-  {
-    id: 4, name: "Finance Manager", color: "#22C55E",
-    permissions: ["dashboard","finance","users"],
-  },
-  {
-    id: 5, name: "Selection Panel", color: "#F59E0B",
-    permissions: ["dashboard","users","selection"],
-  },
+const PERMISSIONS = [
+  { id: "view_dashboard", label: "View Dashboard", group: "Analytics" },
+  { id: "view_users", label: "View Users", group: "Users" },
+  { id: "edit_users", label: "Edit Users", group: "Users" },
+  { id: "approve_kyc", label: "Approve KYC", group: "Users" },
+  { id: "view_finance", label: "View Finance", group: "Finance" },
+  { id: "export_finance", label: "Export Finance", group: "Finance" },
+  { id: "refund_payment", label: "Issue Refund", group: "Finance" },
+  { id: "manage_matches", label: "Manage Matches", group: "League" },
+  { id: "live_scoring", label: "Live Scoring", group: "League" },
+  { id: "manage_teams", label: "Manage Teams", group: "League" },
+  { id: "player_selection", label: "Player Selection", group: "League" },
+  { id: "manage_marketing", label: "Manage Marketing", group: "Growth" },
+  { id: "manage_seo", label: "Manage SEO", group: "Growth" },
+  { id: "manage_sponsors", label: "Manage Sponsors", group: "Growth" },
+  { id: "manage_cms", label: "Manage CMS", group: "Content" },
+  { id: "manage_banners", label: "Manage Banners", group: "Content" },
+  { id: "manage_media", label: "Manage Media", group: "Content" },
+  { id: "manage_roles", label: "Manage Roles", group: "Settings" },
+  { id: "manage_admins", label: "Manage Admins", group: "Settings" },
 ];
 
-const ALL_PERMISSIONS = [
-  "dashboard","users","finance","teams","matches",
-  "selection","live-scoring","marketing","seo",
-  "sponsors","banners","cms","roles","media",
+const ROLES_INIT = [
+  { id: "super_admin", name: "Super Admin", color: "#FF6B00", permissions: PERMISSIONS.map(p => p.id) },
+  { id: "league_manager", name: "League Manager", color: "#3B82F6", permissions: ["view_dashboard", "view_users", "manage_matches", "live_scoring", "manage_teams", "player_selection"] },
+  { id: "finance_admin", name: "Finance Admin", color: "#10B981", permissions: ["view_dashboard", "view_finance", "export_finance", "refund_payment"] },
+  { id: "content_manager", name: "Content Manager", color: "#8B5CF6", permissions: ["view_dashboard", "manage_cms", "manage_banners", "manage_media", "manage_seo"] },
+  { id: "marketing_head", name: "Marketing Head", color: "#F59E0B", permissions: ["view_dashboard", "manage_marketing", "manage_seo", "manage_sponsors"] },
 ];
 
 const ADMINS = [
-  { id: 1, name: "Admin User",    email: "admin@bcplt20.com",    role: "Super Admin", status: "Active" },
-  { id: 2, name: "Raj Scorer",   email: "raj@bcplt20.com",      role: "Scorer",       status: "Active" },
-  { id: 3, name: "Priya Content", email: "priya@bcplt20.com",   role: "Content Manager", status: "Active" },
-  { id: 4, name: "Arun Finance",  email: "arun@bcplt20.com",    role: "Finance Manager",  status: "Inactive" },
+  { id: "A01", name: "Vikram Shah", email: "vikram@bcplt20.com", role: "super_admin", status: "active", last: "Now" },
+  { id: "A02", name: "Sneha Patel", email: "sneha@bcplt20.com", role: "league_manager", status: "active", last: "2h ago" },
+  { id: "A03", name: "Rajan More", email: "rajan@bcplt20.com", role: "finance_admin", status: "active", last: "1d ago" },
+  { id: "A04", name: "Pooja Desai", email: "pooja@bcplt20.com", role: "content_manager", status: "active", last: "3h ago" },
+  { id: "A05", name: "Amit Joshi", email: "amit@bcplt20.com", role: "marketing_head", status: "inactive", last: "5d ago" },
 ];
 
 export default function RolesView() {
-  const [roles, setRoles]   = useState(ROLES);
-  const [selected, setSelected] = useState(roles[0]);
-  const [tab, setTab]       = useState<"roles" | "users">("roles");
+  const [tab, setTab] = useState<"roles" | "admins">("roles");
+  const [selectedRole, setSelectedRole] = useState("super_admin");
+  const [roles, setRoles] = useState(ROLES_INIT);
 
-  const toggle = (perm: string) => {
-    setRoles(prev => prev.map(r => {
-      if (r.id !== selected.id) return r;
-      const has = r.permissions.includes(perm);
-      return {
-        ...r,
-        permissions: has ? r.permissions.filter(p => p !== perm) : [...r.permissions, perm],
-      };
-    }));
-    setSelected(prev => {
-      const has = prev.permissions.includes(perm);
-      return {
-        ...prev,
-        permissions: has ? prev.permissions.filter(p => p !== perm) : [...prev.permissions, perm],
-      };
-    });
+  const role = roles.find(r => r.id === selectedRole)!;
+  const groups = [...new Set(PERMISSIONS.map(p => p.group))];
+
+  const togglePerm = (permId: string) => {
+    setRoles(rs => rs.map(r => r.id === selectedRole ? {
+      ...r,
+      permissions: r.permissions.includes(permId)
+        ? r.permissions.filter(p => p !== permId)
+        : [...r.permissions, permId]
+    } : r));
   };
 
+  const card: React.CSSProperties = { background: "#0D1526", border: "1px solid #1E293B", borderRadius: 16, padding: "20px 22px" };
+
   return (
-    <div>
+    <div style={{ padding: 28, fontFamily: "'Inter', sans-serif" }}>
       {/* Tabs */}
       <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
-        {(["roles","users"] as const).map(t => (
-          <button
-            key={t}
-            onClick={() => setTab(t)}
-            style={{
-              padding: "8px 18px",
-              background: tab === t ? "#FF7A29" : "#0D1B2E",
-              color: tab === t ? "#fff" : "#7A8EA8",
-              border: `1px solid ${tab === t ? "#FF7A29" : "rgba(255,255,255,.12)"}`,
-              borderRadius: 8, cursor: "pointer", fontWeight: 700, fontSize: 13,
-              fontFamily: "'Montserrat', sans-serif", textTransform: "capitalize",
-            }}
-          >
-            {t === "roles" ? "🔐 Roles & Permissions" : "👤 Admin Users"}
-          </button>
+        {(["roles", "admins"] as const).map(t => (
+          <button key={t} onClick={() => setTab(t)} style={{ padding: "9px 22px", borderRadius: 10, border: tab === t ? "none" : "1px solid #1E293B", background: tab === t ? "#FF6B00" : "transparent", color: tab === t ? "#fff" : "#475569", fontSize: 13, fontWeight: 700, cursor: "pointer", textTransform: "capitalize" }}>{t === "roles" ? "🔐 Roles & Permissions" : "👤 Admin Users"}</button>
         ))}
       </div>
 
       {tab === "roles" && (
-        <div style={{ display: "grid", gridTemplateColumns: "220px 1fr", gap: 20 }}>
-          {/* Roles list */}
-          <div style={{ background: "#0D1B2E", borderRadius: 14, border: "1px solid rgba(255,255,255,.07)", overflow: "hidden", height: "fit-content" }}>
-            <div style={{ padding: "14px 16px", borderBottom: "1px solid rgba(255,255,255,.07)", fontWeight: 900, color: "#fff", fontSize: 14 }}>Roles</div>
-            {roles.map(r => (
-              <button
-                key={r.id}
-                onClick={() => setSelected(r)}
-                style={{
-                  display: "flex", alignItems: "center", gap: 10, width: "100%",
-                  padding: "12px 16px",
-                  background: selected.id === r.id ? "rgba(255,122,41,.1)" : "none",
-                  border: "none", borderLeft: selected.id === r.id ? "3px solid #FF7A29" : "3px solid transparent",
-                  borderBottom: "1px solid rgba(255,255,255,.05)",
-                  color: selected.id === r.id ? "#FF7A29" : "#E8F0FE",
-                  cursor: "pointer", textAlign: "left",
-                  fontFamily: "'Montserrat', sans-serif", fontSize: 13, fontWeight: 700,
-                }}
-              >
-                <div style={{ width: 8, height: 8, borderRadius: "50%", background: r.color, flexShrink: 0 }} />
-                {r.name}
-              </button>
-            ))}
+        <div style={{ display: "grid", gridTemplateColumns: "220px 1fr", gap: 16 }}>
+          {/* Role List */}
+          <div style={card}>
+            <div style={{ fontSize: 11, fontWeight: 800, color: "#94A3B8", letterSpacing: 0.5, marginBottom: 14, textTransform: "uppercase" }}>Roles</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              {roles.map(r => (
+                <button key={r.id} onClick={() => setSelectedRole(r.id)} style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "none", background: selectedRole === r.id ? "#FF6B0015" : "transparent", borderLeft: `2px solid ${selectedRole === r.id ? r.color : "transparent"}`, cursor: "pointer", display: "flex", alignItems: "center", gap: 10, textAlign: "left" }}>
+                  <div style={{ width: 8, height: 8, borderRadius: "50%", background: r.color }} />
+                  <span style={{ fontSize: 12, color: selectedRole === r.id ? r.color : "#94A3B8", fontWeight: selectedRole === r.id ? 700 : 500 }}>{r.name}</span>
+                  <span style={{ marginLeft: "auto", fontSize: 10, color: "#334155" }}>{r.permissions.length}</span>
+                </button>
+              ))}
+            </div>
+            <button style={{ width: "100%", marginTop: 12, padding: "9px", borderRadius: 8, border: "1px dashed #1E293B", background: "transparent", color: "#475569", fontSize: 12, cursor: "pointer" }}>+ Add Role</button>
           </div>
 
-          {/* Permissions editor */}
-          <div style={{ background: "#0D1B2E", borderRadius: 14, border: "1px solid rgba(255,255,255,.07)", padding: 24 }}>
-            <div style={{ fontWeight: 900, color: "#fff", fontSize: 16, marginBottom: 4 }}>{selected.name}</div>
-            <div style={{ color: "#7A8EA8", fontSize: 12, marginBottom: 20 }}>{selected.permissions.length} of {ALL_PERMISSIONS.length} permissions enabled</div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(160px,1fr))", gap: 10 }}>
-              {ALL_PERMISSIONS.map(perm => {
-                const has = selected.permissions.includes(perm);
-                return (
-                  <button
-                    key={perm}
-                    onClick={() => selected.id !== 1 && toggle(perm)} // Super Admin can't be restricted
-                    style={{
-                      display: "flex", alignItems: "center", gap: 8,
-                      padding: "10px 14px",
-                      background: has ? "rgba(34,197,94,.12)" : "rgba(255,255,255,.04)",
-                      border: `1px solid ${has ? "#22C55E" : "rgba(255,255,255,.1)"}`,
-                      borderRadius: 8, cursor: selected.id === 1 ? "default" : "pointer",
-                      color: has ? "#22C55E" : "#7A8EA8",
-                      fontFamily: "'Montserrat', sans-serif", fontSize: 12, fontWeight: 700,
-                      textTransform: "capitalize",
-                    }}
-                  >
-                    <span style={{ fontSize: 14 }}>{has ? "✓" : "○"}</span>
-                    {perm.replace(/-/g, " ")}
-                  </button>
-                );
-              })}
+          {/* Permissions Matrix */}
+          <div style={card}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
+              <div style={{ width: 10, height: 10, borderRadius: "50%", background: role.color }} />
+              <div style={{ fontSize: 14, fontWeight: 800, color: "#E2E8F0" }}>{role.name}</div>
+              <span style={{ fontSize: 11, color: "#475569" }}>{role.permissions.length} / {PERMISSIONS.length} permissions</span>
+              <button style={{ marginLeft: "auto", padding: "7px 16px", borderRadius: 8, border: "none", background: "linear-gradient(135deg, #FF6B00, #FF8C40)", color: "#fff", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>Save Changes</button>
             </div>
-            {selected.id === 1 && (
-              <div style={{ marginTop: 16, color: "#F59E0B", fontSize: 12, fontStyle: "italic" }}>
-                ⚠️ Super Admin always has all permissions and cannot be restricted.
-              </div>
-            )}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 16 }}>
+              {groups.map(group => (
+                <div key={group}>
+                  <div style={{ fontSize: 10, fontWeight: 800, color: "#1E3A5F", letterSpacing: 1.5, marginBottom: 10, textTransform: "uppercase" }}>{group}</div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    {PERMISSIONS.filter(p => p.group === group).map(perm => {
+                      const checked = role.permissions.includes(perm.id);
+                      const disabled = role.id === "super_admin";
+                      return (
+                        <label key={perm.id} style={{ display: "flex", alignItems: "center", gap: 10, cursor: disabled ? "default" : "pointer" }}>
+                          <div onClick={() => !disabled && togglePerm(perm.id)} style={{ width: 18, height: 18, borderRadius: 5, border: `2px solid ${checked ? "#FF6B00" : "#1E293B"}`, background: checked ? "#FF6B0020" : "transparent", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.15s" }}>
+                            {checked && <span style={{ fontSize: 10, color: "#FF6B00", fontWeight: 900 }}>✓</span>}
+                          </div>
+                          <span style={{ fontSize: 12, color: checked ? "#CBD5E1" : "#475569" }}>{perm.label}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}
 
-      {tab === "users" && (
-        <div style={{ background: "#0D1B2E", borderRadius: 14, border: "1px solid rgba(255,255,255,.07)", overflow: "hidden" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 20px", borderBottom: "1px solid rgba(255,255,255,.07)" }}>
-            <div style={{ fontWeight: 900, color: "#fff" }}>Admin Users</div>
-            <button style={{ padding: "8px 16px", background: "linear-gradient(135deg,#FF7A29,#FF4500)", color: "#fff", border: "none", borderRadius: 8, fontWeight: 700, cursor: "pointer", fontSize: 12 }}>
-              + Invite Admin
-            </button>
+      {tab === "admins" && (
+        <div style={card}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
+            <div style={{ fontSize: 11, fontWeight: 800, color: "#94A3B8", letterSpacing: 0.5, textTransform: "uppercase" }}>Admin Users</div>
+            <button style={{ padding: "8px 18px", borderRadius: 8, border: "none", background: "linear-gradient(135deg, #FF6B00, #FF8C40)", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>+ Invite Admin</button>
           </div>
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
             <thead>
-              <tr style={{ background: "rgba(255,255,255,.04)" }}>
-                {["Name","Email","Role","Status","Actions"].map(h => (
-                  <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: "#7A8EA8", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".06em", borderBottom: "1px solid rgba(255,255,255,.07)" }}>{h}</th>
+              <tr style={{ borderBottom: "1px solid #1E293B" }}>
+                {["Name", "Email", "Role", "Status", "Last Active", ""].map(h => (
+                  <th key={h} style={{ padding: "8px 12px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#475569", letterSpacing: 0.5 }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {ADMINS.map((a, i) => (
-                <tr key={a.id} style={{ borderBottom: i < ADMINS.length - 1 ? "1px solid rgba(255,255,255,.05)" : "none" }}>
-                  <td style={{ padding: "12px 16px", color: "#fff", fontWeight: 700, fontSize: 13 }}>{a.name}</td>
-                  <td style={{ padding: "12px 16px", color: "#7A8EA8", fontSize: 12 }}>{a.email}</td>
-                  <td style={{ padding: "12px 16px" }}>
-                    <span style={{ background: "rgba(255,122,41,.15)", color: "#FF7A29", borderRadius: 6, padding: "3px 8px", fontSize: 11, fontWeight: 700 }}>{a.role}</span>
-                  </td>
-                  <td style={{ padding: "12px 16px" }}>
-                    <span style={{ background: a.status === "Active" ? "#22C55E22" : "#7A8EA822", color: a.status === "Active" ? "#22C55E" : "#7A8EA8", borderRadius: 6, padding: "3px 8px", fontSize: 11, fontWeight: 700 }}>{a.status}</span>
-                  </td>
-                  <td style={{ padding: "12px 16px" }}>
-                    <button style={{ padding: "5px 12px", background: "rgba(255,255,255,.06)", color: "#7A8EA8", border: "1px solid rgba(255,255,255,.12)", borderRadius: 6, cursor: "pointer", fontSize: 11, fontWeight: 700 }}>Edit</button>
-                  </td>
-                </tr>
-              ))}
+              {ADMINS.map(a => {
+                const roleObj = roles.find(r => r.id === a.role);
+                return (
+                  <tr key={a.id} style={{ borderBottom: "1px solid #0F172A" }}>
+                    <td style={{ padding: "12px 12px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <div style={{ width: 30, height: 30, borderRadius: 9, background: `${roleObj?.color}20`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 800, color: roleObj?.color }}>{a.name.split(" ").map(w => w[0]).join("")}</div>
+                        <span style={{ color: "#E2E8F0", fontWeight: 600 }}>{a.name}</span>
+                      </div>
+                    </td>
+                    <td style={{ padding: "12px 12px", color: "#64748B" }}>{a.email}</td>
+                    <td style={{ padding: "12px 12px" }}><span style={{ background: `${roleObj?.color}20`, color: roleObj?.color, padding: "2px 9px", borderRadius: 6, fontSize: 10, fontWeight: 700 }}>{roleObj?.name}</span></td>
+                    <td style={{ padding: "12px 12px" }}><span style={{ background: a.status === "active" ? "#10B98120" : "#1E293B", color: a.status === "active" ? "#10B981" : "#475569", padding: "2px 8px", borderRadius: 6, fontSize: 10, fontWeight: 700 }}>{a.status}</span></td>
+                    <td style={{ padding: "12px 12px", color: "#475569" }}>{a.last}</td>
+                    <td style={{ padding: "12px 12px" }}><button style={{ background: "none", border: "1px solid #1E293B", borderRadius: 6, padding: "4px 10px", color: "#64748B", fontSize: 11, cursor: "pointer" }}>Edit</button></td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
