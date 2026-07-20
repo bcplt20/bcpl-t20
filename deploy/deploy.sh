@@ -6,8 +6,8 @@
 # ============================================================
 
 set -e
-APP_DIR="/home/bcpl/app"
-LOG_DIR="/home/bcpl/logs"
+APP_DIR="/home/ubuntu/app"
+LOG_DIR="/home/ubuntu/logs"
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "  BCPL T20 — Deployment Started"
