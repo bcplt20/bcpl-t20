@@ -211,6 +211,40 @@ export function Home() {
         .float-reg-btn:hover { opacity:.9; transform:translateY(-2px); }
         @keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4)} 50%{box-shadow:0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0)} }
         .float-reg-pulse { animation:floatPulse 2.5s ease-in-out infinite; }
+
+        /* ── HERO RESPONSIVE PANELS ── */
+        /* Stats panel (slide 0) and Prize panel (slide 2): hidden on mobile, shown desktop */
+        .hero-side { display:none; }
+        @media(min-width:900px){
+          .hero-side { display:flex; position:absolute; right:3%; top:50%; transform:translateY(-50%); z-index:1; }
+        }
+
+        /* Photo panel (slide 1): hidden on mobile, shown desktop */
+        .hero-photo { display:none; }
+        @media(min-width:900px){
+          .hero-photo { display:block; position:absolute; right:0; top:0; bottom:0; width:clamp(240px,40%,460px); overflow:hidden; background:#040810; }
+        }
+
+        /* Hero section: full content width on mobile */
+        .hero-content { position:relative; z-index:2; padding-top:clamp(40px,6vw,56px); padding-bottom:clamp(56px,8vw,80px); width:100%; }
+        @media(min-width:900px){
+          .hero-content { max-width:680px; }
+        }
+
+        /* Hero section min-height: auto on mobile, fixed on desktop */
+        .hero-section { min-height:auto; padding-top:0; padding-bottom:0; }
+        @media(min-width:900px){
+          .hero-section { min-height:clamp(440px,58vw,580px); }
+        }
+
+        /* Ambassador section: stack on mobile */
+        .amb-grid { display:flex; flex-direction:column; gap:20px; }
+        @media(min-width:900px){
+          .amb-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+        }
+
+        /* Phase 1 pricing chips: ensure wrap on small screens */
+        .pricing-chips { display:flex; justify-content:center; flex-wrap:wrap; gap:10px; margin-bottom:16px; }
       `}</style>
 
       {/* ── TICKER ── */}
@@ -256,7 +290,7 @@ export function Home() {
       {/* ══════════════════════════════════════════════
           BANNER CAROUSEL — Full-bleed hero
       ══════════════════════════════════════════════ */}
-      <section style={{ position:"relative", overflow:"hidden", background:slide.bg, transition:"background 0.7s ease", minHeight:"clamp(440px,58vw,580px)", display:"flex", flexDirection:"column", justifyContent:"flex-end" }}>
+      <section className="hero-section" style={{ position:"relative", overflow:"hidden", background:slide.bg, transition:"background 0.7s ease", display:"flex", flexDirection:"column", justifyContent:"flex-end" }}>
 
         {/* Background texture */}
         <div style={{ position:"absolute", inset:0, background:"repeating-linear-gradient(135deg,transparent,transparent 40px,rgba(255,255,255,0.012) 40px,rgba(255,255,255,0.012) 80px)", pointerEvents:"none" }} />
@@ -270,9 +304,9 @@ export function Home() {
         {/* Top color bar */}
         <div style={{ position:"absolute", top:0, left:0, right:0, height:4, background:`linear-gradient(90deg,transparent 0%,${slide.accent} 40%,${slide.accent} 60%,transparent 100%)`, opacity:0.8, transition:"background 0.7s" }} />
 
-        {/* RIGHT SIDE CONTENT */}
+        {/* RIGHT SIDE CONTENT — Photo panel (slide 1): hidden on mobile via .hero-photo class */}
         {slide.imageSide === "photo" && (
-          <div style={{ position:"absolute", right:0, top:0, bottom:0, width:"clamp(240px,46%,500px)", overflow:"hidden", background:"#040810" }}>
+          <div className="hero-photo">
             {!imgError ? (
               <img src={G} alt="Sourav Ganguly" onError={() => setImgError(true)}
                 style={{ width:"100%", height:"100%", objectFit:"contain", objectPosition:"center bottom", filter:"brightness(0.9) contrast(1.08) saturate(1.1)" }} />
@@ -298,8 +332,9 @@ export function Home() {
           </div>
         )}
 
+        {/* Stats panel (slide 0): hidden on mobile via .hero-side class */}
         {slide.imageSide === "stats" && (
-          <div style={{ position:"absolute", right:"3%", top:"50%", transform:"translateY(-50%)", display:"flex", flexDirection:"column", gap:10, zIndex:1 }}>
+          <div className="hero-side" style={{ flexDirection:"column", gap:10 }}>
             {[{v:"₹6 Cr",l:"Prize Pool"},{v:"10",l:"Teams"},{v:"21",l:"Cities"},{v:"₹15L",l:"Top Bid"}].map(s => (
               <div key={s.l} className="stat-box" style={{ minWidth:120, borderLeft:`3px solid ${slide.accent}`, paddingLeft:14, transition:"border-color 0.7s" }}>
                 <div className="stat-val" style={{ color:slide.accent, transition:"color 0.7s" }}>{s.v}</div>
@@ -309,14 +344,15 @@ export function Home() {
           </div>
         )}
 
+        {/* Prize panel (slide 2): hidden on mobile via .hero-side class */}
         {slide.imageSide === "prize" && (
-          <div style={{ position:"absolute", right:"4%", top:"50%", transform:"translateY(-50%)", textAlign:"center", zIndex:1 }}>
+          <div className="hero-side" style={{ right:"4%", textAlign:"center" }}>
             <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:"clamp(60px,10vw,110px)", lineHeight:1, color:"#22C55E", opacity:0.12 }}>₹6Cr</div>
           </div>
         )}
 
-        {/* LEFT: Main Slide Content */}
-        <div className="wrap" style={{ position:"relative", zIndex:2, paddingTop:56, paddingBottom:64, maxWidth:680 }}>
+        {/* LEFT: Main Slide Content — full width on mobile, capped on desktop via .hero-content */}
+        <div className="wrap hero-content">
           {/* Tag */}
           <div style={{ display:"inline-flex", alignItems:"center", gap:8, background:`${slide.accent}18`, border:`1px solid ${slide.accent}44`, borderRadius:12, padding:"6px 14px", marginBottom:22, transition:"all 0.5s" }}>
             {slide.id === 1 && <span style={{ width:7, height:7, borderRadius:"50%", background:"#E8B23D", display:"inline-block" }} />}
@@ -386,7 +422,7 @@ export function Home() {
         </div>
 
         {/* Slide dots + admin button */}
-        <div style={{ position:"absolute", bottom:16, left:0, right:0, display:"flex", alignItems:"center", justifyContent:"center", gap:12, zIndex:3 }}>
+        <div style={{ position:"relative", zIndex:3, display:"flex", alignItems:"center", justifyContent:"center", gap:12, padding:"12px 0 16px" }}>
           <div style={{ display:"flex", gap:6 }}>
             {SLIDES.map((_,i) => (
               <button key={i} className="slide-dot" onClick={() => setSlideIdx(i)}
@@ -409,7 +445,7 @@ export function Home() {
           <div className="wrap" style={{ position:"relative", zIndex:1, textAlign:"center" }}>
             <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:"clamp(20px,4vw,36px)", color:"#fff", marginBottom:8, textTransform:"uppercase" }}>⚡ PHASE 1 TRIALS NOW OPEN</div>
             <div style={{ fontFamily:"Inter,sans-serif", fontSize:"clamp(14px,2vw,16px)", color:"rgba(255,255,255,0.9)", marginBottom:24, lineHeight:1.5 }}>Send your 2-min video. BCCI-certified scouts review in 7 days.</div>
-            <div style={{ display:"flex", justifyContent:"center", flexWrap:"wrap", gap:10, marginBottom:16 }}>
+            <div className="pricing-chips">
               <div style={{ background:"rgba(0,0,0,0.22)", border:"1px solid rgba(255,255,255,0.22)", borderRadius:12, padding:"10px 18px", fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:13, color:"#fff" }}>🏏 Bat / 🎳 Bowl / 🧤 WK — <span style={{ color:"#FFE8A0" }}>₹299</span></div>
               <div style={{ background:"rgba(0,0,0,0.22)", border:"1px solid rgba(255,255,255,0.22)", borderRadius:12, padding:"10px 18px", fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:13, color:"#fff" }}>⭐ All-Rounder — <span style={{ color:"#FFE8A0" }}>₹399</span></div>
             </div>
@@ -737,8 +773,8 @@ export function Home() {
           <h2 className="section-title" style={{ fontSize:"clamp(20px,3.5vw,36px)", color:"#fff", marginBottom:8, textTransform:"uppercase" }}>BACKED BY INDIA'S GREATEST MATCH-WINNER</h2>
           <p style={{ fontFamily:"Inter,sans-serif", color:"rgba(255,255,255,0.4)", marginBottom:40, fontSize:15 }}>Sourav Ganguly · The Prince of Kolkata · BCPL Season 5 Brand Ambassador</p>
 
-          {/* 2-col: left = quote+badges, right = Ganguly full photo */}
-          <div style={{ display:"grid", gridTemplateColumns:"1fr", gap:20 }}>
+          {/* 2-col on desktop, stacked on mobile via .amb-grid */}
+          <div className="amb-grid">
             {/* Left column */}
             <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
               {/* Quote card */}

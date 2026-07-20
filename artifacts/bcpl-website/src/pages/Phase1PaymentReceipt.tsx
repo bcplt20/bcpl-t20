@@ -19,7 +19,7 @@ export function Phase1PaymentReceipt() {
         @keyframes liveBlip{0%,100%{opacity:1}50%{opacity:0.15}}
         @keyframes barcodeScan{0%{opacity:0.3}50%{opacity:1}100%{opacity:0.3}}
 
-        .wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+        .wrap{max-width:1100px;margin:0 auto;padding:0 16px}
         @media(min-width:768px){.wrap{padding:0 32px}}
 
         .desk-nav{display:none}
@@ -37,27 +37,33 @@ export function Phase1PaymentReceipt() {
         .btn-primary:hover{filter:brightness(1.15);transform:translateY(-2px)}
 
         .receipt-row{
-          display:flex;justify-content:space-between;align-items:center;
+          display:flex;justify-content:space-between;align-items:flex-start;
           padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.05);
-          font-size:13px;
+          font-size:13px;gap:8px;
         }
         .receipt-row:last-child{border-bottom:none}
-        .receipt-label{color:rgba(255,255,255,0.4);font-weight:600;letter-spacing:.04em}
-        .receipt-val{color:#F0EDE8;font-weight:700;text-align:right}
+        .receipt-label{color:rgba(255,255,255,0.4);font-weight:600;letter-spacing:.04em;flex-shrink:0}
+        .receipt-val{color:#F0EDE8;font-weight:700;text-align:right;word-break:break-all}
+
+        .next-steps-grid{display:grid;grid-template-columns:1fr;gap:14px}
+        @media(min-width:600px){.next-steps-grid{grid-template-columns:repeat(3,1fr)}}
 
         .next-card{
           background:#0A1727;border:1px solid rgba(255,255,255,0.08);border-radius:12px;
-          padding:22px 20px;flex:1;min-width:200px;
+          padding:22px 20px;
           transition:border-color .2s,transform .2s;
         }
         .next-card:hover{border-color:rgba(255,122,41,0.35);transform:translateY(-3px)}
 
+        .share-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
         .share-btn{
           display:flex;align-items:center;justify-content:center;gap:8px;
           padding:14px 22px;border-radius:12px;font-family:Montserrat,sans-serif;
           font-weight:800;font-size:13px;letter-spacing:.06em;cursor:pointer;
           border:none;transition:filter .2s,transform .15s;
+          width:100%;
         }
+        @media(min-width:480px){.share-btn{width:auto}}
         .share-btn:hover{filter:brightness(1.12);transform:translateY(-2px)}
 
         .barcode-line{display:inline-block;width:2px;margin:0 0.5px;background:rgba(255,255,255,0.85);animation:barcodeScan 2.5s ease-in-out infinite}
@@ -68,6 +74,13 @@ export function Phase1PaymentReceipt() {
         .fade-up-3{animation-delay:.4s}
         .fade-up-4{animation-delay:.55s}
         .fade-up-5{animation-delay:.7s}
+
+        .ticket-wrap{background:#0A1727;border:1px solid rgba(255,122,41,0.35);position:relative;overflow:hidden;width:100%;max-width:100%}
+        .ticket-notch-l{position:absolute;left:-10px;top:50%;transform:translateY(-50%);width:20px;height:20px;border-radius:50%;background:#06101E;border:1px solid rgba(255,122,41,0.35)}
+        .ticket-notch-r{position:absolute;right:-10px;top:50%;transform:translateY(-50%);width:20px;height:20px;border-radius:50%;background:#06101E;border:1px solid rgba(255,122,41,0.35)}
+        @media(max-width:480px){.ticket-notch-l,.ticket-notch-r{display:none}}
+
+        .barcode-wrap{background:#060C18;padding:14px 20px;display:flex;align-items:flex-end;gap:0;border-top:1px solid rgba(255,255,255,0.05);overflow:hidden}
       `}</style>
 
       {/* ── TICKER ── */}
@@ -115,7 +128,6 @@ export function Phase1PaymentReceipt() {
 
       {/* ── HERO ── */}
       <div style={{ position:'relative', overflow:'hidden', background:'linear-gradient(180deg,#06101E 0%,#060C18 100%)', paddingTop:60, paddingBottom:56, textAlign:'center' }}>
-        {/* Diagonal stripes */}
         <div style={{ position:'absolute', top:0, left:'-10%', width:'50%', height:'100%', background:'linear-gradient(135deg,rgba(34,197,94,0.06) 0%,transparent 60%)', transform:'skewX(-8deg)', pointerEvents:'none' }} />
         <div style={{ position:'absolute', top:0, right:'-10%', width:'50%', height:'100%', background:'linear-gradient(225deg,rgba(34,197,94,0.04) 0%,transparent 60%)', transform:'skewX(-8deg)', pointerEvents:'none' }} />
 
@@ -140,29 +152,28 @@ export function Phase1PaymentReceipt() {
               { label:'📍 Mumbai', color:'#FF7A29' },
               { label:'BCPL Season 5', color:'#E8B23D' },
             ].map(c => (
-              <span key={c.label} style={{ padding:'6px 16px', background:`rgba(255,255,255,0.05)`, border:`1px solid ${c.color}44`, borderRadius:12, fontSize:12, fontWeight:700, fontFamily:'Montserrat,sans-serif', color:c.color, letterSpacing:'.06em' }}>
+              <span key={c.label} style={{ padding:'6px 16px', background:'rgba(255,255,255,0.05)', border:`1px solid ${c.color}44`, borderRadius:12, fontSize:12, fontWeight:700, fontFamily:'Montserrat,sans-serif', color:c.color, letterSpacing:'.06em' }}>
                 {c.label}
               </span>
             ))}
           </div>
 
           {/* Booking ref */}
-          <div className="fade-up fade-up-4" style={{ display:'inline-block', background:'#060C18', border:'1px solid rgba(255,122,41,0.4)', padding:'12px 24px', borderRadius:12, marginBottom:0 }}>
+          <div className="fade-up fade-up-4" style={{ display:'inline-block', background:'#060C18', border:'1px solid rgba(255,122,41,0.4)', padding:'12px 20px', borderRadius:12, marginBottom:0, maxWidth:'100%', overflow:'hidden' }}>
             <div style={{ fontSize:9, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.18em', color:'rgba(255,255,255,0.35)', marginBottom:4 }}>BOOKING REFERENCE</div>
-            <div style={{ fontFamily:'monospace', fontSize:18, fontWeight:700, color:'#FF7A29', letterSpacing:'.12em' }}>BCPL-S5-MUM-BAT-7432</div>
+            <div style={{ fontFamily:'monospace', fontSize:'clamp(13px,4vw,18px)', fontWeight:700, color:'#FF7A29', letterSpacing:'.12em', wordBreak:'break-all' }}>BCPL-S5-MUM-BAT-7432</div>
           </div>
         </div>
       </div>
 
       {/* ── MATCH TICKET ── */}
       <div className="wrap fade-up fade-up-5" style={{ marginTop:40 }}>
-        <div style={{ background:'#0A1727', border:'1px solid rgba(255,122,41,0.35)', borderRadius:0, position:'relative', overflow:'hidden' }}>
-          {/* Ticket notches */}
-          <div style={{ position:'absolute', left:-10, top:'50%', transform:'translateY(-50%)', width:20, height:20, borderRadius:'50%', background:'#06101E', border:'1px solid rgba(255,122,41,0.35)' }} />
-          <div style={{ position:'absolute', right:-10, top:'50%', transform:'translateY(-50%)', width:20, height:20, borderRadius:'50%', background:'#06101E', border:'1px solid rgba(255,122,41,0.35)' }} />
+        <div className="ticket-wrap">
+          <div className="ticket-notch-l" />
+          <div className="ticket-notch-r" />
 
           {/* Ticket header */}
-          <div style={{ background:'linear-gradient(135deg,#C94E0E,#FF7A29,#E8611A)', padding:'16px 28px', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:12 }}>
+          <div style={{ background:'linear-gradient(135deg,#C94E0E,#FF7A29,#E8611A)', padding:'16px 24px', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:12 }}>
             <div>
               <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:13, letterSpacing:'.14em', color:'#fff', textTransform:'uppercase' }}>PHASE 1 TRIAL ENTRY</div>
               <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:10, letterSpacing:'.12em', color:'rgba(255,255,255,0.75)', marginTop:2 }}>PAYMENT CONFIRMED</div>
@@ -174,7 +185,7 @@ export function Phase1PaymentReceipt() {
           </div>
 
           {/* Ticket body */}
-          <div style={{ padding:'0 28px' }}>
+          <div style={{ padding:'0 20px' }}>
             {[
               { label:'Player Name', val:'Rahul Sharma' },
               { label:'Role', val:'🏏 Batsman' },
@@ -191,10 +202,10 @@ export function Phase1PaymentReceipt() {
           </div>
 
           {/* Dashed divider */}
-          <div style={{ borderTop:'2px dashed rgba(255,122,41,0.25)', margin:'0 28px' }} />
+          <div style={{ borderTop:'2px dashed rgba(255,122,41,0.25)', margin:'0 20px' }} />
 
           {/* Phase 2 locked row */}
-          <div style={{ padding:'14px 28px', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:8 }}>
+          <div style={{ padding:'14px 20px', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:8 }}>
             <div>
               <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:11, letterSpacing:'.14em', color:'rgba(255,255,255,0.5)', textTransform:'uppercase' }}>PHASE 2 STATUS</div>
               <div style={{ fontSize:13, color:'rgba(255,255,255,0.6)', marginTop:3 }}>🔒 Locked — You'll be notified if selected by scouts</div>
@@ -203,14 +214,14 @@ export function Phase1PaymentReceipt() {
           </div>
 
           {/* Decorative barcode */}
-          <div style={{ background:'#060C18', padding:'14px 28px', display:'flex', alignItems:'flex-end', gap:0, borderTop:'1px solid rgba(255,255,255,0.05)' }}>
+          <div className="barcode-wrap">
             {Array.from({length:52}, (_,i) => {
               const heights = [24,32,18,38,22,28,14,36,20,30,16,40,26,18,34,22,28,12,38,24,30,16,36,20,26,14,32,24,38,18,28,22,36,14,30,26,18,40,24,32,16,38,22,28,12,36,20,30,16,40,26,18];
               const h = heights[i % heights.length];
               const delay = (i * 0.04) % 2.5;
               return <div key={i} className="barcode-line" style={{ height:h, animationDelay:`${delay}s` }} />;
             })}
-            <span style={{ marginLeft:'auto', fontFamily:'monospace', fontSize:9, color:'rgba(255,255,255,0.25)', letterSpacing:'.08em' }}>BCPL-S5-MUM-BAT-7432</span>
+            <span style={{ marginLeft:'auto', fontFamily:'monospace', fontSize:9, color:'rgba(255,255,255,0.25)', letterSpacing:'.08em', whiteSpace:'nowrap' }}>BCPL-S5-MUM-BAT-7432</span>
           </div>
         </div>
       </div>
@@ -218,7 +229,7 @@ export function Phase1PaymentReceipt() {
       {/* ── NEXT STEPS ── */}
       <div className="wrap" style={{ marginTop:48 }}>
         <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:11, letterSpacing:'.2em', color:'rgba(255,255,255,0.3)', marginBottom:20, textTransform:'uppercase' }}>Your Next Steps</div>
-        <div style={{ display:'flex', gap:16, flexWrap:'wrap' }}>
+        <div className="next-steps-grid">
           {/* Step 1 */}
           <div className="next-card">
             <div style={{ fontSize:28, marginBottom:12 }}>🎬</div>
@@ -255,10 +266,10 @@ export function Phase1PaymentReceipt() {
 
       {/* ── SHARE SECTION ── */}
       <div className="wrap" style={{ marginTop:48 }}>
-        <div style={{ background:'#0A1727', border:'1px solid rgba(255,255,255,0.08)', borderRadius:12, padding:'28px', textAlign:'center' }}>
+        <div style={{ background:'#0A1727', border:'1px solid rgba(255,255,255,0.08)', borderRadius:12, padding:'28px 20px', textAlign:'center' }}>
           <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:13, letterSpacing:'.16em', color:'rgba(255,255,255,0.4)', marginBottom:6, textTransform:'uppercase' }}>Share Your Achievement</div>
           <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'#fff', marginBottom:24 }}>Tell the world you're in the trials! 🏏</div>
-          <div style={{ display:'flex', gap:12, justifyContent:'center', flexWrap:'wrap' }}>
+          <div className="share-btns">
             <button className="share-btn" style={{ background:'#25D366', color:'#fff' }}>
               💬 Share on WhatsApp
             </button>

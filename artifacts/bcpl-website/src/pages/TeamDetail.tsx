@@ -19,7 +19,7 @@ function Navbar() {
             <span style={{fontSize:10,color:'rgba(255,122,41,0.7)',marginLeft:8,fontWeight:700,letterSpacing:'0.08em'}}>SEASON 5</span>
           </div>
           <div className="desk-nav">
-            {links.map(([l,k])=><a key={k} href="#" style={{color:k==='teams'?'#FF7A29':'rgba(255,255,255,0.7)',fontWeight:600,fontSize:13,textDecoration:'none',fontFamily:'Inter,sans-serif',borderBottom:k==='teams'?'2px solid #FF7A29':'2px solid transparent',paddingBottom:2}}>{l}</a>)}
+            {links.map(([l,k])=><a key={k} href={ROUTE_MAP[l]||'#'} style={{color:k==='teams'?'#FF7A29':'rgba(255,255,255,0.7)',fontWeight:600,fontSize:13,textDecoration:'none',fontFamily:'Inter,sans-serif',borderBottom:k==='teams'?'2px solid #FF7A29':'2px solid transparent',paddingBottom:2}}>{l}</a>)}
             <button className="btn-fire" style={{padding:'9px 20px',fontSize:13}}>Register ₹299</button>
           </div>
           <button className="ham-btn" onClick={()=>setOpen(o=>!o)} style={{flexDirection:'column',gap:5,background:'none',border:'none',cursor:'pointer',padding:8}}>
@@ -31,10 +31,10 @@ function Navbar() {
       </nav>
       {open&&(
         <div style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'#06101E',zIndex:300,display:'flex',flexDirection:'column',padding:'80px 24px 40px',overflowY:'auto'}}>
-          <button onClick={()=>{ setOpen(false); window.location.assign(ROUTE_MAP[l]||'/'); }} style={{position:'absolute',top:20,right:20,background:'none',border:'none',color:'rgba(255,255,255,0.5)',fontSize:28,cursor:'pointer'}}>✕</button>
+          <button onClick={()=>setOpen(false)} style={{position:'absolute',top:20,right:20,background:'none',border:'none',color:'rgba(255,255,255,0.5)',fontSize:28,cursor:'pointer'}}>✕</button>
           <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,marginBottom:32}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff',marginLeft:3}}>T20</span></div>
-          {[['🏠 Home','home'],['🔴 Match Center','mc'],['🏏 Teams','teams'],['🤝 Sponsors','sp'],['📷 Photos','ph'],['▶️ Videos','vid'],['ℹ️ About','about'],['❓ FAQ','faq'],['✉️ Contact','contact']].map(([l,k])=>(
-            <a key={k} href="#" onClick={()=>{ setOpen(false); window.location.assign(ROUTE_MAP[l]||'/'); }} style={{color:'rgba(255,255,255,0.85)',fontWeight:700,fontSize:18,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,0.07)'}}>{l}</a>
+          {[['🏠 Home','Home'],['🔴 Match Center','Match Center'],['🏏 Teams','Teams'],['🤝 Sponsors','Sponsors'],['📷 Photos','Photos'],['▶️ Videos','Videos'],['ℹ️ About','About'],['❓ FAQ','FAQ'],['✉️ Contact','Contact']].map(([label,key])=>(
+            <a key={key} href={ROUTE_MAP[key]||'#'} onClick={()=>setOpen(false)} style={{color:'rgba(255,255,255,0.85)',fontWeight:700,fontSize:18,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,0.07)',display:'block'}}>{label}</a>
           ))}
           <button className="btn-fire" style={{marginTop:32,height:52,fontSize:16,borderRadius:14,width:'100%'}}>📝 Register for ₹299 →</button>
         </div>
@@ -137,10 +137,11 @@ export function TeamDetail() {
     <div style={{background:'#060E1C',color:'#fff',minHeight:'100vh',overflowX:'hidden',fontFamily:'Inter,sans-serif'}}>
       <style>{`
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-        .wrap{max-width:1280px;margin:0 auto;padding:0 20px;}
+        .wrap{max-width:1280px;margin:0 auto;padding:0 16px;}
         .desk-nav{display:none;align-items:center;gap:22px;}
         .ham-btn{display:flex;}
         .bot-cta{display:flex;}
+        @media(min-width:640px){.wrap{padding:0 24px}}
         @media(min-width:768px){.wrap{padding:0 32px}}
         @media(min-width:1024px){.desk-nav{display:flex!important;}.ham-btn{display:none!important;}.bot-cta{display:none!important;}.squad-grid{grid-template-columns:repeat(3,1fr)!important;}.about-grid{grid-template-columns:repeat(2,1fr)!important;}}
         @media(min-width:640px){.squad-grid{grid-template-columns:repeat(2,1fr)!important;}}
@@ -158,12 +159,27 @@ export function TeamDetail() {
         @keyframes fadeSlide{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
         @keyframes borderGlow{0%,100%{border-color:rgba(59,130,246,0.3)}50%{border-color:rgba(59,130,246,0.8)}}
         @keyframes blueGlow{0%,100%{box-shadow:0 0 40px rgba(59,130,246,0.2)}50%{box-shadow:0 0 80px rgba(59,130,246,0.4),0 0 120px rgba(59,130,246,0.1)}}
-      
+
         /* ── FLOATING REGISTER BUTTON ── */
         .float-reg-btn { position:fixed; bottom:28px; right:28px; z-index:9999; background:linear-gradient(135deg,#FF7A29,#D95E10); border:none; border-radius:12px; color:#fff; font-family:'Montserrat',sans-serif; font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:14px 22px; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(255,122,41,0.45); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition:opacity .2s,transform .15s; }
         .float-reg-btn:hover { opacity:.9; transform:translateY(-2px); }
         @keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4)} 50%{box-shadow:0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0)} }
         .float-reg-pulse { animation:floatPulse 2.5s ease-in-out infinite; }
+
+        /* ── HERO STATS RESPONSIVE ── */
+        .hero-stats{display:flex;flex-wrap:wrap;gap:10;justify-content:center;}
+
+        /* ── RESULTS TAB MOBILE ── */
+        .result-row{display:flex;flex-wrap:wrap;gap:12;align-items:center;}
+
+        /* ── BOTTOM CTA BUTTONS ── */
+        .cta-buttons{display:flex;gap:12;justify-content:center;flex-wrap:wrap;}
+
+        @media(max-width:639px){
+          .float-reg-btn{bottom:80px;right:16px;padding:12px 16px;font-size:12px;}
+          .hero-stats>div{min-width:calc(50% - 5px)!important;}
+          .result-row .result-mom{display:none;}
+        }
       `}</style>
 
       {/* Ambient */}
@@ -187,8 +203,8 @@ export function TeamDetail() {
         <Navbar/>
 
         {/* HERO */}
-        <section style={{padding:'72px 0 56px',position:'relative',overflow:'hidden'}}>
-          <div style={{position:'absolute',top:'50%',left:'50%',transform:'translate(-50%,-50%)',width:600,height:600,borderRadius:'50%',background:`radial-gradient(circle,${ACCENT}18,transparent 70%)`,animation:'blueGlow 4s ease-in-out infinite',pointerEvents:'none'}}/>
+        <section style={{padding:'clamp(48px,6vw,72px) 0 clamp(32px,4vw,56px)',position:'relative',overflow:'hidden'}}>
+          <div style={{position:'absolute',top:'50%',left:'50%',transform:'translate(-50%,-50%)',width:'min(600px,90vw)',height:'min(600px,90vw)',borderRadius:'50%',background:`radial-gradient(circle,${ACCENT}18,transparent 70%)`,animation:'blueGlow 4s ease-in-out infinite',pointerEvents:'none'}}/>
           <div className="wrap" style={{textAlign:'center',position:'relative',zIndex:2}}>
             <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:12,marginBottom:16}}>
               <span style={{fontSize:52}}>🗼</span>
@@ -196,12 +212,12 @@ export function TeamDetail() {
             <div className="tag-pill" style={{marginBottom:16,borderColor:`${ACCENT}55`,color:ACCENT,background:`${ACCENT}18`}}>
               GROUP A · NEW DELHI
             </div>
-            <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(36px,7vw,76px)',lineHeight:1.0,color:'#fff',marginBottom:24,textShadow:`0 0 60px ${ACCENT}66`}}>
+            <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(28px,6vw,76px)',lineHeight:1.0,color:'#fff',marginBottom:24,textShadow:`0 0 60px ${ACCENT}66`}}>
               DELHI DYNAMOS
             </h1>
-            <div style={{display:'flex',flexWrap:'wrap',gap:12,justifyContent:'center',marginBottom:0}}>
+            <div className="hero-stats" style={{display:'flex',flexWrap:'wrap',gap:10,justifyContent:'center',marginBottom:0}}>
               {[{label:'Players',val:'12'},{label:'Record',val:'6W / 2L'},{label:'NRR',val:'+0.842'},{label:'Rank',val:'#3'}].map(s=>(
-                <div key={s.label} style={{background:'rgba(59,130,246,0.10)',border:`1px solid ${ACCENT}33`,borderRadius:14,padding:'14px 24px',textAlign:'center',minWidth:90}}>
+                <div key={s.label} style={{background:'rgba(59,130,246,0.10)',border:`1px solid ${ACCENT}33`,borderRadius:14,padding:'14px 20px',textAlign:'center',minWidth:80,flex:'1 1 80px',maxWidth:140}}>
                   <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,color:ACCENT}}>{s.val}</div>
                   <div style={{color:'rgba(255,255,255,0.45)',fontSize:11,fontFamily:'Inter,sans-serif',marginTop:2,textTransform:'uppercase',letterSpacing:'0.06em'}}>{s.label}</div>
                 </div>
@@ -253,18 +269,18 @@ export function TeamDetail() {
           {tab===1&&(
             <div style={{display:'flex',flexDirection:'column',gap:12}}>
               {RESULTS.map((r,i)=>(
-                <div key={i} style={{background:'linear-gradient(135deg,rgba(15,34,71,0.92),rgba(10,22,46,0.88))',backdropFilter:'blur(24px)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:16,padding:'18px 20px',borderLeft:`4px solid ${r.won?'#22C55E':'#E8493F'}`,animation:`fadeSlide 0.4s ease ${i*0.06}s both`,display:'flex',flexWrap:'wrap',gap:12,alignItems:'center'}}>
-                  <div style={{minWidth:80}}>
+                <div key={i} style={{background:'linear-gradient(135deg,rgba(15,34,71,0.92),rgba(10,22,46,0.88))',backdropFilter:'blur(24px)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:16,padding:'18px 16px',borderLeft:`4px solid ${r.won?'#22C55E':'#E8493F'}`,animation:`fadeSlide 0.4s ease ${i*0.06}s both`,display:'flex',flexWrap:'wrap',gap:12,alignItems:'center'}}>
+                  <div style={{minWidth:70}}>
                     <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:12,color:'rgba(255,255,255,0.5)',marginBottom:2}}>{r.date}</div>
                     <div style={{fontFamily:'Inter,sans-serif',fontSize:11,color:'rgba(255,255,255,0.35)'}}>{r.venue}</div>
                     <div style={{fontFamily:'Montserrat,sans-serif',fontSize:10,color:'rgba(255,122,41,0.7)',fontWeight:700,marginTop:2}}>{r.round}</div>
                   </div>
-                  <div style={{flex:1,display:'flex',alignItems:'center',gap:10,justifyContent:'center',flexWrap:'wrap'}}>
+                  <div style={{flex:1,display:'flex',alignItems:'center',gap:10,justifyContent:'center',flexWrap:'wrap',minWidth:160}}>
                     <div style={{textAlign:'center'}}>
                       <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:15,color:ACCENT}}>{r.teamA}</div>
                       <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:18,color:'#F8F4EE'}}>{r.scoreA}</div>
                     </div>
-                    <div style={{padding:'6px 14px',borderRadius:8,background:r.won?'rgba(34,197,94,0.15)':'rgba(232,73,63,0.15)',border:`1px solid ${r.won?'rgba(34,197,94,0.4)':'rgba(232,73,63,0.4)'}`,fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:11,color:r.won?'#22C55E':'#E8493F',letterSpacing:'0.08em'}}>
+                    <div style={{padding:'6px 12px',borderRadius:8,background:r.won?'rgba(34,197,94,0.15)':'rgba(232,73,63,0.15)',border:`1px solid ${r.won?'rgba(34,197,94,0.4)':'rgba(232,73,63,0.4)'}`,fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:11,color:r.won?'#22C55E':'#E8493F',letterSpacing:'0.08em'}}>
                       {r.won?'WON':'LOST'}
                     </div>
                     <div style={{textAlign:'center'}}>
@@ -272,7 +288,7 @@ export function TeamDetail() {
                       <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:18,color:'rgba(255,255,255,0.85)'}}>{r.scoreB}</div>
                     </div>
                   </div>
-                  <div style={{textAlign:'right',minWidth:80}}>
+                  <div className="result-mom" style={{textAlign:'right',minWidth:80}}>
                     <div style={{fontFamily:'Inter,sans-serif',fontSize:10,color:'rgba(255,255,255,0.35)',marginBottom:3}}>Man of Match</div>
                     <div style={{background:'rgba(232,178,61,0.12)',border:'1px solid rgba(232,178,61,0.3)',color:'#E8B23D',fontSize:11,fontWeight:700,padding:'4px 10px',borderRadius:8,fontFamily:'Montserrat,sans-serif'}}>{r.mom}</div>
                   </div>
@@ -306,16 +322,16 @@ export function TeamDetail() {
         {/* BOTTOM CTA */}
         <section style={{padding:'0 0 80px'}}>
           <div className="wrap">
-            <div style={{background:`linear-gradient(135deg,${ACCENT}14,rgba(255,122,41,0.06),rgba(15,34,71,0.92))`,backdropFilter:'blur(32px)',border:`1px solid ${ACCENT}30`,borderRadius:24,padding:'48px 32px',textAlign:'center',animation:'borderGlow 3s ease-in-out infinite'}}>
+            <div style={{background:`linear-gradient(135deg,${ACCENT}14,rgba(255,122,41,0.06),rgba(15,34,71,0.92))`,backdropFilter:'blur(32px)',border:`1px solid ${ACCENT}30`,borderRadius:24,padding:'clamp(28px,4vw,48px) clamp(20px,3vw,32px)',textAlign:'center',animation:'borderGlow 3s ease-in-out infinite'}}>
               <div className="tag-pill" style={{marginBottom:16,borderColor:`${ACCENT}55`,color:ACCENT,background:`${ACCENT}18`}}>🗼 WANT TO WEAR THE BLUE?</div>
-              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(20px,4vw,34px)',color:'#fff',marginBottom:12}}>
+              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(18px,4vw,34px)',color:'#fff',marginBottom:12}}>
                 WANT TO PLAY FOR DELHI DYNAMOS?
               </h2>
               <p style={{color:'rgba(255,255,255,0.55)',fontSize:15,lineHeight:1.7,maxWidth:460,margin:'0 auto 28px',fontFamily:'Inter,sans-serif'}}>
                 Register today and get your shot at representing Delhi on the BCPL stage. All roles open — Bat, Bowl, WK, All-Rounder.
               </p>
-              <div style={{display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap'}}>
-                <button className="btn-fire" style={{padding:'16px 36px',fontSize:15,borderRadius:14}}>🏏 Register for ₹299 →</button>
+              <div className="cta-buttons" style={{display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap'}}>
+                <button className="btn-fire" style={{padding:'16px 32px',fontSize:15,borderRadius:14}}>🏏 Register for ₹299 →</button>
                 <button className="btn-wa" style={{padding:'16px 24px',fontSize:15,borderRadius:14}}>💬 WhatsApp Us</button>
               </div>
             </div>

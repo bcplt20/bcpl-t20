@@ -35,6 +35,10 @@ body { background:#060E1C; }
         .float-reg-btn:hover { opacity:.9; transform:translateY(-2px); }
         @keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4)} 50%{box-shadow:0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0)} }
         .float-reg-pulse { animation:floatPulse 2.5s ease-in-out infinite; }
+        @media(max-width:1023px){ .float-reg-btn { display:none; } }
+        .video-grid { display:grid; grid-template-columns:1fr; gap:24px; }
+        @media(min-width:480px){ .video-grid { grid-template-columns:repeat(2,1fr); } }
+        @media(min-width:900px){ .video-grid { grid-template-columns:repeat(3,1fr); } }
 `;
 
 const VIDEOS = [
@@ -174,7 +178,7 @@ function Footer() {
 
 function MobileStickyCTA() {
   return (
-    <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',padding:'10px 16px 18px',gap:10}}>
+    <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',padding:'10px 16px calc(16px + env(safe-area-inset-bottom))',gap:10}}>
       <button className="btn-fire" style={{flex:2,height:52,fontSize:15}}>Register ₹299 →</button>
       <button className="btn-wa" style={{flex:1,height:52,fontSize:14}}>💬 WhatsApp</button>
     </div>
@@ -286,7 +290,7 @@ export function Videos() {
       {/* VIDEO GRID */}
       <section style={{position:'relative',zIndex:1,padding:'0 0 60px'}}>
         <div className="wrap">
-          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:24}}>
+          <div className="video-grid">
             {filtered.map((v,i)=>{
               const catColor = CAT_COLORS[v.cat] || '#FF7A29';
               return (
@@ -321,7 +325,7 @@ export function Videos() {
       {/* YOUTUBE CTA */}
       <section style={{position:'relative',zIndex:1,padding:'0 0 120px'}}>
         <div className="wrap">
-          <div className="glass-card" style={{padding:'48px',textAlign:'center',maxWidth:640,margin:'0 auto',border:'1px solid rgba(255,122,41,0.15)'}}>
+          <div className="glass-card" style={{padding:'clamp(20px,5vw,48px) clamp(16px,4vw,48px)',textAlign:'center',maxWidth:640,margin:'0 auto',border:'1px solid rgba(255,122,41,0.15)'}}>
             <div style={{fontSize:44,marginBottom:12}}>▶️</div>
             <h3 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,color:'#fff',marginBottom:6}}>Subscribe to BCPL TV</h3>
             <div style={{color:'rgba(255,255,255,0.4)',fontSize:14,marginBottom:24,fontFamily:'Inter,sans-serif'}}>23K subscribers · New videos every match day</div>

@@ -6,7 +6,7 @@ export function Phase1VideoUpload() {
   const NAV = ['Home','Match Center','Teams','Sponsors','Photos','Videos','About','FAQ','Contact'];
 
   return (
-    <div style={{ background:'#06101E', minHeight:'100vh', color:'#F0EDE8', fontFamily:"'Inter',sans-serif", overflowX:'hidden', paddingBottom:120 }}>
+    <div style={{ background:'#06101E', minHeight:'100vh', color:'#F0EDE8', fontFamily:"'Inter',sans-serif", overflowX:'hidden', paddingBottom:'calc(120px + env(safe-area-inset-bottom))' }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap');
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -20,7 +20,7 @@ export function Phase1VideoUpload() {
         @keyframes uploadBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
         @keyframes dashedMarch{to{stroke-dashoffset:-20}}
 
-        .wrap{max-width:1140px;margin:0 auto;padding:0 20px}
+        .wrap{max-width:1140px;margin:0 auto;padding:0 16px}
         @media(min-width:768px){.wrap{padding:0 32px}}
 
         .desk-nav{display:none}
@@ -41,11 +41,12 @@ export function Phase1VideoUpload() {
           border:2px dashed rgba(255,122,41,0.35);
           background:#060C18;
           border-radius:12px;
-          padding:52px 24px;
+          padding:40px 20px;
           display:flex;flex-direction:column;align-items:center;justify-content:center;
           text-align:center;cursor:pointer;
           transition:border-color .2s,background .2s;
-          min-height:240px;
+          min-height:200px;
+          width:100%;
         }
         .upload-zone:hover,.upload-zone.drag{border-color:#FF7A29;background:rgba(255,122,41,0.04)}
 
@@ -73,6 +74,16 @@ export function Phase1VideoUpload() {
         @media(min-width:900px){.two-col{flex-direction:row;gap:32px}}
         .col-left{flex:1;min-width:0}
         .col-right{flex:1;min-width:0}
+
+        .format-chips{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+        .format-chip{flex:1;min-width:80px;background:#060C18;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:10px 14px}
+
+        .filming-grid{display:grid;grid-template-columns:1fr;gap:0}
+        @media(min-width:600px){.filming-grid{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}}
+
+        .sticky-banner{position:fixed;bottom:0;left:0;right:0;zIndex:500;background:rgba(4,10,20,0.98);backdropFilter:blur(20px);borderTop:2px solid #FF7A29;padding:12px 16px calc(12px + env(safe-area-inset-bottom))}
+        .sticky-inner{max-width:1140px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+        .sticky-text{display:flex;align-items:flex-start;gap:10px;flex:1;min-width:0}
 
         .fade-in{animation:fadeUp .45s ease both}
       `}</style>
@@ -124,7 +135,7 @@ export function Phase1VideoUpload() {
       <div style={{ background:'linear-gradient(180deg,#060C18 0%,#06101E 100%)', borderBottom:'1px solid rgba(255,255,255,0.06)', paddingTop:36, paddingBottom:32 }}>
         <div className="wrap">
           <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', flexWrap:'wrap', gap:16 }}>
-            <div>
+            <div style={{ flex:1, minWidth:0 }}>
               <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:11, letterSpacing:'.2em', color:'rgba(255,255,255,0.3)', marginBottom:10, textTransform:'uppercase' }}>Phase 1 · Step 2 of 3</div>
               <h1 style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(24px,5vw,44px)', color:'#fff', letterSpacing:'-.01em', textTransform:'uppercase', lineHeight:.95, marginBottom:8 }}>
                 UPLOAD YOUR<br /><span style={{ color:'#FF7A29' }}>TRIAL VIDEO</span>
@@ -132,7 +143,7 @@ export function Phase1VideoUpload() {
               <p style={{ color:'rgba(255,255,255,0.45)', fontSize:13, lineHeight:1.6, maxWidth:460 }}>Your video is your ticket to the ground trials. Make every second count.</p>
             </div>
             {/* Deadline badge */}
-            <div style={{ display:'flex', alignItems:'center', gap:8, background:'rgba(239,68,68,0.1)', border:'1px solid rgba(239,68,68,0.4)', padding:'10px 18px', borderRadius:12, animation:'pulseDanger 2s ease-in-out infinite', flexShrink:0 }}>
+            <div style={{ display:'flex', alignItems:'center', gap:8, background:'rgba(239,68,68,0.1)', border:'1px solid rgba(239,68,68,0.4)', padding:'10px 16px', borderRadius:12, animation:'pulseDanger 2s ease-in-out infinite', flexShrink:0 }}>
               <span style={{ fontSize:14 }}>⚠️</span>
               <div>
                 <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:12, color:'#EF4444', letterSpacing:'.1em' }}>7 DAYS REMAINING</div>
@@ -142,7 +153,7 @@ export function Phase1VideoUpload() {
           </div>
 
           {/* Player summary bar */}
-          <div style={{ display:'flex', gap:10, flexWrap:'wrap', marginTop:24 }}>
+          <div style={{ display:'flex', gap:8, flexWrap:'wrap', marginTop:24 }}>
             {[
               { icon:'🏏', label:'Batsman', bg:'rgba(59,130,246,0.12)', border:'rgba(59,130,246,0.35)', color:'#60A5FA' },
               { icon:'📍', label:'Mumbai', bg:'rgba(255,122,41,0.1)', border:'rgba(255,122,41,0.35)', color:'#FF7A29' },
@@ -186,11 +197,11 @@ export function Phase1VideoUpload() {
             </div>
 
             {/* Sample uploaded state */}
-            <div style={{ marginTop:16, background:'#0A1727', border:'1px solid #22C55E', borderRadius:12, padding:'14px 18px', display:'flex', alignItems:'center', gap:14 }}>
+            <div style={{ marginTop:16, background:'#0A1727', border:'1px solid #22C55E', borderRadius:12, padding:'14px 16px', display:'flex', alignItems:'center', gap:14, flexWrap:'wrap' }}>
               <div style={{ width:40, height:40, background:'rgba(34,197,94,0.12)', border:'1px solid rgba(34,197,94,0.4)', borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', fontSize:18, flexShrink:0 }}>🎥</div>
               <div style={{ flex:1, minWidth:0 }}>
                 <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:13, color:'#22C55E', letterSpacing:'.02em', marginBottom:3 }}>✅ trial_video_final.mp4</div>
-                <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)', display:'flex', gap:12 }}>
+                <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)', display:'flex', gap:8, flexWrap:'wrap' }}>
                   <span>124 MB</span>
                   <span>·</span>
                   <span>1:47 duration</span>
@@ -198,18 +209,17 @@ export function Phase1VideoUpload() {
                   <span style={{ color:'#22C55E', fontWeight:700 }}>Ready to submit</span>
                 </div>
               </div>
-              {/* Progress bar */}
               <div style={{ width:40, height:40, borderRadius:'50%', border:'3px solid #22C55E', display:'flex', alignItems:'center', justifyContent:'center', fontSize:14, flexShrink:0 }}>✓</div>
             </div>
 
             {/* Format info */}
-            <div style={{ display:'flex', gap:10, marginTop:14, flexWrap:'wrap' }}>
+            <div className="format-chips">
               {[
                 { label:'Max Size', val:'500 MB' },
                 { label:'Max Duration', val:'2 min' },
                 { label:'Formats', val:'MP4, MOV, AVI' },
               ].map(f => (
-                <div key={f.label} style={{ flex:1, minWidth:100, background:'#060C18', border:'1px solid rgba(255,255,255,0.07)', borderRadius:12, padding:'10px 14px' }}>
+                <div key={f.label} className="format-chip">
                   <div style={{ fontSize:9, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.14em', color:'rgba(255,255,255,0.3)', marginBottom:3 }}>{f.label}</div>
                   <div style={{ fontSize:13, fontWeight:700, color:'#FF7A29' }}>{f.val}</div>
                 </div>
@@ -222,7 +232,6 @@ export function Phase1VideoUpload() {
             <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:10, letterSpacing:'.18em', color:'rgba(255,255,255,0.3)', marginBottom:14, textTransform:'uppercase' }}>What Scouts Look For</div>
 
             <div style={{ background:'#0A1727', border:'1px solid rgba(255,255,255,0.08)', borderRadius:12, padding:'0 0 4px' }}>
-              {/* Heading */}
               <div style={{ borderLeft:'4px solid #FF7A29', padding:'16px 20px', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
                 <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, color:'#FF7A29', letterSpacing:'.06em', textTransform:'uppercase' }}>Role-Specific Guidelines</div>
                 <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)', marginTop:2 }}>Follow your role requirements exactly for best scout scores</div>
@@ -275,9 +284,9 @@ export function Phase1VideoUpload() {
         </div>
 
         {/* ── FILMING TIPS ── */}
-        <div style={{ marginTop:36, background:'#0A1727', border:'1px solid rgba(255,255,255,0.08)', borderRadius:12, padding:'24px 28px' }}>
+        <div style={{ marginTop:36, background:'#0A1727', border:'1px solid rgba(255,255,255,0.08)', borderRadius:12, padding:'24px 20px' }}>
           <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:12, letterSpacing:'.16em', color:'rgba(255,255,255,0.4)', marginBottom:16, textTransform:'uppercase' }}>📹 Filming Tips</div>
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(260px,1fr))', gap:0 }}>
+          <div className="filming-grid">
             {[
               { ok:true,  tip:'Good natural light or indoor stadium lighting' },
               { ok:true,  tip:'Camera at stumps height, side-on angle for batting/bowling' },
@@ -295,15 +304,15 @@ export function Phase1VideoUpload() {
       </div>
 
       {/* ── STICKY BOTTOM BANNER ── */}
-      <div style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:500, background:'rgba(4,10,20,0.98)', backdropFilter:'blur(20px)', borderTop:'2px solid #FF7A29', padding:'12px 20px' }}>
+      <div style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:500, background:'rgba(4,10,20,0.98)', backdropFilter:'blur(20px)', borderTop:'2px solid #FF7A29', padding:`12px 16px calc(12px + env(safe-area-inset-bottom))` }}>
         <div style={{ maxWidth:1140, margin:'0 auto', display:'flex', alignItems:'center', justifyContent:'space-between', gap:16, flexWrap:'wrap' }}>
-          <div style={{ display:'flex', alignItems:'flex-start', gap:10 }}>
+          <div style={{ display:'flex', alignItems:'flex-start', gap:10, flex:1, minWidth:0 }}>
             <span style={{ fontSize:16, flexShrink:0, marginTop:1 }}>⚠️</span>
-            <span style={{ fontSize:12, color:'rgba(255,255,255,0.6)', lineHeight:1.5, maxWidth:560 }}>
-              <strong style={{ color:'#FF7A29', fontFamily:'Montserrat,sans-serif', letterSpacing:'.04em' }}>VIDEO MUST BE UPLOADED WITHIN 7 DAYS OF PAYMENT.</strong> Late submissions will not be reviewed by scouts.
+            <span style={{ fontSize:12, color:'rgba(255,255,255,0.6)', lineHeight:1.5 }}>
+              <strong style={{ color:'#FF7A29', fontFamily:'Montserrat,sans-serif', letterSpacing:'.04em' }}>VIDEO MUST BE UPLOADED WITHIN 7 DAYS.</strong> Late submissions will not be reviewed.
             </span>
           </div>
-          <button className="btn-primary" style={{ padding:'13px 28px', fontSize:13, whiteSpace:'nowrap', flexShrink:0 }}>
+          <button className="btn-primary" style={{ padding:'13px 24px', fontSize:13, whiteSpace:'nowrap', flexShrink:0, width:'100%', maxWidth:200 }}>
             SUBMIT VIDEO →
           </button>
         </div>

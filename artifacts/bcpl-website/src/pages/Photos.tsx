@@ -33,6 +33,9 @@ body { background:#060E1C; }
         .float-reg-btn:hover { opacity:.9; transform:translateY(-2px); }
         @keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4)} 50%{box-shadow:0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0)} }
         .float-reg-pulse { animation:floatPulse 2.5s ease-in-out infinite; }
+        @media(max-width:1023px){ .float-reg-btn { display:none; } }
+        .photo-masonry { columns:2 160px; column-gap:12px; }
+        @media(min-width:640px){ .photo-masonry { columns:3 200px; column-gap:16px; } }
 `;
 
 const GRADIENTS = [
@@ -199,7 +202,7 @@ function Footer() {
 
 function MobileStickyCTA() {
   return (
-    <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',padding:'10px 16px 18px',gap:10}}>
+    <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',padding:'10px 16px calc(16px + env(safe-area-inset-bottom))',gap:10}}>
       <button className="btn-fire" style={{flex:2,height:52,fontSize:15}}>Register ₹299 →</button>
       <button className="btn-wa" style={{flex:1,height:52,fontSize:14}}>💬 WhatsApp</button>
     </div>
@@ -275,7 +278,7 @@ export function Photos() {
       {/* MASONRY GRID */}
       <section style={{position:'relative',zIndex:1,padding:'20px 0 60px'}}>
         <div className="wrap">
-          <div style={{columns:'2 200px',columnGap:16}}>
+          <div className="photo-masonry">
             {shown.map((p,i)=>{
               const h = HEIGHTS[i % HEIGHTS.length];
               const g = GRADIENTS[i % GRADIENTS.length];

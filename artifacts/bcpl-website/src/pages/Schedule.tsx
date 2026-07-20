@@ -3,10 +3,11 @@ import React from 'react';
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-.wrap{max-width:1280px;margin:0 auto;padding:0 20px;}
+.wrap{max-width:1280px;margin:0 auto;padding:0 16px;}
 .desk-nav{display:none;align-items:center;gap:22px;}
 .ham-btn{display:flex;}
 .bot-cta{display:flex;}
+@media(min-width:640px){.wrap{padding:0 24px}}
 @media(min-width:768px){.wrap{padding:0 32px}}
 @media(min-width:1024px){.desk-nav{display:flex!important;}.ham-btn{display:none!important;}.bot-cta{display:none!important;}}
 .btn-fire{background:linear-gradient(135deg,#FF7A29 0%,#E8611A 60%,#C94E0E 100%);border:none;border-radius:14px;color:#fff;font-family:Montserrat,sans-serif;font-weight:800;cursor:pointer;box-shadow:0 8px 28px rgba(255,122,41,0.45),inset 0 1px 0 rgba(255,255,255,0.2);transition:transform 0.15s,box-shadow 0.2s;letter-spacing:0.02em;animation:pulseGlow 3s ease-in-out infinite;}
@@ -21,6 +22,7 @@ const CSS = `
 .filter-tab{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;color:rgba(255,255,255,0.5);font-family:Montserrat,sans-serif;font-weight:700;font-size:12px;padding:8px 18px;cursor:pointer;transition:all 0.2s;letter-spacing:0.06em;}
 .filter-tab.active{background:rgba(255,122,41,0.15);border-color:rgba(255,122,41,0.5);color:#FF7A29;}
 .filter-tab:hover:not(.active){background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.8);}
+.team-select{background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.1);border-radius:12px;color:#F8F4EE;padding:10px 16px;font-family:Inter,sans-serif;fontSize:14px;outline:none;cursor:pointer;appearance:none;-webkit-appearance:none;width:100%;max-width:320px;transition:all 0.25s;}
 @keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 @keyframes pulseGlow{0%,100%{box-shadow:0 0 16px rgba(255,122,41,0.4)}50%{box-shadow:0 0 36px rgba(255,122,41,0.8),0 0 60px rgba(255,122,41,0.3)}}
 @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
@@ -29,11 +31,19 @@ const CSS = `
 @keyframes floatParticle{0%{transform:translateY(0) rotate(0deg);opacity:0.4}50%{opacity:0.8}100%{transform:translateY(-80px) rotate(180deg);opacity:0}}
 @keyframes fadeSlide{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 @keyframes borderGlow{0%,100%{border-color:rgba(255,122,41,0.3)}50%{border-color:rgba(255,122,41,0.8)}}
-        /* float-reg-btn */
-        .float-reg-btn { position:fixed; bottom:28px; right:28px; z-index:9999; background:linear-gradient(135deg,#FF7A29,#D95E10); border:none; border-radius:12px; color:#fff; font-family:Montserrat,sans-serif; font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:14px 22px; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(255,122,41,0.45); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition:opacity .2s,transform .15s; }
-        .float-reg-btn:hover { opacity:.9; transform:translateY(-2px); }
-        @keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4)} 50%{box-shadow:0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0)} }
-        .float-reg-pulse { animation:floatPulse 2.5s ease-in-out infinite; }
+/* float-reg-btn */
+.float-reg-btn { position:fixed; bottom:28px; right:28px; z-index:9999; background:linear-gradient(135deg,#FF7A29,#D95E10); border:none; border-radius:12px; color:#fff; font-family:Montserrat,sans-serif; font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:14px 22px; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(255,122,41,0.45); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition:opacity .2s,transform .15s; }
+.float-reg-btn:hover { opacity:.9; transform:translateY(-2px); }
+@keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4)} 50%{box-shadow:0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0)} }
+.float-reg-pulse { animation:floatPulse 2.5s ease-in-out infinite; }
+
+/* ── MOBILE FIXES ── */
+@media(max-width:639px){
+  .float-reg-btn { bottom:80px; right:16px; padding:12px 16px; font-size:12px; }
+  .match-row-inner { flex-wrap:wrap; gap:8px; }
+  .match-date-box { width:56px!important; height:62px!important; }
+  .match-date-day { font-size:22px!important; }
+}
 `;
 
 const particles = [
@@ -79,6 +89,21 @@ function AnnouncementBar() {
   );
 }
 
+const ROUTE_MAP: Record<string,string> = {
+  'Home':'/', 'HOME':'/',
+  '🏠 Home':'/', 'Match Center':'/match-center', 'MATCH CENTER':'/match-center',
+  '🔴 Match Center':'/match-center',
+  'Teams':'/teams', 'TEAMS':'/teams', '🏏 Teams':'/teams',
+  'Sponsors':'/sponsors', 'SPONSORS':'/sponsors', '🤝 Sponsors':'/sponsors',
+  'Photos':'/photos', 'PHOTOS':'/photos', '📷 Photos':'/photos',
+  'Videos':'/videos', 'VIDEOS':'/videos', '▶️ Videos':'/videos',
+  'About':'/about', 'ABOUT':'/about', 'ℹ️ About':'/about',
+  'FAQ':'/faq', '❓ FAQ':'/faq',
+  'Contact':'/contact', 'CONTACT':'/contact', '✉️ Contact':'/contact',
+  'Schedule':'/schedule',
+  'Points Table':'/points-table',
+};
+
 function Navbar() {
   const [open, setOpen] = React.useState(false);
   const links = [['Home','#'],['Match Center','#'],['Teams','#'],['Sponsors','#'],['Photos','#'],['Videos','#'],['About','#'],['FAQ','#'],['Contact','#']];
@@ -106,10 +131,10 @@ function Navbar() {
       </nav>
       {open && (
         <div style={{position:'fixed',inset:0,background:'#06101E',zIndex:300,display:'flex',flexDirection:'column',padding:'80px 28px 40px',overflowY:'auto'}}>
-          <button onClick={()=>{ setOpen(false); window.location.assign(ROUTE_MAP[l]||'/'); }} style={{position:'absolute',top:18,right:18,background:'none',border:'none',color:'rgba(255,255,255,0.5)',fontSize:28,cursor:'pointer',lineHeight:1}}>✕</button>
+          <button onClick={()=>setOpen(false)} style={{position:'absolute',top:18,right:18,background:'none',border:'none',color:'rgba(255,255,255,0.5)',fontSize:28,cursor:'pointer',lineHeight:1}}>✕</button>
           <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,marginBottom:32}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff'}}>T20</span></div>
           {[['🏠 Home','#'],['🔴 Match Center','#'],['🏏 Teams','#'],['🤝 Sponsors','#'],['📷 Photos','#'],['▶️ Videos','#'],['ℹ️ About','#'],['❓ FAQ','#'],['✉️ Contact','#']].map(([l,h])=>(
-            <a key={l} href={h} onClick={()=>{ setOpen(false); window.location.assign(ROUTE_MAP[l]||'/'); }} style={{color:'rgba(255,255,255,0.85)',fontWeight:700,fontSize:18,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,0.07)'}}>{l}</a>
+            <a key={l} href={h} onClick={()=>setOpen(false)} style={{color:'rgba(255,255,255,0.85)',fontWeight:700,fontSize:18,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,0.07)',display:'block'}}>{l}</a>
           ))}
           <button className="btn-fire" style={{marginTop:32,height:54,fontSize:16,borderRadius:14,width:'100%'}}>📝 Register for ₹299 →</button>
         </div>
@@ -215,21 +240,6 @@ function StatusPill({status}: {status: MatchStatus}) {
   );
 }
 
-
-const ROUTE_MAP: Record<string,string> = {
-  'Home':'/', 'HOME':'/',
-  'Match Center':'/match-center', 'MATCH CENTER':'/match-center',
-  'Teams':'/teams', 'TEAMS':'/teams',
-  'Sponsors':'/sponsors', 'SPONSORS':'/sponsors',
-  'Photos':'/photos', 'PHOTOS':'/photos',
-  'Videos':'/videos', 'VIDEOS':'/videos',
-  'About':'/about', 'ABOUT':'/about',
-  'FAQ':'/faq',
-  'Contact':'/contact', 'CONTACT':'/contact',
-  'Schedule':'/schedule',
-  'Points Table':'/points-table',
-};
-
 export function Schedule() {
   const [activeTab, setActiveTab] = React.useState<'All'|'Upcoming'|'Completed'|'Live'>('All');
   const [teamFilter, setTeamFilter] = React.useState('All Teams');
@@ -259,15 +269,15 @@ export function Schedule() {
         <Navbar/>
 
         {/* HERO */}
-        <div style={{padding:'60px 0 48px',textAlign:'center',position:'relative'}}>
+        <div style={{padding:'clamp(40px,6vw,60px) 0 clamp(28px,4vw,48px)',textAlign:'center',position:'relative'}}>
           <div className="wrap">
             <div style={{marginBottom:16,display:'flex',justifyContent:'center'}}>
               <span className="tag-pill">📅 SEASON 5 FIXTURES</span>
             </div>
-            <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(36px,6vw,72px)',lineHeight:1.05,marginBottom:12,color:'#fff'}}>
+            <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(32px,6vw,72px)',lineHeight:1.05,marginBottom:12,color:'#fff'}}>
               EVERY MATCH,
             </h1>
-            <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(36px,6vw,72px)',lineHeight:1.05,marginBottom:24}}>
+            <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(32px,6vw,72px)',lineHeight:1.05,marginBottom:24}}>
               <span className="shimmer-gold">EVERY MOMENT.</span>
             </h1>
             <p style={{color:'rgba(255,255,255,0.45)',fontSize:15,fontFamily:'Inter,sans-serif',maxWidth:520,margin:'0 auto'}}>Full fixture list for BCPL T20 Season 5 · 10 teams · 75 cities · One champion</p>
@@ -277,7 +287,7 @@ export function Schedule() {
         <div className="wrap" style={{paddingBottom:100}}>
 
           {/* FILTERS */}
-          <div className="glass-card" style={{padding:'20px 24px',marginBottom:32}}>
+          <div className="glass-card" style={{padding:'20px 20px',marginBottom:32}}>
             <div style={{display:'flex',flexWrap:'wrap',gap:8,marginBottom:16}}>
               {(['All','Upcoming','Completed','Live'] as const).map(tab=>(
                 <button key={tab} className={`filter-tab${activeTab===tab?' active':''}`} onClick={()=>setActiveTab(tab)}>{tab}</button>
@@ -287,7 +297,7 @@ export function Schedule() {
               <select
                 value={teamFilter}
                 onChange={e=>setTeamFilter(e.target.value)}
-                style={{background:'rgba(255,255,255,0.04)',border:'1.5px solid rgba(255,255,255,0.1)',borderRadius:12,color:'#F8F4EE',padding:'10px 16px',fontFamily:'Inter,sans-serif',fontSize:14,outline:'none',cursor:'pointer',appearance:'none',minWidth:200,transition:'all 0.25s'}}
+                className="team-select"
               >
                 {TEAMS.map(t=><option key={t} value={t} style={{background:'#0A1628'}}>{t}</option>)}
               </select>
@@ -313,7 +323,7 @@ export function Schedule() {
                     key={i}
                     className="glass-card match-card"
                     style={{
-                      padding:'18px 20px',
+                      padding:'16px 16px',
                       border: m.final ? '1px solid rgba(232,178,61,0.4)' : m.marquee ? '1px solid rgba(232,178,61,0.5)' : '1px solid rgba(255,255,255,0.09)',
                       background: m.final ? 'linear-gradient(135deg,rgba(232,178,61,0.1),rgba(15,34,71,0.9))' : m.marquee ? 'linear-gradient(135deg,rgba(232,178,61,0.07),rgba(15,34,71,0.9))' : undefined,
                       animation:`fadeSlide 0.3s ${i*0.05}s ease both`,
@@ -334,15 +344,18 @@ export function Schedule() {
                         <span style={{background:'rgba(232,178,61,0.12)',border:'1px solid rgba(232,178,61,0.3)',borderRadius:6,padding:'2px 10px',fontSize:10,fontFamily:'Montserrat,sans-serif',fontWeight:700,color:'#E8B23D',letterSpacing:'0.1em'}}>⭐ MARQUEE MATCH</span>
                       </div>
                     )}
-                    <div style={{display:'flex',alignItems:'center',gap:12,flexWrap:'wrap'}}>
+                    <div className="match-row-inner" style={{display:'flex',alignItems:'center',gap:12,flexWrap:'wrap'}}>
                       {/* Date box */}
-                      <div style={{
-                        width:64,height:70,borderRadius:12,flexShrink:0,
-                        background: m.final ? 'linear-gradient(135deg,#E8B23D,#C4922A)' : 'linear-gradient(135deg,rgba(255,122,41,0.25),rgba(232,97,26,0.15))',
-                        border: m.final ? 'none' : '1px solid rgba(255,122,41,0.2)',
-                        display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:1
-                      }}>
-                        <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:26,color: m.final ? '#060E1C' :'#FF7A29',lineHeight:1}}>{m.day}</div>
+                      <div
+                        className="match-date-box"
+                        style={{
+                          width:64,height:70,borderRadius:12,flexShrink:0,
+                          background: m.final ? 'linear-gradient(135deg,#E8B23D,#C4922A)' : 'linear-gradient(135deg,rgba(255,122,41,0.25),rgba(232,97,26,0.15))',
+                          border: m.final ? 'none' : '1px solid rgba(255,122,41,0.2)',
+                          display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:1
+                        }}
+                      >
+                        <div className="match-date-day" style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:26,color: m.final ? '#060E1C' :'#FF7A29',lineHeight:1}}>{m.day}</div>
                         <div style={{fontSize:11,fontFamily:'Montserrat,sans-serif',fontWeight:700,color: m.final ? 'rgba(6,14,28,0.7)' : 'rgba(255,122,41,0.7)',letterSpacing:'0.06em'}}>{m.month}</div>
                         <div style={{fontSize:10,fontFamily:'Inter,sans-serif',color: m.final ? 'rgba(6,14,28,0.5)' : 'rgba(255,255,255,0.3)'}}>{m.weekday}</div>
                       </div>
@@ -396,6 +409,8 @@ export function Schedule() {
           <button className="btn-wa" style={{flex:1,height:52,fontSize:14,borderRadius:14}}>💬 WhatsApp</button>
         </div>
       </div>
+      {/* ── FLOATING REGISTER BUTTON ── */}
+      <a className="float-reg-btn float-reg-pulse" href="/register" style={{textDecoration:"none"}}>🏏 REGISTER NOW →</a>
     </div>
   );
 }

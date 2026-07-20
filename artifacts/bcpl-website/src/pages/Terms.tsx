@@ -37,10 +37,10 @@ function Navbar({open,setOpen}:{open:boolean,setOpen:(v:boolean)=>void}) {
       </nav>
       {open&&(
         <div style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'#06101E',zIndex:199,display:'flex',flexDirection:'column',padding:'80px 24px 40px',overflowY:'auto'}}>
-          <button onClick={()=>{ setOpen(false); window.location.assign(ROUTE_MAP[l]||'/'); }} style={{position:'absolute',top:16,right:16,background:'none',border:'none',color:'rgba(255,255,255,0.5)',fontSize:28,cursor:'pointer',lineHeight:1}}>✕</button>
+          <button onClick={()=>setOpen(false)} style={{position:'absolute',top:16,right:16,background:'none',border:'none',color:'rgba(255,255,255,0.5)',fontSize:28,cursor:'pointer',lineHeight:1}}>✕</button>
           <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,marginBottom:32}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff',marginLeft:3}}>T20</span></div>
           {links.map(([l])=>(
-            <a key={l} href="#" onClick={()=>{ setOpen(false); window.location.assign(ROUTE_MAP[l]||'/'); }} style={{color:'rgba(255,255,255,0.85)',fontWeight:700,fontSize:18,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'13px 0',borderBottom:'1px solid rgba(255,255,255,0.07)',display:'block'}}>{l}</a>
+            <a key={l} href="#" onClick={()=>setOpen(false)} style={{color:'rgba(255,255,255,0.85)',fontWeight:700,fontSize:18,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'13px 0',borderBottom:'1px solid rgba(255,255,255,0.07)',display:'flex',alignItems:'center',minHeight:44}}>{l}</a>
           ))}
           <button className="btn-fire" style={{marginTop:28,height:52,fontSize:16,width:'100%'}}>📝 Register for ₹299 →</button>
         </div>
@@ -53,7 +53,7 @@ function Footer() {
   return (
     <footer style={{background:'#040C18',borderTop:'1px solid rgba(255,255,255,0.05)',padding:'48px 0 32px'}}>
       <div className="wrap">
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:32,marginBottom:32}}>
+        <div className="footer-grid" style={{display:'grid',gap:32,marginBottom:32}}>
           <div>
             <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,marginBottom:8}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff',marginLeft:4}}>T20</span></div>
             <div style={{fontSize:11,color:'rgba(255,122,41,0.7)',fontWeight:700,letterSpacing:'0.08em',marginBottom:10}}>SEASON 5 · 2025</div>
@@ -97,39 +97,31 @@ const OrangeDot = () => (
   <span style={{display:'inline-block',width:6,height:6,borderRadius:'50%',background:'#FF7A29',marginRight:10,flexShrink:0,marginTop:7}}/>
 );
 
-
-const ROUTE_MAP: Record<string,string> = {
-  'Home':'/', 'HOME':'/',
-  'Match Center':'/match-center', 'MATCH CENTER':'/match-center',
-  'Teams':'/teams', 'TEAMS':'/teams',
-  'Sponsors':'/sponsors', 'SPONSORS':'/sponsors',
-  'Photos':'/photos', 'PHOTOS':'/photos',
-  'Videos':'/videos', 'VIDEOS':'/videos',
-  'About':'/about', 'ABOUT':'/about',
-  'FAQ':'/faq',
-  'Contact':'/contact', 'CONTACT':'/contact',
-  'Schedule':'/schedule',
-  'Points Table':'/points-table',
-};
-
 export function Terms() {
   const [open,setOpen]=React.useState(false);
 
   const css = `
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap');
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    .wrap{max-width:1280px;margin:0 auto;padding:0 20px;}
+    .wrap{max-width:1280px;margin:0 auto;padding:0 16px;}
     .desk-nav{display:none;align-items:center;gap:22px;}
     .ham-btn{display:flex;}
     .bot-cta{display:flex;}
+    @media(min-width:640px){.wrap{padding:0 24px}}
     @media(min-width:768px){.wrap{padding:0 32px}}
     @media(min-width:1024px){.desk-nav{display:flex!important;}.ham-btn{display:none!important;}.bot-cta{display:none!important;}}
-    .btn-fire{background:linear-gradient(135deg,#FF7A29 0%,#E8611A 60%,#C94E0E 100%);border:none;border-radius:14px;color:#fff;font-family:Montserrat,sans-serif;font-weight:800;cursor:pointer;box-shadow:0 8px 28px rgba(255,122,41,0.45),inset 0 1px 0 rgba(255,255,255,0.2);transition:transform 0.15s,box-shadow 0.2s;letter-spacing:0.02em;animation:pulseGlow 3s ease-in-out infinite;display:inline-flex;align-items:center;justify-content:center;}
+    .btn-fire{background:linear-gradient(135deg,#FF7A29 0%,#E8611A 60%,#C94E0E 100%);border:none;border-radius:14px;color:#fff;font-family:Montserrat,sans-serif;font-weight:800;cursor:pointer;box-shadow:0 8px 28px rgba(255,122,41,0.45),inset 0 1px 0 rgba(255,255,255,0.2);transition:transform 0.15s,box-shadow 0.2s;letter-spacing:0.02em;animation:pulseGlow 3s ease-in-out infinite;display:inline-flex;align-items:center;justify-content:center;min-height:44px;}
     .btn-fire:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(255,122,41,0.6);}
-    .btn-wa{background:linear-gradient(135deg,#25D366,#1BA851);border:none;border-radius:14px;color:#fff;font-weight:700;cursor:pointer;font-family:Montserrat,sans-serif;transition:transform 0.15s;display:inline-flex;align-items:center;justify-content:center;}
+    .btn-wa{background:linear-gradient(135deg,#25D366,#1BA851);border:none;border-radius:14px;color:#fff;font-weight:700;cursor:pointer;font-family:Montserrat,sans-serif;transition:transform 0.15s;display:inline-flex;align-items:center;justify-content:center;min-height:44px;}
     .glass-card{background:linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85));backdrop-filter:blur(32px);border:1px solid rgba(255,255,255,0.09);border-radius:20px;box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06);}
     .shimmer-gold{background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D,#F5C842,#E8B23D);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 3s linear infinite;}
     .tag-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,122,41,0.12);border:1px solid rgba(255,122,41,0.3);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:700;font-family:Montserrat,sans-serif;color:#FF7A29;letter-spacing:0.1em;}
+    .footer-grid{grid-template-columns:1fr!important;}
+    @media(min-width:640px){.footer-grid{grid-template-columns:1fr 1fr!important;}}
+    .float-reg-btn{position:fixed;bottom:28px;right:28px;z-index:9999;background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:12px;color:#fff;font-family:Montserrat,sans-serif;font-weight:900;font-size:13px;letter-spacing:.06em;cursor:pointer;padding:14px 22px;text-transform:uppercase;text-decoration:none;display:flex;align-items:center;gap:8px;box-shadow:0 8px 32px rgba(255,122,41,0.45);clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%);transition:opacity .2s,transform .15s;}
+    .float-reg-btn:hover{opacity:.9;transform:translateY(-2px);}
+    .float-reg-pulse{animation:floatPulse 2.5s ease-in-out infinite;}
+    @media(max-width:1023px){.float-reg-btn{display:none!important;}}
     @keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
     @keyframes pulseGlow{0%,100%{box-shadow:0 0 16px rgba(255,122,41,0.4)}50%{box-shadow:0 0 36px rgba(255,122,41,0.8),0 0 60px rgba(255,122,41,0.3)}}
     @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
@@ -137,6 +129,7 @@ export function Terms() {
     @keyframes scanPulse{0%,100%{opacity:0.03}50%{opacity:0.08}}
     @keyframes fadeSlide{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
     @keyframes borderGlow{0%,100%{border-color:rgba(255,122,41,0.3)}50%{border-color:rgba(255,122,41,0.8)}}
+    @keyframes floatPulse{0%,100%{box-shadow:0 8px 32px rgba(255,122,41,0.45)}50%{box-shadow:0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0)}}
   `;
 
   const particles=[
@@ -210,7 +203,7 @@ export function Terms() {
   ];
 
   return (
-    <div style={{background:'#060E1C',minHeight:'100vh',fontFamily:'Inter,sans-serif',color:'#F8F4EE',paddingBottom:80}}>
+    <div style={{background:'#060E1C',minHeight:'100vh',fontFamily:'Inter,sans-serif',color:'#F8F4EE',paddingBottom:80,overflowX:'hidden'}}>
       <style>{css}</style>
       <div style={{position:'fixed',inset:0,zIndex:0,pointerEvents:'none',overflow:'hidden'}}>
         <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 80% 60% at 20% 40%, rgba(255,122,41,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 20%, rgba(30,64,175,0.12) 0%, transparent 60%)'}}/>
@@ -234,15 +227,15 @@ export function Terms() {
         <AnnBar/>
         <Navbar open={open} setOpen={setOpen}/>
 
-        <section style={{padding:'72px 0 40px',textAlign:'center',animation:'fadeSlide 0.6s ease both'}}>
+        <section style={{padding:'clamp(40px,8vw,72px) 0 40px',textAlign:'center',animation:'fadeSlide 0.6s ease both'}}>
           <div className="wrap">
             <div className="tag-pill" style={{marginBottom:20}}>⚖️ LEGAL</div>
-            <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(36px,7vw,72px)',lineHeight:1.05,marginBottom:8}}>
+            <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(32px,7vw,72px)',lineHeight:1.05,marginBottom:8}}>
               <span style={{color:'#fff',display:'block'}}>TERMS &</span>
               <span className="shimmer-gold" style={{display:'block'}}>CONDITIONS.</span>
             </h1>
             <p style={{color:'rgba(255,255,255,0.5)',fontSize:13,fontWeight:600,letterSpacing:'0.05em',marginTop:16,fontFamily:'Montserrat,sans-serif'}}>Last updated: January 15, 2025</p>
-            <p style={{color:'rgba(255,255,255,0.65)',fontSize:16,lineHeight:1.7,maxWidth:600,margin:'16px auto 0'}}>
+            <p style={{color:'rgba(255,255,255,0.65)',fontSize:'clamp(14px,2vw,16px)',lineHeight:1.7,maxWidth:600,margin:'16px auto 0'}}>
               Please read these Terms & Conditions carefully before registering for BCPL T20 Season 5. These terms govern your participation in the league.
             </p>
           </div>
@@ -250,25 +243,24 @@ export function Terms() {
 
         <div className="wrap" style={{maxWidth:860,margin:'0 auto',paddingBottom:40}}>
 
-          {/* Quick nav pills */}
           <div style={{display:'flex',flexWrap:'wrap',gap:8,marginBottom:24,animation:'fadeSlide 0.5s ease 0.1s both'}}>
             {sections.map(s=>(
-              <span key={s.n} style={{background:'rgba(255,122,41,0.1)',border:'1px solid rgba(255,122,41,0.25)',borderRadius:8,padding:'5px 12px',fontSize:12,color:'rgba(255,255,255,0.7)',cursor:'pointer',fontFamily:'Montserrat,sans-serif',fontWeight:600}}>
+              <span key={s.n} style={{background:'rgba(255,122,41,0.1)',border:'1px solid rgba(255,122,41,0.25)',borderRadius:8,padding:'5px 12px',fontSize:12,color:'rgba(255,255,255,0.7)',cursor:'pointer',fontFamily:'Montserrat,sans-serif',fontWeight:600,minHeight:36,display:'inline-flex',alignItems:'center'}}>
                 {s.n}. {s.title}
               </span>
             ))}
           </div>
 
           {sections.map((s,idx)=>(
-            <div key={s.n} className="glass-card" style={{padding:'32px 36px',marginBottom:20,animation:`fadeSlide 0.5s ease ${0.1+idx*0.07}s both`}}>
-              <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18}}>
+            <div key={s.n} className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:20,animation:`fadeSlide 0.5s ease ${0.1+idx*0.07}s both`}}>
+              <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18,flexWrap:'wrap'}}>
                 <div style={{width:32,height:32,borderRadius:'50%',background:'linear-gradient(135deg,rgba(255,122,41,0.3),rgba(232,178,61,0.2))',border:'1px solid rgba(255,122,41,0.4)',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:13,color:'#FF7A29',flexShrink:0}}>{s.n}</div>
                 <span style={{fontSize:22}}>{s.icon}</span>
-                <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:20,color:'#fff'}}>{s.title}</h2>
+                <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>{s.title}</h2>
               </div>
               <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:10}}>
                 {s.items.map((item,i)=>(
-                  <li key={i} style={{display:'flex',alignItems:'flex-start',color:'rgba(255,255,255,0.75)',fontSize:14,lineHeight:1.8}}>
+                  <li key={i} style={{display:'flex',alignItems:'flex-start',color:'rgba(255,255,255,0.75)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.8}}>
                     <OrangeDot/>{item}
                   </li>
                 ))}
@@ -276,35 +268,28 @@ export function Terms() {
             </div>
           ))}
 
-          <div style={{background:'rgba(255,122,41,0.08)',border:'1px solid rgba(255,122,41,0.4)',borderLeft:'3px solid #FF7A29',borderRadius:16,padding:'20px 24px',marginBottom:20,animation:'borderGlow 3s ease-in-out infinite'}}>
+          <div style={{background:'rgba(255,122,41,0.08)',border:'1px solid rgba(255,122,41,0.4)',borderLeft:'3px solid #FF7A29',borderRadius:16,padding:'20px clamp(16px,4vw,24px)',marginBottom:20,animation:'borderGlow 3s ease-in-out infinite'}}>
             <div style={{display:'flex',gap:12,alignItems:'flex-start'}}>
               <span style={{fontSize:24,flexShrink:0}}>📬</span>
               <div>
                 <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#FF7A29',marginBottom:6}}>Questions About These Terms?</div>
-                <p style={{color:'rgba(255,255,255,0.85)',fontSize:14,lineHeight:1.7}}>
+                <p style={{color:'rgba(255,255,255,0.85)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
                   Contact our legal team at <strong style={{color:'#E8B23D'}}>legal@bcpl-t20.com</strong> or write to: Kriparti Playing11 Pvt. Ltd., New Delhi, India. We aim to respond within 5 business days.
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="glass-card" style={{padding:'32px',textAlign:'center'}}>
-            <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,marginBottom:8}}>Ready to Join BCPL T20?</div>
+          <div className="glass-card" style={{padding:'clamp(20px,4vw,32px)',textAlign:'center'}}>
+            <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(18px,3vw,22px)',marginBottom:8}}>Ready to Join BCPL T20?</div>
             <p style={{color:'rgba(255,255,255,0.6)',fontSize:14,marginBottom:20}}>By registering, you accept these terms. See you on the field!</p>
-            <button className="btn-fire" style={{padding:'14px 36px',fontSize:16}}>Register for ₹299 →</button>
+            <button className="btn-fire" style={{padding:'14px 36px',fontSize:16,width:'100%',maxWidth:300}}>Register for ₹299 →</button>
           </div>
         </div>
 
         <Footer/>
       </div>
       <MobileCTA/>
-      <style>{`
-        .float-reg-btn { position:fixed; bottom:28px; right:28px; z-index:9999; background:linear-gradient(135deg,#FF7A29,#D95E10); border:none; border-radius:12px; color:#fff; font-family:Montserrat,sans-serif; font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:14px 22px; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(255,122,41,0.45); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition:opacity .2s,transform .15s; }
-        .float-reg-btn:hover { opacity:.9; transform:translateY(-2px); }
-        @keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(255,122,41,0.45)} 50%{box-shadow:0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0)} }
-        .float-reg-pulse { animation:floatPulse 2.5s ease-in-out infinite; }
-      `}</style>
-      {/* float reg */}
       <a className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>🏏 REGISTER NOW →</a>
     </div>
   );

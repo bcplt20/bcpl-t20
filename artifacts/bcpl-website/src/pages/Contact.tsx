@@ -146,7 +146,7 @@ function Footer() {
 
 function MobileStickyCTA() {
   return (
-    <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',padding:'10px 16px 18px',gap:10}}>
+    <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',padding:'10px 16px calc(16px + env(safe-area-inset-bottom))',gap:10}}>
       <button className="btn-fire" style={{flex:2,height:52,fontSize:15}}>Register ₹299 →</button>
       <button className="btn-wa" style={{flex:1,height:52,fontSize:14}}>💬 WhatsApp</button>
     </div>
@@ -257,9 +257,12 @@ export function Contact() {
         .float-reg-btn:hover { opacity:.9; transform:translateY(-2px); }
         @keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4)} 50%{box-shadow:0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0)} }
         .float-reg-pulse { animation:floatPulse 2.5s ease-in-out infinite; }
+        @media(max-width:1023px){ .float-reg-btn { display:none; } }
+        .form-name-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+        @media(max-width:600px){ .form-name-row { grid-template-columns:1fr; } }
       `}</style>
 
-            <div className="glass-card" style={{padding:'40px',animation:'fadeSlide 0.7s ease 0.2s both'}}>
+            <div className="glass-card" style={{padding:'clamp(20px,5vw,40px)',animation:'fadeSlide 0.7s ease 0.2s both'}}>
               <div className="tag-pill" style={{marginBottom:20}}>SEND A MESSAGE</div>
               <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:28,color:'#fff',marginBottom:8}}>Drop Us a Line</h2>
               <p style={{color:'rgba(255,255,255,0.5)',fontSize:14,marginBottom:32,lineHeight:1.6}}>Fill out the form and our team will get back to you within 24 hours.</p>
@@ -272,7 +275,7 @@ export function Contact() {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit}>
-                  <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16}}>
+                  <div className="form-name-row">
                     <div>
                       <label className="lbl">Full Name *</label>
                       <input className="inp" placeholder="Rahul Sharma" required value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))}/>

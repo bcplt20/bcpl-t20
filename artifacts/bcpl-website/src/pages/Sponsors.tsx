@@ -152,6 +152,7 @@ export function Sponsors() {
         .float-reg-btn:hover { opacity:.9; transform:translateY(-2px); }
         @keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4)} 50%{box-shadow:0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0)} }
         .float-reg-pulse { animation:floatPulse 2.5s ease-in-out infinite; }
+        @media(max-width:1023px){ .float-reg-btn { display:none; } }
       `}</style>
 
       {/* Ambient Background */}
@@ -327,7 +328,7 @@ export function Sponsors() {
         </section>
 
         {/* Mobile Sticky CTA */}
-        <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',padding:'10px 16px 18px',gap:10}}>
+        <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',padding:'10px 16px calc(16px + env(safe-area-inset-bottom))',gap:10}}>
           <button className="btn-fire" style={{flex:2,height:52,fontSize:14,borderRadius:14}}>Register ₹299 →</button>
           <button className="btn-wa" style={{flex:1,height:52,fontSize:13,borderRadius:14}}>💬 WhatsApp</button>
         </div>

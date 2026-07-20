@@ -40,10 +40,13 @@ export function AuctionSelected() {
         @media(min-width:1024px){.desk-nav{display:flex;align-items:center;gap:20px}}
         .ham-btn{display:flex;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
         @media(min-width:1024px){.ham-btn{display:none}}
-        .btn-gold{background:linear-gradient(135deg,#E8B23D,#C49A1E);border:none;border-radius:12px;color:#060C18;font-family:Montserrat,sans-serif;font-weight:900;letter-spacing:.06em;cursor:pointer;transition:all .2s;text-transform:uppercase}
+        .btn-gold{background:linear-gradient(135deg,#E8B23D,#C49A1E);border:none;border-radius:12px;color:#060C18;font-family:Montserrat,sans-serif;font-weight:900;letter-spacing:.06em;cursor:pointer;transition:all .2s;text-transform:uppercase;min-height:44px;display:inline-flex;align-items:center;justify-content:center;}
         .btn-gold:hover{filter:brightness(1.1);transform:translateY(-2px)}
-        .btn-outline{background:transparent;border:1px solid rgba(255,255,255,0.2);border-radius:12px;color:rgba(255,255,255,0.7);font-family:Montserrat,sans-serif;font-weight:700;cursor:pointer;transition:all .2s}
+        .btn-outline{background:transparent;border:1px solid rgba(255,255,255,0.2);border-radius:12px;color:rgba(255,255,255,0.7);font-family:Montserrat,sans-serif;font-weight:700;cursor:pointer;transition:all .2s;min-height:44px;display:inline-flex;align-items:center;justify-content:center;}
         .btn-outline:hover{border-color:#E8B23D;color:#E8B23D}
+        .cta-btn-group{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;}
+        .cta-btn-group .btn-gold,.cta-btn-group .btn-outline{flex:1 1 180px;max-width:260px;}
+        @media(max-width:480px){.cta-btn-group .btn-gold,.cta-btn-group .btn-outline{max-width:100%;}}
         .team-bid-card{background:#0A1727;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;transition:border-color .2s}
         .team-bid-card:hover{border-color:rgba(232,178,61,0.3)}
         @keyframes tickerScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
@@ -226,7 +229,7 @@ export function AuctionSelected() {
             <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:11, color:'rgba(255,255,255,0.35)', letterSpacing:'.14em', textTransform:'uppercase', marginBottom:8 }}>Season 5 · Franchise Auction</div>
             <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(18px,3vw,28px)', color:'#E8B23D', marginBottom:4, textTransform:'uppercase' }}>AUGUST 2026</div>
             <div style={{ fontFamily:'Inter,sans-serif', fontSize:14, color:'rgba(255,255,255,0.5)', marginBottom:20 }}>Exact date & venue to be announced via WhatsApp/Email</div>
-            <div style={{ display:'flex', justifyContent:'center', gap:12, flexWrap:'wrap' }}>
+            <div className="cta-btn-group">
               <button className="btn-gold" style={{ padding:'13px 28px', fontSize:13 }}>SET AUCTION REMINDER →</button>
               <button className="btn-outline" style={{ padding:'13px 24px', fontSize:13 }}>DOWNLOAD PLAYER PROFILE</button>
             </div>

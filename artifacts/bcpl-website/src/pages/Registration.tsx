@@ -89,7 +89,7 @@ export function Registration() {
   const NAV = ['Home','Match Center','Teams','Sponsors','Photos','Videos','About','FAQ','Contact'];
 
   return (
-    <div style={{ background:'#06101E', minHeight:'100vh', color:'#F0EDE8', fontFamily:"'Inter',sans-serif", overflowX:'hidden', paddingBottom:100 }}>
+    <div style={{ background:'#06101E', minHeight:'100vh', color:'#F0EDE8', fontFamily:"'Inter',sans-serif", overflowX:'hidden', paddingBottom:'calc(100px + env(safe-area-inset-bottom))' }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap');
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -104,7 +104,7 @@ export function Registration() {
         @keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 
         /* ── UTILITY ── */
-        .wrap{max-width:1200px;margin:0 auto;padding:0 20px}
+        .wrap{max-width:1200px;margin:0 auto;padding:0 16px}
         @media(min-width:768px){.wrap{padding:0 32px}}
 
         /* ── NAV RESPONSIVE ── */
@@ -175,6 +175,10 @@ export function Registration() {
         }
         .role-card.selected .corner-cut{background:var(--rc,#FF7A29)}
 
+        /* ── ROLES GRID ── */
+        .roles-grid{display:grid;grid-template-columns:1fr;gap:12px}
+        @media(min-width:480px){.roles-grid{grid-template-columns:repeat(2,1fr);gap:14px}}
+
         /* ── CITY CHIP ── */
         .city-chip{
           border:1px solid rgba(255,255,255,0.1);border-radius:12px;
@@ -185,25 +189,30 @@ export function Registration() {
         .city-chip.sel{border-color:#FF7A29;background:rgba(255,122,41,0.12);color:#FF7A29;font-weight:700}
 
         /* ── STEP INDICATOR ── */
+        .step-row{display:flex;align-items:center;overflow:hidden}
         .step-node{
-          width:32px;height:32px;border-radius:50%;
+          width:30px;height:30px;border-radius:50%;
           display:flex;align-items:center;justify-content:center;
-          font-family:Montserrat,sans-serif;font-weight:900;font-size:13px;
+          font-family:Montserrat,sans-serif;font-weight:900;font-size:12px;
           border:2px solid rgba(255,255,255,0.15);
           color:rgba(255,255,255,0.3);background:transparent;
           transition:all .3s;flex-shrink:0;
         }
+        @media(min-width:400px){.step-node{width:32px;height:32px;font-size:13px}}
         .step-node.done{background:#22C55E;border-color:#22C55E;color:#fff}
         .step-node.active{background:#FF7A29;border-color:#FF7A29;color:#fff;animation:pulseOrange 2s infinite}
-        .step-track{height:2px;flex:1;background:rgba(255,255,255,0.08);margin:0 4px;transition:background .4s}
+        .step-track{height:2px;flex:1;background:rgba(255,255,255,0.08);margin:0 4px;transition:background .4s;min-width:8px}
         .step-track.done{background:#22C55E}
         .step-track.active{background:linear-gradient(90deg,#22C55E,#FF7A29)}
+        .step-label{font-size:10px;color:rgba(255,255,255,0.4);font-weight:700;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;margin-left:8px;flex-shrink:0}
+        @media(max-width:360px){.step-label{display:none}}
 
         /* ── TICKET ── */
         .ticket{
           background:#0A1727;
           border:1px solid rgba(255,122,41,0.35);
           position:relative;
+          overflow:visible;
         }
         .ticket::before,.ticket::after{
           content:'';position:absolute;
@@ -217,6 +226,18 @@ export function Registration() {
           margin:0 20px;
         }
 
+        /* ── TICKET BODY GRID ── */
+        .ticket-info-grid{display:grid;grid-template-columns:1fr;gap:0}
+        @media(min-width:400px){.ticket-info-grid{grid-template-columns:1fr 1fr}}
+
+        /* ── WHAT YOU GET GRID ── */
+        .what-you-get-grid{display:grid;grid-template-columns:1fr;gap:6px}
+        @media(min-width:400px){.what-you-get-grid{grid-template-columns:1fr 1fr}}
+
+        /* ── PHASE 2 GRID ── */
+        .phase2-strip-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+        @media(min-width:600px){.phase2-strip-grid{grid-template-columns:1fr 1fr}}
+
         /* ── PHASE BADGE ── */
         .phase-badge{
           display:inline-block;padding:2px 10px;
@@ -228,6 +249,7 @@ export function Registration() {
         .step-enter{animation:stepIn .35s cubic-bezier(.34,1.56,.64,1) both}
 
         /* ── JOURNEY RAIL ── */
+        .journey-wrap{display:flex;align-items:flex-start;gap:0;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch}
         .journey-node{
           display:flex;flex-direction:column;align-items:center;gap:6px;
           flex:1;min-width:0;position:relative;
@@ -247,6 +269,16 @@ export function Registration() {
         .j-icon.p1{border-color:#FF7A29;background:rgba(255,122,41,0.12)}
         .j-icon.p1.active-j{background:#FF7A29}
         .j-icon.p2{border-color:rgba(232,178,61,0.5);background:rgba(232,178,61,0.06)}
+        .j-label{font-size:9px;font-weight:700;font-family:Montserrat,sans-serif;letter-spacing:.04em;text-align:center;white-space:nowrap}
+        .j-sub{font-size:8px;color:rgba(255,255,255,0.28);line-height:1.3;margin-top:2px;text-align:center}
+        @media(max-width:479px){.j-label{display:none}.j-sub{display:none}}
+
+        /* ── FORM FIELD GRIDS ── */
+        .field-grid-2{display:grid;grid-template-columns:1fr;gap:16px}
+        @media(min-width:480px){.field-grid-2{grid-template-columns:1fr 1fr}}
+
+        /* ── CITY CHIPS CONTAINER ── */
+        .city-chips-wrap{display:flex;flex-wrap:wrap;gap:8px;max-height:300px;overflow-y:auto;-webkit-overflow-scrolling:touch}
       `}</style>
 
       {/* ═══════════════ TICKER BAR ═══════════════ */}
@@ -306,7 +338,7 @@ export function Registration() {
 
         <div className="wrap">
           {/* Live badge */}
-          <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:16 }}>
+          <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:16, flexWrap:'wrap' }}>
             <div style={{ display:'flex', alignItems:'center', gap:6, background:'rgba(255,122,41,0.12)', border:'1px solid rgba(255,122,41,0.35)', padding:'5px 14px', borderRadius:12 }}>
               <span style={{ width:7, height:7, borderRadius:'50%', background:'#FF7A29', display:'inline-block', animation:'liveBlip 1.2s ease-in-out infinite' }} />
               <span style={{ fontSize:10, fontWeight:800, fontFamily:'Montserrat,sans-serif', color:'#FF7A29', letterSpacing:'.14em' }}>PHASE 1 OPEN NOW</span>
@@ -327,9 +359,9 @@ export function Registration() {
           {/* ─── JOURNEY RAIL ─── */}
           <div style={{ marginBottom:0, paddingBottom:32 }}>
             <div style={{ fontSize:10, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.16em', color:'rgba(255,255,255,0.3)', marginBottom:16 }}>YOUR COMPLETE TRIAL JOURNEY</div>
-            <div style={{ display:'flex', alignItems:'flex-start', gap:0, overflowX:'auto', paddingBottom:8 }}>
+            <div className="journey-wrap">
               {JOURNEY.map((j, i) => (
-                <div key={i} className="journey-node" style={{ minWidth:80 }}>
+                <div key={i} className="journey-node" style={{ minWidth:56 }}>
                   {/* Phase badge */}
                   <div style={{ fontSize:8, fontWeight:900, fontFamily:'Montserrat,sans-serif', letterSpacing:'.14em', color: j.phase==='P1' ? '#FF7A29' : '#E8B23D', marginBottom:2 }}>
                     {j.phase}
@@ -338,10 +370,10 @@ export function Registration() {
                   <div className={`j-icon ${j.phase==='p1'?'p1':'p2'}${j.active?' active-j':''}`} style={{ border:`2px solid ${j.phase==='P1'?'rgba(255,122,41,0.4)':'rgba(232,178,61,0.3)'}`, background: i===0 ? '#FF7A29' : j.phase==='P1'?'rgba(255,122,41,0.08)':'rgba(232,178,61,0.06)' }}>
                     <span style={{ fontSize:14 }}>{j.icon}</span>
                   </div>
-                  {/* Label */}
-                  <div style={{ textAlign:'center' }}>
-                    <div style={{ fontSize:10, fontWeight:700, color: i===0 ? '#FF7A29' : j.phase==='P1'?'rgba(255,255,255,0.7)':'rgba(232,178,61,0.6)', fontFamily:'Montserrat,sans-serif', letterSpacing:'.04em', whiteSpace:'nowrap' }}>{j.label}</div>
-                    <div style={{ fontSize:9, color:'rgba(255,255,255,0.28)', lineHeight:1.3, marginTop:2 }}>{j.sub}</div>
+                  {/* Label — hidden on very small screens via CSS */}
+                  <div>
+                    <div className="j-label" style={{ color: i===0 ? '#FF7A29' : j.phase==='P1'?'rgba(255,255,255,0.7)':'rgba(232,178,61,0.6)' }}>{j.label}</div>
+                    <div className="j-sub">{j.sub}</div>
                   </div>
                   {/* Connector line */}
                   {i < JOURNEY.length-1 && (
@@ -371,13 +403,13 @@ export function Registration() {
 
       {/* ═══════════════ FORM SECTION ═══════════════ */}
       <div className="wrap" style={{ paddingTop:40 }}>
-        <div style={{ display:'grid', gridTemplateColumns:'1fr', gap:32 }} className="form-grid">
+        <div style={{ display:'grid', gridTemplateColumns:'1fr', gap:32 }}>
 
           {/* ─── LEFT: FORM ─── */}
           <div style={{ maxWidth:680 }}>
 
             {/* Step progress bar */}
-            <div style={{ display:'flex', alignItems:'center', marginBottom:32 }}>
+            <div className="step-row" style={{ marginBottom:32 }}>
               {[1,2,3,4].map((s,i) => (
                 <React.Fragment key={s}>
                   <div className={`step-node ${step>s?'done':step===s?'active':''}`}>
@@ -386,7 +418,7 @@ export function Registration() {
                   {i < 3 && <div className={`step-track ${step>s?'done':step===s?'active':''}`} />}
                 </React.Fragment>
               ))}
-              <div style={{ marginLeft:12, fontSize:11, color:'rgba(255,255,255,0.4)', fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', whiteSpace:'nowrap' }}>
+              <div className="step-label">
                 Step {step} of 4
               </div>
             </div>
@@ -395,7 +427,7 @@ export function Registration() {
             {step === 1 && (
               <div className="step-enter">
                 <div style={{ borderLeft:'3px solid #FF7A29', paddingLeft:14, marginBottom:28 }}>
-                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:22, color:'#fff', textTransform:'uppercase', letterSpacing:'.02em' }}>Your Details</div>
+                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(18px,5vw,22px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em' }}>Your Details</div>
                   <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginTop:4 }}>As per Aadhaar / PAN — used for franchise records</div>
                 </div>
 
@@ -404,7 +436,7 @@ export function Registration() {
                     <label className="field-lbl">Full Name *</label>
                     <input className="field-inp" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Rahul Kumar Sharma" autoFocus />
                   </div>
-                  <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16 }}>
+                  <div className="field-grid-2">
                     <div>
                       <label className="field-lbl">Work Email *</label>
                       <input className="field-inp" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@company.com" />
@@ -414,7 +446,7 @@ export function Registration() {
                       <input className="field-inp" type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="+91 98765 43210" />
                     </div>
                   </div>
-                  <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16 }}>
+                  <div className="field-grid-2">
                     <div>
                       <label className="field-lbl">Company / Organisation *</label>
                       <input className="field-inp" value={company} onChange={e => setCompany(e.target.value)} placeholder="Your Employer / Business" />
@@ -427,9 +459,9 @@ export function Registration() {
                 </div>
 
                 {/* Already registered? */}
-                <div style={{ marginTop:20, padding:'12px 16px', background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.08)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                <div style={{ marginTop:20, padding:'12px 16px', background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.08)', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:10 }}>
                   <span style={{ fontSize:12, color:'rgba(255,255,255,0.45)' }}>Already registered Phase 1? Upload your video directly.</span>
-                  <button style={{ background:'none', border:'1px solid rgba(255,255,255,0.15)', color:'rgba(255,255,255,0.6)', fontSize:11, fontWeight:700, padding:'6px 14px', cursor:'pointer', fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em' }}>LOGIN →</button>
+                  <button style={{ background:'none', border:'1px solid rgba(255,255,255,0.15)', color:'rgba(255,255,255,0.6)', fontSize:11, fontWeight:700, padding:'6px 14px', cursor:'pointer', fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em', flexShrink:0 }}>LOGIN →</button>
                 </div>
               </div>
             )}
@@ -438,11 +470,11 @@ export function Registration() {
             {step === 2 && (
               <div className="step-enter">
                 <div style={{ borderLeft:'3px solid #FF7A29', paddingLeft:14, marginBottom:28 }}>
-                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:22, color:'#fff', textTransform:'uppercase', letterSpacing:'.02em' }}>Your Role</div>
+                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(18px,5vw,22px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em' }}>Your Role</div>
                   <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginTop:4 }}>Scouts evaluate you specifically for this role. All-Rounders are highest valued at auction.</div>
                 </div>
 
-                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:14 }}>
+                <div className="roles-grid">
                   {ROLES.map(r => (
                     <div
                       key={r.id}
@@ -494,9 +526,9 @@ export function Registration() {
                 </div>
 
                 {role && (
-                  <div style={{ marginTop:16, padding:'12px 16px', background:`${role.color}10`, border:`1px solid ${role.color}30`, display:'flex', alignItems:'center', gap:10 }}>
+                  <div style={{ marginTop:16, padding:'12px 16px', background:`${role.color}10`, border:`1px solid ${role.color}30`, display:'flex', alignItems:'center', gap:10, flexWrap:'wrap' }}>
                     <span style={{ fontSize:18 }}>{role.emoji}</span>
-                    <div style={{ flex:1 }}>
+                    <div style={{ flex:1, minWidth:0 }}>
                       <div style={{ fontSize:12, fontWeight:700, color:'#fff', fontFamily:'Montserrat,sans-serif' }}>{role.label} selected</div>
                       <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)' }}>Phase 1 fee: ₹{role.phase1} · Phase 2 (if selected): ₹{role.phase2.toLocaleString()}</div>
                     </div>
@@ -510,7 +542,7 @@ export function Registration() {
             {step === 3 && (
               <div className="step-enter">
                 <div style={{ borderLeft:'3px solid #FF7A29', paddingLeft:14, marginBottom:24 }}>
-                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:22, color:'#fff', textTransform:'uppercase', letterSpacing:'.02em' }}>Trial City</div>
+                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(18px,5vw,22px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em' }}>Trial City</div>
                   <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginTop:4 }}>21 cities across India. Choose nearest to your home or workplace.</div>
                 </div>
 
@@ -536,7 +568,7 @@ export function Registration() {
                 </div>
 
                 {/* Quick chips */}
-                <div style={{ display:'flex', flexWrap:'wrap', gap:8 }}>
+                <div className="city-chips-wrap">
                   {CITIES.map(c => (
                     <button key={c} className={`city-chip${city===c?' sel':''}`} onClick={() => { setCity(c); setCityQ(c); }}>
                       {c}
@@ -560,14 +592,14 @@ export function Registration() {
             {step === 4 && (
               <div className="step-enter">
                 <div style={{ borderLeft:'3px solid #FF7A29', paddingLeft:14, marginBottom:24 }}>
-                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:22, color:'#fff', textTransform:'uppercase', letterSpacing:'.02em' }}>Confirm & Pay</div>
+                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(18px,5vw,22px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em' }}>Confirm & Pay</div>
                   <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginTop:4 }}>Phase 1 entry fee. No hidden charges. Phase 2 fee payable only if selected.</div>
                 </div>
 
                 {/* ── MATCH TICKET ── */}
                 <div className="ticket" style={{ borderRadius:0, marginBottom:24 }}>
                   {/* Ticket header */}
-                  <div style={{ background:'linear-gradient(135deg,#FF7A29,#C94E0E)', padding:'16px 24px', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                  <div style={{ background:'linear-gradient(135deg,#FF7A29,#C94E0E)', padding:'16px 24px', display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:8 }}>
                     <div>
                       <div style={{ fontSize:8, fontWeight:900, fontFamily:'Montserrat,sans-serif', letterSpacing:'.2em', color:'rgba(255,255,255,0.7)', marginBottom:3 }}>BCPL T20 · SEASON 5</div>
                       <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:16, color:'#fff', letterSpacing:'.04em' }}>PHASE 1 TRIAL ENTRY</div>
@@ -581,7 +613,7 @@ export function Registration() {
                   {/* Ticket body */}
                   <div style={{ padding:'0 24px' }}>
                     {/* Player info rows */}
-                    <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:0, paddingTop:18, paddingBottom:16 }}>
+                    <div className="ticket-info-grid" style={{ paddingTop:18, paddingBottom:16 }}>
                       {[
                         { l:'PLAYER NAME', v:name || '—' },
                         { l:'ROLE', v:role ? `${role.emoji} ${role.label}` : '—' },
@@ -600,7 +632,7 @@ export function Registration() {
                     {/* Inclusions */}
                     <div style={{ padding:'14px 0' }}>
                       <div style={{ fontSize:9, fontWeight:700, fontFamily:'Montserrat,sans-serif', letterSpacing:'.14em', color:'rgba(255,255,255,0.3)', marginBottom:10 }}>WHAT YOU GET</div>
-                      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:6 }}>
+                      <div className="what-you-get-grid">
                         {[
                           '✅ BCCI-certified scout evaluation',
                           '✅ Result within 7 working days',
@@ -616,7 +648,7 @@ export function Registration() {
 
                     {/* Phase 2 teaser */}
                     <div style={{ padding:'14px 0 16px' }}>
-                      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:8 }}>
                         <div>
                           <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:3 }}>
                             <span style={{ fontSize:10 }}>🔒</span>
@@ -649,7 +681,7 @@ export function Registration() {
                 >
                   🏏 &nbsp;PAY ₹{price} · ENTER PHASE 1 TRIALS
                 </button>
-                <div style={{ display:'flex', justifyContent:'center', gap:16, marginTop:12 }}>
+                <div style={{ display:'flex', justifyContent:'center', gap:16, marginTop:12, flexWrap:'wrap' }}>
                   {['🔒 Razorpay Secured','256-bit SSL','Kriparti Playing11'].map(t => (
                     <span key={t} style={{ fontSize:10, color:'rgba(255,255,255,0.25)', fontWeight:600 }}>{t}</span>
                   ))}
@@ -678,7 +710,7 @@ export function Registration() {
 
       {/* ═══════════════ PHASE 2 INFO STRIP ═══════════════ */}
       <div className="wrap" style={{ marginTop:48 }}>
-        <div style={{ background:'#0A1727', border:'1px solid rgba(232,178,61,0.2)', padding:'24px 28px', position:'relative', overflow:'hidden' }}>
+        <div style={{ background:'#0A1727', border:'1px solid rgba(232,178,61,0.2)', padding:'24px 20px', position:'relative', overflow:'hidden' }}>
           {/* Diagonal accent */}
           <div style={{ position:'absolute', top:0, right:0, width:160, height:'100%', background:'linear-gradient(135deg, transparent 50%, rgba(232,178,61,0.05) 100%)', pointerEvents:'none' }} />
           <div style={{ display:'flex', alignItems:'flex-start', gap:16, flexWrap:'wrap' }}>
@@ -687,7 +719,7 @@ export function Registration() {
               <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'rgba(255,255,255,0.8)' }}>Only for selected players.</div>
             </div>
             <div style={{ flex:1, minWidth:240 }}>
-              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+              <div className="phase2-strip-grid">
                 {[
                   { icon:'🏟', label:'Ground Trial', sub:'At your registered city' },
                   { icon:'📋', label:'Skill Evaluation', sub:'By franchise coaching staff' },
@@ -709,7 +741,7 @@ export function Registration() {
       </div>
 
       {/* ═══════════════ MOBILE STICKY CTA ═══════════════ */}
-      <div className="bot-cta" style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:500, padding:'10px 16px 20px', background:'rgba(4,10,20,0.98)', backdropFilter:'blur(20px)', borderTop:'2px solid #FF7A29', gap:10 }}>
+      <div className="bot-cta" style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:500, padding:'10px 16px calc(20px + env(safe-area-inset-bottom))', background:'rgba(4,10,20,0.98)', backdropFilter:'blur(20px)', borderTop:'2px solid #FF7A29', gap:10 }}>
         <button
           className="btn-primary"
           disabled={!canNext}

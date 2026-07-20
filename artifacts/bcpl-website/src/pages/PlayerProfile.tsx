@@ -93,7 +93,7 @@ export function PlayerProfile() {
         .btn-ghost:hover{border-color:#FF7A29;color:#FF7A29;}
         .row-item{display:flex;justify-content:space-between;align-items:flex-start;gap:12;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
         .row-item:last-child{border-bottom:none;}
-        @media(max-width:1023px){.profile-layout{flex-direction:column!important;}}
+        @media(max-width:1023px){.profile-layout{flex-direction:column!important;}.profile-left{width:100%!important;min-width:0!important;}.status-btn{margin-left:0!important;width:100%;margin-top:10px!important;}
       `}</style>
 
       {/* TICKER */}
@@ -151,17 +151,17 @@ export function PlayerProfile() {
         <div className="wrap">
 
           {/* ── STATUS BANNER ── */}
-          <div key={phase} style={{ background:banner.bg, border:`1px solid ${banner.color}33`, borderLeft:`4px solid ${banner.color}`, borderRadius:12, padding:"18px 22px", marginBottom:28, display:"flex", alignItems:"flex-start", gap:16, animation:"fadeUp .35s ease both" }}>
+          <div key={phase} style={{ background:banner.bg, border:`1px solid ${banner.color}33`, borderLeft:`4px solid ${banner.color}`, borderRadius:12, padding:"18px 22px", marginBottom:28, display:"flex", alignItems:"flex-start", gap:16, flexWrap:"wrap", animation:"fadeUp .35s ease both" }}>
             <span style={{ fontSize:28, flexShrink:0, marginTop:2 }}>{banner.icon}</span>
-            <div>
+            <div style={{ flex:1, minWidth:180 }}>
               <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:14, color:banner.color, marginBottom:5, textTransform:"uppercase", letterSpacing:".02em" }}>{banner.title}</div>
               <div style={{ fontFamily:"Inter,sans-serif", fontSize:13, color:"rgba(255,255,255,0.65)", lineHeight:1.6 }}>{banner.body}</div>
             </div>
             {phase === "p1_registered" && (
-              <button className="btn-orange" style={{ flexShrink:0, marginLeft:"auto", whiteSpace:"nowrap" }}>UPLOAD VIDEO →</button>
+              <button className="btn-orange status-btn" style={{ flexShrink:0, marginLeft:"auto", whiteSpace:"nowrap", minHeight:44 }}>UPLOAD VIDEO →</button>
             )}
             {phase === "p2_selected" && (
-              <button className="btn-orange" style={{ flexShrink:0, marginLeft:"auto", whiteSpace:"nowrap", background:"linear-gradient(135deg,#E8B23D,#C49A1E)", color:"#000" }}>PAY ₹2,000 →</button>
+              <button className="btn-orange status-btn" style={{ flexShrink:0, marginLeft:"auto", whiteSpace:"nowrap", background:"linear-gradient(135deg,#E8B23D,#C49A1E)", color:"#000", minHeight:44 }}>PAY ₹2,000 →</button>
             )}
           </div>
 
@@ -169,7 +169,7 @@ export function PlayerProfile() {
           <div className="profile-layout" style={{ display:"flex", alignItems:"flex-start", gap:20 }}>
 
             {/* ══ LEFT: PLAYER CARD ══ */}
-            <div style={{ width:320, minWidth:280, flexShrink:0 }}>
+            <div className="profile-left" style={{ width:320, minWidth:280, flexShrink:0 }}>
 
               {/* Avatar + name */}
               <div className="card" style={{ padding:"28px 22px", marginBottom:14, textAlign:"center", position:"relative", overflow:"hidden" }}>

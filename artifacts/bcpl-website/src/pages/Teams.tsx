@@ -84,6 +84,8 @@ const ROUTE_MAP: Record<string,string> = {
 };
 
 export function Teams() {
+  const [menuOpen, setMenuOpen] = React.useState(false);
+
   return (
     <div style={{ background:"#06101E", color:"#fff", minHeight:"100vh", overflowX:"hidden", fontFamily:"Inter,sans-serif" }}>
       <style>{`
@@ -107,12 +109,26 @@ export function Teams() {
         .btn-orange:hover{opacity:.88;}
         .footer-link{color:rgba(255,255,255,0.45);font-size:13px;font-family:Inter,sans-serif;text-decoration:none;transition:color .2s;}
         .footer-link:hover{color:#FF7A29;}
-      
+
+        /* ── MOBILE MENU ── */
+        .mob-menu{position:fixed;top:0;left:0;right:0;bottom:0;background:#06101E;z-index:999;display:flex;flex-direction:column;padding:80px 28px 40px;gap:24px;overflow-y:auto;}
+        .mob-menu-link{font-family:Montserrat,sans-serif;font-weight:800;font-size:18px;letter-spacing:0.06em;color:rgba(255,255,255,0.8);text-transform:uppercase;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.06);padding-bottom:20px;transition:color 0.2s;text-decoration:none;display:block;}
+        .mob-menu-link:hover{color:#FF7A29;}
+        .close-btn{position:fixed;top:20px;right:24px;background:none;border:none;color:#fff;font-size:28px;cursor:pointer;z-index:1000;}
+
+        /* ── LIVE STANDINGS STRIP ── */
+        .standings-scroll{overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch;scrollbar-width:thin;}
+
         /* ── FLOATING REGISTER BUTTON ── */
         .float-reg-btn { position:fixed; bottom:28px; right:28px; z-index:9999; background:linear-gradient(135deg,#FF7A29,#D95E10); border:none; border-radius:12px; color:#fff; font-family:'Montserrat',sans-serif; font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:14px 22px; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(255,122,41,0.45); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition:opacity .2s,transform .15s; }
         .float-reg-btn:hover { opacity:.9; transform:translateY(-2px); }
         @keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4)} 50%{box-shadow:0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0)} }
         .float-reg-pulse { animation:floatPulse 2.5s ease-in-out infinite; }
+
+        /* ── MOBILE RESPONSIVE FIXES ── */
+        @media(max-width:639px){
+          .float-reg-btn{bottom:16px;right:16px;padding:12px 16px;font-size:12px;}
+        }
       `}</style>
 
       {/* TICKER */}
@@ -135,9 +151,34 @@ export function Teams() {
               <a key={l} className={`nav-link${l==="Teams"?" active":""}`} href={ROUTE_MAP[l]||"#"}>{l}</a>
             ))}
           </div>
-          <button className="btn-orange" style={{ fontSize:12, padding:"9px 18px" }}>REGISTER NOW →</button>
+          <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+            <button className="btn-orange" style={{ fontSize:12, padding:"9px 18px" }}>REGISTER NOW →</button>
+            <button
+              className="ham-btn"
+              onClick={() => setMenuOpen(true)}
+              style={{ flexDirection:"column", gap:5, background:"none", border:"none", cursor:"pointer", padding:8 }}
+            >
+              <span style={{ display:"block", width:22, height:2, background:"#fff", borderRadius:12 }}/>
+              <span style={{ display:"block", width:22, height:2, background:"#fff", borderRadius:12 }}/>
+              <span style={{ display:"block", width:22, height:2, background:"#fff", borderRadius:12 }}/>
+            </button>
+          </div>
         </div>
       </nav>
+
+      {/* MOBILE MENU */}
+      {menuOpen && (
+        <div className="mob-menu">
+          <button className="close-btn" onClick={() => setMenuOpen(false)}>✕</button>
+          <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:24, marginBottom:8 }}>
+            <span style={{ color:"#FF7A29" }}>BCPL</span><span style={{ color:"#fff", marginLeft:3 }}>T20</span>
+          </div>
+          {[["🏠 Home","Home"],["🔴 Match Center","Match Center"],["🏏 Teams","Teams"],["🤝 Sponsors","Sponsors"],["📷 Photos","Photos"],["▶️ Videos","Videos"],["ℹ️ About","About"],["❓ FAQ","FAQ"],["✉️ Contact","Contact"]].map(([label, key])=>(
+            <a key={key} href={ROUTE_MAP[key]||"#"} className="mob-menu-link" onClick={() => setMenuOpen(false)}>{label}</a>
+          ))}
+          <button className="btn-orange" style={{ marginTop:16, height:52, fontSize:15, borderRadius:14, width:"100%" }}>📝 REGISTER NOW →</button>
+        </div>
+      )}
 
       {/* HERO */}
       <section style={{ padding:"clamp(60px,8vw,80px) 0 48px", textAlign:"center", position:"relative", overflow:"hidden" }}>
@@ -168,10 +209,10 @@ export function Teams() {
       {/* LIVE STANDINGS STRIP */}
       <section style={{ padding:"0 0 48px" }}>
         <div className="wrap">
-          <div style={{ overflowX:"auto", paddingBottom:6 }}>
+          <div className="standings-scroll">
             <div style={{ display:"inline-flex", gap:10, minWidth:"max-content" }}>
               <div style={{ background:"rgba(255,122,41,0.08)", border:"1px solid rgba(255,122,41,0.2)", borderRadius:12, padding:"10px 16px", display:"flex", alignItems:"center", gap:8, flexShrink:0 }}>
-                <div style={{ width:6, height:6, borderRadius:"50%", background:"#22C55E", animation:"none" }}/>
+                <div style={{ width:6, height:6, borderRadius:"50%", background:"#22C55E" }}/>
                 <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:11, color:"#FF7A29", letterSpacing:".1em" }}>STANDINGS</span>
               </div>
               {TOP5.map((t,i)=>(

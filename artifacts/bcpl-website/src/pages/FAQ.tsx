@@ -33,6 +33,7 @@ body { background:#060E1C; }
         .float-reg-btn:hover { opacity:.9; transform:translateY(-2px); }
         @keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4)} 50%{box-shadow:0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0)} }
         .float-reg-pulse { animation:floatPulse 2.5s ease-in-out infinite; }
+        @media(max-width:1023px){ .float-reg-btn { display:none; } }
 `;
 
 const FAQS = [
@@ -178,7 +179,7 @@ function Footer() {
 
 function MobileStickyCTA() {
   return (
-    <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',padding:'10px 16px 18px',gap:10}}>
+    <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',padding:'10px 16px calc(16px + env(safe-area-inset-bottom))',gap:10}}>
       <button className="btn-fire" style={{flex:2,height:52,fontSize:15}}>Register ₹299 →</button>
       <button className="btn-wa" style={{flex:1,height:52,fontSize:14}}>💬 WhatsApp</button>
     </div>
@@ -305,7 +306,7 @@ export function FAQ() {
       {/* STILL HAVE QUESTIONS */}
       <section style={{position:'relative',zIndex:1,padding:'0 0 120px'}}>
         <div className="wrap">
-          <div className="glass-card" style={{padding:'48px',textAlign:'center',maxWidth:720,margin:'0 auto',border:'1px solid rgba(232,178,61,0.2)'}}>
+          <div className="glass-card" style={{padding:'clamp(20px,5vw,48px) clamp(16px,4vw,48px)',textAlign:'center',maxWidth:720,margin:'0 auto',border:'1px solid rgba(232,178,61,0.2)'}}>
             <div style={{fontSize:44,marginBottom:16}}>💬</div>
             <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:28,color:'#fff',marginBottom:8}}>Still Have Questions?</h2>
             <p style={{color:'rgba(255,255,255,0.55)',fontSize:15,marginBottom:32,lineHeight:1.6}}>Our support team is here for you. We'll respond within 2 hours on WhatsApp.</p>

@@ -22,7 +22,7 @@ export function Phase2KYC() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap');
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-        .wrap{max-width:1200px;margin:0 auto;padding:0 20px}
+        .wrap{max-width:1200px;margin:0 auto;padding:0 16px}
         @media(min-width:768px){.wrap{padding:0 32px}}
         .desk-nav{display:none}
         @media(min-width:1024px){.desk-nav{display:flex;align-items:center;gap:20px}}
@@ -31,10 +31,10 @@ export function Phase2KYC() {
         .btn-primary{background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:12px;color:#fff;font-family:Montserrat,sans-serif;font-weight:900;letter-spacing:.06em;cursor:pointer;transition:all .2s}
         .btn-primary:hover{filter:brightness(1.15);transform:translateY(-2px)}
         .btn-primary:disabled{opacity:.35;cursor:not-allowed;filter:none;transform:none}
-        .upload-zone{border:2px dashed rgba(255,255,255,0.15);background:#0C1A2E;padding:28px;text-align:center;cursor:pointer;transition:all .2s;border-radius:12px}
+        .upload-zone{border:2px dashed rgba(255,255,255,0.15);background:#0C1A2E;padding:24px 16px;text-align:center;cursor:pointer;transition:all .2s;border-radius:12px;width:100%}
         .upload-zone:hover{border-color:rgba(255,122,41,0.5);background:#0E1F35}
         .upload-zone.done{border-color:#22C55E;border-style:solid;background:rgba(34,197,94,0.06)}
-        .doc-card{background:#0A1727;border:1px solid rgba(255,255,255,0.08);padding:24px;border-radius:12px}
+        .doc-card{background:#0A1727;border:1px solid rgba(255,255,255,0.08);padding:20px 16px;border-radius:12px;width:100%}
         .doc-card.verified-card{border-color:rgba(34,197,94,0.3)}
         @keyframes tickerScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
         @keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
@@ -43,6 +43,24 @@ export function Phase2KYC() {
         @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
         @keyframes scaleIn{from{transform:scale(0.5);opacity:0}to{transform:scale(1);opacity:1}}
         @keyframes verifiedPulse{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,0.4)}50%{box-shadow:0 0 0 12px rgba(34,197,94,0)}}
+
+        /* Upload grid — 1 col on mobile, 2 col on wider */
+        .upload-grid{display:grid;grid-template-columns:1fr;gap:20px;margin-bottom:24px}
+        @media(min-width:640px){.upload-grid{grid-template-columns:1fr 1fr}}
+
+        /* Verified chips */
+        .verified-chips{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+
+        /* Submit row */
+        .submit-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+        .submit-btn{padding:18px 32px;font-size:15px;letter-spacing:.06em;width:100%}
+        @media(min-width:480px){.submit-btn{width:auto}}
+
+        /* Achievement bar */
+        .achiev-bar-inner{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:#E8B23D;font-family:Montserrat,sans-serif;letter-spacing:.06em;flex-wrap:wrap}
+
+        /* State toggle */
+        .state-toggle{margin-left:auto;display:flex;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.1)}
       `}</style>
 
       {/* ── TICKER ── */}
@@ -79,10 +97,18 @@ export function Phase2KYC() {
         </div>
       </nav>
 
+      {menuOpen && (
+        <div style={{ position:'fixed', inset:0, background:'#040C18', zIndex:400, display:'flex', flexDirection:'column', padding:'72px 24px 40px', overflowY:'auto' }}>
+          <button onClick={() => setMenuOpen(false)} style={{ position:'absolute', top:16, right:16, background:'rgba(255,255,255,0.07)', border:'1px solid rgba(255,255,255,0.1)', color:'#fff', width:38, height:38, borderRadius:4, cursor:'pointer', fontSize:18 }}>✕</button>
+          {NAV.map(l => <a key={l} href="#" style={{ color:'rgba(255,255,255,0.85)', fontWeight:700, fontSize:18, fontFamily:'Montserrat,sans-serif', textDecoration:'none', padding:'14px 0', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>{l}</a>)}
+          <button className="btn-primary" style={{ marginTop:24, padding:'16px', fontSize:15 }}>REGISTER NOW →</button>
+        </div>
+      )}
+
       {/* ── ACHIEVEMENT BAR ── */}
       <div style={{ background:'rgba(232,178,61,0.08)', borderBottom:'1px solid rgba(232,178,61,0.2)', padding:'10px 0' }}>
-        <div className="wrap" style={{ display:'flex', alignItems:'center', gap:16, flexWrap:'wrap' }}>
-          <div style={{ display:'flex', alignItems:'center', gap:8, fontSize:12, fontWeight:700, color:'#E8B23D', fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em' }}>
+        <div className="wrap" style={{ display:'flex', alignItems:'center', gap:12, flexWrap:'wrap' }}>
+          <div className="achiev-bar-inner">
             <span style={{ color:'#22C55E' }}>✓</span> PHASE 1 CLEARED
             <span style={{ color:'rgba(255,255,255,0.2)' }}>·</span>
             <span style={{ color:'#22C55E' }}>✓</span> PHASE 2 PAID
@@ -90,9 +116,9 @@ export function Phase2KYC() {
             <span style={{ color:'rgba(255,255,255,0.35)' }}>→ KYC PENDING</span>
           </div>
           {/* Design toggle */}
-          <div style={{ marginLeft:'auto', display:'flex', borderRadius:12, overflow:'hidden', border:'1px solid rgba(255,255,255,0.1)' }}>
-            <button onClick={() => setKycState('pending')} style={{ padding:'6px 16px', fontSize:11, fontWeight:800, fontFamily:'Montserrat,sans-serif', border:'none', cursor:'pointer', background: kycState==='pending'?'rgba(255,122,41,0.2)':'rgba(255,255,255,0.04)', color: kycState==='pending'?'#FF7A29':'rgba(255,255,255,0.4)' }}>⏳ PENDING</button>
-            <button onClick={() => setKycState('verified')} style={{ padding:'6px 16px', fontSize:11, fontWeight:800, fontFamily:'Montserrat,sans-serif', border:'none', borderLeft:'1px solid rgba(255,255,255,0.1)', cursor:'pointer', background: kycState==='verified'?'rgba(34,197,94,0.2)':'rgba(255,255,255,0.04)', color: kycState==='verified'?'#22C55E':'rgba(255,255,255,0.4)' }}>✅ VERIFIED</button>
+          <div className="state-toggle">
+            <button onClick={() => setKycState('pending')} style={{ padding:'6px 14px', fontSize:11, fontWeight:800, fontFamily:'Montserrat,sans-serif', border:'none', cursor:'pointer', background: kycState==='pending'?'rgba(255,122,41,0.2)':'rgba(255,255,255,0.04)', color: kycState==='pending'?'#FF7A29':'rgba(255,255,255,0.4)' }}>⏳ PENDING</button>
+            <button onClick={() => setKycState('verified')} style={{ padding:'6px 14px', fontSize:11, fontWeight:800, fontFamily:'Montserrat,sans-serif', border:'none', borderLeft:'1px solid rgba(255,255,255,0.1)', cursor:'pointer', background: kycState==='verified'?'rgba(34,197,94,0.2)':'rgba(255,255,255,0.04)', color: kycState==='verified'?'#22C55E':'rgba(255,255,255,0.4)' }}>✅ VERIFIED</button>
           </div>
         </div>
       </div>
@@ -101,7 +127,7 @@ export function Phase2KYC() {
       <div className="wrap" style={{ paddingTop:40 }}>
         {/* Page header */}
         <div style={{ borderLeft:'3px solid #FF7A29', paddingLeft:14, marginBottom:32 }}>
-          <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:28, color:'#fff', textTransform:'uppercase', letterSpacing:'.02em', marginBottom:4 }}>
+          <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(20px,4vw,28px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em', marginBottom:4 }}>
             {kycState === 'pending' ? 'Identity Verification (KYC)' : '✅ KYC Verified'}
           </div>
           <div style={{ fontSize:13, color:'rgba(255,255,255,0.45)', marginBottom:10 }}>
@@ -121,23 +147,23 @@ export function Phase2KYC() {
 
         {kycState === 'verified' ? (
           /* ─── VERIFIED STATE ─── */
-          <div style={{ background:'rgba(34,197,94,0.06)', border:'1px solid rgba(34,197,94,0.25)', padding:'40px', textAlign:'center', marginBottom:32 }}>
+          <div style={{ background:'rgba(34,197,94,0.06)', border:'1px solid rgba(34,197,94,0.25)', padding:'40px 24px', textAlign:'center', marginBottom:32 }}>
             <div style={{ fontSize:64, marginBottom:16, animation:'scaleIn .5s cubic-bezier(.34,1.56,.64,1) both' }}>✅</div>
-            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:28, color:'#22C55E', marginBottom:8 }}>KYC VERIFICATION COMPLETE</div>
+            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(20px,4vw,28px)', color:'#22C55E', marginBottom:8 }}>KYC VERIFICATION COMPLETE</div>
             <div style={{ fontSize:14, color:'rgba(255,255,255,0.55)', marginBottom:24 }}>All documents verified. You are officially cleared for BCPL Season 5 Physical Trials.</div>
-            <div style={{ display:'flex', justifyContent:'center', gap:16, flexWrap:'wrap' }}>
+            <div className="verified-chips">
               {['🪪 Aadhaar ✓','📋 PAN ✓','👤 Identity ✓'].map(t => (
-                <div key={t} style={{ background:'rgba(34,197,94,0.12)', border:'1px solid rgba(34,197,94,0.3)', padding:'8px 20px', fontSize:12, fontWeight:700, color:'#22C55E', fontFamily:'Montserrat,sans-serif' }}>{t}</div>
+                <div key={t} style={{ background:'rgba(34,197,94,0.12)', border:'1px solid rgba(34,197,94,0.3)', padding:'8px 20px', fontSize:12, fontWeight:700, color:'#22C55E', fontFamily:'Montserrat,sans-serif', borderRadius:8 }}>{t}</div>
               ))}
             </div>
             <div style={{ marginTop:24 }}>
-              <button className="btn-primary" style={{ padding:'16px 40px', fontSize:15, letterSpacing:'.06em' }}>VIEW YOUR PLAYER DASHBOARD →</button>
+              <button className="btn-primary" style={{ padding:'16px 32px', fontSize:14, letterSpacing:'.06em', width:'100%', maxWidth:360 }}>VIEW YOUR PLAYER DASHBOARD →</button>
             </div>
           </div>
         ) : (
           /* ─── PENDING STATE — upload UI ─── */
           <>
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:20, marginBottom:24 }}>
+            <div className="upload-grid">
               {/* Aadhaar Card */}
               <div className="doc-card">
                 <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:20 }}>
@@ -197,7 +223,7 @@ export function Phase2KYC() {
                     <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)' }}>Single document required</div>
                   </div>
                 </div>
-                <div className={`upload-zone${pan==='uploaded'?' done':''}`} onClick={() => setPan('uploaded')} style={{ minHeight:220, display:'flex', alignItems:'center', justifyContent:'center' }}>
+                <div className={`upload-zone${pan==='uploaded'?' done':''}`} onClick={() => setPan('uploaded')} style={{ minHeight:180, display:'flex', alignItems:'center', justifyContent:'center' }}>
                   {pan === 'uploaded' ? (
                     <div style={{ textAlign:'center' }}>
                       <div style={{ fontSize:36, marginBottom:8 }}>✅</div>
@@ -215,7 +241,7 @@ export function Phase2KYC() {
                 <div style={{ marginTop:12, fontSize:11, color:'rgba(255,255,255,0.3)', fontStyle:'italic' }}>⚠️ PAN must be in your personal name, not company name</div>
 
                 {/* Why we need this */}
-                <div style={{ marginTop:24, background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.07)', padding:'16px' }}>
+                <div style={{ marginTop:20, background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.07)', padding:'16px', borderRadius:8 }}>
                   <div style={{ fontSize:10, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.14em', color:'rgba(255,255,255,0.4)', marginBottom:10 }}>WHY WE NEED THIS</div>
                   {[
                     'BCCI compliance for league participation',
@@ -232,23 +258,22 @@ export function Phase2KYC() {
             </div>
 
             {/* Privacy assurance */}
-            <div style={{ background:'rgba(255,255,255,0.02)', border:'1px solid rgba(255,255,255,0.06)', padding:'14px 20px', display:'flex', alignItems:'center', gap:12, marginBottom:24 }}>
-              <span style={{ fontSize:24 }}>🔒</span>
+            <div style={{ background:'rgba(255,255,255,0.02)', border:'1px solid rgba(255,255,255,0.06)', padding:'14px 16px', display:'flex', alignItems:'flex-start', gap:12, marginBottom:24, borderRadius:8 }}>
+              <span style={{ fontSize:24, flexShrink:0 }}>🔒</span>
               <div style={{ fontSize:12, color:'rgba(255,255,255,0.45)', lineHeight:1.6 }}>
                 <strong style={{ color:'rgba(255,255,255,0.7)' }}>Privacy Assured.</strong> Your documents are encrypted at rest and in transit (AES-256). We never share with third parties. Stored in compliance with the IT Act, 2000. Used exclusively for BCCI compliance and Kriparti Playing 11 records.
               </div>
             </div>
 
             {/* Submit */}
-            <div style={{ display:'flex', alignItems:'center', gap:16, flexWrap:'wrap' }}>
+            <div className="submit-row">
               <button
-                className="btn-primary"
+                className="btn-primary submit-btn"
                 disabled={!allUploaded || submitting}
                 onClick={handleSubmit}
-                style={{ padding:'18px 40px', fontSize:15, letterSpacing:'.06em' }}
               >
                 {submitting ? (
-                  <span style={{ display:'flex', alignItems:'center', gap:10 }}>
+                  <span style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:10 }}>
                     <span style={{ display:'inline-block', width:16, height:16, border:'2px solid rgba(255,255,255,0.3)', borderTopColor:'#fff', borderRadius:'50%', animation:'spin .8s linear infinite' }} />
                     VERIFYING...
                   </span>
@@ -276,7 +301,7 @@ export function Phase2KYC() {
             <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20 }}>
               <span style={{ color:'#FF7A29' }}>BCPL</span><span style={{ color:'#fff' }}> T20</span>
             </div>
-            <div style={{ display:'flex', gap:20, flexWrap:'wrap' }}>
+            <div style={{ display:'flex', gap:16, flexWrap:'wrap' }}>
               {['About','Teams','FAQ','Contact','Terms','Privacy'].map(l => (
                 <a key={l} href="#" style={{ fontSize:12, color:'rgba(255,255,255,0.4)', textDecoration:'none', fontWeight:600 }}>{l}</a>
               ))}

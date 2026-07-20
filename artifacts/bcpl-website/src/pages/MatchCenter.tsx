@@ -140,7 +140,8 @@ export function MatchCenter() {
         @keyframes gradShift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
         @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
 
-        .wrap { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+        .wrap { max-width: 1280px; margin: 0 auto; padding: 0 16px; }
+        @media(min-width:640px){ .wrap { padding: 0 24px; } }
         @media(min-width:768px){ .wrap { padding: 0 40px; } }
 
         .desk-nav { display: none; align-items: center; gap: 20px; }
@@ -160,14 +161,14 @@ export function MatchCenter() {
 
         .section-title { font-family: Montserrat, sans-serif; font-weight: 900; line-height: 1.05; }
 
-        .roadmap-scroll { display: flex; overflow-x: auto; padding-bottom: 16px; gap: 0; align-items: stretch; }
+        .roadmap-scroll { display: flex; overflow-x: auto; padding-bottom: 16px; gap: 0; align-items: stretch; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
         .roadmap-scroll::-webkit-scrollbar { height: 4px; }
         .roadmap-scroll::-webkit-scrollbar-track { background: #060C18; }
         .roadmap-scroll::-webkit-scrollbar-thumb { background: #FF7A29; border-radius:12px; }
 
-        .roadmap-block { background: #0A1727; border: 1px solid rgba(255,255,255,0.08); border-radius:12px; min-width: 230px; padding: 24px 20px; flex-shrink: 0; position: relative; }
+        .roadmap-block { background: #0A1727; border: 1px solid rgba(255,255,255,0.08); border-radius:12px; min-width: 220px; padding: 24px 18px; flex-shrink: 0; position: relative; }
         .roadmap-block.active { border-color: rgba(255,122,41,0.6); animation: glowPulse 2.5s ease-in-out infinite; }
-        .roadmap-connector { width: 36px; height: 2px; background: rgba(255,255,255,0.1); align-self: center; flex-shrink: 0; position: relative; }
+        .roadmap-connector { width: 28px; height: 2px; background: rgba(255,255,255,0.1); align-self: center; flex-shrink: 0; position: relative; }
         .roadmap-connector::after { content: '▶'; position: absolute; right: -8px; top: -8px; color: rgba(255,255,255,0.18); font-size: 10px; }
 
         .city-chip { background: #0A1727; border: 1px solid rgba(255,255,255,0.1); border-radius:12px; padding: 8px 14px; font-family: Montserrat, sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 0.05em; color: rgba(255,255,255,0.7); text-transform: uppercase; transition: border-color 0.2s, color 0.2s; cursor: default; display: flex; align-items: center; gap: 8px; }
@@ -176,6 +177,10 @@ export function MatchCenter() {
         .result-card { background: #0A1727; border: 1px solid rgba(255,255,255,0.08); border-radius:12px; overflow: hidden; transition: transform 0.2s, border-color 0.2s; }
         .result-card:hover { transform: translateY(-3px); border-color: rgba(255,122,41,0.25); }
 
+        /* Points table: scrollable on mobile */
+        .pts-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
+        .pts-table-inner { min-width: 520px; }
+
         .pts-row { display: grid; grid-template-columns: 28px 1fr 48px 28px 28px 48px 68px; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.15s; }
         .pts-row:hover { background: rgba(255,122,41,0.04); }
         .pts-row:last-child { border-bottom: none; }
@@ -183,7 +188,7 @@ export function MatchCenter() {
         .pts-header { display: grid; grid-template-columns: 28px 1fr 48px 28px 28px 48px 68px; align-items: center; gap: 8px; padding: 10px 16px; background: #060C18; }
 
         .mob-menu { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #06101E; z-index: 999; display: flex; flex-direction: column; padding: 80px 32px 32px; gap: 24px; overflow-y: auto; }
-        .mob-menu-link { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 18px; letter-spacing: 0.06em; color: rgba(255,255,255,0.8); text-transform: uppercase; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 20px; transition: color 0.2s; }
+        .mob-menu-link { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 18px; letter-spacing: 0.06em; color: rgba(255,255,255,0.8); text-transform: uppercase; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 20px; transition: color 0.2s; text-decoration: none; display: block; }
         .mob-menu-link:hover { color: #FF7A29; }
         .close-btn { position: fixed; top: 20px; right: 24px; background: none; border: none; color: #fff; font-size: 28px; cursor: pointer; z-index: 1000; }
 
@@ -192,12 +197,20 @@ export function MatchCenter() {
 
         .footer-link { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 13px; font-family: Inter, sans-serif; transition: color 0.2s; }
         .footer-link:hover { color: #FF7A29; }
-      
+
+        /* Results grid: stack on mobile */
+        .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+
         /* ── FLOATING REGISTER BUTTON ── */
         .float-reg-btn { position:fixed; bottom:28px; right:28px; z-index:9999; background:linear-gradient(135deg,#FF7A29,#D95E10); border:none; border-radius:12px; color:#fff; font-family:'Montserrat',sans-serif; font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:14px 22px; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(255,122,41,0.45); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition:opacity .2s,transform .15s; }
         .float-reg-btn:hover { opacity:.9; transform:translateY(-2px); }
         @keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4)} 50%{box-shadow:0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0)} }
         .float-reg-pulse { animation:floatPulse 2.5s ease-in-out infinite; }
+
+        @media(max-width:639px){
+          .float-reg-btn { bottom:16px; right:16px; padding:12px 16px; font-size:12px; }
+          .results-grid { grid-template-columns: 1fr; }
+        }
       `}</style>
 
       {/* TICKER BAR */}
@@ -228,7 +241,7 @@ export function MatchCenter() {
 
           <nav className="desk-nav">
             {NAV_LINKS.map(link => (
-              <a key={link} className={`nav-link${link === "Match Center" ? " active" : ""}`} href={ROUTE_MAP[l]||"#"}>{link}</a>
+              <a key={link} className={`nav-link${link === "Match Center" ? " active" : ""}`} href={ROUTE_MAP[link]||"#"}>{link}</a>
             ))}
           </nav>
 
@@ -247,15 +260,18 @@ export function MatchCenter() {
       {menuOpen && (
         <div className="mob-menu">
           <button className="close-btn" onClick={() => setMenuOpen(false)}>✕</button>
+          <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 24, marginBottom: 8 }}>
+            <span style={{ color: "#FF7A29" }}>BCPL</span><span style={{ color: "#fff", marginLeft: 3 }}>T20</span>
+          </div>
           {NAV_LINKS.map(link => (
-            <div key={link} className="mob-menu-link" onClick={() => setMenuOpen(false)}>{link}</div>
+            <a key={link} className="mob-menu-link" href={ROUTE_MAP[link]||"#"} onClick={() => setMenuOpen(false)}>{link}</a>
           ))}
           <button className="btn-orange" style={{ marginTop: 12, padding: "14px 24px", fontSize: 14 }}>REGISTER NOW →</button>
         </div>
       )}
 
       {/* HERO */}
-      <section style={{ background: "#06101E", padding: "60px 0 48px", position: "relative", overflow: "hidden" }}>
+      <section style={{ background: "#06101E", padding: "clamp(40px,6vw,60px) 0 clamp(28px,4vw,48px)", position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", top: 0, left: 0, width: "40%", height: "100%", background: "linear-gradient(135deg, rgba(255,122,41,0.04) 0%, transparent 70%)", pointerEvents: "none" }} />
         <div style={{ position: "absolute", top: 0, left: 0, width: "3px", height: "100%", background: "linear-gradient(180deg,transparent,#FF7A29 30%,#FF7A29 70%,transparent)", opacity: 0.35 }} />
 
@@ -269,7 +285,7 @@ export function MatchCenter() {
               <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 11, letterSpacing: "0.1em", color: "#E8B23D" }}>SEASON 5 · 2025–26</span>
             </div>
 
-            <h1 style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: "clamp(28px, 5vw, 60px)", color: "#fff", textTransform: "uppercase", letterSpacing: "-0.01em", lineHeight: 1.05, marginBottom: 14 }}>
+            <h1 style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: "clamp(24px, 5vw, 60px)", color: "#fff", textTransform: "uppercase", letterSpacing: "-0.01em", lineHeight: 1.05, marginBottom: 14 }}>
               MATCH CENTER <span style={{ color: "#FF7A29" }}>·</span> SEASON 5
             </h1>
             <p style={{ fontFamily: "Inter, sans-serif", fontSize: "clamp(14px, 1.8vw, 17px)", color: "rgba(255,255,255,0.5)", lineHeight: 1.6, maxWidth: 560 }}>
@@ -280,10 +296,10 @@ export function MatchCenter() {
       </section>
 
       {/* SEASON 5 TIMELINE — MAIN FEATURE */}
-      <section style={{ padding: "64px 0", background: "#060C18" }}>
+      <section style={{ padding: "clamp(40px,6vw,64px) 0", background: "#060C18" }}>
         <div className="wrap">
           <div className="section-label">Season Roadmap</div>
-          <h2 className="section-title" style={{ fontSize: "clamp(22px, 4vw, 40px)", color: "#fff", marginBottom: 8, textTransform: "uppercase" }}>
+          <h2 className="section-title" style={{ fontSize: "clamp(20px, 4vw, 40px)", color: "#fff", marginBottom: 8, textTransform: "uppercase" }}>
             SEASON 5 — COMPLETE TIMELINE
           </h2>
           <p style={{ fontFamily: "Inter, sans-serif", color: "rgba(255,255,255,0.4)", marginBottom: 36, fontSize: 15 }}>
@@ -334,10 +350,10 @@ export function MatchCenter() {
       </section>
 
       {/* TRIAL CITIES */}
-      <section style={{ padding: "64px 0", background: "#06101E" }}>
+      <section style={{ padding: "clamp(40px,6vw,64px) 0", background: "#06101E" }}>
         <div className="wrap">
           <div className="section-label">Locations</div>
-          <h2 className="section-title" style={{ fontSize: "clamp(22px, 4vw, 40px)", color: "#fff", marginBottom: 8, textTransform: "uppercase" }}>
+          <h2 className="section-title" style={{ fontSize: "clamp(20px, 4vw, 40px)", color: "#fff", marginBottom: 8, textTransform: "uppercase" }}>
             TRIAL CITIES — SEASON 5
           </h2>
           <p style={{ fontFamily: "Inter, sans-serif", color: "rgba(255,255,255,0.4)", marginBottom: 36, fontSize: 15 }}>
@@ -356,17 +372,17 @@ export function MatchCenter() {
       </section>
 
       {/* MATCH RESULTS */}
-      <section style={{ padding: "64px 0", background: "#060C18" }}>
+      <section style={{ padding: "clamp(40px,6vw,64px) 0", background: "#060C18" }}>
         <div className="wrap">
           <div className="section-label">Results</div>
-          <h2 className="section-title" style={{ fontSize: "clamp(22px, 4vw, 40px)", color: "#fff", marginBottom: 8, textTransform: "uppercase" }}>
+          <h2 className="section-title" style={{ fontSize: "clamp(20px, 4vw, 40px)", color: "#fff", marginBottom: 8, textTransform: "uppercase" }}>
             RECENT RESULTS — SEASON 5 EXHIBITION
           </h2>
           <p style={{ fontFamily: "Inter, sans-serif", color: "rgba(255,255,255,0.4)", marginBottom: 36, fontSize: 15 }}>
             Exhibition matches from Season 5 showcase events.
           </p>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 16 }}>
+          <div className="results-grid">
             {RESULTS.map((match, i) => (
               <div key={i} className="result-card">
                 {/* Orange header gradient */}
@@ -415,10 +431,10 @@ export function MatchCenter() {
       </section>
 
       {/* POINTS TABLE */}
-      <section style={{ padding: "64px 0", background: "#06101E" }}>
+      <section style={{ padding: "clamp(40px,6vw,64px) 0", background: "#06101E" }}>
         <div className="wrap">
           <div className="section-label">Standings</div>
-          <h2 className="section-title" style={{ fontSize: "clamp(22px, 4vw, 40px)", color: "#fff", marginBottom: 8, textTransform: "uppercase" }}>
+          <h2 className="section-title" style={{ fontSize: "clamp(20px, 4vw, 40px)", color: "#fff", marginBottom: 8, textTransform: "uppercase" }}>
             POINTS TABLE — TOP 5
           </h2>
           <p style={{ fontFamily: "Inter, sans-serif", color: "rgba(255,255,255,0.4)", marginBottom: 32, fontSize: 15 }}>
@@ -426,31 +442,35 @@ export function MatchCenter() {
           </p>
 
           <div className="card" style={{ overflow: "hidden" }}>
-            {/* Header */}
-            <div className="pts-header">
-              <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.08em" }}>#</span>
-              <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Team</span>
-              <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "center" }}>P</span>
-              <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "center" }}>W</span>
-              <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "center" }}>L</span>
-              <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "center" }}>PTS</span>
-              <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "right" }}>NRR</span>
-            </div>
-
-            {POINTS.map((row, i) => (
-              <div key={i} className="pts-row">
-                <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 13, color: i === 0 ? "#E8B23D" : "rgba(255,255,255,0.4)" }}>{row.rank}</span>
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <div style={{ width: 3, height: 18, background: row.color, borderRadius: 1, flexShrink: 0 }} />
-                  <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 13, color: "#fff" }}>{row.name}</span>
+            <div className="pts-table-wrap">
+              <div className="pts-table-inner">
+                {/* Header */}
+                <div className="pts-header">
+                  <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.08em" }}>#</span>
+                  <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Team</span>
+                  <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "center" }}>P</span>
+                  <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "center" }}>W</span>
+                  <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "center" }}>L</span>
+                  <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "center" }}>PTS</span>
+                  <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "right" }}>NRR</span>
                 </div>
-                <span style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: "rgba(255,255,255,0.5)", textAlign: "center" }}>{row.p}</span>
-                <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 700, fontSize: 13, color: "#22C55E", textAlign: "center" }}>{row.w}</span>
-                <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 700, fontSize: 13, color: "#EF4444", textAlign: "center" }}>{row.l}</span>
-                <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 14, color: "#FF7A29", textAlign: "center" }}>{row.pts}</span>
-                <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 700, fontSize: 13, color: "#22C55E", textAlign: "right" }}>{row.nrr}</span>
+
+                {POINTS.map((row, i) => (
+                  <div key={i} className="pts-row">
+                    <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 13, color: i === 0 ? "#E8B23D" : "rgba(255,255,255,0.4)" }}>{row.rank}</span>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <div style={{ width: 3, height: 18, background: row.color, borderRadius: 1, flexShrink: 0 }} />
+                      <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 13, color: "#fff" }}>{row.name}</span>
+                    </div>
+                    <span style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: "rgba(255,255,255,0.5)", textAlign: "center" }}>{row.p}</span>
+                    <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 700, fontSize: 13, color: "#22C55E", textAlign: "center" }}>{row.w}</span>
+                    <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 700, fontSize: 13, color: "#EF4444", textAlign: "center" }}>{row.l}</span>
+                    <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 14, color: "#FF7A29", textAlign: "center" }}>{row.pts}</span>
+                    <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 700, fontSize: 13, color: "#22C55E", textAlign: "right" }}>{row.nrr}</span>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
 
           <div style={{ marginTop: 20, textAlign: "right" }}>
@@ -460,11 +480,11 @@ export function MatchCenter() {
       </section>
 
       {/* FOOTER */}
-      <footer style={{ background: "#060C18", borderTop: "1px solid rgba(255,255,255,0.06)", padding: "60px 0 0" }}>
+      <footer style={{ background: "#060C18", borderTop: "1px solid rgba(255,255,255,0.06)", padding: "clamp(40px,6vw,60px) 0 0" }}>
         <div className="wrap">
           <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: 40, marginBottom: 48 }}>
             {/* Brand */}
-            <div style={{ minWidth: 220 }}>
+            <div style={{ minWidth: 200 }}>
               <div style={{ display: "flex", alignItems: "baseline", gap: 2, marginBottom: 8 }}>
                 <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 24, color: "#FF7A29" }}>BCPL</span>
                 <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 24, color: "#fff" }}>T20</span>

@@ -32,6 +32,7 @@ body { background:#060E1C; }
         .float-reg-btn:hover { opacity:.9; transform:translateY(-2px); }
         @keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4)} 50%{box-shadow:0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0)} }
         .float-reg-pulse { animation:floatPulse 2.5s ease-in-out infinite; }
+        @media(max-width:1023px){ .float-reg-btn { display:none; } }
 `;
 
 function AmbientBg() {
@@ -147,7 +148,7 @@ function Footer() {
 
 function MobileStickyCTA() {
   return (
-    <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',padding:'10px 16px 18px',gap:10}}>
+    <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',padding:'10px 16px calc(16px + env(safe-area-inset-bottom))',gap:10}}>
       <button className="btn-fire" style={{flex:2,height:52,fontSize:15}}>Register ₹299 →</button>
       <button className="btn-wa" style={{flex:1,height:52,fontSize:14}}>💬 WhatsApp</button>
     </div>
@@ -217,7 +218,7 @@ export function About() {
       {/* MISSION CARD */}
       <section style={{position:'relative',zIndex:1,padding:'0 0 80px'}}>
         <div className="wrap">
-          <div className="glass-card" style={{padding:'40px 48px',borderLeft:'3px solid #E8B23D',maxWidth:860,margin:'0 auto',animation:'fadeSlide 0.8s ease 0.4s both'}}>
+          <div className="glass-card" style={{padding:'clamp(20px,5vw,40px) clamp(16px,4vw,48px)',borderLeft:'3px solid #E8B23D',maxWidth:860,margin:'0 auto',animation:'fadeSlide 0.8s ease 0.4s both'}}>
             <div style={{fontSize:32,marginBottom:16}}>💡</div>
             <p style={{color:'rgba(255,255,255,0.88)',fontSize:'clamp(17px,2.2vw,21px)',lineHeight:1.75,fontStyle:'italic'}}>
               "We believe every corporate professional who watched IPL and thought <span style={{color:'#FF7A29',fontWeight:700}}>'I could have played'</span> — deserves a real shot. BCPL exists to give them that shot."
@@ -287,7 +288,7 @@ export function About() {
       {/* COMPANY CARD */}
       <section style={{position:'relative',zIndex:1,padding:'0 0 80px'}}>
         <div className="wrap">
-          <div className="glass-card" style={{padding:'48px',maxWidth:860,margin:'0 auto',border:'1px solid rgba(232,178,61,0.25)',animation:'borderGlow 3s ease infinite'}}>
+          <div className="glass-card" style={{padding:'clamp(20px,5vw,48px) clamp(16px,4vw,48px)',maxWidth:860,margin:'0 auto',border:'1px solid rgba(232,178,61,0.25)',animation:'borderGlow 3s ease infinite'}}>
             <div style={{display:'flex',flexWrap:'wrap',gap:32,alignItems:'center',marginBottom:32}}>
               <div style={{flex:1,minWidth:200}}>
                 <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,color:'#fff',marginBottom:8}}>Kriparti Playing11 Pvt. Ltd.</div>
