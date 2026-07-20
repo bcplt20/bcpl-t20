@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "wouter";
 
 const L = import.meta.env.BASE_URL + "bcpl-assets/logos/";
 const G  = import.meta.env.BASE_URL + "bcpl-assets/ganguly_shoot.jpg";
@@ -52,7 +53,7 @@ const SLIDES = [
     tag: "Season 5 · Prize Pool",
     headline: ["₹6 CRORE", "PRIZE", "POOL"],
     accents: [true, false, false],
-    sub: "The biggest prize pool in corporate cricket history. Top auction bid: ₹15 Lakh. 4 seasons completed.",
+    sub: "The biggest prize pool in corporate cricket history. Top auction bid: ₹20 Lakh. 4 seasons completed.",
     cta: "REGISTER & WIN →",
     ctaSecondary: "VIEW ROADMAP ↓",
     bg: "linear-gradient(135deg,#06101E 0%,#0D1A10 100%)",
@@ -77,7 +78,7 @@ const STEPS_P1 = [
 ];
 const STEPS_P2 = [
   { num:4, icon:"🏟", label:"Physical Trial",     sub:"Report to your city's trial ground · Franchise coaches watch live · Full day event",       color:"#E8B23D" },
-  { num:5, icon:"🏏", label:"Franchise Auction",  sub:"10 BCPL franchises bid for you live · Wooden gavel drops — SOLD! · Top bid ₹15 Lakh",    color:"#E8B23D" },
+  { num:5, icon:"🏏", label:"Franchise Auction",  sub:"10 BCPL franchises bid for you live · Wooden gavel drops — SOLD! · Top bid ₹20 Lakh",    color:"#E8B23D" },
 ];
 
 
@@ -100,6 +101,11 @@ export function Home() {
   const [slideIdx,   setSlideIdx]   = useState(0);
   const [countdown,  setCountdown]  = useState({ days:47, hrs:14, min:22, sec:45 });
   const [imgError,   setImgError]   = useState(false);
+  const [, navigate] = useLocation();
+
+  function toTeamSlug(name: string) {
+    return name.toLowerCase().replace(/\s+/g, '-');
+  }
 
   /* Countdown */
   useEffect(() => {
@@ -202,6 +208,20 @@ export function Home() {
         /* FOOTER LINK */
         .footer-link { color:rgba(255,255,255,0.5); text-decoration:none; font-size:13px; font-family:Inter,sans-serif; transition:color .2s; }
         .footer-link:hover { color:#FF7A29; }
+
+        /* TEAM GRID — 3 per row on mobile, auto-fill on larger screens */
+        .teams-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+        @media(min-width:640px){ .teams-grid { grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px; } }
+
+        /* TEAM CARD COMPACT — smaller padding on mobile */
+        .team-card-inner { padding:10px 8px; }
+        @media(min-width:640px){ .team-card-inner { padding:18px 16px; } }
+        .team-name-txt { font-size:10px; line-height:1.2; }
+        @media(min-width:640px){ .team-name-txt { font-size:clamp(13px,1.8vw,16px); } }
+        .team-city-txt { font-size:9px; }
+        @media(min-width:640px){ .team-city-txt { font-size:11px; } }
+        .team-logo-box { width:32px; height:32px; border-radius:6px; }
+        @media(min-width:640px){ .team-logo-box { width:54px; height:54px; border-radius:4px; } }
 
         /* SLIDE DOT */
         .slide-dot { width:24px; height:3px; border-radius:12px; cursor:pointer; transition:all .3s; border:none; }
@@ -335,7 +355,7 @@ export function Home() {
         {/* Stats panel (slide 0): hidden on mobile via .hero-side class */}
         {slide.imageSide === "stats" && (
           <div className="hero-side" style={{ flexDirection:"column", gap:10 }}>
-            {[{v:"₹6 Cr",l:"Prize Pool"},{v:"10",l:"Teams"},{v:"21",l:"Cities"},{v:"₹15L",l:"Top Bid"}].map(s => (
+            {[{v:"₹6 Cr",l:"Prize Pool"},{v:"10",l:"Teams"},{v:"21",l:"Cities"},{v:"₹20L",l:"Top Bid"}].map(s => (
               <div key={s.l} className="stat-box" style={{ minWidth:120, borderLeft:`3px solid ${slide.accent}`, paddingLeft:14, transition:"border-color 0.7s" }}>
                 <div className="stat-val" style={{ color:slide.accent, transition:"color 0.7s" }}>{s.v}</div>
                 <div className="stat-lbl">{s.l}</div>
@@ -440,8 +460,8 @@ export function Home() {
 
       {/* ── PHASE 1 URGENT STRIP ── */}
       <section style={{ position:"relative", overflow:"hidden" }}>
-        <div style={{ background:"linear-gradient(135deg,#C94E0E,#FF7A29,#E8611A)", backgroundSize:"300% 300%", animation:"gradShift 4s ease infinite", padding:"clamp(32px,5vw,48px) 0", position:"relative" }}>
-          <div style={{ position:"absolute", inset:0, background:"repeating-linear-gradient(135deg,transparent,transparent 20px,rgba(0,0,0,0.06) 20px,rgba(0,0,0,0.06) 40px)", animation:"diagonalMove 2s linear infinite" }} />
+        <div style={{ background:"linear-gradient(135deg,#C94E0E,#FF7A29,#E8611A)", padding:"clamp(32px,5vw,48px) 0", position:"relative" }}>
+          <div style={{ position:"absolute", inset:0, background:"repeating-linear-gradient(135deg,transparent,transparent 20px,rgba(0,0,0,0.06) 20px,rgba(0,0,0,0.06) 40px)" }} />
           <div className="wrap" style={{ position:"relative", zIndex:1, textAlign:"center" }}>
             <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:"clamp(20px,4vw,36px)", color:"#fff", marginBottom:8, textTransform:"uppercase" }}>⚡ PHASE 1 TRIALS NOW OPEN</div>
             <div style={{ fontFamily:"Inter,sans-serif", fontSize:"clamp(14px,2vw,16px)", color:"rgba(255,255,255,0.9)", marginBottom:24, lineHeight:1.5 }}>Send your 2-min video. BCCI-certified scouts review in 7 days.</div>
@@ -609,9 +629,9 @@ export function Home() {
                 </div>
               </div>
 
-              <div style={{ display:"flex", flexDirection:"column", gap:12, flexShrink:0, textAlign:"right" }}>
-                {[{v:"₹6 Cr",l:"Prize Pool"},{v:"₹15L",l:"Top Auction Bid"},{v:"10",l:"Franchises"}].map(s => (
-                  <div key={s.l}>
+              <div style={{ display:"flex", flexDirection:"row", gap:20, flexWrap:"wrap", justifyContent:"flex-start" }}>
+                {[{v:"₹6 Cr",l:"Prize Pool"},{v:"₹20L",l:"Top Auction Bid"},{v:"10",l:"Franchises"}].map(s => (
+                  <div key={s.l} style={{ textAlign:"center" }}>
                     <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:22, color:"#22C55E" }}>{s.v}</div>
                     <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:9, color:"rgba(255,255,255,0.3)", letterSpacing:".1em", textTransform:"uppercase" }}>{s.l}</div>
                   </div>
@@ -650,7 +670,7 @@ export function Home() {
               { num:1, icon:"📋", milestone:"REGISTRATIONS", dates:"Oct 2025 – Feb 2026", statusColor:"#FF7A29", status:"OPEN NOW", active:true,  bg:"linear-gradient(135deg,rgba(255,122,41,0.07) 0%,rgba(10,23,39,0.97) 100%)", desc:"Upload your 2-min trial video. BCCI-certified scouts review your clip.", cta:"REGISTER NOW →" },
               { num:2, icon:"🏟", milestone:"TRIALS",         dates:"Mar – Jun 2026",      statusColor:"#E8B23D", status:"UPCOMING", active:false, bg:"linear-gradient(135deg,rgba(232,178,61,0.05) 0%,rgba(10,23,39,0.97) 100%)", desc:"Physical trials at 21 city grounds. Franchise coaches evaluate live.", cta:null },
               { num:3, icon:"📢", milestone:"RESULTS",        dates:"Jul – Aug 2026",      statusColor:"#E8B23D", status:"UPCOMING", active:false, bg:"linear-gradient(135deg,rgba(232,178,61,0.04) 0%,rgba(10,23,39,0.97) 100%)", desc:"Phase 2 selections announced. Franchise team lists revealed online.", cta:null },
-              { num:4, icon:"🏏", milestone:"AUCTION",        dates:"Aug 2026",             statusColor:"#E8B23D", status:"UPCOMING", active:false, bg:"linear-gradient(135deg,rgba(232,178,61,0.06) 0%,rgba(10,23,39,0.97) 100%)", desc:"Live franchise auction. Wooden gavel drops. Players sold up to ₹15L.", cta:null },
+              { num:4, icon:"🏏", milestone:"AUCTION",        dates:"Aug 2026",             statusColor:"#E8B23D", status:"UPCOMING", active:false, bg:"linear-gradient(135deg,rgba(232,178,61,0.06) 0%,rgba(10,23,39,0.97) 100%)", desc:"Live franchise auction. Wooden gavel drops. Players sold up to ₹20L.", cta:null },
               { num:5, icon:"🏆", milestone:"TOURNAMENT",     dates:"Sep – Oct 2026",      statusColor:"#22C55E", status:"UPCOMING", active:false, bg:"linear-gradient(135deg,rgba(34,197,94,0.06) 0%,rgba(10,23,39,0.97) 100%)", desc:"BCPL Season 5 T20 tournament across India. ₹6 Crore prize pool.", cta:null },
             ].map((block, i, arr) => (
               <React.Fragment key={i}>
@@ -709,28 +729,30 @@ export function Home() {
           <h2 className="section-title" style={{ fontSize:"clamp(22px,4vw,40px)", color:"#fff", marginBottom:8, textTransform:"uppercase" }}>THE 10 FRANCHISE TEAMS</h2>
           <p style={{ fontFamily:"Inter,sans-serif", color:"rgba(255,255,255,0.45)", marginBottom:36, fontSize:15 }}>Choose your allegiance. One of these will be your home.</p>
 
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))", gap:14 }}>
+          <div className="teams-grid">
             {TEAMS.map(team => (
-              <div key={team.name} className="team-card" style={{ borderTop:`3px solid ${team.color}` }}>
-                {/* Watermark logo — PNG transparent, direct opacity */}
+              <div key={team.name} className="team-card team-card-inner"
+                style={{ borderTop:`3px solid ${team.color}`, cursor:"pointer" }}
+                onClick={() => navigate(`/team/${toTeamSlug(team.name)}`)}>
+                {/* Watermark logo */}
                 <img src={team.logo} alt={team.name}
                   style={{ position:"absolute", right:"-6%", bottom:"-6%", width:"78%", height:"78%", objectFit:"contain", opacity:0.09, pointerEvents:"none", filter:"grayscale(15%)" }} />
                 {/* Color glow corner */}
                 <div style={{ position:"absolute", top:0, right:0, width:80, height:80, background:`radial-gradient(circle at top right,${team.color}18 0%,transparent 70%)`, pointerEvents:"none" }} />
 
                 <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", position:"relative", zIndex:1 }}>
-                  <div>
-                    <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:"clamp(13px,1.8vw,16px)", color:"#fff", letterSpacing:".01em", lineHeight:1.2, marginBottom:6 }}>{team.name}</div>
-                    <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:11, color:team.color, letterSpacing:".08em", textTransform:"uppercase" }}>{team.city}</div>
+                  <div style={{ flex:1, minWidth:0, paddingRight:4 }}>
+                    <div className="team-name-txt" style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, color:"#fff", letterSpacing:".01em", marginBottom:4 }}>{team.name}</div>
+                    <div className="team-city-txt" style={{ fontFamily:"Montserrat,sans-serif", fontWeight:700, color:team.color, letterSpacing:".08em", textTransform:"uppercase" }}>{team.city}</div>
                   </div>
-                  {/* Logo badge — transparent PNG, team-color subtle bg */}
-                  <div style={{ width:54, height:54, borderRadius:4, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", background:"rgba(255,255,255,0.96)", border:`2px solid ${team.color}55`, boxShadow:`0 4px 18px ${team.color}44` }}>
+                  {/* Logo badge */}
+                  <div className="team-logo-box" style={{ flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", background:"rgba(255,255,255,0.96)", border:`2px solid ${team.color}55`, boxShadow:`0 4px 18px ${team.color}44` }}>
                     <img src={team.logo} alt={team.name} style={{ width:"86%", height:"86%", objectFit:"contain" }} />
                   </div>
                 </div>
 
-                <div style={{ position:"relative", zIndex:1, marginTop:16 }}>
-                  <div style={{ width:28, height:3, background:team.color, borderRadius:1 }} />
+                <div style={{ position:"relative", zIndex:1, marginTop:8 }}>
+                  <div style={{ width:20, height:2, background:team.color, borderRadius:1 }} />
                 </div>
               </div>
             ))}
@@ -748,10 +770,11 @@ export function Home() {
           <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:"clamp(16px,3vw,26px)", color:"#fff", textTransform:"uppercase", letterSpacing:".1em", marginBottom:12 }}>SEASON 5 PRIZE POOL</div>
           <p style={{ fontFamily:"Inter,sans-serif", color:"rgba(255,255,255,0.45)", fontSize:15, marginBottom:48 }}>The biggest prize pool in corporate cricket history.</p>
           <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(180px,1fr))", gap:12, textAlign:"left" }}>
-            {[{v:"4",l:"Seasons Completed"},{v:"400+",l:"Players Auctioned"},{v:"₹14 Cr+",l:"Total Prize Distributed"},{v:"21",l:"Trial Cities"}].map(s => (
+            {[{v:"4",l:"Seasons Completed"},{v:"400+",l:"Players Auctioned"},{v:"₹14 Cr+",l:"Total Prize Distributed"},{v:"21",l:"Trial Cities",sub:"50+ coming soon"}].map(s => (
               <div key={s.l} className="stat-box" style={{ textAlign:"center", padding:"24px 18px" }}>
                 <div className="stat-val" style={{ fontSize:"clamp(24px,4vw,36px)" }}>{s.v}</div>
                 <div className="stat-lbl" style={{ marginTop:8 }}>{s.l}</div>
+                {'sub' in s && s.sub && <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:9, color:"#FF7A29", letterSpacing:".08em", textTransform:"uppercase", marginTop:4 }}>▲ {s.sub}</div>}
               </div>
             ))}
           </div>
