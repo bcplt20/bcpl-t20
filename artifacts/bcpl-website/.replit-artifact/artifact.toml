@@ -21,9 +21,13 @@ args = ["pnpm", "--filter", "@workspace/bcpl-website", "run", "build"]
 [services.production.build.env]
 BASE_PATH = "/"
 
-# Production run: vite preview serves the built SPA; PORT comes from Cloud Run
+# Production run: node server.mjs serves the built SPA
+# PORT must match localPort (20570) — pid1 owns the Cloud Run external PORT
 [services.production.run]
 args = ["pnpm", "--filter", "@workspace/bcpl-website", "run", "serve"]
+
+[services.production.run.env]
+PORT = "20570"
 
 # SPA fallback: all routes → index.html
 [[services.production.rewrites]]

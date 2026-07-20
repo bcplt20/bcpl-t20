@@ -11,7 +11,9 @@ import { dirname } from 'node:path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const distDir = resolve(__dirname, 'dist/public');
-const port = parseInt(process.env.PORT ?? '3000', 10);
+// In production, PORT is set to localPort (20570) by artifact.toml.
+// Fallback to 20570 to match localPort even if env var is absent.
+const port = parseInt(process.env.PORT ?? '20570', 10);
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
