@@ -2,60 +2,91 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 
 const L = import.meta.env.BASE_URL + "bcpl-assets/logos/";
-const G = import.meta.env.BASE_URL + "bcpl-assets/ganguly_shoot.jpg";
 
 const TEAMS = [
-  { name:"Rajasthan Scorchers",  city:"Jaipur",      color:"#E97B6B", logo:"🦂" },
-  { name:"Punjab Warriors",      city:"Chandigarh",  color:"#DC2626", logo:"⚔️" },
-  { name:"Kolkata Tigers",        city:"Kolkata",     color:"#F97316", logo:"🐯" },
-  { name:"Lucknow Nawabs",        city:"Lucknow",     color:"#F59E0B", logo:"👑" },
-  { name:"Mumbai Mavericks",      city:"Mumbai",      color:"#3B82F6", logo:"🌊" },
-  { name:"Hyderabad Hawks",       city:"Hyderabad",   color:"#16A34A", logo:"🦅" },
-  { name:"Delhi Suryas",           city:"Delhi",       color:"#6366F1", logo:"☀️" },
-  { name:"Chennai Thalaivas",      city:"Chennai",     color:"#2563EB", logo:"🦁" },
-  { name:"Ahmedabad Lions",        city:"Ahmedabad",   color:"#B91C1C", logo:"🦁" },
-  { name:"Bengaluru Rockets",      city:"Bengaluru",   color:"#EF4444", logo:"🚀" },
+  { name:"Rajasthan Scorchers",  city:"Jaipur",      color:"#E97B6B", slug:"rajasthan_scorchers"  },
+  { name:"Punjab Warriors",      city:"Chandigarh",  color:"#DC2626", slug:"punjab_warriors"       },
+  { name:"Kolkata Tigers",        city:"Kolkata",     color:"#F97316", slug:"kolkata_tigers"        },
+  { name:"Lucknow Nawabs",        city:"Lucknow",     color:"#F59E0B", slug:"lucknow_nawabs"        },
+  { name:"Mumbai Mavericks",      city:"Mumbai",      color:"#3B82F6", slug:"mumbai_mavericks"      },
+  { name:"Hyderabad Hawks",       city:"Hyderabad",   color:"#16A34A", slug:"hyderabad_hawks"       },
+  { name:"Delhi Suryas",           city:"Delhi",       color:"#6366F1", slug:"delhi_suryas"          },
+  { name:"Chennai Thalaivas",      city:"Chennai",     color:"#2563EB", slug:"chennai_thalaivas"     },
+  { name:"Ahmedabad Lions",        city:"Ahmedabad",   color:"#B91C1C", slug:"ahmedabad_lions"       },
+  { name:"Bengaluru Rockets",      city:"Bengaluru",   color:"#EF4444", slug:"bengaluru_rockets"     },
 ];
 
-const NAV = ["Home","Match Center","Teams","Sponsors","Photos","Videos","About","FAQ","Contact"];
-const ROUTES: Record<string,string> = {
+const NAV  = ["Home","Match Center","Teams","Sponsors","Photos","Videos","About","FAQ","Contact"];
+const RTES: Record<string,string> = {
   "Home":"/","Match Center":"/match-center","Teams":"/teams","Sponsors":"/sponsors",
   "Photos":"/photos","Videos":"/videos","About":"/about","FAQ":"/faq","Contact":"/contact",
 };
 
 const STATS = [
-  { value:"₹6 Cr", label:"Prize Pool",      icon:"💰", color:"#FF7A29" },
-  { value:"10",    label:"Franchise Teams", icon:"🏏", color:"#E8B23D" },
-  { value:"21",    label:"Trial Cities",    icon:"📍", color:"#22C55E" },
-  { value:"4",     label:"Seasons Done",    icon:"🏆", color:"#3B82F6" },
+  { value:"₹6 Cr", label:"Prize Pool",      color:"#FF7A29" },
+  { value:"10",    label:"Franchise Teams", color:"#E8B23D" },
+  { value:"21",    label:"Trial Cities",    color:"#22C55E" },
+  { value:"4",     label:"Seasons Done",    color:"#3B82F6" },
 ];
 
 const STEPS = [
-  { num:1, phase:"Phase 1", icon:"📋", title:"Register & Pay",    price:"₹299 / ₹399", desc:"Choose your role. Pay the Phase 1 fee. Instant confirmation.",                           color:"#FF7A29", status:"OPEN NOW" },
-  { num:2, phase:"Phase 1", icon:"🎬", title:"Upload Your Video", price:"Free",          desc:"Record a 2-minute trial clip. Upload from any cricket ground in India.",               color:"#FF7A29", status:null },
-  { num:3, phase:"Phase 1", icon:"🔍", title:"Scout Review",      price:"Free",          desc:"BCCI-certified scouts review your clip. Result within 7 working days.",                color:"#FF7A29", status:null },
-  { num:4, phase:"Phase 2", icon:"🏟", title:"Physical Trial",    price:"₹2,000",        desc:"If selected — attend your city trial. Franchise coaches watch live.",                   color:"#E8B23D", status:"Only if selected" },
-  { num:5, phase:"Phase 2", icon:"🏏", title:"Franchise Auction", price:"No extra cost", desc:"10 BCPL franchises bid for you live. Top auction bid: ₹20 Lakh.",                     color:"#E8B23D", status:null },
-  { num:6, phase:"Final",   icon:"🏆", title:"Play Season 5",     price:"No extra cost", desc:"Represent your franchise. ₹6 Crore prize pool. Office se Stadium tak.",               color:"#22C55E", status:null },
+  { num:1, phase:1, icon:"📋", title:"Register & Pay",    price:"₹299 / ₹399", desc:"Choose your role. Pay the Phase 1 fee. Instant confirmation.",           color:"#FF7A29", status:"OPEN NOW" },
+  { num:2, phase:1, icon:"🎬", title:"Upload Trial Video", price:"Free",         desc:"Record a 2-minute cricket clip. Upload from any ground in India.",       color:"#FF7A29", status:null },
+  { num:3, phase:1, icon:"🔍", title:"Scout Review",       price:"Free",         desc:"BCCI-certified scouts review your clip. Result within 7 working days.",  color:"#FF7A29", status:null },
+  { num:4, phase:2, icon:"🏟", title:"Physical Trial",     price:"₹2,000",       desc:"If selected — attend your city trial. Franchise coaches watch live.",    color:"#E8B23D", status:"Only if selected" },
+  { num:5, phase:2, icon:"🏏", title:"Franchise Auction",  price:"No extra cost",desc:"10 BCPL franchises bid for you live. Top bid: ₹20 Lakh.",               color:"#E8B23D", status:null },
+  { num:6, phase:3, icon:"🏆", title:"Play Season 5",      price:"No extra cost",desc:"Represent your franchise. ₹6 Crore prize pool. Office se Stadium tak.", color:"#22C55E", status:null },
 ];
 
 const FAQS = [
-  { q:"How much do I pay in Phase 1?",                   a:"₹299 for Batsman/Bowler/Wicket-keeper. ₹399 for All-rounders. That's it for Phase 1." },
-  { q:"Do I pay anything extra for Phase 2?",            a:"Only if you are selected after Phase 1. Phase 2 fee is ₹2,000 (Bat/Bowl/WK) or ₹3,000 (All-rounder). If you are not selected, you pay nothing more." },
-  { q:"Are there any hidden costs?",                     a:"Zero. Maximum total cost is ₹2,299 to ₹3,399 for your entire BCPL journey — from registration to franchise auction." },
-  { q:"Who reviews my Phase 1 video?",                   a:"BCCI-certified cricket scouts review every video. Results are sent within 7 working days of submission." },
-  { q:"Which cities have physical trials?",              a:"21 cities including Mumbai, Delhi, Bengaluru, Hyderabad, Chennai, Kolkata, Ahmedabad, Jaipur, Lucknow, Pune, and more." },
-  { q:"What if I'm not selected for Phase 2?",           a:"You simply don't pay for Phase 2. Your Phase 1 payment covers the scout review and there is no further obligation." },
+  { q:"How much do I pay in Phase 1?",         a:"₹299 for Batsman/Bowler/Wicket-keeper. ₹399 for All-rounders. That's it for Phase 1." },
+  { q:"Do I pay extra for Phase 2?",           a:"Only if selected. Phase 2 fee is ₹2,000 (Bat/Bowl/WK) or ₹3,000 (All-rounder). Not selected = pay nothing more." },
+  { q:"Are there hidden costs?",               a:"Zero. Maximum total cost is ₹2,299–₹3,399 for your entire BCPL journey — registration to franchise auction." },
+  { q:"Who reviews my Phase 1 video?",         a:"BCCI-certified cricket scouts review every video. Results sent within 7 working days of submission." },
+  { q:"Which cities have physical trials?",    a:"21 cities including Mumbai, Delhi, Bengaluru, Hyderabad, Chennai, Kolkata, Ahmedabad, Jaipur, Lucknow, Pune, and more." },
+  { q:"What if I'm not selected for Phase 2?", a:"You simply don't pay for Phase 2. Your Phase 1 fee covers the scout review and there is no further obligation." },
 ];
 
+/* Announcement banners that rotate */
+const BANNERS = [
+  { text:"🎁 Refer a friend and get ₹50 cashback on your next phase fee!", cta:"Refer Now", color:"#1a3a1a", border:"#22C55E", textCol:"#22C55E", ctaCol:"#22C55E" },
+  { text:"⏰ Last date for Phase 1 registration is 28th February 2026 — Don't miss out!", cta:"Register Now", color:"#1a1a0a", border:"#FF7A29", textCol:"#FF7A29", ctaCol:"#FF7A29" },
+  { text:"🏏 New cities added! Trials now in 21 cities across India. Check your city →", cta:"View Cities", color:"#0a1a2e", border:"#3B82F6", textCol:"#60A5FA", ctaCol:"#60A5FA" },
+];
+
+/* Season timeline */
+const TIMELINE = [
+  { month:"Oct – Feb", label:"Registrations", icon:"📋", desc:"Online Phase 1 registrations open. Pay ₹299. Upload trial video.", color:"#FF7A29", done:true },
+  { month:"Mar – Jun", label:"Trials",         icon:"🏟", desc:"Physical trials across 21 cities. BCCI scouts evaluate players live.", color:"#E8B23D", done:false },
+  { month:"Jul – Aug", label:"Results",        icon:"📣", desc:"Selection results announced. Shortlisted players notified directly.", color:"#22C55E", done:false },
+  { month:"August",    label:"Auction",        icon:"🔨", desc:"IPL-style live franchise auction. 10 teams bid for top players.", color:"#3B82F6", done:false },
+  { month:"Sep – Oct", label:"Tournament",     icon:"🏆", desc:"BCPL T20 Season 5 kicks off. ₹6 Crore prize pool up for grabs.", color:"#6366F1", done:false },
+];
+
+/* Sponsors */
+const SPONSORS = [
+  { tier:"Title Sponsor",    name:"TechCorp India",     logo:"TC",  color:"#FF7A29" },
+  { tier:"Title Sponsor",    name:"SportsMax",           logo:"SM",  color:"#FF7A29" },
+  { tier:"Associate",        name:"HealthFirst",         logo:"HF",  color:"#E8B23D" },
+  { tier:"Associate",        name:"PowerDrink Pro",      logo:"PD",  color:"#E8B23D" },
+  { tier:"Associate",        name:"FastTrack Jobs",      logo:"FT",  color:"#E8B23D" },
+  { tier:"Official Partner", name:"CricEquip",           logo:"CE",  color:"#64748B" },
+  { tier:"Official Partner", name:"SportswearX",         logo:"SX",  color:"#64748B" },
+  { tier:"Official Partner", name:"FlightEasy",          logo:"FE",  color:"#64748B" },
+  { tier:"Official Partner", name:"HotelNow",            logo:"HN",  color:"#64748B" },
+];
+
+/* ═══════════════════════════════════════════════════════════ */
 export function Home() {
   const [menuOpen,  setMenuOpen]  = useState(false);
   const [faqOpen,   setFaqOpen]   = useState<number|null>(null);
   const [countdown, setCountdown] = useState({ d:47, h:14, m:22, s:45 });
-  const [imgErr,    setImgErr]    = useState(false);
+  const [bannerIdx, setBannerIdx] = useState(0);
+  const [bannerOut, setBannerOut] = useState(false);
   const [, navigate] = useLocation();
 
-  useEffect(() => {
+  /* Countdown */
+  useEffect(()=>{
     const target = new Date(Date.now() + 47*86400000);
     const t = setInterval(()=>{
       const diff = target.getTime()-Date.now();
@@ -65,95 +96,133 @@ export function Home() {
     return ()=>clearInterval(t);
   },[]);
 
+  /* Banner auto-rotate */
+  useEffect(()=>{
+    const iv = setInterval(()=>{
+      setBannerOut(true);
+      setTimeout(()=>{ setBannerIdx(i=>(i+1)%BANNERS.length); setBannerOut(false); }, 350);
+    }, 5000);
+    return ()=>clearInterval(iv);
+  },[]);
+
+  const B = BANNERS[bannerIdx];
+
   return (
     <div style={{ background:"#06101E", color:"#F0EDE8", fontFamily:"'Inter',sans-serif", overflowX:"hidden" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap');
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
         html{scroll-behavior:smooth;}
-
-        /* ─ Layout ─ */
         .W{max-width:1200px;margin:0 auto;padding:0 20px;}
         @media(min-width:768px){.W{padding:0 32px;}}
         @media(min-width:1280px){.W{padding:0 48px;}}
-
-        /* ─ Typography ─ */
         .mont{font-family:'Montserrat',sans-serif;}
 
-        /* ─ Animations ─ */
+        /* Animations */
         @keyframes ticker   {from{transform:translateX(0)}to{transform:translateX(-50%)}}
         @keyframes pulse6   {0%,100%{box-shadow:0 0 0 0 rgba(255,122,41,.4)}50%{box-shadow:0 0 0 10px rgba(255,122,41,0)}}
         @keyframes blip     {0%,100%{opacity:1}50%{opacity:.15}}
-        @keyframes fadeUp   {from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
         @keyframes gradMove {0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+        @keyframes bannerIn {from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes bannerOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(8px)}}
+        @keyframes shimmer  {0%{left:-100%}100%{left:200%}}
+        @keyframes float    {0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+        @keyframes glow     {0%,100%{text-shadow:0 0 20px rgba(255,122,41,.3)}50%{text-shadow:0 0 40px rgba(255,122,41,.7),0 0 80px rgba(255,122,41,.3)}}
+        @keyframes s5spin   {0%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}100%{transform:rotate(-2deg)}}
+        @keyframes tlPop    {from{opacity:0;transform:scale(.85) translateY(12px)}to{opacity:1;transform:scale(1) translateY(0)}}
+        @keyframes railGrow {from{height:0}to{height:100%}}
 
-        /* ─ Buttons ─ */
+        /* Buttons */
         .btn-cta{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:14px;color:#fff;font-family:'Montserrat',sans-serif;font-weight:900;font-size:14px;letter-spacing:.04em;cursor:pointer;padding:14px 28px;text-transform:uppercase;text-decoration:none;transition:opacity .2s,transform .15s;}
         .btn-cta:hover{opacity:.9;transform:translateY(-2px);}
-        .btn-ghost{display:inline-flex;align-items:center;background:transparent;border:1.5px solid rgba(255,255,255,.25);border-radius:14px;color:rgba(255,255,255,.85);font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;cursor:pointer;padding:13px 26px;text-transform:uppercase;transition:border-color .2s,color .2s;}
+        .btn-ghost{display:inline-flex;align-items:center;background:transparent;border:1.5px solid rgba(255,255,255,.25);border-radius:14px;color:rgba(255,255,255,.85);font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;cursor:pointer;padding:13px 26px;text-transform:uppercase;transition:border-color .2s,color .2s;text-decoration:none;}
         .btn-ghost:hover{border-color:#FF7A29;color:#FF7A29;}
 
-        /* ─ Nav ─ */
+        /* Nav */
         .nav-link{font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;letter-spacing:.08em;color:rgba(255,255,255,.55);text-decoration:none;text-transform:uppercase;transition:color .2s;white-space:nowrap;}
         .nav-link:hover{color:#FF7A29;}
         .desk-links{display:none;}
         @media(min-width:1024px){.desk-links{display:flex;gap:18px;align-items:center;}.ham{display:none!important;}}
 
-        /* ─ Mobile Menu ─ */
-        .mob-menu{position:fixed;inset:0;background:#06101E;z-index:1000;display:flex;flex-direction:column;padding:72px 32px 32px;gap:0;overflow-y:auto;}
-        .mob-link{padding:18px 0;border-bottom:1px solid rgba(255,255,255,.06);font-family:'Montserrat',sans-serif;font-weight:800;font-size:20px;color:rgba(255,255,255,.8);text-transform:uppercase;cursor:pointer;letter-spacing:.02em;}
+        /* Mobile menu */
+        .mob-menu{position:fixed;inset:0;background:#06101E;z-index:1000;display:flex;flex-direction:column;padding:72px 32px 32px;overflow-y:auto;}
+        .mob-link{padding:18px 0;border-bottom:1px solid rgba(255,255,255,.06);font-family:'Montserrat',sans-serif;font-weight:800;font-size:20px;color:rgba(255,255,255,.8);text-transform:uppercase;cursor:pointer;}
         .mob-link:hover{color:#FF7A29;}
 
-        /* ─ Section Label ─ */
+        /* Section label */
         .slbl{font-family:'Montserrat',sans-serif;font-weight:800;font-size:11px;letter-spacing:.15em;color:#FF7A29;text-transform:uppercase;display:flex;align-items:center;gap:10px;margin-bottom:14px;}
         .slbl::before{content:'';display:inline-block;width:20px;height:2px;background:#FF7A29;}
 
-        /* ─ Cards ─ */
+        /* Card */
         .card{background:#0A1727;border:1px solid rgba(255,255,255,.07);border-radius:16px;}
 
-        /* ─ Price Chip ─ */
-        .chip{border-radius:10px;padding:8px 16px;font-family:'Montserrat',sans-serif;font-weight:800;font-size:13px;text-align:center;}
-
-        /* ─ Step cards grid ─ */
+        /* Grids */
         .steps-grid{display:grid;grid-template-columns:1fr;gap:12px;}
         @media(min-width:640px){.steps-grid{grid-template-columns:1fr 1fr;}}
         @media(min-width:1024px){.steps-grid{grid-template-columns:repeat(3,1fr);}}
 
-        /* ─ Team grid ─ */
         .team-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
         @media(min-width:480px){.team-grid{grid-template-columns:repeat(3,1fr);}}
         @media(min-width:768px){.team-grid{grid-template-columns:repeat(5,1fr);}}
 
-        /* ─ Stats row ─ */
-        .stats-row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
-        @media(min-width:640px){.stats-row{grid-template-columns:repeat(4,1fr);}}
-
-        /* ─ Price cards ─ */
         .price-grid{display:grid;grid-template-columns:1fr;gap:14px;}
         @media(min-width:640px){.price-grid{grid-template-columns:1fr 1fr;}}
 
-        /* ─ Hero grid ─ */
         .hero-grid{display:flex;flex-direction:column;gap:32px;}
         @media(min-width:900px){.hero-grid{flex-direction:row;align-items:center;}}
 
-        /* ─ Ambassador grid ─ */
         .amb-grid{display:flex;flex-direction:column;gap:20px;}
         @media(min-width:768px){.amb-grid{flex-direction:row;align-items:center;}}
 
-        /* ─ Floating CTA ─ */
+        /* Timeline */
+        .tl-grid{display:grid;grid-template-columns:1fr;gap:0;}
+        @media(min-width:768px){.tl-grid{grid-template-columns:repeat(5,1fr);gap:0;}}
+
+        /* Sponsor tiers */
+        .sp-row{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;}
+
+        /* Footer columns - always horizontal */
+        .foot-cols{display:flex;flex-wrap:wrap;gap:32px;}
+        .foot-bottom{display:flex;flex-direction:row;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+        .foot-legal-links{display:flex;flex-direction:row;flex-wrap:wrap;gap:12px;align-items:center;}
+
+        /* Floating CTA */
         .float-btn{position:fixed;bottom:20px;right:20px;z-index:999;animation:pulse6 2.5s infinite;}
         @media(min-width:768px){.float-btn{bottom:28px;right:28px;}}
 
-        /* ─ Countdown ─ */
+        /* Countdown */
         .cd-box{background:#060C18;border:1px solid rgba(255,122,41,.2);border-radius:12px;padding:12px 10px;text-align:center;min-width:58px;}
         @media(min-width:480px){.cd-box{padding:14px 14px;min-width:68px;}}
 
-        /* ─ shimmer text ─ */
+        /* Shimmer text */
         .shim{background:linear-gradient(90deg,#FF7A29,#FFB347,#FF7A29);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradMove 3s ease infinite;}
         .shim-gold{background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradMove 3s ease infinite;}
+
+        /* S5 badge glow */
+        .s5-badge{animation:s5spin 3s ease-in-out infinite;}
+
+        /* Banner slide */
+        .banner-in{animation:bannerIn .35s ease forwards;}
+        .banner-out{animation:bannerOut .35s ease forwards;}
+
+        /* Timeline card pop */
+        .tl-card{animation:tlPop .5s ease forwards;opacity:0;}
+        .tl-card:nth-child(1){animation-delay:.1s;}
+        .tl-card:nth-child(2){animation-delay:.2s;}
+        .tl-card:nth-child(3){animation-delay:.3s;}
+        .tl-card:nth-child(4){animation-delay:.4s;}
+        .tl-card:nth-child(5){animation-delay:.5s;}
+
+        /* Sponsor hover */
+        .sp-card{transition:transform .2s,border-color .2s;}
+        .sp-card:hover{transform:translateY(-3px);}
+
+        /* Logo circle shimmer */
+        .bcpl-logo{position:relative;overflow:hidden;}
+        .bcpl-logo::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);animation:shimmer 2.5s infinite;}
       `}</style>
 
-      {/* ── TICKER ── */}
+      {/* ══ TICKER ══ */}
       <div style={{ background:"linear-gradient(90deg,#C94E0E,#FF7A29)", height:34, overflow:"hidden", display:"flex", alignItems:"center" }}>
         <div style={{ display:"flex", whiteSpace:"nowrap", animation:"ticker 36s linear infinite" }}>
           {[0,1].map(i=>(
@@ -164,32 +233,48 @@ export function Home() {
         </div>
       </div>
 
-      {/* ── NAVBAR ── */}
+      {/* ══ ANNOUNCEMENT BANNER ══ */}
+      <div style={{ background:B.color, borderBottom:`1px solid ${B.border}33`, padding:"10px 0", overflow:"hidden" }}>
+        <div className="W" style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:12, flexWrap:"wrap" }}>
+          <span className={bannerOut?"banner-out":"banner-in"} style={{ fontSize:"clamp(12px,2vw,13px)", color:B.textCol, fontWeight:600, flex:1, minWidth:0 }}>{B.text}</span>
+          <button onClick={()=>navigate("/registration")} style={{ padding:"5px 16px", borderRadius:8, border:`1px solid ${B.ctaCol}55`, background:"transparent", color:B.ctaCol, fontSize:12, fontWeight:700, cursor:"pointer", whiteSpace:"nowrap", flexShrink:0 }}>{B.cta} →</button>
+          {/* Dots */}
+          <div style={{ display:"flex", gap:5, flexShrink:0 }}>
+            {BANNERS.map((_,i)=>(
+              <button key={i} onClick={()=>setBannerIdx(i)} style={{ width:i===bannerIdx?20:6, height:6, borderRadius:3, border:"none", background:i===bannerIdx?B.ctaCol:"rgba(255,255,255,.2)", cursor:"pointer", padding:0, transition:"width .3s,background .3s" }}/>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ══ NAVBAR ══ */}
       <nav style={{ position:"sticky", top:0, zIndex:200, background:"rgba(6,16,30,.97)", backdropFilter:"blur(20px)", borderBottom:"1px solid rgba(255,255,255,.06)" }}>
         <div className="W" style={{ height:60, display:"flex", alignItems:"center", justifyContent:"space-between", gap:16 }}>
+
           {/* Logo */}
-          <div style={{ display:"flex", alignItems:"center", gap:10, flexShrink:0 }}>
-            <div style={{ display:"flex", alignItems:"baseline", gap:2 }}>
-              <span className="mont" style={{ fontWeight:900, fontSize:22, color:"#FF7A29" }}>BCPL</span>
-              <span className="mont" style={{ fontWeight:900, fontSize:22, color:"#fff" }}>T20</span>
+          <div style={{ display:"flex", alignItems:"center", gap:10, flexShrink:0, cursor:"pointer" }} onClick={()=>navigate("/")}>
+            {/* Hexagonal BCPL badge */}
+            <div className="bcpl-logo" style={{ width:38, height:38, borderRadius:10, background:"linear-gradient(135deg,#FF7A29,#C94E0E)", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 0 12px rgba(255,122,41,.35)", flexShrink:0 }}>
+              <span className="mont" style={{ fontWeight:900, fontSize:14, color:"#fff", letterSpacing:"-.02em", lineHeight:1 }}>B</span>
             </div>
-            <div style={{ width:1, height:26, background:"rgba(255,255,255,.12)" }}/>
             <div>
-              <div className="mont" style={{ fontWeight:800, fontSize:9, letterSpacing:".12em", color:"#E8B23D", textTransform:"uppercase" }}>Season 5</div>
-              <div className="mont" style={{ fontWeight:700, fontSize:8, letterSpacing:".06em", color:"rgba(255,255,255,.3)", textTransform:"uppercase" }}>Kriparti Playing11</div>
+              <div style={{ display:"flex", alignItems:"baseline", gap:2 }}>
+                <span className="mont" style={{ fontWeight:900, fontSize:20, color:"#FF7A29", lineHeight:1 }}>BCPL</span>
+                <span className="mont" style={{ fontWeight:900, fontSize:20, color:"#fff", lineHeight:1 }}>T20</span>
+              </div>
+              <div className="mont" style={{ fontWeight:800, fontSize:8, letterSpacing:".12em", color:"#E8B23D", textTransform:"uppercase", lineHeight:1, marginTop:2 }}>Season 5 · 2026</div>
             </div>
           </div>
 
           {/* Desktop Nav */}
           <nav className="desk-links">
-            {NAV.map(n=><a key={n} className="nav-link" href={ROUTES[n]||"#"}>{n}</a>)}
+            {NAV.map(n=><a key={n} className="nav-link" href={RTES[n]||"#"}>{n}</a>)}
           </nav>
 
-          {/* Right side */}
+          {/* Right */}
           <div style={{ display:"flex", alignItems:"center", gap:10, flexShrink:0 }}>
             <button className="btn-cta" style={{ fontSize:12, padding:"9px 18px" }} onClick={()=>navigate("/registration")}>Register Now →</button>
-            <button className="ham" onClick={()=>setMenuOpen(true)}
-              style={{ display:"flex", flexDirection:"column", gap:5, background:"none", border:"none", cursor:"pointer", padding:"8px" }}>
+            <button className="ham" onClick={()=>setMenuOpen(true)} style={{ display:"flex", flexDirection:"column", gap:5, background:"none", border:"none", cursor:"pointer", padding:8 }}>
               {[0,1,2].map(i=><span key={i} style={{ width:22, height:2, background:"#fff", display:"block" }}/>)}
             </button>
           </div>
@@ -201,9 +286,9 @@ export function Home() {
         <div className="mob-menu">
           <button onClick={()=>setMenuOpen(false)} style={{ position:"fixed", top:18, right:22, background:"none", border:"none", color:"#fff", fontSize:28, cursor:"pointer", zIndex:1001, lineHeight:1 }}>✕</button>
           {NAV.map(n=>(
-            <div key={n} className="mob-link" onClick={()=>{ setMenuOpen(false); navigate(ROUTES[n]||"/"); }}>{n}</div>
+            <div key={n} className="mob-link" onClick={()=>{ setMenuOpen(false); navigate(RTES[n]||"/"); }}>{n}</div>
           ))}
-          <button className="btn-cta" style={{ marginTop:24, width:"100%", justifyContent:"center", fontSize:16, padding:"16px" }} onClick={()=>{ setMenuOpen(false); navigate("/registration"); }}>
+          <button className="btn-cta" style={{ marginTop:24, width:"100%", justifyContent:"center", fontSize:16, padding:16 }} onClick={()=>{ setMenuOpen(false); navigate("/registration"); }}>
             Register Now — ₹299 →
           </button>
         </div>
@@ -212,20 +297,30 @@ export function Home() {
       {/* ══════════════════════════════════════
           HERO SECTION
       ══════════════════════════════════════ */}
-      <section style={{ background:"linear-gradient(135deg,#060C18 0%,#0A1520 100%)", position:"relative", overflow:"hidden", paddingBottom:0 }}>
+      <section style={{ background:"linear-gradient(135deg,#060C18 0%,#0A1520 100%)", position:"relative", overflow:"hidden" }}>
         {/* BG grid */}
         <div style={{ position:"absolute", inset:0, backgroundImage:"linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px)", backgroundSize:"60px 60px", pointerEvents:"none" }}/>
-        {/* Orange radial */}
         <div style={{ position:"absolute", top:"-20%", left:"-10%", width:"60%", height:"140%", background:"radial-gradient(ellipse,rgba(255,122,41,.06) 0%,transparent 65%)", pointerEvents:"none" }}/>
 
         <div className="W" style={{ position:"relative", zIndex:1, paddingTop:"clamp(48px,8vw,80px)", paddingBottom:"clamp(48px,8vw,72px)" }}>
           <div className="hero-grid">
+
             {/* Left: Text */}
             <div style={{ flex:1 }}>
-              {/* Badge */}
-              <div style={{ display:"inline-flex", alignItems:"center", gap:8, background:"rgba(255,122,41,.1)", border:"1px solid rgba(255,122,41,.3)", borderRadius:20, padding:"6px 14px", marginBottom:22 }}>
-                <span style={{ width:7, height:7, borderRadius:"50%", background:"#22C55E", display:"inline-block", animation:"blip 1.2s infinite" }}/>
-                <span className="mont" style={{ fontSize:11, fontWeight:800, color:"#FF7A29", letterSpacing:".12em", textTransform:"uppercase" }}>Phase 1 Registrations Open</span>
+              {/* SEASON 5 GLORIFIED BADGE */}
+              <div style={{ display:"inline-flex", alignItems:"center", gap:12, marginBottom:20 }}>
+                <div className="s5-badge" style={{ display:"inline-flex", alignItems:"center", gap:10, background:"linear-gradient(135deg,rgba(232,178,61,.15),rgba(232,178,61,.05))", border:"1.5px solid rgba(232,178,61,.5)", borderRadius:16, padding:"8px 18px", boxShadow:"0 0 24px rgba(232,178,61,.2), inset 0 1px 0 rgba(232,178,61,.3)" }}>
+                  <span style={{ fontSize:18, lineHeight:1 }}>🏆</span>
+                  <div>
+                    <div className="mont" style={{ fontWeight:900, fontSize:16, color:"#E8B23D", letterSpacing:".06em", lineHeight:1, animation:"glow 2.5s ease infinite" }}>SEASON 5</div>
+                    <div className="mont" style={{ fontWeight:700, fontSize:9, color:"rgba(232,178,61,.6)", letterSpacing:".12em", textTransform:"uppercase", marginTop:2, lineHeight:1 }}>BCPL T20 · 2026</div>
+                  </div>
+                  <div style={{ width:1, height:28, background:"rgba(232,178,61,.3)" }}/>
+                  <div style={{ display:"flex", alignItems:"center", gap:5 }}>
+                    <span style={{ width:6, height:6, borderRadius:"50%", background:"#22C55E", display:"inline-block", animation:"blip 1.2s infinite" }}/>
+                    <span className="mont" style={{ fontSize:10, fontWeight:800, color:"#22C55E", letterSpacing:".1em" }}>REGISTRATIONS OPEN</span>
+                  </div>
+                </div>
               </div>
 
               {/* Headline */}
@@ -241,7 +336,7 @@ export function Home() {
 
               {/* Price pills */}
               <div style={{ display:"flex", flexWrap:"wrap", gap:10, marginBottom:28 }}>
-                {[{label:"Bat / Bowl / WK",price:"₹299",color:"#FF7A29"},{label:"All-Rounder",price:"₹399",color:"#E8B23D"},{label:"Phase 2 fee (only if selected)",price:"₹2,000+",color:"#22C55E"}].map(p=>(
+                {[{label:"Bat / Bowl / WK",price:"₹299",color:"#FF7A29"},{label:"All-Rounder",price:"₹399",color:"#E8B23D"},{label:"Phase 2 (only if selected)",price:"₹2,000+",color:"#22C55E"}].map(p=>(
                   <div key={p.label} style={{ background:p.color+"18", border:`1px solid ${p.color}44`, borderRadius:10, padding:"8px 14px", display:"flex", gap:8, alignItems:"center" }}>
                     <span className="mont" style={{ fontSize:15, fontWeight:900, color:p.color }}>{p.price}</span>
                     <span style={{ fontSize:11, color:"rgba(255,255,255,.5)" }}>{p.label}</span>
@@ -251,9 +346,7 @@ export function Home() {
 
               {/* CTAs */}
               <div style={{ display:"flex", flexWrap:"wrap", gap:12, marginBottom:32 }}>
-                <button className="btn-cta" style={{ fontSize:15, padding:"15px 32px" }} onClick={()=>navigate("/registration")}>
-                  Register Now — ₹299 →
-                </button>
+                <button className="btn-cta" style={{ fontSize:15, padding:"15px 32px" }} onClick={()=>navigate("/registration")}>Register Now — ₹299 →</button>
                 <a className="btn-ghost" href="#how-it-works" style={{ fontSize:14, padding:"14px 26px" }}>How It Works ↓</a>
               </div>
 
@@ -271,20 +364,17 @@ export function Home() {
               </div>
             </div>
 
-            {/* Right: Stats + Ganguly */}
+            {/* Right: Stats + Trust */}
             <div style={{ flex:"0 0 auto", display:"flex", flexDirection:"column", gap:12, alignSelf:"stretch", minWidth:0 }}>
-              {/* Stats */}
-              <div className="stats-row" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
                 {STATS.map(s=>(
                   <div key={s.label} className="card" style={{ padding:"16px 14px", borderLeft:`3px solid ${s.color}` }}>
-                    <div style={{ fontSize:20, marginBottom:6 }}>{s.icon}</div>
                     <div className="mont" style={{ fontWeight:900, fontSize:"clamp(22px,3vw,28px)", color:s.color }}>{s.value}</div>
                     <div className="mont" style={{ fontWeight:700, fontSize:10, letterSpacing:".08em", color:"rgba(255,255,255,.4)", textTransform:"uppercase", marginTop:4 }}>{s.label}</div>
                   </div>
                 ))}
               </div>
-              {/* Trust badge */}
-              <div className="card" style={{ padding:"16px", display:"flex", alignItems:"center", gap:12, borderColor:"rgba(232,178,61,.25)" }}>
+              <div className="card" style={{ padding:16, display:"flex", alignItems:"center", gap:12, borderColor:"rgba(232,178,61,.25)" }}>
                 <div style={{ width:44, height:44, borderRadius:12, background:"linear-gradient(135deg,#E8B23D,#C49A1E)", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:18, color:"#fff", flexShrink:0 }}>SG</div>
                 <div>
                   <div className="mont" style={{ fontWeight:900, fontSize:14, color:"#E8B23D" }}>Sourav Ganguly</div>
@@ -297,9 +387,7 @@ export function Home() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════
-          NO HIDDEN COSTS BANNER
-      ══════════════════════════════════════ */}
+      {/* ══ NO HIDDEN COSTS STRIP ══ */}
       <section style={{ background:"linear-gradient(135deg,#0A2010,#061208)", borderTop:"1px solid rgba(34,197,94,.15)", borderBottom:"1px solid rgba(34,197,94,.15)", padding:"20px 0" }}>
         <div className="W" style={{ display:"flex", flexWrap:"wrap", gap:16, alignItems:"center", justifyContent:"center" }}>
           {[
@@ -326,7 +414,7 @@ export function Home() {
           <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4vw,44px)", color:"#fff", textTransform:"uppercase", marginBottom:8 }}>How It Works</h2>
           <p style={{ fontSize:15, color:"rgba(255,255,255,.45)", marginBottom:44, maxWidth:520 }}>6 steps from registration to the pitch. Simple, transparent, fair.</p>
 
-          {/* Phase 1 header */}
+          {/* Phase 1 */}
           <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:18 }}>
             <div style={{ background:"linear-gradient(90deg,#FF7A29,#D95E10)", borderRadius:10, padding:"5px 16px" }}>
               <span className="mont" style={{ fontSize:11, fontWeight:900, color:"#fff", letterSpacing:".1em" }}>PHASE 1 — ONLINE</span>
@@ -334,27 +422,26 @@ export function Home() {
             <div style={{ flex:1, height:1, background:"linear-gradient(90deg,rgba(255,122,41,.4),transparent)" }}/>
             <span className="mont" style={{ fontSize:11, fontWeight:700, color:"rgba(255,122,41,.6)" }}>₹299 / ₹399</span>
           </div>
-
           <div className="steps-grid" style={{ marginBottom:28 }}>
-            {STEPS.slice(0,3).map(step=>(
-              <div key={step.num} className="card" style={{ padding:"22px 20px", position:"relative", overflow:"hidden", borderTop:`3px solid ${step.color}` }}>
-                <div style={{ position:"absolute", right:-10, bottom:-20, fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:100, lineHeight:1, color:`${step.color}08`, userSelect:"none" }}>{step.num}</div>
-                <div style={{ width:52, height:52, borderRadius:"50%", background:`${step.color}18`, border:`2px solid ${step.color}44`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:24, marginBottom:14, position:"relative", zIndex:1 }}>
-                  {step.icon}
-                  <div style={{ position:"absolute", top:-4, right:-4, width:20, height:20, borderRadius:"50%", background:step.color, border:"2px solid #06101E", display:"flex", alignItems:"center", justifyContent:"center" }}>
-                    <span className="mont" style={{ fontSize:10, fontWeight:900, color:"#fff" }}>{step.num}</span>
+            {STEPS.slice(0,3).map(s=>(
+              <div key={s.num} className="card" style={{ padding:"22px 20px", position:"relative", overflow:"hidden", borderTop:`3px solid ${s.color}` }}>
+                <div style={{ position:"absolute", right:-10, bottom:-20, fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:100, lineHeight:1, color:`${s.color}08`, userSelect:"none" }}>{s.num}</div>
+                <div style={{ width:52, height:52, borderRadius:"50%", background:`${s.color}18`, border:`2px solid ${s.color}44`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:24, marginBottom:14, position:"relative", zIndex:1 }}>
+                  {s.icon}
+                  <div style={{ position:"absolute", top:-4, right:-4, width:20, height:20, borderRadius:"50%", background:s.color, border:"2px solid #06101E", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                    <span className="mont" style={{ fontSize:10, fontWeight:900, color:"#fff" }}>{s.num}</span>
                   </div>
                 </div>
-                <div className="mont" style={{ fontWeight:900, fontSize:15, color:step.num===1?"#FF7A29":"#fff", marginBottom:8 }}>{step.title}</div>
-                <p style={{ fontSize:13, color:"rgba(255,255,255,.45)", lineHeight:1.65, marginBottom:12 }}>{step.desc}</p>
+                <div className="mont" style={{ fontWeight:900, fontSize:15, color:s.num===1?"#FF7A29":"#fff", marginBottom:8 }}>{s.title}</div>
+                <p style={{ fontSize:13, color:"rgba(255,255,255,.45)", lineHeight:1.65, marginBottom:12 }}>{s.desc}</p>
                 <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
-                  <span style={{ background:`${step.color}18`, border:`1px solid ${step.color}44`, borderRadius:8, padding:"4px 10px" }}>
-                    <span className="mont" style={{ fontSize:12, fontWeight:800, color:step.color }}>{step.price}</span>
+                  <span style={{ background:`${s.color}18`, border:`1px solid ${s.color}44`, borderRadius:8, padding:"4px 10px" }}>
+                    <span className="mont" style={{ fontSize:12, fontWeight:800, color:s.color }}>{s.price}</span>
                   </span>
-                  {step.status&&step.num===1&&(
+                  {s.status&&s.num===1&&(
                     <span style={{ background:"rgba(34,197,94,.1)", border:"1px solid rgba(34,197,94,.3)", borderRadius:8, padding:"4px 10px", display:"flex", alignItems:"center", gap:5 }}>
                       <span style={{ width:5, height:5, borderRadius:"50%", background:"#22C55E", display:"inline-block", animation:"blip 1s infinite" }}/>
-                      <span className="mont" style={{ fontSize:10, fontWeight:800, color:"#22C55E", letterSpacing:".08em" }}>OPEN NOW</span>
+                      <span className="mont" style={{ fontSize:10, fontWeight:800, color:"#22C55E" }}>OPEN NOW</span>
                     </span>
                   )}
                 </div>
@@ -362,7 +449,7 @@ export function Home() {
             ))}
           </div>
 
-          {/* Phase 1 → Phase 2 divider */}
+          {/* Phase divider */}
           <div style={{ display:"flex", alignItems:"center", gap:14, marginBottom:28 }}>
             <div style={{ flex:1, height:1, background:"linear-gradient(90deg,rgba(255,122,41,.4),rgba(232,178,61,.4))" }}/>
             <div style={{ background:"linear-gradient(135deg,#FF7A29,#E8B23D)", borderRadius:10, padding:"8px 18px", display:"flex", alignItems:"center", gap:8 }}>
@@ -372,7 +459,7 @@ export function Home() {
             <div style={{ flex:1, height:1, background:"linear-gradient(270deg,rgba(255,122,41,.4),rgba(232,178,61,.4))" }}/>
           </div>
 
-          {/* Phase 2 header */}
+          {/* Phase 2 */}
           <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:18 }}>
             <div style={{ background:"linear-gradient(90deg,#E8B23D,#C49A1E)", borderRadius:10, padding:"5px 16px" }}>
               <span className="mont" style={{ fontSize:11, fontWeight:900, color:"#000", letterSpacing:".1em" }}>PHASE 2 — PHYSICAL</span>
@@ -380,22 +467,21 @@ export function Home() {
             <div style={{ flex:1, height:1, background:"linear-gradient(90deg,rgba(232,178,61,.4),transparent)" }}/>
             <span className="mont" style={{ fontSize:11, fontWeight:700, color:"rgba(232,178,61,.6)" }}>₹2,000 / ₹3,000 (only if selected)</span>
           </div>
-
-          <div className="steps-grid" style={{ marginBottom:0 }}>
-            {STEPS.slice(3).map(step=>(
-              <div key={step.num} className="card" style={{ padding:"22px 20px", position:"relative", overflow:"hidden", borderTop:`3px solid ${step.color}` }}>
-                <div style={{ position:"absolute", right:-10, bottom:-20, fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:100, lineHeight:1, color:`${step.color}08`, userSelect:"none" }}>{step.num}</div>
-                <div style={{ width:52, height:52, borderRadius:"50%", background:`${step.color}18`, border:`2px solid ${step.color}44`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:24, marginBottom:14, position:"relative", zIndex:1 }}>
-                  {step.icon}
-                  <div style={{ position:"absolute", top:-4, right:-4, width:20, height:20, borderRadius:"50%", background:step.color, border:"2px solid #06101E", display:"flex", alignItems:"center", justifyContent:"center" }}>
-                    <span className="mont" style={{ fontSize:10, fontWeight:900, color:step.num===6?"#000":"#fff" }}>{step.num}</span>
+          <div className="steps-grid">
+            {STEPS.slice(3).map(s=>(
+              <div key={s.num} className="card" style={{ padding:"22px 20px", position:"relative", overflow:"hidden", borderTop:`3px solid ${s.color}` }}>
+                <div style={{ position:"absolute", right:-10, bottom:-20, fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:100, lineHeight:1, color:`${s.color}08`, userSelect:"none" }}>{s.num}</div>
+                <div style={{ width:52, height:52, borderRadius:"50%", background:`${s.color}18`, border:`2px solid ${s.color}44`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:24, marginBottom:14, position:"relative", zIndex:1 }}>
+                  {s.icon}
+                  <div style={{ position:"absolute", top:-4, right:-4, width:20, height:20, borderRadius:"50%", background:s.color, border:"2px solid #06101E", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                    <span className="mont" style={{ fontSize:10, fontWeight:900, color:s.num===6?"#000":"#fff" }}>{s.num}</span>
                   </div>
                 </div>
-                <div className="mont" style={{ fontWeight:900, fontSize:15, color:step.color, marginBottom:8 }}>{step.title}</div>
-                <p style={{ fontSize:13, color:"rgba(255,255,255,.45)", lineHeight:1.65, marginBottom:12 }}>{step.desc}</p>
-                {step.status&&(
+                <div className="mont" style={{ fontWeight:900, fontSize:15, color:s.color, marginBottom:8 }}>{s.title}</div>
+                <p style={{ fontSize:13, color:"rgba(255,255,255,.45)", lineHeight:1.65, marginBottom:12 }}>{s.desc}</p>
+                {s.status&&(
                   <span style={{ background:"rgba(232,178,61,.1)", border:"1px solid rgba(232,178,61,.3)", borderRadius:8, padding:"4px 10px" }}>
-                    <span className="mont" style={{ fontSize:11, fontWeight:800, color:"#E8B23D" }}>{step.status}</span>
+                    <span className="mont" style={{ fontSize:11, fontWeight:800, color:"#E8B23D" }}>{s.status}</span>
                   </span>
                 )}
               </div>
@@ -405,17 +491,15 @@ export function Home() {
       </section>
 
       {/* ══════════════════════════════════════
-          PRICING — CRYSTAL CLEAR
+          PRICING
       ══════════════════════════════════════ */}
       <section style={{ padding:"clamp(60px,7vw,88px) 0", background:"#060C18" }}>
         <div className="W">
           <div className="slbl">Pricing</div>
           <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4vw,42px)", color:"#fff", textTransform:"uppercase", marginBottom:6 }}>Complete Fee Structure</h2>
           <p style={{ fontSize:15, color:"rgba(255,255,255,.45)", marginBottom:36, maxWidth:520 }}>No fine print. No surprises. Here's exactly what you pay — and when.</p>
-
           <div className="price-grid">
-            {/* Phase 1 */}
-            <div className="card" style={{ padding:"24px", borderTop:"3px solid #FF7A29" }}>
+            <div className="card" style={{ padding:24, borderTop:"3px solid #FF7A29" }}>
               <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:20 }}>
                 <div style={{ width:40, height:40, borderRadius:10, background:"rgba(255,122,41,.12)", border:"1px solid rgba(255,122,41,.3)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:20 }}>📋</div>
                 <div>
@@ -433,13 +517,9 @@ export function Home() {
                 </div>
               ))}
               <p style={{ fontSize:12, color:"rgba(255,255,255,.35)", marginTop:14, lineHeight:1.6 }}>Includes: Scout review slot · Video submission · Registration confirmation</p>
-              <button className="btn-cta" style={{ width:"100%", justifyContent:"center", marginTop:20, fontSize:14, padding:"14px" }} onClick={()=>navigate("/registration")}>
-                Register Now →
-              </button>
+              <button className="btn-cta" style={{ width:"100%", justifyContent:"center", marginTop:20, fontSize:14, padding:14 }} onClick={()=>navigate("/registration")}>Register Now →</button>
             </div>
-
-            {/* Phase 2 */}
-            <div className="card" style={{ padding:"24px", borderTop:"3px solid #E8B23D" }}>
+            <div className="card" style={{ padding:24, borderTop:"3px solid #E8B23D" }}>
               <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:20 }}>
                 <div style={{ width:40, height:40, borderRadius:10, background:"rgba(232,178,61,.12)", border:"1px solid rgba(232,178,61,.3)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:20 }}>🏆</div>
                 <div>
@@ -459,12 +539,10 @@ export function Home() {
               <p style={{ fontSize:12, color:"rgba(255,255,255,.35)", marginTop:14, lineHeight:1.6 }}>Includes: Physical trial entry · Franchise auction eligibility · Season 5 participation</p>
               <div style={{ marginTop:20, padding:"14px 16px", background:"rgba(34,197,94,.06)", border:"1px solid rgba(34,197,94,.2)", borderRadius:12, display:"flex", gap:10, alignItems:"flex-start" }}>
                 <span style={{ fontSize:18, flexShrink:0 }}>🛡</span>
-                <p style={{ fontSize:12, color:"rgba(34,197,94,.9)", lineHeight:1.6 }}><strong>Not selected?</strong> You pay nothing for Phase 2. Ever. Your Phase 1 fee covers everything.</p>
+                <p style={{ fontSize:12, color:"rgba(34,197,94,.9)", lineHeight:1.6 }}><strong>Not selected?</strong> You pay nothing for Phase 2. Ever.</p>
               </div>
             </div>
           </div>
-
-          {/* Total cost summary */}
           <div style={{ marginTop:20, padding:"20px 24px", background:"rgba(255,122,41,.05)", border:"1px solid rgba(255,122,41,.2)", borderRadius:16, display:"flex", flexWrap:"wrap", gap:20, alignItems:"center", justifyContent:"space-between" }}>
             <div>
               <div className="mont" style={{ fontWeight:900, fontSize:14, color:"#FF7A29" }}>Maximum Total Cost (Full Journey)</div>
@@ -483,9 +561,95 @@ export function Home() {
       </section>
 
       {/* ══════════════════════════════════════
+          SEASON TIMELINE  (NEW!)
+      ══════════════════════════════════════ */}
+      <section style={{ padding:"clamp(60px,7vw,88px) 0", background:"#06101E", position:"relative", overflow:"hidden" }}>
+        {/* BG decor */}
+        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 80% 60% at 50% 100%,rgba(255,122,41,.04) 0%,transparent 70%)", pointerEvents:"none" }}/>
+        <div className="W" style={{ position:"relative", zIndex:1 }}>
+          <div className="slbl">Season Journey</div>
+          <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4vw,44px)", color:"#fff", textTransform:"uppercase", marginBottom:6 }}>Season 5 Timeline</h2>
+          <p style={{ fontSize:15, color:"rgba(255,255,255,.45)", marginBottom:48, maxWidth:540 }}>From registration to the trophy — here's the complete road map for BCPL T20 Season 5.</p>
+
+          {/* Desktop timeline — horizontal */}
+          <div style={{ display:"none" }} className="tl-desktop-hide"/>
+          <div className="tl-grid">
+            {TIMELINE.map((t, i)=>(
+              <div key={i} className="tl-card" style={{ position:"relative", paddingBottom:0 }}>
+                {/* Connector line */}
+                {i < TIMELINE.length-1 && (
+                  <div style={{ display:"none" }} className="tl-connector"/>
+                )}
+
+                {/* Card */}
+                <div style={{ margin:"0 6px", background:"linear-gradient(135deg,#0A1727,#060C18)", border:`1.5px solid ${t.color}33`, borderTop:`3px solid ${t.color}`, borderRadius:16, padding:"20px 16px", textAlign:"center", position:"relative", overflow:"hidden" }}>
+                  {/* Shimmer bg */}
+                  <div style={{ position:"absolute", inset:0, background:`radial-gradient(ellipse 80% 60% at 50% 0%,${t.color}08 0%,transparent 70%)`, pointerEvents:"none" }}/>
+
+                  {/* Icon bubble */}
+                  <div style={{ width:56, height:56, borderRadius:"50%", background:`linear-gradient(135deg,${t.color}22,${t.color}08)`, border:`2px solid ${t.color}44`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:26, margin:"0 auto 12px", boxShadow:`0 0 20px ${t.color}22`, animation:"float 3s ease-in-out infinite", animationDelay:`${i*0.5}s` }}>{t.icon}</div>
+
+                  {/* Month pill */}
+                  <div style={{ display:"inline-block", background:`${t.color}18`, border:`1px solid ${t.color}44`, borderRadius:20, padding:"3px 12px", marginBottom:8 }}>
+                    <span className="mont" style={{ fontSize:10, fontWeight:800, color:t.color, letterSpacing:".08em" }}>{t.month}</span>
+                  </div>
+
+                  {/* Label */}
+                  <div className="mont" style={{ fontWeight:900, fontSize:"clamp(13px,2vw,16px)", color:"#fff", marginBottom:8, lineHeight:1.2 }}>{t.label}</div>
+
+                  {/* Desc */}
+                  <p style={{ fontSize:11, color:"rgba(255,255,255,.45)", lineHeight:1.6, margin:0 }}>{t.desc}</p>
+
+                  {/* Done badge */}
+                  {t.done && (
+                    <div style={{ marginTop:10, display:"inline-flex", alignItems:"center", gap:4, background:"rgba(34,197,94,.1)", border:"1px solid rgba(34,197,94,.3)", borderRadius:6, padding:"2px 8px" }}>
+                      <span style={{ fontSize:10 }}>✅</span>
+                      <span className="mont" style={{ fontSize:9, fontWeight:800, color:"#22C55E", letterSpacing:".08em" }}>ONGOING</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Arrow connector (hidden on mobile, shown via CSS below) */}
+                {i < TIMELINE.length-1 && (
+                  <div style={{ position:"absolute", top:"50%", right:-14, transform:"translateY(-50%)", zIndex:10, display:"flex", alignItems:"center", justifyContent:"center" }}>
+                    <div style={{ width:20, height:20, borderRadius:"50%", background:`${t.color}`, display:"flex", alignItems:"center", justifyContent:"center" }}>
+                      <span style={{ fontSize:10, color:"#fff", fontWeight:900 }}>→</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Mobile: vertical timeline */}
+          <style>{`
+            @media(min-width:768px){
+              .tl-grid{position:relative;}
+              .tl-grid::before{content:'';position:absolute;top:50%;left:0;right:0;height:2px;background:linear-gradient(90deg,#FF7A29,#E8B23D,#22C55E,#3B82F6,#6366F1);transform:translateY(-50%);z-index:0;border-radius:2px;opacity:.3;}
+            }
+            @media(max-width:767px){
+              .tl-grid{display:flex;flex-direction:column;gap:0;position:relative;}
+              .tl-grid::before{content:'';position:absolute;top:0;bottom:0;left:28px;width:2px;background:linear-gradient(180deg,#FF7A29,#E8B23D,#22C55E,#3B82F6,#6366F1);z-index:0;opacity:.3;border-radius:2px;}
+              .tl-card{display:flex;gap:16px;padding-bottom:24px;padding-left:8px;}
+              .tl-card > div:last-child{flex:1;text-align:left;margin:0;}
+            }
+          `}</style>
+
+          {/* CTA strip */}
+          <div style={{ marginTop:44, padding:"24px 28px", background:"linear-gradient(135deg,rgba(255,122,41,.08),rgba(232,178,61,.04))", border:"1px solid rgba(255,122,41,.2)", borderRadius:20, display:"flex", flexWrap:"wrap", alignItems:"center", justifyContent:"space-between", gap:16 }}>
+            <div>
+              <div className="mont" style={{ fontWeight:900, fontSize:16, color:"#FF7A29", marginBottom:4 }}>Phase 1 Registrations Are Open Now!</div>
+              <div style={{ fontSize:13, color:"rgba(255,255,255,.5)" }}>Join before 28th February 2026. Start your journey for just ₹299.</div>
+            </div>
+            <button className="btn-cta" style={{ fontSize:14, padding:"13px 28px", flexShrink:0 }} onClick={()=>navigate("/registration")}>Register Now — ₹299 →</button>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
           10 FRANCHISE TEAMS
       ══════════════════════════════════════ */}
-      <section style={{ padding:"clamp(60px,7vw,88px) 0", background:"#06101E" }}>
+      <section style={{ padding:"clamp(60px,7vw,88px) 0", background:"#060C18" }}>
         <div className="W">
           <div className="slbl">Franchises</div>
           <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(22px,4vw,40px)", color:"#fff", textTransform:"uppercase", marginBottom:8 }}>10 Franchise Teams</h2>
@@ -494,8 +658,9 @@ export function Home() {
             {TEAMS.map(t=>(
               <div key={t.name} className="card" style={{ padding:"16px 12px", display:"flex", flexDirection:"column", gap:8, cursor:"pointer", transition:"transform .2s,border-color .2s", borderTop:`3px solid ${t.color}` }}
                 onMouseEnter={e=>(e.currentTarget.style.transform="translateY(-3px)")}
-                onMouseLeave={e=>(e.currentTarget.style.transform="translateY(0)")}>
-                <div style={{ width:44, height:44, borderRadius:12, background:t.color+"22", border:`1px solid ${t.color}44`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:24 }}>{t.logo}</div>
+                onMouseLeave={e=>(e.currentTarget.style.transform="")}>
+                {/* Team logo — try image, fallback to colored initials */}
+                <TeamLogo slug={t.slug} name={t.name} color={t.color}/>
                 <div>
                   <div className="mont" style={{ fontWeight:800, fontSize:"clamp(11px,1.5vw,13px)", color:"#F1F5F9", lineHeight:1.2 }}>{t.name}</div>
                   <div style={{ fontSize:11, color:"rgba(255,255,255,.35)", marginTop:3 }}>{t.city}</div>
@@ -509,7 +674,7 @@ export function Home() {
       {/* ══════════════════════════════════════
           AMBASSADOR
       ══════════════════════════════════════ */}
-      <section style={{ padding:"clamp(60px,7vw,80px) 0", background:"#060C18" }}>
+      <section style={{ padding:"clamp(60px,7vw,80px) 0", background:"#06101E" }}>
         <div className="W">
           <div className="amb-grid">
             <div style={{ flex:1 }}>
@@ -543,7 +708,7 @@ export function Home() {
       {/* ══════════════════════════════════════
           FAQ
       ══════════════════════════════════════ */}
-      <section style={{ padding:"clamp(60px,7vw,88px) 0", background:"#06101E" }}>
+      <section style={{ padding:"clamp(60px,7vw,88px) 0", background:"#060C18" }}>
         <div className="W">
           <div className="slbl">FAQ</div>
           <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(22px,4vw,40px)", color:"#fff", textTransform:"uppercase", marginBottom:8 }}>Frequently Asked Questions</h2>
@@ -559,7 +724,7 @@ export function Home() {
                     </span>
                     <span className="mont" style={{ fontWeight:700, fontSize:"clamp(13px,2vw,15px)", color:faqOpen===i?"#FF7A29":"#F1F5F9" }}>{f.q}</span>
                   </div>
-                  <span style={{ fontSize:18, color:faqOpen===i?"#FF7A29":"rgba(255,255,255,.3)", flexShrink:0, transition:"transform .25s", display:"inline-block", transform:faqOpen===i?"rotate(45deg)":"rotate(0)" }}>+</span>
+                  <span style={{ fontSize:18, color:faqOpen===i?"#FF7A29":"rgba(255,255,255,.3)", flexShrink:0, display:"inline-block", transform:faqOpen===i?"rotate(45deg)":"rotate(0)", transition:"transform .25s" }}>+</span>
                 </div>
                 {faqOpen===i&&(
                   <div style={{ padding:"0 20px 18px 56px" }}>
@@ -586,62 +751,197 @@ export function Home() {
             Your Stadium Debut<br/>Starts With <span className="shim">₹299</span>
           </h2>
           <p style={{ fontSize:"clamp(14px,2vw,17px)", color:"rgba(255,255,255,.5)", lineHeight:1.7, marginBottom:32, maxWidth:520, margin:"0 auto 32px" }}>
-            Join thousands of working professionals who have already taken the first step. Phase 1 closes soon.
+            Join thousands of working professionals who have already taken the first step. Phase 1 closes 28 February 2026.
           </p>
           <div style={{ display:"flex", gap:14, justifyContent:"center", flexWrap:"wrap" }}>
-            <button className="btn-cta" style={{ fontSize:16, padding:"16px 36px" }} onClick={()=>navigate("/registration")}>
-              🏏 Register Now — ₹299 →
-            </button>
-            <a className="btn-ghost" href="#how-it-works" style={{ fontSize:14, padding:"15px 28px" }}>
-              Learn More
+            <button className="btn-cta" style={{ fontSize:16, padding:"16px 36px" }} onClick={()=>navigate("/registration")}>🏏 Register Now — ₹299 →</button>
+            <a className="btn-ghost" href="#how-it-works" style={{ fontSize:14, padding:"15px 28px" }}>Learn More</a>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
+          SPONSORS  (NEW!)
+      ══════════════════════════════════════ */}
+      <section style={{ padding:"clamp(40px,6vw,72px) 0", background:"#040810", borderTop:"1px solid rgba(255,255,255,.05)" }}>
+        <div className="W">
+          <div style={{ textAlign:"center", marginBottom:36 }}>
+            <div className="slbl" style={{ justifyContent:"center" }}>Our Partners</div>
+            <h3 className="mont" style={{ fontWeight:900, fontSize:"clamp(18px,3vw,30px)", color:"#fff", textTransform:"uppercase" }}>Season 5 Sponsors</h3>
+          </div>
+
+          {/* Title Sponsors */}
+          <div style={{ marginBottom:32 }}>
+            <div style={{ textAlign:"center", marginBottom:16 }}>
+              <span className="mont" style={{ fontSize:10, fontWeight:800, letterSpacing:".15em", color:"#FF7A29", textTransform:"uppercase" }}>Title Sponsors</span>
+            </div>
+            <div className="sp-row">
+              {SPONSORS.filter(s=>s.tier==="Title Sponsor").map((s,i)=>(
+                <div key={i} className="sp-card" style={{ background:"linear-gradient(135deg,#0A1727,#060C18)", border:"1.5px solid rgba(255,122,41,.25)", borderRadius:16, padding:"18px 28px", display:"flex", alignItems:"center", gap:14, minWidth:180 }}>
+                  <div style={{ width:48, height:48, borderRadius:12, background:"linear-gradient(135deg,#FF7A29,#C94E0E)", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                    <span className="mont" style={{ fontWeight:900, fontSize:16, color:"#fff" }}>{s.logo}</span>
+                  </div>
+                  <div>
+                    <div className="mont" style={{ fontWeight:800, fontSize:14, color:"#fff" }}>{s.name}</div>
+                    <div style={{ fontSize:10, color:"#FF7A29", marginTop:2, fontWeight:600 }}>{s.tier}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Associate Sponsors */}
+          <div style={{ marginBottom:28 }}>
+            <div style={{ textAlign:"center", marginBottom:14 }}>
+              <span className="mont" style={{ fontSize:10, fontWeight:800, letterSpacing:".15em", color:"#E8B23D", textTransform:"uppercase" }}>Associate Sponsors</span>
+            </div>
+            <div className="sp-row">
+              {SPONSORS.filter(s=>s.tier==="Associate").map((s,i)=>(
+                <div key={i} className="sp-card" style={{ background:"#0A1727", border:"1px solid rgba(232,178,61,.15)", borderRadius:14, padding:"14px 20px", display:"flex", alignItems:"center", gap:10, minWidth:150 }}>
+                  <div style={{ width:38, height:38, borderRadius:9, background:"linear-gradient(135deg,#E8B23D44,#E8B23D11)", border:"1px solid rgba(232,178,61,.3)", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                    <span className="mont" style={{ fontWeight:900, fontSize:13, color:"#E8B23D" }}>{s.logo}</span>
+                  </div>
+                  <div>
+                    <div className="mont" style={{ fontWeight:700, fontSize:13, color:"#F1F5F9" }}>{s.name}</div>
+                    <div style={{ fontSize:9, color:"#E8B23D", marginTop:1, fontWeight:600 }}>{s.tier}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Official Partners */}
+          <div>
+            <div style={{ textAlign:"center", marginBottom:14 }}>
+              <span className="mont" style={{ fontSize:10, fontWeight:800, letterSpacing:".15em", color:"rgba(255,255,255,.35)", textTransform:"uppercase" }}>Official Partners</span>
+            </div>
+            <div className="sp-row">
+              {SPONSORS.filter(s=>s.tier==="Official Partner").map((s,i)=>(
+                <div key={i} className="sp-card" style={{ background:"#060C18", border:"1px solid rgba(255,255,255,.07)", borderRadius:12, padding:"10px 16px", display:"flex", alignItems:"center", gap:8 }}>
+                  <div style={{ width:30, height:30, borderRadius:7, background:"rgba(255,255,255,.06)", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                    <span className="mont" style={{ fontWeight:900, fontSize:11, color:"rgba(255,255,255,.5)" }}>{s.logo}</span>
+                  </div>
+                  <span className="mont" style={{ fontWeight:700, fontSize:12, color:"rgba(255,255,255,.5)" }}>{s.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Become a sponsor CTA */}
+          <div style={{ marginTop:36, textAlign:"center" }}>
+            <a href="/sponsors" style={{ fontSize:13, color:"rgba(255,255,255,.35)", textDecoration:"none", borderBottom:"1px solid rgba(255,255,255,.12)", paddingBottom:2 }}>
+              Interested in sponsoring BCPL T20 Season 5? <span style={{ color:"#FF7A29" }}>Contact us →</span>
             </a>
           </div>
         </div>
       </section>
 
       {/* ══════════════════════════════════════
-          FOOTER
+          FOOTER  (FIXED)
       ══════════════════════════════════════ */}
-      <footer style={{ background:"#040810", borderTop:"1px solid rgba(255,255,255,.06)", padding:"clamp(40px,6vw,60px) 0 24px" }}>
+      <footer style={{ background:"#030710", borderTop:"1px solid rgba(255,255,255,.05)", padding:"clamp(32px,5vw,52px) 0 20px" }}>
         <div className="W">
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(180px,1fr))", gap:32, marginBottom:40 }}>
-            <div>
-              <div style={{ display:"flex", alignItems:"baseline", gap:2, marginBottom:10 }}>
-                <span className="mont" style={{ fontWeight:900, fontSize:20, color:"#FF7A29" }}>BCPL</span>
-                <span className="mont" style={{ fontWeight:900, fontSize:20, color:"#fff" }}>T20</span>
-              </div>
-              <p style={{ fontSize:13, color:"rgba(255,255,255,.35)", lineHeight:1.7 }}>India's Biggest Corporate T20 Cricket League. Season 5 — 2026.</p>
-            </div>
-            {[
-              { title:"League", links:["About","Teams","Schedule","Points Table","Sponsors"] },
-              { title:"Register", links:["Phase 1 Registration","Eligibility Criteria","FAQ","Cricket Rules","Code of Conduct"] },
-              { title:"Legal", links:["Privacy Policy","Terms & Conditions","Refund Policy","Contact Us"] },
-            ].map(col=>(
-              <div key={col.title}>
-                <div className="mont" style={{ fontWeight:800, fontSize:11, letterSpacing:".1em", color:"rgba(255,255,255,.4)", textTransform:"uppercase", marginBottom:14 }}>{col.title}</div>
-                <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
-                  {col.links.map(l=>(
-                    <a key={l} href="#" style={{ fontSize:13, color:"rgba(255,255,255,.4)", textDecoration:"none", transition:"color .2s" }}
-                      onMouseEnter={e=>(e.currentTarget.style.color="#FF7A29")}
-                      onMouseLeave={e=>(e.currentTarget.style.color="rgba(255,255,255,.4)")}>{l}</a>
-                  ))}
+
+          {/* Brand + columns in one row */}
+          <div className="foot-cols" style={{ marginBottom:32 }}>
+            {/* Brand */}
+            <div style={{ flex:"0 0 200px", minWidth:160 }}>
+              <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:10 }}>
+                <div style={{ width:32, height:32, borderRadius:8, background:"linear-gradient(135deg,#FF7A29,#C94E0E)", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                  <span className="mont" style={{ fontWeight:900, fontSize:12, color:"#fff" }}>B</span>
+                </div>
+                <div style={{ display:"flex", alignItems:"baseline", gap:2 }}>
+                  <span className="mont" style={{ fontWeight:900, fontSize:18, color:"#FF7A29" }}>BCPL</span>
+                  <span className="mont" style={{ fontWeight:900, fontSize:18, color:"#fff" }}>T20</span>
                 </div>
               </div>
-            ))}
+              <p style={{ fontSize:12, color:"rgba(255,255,255,.3)", lineHeight:1.7, maxWidth:180 }}>India's Biggest Corporate T20 Cricket League. Season 5 — 2026.</p>
+            </div>
+
+            {/* League */}
+            <div style={{ flex:1, minWidth:120 }}>
+              <div className="mont" style={{ fontWeight:800, fontSize:10, letterSpacing:".1em", color:"rgba(255,255,255,.35)", textTransform:"uppercase", marginBottom:12 }}>League</div>
+              <div style={{ display:"flex", flexDirection:"column", gap:7 }}>
+                {["About","Teams","Schedule","Points Table","Sponsors"].map(l=>(
+                  <a key={l} href="#" style={{ fontSize:13, color:"rgba(255,255,255,.38)", textDecoration:"none" }}
+                    onMouseEnter={e=>(e.currentTarget.style.color="#FF7A29")}
+                    onMouseLeave={e=>(e.currentTarget.style.color="rgba(255,255,255,.38)")}>{l}</a>
+                ))}
+              </div>
+            </div>
+
+            {/* Register */}
+            <div style={{ flex:1, minWidth:120 }}>
+              <div className="mont" style={{ fontWeight:800, fontSize:10, letterSpacing:".1em", color:"rgba(255,255,255,.35)", textTransform:"uppercase", marginBottom:12 }}>Register</div>
+              <div style={{ display:"flex", flexDirection:"column", gap:7 }}>
+                {["Phase 1 Registration","Eligibility Criteria","FAQ","Cricket Rules","Code of Conduct"].map(l=>(
+                  <a key={l} href="#" style={{ fontSize:13, color:"rgba(255,255,255,.38)", textDecoration:"none" }}
+                    onMouseEnter={e=>(e.currentTarget.style.color="#FF7A29")}
+                    onMouseLeave={e=>(e.currentTarget.style.color="rgba(255,255,255,.38)")}>{l}</a>
+                ))}
+              </div>
+            </div>
+
+            {/* Legal */}
+            <div style={{ flex:1, minWidth:120 }}>
+              <div className="mont" style={{ fontWeight:800, fontSize:10, letterSpacing:".1em", color:"rgba(255,255,255,.35)", textTransform:"uppercase", marginBottom:12 }}>Legal</div>
+              <div style={{ display:"flex", flexDirection:"column", gap:7 }}>
+                {["Privacy Policy","Terms & Conditions","Refund Policy","Contact Us"].map(l=>(
+                  <a key={l} href="#" style={{ fontSize:13, color:"rgba(255,255,255,.38)", textDecoration:"none" }}
+                    onMouseEnter={e=>(e.currentTarget.style.color="#FF7A29")}
+                    onMouseLeave={e=>(e.currentTarget.style.color="rgba(255,255,255,.38)")}>{l}</a>
+                ))}
+              </div>
+            </div>
           </div>
-          <div style={{ borderTop:"1px solid rgba(255,255,255,.06)", paddingTop:20, display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:12 }}>
-            <p style={{ fontSize:12, color:"rgba(255,255,255,.25)" }}>© 2026 BCPL T20 — Kriparti Playing11 Pvt. Ltd. All rights reserved.</p>
-            <p style={{ fontSize:12, color:"rgba(255,255,255,.2)" }}>Made with 🏏 in India</p>
+
+          {/* Bottom bar — single line */}
+          <div style={{ borderTop:"1px solid rgba(255,255,255,.05)", paddingTop:16 }}>
+            <div className="foot-bottom">
+              <p className="mont" style={{ fontSize:11, color:"rgba(255,255,255,.2)", fontWeight:600 }}>© 2026 BCPL T20 · Kriparti Playing11 Pvt. Ltd. · All Rights Reserved.</p>
+              <div className="foot-legal-links">
+                <a href="#" style={{ fontSize:11, color:"rgba(255,255,255,.2)", textDecoration:"none" }}
+                  onMouseEnter={e=>(e.currentTarget.style.color="#FF7A29")}
+                  onMouseLeave={e=>(e.currentTarget.style.color="rgba(255,255,255,.2)")}>Privacy Policy</a>
+                <span style={{ color:"rgba(255,255,255,.1)", fontSize:10 }}>|</span>
+                <a href="#" style={{ fontSize:11, color:"rgba(255,255,255,.2)", textDecoration:"none" }}
+                  onMouseEnter={e=>(e.currentTarget.style.color="#FF7A29")}
+                  onMouseLeave={e=>(e.currentTarget.style.color="rgba(255,255,255,.2)")}>Terms</a>
+                <span style={{ color:"rgba(255,255,255,.1)", fontSize:10 }}>|</span>
+                <a href="#" style={{ fontSize:11, color:"rgba(255,255,255,.2)", textDecoration:"none" }}
+                  onMouseEnter={e=>(e.currentTarget.style.color="#FF7A29")}
+                  onMouseLeave={e=>(e.currentTarget.style.color="rgba(255,255,255,.2)")}>Refund Policy</a>
+                <span style={{ color:"rgba(255,255,255,.1)", fontSize:10 }}>|</span>
+                <span style={{ fontSize:11, color:"rgba(255,255,255,.15)" }}>Made with 🏏 in India</span>
+              </div>
+            </div>
           </div>
         </div>
       </footer>
 
-      {/* Floating Register Button */}
+      {/* Floating CTA */}
       <div className="float-btn">
         <button className="btn-cta" style={{ fontSize:13, padding:"13px 22px", borderRadius:12, boxShadow:"0 8px 32px rgba(255,122,41,.5)" }} onClick={()=>navigate("/registration")}>
           🏏 Register — ₹299
         </button>
       </div>
+    </div>
+  );
+}
+
+/* ── Team Logo with image fallback ── */
+function TeamLogo({ slug, name, color }: { slug:string; name:string; color:string }) {
+  const [err, setErr] = useState(false);
+  const L = import.meta.env.BASE_URL + "bcpl-assets/logos/";
+  if (!err) {
+    return (
+      <img src={`${L}${slug}.png`} alt={name} onError={()=>setErr(true)}
+        style={{ width:44, height:44, borderRadius:10, objectFit:"contain", background:color+"22" }}/>
+    );
+  }
+  return (
+    <div style={{ width:44, height:44, borderRadius:10, background:color+"22", border:`1px solid ${color}44`, display:"flex", alignItems:"center", justifyContent:"center" }}>
+      <span style={{ fontSize:18 }}>🏏</span>
     </div>
   );
 }
