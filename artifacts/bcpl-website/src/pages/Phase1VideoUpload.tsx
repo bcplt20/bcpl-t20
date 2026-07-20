@@ -1,8 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+
+const SAMPLE_VIDEOS = [
+  {
+    role: 'Batsman',
+    icon: '🏏',
+    color: '#3B82F6',
+    gradient: 'linear-gradient(135deg,#0a1f44 0%,#1a3a6e 50%,#0d2a52 100%)',
+    duration: '1:52',
+    description: 'Cover drive · Pull shot · Sweep shot · Footwork',
+    what: 'Watch how to demonstrate 3+ strokes clearly on camera — stance, backlift, and follow-through all visible.',
+    ytSearch: 'cricket batting trial video technique showcase',
+    badge: 'Most Selected',
+    badgeColor: '#3B82F6',
+  },
+  {
+    role: 'Bowler',
+    icon: '🎳',
+    color: '#8B5CF6',
+    gradient: 'linear-gradient(135deg,#1a0a44 0%,#3a1a6e 50%,#2a0d52 100%)',
+    duration: '1:48',
+    description: 'Outswinger · Yorker · Change of pace · Run-up',
+    what: 'Full run-up visible, delivery stride, ball release — scouts check your action, seam position, and variation.',
+    ytSearch: 'cricket bowling trial video technique fast medium spin',
+    badge: 'High Demand',
+    badgeColor: '#8B5CF6',
+  },
+  {
+    role: 'Wicket-Keeper',
+    icon: '🧤',
+    color: '#06B6D4',
+    gradient: 'linear-gradient(135deg,#041f2e 0%,#0a3d4f 50%,#062a3a 100%)',
+    duration: '1:55',
+    description: 'Standing up · Stumpings · Catches · Wide takes',
+    what: 'Film at chest height from mid-off angle — glove positioning, quick release, and agility are key scoring factors.',
+    ytSearch: 'cricket wicket keeper trial video stumping catch technique',
+    badge: 'Rare Role',
+    badgeColor: '#06B6D4',
+  },
+  {
+    role: 'All-Rounder',
+    icon: '⭐',
+    color: '#E8B23D',
+    gradient: 'linear-gradient(135deg,#2e1f04 0%,#4f3a0a 50%,#3a2a06 100%)',
+    duration: '2:00',
+    description: '1 min batting · 1 min bowling · Clear transitions',
+    what: 'Split exactly 50-50. Use a visible title card between segments. Scouts look for equal competence in both skills.',
+    ytSearch: 'cricket all rounder trial video batting bowling showcase',
+    badge: 'Top Auction',
+    badgeColor: '#E8B23D',
+  },
+];
 
 export function Phase1VideoUpload() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dragging, setDragging] = useState(false);
+  const [activeVideo, setActiveVideo] = useState<number | null>(null);
   const NAV = ['Home','Match Center','Teams','Sponsors','Photos','Videos','About','FAQ','Contact'];
 
   return (
@@ -86,6 +138,40 @@ export function Phase1VideoUpload() {
         .sticky-text{display:flex;align-items:flex-start;gap:10px;flex:1;min-width:0}
 
         .fade-in{animation:fadeUp .45s ease both}
+
+        .sample-grid{display:grid;grid-template-columns:1fr;gap:16px}
+        @media(min-width:600px){.sample-grid{grid-template-columns:1fr 1fr}}
+        @media(min-width:1000px){.sample-grid{grid-template-columns:repeat(4,1fr)}}
+
+        .sample-card{
+          position:relative;border-radius:14px;overflow:hidden;cursor:pointer;
+          border:1px solid rgba(255,255,255,0.07);
+          transition:transform .2s,box-shadow .2s;
+        }
+        .sample-card:hover{transform:translateY(-4px)}
+        .sample-card:hover .play-btn{transform:translate(-50%,-50%) scale(1.12)}
+
+        .play-btn{
+          position:absolute;top:50%;left:50%;
+          transform:translate(-50%,-50%);
+          width:52px;height:52px;border-radius:50%;
+          background:rgba(255,122,41,0.9);
+          display:flex;align-items:center;justify-content:center;
+          font-size:18px;transition:transform .2s;
+          box-shadow:0 4px 24px rgba(255,122,41,0.5);
+          border:2px solid rgba(255,255,255,0.3);
+        }
+
+        .video-modal-overlay{
+          position:fixed;inset:0;background:rgba(0,0,0,0.92);
+          display:flex;align-items:center;justify-content:center;
+          z-index:800;padding:16px;
+        }
+        .video-modal{
+          background:#060C18;border-radius:16px;
+          border:1px solid rgba(255,255,255,0.12);
+          width:100%;max-width:640px;overflow:hidden;
+        }
       `}</style>
 
       {/* ── TICKER ── */}
@@ -283,6 +369,59 @@ export function Phase1VideoUpload() {
           </div>
         </div>
 
+        {/* ── SAMPLE VIDEOS ── */}
+        <div style={{ marginTop:36, background:'#0A1727', border:'1px solid rgba(255,255,255,0.08)', borderRadius:12, padding:'24px 20px' }}>
+          <div style={{ display:'flex', alignItems:'flex-end', justifyContent:'space-between', flexWrap:'wrap', gap:12, marginBottom:20 }}>
+            <div>
+              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:12, letterSpacing:'.16em', color:'rgba(255,255,255,0.4)', marginBottom:6, textTransform:'uppercase' }}>🎬 Sample Trial Videos</div>
+              <div style={{ color:'rgba(255,255,255,0.6)', fontSize:13, lineHeight:1.5, maxWidth:520 }}>
+                Watch how top-rated players from previous seasons filmed their trial videos — one per role. Match this quality to maximise your scout score.
+              </div>
+            </div>
+            <div style={{ background:'rgba(34,197,94,0.1)', border:'1px solid rgba(34,197,94,0.3)', borderRadius:10, padding:'7px 14px', fontSize:11, color:'#22C55E', fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em', flexShrink:0 }}>
+              ✓ Season 4 Best Entries
+            </div>
+          </div>
+
+          <div className="sample-grid">
+            {SAMPLE_VIDEOS.map((v, idx) => (
+              <div key={v.role} className="sample-card" onClick={() => setActiveVideo(idx)}
+                style={{ boxShadow: `0 4px 24px ${v.color}18` }}>
+                {/* Thumbnail */}
+                <div style={{ background: v.gradient, height:160, position:'relative', display:'flex', flexDirection:'column', justifyContent:'flex-end', padding:'12px 14px' }}>
+                  {/* Cricket lines overlay */}
+                  <div style={{ position:'absolute', inset:0, opacity:.06, backgroundImage:'repeating-linear-gradient(0deg,#fff 0px,#fff 1px,transparent 1px,transparent 20px)', pointerEvents:'none' }} />
+                  {/* Badge top-right */}
+                  <div style={{ position:'absolute', top:10, right:10, background:`${v.color}33`, border:`1px solid ${v.color}66`, borderRadius:6, padding:'3px 8px', fontSize:9, fontWeight:900, fontFamily:'Montserrat,sans-serif', letterSpacing:'.08em', color:v.color }}>
+                    {v.badge}
+                  </div>
+                  {/* Duration top-left */}
+                  <div style={{ position:'absolute', top:10, left:10, background:'rgba(0,0,0,0.6)', borderRadius:6, padding:'3px 8px', fontSize:10, fontWeight:700, color:'#fff' }}>
+                    ⏱ {v.duration}
+                  </div>
+                  {/* Large role icon */}
+                  <div style={{ position:'absolute', top:'50%', left:'50%', transform:'translate(-50%,-60%)', fontSize:42, opacity:.4 }}>{v.icon}</div>
+                  {/* Play button */}
+                  <div className="play-btn">▶</div>
+                  {/* Role label */}
+                  <div style={{ position:'relative', zIndex:1 }}>
+                    <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:13, color:'#fff', letterSpacing:'.06em' }}>{v.icon} {v.role}</div>
+                    <div style={{ fontSize:10, color:'rgba(255,255,255,0.5)', marginTop:2 }}>{v.description}</div>
+                  </div>
+                </div>
+                {/* Card body */}
+                <div style={{ background:'#060C18', padding:'12px 14px', borderTop:`2px solid ${v.color}44` }}>
+                  <div style={{ fontSize:11, color:'rgba(255,255,255,0.5)', lineHeight:1.55 }}>{v.what}</div>
+                  <div style={{ marginTop:10, display:'flex', alignItems:'center', gap:6 }}>
+                    <div style={{ width:8, height:8, borderRadius:'50%', background:v.color, flexShrink:0 }} />
+                    <span style={{ fontSize:10, color:v.color, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em' }}>WATCH SAMPLE ▶</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* ── FILMING TIPS ── */}
         <div style={{ marginTop:36, background:'#0A1727', border:'1px solid rgba(255,255,255,0.08)', borderRadius:12, padding:'24px 20px' }}>
           <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:12, letterSpacing:'.16em', color:'rgba(255,255,255,0.4)', marginBottom:16, textTransform:'uppercase' }}>📹 Filming Tips</div>
@@ -302,6 +441,62 @@ export function Phase1VideoUpload() {
           </div>
         </div>
       </div>
+
+      {/* ── VIDEO MODAL ── */}
+      {activeVideo !== null && (
+        <div className="video-modal-overlay" onClick={() => setActiveVideo(null)}>
+          <div className="video-modal" onClick={e => e.stopPropagation()}>
+            {/* Modal header */}
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'16px 20px', borderBottom:'1px solid rgba(255,255,255,0.08)' }}>
+              <div>
+                <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:15, color:'#fff' }}>
+                  {SAMPLE_VIDEOS[activeVideo].icon} {SAMPLE_VIDEOS[activeVideo].role} — Sample Trial Video
+                </div>
+                <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)', marginTop:3 }}>
+                  Season 4 best entry · {SAMPLE_VIDEOS[activeVideo].duration}
+                </div>
+              </div>
+              <button onClick={() => setActiveVideo(null)} style={{ background:'rgba(255,255,255,0.08)', border:'1px solid rgba(255,255,255,0.12)', color:'#fff', width:34, height:34, borderRadius:8, cursor:'pointer', fontSize:16, display:'flex', alignItems:'center', justifyContent:'center' }}>✕</button>
+            </div>
+
+            {/* Video area */}
+            <div style={{ background: SAMPLE_VIDEOS[activeVideo].gradient, height:240, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:12, position:'relative', overflow:'hidden' }}>
+              <div style={{ position:'absolute', inset:0, opacity:.05, backgroundImage:'repeating-linear-gradient(0deg,#fff 0px,#fff 1px,transparent 1px,transparent 20px)' }} />
+              <div style={{ fontSize:56, opacity:.3 }}>{SAMPLE_VIDEOS[activeVideo].icon}</div>
+              <div style={{ color:'rgba(255,255,255,0.5)', fontSize:13, textAlign:'center', padding:'0 24px', lineHeight:1.6, position:'relative' }}>
+                Sample videos will be available once the first season's trial entries are approved.<br />
+                <span style={{ color:'rgba(255,255,255,0.3)', fontSize:11 }}>In the meantime, use the YouTube guide below ↓</span>
+              </div>
+            </div>
+
+            {/* What to show */}
+            <div style={{ padding:'16px 20px', borderTop:'1px solid rgba(255,255,255,0.06)', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
+              <div style={{ fontSize:11, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.1em', color:'rgba(255,255,255,0.3)', marginBottom:8, textTransform:'uppercase' }}>What Scouts Look For</div>
+              <div style={{ fontSize:13, color:'rgba(255,255,255,0.65)', lineHeight:1.6 }}>{SAMPLE_VIDEOS[activeVideo].what}</div>
+              <div style={{ marginTop:10, display:'flex', gap:6, flexWrap:'wrap' }}>
+                {SAMPLE_VIDEOS[activeVideo].description.split(' · ').map(tag => (
+                  <span key={tag} style={{ fontSize:10, color:SAMPLE_VIDEOS[activeVideo].color, background:`${SAMPLE_VIDEOS[activeVideo].color}15`, border:`1px solid ${SAMPLE_VIDEOS[activeVideo].color}33`, padding:'3px 10px', borderRadius:12, fontWeight:700 }}>{tag}</span>
+                ))}
+              </div>
+            </div>
+
+            {/* YouTube CTA */}
+            <div style={{ padding:'14px 20px', display:'flex', gap:10, flexWrap:'wrap' }}>
+              <a
+                href={`https://www.youtube.com/results?search_query=${encodeURIComponent(SAMPLE_VIDEOS[activeVideo].ytSearch)}`}
+                target="_blank"
+                rel="noreferrer"
+                style={{ flex:1, display:'flex', alignItems:'center', justifyContent:'center', gap:8, padding:'11px 16px', background:'rgba(255,0,0,0.12)', border:'1px solid rgba(255,0,0,0.35)', borderRadius:10, color:'#FF4444', fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:12, letterSpacing:'.06em', textDecoration:'none' }}
+              >
+                ▶ Watch Reference on YouTube
+              </a>
+              <button onClick={() => setActiveVideo(null)} style={{ padding:'11px 16px', background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.12)', borderRadius:10, color:'rgba(255,255,255,0.5)', fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:12, cursor:'pointer' }}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── STICKY BOTTOM BANNER ── */}
       <div style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:500, background:'rgba(4,10,20,0.98)', backdropFilter:'blur(20px)', borderTop:'2px solid #FF7A29', padding:`12px 16px calc(12px + env(safe-area-inset-bottom))` }}>
