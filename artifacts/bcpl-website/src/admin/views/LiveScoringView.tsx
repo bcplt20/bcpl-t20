@@ -1,962 +1,880 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 
 /* ─── Types ─────────────────────────────────────────── */
-interface Batsman {
-  name: string; runs: number; balls: number; fours: number; sixes: number;
-  out?: string; sr?: number; dismissed?: boolean;
+type Role = "BAT"|"BOWL"|"AR"|"WK";
+interface Player { id:number; name:string; role:Role; }
+interface BatScore { name:string; runs:number; balls:number; fours:number; sixes:number; dismissal:string; batting:boolean; }
+interface BowlScore { name:string; overs:number; balls:number; runs:number; wickets:number; wides:number; noBalls:number; }
+interface Fow { wicket:number; batsman:string; runs:number; overStr:string; }
+interface Partnership { bat1:string; bat2:string; runs:number; balls:number; }
+interface OverBalls { over:number; runs:number; wickets:number; deliveries:string[]; }
+interface InningsState {
+  battingTeam:string; bowlingTeam:string;
+  battingXI:string[]; bowlingXI:string[];
+  batScores:BatScore[]; bowlScores:BowlScore[];
+  totalRuns:number; totalWickets:number; overs:number; balls:number; extras:number;
+  currentOverDeliveries:string[]; overHistory:OverBalls[];
+  partnerships:Partnership[]; fowList:Fow[];
+  strikerIdx:number; nonStrikerIdx:number; bowlerIdx:number;
+  target?:number;
 }
-interface Bowler {
-  name: string; overs: number; balls: number; runs: number; wickets: number;
-  wides: number; noBalls: number;
+interface MatchDef { id:number; matchNo:number; team1:string; team2:string; venue:string; date:string; status:"scheduled"|"live"|"completed"; }
+interface LiveMatch {
+  def:MatchDef;
+  tossWinner:string; tossDec:"bat"|"field";
+  xi1:string[]; xi2:string[];
+  currentInnings:1|2; inn1:InningsState; inn2:InningsState|null;
+  phase:"toss"|"xi"|"live"|"completed";
 }
-interface Partnership { bat1: string; bat2: string; runs: number; balls: number; }
-interface FallOfWicket { wicket: number; batsman: string; runs: number; overs: string; }
-interface OverSummary { over: number; runs: number; wickets: number; balls: string[]; }
-interface InningsData {
-  team: string; runs: number; wickets: number; overs: number; balls: number;
-  batting: Batsman[]; bowling: Bowler[]; partnerships: Partnership[];
-  fallOfWickets: FallOfWicket[]; overHistory: OverSummary[]; extras: number;
-  target?: number;
+interface DismissalModal {
+  type:"b"|"c"|"lbw"|"ro"|"st"|"hw"|"cb"|"rh";
+  fielder:string; nonStrikerOut:boolean; newBatsmanIdx:number;
 }
+
+/* ─── Squad data ─────────────────────────────────────── */
+type RawSquad = [string, Role][];
+const RAW: Record<string,RawSquad> = {
+  "Mumbai Mavericks":   [["Arjun Sharma","BAT"],["Rahul Patel","BAT"],["Dev Mehta","BAT"],["Karan Joshi","AR"],["Saurav Roy","BAT"],["Nikhil Das","WK"],["Pranav Singh","AR"],["Vikram Nair","BOWL"],["Ajay Kumar","BOWL"],["Suresh Rao","BOWL"],["Manish Tiwari","BOWL"],["Rohit Kumar","BAT"],["Aakash Verma","BAT"],["Deepak Mishra","AR"],["Harish Reddy","BOWL"]],
+  "Kolkata Tigers":     [["Rahul Kapoor","BAT"],["Suresh Verma","BAT"],["Deepak Nair","BAT"],["Ankit Rao","AR"],["Vikash Tiwari","BAT"],["Sachin Dubey","WK"],["Ravi Patil","AR"],["Mohit Kumar","BOWL"],["Tarun Das","BOWL"],["Harish Pillai","BOWL"],["Ganesh Mishra","BOWL"],["Sanjay Gupta","BAT"],["Vivek Chauhan","AR"],["Nitin Shah","BOWL"],["Pankaj Yadav","BAT"]],
+  "Rajasthan Scorchers":[["Priya Singh","BAT"],["Rajesh Kumar","AR"],["Mukesh Vyas","WK"],["Narayan Das","BAT"],["Sandeep Bishnoi","BOWL"],["Pawan Shekhawat","BOWL"],["Dushyant Sharma","BOWL"],["Kuldeep Rathore","BAT"],["Lalit Garg","AR"],["Rahul Jhajharia","BOWL"],["Bhuvnesh Choudhary","BOWL"],["Manohar Lal","BAT"],["Rakesh Poonia","AR"],["Suraj Mandawat","BAT"],["Arun Shekhawat","BAT"]],
+  "Punjab Warriors":    [["Vikas Singh","BOWL"],["Manpreet Grewal","BAT"],["Gurjit Sidhu","WK"],["Karanveer Brar","BAT"],["Simranjit Mann","BOWL"],["Harjinder Dhaliwal","BOWL"],["Ravinder Dhindsa","BAT"],["Sukhjit Toor","AR"],["Jasvinder Bajwa","BOWL"],["Amanpreet Gill","BAT"],["Prabhjot Randhawa","BOWL"],["Deepinder Sohal","BAT"],["Bhupinder Panesar","AR"],["Gurwinder Sodhi","BAT"],["Navjot Cheema","AR"]],
+  "Lucknow Nawabs":     [["Rahul Mishra","BAT"],["Abhishek Dubey","BAT"],["Aditya Pandey","AR"],["Ranveer Yadav","WK"],["Subhash Tiwari","BOWL"],["Ashish Verma","BAT"],["Saurabh Singh","BOWL"],["Vivek Kushwaha","BOWL"],["Prashant Ojha Jr","AR"],["Shivam Yadav","BAT"],["Durgesh Chaudhary","BOWL"],["Mohit Srivastava","BAT"],["Akash Tripathi","AR"],["Divyanshu Vatsal","BAT"],["Piyush Jha","BOWL"]],
+  "Hyderabad Hawks":    [["Anil Reddy","BAT"],["Ravi Teja","AR"],["Suresh Babu","WK"],["Prasad Rao","BOWL"],["Venkaiah Naidu Jr","BAT"],["Srinivas Goud","BOWL"],["Ramaiah Das","BOWL"],["Kishan Rao","BAT"],["Nagendra Rao","AR"],["Purna Chandra","BOWL"],["Vamsi Krishna","BAT"],["Eshwar Prasad","BOWL"],["Raju Varma","BAT"],["Laxman Reddy","AR"],["Gopal Krishna","BAT"]],
+  "Delhi Suryas":       [["Deepak Gupta","BAT"],["Mohit Dagar","BOWL"],["Sanjay Dahiya","AR"],["Rahul Hooda Jr","BAT"],["Himanshu Singhal","WK"],["Ajay Jadeja Jr","AR"],["Vikas Yadav","BOWL"],["Pradeep Sangwan Jr","BOWL"],["Akash Goyal","BAT"],["Sanjeev Tomar","BOWL"],["Ravi Shankar","BAT"],["Kuldeep Arya","AR"],["Harshit Malik","BOWL"],["Nikhil Bansal","BAT"],["Gaurav Mahajan","BAT"]],
+  "Chennai Thalaivas":  [["Kartik Rajan","BAT"],["Muthu Krishnan","BOWL"],["Siva Subramanian","WK"],["Arun Pandian","AR"],["Ganesan Pillai","BAT"],["Vetrivel Murugan","BOWL"],["Arumugam Das","BOWL"],["Kalidasan Raja","BAT"],["Suresh Murugesan","AR"],["Dinesh Kanthan","BOWL"],["Palaniswamy Velu","BAT"],["Rajesh Annamalai","BOWL"],["Balamurugan Sekar","BAT"],["Thandavan Mani","AR"],["Chellapan Rajan","BAT"]],
+  "Ahmedabad Lions":    [["Vikas Patel","BAT"],["Jignesh Shah","AR"],["Chirag Solanki","WK"],["Mehul Raval","BAT"],["Rakesh Pandya","BOWL"],["Ketan Brahmbhatt","BAT"],["Saurabh Chauhan","BOWL"],["Haresh Mistry","BOWL"],["Dhruv Trivedi","BAT"],["Niral Bhatt","AR"],["Rajesh Desai","BOWL"],["Pratik Jadeja","BAT"],["Kiran Thakkar","BOWL"],["Umesh Modi","AR"],["Bharatbhai Patel","BAT"]],
+  "Bengaluru Rockets":  [["Kiran Kumar","BAT"],["Raghavendra Rao","BOWL"],["Prasanna Kumar","WK"],["Narayan Swamy","AR"],["Jayaram Shetty","BAT"],["Chandan Gowda","BOWL"],["Mahesh Hegde","BOWL"],["Sunil Naik","BAT"],["Aditya Kamath","AR"],["Vinod Shetty","BOWL"],["Govinda Rao","BAT"],["Manjunath Patil","BOWL"],["Madhu Swamy","BAT"],["Nagaraj Bhat","AR"],["Lokesh Reddy","BAT"]],
+};
+const SQUADS: Record<string,Player[]> = Object.fromEntries(
+  Object.entries(RAW).map(([t,raw])=>[t, raw.map((r,i)=>({id:i+1, name:r[0], role:r[1]}))])
+);
+const TEAM_COLORS: Record<string,string> = {
+  "Mumbai Mavericks":"#3B82F6","Kolkata Tigers":"#F97316","Rajasthan Scorchers":"#E97B6B",
+  "Punjab Warriors":"#DC2626","Lucknow Nawabs":"#F59E0B","Hyderabad Hawks":"#16A34A",
+  "Delhi Suryas":"#6366F1","Chennai Thalaivas":"#2563EB","Ahmedabad Lions":"#B91C1C","Bengaluru Rockets":"#EF4444",
+};
+const ALL_TEAMS = Object.keys(RAW);
+const VENUES = ["Wankhede, Mumbai","SMS Stadium, Jaipur","PCA, Mohali","Ekana, Lucknow","Eden Gardens, Kolkata","Chinnaswamy, Bengaluru","Rajiv Gandhi, Hyderabad","Chepauk, Chennai","Narendra Modi, Ahmedabad","Feroz Shah Kotla, Delhi"];
+
+/* ─── Initial matches ────────────────────────────────── */
+const INIT_MATCHES: MatchDef[] = [
+  { id:1, matchNo:12, team1:"Mumbai Mavericks",   team2:"Kolkata Tigers",     venue:"Wankhede, Mumbai",        date:"20 Jul, Today 4:00 PM",    status:"live"      },
+  { id:2, matchNo:13, team1:"Rajasthan Scorchers", team2:"Punjab Warriors",    venue:"SMS Stadium, Jaipur",     date:"22 Jul, 6:00 PM",          status:"scheduled" },
+  { id:3, matchNo:14, team1:"Delhi Suryas",         team2:"Chennai Thalaivas",  venue:"Feroz Shah Kotla, Delhi", date:"23 Jul, 4:00 PM",          status:"scheduled" },
+  { id:4, matchNo:15, team1:"Lucknow Nawabs",       team2:"Hyderabad Hawks",    venue:"Ekana, Lucknow",          date:"24 Jul, 6:00 PM",          status:"scheduled" },
+  { id:5, matchNo:11, team1:"Hyderabad Hawks",      team2:"Bengaluru Rockets",  venue:"Rajiv Gandhi, Hyderabad", date:"19 Jul, 4:00 PM",          status:"completed" },
+  { id:6, matchNo:10, team1:"Ahmedabad Lions",      team2:"Lucknow Nawabs",     venue:"Narendra Modi, Ahmedabad",date:"18 Jul, 6:00 PM",          status:"completed" },
+];
 
 /* ─── Helpers ────────────────────────────────────────── */
-const fmtOvers = (o: number, b: number) => `${o}.${b}`;
-const sr = (r: number, b: number) => b === 0 ? "0.00" : ((r / b) * 100).toFixed(1);
-const eco = (r: number, o: number, b: number) => {
-  const totalOvers = o + b / 6;
-  return totalOvers === 0 ? "0.00" : (r / totalOvers).toFixed(2);
-};
-const projScore = (runs: number, overs: number, balls: number) => {
-  const done = overs + balls / 6;
-  if (done === 0) return 0;
-  return Math.round((runs / done) * 20);
-};
-const rrr = (target: number, runs: number, overs: number, balls: number) => {
-  const remaining = 20 - (overs + balls / 6);
-  if (remaining <= 0) return "—";
-  return ((target - runs) / remaining).toFixed(2);
-};
-const crr = (runs: number, overs: number, balls: number) => {
-  const done = overs + balls / 6;
-  return done === 0 ? "0.00" : (runs / done).toFixed(2);
+const fmtO = (o:number, b:number) => `${o}.${b}`;
+const crr  = (r:number, o:number, b:number) => { const d=o+b/6; return d===0?"0.00":(r/d).toFixed(2); };
+const rrr  = (tgt:number, r:number, o:number, b:number) => { const rem=20-(o+b/6); if(rem<=0)return"0.00"; return ((tgt-r)/rem).toFixed(2); };
+
+const makeInnings = (battingTeam:string, bowlingTeam:string, xi1:string[], xi2:string[], target?:number): InningsState => {
+  const batXI = battingTeam === xi1[0]?.split("·")[0] ? xi1 : xi2; // simplified: use passed order
+  return {
+    battingTeam, bowlingTeam,
+    battingXI: xi1, bowlingXI: xi2,
+    batScores: xi1.map(n=>({ name:n, runs:0, balls:0, fours:0, sixes:0, dismissal:"", batting:false })),
+    bowlScores: xi2.map(n=>({ name:n, overs:0, balls:0, runs:0, wickets:0, wides:0, noBalls:0 })),
+    totalRuns:0, totalWickets:0, overs:0, balls:0, extras:0,
+    currentOverDeliveries:[], overHistory:[], partnerships:[], fowList:[],
+    strikerIdx:0, nonStrikerIdx:1, bowlerIdx:0, target,
+  };
 };
 
-/* ─── Initial mock data ──────────────────────────────── */
-const makeInnings = (team: string, target?: number): InningsData => ({
-  team, runs: 0, wickets: 0, overs: 0, balls: 0, extras: 0, target,
-  batting: [
-    { name: "Arjun Sharma",  runs: 0, balls: 0, fours: 0, sixes: 0 },
-    { name: "Rahul Patel",   runs: 0, balls: 0, fours: 0, sixes: 0 },
-    { name: "Dev Mehta",     runs: 0, balls: 0, fours: 0, sixes: 0, dismissed: false },
-    { name: "Karan Joshi",   runs: 0, balls: 0, fours: 0, sixes: 0, dismissed: false },
-    { name: "Saurav Roy",    runs: 0, balls: 0, fours: 0, sixes: 0, dismissed: false },
-    { name: "Nikhil Das",    runs: 0, balls: 0, fours: 0, sixes: 0, dismissed: false },
-    { name: "Pranav Singh",  runs: 0, balls: 0, fours: 0, sixes: 0, dismissed: false },
-    { name: "Vikram Nair",   runs: 0, balls: 0, fours: 0, sixes: 0, dismissed: false },
-    { name: "Ajay Kumar",    runs: 0, balls: 0, fours: 0, sixes: 0, dismissed: false },
-    { name: "Suresh Rao",    runs: 0, balls: 0, fours: 0, sixes: 0, dismissed: false },
-    { name: "Manish Tiwari", runs: 0, balls: 0, fours: 0, sixes: 0, dismissed: false },
-  ],
-  bowling: [
-    { name: "Vikas Singh",  overs: 0, balls: 0, runs: 0, wickets: 0, wides: 0, noBalls: 0 },
-    { name: "Amit Gupta",   overs: 0, balls: 0, runs: 0, wickets: 0, wides: 0, noBalls: 0 },
-    { name: "Rohit Verma",  overs: 0, balls: 0, runs: 0, wickets: 0, wides: 0, noBalls: 0 },
-    { name: "Sunil Patil",  overs: 0, balls: 0, runs: 0, wickets: 0, wides: 0, noBalls: 0 },
-    { name: "Hemant Dubey", overs: 0, balls: 0, runs: 0, wickets: 0, wides: 0, noBalls: 0 },
-  ],
-  partnerships: [{ bat1: "Arjun Sharma", bat2: "Rahul Patel", runs: 0, balls: 0 }],
-  fallOfWickets: [],
-  overHistory: [],
-});
-
-/* ─── Preloaded demo innings (1st innings done) ─────── */
-const DEMO_INN1: InningsData = {
-  team: "Mumbai Mavericks",
-  runs: 172, wickets: 6, overs: 20, balls: 0, extras: 8,
-  target: 173,
-  batting: [
-    { name: "Arjun Sharma",  runs: 67, balls: 42, fours: 6, sixes: 3, out: "c Kapoor b Singh", dismissed: true },
-    { name: "Rahul Patel",   runs: 31, balls: 28, fours: 3, sixes: 0, out: "b Gupta", dismissed: true },
-    { name: "Dev Mehta",     runs: 44, balls: 30, fours: 4, sixes: 2, out: "run out", dismissed: true },
-    { name: "Karan Joshi",   runs: 12, balls: 9,  fours: 1, sixes: 0, out: "c Das b Verma", dismissed: true },
-    { name: "Saurav Roy",    runs: 7,  balls: 5,  fours: 0, sixes: 1, out: "b Singh", dismissed: true },
-    { name: "Nikhil Das",    runs: 3,  balls: 4,  fours: 0, sixes: 0, out: "lbw b Patil", dismissed: true },
-    { name: "Pranav Singh",  runs: 8,  balls: 6,  fours: 1, sixes: 0, dismissed: false },
-    { name: "Vikram Nair",   runs: 0,  balls: 0,  fours: 0, sixes: 0, dismissed: false },
-    { name: "Ajay Kumar",    runs: 0,  balls: 0,  fours: 0, sixes: 0, dismissed: false },
-    { name: "Suresh Rao",    runs: 0,  balls: 0,  fours: 0, sixes: 0, dismissed: false },
-    { name: "Manish Tiwari", runs: 0,  balls: 0,  fours: 0, sixes: 0, dismissed: false },
-  ],
-  bowling: [
-    { name: "Vikas Singh",  overs: 4, balls: 0, runs: 36, wickets: 2, wides: 2, noBalls: 0 },
-    { name: "Amit Gupta",   overs: 4, balls: 0, runs: 31, wickets: 1, wides: 1, noBalls: 1 },
-    { name: "Rohit Verma",  overs: 4, balls: 0, runs: 42, wickets: 1, wides: 0, noBalls: 0 },
-    { name: "Sunil Patil",  overs: 4, balls: 0, runs: 34, wickets: 1, wides: 2, noBalls: 0 },
-    { name: "Hemant Dubey", overs: 4, balls: 0, runs: 21, wickets: 1, wides: 0, noBalls: 0 },
-  ],
-  partnerships: [
-    { bat1: "Arjun Sharma", bat2: "Rahul Patel", runs: 78, balls: 52 },
-    { bat1: "Arjun Sharma", bat2: "Dev Mehta",   runs: 62, balls: 38 },
-    { bat1: "Dev Mehta",    bat2: "Karan Joshi",  runs: 18, balls: 14 },
-    { bat1: "Karan Joshi",  bat2: "Saurav Roy",   runs: 9,  balls: 7  },
-    { bat1: "Saurav Roy",   bat2: "Nikhil Das",   runs: 3,  balls: 4  },
-    { bat1: "Nikhil Das",   bat2: "Pranav Singh", runs: 2,  balls: 3  },
-  ],
-  fallOfWickets: [
-    { wicket: 1, batsman: "Rahul Patel",   runs: 78,  overs: "8.4"  },
-    { wicket: 2, batsman: "Arjun Sharma",  runs: 140, overs: "16.2" },
-    { wicket: 3, batsman: "Dev Mehta",     runs: 158, overs: "18.1" },
-    { wicket: 4, batsman: "Karan Joshi",   runs: 167, overs: "19.1" },
-    { wicket: 5, batsman: "Saurav Roy",    runs: 170, overs: "19.4" },
-    { wicket: 6, batsman: "Nikhil Das",    runs: 172, overs: "20.0" },
-  ],
-  overHistory: [
-    { over: 1,  runs: 8,  wickets: 0, balls: ["1","2","1","0","2","2"] },
-    { over: 2,  runs: 11, wickets: 0, balls: ["1","4","2","1","2","1"] },
-    { over: 3,  runs: 6,  wickets: 0, balls: ["1","1","1","1","1","1"] },
-    { over: 4,  runs: 14, wickets: 0, balls: ["4","2","4","1","2","1"] },
-    { over: 5,  runs: 7,  wickets: 0, balls: ["1","1","2","1","1","1"] },
-    { over: 6,  runs: 12, wickets: 0, balls: ["6","2","1","1","1","1"] },
-    { over: 7,  runs: 9,  wickets: 0, balls: ["1","1","4","1","1","1"] },
-    { over: 8,  runs: 11, wickets: 0, balls: ["2","1","4","1","2","1"] },
-    { over: 9,  runs: 5,  wickets: 1, balls: ["1","1","W","1","1","1"] },
-    { over: 10, runs: 10, wickets: 0, balls: ["4","2","1","1","1","1"] },
-    { over: 11, runs: 13, wickets: 0, balls: ["6","1","2","1","2","1"] },
-    { over: 12, runs: 8,  wickets: 0, balls: ["1","4","1","1","0","1"] },
-    { over: 13, runs: 12, wickets: 0, balls: ["4","2","1","2","1","2"] },
-    { over: 14, runs: 9,  wickets: 0, balls: ["1","1","2","1","3","1"] },
-    { over: 15, runs: 11, wickets: 0, balls: ["6","1","1","1","1","1"] },
-    { over: 16, runs: 8,  wickets: 1, balls: ["2","W","2","1","2","1"] },
-    { over: 17, runs: 14, wickets: 1, balls: ["4","W","6","1","2","1"] },
-    { over: 18, runs: 9,  wickets: 1, balls: ["1","W","4","1","2","1"] },
-    { over: 19, runs: 8,  wickets: 1, balls: ["2","W","2","2","1","1"] },
-    { over: 20, runs: 6,  wickets: 1, balls: ["2","1","1","W","1","1"] },
-  ],
+const getDisStr = (type:string, fielder:string, bowler:string, nonStrikerOut:boolean):string => {
+  if(type==="b")  return `b ${bowler}`;
+  if(type==="c")  return `c ${fielder} b ${bowler}`;
+  if(type==="lbw")return `lbw b ${bowler}`;
+  if(type==="ro") return `run out (${fielder})`;
+  if(type==="st") return `st ${fielder} b ${bowler}`;
+  if(type==="hw") return `hit wicket b ${bowler}`;
+  if(type==="cb") return `c & b ${bowler}`;
+  if(type==="rh") return `retired hurt`;
+  return "dismissed";
 };
-
-const DEMO_INN2_START: InningsData = {
-  ...makeInnings("Kolkata Tigers", 173),
-  runs: 124, wickets: 4, overs: 14, balls: 2, extras: 4,
-  batting: [
-    { name: "Rahul Kapoor",   runs: 62, balls: 41, fours: 6, sixes: 2, out: "c Sharma b Singh", dismissed: true },
-    { name: "Suresh Verma",   runs: 18, balls: 16, fours: 2, sixes: 0, out: "lbw b Gupta", dismissed: true },
-    { name: "Deepak Nair",    runs: 29, balls: 22, fours: 2, sixes: 1, out: "run out", dismissed: true },
-    { name: "Ankit Rao",      runs: 5,  balls: 7,  fours: 0, sixes: 0, out: "c Joshi b Verma", dismissed: true },
-    { name: "Vikash Tiwari",  runs: 10, balls: 8,  fours: 1, sixes: 0, dismissed: false },
-    { name: "Sachin Dubey",   runs: 0,  balls: 0,  fours: 0, sixes: 0, dismissed: false },
-    { name: "Ravi Patil",     runs: 0,  balls: 0,  fours: 0, sixes: 0, dismissed: false },
-    { name: "Mohit Kumar",    runs: 0,  balls: 0,  fours: 0, sixes: 0, dismissed: false },
-    { name: "Tarun Das",      runs: 0,  balls: 0,  fours: 0, sixes: 0, dismissed: false },
-    { name: "Harish Pillai",  runs: 0,  balls: 0,  fours: 0, sixes: 0, dismissed: false },
-    { name: "Ganesh Mishra",  runs: 0,  balls: 0,  fours: 0, sixes: 0, dismissed: false },
-  ],
-  bowling: [
-    { name: "Arjun Sharma",  overs: 3, balls: 0, runs: 28, wickets: 1, wides: 1, noBalls: 0 },
-    { name: "Pranav Singh",  overs: 3, balls: 2, runs: 24, wickets: 2, wides: 0, noBalls: 0 },
-    { name: "Dev Mehta",     overs: 3, balls: 0, runs: 32, wickets: 1, wides: 2, noBalls: 0 },
-    { name: "Vikram Nair",   overs: 2, balls: 0, runs: 18, wickets: 0, wides: 1, noBalls: 0 },
-    { name: "Karan Joshi",   overs: 3, balls: 0, runs: 22, wickets: 0, wides: 0, noBalls: 0 },
-  ],
-  partnerships: [
-    { bat1: "Rahul Kapoor", bat2: "Suresh Verma",  runs: 48, balls: 32 },
-    { bat1: "Rahul Kapoor", bat2: "Deepak Nair",   runs: 55, balls: 36 },
-    { bat1: "Deepak Nair",  bat2: "Ankit Rao",     runs: 12, balls: 11 },
-    { bat1: "Ankit Rao",    bat2: "Vikash Tiwari", runs: 9,  balls: 9  },
-    { bat1: "Vikash Tiwari",bat2: "Sachin Dubey",  runs: 0,  balls: 0  },
-  ],
-  fallOfWickets: [
-    { wicket: 1, batsman: "Suresh Verma",  runs: 48,  overs: "5.4"  },
-    { wicket: 2, batsman: "Rahul Kapoor",  runs: 103, overs: "11.2" },
-    { wicket: 3, batsman: "Deepak Nair",   runs: 115, overs: "13.1" },
-    { wicket: 4, batsman: "Ankit Rao",     runs: 124, overs: "14.1" },
-  ],
-  overHistory: [
-    { over: 1,  runs: 8,  wickets: 0, balls: ["2","1","4","0","0","1"] },
-    { over: 2,  runs: 6,  wickets: 0, balls: ["1","1","1","1","2","0"] },
-    { over: 3,  runs: 10, wickets: 0, balls: ["4","2","1","2","1","0"] },
-    { over: 4,  runs: 12, wickets: 0, balls: ["6","1","2","1","1","1"] },
-    { over: 5,  runs: 10, wickets: 0, balls: ["4","2","1","1","2","0"] },
-    { over: 6,  runs: 2,  wickets: 1, balls: ["1","W","0","0","0","1"] },
-    { over: 7,  runs: 12, wickets: 0, balls: ["4","2","4","1","0","1"] },
-    { over: 8,  runs: 14, wickets: 0, balls: ["6","2","1","2","2","1"] },
-    { over: 9,  runs: 8,  wickets: 0, balls: ["4","1","1","1","0","1"] },
-    { over: 10, runs: 9,  wickets: 0, balls: ["1","2","4","1","0","1"] },
-    { over: 11, runs: 11, wickets: 0, balls: ["4","2","1","1","2","1"] },
-    { over: 12, runs: 3,  wickets: 1, balls: ["1","1","0","W","1","0"] },
-    { over: 13, runs: 8,  wickets: 0, balls: ["2","2","1","1","1","1"] },
-    { over: 14, runs: 11, wickets: 2, balls: ["4","W","2","W","2","."  ] },
-  ],
-};
-
-const QUICK_COMMENTS = [
-  "🏏 Straight drive to the boundary!",
-  "🚀 Massive six over deep mid-wicket!",
-  "💥 OUT! Caught behind by the keeper!",
-  "🎯 Dot ball! Superb line and length.",
-  "🤝 Single to square leg, rotate.",
-  "🌟 Amazing catch at covers! Diving effort!",
-  "🔥 Full toss — cracked through the covers!",
-  "🧤 Run out! Brilliant throw from mid-on!",
-  "↩️ LBW! Plumb in front of middle stump.",
-  "✨ Flicked off his pads for a boundary!",
-];
 
 /* ─── Styles ─────────────────────────────────────────── */
-const card = (extra?: React.CSSProperties): React.CSSProperties => ({
-  background: "linear-gradient(135deg,#0D1526 0%,#0A1020 100%)",
-  border: "1px solid #1E293B", borderRadius: 16, padding: "18px 20px",
-  ...extra,
-});
-const pill = (color: string): React.CSSProperties => ({
-  display: "inline-flex", alignItems: "center", gap: 5,
-  padding: "3px 10px", borderRadius: 20,
-  background: `${color}20`, border: `1px solid ${color}40`,
-  fontSize: 11, fontWeight: 700, color,
-});
-const tabBtn = (active: boolean): React.CSSProperties => ({
-  padding: "7px 18px", borderRadius: 8, border: "none", cursor: "pointer",
-  background: active ? "linear-gradient(135deg,#FF6B00,#FF8C40)" : "transparent",
-  color: active ? "#fff" : "#64748B", fontSize: 12, fontWeight: 700,
-  transition: "all 0.2s",
-});
+const CARD: React.CSSProperties = { background:"linear-gradient(135deg,#0D1526,#0A1020)", border:"1px solid #1E293B", borderRadius:16, padding:20 };
+const TAB  = (a:boolean): React.CSSProperties => ({ padding:"7px 16px", borderRadius:8, border:"none", cursor:"pointer", fontWeight:700, fontSize:12, background:a?"linear-gradient(135deg,#FF6B00,#FF8C40)":"transparent", color:a?"#fff":"#64748B" });
+const PILL = (c:string): React.CSSProperties => ({ display:"inline-flex", alignItems:"center", gap:5, padding:"2px 10px", borderRadius:20, background:`${c}20`, border:`1px solid ${c}40`, fontSize:10, fontWeight:700, color:c });
 
-/* ─── Wagon Wheel SVG ────────────────────────────────── */
-const SHOTS = [
-  { angle: 30,  len: 0.75, color: "#10B981", label: "6" },
-  { angle: 60,  len: 0.55, color: "#3B82F6", label: "4" },
-  { angle: 90,  len: 0.45, color: "#3B82F6", label: "4" },
-  { angle: 120, len: 0.62, color: "#10B981", label: "6" },
-  { angle: 150, len: 0.40, color: "#94A3B8", label: "2" },
-  { angle: 180, len: 0.30, color: "#64748B", label: "1" },
-  { angle: 210, len: 0.68, color: "#10B981", label: "6" },
-  { angle: 240, len: 0.48, color: "#3B82F6", label: "4" },
-  { angle: 270, len: 0.35, color: "#94A3B8", label: "2" },
-  { angle: 300, len: 0.72, color: "#10B981", label: "6" },
-  { angle: 330, len: 0.52, color: "#3B82F6", label: "4" },
-  { angle: 10,  len: 0.28, color: "#64748B", label: "1" },
-];
-
-function WagonWheel() {
-  const cx = 140, cy = 140, r = 120;
-  return (
-    <svg width={280} height={280} style={{ display: "block", margin: "0 auto" }}>
-      {/* Field zones */}
-      <circle cx={cx} cy={cy} r={r}   fill="#0A2010" stroke="#1E3B28" strokeWidth={1} />
-      <circle cx={cx} cy={cy} r={r*0.6} fill="none" stroke="#1E3B2880" strokeWidth={1} strokeDasharray="4 4"/>
-      <circle cx={cx} cy={cy} r={r*0.3} fill="none" stroke="#1E3B2880" strokeWidth={1} strokeDasharray="4 4"/>
-      {/* Pitch lines */}
-      <line x1={cx} y1={cy-r} x2={cx} y2={cy+r} stroke="#1E3B28" strokeWidth={1} strokeDasharray="6 4"/>
-      <line x1={cx-r} y1={cy} x2={cx+r} y2={cy} stroke="#1E3B28" strokeWidth={1} strokeDasharray="6 4"/>
-      {/* Boundary rope */}
-      <circle cx={cx} cy={cy} r={r-4} fill="none" stroke="#22C55E40" strokeWidth={3}/>
-      {/* Shot lines */}
-      {SHOTS.map((s, i) => {
-        const rad = (s.angle - 90) * (Math.PI / 180);
-        const x2 = cx + Math.cos(rad) * r * s.len;
-        const y2 = cy + Math.sin(rad) * r * s.len;
-        return (
-          <g key={i}>
-            <line x1={cx} y1={cy} x2={x2} y2={y2}
-              stroke={s.color} strokeWidth={2} strokeLinecap="round" opacity={0.85}/>
-            <circle cx={x2} cy={y2} r={4} fill={s.color} opacity={0.9}/>
-          </g>
-        );
-      })}
-      {/* Batsman at crease */}
-      <circle cx={cx} cy={cy} r={8} fill="#FF6B00" opacity={0.9}/>
-      <circle cx={cx} cy={cy} r={3} fill="#fff"/>
-      {/* Labels */}
-      <text x={cx} y={14} textAnchor="middle" fill="#4ADE8080" fontSize={9}>MID-ON</text>
-      <text x={cx} y={cy*2-4} textAnchor="middle" fill="#4ADE8080" fontSize={9}>MID-OFF</text>
-      <text x={8} y={cy+4} textAnchor="start" fill="#4ADE8080" fontSize={9}>SQ LEG</text>
-      <text x={cx*2-8} y={cy+4} textAnchor="end" fill="#4ADE8080" fontSize={9}>POINT</text>
-    </svg>
-  );
-}
-
-/* ─── Main Component ─────────────────────────────────── */
+/* ══════════════════════════════════════════════════════ */
 export default function LiveScoringView() {
-  const [matchPhase, setMatchPhase] = useState<"setup"|"inn1"|"inn2"|"result">("inn2");
-  const [inn1, setInn1] = useState<InningsData>(DEMO_INN1);
-  const [inn2, setInn2] = useState<InningsData>(DEMO_INN2_START);
-  const [activeInnings, setActiveInnings] = useState<1|2>(2);
-  const [mainTab, setMainTab] = useState<"live"|"scorecard"|"stats">("live");
-  const [scorecardTab, setScorecardTab] = useState<"batting1"|"bowling1"|"batting2"|"bowling2">("batting2");
-  const [strikerIdx, setStrikerIdx] = useState(4);  // Vikash Tiwari
-  const [nonStrikerIdx, setNonStrikerIdx] = useState(5); // Sachin Dubey
-  const [bowlerIdx, setBowlerIdx] = useState(1);    // Pranav Singh
-  const [commentary, setCommentary] = useState<string[]>([
-    "14.2 — 🏏 Full toss driven to the cover boundary! FOUR!",
-    "14.1 — 💥 OUT! Ankit Rao caught at mid-off by Joshi. Kolkata 4 down.",
-    "14.0 — 🎯 Dot ball, perfect yorker!",
-    "13.6 — 🤝 Two runs to deep square leg.",
-    "13.5 — 🚀 SIX! Pulled over mid-wicket. Deepak Nair in form!",
-    "13.4 — Single taken, rotated strike.",
-  ]);
+  const [matches,    setMatches]    = useState<MatchDef[]>(INIT_MATCHES);
+  const [live,       setLive]       = useState<LiveMatch|null>(null);
+  const [mainTab,    setMainTab]    = useState<"live"|"scorecard">("live");
+  const [scTab,      setScTab]      = useState<"bat1"|"bowl1"|"bat2"|"bowl2">("bat1");
+  const [commentary, setCommentary] = useState<string[]>([]);
   const [customNote, setCustomNote] = useState("");
-  const [currentOverBalls, setCurrentOverBalls] = useState<string[]>(["4","W"]);
-  const commentRef = useRef<HTMLTextAreaElement>(null);
+  const [dm,         setDm]         = useState<DismissalModal|null>(null); // dismissal modal
 
-  // Toss & setup state
-  const [tossWinner, setTossWinner] = useState("Mumbai Mavericks");
-  const [tossDec, setTossDec] = useState("bat");
-  const [venue, setVenue] = useState("Wankhede Stadium, Mumbai");
-  const [matchNo, setMatchNo] = useState("12");
+  // Add match form
+  const [showAdd, setShowAdd] = useState(false);
+  const [addForm, setAddForm] = useState({ team1:ALL_TEAMS[0], team2:ALL_TEAMS[1], venue:VENUES[0], date:"" });
 
-  const inn = activeInnings === 1 ? inn1 : inn2;
-  const setInn = activeInnings === 1 ? setInn1 : setInn2;
+  /* ── XI selection temp state ── */
+  const [xi1sel, setXi1sel] = useState<string[]>([]);
+  const [xi2sel, setXi2sel] = useState<string[]>([]);
 
-  /* ─── Add ball ─────────────────────────────── */
-  const addBall = (outcome: string) => {
-    const isWide = outcome === "WD";
-    const isNB = outcome === "NB";
-    const isExtra = isWide || isNB;
-    const isWicket = outcome === "W";
-    const runs =
-      outcome === "4" ? 4 : outcome === "6" ? 6 :
-      (isWicket || outcome === "." || isWide || isNB) ? 0 :
-      parseInt(outcome) || 0;
+  /* ── Start a match (open toss screen) ── */
+  const openMatch = (m:MatchDef) => {
+    if(m.status==="completed") return;
+    setLive({ def:m, tossWinner:m.team1, tossDec:"bat", xi1:[], xi2:[], currentInnings:1, inn1:null as any, inn2:null, phase:"toss" });
+    setXi1sel([]); setXi2sel([]);
+    setCommentary([]);
+    setMainTab("live");
+  };
 
-    if (!isExtra) setCurrentOverBalls(b => [...b, isWicket ? "W" : outcome]);
+  /* ── Confirm toss → go to XI selection ── */
+  const confirmToss = () => {
+    if(!live) return;
+    setLive(l=>l?{...l, phase:"xi"}:l);
+  };
 
-    // Compute over-completion from current inn state (before the updater runs)
-    const overComplete = !isExtra && (inn.balls + 1) === 6;
+  /* ── Confirm XI → start innings ── */
+  const confirmXI = () => {
+    if(!live || xi1sel.length!==11 || xi2sel.length!==11) return;
+    const bat = live.tossDec==="bat" ? live.def.team1 : live.def.team2;
+    const bowl= bat===live.def.team1 ? live.def.team2 : live.def.team1;
+    const batXI = bat===live.def.team1 ? xi1sel : xi2sel;
+    const bowlXI= bat===live.def.team1 ? xi2sel : xi1sel;
+    const inn1  = makeInnings(bat, bowl, batXI, bowlXI);
+    inn1.batScores[0].batting = true;
+    inn1.batScores[1].batting = true;
+    setLive(l=>l?{...l, xi1:xi1sel, xi2:xi2sel, inn1, currentInnings:1, phase:"live"}:l);
+    setMatches(ms=>ms.map(m=>m.id===live.def.id?{...m,status:"live"}:m));
+  };
 
-    setInn(prev => {
-      const newBalls = isExtra ? prev.balls : prev.balls + 1;
-      const _overComplete = !isExtra && newBalls === 6;
-      const newOvers = _overComplete ? prev.overs + 1 : prev.overs;
-      const finalBalls = _overComplete ? 0 : newBalls;
+  /* ── Current innings helper ── */
+  const inn = live ? (live.currentInnings===1 ? live.inn1 : live.inn2) : null;
 
-      // Update batting
-      const newBatting = prev.batting.map((b, i) => {
-        if (i === strikerIdx && !isExtra) {
-          return { ...b, runs: b.runs + runs, balls: b.balls + 1,
-            fours: outcome === "4" ? b.fours + 1 : b.fours,
-            sixes: outcome === "6" ? b.sixes + 1 : b.sixes,
-            dismissed: isWicket ? true : b.dismissed,
-            out: isWicket ? "dismissed" : b.out };
+  /* ── Ball outcome ── */
+  const addBall = (outcome:string) => {
+    if(!live || !inn) return;
+    if(outcome==="W") { setDm({ type:"b", fielder:"", nonStrikerOut:false, newBatsmanIdx:-1 }); return; }
+
+    const isWide = outcome==="WD";
+    const isNB   = outcome==="NB";
+    const isExtra= isWide||isNB;
+    const runs   = outcome==="4"?4:outcome==="6"?6:(outcome==="."||isExtra)?0:parseInt(outcome)||0;
+
+    applyBall({ outcome, runs, isExtra, isWide, isNB, isWicket:false, dismissal:"" });
+  };
+
+  const applyBall = ({ outcome, runs, isExtra, isWide, isNB, isWicket, dismissal, nonStrikerOut=false }:
+    { outcome:string; runs:number; isExtra:boolean; isWide:boolean; isNB:boolean; isWicket:boolean; dismissal:string; nonStrikerOut?:boolean }) => {
+    if(!live || !inn) return;
+
+    setLive(prev=>{
+      if(!prev) return prev;
+      const curInns = prev.currentInnings===1 ? prev.inn1 : prev.inn2!;
+      if(!curInns) return prev;
+
+      const newBalls    = isExtra ? curInns.balls : curInns.balls+1;
+      const overDone    = !isExtra && newBalls===6;
+      const newOvers    = overDone ? curInns.overs+1 : curInns.overs;
+      const finalBalls  = overDone ? 0 : newBalls;
+
+      // Batting update
+      const newBatScores = curInns.batScores.map((b,i)=>{
+        if(i===curInns.strikerIdx && !isExtra){
+          return { ...b, runs:b.runs+runs, balls:b.balls+1,
+            fours:outcome==="4"?b.fours+1:b.fours, sixes:outcome==="6"?b.sixes+1:b.sixes,
+            dismissal:isWicket&&!nonStrikerOut?dismissal:b.dismissal,
+            batting:!(isWicket&&!nonStrikerOut) };
+        }
+        if(i===curInns.nonStrikerIdx && isWicket && nonStrikerOut){
+          return { ...b, dismissal, batting:false };
         }
         return b;
       });
 
-      // Update bowling
-      const newBowling = prev.bowling.map((b, i) => {
-        if (i !== bowlerIdx) return b;
-        const nb = isExtra ? b.balls : b.balls + 1;
-        const oc = !isExtra && nb === 6;
-        return { ...b, runs: b.runs + runs + (isExtra ? 1 : 0),
-          wickets: isWicket ? b.wickets + 1 : b.wickets,
-          balls: oc ? 0 : nb, overs: oc ? b.overs + 1 : b.overs,
-          wides: isWide ? b.wides + 1 : b.wides,
-          noBalls: isNB ? b.noBalls + 1 : b.noBalls };
+      // Bowling update
+      const newBowlScores = curInns.bowlScores.map((b,i)=>{
+        if(i!==curInns.bowlerIdx) return b;
+        const nb2 = isExtra ? b.balls : b.balls+1;
+        const oc  = !isExtra && nb2===6;
+        return { ...b, runs:b.runs+runs+(isExtra?1:0), wickets:isWicket?b.wickets+1:b.wickets,
+          balls:oc?0:nb2, overs:oc?b.overs+1:b.overs,
+          wides:isWide?b.wides+1:b.wides, noBalls:isNB?b.noBalls+1:b.noBalls };
       });
 
-      // Partnership update
-      const newPartnerships = [...prev.partnerships];
-      const lastP = newPartnerships[newPartnerships.length - 1];
-      if (lastP) {
-        newPartnerships[newPartnerships.length - 1] = {
-          ...lastP, runs: lastP.runs + runs,
-          balls: isExtra ? lastP.balls : lastP.balls + 1,
-        };
-      }
-
-      // Over history
-      let newOverHistory = [...prev.overHistory];
-      if (overComplete) {
-        newOverHistory.push({ over: prev.overs + 1, runs, wickets: isWicket ? 1 : 0,
-          balls: currentOverBalls.concat([isWicket ? "W" : outcome]) });
+      // Partnerships
+      const newPart = [...curInns.partnerships];
+      if(newPart.length) {
+        const last = newPart[newPart.length-1];
+        newPart[newPart.length-1] = { ...last, runs:last.runs+runs, balls:isExtra?last.balls:last.balls+1 };
       }
 
       // Fall of wicket
-      const newFow = isWicket
-        ? [...prev.fallOfWickets, { wicket: prev.wickets + 1,
-            batsman: prev.batting[strikerIdx]?.name || "Unknown",
-            runs: prev.runs + runs, overs: fmtOvers(prev.overs, prev.balls) }]
-        : prev.fallOfWickets;
+      let newFow = [...curInns.fowList];
+      if(isWicket){
+        const outIdx = nonStrikerOut ? curInns.nonStrikerIdx : curInns.strikerIdx;
+        newFow.push({ wicket:curInns.totalWickets+1, batsman:curInns.batScores[outIdx].name,
+          runs:curInns.totalRuns+runs, overStr:fmtO(curInns.overs, curInns.balls) });
+      }
 
-      return {
-        ...prev, runs: prev.runs + runs + (isExtra ? 1 : 0),
-        wickets: isWicket ? prev.wickets + 1 : prev.wickets,
-        overs: newOvers, balls: finalBalls,
-        extras: prev.extras + (isExtra ? 1 : 0),
-        batting: newBatting, bowling: newBowling,
-        partnerships: newPartnerships, fallOfWickets: newFow,
-        overHistory: newOverHistory,
+      // Current over deliveries
+      let newCurOver = isExtra ? curInns.currentOverDeliveries : [...curInns.currentOverDeliveries, isWicket?"W":outcome];
+
+      // Over history
+      let newOverHistory = [...curInns.overHistory];
+      if(overDone) {
+        newOverHistory.push({ over:curInns.overs+1, runs:newCurOver.reduce((s,d)=>s+(d==="W"?0:d==="4"?4:d==="6"?6:parseInt(d)||0),0), wickets:isWicket?1:0, deliveries:newCurOver });
+        newCurOver=[];
+      }
+
+      // Strike rotation
+      let newStriker = curInns.strikerIdx;
+      let newNonStriker = curInns.nonStrikerIdx;
+      const oddRuns = runs % 2 === 1;
+      if(overDone) { const tmp=newStriker; newStriker=newNonStriker; newNonStriker=tmp; }
+      else if(oddRuns) { const tmp=newStriker; newStriker=newNonStriker; newNonStriker=tmp; }
+
+      const newTotalWickets = curInns.totalWickets + (isWicket?1:0);
+      const innComplete = newTotalWickets>=10 || newOvers>=20;
+
+      const updatedInns: InningsState = {
+        ...curInns,
+        batScores:newBatScores, bowlScores:newBowlScores,
+        totalRuns:curInns.totalRuns+runs+(isExtra?1:0),
+        totalWickets:newTotalWickets,
+        overs:newOvers, balls:finalBalls,
+        extras:curInns.extras+(isExtra?1:0),
+        currentOverDeliveries:newCurOver,
+        overHistory:newOverHistory,
+        partnerships:newPart, fowList:newFow,
+        strikerIdx:newStriker, nonStrikerIdx:newNonStriker,
       };
+
+      if(prev.currentInnings===1){
+        if(innComplete){
+          const inn2 = makeInnings(prev.def.team2===updatedInns.battingTeam?prev.def.team1:prev.def.team2,
+            updatedInns.battingTeam,
+            prev.def.team1===updatedInns.battingTeam?prev.xi2:prev.xi1,
+            prev.def.team1===updatedInns.battingTeam?prev.xi1:prev.xi2,
+            updatedInns.totalRuns+1);
+          inn2.batScores[0].batting=true; inn2.batScores[1].batting=true;
+          return { ...prev, inn1:updatedInns, inn2, currentInnings:2 };
+        }
+        return { ...prev, inn1:updatedInns };
+      } else {
+        if(innComplete) return { ...prev, inn2:updatedInns, phase:"completed" };
+        return { ...prev, inn2:updatedInns };
+      }
     });
 
-    if (overComplete && !isExtra) setCurrentOverBalls([]);
-
     // Commentary
-    const o = inn.overs, b = inn.balls + 1;
-    const msg =
-      outcome === "W"  ? `${o}.${b} — 💥 WICKET! ${inn.batting[strikerIdx]?.name} is OUT!` :
-      outcome === "6"  ? `${o}.${b} — 🚀 SIX! Ball disappears into the stands!` :
-      outcome === "4"  ? `${o}.${b} — 🏏 FOUR! Racing to the boundary!` :
-      outcome === "."  ? `${o}.${b} — 🎯 Dot ball, well bowled.` :
-      outcome === "WD" ? `${o}.${b} — Wide ball signalled by umpire. +1 extra.` :
-      outcome === "NB" ? `${o}.${b} — ⚠️ No ball called! Free hit coming up. +1 extra.` :
-      outcome === "LB" ? `${o}.${b} — Leg bye, ${outcome} extra.` :
-                         `${o}.${b} — ${outcome} run(s) taken.`;
-    setCommentary(c => [msg, ...c].slice(0, 30));
+    const o=inn.overs, b=inn.balls+(isExtra?0:1);
+    const msg=
+      outcome==="6" ? `${o}.${b} — 🚀 SIX! Ball disappears into the stands!` :
+      outcome==="4" ? `${o}.${b} — 🏏 FOUR! Racing to the boundary!` :
+      outcome==="." ? `${o}.${b} — 🎯 Dot ball. Tight bowling.` :
+      outcome==="WD"? `${o}.${b} — Wide ball signalled. +1 extra.` :
+      outcome==="NB"? `${o}.${b} — ⚠️ No ball! Free hit next. +1 extra.` :
+      outcome==="LB"? `${o}.${b} — Leg bye, 1 extra.` :
+      outcome==="B" ? `${o}.${b} — Bye, 1 extra.` :
+                      `${o}.${b} — ${outcome} run(s) taken.`;
+    setCommentary(c=>[msg,...c].slice(0,30));
   };
 
-  const addCustomCommentary = (text: string) => {
-    if (!text.trim()) return;
-    setCommentary(c => [`${inn.overs}.${inn.balls} — ${text.trim()}`, ...c].slice(0, 30));
-    setCustomNote("");
+  /* ── Confirm dismissal ── */
+  const confirmDismissal = () => {
+    if(!live||!inn||!dm||dm.newBatsmanIdx===-1) return;
+    const bowler  = inn.bowlScores[inn.bowlerIdx]?.name||"";
+    const keeper  = inn.bowlingXI.find(n=>{ const sq=SQUADS[inn.bowlingTeam]||[]; return sq.find(p=>p.name===n&&p.role==="WK"); })||bowler;
+    const disStr  = getDisStr(dm.type, dm.fielder||keeper, bowler, dm.nonStrikerOut);
+    const outIdx  = dm.nonStrikerOut ? inn.nonStrikerIdx : inn.strikerIdx;
+    const outName = inn.batScores[outIdx]?.name||"";
+
+    // Apply dismissal then ball
+    setLive(prev=>{
+      if(!prev) return prev;
+      const curInns = prev.currentInnings===1?prev.inn1:prev.inn2!;
+      if(!curInns) return prev;
+      const newBatScores = curInns.batScores.map((b,i)=>{
+        if(i===outIdx) return {...b, dismissal:disStr, batting:false};
+        if(i===dm.newBatsmanIdx) return {...b, batting:true};
+        return b;
+      });
+      // New partnership
+      const newStriker = dm.nonStrikerOut ? dm.newBatsmanIdx : curInns.strikerIdx;
+      const newNonStr  = dm.nonStrikerOut ? curInns.strikerIdx : dm.newBatsmanIdx;
+      const newPart    = [...curInns.partnerships, { bat1:curInns.batScores[newStriker]?.name||"", bat2:curInns.batScores[newNonStr]?.name||"", runs:0, balls:0 }];
+
+      const updatedInns = {...curInns, batScores:newBatScores, strikerIdx:newStriker, nonStrikerIdx:newNonStr,
+        totalWickets:curInns.totalWickets+1, partnerships:newPart };
+      if(prev.currentInnings===1) return {...prev, inn1:updatedInns};
+      return {...prev, inn2:updatedInns};
+    });
+
+    setCommentary(c=>[`${inn.overs}.${inn.balls} — 💥 WICKET! ${outName} ${disStr}.`,...c].slice(0,30));
+    setDm(null);
+
+    // Now actually process the ball (no runs scored on wicket)
+    applyBall({ outcome:"W", runs:0, isExtra:false, isWide:false, isNB:false, isWicket:true, dismissal:disStr, nonStrikerOut:dm.nonStrikerOut });
   };
 
-  /* ─── Derived stats ──────────────────────────────── */
-  const target = inn2.target ?? 0;
-  const runsNeeded = Math.max(0, target - inn2.runs);
-  const ballsLeft = Math.max(0, (20 - inn2.overs) * 6 - inn2.balls);
-  const oversLeft = (ballsLeft / 6).toFixed(1);
-  const currentCRR = crr(inn2.runs, inn2.overs, inn2.balls);
-  const currentRRR = rrr(target, inn2.runs, inn2.overs, inn2.balls);
-  const projected = projScore(inn2.runs, inn2.overs, inn2.balls);
-  const striker = inn.batting[strikerIdx];
-  const nonStriker = inn.batting[nonStrikerIdx];
-  const currentBowler = inn.bowling[bowlerIdx];
-  const currentPartnership = inn.partnerships[inn.partnerships.length - 1];
+  /* ═══════════════════════════════ RENDER ═════════════ */
 
-  /* ─── Match Setup ────────────────────────────────── */
-  if (matchPhase === "setup") {
-    return (
-      <div style={{ display: "flex", flexDirection: "column", gap: 16, maxWidth: 600, margin: "0 auto" }}>
-        <div style={card()}>
-          <div style={{ fontSize: 16, fontWeight: 800, color: "#E2E8F0", marginBottom: 18 }}>🏟️ Match Setup</div>
-          {[
-            { label: "Match Number", value: matchNo, set: setMatchNo },
-            { label: "Venue", value: venue, set: setVenue },
-          ].map(f => (
-            <div key={f.label} style={{ marginBottom: 14 }}>
-              <div style={{ fontSize: 11, color: "#64748B", marginBottom: 6, fontWeight: 600 }}>{f.label}</div>
-              <input value={f.value} onChange={e => f.set(e.target.value)}
-                style={{ width: "100%", padding: "9px 12px", background: "#060B18", border: "1px solid #1E293B", borderRadius: 8, color: "#F1F5F9", fontSize: 13, outline: "none", boxSizing: "border-box" }}/>
-            </div>
-          ))}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
-            <div>
-              <div style={{ fontSize: 11, color: "#64748B", marginBottom: 6, fontWeight: 600 }}>Toss Winner</div>
-              <select value={tossWinner} onChange={e => setTossWinner(e.target.value)}
-                style={{ width: "100%", padding: "9px 12px", background: "#060B18", border: "1px solid #1E293B", borderRadius: 8, color: "#F1F5F9", fontSize: 13, outline: "none" }}>
-                <option>Mumbai Mavericks</option>
-                <option>Kolkata Tigers</option>
-              </select>
-            </div>
-            <div>
-              <div style={{ fontSize: 11, color: "#64748B", marginBottom: 6, fontWeight: 600 }}>Elected To</div>
-              <select value={tossDec} onChange={e => setTossDec(e.target.value)}
-                style={{ width: "100%", padding: "9px 12px", background: "#060B18", border: "1px solid #1E293B", borderRadius: 8, color: "#F1F5F9", fontSize: 13, outline: "none" }}>
-                <option value="bat">Bat</option>
-                <option value="field">Field</option>
-              </select>
-            </div>
-          </div>
-          <button onClick={() => setMatchPhase("inn1")}
-            style={{ width: "100%", padding: "12px", borderRadius: 10, border: "none", background: "linear-gradient(135deg,#FF6B00,#FF8C40)", color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer" }}>
-            🏏 Start Match
-          </button>
+  /* ── Match List ─────────────────────────────────────── */
+  if(!live) return (
+    <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+        <div>
+          <div style={{ fontSize:20, fontWeight:800, color:"#F1F5F9" }}>Live Scoring</div>
+          <div style={{ fontSize:12, color:"#64748B", marginTop:2 }}>Select a match to start or manage scoring</div>
         </div>
+        <button onClick={()=>setShowAdd(true)} style={{ padding:"9px 18px", borderRadius:9, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer" }}>+ Add Match</button>
       </div>
-    );
-  }
 
-  /* ─── Scorecard Tab ──────────────────────────────── */
-  const renderScorecard = () => {
-    const tabsConfig = [
-      { id: "batting1",  label: "Batting (Inn 1)" },
-      { id: "bowling1",  label: "Bowling (Inn 1)" },
-      { id: "batting2",  label: "Batting (Inn 2)" },
-      { id: "bowling2",  label: "Bowling (Inn 2)" },
-    ] as const;
-
-    const renderBatting = (d: InningsData, inningsNum: number) => (
-      <div>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
-          <div>
-            <div style={{ fontSize: 15, fontWeight: 800, color: "#E2E8F0" }}>{d.team}</div>
-            <div style={{ fontSize: 22, fontWeight: 900, color: "#FF6B00", marginTop: 2 }}>
-              {d.runs}/{d.wickets} <span style={{ fontSize: 13, color: "#94A3B8", fontWeight: 600 }}>({fmtOvers(d.overs, d.balls)} ov)</span>
+      {/* Add Match modal */}
+      {showAdd&&(
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,.7)", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center" }}>
+          <div style={{ ...CARD, width:420, padding:28 }}>
+            <div style={{ fontSize:16, fontWeight:800, color:"#F1F5F9", marginBottom:20 }}>Schedule New Match</div>
+            {([["Team 1","team1"],["Team 2","team2"]] as const).map(([lbl,key])=>(
+              <div key={key} style={{ marginBottom:14 }}>
+                <div style={{ fontSize:11, color:"#64748B", marginBottom:5, fontWeight:600 }}>{lbl}</div>
+                <select value={addForm[key]} onChange={e=>setAddForm(f=>({...f,[key]:e.target.value}))}
+                  style={{ width:"100%", padding:"9px 12px", background:"#060B18", border:"1px solid #1E293B", borderRadius:8, color:"#F1F5F9", fontSize:13, outline:"none" }}>
+                  {ALL_TEAMS.map(t=><option key={t}>{t}</option>)}
+                </select>
+              </div>
+            ))}
+            <div style={{ marginBottom:14 }}>
+              <div style={{ fontSize:11, color:"#64748B", marginBottom:5, fontWeight:600 }}>Venue</div>
+              <select value={addForm.venue} onChange={e=>setAddForm(f=>({...f,venue:e.target.value}))}
+                style={{ width:"100%", padding:"9px 12px", background:"#060B18", border:"1px solid #1E293B", borderRadius:8, color:"#F1F5F9", fontSize:13, outline:"none" }}>
+                {VENUES.map(v=><option key={v}>{v}</option>)}
+              </select>
+            </div>
+            <div style={{ marginBottom:20 }}>
+              <div style={{ fontSize:11, color:"#64748B", marginBottom:5, fontWeight:600 }}>Date & Time</div>
+              <input type="datetime-local" value={addForm.date} onChange={e=>setAddForm(f=>({...f,date:e.target.value}))}
+                style={{ width:"100%", padding:"9px 12px", background:"#060B18", border:"1px solid #1E293B", borderRadius:8, color:"#F1F5F9", fontSize:13, outline:"none", boxSizing:"border-box" }}/>
+            </div>
+            <div style={{ display:"flex", gap:10 }}>
+              <button onClick={()=>setShowAdd(false)} style={{ flex:1, padding:11, borderRadius:8, border:"1px solid #1E293B", background:"transparent", color:"#64748B", cursor:"pointer" }}>Cancel</button>
+              <button onClick={()=>{
+                const newMatch:MatchDef = { id:Date.now(), matchNo:matches.length+1, team1:addForm.team1, team2:addForm.team2, venue:addForm.venue, date:addForm.date||"TBD", status:"scheduled" };
+                setMatches(m=>[...m, newMatch]); setShowAdd(false);
+              }} style={{ flex:1, padding:11, borderRadius:8, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontWeight:700, cursor:"pointer" }}>Schedule →</button>
             </div>
           </div>
-          <div style={{ textAlign: "right", fontSize: 12, color: "#64748B" }}>
-            <div>Extras: <span style={{ color: "#E2E8F0" }}>{d.extras}</span></div>
-            {d.target && <div style={{ color: "#F59E0B", fontWeight: 700 }}>Target: {d.target}</div>}
-          </div>
         </div>
-        {/* Batting table */}
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
-            <thead>
-              <tr style={{ borderBottom: "1px solid #1E293B" }}>
-                {["Batsman","Dismissal","R","B","4s","6s","SR"].map(h => (
-                  <th key={h} style={{ padding: "7px 8px", textAlign: h === "Batsman" || h === "Dismissal" ? "left" : "right", color: "#64748B", fontWeight: 700, fontSize: 11, whiteSpace: "nowrap" }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {d.batting.filter(b => b.balls > 0 || b.dismissed).map((bat, i) => (
-                <tr key={i} style={{ borderBottom: "1px solid #0F172A" }}>
-                  <td style={{ padding: "8px", color: bat.dismissed ? "#94A3B8" : "#E2E8F0", fontWeight: bat.dismissed ? 400 : 700 }}>{bat.name}</td>
-                  <td style={{ padding: "8px", color: "#64748B", fontSize: 11 }}>{bat.out || (inningsNum === activeInnings && !bat.dismissed ? "not out" : "not out")}</td>
-                  <td style={{ padding: "8px", textAlign: "right", color: bat.runs >= 50 ? "#F59E0B" : "#E2E8F0", fontWeight: 800 }}>{bat.runs}</td>
-                  <td style={{ padding: "8px", textAlign: "right", color: "#94A3B8" }}>{bat.balls}</td>
-                  <td style={{ padding: "8px", textAlign: "right", color: "#3B82F6" }}>{bat.fours}</td>
-                  <td style={{ padding: "8px", textAlign: "right", color: "#10B981" }}>{bat.sixes}</td>
-                  <td style={{ padding: "8px", textAlign: "right", color: "#64748B" }}>{sr(bat.runs, bat.balls)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        {/* Fall of wickets */}
-        {d.fallOfWickets.length > 0 && (
-          <div style={{ marginTop: 16 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: "#64748B", marginBottom: 8, textTransform: "uppercase", letterSpacing: 0.5 }}>Fall of Wickets</div>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-              {d.fallOfWickets.map((f, i) => (
-                <div key={i} style={{ padding: "4px 10px", background: "#EF444415", border: "1px solid #EF444430", borderRadius: 20, fontSize: 11, color: "#EF4444" }}>
-                  {f.wicket}-{f.runs} ({f.batsman.split(" ")[0]}, {f.overs})
+      )}
+
+      {/* Match cards */}
+      <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+        {[
+          { label:"🔴 Live", items:matches.filter(m=>m.status==="live"), color:"#EF4444" },
+          { label:"📅 Upcoming", items:matches.filter(m=>m.status==="scheduled"), color:"#3B82F6" },
+          { label:"✅ Completed", items:matches.filter(m=>m.status==="completed"), color:"#10B981" },
+        ].map(group=>group.items.length>0&&(
+          <div key={group.label}>
+            <div style={{ fontSize:11, fontWeight:800, color:group.color, letterSpacing:.5, textTransform:"uppercase", marginBottom:8 }}>{group.label}</div>
+            {group.items.map(m=>(
+              <div key={m.id} style={{ ...CARD, marginBottom:8, cursor:m.status!=="completed"?"pointer":"default", borderColor:m.status==="live"?"rgba(239,68,68,.3)":"#1E293B", transition:"transform .15s,border-color .15s", position:"relative", overflow:"hidden" }}
+                onClick={()=>openMatch(m)}
+                onMouseEnter={e=>{ if(m.status!=="completed"){ (e.currentTarget as HTMLElement).style.transform="translateY(-2px)"; (e.currentTarget as HTMLElement).style.borderColor=group.color+"66"; }}}
+                onMouseLeave={e=>{ (e.currentTarget as HTMLElement).style.transform=""; (e.currentTarget as HTMLElement).style.borderColor=m.status==="live"?"rgba(239,68,68,.3)":"#1E293B"; }}>
+                {m.status==="live"&&<div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 60% 60% at 50% 0%,rgba(239,68,68,.05),transparent)", pointerEvents:"none" }}/>}
+                <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:12, flexWrap:"wrap", gap:8 }}>
+                  <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                    <span style={PILL(group.color)}>{m.status==="live"?"🔴 LIVE":m.status==="scheduled"?"📅 UPCOMING":"✅ RESULT"}</span>
+                    <span style={{ fontSize:11, color:"#475569" }}>Match {m.matchNo} · BCPL T20 Season 5</span>
+                  </div>
+                  <span style={{ fontSize:11, color:"#475569" }}>📍 {m.venue} · {m.date}</span>
                 </div>
-              ))}
-            </div>
+                <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+                  <div style={{ flex:1 }}>
+                    <div style={{ fontSize:15, fontWeight:800, color: TEAM_COLORS[m.team1]||"#E2E8F0" }}>{m.team1}</div>
+                  </div>
+                  <div style={{ padding:"6px 14px", background:"#060B18", borderRadius:8, fontWeight:900, fontSize:13, color:"rgba(255,255,255,.3)" }}>VS</div>
+                  <div style={{ flex:1, textAlign:"right" }}>
+                    <div style={{ fontSize:15, fontWeight:800, color:TEAM_COLORS[m.team2]||"#E2E8F0" }}>{m.team2}</div>
+                  </div>
+                </div>
+                {m.status!=="completed"&&(
+                  <div style={{ marginTop:12, textAlign:"center" }}>
+                    <span style={{ fontSize:11, color:"#FF6B00", fontWeight:700 }}>
+                      {m.status==="live"?"Click to continue scoring →":"Click to set up scoring →"}
+                    </span>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
-        )}
+        ))}
       </div>
-    );
+    </div>
+  );
 
-    const renderBowling = (d: InningsData) => (
-      <div>
-        <div style={{ fontSize: 15, fontWeight: 800, color: "#E2E8F0", marginBottom: 14 }}>
-          Bowling — {d.team === "Mumbai Mavericks" ? "Kolkata Tigers" : "Mumbai Mavericks"}
-        </div>
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
-            <thead>
-              <tr style={{ borderBottom: "1px solid #1E293B" }}>
-                {["Bowler","O","R","W","Econ","Wd","NB"].map(h => (
-                  <th key={h} style={{ padding: "7px 8px", textAlign: h === "Bowler" ? "left" : "right", color: "#64748B", fontWeight: 700, fontSize: 11 }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {d.bowling.filter(b => b.overs > 0 || b.balls > 0).map((b, i) => (
-                <tr key={i} style={{ borderBottom: "1px solid #0F172A" }}>
-                  <td style={{ padding: "8px", color: "#E2E8F0", fontWeight: 600 }}>{b.name}</td>
-                  <td style={{ padding: "8px", textAlign: "right", color: "#94A3B8" }}>{fmtOvers(b.overs, b.balls)}</td>
-                  <td style={{ padding: "8px", textAlign: "right", color: "#E2E8F0" }}>{b.runs}</td>
-                  <td style={{ padding: "8px", textAlign: "right", color: b.wickets > 0 ? "#EF4444" : "#64748B", fontWeight: b.wickets > 0 ? 800 : 400 }}>{b.wickets}</td>
-                  <td style={{ padding: "8px", textAlign: "right", color: "#F59E0B" }}>{eco(b.runs, b.overs, b.balls)}</td>
-                  <td style={{ padding: "8px", textAlign: "right", color: "#64748B" }}>{b.wides}</td>
-                  <td style={{ padding: "8px", textAlign: "right", color: "#64748B" }}>{b.noBalls}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+  /* ── Toss Setup ─────────────────────────────────────── */
+  if(live.phase==="toss") return (
+    <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
+      <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+        <button onClick={()=>setLive(null)} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #1E293B", background:"transparent", color:"#64748B", fontSize:12, cursor:"pointer" }}>← Back</button>
+        <div style={{ fontSize:16, fontWeight:800, color:"#F1F5F9" }}>Match {live.def.matchNo} · Toss Setup</div>
       </div>
-    );
-
-    return (
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-          {tabsConfig.map(t => (
-            <button key={t.id} onClick={() => setScorecardTab(t.id)} style={tabBtn(scorecardTab === t.id)}>{t.label}</button>
-          ))}
+      <div style={{ ...CARD, maxWidth:520 }}>
+        <div style={{ fontSize:20, fontWeight:900, color:"#FF6B00", textAlign:"center", marginBottom:6 }}>🪙 Toss</div>
+        <div style={{ fontSize:13, color:"#64748B", textAlign:"center", marginBottom:24 }}>{live.def.team1} <span style={{ color:"#475569" }}>vs</span> {live.def.team2} · {live.def.venue}</div>
+        <div style={{ marginBottom:16 }}>
+          <div style={{ fontSize:11, color:"#64748B", marginBottom:8, fontWeight:600 }}>TOSS WON BY</div>
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
+            {[live.def.team1, live.def.team2].map(t=>(
+              <button key={t} onClick={()=>setLive(l=>l?{...l,tossWinner:t}:l)}
+                style={{ padding:"14px 12px", borderRadius:10, border:`2px solid ${live.tossWinner===t?TEAM_COLORS[t]||"#FF6B00":"#1E293B"}`, background:live.tossWinner===t?`${TEAM_COLORS[t]||"#FF6B00"}18`:"#060B18", color:live.tossWinner===t?(TEAM_COLORS[t]||"#FF6B00"):"#64748B", fontWeight:700, fontSize:13, cursor:"pointer", transition:"all .2s" }}>
+                {t}
+              </button>
+            ))}
+          </div>
         </div>
-        <div style={card()}>
-          {scorecardTab === "batting1"  && renderBatting(inn1, 1)}
-          {scorecardTab === "bowling1"  && renderBowling(inn1)}
-          {scorecardTab === "batting2"  && renderBatting(inn2, 2)}
-          {scorecardTab === "bowling2"  && renderBowling(inn2)}
+        <div style={{ marginBottom:24 }}>
+          <div style={{ fontSize:11, color:"#64748B", marginBottom:8, fontWeight:600 }}>ELECTED TO</div>
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
+            {(["bat","field"] as const).map(d=>(
+              <button key={d} onClick={()=>setLive(l=>l?{...l,tossDec:d}:l)}
+                style={{ padding:"14px 12px", borderRadius:10, border:`2px solid ${live.tossDec===d?"#FF6B00":"#1E293B"}`, background:live.tossDec===d?"#FF6B0018":"#060B18", color:live.tossDec===d?"#FF6B00":"#64748B", fontWeight:700, fontSize:14, cursor:"pointer" }}>
+                {d==="bat"?"🏏 Bat First":"🎳 Field First"}
+              </button>
+            ))}
+          </div>
         </div>
+        <div style={{ padding:"12px 16px", background:"#FF6B0008", border:"1px solid #FF6B0020", borderRadius:10, marginBottom:20, textAlign:"center" }}>
+          <span style={{ fontSize:13, color:"#FF7A29", fontWeight:700 }}>
+            {live.tossWinner} won the toss and elected to {live.tossDec} first
+          </span>
+        </div>
+        <button onClick={confirmToss} style={{ width:"100%", padding:13, borderRadius:10, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontSize:14, fontWeight:800, cursor:"pointer" }}>
+          Confirm Toss → Select Playing XI
+        </button>
       </div>
-    );
-  };
+    </div>
+  );
 
-  /* ─── Stats Tab ──────────────────────────────────── */
-  const renderStats = () => (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-      {/* Partnerships */}
-      <div style={card()}>
-        <div style={{ fontSize: 11, fontWeight: 800, color: "#94A3B8", letterSpacing: 0.5, marginBottom: 14, textTransform: "uppercase" }}>Partnerships — 2nd Innings</div>
-        {inn2.partnerships.map((p, i) => {
-          const barW = Math.min(100, (p.runs / 80) * 100);
+  /* ── Playing XI Selection ────────────────────────────── */
+  if(live.phase==="xi") {
+    const bat = live.tossDec==="bat" ? live.def.team1 : live.def.team2;
+    const bowl= bat===live.def.team1 ? live.def.team2 : live.def.team1;
+    const renderXI = (team:string, sel:string[], setSel:React.Dispatch<React.SetStateAction<string[]>>) => (
+      <div style={CARD}>
+        <div style={{ display:"flex", justifyContent:"space-between", marginBottom:14 }}>
+          <div style={{ fontSize:14, fontWeight:800, color:TEAM_COLORS[team]||"#E2E8F0" }}>{team}</div>
+          <span style={{ fontSize:12, color:sel.length===11?"#10B981":"#F59E0B", fontWeight:700 }}>{sel.length}/11 selected</span>
+        </div>
+        {(SQUADS[team]||[]).map(p=>{
+          const picked = sel.includes(p.name);
+          const roleCol = p.role==="WK"?"#F59E0B":p.role==="BOWL"?"#EF4444":p.role==="AR"?"#10B981":"#3B82F6";
           return (
-            <div key={i} style={{ marginBottom: 12 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                <span style={{ fontSize: 11, color: "#94A3B8" }}>{p.bat1.split(" ")[0]} & {p.bat2.split(" ")[0]}</span>
-                <span style={{ fontSize: 12, fontWeight: 800, color: "#FF6B00" }}>{p.runs} <span style={{ color: "#64748B", fontWeight: 400, fontSize: 10 }}>({p.balls}b)</span></span>
+            <div key={p.id} onClick={()=>{ setSel(s=>picked?s.filter(n=>n!==p.name):s.length<11?[...s,p.name]:s); }}
+              style={{ display:"flex", alignItems:"center", gap:10, padding:"9px 10px", borderRadius:8, cursor:"pointer", marginBottom:4,
+                background:picked?"#FF6B0012":"transparent", border:picked?"1px solid #FF6B0030":"1px solid transparent", transition:"all .15s" }}>
+              <div style={{ width:22, height:22, borderRadius:"50%", background:picked?"#FF6B00":"#1E293B", display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, flexShrink:0 }}>
+                {picked&&<span style={{ color:"#fff", fontWeight:900 }}>✓</span>}
               </div>
-              <div style={{ height: 6, background: "#0F172A", borderRadius: 3, overflow: "hidden" }}>
-                <div style={{ height: "100%", width: `${barW}%`, background: "linear-gradient(90deg,#FF6B00,#FF8C40)", borderRadius: 3, transition: "width 0.5s" }}/>
-              </div>
+              <span style={{ flex:1, fontSize:12, color:picked?"#E2E8F0":"#94A3B8", fontWeight:picked?700:400 }}>{p.name}</span>
+              <span style={{ fontSize:10, padding:"2px 7px", borderRadius:4, background:`${roleCol}20`, color:roleCol, fontWeight:700 }}>{p.role}</span>
             </div>
           );
         })}
       </div>
-
-      {/* Over-by-over summary */}
-      <div style={card()}>
-        <div style={{ fontSize: 11, fontWeight: 800, color: "#94A3B8", letterSpacing: 0.5, marginBottom: 14, textTransform: "uppercase" }}>Over Summary — 2nd Innings</div>
-        <div style={{ maxHeight: 260, overflowY: "auto" }}>
-          {inn2.overHistory.slice().reverse().map((o, i) => (
-            <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 0", borderBottom: "1px solid #0F172A" }}>
-              <span style={{ fontSize: 11, color: "#64748B", width: 40 }}>Ov {o.over}</span>
-              <div style={{ display: "flex", gap: 3 }}>
-                {o.balls.map((b, j) => (
-                  <div key={j} style={{ width: 20, height: 20, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9, fontWeight: 800,
-                    background: b === "6" ? "#10B98130" : b === "4" ? "#3B82F630" : b === "W" ? "#EF444430" : "#1E293B",
-                    color: b === "6" ? "#10B981" : b === "4" ? "#3B82F6" : b === "W" ? "#EF4444" : "#64748B" }}>{b}</div>
-                ))}
-              </div>
-              <span style={{ marginLeft: "auto", fontSize: 12, fontWeight: 800, color: o.runs >= 15 ? "#10B981" : o.runs >= 10 ? "#F59E0B" : "#E2E8F0" }}>{o.runs}</span>
-              {o.wickets > 0 && <span style={{ fontSize: 10, color: "#EF4444" }}>W</span>}
-            </div>
-          ))}
+    );
+    return (
+      <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
+        <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+          <button onClick={()=>setLive(l=>l?{...l,phase:"toss"}:l)} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #1E293B", background:"transparent", color:"#64748B", fontSize:12, cursor:"pointer" }}>← Back</button>
+          <div style={{ fontSize:16, fontWeight:800, color:"#F1F5F9" }}>Select Playing XI</div>
+          <span style={{ fontSize:11, color:"#64748B" }}>· {live.tossWinner} won toss · {bat} bat first</span>
         </div>
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:14 }}>
+          {renderXI(live.def.team1, xi1sel, setXi1sel)}
+          {renderXI(live.def.team2, xi2sel, setXi2sel)}
+        </div>
+        <button onClick={confirmXI} disabled={xi1sel.length!==11||xi2sel.length!==11}
+          style={{ padding:14, borderRadius:10, border:"none", background:xi1sel.length===11&&xi2sel.length===11?"linear-gradient(135deg,#FF6B00,#FF8C40)":"#1E293B", color:xi1sel.length===11&&xi2sel.length===11?"#fff":"#475569", fontSize:14, fontWeight:800, cursor:xi1sel.length===11&&xi2sel.length===11?"pointer":"not-allowed" }}>
+          {xi1sel.length===11&&xi2sel.length===11?"🏏 Start Match →":"Select 11 players from each team first"}
+        </button>
       </div>
+    );
+  }
 
-      {/* Wagon Wheel */}
-      <div style={card()}>
-        <div style={{ fontSize: 11, fontWeight: 800, color: "#94A3B8", letterSpacing: 0.5, marginBottom: 14, textTransform: "uppercase" }}>Wagon Wheel — Striker</div>
-        <WagonWheel />
-        <div style={{ display: "flex", justifyContent: "center", gap: 16, marginTop: 12 }}>
-          {[{ c: "#10B981", l: "Six" }, { c: "#3B82F6", l: "Four" }, { c: "#94A3B8", l: "2/3" }, { c: "#64748B", l: "1/Dot" }].map(x => (
-            <div key={x.l} style={{ display: "flex", alignItems: "center", gap: 4 }}>
-              <div style={{ width: 8, height: 8, borderRadius: "50%", background: x.c }}/>
-              <span style={{ fontSize: 10, color: "#64748B" }}>{x.l}</span>
-            </div>
-          ))}
-        </div>
-      </div>
+  /* ── Dismissal Modal ────────────────────────────────── */
+  const renderDismissalModal = () => {
+    if(!dm||!inn||!live) return null;
+    const fieldingXI = inn.bowlingXI;
+    const keeper = fieldingXI.find(n=>{ const sq=SQUADS[inn.bowlingTeam]||[]; return sq.find(p=>p.name===n&&p.role==="WK"); })||fieldingXI[0];
+    const bowler = inn.bowlScores[inn.bowlerIdx]?.name||"";
+    const remaining = inn.batScores.filter((_,i)=>i!==inn.strikerIdx&&i!==inn.nonStrikerIdx&&!inn.batScores[i].dismissal&&!inn.batScores[i].batting);
+    const TYPES = [["b","Bowled"],["c","Caught"],["lbw","LBW"],["ro","Run Out"],["st","Stumped"],["hw","Hit Wicket"],["cb","Caught & Bowled"],["rh","Retired Hurt"]] as const;
+    return (
+      <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,.8)", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center", padding:16 }}>
+        <div style={{ ...CARD, width:"min(540px, 100%)", maxHeight:"90vh", overflowY:"auto" }}>
+          <div style={{ fontSize:16, fontWeight:900, color:"#EF4444", marginBottom:4 }}>💥 Wicket!</div>
+          <div style={{ fontSize:12, color:"#64748B", marginBottom:20 }}>
+            {inn.batScores[inn.strikerIdx]?.name} — select dismissal details
+          </div>
 
-      {/* Run Rate Chart */}
-      <div style={card()}>
-        <div style={{ fontSize: 11, fontWeight: 800, color: "#94A3B8", letterSpacing: 0.5, marginBottom: 14, textTransform: "uppercase" }}>Run Rate Comparison</div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          {inn2.overHistory.map((o, i) => {
-            const inn1Over = inn1.overHistory[i];
-            const w1 = inn1Over ? Math.min(100, (inn1Over.runs / 20) * 100) : 0;
-            const w2 = Math.min(100, (o.runs / 20) * 100);
-            return (
-              <div key={i}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3, fontSize: 10, color: "#475569" }}>
-                  <span>Ov {o.over}</span>
-                  <span style={{ color: "#94A3B8" }}>{inn1Over?.runs ?? 0} vs {o.runs}</span>
-                </div>
-                <div style={{ height: 5, background: "#0F172A", borderRadius: 3, marginBottom: 2 }}>
-                  <div style={{ height: "100%", width: `${w1}%`, background: "#3B82F6", borderRadius: 3 }}/>
-                </div>
-                <div style={{ height: 5, background: "#0F172A", borderRadius: 3 }}>
-                  <div style={{ height: "100%", width: `${w2}%`, background: "#FF6B00", borderRadius: 3 }}/>
-                </div>
-              </div>
-            );
-          })}
-          <div style={{ display: "flex", gap: 16, marginTop: 8 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <div style={{ width: 12, height: 4, background: "#3B82F6", borderRadius: 2 }}/>
-              <span style={{ fontSize: 10, color: "#64748B" }}>{inn1.team}</span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <div style={{ width: 12, height: 4, background: "#FF6B00", borderRadius: 2 }}/>
-              <span style={{ fontSize: 10, color: "#64748B" }}>{inn2.team}</span>
+          {/* Dismissal type */}
+          <div style={{ marginBottom:16 }}>
+            <div style={{ fontSize:11, color:"#64748B", fontWeight:700, marginBottom:8 }}>DISMISSAL TYPE</div>
+            <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
+              {TYPES.map(([t,l])=>(
+                <button key={t} onClick={()=>setDm(d=>d?{...d,type:t as any}:d)}
+                  style={{ padding:"7px 14px", borderRadius:8, border:`1px solid ${dm.type===t?"#EF4444":"#1E293B"}`, background:dm.type===t?"#EF444420":"transparent", color:dm.type===t?"#EF4444":"#64748B", fontSize:12, fontWeight:700, cursor:"pointer" }}>
+                  {l}
+                </button>
+              ))}
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-  );
 
-  /* ─── Live Tab ───────────────────────────────────── */
-  const renderLive = () => (
-    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-
-      {/* ── Match Header ── */}
-      <div style={card({ borderColor: "#EF444440", background: "linear-gradient(135deg,#0D1526,#1A0808)" })}>
-        <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
-          {/* LIVE badge */}
-          <div style={pill("#EF4444")}>
-            <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#EF4444", boxShadow: "0 0 8px #EF4444", animation: "pulse 1.2s infinite" }}/>
-            LIVE
-          </div>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 15, fontWeight: 900, color: "#E2E8F0" }}>
-              Mumbai Mavericks <span style={{ color: "#FF6B00" }}>vs</span> Kolkata Tigers
-            </div>
-            <div style={{ fontSize: 11, color: "#475569", marginTop: 3 }}>
-              📍 {venue} · Match {matchNo} of 64 · BCPL T20 Season 5 · {tossWinner} chose to {tossDec}
-            </div>
-          </div>
-          {/* Innings toggle */}
-          <div style={{ display: "flex", gap: 6 }}>
-            {([1, 2] as const).map(i => (
-              <button key={i} onClick={() => setActiveInnings(i)}
-                style={{ padding: "5px 14px", borderRadius: 8, cursor: "pointer", fontSize: 11, fontWeight: 700,
-                  background: activeInnings === i ? "#FF6B0030" : "#0F172A",
-                  color: activeInnings === i ? "#FF6B00" : "#64748B",
-                  border: activeInnings === i ? "1px solid #FF6B0040" : "1px solid #1E293B" }}>
-                {i === 1 ? "1st Inn" : "2nd Inn"}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Both innings scores */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 14 }}>
-          {[{ d: inn1, label: "1st Innings", suffix: "" }, { d: inn2, label: "2nd Innings", suffix: `/ ${target}` }].map(({ d, label, suffix }) => (
-            <div key={label} style={{ background: "#060B1880", borderRadius: 12, padding: "12px 16px", border: "1px solid #1E293B" }}>
-              <div style={{ fontSize: 10, color: "#64748B", marginBottom: 4, fontWeight: 700 }}>{label} · {d.team}</div>
-              <div style={{ fontSize: 26, fontWeight: 900, color: "#FF6B00" }}>
-                {d.runs}/{d.wickets}{suffix}
-              </div>
-              <div style={{ fontSize: 12, color: "#94A3B8" }}>{fmtOvers(d.overs, d.balls)} Overs</div>
-            </div>
-          ))}
-        </div>
-
-        {/* CRR / RRR / Projected / Needed */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 8, marginTop: 12 }}>
-          {[
-            { label: "CRR", value: currentCRR, color: "#10B981" },
-            { label: "RRR", value: currentRRR, color: runsNeeded > 0 ? "#EF4444" : "#10B981" },
-            { label: "Projected", value: projected, color: "#F59E0B" },
-            { label: "Need", value: `${runsNeeded} off ${ballsLeft}b`, color: "#FF6B00" },
-          ].map(s => (
-            <div key={s.label} style={{ textAlign: "center", background: "#060B18", borderRadius: 10, padding: "10px 6px", border: "1px solid #1E293B" }}>
-              <div style={{ fontSize: 16, fontWeight: 900, color: s.color }}>{s.value}</div>
-              <div style={{ fontSize: 9, color: "#475569", marginTop: 2, fontWeight: 700 }}>{s.label}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* Current over ball log */}
-        <div style={{ marginTop: 14 }}>
-          <div style={{ fontSize: 10, color: "#475569", marginBottom: 6, fontWeight: 700 }}>THIS OVER</div>
-          <div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
-            {currentOverBalls.map((b, i) => (
-              <div key={i} style={{ width: 30, height: 30, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 800,
-                background: b === "6" ? "#10B98130" : b === "4" ? "#3B82F630" : b === "W" ? "#EF444430" : "#1E293B",
-                color: b === "6" ? "#10B981" : b === "4" ? "#3B82F6" : b === "W" ? "#EF4444" : "#94A3B8",
-                border: `1px solid ${b === "6" ? "#10B98140" : b === "4" ? "#3B82F640" : b === "W" ? "#EF444440" : "#0F172A"}` }}>{b}</div>
-            ))}
-            {Array.from({ length: Math.max(0, 6 - currentOverBalls.length) }).map((_, i) => (
-              <div key={`e-${i}`} style={{ width: 30, height: 30, borderRadius: "50%", border: "1px dashed #1E293B", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#1E293B" }}/>
-              </div>
-            ))}
-            <span style={{ fontSize: 11, color: "#475569", marginLeft: 6 }}>
-              Over {inn.overs + 1} · {currentOverBalls.reduce((s, b) => s + (b === "4" ? 4 : b === "6" ? 6 : b === "W" || b === "." ? 0 : parseInt(b) || 0), 0)} runs
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* ── At the Crease + Current Bowler ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-        <div style={card()}>
-          <div style={{ fontSize: 11, fontWeight: 800, color: "#94A3B8", letterSpacing: 0.5, marginBottom: 14, textTransform: "uppercase" }}>At the Crease</div>
-          {striker && (
-            <div style={{ display: "flex", alignItems: "center", padding: "10px 0", borderBottom: "1px solid #0F172A", marginBottom: 10 }}>
-              <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#FF6B00", marginRight: 10 }}/>
-              <span style={{ flex: 1, fontSize: 13, color: "#E2E8F0", fontWeight: 700 }}>{striker.name}</span>
-              <span style={{ fontSize: 18, fontWeight: 900, color: "#FF6B00" }}>{striker.runs}</span>
-              <span style={{ fontSize: 11, color: "#475569", marginLeft: 4 }}>({striker.balls})</span>
-              <div style={{ display: "flex", gap: 10, marginLeft: 12 }}>
-                <span style={{ fontSize: 11, color: "#3B82F6" }}>4s:{striker.fours}</span>
-                <span style={{ fontSize: 11, color: "#10B981" }}>6s:{striker.sixes}</span>
-                <span style={{ fontSize: 10, color: "#F59E0B" }}>SR:{sr(striker.runs, striker.balls)}</span>
-              </div>
+          {/* Bowler (auto-shown for most types) */}
+          {["b","c","lbw","st","hw","cb"].includes(dm.type)&&(
+            <div style={{ marginBottom:14, padding:"10px 14px", background:"#1E293B20", borderRadius:8 }}>
+              <span style={{ fontSize:11, color:"#64748B" }}>Bowler: </span>
+              <span style={{ fontSize:13, fontWeight:700, color:"#E2E8F0" }}>{bowler}</span>
             </div>
           )}
-          {nonStriker && (
-            <div style={{ display: "flex", alignItems: "center", padding: "4px 0" }}>
-              <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#1E293B", marginRight: 10, border: "1px solid #475569" }}/>
-              <span style={{ flex: 1, fontSize: 13, color: "#94A3B8", fontWeight: 500 }}>{nonStriker.name}</span>
-              <span style={{ fontSize: 16, fontWeight: 700, color: "#94A3B8" }}>{nonStriker.runs}</span>
-              <span style={{ fontSize: 11, color: "#475569", marginLeft: 4 }}>({nonStriker.balls})</span>
-              <div style={{ display: "flex", gap: 10, marginLeft: 12 }}>
-                <span style={{ fontSize: 11, color: "#1E3A5F" }}>4s:{nonStriker.fours}</span>
-                <span style={{ fontSize: 11, color: "#1E4A3A" }}>6s:{nonStriker.sixes}</span>
-              </div>
-            </div>
-          )}
-          {/* Partnership */}
-          {currentPartnership && (
-            <div style={{ marginTop: 12, padding: "8px 12px", background: "#FF6B0008", border: "1px solid #FF6B0020", borderRadius: 8 }}>
-              <div style={{ fontSize: 10, color: "#64748B", marginBottom: 3, fontWeight: 700 }}>CURRENT PARTNERSHIP</div>
-              <div style={{ fontSize: 14, fontWeight: 800, color: "#FF6B00" }}>{currentPartnership.runs} runs <span style={{ fontSize: 11, color: "#64748B" }}>off {currentPartnership.balls} balls</span></div>
-            </div>
-          )}
-        </div>
 
-        <div style={card()}>
-          <div style={{ fontSize: 11, fontWeight: 800, color: "#94A3B8", letterSpacing: 0.5, marginBottom: 14, textTransform: "uppercase" }}>Current Bowler</div>
-          {currentBowler && (
+          {/* Fielder selector */}
+          {dm.type==="c"&&(
+            <div style={{ marginBottom:14 }}>
+              <div style={{ fontSize:11, color:"#64748B", fontWeight:700, marginBottom:6 }}>CAUGHT BY</div>
+              <select value={dm.fielder} onChange={e=>setDm(d=>d?{...d,fielder:e.target.value}:d)}
+                style={{ width:"100%", padding:"9px 12px", background:"#060B18", border:"1px solid #1E293B", borderRadius:8, color:"#F1F5F9", fontSize:13, outline:"none" }}>
+                <option value="">Select fielder…</option>
+                {fieldingXI.map(n=><option key={n} value={n}>{n}</option>)}
+              </select>
+            </div>
+          )}
+          {dm.type==="ro"&&(
             <>
-              <div style={{ fontSize: 14, fontWeight: 700, color: "#E2E8F0", marginBottom: 12 }}>{currentBowler.name}</div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 8, marginBottom: 12 }}>
-                {[
-                  { v: fmtOvers(currentBowler.overs, currentBowler.balls), l: "Overs", c: "#F59E0B" },
-                  { v: currentBowler.runs, l: "Runs", c: "#E2E8F0" },
-                  { v: currentBowler.wickets, l: "Wickets", c: "#EF4444" },
-                  { v: eco(currentBowler.runs, currentBowler.overs, currentBowler.balls), l: "Economy", c: "#64748B" },
-                ].map(s => (
-                  <div key={s.l} style={{ textAlign: "center", background: "#060B18", borderRadius: 8, padding: "8px 4px" }}>
-                    <div style={{ fontSize: 15, fontWeight: 900, color: s.c }}>{s.v}</div>
-                    <div style={{ fontSize: 9, color: "#475569", marginTop: 2 }}>{s.l}</div>
-                  </div>
-                ))}
-              </div>
-              {/* Bowler selector */}
-              <div>
-                <div style={{ fontSize: 10, color: "#475569", marginBottom: 6, fontWeight: 700 }}>CHANGE BOWLER</div>
-                <select value={bowlerIdx} onChange={e => setBowlerIdx(Number(e.target.value))}
-                  style={{ width: "100%", padding: "7px 10px", background: "#060B18", border: "1px solid #1E293B", borderRadius: 8, color: "#F1F5F9", fontSize: 12, outline: "none" }}>
-                  {inn.bowling.map((b, i) => (
-                    <option key={i} value={i}>{b.name} ({fmtOvers(b.overs, b.balls)} ov, {b.wickets}W)</option>
-                  ))}
+              <div style={{ marginBottom:12 }}>
+                <div style={{ fontSize:11, color:"#64748B", fontWeight:700, marginBottom:6 }}>THROWN BY (Fielder)</div>
+                <select value={dm.fielder} onChange={e=>setDm(d=>d?{...d,fielder:e.target.value}:d)}
+                  style={{ width:"100%", padding:"9px 12px", background:"#060B18", border:"1px solid #1E293B", borderRadius:8, color:"#F1F5F9", fontSize:13, outline:"none" }}>
+                  <option value="">Select fielder…</option>
+                  {fieldingXI.map(n=><option key={n} value={n}>{n}</option>)}
                 </select>
+              </div>
+              <div style={{ marginBottom:14 }}>
+                <div style={{ fontSize:11, color:"#64748B", fontWeight:700, marginBottom:6 }}>WHO WAS RUN OUT?</div>
+                <div style={{ display:"flex", gap:8 }}>
+                  {([false,true] as const).map(ns=>(
+                    <button key={String(ns)} onClick={()=>setDm(d=>d?{...d,nonStrikerOut:ns}:d)}
+                      style={{ flex:1, padding:"8px 12px", borderRadius:8, border:`1px solid ${dm.nonStrikerOut===ns?"#F59E0B":"#1E293B"}`, background:dm.nonStrikerOut===ns?"#F59E0B20":"transparent", color:dm.nonStrikerOut===ns?"#F59E0B":"#64748B", fontWeight:700, fontSize:12, cursor:"pointer" }}>
+                      {ns?`Non-striker (${inn.batScores[inn.nonStrikerIdx]?.name})`:`Striker (${inn.batScores[inn.strikerIdx]?.name})`}
+                    </button>
+                  ))}
+                </div>
               </div>
             </>
           )}
+          {dm.type==="st"&&(
+            <div style={{ marginBottom:14, padding:"10px 14px", background:"#1E293B20", borderRadius:8 }}>
+              <span style={{ fontSize:11, color:"#64748B" }}>Stumped by: </span>
+              <span style={{ fontSize:13, fontWeight:700, color:"#E2E8F0" }}>{keeper} (WK)</span>
+            </div>
+          )}
+
+          {/* New batsman */}
+          {dm.type!=="rh"&&remaining.length>0&&(
+            <div style={{ marginBottom:20 }}>
+              <div style={{ fontSize:11, color:"#64748B", fontWeight:700, marginBottom:6 }}>NEXT BATSMAN IN</div>
+              <select value={dm.newBatsmanIdx} onChange={e=>setDm(d=>d?{...d,newBatsmanIdx:Number(e.target.value)}:d)}
+                style={{ width:"100%", padding:"9px 12px", background:"#060B18", border:"1px solid #1E293B", borderRadius:8, color:"#F1F5F9", fontSize:13, outline:"none" }}>
+                <option value={-1}>Select next batsman…</option>
+                {inn.batScores.map((b,i)=>!b.dismissal&&!b.batting&&i!==inn.strikerIdx&&i!==inn.nonStrikerIdx?(
+                  <option key={i} value={i}>{b.name}</option>
+                ):null)}
+              </select>
+            </div>
+          )}
+
+          {/* Preview */}
+          <div style={{ padding:"10px 14px", background:"#EF444408", border:"1px solid #EF444420", borderRadius:8, marginBottom:16 }}>
+            <span style={{ fontSize:12, color:"#EF4444" }}>
+              {inn.batScores[inn.strikerIdx]?.name} — {getDisStr(dm.type, dm.fielder||keeper, bowler, dm.nonStrikerOut)}
+            </span>
+          </div>
+
+          <div style={{ display:"flex", gap:10 }}>
+            <button onClick={()=>setDm(null)} style={{ flex:1, padding:11, borderRadius:9, border:"1px solid #1E293B", background:"transparent", color:"#64748B", cursor:"pointer" }}>Cancel</button>
+            <button onClick={confirmDismissal}
+              disabled={(dm.type==="c"&&!dm.fielder)||(dm.type==="ro"&&!dm.fielder)||(dm.newBatsmanIdx===-1&&dm.type!=="rh"&&remaining.length>0)}
+              style={{ flex:2, padding:11, borderRadius:9, border:"none", background:"linear-gradient(135deg,#EF4444,#DC2626)", color:"#fff", fontWeight:800, fontSize:13, cursor:"pointer" }}>
+              ✓ Confirm Dismissal
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  /* ── Live Scoring View ───────────────────────────────── */
+  const curInn = live.currentInnings===1 ? live.inn1 : live.inn2;
+  if(!curInn) return null;
+
+  const striker   = curInn.batScores[curInn.strikerIdx];
+  const nonStr    = curInn.batScores[curInn.nonStrikerIdx];
+  const bowler    = curInn.bowlScores[curInn.bowlerIdx];
+  const lastPart  = curInn.partnerships[curInn.partnerships.length-1];
+  const target    = curInn.target;
+  const runsNeeded= target?Math.max(0,target-curInn.totalRuns):0;
+  const ballsLeft = Math.max(0,(20-curInn.overs)*6-curInn.balls);
+
+  const renderScorecard = () => {
+    const renderBat = (d:InningsState) => (
+      <div>
+        <div style={{ display:"flex", justifyContent:"space-between", marginBottom:14 }}>
+          <div>
+            <div style={{ fontSize:14, fontWeight:800, color:TEAM_COLORS[d.battingTeam]||"#E2E8F0" }}>{d.battingTeam}</div>
+            <div style={{ fontSize:22, fontWeight:900, color:"#FF6B00" }}>{d.totalRuns}/{d.totalWickets} <span style={{ fontSize:12, color:"#64748B" }}>({fmtO(d.overs,d.balls)} ov)</span></div>
+          </div>
+          <div style={{ fontSize:12, color:"#64748B" }}>Extras: {d.extras}{d.target?<div style={{ color:"#F59E0B" }}>Target: {d.target}</div>:null}</div>
+        </div>
+        <table style={{ width:"100%", borderCollapse:"collapse", fontSize:12 }}>
+          <thead><tr style={{ borderBottom:"1px solid #1E293B" }}>
+            {["Batsman","Dismissal","R","B","4s","6s","SR"].map(h=><th key={h} style={{ padding:"6px 8px", textAlign:h==="Batsman"||h==="Dismissal"?"left":"right", color:"#475569", fontWeight:700, fontSize:10 }}>{h}</th>)}
+          </tr></thead>
+          <tbody>
+            {d.batScores.filter(b=>b.balls>0||b.dismissal).map((b,i)=>(
+              <tr key={i} style={{ borderBottom:"1px solid #0F172A" }}>
+                <td style={{ padding:"8px", color:b.dismissal?"#64748B":"#E2E8F0", fontWeight:b.dismissal?400:700 }}>{b.name}{b.batting&&!b.dismissal?<span style={{ color:"#FF6B00" }}>*</span>:null}</td>
+                <td style={{ padding:"8px", color:"#475569", fontSize:10 }}>{b.dismissal||"not out"}</td>
+                <td style={{ padding:"8px", textAlign:"right", color:b.runs>=50?"#F59E0B":"#E2E8F0", fontWeight:800 }}>{b.runs}</td>
+                <td style={{ padding:"8px", textAlign:"right", color:"#64748B" }}>{b.balls}</td>
+                <td style={{ padding:"8px", textAlign:"right", color:"#3B82F6" }}>{b.fours}</td>
+                <td style={{ padding:"8px", textAlign:"right", color:"#10B981" }}>{b.sixes}</td>
+                <td style={{ padding:"8px", textAlign:"right", color:"#64748B" }}>{b.balls?((b.runs/b.balls)*100).toFixed(1):"—"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {d.fowList.length>0&&<div style={{ marginTop:12 }}>
+          <div style={{ fontSize:10, color:"#475569", fontWeight:700, marginBottom:6 }}>FALL OF WICKETS</div>
+          <div style={{ display:"flex", flexWrap:"wrap", gap:5 }}>
+            {d.fowList.map((f,i)=><div key={i} style={{ padding:"3px 10px", background:"#EF444410", border:"1px solid #EF444430", borderRadius:20, fontSize:10, color:"#EF4444" }}>{f.wicket}-{f.runs} ({f.batsman.split(" ")[0]}, {f.overStr})</div>)}
+          </div>
+        </div>}
+      </div>
+    );
+    const renderBowl = (d:InningsState) => (
+      <div>
+        <div style={{ fontSize:14, fontWeight:800, color:TEAM_COLORS[d.bowlingTeam]||"#E2E8F0", marginBottom:14 }}>Bowling — {d.bowlingTeam}</div>
+        <table style={{ width:"100%", borderCollapse:"collapse", fontSize:12 }}>
+          <thead><tr style={{ borderBottom:"1px solid #1E293B" }}>
+            {["Bowler","O","R","W","Econ","Wd","NB"].map(h=><th key={h} style={{ padding:"6px 8px", textAlign:h==="Bowler"?"left":"right", color:"#475569", fontWeight:700, fontSize:10 }}>{h}</th>)}
+          </tr></thead>
+          <tbody>
+            {d.bowlScores.filter(b=>b.overs>0||b.balls>0).map((b,i)=>(
+              <tr key={i} style={{ borderBottom:"1px solid #0F172A" }}>
+                <td style={{ padding:"8px", color:"#E2E8F0", fontWeight:600 }}>{b.name}</td>
+                <td style={{ padding:"8px", textAlign:"right", color:"#94A3B8" }}>{fmtO(b.overs,b.balls)}</td>
+                <td style={{ padding:"8px", textAlign:"right", color:"#E2E8F0" }}>{b.runs}</td>
+                <td style={{ padding:"8px", textAlign:"right", color:b.wickets>0?"#EF4444":"#64748B", fontWeight:b.wickets>0?800:400 }}>{b.wickets}</td>
+                <td style={{ padding:"8px", textAlign:"right", color:"#F59E0B" }}>{b.overs||b.balls?((b.runs/(b.overs+b.balls/6))||0).toFixed(2):"—"}</td>
+                <td style={{ padding:"8px", textAlign:"right", color:"#64748B" }}>{b.wides}</td>
+                <td style={{ padding:"8px", textAlign:"right", color:"#64748B" }}>{b.noBalls}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+    const scTabs = [["bat1","Batting (Inn 1)"],["bowl1","Bowling (Inn 1)"],["bat2","Batting (Inn 2)"],["bowl2","Bowling (Inn 2)"]] as const;
+    return (
+      <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+        <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
+          {scTabs.map(([t,l])=><button key={t} onClick={()=>setScTab(t)} style={TAB(scTab===t)}>{l}</button>)}
+        </div>
+        <div style={CARD}>
+          {scTab==="bat1"  && renderBat(live.inn1)}
+          {scTab==="bowl1" && renderBowl(live.inn1)}
+          {scTab==="bat2"  && (live.inn2?renderBat(live.inn2):<div style={{ color:"#475569" }}>2nd innings not started yet</div>)}
+          {scTab==="bowl2" && (live.inn2?renderBowl(live.inn2):<div style={{ color:"#475569" }}>2nd innings not started yet</div>)}
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
+      {renderDismissalModal()}
+
+      {/* Top bar */}
+      <div style={{ display:"flex", gap:6, alignItems:"center", flexWrap:"wrap" }}>
+        <button onClick={()=>setLive(null)} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #1E293B", background:"transparent", color:"#64748B", fontSize:11, cursor:"pointer" }}>← All Matches</button>
+        {[["live","🔴 Live"],["scorecard","📋 Scorecard"]] .map(([t,l])=><button key={t} onClick={()=>setMainTab(t as any)} style={TAB(mainTab===t)}>{l}</button>)}
+        <div style={{ marginLeft:"auto", display:"flex", gap:8, alignItems:"center" }}>
+          <span style={{ fontSize:11, color:"#475569" }}>Match {live.def.matchNo} · Innings {live.currentInnings}</span>
+          {live.phase==="completed"&&<span style={PILL("#10B981")}>COMPLETED</span>}
+          {live.phase==="live"&&<span style={PILL("#EF4444")}>LIVE</span>}
         </div>
       </div>
 
-      {/* ── Batsman selectors ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-        {[
-          { label: "Striker", idx: strikerIdx, set: setStrikerIdx },
-          { label: "Non-Striker", idx: nonStrikerIdx, set: setNonStrikerIdx },
-        ].map(({ label, idx, set }) => (
-          <div key={label} style={card({ padding: "12px 16px" })}>
-            <div style={{ fontSize: 10, color: "#475569", marginBottom: 6, fontWeight: 700 }}>{label.toUpperCase()}</div>
-            <select value={idx} onChange={e => set(Number(e.target.value))}
-              style={{ width: "100%", padding: "7px 10px", background: "#060B18", border: "1px solid #1E293B", borderRadius: 8, color: "#F1F5F9", fontSize: 12, outline: "none" }}>
-              {inn.batting.map((b, i) => (
-                <option key={i} value={i} disabled={b.dismissed}>{b.name} ({b.runs} off {b.balls}){b.dismissed ? " [out]" : ""}</option>
+      {mainTab==="scorecard"&&renderScorecard()}
+      {mainTab==="live"&&(
+        <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
+
+          {/* Match header */}
+          <div style={{ ...CARD, borderColor:"rgba(239,68,68,.3)" }}>
+            <div style={{ display:"flex", alignItems:"center", gap:12, flexWrap:"wrap", marginBottom:14 }}>
+              <span style={{ fontSize:11, color:"#64748B" }}>📍 {live.def.venue} · {live.def.date}</span>
+              <span style={{ marginLeft:"auto", fontSize:11, color:"#475569" }}>
+                {live.tossWinner} won toss · elected to {live.tossDec}
+              </span>
+            </div>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:14 }}>
+              {([
+                { d:live.inn1,  label:"1st Innings", suffix:"" },
+                { d:live.inn2!, label:"2nd Innings",  suffix:target?` / ${live.inn1.totalRuns+1}`:"" },
+              ] as const).map(({d,label,suffix},i)=>d&&(
+                <div key={i} style={{ background:"#060B1880", borderRadius:10, padding:"10px 14px", border:"1px solid #1E293B" }}>
+                  <div style={{ fontSize:10, color:"#475569", fontWeight:700, marginBottom:4 }}>{label} · {d.battingTeam}</div>
+                  <div style={{ fontSize:24, fontWeight:900, color:"#FF6B00" }}>{d.totalRuns}/{d.totalWickets}<span style={{ fontSize:11, color:"#64748B" }}>{suffix}</span></div>
+                  <div style={{ fontSize:11, color:"#94A3B8" }}>{fmtO(d.overs,d.balls)} overs</div>
+                </div>
               ))}
-            </select>
+            </div>
+            {/* CRR / RRR / Need */}
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:6 }}>
+              {[
+                { l:"CRR", v:crr(curInn.totalRuns,curInn.overs,curInn.balls), c:"#10B981" },
+                { l:"RRR", v:target?rrr(target,curInn.totalRuns,curInn.overs,curInn.balls):"—", c:"#EF4444" },
+                { l:"Need", v:target?`${runsNeeded} off ${ballsLeft}b`:"—", c:"#FF6B00" },
+                { l:"This Over", v:curInn.currentOverDeliveries.reduce((s,d)=>s+(d==="W"?0:d==="4"?4:d==="6"?6:parseInt(d)||0),0).toString(), c:"#F59E0B" },
+              ].map(s=>(
+                <div key={s.l} style={{ textAlign:"center", background:"#060B18", borderRadius:8, padding:"8px 4px", border:"1px solid #1E293B" }}>
+                  <div style={{ fontSize:15, fontWeight:900, color:s.c }}>{s.v}</div>
+                  <div style={{ fontSize:9, color:"#475569", marginTop:2 }}>{s.l}</div>
+                </div>
+              ))}
+            </div>
+            {/* Current over balls */}
+            <div style={{ marginTop:10, display:"flex", gap:5, alignItems:"center" }}>
+              <span style={{ fontSize:10, color:"#475569" }}>Over {curInn.overs+1}:</span>
+              {curInn.currentOverDeliveries.map((b,i)=>(
+                <div key={i} style={{ width:26, height:26, borderRadius:"50%", display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:800,
+                  background:b==="6"?"#10B98130":b==="4"?"#3B82F630":b==="W"?"#EF444430":"#1E293B",
+                  color:b==="6"?"#10B981":b==="4"?"#3B82F6":b==="W"?"#EF4444":"#94A3B8", border:"1px solid rgba(255,255,255,.04)" }}>{b}</div>
+              ))}
+              {Array.from({length:Math.max(0,6-curInn.currentOverDeliveries.length)}).map((_,i)=>(
+                <div key={`e${i}`} style={{ width:26, height:26, borderRadius:"50%", border:"1px dashed #1E293B" }}/>
+              ))}
+            </div>
           </div>
-        ))}
-      </div>
 
-      {/* ── Scoring Pad + Commentary ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-        <div style={card()}>
-          <div style={{ fontSize: 11, fontWeight: 800, color: "#94A3B8", letterSpacing: 0.5, marginBottom: 16, textTransform: "uppercase" }}>Scoring Pad</div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 8 }}>
-            {[
-              { label: "0",  bg: "#1E293B",     tc: "#94A3B8" },
-              { label: "1",  bg: "#1E3A5F40",   tc: "#3B82F6" },
-              { label: "2",  bg: "#1E3A5F40",   tc: "#3B82F6" },
-              { label: "3",  bg: "#1E3A5F40",   tc: "#3B82F6" },
-              { label: "4",  bg: "#3B82F620",   tc: "#3B82F6" },
-              { label: "6",  bg: "#10B98120",   tc: "#10B981" },
-              { label: "W",  bg: "#EF444420",   tc: "#EF4444" },
-              { label: ".",  bg: "#1E293B",     tc: "#64748B" },
-              { label: "WD", bg: "#F59E0B20",   tc: "#F59E0B" },
-              { label: "NB", bg: "#F59E0B20",   tc: "#F59E0B" },
-              { label: "LB", bg: "#8B5CF620",   tc: "#8B5CF6" },
-              { label: "B",  bg: "#8B5CF620",   tc: "#8B5CF6" },
-            ].map(btn => (
-              <button key={btn.label} onClick={() => addBall(btn.label)}
-                style={{ padding: "16px 4px", borderRadius: 10, border: `1px solid ${btn.tc}30`, background: btn.bg,
-                  color: btn.tc, fontSize: 17, fontWeight: 900, cursor: "pointer", transition: "transform 0.08s, box-shadow 0.08s" }}
-                onMouseDown={e => { e.currentTarget.style.transform = "scale(0.91)"; e.currentTarget.style.boxShadow = `0 0 12px ${btn.tc}40`; }}
-                onMouseUp={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = "none"; }}>
-                {btn.label}
-              </button>
-            ))}
-          </div>
-          {/* Undo last ball */}
-          <button onClick={() => setCurrentOverBalls(b => b.slice(0, -1))}
-            style={{ marginTop: 12, width: "100%", padding: "8px", borderRadius: 8, border: "1px solid #EF444430", background: "#EF444410", color: "#EF4444", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
-            ↩ Undo Last Ball
-          </button>
-        </div>
-
-        <div style={card()}>
-          <div style={{ fontSize: 11, fontWeight: 800, color: "#94A3B8", letterSpacing: 0.5, marginBottom: 12, textTransform: "uppercase" }}>Ball-by-Ball Commentary</div>
-          {/* Quick comments */}
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 12 }}>
-            {QUICK_COMMENTS.slice(0, 6).map((q, i) => (
-              <button key={i} onClick={() => addCustomCommentary(q)}
-                style={{ padding: "4px 10px", borderRadius: 20, border: "1px solid #1E293B", background: "transparent", color: "#64748B", fontSize: 10, cursor: "pointer" }}>
-                {q}
-              </button>
-            ))}
-          </div>
-          {/* Custom input */}
-          <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-            <textarea ref={commentRef} value={customNote} onChange={e => setCustomNote(e.target.value)}
-              onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); addCustomCommentary(customNote); }}}
-              placeholder="Type commentary… (Enter to add)"
-              rows={2}
-              style={{ flex: 1, padding: "9px 12px", background: "#060B18", border: "1px solid #1E293B", borderRadius: 9, color: "#F1F5F9", fontSize: 12, outline: "none", resize: "none", lineHeight: 1.5, fontFamily: "inherit" }}/>
-            <button onClick={() => addCustomCommentary(customNote)}
-              style={{ padding: "0 14px", borderRadius: 9, border: "none", background: "linear-gradient(135deg,#FF6B00,#FF8C40)", color: "#fff", fontSize: 20, cursor: "pointer", fontWeight: 700 }}>→</button>
-          </div>
-          {/* Feed */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 5, maxHeight: 220, overflowY: "auto" }}>
-            {commentary.map((c, i) => (
-              <div key={i} style={{ padding: "7px 10px", background: i === 0 ? "#FF6B0008" : "#080E1C",
-                border: `1px solid ${i === 0 ? "#FF6B0030" : "#0F172A"}`, borderRadius: 8,
-                fontSize: 11, color: i === 0 ? "#E2E8F0" : "#64748B", lineHeight: 1.5 }}>{c}</div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* ── Fall of Wickets ── */}
-      {inn.fallOfWickets.length > 0 && (
-        <div style={card()}>
-          <div style={{ fontSize: 11, fontWeight: 800, color: "#94A3B8", letterSpacing: 0.5, marginBottom: 12, textTransform: "uppercase" }}>Fall of Wickets</div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-            {inn.fallOfWickets.map((f, i) => (
-              <div key={i} style={{ padding: "6px 14px", background: "#EF444410", border: "1px solid #EF444430", borderRadius: 20 }}>
-                <span style={{ fontSize: 12, fontWeight: 800, color: "#EF4444" }}>{f.wicket}/{f.runs}</span>
-                <span style={{ fontSize: 10, color: "#64748B", marginLeft: 6 }}>{f.batsman.split(" ")[0]} ({f.overs})</span>
+          {/* At crease + Bowler */}
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:14 }}>
+            <div style={CARD}>
+              <div style={{ fontSize:10, color:"#64748B", fontWeight:700, textTransform:"uppercase", letterSpacing:.5, marginBottom:12 }}>At The Crease</div>
+              {striker&&(
+                <div style={{ display:"flex", alignItems:"center", padding:"8px 0", borderBottom:"1px solid #0F172A", marginBottom:8 }}>
+                  <span style={{ width:8, height:8, borderRadius:"50%", background:"#FF6B00", marginRight:8, flexShrink:0 }}/>
+                  <span style={{ flex:1, fontSize:13, color:"#E2E8F0", fontWeight:700 }}>{striker.name}</span>
+                  <span style={{ fontSize:18, fontWeight:900, color:"#FF6B00" }}>{striker.runs}</span>
+                  <span style={{ fontSize:11, color:"#475569", marginLeft:4 }}>({striker.balls})</span>
+                  <span style={{ fontSize:10, color:"#3B82F6", marginLeft:8 }}>4s:{striker.fours}</span>
+                  <span style={{ fontSize:10, color:"#10B981", marginLeft:6 }}>6s:{striker.sixes}</span>
+                </div>
+              )}
+              {nonStr&&(
+                <div style={{ display:"flex", alignItems:"center", padding:"4px 0" }}>
+                  <span style={{ width:8, height:8, borderRadius:"50%", background:"#1E293B", border:"1px solid #475569", marginRight:8, flexShrink:0 }}/>
+                  <span style={{ flex:1, fontSize:12, color:"#94A3B8" }}>{nonStr.name}</span>
+                  <span style={{ fontSize:15, fontWeight:700, color:"#94A3B8" }}>{nonStr.runs}</span>
+                  <span style={{ fontSize:10, color:"#475569", marginLeft:4 }}>({nonStr.balls})</span>
+                </div>
+              )}
+              {lastPart&&<div style={{ marginTop:10, padding:"7px 10px", background:"#FF6B0008", border:"1px solid #FF6B0018", borderRadius:8, fontSize:11, color:"#FF7A29" }}>
+                Partnership: <strong>{lastPart.runs}</strong> runs off {lastPart.balls} balls
+              </div>}
+              {/* Batsman selectors */}
+              <div style={{ marginTop:12, display:"flex", flexDirection:"column", gap:6 }}>
+                {([["Striker","strikerIdx"],["Non-Striker","nonStrikerIdx"]] as const).map(([lbl,key])=>(
+                  <div key={key}>
+                    <div style={{ fontSize:9, color:"#475569", marginBottom:3, fontWeight:700 }}>{lbl.toUpperCase()}</div>
+                    <select value={curInn[key]} onChange={e=>setLive(l=>{
+                      if(!l) return l;
+                      const upd = {...(l.currentInnings===1?l.inn1:l.inn2!), [key]:Number(e.target.value)};
+                      return l.currentInnings===1?{...l,inn1:upd}:{...l,inn2:upd};
+                    })} style={{ width:"100%", padding:"6px 8px", background:"#060B18", border:"1px solid #1E293B", borderRadius:7, color:"#F1F5F9", fontSize:11, outline:"none" }}>
+                      {curInn.batScores.map((b,i)=>!b.dismissal||(
+                        <option key={i} value={i} disabled={!!b.dismissal}>{b.name} {b.dismissal?"[out]":""}</option>
+                      ))}
+                    </select>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+
+            <div style={CARD}>
+              <div style={{ fontSize:10, color:"#64748B", fontWeight:700, textTransform:"uppercase", letterSpacing:.5, marginBottom:12 }}>Current Bowler</div>
+              {bowler&&(
+                <>
+                  <div style={{ fontSize:14, fontWeight:700, color:"#E2E8F0", marginBottom:10 }}>{bowler.name}</div>
+                  <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:6, marginBottom:12 }}>
+                    {[{v:fmtO(bowler.overs,bowler.balls),l:"Overs",c:"#F59E0B"},{v:bowler.runs,l:"Runs",c:"#E2E8F0"},{v:bowler.wickets,l:"Wkts",c:"#EF4444"},{v:bowler.overs||bowler.balls?((bowler.runs/(bowler.overs+bowler.balls/6))||0).toFixed(1):"—",l:"Econ",c:"#64748B"}].map(s=>(
+                      <div key={s.l} style={{ textAlign:"center", background:"#060B18", borderRadius:7, padding:"7px 3px" }}>
+                        <div style={{ fontSize:14, fontWeight:900, color:s.c }}>{s.v}</div>
+                        <div style={{ fontSize:8, color:"#475569", marginTop:2 }}>{s.l}</div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+              <div style={{ fontSize:9, color:"#475569", marginBottom:4, fontWeight:700 }}>CHANGE BOWLER</div>
+              <select value={curInn.bowlerIdx} onChange={e=>setLive(l=>{
+                if(!l) return l;
+                const upd = {...(l.currentInnings===1?l.inn1:l.inn2!), bowlerIdx:Number(e.target.value)};
+                return l.currentInnings===1?{...l,inn1:upd}:{...l,inn2:upd};
+              })} style={{ width:"100%", padding:"7px 10px", background:"#060B18", border:"1px solid #1E293B", borderRadius:8, color:"#F1F5F9", fontSize:12, outline:"none" }}>
+                {curInn.bowlScores.map((b,i)=><option key={i} value={i}>{b.name} ({fmtO(b.overs,b.balls)} ov, {b.wickets}W)</option>)}
+              </select>
+            </div>
           </div>
+
+          {/* Scoring pad + Commentary */}
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:14 }}>
+            <div style={CARD}>
+              <div style={{ fontSize:10, color:"#64748B", fontWeight:700, textTransform:"uppercase", letterSpacing:.5, marginBottom:14 }}>Scoring Pad</div>
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:7 }}>
+                {([["0","#1E293B","#94A3B8"],["1","#1E3A5F40","#3B82F6"],["2","#1E3A5F40","#3B82F6"],["3","#1E3A5F40","#3B82F6"],["4","#3B82F620","#3B82F6"],["6","#10B98120","#10B981"],["W","#EF444420","#EF4444"],["•","#1E293B","#64748B"],["WD","#F59E0B20","#F59E0B"],["NB","#F59E0B20","#F59E0B"],["LB","#8B5CF620","#8B5CF6"],["B","#8B5CF620","#8B5CF6"]] as [string,string,string][]).map(([lbl,bg,tc])=>(
+                  <button key={lbl} onClick={()=>addBall(lbl==="•"?".":lbl)}
+                    style={{ padding:"15px 4px", borderRadius:9, border:`1px solid ${tc}30`, background:bg, color:tc, fontSize:16, fontWeight:900, cursor:"pointer" }}
+                    onMouseDown={e=>(e.currentTarget.style.transform="scale(0.9)")}
+                    onMouseUp={e=>(e.currentTarget.style.transform="")}>
+                    {lbl}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div style={CARD}>
+              <div style={{ fontSize:10, color:"#64748B", fontWeight:700, textTransform:"uppercase", letterSpacing:.5, marginBottom:10 }}>Commentary</div>
+              <div style={{ display:"flex", gap:8, marginBottom:10 }}>
+                <input value={customNote} onChange={e=>setCustomNote(e.target.value)}
+                  onKeyDown={e=>{ if(e.key==="Enter"){ setCommentary(c=>[`${curInn.overs}.${curInn.balls} — ${customNote.trim()}`,...c].slice(0,30)); setCustomNote(""); }}}
+                  placeholder="Type commentary… (Enter)"
+                  style={{ flex:1, padding:"8px 10px", background:"#060B18", border:"1px solid #1E293B", borderRadius:8, color:"#F1F5F9", fontSize:12, outline:"none" }}/>
+                <button onClick={()=>{ setCommentary(c=>[`${curInn.overs}.${curInn.balls} — ${customNote.trim()}`,...c].slice(0,30)); setCustomNote(""); }}
+                  style={{ padding:"0 14px", borderRadius:8, border:"none", background:"#FF6B00", color:"#fff", cursor:"pointer", fontWeight:700 }}>→</button>
+              </div>
+              <div style={{ display:"flex", flexDirection:"column", gap:5, maxHeight:260, overflowY:"auto" }}>
+                {commentary.map((c,i)=>(
+                  <div key={i} style={{ padding:"6px 10px", background:i===0?"#FF6B0008":"#080E1C", border:`1px solid ${i===0?"#FF6B0030":"#0F172A"}`, borderRadius:7, fontSize:11, color:i===0?"#E2E8F0":"#64748B" }}>{c}</div>
+                ))}
+              </div>
+            </div>
+          </div>
+
         </div>
       )}
-    </div>
-  );
-
-  /* ─── Root render ────────────────────────────────── */
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-      {/* Top tabs */}
-      <div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
-        {[
-          { id: "live",      label: "🔴 Live Scoring" },
-          { id: "scorecard", label: "📋 Scorecard"    },
-          { id: "stats",     label: "📊 Stats & Charts" },
-        ].map(t => (
-          <button key={t.id} onClick={() => setMainTab(t.id as any)} style={tabBtn(mainTab === t.id)}>{t.label}</button>
-        ))}
-        <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
-          <button onClick={() => setMatchPhase("setup")}
-            style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #1E293B", background: "transparent", color: "#64748B", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
-            ⚙️ Setup
-          </button>
-          <div style={pill("#EF4444")}>
-            <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#EF4444" }}/>
-            LIVE
-          </div>
-        </div>
-      </div>
-
-      {mainTab === "live"      && renderLive()}
-      {mainTab === "scorecard" && renderScorecard()}
-      {mainTab === "stats"     && renderStats()}
     </div>
   );
 }
