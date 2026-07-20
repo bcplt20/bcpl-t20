@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 /* ─ Data ─ */
 const PAGES = [
@@ -81,7 +81,27 @@ const SCHEMA_TEMPLATES: Record<string,string> = {
   }, null, 2),
 };
 
-type Tab = "meta"|"keywords"|"technical"|"backlinks"|"schema"|"social";
+type Tab = "meta"|"keywords"|"technical"|"backlinks"|"schema"|"social"|"google";
+
+/* ── GSC mock data ── */
+const GSC_QUERIES = [
+  { query:"bcpl t20 registration",           clicks:1240, impressions:8400,  ctr:14.8, pos:1.2 },
+  { query:"corporate cricket league india",  clicks:830,  impressions:12600, ctr:6.6,  pos:4.1 },
+  { query:"cricket trial ₹299",             clicks:520,  impressions:4200,  ctr:12.4, pos:2.3 },
+  { query:"office cricket league 2026",     clicks:310,  impressions:3800,  ctr:8.2,  pos:3.4 },
+  { query:"ganguly cricket league",         clicks:290,  impressions:5200,  ctr:5.6,  pos:5.8 },
+  { query:"franchise cricket registration", clicks:210,  impressions:2900,  ctr:7.2,  pos:4.9 },
+  { query:"working professionals cricket",  clicks:180,  impressions:3100,  ctr:5.8,  pos:6.2 },
+  { query:"bcpl t20 season 5",             clicks:160,  impressions:1800,  ctr:8.9,  pos:1.8 },
+];
+const GSC_PAGES = [
+  { page:"/",              clicks:2180, impressions:24000, ctr:9.1,  pos:2.8 },
+  { page:"/registration",  clicks:1420, impressions:11000, ctr:12.9, pos:1.9 },
+  { page:"/teams",         clicks:480,  impressions:6200,  ctr:7.7,  pos:4.2 },
+  { page:"/faq",           clicks:320,  impressions:4800,  ctr:6.7,  pos:3.6 },
+  { page:"/about",         clicks:210,  impressions:3200,  ctr:6.6,  pos:5.1 },
+  { page:"/match-center",  clicks:130,  impressions:2400,  ctr:5.4,  pos:7.3 },
+];
 
 export default function SEOView() {
   const [tab,     setTab]     = useState<Tab>("meta");
@@ -96,6 +116,31 @@ export default function SEOView() {
     twitterCard:"summary_large_image",
     twitterSite:"@bcplt20",
   });
+
+  /* ── Google Search Console state ── */
+  type GscStatus = "not_connected"|"connecting"|"verifying"|"connected";
+  const [gscStatus,   setGscStatus]   = useState<GscStatus>("not_connected");
+  const [gscProperty, setGscProperty] = useState("https://bcplt20.com");
+  const [verifyMethod,setVerifyMethod]= useState<"html_tag"|"html_file"|"dns">("html_tag");
+  const [gscTab,      setGscTab]      = useState<"overview"|"queries"|"pages"|"sitemaps"|"setup">("overview");
+  const [verifyCode]  = useState("google-site-verification: google7a4c9b2d1e8f3a5b.html");
+  const [sitemapUrl,  setSitemapUrl]  = useState("https://bcplt20.com/sitemap.xml");
+  const [sitemapSent, setSitemapSent] = useState(false);
+  const [connecting,  setConnecting]  = useState(false);
+
+  function startConnect() {
+    setConnecting(true);
+    setGscStatus("connecting");
+    setTimeout(()=>{ setGscStatus("verifying"); setConnecting(false); }, 1800);
+  }
+  function verifyNow() {
+    setGscStatus("connecting");
+    setTimeout(()=>{ setGscStatus("connected"); setGscTab("overview"); }, 2000);
+  }
+  function submitSitemap() { setSitemapSent(true); setTimeout(()=>setSitemapSent(false), 3000); }
+
+  // suppress unused warning
+  useEffect(()=>{}, [connecting]);
 
   const scoreColor=(s:number)=>s>=85?"#10B981":s>=70?"#F59E0B":"#EF4444";
   const statusIcon=(s:string)=>s==="good"?"✅":s==="warn"?"⚠️":"❌";
@@ -145,8 +190,16 @@ export default function SEOView() {
 
       {/* Tabs */}
       <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
-        {([["meta","📄 Meta Tags"],["keywords","🔑 Keywords"],["technical","⚙️ Technical Audit"],["backlinks","🔗 Backlinks"],["schema","{ } Schema"],["social","📱 Social OG"]] as [Tab,string][]).map(([t,l])=>(
-          <button key={t} onClick={()=>setTab(t)} style={{ padding:"9px 18px", borderRadius:10, border:"1px solid", borderColor:tab===t?"#FF6B00":"#1E293B", background:tab===t?"#FF6B0022":"transparent", color:tab===t?"#FF6B00":"#64748B", fontSize:12, fontWeight:700, cursor:"pointer" }}>{l}</button>
+        {([
+          ["meta","📄 Meta Tags"],["keywords","🔑 Keywords"],["technical","⚙️ Technical Audit"],
+          ["backlinks","🔗 Backlinks"],["schema","{ } Schema"],["social","📱 Social OG"],
+          ["google","🔍 Google Search Console"],
+        ] as [Tab,string][]).map(([t,l])=>(
+          <button key={t} onClick={()=>setTab(t)} style={{ padding:"9px 18px", borderRadius:10, border:`1px solid ${tab===t?(t==="google"?"#4285F4":"#FF6B00"):"#1E293B"}`, background:tab===t?(t==="google"?"#4285F422":"#FF6B0022"):"transparent", color:tab===t?(t==="google"?"#4285F4":"#FF6B00"):"#64748B", fontSize:12, fontWeight:700, cursor:"pointer" }}>
+            {l}
+            {t==="google"&&gscStatus==="connected"&&<span style={{ marginLeft:6, width:7, height:7, borderRadius:"50%", background:"#10B981", display:"inline-block", verticalAlign:"middle" }}/>}
+            {t==="google"&&gscStatus!=="connected"&&<span style={{ marginLeft:6, width:7, height:7, borderRadius:"50%", background:"#EF4444", display:"inline-block", verticalAlign:"middle" }}/>}
+          </button>
         ))}
       </div>
 
@@ -488,6 +541,403 @@ export default function SEOView() {
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* ── GOOGLE SEARCH CONSOLE TAB ── */}
+      {tab==="google"&&(
+        <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
+
+          {/* ─ NOT CONNECTED ─ */}
+          {gscStatus==="not_connected"&&(
+            <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
+              {/* Hero card */}
+              <div style={{ ...card, background:"linear-gradient(135deg,#0D1526,#0A1020)", borderTop:"2px solid #4285F4", padding:"32px 28px", textAlign:"center" }}>
+                <div style={{ fontSize:40, marginBottom:12 }}>🔍</div>
+                <div style={{ fontSize:20, fontWeight:800, color:"#F1F5F9", marginBottom:8 }}>Connect Google Search Console</div>
+                <div style={{ fontSize:13, color:"#64748B", maxWidth:520, margin:"0 auto 24px", lineHeight:1.7 }}>
+                  Google Search Console दिखाता है कि आपकी website Google पर कैसे perform कर रही है — क्लिक्स, impressions, keyword positions, crawl errors, और बहुत कुछ। यह SEO का सबसे important free tool है।
+                </div>
+                <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:12, maxWidth:640, margin:"0 auto 28px" }}>
+                  {[
+                    { icon:"📊", label:"Search Traffic", sub:"क्लिक्स और impressions देखें" },
+                    { icon:"🔑", label:"Top Queries",    sub:"कौन से keywords लाते हैं traffic" },
+                    { icon:"⚠️", label:"Crawl Issues",   sub:"Google को क्या problem आ रही है" },
+                    { icon:"🗺",  label:"Sitemap Status", sub:"Pages index हो रहे हैं या नहीं" },
+                  ].map(b=>(
+                    <div key={b.label} style={{ background:"#060B18", border:"1px solid #1E293B", borderRadius:12, padding:"14px 10px", textAlign:"center" }}>
+                      <div style={{ fontSize:20, marginBottom:6 }}>{b.icon}</div>
+                      <div style={{ fontSize:11, fontWeight:700, color:"#F1F5F9", marginBottom:4 }}>{b.label}</div>
+                      <div style={{ fontSize:10, color:"#475569", lineHeight:1.4 }}>{b.sub}</div>
+                    </div>
+                  ))}
+                </div>
+                <button onClick={startConnect} style={{ padding:"12px 32px", borderRadius:12, border:"none", background:"#4285F4", color:"#fff", fontSize:14, fontWeight:700, cursor:"pointer" }}>
+                  🔍 Google Search Console से Connect करें
+                </button>
+                <div style={{ fontSize:11, color:"#334155", marginTop:12 }}>Google account से sign-in करके property verify करनी होगी</div>
+              </div>
+
+              {/* Step guide */}
+              <div style={card}>
+                <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9", marginBottom:16 }}>Connection के Steps</div>
+                <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+                  {[
+                    { step:1, title:"Property Type चुनें",   desc:"Domain (bcplt20.com) या URL prefix (https://bcplt20.com) — Domain recommended है" },
+                    { step:2, title:"Verification Method",  desc:"HTML tag, HTML file upload, DNS TXT record, या Google Analytics — इनमें से कोई एक चुनें" },
+                    { step:3, title:"Code Add करें",         desc:"HTML tag को अपनी website के <head> में paste करें, फिर Google को verify करने दें" },
+                    { step:4, title:"Data देखें",            desc:"Verify होने के बाद 24-48 घंटे में data show होना शुरू हो जाएगा" },
+                  ].map(s=>(
+                    <div key={s.step} style={{ display:"flex", gap:14, padding:"12px 14px", background:"#060B18", borderRadius:12, border:"1px solid #1E293B" }}>
+                      <div style={{ width:28, height:28, borderRadius:"50%", background:"#4285F420", border:"1px solid #4285F440", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                        <span style={{ fontSize:12, fontWeight:800, color:"#4285F4" }}>{s.step}</span>
+                      </div>
+                      <div>
+                        <div style={{ fontSize:12, fontWeight:700, color:"#F1F5F9", marginBottom:3 }}>{s.title}</div>
+                        <div style={{ fontSize:11, color:"#64748B", lineHeight:1.5 }}>{s.desc}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ─ CONNECTING (OAuth loading) ─ */}
+          {gscStatus==="connecting"&&(
+            <div style={{ ...card, textAlign:"center", padding:"48px 28px" }}>
+              <div style={{ fontSize:36, marginBottom:16 }}>⏳</div>
+              <div style={{ fontSize:16, fontWeight:700, color:"#F1F5F9", marginBottom:8 }}>Google से Connect हो रहा है…</div>
+              <div style={{ fontSize:12, color:"#64748B" }}>Browser में Google Sign-in popup खुला होगा। अपना account select करें और permission दें।</div>
+              <div style={{ marginTop:20, height:4, borderRadius:2, background:"#1E293B", overflow:"hidden", maxWidth:320, margin:"20px auto 0" }}>
+                <div style={{ height:"100%", width:"60%", background:"#4285F4", borderRadius:2, animation:"none" }}/>
+              </div>
+            </div>
+          )}
+
+          {/* ─ VERIFYING (setup form) ─ */}
+          {gscStatus==="verifying"&&(
+            <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
+              <div style={{ ...card, borderTop:"2px solid #4285F4" }}>
+                <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:20 }}>
+                  <span style={{ fontSize:20 }}>🔧</span>
+                  <div>
+                    <div style={{ fontSize:16, fontWeight:800, color:"#F1F5F9" }}>Property Setup और Verification</div>
+                    <div style={{ fontSize:12, color:"#64748B", marginTop:2 }}>नीचे method चुनें और code को website में add करें</div>
+                  </div>
+                </div>
+
+                {/* Property URL */}
+                <div style={{ marginBottom:16 }}>
+                  <label style={{ fontSize:11, fontWeight:700, color:"#475569", display:"block", marginBottom:7, textTransform:"uppercase", letterSpacing:.5 }}>Website URL (Property)</label>
+                  <input value={gscProperty} onChange={e=>setGscProperty(e.target.value)}
+                    style={{ width:"100%", padding:"10px 12px", background:"#060B18", border:"1px solid #4285F440", borderRadius:9, color:"#F1F5F9", fontSize:13, outline:"none", boxSizing:"border-box", fontFamily:"monospace" }}/>
+                </div>
+
+                {/* Verify method tabs */}
+                <div style={{ marginBottom:16 }}>
+                  <label style={{ fontSize:11, fontWeight:700, color:"#475569", display:"block", marginBottom:10, textTransform:"uppercase", letterSpacing:.5 }}>Verification Method</label>
+                  <div style={{ display:"flex", gap:8 }}>
+                    {([["html_tag","HTML Meta Tag"],["html_file","HTML File Upload"],["dns","DNS TXT Record"]] as const).map(([v,l])=>(
+                      <button key={v} onClick={()=>setVerifyMethod(v)} style={{ padding:"8px 14px", borderRadius:9, border:`1px solid ${verifyMethod===v?"#4285F4":"#1E293B"}`, background:verifyMethod===v?"#4285F422":"transparent", color:verifyMethod===v?"#4285F4":"#64748B", fontSize:12, fontWeight:700, cursor:"pointer" }}>{l}</button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* HTML Tag instructions */}
+                {verifyMethod==="html_tag"&&(
+                  <div>
+                    <div style={{ fontSize:12, color:"#94A3B8", marginBottom:10 }}>
+                      नीचे दिया गया tag अपनी website के <code style={{ background:"#060B18", padding:"1px 5px", borderRadius:4, color:"#FF6B00" }}>&lt;head&gt;</code> section में paste करें:
+                    </div>
+                    <div style={{ background:"#060B18", border:"1px solid #1E293B", borderRadius:10, padding:14, marginBottom:14 }}>
+                      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8 }}>
+                        <span style={{ fontSize:10, color:"#475569", fontWeight:700, textTransform:"uppercase" }}>HTML Meta Tag</span>
+                        <button onClick={()=>navigator.clipboard?.writeText(`<meta name="google-site-verification" content="google7a4c9b2d1e8f3a5b" />`)} style={{ padding:"3px 10px", borderRadius:6, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontSize:10, cursor:"pointer" }}>📋 Copy</button>
+                      </div>
+                      <pre style={{ margin:0, fontSize:11, color:"#4285F4", fontFamily:"monospace", whiteSpace:"pre-wrap", wordBreak:"break-all", lineHeight:1.7 }}>
+{`<meta name="google-site-verification"\n  content="google7a4c9b2d1e8f3a5b" />`}
+                      </pre>
+                    </div>
+                    <div style={{ padding:"10px 14px", background:"#F59E0B10", border:"1px solid #F59E0B30", borderRadius:10, fontSize:11, color:"#F59E0B", lineHeight:1.6, marginBottom:16 }}>
+                      ⚠️ Tag add करने के बाद website publish करें, <strong>फिर</strong> नीचे "Verify Now" click करें।<br/>
+                      Tag हटाने पर ownership revoke हो जाएगी।
+                    </div>
+                  </div>
+                )}
+
+                {/* HTML File */}
+                {verifyMethod==="html_file"&&(
+                  <div style={{ marginBottom:16 }}>
+                    <div style={{ fontSize:12, color:"#94A3B8", marginBottom:10, lineHeight:1.6 }}>
+                      नीचे दी गई file download करें और अपनी website के root में upload करें ताकि यह URL accessible हो:<br/>
+                      <code style={{ color:"#4285F4", fontSize:11 }}>https://bcplt20.com/{verifyCode}</code>
+                    </div>
+                    <div style={{ background:"#060B18", border:"1px solid #1E293B", borderRadius:10, padding:14, marginBottom:12 }}>
+                      <div style={{ fontSize:10, color:"#475569", marginBottom:6, fontWeight:700 }}>FILE CONTENT</div>
+                      <pre style={{ margin:0, fontSize:11, color:"#10B981", fontFamily:"monospace" }}>google-site-verification: google7a4c9b2d1e8f3a5b</pre>
+                    </div>
+                    <button style={{ padding:"8px 16px", borderRadius:9, border:"1px solid #4285F440", background:"transparent", color:"#4285F4", fontSize:12, fontWeight:700, cursor:"pointer" }}>⬇ Download Verification File</button>
+                  </div>
+                )}
+
+                {/* DNS */}
+                {verifyMethod==="dns"&&(
+                  <div style={{ marginBottom:16 }}>
+                    <div style={{ fontSize:12, color:"#94A3B8", marginBottom:10, lineHeight:1.6 }}>
+                      अपने domain provider (GoDaddy, Cloudflare, BigRock आदि) के DNS settings में TXT record add करें:
+                    </div>
+                    <div style={{ background:"#060B18", border:"1px solid #1E293B", borderRadius:10, padding:14, marginBottom:12 }}>
+                      <div style={{ display:"grid", gridTemplateColumns:"120px 1fr", gap:10 }}>
+                        {[["Type","TXT"],["Name","@ (या domain name)"],["Value","google-site-verification=google7a4c9b2d1e8f3a5b"],["TTL","3600 (या Default)"]].map(([k,v])=>(
+                          <><span key={k+"k"} style={{ fontSize:11, color:"#475569", fontWeight:700 }}>{k}</span>
+                          <span key={k+"v"} style={{ fontSize:11, color:"#10B981", fontFamily:"monospace" }}>{v}</span></>
+                        ))}
+                      </div>
+                    </div>
+                    <div style={{ fontSize:11, color:"#F59E0B", lineHeight:1.5 }}>⏱ DNS changes propagate होने में 24-72 घंटे लग सकते हैं।</div>
+                  </div>
+                )}
+
+                <div style={{ display:"flex", gap:10 }}>
+                  <button onClick={()=>setGscStatus("not_connected")} style={{ padding:"11px 20px", borderRadius:10, border:"1px solid #1E293B", background:"transparent", color:"#64748B", fontSize:13, cursor:"pointer" }}>← Back</button>
+                  <button onClick={verifyNow} style={{ flex:1, padding:"11px", borderRadius:10, border:"none", background:"#4285F4", color:"#fff", fontSize:13, fontWeight:700, cursor:"pointer" }}>✓ Verify Now</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ─ CONNECTED — Full Dashboard ─ */}
+          {gscStatus==="connected"&&(
+            <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
+
+              {/* Status bar */}
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 16px", background:"#10B98110", border:"1px solid #10B98130", borderRadius:12 }}>
+                <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                  <span style={{ width:10, height:10, borderRadius:"50%", background:"#10B981", display:"inline-block", flexShrink:0 }}/>
+                  <span style={{ fontSize:13, fontWeight:700, color:"#10B981" }}>Connected</span>
+                  <span style={{ fontSize:12, color:"#64748B" }}>· {gscProperty}</span>
+                </div>
+                <div style={{ display:"flex", gap:8 }}>
+                  <span style={{ fontSize:11, color:"#64748B" }}>Last synced: Today 4:08 AM</span>
+                  <button onClick={()=>setGscStatus("not_connected")} style={{ padding:"4px 10px", borderRadius:6, border:"1px solid #EF444440", background:"transparent", color:"#EF4444", fontSize:11, cursor:"pointer" }}>Disconnect</button>
+                </div>
+              </div>
+
+              {/* Inner tabs */}
+              <div style={{ display:"flex", gap:6 }}>
+                {([["overview","📊 Overview"],["queries","🔑 Queries"],["pages","📄 Pages"],["sitemaps","🗺 Sitemaps"],["setup","⚙️ Setup"]] as const).map(([t,l])=>(
+                  <button key={t} onClick={()=>setGscTab(t)} style={{ padding:"8px 16px", borderRadius:9, border:`1px solid ${gscTab===t?"#4285F4":"#1E293B"}`, background:gscTab===t?"#4285F422":"transparent", color:gscTab===t?"#4285F4":"#64748B", fontSize:12, fontWeight:700, cursor:"pointer" }}>{l}</button>
+                ))}
+              </div>
+
+              {/* Overview */}
+              {gscTab==="overview"&&(
+                <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
+                  <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:12 }}>
+                    {[
+                      { label:"Total Clicks",      value:"4,738",  sub:"Last 28 days",  color:"#4285F4", delta:"+18%" },
+                      { label:"Total Impressions", value:"58,400", sub:"Last 28 days",  color:"#34A853", delta:"+24%" },
+                      { label:"Avg CTR",           value:"8.1%",   sub:"Clicks / Impr", color:"#FBBC04", delta:"+1.2%" },
+                      { label:"Avg Position",      value:"3.8",    sub:"In search results", color:"#EA4335", delta:"-0.4" },
+                    ].map(s=>(
+                      <div key={s.label} style={{ ...card, borderTop:`3px solid ${s.color}` }}>
+                        <div style={{ fontSize:24, fontWeight:800, color:s.color, marginBottom:4 }}>{s.value}</div>
+                        <div style={{ fontSize:12, color:"#F1F5F9", fontWeight:600 }}>{s.label}</div>
+                        <div style={{ display:"flex", justifyContent:"space-between", marginTop:6 }}>
+                          <span style={{ fontSize:10, color:"#475569" }}>{s.sub}</span>
+                          <span style={{ fontSize:11, fontWeight:700, color:s.delta.startsWith("+")?"#10B981":s.delta.startsWith("-")&&s.label==="Avg Position"?"#10B981":"#EF4444" }}>{s.delta}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:14 }}>
+                    <div style={card}>
+                      <div style={{ fontSize:13, fontWeight:700, color:"#F1F5F9", marginBottom:14 }}>Top 5 Queries (Last 28 Days)</div>
+                      <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+                        {GSC_QUERIES.slice(0,5).map((q,i)=>(
+                          <div key={i} style={{ display:"flex", alignItems:"center", gap:12 }}>
+                            <span style={{ fontSize:11, color:"#475569", width:18, textAlign:"right", flexShrink:0 }}>{i+1}</span>
+                            <div style={{ flex:1, minWidth:0 }}>
+                              <div style={{ fontSize:11, color:"#94A3B8", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{q.query}</div>
+                              <div style={{ height:3, borderRadius:2, background:"#1E293B", marginTop:4, overflow:"hidden" }}>
+                                <div style={{ height:"100%", width:`${(q.clicks/GSC_QUERIES[0].clicks)*100}%`, background:"#4285F4", borderRadius:2 }}/>
+                              </div>
+                            </div>
+                            <span style={{ fontSize:12, fontWeight:700, color:"#4285F4", flexShrink:0 }}>{q.clicks.toLocaleString()}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div style={card}>
+                      <div style={{ fontSize:13, fontWeight:700, color:"#F1F5F9", marginBottom:14 }}>Coverage Status</div>
+                      <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+                        {[
+                          { label:"Valid (Indexed)",          n:7,  color:"#34A853" },
+                          { label:"Valid with warnings",       n:2,  color:"#FBBC04" },
+                          { label:"Excluded (noindex/etc.)",  n:3,  color:"#64748B" },
+                          { label:"Error (crawl issues)",     n:0,  color:"#EA4335" },
+                        ].map(r=>(
+                          <div key={r.label} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"8px 12px", background:"#060B18", borderRadius:8, border:`1px solid ${r.color}25` }}>
+                            <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                              <div style={{ width:8, height:8, borderRadius:2, background:r.color, flexShrink:0 }}/>
+                              <span style={{ fontSize:12, color:"#94A3B8" }}>{r.label}</span>
+                            </div>
+                            <span style={{ fontSize:14, fontWeight:800, color:r.color }}>{r.n}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Queries */}
+              {gscTab==="queries"&&(
+                <div style={card}>
+                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
+                    <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9" }}>Search Queries — Last 28 Days</div>
+                    <div style={{ display:"flex", gap:8 }}>
+                      <select style={{ padding:"6px 10px", background:"#060B18", border:"1px solid #1E293B", borderRadius:8, color:"#94A3B8", fontSize:11, outline:"none", cursor:"pointer" }}>
+                        <option>Last 28 days</option><option>Last 3 months</option><option>Last 12 months</option>
+                      </select>
+                      <button style={{ padding:"6px 12px", borderRadius:8, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontSize:11, cursor:"pointer" }}>⬇ Export CSV</button>
+                    </div>
+                  </div>
+                  <table style={{ width:"100%", borderCollapse:"collapse" }}>
+                    <thead>
+                      <tr style={{ borderBottom:"1px solid #1E293B" }}>
+                        {["Query","Clicks","Impressions","CTR","Avg. Position"].map(h=>(
+                          <th key={h} style={{ padding:"8px 12px", textAlign:"left", fontSize:10, color:"#475569", fontWeight:700, textTransform:"uppercase" }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {GSC_QUERIES.map((q,i)=>(
+                        <tr key={i} style={{ borderBottom:"1px solid #0F1B2D" }}>
+                          <td style={{ padding:"12px 12px", fontSize:13, color:"#F1F5F9", fontWeight:600 }}>{q.query}</td>
+                          <td style={{ padding:"12px 12px", fontSize:13, color:"#4285F4", fontWeight:700 }}>{q.clicks.toLocaleString()}</td>
+                          <td style={{ padding:"12px 12px", fontSize:13, color:"#94A3B8" }}>{q.impressions.toLocaleString()}</td>
+                          <td style={{ padding:"12px 12px", fontSize:13, color:"#FBBC04", fontWeight:700 }}>{q.ctr}%</td>
+                          <td style={{ padding:"12px 12px" }}>
+                            <span style={{ fontSize:13, fontWeight:800, color:q.pos<=3?"#34A853":q.pos<=6?"#FBBC04":"#94A3B8" }}>#{q.pos.toFixed(1)}</span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              {/* Pages */}
+              {gscTab==="pages"&&(
+                <div style={card}>
+                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
+                    <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9" }}>Top Pages by Clicks</div>
+                    <button style={{ padding:"6px 12px", borderRadius:8, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontSize:11, cursor:"pointer" }}>⬇ Export CSV</button>
+                  </div>
+                  <table style={{ width:"100%", borderCollapse:"collapse" }}>
+                    <thead>
+                      <tr style={{ borderBottom:"1px solid #1E293B" }}>
+                        {["Page URL","Clicks","Impressions","CTR","Avg. Position"].map(h=>(
+                          <th key={h} style={{ padding:"8px 12px", textAlign:"left", fontSize:10, color:"#475569", fontWeight:700, textTransform:"uppercase" }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {GSC_PAGES.map((p,i)=>(
+                        <tr key={i} style={{ borderBottom:"1px solid #0F1B2D" }}>
+                          <td style={{ padding:"12px 12px" }}>
+                            <span style={{ fontSize:12, color:"#4285F4", fontFamily:"monospace" }}>bcplt20.com{p.page}</span>
+                          </td>
+                          <td style={{ padding:"12px 12px", fontSize:13, color:"#4285F4", fontWeight:700 }}>{p.clicks.toLocaleString()}</td>
+                          <td style={{ padding:"12px 12px", fontSize:13, color:"#94A3B8" }}>{p.impressions.toLocaleString()}</td>
+                          <td style={{ padding:"12px 12px", fontSize:13, color:"#FBBC04", fontWeight:700 }}>{p.ctr}%</td>
+                          <td style={{ padding:"12px 12px" }}>
+                            <span style={{ fontSize:13, fontWeight:800, color:p.pos<=3?"#34A853":p.pos<=6?"#FBBC04":"#94A3B8" }}>#{p.pos.toFixed(1)}</span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              {/* Sitemaps */}
+              {gscTab==="sitemaps"&&(
+                <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
+                  <div style={card}>
+                    <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9", marginBottom:16 }}>Sitemap Submit करें</div>
+                    <div style={{ display:"flex", gap:10 }}>
+                      <input value={sitemapUrl} onChange={e=>setSitemapUrl(e.target.value)}
+                        style={{ flex:1, padding:"10px 14px", background:"#060B18", border:"1px solid #1E293B", borderRadius:9, color:"#F1F5F9", fontSize:13, outline:"none", fontFamily:"monospace" }}/>
+                      <button onClick={submitSitemap} style={{ padding:"10px 20px", borderRadius:9, border:"none", background:"#4285F4", color:"#fff", fontSize:13, fontWeight:700, cursor:"pointer" }}>Submit</button>
+                    </div>
+                    {sitemapSent&&<div style={{ fontSize:12, color:"#34A853", marginTop:10 }}>✅ Sitemap submitted successfully! Google will process it within a few hours.</div>}
+                  </div>
+                  <div style={card}>
+                    <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9", marginBottom:14 }}>Submitted Sitemaps</div>
+                    <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+                      {[
+                        { url:"/sitemap.xml",       status:"Success", pages:12, lastRead:"Jul 18, 2026" },
+                        { url:"/sitemap-blog.xml",  status:"Warning", pages:3,  lastRead:"Jul 10, 2026" },
+                      ].map((s,i)=>(
+                        <div key={i} style={{ padding:"14px 16px", background:"#060B18", borderRadius:12, border:"1px solid #1E293B", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                          <div>
+                            <div style={{ fontSize:12, color:"#4285F4", fontFamily:"monospace", marginBottom:4 }}>bcplt20.com{s.url}</div>
+                            <div style={{ fontSize:11, color:"#475569" }}>Last read: {s.lastRead} · {s.pages} pages discovered</div>
+                          </div>
+                          <div style={{ display:"flex", gap:10, alignItems:"center" }}>
+                            <span style={{ fontSize:11, fontWeight:700, padding:"3px 10px", borderRadius:6, background:s.status==="Success"?"#34A85322":"#FBBC0422", color:s.status==="Success"?"#34A853":"#FBBC04" }}>{s.status}</span>
+                            <button style={{ padding:"4px 10px", borderRadius:6, border:"1px solid #EF444440", background:"transparent", color:"#EF4444", fontSize:11, cursor:"pointer" }}>Remove</button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Setup / ownership */}
+              {gscTab==="setup"&&(
+                <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
+                  <div style={card}>
+                    <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9", marginBottom:16 }}>Ownership Details</div>
+                    <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+                      {[
+                        { label:"Property",        value:gscProperty },
+                        { label:"Verified via",    value:"HTML Meta Tag" },
+                        { label:"Verification tag",value:'content="google7a4c9b2d1e8f3a5b"' },
+                        { label:"Verified on",     value:"Jul 20, 2026" },
+                        { label:"Owners",          value:"admin@bcplt20.com" },
+                      ].map(r=>(
+                        <div key={r.label} style={{ display:"flex", gap:12, padding:"10px 14px", background:"#060B18", borderRadius:10, border:"1px solid #1E293B" }}>
+                          <span style={{ fontSize:11, color:"#475569", fontWeight:700, minWidth:130 }}>{r.label}</span>
+                          <span style={{ fontSize:11, color:"#94A3B8", fontFamily:"monospace" }}>{r.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div style={{ ...card, borderLeft:"3px solid #FBBC04" }}>
+                    <div style={{ fontSize:13, fontWeight:700, color:"#FBBC04", marginBottom:8 }}>⚠️ Important</div>
+                    <div style={{ fontSize:12, color:"#64748B", lineHeight:1.7 }}>
+                      Verification tag को website के &lt;head&gt; से कभी remove मत करें।<br/>
+                      Remove करने पर ownership revoke हो जाएगी और data access बंद हो जाएगा।
+                    </div>
+                  </div>
+                  <div style={card}>
+                    <div style={{ fontSize:13, fontWeight:700, color:"#F1F5F9", marginBottom:12 }}>Google Analytics भी Connect करें</div>
+                    <div style={{ fontSize:12, color:"#64748B", marginBottom:14, lineHeight:1.6 }}>
+                      Google Analytics connect करने से GSC data और website behaviour data एक साथ देख सकते हैं।
+                    </div>
+                    <button style={{ padding:"9px 18px", borderRadius:9, border:"1px solid #EA433540", background:"transparent", color:"#EA4335", fontSize:12, fontWeight:700, cursor:"pointer" }}>
+                      📊 Google Analytics से Link करें
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 
