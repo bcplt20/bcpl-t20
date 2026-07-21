@@ -263,6 +263,69 @@ export function About() {
         </div>
       </section>
 
+      {/* ── MEET THE TEAM ── */}
+      <section style={{position:'relative',zIndex:1,padding:'0 0 80px'}}>
+        <div className="wrap">
+          <div style={{textAlign:'center',marginBottom:56}}>
+            <div className="tag-pill" style={{marginBottom:16}}>THE PEOPLE BEHIND BCPL</div>
+            <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(28px,4vw,44px)',color:'#fff'}}>
+              Meet Our <span className="shimmer-gold">Team</span>
+            </h2>
+          </div>
+
+          {/* Founder — Full-width featured card */}
+          <div className="glass-card" style={{display:'flex',flexWrap:'wrap',gap:0,maxWidth:860,margin:'0 auto 48px',borderTop:'3px solid #E8B23D',overflow:'hidden',animation:'fadeSlide 0.7s ease both'}}>
+            <div style={{flexShrink:0,width:'clamp(160px,35%,280px)',background:'linear-gradient(180deg,rgba(232,178,61,0.08) 0%,rgba(6,14,28,0) 100%)'}}>
+              <img
+                src="https://www.bcpl-t20.com/wp-content/uploads/2025/07/saurabh.png"
+                alt="Saurabh Jha"
+                style={{width:'100%',height:'100%',minHeight:220,objectFit:'cover',objectPosition:'top',display:'block'}}
+                onError={(e)=>{ (e.target as HTMLImageElement).src='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="280" height="280" viewBox="0 0 280 280"><rect fill="%23132040" width="280" height="280"/><text fill="%23FF7A29" font-size="72" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle" x="140" y="140">SJ</text></svg>'; }}
+              />
+            </div>
+            <div style={{flex:1,minWidth:220,padding:'clamp(24px,4vw,40px)'}}>
+              <div style={{display:'inline-flex',alignItems:'center',gap:8,background:'rgba(232,178,61,0.12)',border:'1px solid rgba(232,178,61,0.35)',borderRadius:100,padding:'5px 14px',marginBottom:18}}>
+                <span style={{width:8,height:8,borderRadius:'50%',background:'#E8B23D',display:'inline-block'}}/>
+                <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:11,color:'#E8B23D',letterSpacing:'.12em'}}>FOUNDER</span>
+              </div>
+              <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:6,lineHeight:1.1}}>Saurabh Jha</div>
+              <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:14,color:'#FF7A29',letterSpacing:'.06em',marginBottom:20}}>Founder &amp; Chairman</div>
+              <p style={{color:'rgba(255,255,255,0.65)',fontSize:14,lineHeight:1.8,maxWidth:420}}>
+                Visionary behind Bharatiya Corporate Premier League — the world's largest corporate cricket tournament. Conceptualized under Kriparti Playing 11 Private Limited, Saurabh built BCPL from the ground up to give every working professional a real shot at professional cricket.
+              </p>
+            </div>
+          </div>
+
+          {/* Rest of team — 5-column grid */}
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))',gap:20,maxWidth:1100,margin:'0 auto'}}>
+            {[
+              {name:'Muhammad Muzammil', role:'COO & CMO',           photo:'muzammil', initials:'MM'},
+              {name:'Mohammed Imran',    role:'Head of Production',   photo:'imran',    initials:'MI'},
+              {name:'Gaurav Anthoney',   role:'Head of Operations',   photo:'gaurav',   initials:'GA'},
+              {name:'Gautam Singh',      role:'Legal Head',           sub:'Partner, D K Singh & Co.', photo:'gautam', initials:'GS'},
+              {name:'Mohit Kumar',       role:'Finance & Accounts',   photo:'mohit',    initials:'MK'},
+            ].map((m,i)=>(
+              <div key={i} className="glass-card" style={{overflow:'hidden',display:'flex',flexDirection:'column',animation:`fadeSlide 0.6s ease ${0.1+i*0.1}s both`,transition:'transform 0.2s',borderTop:'2px solid rgba(255,122,41,0.3)'}}>
+                <div style={{position:'relative',paddingTop:'100%',background:'linear-gradient(180deg,rgba(255,122,41,0.06) 0%,rgba(6,14,28,0) 100%)'}}>
+                  <img
+                    src={`https://www.bcpl-t20.com/wp-content/uploads/2025/07/${m.photo}.png`}
+                    alt={m.name}
+                    style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:'top'}}
+                    onError={(e)=>{ (e.target as HTMLImageElement).style.display='none'; }}
+                  />
+                  <div style={{position:'absolute',bottom:0,left:0,right:0,height:'40%',background:'linear-gradient(0deg,rgba(6,14,28,0.95) 0%,transparent 100%)'}}/>
+                </div>
+                <div style={{padding:'16px 18px 20px'}}>
+                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#fff',marginBottom:4,lineHeight:1.25}}>{m.name}</div>
+                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:12,color:'#FF7A29',letterSpacing:'.05em',marginBottom:m.sub?2:0}}>{m.role}</div>
+                  {m.sub && <div style={{fontFamily:'Inter,sans-serif',fontSize:11,color:'rgba(255,255,255,0.35)',marginTop:2}}>{m.sub}</div>}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* COMPANY CARD */}
       <section style={{position:'relative',zIndex:1,padding:'0 0 80px'}}>
         <div className="wrap">
