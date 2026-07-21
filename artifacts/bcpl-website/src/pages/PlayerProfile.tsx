@@ -8,7 +8,7 @@ type Phase = "p1_registered" | "p1_video" | "p2_selected" | "auction" | "signed"
 const DEMO_PHASES: {id:Phase;label:string;short:string;color:string}[] = [
   { id:"p1_registered", label:"P1 Registered",     short:"P1 REG",  color:"#FF7A29" },
   { id:"p1_video",      label:"Video Uploaded",     short:"VIDEO",   color:"#FF7A29" },
-  { id:"p2_selected",   label:"P2 Selected",        short:"P2 SEL",  color:"#E8B23D" },
+  { id:"p2_selected",   label:"P2 Selected",        short:"P2 REG",  color:"#E8B23D" },
   { id:"auction",       label:"Auction Shortlisted", short:"AUCTION", color:"#E8B23D" },
   { id:"signed",        label:"Team Signed! 🏆",    short:"SIGNED",  color:"#22C55E" },
 ];
@@ -59,7 +59,7 @@ function getBanner(phase: Phase) {
     p1_registered: { color:"#FF7A29", bg:"rgba(255,122,41,0.08)", icon:"📝", title:"Registration Complete — Upload Your Video", body:`You've registered as a Batsman for BCPL Season 5. Next step: upload your 2-minute trial video. Deadline: 28 Feb 2026.` },
     p1_video:      { color:"#FF7A29", bg:"rgba(255,122,41,0.08)", icon:"🎬", title:"Video Submitted — Scout Review in Progress", body:`Your video is with BCCI-certified scouts. Review takes up to 7 working days. You'll receive an email & SMS.` },
     p2_selected:   { color:"#E8B23D", bg:"rgba(232,178,61,0.08)", icon:"⭐", title:"Congratulations! Selected for Phase 2 Trial", body:`Report to ${PLAYER.p2City} on ${PLAYER.p2Date} for your physical trial. Phase 2 fee of ₹2,000 due before trial.` },
-    auction:       { color:"#E8B23D", bg:"rgba(232,178,61,0.08)", icon:"🔨", title:"You Are Auction Shortlisted!", body:`All 10 franchise coaches have reviewed your trial. Your profile is live for the Season 5 Franchise Auction. Base price: ₹1L.` },
+    auction:       { color:"#E8B23D", bg:"rgba(232,178,61,0.08)", icon:"🔨", title:"You Are Shortlisted for Auction!", body:`All 10 franchise coaches have reviewed your trial. Your profile is live for the Season 5 Franchise Auction. Base price: ₹2L · Max: ₹20L.` },
     signed:        { color:"#22C55E", bg:"rgba(34,197,94,0.08)",  icon:"🏆", title:`You've Been Signed by Mumbai Mavericks!`, body:`Contract value: ${PLAYER.contract}. Welcome to the squad. Report to your franchise on 15 Sep 2026 for pre-season camp.` },
   };
   return M[phase];
@@ -67,6 +67,7 @@ function getBanner(phase: Phase) {
 
 export function PlayerProfile() {
   const [phase, setPhase] = useState<Phase>("p1_video");
+  const [menuOpen, setMenuOpen] = useState(false);
   const nodes  = getNodes(phase);
   const banner = getBanner(phase);
 
@@ -118,20 +119,80 @@ export function PlayerProfile() {
               <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:9, color:'#E8B23D', letterSpacing:'.12em' }}>SEASON 5</span>
             </div>
           </div>
-          {/* Right: player chip + logout */}
-          <div style={{ display:"flex", alignItems:"center", gap:8, flexShrink:0 }}>
-            <div style={{ display:"flex", alignItems:"center", gap:8, background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:10, padding:'5px 10px' }}>
-              <div style={{ width:28, height:28, borderRadius:8, background:"linear-gradient(135deg,#FF7A29,#D95E10)", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:11, color:"#fff", flexShrink:0 }}>RS</div>
-              <div style={{ display:'flex', flexDirection:'column', lineHeight:1.2 }}>
-                <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:11, color:"#fff" }}>Rahul Sharma</span>
-                <span style={{ fontFamily:"monospace", fontSize:9, color:"rgba(255,255,255,0.3)" }}>BCPL-S5-7432</span>
-              </div>
-            </div>
-            <button className="btn-ghost" style={{ fontSize:11, padding:"7px 14px", flexShrink:0 }}>Log Out</button>
-          </div>
+          {/* Right: hamburger menu */}
+          <button onClick={() => setMenuOpen(true)} style={{ display:"flex", flexDirection:"column", gap:5, background:"none", border:"none", cursor:"pointer", padding:8, flexShrink:0 }}>
+            <span style={{ display:"block", width:22, height:2, background:"#fff", borderRadius:12 }}/>
+            <span style={{ display:"block", width:22, height:2, background:"#fff", borderRadius:12 }}/>
+            <span style={{ display:"block", width:22, height:2, background:"#fff", borderRadius:12 }}/>
+          </button>
         </div>
       </nav>
       </div>{/* /sticky-top */}
+
+      {/* ── PLAYER SIDE MENU ── */}
+      {menuOpen && (
+        <div style={{ position:'fixed', inset:0, zIndex:600 }} onClick={() => setMenuOpen(false)}>
+          {/* Backdrop */}
+          <div style={{ position:'absolute', inset:0, background:'rgba(0,0,0,0.6)', backdropFilter:'blur(4px)' }} />
+          {/* Drawer from right */}
+          <div style={{ position:'absolute', top:0, right:0, bottom:0, width:280, background:'#06101E', borderLeft:'1px solid rgba(255,255,255,0.08)', display:'flex', flexDirection:'column', padding:'24px 20px' }} onClick={e => e.stopPropagation()}>
+            {/* Close */}
+            <button onClick={() => setMenuOpen(false)} style={{ position:'absolute', top:16, right:16, background:'rgba(255,255,255,0.07)', border:'1px solid rgba(255,255,255,0.1)', color:'#fff', width:36, height:36, borderRadius:6, cursor:'pointer', fontSize:18, lineHeight:1 }}>✕</button>
+
+            {/* Player info header */}
+            <div style={{ marginTop:8, marginBottom:28, paddingBottom:20, borderBottom:'1px solid rgba(255,255,255,0.07)' }}>
+              <div style={{ width:52, height:52, borderRadius:12, background:'linear-gradient(135deg,#FF7A29,#D95E10)', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'#fff', marginBottom:12 }}>RS</div>
+              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:16, color:'#fff', marginBottom:4 }}>{PLAYER.name}</div>
+              <div style={{ fontFamily:'monospace', fontSize:11, color:'rgba(255,255,255,0.35)', marginBottom:6 }}>{PLAYER.ref}</div>
+              <div style={{ display:'inline-flex', alignItems:'center', gap:5, background:'rgba(34,197,94,0.1)', border:'1px solid rgba(34,197,94,0.3)', borderRadius:6, padding:'3px 10px' }}>
+                <span style={{ width:6, height:6, borderRadius:'50%', background:'#22C55E', display:'inline-block' }} />
+                <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:9, color:'#22C55E', letterSpacing:'.1em' }}>KYC VERIFIED</span>
+              </div>
+            </div>
+
+            {/* Menu items */}
+            <div style={{ display:'flex', flexDirection:'column', gap:4 }}>
+              {[
+                { icon:'👤', label:'Player Profile',   action:() => { setMenuOpen(false); window.scrollTo({top:0,behavior:'smooth'}); } },
+                { icon:'📋', label:'Download ID Card', action:() => { setMenuOpen(false); (document.querySelector('.btn-orange') as HTMLButtonElement)?.click(); } },
+                { icon:'✉️', label:'Contact Support',  action:() => setMenuOpen(false) },
+              ].map(item => (
+                <button key={item.label} onClick={item.action}
+                  style={{ display:'flex', alignItems:'center', gap:12, background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.06)', borderRadius:10, padding:'13px 16px', cursor:'pointer', textAlign:'left', width:'100%', transition:'background .15s' }}
+                  onMouseEnter={e => (e.currentTarget.style.background='rgba(255,255,255,0.07)')}
+                  onMouseLeave={e => (e.currentTarget.style.background='rgba(255,255,255,0.03)')}>
+                  <span style={{ fontSize:16 }}>{item.icon}</span>
+                  <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:13, color:'rgba(255,255,255,0.85)' }}>{item.label}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Player details summary */}
+            <div style={{ marginTop:20, padding:'14px 16px', background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.06)', borderRadius:10 }}>
+              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:9, color:'rgba(255,255,255,0.3)', letterSpacing:'.1em', textTransform:'uppercase', marginBottom:10 }}>Quick Info</div>
+              {[
+                { label:'Role',    value:`${PLAYER.roleIcon} ${PLAYER.role}` },
+                { label:'City',    value:PLAYER.city },
+                { label:'Company', value:PLAYER.company.split(',')[0] },
+                { label:'Phone',   value:PLAYER.phone },
+              ].map(r => (
+                <div key={r.label} style={{ display:'flex', justifyContent:'space-between', gap:8, padding:'6px 0', borderBottom:'1px solid rgba(255,255,255,0.04)' }}>
+                  <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:10, color:'rgba(255,255,255,0.3)', textTransform:'uppercase', flexShrink:0 }}>{r.label}</span>
+                  <span style={{ fontFamily:'Inter,sans-serif', fontSize:11, color:'rgba(255,255,255,0.7)', textAlign:'right' }}>{r.value}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Logout at bottom */}
+            <div style={{ marginTop:'auto', paddingTop:20 }}>
+              <button onClick={() => { window.location.href = import.meta.env.BASE_URL; }}
+                style={{ width:'100%', padding:'12px', background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.25)', borderRadius:10, color:'rgba(239,68,68,0.8)', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:12, letterSpacing:'.06em', cursor:'pointer', textTransform:'uppercase' }}>
+                🚪 Log Out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── DEMO STATE SWITCHER ── */}
       <div style={{ background:"#040A15", borderBottom:"1px solid rgba(255,255,255,0.06)", padding:"10px 0" }}>
