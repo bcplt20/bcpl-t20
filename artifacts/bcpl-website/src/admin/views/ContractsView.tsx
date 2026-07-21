@@ -570,7 +570,7 @@ function ContractModal({ c, onClose }: { c: Contract; onClose: ()=>void }) {
   const cType = c.contractType || "Player";
 
   function downloadPDF() {
-    const logoUrl = `${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/bcpl-ball-color.jpg`;
+    const logoUrl = `${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/bcpl-ball-clean.png`;
     const w = window.open("", "_blank");
     if (!w) return;
     const cType = c.contractType || "Player";
