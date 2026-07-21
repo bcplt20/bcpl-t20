@@ -1,4 +1,5 @@
 import React from 'react';
+import { BCPLFooter } from '../components/BCPLFooter';
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
@@ -137,10 +138,14 @@ function Navbar() {
     <>
       <nav style={{position:'sticky',top:0,zIndex:200,background:'rgba(6,14,28,0.96)',backdropFilter:'blur(24px)',borderBottom:'1px solid rgba(255,255,255,0.07)',boxShadow:'0 1px 0 0 rgba(255,122,41,0.25)'}}>
         <div className="wrap" style={{height:64,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-          <div style={{display:'flex',alignItems:'center',gap:8}}>
-            <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff'}}>T20</span></span>
-            <span style={{fontSize:10,color:'rgba(255,122,41,0.7)',fontFamily:'Montserrat,sans-serif',fontWeight:700,marginLeft:8,letterSpacing:'0.08em'}}>SEASON 5</span>
-          </div>
+          <a href="/" style={{display:'flex',flexDirection:'row',alignItems:'center',gap:8,textDecoration:'none',flexShrink:0,whiteSpace:'nowrap'}}>
+            <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL"
+              style={{height:36,maxWidth:100,width:'auto',objectFit:'contain',display:'block',filter:'brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.7))',flexShrink:0}}/>
+            <div style={{display:'inline-flex',alignItems:'center',gap:4,background:'rgba(232,178,61,0.12)',border:'1px solid rgba(232,178,61,0.5)',borderRadius:6,padding:'3px 10px',flexShrink:0}}>
+              <span style={{fontSize:9}}>🏆</span>
+              <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:9,color:'#E8B23D',letterSpacing:'.12em'}}>SEASON 5</span>
+            </div>
+          </a>
           <div className="desk-nav">
             {links.map(l=>(
               <a key={l} href="#" style={{color:l==='Photos'?'#FF7A29':'rgba(255,255,255,0.75)',fontWeight:600,fontSize:13.5,textDecoration:'none',fontFamily:'Inter,sans-serif',transition:'color 0.2s'}}>{l}</a>
@@ -157,7 +162,7 @@ function Navbar() {
       {open && (
         <div style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'#06101E',zIndex:300,display:'flex',flexDirection:'column',padding:'72px 24px 40px',overflowY:'auto'}}>
           <button onClick={()=>{ setOpen(false); window.location.assign(ROUTE_MAP[l]||'/'); }} style={{position:'absolute',top:18,right:20,background:'none',border:'none',color:'rgba(255,255,255,0.5)',fontSize:28,cursor:'pointer',lineHeight:1}}>✕</button>
-          <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,marginBottom:32}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff'}}>T20</span></div>
+          <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL" style={{height:36,width:'auto',objectFit:'contain',marginBottom:32,filter:'brightness(1.3)'}}/>
           {links.map(l=>(
             <a key={l} href="#" onClick={()=>{ setOpen(false); window.location.assign(ROUTE_MAP[l]||'/'); }} style={{color:'rgba(255,255,255,0.88)',fontWeight:700,fontSize:20,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,0.07)'}}>{l}</a>
           ))}
@@ -168,37 +173,6 @@ function Navbar() {
   );
 }
 
-function Footer() {
-  return (
-    <footer style={{background:'#040C18',borderTop:'1px solid rgba(255,255,255,0.05)',padding:'48px 0 32px',position:'relative',zIndex:10}}>
-      <div className="wrap">
-        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:40,marginBottom:40}}>
-          <div>
-            <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:26,marginBottom:8}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff'}}>T20</span></div>
-            <div style={{color:'rgba(255,255,255,0.4)',fontSize:11,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'0.1em',marginBottom:12}}>SEASON 5 · 2025</div>
-            <div style={{color:'rgba(255,255,255,0.5)',fontSize:13,fontFamily:'Inter,sans-serif',lineHeight:1.6}}>#OfficeSeStadiumtak<br/>Relive the dream. Rediscover the thrill.</div>
-          </div>
-          <div>
-            <div style={{color:'rgba(255,255,255,0.3)',fontSize:11,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'0.1em',marginBottom:16,textTransform:'uppercase'}}>League</div>
-            {['Schedule','Match Center','Teams','Points Table','Photos','Videos'].map(l=>(
-              <a key={l} href="#" style={{display:'block',color:'rgba(255,255,255,0.55)',fontSize:14,fontFamily:'Inter,sans-serif',textDecoration:'none',marginBottom:9}}>{l}</a>
-            ))}
-          </div>
-          <div>
-            <div style={{color:'rgba(255,255,255,0.3)',fontSize:11,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'0.1em',marginBottom:16,textTransform:'uppercase'}}>Info</div>
-            {['About','FAQ','Contact','Terms','Privacy','Refunds','Eligibility'].map(l=>(
-              <a key={l} href="#" style={{display:'block',color:'rgba(255,255,255,0.55)',fontSize:14,fontFamily:'Inter,sans-serif',textDecoration:'none',marginBottom:9}}>{l}</a>
-            ))}
-          </div>
-        </div>
-        <div style={{borderTop:'1px solid rgba(255,255,255,0.06)',paddingTop:24,display:'flex',flexWrap:'wrap',gap:12,justifyContent:'space-between',alignItems:'center'}}>
-          <div style={{color:'rgba(255,255,255,0.3)',fontSize:12,fontFamily:'Inter,sans-serif'}}>© 2026 BCPL Pvt. Ltd. | www.bcpl-t20.com</div>
-          <div style={{color:'rgba(255,255,255,0.25)',fontSize:12,fontFamily:'Inter,sans-serif'}}>All rights reserved.</div>
-        </div>
-      </div>
-    </footer>
-  );
-}
 
 function MobileStickyCTA() {
   return (
@@ -331,7 +305,7 @@ export function Photos() {
 
       {/* ── FLOATING REGISTER BUTTON ── */}
       <a className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>🏏 REGISTER NOW &rarr;</a>
-      <Footer/>
+      <BCPLFooter />
       <MobileStickyCTA/>
     </div>
   );

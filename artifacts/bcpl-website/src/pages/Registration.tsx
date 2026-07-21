@@ -25,7 +25,7 @@ import { BCPLFooter } from '../components/BCPLFooter';
 
 const ROLES = [
   {
-    id: 'bat',  emoji: '🏏', label: 'Batsman',
+    id: 'bat',  emoji: '🏏', icon: 'batsman', label: 'Batsman',
     desc: 'Open the innings. Anchor the chase.',
     phase1: 299, phase2: 2000,
     color: '#3B82F6', colorDark: '#1D4ED8',
@@ -39,7 +39,7 @@ const ROLES = [
     </svg>`,
   },
   {
-    id: 'bowl', emoji: '🎳', label: 'Bowler',
+    id: 'bowl', emoji: '🎳', icon: 'bowler', label: 'Bowler',
     desc: 'Take wickets. Change the game.',
     phase1: 299, phase2: 2000,
     color: '#8B5CF6', colorDark: '#6D28D9',
@@ -53,7 +53,7 @@ const ROLES = [
     </svg>`,
   },
   {
-    id: 'wk',   emoji: '🧤', label: 'Wicket-Keeper',
+    id: 'wk',   emoji: '🧤', icon: 'wicketkeeper', label: 'Wicket-Keeper',
     desc: 'Command the field. Lead from behind the stumps.',
     phase1: 299, phase2: 2000,
     color: '#06B6D4', colorDark: '#0E7490',
@@ -69,7 +69,7 @@ const ROLES = [
     </svg>`,
   },
   {
-    id: 'ar',   emoji: '⭐', label: 'All-Rounder',
+    id: 'ar',   emoji: '⭐', icon: 'allrounder', label: 'All-Rounder',
     desc: 'Bat. Bowl. Win matches. The complete cricketer.',
     phase1: 399, phase2: 3000,
     color: '#F59E0B', colorDark: '#B45309',
@@ -655,9 +655,9 @@ export function Registration() {
                       <div style={{ padding:'18px 16px 16px' }}>
                         {/* Top row */}
                         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:12 }}>
-                          {/* Role SVG icon */}
-                          <div style={{ width:56, height:56, flexShrink:0 }}
-                            dangerouslySetInnerHTML={{ __html: r.svgPath }} />
+                          {/* Role icon */}
+                          <img src={import.meta.env.BASE_URL + 'bcpl-assets/role-icons/' + r.icon + '.png'} alt={r.label}
+                            style={{ width:64, height:64, objectFit:'contain', flexShrink:0 }} />
                           {role?.id === r.id && (
                             <div style={{ width:20, height:20, borderRadius:'50%', background:r.color, display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:900, color:'#fff' }}>✓</div>
                           )}

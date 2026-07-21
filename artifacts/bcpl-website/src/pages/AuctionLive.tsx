@@ -122,6 +122,8 @@ export function AuctionLive() {
               <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:12, color:'#EF4444', letterSpacing:'.14em' }}>🔴 AUCTION LIVE NOW</span>
             </div>
 
+            <img src={import.meta.env.BASE_URL + 'bcpl-assets/role-icons/auction.png'} alt="Auction"
+              style={{ height:72, width:72, objectFit:'contain', margin:'12px auto 16px', display:'block', filter:'drop-shadow(0 4px 20px rgba(239,68,68,0.5)) brightness(1.1)' }}/>
             <h1 style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(24px,5vw,56px)', lineHeight:1.05, color:'#fff', textTransform:'uppercase', marginBottom:8, letterSpacing:'-0.01em' }}>
               YOUR NAME IS<br/>
               <span className="shimmer-gold">LIVE IN THE AUCTION</span>

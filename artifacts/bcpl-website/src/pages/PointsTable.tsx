@@ -1,4 +1,5 @@
 import React from 'react';
+import { BCPLFooter } from '../components/BCPLFooter';
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap');
@@ -118,15 +119,12 @@ function Navbar() {
     <>
       <nav style={{position:'sticky',top:0,zIndex:200,background:'rgba(6,14,28,0.96)',backdropFilter:'blur(24px)',borderBottom:'1px solid rgba(255,255,255,0.07)',boxShadow:'0 1px 0 0 rgba(255,122,41,0.25)'}}>
         <div className="wrap" style={{height:64,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-          <a href="/" style={{display:'flex',alignItems:'center',gap:8,textDecoration:'none',cursor:'pointer'}}>
-            <div style={{width:36,height:36,borderRadius:'50%',overflow:'hidden',flexShrink:0}}>
-              <img src="/bcpl-website/bcpl-assets/bcpl-ball-color.jpg" alt="BCPL" style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:'top center'}}/>
-            </div>
-            <div>
-              <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:18,lineHeight:1}}>
-                <span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff'}}>T20</span>
-              </div>
-              <div style={{fontSize:9,color:'rgba(255,122,41,0.7)',fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'0.06em',lineHeight:1,marginTop:2}}>SEASON 5</div>
+          <a href="/" style={{display:'flex',flexDirection:'row',alignItems:'center',gap:8,textDecoration:'none',flexShrink:0,whiteSpace:'nowrap'}}>
+            <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL"
+              style={{height:36,maxWidth:100,width:'auto',objectFit:'contain',display:'block',filter:'brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.7))',flexShrink:0}}/>
+            <div style={{display:'inline-flex',alignItems:'center',gap:4,background:'rgba(232,178,61,0.12)',border:'1px solid rgba(232,178,61,0.5)',borderRadius:6,padding:'3px 10px',flexShrink:0}}>
+              <span style={{fontSize:9}}>🏆</span>
+              <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:9,color:'#E8B23D',letterSpacing:'.12em'}}>SEASON 5</span>
             </div>
           </a>
           <div className="desk-nav">
@@ -145,7 +143,7 @@ function Navbar() {
       {open && (
         <div style={{position:'fixed',inset:0,background:'#06101E',zIndex:300,display:'flex',flexDirection:'column',padding:'80px 28px 40px',overflowY:'auto'}}>
           <button onClick={()=>setOpen(false)} style={{position:'absolute',top:18,right:18,background:'none',border:'none',color:'rgba(255,255,255,0.5)',fontSize:28,cursor:'pointer',lineHeight:1}}>✕</button>
-          <a href="/" style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,marginBottom:32,textDecoration:'none'}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff'}}>T20</span></a>
+          <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL" style={{height:36,width:'auto',objectFit:'contain',marginBottom:32,filter:'brightness(1.3)'}}/>
           {[['🏠 Home','/'],['🔴 Match Center','/match-center'],['🏏 Teams','/teams'],['🤝 Sponsors','/sponsors'],['📷 Photos','/photos'],['▶️ Videos','/videos'],['ℹ️ About','/about'],['❓ FAQ','/faq'],['✉️ Contact','/contact'],['🔑 Login','/register#login']].map(([l,h])=>(
             <a key={l} href={h} onClick={()=>setOpen(false)} style={{color:l.includes('Login')?'#FF7A29':'rgba(255,255,255,0.85)',fontWeight:700,fontSize:18,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,0.07)',display:'block'}}>{l}</a>
           ))}
@@ -156,42 +154,6 @@ function Navbar() {
   );
 }
 
-function Footer() {
-  return (
-    <footer style={{background:'#040C18',borderTop:'1px solid rgba(255,255,255,0.05)',padding:'48px 0 32px',position:'relative',zIndex:10}}>
-      <div className="wrap">
-        <div style={{display:'grid',gridTemplateColumns:'1fr',gap:32,marginBottom:32}}>
-          <div>
-            <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,marginBottom:8}}>
-              <span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff'}}>T20</span>
-              <span style={{fontSize:11,color:'rgba(255,122,41,0.7)',marginLeft:8,fontFamily:'Montserrat,sans-serif'}}>SEASON 5</span>
-            </div>
-            <p style={{color:'rgba(255,255,255,0.4)',fontSize:13,lineHeight:1.7,marginBottom:10,fontFamily:'Inter,sans-serif'}}>Relive the dream. Rediscover the thrill.</p>
-            <p style={{color:'rgba(255,122,41,0.65)',fontSize:12,fontWeight:700,fontFamily:'Montserrat,sans-serif',letterSpacing:'0.06em'}}>#OfficeSeStadiumtak</p>
-          </div>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
-            <div>
-              <div style={{color:'rgba(255,255,255,0.3)',fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:14,fontFamily:'Montserrat,sans-serif'}}>League</div>
-              {[['Schedule','/schedule'],['Match Center','/match-center'],['Teams','/teams'],['Points Table','/points-table'],['Photos','/photos'],['Videos','/videos']].map(([l,h])=>(
-                <div key={l} style={{marginBottom:9}}><a href={h} style={{color:'rgba(255,255,255,0.5)',fontSize:13,textDecoration:'none',fontFamily:'Inter,sans-serif'}}>{l}</a></div>
-              ))}
-            </div>
-            <div>
-              <div style={{color:'rgba(255,255,255,0.3)',fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:14,fontFamily:'Montserrat,sans-serif'}}>Info</div>
-              {[['About','/about'],['FAQ','/faq'],['Contact','/contact'],['Terms','/terms'],['Privacy','/privacy'],['Refunds','/refunds'],['Eligibility','/eligibility']].map(([l,h])=>(
-                <div key={l} style={{marginBottom:9}}><a href={h} style={{color:'rgba(255,255,255,0.5)',fontSize:13,textDecoration:'none',fontFamily:'Inter,sans-serif'}}>{l}</a></div>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div style={{borderTop:'1px solid rgba(255,255,255,0.05)',paddingTop:24,display:'flex',flexWrap:'wrap',gap:12,justifyContent:'space-between',alignItems:'center'}}>
-          <div style={{color:'rgba(255,255,255,0.25)',fontSize:11,fontFamily:'Inter,sans-serif'}}>© 2025 BCPL T20 Pvt. Ltd. · <a href="https://www.bcpl-t20.com" style={{color:'rgba(255,122,41,0.5)',textDecoration:'none'}}>www.bcpl-t20.com</a></div>
-          <div style={{color:'rgba(255,255,255,0.2)',fontSize:11,fontFamily:'Inter,sans-serif'}}>Relive the dream. Rediscover the thrill.</div>
-        </div>
-      </div>
-    </footer>
-  );
-}
 
 interface TeamRow {
   pos: number;
@@ -385,7 +347,7 @@ export function PointsTable() {
           )}
 
         </div>
-        <Footer/>
+        <BCPLFooter />
 
         {/* MOBILE STICKY CTA */}
         <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',padding:'10px 16px 18px',gap:10}}>

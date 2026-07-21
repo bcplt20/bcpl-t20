@@ -129,7 +129,11 @@ export function AuctionSelected() {
               <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:11, color:'#E8B23D', letterSpacing:'.12em' }}>BCPL SEASON 5 · FRANCHISE AUCTION</span>
             </div>
 
-            <div style={{ fontSize:80, animation:'starPop 0.6s 0.1s ease both', marginBottom:16 }}>🏆</div>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:16, animation:'starPop 0.6s 0.1s ease both', marginBottom:16 }}>
+              <span style={{ fontSize:64 }}>🏆</span>
+              <img src={import.meta.env.BASE_URL + 'bcpl-assets/role-icons/auction.png'} alt="Auction Hammer"
+                style={{ height:72, width:72, objectFit:'contain', filter:'drop-shadow(0 4px 20px rgba(232,178,61,0.6)) brightness(1.1)' }}/>
+            </div>
             <h1 style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(28px,6vw,64px)', lineHeight:1.05, color:'#fff', textTransform:'uppercase', marginBottom:16, letterSpacing:'-0.01em' }}>
               YOU ARE <span className="shimmer-gold">AUCTION</span><br/>SHORTLISTED
             </h1>
