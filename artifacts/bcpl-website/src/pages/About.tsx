@@ -96,7 +96,6 @@ function Navbar() {
             {links.map(l=>(
               <a key={l} href={ROUTE_MAP[l]||'/'} style={{color:l==='About'?'#FF7A29':'rgba(255,255,255,0.75)',fontWeight:600,fontSize:13.5,textDecoration:'none',fontFamily:'Inter,sans-serif',transition:'color 0.2s'}}>{l}</a>
             ))}
-            <a href="/register" className="btn-fire" style={{padding:'10px 22px',fontSize:14,textDecoration:'none'}}>Register ₹299</a>
           </div>
           <button className="ham-btn" onClick={()=>setOpen(o=>!o)} style={{flexDirection:'column',gap:5,background:'none',border:'none',cursor:'pointer',padding:8,zIndex:201}}>
             <span style={{display:'block',width:22,height:2,background:'#fff',borderRadius:12,transition:'all 0.25s',transform:open?'rotate(45deg) translate(5px,5px)':''}}/>
@@ -112,7 +111,7 @@ function Navbar() {
           {links.map(l=>(
             <a key={l} href={ROUTE_MAP[l]||'/'} onClick={()=>setOpen(false)} style={{color:'rgba(255,255,255,0.88)',fontWeight:700,fontSize:20,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,0.07)'}}>{l}</a>
           ))}
-          <button className="btn-fire" style={{marginTop:32,height:54,fontSize:17,width:'100%'}}>📝 Register for ₹299 →</button>
+          <a href="/register" className="btn-fire" style={{marginTop:32,height:54,fontSize:17,width:'100%',textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>📝 Register for ₹299 →</a>
         </div>
       )}
     </>
@@ -123,8 +122,8 @@ function Navbar() {
 function MobileStickyCTA() {
   return (
     <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',padding:'10px 16px calc(16px + env(safe-area-inset-bottom))',gap:10}}>
-      <button className="btn-fire" style={{flex:2,height:52,fontSize:15}}>Register ₹299 →</button>
-      <button className="btn-wa" style={{flex:1,height:52,fontSize:14}}>💬 WhatsApp</button>
+      <a href="/register" className="btn-fire" style={{flex:2,height:52,fontSize:15,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register ₹299 →</a>
+      <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" className="btn-wa" style={{flex:1,height:52,fontSize:14,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>💬 WhatsApp</a>
     </div>
   );
 }
@@ -294,7 +293,7 @@ export function About() {
             Join <span style={{color:'#FF7A29'}}>2.5 Lakh+</span> players who took their shot
           </h2>
           <p style={{color:'rgba(255,255,255,0.5)',fontSize:15,marginBottom:32}}>Registration open now. ₹299 only.</p>
-          <button className="btn-fire" style={{padding:'18px 48px',fontSize:17}}>Register for ₹299 →</button>
+          <a href="/register" className="btn-fire" style={{padding:'18px 48px',fontSize:17,textDecoration:'none',display:'inline-block'}}>Register for ₹299 →</a>
         </div>
       </section>
 

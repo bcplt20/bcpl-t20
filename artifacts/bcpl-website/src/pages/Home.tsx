@@ -297,8 +297,9 @@ export function Home() {
         }
 
         /* ── MOBILE GENERAL ── */
-        @media(max-width:640px){
+        @media(max-width:767px){
           .slbl{font-size:10px!important;}
+          .tl-grid{overflow-x:hidden;}
           .tl-grid::before{display:none!important;}
           .tl-arrow{display:none!important;}
           .hashtag-tag{font-size:20px!important;}

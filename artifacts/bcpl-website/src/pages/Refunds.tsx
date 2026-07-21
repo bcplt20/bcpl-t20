@@ -59,7 +59,7 @@ function MobileCTA() {
   return (
     <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,padding:'10px 16px 18px',background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',gap:10}}>
       <button className="btn-fire" style={{flex:2,height:52,fontSize:15}}>Register ₹299 →</button>
-      <button className="btn-wa" style={{flex:1,height:52,fontSize:14,borderRadius:14}}>💬 WhatsApp</button>
+      <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" className="btn-wa" style={{flex:1,height:52,fontSize:14,borderRadius:14,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>💬 WhatsApp</a>
     </div>
   );
 }
@@ -285,7 +285,7 @@ export function Refunds() {
                 {n:1,label:'Subject Line',desc:'Use exactly: "REFUND REQUEST — [Your Registration ID]"'},
                 {n:2,label:'Registration ID',desc:'Your unique BCPL Registration ID (found in confirmation email)'},
                 {n:3,label:'Reason',desc:'Brief explanation of why you\'re requesting the refund'},
-                {n:4,label:'Payment Screenshot',desc:'Screenshot or PDF of Razorpay payment confirmation'},
+                {n:4,label:'Payment Screenshot',desc:'Screenshot or PDF of Cashfree payment confirmation'},
               ].map((item)=>(
                 <div key={item.n} style={{display:'flex',gap:12,alignItems:'flex-start',background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:10,padding:'12px 14px'}}>
                   <div style={{width:24,height:24,borderRadius:'50%',background:'rgba(255,122,41,0.2)',border:'1px solid rgba(255,122,41,0.4)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:800,color:'#FF7A29',flexShrink:0,fontFamily:'Montserrat,sans-serif'}}>{item.n}</div>
@@ -309,7 +309,7 @@ export function Refunds() {
               {[
                 {days:'24h',label:'Acknowledgement',desc:'Refund request acknowledged via email'},
                 {days:'5-7',label:'Business Days',desc:'Refund processed and initiated'},
-                {days:'+1-2',label:'Extra Days',desc:'Razorpay gateway processing time'},
+                {days:'+1-2',label:'Extra Days',desc:'Cashfree gateway processing time'},
               ].map((item,i)=>(
                 <div key={i} style={{background:'rgba(255,122,41,0.08)',border:'1px solid rgba(255,122,41,0.2)',borderRadius:12,padding:'16px',textAlign:'center'}}>
                   <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:28,color:'#FF7A29',lineHeight:1}}>{item.days}</div>

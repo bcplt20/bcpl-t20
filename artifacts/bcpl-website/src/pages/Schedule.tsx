@@ -1,4 +1,5 @@
 import React from 'react';
+import { BCPLFooter } from '../components/BCPLFooter';
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap');
@@ -123,7 +124,6 @@ function Navbar() {
             {links.map(([l,h])=>(
               <a key={l} href={h} style={{color: l==='Schedule'?'#FF7A29':l==='Login'?'#FF7A29':'rgba(255,255,255,0.72)',fontSize:13,fontWeight:600,fontFamily:'Inter,sans-serif',textDecoration:'none',borderBottom: l==='Schedule'?'2px solid #FF7A29':'2px solid transparent',paddingBottom:2}}>{l}</a>
             ))}
-            <a href="/register" className="btn-fire" style={{padding:'10px 22px',fontSize:13,borderRadius:12,textDecoration:'none',display:'inline-flex',alignItems:'center'}}>Register ₹299</a>
           </div>
           <button className="ham-btn" onClick={()=>setOpen(o=>!o)} style={{flexDirection:'column',gap:5,background:'none',border:'none',cursor:'pointer',padding:8,zIndex:201}}>
             <span style={{display:'block',width:24,height:2,background:'#fff',borderRadius:12,transition:'all 0.25s',transform:open?'rotate(45deg) translate(5px,5px)':''}}/>
@@ -135,55 +135,16 @@ function Navbar() {
       {open && (
         <div style={{position:'fixed',inset:0,background:'#06101E',zIndex:300,display:'flex',flexDirection:'column',padding:'80px 28px 40px',overflowY:'auto'}}>
           <button onClick={()=>setOpen(false)} style={{position:'absolute',top:18,right:18,background:'none',border:'none',color:'rgba(255,255,255,0.5)',fontSize:28,cursor:'pointer',lineHeight:1}}>✕</button>
-          <a href="/" style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,marginBottom:32,textDecoration:'none'}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff'}}>T20</span></a>
+          <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL" style={{height:36,width:'auto',objectFit:'contain',marginBottom:32,filter:'brightness(1.3)'}}/>
           {[['🏠 Home','/'],['🔴 Match Center','/match-center'],['🏏 Teams','/teams'],['🤝 Sponsors','/sponsors'],['📷 Photos','/photos'],['▶️ Videos','/videos'],['ℹ️ About','/about'],['❓ FAQ','/faq'],['✉️ Contact','/contact'],['🔑 Login','/register#login']].map(([l,h])=>(
             <a key={l} href={h} onClick={()=>setOpen(false)} style={{color:l.includes('Login')?'#FF7A29':'rgba(255,255,255,0.85)',fontWeight:700,fontSize:18,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,0.07)',display:'block'}}>{l}</a>
           ))}
-          <a href="/register" className="btn-fire" style={{marginTop:32,height:54,fontSize:16,borderRadius:14,width:'100%',display:'flex',alignItems:'center',justifyContent:'center',textDecoration:'none'}}>📝 Register for ₹299 →</a>
         </div>
       )}
     </>
   );
 }
 
-function Footer() {
-  return (
-    <footer style={{background:'#040C18',borderTop:'1px solid rgba(255,255,255,0.05)',padding:'48px 0 32px',position:'relative',zIndex:10}}>
-      <div className="wrap">
-        <div style={{display:'grid',gridTemplateColumns:'1fr',gap:32,marginBottom:32}}>
-          <div style={{display:'grid',gridTemplateColumns:'1fr',gap:32}}>
-            <div>
-              <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,marginBottom:8}}>
-                <span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff'}}>T20</span>
-                <span style={{fontSize:11,color:'rgba(255,122,41,0.7)',marginLeft:8,fontFamily:'Montserrat,sans-serif'}}>SEASON 5</span>
-              </div>
-              <p style={{color:'rgba(255,255,255,0.4)',fontSize:13,lineHeight:1.7,marginBottom:10,fontFamily:'Inter,sans-serif'}}>Relive the dream. Rediscover the thrill.</p>
-              <p style={{color:'rgba(255,122,41,0.65)',fontSize:12,fontWeight:700,fontFamily:'Montserrat,sans-serif',letterSpacing:'0.06em'}}>#OfficeSeStadiumtak</p>
-            </div>
-            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
-              <div>
-                <div style={{color:'rgba(255,255,255,0.3)',fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:14,fontFamily:'Montserrat,sans-serif'}}>League</div>
-                {['Schedule','Match Center','Teams','Points Table','Photos','Videos'].map(l=>(
-                  <div key={l} style={{marginBottom:9}}><a href="#" style={{color:'rgba(255,255,255,0.5)',fontSize:13,textDecoration:'none',fontFamily:'Inter,sans-serif'}}>{l}</a></div>
-                ))}
-              </div>
-              <div>
-                <div style={{color:'rgba(255,255,255,0.3)',fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:14,fontFamily:'Montserrat,sans-serif'}}>Info</div>
-                {['About','FAQ','Contact','Terms','Privacy','Refunds','Eligibility'].map(l=>(
-                  <div key={l} style={{marginBottom:9}}><a href="#" style={{color:'rgba(255,255,255,0.5)',fontSize:13,textDecoration:'none',fontFamily:'Inter,sans-serif'}}>{l}</a></div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div style={{borderTop:'1px solid rgba(255,255,255,0.05)',paddingTop:24,display:'flex',flexWrap:'wrap',gap:12,justifyContent:'space-between',alignItems:'center'}}>
-          <div style={{color:'rgba(255,255,255,0.25)',fontSize:11,fontFamily:'Inter,sans-serif'}}>© 2025 BCPL T20 Pvt. Ltd. · <a href="https://www.bcpl-t20.com" style={{color:'rgba(255,122,41,0.5)',textDecoration:'none'}}>www.bcpl-t20.com</a></div>
-          <div style={{color:'rgba(255,255,255,0.2)',fontSize:11,fontFamily:'Inter,sans-serif'}}>Relive the dream. Rediscover the thrill.</div>
-        </div>
-      </div>
-    </footer>
-  );
-}
 
 type MatchStatus = 'COMPLETED' | 'LIVE' | 'UPCOMING' | 'TBD';
 
@@ -404,12 +365,12 @@ export function Schedule() {
           </div>
 
         </div>
-        <Footer/>
+        <BCPLFooter />
 
         {/* MOBILE STICKY CTA */}
         <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',padding:'10px 16px 18px',gap:10}}>
-          <button className="btn-fire" style={{flex:2,height:52,fontSize:15}}>Register ₹299 →</button>
-          <button className="btn-wa" style={{flex:1,height:52,fontSize:14,borderRadius:14}}>💬 WhatsApp</button>
+          <a href="/register" className="btn-fire" style={{flex:2,height:52,fontSize:15,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register ₹299 →</a>
+          <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" className="btn-wa" style={{flex:1,height:52,fontSize:14,borderRadius:14,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>💬 WhatsApp</a>
         </div>
       </div>
       {/* ── FLOATING REGISTER BUTTON ── */}

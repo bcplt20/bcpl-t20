@@ -1,4 +1,5 @@
 import React from 'react';
+import { BCPLFooter } from '../components/BCPLFooter';
 
 const L = import.meta.env.BASE_URL + "bcpl-assets/logos/";
 
@@ -116,7 +117,7 @@ export function Teams() {
       {/* TICKER */}
       <div style={{ background:"linear-gradient(90deg,#C94E0E,#FF7A29,#E8611A)", overflow:"hidden", height:34, display:"flex", alignItems:"center" }}>
         <div style={{ display:"flex", whiteSpace:"nowrap", animation:"tickerScroll 32s linear infinite" }}>
-          {[0,1].map(i=><span key={i} style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:11, letterSpacing:".1em", color:"#fff", paddingRight:80 }}>🏏 SEASON 5 OPEN · 10 FRANCHISE TEAMS · ₹6 CR PRIZE POOL · SOURAV GANGULY · #OfficeSeStadiumtak &nbsp;&nbsp; 🏏 SEASON 5 OPEN · 10 FRANCHISE TEAMS · ₹6 CR PRIZE POOL &nbsp;&nbsp;</span>)}
+          {[0,1].map(i=><span key={i} style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:11, letterSpacing:".1em", color:"#fff", paddingRight:80 }}>🏏 SEASON 5 OPEN · 10 FRANCHISE TEAMS · ₹6 CR PRIZE POOL · #OfficeSeStadiumtak &nbsp;&nbsp; 🏏 SEASON 5 OPEN · 10 FRANCHISE TEAMS · ₹6 CR PRIZE POOL &nbsp;&nbsp;</span>)}
         </div>
       </div>
 
@@ -136,18 +137,15 @@ export function Teams() {
               <a key={l} className={`nav-link${l==="Teams"?" active":""}`} href={ROUTE_MAP[l]||"#"}>{l}</a>
             ))}
           </div>
-          <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-            <button className="btn-orange" style={{ fontSize:12, padding:"9px 18px" }}>REGISTER NOW →</button>
-            <button
-              className="ham-btn"
-              onClick={() => setMenuOpen(true)}
-              style={{ flexDirection:"column", gap:5, background:"none", border:"none", cursor:"pointer", padding:8 }}
-            >
-              <span style={{ display:"block", width:22, height:2, background:"#fff", borderRadius:12 }}/>
-              <span style={{ display:"block", width:22, height:2, background:"#fff", borderRadius:12 }}/>
-              <span style={{ display:"block", width:22, height:2, background:"#fff", borderRadius:12 }}/>
-            </button>
-          </div>
+          <button
+            className="ham-btn"
+            onClick={() => setMenuOpen(true)}
+            style={{ flexDirection:"column", gap:5, background:"none", border:"none", cursor:"pointer", padding:8 }}
+          >
+            <span style={{ display:"block", width:22, height:2, background:"#fff", borderRadius:12 }}/>
+            <span style={{ display:"block", width:22, height:2, background:"#fff", borderRadius:12 }}/>
+            <span style={{ display:"block", width:22, height:2, background:"#fff", borderRadius:12 }}/>
+          </button>
         </div>
       </nav>
 
@@ -155,13 +153,11 @@ export function Teams() {
       {menuOpen && (
         <div className="mob-menu">
           <button className="close-btn" onClick={() => setMenuOpen(false)}>✕</button>
-          <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:24, marginBottom:8 }}>
-            <span style={{ color:"#FF7A29" }}>BCPL</span><span style={{ color:"#fff", marginLeft:3 }}>T20</span>
-          </div>
+          <img src={import.meta.env.BASE_URL + "bcpl-assets/bcpl-logo-white.png"} alt="BCPL" style={{ height:36, width:"auto", objectFit:"contain", marginBottom:16, filter:"brightness(1.3)" }}/>
           {[["🏠 Home","Home"],["🔴 Match Center","Match Center"],["🏏 Teams","Teams"],["🤝 Sponsors","Sponsors"],["📷 Photos","Photos"],["▶️ Videos","Videos"],["ℹ️ About","About"],["❓ FAQ","FAQ"],["✉️ Contact","Contact"]].map(([label, key])=>(
             <a key={key} href={ROUTE_MAP[key]||"#"} className="mob-menu-link" onClick={() => setMenuOpen(false)}>{label}</a>
           ))}
-          <button className="btn-orange" style={{ marginTop:16, height:52, fontSize:15, borderRadius:14, width:"100%" }}>📝 REGISTER NOW →</button>
+          <a href="/register" className="btn-orange" style={{ marginTop:16, height:52, fontSize:15, borderRadius:14, width:"100%", textDecoration:"none", display:"flex", alignItems:"center", justifyContent:"center" }}>📝 REGISTER NOW →</a>
         </div>
       )}
 
@@ -239,42 +235,12 @@ export function Teams() {
             <p style={{ fontFamily:"Inter,sans-serif", color:"rgba(255,255,255,0.45)", fontSize:15, lineHeight:1.7, maxWidth:460, margin:"0 auto 28px" }}>
               Register today and get your shot at Season 5. 50+ cities, all roles open.
             </p>
-            <button className="btn-orange" style={{ fontSize:14, padding:"14px 36px" }}>REGISTER NOW — ₹299 →</button>
+            <a href="/register" className="btn-orange" style={{ fontSize:14, padding:"14px 36px", textDecoration:"none", display:"inline-block" }}>REGISTER NOW — ₹299 →</a>
           </div>
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer style={{ background:"#040A15", borderTop:"1px solid rgba(255,255,255,0.06)", padding:"clamp(40px,6vw,56px) 0 0" }}>
-        <div className="wrap">
-          <div style={{ display:"flex", flexWrap:"wrap", justifyContent:"space-between", gap:32, marginBottom:40 }}>
-            <div>
-              <div style={{ display:"flex", alignItems:"baseline", gap:2, marginBottom:8 }}>
-                <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:22, color:"#FF7A29" }}>BCPL</span>
-                <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:22, color:"#fff" }}>T20</span>
-              </div>
-              <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, color:"#E8B23D", letterSpacing:".12em", textTransform:"uppercase", marginBottom:8 }}>#OfficeSeStadiumtak</div>
-              <div style={{ fontFamily:"Inter,sans-serif", fontSize:13, color:"rgba(255,255,255,0.3)", lineHeight:1.6 }}>India's biggest corporate T20 league.<br/>Season 5 · BCPL Pvt. Ltd.</div>
-            </div>
-            {[
-              {h:"League",links:[["About","/about"],["Teams","/teams"],["Sponsors","/sponsors"],["Schedule","/schedule"]]},
-              {h:"Help",links:[["FAQ","/faq"],["Contact","/contact"],["Eligibility","/eligibility"],["Rulebook","/cricket-rulebook"]]},
-              {h:"Legal",links:[["Terms","/terms"],["Privacy","/privacy"],["Refunds","/refunds"],["Code of Conduct","/code-of-conduct"]]}
-            ].map(col=>(
-              <div key={col.h}>
-                <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:9, letterSpacing:".12em", color:"rgba(255,255,255,0.25)", textTransform:"uppercase", marginBottom:12 }}>{col.h}</div>
-                <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
-                  {col.links.map(([l,href])=><a key={l} href={href} className="footer-link">{l}</a>)}
-                </div>
-              </div>
-            ))}
-          </div>
-          <div style={{ borderTop:"1px solid rgba(255,255,255,0.05)", padding:"18px 0", display:"flex", flexWrap:"wrap", justifyContent:"space-between", alignItems:"center", gap:10 }}>
-            <span style={{ fontFamily:"Inter,sans-serif", fontSize:11, color:"rgba(255,255,255,0.2)" }}>© 2026 BCPL Pvt. Ltd. · All Rights Reserved</span>
-            <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, color:"#FF7A29" }}>#OfficeSeStadiumtak</span>
-          </div>
-        </div>
-      </footer>
+      <BCPLFooter />
       {/* ── FLOATING REGISTER BUTTON ── */}
       <a className="float-reg-btn float-reg-pulse" href="/register" style={{textDecoration:"none"}}>🏏 REGISTER NOW →</a>
     </div>

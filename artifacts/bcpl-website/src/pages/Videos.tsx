@@ -42,20 +42,7 @@ body { background:#060E1C; }
         @media(min-width:900px){ .video-grid { grid-template-columns:repeat(3,1fr); } }
 `;
 
-const VIDEOS = [
-  {title:'DEL vs BLR Final — Full Highlights',cat:'Match Highlights',dur:'28:14',views:'87K views',date:'2 days ago',g:'linear-gradient(135deg,#3B82F6 0%,#1e3a5f 100%)'},
-  {title:'Mumbai Mavericks Squad Reveal 2025',cat:'Team Videos',dur:'6:45',views:'34K views',date:'5 days ago',g:'linear-gradient(135deg,#06B6D4 0%,#0c2a3a 100%)'},
-  {title:'Top 10 Catches Season 5',cat:'Compilations',dur:'8:22',views:'52K views',date:'1 week ago',g:'linear-gradient(135deg,#E8B23D 0%,#2a1f0a 100%)'},
-  {title:'BCPL Auction 2025 — All Bids',cat:'Auction',dur:'45:00',views:'120K views',date:'2 weeks ago',g:'linear-gradient(135deg,#8B5CF6 0%,#1e0a3a 100%)'},
-  {title:'How I Got Shortlisted — Ravi Story',cat:'Interviews',dur:'11:30',views:'28K views',date:'1 week ago',g:'linear-gradient(135deg,#22C55E 0%,#0a2a1a 100%)'},
-  {title:'Batting Masterclass BCCI Coach',cat:'Training',dur:'18:45',views:'19K views',date:'2 weeks ago',g:'linear-gradient(135deg,#F97316 0%,#2a1005 100%)'},
-  {title:'PUN vs KOL Match Highlights',cat:'Match Highlights',dur:'31:10',views:'41K views',date:'3 days ago',g:'linear-gradient(135deg,#A78BFA 0%,#1a0a3a 100%)'},
-  {title:'Season 5 Opening Ceremony',cat:'Events',dur:'12:34',views:'45K views',date:'3 days ago',g:'linear-gradient(135deg,#FF7A29 0%,#2a1205 100%)'},
-  {title:'Top 10 Sixes Season 5',cat:'Compilations',dur:'5:30',views:'67K views',date:'1 week ago',g:'linear-gradient(135deg,#EC4899 0%,#2a0a1a 100%)'},
-  {title:'AHM vs CHN Last Ball Thriller',cat:'Match Highlights',dur:'25:45',views:'39K views',date:'4 days ago',g:'linear-gradient(135deg,#EF4444 0%,#2a0505 100%)'},
-  {title:'Player Testimonials Season 5',cat:'Interviews',dur:'15:20',views:'22K views',date:'2 weeks ago',g:'linear-gradient(135deg,#10B981 0%,#0a2a1a 100%)'},
-  {title:'BCPL Season 5 Promo',cat:'Promos',dur:'2:30',views:'95K views',date:'1 month ago',g:'linear-gradient(135deg,#F59E0B 0%,#2a1a05 100%)'},
-];
+const VIDEOS: {title:string;cat:string;dur:string;views:string;date:string;g:string;ytId?:string}[] = [];
 
 const TABS = ['All','Highlights','Interviews','Trials','Promos'];
 const TAB_MAP: Record<string,string[]> = {
@@ -124,9 +111,8 @@ function Navbar() {
           </a>
           <div className="desk-nav">
             {links.map(l=>(
-              <a key={l} href="#" style={{color:l==='Videos'?'#FF7A29':'rgba(255,255,255,0.75)',fontWeight:600,fontSize:13.5,textDecoration:'none',fontFamily:'Inter,sans-serif',transition:'color 0.2s'}}>{l}</a>
+              <a key={l} href={ROUTE_MAP[l]||'/'} style={{color:l==='Videos'?'#FF7A29':'rgba(255,255,255,0.75)',fontWeight:600,fontSize:13.5,textDecoration:'none',fontFamily:'Inter,sans-serif',transition:'color 0.2s'}}>{l}</a>
             ))}
-            <button className="btn-fire" style={{padding:'10px 22px',fontSize:14}}>Register ₹299</button>
           </div>
           <button className="ham-btn" onClick={()=>setOpen(o=>!o)} style={{flexDirection:'column',gap:5,background:'none',border:'none',cursor:'pointer',padding:8,zIndex:201}}>
             <span style={{display:'block',width:22,height:2,background:'#fff',borderRadius:12,transition:'all 0.25s',transform:open?'rotate(45deg) translate(5px,5px)':''}}/>
@@ -137,12 +123,12 @@ function Navbar() {
       </nav>
       {open && (
         <div style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'#06101E',zIndex:300,display:'flex',flexDirection:'column',padding:'72px 24px 40px',overflowY:'auto'}}>
-          <button onClick={()=>{ setOpen(false); window.location.assign(ROUTE_MAP[l]||'/'); }} style={{position:'absolute',top:18,right:20,background:'none',border:'none',color:'rgba(255,255,255,0.5)',fontSize:28,cursor:'pointer',lineHeight:1}}>✕</button>
+          <button onClick={()=>setOpen(false)} style={{position:'absolute',top:18,right:20,background:'none',border:'none',color:'rgba(255,255,255,0.5)',fontSize:28,cursor:'pointer',lineHeight:1}}>✕</button>
           <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL" style={{height:36,width:'auto',objectFit:'contain',marginBottom:32,filter:'brightness(1.3)'}}/>
           {links.map(l=>(
             <a key={l} href="#" onClick={()=>{ setOpen(false); window.location.assign(ROUTE_MAP[l]||'/'); }} style={{color:'rgba(255,255,255,0.88)',fontWeight:700,fontSize:20,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,0.07)'}}>{l}</a>
           ))}
-          <button className="btn-fire" style={{marginTop:32,height:54,fontSize:17,width:'100%'}}>📝 Register for ₹299 →</button>
+          <a href="/register" className="btn-fire" style={{marginTop:32,height:54,fontSize:17,width:'100%',textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>📝 Register for ₹299 →</a>
         </div>
       )}
     </>
@@ -153,8 +139,8 @@ function Navbar() {
 function MobileStickyCTA() {
   return (
     <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',padding:'10px 16px calc(16px + env(safe-area-inset-bottom))',gap:10}}>
-      <button className="btn-fire" style={{flex:2,height:52,fontSize:15}}>Register ₹299 →</button>
-      <button className="btn-wa" style={{flex:1,height:52,fontSize:14}}>💬 WhatsApp</button>
+      <a href="/register" className="btn-fire" style={{flex:2,height:52,fontSize:15,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register ₹299 →</a>
+      <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" className="btn-wa" style={{flex:1,height:52,fontSize:14,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>💬 WhatsApp</a>
     </div>
   );
 }
@@ -242,7 +228,7 @@ export function Videos() {
                   <span style={{color:'#FF7A29',fontWeight:600}}>BCPL TV</span>
                 </div>
               </div>
-              <button className="btn-fire" style={{padding:'12px 28px',fontSize:14,flexShrink:0}}>Watch Now →</button>
+              <a href="https://www.youtube.com/@bcplt20" target="_blank" rel="noopener noreferrer" className="btn-fire" style={{padding:'12px 28px',fontSize:14,flexShrink:0,textDecoration:'none'}}>Watch on YouTube →</a>
             </div>
           </div>
         </div>
@@ -264,6 +250,16 @@ export function Videos() {
       {/* VIDEO GRID */}
       <section style={{position:'relative',zIndex:1,padding:'0 0 60px'}}>
         <div className="wrap">
+          {filtered.length === 0 && (
+            <div style={{textAlign:'center',padding:'60px 20px'}}>
+              <div style={{fontSize:48,marginBottom:16}}>📹</div>
+              <h3 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,color:'rgba(255,255,255,0.7)',marginBottom:10}}>No videos yet</h3>
+              <p style={{color:'rgba(255,255,255,0.4)',fontSize:15,fontFamily:'Inter,sans-serif',maxWidth:400,margin:'0 auto 24px',lineHeight:1.6}}>Match highlights and event videos will appear here once the season begins.</p>
+              <a href="https://www.youtube.com/@bcplt20" target="_blank" rel="noopener noreferrer" style={{display:'inline-flex',alignItems:'center',gap:8,padding:'14px 32px',borderRadius:14,background:'#FF0000',border:'none',color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,cursor:'pointer',textDecoration:'none',letterSpacing:'0.02em'}}>
+                <span>▶</span> Subscribe to BCPL TV
+              </a>
+            </div>
+          )}
           <div className="video-grid">
             {filtered.map((v,i)=>{
               const catColor = CAT_COLORS[v.cat] || '#FF7A29';
@@ -304,12 +300,12 @@ export function Videos() {
             <h3 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,color:'#fff',marginBottom:6}}>Subscribe to BCPL TV</h3>
             <div style={{color:'rgba(255,255,255,0.4)',fontSize:14,marginBottom:24,fontFamily:'Inter,sans-serif'}}>23K subscribers · New videos every match day</div>
             <div style={{display:'flex',gap:14,justifyContent:'center',flexWrap:'wrap'}}>
-              <button style={{padding:'14px 36px',borderRadius:14,background:'#FF0000',border:'none',color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,cursor:'pointer',display:'flex',alignItems:'center',gap:8,letterSpacing:'0.02em'}}>
+              <a href="https://www.youtube.com/@bcplt20" target="_blank" rel="noopener noreferrer" style={{padding:'14px 36px',borderRadius:14,background:'#FF0000',border:'none',color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,cursor:'pointer',display:'flex',alignItems:'center',gap:8,letterSpacing:'0.02em',textDecoration:'none'}}>
                 <span>▶</span> Subscribe
-              </button>
-              <button style={{padding:'14px 28px',borderRadius:14,background:'rgba(255,255,255,0.06)',border:'1.5px solid rgba(255,255,255,0.15)',color:'rgba(255,255,255,0.7)',fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:15,cursor:'pointer'}}>
+              </a>
+              <a href="https://www.youtube.com/@bcplt20?sub_confirmation=1" target="_blank" rel="noopener noreferrer" style={{padding:'14px 28px',borderRadius:14,background:'rgba(255,255,255,0.06)',border:'1.5px solid rgba(255,255,255,0.15)',color:'rgba(255,255,255,0.7)',fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:15,cursor:'pointer',textDecoration:'none',display:'inline-flex',alignItems:'center',gap:8}}>
                 🔔 Enable Alerts
-              </button>
+              </a>
             </div>
           </div>
         </div>

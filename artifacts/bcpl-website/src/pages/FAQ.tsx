@@ -55,10 +55,10 @@ const FAQS = [
   {cat:'Selection',q:'What is the franchise auction?',a:'The 10 BCPL franchise teams (Delhi Dynamos, Mumbai Mavericks, Pune Panthers, etc.) bid for players from the trial pool. Players selected in the auction play in the main BCPL T20 season completely free — zero additional fee required.'},
   {cat:'Selection',q:'How many players get selected each season?',a:'Each franchise picks 12–15 players, meaning roughly 120–150 players play in the main season. This represents about 5–8% of total registrants. Selection is purely merit-based through our transparent scouting system.'},
   // Payment
-  {cat:'Payment',q:'What payment methods are accepted?',a:'We accept all major UPI apps (GPay, PhonePe, Paytm, etc.), debit and credit cards (Visa, Mastercard, RuPay), net banking from 50+ banks, and popular wallets. All payments are processed securely via Razorpay.'},
-  {cat:'Payment',q:'Is my payment information secure?',a:'Yes, absolutely. All transactions are secured with 256-bit SSL encryption via Razorpay, India\'s most trusted payment gateway. BCPL never stores your card details — all sensitive data is handled exclusively by Razorpay\'s PCI-DSS compliant infrastructure.'},
+  {cat:'Payment',q:'What payment methods are accepted?',a:'We accept all major UPI apps (GPay, PhonePe, Paytm, etc.), debit and credit cards (Visa, Mastercard, RuPay), net banking from 50+ banks, and popular wallets. All payments are processed securely via Cashfree.'},
+  {cat:'Payment',q:'Is my payment information secure?',a:'Yes, absolutely. All transactions are secured with 256-bit SSL encryption via Cashfree, India\'s most trusted payment gateway. BCPL never stores your card details — all sensitive data is handled exclusively by Cashfree\'s PCI-DSS compliant infrastructure.'},
   {cat:'Payment',q:'Can I get a GST invoice for my registration?',a:'Yes. Email invoice@bcpl-t20.com with your Registration ID and GSTIN (if applicable). GST invoices are issued within 3 business days. The registration fee attracts applicable GST as per government regulations.'},
-  {cat:'Payment',q:'When is payment deducted from my account?',a:'Payment is deducted immediately upon successful form submission. Razorpay processes the transaction in real-time. You receive a payment confirmation SMS and email instantly after deduction.'},
+  {cat:'Payment',q:'When is payment deducted from my account?',a:'Payment is deducted immediately upon successful form submission. Cashfree processes the transaction in real-time. You receive a payment confirmation SMS and email instantly after deduction.'},
   // General
   {cat:'General',q:'When is BCPL Season 5?',a:'Video trials run from July–August 2025. Physical trials take place August–September 2025. The main BCPL T20 season (matches) runs September–November 2025. The finale is expected in late November 2025.'},
   {cat:'General',q:'Where are the matches held?',a:'BCPL Season 5 matches are held at professional cricket grounds in franchise cities, including iconic venues like DY Patil Stadium (Mumbai), Feroz Shah Kotla (Delhi), and other professional grounds across our 10 franchise cities.'},
@@ -127,7 +127,6 @@ function Navbar() {
             {links.map(l=>(
               <a key={l} href={ROUTE_MAP[l]||'/'} style={{color:l==='FAQ'?'#FF7A29':'rgba(255,255,255,0.75)',fontWeight:600,fontSize:13.5,textDecoration:'none',fontFamily:'Inter,sans-serif',transition:'color 0.2s'}}>{l}</a>
             ))}
-            <a href="/register" className="btn-fire" style={{padding:'10px 22px',fontSize:14,textDecoration:'none'}}>Register ₹299</a>
           </div>
           <button className="ham-btn" onClick={()=>setOpen(o=>!o)} style={{flexDirection:'column',gap:5,background:'none',border:'none',cursor:'pointer',padding:8,zIndex:201}}>
             <span style={{display:'block',width:22,height:2,background:'#fff',borderRadius:12,transition:'all 0.25s',transform:open?'rotate(45deg) translate(5px,5px)':''}}/>
@@ -143,7 +142,7 @@ function Navbar() {
           {links.map(l=>(
             <a key={l} href={ROUTE_MAP[l]||'/'} onClick={()=>setOpen(false)} style={{color:'rgba(255,255,255,0.88)',fontWeight:700,fontSize:20,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,0.07)'}}>{l}</a>
           ))}
-          <button className="btn-fire" style={{marginTop:32,height:54,fontSize:17,width:'100%'}}>📝 Register for ₹299 →</button>
+          <a href="/register" className="btn-fire" style={{marginTop:32,height:54,fontSize:17,width:'100%',textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>📝 Register for ₹299 →</a>
         </div>
       )}
     </>
@@ -154,8 +153,8 @@ function Navbar() {
 function MobileStickyCTA() {
   return (
     <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',padding:'10px 16px calc(16px + env(safe-area-inset-bottom))',gap:10}}>
-      <button className="btn-fire" style={{flex:2,height:52,fontSize:15}}>Register ₹299 →</button>
-      <button className="btn-wa" style={{flex:1,height:52,fontSize:14}}>💬 WhatsApp</button>
+      <a href="/register" className="btn-fire" style={{flex:2,height:52,fontSize:15,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register ₹299 →</a>
+      <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" className="btn-wa" style={{flex:1,height:52,fontSize:14,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>💬 WhatsApp</a>
     </div>
   );
 }
@@ -285,7 +284,7 @@ export function FAQ() {
             <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:28,color:'#fff',marginBottom:8}}>Still Have Questions?</h2>
             <p style={{color:'rgba(255,255,255,0.55)',fontSize:15,marginBottom:32,lineHeight:1.6}}>Our support team is here for you. We'll respond within 2 hours on WhatsApp.</p>
             <div style={{display:'flex',gap:14,justifyContent:'center',flexWrap:'wrap'}}>
-              <button className="btn-wa" style={{padding:'14px 28px',fontSize:15,borderRadius:14}}>💬 WhatsApp Us</button>
+              <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" className="btn-wa" style={{padding:'14px 28px',fontSize:15,borderRadius:14,textDecoration:'none',display:'inline-flex',alignItems:'center',gap:8}}>💬 WhatsApp Us</a>
               <a href="mailto:info@bcpl-t20.com" style={{textDecoration:'none'}}>
                 <button style={{padding:'14px 28px',fontSize:15,borderRadius:14,background:'rgba(6,182,212,0.15)',border:'1.5px solid rgba(6,182,212,0.4)',color:'#06B6D4',fontFamily:'Montserrat,sans-serif',fontWeight:700,cursor:'pointer'}}>📧 Email Us</button>
               </a>

@@ -59,7 +59,7 @@ function MobileCTA() {
   return (
     <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,padding:'10px 16px 18px',background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',gap:10}}>
       <button className="btn-fire" style={{flex:2,height:52,fontSize:15}}>Register ₹299 →</button>
-      <button className="btn-wa" style={{flex:1,height:52,fontSize:14,borderRadius:14}}>💬 WhatsApp</button>
+      <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" className="btn-wa" style={{flex:1,height:52,fontSize:14,borderRadius:14,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>💬 WhatsApp</a>
     </div>
   );
 }
@@ -131,7 +131,7 @@ export function Terms() {
     ]},
     {n:3,icon:'💳',title:'Payment Terms',items:[
       'Registration fee: ₹299 (Batsman/Bowler/Wicketkeeper) or ₹399 (All-Rounder) — GST inclusive',
-      'Payments processed securely via Razorpay; BCPL does not store card or UPI details',
+      'Payments processed securely via Cashfree; BCPL does not store card or UPI details',
       'Registration fees are non-refundable once a cricket video has been uploaded',
       'Within 7 days of registration (before video upload), a full refund may be requested',
       'In case of payment failure with amount debited, contact support@bcpl-t20.com within 48 hours',

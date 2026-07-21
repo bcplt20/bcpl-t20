@@ -148,9 +148,8 @@ function Navbar() {
           </a>
           <div className="desk-nav">
             {links.map(l=>(
-              <a key={l} href="#" style={{color:l==='Photos'?'#FF7A29':'rgba(255,255,255,0.75)',fontWeight:600,fontSize:13.5,textDecoration:'none',fontFamily:'Inter,sans-serif',transition:'color 0.2s'}}>{l}</a>
+              <a key={l} href={ROUTE_MAP[l]||'/'} style={{color:l==='Photos'?'#FF7A29':'rgba(255,255,255,0.75)',fontWeight:600,fontSize:13.5,textDecoration:'none',fontFamily:'Inter,sans-serif',transition:'color 0.2s'}}>{l}</a>
             ))}
-            <button className="btn-fire" style={{padding:'10px 22px',fontSize:14}}>Register ₹299</button>
           </div>
           <button className="ham-btn" onClick={()=>setOpen(o=>!o)} style={{flexDirection:'column',gap:5,background:'none',border:'none',cursor:'pointer',padding:8,zIndex:201}}>
             <span style={{display:'block',width:22,height:2,background:'#fff',borderRadius:12,transition:'all 0.25s',transform:open?'rotate(45deg) translate(5px,5px)':''}}/>
@@ -161,12 +160,12 @@ function Navbar() {
       </nav>
       {open && (
         <div style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'#06101E',zIndex:300,display:'flex',flexDirection:'column',padding:'72px 24px 40px',overflowY:'auto'}}>
-          <button onClick={()=>{ setOpen(false); window.location.assign(ROUTE_MAP[l]||'/'); }} style={{position:'absolute',top:18,right:20,background:'none',border:'none',color:'rgba(255,255,255,0.5)',fontSize:28,cursor:'pointer',lineHeight:1}}>✕</button>
+          <button onClick={()=>setOpen(false)} style={{position:'absolute',top:18,right:20,background:'none',border:'none',color:'rgba(255,255,255,0.5)',fontSize:28,cursor:'pointer',lineHeight:1}}>✕</button>
           <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL" style={{height:36,width:'auto',objectFit:'contain',marginBottom:32,filter:'brightness(1.3)'}}/>
           {links.map(l=>(
             <a key={l} href="#" onClick={()=>{ setOpen(false); window.location.assign(ROUTE_MAP[l]||'/'); }} style={{color:'rgba(255,255,255,0.88)',fontWeight:700,fontSize:20,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,0.07)'}}>{l}</a>
           ))}
-          <button className="btn-fire" style={{marginTop:32,height:54,fontSize:17,width:'100%'}}>📝 Register for ₹299 →</button>
+          <a href="/register" className="btn-fire" style={{marginTop:32,height:54,fontSize:17,width:'100%',textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>📝 Register for ₹299 →</a>
         </div>
       )}
     </>
@@ -177,8 +176,8 @@ function Navbar() {
 function MobileStickyCTA() {
   return (
     <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',padding:'10px 16px calc(16px + env(safe-area-inset-bottom))',gap:10}}>
-      <button className="btn-fire" style={{flex:2,height:52,fontSize:15}}>Register ₹299 →</button>
-      <button className="btn-wa" style={{flex:1,height:52,fontSize:14}}>💬 WhatsApp</button>
+      <a href="/register" className="btn-fire" style={{flex:2,height:52,fontSize:15,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register ₹299 →</a>
+      <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" className="btn-wa" style={{flex:1,height:52,fontSize:14,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>💬 WhatsApp</a>
     </div>
   );
 }
@@ -202,6 +201,7 @@ export function Photos() {
   const [filter, setFilter] = React.useState('All Photos');
   const [season, setSeason] = React.useState('Season 5');
   const [visible, setVisible] = React.useState(12);
+  const [lightbox, setLightbox] = React.useState<number|null>(null);
 
   const filtered = filter==='All Photos' ? PHOTOS : PHOTOS.filter(p=>p.cat===filter);
   const shown = filtered.slice(0, visible);
@@ -258,7 +258,7 @@ export function Photos() {
               const g = GRADIENTS[i % GRADIENTS.length];
               const catColor = CAT_COLORS[p.cat] || '#FF7A29';
               return (
-                <div key={i} className="photo-card" style={{background:g,height:h}}>
+                <div key={i} className="photo-card" style={{background:g,height:h}} onClick={()=>setLightbox(i)} role="button" tabIndex={0} aria-label={`View ${p.title}`}>
                   {/* subtle grid pattern overlay */}
                   <div style={{position:'absolute',inset:0,backgroundImage:'repeating-linear-gradient(0deg,transparent,transparent 20px,rgba(255,255,255,0.03) 20px,rgba(255,255,255,0.03) 21px),repeating-linear-gradient(90deg,transparent,transparent 20px,rgba(255,255,255,0.03) 20px,rgba(255,255,255,0.03) 21px)'}}/>
                   {/* cricket ball decoration */}
@@ -303,6 +303,30 @@ export function Photos() {
         </div>
       </section>
 
+      {/* LIGHTBOX */}
+      {lightbox !== null && (()=>{
+        const idx = lightbox;
+        const p = shown[idx];
+        const g = GRADIENTS[idx % GRADIENTS.length];
+        const catColor = CAT_COLORS[p.cat] || '#FF7A29';
+        return (
+          <div onClick={()=>setLightbox(null)} style={{position:'fixed',inset:0,zIndex:9000,background:'rgba(0,0,0,0.92)',display:'flex',alignItems:'center',justifyContent:'center',padding:20,cursor:'pointer'}}>
+            <div onClick={e=>e.stopPropagation()} style={{background:g,borderRadius:20,overflow:'hidden',maxWidth:640,width:'100%',maxHeight:'80vh',position:'relative',boxShadow:'0 40px 120px rgba(0,0,0,0.8)',cursor:'default'}}>
+              <div style={{position:'absolute',inset:0,backgroundImage:'repeating-linear-gradient(0deg,transparent,transparent 20px,rgba(255,255,255,0.03) 20px,rgba(255,255,255,0.03) 21px),repeating-linear-gradient(90deg,transparent,transparent 20px,rgba(255,255,255,0.03) 20px,rgba(255,255,255,0.03) 21px)'}}/>
+              <div style={{padding:'80px 40px 60px',textAlign:'center',position:'relative'}}>
+                <div style={{fontSize:56,marginBottom:12}}>🏏</div>
+                <span style={{display:'inline-flex',alignItems:'center',gap:4,background:catColor+'33',border:`1px solid ${catColor}66`,borderRadius:100,padding:'4px 14px',fontSize:11,fontFamily:'Montserrat,sans-serif',fontWeight:700,color:catColor,marginBottom:14}}>{p.cat}</span>
+                <div style={{color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:20,lineHeight:1.3}}>{p.title}</div>
+              </div>
+              <button onClick={()=>setLightbox(null)} style={{position:'absolute',top:12,right:12,background:'rgba(0,0,0,0.5)',border:'1px solid rgba(255,255,255,0.2)',borderRadius:'50%',width:36,height:36,color:'#fff',fontSize:18,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}>✕</button>
+              <div style={{display:'flex',justifyContent:'space-between',padding:'0 12px 12px',position:'relative'}}>
+                <button disabled={idx===0} onClick={()=>setLightbox(i=>i!==null&&i>0?i-1:i)} style={{background:'rgba(0,0,0,0.4)',border:'1px solid rgba(255,255,255,0.15)',borderRadius:10,padding:'8px 16px',color:'#fff',cursor:idx===0?'default':'pointer',opacity:idx===0?0.3:1,fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:13}}>← Prev</button>
+                <button disabled={idx>=shown.length-1} onClick={()=>setLightbox(i=>i!==null&&i<shown.length-1?i+1:i)} style={{background:'rgba(0,0,0,0.4)',border:'1px solid rgba(255,255,255,0.15)',borderRadius:10,padding:'8px 16px',color:'#fff',cursor:idx>=shown.length-1?'default':'pointer',opacity:idx>=shown.length-1?0.3:1,fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:13}}>Next →</button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
       {/* ── FLOATING REGISTER BUTTON ── */}
       <a className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>🏏 REGISTER NOW &rarr;</a>
       <BCPLFooter />

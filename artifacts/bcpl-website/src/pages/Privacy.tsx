@@ -59,7 +59,7 @@ function MobileCTA() {
   return (
     <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,padding:'10px 16px 18px',background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',gap:10}}>
       <button className="btn-fire" style={{flex:2,height:52,fontSize:15}}>Register ₹299 →</button>
-      <button className="btn-wa" style={{flex:1,height:52,fontSize:14,borderRadius:14}}>💬 WhatsApp</button>
+      <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" className="btn-wa" style={{flex:1,height:52,fontSize:14,borderRadius:14,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>💬 WhatsApp</a>
     </div>
   );
 }
@@ -134,7 +134,7 @@ export function Privacy() {
     ]},
     {n:3,icon:'🤝',title:'Data Sharing',items:[
       'Shortlisted player profiles (name, video, cricket role) are shared with franchise team scouts',
-      'Payment transaction data is processed by Razorpay under their separate Privacy Policy',
+      'Payment transaction data is processed by Cashfree under their separate Privacy Policy',
       'Aggregated, anonymised statistics may be shared with sponsors for league reporting',
       'We NEVER sell, rent, or trade your personal data to any third party — ever',
       'We do not share your data with advertisers, data brokers, or marketing platforms',
@@ -145,7 +145,7 @@ export function Privacy() {
       'SSL/TLS (HTTPS) encryption for all data in transit between your device and our servers',
       'Role-based access controls — only authorised BCPL staff access player data',
       'Regular third-party security audits and penetration testing (quarterly)',
-      'Razorpay processes payments in a PCI-DSS compliant environment — BCPL never sees card data',
+      'Cashfree processes payments in a PCI-DSS compliant environment — BCPL never sees card data',
       'In the event of a data breach, affected users will be notified within 72 hours',
     ]},
     {n:5,icon:'✊',title:'Your Rights',items:[
