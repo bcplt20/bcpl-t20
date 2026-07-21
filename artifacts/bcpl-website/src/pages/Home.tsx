@@ -128,6 +128,25 @@ export function Home() {
     return ()=>clearInterval(iv);
   },[]);
 
+  /* Timeline scroll observer */
+  const tlRef = useRef<HTMLDivElement|null>(null);
+  useEffect(()=>{
+    const el = tlRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      (entries)=>{
+        if (entries[0].isIntersecting) {
+          el.querySelectorAll<HTMLElement>(".tl-card").forEach(c=>c.classList.add("tl-visible"));
+          el.classList.add("has-visible");
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.10 }
+    );
+    obs.observe(el);
+    return ()=>obs.disconnect();
+  }, []);
+
   const B = BANNERS[bannerIdx];
 
   return (
@@ -222,19 +241,32 @@ export function Home() {
         /* S5 badge glow */
         .s5-badge{animation:s5spin 3s ease-in-out infinite;}
 
+        /* S5 nav badge pulse */
+        @keyframes s5NavPulse{0%,100%{box-shadow:0 0 6px rgba(232,178,61,.3)}50%{box-shadow:0 0 16px rgba(232,178,61,.7),0 0 28px rgba(232,178,61,.3)}}
+        .s5-nav-badge{animation:s5NavPulse 2.5s ease-in-out infinite;}
+
+        /* Hashtag style */
+        .hashtag-tag{display:inline-block;}
+
         /* Banner slide */
         .banner-in{animation:bannerIn .35s ease forwards;}
         .banner-out{animation:bannerOut .35s ease forwards;}
 
-        /* Timeline card pop */
-        .tl-card{animation:tlPop .5s ease forwards;opacity:0;display:flex;flex-direction:column;}
-        .tl-card:nth-child(1){animation-delay:.1s;}
-        .tl-card:nth-child(2){animation-delay:.2s;}
-        .tl-card:nth-child(3){animation-delay:.3s;}
-        .tl-card:nth-child(4){animation-delay:.4s;}
-        .tl-card:nth-child(5){animation-delay:.5s;}
+        /* Timeline */
+        .tl-card{opacity:0;display:flex;flex-direction:column;transition:opacity .5s ease,transform .5s ease;}
+        .tl-card.tl-visible{opacity:1;transform:translateY(0)!important;}
+        .tl-card:not(.tl-visible){transform:translateY(18px);}
+        .tl-card:nth-child(1){transition-delay:.05s;}
+        .tl-card:nth-child(2){transition-delay:.15s;}
+        .tl-card:nth-child(3){transition-delay:.25s;}
+        .tl-card:nth-child(4){transition-delay:.35s;}
+        .tl-card:nth-child(5){transition-delay:.45s;}
         /* Equal-height timeline inner cards */
-        .tl-inner{flex:1;display:flex;flex-direction:column;}
+        .tl-inner{flex:1;display:flex;flex-direction:column;transition:border-color .3s,box-shadow .3s;}
+        .tl-inner:hover{box-shadow:0 8px 32px rgba(0,0,0,.4)!important;}
+        /* Progress rail animation */
+        @keyframes railAnim{from{width:0}to{width:100%}}
+        .tl-rail{animation:railAnim 2.2s ease forwards;animation-delay:.6s;}
 
         /* Sponsor hover */
         .sp-card{transition:transform .2s,border-color .2s;}
@@ -242,7 +274,26 @@ export function Home() {
 
         /* Logo circle shimmer */
         .bcpl-logo{position:relative;overflow:hidden;}
-        .bcpl-logo::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);animation:shimmer 2.5s infinite;}
+        .bcpl-logo::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);animation:shimmer 2.5s infinite;}
+
+        /* ── MOBILE HERO IMPROVEMENTS ── */
+        @media(max-width:899px){
+          .hero-grid{flex-direction:column!important;gap:24px!important;}
+          .hero-right-stats{display:grid!important;grid-template-columns:repeat(2,1fr)!important;gap:10px!important;}
+          .hero-amb-card{display:flex!important;}
+        }
+        @media(max-width:480px){
+          .hero-right-stats{grid-template-columns:repeat(2,1fr)!important;}
+          .cd-box{min-width:52px!important;padding:10px 8px!important;}
+        }
+
+        /* ── MOBILE GENERAL ── */
+        @media(max-width:640px){
+          .slbl{font-size:10px!important;}
+          .tl-grid::before{display:none!important;}
+          .tl-arrow{display:none!important;}
+          .hashtag-tag{font-size:20px!important;}
+        }
       `}</style>
 
       {/* ══ TICKER ══ */}
@@ -276,15 +327,15 @@ export function Home() {
 
           {/* Logo */}
           <div style={{ display:"flex", alignItems:"center", gap:10, flexShrink:0, cursor:"pointer" }} onClick={()=>navigate("/")}>
-            <div className="bcpl-logo" style={{ width:42, height:42, borderRadius:"50%", overflow:"hidden", flexShrink:0, border:"2px solid rgba(255,122,41,0.5)", boxShadow:"0 0 12px rgba(255,122,41,0.35)" }}>
-              <img src={import.meta.env.BASE_URL + "bcpl-assets/bcpl-ball-color.jpg"} alt="BCPL" style={{ width:"100%", height:"100%", objectFit:"cover" }}/>
+            <div className="bcpl-logo" style={{ width:50, height:50, borderRadius:"50%", overflow:"hidden", flexShrink:0, border:"2.5px solid rgba(255,122,41,0.6)", boxShadow:"0 0 18px rgba(255,122,41,0.45), 0 0 36px rgba(255,122,41,0.15)" }}>
+              <img src={import.meta.env.BASE_URL + "bcpl-assets/bcpl-ball-color.jpg"} alt="BCPL T20" style={{ width:"100%", height:"100%", objectFit:"cover" }}/>
             </div>
-            <div>
-              <div style={{ display:"flex", alignItems:"baseline", gap:2 }}>
-                <span className="mont" style={{ fontWeight:900, fontSize:20, color:"#FF7A29", lineHeight:1 }}>BCPL</span>
-                <span className="mont" style={{ fontWeight:900, fontSize:20, color:"#fff", lineHeight:1 }}>T20</span>
+            <div style={{ display:"flex", flexDirection:"column", gap:2 }}>
+              <div className="s5-nav-badge mont" style={{ display:"inline-flex", alignItems:"center", gap:5, background:"linear-gradient(135deg,rgba(232,178,61,.18),rgba(232,178,61,.06))", border:"1.5px solid rgba(232,178,61,.55)", borderRadius:8, padding:"3px 8px" }}>
+                <span style={{ fontSize:11 }}>🏆</span>
+                <span style={{ fontWeight:900, fontSize:12, color:"#E8B23D", letterSpacing:".06em", animation:"glow 2.5s ease infinite" }}>SEASON 5</span>
               </div>
-              <div className="mont" style={{ fontWeight:800, fontSize:8, letterSpacing:".12em", color:"#E8B23D", textTransform:"uppercase", lineHeight:1, marginTop:2 }}>Season 5 · 2026–27</div>
+              <div className="mont" style={{ fontWeight:700, fontSize:8, letterSpacing:".1em", color:"rgba(255,255,255,.35)", textTransform:"uppercase", paddingLeft:2 }}>2026–27 · BCPL T20</div>
             </div>
           </div>
 
@@ -323,9 +374,9 @@ export function Home() {
         {/* BG grid */}
         <div style={{ position:"absolute", inset:0, backgroundImage:"linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px)", backgroundSize:"60px 60px", pointerEvents:"none" }}/>
         <div style={{ position:"absolute", top:"-20%", left:"-10%", width:"60%", height:"140%", background:"radial-gradient(ellipse,rgba(255,122,41,.06) 0%,transparent 65%)", pointerEvents:"none" }}/>
-        {/* Ganguly watermark */}
-        <img src={import.meta.env.BASE_URL + "bcpl-assets/ganguly_shoot.jpg"} alt="" aria-hidden="true"
-          style={{ position:"absolute", right:0, top:0, height:"100%", width:"auto", objectFit:"cover", objectPosition:"center top", opacity:0.13, pointerEvents:"none", userSelect:"none", filter:"grayscale(15%) contrast(1.05)", zIndex:0, maskImage:"linear-gradient(to left, rgba(0,0,0,0.9) 0%, transparent 65%)", WebkitMaskImage:"linear-gradient(to left, rgba(0,0,0,0.9) 0%, transparent 65%)" as any }}
+        {/* Ganguly watermark — visible brand ambassador presence */}
+        <img src={import.meta.env.BASE_URL + "bcpl-assets/ganguly_shoot.jpg"} alt="Sourav Ganguly — BCPL Brand Ambassador" aria-hidden="true"
+          style={{ position:"absolute", right:0, top:0, height:"100%", width:"auto", objectFit:"cover", objectPosition:"center top", opacity:0.32, pointerEvents:"none", userSelect:"none", filter:"sepia(10%) contrast(1.08) brightness(0.95)", zIndex:0, maskImage:"linear-gradient(to left, rgba(0,0,0,1) 10%, rgba(0,0,0,0.7) 45%, transparent 72%)", WebkitMaskImage:"linear-gradient(to left, rgba(0,0,0,1) 10%, rgba(0,0,0,0.7) 45%, transparent 72%)" as any }}
         />
 
         <div className="W" style={{ position:"relative", zIndex:1, paddingTop:"clamp(48px,8vw,80px)", paddingBottom:"clamp(48px,8vw,72px)" }}>
@@ -356,9 +407,12 @@ export function Home() {
                 Cricket League
               </h1>
 
-              <p style={{ fontSize:"clamp(15px,2vw,18px)", color:"rgba(255,255,255,.6)", lineHeight:1.7, marginBottom:28, maxWidth:500 }}>
-                10 franchise teams. 50+ cities. ₹6 Crore+ prize pool. Open to every working professional. <strong style={{ color:"rgba(255,255,255,.85)" }}>Office se Stadium tak.</strong>
+              <p style={{ fontSize:"clamp(14px,2vw,17px)", color:"rgba(255,255,255,.6)", lineHeight:1.7, marginBottom:12, maxWidth:500 }}>
+                10 franchise teams · 50+ cities · ₹6 Crore+ prize pool · Open to every working professional.
               </p>
+              <div style={{ marginBottom:28 }}>
+                <span className="mont hashtag-tag" style={{ fontWeight:900, fontSize:"clamp(18px,3vw,24px)", letterSpacing:".01em", background:"linear-gradient(90deg,#FF7A29,#FFB347,#FF7A29)", backgroundSize:"200% auto", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text", animation:"gradMove 3s ease infinite" }}>#OfficeSeStadiumTak</span>
+              </div>
 
               {/* Price pills */}
               <div style={{ display:"flex", flexWrap:"wrap", gap:10, marginBottom:28 }}>
@@ -391,8 +445,8 @@ export function Home() {
             </div>
 
             {/* Right: Stats + Trust */}
-            <div style={{ flex:"0 0 auto", display:"flex", flexDirection:"column", gap:12, alignSelf:"stretch", minWidth:0 }}>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
+            <div style={{ flex:"0 0 auto", display:"flex", flexDirection:"column", gap:12, alignSelf:"stretch", minWidth:0, width:"100%" }}>
+              <div className="hero-right-stats" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
                 {STATS.map(s=>(
                   <div key={s.label} className="card" style={{ padding:"16px 14px", borderLeft:`3px solid ${s.color}` }}>
                     <div className="mont" style={{ fontWeight:900, fontSize:"clamp(22px,3vw,28px)", color:s.color }}>{s.value}</div>
@@ -400,11 +454,12 @@ export function Home() {
                   </div>
                 ))}
               </div>
-              <div className="card" style={{ padding:16, display:"flex", alignItems:"center", gap:12, borderColor:"rgba(232,178,61,.25)" }}>
-                <div style={{ width:44, height:44, borderRadius:12, background:"linear-gradient(135deg,#E8B23D,#C49A1E)", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:18, color:"#fff", flexShrink:0 }}>SG</div>
+              <div className="card hero-amb-card" style={{ padding:16, display:"flex", alignItems:"center", gap:12, borderColor:"rgba(232,178,61,.35)", boxShadow:"0 0 20px rgba(232,178,61,.08)" }}>
+                <div style={{ width:48, height:48, borderRadius:14, background:"linear-gradient(135deg,#E8B23D,#C49A1E)", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:20, color:"#fff", flexShrink:0, boxShadow:"0 4px 14px rgba(232,178,61,.3)" }}>SG</div>
                 <div>
-                  <div className="mont" style={{ fontWeight:900, fontSize:14, color:"#E8B23D" }}>Sourav Ganguly</div>
-                  <div style={{ fontSize:11, color:"rgba(255,255,255,.4)" }}>Brand Ambassador · BCPL T20</div>
+                  <div style={{ fontSize:10, fontWeight:700, letterSpacing:".1em", color:"rgba(232,178,61,.6)", textTransform:"uppercase", marginBottom:3 }}>Brand Ambassador</div>
+                  <div className="mont" style={{ fontWeight:900, fontSize:15, color:"#E8B23D" }}>Sourav Ganguly</div>
+                  <div style={{ fontSize:11, color:"rgba(255,255,255,.45)", marginTop:2 }}>Former BCCI President · Legend of Cricket</div>
                   <div style={{ fontSize:11, color:"rgba(255,255,255,.55)", marginTop:3, fontStyle:"italic" }}>"Cricket is a way of life."</div>
                 </div>
               </div>
@@ -604,7 +659,7 @@ export function Home() {
           <p style={{ fontSize:15, color:"rgba(255,255,255,.45)", marginBottom:48, maxWidth:540 }}>From registration to the trophy — here's the complete road map for BCPL T20 Season 5.</p>
 
           {/* Timeline grid */}
-          <div className="tl-grid">
+          <div className="tl-grid" ref={tlRef}>
             {TIMELINE.map((t, i)=>(
               <div key={i} className="tl-card" style={{ position:"relative" }}>
                 {/* Card */}
@@ -675,7 +730,8 @@ export function Home() {
           <style>{`
             @media(min-width:768px){
               .tl-grid{position:relative;align-items:stretch;}
-              .tl-grid::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:linear-gradient(90deg,#FF7A29,#E8B23D,#22C55E,#3B82F6,#6366F1);transform:translateY(-50%);z-index:0;opacity:.2;}
+              .tl-grid::before{content:'';position:absolute;top:50%;left:0;right:0;height:2px;background:linear-gradient(90deg,#FF7A29,#E8B23D,#22C55E,#3B82F6,#6366F1);transform:translateY(-50%);z-index:0;opacity:.25;animation:railAnim 2.2s ease forwards;animation-delay:.6s;width:0;}
+              .tl-grid.has-visible::before{width:100%;}
             }
             @media(max-width:767px){
               .tl-grid{display:grid;grid-template-columns:1fr;gap:12px;}

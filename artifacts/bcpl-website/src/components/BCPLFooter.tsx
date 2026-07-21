@@ -21,9 +21,10 @@ export function BCPLFooter() {
     <footer style={{ background:"#030710", borderTop:"1px solid rgba(255,255,255,.05)", padding:"clamp(32px,5vw,52px) 0 20px", fontFamily:"Montserrat,Inter,sans-serif" }}>
       <style>{`
         .bcpl-foot-wrap { max-width:1200px; margin:0 auto; padding:0 clamp(16px,4vw,40px); }
-        .bcpl-foot-cols { display:grid; grid-template-columns:200px 1fr 1fr 1fr; gap:32px; margin-bottom:32px; }
-        @media(max-width:767px){ .bcpl-foot-cols{grid-template-columns:1fr 1fr;} }
-        @media(max-width:480px){ .bcpl-foot-cols{grid-template-columns:1fr;} }
+        .bcpl-foot-cols { display:grid; grid-template-columns:220px 1fr 1fr 1fr; gap:40px; margin-bottom:32px; }
+        @media(max-width:900px){ .bcpl-foot-cols{grid-template-columns:1fr 1fr 1fr;} .bcpl-foot-brand{grid-column:1/-1;display:flex;align-items:center;gap:24px;} .bcpl-foot-brand p{margin-top:0!important;max-width:none!important;} }
+        @media(max-width:540px){ .bcpl-foot-cols{grid-template-columns:1fr 1fr;} .bcpl-foot-brand{flex-direction:column;align-items:flex-start;gap:10px;} }
+        @media(max-width:380px){ .bcpl-foot-cols{grid-template-columns:1fr;} }
         .bcpl-foot-link:hover{ color:#FF7A29!important; }
         .bcpl-soc:hover{ border-color:#FF7A29!important; background:rgba(255,122,41,.12)!important; }
         .bcpl-foot-bottom{ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; }
@@ -33,7 +34,7 @@ export function BCPLFooter() {
       <div className="bcpl-foot-wrap">
         <div className="bcpl-foot-cols">
           {/* Brand */}
-          <div>
+          <div className="bcpl-foot-brand">
             <a href="/" style={{ display:"flex", alignItems:"center", gap:10, textDecoration:"none", marginBottom:12 }}>
               <div style={{ width:40, height:40, borderRadius:"50%", overflow:"hidden", flexShrink:0, border:"2px solid rgba(255,122,41,0.4)", boxShadow:"0 0 10px rgba(255,122,41,0.25)" }}>
                 <img src={BASE + "bcpl-assets/bcpl-ball-color.jpg"} alt="BCPL"
