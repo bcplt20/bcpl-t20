@@ -1,7 +1,8 @@
 import { useState } from "react";
 
-// Actuals start at 0; targets are editable below
-const MONTHLY = [
+type MonthEntry = { month:string; actual:number; target:number; revenue:number };
+// Actuals start at 0; targets are editable
+const INIT_MONTHLY: MonthEntry[] = [
   { month:"Jul",   actual:0, target:500,  revenue:0 },
   { month:"Aug",   actual:0, target:1500, revenue:0 },
   { month:"Sep",   actual:0, target:2000, revenue:0 },
@@ -15,21 +16,25 @@ const SCENARIOS = [
 ];
 
 export default function ForecastView() {
-  const [goal,     setGoal]     = useState(6000);
-  const [avgRev,   setAvgRev]   = useState(299);
-  const [daysLeft, setDaysLeft] = useState(180);
-  const [scenario, setScenario] = useState(1);
-  const [editGoal, setEditGoal] = useState(false);
+  const [goal,      setGoal]      = useState(6000);
+  const [avgRev,    setAvgRev]    = useState(299);
+  const [daysLeft,  setDaysLeft]  = useState(180);
+  const [scenario,  setScenario]  = useState(1);
+  const [editGoal,  setEditGoal]  = useState(false);
+  const [monthly,   setMonthly]   = useState<MonthEntry[]>(INIT_MONTHLY);
+  const [addOpen,   setAddOpen]   = useState(false);
+  const [editIdx,   setEditIdx]   = useState<number|null>(null);
+  const [addForm,   setAddForm]   = useState({ month:"", target:"", actual:"" });
 
-  const totalActual   = MONTHLY.reduce((a,m)=>a+m.actual,0);
-  const totalTarget   = MONTHLY.reduce((a,m)=>a+m.target,0);
+  const totalActual   = monthly.reduce((a,m)=>a+m.actual,0);
+  const totalTarget   = monthly.reduce((a,m)=>a+m.target,0);
   const pct           = Math.round(totalActual/goal*100);
   const remaining     = goal - totalActual;
-  const dailyNeeded   = Math.ceil(remaining / daysLeft);
+  const dailyNeeded   = Math.ceil(remaining / Math.max(daysLeft,1));
   const projTotal     = Math.round(totalActual + (dailyNeeded * daysLeft * SCENARIOS[scenario].multiplier));
   const projRevenue   = projTotal * avgRev;
 
-  const maxBar = Math.max(...MONTHLY.map(m=>Math.max(m.actual,m.target)), 1);
+  const maxBar = Math.max(...monthly.map(m=>Math.max(m.actual,m.target)), 1);
   const card:React.CSSProperties={background:"linear-gradient(135deg,#0D1526,#0A1020)",border:"1px solid #1E293B",borderRadius:16,padding:20};
 
   return (
@@ -39,14 +44,17 @@ export default function ForecastView() {
           <div style={{fontSize:20,fontWeight:800,color:"#F1F5F9"}}>Revenue Forecasting</div>
           <div style={{fontSize:12,color:"#64748B",marginTop:2}}>Season 5 trajectory — actual vs target with scenario planning</div>
         </div>
-        <button style={{padding:"9px 16px",borderRadius:9,border:"none",background:"linear-gradient(135deg,#FF6B00,#FF8C40)",color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer"}}>⬇ Export Forecast</button>
+        <div style={{display:"flex",gap:8}}>
+          <button onClick={()=>setAddOpen(true)} style={{padding:"9px 16px",borderRadius:9,border:"1px solid #FF6B00",background:"#FF6B0018",color:"#FF6B00",fontSize:12,fontWeight:700,cursor:"pointer"}}>+ Add Month</button>
+          <button onClick={()=>{ const rows=monthly.map(m=>`${m.month},${m.actual},${m.target},${m.revenue}`).join('\n'); const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,Month,Actual,Target,Revenue\n'+rows;a.download='bcpl_forecast.csv';a.click(); }} style={{padding:"9px 16px",borderRadius:9,border:"none",background:"linear-gradient(135deg,#FF6B00,#FF8C40)",color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer"}}>⬇ Export</button>
+        </div>
       </div>
 
       {/* Key metrics */}
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12}}>
         {[
           {label:"Registered So Far",  value:totalActual.toLocaleString(), sub:`of ${goal.toLocaleString()} goal`, color:"#FF6B00"},
-          {label:"Revenue So Far",     value:`₹${(MONTHLY.reduce((a,m)=>a+m.revenue,0)/100000).toFixed(1)}L`, sub:"Phase 1 only",color:"#10B981"},
+          {label:"Revenue So Far",     value:`₹${(monthly.reduce((a,m)=>a+m.revenue,0)/100000).toFixed(1)}L`, sub:"Phase 1 only",color:"#10B981"},
           {label:"Daily Pace Needed",  value:dailyNeeded, sub:`next ${daysLeft} days`,color:"#6366F1"},
           {label:"Projected Final",    value:projTotal.toLocaleString(), sub:SCENARIOS[scenario].label,color:SCENARIOS[scenario].color},
         ].map(s=>(
@@ -93,12 +101,16 @@ export default function ForecastView() {
             </div>
           </div>
           <div style={{display:"flex",gap:16,alignItems:"flex-end",height:180}}>
-            {MONTHLY.map((m,i)=>(
-              <div key={i} style={{flex:1,display:"flex",gap:3,alignItems:"flex-end",height:"100%"}}>
+            {monthly.map((m,i)=>(
+              <div key={i} style={{flex:1,display:"flex",gap:3,alignItems:"flex-end",height:"100%",position:"relative"}} title={`Target: ${m.target} | Actual: ${m.actual}`}>
                 <div style={{flex:1,display:"flex",flexDirection:"column",justifyContent:"flex-end",gap:2}}>
                   <div style={{background:m.actual>0?"#FF6B00":"#FF6B0030",borderRadius:"4px 4px 0 0",height:`${(m.actual/maxBar)*160}px`,minHeight:m.actual>0?4:0,transition:"height .4s"}}/>
                   <div style={{background:"#1E3A5F",borderRadius:"4px 4px 0 0",height:`${(m.target/maxBar)*160}px`,opacity:0.7}}/>
-                  <div style={{fontSize:9,color:"#475569",textAlign:"center",marginTop:6,whiteSpace:"nowrap"}}>{m.month}</div>
+                  <div style={{display:"flex",justifyContent:"center",alignItems:"center",gap:3,marginTop:6}}>
+                    <span style={{fontSize:9,color:"#475569",whiteSpace:"nowrap"}}>{m.month}</span>
+                    <button onClick={()=>{setEditIdx(i);setAddForm({month:m.month,target:String(m.target),actual:String(m.actual)});setAddOpen(true);}}
+                      style={{fontSize:8,padding:"1px 4px",borderRadius:3,border:"1px solid #1E293B",background:"transparent",color:"#475569",cursor:"pointer"}}>✏</button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -127,6 +139,44 @@ export default function ForecastView() {
           </div>
         </div>
       </div>
+
+      {/* Add / Edit Month Modal */}
+      {addOpen&&(
+        <div style={{position:"fixed",inset:0,background:"#00000088",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={()=>{setAddOpen(false);setEditIdx(null);setAddForm({month:"",target:"",actual:""});}}>
+          <div style={{...card,width:400,padding:28}} onClick={e=>e.stopPropagation()}>
+            <div style={{fontSize:16,fontWeight:800,color:"#F1F5F9",marginBottom:20}}>{editIdx!==null?"✏ Edit Month Target":"+ Add Forecast Month"}</div>
+            {[
+              {label:"Month Name",key:"month",type:"text",placeholder:"e.g. Nov"},
+              {label:"Registration Target",key:"target",type:"number",placeholder:"e.g. 2000"},
+              {label:"Actual Registrations",key:"actual",type:"number",placeholder:"e.g. 0"},
+            ].map(f=>(
+              <div key={f.key} style={{marginBottom:14}}>
+                <label style={{fontSize:11,fontWeight:700,color:"#475569",display:"block",marginBottom:6,textTransform:"uppercase"}}>{f.label}</label>
+                <input type={f.type} value={addForm[f.key as keyof typeof addForm]} onChange={e=>setAddForm(p=>({...p,[f.key]:e.target.value}))}
+                  placeholder={f.placeholder}
+                  style={{width:"100%",padding:"10px 12px",borderRadius:9,border:"1px solid #1E293B",background:"#060B18",color:"#E2E8F0",fontSize:13,outline:"none",boxSizing:"border-box"}}/>
+              </div>
+            ))}
+            <div style={{display:"flex",gap:10,marginTop:8}}>
+              {editIdx!==null&&(
+                <button onClick={()=>{ setMonthly(m=>m.filter((_,i)=>i!==editIdx)); setAddOpen(false);setEditIdx(null);setAddForm({month:"",target:"",actual:""}); }}
+                  style={{padding:"11px 16px",borderRadius:10,border:"1px solid #EF444444",background:"transparent",color:"#EF4444",fontSize:12,cursor:"pointer",fontWeight:700}}>🗑 Remove</button>
+              )}
+              <button onClick={()=>{setAddOpen(false);setEditIdx(null);setAddForm({month:"",target:"",actual:""}); }} style={{flex:1,padding:"11px",borderRadius:10,border:"1px solid #1E293B",background:"transparent",color:"#64748B",fontSize:13,cursor:"pointer"}}>Cancel</button>
+              <button onClick={()=>{
+                if(!addForm.month.trim()||!addForm.target) return;
+                const entry:MonthEntry={month:addForm.month.trim(),target:parseInt(addForm.target)||0,actual:parseInt(addForm.actual)||0,revenue:(parseInt(addForm.actual)||0)*avgRev};
+                if(editIdx!==null){ setMonthly(m=>m.map((x,i)=>i===editIdx?entry:x)); }
+                else { setMonthly(m=>[...m,entry]); }
+                setAddOpen(false);setEditIdx(null);setAddForm({month:"",target:"",actual:""});
+              }} disabled={!addForm.month.trim()||!addForm.target}
+                style={{flex:2,padding:"11px",borderRadius:10,border:"none",background:"linear-gradient(135deg,#FF6B00,#FF8C40)",color:"#fff",fontWeight:700,fontSize:13,cursor:"pointer",opacity:addForm.month.trim()&&addForm.target?1:0.5}}>
+                {editIdx!==null?"Save Changes":"Add Month"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

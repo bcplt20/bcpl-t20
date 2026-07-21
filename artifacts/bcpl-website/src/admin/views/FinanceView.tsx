@@ -8,8 +8,8 @@ import {
 const GST_RATE   = 0.18;
 const CF_FEE     = 0.02;   // Cashfree 2% gateway fee
 const TDS_RATE   = 0.10;   // TDS on prizes
-const BCPL_GSTIN = "07AABCK9234P1ZX";
-const BCPL_ADDR  = "Kriparthi Playing Eleven Pvt. Ltd. (BCPL T20), 4th Floor, Sector-44, Gurugram, Haryana - 122003";
+const BCPL_GSTIN = "07AAHCK4053D1ZS";
+const BCPL_ADDR  = "Kriparti Playing11 Private Limited, 2nd Floor Back Side, RZ-108, Indra Park, Uttam Nagar, West Delhi, Delhi - 110059";
 
 /* ─── Data — empty until real transactions come in ───────────── */
 const dailyRevenue: { day:string; p1:number; p2:number; refunds:number }[] = [];
@@ -185,7 +185,7 @@ export default function FinanceView() {
   const [invoice,   setInvoice]   = useState<Txn|null>(null);
   const [search,    setSearch]    = useState("");
 
-  const totalRevenue  = 630600;
+  const totalRevenue  = TRANSACTIONS.filter(t=>t.status==="success").reduce((a,t)=>a+t.amount,0);
   const totalGST      = Math.round(totalRevenue * GST_RATE);
   const totalGW       = Math.round(totalRevenue * CF_FEE);
   const netRevenue    = totalRevenue - totalGST - totalGW;
@@ -222,12 +222,12 @@ export default function FinanceView() {
       {/* ── KPI Cards ── */}
       <div style={{ display:"grid", gridTemplateColumns:"repeat(6,1fr)", gap:10 }}>
         {[
-          { label:"Total Revenue",    value:"₹6.31L",         sub:`${TRANSACTIONS.filter(t=>t.status==="success").length} paid txns`, color:"#FF6B00", delta:"+18.4%" },
-          { label:"Net Revenue",      value:`₹${(netRevenue/1000).toFixed(1)}k`,sub:"After GST & gateway fee",color:"#10B981",delta:"+14.2%"},
-          { label:"GST Collected",    value:`₹${(totalGST/1000).toFixed(1)}k`,  sub:"18% on all payments",    color:"#6366F1", delta:"FY 25-26" },
-          { label:"Gateway Fees",     value:`₹${(totalGW/1000).toFixed(1)}k`,   sub:"Cashfree 2% fee",        color:"#F59E0B", delta:"CF charges" },
-          { label:"Total Refunds",    value:`₹${totalRefunds}`,                  sub:`${REFUNDS.length} refund requests`,color:"#EF4444",delta:"-₹"+totalRefunds},
-          { label:"Pending Clearance",value:"₹3,22,000",                         sub:"In Cashfree settlement", color:"#3B82F6", delta:"T+2 days"  },
+          { label:"Total Revenue",    value:totalRevenue>0?`₹${(totalRevenue/100000).toFixed(2)}L`:"₹0", sub:`${TRANSACTIONS.filter(t=>t.status==="success").length} paid txns`, color:"#FF6B00", delta:"Season 5" },
+          { label:"Net Revenue",      value:netRevenue>0?`₹${(netRevenue/1000).toFixed(1)}k`:"₹0", sub:"After GST & gateway fee",color:"#10B981",delta:"After deductions"},
+          { label:"GST Collected",    value:totalGST>0?`₹${(totalGST/1000).toFixed(1)}k`:"₹0",    sub:"18% on all payments",    color:"#6366F1", delta:"FY 26-27" },
+          { label:"Gateway Fees",     value:totalGW>0?`₹${(totalGW/1000).toFixed(1)}k`:"₹0",      sub:"Cashfree 2% fee",        color:"#F59E0B", delta:"CF charges" },
+          { label:"Total Refunds",    value:`₹${totalRefunds}`,                  sub:`${REFUNDS.length} refund requests`,color:"#EF4444",delta:REFUNDS.length>0?`-₹${totalRefunds}`:"No refunds"},
+          { label:"Pending Clearance",value:"₹0",                                sub:"Cashfree settlement",    color:"#3B82F6", delta:"T+2 days"  },
         ].map(s=>(
           <div key={s.label} style={{ ...card, padding:"14px 16px", borderTop:`3px solid ${s.color}` }}>
             <div style={{ fontSize:20, fontWeight:800, color:s.color }}>{s.value}</div>
@@ -286,7 +286,7 @@ export default function FinanceView() {
               </div>
               <div style={{ ...card, padding:"14px 16px" }}>
                 <div style={{ fontSize:12, fontWeight:700, color:"#F1F5F9", marginBottom:10 }}>Settlement Status</div>
-                {[{l:"Settled Today",v:"₹42,800",c:"#10B981"},{l:"In Transit (T+2)",v:"₹1,14,200",c:"#F59E0B"},{l:"On Hold",v:"₹2,900",c:"#EF4444"}].map(s=>(
+                {[{l:"Settled Today",v:"₹0",c:"#10B981"},{l:"In Transit (T+2)",v:"₹0",c:"#F59E0B"},{l:"On Hold",v:"₹0",c:"#EF4444"}].map(s=>(
                   <div key={s.l} style={{ display:"flex", justifyContent:"space-between", padding:"6px 0", borderBottom:"1px solid #1E293B" }}>
                     <span style={{ fontSize:11, color:"#64748B" }}>{s.l}</span>
                     <span style={{ fontSize:12, fontWeight:700, color:s.c }}>{s.v}</span>
@@ -352,10 +352,10 @@ export default function FinanceView() {
         <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
           <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:12 }}>
             {[
-              { l:"Gross Revenue",  v:"₹5,54,100",  c:"#FF6B00", sub:"Apr–Jul 2026" },
-              { l:"GST Payable",    v:"-₹99,738",   c:"#6366F1", sub:"18% collected" },
-              { l:"Gateway Fees",   v:"-₹11,082",   c:"#EF4444", sub:"Cashfree 2%" },
-              { l:"Net Revenue",    v:"₹4,43,280",  c:"#10B981", sub:"After deductions" },
+              { l:"Gross Revenue",  v:totalRevenue>0?`₹${(totalRevenue/100000).toFixed(2)}L`:"₹0", c:"#FF6B00", sub:"FY 2026-27" },
+              { l:"GST Payable",    v:totalGST>0?`-₹${totalGST.toLocaleString()}`:"₹0",            c:"#6366F1", sub:"18% collected" },
+              { l:"Gateway Fees",   v:totalGW>0?`-₹${totalGW.toLocaleString()}`:"₹0",              c:"#EF4444", sub:"Cashfree 2%" },
+              { l:"Net Revenue",    v:netRevenue>0?`₹${(netRevenue/100000).toFixed(2)}L`:"₹0",     c:"#10B981", sub:"After deductions" },
             ].map(s=>(
               <div key={s.l} style={{ ...card, borderTop:`3px solid ${s.c}` }}>
                 <div style={{ fontSize:22, fontWeight:800, color:s.c }}>{s.v}</div>
@@ -398,9 +398,9 @@ export default function FinanceView() {
                   </div>
                 </div>
               ))}
-              <div style={{ marginTop:12, padding:"10px 12px", background:"#FF6B0010", border:"1px solid #FF6B0030", borderRadius:10 }}>
-                <div style={{ fontSize:11, color:"#FF6B00", fontWeight:700 }}>Profit Margin: ~80%</div>
-                <div style={{ fontSize:10, color:"#475569", marginTop:2 }}>Revenue net of GST & gateway</div>
+              <div style={{ marginTop:12, padding:"10px 12px", background:"#1E293B22", border:"1px solid #1E293B", borderRadius:10 }}>
+                <div style={{ fontSize:11, color:"#64748B", fontWeight:700 }}>No transactions yet</div>
+                <div style={{ fontSize:10, color:"#475569", marginTop:2 }}>P&L will auto-update as Cashfree payments come in</div>
               </div>
             </div>
           </div>
@@ -412,7 +412,7 @@ export default function FinanceView() {
         <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
           <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:12 }}>
             {[
-              { l:"Total GST Collected", v:`₹${(totalGST/1000).toFixed(1)}k`, c:"#6366F1", sub:"FY 2025-26" },
+              { l:"Total GST Collected", v:totalGST>0?`₹${(totalGST/1000).toFixed(1)}k`:"₹0", c:"#6366F1", sub:"FY 2026-27" },
               { l:"CGST (9%)",           v:`₹${(totalGST/2/1000).toFixed(1)}k`,c:"#FF6B00", sub:"Central GST share" },
               { l:"SGST (9%)",           v:`₹${(totalGST/2/1000).toFixed(1)}k`,c:"#10B981", sub:"State GST share" },
               { l:"Next GSTR-1 Due",     v:"11 Aug",                             c:"#F59E0B", sub:"File before due date" },

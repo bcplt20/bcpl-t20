@@ -1,18 +1,8 @@
 import { useState } from "react";
 
-const FLAGS = [
-  { id:"FRD-001", type:"Duplicate Phone",    players:["Rahul Singh (Mumbai)","Rahul S. (Delhi)"],   ip:"152.58.XX.XX", count:2,  risk:"High",   created:"2h ago",  details:"Same phone number used for 2 registrations in different cities" },
-  { id:"FRD-002", type:"Same IP — 5 Regs",   players:["Arjun K.","Priya K.","Dev K.","Vikram K.","Sneha K."], ip:"103.21.XX.XX", count:5, risk:"High", created:"4h ago", details:"5 different registrations from same IP address within 20 minutes" },
-  { id:"FRD-003", type:"Self Referral",       players:["Kiran Sharma (Mumbai)"],                    ip:"49.37.XX.XX",  count:1,  risk:"Medium", created:"1d ago",  details:"Player used own referral code to try to earn commission" },
-  { id:"FRD-004", type:"Fake Phone OTP Skip", players:["Unknown User"],                             ip:"117.55.XX.XX", count:1,  risk:"Medium", created:"1d ago",  details:"Registration completed with unverified phone number pattern" },
-  { id:"FRD-005", type:"Duplicate Email",     players:["amit@gmail.com (×3)"],                      ip:"Multiple",     count:3,  risk:"Low",    created:"2d ago",  details:"Same email used with slight variations (+1, .1 suffixes)" },
-  { id:"FRD-006", type:"VPN/Proxy Detected",  players:["Dev Mehta"],                               ip:"Cloudflare",   count:1,  risk:"Low",    created:"3d ago",  details:"Registration via known VPN exit node" },
-];
-
-const BLOCKED = [
-  { ip:"103.21.XX.XX", reason:"Mass registration (5 accounts)", date:"Jul 19", blocked:true },
-  { ip:"117.55.XX.XX", reason:"OTP bypass attempt",             date:"Jul 18", blocked:true },
-];
+// No fraud flags yet — will populate as registrations come in and auto-scan runs
+const FLAGS: { id:string; type:string; players:string[]; ip:string; count:number; risk:string; created:string; details:string }[] = [];
+const BLOCKED: { ip:string; reason:string; date:string; blocked:boolean }[] = [];
 
 const riskColor=(r:string)=>r==="High"?"#EF4444":r==="Medium"?"#F59E0B":"#10B981";
 

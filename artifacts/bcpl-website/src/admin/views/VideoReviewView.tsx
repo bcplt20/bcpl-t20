@@ -2,17 +2,8 @@ import { useState } from "react";
 
 type Video = { id:string; player:string; city:string; role:string; uploaded:string; duration:string; score:number|null; status:string; notes:string; thumb:string };
 
-const VIDEOS: Video[] = [
-  { id:"VID-001", player:"Rahul Verma",   city:"Mumbai",    role:"Batsman",    uploaded:"2h ago",  duration:"2:34", score:null, status:"Pending", notes:"", thumb:"🏏" },
-  { id:"VID-002", player:"Arjun Patel",   city:"Delhi",     role:"Bowler",     uploaded:"3h ago",  duration:"3:12", score:null, status:"Pending", notes:"", thumb:"🎯" },
-  { id:"VID-003", player:"Kiran Sharma",  city:"Bengaluru", role:"All-Rounder",uploaded:"4h ago",  duration:"2:58", score:92,   status:"Approved",notes:"Excellent technique, strong drives", thumb:"⭐" },
-  { id:"VID-004", player:"Suresh Nair",   city:"Chennai",   role:"WK-Batsman", uploaded:"5h ago",  duration:"2:10", score:76,   status:"Approved",notes:"Good keeping skills", thumb:"🧤" },
-  { id:"VID-005", player:"Dev Mehta",     city:"Hyderabad", role:"Batsman",    uploaded:"6h ago",  duration:"1:48", score:null, status:"Pending", notes:"", thumb:"🏏" },
-  { id:"VID-006", player:"Amit Singh",    city:"Kolkata",   role:"Bowler",     uploaded:"8h ago",  duration:"3:00", score:48,   status:"Rejected",notes:"Video quality too poor — reshoot needed", thumb:"📹" },
-  { id:"VID-007", player:"Priya Nair",    city:"Pune",      role:"All-Rounder",uploaded:"10h ago", duration:"2:45", score:null, status:"Pending", notes:"", thumb:"🏏" },
-  { id:"VID-008", player:"Kavita Reddy",  city:"Hyderabad", role:"Batsman",    uploaded:"12h ago", duration:"2:22", score:85,   status:"Approved",notes:"Consistent footwork", thumb:"⭐" },
-  { id:"VID-009", player:"Rohit Das",     city:"Bengaluru", role:"Bowler",     uploaded:"1d ago",  duration:"2:55", score:null, status:"Pending", notes:"", thumb:"🎯" },
-];
+// No videos yet — will populate as Phase 1 players upload selection videos
+const VIDEOS: Video[] = [];
 
 const statusColor=(s:string)=>s==="Approved"?"#10B981":s==="Pending"?"#F59E0B":"#EF4444";
 

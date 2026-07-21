@@ -7,18 +7,8 @@ type Player = {
   phase: 1 | 2;
 };
 
-const players: Player[] = [
-  { id: 1, name: "Arjun Sharma", phone: "9876543210", state: "Rajasthan", city: "Jaipur", role: "Batsman", age: 23, score: 87, video: true, status: "selected", phase: 2 },
-  { id: 2, name: "Priya Patel", phone: "9123456789", state: "Gujarat", city: "Ahmedabad", role: "All-rounder", age: 22, score: 79, video: true, status: "selected", phase: 2 },
-  { id: 3, name: "Rahul Kumar", phone: "8765432109", state: "Maharashtra", city: "Mumbai", role: "Bowler", age: 24, score: 73, video: true, status: "watchlist", phase: 1 },
-  { id: 4, name: "Sneha Verma", phone: "7654321098", state: "UP", city: "Lucknow", role: "Batsman", age: 21, score: 68, video: false, status: "pending", phase: 1 },
-  { id: 5, name: "Vikas Singh", phone: "6543210987", state: "Punjab", city: "Amritsar", role: "Wicket-keeper", age: 25, score: 82, video: true, status: "selected", phase: 2 },
-  { id: 6, name: "Anjali Rao", phone: "9012345678", state: "Karnataka", city: "Bangalore", role: "Bowler", age: 22, score: 61, video: false, status: "rejected", phase: 1 },
-  { id: 7, name: "Deepak Gupta", phone: "8901234567", state: "Delhi", city: "New Delhi", role: "All-rounder", age: 27, score: 91, video: true, status: "selected", phase: 2 },
-  { id: 8, name: "Meena Joshi", phone: "7890123456", state: "MP", city: "Bhopal", role: "Batsman", age: 20, score: 65, video: true, status: "pending", phase: 1 },
-  { id: 9, name: "Sanjay Yadav", phone: "6789012345", state: "Bihar", city: "Patna", role: "Bowler", age: 23, score: 58, video: false, status: "pending", phase: 1 },
-  { id: 10, name: "Kavita Nair", phone: "5678901234", state: "Kerala", city: "Kochi", role: "All-rounder", age: 24, score: 85, video: true, status: "selected", phase: 2 },
-];
+// No players yet — will populate as Phase 1 videos are reviewed and scored
+const players: Player[] = [];
 
 const statusConfig = {
   pending: { label: "Pending", color: "#F59E0B", bg: "#F59E0B22" },

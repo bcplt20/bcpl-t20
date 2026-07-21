@@ -89,8 +89,8 @@ export default function DashboardView() {
         <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
           {[
             { label:"📢 WhatsApp Blast", action:()=>setBlast(true), style:{ background:"linear-gradient(135deg,#25D366,#128C4E)" }},
-            { label:"⬇ Export Data",    action:()=>{},              style:{ background:"#1E293B", color:"#94A3B8", border:"1px solid #1E293B" }},
-            { label:"📊 Full Report",   action:()=>{},              style:{ background:"#1E293B", color:"#94A3B8", border:"1px solid #1E293B" }},
+            { label:"⬇ Export Data",    action:()=>{ const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,Name,Phone,Email,City,Role,Phase,Payment\n';a.download='bcpl_users_'+new Date().toISOString().slice(0,10)+'.csv';a.click(); },              style:{ background:"#1E293B", color:"#94A3B8", border:"1px solid #1E293B" }},
+            { label:"📊 Full Report",   action:()=>window.print(),  style:{ background:"#1E293B", color:"#94A3B8", border:"1px solid #1E293B" }},
           ].map(b=>(
             <button key={b.label} onClick={b.action} style={{ padding:"9px 16px", borderRadius:9, border:"none", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer", ...b.style }}>{b.label}</button>
           ))}
@@ -323,7 +323,7 @@ export default function DashboardView() {
             <div style={{ marginBottom:12 }}>
               <label style={{ fontSize:11, color:"#64748B", fontWeight:700, display:"block", marginBottom:6 }}>Target Segment</label>
               <select style={{ width:"100%", padding:"10px 12px", background:"#060B18", border:"1px solid #1E293B", borderRadius:9, color:"#F1F5F9", fontSize:13, outline:"none" }}>
-                {["All registered users (8,430)","Phase 1 paid — no video (922)","Registered — no payment (4,618)","Phase 2 selected (1,247)","Specific city"].map(o=><option key={o}>{o}</option>)}
+                {["All registered users (0)","Phase 1 paid — no video (0)","Registered — no payment (0)","Phase 2 selected (0)","Specific city"].map(o=><option key={o}>{o}</option>)}
               </select>
             </div>
             <div style={{ marginBottom:12 }}>

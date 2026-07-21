@@ -6,9 +6,12 @@ const AFFILIATES: { id:string; name:string; city:string; referrals:number; paid:
 const statusColor=(s:string)=>s==="Active"?"#10B981":s==="Paid Out"?"#6366F1":"#EF4444";
 
 export default function AffiliatesView() {
-  const [sel, setSel]     = useState<typeof AFFILIATES[0]|null>(null);
-  const [addOpen, setAdd] = useState(false);
+  const [sel,      setSel]      = useState<typeof AFFILIATES[0]|null>(null);
+  const [addOpen,  setAdd]      = useState(false);
+  const [agentList,setAgentList]= useState(AFFILIATES);
+  const [agentForm,setAgentForm]= useState({ name:"", phone:"", city:"", email:"", commission:"270" });
   const card:React.CSSProperties={background:"linear-gradient(135deg,#0D1526,#0A1020)",border:"1px solid #1E293B",borderRadius:16,padding:20};
+  const inp:React.CSSProperties={width:"100%",padding:"10px 12px",borderRadius:9,border:"1px solid #1E293B",background:"#060B18",color:"#E2E8F0",fontSize:13,outline:"none",boxSizing:"border-box"};
 
   const totalReferrals  = AFFILIATES.reduce((a,x)=>a+x.referrals,0);
   const totalCommission = AFFILIATES.reduce((a,x)=>a+x.commission,0);
@@ -93,6 +96,61 @@ export default function AffiliatesView() {
           </tbody>
         </table>
       </div>
+
+      {/* Add Agent Modal */}
+      {addOpen&&(
+        <div style={{position:"fixed",inset:0,background:"#00000088",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={()=>{ setAdd(false); setAgentForm({name:"",phone:"",city:"",email:"",commission:"270"}); }}>
+          <div style={{...card,width:440,padding:28}} onClick={e=>e.stopPropagation()}>
+            <div style={{fontSize:16,fontWeight:800,color:"#F1F5F9",marginBottom:4}}>+ Add New Agent</div>
+            <div style={{fontSize:12,color:"#64748B",marginBottom:20}}>City-level affiliate who brings player registrations</div>
+            <div style={{display:"flex",flexDirection:"column",gap:12}}>
+              {[
+                {label:"Full Name",   key:"name",  type:"text",  placeholder:"e.g. Ramesh Sharma"},
+                {label:"Mobile",      key:"phone", type:"tel",   placeholder:"e.g. 9876543210"},
+                {label:"City",        key:"city",  type:"text",  placeholder:"e.g. Jaipur"},
+                {label:"Email",       key:"email", type:"email", placeholder:"e.g. agent@email.com"},
+              ].map(f=>(
+                <div key={f.key}>
+                  <label style={{fontSize:11,fontWeight:700,color:"#475569",display:"block",marginBottom:6,textTransform:"uppercase"}}>{f.label}</label>
+                  <input type={f.type} value={agentForm[f.key as keyof typeof agentForm]} onChange={e=>setAgentForm(p=>({...p,[f.key]:e.target.value}))}
+                    placeholder={f.placeholder} style={inp}/>
+                </div>
+              ))}
+              <div>
+                <label style={{fontSize:11,fontWeight:700,color:"#475569",display:"block",marginBottom:6,textTransform:"uppercase"}}>Commission Rate</label>
+                <select value={agentForm.commission} onChange={e=>setAgentForm(p=>({...p,commission:e.target.value}))} style={inp as any}>
+                  <option value="270">₹270/signup — Standard (90% of ₹299)</option>
+                  <option value="285">₹285/signup — Senior (95% of ₹299)</option>
+                  <option value="299">₹299/signup — Premium (100% of ₹299)</option>
+                </select>
+              </div>
+              <div style={{padding:"10px 14px",borderRadius:9,background:"#10B98115",border:"1px solid #10B98130",fontSize:11,color:"#10B981"}}>
+                ✅ Agent will receive a unique referral link and QR code after activation.
+              </div>
+              <div style={{display:"flex",gap:10,marginTop:4}}>
+                <button onClick={()=>{ setAdd(false); setAgentForm({name:"",phone:"",city:"",email:"",commission:"270"}); }}
+                  style={{flex:1,padding:"11px",borderRadius:10,border:"1px solid #1E293B",background:"transparent",color:"#64748B",fontSize:13,cursor:"pointer"}}>Cancel</button>
+                <button disabled={!agentForm.name.trim()||!agentForm.phone.trim()||!agentForm.city.trim()}
+                  onClick={()=>{
+                    const code = agentForm.name.toLowerCase().replace(/\s+/g,"")+Math.floor(Math.random()*900+100);
+                    setAgentList(prev=>[...prev,{
+                      id:`AGT-${String(agentList.length+1).padStart(3,"0")}`,
+                      name:agentForm.name.trim(), phone:agentForm.phone.trim(), city:agentForm.city.trim(),
+                      referrals:0, paid:0, pending:0, commission:parseInt(agentForm.commission),
+                      earned:0, status:"Active", joined:new Date().toLocaleDateString("en-IN")
+                    }]);
+                    setAdd(false); setAgentForm({name:"",phone:"",city:"",email:"",commission:"270"});
+                    alert(`Agent ${agentForm.name} added! Referral code: ${code}`);
+                  }}
+                  style={{flex:2,padding:"11px",borderRadius:10,border:"none",background:"linear-gradient(135deg,#FF6B00,#FF8C40)",color:"#fff",fontWeight:700,fontSize:13,cursor:"pointer",
+                    opacity:agentForm.name.trim()&&agentForm.phone.trim()&&agentForm.city.trim()?1:0.5}}>
+                  ✅ Add Agent
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Payout modal */}
       {sel&&(

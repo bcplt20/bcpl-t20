@@ -1,13 +1,7 @@
 import { useState } from "react";
 
-const EXPORTS = [
-  { name:"Phase 1 Paid — All Cities",     rows:3812, format:"CSV",   size:"284 KB", date:"Jul 20, 09:14 AM", by:"Admin" },
-  { name:"Mumbai Registrations — Jul",    rows:648,  format:"Excel", size:"92 KB",  date:"Jul 19, 04:30 PM", by:"Admin" },
-  { name:"Failed Payments — Last 30 days",rows:24,   format:"CSV",   size:"8 KB",   date:"Jul 18, 11:00 AM", by:"Admin" },
-  { name:"KYC Pending Players",           rows:38,   format:"CSV",   size:"12 KB",  date:"Jul 17, 02:15 PM", by:"Admin" },
-  { name:"Phase 2 Selected Players",      rows:318,  format:"Excel", size:"48 KB",  date:"Jul 15, 06:00 PM", by:"Admin" },
-  { name:"Full Season 4 — All Data",      rows:6200, format:"Excel", size:"1.2 MB", date:"Jun 30, 09:00 AM", by:"Admin" },
-];
+// No export history yet — will populate as exports are generated
+const EXPORTS: { name:string; rows:number; format:string; size:string; date:string; by:string }[] = [];
 
 const DATASETS = [
   { id:"registrations", label:"Registrations",      icon:"👥", fields:["Name","Phone","Email","City","Role","Phase","Payment Status","Registration Date"] },

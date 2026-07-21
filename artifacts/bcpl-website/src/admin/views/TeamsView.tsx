@@ -15,35 +15,19 @@ type Team = {
 
 /* ─── Mock Data ──────────────────────────────────────────────── */
 const defaultTeams: Team[] = [
-  { id:1,  name:"Rajasthan Scorchers",  city:"Jaipur",      color:"#E97B6B", secondColor:"#F5A623", logoUrl:"", wins:9,  losses:1,  nrr:"+1.84", captain:"Arjun Sharma",  homeGround:"SMS Stadium",       coach:"Ravi Tiwari",   owner:"TechCorp Jaipur",  matchesPlayed:10, titlesWon:1, players:[
-    { name:"Arjun Sharma", role:"Batsman", age:26, state:"Rajasthan", photoUrl:"", battingStyle:"Right-hand bat", bowlingStyle:"Right-arm off-break", jerseyNo:"7", isCaptain:true, nationality:"Indian",
-      lastSeason:{ matches:14, runs:612, avg:51.0, sr:152.1, wickets:0, economy:0, fifties:5, centuries:1, sixes:18, fours:42, bestBowl:"-", bestBat:"112*" }, auctionPrice:"₹12,00,000", phase:2, selected:true },
-    { name:"Sunita Patel", role:"Bowler", age:23, state:"Rajasthan", photoUrl:"", battingStyle:"Right-hand bat", bowlingStyle:"Right-arm fast", jerseyNo:"99", isViceCaptain:true, nationality:"Indian",
-      lastSeason:{ matches:14, runs:28, avg:5.6, sr:78.0, wickets:22, economy:6.8, fifties:0, centuries:0, sixes:0, fours:2, bestBowl:"5/24", bestBat:"14" }, auctionPrice:"₹7,50,000", phase:2, selected:true },
-  ]},
-  { id:2,  name:"Punjab Warriors",      city:"Chandigarh",  color:"#DC2626", secondColor:"#1D4ED8", logoUrl:"", wins:8,  losses:2,  nrr:"+1.24", captain:"Vikas Singh",   homeGround:"PCA Stadium",       coach:"Gurpreet Mann", owner:"Singh Group",      matchesPlayed:10, titlesWon:2, players:[] },
-  { id:3,  name:"Kolkata Tigers",        city:"Kolkata",     color:"#F97316", secondColor:"#7C3AED", logoUrl:"", wins:7,  losses:3,  nrr:"+0.97", captain:"Sanjay Das",    homeGround:"Eden Gardens",      coach:"Biplab Roy",    owner:"Kolkata Ventures", matchesPlayed:10, titlesWon:0, players:[] },
-  { id:4,  name:"Lucknow Nawabs",        city:"Lucknow",     color:"#F59E0B", secondColor:"#065F46", logoUrl:"", wins:7,  losses:3,  nrr:"+0.81", captain:"Rahul Mishra",  homeGround:"BRSABV Ekana",      coach:"Ashok Yadav",   owner:"Nawab Estates",   matchesPlayed:10, titlesWon:1, players:[] },
-  { id:5,  name:"Mumbai Mavericks",      city:"Mumbai",      color:"#3B82F6", secondColor:"#F59E0B", logoUrl:"", wins:6,  losses:4,  nrr:"+0.55", captain:"Rahul Kumar",   homeGround:"Wankhede Stadium",  coach:"Suresh Nair",   owner:"Mumbai Sports",    matchesPlayed:10, titlesWon:0, players:[
-    { name:"Rahul Kumar", role:"Batsman", age:24, state:"Maharashtra", photoUrl:"", battingStyle:"Right-hand bat", bowlingStyle:"Right-arm off-break", jerseyNo:"7", isCaptain:true, nationality:"Indian",
-      lastSeason:{ matches:14, runs:487, avg:38.2, sr:142.1, wickets:0, economy:0, fifties:4, centuries:0, sixes:12, fours:31, bestBowl:"-", bestBat:"88*" }, auctionPrice:"₹4,50,000", phase:2, selected:true },
-    { name:"Amit Patil", role:"Bowler", age:22, state:"Maharashtra", photoUrl:"", battingStyle:"Right-hand bat", bowlingStyle:"Right-arm fast-medium", jerseyNo:"22", nationality:"Indian",
-      lastSeason:{ matches:12, runs:45, avg:6.4, sr:88.2, wickets:18, economy:7.2, fifties:0, centuries:0, sixes:1, fours:3, bestBowl:"4/28", bestBat:"14" }, auctionPrice:"₹2,20,000", phase:2, selected:true },
-  ]},
-  { id:6,  name:"Hyderabad Hawks",       city:"Hyderabad",   color:"#16A34A", secondColor:"#EF4444", logoUrl:"", wins:5,  losses:5,  nrr:"+0.12", captain:"Anil Reddy",    homeGround:"Rajiv Gandhi Intl", coach:"Prakash Rao",   owner:"Hawks LLC",        matchesPlayed:10, titlesWon:0, players:[] },
-  { id:7,  name:"Delhi Suryas",           city:"Delhi",       color:"#6366F1", secondColor:"#F97316", logoUrl:"", wins:5,  losses:5,  nrr:"-0.08", captain:"Deepak Gupta",  homeGround:"Arun Jaitley",      coach:"Narendra Pal",  owner:"Capital Sports",   matchesPlayed:10, titlesWon:0, players:[] },
-  { id:8,  name:"Chennai Thalaivas",      city:"Chennai",     color:"#2563EB", secondColor:"#F59E0B", logoUrl:"", wins:4,  losses:6,  nrr:"-0.34", captain:"Kartik Rajan",  homeGround:"Chepauk Stadium",   coach:"Venkat Kumar",  owner:"Thalaiva Group",   matchesPlayed:10, titlesWon:1, players:[] },
-  { id:9,  name:"Ahmedabad Lions",        city:"Ahmedabad",   color:"#B91C1C", secondColor:"#F59E0B", logoUrl:"", wins:3,  losses:7,  nrr:"-0.87", captain:"Vikas Patel",   homeGround:"Narendra Modi",     coach:"Chirag Shah",   owner:"Lions Corp",       matchesPlayed:10, titlesWon:0, players:[] },
-  { id:10, name:"Bengaluru Rockets",      city:"Bengaluru",   color:"#EF4444", secondColor:"#1D4ED8", logoUrl:"", wins:2,  losses:8,  nrr:"-1.42", captain:"Kiran Kumar",   homeGround:"M. Chinnaswamy",    coach:"Sudhir Rao",    owner:"Rockets Pvt. Ltd.",matchesPlayed:10, titlesWon:0, players:[] },
+  { id:1,  name:"Rajasthan Scorchers",  city:"Jaipur",      color:"#E97B6B", secondColor:"#F5A623", logoUrl:import.meta.env.BASE_URL + "bcpl-assets/logos/rajasthan_scorchers.jpg", wins:0,  losses:0,  nrr:"0.00", captain:"Arjun Sharma",  homeGround:"SMS Stadium",       coach:"Ravi Tiwari",   owner:"TechCorp Jaipur",  matchesPlayed:0, titlesWon:0, players:[]},
+  { id:2,  name:"Punjab Warriors",      city:"Chandigarh",  color:"#DC2626", secondColor:"#1D4ED8", logoUrl:import.meta.env.BASE_URL + "bcpl-assets/logos/punjab_warriors.jpg", wins:0,  losses:0,  nrr:"0.00", captain:"Vikas Singh",   homeGround:"PCA Stadium",       coach:"Gurpreet Mann", owner:"Singh Group",      matchesPlayed:0, titlesWon:0, players:[] },
+  { id:3,  name:"Kolkata Tigers",        city:"Kolkata",     color:"#F97316", secondColor:"#7C3AED", logoUrl:import.meta.env.BASE_URL + "bcpl-assets/logos/kolkata_tigers.jpg", wins:0,  losses:0,  nrr:"0.00", captain:"Sanjay Das",    homeGround:"Eden Gardens",      coach:"Biplab Roy",    owner:"Kolkata Ventures", matchesPlayed:0, titlesWon:0, players:[] },
+  { id:4,  name:"Lucknow Nawabs",        city:"Lucknow",     color:"#F59E0B", secondColor:"#065F46", logoUrl:import.meta.env.BASE_URL + "bcpl-assets/logos/lucknow_nawabs.jpg", wins:0,  losses:0,  nrr:"0.00", captain:"Rahul Mishra",  homeGround:"BRSABV Ekana",      coach:"Ashok Yadav",   owner:"Nawab Estates",   matchesPlayed:0, titlesWon:0, players:[] },
+  { id:5,  name:"Mumbai Mavericks",      city:"Mumbai",      color:"#3B82F6", secondColor:"#F59E0B", logoUrl:import.meta.env.BASE_URL + "bcpl-assets/logos/mumbai_mavericks.jpg", wins:0,  losses:0,  nrr:"0.00", captain:"Rahul Kumar",   homeGround:"Wankhede Stadium",  coach:"Suresh Nair",   owner:"Mumbai Sports",    matchesPlayed:0, titlesWon:0, players:[]},
+  { id:6,  name:"Hyderabad Hawks",       city:"Hyderabad",   color:"#16A34A", secondColor:"#EF4444", logoUrl:import.meta.env.BASE_URL + "bcpl-assets/logos/hyderabad_hawks.jpg", wins:0,  losses:0,  nrr:"0.00", captain:"Anil Reddy",    homeGround:"Rajiv Gandhi Intl", coach:"Prakash Rao",   owner:"Hawks LLC",        matchesPlayed:0, titlesWon:0, players:[] },
+  { id:7,  name:"Delhi Suryas",           city:"Delhi",       color:"#6366F1", secondColor:"#F97316", logoUrl:import.meta.env.BASE_URL + "bcpl-assets/logos/delhi_suryas.jpg", wins:0,  losses:0,  nrr:"0.00", captain:"Deepak Gupta",  homeGround:"Arun Jaitley",      coach:"Narendra Pal",  owner:"Capital Sports",   matchesPlayed:0, titlesWon:0, players:[] },
+  { id:8,  name:"Chennai Thalaivas",      city:"Chennai",     color:"#2563EB", secondColor:"#F59E0B", logoUrl:import.meta.env.BASE_URL + "bcpl-assets/logos/chennai_thalaivas.jpg", wins:0,  losses:0,  nrr:"0.00", captain:"Kartik Rajan",  homeGround:"Chepauk Stadium",   coach:"Venkat Kumar",  owner:"Thalaiva Group",   matchesPlayed:0, titlesWon:0, players:[] },
+  { id:9,  name:"Ahmedabad Lions",        city:"Ahmedabad",   color:"#B91C1C", secondColor:"#F59E0B", logoUrl:import.meta.env.BASE_URL + "bcpl-assets/logos/ahmedabad_lions.jpg", wins:0,  losses:0,  nrr:"0.00", captain:"Vikas Patel",   homeGround:"Narendra Modi",     coach:"Chirag Shah",   owner:"Lions Corp",       matchesPlayed:0, titlesWon:0, players:[] },
+  { id:10, name:"Bengaluru Rockets",      city:"Bengaluru",   color:"#EF4444", secondColor:"#1D4ED8", logoUrl:import.meta.env.BASE_URL + "bcpl-assets/logos/bengaluru_rockets.jpg", wins:0,  losses:0,  nrr:"0.00", captain:"Kiran Kumar",   homeGround:"M. Chinnaswamy",    coach:"Sudhir Rao",    owner:"Rockets Pvt. Ltd.",matchesPlayed:0, titlesWon:0, players:[] },
 ];
 
-const MATCH_HISTORY = [
-  { opponent:"Punjab Warriors",   result:"W", runs:"182/5", opp:"178/7", margin:"4 runs",    date:"Jul 18" },
-  { opponent:"Kolkata Tigers",    result:"W", runs:"204/3", opp:"188/6", margin:"16 runs",   date:"Jul 15" },
-  { opponent:"Mumbai Mavericks",  result:"W", runs:"176/4", opp:"142/8", margin:"34 runs",   date:"Jul 12" },
-  { opponent:"Lucknow Nawabs",    result:"L", runs:"154/7", opp:"156/5", margin:"2 wickets", date:"Jul 9"  },
-  { opponent:"Delhi Suryas",      result:"W", runs:"198/2", opp:"190/4", margin:"8 runs",    date:"Jul 6"  },
-];
+const MATCH_HISTORY: { opponent:string; result:string; runs:string; opp:string; margin:string; date:string }[] = [];
 
 /* ─── Helpers ────────────────────────────────────────────────── */
 const roleColor = (r:string) => r==="Batsman"?"#3B82F6":r==="Bowler"?"#EF4444":r==="All-rounder"?"#FF6B00":"#10B981";

@@ -1,14 +1,7 @@
 import { useState } from "react";
 
-const PLAYERS = [
-  { id:"PLY-001", name:"Arjun Patel",   team:"Rajasthan Scorchers", city:"Delhi",     role:"Batsman",    matches:9, runs:420, avg:52.5, wickets:0,  status:"Active",   selected:true,  slug:"arjun-patel-delhi",   views:1240 },
-  { id:"PLY-002", name:"Kiran Sharma",  team:"Bengaluru Bulls",     city:"Bengaluru", role:"All-Rounder", matches:9, runs:380, avg:47.5, wickets:12, status:"Active",   selected:true,  slug:"kiran-sharma-bengaluru",views:980 },
-  { id:"PLY-003", name:"Dev Mehta",     team:"Delhi Suryas",        city:"Hyderabad", role:"Batsman",    matches:9, runs:352, avg:44.0, wickets:0,  status:"Active",   selected:true,  slug:"dev-mehta-hyderabad",  views:742 },
-  { id:"PLY-004", name:"Rahul Verma",   team:"Mumbai Mavericks",    city:"Mumbai",    role:"Batsman",    matches:9, runs:318, avg:39.75,wickets:0,  status:"Active",   selected:true,  slug:"rahul-verma-mumbai",   views:621 },
-  { id:"PLY-005", name:"Amit Singh",    team:"Mumbai Mavericks",    city:"Kolkata",   role:"Bowler",     matches:9, runs:42,  avg:10.5, wickets:18, status:"Active",   selected:true,  slug:"amit-singh-kolkata",   views:588 },
-  { id:"PLY-006", name:"Rohit Kumar",   team:"-",                   city:"Chennai",   role:"Batsman",    matches:0, runs:0,   avg:0,    wickets:0,  status:"Phase 1",  selected:false, slug:"rohit-kumar-chennai",  views:0   },
-  { id:"PLY-007", name:"Pooja Sharma",  team:"-",                   city:"Pune",      role:"All-Rounder", matches:0, runs:0,  avg:0,    wickets:0,  status:"Phase 1",  selected:false, slug:"pooja-sharma-pune",    views:0   },
-];
+// No player profiles yet — will populate after auction and team selection
+const PLAYERS: { id:string; name:string; team:string; city:string; role:string; matches:number; runs:number; avg:number; wickets:number; status:string; selected:boolean; slug:string; views:number }[] = [];
 
 const statusColor=(s:string)=>s==="Active"?"#10B981":s==="Phase 1"?"#F59E0B":"#64748B";
 

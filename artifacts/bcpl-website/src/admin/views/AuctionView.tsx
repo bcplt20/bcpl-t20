@@ -1,21 +1,21 @@
 import { useState, useEffect } from "react";
 
+// Teams structure — budget = ₹30L per team; spent resets to 0 each season
 const TEAMS = [
-  { name:"Rajasthan Scorchers",  budget:3000000, spent:1850000, color:"#3B82F6" },
-  { name:"Mumbai Mavericks",     budget:3000000, spent:2200000, color:"#10B981" },
-  { name:"Delhi Suryas",         budget:3000000, spent:900000,  color:"#F59E0B" },
-  { name:"Bengaluru Bulls",      budget:3000000, spent:2750000, color:"#8B5CF6" },
-  { name:"Chennai Challengers",  budget:3000000, spent:1500000, color:"#EF4444" },
+  { name:"Rajasthan Scorchers",  budget:3000000, spent:0, color:"#E97B6B" },
+  { name:"Punjab Warriors",      budget:3000000, spent:0, color:"#DC2626" },
+  { name:"Kolkata Tigers",       budget:3000000, spent:0, color:"#F97316" },
+  { name:"Lucknow Nawabs",       budget:3000000, spent:0, color:"#F59E0B" },
+  { name:"Mumbai Mavericks",     budget:3000000, spent:0, color:"#3B82F6" },
+  { name:"Hyderabad Hawks",      budget:3000000, spent:0, color:"#16A34A" },
+  { name:"Delhi Suryas",         budget:3000000, spent:0, color:"#6366F1" },
+  { name:"Chennai Thalaivas",    budget:3000000, spent:0, color:"#2563EB" },
+  { name:"Ahmedabad Lions",      budget:3000000, spent:0, color:"#B91C1C" },
+  { name:"Bengaluru Rockets",    budget:3000000, spent:0, color:"#EF4444" },
 ];
 
-const POOL = [
-  { id:1, name:"Rahul Verma",    role:"Batsman",  city:"Mumbai",    phase1Score:88, base:50000 },
-  { id:2, name:"Arjun Patel",    role:"Bowler",   city:"Delhi",     phase1Score:91, base:75000 },
-  { id:3, name:"Kiran Sharma",   role:"All-Rounder",city:"Bengaluru",phase1Score:95, base:100000 },
-  { id:4, name:"Suresh Nair",    role:"WK-Batsman",city:"Chennai",  phase1Score:82, base:50000 },
-  { id:5, name:"Dev Mehta",      role:"Batsman",  city:"Hyderabad", phase1Score:79, base:50000 },
-  { id:6, name:"Amit Singh",     role:"Bowler",   city:"Kolkata",   phase1Score:86, base:75000 },
-];
+// No player pool yet — will populate after Phase 2 selection
+const POOL: { id:number; name:string; role:string; city:string; phase1Score:number; base:number }[] = [];
 
 export default function AuctionView() {
   const [currentIdx, setCurrentIdx] = useState(0);

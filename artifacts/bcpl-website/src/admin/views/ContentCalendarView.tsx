@@ -143,33 +143,86 @@ export default function ContentCalendarView() {
       )}
 
       {newOpen&&(
-        <div style={{position:"fixed",inset:0,background:"#00000080",zIndex:100,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={()=>setNewOpen(false)}>
-          <div style={{...card,width:480,padding:28}} onClick={e=>e.stopPropagation()}>
-            <div style={{fontSize:16,fontWeight:800,color:"#F1F5F9",marginBottom:20}}>Schedule New Post</div>
+        <div style={{position:"fixed",inset:0,background:"#00000088",zIndex:100,display:"flex",alignItems:"center",justifyContent:"center",padding:16}} onClick={()=>setNewOpen(false)}>
+          <div style={{...card,width:"100%",maxWidth:540,padding:28,maxHeight:"92vh",overflowY:"auto"}} onClick={e=>e.stopPropagation()}>
+            <div style={{fontSize:16,fontWeight:800,color:"#F1F5F9",marginBottom:4}}>📅 Schedule New Post</div>
+            <div style={{fontSize:12,color:"#64748B",marginBottom:20}}>Create a post for any connected social platform</div>
+
+            {/* Social Account Status */}
+            <div style={{background:"#060B18",borderRadius:12,padding:"12px 16px",border:"1px solid #1E293B",marginBottom:18}}>
+              <div style={{fontSize:11,fontWeight:700,color:"#475569",textTransform:"uppercase",marginBottom:10}}>Connected Accounts</div>
+              <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
+                {[
+                  {p:"Instagram",c:"#E1306C",icon:"📷",connected:false},
+                  {p:"YouTube",  c:"#FF0000",icon:"▶️",connected:false},
+                  {p:"Facebook", c:"#1877F2",icon:"📘",connected:false},
+                  {p:"X / Twitter",c:"#1DA1F2",icon:"𝕏",connected:false},
+                  {p:"LinkedIn", c:"#0077B5",icon:"💼",connected:false},
+                  {p:"WhatsApp", c:"#25D366",icon:"💬",connected:false},
+                ].map(a=>(
+                  <div key={a.p} style={{display:"flex",alignItems:"center",gap:6,padding:"5px 10px",borderRadius:8,background:`${a.c}12`,border:`1px solid ${a.c}30`}}>
+                    <span style={{fontSize:12}}>{a.icon}</span>
+                    <span style={{fontSize:11,fontWeight:700,color:a.connected?a.c:"#475569"}}>{a.p}</span>
+                    {a.connected
+                      ? <span style={{fontSize:9,color:"#10B981",fontWeight:700}}>✓</span>
+                      : <button onClick={()=>alert(`To connect ${a.p}: go to Settings → Social Accounts → ${a.p} and paste your API credentials.`)}
+                          style={{fontSize:9,padding:"2px 6px",borderRadius:4,border:`1px solid ${a.c}44`,background:"transparent",color:a.c,cursor:"pointer",fontWeight:700}}>Connect</button>
+                    }
+                  </div>
+                ))}
+              </div>
+            </div>
+
             <div style={{display:"flex",flexDirection:"column",gap:14}}>
               <div>
-                <label style={{fontSize:11,fontWeight:700,color:"#475569",display:"block",marginBottom:7}}>PLATFORM</label>
+                <label style={{fontSize:11,fontWeight:700,color:"#475569",display:"block",marginBottom:7,textTransform:"uppercase"}}>Platform</label>
                 <select style={{width:"100%",padding:"10px 12px",borderRadius:9,border:"1px solid #1E293B",background:"#060B18",color:"#E2E8F0",fontSize:13,outline:"none"}}>
                   {Object.keys(PLATFORMS).map(p=><option key={p}>{p}</option>)}
                 </select>
               </div>
+
+              {/* Image Upload */}
               <div>
-                <label style={{fontSize:11,fontWeight:700,color:"#475569",display:"block",marginBottom:7}}>CAPTION</label>
-                <textarea rows={4} style={{width:"100%",padding:"10px 12px",borderRadius:9,border:"1px solid #1E293B",background:"#060B18",color:"#E2E8F0",fontSize:13,outline:"none",resize:"vertical",boxSizing:"border-box",lineHeight:1.5}}/>
+                <label style={{fontSize:11,fontWeight:700,color:"#475569",display:"block",marginBottom:7,textTransform:"uppercase"}}>Image / Video</label>
+                <label style={{display:"block",cursor:"pointer"}}>
+                  <input type="file" accept="image/*,video/*" multiple style={{display:"none"}} onChange={e=>{
+                    const files = Array.from(e.target.files||[]);
+                    if(files.length>0) alert(`${files.length} file(s) selected: ${files.map(f=>f.name).join(", ")}`);
+                  }}/>
+                  <div style={{border:"2px dashed #1E293B",borderRadius:12,padding:"24px 16px",textAlign:"center",background:"#060B18",transition:"border-color .2s"}}
+                    onMouseEnter={e=>(e.currentTarget.style.borderColor="#FF6B00")}
+                    onMouseLeave={e=>(e.currentTarget.style.borderColor="#1E293B")}>
+                    <div style={{fontSize:28,marginBottom:6}}>🖼️</div>
+                    <div style={{fontSize:12,fontWeight:700,color:"#94A3B8"}}>Click to upload image or video</div>
+                    <div style={{fontSize:10,color:"#475569",marginTop:4}}>PNG, JPG, MP4, MOV — up to 100MB · Multiple files supported</div>
+                    <div style={{marginTop:10,display:"flex",gap:6,justifyContent:"center",flexWrap:"wrap"}}>
+                      {["📸 Photo","🎬 Reel / Short","📺 Thumbnail","🖼️ Story"].map(t=>(
+                        <span key={t} style={{fontSize:10,padding:"3px 8px",borderRadius:5,background:"#1E293B",color:"#64748B"}}>{t}</span>
+                      ))}
+                    </div>
+                  </div>
+                </label>
               </div>
+
+              <div>
+                <label style={{fontSize:11,fontWeight:700,color:"#475569",display:"block",marginBottom:7,textTransform:"uppercase"}}>Caption / Message</label>
+                <textarea rows={4} placeholder="Write your post caption here... #BCPLT20 #Cricket" style={{width:"100%",padding:"10px 12px",borderRadius:9,border:"1px solid #1E293B",background:"#060B18",color:"#E2E8F0",fontSize:13,outline:"none",resize:"vertical",boxSizing:"border-box",lineHeight:1.5}}/>
+              </div>
+
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
                 <div>
-                  <label style={{fontSize:11,fontWeight:700,color:"#475569",display:"block",marginBottom:7}}>DATE</label>
+                  <label style={{fontSize:11,fontWeight:700,color:"#475569",display:"block",marginBottom:7,textTransform:"uppercase"}}>Date</label>
                   <input type="date" style={{width:"100%",padding:"10px 12px",borderRadius:9,border:"1px solid #1E293B",background:"#060B18",color:"#E2E8F0",fontSize:13,outline:"none",boxSizing:"border-box"}}/>
                 </div>
                 <div>
-                  <label style={{fontSize:11,fontWeight:700,color:"#475569",display:"block",marginBottom:7}}>TIME</label>
+                  <label style={{fontSize:11,fontWeight:700,color:"#475569",display:"block",marginBottom:7,textTransform:"uppercase"}}>Time</label>
                   <input type="time" style={{width:"100%",padding:"10px 12px",borderRadius:9,border:"1px solid #1E293B",background:"#060B18",color:"#E2E8F0",fontSize:13,outline:"none",boxSizing:"border-box"}}/>
                 </div>
               </div>
+
               <div style={{display:"flex",gap:10,marginTop:4}}>
                 <button onClick={()=>setNewOpen(false)} style={{flex:1,padding:"11px",borderRadius:10,border:"1px solid #1E293B",background:"transparent",color:"#94A3B8",fontSize:13,cursor:"pointer"}}>Cancel</button>
-                <button style={{flex:1,padding:"11px",borderRadius:10,border:"none",background:"linear-gradient(135deg,#FF6B00,#FF8C40)",color:"#fff",fontWeight:700,fontSize:13,cursor:"pointer"}}>Schedule</button>
+                <button onClick={()=>{ setNewOpen(false); alert("Post scheduled! Connect your social accounts in Settings → Social Accounts to auto-publish."); }} style={{flex:2,padding:"11px",borderRadius:10,border:"none",background:"linear-gradient(135deg,#FF6B00,#FF8C40)",color:"#fff",fontWeight:700,fontSize:13,cursor:"pointer"}}>📅 Schedule Post</button>
               </div>
             </div>
           </div>
