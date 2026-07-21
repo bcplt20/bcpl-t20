@@ -1,4 +1,6 @@
 import { useState } from "react";
+import AdminSettingsView, { loadCoAdmins, ALL_SECTIONS } from "./views/AdminSettingsView";
+import type { CoAdmin } from "./views/AdminSettingsView";
 import DashboardView        from "./views/DashboardView";
 import UsersView            from "./views/UsersView";
 import FinanceView          from "./views/FinanceView";
@@ -76,8 +78,11 @@ const NAV: NavGroup[] = [
     { id:"sponsor_roi",  label:"Sponsor ROI",       icon:"↗" },
   ]},
   { title: "TOOLS", items: [
-    { id:"data_export",  label:"Data Export",       icon:"⊕" },
-    { id:"roles",        label:"Roles & Access",    icon:"◈" },
+    { id:"data_export",     label:"Data Export",        icon:"⊕" },
+    { id:"roles",           label:"Roles & Access",     icon:"◈" },
+  ]},
+  { title: "SETTINGS", items: [
+    { id:"admin_settings",  label:"Admin Management",   icon:"⚙" },
   ]},
 ];
 
@@ -122,53 +127,74 @@ function renderView(id: string) {
     case "sponsor_roi":    return <SponsorROIView />;
     case "data_export":    return <DataExportView />;
     case "roles":          return <RolesView />;
+    case "admin_settings": return <AdminSettingsView />;
     default:               return <DashboardView />;
   }
 }
 
 const ALL_ITEMS = NAV.flatMap(g => g.items);
 
+/* ── Super Admin (hardcoded, always available) ── */
+const SUPER_ADMIN = {
+  id:"SA-ROOT", name:"Saurabh Jha", email:"saurabhjha@bcplt20.com",
+  role:"Super Admin", permissions:["all"] as string[],
+};
+
 export default function AdminShell() {
-  const [active,     setActive]    = useState("dashboard");
-  const [loggedIn,   setLoggedIn]  = useState(false);
-  const [collapsed,  setCollapsed] = useState(false);
-  const [loginForm,  setLoginForm] = useState({ email:"admin@bcplt20.com", password:"" });
-  const [loginErr,   setLoginErr]  = useState("");
-  const [notifOpen,  setNotifOpen] = useState(false);
-  const [searchOpen, setSearchOpen]= useState(false);
-  const [searchQ,    setSearchQ]   = useState("");
+  const [active,        setActive]       = useState("dashboard");
+  const [loggedIn,      setLoggedIn]     = useState(false);
+  const [loggedInAdmin, setLoggedInAdmin]= useState<typeof SUPER_ADMIN & { password?:string } | null>(null);
+  const [collapsed,     setCollapsed]    = useState(false);
+  const [loginForm,     setLoginForm]    = useState({ email:"", password:"" });
+  const [loginErr,      setLoginErr]     = useState("");
+  const [notifOpen,     setNotifOpen]    = useState(false);
+  const [searchOpen,    setSearchOpen]   = useState(false);
+  const [searchQ,       setSearchQ]      = useState("");
 
   const NOTIFS: { icon:string; text:string; time:string; unread:boolean }[] = [];
   const unreadCount = NOTIFS.filter(n => n.unread).length;
 
-  const SEARCH_ITEMS = ALL_ITEMS.filter(i =>
+  /* ── Super Admin password (only this needs changing in code) ── */
+  const SUPER_ADMIN_PASSWORD = "BCPL@S5#2026!";
+
+  /* ── Nav filtering by permission ── */
+  const isSuperAdmin = loggedInAdmin?.permissions?.includes("all") ?? false;
+  const visibleNAV = NAV.map(group => ({
+    ...group,
+    items: group.items.filter(item => {
+      if (item.id === "admin_settings") return isSuperAdmin;
+      if (isSuperAdmin) return true;
+      return loggedInAdmin?.permissions?.includes(item.id);
+    }),
+  })).filter(g => g.items.length > 0);
+
+  const VISIBLE_ITEMS = visibleNAV.flatMap(g => g.items);
+  const SEARCH_ITEMS = VISIBLE_ITEMS.filter(i =>
     !searchQ || i.label.toLowerCase().includes(searchQ.toLowerCase())
   );
   const activeLabel = ALL_ITEMS.find(i => i.id === active)?.label || "Dashboard";
-
-  /* ══════════════════════════════════════════════════
-     ADMIN ACCOUNTS — sirf aap yahan change karein
-     ══════════════════════════════════════════════════
-     Role options: "Super Admin" | "Finance Admin" | "Operations Admin"
-     Password badalna ho to bas neeche value badlo aur save karo.
-     ══════════════════════════════════════════════════ */
-  const ADMIN_ACCOUNTS = [
-    // ── MAIN HEAD (aap) ────────────────────────────
-    { email:"saurabhjha@bcplt20.com", password:"BCPL@S5#2026!", name:"Saurabh Jha",  role:"Super Admin"      },
-
-    // ── CO-ADMINS (baad mein fill karein) ──────────
-    // { email:"coladmin@bcplt20.com",  password:"BCPL@Ops2026!", name:"Ops Team",     role:"Operations Admin" },
-    // { email:"finance@bcplt20.com",   password:"BCPL@Fin2026!", name:"Finance Team",  role:"Finance Admin"    },
-  ];
 
   /* ── Login ── */
   if (!loggedIn) {
     const handleLogin = () => {
       if(!loginForm.email){ setLoginErr("Email address is required"); return; }
       if(!loginForm.password){ setLoginErr("Password is required"); return; }
-      const acc = ADMIN_ACCOUNTS.find(a => a.email.toLowerCase()===loginForm.email.toLowerCase() && a.password===loginForm.password);
-      if(!acc){ setLoginErr("Incorrect email or password. Contact the Super Admin."); return; }
-      setLoggedIn(true);
+      const emailL = loginForm.email.toLowerCase().trim();
+      // Check Super Admin first
+      if (emailL === SUPER_ADMIN.email && loginForm.password === SUPER_ADMIN_PASSWORD) {
+        setLoggedIn(true);
+        setLoggedInAdmin(SUPER_ADMIN);
+        return;
+      }
+      // Check co-admins from localStorage
+      const coAdmins: CoAdmin[] = loadCoAdmins();
+      const co = coAdmins.find(a => a.email.toLowerCase() === emailL && a.password === loginForm.password);
+      if (co) {
+        setLoggedIn(true);
+        setLoggedInAdmin({ id:co.id, name:co.name, email:co.email, role:co.role, permissions:co.permissions });
+        return;
+      }
+      setLoginErr("Incorrect email or password. Contact the Super Admin.");
     };
     return (
       <div style={{ minHeight:"100vh", background:"radial-gradient(ellipse at 20% 50%,#0D1526 0%,#060B18 60%)", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"'Inter',sans-serif" }}>
@@ -240,7 +266,7 @@ export default function AdminShell() {
 
         {/* Nav */}
         <nav style={{ flex:1, padding:"10px 8px", overflowY:"auto", overflowX:"hidden" }}>
-          {NAV.map(group=>(
+          {visibleNAV.map(group=>(
             <div key={group.title} style={{ marginBottom:14 }}>
               {!collapsed&&(
                 <div style={{ height:26, display:"flex", alignItems:"center", paddingLeft:8 }}>
@@ -270,14 +296,17 @@ export default function AdminShell() {
 
         {/* Profile footer */}
         <div style={{ height:56, paddingLeft:collapsed?0:12, paddingRight:collapsed?0:10, borderTop:"1px solid #0F172A", display:"flex", alignItems:"center", justifyContent:collapsed?"center":"flex-start", gap:10, flexShrink:0 }}>
-          <div style={{ width:30, height:30, borderRadius:8, background:"#FF6B0020", border:"2px solid #FF6B0040", display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, fontWeight:800, color:"#FF6B00", flexShrink:0, lineHeight:1 }}>A</div>
+          <div style={{ width:30, height:30, borderRadius:8, background:"#FF6B0020", border:"2px solid #FF6B0040", display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, fontWeight:800, color:"#FF6B00", flexShrink:0, lineHeight:1 }}>
+            {(loggedInAdmin?.name||"A").charAt(0).toUpperCase()}
+          </div>
           {!collapsed&&(
             <>
               <div style={{ flex:1, minWidth:0 }}>
-                <div style={{ fontSize:12, fontWeight:700, color:"#CBD5E1", lineHeight:1, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>Admin</div>
-                <div style={{ fontSize:10, color:"#334155", marginTop:4, lineHeight:1 }}>Super Admin</div>
+                <div style={{ fontSize:12, fontWeight:700, color:"#CBD5E1", lineHeight:1, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{loggedInAdmin?.name||"Admin"}</div>
+                <div style={{ fontSize:10, color:"#334155", marginTop:4, lineHeight:1 }}>{loggedInAdmin?.role||"Super Admin"}</div>
               </div>
-              <button onClick={()=>setLoggedIn(false)} style={{ width:28, height:28, display:"flex", alignItems:"center", justifyContent:"center", background:"none", border:"none", color:"#334155", cursor:"pointer", fontSize:14, flexShrink:0, lineHeight:1, borderRadius:6 }} title="Sign out">⎋</button>
+              <button onClick={()=>{ setLoggedIn(false); setLoggedInAdmin(null); setLoginForm({email:"",password:""}); setLoginErr(""); }}
+                style={{ width:28, height:28, display:"flex", alignItems:"center", justifyContent:"center", background:"none", border:"none", color:"#334155", cursor:"pointer", fontSize:14, flexShrink:0, lineHeight:1, borderRadius:6 }} title="Sign out">⎋</button>
             </>
           )}
         </div>
