@@ -1,53 +1,37 @@
-// MSG91 SMS / OTP service — https://msg91.com
+// MSG91 OTP service — https://msg91.com
 
-const AUTH_KEY   = process.env.MSG91_AUTH_KEY;
+const AUTH_KEY    = process.env.MSG91_AUTH_KEY;
 const TEMPLATE_ID = process.env.MSG91_TEMPLATE_ID;
-const SENDER_ID  = process.env.MSG91_SENDER_ID || "KRIPLA";
 
-/** Send OTP via MSG91 Flow API */
+/** Send OTP via MSG91 OTP API (dedicated OTP endpoint) */
 export async function sendOtp(phone: string, otp: string): Promise<boolean> {
   if (!AUTH_KEY || !TEMPLATE_ID) {
     console.warn(`[SMS-STUB] OTP for ${phone}: ${otp}`);
     (globalThis as any).__lastDevOtp = otp;
-    return true; // dev stub — no keys set
+    return true;
   }
 
   try {
-    // MSG91 expects 91XXXXXXXXXX format (no + sign)
+    // MSG91 expects 91XXXXXXXXXX (no + sign)
     const mobile = `91${phone}`;
 
-    const body = {
-      template_id: TEMPLATE_ID,
-      short_url: "0",
-      recipients: [
-        {
-          mobiles: mobile,
-          var1: otp,
-        },
-      ],
-    };
+    const url = `https://api.msg91.com/api/v5/otp?template_id=${TEMPLATE_ID}&mobile=${mobile}&authkey=${AUTH_KEY}&otp=${otp}`;
 
-    const res = await fetch("https://api.msg91.com/api/v5/flow/", {
-      method: "POST",
-      headers: {
-        authkey: AUTH_KEY,
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify(body),
-    });
-
+    const res = await fetch(url, { method: "POST" });
     const data = (await res.json()) as { type?: string; message?: string };
-    console.log("[MSG91] sendOtp response:", data);
+    console.log("[MSG91-OTP] response:", JSON.stringify(data));
 
-    return data.type === "success";
+    if (data.type === "success") return true;
+
+    console.error("[MSG91-OTP] failed:", data);
+    return false;
   } catch (e) {
-    console.error("[MSG91] sendOtp failed", e);
+    console.error("[MSG91-OTP] exception:", e);
     return false;
   }
 }
 
-/** Send transactional SMS via MSG91 (for non-OTP messages) */
+/** Send transactional SMS via MSG91 */
 export async function sendSms(phone: string, message: string): Promise<boolean> {
   if (!AUTH_KEY) {
     console.warn(`[SMS-STUB] To ${phone}: ${message}`);
@@ -56,13 +40,13 @@ export async function sendSms(phone: string, message: string): Promise<boolean> 
   try {
     const mobile = `91${phone}`;
     const res = await fetch(
-      `https://api.msg91.com/api/sendhttp.php?authkey=${AUTH_KEY}&mobiles=${mobile}&message=${encodeURIComponent(message)}&sender=${SENDER_ID}&route=4`,
+      `https://api.msg91.com/api/sendhttp.php?authkey=${AUTH_KEY}&mobiles=${mobile}&message=${encodeURIComponent(message)}&sender=KRIPLA&route=4`,
     );
     const text = await res.text();
-    console.log("[MSG91] sendSms response:", text);
+    console.log("[MSG91-SMS] response:", text);
     return true;
   } catch (e) {
-    console.error("[MSG91] sendSms failed", e);
+    console.error("[MSG91-SMS] failed:", e);
     return false;
   }
 }
