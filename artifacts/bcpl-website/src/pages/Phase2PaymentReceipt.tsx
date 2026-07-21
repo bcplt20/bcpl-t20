@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { BCPLFooter } from '../components/BCPLFooter';
 
 export function Phase2PaymentReceipt() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -193,34 +194,7 @@ const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-cen
         </div>
       </div>
 
-      {/* FOOTER */}
-      <footer style={{ marginTop:80, background:'#060C18', borderTop:'1px solid rgba(255,255,255,0.07)', padding:'40px 0 24px' }}>
-        <div className="wrap" style={{ maxWidth:1200 }}>
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))', gap:28, marginBottom:32 }}>
-            <div>
-              <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL" style={{ height:48, width:'auto', objectFit:'contain', display:'block', filter:'brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.6))', marginBottom:8 }}/>
-              <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)', lineHeight:1.7 }}>India's biggest corporate cricket league. Season 5 · ₹6 Cr Prize Pool · 50+ Cities</div>
-              <div style={{ marginTop:12, fontSize:11, fontWeight:700, fontFamily:'Montserrat,sans-serif', color:'#E8B23D' }}>#OfficeSeStadiumtak</div>
-            </div>
-            <div>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:11, letterSpacing:'.12em', color:'rgba(255,255,255,0.35)', marginBottom:12, textTransform:'uppercase' }}>Quick Links</div>
-              {['Register','Teams','Match Center','FAQ','Contact'].map(l => <div key={l} style={{ fontSize:13, color:'rgba(255,255,255,0.5)', marginBottom:8 }}><a href="#">{l}</a></div>)}
-            </div>
-            <div>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:11, letterSpacing:'.12em', color:'rgba(255,255,255,0.35)', marginBottom:12, textTransform:'uppercase' }}>Legal</div>
-              {['Terms & Conditions','Privacy Policy','Refund Policy','Code of Conduct'].map(l => <div key={l} style={{ fontSize:13, color:'rgba(255,255,255,0.5)', marginBottom:8 }}><a href="#">{l}</a></div>)}
-            </div>
-            <div>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:11, letterSpacing:'.12em', color:'rgba(255,255,255,0.35)', marginBottom:12, textTransform:'uppercase' }}>Organised By</div>
-              <div style={{ fontSize:13, color:'rgba(255,255,255,0.6)', lineHeight:1.7 }}>BCPL Pvt. Ltd.<br/>Brand Ambassador: Sourav Ganguly<br/>Season 5 · BCCI Certified Scouts</div>
-            </div>
-          </div>
-          <div style={{ borderTop:'1px solid rgba(255,255,255,0.06)', paddingTop:20, display:'flex', justifyContent:'space-between', flexWrap:'wrap', gap:12 }}>
-            <span style={{ fontSize:11, color:'rgba(255,255,255,0.25)' }}>© 2026 BCPL Pvt. Ltd. All rights reserved.</span>
-            <span style={{ fontSize:11, color:'rgba(255,255,255,0.25)' }}>BCPL Season 5</span>
-          </div>
-        </div>
-      </footer>
+      <BCPLFooter />
     </div>
   );
 }

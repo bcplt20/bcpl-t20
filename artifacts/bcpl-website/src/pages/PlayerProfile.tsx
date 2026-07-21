@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { BCPLFooter } from '../components/BCPLFooter';
 
 const L = import.meta.env.BASE_URL + "bcpl-assets/logos/";
 
@@ -465,13 +466,7 @@ export function PlayerProfile() {
         </div>
       </main>
 
-      {/* FOOTER */}
-      <footer style={{ background:"#040A15", borderTop:"1px solid rgba(255,255,255,0.06)", padding:"20px 0" }}>
-        <div className="wrap" style={{ display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:10 }}>
-          <span style={{ fontFamily:"Inter,sans-serif", fontSize:12, color:"rgba(255,255,255,0.2)" }}>BCPL T20 · Season 5 · BCPL T20 Pvt. Ltd. · © 2026</span>
-          <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, letterSpacing:".1em", color:"#E8B23D" }}>#OfficeSeStadiumtak</span>
-        </div>
-      </footer>
+      <BCPLFooter />
     </div>
   );
 }

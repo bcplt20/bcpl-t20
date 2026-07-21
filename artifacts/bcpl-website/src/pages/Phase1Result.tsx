@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { BCPLFooter } from '../components/BCPLFooter';
 
 const NAV = ['Home','Match Center','Teams','Sponsors','Photos','Videos','About','FAQ','Contact'];
 const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-center', 'Teams':'teams', 'Sponsors':'sponsors', 'Photos':'photos', 'Videos':'videos', 'About':'about', 'FAQ':'faq', 'Contact':'contact' };
@@ -266,30 +267,7 @@ export function Phase1Result() {
         </div>
       )}
 
-      {/* ── FOOTER ── */}
-      <footer style={{ background:'#040C18', borderTop:'1px solid rgba(255,255,255,0.06)', padding:'32px 0 20px' }}>
-        <div className="wrap">
-          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', flexWrap:'wrap', gap:20, marginBottom:24 }}>
-            <div>
-                            <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL" style={{ height:42, width:'auto', objectFit:'contain', display:'block', filter:'brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.7))' }}/>
-              <div style={{ display:'inline-flex', alignItems:'center', gap:4, background:'rgba(232,178,61,0.12)', border:'1px solid rgba(232,178,61,0.5)', borderRadius:6, padding:'3px 10px' }}>
-                <span style={{ fontSize:9 }}>🏆</span>
-                <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:9, color:'#E8B23D', letterSpacing:'.12em' }}>SEASON 5</span>
-              </div>
-              <div style={{ fontSize:11, color:'#E8B23D', fontWeight:700, fontFamily:'Montserrat,sans-serif', letterSpacing:'.08em', marginTop:6 }}>#OfficeSeStadiumtak</div>
-            </div>
-            <div className="footer-links">
-              {['About','Teams','FAQ','Contact','Terms','Privacy','Refunds'].map(l => (
-                <a key={l} href="#" style={{ fontSize:12, color:'rgba(255,255,255,0.4)', textDecoration:'none', fontWeight:600 }}>{l}</a>
-              ))}
-            </div>
-          </div>
-          <div style={{ borderTop:'1px solid rgba(255,255,255,0.05)', paddingTop:16, fontSize:11, color:'rgba(255,255,255,0.25)' }} className="footer-bottom">
-            <span>Season 5 · BCPL Pvt. Ltd.</span>
-            <span>© 2026 BCPL. All Rights Reserved.</span>
-          </div>
-        </div>
-      </footer>
+      <BCPLFooter />
     </div>
   );
 }
