@@ -23,7 +23,7 @@ export function BCPLFooter() {
         .bcpl-foot-wrap { max-width:1200px; margin:0 auto; padding:0 clamp(16px,4vw,40px); }
         .bcpl-foot-cols { display:grid; grid-template-columns:220px 1fr 1fr 1fr; gap:40px; margin-bottom:32px; }
         @media(max-width:900px){ .bcpl-foot-cols{grid-template-columns:1fr 1fr 1fr;} .bcpl-foot-brand{grid-column:1/-1;} }
-        @media(max-width:540px){ .bcpl-foot-cols{grid-template-columns:1fr 1fr;} }
+        @media(max-width:540px){ .bcpl-foot-cols{grid-template-columns:1fr 1fr;} .bcpl-foot-brand{grid-column:1/-1;} }
         @media(max-width:380px){ .bcpl-foot-cols{grid-template-columns:1fr;} }
         .bcpl-foot-link:hover{ color:#FF7A29!important; }
         .bcpl-soc:hover{ border-color:#FF7A29!important; background:rgba(255,122,41,.12)!important; }
@@ -41,7 +41,7 @@ export function BCPLFooter() {
           <div className="bcpl-foot-brand">
             <a href="/" style={{ display:"flex", alignItems:"center", gap:10, textDecoration:"none", marginBottom:12, flexWrap:"nowrap" }}>
               <img src={BASE + "bcpl-assets/bcpl-logo-white.png"} alt="BCPL"
-                style={{ height:44, maxWidth:155, width:"auto", objectFit:"contain", display:"block", flexShrink:0 }}/>
+                style={{ height:38, maxWidth:120, width:"auto", objectFit:"contain", display:"block", flexShrink:0 }}/>
               <div style={{ display:"inline-flex", alignItems:"center", gap:4, background:"rgba(232,178,61,0.1)", border:"1px solid rgba(232,178,61,0.4)", borderRadius:6, padding:"3px 9px", flexShrink:0, whiteSpace:"nowrap" }}>
                 <span className="s5-trophy" style={{ fontSize:9 }}>🏆</span>
                 <span className="s5-badge-text" style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:9, color:"#E8B23D", letterSpacing:".12em" }}>SEASON 5</span>

@@ -175,6 +175,7 @@ const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-cen
         }
       `}</style>
 
+      <div style={{ position:'sticky', top:0, zIndex:300 }}>
       {/* ── TICKER ── */}
       <div style={{ background:'linear-gradient(90deg,#C94E0E,#FF7A29,#E8611A,#FF7A29,#C94E0E)', backgroundSize:'300% 100%', animation:'gradShift 4s ease infinite', overflow:'hidden', height:34, display:'flex', alignItems:'center' }}>
         <div style={{ display:'flex', whiteSpace:'nowrap', animation:'tickerScroll 30s linear infinite' }}>
@@ -187,7 +188,7 @@ const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-cen
       </div>
 
       {/* ── NAVBAR ── */}
-      <nav style={{ position:'sticky', top:0, zIndex:300, background:'rgba(6,16,30,0.97)', backdropFilter:'blur(20px)', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
+      <nav style={{ background:'rgba(6,16,30,0.97)', backdropFilter:'blur(20px)', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
         <div style={{ height:2, background:'linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)', backgroundSize:'200%', animation:'shimGold 4s linear infinite' }} />
         <div className="wrap" style={{ height:60, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
           <div style={{ display:'flex', alignItems:'center', gap:10 }}>
@@ -206,6 +207,7 @@ const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-cen
           </button>
         </div>
       </nav>
+      </div>{/* /sticky-top */}
 
       {menuOpen && (
         <div style={{ position:'fixed', inset:0, background:'#040C18', zIndex:400, display:'flex', flexDirection:'column', padding:'72px 24px 40px', overflowY:'auto' }}>

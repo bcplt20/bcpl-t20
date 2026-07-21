@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { BCPLFooter } from '../components/BCPLFooter';
 
 export function Phase2Payment() {
   const [agreed, setAgreed] = useState(false);
@@ -51,6 +52,7 @@ const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-cen
         .achievement-banner{background:#060C18;border:1px solid rgba(232,178,61,0.5);border-left:4px solid #E8B23D;padding:14px 16px;margin-bottom:32px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-radius:12px}
       `}</style>
 
+      <div style={{ position:'sticky', top:0, zIndex:300 }}>
       {/* TICKER */}
       <div style={{ background:'linear-gradient(90deg,#C94E0E,#FF7A29,#E8611A,#FF7A29,#C94E0E)', backgroundSize:'300% 100%', animation:'gradShift 4s ease infinite', overflow:'hidden', height:34, display:'flex', alignItems:'center' }}>
         <div style={{ display:'flex', whiteSpace:'nowrap', animation:'tickerScroll 32s linear infinite' }}>
@@ -63,7 +65,7 @@ const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-cen
       </div>
 
       {/* NAVBAR */}
-      <nav style={{ position:'sticky', top:0, zIndex:300, background:'rgba(6,16,30,0.97)', backdropFilter:'blur(20px)', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
+      <nav style={{ background:'rgba(6,16,30,0.97)', backdropFilter:'blur(20px)', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
         <div style={{ height:2, background:'linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)', backgroundSize:'200%', animation:'shimGold 4s linear infinite' }} />
         <div className="wrap" style={{ maxWidth:1200, height:60, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
           <div style={{ display:'flex', alignItems:'center', gap:10 }}>
@@ -90,6 +92,7 @@ const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-cen
           </div>
         )}
       </nav>
+      </div>{/* /sticky-top */}
 
       <div className="wrap" style={{ paddingTop:32 }}>
         {/* ACHIEVEMENT BANNER */}
@@ -229,34 +232,7 @@ const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-cen
         </div>
       </div>
 
-      {/* FOOTER */}
-      <footer style={{ marginTop:80, background:'#060C18', borderTop:'1px solid rgba(255,255,255,0.07)', padding:'40px 0 24px' }}>
-        <div className="wrap" style={{ maxWidth:1200 }}>
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))', gap:28, marginBottom:32 }}>
-            <div>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, marginBottom:8 }}><span style={{ color:'#FF7A29' }}>BCPL</span></div>
-              <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)', lineHeight:1.7 }}>Bhartiya Corporate Premier League. Season 5 · ₹6 Cr Prize Pool · 21 Cities</div>
-              <div style={{ marginTop:12, fontSize:11, fontWeight:700, fontFamily:'Montserrat,sans-serif', color:'#E8B23D' }}>#OfficeSeStadiumtak</div>
-            </div>
-            <div>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:11, letterSpacing:'.12em', color:'rgba(255,255,255,0.35)', marginBottom:12, textTransform:'uppercase' }}>Quick Links</div>
-              {['Register','Teams','Match Center','FAQ','Contact'].map(l => <div key={l} style={{ fontSize:13, color:'rgba(255,255,255,0.5)', marginBottom:8 }}><a href="#">{l}</a></div>)}
-            </div>
-            <div>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:11, letterSpacing:'.12em', color:'rgba(255,255,255,0.35)', marginBottom:12, textTransform:'uppercase' }}>Legal</div>
-              {['Terms & Conditions','Privacy Policy','Refund Policy','Code of Conduct'].map(l => <div key={l} style={{ fontSize:13, color:'rgba(255,255,255,0.5)', marginBottom:8 }}><a href="#">{l}</a></div>)}
-            </div>
-            <div>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:11, letterSpacing:'.12em', color:'rgba(255,255,255,0.35)', marginBottom:12, textTransform:'uppercase' }}>Organised By</div>
-              <div style={{ fontSize:13, color:'rgba(255,255,255,0.6)', lineHeight:1.7 }}>Kriparti Playing11 Pvt. Ltd.<br/>Brand Ambassador: Sourav Ganguly<br/>Season 5 · BCCI Certified Scouts</div>
-            </div>
-          </div>
-          <div style={{ borderTop:'1px solid rgba(255,255,255,0.06)', paddingTop:20, display:'flex', justifyContent:'space-between', flexWrap:'wrap', gap:12 }}>
-            <span style={{ fontSize:11, color:'rgba(255,255,255,0.25)' }}>© 2026 Kriparti Playing11 Pvt. Ltd. All rights reserved.</span>
-            <span style={{ fontSize:11, color:'rgba(255,255,255,0.25)' }}>BCPL Season 5</span>
-          </div>
-        </div>
-      </footer>
+      <BCPLFooter />
     </div>
   );
 }
