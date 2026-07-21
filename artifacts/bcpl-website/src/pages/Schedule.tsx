@@ -106,21 +106,27 @@ const ROUTE_MAP: Record<string,string> = {
 
 function Navbar() {
   const [open, setOpen] = React.useState(false);
-  const links = [['Home','#'],['Match Center','#'],['Teams','#'],['Sponsors','#'],['Photos','#'],['Videos','#'],['About','#'],['FAQ','#'],['Contact','#']];
+  const links = [['Home','/'],['Match Center','/match-center'],['Teams','/teams'],['Sponsors','/sponsors'],['Photos','/photos'],['Videos','/videos'],['About','/about'],['FAQ','/faq'],['Contact','/contact'],['Login','/register#login']];
   return (
     <>
       <nav style={{position:'sticky',top:0,zIndex:200,background:'rgba(6,14,28,0.96)',backdropFilter:'blur(24px)',borderBottom:'1px solid rgba(255,255,255,0.07)',boxShadow:'0 1px 0 0 rgba(255,122,41,0.25)'}}>
         <div className="wrap" style={{height:64,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-          <div style={{display:'flex',alignItems:'center'}}>
-            <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,color:'#FF7A29'}}>BCPL</span>
-            <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,color:'#fff'}}>T20</span>
-            <span style={{fontSize:10,color:'rgba(255,122,41,0.7)',fontFamily:'Montserrat,sans-serif',fontWeight:700,marginLeft:8,letterSpacing:'0.06em'}}>SEASON 5</span>
-          </div>
+          <a href="/" style={{display:'flex',alignItems:'center',gap:8,textDecoration:'none'}}>
+            <div style={{width:36,height:36,borderRadius:'50%',overflow:'hidden',flexShrink:0}}>
+              <img src="/bcpl-website/bcpl-assets/bcpl-ball-clean.png" alt="BCPL" style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:'top center'}}/>
+            </div>
+            <div>
+              <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:18,lineHeight:1}}>
+                <span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff'}}>T20</span>
+              </div>
+              <div style={{fontSize:9,color:'rgba(255,122,41,0.7)',fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'0.06em',lineHeight:1,marginTop:2}}>SEASON 5</div>
+            </div>
+          </a>
           <div className="desk-nav">
             {links.map(([l,h])=>(
-              <a key={l} href={h} style={{color: l==='Schedule' ? '#FF7A29':'rgba(255,255,255,0.72)',fontSize:13,fontWeight:600,fontFamily:'Inter,sans-serif',textDecoration:'none',borderBottom: l==='Schedule'?'2px solid #FF7A29':'2px solid transparent',paddingBottom:2}}>{l}</a>
+              <a key={l} href={h} style={{color: l==='Schedule'?'#FF7A29':l==='Login'?'#FF7A29':'rgba(255,255,255,0.72)',fontSize:13,fontWeight:600,fontFamily:'Inter,sans-serif',textDecoration:'none',borderBottom: l==='Schedule'?'2px solid #FF7A29':'2px solid transparent',paddingBottom:2}}>{l}</a>
             ))}
-            <button className="btn-fire" style={{padding:'10px 22px',fontSize:13,borderRadius:12}}>Register ₹299</button>
+            <a href="/register" className="btn-fire" style={{padding:'10px 22px',fontSize:13,borderRadius:12,textDecoration:'none',display:'inline-flex',alignItems:'center'}}>Register ₹299</a>
           </div>
           <button className="ham-btn" onClick={()=>setOpen(o=>!o)} style={{flexDirection:'column',gap:5,background:'none',border:'none',cursor:'pointer',padding:8,zIndex:201}}>
             <span style={{display:'block',width:24,height:2,background:'#fff',borderRadius:12,transition:'all 0.25s',transform:open?'rotate(45deg) translate(5px,5px)':''}}/>
@@ -132,11 +138,11 @@ function Navbar() {
       {open && (
         <div style={{position:'fixed',inset:0,background:'#06101E',zIndex:300,display:'flex',flexDirection:'column',padding:'80px 28px 40px',overflowY:'auto'}}>
           <button onClick={()=>setOpen(false)} style={{position:'absolute',top:18,right:18,background:'none',border:'none',color:'rgba(255,255,255,0.5)',fontSize:28,cursor:'pointer',lineHeight:1}}>✕</button>
-          <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,marginBottom:32}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff'}}>T20</span></div>
-          {[['🏠 Home','#'],['🔴 Match Center','#'],['🏏 Teams','#'],['🤝 Sponsors','#'],['📷 Photos','#'],['▶️ Videos','#'],['ℹ️ About','#'],['❓ FAQ','#'],['✉️ Contact','#']].map(([l,h])=>(
-            <a key={l} href={h} onClick={()=>setOpen(false)} style={{color:'rgba(255,255,255,0.85)',fontWeight:700,fontSize:18,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,0.07)',display:'block'}}>{l}</a>
+          <a href="/" style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,marginBottom:32,textDecoration:'none'}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff'}}>T20</span></a>
+          {[['🏠 Home','/'],['🔴 Match Center','/match-center'],['🏏 Teams','/teams'],['🤝 Sponsors','/sponsors'],['📷 Photos','/photos'],['▶️ Videos','/videos'],['ℹ️ About','/about'],['❓ FAQ','/faq'],['✉️ Contact','/contact'],['🔑 Login','/register#login']].map(([l,h])=>(
+            <a key={l} href={h} onClick={()=>setOpen(false)} style={{color:l.includes('Login')?'#FF7A29':'rgba(255,255,255,0.85)',fontWeight:700,fontSize:18,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,0.07)',display:'block'}}>{l}</a>
           ))}
-          <button className="btn-fire" style={{marginTop:32,height:54,fontSize:16,borderRadius:14,width:'100%'}}>📝 Register for ₹299 →</button>
+          <a href="/register" className="btn-fire" style={{marginTop:32,height:54,fontSize:16,borderRadius:14,width:'100%',display:'flex',alignItems:'center',justifyContent:'center',textDecoration:'none'}}>📝 Register for ₹299 →</a>
         </div>
       )}
     </>

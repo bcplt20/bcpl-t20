@@ -718,6 +718,22 @@ export function Registration() {
                   </span>
                 </label>
 
+                {/* GST Breakdown */}
+                <div style={{ background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:10, padding:'14px 16px', marginBottom:12 }}>
+                  <div style={{ display:'flex', justifyContent:'space-between', marginBottom:8 }}>
+                    <span style={{ fontSize:13, color:'rgba(255,255,255,0.5)' }}>Registration Fee</span>
+                    <span style={{ fontSize:13, color:'rgba(255,255,255,0.7)', fontWeight:700 }}>₹{price}</span>
+                  </div>
+                  <div style={{ display:'flex', justifyContent:'space-between', marginBottom:10, paddingBottom:10, borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
+                    <span style={{ fontSize:12, color:'rgba(255,255,255,0.4)' }}>GST (18%)</span>
+                    <span style={{ fontSize:12, color:'rgba(255,255,255,0.5)' }}>₹{Math.round(price * 0.18)}</span>
+                  </div>
+                  <div style={{ display:'flex', justifyContent:'space-between' }}>
+                    <span style={{ fontSize:14, fontWeight:800, color:'#FF7A29', fontFamily:'Montserrat,sans-serif' }}>Total Payable</span>
+                    <span style={{ fontSize:16, fontWeight:900, color:'#FF7A29', fontFamily:'Montserrat,sans-serif' }}>₹{Math.round(price * 1.18)}</span>
+                  </div>
+                </div>
+
                 {/* Pay CTA */}
                 <button
                   className="btn-primary"
@@ -725,13 +741,13 @@ export function Registration() {
                   style={{ width:'100%', padding:'20px 0', fontSize:17, clipPath:'none', borderRadius:12, letterSpacing:'.08em' }}
                   onClick={() => agreed && alert('Payment gateway (Cashfree) will be live soon. Your registration details have been noted!')}
                 >
-                  🏏 &nbsp;PAY ₹{price} · ENTER PHASE 1 TRIALS
+                  🏏 &nbsp;PAY ₹{Math.round(price * 1.18)} (incl. 18% GST) · ENTER PHASE 1
                 </button>
                 {/* TEMP: Dummy pay for testing flow */}
                 {agreed && (
                   <button
                     style={{ width:'100%', marginTop:10, padding:'14px 0', background:'rgba(34,197,94,0.1)', border:'2px dashed rgba(34,197,94,0.4)', borderRadius:12, color:'#22C55E', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:13, cursor:'pointer', letterSpacing:'.06em' }}
-                    onClick={() => { window.location.href = '/phase1-receipt?name='+encodeURIComponent(name)+'&role='+encodeURIComponent(role?.label||'')+'&city='+encodeURIComponent(city)+'&amount='+price; }}
+                    onClick={() => { window.location.href = '/register/payment-receipt?name='+encodeURIComponent(name)+'&role='+encodeURIComponent(role?.label||'')+'&city='+encodeURIComponent(city)+'&amount='+price; }}
                   >
                     🧪 SKIP PAYMENT (TEST MODE) →
                   </button>

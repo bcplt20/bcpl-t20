@@ -1,14 +1,6 @@
 import { useState } from "react";
 
-const SPONSORS = [
-  { id: "S01", name: "Gujarat Titan Paints", tier: "Title", logo: "🏭", amount: "₹25L", status: "active", contract: "Mar 2025", visibility: "Jersey, Ground, Digital" },
-  { id: "S02", name: "Baroda Beverages Co.", tier: "Platinum", logo: "🥤", amount: "₹12L", status: "active", contract: "Mar 2025", visibility: "Ground Hoarding, Website" },
-  { id: "S03", name: "Excel Steel Ltd", tier: "Platinum", logo: "🔩", amount: "₹10L", status: "active", contract: "Feb 2025", visibility: "Boundary Boards, App" },
-  { id: "S04", name: "StarPlex Cinemas", tier: "Gold", logo: "🎬", amount: "₹5L", status: "active", contract: "Mar 2025", visibility: "Scoreboard, Social" },
-  { id: "S05", name: "TechFin Solutions", tier: "Gold", logo: "💻", amount: "₹4.5L", status: "active", contract: "Jan 2025", visibility: "App Banner, Email" },
-  { id: "S06", name: "Mehta Motors", tier: "Silver", logo: "🚗", amount: "₹2L", status: "negotiating", contract: "—", visibility: "TBD" },
-  { id: "S07", name: "Patel Dairy Fresh", tier: "Silver", logo: "🥛", amount: "₹1.5L", status: "active", contract: "Feb 2025", visibility: "Social Media" },
-];
+const SPONSORS: { id:string; name:string; tier:string; logo:string; amount:string; status:string; contract:string; visibility:string }[] = [];
 
 const TIERS = ["Title", "Platinum", "Gold", "Silver", "Bronze"];
 const TIER_C: Record<string, { bg: string; color: string; border: string }> = {

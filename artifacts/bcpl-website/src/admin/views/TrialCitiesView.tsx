@@ -1,17 +1,6 @@
 import { useState } from "react";
 
-const CITIES = [
-  { city:"Mumbai",    date:"Aug 10, 2026", venue:"Wankhede Academy Ground",   slots:150, filled:138, waitlist:42, status:"Almost Full", region:"West"  },
-  { city:"Delhi",     date:"Aug 12, 2026", venue:"Feroz Shah Kotla Ground",   slots:150, filled:101, waitlist:18, status:"Open",        region:"North" },
-  { city:"Bengaluru", date:"Aug 14, 2026", venue:"Chinnaswamy Stadium Nets",  slots:120, filled:120, waitlist:67, status:"Full",        region:"South" },
-  { city:"Hyderabad", date:"Aug 16, 2026", venue:"Rajiv Gandhi Int'l Stadium",slots:100, filled:74,  waitlist:12, status:"Open",        region:"South" },
-  { city:"Chennai",   date:"Aug 18, 2026", venue:"Chepauk Ground B",          slots:100, filled:88,  waitlist:25, status:"Almost Full", region:"South" },
-  { city:"Kolkata",   date:"Aug 20, 2026", venue:"Eden Gardens Practice",     slots:120, filled:55,  waitlist:0,  status:"Open",        region:"East"  },
-  { city:"Pune",      date:"Aug 22, 2026", venue:"MCA Ground, Gahunje",       slots:80,  filled:63,  waitlist:9,  status:"Open",        region:"West"  },
-  { city:"Ahmedabad", date:"Aug 24, 2026", venue:"Narendra Modi Stadium Nets",slots:100, filled:48,  waitlist:0,  status:"Open",        region:"West"  },
-  { city:"Jaipur",    date:"Aug 26, 2026", venue:"SMS Stadium Ground",        slots:80,  filled:31,  waitlist:0,  status:"Open",        region:"North" },
-  { city:"Lucknow",   date:"Aug 28, 2026", venue:"BRSABV Ekana Stadium",      slots:80,  filled:22,  waitlist:0,  status:"Open",        region:"North" },
-];
+const CITIES: { city:string; date:string; venue:string; slots:number; filled:number; waitlist:number; status:string; region:string }[] = [];
 
 const statusColor = (s: string) =>
   s==="Full"?"#EF4444":s==="Almost Full"?"#F59E0B":"#10B981";
@@ -24,6 +13,7 @@ export default function TrialCitiesView() {
   const totSlots = CITIES.reduce((a,c)=>a+c.slots,0);
   const totFilled= CITIES.reduce((a,c)=>a+c.filled,0);
   const totWait  = CITIES.reduce((a,c)=>a+c.waitlist,0);
+  const fillPct  = totSlots > 0 ? Math.round(totFilled/totSlots*100) : 0;
 
   return (
     <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
@@ -42,10 +32,10 @@ export default function TrialCitiesView() {
       {/* Stats */}
       <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:12 }}>
         {[
-          { label:"Total Cities",     value:CITIES.length,          color:"#6366F1" },
-          { label:"Total Slots",      value:totSlots,               color:"#FF6B00" },
-          { label:"Filled / Booked",  value:`${totFilled} (${Math.round(totFilled/totSlots*100)}%)`, color:"#10B981" },
-          { label:"On Waitlist",      value:totWait,                color:"#F59E0B" },
+          { label:"Total Cities",     value:CITIES.length,                 color:"#6366F1" },
+          { label:"Total Slots",      value:totSlots || 0,                 color:"#FF6B00" },
+          { label:"Filled / Booked",  value:`${totFilled} (${fillPct}%)`,  color:"#10B981" },
+          { label:"On Waitlist",      value:totWait,                       color:"#F59E0B" },
         ].map(s=>(
           <div key={s.label} style={{ ...card, borderTop:`3px solid ${s.color}` }}>
             <div style={{ fontSize:24, fontWeight:800, color:s.color }}>{s.value}</div>

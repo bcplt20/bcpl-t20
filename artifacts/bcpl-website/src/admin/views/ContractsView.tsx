@@ -1,17 +1,39 @@
 import { useState } from "react";
 
-// No contracts yet — generate after auction via "+ Generate Contract"
+// No contracts yet — generated post-auction via "+ Generate Contract"
 const CONTRACTS: { id:string; player:string; team:string; amount:number; status:string; date:string; expiry:string }[] = [];
+
+const TEAMS_LIST = ["Mumbai Marathas","Delhi Dynamos","Bengaluru Bulls","Hyderabad Hawks","Chennai Challengers","Kolkata Kings","Rajasthan Royals CF","Punjab Panthers CF","Gujarat Giants CF","Lucknow Lions CF"];
 
 const statusColor=(s:string)=>s==="Signed"?"#10B981":s==="Pending"?"#F59E0B":"#EF4444";
 
 export default function ContractsView() {
-  const [search, setSearch] = useState("");
+  const [search, setSearch]   = useState("");
   const [preview, setPreview] = useState<typeof CONTRACTS[0]|null>(null);
+  const [genOpen, setGenOpen] = useState(false);
+  const [genForm, setGenForm] = useState({ player:"", team:TEAMS_LIST[0], amount:"", date:"", expiry:"" });
+  const [contracts, setContracts] = useState(CONTRACTS);
   const card:React.CSSProperties={background:"linear-gradient(135deg,#0D1526,#0A1020)",border:"1px solid #1E293B",borderRadius:16,padding:20};
 
-  const filtered = CONTRACTS.filter(c=>c.player.toLowerCase().includes(search.toLowerCase())||c.team.toLowerCase().includes(search.toLowerCase()));
+  const filtered = contracts.filter(c=>c.player.toLowerCase().includes(search.toLowerCase())||c.team.toLowerCase().includes(search.toLowerCase()));
   const fmt=(n:number)=>`₹${(n/1000).toFixed(0)}K`;
+
+  function handleGenerate() {
+    if (!genForm.player.trim() || !genForm.amount || !genForm.date || !genForm.expiry) return;
+    const today = new Date().toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"});
+    const newC = {
+      id: `BCPL/S5/${String(contracts.length+1).padStart(3,"0")}`,
+      player: genForm.player.trim(),
+      team: genForm.team,
+      amount: parseInt(genForm.amount) * 1000,
+      status: "Pending",
+      date: genForm.date,
+      expiry: genForm.expiry,
+    };
+    setContracts(prev=>[...prev,newC]);
+    setGenOpen(false);
+    setGenForm({ player:"", team:TEAMS_LIST[0], amount:"", date:"", expiry:"" });
+  }
 
   return (
     <div style={{display:"flex",flexDirection:"column",gap:16}}>
@@ -22,16 +44,16 @@ export default function ContractsView() {
         </div>
         <div style={{display:"flex",gap:8}}>
           <button style={{padding:"9px 16px",borderRadius:9,border:"1px solid #1E293B",background:"transparent",color:"#94A3B8",fontSize:12,cursor:"pointer"}}>⬇ Export All</button>
-          <button style={{padding:"9px 16px",borderRadius:9,border:"none",background:"linear-gradient(135deg,#FF6B00,#FF8C40)",color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer"}}>+ Generate Contract</button>
+          <button onClick={()=>setGenOpen(true)} style={{padding:"9px 16px",borderRadius:9,border:"none",background:"linear-gradient(135deg,#FF6B00,#FF8C40)",color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer"}}>+ Generate Contract</button>
         </div>
       </div>
 
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12}}>
         {[
-          {label:"Total Contracts",value:CONTRACTS.length,color:"#6366F1"},
-          {label:"Signed",value:CONTRACTS.filter(c=>c.status==="Signed").length,color:"#10B981"},
-          {label:"Pending Signature",value:CONTRACTS.filter(c=>c.status==="Pending").length,color:"#F59E0B"},
-          {label:"Total Value",value:`₹${(CONTRACTS.reduce((a,c)=>a+c.amount,0)/100000).toFixed(1)}L`,color:"#FF6B00"},
+          {label:"Total Contracts",value:contracts.length,color:"#6366F1"},
+          {label:"Signed",value:contracts.filter(c=>c.status==="Signed").length,color:"#10B981"},
+          {label:"Pending Signature",value:contracts.filter(c=>c.status==="Pending").length,color:"#F59E0B"},
+          {label:"Total Value",value:`₹${(contracts.reduce((a,c)=>a+c.amount,0)/100000).toFixed(1)}L`,color:"#FF6B00"},
         ].map(s=>(
           <div key={s.label} style={{...card,borderTop:`3px solid ${s.color}`}}>
             <div style={{fontSize:24,fontWeight:800,color:s.color}}>{s.value}</div>
@@ -79,6 +101,41 @@ export default function ContractsView() {
           </tbody>
         </table>
       </div>
+
+      {/* Generate Contract Modal */}
+      {genOpen&&(
+        <div style={{position:"fixed",inset:0,background:"#00000088",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:20}} onClick={()=>setGenOpen(false)}>
+          <div style={{...card,width:"100%",maxWidth:480,padding:28}} onClick={e=>e.stopPropagation()}>
+            <div style={{fontSize:18,fontWeight:800,color:"#F1F5F9",marginBottom:4}}>+ Generate Player Contract</div>
+            <div style={{fontSize:12,color:"#64748B",marginBottom:20}}>Post-auction contracts under Kriparthi Playing Eleven Pvt. Ltd.</div>
+            {[
+              {label:"Player Full Name",key:"player",type:"text",placeholder:"e.g. Rahul Sharma"},
+              {label:"Franchise Team",key:"team",type:"select"},
+              {label:"Contract Value (₹ thousands)",key:"amount",type:"number",placeholder:"e.g. 500 = ₹5L"},
+              {label:"Valid From",key:"date",type:"date"},
+              {label:"Valid Until",key:"expiry",type:"date"},
+            ].map(f=>(
+              <div key={f.key} style={{marginBottom:12}}>
+                <div style={{fontSize:11,color:"#64748B",fontWeight:700,marginBottom:5,textTransform:"uppercase"}}>{f.label}</div>
+                {f.type==="select" ? (
+                  <select value={genForm[f.key as keyof typeof genForm]} onChange={e=>setGenForm(p=>({...p,[f.key]:e.target.value}))}
+                    style={{width:"100%",padding:"9px 12px",borderRadius:9,border:"1px solid #1E293B",background:"#060B18",color:"#E2E8F0",fontSize:13,outline:"none"}}>
+                    {TEAMS_LIST.map(t=><option key={t} value={t}>{t}</option>)}
+                  </select>
+                ) : (
+                  <input type={f.type} value={genForm[f.key as keyof typeof genForm]} onChange={e=>setGenForm(p=>({...p,[f.key]:e.target.value}))}
+                    placeholder={f.placeholder||""} min={f.type==="number"?"0":undefined}
+                    style={{width:"100%",padding:"9px 12px",borderRadius:9,border:"1px solid #1E293B",background:"#060B18",color:"#E2E8F0",fontSize:13,outline:"none"}}/>
+                )}
+              </div>
+            ))}
+            <div style={{display:"flex",gap:10,marginTop:8}}>
+              <button onClick={()=>setGenOpen(false)} style={{flex:1,padding:"11px",borderRadius:10,border:"1px solid #1E293B",background:"transparent",color:"#64748B",fontSize:13,cursor:"pointer"}}>Cancel</button>
+              <button onClick={handleGenerate} disabled={!genForm.player.trim()||!genForm.amount} style={{flex:2,padding:"11px",borderRadius:10,border:"none",background:"linear-gradient(135deg,#FF6B00,#FF8C40)",color:"#fff",fontWeight:700,fontSize:13,cursor:"pointer",opacity:genForm.player.trim()&&genForm.amount?1:0.5}}>📝 Generate Contract</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {preview&&(
         <div style={{position:"fixed",inset:0,background:"#00000080",zIndex:100,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={()=>setPreview(null)}>

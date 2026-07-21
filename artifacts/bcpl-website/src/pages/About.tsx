@@ -78,15 +78,22 @@ function AnnouncementBar() {
 
 function Navbar() {
   const [open, setOpen] = React.useState(false);
-  const links = ['Home','Match Center','Teams','Sponsors','Photos','Videos','About','FAQ','Contact'];
+  const links = ['Home','Match Center','Teams','Sponsors','Photos','Videos','About','FAQ','Contact','Login'];
   return (
     <>
       <nav style={{position:'sticky',top:0,zIndex:200,background:'rgba(6,14,28,0.96)',backdropFilter:'blur(24px)',borderBottom:'1px solid rgba(255,255,255,0.07)',boxShadow:'0 1px 0 0 rgba(255,122,41,0.25)'}}>
         <div className="wrap" style={{height:64,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-          <div style={{display:'flex',alignItems:'center',gap:8}}>
-            <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff'}}>T20</span></span>
-            <span style={{fontSize:10,color:'rgba(255,122,41,0.7)',fontFamily:'Montserrat,sans-serif',fontWeight:700,marginLeft:8,letterSpacing:'0.08em'}}>SEASON 5</span>
-          </div>
+          <a href="/" style={{display:'flex',alignItems:'center',gap:8,textDecoration:'none'}}>
+            <div style={{width:36,height:36,borderRadius:'50%',overflow:'hidden',flexShrink:0}}>
+              <img src="/bcpl-website/bcpl-assets/bcpl-ball-clean.png" alt="BCPL" style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:'top center'}}/>
+            </div>
+            <div>
+              <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:18,lineHeight:1}}>
+                <span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff'}}>T20</span>
+              </div>
+              <div style={{fontSize:9,color:'rgba(255,122,41,0.7)',fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'0.08em',lineHeight:1,marginTop:2}}>SEASON 5</div>
+            </div>
+          </a>
           <div className="desk-nav">
             {links.map(l=>(
               <a key={l} href={ROUTE_MAP[l]||'/'} style={{color:l==='About'?'#FF7A29':'rgba(255,255,255,0.75)',fontWeight:600,fontSize:13.5,textDecoration:'none',fontFamily:'Inter,sans-serif',transition:'color 0.2s'}}>{l}</a>
@@ -103,7 +110,7 @@ function Navbar() {
       {open && (
         <div style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'#06101E',zIndex:300,display:'flex',flexDirection:'column',padding:'72px 24px 40px',overflowY:'auto'}}>
           <button onClick={()=>setOpen(false)} style={{position:'absolute',top:18,right:20,background:'none',border:'none',color:'rgba(255,255,255,0.5)',fontSize:28,cursor:'pointer',lineHeight:1}}>✕</button>
-          <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,marginBottom:32}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff'}}>T20</span></div>
+          <a href="/" style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,marginBottom:32,textDecoration:'none',display:'block'}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff'}}>T20</span></a>
           {links.map(l=>(
             <a key={l} href={ROUTE_MAP[l]||'/'} onClick={()=>setOpen(false)} style={{color:'rgba(255,255,255,0.88)',fontWeight:700,fontSize:20,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,0.07)'}}>{l}</a>
           ))}
@@ -156,18 +163,18 @@ function MobileStickyCTA() {
 }
 
 const stats = [
-  {num:'2.5 Lakh+',label:'Players',sub:'registered across all seasons'},
-  {num:'75',label:'Cities',sub:'across India'},
-  {num:'4',label:'Seasons',sub:'since 2021'},
-  {num:'10',label:'Franchises',sub:'competing this year'},
+  {num:'2 Lakh+',label:'Players',sub:'registered across all seasons'},
+  {num:'75+',label:'Trial Cities',sub:'across India'},
+  {num:'4',label:'Seasons',sub:'completed since 2023'},
+  {num:'10',label:'Franchises',sub:'competing in Season 5'},
 ];
 
 const timeline = [
-  {year:'2021',text:'Season 1 — Founded in Delhi. 500 players, 5 cities, 1 dream'},
-  {year:'2022',text:'Season 2 — 5,000+ players, franchise auction debut, 10 cities'},
-  {year:'2023',text:'Season 3 — 25,000+ players, 25 cities, franchise system expands'},
-  {year:'2024',text:'Season 4 — 2 Lakh+ players, 75 cities, national media coverage'},
-  {year:'2025–26',text:'Season 5 — 2.5 Lakh+ players, 75 cities, 10 franchises. India\'s biggest corporate cricket league.'},
+  {year:'2023', icon:'🌱', text:'Season 1 — Founded in Delhi. Working professionals took the field for the first time. 500+ players, 5 trial cities, 1 unforgettable dream born.'},
+  {year:'2024', icon:'📈', text:'Season 2 — Growth exploded. 25,000+ players across 21 cities. Franchise auction system introduced. Corporate cricket found its identity.'},
+  {year:'2025', icon:'🏟️', text:'Season 3 & 4 — Two powerful seasons. 1 Lakh+ registrations, 50+ trial cities, national media coverage. BCPL became India\'s largest corporate cricket league.'},
+  {year:'2026', icon:'🏆', text:'Season 4 concluded — 2 Lakh+ players registered. 21 trial cities. Tournament to be held in October 2026. The stage is set for the grandest season yet.'},
+  {year:'2026–27', icon:'🚀', text:'Season 5 — Registrations open now. 75+ trial cities. 10 franchise teams. ₹6 Crore prize pool. #OfficeSeStadiumtak. India\'s biggest corporate cricket league awaits you.'},
 ];
 
 const diffs = [

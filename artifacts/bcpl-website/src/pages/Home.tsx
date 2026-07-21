@@ -206,9 +206,7 @@ export function Home() {
         .foot-bottom{display:flex;flex-direction:row;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
         .foot-legal-links{display:flex;flex-direction:row;flex-wrap:wrap;gap:12px;align-items:center;}
 
-        /* Floating CTA */
-        .float-btn{position:fixed;bottom:20px;right:20px;z-index:999;animation:pulse6 2.5s infinite;}
-        @media(min-width:768px){.float-btn{bottom:28px;right:28px;}}
+        /* Floating CTA — removed */
 
         /* Countdown */
         .cd-box{background:#060C18;border:1px solid rgba(255,122,41,.2);border-radius:12px;padding:12px 10px;text-align:center;min-width:58px;}
@@ -867,6 +865,7 @@ export function Home() {
           <div className="team-grid">
             {TEAMS.map(t=>(
               <div key={t.name} className="card" style={{ padding:"16px 12px", display:"flex", flexDirection:"column", gap:8, cursor:"pointer", transition:"transform .2s,border-color .2s", borderTop:`3px solid ${t.color}`, position:"relative", overflow:"hidden" }}
+                onClick={()=>navigate("/teams")}
                 onMouseEnter={e=>(e.currentTarget.style.transform="translateY(-3px)")}
                 onMouseLeave={e=>(e.currentTarget.style.transform="")}>
                 {/* Watermark logo behind content */}
@@ -1154,12 +1153,6 @@ export function Home() {
         </div>
       </footer>
 
-      {/* Floating CTA */}
-      <div className="float-btn">
-        <button className="btn-cta" style={{ fontSize:13, padding:"13px 22px", borderRadius:12, boxShadow:"0 8px 32px rgba(255,122,41,.5)" }} onClick={()=>navigate("/register")}>
-          🏏 Register — ₹299
-        </button>
-      </div>
     </div>
   );
 }

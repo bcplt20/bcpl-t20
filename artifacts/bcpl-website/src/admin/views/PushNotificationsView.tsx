@@ -1,13 +1,6 @@
 import { useState } from "react";
 
-const TEMPLATES = [
-  { id:1, title:"Registration Open",       body:"BCPL T20 Season 5 registrations are now open! Register from ₹299. Slots filling fast.", sent:4820, opened:3210, ctr:66.6, segment:"All" },
-  { id:2, title:"Phase 1 Results Out",     body:"🎉 Phase 1 results are here! Check if you've been selected for Phase 2 auction.", sent:2400, opened:2280, ctr:95.0, segment:"Phase 1 Paid" },
-  { id:3, title:"Trial Reminder",          body:"⏰ Your trial is tomorrow! Check-in starts at 8 AM. Bring your kit and enthusiasm.", sent:980,  opened:876,  ctr:89.4, segment:"Trial Registered" },
-  { id:4, title:"Phase 2 Payment Due",     body:"💳 You've been selected! Phase 2 payment due in 48 hours. Pay to secure your spot.", sent:318,  opened:301,  ctr:94.7, segment:"Phase 2 Selected" },
-  { id:5, title:"Match Schedule Out",      body:"📅 BCPL Season 5 match schedule is live! Check your team's fixtures now.", sent:6200, opened:3720, ctr:60.0, segment:"All Paid" },
-  { id:6, title:"Video Upload Reminder",   body:"🎬 Don't forget to upload your trial video! Deadline in 3 days.", sent:1140, opened:890,  ctr:78.1, segment:"Phase 1 Paid" },
-];
+const TEMPLATES: { id:number; title:string; body:string; sent:number; opened:number; ctr:number; segment:string }[] = [];
 
 const SEGMENTS = ["All","Phase 1 Paid","Phase 2 Selected","Trial Registered","All Paid","City: Mumbai","City: Delhi"];
 
@@ -18,7 +11,7 @@ export default function PushNotificationsView() {
 
   const totalSent   = TEMPLATES.reduce((a,t)=>a+t.sent,0);
   const totalOpened = TEMPLATES.reduce((a,t)=>a+t.opened,0);
-  const avgCTR      = (totalOpened/totalSent*100).toFixed(1);
+  const avgCTR      = totalSent > 0 ? (totalOpened/totalSent*100).toFixed(1) : "0.0";
 
   return (
     <div style={{display:"flex",flexDirection:"column",gap:16}}>

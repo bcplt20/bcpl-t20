@@ -1,12 +1,6 @@
 import { useState } from "react";
 
-const SPONSORS = [
-  { name:"SportFit India",      tier:"Title",     logo:"🏆", monthly:500000, impressions:284000, clicks:18420, ctr:6.5, leads:342, conv:4.2, roi:2.8, color:"#F59E0B", start:"Jun 2026", end:"Mar 2027" },
-  { name:"CricketGear Pro",     tier:"Associate", logo:"🎽", monthly:200000, impressions:142000, clicks:9840,  ctr:6.9, leads:188, conv:3.8, roi:3.1, color:"#6366F1", start:"Jun 2026", end:"Mar 2027" },
-  { name:"Fitness First",       tier:"Associate", logo:"💪", monthly:200000, impressions:138000, clicks:8200,  ctr:5.9, leads:156, conv:3.2, roi:2.5, color:"#10B981", start:"Jul 2026", end:"Jan 2027" },
-  { name:"Tech Mahindra",       tier:"Official",  logo:"💻", monthly:100000, impressions:92000,  clicks:4100,  ctr:4.5, leads:82,  conv:2.8, roi:1.9, color:"#3B82F6", start:"Jul 2026", end:"Dec 2026" },
-  { name:"Jio Sports",          tier:"Official",  logo:"📱", monthly:100000, impressions:88000,  clicks:5280,  ctr:6.0, leads:96,  conv:3.5, roi:2.2, color:"#EF4444", start:"Jul 2026", end:"Mar 2027" },
-];
+const SPONSORS: { name:string; tier:string; logo:string; monthly:number; impressions:number; clicks:number; ctr:number; leads:number; conv:number; roi:number; color:string; start:string; end:string }[] = [];
 
 const tierColor=(t:string)=>t==="Title"?"#F59E0B":t==="Associate"?"#6366F1":"#10B981";
 
@@ -18,7 +12,7 @@ export default function SponsorROIView() {
   const totalSpend       = SPONSORS.reduce((a,s)=>a+(s.monthly*3),0);
   const totalImpressions = SPONSORS.reduce((a,s)=>a+s.impressions,0);
   const totalClicks      = SPONSORS.reduce((a,s)=>a+s.clicks,0);
-  const avgROI           = (SPONSORS.reduce((a,s)=>a+s.roi,0)/SPONSORS.length).toFixed(1);
+  const avgROI           = SPONSORS.length > 0 ? (SPONSORS.reduce((a,s)=>a+s.roi,0)/SPONSORS.length).toFixed(1) : "0.0";
 
   return (
     <div style={{display:"flex",flexDirection:"column",gap:16}}>

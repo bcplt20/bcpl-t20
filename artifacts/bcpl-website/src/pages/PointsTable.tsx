@@ -113,21 +113,27 @@ const ROUTE_MAP: Record<string,string> = {
 
 function Navbar() {
   const [open, setOpen] = React.useState(false);
-  const links = [['Home','#'],['Match Center','#'],['Teams','#'],['Sponsors','#'],['Photos','#'],['Videos','#'],['About','#'],['FAQ','#'],['Contact','#']];
+  const links = [['Home','/'],['Match Center','/match-center'],['Teams','/teams'],['Sponsors','/sponsors'],['Photos','/photos'],['Videos','/videos'],['About','/about'],['FAQ','/faq'],['Contact','/contact'],['Login','/register#login']];
   return (
     <>
       <nav style={{position:'sticky',top:0,zIndex:200,background:'rgba(6,14,28,0.96)',backdropFilter:'blur(24px)',borderBottom:'1px solid rgba(255,255,255,0.07)',boxShadow:'0 1px 0 0 rgba(255,122,41,0.25)'}}>
         <div className="wrap" style={{height:64,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-          <div style={{display:'flex',alignItems:'center'}}>
-            <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,color:'#FF7A29'}}>BCPL</span>
-            <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,color:'#fff'}}>T20</span>
-            <span style={{fontSize:10,color:'rgba(255,122,41,0.7)',fontFamily:'Montserrat,sans-serif',fontWeight:700,marginLeft:8,letterSpacing:'0.06em'}}>SEASON 5</span>
-          </div>
+          <a href="/" style={{display:'flex',alignItems:'center',gap:8,textDecoration:'none',cursor:'pointer'}}>
+            <div style={{width:36,height:36,borderRadius:'50%',overflow:'hidden',flexShrink:0}}>
+              <img src="/bcpl-website/bcpl-assets/bcpl-ball-clean.png" alt="BCPL" style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:'top center'}}/>
+            </div>
+            <div>
+              <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:18,lineHeight:1}}>
+                <span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff'}}>T20</span>
+              </div>
+              <div style={{fontSize:9,color:'rgba(255,122,41,0.7)',fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'0.06em',lineHeight:1,marginTop:2}}>SEASON 5</div>
+            </div>
+          </a>
           <div className="desk-nav">
             {links.map(([l,h])=>(
-              <a key={l} href={h} style={{color:'rgba(255,255,255,0.72)',fontSize:13,fontWeight:600,fontFamily:'Inter,sans-serif',textDecoration:'none',borderBottom:'2px solid transparent',paddingBottom:2}}>{l}</a>
+              <a key={l} href={h} style={{color:l==='Login'?'#FF7A29':'rgba(255,255,255,0.72)',fontSize:13,fontWeight:600,fontFamily:'Inter,sans-serif',textDecoration:'none',borderBottom:'2px solid transparent',paddingBottom:2}}>{l}</a>
             ))}
-            <button className="btn-fire" style={{padding:'10px 22px',fontSize:13,borderRadius:12}}>Register ₹299</button>
+            <a href="/register" className="btn-fire" style={{padding:'10px 22px',fontSize:13,borderRadius:12,textDecoration:'none',display:'inline-flex',alignItems:'center'}}>Register ₹299</a>
           </div>
           <button className="ham-btn" onClick={()=>setOpen(o=>!o)} style={{flexDirection:'column',gap:5,background:'none',border:'none',cursor:'pointer',padding:8,zIndex:201}}>
             <span style={{display:'block',width:24,height:2,background:'#fff',borderRadius:12,transition:'all 0.25s',transform:open?'rotate(45deg) translate(5px,5px)':''}}/>
@@ -139,11 +145,11 @@ function Navbar() {
       {open && (
         <div style={{position:'fixed',inset:0,background:'#06101E',zIndex:300,display:'flex',flexDirection:'column',padding:'80px 28px 40px',overflowY:'auto'}}>
           <button onClick={()=>setOpen(false)} style={{position:'absolute',top:18,right:18,background:'none',border:'none',color:'rgba(255,255,255,0.5)',fontSize:28,cursor:'pointer',lineHeight:1}}>✕</button>
-          <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,marginBottom:32}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff'}}>T20</span></div>
-          {[['🏠 Home','#'],['🔴 Match Center','#'],['🏏 Teams','#'],['🤝 Sponsors','#'],['📷 Photos','#'],['▶️ Videos','#'],['ℹ️ About','#'],['❓ FAQ','#'],['✉️ Contact','#']].map(([l,h])=>(
-            <a key={l} href={h} onClick={()=>setOpen(false)} style={{color:'rgba(255,255,255,0.85)',fontWeight:700,fontSize:18,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,0.07)',display:'block'}}>{l}</a>
+          <a href="/" style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,marginBottom:32,textDecoration:'none'}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff'}}>T20</span></a>
+          {[['🏠 Home','/'],['🔴 Match Center','/match-center'],['🏏 Teams','/teams'],['🤝 Sponsors','/sponsors'],['📷 Photos','/photos'],['▶️ Videos','/videos'],['ℹ️ About','/about'],['❓ FAQ','/faq'],['✉️ Contact','/contact'],['🔑 Login','/register#login']].map(([l,h])=>(
+            <a key={l} href={h} onClick={()=>setOpen(false)} style={{color:l.includes('Login')?'#FF7A29':'rgba(255,255,255,0.85)',fontWeight:700,fontSize:18,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,0.07)',display:'block'}}>{l}</a>
           ))}
-          <button className="btn-fire" style={{marginTop:32,height:54,fontSize:16,borderRadius:14,width:'100%'}}>📝 Register for ₹299 →</button>
+          <a href="/register" className="btn-fire" style={{marginTop:32,height:54,fontSize:16,borderRadius:14,width:'100%',display:'flex',alignItems:'center',justifyContent:'center',textDecoration:'none'}}>📝 Register for ₹299 →</a>
         </div>
       )}
     </>
@@ -166,14 +172,14 @@ function Footer() {
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
             <div>
               <div style={{color:'rgba(255,255,255,0.3)',fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:14,fontFamily:'Montserrat,sans-serif'}}>League</div>
-              {['Schedule','Match Center','Teams','Points Table','Photos','Videos'].map(l=>(
-                <div key={l} style={{marginBottom:9}}><a href="#" style={{color:'rgba(255,255,255,0.5)',fontSize:13,textDecoration:'none',fontFamily:'Inter,sans-serif'}}>{l}</a></div>
+              {[['Schedule','/schedule'],['Match Center','/match-center'],['Teams','/teams'],['Points Table','/points-table'],['Photos','/photos'],['Videos','/videos']].map(([l,h])=>(
+                <div key={l} style={{marginBottom:9}}><a href={h} style={{color:'rgba(255,255,255,0.5)',fontSize:13,textDecoration:'none',fontFamily:'Inter,sans-serif'}}>{l}</a></div>
               ))}
             </div>
             <div>
               <div style={{color:'rgba(255,255,255,0.3)',fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:14,fontFamily:'Montserrat,sans-serif'}}>Info</div>
-              {['About','FAQ','Contact','Terms','Privacy','Refunds','Eligibility'].map(l=>(
-                <div key={l} style={{marginBottom:9}}><a href="#" style={{color:'rgba(255,255,255,0.5)',fontSize:13,textDecoration:'none',fontFamily:'Inter,sans-serif'}}>{l}</a></div>
+              {[['About','/about'],['FAQ','/faq'],['Contact','/contact'],['Terms','/terms'],['Privacy','/privacy'],['Refunds','/refunds'],['Eligibility','/eligibility']].map(([l,h])=>(
+                <div key={l} style={{marginBottom:9}}><a href={h} style={{color:'rgba(255,255,255,0.5)',fontSize:13,textDecoration:'none',fontFamily:'Inter,sans-serif'}}>{l}</a></div>
               ))}
             </div>
           </div>
@@ -341,87 +347,42 @@ export function PointsTable() {
             <StandingsTable rows={GROUP_B} groupLabel="B"/>
           </>}
 
-          {/* TOP PERFORMERS */}
-          <div style={{marginBottom:40}}>
-            <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:24}}>
-              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,color:'#fff',letterSpacing:'0.04em'}}>TOP PERFORMERS</h2>
-              <div style={{flex:1,height:2,background:'linear-gradient(90deg,#FF7A29,transparent)'}}/>
+          {/* TOP PERFORMERS — only when data exists */}
+          {(GROUP_A.length > 0 || GROUP_B.length > 0) && (
+            <div style={{marginBottom:40}}>
+              <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:24}}>
+                <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,color:'#fff',letterSpacing:'0.04em'}}>TOP PERFORMERS</h2>
+                <div style={{flex:1,height:2,background:'linear-gradient(90deg,#FF7A29,transparent)'}}/>
+              </div>
+              <div className="perf-grid" style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:16}}>
+                {[
+                  {icon:'🏏',title:'Top Scorer',name:'—',team:'—',stat:'—',sub:'Data available after matches begin',accent:'#3B82F6'},
+                  {icon:'🎳',title:'Top Wicket-Taker',name:'—',team:'—',stat:'—',sub:'Data available after matches begin',accent:'#6366F1'},
+                  {icon:'⭐',title:'Best All-Rounder',name:'—',team:'—',stat:'—',sub:'Data available after matches begin',accent:'#EF4444'},
+                ].map((p,i)=>(
+                  <div key={i} className="glass-card perf-card" style={{padding:'24px',borderTop:`3px solid ${p.accent}`,animation:`fadeSlide 0.4s ${i*0.1}s ease both`}}>
+                    <div style={{fontSize:28,marginBottom:12}}>{p.icon}</div>
+                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:11,color:'rgba(255,255,255,0.35)',letterSpacing:'0.12em',textTransform:'uppercase',marginBottom:8}}>{p.title}</div>
+                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:20,color:'#fff',marginBottom:4}}>{p.name}</div>
+                    <div style={{fontSize:12,color:'rgba(255,255,255,0.35)',fontFamily:'Inter,sans-serif'}}>{p.sub}</div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="perf-grid" style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:16}}>
-              {[
-                {icon:'🏏',title:'Top Scorer',name:'A. Kumar',team:'DEL',stat:'387 runs',sub:'Avg 54.8 · SR 142.3',accent:'#3B82F6'},
-                {icon:'🎳',title:'Top Wicket-Taker',name:'S. Reddy',team:'HYD',stat:'18 wickets',sub:'Avg 14.2 · Econ 7.1',accent:'#6366F1'},
-                {icon:'⭐',title:'Best All-Rounder',name:'R. Singh',team:'AHM',stat:'245 runs + 12 wkts',sub:'Impact player of the season',accent:'#EF4444'},
-              ].map((p,i)=>(
-                <div key={i} className="glass-card perf-card" style={{padding:'24px',borderTop:`3px solid ${p.accent}`,animation:`fadeSlide 0.4s ${i*0.1}s ease both`}}>
-                  <div style={{fontSize:28,marginBottom:12}}>{p.icon}</div>
-                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:11,color:'rgba(255,255,255,0.35)',letterSpacing:'0.12em',textTransform:'uppercase',marginBottom:8}}>{p.title}</div>
-                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:20,color:'#fff',marginBottom:4}}>{p.name}</div>
-                  <div style={{fontSize:12,color:'rgba(255,255,255,0.4)',fontFamily:'Inter,sans-serif',marginBottom:14}}>{p.team}</div>
-                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,color:p.accent,marginBottom:6}}>{p.stat}</div>
-                  <div style={{fontSize:12,color:'rgba(255,255,255,0.35)',fontFamily:'Inter,sans-serif'}}>{p.sub}</div>
-                </div>
-              ))}
-            </div>
-          </div>
+          )}
 
-          {/* PLAYOFF BRACKET */}
-          <div>
-            <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:24}}>
-              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,color:'#fff',letterSpacing:'0.04em'}}>PLAYOFF BRACKET</h2>
-              <div style={{flex:1,height:2,background:'linear-gradient(90deg,#FF7A29,transparent)'}}/>
-            </div>
-            <div className="bracket-grid" style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:16,alignItems:'start'}}>
-              {/* SF1 */}
-              <div className="glass-card" style={{padding:'22px',borderLeft:'3px solid rgba(59,130,246,0.6)'}}>
-                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:10,color:'rgba(59,130,246,0.8)',letterSpacing:'0.12em',marginBottom:14,textTransform:'uppercase'}}>SEMIFINAL 1 · AUG 10</div>
-                <div style={{display:'flex',flexDirection:'column',gap:10}}>
-                  <div style={{display:'flex',alignItems:'center',gap:10,padding:'10px 14px',background:'rgba(34,197,94,0.06)',borderRadius:10,border:'1px solid rgba(34,197,94,0.15)'}}>
-                    <span>🌊</span>
-                    <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#fff'}}>MUM</span>
-                    <span style={{fontSize:11,color:'rgba(255,255,255,0.3)',fontFamily:'Inter,sans-serif'}}>Group A Topper</span>
-                  </div>
-                  <div style={{textAlign:'center',fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:13,color:'rgba(255,255,255,0.3)'}}>VS</div>
-                  <div style={{display:'flex',alignItems:'center',gap:10,padding:'10px 14px',background:'rgba(255,255,255,0.03)',borderRadius:10,border:'1px solid rgba(255,255,255,0.07)'}}>
-                    <span>🦅</span>
-                    <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#fff'}}>HYD</span>
-                    <span style={{fontSize:11,color:'rgba(255,255,255,0.3)',fontFamily:'Inter,sans-serif'}}>Group B Runner-up</span>
-                  </div>
-                </div>
+          {/* PLAYOFF BRACKET — only when data exists */}
+          {(GROUP_A.length > 0 || GROUP_B.length > 0) && (
+            <div>
+              <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:24}}>
+                <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,color:'#fff',letterSpacing:'0.04em'}}>PLAYOFF BRACKET</h2>
+                <div style={{flex:1,height:2,background:'linear-gradient(90deg,#FF7A29,transparent)'}}/>
               </div>
-              {/* SF2 */}
-              <div className="glass-card" style={{padding:'22px',borderLeft:'3px solid rgba(99,102,241,0.6)'}}>
-                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:10,color:'rgba(99,102,241,0.8)',letterSpacing:'0.12em',marginBottom:14,textTransform:'uppercase'}}>SEMIFINAL 2 · AUG 11</div>
-                <div style={{display:'flex',flexDirection:'column',gap:10}}>
-                  <div style={{display:'flex',alignItems:'center',gap:10,padding:'10px 14px',background:'rgba(34,197,94,0.06)',borderRadius:10,border:'1px solid rgba(34,197,94,0.15)'}}>
-                    <span>🗼</span>
-                    <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#fff'}}>DEL</span>
-                    <span style={{fontSize:11,color:'rgba(255,255,255,0.3)',fontFamily:'Inter,sans-serif'}}>Group A Runner-up</span>
-                  </div>
-                  <div style={{textAlign:'center',fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:13,color:'rgba(255,255,255,0.3)'}}>VS</div>
-                  <div style={{display:'flex',alignItems:'center',gap:10,padding:'10px 14px',background:'rgba(255,255,255,0.03)',borderRadius:10,border:'1px solid rgba(255,255,255,0.07)'}}>
-                    <span>🐂</span>
-                    <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#fff'}}>BLR</span>
-                    <span style={{fontSize:11,color:'rgba(255,255,255,0.3)',fontFamily:'Inter,sans-serif'}}>Group B Topper</span>
-                  </div>
-                </div>
-              </div>
-              {/* FINAL */}
-              <div style={{background:'linear-gradient(135deg,rgba(232,178,61,0.12),rgba(15,34,71,0.9))',backdropFilter:'blur(32px)',border:'1px solid rgba(232,178,61,0.4)',borderRadius:20,boxShadow:'0 24px 64px rgba(0,0,0,0.5),0 0 60px rgba(232,178,61,0.1)',padding:'22px'}}>
-                <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:14}}>
-                  <span style={{fontSize:18}}>🏆</span>
-                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:10,color:'#E8B23D',letterSpacing:'0.15em',textTransform:'uppercase'}}>GRAND FINAL · AUG 17</div>
-                </div>
-                <div style={{textAlign:'center',padding:'20px 0'}}>
-                  <div className="shimmer-gold" style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:28,marginBottom:8}}>TBD vs TBD</div>
-                  <div style={{color:'rgba(255,255,255,0.3)',fontSize:13,fontFamily:'Inter,sans-serif'}}>Winner SF1 · Winner SF2</div>
-                </div>
-                <div style={{background:'rgba(232,178,61,0.06)',borderRadius:10,padding:'10px',textAlign:'center'}}>
-                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:11,color:'rgba(232,178,61,0.6)',letterSpacing:'0.1em'}}>📍 VENUE · TBD</div>
-                </div>
+              <div style={{textAlign:'center',padding:'40px 0',color:'rgba(255,255,255,0.35)',fontFamily:'Montserrat,sans-serif',fontWeight:700}}>
+                Playoff bracket will be displayed once the group stage concludes.
               </div>
             </div>
-          </div>
+          )}
 
         </div>
         <Footer/>

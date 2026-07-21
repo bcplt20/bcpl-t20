@@ -191,17 +191,17 @@ export function MatchCenter() {
       {/* NAVBAR */}
       <nav style={{ position: "sticky", top: 0, zIndex: 200, background: "rgba(6,16,30,0.97)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
         <div className="wrap" style={{ height: 64, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{ display: "flex", alignItems: "baseline", gap: 2 }}>
-              <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 22, color: "#FF7A29" }}>BCPL</span>
-              <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 22, color: "#fff" }}>T20</span>
+          <a href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
+            <div style={{ width: 38, height: 38, borderRadius: "50%", overflow: "hidden", flexShrink: 0 }}>
+              <img src="/bcpl-website/bcpl-assets/bcpl-ball-clean.png" alt="BCPL" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center" }}/>
             </div>
-            <div style={{ width: 1, height: 28, background: "rgba(255,255,255,0.12)" }} />
             <div>
-              <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 9, letterSpacing: "0.12em", color: "#E8B23D", textTransform: "uppercase" }}>Season 5</div>
-              <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 700, fontSize: 8, letterSpacing: "0.08em", color: "rgba(255,255,255,0.4)", textTransform: "uppercase" }}>Kriparti Playing11</div>
+              <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 18, lineHeight: 1 }}>
+                <span style={{ color: "#FF7A29" }}>BCPL</span><span style={{ color: "#fff" }}>T20</span>
+              </div>
+              <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 700, fontSize: 9, letterSpacing: "0.08em", color: "#E8B23D", textTransform: "uppercase", lineHeight: 1, marginTop: 2 }}>Season 5</div>
             </div>
-          </div>
+          </a>
 
           <nav className="desk-nav">
             {NAV_LINKS.map(link => (
