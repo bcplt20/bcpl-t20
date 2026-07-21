@@ -9,6 +9,7 @@ import userRouter     from "./user";
 import matchesRouter  from "./matches";
 import scoringRouter  from "./scoring";
 import pointsRouter   from "./points";
+import adminRouter    from "./admin";
 
 const router: IRouter = Router();
 
@@ -23,5 +24,7 @@ router.use("/user",          userRouter);
 router.use("/matches",       matchesRouter);
 router.use("/scoring",       scoringRouter);
 router.use("/points-table",  pointsRouter);
+// Admin panel
+router.use("/admin",         adminRouter);
 
 export default router;

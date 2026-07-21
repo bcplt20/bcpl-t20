@@ -132,3 +132,102 @@ export const updatePointsRow = (team: string, data: {
 export const recordMatchResult = (data: {
   winner?: string; loser?: string; noResult?: boolean; season?: number;
 }) => req("POST", "/points-table/admin/points-table/result", data, true);
+
+/* ─── Admin Panel API ──────────────────────────────────────────── */
+
+const ADMIN_TOKEN_KEY = "bcpl_admin_token_v1";
+
+function getAdminToken(): string | null {
+  try { return localStorage.getItem(ADMIN_TOKEN_KEY); } catch { return null; }
+}
+
+export function saveAdminToken(token: string): void {
+  try { localStorage.setItem(ADMIN_TOKEN_KEY, token); } catch {}
+}
+
+export function clearAdminToken(): void {
+  try { localStorage.removeItem(ADMIN_TOKEN_KEY); } catch {}
+}
+
+async function adminReq<T = unknown>(
+  method: string,
+  path: string,
+  body?: unknown,
+): Promise<T> {
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  const token = getAdminToken();
+  if (token) headers["x-bcpl-admin-token"] = token;
+  // Legacy fallback for server-to-server calls
+  if (!token && ADMIN_KEY) headers["x-bcpl-admin"] = ADMIN_KEY;
+
+  const res = await fetch(`${BASE}/api${path}`, {
+    method,
+    headers,
+    body: body !== undefined ? JSON.stringify(body) : undefined,
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: res.statusText }));
+    throw new Error((err as any).error ?? res.statusText);
+  }
+  return res.json() as Promise<T>;
+}
+
+// Admin session (login)
+export const adminLogin = (password: string) =>
+  fetch(`${BASE}/api/admin/session`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ password }),
+  }).then(async r => {
+    if (!r.ok) { const e = await r.json().catch(() => ({})); throw new Error((e as any).error ?? "Login failed"); }
+    return r.json() as Promise<{ success: boolean; token: string }>;
+  });
+
+// Stats
+export const adminGetStats = () =>
+  adminReq<{
+    registrations: { total:number; paymentDone:number; videoSubmitted:number; selected:number; rejected:number };
+    videos: { total:number; pending:number; reviewed:number };
+    kyc: { total:number; pending:number; verified:number; failed:number };
+    users: { total:number };
+  }>("GET", "/admin/stats");
+
+// Phase 1 Registrations
+export const adminGetRegistrations = (params?: Record<string, string>) =>
+  adminReq<{ registrations: any[]; total: number }>(
+    "GET",
+    `/admin/registrations${params && Object.keys(params).length ? "?" + new URLSearchParams(params) : ""}`,
+  );
+
+export const adminUpdatePhase1Status = (id: string, status: string) =>
+  adminReq<{ success: boolean; registration: any }>(
+    "PUT", `/admin/registrations/${id}/phase1-status`, { status }
+  );
+
+export const adminUpdatePhase2Status = (id: string, status: string) =>
+  adminReq<{ success: boolean; registration: any }>(
+    "PUT", `/admin/registrations/${id}/phase2-status`, { status }
+  );
+
+// Videos
+export const adminGetVideos = (status?: string) =>
+  adminReq<{ videos: any[]; total: number }>(
+    "GET", `/admin/videos${status ? `?status=${status}` : ""}`
+  );
+
+export const adminReviewVideo = (id: string, status = "reviewed") =>
+  adminReq<{ success: boolean; video: any }>(
+    "PUT", `/admin/videos/${id}/review`, { status }
+  );
+
+// KYC
+export const adminGetKyc = (status?: string) =>
+  adminReq<{ kyc: any[]; total: number }>(
+    "GET", `/admin/kyc${status ? `?status=${status}` : ""}`
+  );
+
+export const adminUpdateKycStatus = (id: string, status: string) =>
+  adminReq<{ success: boolean; kyc: any }>(
+    "PUT", `/admin/kyc/${id}/status`, { status }
+  );

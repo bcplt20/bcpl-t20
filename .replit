@@ -30,6 +30,7 @@ CASHFREE_ENV = "TEST"
 SITE_URL = "https://elite-user-experience.replit.app/bcpl-website"
 VITE_ADMIN_KEY = ""
 VITE_API_URL = "https://elite-user-experience.replit.app"
+ADMIN_PANEL_PASSWORD = "BCPL@S5#2026!"
 
 [nix]
 channel = "stable-25_05"

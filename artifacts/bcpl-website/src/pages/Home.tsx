@@ -213,6 +213,7 @@ export function Home() {
 
         .hero-grid{display:flex;flex-direction:column;gap:32px;}
         @media(min-width:900px){.hero-grid{flex-direction:row;align-items:center;}}
+        @media(min-width:900px){.hero-right{flex:0 0 360px!important;width:360px!important;max-width:40%;}}
         .ganguly-img{right:0!important;left:auto!important;}
         @media(max-width:899px){.ganguly-img{left:50%!important;right:auto!important;transform:translateX(-50%)!important;width:100%!important;object-position:center top!important;opacity:0.18!important;}}
 
@@ -455,7 +456,7 @@ export function Home() {
             </div>
 
             {/* Right: Stats + Trust */}
-            <div style={{ flex:"0 0 auto", display:"flex", flexDirection:"column", gap:12, alignSelf:"stretch", minWidth:0, width:"100%" }}>
+            <div className="hero-right" style={{ flex:"0 0 auto", display:"flex", flexDirection:"column", gap:12, alignSelf:"stretch", minWidth:0, width:"100%" }}>
               <div className="hero-right-stats" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
                 {STATS.map(s=>(
                   <div key={s.label} className="card" style={{ padding:"16px 14px", borderLeft:`3px solid ${s.color}` }}>

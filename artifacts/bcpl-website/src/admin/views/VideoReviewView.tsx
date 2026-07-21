@@ -1,106 +1,259 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { adminGetVideos, adminReviewVideo } from "../../lib/api";
 
-type Video = { id:string; player:string; city:string; role:string; uploaded:string; duration:string; score:number|null; status:string; notes:string; thumb:string };
+type Video = {
+  id: string;
+  registrationId: string;
+  s3Key: string | null;
+  s3Url: string | null;
+  durationSeconds: number | null;
+  submittedAt: string;
+  status: string;
+  player: string;
+  phone: string;
+  role: string;
+  trialCity: string;
+};
 
-// No videos yet — will populate as Phase 1 players upload selection videos
-const VIDEOS: Video[] = [];
+const ROLE_LABEL: Record<string, string> = {
+  bat: "Bat", bowl: "Bowl", wk: "WK", ar: "AR",
+};
 
-const statusColor=(s:string)=>s==="Approved"?"#10B981":s==="Pending"?"#F59E0B":"#EF4444";
+const statusColor = (s: string) =>
+  s === "reviewed" ? "#10B981" : "#F59E0B";
+
+function fmtDur(sec: number | null) {
+  if (!sec) return "—";
+  const m = Math.floor(sec / 60), s = sec % 60;
+  return `${m}:${String(s).padStart(2, "0")}`;
+}
 
 export default function VideoReviewView() {
-  const [filter, setFilter]  = useState("Pending");
-  const [sel,    setSel]     = useState<Video|null>(null);
-  const [score,  setScore]   = useState("");
-  const [notes,  setNotes]   = useState("");
-  const card:React.CSSProperties={background:"linear-gradient(135deg,#0D1526,#0A1020)",border:"1px solid #1E293B",borderRadius:16,padding:20};
+  const [videos, setVideos]     = useState<Video[]>([]);
+  const [filter, setFilter]     = useState("all");
+  const [loading, setLoading]   = useState(true);
+  const [err, setErr]           = useState("");
+  const [sel, setSel]           = useState<Video | null>(null);
+  const [acting, setActing]     = useState<string | null>(null);
 
-  const filtered = filter==="All"?VIDEOS:VIDEOS.filter(v=>v.status===filter);
+  const load = useCallback(async () => {
+    setLoading(true); setErr("");
+    try {
+      const { videos: v } = await adminGetVideos(filter === "all" ? undefined : filter);
+      setVideos(v);
+    } catch (e: any) {
+      setErr(e.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [filter]);
+
+  useEffect(() => { load(); }, [load]);
+
+  const markReviewed = async (id: string) => {
+    setActing(id);
+    try {
+      await adminReviewVideo(id, "reviewed");
+      setVideos(prev => prev.map(v => v.id === id ? { ...v, status: "reviewed" } : v));
+      if (sel?.id === id) setSel(s => s ? { ...s, status: "reviewed" } : s);
+    } catch (e: any) {
+      alert("Error: " + e.message);
+    } finally {
+      setActing(null);
+    }
+  };
+
+  const pending   = videos.filter(v => v.status === "submitted").length;
+  const reviewed  = videos.filter(v => v.status === "reviewed").length;
+
+  const card: React.CSSProperties = {
+    background:"linear-gradient(135deg,#0D1526,#0A1020)",
+    border:"1px solid #1E293B", borderRadius:16, padding:20,
+  };
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:16}}>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+    <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
+
+      {/* Header */}
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:10 }}>
         <div>
-          <div style={{fontSize:20,fontWeight:800,color:"#F1F5F9"}}>Video Review Panel</div>
-          <div style={{fontSize:12,color:"#64748B",marginTop:2}}>Review Phase 1 trial videos — score, approve or reject with notes</div>
+          <div style={{ fontSize:20, fontWeight:800, color:"#F1F5F9" }}>Video Review Panel</div>
+          <div style={{ fontSize:12, color:"#64748B", marginTop:2 }}>Review Phase 1 trial videos submitted by players</div>
         </div>
-        <div style={{display:"flex",gap:8,alignItems:"center"}}>
-          <span style={{fontSize:12,fontWeight:700,color:"#F59E0B",background:"#F59E0B15",padding:"6px 12px",borderRadius:8,border:"1px solid #F59E0B30"}}>{VIDEOS.filter(v=>v.status==="Pending").length} Pending</span>
-          <button style={{padding:"9px 16px",borderRadius:9,border:"none",background:"linear-gradient(135deg,#FF6B00,#FF8C40)",color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer"}}>⬇ Export Reviews</button>
+        <div style={{ display:"flex", gap:8, alignItems:"center" }}>
+          {pending > 0 && (
+            <span style={{ fontSize:12, fontWeight:700, color:"#F59E0B", background:"#F59E0B15", padding:"6px 12px", borderRadius:8, border:"1px solid #F59E0B30" }}>
+              {pending} Pending
+            </span>
+          )}
+          <button onClick={load} style={{ padding:"9px 16px", borderRadius:9, border:"1px solid #1E293B", background:"transparent", color:"#64748B", fontSize:12, fontWeight:700, cursor:"pointer" }}>
+            ↺ Refresh
+          </button>
         </div>
       </div>
 
-      <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12}}>
+      {err && (
+        <div style={{ padding:14, borderRadius:10, background:"#EF444415", border:"1px solid #EF444440", color:"#EF4444", fontSize:12 }}>
+          ⚠ {err} — <button onClick={load} style={{ background:"none", border:"none", color:"#EF4444", cursor:"pointer", fontWeight:700, fontSize:12 }}>Retry</button>
+        </div>
+      )}
+
+      {/* Stats */}
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:12 }}>
         {[
-          {label:"Total Videos",   value:VIDEOS.length,                                  color:"#6366F1"},
-          {label:"Pending Review", value:VIDEOS.filter(v=>v.status==="Pending").length,   color:"#F59E0B"},
-          {label:"Approved",       value:VIDEOS.filter(v=>v.status==="Approved").length,  color:"#10B981"},
-          {label:"Rejected",       value:VIDEOS.filter(v=>v.status==="Rejected").length,  color:"#EF4444"},
-        ].map(s=>(
-          <div key={s.label} style={{...card,borderTop:`3px solid ${s.color}`}}>
-            <div style={{fontSize:24,fontWeight:800,color:s.color}}>{s.value}</div>
-            <div style={{fontSize:11,color:"#64748B",marginTop:5}}>{s.label}</div>
+          { label:"Total Videos",   value: videos.length, color:"#6366F1" },
+          { label:"Pending Review", value: pending,        color:"#F59E0B" },
+          { label:"Reviewed",       value: reviewed,       color:"#10B981" },
+        ].map(s => (
+          <div key={s.label} style={{ ...card, borderTop:`3px solid ${s.color}` }}>
+            <div style={{ fontSize:24, fontWeight:800, color:s.color }}>{loading ? "…" : s.value}</div>
+            <div style={{ fontSize:11, color:"#64748B", marginTop:5 }}>{s.label}</div>
           </div>
         ))}
       </div>
 
       {/* Filter */}
-      <div style={{display:"flex",gap:6}}>
-        {["All","Pending","Approved","Rejected"].map(f=>(
-          <button key={f} onClick={()=>setFilter(f)} style={{padding:"8px 18px",borderRadius:9,border:`1px solid ${filter===f?"#FF6B00":"#1E293B"}`,background:filter===f?"#FF6B0022":"transparent",color:filter===f?"#FF6B00":"#64748B",fontSize:12,fontWeight:700,cursor:"pointer"}}>{f}</button>
+      <div style={{ display:"flex", gap:6 }}>
+        {[
+          { id:"all",       label:"All" },
+          { id:"submitted", label:"Pending" },
+          { id:"reviewed",  label:"Reviewed" },
+        ].map(f => (
+          <button key={f.id} onClick={() => setFilter(f.id)}
+            style={{ padding:"8px 18px", borderRadius:9, border:`1px solid ${filter===f.id?"#FF6B00":"#1E293B"}`, background:filter===f.id?"#FF6B0022":"transparent", color:filter===f.id?"#FF6B00":"#64748B", fontSize:12, fontWeight:700, cursor:"pointer" }}>
+            {f.label}
+          </button>
         ))}
       </div>
 
-      <div style={{display:"grid",gridTemplateColumns:sel?"1fr 380px":"repeat(3,1fr)",gap:12}}>
-        {filtered.map(v=>(
-          <div key={v.id} onClick={()=>{setSel(vv=>vv?.id===v.id?null:v);setScore(v.score?.toString()||"");setNotes(v.notes);}} style={{...card,cursor:"pointer",border:`1px solid ${sel?.id===v.id?"#FF6B0060":"#1E293B"}`,padding:16}}>
-            {/* Thumbnail area */}
-            <div style={{height:100,background:"linear-gradient(135deg,#1E293B,#0F172A)",borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",marginBottom:12,position:"relative",overflow:"hidden"}}>
-              <span style={{fontSize:40}}>{v.thumb}</span>
-              <div style={{position:"absolute",bottom:8,right:8,background:"#00000080",borderRadius:4,padding:"2px 6px",fontSize:10,color:"#fff"}}>{v.duration}</div>
-              <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",opacity:0,transition:"opacity .2s",":hover":{opacity:1}} as any}>
-                <div style={{width:44,height:44,borderRadius:"50%",background:"#FF6B0080",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}>▶</div>
-              </div>
-            </div>
-            <div style={{fontSize:13,fontWeight:700,color:"#F1F5F9"}}>{v.player}</div>
-            <div style={{fontSize:11,color:"#475569",marginTop:2}}>{v.role} · {v.city} · {v.uploaded}</div>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:10}}>
-              <span style={{fontSize:10,fontWeight:800,padding:"3px 8px",borderRadius:6,background:`${statusColor(v.status)}22`,color:statusColor(v.status)}}>{v.status}</span>
-              {v.score&&<span style={{fontSize:14,fontWeight:900,color:v.score>=80?"#10B981":v.score>=60?"#F59E0B":"#EF4444"}}>{v.score}/100</span>}
-            </div>
+      {/* Main content */}
+      {loading ? (
+        <div style={{ ...card, padding:60, textAlign:"center", color:"#334155", fontSize:14 }}>Loading videos…</div>
+      ) : videos.length === 0 ? (
+        <div style={{ ...card, padding:80, textAlign:"center" }}>
+          <div style={{ fontSize:32, marginBottom:12 }}>🎬</div>
+          <div style={{ fontSize:15, fontWeight:700, color:"#334155" }}>No videos yet</div>
+          <div style={{ fontSize:12, color:"#1E293B", marginTop:6 }}>
+            Videos appear here once Phase 1 players upload their trial footage.
           </div>
-        ))}
+        </div>
+      ) : (
+        <div style={{ display:"grid", gridTemplateColumns: sel ? "1fr 380px" : "repeat(auto-fill,minmax(260px,1fr))", gap:12 }}>
 
-        {/* Review panel */}
-        {sel&&(
-          <div style={{display:"flex",flexDirection:"column",gap:12}}>
-            <div style={card}>
-              <div style={{fontSize:14,fontWeight:700,color:"#F1F5F9",marginBottom:4}}>{sel.player}</div>
-              <div style={{fontSize:11,color:"#475569",marginBottom:16}}>{sel.role} · {sel.city} · {sel.id}</div>
-              {/* Video player placeholder */}
-              <div style={{height:160,background:"linear-gradient(135deg,#1E293B,#0F172A)",borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center",marginBottom:16,cursor:"pointer"}}>
-                <div style={{textAlign:"center"}}>
-                  <div style={{width:52,height:52,borderRadius:"50%",background:"#FF6B0060",display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,margin:"0 auto 8px"}}>▶</div>
-                  <div style={{fontSize:11,color:"#64748B"}}>Click to play trial video</div>
+          {/* Video grid */}
+          <div style={{ display:"contents" }}>
+            {videos.map(v => (
+              <div key={v.id}
+                onClick={() => setSel(prev => prev?.id === v.id ? null : v)}
+                style={{ ...card, cursor:"pointer", border:`1px solid ${sel?.id===v.id?"#FF6B0060":"#1E293B"}`, padding:16 }}>
+                {/* Thumbnail / play area */}
+                <div style={{ height:110, background:"linear-gradient(135deg,#1E293B,#0F172A)", borderRadius:10, display:"flex", alignItems:"center", justifyContent:"center", marginBottom:12, position:"relative", overflow:"hidden" }}>
+                  <div style={{ width:44, height:44, borderRadius:"50%", background:"#FF6B0060", display:"flex", alignItems:"center", justifyContent:"center", fontSize:20 }}>▶</div>
+                  {v.durationSeconds && (
+                    <div style={{ position:"absolute", bottom:7, right:8, background:"#00000090", borderRadius:4, padding:"2px 6px", fontSize:10, color:"#fff" }}>
+                      {fmtDur(v.durationSeconds)}
+                    </div>
+                  )}
+                  <div style={{ position:"absolute", top:7, left:8, background:`${statusColor(v.status)}22`, borderRadius:4, padding:"2px 7px", fontSize:9, fontWeight:800, color:statusColor(v.status), border:`1px solid ${statusColor(v.status)}44` }}>
+                    {v.status === "reviewed" ? "Reviewed" : "Pending"}
+                  </div>
+                </div>
+                <div style={{ fontSize:13, fontWeight:700, color:"#F1F5F9" }}>{v.player}</div>
+                <div style={{ fontSize:11, color:"#475569", marginTop:2 }}>
+                  {ROLE_LABEL[v.role] ?? v.role} · {v.trialCity || "—"}
+                </div>
+                <div style={{ fontSize:10, color:"#334155", marginTop:4 }}>
+                  {v.submittedAt ? new Date(v.submittedAt).toLocaleDateString("en-IN", { day:"2-digit", month:"short", year:"numeric" }) : "—"}
+                </div>
+                {v.status === "submitted" && (
+                  <button
+                    disabled={acting === v.id}
+                    onClick={e => { e.stopPropagation(); markReviewed(v.id); }}
+                    style={{ marginTop:10, width:"100%", padding:"8px", borderRadius:8, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontSize:11, fontWeight:700, cursor:"pointer", opacity:acting===v.id?0.5:1 }}>
+                    Mark Reviewed
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Detail panel */}
+          {sel && (
+            <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+              <div style={{ ...card }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:16 }}>
+                  <div>
+                    <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9" }}>{sel.player}</div>
+                    <div style={{ fontSize:11, color:"#475569", marginTop:2 }}>
+                      {ROLE_LABEL[sel.role] ?? sel.role} · {sel.trialCity || "—"}
+                    </div>
+                  </div>
+                  <button onClick={() => setSel(null)} style={{ background:"none", border:"none", color:"#334155", cursor:"pointer", fontSize:18, padding:4 }}>×</button>
+                </div>
+
+                {/* Video player */}
+                {sel.s3Url ? (
+                  <video
+                    src={sel.s3Url}
+                    controls
+                    style={{ width:"100%", borderRadius:10, background:"#0F172A", marginBottom:16, maxHeight:200 }}
+                  />
+                ) : (
+                  <div style={{ height:140, background:"linear-gradient(135deg,#1E293B,#0F172A)", borderRadius:10, display:"flex", alignItems:"center", justifyContent:"center", marginBottom:16 }}>
+                    <div style={{ textAlign:"center" }}>
+                      <div style={{ width:52, height:52, borderRadius:"50%", background:"#FF6B0060", display:"flex", alignItems:"center", justifyContent:"center", fontSize:24, margin:"0 auto 8px" }}>▶</div>
+                      <div style={{ fontSize:11, color:"#64748B" }}>No video URL available</div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Details */}
+                <div style={{ display:"flex", flexDirection:"column", gap:8, marginBottom:16 }}>
+                  {[
+                    { label:"Phone",     value: sel.phone || "—" },
+                    { label:"Duration",  value: fmtDur(sel.durationSeconds) },
+                    { label:"Submitted", value: sel.submittedAt ? new Date(sel.submittedAt).toLocaleString("en-IN") : "—" },
+                    { label:"Status",    value: sel.status === "reviewed" ? "✓ Reviewed" : "⏳ Pending" },
+                  ].map(item => (
+                    <div key={item.label} style={{ display:"flex", justifyContent:"space-between", padding:"6px 0", borderBottom:"1px solid #0F172A" }}>
+                      <span style={{ fontSize:11, color:"#475569", fontWeight:600 }}>{item.label}</span>
+                      <span style={{ fontSize:11, color:"#94A3B8" }}>{item.value}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div style={{ display:"flex", gap:8 }}>
+                  {sel.s3Url && (
+                    <a href={sel.s3Url} target="_blank" rel="noreferrer"
+                      style={{ flex:1, padding:11, borderRadius:10, border:"1px solid #6366F140", background:"#6366F120", color:"#6366F1", fontWeight:800, fontSize:13, cursor:"pointer", textAlign:"center", textDecoration:"none" }}>
+                      ↗ Open Video
+                    </a>
+                  )}
+                  {sel.status === "submitted" && (
+                    <button
+                      disabled={acting === sel.id}
+                      onClick={() => markReviewed(sel.id)}
+                      style={{ flex:1, padding:11, borderRadius:10, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontWeight:800, fontSize:13, cursor:"pointer", opacity:acting===sel.id?0.5:1 }}>
+                      ✓ Mark Reviewed
+                    </button>
+                  )}
+                  {sel.status === "reviewed" && (
+                    <div style={{ flex:1, padding:11, borderRadius:10, border:"1px solid #10B98140", background:"#10B98120", color:"#10B981", fontWeight:800, fontSize:13, textAlign:"center" }}>
+                      ✓ Already Reviewed
+                    </div>
+                  )}
                 </div>
               </div>
-              <div style={{marginBottom:14}}>
-                <label style={{fontSize:11,fontWeight:700,color:"#475569",display:"block",marginBottom:7}}>SCORE (0–100)</label>
-                <input type="number" min="0" max="100" value={score} onChange={e=>setScore(e.target.value)} placeholder="Enter score…"
-                  style={{width:"100%",padding:"10px 12px",borderRadius:9,border:"1px solid #1E293B",background:"#060B18",color:"#E2E8F0",fontSize:20,fontWeight:800,outline:"none",boxSizing:"border-box",textAlign:"center"}}/>
-              </div>
-              <div style={{marginBottom:16}}>
-                <label style={{fontSize:11,fontWeight:700,color:"#475569",display:"block",marginBottom:7}}>REVIEWER NOTES</label>
-                <textarea value={notes} onChange={e=>setNotes(e.target.value)} rows={3} placeholder="e.g. Good footwork, strong off-side play…"
-                  style={{width:"100%",padding:"10px 12px",borderRadius:9,border:"1px solid #1E293B",background:"#060B18",color:"#E2E8F0",fontSize:12,outline:"none",resize:"none",boxSizing:"border-box",lineHeight:1.5}}/>
-              </div>
-              <div style={{display:"flex",gap:8}}>
-                <button style={{flex:1,padding:"11px",borderRadius:10,border:"none",background:"#10B98120",color:"#10B981",fontWeight:800,fontSize:13,cursor:"pointer",border:"1px solid #10B98140"} as any}>✓ Approve</button>
-                <button style={{flex:1,padding:"11px",borderRadius:10,border:"none",background:"#EF444420",color:"#EF4444",fontWeight:800,fontSize:13,cursor:"pointer",border:"1px solid #EF444440"} as any}>✗ Reject</button>
-              </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
+
+      {!loading && videos.length > 0 && (
+        <div style={{ fontSize:11, color:"#334155", textAlign:"right" }}>
+          {videos.length} video{videos.length !== 1 ? "s" : ""} total
+        </div>
+      )}
     </div>
   );
 }

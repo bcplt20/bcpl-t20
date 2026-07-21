@@ -27,10 +27,13 @@ import LeaderboardView      from "./views/LeaderboardView";
 import WhatsAppTemplatesView from "./views/WhatsAppTemplatesView";
 import DataExportView       from "./views/DataExportView";
 import AffiliatesView       from "./views/AffiliatesView";
-import VideoReviewView      from "./views/VideoReviewView";
+import VideoReviewView         from "./views/VideoReviewView";
+import Phase1RegistrationsView from "./views/Phase1RegistrationsView";
+import Phase2KYCView           from "./views/Phase2KYCView";
 import FraudView            from "./views/FraudView";
 import ForecastView         from "./views/ForecastView";
 import SponsorROIView       from "./views/SponsorROIView";
+import { adminLogin, saveAdminToken } from "../lib/api";
 
 type NavItem  = { id: string; label: string; icon: string; badge?: string; badgeColor?: string };
 type NavGroup = { title: string; items: NavItem[] };
@@ -58,8 +61,12 @@ const NAV: NavGroup[] = [
     { id:"leaderboard",  label:"Leaderboard",       icon:"≡" },
     { id:"contracts",    label:"Contracts",         icon:"◈" },
   ]},
+  { title: "REGISTRATIONS", items: [
+    { id:"phase1_regs",  label:"Phase 1 Registrations", icon:"①", badge:"Live", badgeColor:"#3B82F6" },
+    { id:"video_review", label:"Video Review",           icon:"▣", badgeColor:"#F59E0B" },
+    { id:"phase2_kyc",   label:"Phase 2 · KYC",         icon:"②", badgeColor:"#A855F7" },
+  ]},
   { title: "PLAYERS", items: [
-    { id:"video_review", label:"Video Review",      icon:"▣", badge:"142", badgeColor:"#F59E0B" },
     { id:"player_profiles",label:"Player Profiles", icon:"⊞" },
     { id:"whatsapp_tpl", label:"WhatsApp Templates",icon:"◎" },
     { id:"fraud",        label:"Fraud Detection",   icon:"⌖", badge:"2 High", badgeColor:"#EF4444" },
@@ -114,7 +121,9 @@ function renderView(id: string) {
     case "auction":        return <AuctionView />;
     case "leaderboard":    return <LeaderboardView />;
     case "contracts":      return <ContractsView />;
+    case "phase1_regs":    return <Phase1RegistrationsView />;
     case "video_review":   return <VideoReviewView />;
+    case "phase2_kyc":     return <Phase2KYCView />;
     case "player_profiles":return <PlayerProfilesView />;
     case "whatsapp_tpl":   return <WhatsAppTemplatesView />;
     case "fraud":          return <FraudView />;
@@ -184,6 +193,8 @@ export default function AdminShell() {
       if (emailL === SUPER_ADMIN.email && loginForm.password === SUPER_ADMIN_PASSWORD) {
         setLoggedIn(true);
         setLoggedInAdmin(SUPER_ADMIN);
+        // Fetch admin API token silently (used for all admin API calls)
+        adminLogin(loginForm.password).then(r => saveAdminToken(r.token)).catch(() => {});
         return;
       }
       // Check co-admins from localStorage
