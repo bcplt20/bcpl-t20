@@ -182,6 +182,9 @@ export function Registration() {
         @media(min-width:1024px){.ham-btn{display:none}}
         .bot-cta{display:flex}
         @media(min-width:1024px){.bot-cta{display:none}}
+        /* ── INLINE NAV BUTTONS — hidden on mobile (sticky CTA handles it) ── */
+        .form-nav-btns{display:none}
+        @media(min-width:1024px){.form-nav-btns{display:flex}}
 
         /* ── BUTTONS ── */
         .btn-primary{
@@ -349,6 +352,9 @@ export function Registration() {
         .city-chips-wrap{display:flex;flex-wrap:wrap;gap:8px;max-height:300px;overflow-y:auto;-webkit-overflow-scrolling:touch}
       `}</style>
 
+      {/* ═══════════════ STICKY TOP WRAPPER (ticker + nav) ═══════════════ */}
+      <div style={{ position:'sticky', top:0, zIndex:300 }}>
+
       {/* ═══════════════ TICKER BAR ═══════════════ */}
       <div style={{ background:'linear-gradient(90deg,#C94E0E,#FF7A29,#E8611A,#FF7A29,#C94E0E)', backgroundSize:'300% 100%', animation:'gradShift 4s ease infinite', overflow:'hidden', height:34, display:'flex', alignItems:'center' }}>
         <div style={{ display:'flex', whiteSpace:'nowrap', animation:'tickerScroll 30s linear infinite', gap:0 }}>
@@ -361,14 +367,14 @@ export function Registration() {
       </div>
 
       {/* ═══════════════ NAVBAR ═══════════════ */}
-      <nav style={{ position:'sticky', top:0, zIndex:300, background:'rgba(6,16,30,0.97)', backdropFilter:'blur(20px)', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
+      <nav style={{ background:'rgba(6,16,30,0.97)', backdropFilter:'blur(20px)', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
         {/* Orange top accent line */}
         <div style={{ height:2, background:'linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)', backgroundSize:'200%', animation:'shimGold 4s linear infinite' }} />
         <div className="wrap" style={{ height:60, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
           {/* Logo — click to go home */}
-          <div style={{ display:'flex', alignItems:'center', gap:10, cursor:'pointer' }} onClick={()=>navigate('/')}>
+          <div style={{ display:'flex', alignItems:'center', gap:10, cursor:'pointer', flexShrink:0 }} onClick={()=>navigate('/')}>
             <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL" style={{ height:42, width:'auto', objectFit:'contain', display:'block', filter:'brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.7))' }}/>
-            <div style={{ display:'inline-flex', alignItems:'center', gap:4, background:'rgba(232,178,61,0.12)', border:'1px solid rgba(232,178,61,0.5)', borderRadius:6, padding:'3px 10px' }}>
+            <div style={{ display:'inline-flex', alignItems:'center', gap:4, background:'rgba(232,178,61,0.12)', border:'1px solid rgba(232,178,61,0.5)', borderRadius:6, padding:'3px 10px', whiteSpace:'nowrap', flexShrink:0 }}>
               <span style={{ fontSize:9 }}>🏆</span>
               <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:9, color:'#E8B23D', letterSpacing:'.12em' }}>SEASON 5</span>
             </div>
@@ -384,6 +390,7 @@ export function Registration() {
           </button>
         </div>
       </nav>
+      </div>{/* end sticky top wrapper */}
 
       {/* Mobile menu */}
       {menuOpen && (
@@ -906,8 +913,8 @@ export function Registration() {
               </div>
             )}
 
-            {/* ─── NAV BUTTONS ─── */}
-            <div style={{ display:'flex', gap:12, marginTop:28 }}>
+            {/* ─── NAV BUTTONS — hidden on mobile (sticky bottom CTA handles it) ─── */}
+            <div className="form-nav-btns" style={{ gap:12, marginTop:28 }}>
               {step > 1 && (
                 <button className="btn-back" style={{ flex:1, padding:'14px', fontSize:13, letterSpacing:'.06em' }} onClick={() => setStep(s => s - 1)}>
                   ← BACK
