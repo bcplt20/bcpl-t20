@@ -813,7 +813,7 @@ function ContractModal({ c, onClose }: { c: Contract; onClose: ()=>void }) {
   const cType = c.contractType || "Player";
 
   function downloadPDF() {
-    const logoUrl = `${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/bcpl-logo-transparent.png`;
+    const logoUrl = `${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/bcpl-logo-white.png`;
     const ballUrl = `${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/bcpl-ball-transparent.png`;
     const w = window.open("", "_blank");
     if (!w) return;

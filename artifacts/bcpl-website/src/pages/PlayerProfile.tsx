@@ -183,9 +183,9 @@ export function PlayerProfile() {
                 <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:20, color:"#fff", marginBottom:4 }}>{PLAYER.name}</div>
                 <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:11, color:"#FF7A29", letterSpacing:".1em", textTransform:"uppercase", marginBottom:14 }}>{PLAYER.roleIcon} {PLAYER.role} · {PLAYER.city}</div>
                 
-                {/* Booking ref */}
+                {/* BCPL Registration Number */}
                 <div style={{ background:"rgba(255,122,41,0.07)", border:"1px solid rgba(255,122,41,0.2)", borderRadius:12, padding:"8px 14px", display:"inline-flex", alignItems:"center", gap:6 }}>
-                  <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:9, color:"rgba(255,255,255,0.4)", letterSpacing:".1em", textTransform:"uppercase" }}>REF</span>
+                  <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:8, color:"rgba(255,255,255,0.4)", letterSpacing:".08em", textTransform:"uppercase" }}>BCPL Reg. No.</span>
                   <span style={{ fontFamily:"monospace", fontWeight:700, fontSize:13, color:"#FF7A29", letterSpacing:".06em" }}>{PLAYER.ref}</span>
                 </div>
               </div>
@@ -301,7 +301,7 @@ export function PlayerProfile() {
                     { label:"Entry Fee",  value:"₹299 Paid",                          highlight:true  },
                     { label:"City",       value:PLAYER.city,                          highlight:false },
                     { label:"Reg Date",   value:PLAYER.regDate,                       highlight:false },
-                    { label:"Ref No.",    value:PLAYER.ref,                           highlight:false },
+                    { label:"BCPL Reg. No.", value:PLAYER.ref,                        highlight:false },
                     { label:"Status",     value:"ACTIVE",                             highlight:true  },
                   ].map(f => (
                     <div key={f.label} style={{ background:"rgba(255,255,255,0.03)", border:"1px solid rgba(255,255,255,0.06)", borderRadius:12, padding:"12px 14px" }}>

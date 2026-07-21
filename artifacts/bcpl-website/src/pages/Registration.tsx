@@ -367,7 +367,7 @@ export function Registration() {
         <div className="wrap" style={{ height:60, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
           {/* Logo — click to go home */}
           <div style={{ display:'flex', alignItems:'center', gap:10, cursor:'pointer' }} onClick={()=>navigate('/')}>
-            <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-transparent.png'} alt="BCPL" style={{ height:42, width:'auto', objectFit:'contain', display:'block', filter:'brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.7))' }}/>
+            <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL" style={{ height:42, width:'auto', objectFit:'contain', display:'block', filter:'brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.7))' }}/>
             <div style={{ display:'inline-flex', alignItems:'center', gap:4, background:'rgba(232,178,61,0.12)', border:'1px solid rgba(232,178,61,0.5)', borderRadius:6, padding:'3px 10px' }}>
               <span style={{ fontSize:9 }}>🏆</span>
               <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:9, color:'#E8B23D', letterSpacing:'.12em' }}>SEASON 5</span>
@@ -892,11 +892,11 @@ export function Registration() {
                         style={{ padding:'6px 14px', background:'none', border:'1px dashed rgba(232,178,61,0.3)', borderRadius:8, color:'rgba(232,178,61,0.5)', fontSize:11, cursor:'pointer', fontFamily:'Montserrat,sans-serif', fontWeight:700, letterSpacing:'.06em' }}>
                         → KYC Approved
                       </button>
-                      <button onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/auction-selected'; }}
+                      <button onClick={() => { window.location.href = import.meta.env.BASE_URL + 'auction/selected'; }}
                         style={{ padding:'6px 14px', background:'none', border:'1px dashed rgba(232,178,61,0.3)', borderRadius:8, color:'rgba(232,178,61,0.5)', fontSize:11, cursor:'pointer', fontFamily:'Montserrat,sans-serif', fontWeight:700, letterSpacing:'.06em' }}>
                         → Auction Selected
                       </button>
-                      <button onClick={() => { window.location.href = import.meta.env.BASE_URL + 'player-profile'; }}
+                      <button onClick={() => { window.location.href = import.meta.env.BASE_URL + 'profile'; }}
                         style={{ padding:'6px 14px', background:'none', border:'1px dashed rgba(34,197,94,0.3)', borderRadius:8, color:'rgba(34,197,94,0.5)', fontSize:11, cursor:'pointer', fontFamily:'Montserrat,sans-serif', fontWeight:700, letterSpacing:'.06em' }}>
                         → Player Profile
                       </button>
@@ -960,20 +960,25 @@ export function Registration() {
       {/* Footer */}
       <BCPLFooter />
 
-      {/* ═══════════════ MOBILE STICKY CTA ═══════════════ */}
-      <div className="bot-cta" style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:500, padding:'10px 16px calc(20px + env(safe-area-inset-bottom))', background:'rgba(4,10,20,0.98)', backdropFilter:'blur(20px)', borderTop:'2px solid #FF7A29', gap:10 }}>
-        <button
-          className="btn-primary"
-          disabled={!canNext}
-          onClick={() => canNext && (step < 4 ? setStep(s => s + 1) : null)}
-          style={{ flex:2, padding:'15px 0', fontSize:14, clipPath:'none', borderRadius:12, letterSpacing:'.06em' }}
-        >
-          {step < 4 ? 'CONTINUE →' : `PAY ₹${price} · ENTER TRIALS`}
-        </button>
-        <button style={{ flex:1, padding:'15px 0', background:'linear-gradient(135deg,#25D366,#1BA851)', border:'none', borderRadius:12, color:'#fff', fontWeight:700, cursor:'pointer', fontSize:13, fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em' }}>
-          💬 WHATSAPP
-        </button>
-      </div>
+      {/* ═══════════════ MOBILE STICKY CTA — hidden on step 4 (inline pay button handles it) ═══════════════ */}
+      {step < 4 && (
+        <div className="bot-cta" style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:500, padding:'10px 16px calc(20px + env(safe-area-inset-bottom))', background:'rgba(4,10,20,0.98)', backdropFilter:'blur(20px)', borderTop:'2px solid #FF7A29', gap:10 }}>
+          <button
+            className="btn-primary"
+            disabled={!canNext}
+            onClick={() => canNext && setStep(s => s + 1)}
+            style={{ flex:2, padding:'15px 0', fontSize:14, clipPath:'none', borderRadius:12, letterSpacing:'.06em' }}
+          >
+            CONTINUE →
+          </button>
+          <button
+            style={{ flex:1, padding:'15px 0', background:'linear-gradient(135deg,#25D366,#1BA851)', border:'none', borderRadius:12, color:'#fff', fontWeight:700, cursor:'pointer', fontSize:13, fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em' }}
+            onClick={() => window.open('https://wa.me/918800000000?text=Hi+BCPL+team,+I+need+help+with+registration', '_blank')}
+          >
+            💬 WHATSAPP
+          </button>
+        </div>
+      )}
     </div>
   );
 }

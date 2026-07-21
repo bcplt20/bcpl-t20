@@ -22,28 +22,32 @@ export function BCPLFooter() {
       <style>{`
         .bcpl-foot-wrap { max-width:1200px; margin:0 auto; padding:0 clamp(16px,4vw,40px); }
         .bcpl-foot-cols { display:grid; grid-template-columns:220px 1fr 1fr 1fr; gap:40px; margin-bottom:32px; }
-        @media(max-width:900px){ .bcpl-foot-cols{grid-template-columns:1fr 1fr 1fr;} .bcpl-foot-brand{grid-column:1/-1;display:flex;align-items:center;gap:24px;} .bcpl-foot-brand p{margin-top:0!important;max-width:none!important;} }
-        @media(max-width:540px){ .bcpl-foot-cols{grid-template-columns:1fr 1fr;} .bcpl-foot-brand{flex-direction:column;align-items:flex-start;gap:10px;} }
+        @media(max-width:900px){ .bcpl-foot-cols{grid-template-columns:1fr 1fr 1fr;} .bcpl-foot-brand{grid-column:1/-1;} }
+        @media(max-width:540px){ .bcpl-foot-cols{grid-template-columns:1fr 1fr;} }
         @media(max-width:380px){ .bcpl-foot-cols{grid-template-columns:1fr;} }
         .bcpl-foot-link:hover{ color:#FF7A29!important; }
         .bcpl-soc:hover{ border-color:#FF7A29!important; background:rgba(255,122,41,.12)!important; }
         .bcpl-foot-bottom{ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; }
         .bcpl-foot-legal{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
+        @keyframes s5glow{0%,100%{opacity:1;text-shadow:0 0 6px rgba(232,178,61,0.6)}50%{opacity:.78;text-shadow:0 0 14px rgba(232,178,61,1),0 0 4px #fff}}
+        @keyframes trophyBounce{0%,100%{transform:translateY(0) rotate(0deg)}30%{transform:translateY(-3px) rotate(-8deg)}60%{transform:translateY(-1px) rotate(5deg)}}
+        .s5-badge-text{animation:s5glow 2.4s ease-in-out infinite}
+        .s5-trophy{display:inline-block;animation:trophyBounce 2.8s ease-in-out infinite}
       `}</style>
 
       <div className="bcpl-foot-wrap">
         <div className="bcpl-foot-cols">
           {/* Brand */}
           <div className="bcpl-foot-brand">
-            <a href="/" style={{ display:"flex", alignItems:"center", gap:12, textDecoration:"none", marginBottom:12 }}>
-              <img src={BASE + "bcpl-assets/bcpl-logo-transparent.png"} alt="BCPL"
-                style={{ height:54, width:"auto", objectFit:"contain", display:"block", filter:"brightness(1.3) drop-shadow(0 2px 10px rgba(0,0,0,0.7))" }}/>
-              <div style={{ display:"inline-flex", alignItems:"center", gap:4, background:"rgba(232,178,61,0.1)", border:"1px solid rgba(232,178,61,0.4)", borderRadius:6, padding:"3px 9px" }}>
-                <span style={{ fontSize:9 }}>🏆</span>
-                <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:9, color:"#E8B23D", letterSpacing:".12em" }}>SEASON 5</span>
+            <a href="/" style={{ display:"flex", alignItems:"center", gap:10, textDecoration:"none", marginBottom:12, flexWrap:"nowrap" }}>
+              <img src={BASE + "bcpl-assets/bcpl-logo-white.png"} alt="BCPL"
+                style={{ height:44, maxWidth:155, width:"auto", objectFit:"contain", display:"block", flexShrink:0 }}/>
+              <div style={{ display:"inline-flex", alignItems:"center", gap:4, background:"rgba(232,178,61,0.1)", border:"1px solid rgba(232,178,61,0.4)", borderRadius:6, padding:"3px 9px", flexShrink:0, whiteSpace:"nowrap" }}>
+                <span className="s5-trophy" style={{ fontSize:9 }}>🏆</span>
+                <span className="s5-badge-text" style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:9, color:"#E8B23D", letterSpacing:".12em" }}>SEASON 5</span>
               </div>
             </a>
-            <p style={{ fontSize:12, color:"rgba(255,255,255,.3)", lineHeight:1.7, maxWidth:180 }}>India's Biggest Corporate Cricket League. Season 5 — 2026–27.</p>
+            <p style={{ fontSize:12, color:"rgba(255,255,255,.3)", lineHeight:1.7, maxWidth:200, marginTop:0 }}>India's Biggest Corporate Cricket League. Season 5 — 2026–27.</p>
           </div>
 
           {/* League */}
