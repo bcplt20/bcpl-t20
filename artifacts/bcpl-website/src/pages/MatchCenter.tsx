@@ -1,8 +1,9 @@
 import React, { useState } from "react";
+import { BCPLFooter } from '../components/BCPLFooter';
 
 const NAV_LINKS = ["Home", "Match Center", "Teams", "Sponsors", "Photos", "Videos", "About", "FAQ", "Contact", "Login"];
 
-const TICKER_TEXT = "🏏 SEASON 5 REGISTRATIONS OPEN · ₹6 CR PRIZE POOL · 50+ CITIES · BACKED BY SOURAV GANGULY · 10 FRANCHISE TEAMS · #OfficeSeStadiumtak";
+const TICKER_TEXT = "🏏 SEASON 5 REGISTRATIONS OPEN · ₹6 CR PRIZE POOL · 50+ CITIES · 10 FRANCHISE TEAMS · #OfficeSeStadiumtak";
 
 const CITIES = [
   "Mumbai", "Delhi", "Bengaluru", "Hyderabad", "Pune", "Chennai", "Kolkata", "Ahmedabad",
@@ -129,8 +130,8 @@ export function MatchCenter() {
         .roadmap-connector::after { content: '▶'; position: absolute; right: -8px; top: -8px; color: rgba(255,255,255,0.18); font-size: 10px; }
         @media(max-width:639px){
           .roadmap-scroll { flex-direction: column; overflow-x: visible; padding-bottom: 0; gap: 0; }
-          .roadmap-block { min-width: unset; max-width: unset; width: 100%; display: flex; gap: 14px; align-items: flex-start; padding: 16px; border-radius: 12px; margin-bottom: 0; }
-          .roadmap-block > * { flex-shrink: 0; }
+          .roadmap-block { min-width: unset; max-width: unset; width: 100%; flex-direction: column; padding: 16px; border-radius: 12px; margin-bottom: 0; }
+          .roadmap-block > * { flex-shrink: 1; min-width: 0; }
           .roadmap-connector { width: 2px; height: 20px; margin: 0 auto; align-self: unset; }
           .roadmap-connector::after { content: '▼'; top: unset; right: unset; left: -4px; bottom: -10px; }
         }
@@ -206,14 +207,11 @@ export function MatchCenter() {
             ))}
           </nav>
 
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <button className="btn-orange" style={{ fontSize: 12, padding: "9px 18px" }}>REGISTER NOW →</button>
-            <button className="ham-btn" onClick={() => setMenuOpen(true)}>
-              <span className="ham-bar" />
-              <span className="ham-bar" />
-              <span className="ham-bar" />
-            </button>
-          </div>
+          <button className="ham-btn" onClick={() => setMenuOpen(true)}>
+            <span className="ham-bar" />
+            <span className="ham-bar" />
+            <span className="ham-bar" />
+          </button>
         </div>
       </nav>
 
@@ -221,13 +219,10 @@ export function MatchCenter() {
       {menuOpen && (
         <div className="mob-menu">
           <button className="close-btn" onClick={() => setMenuOpen(false)}>✕</button>
-          <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 24, marginBottom: 8 }}>
-            <span style={{ color: "#FF7A29" }}>BCPL</span><span style={{ color: "#fff", marginLeft: 3 }}>T20</span>
-          </div>
+          <img src={import.meta.env.BASE_URL + "bcpl-assets/bcpl-logo-white.png"} alt="BCPL" style={{ height: 36, width: "auto", objectFit: "contain", marginBottom: 8, filter: "brightness(1.3)" }}/>
           {NAV_LINKS.map(link => (
             <a key={link} className="mob-menu-link" href={ROUTE_MAP[link]||"#"} onClick={() => setMenuOpen(false)}>{link}</a>
           ))}
-          <button className="btn-orange" style={{ marginTop: 12, padding: "14px 24px", fontSize: 14 }}>REGISTER NOW →</button>
         </div>
       )}
 
@@ -373,45 +368,7 @@ export function MatchCenter() {
       </section>
 
       {/* FOOTER */}
-      <footer style={{ background: "#060C18", borderTop: "1px solid rgba(255,255,255,0.06)", padding: "clamp(40px,6vw,60px) 0 0" }}>
-        <div className="wrap">
-          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: 40, marginBottom: 48 }}>
-            {/* Brand */}
-            <div style={{ minWidth: 200 }}>
-              <div style={{ display: "flex", alignItems: "baseline", gap: 2, marginBottom: 8 }}>
-                <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 24, color: "#FF7A29" }}>BCPL</span>
-                <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 24, color: "#fff" }}>T20</span>
-              </div>
-              <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 12, color: "#E8B23D", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 12 }}>#OfficeSeStadiumtak</div>
-              <div style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: "rgba(255,255,255,0.35)", lineHeight: 1.6 }}>
-                India's biggest corporate cricket league.<br />Season 5 · BCPL Pvt. Ltd.
-              </div>
-            </div>
-
-            {[
-              { header: "League", links: [["About","/about"],["Teams","/teams"],["Sponsors","/sponsors"],["Schedule","/schedule"]] },
-              { header: "Help", links: [["FAQ","/faq"],["Contact","/contact"],["Eligibility Criteria","/eligibility"],["Cricket Rulebook","/cricket-rulebook"]] },
-              { header: "Legal", links: [["Terms","/terms"],["Privacy","/privacy"],["Refunds","/refunds"],["Code of Conduct","/code-of-conduct"]] },
-            ].map(col => (
-              <div key={col.header}>
-                <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 11, letterSpacing: "0.12em", color: "rgba(255,255,255,0.35)", textTransform: "uppercase", marginBottom: 16 }}>{col.header}</div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                  {col.links.map(([link,href]) => (
-                    <a key={link} href={href} className="footer-link">{link}</a>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", padding: "20px 0", display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
-            <span style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: "rgba(255,255,255,0.25)" }}>
-              Season 5 · BCPL Pvt. Ltd. · © 2025 · All Rights Reserved
-            </span>
-            <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 11, letterSpacing: "0.1em", color: "#FF7A29" }}>#OfficeSeStadiumtak</span>
-          </div>
-        </div>
-      </footer>
+      <BCPLFooter />
       {/* ── FLOATING REGISTER BUTTON ── */}
       <a className="float-reg-btn float-reg-pulse" href="/register" style={{textDecoration:"none"}}>🏏 REGISTER NOW →</a>
     </div>
