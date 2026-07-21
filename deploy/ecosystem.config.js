@@ -32,16 +32,20 @@ module.exports = {
         BREVO_API_KEY:     process.env.BREVO_API_KEY,
         BREVO_FROM_EMAIL:  "noreply@bcplt20.com",
         INTERAKT_API_KEY:  process.env.INTERAKT_API_KEY,
-        CASHFREE_APP_ID:   process.env.CASHFREE_APP_ID,
+        CASHFREE_APP_ID:     process.env.CASHFREE_APP_ID,
         CASHFREE_SECRET_KEY: process.env.CASHFREE_SECRET_KEY,
-        CASHFREE_ENV:      "PROD",
+        CASHFREE_ENV:        "PROD",
+
+        // ── Cashfree Verification Suite (KYC) ───────────────
+        CF_VERIFY_APP_ID: process.env.CF_VERIFY_APP_ID,
+        CF_VERIFY_SECRET: process.env.CF_VERIFY_SECRET,
 
         // ── Site URLs ────────────────────────────────────────
         SITE_URL:  "https://bcplt20.com",
         API_URL:   "https://bcplt20.com",
       },
-      error_file:  "/home/bcpl/logs/bcpl-api-error.log",
-      out_file:    "/home/bcpl/logs/bcpl-api-out.log",
+      error_file:  "/home/ubuntu/logs/bcpl-api-error.log",
+      out_file:    "/home/ubuntu/logs/bcpl-api-out.log",
       log_date_format: "YYYY-MM-DD HH:mm:ss",
       max_memory_restart: "500M",
       restart_delay: 3000,
