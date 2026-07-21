@@ -26,7 +26,7 @@ function Navbar({open,setOpen}:{open:boolean,setOpen:(v:boolean)=>void}) {
             {['Home','Match Center','Teams','Sponsors','Photos','Videos','About','FAQ','Contact'].map(l=>(
               <a key={l} href="#" style={{color:'rgba(255,255,255,0.7)',fontWeight:600,fontSize:13,textDecoration:'none',fontFamily:'Inter,sans-serif',transition:'color 0.2s'}}>{l}</a>
             ))}
-            <button className="btn-fire" style={{padding:'10px 20px',fontSize:13}}>Register ₹299</button>
+            <a href="/register" className="btn-fire" style={{padding:'10px 20px',fontSize:13,textDecoration:'none',display:'inline-flex',alignItems:'center'}}>Register ₹299</a>
           </div>
           <button className="ham-btn" onClick={()=>setOpen(!open)} style={{flexDirection:'column',gap:5,background:'none',border:'none',cursor:'pointer',padding:8,zIndex:201,display:'flex'}}>
             <span style={{display:'block',width:22,height:2,background:'#fff',borderRadius:12,transition:'all 0.25s',transform:open?'rotate(45deg) translate(5px,5px)':''}}/>
@@ -42,7 +42,7 @@ function Navbar({open,setOpen}:{open:boolean,setOpen:(v:boolean)=>void}) {
           {links.map(([l])=>(
             <a key={l} href="#" onClick={()=>setOpen(false)} style={{color:'rgba(255,255,255,0.85)',fontWeight:700,fontSize:18,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'13px 0',borderBottom:'1px solid rgba(255,255,255,0.07)',display:'flex',alignItems:'center',minHeight:44}}>{l}</a>
           ))}
-          <button className="btn-fire" style={{marginTop:28,height:52,fontSize:16,width:'100%'}}>📝 Register for ₹299 →</button>
+          <a href="/register" className="btn-fire" style={{marginTop:28,height:52,fontSize:16,width:'100%',textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>📝 Register for ₹299 →</a>
         </div>
       )}
     </>
@@ -53,7 +53,7 @@ function Navbar({open,setOpen}:{open:boolean,setOpen:(v:boolean)=>void}) {
 function MobileCTA() {
   return (
     <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,padding:'10px 16px 18px',background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',gap:10}}>
-      <button className="btn-fire" style={{flex:2,height:52,fontSize:15}}>Register ₹299 →</button>
+      <a href="/register" className="btn-fire" style={{flex:2,height:52,fontSize:15,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register ₹299 →</a>
       <button className="btn-wa" style={{flex:1,height:52,fontSize:14,borderRadius:14}}>💬 WhatsApp</button>
     </div>
   );
@@ -304,7 +304,7 @@ export function CodeOfConduct() {
               Ready to Play by the Rules?
             </div>
             <p style={{color:'rgba(255,255,255,0.6)',fontSize:14,marginBottom:20}}>Register for BCPL T20 Season 5 and be part of the world's greatest corporate cricket league.</p>
-            <button className="btn-fire" style={{padding:'14px 36px',fontSize:16,width:'100%',maxWidth:300}}>Register for ₹299 →</button>
+            <a href="/register" className="btn-fire" style={{padding:'14px 36px',fontSize:16,width:'100%',maxWidth:300,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register for ₹299 →</a>
           </div>
         </div>
 
