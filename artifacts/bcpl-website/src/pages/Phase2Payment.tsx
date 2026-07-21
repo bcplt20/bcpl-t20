@@ -68,22 +68,22 @@ const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-cen
       <nav style={{ background:'rgba(6,16,30,0.97)', backdropFilter:'blur(20px)', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
         <div style={{ height:2, background:'linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)', backgroundSize:'200%', animation:'shimGold 4s linear infinite' }} />
         <div className="wrap" style={{ maxWidth:1200, height:60, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-          <div style={{ display:'flex', flexDirection:'row', alignItems:'center', gap:8, flexShrink:0, whiteSpace:'nowrap' }}>
+          <a href="/" style={{ display:'flex', flexDirection:'row', alignItems:'center', gap:8, flexShrink:0, whiteSpace:'nowrap', textDecoration:'none' }}>
             <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL"
               style={{ height:36, maxWidth:100, width:'auto', objectFit:'contain', display:'block', filter:'brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.7))', flexShrink:0 }}/>
             <div style={{ display:'inline-flex', alignItems:'center', gap:4, background:'rgba(232,178,61,0.12)', border:'1px solid rgba(232,178,61,0.5)', borderRadius:6, padding:'3px 10px', flexShrink:0 }}>
               <span style={{ fontSize:9 }}>🏆</span>
               <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:9, color:'#E8B23D', letterSpacing:'.12em' }}>SEASON 5</span>
             </div>
-          </div>
-          <div className="desk-nav">{NAV.map(n => <button key={n} className="nav-link">{n}</button>)}</div>
+          </a>
+          <div className="desk-nav">{NAV.map(n => <a key={n} href={'/' + NAV_ROUTES[n]} className="nav-link" style={{textDecoration:'none'}}>{n}</a>)}</div>
           <button className="ham-btn" onClick={() => setMenuOpen(o => !o)}>
             {[0,1,2].map(i => <span key={i} style={{ width:24, height:2, background:'#fff', display:'block', borderRadius:12, transition:'all .3s', transform: menuOpen ? (i===0?'rotate(45deg) translate(5px,5px)':i===2?'rotate(-45deg) translate(5px,-5px)':'scaleX(0)') : 'none', opacity: menuOpen && i===1 ? 0 : 1 }} />)}
           </button>
         </div>
         {menuOpen && (
           <div style={{ background:'#0A1727', borderTop:'1px solid rgba(255,255,255,0.07)', padding:'12px 0' }}>
-            {NAV.map(n => <div key={n} onClick={()=>{ setMenuOpen(false); window.location.href = import.meta.env.BASE_URL + (NAV_ROUTES[n]||''); }} style={{ padding:'10px 24px', fontSize:13, fontWeight:700, fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em', color:'rgba(255,255,255,0.7)', cursor:'pointer', textTransform:'uppercase' }}>{n}</div>)}
+            {NAV.map(n => <a key={n} href={'/' + NAV_ROUTES[n]} onClick={()=>setMenuOpen(false)} style={{ padding:'10px 24px', fontSize:13, fontWeight:700, fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em', color:'rgba(255,255,255,0.7)', textTransform:'uppercase', textDecoration:'none', display:'block' }}>{n}</a>)}
           </div>
         )}
       </nav>

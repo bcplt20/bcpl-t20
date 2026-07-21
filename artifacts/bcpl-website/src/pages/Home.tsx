@@ -333,17 +333,20 @@ export function Home() {
         <div className="W" style={{ height:60, display:"flex", alignItems:"center", justifyContent:"space-between", gap:16 }}>
 
           {/* Logo */}
-          <div style={{ display:"flex", alignItems:"center", gap:10, flexShrink:0, cursor:"pointer" }} onClick={()=>navigate("/")}>
+          <a href="/" style={{ display:"flex", alignItems:"center", gap:10, flexShrink:0, textDecoration:"none" }}>
             <img src={import.meta.env.BASE_URL + "bcpl-assets/bcpl-logo-white.png"} alt="BCPL" style={{ height:42, width:"auto", objectFit:"contain", display:"block", filter:"brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.7))" }}/>
             <div style={{ display:"inline-flex", alignItems:"center", gap:4, background:"rgba(232,178,61,0.12)", border:"1px solid rgba(232,178,61,0.5)", borderRadius:6, padding:"3px 10px" }}>
               <span style={{ fontSize:9 }}>🏆</span>
               <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:9, color:"#E8B23D", letterSpacing:".12em" }}>SEASON 5</span>
             </div>
-          </div>
+          </a>
 
           {/* Desktop Nav */}
           <nav className="desk-links">
-            {NAV.map(n=><span key={n} className="nav-link" style={{cursor:"pointer",color:n==="Login"?"#FF7A29":"",fontWeight:n==="Login"?800:undefined}} onClick={()=>{ if(n==="Login"){ openLoginModal(); return; } navigate(RTES[n]||"/"); }}>{n}</span>)}
+            {NAV.map(n=> n==="Login"
+              ? <span key={n} className="nav-link" style={{cursor:"pointer",color:"#FF7A29",fontWeight:800}} onClick={openLoginModal}>{n}</span>
+              : <a key={n} href={RTES[n]||"/"} className="nav-link" style={{textDecoration:"none"}}>{n}</a>
+            )}
           </nav>
 
           {/* Right */}
@@ -361,7 +364,9 @@ export function Home() {
         <div className="mob-menu">
           <button onClick={()=>setMenuOpen(false)} style={{ position:"fixed", top:18, right:22, background:"none", border:"none", color:"#fff", fontSize:28, cursor:"pointer", zIndex:1001, lineHeight:1 }}>✕</button>
           {NAV.map(n=>(
-            <div key={n} className="mob-link" style={{color:n==="Login"?"#FF7A29":undefined}} onClick={()=>{ setMenuOpen(false); if(n==="Login"){ openLoginModal(); return; } navigate(RTES[n]||"/"); }}>{n}</div>
+            n==="Login"
+              ? <div key={n} className="mob-link" style={{color:"#FF7A29"}} onClick={()=>{ setMenuOpen(false); openLoginModal(); }}>{n}</div>
+              : <a key={n} href={RTES[n]||"/"} className="mob-link" onClick={()=>setMenuOpen(false)} style={{textDecoration:"none"}}>{n}</a>
           ))}
           <button className="btn-cta" style={{ marginTop:24, width:"100%", justifyContent:"center", fontSize:16, padding:16 }} onClick={()=>{ setMenuOpen(false); navigate("/register"); }}>
             Register Now — ₹299 →
