@@ -5,7 +5,7 @@ import {
   phase1PaymentsTable, phase2PaymentsTable,
   notificationLogsTable,
 } from "@workspace/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, or, isNull } from "drizzle-orm";
 import { requireAuth, type AuthRequest } from "../middlewares/auth";
 import { createOrder, getPaymentStatus } from "../lib/cashfree";
 import { sendEmail, tplPhase1Receipt, tplPhase2Receipt } from "../lib/email";
@@ -219,11 +219,34 @@ router.post("/webhook", async (req, res) => {
 
     if (orderId && payStatus === "SUCCESS") {
       if (orderId.startsWith("p1_")) {
-        await db.update(phase1PaymentsTable).set({ status: "success", cashfreePaymentId: payId, paidAt: new Date() })
-          .where(eq(phase1PaymentsTable.cashfreeOrderId, orderId));
+        const updated = await db.update(phase1PaymentsTable)
+          .set({ status: "success", cashfreePaymentId: payId, paidAt: new Date() })
+          .where(eq(phase1PaymentsTable.cashfreeOrderId, orderId))
+          .returning({ registrationId: phase1PaymentsTable.registrationId });
+
+        // Keep registration in sync even if the user never returns to the site
+        if (updated[0]) {
+          await db.update(registrationsTable)
+            .set({ phase1Status: "payment_done", updatedAt: new Date() })
+            .where(and(
+              eq(registrationsTable.id, updated[0].registrationId),
+              eq(registrationsTable.phase1Status, "pending"),
+            ));
+        }
       } else if (orderId.startsWith("p2_")) {
-        await db.update(phase2PaymentsTable).set({ status: "success", cashfreePaymentId: payId, paidAt: new Date() })
-          .where(eq(phase2PaymentsTable.cashfreeOrderId, orderId));
+        const updated = await db.update(phase2PaymentsTable)
+          .set({ status: "success", cashfreePaymentId: payId, paidAt: new Date() })
+          .where(eq(phase2PaymentsTable.cashfreeOrderId, orderId))
+          .returning({ registrationId: phase2PaymentsTable.registrationId });
+
+        if (updated[0]) {
+          await db.update(registrationsTable)
+            .set({ phase2Status: "payment_done", updatedAt: new Date() })
+            .where(and(
+              eq(registrationsTable.id, updated[0].registrationId),
+              or(isNull(registrationsTable.phase2Status), eq(registrationsTable.phase2Status, "pending")),
+            ));
+        }
       }
     }
   } catch (e) { console.error("[WEBHOOK] error", e); }
