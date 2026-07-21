@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>API Keys Guide — BCPL</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#0A0F1E; font-family:'Segoe UI',Arial,sans-serif; color:#F0EDE8; padding:20px; }
+  h1 { color:#FF7A29; font-size:22px; text-align:center; margin:20px 0 4px; letter-spacing:1px; }
+  .sub { color:rgba(255,255,255,0.35); font-size:12px; text-align:center; margin-bottom:32px; }
+
+  .service { background:#0D1829; border:1px solid rgba(255,255,255,0.08); border-radius:16px; margin-bottom:28px; overflow:hidden; }
+  .svc-header { padding:16px 20px; display:flex; align-items:center; gap:14px; border-bottom:1px solid rgba(255,255,255,0.07); }
+  .svc-icon { width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
+  .svc-name { font-size:17px; font-weight:700; }
+  .svc-key  { font-size:11px; font-family:monospace; color:#FF7A29; margin-top:3px; background:rgba(255,122,41,0.1); padding:2px 8px; border-radius:4px; display:inline-block; }
+  .svc-url  { font-size:11px; color:rgba(255,255,255,0.35); margin-top:3px; }
+
+  .steps { padding:20px; }
+  .step { display:flex; gap:14px; margin-bottom:18px; }
+  .step:last-child { margin-bottom:0; }
+  .step-num { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:800; flex-shrink:0; margin-top:1px; }
+  .step-body { flex:1; }
+  .step-title { font-size:14px; font-weight:700; color:#fff; margin-bottom:4px; }
+  .step-desc  { font-size:12px; color:rgba(255,255,255,0.5); line-height:1.6; }
+
+  /* Mock UI screenshots */
+  .mock-screen { background:#1a2540; border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:14px; margin-top:10px; position:relative; font-size:12px; }
+  .mock-topbar { background:#243050; border-radius:6px; padding:8px 12px; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+  .mock-url { color:rgba(255,255,255,0.4); font-size:11px; font-family:monospace; flex:1; }
+  .mock-nav { display:flex; gap:0; margin-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.08); }
+  .mock-nav-item { padding:7px 14px; font-size:11px; color:rgba(255,255,255,0.4); cursor:default; }
+  .mock-nav-item.active { color:#FF7A29; border-bottom:2px solid #FF7A29; margin-bottom:-1px; font-weight:700; }
+  .mock-sidebar { display:flex; gap:12px; }
+  .mock-sidebar-menu { width:140px; flex-shrink:0; }
+  .mock-sidebar-item { padding:8px 12px; border-radius:6px; font-size:11px; color:rgba(255,255,255,0.4); margin-bottom:2px; }
+  .mock-sidebar-item.active { background:rgba(255,122,41,0.15); color:#FF7A29; font-weight:700; }
+  .mock-content { flex:1; }
+  .mock-key-box { background:#0D1829; border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:12px 14px; }
+  .mock-key-label { font-size:10px; color:rgba(255,255,255,0.35); margin-bottom:6px; letter-spacing:1px; text-transform:uppercase; }
+  .mock-key-val { font-family:monospace; font-size:12px; color:#22C55E; word-break:break-all; background:rgba(34,197,94,0.06); padding:8px 10px; border-radius:6px; border:1px solid rgba(34,197,94,0.2); }
+  .mock-btn { display:inline-block; padding:8px 18px; border-radius:6px; font-size:11px; font-weight:700; cursor:default; margin-top:8px; }
+
+  /* Arrow annotation */
+  .arrow-box { display:flex; align-items:center; gap:8px; margin-top:8px; padding:8px 12px; background:rgba(255,122,41,0.08); border:1px solid rgba(255,122,41,0.2); border-radius:8px; }
+  .arrow-box-text { font-size:12px; color:#FF7A29; font-weight:600; }
+
+  .tip { margin-top:12px; padding:10px 14px; background:rgba(59,130,246,0.08); border-left:3px solid #3B82F6; border-radius:0 8px 8px 0; font-size:12px; color:rgba(255,255,255,0.55); line-height:1.6; }
+  .warn { margin-top:12px; padding:10px 14px; background:rgba(245,158,11,0.08); border-left:3px solid #F59E0B; border-radius:0 8px 8px 0; font-size:12px; color:rgba(255,255,255,0.6); line-height:1.6; }
+
+  .click-badge { display:inline-block; background:#FF7A29; color:#fff; font-size:10px; font-weight:800; padding:2px 8px; border-radius:10px; margin-left:6px; vertical-align:middle; }
+  .highlight-box { border:2px solid #FF7A29; border-radius:8px; position:relative; }
+  .highlight-box::after { content:'👈 यहाँ click करें'; position:absolute; top:-22px; right:0; background:#FF7A29; color:#fff; font-size:10px; font-weight:700; padding:2px 8px; border-radius:10px; white-space:nowrap; }
+</style>
+</head>
+<body>
+
+<h1>🔑 API Keys कहाँ से लेनी हैं</h1>
+<p class="sub">तीनों websites का exact location — step by step</p>
+
+<!-- ═══════════ 1. BREVO ═══════════ -->
+<div class="service">
+  <div class="svc-header">
+    <div class="svc-icon" style="background:rgba(0,160,100,0.15);">📧</div>
+    <div>
+      <div class="svc-name">Brevo <span style="color:rgba(255,255,255,0.3);font-weight:400;font-size:13px;">(Email भेजने के लिए)</span></div>
+      <div class="svc-key">BREVO_API_KEY</div>
+      <div class="svc-url">🌐 app.brevo.com</div>
+    </div>
+  </div>
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-num" style="background:#22C55E22;color:#22C55E;">1</div>
+      <div class="step-body">
+        <div class="step-title">Browser में open करें</div>
+        <div class="step-desc">अपने browser में जाएं: <strong style="color:#FF7A29;">app.brevo.com</strong> → अपना email + password डालकर login करें</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num" style="background:#22C55E22;color:#22C55E;">2</div>
+      <div class="step-body">
+        <div class="step-title">ऊपर right corner → अपना नाम click करें</div>
+        <div class="step-desc">Dashboard खुलने के बाद, ऊपर <strong style="color:#fff;">right side</strong> में आपका नाम या email दिखेगा — उस पर click करें</div>
+        <div class="mock-screen">
+          <div class="mock-topbar">
+            <span style="color:#22C55E;font-weight:700;font-size:13px;">Brevo</span>
+            <span style="flex:1"></span>
+            <span style="font-size:11px;color:rgba(255,255,255,0.5);">Campaigns &nbsp; Contacts &nbsp; Automations</span>
+            <span style="flex:1"></span>
+            <span class="highlight-box" style="padding:5px 12px;font-size:11px;background:#243050;border-radius:6px;cursor:default;">👤 Ravi Sharma ▾</span>
+          </div>
+          <div class="arrow-box">
+            <span style="font-size:18px;">☝️</span>
+            <span class="arrow-box-text">यहाँ — ऊपर right में अपने नाम पर click करें</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num" style="background:#22C55E22;color:#22C55E;">3</div>
+      <div class="step-body">
+        <div class="step-title">Dropdown में "Profile & Settings" select करें</div>
+        <div class="step-desc">नाम click करने पर एक dropdown खुलेगा — उसमें <strong style="color:#fff;">"Profile & Settings"</strong> पर click करें</div>
+        <div class="mock-screen">
+          <div style="background:#1a2540;border:1px solid rgba(255,255,255,0.1);border-radius:8px;width:180px;padding:6px;margin:4px auto;">
+            <div style="padding:7px 12px;font-size:12px;color:rgba(255,255,255,0.4);">My Plan</div>
+            <div class="highlight-box" style="padding:7px 12px;font-size:12px;background:rgba(255,122,41,0.1);">⚙️ Profile & Settings</div>
+            <div style="padding:7px 12px;font-size:12px;color:rgba(255,255,255,0.4);">Help Center</div>
+            <div style="padding:7px 12px;font-size:12px;color:rgba(255,255,255,0.4);">Logout</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num" style="background:#22C55E22;color:#22C55E;">4</div>
+      <div class="step-body">
+        <div class="step-title">Left menu → "SMTP & API" click करें</div>
+        <div class="step-desc">Settings page पर left side में menu दिखेगा — उसमें <strong style="color:#fff;">"SMTP & API"</strong> ढूंढें और click करें</div>
+        <div class="mock-screen">
+          <div class="mock-sidebar">
+            <div class="mock-sidebar-menu">
+              <div class="mock-sidebar-item">My Profile</div>
+              <div class="mock-sidebar-item">Plan & Billing</div>
+              <div class="mock-sidebar-item">Senders & IPs</div>
+              <div class="mock-sidebar-item highlight-box">📡 SMTP & API</div>
+              <div class="mock-sidebar-item">Users & Teams</div>
+            </div>
+            <div style="flex:1;padding-left:12px;color:rgba(255,255,255,0.2);font-size:12px;">← इस पर click करें</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num" style="background:#22C55E22;color:#22C55E;">5</div>
+      <div class="step-body">
+        <div class="step-title">"API Keys" tab → "Generate new API key"</div>
+        <div class="step-desc">SMTP & API page पर ऊपर <strong style="color:#fff;">"API Keys"</strong> tab click करें → फिर <strong style="color:#22C55E;">"Generate a new API key"</strong> button दबाएं → name: <em>BCPL</em> → Generate करें</div>
+        <div class="mock-screen">
+          <div class="mock-nav">
+            <div class="mock-nav-item">SMTP</div>
+            <div class="mock-nav-item active">API Keys ← यहाँ</div>
+          </div>
+          <div style="margin-bottom:10px;">
+            <div class="mock-btn highlight-box" style="background:#22C55E22;color:#22C55E;border:1px solid #22C55E44;">＋ Generate a new API key</div>
+          </div>
+          <div class="mock-key-box" style="margin-top:12px;">
+            <div class="mock-key-label">Your API Key (copy करें — एक बार ही दिखेगी)</div>
+            <div class="mock-key-val">xkeysib-a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6...</div>
+          </div>
+        </div>
+        <div class="warn">⚠️ Key generate होने के बाद <strong>तुरंत copy करें</strong> — page reload करने पर दोबारा नहीं दिखती!</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ═══════════ 2. CASHFREE ═══════════ -->
+<div class="service">
+  <div class="svc-header">
+    <div class="svc-icon" style="background:rgba(59,130,246,0.15);">💳</div>
+    <div>
+      <div class="svc-name">Cashfree <span style="color:rgba(255,255,255,0.3);font-weight:400;font-size:13px;">(Payment लेने के लिए)</span></div>
+      <div class="svc-key">CASHFREE_APP_ID &nbsp;+&nbsp; CASHFREE_SECRET_KEY</div>
+      <div class="svc-url">🌐 merchant.cashfree.com</div>
+    </div>
+  </div>
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-num" style="background:#3B82F622;color:#3B82F6;">1</div>
+      <div class="step-body">
+        <div class="step-title">merchant.cashfree.com पर login करें</div>
+        <div class="step-desc">Browser में <strong style="color:#FF7A29;">merchant.cashfree.com</strong> खोलें → अपना registered mobile/email से login करें</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num" style="background:#3B82F622;color:#3B82F6;">2</div>
+      <div class="step-body">
+        <div class="step-title">Left sidebar → "Developers" पर click करें</div>
+        <div class="step-desc">Dashboard के left side में नीचे की तरफ <strong style="color:#fff;">"Developers"</strong> या <strong style="color:#fff;">"&lt;/&gt; Developers"</strong> section दिखेगा</div>
+        <div class="mock-screen">
+          <div class="mock-sidebar">
+            <div class="mock-sidebar-menu">
+              <div class="mock-sidebar-item">🏠 Dashboard</div>
+              <div class="mock-sidebar-item">💰 Settlements</div>
+              <div class="mock-sidebar-item">📋 Orders</div>
+              <div class="mock-sidebar-item">🔗 Payment Links</div>
+              <div class="mock-sidebar-item" style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);">⚙️ Settings</div>
+              <div class="mock-sidebar-item highlight-box active">&lt;/&gt; Developers</div>
+            </div>
+            <div style="flex:1;padding-left:12px;color:rgba(255,255,255,0.2);font-size:12px;">← यहाँ click करें</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num" style="background:#3B82F622;color:#3B82F6;">3</div>
+      <div class="step-body">
+        <div class="step-title">⚠️ IMPORTANT: "Production" toggle करें</div>
+        <div class="step-desc">API Keys page पर <strong style="color:#F59E0B;">ऊपर TEST / PRODUCTION toggle होगा</strong> — इसे <strong style="color:#22C55E;">PRODUCTION पर switch करें</strong> — नहीं तो payment real नहीं होगा!</div>
+        <div class="mock-screen">
+          <div style="display:flex;align-items:center;gap:10px;padding:8px;background:#0D1829;border-radius:8px;width:fit-content;margin-bottom:12px;">
+            <span style="font-size:12px;color:rgba(255,255,255,0.3);">TEST</span>
+            <div style="width:44px;height:22px;background:#22C55E;border-radius:11px;position:relative;cursor:default;">
+              <div style="width:18px;height:18px;background:#fff;border-radius:50%;position:absolute;right:2px;top:2px;"></div>
+            </div>
+            <span class="highlight-box" style="font-size:12px;color:#22C55E;font-weight:700;padding:2px 8px;">PRODUCTION ✓</span>
+          </div>
+          <div class="arrow-box">
+            <span style="font-size:18px;">☝️</span>
+            <span class="arrow-box-text">Toggle को PRODUCTION side करें — live payments के लिए</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num" style="background:#3B82F622;color:#3B82F6;">4</div>
+      <div class="step-body">
+        <div class="step-title">"API Keys" section में App ID और Secret Key copy करें</div>
+        <div class="step-desc">Production toggle करने के बाद आपको दो values दिखेंगी — दोनों copy करनी हैं</div>
+        <div class="mock-screen">
+          <div class="mock-key-box" style="margin-bottom:10px;">
+            <div class="mock-key-label">App ID <span class="click-badge">COPY</span></div>
+            <div class="mock-key-val">CF10234567890ABC <span style="color:rgba(255,255,255,0.3);font-size:10px;">← यह CASHFREE_APP_ID है</span></div>
+          </div>
+          <div class="mock-key-box">
+            <div class="mock-key-label">Secret Key <span class="click-badge">COPY</span></div>
+            <div class="mock-key-val">cfsk_ma_prod_a1b2c3d4e5f6g7h8... <span style="color:rgba(255,255,255,0.3);font-size:10px;">← यह CASHFREE_SECRET_KEY है</span></div>
+          </div>
+        </div>
+        <div class="tip">💡 Secret Key को कहीं safe जगह भी save करके रखें (Notepad/Notes app में)</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ═══════════ 3. 2FACTOR ═══════════ -->
+<div class="service">
+  <div class="svc-header">
+    <div class="svc-icon" style="background:rgba(168,85,247,0.15);">📱</div>
+    <div>
+      <div class="svc-name">2Factor <span style="color:rgba(255,255,255,0.3);font-weight:400;font-size:13px;">(OTP SMS भेजने के लिए)</span></div>
+      <div class="svc-key">TWOFACTOR_API_KEY</div>
+      <div class="svc-url">🌐  2factor.in</div>
+    </div>
+  </div>
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-num" style="background:#A855F722;color:#A855F7;">1</div>
+      <div class="step-body">
+        <div class="step-title">2factor.in पर login करें</div>
+        <div class="step-desc">Browser में <strong style="color:#FF7A29;">2factor.in</strong> खोलें → ऊपर right में <strong style="color:#fff;">"Login"</strong> पर click करें → अपना registered mobile number डालें</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num" style="background:#A855F722;color:#A855F7;">2</div>
+      <div class="step-body">
+        <div class="step-title">Dashboard में "API Key" ढूंढें</div>
+        <div class="step-desc">Login के बाद <strong style="color:#fff;">Dashboard/Control Panel</strong> खुलेगा — वहाँ <strong style="color:#fff;">"API Key"</strong> या <strong style="color:#fff;">"Your API Key"</strong> section दिखेगा</div>
+        <div class="mock-screen">
+          <div class="mock-topbar">
+            <span style="color:#A855F7;font-weight:700;font-size:13px;">2Factor</span>
+            <span style="flex:1"></span>
+            <span style="font-size:11px;color:rgba(255,255,255,0.4);">Dashboard &nbsp; SMS &nbsp; Reports</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+            <div style="background:#0D1829;border-radius:8px;padding:12px;">
+              <div style="font-size:10px;color:rgba(255,255,255,0.3);">Credits Left</div>
+              <div style="font-size:18px;font-weight:700;color:#fff;">1,250</div>
+            </div>
+            <div style="background:#0D1829;border-radius:8px;padding:12px;">
+              <div style="font-size:10px;color:rgba(255,255,255,0.3);">SMS Sent Today</div>
+              <div style="font-size:18px;font-weight:700;color:#fff;">0</div>
+            </div>
+          </div>
+          <div class="mock-key-box highlight-box">
+            <div class="mock-key-label">Your API Key <span class="click-badge">COPY</span></div>
+            <div class="mock-key-val">a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6</div>
+          </div>
+          <div class="arrow-box" style="margin-top:10px;">
+            <span style="font-size:18px;">☝️</span>
+            <span class="arrow-box-text">यही आपकी TWOFACTOR_API_KEY है — copy करें</span>
+          </div>
+        </div>
+        <div class="warn">⚠️ अगर Dashboard में API Key नहीं दिखे तो: <strong>Settings → API Access</strong> में जाएं। कुछ accounts में यह अलग tab में होती है।</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ═══════════ NEXT STEP ═══════════ -->
+<div style="background:rgba(255,122,41,0.07);border:1px solid rgba(255,122,41,0.2);border-radius:16px;padding:20px;margin-top:8px;">
+  <div style="font-size:15px;font-weight:700;color:#FF7A29;margin-bottom:12px;">✅ Keys मिलने के बाद — Replit में कहाँ add करें?</div>
+  <div style="font-size:13px;color:rgba(255,255,255,0.6);line-height:1.9;">
+    1️⃣ Replit project खोलें<br/>
+    2️⃣ Left panel में <strong style="color:#fff;">🔒 Secrets</strong> icon पर click करें<br/>
+    3️⃣ <strong style="color:#fff;">"New Secret"</strong> button दबाएं<br/>
+    4️⃣ <strong>Key:</strong> जैसे <code style="color:#FF7A29;">BREVO_API_KEY</code><br/>
+    5️⃣ <strong>Value:</strong> copy की हुई key paste करें<br/>
+    6️⃣ <strong>"Add Secret"</strong> save करें<br/>
+    7️⃣ चारों keys add करने के बाद मुझे बताएं → मैं server restart करूँगा
+  </div>
+</div>
+
+</body>
+</html>
