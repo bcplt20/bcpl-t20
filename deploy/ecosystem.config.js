@@ -28,9 +28,7 @@ module.exports = {
         ADMIN_SECRET:   process.env.ADMIN_SECRET,
 
         // ── SMS / Email / WhatsApp / Payment ────────────────
-        MSG91_AUTH_KEY:    process.env.MSG91_AUTH_KEY,
-        MSG91_TEMPLATE_ID: process.env.MSG91_TEMPLATE_ID,
-        MSG91_SENDER_ID:   process.env.MSG91_SENDER_ID,
+        TWOFACTOR_API_KEY: process.env.TWOFACTOR_API_KEY,
         BREVO_API_KEY:     process.env.BREVO_API_KEY,
         BREVO_FROM_EMAIL:  "noreply@bcplt20.com",
         INTERAKT_API_KEY:  process.env.INTERAKT_API_KEY,

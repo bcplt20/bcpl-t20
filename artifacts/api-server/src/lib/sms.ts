@@ -1,51 +1,41 @@
-// MSG91 SMS service — https://msg91.com
+// 2Factor OTP service — https://2factor.in
 
-const AUTH_KEY  = process.env.MSG91_AUTH_KEY;
-const SENDER_ID = process.env.MSG91_SENDER_ID || "KRIPLA";
+const API_KEY = process.env.TWOFACTOR_API_KEY;
 
-/** Send OTP via MSG91 transactional SMS (route 4) */
+/** Send OTP via 2Factor */
 export async function sendOtp(phone: string, otp: string): Promise<boolean> {
-  if (!AUTH_KEY) {
+  if (!API_KEY) {
     console.warn(`[SMS-STUB] OTP for ${phone}: ${otp}`);
     (globalThis as any).__lastDevOtp = otp;
     return true;
   }
 
   try {
-    const mobile  = `91${phone}`;
-    // DLT-registered template content with OTP substituted
-    const message = `Your OTP is ${otp} Please enter this to verify your mobile. Thank you for choosing us. Team, Kriparti`;
-
-    const url = `https://api.msg91.com/api/sendhttp.php?authkey=${AUTH_KEY}&mobiles=${mobile}&message=${encodeURIComponent(message)}&sender=${SENDER_ID}&route=4&country=91`;
-
+    const url = `https://2factor.in/API/V1/${API_KEY}/SMS/${phone}/${otp}/AUTOGEN`;
     const res  = await fetch(url);
-    const text = await res.text();
-    console.log("[MSG91] sendOtp response:", text);
-
-    // MSG91 returns a hex request ID on success, or an error message
-    const isError = text.toLowerCase().includes("error") || text.trim() === "";
-    return !isError;
+    const data = (await res.json()) as { Status: string; Details: string };
+    console.log("[2Factor] sendOtp response:", JSON.stringify(data));
+    return data.Status === "Success";
   } catch (e) {
-    console.error("[MSG91] sendOtp exception:", e);
+    console.error("[2Factor] sendOtp exception:", e);
     return false;
   }
 }
 
-/** Send transactional SMS via MSG91 */
+/** Send transactional SMS (non-OTP) */
 export async function sendSms(phone: string, message: string): Promise<boolean> {
-  if (!AUTH_KEY) {
+  if (!API_KEY) {
     console.warn(`[SMS-STUB] To ${phone}: ${message}`);
     return true;
   }
   try {
-    const mobile = `91${phone}`;
-    const url    = `https://api.msg91.com/api/sendhttp.php?authkey=${AUTH_KEY}&mobiles=${mobile}&message=${encodeURIComponent(message)}&sender=${SENDER_ID}&route=4&country=91`;
-    const res    = await fetch(url);
-    const text   = await res.text();
-    console.log("[MSG91] sendSms response:", text);
-    return true;
+    const url = `https://2factor.in/API/V1/${API_KEY}/ADDON_SERVICES/SEND/TSMS?To=${phone}&Msg=${encodeURIComponent(message)}`;
+    const res  = await fetch(url);
+    const data = (await res.json()) as { Status: string };
+    console.log("[2Factor] sendSms response:", JSON.stringify(data));
+    return data.Status === "Success";
   } catch (e) {
-    console.error("[MSG91] sendSms failed:", e);
+    console.error("[2Factor] sendSms failed:", e);
     return false;
   }
 }
