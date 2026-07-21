@@ -510,6 +510,11 @@ export function Phase1VideoUpload() {
           <button className="btn-primary" style={{ padding:'13px 24px', fontSize:13, whiteSpace:'nowrap', flexShrink:0, width:'100%', maxWidth:200 }}>
             SUBMIT VIDEO →
           </button>
+          {/* TEST MODE */}
+          <button onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/result'; }}
+            style={{ padding:'8px 14px', background:'none', border:'1px dashed rgba(34,197,94,0.3)', borderRadius:8, color:'rgba(34,197,94,0.5)', fontSize:11, cursor:'pointer', fontFamily:'Montserrat,sans-serif', fontWeight:700, whiteSpace:'nowrap', flexShrink:0 }}>
+            🧪 → Result Page
+          </button>
         </div>
       </div>
 
@@ -518,10 +523,9 @@ export function Phase1VideoUpload() {
         <div className="wrap" style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:12 }}>
           <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20 }}>
             <span style={{ color:'#FF7A29' }}>BCPL</span>
-            <span style={{ color:'#fff' }}> T20</span>
           </div>
           <div style={{ fontSize:11, color:'rgba(255,255,255,0.3)', letterSpacing:'.08em', textAlign:'center' }}>
-            Kriparti Playing 11 Pvt. Ltd. &nbsp;·&nbsp; Season 5 &nbsp;·&nbsp; #OfficeSeStadiumtak
+            Bhartiya Corporate Premier League &nbsp;·&nbsp; Season 5 &nbsp;·&nbsp; #OfficeSeStadiumtak
           </div>
           <div style={{ fontSize:11, color:'rgba(255,255,255,0.2)', letterSpacing:'.06em' }}>
             © 2026 BCPL. All rights reserved.

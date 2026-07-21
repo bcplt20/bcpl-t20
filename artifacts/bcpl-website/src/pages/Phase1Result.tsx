@@ -80,7 +80,7 @@ export function Phase1Result() {
         <div className="wrap" style={{ height:60, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
           <div style={{ display:'flex', alignItems:'center', gap:10 }}>
             <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:22, lineHeight:1 }}>
-              <span style={{ color:'#FF7A29' }}>BCPL</span><span style={{ color:'#fff' }}> T20</span>
+              <span style={{ color:'#FF7A29' }}>BCPL</span>
             </div>
             <div style={{ display:'flex', flexDirection:'column', borderLeft:'2px solid rgba(255,122,41,0.4)', paddingLeft:10, gap:1 }}>
               <span style={{ fontSize:8, fontWeight:800, color:'#FF7A29', letterSpacing:'.16em' }}>SEASON 5</span>
@@ -205,12 +205,27 @@ export function Phase1Result() {
                   </div>
 
                   <div className="p2-cta-row">
-                    <button className="btn-gold p2-cta-btn" style={{ padding:'18px 0', fontSize:15, letterSpacing:'.06em' }}>
+                    <button className="btn-gold p2-cta-btn" style={{ padding:'18px 0', fontSize:15, letterSpacing:'.06em' }}
+                      onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/phase2/payment'; }}>
                       CLAIM YOUR PHASE 2 SPOT — PAY ₹2,000 →
                     </button>
                     <div className="p2-time-warn">
                       <div style={{ fontSize:10, fontWeight:800, fontFamily:'Montserrat,sans-serif', color:'#EF4444', letterSpacing:'.12em', marginBottom:2 }}>⚠️ TIME SENSITIVE</div>
-                      <div style={{ fontSize:12, color:'rgba(255,255,255,0.55)' }}>Phase 2 spot reserved for <strong style={{ color:'#fff' }}>7 days</strong> only</div>
+                      <div style={{ fontSize:12, color:'rgba(255,255,255,0.55)' }}>Phase 2 spot reserved for <strong style={{ color:'#fff' }}>limited time</strong> only</div>
+                    </div>
+                  </div>
+                  {/* TEST MODE */}
+                  <div style={{ marginTop:14, textAlign:'center', borderTop:'1px dashed rgba(255,255,255,0.06)', paddingTop:12 }}>
+                    <div style={{ fontSize:10, color:'rgba(255,255,255,0.12)', marginBottom:6, letterSpacing:'.08em' }}>— TEST MODE ONLY —</div>
+                    <div style={{ display:'flex', gap:8, justifyContent:'center', flexWrap:'wrap' }}>
+                      <button onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/phase2/payment'; }}
+                        style={{ padding:'5px 12px', background:'none', border:'1px dashed rgba(232,178,61,0.3)', borderRadius:8, color:'rgba(232,178,61,0.5)', fontSize:11, cursor:'pointer', fontFamily:'Montserrat,sans-serif', fontWeight:700 }}>→ Phase 2 Payment</button>
+                      <button onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/phase2/payment-receipt'; }}
+                        style={{ padding:'5px 12px', background:'none', border:'1px dashed rgba(232,178,61,0.3)', borderRadius:8, color:'rgba(232,178,61,0.5)', fontSize:11, cursor:'pointer', fontFamily:'Montserrat,sans-serif', fontWeight:700 }}>→ Phase 2 Receipt</button>
+                      <button onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/phase2/kyc'; }}
+                        style={{ padding:'5px 12px', background:'none', border:'1px dashed rgba(232,178,61,0.3)', borderRadius:8, color:'rgba(232,178,61,0.5)', fontSize:11, cursor:'pointer', fontFamily:'Montserrat,sans-serif', fontWeight:700 }}>→ Phase 2 KYC</button>
+                      <button onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/phase2/kyc-approved'; }}
+                        style={{ padding:'5px 12px', background:'none', border:'1px dashed rgba(232,178,61,0.3)', borderRadius:8, color:'rgba(232,178,61,0.5)', fontSize:11, cursor:'pointer', fontFamily:'Montserrat,sans-serif', fontWeight:700 }}>→ KYC Approved</button>
                     </div>
                   </div>
                 </div>
@@ -276,7 +291,7 @@ export function Phase1Result() {
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', flexWrap:'wrap', gap:20, marginBottom:24 }}>
             <div>
               <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20 }}>
-                <span style={{ color:'#FF7A29' }}>BCPL</span><span style={{ color:'#fff' }}> T20</span>
+                <span style={{ color:'#FF7A29' }}>BCPL</span>
               </div>
               <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)', marginTop:4 }}>#OfficeSeStadiumtak</div>
             </div>

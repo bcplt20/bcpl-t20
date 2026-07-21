@@ -206,7 +206,7 @@ export default function AdminShell() {
               <img src={import.meta.env.BASE_URL + "bcpl-assets/bcpl-ball-color.jpg"} alt="BCPL" style={{ width:"100%", height:"100%", objectFit:"cover" }}/>
             </div>
             <div style={{ fontSize:9, fontWeight:800, letterSpacing:".18em", color:"rgba(255,107,0,.5)", textTransform:"uppercase", marginBottom:4 }}>Bhartiya Corporate Premier League</div>
-            <div style={{ fontSize:22, fontWeight:900, color:"#FF6B00", letterSpacing:1, lineHeight:1 }}>BCPL T20 Admin</div>
+            <div style={{ fontSize:22, fontWeight:900, color:"#FF6B00", letterSpacing:1, lineHeight:1 }}>BCPL Admin</div>
             <div style={{ fontSize:13, color:"#475569", marginTop:6 }}>Season 5 · Secure Access</div>
           </div>
           <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
@@ -255,7 +255,7 @@ export default function AdminShell() {
           </div>
           {!collapsed&&(
             <div style={{ flex:1, minWidth:0 }}>
-              <div style={{ fontWeight:900, fontSize:13, color:"#FF6B00", letterSpacing:.5, lineHeight:1, whiteSpace:"nowrap" }}>BCPL T20 Admin</div>
+              <div style={{ fontWeight:900, fontSize:13, color:"#FF6B00", letterSpacing:.5, lineHeight:1, whiteSpace:"nowrap" }}>BCPL Admin</div>
               <div style={{ fontSize:10, color:"#334155", marginTop:3, lineHeight:1, whiteSpace:"nowrap" }}>Season 5 · 2026–27</div>
             </div>
           )}

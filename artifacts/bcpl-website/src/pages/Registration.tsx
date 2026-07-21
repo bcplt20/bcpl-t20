@@ -840,6 +840,42 @@ export function Registration() {
                     <span key={t} style={{ fontSize:10, color:'rgba(255,255,255,0.25)', fontWeight:600 }}>{t}</span>
                   ))}
                 </div>
+                {/* TEST MODE — remove before go-live */}
+                {agreed && (
+                  <div style={{ marginTop:20, textAlign:'center', borderTop:'1px dashed rgba(255,255,255,0.08)', paddingTop:14 }}>
+                    <div style={{ fontSize:10, color:'rgba(255,255,255,0.15)', marginBottom:8, letterSpacing:'.08em' }}>— TEST MODE ONLY —</div>
+                    <div style={{ display:'flex', gap:8, justifyContent:'center', flexWrap:'wrap' }}>
+                      <button onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/payment-receipt?name='+encodeURIComponent(name)+'&role='+encodeURIComponent(role?.label||'Batsman')+'&city='+encodeURIComponent(city)+'&amount='+price; }}
+                        style={{ padding:'6px 14px', background:'none', border:'1px dashed rgba(34,197,94,0.3)', borderRadius:8, color:'rgba(34,197,94,0.5)', fontSize:11, cursor:'pointer', fontFamily:'Montserrat,sans-serif', fontWeight:700, letterSpacing:'.06em' }}>
+                        → Skip to Phase 1 Receipt
+                      </button>
+                      <button onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/upload-video'; }}
+                        style={{ padding:'6px 14px', background:'none', border:'1px dashed rgba(34,197,94,0.3)', borderRadius:8, color:'rgba(34,197,94,0.5)', fontSize:11, cursor:'pointer', fontFamily:'Montserrat,sans-serif', fontWeight:700, letterSpacing:'.06em' }}>
+                        → Video Upload Page
+                      </button>
+                      <button onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/result'; }}
+                        style={{ padding:'6px 14px', background:'none', border:'1px dashed rgba(34,197,94,0.3)', borderRadius:8, color:'rgba(34,197,94,0.5)', fontSize:11, cursor:'pointer', fontFamily:'Montserrat,sans-serif', fontWeight:700, letterSpacing:'.06em' }}>
+                        → Result Page
+                      </button>
+                      <button onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/phase2/payment'; }}
+                        style={{ padding:'6px 14px', background:'none', border:'1px dashed rgba(232,178,61,0.3)', borderRadius:8, color:'rgba(232,178,61,0.5)', fontSize:11, cursor:'pointer', fontFamily:'Montserrat,sans-serif', fontWeight:700, letterSpacing:'.06em' }}>
+                        → Phase 2 Payment
+                      </button>
+                      <button onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/phase2/payment-receipt'; }}
+                        style={{ padding:'6px 14px', background:'none', border:'1px dashed rgba(232,178,61,0.3)', borderRadius:8, color:'rgba(232,178,61,0.5)', fontSize:11, cursor:'pointer', fontFamily:'Montserrat,sans-serif', fontWeight:700, letterSpacing:'.06em' }}>
+                        → Phase 2 Receipt
+                      </button>
+                      <button onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/phase2/kyc'; }}
+                        style={{ padding:'6px 14px', background:'none', border:'1px dashed rgba(232,178,61,0.3)', borderRadius:8, color:'rgba(232,178,61,0.5)', fontSize:11, cursor:'pointer', fontFamily:'Montserrat,sans-serif', fontWeight:700, letterSpacing:'.06em' }}>
+                        → Phase 2 KYC
+                      </button>
+                      <button onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/phase2/kyc-approved'; }}
+                        style={{ padding:'6px 14px', background:'none', border:'1px dashed rgba(232,178,61,0.3)', borderRadius:8, color:'rgba(232,178,61,0.5)', fontSize:11, cursor:'pointer', fontFamily:'Montserrat,sans-serif', fontWeight:700, letterSpacing:'.06em' }}>
+                        → KYC Approved
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 

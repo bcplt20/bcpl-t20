@@ -177,16 +177,38 @@ export function Phase2Payment() {
             className="btn-gold"
             disabled={!agreed}
             style={{ width:'100%', padding:'18px 32px', fontSize:15, letterSpacing:'.1em', textAlign:'center' }}
+            onClick={() => agreed && alert('Cashfree payment gateway will be live soon!')}
           >
             PAY ₹2,000 — SECURE YOUR TRIAL SPOT →
           </button>
 
+          {/* TEST MODE */}
+          {agreed && (
+            <div style={{ marginTop:16, textAlign:'center', borderTop:'1px dashed rgba(255,255,255,0.08)', paddingTop:14 }}>
+              <div style={{ fontSize:10, color:'rgba(255,255,255,0.15)', marginBottom:8, letterSpacing:'.08em' }}>— TEST MODE ONLY —</div>
+              <div style={{ display:'flex', gap:8, justifyContent:'center', flexWrap:'wrap' }}>
+                <button onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/phase2/payment-receipt'; }}
+                  style={{ padding:'6px 14px', background:'none', border:'1px dashed rgba(232,178,61,0.35)', borderRadius:8, color:'rgba(232,178,61,0.55)', fontSize:11, cursor:'pointer', fontFamily:'Montserrat,sans-serif', fontWeight:700 }}>
+                  → Phase 2 Receipt
+                </button>
+                <button onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/phase2/kyc'; }}
+                  style={{ padding:'6px 14px', background:'none', border:'1px dashed rgba(232,178,61,0.35)', borderRadius:8, color:'rgba(232,178,61,0.55)', fontSize:11, cursor:'pointer', fontFamily:'Montserrat,sans-serif', fontWeight:700 }}>
+                  → Phase 2 KYC
+                </button>
+                <button onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/phase2/kyc-approved'; }}
+                  style={{ padding:'6px 14px', background:'none', border:'1px dashed rgba(232,178,61,0.35)', borderRadius:8, color:'rgba(232,178,61,0.55)', fontSize:11, cursor:'pointer', fontFamily:'Montserrat,sans-serif', fontWeight:700 }}>
+                  → KYC Approved
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Security strip */}
           <div className="security-strip">
             {[
-              { icon:'🔒', label:'Razorpay Secured' },
+              { icon:'🔒', label:'Cashfree Secured' },
               { icon:'🛡', label:'256-bit SSL' },
-              { icon:'🏢', label:'BCPL T20' },
+              { icon:'🏢', label:'BCPL' },
             ].map(({ icon, label }) => (
               <div key={label} style={{ display:'flex', alignItems:'center', gap:6 }}>
                 <span style={{ fontSize:14 }}>{icon}</span>
@@ -202,8 +224,8 @@ export function Phase2Payment() {
         <div className="wrap" style={{ maxWidth:1200 }}>
           <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))', gap:28, marginBottom:32 }}>
             <div>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, marginBottom:8 }}><span style={{ color:'#FF7A29' }}>BCPL</span> T20</div>
-              <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)', lineHeight:1.7 }}>India's biggest corporate cricket league. Season 5 · ₹6 Cr Prize Pool · 21 Cities</div>
+              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, marginBottom:8 }}><span style={{ color:'#FF7A29' }}>BCPL</span></div>
+              <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)', lineHeight:1.7 }}>Bhartiya Corporate Premier League. Season 5 · ₹6 Cr Prize Pool · 21 Cities</div>
               <div style={{ marginTop:12, fontSize:11, fontWeight:700, fontFamily:'Montserrat,sans-serif', color:'#E8B23D' }}>#OfficeSeStadiumtak</div>
             </div>
             <div>
@@ -216,12 +238,12 @@ export function Phase2Payment() {
             </div>
             <div>
               <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:11, letterSpacing:'.12em', color:'rgba(255,255,255,0.35)', marginBottom:12, textTransform:'uppercase' }}>Organised By</div>
-              <div style={{ fontSize:13, color:'rgba(255,255,255,0.6)', lineHeight:1.7 }}>BCPL T20 Pvt. Ltd.<br/>Brand Ambassador: Sourav Ganguly<br/>Season 5 · BCCI Certified Scouts</div>
+              <div style={{ fontSize:13, color:'rgba(255,255,255,0.6)', lineHeight:1.7 }}>Kriparti Playing11 Pvt. Ltd.<br/>Brand Ambassador: Sourav Ganguly<br/>Season 5 · BCCI Certified Scouts</div>
             </div>
           </div>
           <div style={{ borderTop:'1px solid rgba(255,255,255,0.06)', paddingTop:20, display:'flex', justifyContent:'space-between', flexWrap:'wrap', gap:12 }}>
-            <span style={{ fontSize:11, color:'rgba(255,255,255,0.25)' }}>© 2025 BCPL T20 Pvt. Ltd. All rights reserved.</span>
-            <span style={{ fontSize:11, color:'rgba(255,255,255,0.25)' }}>BCPL T20 Season 5</span>
+            <span style={{ fontSize:11, color:'rgba(255,255,255,0.25)' }}>© 2026 Kriparti Playing11 Pvt. Ltd. All rights reserved.</span>
+            <span style={{ fontSize:11, color:'rgba(255,255,255,0.25)' }}>BCPL Season 5</span>
           </div>
         </div>
       </footer>
