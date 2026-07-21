@@ -39,7 +39,9 @@ export function Phase1PaymentReceipt() {
         setPlayerRole(ROLE_LABELS[role] ?? role);
         setPlayerCity(city);
         setRegId((statusRes as any).registrationId ?? verifyRes.registrationId ?? '');
-        setPaidAmount(fees.phase1 ?? 0);
+        // Show GST-inclusive amount (base * 1.18, same formula as API)
+        const baseFee = fees.phase1 ?? 299;
+        setPaidAmount(Math.round(baseFee * 1.18));
         setPaymentDate(new Date().toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }));
       } catch (e: any) {
         setReceiptError(e.message ?? 'Could not load receipt');

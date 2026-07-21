@@ -91,7 +91,12 @@ export function Phase1VideoUpload() {
         setDeadline(reg.videoDeadline ?? null);
         setPhase1Fee(reg.fees?.phase1 ?? 299);
 
-        if (reg.phase1Status === 'video_submitted' || reg.phase1Status === 'p1_selected' || reg.phase1Status === 'p1_rejected') {
+        if (reg.phase1Status === 'video_submitted' || reg.phase1Status === 'selected' || reg.phase1Status === 'rejected' || reg.phase1Status === 'p1_selected' || reg.phase1Status === 'p1_rejected') {
+          // Redirect to result page if selected/rejected, otherwise show already-uploaded
+          if (reg.phase1Status === 'selected' || reg.phase1Status === 'rejected') {
+            window.location.replace('/register/result');
+            return;
+          }
           setUploadState('already_uploaded'); return;
         }
 

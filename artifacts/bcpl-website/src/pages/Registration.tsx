@@ -162,12 +162,22 @@ export function Registration() {
   const [regStatus, setRegStatus]       = useState<any>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  // On mount: if already authenticated, fetch registration status
+  // On mount: if already authenticated, fetch registration status and redirect based on it
   useEffect(() => {
     if (isAuthenticated()) {
       getRegistrationStatus().then((s: any) => {
         setRegStatus(s);
-        if (s.registered) setLoggedIn(true);
+        if (s.registered) {
+          setLoggedIn(true);
+          const st = s.phase1Status;
+          // Auto-redirect to the correct page based on status
+          if (st === 'payment_done') {
+            navigate('/register/upload-video');
+          } else if (st === 'video_submitted' || st === 'selected' || st === 'rejected') {
+            navigate('/register/result');
+          }
+          // 'pending' → stay here so user can complete payment
+        }
       }).catch(() => {});
     }
   }, []);
@@ -742,9 +752,10 @@ export function Registration() {
                           try {
                             setPayLoading(true);
                             const pay = await createPhase1Payment(regStatus.registrationId);
+                            sessionStorage.setItem('bcpl_p1_pending', JSON.stringify({ amount: pay.amount, orderId: pay.orderId }));
                             await loadCashfreeSDK();
                             const cf = (window as any).Cashfree({ mode:'production' });
-                            cf.checkout({ paymentSessionId: pay.paymentSessionId, redirectTarget:'_modal' });
+                            cf.checkout({ paymentSessionId: pay.paymentSessionId });
                           } catch(e:any){ alert(e.message); } finally { setPayLoading(false); }
                         }} style={{ padding:'12px 28px', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer' }}>
                           {payLoading ? '⏳ Processing...' : '💳 COMPLETE PAYMENT →'}
