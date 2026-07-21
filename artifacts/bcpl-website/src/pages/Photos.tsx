@@ -229,104 +229,25 @@ export function Photos() {
         </div>
       </section>
 
-      {/* FILTER BAR */}
-      <section style={{position:'relative',zIndex:1,padding:'0 0 20px'}}>
+      {/* COMING SOON */}
+      <section style={{position:'relative',zIndex:1,padding:'40px 0 120px'}}>
         <div className="wrap">
-          <div style={{display:'flex',gap:10,flexWrap:'wrap',justifyContent:'center',marginBottom:16}}>
-            {FILTERS.map(f=>(
-              <button key={f} onClick={()=>{ setFilter(f); setVisible(12); }} style={{padding:'9px 20px',borderRadius:100,border:`1.5px solid ${filter===f?'#FF7A29':'rgba(255,255,255,0.12)'}`,background:filter===f?'rgba(255,122,41,0.15)':'rgba(255,255,255,0.04)',color:filter===f?'#FF7A29':'rgba(255,255,255,0.6)',fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:12,cursor:'pointer',transition:'all 0.2s',letterSpacing:'0.04em'}}>
-                {f}
-              </button>
-            ))}
-          </div>
-          <div style={{display:'flex',gap:8,justifyContent:'center'}}>
-            {SEASONS.map(s=>(
-              <button key={s} onClick={()=>setSeason(s)} style={{padding:'7px 16px',borderRadius:100,border:`1px solid ${season===s?'rgba(232,178,61,0.6)':'rgba(255,255,255,0.08)'}`,background:season===s?'rgba(232,178,61,0.1)':'transparent',color:season===s?'#E8B23D':'rgba(255,255,255,0.4)',fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:11,cursor:'pointer',transition:'all 0.2s',letterSpacing:'0.06em'}}>
-                {s}
-              </button>
-            ))}
+          <div className="glass-card" style={{padding:'clamp(40px,8vw,80px) clamp(20px,5vw,60px)',textAlign:'center',maxWidth:600,margin:'0 auto',border:'1px solid rgba(255,122,41,0.15)',animation:'fadeSlide 0.7s ease both'}}>
+            <div style={{fontSize:64,marginBottom:20}}>📷</div>
+            <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,4vw,32px)',color:'#fff',marginBottom:12,lineHeight:1.2}}>
+              Photos Will Be<br/>
+              <span className="shimmer-gold">Uploaded Soon</span>
+            </h2>
+            <p style={{color:'rgba(255,255,255,0.5)',fontSize:15,lineHeight:1.7,maxWidth:420,margin:'0 auto 28px',fontFamily:'Inter,sans-serif'}}>
+              Match day galleries, trial ground moments, auction highlights, and celebrations — all coming as Season 5 unfolds.
+            </p>
+            <a href="https://www.instagram.com/bcplt20" target="_blank" rel="noopener noreferrer"
+              style={{display:'inline-flex',alignItems:'center',gap:10,padding:'14px 32px',borderRadius:14,background:'linear-gradient(135deg,#E1306C,#F77737,#FCAF45)',border:'none',color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:14,cursor:'pointer',letterSpacing:'0.02em',textDecoration:'none'}}>
+              📸 Follow @bcplt20 for Updates
+            </a>
           </div>
         </div>
       </section>
-
-      {/* MASONRY GRID */}
-      <section style={{position:'relative',zIndex:1,padding:'20px 0 60px'}}>
-        <div className="wrap">
-          <div className="photo-masonry">
-            {shown.map((p,i)=>{
-              const h = HEIGHTS[i % HEIGHTS.length];
-              const g = GRADIENTS[i % GRADIENTS.length];
-              const catColor = CAT_COLORS[p.cat] || '#FF7A29';
-              return (
-                <div key={i} className="photo-card" style={{background:g,height:h}} onClick={()=>setLightbox(i)} role="button" tabIndex={0} aria-label={`View ${p.title}`}>
-                  {/* subtle grid pattern overlay */}
-                  <div style={{position:'absolute',inset:0,backgroundImage:'repeating-linear-gradient(0deg,transparent,transparent 20px,rgba(255,255,255,0.03) 20px,rgba(255,255,255,0.03) 21px),repeating-linear-gradient(90deg,transparent,transparent 20px,rgba(255,255,255,0.03) 20px,rgba(255,255,255,0.03) 21px)'}}/>
-                  {/* cricket ball decoration */}
-                  <div style={{position:'absolute',top:12,right:12,width:32,height:32,borderRadius:'50%',background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.1)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:16}}>🏏</div>
-                  <div className="photo-overlay">
-                    <span style={{display:'inline-flex',alignItems:'center',gap:4,background:catColor+'22',border:`1px solid ${catColor}55`,borderRadius:100,padding:'3px 10px',fontSize:10,fontFamily:'Montserrat,sans-serif',fontWeight:700,color:catColor,marginBottom:6,width:'fit-content'}}>{p.cat}</span>
-                    <span style={{color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:13,lineHeight:1.3}}>{p.title}</span>
-                  </div>
-                  {/* always-visible bottom bar */}
-                  <div style={{position:'absolute',bottom:0,left:0,right:0,background:'linear-gradient(0deg,rgba(0,0,0,0.7) 0%,transparent 100%)',padding:'20px 12px 10px',display:'flex',alignItems:'flex-end',justifyContent:'space-between'}}>
-                    <span style={{display:'inline-flex',alignItems:'center',gap:4,background:catColor+'33',border:`1px solid ${catColor}44`,borderRadius:100,padding:'2px 8px',fontSize:9,fontFamily:'Montserrat,sans-serif',fontWeight:700,color:catColor}}>{p.cat}</span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* LOAD MORE */}
-          {visible < filtered.length && (
-            <div style={{textAlign:'center',marginTop:40}}>
-              <button onClick={()=>setVisible(v=>v+12)} className="glass-card" style={{padding:'16px 48px',fontSize:15,fontFamily:'Montserrat,sans-serif',fontWeight:700,color:'rgba(255,255,255,0.75)',border:'1px solid rgba(255,255,255,0.15)',borderRadius:14,cursor:'pointer',background:'rgba(255,255,255,0.04)',transition:'all 0.2s'}}>
-                Load More Photos ↓
-              </button>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* INSTAGRAM CTA */}
-      <section style={{position:'relative',zIndex:1,padding:'0 0 120px'}}>
-        <div className="wrap">
-          <div className="glass-card" style={{padding:'40px',textAlign:'center',maxWidth:640,margin:'0 auto',border:'1px solid rgba(232,178,61,0.15)'}}>
-            <div style={{fontSize:40,marginBottom:12}}>📸</div>
-            <h3 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,color:'#fff',marginBottom:8}}>
-              Follow @bcplt20 for live updates
-            </h3>
-            <p style={{color:'rgba(255,255,255,0.5)',fontSize:14,marginBottom:24}}>Behind-the-scenes, live match stories, and player spotlights.</p>
-            <button style={{padding:'14px 36px',borderRadius:14,background:'linear-gradient(135deg,#E1306C,#F77737,#FCAF45)',border:'none',color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,cursor:'pointer',letterSpacing:'0.02em'}}>
-              Follow on Instagram →
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* LIGHTBOX */}
-      {lightbox !== null && (()=>{
-        const idx = lightbox;
-        const p = shown[idx];
-        const g = GRADIENTS[idx % GRADIENTS.length];
-        const catColor = CAT_COLORS[p.cat] || '#FF7A29';
-        return (
-          <div onClick={()=>setLightbox(null)} style={{position:'fixed',inset:0,zIndex:9000,background:'rgba(0,0,0,0.92)',display:'flex',alignItems:'center',justifyContent:'center',padding:20,cursor:'pointer'}}>
-            <div onClick={e=>e.stopPropagation()} style={{background:g,borderRadius:20,overflow:'hidden',maxWidth:640,width:'100%',maxHeight:'80vh',position:'relative',boxShadow:'0 40px 120px rgba(0,0,0,0.8)',cursor:'default'}}>
-              <div style={{position:'absolute',inset:0,backgroundImage:'repeating-linear-gradient(0deg,transparent,transparent 20px,rgba(255,255,255,0.03) 20px,rgba(255,255,255,0.03) 21px),repeating-linear-gradient(90deg,transparent,transparent 20px,rgba(255,255,255,0.03) 20px,rgba(255,255,255,0.03) 21px)'}}/>
-              <div style={{padding:'80px 40px 60px',textAlign:'center',position:'relative'}}>
-                <div style={{fontSize:56,marginBottom:12}}>🏏</div>
-                <span style={{display:'inline-flex',alignItems:'center',gap:4,background:catColor+'33',border:`1px solid ${catColor}66`,borderRadius:100,padding:'4px 14px',fontSize:11,fontFamily:'Montserrat,sans-serif',fontWeight:700,color:catColor,marginBottom:14}}>{p.cat}</span>
-                <div style={{color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:20,lineHeight:1.3}}>{p.title}</div>
-              </div>
-              <button onClick={()=>setLightbox(null)} style={{position:'absolute',top:12,right:12,background:'rgba(0,0,0,0.5)',border:'1px solid rgba(255,255,255,0.2)',borderRadius:'50%',width:36,height:36,color:'#fff',fontSize:18,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}>✕</button>
-              <div style={{display:'flex',justifyContent:'space-between',padding:'0 12px 12px',position:'relative'}}>
-                <button disabled={idx===0} onClick={()=>setLightbox(i=>i!==null&&i>0?i-1:i)} style={{background:'rgba(0,0,0,0.4)',border:'1px solid rgba(255,255,255,0.15)',borderRadius:10,padding:'8px 16px',color:'#fff',cursor:idx===0?'default':'pointer',opacity:idx===0?0.3:1,fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:13}}>← Prev</button>
-                <button disabled={idx>=shown.length-1} onClick={()=>setLightbox(i=>i!==null&&i<shown.length-1?i+1:i)} style={{background:'rgba(0,0,0,0.4)',border:'1px solid rgba(255,255,255,0.15)',borderRadius:10,padding:'8px 16px',color:'#fff',cursor:idx>=shown.length-1?'default':'pointer',opacity:idx>=shown.length-1?0.3:1,fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:13}}>Next →</button>
-              </div>
-            </div>
-          </div>
-        );
-      })()}
       {/* ── FLOATING REGISTER BUTTON ── */}
       <a className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>🏏 REGISTER NOW &rarr;</a>
       <BCPLFooter />

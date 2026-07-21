@@ -198,42 +198,6 @@ export function Videos() {
         </div>
       </section>
 
-      {/* FEATURED VIDEO */}
-      <section style={{position:'relative',zIndex:1,padding:'0 0 48px'}}>
-        <div className="wrap">
-          <div className="glass-card" style={{overflow:'hidden',animation:'fadeSlide 0.7s ease 0.1s both'}}>
-            <div style={{position:'relative',paddingTop:'56.25%',background:'linear-gradient(135deg,#FF7A29 0%,#C94E0E 30%,#0A1628 100%)',cursor:'pointer'}}>
-              {/* decorative overlays */}
-              <div style={{position:'absolute',inset:0,backgroundImage:'repeating-linear-gradient(0deg,transparent,transparent 30px,rgba(255,255,255,0.02) 30px,rgba(255,255,255,0.02) 31px)'}}/> 
-              <div style={{position:'absolute',inset:0,display:'flex',alignItems:'center',justifyContent:'center'}}>
-                <div style={{width:72,height:72,borderRadius:'50%',background:'rgba(0,0,0,0.55)',backdropFilter:'blur(8px)',border:'2px solid rgba(255,255,255,0.25)',display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 0 40px rgba(0,0,0,0.5)',transition:'transform 0.2s',cursor:'pointer'}}>
-                  <svg width="28" height="28" viewBox="0 0 12 14" fill="white"><path d="M0 0 L12 7 L0 14 Z"/></svg>
-                </div>
-              </div>
-              {/* top-left badge */}
-              <div style={{position:'absolute',top:16,left:16}}>
-                <span style={{background:'rgba(236,72,153,0.85)',backdropFilter:'blur(8px)',border:'1px solid rgba(236,72,153,0.5)',borderRadius:100,padding:'4px 12px',fontSize:10,fontFamily:'Montserrat,sans-serif',fontWeight:700,color:'#fff',letterSpacing:'0.08em'}}>EVENTS</span>
-              </div>
-              {/* duration */}
-              <div style={{position:'absolute',bottom:16,right:16,background:'rgba(0,0,0,0.75)',borderRadius:6,padding:'3px 8px',fontSize:12,color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:700}}>12:34</div>
-            </div>
-            <div style={{padding:'24px 28px 28px',display:'flex',flexWrap:'wrap',gap:20,alignItems:'flex-start',justifyContent:'space-between'}}>
-              <div style={{flex:1,minWidth:200}}>
-                <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,color:'#fff',marginBottom:8,lineHeight:1.3}}>SEASON 5 OPENING CEREMONY</h2>
-                <div style={{display:'flex',gap:16,flexWrap:'wrap',color:'rgba(255,255,255,0.45)',fontSize:13,fontFamily:'Inter,sans-serif'}}>
-                  <span>▶ 45K views</span>
-                  <span>·</span>
-                  <span>3 days ago</span>
-                  <span>·</span>
-                  <span style={{color:'#FF7A29',fontWeight:600}}>BCPL TV</span>
-                </div>
-              </div>
-              <a href="https://www.youtube.com/@bcplt20" target="_blank" rel="noopener noreferrer" className="btn-fire" style={{padding:'12px 28px',fontSize:14,flexShrink:0,textDecoration:'none'}}>Watch on YouTube →</a>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* FILTER TABS */}
       <section style={{position:'relative',zIndex:1,padding:'0 0 32px'}}>
         <div className="wrap">
