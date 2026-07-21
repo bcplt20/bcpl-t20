@@ -9,18 +9,29 @@ if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${process.env["PORT"]}"`);
 }
 
-app.listen(port, (err) => {
-  if (err) {
-    logger.error({ err }, "Error listening on port");
-    process.exit(1);
+async function start() {
+  // Idempotent migration BEFORE accepting traffic: reg_number column + backfill (BCPL-DEL-1 style IDs)
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      await ensureRegNumbers();
+      logger.info("reg_number migration ensured");
+      break;
+    } catch (e) {
+      logger.error({ err: e, attempt }, "reg_number migration failed");
+      if (attempt < 3) await new Promise((r) => setTimeout(r, 2000));
+    }
   }
-  logger.info({ port }, "Server listening");
 
-  // Idempotent migration: reg_number column + backfill (BCPL-DEL-1 style IDs)
-  ensureRegNumbers()
-    .then(() => logger.info("reg_number migration ensured"))
-    .catch((e) => logger.error({ err: e }, "reg_number migration failed"));
-});
+  app.listen(port, (err) => {
+    if (err) {
+      logger.error({ err }, "Error listening on port");
+      process.exit(1);
+    }
+    logger.info({ port }, "Server listening");
+  });
+}
+
+void start();
 
 // ── Reminder scheduler: runs every 6 hours ──────────────────────────────────
 // Sends video upload reminders at Day 3 (4 days left) and Day 6 (1 day left)

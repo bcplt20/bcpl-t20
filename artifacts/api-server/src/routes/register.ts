@@ -109,7 +109,9 @@ router.post("/phase1", requireAuth, async (req: AuthRequest, res) => {
       }).returning();
       break;
     } catch (e: any) {
-      if (attempt === 2 || !String(e?.message ?? "").includes("reg_number")) throw e;
+      // 23505 = Postgres unique_violation (concurrent signup grabbed the same number)
+      const isUniqueCollision = e?.code === "23505" || String(e?.message ?? "").includes("reg_number");
+      if (attempt === 2 || !isUniqueCollision) throw e;
     }
   }
   if (!reg) return void res.status(500).json({ error: "Registration failed. Please try again." });

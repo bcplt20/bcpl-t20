@@ -43,6 +43,7 @@ router.get("/dashboard", requireAuth, async (req: AuthRequest, res) => {
     registered:     true,
     registration:   {
       id:            reg.id,
+      regNumber:     reg.regNumber,
       role:          reg.role,
       trialCity:     reg.trialCity,
       phase1Status:  reg.phase1Status,
