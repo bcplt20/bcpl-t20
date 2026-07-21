@@ -174,7 +174,7 @@ function Footer() {
           </div>
         </div>
         <div style={{borderTop:'1px solid rgba(255,255,255,0.05)',paddingTop:24,display:'flex',flexWrap:'wrap',gap:12,justifyContent:'space-between',alignItems:'center'}}>
-          <div style={{color:'rgba(255,255,255,0.25)',fontSize:11,fontFamily:'Inter,sans-serif'}}>© 2025 Kriparti Playing11 Pvt. Ltd. · <a href="https://www.bcpl-t20.com" style={{color:'rgba(255,122,41,0.5)',textDecoration:'none'}}>www.bcpl-t20.com</a></div>
+          <div style={{color:'rgba(255,255,255,0.25)',fontSize:11,fontFamily:'Inter,sans-serif'}}>© 2025 BCPL T20 Pvt. Ltd. · <a href="https://www.bcpl-t20.com" style={{color:'rgba(255,122,41,0.5)',textDecoration:'none'}}>www.bcpl-t20.com</a></div>
           <div style={{color:'rgba(255,255,255,0.2)',fontSize:11,fontFamily:'Inter,sans-serif'}}>Relive the dream. Rediscover the thrill.</div>
         </div>
       </div>
@@ -205,21 +205,8 @@ interface Match {
   monthGroup: string;
 }
 
-const ALL_MATCHES: Match[] = [
-  {day:'3',month:'JUL',weekday:'SAT',dateKey:'Jul 3',teamA:'MUM',teamAEmoji:'🌊',teamAFull:'Mumbai Mavericks',teamB:'DEL',teamBEmoji:'🗼',teamBFull:'Delhi Dynamos',status:'COMPLETED',venue:'DY Patil Stadium',time:'6:00 PM IST',result:'MUM 198/4 won by 12 runs',monthGroup:'JULY 2025'},
-  {day:'5',month:'JUL',weekday:'MON',dateKey:'Jul 5',teamA:'DEL',teamAEmoji:'🗼',teamAFull:'Delhi Dynamos',teamB:'BLR',teamBEmoji:'🐂',teamBFull:'Bangalore Bulls',status:'COMPLETED',venue:'DY Patil Stadium',time:'6:00 PM IST',result:'DEL 187/4 won by 22 runs',monthGroup:'JULY 2025'},
-  {day:'7',month:'JUL',weekday:'WED',dateKey:'Jul 7',teamA:'PUN',teamAEmoji:'🐆',teamAFull:'Pune Panthers',teamB:'KOL',teamBEmoji:'♟️',teamBFull:'Kolkata Knights',status:'COMPLETED',venue:'MCA Stadium',time:'6:00 PM IST',result:'PUN 143/7 won by 4 runs',monthGroup:'JULY 2025'},
-  {day:'12',month:'JUL',weekday:'MON',dateKey:'Jul 12',teamA:'AHM',teamAEmoji:'🦁',teamAFull:'Ahmedabad Lions',teamB:'CHN',teamBEmoji:'🌶️',teamBFull:'Chennai Chiefs',status:'LIVE',venue:'DY Patil Stadium',time:'6:00 PM IST',monthGroup:'JULY 2025'},
-  {day:'15',month:'JUL',weekday:'THU',dateKey:'Jul 15',teamA:'HYD',teamAEmoji:'🦅',teamAFull:'Hyderabad Hawks',teamB:'LKN',teamBEmoji:'👑',teamBFull:'Lucknow Nawabs',status:'UPCOMING',venue:'Uppal Stadium',time:'6:00 PM IST',monthGroup:'JULY 2025'},
-  {day:'17',month:'JUL',weekday:'SAT',dateKey:'Jul 17',teamA:'JAI',teamAEmoji:'🐅',teamAFull:'Jaipur Jaguars',teamB:'BLR',teamBEmoji:'🐂',teamBFull:'Bangalore Bulls',status:'UPCOMING',venue:'SMS Stadium',time:'6:00 PM IST',monthGroup:'JULY 2025'},
-  {day:'19',month:'JUL',weekday:'MON',dateKey:'Jul 19',teamA:'MUM',teamAEmoji:'🌊',teamAFull:'Mumbai Mavericks',teamB:'PUN',teamBEmoji:'🐆',teamBFull:'Pune Panthers',status:'UPCOMING',venue:'DY Patil Stadium',time:'6:00 PM IST',monthGroup:'JULY 2025'},
-  {day:'22',month:'JUL',weekday:'THU',dateKey:'Jul 22',teamA:'DEL',teamAEmoji:'🗼',teamAFull:'Delhi Dynamos',teamB:'KOL',teamBEmoji:'♟️',teamBFull:'Kolkata Knights',status:'UPCOMING',venue:'Ferozeshah Kotla',time:'6:00 PM IST',monthGroup:'JULY 2025'},
-  {day:'24',month:'JUL',weekday:'SAT',dateKey:'Jul 24',teamA:'AHM',teamAEmoji:'🦁',teamAFull:'Ahmedabad Lions',teamB:'HYD',teamBEmoji:'🦅',teamBFull:'Hyderabad Hawks',status:'UPCOMING',venue:'Narendra Modi Stadium',time:'6:00 PM IST',monthGroup:'JULY 2025'},
-  {day:'26',month:'JUL',weekday:'MON',dateKey:'Jul 26',teamA:'MUM',teamAEmoji:'🌊',teamAFull:'Mumbai Mavericks',teamB:'DEL',teamBEmoji:'🗼',teamBFull:'Delhi Dynamos',status:'UPCOMING',venue:'DY Patil Stadium',time:'6:00 PM IST',marquee:true,monthGroup:'JULY 2025'},
-  {day:'10',month:'AUG',weekday:'SUN',dateKey:'Aug 10',teamA:'SF1',teamAEmoji:'🏏',teamAFull:'Semifinal 1',teamB:'TBD',teamBEmoji:'',teamBFull:'TBD',status:'TBD',venue:'TBD',time:'TBD',semifinal:true,monthGroup:'AUGUST 2025'},
-  {day:'11',month:'AUG',weekday:'MON',dateKey:'Aug 11',teamA:'SF2',teamAEmoji:'🏏',teamAFull:'Semifinal 2',teamB:'TBD',teamBEmoji:'',teamBFull:'TBD',status:'TBD',venue:'TBD',time:'TBD',semifinal:true,monthGroup:'AUGUST 2025'},
-  {day:'17',month:'AUG',weekday:'SUN',dateKey:'Aug 17',teamA:'TBD',teamAEmoji:'🏆',teamAFull:'Winner SF1',teamB:'TBD',teamBEmoji:'🏆',teamBFull:'Winner SF2',status:'TBD',venue:'TBD',time:'TBD',final:true,monthGroup:'AUGUST 2025'},
-];
+// Season 4 fixtures will be published once trial phase is complete
+const ALL_MATCHES: Match[] = [];
 
 const TEAMS = ['All Teams','Mumbai Mavericks','Delhi Dynamos','Pune Panthers','Kolkata Knights','Ahmedabad Lions','Bangalore Bulls','Chennai Chiefs','Hyderabad Hawks','Jaipur Jaguars','Lucknow Nawabs'];
 
@@ -272,15 +259,15 @@ export function Schedule() {
         <div style={{padding:'clamp(40px,6vw,60px) 0 clamp(28px,4vw,48px)',textAlign:'center',position:'relative'}}>
           <div className="wrap">
             <div style={{marginBottom:16,display:'flex',justifyContent:'center'}}>
-              <span className="tag-pill">📅 SEASON 5 FIXTURES</span>
+              <span className="tag-pill">📅 SEASON 4 FIXTURES</span>
             </div>
             <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(32px,6vw,72px)',lineHeight:1.05,marginBottom:12,color:'#fff'}}>
-              EVERY MATCH,
+              SEASON 4
             </h1>
             <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(32px,6vw,72px)',lineHeight:1.05,marginBottom:24}}>
-              <span className="shimmer-gold">EVERY MOMENT.</span>
+              <span className="shimmer-gold">FIXTURES.</span>
             </h1>
-            <p style={{color:'rgba(255,255,255,0.45)',fontSize:15,fontFamily:'Inter,sans-serif',maxWidth:520,margin:'0 auto'}}>Full fixture list for BCPL T20 Season 5 · 10 teams · 75 cities · One champion</p>
+            <p style={{color:'rgba(255,255,255,0.45)',fontSize:15,fontFamily:'Inter,sans-serif',maxWidth:520,margin:'0 auto'}}>Season 4 trial phase is ongoing — full fixture list will be published once teams are finalized.</p>
           </div>
         </div>
 
@@ -304,8 +291,21 @@ export function Schedule() {
             </div>
           </div>
 
+          {/* UPCOMING NOTICE */}
+          {ALL_MATCHES.length === 0 && (
+            <div style={{textAlign:'center',padding:'clamp(60px,10vw,100px) 20px'}}>
+              <div style={{fontSize:64,marginBottom:20}}>🏏</div>
+              <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,4vw,36px)',color:'#fff',marginBottom:12}}>Fixtures Coming Soon</div>
+              <p style={{color:'rgba(255,255,255,0.45)',fontSize:15,maxWidth:440,margin:'0 auto 28px',lineHeight:1.7}}>Season 4 trial phase is currently in progress. The complete fixture schedule will be published here once all 10 franchises confirm their squads after the auction.</p>
+              <div style={{display:'inline-flex',alignItems:'center',gap:8,background:'rgba(255,122,41,0.1)',border:'1px solid rgba(255,122,41,0.3)',borderRadius:20,padding:'8px 20px'}}>
+                <span style={{width:8,height:8,borderRadius:'50%',background:'#FF7A29',display:'inline-block',animation:'liveBlip 1.2s infinite'}}/>
+                <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:12,color:'#FF7A29',letterSpacing:'.08em'}}>REGISTRATIONS OPEN — SEASON 5</span>
+              </div>
+            </div>
+          )}
+
           {/* MATCH GROUPS */}
-          {Object.entries(groups).length === 0 && (
+          {Object.entries(groups).length === 0 && ALL_MATCHES.length > 0 && (
             <div style={{textAlign:'center',padding:'60px 0',color:'rgba(255,255,255,0.3)',fontFamily:'Inter,sans-serif',fontSize:15}}>No matches found for this filter.</div>
           )}
 

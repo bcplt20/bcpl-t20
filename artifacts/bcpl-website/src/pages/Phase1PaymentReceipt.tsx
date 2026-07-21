@@ -291,7 +291,7 @@ export function Phase1PaymentReceipt() {
             <span style={{ color:'#fff' }}> T20</span>
           </div>
           <div style={{ fontSize:11, color:'rgba(255,255,255,0.3)', letterSpacing:'.08em', textAlign:'center' }}>
-            Kriparti Playing 11 Pvt. Ltd. &nbsp;·&nbsp; Season 5 &nbsp;·&nbsp; #OfficeSeStadiumtak
+            BCPL T20 Pvt. Ltd. &nbsp;·&nbsp; Season 5 &nbsp;·&nbsp; #OfficeSeStadiumtak
           </div>
           <div style={{ fontSize:11, color:'rgba(255,255,255,0.2)', letterSpacing:'.06em' }}>
             © 2025 BCPL T20. All rights reserved.

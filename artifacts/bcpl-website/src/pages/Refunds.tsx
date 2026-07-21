@@ -76,7 +76,7 @@ function Footer() {
           </div>
         </div>
         <div style={{borderTop:'1px solid rgba(255,255,255,0.05)',paddingTop:20,display:'flex',flexWrap:'wrap',gap:12,justifyContent:'space-between',alignItems:'center'}}>
-          <div style={{color:'rgba(255,255,255,0.28)',fontSize:11}}>© 2025 Kriparti Playing11 Pvt. Ltd. | www.bcpl-t20.com</div>
+          <div style={{color:'rgba(255,255,255,0.28)',fontSize:11}}>© 2025 BCPL T20 Pvt. Ltd. | www.bcpl-t20.com</div>
           <div style={{color:'rgba(255,255,255,0.28)',fontSize:11}}>All rights reserved</div>
         </div>
       </div>
@@ -254,21 +254,23 @@ export function Refunds() {
               <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>When You're Eligible for a Refund</h2>
             </div>
             <div style={{background:'rgba(34,197,94,0.06)',border:'1px solid rgba(34,197,94,0.15)',borderRadius:12,padding:'14px 18px',marginBottom:16}}>
-              <p style={{color:'rgba(34,197,94,0.9)',fontSize:14,fontWeight:700,fontFamily:'Montserrat,sans-serif'}}>✅ Full ₹299 refunded — zero deductions</p>
+              <p style={{color:'rgba(34,197,94,0.9)',fontSize:14,fontWeight:700,fontFamily:'Montserrat,sans-serif'}}>✅ Full amount refunded — zero deductions, in these 3 specific cases only</p>
             </div>
-            <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:10}}>
+            <div style={{display:'grid',gap:12}}>
               {[
-                'Refund request submitted within 7 calendar days of completing registration',
-                'Cricket performance video has NOT been uploaded to the BCPL portal',
-                'Registration was not involved in any Code of Conduct investigation',
-                'Refund request includes valid Registration ID and reason',
-                'No processing fee, no gateway fee — you get back exactly what you paid',
-              ].map((item,i)=>(
-                <li key={i} style={{display:'flex',alignItems:'flex-start',color:'rgba(255,255,255,0.75)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.8}}>
-                  <OrangeDot/>{item}
-                </li>
+                {n:1, icon:'💳', title:'Duplicate Payment', desc:'If your payment was charged more than once for the same registration — double or triple charge due to a payment gateway error — the extra amount(s) will be refunded in full within 5–7 working days.'},
+                {n:2, icon:'🏟', title:'Trial Not Conducted by BCPL', desc:'If BCPL is unable to conduct the physical trial in your city for any reason within the committed schedule, your Phase 2 fee (if paid) will be refunded in full. Phase 1 fee is non-refundable in this case as the scout review service has been rendered.'},
+                {n:3, icon:'⏱', title:'Phase 1 Result Not Delivered in 7 Days', desc:'We guarantee that every Phase 1 video submitted will receive a result (pass or fail) within 7 working days of upload. If we fail to deliver your result within this window, you are entitled to a full refund of your Phase 1 registration fee — no questions asked.'},
+              ].map((item)=>(
+                <div key={item.n} style={{display:'flex',gap:14,alignItems:'flex-start',background:'rgba(34,197,94,0.05)',border:'1px solid rgba(34,197,94,0.2)',borderRadius:12,padding:'16px'}}>
+                  <div style={{width:32,height:32,borderRadius:'50%',background:'rgba(34,197,94,0.2)',border:'1px solid rgba(34,197,94,0.4)',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:13,color:'#22C55E',flexShrink:0}}>{item.n}</div>
+                  <div>
+                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#fff',marginBottom:4}}>{item.icon} {item.title}</div>
+                    <div style={{color:'rgba(255,255,255,0.7)',fontSize:13,lineHeight:1.7}}>{item.desc}</div>
+                  </div>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
 
           {/* Section 2 */}
@@ -276,17 +278,18 @@ export function Refunds() {
             <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18,flexWrap:'wrap'}}>
               <div style={{width:32,height:32,borderRadius:'50%',background:'rgba(232,73,63,0.2)',border:'1px solid rgba(232,73,63,0.5)',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:13,color:'#E8493F',flexShrink:0}}>2</div>
               <span style={{fontSize:22}}>❌</span>
-              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>When Refunds Are NOT Applicable</h2>
+              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>All Other Cases — No Refund</h2>
             </div>
-            <p style={{color:'rgba(255,255,255,0.65)',fontSize:14,lineHeight:1.7,marginBottom:16}}>The following situations are categorically non-refundable, regardless of circumstances:</p>
+            <p style={{color:'rgba(255,255,255,0.65)',fontSize:14,lineHeight:1.7,marginBottom:16}}>Except for the 3 specific cases above, <strong style={{color:'#E8493F'}}>all fees are strictly non-refundable</strong>. This includes but is not limited to:</p>
             <div style={{display:'grid',gap:10}}>
               {[
-                {icon:'🎥',text:'After your cricket performance video has been uploaded (even if evaluation is pending)'},
-                {icon:'📅',text:'After 7 calendar days from the date of registration payment'},
-                {icon:'🏆',text:'After receiving shortlisting notification or selection confirmation'},
-                {icon:'🔍',text:'If found ineligible post-registration due to misrepresentation of professional status'},
-                {icon:'🚫',text:'If disqualified for Code of Conduct violations at any stage'},
-                {icon:'💸',text:'Change of mind, scheduling conflicts, or inability to attend trials'},
+                {icon:'🎥',text:'After your trial video has been uploaded and scout review has begun'},
+                {icon:'📅',text:'Change of mind after registration'},
+                {icon:'🏆',text:'After receiving shortlisting notification or selection result'},
+                {icon:'🔍',text:'If found ineligible due to misrepresentation of age, professional status, or cricket experience'},
+                {icon:'🚫',text:'Disqualification for Code of Conduct violations at any stage'},
+                {icon:'💸',text:'Inability to attend trials due to scheduling conflicts, personal reasons, or travel issues'},
+                {icon:'📵',text:'Technical issues on your own device, internet, or video upload from your end'},
               ].map((item,i)=>(
                 <div key={i} style={{display:'flex',gap:12,alignItems:'flex-start',background:'rgba(232,73,63,0.06)',border:'1px solid rgba(232,73,63,0.15)',borderRadius:10,padding:'10px 14px'}}>
                   <span style={{fontSize:16,flexShrink:0}}>{item.icon}</span>

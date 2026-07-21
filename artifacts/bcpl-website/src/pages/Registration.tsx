@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 /*
   BCPL T20 — Bhartiya Corporate Premier League
   World's largest corporate cricket league for working professionals
-  Run by Kriparti Playing 11 Pvt. Ltd. | Brand Ambassador: Sourav Ganguly
+  Run by BCPL T20 Pvt. Ltd. | Brand Ambassador: Sourav Ganguly
   ₹6 Cr Season 5 Prize Pool | 10 Franchise Teams | 21 Trial Cities
 
   TRIAL JOURNEY:
@@ -304,7 +304,7 @@ export function Registration() {
             </div>
             <div style={{ display:'flex', flexDirection:'column', borderLeft:'2px solid rgba(255,122,41,0.4)', paddingLeft:10, gap:1 }}>
               <span style={{ fontSize:8, fontWeight:800, color:'#FF7A29', letterSpacing:'.16em' }}>SEASON 5</span>
-              <span style={{ fontSize:7, color:'rgba(255,255,255,0.35)', letterSpacing:'.08em' }}>KRIPARTI PLAYING11</span>
+              <span style={{ fontSize:7, color:'rgba(255,255,255,0.35)', letterSpacing:'.08em' }}>BHARTIYA CORPORATE PL</span>
             </div>
           </div>
           {/* Desktop nav */}
@@ -676,7 +676,7 @@ export function Registration() {
                   🏏 &nbsp;PAY ₹{price} · ENTER PHASE 1 TRIALS
                 </button>
                 <div style={{ display:'flex', justifyContent:'center', gap:16, marginTop:12, flexWrap:'wrap' }}>
-                  {['🔒 Razorpay Secured','256-bit SSL','Kriparti Playing11'].map(t => (
+                  {['🔒 Razorpay Secured','256-bit SSL','BCPL T20'].map(t => (
                     <span key={t} style={{ fontSize:10, color:'rgba(255,255,255,0.25)', fontWeight:600 }}>{t}</span>
                   ))}
                 </div>

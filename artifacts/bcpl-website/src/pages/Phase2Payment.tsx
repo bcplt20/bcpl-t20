@@ -109,7 +109,7 @@ export function Phase2Payment() {
           <div className="ticket">
             {/* Gold header */}
             <div style={{ background:'linear-gradient(135deg,#E8B23D,#B8860B)', padding:'22px 24px' }}>
-              <div style={{ fontSize:9, fontWeight:900, fontFamily:'Montserrat,sans-serif', letterSpacing:'.2em', color:'rgba(0,0,0,0.55)', marginBottom:6, textTransform:'uppercase' }}>BCPL Season 5 · Kriparti Playing11</div>
+              <div style={{ fontSize:9, fontWeight:900, fontFamily:'Montserrat,sans-serif', letterSpacing:'.2em', color:'rgba(0,0,0,0.55)', marginBottom:6, textTransform:'uppercase' }}>BCPL Season 5 · BCPL T20</div>
               <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(14px,4vw,18px)', color:'#fff', lineHeight:1.25, textShadow:'0 2px 8px rgba(0,0,0,0.3)' }}>PHASE 2 PHYSICAL TRIAL ENTRY · BCPL SEASON 5</div>
               <div style={{ marginTop:6, fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.75)' }}>Brand Ambassador: Sourav Ganguly</div>
             </div>
@@ -186,7 +186,7 @@ export function Phase2Payment() {
             {[
               { icon:'🔒', label:'Razorpay Secured' },
               { icon:'🛡', label:'256-bit SSL' },
-              { icon:'🏢', label:'Kriparti Playing11' },
+              { icon:'🏢', label:'BCPL T20' },
             ].map(({ icon, label }) => (
               <div key={label} style={{ display:'flex', alignItems:'center', gap:6 }}>
                 <span style={{ fontSize:14 }}>{icon}</span>
@@ -216,11 +216,11 @@ export function Phase2Payment() {
             </div>
             <div>
               <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:11, letterSpacing:'.12em', color:'rgba(255,255,255,0.35)', marginBottom:12, textTransform:'uppercase' }}>Organised By</div>
-              <div style={{ fontSize:13, color:'rgba(255,255,255,0.6)', lineHeight:1.7 }}>Kriparti Playing11 Pvt. Ltd.<br/>Brand Ambassador: Sourav Ganguly<br/>Season 5 · BCCI Certified Scouts</div>
+              <div style={{ fontSize:13, color:'rgba(255,255,255,0.6)', lineHeight:1.7 }}>BCPL T20 Pvt. Ltd.<br/>Brand Ambassador: Sourav Ganguly<br/>Season 5 · BCCI Certified Scouts</div>
             </div>
           </div>
           <div style={{ borderTop:'1px solid rgba(255,255,255,0.06)', paddingTop:20, display:'flex', justifyContent:'space-between', flexWrap:'wrap', gap:12 }}>
-            <span style={{ fontSize:11, color:'rgba(255,255,255,0.25)' }}>© 2025 Kriparti Playing11 Pvt. Ltd. All rights reserved.</span>
+            <span style={{ fontSize:11, color:'rgba(255,255,255,0.25)' }}>© 2025 BCPL T20 Pvt. Ltd. All rights reserved.</span>
             <span style={{ fontSize:11, color:'rgba(255,255,255,0.25)' }}>BCPL T20 Season 5</span>
           </div>
         </div>

@@ -136,7 +136,7 @@ function Footer() {
           </div>
         </div>
         <div style={{borderTop:'1px solid rgba(255,255,255,0.06)',paddingTop:24,display:'flex',flexWrap:'wrap',gap:12,justifyContent:'space-between',alignItems:'center'}}>
-          <div style={{color:'rgba(255,255,255,0.3)',fontSize:12,fontFamily:'Inter,sans-serif'}}>© 2025 Kriparti Playing11 Pvt. Ltd. | www.bcpl-t20.com</div>
+          <div style={{color:'rgba(255,255,255,0.3)',fontSize:12,fontFamily:'Inter,sans-serif'}}>© 2025 BCPL T20 Pvt. Ltd. | www.bcpl-t20.com</div>
           <div style={{color:'rgba(255,255,255,0.25)',fontSize:12,fontFamily:'Inter,sans-serif'}}>All rights reserved.</div>
         </div>
       </div>
@@ -330,7 +330,7 @@ export function Contact() {
               <div className="glass-card" style={{padding:'28px',animation:'fadeSlide 0.7s ease 0.45s both'}}>
                 <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'rgba(255,255,255,0.7)',marginBottom:16}}>📍 Find Us</div>
                 <div style={{color:'rgba(255,255,255,0.5)',fontSize:13,lineHeight:1.8}}>
-                  <div>Kriparti Playing11 Pvt. Ltd.</div>
+                  <div>BCPL T20 Pvt. Ltd.</div>
                   <div style={{color:'#FF7A29',fontWeight:600}}>www.bcpl-t20.com</div>
                   <div style={{marginTop:8,color:'rgba(255,255,255,0.35)',fontSize:12}}>CIN: U74999DL2020PTC123456</div>
                 </div>

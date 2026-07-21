@@ -78,7 +78,7 @@ function Footer() {
           </div>
         </div>
         <div style={{borderTop:'1px solid rgba(255,255,255,0.05)',paddingTop:20,display:'flex',flexWrap:'wrap',gap:12,justifyContent:'space-between',alignItems:'center'}}>
-          <div style={{color:'rgba(255,255,255,0.28)',fontSize:11}}>© 2025 Kriparti Playing11 Pvt. Ltd. | www.bcpl-t20.com</div>
+          <div style={{color:'rgba(255,255,255,0.28)',fontSize:11}}>© 2025 BCPL T20 Pvt. Ltd. | www.bcpl-t20.com</div>
           <div style={{color:'rgba(255,255,255,0.28)',fontSize:11}}>All rights reserved</div>
         </div>
       </div>
@@ -216,7 +216,7 @@ export function EligibilityCriteria() {
             <p style={{color:'rgba(255,255,255,0.55)',fontSize:13,marginBottom:24}}>Answer 3 quick questions to find out if you qualify for Season 5.</p>
             <div style={{display:'flex',flexDirection:'column',gap:16}}>
               {questions.map((q,i)=>(
-                <div key={i} style={{display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:10}}>
+                <div key={i} style={{display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'nowrap',gap:10}}>
                   <span style={{color:'rgba(255,255,255,0.85)',fontSize:15,fontWeight:600,fontFamily:'Inter,sans-serif'}}>{q.label}</span>
                   <div style={{display:'flex',gap:8}}>
                     <button className={`chip-yes${q.val===true?' active':''}`} onClick={()=>q.setVal(true)}>✓ YES</button>
@@ -285,14 +285,14 @@ export function EligibilityCriteria() {
                 <div style={{color:'rgba(255,255,255,0.6)',fontSize:13,marginTop:4}}>Minimum Age</div>
               </div>
               <div style={{background:'linear-gradient(135deg,rgba(34,197,94,0.1),rgba(34,197,94,0.05))',border:'1px solid rgba(34,197,94,0.2)',borderRadius:14,padding:'16px 24px',textAlign:'center',flex:1,minWidth:120}}>
-                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:36,color:'#22C55E',lineHeight:1}}>∞</div>
-                <div style={{color:'rgba(255,255,255,0.6)',fontSize:13,marginTop:4}}>No Maximum Age</div>
+                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:36,color:'#22C55E',lineHeight:1}}>45</div>
+                <div style={{color:'rgba(255,255,255,0.6)',fontSize:13,marginTop:4}}>Maximum Age</div>
               </div>
             </div>
             <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:10}}>
               {[
                 'Minimum age: 18 years as of the registration date',
-                'No maximum age limit — cricket is for everyone',
+                'Maximum age: 45 years as of the registration date',
                 'Age verified via government-issued Aadhaar card or PAN card',
                 'Date of birth must match across all submitted documents',
               ].map((item,i)=>(
@@ -314,7 +314,8 @@ export function EligibilityCriteria() {
             </p>
             <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:10}}>
               {[
-                'Basic cricket experience is required — colony cricket counts!',
+                'Basic cricket experience is required — colony or gully cricket counts!',
+                'Players who have represented at state, district, or professional level must have a minimum 10-year gap from their last competitive match',
                 'No formal coaching certificates or club membership needed',
                 'Skills assessed via self-uploaded video post-registration',
                 'Video must demonstrate batting, bowling, or keeping depending on your role',

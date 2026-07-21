@@ -138,7 +138,7 @@ function Footer() {
           </div>
         </div>
         <div style={{borderTop:'1px solid rgba(255,255,255,0.06)',paddingTop:24,display:'flex',flexWrap:'wrap',gap:12,justifyContent:'space-between',alignItems:'center'}}>
-          <div style={{color:'rgba(255,255,255,0.3)',fontSize:12,fontFamily:'Inter,sans-serif'}}>© 2025 Kriparti Playing11 Pvt. Ltd. | www.bcpl-t20.com</div>
+          <div style={{color:'rgba(255,255,255,0.3)',fontSize:12,fontFamily:'Inter,sans-serif'}}>© 2025 BCPL T20 Pvt. Ltd. | www.bcpl-t20.com</div>
           <div style={{color:'rgba(255,255,255,0.25)',fontSize:12,fontFamily:'Inter,sans-serif'}}>All rights reserved.</div>
         </div>
       </div>
@@ -156,18 +156,18 @@ function MobileStickyCTA() {
 }
 
 const stats = [
-  {num:'5,000+',label:'Players',sub:'& growing every season'},
+  {num:'2.5 Lakh+',label:'Players',sub:'registered across all seasons'},
   {num:'75',label:'Cities',sub:'across India'},
-  {num:'5',label:'Seasons',sub:'since 2020'},
+  {num:'4',label:'Seasons',sub:'since 2021'},
   {num:'10',label:'Franchises',sub:'competing this year'},
 ];
 
 const timeline = [
-  {year:'2020',text:'Founded in Delhi — 150 players, 3 cities, 1 dream'},
-  {year:'2021',text:'Season 2 — 500 players, 5 cities, first franchise system'},
-  {year:'2022',text:'Season 3 — 1,200 players, franchise auction debut'},
-  {year:'2023',text:'Season 4 — 3,000 players, 25 cities, national media'},
-  {year:'2025',text:'Season 5 — 5,000+ players, 75 cities, 10 franchises. India\'s biggest.'},
+  {year:'2021',text:'Season 1 — Founded in Delhi. 500 players, 5 cities, 1 dream'},
+  {year:'2022',text:'Season 2 — 5,000+ players, franchise auction debut, 10 cities'},
+  {year:'2023',text:'Season 3 — 25,000+ players, 25 cities, franchise system expands'},
+  {year:'2024',text:'Season 4 — 2 Lakh+ players, 75 cities, national media coverage'},
+  {year:'2025–26',text:'Season 5 — 2.5 Lakh+ players, 75 cities, 10 franchises. India\'s biggest corporate cricket league.'},
 ];
 
 const diffs = [
@@ -291,11 +291,11 @@ export function About() {
           <div className="glass-card" style={{padding:'clamp(20px,5vw,48px) clamp(16px,4vw,48px)',maxWidth:860,margin:'0 auto',border:'1px solid rgba(232,178,61,0.25)',animation:'borderGlow 3s ease infinite'}}>
             <div style={{display:'flex',flexWrap:'wrap',gap:32,alignItems:'center',marginBottom:32}}>
               <div style={{flex:1,minWidth:200}}>
-                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,color:'#fff',marginBottom:8}}>Kriparti Playing11 Pvt. Ltd.</div>
+                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,color:'#fff',marginBottom:8}}>BCPL T20 Pvt. Ltd.</div>
                 <div style={{color:'rgba(255,255,255,0.4)',fontSize:13,fontFamily:'Inter,sans-serif'}}>Registered Company · India</div>
               </div>
               <div style={{display:'flex',gap:20,flexWrap:'wrap'}}>
-                {[{label:'Registered',val:'Company'},{ label:'Track Record',val:'4 Years'},{label:'Players Served',val:'5,000+'}].map((b,i)=>(
+                {[{label:'Registered',val:'Company'},{ label:'Track Record',val:'4 Seasons'},{label:'Players Served',val:'2.5 Lakh+'}].map((b,i)=>(
                   <div key={i} style={{textAlign:'center'}}>
                     <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:20,color:'#E8B23D'}}>{b.val}</div>
                     <div style={{color:'rgba(255,255,255,0.4)',fontSize:11,fontFamily:'Inter,sans-serif'}}>{b.label}</div>
@@ -317,7 +317,7 @@ export function About() {
       <section style={{position:'relative',zIndex:1,padding:'0 0 120px',textAlign:'center'}}>
         <div className="wrap">
           <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(24px,3.5vw,40px)',color:'#fff',marginBottom:12}}>
-            Join <span style={{color:'#FF7A29'}}>5,000+</span> players who took their shot
+            Join <span style={{color:'#FF7A29'}}>2.5 Lakh+</span> players who took their shot
           </h2>
           <p style={{color:'rgba(255,255,255,0.5)',fontSize:15,marginBottom:32}}>Registration open now. ₹299 only.</p>
           <button className="btn-fire" style={{padding:'18px 48px',fontSize:17}}>Register for ₹299 →</button>

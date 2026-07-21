@@ -76,7 +76,7 @@ function Footer() {
           </div>
         </div>
         <div style={{borderTop:'1px solid rgba(255,255,255,0.05)',paddingTop:20,display:'flex',flexWrap:'wrap',gap:12,justifyContent:'space-between',alignItems:'center'}}>
-          <div style={{color:'rgba(255,255,255,0.28)',fontSize:11}}>© 2025 Kriparti Playing11 Pvt. Ltd. | www.bcpl-t20.com</div>
+          <div style={{color:'rgba(255,255,255,0.28)',fontSize:11}}>© 2025 BCPL T20 Pvt. Ltd. | www.bcpl-t20.com</div>
           <div style={{color:'rgba(255,255,255,0.28)',fontSize:11}}>All rights reserved</div>
         </div>
       </div>
@@ -182,7 +182,7 @@ export function Terms() {
     {n:6,icon:'©',title:'Intellectual Property',items:[
       'BCPL owns all match footage, broadcast content, highlight reels, and official photographs',
       'Players may share their own personal performance clips on social media for personal promotion',
-      'BCPL name, logo, team names, and all associated marks are registered trademarks of Kriparti Playing11 Pvt. Ltd.',
+      'BCPL name, logo, team names, and all associated marks are registered trademarks of BCPL T20 Pvt. Ltd.',
       'Unauthorised commercial use of BCPL brand assets is prohibited and actionable',
       'Players may not license or sell BCPL content without explicit written consent',
     ]},
@@ -274,7 +274,7 @@ export function Terms() {
               <div>
                 <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#FF7A29',marginBottom:6}}>Questions About These Terms?</div>
                 <p style={{color:'rgba(255,255,255,0.85)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
-                  Contact our legal team at <strong style={{color:'#E8B23D'}}>legal@bcpl-t20.com</strong> or write to: Kriparti Playing11 Pvt. Ltd., New Delhi, India. We aim to respond within 5 business days.
+                  Contact our legal team at <strong style={{color:'#E8B23D'}}>legal@bcpl-t20.com</strong> or write to: BCPL T20 Pvt. Ltd., New Delhi, India. We aim to respond within 5 business days.
                 </p>
               </div>
             </div>

@@ -31,12 +31,12 @@ const STATS = [
 ];
 
 const STEPS = [
-  { num:1, phase:1, icon:"📋", title:"Register & Pay",    price:"₹299 / ₹399", desc:"Choose your role. Pay the Phase 1 fee. Instant confirmation.",           color:"#FF7A29", status:"OPEN NOW" },
-  { num:2, phase:1, icon:"🎬", title:"Upload Trial Video", price:"Free",         desc:"Record a 2-minute cricket clip. Upload from any ground in India.",       color:"#FF7A29", status:null },
-  { num:3, phase:1, icon:"🔍", title:"Scout Review",       price:"Free",         desc:"BCCI-certified scouts review your clip. Result within 7 working days.",  color:"#FF7A29", status:null },
-  { num:4, phase:2, icon:"🏟", title:"Physical Trial",     price:"₹2,000",       desc:"If selected — attend your city trial. Franchise coaches watch live.",    color:"#E8B23D", status:"Only if selected" },
-  { num:5, phase:2, icon:"🏏", title:"Franchise Auction",  price:"No extra cost",desc:"10 BCPL franchises bid for you live. Top bid: ₹20 Lakh.",               color:"#E8B23D", status:null },
-  { num:6, phase:3, icon:"🏆", title:"Play Season 5",      price:"No extra cost",desc:"Represent your franchise. ₹6 Crore prize pool. Office se Stadium tak.", color:"#22C55E", status:null },
+  { num:1, phase:1, icon:"📋", title:"Register & Pay",    price:"₹299 / ₹399",  desc:"Batsman/Bowler/WK: ₹299 · All-Rounder: ₹399. Choose your role and pay online — instant confirmation.",   color:"#FF7A29", status:"OPEN NOW" },
+  { num:2, phase:1, icon:"🎬", title:"Upload Trial Video", price:"Included",     desc:"Record a 2-minute cricket clip. Upload from any ground in India. No studio needed.",                      color:"#FF7A29", status:null },
+  { num:3, phase:1, icon:"🔍", title:"Scout Review",       price:"Included",     desc:"BCCI-certified scouts review your clip. Result guaranteed within 7 working days — or full refund.",       color:"#FF7A29", status:null },
+  { num:4, phase:2, icon:"🏟", title:"Physical Trial",     price:"₹2,000",       desc:"Only if selected from Phase 1 — attend your tri-city trial. Franchise coaches evaluate you live.",       color:"#E8B23D", status:"Only if selected from Phase 1" },
+  { num:5, phase:2, icon:"🏏", title:"Franchise Auction",  price:"No extra cost",desc:"10 BCPL franchises bid for you in a live IPL-style auction. Top player bid: ₹20 Lakh.",                color:"#E8B23D", status:null },
+  { num:6, phase:3, icon:"🏆", title:"Play Season 5",      price:"No extra cost",desc:"Represent your franchise. ₹6 Crore prize pool. Office se Stadium tak.",                                  color:"#22C55E", status:null },
 ];
 
 const FAQS = [
@@ -436,20 +436,26 @@ export function Home() {
       </section>
 
       {/* ══ NO HIDDEN COSTS STRIP ══ */}
-      <section style={{ background:"linear-gradient(135deg,#0A2010,#061208)", borderTop:"1px solid rgba(34,197,94,.15)", borderBottom:"1px solid rgba(34,197,94,.15)", padding:"20px 0" }}>
-        <div className="W" style={{ display:"flex", flexWrap:"wrap", gap:16, alignItems:"center", justifyContent:"center" }}>
-          {[
-            { icon:"✅", text:"Zero hidden costs — ever" },
-            { icon:"🛡",  text:"Pay Phase 2 ONLY if selected" },
-            { icon:"🔒",  text:"Secure payment via Cashfree" },
-            { icon:"⚡",  text:"Instant registration confirmation" },
-          ].map(b=>(
-            <div key={b.text} style={{ display:"flex", alignItems:"center", gap:8 }}>
-              <span style={{ fontSize:18 }}>{b.icon}</span>
-              <span className="mont" style={{ fontWeight:700, fontSize:12, color:"#22C55E", letterSpacing:".04em" }}>{b.text}</span>
+      <section style={{ background:"linear-gradient(135deg,#0A2010,#061208)", borderTop:"1px solid rgba(34,197,94,.15)", borderBottom:"1px solid rgba(34,197,94,.15)", padding:"16px 0", overflowX:"hidden" }}>
+        <div style={{ display:"flex", gap:0, animation:"trustScroll 18s linear infinite", width:"max-content" }}>
+          {[...Array(3)].map((_,rep)=>(
+            <div key={rep} style={{ display:"flex", gap:0, flexShrink:0 }}>
+              {[
+                { icon:"✅", text:"Zero hidden costs — ever" },
+                { icon:"🛡",  text:"Pay Phase 2 ONLY if selected" },
+                { icon:"🔒",  text:"Secure payment via Cashfree" },
+                { icon:"⚡",  text:"Instant registration confirmation" },
+                { icon:"⏱",  text:"Phase 1 result in 7 days — or full refund" },
+              ].map(b=>(
+                <div key={b.text+rep} style={{ display:"flex", alignItems:"center", gap:8, padding:"0 28px", borderRight:"1px solid rgba(34,197,94,.12)", whiteSpace:"nowrap" }}>
+                  <span style={{ fontSize:16 }}>{b.icon}</span>
+                  <span className="mont" style={{ fontWeight:700, fontSize:11, color:"#22C55E", letterSpacing:".04em" }}>{b.text}</span>
+                </div>
+              ))}
             </div>
           ))}
         </div>
+        <style>{`@keyframes trustScroll{0%{transform:translateX(0)}100%{transform:translateX(-33.333%)}}`}</style>
       </section>
 
       {/* ══════════════════════════════════════
@@ -961,7 +967,7 @@ export function Home() {
             Your Stadium Debut<br/>Starts With <span className="shim">₹299</span>
           </h2>
           <p style={{ fontSize:"clamp(14px,2vw,17px)", color:"rgba(255,255,255,.5)", lineHeight:1.7, marginBottom:32, maxWidth:520, margin:"0 auto 32px" }}>
-            Join thousands of working professionals who have already taken the first step. Phase 1 closes 28 February 2026.
+            Join 2.5 lakh+ working professionals who have already taken the first step. Phase 1 closes 28 February 2026.
           </p>
           <div style={{ display:"flex", gap:14, justifyContent:"center", flexWrap:"wrap" }}>
             <button className="btn-cta" style={{ fontSize:16, padding:"16px 36px" }} onClick={()=>navigate("/register")}>🏏 Register Now — ₹299 →</button>
@@ -1108,22 +1114,25 @@ export function Home() {
           {/* Bottom bar — single line */}
           <div style={{ borderTop:"1px solid rgba(255,255,255,.05)", paddingTop:16 }}>
             {/* Social Media Links */}
-            <div style={{ display:"flex", gap:10, justifyContent:"center", marginBottom:18 }}>
-              {[
-                { icon:"📸", label:"Instagram", href:"https://instagram.com/bcplt20" },
-                { icon:"▶️", label:"YouTube",   href:"https://youtube.com/@bcplt20" },
-                { icon:"🐦", label:"Twitter",   href:"https://twitter.com/bcplt20" },
-                { icon:"💼", label:"LinkedIn",  href:"https://linkedin.com/company/bcplt20" },
-              ].map(s=>(
+            <div style={{ display:"flex", gap:10, justifyContent:"center", marginBottom:18, flexWrap:"wrap" }}>
+              {([
+                { label:"Instagram", href:"https://instagram.com/bcplt20", path:"M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z", type:"path" },
+                { label:"YouTube",   href:"https://youtube.com/@bcplt20",  path:"M10,16.5V7.5L16,12M20,4.4C19.4,4.2 15.7,4 12,4C8.3,4 4.6,4.2 4,4.4C2.1,4.9 2,8.6 2,12C2,15.4 2.1,19.1 4,19.6C4.6,19.8 8.3,20 12,20C15.7,20 19.4,19.8 20,19.6C21.9,19.1 22,15.4 22,12C22,8.6 21.9,4.9 20,4.4Z", type:"path" },
+                { label:"X",         href:"https://x.com/bcplt20",         path:"M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.631L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z", type:"path" },
+                { label:"Threads",   href:"https://threads.net/@bcplt20",  path:"M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm3.86 11.4c-.07 1.57-1.17 2.63-2.94 2.74-1.07.07-1.93-.3-2.47-.98-.42-.54-.58-1.2-.47-1.9.19-1.2 1.17-1.98 2.58-2.06.58-.03 1.13.06 1.64.27-.06-.4-.24-.74-.54-.97-.41-.31-.98-.42-1.7-.34-.9.1-1.46.54-1.46.54l-.67-1.2s.84-.62 2.17-.72c.77-.06 1.44.08 1.99.41.87.52 1.32 1.38 1.34 2.52 0 .04 0 .08 0 .12.15.07.29.15.42.24.66.46.97 1.12.9 1.97l-.03.36zm-1.17-.26c.04-.44-.1-.77-.42-.99-.2-.14-.44-.23-.69-.28.02.18.02.37 0 .56-.07.7-.5 1.12-1.16 1.09-.46-.02-.78-.3-.75-.7.04-.48.5-.76 1.3-.74.15 0 .29.01.43.03-.03-.6-.35-.93-.96-.93-.44 0-.85.17-1.15.47l-.43-.78c.44-.38 1.04-.58 1.72-.54.99.06 1.57.63 1.63 1.62l.01.08c.16.02.31.06.47.11z", type:"path" },
+                { label:"Facebook",  href:"https://facebook.com/bcplt20",  path:"M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.34 11.93 5.96 14.22 5.96C15.31 5.96 16.45 6.15 16.45 6.15V8.62H15.19C13.95 8.62 13.56 9.39 13.56 10.18V12.06H16.34L15.89 14.96H13.56V21.96A10 10 0 0 0 22 12.06C22 6.53 17.5 2.04 12 2.04Z", type:"path" },
+              ] as {label:string,href:string,path:string,type:string}[]).map(s=>(
                 <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" title={s.label}
-                  style={{ width:36, height:36, borderRadius:8, background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.08)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:15, textDecoration:"none", transition:"border-color .2s,background .2s" }}
-                  onMouseEnter={e=>{ e.currentTarget.style.borderColor="#FF7A29"; e.currentTarget.style.background="rgba(255,122,41,.1)"; }}
-                  onMouseLeave={e=>{ e.currentTarget.style.borderColor="rgba(255,255,255,.08)"; e.currentTarget.style.background="rgba(255,255,255,.05)"; }}
-                >{s.icon}</a>
+                  style={{ width:38, height:38, borderRadius:9, background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.08)", display:"flex", alignItems:"center", justifyContent:"center", textDecoration:"none", transition:"border-color .2s,background .2s", color:"rgba(255,255,255,.6)", flexShrink:0 }}
+                  onMouseEnter={e=>{ e.currentTarget.style.borderColor="#FF7A29"; e.currentTarget.style.background="rgba(255,122,41,.12)"; (e.currentTarget.querySelector('svg') as SVGElement|null)?.setAttribute('style','color:#FF7A29'); }}
+                  onMouseLeave={e=>{ e.currentTarget.style.borderColor="rgba(255,255,255,.08)"; e.currentTarget.style.background="rgba(255,255,255,.05)"; (e.currentTarget.querySelector('svg') as SVGElement|null)?.setAttribute('style','color:rgba(255,255,255,.6)'); }}
+                >
+                  <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d={s.path}/></svg>
+                </a>
               ))}
             </div>
             <div className="foot-bottom">
-              <p className="mont" style={{ fontSize:11, color:"rgba(255,255,255,.2)", fontWeight:600 }}>© 2026 BCPL T20 · Kriparti Playing11 Pvt. Ltd. · All Rights Reserved.</p>
+              <p className="mont" style={{ fontSize:11, color:"rgba(255,255,255,.2)", fontWeight:600 }}>© 2026 BCPL T20 — Bhartiya Corporate Premier League · All Rights Reserved.</p>
               <div className="foot-legal-links">
                 <a href="/privacy" style={{ fontSize:11, color:"rgba(255,255,255,.2)", textDecoration:"none" }}
                   onMouseEnter={e=>(e.currentTarget.style.color="#FF7A29")}

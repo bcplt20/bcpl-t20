@@ -205,11 +205,11 @@ export function Phase2PaymentReceipt() {
             </div>
             <div>
               <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:11, letterSpacing:'.12em', color:'rgba(255,255,255,0.35)', marginBottom:12, textTransform:'uppercase' }}>Organised By</div>
-              <div style={{ fontSize:13, color:'rgba(255,255,255,0.6)', lineHeight:1.7 }}>Kriparti Playing11 Pvt. Ltd.<br/>Brand Ambassador: Sourav Ganguly<br/>Season 5 · BCCI Certified Scouts</div>
+              <div style={{ fontSize:13, color:'rgba(255,255,255,0.6)', lineHeight:1.7 }}>BCPL T20 Pvt. Ltd.<br/>Brand Ambassador: Sourav Ganguly<br/>Season 5 · BCCI Certified Scouts</div>
             </div>
           </div>
           <div style={{ borderTop:'1px solid rgba(255,255,255,0.06)', paddingTop:20, display:'flex', justifyContent:'space-between', flexWrap:'wrap', gap:12 }}>
-            <span style={{ fontSize:11, color:'rgba(255,255,255,0.25)' }}>© 2025 Kriparti Playing11 Pvt. Ltd. All rights reserved.</span>
+            <span style={{ fontSize:11, color:'rgba(255,255,255,0.25)' }}>© 2025 BCPL T20 Pvt. Ltd. All rights reserved.</span>
             <span style={{ fontSize:11, color:'rgba(255,255,255,0.25)' }}>BCPL T20 Season 5</span>
           </div>
         </div>

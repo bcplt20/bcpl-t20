@@ -179,7 +179,7 @@ function Footer() {
           </div>
         </div>
         <div style={{borderTop:'1px solid rgba(255,255,255,0.05)',paddingTop:24,display:'flex',flexWrap:'wrap',gap:12,justifyContent:'space-between',alignItems:'center'}}>
-          <div style={{color:'rgba(255,255,255,0.25)',fontSize:11,fontFamily:'Inter,sans-serif'}}>© 2025 Kriparti Playing11 Pvt. Ltd. · <a href="https://www.bcpl-t20.com" style={{color:'rgba(255,122,41,0.5)',textDecoration:'none'}}>www.bcpl-t20.com</a></div>
+          <div style={{color:'rgba(255,255,255,0.25)',fontSize:11,fontFamily:'Inter,sans-serif'}}>© 2025 BCPL T20 Pvt. Ltd. · <a href="https://www.bcpl-t20.com" style={{color:'rgba(255,122,41,0.5)',textDecoration:'none'}}>www.bcpl-t20.com</a></div>
           <div style={{color:'rgba(255,255,255,0.2)',fontSize:11,fontFamily:'Inter,sans-serif'}}>Relive the dream. Rediscover the thrill.</div>
         </div>
       </div>
@@ -203,21 +203,9 @@ interface TeamRow {
   eliminated?: boolean;
 }
 
-const GROUP_A: TeamRow[] = [
-  {pos:1,emoji:'🌊',name:'Mumbai Mavericks',abbr:'MUM',p:8,w:6,l:2,t:0,nrr:'+1.24',pts:12,form:['W','W','L','W','W'],qualified:true},
-  {pos:2,emoji:'🗼',name:'Delhi Dynamos',abbr:'DEL',p:8,w:5,l:3,t:0,nrr:'+0.87',pts:10,form:['W','W','L','W','L'],qualified:true},
-  {pos:3,emoji:'🐆',name:'Pune Panthers',abbr:'PUN',p:8,w:5,l:3,t:0,nrr:'+0.43',pts:10,form:['L','W','W','W','L']},
-  {pos:4,emoji:'🦁',name:'Ahmedabad Lions',abbr:'AHM',p:8,w:4,l:4,t:0,nrr:'-0.12',pts:8,form:['W','L','L','W','L']},
-  {pos:5,emoji:'♟️',name:'Kolkata Knights',abbr:'KOL',p:8,w:3,l:5,t:0,nrr:'-0.65',pts:6,form:['L','L','L','W','W']},
-];
-
-const GROUP_B: TeamRow[] = [
-  {pos:1,emoji:'🐂',name:'Bangalore Bulls',abbr:'BLR',p:8,w:7,l:1,t:0,nrr:'+1.56',pts:14,form:['W','W','W','W','L'],qualified:true},
-  {pos:2,emoji:'🦅',name:'Hyderabad Hawks',abbr:'HYD',p:8,w:5,l:3,t:0,nrr:'+0.92',pts:10,form:['W','W','L','W','L'],qualified:true},
-  {pos:3,emoji:'👑',name:'Lucknow Nawabs',abbr:'LKN',p:8,w:4,l:4,t:0,nrr:'+0.11',pts:8,form:['W','L','W','L','W']},
-  {pos:4,emoji:'🌶️',name:'Chennai Chiefs',abbr:'CHN',p:8,w:3,l:5,t:0,nrr:'-0.34',pts:6,form:['L','W','L','L','W']},
-  {pos:5,emoji:'🐅',name:'Jaipur Jaguars',abbr:'JAI',p:8,w:2,l:6,t:0,nrr:'-0.88',pts:4,form:['L','L','W','L','L'],eliminated:true},
-];
+// Season 4 standings will be published once tournament begins
+const GROUP_A: TeamRow[] = [];
+const GROUP_B: TeamRow[] = [];
 
 function FormDots({form}: {form: ('W'|'L')[]}) {
   return (
@@ -315,36 +303,43 @@ export function PointsTable() {
         <div style={{padding:'clamp(40px,6vw,60px) 0 clamp(28px,4vw,48px)',textAlign:'center'}}>
           <div className="wrap">
             <div style={{marginBottom:16,display:'flex',justifyContent:'center',alignItems:'center',gap:8}}>
-              <span className="tag-pill">📊 LIVE STANDINGS</span>
-              <span style={{width:8,height:8,borderRadius:'50%',background:'#E8493F',animation:'liveBlip 1s ease-in-out infinite',display:'inline-block'}}/>
+              <span className="tag-pill">📊 SEASON 4 STANDINGS</span>
             </div>
             <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(28px,6vw,68px)',lineHeight:1.05,marginBottom:10,color:'#fff'}}>
-              WHO'S LEADING
+              POINTS
             </h1>
             <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(28px,6vw,68px)',lineHeight:1.05,marginBottom:24}}>
-              <span className="shimmer-gold">THE PACK?</span>
+              <span className="shimmer-gold">TABLE.</span>
             </h1>
-            <p style={{color:'rgba(255,255,255,0.45)',fontSize:15,fontFamily:'Inter,sans-serif',maxWidth:480,margin:'0 auto'}}>Live group standings · Season 5 · Top 2 from each group advance to playoffs</p>
+            <p style={{color:'rgba(255,255,255,0.45)',fontSize:15,fontFamily:'Inter,sans-serif',maxWidth:480,margin:'0 auto'}}>Season 4 standings will be updated live once the tournament begins — stay tuned!</p>
           </div>
         </div>
 
         <div className="wrap" style={{paddingBottom:100}}>
 
+          {/* UPCOMING NOTICE */}
+          {GROUP_A.length === 0 && GROUP_B.length === 0 && (
+            <div style={{textAlign:'center',padding:'clamp(60px,10vw,100px) 20px'}}>
+              <div style={{fontSize:64,marginBottom:20}}>🏆</div>
+              <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,4vw,36px)',color:'#fff',marginBottom:12}}>Standings Coming Soon</div>
+              <p style={{color:'rgba(255,255,255,0.45)',fontSize:15,maxWidth:440,margin:'0 auto 28px',lineHeight:1.7}}>Season 4 is in the trial phase — franchise auctions and final team composition will be announced before the tournament begins. Live standings will appear here once the first match is played.</p>
+              <a href="/register" style={{display:'inline-flex',alignItems:'center',gap:8,background:'linear-gradient(135deg,#FF7A29,#D95E10)',border:'none',borderRadius:12,color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:13,letterSpacing:'.06em',cursor:'pointer',padding:'14px 28px',textDecoration:'none',textTransform:'uppercase'}}>🏏 Register for Season 5 →</a>
+            </div>
+          )}
+
           {/* LEGEND */}
-          <div className="legend-wrap" style={{display:'flex',flexWrap:'wrap',gap:10,marginBottom:28}}>
-            <span style={{display:'inline-flex',alignItems:'center',gap:6,background:'rgba(232,178,61,0.08)',border:'1px solid rgba(232,178,61,0.25)',borderRadius:100,padding:'6px 16px',fontSize:12,fontFamily:'Montserrat,sans-serif',fontWeight:700,color:'#E8B23D'}}>🏆 Qualified for Playoffs</span>
-            <span style={{display:'inline-flex',alignItems:'center',gap:6,background:'rgba(232,73,63,0.08)',border:'1px solid rgba(232,73,63,0.25)',borderRadius:100,padding:'6px 16px',fontSize:12,fontFamily:'Montserrat,sans-serif',fontWeight:700,color:'#E8493F'}}>❌ Eliminated</span>
-            <span style={{display:'inline-flex',alignItems:'center',gap:6,background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:100,padding:'6px 16px',fontSize:12,fontFamily:'Inter,sans-serif',fontWeight:600,color:'rgba(255,255,255,0.5)'}}>
-              <span style={{width:8,height:8,borderRadius:'50%',background:'#22C55E',display:'inline-block'}}/>W = Win
-              <span style={{marginLeft:8,width:8,height:8,borderRadius:'50%',background:'#E8493F',display:'inline-block'}}/>L = Loss
-            </span>
-          </div>
-
-          {/* GROUP A */}
-          <StandingsTable rows={GROUP_A} groupLabel="A"/>
-
-          {/* GROUP B */}
-          <StandingsTable rows={GROUP_B} groupLabel="B"/>
+          {(GROUP_A.length > 0 || GROUP_B.length > 0) && <>
+            <div className="legend-wrap" style={{display:'flex',flexWrap:'wrap',gap:10,marginBottom:28}}>
+              <span style={{display:'inline-flex',alignItems:'center',gap:6,background:'rgba(232,178,61,0.08)',border:'1px solid rgba(232,178,61,0.25)',borderRadius:100,padding:'6px 16px',fontSize:12,fontFamily:'Montserrat,sans-serif',fontWeight:700,color:'#E8B23D'}}>🏆 Qualified for Playoffs</span>
+              <span style={{display:'inline-flex',alignItems:'center',gap:6,background:'rgba(232,73,63,0.08)',border:'1px solid rgba(232,73,63,0.25)',borderRadius:100,padding:'6px 16px',fontSize:12,fontFamily:'Montserrat,sans-serif',fontWeight:700,color:'#E8493F'}}>❌ Eliminated</span>
+              <span style={{display:'inline-flex',alignItems:'center',gap:6,background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:100,padding:'6px 16px',fontSize:12,fontFamily:'Inter,sans-serif',fontWeight:600,color:'rgba(255,255,255,0.5)'}}>
+                <span style={{width:8,height:8,borderRadius:'50%',background:'#22C55E',display:'inline-block'}}/>W = Win
+                <span style={{marginLeft:8,width:8,height:8,borderRadius:'50%',background:'#E8493F',display:'inline-block'}}/>L = Loss
+              </span>
+            </div>
+            <StandingsTable rows={GROUP_A} groupLabel="A"/>
+            <StandingsTable rows={GROUP_B} groupLabel="B"/>
+          </>}
 
           {/* TOP PERFORMERS */}
           <div style={{marginBottom:40}}>
