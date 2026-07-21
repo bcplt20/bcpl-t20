@@ -34,6 +34,7 @@ export function LoginModal() {
   const [verifying, setVerifying] = useState(false);
   const [errMsg,  setErrMsg]  = useState('');
   const [devOtp,  setDevOtp]  = useState('');   // shown in dev when SMS isn't wired
+  const [resendTimer, setResendTimer] = useState(0);
 
   const reset = useCallback(() => {
     setStep('phone'); setPhone(''); setOtp(''); setErrMsg(''); setDevOtp('');
@@ -52,15 +53,35 @@ export function LoginModal() {
     if (e.target === e.currentTarget) close();
   };
 
+  function startResendTimer() {
+    setResendTimer(30);
+    const iv = setInterval(() => {
+      setResendTimer(t => { if (t <= 1) { clearInterval(iv); return 0; } return t - 1; });
+    }, 1000);
+  }
+
   async function handleSendOtp() {
     setSending(true); setErrMsg('');
     try {
       const res: any = await apiPost('/auth/send-otp', { phone, purpose: 'login' });
-      // Dev mode: API returns devOtp when SMS key not set
       if (res.devOtp) setDevOtp(res.devOtp);
       setStep('otp');
+      startResendTimer();
     } catch (e: any) {
       setErrMsg(e.message ?? 'Failed to send OTP');
+    } finally {
+      setSending(false);
+    }
+  }
+
+  async function handleResendOtp() {
+    setSending(true); setErrMsg('');
+    try {
+      const res: any = await apiPost('/auth/send-otp', { phone, purpose: 'login' });
+      if (res.devOtp) setDevOtp(res.devOtp);
+      startResendTimer();
+    } catch (e: any) {
+      setErrMsg(e.message ?? 'Failed to resend OTP');
     } finally {
       setSending(false);
     }
@@ -181,10 +202,16 @@ export function LoginModal() {
             >
               {verifying ? 'Verifying…' : '✓ Verify & Login'}
             </button>
-            <div style={{ textAlign:'center' }}>
+            <div style={{ textAlign:'center', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
               <button onClick={() => { setStep('phone'); setOtp(''); setErrMsg(''); }}
                 style={{ background:'none', border:'none', color:'rgba(255,255,255,0.35)', fontFamily:'Inter,sans-serif', fontSize:12, cursor:'pointer', textDecoration:'underline' }}>
                 ← Change number
+              </button>
+              <button
+                onClick={handleResendOtp}
+                disabled={resendTimer > 0 || sending}
+                style={{ background:'none', border:'none', fontFamily:'Inter,sans-serif', fontSize:12, cursor: resendTimer > 0 ? 'default' : 'pointer', color: resendTimer > 0 ? 'rgba(255,255,255,0.25)' : '#FF7A29', textDecoration: resendTimer > 0 ? 'none' : 'underline' }}>
+                {resendTimer > 0 ? `Resend in ${resendTimer}s` : 'Resend OTP'}
               </button>
             </div>
           </>

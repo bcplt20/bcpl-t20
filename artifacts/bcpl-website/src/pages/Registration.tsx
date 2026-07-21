@@ -155,6 +155,7 @@ export function Registration() {
   const [payOtp, setPayOtp]             = useState('');
   const [payOtpLoading, setPayOtpLoading] = useState(false);
   const [payOtpError, setPayOtpError]   = useState('');
+  const [payOtpTimer, setPayOtpTimer]   = useState(0);
 
   const handleVideoFile = (file: File) => {
     if (!file.type.startsWith('video/')) { alert('Please select a video file (MP4, MOV, AVI, etc.)'); return; }
@@ -236,13 +237,31 @@ export function Registration() {
     }
   };
 
+  function startPayOtpTimer() {
+    setPayOtpTimer(30);
+    const iv = setInterval(() => {
+      setPayOtpTimer(t => { if (t <= 1) { clearInterval(iv); return 0; } return t - 1; });
+    }, 1000);
+  }
+
   const handlePayOtpSend = async () => {
     setPayOtpLoading(true); setPayOtpError('');
     try {
       const r = await sendOtp(phone, 'register');
       if (r.devOtp) console.info('[DEV OTP]', r.devOtp);
       setPayOtpStep('otp');
+      startPayOtpTimer();
     } catch (e: any) { setPayOtpError(e.message ?? 'Failed to send OTP'); }
+    finally { setPayOtpLoading(false); }
+  };
+
+  const handlePayOtpResend = async () => {
+    setPayOtpLoading(true); setPayOtpError('');
+    try {
+      const r = await sendOtp(phone, 'register');
+      if (r.devOtp) console.info('[DEV OTP]', r.devOtp);
+      startPayOtpTimer();
+    } catch (e: any) { setPayOtpError(e.message ?? 'Failed to resend OTP'); }
     finally { setPayOtpLoading(false); }
   };
 
@@ -1062,7 +1081,13 @@ export function Registration() {
                 style={{ width:'100%', padding:'13px 0', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', opacity:payOtp.length!==6||payOtpLoading?0.5:1 }}>
                 {payOtpLoading ? '⏳ Verifying...' : 'Verify & Pay →'}
               </button>
-              <button onClick={() => { setPayOtpStep('phone'); setPayOtpError(''); }} style={{ width:'100%', marginTop:8, padding:'10px', background:'none', border:'1px solid rgba(255,255,255,0.1)', borderRadius:10, color:'rgba(255,255,255,0.4)', fontSize:12, cursor:'pointer' }}>← Back</button>
+              <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginTop:8 }}>
+                <button onClick={() => { setPayOtpStep('phone'); setPayOtpError(''); }} style={{ background:'none', border:'none', color:'rgba(255,255,255,0.4)', fontSize:12, cursor:'pointer', padding:'8px 0' }}>← Back</button>
+                <button onClick={handlePayOtpResend} disabled={payOtpTimer > 0 || payOtpLoading}
+                  style={{ background:'none', border:'none', fontSize:12, cursor: payOtpTimer > 0 ? 'default' : 'pointer', color: payOtpTimer > 0 ? 'rgba(255,255,255,0.25)' : '#FF7A29', textDecoration: payOtpTimer > 0 ? 'none' : 'underline', padding:'8px 0' }}>
+                  {payOtpTimer > 0 ? `Resend in ${payOtpTimer}s` : 'Resend OTP'}
+                </button>
+              </div>
             </>)}
           </div>
         </div>
