@@ -246,6 +246,11 @@ export default function UsersView() {
               <button style={{ flex:1, padding:"9px 0", borderRadius:8, border:"none", background:"#1E293B", color:"#94A3B8", fontSize:11, cursor:"pointer", fontWeight:600 }}>Message</button>
               <button style={{ flex:1, padding:"9px 0", borderRadius:8, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontSize:11, cursor:"pointer", fontWeight:700 }}>Full Profile</button>
             </div>
+            <button
+              onClick={() => { if(confirm(`Delete all data for ${selected.name}? This cannot be undone.`)) setSelected(null); }}
+              style={{ width:"100%", marginTop:8, padding:"9px 0", borderRadius:8, border:"1px solid #EF444440", background:"#EF444410", color:"#EF4444", fontSize:11, cursor:"pointer", fontWeight:700 }}>
+              🗑 Delete User & All Data
+            </button>
           </div>
           <div style={{ ...card, padding:16 }}>
             <div style={{ fontSize:11, fontWeight:700, color:"#475569", marginBottom:12, textTransform:"uppercase", letterSpacing:.5 }}>Payment Status</div>

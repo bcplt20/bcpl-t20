@@ -570,50 +570,138 @@ function ContractModal({ c, onClose }: { c: Contract; onClose: ()=>void }) {
   const cType = c.contractType || "Player";
 
   function downloadPDF() {
+    const logoUrl = `${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/bcpl-ball-color.jpg`;
     const w = window.open("", "_blank");
     if (!w) return;
     const cType = c.contractType || "Player";
     w.document.write(`<!DOCTYPE html><html><head><title>${c.id} — BCPL ${cType} Contract</title>
     <style>
-      body{font-family:Arial,sans-serif;font-size:11px;line-height:1.7;color:#111;padding:0;margin:0}
-      .lh{display:flex;align-items:center;gap:18px;background:#FF6B00;padding:16px 32px;color:#fff}
-      .logo{width:64px;height:64px;border-radius:50%;overflow:hidden;border:3px solid rgba(255,255,255,.45);flex-shrink:0}
-      .logo img{width:100%;height:100%;object-fit:cover}
-      .lh-title{font-size:17px;font-weight:900;letter-spacing:.04em;line-height:1.2}
-      .lh-sub{font-size:9px;opacity:.85;margin-top:3px}
-      .body{padding:28px 40px;max-width:820px;margin:0 auto}
-      .contract-badge{text-align:center;background:#FFF5EE;border:2px solid #FF6B00;border-radius:8px;padding:10px 20px;margin-bottom:20px}
-      .contract-badge h2{margin:0;font-size:14px;color:#FF6B00;letter-spacing:.08em;font-weight:900;text-transform:uppercase}
-      .contract-badge p{margin:4px 0 0;font-size:10px;color:#888}
-      pre{white-space:pre-wrap;word-wrap:break-word;font-family:Arial,sans-serif;font-size:11px;line-height:1.8;color:#111}
-      .footer{margin-top:24px;background:#f8f8f8;border-top:3px solid #FF6B00;padding:10px 32px;font-size:8px;color:#666;display:flex;justify-content:space-between}
-      @media print{.lh{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+      *{box-sizing:border-box;margin:0;padding:0}
+      body{font-family:'Arial',sans-serif;font-size:11.5px;line-height:1.75;color:#1a1a1a;background:#fff;position:relative}
+
+      /* ── Watermark (every page) ── */
+      body::before{
+        content:'';position:fixed;top:50%;left:50%;
+        transform:translate(-50%,-50%);
+        width:380px;height:380px;
+        background-image:url('${logoUrl}');
+        background-size:contain;background-repeat:no-repeat;background-position:center;
+        opacity:0.04;z-index:0;
+        -webkit-print-color-adjust:exact;print-color-adjust:exact;
+      }
+
+      /* ── Header ── */
+      .lh{
+        display:flex;align-items:center;gap:20px;
+        background:linear-gradient(135deg,#C94E0E,#FF6B00,#FF8C40);
+        padding:18px 36px;color:#fff;
+        -webkit-print-color-adjust:exact;print-color-adjust:exact;
+      }
+      .logo-wrap{
+        width:68px;height:68px;border-radius:50%;overflow:hidden;
+        border:3px solid rgba(255,255,255,.5);flex-shrink:0;
+        background:#fff;
+      }
+      .logo-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+      .lh-title{font-size:18px;font-weight:900;letter-spacing:.05em;line-height:1.2}
+      .lh-brand{font-size:10px;opacity:.9;margin-top:2px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+      .lh-sub{font-size:8.5px;opacity:.75;margin-top:3px}
+
+      /* ── Gold accent bar ── */
+      .accent-bar{height:4px;background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D);
+        -webkit-print-color-adjust:exact;print-color-adjust:exact;}
+
+      /* ── Body ── */
+      .body{padding:28px 40px 24px;max-width:860px;margin:0 auto;position:relative;z-index:1}
+
+      /* ── Contract badge ── */
+      .contract-badge{
+        text-align:center;
+        background:#FFF8F3;
+        border:2px solid #FF6B00;
+        border-radius:10px;
+        padding:14px 24px;
+        margin-bottom:24px;
+      }
+      .contract-badge h2{font-size:15px;color:#C94E0E;letter-spacing:.1em;font-weight:900;text-transform:uppercase;margin-bottom:4px}
+      .contract-badge p{font-size:10px;color:#777}
+      .contract-badge .ref{font-size:11px;color:#FF6B00;font-weight:700;margin-top:6px;font-family:monospace}
+
+      /* ── Content ── */
+      pre{
+        white-space:pre-wrap;word-wrap:break-word;
+        font-family:Arial,sans-serif;font-size:11.5px;
+        line-height:1.85;color:#1a1a1a;
+      }
+
+      /* ── Footer (every page) ── */
+      .pg-footer{
+        position:fixed;bottom:0;left:0;right:0;
+        background:#FFF8F3;border-top:3px solid #FF6B00;
+        padding:7px 36px;font-size:8px;color:#888;
+        display:flex;justify-content:space-between;align-items:center;
+        -webkit-print-color-adjust:exact;print-color-adjust:exact;
+        z-index:1;
+      }
+      .pg-footer strong{color:#FF6B00}
+
+      /* ── Signature block ── */
+      .sig-block{margin-top:32px;border-top:1px dashed #ddd;padding-top:20px;display:flex;gap:60px}
+      .sig-line{flex:1}
+      .sig-line .label{font-size:9px;color:#999;text-transform:uppercase;letter-spacing:.06em;margin-bottom:28px}
+      .sig-line .line{border-bottom:1.5px solid #333;margin-bottom:4px}
+      .sig-line .name{font-size:10px;color:#555}
+
+      @media print{
+        body::before{position:fixed}
+        .pg-footer{position:fixed}
+        @page{margin:0}
+        body{margin:0}
+      }
     </style></head>
     <body>
       <div class="lh">
-        <div class="logo"><img src="/bcpl-website/bcpl-assets/bcpl-ball-color.jpg"/></div>
+        <div class="logo-wrap"><img src="${logoUrl}" alt="BCPL"/></div>
         <div>
-          <div class="lh-title">BCPL T20 — Bhartiya Corporate Premier League</div>
-          <div class="lh-sub">KRIPARTI PLAYING11 PRIVATE LIMITED · GSTIN: ${COMPANY.gstin}</div>
+          <div class="lh-title">BCPL — Bhartiya Corporate Premier League</div>
+          <div class="lh-brand">India's Biggest Corporate Cricket League · Season 5</div>
+          <div class="lh-sub">${COMPANY.name} · GSTIN: ${COMPANY.gstin} · CIN: ${COMPANY.cin}</div>
           <div class="lh-sub">${COMPANY.address}</div>
-          <div class="lh-sub">legal@bcplt20.com · bcplt20.com · CIN: ${COMPANY.cin}</div>
+          <div class="lh-sub">legal@bcplt20.com &nbsp;·&nbsp; www.bcplt20.com</div>
         </div>
       </div>
+      <div class="accent-bar"></div>
+
       <div class="body">
         <div class="contract-badge">
-          <h2>${cType} Contract — ${COMPANY.season}</h2>
-          <p>Reference: ${c.id} · Party: ${c.player} · ${c.team}</p>
+          <h2>🏏 ${cType} Contract &mdash; ${COMPANY.season}</h2>
+          <p>This is an official legal document issued under the authority of ${COMPANY.name}</p>
+          <div class="ref">Ref: ${c.id} &nbsp;·&nbsp; Party: ${c.player} &nbsp;·&nbsp; ${c.team}</div>
         </div>
         <pre>${contractText.replace(/</g,"&lt;").replace(/>/g,"&gt;")}</pre>
+
+        <div class="sig-block">
+          <div class="sig-line">
+            <div class="label">Authorised Signatory — BCPL</div>
+            <div class="line"></div>
+            <div class="name">For ${COMPANY.name}</div>
+          </div>
+          <div class="sig-line">
+            <div class="label">Signature of Party</div>
+            <div class="line"></div>
+            <div class="name">${c.player}</div>
+          </div>
+        </div>
       </div>
-      <div class="footer">
-        <span>Ref: ${c.id}</span>
-        <span>${COMPANY.name} · Secure &amp; Confidential</span>
+
+      <div class="pg-footer">
+        <span>Ref: <strong>${c.id}</strong></span>
+        <span><strong>BCPL</strong> — Bhartiya Corporate Premier League · Confidential &amp; Legally Binding</span>
         <span>legal@bcplt20.com · bcplt20.com</span>
       </div>
     </body></html>`);
     w.document.close();
-    setTimeout(()=>w.print(), 500);
+    setTimeout(()=>w.print(), 600);
   }
 
   function sendEmail() {
@@ -837,6 +925,8 @@ export default function ContractsView() {
                       <button onClick={()=>setContracts(cs=>cs.map(x=>x.id===c.id?{...x,status:"Signed"}:x))}
                         style={{padding:"4px 10px",borderRadius:6,border:"none",background:"#10B98122",color:"#10B981",fontSize:11,cursor:"pointer",fontWeight:700}}>✓ Mark Signed</button>
                     )}
+                    <button onClick={()=>{ if(confirm(`Delete contract ${c.id} for ${c.player}? This cannot be undone.`)) setContracts(cs=>cs.filter(x=>x.id!==c.id)); }}
+                      style={{padding:"4px 10px",borderRadius:6,border:"1px solid #EF444444",background:"#EF444411",color:"#EF4444",fontSize:11,cursor:"pointer",fontWeight:700}}>🗑</button>
                   </div>
                 </td>
               </tr>
