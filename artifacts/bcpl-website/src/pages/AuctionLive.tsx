@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 const NAV = ['Home','Match Center','Teams','Sponsors','Photos','Videos','About','FAQ','Contact'];
+const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-center', 'Teams':'teams', 'Sponsors':'sponsors', 'Photos':'photos', 'Videos':'videos', 'About':'about', 'FAQ':'faq', 'Contact':'contact' };
 const BOOKING_REF = 'BCPL-S5-7432';
 
 const BIDS = [

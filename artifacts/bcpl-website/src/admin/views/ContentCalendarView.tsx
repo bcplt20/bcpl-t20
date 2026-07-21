@@ -12,7 +12,7 @@ const POSTS: Post[] = [
   { id:5,  date:"Jul 23", day:23, platform:"Twitter",   caption:"Working professionals — your cricket journey starts NOW. BCPL T20 Season 5 is here! #BCPLT20 #Cricket", type:"Tweet", status:"Draft", time:"11:00 AM" },
   { id:6,  date:"Jul 24", day:24, platform:"LinkedIn",  caption:"BCPL T20: India's first corporate T20 cricket league now in Season 5. 8,000+ professionals. Register your team.", type:"Post", status:"Scheduled", time:"09:30 AM" },
   { id:7,  date:"Jul 25", day:25, platform:"Instagram", caption:"💰 Transparent pricing. ₹299 Phase 1 trial. No hidden fees. If not selected → no Phase 2 payment.", type:"Story",   status:"Draft",     time:"06:00 PM" },
-  { id:8,  date:"Jul 27", day:27, platform:"Instagram", caption:"🏙 21 cities. 1 league. Find your trial city and register today! Slots filling fast.", type:"Post",    status:"Scheduled", time:"10:00 AM" },
+  { id:8,  date:"Jul 27", day:27, platform:"Instagram", caption:"🏙 50+ cities. 1 league. Find your trial city and register today! Slots filling fast.", type:"Post",    status:"Scheduled", time:"10:00 AM" },
 ];
 
 const DAYS = Array.from({length:14},(_,i)=>i+19);

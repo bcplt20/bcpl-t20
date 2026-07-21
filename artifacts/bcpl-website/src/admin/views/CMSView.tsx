@@ -16,14 +16,14 @@ const SECTIONS = [
 ];
 
 const CONTENT: Record<string,{title:string;body:string}> = {
-  hero:        { title:"BCPL T20 Season 5 — Registration Open", body:"India's biggest T20 cricket league is back for Season 5! 10 franchise teams. 21 cities. ₹6 Cr prize pool. Open for all working professionals." },
-  about:       { title:"About BCPL T20", body:"BCPL T20 is India's premier corporate T20 franchise cricket league. Founded in 2020, the league has grown to 10 franchise teams across 21 cities with over ₹14 Crore distributed across 4 seasons." },
+  hero:        { title:"BCPL T20 Season 5 — Registration Open", body:"India's biggest T20 cricket league is back for Season 5! 10 franchise teams. 50+ cities. ₹6 Cr prize pool. Open for all working professionals." },
+  about:       { title:"About BCPL T20", body:"BCPL T20 is India's premier corporate T20 franchise cricket league. Founded in 2020, the league has grown to 10 franchise teams across 50+ cities with over ₹14 Crore distributed across 4 seasons." },
   howit:       { title:"How It Works", body:"1. Register online & pay ₹299 (Bat/Bowl/WK) or ₹399 (All-rounder)\n2. Upload your 2-min selection video from any cricket ground\n3. BCCI-certified scouts review your video within 7 days\n4. If selected → Pay Phase 2 fee (₹2,000 or ₹3,000)\n5. Attend physical trials at your city ground\n6. Get auctioned to a BCPL franchise — Play Season 5!" },
   prizes:      { title:"Prize Money — BCPL Season 5", body:"🏆 Champion Team: ₹2,50,00,000\n🥈 Runner-Up: ₹1,00,00,000\n🥉 3rd Place: ₹50,00,000\n🏏 Best Batsman: ₹5,00,000\n🎳 Best Bowler: ₹5,00,000\n⭐ Most Valuable Player: ₹10,00,000\n🤝 Fair Play Award: ₹2,00,000" },
   eligibility: { title:"Eligibility Criteria", body:"• Age: 18 years and above\n• Indian citizen (Aadhaar/PAN required for KYC)\n• No active BCCI/state board contract\n• Working professional (any sector)\n• Good physical fitness\n• Available for matches as per schedule" },
   rules:       { title:"BCPL Cricket Rules", body:"Format: T20 (20 overs per side)\nTeams: 10 franchises, 15 players each\nLeague: Double round-robin, top 4 to playoffs\nDRS: 1 review per innings per team\nNo-Ball: Free hit on no-balls\nUmpire: Third umpire available for disputes" },
   contact:     { title:"Contact BCPL T20", body:"📧 Email: info@bcplt20.com\n📞 Phone: +91 98765 43210\n🏢 Address: BCPL Office, Vadodara, Gujarat – 390001\n💬 WhatsApp: +91 98765 43210\n📸 Instagram: @bcplt20official\n👥 Facebook: BCPL T20 Official\n🐦 Twitter: @bcplt20" },
-  ticker:      { title:"News Ticker Text", body:"🏏 SEASON 5 OPEN · ₹6 CR PRIZE POOL · 21 TRIAL CITIES · SOURAV GANGULY · 10 FRANCHISE TEAMS · REGISTER NOW AT ₹299 · #OfficeSeStadiumtak" },
+  ticker:      { title:"News Ticker Text", body:"🏏 SEASON 5 OPEN · ₹6 CR PRIZE POOL · 50+ CITIES · SOURAV GANGULY · 10 FRANCHISE TEAMS · REGISTER NOW AT ₹299 · #OfficeSeStadiumtak" },
   phases:      { title:"Registration Phases", body:"PHASE 1:\n• Bat/Bowl/WK: ₹299\n• All-Rounder: ₹399\n• Includes: Video submission slot, Scout review\n\nPHASE 2 (Only if selected):\n• Bat/Bowl/WK: ₹2,000\n• All-Rounder: ₹3,000\n• Includes: Physical trial entry, Franchise auction eligibility\n\nNO HIDDEN COSTS. If not selected for Phase 2, no further payment needed." },
 };
 
@@ -34,7 +34,7 @@ const initFAQs:FAQ[] = [
   { id:4, q:"How much is Phase 2?", a:"Phase 2 registration is ₹2,000 for Bat/Bowl/WK roles and ₹3,000 for All-rounders. This covers your physical trial entry and franchise auction eligibility." },
   { id:5, q:"Who reviews the Phase 1 video?", a:"All Phase 1 videos are reviewed by BCCI-certified cricket scouts. Results are communicated within 7 working days of submission." },
   { id:6, q:"Are there any hidden costs?", a:"Absolutely not. If you are not selected for Phase 2, you pay nothing more. The total maximum cost is ₹299/₹399 (Phase 1) + ₹2,000/₹3,000 (Phase 2 only if selected) = ₹2,299 to ₹3,399." },
-  { id:7, q:"What cities have physical trials?", a:"BCPL Season 5 has physical trials in 21 cities across India including Mumbai, Delhi, Bangalore, Hyderabad, Chennai, Kolkata, Pune, Ahmedabad, Jaipur, Lucknow, and more." },
+  { id:7, q:"What cities have physical trials?", a:"BCPL Season 5 has physical trials in 50+ cities across India including Mumbai, Delhi, Bangalore, Hyderabad, Chennai, Kolkata, Pune, Ahmedabad, Jaipur, Lucknow, and more." },
   { id:8, q:"When does Season 5 start?", a:"BCPL Season 5 is scheduled for September–October 2026. Registrations are open now (Phase 1). Physical trials run from March–June 2026." },
 ];
 

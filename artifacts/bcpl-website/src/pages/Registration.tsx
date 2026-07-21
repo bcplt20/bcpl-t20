@@ -354,7 +354,7 @@ export function Registration() {
         <div style={{ display:'flex', whiteSpace:'nowrap', animation:'tickerScroll 30s linear infinite', gap:0 }}>
           {[...Array(4)].map((_,i) => (
             <span key={i} style={{ fontSize:11, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.1em', color:'#fff', paddingRight:0 }}>
-              &nbsp;🏏 SEASON 5 REGISTRATIONS OPEN &nbsp;·&nbsp; ₹6 CR PRIZE POOL &nbsp;·&nbsp; 21 TRIAL CITIES &nbsp;·&nbsp; BACKED BY SOURAV GANGULY &nbsp;·&nbsp; 10 FRANCHISE TEAMS &nbsp;·&nbsp; #OfficeSeStadiumtak &nbsp;·&nbsp;
+              &nbsp;🏏 SEASON 5 REGISTRATIONS OPEN &nbsp;·&nbsp; ₹6 CR PRIZE POOL &nbsp;·&nbsp; 50+ CITIES &nbsp;·&nbsp; BACKED BY SOURAV GANGULY &nbsp;·&nbsp; 10 FRANCHISE TEAMS &nbsp;·&nbsp; #OfficeSeStadiumtak &nbsp;·&nbsp;
             </span>
           ))}
         </div>
@@ -366,9 +366,12 @@ export function Registration() {
         <div style={{ height:2, background:'linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)', backgroundSize:'200%', animation:'shimGold 4s linear infinite' }} />
         <div className="wrap" style={{ height:60, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
           {/* Logo — click to go home */}
-          <div style={{ display:'flex', alignItems:'center', cursor:'pointer' }} onClick={()=>navigate('/')}>
-            <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-final.png'} alt="BCPL"
-              style={{ height:38, width:'auto', objectFit:'contain', display:'block', filter:'drop-shadow(0 0 6px rgba(255,122,41,0.25))' }}/>
+          <div style={{ display:'flex', alignItems:'center', gap:10, cursor:'pointer' }} onClick={()=>navigate('/')}>
+            <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-transparent.png'} alt="BCPL" style={{ height:42, width:'auto', objectFit:'contain', display:'block', filter:'brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.7))' }}/>
+            <div style={{ display:'inline-flex', alignItems:'center', gap:4, background:'rgba(232,178,61,0.12)', border:'1px solid rgba(232,178,61,0.5)', borderRadius:6, padding:'3px 10px' }}>
+              <span style={{ fontSize:9 }}>🏆</span>
+              <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:9, color:'#E8B23D', letterSpacing:'.12em' }}>SEASON 5</span>
+            </div>
           </div>
           {/* Desktop nav */}
           <div className="desk-nav">
@@ -755,7 +758,7 @@ export function Registration() {
                   {/* Ticket header */}
                   <div style={{ background:'linear-gradient(135deg,#FF7A29,#C94E0E)', padding:'16px 24px', display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:8 }}>
                     <div>
-                      <div style={{ fontSize:8, fontWeight:900, fontFamily:'Montserrat,sans-serif', letterSpacing:'.2em', color:'rgba(255,255,255,0.7)', marginBottom:3 }}>BCPL T20 · SEASON 5</div>
+                      <div style={{ fontSize:8, fontWeight:900, fontFamily:'Montserrat,sans-serif', letterSpacing:'.2em', color:'rgba(255,255,255,0.7)', marginBottom:3 }}>BCPL · SEASON 5</div>
                       <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:16, color:'#fff', letterSpacing:'.04em' }}>PHASE 1 TRIAL ENTRY</div>
                     </div>
                     <div style={{ textAlign:'right' }}>
@@ -888,6 +891,14 @@ export function Registration() {
                       <button onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/phase2/kyc-approved'; }}
                         style={{ padding:'6px 14px', background:'none', border:'1px dashed rgba(232,178,61,0.3)', borderRadius:8, color:'rgba(232,178,61,0.5)', fontSize:11, cursor:'pointer', fontFamily:'Montserrat,sans-serif', fontWeight:700, letterSpacing:'.06em' }}>
                         → KYC Approved
+                      </button>
+                      <button onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/auction-selected'; }}
+                        style={{ padding:'6px 14px', background:'none', border:'1px dashed rgba(232,178,61,0.3)', borderRadius:8, color:'rgba(232,178,61,0.5)', fontSize:11, cursor:'pointer', fontFamily:'Montserrat,sans-serif', fontWeight:700, letterSpacing:'.06em' }}>
+                        → Auction Selected
+                      </button>
+                      <button onClick={() => { window.location.href = import.meta.env.BASE_URL + 'player-profile'; }}
+                        style={{ padding:'6px 14px', background:'none', border:'1px dashed rgba(34,197,94,0.3)', borderRadius:8, color:'rgba(34,197,94,0.5)', fontSize:11, cursor:'pointer', fontFamily:'Montserrat,sans-serif', fontWeight:700, letterSpacing:'.06em' }}>
+                        → Player Profile
                       </button>
                     </div>
                   </div>

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 export function Phase2PaymentReceipt() {
   const [menuOpen, setMenuOpen] = useState(false);
   const NAV = ['Home','Match Center','Teams','Sponsors','Photos','Videos','About','FAQ','Contact'];
+const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-center', 'Teams':'teams', 'Sponsors':'sponsors', 'Photos':'photos', 'Videos':'videos', 'About':'about', 'FAQ':'faq', 'Contact':'contact' };
 
   return (
     <div style={{ background:'#06101E', minHeight:'100vh', color:'#F0EDE8', fontFamily:"'Inter',sans-serif", overflowX:'hidden', paddingBottom:80 }}>
@@ -52,7 +53,7 @@ export function Phase2PaymentReceipt() {
         <div style={{ display:'flex', whiteSpace:'nowrap', animation:'tickerScroll 32s linear infinite' }}>
           {[...Array(4)].map((_,i) => (
             <span key={i} style={{ fontSize:11, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.1em', color:'#fff' }}>
-              &nbsp;🏏 SEASON 5 REGISTRATIONS OPEN &nbsp;·&nbsp; ₹6 CR PRIZE POOL &nbsp;·&nbsp; 21 TRIAL CITIES &nbsp;·&nbsp; BACKED BY SOURAV GANGULY &nbsp;·&nbsp; 10 FRANCHISE TEAMS &nbsp;·&nbsp; #OfficeSeStadiumtak &nbsp;·&nbsp;
+              &nbsp;🏏 SEASON 5 REGISTRATIONS OPEN &nbsp;·&nbsp; ₹6 CR PRIZE POOL &nbsp;·&nbsp; 50+ CITIES &nbsp;·&nbsp; BACKED BY SOURAV GANGULY &nbsp;·&nbsp; 10 FRANCHISE TEAMS &nbsp;·&nbsp; #OfficeSeStadiumtak &nbsp;·&nbsp;
             </span>
           ))}
         </div>
@@ -63,7 +64,11 @@ export function Phase2PaymentReceipt() {
         <div style={{ height:2, background:'linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)', backgroundSize:'200%', animation:'shimGold 4s linear infinite' }} />
         <div className="wrap" style={{ maxWidth:1200, height:60, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
           <div style={{ display:'flex', flexDirection:'column', lineHeight:1.1 }}>
-                          <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-final.png'} alt="BCPL" style={{ height:36, width:'auto', objectFit:'contain', display:'block', filter:'drop-shadow(0 0 6px rgba(255,122,41,0.22))' }}/>
+                          <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-transparent.png'} alt="BCPL" style={{ height:42, width:'auto', objectFit:'contain', display:'block', filter:'brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.7))' }}/>
+              <div style={{ display:'inline-flex', alignItems:'center', gap:4, background:'rgba(232,178,61,0.12)', border:'1px solid rgba(232,178,61,0.5)', borderRadius:6, padding:'3px 10px' }}>
+                <span style={{ fontSize:9 }}>🏆</span>
+                <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:9, color:'#E8B23D', letterSpacing:'.12em' }}>SEASON 5</span>
+              </div>
           </div>
           <div className="desk-nav">{NAV.map(n => <button key={n} className="nav-link">{n}</button>)}</div>
           <button className="ham-btn" onClick={() => setMenuOpen(o => !o)}>
@@ -72,7 +77,7 @@ export function Phase2PaymentReceipt() {
         </div>
         {menuOpen && (
           <div style={{ background:'#0A1727', borderTop:'1px solid rgba(255,255,255,0.07)', padding:'12px 0' }}>
-            {NAV.map(n => <div key={n} style={{ padding:'10px 24px', fontSize:13, fontWeight:700, fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em', color:'rgba(255,255,255,0.7)', cursor:'pointer', textTransform:'uppercase' }}>{n}</div>)}
+            {NAV.map(n => <div key={n} onClick={()=>{ setMenuOpen(false); window.location.href = import.meta.env.BASE_URL + (NAV_ROUTES[n]||''); }} style={{ padding:'10px 24px', fontSize:13, fontWeight:700, fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em', color:'rgba(255,255,255,0.7)', cursor:'pointer', textTransform:'uppercase' }}>{n}</div>)}
           </div>
         )}
       </nav>
@@ -136,7 +141,7 @@ export function Phase2PaymentReceipt() {
                 <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:12, color:'#E8B23D', letterSpacing:'.08em' }}>NEXT STEP</div>
                 <div style={{ fontSize:13, color:'rgba(255,255,255,0.65)', marginTop:2 }}>Complete KYC verification — Aadhaar + PAN required</div>
               </div>
-              <button className="btn-outline-gold" style={{ flexShrink:0 }}>COMPLETE KYC →</button>
+              <button className="btn-outline-gold" style={{ flexShrink:0 }} onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/phase2/kyc'; }}>COMPLETE KYC →</button>
             </div>
           </div>
         </div>
@@ -175,7 +180,8 @@ export function Phase2PaymentReceipt() {
                 <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:15, color:'#fff', marginBottom:8 }}>{title}</div>
                 <div style={{ fontSize:13, color:'rgba(255,255,255,0.5)', lineHeight:1.6, marginBottom: cta ? 16 : 0 }}>{desc}</div>
                 {cta && (
-                  <button style={{ background:'transparent', border:`1px solid ${ctaColor}60`, borderRadius:12, color:ctaColor, fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:11, letterSpacing:'.1em', cursor:'pointer', padding:'8px 16px', transition:'all .2s' }}>
+                  <button style={{ background:'transparent', border:`1px solid ${ctaColor}60`, borderRadius:12, color:ctaColor, fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:11, letterSpacing:'.1em', cursor:'pointer', padding:'8px 16px', transition:'all .2s' }}
+                    onClick={title === 'Complete KYC' ? ()=>{ window.location.href = import.meta.env.BASE_URL + 'register/phase2/kyc'; } : title === 'Join WhatsApp Group' ? ()=>{ window.open('https://wa.me/919999999999','_blank'); } : undefined}>
                     {cta}
                   </button>
                 )}
@@ -190,8 +196,8 @@ export function Phase2PaymentReceipt() {
         <div className="wrap" style={{ maxWidth:1200 }}>
           <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))', gap:28, marginBottom:32 }}>
             <div>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, marginBottom:8 }}><span style={{ color:'#FF7A29' }}>BCPL</span> T20</div>
-              <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)', lineHeight:1.7 }}>India's biggest corporate cricket league. Season 5 · ₹6 Cr Prize Pool · 21 Cities</div>
+              <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-transparent.png'} alt="BCPL" style={{ height:48, width:'auto', objectFit:'contain', display:'block', filter:'brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.6))', marginBottom:8 }}/>
+              <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)', lineHeight:1.7 }}>India's biggest corporate cricket league. Season 5 · ₹6 Cr Prize Pool · 50+ Cities</div>
               <div style={{ marginTop:12, fontSize:11, fontWeight:700, fontFamily:'Montserrat,sans-serif', color:'#E8B23D' }}>#OfficeSeStadiumtak</div>
             </div>
             <div>

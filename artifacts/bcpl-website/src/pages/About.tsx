@@ -141,9 +141,9 @@ const stats = [
 
 const timeline = [
   {year:'2023', icon:'🌱', text:'Season 1 — Founded in Delhi. Working professionals took the field for the first time. 500+ players, 5 trial cities, 1 unforgettable dream born.'},
-  {year:'2024', icon:'📈', text:'Season 2 — Growth exploded. 25,000+ players across 21 cities. Franchise auction system introduced. Corporate cricket found its identity.'},
+  {year:'2024', icon:'📈', text:'Season 2 — Growth exploded. 25,000+ players across 50+ cities. Franchise auction system introduced. Corporate cricket found its identity.'},
   {year:'2025', icon:'🏟️', text:'Season 3 & 4 — Two powerful seasons. 1 Lakh+ registrations, 50+ trial cities, national media coverage. BCPL became India\'s largest corporate cricket league.'},
-  {year:'2026', icon:'🏆', text:'Season 4 concluded — 2 Lakh+ players registered. 21 trial cities. Tournament to be held in October 2026. The stage is set for the grandest season yet.'},
+  {year:'2026', icon:'🏆', text:'Season 4 concluded — 2 Lakh+ players registered. 50+ cities. Tournament to be held in October 2026. The stage is set for the grandest season yet.'},
   {year:'2026–27', icon:'🚀', text:'Season 5 — Registrations open now. 75+ trial cities. 10 franchise teams. ₹6 Crore prize pool. #OfficeSeStadiumtak. India\'s biggest corporate cricket league awaits you.'},
 ];
 

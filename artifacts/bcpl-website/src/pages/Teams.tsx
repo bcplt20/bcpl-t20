@@ -234,7 +234,7 @@ export function Teams() {
           <div style={{ background:"#0A1727", border:"1px solid rgba(255,122,41,0.2)", borderRadius:12, borderTop:"3px solid #FF7A29", padding:"clamp(32px,5vw,52px)", textAlign:"center" }}>
             <h2 style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:"clamp(20px,3.5vw,36px)", color:"#fff", marginBottom:10, textTransform:"uppercase" }}>Want to play for one of these franchises?</h2>
             <p style={{ fontFamily:"Inter,sans-serif", color:"rgba(255,255,255,0.45)", fontSize:15, lineHeight:1.7, maxWidth:460, margin:"0 auto 28px" }}>
-              Register today and get your shot at Season 5. 21 trial cities, all roles open.
+              Register today and get your shot at Season 5. 50+ cities, all roles open.
             </p>
             <button className="btn-orange" style={{ fontSize:14, padding:"14px 36px" }}>REGISTER NOW — ₹299 →</button>
           </div>

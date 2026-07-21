@@ -17,6 +17,7 @@ export function Phase2Registration() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const NAV = ['Home','Match Center','Teams','Sponsors','Photos','Videos','About','FAQ','Contact'];
+const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-center', 'Teams':'teams', 'Sponsors':'sponsors', 'Photos':'photos', 'Videos':'videos', 'About':'about', 'FAQ':'faq', 'Contact':'contact' };
   const STEPS = ['Professional Details','Emergency Contact','Declaration'];
 
   const canNext =
@@ -119,7 +120,7 @@ export function Phase2Registration() {
         <div style={{ display:'flex', whiteSpace:'nowrap', animation:'tickerScroll 32s linear infinite' }}>
           {[...Array(4)].map((_,i) => (
             <span key={i} style={{ fontSize:11, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.1em', color:'#fff' }}>
-              &nbsp;🏏 SEASON 5 REGISTRATIONS OPEN &nbsp;·&nbsp; ₹6 CR PRIZE POOL &nbsp;·&nbsp; 21 TRIAL CITIES &nbsp;·&nbsp; BACKED BY SOURAV GANGULY &nbsp;·&nbsp; 10 FRANCHISE TEAMS &nbsp;·&nbsp; #OfficeSeStadiumtak &nbsp;·&nbsp;
+              &nbsp;🏏 SEASON 5 REGISTRATIONS OPEN &nbsp;·&nbsp; ₹6 CR PRIZE POOL &nbsp;·&nbsp; 50+ CITIES &nbsp;·&nbsp; BACKED BY SOURAV GANGULY &nbsp;·&nbsp; 10 FRANCHISE TEAMS &nbsp;·&nbsp; #OfficeSeStadiumtak &nbsp;·&nbsp;
             </span>
           ))}
         </div>
@@ -144,7 +145,7 @@ export function Phase2Registration() {
         </div>
         {menuOpen && (
           <div style={{ background:'#0A1727', borderTop:'1px solid rgba(255,255,255,0.07)', padding:'12px 0' }}>
-            {NAV.map(n => <div key={n} style={{ padding:'10px 24px', fontSize:13, fontWeight:700, fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em', color:'rgba(255,255,255,0.7)', cursor:'pointer', textTransform:'uppercase' }}>{n}</div>)}
+            {NAV.map(n => <div key={n} onClick={()=>{ setMenuOpen(false); window.location.href = import.meta.env.BASE_URL + (NAV_ROUTES[n]||''); }} style={{ padding:'10px 24px', fontSize:13, fontWeight:700, fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em', color:'rgba(255,255,255,0.7)', cursor:'pointer', textTransform:'uppercase' }}>{n}</div>)}
           </div>
         )}
       </nav>

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 const NAV_LINKS = ["Home", "Match Center", "Teams", "Sponsors", "Photos", "Videos", "About", "FAQ", "Contact", "Login"];
 
-const TICKER_TEXT = "🏏 SEASON 5 REGISTRATIONS OPEN · ₹6 CR PRIZE POOL · 21 TRIAL CITIES · BACKED BY SOURAV GANGULY · 10 FRANCHISE TEAMS · #OfficeSeStadiumtak";
+const TICKER_TEXT = "🏏 SEASON 5 REGISTRATIONS OPEN · ₹6 CR PRIZE POOL · 50+ CITIES · BACKED BY SOURAV GANGULY · 10 FRANCHISE TEAMS · #OfficeSeStadiumtak";
 
 const CITIES = [
   "Mumbai", "Delhi", "Bengaluru", "Hyderabad", "Pune", "Chennai", "Kolkata", "Ahmedabad",
@@ -16,7 +16,7 @@ const TIMELINE = [
     milestone: "REGISTRATIONS",
     status: "OPEN",
     statusColor: "#FF7A29",
-    desc: "Phase 1 video trials. 21 cities. ₹299/₹399 entry.",
+    desc: "Phase 1 video trials. 50+ cities. ₹299/₹399 entry.",
     cta: "REGISTER NOW →",
     active: true,
   },
@@ -321,7 +321,7 @@ export function MatchCenter() {
             TRIAL CITIES — SEASON 5
           </h2>
           <p style={{ fontFamily: "Inter, sans-serif", color: "rgba(255,255,255,0.4)", marginBottom: 36, fontSize: 15 }}>
-            21 cities. One dream. Find your nearest trial ground.
+            50+ cities. One dream. Find your nearest trial ground.
           </p>
 
           <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
@@ -387,7 +387,7 @@ export function MatchCenter() {
               </div>
               <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 12, color: "#E8B23D", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 12 }}>#OfficeSeStadiumtak</div>
               <div style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: "rgba(255,255,255,0.35)", lineHeight: 1.6 }}>
-                India's biggest corporate cricket league.<br />Season 5 · Kriparti Playing 11 Pvt. Ltd.
+                India's biggest corporate cricket league.<br />Season 5 · BCPL Pvt. Ltd.
               </div>
             </div>
 
@@ -409,7 +409,7 @@ export function MatchCenter() {
 
           <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", padding: "20px 0", display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
             <span style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: "rgba(255,255,255,0.25)" }}>
-              Season 5 · Kriparti Playing 11 Pvt. Ltd. · © 2025 · All Rights Reserved
+              Season 5 · BCPL Pvt. Ltd. · © 2025 · All Rights Reserved
             </span>
             <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 11, letterSpacing: "0.1em", color: "#FF7A29" }}>#OfficeSeStadiumtak</span>
           </div>

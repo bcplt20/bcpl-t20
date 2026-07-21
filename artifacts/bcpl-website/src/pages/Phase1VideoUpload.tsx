@@ -56,6 +56,7 @@ export function Phase1VideoUpload() {
   const [dragging, setDragging] = useState(false);
   const [activeVideo, setActiveVideo] = useState<number | null>(null);
   const NAV = ['Home','Match Center','Teams','Sponsors','Photos','Videos','About','FAQ','Contact'];
+const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-center', 'Teams':'teams', 'Sponsors':'sponsors', 'Photos':'photos', 'Videos':'videos', 'About':'about', 'FAQ':'faq', 'Contact':'contact' };
 
   return (
     <div style={{ background:'#06101E', minHeight:'100vh', color:'#F0EDE8', fontFamily:"'Inter',sans-serif", overflowX:'hidden', paddingBottom:'calc(120px + env(safe-area-inset-bottom))' }}>
@@ -179,7 +180,7 @@ export function Phase1VideoUpload() {
         <div style={{ display:'flex', whiteSpace:'nowrap', animation:'tickerScroll 30s linear infinite' }}>
           {[...Array(4)].map((_,i) => (
             <span key={i} style={{ fontSize:11, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.1em', color:'#fff' }}>
-              &nbsp;🏏 SEASON 5 REGISTRATIONS OPEN &nbsp;·&nbsp; ₹6 CR PRIZE POOL &nbsp;·&nbsp; 21 TRIAL CITIES &nbsp;·&nbsp; BACKED BY SOURAV GANGULY &nbsp;·&nbsp; 10 FRANCHISE TEAMS &nbsp;·&nbsp; #OfficeSeStadiumtak &nbsp;·&nbsp;
+              &nbsp;🏏 SEASON 5 REGISTRATIONS OPEN &nbsp;·&nbsp; ₹6 CR PRIZE POOL &nbsp;·&nbsp; 50+ CITIES &nbsp;·&nbsp; BACKED BY SOURAV GANGULY &nbsp;·&nbsp; 10 FRANCHISE TEAMS &nbsp;·&nbsp; #OfficeSeStadiumtak &nbsp;·&nbsp;
             </span>
           ))}
         </div>
@@ -190,7 +191,11 @@ export function Phase1VideoUpload() {
         <div style={{ height:2, background:'linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)', backgroundSize:'200%', animation:'shimGold 4s linear infinite' }} />
         <div className="wrap" style={{ height:60, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
           <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-                          <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-final.png'} alt="BCPL" style={{ height:36, width:'auto', objectFit:'contain', display:'block', filter:'drop-shadow(0 0 6px rgba(255,122,41,0.22))' }}/>
+                          <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-transparent.png'} alt="BCPL" style={{ height:42, width:'auto', objectFit:'contain', display:'block', filter:'brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.7))' }}/>
+              <div style={{ display:'inline-flex', alignItems:'center', gap:4, background:'rgba(232,178,61,0.12)', border:'1px solid rgba(232,178,61,0.5)', borderRadius:6, padding:'3px 10px' }}>
+                <span style={{ fontSize:9 }}>🏆</span>
+                <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:9, color:'#E8B23D', letterSpacing:'.12em' }}>SEASON 5</span>
+              </div>
           </div>
           <div className="desk-nav">
             {NAV.map(l => <a key={l} href="#" style={{ color:'rgba(255,255,255,0.6)', fontSize:12, fontWeight:600, textDecoration:'none', letterSpacing:'.04em' }}>{l}</a>)}
@@ -372,7 +377,7 @@ export function Phase1VideoUpload() {
             <div>
               <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:12, letterSpacing:'.16em', color:'rgba(255,255,255,0.4)', marginBottom:6, textTransform:'uppercase' }}>🎬 Sample Trial Videos</div>
               <div style={{ color:'rgba(255,255,255,0.6)', fontSize:13, lineHeight:1.5, maxWidth:520 }}>
-                Watch how top-rated players from previous seasons filmed their trial videos — one per role. Match this quality to maximise your scout score.
+                Sample videos for each role — watch before filming your own trial video.
               </div>
             </div>
             <div style={{ background:'rgba(34,197,94,0.1)', border:'1px solid rgba(34,197,94,0.3)', borderRadius:10, padding:'7px 14px', fontSize:11, color:'#22C55E', fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em', flexShrink:0 }}>
@@ -518,7 +523,11 @@ export function Phase1VideoUpload() {
       {/* ── FOOTER ── */}
       <footer style={{ marginTop:64, borderTop:'1px solid rgba(255,255,255,0.06)', paddingTop:32, paddingBottom:32 }}>
         <div className="wrap" style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:12 }}>
-                        <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-final.png'} alt="BCPL" style={{ height:36, width:'auto', objectFit:'contain', display:'block', filter:'drop-shadow(0 0 6px rgba(255,122,41,0.22))' }}/>
+                        <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-transparent.png'} alt="BCPL" style={{ height:42, width:'auto', objectFit:'contain', display:'block', filter:'brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.7))' }}/>
+              <div style={{ display:'inline-flex', alignItems:'center', gap:4, background:'rgba(232,178,61,0.12)', border:'1px solid rgba(232,178,61,0.5)', borderRadius:6, padding:'3px 10px' }}>
+                <span style={{ fontSize:9 }}>🏆</span>
+                <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:9, color:'#E8B23D', letterSpacing:'.12em' }}>SEASON 5</span>
+              </div>
           <div style={{ fontSize:11, color:'rgba(255,255,255,0.3)', letterSpacing:'.08em', textAlign:'center' }}>
             Bhartiya Corporate Premier League &nbsp;·&nbsp; Season 5 &nbsp;·&nbsp; #OfficeSeStadiumtak
           </div>

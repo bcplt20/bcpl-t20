@@ -35,16 +35,12 @@ export function BCPLFooter() {
         <div className="bcpl-foot-cols">
           {/* Brand */}
           <div className="bcpl-foot-brand">
-            <a href="/" style={{ display:"flex", alignItems:"center", gap:10, textDecoration:"none", marginBottom:12 }}>
-              <div style={{ width:40, height:40, borderRadius:"50%", overflow:"hidden", flexShrink:0, border:"2px solid rgba(255,122,41,0.4)", boxShadow:"0 0 10px rgba(255,122,41,0.25)" }}>
-                <img src={BASE + "bcpl-assets/bcpl-ball-color.jpg"} alt="BCPL"
-                  style={{ width:"100%", height:"100%", objectFit:"cover" }}/>
-              </div>
-              <div>
-                <div style={{ fontWeight:900, fontSize:18, lineHeight:1 }}>
-                  <span style={{ color:"#FF7A29" }}>BCPL</span>
-                </div>
-                <div style={{ fontSize:9, color:"rgba(255,122,41,.65)", fontWeight:700, letterSpacing:".08em", marginTop:2 }}>BHARTIYA CORPORATE PREMIER LEAGUE · S5</div>
+            <a href="/" style={{ display:"flex", alignItems:"center", gap:12, textDecoration:"none", marginBottom:12 }}>
+              <img src={BASE + "bcpl-assets/bcpl-logo-transparent.png"} alt="BCPL"
+                style={{ height:54, width:"auto", objectFit:"contain", display:"block", filter:"brightness(1.3) drop-shadow(0 2px 10px rgba(0,0,0,0.7))" }}/>
+              <div style={{ display:"inline-flex", alignItems:"center", gap:4, background:"rgba(232,178,61,0.1)", border:"1px solid rgba(232,178,61,0.4)", borderRadius:6, padding:"3px 9px" }}>
+                <span style={{ fontSize:9 }}>🏆</span>
+                <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:9, color:"#E8B23D", letterSpacing:".12em" }}>SEASON 5</span>
               </div>
             </a>
             <p style={{ fontSize:12, color:"rgba(255,255,255,.3)", lineHeight:1.7, maxWidth:180 }}>India's Biggest Corporate Cricket League. Season 5 — 2026–27.</p>

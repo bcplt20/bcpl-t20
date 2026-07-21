@@ -4,6 +4,7 @@ export function Phase2Payment() {
   const [agreed, setAgreed] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const NAV = ['Home','Match Center','Teams','Sponsors','Photos','Videos','About','FAQ','Contact'];
+const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-center', 'Teams':'teams', 'Sponsors':'sponsors', 'Photos':'photos', 'Videos':'videos', 'About':'about', 'FAQ':'faq', 'Contact':'contact' };
 
   return (
     <div style={{ background:'#06101E', minHeight:'100vh', color:'#F0EDE8', fontFamily:"'Inter',sans-serif", overflowX:'hidden', paddingBottom:'calc(120px + env(safe-area-inset-bottom))' }}>
@@ -55,7 +56,7 @@ export function Phase2Payment() {
         <div style={{ display:'flex', whiteSpace:'nowrap', animation:'tickerScroll 32s linear infinite' }}>
           {[...Array(4)].map((_,i) => (
             <span key={i} style={{ fontSize:11, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.1em', color:'#fff' }}>
-              &nbsp;🏏 SEASON 5 REGISTRATIONS OPEN &nbsp;·&nbsp; ₹6 CR PRIZE POOL &nbsp;·&nbsp; 21 TRIAL CITIES &nbsp;·&nbsp; BACKED BY SOURAV GANGULY &nbsp;·&nbsp; 10 FRANCHISE TEAMS &nbsp;·&nbsp; #OfficeSeStadiumtak &nbsp;·&nbsp;
+              &nbsp;🏏 SEASON 5 REGISTRATIONS OPEN &nbsp;·&nbsp; ₹6 CR PRIZE POOL &nbsp;·&nbsp; 50+ CITIES &nbsp;·&nbsp; BACKED BY SOURAV GANGULY &nbsp;·&nbsp; 10 FRANCHISE TEAMS &nbsp;·&nbsp; #OfficeSeStadiumtak &nbsp;·&nbsp;
             </span>
           ))}
         </div>
@@ -65,9 +66,18 @@ export function Phase2Payment() {
       <nav style={{ position:'sticky', top:0, zIndex:300, background:'rgba(6,16,30,0.97)', backdropFilter:'blur(20px)', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
         <div style={{ height:2, background:'linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)', backgroundSize:'200%', animation:'shimGold 4s linear infinite' }} />
         <div className="wrap" style={{ maxWidth:1200, height:60, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-          <div style={{ display:'flex', alignItems:'center' }}>
-            <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-final.png'} alt="BCPL"
-              style={{ height:36, width:'auto', objectFit:'contain', display:'block', filter:'drop-shadow(0 0 6px rgba(255,122,41,0.22))' }}/>
+          <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+            <div style={{ width:36, height:36, borderRadius:'50%', overflow:'hidden', flexShrink:0, border:'2px solid rgba(255,122,41,0.5)', boxShadow:'0 0 12px rgba(255,122,41,0.35)' }}>
+              <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-ball-color.jpg'} alt="BCPL" style={{ width:'100%', height:'100%', objectFit:'cover' }}/>
+            </div>
+            <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, lineHeight:1, color:'#FF7A29' }}>BCPL</span>
+            <div style={{ display:'flex', flexDirection:'column', borderLeft:'1.5px solid rgba(255,122,41,0.35)', paddingLeft:9, gap:3 }}>
+              <div style={{ display:'inline-flex', alignItems:'center', gap:4, background:'rgba(232,178,61,0.1)', border:'1px solid rgba(232,178,61,0.4)', borderRadius:5, padding:'2px 7px' }}>
+                <span style={{ fontSize:8 }}>🏆</span>
+                <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:9, color:'#E8B23D', letterSpacing:'.12em' }}>SEASON 5</span>
+              </div>
+              <span style={{ fontFamily:'Montserrat,sans-serif', fontSize:7, fontWeight:700, color:'rgba(255,255,255,0.3)', letterSpacing:'.07em' }}>2026–27</span>
+            </div>
           </div>
           <div className="desk-nav">{NAV.map(n => <button key={n} className="nav-link">{n}</button>)}</div>
           <button className="ham-btn" onClick={() => setMenuOpen(o => !o)}>
@@ -76,7 +86,7 @@ export function Phase2Payment() {
         </div>
         {menuOpen && (
           <div style={{ background:'#0A1727', borderTop:'1px solid rgba(255,255,255,0.07)', padding:'12px 0' }}>
-            {NAV.map(n => <div key={n} style={{ padding:'10px 24px', fontSize:13, fontWeight:700, fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em', color:'rgba(255,255,255,0.7)', cursor:'pointer', textTransform:'uppercase' }}>{n}</div>)}
+            {NAV.map(n => <div key={n} onClick={()=>{ setMenuOpen(false); window.location.href = import.meta.env.BASE_URL + (NAV_ROUTES[n]||''); }} style={{ padding:'10px 24px', fontSize:13, fontWeight:700, fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em', color:'rgba(255,255,255,0.7)', cursor:'pointer', textTransform:'uppercase' }}>{n}</div>)}
           </div>
         )}
       </nav>
@@ -109,7 +119,7 @@ export function Phase2Payment() {
           <div className="ticket">
             {/* Gold header */}
             <div style={{ background:'linear-gradient(135deg,#E8B23D,#B8860B)', padding:'22px 24px' }}>
-              <div style={{ fontSize:9, fontWeight:900, fontFamily:'Montserrat,sans-serif', letterSpacing:'.2em', color:'rgba(0,0,0,0.55)', marginBottom:6, textTransform:'uppercase' }}>BCPL Season 5 · BCPL T20</div>
+              <div style={{ fontSize:9, fontWeight:900, fontFamily:'Montserrat,sans-serif', letterSpacing:'.2em', color:'rgba(0,0,0,0.55)', marginBottom:6, textTransform:'uppercase' }}>BCPL Season 5 · BCPL</div>
               <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(14px,4vw,18px)', color:'#fff', lineHeight:1.25, textShadow:'0 2px 8px rgba(0,0,0,0.3)' }}>PHASE 2 PHYSICAL TRIAL ENTRY · BCPL SEASON 5</div>
               <div style={{ marginTop:6, fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.75)' }}>Brand Ambassador: Sourav Ganguly</div>
             </div>

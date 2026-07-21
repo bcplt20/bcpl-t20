@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 const NAV = ['Home','Match Center','Teams','Sponsors','Photos','Videos','About','FAQ','Contact'];
+const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-center', 'Teams':'teams', 'Sponsors':'sponsors', 'Photos':'photos', 'Videos':'videos', 'About':'about', 'FAQ':'faq', 'Contact':'contact' };
 
 const ROADMAP = [
   { icon:'📝', label:'Register',     done:true  },
@@ -73,7 +74,7 @@ export function Phase2KYCApproved() {
         <div style={{ display:'flex', whiteSpace:'nowrap', animation:'tickerScroll 28s linear infinite' }}>
           {[...Array(4)].map((_,i) => (
             <span key={i} style={{ fontSize:11, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.1em', color:'#fff' }}>
-              &nbsp;🏏 SEASON 5 REGISTRATIONS OPEN &nbsp;·&nbsp; ₹6 CR PRIZE POOL &nbsp;·&nbsp; 21 TRIAL CITIES &nbsp;·&nbsp; BACKED BY SOURAV GANGULY &nbsp;·&nbsp; 10 FRANCHISE TEAMS &nbsp;·&nbsp; #OfficeSeStadiumtak &nbsp;·&nbsp;
+              &nbsp;🏏 SEASON 5 REGISTRATIONS OPEN &nbsp;·&nbsp; ₹6 CR PRIZE POOL &nbsp;·&nbsp; 50+ CITIES &nbsp;·&nbsp; BACKED BY SOURAV GANGULY &nbsp;·&nbsp; 10 FRANCHISE TEAMS &nbsp;·&nbsp; #OfficeSeStadiumtak &nbsp;·&nbsp;
             </span>
           ))}
         </div>
@@ -84,7 +85,11 @@ export function Phase2KYCApproved() {
         <div style={{ height:2, background:'linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)', backgroundSize:'200%', animation:'shimGold 4s linear infinite' }} />
         <div className="wrap" style={{ height:60, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
           <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-                          <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-final.png'} alt="BCPL" style={{ height:36, width:'auto', objectFit:'contain', display:'block', filter:'drop-shadow(0 0 6px rgba(255,122,41,0.22))' }}/>
+                          <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-transparent.png'} alt="BCPL" style={{ height:42, width:'auto', objectFit:'contain', display:'block', filter:'brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.7))' }}/>
+              <div style={{ display:'inline-flex', alignItems:'center', gap:4, background:'rgba(232,178,61,0.12)', border:'1px solid rgba(232,178,61,0.5)', borderRadius:6, padding:'3px 10px' }}>
+                <span style={{ fontSize:9 }}>🏆</span>
+                <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:9, color:'#E8B23D', letterSpacing:'.12em' }}>SEASON 5</span>
+              </div>
             <div style={{ display:'flex', flexDirection:'column', borderLeft:'2px solid rgba(255,122,41,0.4)', paddingLeft:10, gap:1 }}>
               <span style={{ fontSize:8, fontWeight:800, color:'#FF7A29', letterSpacing:'.16em' }}>SEASON 5</span>
             </div>
@@ -290,7 +295,11 @@ export function Phase2KYCApproved() {
         <div className="wrap">
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:16, marginBottom:16 }}>
             <div>
-                            <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-final.png'} alt="BCPL" style={{ height:36, width:'auto', objectFit:'contain', display:'block', filter:'drop-shadow(0 0 6px rgba(255,122,41,0.22))' }}/>
+                            <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-transparent.png'} alt="BCPL" style={{ height:42, width:'auto', objectFit:'contain', display:'block', filter:'brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.7))' }}/>
+              <div style={{ display:'inline-flex', alignItems:'center', gap:4, background:'rgba(232,178,61,0.12)', border:'1px solid rgba(232,178,61,0.5)', borderRadius:6, padding:'3px 10px' }}>
+                <span style={{ fontSize:9 }}>🏆</span>
+                <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:9, color:'#E8B23D', letterSpacing:'.12em' }}>SEASON 5</span>
+              </div>
               <div style={{ fontSize:11, color:'rgba(255,255,255,0.3)', marginTop:3 }}>#OfficeSeStadiumtak</div>
             </div>
             <div style={{ display:'flex', gap:16, flexWrap:'wrap' }}>
@@ -300,7 +309,7 @@ export function Phase2KYCApproved() {
             </div>
           </div>
           <div style={{ borderTop:'1px solid rgba(255,255,255,0.05)', paddingTop:14, fontSize:11, color:'rgba(255,255,255,0.2)', display:'flex', justifyContent:'space-between', flexWrap:'wrap', gap:8 }}>
-            <span>Season 5 · Kriparti Playing 11 Pvt. Ltd.</span>
+            <span>Season 5 · BCPL Pvt. Ltd.</span>
             <span>© 2026 BCPL. All Rights Reserved.</span>
           </div>
         </div>

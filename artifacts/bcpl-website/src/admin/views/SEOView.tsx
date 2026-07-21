@@ -23,7 +23,7 @@ const KEYWORDS = [
 ];
 
 const BACKLINKS = [
-  { domain:"cricbuzz.com",      da:92, links:14, type:"Dofollow", status:"Active",   anchor:"BCPL T20" },
+  { domain:"cricbuzz.com",      da:92, links:14, type:"Dofollow", status:"Active",   anchor:"BCPL" },
   { domain:"espncricinfo.com",  da:89, links:8,  type:"Dofollow", status:"Active",   anchor:"corporate cricket" },
   { domain:"sportskeeda.com",   da:78, links:22, type:"Dofollow", status:"Active",   anchor:"BCPL Season 5" },
   { domain:"hindustantimes.com",da:85, links:5,  type:"Nofollow", status:"Active",   anchor:"cricket league india" },
@@ -241,7 +241,7 @@ export default function SEOView() {
                   <textarea value={form.desc} onChange={e=>setForm(f=>({...f,desc:e.target.value}))} rows={3}
                     style={{ width:"100%", padding:"10px 12px", borderRadius:9, border:`1px solid ${form.desc.length>160?"#EF444460":"#1E293B"}`, background:"#060B18", color:"#E2E8F0", fontSize:13, outline:"none", resize:"vertical", boxSizing:"border-box", lineHeight:1.5 }}/>
                   <div style={{ display:"flex", gap:8, marginTop:5, flexWrap:"wrap" }}>
-                    {["BCPL T20","Season 5","₹299","cricket","India"].map(kw=>(
+                    {["BCPL","Season 5","₹299","cricket","India"].map(kw=>(
                       <span key={kw} style={{ fontSize:10, padding:"2px 8px", borderRadius:5, background:form.desc.includes(kw)?"#10B98122":"#1E293B", color:form.desc.includes(kw)?"#10B981":"#475569", fontWeight:700 }}>{form.desc.includes(kw)?"✓":""} {kw}</span>
                     ))}
                   </div>
@@ -274,7 +274,7 @@ export default function SEOView() {
                 {[
                   { label:"Title 30–60 chars",          ok:form.title.length>=30&&form.title.length<=60 },
                   { label:"Description 120–160 chars",  ok:form.desc.length>=120&&form.desc.length<=160 },
-                  { label:"Title contains 'BCPL T20'",  ok:form.title.toLowerCase().includes("bcpl") },
+                  { label:"Title contains 'BCPL'",  ok:form.title.toLowerCase().includes("bcpl") },
                   { label:"Slug lowercase & clean",     ok:/^\/[a-z0-9-/]*$/.test(form.slug) },
                   { label:"Primary keyword in title",   ok:form.title.toLowerCase().includes("cricket") },
                   { label:"Description mentions price", ok:form.desc.includes("₹") },

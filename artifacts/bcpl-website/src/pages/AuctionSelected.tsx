@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 const NAV = ['Home','Match Center','Teams','Sponsors','Photos','Videos','About','FAQ','Contact'];
+const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-center', 'Teams':'teams', 'Sponsors':'sponsors', 'Photos':'photos', 'Videos':'videos', 'About':'about', 'FAQ':'faq', 'Contact':'contact' };
 const BOOKING_REF = 'BCPL-S5-7432';
 
 const TEAMS = [
@@ -158,7 +159,7 @@ export function AuctionSelected() {
             </div>
             <div style={{ marginTop:20, paddingTop:16, borderTop:'1px solid rgba(255,255,255,0.06)', display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:8 }}>
               <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:10, color:'rgba(255,255,255,0.35)', letterSpacing:'.1em' }}>REF · {BOOKING_REF}</div>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:10, color:'rgba(255,255,255,0.35)', letterSpacing:'.1em' }}>SEASON 5 · BCPL T20</div>
+              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:10, color:'rgba(255,255,255,0.35)', letterSpacing:'.1em' }}>SEASON 5 · BCPL</div>
             </div>
           </div>
         </div>
