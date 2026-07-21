@@ -231,3 +231,55 @@ export const adminUpdateKycStatus = (id: string, status: string) =>
   adminReq<{ success: boolean; kyc: any }>(
     "PUT", `/admin/kyc/${id}/status`, { status }
   );
+
+/* ─── Auth token helpers ───────────────────────────────── */
+
+export function saveAuthToken(token: string, user: any): void {
+  try { localStorage.setItem(AUTH_KEY, JSON.stringify({ token, user })); } catch {}
+}
+
+export function getAuthUser(): any | null {
+  try {
+    const raw = localStorage.getItem(AUTH_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw)?.user ?? null;
+  } catch { return null; }
+}
+
+export function clearAuthToken(): void {
+  try { localStorage.removeItem(AUTH_KEY); } catch {}
+}
+
+export function isAuthenticated(): boolean {
+  return !!getStoredToken();
+}
+
+/* ─── Registration ─────────────────────────────────────── */
+
+export const registerPhase1 = (data: { role: string; trialCity: string }) =>
+  req<{
+    success: boolean; registrationId: string;
+    role: string; trialCity: string; phase1Fee: number; videoDeadline: string;
+  }>("POST", "/register/phase1", data);
+
+/* ─── Payments ─────────────────────────────────────────── */
+
+export const createPhase1Payment = (registrationId: string) =>
+  req<{ success: boolean; orderId: string; paymentSessionId: string; amount: number }>(
+    "POST", "/payment/phase1/create", { registrationId }
+  );
+
+export const verifyPhase1Payment = (orderId: string) =>
+  req<{ success: boolean; registrationId: string }>(
+    "POST", "/payment/phase1/verify", { orderId }
+  );
+
+export const createPhase2Payment = (registrationId: string) =>
+  req<{ success: boolean; orderId: string; paymentSessionId: string; amount: number }>(
+    "POST", "/payment/phase2/create", { registrationId }
+  );
+
+export const verifyPhase2Payment = (orderId: string) =>
+  req<{ success: boolean; registrationId: string }>(
+    "POST", "/payment/phase2/verify", { orderId }
+  );

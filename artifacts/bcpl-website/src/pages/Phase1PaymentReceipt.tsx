@@ -1,8 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BCPLFooter } from '../components/BCPLFooter';
+import { verifyPhase1Payment, getMe, getRegistrationStatus } from '../lib/api';
+
+const ROLE_LABELS: Record<string, string> = {
+  bat: '🏏 Batsman', bowl: '🎳 Bowler', wk: '🧤 Wicket-Keeper', ar: '⭐ All-Rounder',
+};
 
 export function Phase1PaymentReceipt() {
   const [menuOpen, setMenuOpen] = useState(false);
+
+  /* ── Real receipt data ── */
+  const [receiptLoading, setReceiptLoading] = useState(true);
+  const [receiptError, setReceiptError] = useState('');
+  const [playerName, setPlayerName] = useState('');
+  const [playerRole, setPlayerRole] = useState('');
+  const [playerCity, setPlayerCity] = useState('');
+  const [regId, setRegId] = useState('');
+  const [paidAmount, setPaidAmount] = useState(0);
+  const [paymentDate, setPaymentDate] = useState('');
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const orderId = params.get('orderId');
+    if (!orderId) { setReceiptError('Missing order ID.'); setReceiptLoading(false); return; }
+
+    (async () => {
+      try {
+        const [verifyRes, meRes, statusRes] = await Promise.all([
+          verifyPhase1Payment(orderId),
+          getMe(),
+          getRegistrationStatus(),
+        ]);
+        if (!verifyRes.success) throw new Error('Payment not confirmed');
+        setPlayerName(meRes.user.name);
+        const role = (statusRes as any).role ?? '';
+        const city = (statusRes as any).trialCity ?? '';
+        const fees = (statusRes as any).fees ?? {};
+        setPlayerRole(ROLE_LABELS[role] ?? role);
+        setPlayerCity(city);
+        setRegId((statusRes as any).registrationId ?? verifyRes.registrationId ?? '');
+        setPaidAmount(fees.phase1 ?? 0);
+        setPaymentDate(new Date().toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }));
+      } catch (e: any) {
+        setReceiptError(e.message ?? 'Could not load receipt');
+      } finally { setReceiptLoading(false); }
+    })();
+  }, []);
   const NAV = ['Home','Match Center','Teams','Sponsors','Photos','Videos','About','FAQ','Contact'];
 const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-center', 'Teams':'teams', 'Sponsors':'sponsors', 'Photos':'photos', 'Videos':'videos', 'About':'about', 'FAQ':'faq', 'Contact':'contact' };
 
@@ -146,11 +189,16 @@ const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-cen
             YOU'RE IN THE TRIALS.
           </div>
 
+          {/* Loading / Error */}
+          {receiptLoading && <div style={{ color:'rgba(255,255,255,0.5)', fontSize:14, marginBottom:20 }}>⏳ Confirming payment...</div>}
+          {receiptError && <div style={{ color:'#EF4444', fontSize:13, marginBottom:20, fontWeight:600 }}>⚠ {receiptError}</div>}
+
           {/* Player chips */}
+          {!receiptLoading && !receiptError && (
           <div className="fade-up fade-up-3" style={{ display:'flex', gap:10, justifyContent:'center', flexWrap:'wrap', marginBottom:28 }}>
             {[
-              { label:'🏏 Batsman', color:'#3B82F6' },
-              { label:'📍 Mumbai', color:'#FF7A29' },
+              { label: playerRole || '🏏 Player', color:'#3B82F6' },
+              { label: playerCity ? `📍 ${playerCity}` : '📍 City', color:'#FF7A29' },
               { label:'BCPL Season 5', color:'#E8B23D' },
             ].map(c => (
               <span key={c.label} style={{ padding:'6px 16px', background:'rgba(255,255,255,0.05)', border:`1px solid ${c.color}44`, borderRadius:12, fontSize:12, fontWeight:700, fontFamily:'Montserrat,sans-serif', color:c.color, letterSpacing:'.06em' }}>
@@ -158,12 +206,17 @@ const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-cen
               </span>
             ))}
           </div>
+          )}
 
           {/* Booking ref */}
+          {!receiptLoading && (
           <div className="fade-up fade-up-4" style={{ display:'inline-block', background:'#060C18', border:'1px solid rgba(255,122,41,0.4)', padding:'12px 20px', borderRadius:12, marginBottom:0, maxWidth:'100%', overflow:'hidden' }}>
             <div style={{ fontSize:9, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.18em', color:'rgba(255,255,255,0.35)', marginBottom:4 }}>REGISTRATION NUMBER</div>
-            <div style={{ fontFamily:'monospace', fontSize:'clamp(13px,4vw,18px)', fontWeight:700, color:'#FF7A29', letterSpacing:'.12em', wordBreak:'break-all' }}>BCPL-MUM-7432</div>
+            <div style={{ fontFamily:'monospace', fontSize:'clamp(13px,4vw,18px)', fontWeight:700, color:'#FF7A29', letterSpacing:'.12em', wordBreak:'break-all' }}>
+              {regId ? regId.slice(0,8).toUpperCase() : '—'}
+            </div>
           </div>
+          )}
         </div>
       </div>
 
@@ -188,11 +241,11 @@ const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-cen
           {/* Ticket body */}
           <div style={{ padding:'0 20px' }}>
             {[
-              { label:'Player Name', val:'Rahul Sharma' },
-              { label:'Role', val:'🏏 Batsman' },
-              { label:'Trial City', val:'📍 Mumbai' },
-              { label:'Registration No.', val:'BCPL-MUM-7432' },
-              { label:'Payment Date', val:'15 Jan 2025, 11:42 AM' },
+              { label:'Player Name',      val: playerName || '—' },
+              { label:'Role',             val: playerRole || '—' },
+              { label:'Trial City',       val: playerCity ? `📍 ${playerCity}` : '—' },
+              { label:'Registration No.', val: regId ? regId.slice(0,8).toUpperCase() : '—' },
+              { label:'Payment Date',     val: paymentDate || '—' },
             ].map(r => (
               <div key={r.label} className="receipt-row">
                 <span className="receipt-label">{r.label}</span>
@@ -202,23 +255,31 @@ const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-cen
           </div>
 
           {/* GST Breakdown */}
-          <div style={{ margin:'0', background:'rgba(255,122,41,0.04)', borderTop:'1px solid rgba(255,255,255,0.06)', padding:'16px 20px' }}>
-            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:9, letterSpacing:'.14em', color:'rgba(255,255,255,0.3)', textTransform:'uppercase', marginBottom:10 }}>Payment Breakdown</div>
-            {[
-              { label:'Taxable Amount', val:'₹253.39', dim:false },
-              { label:'CGST @ 9%',      val:'₹22.81',  dim:true  },
-              { label:'SGST @ 9%',      val:'₹22.81',  dim:true  },
-            ].map(r => (
-              <div key={r.label} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'5px 0', borderBottom:'1px solid rgba(255,255,255,0.04)' }}>
-                <span style={{ fontFamily:'Inter,sans-serif', fontSize:12, color: r.dim ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.6)', fontWeight:600 }}>{r.label}</span>
-                <span style={{ fontFamily:'Inter,sans-serif', fontSize:12, color: r.dim ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.7)', fontWeight:700 }}>{r.val}</span>
+          {(() => {
+            const taxable = paidAmount ? +(paidAmount / 1.18).toFixed(2) : 0;
+            const gst     = paidAmount ? +((paidAmount - taxable) / 2).toFixed(2) : 0;
+            return (
+            <div style={{ margin:'0', background:'rgba(255,122,41,0.04)', borderTop:'1px solid rgba(255,255,255,0.06)', padding:'16px 20px' }}>
+              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:9, letterSpacing:'.14em', color:'rgba(255,255,255,0.3)', textTransform:'uppercase', marginBottom:10 }}>Payment Breakdown</div>
+              {[
+                { label:'Taxable Amount', val: paidAmount ? `₹${taxable.toFixed(2)}` : '—', dim:false },
+                { label:'CGST @ 9%',     val: paidAmount ? `₹${gst.toFixed(2)}`     : '—', dim:true  },
+                { label:'SGST @ 9%',     val: paidAmount ? `₹${gst.toFixed(2)}`     : '—', dim:true  },
+              ].map(r => (
+                <div key={r.label} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'5px 0', borderBottom:'1px solid rgba(255,255,255,0.04)' }}>
+                  <span style={{ fontFamily:'Inter,sans-serif', fontSize:12, color: r.dim ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.6)', fontWeight:600 }}>{r.label}</span>
+                  <span style={{ fontFamily:'Inter,sans-serif', fontSize:12, color: r.dim ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.7)', fontWeight:700 }}>{r.val}</span>
+                </div>
+              ))}
+              <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'10px 0 2px', marginTop:6, borderTop:'1px solid rgba(255,122,41,0.3)' }}>
+                <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:13, color:'#FF7A29', letterSpacing:'.04em' }}>TOTAL PAID</span>
+                <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:16, color:'#22C55E' }}>
+                  {paidAmount ? `₹${paidAmount.toFixed(2)} ✅` : '—'}
+                </span>
               </div>
-            ))}
-            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'10px 0 2px', marginTop:6, borderTop:'1px solid rgba(255,122,41,0.3)' }}>
-              <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:13, color:'#FF7A29', letterSpacing:'.04em' }}>TOTAL PAID</span>
-              <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:16, color:'#22C55E' }}>₹299.00 ✅</span>
             </div>
-          </div>
+            );
+          })()}
 
           {/* Dashed divider */}
           <div style={{ borderTop:'2px dashed rgba(255,122,41,0.25)', margin:'0 20px' }} />

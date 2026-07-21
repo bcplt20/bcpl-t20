@@ -1,6 +1,10 @@
 import React, { useState, useRef } from 'react';
 import { useLocation } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
+import {
+  sendOtp, verifyOtp, saveAuthToken, isAuthenticated,
+  registerPhase1, createPhase1Payment, getRegistrationStatus,
+} from '../lib/api';
 
 /*
   BCPL T20 — Bhartiya Corporate Premier League
@@ -141,6 +145,17 @@ export function Registration() {
   const [videoDragOver, setVideoDragOver]   = useState(false);
   const videoInputRef = useRef<HTMLInputElement>(null);
 
+  /* ── New registration + payment state ── */
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [loginError, setLoginError]     = useState('');
+  const [payLoading, setPayLoading]     = useState(false);
+  const [payError, setPayError]         = useState('');
+  const [showPayOtp, setShowPayOtp]     = useState(false);
+  const [payOtpStep, setPayOtpStep]     = useState<'phone'|'otp'>('phone');
+  const [payOtp, setPayOtp]             = useState('');
+  const [payOtpLoading, setPayOtpLoading] = useState(false);
+  const [payOtpError, setPayOtpError]   = useState('');
+
   const handleVideoFile = (file: File) => {
     if (!file.type.startsWith('video/')) { alert('Please select a video file (MP4, MOV, AVI, etc.)'); return; }
     if (file.size > 500 * 1024 * 1024) { alert('File too large. Max size is 500 MB.'); return; }
@@ -152,6 +167,97 @@ export function Registration() {
     if (!videoFile) return;
     setVideoUploading(true);
     setTimeout(() => { setVideoUploading(false); setVideoUploaded(true); }, 2200);
+  };
+
+  /* ── Cashfree SDK loader ── */
+  const loadCashfreeSDK = (): Promise<void> =>
+    new Promise((resolve, reject) => {
+      if ((window as any).Cashfree) { resolve(); return; }
+      const s = document.createElement('script');
+      s.src = 'https://sdk.cashfree.com/js/v3/cashfree.js';
+      s.onload = () => resolve();
+      s.onerror = () => reject(new Error('Cashfree SDK failed to load'));
+      document.head.appendChild(s);
+    });
+
+  /* ── Existing login modal (registered players → video upload) ── */
+  const handleSendLoginOtp = async () => {
+    setLoginLoading(true); setLoginError('');
+    try {
+      const r = await sendOtp(loginPhone, 'login');
+      if (r.devOtp) console.info('[DEV OTP]', r.devOtp);
+      setLoginStep('otp');
+    } catch (e: any) { setLoginError(e.message ?? 'Failed to send OTP'); }
+    finally { setLoginLoading(false); }
+  };
+
+  const handleVerifyLoginOtp = async () => {
+    setLoginLoading(true); setLoginError('');
+    try {
+      const r = await verifyOtp(loginPhone, loginOtp, 'login');
+      saveAuthToken(r.token, r.user);
+      setLoggedIn(true); setShowLogin(false);
+    } catch (e: any) { setLoginError(e.message ?? 'Invalid OTP. Please try again.'); }
+    finally { setLoginLoading(false); }
+  };
+
+  /* ── New registration payment flow ── */
+  const doRegisterAndPay = async () => {
+    setPayLoading(true); setPayError('');
+    try {
+      let regId: string;
+      try {
+        const reg = await registerPhase1({ role: role!.id, trialCity: city });
+        regId = reg.registrationId;
+      } catch (e: any) {
+        // Already registered — get existing regId
+        const status = await getRegistrationStatus() as any;
+        if (status?.registrationId) { regId = status.registrationId; }
+        else throw e;
+      }
+      const pay = await createPhase1Payment(regId);
+      // Store data for receipt page
+      sessionStorage.setItem('bcpl_p1_pending', JSON.stringify({ amount: pay.amount, orderId: pay.orderId }));
+      // Open Cashfree
+      await loadCashfreeSDK();
+      const cashfree = (window as any).Cashfree({ mode: 'production' });
+      cashfree.checkout({ paymentSessionId: pay.paymentSessionId });
+    } catch (e: any) {
+      setPayError(e.message ?? 'Payment failed. Please try again.');
+      setPayLoading(false);
+    }
+  };
+
+  const handlePay = () => {
+    if (!isAuthenticated()) {
+      setShowPayOtp(true); setPayOtpStep('phone'); setPayOtp(''); setPayOtpError('');
+    } else {
+      doRegisterAndPay();
+    }
+  };
+
+  const handlePayOtpSend = async () => {
+    setPayOtpLoading(true); setPayOtpError('');
+    try {
+      const r = await sendOtp(phone, 'register');
+      if (r.devOtp) console.info('[DEV OTP]', r.devOtp);
+      setPayOtpStep('otp');
+    } catch (e: any) { setPayOtpError(e.message ?? 'Failed to send OTP'); }
+    finally { setPayOtpLoading(false); }
+  };
+
+  const handlePayOtpVerify = async () => {
+    setPayOtpLoading(true); setPayOtpError('');
+    try {
+      const r = await verifyOtp(phone, payOtp, 'register', name, email);
+      saveAuthToken(r.token, r.user);
+      setShowPayOtp(false);
+      setPayOtpLoading(false);
+      doRegisterAndPay();
+    } catch (e: any) {
+      setPayOtpError(e.message ?? 'Invalid OTP. Please try again.');
+      setPayOtpLoading(false);
+    }
   };
 
   const NAV_LINKS: [string,string][] = [['Home','/'],['Match Center','/match-center'],['Teams','/teams'],['Sponsors','/sponsors'],['About','/about'],['FAQ','/faq'],['Contact','/contact'],['Login','#login']];
@@ -611,9 +717,10 @@ export function Registration() {
                         <input className="field-inp" type="tel" inputMode="numeric" maxLength={10} value={loginPhone}
                           onChange={e => { const v=e.target.value.replace(/\D/g,''); if(v.length<=10) setLoginPhone(v); }}
                           placeholder="10-digit number" style={{ marginBottom:16, width:'100%' }} />
-                        <button disabled={loginPhone.length!==10} onClick={() => setLoginStep('otp')}
-                          style={{ width:'100%', padding:'13px 0', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', opacity:loginPhone.length!==10?0.5:1 }}>
-                          Send OTP →
+                        {loginError && <div style={{ fontSize:12, color:'#EF4444', marginBottom:10, fontWeight:600 }}>⚠ {loginError}</div>}
+                        <button disabled={loginPhone.length!==10 || loginLoading} onClick={handleSendLoginOtp}
+                          style={{ width:'100%', padding:'13px 0', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', opacity:loginPhone.length!==10||loginLoading?0.5:1 }}>
+                          {loginLoading ? '⏳ Sending...' : 'Send OTP →'}
                         </button>
                       </>) : (<>
                         <div style={{ fontSize:12, color:'#22C55E', marginBottom:12 }}>✅ OTP sent to +91 {loginPhone}</div>
@@ -621,11 +728,12 @@ export function Registration() {
                         <input className="field-inp" type="tel" inputMode="numeric" maxLength={6} value={loginOtp}
                           onChange={e => { const v=e.target.value.replace(/\D/g,''); if(v.length<=6) setLoginOtp(v); }}
                           placeholder="6-digit OTP" style={{ marginBottom:16, width:'100%', letterSpacing:'0.3em', fontSize:20, textAlign:'center' }} />
-                        <button disabled={loginOtp.length!==6} onClick={() => { setLoggedIn(true); setShowLogin(false); }}
-                          style={{ width:'100%', padding:'13px 0', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', opacity:loginOtp.length!==6?0.5:1 }}>
-                          Verify & Login →
+                        {loginError && <div style={{ fontSize:12, color:'#EF4444', marginBottom:10, fontWeight:600 }}>⚠ {loginError}</div>}
+                        <button disabled={loginOtp.length!==6 || loginLoading} onClick={handleVerifyLoginOtp}
+                          style={{ width:'100%', padding:'13px 0', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', opacity:loginOtp.length!==6||loginLoading?0.5:1 }}>
+                          {loginLoading ? '⏳ Verifying...' : 'Verify & Login →'}
                         </button>
-                        <button onClick={() => setLoginStep('phone')} style={{ width:'100%', marginTop:8, padding:'10px', background:'none', border:'1px solid rgba(255,255,255,0.1)', borderRadius:10, color:'rgba(255,255,255,0.4)', fontSize:12, cursor:'pointer' }}>← Change Number</button>
+                        <button onClick={() => { setLoginStep('phone'); setLoginError(''); }} style={{ width:'100%', marginTop:8, padding:'10px', background:'none', border:'1px solid rgba(255,255,255,0.1)', borderRadius:10, color:'rgba(255,255,255,0.4)', fontSize:12, cursor:'pointer' }}>← Change Number</button>
                       </>)}
                     </div>
                   </div>
@@ -855,12 +963,17 @@ export function Registration() {
                 {/* Pay CTA */}
                 <button
                   className="btn-primary"
-                  disabled={!agreed}
+                  disabled={!agreed || payLoading}
                   style={{ width:'100%', padding:'20px 0', fontSize:17, clipPath:'none', borderRadius:12, letterSpacing:'.08em' }}
-                  onClick={() => agreed && alert('Payment gateway (Cashfree) will be live soon. Your registration details have been noted!')}
+                  onClick={handlePay}
                 >
-                  🏏 &nbsp;PAY ₹{Math.round(price * 1.18)} (incl. 18% GST) · ENTER PHASE 1
+                  {payLoading ? '⏳ Processing...' : `🏏  PAY ₹${price} · ENTER PHASE 1`}
                 </button>
+                {payError && (
+                  <div style={{ marginTop:12, padding:'12px 16px', background:'rgba(239,68,68,0.1)', border:'1px solid rgba(239,68,68,0.3)', borderRadius:8, fontSize:13, color:'#EF4444', fontWeight:600 }}>
+                    ⚠ {payError}
+                  </div>
+                )}
                 <div style={{ display:'flex', justifyContent:'center', gap:16, marginTop:12, flexWrap:'wrap' }}>
                   {['🔒 Cashfree Secured','256-bit SSL','BCPL'].map(t => (
                     <span key={t} style={{ fontSize:10, color:'rgba(255,255,255,0.25)', fontWeight:600 }}>{t}</span>
@@ -963,6 +1076,41 @@ export function Registration() {
           </div>
         </div>
       </div>
+
+      {/* ═══════════════ PAY OTP MODAL (new registration) ═══════════════ */}
+      {showPayOtp && (
+        <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.88)', zIndex:1000, display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}>
+          <div style={{ background:'#0C1A2E', border:'1px solid rgba(255,122,41,0.35)', borderRadius:16, padding:28, width:'100%', maxWidth:380, position:'relative' }}>
+            <button onClick={() => setShowPayOtp(false)} style={{ position:'absolute', top:12, right:14, background:'none', border:'none', color:'rgba(255,255,255,0.4)', fontSize:18, cursor:'pointer' }}>✕</button>
+            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:18, color:'#fff', marginBottom:4 }}>Verify Your Number</div>
+            <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginBottom:20 }}>One-time OTP to confirm your identity before payment.</div>
+            {payOtpStep === 'phone' ? (<>
+              <label style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.5)', letterSpacing:'.08em', display:'block', marginBottom:6 }}>MOBILE NUMBER</label>
+              <div style={{ display:'flex', alignItems:'center', gap:0, marginBottom:16 }}>
+                <span style={{ padding:'0 12px', height:46, display:'flex', alignItems:'center', background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,122,41,0.25)', borderRight:'none', fontSize:14, fontWeight:700, color:'rgba(255,255,255,0.6)', flexShrink:0 }}>+91</span>
+                <div className="field-inp" style={{ flex:1, display:'flex', alignItems:'center', borderLeft:'none', pointerEvents:'none', opacity:.7 }}>{phone}</div>
+              </div>
+              {payOtpError && <div style={{ fontSize:12, color:'#EF4444', marginBottom:10, fontWeight:600 }}>⚠ {payOtpError}</div>}
+              <button disabled={payOtpLoading} onClick={handlePayOtpSend}
+                style={{ width:'100%', padding:'13px 0', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', opacity:payOtpLoading?0.5:1 }}>
+                {payOtpLoading ? '⏳ Sending...' : `Send OTP to +91 ${phone} →`}
+              </button>
+            </>) : (<>
+              <div style={{ fontSize:12, color:'#22C55E', marginBottom:12 }}>✅ OTP sent to +91 {phone}</div>
+              <label style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.5)', letterSpacing:'.08em', display:'block', marginBottom:6 }}>ENTER OTP</label>
+              <input className="field-inp" type="tel" inputMode="numeric" maxLength={6} value={payOtp}
+                onChange={e => { const v=e.target.value.replace(/\D/g,''); if(v.length<=6) setPayOtp(v); }}
+                placeholder="6-digit OTP" style={{ marginBottom:16, width:'100%', letterSpacing:'0.3em', fontSize:20, textAlign:'center' }} autoFocus />
+              {payOtpError && <div style={{ fontSize:12, color:'#EF4444', marginBottom:10, fontWeight:600 }}>⚠ {payOtpError}</div>}
+              <button disabled={payOtp.length!==6 || payOtpLoading} onClick={handlePayOtpVerify}
+                style={{ width:'100%', padding:'13px 0', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', opacity:payOtp.length!==6||payOtpLoading?0.5:1 }}>
+                {payOtpLoading ? '⏳ Verifying...' : 'Verify & Pay →'}
+              </button>
+              <button onClick={() => { setPayOtpStep('phone'); setPayOtpError(''); }} style={{ width:'100%', marginTop:8, padding:'10px', background:'none', border:'1px solid rgba(255,255,255,0.1)', borderRadius:10, color:'rgba(255,255,255,0.4)', fontSize:12, cursor:'pointer' }}>← Back</button>
+            </>)}
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
       <BCPLFooter />
