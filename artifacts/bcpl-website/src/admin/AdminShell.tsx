@@ -146,11 +146,19 @@ export default function AdminShell() {
   );
   const activeLabel = ALL_ITEMS.find(i => i.id === active)?.label || "Dashboard";
 
-  /* ── Admin Accounts — update passwords as needed ── */
+  /* ══════════════════════════════════════════════════
+     ADMIN ACCOUNTS — sirf aap yahan change karein
+     ══════════════════════════════════════════════════
+     Role options: "Super Admin" | "Finance Admin" | "Operations Admin"
+     Password badalna ho to bas neeche value badlo aur save karo.
+     ══════════════════════════════════════════════════ */
   const ADMIN_ACCOUNTS = [
-    { email:"saurabh@bcplt20.com", password:"BCPL@Super2024!", name:"Saurabh Jha",  role:"Super Admin"      },
-    { email:"arti@bcplt20.com",    password:"BCPL@Super2024!", name:"Arti Jha",     role:"Super Admin"      },
-    { email:"ops@bcplt20.com",     password:"BCPL@Ops2024!",   name:"Ops Team",     role:"Operations Admin" },
+    // ── MAIN HEAD (aap) ────────────────────────────
+    { email:"saurabhjha@bcplt20.com", password:"BCPL@S5#2026!", name:"Saurabh Jha",  role:"Super Admin"      },
+
+    // ── CO-ADMINS (baad mein fill karein) ──────────
+    // { email:"coladmin@bcplt20.com",  password:"BCPL@Ops2026!", name:"Ops Team",     role:"Operations Admin" },
+    // { email:"finance@bcplt20.com",   password:"BCPL@Fin2026!", name:"Finance Team",  role:"Finance Admin"    },
   ];
 
   /* ── Login ── */
