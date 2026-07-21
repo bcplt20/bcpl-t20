@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BCPLFooter } from '../components/BCPLFooter';
 
 const NAV = ['Home','Match Center','Teams','Sponsors','Photos','Videos','About','FAQ','Contact'];
 const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-center', 'Teams':'teams', 'Sponsors':'sponsors', 'Photos':'photos', 'Videos':'videos', 'About':'about', 'FAQ':'faq', 'Contact':'contact' };
@@ -213,19 +214,7 @@ export function AuctionLive() {
       </div>
 
       {/* FOOTER */}
-      <footer style={{ background:'#040C18', borderTop:'1px solid rgba(255,255,255,0.06)', padding:'32px 0 20px', marginTop:60 }}>
-        <div className="wrap">
-          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:16, marginBottom:16 }}>
-            <div><span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'#FF7A29' }}>BCPL</span><span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'#fff' }}> T20</span></div>
-            <div style={{ display:'flex', gap:20, flexWrap:'wrap' }}>
-              {['About','Teams','FAQ','Contact','Terms','Privacy'].map(l=><a key={l} href="#" style={{ fontSize:12, color:'rgba(255,255,255,0.4)', textDecoration:'none', fontWeight:600 }}>{l}</a>)}
-            </div>
-          </div>
-          <div style={{ borderTop:'1px solid rgba(255,255,255,0.05)', paddingTop:14, fontSize:11, color:'rgba(255,255,255,0.2)', display:'flex', justifyContent:'space-between', flexWrap:'wrap', gap:8 }}>
-            <span>Season 5 · BCPL Pvt. Ltd.</span>
-            <span>© 2026 BCPL. All Rights Reserved.</span>
-          </div>
-        </div>
+      <BCPLFooter />
       </footer>
     </div>
   );
