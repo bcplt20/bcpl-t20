@@ -661,7 +661,7 @@ export function Home() {
         <div className="W" style={{ position:"relative", zIndex:1 }}>
           <div className="slbl">Season Journey</div>
           <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4vw,44px)", color:"#fff", textTransform:"uppercase", marginBottom:6 }}>Season 5 Timeline</h2>
-          <p style={{ fontSize:15, color:"rgba(255,255,255,.45)", marginBottom:48, maxWidth:540 }}>From registration to the trophy — here's the complete road map for BCPL T20 Season 5.</p>
+          <p style={{ fontSize:15, color:"rgba(255,255,255,.45)", marginBottom:48, maxWidth:540 }}>From registration to the trophy — here's the complete road map for BCPL Season 5.</p>
 
           {/* Timeline grid */}
           <div className="tl-grid" ref={tlRef}>
@@ -1102,7 +1102,7 @@ export function Home() {
           {/* Become a sponsor CTA */}
           <div style={{ marginTop:36, textAlign:"center" }}>
             <a href="/sponsors" style={{ fontSize:13, color:"rgba(255,255,255,.35)", textDecoration:"none", borderBottom:"1px solid rgba(255,255,255,.12)", paddingBottom:2 }}>
-              Interested in sponsoring BCPL T20 Season 5?&nbsp;<span style={{ color:"#FF7A29" }}>Contact us →</span>
+              Interested in sponsoring BCPL Season 5?&nbsp;<span style={{ color:"#FF7A29" }}>Contact us →</span>
             </a>
           </div>
         </div>

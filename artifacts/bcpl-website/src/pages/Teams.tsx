@@ -251,7 +251,7 @@ export function Teams() {
                 <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:22, color:"#fff" }}>T20</span>
               </div>
               <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, color:"#E8B23D", letterSpacing:".12em", textTransform:"uppercase", marginBottom:8 }}>#OfficeSeStadiumtak</div>
-              <div style={{ fontFamily:"Inter,sans-serif", fontSize:13, color:"rgba(255,255,255,0.3)", lineHeight:1.6 }}>India's biggest corporate T20 league.<br/>Season 5 · BCPL T20 Pvt. Ltd.</div>
+              <div style={{ fontFamily:"Inter,sans-serif", fontSize:13, color:"rgba(255,255,255,0.3)", lineHeight:1.6 }}>India's biggest corporate T20 league.<br/>Season 5 · BCPL Pvt. Ltd.</div>
             </div>
             {[
               {h:"League",links:[["About","/about"],["Teams","/teams"],["Sponsors","/sponsors"],["Schedule","/schedule"]]},
@@ -267,7 +267,7 @@ export function Teams() {
             ))}
           </div>
           <div style={{ borderTop:"1px solid rgba(255,255,255,0.05)", padding:"18px 0", display:"flex", flexWrap:"wrap", justifyContent:"space-between", alignItems:"center", gap:10 }}>
-            <span style={{ fontFamily:"Inter,sans-serif", fontSize:11, color:"rgba(255,255,255,0.2)" }}>© 2026 BCPL T20 Pvt. Ltd. · All Rights Reserved</span>
+            <span style={{ fontFamily:"Inter,sans-serif", fontSize:11, color:"rgba(255,255,255,0.2)" }}>© 2026 BCPL Pvt. Ltd. · All Rights Reserved</span>
             <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, color:"#FF7A29" }}>#OfficeSeStadiumtak</span>
           </div>
         </div>

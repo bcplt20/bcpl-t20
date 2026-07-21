@@ -309,7 +309,7 @@ export function Phase2KYC() {
           </div>
           <div style={{ borderTop:'1px solid rgba(255,255,255,0.05)', paddingTop:14, fontSize:11, color:'rgba(255,255,255,0.25)', display:'flex', justifyContent:'space-between', flexWrap:'wrap', gap:8 }}>
             <span>Season 5 · Kriparti Playing 11 Pvt. Ltd.</span>
-            <span>© 2025 BCPL T20. All Rights Reserved.</span>
+            <span>© 2026 BCPL. All Rights Reserved.</span>
           </div>
         </div>
       </footer>

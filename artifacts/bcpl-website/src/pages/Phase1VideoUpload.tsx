@@ -524,7 +524,7 @@ export function Phase1VideoUpload() {
             Kriparti Playing 11 Pvt. Ltd. &nbsp;·&nbsp; Season 5 &nbsp;·&nbsp; #OfficeSeStadiumtak
           </div>
           <div style={{ fontSize:11, color:'rgba(255,255,255,0.2)', letterSpacing:'.06em' }}>
-            © 2025 BCPL T20. All rights reserved.
+            © 2026 BCPL. All rights reserved.
           </div>
         </div>
       </footer>

@@ -6,7 +6,7 @@ function Navbar() {
   return (
     <>
       <div style={{background:'linear-gradient(90deg,#C94E0E,#FF7A29,#E8611A,#FF7A29,#C94E0E)',backgroundSize:'300% 100%',animation:'gradShift 4s ease infinite',color:'#fff',padding:'11px 20px',textAlign:'center',fontSize:12,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'0.04em',zIndex:10,position:'relative'}}>
-        <span>🏏 BCPL T20 Season 5 — Trials Open in 75 Cities</span>
+        <span>🏏 BCPL Season 5 — Trials Open in 75 Cities</span>
         <span style={{margin:'0 12px',opacity:0.5}}>|</span>
         <span>Register for ₹299 Only</span>
         <span style={{margin:'0 12px',opacity:0.5}}>|</span>
@@ -65,7 +65,7 @@ function Footer() {
           </div>
         </div>
         <div style={{borderTop:'1px solid rgba(255,255,255,0.06)',paddingTop:20,display:'flex',flexWrap:'wrap',gap:12,justifyContent:'space-between',alignItems:'center'}}>
-          <p style={{color:'rgba(255,255,255,0.28)',fontSize:11,fontFamily:'Inter,sans-serif'}}>© 2025 BCPL T20 Pvt. Ltd. | www.bcpl-t20.com</p>
+          <p style={{color:'rgba(255,255,255,0.28)',fontSize:11,fontFamily:'Inter,sans-serif'}}>© 2026 BCPL Pvt. Ltd. | www.bcpl-t20.com</p>
           <div style={{display:'flex',gap:8}}>
             {['📸','▶️','🐦','📘'].map((ic,i)=><a key={i} href="#" style={{width:34,height:34,borderRadius:8,background:'rgba(255,255,255,0.06)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,textDecoration:'none',border:'1px solid rgba(255,255,255,0.07)'}}>{ic}</a>)}
           </div>
