@@ -39,15 +39,15 @@ const PLAYER = {
 
 /* ── JOURNEY NODES ── */
 function getNodes(phase: Phase) {
-  const done  = (label:string) => ({ label, state:"done"    as const });
-  const active= (label:string) => ({ label, state:"active"  as const });
-  const wait  = (label:string) => ({ label, state:"waiting" as const });
-  const map: Record<Phase, Array<{label:string;state:"done"|"active"|"waiting"}>> = {
-    p1_registered: [active("Phase 1 Registration"), wait("Video Upload"), wait("Scout Review"), wait("Trial Invite"), wait("Franchise Auction"), wait("Team Selected")],
-    p1_video:      [done("Phase 1 Registration"),   active("Video Upload"), wait("Scout Review"), wait("Trial Invite"), wait("Franchise Auction"), wait("Team Selected")],
-    p2_selected:   [done("Phase 1 Registration"),   done("Video Upload"),  done("Scout Review"),  active("Trial Invite"), wait("Franchise Auction"), wait("Team Selected")],
-    auction:       [done("Phase 1 Registration"),   done("Video Upload"),  done("Scout Review"),  done("Trial Invite"),  active("Franchise Auction"), wait("Team Selected")],
-    signed:        [done("Phase 1 Registration"),   done("Video Upload"),  done("Scout Review"),  done("Trial Invite"),  done("Franchise Auction"),  active("Team Selected")],
+  const done  = (label:string, receipt?:string) => ({ label, state:"done"    as const, receipt });
+  const active= (label:string) => ({ label, state:"active"  as const, receipt: undefined as string|undefined });
+  const wait  = (label:string) => ({ label, state:"waiting" as const, receipt: undefined as string|undefined });
+  const map: Record<Phase, Array<{label:string;state:"done"|"active"|"waiting";receipt?:string}>> = {
+    p1_registered: [active("P1 Registration"),                         wait("Video Upload"), wait("P2 Registration"),                              wait("Franchise Auction"), wait("Team Signed")],
+    p1_video:      [done("P1 Registration","register/p1-receipt"),     active("Video Upload"), wait("P2 Registration"),                            wait("Franchise Auction"), wait("Team Signed")],
+    p2_selected:   [done("P1 Registration","register/p1-receipt"),     done("Video Upload"), active("P2 Registration"),                            wait("Franchise Auction"), wait("Team Signed")],
+    auction:       [done("P1 Registration","register/p1-receipt"),     done("Video Upload"), done("P2 Registration","register/p2-receipt"),         active("Franchise Auction"), wait("Team Signed")],
+    signed:        [done("P1 Registration","register/p1-receipt"),     done("Video Upload"), done("P2 Registration","register/p2-receipt"),         done("Franchise Auction"), active("Team Signed")],
   };
   return map[phase];
 }
@@ -96,6 +96,7 @@ export function PlayerProfile() {
         @media(max-width:1023px){.profile-layout{flex-direction:column!important;}.profile-left{width:100%!important;min-width:0!important;}.status-btn{margin-left:0!important;width:100%;margin-top:10px!important;}
       `}</style>
 
+      <div style={{ position:'sticky', top:0, zIndex:300 }}>
       {/* TICKER */}
       <div style={{ background:"linear-gradient(90deg,#C94E0E,#FF7A29,#E8611A)", overflow:"hidden", height:34, display:"flex", alignItems:"center" }}>
         <div style={{ display:"flex", whiteSpace:"nowrap", animation:"tickerScroll 32s linear infinite" }}>
@@ -104,30 +105,32 @@ export function PlayerProfile() {
       </div>
 
       {/* NAVBAR */}
-      <nav style={{ position:"sticky", top:0, zIndex:200, background:"rgba(6,16,30,0.97)", backdropFilter:"blur(20px)", borderBottom:"1px solid rgba(255,255,255,0.06)" }}>
-        <div className="wrap" style={{ height:60, display:"flex", alignItems:"center", justifyContent:"space-between", gap:16 }}>
-          <div style={{ display:"flex", alignItems:"baseline", gap:3 }}>
-            <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:20, color:"#FF7A29" }}>BCPL</span>
-            <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:20, color:"#fff" }}>T20</span>
-            <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:10, color:"rgba(255,122,41,0.6)", marginLeft:6, letterSpacing:".1em" }}>SEASON 5</span>
-          </div>
-          {/* Breadcrumb */}
-          <div style={{ display:"flex", alignItems:"center", gap:6, fontFamily:"Inter,sans-serif", fontSize:12, color:"rgba(255,255,255,0.35)" }}>
-            <span style={{ cursor:"pointer", color:"rgba(255,255,255,0.5)" }}>Dashboard</span>
-            <span>›</span>
-            <span style={{ color:"#FF7A29" }}>My Profile</span>
-          </div>
-          <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-            {/* Avatar */}
-            <div style={{ width:36, height:36, borderRadius:12, background:"linear-gradient(135deg,#FF7A29,#D95E10)", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:14, color:"#fff" }}>RS</div>
-            <div style={{ display:"none" }}>
-              <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:13, color:"#fff" }}>Rahul Sharma</div>
-              <div style={{ fontFamily:"Inter,sans-serif", fontSize:11, color:"rgba(255,255,255,0.35)" }}>BCPL-S5-7432</div>
+      <nav style={{ background:"rgba(6,16,30,0.97)", backdropFilter:"blur(20px)", borderBottom:"1px solid rgba(255,255,255,0.06)" }}>
+        <div style={{ height:2, background:'linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)', backgroundSize:'200%', animation:'shimGold 4s linear infinite' }} />
+        <div className="wrap" style={{ height:60, display:"flex", alignItems:"center", justifyContent:"space-between", gap:12 }}>
+          {/* BCPL Logo + Season 5 badge */}
+          <div style={{ display:'flex', flexDirection:'row', alignItems:'center', gap:8, flexShrink:0, whiteSpace:'nowrap' }}>
+            <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL"
+              style={{ height:36, maxWidth:100, width:'auto', objectFit:'contain', display:'block', filter:'brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.7))', flexShrink:0 }}/>
+            <div style={{ display:'inline-flex', alignItems:'center', gap:4, background:'rgba(232,178,61,0.12)', border:'1px solid rgba(232,178,61,0.5)', borderRadius:6, padding:'3px 10px', flexShrink:0 }}>
+              <span style={{ fontSize:9 }}>🏆</span>
+              <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:9, color:'#E8B23D', letterSpacing:'.12em' }}>SEASON 5</span>
             </div>
-            <button className="btn-ghost" style={{ fontSize:11, padding:"7px 14px" }}>Log Out</button>
+          </div>
+          {/* Right: player chip + logout */}
+          <div style={{ display:"flex", alignItems:"center", gap:8, flexShrink:0 }}>
+            <div style={{ display:"flex", alignItems:"center", gap:8, background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:10, padding:'5px 10px' }}>
+              <div style={{ width:28, height:28, borderRadius:8, background:"linear-gradient(135deg,#FF7A29,#D95E10)", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:11, color:"#fff", flexShrink:0 }}>RS</div>
+              <div style={{ display:'flex', flexDirection:'column', lineHeight:1.2 }}>
+                <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:11, color:"#fff" }}>Rahul Sharma</span>
+                <span style={{ fontFamily:"monospace", fontSize:9, color:"rgba(255,255,255,0.3)" }}>BCPL-S5-7432</span>
+              </div>
+            </div>
+            <button className="btn-ghost" style={{ fontSize:11, padding:"7px 14px", flexShrink:0 }}>Log Out</button>
           </div>
         </div>
       </nav>
+      </div>{/* /sticky-top */}
 
       {/* ── DEMO STATE SWITCHER ── */}
       <div style={{ background:"#040A15", borderBottom:"1px solid rgba(255,255,255,0.06)", padding:"10px 0" }}>
@@ -244,9 +247,9 @@ export function PlayerProfile() {
             {/* ══ RIGHT: JOURNEY + DETAILS ══ */}
             <div style={{ flex:1, minWidth:0, display:"flex", flexDirection:"column", gap:16 }}>
 
-              {/* ── Journey Rail ── */}
+              {/* ── Player Timeline ── */}
               <div className="card" style={{ padding:"22px 24px" }}>
-                <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:13, color:"#fff", textTransform:"uppercase", letterSpacing:".05em", marginBottom:20 }}>🗺 Your Journey — Season 5</div>
+                <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:13, color:"#fff", textTransform:"uppercase", letterSpacing:".05em", marginBottom:20 }}>📊 Player Timeline</div>
                 <div style={{ display:"flex", flexDirection:"column", gap:0 }}>
                   {nodes.map((node, i) => {
                     const isDone   = node.state === "done";
@@ -260,14 +263,24 @@ export function PlayerProfile() {
                           <div style={{ width:28, height:28, borderRadius:12, background: isDone ? "#22C55E" : isActive ? "#FF7A29" : "rgba(255,255,255,0.06)", border:`1.5px solid ${color}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, fontFamily:"Montserrat,sans-serif", fontWeight:900, color: isDone||isActive ? "#fff" : "rgba(255,255,255,0.2)", flexShrink:0, animation: isActive ? "glowPulse 2s infinite" : "none" }}>
                             {isDone ? "✓" : isActive ? "●" : i+1}
                           </div>
-                          {i < nodes.length-1 && <div style={{ width:2, height:32, background: isDone ? "#22C55E44" : "rgba(255,255,255,0.07)", margin:"3px 0" }} />}
+                          {i < nodes.length-1 && <div style={{ width:2, height:36, background: isDone ? "#22C55E44" : "rgba(255,255,255,0.07)", margin:"3px 0" }} />}
                         </div>
                         {/* Right: content */}
-                        <div style={{ paddingBottom: i < nodes.length-1 ? 0 : 0, minHeight:50 }}>
-                          <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:isActive ? 900 : 700, fontSize:14, color: isDone ? "#22C55E" : isActive ? "#FF7A29" : "rgba(255,255,255,0.3)", marginTop:4 }}>{node.label}</div>
-                          {isDone && <div style={{ fontFamily:"Inter,sans-serif", fontSize:11, color:"rgba(255,255,255,0.3)", marginTop:2 }}>Completed ✓</div>}
-                          {isActive && <div style={{ fontFamily:"Inter,sans-serif", fontSize:11, color:"rgba(255,122,41,0.7)", marginTop:2 }}>● In Progress</div>}
-                          {isWait && <div style={{ fontFamily:"Inter,sans-serif", fontSize:11, color:"rgba(255,255,255,0.18)", marginTop:2 }}>Pending</div>}
+                        <div style={{ minHeight:52, paddingTop:2 }}>
+                          <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:isActive ? 900 : 700, fontSize:14, color: isDone ? "#22C55E" : isActive ? "#FF7A29" : "rgba(255,255,255,0.3)" }}>{node.label}</div>
+                          {isDone && (
+                            <div style={{ display:'flex', alignItems:'center', gap:8, flexWrap:'wrap', marginTop:4 }}>
+                              <span style={{ fontFamily:"Inter,sans-serif", fontSize:11, color:"rgba(255,255,255,0.3)" }}>Completed ✓</span>
+                              {node.receipt && (
+                                <button onClick={() => { window.location.href = import.meta.env.BASE_URL + node.receipt; }}
+                                  style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:9, color:'#FF7A29', background:'rgba(255,122,41,0.1)', border:'1px solid rgba(255,122,41,0.3)', borderRadius:6, padding:'2px 8px', cursor:'pointer', letterSpacing:'.06em', textTransform:'uppercase' }}>
+                                  📄 Receipt
+                                </button>
+                              )}
+                            </div>
+                          )}
+                          {isActive && <div style={{ fontFamily:"Inter,sans-serif", fontSize:11, color:"rgba(255,122,41,0.7)", marginTop:4 }}>● In Progress</div>}
+                          {isWait && <div style={{ fontFamily:"Inter,sans-serif", fontSize:11, color:"rgba(255,255,255,0.18)", marginTop:4 }}>Pending</div>}
                         </div>
                       </div>
                     );
