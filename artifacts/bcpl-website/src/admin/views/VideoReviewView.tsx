@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { adminGetVideos, adminReviewVideo } from "../../lib/api";
+import { adminGetVideos, adminReviewVideo, adminUpdatePhase1Status } from "../../lib/api";
 
 type Video = {
   id: string;
@@ -56,6 +56,27 @@ export default function VideoReviewView() {
       await adminReviewVideo(id, "reviewed");
       setVideos(prev => prev.map(v => v.id === id ? { ...v, status: "reviewed" } : v));
       if (sel?.id === id) setSel(s => s ? { ...s, status: "reviewed" } : s);
+    } catch (e: any) {
+      alert("Error: " + e.message);
+    } finally {
+      setActing(null);
+    }
+  };
+
+  const setP1Status = async (video: Video, status: "selected" | "rejected") => {
+    setActing(video.id + "_" + status);
+    try {
+      await adminUpdatePhase1Status(video.registrationId, status);
+      // Also mark reviewed if not already
+      if (video.status !== "reviewed") {
+        await adminReviewVideo(video.id, "reviewed");
+        setVideos(prev => prev.map(v => v.id === video.id ? { ...v, status: "reviewed", p1Status: status } : v));
+        if (sel?.id === video.id) setSel(s => s ? { ...s, status: "reviewed", p1Status: status } : s);
+      } else {
+        setVideos(prev => prev.map(v => v.id === video.id ? { ...v, p1Status: status } : v));
+        if (sel?.id === video.id) setSel(s => s ? { ...s, p1Status: status } : s);
+      }
+      alert(`✅ Player ${status === "selected" ? "SELECTED" : "REJECTED"} — Email & SMS sent automatically.`);
     } catch (e: any) {
       alert("Error: " + e.message);
     } finally {
@@ -222,26 +243,49 @@ export default function VideoReviewView() {
                   ))}
                 </div>
 
-                <div style={{ display:"flex", gap:8 }}>
+                {/* Open + Mark Reviewed */}
+                <div style={{ display:"flex", gap:8, marginBottom:8 }}>
                   {sel.s3Url && (
                     <a href={sel.s3Url} target="_blank" rel="noreferrer"
-                      style={{ flex:1, padding:11, borderRadius:10, border:"1px solid #6366F140", background:"#6366F120", color:"#6366F1", fontWeight:800, fontSize:13, cursor:"pointer", textAlign:"center", textDecoration:"none" }}>
+                      style={{ flex:1, padding:10, borderRadius:10, border:"1px solid #6366F140", background:"#6366F120", color:"#6366F1", fontWeight:800, fontSize:12, cursor:"pointer", textAlign:"center", textDecoration:"none" }}>
                       ↗ Open Video
                     </a>
                   )}
                   {sel.status === "submitted" && (
                     <button
-                      disabled={acting === sel.id}
+                      disabled={!!acting}
                       onClick={() => markReviewed(sel.id)}
-                      style={{ flex:1, padding:11, borderRadius:10, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontWeight:800, fontSize:13, cursor:"pointer", opacity:acting===sel.id?0.5:1 }}>
-                      ✓ Mark Reviewed
+                      style={{ flex:1, padding:10, borderRadius:10, border:"1px solid #FF6B0060", background:"#FF6B0020", color:"#FF6B00", fontWeight:800, fontSize:12, cursor:"pointer", opacity:acting?0.5:1 }}>
+                      👁 Mark Reviewed
                     </button>
                   )}
                   {sel.status === "reviewed" && (
-                    <div style={{ flex:1, padding:11, borderRadius:10, border:"1px solid #10B98140", background:"#10B98120", color:"#10B981", fontWeight:800, fontSize:13, textAlign:"center" }}>
-                      ✓ Already Reviewed
+                    <div style={{ flex:1, padding:10, borderRadius:10, border:"1px solid #10B98140", background:"#10B98120", color:"#10B981", fontWeight:800, fontSize:12, textAlign:"center" }}>
+                      ✓ Reviewed
                     </div>
                   )}
+                </div>
+
+                {/* Select / Reject — triggers email + SMS */}
+                <div style={{ background:"rgba(255,255,255,0.03)", border:"1px solid rgba(255,255,255,0.07)", borderRadius:10, padding:12 }}>
+                  <div style={{ fontSize:10, fontWeight:700, color:"#475569", letterSpacing:".08em", textTransform:"uppercase", marginBottom:8 }}>Scout Decision — sends Email + SMS</div>
+                  <div style={{ display:"flex", gap:8 }}>
+                    <button
+                      disabled={!!acting}
+                      onClick={() => setP1Status(sel, "selected")}
+                      style={{ flex:1, padding:"10px 8px", borderRadius:9, border:"1px solid #22C55E60", background:"#22C55E18", color:"#22C55E", fontWeight:900, fontSize:13, cursor:"pointer", opacity:acting?0.5:1 }}>
+                      ✓ SELECT
+                    </button>
+                    <button
+                      disabled={!!acting}
+                      onClick={() => setP1Status(sel, "rejected")}
+                      style={{ flex:1, padding:"10px 8px", borderRadius:9, border:"1px solid #EF444460", background:"#EF444418", color:"#EF4444", fontWeight:900, fontSize:13, cursor:"pointer", opacity:acting?0.5:1 }}>
+                      ✗ REJECT
+                    </button>
+                  </div>
+                  <div style={{ fontSize:10, color:"#334155", marginTop:7 }}>
+                    ⚡ Instant Email + SMS notification to player on decision
+                  </div>
                 </div>
               </div>
             </div>

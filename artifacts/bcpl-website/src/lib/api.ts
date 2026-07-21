@@ -250,6 +250,28 @@ export const adminReviewVideo = (id: string, status = "reviewed") =>
     "PUT", `/admin/videos/${id}/review`, { status }
   );
 
+// Trial Venues
+export const adminGetTrialVenues = () =>
+  adminReq<{ venues: any[] }>("GET", "/admin/trial-venues");
+
+export const adminCreateTrialVenue = (data: {
+  city: string; venue: string; trialDate: string; trialTime: string;
+  reportingTime: string; slots?: number; notes?: string;
+}) => adminReq<{ success: boolean; venue: any }>("POST", "/admin/trial-venues", data);
+
+export const adminUpdateTrialVenue = (id: string, data: Partial<{
+  city: string; venue: string; trialDate: string; trialTime: string;
+  reportingTime: string; slots: number; notes: string; status: string;
+}>) => adminReq<{ success: boolean; venue: any }>("PUT", `/admin/trial-venues/${id}`, data);
+
+export const adminDeleteTrialVenue = (id: string) =>
+  adminReq<{ success: boolean }>("DELETE", `/admin/trial-venues/${id}`);
+
+export const adminAnnounceTrialVenue = (id: string) =>
+  adminReq<{ success: boolean; sent: number; total: number }>(
+    "POST", `/admin/trial-venues/${id}/announce`
+  );
+
 // KYC
 export const adminGetKyc = (status?: string) =>
   adminReq<{ kyc: any[]; total: number }>(

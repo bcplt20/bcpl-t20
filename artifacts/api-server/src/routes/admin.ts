@@ -16,9 +16,12 @@ import {
   phase1VideosTable,
   kycRecordsTable,
   phase1PaymentsTable,
+  trialVenuesTable,
 } from "@workspace/db/schema";
-import { eq, desc, count } from "drizzle-orm";
+import { eq, desc, count, and } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
+import { sendEmail, tplPhase1Selected, tplPhase1Rejected, tplTrialVenueAnnounced } from "../lib/email";
+import { sendSms } from "../lib/sms";
 
 const router = Router();
 
@@ -178,6 +181,30 @@ router.put("/registrations/:id/phase1-status", async (req, res) => {
       .where(eq(registrationsTable.id, id))
       .returning();
     if (!updated) { res.status(404).json({ error: "Registration not found" }); return; }
+
+    // Fire-and-forget: send email + SMS on select / reject
+    if (status === "selected" || status === "rejected") {
+      const [userRow] = await db
+        .select({ user: usersTable })
+        .from(usersTable)
+        .where(eq(usersTable.id, updated.userId))
+        .limit(1);
+
+      if (userRow?.user) {
+        const { name, email, phone } = userRow.user;
+        const tpl = status === "selected" ? tplPhase1Selected(name) : tplPhase1Rejected(name);
+        const smsMsg = status === "selected"
+          ? `Congratulations ${name}! You have been SELECTED for BCPL T20 Season 5 Phase 2 trials. Login to bcplt20.com to proceed. - BCPL T20`
+          : `Dear ${name}, thank you for participating in BCPL Season 5. Phase 1 result is out. Visit bcplt20.com for details. - BCPL T20`;
+
+        // Don't await — fire and forget
+        sendEmail({ to: email, toName: name, subject: tpl.subject, htmlContent: tpl.htmlContent })
+          .catch(e => console.error("[admin] email failed", e));
+        sendSms(phone, smsMsg)
+          .catch(e => console.error("[admin] sms failed", e));
+      }
+    }
+
     res.json({ success: true, registration: updated });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
@@ -260,6 +287,111 @@ router.put("/videos/:id/review", async (req, res) => {
     if (!updated) { res.status(404).json({ error: "Video not found" }); return; }
     res.json({ success: true, video: updated });
   } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/* ─── Trial Venue CRUD ─────────────────────────────────────────── */
+
+// GET /api/admin/trial-venues
+router.get("/trial-venues", async (_req, res) => {
+  try {
+    const venues = await db.select().from(trialVenuesTable).orderBy(trialVenuesTable.city);
+    res.json({ venues });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/admin/trial-venues
+router.post("/trial-venues", async (req, res) => {
+  try {
+    const { city, venue, trialDate, trialTime, reportingTime, slots, notes } = req.body as {
+      city: string; venue: string; trialDate: string; trialTime: string;
+      reportingTime: string; slots?: number; notes?: string;
+    };
+    if (!city || !venue || !trialDate || !trialTime || !reportingTime) {
+      res.status(400).json({ error: "city, venue, trialDate, trialTime, reportingTime are required" });
+      return;
+    }
+    const [created] = await db.insert(trialVenuesTable).values({
+      city, venue, trialDate, trialTime, reportingTime,
+      slots: slots ?? 100, notes: notes ?? null,
+    }).returning();
+    res.json({ success: true, venue: created });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PUT /api/admin/trial-venues/:id
+router.put("/trial-venues/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { city, venue, trialDate, trialTime, reportingTime, slots, notes, status } = req.body as Record<string, any>;
+    const [updated] = await db
+      .update(trialVenuesTable)
+      .set({ city, venue, trialDate, trialTime, reportingTime, slots, notes, status, updatedAt: new Date() })
+      .where(eq(trialVenuesTable.id, id))
+      .returning();
+    if (!updated) { res.status(404).json({ error: "Venue not found" }); return; }
+    res.json({ success: true, venue: updated });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// DELETE /api/admin/trial-venues/:id
+router.delete("/trial-venues/:id", async (req, res) => {
+  try {
+    await db.delete(trialVenuesTable).where(eq(trialVenuesTable.id, req.params.id));
+    res.json({ success: true });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/admin/trial-venues/:id/announce
+// Sends tplTrialVenueAnnounced email to all Phase 2 players in that city
+router.post("/trial-venues/:id/announce", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const [venueRow] = await db.select().from(trialVenuesTable).where(eq(trialVenuesTable.id, id)).limit(1);
+    if (!venueRow) { res.status(404).json({ error: "Venue not found" }); return; }
+
+    // Fetch selected players in this city with phase2 payment done or kyc done
+    const players = await db
+      .select({ reg: registrationsTable, user: usersTable })
+      .from(registrationsTable)
+      .leftJoin(usersTable, eq(registrationsTable.userId, usersTable.id))
+      .where(eq(registrationsTable.trialCity, venueRow.city));
+
+    // Filter: selected for phase 2 and payment/kyc done
+    const eligible = players.filter(p =>
+      p.reg.phase1Status === "selected" &&
+      (p.reg.phase2Status === "payment_done" || p.reg.phase2Status === "kyc_done")
+    );
+
+    let sent = 0;
+    for (const { user } of eligible) {
+      if (!user) continue;
+      const tpl = tplTrialVenueAnnounced(
+        user.name, venueRow.city, venueRow.venue,
+        venueRow.trialDate, venueRow.trialTime, venueRow.reportingTime
+      );
+      const emailOk = await sendEmail({ to: user.email, toName: user.name, subject: tpl.subject, htmlContent: tpl.htmlContent });
+      if (emailOk) {
+        await sendSms(user.phone, `BCPL T20 Season 5: Your Phase 2 trial is confirmed! Venue: ${venueRow.venue}, ${venueRow.city} on ${venueRow.trialDate} at ${venueRow.trialTime}. Reporting: ${venueRow.reportingTime}. - BCPL T20`).catch(() => {});
+        sent++;
+      }
+    }
+
+    // Mark as announced
+    await db.update(trialVenuesTable).set({ announcedAt: new Date(), updatedAt: new Date() }).where(eq(trialVenuesTable.id, id));
+
+    res.json({ success: true, sent, total: eligible.length });
+  } catch (err: any) {
+    console.error("[admin/announce]", err);
     res.status(500).json({ error: err.message });
   }
 });
