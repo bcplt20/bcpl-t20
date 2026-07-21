@@ -1,0 +1,35 @@
+ubuntu@ip-172-31-12-8:~/app$ cd /home/ubuntu/app/artifacts/api-server
+source /home/ubuntu/app/.env.production
+node -e "
+const {Client}=require('pg');
+const c=new Client({connectionString:process.env.DATABASE_URL,ssl:{rejectUnauthorized:false}});
+c.connect().then(()=>c.query(\`
+  CREATE EXTENSION IF NOT EXISTS pgcrypto;
+  CREATE TABLE IF NOT EXISTS otp_sessions (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), phone varchar(15) NOT NULL, otp_code varchar(6) NOT NULL, purpose varchar(30) NOT NULL, expires_at timestamptz NOT NULL, used_at timestamptz, created_at timestamptz NOT NULL DEFAULT now());
+  CREATE TABLE IF NOT EXISTS matches (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), match_no integer NOT NULL, season integer NOT NULL DEFAULT 5, team1 varchar(80) NOT NULL, team2 varchar(80) NOT NULL, venue varchar(150) NOT NULL, scheduled_at timestamptz, toss_winner varchar(80), toss_decision varchar(10), status varchar(20) NOT NULL DEFAULT 'scheduled', winner varchar(80), result_desc text, player_of_match varchar(100), created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now());
+  CREATE TABLE IF NOT EXISTS points_table (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), season integer NOT NULL DEFAULT 5, team varchar(80) NOT NULL, played integer NOT NULL DEFAULT 0, won integer NOT NULL DEFAULT 0, lost integer NOT NULL DEFAULT 0, no_result integer NOT NULL DEFAULT 0, points integer NOT NULL DEFAULT 0, nrr real NOT NULL DEFAULT 0, form json NOT NULL DEFAULT '[]', updated_at timestamptz NOT NULL DEFAULT now());
+\`)).then(()=>{console.log('Tables created OK');c.end()}).catch(e=>{console.error(e.message);c.end()});
+"
+node:internal/modules/cjs/loader:1210
+  throw err;
+  ^
+
+Error: Cannot find module 'pg'
+Require stack:
+- /home/ubuntu/app/artifacts/api-server/[eval]
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Module._load (node:internal/modules/cjs/loader:1038:27)
+    at Module.require (node:internal/modules/cjs/loader:1289:19)
+    at require (node:internal/modules/helpers:182:18)
+    at [eval]:2:16
+    at runScriptInThisContext (node:internal/vm:209:10)
+    at node:internal/process/execution:118:14
+    at [eval]-wrapper:6:24
+    at runScript (node:internal/process/execution:101:62)
+    at evalScript (node:internal/process/execution:133:3) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [ '/home/ubuntu/app/artifacts/api-server/[eval]' ]
+}
+
+Node.js v20.20.2
+ubuntu@ip-172-31-12-8:~/app/artifacts/api-server$ 
