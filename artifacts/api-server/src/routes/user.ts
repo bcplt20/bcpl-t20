@@ -58,4 +58,43 @@ router.get("/dashboard", requireAuth, async (req: AuthRequest, res) => {
   });
 });
 
+// GET /api/user/trial-venue — announced venue for player's trial city
+router.get("/trial-venue", requireAuth, async (req: AuthRequest, res) => {
+  const { trialVenuesTable } = await import("@workspace/db/schema");
+  const { and, isNotNull } = await import("drizzle-orm");
+
+  const [reg] = await db.select().from(registrationsTable)
+    .where(eq(registrationsTable.userId, req.user!.userId)).limit(1);
+
+  if (!reg) return void res.json({ found: false });
+
+  const [venue] = await db.select().from(trialVenuesTable)
+    .where(
+      and(
+        eq(trialVenuesTable.city, reg.trialCity ?? ""),
+        isNotNull(trialVenuesTable.announcedAt),
+      )
+    )
+    .orderBy(trialVenuesTable.announcedAt)
+    .limit(1);
+
+  if (!venue) return void res.json({ found: false });
+
+  res.json({
+    found: true,
+    venue: {
+      id:            venue.id,
+      city:          venue.city,
+      venue:         venue.venue,
+      trialDate:     venue.trialDate,
+      trialTime:     venue.trialTime,
+      reportingTime: venue.reportingTime,
+      slots:         venue.slots,
+      notes:         venue.notes,
+      status:        venue.status,
+      announcedAt:   venue.announcedAt,
+    },
+  });
+});
+
 export default router;

@@ -53,6 +53,31 @@ export const verifyOtp = (phone: string, otp: string, purpose: "login" | "regist
     "POST", "/auth/verify-otp", { phone, otp, purpose, name, email }
   );
 
+export const getDashboard = () =>
+  req<{
+    user:          { id: string; name: string; phone: string; email: string };
+    registered:    boolean;
+    registration?: {
+      id: string; role: string; trialCity: string;
+      phase1Status: string; phase2Status: string | null;
+      videoDeadline: string | null; deadlineExpired: boolean; createdAt: string;
+    };
+    phase1Payment?: { status: string; amount: number; paidAt: string } | null;
+    video?:         { submitted: boolean; submittedAt: string; status: string } | null;
+    phase2Payment?: { status: string; amount: number; paidAt: string } | null;
+    kyc?:           { status: string; profession: string; verifiedAt: string | null } | null;
+  }>("GET", "/user/dashboard");
+
+export const getPlayerTrialVenue = () =>
+  req<{
+    found: boolean;
+    venue?: {
+      id: string; city: string; venue: string; trialDate: string;
+      trialTime: string; reportingTime: string; slots: number; notes: string | null;
+      status: string; announcedAt: string | null;
+    };
+  }>("GET", "/user/trial-venue");
+
 export const getMe = () =>
   req<{ user: { id: string; name: string; phone: string; email: string } }>(
     "GET", "/auth/me"

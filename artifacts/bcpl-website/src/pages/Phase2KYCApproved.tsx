@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BCPLFooter } from '../components/BCPLFooter';
+import { getDashboard } from '../lib/api';
 
 const NAV = ['Home','Match Center','Teams','Sponsors','Photos','Videos','About','FAQ','Contact'];
 const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-center', 'Teams':'teams', 'Sponsors':'sponsors', 'Photos':'photos', 'Videos':'videos', 'About':'about', 'FAQ':'faq', 'Contact':'contact' };
@@ -15,7 +16,27 @@ const ROADMAP = [
 ];
 
 export function Phase2KYCApproved() {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpen,  setMenuOpen]  = useState(false);
+  const [playerName, setPlayerName] = useState('Player');
+  const [playerCity, setPlayerCity] = useState('—');
+  const [regIdShort, setRegIdShort] = useState('—');
+  const [playerRole, setPlayerRole] = useState('—');
+  const [playerEmail, setPlayerEmail] = useState('');
+  const [playerPhone, setPlayerPhone] = useState('');
+  const BASE = import.meta.env.BASE_URL;
+
+  useEffect(() => {
+    const token = localStorage.getItem('bcpl_auth_v1');
+    if (!token) { window.location.href = BASE + 'register'; return; }
+    getDashboard().then(d => {
+      if (d.user)         setPlayerName(d.user.name);
+      if (d.user?.email)  setPlayerEmail(d.user.email);
+      if (d.user?.phone)  setPlayerPhone(d.user.phone);
+      if (d.registration?.trialCity) setPlayerCity(d.registration.trialCity);
+      if (d.registration?.id)        setRegIdShort('BCPL-' + d.registration.id.slice(0,8).toUpperCase());
+      if (d.registration?.role)      setPlayerRole(d.registration.role);
+    }).catch(() => {});
+  }, []);
 
   return (
     <div style={{ background:'#06101E', minHeight:'100vh', fontFamily:"'Inter',sans-serif", color:'#F0EDE8', overflowX:'hidden', paddingBottom:100 }}>
@@ -170,18 +191,18 @@ export function Phase2KYCApproved() {
           <div style={{ background:'#0A1727', border:'1px solid rgba(255,255,255,0.08)', borderTop:'3px solid #FF7A29' }}>
             <div style={{ padding:'20px 20px', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
               <div style={{ fontSize:10, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.16em', color:'rgba(255,255,255,0.35)', marginBottom:6 }}>PLAYER PROFILE</div>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(22px,4vw,28px)', color:'#fff', letterSpacing:'-.01em' }}>Rahul Sharma</div>
+              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(22px,4vw,28px)', color:'#fff', letterSpacing:'-.01em' }}>{playerName}</div>
             </div>
             <div style={{ padding:'20px' }}>
               <div style={{ display:'flex', gap:10, marginBottom:20, flexWrap:'wrap' }}>
-                <div className="chip" style={{ background:'rgba(59,130,246,0.12)', border:'1px solid rgba(59,130,246,0.3)', color:'#93C5FD' }}>🏏 Batsman</div>
-                <div className="chip" style={{ background:'rgba(255,122,41,0.1)', border:'1px solid rgba(255,122,41,0.3)', color:'#FF7A29' }}>📍 Mumbai</div>
+                <div className="chip" style={{ background:'rgba(59,130,246,0.12)', border:'1px solid rgba(59,130,246,0.3)', color:'#93C5FD' }}>🏏 {playerRole}</div>
+                <div className="chip" style={{ background:'rgba(255,122,41,0.1)', border:'1px solid rgba(255,122,41,0.3)', color:'#FF7A29' }}>📍 {playerCity}</div>
               </div>
 
               {[
-                { label:'Registration No.', value:'BCPL-S5-7432', mono:true },
-                { label:'Email', value:'rahul.sharma@tcsmumbai.com', mono:false },
-                { label:'Phone', value:'+91 98765 43210', mono:false },
+                { label:'Registration No.', value:regIdShort, mono:true },
+                { label:'Email', value:playerEmail || '—', mono:false },
+                { label:'Phone', value:playerPhone || '—', mono:false },
                 { label:'KYC Status', value:'✅ Verified', green:true },
               ].map(row => (
                 <div key={row.label} className="profile-info-row">
@@ -192,7 +213,8 @@ export function Phase2KYCApproved() {
 
               <button className="btn-outline" style={{ width:'100%', padding:'13px', marginTop:20, fontSize:13 }} onClick={() => {
                 const logoUrl = `${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/bcpl-logo-white.png`;
-                const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>BCPL Player ID — Rahul Sharma</title><style>body{margin:0;background:#030E1C;display:flex;justify-content:center;padding:32px;font-family:'Segoe UI',sans-serif}.card{width:340px;background:linear-gradient(145deg,#0D1F3C,#06101E);border:1.5px solid rgba(255,122,41,0.45);border-radius:18px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.6)}.stripe{height:4px;background:linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)}.head{background:linear-gradient(135deg,#FF7A29,#C94E0E);padding:14px 20px}.head-title{font-size:10px;font-weight:800;color:rgba(255,255,255,0.9);letter-spacing:.18em}.head-sub{font-size:8px;color:rgba(255,255,255,0.65);margin-top:3px;letter-spacing:.1em}.body{padding:20px 22px 16px}.avatar{width:60px;height:60px;background:linear-gradient(135deg,#FF7A29,#C94E0E);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;margin-bottom:12px;box-shadow:0 4px 20px rgba(255,122,41,0.4)}.name{font-size:20px;font-weight:900;color:#fff;margin-bottom:3px}.role{font-size:11px;font-weight:800;color:#FF7A29;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px}hr{border:none;border-top:1px solid rgba(255,255,255,0.08);margin:12px 0}.row{display:flex;justify-content:space-between;margin-bottom:9px}.label{font-size:9px;font-weight:700;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:.08em}.val{font-size:11px;font-weight:700;color:rgba(255,255,255,0.8);text-align:right}.ref{font-family:monospace;color:#FF7A29;font-size:11px;font-weight:700}.foot{background:rgba(255,122,41,0.07);border-top:1px solid rgba(255,122,41,0.18);padding:12px 22px;display:flex;justify-content:space-between;align-items:center}.kyc{background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.4);border-radius:6px;padding:4px 11px;font-size:9px;font-weight:800;color:#22C55E;letter-spacing:.08em}.site{font-size:9px;color:rgba(255,255,255,0.25);font-weight:600}@media print{body{padding:0;background:#fff}.card{box-shadow:none}}</style></head><body><div class="card"><div class="stripe"></div><div class="head"><div class="head-title">BHARTIYA CORPORATE PREMIER LEAGUE</div><div class="head-sub">OFFICIAL PLAYER ID CARD · SEASON 5 · 2026–27</div></div><div class="body"><div class="avatar">RS</div><div class="name">Rahul Sharma</div><div class="role">🏏 Batsman · Mumbai</div><hr/><div class="row"><span class="label">Email</span><span class="val">rahul.sharma@tcsmumbai.com</span></div><div class="row"><span class="label">Phone</span><span class="val">+91 98765 43210</span></div><hr/><div class="row"><span class="label">Registration No.</span><span class="ref">BCPL-S5-7432</span></div><div class="row"><span class="label">KYC Status</span><span class="val" style="color:#22C55E">✅ Verified</span></div></div><div class="foot"><span class="site">bcplt20.com · BCPL Season 5</span><span class="kyc">KYC ✓ VERIFIED</span></div></div><script>window.onload=function(){window.print();}<\/script></body></html>`;
+                const initials = playerName.split(' ').map((w:string)=>w[0]).join('').toUpperCase().slice(0,2);
+                const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>BCPL Player ID — ${playerName}</title><style>body{margin:0;background:#030E1C;display:flex;justify-content:center;padding:32px;font-family:'Segoe UI',sans-serif}.card{width:340px;background:linear-gradient(145deg,#0D1F3C,#06101E);border:1.5px solid rgba(255,122,41,0.45);border-radius:18px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.6)}.stripe{height:4px;background:linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)}.head{background:linear-gradient(135deg,#FF7A29,#C94E0E);padding:14px 20px}.head-title{font-size:10px;font-weight:800;color:rgba(255,255,255,0.9);letter-spacing:.18em}.head-sub{font-size:8px;color:rgba(255,255,255,0.65);margin-top:3px;letter-spacing:.1em}.body{padding:20px 22px 16px}.avatar{width:60px;height:60px;background:linear-gradient(135deg,#FF7A29,#C94E0E);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;margin-bottom:12px;box-shadow:0 4px 20px rgba(255,122,41,0.4)}.name{font-size:20px;font-weight:900;color:#fff;margin-bottom:3px}.role{font-size:11px;font-weight:800;color:#FF7A29;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px}hr{border:none;border-top:1px solid rgba(255,255,255,0.08);margin:12px 0}.row{display:flex;justify-content:space-between;margin-bottom:9px}.label{font-size:9px;font-weight:700;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:.08em}.val{font-size:11px;font-weight:700;color:rgba(255,255,255,0.8);text-align:right}.ref{font-family:monospace;color:#FF7A29;font-size:11px;font-weight:700}.foot{background:rgba(255,122,41,0.07);border-top:1px solid rgba(255,122,41,0.18);padding:12px 22px;display:flex;justify-content:space-between;align-items:center}.kyc{background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.4);border-radius:6px;padding:4px 11px;font-size:9px;font-weight:800;color:#22C55E;letter-spacing:.08em}.site{font-size:9px;color:rgba(255,255,255,0.25);font-weight:600}@media print{body{padding:0;background:#fff}.card{box-shadow:none}}</style></head><body><div class="card"><div class="stripe"></div><div class="head"><div class="head-title">BHARTIYA CORPORATE PREMIER LEAGUE</div><div class="head-sub">OFFICIAL PLAYER ID CARD · SEASON 5 · 2026–27</div></div><div class="body"><div class="avatar">${initials}</div><div class="name">${playerName}</div><div class="role">🏏 ${playerRole} · ${playerCity}</div><hr/><div class="row"><span class="label">Email</span><span class="val">${playerEmail}</span></div><div class="row"><span class="label">Phone</span><span class="val">${playerPhone}</span></div><hr/><div class="row"><span class="label">Registration No.</span><span class="ref">${regIdShort}</span></div><div class="row"><span class="label">KYC Status</span><span class="val" style="color:#22C55E">✅ Verified</span></div></div><div class="foot"><span class="site">bcplt20.com · BCPL Season 5</span><span class="kyc">KYC ✓ VERIFIED</span></div></div><script>window.onload=function(){window.print();}<\/script></body></html>`;
                 const win = window.open('', '_blank');
                 if(win){ win.document.write(html); win.document.close(); }
               }}>
@@ -212,7 +234,7 @@ export function Phase2KYCApproved() {
                 <div style={{ fontSize:10, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.14em', color:'rgba(255,255,255,0.35)', marginBottom:8 }}>TRIAL CITY</div>
                 <div style={{ display:'flex', alignItems:'center', gap:12 }}>
                   <span style={{ fontSize:28 }}>🏟</span>
-                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(24px,5vw,32px)', color:'#fff' }}>Mumbai</div>
+                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(24px,5vw,32px)', color:'#fff' }}>{playerCity}</div>
                 </div>
               </div>
 
@@ -233,7 +255,7 @@ export function Phase2KYCApproved() {
               </div>
 
               <button className="btn-outline" style={{ width:'100%', padding:'13px', fontSize:13, marginBottom:12 }}>
-                📍 View Mumbai on Google Maps →
+                📍 View {playerCity} on Google Maps →
               </button>
               <div style={{ fontSize:11, color:'rgba(255,255,255,0.25)', textAlign:'center', fontStyle:'italic' }}>Exact ground address will be shared 30 days before trial</div>
             </div>
