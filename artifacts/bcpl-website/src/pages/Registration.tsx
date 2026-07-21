@@ -1,9 +1,10 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import {
   sendOtp, verifyOtp, saveAuthToken, isAuthenticated,
   registerPhase1, createPhase1Payment, getRegistrationStatus,
+  getUploadUrl, confirmVideoUpload,
 } from '../lib/api';
 
 /*
@@ -157,6 +158,20 @@ export function Registration() {
   const [payOtpError, setPayOtpError]   = useState('');
   const [payOtpTimer, setPayOtpTimer]   = useState(0);
 
+  // Registration status for already-registered/logged-in players
+  const [regStatus, setRegStatus]       = useState<any>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+
+  // On mount: if already authenticated, fetch registration status
+  useEffect(() => {
+    if (isAuthenticated()) {
+      getRegistrationStatus().then((s: any) => {
+        setRegStatus(s);
+        if (s.registered) setLoggedIn(true);
+      }).catch(() => {});
+    }
+  }, []);
+
   const handleVideoFile = (file: File) => {
     if (!file.type.startsWith('video/')) { alert('Please select a video file (MP4, MOV, AVI, etc.)'); return; }
     if (file.size > 500 * 1024 * 1024) { alert('File too large. Max size is 500 MB.'); return; }
@@ -164,10 +179,41 @@ export function Registration() {
     setVideoUploaded(false);
   };
 
-  const handleVideoUpload = () => {
-    if (!videoFile) return;
-    setVideoUploading(true);
-    setTimeout(() => { setVideoUploading(false); setVideoUploaded(true); }, 2200);
+  const handleVideoUpload = async () => {
+    if (!videoFile || !regStatus?.registrationId) return;
+    setVideoUploading(true); setUploadProgress(0);
+    try {
+      // 1. Get S3 presigned URL from API
+      const ct = videoFile.type === 'video/quicktime' ? 'video/quicktime'
+        : videoFile.type === 'video/x-msvideo' ? 'video/x-msvideo'
+        : videoFile.type === 'video/webm' ? 'video/webm'
+        : 'video/mp4';
+      const { presignedUrl, s3Key } = await getUploadUrl(regStatus.registrationId, ct);
+
+      // 2. Upload directly to S3 (with progress)
+      await new Promise<void>((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.upload.onprogress = (e) => {
+          if (e.lengthComputable) setUploadProgress(Math.round((e.loaded / e.total) * 90));
+        };
+        xhr.onload = () => { if (xhr.status === 200) resolve(); else reject(new Error(`Upload failed (${xhr.status})`)); };
+        xhr.onerror = () => reject(new Error('Upload failed. Check your connection.'));
+        xhr.open('PUT', presignedUrl);
+        xhr.setRequestHeader('Content-Type', videoFile.type);
+        xhr.send(videoFile);
+      });
+
+      // 3. Confirm upload with API → sends email/SMS
+      setUploadProgress(95);
+      await confirmVideoUpload(regStatus.registrationId, s3Key);
+      setUploadProgress(100);
+      setVideoUploaded(true);
+      setRegStatus((prev: any) => ({ ...prev, phase1Status: 'video_submitted' }));
+    } catch (e: any) {
+      alert(e.message ?? 'Upload failed. Please try again.');
+    } finally {
+      setVideoUploading(false);
+    }
   };
 
   /* ── Cashfree SDK loader ── */
@@ -197,6 +243,9 @@ export function Registration() {
     try {
       const r = await verifyOtp(loginPhone, loginOtp, 'login');
       saveAuthToken(r.token, r.user);
+      // Fetch real registration status to drive correct UI
+      const status = await getRegistrationStatus() as any;
+      setRegStatus(status);
       setLoggedIn(true); setShowLogin(false);
     } catch (e: any) { setLoginError(e.message ?? 'Invalid OTP. Please try again.'); }
     finally { setLoginLoading(false); }
@@ -660,66 +709,143 @@ export function Registration() {
                 {/* Already registered? */}
                 {!loggedIn ? (
                   <div style={{ marginTop:20, padding:'12px 16px', background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.08)', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:10 }}>
-                    <span style={{ fontSize:12, color:'rgba(255,255,255,0.45)' }}>Already registered Phase 1? Upload your video directly.</span>
+                    <span style={{ fontSize:12, color:'rgba(255,255,255,0.45)' }}>Already registered Phase 1? Login to upload video or check status.</span>
                     <button onClick={() => { setShowLogin(true); setLoginStep('phone'); setLoginPhone(''); setLoginOtp(''); }} style={{ background:'none', border:'1px solid rgba(255,122,41,0.4)', color:'#FF7A29', fontSize:11, fontWeight:700, padding:'6px 14px', cursor:'pointer', fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em', flexShrink:0, borderRadius:6 }}>LOGIN →</button>
                   </div>
                 ) : (
-                  /* ── VIDEO UPLOAD SECTION (shown after login) ── */
+                  /* ── STATUS-AWARE SECTION (shown after login) ── */
                   <div style={{ marginTop:20 }}>
-                    <div style={{ padding:'14px 16px', background:'rgba(34,197,94,0.06)', border:'1px solid rgba(34,197,94,0.25)', borderRadius:10, display:'flex', alignItems:'center', gap:10, marginBottom:16 }}>
+                    {/* Logged-in banner */}
+                    <div style={{ padding:'12px 16px', background:'rgba(34,197,94,0.06)', border:'1px solid rgba(34,197,94,0.25)', borderRadius:10, display:'flex', alignItems:'center', gap:10, marginBottom:16 }}>
                       <span style={{ fontSize:18 }}>✅</span>
+                      <div style={{ flex:1 }}>
+                        <div style={{ fontSize:13, fontWeight:700, color:'#22C55E', fontFamily:'Montserrat,sans-serif' }}>Logged in as +91 {loginPhone || regStatus?.phone || '—'}</div>
+                        {regStatus?.registered && <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)', marginTop:2 }}>Role: {regStatus.role?.toUpperCase()} · City: {regStatus.trialCity}</div>}
+                      </div>
+                      <button onClick={()=>{ setLoggedIn(false); setRegStatus(null); setVideoFile(null); setVideoUploaded(false); }} style={{ background:'none', border:'none', color:'rgba(255,255,255,0.3)', cursor:'pointer', fontSize:16 }}>✕</button>
+                    </div>
+
+                    {/* ── Not registered yet ── */}
+                    {regStatus && !regStatus.registered && (
+                      <div style={{ padding:'16px', background:'rgba(255,122,41,0.07)', border:'1px solid rgba(255,122,41,0.25)', borderRadius:10, textAlign:'center' }}>
+                        <div style={{ fontSize:13, color:'rgba(255,255,255,0.6)', marginBottom:8 }}>You haven't registered yet. Fill the form above to register.</div>
+                      </div>
+                    )}
+
+                    {/* ── Payment Pending ── */}
+                    {regStatus?.phase1Status === 'pending' && (
+                      <div style={{ padding:'16px', background:'rgba(251,191,36,0.07)', border:'1px solid rgba(251,191,36,0.3)', borderRadius:10, textAlign:'center' }}>
+                        <div style={{ fontSize:22, marginBottom:8 }}>⏳</div>
+                        <div style={{ fontSize:14, fontWeight:800, color:'#FBB724', fontFamily:'Montserrat,sans-serif' }}>Payment Pending</div>
+                        <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:6, marginBottom:14 }}>Complete your Phase 1 payment to activate your registration.</div>
+                        <button onClick={async()=>{
+                          try {
+                            setPayLoading(true);
+                            const pay = await createPhase1Payment(regStatus.registrationId);
+                            await loadCashfreeSDK();
+                            const cf = (window as any).Cashfree({ mode:'production' });
+                            cf.checkout({ paymentSessionId: pay.paymentSessionId, redirectTarget:'_modal' });
+                          } catch(e:any){ alert(e.message); } finally { setPayLoading(false); }
+                        }} style={{ padding:'12px 28px', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer' }}>
+                          {payLoading ? '⏳ Processing...' : '💳 COMPLETE PAYMENT →'}
+                        </button>
+                      </div>
+                    )}
+
+                    {/* ── Video Upload (payment done) ── */}
+                    {regStatus?.phase1Status === 'payment_done' && (
                       <div>
-                        <div style={{ fontSize:13, fontWeight:700, color:'#22C55E', fontFamily:'Montserrat,sans-serif' }}>Logged in as +91 {loginPhone}</div>
-                        <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)', marginTop:2 }}>Upload your 2-minute trial video below</div>
-                      </div>
-                      <button onClick={()=>{ setLoggedIn(false); setVideoFile(null); setVideoUploaded(false); }} style={{ marginLeft:'auto', background:'none', border:'none', color:'rgba(255,255,255,0.3)', cursor:'pointer', fontSize:16 }}>✕</button>
-                    </div>
-
-                    {/* Upload zone */}
-                    <div
-                      onDragOver={e=>{ e.preventDefault(); setVideoDragOver(true); }}
-                      onDragLeave={()=>setVideoDragOver(false)}
-                      onDrop={e=>{ e.preventDefault(); setVideoDragOver(false); const f=e.dataTransfer.files[0]; if(f) handleVideoFile(f); }}
-                      onClick={()=>videoInputRef.current?.click()}
-                      style={{ border:`2px dashed ${videoDragOver?'#FF7A29':'rgba(255,122,41,0.3)'}`, borderRadius:12, padding:'28px 20px', textAlign:'center', cursor:'pointer', background:videoDragOver?'rgba(255,122,41,0.06)':'rgba(255,122,41,0.02)', transition:'all .2s', marginBottom:12 }}
-                    >
-                      <input ref={videoInputRef} type="file" accept="video/*" style={{ display:'none' }} onChange={e=>{ const f=e.target.files?.[0]; if(f) handleVideoFile(f); }}/>
-                      {videoFile ? (
-                        <div>
-                          <div style={{ fontSize:28, marginBottom:8 }}>🎬</div>
-                          <div style={{ fontSize:13, fontWeight:700, color:'#fff', marginBottom:4, wordBreak:'break-all' }}>{videoFile.name}</div>
-                          <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)' }}>{(videoFile.size/1024/1024).toFixed(1)} MB · Click to change</div>
+                        <div style={{ padding:'10px 14px', background:'rgba(59,130,246,0.08)', border:'1px solid rgba(59,130,246,0.25)', borderRadius:8, marginBottom:14, fontSize:12, color:'rgba(255,255,255,0.6)' }}>
+                          🎉 Payment confirmed! Upload your 2-minute trial video below.
+                          {regStatus.videoDeadline && <span style={{ color:'#FBB724', fontWeight:700 }}> Deadline: {new Date(regStatus.videoDeadline).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' })}</span>}
                         </div>
-                      ) : (
-                        <div>
-                          <div style={{ fontSize:36, marginBottom:10 }}>📹</div>
-                          <div style={{ fontSize:14, fontWeight:700, color:'rgba(255,255,255,0.7)', marginBottom:4 }}>Tap to select video or drag & drop</div>
-                          <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)' }}>MP4, MOV, AVI · Max 2 minutes · Max 500 MB</div>
+                        <div
+                          onDragOver={e=>{ e.preventDefault(); setVideoDragOver(true); }}
+                          onDragLeave={()=>setVideoDragOver(false)}
+                          onDrop={e=>{ e.preventDefault(); setVideoDragOver(false); const f=e.dataTransfer.files[0]; if(f) handleVideoFile(f); }}
+                          onClick={()=>!videoUploading && videoInputRef.current?.click()}
+                          style={{ border:`2px dashed ${videoDragOver?'#FF7A29':'rgba(255,122,41,0.3)'}`, borderRadius:12, padding:'28px 20px', textAlign:'center', cursor: videoUploading?'default':'pointer', background:videoDragOver?'rgba(255,122,41,0.06)':'rgba(255,122,41,0.02)', transition:'all .2s', marginBottom:12 }}
+                        >
+                          <input ref={videoInputRef} type="file" accept="video/mp4,video/quicktime,video/x-msvideo,video/webm" style={{ display:'none' }} onChange={e=>{ const f=e.target.files?.[0]; if(f) handleVideoFile(f); }}/>
+                          {videoFile ? (
+                            <div>
+                              <div style={{ fontSize:28, marginBottom:8 }}>🎬</div>
+                              <div style={{ fontSize:13, fontWeight:700, color:'#fff', marginBottom:4, wordBreak:'break-all' }}>{videoFile.name}</div>
+                              <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)' }}>{(videoFile.size/1024/1024).toFixed(1)} MB{!videoUploading && ' · Tap to change'}</div>
+                            </div>
+                          ) : (
+                            <div>
+                              <div style={{ fontSize:36, marginBottom:10 }}>📹</div>
+                              <div style={{ fontSize:14, fontWeight:700, color:'rgba(255,255,255,0.7)', marginBottom:4 }}>Tap to select video or drag & drop</div>
+                              <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)' }}>MP4, MOV, AVI, WEBM · Max 2 minutes · Max 500 MB</div>
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
-
-                    {/* Tips */}
-                    <div style={{ marginBottom:16, display:'flex', flexDirection:'column', gap:5 }}>
-                      {['🏏 Show batting, bowling, or fielding based on your role','📍 Any outdoor/indoor ground — no studio needed','⏱ Keep it under 2 minutes for best results'].map(t=>(
-                        <div key={t} style={{ fontSize:11, color:'rgba(255,255,255,0.4)', display:'flex', gap:6 }}><span style={{flexShrink:0}}></span>{t}</div>
-                      ))}
-                    </div>
-
-                    {videoUploaded ? (
-                      <div style={{ padding:'16px', background:'rgba(34,197,94,0.1)', border:'1px solid rgba(34,197,94,0.4)', borderRadius:10, textAlign:'center' }}>
-                        <div style={{ fontSize:24, marginBottom:6 }}>✅</div>
-                        <div style={{ fontSize:14, fontWeight:800, color:'#22C55E', fontFamily:'Montserrat,sans-serif' }}>Video Uploaded Successfully!</div>
-                        <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:4 }}>BCCI scouts will review within 15 working days. Result via SMS + Email.</div>
+                        <div style={{ marginBottom:14, display:'flex', flexDirection:'column', gap:5 }}>
+                          {['🏏 Show batting, bowling, or fielding based on your role','📍 Any outdoor/indoor ground — no studio needed','⏱ Keep it under 2 minutes for best results'].map(t=>(
+                            <div key={t} style={{ fontSize:11, color:'rgba(255,255,255,0.4)' }}>{t}</div>
+                          ))}
+                        </div>
+                        {videoUploading && (
+                          <div style={{ marginBottom:12 }}>
+                            <div style={{ display:'flex', justifyContent:'space-between', fontSize:11, color:'rgba(255,255,255,0.5)', marginBottom:6 }}>
+                              <span>Uploading...</span><span>{uploadProgress}%</span>
+                            </div>
+                            <div style={{ height:6, background:'rgba(255,255,255,0.08)', borderRadius:3 }}>
+                              <div style={{ height:'100%', background:'linear-gradient(90deg,#FF7A29,#E8B23D)', borderRadius:3, width:`${uploadProgress}%`, transition:'width .3s' }} />
+                            </div>
+                          </div>
+                        )}
+                        {videoUploaded ? (
+                          <div style={{ padding:'16px', background:'rgba(34,197,94,0.1)', border:'1px solid rgba(34,197,94,0.4)', borderRadius:10, textAlign:'center' }}>
+                            <div style={{ fontSize:24, marginBottom:6 }}>✅</div>
+                            <div style={{ fontSize:14, fontWeight:800, color:'#22C55E', fontFamily:'Montserrat,sans-serif' }}>Video Submitted!</div>
+                            <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:4 }}>BCPL scouts will review within 15 working days. Result via SMS + Email.</div>
+                          </div>
+                        ) : (
+                          <button disabled={!videoFile || videoUploading} onClick={handleVideoUpload}
+                            style={{ width:'100%', padding:'16px 0', background:videoFile&&!videoUploading?'linear-gradient(135deg,#FF7A29,#C94E0E)':'rgba(255,255,255,0.06)', border:'none', borderRadius:10, color:videoFile&&!videoUploading?'#fff':'rgba(255,255,255,0.3)', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:videoFile&&!videoUploading?'pointer':'not-allowed', letterSpacing:'.06em' }}>
+                            🎬 SUBMIT TRIAL VIDEO →
+                          </button>
+                        )}
                       </div>
-                    ) : (
-                      <button
-                        disabled={!videoFile || videoUploading}
-                        onClick={handleVideoUpload}
-                        style={{ width:'100%', padding:'16px 0', background:videoFile?'linear-gradient(135deg,#FF7A29,#C94E0E)':'rgba(255,255,255,0.06)', border:'none', borderRadius:10, color:videoFile?'#fff':'rgba(255,255,255,0.3)', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:videoFile?'pointer':'not-allowed', letterSpacing:'.06em', transition:'all .2s' }}
-                      >
-                        {videoUploading ? '⏳ Uploading...' : '🎬 SUBMIT TRIAL VIDEO →'}
-                      </button>
+                    )}
+
+                    {/* ── Video Submitted — Awaiting Review ── */}
+                    {regStatus?.phase1Status === 'video_submitted' && (
+                      <div style={{ padding:'20px', background:'rgba(168,85,247,0.07)', border:'1px solid rgba(168,85,247,0.3)', borderRadius:12, textAlign:'center' }}>
+                        <div style={{ fontSize:32, marginBottom:10 }}>🎬</div>
+                        <div style={{ fontSize:15, fontWeight:800, color:'#A855F7', fontFamily:'Montserrat,sans-serif' }}>Video Under Review</div>
+                        <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:8, lineHeight:1.7 }}>
+                          Your trial video has been received by our BCPL scouts.<br/>
+                          Result will be shared via <strong style={{color:'rgba(255,255,255,0.7)'}}>SMS + Email</strong> within 15 working days.
+                        </div>
+                      </div>
+                    )}
+
+                    {/* ── Selected for Phase 2 ── */}
+                    {regStatus?.phase1Status === 'selected' && (
+                      <div style={{ padding:'20px', background:'rgba(34,197,94,0.08)', border:'1px solid rgba(34,197,94,0.35)', borderRadius:12, textAlign:'center' }}>
+                        <div style={{ fontSize:32, marginBottom:10 }}>🏆</div>
+                        <div style={{ fontSize:15, fontWeight:800, color:'#22C55E', fontFamily:'Montserrat,sans-serif' }}>Congratulations! Selected for Phase 2</div>
+                        <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:8, marginBottom:16, lineHeight:1.7 }}>
+                          You've cleared Phase 1. Pay the Phase 2 fee to confirm your physical trial slot.
+                        </div>
+                        <button onClick={()=>window.location.href='/register/phase2'} style={{ padding:'12px 28px', background:'linear-gradient(135deg,#22C55E,#16A34A)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer' }}>
+                          🏟 PAY PHASE 2 FEE →
+                        </button>
+                      </div>
+                    )}
+
+                    {/* ── Rejected ── */}
+                    {regStatus?.phase1Status === 'rejected' && (
+                      <div style={{ padding:'20px', background:'rgba(239,68,68,0.07)', border:'1px solid rgba(239,68,68,0.3)', borderRadius:12, textAlign:'center' }}>
+                        <div style={{ fontSize:32, marginBottom:10 }}>😔</div>
+                        <div style={{ fontSize:15, fontWeight:800, color:'#EF4444', fontFamily:'Montserrat,sans-serif' }}>Not Selected This Season</div>
+                        <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:8, lineHeight:1.7 }}>
+                          Thank you for participating. Better luck in BCPL Season 6!
+                        </div>
+                      </div>
                     )}
                   </div>
                 )}
