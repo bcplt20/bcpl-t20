@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Route, Switch, Router as WouterRouter, useLocation } from 'wouter';
 import { LoginModal } from './components/LoginModal';
-import { getSession, clearSession, openLoginModal } from './lib/auth';
 
 // All BCPL pages
 import { Home }                from '@/pages/Home';
@@ -110,73 +109,12 @@ function Router() {
   );
 }
 
-/** Floating Login / Profile pill — visible on every page */
-function FloatingAuth() {
-  const [session, setSession] = useState(getSession);
-
-  // Re-sync when the user logs in/out (storage event)
-  useEffect(() => {
-    const onStorage = () => setSession(getSession());
-    window.addEventListener('storage', onStorage);
-    window.addEventListener('bcpl:authChanged', onStorage);
-    return () => {
-      window.removeEventListener('storage', onStorage);
-      window.removeEventListener('bcpl:authChanged', onStorage);
-    };
-  }, []);
-
-  const base = (import.meta.env.BASE_URL ?? '/').replace(/\/$/, '');
-
-  if (session) {
-    const initials = session.user.name.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase();
-    return (
-      <div style={{
-        position:'fixed', bottom:24, right:24, zIndex:1500,
-        display:'flex', alignItems:'center', gap:8,
-        background:'linear-gradient(135deg,#0A1727,#0F2140)',
-        border:'1.5px solid rgba(255,122,41,0.45)', borderRadius:40,
-        padding:'8px 14px 8px 8px',
-        boxShadow:'0 4px 24px rgba(0,0,0,0.5)',
-        cursor:'pointer',
-      }}>
-        <div style={{
-          width:30, height:30, borderRadius:'50%',
-          background:'linear-gradient(135deg,#FF7A29,#D95E10)',
-          display:'flex', alignItems:'center', justifyContent:'center',
-          fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:11, color:'#fff',
-        }}>{initials}</div>
-        <a href={`${base}/profile`} style={{ fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:12, color:'#fff', textDecoration:'none', maxWidth:100, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
-          {session.user.name.split(' ')[0]}
-        </a>
-        <button onClick={() => { clearSession(); setSession(null); window.dispatchEvent(new Event('bcpl:authChanged')); }}
-          style={{ background:'none', border:'none', color:'rgba(255,255,255,0.35)', cursor:'pointer', fontSize:13, padding:0, lineHeight:1, marginLeft:2 }}
-          title="Logout">✕</button>
-      </div>
-    );
-  }
-
-  return (
-    <button onClick={openLoginModal} style={{
-      position:'fixed', bottom:24, right:24, zIndex:1500,
-      background:'linear-gradient(135deg,#FF7A29,#D95E10)',
-      border:'none', borderRadius:40, padding:'11px 20px',
-      fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:12,
-      color:'#fff', letterSpacing:'.06em', cursor:'pointer',
-      boxShadow:'0 4px 24px rgba(255,122,41,0.4)',
-      display:'flex', alignItems:'center', gap:8,
-    }}>
-      <span>🔑</span> Login
-    </button>
-  );
-}
-
 export default function App() {
   const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   return (
     <WouterRouter base={base}>
       <Router />
       <LoginModal />
-      <FloatingAuth />
     </WouterRouter>
   );
 }

@@ -293,7 +293,7 @@ export function MatchCenter() {
                   </div>
 
                   {block.cta && (
-                    <button className="btn-orange" style={{ fontSize: 12, padding: "9px 16px", marginTop: 4 }}>{block.cta}</button>
+                    <a href={import.meta.env.BASE_URL + "register"} className="btn-orange" style={{ fontSize: 12, padding: "9px 16px", marginTop: 4, textDecoration: "none", display: "inline-flex", alignItems: "center" }}>{block.cta}</a>
                   )}
                 </div>
                 {i < TIMELINE.length - 1 && (
