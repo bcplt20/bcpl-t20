@@ -1,4 +1,5 @@
 import React from 'react';
+import { openLoginModal } from '../lib/auth';
 import { BCPLFooter } from '../components/BCPLFooter';
 
 const CSS = `
@@ -94,7 +95,9 @@ function Navbar() {
           </a>
           <div className="desk-nav">
             {links.map(l=>(
-              <a key={l} href={ROUTE_MAP[l]||'/'} style={{color:l==='About'?'#FF7A29':'rgba(255,255,255,0.75)',fontWeight:600,fontSize:13.5,textDecoration:'none',fontFamily:'Inter,sans-serif',transition:'color 0.2s'}}>{l}</a>
+              l === 'Login'
+                ? <span key={l} onClick={openLoginModal} style={{color:'#FF7A29',fontWeight:700,fontSize:13.5,fontFamily:'Inter,sans-serif',cursor:'pointer'}}>{l}</span>
+                : <a key={l} href={ROUTE_MAP[l]||'/'} style={{color:l==='About'?'#FF7A29':'rgba(255,255,255,0.75)',fontWeight:600,fontSize:13.5,textDecoration:'none',fontFamily:'Inter,sans-serif',transition:'color 0.2s'}}>{l}</a>
             ))}
           </div>
           <button className="ham-btn" onClick={()=>setOpen(o=>!o)} style={{flexDirection:'column',gap:5,background:'none',border:'none',cursor:'pointer',padding:8,zIndex:201}}>
@@ -109,7 +112,9 @@ function Navbar() {
           <button onClick={()=>setOpen(false)} style={{position:'absolute',top:18,right:20,background:'none',border:'none',color:'rgba(255,255,255,0.5)',fontSize:28,cursor:'pointer',lineHeight:1}}>✕</button>
           <a href="/" style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,marginBottom:32,textDecoration:'none',display:'block'}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff'}}>T20</span></a>
           {links.map(l=>(
-            <a key={l} href={ROUTE_MAP[l]||'/'} onClick={()=>setOpen(false)} style={{color:'rgba(255,255,255,0.88)',fontWeight:700,fontSize:20,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,0.07)'}}>{l}</a>
+            l === 'Login'
+              ? <span key={l} onClick={()=>{ setOpen(false); openLoginModal(); }} style={{color:'#FF7A29',fontWeight:700,fontSize:20,fontFamily:'Montserrat,sans-serif',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,0.07)',display:'block',cursor:'pointer'}}>{l}</span>
+              : <a key={l} href={ROUTE_MAP[l]||'/'} onClick={()=>setOpen(false)} style={{color:'rgba(255,255,255,0.88)',fontWeight:700,fontSize:20,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,0.07)'}}>{l}</a>
           ))}
           <a href="/register" className="btn-fire" style={{marginTop:32,height:54,fontSize:17,width:'100%',textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>📝 Register for ₹299 →</a>
         </div>

@@ -6,6 +6,16 @@
 
 const BASE = (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "");
 const ADMIN_KEY = import.meta.env.VITE_ADMIN_KEY ?? "";
+const AUTH_KEY  = "bcpl_auth_v1";
+
+function getStoredToken(): string | null {
+  try {
+    const raw = localStorage.getItem(AUTH_KEY);
+    if (!raw) return null;
+    const s = JSON.parse(raw);
+    return s?.token ?? null;
+  } catch { return null; }
+}
 
 async function req<T = unknown>(
   method: string,
@@ -15,6 +25,8 @@ async function req<T = unknown>(
 ): Promise<T> {
   const headers: Record<string, string> = { "Content-Type": "application/json" };
   if (isAdmin && ADMIN_KEY) headers["x-bcpl-admin"] = ADMIN_KEY;
+  const token = getStoredToken();
+  if (token) headers["Authorization"] = `Bearer ${token}`;
 
   const res = await fetch(`${BASE}/api${path}`, {
     method,
@@ -28,6 +40,28 @@ async function req<T = unknown>(
   }
   return res.json() as Promise<T>;
 }
+
+/* ─── Auth ─────────────────────────────────────────── */
+
+export const sendOtp = (phone: string, purpose: "login" | "register" = "login") =>
+  req<{ success: boolean; message: string; devOtp?: string }>(
+    "POST", "/auth/send-otp", { phone, purpose }
+  );
+
+export const verifyOtp = (phone: string, otp: string, purpose: "login" | "register" = "login", name?: string, email?: string) =>
+  req<{ success: boolean; token: string; user: { id: string; name: string; phone: string; email: string } }>(
+    "POST", "/auth/verify-otp", { phone, otp, purpose, name, email }
+  );
+
+export const getMe = () =>
+  req<{ user: { id: string; name: string; phone: string; email: string } }>(
+    "GET", "/auth/me"
+  );
+
+export const getRegistrationStatus = () =>
+  req<{ registered: boolean; phase1Status?: string; phase2Status?: string | null }>(
+    "GET", "/register/status"
+  );
 
 /* ─── Matches ──────────────────────────────────────── */
 

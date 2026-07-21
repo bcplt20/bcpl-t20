@@ -5,6 +5,8 @@ const API_KEY = process.env.TWOFACTOR_API_KEY;
 export async function sendOtp(phone: string, otp: string): Promise<boolean> {
   if (!API_KEY) {
     console.warn(`[SMS-STUB] OTP for ${phone}: ${otp}`);
+    // expose OTP on the response object for dev/demo mode
+    (globalThis as any).__lastDevOtp = otp;
     return true; // dev stub
   }
   try {
