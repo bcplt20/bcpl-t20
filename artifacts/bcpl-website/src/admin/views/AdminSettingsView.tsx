@@ -341,7 +341,7 @@ export default function AdminSettingsView() {
       <div style={{ ...CARD, borderLeft:"4px solid #FF6B00", background:"linear-gradient(135deg,#FF6B0010,#0D1526)" }}>
         <div style={{ display:"flex", alignItems:"center", gap:14 }}>
           <div style={{ width:44, height:44, borderRadius:"50%", overflow:"hidden", border:"2px solid rgba(255,107,0,.6)", boxShadow:"0 0 14px rgba(255,107,0,.3)", flexShrink:0 }}>
-            <img src="/bcpl-website/bcpl-assets/bcpl-ball-color.jpg" alt="BCPL" style={{ width:"100%", height:"100%", objectFit:"cover" }}/>
+            <img src={import.meta.env.BASE_URL + "bcpl-assets/bcpl-ball-color.jpg"} alt="BCPL" style={{ width:"100%", height:"100%", objectFit:"cover" }}/>
           </div>
           <div style={{ flex:1 }}>
             <div style={{ fontSize:14, fontWeight:900, color:"#FF6B00" }}>Saurabh Jha</div>

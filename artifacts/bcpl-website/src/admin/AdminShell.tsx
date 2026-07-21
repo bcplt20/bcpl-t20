@@ -203,7 +203,7 @@ export default function AdminShell() {
         <div style={{ width:420, padding:40, background:"#0D1526", border:"1px solid #1E293B", borderRadius:24, boxShadow:"0 40px 80px #00000060" }}>
           <div style={{ textAlign:"center", marginBottom:36 }}>
             <div style={{ width:72, height:72, borderRadius:"50%", overflow:"hidden", border:"3px solid rgba(255,107,0,0.5)", boxShadow:"0 0 24px rgba(255,107,0,0.3)", display:"inline-flex", alignItems:"center", justifyContent:"center", marginBottom:14 }}>
-              <img src={"/bcpl-website/bcpl-assets/bcpl-ball-color.jpg"} alt="BCPL" style={{ width:"100%", height:"100%", objectFit:"cover" }}/>
+              <img src={import.meta.env.BASE_URL + "bcpl-assets/bcpl-ball-color.jpg"} alt="BCPL" style={{ width:"100%", height:"100%", objectFit:"cover" }}/>
             </div>
             <div style={{ fontSize:9, fontWeight:800, letterSpacing:".18em", color:"rgba(255,107,0,.5)", textTransform:"uppercase", marginBottom:4 }}>Bhartiya Corporate Premier League</div>
             <div style={{ fontSize:22, fontWeight:900, color:"#FF6B00", letterSpacing:1, lineHeight:1 }}>BCPL T20 Admin</div>
@@ -251,7 +251,7 @@ export default function AdminShell() {
         {/* Brand */}
         <div style={{ height:60, paddingLeft:collapsed?0:12, paddingRight:collapsed?0:10, borderBottom:"1px solid #0F172A", display:"flex", alignItems:"center", justifyContent:collapsed?"center":"flex-start", gap:10, flexShrink:0 }}>
           <div style={{ width:32, height:32, borderRadius:"50%", overflow:"hidden", border:"2px solid rgba(255,107,0,0.55)", boxShadow:"0 0 10px rgba(255,107,0,0.3)", flexShrink:0 }}>
-            <img src={"/bcpl-website/bcpl-assets/bcpl-ball-color.jpg"} alt="BCPL" style={{ width:"100%", height:"100%", objectFit:"cover" }}/>
+            <img src={import.meta.env.BASE_URL + "bcpl-assets/bcpl-ball-color.jpg"} alt="BCPL" style={{ width:"100%", height:"100%", objectFit:"cover" }}/>
           </div>
           {!collapsed&&(
             <div style={{ flex:1, minWidth:0 }}>
