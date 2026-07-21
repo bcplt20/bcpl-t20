@@ -804,11 +804,9 @@ function numberToWords(n: number): string {
 }
 
 /* ─── Contract Preview Modal ─────────────────────────────── */
+const SIG_KEY = "bcpl_founder_signature";
+
 function ContractModal({ c, onClose }: { c: Contract; onClose: ()=>void }) {
-  const [emailAddr,  setEmailAddr]  = useState(c.email||"");
-  const [emailSent,  setEmailSent]  = useState(false);
-  const [emailLoading, setEL]       = useState(false);
-  const [tab,        setTab]        = useState<"preview"|"email">("preview");
   const contractText = buildContractText(c);
   const cType = c.contractType || "Player";
 
@@ -816,7 +814,7 @@ function ContractModal({ c, onClose }: { c: Contract; onClose: ()=>void }) {
     const base = `${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/`;
     const logoUrl  = base + "bcpl-logo-white.png";
     const ballUrl  = base + "bcpl-ball-transparent.png";
-    const sigUrl   = base + "bcpl-signature.png";
+    const sigUrl   = localStorage.getItem(SIG_KEY) || (base + "bcpl-signature.png");
     const stampUrl = base + "bcpl-stamp.png";
     const w = window.open("", "_blank");
     if (!w) return;
@@ -958,13 +956,6 @@ function ContractModal({ c, onClose }: { c: Contract; onClose: ()=>void }) {
             <div class="name">Saurabh Jha</div>
             <div class="desig">Founder &amp; Director — Bhartiya Corporate Premier League Pvt. Ltd.</div>
           </div>
-          <div class="sig-line">
-            <div class="label">Signature of ${cType === "Brand Ambassador" ? "Ambassador" : "Party"}</div>
-            <div style="height:80px"></div>
-            <div class="line"></div>
-            <div class="name">${c.player}</div>
-            <div class="desig">${c.role}${c.team && c.team !== "BCPL (League)" && c.team !== "Individual" ? " · " + c.team : ""}</div>
-          </div>
         </div>
       </div>
 
@@ -976,11 +967,6 @@ function ContractModal({ c, onClose }: { c: Contract; onClose: ()=>void }) {
     </body></html>`);
     w.document.close();
     setTimeout(()=>w.print(), 800);
-  }
-
-  function sendEmail() {
-    setEL(true);
-    setTimeout(()=>{ setEL(false); setEmailSent(true); }, 1800);
   }
 
   const card:React.CSSProperties={background:"#0D1526",border:"1px solid #1E293B",borderRadius:20};
@@ -995,74 +981,16 @@ function ContractModal({ c, onClose }: { c: Contract; onClose: ()=>void }) {
             <div style={{fontSize:11,color:"#475569",marginTop:2}}>{c.id} · {c.player} · {c.team}</div>
           </div>
           <div style={{display:"flex",gap:8,alignItems:"center"}}>
-            <button onClick={downloadPDF} style={{padding:"7px 14px",borderRadius:8,border:"1px solid #1E293B",background:"#1E293B",color:"#94A3B8",fontSize:12,cursor:"pointer",fontWeight:600}}>⬇ Download PDF</button>
-            <button onClick={()=>setTab("email")} style={{padding:"7px 14px",borderRadius:8,border:"none",background:"linear-gradient(135deg,#FF6B00,#FF8C40)",color:"#fff",fontSize:12,cursor:"pointer",fontWeight:700}}>✉ Send for Signature</button>
+            <button onClick={downloadPDF} style={{padding:"7px 14px",borderRadius:8,border:"none",background:"linear-gradient(135deg,#FF6B00,#FF8C40)",color:"#fff",fontSize:12,cursor:"pointer",fontWeight:700}}>⬇ Download PDF</button>
             <button onClick={onClose} style={{padding:"6px 10px",borderRadius:8,border:"none",background:"#1E293B",color:"#64748B",fontSize:12,cursor:"pointer"}}>✕</button>
           </div>
         </div>
 
-        {/* Tabs */}
-        <div style={{display:"flex",gap:4,padding:"12px 24px 0",borderBottom:"1px solid #1E293B",flexShrink:0}}>
-          {([["preview","📄 Contract Preview"],["email","✉ Send"]] as const).map(([t,l])=>(
-            <button key={t} onClick={()=>setTab(t)} style={{padding:"7px 16px",borderRadius:"10px 10px 0 0",border:"none",background:tab===t?"#1E293B":"transparent",color:tab===t?"#F1F5F9":"#64748B",fontSize:12,fontWeight:700,cursor:"pointer"}}>{l}</button>
-          ))}
-        </div>
-
         {/* Body */}
         <div style={{overflowY:"auto",flex:1,padding:"20px 24px"}}>
-          {tab==="preview"&&(
-            <pre style={{fontFamily:"'Courier New',monospace",fontSize:11,color:"#94A3B8",lineHeight:1.7,whiteSpace:"pre-wrap",wordWrap:"break-word",margin:0}}>
-              {contractText}
-            </pre>
-          )}
-          {tab==="email"&&(
-            <div style={{display:"flex",flexDirection:"column",gap:16}}>
-              <div style={{background:"#060B18",borderRadius:14,padding:20,border:"1px solid #1E293B"}}>
-                <div style={{fontSize:13,fontWeight:700,color:"#F1F5F9",marginBottom:16}}>📧 Email Contract for Signature</div>
-                {[["To (Player Email)", emailAddr, setEmailAddr],
-                  ["CC (Admin)", "admin@bcplt20.com", ()=>{}],
-                ].map(([label,val,setter])=>(
-                  <div key={label as string} style={{marginBottom:12}}>
-                    <label style={{fontSize:11,fontWeight:700,color:"#475569",display:"block",marginBottom:6,textTransform:"uppercase"}}>{label as string}</label>
-                    <input value={val as string} onChange={e=>(setter as Function)(e.target.value)}
-                      style={{width:"100%",padding:"10px 12px",borderRadius:9,border:"1px solid #1E293B",background:"#0D1526",color:"#F1F5F9",fontSize:13,outline:"none",boxSizing:"border-box"}}/>
-                  </div>
-                ))}
-                <div style={{marginBottom:16}}>
-                  <label style={{fontSize:11,fontWeight:700,color:"#475569",display:"block",marginBottom:6,textTransform:"uppercase"}}>Subject</label>
-                  <input value={`BCPL T20 ${COMPANY.season} — Player Contract for Signature — ${c.player}`} readOnly
-                    style={{width:"100%",padding:"10px 12px",borderRadius:9,border:"1px solid #1E293B",background:"#0A1020",color:"#64748B",fontSize:13,outline:"none",boxSizing:"border-box"}}/>
-                </div>
-                <div style={{background:"#0A1020",borderRadius:10,padding:"12px 14px",border:"1px solid #1E293B",fontSize:12,color:"#64748B",lineHeight:1.7,marginBottom:16}}>
-                  Dear {c.player},<br/><br/>
-                  Please find attached your BCPL T20 {COMPANY.season} Player Participation Contract ({c.id}).<br/>
-                  Review the terms and sign at your earliest convenience.<br/><br/>
-                  Contract Value: ₹{c.amount.toLocaleString("en-IN")} | Team: {c.team} | Valid Until: {c.expiry}<br/><br/>
-                  Regards,<br/>Team BCPL
-                </div>
-                {emailSent
-                  ? <div style={{padding:"13px",borderRadius:10,background:"#10B98122",border:"1px solid #10B98144",textAlign:"center",fontSize:13,fontWeight:700,color:"#10B981"}}>✅ Contract sent to {emailAddr}</div>
-                  : <button onClick={sendEmail} disabled={emailLoading||!emailAddr} style={{width:"100%",padding:"13px",borderRadius:10,border:"none",background:emailLoading?"#334155":"linear-gradient(135deg,#FF6B00,#FF8C40)",color:"#fff",fontWeight:700,fontSize:13,cursor:emailLoading?"not-allowed":"pointer",opacity:emailAddr?1:0.5}}>
-                      {emailLoading ? "⏳ Sending…" : "📧 Send Contract"}
-                    </button>
-                }
-              </div>
-              <div style={{background:"#060B18",borderRadius:12,padding:"14px 16px",border:"1px solid #1E293B"}}>
-                <div style={{fontSize:12,fontWeight:700,color:"#F1F5F9",marginBottom:12}}>Contract Summary</div>
-                {[
-                  ["Player",c.player],["Role",c.role],["Franchise",c.team],
-                  ["Contract Value",`₹${c.amount.toLocaleString("en-IN")}`],
-                  ["Valid From",c.date],["Valid Until",c.expiry],
-                  ["GSTIN (Company)",COMPANY.gstin],
-                ].map(([k,v])=>(
-                  <div key={k} style={{display:"flex",justifyContent:"space-between",padding:"7px 0",borderBottom:"1px solid #0F1B2D"}}>
-                    <span style={{fontSize:12,color:"#475569"}}>{k}</span>
-                    <span style={{fontSize:12,fontWeight:700,color:"#F1F5F9"}}>{v}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          <pre style={{fontFamily:"'Courier New',monospace",fontSize:11,color:"#94A3B8",lineHeight:1.7,whiteSpace:"pre-wrap",wordWrap:"break-word",margin:0}}>
+            {contractText}
+          </pre>
         </div>
       </div>
     </div>
@@ -1075,6 +1003,20 @@ export default function ContractsView() {
   const [preview,  setPreview]  = useState<Contract|null>(null);
   const [genOpen,  setGenOpen]  = useState(false);
   const [contracts,setContracts]= useState<Contract[]>([]);
+  const [sigImg,   setSigImg]   = useState<string>(() => localStorage.getItem(SIG_KEY) || "");
+  const sigFileRef = useRef<HTMLInputElement>(null);
+
+  function handleSigUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const b64 = reader.result as string;
+      localStorage.setItem(SIG_KEY, b64);
+      setSigImg(b64);
+    };
+    reader.readAsDataURL(file);
+  }
   const [genForm,  setGenForm]  = useState({ player:"", phone:"", email:"", team:TEAMS_LIST[0], role:"Batsman", amount:"", date:"", expiry:"", contractType:"Player" });
   const card:React.CSSProperties={background:"linear-gradient(135deg,#0D1526,#0A1020)",border:"1px solid #1E293B",borderRadius:16,padding:20};
 
@@ -1135,6 +1077,31 @@ export default function ContractsView() {
             <div style={{fontSize:11,color:"#64748B",marginTop:5}}>{s.label}</div>
           </div>
         ))}
+      </div>
+
+      {/* Founder Signature Upload */}
+      <div style={{...card,padding:"18px 22px",borderLeft:"4px solid #6366F1",background:"linear-gradient(135deg,#6366F110,#0D1526)",display:"flex",alignItems:"center",gap:20,flexWrap:"wrap"}}>
+        <div style={{flex:1,minWidth:200}}>
+          <div style={{fontSize:12,fontWeight:800,color:"#6366F1",marginBottom:3}}>🖊 Founder Signature</div>
+          <div style={{fontSize:11,color:"#475569"}}>Upload the authorised signatory's signature — it will appear on all generated contracts.</div>
+        </div>
+        <div style={{display:"flex",alignItems:"center",gap:16,flexShrink:0}}>
+          {sigImg
+            ? <img src={sigImg} alt="Founder signature" style={{height:52,maxWidth:160,objectFit:"contain",background:"#fff",borderRadius:8,padding:"4px 10px",border:"1px solid #1E293B"}}/>
+            : <div style={{height:52,width:120,borderRadius:8,border:"1px dashed #334155",background:"#060B18",display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,color:"#334155"}}>No signature</div>
+          }
+          <input ref={sigFileRef} type="file" accept="image/*" style={{display:"none"}} onChange={handleSigUpload}/>
+          <div style={{display:"flex",flexDirection:"column",gap:6}}>
+            <button onClick={()=>sigFileRef.current?.click()}
+              style={{padding:"8px 16px",borderRadius:8,border:"none",background:"linear-gradient(135deg,#6366F1,#8B5CF6)",color:"#fff",fontSize:12,cursor:"pointer",fontWeight:700}}>
+              📁 Upload Signature
+            </button>
+            {sigImg && <button onClick={()=>{ localStorage.removeItem(SIG_KEY); setSigImg(""); }}
+              style={{background:"none",border:"none",color:"#EF4444",fontSize:11,cursor:"pointer",textAlign:"center"}}>
+              Remove
+            </button>}
+          </div>
+        </div>
       </div>
 
       {/* Company GST Banner */}

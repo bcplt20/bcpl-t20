@@ -1,5 +1,17 @@
 import { useState, useRef, useEffect } from "react";
 
+const KNOWN_SPONSORS = [
+  "Tata Group","Reliance Industries","HDFC Bank","ICICI Bank","Infosys","Wipro",
+  "HCL Technologies","Tech Mahindra","Bajaj Auto","Mahindra & Mahindra",
+  "Larsen & Toubro","Adani Group","Asian Paints","Hindustan Unilever","ITC Limited",
+  "Maruti Suzuki","Bharti Airtel","Vodafone Idea","Jio","Axis Bank",
+  "Kotak Mahindra","State Bank of India","Bank of Baroda","Yes Bank",
+  "Dream11","MPL Sports","CRED","PhonePe","Paytm","Zepto","Swiggy","Zomato",
+  "Myntra","Flipkart","Amazon India","Meesho",
+  "Royal Stag","Pepsi","Coca-Cola India","Red Bull","Kingfisher",
+  "MRF Tyres","CEAT Tyres","Bosch India","Havells India","Havells","Voltas",
+];
+
 type Sponsor = {
   id: string;
   name: string;
@@ -32,6 +44,7 @@ export default function SponsorsView() {
     name: "", category: "", logo: "", amount: "", website: "",
     contract: "", status: "active", visibility: "All Platforms",
   });
+  const [nameMode,  setNameMode]  = useState<string>("__custom");
   const fileRef = useRef<HTMLInputElement>(null);
 
   // Persist on change
@@ -43,6 +56,7 @@ export default function SponsorsView() {
 
   function resetForm() {
     setForm({ name:"", category:"", logo:"", amount:"", website:"", contract:"", status:"active", visibility:"All Platforms" });
+    setNameMode("__custom");
     setEditId(null);
     setShowAdd(false);
   }
@@ -69,6 +83,8 @@ export default function SponsorsView() {
   function handleEdit(s: Sponsor) {
     setForm({ name:s.name, category:s.category, logo:s.logo, amount:s.amount,
               website:s.website, contract:s.contract, status:s.status, visibility:s.visibility });
+    const known = KNOWN_SPONSORS.includes(s.name);
+    setNameMode(known ? s.name : "__custom");
     setEditId(s.id);
     setShowAdd(true);
   }
@@ -136,11 +152,22 @@ export default function SponsorsView() {
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14, marginBottom: 14 }}>
-            {/* Company Name */}
-            <div>
+            {/* Company Name — known list + custom */}
+            <div style={{ gridColumn: "1 / -1" }}>
               <label style={{ fontSize: 10, fontWeight: 700, color: "#475569", letterSpacing: 0.5 }}>COMPANY NAME *</label>
-              <input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                placeholder="e.g. Tata Motors" style={inp} />
+              <select value={nameMode} onChange={e => {
+                  const v = e.target.value;
+                  setNameMode(v);
+                  if (v !== "__custom") setForm(f => ({ ...f, name: v }));
+                  else setForm(f => ({ ...f, name: "" }));
+                }} style={{ ...inp, marginBottom: nameMode === "__custom" ? 6 : 0 }}>
+                {KNOWN_SPONSORS.map(s => <option key={s} value={s}>{s}</option>)}
+                <option value="__custom">✎ Add Custom Name…</option>
+              </select>
+              {nameMode === "__custom" && (
+                <input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                  placeholder="Type company name…" autoFocus style={inp} />
+              )}
             </div>
 
             {/* Category — free text */}
@@ -264,8 +291,6 @@ export default function SponsorsView() {
                   <span>📍 {s.visibility}</span>
                 </div>
               </div>
-
-              <span style={{ fontSize: 16, fontWeight: 900, color: "#10B981", minWidth: 60, textAlign: "right", flexShrink: 0 }}>{s.amount}</span>
 
               <span style={{ background: statusColor(s.status) + "20", color: statusColor(s.status), padding: "3px 10px", borderRadius: 8, fontSize: 10, fontWeight: 700, textTransform: "capitalize", flexShrink: 0 }}>
                 {s.status}
