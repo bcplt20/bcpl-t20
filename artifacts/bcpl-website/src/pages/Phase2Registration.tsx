@@ -133,7 +133,6 @@ export function Phase2Registration() {
             <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:18, color:'#fff', letterSpacing:'.04em' }}>
               <span style={{ color:'#FF7A29' }}>BCPL</span> T20
             </span>
-            <span style={{ fontSize:8, fontWeight:700, letterSpacing:'.14em', color:'rgba(255,255,255,0.38)', textTransform:'uppercase', fontFamily:'Montserrat,sans-serif' }}>SEASON 5 · KRIPARTI PLAYING11</span>
           </div>
           <div className="desk-nav">
             {NAV.map(n => <button key={n} className="nav-link">{n}</button>)}

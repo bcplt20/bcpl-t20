@@ -84,7 +84,6 @@ function InvoiceModal({ txn, onClose }: { txn: Txn; onClose: () => void }) {
               <div class="lh">
                 <div class="logo"><img src="${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/bcpl-ball-color.jpg"/></div>
                 <div><div class="lh-title">BCPL T20 — Bhartiya Corporate Premier League</div>
-                <div class="lh-sub">KRIPARTI PLAYING11 PRIVATE LIMITED · GSTIN: ${BCPL_GSTIN}</div>
                 <div class="lh-sub">2nd Floor Back Side, RZ-108, Indra Park, Uttam Nagar, West Delhi — 110059</div></div>
               </div>
               <div class="body">

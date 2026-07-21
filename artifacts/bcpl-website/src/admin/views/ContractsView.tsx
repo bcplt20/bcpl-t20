@@ -2,7 +2,6 @@ import { useState, useRef } from "react";
 
 /* ─── Company Details (from GST Registration Certificate) ──── */
 const COMPANY = {
-  name:    "KRIPARTI PLAYING11 PRIVATE LIMITED",
   brand:   "BCPL T20 — Bhartiya Corporate Premier League",
   gstin:   "07AAHCK4053D1ZS",
   address: "2nd Floor Back Side, RZ-108, Indra Park, Uttam Nagar, West Delhi, Delhi — 110059",

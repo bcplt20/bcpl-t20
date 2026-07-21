@@ -104,7 +104,6 @@ export function Phase1PaymentReceipt() {
             </div>
             <div style={{ display:'flex', flexDirection:'column', borderLeft:'2px solid rgba(255,122,41,0.4)', paddingLeft:10, gap:1 }}>
               <span style={{ fontSize:8, fontWeight:800, color:'#FF7A29', letterSpacing:'.16em' }}>SEASON 5</span>
-              <span style={{ fontSize:7, color:'rgba(255,255,255,0.35)', letterSpacing:'.08em' }}>KRIPARTI PLAYING11</span>
             </div>
           </div>
           <div className="desk-nav">
@@ -238,7 +237,10 @@ export function Phase1PaymentReceipt() {
               <span style={{ fontSize:11, fontWeight:700, color:'rgba(255,122,41,0.8)', fontFamily:'Montserrat,sans-serif', letterSpacing:'.08em' }}>SUBMIT AS SOON AS POSSIBLE</span>
             </div>
             <p style={{ fontSize:12, color:'rgba(255,255,255,0.45)', lineHeight:1.6, marginBottom:16 }}>Record your 2-minute cricket trial video. Follow the guidelines for best results.</p>
-            <button className="btn-primary" style={{ width:'100%', padding:'12px', fontSize:12 }}>UPLOAD NOW →</button>
+            <button className="btn-primary" style={{ width:'100%', padding:'12px', fontSize:12 }}
+              onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/upload-video'; }}>
+              UPLOAD NOW →
+            </button>
           </div>
 
           {/* Step 2 */}

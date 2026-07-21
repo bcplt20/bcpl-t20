@@ -67,7 +67,6 @@ export function Phase2Payment() {
         <div className="wrap" style={{ maxWidth:1200, height:60, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
           <div style={{ display:'flex', flexDirection:'column', lineHeight:1.1 }}>
             <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:18, color:'#fff', letterSpacing:'.04em' }}><span style={{ color:'#FF7A29' }}>BCPL</span> T20</span>
-            <span style={{ fontSize:8, fontWeight:700, letterSpacing:'.14em', color:'rgba(255,255,255,0.38)', textTransform:'uppercase', fontFamily:'Montserrat,sans-serif' }}>SEASON 5 · KRIPARTI PLAYING11</span>
           </div>
           <div className="desk-nav">{NAV.map(n => <button key={n} className="nav-link">{n}</button>)}</div>
           <button className="ham-btn" onClick={() => setMenuOpen(o => !o)}>

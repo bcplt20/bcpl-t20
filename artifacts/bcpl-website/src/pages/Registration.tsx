@@ -29,24 +29,54 @@ const ROLES = [
     desc: 'Open the innings. Anchor the chase.',
     phase1: 299, phase2: 2000,
     color: '#3B82F6', colorDark: '#1D4ED8',
+    svgPath: `<svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="28" cy="28" r="26" fill="#3B82F612" stroke="#3B82F630" stroke-width="1.5"/>
+      <path d="M18 40 L38 12" stroke="#3B82F6" stroke-width="3.5" stroke-linecap="round"/>
+      <path d="M35 9 L44 18 L38 24 L29 15 Z" fill="#3B82F6"/>
+      <circle cx="17" cy="41" r="4.5" fill="#3B82F6"/>
+      <path d="M15 41 Q17 38.5 19 41" stroke="white" stroke-width="1.1" fill="none" opacity="0.7"/>
+      <path d="M15 41 Q17 43.5 19 41" stroke="white" stroke-width="1.1" fill="none" opacity="0.7"/>
+    </svg>`,
   },
   {
     id: 'bowl', emoji: '🎳', label: 'Bowler',
     desc: 'Take wickets. Change the game.',
     phase1: 299, phase2: 2000,
     color: '#8B5CF6', colorDark: '#6D28D9',
+    svgPath: `<svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="28" cy="28" r="26" fill="#8B5CF612" stroke="#8B5CF630" stroke-width="1.5"/>
+      <circle cx="28" cy="30" r="11" fill="#8B5CF6" opacity="0.85"/>
+      <path d="M17.5 30 Q22 24 28 30 Q34 36 38.5 30" stroke="white" stroke-width="1.4" fill="none" opacity="0.65"/>
+      <path d="M17.5 30 Q22 36 28 30 Q34 24 38.5 30" stroke="white" stroke-width="1.4" fill="none" opacity="0.65"/>
+      <line x1="14" y1="14" x2="21" y2="12" stroke="#8B5CF6" stroke-width="2.5" stroke-linecap="round" opacity="0.55"/>
+      <line x1="12" y1="19" x2="21" y2="17" stroke="#8B5CF6" stroke-width="2.5" stroke-linecap="round" opacity="0.35"/>
+    </svg>`,
   },
   {
     id: 'wk',   emoji: '🧤', label: 'Wicket-Keeper',
     desc: 'Command the field. Lead from behind the stumps.',
     phase1: 299, phase2: 2000,
     color: '#06B6D4', colorDark: '#0E7490',
+    svgPath: `<svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="28" cy="28" r="26" fill="#06B6D412" stroke="#06B6D430" stroke-width="1.5"/>
+      <rect x="19" y="16" width="4" height="22" rx="2" fill="#06B6D4"/>
+      <rect x="26" y="16" width="4" height="22" rx="2" fill="#06B6D4"/>
+      <rect x="33" y="16" width="4" height="22" rx="2" fill="#06B6D4"/>
+      <rect x="17.5" y="13" width="10" height="4" rx="2" fill="#06B6D4" opacity="0.8"/>
+      <rect x="28.5" y="13" width="10" height="4" rx="2" fill="#06B6D4" opacity="0.8"/>
+      <path d="M15 35 Q13 40 17 42" stroke="#06B6D4" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.55"/>
+      <path d="M41 35 Q43 40 39 42" stroke="#06B6D4" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.55"/>
+    </svg>`,
   },
   {
     id: 'ar',   emoji: '⭐', label: 'All-Rounder',
     desc: 'Bat. Bowl. Win matches. The complete cricketer.',
     phase1: 399, phase2: 3000,
     color: '#F59E0B', colorDark: '#B45309',
+    svgPath: `<svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="28" cy="28" r="26" fill="#F59E0B12" stroke="#F59E0B30" stroke-width="1.5"/>
+      <path d="M28 10 L31.5 21 L44 21 L34 28.5 L37.5 40 L28 33 L18.5 40 L22 28.5 L12 21 L24.5 21 Z" fill="#F59E0B" opacity="0.9"/>
+    </svg>`,
   },
 ];
 
@@ -342,7 +372,7 @@ export function Registration() {
             </div>
             <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, lineHeight:1 }}>
               <span style={{ color:'#FF7A29' }}>BCPL</span>
-              <span style={{ color:'#fff' }}> T20</span>
+              
             </div>
             <div style={{ display:'flex', flexDirection:'column', borderLeft:'2px solid rgba(255,122,41,0.4)', paddingLeft:10, gap:1 }}>
               <span style={{ fontSize:8, fontWeight:800, color:'#FF7A29', letterSpacing:'.16em' }}>SEASON 5</span>
@@ -624,14 +654,9 @@ export function Registration() {
                       <div style={{ padding:'18px 16px 16px' }}>
                         {/* Top row */}
                         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:12 }}>
-                          {/* Role image from sprite */}
-                          <div style={{
-                            width:56, height:56, borderRadius:'50%', overflow:'hidden', flexShrink:0,
-                            border:`2px solid ${r.color}55`,
-                            backgroundImage:`url(${import.meta.env.BASE_URL}bcpl-assets/cricket-roles.png)`,
-                            backgroundSize: r.id==='bat' ? '300% 200%' : r.id==='bowl' ? '300% 200%' : r.id==='wk' ? '300% 200%' : '200% 200%',
-                            backgroundPosition: r.id==='bat' ? '50% 0%' : r.id==='bowl' ? '0% 0%' : r.id==='wk' ? '100% 0%' : '0% 100%',
-                          }} />
+                          {/* Role SVG icon */}
+                          <div style={{ width:56, height:56, flexShrink:0 }}
+                            dangerouslySetInnerHTML={{ __html: r.svgPath }} />
                           {role?.id === r.id && (
                             <div style={{ width:20, height:20, borderRadius:'50%', background:r.color, display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:900, color:'#fff' }}>✓</div>
                           )}

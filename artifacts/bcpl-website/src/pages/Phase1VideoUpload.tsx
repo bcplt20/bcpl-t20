@@ -192,11 +192,10 @@ export function Phase1VideoUpload() {
           <div style={{ display:'flex', alignItems:'center', gap:10 }}>
             <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:22, lineHeight:1 }}>
               <span style={{ color:'#FF7A29' }}>BCPL</span>
-              <span style={{ color:'#fff' }}> T20</span>
+              
             </div>
             <div style={{ display:'flex', flexDirection:'column', borderLeft:'2px solid rgba(255,122,41,0.4)', paddingLeft:10, gap:1 }}>
               <span style={{ fontSize:8, fontWeight:800, color:'#FF7A29', letterSpacing:'.16em' }}>SEASON 5</span>
-              <span style={{ fontSize:7, color:'rgba(255,255,255,0.35)', letterSpacing:'.08em' }}>KRIPARTI PLAYING11</span>
             </div>
           </div>
           <div className="desk-nav">
@@ -280,6 +279,10 @@ export function Phase1VideoUpload() {
                   + Browse Files
                 </span>
               </label>
+              <div style={{ marginTop:14, display:'flex', alignItems:'center', gap:6, color:'rgba(255,255,255,0.3)', fontSize:11 }}>
+                <span style={{ animation:'uploadBounce 1.5s ease-in-out infinite', display:'inline-block' }}>↓</span>
+                <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:600, letterSpacing:'.04em' }}>Drag down to see sample video guidelines</span>
+              </div>
             </div>
 
             {/* Sample uploaded state */}

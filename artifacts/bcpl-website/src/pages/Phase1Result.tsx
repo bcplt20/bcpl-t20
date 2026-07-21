@@ -84,7 +84,6 @@ export function Phase1Result() {
             </div>
             <div style={{ display:'flex', flexDirection:'column', borderLeft:'2px solid rgba(255,122,41,0.4)', paddingLeft:10, gap:1 }}>
               <span style={{ fontSize:8, fontWeight:800, color:'#FF7A29', letterSpacing:'.16em' }}>SEASON 5</span>
-              <span style={{ fontSize:7, color:'rgba(255,255,255,0.35)', letterSpacing:'.08em' }}>KRIPARTI PLAYING11</span>
             </div>
           </div>
           <div className="desk-nav">
@@ -154,26 +153,6 @@ export function Phase1Result() {
 
           <div className="wrap" style={{ paddingTop:40, paddingBottom:80 }}>
             <div style={{ display:'grid', gridTemplateColumns:'1fr', gap:24 }}>
-              {/* Scout's evaluation card */}
-              <div style={{ background:'#0A1727', border:'1px solid rgba(232,178,61,0.25)', borderLeft:'4px solid #E8B23D', padding:'24px 20px' }}>
-                <div className="scout-header">
-                  <div>
-                    <div style={{ fontSize:10, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.18em', color:'#E8B23D', marginBottom:4 }}>⭐ SCOUT EVALUATION REPORT</div>
-                    <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:18, color:'#fff' }}>Rahul Sharma — Batsman</div>
-                  </div>
-                  <div style={{ display:'flex', gap:2 }}>
-                    {[...Array(5)].map((_,i) => <span key={i} style={{ fontSize:18, color: i < 4 ? '#E8B23D' : 'rgba(255,255,255,0.2)' }}>★</span>)}
-                  </div>
-                </div>
-                <blockquote style={{ fontSize:14, color:'rgba(255,255,255,0.75)', lineHeight:1.7, fontStyle:'italic', borderLeft:'2px solid rgba(232,178,61,0.3)', paddingLeft:16, margin:'0 0 16px' }}>
-                  "Strong bat. Excellent timing on cover drives and pull shots. Footwork is organized. Clear understanding of line and length. Highly recommended for Phase 2 physical trial."
-                </blockquote>
-                <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:8 }}>
-                  <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)', fontWeight:600 }}>— BCPL Scout Evaluation Team · BCCI Certified</div>
-                  <div style={{ fontSize:10, fontWeight:800, fontFamily:'Montserrat,sans-serif', color:'#22C55E', letterSpacing:'.1em' }}>✅ RECOMMENDED</div>
-                </div>
-              </div>
-
               {/* Phase 2 CTA */}
               <div style={{ background:'#0A1727', border:'1px solid rgba(255,122,41,0.25)' }}>
                 <div style={{ background:'linear-gradient(135deg,rgba(255,122,41,0.15),rgba(255,122,41,0.05))', borderBottom:'1px solid rgba(255,122,41,0.2)', padding:'20px 20px' }}>

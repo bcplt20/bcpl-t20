@@ -6,11 +6,27 @@ export function Phase2KYC() {
   const [aadhaarFront, setAadhaarFront] = useState<'none'|'uploaded'>('none');
   const [aadhaarBack, setAadhaarBack]   = useState<'none'|'uploaded'>('none');
   const [pan, setPan]                   = useState<'none'|'uploaded'>('none');
+  const [profession, setProfession]     = useState('');
   const [kycState, setKycState]         = useState<'pending'|'verified'>('pending');
   const [submitting, setSubmitting]     = useState(false);
   const [menuOpen, setMenuOpen]         = useState(false);
 
-  const allUploaded = aadhaarFront === 'uploaded' && aadhaarBack === 'uploaded' && pan === 'uploaded';
+  const allUploaded = aadhaarFront === 'uploaded' && aadhaarBack === 'uploaded' && pan === 'uploaded' && !!profession;
+
+  const PROFESSIONS = [
+    { id:'doctor',     icon:'👨‍⚕️', label:'Doctor' },
+    { id:'ips',        icon:'👮', label:'IPS / Police' },
+    { id:'army',       icon:'🎖️', label:'Army / Defence' },
+    { id:'engineer',   icon:'⚙️', label:'Engineer' },
+    { id:'ca',         icon:'💰', label:'CA / Finance' },
+    { id:'lawyer',     icon:'⚖️', label:'Lawyer' },
+    { id:'teacher',    icon:'📚', label:'Teacher / Professor' },
+    { id:'business',   icon:'🏢', label:'Business Owner' },
+    { id:'it',         icon:'💻', label:'IT Professional' },
+    { id:'govt',       icon:'🏛️', label:'Govt. Officer' },
+    { id:'sports',     icon:'🏅', label:'Sports Professional' },
+    { id:'other',      icon:'🔧', label:'Other' },
+  ];
 
   const handleSubmit = () => {
     setSubmitting(true);
@@ -80,11 +96,10 @@ export function Phase2KYC() {
         <div className="wrap" style={{ height:60, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
           <div style={{ display:'flex', alignItems:'center', gap:10 }}>
             <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:22 }}>
-              <span style={{ color:'#FF7A29' }}>BCPL</span><span style={{ color:'#fff' }}> T20</span>
+              <span style={{ color:'#FF7A29' }}>BCPL</span>
             </div>
             <div style={{ display:'flex', flexDirection:'column', borderLeft:'2px solid rgba(255,122,41,0.4)', paddingLeft:10, gap:1 }}>
               <span style={{ fontSize:8, fontWeight:800, color:'#FF7A29', letterSpacing:'.16em' }}>SEASON 5</span>
-              <span style={{ fontSize:7, color:'rgba(255,255,255,0.35)', letterSpacing:'.08em' }}>KRIPARTI PLAYING11</span>
             </div>
           </div>
           <div className="desk-nav">
@@ -163,6 +178,21 @@ export function Phase2KYC() {
         ) : (
           /* ─── PENDING STATE — upload UI ─── */
           <>
+            {/* ── PROFESSION SELECTOR ── */}
+            <div style={{ background:'#0A1727', border:'1px solid rgba(255,122,41,0.2)', borderRadius:12, padding:'20px 18px', marginBottom:24 }}>
+              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, color:'#FF7A29', letterSpacing:'.06em', marginBottom:4 }}>YOUR PROFESSION</div>
+              <div style={{ fontSize:12, color:'rgba(255,255,255,0.35)', marginBottom:16 }}>Select the field you currently work in</div>
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(110px,1fr))', gap:8 }}>
+                {PROFESSIONS.map(p => (
+                  <button key={p.id} onClick={() => setProfession(p.id)}
+                    style={{ padding:'10px 8px', borderRadius:10, border: profession===p.id ? '2px solid #FF7A29' : '1px solid rgba(255,255,255,0.1)', background: profession===p.id ? 'rgba(255,122,41,0.12)' : 'rgba(255,255,255,0.03)', color: profession===p.id ? '#FF7A29' : 'rgba(255,255,255,0.6)', fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:11, cursor:'pointer', textAlign:'center', transition:'all .18s', display:'flex', flexDirection:'column', alignItems:'center', gap:6 }}>
+                    <span style={{ fontSize:20 }}>{p.icon}</span>
+                    {p.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div className="upload-grid">
               {/* Aadhaar Card */}
               <div className="doc-card">
@@ -299,7 +329,7 @@ export function Phase2KYC() {
         <div className="wrap">
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:16, marginBottom:16 }}>
             <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20 }}>
-              <span style={{ color:'#FF7A29' }}>BCPL</span><span style={{ color:'#fff' }}> T20</span>
+              <span style={{ color:'#FF7A29' }}>BCPL</span>
             </div>
             <div style={{ display:'flex', gap:16, flexWrap:'wrap' }}>
               {['About','Teams','FAQ','Contact','Terms','Privacy'].map(l => (

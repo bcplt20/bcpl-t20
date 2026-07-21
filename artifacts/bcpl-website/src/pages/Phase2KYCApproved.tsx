@@ -85,11 +85,10 @@ export function Phase2KYCApproved() {
         <div className="wrap" style={{ height:60, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
           <div style={{ display:'flex', alignItems:'center', gap:10 }}>
             <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:22 }}>
-              <span style={{ color:'#FF7A29' }}>BCPL</span><span style={{ color:'#fff' }}> T20</span>
+              <span style={{ color:'#FF7A29' }}>BCPL</span>
             </div>
             <div style={{ display:'flex', flexDirection:'column', borderLeft:'2px solid rgba(255,122,41,0.4)', paddingLeft:10, gap:1 }}>
               <span style={{ fontSize:8, fontWeight:800, color:'#FF7A29', letterSpacing:'.16em' }}>SEASON 5</span>
-              <span style={{ fontSize:7, color:'rgba(255,255,255,0.35)', letterSpacing:'.08em' }}>KRIPARTI PLAYING11</span>
             </div>
           </div>
           <div className="desk-nav">
@@ -238,19 +237,41 @@ export function Phase2KYCApproved() {
         <div style={{ fontSize:10, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.16em', color:'rgba(255,255,255,0.25)', marginBottom:16 }}>IMPORTANT UPDATES</div>
         <div className="notices-grid">
           {[
-            { icon:'📱', title:'Stay Connected', body:'Join the BCPL Mumbai Players WhatsApp group for real-time updates and trial announcements.', cta:'Join WhatsApp Group →', color:'#25D366' },
-            { icon:'🏋️', title:'Prepare Now', body:'Train consistently. Franchise scouts value players who show up fit and ready. 6 months to get match-sharp.', cta:'Training Tips →', color:'#FF7A29' },
-            { icon:'📧', title:'Check Your Email', body:'All trial updates, date announcements, and instructions will be sent to rahul@infosys.com', cta:'Manage Preferences →', color:'#3B82F6' },
+            { icon:'💬', title:'Stay Connected', body:'Join the BCPL Mumbai Players WhatsApp group for real-time trial updates, schedule announcements and coordination.', cta:'Join WhatsApp Group →', color:'#25D366', onClick: () => window.open('https://wa.me/919999999999?text=Hi%2C%20I%20want%20to%20join%20the%20BCPL%20Players%20WhatsApp%20group', '_blank') },
+            { icon:'🏋️', title:'Prepare Now', body:'Train consistently. Scouts value fitness and skill. Focus on your strengths — batting technique, bowling rhythm, or all-round conditioning.', cta:'View Training Tips →', color:'#FF7A29', onClick: () => { const el = document.getElementById('training-tips'); if(el) el.scrollIntoView({behavior:'smooth'}); } },
+            { icon:'📧', title:'Check Your Email', body:'All trial updates, schedule and instructions will be sent to your registered email & WhatsApp number.', cta:'Manage Preferences →', color:'#3B82F6', onClick: () => {} },
           ].map(card => (
             <div key={card.title} className="notice-card">
               <div style={{ fontSize:28, marginBottom:10 }}>{card.icon}</div>
               <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:15, color:'#fff', marginBottom:6 }}>{card.title}</div>
               <div style={{ fontSize:12, color:'rgba(255,255,255,0.45)', lineHeight:1.6, marginBottom:16 }}>{card.body}</div>
-              <button style={{ background:'none', border:`1px solid ${card.color}40`, color:card.color, padding:'8px 16px', fontSize:11, fontWeight:700, fontFamily:'Montserrat,sans-serif', cursor:'pointer', borderRadius:12, letterSpacing:'.04em', transition:'all .2s' }}>
+              <button onClick={card.onClick} style={{ background:'none', border:`1px solid ${card.color}40`, color:card.color, padding:'8px 16px', fontSize:11, fontWeight:700, fontFamily:'Montserrat,sans-serif', cursor:'pointer', borderRadius:12, letterSpacing:'.04em', transition:'all .2s' }}>
                 {card.cta}
               </button>
             </div>
           ))}
+        </div>
+
+        {/* ── TRAINING TIPS ── */}
+        <div id="training-tips" style={{ background:'#0A1727', border:'1px solid rgba(255,122,41,0.2)', borderRadius:12, padding:'24px 20px', marginBottom:28 }}>
+          <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, color:'#FF7A29', letterSpacing:'.06em', marginBottom:4 }}>🏋️ TRAINING TIPS FOR PHYSICAL TRIAL</div>
+          <div style={{ fontSize:12, color:'rgba(255,255,255,0.35)', marginBottom:20 }}>Franchise scouts evaluate these key areas during the ground trial</div>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))', gap:12 }}>
+            {[
+              { icon:'🏃', title:'Fitness First', tip:'30 min cardio daily. Scouts notice your stamina in the last over as much as the first.' },
+              { icon:'🏏', title:'Master Your Core Skill', tip:'Spend 70% of practice on your primary role. Consistency beats variety at trials.' },
+              { icon:'🎯', title:'Video Review', tip:'Watch back your own practice sessions. Identify one technical flaw and fix it weekly.' },
+              { icon:'🧘', title:'Match Simulation', tip:'Practice under pressure — tape a match format with others. React-time decisions matter.' },
+              { icon:'💪', title:'Strength & Agility', tip:'Focus on rotational strength (core, shoulders) and lateral movement. Cricket is explosive, not endurance.' },
+              { icon:'🍎', title:'Nutrition', tip:'High protein, complex carbs 3 hours before trial. Avoid heavy meals on trial day.' },
+            ].map(t => (
+              <div key={t.title} style={{ background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.07)', borderRadius:10, padding:'14px 14px', borderLeft:`3px solid rgba(255,122,41,0.4)` }}>
+                <div style={{ fontSize:22, marginBottom:8 }}>{t.icon}</div>
+                <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:13, color:'#fff', marginBottom:6 }}>{t.title}</div>
+                <div style={{ fontSize:12, color:'rgba(255,255,255,0.45)', lineHeight:1.6 }}>{t.tip}</div>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Season 5 phase summary */}
@@ -259,7 +280,8 @@ export function Phase2KYCApproved() {
             <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'#fff', marginBottom:4 }}>You're in the top bracket.</div>
             <div style={{ fontSize:13, color:'rgba(255,255,255,0.45)' }}>Only players who clear Phase 1 video + Phase 2 KYC reach the physical trial. You're one step from the auction floor.</div>
           </div>
-          <button className="btn-primary season-cta-btn">
+          <button className="btn-primary season-cta-btn"
+            onClick={() => { window.location.href = import.meta.env.BASE_URL.replace(/\/$/, '') + '/#timeline'; }}>
             VIEW SEASON 5 ROADMAP →
           </button>
         </div>
@@ -271,7 +293,7 @@ export function Phase2KYCApproved() {
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:16, marginBottom:16 }}>
             <div>
               <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20 }}>
-                <span style={{ color:'#FF7A29' }}>BCPL</span><span style={{ color:'#fff' }}> T20</span>
+                <span style={{ color:'#FF7A29' }}>BCPL</span>
               </div>
               <div style={{ fontSize:11, color:'rgba(255,255,255,0.3)', marginTop:3 }}>#OfficeSeStadiumtak</div>
             </div>

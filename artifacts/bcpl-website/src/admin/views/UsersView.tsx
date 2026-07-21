@@ -155,7 +155,6 @@ export default function UsersView() {
               </div>
               <table><thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Location</th><th>Role</th><th>Payments</th><th>KYC</th><th>Status</th></tr></thead>
               <tbody>${rows}</tbody></table>
-              <div class="footer">KRIPARTI PLAYING11 PRIVATE LIMITED · GSTIN: 07AAHCK4053D1ZS · 2nd Floor Back Side, RZ-108, Indra Park, Uttam Nagar, West Delhi, Delhi — 110059 · legal@bcplt20.com</div>
               </body></html>`);w.document.close();setTimeout(()=>w.print(),500);
             }} style={{ padding:"7px 13px", borderRadius:8, border:"1px solid #6366F144", background:"#6366F112", color:"#6366F1", fontSize:11, cursor:"pointer", fontWeight:700 }}>
               🖨 PDF
