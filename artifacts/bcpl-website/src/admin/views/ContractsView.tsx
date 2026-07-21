@@ -19,12 +19,310 @@ type Contract = {
   id:string; player:string; phone:string; email:string;
   team:string; role:string; amount:number;
   date:string; expiry:string; status:string;
+  contractType:string;
 };
 
 const statusColor = (s:string) => s==="Signed"?"#10B981":s==="Pending"?"#F59E0B":"#EF4444";
 
-/* ─── Full Legal Contract Text ───────────────────────────── */
+/* ─── Contract text dispatchers by type ─────────────────── */
 function buildContractText(c: Contract): string {
+  switch(c.contractType) {
+    case "Employee":         return buildEmployeeContract(c);
+    case "Brand Ambassador": return buildBrandAmbassadorContract(c);
+    case "Coach":            return buildCoachContract(c);
+    case "Operations Staff": return buildOperationsContract(c);
+    default:                 return buildPlayerContract(c);
+  }
+}
+
+function buildEmployeeContract(c: Contract): string {
+  const today = new Date(c.date||Date.now()).toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"});
+  const expiry = new Date(c.expiry||Date.now()).toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"});
+  return `BCPL T20 — EMPLOYMENT CONTRACT
+${COMPANY.season} · Contract Ref: ${c.id}
+
+THIS EMPLOYMENT CONTRACT ("Agreement") is entered into on ${today} by and between:
+
+EMPLOYER: ${COMPANY.name}
+CIN: ${COMPANY.cin} · GSTIN: ${COMPANY.gstin}
+${COMPANY.address}
+(hereinafter "the Company")
+
+EMPLOYEE: ${c.player}
+Designation: ${c.role}
+(hereinafter "the Employee")
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CLAUSE 1 — APPOINTMENT & COMMENCEMENT
+The Company appoints the Employee in the role of ${c.role} effective ${today}.
+Duration: ${today} to ${expiry}.
+
+CLAUSE 2 — DUTIES & RESPONSIBILITIES
+The Employee shall perform all duties as assigned by the management related to the BCPL T20 Season 5 operations, including but not limited to coordination, execution, reporting, and any other tasks directed by the designated manager.
+
+CLAUSE 3 — COMPENSATION
+Fixed Monthly Remuneration: ₹${c.amount.toLocaleString("en-IN")} (${numberToWords(c.amount)} Rupees).
+Payment shall be made on or before the 7th of each month via NEFT/IMPS.
+
+CLAUSE 4 — DEDUCTIONS & TAXES
+Applicable TDS (if any) shall be deducted at source as per Income Tax Act. PF/ESIC shall apply as per government norms.
+
+CLAUSE 5 — WORKING HOURS
+Standard working hours: 9 AM to 6 PM, Monday through Saturday. Flexibility required during match days and events.
+
+CLAUSE 6 — LEAVE ENTITLEMENT
+The Employee is entitled to: 12 paid leaves, 6 casual leaves, and 6 sick leaves per annum (pro-rated for contract duration).
+
+CLAUSE 7 — CONFIDENTIALITY
+The Employee agrees to maintain strict confidentiality of all business strategies, player data, financial information, partner details, and operational plans of the Company.
+
+CLAUSE 8 — INTELLECTUAL PROPERTY
+Any work product, software, documentation, content, or creative output produced by the Employee in the course of employment shall be the exclusive property of the Company.
+
+CLAUSE 9 — NON-COMPETE
+During the contract period and for 12 months thereafter, the Employee shall not directly or indirectly work for, advise, or assist any competing cricket league or organization.
+
+CLAUSE 10 — TERMINATION
+Either party may terminate with 30 days' written notice. The Company reserves the right to terminate immediately for gross misconduct, breach of confidentiality, or criminal conduct.
+
+CLAUSE 11 — DISPUTE RESOLUTION
+All disputes shall be resolved through arbitration under the Arbitration and Conciliation Act, 1996. Seat of arbitration: New Delhi.
+
+CLAUSE 12 — GOVERNING LAW
+This Agreement shall be governed by the laws of India. Subject to Delhi jurisdiction.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+FOR THE COMPANY:
+Signature:         _________________________
+Authorised Signatory — ${COMPANY.name}
+Date:              ${today}
+
+FOR THE EMPLOYEE:
+Signature:         _________________________
+Name:              ${c.player}
+Date:              ${today}
+Witness:           _________________________`;
+}
+
+function buildBrandAmbassadorContract(c: Contract): string {
+  const today = new Date(c.date||Date.now()).toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"});
+  const expiry = new Date(c.expiry||Date.now()).toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"});
+  return `BCPL T20 — BRAND AMBASSADOR AGREEMENT
+${COMPANY.season} · Contract Ref: ${c.id}
+
+THIS BRAND AMBASSADOR AGREEMENT ("Agreement") is entered into on ${today} by and between:
+
+PRINCIPAL: ${COMPANY.name}
+CIN: ${COMPANY.cin} · GSTIN: ${COMPANY.gstin}
+${COMPANY.address}
+(hereinafter "the Company")
+
+AMBASSADOR: ${c.player}
+(hereinafter "the Ambassador")
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CLAUSE 1 — APPOINTMENT
+The Company appoints the Ambassador as the official Brand Ambassador of BCPL T20 ${COMPANY.season} for the period ${today} to ${expiry}.
+
+CLAUSE 2 — SCOPE OF ENGAGEMENT
+The Ambassador agrees to:
+a) Promote BCPL T20 on all personal social media platforms (minimum 4 posts/month)
+b) Attend BCPL press conferences, launch events, and sponsor activations as required
+c) Feature in official promotional materials, advertisements, and digital campaigns
+d) Endorse BCPL's mission and values publicly
+
+CLAUSE 3 — AMBASSADOR FEE
+Total Ambassador Fee: ₹${c.amount.toLocaleString("en-IN")} (${numberToWords(c.amount)} Rupees Only)
+Payment Schedule: 50% on signing, 25% at mid-season, 25% at season close.
+TDS shall be deducted as per applicable rates under Section 194J/194C.
+
+CLAUSE 4 — EXCLUSIVITY
+During the contract period, the Ambassador shall not represent, endorse, or appear in any capacity for a competing T20 cricket league or event.
+
+CLAUSE 5 — IMAGE RIGHTS
+The Company is granted a royalty-free license to use the Ambassador's name, image, voice, and likeness for BCPL T20 marketing across all media channels during the contract term.
+
+CLAUSE 6 — SOCIAL MEDIA STANDARDS
+All BCPL-related social media posts must be pre-approved by the Company's marketing team. The Ambassador shall not post any content that may harm BCPL's reputation.
+
+CLAUSE 7 — CODE OF CONDUCT
+The Ambassador shall maintain the highest standards of professional conduct, refraining from any activity that may harm the reputation of BCPL T20 or its sponsors.
+
+CLAUSE 8 — CONFIDENTIALITY
+The Ambassador agrees not to disclose any confidential information regarding the Company's business, sponsors, financials, or strategic plans.
+
+CLAUSE 9 — INTELLECTUAL PROPERTY
+All campaign assets, creative content, and materials featuring the Ambassador created for BCPL shall remain the intellectual property of the Company.
+
+CLAUSE 10 — MORALITY CLAUSE
+The Company reserves the right to terminate this Agreement immediately without payment of any outstanding fees if the Ambassador engages in conduct that, in the Company's reasonable judgment, brings disrepute to the BCPL brand.
+
+CLAUSE 11 — INDEMNIFICATION
+Each party shall indemnify the other against claims, losses, and liabilities arising from a breach of their respective obligations under this Agreement.
+
+CLAUSE 12 — DISPUTE RESOLUTION
+All disputes shall be resolved through arbitration. Subject to New Delhi jurisdiction.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+FOR THE COMPANY:
+Signature:         _________________________
+Date:              ${today}
+
+FOR THE AMBASSADOR:
+Signature:         _________________________
+Name:              ${c.player}
+Date:              ${today}`;
+}
+
+function buildCoachContract(c: Contract): string {
+  const today = new Date(c.date||Date.now()).toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"});
+  const expiry = new Date(c.expiry||Date.now()).toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"});
+  return `BCPL T20 — COACHING SERVICES AGREEMENT
+${COMPANY.season} · Contract Ref: ${c.id}
+
+THIS COACHING AGREEMENT ("Agreement") is made on ${today} between:
+
+ORGANIZATION: ${COMPANY.name}
+CIN: ${COMPANY.cin} · GSTIN: ${COMPANY.gstin}
+${COMPANY.address}
+(hereinafter "the Company" or "BCPL")
+
+COACH: ${c.player}
+Specialization: ${c.role}
+Franchise / Assignment: ${c.team}
+(hereinafter "the Coach")
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CLAUSE 1 — ENGAGEMENT
+BCPL engages the Coach as ${c.role} for the franchise team ${c.team} for BCPL T20 ${COMPANY.season}.
+Contract Period: ${today} to ${expiry}.
+
+CLAUSE 2 — DUTIES & RESPONSIBILITIES
+The Coach shall:
+a) Conduct regular training sessions, fitness drills, and skill clinics for the squad
+b) Develop and implement the team's tactical approach for BCPL T20
+c) Manage on-field strategy during matches, including batting order and field placements
+d) Mentor players in their individual and collective performance
+e) Attend all team meetings, selection panels, and BCPL coaching conferences
+
+CLAUSE 3 — COACHING FEE
+Total Remuneration: ₹${c.amount.toLocaleString("en-IN")} (${numberToWords(c.amount)} Rupees Only)
+Payable in tranches: 30% on commencement, 40% at mid-season, 30% upon season completion.
+
+CLAUSE 4 — TRAVEL & ACCOMMODATION
+BCPL shall arrange and bear the cost of travel and accommodation for the Coach during all official BCPL events, matches, and training camps.
+
+CLAUSE 5 — STANDARDS OF CONDUCT
+The Coach agrees to maintain high standards of sportsmanship, fairness, and ethical conduct and shall comply with BCPL's Code of Conduct and anti-corruption charter.
+
+CLAUSE 6 — ANTI-MATCH-FIXING DECLARATION
+The Coach unconditionally declares that they are not involved in, nor will engage in, any form of match-fixing, spot-fixing, or any corrupt activity. Violation shall lead to immediate termination and reporting to BCCI / relevant authorities.
+
+CLAUSE 7 — CONFIDENTIALITY
+The Coach shall not disclose team strategies, squad selection decisions, player performance data, or BCPL confidential information to any third party.
+
+CLAUSE 8 — NON-SOLICITATION
+During and for 2 seasons after this contract, the Coach shall not solicit or entice any BCPL player to leave for a competing league.
+
+CLAUSE 9 — MEDIA & COMMUNICATIONS
+All public statements, interviews, and media interactions by the Coach regarding BCPL must be pre-approved by the Company's communications team.
+
+CLAUSE 10 — TERMINATION
+The Company may terminate with 15 days' notice. For gross misconduct or anti-corruption violations, termination shall be immediate with forfeiture of remaining fees.
+
+CLAUSE 11 — GOVERNING LAW
+Subject to Delhi jurisdiction.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+FOR BCPL:
+Signature:         _________________________
+Date:              ${today}
+
+FOR THE COACH:
+Signature:         _________________________
+Name:              ${c.player}
+Date:              ${today}`;
+}
+
+function buildOperationsContract(c: Contract): string {
+  const today = new Date(c.date||Date.now()).toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"});
+  const expiry = new Date(c.expiry||Date.now()).toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"});
+  return `BCPL T20 — SERVICE AGREEMENT (OPERATIONS & TOURNAMENT STAFF)
+${COMPANY.season} · Contract Ref: ${c.id}
+
+THIS SERVICE AGREEMENT ("Agreement") is entered into on ${today} by and between:
+
+PRINCIPAL: ${COMPANY.name}
+CIN: ${COMPANY.cin} · GSTIN: ${COMPANY.gstin}
+${COMPANY.address}
+(hereinafter "the Company")
+
+SERVICE PROVIDER / STAFF: ${c.player}
+Role/Position: ${c.role}
+Assigned Event/Team: ${c.team}
+(hereinafter "the Staff Member")
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CLAUSE 1 — SCOPE OF SERVICES
+The Staff Member is engaged to provide operational support services for BCPL T20 ${COMPANY.season} in the capacity of ${c.role}.
+Engagement Period: ${today} to ${expiry}.
+
+CLAUSE 2 — RESPONSIBILITIES
+The Staff Member shall:
+a) Execute all duties specified by the Tournament Director and designated supervisors
+b) Ensure smooth operations at all BCPL venues, including setup, ground management, logistics, and player support
+c) Coordinate with venue staff, media, security, and franchise representatives
+d) Maintain decorum and professional behavior at all BCPL events
+e) Submit daily and event-wise operational reports to the assigned manager
+
+CLAUSE 3 — SERVICE FEE
+Total Service Fee: ₹${c.amount.toLocaleString("en-IN")} (${numberToWords(c.amount)} Rupees Only)
+Payment shall be released within 7 working days of each event/milestone completion.
+TDS shall be deducted as per prevailing rates under the Income Tax Act.
+
+CLAUSE 4 — VENUE & TRAVEL
+The Company shall provide venue access passes. Travel and accommodation arrangements shall be as per the specific event logistics plan shared separately.
+
+CLAUSE 5 — UNIFORM & IDENTIFICATION
+The Staff Member must wear the official BCPL operations uniform and carry valid ID at all times during events. No BCPL branding may be used on personal channels without prior written approval.
+
+CLAUSE 6 — CONFIDENTIALITY
+The Staff Member agrees to maintain strict confidentiality of all tournament plans, scheduling, financial arrangements, and any player-related information.
+
+CLAUSE 7 — CONDUCT STANDARDS
+The Staff Member shall follow BCPL's Code of Conduct. Any harassment, misconduct, substance use, or breach of safety norms shall result in immediate contract termination.
+
+CLAUSE 8 — ANTI-CORRUPTION
+The Staff Member declares they have no conflict of interest and will not engage in any activity that may constitute match-fixing, spot-fixing, or corruption. Violations will be reported to appropriate authorities.
+
+CLAUSE 9 — EQUIPMENT & ASSETS
+All equipment, devices, access cards, and materials provided by the Company remain BCPL property and must be returned at contract end.
+
+CLAUSE 10 — DISPUTE RESOLUTION
+Disputes to be resolved through arbitration. Subject to Delhi jurisdiction.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+FOR THE COMPANY:
+Signature:         _________________________
+Date:              ${today}
+
+STAFF MEMBER:
+Signature:         _________________________
+Name:              ${c.player}
+Role:              ${c.role}
+Date:              ${today}`;
+}
+
+/* ─── Full Legal Player Contract Text ───────────────────────────── */
+function buildPlayerContract(c: Contract): string {
   const today = new Date(c.date||Date.now()).toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"});
   const expiry = new Date(c.expiry||Date.now()).toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"});
   const amtWords = numberToWords(c.amount);
@@ -269,15 +567,51 @@ function ContractModal({ c, onClose }: { c: Contract; onClose: ()=>void }) {
   const [emailLoading, setEL]       = useState(false);
   const [tab,        setTab]        = useState<"preview"|"email">("preview");
   const contractText = buildContractText(c);
+  const cType = c.contractType || "Player";
 
   function downloadPDF() {
     const w = window.open("", "_blank");
     if (!w) return;
-    w.document.write(`<!DOCTYPE html><html><head><title>${c.id} — BCPL Contract</title>
-    <style>body{font-family:Arial,sans-serif;font-size:12px;line-height:1.7;color:#111;padding:40px;max-width:800px;margin:auto}
-    pre{white-space:pre-wrap;word-wrap:break-word;font-family:Arial,sans-serif}
-    @media print{body{padding:20px}}</style></head>
-    <body><pre>${contractText.replace(/</g,"&lt;").replace(/>/g,"&gt;")}</pre></body></html>`);
+    const cType = c.contractType || "Player";
+    w.document.write(`<!DOCTYPE html><html><head><title>${c.id} — BCPL ${cType} Contract</title>
+    <style>
+      body{font-family:Arial,sans-serif;font-size:11px;line-height:1.7;color:#111;padding:0;margin:0}
+      .lh{display:flex;align-items:center;gap:18px;background:#FF6B00;padding:16px 32px;color:#fff}
+      .logo{width:64px;height:64px;border-radius:50%;overflow:hidden;border:3px solid rgba(255,255,255,.45);flex-shrink:0}
+      .logo img{width:100%;height:100%;object-fit:cover}
+      .lh-title{font-size:17px;font-weight:900;letter-spacing:.04em;line-height:1.2}
+      .lh-sub{font-size:9px;opacity:.85;margin-top:3px}
+      .body{padding:28px 40px;max-width:820px;margin:0 auto}
+      .contract-badge{text-align:center;background:#FFF5EE;border:2px solid #FF6B00;border-radius:8px;padding:10px 20px;margin-bottom:20px}
+      .contract-badge h2{margin:0;font-size:14px;color:#FF6B00;letter-spacing:.08em;font-weight:900;text-transform:uppercase}
+      .contract-badge p{margin:4px 0 0;font-size:10px;color:#888}
+      pre{white-space:pre-wrap;word-wrap:break-word;font-family:Arial,sans-serif;font-size:11px;line-height:1.8;color:#111}
+      .footer{margin-top:24px;background:#f8f8f8;border-top:3px solid #FF6B00;padding:10px 32px;font-size:8px;color:#666;display:flex;justify-content:space-between}
+      @media print{.lh{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+    </style></head>
+    <body>
+      <div class="lh">
+        <div class="logo"><img src="/bcpl-website/bcpl-assets/bcpl-ball-color.jpg"/></div>
+        <div>
+          <div class="lh-title">BCPL T20 — Bhartiya Corporate Premier League</div>
+          <div class="lh-sub">KRIPARTI PLAYING11 PRIVATE LIMITED · GSTIN: ${COMPANY.gstin}</div>
+          <div class="lh-sub">${COMPANY.address}</div>
+          <div class="lh-sub">legal@bcplt20.com · bcplt20.com · CIN: ${COMPANY.cin}</div>
+        </div>
+      </div>
+      <div class="body">
+        <div class="contract-badge">
+          <h2>${cType} Contract — ${COMPANY.season}</h2>
+          <p>Reference: ${c.id} · Party: ${c.player} · ${c.team}</p>
+        </div>
+        <pre>${contractText.replace(/</g,"&lt;").replace(/>/g,"&gt;")}</pre>
+      </div>
+      <div class="footer">
+        <span>Ref: ${c.id}</span>
+        <span>${COMPANY.name} · Secure &amp; Confidential</span>
+        <span>legal@bcplt20.com · bcplt20.com</span>
+      </div>
+    </body></html>`);
     w.document.close();
     setTimeout(()=>w.print(), 500);
   }
@@ -379,7 +713,7 @@ export default function ContractsView() {
   const [preview,  setPreview]  = useState<Contract|null>(null);
   const [genOpen,  setGenOpen]  = useState(false);
   const [contracts,setContracts]= useState<Contract[]>([]);
-  const [genForm,  setGenForm]  = useState({ player:"", phone:"", email:"", team:TEAMS_LIST[0], role:"Batsman", amount:"", date:"", expiry:"" });
+  const [genForm,  setGenForm]  = useState({ player:"", phone:"", email:"", team:TEAMS_LIST[0], role:"Batsman", amount:"", date:"", expiry:"", contractType:"Player" });
   const card:React.CSSProperties={background:"linear-gradient(135deg,#0D1526,#0A1020)",border:"1px solid #1E293B",borderRadius:16,padding:20};
 
   const filtered = contracts.filter(c=>
@@ -401,11 +735,12 @@ export default function ContractsView() {
       status: "Pending",
       date:   genForm.date,
       expiry: genForm.expiry,
+      contractType: genForm.contractType,
     };
     setContracts(prev=>[...prev, newC]);
     setPreview(newC);
     setGenOpen(false);
-    setGenForm({ player:"", phone:"", email:"", team:TEAMS_LIST[0], role:"Batsman", amount:"", date:"", expiry:"" });
+    setGenForm({ player:"", phone:"", email:"", team:TEAMS_LIST[0], role:"Batsman", amount:"", date:"", expiry:"", contractType:"Player" });
   }
 
   return (
@@ -519,17 +854,18 @@ export default function ContractsView() {
       {genOpen&&(
         <div style={{position:"fixed",inset:0,background:"#00000088",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:16}} onClick={()=>setGenOpen(false)}>
           <div style={{...card,width:"100%",maxWidth:500,padding:28,maxHeight:"92vh",overflowY:"auto"}} onClick={e=>e.stopPropagation()}>
-            <div style={{fontSize:18,fontWeight:800,color:"#F1F5F9",marginBottom:4}}>+ Generate Player Contract</div>
-            <div style={{fontSize:12,color:"#64748B",marginBottom:20}}>Post-auction contracts under {COMPANY.name}</div>
+            <div style={{fontSize:18,fontWeight:800,color:"#F1F5F9",marginBottom:4}}>+ Generate Contract</div>
+            <div style={{fontSize:12,color:"#64748B",marginBottom:20}}>BCPL official contracts under {COMPANY.name}</div>
             {[
-              {label:"Player Full Name",    key:"player", type:"text",   placeholder:"e.g. Rahul Sharma"},
-              {label:"Player Phone",        key:"phone",  type:"tel",    placeholder:"e.g. 9876543210"},
-              {label:"Player Email",        key:"email",  type:"email",  placeholder:"e.g. player@email.com"},
-              {label:"Franchise Team",      key:"team",   type:"select", options:TEAMS_LIST},
-              {label:"Playing Role",        key:"role",   type:"select", options:["Batsman","Bowler","All-Rounder","Wicket-Keeper"]},
-              {label:"Contract Value (₹K)", key:"amount", type:"number", placeholder:"e.g. 500 = ₹5L"},
-              {label:"Valid From",          key:"date",   type:"date",   placeholder:""},
-              {label:"Valid Until",         key:"expiry", type:"date",   placeholder:""},
+              {label:"Contract Type",    key:"contractType", type:"select", options:["Player","Employee","Brand Ambassador","Coach","Operations Staff"]},
+              {label:"Full Name",        key:"player", type:"text",   placeholder:"e.g. Rahul Sharma"},
+              {label:"Phone",            key:"phone",  type:"tel",    placeholder:"e.g. 9876543210"},
+              {label:"Email",            key:"email",  type:"email",  placeholder:"e.g. person@email.com"},
+              {label:"Team / Department",key:"team",   type:"select", options:TEAMS_LIST},
+              {label:"Designation / Role",key:"role",  type:"select", options:["Batsman","Bowler","All-Rounder","Wicket-Keeper","Head Coach","Batting Coach","Bowling Coach","Fielding Coach","Operations Manager","Ground Staff","Marketing Executive","Finance Officer","Admin Executive","Brand Manager","PR Manager"]},
+              {label:"Value (₹K)",       key:"amount", type:"number", placeholder:"e.g. 500 = ₹5L"},
+              {label:"Valid From",       key:"date",   type:"date",   placeholder:""},
+              {label:"Valid Until",      key:"expiry", type:"date",   placeholder:""},
             ].map(f=>(
               <div key={f.key} style={{marginBottom:12}}>
                 <label style={{fontSize:11,color:"#64748B",fontWeight:700,marginBottom:5,display:"block",textTransform:"uppercase"}}>{f.label}</label>
@@ -550,7 +886,7 @@ export default function ContractsView() {
               <button onClick={handleGenerate} disabled={!genForm.player.trim()||!genForm.amount||!genForm.date||!genForm.expiry}
                 style={{flex:2,padding:"11px",borderRadius:10,border:"none",background:"linear-gradient(135deg,#FF6B00,#FF8C40)",color:"#fff",fontWeight:700,fontSize:13,cursor:"pointer",
                   opacity:genForm.player.trim()&&genForm.amount&&genForm.date&&genForm.expiry?1:0.5}}>
-                📜 Generate Legal Contract
+                📜 Generate {genForm.contractType} Contract
               </button>
             </div>
           </div>

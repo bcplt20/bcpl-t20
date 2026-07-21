@@ -53,8 +53,91 @@ function InvoiceModal({ txn, onClose }: { txn: Txn; onClose: () => void }) {
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"16px 24px", borderBottom:"1px solid #1E293B" }}>
           <div style={{ fontSize:15, fontWeight:800, color:"#F1F5F9" }}>📄 GST Tax Invoice</div>
           <div style={{ display:"flex", gap:8 }}>
-            <button style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontSize:12, cursor:"pointer" }}>⬇ PDF</button>
-            <button style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontSize:12, cursor:"pointer" }}>📋 Copy Link</button>
+            <button onClick={()=>{
+              const w=window.open("","_blank");if(!w)return;
+              const iNo=`BCPL/25-26/${txn.id}`;
+              const gst=Math.round(base*GST_RATE);const cgst=gst/2;const total=base+gst;
+              w.document.write(`<!DOCTYPE html><html><head><title>${iNo}</title>
+              <style>body{font-family:Arial,sans-serif;font-size:11px;padding:0;margin:0}
+              .lh{display:flex;align-items:center;gap:16px;background:#FF6B00;padding:14px 30px;color:#fff}
+              .logo{width:54px;height:54px;border-radius:50%;overflow:hidden;border:3px solid rgba(255,255,255,.4);flex-shrink:0}
+              .logo img{width:100%;height:100%;object-fit:cover}
+              .lh-title{font-size:16px;font-weight:900;letter-spacing:.04em}
+              .lh-sub{font-size:9px;opacity:.8;margin-top:2px}
+              .body{padding:24px 32px;max-width:800px}
+              .inv-header{display:flex;justify-content:space-between;margin-bottom:20px;padding-bottom:14px;border-bottom:2px solid #FF6B00}
+              .inv-badge{background:#FF6B00;color:#fff;padding:5px 14px;border-radius:6px;font-weight:900;font-size:11px;letter-spacing:.04em;display:inline-block;margin-bottom:6px}
+              h3{margin:0;font-size:12px;color:#555}
+              .bill{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+              .bill-box{background:#f8f8f8;border:1px solid #eee;border-radius:8px;padding:12px}
+              .bill-label{font-size:9px;font-weight:700;color:#888;text-transform:uppercase;margin-bottom:6px}
+              table{width:100%;border-collapse:collapse;margin-bottom:16px;font-size:10px}
+              th{background:#f1f1f1;padding:6px 8px;text-align:left;font-size:9px;font-weight:700;text-transform:uppercase;color:#555}
+              td{padding:8px;border-bottom:1px solid #eee}
+              .tax-box{float:right;width:260px;background:#f8f8f8;border:1px solid #eee;border-radius:8px;padding:12px}
+              .tax-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #eee;font-size:10px}
+              .total-row{display:flex;justify-content:space-between;padding:8px 0 0;font-weight:900;font-size:14px}
+              .total-row span:last-child{color:#FF6B00}
+              .footer{clear:both;margin-top:20px;border-top:2px solid #FF6B00;padding:10px 32px;font-size:8px;color:#666;display:flex;justify-content:space-between}
+              @media print{body{} .lh{-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style></head>
+              <body>
+              <div class="lh">
+                <div class="logo"><img src="/bcpl-website/bcpl-assets/bcpl-ball-color.jpg"/></div>
+                <div><div class="lh-title">BCPL T20 — Bhartiya Corporate Premier League</div>
+                <div class="lh-sub">KRIPARTI PLAYING11 PRIVATE LIMITED · GSTIN: ${BCPL_GSTIN}</div>
+                <div class="lh-sub">2nd Floor Back Side, RZ-108, Indra Park, Uttam Nagar, West Delhi — 110059</div></div>
+              </div>
+              <div class="body">
+                <div class="inv-header">
+                  <div>
+                    <div class="inv-badge">TAX INVOICE</div>
+                    <h3>Invoice No: <strong>${iNo}</strong></h3>
+                    <h3>Date: ${new Date().toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"})}</h3>
+                    <h3>HSN/SAC Code: 999299 — Sports Event Services</h3>
+                    <h3>GST Rate: 18% (CGST 9% + SGST 9%)</h3>
+                  </div>
+                  <div style="text-align:right">
+                    <div style="font-size:11px;color:#555">Place of Supply: PAN India</div>
+                    <div style="font-size:10px;color:#888;margin-top:4px">TXN ID: ${txn.id}</div>
+                    <div style="font-size:10px;color:#888">Method: ${txn.method}</div>
+                  </div>
+                </div>
+                <div class="bill">
+                  <div class="bill-box">
+                    <div class="bill-label">Issued By (Supplier)</div>
+                    <strong>Kriparti Playing11 Pvt. Ltd.</strong><br/>
+                    <span style="font-size:10px;color:#555">GSTIN: ${BCPL_GSTIN}<br/>
+                    2nd Floor Back Side, RZ-108, Indra Park,<br/>Uttam Nagar, West Delhi - 110059</span>
+                  </div>
+                  <div class="bill-box">
+                    <div class="bill-label">Bill To (Recipient)</div>
+                    <strong>${txn.name}</strong><br/>
+                    <span style="font-size:10px;color:#555">${txn.email}<br/>${txn.phone}${txn.gstin?`<br/>GSTIN: ${txn.gstin}`:""}</span>
+                  </div>
+                </div>
+                <table>
+                  <thead><tr><th>Description</th><th>HSN</th><th>Rate</th><th>Qty</th><th>Taxable Amount</th></tr></thead>
+                  <tbody>
+                    <tr><td>BCPL T20 Season 5 — ${txn.type} Registration<br/><span style="font-size:9px;color:#888">${txn.type==="Phase 1"?"Online Scout Review &amp; Video Submission":"Physical Trial Entry &amp; Franchise Auction Eligibility"}</span></td>
+                    <td>999299</td><td>₹${base.toLocaleString()}</td><td>1</td><td>₹${base.toLocaleString()}</td></tr>
+                  </tbody>
+                </table>
+                <div class="tax-box">
+                  <div class="tax-row"><span>Subtotal</span><span>₹${base.toLocaleString()}</span></div>
+                  <div class="tax-row"><span>CGST @ 9%</span><span>₹${cgst.toFixed(2)}</span></div>
+                  <div class="tax-row"><span>SGST @ 9%</span><span>₹${cgst.toFixed(2)}</span></div>
+                  <div class="total-row"><span>Total Payable</span><span>₹${total.toLocaleString()}</span></div>
+                  <div style="font-size:8px;color:#888;margin-top:6px">Computer-generated invoice. Subject to Delhi jurisdiction.</div>
+                </div>
+              </div>
+              <div class="footer">
+                <span>Invoice: ${iNo} · Verified Payment</span>
+                <span>Kriparti Playing11 Pvt. Ltd. · CIN: U74999DL2019PTC345678</span>
+                <span>legal@bcplt20.com · bcplt20.com</span>
+              </div>
+              </body></html>`);
+              w.document.close();setTimeout(()=>w.print(),500);
+            }} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontSize:12, cursor:"pointer" }}>⬇ PDF</button>
             <button onClick={onClose} style={{ padding:"6px 12px", borderRadius:8, border:"none", background:"#1E293B", color:"#64748B", fontSize:12, cursor:"pointer" }}>✕</button>
           </div>
         </div>
@@ -213,9 +296,30 @@ export default function FinanceView() {
           <div style={{ fontSize:12, color:"#64748B", marginTop:2 }}>Revenue · P&L · GST Compliance · Invoices · Refunds · TDS</div>
         </div>
         <div style={{ display:"flex", gap:8 }}>
-          <button style={{ padding:"9px 16px", borderRadius:9, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontSize:12, cursor:"pointer" }}>⬇ Export CSV</button>
-          <button style={{ padding:"9px 16px", borderRadius:9, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontSize:12, cursor:"pointer" }}>📄 Bulk Invoices</button>
-          <button style={{ padding:"9px 16px", borderRadius:9, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer" }}>📥 GSTR-1 Report</button>
+          <button onClick={()=>{
+            const headers=["TXN ID","Player","Email","Phone","Type","Amount","GST","Total","Method","Status","Time"];
+            const rows=TRANSACTIONS.map(t=>[t.id,t.name,t.email,t.phone,t.type,t.amount,Math.round(t.amount*GST_RATE),Math.round(t.amount*(1+GST_RATE)),t.method,t.status,t.time]);
+            const csv=[headers,...rows].map(r=>r.join(",")).join("\n");
+            const a=document.createElement("a");a.href="data:text/csv;charset=utf-8,"+encodeURIComponent(csv);a.download=`bcpl_finance_${new Date().toISOString().slice(0,10)}.csv`;a.click();
+          }} style={{ padding:"9px 16px", borderRadius:9, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontSize:12, cursor:"pointer" }}>⬇ Export CSV</button>
+          <button onClick={()=>{
+            const w=window.open("","_blank");if(!w)return;
+            const rows=TRANSACTIONS.filter(t=>t.status==="success").map((t,i)=>{const gst=Math.round(t.amount*GST_RATE);const total=t.amount+gst;return`<tr><td>BCPL/25-26/${t.id}</td><td>${t.name}</td><td>${t.email}</td><td>${t.type}</td><td>₹${t.amount.toLocaleString()}</td><td>₹${gst}</td><td style="font-weight:bold;color:#FF6B00">₹${total.toLocaleString()}</td></tr>`;}).join("");
+            w.document.write(`<!DOCTYPE html><html><head><title>BCPL Bulk Invoices</title><style>body{font-family:Arial;font-size:11px;padding:20px}.header{display:flex;align-items:center;gap:16px;border-bottom:3px solid #FF6B00;padding-bottom:12px;margin-bottom:20px}.logo{width:52px;height:52px;border-radius:50%;overflow:hidden;border:2px solid #FF6B00}.logo img{width:100%;height:100%;object-fit:cover}h1{margin:0;font-size:18px;color:#FF6B00}p{margin:2px 0;font-size:10px;color:#555}table{width:100%;border-collapse:collapse}th{background:#FF6B00;color:#fff;padding:7px;text-align:left;font-size:10px}td{padding:6px;border-bottom:1px solid #eee;font-size:10px}tr:nth-child(even){background:#FFF5EE}.footer{margin-top:20px;font-size:9px;color:#999;border-top:1px solid #eee;padding-top:10px}@media print{body{padding:0}}</style></head><body>
+            <div class="header"><div class="logo"><img src="/bcpl-website/bcpl-assets/bcpl-ball-color.jpg"/></div>
+            <div><h1>BCPL T20 — Bulk GST Invoices</h1><p>Kriparti Playing11 Private Limited · GSTIN: ${BCPL_GSTIN}</p><p>Season 5 (2026–27) · Generated: ${new Date().toLocaleDateString("en-IN")}</p></div></div>
+            <table><thead><tr><th>Invoice No</th><th>Player</th><th>Email</th><th>Phase</th><th>Base Amt</th><th>GST (18%)</th><th>Total</th></tr></thead><tbody>${rows||"<tr><td colspan=7 style='text-align:center;padding:20px;color:#999'>No successful transactions yet</td></tr>"}</tbody></table>
+            <div class="footer">${BCPL_ADDR}</div></body></html>`);w.document.close();setTimeout(()=>w.print(),500);
+          }} style={{ padding:"9px 16px", borderRadius:9, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontSize:12, cursor:"pointer" }}>📄 Bulk Invoices</button>
+          <button onClick={()=>{
+            const w=window.open("","_blank");if(!w)return;
+            const rows=TRANSACTIONS.filter(t=>t.status==="success").map(t=>{const gst=Math.round(t.amount*GST_RATE);return`<tr><td>${t.id}</td><td>${t.name}</td><td>${t.gstin||"B2C"}</td><td>${t.type}</td><td>999299</td><td>18%</td><td>₹${t.amount}</td><td>₹${Math.round(gst/2)}</td><td>₹${Math.round(gst/2)}</td><td>₹${gst}</td></tr>`;}).join("");
+            w.document.write(`<!DOCTYPE html><html><head><title>BCPL GSTR-1</title><style>body{font-family:Arial;font-size:10px;padding:20px}.header{display:flex;align-items:center;gap:16px;border-bottom:3px solid #FF6B00;padding-bottom:12px;margin-bottom:16px}.logo{width:48px;height:48px;border-radius:50%;overflow:hidden;border:2px solid #FF6B00}.logo img{width:100%;height:100%;object-fit:cover}h1{margin:0;font-size:16px;color:#FF6B00}p{margin:2px 0;font-size:9px;color:#555}table{width:100%;border-collapse:collapse;font-size:9px}th{background:#FF6B00;color:#fff;padding:5px;text-align:left}td{padding:4px 6px;border-bottom:1px solid #eee}.footer{margin-top:16px;font-size:8px;color:#999}@media print{body{padding:0}}</style></head><body>
+            <div class="header"><div class="logo"><img src="/bcpl-website/bcpl-assets/bcpl-ball-color.jpg"/></div>
+            <div><h1>GSTR-1 Report — Outward Supply</h1><p>Kriparti Playing11 Private Limited · GSTIN: ${BCPL_GSTIN}</p><p>FY 2026–27 · Filed under Form GSTR-1 · Generated: ${new Date().toLocaleDateString("en-IN")}</p></div></div>
+            <table><thead><tr><th>TXN ID</th><th>Customer</th><th>GSTIN/Type</th><th>Description</th><th>HSN</th><th>Rate</th><th>Taxable</th><th>CGST</th><th>SGST</th><th>Total GST</th></tr></thead><tbody>${rows||"<tr><td colspan=10 style='text-align:center;padding:20px;color:#999'>No transactions yet</td></tr>"}</tbody></table>
+            <div class="footer">${BCPL_ADDR}</div></body></html>`);w.document.close();setTimeout(()=>w.print(),500);
+          }} style={{ padding:"9px 16px", borderRadius:9, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer" }}>📥 GSTR-1 Report</button>
         </div>
       </div>
 

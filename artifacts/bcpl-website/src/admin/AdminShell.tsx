@@ -138,13 +138,7 @@ export default function AdminShell() {
   const [searchOpen, setSearchOpen]= useState(false);
   const [searchQ,    setSearchQ]   = useState("");
 
-  const NOTIFS = [
-    { icon:"💳", text:"Arjun Sharma paid Phase 2",    time:"12s ago",  unread:true  },
-    { icon:"🪪", text:"Rahul Patel completed KYC",    time:"1m ago",   unread:true  },
-    { icon:"🔴", text:"Pune Panthers match started",  time:"5m ago",   unread:true  },
-    { icon:"⚠️", text:"3 KYC verifications failed",   time:"12m ago",  unread:false },
-    { icon:"💰", text:"Daily target reached ₹1L+",    time:"1h ago",   unread:false },
-  ];
+  const NOTIFS: { icon:string; text:string; time:string; unread:boolean }[] = [];
   const unreadCount = NOTIFS.filter(n => n.unread).length;
 
   const SEARCH_ITEMS = ALL_ITEMS.filter(i =>
@@ -152,38 +146,59 @@ export default function AdminShell() {
   );
   const activeLabel = ALL_ITEMS.find(i => i.id === active)?.label || "Dashboard";
 
+  /* ── Admin Accounts — update passwords as needed ── */
+  const ADMIN_ACCOUNTS = [
+    { email:"saurabh@bcplt20.com", password:"BCPL@Super2024!", name:"Saurabh Jha",  role:"Super Admin"      },
+    { email:"arti@bcplt20.com",    password:"BCPL@Super2024!", name:"Arti Jha",     role:"Super Admin"      },
+    { email:"ops@bcplt20.com",     password:"BCPL@Ops2024!",   name:"Ops Team",     role:"Operations Admin" },
+  ];
+
   /* ── Login ── */
   if (!loggedIn) {
+    const handleLogin = () => {
+      if(!loginForm.email){ setLoginErr("Email address is required"); return; }
+      if(!loginForm.password){ setLoginErr("Password is required"); return; }
+      const acc = ADMIN_ACCOUNTS.find(a => a.email.toLowerCase()===loginForm.email.toLowerCase() && a.password===loginForm.password);
+      if(!acc){ setLoginErr("Incorrect email or password. Contact the Super Admin."); return; }
+      setLoggedIn(true);
+    };
     return (
       <div style={{ minHeight:"100vh", background:"radial-gradient(ellipse at 20% 50%,#0D1526 0%,#060B18 60%)", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"'Inter',sans-serif" }}>
         <div style={{ position:"fixed", top:-100, left:-100, width:400, height:400, borderRadius:"50%", background:"#FF6B0008", filter:"blur(80px)", pointerEvents:"none" }}/>
         <div style={{ position:"fixed", bottom:-100, right:-100, width:500, height:500, borderRadius:"50%", background:"#3B82F605", filter:"blur(100px)", pointerEvents:"none" }}/>
         <div style={{ width:420, padding:40, background:"#0D1526", border:"1px solid #1E293B", borderRadius:24, boxShadow:"0 40px 80px #00000060" }}>
           <div style={{ textAlign:"center", marginBottom:36 }}>
-            <div style={{ width:56, height:56, borderRadius:16, background:"#FF6B0020", border:"2px solid #FF6B0050", display:"inline-flex", alignItems:"center", justifyContent:"center", fontSize:26, marginBottom:14 }}>🏏</div>
-            <div style={{ fontSize:22, fontWeight:900, color:"#FF6B00", letterSpacing:1, lineHeight:1 }}>BCPL T20</div>
-            <div style={{ fontSize:13, color:"#475569", marginTop:6 }}>Admin Panel · Season 5</div>
+            <div style={{ width:72, height:72, borderRadius:"50%", overflow:"hidden", border:"3px solid rgba(255,107,0,0.5)", boxShadow:"0 0 24px rgba(255,107,0,0.3)", display:"inline-flex", alignItems:"center", justifyContent:"center", marginBottom:14 }}>
+              <img src={"/bcpl-website/bcpl-assets/bcpl-ball-color.jpg"} alt="BCPL" style={{ width:"100%", height:"100%", objectFit:"cover" }}/>
+            </div>
+            <div style={{ fontSize:9, fontWeight:800, letterSpacing:".18em", color:"rgba(255,107,0,.5)", textTransform:"uppercase", marginBottom:4 }}>Bhartiya Corporate Premier League</div>
+            <div style={{ fontSize:22, fontWeight:900, color:"#FF6B00", letterSpacing:1, lineHeight:1 }}>BCPL T20 Admin</div>
+            <div style={{ fontSize:13, color:"#475569", marginTop:6 }}>Season 5 · Secure Access</div>
           </div>
           <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
             <div>
               <label style={{ display:"block", fontSize:11, fontWeight:700, color:"#475569", letterSpacing:1, marginBottom:8 }}>EMAIL ADDRESS</label>
               <input value={loginForm.email} onChange={e=>setLoginForm(f=>({...f,email:e.target.value}))}
+                onKeyDown={e=>e.key==="Enter"&&handleLogin()}
+                placeholder="your@email.com"
                 style={{ width:"100%", padding:"12px 14px", borderRadius:10, border:"1px solid #1E293B", background:"#080E1C", color:"#E2E8F0", fontSize:14, outline:"none", boxSizing:"border-box", lineHeight:1 }}/>
             </div>
             <div>
               <label style={{ display:"block", fontSize:11, fontWeight:700, color:"#475569", letterSpacing:1, marginBottom:8 }}>PASSWORD</label>
-              <input type="password" value={loginForm.password} onChange={e=>{ setLoginForm(f=>({...f,password:e.target.value})); setLoginErr(""); }} placeholder="••••••••"
+              <input type="password" value={loginForm.password} onChange={e=>{ setLoginForm(f=>({...f,password:e.target.value})); setLoginErr(""); }}
+                onKeyDown={e=>e.key==="Enter"&&handleLogin()}
+                placeholder="••••••••"
                 style={{ width:"100%", padding:"12px 14px", borderRadius:10, border:`1px solid ${loginErr?"#EF4444":"#1E293B"}`, background:"#080E1C", color:"#E2E8F0", fontSize:14, outline:"none", boxSizing:"border-box", lineHeight:1 }}/>
-              {loginErr&&<div style={{ fontSize:11, color:"#EF4444", marginTop:6 }}>{loginErr}</div>}
+              {loginErr&&<div style={{ fontSize:11, color:"#EF4444", marginTop:6 }}>⚠ {loginErr}</div>}
             </div>
-            <button onClick={()=>{ if(!loginForm.password){setLoginErr("Password is required");return;} if(loginForm.password!=="admin123"){setLoginErr("Incorrect password. Try: admin123");return;} setLoggedIn(true); }}
+            <button onClick={handleLogin}
               style={{ marginTop:4, width:"100%", padding:14, borderRadius:12, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontWeight:800, fontSize:15, cursor:"pointer", letterSpacing:.5, lineHeight:1 }}>
               Sign In →
             </button>
           </div>
           <div style={{ textAlign:"center", marginTop:20 }}>
             <div style={{ fontSize:11, color:"#334155", padding:"8px 16px", background:"#080E1C", borderRadius:8, display:"inline-block", border:"1px solid #1E293B" }}>
-              Demo: <span style={{ color:"#FF6B00" }}>admin@bcplt20.com</span> / <span style={{ color:"#FF6B00" }}>admin123</span>
+              Contact the Super Admin for your login credentials
             </div>
           </div>
         </div>
@@ -200,12 +215,14 @@ export default function AdminShell() {
       <aside style={{ width:W, flexShrink:0, background:"#080E1C", borderRight:"1px solid #0F172A", display:"flex", flexDirection:"column", transition:"width .22s cubic-bezier(.4,0,.2,1)", overflow:"hidden" }}>
 
         {/* Brand */}
-        <div style={{ height:60, paddingLeft:collapsed?0:16, paddingRight:collapsed?0:12, borderBottom:"1px solid #0F172A", display:"flex", alignItems:"center", justifyContent:collapsed?"center":"flex-start", gap:10, flexShrink:0 }}>
-          <div style={{ width:30, height:30, borderRadius:8, background:"#FF6B0020", border:"1.5px solid #FF6B0060", display:"flex", alignItems:"center", justifyContent:"center", fontSize:15, flexShrink:0 }}>🏏</div>
+        <div style={{ height:60, paddingLeft:collapsed?0:12, paddingRight:collapsed?0:10, borderBottom:"1px solid #0F172A", display:"flex", alignItems:"center", justifyContent:collapsed?"center":"flex-start", gap:10, flexShrink:0 }}>
+          <div style={{ width:32, height:32, borderRadius:"50%", overflow:"hidden", border:"2px solid rgba(255,107,0,0.55)", boxShadow:"0 0 10px rgba(255,107,0,0.3)", flexShrink:0 }}>
+            <img src={"/bcpl-website/bcpl-assets/bcpl-ball-color.jpg"} alt="BCPL" style={{ width:"100%", height:"100%", objectFit:"cover" }}/>
+          </div>
           {!collapsed&&(
             <div style={{ flex:1, minWidth:0 }}>
-              <div style={{ fontWeight:900, fontSize:13, color:"#FF6B00", letterSpacing:.5, lineHeight:1, whiteSpace:"nowrap" }}>BCPL Admin</div>
-              <div style={{ fontSize:10, color:"#334155", marginTop:4, lineHeight:1, whiteSpace:"nowrap" }}>Season 5 · 2025-26</div>
+              <div style={{ fontWeight:900, fontSize:13, color:"#FF6B00", letterSpacing:.5, lineHeight:1, whiteSpace:"nowrap" }}>BCPL T20 Admin</div>
+              <div style={{ fontSize:10, color:"#334155", marginTop:3, lineHeight:1, whiteSpace:"nowrap" }}>Season 5 · 2026–27</div>
             </div>
           )}
           <button onClick={()=>setCollapsed(c=>!c)} style={{ width:24, height:24, display:"flex", alignItems:"center", justifyContent:"center", background:"none", border:"none", color:"#334155", cursor:"pointer", fontSize:16, flexShrink:0, lineHeight:1, padding:0 }}>

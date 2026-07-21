@@ -6,10 +6,17 @@ const AFFILIATES: { id:string; name:string; city:string; referrals:number; paid:
 const statusColor=(s:string)=>s==="Active"?"#10B981":s==="Paid Out"?"#6366F1":"#EF4444";
 
 export default function AffiliatesView() {
-  const [sel,      setSel]      = useState<typeof AFFILIATES[0]|null>(null);
-  const [addOpen,  setAdd]      = useState(false);
-  const [agentList,setAgentList]= useState(AFFILIATES);
-  const [agentForm,setAgentForm]= useState({ name:"", phone:"", city:"", email:"", commission:"270" });
+  const [sel,        setSel]       = useState<typeof AFFILIATES[0]|null>(null);
+  const [addOpen,    setAdd]       = useState(false);
+  const [ratesOpen,  setRatesOpen] = useState(false);
+  const [agentList,  setAgentList] = useState(AFFILIATES);
+  const [agentForm,  setAgentForm] = useState({ name:"", phone:"", city:"", email:"", commission:"270" });
+  const [rates,      setRates]     = useState([
+    { range:"1–50 referrals",   rate:270, label:"Standard (90% of ₹299)" },
+    { range:"51–100 referrals", rate:285, label:"Senior (95% of ₹299)"  },
+    { range:"100+ referrals",   rate:299, label:"Premium (100% of ₹299)" },
+  ]);
+  const [rateEdits,  setRateEdits] = useState(rates.map(r=>String(r.rate)));
   const card:React.CSSProperties={background:"linear-gradient(135deg,#0D1526,#0A1020)",border:"1px solid #1E293B",borderRadius:16,padding:20};
   const inp:React.CSSProperties={width:"100%",padding:"10px 12px",borderRadius:9,border:"1px solid #1E293B",background:"#060B18",color:"#E2E8F0",fontSize:13,outline:"none",boxSizing:"border-box"};
 
@@ -48,17 +55,13 @@ export default function AffiliatesView() {
       {/* Commission rate card */}
       <div style={{...card,display:"flex",gap:24,alignItems:"center",padding:"16px 24px"}}>
         <div style={{fontSize:14,fontWeight:700,color:"#F1F5F9"}}>Commission Structure</div>
-        {[
-          {range:"1–50 referrals",   rate:"₹270/signup (90% of ₹299)"},
-          {range:"51–100 referrals", rate:"₹285/signup (95% of ₹299)"},
-          {range:"100+ referrals",   rate:"₹299/signup (100% of ₹299)"},
-        ].map(r=>(
+        {rates.map(r=>(
           <div key={r.range} style={{padding:"8px 16px",background:"#060B18",borderRadius:10,border:"1px solid #1E293B"}}>
-            <div style={{fontSize:11,color:"#FF6B00",fontWeight:700}}>{r.rate}</div>
+            <div style={{fontSize:11,color:"#FF6B00",fontWeight:700}}>₹{r.rate}/signup — {r.label}</div>
             <div style={{fontSize:10,color:"#475569",marginTop:3}}>{r.range}</div>
           </div>
         ))}
-        <button style={{marginLeft:"auto",padding:"8px 16px",borderRadius:9,border:"1px solid #1E293B",background:"transparent",color:"#94A3B8",fontSize:12,cursor:"pointer"}}>✏ Edit Rates</button>
+        <button onClick={()=>{ setRateEdits(rates.map(r=>String(r.rate))); setRatesOpen(true); }} style={{marginLeft:"auto",padding:"8px 16px",borderRadius:9,border:"1px solid #FF6B0044",background:"#FF6B0010",color:"#FF6B00",fontSize:12,cursor:"pointer",fontWeight:700}}>✏ Edit Rates</button>
       </div>
 
       <div style={card}>
@@ -147,6 +150,42 @@ export default function AffiliatesView() {
                   ✅ Add Agent
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Commission Rates Modal */}
+      {ratesOpen&&(
+        <div style={{position:"fixed",inset:0,background:"#00000088",zIndex:300,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={()=>setRatesOpen(false)}>
+          <div style={{...card,width:460,padding:28}} onClick={e=>e.stopPropagation()}>
+            <div style={{fontSize:16,fontWeight:800,color:"#F1F5F9",marginBottom:4}}>✏ Edit Commission Rates</div>
+            <div style={{fontSize:12,color:"#64748B",marginBottom:20}}>Set the ₹/signup rate for each referral tier. Base registration is ₹299.</div>
+            <div style={{display:"flex",flexDirection:"column",gap:14}}>
+              {rates.map((r,i)=>(
+                <div key={i} style={{background:"#060B18",borderRadius:12,padding:"14px 16px",border:"1px solid #1E293B"}}>
+                  <div style={{fontSize:10,color:"#64748B",fontWeight:700,textTransform:"uppercase",marginBottom:8}}>{r.range}</div>
+                  <div style={{display:"flex",alignItems:"center",gap:12}}>
+                    <span style={{fontSize:13,color:"#94A3B8"}}>₹</span>
+                    <input type="number" min="0" max="299" value={rateEdits[i]}
+                      onChange={e=>setRateEdits(ed=>ed.map((v,j)=>j===i?e.target.value:v))}
+                      style={{...inp,flex:1,textAlign:"center",fontSize:20,fontWeight:800,color:"#FF6B00"}}/>
+                    <span style={{fontSize:12,color:"#475569"}}>per signup</span>
+                  </div>
+                  <div style={{fontSize:10,color:"#475569",marginTop:6}}>
+                    = {rateEdits[i] ? `${((parseInt(rateEdits[i])||0)/299*100).toFixed(1)}% of ₹299` : "—"}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div style={{display:"flex",gap:10,marginTop:20}}>
+              <button onClick={()=>setRatesOpen(false)} style={{flex:1,padding:11,borderRadius:10,border:"1px solid #1E293B",background:"transparent",color:"#64748B",fontSize:13,cursor:"pointer"}}>Cancel</button>
+              <button onClick={()=>{
+                setRates(rs=>rs.map((r,i)=>({...r,rate:parseInt(rateEdits[i])||r.rate})));
+                setRatesOpen(false);
+              }} style={{flex:2,padding:11,borderRadius:10,border:"none",background:"linear-gradient(135deg,#FF6B00,#FF8C40)",color:"#fff",fontWeight:700,fontSize:13,cursor:"pointer"}}>
+                ✅ Save Rates
+              </button>
             </div>
           </div>
         </div>

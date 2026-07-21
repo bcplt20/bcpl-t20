@@ -123,6 +123,43 @@ export default function UsersView() {
                 Clear ✕
               </button>
             )}
+            {/* Export buttons */}
+            <button onClick={()=>{
+              const headers = ["ID","Name","Phone","Email","State","City","Joined","Phase1","Phase2","KYC","Video","Role","Active"];
+              const rows = filtered.map(u=>[u.id,u.name,u.phone,u.email,u.state,u.city,u.joined,u.phase1?"Yes":"No",u.phase2?"Yes":"No",u.kyc,u.video?"Yes":"No",u.role,u.active?"Yes":"No"]);
+              const csv = [headers,...rows].map(r=>r.join(",")).join("\n");
+              const a=document.createElement("a");a.href="data:text/csv;charset=utf-8,"+encodeURIComponent(csv);a.download=`bcpl_users_${quick}_${new Date().toISOString().slice(0,10)}.csv`;a.click();
+            }} style={{ padding:"7px 13px", borderRadius:8, border:"1px solid #10B98144", background:"#10B98112", color:"#10B981", fontSize:11, cursor:"pointer", fontWeight:700 }}>
+              ⬇ Excel
+            </button>
+            <button onClick={()=>{
+              const w=window.open("","_blank");if(!w)return;
+              const rows=filtered.map(u=>`<tr style="border-bottom:1px solid #eee"><td>${u.name}</td><td>${u.phone}</td><td>${u.email}</td><td>${u.state}, ${u.city}</td><td>${u.role}</td><td>${u.phase1?"✓ Phase 1":""} ${u.phase2?"✓ Phase 2":""}</td><td>${u.kyc}</td><td>${u.active?"Active":"Inactive"}</td></tr>`).join("");
+              w.document.write(`<!DOCTYPE html><html><head><title>BCPL Players Export</title>
+              <style>body{font-family:Arial,sans-serif;font-size:11px;padding:20px}
+              .header{display:flex;align-items:center;gap:16px;border-bottom:3px solid #FF6B00;padding-bottom:12px;margin-bottom:20px}
+              .logo{width:52px;height:52px;border-radius:50%;overflow:hidden;border:2px solid #FF6B00}
+              .logo img{width:100%;height:100%;object-fit:cover}
+              h1{margin:0;font-size:18px;color:#FF6B00}p{margin:2px 0;font-size:10px;color:#555}
+              table{width:100%;border-collapse:collapse;margin-top:12px}
+              th{background:#FF6B00;color:#fff;padding:6px 8px;text-align:left;font-size:9px;text-transform:uppercase}
+              td{padding:5px 8px;border-bottom:1px solid #eee;font-size:10px}
+              tr:nth-child(even){background:#FFF5EE}
+              .footer{margin-top:20px;font-size:9px;color:#999;border-top:1px solid #eee;padding-top:10px}
+              @media print{body{padding:0}}</style></head><body>
+              <div class="header">
+                <div class="logo"><img src="/bcpl-website/bcpl-assets/bcpl-ball-color.jpg"/></div>
+                <div><h1>BCPL T20 — Player Report</h1>
+                <p>Bhartiya Corporate Premier League · Season 5 (2026–27)</p>
+                <p>Filter: ${quickLabels[quick]}${state!=="All States"?" · "+state:""}${city!=="All Cities"?" · "+city:""} · ${filtered.length} players · Generated: ${new Date().toLocaleDateString("en-IN")}</p></div>
+              </div>
+              <table><thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Location</th><th>Role</th><th>Payments</th><th>KYC</th><th>Status</th></tr></thead>
+              <tbody>${rows}</tbody></table>
+              <div class="footer">KRIPARTI PLAYING11 PRIVATE LIMITED · GSTIN: 07AAHCK4053D1ZS · 2nd Floor Back Side, RZ-108, Indra Park, Uttam Nagar, West Delhi, Delhi — 110059 · legal@bcplt20.com</div>
+              </body></html>`);w.document.close();setTimeout(()=>w.print(),500);
+            }} style={{ padding:"7px 13px", borderRadius:8, border:"1px solid #6366F144", background:"#6366F112", color:"#6366F1", fontSize:11, cursor:"pointer", fontWeight:700 }}>
+              🖨 PDF
+            </button>
           </div>
 
           {/* Quick Filter Chips */}

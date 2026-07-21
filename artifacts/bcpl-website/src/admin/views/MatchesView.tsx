@@ -5,12 +5,8 @@ const VENUES = ["Wankhede, Mumbai","SMS, Jaipur","PCA, Mohali","Ekana, Lucknow",
 
 type Match = { id:number; team1:string; team2:string; date:string; time:string; venue:string; status:"scheduled"|"live"|"completed"; t1Score:string|null; t2Score:string|null; winner?:string };
 
-const initMatches:Match[] = [
-  { id:1, team1:"Rajasthan Scorchers",  team2:"Punjab Warriors",   date:"Jul 22, 2025", time:"6:00 PM", venue:"SMS, Jaipur",              status:"scheduled", t1Score:null,          t2Score:null },
-  { id:2, team1:"Mumbai Mavericks",     team2:"Kolkata Tigers",    date:"Jul 20, 2025", time:"4:00 PM", venue:"Wankhede, Mumbai",          status:"live",      t1Score:"124/4 (16.2)",t2Score:null },
-  { id:3, team1:"Lucknow Nawabs",       team2:"Delhi Suryas",      date:"Jul 19, 2025", time:"6:00 PM", venue:"Ekana, Lucknow",            status:"completed", t1Score:"187/6 (20)",  t2Score:"143/9 (20)", winner:"Lucknow Nawabs" },
-  { id:4, team1:"Hyderabad Hawks",      team2:"Bengaluru Rockets", date:"Jul 18, 2025", time:"4:00 PM", venue:"Rajiv Gandhi, Hyderabad",   status:"completed", t1Score:"156/7 (20)",  t2Score:"160/4 (18.3)",winner:"Bengaluru Rockets" },
-];
+// No matches yet — add matches using the "+ Schedule Match" button
+const initMatches:Match[] = [];
 
 const statusColor=(s:string)=>s==="live"?"#EF4444":s==="scheduled"?"#3B82F6":"#10B981";
 const statusBg   =(s:string)=>s==="live"?"#EF444422":s==="scheduled"?"#3B82F622":"#10B98122";

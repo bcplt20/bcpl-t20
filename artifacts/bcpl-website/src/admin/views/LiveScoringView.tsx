@@ -57,15 +57,8 @@ const TEAM_COLORS: Record<string,string> = {
 const ALL_TEAMS = Object.keys(RAW);
 const VENUES = ["Wankhede, Mumbai","SMS Stadium, Jaipur","PCA, Mohali","Ekana, Lucknow","Eden Gardens, Kolkata","Chinnaswamy, Bengaluru","Rajiv Gandhi, Hyderabad","Chepauk, Chennai","Narendra Modi, Ahmedabad","Feroz Shah Kotla, Delhi"];
 
-/* ─── Initial matches ────────────────────────────────── */
-const INIT_MATCHES: MatchDef[] = [
-  { id:1, matchNo:12, team1:"Mumbai Mavericks",   team2:"Kolkata Tigers",     venue:"Wankhede, Mumbai",        date:"20 Jul, Today 4:00 PM",    status:"live"      },
-  { id:2, matchNo:13, team1:"Rajasthan Scorchers", team2:"Punjab Warriors",    venue:"SMS Stadium, Jaipur",     date:"22 Jul, 6:00 PM",          status:"scheduled" },
-  { id:3, matchNo:14, team1:"Delhi Suryas",         team2:"Chennai Thalaivas",  venue:"Feroz Shah Kotla, Delhi", date:"23 Jul, 4:00 PM",          status:"scheduled" },
-  { id:4, matchNo:15, team1:"Lucknow Nawabs",       team2:"Hyderabad Hawks",    venue:"Ekana, Lucknow",          date:"24 Jul, 6:00 PM",          status:"scheduled" },
-  { id:5, matchNo:11, team1:"Hyderabad Hawks",      team2:"Bengaluru Rockets",  venue:"Rajiv Gandhi, Hyderabad", date:"19 Jul, 4:00 PM",          status:"completed" },
-  { id:6, matchNo:10, team1:"Ahmedabad Lions",      team2:"Lucknow Nawabs",     venue:"Narendra Modi, Ahmedabad",date:"18 Jul, 6:00 PM",          status:"completed" },
-];
+/* ─── Initial matches — empty until matches are scheduled via Matches panel ── */
+const INIT_MATCHES: MatchDef[] = [];
 
 /* ─── Helpers ────────────────────────────────────────── */
 const fmtO = (o:number, b:number) => `${o}.${b}`;
@@ -676,8 +669,26 @@ export default function LiveScoringView() {
   };
 
   /* ── Live Scoring View ───────────────────────────────── */
-  const curInn = live.currentInnings===1 ? live.inn1 : live.inn2;
-  if(!curInn) return null;
+  // Guard: inn1 may be null if XI selection was not completed yet
+  const curInn = live ? (live.currentInnings===1 ? live.inn1 : live.inn2) : null;
+  if(!live || !curInn) {
+    // Fallback: go back to toss screen rather than blank page
+    return (
+      <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
+        <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+          <button onClick={()=>setLive(null)} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #1E293B", background:"transparent", color:"#64748B", fontSize:12, cursor:"pointer" }}>← All Matches</button>
+        </div>
+        <div style={{ ...CARD, textAlign:"center", padding:48 }}>
+          <div style={{ fontSize:32, marginBottom:12 }}>🏏</div>
+          <div style={{ fontSize:16, fontWeight:800, color:"#F1F5F9", marginBottom:6 }}>Match setup incomplete</div>
+          <div style={{ fontSize:13, color:"#64748B", marginBottom:20 }}>Complete the toss and XI selection first to begin live scoring.</div>
+          <button onClick={()=>live && setLive(l=>l?{...l,phase:"toss"}:null)} style={{ padding:"10px 24px", borderRadius:10, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontWeight:700, cursor:"pointer" }}>
+            ← Back to Toss Setup
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const striker   = curInn.batScores[curInn.strikerIdx];
   const nonStr    = curInn.batScores[curInn.nonStrikerIdx];

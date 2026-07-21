@@ -2,14 +2,8 @@ import { useState } from "react";
 
 type Ticket = { id:string; player:string; city:string; issue:string; category:string; status:string; priority:string; created:string; slaHours:number; elapsed:number; messages:{sender:string;text:string;time:string}[] };
 
-const TICKETS: Ticket[] = [
-  { id:"TKT-001", player:"Rahul Sharma",   city:"Mumbai",    issue:"Payment failed but ₹299 deducted",    category:"Payment",   status:"Open",        priority:"High",   created:"2h ago",  slaHours:4, elapsed:2, messages:[{sender:"player",text:"My payment failed but ₹299 was deducted from my account. Please help!",time:"2h ago"},{sender:"agent",text:"We are looking into this. Could you share your transaction ID?",time:"1h ago"}] },
-  { id:"TKT-002", player:"Priya Patel",    city:"Bengaluru", issue:"KYC documents rejected — reason?",    category:"KYC",       status:"In Progress", priority:"Medium", created:"4h ago",  slaHours:8, elapsed:4, messages:[{sender:"player",text:"My KYC was rejected but the images are clear. What's wrong?",time:"4h ago"}] },
-  { id:"TKT-003", player:"Amit Singh",     city:"Delhi",     issue:"Trial city not showing my slot",      category:"Trial",     status:"Open",        priority:"High",   created:"30m ago", slaHours:4, elapsed:0.5, messages:[{sender:"player",text:"I registered for Delhi trial but don't see my slot confirmation.",time:"30m ago"}] },
-  { id:"TKT-004", player:"Sneha Kumar",    city:"Chennai",   issue:"Video upload stuck at 80%",          category:"Technical", status:"Resolved",    priority:"Low",    created:"1d ago",  slaHours:24, elapsed:24, messages:[{sender:"player",text:"My trial video is stuck at 80% upload.",time:"1d ago"},{sender:"agent",text:"Try uploading from a stable WiFi connection.",time:"22h ago"},{sender:"player",text:"Worked! Thank you.",time:"20h ago"}] },
-  { id:"TKT-005", player:"Dev Mehta",      city:"Hyderabad", issue:"Referral bonus not credited",        category:"Referral",  status:"Open",        priority:"Medium", created:"6h ago",  slaHours:12, elapsed:6, messages:[{sender:"player",text:"I referred 3 friends and none of them show in my referral count.",time:"6h ago"}] },
-  { id:"TKT-006", player:"Kiran Rao",      city:"Pune",      issue:"Phase 2 selection criteria unclear", category:"General",   status:"In Progress", priority:"Low",    created:"12h ago", slaHours:24, elapsed:12, messages:[{sender:"player",text:"What parameters are used for Phase 2 selection? Is it only video or also Phase 1 score?",time:"12h ago"},{sender:"agent",text:"Both Phase 1 test score and video evaluation are considered.",time:"8h ago"}] },
-];
+// No support tickets yet — they will appear here as players raise queries
+const TICKETS: Ticket[] = [];
 
 const priorityColor = (p:string)=>p==="High"?"#EF4444":p==="Medium"?"#F59E0B":"#10B981";
 const statusColor   = (s:string)=>s==="Open"?"#EF4444":s==="In Progress"?"#F59E0B":"#10B981";
