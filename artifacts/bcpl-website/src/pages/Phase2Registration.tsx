@@ -40,7 +40,7 @@ export function Phase2Registration() {
         if (!status.registered || status.phase1Status !== 'selected') {
           setLoadState('not_selected'); return;
         }
-        setPlayerName(me.name || '');
+        setPlayerName(me.user?.name || '');
         setRole(status.role || '');
         setCity(status.trialCity || '');
         setRegId(status.registrationId || '');

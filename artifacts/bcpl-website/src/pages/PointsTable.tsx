@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BCPLFooter } from '../components/BCPLFooter';
+import { getPointsTable } from '../lib/api';
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap');
@@ -171,9 +172,18 @@ interface TeamRow {
   eliminated?: boolean;
 }
 
-// Season 4 standings will be published once tournament begins
-const GROUP_A: TeamRow[] = [];
-const GROUP_B: TeamRow[] = [];
+const TEAM_META: Record<string, { emoji: string; abbr: string }> = {
+  "Kolkata Tigers":      { emoji: "🐯", abbr: "KT" },
+  "Mumbai Mavericks":    { emoji: "⚡", abbr: "MM" },
+  "Lucknow Nawabs":      { emoji: "👑", abbr: "LN" },
+  "Hyderabad Hawks":     { emoji: "🦅", abbr: "HH" },
+  "Delhi Suryas":        { emoji: "☀️", abbr: "DS" },
+  "Chennai Thalaivas":   { emoji: "🦁", abbr: "CT" },
+  "Rajasthan Scorchers": { emoji: "🔥", abbr: "RS" },
+  "Punjab Warriors":     { emoji: "⚔️", abbr: "PW" },
+  "Bengaluru Rockets":   { emoji: "🚀", abbr: "BR" },
+  "Ahmedabad Lions":     { emoji: "🦁", abbr: "AL" },
+};
 
 function FormDots({form}: {form: ('W'|'L')[]}) {
   return (
@@ -191,8 +201,8 @@ function StandingsTable({rows, groupLabel}: {rows: TeamRow[], groupLabel: string
     <div className="glass-card" style={{marginBottom:32,overflow:'hidden',animation:'fadeSlide 0.5s ease both'}}>
       <div style={{padding:'20px 20px 16px',borderBottom:'1px solid rgba(255,255,255,0.06)',display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:10}}>
         <div style={{display:'flex',alignItems:'center',gap:10,flexWrap:'wrap'}}>
-          <span className="tag-pill">GROUP {groupLabel}</span>
-          <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:16,color:'#fff'}}>Group {groupLabel} Standings</span>
+          <span className="tag-pill">📊 {groupLabel.toUpperCase()} STANDINGS</span>
+          <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:16,color:'#fff'}}>{groupLabel} Standings</span>
         </div>
         <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
           <span style={{background:'rgba(232,178,61,0.1)',border:'1px solid rgba(232,178,61,0.25)',borderRadius:100,padding:'3px 12px',fontSize:11,fontFamily:'Montserrat,sans-serif',fontWeight:700,color:'#E8B23D'}}>🏆 Qualified</span>
@@ -259,6 +269,30 @@ function StandingsTable({rows, groupLabel}: {rows: TeamRow[], groupLabel: string
 }
 
 export function PointsTable() {
+  const [tableRows, setTableRows] = useState<TeamRow[]>([]);
+
+  useEffect(() => {
+    getPointsTable(5).then(d => {
+      const rows: TeamRow[] = (d.table ?? []).map((r: any, i: number) => {
+        const meta = TEAM_META[r.team] ?? { emoji: "🏏", abbr: r.team.slice(0,3).toUpperCase() };
+        return {
+          pos:  i + 1,
+          emoji: meta.emoji,
+          name:  r.team,
+          abbr:  meta.abbr,
+          p:     r.played,
+          w:     r.won,
+          l:     r.lost,
+          t:     r.noResult,
+          nrr:   (r.nrr >= 0 ? "+" : "") + Number(r.nrr).toFixed(3),
+          pts:   r.points,
+          form:  (r.form as string[]).filter(f => f === "W" || f === "L") as ('W'|'L')[],
+        };
+      });
+      setTableRows(rows);
+    }).catch(() => {});
+  }, []);
+
   return (
     <div style={{background:'#060E1C',color:'#fff',minHeight:'100vh',overflowX:'hidden',fontFamily:'Inter,sans-serif'}}>
       <style>{CSS}</style>
@@ -271,7 +305,7 @@ export function PointsTable() {
         <div style={{padding:'clamp(40px,6vw,60px) 0 clamp(28px,4vw,48px)',textAlign:'center'}}>
           <div className="wrap">
             <div style={{marginBottom:16,display:'flex',justifyContent:'center',alignItems:'center',gap:8}}>
-              <span className="tag-pill">📊 SEASON 4 STANDINGS</span>
+              <span className="tag-pill">📊 SEASON 5 STANDINGS</span>
             </div>
             <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(28px,6vw,68px)',lineHeight:1.05,marginBottom:10,color:'#fff'}}>
               POINTS
@@ -279,24 +313,24 @@ export function PointsTable() {
             <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(28px,6vw,68px)',lineHeight:1.05,marginBottom:24}}>
               <span className="shimmer-gold">TABLE.</span>
             </h1>
-            <p style={{color:'rgba(255,255,255,0.45)',fontSize:15,fontFamily:'Inter,sans-serif',maxWidth:480,margin:'0 auto'}}>Season 4 standings will be updated live once the tournament begins — stay tuned!</p>
+            <p style={{color:'rgba(255,255,255,0.45)',fontSize:15,fontFamily:'Inter,sans-serif',maxWidth:480,margin:'0 auto'}}>Season 5 standings update live once tournament matches begin.</p>
           </div>
         </div>
 
         <div className="wrap" style={{paddingBottom:100}}>
 
           {/* UPCOMING NOTICE */}
-          {GROUP_A.length === 0 && GROUP_B.length === 0 && (
+          {tableRows.length === 0 && (
             <div style={{textAlign:'center',padding:'clamp(60px,10vw,100px) 20px'}}>
               <div style={{fontSize:64,marginBottom:20}}>🏆</div>
               <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,4vw,36px)',color:'#fff',marginBottom:12}}>Standings Coming Soon</div>
-              <p style={{color:'rgba(255,255,255,0.45)',fontSize:15,maxWidth:440,margin:'0 auto 28px',lineHeight:1.7}}>Season 4 is in the trial phase — franchise auctions and final team composition will be announced before the tournament begins. Live standings will appear here once the first match is played.</p>
+              <p style={{color:'rgba(255,255,255,0.45)',fontSize:15,maxWidth:440,margin:'0 auto 28px',lineHeight:1.7}}>Season 5 tournament kicks off Sep 2026 — franchise auctions and final team composition will be announced soon. Live standings will appear here once the first match is played.</p>
               <a href="/register" style={{display:'inline-flex',alignItems:'center',gap:8,background:'linear-gradient(135deg,#FF7A29,#D95E10)',border:'none',borderRadius:12,color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:13,letterSpacing:'.06em',cursor:'pointer',padding:'14px 28px',textDecoration:'none',textTransform:'uppercase'}}>🏏 Register for Season 5 →</a>
             </div>
           )}
 
-          {/* LEGEND */}
-          {(GROUP_A.length > 0 || GROUP_B.length > 0) && <>
+          {/* LEAGUE TABLE */}
+          {tableRows.length > 0 && <>
             <div className="legend-wrap" style={{display:'flex',flexWrap:'wrap',gap:10,marginBottom:28}}>
               <span style={{display:'inline-flex',alignItems:'center',gap:6,background:'rgba(232,178,61,0.08)',border:'1px solid rgba(232,178,61,0.25)',borderRadius:100,padding:'6px 16px',fontSize:12,fontFamily:'Montserrat,sans-serif',fontWeight:700,color:'#E8B23D'}}>🏆 Qualified for Playoffs</span>
               <span style={{display:'inline-flex',alignItems:'center',gap:6,background:'rgba(232,73,63,0.08)',border:'1px solid rgba(232,73,63,0.25)',borderRadius:100,padding:'6px 16px',fontSize:12,fontFamily:'Montserrat,sans-serif',fontWeight:700,color:'#E8493F'}}>❌ Eliminated</span>
@@ -305,12 +339,11 @@ export function PointsTable() {
                 <span style={{marginLeft:8,width:8,height:8,borderRadius:'50%',background:'#E8493F',display:'inline-block'}}/>L = Loss
               </span>
             </div>
-            <StandingsTable rows={GROUP_A} groupLabel="A"/>
-            <StandingsTable rows={GROUP_B} groupLabel="B"/>
+            <StandingsTable rows={tableRows} groupLabel="Season 5"/>
           </>}
 
           {/* TOP PERFORMERS — only when data exists */}
-          {(GROUP_A.length > 0 || GROUP_B.length > 0) && (
+          {tableRows.length > 0 && (
             <div style={{marginBottom:40}}>
               <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:24}}>
                 <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,color:'#fff',letterSpacing:'0.04em'}}>TOP PERFORMERS</h2>
@@ -334,7 +367,7 @@ export function PointsTable() {
           )}
 
           {/* PLAYOFF BRACKET — only when data exists */}
-          {(GROUP_A.length > 0 || GROUP_B.length > 0) && (
+          {tableRows.length > 0 && (
             <div>
               <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:24}}>
                 <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,color:'#fff',letterSpacing:'0.04em'}}>PLAYOFF BRACKET</h2>

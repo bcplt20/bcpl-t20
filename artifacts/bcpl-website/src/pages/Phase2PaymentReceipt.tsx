@@ -26,7 +26,7 @@ export function Phase2PaymentReceipt() {
         const [status, me] = await Promise.all([getRegistrationStatus(), getMe()]);
         const pending = JSON.parse(sessionStorage.getItem('bcpl_p2_pending') || '{}');
         sessionStorage.removeItem('bcpl_p2_pending');
-        setPlayerName(me.name || '');
+        setPlayerName(me.user?.name || '');
         setRole(status.role || '');
         setCity(status.trialCity || '');
         setRegId(status.registrationId || '');

@@ -55,7 +55,8 @@ function journeyNodes(step: Step) {
   const active  = (l: string) => ({ label: l, state: 'active'  as const });
   const waiting = (l: string) => ({ label: l, state: 'waiting' as const });
 
-  const map: Record<Step, ReturnType<typeof done>[]> = {
+  type Node = ReturnType<typeof done> | ReturnType<typeof active> | ReturnType<typeof waiting>;
+  const map: Record<Step, Node[]> = {
     not_registered:   [active('Register'),        waiting('Upload Video'), waiting('Phase 1 Review'),   waiting('Phase 2 + KYC'),    waiting('Physical Trial')],
     upload_video:     [done('Register'),           active('Upload Video'),  waiting('Phase 1 Review'),   waiting('Phase 2 + KYC'),    waiting('Physical Trial')],
     under_review:     [done('Register'),           done('Upload Video'),    active('Phase 1 Review'),    waiting('Phase 2 + KYC'),    waiting('Physical Trial')],

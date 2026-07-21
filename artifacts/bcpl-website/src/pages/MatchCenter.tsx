@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BCPLFooter } from '../components/BCPLFooter';
+import { getMatches, getPointsTable } from '../lib/api';
 
 const NAV_LINKS = ["Home", "Match Center", "Teams", "Sponsors", "Photos", "Videos", "About", "FAQ", "Contact", "Login"];
 
@@ -59,11 +60,18 @@ const TIMELINE = [
   },
 ];
 
-// Match results will be populated by admin when tournament begins (Sep 2026)
-const RESULTS: any[] = [];
-
-// Points table will be populated when tournament begins (Sep 2026)
-const POINTS: any[] = [];
+const TEAM_META: Record<string, { emoji: string; abbr: string }> = {
+  "Kolkata Tigers":      { emoji: "🐯", abbr: "KT" },
+  "Mumbai Mavericks":    { emoji: "⚡", abbr: "MM" },
+  "Lucknow Nawabs":      { emoji: "👑", abbr: "LN" },
+  "Hyderabad Hawks":     { emoji: "🦅", abbr: "HH" },
+  "Delhi Suryas":        { emoji: "☀️", abbr: "DS" },
+  "Chennai Thalaivas":   { emoji: "🦁", abbr: "CT" },
+  "Rajasthan Scorchers": { emoji: "🔥", abbr: "RS" },
+  "Punjab Warriors":     { emoji: "⚔️", abbr: "PW" },
+  "Bengaluru Rockets":   { emoji: "🚀", abbr: "BR" },
+  "Ahmedabad Lions":     { emoji: "🦁", abbr: "AL" },
+};
 
 
 const ROUTE_MAP: Record<string,string> = {
@@ -83,6 +91,13 @@ const ROUTE_MAP: Record<string,string> = {
 
 export function MatchCenter() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [matches,  setMatches]  = useState<any[]>([]);
+  const [points,   setPoints]   = useState<any[]>([]);
+
+  useEffect(() => {
+    getMatches(5).then(d => setMatches(d.matches ?? [])).catch(() => {});
+    getPointsTable(5).then(d => setPoints(d.table ?? [])).catch(() => {});
+  }, []);
 
   return (
     <div style={{ background: "#06101E", minHeight: "100vh", color: "#F0EDE8", fontFamily: "'Inter',sans-serif", overflowX: "hidden" }}>
@@ -335,15 +350,58 @@ export function MatchCenter() {
             MATCH RESULTS — SEASON 5
           </h2>
           <p style={{ fontFamily: "Inter, sans-serif", color: "rgba(255,255,255,0.4)", marginBottom: 36, fontSize: 15 }}>
-            Match results will appear here once the tournament begins.
+            {matches.filter(m => m.status === "completed").length > 0 ? `${matches.filter(m => m.status === "completed").length} matches played so far.` : "Match results will appear here once the tournament begins."}
           </p>
-          <div style={{ textAlign: "center", padding: "48px 20px", background: "#0A1727", borderRadius: 16, border: "1px solid rgba(255,255,255,0.07)" }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>🏏</div>
-            <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 20, color: "#fff", marginBottom: 8 }}>No Matches Played Yet</div>
-            <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 14, fontFamily: "Inter, sans-serif", maxWidth: 360, margin: "0 auto" }}>
-              Season 5 tournament kicks off Sep 2026. Live scores and match results will update here automatically.
-            </p>
-          </div>
+
+          {/* Empty state */}
+          {matches.filter(m => m.status === "completed").length === 0 && (
+            <div style={{ textAlign: "center", padding: "48px 20px", background: "#0A1727", borderRadius: 16, border: "1px solid rgba(255,255,255,0.07)" }}>
+              <div style={{ fontSize: 48, marginBottom: 16 }}>🏏</div>
+              <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 20, color: "#fff", marginBottom: 8 }}>No Matches Played Yet</div>
+              <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 14, fontFamily: "Inter, sans-serif", maxWidth: 360, margin: "0 auto" }}>
+                Season 5 tournament kicks off Sep 2026. Live scores and match results will update here automatically.
+              </p>
+            </div>
+          )}
+
+          {/* Match result cards */}
+          {matches.filter(m => m.status === "completed").length > 0 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {matches.filter(m => m.status === "completed").map((m: any) => {
+                const t1 = TEAM_META[m.team1] ?? { emoji: "🏏", abbr: m.team1.slice(0,3) };
+                const t2 = TEAM_META[m.team2] ?? { emoji: "🏏", abbr: m.team2.slice(0,3) };
+                const date = m.scheduledAt ? new Date(m.scheduledAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" }) : "";
+                return (
+                  <div key={m.id} className="result-card" style={{ padding: "18px 20px" }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                        <div style={{ textAlign: "center" }}>
+                          <div style={{ fontSize: 22 }}>{t1.emoji}</div>
+                          <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 11, color: m.winner === m.team1 ? "#FF7A29" : "rgba(255,255,255,0.6)", marginTop: 4 }}>{t1.abbr}</div>
+                        </div>
+                        <div style={{ textAlign: "center" }}>
+                          <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 12, color: "rgba(255,255,255,0.3)", letterSpacing: ".1em" }}>VS</div>
+                        </div>
+                        <div style={{ textAlign: "center" }}>
+                          <div style={{ fontSize: 22 }}>{t2.emoji}</div>
+                          <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 11, color: m.winner === m.team2 ? "#FF7A29" : "rgba(255,255,255,0.6)", marginTop: 4 }}>{t2.abbr}</div>
+                        </div>
+                      </div>
+                      <div style={{ flex: 1, minWidth: 160 }}>
+                        <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 700, fontSize: 13, color: "#fff", marginBottom: 4 }}>Match {m.matchNo}</div>
+                        {m.resultDesc && <div style={{ fontSize: 12, color: "#22C55E", fontFamily: "Inter, sans-serif" }}>{m.resultDesc}</div>}
+                        {m.playerOfMatch && <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", marginTop: 4 }}>⭐ {m.playerOfMatch}</div>}
+                      </div>
+                      <div style={{ textAlign: "right" }}>
+                        <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", fontFamily: "Inter, sans-serif" }}>{date}</div>
+                        <div style={{ fontSize: 11, color: "rgba(255,255,255,0.3)", marginTop: 2 }}>{m.venue}</div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </section>
 
@@ -355,15 +413,50 @@ export function MatchCenter() {
             POINTS TABLE — SEASON 5
           </h2>
           <p style={{ fontFamily: "Inter, sans-serif", color: "rgba(255,255,255,0.4)", marginBottom: 32, fontSize: 15 }}>
-            Season 5 league table begins Sep 2026.
+            {points.length > 0 ? "Live Season 5 standings." : "Season 5 league table begins Sep 2026."}
           </p>
-          <div style={{ textAlign: "center", padding: "48px 20px", background: "#0A1727", borderRadius: 16, border: "1px solid rgba(255,255,255,0.07)" }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>🏆</div>
-            <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 20, color: "#fff", marginBottom: 8 }}>Tournament Begins Sep 2026</div>
-            <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 14, fontFamily: "Inter, sans-serif", maxWidth: 360, margin: "0 auto" }}>
-              Points table will update in real time once Season 5 matches begin. Register now to be part of it!
-            </p>
-          </div>
+
+          {/* Empty state */}
+          {points.length === 0 && (
+            <div style={{ textAlign: "center", padding: "48px 20px", background: "#0A1727", borderRadius: 16, border: "1px solid rgba(255,255,255,0.07)" }}>
+              <div style={{ fontSize: 48, marginBottom: 16 }}>🏆</div>
+              <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 20, color: "#fff", marginBottom: 8 }}>Tournament Begins Sep 2026</div>
+              <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 14, fontFamily: "Inter, sans-serif", maxWidth: 360, margin: "0 auto" }}>
+                Points table will update in real time once Season 5 matches begin. Register now to be part of it!
+              </p>
+            </div>
+          )}
+
+          {/* Points table */}
+          {points.length > 0 && (
+            <div style={{ background: "#0A1727", borderRadius: 16, border: "1px solid rgba(255,255,255,0.07)", overflow: "hidden" }}>
+              <div className="pts-header">
+                {["#","Team","P","W","L","NR","Pts"].map(h => (
+                  <div key={h} style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 700, fontSize: 10, color: "rgba(255,255,255,0.35)", letterSpacing: ".1em", textAlign: h==="Team"?"left":"center" }}>{h}</div>
+                ))}
+              </div>
+              {points.map((row: any, i: number) => {
+                const meta = TEAM_META[row.team] ?? { emoji: "🏏", abbr: row.team.slice(0,3) };
+                return (
+                  <div key={row.id ?? i} className="pts-row">
+                    <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 13, color: i===0?"#E8B23D":i===1?"#9CA3AF":i===2?"#B45309":"rgba(255,255,255,0.4)", textAlign: "center" }}>{i+1}</div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <span style={{ fontSize: 16 }}>{meta.emoji}</span>
+                      <div>
+                        <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 700, fontSize: 13, color: "#fff" }}>{row.team}</div>
+                        <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)" }}>{meta.abbr}</div>
+                      </div>
+                    </div>
+                    <div style={{ textAlign: "center", fontSize: 13, color: "rgba(255,255,255,0.6)" }}>{row.played}</div>
+                    <div style={{ textAlign: "center", fontSize: 13, color: "#22C55E", fontWeight: 600 }}>{row.won}</div>
+                    <div style={{ textAlign: "center", fontSize: 13, color: "#E8493F" }}>{row.lost}</div>
+                    <div style={{ textAlign: "center", fontSize: 13, color: "rgba(255,255,255,0.4)" }}>{row.noResult}</div>
+                    <div style={{ textAlign: "center", fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 16, color: "#FF7A29" }}>{row.points}</div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </section>
 

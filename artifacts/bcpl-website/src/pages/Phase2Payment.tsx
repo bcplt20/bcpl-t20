@@ -39,7 +39,7 @@ export function Phase2Payment() {
         if (status.phase2Status === 'payment_done' || status.phase2Status === 'kyc_done') {
           setLoadState('already_paid'); return;
         }
-        setPlayerName(me.name || '');
+        setPlayerName(me.user?.name || '');
         setRole(status.role || '');
         setCity(status.trialCity || '');
         setRegId(status.registrationId || '');
