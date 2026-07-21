@@ -349,10 +349,10 @@ export default function AdminShell() {
             )}
           </div>
 
-          {/* 247 Live pill */}
-          <div style={{ height:30, display:"flex", alignItems:"center", gap:7, background:"#10B98115", border:"1px solid #10B98130", borderRadius:20, padding:"0 12px", flexShrink:0 }}>
-            <div style={{ width:7, height:7, borderRadius:"50%", background:"#10B981", flexShrink:0 }}/>
-            <span style={{ fontSize:12, fontWeight:700, color:"#10B981", lineHeight:1, whiteSpace:"nowrap" }}>247 Live</span>
+          {/* Live pill */}
+          <div style={{ height:30, display:"flex", alignItems:"center", gap:7, background:"#47556910", border:"1px solid #47556930", borderRadius:20, padding:"0 12px", flexShrink:0 }}>
+            <div style={{ width:7, height:7, borderRadius:"50%", background:"#475569", flexShrink:0 }}/>
+            <span style={{ fontSize:12, fontWeight:700, color:"#475569", lineHeight:1, whiteSpace:"nowrap" }}>0 Live</span>
           </div>
 
           {/* Notifications */}

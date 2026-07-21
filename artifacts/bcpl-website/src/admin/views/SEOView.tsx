@@ -6,30 +6,23 @@ const PAGES = [
   { page:"Registration", slug:"/registration",  title:"Register for BCPL T20 Season 5 | ₹299 Only | Corporate Cricket",  desc:"Sign up for BCPL T20 Season 5 in 3 easy steps. Pay ₹299 for Phase 1. Upload trial video. Get selected for franchise auction. India's biggest working professionals cricket league.", score:88 },
   { page:"Teams",        slug:"/teams",         title:"BCPL T20 Teams – 10 Franchise Teams | Season 5 Squads",           desc:"Explore all 10 BCPL T20 franchise teams, their squads, captains, and season stats. Rajasthan Scorchers, Mumbai Mavericks, Delhi Suryas and more.",                      score:76 },
   { page:"Match Center", slug:"/match-center",  title:"BCPL T20 Live Scores & Match Schedule | Season 5",                desc:"Get live scores, match schedule, points table and highlights from BCPL T20 Season 5. Stay updated with all corporate cricket matches across India.",                      score:72 },
-  { page:"About",        slug:"/about",         title:"About BCPL T20 – Kriparti Playing11 | Corporate Cricket India",   desc:"Learn about BCPL T20, India's premier corporate T20 cricket league by Kriparti Playing11. Backed by Sourav Ganguly. 4 seasons, ₹14 Crore distributed.",               score:80 },
-  { page:"Sponsors",     slug:"/sponsors",      title:"BCPL T20 Sponsors & Partners | Season 5 Sponsorship",             desc:"BCPL T20 sponsorship opportunities for brands. Reach 8,000+ cricket-loving working professionals across 21 Indian cities. Title, Associate, and Official partners.",    score:65 },
+  { page:"About",        slug:"/about",         title:"About BCPL T20 – BCPL | Corporate Cricket India",   desc:"Learn about BCPL T20, India's premier corporate T20 cricket league by BCPL. Backed by Sourav Ganguly. 4 seasons, ₹14 Crore distributed.",               score:80 },
+  { page:"Sponsors",     slug:"/sponsors",      title:"BCPL T20 Sponsors & Partners | Season 5 Sponsorship",             desc:"BCPL T20 sponsorship opportunities for brands. Reach 8,000+ cricket-loving working professionals across 50+ cities. Title, Associate, and Official partners.",    score:65 },
   { page:"FAQ",          slug:"/faq",           title:"BCPL T20 FAQ – Registration, Fees, Rules | Season 5",             desc:"Find answers to common BCPL T20 questions: registration fees, Phase 1 & Phase 2 process, trial cities, eligibility, and refund policy.",                             score:83 },
 ];
 
 const KEYWORDS = [
-  { kw:"corporate cricket league india",           vol:2400, diff:32, pos:4,  trend:"up",   intent:"Informational" },
-  { kw:"bcpl t20 registration",                    vol:1900, diff:18, pos:1,  trend:"up",   intent:"Transactional" },
-  { kw:"working professionals cricket india",       vol:880,  diff:41, pos:7,  trend:"up",   intent:"Informational" },
-  { kw:"office cricket league 2025",               vol:720,  diff:28, pos:3,  trend:"same", intent:"Informational" },
-  { kw:"franchise cricket league registration",    vol:590,  diff:35, pos:5,  trend:"up",   intent:"Transactional" },
-  { kw:"cricket trial india ₹299",                 vol:420,  diff:12, pos:2,  trend:"up",   intent:"Transactional" },
-  { kw:"ganguly cricket league corporate",         vol:380,  diff:22, pos:6,  trend:"up",   intent:"Informational" },
-  { kw:"t20 cricket registration open 2025",       vol:340,  diff:29, pos:9,  trend:"down", intent:"Transactional" },
+  { kw:"corporate cricket league india",           vol:2400, diff:32, pos:0,  trend:"same", intent:"Informational" },
+  { kw:"bcpl t20 registration",                    vol:1900, diff:18, pos:0,  trend:"same", intent:"Transactional" },
+  { kw:"working professionals cricket india",       vol:880,  diff:41, pos:0,  trend:"same", intent:"Informational" },
+  { kw:"office cricket league 2026",               vol:720,  diff:28, pos:0,  trend:"same", intent:"Informational" },
+  { kw:"franchise cricket league registration",    vol:590,  diff:35, pos:0,  trend:"same", intent:"Transactional" },
+  { kw:"cricket trial india ₹299",                 vol:420,  diff:12, pos:0,  trend:"same", intent:"Transactional" },
+  { kw:"ganguly cricket league corporate",         vol:380,  diff:22, pos:0,  trend:"same", intent:"Informational" },
+  { kw:"t20 cricket registration open 2026",       vol:340,  diff:29, pos:0,  trend:"same", intent:"Transactional" },
 ];
 
-const BACKLINKS = [
-  { domain:"cricbuzz.com",      da:92, links:14, type:"Dofollow", status:"Active",   anchor:"BCPL" },
-  { domain:"espncricinfo.com",  da:89, links:8,  type:"Dofollow", status:"Active",   anchor:"corporate cricket" },
-  { domain:"sportskeeda.com",   da:78, links:22, type:"Dofollow", status:"Active",   anchor:"BCPL Season 5" },
-  { domain:"hindustantimes.com",da:85, links:5,  type:"Nofollow", status:"Active",   anchor:"cricket league india" },
-  { domain:"deccanherald.com",  da:72, links:3,  type:"Dofollow", status:"Active",   anchor:"Kriparti Playing11" },
-  { domain:"indiatoday.in",     da:88, links:2,  type:"Nofollow", status:"Lost",     anchor:"BCPL T20 registration" },
-];
+const BACKLINKS: { domain:string; da:number; links:number; type:string; status:string; anchor:string }[] = [];
 
 const TECH_AUDIT = [
   { label:"Core Web Vitals — LCP",      status:"good",    value:"1.8s",   target:"< 2.5s",   tip:null },
@@ -54,7 +47,7 @@ const SCHEMA_TEMPLATES: Record<string,string> = {
   Organization: JSON.stringify({
     "@context":"https://schema.org",
     "@type":"Organization",
-    "name":"BCPL T20 – Kriparti Playing11",
+    "name":"BCPL T20 – BCPL",
     "url":"https://bcplt20.com",
     "logo":"https://bcplt20.com/bcpl-assets/logos/bcpl-logo.png",
     "sameAs":["https://instagram.com/bcplt20","https://youtube.com/@bcplt20"],
@@ -68,7 +61,7 @@ const SCHEMA_TEMPLATES: Record<string,string> = {
     "startDate":"2026-09-01",
     "endDate":"2026-12-15",
     "location":{ "@type":"Place","name":"Multiple Cities, India" },
-    "organizer":{ "@type":"Organization","name":"Kriparti Playing11 Pvt. Ltd." },
+    "organizer":{ "@type":"Organization","name":"BCPL Pvt. Ltd." },
     "offers":{ "@type":"Offer","price":"299","priceCurrency":"INR","url":"https://bcplt20.com/registration" }
   }, null, 2),
   FAQPage: JSON.stringify({
@@ -84,24 +77,8 @@ const SCHEMA_TEMPLATES: Record<string,string> = {
 type Tab = "meta"|"keywords"|"technical"|"backlinks"|"schema"|"social"|"google";
 
 /* ── GSC mock data ── */
-const GSC_QUERIES = [
-  { query:"bcpl t20 registration",           clicks:1240, impressions:8400,  ctr:14.8, pos:1.2 },
-  { query:"corporate cricket league india",  clicks:830,  impressions:12600, ctr:6.6,  pos:4.1 },
-  { query:"cricket trial ₹299",             clicks:520,  impressions:4200,  ctr:12.4, pos:2.3 },
-  { query:"office cricket league 2026",     clicks:310,  impressions:3800,  ctr:8.2,  pos:3.4 },
-  { query:"ganguly cricket league",         clicks:290,  impressions:5200,  ctr:5.6,  pos:5.8 },
-  { query:"franchise cricket registration", clicks:210,  impressions:2900,  ctr:7.2,  pos:4.9 },
-  { query:"working professionals cricket",  clicks:180,  impressions:3100,  ctr:5.8,  pos:6.2 },
-  { query:"bcpl t20 season 5",             clicks:160,  impressions:1800,  ctr:8.9,  pos:1.8 },
-];
-const GSC_PAGES = [
-  { page:"/",              clicks:2180, impressions:24000, ctr:9.1,  pos:2.8 },
-  { page:"/registration",  clicks:1420, impressions:11000, ctr:12.9, pos:1.9 },
-  { page:"/teams",         clicks:480,  impressions:6200,  ctr:7.7,  pos:4.2 },
-  { page:"/faq",           clicks:320,  impressions:4800,  ctr:6.7,  pos:3.6 },
-  { page:"/about",         clicks:210,  impressions:3200,  ctr:6.6,  pos:5.1 },
-  { page:"/match-center",  clicks:130,  impressions:2400,  ctr:5.4,  pos:7.3 },
-];
+const GSC_QUERIES: { query:string; clicks:number; impressions:number; ctr:number; pos:number }[] = [];
+const GSC_PAGES: { page:string; clicks:number; impressions:number; ctr:number; pos:number }[] = [];
 
 export default function SEOView() {
   const [tab,     setTab]     = useState<Tab>("meta");
@@ -362,7 +339,7 @@ export default function SEOView() {
                 { kw:"cricket league for employees india",  why:"Untapped long-tail, low difficulty 22" },
                 { kw:"office cricket tournament india",     why:"1,200 monthly searches, you're not ranking" },
                 { kw:"play cricket like a professional",   why:"Top of funnel, Ganguly angle works here" },
-                { kw:"kriparti playing11 cricket",          why:"Brand keyword — zero competition" },
+                { kw:"bcpl cricket",          why:"Brand keyword — zero competition" },
                 { kw:"cricket franchise auction india",     why:"Phase 2 intent, 400 searches/mo" },
               ].map(s=>(
                 <div key={s.kw} style={{ padding:"10px 14px", background:"#060B18", borderRadius:10, border:"1px solid #1E293B", display:"flex", alignItems:"flex-start", gap:10 }}>

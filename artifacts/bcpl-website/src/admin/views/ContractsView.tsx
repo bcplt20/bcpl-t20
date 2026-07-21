@@ -2,7 +2,8 @@ import { useState, useRef } from "react";
 
 /* ─── Company Details (from GST Registration Certificate) ──── */
 const COMPANY = {
-  brand:   "BCPL T20 — Bhartiya Corporate Premier League",
+  name:    "Bhartiya Corporate Premier League Pvt. Ltd.",
+  brand:   "Bhartiya Corporate Premier League",
   gstin:   "07AAHCK4053D1ZS",
   address: "2nd Floor Back Side, RZ-108, Indra Park, Uttam Nagar, West Delhi, Delhi — 110059",
   email:   "legal@bcplt20.com",
@@ -108,73 +109,316 @@ Witness:           _________________________`;
 function buildBrandAmbassadorContract(c: Contract): string {
   const today = new Date(c.date||Date.now()).toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"});
   const expiry = new Date(c.expiry||Date.now()).toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"});
-  return `BCPL T20 — BRAND AMBASSADOR AGREEMENT
-${COMPANY.season} · Contract Ref: ${c.id}
+  return `BRAND AMBASSADOR AGREEMENT
+${COMPANY.season} · Contract Reference: ${c.id}
 
-THIS BRAND AMBASSADOR AGREEMENT ("Agreement") is entered into on ${today} by and between:
+This Brand Ambassador Agreement ("Agreement") is executed on ${today} at New Delhi, India, by and between:
 
-PRINCIPAL: ${COMPANY.name}
-CIN: ${COMPANY.cin} · GSTIN: ${COMPANY.gstin}
-${COMPANY.address}
-(hereinafter "the Company")
+PRINCIPAL:
+${COMPANY.name}
+(Operating brand: Bhartiya Corporate Premier League — BCPL)
+Registered under the Companies Act, 2013
+CIN: ${COMPANY.cin}
+GSTIN: ${COMPANY.gstin}
+Registered Office: ${COMPANY.address}
+(hereinafter referred to as "BCPL" or "the Company")
 
-AMBASSADOR: ${c.player}
-(hereinafter "the Ambassador")
+AND
+
+AMBASSADOR:
+Full Name: ${c.player}
+Represented As: ${c.team}
+(hereinafter referred to as "the Ambassador")
+
+Both parties collectively referred to as "the Parties".
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-CLAUSE 1 — APPOINTMENT
-The Company appoints the Ambassador as the official Brand Ambassador of BCPL T20 ${COMPANY.season} for the period ${today} to ${expiry}.
+RECITALS
 
-CLAUSE 2 — SCOPE OF ENGAGEMENT
-The Ambassador agrees to:
-a) Promote BCPL T20 on all personal social media platforms (minimum 4 posts/month)
-b) Attend BCPL press conferences, launch events, and sponsor activations as required
-c) Feature in official promotional materials, advertisements, and digital campaigns
-d) Endorse BCPL's mission and values publicly
+WHEREAS BCPL operates the Bhartiya Corporate Premier League, India's premier corporate T20 cricket league, currently in its ${COMPANY.season} with presence across 50+ cities and 10,000+ registered players nationwide;
 
-CLAUSE 3 — AMBASSADOR FEE
-Total Ambassador Fee: ₹${c.amount.toLocaleString("en-IN")} (${numberToWords(c.amount)} Rupees Only)
-Payment Schedule: 50% on signing, 25% at mid-season, 25% at season close.
-TDS shall be deducted as per applicable rates under Section 194J/194C.
+WHEREAS BCPL desires to appoint the Ambassador as an official representative and brand face to enhance public awareness, goodwill, and commercial reach of the League during the Season;
 
-CLAUSE 4 — EXCLUSIVITY
-During the contract period, the Ambassador shall not represent, endorse, or appear in any capacity for a competing T20 cricket league or event.
+WHEREAS the Ambassador possesses the requisite professional standing, public profile, and social media influence suitable for representing the BCPL brand at a national level;
 
-CLAUSE 5 — IMAGE RIGHTS
-The Company is granted a royalty-free license to use the Ambassador's name, image, voice, and likeness for BCPL T20 marketing across all media channels during the contract term.
+WHEREAS the Parties desire to formalise the terms of this ambassadorship on the terms and conditions herein contained;
 
-CLAUSE 6 — SOCIAL MEDIA STANDARDS
-All BCPL-related social media posts must be pre-approved by the Company's marketing team. The Ambassador shall not post any content that may harm BCPL's reputation.
+NOW THEREFORE, in consideration of the mutual covenants herein, and other good and valuable consideration, the receipt and sufficiency of which are hereby acknowledged, the Parties agree as follows:
 
-CLAUSE 7 — CODE OF CONDUCT
-The Ambassador shall maintain the highest standards of professional conduct, refraining from any activity that may harm the reputation of BCPL T20 or its sponsors.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-CLAUSE 8 — CONFIDENTIALITY
-The Ambassador agrees not to disclose any confidential information regarding the Company's business, sponsors, financials, or strategic plans.
+CLAUSE 1 — DEFINITIONS
 
-CLAUSE 9 — INTELLECTUAL PROPERTY
-All campaign assets, creative content, and materials featuring the Ambassador created for BCPL shall remain the intellectual property of the Company.
+1.1 "Ambassador Fee" means the total compensation payable under Clause 5.
+1.2 "Brand Assets" means any materials bearing the BCPL name, logo, colours, trademarks, or slogans.
+1.3 "Campaign" means any promotional initiative, advertising project, or marketing activation conducted by or on behalf of BCPL.
+1.4 "Content" means all posts, reels, stories, photographs, videos, interviews, blogs, and public statements made by the Ambassador in connection with BCPL.
+1.5 "Deliverables" means the specific content pieces, appearances, and engagements scheduled in Schedule A of this Agreement.
+1.6 "ASCI Code" means the Advertising Standards Council of India guidelines for endorsements and influencer marketing, as amended from time to time.
+1.7 "Territory" means the Republic of India and, where applicable, all digital platforms accessible globally.
+1.8 "Season" means BCPL ${COMPANY.season}, covering the period from ${today} to ${expiry}.
+1.9 "Competing Entity" means any corporate cricket league, franchise T20 tournament, or similar professional/semi-professional cricket event operating primarily in India during the Term.
 
-CLAUSE 10 — MORALITY CLAUSE
-The Company reserves the right to terminate this Agreement immediately without payment of any outstanding fees if the Ambassador engages in conduct that, in the Company's reasonable judgment, brings disrepute to the BCPL brand.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CLAUSE 2 — APPOINTMENT & TERM
+
+2.1 BCPL hereby appoints the Ambassador as Official Brand Ambassador for BCPL ${COMPANY.season}, effective from ${today} to ${expiry} ("the Term").
+2.2 This appointment covers the Territory as defined in Clause 1.7.
+2.3 During the Term, BCPL shall identify and credit the Ambassador as "Official Brand Ambassador — BCPL ${COMPANY.season}" in all relevant official communications, press releases, and campaign materials.
+2.4 Renewal for subsequent seasons shall require a fresh written agreement signed by both Parties not later than 60 days before the expiry of this Agreement.
+2.5 This is an independent contractor engagement and shall not constitute an employment relationship between the Parties.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CLAUSE 3 — AMBASSADOR OBLIGATIONS & DELIVERABLES
+
+3.1 SOCIAL MEDIA CONTENT
+The Ambassador shall create, post, and publish the following minimum Deliverables across personal social media channels during the Term:
+   (a) Instagram and/or Facebook: Minimum 4 (four) branded posts per month, including static posts, reels, or stories featuring BCPL branding, match updates, registration calls-to-action, or sponsor activations;
+   (b) LinkedIn: Minimum 2 (two) posts per month positioning BCPL as India's leading corporate sports event;
+   (c) YouTube or WhatsApp Broadcast (if applicable): Minimum 1 (one) promotional video clip per season;
+   (d) All Content must include the official BCPL hashtags (#BCPLT20 #BhartiyaCorporateLeague #Season5) and tag BCPL's verified official social handles;
+   (e) Total minimum Deliverables: 48 social media posts over the Season, distributed per sub-clause (a) above.
+
+3.2 LIVE EVENT APPEARANCES
+The Ambassador shall attend, in person, the following minimum events during the Season:
+   (a) 2 (two) BCPL official press conferences or media launch events;
+   (b) 1 (one) BCPL Season 5 Player Auction event (in-person or via video conference with prior agreement);
+   (c) 2 (two) BCPL match-day appearances at franchise venues for spectator engagement and sponsor activations;
+   (d) Any additional events by mutual written agreement with at least 15 days' advance notice;
+   (e) Total minimum event appearances: 5 (five) per Season.
+
+3.3 CAMPAIGN PARTICIPATION (PHOTO/VIDEO SHOOTS)
+   (a) The Ambassador consents to feature in BCPL's official advertising campaigns across digital, print, out-of-home (OOH), and broadcast media during the Term;
+   (b) BCPL shall provide a minimum of 7 (seven) days' advance notice for any scheduled photo or video shoot;
+   (c) Each shoot session shall not exceed 8 (eight) hours per day;
+   (d) BCPL shall arrange and bear all costs for studio, equipment, crew, hair and makeup, and food for the Ambassador during shoots;
+   (e) The Ambassador shall cooperate with BCPL's creative directors, photographers, and production crew.
+
+3.4 CONTENT APPROVAL PROCESS
+   (a) The Ambassador shall submit all BCPL-related Content for written pre-approval by BCPL's marketing team a minimum of 48 (forty-eight) hours before publishing;
+   (b) BCPL shall respond within 24 hours with approval, revision requests, or rejection;
+   (c) BCPL may request reasonable changes to Content that does not align with brand guidelines, and the Ambassador shall incorporate such changes promptly;
+   (d) For time-sensitive match-day or event Content, pre-approval may be obtained via WhatsApp or email with a minimum 2 (two) hours' notice.
+
+3.5 BRAND GUIDELINES COMPLIANCE
+The Ambassador shall at all times:
+   (a) Use only BCPL's approved logo, colour palette, typography, and creative assets as provided in the BCPL Brand Book;
+   (b) Never alter, distort, misuse, or misrepresent BCPL's trademarks, logo, or creative materials;
+   (c) Ensure all Content is of a professional standard consistent with BCPL's premium national brand positioning.
+
+3.6 ADVERTISING STANDARDS COUNCIL OF INDIA (ASCI) COMPLIANCE
+   (a) All endorsement Content shall comply with the ASCI Guidelines for Influencer Advertising and Celebrity Endorsements, as amended;
+   (b) Content shall be clearly disclosed as #Ad or #Sponsored as required under applicable Indian law and ASCI guidelines;
+   (c) The Ambassador shall not make any false, misleading, or unsubstantiated claims about BCPL or its products in Content.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CLAUSE 4 — EXCLUSIVITY & NON-COMPETE
+
+4.1 During the Term, the Ambassador shall not, without prior written consent from BCPL:
+   (a) Serve as a brand ambassador, spokesperson, or promotional face for any Competing Entity;
+   (b) Create or publish Content that directly promotes, implies association with, or endorses any Competing Entity;
+   (c) Attend or participate in any Competing Entity's launch events, press conferences, or promotional activities in a public capacity.
+
+4.2 The Ambassador may continue to endorse or promote products and brands in all other categories (e.g. apparel, fintech, food, automobiles, personal care, education) provided such endorsements do not conflict with BCPL's officially appointed Title, Co-Title, or Associate Sponsors.
+
+4.3 BCPL shall provide the Ambassador with a complete and updated list of its official sponsors at the time of signing this Agreement. Category conflicts with BCPL's exclusive sponsors shall require prior written approval from BCPL's commercial team.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CLAUSE 5 — AMBASSADOR FEE, PAYMENT & EXPENSES
+
+5.1 TOTAL FEE
+The total Ambassador Fee for the Season is:
+₹${c.amount.toLocaleString("en-IN")} (Rupees ${numberToWords(c.amount)} Only)
+
+5.2 PAYMENT SCHEDULE
+   (a) 40% — ₹${Math.round(c.amount*0.4).toLocaleString("en-IN")} — payable within 7 (seven) working days of execution of this Agreement;
+   (b) 30% — ₹${Math.round(c.amount*0.3).toLocaleString("en-IN")} — payable at mid-season milestone upon written confirmation of Deliverables completed up to that point;
+   (c) 30% — ₹${Math.round(c.amount*0.3).toLocaleString("en-IN")} — payable within 15 (fifteen) working days of the BCPL ${COMPANY.season} closing ceremony, subject to full Deliverable completion.
+
+5.3 TAX DEDUCTION AT SOURCE (TDS)
+TDS shall be deducted at the applicable rate under Section 194J (Fees for Professional or Technical Services) of the Income Tax Act, 1961. BCPL shall issue Form 16A to the Ambassador within 30 (thirty) days of each deduction.
+
+5.4 GOODS AND SERVICES TAX (GST)
+If the Ambassador is registered under GST, they shall provide their valid GSTIN and issue a compliant Tax Invoice. GST at the applicable rate (currently 18% on professional services) shall be payable by BCPL over and above the Ambassador Fee, subject to issuance of proper invoice.
+
+5.5 EXPENSE REIMBURSEMENT
+BCPL shall reimburse reasonable, pre-approved, and documented travel, accommodation, and incidental expenses incurred by the Ambassador solely for the purpose of fulfilling Deliverables under this Agreement. Claims must be submitted with supporting receipts within 15 days of incurrence and shall be settled within 10 working days of approval.
+
+5.6 PERFORMANCE INCENTIVE
+BCPL may, at its sole discretion, provide a performance incentive bonus of up to 20% of the Ambassador Fee in the event the Ambassador's verified social media Deliverables result in measurable, documented outcomes (e.g. verified campaign reach exceeding agreed targets). The criteria and targets for this incentive shall be mutually agreed in writing before the Season commences.
+
+5.7 FEE DEDUCTIONS
+BCPL reserves the right to proportionally deduct from outstanding fees for undelivered Deliverables, provided the Ambassador has been given 7 (seven) days' written notice to cure such default.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CLAUSE 6 — IMAGE RIGHTS & INTELLECTUAL PROPERTY
+
+6.1 LICENSE GRANT
+The Ambassador grants to BCPL a non-exclusive, royalty-free, worldwide license during the Term to use the Ambassador's:
+   (a) Name, signature, and biographical information;
+   (b) Voice, likeness, image, and photograph as captured during Campaigns;
+   (c) Performance footage, video recordings, and audio clips made during Campaigns and official appearances;
+   for all purposes connected with BCPL's marketing, promotion, advertising, and commercial activities across all media (digital, print, OOH, broadcast, social media).
+
+6.2 POST-TERM USE
+BCPL may continue to display Campaign Content featuring the Ambassador for a period of 6 (six) months after expiry of this Agreement, strictly in the context of BCPL Season 5 highlights, archival documentation, and annual reports. Any use beyond this period requires fresh written consent.
+
+6.3 BCPL OWNERSHIP
+All Campaign materials, brand assets, photographs, videos, and creative works produced by BCPL or its agents (including content featuring the Ambassador) shall be the exclusive intellectual property of BCPL.
+
+6.4 AMBASSADOR'S PERSONAL CHANNELS
+The Ambassador may share BCPL-produced Content on personal social media channels in compliance with BCPL's brand guidelines, provided BCPL branding is not removed, cropped, or altered.
+
+6.5 THIRD-PARTY CONTENT
+The Ambassador shall not use, reproduce, or sub-license any BCPL Content for purposes other than those specifically approved in writing by BCPL.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CLAUSE 7 — CODE OF CONDUCT & MEDIA OBLIGATIONS
+
+7.1 GENERAL CONDUCT
+The Ambassador shall at all times maintain the highest standards of professional, ethical, and social behaviour — both publicly and privately — in a manner fully consistent with BCPL's values, public image, and brand positioning.
+
+7.2 PROHIBITED CONDUCT
+The Ambassador shall not:
+   (a) Make any statement, post, gesture, or act that is discriminatory, communally or religiously insensitive, defamatory, sexually explicit, or in violation of applicable Indian law;
+   (b) Engage in, be publicly associated with, or be convicted of any activity that is illegal, fraudulent, or deemed morally reprehensible by a reasonable standard;
+   (c) Publicly criticise, disparage, or make derogatory statements about BCPL, its management, team owners, sponsors, players, or the sport of cricket;
+   (d) Misrepresent their association with BCPL or make any claim about BCPL that is false, exaggerated, or misleading.
+
+7.3 MEDIA INTERACTIONS
+   (a) The Ambassador shall speak on behalf of BCPL only when explicitly authorised in writing by BCPL's communications team;
+   (b) All unscripted media interactions relating to BCPL's strategy, financials, legal matters, or management shall be referred to BCPL's designated spokesperson prior to any response.
+
+7.4 CRISIS COMMUNICATION PROTOCOL
+If any event occurs (personal, professional, or in the public domain) that may foreseeably and adversely impact the Ambassador's public reputation or BCPL's brand standing, the Ambassador shall notify BCPL's designated contact within 24 (twenty-four) hours. The Parties shall cooperate in developing an appropriate joint communication strategy.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CLAUSE 8 — MORALITY CLAUSE
+
+8.1 BCPL may terminate this Agreement immediately, without notice and without payment of any remaining outstanding fees, if the Ambassador:
+   (a) Is convicted of, or pleads guilty to, any criminal offence (including but not limited to fraud, corruption, assault, substance-related offences, or sexual misconduct);
+   (b) Makes any public statement, gesture, or engages in conduct that, in BCPL's sole and reasonable judgement, brings or threatens to bring material disrepute, embarrassment, or reputational harm to the BCPL brand;
+   (c) Is publicly and credibly associated with substance abuse, financial fraud, harassment, sexual misconduct, or extremist activities;
+   (d) Commits any material breach of Clause 7 (Code of Conduct) that is not cured within 48 hours of written notice.
+
+8.2 In the event of termination under this Clause, BCPL shall be entitled to seek injunctive relief, specific performance, or any other appropriate equitable remedy from a court of competent jurisdiction without being required to post any bond or security.
+
+8.3 The Ambassador shall, within 7 (seven) days of termination under this Clause, remove or archive all BCPL-branded Content from their personal social media channels, unless otherwise instructed by BCPL in writing.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CLAUSE 9 — CONFIDENTIALITY
+
+9.1 The Ambassador shall maintain in the strictest confidence all non-public information obtained from or in connection with BCPL, including but not limited to: business strategies, financial terms, sponsor agreements, player evaluation data, franchise plans, and marketing budgets.
+9.2 This obligation of confidentiality shall survive the expiry or termination of this Agreement for a period of 3 (three) years.
+9.3 The Ambassador shall not use any Confidential Information for personal commercial benefit or for the benefit of any third party, competitor, or media entity.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CLAUSE 10 — TERMINATION
+
+10.1 BY BCPL (WITHOUT CAUSE): BCPL may terminate this Agreement for any reason by giving 30 (thirty) days' written notice. All fees earned up to the date of notice shall be paid within 15 working days.
+
+10.2 BY AMBASSADOR (WITHOUT CAUSE): The Ambassador may terminate by giving 30 (thirty) days' written notice, provided all pre-scheduled Campaigns and appearances within the notice period are completed. The Ambassador shall forfeit all unpaid future tranches of the Ambassador Fee.
+
+10.3 BY BCPL (FOR CAUSE — IMMEDIATE): As specified in Clause 8 (Morality Clause), or for material breach of any obligation under this Agreement not cured within 7 (seven) days of written notice. No further fees shall be payable.
+
+10.4 CONSEQUENCES OF TERMINATION: Upon termination, (a) all licenses granted under Clause 6 shall cease (subject to Clause 6.2); (b) the Ambassador shall immediately cease using BCPL Brand Assets; (c) the Ambassador shall confirm in writing within 7 days that all Brand Assets have been returned or destroyed.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 CLAUSE 11 — INDEMNIFICATION
-Each party shall indemnify the other against claims, losses, and liabilities arising from a breach of their respective obligations under this Agreement.
 
-CLAUSE 12 — DISPUTE RESOLUTION
-All disputes shall be resolved through arbitration. Subject to New Delhi jurisdiction.
+11.1 AMBASSADOR'S INDEMNITY: The Ambassador shall indemnify, defend, and hold BCPL and its officers, directors, shareholders, agents, and employees harmless from and against any and all claims, demands, losses, liabilities, costs, and legal expenses arising from: (a) any breach by the Ambassador of any representation, warranty, or obligation under this Agreement; (b) any Content created by the Ambassador that infringes a third party's intellectual property rights, defames any person, or violates any applicable law.
+
+11.2 BCPL'S INDEMNITY: BCPL shall indemnify the Ambassador from any third-party claims arising solely and directly from BCPL's breach of this Agreement or from defects in BCPL-created Campaign materials.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-FOR THE COMPANY:
-Signature:         _________________________
-Date:              ${today}
+CLAUSE 12 — GENERAL PROVISIONS
+
+12.1 GOVERNING LAW: This Agreement shall be governed by and construed in accordance with the laws of India.
+12.2 DISPUTE RESOLUTION: The Parties shall first attempt to resolve any dispute through good-faith negotiation within 30 (thirty) days of written notice of the dispute. If unresolved, the dispute shall be submitted to arbitration under the Arbitration and Conciliation Act, 1996. Seat of arbitration: New Delhi. Language: English. Each Party appoints one arbitrator, and the two appointed arbitrators shall jointly appoint a presiding arbitrator.
+12.3 ENTIRE AGREEMENT: This Agreement constitutes the entire agreement between the Parties with respect to the subject matter hereof and supersedes all prior negotiations, representations, discussions, and agreements.
+12.4 AMENDMENTS: No amendment to this Agreement shall be valid unless made in writing and duly signed by both Parties.
+12.5 SEVERABILITY: If any provision is held invalid or unenforceable, the remaining provisions shall continue in full force and effect.
+12.6 ASSIGNMENT: The Ambassador may not assign any rights or obligations under this Agreement without BCPL's prior written consent. BCPL may assign this Agreement to any affiliate or successor entity.
+12.7 WAIVER: Failure by either Party to enforce any provision shall not constitute a waiver of that right.
+12.8 FORCE MAJEURE: Neither Party shall be liable for delays or failure to perform due to causes beyond their reasonable control (including acts of God, government orders, pandemics), provided the affected Party gives written notice within 48 hours.
+12.9 NOTICES: All formal notices under this Agreement shall be in writing and delivered by email (with read receipt) or registered post to the addresses on record with both Parties.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SCHEDULE A — DELIVERABLES SUMMARY
+
+┌────────────────────────────────┬──────────────────────┬─────────────────┐
+│ Deliverable                    │ Minimum Frequency    │ Format/Platform │
+├────────────────────────────────┼──────────────────────┼─────────────────┤
+│ Instagram/FB Branded Post      │ 4 per month          │ Social Media    │
+│ LinkedIn Professional Post     │ 2 per month          │ Social Media    │
+│ BCPL Press Conference/Launch   │ 2 per Season         │ In-Person       │
+│ Player Auction Event           │ 1 per Season         │ In-Person/Video │
+│ Match-Day Appearance           │ 2 per Season         │ In-Person       │
+│ Campaign Photo/Video Shoot     │ As mutually agreed   │ Studio/On-site  │
+│ YouTube/WhatsApp Promo Clip    │ 1 per Season         │ Digital         │
+└────────────────────────────────┴──────────────────────┴─────────────────┘
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SCHEDULE B — CONTRACT PARTICULARS
+
+┌────────────────────────────┬──────────────────────────────────────────┐
+│ Contract Reference         │ ${c.id}                                  │
+│ Ambassador                 │ ${c.player}                              │
+│ Represented As             │ ${c.team}                                │
+│ Total Ambassador Fee       │ ₹${c.amount.toLocaleString("en-IN")}     │
+│ Agreement Start            │ ${today}                                  │
+│ Agreement End              │ ${expiry}                                 │
+│ Season                     │ BCPL ${COMPANY.season}                   │
+│ GSTIN (Company)            │ ${COMPANY.gstin}                         │
+│ CIN (Company)              │ ${COMPANY.cin}                           │
+└────────────────────────────┴──────────────────────────────────────────┘
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+IN WITNESS WHEREOF, the Parties have caused this Agreement to be executed as of the date first written above.
+
+FOR BHARTIYA CORPORATE PREMIER LEAGUE PVT. LTD.:
+
+Authorised Signatory:    _________________________
+Name:                    Saurabh Jha
+Designation:             Director
+Date:                    ${today}
+Company Seal:            [SEAL]
+
 
 FOR THE AMBASSADOR:
-Signature:         _________________________
-Name:              ${c.player}
-Date:              ${today}`;
+
+Signature:               _________________________
+Full Name:               ${c.player}
+Date:                    ${today}
+PAN:                     ______________________
+GSTIN (if applicable):   ______________________
+
+WITNESS 1:
+Name:                    _________________________
+Signature & Date:        _________________________
+
+WITNESS 2:
+Name:                    _________________________
+Signature & Date:        _________________________
+
+This Agreement was executed at New Delhi, India.
+Applicable stamp duty to be affixed as per the Indian Stamp Act.
+Subject to Delhi High Court jurisdiction.`;
 }
 
 function buildCoachContract(c: Contract): string {
@@ -569,124 +813,138 @@ function ContractModal({ c, onClose }: { c: Contract; onClose: ()=>void }) {
   const cType = c.contractType || "Player";
 
   function downloadPDF() {
-    const logoUrl = `${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/bcpl-ball-clean.png`;
+    const logoUrl = `${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/bcpl-logo-transparent.png`;
+    const ballUrl = `${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/bcpl-ball-transparent.png`;
     const w = window.open("", "_blank");
     if (!w) return;
     const cType = c.contractType || "Player";
     w.document.write(`<!DOCTYPE html><html><head><title>${c.id} — BCPL ${cType} Contract</title>
     <style>
       *{box-sizing:border-box;margin:0;padding:0}
-      body{font-family:'Arial',sans-serif;font-size:11.5px;line-height:1.75;color:#1a1a1a;background:#fff;position:relative}
+      body{font-family:'Georgia',serif;font-size:11.5px;line-height:1.82;color:#1a1a1a;background:#fff;position:relative}
 
-      /* ── Watermark (every page) ── */
-      body::before{
-        content:'';position:fixed;top:50%;left:50%;
-        transform:translate(-50%,-50%);
-        width:380px;height:380px;
-        background-image:url('${logoUrl}');
-        background-size:contain;background-repeat:no-repeat;background-position:center;
-        opacity:0.04;z-index:0;
-        -webkit-print-color-adjust:exact;print-color-adjust:exact;
-      }
+      /* ── Watermark — transparent ball, zero box artifacts ── */
+      .watermark{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+        width:460px;height:460px;z-index:0;pointer-events:none;
+        -webkit-print-color-adjust:exact;print-color-adjust:exact;}
+      .watermark img{width:100%;height:100%;object-fit:contain;opacity:0.055;display:block}
 
-      /* ── Header ── */
-      .lh{
-        display:flex;align-items:center;gap:20px;
-        background:linear-gradient(135deg,#C94E0E,#FF6B00,#FF8C40);
-        padding:18px 36px;color:#fff;
-        -webkit-print-color-adjust:exact;print-color-adjust:exact;
-      }
-      .logo-wrap{
-        width:68px;height:68px;border-radius:50%;overflow:hidden;
-        border:3px solid rgba(255,255,255,.5);flex-shrink:0;
-        background:#fff;
-      }
-      .logo-wrap img{width:100%;height:100%;object-fit:cover;display:block}
-      .lh-title{font-size:18px;font-weight:900;letter-spacing:.05em;line-height:1.2}
-      .lh-brand{font-size:10px;opacity:.9;margin-top:2px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
-      .lh-sub{font-size:8.5px;opacity:.75;margin-top:3px}
+      /* ── Premium Letterhead ── */
+      .lh{display:flex;align-items:center;gap:22px;
+        background:linear-gradient(120deg,#060F25 0%,#0D1E44 55%,#091630 100%);
+        padding:18px 36px;
+        -webkit-print-color-adjust:exact;print-color-adjust:exact;}
+      .lh-logo{height:56px;width:auto;object-fit:contain;display:block;
+        filter:brightness(1.35) drop-shadow(0 2px 14px rgba(0,0,0,0.65))}
+      .lh-divider{width:1.5px;height:62px;flex-shrink:0;margin:0 6px;
+        background:linear-gradient(180deg,transparent 5%,rgba(232,178,61,0.65) 50%,transparent 95%)}
+      .lh-right{flex:1}
+      .lh-company{font-size:11px;font-weight:900;color:#FFFFFF;letter-spacing:.07em;
+        margin-bottom:5px;font-family:'Arial',sans-serif;text-transform:uppercase}
+      .lh-tagline{font-size:8px;color:rgba(255,255,255,0.45);font-family:'Arial',sans-serif;
+        letter-spacing:.12em;text-transform:uppercase;margin-bottom:5px}
+      .lh-contact{font-size:8.5px;color:rgba(255,255,255,0.48);margin-top:2px;font-family:'Arial',sans-serif}
+      .lh-chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px;align-items:center}
+      .chip{font-size:7.5px;font-weight:700;color:rgba(255,255,255,0.42);
+        background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.11);
+        border-radius:4px;padding:2px 8px;letter-spacing:.04em;font-family:'Courier New',monospace}
+      .chip-gold{font-size:7.5px;font-weight:800;color:#E8B23D;
+        background:rgba(232,178,61,0.1);border:1px solid rgba(232,178,61,0.38);
+        border-radius:4px;padding:2px 8px;letter-spacing:.08em;font-family:'Arial',sans-serif}
 
       /* ── Gold accent bar ── */
-      .accent-bar{height:4px;background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D);
-        -webkit-print-color-adjust:exact;print-color-adjust:exact;}
+      .accent-bar{height:4px;
+        background:linear-gradient(90deg,#9A3408,#FF6B00,#E8B23D,#FFD700,#E8B23D,#FF6B00,#9A3408);
+        -webkit-print-color-adjust:exact;print-color-adjust:exact}
 
-      /* ── Body ── */
-      .body{padding:28px 40px 24px;max-width:860px;margin:0 auto;position:relative;z-index:1}
+      /* ── Document title strip ── */
+      .doc-title{background:#F9F5F0;padding:8px 36px;font-size:9px;font-weight:900;
+        color:#7A3A0A;letter-spacing:.22em;text-align:center;
+        border-bottom:1px solid #EDE0D0;font-family:'Arial',sans-serif}
+
+      /* ── Body — extra padding-bottom so nothing hides behind fixed footer ── */
+      .body{padding:28px 40px 110px;max-width:860px;margin:0 auto;position:relative;z-index:1}
 
       /* ── Contract badge ── */
       .contract-badge{
-        text-align:center;
-        background:#FFF8F3;
-        border:2px solid #FF6B00;
-        border-radius:10px;
-        padding:14px 24px;
-        margin-bottom:24px;
-      }
-      .contract-badge h2{font-size:15px;color:#C94E0E;letter-spacing:.1em;font-weight:900;text-transform:uppercase;margin-bottom:4px}
-      .contract-badge p{font-size:10px;color:#777}
-      .contract-badge .ref{font-size:11px;color:#FF6B00;font-weight:700;margin-top:6px;font-family:monospace}
+        background:linear-gradient(135deg,#FFF9F4,#FFF3E8);
+        border:1.5px solid rgba(201,78,14,0.32);border-radius:12px;
+        padding:16px 24px;margin-bottom:28px;
+        box-shadow:0 2px 16px rgba(255,107,0,0.05)}
+      .contract-badge h2{font-size:13.5px;color:#8B3A0A;letter-spacing:.12em;font-weight:900;
+        text-transform:uppercase;margin-bottom:5px;font-family:'Arial',sans-serif}
+      .contract-badge p{font-size:9.5px;color:#AAA;font-family:'Arial',sans-serif}
+      .contract-badge .ref{font-size:11px;color:#FF6B00;font-weight:700;margin-top:7px;
+        font-family:'Courier New',monospace;letter-spacing:.04em}
 
       /* ── Content ── */
-      pre{
-        white-space:pre-wrap;word-wrap:break-word;
-        font-family:Arial,sans-serif;font-size:11.5px;
-        line-height:1.85;color:#1a1a1a;
-      }
-
-      /* ── Footer (every page) ── */
-      .pg-footer{
-        position:fixed;bottom:0;left:0;right:0;
-        background:#FFF8F3;border-top:3px solid #FF6B00;
-        padding:7px 36px;font-size:8px;color:#888;
-        display:flex;justify-content:space-between;align-items:center;
-        -webkit-print-color-adjust:exact;print-color-adjust:exact;
-        z-index:1;
-      }
-      .pg-footer strong{color:#FF6B00}
+      pre{white-space:pre-wrap;word-wrap:break-word;
+        font-family:'Georgia',serif;font-size:11px;line-height:1.88;color:#1a1a1a}
 
       /* ── Signature block ── */
-      .sig-block{margin-top:32px;border-top:1px dashed #ddd;padding-top:20px;display:flex;gap:60px}
+      .sig-block{margin-top:38px;border-top:1.5px solid #E2D4C4;padding-top:26px;display:flex;gap:60px}
       .sig-line{flex:1}
-      .sig-line .label{font-size:9px;color:#999;text-transform:uppercase;letter-spacing:.06em;margin-bottom:28px}
-      .sig-line .line{border-bottom:1.5px solid #333;margin-bottom:4px}
-      .sig-line .name{font-size:10px;color:#555}
+      .sig-line .label{font-size:8.5px;color:#aaa;text-transform:uppercase;
+        letter-spacing:.08em;margin-bottom:28px;font-family:'Arial',sans-serif}
+      .sig-line .line{border-bottom:1.5px solid #333;margin-bottom:5px}
+      .sig-line .name{font-size:10px;color:#666;font-family:'Arial',sans-serif}
+
+      /* ── Page footer — fixed, premium dark ── */
+      .pg-footer{
+        position:fixed;bottom:0;left:0;right:0;
+        background:linear-gradient(120deg,#060F25,#0D1E44);
+        border-top:3px solid #FF6B00;padding:7px 36px;
+        font-size:7.5px;color:rgba(255,255,255,0.4);
+        display:flex;justify-content:space-between;align-items:center;
+        -webkit-print-color-adjust:exact;print-color-adjust:exact;
+        z-index:2;font-family:'Arial',sans-serif;letter-spacing:.03em}
+      .pg-footer strong{color:#E8B23D}
 
       @media print{
-        body::before{position:fixed}
-        .pg-footer{position:fixed}
+        .watermark,.pg-footer{position:fixed}
         @page{margin:0}
         body{margin:0}
       }
     </style></head>
     <body>
+      <!-- Watermark: transparent PNG ball → no white box -->
+      <div class="watermark"><img src="${ballUrl}" alt=""/></div>
+
+      <!-- Premium Letterhead -->
       <div class="lh">
-        <div class="logo-wrap"><img src="${logoUrl}" alt="BCPL"/></div>
-        <div>
-          <div class="lh-title">BCPL — Bhartiya Corporate Premier League</div>
-          <div class="lh-brand">India's Biggest Corporate Cricket League · Season 5</div>
-          <div class="lh-sub">${COMPANY.name} · GSTIN: ${COMPANY.gstin} · CIN: ${COMPANY.cin}</div>
-          <div class="lh-sub">${COMPANY.address}</div>
-          <div class="lh-sub">legal@bcplt20.com &nbsp;·&nbsp; www.bcplt20.com</div>
+        <img src="${logoUrl}" class="lh-logo" alt="BCPL Logo"/>
+        <div class="lh-divider"></div>
+        <div class="lh-right">
+          <div class="lh-company">Bhartiya Corporate Premier League Pvt. Ltd.</div>
+          <div class="lh-tagline">India's Premier Corporate T20 Cricket League</div>
+          <div class="lh-contact">${COMPANY.address}</div>
+          <div class="lh-contact">✉ legal@bcplt20.com &nbsp;·&nbsp; 🌐 www.bcplt20.com &nbsp;·&nbsp; ☎ ${COMPANY.phone}</div>
+          <div class="lh-chips">
+            <span class="chip">GSTIN: ${COMPANY.gstin}</span>
+            <span class="chip">CIN: ${COMPANY.cin}</span>
+            <span class="chip-gold">🏆 SEASON 5 · 2026–27</span>
+          </div>
         </div>
       </div>
       <div class="accent-bar"></div>
+      <div class="doc-title">OFFICIAL LEGAL DOCUMENT — ${cType.toUpperCase()} CONTRACT &nbsp;·&nbsp; ${COMPANY.season.toUpperCase()}</div>
 
       <div class="body">
         <div class="contract-badge">
-          <h2>🏏 ${cType} Contract &mdash; ${COMPANY.season}</h2>
-          <p>This is an official legal document issued under the authority of ${COMPANY.name}</p>
-          <div class="ref">Ref: ${c.id} &nbsp;·&nbsp; Party: ${c.player} &nbsp;·&nbsp; ${c.team}</div>
+          <h2>🏏 ${cType} Contract — ${COMPANY.season}</h2>
+          <p>This is an official legally binding document issued under the authority of Bhartiya Corporate Premier League Pvt. Ltd.</p>
+          <div class="ref">Ref: ${c.id} &nbsp;&nbsp;·&nbsp;&nbsp; Party: ${c.player} &nbsp;&nbsp;·&nbsp;&nbsp; ${c.team}</div>
         </div>
-        <pre>${contractText.replace(/</g,"&lt;").replace(/>/g,"&gt;")}</pre>
+        <pre>${contractText.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}</pre>
 
         <div class="sig-block">
           <div class="sig-line">
             <div class="label">Authorised Signatory — BCPL</div>
             <div class="line"></div>
-            <div class="name">For ${COMPANY.name}</div>
+            <div class="name">For Bhartiya Corporate Premier League Pvt. Ltd.</div>
           </div>
           <div class="sig-line">
-            <div class="label">Signature of Party</div>
+            <div class="label">Signature of ${cType === "Brand Ambassador" ? "Ambassador" : "Party"}</div>
             <div class="line"></div>
             <div class="name">${c.player}</div>
           </div>
@@ -694,13 +952,13 @@ function ContractModal({ c, onClose }: { c: Contract; onClose: ()=>void }) {
       </div>
 
       <div class="pg-footer">
-        <span>Ref: <strong>${c.id}</strong></span>
-        <span><strong>BCPL</strong> — Bhartiya Corporate Premier League · Confidential &amp; Legally Binding</span>
-        <span>legal@bcplt20.com · bcplt20.com</span>
+        <span>Ref: <strong>${c.id}</strong> &nbsp;·&nbsp; ${cType} Contract</span>
+        <span><strong>BCPL</strong> — Bhartiya Corporate Premier League Pvt. Ltd. &nbsp;·&nbsp; STRICTLY CONFIDENTIAL</span>
+        <span>legal@bcplt20.com &nbsp;·&nbsp; bcplt20.com</span>
       </div>
     </body></html>`);
     w.document.close();
-    setTimeout(()=>w.print(), 600);
+    setTimeout(()=>w.print(), 800);
   }
 
   function sendEmail() {
@@ -716,7 +974,7 @@ function ContractModal({ c, onClose }: { c: Contract; onClose: ()=>void }) {
         {/* Header */}
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"16px 24px",borderBottom:"1px solid #1E293B",flexShrink:0}}>
           <div>
-            <div style={{fontSize:15,fontWeight:800,color:"#F1F5F9"}}>📜 Player Participation Contract</div>
+            <div style={{fontSize:15,fontWeight:800,color:"#F1F5F9"}}>📜 {cType} Contract</div>
             <div style={{fontSize:11,color:"#475569",marginTop:2}}>{c.id} · {c.player} · {c.team}</div>
           </div>
           <div style={{display:"flex",gap:8,alignItems:"center"}}>
@@ -944,13 +1202,19 @@ export default function ContractsView() {
         <div style={{position:"fixed",inset:0,background:"#00000088",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:16}} onClick={()=>setGenOpen(false)}>
           <div style={{...card,width:"100%",maxWidth:500,padding:28,maxHeight:"92vh",overflowY:"auto"}} onClick={e=>e.stopPropagation()}>
             <div style={{fontSize:18,fontWeight:800,color:"#F1F5F9",marginBottom:4}}>+ Generate Contract</div>
-            <div style={{fontSize:12,color:"#64748B",marginBottom:20}}>BCPL official contracts under {COMPANY.name}</div>
+            <div style={{fontSize:12,color:"#64748B",marginBottom:20}}>BCPL official contracts — {COMPANY.name}</div>
             {[
               {label:"Contract Type",    key:"contractType", type:"select", options:["Player","Employee","Brand Ambassador","Coach","Operations Staff"]},
               {label:"Full Name",        key:"player", type:"text",   placeholder:"e.g. Rahul Sharma"},
               {label:"Phone",            key:"phone",  type:"tel",    placeholder:"e.g. 9876543210"},
               {label:"Email",            key:"email",  type:"email",  placeholder:"e.g. person@email.com"},
-              {label:"Team / Department",key:"team",   type:"select", options:TEAMS_LIST},
+              {label: genForm.contractType==="Brand Ambassador" ? "Represented As / Entity" : genForm.contractType==="Employee" ? "Department" : "Team / Franchise",
+               key:"team", type:"select",
+               options: genForm.contractType==="Brand Ambassador"
+                 ? ["BCPL (League)","Individual"]
+                 : genForm.contractType==="Employee"
+                   ? ["BCPL HQ","Admin","Marketing","Finance","Operations","Logistics","Media & Content","IT","Legal","Ground & Venue"]
+                   : TEAMS_LIST},
               {label:"Designation / Role",key:"role",  type:"select", options:["Batsman","Bowler","All-Rounder","Wicket-Keeper","Head Coach","Batting Coach","Bowling Coach","Fielding Coach","Operations Manager","Ground Staff","Marketing Executive","Finance Officer","Admin Executive","Brand Manager","PR Manager"]},
               {label:"Value (₹K)",       key:"amount", type:"number", placeholder:"e.g. 500 = ₹5L"},
               {label:"Valid From",       key:"date",   type:"date",   placeholder:""},
