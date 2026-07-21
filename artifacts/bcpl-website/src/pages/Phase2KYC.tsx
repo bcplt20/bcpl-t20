@@ -95,9 +95,7 @@ export function Phase2KYC() {
         <div style={{ height:2, background:'linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)', backgroundSize:'200%', animation:'shimGold 4s linear infinite' }} />
         <div className="wrap" style={{ height:60, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
           <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:22 }}>
-              <span style={{ color:'#FF7A29' }}>BCPL</span>
-            </div>
+                          <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-final.png'} alt="BCPL" style={{ height:36, width:'auto', objectFit:'contain', display:'block', filter:'drop-shadow(0 0 6px rgba(255,122,41,0.22))' }}/>
             <div style={{ display:'flex', flexDirection:'column', borderLeft:'2px solid rgba(255,122,41,0.4)', paddingLeft:10, gap:1 }}>
               <span style={{ fontSize:8, fontWeight:800, color:'#FF7A29', letterSpacing:'.16em' }}>SEASON 5</span>
             </div>
@@ -328,9 +326,7 @@ export function Phase2KYC() {
       <footer style={{ background:'#040C18', borderTop:'1px solid rgba(255,255,255,0.06)', padding:'32px 0 20px', marginTop:60 }}>
         <div className="wrap">
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:16, marginBottom:16 }}>
-            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20 }}>
-              <span style={{ color:'#FF7A29' }}>BCPL</span>
-            </div>
+                          <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-final.png'} alt="BCPL" style={{ height:36, width:'auto', objectFit:'contain', display:'block', filter:'drop-shadow(0 0 6px rgba(255,122,41,0.22))' }}/>
             <div style={{ display:'flex', gap:16, flexWrap:'wrap' }}>
               {['About','Teams','FAQ','Contact','Terms','Privacy'].map(l => (
                 <a key={l} href="#" style={{ fontSize:12, color:'rgba(255,255,255,0.4)', textDecoration:'none', fontWeight:600 }}>{l}</a>

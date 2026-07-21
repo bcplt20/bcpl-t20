@@ -247,6 +247,9 @@ export function Home() {
         @keyframes s5NavPulse{0%,100%{box-shadow:0 0 6px rgba(232,178,61,.3)}50%{box-shadow:0 0 16px rgba(232,178,61,.7),0 0 28px rgba(232,178,61,.3)}}
         .s5-nav-badge{animation:s5NavPulse 2.5s ease-in-out infinite;}
 
+        /* Hide register button on small phones to keep hamburger visible */
+        @media(max-width:680px){.nav-reg-btn{display:none!important;}}
+
         /* Hashtag style */
         .hashtag-tag{display:inline-block;}
 
@@ -328,17 +331,9 @@ export function Home() {
         <div className="W" style={{ height:60, display:"flex", alignItems:"center", justifyContent:"space-between", gap:16 }}>
 
           {/* Logo */}
-          <div style={{ display:"flex", alignItems:"center", gap:10, flexShrink:0, cursor:"pointer" }} onClick={()=>navigate("/")}>
-            <div className="bcpl-logo" style={{ width:50, height:50, borderRadius:"50%", overflow:"hidden", flexShrink:0, border:"2.5px solid rgba(255,122,41,0.6)", boxShadow:"0 0 18px rgba(255,122,41,0.45), 0 0 36px rgba(255,122,41,0.15)" }}>
-              <img src={import.meta.env.BASE_URL + "bcpl-assets/bcpl-ball-color.jpg"} alt="BCPL T20" style={{ width:"100%", height:"100%", objectFit:"cover" }}/>
-            </div>
-            <div style={{ display:"flex", flexDirection:"column", gap:2 }}>
-              <div className="s5-nav-badge mont" style={{ display:"inline-flex", alignItems:"center", gap:5, background:"linear-gradient(135deg,rgba(232,178,61,.18),rgba(232,178,61,.06))", border:"1.5px solid rgba(232,178,61,.55)", borderRadius:8, padding:"3px 8px" }}>
-                <span style={{ fontSize:11 }}>🏆</span>
-                <span style={{ fontWeight:900, fontSize:12, color:"#E8B23D", letterSpacing:".06em", animation:"glow 2.5s ease infinite" }}>SEASON 5</span>
-              </div>
-              <div className="mont" style={{ fontWeight:700, fontSize:8, letterSpacing:".1em", color:"rgba(255,255,255,.35)", textTransform:"uppercase", paddingLeft:2 }}>2026–27 · BHARTIYA CORPORATE PREMIER LEAGUE</div>
-            </div>
+          <div style={{ display:"flex", alignItems:"center", flexShrink:0, cursor:"pointer" }} onClick={()=>navigate("/")}>
+            <img src={import.meta.env.BASE_URL + "bcpl-assets/bcpl-logo-final.png"} alt="BCPL"
+              style={{ height:40, width:"auto", objectFit:"contain", display:"block", filter:"drop-shadow(0 0 8px rgba(255,122,41,0.3))" }}/>
           </div>
 
           {/* Desktop Nav */}
@@ -348,7 +343,7 @@ export function Home() {
 
           {/* Right */}
           <div style={{ display:"flex", alignItems:"center", gap:10, flexShrink:0 }}>
-            <button className="btn-cta" style={{ fontSize:12, padding:"9px 18px" }} onClick={()=>navigate("/register")}>Register Now →</button>
+            <button className="btn-cta nav-reg-btn" style={{ fontSize:12, padding:"9px 18px" }} onClick={()=>navigate("/register")}>Register Now →</button>
             <button className="ham" onClick={()=>setMenuOpen(true)} style={{ display:"flex", flexDirection:"column", gap:5, background:"none", border:"none", cursor:"pointer", padding:8 }}>
               {[0,1,2].map(i=><span key={i} style={{ width:22, height:2, background:"#fff", display:"block" }}/>)}
             </button>

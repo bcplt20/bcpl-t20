@@ -366,18 +366,9 @@ export function Registration() {
         <div style={{ height:2, background:'linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)', backgroundSize:'200%', animation:'shimGold 4s linear infinite' }} />
         <div className="wrap" style={{ height:60, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
           {/* Logo — click to go home */}
-          <div style={{ display:'flex', alignItems:'center', gap:10, cursor:'pointer' }} onClick={()=>navigate('/')}>
-            <div style={{ width:36, height:36, borderRadius:'50%', overflow:'hidden', flexShrink:0, border:'2px solid rgba(255,122,41,0.45)', boxShadow:'0 0 10px rgba(255,122,41,0.3)' }}>
-              <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-ball-color.jpg'} alt="BCPL" style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'top center' }}/>
-            </div>
-            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, lineHeight:1 }}>
-              <span style={{ color:'#FF7A29' }}>BCPL</span>
-              
-            </div>
-            <div style={{ display:'flex', flexDirection:'column', borderLeft:'2px solid rgba(255,122,41,0.4)', paddingLeft:10, gap:1 }}>
-              <span style={{ fontSize:8, fontWeight:800, color:'#FF7A29', letterSpacing:'.16em' }}>SEASON 5</span>
-              <span style={{ fontSize:7, color:'rgba(255,255,255,0.35)', letterSpacing:'.08em' }}>BHARTIYA CORPORATE PL</span>
-            </div>
+          <div style={{ display:'flex', alignItems:'center', cursor:'pointer' }} onClick={()=>navigate('/')}>
+            <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-final.png'} alt="BCPL"
+              style={{ height:38, width:'auto', objectFit:'contain', display:'block', filter:'drop-shadow(0 0 6px rgba(255,122,41,0.25))' }}/>
           </div>
           {/* Desktop nav */}
           <div className="desk-nav">

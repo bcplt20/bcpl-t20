@@ -99,12 +99,7 @@ export function Phase1PaymentReceipt() {
         <div style={{ height:2, background:'linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)', backgroundSize:'200%', animation:'shimGold 4s linear infinite' }} />
         <div className="wrap" style={{ height:60, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
           <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:22, lineHeight:1 }}>
-              <span style={{ color:'#FF7A29' }}>BCPL</span>
-            </div>
-            <div style={{ display:'flex', flexDirection:'column', borderLeft:'2px solid rgba(255,122,41,0.4)', paddingLeft:10, gap:1 }}>
-              <span style={{ fontSize:8, fontWeight:800, color:'#FF7A29', letterSpacing:'.16em' }}>SEASON 5</span>
-            </div>
+                          <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-final.png'} alt="BCPL" style={{ height:36, width:'auto', objectFit:'contain', display:'block', filter:'drop-shadow(0 0 6px rgba(255,122,41,0.22))' }}/>
           </div>
           <div className="desk-nav">
             {NAV.map(l => <a key={l} href={`/${import.meta.env.BASE_URL}#${l.toLowerCase().replace(/ /g,'-')}`} onClick={()=>{window.location.href='/'+import.meta.env.BASE_URL.replace(/^\//,'');}} style={{ color:'rgba(255,255,255,0.6)', fontSize:12, fontWeight:600, textDecoration:'none', letterSpacing:'.04em' }}>{l}</a>)}
@@ -508,9 +503,7 @@ export function Phase1PaymentReceipt() {
       {/* ── FOOTER ── */}
       <footer style={{ marginTop:64, borderTop:'1px solid rgba(255,255,255,0.06)', paddingTop:32, paddingBottom:32 }}>
         <div className="wrap" style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:12 }}>
-          <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20 }}>
-            <span style={{ color:'#FF7A29' }}>BCPL</span>
-          </div>
+                        <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-final.png'} alt="BCPL" style={{ height:36, width:'auto', objectFit:'contain', display:'block', filter:'drop-shadow(0 0 6px rgba(255,122,41,0.22))' }}/>
           <div style={{ fontSize:11, color:'rgba(255,255,255,0.3)', letterSpacing:'.08em', textAlign:'center' }}>
             Bhartiya Corporate Premier League &nbsp;·&nbsp; Season 5 &nbsp;·&nbsp; #OfficeSeStadiumtak
           </div>

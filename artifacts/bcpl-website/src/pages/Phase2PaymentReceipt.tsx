@@ -63,7 +63,7 @@ export function Phase2PaymentReceipt() {
         <div style={{ height:2, background:'linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)', backgroundSize:'200%', animation:'shimGold 4s linear infinite' }} />
         <div className="wrap" style={{ maxWidth:1200, height:60, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
           <div style={{ display:'flex', flexDirection:'column', lineHeight:1.1 }}>
-            <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:18, color:'#fff' }}><span style={{ color:'#FF7A29' }}>BCPL</span> T20</span>
+                          <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-final.png'} alt="BCPL" style={{ height:36, width:'auto', objectFit:'contain', display:'block', filter:'drop-shadow(0 0 6px rgba(255,122,41,0.22))' }}/>
           </div>
           <div className="desk-nav">{NAV.map(n => <button key={n} className="nav-link">{n}</button>)}</div>
           <button className="ham-btn" onClick={() => setMenuOpen(o => !o)}>
