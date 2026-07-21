@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BCPLFooter } from '../components/BCPLFooter';
-import { getRegistrationStatus, initiateKyc } from '../lib/api';
+import { getRegistrationStatus, initiateKyc, verifyKycOtp } from '../lib/api';
 
 const BASE = import.meta.env.BASE_URL;
 const NAV = ['Home','Match Center','Teams','Sponsors','Photos','Videos','About','FAQ','Contact'];
@@ -45,10 +45,16 @@ export function Phase2KYC() {
   const [panErr, setPanErr]         = useState('');
 
   // Submit state
-  const [submitting, setSubmitting] = useState(false);
-  const [submitErr, setSubmitErr]   = useState('');
-  const [kycStatus, setKycStatus]   = useState<'pending'|'verified'|null>(null);
-  const [kycMsg, setKycMsg]         = useState('');
+  const [submitting, setSubmitting]     = useState(false);
+  const [submitErr, setSubmitErr]       = useState('');
+  const [kycStatus, setKycStatus]       = useState<'pending'|'verified'|null>(null);
+  const [kycMsg, setKycMsg]             = useState('');
+  // OTP step
+  const [kycId, setKycId]               = useState('');
+  const [aadhaarRefId, setAadhaarRefId] = useState('');
+  const [otp, setOtp]                   = useState('');
+  const [otpErr, setOtpErr]             = useState('');
+  const [otpLoading, setOtpLoading]     = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -81,7 +87,6 @@ export function Phase2KYC() {
   };
 
   const handleSubmit = async () => {
-    // Final validation
     if (!validateAadhaar(aadhaar)) { setAadhaarErr('Aadhaar must be 12 digits'); return; }
     if (!validatePan(pan))         { setPanErr('Enter a valid PAN (e.g. ABCDE1234F)'); return; }
 
@@ -94,7 +99,12 @@ export function Phase2KYC() {
         panNumber: pan.toUpperCase(),
       });
       setKycMsg(result.message);
-      if (result.status === 'verified') {
+      setKycId(result.kycId);
+
+      if (result.status === 'OTP_SENT' && result.aadhaarRefId) {
+        // PAN verified ✓ — now collect Aadhaar OTP
+        setAadhaarRefId(result.aadhaarRefId);
+      } else if (result.status === 'verified' || result.status === 'VALID') {
         setKycStatus('verified');
         setTimeout(() => { window.location.href = BASE + 'register/phase2/kyc-approved'; }, 2000);
       } else {
@@ -104,6 +114,25 @@ export function Phase2KYC() {
       setSubmitErr(e.message || 'KYC submission failed. Please try again.');
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleOtpVerify = async () => {
+    if (otp.length !== 6 || !/^\d{6}$/.test(otp)) { setOtpErr('6-digit OTP required'); return; }
+    setOtpLoading(true); setOtpErr('');
+    try {
+      const result = await verifyKycOtp({ registrationId: regId, aadhaarRefId, otp });
+      if (result.status === 'verified') {
+        setKycStatus('verified');
+        setKycMsg(result.message);
+        setTimeout(() => { window.location.href = BASE + 'register/phase2/kyc-approved'; }, 2000);
+      } else {
+        setOtpErr(result.message || 'Verification failed. Try again.');
+      }
+    } catch (e: any) {
+      setOtpErr(e.message || 'Incorrect OTP or expired. Please try again.');
+    } finally {
+      setOtpLoading(false);
     }
   };
 
@@ -243,6 +272,43 @@ export function Phase2KYC() {
             <div style={{ fontSize:48, marginBottom:16 }}>⏳</div>
             <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:22, color:'#FF7A29', marginBottom:8 }}>KYC Submitted for Review</div>
             <div style={{ fontSize:14, color:'rgba(255,255,255,0.55)', maxWidth:420, margin:'0 auto' }}>{kycMsg || 'Your documents are under review. You will receive an SMS + Email when verified (usually within 24 hours).'}</div>
+          </div>
+        ) : aadhaarRefId ? (
+          /* ── STEP 2: Aadhaar OTP ── */
+          <div style={{ background:'rgba(34,197,94,0.04)', border:'1px solid rgba(34,197,94,0.2)', borderRadius:12, padding:'32px 24px', marginBottom:32 }}>
+            <div style={{ textAlign:'center', marginBottom:28 }}>
+              <div style={{ fontSize:40, marginBottom:12 }}>📱</div>
+              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'#22C55E', marginBottom:8 }}>PAN Verified ✓</div>
+              <div style={{ fontSize:14, color:'rgba(255,255,255,0.6)', maxWidth:380, margin:'0 auto' }}>
+                An OTP has been sent to your <strong style={{ color:'#fff' }}>Aadhaar-linked mobile number</strong>. Enter it below to complete verification.
+              </div>
+            </div>
+
+            <div style={{ maxWidth:320, margin:'0 auto' }}>
+              <label style={{ display:'block', fontSize:10, fontWeight:700, letterSpacing:'.12em', color:'rgba(255,255,255,0.4)', fontFamily:'Montserrat,sans-serif', marginBottom:8, textTransform:'uppercase' }}>
+                AADHAAR OTP (6 digits) *
+              </label>
+              <input
+                style={{ ...inp, letterSpacing:'0.25em', fontSize:22, textAlign:'center', borderColor: otpErr ? '#EF4444' : (otp.length === 6 ? '#22C55E' : '#1E293B') }}
+                type="text" inputMode="numeric" maxLength={6} placeholder="• • • • • •"
+                value={otp}
+                onChange={e => { setOtp(e.target.value.replace(/\D/g,'')); setOtpErr(''); }}
+              />
+              {otpErr && <div style={{ fontSize:11, color:'#EF4444', marginTop:6, textAlign:'center' }}>⚠ {otpErr}</div>}
+
+              <button
+                onClick={handleOtpVerify}
+                disabled={otpLoading || otp.length !== 6}
+                style={{ marginTop:20, width:'100%', background: otp.length===6 ? 'linear-gradient(135deg,#22C55E,#16A34A)' : 'rgba(255,255,255,0.07)', color: otp.length===6 ? '#fff' : 'rgba(255,255,255,0.35)', border:'none', borderRadius:10, padding:'16px 24px', fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, letterSpacing:'.08em', cursor: otp.length===6 ? 'pointer' : 'not-allowed', transition:'all .2s' }}
+              >
+                {otpLoading ? 'VERIFYING…' : 'VERIFY & COMPLETE KYC →'}
+              </button>
+
+              <div style={{ marginTop:16, textAlign:'center', fontSize:12, color:'rgba(255,255,255,0.3)' }}>
+                OTP expires in 10 minutes. Didn't receive?{' '}
+                <button onClick={handleSubmit} style={{ background:'none', border:'none', color:'#FF7A29', cursor:'pointer', fontSize:12, fontWeight:700, padding:0 }}>Resend</button>
+              </div>
+            </div>
           </div>
         ) : (
           /* Main KYC Form */

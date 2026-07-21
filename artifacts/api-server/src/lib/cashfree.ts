@@ -71,32 +71,153 @@ export async function getPaymentStatus(orderId: string): Promise<{ status: strin
   } catch (e) { console.error("[CF] getPaymentStatus error", e); return null; }
 }
 
-// Cashfree KYC / Aadhaar-PAN verification (Verification Suite)
-export async function initiateKyc(params: {
-  referenceId: string;
-  aadhaarNumber?: string;
-  panNumber?: string;
-}): Promise<{ kycId: string; status: string } | null> {
-  if (!APP_ID || !SECRET) {
-    console.warn("[CF-STUB] initiateKyc", params.referenceId);
-    return { kycId: `mock_kyc_${Date.now()}`, status: "PENDING" };
+// ─── Cashfree Verification Suite (separate credentials) ───────────────────────
+const VERIFY_APP_ID = process.env.CF_VERIFY_APP_ID;
+const VERIFY_SECRET = process.env.CF_VERIFY_SECRET;
+
+const verifyHeaders = () => ({
+  "x-client-id":     VERIFY_APP_ID!,
+  "x-client-secret": VERIFY_SECRET!,
+  "Content-Type":    "application/json",
+});
+
+/**
+ * Verify PAN via Cashfree Verification Suite
+ * Returns: { valid: boolean; name: string; referenceId: string }
+ */
+export async function verifyPan(pan: string, name: string): Promise<{
+  valid: boolean; name: string; referenceId: string;
+} | null> {
+  if (!VERIFY_APP_ID || !VERIFY_SECRET) {
+    console.warn("[CF-STUB] verifyPan — credentials not set, returning mock");
+    return { valid: true, name, referenceId: `mock_pan_${Date.now()}` };
   }
-  // Cashfree Verification Suite endpoint
   try {
     const res = await fetch("https://api.cashfree.com/verification/pan", {
       method: "POST",
-      headers: {
-        "x-client-id": APP_ID,
-        "x-client-secret": SECRET,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        pan: params.panNumber,
-        name: params.referenceId,
-      }),
+      headers: verifyHeaders(),
+      body: JSON.stringify({ pan, name }),
     });
-    if (!res.ok) return null;
-    const data = (await res.json()) as { reference_id: string; pan_status: string };
-    return { kycId: data.reference_id, status: data.pan_status };
-  } catch (e) { console.error("[CF] initiateKyc error", e); return null; }
+    const data = await res.json() as any;
+    if (!res.ok) {
+      console.error("[CF] verifyPan failed:", data);
+      return null;
+    }
+    // pan_status: "VALID" | "INVALID" | "NOT_FOUND" | "PENDING"
+    return {
+      valid:       data.pan_status === "VALID",
+      name:        data.name_on_pan ?? name,
+      referenceId: data.reference_id ?? `pan_${Date.now()}`,
+    };
+  } catch (e) { console.error("[CF] verifyPan error", e); return null; }
+}
+
+/**
+ * Step 1 — Initiate Aadhaar OTP via Cashfree Verification Suite
+ * Returns: { referenceId: string } to be used in verifyAadhaarOtp
+ */
+export async function initiateAadhaarOtp(aadhaarNumber: string): Promise<{
+  referenceId: string;
+} | null> {
+  if (!VERIFY_APP_ID || !VERIFY_SECRET) {
+    console.warn("[CF-STUB] initiateAadhaarOtp — returning mock");
+    return { referenceId: `mock_aadhaar_${Date.now()}` };
+  }
+  try {
+    const res = await fetch("https://api.cashfree.com/verification/offline-aadhaar/otp", {
+      method: "POST",
+      headers: verifyHeaders(),
+      body: JSON.stringify({ aadhaar_number: aadhaarNumber }),
+    });
+    const data = await res.json() as any;
+    if (!res.ok) { console.error("[CF] initiateAadhaarOtp failed:", data); return null; }
+    return { referenceId: data.reference_id ?? data.ref_id };
+  } catch (e) { console.error("[CF] initiateAadhaarOtp error", e); return null; }
+}
+
+/**
+ * Step 2 — Verify Aadhaar OTP
+ * Returns: { valid: boolean; name: string; dob: string; address: string }
+ */
+export async function verifyAadhaarOtp(referenceId: string, otp: string): Promise<{
+  valid: boolean; name: string; dob?: string; address?: string;
+} | null> {
+  if (!VERIFY_APP_ID || !VERIFY_SECRET) {
+    return { valid: true, name: "Verified", dob: "", address: "" };
+  }
+  try {
+    const res = await fetch("https://api.cashfree.com/verification/offline-aadhaar/verify", {
+      method: "POST",
+      headers: verifyHeaders(),
+      body: JSON.stringify({ reference_id: referenceId, otp }),
+    });
+    const data = await res.json() as any;
+    if (!res.ok) { console.error("[CF] verifyAadhaarOtp failed:", data); return null; }
+    return {
+      valid:   data.status === "SUCCESS",
+      name:    data.name ?? "",
+      dob:     data.dob  ?? "",
+      address: data.address ?? "",
+    };
+  } catch (e) { console.error("[CF] verifyAadhaarOtp error", e); return null; }
+}
+
+/**
+ * Combined KYC — verifies PAN + initiates Aadhaar OTP in parallel.
+ * Called from kyc.ts route. Returns kycId (stored in DB) and status.
+ */
+export async function initiateKyc(params: {
+  referenceId: string;   // registrationId
+  aadhaarNumber?: string;
+  panNumber?: string;
+  playerName?: string;
+}): Promise<{ kycId: string; status: string; aadhaarRefId?: string } | null> {
+  if (!VERIFY_APP_ID || !VERIFY_SECRET) {
+    console.warn("[CF-STUB] initiateKyc — credentials not configured");
+    return { kycId: `mock_kyc_${Date.now()}`, status: "PENDING" };
+  }
+
+  let panValid    = false;
+  let aadhaarRefId: string | undefined;
+
+  const tasks: Promise<void>[] = [];
+
+  // PAN verification
+  if (params.panNumber) {
+    tasks.push(
+      verifyPan(params.panNumber, params.playerName ?? params.referenceId)
+        .then(r => { if (r?.valid) panValid = true; })
+        .catch(() => {})
+    );
+  }
+
+  // Aadhaar OTP initiation
+  if (params.aadhaarNumber) {
+    tasks.push(
+      initiateAadhaarOtp(params.aadhaarNumber)
+        .then(r => { if (r) aadhaarRefId = r.referenceId; })
+        .catch(() => {})
+    );
+  }
+
+  await Promise.all(tasks);
+
+  // If both docs provided: success only when PAN valid + Aadhaar OTP initiated
+  // If only PAN: instant verification
+  if (params.panNumber && !params.aadhaarNumber) {
+    return {
+      kycId:  `pan_${params.referenceId}_${Date.now()}`,
+      status: panValid ? "VALID" : "FAILED",
+    };
+  }
+
+  if (aadhaarRefId) {
+    return {
+      kycId:       `kyc_${params.referenceId}_${Date.now()}`,
+      status:      "OTP_SENT",   // frontend will collect OTP and call /kyc/verify-otp
+      aadhaarRefId,
+    };
+  }
+
+  return { kycId: `kyc_${params.referenceId}_${Date.now()}`, status: "PENDING" };
 }

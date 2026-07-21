@@ -338,8 +338,17 @@ export const verifyPhase2Payment = (orderId: string) =>
 export const initiateKyc = (data: {
   registrationId: string;
   profession: string;
-  aadhaarNumber?: string;
-  panNumber?: string;
-}) => req<{ success: boolean; kycId: string; status: string; message: string }>(
-  "POST", "/kyc/initiate", data
+  aadhaarNumber: string;
+  panNumber: string;
+}) => req<{
+  success: boolean; kycId: string; status: string; message: string;
+  aadhaarRefId?: string;
+}>("POST", "/kyc/initiate", data);
+
+export const verifyKycOtp = (data: {
+  registrationId: string;
+  aadhaarRefId: string;
+  otp: string;
+}) => req<{ success: boolean; status: string; message: string }>(
+  "POST", "/kyc/verify-otp", data
 );
