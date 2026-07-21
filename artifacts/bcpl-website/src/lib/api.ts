@@ -59,8 +59,37 @@ export const getMe = () =>
   );
 
 export const getRegistrationStatus = () =>
-  req<{ registered: boolean; phase1Status?: string; phase2Status?: string | null }>(
-    "GET", "/register/status"
+  req<{
+    registered:     boolean;
+    registrationId?: string;
+    role?:           string;
+    trialCity?:      string;
+    phase1Status?:   string;
+    phase2Status?:   string | null;
+    videoDeadline?:  string | null;
+    fees?:           { phase1: number; phase2: number };
+  }>("GET", "/register/status");
+
+/* ─── Video Upload ─────────────────────────────────── */
+
+export const getVideoStatus = () =>
+  req<{
+    registered:     boolean;
+    phase1Status?:  string;
+    videoDeadline?: string | null;
+    deadlineExpired?: boolean;
+    videoSubmitted?: boolean;
+    submittedAt?:   string | null;
+  }>("GET", "/video/status");
+
+export const getUploadUrl = (registrationId: string, contentType: string) =>
+  req<{ success: boolean; presignedUrl: string; s3Key: string }>(
+    "POST", "/video/upload-url", { registrationId, contentType }
+  );
+
+export const confirmVideoUpload = (registrationId: string, s3Key: string) =>
+  req<{ success: boolean; message: string }>(
+    "POST", "/video/confirm", { registrationId, s3Key }
   );
 
 /* ─── Matches ──────────────────────────────────────── */
