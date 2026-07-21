@@ -5,10 +5,14 @@ const FROM_NAME  = "BCPL T20";
 const SITE_URL   = process.env.SITE_URL || "https://elite-user-experience.replit.app/bcpl-website";
 const LOGO_URL   = `${SITE_URL}/bcpl-assets/bcpl-logo-white.png`;
 
-// Instagram & social handles
-const INSTAGRAM  = "@bcpl.t20";
-const YOUTUBE    = "@bcplt20";
-const WEBSITE    = "bcplt20.com";
+// Social handles & links
+const INSTAGRAM       = "@bcpl.t20";
+const INSTAGRAM_URL   = "https://www.instagram.com/bcpl.t20";
+const FACEBOOK_URL    = "https://www.facebook.com/bhartiyacorporatepremierleague";
+const TWITTER_URL     = "https://x.com/BCPLT20League";
+const YOUTUBE_URL     = "https://www.youtube.com/@bcplt20league";
+const YOUTUBE         = "@bcplt20league";
+const WEBSITE         = "bcplt20.com";
 
 interface SendEmailParams {
   to: string;
@@ -54,21 +58,24 @@ const header = `
 // ── Shared footer ─────────────────────────────────────────────────────────────
 const footer = `
   <div style="padding:20px 32px 24px;background:#040C18;border-radius:0 0 12px 12px;border-top:1px solid rgba(255,255,255,0.06);text-align:center;">
-    <div style="margin-bottom:14px;display:flex;justify-content:center;gap:20px;flex-wrap:wrap;">
-      <a href="https://instagram.com/bcpl.t20" style="display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,0.45);text-decoration:none;font-family:Arial,sans-serif;font-size:12px;">
-        <span style="font-size:16px;">📸</span> ${INSTAGRAM}
+    <div style="margin-bottom:14px;display:flex;justify-content:center;gap:18px;flex-wrap:wrap;">
+      <a href="${INSTAGRAM_URL}" style="display:inline-flex;align-items:center;gap:5px;color:rgba(255,255,255,0.45);text-decoration:none;font-family:Arial,sans-serif;font-size:11px;">
+        <span style="font-size:15px;">📸</span> ${INSTAGRAM}
       </a>
-      <a href="https://youtube.com/@bcplt20" style="display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,0.45);text-decoration:none;font-family:Arial,sans-serif;font-size:12px;">
-        <span style="font-size:16px;">▶️</span> ${YOUTUBE}
+      <a href="${FACEBOOK_URL}" style="display:inline-flex;align-items:center;gap:5px;color:rgba(255,255,255,0.45);text-decoration:none;font-family:Arial,sans-serif;font-size:11px;">
+        <span style="font-size:15px;">👥</span> /bhartiyacorporatepremierleague
       </a>
-      <a href="https://${WEBSITE}" style="display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,0.45);text-decoration:none;font-family:Arial,sans-serif;font-size:12px;">
-        <span style="font-size:16px;">🌐</span> ${WEBSITE}
+      <a href="${TWITTER_URL}" style="display:inline-flex;align-items:center;gap:5px;color:rgba(255,255,255,0.45);text-decoration:none;font-family:Arial,sans-serif;font-size:11px;">
+        <span style="font-size:15px;">🐦</span> @BCPLT20League
+      </a>
+      <a href="${YOUTUBE_URL}" style="display:inline-flex;align-items:center;gap:5px;color:rgba(255,255,255,0.45);text-decoration:none;font-family:Arial,sans-serif;font-size:11px;">
+        <span style="font-size:15px;">▶️</span> ${YOUTUBE}
       </a>
     </div>
     <p style="color:rgba(255,255,255,0.2);font-size:10px;margin:0;line-height:1.7;">
       BCPL T20 · Kriparti Playing 11 Pvt. Ltd.<br/>
       India's Biggest Corporate Cricket League<br/>
-      <span style="color:rgba(255,255,255,0.12);">${FROM_EMAIL}</span>
+      <span style="color:rgba(255,255,255,0.12);">${FROM_EMAIL} · ${WEBSITE}</span>
     </p>
   </div>`;
 

@@ -361,7 +361,7 @@ const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-cen
               💬 Share on WhatsApp
             </button>
             <button className="share-btn" style={{ background:'linear-gradient(135deg,#833AB4,#FD1D1D,#F56040)', color:'#fff' }}
-              onClick={() => window.open('https://www.instagram.com/', '_blank')}>
+              onClick={() => window.open('https://www.instagram.com/bcpl.t20', '_blank')}>
               📸 Share on Instagram
             </button>
             <button className="share-btn" style={{ background:'linear-gradient(135deg,#1E3A5F,#0F2040)', border:'1px solid rgba(255,122,41,0.4)', color:'#FF7A29' }}
