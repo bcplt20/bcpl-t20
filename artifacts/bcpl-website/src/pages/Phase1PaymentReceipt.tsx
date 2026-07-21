@@ -286,7 +286,9 @@ const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-cen
             </button>
             <button className="share-btn" style={{ background:'linear-gradient(135deg,#1E3A5F,#0F2040)', border:'1px solid rgba(255,122,41,0.4)', color:'#FF7A29' }}
               onClick={() => {
-                const logoUrl = `${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/bcpl-ball-color.jpg`;
+                const logoUrl  = `${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/bcpl-ball-color.jpg`;
+                const sigUrl   = `${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/bcpl-signature.png`;
+                const stampUrl = `${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/bcpl-stamp.png`;
                 const w = window.open('', '_blank');
                 if (!w) return;
                 w.document.write(`<!DOCTYPE html><html><head><title>BCPL Registration Receipt — BCPL-MUM-7432</title>
@@ -305,7 +307,7 @@ const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-cen
                     -webkit-print-color-adjust:exact;print-color-adjust:exact;
                   }
 
-                  .page{max-width:680px;margin:0 auto;padding:0 0 60px;position:relative;z-index:1}
+                  .page{max-width:680px;margin:0 auto;padding:0 0 90px;position:relative;z-index:1}
 
                   /* Header */
                   .header{
@@ -343,6 +345,7 @@ const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-cen
                   .receipt-card{
                     background:#0A1727;border:1px solid rgba(255,122,41,0.25);
                     border-radius:14px;overflow:hidden;margin-bottom:20px;
+                    page-break-inside:avoid;
                   }
                   .receipt-card-header{
                     background:linear-gradient(135deg,#0F1D35,#0A1727);
@@ -370,10 +373,19 @@ const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-cen
                   .barcode-bar{display:inline-block;width:2px;margin:0 0.5px;background:rgba(255,255,255,0.8)}
                   .barcode-text{margin-left:auto;font-family:monospace;font-size:9px;color:rgba(255,255,255,0.25);white-space:nowrap;padding-bottom:2px}
 
+                  /* Stamp / Sig block */
+                  .sig-block{display:flex;justify-content:flex-end;align-items:center;gap:24px;
+                    padding:0 20px 20px;page-break-inside:avoid}
+                  .sig-col{text-align:center}
+                  .sig-col img{display:block;margin:0 auto 6px}
+                  .sig-col .sig-label{font-size:8.5px;color:rgba(255,255,255,0.35);
+                    border-top:1px solid rgba(255,255,255,0.12);padding-top:5px;line-height:1.5}
+
                   /* Next steps */
                   .steps-card{
                     background:#0A1727;border:1px solid rgba(255,255,255,0.07);
                     border-radius:14px;padding:20px;margin-bottom:20px;
+                    page-break-inside:avoid;
                   }
                   .steps-title{font-size:10px;font-weight:900;color:rgba(255,255,255,0.3);letter-spacing:.18em;text-transform:uppercase;margin-bottom:14px}
                   .step-row{display:flex;align-items:flex-start;gap:14px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
@@ -385,17 +397,18 @@ const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-cen
                   /* Footer */
                   .footer{
                     background:#040C18;border-top:2px solid #FF7A29;
-                    padding:14px 36px;display:flex;justify-content:space-between;align-items:center;
+                    padding:12px 36px;display:flex;justify-content:space-between;align-items:center;
                     font-size:9px;color:rgba(255,255,255,0.3);
-                    position:fixed;bottom:0;left:0;right:0;
+                    margin-top:8px;
                     -webkit-print-color-adjust:exact;print-color-adjust:exact;
+                    page-break-inside:avoid;
                   }
                   .footer strong{color:#FF7A29}
 
                   @media print{
                     body{background:#06101E}
-                    .footer{position:fixed}
-                    @page{margin:0;background:#06101E}
+                    .page{padding-bottom:20px}
+                    @page{margin:6mm 8mm;background:#06101E}
                   }
                 </style></head>
                 <body>
@@ -483,15 +496,27 @@ const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-cen
                         </div>
                       </div>
 
+                      <!-- Stamp & Signature -->
+                      <div class="sig-block">
+                        <div class="sig-col">
+                          <img src="${sigUrl}" style="height:52px;object-fit:contain;opacity:0.9" alt="Signature"/>
+                          <div class="sig-label">Authorised Signatory<br/><strong style="color:#FF7A29">Kriparti Playing11 Pvt. Ltd.</strong></div>
+                        </div>
+                        <div class="sig-col">
+                          <img src="${stampUrl}" style="height:78px;object-fit:contain;opacity:0.85" alt="BCPL Stamp"/>
+                          <div class="sig-label">Official Seal</div>
+                        </div>
+                      </div>
+
                       <!-- Note -->
-                      <div style="background:#0A1727;border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:16px 20px;font-size:11px;color:rgba(255,255,255,0.4);line-height:1.7;text-align:center">
+                      <div style="background:#0A1727;border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px 20px;font-size:11px;color:rgba(255,255,255,0.4);line-height:1.7;text-align:center;page-break-inside:avoid">
                         This is an official digital receipt issued by <strong style="color:rgba(255,255,255,0.65)">Kriparti Playing11 Pvt. Ltd.</strong><br/>
                         For support: <strong style="color:#FF7A29">legal@bcplt20.com</strong> &nbsp;·&nbsp; <strong style="color:#FF7A29">www.bcplt20.com</strong>
                       </div>
                     </div>
                   </div>
 
-                  <!-- Fixed Footer -->
+                  <!-- Footer -->
                   <div class="footer">
                     <span>Ref: <strong>BCPL-MUM-7432</strong></span>
                     <span><strong>BCPL</strong> — Bhartiya Corporate Premier League · Season 5 · Official Receipt</span>

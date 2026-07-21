@@ -908,12 +908,14 @@ function ContractModal({ c, onClose }: { c: Contract; onClose: ()=>void }) {
 
       @media print{
         .watermark{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%)}
-        @page{margin:12mm 14mm 18mm 14mm;size:A4}
+        @page{margin:14mm 16mm 20mm 16mm;size:A4}
         body{margin:0}
-        pre{page-break-inside:auto}
-        .sig-block{page-break-inside:avoid}
+        pre{page-break-inside:auto;orphans:4;widows:4}
+        .contract-badge{page-break-inside:avoid}
+        .sig-block{page-break-inside:avoid;page-break-before:avoid}
         .pg-footer{position:fixed;bottom:0;left:0;right:0;margin-top:0}
-        .body{padding-bottom:60px}
+        .body{padding-bottom:70px}
+        .lh{page-break-inside:avoid}
       }
     </style></head>
     <body>
