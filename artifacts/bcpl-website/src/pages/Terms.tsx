@@ -133,7 +133,7 @@ export function Terms() {
       'Registration fee: ₹299 (Batsman/Bowler/Wicketkeeper) or ₹399 (All-Rounder) — GST inclusive',
       'Payments processed securely via Cashfree; BCPL does not store card or UPI details',
       'Registration fees are non-refundable once a cricket video has been uploaded',
-      'Within 7 days of registration (before video upload), a full refund may be requested',
+      'Within 15 days of registration (before video upload), a full refund may be requested',
       'In case of payment failure with amount debited, contact support@bcpl-t20.com within 48 hours',
     ]},
     {n:4,icon:'🏆',title:'Selection Process',items:[

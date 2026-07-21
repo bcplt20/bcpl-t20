@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>BCPL Email Templates — All</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#111827; font-family:Arial,sans-serif; padding:28px 16px; }
+  h1 { color:#FF7A29; font-size:18px; text-align:center; margin-bottom:4px; letter-spacing:1px; }
+  .sub { color:rgba(255,255,255,0.3); font-size:11px; text-align:center; margin-bottom:32px; }
+  .section { margin-bottom:40px; }
+  .tag { font-size:10px; font-weight:800; letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; padding:4px 12px; border-radius:20px; display:inline-block; }
+  /* ── email shell ── */
+  .eml { font-family:Arial,sans-serif; max-width:600px; margin:0 auto; background:#06101E; border-radius:12px; overflow:hidden; border:1px solid rgba(255,255,255,0.08); }
+  .eml-hdr { text-align:center; padding:24px 32px 18px; background:#040C18; border-bottom:3px solid #FF7A29; }
+  .eml-hdr img { height:46px; width:auto; display:block; margin:0 auto 10px; }
+  .s5-badge { display:inline-flex; align-items:center; gap:5px; background:rgba(232,178,61,0.12); border:1px solid rgba(232,178,61,0.4); border-radius:20px; padding:3px 12px; }
+  .s5-badge span { font-size:10px; font-weight:800; color:#E8B23D; letter-spacing:1.5px; }
+  .eml-body { padding:24px 28px; color:#F0EDE8; }
+  .eml-ftr { padding:16px 28px 20px; background:#040C18; border-top:1px solid rgba(255,255,255,0.06); text-align:center; }
+  .ftr-links { display:flex; justify-content:center; gap:18px; margin-bottom:10px; }
+  .ftr-links a { color:rgba(255,255,255,0.4); text-decoration:none; font-size:11px; }
+  .ftr-copy { color:rgba(255,255,255,0.18); font-size:10px; line-height:1.7; }
+  /* body utils */
+  .card { border-radius:10px; padding:20px; margin-bottom:16px; }
+  .card-green { background:#0A1727; border-left:4px solid #22C55E; }
+  .card-blue { background:#0A1727; border-left:4px solid #3B82F6; }
+  .card-orange { background:#0A1727; border-left:4px solid #F59E0B; }
+  .card-red { background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.3); }
+  .card-gold { background:#0A1727; border-left:4px solid #E8B23D; }
+  .card-dim { background:#0A1727; border-left:4px solid rgba(255,255,255,0.15); }
+  .card-sel { background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.25); }
+  .card-rej { background:rgba(255,122,41,0.06); border:1px solid rgba(255,122,41,0.15); }
+  h2 { font-size:18px; margin:0 0 8px; }
+  p { font-size:13px; line-height:1.6; margin:0 0 8px; }
+  .tbl { width:100%; border-collapse:collapse; margin-bottom:16px; }
+  .tbl td { padding:10px; border-bottom:1px solid rgba(255,255,255,0.07); font-size:13px; }
+  .tbl td:first-child { color:rgba(255,255,255,0.45); }
+  .info-box { background:rgba(255,255,255,0.03); border-radius:8px; padding:14px; margin-bottom:14px; }
+  .info-box .lbl { font-size:10px; color:rgba(255,255,255,0.25); letter-spacing:1px; text-transform:uppercase; margin-bottom:8px; }
+  .step-row { display:flex; align-items:flex-start; gap:12px; margin-bottom:10px; }
+  .step-ico { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
+  .step-ico.blue { background:rgba(59,130,246,0.15); }
+  .step-ico.orange { background:rgba(245,158,11,0.15); }
+  .btn { display:inline-block; padding:12px 28px; border-radius:8px; color:#fff; text-decoration:none; font-weight:800; font-size:13px; margin-top:14px; }
+  .btn-orange { background:#FF7A29; }
+  .btn-yellow { background:#F59E0B; }
+  .btn-red { background:#EF4444; }
+  .btn-green { background:#22C55E; }
+  .btn-gold { background:#E8B23D; }
+  .big-center { text-align:center; margin-bottom:20px; }
+  .big-circle { width:72px; height:72px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:36px; margin-bottom:10px; }
+  .venue-tbl { width:100%; border-collapse:collapse; }
+  .venue-tbl tr:nth-child(odd) { background:rgba(255,255,255,0.03); }
+  .venue-tbl td { padding:11px; font-size:13px; }
+  .venue-tbl td:first-child { color:rgba(255,255,255,0.4); width:42%; }
+</style>
+</head>
+<body>
+<h1>📧 BCPL T20 — EMAIL TEMPLATES</h1>
+<p class="sub">10 automated emails · Brevo · info@bcplt20.com · Season 5</p>
+
+<!-- ═══ EMAIL 1 ═══ -->
+<div class="section">
+  <div class="tag" style="background:rgba(34,197,94,0.12);color:#22C55E;">1 · Registration Confirmed — Payment के तुरंत बाद</div>
+  <div class="eml">
+    <div class="eml-hdr">
+      <img src="/bcpl-website/bcpl-assets/bcpl-logo-white.png" alt="BCPL T20"/>
+      <div class="s5-badge"><span>🏆 SEASON 5 · #OfficeSeStadiumtak</span></div>
+    </div>
+    <div class="eml-body">
+      <div class="card card-green" style="margin-bottom:16px;">
+        <h2 style="color:#22C55E;">✅ Registration Confirmed!</h2>
+        <p style="color:rgba(255,255,255,0.7);">Dear <strong>Rahul Kumar</strong>, you are registered for BCPL Season 5 Phase 1 trials.</p>
+      </div>
+      <table class="tbl">
+        <tr><td>Registration ID</td><td style="color:#fff;font-family:monospace;font-weight:700;">BCPL2025-001</td></tr>
+        <tr><td>Role</td><td style="color:#FF7A29;font-weight:700;">BATSMAN</td></tr>
+        <tr><td>Trial City</td><td style="color:#fff;">Mumbai</td></tr>
+        <tr><td>Amount Paid</td><td style="color:#22C55E;font-weight:800;font-size:20px;">₹299</td></tr>
+      </table>
+      <div style="background:rgba(255,122,41,0.08);border:1px solid rgba(255,122,41,0.25);border-radius:10px;padding:18px;margin-bottom:14px;">
+        <p style="color:#FF7A29;font-weight:700;margin-bottom:6px;">📹 Next Step — Upload Your Trial Video</p>
+        <p style="color:rgba(255,255,255,0.6);">You have <strong style="color:#fff;">15 days</strong> to upload your 2-minute trial video.</p>
+        <p style="color:rgba(255,255,255,0.35);font-size:11px;margin-top:4px;">⏰ Deadline: 15 days from registration &nbsp;|&nbsp; ❌ Late uploads NOT accepted</p>
+        <a class="btn btn-orange" href="#">UPLOAD VIDEO NOW →</a>
+      </div>
+      <div class="info-box">
+        <div class="lbl">Important Notes</div>
+        <p style="color:rgba(255,255,255,0.45);font-size:12px;line-height:1.9;">🎬 Video: 2 minutes max — batting, bowling or fielding<br/>📱 Login with the same phone number used during registration<br/>📩 Phase 1 result within <strong style="color:rgba(255,255,255,0.7);">15 working days</strong> of video submission</p>
+      </div>
+    </div>
+    <div class="eml-ftr">
+      <div class="ftr-links">
+        <a href="#">📸 @bcpl.t20</a>
+        <a href="#">▶️ @bcplt20</a>
+        <a href="#">🌐 bcplt20.com</a>
+      </div>
+      <p class="ftr-copy">BCPL T20 · Kriparti Playing 11 Pvt. Ltd.<br/>India's Biggest Corporate Cricket League · info@bcplt20.com</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ EMAIL 2 ═══ -->
+<div class="section">
+  <div class="tag" style="background:rgba(59,130,246,0.12);color:#3B82F6;">2 · Video Received — Upload होते ही</div>
+  <div class="eml">
+    <div class="eml-hdr">
+      <img src="/bcpl-website/bcpl-assets/bcpl-logo-white.png" alt="BCPL T20"/>
+      <div class="s5-badge"><span>🏆 SEASON 5 · #OfficeSeStadiumtak</span></div>
+    </div>
+    <div class="eml-body">
+      <div class="card card-blue" style="margin-bottom:16px;">
+        <h2 style="color:#3B82F6;">📹 Video Received!</h2>
+        <p style="color:rgba(255,255,255,0.7);">Dear <strong>Rahul Kumar</strong>, your trial video has been submitted successfully.</p>
+        <p style="color:rgba(255,255,255,0.5);">Our BCCI-certified scouts will review it within <strong style="color:#fff;">15 working days</strong>. We'll notify you on Email, SMS and WhatsApp.</p>
+      </div>
+      <div style="background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.15);border-radius:10px;padding:18px;margin-bottom:14px;">
+        <div class="lbl" style="color:rgba(255,255,255,0.3);margin-bottom:12px;">WHAT HAPPENS NEXT</div>
+        <div class="step-row"><div class="step-ico blue">🔍</div><p style="color:rgba(255,255,255,0.65);">BCCI-certified scouts आपका video review करेंगे</p></div>
+        <div class="step-row"><div class="step-ico blue">📊</div><p style="color:rgba(255,255,255,0.65);">Technique, fitness और potential को rate किया जाएगा</p></div>
+        <div class="step-row"><div class="step-ico blue">📩</div><p style="color:rgba(255,255,255,0.65);">Result Email + SMS + WhatsApp पर 15 working days में</p></div>
+      </div>
+      <div class="info-box">
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05);"><span style="font-size:12px;color:rgba(255,255,255,0.4);">Status</span><span style="font-size:12px;color:#22C55E;font-weight:700;">✅ Under Review</span></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;"><span style="font-size:12px;color:rgba(255,255,255,0.4);">Expected Result By</span><span style="font-size:12px;color:#FF7A29;font-weight:700;">Within 15 Working Days</span></div>
+      </div>
+    </div>
+    <div class="eml-ftr">
+      <div class="ftr-links"><a href="#">📸 @bcpl.t20</a><a href="#">▶️ @bcplt20</a><a href="#">🌐 bcplt20.com</a></div>
+      <p class="ftr-copy">BCPL T20 · Kriparti Playing 11 Pvt. Ltd.<br/>India's Biggest Corporate Cricket League · info@bcplt20.com</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ EMAIL 3 ═══ -->
+<div class="section">
+  <div class="tag" style="background:rgba(245,158,11,0.12);color:#F59E0B;">3 · Reminder Day 5 — "10 दिन बचे हैं" (Registration के 5 दिन बाद)</div>
+  <div class="eml">
+    <div class="eml-hdr">
+      <img src="/bcpl-website/bcpl-assets/bcpl-logo-white.png" alt="BCPL T20"/>
+      <div class="s5-badge"><span>🏆 SEASON 5 · #OfficeSeStadiumtak</span></div>
+    </div>
+    <div class="eml-body">
+      <div class="card card-orange" style="margin-bottom:16px;">
+        <h2 style="color:#F59E0B;">⏰ 10 Days Left — Upload Your Video!</h2>
+        <p style="color:rgba(255,255,255,0.7);">Dear <strong>Rahul Kumar</strong>, you registered 5 days ago but haven't uploaded your trial video yet.</p>
+        <p style="color:rgba(255,255,255,0.5);">You have <strong style="color:#F59E0B;">10 more days</strong> to upload. After the deadline, your registration expires.</p>
+      </div>
+      <div style="background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.2);border-radius:10px;padding:18px;margin-bottom:14px;">
+        <div class="lbl" style="color:rgba(255,255,255,0.3);margin-bottom:10px;">VIDEO REQUIREMENTS</div>
+        <p style="color:rgba(255,255,255,0.55);font-size:13px;line-height:1.9;">🎬 Duration: Max 2 minutes<br/>📱 Format: Any (MP4, MOV, etc.)<br/>🏏 Content: Batting, Bowling or Fielding<br/>💡 Good lighting, clear frame — no filter needed</p>
+      </div>
+      <div style="text-align:center;"><a class="btn btn-yellow" href="#">UPLOAD VIDEO NOW →</a></div>
+    </div>
+    <div class="eml-ftr">
+      <div class="ftr-links"><a href="#">📸 @bcpl.t20</a><a href="#">▶️ @bcplt20</a><a href="#">🌐 bcplt20.com</a></div>
+      <p class="ftr-copy">BCPL T20 · Kriparti Playing 11 Pvt. Ltd.<br/>India's Biggest Corporate Cricket League · info@bcplt20.com</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ EMAIL 4 ═══ -->
+<div class="section">
+  <div class="tag" style="background:rgba(239,68,68,0.12);color:#EF4444;">4 · Urgent Reminder Day 10 — "5 दिन बचे!" (Registration के 10 दिन बाद)</div>
+  <div class="eml">
+    <div class="eml-hdr">
+      <img src="/bcpl-website/bcpl-assets/bcpl-logo-white.png" alt="BCPL T20"/>
+      <div class="s5-badge"><span>🏆 SEASON 5 · #OfficeSeStadiumtak</span></div>
+    </div>
+    <div class="eml-body">
+      <div class="card card-red" style="margin-bottom:16px;">
+        <h2 style="color:#EF4444;">🚨 URGENT — Only 5 Days Left!</h2>
+        <p style="color:rgba(255,255,255,0.7);">Dear <strong>Rahul Kumar</strong>, it has been 10 days since registration and your trial video is still not uploaded.</p>
+        <p style="color:rgba(255,255,255,0.5);margin-top:8px;">⚠️ <strong style="color:#EF4444;">If you don't upload within 5 days, your registration will expire</strong> and your slot will be lost permanently.</p>
+      </div>
+      <div class="info-box" style="margin-bottom:14px;">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="font-size:36px;">🏏</div>
+          <div>
+            <p style="color:#fff;font-weight:700;margin-bottom:4px;">Don't Miss Your Chance!</p>
+            <p style="color:rgba(255,255,255,0.5);">You've already paid ₹299. Upload your 2-minute video now and let BCCI-certified scouts evaluate your potential.</p>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center;"><a class="btn btn-red" href="#">🚨 UPLOAD NOW — 5 DAYS LEFT →</a>
+      <p style="font-size:11px;color:rgba(255,255,255,0.2);margin-top:8px;">This is your final reminder. No further extensions will be granted.</p></div>
+    </div>
+    <div class="eml-ftr">
+      <div class="ftr-links"><a href="#">📸 @bcpl.t20</a><a href="#">▶️ @bcplt20</a><a href="#">🌐 bcplt20.com</a></div>
+      <p class="ftr-copy">BCPL T20 · Kriparti Playing 11 Pvt. Ltd.<br/>India's Biggest Corporate Cricket League · info@bcplt20.com</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ EMAIL 5 ═══ -->
+<div class="section">
+  <div class="tag" style="background:rgba(34,197,94,0.12);color:#22C55E;">5 · Selected for Phase 2 — Scout ने Select किया (Admin panel से)</div>
+  <div class="eml">
+    <div class="eml-hdr">
+      <img src="/bcpl-website/bcpl-assets/bcpl-logo-white.png" alt="BCPL T20"/>
+      <div class="s5-badge"><span>🏆 SEASON 5 · #OfficeSeStadiumtak</span></div>
+    </div>
+    <div class="eml-body">
+      <div class="big-center">
+        <div class="big-circle" style="background:rgba(34,197,94,0.15);border:2px solid #22C55E;">🎉</div>
+        <div style="font-size:26px;font-weight:900;color:#22C55E;">YOU'RE SELECTED!</div>
+        <p style="color:rgba(255,255,255,0.35);margin-top:4px;">Phase 2 Physical Trials के लिए</p>
+      </div>
+      <div class="card card-sel" style="margin-bottom:16px;">
+        <p style="color:rgba(255,255,255,0.7);">Dear <strong>Rahul Kumar</strong>, our BCCI-certified scouts have reviewed your video and <strong style="color:#22C55E;">selected you for Phase 2 Physical Trials!</strong></p>
+        <p style="color:rgba(255,255,255,0.5);">You are among the <strong style="color:#fff;">top players</strong> selected from your city.</p>
+      </div>
+      <div style="background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.12);border-radius:10px;padding:18px;margin-bottom:14px;">
+        <div class="lbl" style="color:rgba(255,255,255,0.3);margin-bottom:12px;">PHASE 2 — WHAT'S NEXT</div>
+        <div style="display:flex;gap:12px;padding:10px;background:rgba(255,255,255,0.03);border-radius:8px;margin-bottom:8px;"><span style="font-size:18px;">💰</span><div><p style="color:#fff;font-weight:700;margin-bottom:2px;">Phase 2 Fee Pay करें</p><p style="color:rgba(255,255,255,0.5);font-size:12px;">₹2,000 (Bat/Bowl/WK) · ₹3,000 (All-Rounder)</p></div></div>
+        <div style="display:flex;gap:12px;padding:10px;background:rgba(255,255,255,0.03);border-radius:8px;margin-bottom:8px;"><span style="font-size:18px;">📋</span><div><p style="color:#fff;font-weight:700;margin-bottom:2px;">KYC Complete करें</p><p style="color:rgba(255,255,255,0.5);font-size:12px;">Aadhaar + PAN — trial slot confirm होगा</p></div></div>
+        <div style="display:flex;gap:12px;padding:10px;background:rgba(255,255,255,0.03);border-radius:8px;margin-bottom:8px;"><span style="font-size:18px;">🏟️</span><div><p style="color:#fff;font-weight:700;margin-bottom:2px;">Physical Trial Attend करें</p><p style="color:rgba(255,255,255,0.5);font-size:12px;">Venue + Date जल्द announce होगा</p></div></div>
+        <div style="display:flex;gap:12px;padding:10px;background:rgba(255,255,255,0.03);border-radius:8px;"><span style="font-size:18px;">🔨</span><div><p style="color:#fff;font-weight:700;margin-bottom:2px;">Franchise Auction</p><p style="color:rgba(255,255,255,0.5);font-size:12px;">10 franchise teams में draft होंगे</p></div></div>
+      </div>
+      <div style="text-align:center;"><a class="btn btn-green" href="#">PROCEED TO PHASE 2 →</a></div>
+    </div>
+    <div class="eml-ftr">
+      <div class="ftr-links"><a href="#">📸 @bcpl.t20</a><a href="#">▶️ @bcplt20</a><a href="#">🌐 bcplt20.com</a></div>
+      <p class="ftr-copy">BCPL T20 · Kriparti Playing 11 Pvt. Ltd.<br/>India's Biggest Corporate Cricket League · info@bcplt20.com</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ EMAIL 6 ═══ -->
+<div class="section">
+  <div class="tag" style="background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.5);">6 · Not Selected — Phase 2 के लिए नहीं गया (Admin panel से)</div>
+  <div class="eml">
+    <div class="eml-hdr">
+      <img src="/bcpl-website/bcpl-assets/bcpl-logo-white.png" alt="BCPL T20"/>
+      <div class="s5-badge"><span>🏆 SEASON 5 · #OfficeSeStadiumtak</span></div>
+    </div>
+    <div class="eml-body">
+      <div class="card card-dim" style="margin-bottom:16px;">
+        <h2 style="color:#fff;">Phase 1 Result</h2>
+        <p style="color:rgba(255,255,255,0.7);">Dear <strong>Rahul Kumar</strong>, thank you for participating in BCPL Season 5 Phase 1 trials.</p>
+        <p style="color:rgba(255,255,255,0.5);">After careful evaluation by our BCCI-certified scouts, you have not been selected for Phase 2 this time.</p>
+      </div>
+      <div class="card card-rej" style="margin-bottom:16px;">
+        <div class="lbl" style="color:rgba(255,255,255,0.3);margin-bottom:12px;">DON'T GIVE UP — KEEP GOING!</div>
+        <div style="display:flex;gap:12px;margin-bottom:10px;"><span style="font-size:18px;">💪</span><p style="color:rgba(255,255,255,0.6);">Cricket is a game of consistency. Keep practicing and come back stronger.</p></div>
+        <div style="display:flex;gap:12px;margin-bottom:10px;"><span style="font-size:18px;">🏏</span><p style="color:rgba(255,255,255,0.6);"><strong style="color:#FF7A29;">Season 6 &amp; Season 7</strong> registrations will open — you can try again next year!</p></div>
+        <div style="display:flex;gap:12px;"><span style="font-size:18px;">📱</span><p style="color:rgba(255,255,255,0.6);">Follow us on Instagram <strong style="color:#fff;">@bcpl.t20</strong> for Season 6 updates.</p></div>
+      </div>
+      <div style="text-align:center;padding:14px;background:rgba(255,255,255,0.03);border-radius:8px;">
+        <div style="font-size:16px;font-weight:900;color:#FF7A29;letter-spacing:1px;">#OfficeSeStadiumtak</div>
+        <p style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:4px;">Every great player started somewhere. Your journey continues.</p>
+      </div>
+    </div>
+    <div class="eml-ftr">
+      <div class="ftr-links"><a href="#">📸 @bcpl.t20</a><a href="#">▶️ @bcplt20</a><a href="#">🌐 bcplt20.com</a></div>
+      <p class="ftr-copy">BCPL T20 · Kriparti Playing 11 Pvt. Ltd.<br/>India's Biggest Corporate Cricket League · info@bcplt20.com</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ EMAIL 7 ═══ -->
+<div class="section">
+  <div class="tag" style="background:rgba(232,178,61,0.12);color:#E8B23D;">7 · Trial Venue Announced — Phase 2 का venue/date जब आप डालें</div>
+  <div class="eml">
+    <div class="eml-hdr">
+      <img src="/bcpl-website/bcpl-assets/bcpl-logo-white.png" alt="BCPL T20"/>
+      <div class="s5-badge"><span>🏆 SEASON 5 · #OfficeSeStadiumtak</span></div>
+    </div>
+    <div class="eml-body">
+      <div class="big-center">
+        <div class="big-circle" style="background:rgba(232,178,61,0.15);border:2px solid #E8B23D;">🏟️</div>
+        <div style="font-size:22px;font-weight:900;color:#E8B23D;">TRIAL VENUE ANNOUNCED!</div>
+        <p style="color:rgba(255,255,255,0.35);margin-top:4px;">Mumbai — Phase 2 Physical Trials</p>
+      </div>
+      <div style="background:rgba(232,178,61,0.08);border:1px solid rgba(232,178,61,0.25);border-radius:10px;padding:20px;margin-bottom:16px;">
+        <p style="color:rgba(255,255,255,0.7);margin-bottom:14px;">Dear <strong>Rahul Kumar</strong>, your Phase 2 trial details are confirmed. Be there on time!</p>
+        <table class="venue-tbl">
+          <tr><td>📍 Venue</td><td style="color:#fff;font-weight:700;">DY Patil Stadium, Navi Mumbai</td></tr>
+          <tr><td>📅 Trial Date</td><td style="color:#E8B23D;font-weight:700;">15 February 2025 (Saturday)</td></tr>
+          <tr><td>⏰ Trial Time</td><td style="color:#fff;font-weight:700;">9:00 AM – 1:00 PM</td></tr>
+          <tr><td>🕐 Reporting Time</td><td style="color:#22C55E;font-weight:700;">8:30 AM <span style="font-size:11px;color:rgba(255,255,255,0.3);font-weight:400;">(30 min before)</span></td></tr>
+          <tr><td>🏙️ City</td><td style="color:#fff;font-weight:700;">Mumbai</td></tr>
+        </table>
+      </div>
+      <div class="info-box" style="margin-bottom:12px;">
+        <div class="lbl" style="color:rgba(255,255,255,0.25);">WHAT TO BRING</div>
+        <p style="color:rgba(255,255,255,0.55);font-size:13px;line-height:1.9;">🪪 Aadhaar Card (original)<br/>📄 PAN Card (original)<br/>🏏 Cricket kit (optional — available on site)<br/>💧 Water bottle &amp; light refreshments</p>
+      </div>
+      <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15);border-radius:8px;padding:11px 14px;margin-bottom:14px;">
+        <p style="font-size:12px;color:rgba(239,68,68,0.8);font-weight:700;">⚠️ Important: Late arrivals may not be accommodated. Please reach 30 minutes before trial time.</p>
+      </div>
+      <div style="text-align:center;"><a class="btn btn-gold" href="#" style="color:#000;">CHECK MY PROFILE →</a></div>
+    </div>
+    <div class="eml-ftr">
+      <div class="ftr-links"><a href="#">📸 @bcpl.t20</a><a href="#">▶️ @bcplt20</a><a href="#">🌐 bcplt20.com</a></div>
+      <p class="ftr-copy">BCPL T20 · Kriparti Playing 11 Pvt. Ltd.<br/>India's Biggest Corporate Cricket League · info@bcplt20.com</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

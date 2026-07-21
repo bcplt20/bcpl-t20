@@ -691,7 +691,7 @@ export function Registration() {
                       <div style={{ padding:'16px', background:'rgba(34,197,94,0.1)', border:'1px solid rgba(34,197,94,0.4)', borderRadius:10, textAlign:'center' }}>
                         <div style={{ fontSize:24, marginBottom:6 }}>✅</div>
                         <div style={{ fontSize:14, fontWeight:800, color:'#22C55E', fontFamily:'Montserrat,sans-serif' }}>Video Uploaded Successfully!</div>
-                        <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:4 }}>BCCI scouts will review within 7 working days. Result via SMS + Email.</div>
+                        <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:4 }}>BCCI scouts will review within 15 working days. Result via SMS + Email.</div>
                       </div>
                     ) : (
                       <button

@@ -36,7 +36,7 @@ const STATS = [
 const STEPS = [
   { num:1, phase:1, icon:"📋", title:"Register & Pay",    price:"₹299 / ₹399",  desc:"Batsman/Bowler/WK: ₹299 · All-Rounder: ₹399. Choose your role and pay online — instant confirmation.",   color:"#FF7A29", status:"OPEN NOW" },
   { num:2, phase:1, icon:"🎬", title:"Upload Trial Video", price:"Included",     desc:"Record a 2-minute cricket clip. Upload from any ground in India. No studio needed.",                      color:"#FF7A29", status:null },
-  { num:3, phase:1, icon:"🔍", title:"Scout Review",       price:"Included",     desc:"BCCI-certified scouts review your clip. Result guaranteed within 7 working days — or full refund.",       color:"#FF7A29", status:null },
+  { num:3, phase:1, icon:"🔍", title:"Scout Review",       price:"Included",     desc:"BCCI-certified scouts review your clip. Result guaranteed within 15 working days — or full refund.",       color:"#FF7A29", status:null },
   { num:4, phase:2, icon:"🏟", title:"Physical Trial",     price:"₹2,000",       desc:"Only if selected from Phase 1 — attend your tri-city trial. Franchise coaches evaluate you live.",       color:"#E8B23D", status:"Only if selected from Phase 1" },
   { num:5, phase:2, icon:"🏏", title:"Franchise Auction",  price:"No extra cost",desc:"10 BCPL franchises bid for you in a live IPL-style auction. Top player bid: ₹20 Lakh.",                color:"#E8B23D", status:null },
   { num:6, phase:3, icon:"🏆", title:"Play Season 5",      price:"No extra cost",desc:"Represent your franchise. ₹6 Crore prize pool. Office se Stadium tak.",                                  color:"#22C55E", status:null },
@@ -46,7 +46,7 @@ const FAQS = [
   { q:"How much do I pay in Phase 1?",         a:"₹299 for Batsman/Bowler/Wicket-keeper. ₹399 for All-rounders. That's it for Phase 1." },
   { q:"Do I pay extra for Phase 2?",           a:"Only if selected. Phase 2 fee is ₹2,000 (Bat/Bowl/WK) or ₹3,000 (All-rounder). Not selected = pay nothing more." },
   { q:"Are there hidden costs?",               a:"Zero. Maximum total cost is ₹2,299–₹3,399 for your entire BCPL journey — registration to franchise auction." },
-  { q:"Who reviews my Phase 1 video?",         a:"BCCI-certified cricket scouts review every video. Results sent within 7 working days of submission." },
+  { q:"Who reviews my Phase 1 video?",         a:"BCCI-certified cricket scouts review every video. Results sent within 15 working days of submission." },
   { q:"Which cities have physical trials?",    a:"50+ cities including Mumbai, Delhi, Bengaluru, Hyderabad, Chennai, Kolkata, Ahmedabad, Jaipur, Lucknow, Pune, Surat, Nagpur, Indore, Bhopal, Patna, Kochi, and many more." },
   { q:"What if I'm not selected for Phase 2?", a:"You simply don't pay for Phase 2. Your Phase 1 fee covers the scout review and there is no further obligation." },
 ];
@@ -489,7 +489,7 @@ export function Home() {
                 { icon:"🛡",  text:"Pay Phase 2 ONLY if selected" },
                 { icon:"🔒",  text:"Secure payment via Cashfree" },
                 { icon:"⚡",  text:"Instant registration confirmation" },
-                { icon:"⏱",  text:"Phase 1 result in 7 days — or full refund" },
+                { icon:"⏱",  text:"Phase 1 result in 15 days — or full refund" },
               ].map(b=>(
                 <div key={b.text+rep} style={{ display:"flex", alignItems:"center", gap:8, padding:"0 28px", borderRight:"1px solid rgba(34,197,94,.12)", whiteSpace:"nowrap" }}>
                   <span style={{ fontSize:16 }}>{b.icon}</span>

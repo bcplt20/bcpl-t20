@@ -7,7 +7,7 @@ import {
 import { eq, and } from "drizzle-orm";
 import { requireAuth, type AuthRequest } from "../middlewares/auth";
 import { getUploadPresignedUrl, getS3Url } from "../lib/s3";
-import { sendEmail, tplVideoSubmitted, tplVideoReminder } from "../lib/email";
+import { sendEmail, tplVideoSubmitted, tplVideoReminder, tplVideoReminderDay5, tplVideoReminderDay10 } from "../lib/email";
 import { sendSms } from "../lib/sms";
 import { sendWhatsApp, WA } from "../lib/whatsapp";
 import { z } from "zod";
@@ -79,7 +79,7 @@ router.post("/confirm", requireAuth, async (req: AuthRequest, res) => {
     const email = tplVideoSubmitted(user.name);
     Promise.allSettled([
       sendEmail({ to: user.email, toName: user.name, ...email }),
-      sendSms(user.phone, `BCPL T20: Your trial video has been received! Our scouts will review it within 7 working days. Stay tuned! -BCPL T20`),
+      sendSms(user.phone, `BCPL T20: Your trial video has been received! Our scouts will review it within 15 working days. Stay tuned! -BCPL T20`),
       sendWhatsApp({ phone: user.phone, templateName: WA.VIDEO_SUBMITTED, bodyValues: [user.name] }),
       db.insert(notificationLogsTable).values([
         { userId: user.id, type: "email",    template: "video_submitted" },
@@ -89,7 +89,7 @@ router.post("/confirm", requireAuth, async (req: AuthRequest, res) => {
     ]);
   }
 
-  res.json({ success: true, message: "Video submitted successfully! Result in 7 working days." });
+  res.json({ success: true, message: "Video submitted successfully! Result in 15 working days." });
 });
 
 // GET /api/video/status
@@ -131,12 +131,15 @@ export async function sendVideoReminders() {
     const msLeft = reg.videoDeadline.getTime() - now.getTime();
     const daysLeft = Math.ceil(msLeft / dayMs);
 
-    // Send reminder at 4 days left (day 3) and 1 day left (day 6)
-    if (daysLeft === 4 || daysLeft === 1) {
-      const email = tplVideoReminder(user.name, daysLeft);
+    // Send reminder at day 5 (10 days left) and day 10 (5 days left)
+    if (daysLeft === 10 || daysLeft === 5) {
+      const email = daysLeft === 10 ? tplVideoReminderDay5(user.name) : tplVideoReminderDay10(user.name);
+      const smsText = daysLeft === 10
+        ? `BCPL T20: 10 days left to upload your trial video! Don't miss your chance. Login at bcplt20.com to upload. -BCPL T20`
+        : `BCPL T20 URGENT: Only 5 days left! Upload your trial video NOW or your registration expires. bcplt20.com -BCPL T20`;
       await Promise.allSettled([
         sendEmail({ to: user.email, toName: user.name, ...email }),
-        sendSms(user.phone, `BCPL T20 Reminder: ${daysLeft} day${daysLeft > 1 ? "s" : ""} left to upload your trial video! Upload now to avoid losing your registration. -BCPL T20`),
+        sendSms(user.phone, smsText),
         sendWhatsApp({ phone: user.phone, templateName: WA.VIDEO_REMINDER, bodyValues: [user.name, daysLeft.toString()] }),
         db.insert(notificationLogsTable).values({ userId: user.id, type: "email", template: `video_reminder_d${daysLeft}` }),
       ]);

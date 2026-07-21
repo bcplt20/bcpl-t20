@@ -57,7 +57,7 @@ function getNodes(phase: Phase) {
 function getBanner(phase: Phase) {
   const M: Record<Phase, { color:string; bg:string; icon:string; title:string; body:string }> = {
     p1_registered: { color:"#FF7A29", bg:"rgba(255,122,41,0.08)", icon:"📝", title:"Registration Complete — Upload Your Video", body:`You've registered as a Batsman for BCPL Season 5. Next step: upload your 2-minute trial video. Deadline: 28 Feb 2026.` },
-    p1_video:      { color:"#FF7A29", bg:"rgba(255,122,41,0.08)", icon:"🎬", title:"Video Submitted — Scout Review in Progress", body:`Your video is with BCCI-certified scouts. Review takes up to 7 working days. You'll receive an email & SMS.` },
+    p1_video:      { color:"#FF7A29", bg:"rgba(255,122,41,0.08)", icon:"🎬", title:"Video Submitted — Scout Review in Progress", body:`Your video is with BCCI-certified scouts. Review takes up to 15 working days. You'll receive an email & SMS.` },
     p2_selected:   { color:"#E8B23D", bg:"rgba(232,178,61,0.08)", icon:"⭐", title:"Congratulations! Selected for Phase 2 Trial", body:`Report to ${PLAYER.p2City} on ${PLAYER.p2Date} for your physical trial. Phase 2 fee of ₹2,000 due before trial.` },
     auction:       { color:"#E8B23D", bg:"rgba(232,178,61,0.08)", icon:"🔨", title:"You Are Shortlisted for Auction!", body:`All 10 franchise coaches have reviewed your trial. Your profile is live for the Season 5 Franchise Auction. Base price: ₹2L · Max: ₹20L.` },
     signed:        { color:"#22C55E", bg:"rgba(34,197,94,0.08)",  icon:"🏆", title:`You've Been Signed by Mumbai Mavericks!`, body:`Contract value: ${PLAYER.contract}. Welcome to the squad. Report to your franchise on 15 Sep 2026 for pre-season camp.` },
@@ -411,7 +411,7 @@ export function PlayerProfile() {
                 <div className="card" style={{ padding:"22px 24px", borderTop:"3px solid #FF7A29" }}>
                   <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:13, color:"#fff", textTransform:"uppercase", letterSpacing:".05em", marginBottom:8 }}>Phase 1 · Upload Your Trial Video</div>
                   <p style={{ fontFamily:"Inter,sans-serif", fontSize:13, color:"rgba(255,255,255,0.45)", lineHeight:1.6, marginBottom:16 }}>
-                    Upload a 2-minute video of yourself batting, bowling, or keeping wicket. BCCI-certified scouts will review it within 7 days.
+                    Upload a 2-minute video of yourself batting, bowling, or keeping wicket. BCCI-certified scouts will review it within 15 days.
                   </p>
                   <div style={{ background:"#060C18", border:"2px dashed rgba(255,122,41,0.3)", borderRadius:12, padding:"32px", textAlign:"center", cursor:"pointer", marginBottom:14 }}>
                     <div style={{ fontSize:32, marginBottom:8 }}>🎬</div>

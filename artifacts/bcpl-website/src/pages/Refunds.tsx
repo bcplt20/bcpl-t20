@@ -192,7 +192,7 @@ export function Refunds() {
                 <div style={{display:'flex',flexDirection:'column',gap:8,flexShrink:0}}>
                   <div style={{background:'rgba(34,197,94,0.15)',border:'2px solid rgba(34,197,94,0.5)',borderRadius:12,padding:'10px 16px',minWidth:160}}>
                     <div style={{fontSize:16,marginBottom:2}}>✅</div>
-                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:11,color:'#22C55E',lineHeight:1.3}}>Eligible — within 7 days<br/><span style={{color:'rgba(34,197,94,0.7)',fontWeight:600}}>Full ₹299 refunded</span></div>
+                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:11,color:'#22C55E',lineHeight:1.3}}>Eligible — within 15 days<br/><span style={{color:'rgba(34,197,94,0.7)',fontWeight:600}}>Full ₹299 refunded</span></div>
                   </div>
                   <div style={{background:'rgba(232,73,63,0.15)',border:'2px solid rgba(232,73,63,0.5)',borderRadius:12,padding:'10px 16px',minWidth:160}}>
                     <div style={{fontSize:16,marginBottom:2}}>❌</div>
@@ -231,7 +231,7 @@ export function Refunds() {
               {[
                 {n:1, icon:'💳', title:'Duplicate Payment', desc:'If your payment was charged more than once for the same registration — double or triple charge due to a payment gateway error — the extra amount(s) will be refunded in full within 5–7 working days.'},
                 {n:2, icon:'🏟', title:'Trial Not Conducted by BCPL', desc:'If BCPL is unable to conduct the physical trial in your city for any reason within the committed schedule, your Phase 2 fee (if paid) will be refunded in full. Phase 1 fee is non-refundable in this case as the scout review service has been rendered.'},
-                {n:3, icon:'⏱', title:'Phase 1 Result Not Delivered in 7 Days', desc:'We guarantee that every Phase 1 video submitted will receive a result (pass or fail) within 7 working days of upload. If we fail to deliver your result within this window, you are entitled to a full refund of your Phase 1 registration fee — no questions asked.'},
+                {n:3, icon:'⏱', title:'Phase 1 Result Not Delivered in 15 Days', desc:'We guarantee that every Phase 1 video submitted will receive a result (pass or fail) within 15 working days of upload. If we fail to deliver your result within this window, you are entitled to a full refund of your Phase 1 registration fee — no questions asked.'},
               ].map((item)=>(
                 <div key={item.n} style={{display:'flex',gap:14,alignItems:'flex-start',background:'rgba(34,197,94,0.05)',border:'1px solid rgba(34,197,94,0.2)',borderRadius:12,padding:'16px'}}>
                   <div style={{width:32,height:32,borderRadius:'50%',background:'rgba(34,197,94,0.2)',border:'1px solid rgba(34,197,94,0.4)',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:13,color:'#22C55E',flexShrink:0}}>{item.n}</div>
@@ -377,7 +377,7 @@ export function Refunds() {
 
           <div className="glass-card" style={{padding:'clamp(20px,4vw,32px)',textAlign:'center'}}>
             <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(18px,3vw,22px)',marginBottom:8}}>Still Deciding?</div>
-            <p style={{color:'rgba(255,255,255,0.6)',fontSize:14,marginBottom:20}}>Register now — you have 7 days to request a full refund if you change your mind (before video upload).</p>
+            <p style={{color:'rgba(255,255,255,0.6)',fontSize:14,marginBottom:20}}>Register now — you have 15 days to request a full refund if you change your mind (before video upload).</p>
             <button className="btn-fire" style={{padding:'14px 36px',fontSize:16,width:'100%',maxWidth:300}}>Register for ₹299 →</button>
           </div>
         </div>

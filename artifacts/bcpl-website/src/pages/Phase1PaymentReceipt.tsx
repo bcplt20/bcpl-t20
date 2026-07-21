@@ -560,7 +560,7 @@ const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-cen
                           <div class="step-num">1</div>
                           <div>
                             <div class="step-label">🎬 Upload Your Trial Video</div>
-                            <div class="step-desc">Record a 2-minute cricket video and upload it via bcplt20.com within 7 days of registration.</div>
+                            <div class="step-desc">Record a 2-minute cricket video and upload it via bcplt20.com within 15 days of registration.</div>
                           </div>
                         </div>
                         <div class="step-row">

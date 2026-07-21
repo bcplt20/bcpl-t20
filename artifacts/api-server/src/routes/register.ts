@@ -37,7 +37,7 @@ router.post("/phase1", requireAuth, async (req: AuthRequest, res) => {
     });
   }
 
-  const videoDeadline = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+  const videoDeadline = new Date(Date.now() + 15 * 24 * 60 * 60 * 1000); // 15 days
 
   const [reg] = await db.insert(registrationsTable).values({
     userId: req.user!.userId,

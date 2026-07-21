@@ -25,7 +25,7 @@ async function notifyPhase1Success(
   amount: number,
 ) {
   const email = tplPhase1Receipt(user.name, reg.role, amount, reg.id, reg.trialCity ?? "TBD");
-  const smsMsg = `Welcome to BCPL T20 Season 5! Registered as ${reg.role.toUpperCase()}. Reg ID: ${reg.id.slice(0,8).toUpperCase()}. Upload trial video within 7 days. #OfficeSeStadiumtak`;
+  const smsMsg = `Welcome to BCPL T20 Season 5! Registered as ${reg.role.toUpperCase()}. Reg ID: ${reg.id.slice(0,8).toUpperCase()}. Upload trial video within 15 days. #OfficeSeStadiumtak`;
 
   await Promise.allSettled([
     sendEmail({ to: user.email, toName: user.name, ...email }),
