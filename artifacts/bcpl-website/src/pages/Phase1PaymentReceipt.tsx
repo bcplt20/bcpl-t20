@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { BCPLFooter } from '../components/BCPLFooter';
 
 export function Phase1PaymentReceipt() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -532,23 +533,7 @@ const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-cen
         </div>
       </div>
 
-      {/* ── FOOTER ── */}
-      <footer style={{ marginTop:64, borderTop:'1px solid rgba(255,255,255,0.06)', paddingTop:32, paddingBottom:32 }}>
-        <div className="wrap" style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:12 }}>
-                        <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL" style={{ height:42, width:'auto', objectFit:'contain', display:'block', filter:'brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.7))' }}/>
-              <div style={{ display:'inline-flex', alignItems:'center', gap:4, background:'rgba(232,178,61,0.12)', border:'1px solid rgba(232,178,61,0.5)', borderRadius:6, padding:'3px 10px' }}>
-                <span style={{ fontSize:9 }}>🏆</span>
-                <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:9, color:'#E8B23D', letterSpacing:'.12em' }}>SEASON 5</span>
-              </div>
-          <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)', letterSpacing:'.06em', textAlign:'center' }}>
-            Bhartiya Corporate Premier League &nbsp;·&nbsp; Season 5
-          </div>
-          <div style={{ fontSize:12, color:'#E8B23D', fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.1em' }}>#OfficeSeStadiumtak</div>
-          <div style={{ fontSize:11, color:'rgba(255,255,255,0.2)', letterSpacing:'.06em' }}>
-            © 2026 BCPL. All rights reserved.
-          </div>
-        </div>
-      </footer>
+      <BCPLFooter />
     </div>
   );
 }
