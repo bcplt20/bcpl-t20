@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { BCPLFooter } from '../components/BCPLFooter';
 
 const SAMPLE_VIDEOS = [
   {
@@ -503,42 +504,30 @@ const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-cen
       )}
 
       {/* ── STICKY BOTTOM BANNER ── */}
-      <div style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:500, background:'rgba(4,10,20,0.98)', backdropFilter:'blur(20px)', borderTop:'2px solid #FF7A29', padding:`12px 16px calc(12px + env(safe-area-inset-bottom))` }}>
-        <div style={{ maxWidth:1140, margin:'0 auto', display:'flex', alignItems:'center', justifyContent:'space-between', gap:16, flexWrap:'wrap' }}>
-          <div style={{ display:'flex', alignItems:'flex-start', gap:10, flex:1, minWidth:0 }}>
-            <span style={{ fontSize:16, flexShrink:0, marginTop:1 }}>⚠️</span>
-            <span style={{ fontSize:12, color:'rgba(255,255,255,0.6)', lineHeight:1.5 }}>
+      <div style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:500, background:'rgba(4,10,20,0.98)', backdropFilter:'blur(20px)', borderTop:'2px solid #FF7A29', padding:`10px 16px calc(10px + env(safe-area-inset-bottom))` }}>
+        <div style={{ maxWidth:1140, margin:'0 auto', display:'flex', flexDirection:'column', gap:8 }}>
+          {/* Warning text row */}
+          <div style={{ display:'flex', alignItems:'flex-start', gap:8 }}>
+            <span style={{ fontSize:14, flexShrink:0, lineHeight:1.4 }}>⚠️</span>
+            <span style={{ fontSize:11, color:'rgba(255,255,255,0.6)', lineHeight:1.4 }}>
               <strong style={{ color:'#FF7A29', fontFamily:'Montserrat,sans-serif', letterSpacing:'.04em' }}>VIDEO MUST BE UPLOADED WITHIN 7 DAYS.</strong> Late submissions will not be reviewed.
             </span>
           </div>
-          <button className="btn-primary" style={{ padding:'13px 24px', fontSize:13, whiteSpace:'nowrap', flexShrink:0, width:'100%', maxWidth:200 }}>
-            SUBMIT VIDEO →
-          </button>
-          {/* TEST MODE */}
-          <button onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/result'; }}
-            style={{ padding:'8px 14px', background:'none', border:'1px dashed rgba(34,197,94,0.3)', borderRadius:8, color:'rgba(34,197,94,0.5)', fontSize:11, cursor:'pointer', fontFamily:'Montserrat,sans-serif', fontWeight:700, whiteSpace:'nowrap', flexShrink:0 }}>
-            🧪 → Result Page
-          </button>
+          {/* Action row */}
+          <div style={{ display:'flex', gap:10, alignItems:'center' }}>
+            <button className="btn-primary" style={{ flex:1, padding:'11px 16px', fontSize:13, whiteSpace:'nowrap' }}>
+              SUBMIT VIDEO →
+            </button>
+            {/* TEST MODE */}
+            <button onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/result'; }}
+              style={{ padding:'8px 12px', background:'none', border:'1px dashed rgba(34,197,94,0.3)', borderRadius:8, color:'rgba(34,197,94,0.5)', fontSize:11, cursor:'pointer', fontFamily:'Montserrat,sans-serif', fontWeight:700, whiteSpace:'nowrap', flexShrink:0 }}>
+              🧪 Test
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* ── FOOTER ── */}
-      <footer style={{ marginTop:64, borderTop:'1px solid rgba(255,255,255,0.06)', paddingTop:32, paddingBottom:32 }}>
-        <div className="wrap" style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:12 }}>
-                        <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL" style={{ height:42, width:'auto', objectFit:'contain', display:'block', filter:'brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.7))' }}/>
-              <div style={{ display:'inline-flex', alignItems:'center', gap:4, background:'rgba(232,178,61,0.12)', border:'1px solid rgba(232,178,61,0.5)', borderRadius:6, padding:'3px 10px' }}>
-                <span style={{ fontSize:9 }}>🏆</span>
-                <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:9, color:'#E8B23D', letterSpacing:'.12em' }}>SEASON 5</span>
-              </div>
-          <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)', letterSpacing:'.06em', textAlign:'center' }}>
-            Bhartiya Corporate Premier League &nbsp;·&nbsp; Season 5
-          </div>
-          <div style={{ fontSize:12, color:'#E8B23D', fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.1em' }}>#OfficeSeStadiumtak</div>
-          <div style={{ fontSize:11, color:'rgba(255,255,255,0.2)', letterSpacing:'.06em' }}>
-            © 2026 BCPL. All rights reserved.
-          </div>
-        </div>
-      </footer>
+      <BCPLFooter />
     </div>
   );
 }
