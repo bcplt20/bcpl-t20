@@ -80,6 +80,10 @@ const SPONSORS: {tier:string,name:string,logo:string,color:string}[] = [];
 /* ═══════════════════════════════════════════════════════════ */
 export function Home() {
   const [menuOpen,  setMenuOpen]  = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
+  const [loginPhone,setLoginPhone]= useState('');
+  const [otpSent,   setOtpSent]   = useState(false);
+  const [loginOtp,  setLoginOtp]  = useState('');
   const [faqOpen,   setFaqOpen]   = useState<number|null>(null);
   const [countdown, setCountdown] = useState({ d:47, h:14, m:22, s:45 });
   const [bannerIdx, setBannerIdx] = useState(0);
@@ -341,7 +345,7 @@ export function Home() {
 
           {/* Desktop Nav */}
           <nav className="desk-links">
-            {NAV.map(n=><span key={n} className="nav-link" style={{cursor:"pointer"}} onClick={()=>navigate(RTES[n]||"/")}>{n}</span>)}
+            {NAV.map(n=><span key={n} className="nav-link" style={{cursor:"pointer",color:n==="Login"?"#FF7A29":"",fontWeight:n==="Login"?800:undefined}} onClick={()=>{ if(n==="Login"){ setLoginOpen(true); return; } navigate(RTES[n]||"/"); }}>{n}</span>)}
           </nav>
 
           {/* Right */}
@@ -354,12 +358,66 @@ export function Home() {
         </div>
       </nav>
 
+      {/* ══ LOGIN MODAL ══ */}
+      {loginOpen&&(
+        <div style={{ position:"fixed", inset:0, zIndex:1100, background:"rgba(0,0,0,0.75)", backdropFilter:"blur(8px)", display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}
+          onClick={e=>{ if(e.target===e.currentTarget){ setLoginOpen(false); setOtpSent(false); setLoginPhone(''); setLoginOtp(''); } }}>
+          <div style={{ background:"#0A1727", border:"1px solid rgba(255,255,255,0.1)", borderRadius:20, padding:"32px 28px", width:"100%", maxWidth:380, boxShadow:"0 24px 80px rgba(0,0,0,0.6)", position:"relative" }}>
+            <button onClick={()=>{ setLoginOpen(false); setOtpSent(false); setLoginPhone(''); setLoginOtp(''); }}
+              style={{ position:"absolute", top:16, right:16, background:"none", border:"none", color:"rgba(255,255,255,0.4)", fontSize:22, cursor:"pointer", lineHeight:1 }}>✕</button>
+            {/* Logo */}
+            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:24 }}>
+              <img src={import.meta.env.BASE_URL + "bcpl-assets/bcpl-logo-white.png"} alt="BCPL"
+                style={{ height:32, maxWidth:90, width:"auto", objectFit:"contain", filter:"brightness(1.3)" }}/>
+              <div style={{ display:"inline-flex", alignItems:"center", gap:4, background:"rgba(232,178,61,0.12)", border:"1px solid rgba(232,178,61,0.5)", borderRadius:6, padding:"2px 8px" }}>
+                <span style={{ fontSize:8 }}>🏆</span>
+                <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:8, color:"#E8B23D", letterSpacing:".12em" }}>SEASON 5</span>
+              </div>
+            </div>
+            <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:20, color:"#fff", marginBottom:6 }}>Player Login</div>
+            <div style={{ fontFamily:"Inter,sans-serif", fontSize:13, color:"rgba(255,255,255,0.45)", marginBottom:24, lineHeight:1.5 }}>Enter your registered mobile number to receive an OTP</div>
+            {!otpSent ? (
+              <>
+                <label style={{ fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:10, color:"rgba(255,255,255,0.4)", letterSpacing:".1em", textTransform:"uppercase", display:"block", marginBottom:8 }}>Mobile Number</label>
+                <div style={{ display:"flex", gap:10, marginBottom:18 }}>
+                  <div style={{ background:"rgba(255,255,255,0.06)", border:"1px solid rgba(255,255,255,0.12)", borderRadius:10, padding:"12px 14px", fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:14, color:"rgba(255,255,255,0.5)", flexShrink:0 }}>+91</div>
+                  <input type="tel" maxLength={10} value={loginPhone} onChange={e=>setLoginPhone(e.target.value.replace(/\D/g,''))}
+                    placeholder="10-digit mobile number"
+                    style={{ flex:1, background:"rgba(255,255,255,0.06)", border:"1px solid rgba(255,255,255,0.12)", borderRadius:10, padding:"12px 14px", fontFamily:"Inter,sans-serif", fontSize:15, color:"#fff", outline:"none", letterSpacing:".06em" }}/>
+                </div>
+                <button disabled={loginPhone.length!==10}
+                  onClick={()=>{ if(loginPhone.length===10) setOtpSent(true); }}
+                  style={{ width:"100%", background: loginPhone.length===10 ? "linear-gradient(135deg,#FF7A29,#D95E10)" : "rgba(255,255,255,0.08)", border:"none", borderRadius:12, color: loginPhone.length===10 ? "#fff" : "rgba(255,255,255,0.3)", fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:14, letterSpacing:".06em", padding:"14px", cursor: loginPhone.length===10 ? "pointer" : "not-allowed", textTransform:"uppercase", transition:"all .2s" }}>
+                  Send OTP →
+                </button>
+              </>
+            ) : (
+              <>
+                <div style={{ fontFamily:"Inter,sans-serif", fontSize:13, color:"rgba(255,255,255,0.5)", marginBottom:16 }}>OTP sent to <strong style={{ color:"#FF7A29" }}>+91 {loginPhone}</strong></div>
+                <label style={{ fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:10, color:"rgba(255,255,255,0.4)", letterSpacing:".1em", textTransform:"uppercase", display:"block", marginBottom:8 }}>Enter OTP</label>
+                <input type="tel" maxLength={6} value={loginOtp} onChange={e=>setLoginOtp(e.target.value.replace(/\D/g,''))}
+                  placeholder="6-digit OTP"
+                  style={{ width:"100%", background:"rgba(255,255,255,0.06)", border:"1px solid rgba(255,255,255,0.12)", borderRadius:10, padding:"14px", fontFamily:"Montserrat,sans-serif", fontSize:22, color:"#FF7A29", outline:"none", letterSpacing:".3em", textAlign:"center", marginBottom:18, boxSizing:"border-box" }}/>
+                <button disabled={loginOtp.length!==6}
+                  onClick={()=>{ if(loginOtp.length===6){ setLoginOpen(false); navigate(import.meta.env.BASE_URL+"register/player-profile"); } }}
+                  style={{ width:"100%", background: loginOtp.length===6 ? "linear-gradient(135deg,#22C55E,#16A34A)" : "rgba(255,255,255,0.08)", border:"none", borderRadius:12, color: loginOtp.length===6 ? "#fff" : "rgba(255,255,255,0.3)", fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:14, letterSpacing:".06em", padding:"14px", cursor: loginOtp.length===6 ? "pointer" : "not-allowed", textTransform:"uppercase", transition:"all .2s", marginBottom:12 }}>
+                  ✓ Verify & Login
+                </button>
+                <div style={{ textAlign:"center" }}>
+                  <button onClick={()=>{ setOtpSent(false); setLoginOtp(''); }} style={{ background:"none", border:"none", color:"rgba(255,255,255,0.35)", fontFamily:"Inter,sans-serif", fontSize:12, cursor:"pointer", textDecoration:"underline" }}>Change number</button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Mobile Menu */}
       {menuOpen&&(
         <div className="mob-menu">
           <button onClick={()=>setMenuOpen(false)} style={{ position:"fixed", top:18, right:22, background:"none", border:"none", color:"#fff", fontSize:28, cursor:"pointer", zIndex:1001, lineHeight:1 }}>✕</button>
           {NAV.map(n=>(
-            <div key={n} className="mob-link" onClick={()=>{ setMenuOpen(false); navigate(RTES[n]||"/"); }}>{n}</div>
+            <div key={n} className="mob-link" style={{color:n==="Login"?"#FF7A29":undefined}} onClick={()=>{ setMenuOpen(false); if(n==="Login"){ setLoginOpen(true); return; } navigate(RTES[n]||"/"); }}>{n}</div>
           ))}
           <button className="btn-cta" style={{ marginTop:24, width:"100%", justifyContent:"center", fontSize:16, padding:16 }} onClick={()=>{ setMenuOpen(false); navigate("/register"); }}>
             Register Now — ₹299 →

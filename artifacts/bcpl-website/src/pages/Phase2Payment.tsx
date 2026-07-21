@@ -68,17 +68,12 @@ const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-cen
       <nav style={{ background:'rgba(6,16,30,0.97)', backdropFilter:'blur(20px)', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
         <div style={{ height:2, background:'linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)', backgroundSize:'200%', animation:'shimGold 4s linear infinite' }} />
         <div className="wrap" style={{ maxWidth:1200, height:60, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-          <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-            <div style={{ width:36, height:36, borderRadius:'50%', overflow:'hidden', flexShrink:0, border:'2px solid rgba(255,122,41,0.5)', boxShadow:'0 0 12px rgba(255,122,41,0.35)' }}>
-              <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-ball-color.jpg'} alt="BCPL" style={{ width:'100%', height:'100%', objectFit:'cover' }}/>
-            </div>
-            <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, lineHeight:1, color:'#FF7A29' }}>BCPL</span>
-            <div style={{ display:'flex', flexDirection:'column', borderLeft:'1.5px solid rgba(255,122,41,0.35)', paddingLeft:9, gap:3 }}>
-              <div style={{ display:'inline-flex', alignItems:'center', gap:4, background:'rgba(232,178,61,0.1)', border:'1px solid rgba(232,178,61,0.4)', borderRadius:5, padding:'2px 7px' }}>
-                <span style={{ fontSize:8 }}>🏆</span>
-                <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:9, color:'#E8B23D', letterSpacing:'.12em' }}>SEASON 5</span>
-              </div>
-              <span style={{ fontFamily:'Montserrat,sans-serif', fontSize:7, fontWeight:700, color:'rgba(255,255,255,0.3)', letterSpacing:'.07em' }}>2026–27</span>
+          <div style={{ display:'flex', flexDirection:'row', alignItems:'center', gap:8, flexShrink:0, whiteSpace:'nowrap' }}>
+            <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL"
+              style={{ height:36, maxWidth:100, width:'auto', objectFit:'contain', display:'block', filter:'brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.7))', flexShrink:0 }}/>
+            <div style={{ display:'inline-flex', alignItems:'center', gap:4, background:'rgba(232,178,61,0.12)', border:'1px solid rgba(232,178,61,0.5)', borderRadius:6, padding:'3px 10px', flexShrink:0 }}>
+              <span style={{ fontSize:9 }}>🏆</span>
+              <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:9, color:'#E8B23D', letterSpacing:'.12em' }}>SEASON 5</span>
             </div>
           </div>
           <div className="desk-nav">{NAV.map(n => <button key={n} className="nav-link">{n}</button>)}</div>

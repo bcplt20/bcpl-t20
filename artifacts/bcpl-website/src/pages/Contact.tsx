@@ -82,9 +82,13 @@ function Navbar() {
     <>
       <nav style={{position:'sticky',top:0,zIndex:200,background:'rgba(6,14,28,0.96)',backdropFilter:'blur(24px)',borderBottom:'1px solid rgba(255,255,255,0.07)',boxShadow:'0 1px 0 0 rgba(255,122,41,0.25)'}}>
         <div className="wrap" style={{height:64,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-          <div style={{display:'flex',alignItems:'center',gap:8}}>
-            <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff'}}>T20</span></span>
-            <span style={{fontSize:10,color:'rgba(255,122,41,0.7)',fontFamily:'Montserrat,sans-serif',fontWeight:700,marginLeft:8,letterSpacing:'0.08em'}}>SEASON 5</span>
+          <div style={{display:'flex',flexDirection:'row',alignItems:'center',gap:8,flexShrink:0,whiteSpace:'nowrap'}}>
+            <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL"
+              style={{height:36,maxWidth:100,width:'auto',objectFit:'contain',display:'block',filter:'brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.7))',flexShrink:0}}/>
+            <div style={{display:'inline-flex',alignItems:'center',gap:4,background:'rgba(232,178,61,0.12)',border:'1px solid rgba(232,178,61,0.5)',borderRadius:6,padding:'3px 10px',flexShrink:0}}>
+              <span style={{fontSize:9}}>🏆</span>
+              <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:9,color:'#E8B23D',letterSpacing:'.12em'}}>SEASON 5</span>
+            </div>
           </div>
           <div className="desk-nav">
             {links.map(l=>(
