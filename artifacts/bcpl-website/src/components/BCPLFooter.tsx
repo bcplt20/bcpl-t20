@@ -42,12 +42,12 @@ export function BCPLFooter() {
               </div>
               <div>
                 <div style={{ fontWeight:900, fontSize:18, lineHeight:1 }}>
-                  <span style={{ color:"#FF7A29" }}>BCPL</span><span style={{ color:"#fff" }}>T20</span>
+                  <span style={{ color:"#FF7A29" }}>BCPL</span>
                 </div>
-                <div style={{ fontSize:9, color:"rgba(255,122,41,.65)", fontWeight:700, letterSpacing:".08em", marginTop:2 }}>SEASON 5 · 2026–27</div>
+                <div style={{ fontSize:9, color:"rgba(255,122,41,.65)", fontWeight:700, letterSpacing:".08em", marginTop:2 }}>BHARTIYA CORPORATE PREMIER LEAGUE · S5</div>
               </div>
             </a>
-            <p style={{ fontSize:12, color:"rgba(255,255,255,.3)", lineHeight:1.7, maxWidth:180 }}>India's Biggest Corporate T20 Cricket League. Season 5 — 2026–27.</p>
+            <p style={{ fontSize:12, color:"rgba(255,255,255,.3)", lineHeight:1.7, maxWidth:180 }}>India's Biggest Corporate Cricket League. Season 5 — 2026–27.</p>
           </div>
 
           {/* League */}
@@ -94,7 +94,7 @@ export function BCPLFooter() {
           </div>
 
           <div className="bcpl-foot-bottom">
-            <p style={{ fontSize:11, color:"rgba(255,255,255,.2)", fontWeight:600 }}>© 2026–27 BCPL T20 — Bhartiya Corporate Premier League · All Rights Reserved.</p>
+            <p style={{ fontSize:11, color:"rgba(255,255,255,.2)", fontWeight:600 }}>© 2026–27 BCPL — Bhartiya Corporate Premier League · All Rights Reserved.</p>
             <div className="bcpl-foot-legal">
               <a href="/privacy"  style={{ fontSize:11, color:"rgba(255,255,255,.2)", textDecoration:"none" }} className="bcpl-foot-link">Privacy Policy</a>
               <span style={{ color:"rgba(255,255,255,.1)", fontSize:10 }}>|</span>

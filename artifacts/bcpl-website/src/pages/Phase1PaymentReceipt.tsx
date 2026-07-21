@@ -101,7 +101,6 @@ export function Phase1PaymentReceipt() {
           <div style={{ display:'flex', alignItems:'center', gap:10 }}>
             <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:22, lineHeight:1 }}>
               <span style={{ color:'#FF7A29' }}>BCPL</span>
-              <span style={{ color:'#fff' }}> T20</span>
             </div>
             <div style={{ display:'flex', flexDirection:'column', borderLeft:'2px solid rgba(255,122,41,0.4)', paddingLeft:10, gap:1 }}>
               <span style={{ fontSize:8, fontWeight:800, color:'#FF7A29', letterSpacing:'.16em' }}>SEASON 5</span>
@@ -160,8 +159,8 @@ export function Phase1PaymentReceipt() {
 
           {/* Booking ref */}
           <div className="fade-up fade-up-4" style={{ display:'inline-block', background:'#060C18', border:'1px solid rgba(255,122,41,0.4)', padding:'12px 20px', borderRadius:12, marginBottom:0, maxWidth:'100%', overflow:'hidden' }}>
-            <div style={{ fontSize:9, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.18em', color:'rgba(255,255,255,0.35)', marginBottom:4 }}>BOOKING REFERENCE</div>
-            <div style={{ fontFamily:'monospace', fontSize:'clamp(13px,4vw,18px)', fontWeight:700, color:'#FF7A29', letterSpacing:'.12em', wordBreak:'break-all' }}>BCPL-S5-MUM-BAT-7432</div>
+            <div style={{ fontSize:9, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.18em', color:'rgba(255,255,255,0.35)', marginBottom:4 }}>REGISTRATION NUMBER</div>
+            <div style={{ fontFamily:'monospace', fontSize:'clamp(13px,4vw,18px)', fontWeight:700, color:'#FF7A29', letterSpacing:'.12em', wordBreak:'break-all' }}>BCPL-MUM-7432</div>
           </div>
         </div>
       </div>
@@ -190,7 +189,7 @@ export function Phase1PaymentReceipt() {
               { label:'Player Name', val:'Rahul Sharma' },
               { label:'Role', val:'🏏 Batsman' },
               { label:'Trial City', val:'📍 Mumbai' },
-              { label:'Booking Ref', val:'BCPL-S5-MUM-BAT-7432' },
+              { label:'Registration No.', val:'BCPL-MUM-7432' },
               { label:'Amount Paid', val:'₹299.00 ✅' },
               { label:'Payment Date', val:'15 Jan 2025, 11:42 AM' },
             ].map(r => (
@@ -270,13 +269,25 @@ export function Phase1PaymentReceipt() {
           <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:13, letterSpacing:'.16em', color:'rgba(255,255,255,0.4)', marginBottom:6, textTransform:'uppercase' }}>Share Your Achievement</div>
           <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'#fff', marginBottom:24 }}>Tell the world you're in the trials! 🏏</div>
           <div className="share-btns">
-            <button className="share-btn" style={{ background:'#25D366', color:'#fff' }}>
+            <button className="share-btn" style={{ background:'#25D366', color:'#fff' }}
+              onClick={() => {
+                const msg = encodeURIComponent("🏏 I just registered for BCPL Season 5 trials! India's biggest corporate cricket league. Register at https://bcplt20.com #OfficeSeStadiumTak");
+                window.open(`https://wa.me/?text=${msg}`, '_blank');
+              }}>
               💬 Share on WhatsApp
             </button>
-            <button className="share-btn" style={{ background:'linear-gradient(135deg,#833AB4,#FD1D1D,#F56040)', color:'#fff' }}>
+            <button className="share-btn" style={{ background:'linear-gradient(135deg,#833AB4,#FD1D1D,#F56040)', color:'#fff' }}
+              onClick={() => window.open('https://www.instagram.com/', '_blank')}>
               📸 Share on Instagram
             </button>
-            <button className="share-btn" style={{ background:'transparent', border:'1px solid rgba(255,255,255,0.2)', color:'rgba(255,255,255,0.7)' }}>
+            <button className="share-btn" style={{ background:'transparent', border:'1px solid rgba(255,255,255,0.2)', color:'rgba(255,255,255,0.7)' }}
+              onClick={() => {
+                const content = `BCPL SEASON 5 — PHASE 1 REGISTRATION CONFIRMED\n\nRegistration No.: BCPL-MUM-7432\nPlayer: Rahul Sharma\nRole: Batsman\nTrial City: Mumbai\nAmount Paid: ₹299\n\nwww.bcplt20.com`;
+                const blob = new Blob([content], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a'); a.href = url; a.download = 'BCPL-Receipt.txt'; a.click();
+                URL.revokeObjectURL(url);
+              }}>
               ⬇ Download Receipt
             </button>
           </div>
@@ -288,13 +299,12 @@ export function Phase1PaymentReceipt() {
         <div className="wrap" style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:12 }}>
           <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20 }}>
             <span style={{ color:'#FF7A29' }}>BCPL</span>
-            <span style={{ color:'#fff' }}> T20</span>
           </div>
           <div style={{ fontSize:11, color:'rgba(255,255,255,0.3)', letterSpacing:'.08em', textAlign:'center' }}>
-            BCPL T20 Pvt. Ltd. &nbsp;·&nbsp; Season 5 &nbsp;·&nbsp; #OfficeSeStadiumtak
+            Bhartiya Corporate Premier League &nbsp;·&nbsp; Season 5 &nbsp;·&nbsp; #OfficeSeStadiumtak
           </div>
           <div style={{ fontSize:11, color:'rgba(255,255,255,0.2)', letterSpacing:'.06em' }}>
-            © 2025 BCPL T20. All rights reserved.
+            © 2026 BCPL. All rights reserved.
           </div>
         </div>
       </footer>

@@ -61,7 +61,7 @@ const BANNERS = [
 const TIMELINE = [
   { month:"Oct '26 – Feb '27", label:"Registrations", icon:"📋", details:["Register online in minutes","Pay ₹299 / ₹399 by role","Upload 2-min trial video"], color:"#FF7A29", done:true },
   { month:"Mar – Jun 2027",    label:"Trials",         icon:"🏟", details:["Physical trials in 50+ cities","Franchise coaches evaluate live","3-city option available"],         color:"#E8B23D", done:false },
-  { month:"Jul – Aug 2027",    label:"Results",        icon:"📣", details:["SMS + Email notification","Result in 7 working days","Phase 2 invite if selected"],    color:"#22C55E", done:false },
+  { month:"Jul – Aug 2027",    label:"Results",        icon:"📣", details:["SMS + Email notification","Selection results announced","Phase 2 invite if selected"],    color:"#22C55E", done:false },
   { month:"August 2027",       label:"Auction",        icon:"GAVEL", details:["10 franchises bid live","Top player bid: ₹20 Lakh","IPL-style live auction event"],  color:"#3B82F6", done:false },
   { month:"Sep – Oct 2027",    label:"Tournament",     icon:"🏆", details:["₹6 Crore prize pool","10 franchise teams compete","Office se Stadium tak"],           color:"#6366F1", done:false },
 ];
@@ -212,6 +212,8 @@ export function Home() {
 
         .hero-grid{display:flex;flex-direction:column;gap:32px;}
         @media(min-width:900px){.hero-grid{flex-direction:row;align-items:center;}}
+        .ganguly-img{right:0!important;left:auto!important;}
+        @media(max-width:899px){.ganguly-img{left:50%!important;right:auto!important;transform:translateX(-50%)!important;width:100%!important;object-position:center top!important;opacity:0.18!important;}}
 
         .amb-grid{display:flex;flex-direction:column;gap:20px;}
         @media(min-width:768px){.amb-grid{flex-direction:row;align-items:center;}}
@@ -335,7 +337,7 @@ export function Home() {
                 <span style={{ fontSize:11 }}>🏆</span>
                 <span style={{ fontWeight:900, fontSize:12, color:"#E8B23D", letterSpacing:".06em", animation:"glow 2.5s ease infinite" }}>SEASON 5</span>
               </div>
-              <div className="mont" style={{ fontWeight:700, fontSize:8, letterSpacing:".1em", color:"rgba(255,255,255,.35)", textTransform:"uppercase", paddingLeft:2 }}>2026–27 · BCPL T20</div>
+              <div className="mont" style={{ fontWeight:700, fontSize:8, letterSpacing:".1em", color:"rgba(255,255,255,.35)", textTransform:"uppercase", paddingLeft:2 }}>2026–27 · BHARTIYA CORPORATE PREMIER LEAGUE</div>
             </div>
           </div>
 
@@ -376,7 +378,10 @@ export function Home() {
         <div style={{ position:"absolute", top:"-20%", left:"-10%", width:"60%", height:"140%", background:"radial-gradient(ellipse,rgba(255,122,41,.06) 0%,transparent 65%)", pointerEvents:"none" }}/>
         {/* Ganguly watermark — visible brand ambassador presence */}
         <img src={import.meta.env.BASE_URL + "bcpl-assets/ganguly_shoot.jpg"} alt="Sourav Ganguly — BCPL Brand Ambassador" aria-hidden="true"
-          style={{ position:"absolute", right:0, top:0, height:"100%", width:"auto", objectFit:"cover", objectPosition:"center top", opacity:0.32, pointerEvents:"none", userSelect:"none", filter:"sepia(10%) contrast(1.08) brightness(0.95)", zIndex:0, maskImage:"linear-gradient(to left, rgba(0,0,0,1) 10%, rgba(0,0,0,0.7) 45%, transparent 72%)", WebkitMaskImage:"linear-gradient(to left, rgba(0,0,0,1) 10%, rgba(0,0,0,0.7) 45%, transparent 72%)" as any }}
+          style={{ position:"absolute", right:0, top:0, height:"100%", width:"auto", objectFit:"cover", objectPosition:"center top", opacity:0.32, pointerEvents:"none", userSelect:"none", filter:"sepia(10%) contrast(1.08) brightness(0.95)", zIndex:0, maskImage:"linear-gradient(to left, rgba(0,0,0,1) 10%, rgba(0,0,0,0.7) 45%, transparent 72%)", WebkitMaskImage:"linear-gradient(to left, rgba(0,0,0,1) 10%, rgba(0,0,0,0.7) 45%, transparent 72%)" as any,
+          // Mobile: center the image
+          } as React.CSSProperties}
+          className="ganguly-img"
         />
 
         <div className="W" style={{ position:"relative", zIndex:1, paddingTop:"clamp(48px,8vw,80px)", paddingBottom:"clamp(48px,8vw,72px)" }}>
@@ -390,7 +395,7 @@ export function Home() {
                   <span style={{ fontSize:18, lineHeight:1 }}>🏆</span>
                   <div>
                     <div className="mont" style={{ fontWeight:900, fontSize:16, color:"#E8B23D", letterSpacing:".06em", lineHeight:1, animation:"glow 2.5s ease infinite" }}>SEASON 5</div>
-                    <div className="mont" style={{ fontWeight:700, fontSize:9, color:"rgba(232,178,61,.6)", letterSpacing:".12em", textTransform:"uppercase", marginTop:2, lineHeight:1 }}>BCPL T20 · 2026–27</div>
+                    <div className="mont" style={{ fontWeight:700, fontSize:9, color:"rgba(232,178,61,.6)", letterSpacing:".12em", textTransform:"uppercase", marginTop:2, lineHeight:1 }}>BCPL · 2026–27</div>
                   </div>
                   <div style={{ width:1, height:28, background:"rgba(232,178,61,.3)" }}/>
                   <div style={{ display:"flex", alignItems:"center", gap:5 }}>
@@ -432,7 +437,7 @@ export function Home() {
 
               {/* Countdown */}
               <div>
-                <div className="mont" style={{ fontSize:10, fontWeight:700, letterSpacing:".14em", color:"rgba(255,255,255,.35)", textTransform:"uppercase", marginBottom:10 }}>⏱ Phase 1 Closes In</div>
+                <div className="mont" style={{ fontSize:10, fontWeight:700, letterSpacing:".14em", color:"rgba(255,255,255,.35)", textTransform:"uppercase", marginBottom:10 }}>⏱ Registration for Phase 1 Closes In</div>
                 <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
                   {[{v:countdown.d,l:"Days"},{v:countdown.h,l:"Hrs"},{v:countdown.m,l:"Min"},{v:countdown.s,l:"Sec"}].map(({v,l})=>(
                     <div key={l} className="cd-box">

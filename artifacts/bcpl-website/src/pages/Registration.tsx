@@ -44,10 +44,9 @@ const ROLES = [
   },
   {
     id: 'ar',   emoji: '⭐', label: 'All-Rounder',
-    desc: 'Bat. Bowl. Win matches. Most wanted at auction.',
+    desc: 'Bat. Bowl. Win matches. The complete cricketer.',
     phase1: 399, phase2: 3000,
     color: '#F59E0B', colorDark: '#B45309',
-    premium: true,
   },
 ];
 
@@ -485,11 +484,14 @@ export function Registration() {
                       <input className="field-inp" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" />
                     </div>
                     <div>
-                      <label className="field-lbl">Phone * (10 digits)</label>
-                      <input className="field-inp" type="tel" value={phone}
-                        onChange={e => { const v = e.target.value.replace(/\D/g,''); if(v.length<=10) setPhone(v); }}
-                        placeholder="9876543210" maxLength={10} inputMode="numeric" />
-                      {phone.length > 0 && phone.length < 10 && <div style={{fontSize:10,color:'#EF4444',marginTop:4}}>{10 - phone.length} more digits needed</div>}
+                      <label className="field-lbl">Phone *</label>
+                      <div style={{ display:'flex', alignItems:'center', gap:0 }}>
+                        <span style={{ padding:'0 12px', height:46, display:'flex', alignItems:'center', background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,122,41,0.25)', borderRight:'none', fontSize:14, fontWeight:700, color:'rgba(255,255,255,0.6)', flexShrink:0, borderRadius:'8px 0 0 8px', letterSpacing:'.02em' }}>+91</span>
+                        <input className="field-inp" type="tel" value={phone}
+                          onChange={e => { const v = e.target.value.replace(/\D/g,''); if(v.length<=10) setPhone(v); }}
+                          placeholder="9876543210" maxLength={10} inputMode="numeric"
+                          style={{ borderRadius:'0 8px 8px 0', borderLeft:'none', flex:1 }} />
+                      </div>
                     </div>
                   </div>
                   <div>
@@ -605,7 +607,7 @@ export function Registration() {
               <div className="step-enter">
                 <div style={{ borderLeft:'3px solid #FF7A29', paddingLeft:14, marginBottom:28 }}>
                   <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(18px,5vw,22px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em' }}>Your Role</div>
-                  <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginTop:4 }}>Scouts evaluate you specifically for this role. All-Rounders are highest valued at auction.</div>
+                  <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginTop:4 }}>Scouts evaluate you specifically for this role. Every player brings equal value to the game.</div>
                 </div>
 
                 <div className="roles-grid">
@@ -622,12 +624,14 @@ export function Registration() {
                       <div style={{ padding:'18px 16px 16px' }}>
                         {/* Top row */}
                         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:12 }}>
-                          <span style={{ fontSize:28 }}>{r.emoji}</span>
-                          {r.premium && (
-                            <div style={{ background:'rgba(245,158,11,0.15)', border:'1px solid rgba(245,158,11,0.4)', padding:'2px 8px', fontSize:8, fontWeight:900, fontFamily:'Montserrat,sans-serif', letterSpacing:'.14em', color:'#F59E0B' }}>
-                              MOST VALUED
-                            </div>
-                          )}
+                          {/* Role image from sprite */}
+                          <div style={{
+                            width:56, height:56, borderRadius:'50%', overflow:'hidden', flexShrink:0,
+                            border:`2px solid ${r.color}55`,
+                            backgroundImage:`url(${import.meta.env.BASE_URL}bcpl-assets/cricket-roles.png)`,
+                            backgroundSize: r.id==='bat' ? '300% 200%' : r.id==='bowl' ? '300% 200%' : r.id==='wk' ? '300% 200%' : '200% 200%',
+                            backgroundPosition: r.id==='bat' ? '50% 0%' : r.id==='bowl' ? '0% 0%' : r.id==='wk' ? '100% 0%' : '0% 100%',
+                          }} />
                           {role?.id === r.id && (
                             <div style={{ width:20, height:20, borderRadius:'50%', background:r.color, display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:900, color:'#fff' }}>✓</div>
                           )}
@@ -769,9 +773,9 @@ export function Registration() {
                       <div className="what-you-get-grid">
                         {[
                           '✅ BCCI-certified scout evaluation',
-                          '✅ Result within 7 working days',
+                          '✅ Selection results announced promptly',
                           '✅ Zero auction / tournament fee',
-                          '✅ 7-day result guarantee (or refund)',
+                          '✅ Result guarantee (or full refund)',
                           '✅ Phase 2 invite if selected',
                         ].map(t => <div key={t} style={{ fontSize:12, color:'rgba(255,255,255,0.65)', lineHeight:1.5 }}>{t}</div>)}
                       </div>
