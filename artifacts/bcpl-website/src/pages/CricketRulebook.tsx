@@ -14,7 +14,7 @@ function AnnBar() {
 }
 
 function Navbar({open,setOpen}:{open:boolean,setOpen:(v:boolean)=>void}) {
-  const links=[['🏠 Home'],['🔴 Match Center'],['🏏 Teams'],['🤝 Sponsors'],['📷 Photos'],['▶️ Videos'],['ℹ️ About'],['❓ FAQ'],['✉️ Contact']];
+  const links=[['🏠 Home','/'],['🔴 Match Center','/match-center'],['🏏 Teams','/teams'],['🤝 Sponsors','/sponsors'],['📷 Photos','/photos'],['▶️ Videos','/videos'],['ℹ️ About','/about'],['❓ FAQ','/faq'],['✉️ Contact','/contact']];
   return (
     <>
       <nav style={{position:'sticky',top:0,zIndex:200,background:'rgba(6,14,28,0.96)',backdropFilter:'blur(24px)',borderBottom:'1px solid rgba(255,255,255,0.07)',boxShadow:'0 1px 0 0 rgba(255,122,41,0.25)'}}>
@@ -28,8 +28,8 @@ function Navbar({open,setOpen}:{open:boolean,setOpen:(v:boolean)=>void}) {
             </div>
           </a>
           <div className="desk-nav">
-            {['Home','Match Center','Teams','Sponsors','Photos','Videos','About','FAQ','Contact'].map(l=>(
-              <a key={l} href="#" style={{color:'rgba(255,255,255,0.7)',fontWeight:600,fontSize:13,textDecoration:'none',fontFamily:'Inter,sans-serif'}}>{l}</a>
+            {[['Home','/'],['Match Center','/match-center'],['Teams','/teams'],['Sponsors','/sponsors'],['Photos','/photos'],['Videos','/videos'],['About','/about'],['FAQ','/faq'],['Contact','/contact']].map(([l,h])=>(
+              <a key={l} href={h} style={{color:'rgba(255,255,255,0.7)',fontWeight:600,fontSize:13,textDecoration:'none',fontFamily:'Inter,sans-serif'}}>{l}</a>
             ))}
             <a href="/register" className="btn-fire" style={{padding:'10px 20px',fontSize:13,textDecoration:'none',display:'inline-flex',alignItems:'center'}}>Register ₹299</a>
           </div>
@@ -44,8 +44,8 @@ function Navbar({open,setOpen}:{open:boolean,setOpen:(v:boolean)=>void}) {
         <div style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'#06101E',zIndex:199,display:'flex',flexDirection:'column',padding:'80px 24px 40px',overflowY:'auto'}}>
           <button onClick={()=>setOpen(false)} style={{position:'absolute',top:16,right:16,background:'none',border:'none',color:'rgba(255,255,255,0.5)',fontSize:28,cursor:'pointer',lineHeight:1}}>✕</button>
           <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL" style={{height:36,width:'auto',objectFit:'contain',marginBottom:32,filter:'brightness(1.3)'}}/>
-          {links.map(([l])=>(
-            <a key={l} href="#" onClick={()=>setOpen(false)} style={{color:'rgba(255,255,255,0.85)',fontWeight:700,fontSize:18,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'13px 0',borderBottom:'1px solid rgba(255,255,255,0.07)',display:'flex',alignItems:'center',minHeight:44}}>{l}</a>
+          {links.map(([l,h])=>(
+            <a key={l} href={h} onClick={()=>setOpen(false)} style={{color:'rgba(255,255,255,0.85)',fontWeight:700,fontSize:18,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'13px 0',borderBottom:'1px solid rgba(255,255,255,0.07)',display:'flex',alignItems:'center',minHeight:44}}>{l}</a>
           ))}
           <a href="/register" className="btn-fire" style={{marginTop:28,height:52,fontSize:16,width:'100%',textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>📝 Register for ₹299 →</a>
         </div>
