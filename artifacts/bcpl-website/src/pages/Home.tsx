@@ -52,17 +52,17 @@ const FAQS = [
 /* Announcement banners that rotate */
 const BANNERS = [
   { text:"🎁 Refer a friend and get ₹50 cashback on your next phase fee!", cta:"Refer Now", color:"#1a3a1a", border:"#22C55E", textCol:"#22C55E", ctaCol:"#22C55E" },
-  { text:"⏰ Last date for Phase 1 registration is 28th February 2026 — Don't miss out!", cta:"Register Now", color:"#1a1a0a", border:"#FF7A29", textCol:"#FF7A29", ctaCol:"#FF7A29" },
+  { text:"⏰ Last date for Phase 1 registration is 28th February 2027 — Don't miss out!", cta:"Register Now", color:"#1a1a0a", border:"#FF7A29", textCol:"#FF7A29", ctaCol:"#FF7A29" },
   { text:"🏏 New cities added! Trials now in 50+ cities across India. Check your city →", cta:"View Cities", color:"#0a1a2e", border:"#3B82F6", textCol:"#60A5FA", ctaCol:"#60A5FA" },
 ];
 
 /* Season timeline */
 const TIMELINE = [
-  { month:"Oct – Feb", label:"Registrations", icon:"📋", desc:"Online Phase 1 registrations open. Pay ₹299. Upload trial video.", color:"#FF7A29", done:true },
-  { month:"Mar – Jun", label:"Trials",         icon:"🏟", desc:"Physical trials across 50+ cities. BCCI scouts evaluate players live.", color:"#E8B23D", done:false },
-  { month:"Jul – Aug", label:"Results",        icon:"📣", desc:"Selection results announced. Shortlisted players notified directly.", color:"#22C55E", done:false },
-  { month:"August",    label:"Auction",        icon:"🔨", desc:"IPL-style live franchise auction. 10 teams bid for top players.", color:"#3B82F6", done:false },
-  { month:"Sep – Oct", label:"Tournament",     icon:"🏆", desc:"BCPL T20 Season 5 kicks off. ₹6 Crore prize pool up for grabs.", color:"#6366F1", done:false },
+  { month:"Oct '26 – Feb '27", label:"Registrations", icon:"📋", details:["Register online in minutes","Pay ₹299 / ₹399 by role","Upload 2-min trial video"], color:"#FF7A29", done:true },
+  { month:"Mar – Jun 2027",    label:"Trials",         icon:"🏟", details:["Physical trials in 50+ cities","Franchise coaches evaluate live","3-city option available"],         color:"#E8B23D", done:false },
+  { month:"Jul – Aug 2027",    label:"Results",        icon:"📣", details:["SMS + Email notification","Result in 7 working days","Phase 2 invite if selected"],    color:"#22C55E", done:false },
+  { month:"August 2027",       label:"Auction",        icon:"GAVEL", details:["10 franchises bid live","Top player bid: ₹20 Lakh","IPL-style live auction event"],  color:"#3B82F6", done:false },
+  { month:"Sep – Oct 2027",    label:"Tournament",     icon:"🏆", details:["₹6 Crore prize pool","10 franchise teams compete","Office se Stadium tak"],           color:"#6366F1", done:false },
 ];
 
 /* Matches */
@@ -105,14 +105,16 @@ export function Home() {
     return ()=>{ if(pollRef.current) clearInterval(pollRef.current); };
   },[]);
 
-  /* Countdown */
+  /* Countdown — Phase 1 closes 28 Feb 2027 */
   useEffect(()=>{
-    const target = new Date(Date.now() + 47*86400000);
-    const t = setInterval(()=>{
+    const target = new Date('2027-02-28T23:59:59+05:30');
+    const tick = ()=>{
       const diff = target.getTime()-Date.now();
-      if(diff<=0){ clearInterval(t); return; }
+      if(diff<=0){ setCountdown({d:0,h:0,m:0,s:0}); return; }
       setCountdown({ d:Math.floor(diff/86400000), h:Math.floor((diff%86400000)/3600000), m:Math.floor((diff%3600000)/60000), s:Math.floor((diff%60000)/1000) });
-    },1000);
+    };
+    tick();
+    const t = setInterval(tick,1000);
     return ()=>clearInterval(t);
   },[]);
 
@@ -273,39 +275,15 @@ export function Home() {
 
           {/* Logo */}
           <div style={{ display:"flex", alignItems:"center", gap:10, flexShrink:0, cursor:"pointer" }} onClick={()=>navigate("/")}>
-            {/* BCPL Shield Crest */}
-            <svg width="44" height="48" viewBox="0 0 44 48" fill="none" style={{ flexShrink:0, filter:"drop-shadow(0 0 10px rgba(255,122,41,.4))" }}>
-              <defs>
-                <linearGradient id="shGrad" x1="0" y1="0" x2="44" y2="48" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stopColor="#FF8C40"/>
-                  <stop offset="60%" stopColor="#FF6B00"/>
-                  <stop offset="100%" stopColor="#C94E0E"/>
-                </linearGradient>
-                <linearGradient id="shShine" x1="0" y1="0" x2="0" y2="48" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stopColor="rgba(255,255,255,0.28)"/>
-                  <stop offset="55%" stopColor="rgba(255,255,255,0)"/>
-                </linearGradient>
-              </defs>
-              {/* Shield body */}
-              <path d="M22 1 L43 9.5 L43 28 Q43 42 22 47 Q1 42 1 28 L1 9.5 Z" fill="url(#shGrad)" stroke="rgba(255,200,80,0.25)" strokeWidth="0.8"/>
-              {/* Shine */}
-              <path d="M22 1 L43 9.5 L43 28 Q43 42 22 47 Q1 42 1 28 L1 9.5 Z" fill="url(#shShine)"/>
-              {/* Inner border ring */}
-              <path d="M22 4 L40 11.5 L40 28 Q40 40 22 44 Q4 40 4 28 L4 11.5 Z" fill="none" stroke="rgba(255,210,100,0.22)" strokeWidth="1"/>
-              {/* Cricket ball seam arcs */}
-              <path d="M13 20 Q22 15 31 20" stroke="rgba(255,255,255,0.18)" strokeWidth="1.2" fill="none"/>
-              <path d="M13 20 Q22 25 31 20" stroke="rgba(255,255,255,0.18)" strokeWidth="1.2" fill="none"/>
-              {/* BCPL text */}
-              <text x="22" y="21" textAnchor="middle" dominantBaseline="middle" fontFamily="'Montserrat',Arial Black,sans-serif" fontWeight="900" fontSize="12.5" fill="white" letterSpacing="0.8">BCPL</text>
-              {/* T20 subtitle */}
-              <text x="22" y="34" textAnchor="middle" dominantBaseline="middle" fontFamily="'Montserrat',Arial Black,sans-serif" fontWeight="800" fontSize="8.5" fill="rgba(255,218,100,0.95)" letterSpacing="2.5">T20</text>
-            </svg>
+            <div className="bcpl-logo" style={{ width:42, height:42, borderRadius:"50%", overflow:"hidden", flexShrink:0, border:"2px solid rgba(255,122,41,0.5)", boxShadow:"0 0 12px rgba(255,122,41,0.35)" }}>
+              <img src={import.meta.env.BASE_URL + "bcpl-assets/bcpl-ball-clean.png"} alt="BCPL" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"top center" }}/>
+            </div>
             <div>
               <div style={{ display:"flex", alignItems:"baseline", gap:2 }}>
                 <span className="mont" style={{ fontWeight:900, fontSize:20, color:"#FF7A29", lineHeight:1 }}>BCPL</span>
                 <span className="mont" style={{ fontWeight:900, fontSize:20, color:"#fff", lineHeight:1 }}>T20</span>
               </div>
-              <div className="mont" style={{ fontWeight:800, fontSize:8, letterSpacing:".12em", color:"#E8B23D", textTransform:"uppercase", lineHeight:1, marginTop:2 }}>Season 5 · 2026</div>
+              <div className="mont" style={{ fontWeight:800, fontSize:8, letterSpacing:".12em", color:"#E8B23D", textTransform:"uppercase", lineHeight:1, marginTop:2 }}>Season 5 · 2026–27</div>
             </div>
           </div>
 
@@ -624,49 +602,67 @@ export function Home() {
           <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4vw,44px)", color:"#fff", textTransform:"uppercase", marginBottom:6 }}>Season 5 Timeline</h2>
           <p style={{ fontSize:15, color:"rgba(255,255,255,.45)", marginBottom:48, maxWidth:540 }}>From registration to the trophy — here's the complete road map for BCPL T20 Season 5.</p>
 
-          {/* Desktop timeline — horizontal */}
-          <div style={{ display:"none" }} className="tl-desktop-hide"/>
+          {/* Timeline grid */}
           <div className="tl-grid">
             {TIMELINE.map((t, i)=>(
-              <div key={i} className="tl-card" style={{ position:"relative", paddingBottom:0 }}>
-                {/* Connector line */}
-                {i < TIMELINE.length-1 && (
-                  <div style={{ display:"none" }} className="tl-connector"/>
-                )}
-
+              <div key={i} className="tl-card" style={{ position:"relative" }}>
                 {/* Card */}
-                <div className="tl-inner" style={{ margin:"0 6px", background:"linear-gradient(135deg,#0A1727,#060C18)", border:`1.5px solid ${t.color}33`, borderTop:`3px solid ${t.color}`, borderRadius:16, padding:"20px 16px", textAlign:"center", position:"relative", overflow:"hidden" }}>
+                <div className="tl-inner" style={{ margin:"0 5px", background:"linear-gradient(160deg,#0C1C30,#07101E)", border:`1.5px solid ${t.color}30`, borderTop:`3px solid ${t.color}`, borderRadius:14, padding:"16px 14px", textAlign:"center", position:"relative", overflow:"hidden" }}>
                   {/* Shimmer bg */}
-                  <div style={{ position:"absolute", inset:0, background:`radial-gradient(ellipse 80% 60% at 50% 0%,${t.color}08 0%,transparent 70%)`, pointerEvents:"none" }}/>
+                  <div style={{ position:"absolute", inset:0, background:`radial-gradient(ellipse 90% 50% at 50% 0%,${t.color}09 0%,transparent 65%)`, pointerEvents:"none" }}/>
+
+                  {/* Step number */}
+                  <div style={{ position:"absolute", top:10, left:12, width:18, height:18, borderRadius:"50%", background:`${t.color}22`, border:`1px solid ${t.color}55`, display:"flex", alignItems:"center", justifyContent:"center" }}>
+                    <span className="mont" style={{ fontSize:9, fontWeight:900, color:t.color }}>{i+1}</span>
+                  </div>
 
                   {/* Icon bubble */}
-                  <div style={{ width:56, height:56, borderRadius:"50%", background:`linear-gradient(135deg,${t.color}22,${t.color}08)`, border:`2px solid ${t.color}44`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:26, margin:"0 auto 12px", boxShadow:`0 0 20px ${t.color}22`, animation:"float 3s ease-in-out infinite", animationDelay:`${i*0.5}s` }}>{t.icon}</div>
+                  <div style={{ width:44, height:44, borderRadius:"50%", background:`linear-gradient(135deg,${t.color}20,${t.color}08)`, border:`1.5px solid ${t.color}40`, display:"flex", alignItems:"center", justifyContent:"center", margin:"6px auto 10px" }}>
+                    {t.icon === "GAVEL" ? (
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={t.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M14.5 3.5L20.5 9.5L18 12L12 6L14.5 3.5Z" fill={t.color+"40"} stroke={t.color} strokeWidth="1.8"/>
+                        <path d="M6.5 11.5L12.5 17.5L10 20L4 14L6.5 11.5Z" fill={t.color+"30"} stroke={t.color} strokeWidth="1.8"/>
+                        <path d="M10 8L16 14" stroke={t.color} strokeWidth="2"/>
+                        <path d="M3 21L8 16" stroke={t.color} strokeWidth="2.5" strokeLinecap="round"/>
+                        <rect x="16" y="1" width="5" height="8" rx="1.5" fill={t.color+"50"} stroke={t.color} strokeWidth="1.5" transform="rotate(45 18.5 5)"/>
+                      </svg>
+                    ) : (
+                      <span style={{ fontSize:22 }}>{t.icon}</span>
+                    )}
+                  </div>
 
                   {/* Month pill */}
-                  <div style={{ display:"inline-block", background:`${t.color}18`, border:`1px solid ${t.color}44`, borderRadius:20, padding:"3px 12px", marginBottom:8 }}>
-                    <span className="mont" style={{ fontSize:10, fontWeight:800, color:t.color, letterSpacing:".08em" }}>{t.month}</span>
+                  <div style={{ display:"inline-block", background:`${t.color}15`, border:`1px solid ${t.color}35`, borderRadius:20, padding:"2px 10px", marginBottom:6 }}>
+                    <span className="mont" style={{ fontSize:9, fontWeight:800, color:t.color, letterSpacing:".06em" }}>{t.month}</span>
                   </div>
 
                   {/* Label */}
-                  <div className="mont" style={{ fontWeight:900, fontSize:"clamp(13px,2vw,16px)", color:"#fff", marginBottom:8, lineHeight:1.2 }}>{t.label}</div>
+                  <div className="mont" style={{ fontWeight:900, fontSize:14, color:"#fff", marginBottom:10, lineHeight:1.2 }}>{t.label}</div>
 
-                  {/* Desc */}
-                  <p style={{ fontSize:11, color:"rgba(255,255,255,.45)", lineHeight:1.6, margin:0 }}>{t.desc}</p>
+                  {/* Details bullets */}
+                  <div style={{ display:"flex", flexDirection:"column", gap:5, textAlign:"left" }}>
+                    {(t as any).details.map((d:string, di:number)=>(
+                      <div key={di} style={{ display:"flex", alignItems:"flex-start", gap:6 }}>
+                        <span style={{ width:5, height:5, borderRadius:"50%", background:t.color, display:"inline-block", flexShrink:0, marginTop:5 }}/>
+                        <span style={{ fontSize:11, color:"rgba(255,255,255,.5)", lineHeight:1.5 }}>{d}</span>
+                      </div>
+                    ))}
+                  </div>
 
                   {/* Done badge */}
                   {t.done && (
                     <div style={{ marginTop:10, display:"inline-flex", alignItems:"center", gap:4, background:"rgba(34,197,94,.1)", border:"1px solid rgba(34,197,94,.3)", borderRadius:6, padding:"2px 8px" }}>
-                      <span style={{ fontSize:10 }}>✅</span>
+                      <span style={{ width:6, height:6, borderRadius:"50%", background:"#22C55E", display:"inline-block" }}/>
                       <span className="mont" style={{ fontSize:9, fontWeight:800, color:"#22C55E", letterSpacing:".08em" }}>ONGOING</span>
                     </div>
                   )}
                 </div>
 
-                {/* Arrow connector (hidden on mobile via .tl-arrow CSS) */}
+                {/* Arrow connector */}
                 {i < TIMELINE.length-1 && (
-                  <div className="tl-arrow" style={{ position:"absolute", top:"50%", right:-14, transform:"translateY(-50%)", zIndex:10, display:"flex", alignItems:"center", justifyContent:"center" }}>
-                    <div style={{ width:20, height:20, borderRadius:"50%", background:`${t.color}`, display:"flex", alignItems:"center", justifyContent:"center" }}>
-                      <span style={{ fontSize:10, color:"#fff", fontWeight:900 }}>→</span>
+                  <div className="tl-arrow" style={{ position:"absolute", top:"50%", right:-12, transform:"translateY(-50%)", zIndex:10 }}>
+                    <div style={{ width:16, height:16, borderRadius:"50%", background:t.color, display:"flex", alignItems:"center", justifyContent:"center" }}>
+                      <span style={{ fontSize:8, color:"#fff", fontWeight:900 }}>→</span>
                     </div>
                   </div>
                 )}
@@ -674,19 +670,17 @@ export function Home() {
             ))}
           </div>
 
-          {/* Mobile: vertical timeline */}
+          {/* Responsive styles */}
           <style>{`
             @media(min-width:768px){
               .tl-grid{position:relative;align-items:stretch;}
-              .tl-grid::before{content:'';position:absolute;top:50%;left:0;right:0;height:2px;background:linear-gradient(90deg,#FF7A29,#E8B23D,#22C55E,#3B82F6,#6366F1);transform:translateY(-50%);z-index:0;border-radius:2px;opacity:.3;}
+              .tl-grid::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:linear-gradient(90deg,#FF7A29,#E8B23D,#22C55E,#3B82F6,#6366F1);transform:translateY(-50%);z-index:0;opacity:.2;}
             }
             @media(max-width:767px){
-              .tl-grid{display:grid;grid-template-columns:1fr;gap:12px;}
+              .tl-grid{display:grid;grid-template-columns:1fr;gap:10px;}
               .tl-grid::before{display:none;}
-              .tl-card{padding-bottom:0;}
-              .tl-inner{text-align:left!important;display:flex;gap:14px;align-items:flex-start;padding:16px!important;}
+              .tl-inner{text-align:left!important;display:flex;gap:12px;align-items:flex-start;padding:14px 12px!important;}
               .tl-inner > *{flex-shrink:0;}
-              .tl-inner > p,.tl-inner > div:last-child{flex:1;flex-shrink:1;}
               .tl-arrow{display:none!important;}
             }
           `}</style>
@@ -695,7 +689,7 @@ export function Home() {
           <div style={{ marginTop:44, padding:"24px 28px", background:"linear-gradient(135deg,rgba(255,122,41,.08),rgba(232,178,61,.04))", border:"1px solid rgba(255,122,41,.2)", borderRadius:20, display:"flex", flexWrap:"wrap", alignItems:"center", justifyContent:"space-between", gap:16 }}>
             <div>
               <div className="mont" style={{ fontWeight:900, fontSize:16, color:"#FF7A29", marginBottom:4 }}>Phase 1 Registrations Are Open Now!</div>
-              <div style={{ fontSize:13, color:"rgba(255,255,255,.5)" }}>Join before 28th February 2026. Start your journey for just ₹299.</div>
+              <div style={{ fontSize:13, color:"rgba(255,255,255,.5)" }}>Join before 28th February 2027. Start your journey for just ₹299.</div>
             </div>
             <button className="btn-cta" style={{ fontSize:14, padding:"13px 28px", flexShrink:0 }} onClick={()=>navigate("/register")}>Register Now — ₹299 →</button>
           </div>
@@ -967,7 +961,7 @@ export function Home() {
             Your Stadium Debut<br/>Starts With <span className="shim">₹299</span>
           </h2>
           <p style={{ fontSize:"clamp(14px,2vw,17px)", color:"rgba(255,255,255,.5)", lineHeight:1.7, marginBottom:32, maxWidth:520, margin:"0 auto 32px" }}>
-            Join 2.5 lakh+ working professionals who have already taken the first step. Phase 1 closes 28 February 2026.
+            Join 2.5 lakh+ working professionals who have already taken the first step. Phase 1 closes 28 February 2027.
           </p>
           <div style={{ display:"flex", gap:14, justifyContent:"center", flexWrap:"wrap" }}>
             <button className="btn-cta" style={{ fontSize:16, padding:"16px 36px" }} onClick={()=>navigate("/register")}>🏏 Register Now — ₹299 →</button>
@@ -1046,7 +1040,7 @@ export function Home() {
           {/* Become a sponsor CTA */}
           <div style={{ marginTop:36, textAlign:"center" }}>
             <a href="/sponsors" style={{ fontSize:13, color:"rgba(255,255,255,.35)", textDecoration:"none", borderBottom:"1px solid rgba(255,255,255,.12)", paddingBottom:2 }}>
-              Interested in sponsoring BCPL T20 Season 5? <span style={{ color:"#FF7A29" }}>Contact us →</span>
+              Interested in sponsoring BCPL T20 Season 5?&nbsp;<span style={{ color:"#FF7A29" }}>Contact us →</span>
             </a>
           </div>
         </div>

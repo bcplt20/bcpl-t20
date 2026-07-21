@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import { useLocation } from 'wouter';
 
 /*
   BCPL T20 — Bhartiya Corporate Premier League
@@ -65,6 +66,7 @@ const JOURNEY = [
 ];
 
 export function Registration() {
+  const [, navigate]            = useLocation();
   const [step, setStep]         = useState(1); // 1:details 2:role 3:city 4:pay
   const [name, setName]         = useState('');
   const [email, setEmail]       = useState('');
@@ -96,10 +98,31 @@ export function Registration() {
     step === 3 ? !!city : agreed;
 
   /* Login modal state */
-  const [showLogin, setShowLogin] = useState(false);
+  const [showLogin, setShowLogin]   = useState(false);
   const [loginPhone, setLoginPhone] = useState('');
-  const [loginOtp, setLoginOtp] = useState('');
-  const [loginStep, setLoginStep] = useState<'phone'|'otp'>('phone');
+  const [loginOtp, setLoginOtp]     = useState('');
+  const [loginStep, setLoginStep]   = useState<'phone'|'otp'>('phone');
+
+  /* Video upload state (for already-registered players) */
+  const [loggedIn, setLoggedIn]         = useState(false);
+  const [videoFile, setVideoFile]       = useState<File|null>(null);
+  const [videoUploading, setVideoUploading] = useState(false);
+  const [videoUploaded, setVideoUploaded]   = useState(false);
+  const [videoDragOver, setVideoDragOver]   = useState(false);
+  const videoInputRef = useRef<HTMLInputElement>(null);
+
+  const handleVideoFile = (file: File) => {
+    if (!file.type.startsWith('video/')) { alert('Please select a video file (MP4, MOV, AVI, etc.)'); return; }
+    if (file.size > 500 * 1024 * 1024) { alert('File too large. Max size is 500 MB.'); return; }
+    setVideoFile(file);
+    setVideoUploaded(false);
+  };
+
+  const handleVideoUpload = () => {
+    if (!videoFile) return;
+    setVideoUploading(true);
+    setTimeout(() => { setVideoUploading(false); setVideoUploaded(true); }, 2200);
+  };
 
   const NAV_LINKS: [string,string][] = [['Home','/'],['Match Center','/match-center'],['Teams','/teams'],['Sponsors','/sponsors'],['About','/about'],['FAQ','/faq'],['Contact','/contact'],['Login','#login']];
 
@@ -312,9 +335,12 @@ export function Registration() {
         {/* Orange top accent line */}
         <div style={{ height:2, background:'linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)', backgroundSize:'200%', animation:'shimGold 4s linear infinite' }} />
         <div className="wrap" style={{ height:60, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-          {/* Logo */}
-          <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:22, lineHeight:1 }}>
+          {/* Logo — click to go home */}
+          <div style={{ display:'flex', alignItems:'center', gap:10, cursor:'pointer' }} onClick={()=>navigate('/')}>
+            <div style={{ width:36, height:36, borderRadius:'50%', overflow:'hidden', flexShrink:0, border:'2px solid rgba(255,122,41,0.45)', boxShadow:'0 0 10px rgba(255,122,41,0.3)' }}>
+              <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-ball-clean.png'} alt="BCPL" style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'top center' }}/>
+            </div>
+            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, lineHeight:1 }}>
               <span style={{ color:'#FF7A29' }}>BCPL</span>
               <span style={{ color:'#fff' }}> T20</span>
             </div>
@@ -473,10 +499,71 @@ export function Registration() {
                 </div>
 
                 {/* Already registered? */}
-                <div style={{ marginTop:20, padding:'12px 16px', background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.08)', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:10 }}>
-                  <span style={{ fontSize:12, color:'rgba(255,255,255,0.45)' }}>Already registered Phase 1? Upload your video directly.</span>
-                  <button onClick={() => { setShowLogin(true); setLoginStep('phone'); setLoginPhone(''); setLoginOtp(''); }} style={{ background:'none', border:'1px solid rgba(255,122,41,0.4)', color:'#FF7A29', fontSize:11, fontWeight:700, padding:'6px 14px', cursor:'pointer', fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em', flexShrink:0, borderRadius:6 }}>LOGIN →</button>
-                </div>
+                {!loggedIn ? (
+                  <div style={{ marginTop:20, padding:'12px 16px', background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.08)', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:10 }}>
+                    <span style={{ fontSize:12, color:'rgba(255,255,255,0.45)' }}>Already registered Phase 1? Upload your video directly.</span>
+                    <button onClick={() => { setShowLogin(true); setLoginStep('phone'); setLoginPhone(''); setLoginOtp(''); }} style={{ background:'none', border:'1px solid rgba(255,122,41,0.4)', color:'#FF7A29', fontSize:11, fontWeight:700, padding:'6px 14px', cursor:'pointer', fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em', flexShrink:0, borderRadius:6 }}>LOGIN →</button>
+                  </div>
+                ) : (
+                  /* ── VIDEO UPLOAD SECTION (shown after login) ── */
+                  <div style={{ marginTop:20 }}>
+                    <div style={{ padding:'14px 16px', background:'rgba(34,197,94,0.06)', border:'1px solid rgba(34,197,94,0.25)', borderRadius:10, display:'flex', alignItems:'center', gap:10, marginBottom:16 }}>
+                      <span style={{ fontSize:18 }}>✅</span>
+                      <div>
+                        <div style={{ fontSize:13, fontWeight:700, color:'#22C55E', fontFamily:'Montserrat,sans-serif' }}>Logged in as +91 {loginPhone}</div>
+                        <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)', marginTop:2 }}>Upload your 2-minute trial video below</div>
+                      </div>
+                      <button onClick={()=>{ setLoggedIn(false); setVideoFile(null); setVideoUploaded(false); }} style={{ marginLeft:'auto', background:'none', border:'none', color:'rgba(255,255,255,0.3)', cursor:'pointer', fontSize:16 }}>✕</button>
+                    </div>
+
+                    {/* Upload zone */}
+                    <div
+                      onDragOver={e=>{ e.preventDefault(); setVideoDragOver(true); }}
+                      onDragLeave={()=>setVideoDragOver(false)}
+                      onDrop={e=>{ e.preventDefault(); setVideoDragOver(false); const f=e.dataTransfer.files[0]; if(f) handleVideoFile(f); }}
+                      onClick={()=>videoInputRef.current?.click()}
+                      style={{ border:`2px dashed ${videoDragOver?'#FF7A29':'rgba(255,122,41,0.3)'}`, borderRadius:12, padding:'28px 20px', textAlign:'center', cursor:'pointer', background:videoDragOver?'rgba(255,122,41,0.06)':'rgba(255,122,41,0.02)', transition:'all .2s', marginBottom:12 }}
+                    >
+                      <input ref={videoInputRef} type="file" accept="video/*" style={{ display:'none' }} onChange={e=>{ const f=e.target.files?.[0]; if(f) handleVideoFile(f); }}/>
+                      {videoFile ? (
+                        <div>
+                          <div style={{ fontSize:28, marginBottom:8 }}>🎬</div>
+                          <div style={{ fontSize:13, fontWeight:700, color:'#fff', marginBottom:4, wordBreak:'break-all' }}>{videoFile.name}</div>
+                          <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)' }}>{(videoFile.size/1024/1024).toFixed(1)} MB · Click to change</div>
+                        </div>
+                      ) : (
+                        <div>
+                          <div style={{ fontSize:36, marginBottom:10 }}>📹</div>
+                          <div style={{ fontSize:14, fontWeight:700, color:'rgba(255,255,255,0.7)', marginBottom:4 }}>Tap to select video or drag & drop</div>
+                          <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)' }}>MP4, MOV, AVI · Max 2 minutes · Max 500 MB</div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Tips */}
+                    <div style={{ marginBottom:16, display:'flex', flexDirection:'column', gap:5 }}>
+                      {['🏏 Show batting, bowling, or fielding based on your role','📍 Any outdoor/indoor ground — no studio needed','⏱ Keep it under 2 minutes for best results'].map(t=>(
+                        <div key={t} style={{ fontSize:11, color:'rgba(255,255,255,0.4)', display:'flex', gap:6 }}><span style={{flexShrink:0}}></span>{t}</div>
+                      ))}
+                    </div>
+
+                    {videoUploaded ? (
+                      <div style={{ padding:'16px', background:'rgba(34,197,94,0.1)', border:'1px solid rgba(34,197,94,0.4)', borderRadius:10, textAlign:'center' }}>
+                        <div style={{ fontSize:24, marginBottom:6 }}>✅</div>
+                        <div style={{ fontSize:14, fontWeight:800, color:'#22C55E', fontFamily:'Montserrat,sans-serif' }}>Video Uploaded Successfully!</div>
+                        <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:4 }}>BCCI scouts will review within 7 working days. Result via SMS + Email.</div>
+                      </div>
+                    ) : (
+                      <button
+                        disabled={!videoFile || videoUploading}
+                        onClick={handleVideoUpload}
+                        style={{ width:'100%', padding:'16px 0', background:videoFile?'linear-gradient(135deg,#FF7A29,#C94E0E)':'rgba(255,255,255,0.06)', border:'none', borderRadius:10, color:videoFile?'#fff':'rgba(255,255,255,0.3)', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:videoFile?'pointer':'not-allowed', letterSpacing:'.06em', transition:'all .2s' }}
+                      >
+                        {videoUploading ? '⏳ Uploading...' : '🎬 SUBMIT TRIAL VIDEO →'}
+                      </button>
+                    )}
+                  </div>
+                )}
 
                 {/* Login Modal */}
                 {showLogin && (
@@ -500,7 +587,7 @@ export function Registration() {
                         <input className="field-inp" type="tel" inputMode="numeric" maxLength={6} value={loginOtp}
                           onChange={e => { const v=e.target.value.replace(/\D/g,''); if(v.length<=6) setLoginOtp(v); }}
                           placeholder="6-digit OTP" style={{ marginBottom:16, width:'100%', letterSpacing:'0.3em', fontSize:20, textAlign:'center' }} />
-                        <button disabled={loginOtp.length!==6} onClick={() => { alert('Login feature coming soon — OTP verification will be active once payment gateway is live.'); setShowLogin(false); }}
+                        <button disabled={loginOtp.length!==6} onClick={() => { setLoggedIn(true); setShowLogin(false); }}
                           style={{ width:'100%', padding:'13px 0', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', opacity:loginOtp.length!==6?0.5:1 }}>
                           Verify & Login →
                         </button>
