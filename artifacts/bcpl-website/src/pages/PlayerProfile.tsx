@@ -190,33 +190,19 @@ export function PlayerProfile() {
                 </div>
               </div>
 
-              {/* Contact Details */}
+              {/* Player Details */}
               <div className="card" style={{ padding:"18px 22px", marginBottom:14 }}>
-                <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, color:"rgba(255,255,255,0.3)", letterSpacing:".12em", textTransform:"uppercase", marginBottom:14 }}>Contact Details</div>
+                <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, color:"rgba(255,255,255,0.3)", letterSpacing:".12em", textTransform:"uppercase", marginBottom:14 }}>Player Details</div>
                 {[
-                  { label:"Email",   value:PLAYER.email,   mono:false },
-                  { label:"Phone",   value:PLAYER.phone,   mono:false },
-                  { label:"DOB",     value:`${PLAYER.dob} (Age ${PLAYER.age})`, mono:false },
+                  { label:"Email",      value:PLAYER.email,                       color:"rgba(255,255,255,0.75)" },
+                  { label:"Mobile",     value:PLAYER.phone,                       color:"rgba(255,255,255,0.75)" },
+                  { label:"Role",       value:`${PLAYER.roleIcon} ${PLAYER.role}`, color:"rgba(255,255,255,0.75)" },
+                  { label:"Trial City", value:PLAYER.city,                        color:"rgba(255,255,255,0.75)" },
+                  { label:"KYC",        value:"✅ Verified",                      color:"#22C55E" },
                 ].map(row => (
                   <div key={row.label} className="row-item">
-                    <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:11, color:"rgba(255,255,255,0.35)", textTransform:"uppercase", letterSpacing:".06em", flexShrink:0, minWidth:60 }}>{row.label}</span>
-                    <span style={{ fontFamily:row.mono?"monospace":"Inter,sans-serif", fontSize:12, color:"rgba(255,255,255,0.75)", textAlign:"right", wordBreak:"break-all" }}>{row.value}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Registration Details */}
-              <div className="card" style={{ padding:"18px 22px", marginBottom:14 }}>
-                <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, color:"rgba(255,255,255,0.3)", letterSpacing:".12em", textTransform:"uppercase", marginBottom:14 }}>Registration</div>
-                {[
-                  { label:"Role",     value:`${PLAYER.roleIcon} ${PLAYER.role}` },
-                  { label:"City",     value:PLAYER.city },
-                  { label:"Reg Date", value:PLAYER.regDate },
-                  { label:"Phase 1",  value:`₹${PLAYER.paid} Paid ✓` },
-                ].map(row => (
-                  <div key={row.label} className="row-item">
-                    <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:11, color:"rgba(255,255,255,0.35)", textTransform:"uppercase", letterSpacing:".06em", flexShrink:0, minWidth:60 }}>{row.label}</span>
-                    <span style={{ fontFamily:"Inter,sans-serif", fontSize:12, color: row.label==="Phase 1" ? "#22C55E" : "rgba(255,255,255,0.75)", textAlign:"right" }}>{row.value}</span>
+                    <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:11, color:"rgba(255,255,255,0.35)", textTransform:"uppercase", letterSpacing:".06em", flexShrink:0, minWidth:72 }}>{row.label}</span>
+                    <span style={{ fontFamily:"Inter,sans-serif", fontSize:12, color:row.color, textAlign:"right", wordBreak:"break-all" }}>{row.value}</span>
                   </div>
                 ))}
               </div>
