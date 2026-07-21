@@ -1,0 +1,42 @@
+ubuntu@ip-172-31-12-8:~/app$ pm2 logs bcpl-api --lines 30 --nostream 2>&1 | tail -40
+0|bcpl-api | 2026-07-21 14:10:57: {"level":30,"time":1784643057016,"pid":1945,"hostname":"ip-172-31-12-8","req":{"id":23,"method":"GET","url":"/api/matches"},"res":{"statusCode":304},"responseTime":26,"msg":"request completed"}
+0|bcpl-api | 2026-07-21 14:10:58: {"level":30,"time":1784643058926,"pid":1945,"hostname":"ip-172-31-12-8","req":{"id":24,"method":"GET","url":"/api/matches"},"res":{"statusCode":304},"responseTime":3,"msg":"request completed"}
+0|bcpl-api | 2026-07-21 14:11:30: {"level":30,"time":1784643090222,"pid":1945,"hostname":"ip-172-31-12-8","req":{"id":25,"method":"GET","url":"/api/points-table"},"res":{"statusCode":200},"responseTime":25,"msg":"request completed"}
+0|bcpl-api | 2026-07-21 14:24:31: {"level":30,"time":1784643871252,"pid":2149,"hostname":"ip-172-31-12-8","port":4000,"msg":"Server listening"}
+0|bcpl-api | 2026-07-21 14:25:59: {"level":30,"time":1784643959195,"pid":2214,"hostname":"ip-172-31-12-8","port":4000,"msg":"Server listening"}
+0|bcpl-api | 2026-07-21 14:26:36: [MSG91] sendOtp response: { message: '36677573344a426c7a654877', type: 'success' }
+0|bcpl-api | 2026-07-21 14:26:36: {"level":30,"time":1784643996789,"pid":2214,"hostname":"ip-172-31-12-8","req":{"id":1,"method":"POST","url":"/api/auth/send-otp"},"res":{"statusCode":200},"responseTime":241,"msg":"request completed"}
+
+/home/ubuntu/logs/bcpl-api-out-1.log last 30 lines:
+1|bcpl-api | /points-table"},"res":{"statusCode":304},"responseTime":31,"msg":"request completed"}
+1|bcpl-api | 2026-07-21 14:05:11: {"level":30,"time":1784642711268,"pid":1957,"hostname":"ip-172-31-12-8","port":4000,"msg":"Server listening"}
+1|bcpl-api | 2026-07-21 14:05:19: {"level":30,"time":1784642719702,"pid":1957,"hostname":"ip-172-31-12-8","req":{"id":1,"method":"GET","url":"/api/matches"},"res":{"statusCode":304},"responseTime":126,"msg":"request completed"}
+1|bcpl-api | 2026-07-21 14:06:19: {"level":30,"time":1784642779605,"pid":1957,"hostname":"ip-172-31-12-8","req":{"id":2,"method":"GET","url":"/api/matches"},"res":{"statusCode":304},"responseTime":29,"msg":"request completed"}
+1|bcpl-api | 2026-07-21 14:06:47: {"level":30,"time":1784642807712,"pid":1957,"hostname":"ip-172-31-12-8","req":{"id":3,"method":"GET","url":"/api/points-table"},"res":{"statusCode":304},"responseTime":27,"msg":"request completed"}
+1|bcpl-api | 2026-07-21 14:06:51: {"level":30,"time":1784642811573,"pid":1957,"hostname":"ip-172-31-12-8","req":{"id":4,"method":"GET","url":"/api/matches"},"res":{"statusCode":304},"responseTime":4,"msg":"request completed"}
+1|bcpl-api | 2026-07-21 14:06:59: {"level":30,"time":1784642819571,"pid":1957,"hostname":"ip-172-31-12-8","req":{"id":5,"method":"GET","url":"/api/points-table"},"res":{"statusCode":304},"responseTime":6,"msg":"request completed"}
+1|bcpl-api | 2026-07-21 14:07:07: {"level":30,"time":1784642827585,"pid":1957,"hostname":"ip-172-31-12-8","req":{"id":6,"method":"GET","url":"/api/matches"},"res":{"statusCode":304},"responseTime":4,"msg":"request completed"}
+1|bcpl-api | 2026-07-21 14:07:15: {"level":30,"time":1784642835581,"pid":1957,"hostname":"ip-172-31-12-8","req":{"id":7,"method":"GET","url":"/api/matches"},"res":{"statusCode":304},"responseTime":4,"msg":"request completed"}
+1|bcpl-api | 2026-07-21 14:07:23: {"level":30,"time":1784642843576,"pid":1957,"hostname":"ip-172-31-12-8","req":{"id":8,"method":"GET","url":"/api/matches"},"res":{"statusCode":304},"responseTime":3,"msg":"request completed"}
+1|bcpl-api | 2026-07-21 14:07:31: {"level":30,"time":1784642851581,"pid":1957,"hostname":"ip-172-31-12-8","req":{"id":9,"method":"GET","url":"/api/matches"},"res":{"statusCode":304},"responseTime":4,"msg":"request completed"}
+1|bcpl-api | 2026-07-21 14:07:39: {"level":30,"time":1784642859627,"pid":1957,"hostname":"ip-172-31-12-8","req":{"id":10,"method":"GET","url":"/api/points-table"},"res":{"statusCode":304},"responseTime":6,"msg":"request completed"}
+1|bcpl-api | 2026-07-21 14:07:47: {"level":30,"time":1784642867574,"pid":1957,"hostname":"ip-172-31-12-8","req":{"id":11,"method":"GET","url":"/api/matches"},"res":{"statusCode":304},"responseTime":4,"msg":"request completed"}
+1|bcpl-api | 2026-07-21 14:08:19: {"level":30,"time":1784642899627,"pid":1957,"hostname":"ip-172-31-12-8","req":{"id":12,"method":"GET","url":"/api/points-table"},"res":{"statusCode":304},"responseTime":33,"msg":"request completed"}
+1|bcpl-api | 2026-07-21 14:09:19: {"level":30,"time":1784642959626,"pid":1957,"hostname":"ip-172-31-12-8","req":{"id":13,"method":"GET","url":"/api/points-table"},"res":{"statusCode":304},"responseTime":25,"msg":"request completed"}
+1|bcpl-api | 2026-07-21 14:09:27: {"level":30,"time":1784642967104,"pid":1957,"hostname":"ip-172-31-12-8","req":{"id":14,"method":"GET","url":"/api/points-table"},"res":{"statusCode":304},"responseTime":3,"msg":"request completed"}
+1|bcpl-api | 2026-07-21 14:09:31: {"level":30,"time":1784642971574,"pid":1957,"hostname":"ip-172-31-12-8","req":{"id":15,"method":"GET","url":"/api/points-table"},"res":{"statusCode":304},"responseTime":3,"msg":"request completed"}
+1|bcpl-api | 2026-07-21 14:09:39: {"level":30,"time":1784642979570,"pid":1957,"hostname":"ip-172-31-12-8","req":{"id":16,"method":"GET","url":"/api/points-table"},"res":{"statusCode":304},"responseTime":3,"msg":"request completed"}
+1|bcpl-api | 2026-07-21 14:09:47: {"level":30,"time":1784642987574,"pid":1957,"hostname":"ip-172-31-12-8","req":{"id":17,"method":"GET","url":"/api/matches"},"res":{"statusCode":304},"responseTime":3,"msg":"request completed"}
+1|bcpl-api | 2026-07-21 14:09:55: {"level":30,"time":1784642995577,"pid":1957,"hostname":"ip-172-31-12-8","req":{"id":18,"method":"GET","url":"/api/matches"},"res":{"statusCode":304},"responseTime":3,"msg":"request completed"}
+1|bcpl-api | 2026-07-21 14:10:03: {"level":30,"time":1784643003578,"pid":1957,"hostname":"ip-172-31-12-8","req":{"id":19,"method":"GET","url":"/api/matches"},"res":{"statusCode":304},"responseTime":8,"msg":"request completed"}
+1|bcpl-api | 2026-07-21 14:10:11: {"level":30,"time":1784643011582,"pid":1957,"hostname":"ip-172-31-12-8","req":{"id":20,"method":"GET","url":"/api/points-table"},"res":{"statusCode":304},"responseTime":3,"msg":"request completed"}
+1|bcpl-api | 2026-07-21 14:10:19: {"level":30,"time":1784643019582,"pid":1957,"hostname":"ip-172-31-12-8","req":{"id":21,"method":"GET","url":"/api/points-table"},"res":{"statusCode":304},"responseTime":3,"msg":"request completed"}
+1|bcpl-api | 2026-07-21 14:10:57: {"level":30,"time":1784643057015,"pid":1957,"hostname":"ip-172-31-12-8","req":{"id":22,"method":"GET","url":"/api/points-table"},"res":{"statusCode":304},"responseTime":26,"msg":"request completed"}
+1|bcpl-api | 2026-07-21 14:10:58: {"level":30,"time":1784643058926,"pid":1957,"hostname":"ip-172-31-12-8","req":{"id":23,"method":"GET","url":"/api/points-table"},"res":{"statusCode":304},"responseTime":3,"msg":"request completed"}
+1|bcpl-api | 2026-07-21 14:11:30: {"level":30,"time":1784643090222,"pid":1957,"hostname":"ip-172-31-12-8","req":{"id":24,"method":"GET","url":"/api/matches"},"res":{"statusCode":200},"responseTime":27,"msg":"request completed"}
+1|bcpl-api | 2026-07-21 14:24:31: {"level":30,"time":1784643871877,"pid":2161,"hostname":"ip-172-31-12-8","port":4000,"msg":"Server listening"}
+1|bcpl-api | 2026-07-21 14:25:59: {"level":30,"time":1784643959813,"pid":2226,"hostname":"ip-172-31-12-8","port":4000,"msg":"Server listening"}
+1|bcpl-api | 2026-07-21 14:28:22: [MSG91] sendOtp response: { message: '36677573367567456f364173', type: 'success' }
+1|bcpl-api | 2026-07-21 14:28:22: {"level":30,"time":1784644102007,"pid":2226,"hostname":"ip-172-31-12-8","req":{"id":1,"method":"POST","url":"/api/auth/send-otp"},"res":{"statusCode":200},"responseTime":235,"msg":"request completed"}
+
+ubuntu@ip-172-31-12-8:~/app$ 

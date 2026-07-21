@@ -22,7 +22,7 @@ export async function sendOtp(phone: string, otp: string): Promise<boolean> {
       recipients: [
         {
           mobiles: mobile,
-          "##var1##": otp,
+          var1: otp,
         },
       ],
     };
