@@ -334,3 +334,12 @@ export const verifyPhase2Payment = (orderId: string) =>
   req<{ success: boolean; registrationId: string }>(
     "POST", "/payment/phase2/verify", { orderId }
   );
+
+export const initiateKyc = (data: {
+  registrationId: string;
+  profession: string;
+  aadhaarNumber?: string;
+  panNumber?: string;
+}) => req<{ success: boolean; kycId: string; status: string; message: string }>(
+  "POST", "/kyc/initiate", data
+);
