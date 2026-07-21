@@ -986,7 +986,7 @@ export function Registration() {
                   style={{ width:'100%', padding:'20px 0', fontSize:17, clipPath:'none', borderRadius:12, letterSpacing:'.08em' }}
                   onClick={handlePay}
                 >
-                  {payLoading ? '⏳ Processing...' : `🏏  PAY ₹${price} · ENTER PHASE 1`}
+                  {payLoading ? '⏳ Processing...' : `🏏  PAY ₹${Math.round(price * 1.18)} · ENTER PHASE 1`}
                 </button>
                 {payError && (
                   <div style={{ marginTop:12, padding:'12px 16px', background:'rgba(239,68,68,0.1)', border:'1px solid rgba(239,68,68,0.3)', borderRadius:8, fontSize:13, color:'#EF4444', fontWeight:600 }}>

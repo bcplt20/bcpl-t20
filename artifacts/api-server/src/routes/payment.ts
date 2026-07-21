@@ -59,7 +59,7 @@ router.post("/phase1/create", requireAuth, async (req: AuthRequest, res) => {
   const { reg, user } = rows[0];
   if (reg.phase1Status !== "pending") return void res.status(400).json({ error: "Payment already completed" });
 
-  const amount  = FEES[reg.role].phase1;
+  const amount  = Math.round(FEES[reg.role].phase1 * 1.18); // base + 18% GST
   const orderId = `p1_${reg.id.slice(0, 8)}_${Date.now()}`;
 
   const order = await createOrder({
@@ -139,7 +139,7 @@ router.post("/phase2/create", requireAuth, async (req: AuthRequest, res) => {
   const { reg, user } = rows[0];
   if (reg.phase1Status !== "selected") return void res.status(400).json({ error: "Not selected for Phase 2" });
 
-  const amount  = FEES[reg.role].phase2;
+  const amount  = Math.round(FEES[reg.role].phase2 * 1.18); // base + 18% GST
   const orderId = `p2_${reg.id.slice(0, 8)}_${Date.now()}`;
 
   const order = await createOrder({
