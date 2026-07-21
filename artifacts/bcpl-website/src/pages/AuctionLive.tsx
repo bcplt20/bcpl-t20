@@ -215,7 +215,6 @@ export function AuctionLive() {
 
       {/* FOOTER */}
       <BCPLFooter />
-      </footer>
     </div>
   );
 }

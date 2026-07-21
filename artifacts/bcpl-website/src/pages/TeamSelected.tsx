@@ -253,7 +253,6 @@ export function TeamSelected() {
 
       {/* FOOTER */}
       <BCPLFooter />
-      </footer>
     </div>
   );
 }
