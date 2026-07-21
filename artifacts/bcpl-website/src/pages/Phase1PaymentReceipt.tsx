@@ -280,13 +280,222 @@ export function Phase1PaymentReceipt() {
               onClick={() => window.open('https://www.instagram.com/', '_blank')}>
               📸 Share on Instagram
             </button>
-            <button className="share-btn" style={{ background:'transparent', border:'1px solid rgba(255,255,255,0.2)', color:'rgba(255,255,255,0.7)' }}
+            <button className="share-btn" style={{ background:'linear-gradient(135deg,#1E3A5F,#0F2040)', border:'1px solid rgba(255,122,41,0.4)', color:'#FF7A29' }}
               onClick={() => {
-                const content = `BCPL SEASON 5 — PHASE 1 REGISTRATION CONFIRMED\n\nRegistration No.: BCPL-MUM-7432\nPlayer: Rahul Sharma\nRole: Batsman\nTrial City: Mumbai\nAmount Paid: ₹299\n\nwww.bcplt20.com`;
-                const blob = new Blob([content], { type: 'text/plain' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a'); a.href = url; a.download = 'BCPL-Receipt.txt'; a.click();
-                URL.revokeObjectURL(url);
+                const logoUrl = `${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/bcpl-ball-color.jpg`;
+                const w = window.open('', '_blank');
+                if (!w) return;
+                w.document.write(`<!DOCTYPE html><html><head><title>BCPL Registration Receipt — BCPL-MUM-7432</title>
+                <style>
+                  *{box-sizing:border-box;margin:0;padding:0}
+                  body{font-family:'Arial',sans-serif;background:#06101E;color:#F0EDE8;min-height:100vh;position:relative;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+
+                  /* Watermark */
+                  body::before{
+                    content:'';position:fixed;top:50%;left:50%;
+                    transform:translate(-50%,-50%);
+                    width:420px;height:420px;
+                    background-image:url('${logoUrl}');
+                    background-size:contain;background-repeat:no-repeat;background-position:center;
+                    opacity:0.04;z-index:0;
+                    -webkit-print-color-adjust:exact;print-color-adjust:exact;
+                  }
+
+                  .page{max-width:680px;margin:0 auto;padding:0 0 60px;position:relative;z-index:1}
+
+                  /* Header */
+                  .header{
+                    background:linear-gradient(135deg,#C94E0E 0%,#FF7A29 50%,#E8611A 100%);
+                    padding:28px 36px;display:flex;align-items:center;gap:20px;
+                    -webkit-print-color-adjust:exact;print-color-adjust:exact;
+                  }
+                  .logo-circle{width:72px;height:72px;border-radius:50%;overflow:hidden;border:3px solid rgba(255,255,255,0.5);background:#fff;flex-shrink:0}
+                  .logo-circle img{width:100%;height:100%;object-fit:cover;display:block}
+                  .header-text .brand{font-size:22px;font-weight:900;color:#fff;letter-spacing:.06em;line-height:1}
+                  .header-text .sub{font-size:10px;color:rgba(255,255,255,0.85);letter-spacing:.12em;margin-top:4px;font-weight:700;text-transform:uppercase}
+                  .header-text .addr{font-size:8.5px;color:rgba(255,255,255,0.65);margin-top:5px}
+
+                  /* Gold accent bar */
+                  .gold-bar{height:4px;background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+
+                  /* Success banner */
+                  .success-banner{
+                    background:linear-gradient(135deg,#052D1A,#073D24);
+                    border-bottom:1px solid rgba(34,197,94,0.2);
+                    padding:20px 36px;display:flex;align-items:center;gap:16;
+                    -webkit-print-color-adjust:exact;print-color-adjust:exact;
+                  }
+                  .check-icon{font-size:36px;flex-shrink:0}
+                  .success-title{font-size:20px;font-weight:900;color:#22C55E;letter-spacing:.04em;text-transform:uppercase}
+                  .success-sub{font-size:11px;color:rgba(34,197,94,0.7);margin-top:3px;letter-spacing:.06em}
+                  .reg-badge{margin-left:auto;text-align:right;flex-shrink:0}
+                  .reg-label{font-size:8px;color:rgba(255,255,255,0.3);letter-spacing:.16em;text-transform:uppercase;font-weight:700}
+                  .reg-num{font-size:16px;font-weight:900;color:#FF7A29;font-family:monospace;letter-spacing:.12em;margin-top:3px}
+
+                  /* Body */
+                  .body{padding:28px 36px}
+
+                  /* Receipt card */
+                  .receipt-card{
+                    background:#0A1727;border:1px solid rgba(255,122,41,0.25);
+                    border-radius:14px;overflow:hidden;margin-bottom:20px;
+                  }
+                  .receipt-card-header{
+                    background:linear-gradient(135deg,#0F1D35,#0A1727);
+                    padding:14px 20px;border-bottom:1px solid rgba(255,122,41,0.15);
+                    font-size:10px;font-weight:900;color:#FF7A29;letter-spacing:.16em;text-transform:uppercase;
+                    display:flex;align-items:center;gap:8px;
+                  }
+                  .receipt-table{width:100%;border-collapse:collapse}
+                  .receipt-table tr{border-bottom:1px solid rgba(255,255,255,0.04)}
+                  .receipt-table tr:last-child{border-bottom:none}
+                  .receipt-table td{padding:12px 20px;font-size:13px}
+                  .receipt-table td:first-child{color:rgba(255,255,255,0.4);font-weight:600;letter-spacing:.04em;width:42%}
+                  .receipt-table td:last-child{color:#F0EDE8;font-weight:700;text-align:right}
+                  .amount-row td:last-child{color:#22C55E;font-size:16px;font-weight:900}
+
+                  /* Divider */
+                  .dashed{border:none;border-top:2px dashed rgba(255,122,41,0.2);margin:0 20px}
+
+                  /* Barcode */
+                  .barcode-section{
+                    background:#060C18;border-top:1px solid rgba(255,255,255,0.04);
+                    padding:16px 20px;display:flex;align-items:flex-end;gap:1px;
+                    -webkit-print-color-adjust:exact;print-color-adjust:exact;
+                  }
+                  .barcode-bar{display:inline-block;width:2px;margin:0 0.5px;background:rgba(255,255,255,0.8)}
+                  .barcode-text{margin-left:auto;font-family:monospace;font-size:9px;color:rgba(255,255,255,0.25);white-space:nowrap;padding-bottom:2px}
+
+                  /* Next steps */
+                  .steps-card{
+                    background:#0A1727;border:1px solid rgba(255,255,255,0.07);
+                    border-radius:14px;padding:20px;margin-bottom:20px;
+                  }
+                  .steps-title{font-size:10px;font-weight:900;color:rgba(255,255,255,0.3);letter-spacing:.18em;text-transform:uppercase;margin-bottom:14px}
+                  .step-row{display:flex;align-items:flex-start;gap:14px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+                  .step-row:last-child{border-bottom:none}
+                  .step-num{width:28px;height:28px;border-radius:50%;background:rgba(255,122,41,0.15);border:1.5px solid rgba(255,122,41,0.4);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#FF7A29;flex-shrink:0}
+                  .step-label{font-size:13px;font-weight:800;color:#F0EDE8;margin-bottom:3px}
+                  .step-desc{font-size:11px;color:rgba(255,255,255,0.4);line-height:1.5}
+
+                  /* Footer */
+                  .footer{
+                    background:#040C18;border-top:2px solid #FF7A29;
+                    padding:14px 36px;display:flex;justify-content:space-between;align-items:center;
+                    font-size:9px;color:rgba(255,255,255,0.3);
+                    position:fixed;bottom:0;left:0;right:0;
+                    -webkit-print-color-adjust:exact;print-color-adjust:exact;
+                  }
+                  .footer strong{color:#FF7A29}
+
+                  @media print{
+                    body{background:#06101E}
+                    .footer{position:fixed}
+                    @page{margin:0;background:#06101E}
+                  }
+                </style></head>
+                <body>
+                  <div class="page">
+                    <!-- Header -->
+                    <div class="header">
+                      <div class="logo-circle"><img src="${logoUrl}" alt="BCPL"/></div>
+                      <div class="header-text">
+                        <div class="brand">BCPL — Bhartiya Corporate Premier League</div>
+                        <div class="sub">India's Biggest Corporate Cricket League · Season 5</div>
+                        <div class="addr">Kriparti Playing11 Pvt. Ltd. &nbsp;·&nbsp; 2nd Floor, RZ-108, Indra Park, Uttam Nagar, New Delhi — 110059</div>
+                        <div class="addr">legal@bcplt20.com &nbsp;·&nbsp; www.bcplt20.com &nbsp;·&nbsp; GSTIN: 07AAHCK4053D1ZS</div>
+                      </div>
+                    </div>
+                    <div class="gold-bar"></div>
+
+                    <!-- Success Banner -->
+                    <div class="success-banner" style="display:flex;align-items:center;gap:16px;padding:20px 36px;background:linear-gradient(135deg,#052D1A,#073D24)">
+                      <div class="check-icon">✅</div>
+                      <div>
+                        <div class="success-title">Registration Confirmed</div>
+                        <div class="success-sub">Phase 1 Trial Entry · Payment Received</div>
+                      </div>
+                      <div class="reg-badge">
+                        <div class="reg-label">Registration Number</div>
+                        <div class="reg-num">BCPL-MUM-7432</div>
+                      </div>
+                    </div>
+
+                    <div class="body">
+                      <!-- Payment Receipt Card -->
+                      <div class="receipt-card">
+                        <div class="receipt-card-header">🧾 &nbsp;Payment Receipt</div>
+                        <table class="receipt-table">
+                          <tr><td>Player Name</td><td>Rahul Sharma</td></tr>
+                          <tr><td>Registration No.</td><td style="font-family:monospace;color:#FF7A29">BCPL-MUM-7432</td></tr>
+                          <tr><td>Role</td><td>🏏 Batsman</td></tr>
+                          <tr><td>Trial City</td><td>📍 Mumbai</td></tr>
+                          <tr><td>Phase</td><td>Phase 1 — Video Submission</td></tr>
+                          <tr><td>Payment Date</td><td>15 Jan 2025, 11:42 AM</td></tr>
+                          <tr><td>Payment Method</td><td>UPI / Online</td></tr>
+                          <tr class="amount-row"><td>Amount Paid</td><td>₹299.00 ✓</td></tr>
+                        </table>
+
+                        <hr class="dashed"/>
+
+                        <div style="padding:14px 20px;display:flex;justify-content:space-between;align-items:center">
+                          <div style="font-size:11px;color:rgba(255,255,255,0.4)">Phase 2 Status</div>
+                          <div style="font-size:11px;color:rgba(255,255,255,0.35);font-weight:700">🔒 Locked — Pending scout review</div>
+                        </div>
+
+                        <!-- Barcode -->
+                        <div class="barcode-section">
+                          ${Array.from({length:48}, (_,i) => {
+                            const h = [22,32,16,38,20,28,14,36,18,30,24,40,26,16,34,22,28,12,36,22,30,16,34,20,26,14,32,22,38,18,28,20,34,14,30,24,18,40,22,30,16,36,20,28,12,34,20,18][i % 48];
+                            return `<div class="barcode-bar" style="height:${h}px"></div>`;
+                          }).join('')}
+                          <div class="barcode-text">BCPL-S5-MUM-BAT-7432</div>
+                        </div>
+                      </div>
+
+                      <!-- Next Steps -->
+                      <div class="steps-card">
+                        <div class="steps-title">Your Next Steps</div>
+                        <div class="step-row">
+                          <div class="step-num">1</div>
+                          <div>
+                            <div class="step-label">🎬 Upload Your Trial Video</div>
+                            <div class="step-desc">Record a 2-minute cricket video and upload it via bcplt20.com within 7 days of registration.</div>
+                          </div>
+                        </div>
+                        <div class="step-row">
+                          <div class="step-num">2</div>
+                          <div>
+                            <div class="step-label">⏱ Await Scout Review</div>
+                            <div class="step-desc">BCCI-certified scouts review your video. Selection results announced via email & WhatsApp.</div>
+                          </div>
+                        </div>
+                        <div class="step-row">
+                          <div class="step-num">3</div>
+                          <div>
+                            <div class="step-label">🔓 Phase 2 (If Selected)</div>
+                            <div class="step-desc">Selected players get an invite for the physical ground trial. Pay ₹2,000 only after selection.</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Note -->
+                      <div style="background:#0A1727;border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:16px 20px;font-size:11px;color:rgba(255,255,255,0.4);line-height:1.7;text-align:center">
+                        This is an official digital receipt issued by <strong style="color:rgba(255,255,255,0.65)">Kriparti Playing11 Pvt. Ltd.</strong><br/>
+                        For support: <strong style="color:#FF7A29">legal@bcplt20.com</strong> &nbsp;·&nbsp; <strong style="color:#FF7A29">www.bcplt20.com</strong>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Fixed Footer -->
+                  <div class="footer">
+                    <span>Ref: <strong>BCPL-MUM-7432</strong></span>
+                    <span><strong>BCPL</strong> — Bhartiya Corporate Premier League · Season 5 · Official Receipt</span>
+                    <span>© 2026 Kriparti Playing11 Pvt. Ltd.</span>
+                  </div>
+                </body></html>`);
+                w.document.close();
+                setTimeout(() => w.print(), 600);
               }}>
               ⬇ Download Receipt
             </button>
