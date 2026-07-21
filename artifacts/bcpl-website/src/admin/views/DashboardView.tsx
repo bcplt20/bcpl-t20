@@ -4,78 +4,35 @@ import {
   Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line
 } from "recharts";
 
+// All real data should come from API — no fake data here
 const userGrowthData = {
-  today: [
-    { time:"12am", users:4 }, { time:"2am", users:2 }, { time:"4am", users:1 },
-    { time:"6am", users:8 }, { time:"8am", users:24 }, { time:"10am", users:41 },
-    { time:"12pm", users:63 }, { time:"2pm", users:55 }, { time:"4pm", users:78 },
-    { time:"6pm", users:94 }, { time:"8pm", users:112 }, { time:"10pm", users:87 },
-  ],
-  week: [
-    { time:"Mon", users:312 }, { time:"Tue", users:428 }, { time:"Wed", users:389 },
-    { time:"Thu", users:512 }, { time:"Fri", users:601 }, { time:"Sat", users:743 },
-    { time:"Sun", users:689 },
-  ],
-  month: [
-    { time:"Jul 1", users:120 }, { time:"Jul 5", users:340 }, { time:"Jul 8", users:280 },
-    { time:"Jul 10", users:520 }, { time:"Jul 13", users:690 }, { time:"Jul 15", users:870 },
-    { time:"Jul 17", users:1020 }, { time:"Jul 19", users:1340 }, { time:"Jul 20", users:1180 },
-  ],
+  today: [] as {time:string,users:number}[],
+  week:  [] as {time:string,users:number}[],
+  month: [] as {time:string,users:number}[],
 };
 
-const revenueVsTarget = [
-  { day:"Jul 14", actual:16600, target:15000 }, { day:"Jul 15", actual:26500, target:20000 },
-  { day:"Jul 16", actual:19800, target:20000 }, { day:"Jul 17", actual:31500, target:25000 },
-  { day:"Jul 18", actual:43100, target:30000 }, { day:"Jul 19", actual:50100, target:35000 },
-  { day:"Jul 20", actual:36000, target:35000 },
-];
+const revenueVsTarget: {day:string,actual:number,target:number}[] = [];
 
 const funnelData = [
-  { name:"Visited", value:14820, color:"#334155" },
-  { name:"Registered", value:8430, color:"#FF6B00" },
-  { name:"Phase 1 Paid", value:3812, color:"#F59E0B" },
-  { name:"Phase 2 Paid", value:1247, color:"#10B981" },
+  { name:"Visited",     value:0, color:"#334155" },
+  { name:"Registered",  value:0, color:"#FF6B00" },
+  { name:"Phase 1 Paid",value:0, color:"#F59E0B" },
+  { name:"Phase 2 Paid",value:0, color:"#10B981" },
 ];
 
-const sourceData = [
-  { name:"WhatsApp", value:38, color:"#25D366" },
-  { name:"Instagram", value:27, color:"#E1306C" },
-  { name:"YouTube", value:18, color:"#FF0000" },
-  { name:"Direct", value:10, color:"#6366F1" },
-  { name:"Others", value:7, color:"#64748B" },
-];
+const sourceData: {name:string,value:number,color:string}[] = [];
 
-const topInfluencers = [
-  { name:"Rohit_Cricket22", platform:"Instagram", clicks:4821, signups:1243, conversion:"25.8%", revenue:"₹1,24,300" },
-  { name:"BCPLOfficial",     platform:"YouTube",   clicks:3200, signups:987,  conversion:"30.8%", revenue:"₹98,700"  },
-  { name:"CricketDhamaka",   platform:"WhatsApp",  clicks:2890, signups:743,  conversion:"25.7%", revenue:"₹74,300"  },
-  { name:"SportsBhai",        platform:"Instagram", clicks:1980, signups:412,  conversion:"20.8%", revenue:"₹41,200"  },
-];
+const topInfluencers: {name:string,platform:string,clicks:number,signups:number,conversion:string,revenue:string}[] = [];
 
-const topCities = [
-  { city:"Mumbai",    signups:1240, paid:842, pct:68, color:"#3B82F6"  },
-  { city:"Delhi",     signups:1080, paid:712, pct:66, color:"#6366F1"  },
-  { city:"Bengaluru", signups:890,  paid:567, pct:64, color:"#EF4444"  },
-  { city:"Hyderabad", signups:720,  paid:418, pct:58, color:"#16A34A"  },
-  { city:"Chennai",   signups:640,  paid:352, pct:55, color:"#2563EB"  },
-];
+const topCities: {city:string,signups:number,paid:number,pct:number,color:string}[] = [];
 
-const liveActivity = [
-  { msg:"Arjun Sharma completed Phase 1 payment",   time:"2s ago",  type:"payment"  },
-  { msg:"New user registered from Rajasthan",         time:"14s ago", type:"user"     },
-  { msg:"Priya Patel uploaded selection video",       time:"32s ago", type:"media"    },
-  { msg:"Team Kolkata Tigers added 2 players",        time:"1m ago",  type:"team"     },
-  { msg:"Referral BCPL-INF12 → 5 new signups",        time:"2m ago",  type:"referral" },
-  { msg:"Rahul Kumar Phase 2 payment confirmed",      time:"3m ago",  type:"payment"  },
-  { msg:"New user registered from Maharashtra",       time:"4m ago",  type:"user"     },
-  { msg:"Match Gujarat vs Rajasthan scheduled",       time:"6m ago",  type:"match"    },
-];
+const liveActivity: {msg:string,time:string,type:string}[] = [];
 
 const pendingActions = [
-  { icon:"🎬", count:142, label:"Videos pending review",     color:"#F59E0B", action:"Review Now"   },
-  { icon:"✅", count:38,  label:"KYC approvals pending",      color:"#6366F1", action:"Approve"      },
-  { icon:"💳", count:24,  label:"Failed payments to retry",   color:"#EF4444", action:"View Failed"  },
-  { icon:"📧", count:8,   label:"Scout reports ready to send",color:"#10B981", action:"Send Reports" },
+  { icon:"🎬", count:0, label:"Videos pending review",     color:"#F59E0B", action:"Review Now"   },
+  { icon:"✅", count:0, label:"KYC approvals pending",      color:"#6366F1", action:"Approve"      },
+  { icon:"💳", count:0, label:"Failed payments to retry",   color:"#EF4444", action:"View Failed"  },
+  { icon:"📧", count:0, label:"Scout reports ready to send",color:"#10B981", action:"Send Reports" },
 ];
 
 const activityColor: Record<string,string> = {
@@ -108,17 +65,17 @@ export default function DashboardView() {
   };
 
   const metricCards = [
-    { label:"Live Right Now", value:"247",  sub:"+12 in last 5m",        color:"#10B981", icon:"🟢", live:true  },
-    { label:"Total Users",    value:"8,430",sub:"+124 today",             color:"#6366F1", icon:"👥"             },
-    { label:"Active Users",   value:"3,218",sub:"last 7 days",            color:"#3B82F6", icon:"⚡"             },
-    { label:"Phase 1 Paid",   value:"3,812",sub:"₹3,81,200 revenue",      color:"#F59E0B", icon:"💳"             },
-    { label:"Phase 2 Paid",   value:"1,247",sub:"₹2,49,400 revenue",      color:"#FF6B00", icon:"🏆"             },
-    { label:"Dropped Off",    value:"4,618",sub:"registered, no payment", color:"#EF4444", icon:"❌"             },
+    { label:"Live Right Now", value:"0",  sub:"No activity yet",          color:"#10B981", icon:"🟢", live:true  },
+    { label:"Total Users",    value:"0",  sub:"No registrations yet",     color:"#6366F1", icon:"👥"             },
+    { label:"Active Users",   value:"0",  sub:"last 7 days",              color:"#3B82F6", icon:"⚡"             },
+    { label:"Phase 1 Paid",   value:"0",  sub:"₹0 revenue",               color:"#F59E0B", icon:"💳"             },
+    { label:"Phase 2 Paid",   value:"0",  sub:"₹0 revenue",               color:"#FF6B00", icon:"🏆"             },
+    { label:"Dropped Off",    value:"0",  sub:"registered, no payment",   color:"#EF4444", icon:"❌"             },
   ];
 
   const weekTarget = 5000;
-  const weekActual = 3812;
-  const targetPct  = Math.min(Math.round(weekActual/weekTarget*100),100);
+  const weekActual = 0;
+  const targetPct  = 0;
 
   return (
     <div style={{ display:"flex", flexDirection:"column", gap:18 }}>

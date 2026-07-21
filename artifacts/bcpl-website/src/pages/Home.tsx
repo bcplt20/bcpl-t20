@@ -65,7 +65,7 @@ const TIMELINE = [
 ];
 
 /* Matches */
-const MATCHES: typeof POINTS_TABLE = [];
+const MATCHES: {status:string,team1:string,team2:string,t1Slug:string,t2Slug:string,t1Color:string,t2Color:string,score1:string,score2:string,info:string,winner:string}[] = [];
 
 /* Points Table */
 const POINTS_TABLE: {rank:number,team:string,slug:string,color:string,p:number,w:number,l:number,nr:number,pts:number,nrr:string}[] = [
@@ -258,7 +258,7 @@ export function Home() {
       <div style={{ background:B.color, borderBottom:`1px solid ${B.border}33`, padding:"10px 0", overflow:"hidden" }}>
         <div className="W" style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:12, flexWrap:"wrap" }}>
           <span className={bannerOut?"banner-out":"banner-in"} style={{ fontSize:"clamp(12px,2vw,13px)", color:B.textCol, fontWeight:600, flex:1, minWidth:0 }}>{B.text}</span>
-          <button onClick={()=>navigate("/registration")} style={{ padding:"5px 16px", borderRadius:8, border:`1px solid ${B.ctaCol}55`, background:"transparent", color:B.ctaCol, fontSize:12, fontWeight:700, cursor:"pointer", whiteSpace:"nowrap", flexShrink:0 }}>{B.cta} →</button>
+          <button onClick={()=>navigate("/register")} style={{ padding:"5px 16px", borderRadius:8, border:`1px solid ${B.ctaCol}55`, background:"transparent", color:B.ctaCol, fontSize:12, fontWeight:700, cursor:"pointer", whiteSpace:"nowrap", flexShrink:0 }}>{B.cta} →</button>
           {/* Dots */}
           <div style={{ display:"flex", gap:5, flexShrink:0 }}>
             {BANNERS.map((_,i)=>(
@@ -312,12 +312,12 @@ export function Home() {
 
           {/* Desktop Nav */}
           <nav className="desk-links">
-            {NAV.map(n=><a key={n} className="nav-link" href={RTES[n]||"#"}>{n}</a>)}
+            {NAV.map(n=><span key={n} className="nav-link" style={{cursor:"pointer"}} onClick={()=>navigate(RTES[n]||"/")}>{n}</span>)}
           </nav>
 
           {/* Right */}
           <div style={{ display:"flex", alignItems:"center", gap:10, flexShrink:0 }}>
-            <button className="btn-cta" style={{ fontSize:12, padding:"9px 18px" }} onClick={()=>navigate("/registration")}>Register Now →</button>
+            <button className="btn-cta" style={{ fontSize:12, padding:"9px 18px" }} onClick={()=>navigate("/register")}>Register Now →</button>
             <button className="ham" onClick={()=>setMenuOpen(true)} style={{ display:"flex", flexDirection:"column", gap:5, background:"none", border:"none", cursor:"pointer", padding:8 }}>
               {[0,1,2].map(i=><span key={i} style={{ width:22, height:2, background:"#fff", display:"block" }}/>)}
             </button>
@@ -332,7 +332,7 @@ export function Home() {
           {NAV.map(n=>(
             <div key={n} className="mob-link" onClick={()=>{ setMenuOpen(false); navigate(RTES[n]||"/"); }}>{n}</div>
           ))}
-          <button className="btn-cta" style={{ marginTop:24, width:"100%", justifyContent:"center", fontSize:16, padding:16 }} onClick={()=>{ setMenuOpen(false); navigate("/registration"); }}>
+          <button className="btn-cta" style={{ marginTop:24, width:"100%", justifyContent:"center", fontSize:16, padding:16 }} onClick={()=>{ setMenuOpen(false); navigate("/register"); }}>
             Register Now — ₹299 →
           </button>
         </div>
@@ -345,6 +345,10 @@ export function Home() {
         {/* BG grid */}
         <div style={{ position:"absolute", inset:0, backgroundImage:"linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px)", backgroundSize:"60px 60px", pointerEvents:"none" }}/>
         <div style={{ position:"absolute", top:"-20%", left:"-10%", width:"60%", height:"140%", background:"radial-gradient(ellipse,rgba(255,122,41,.06) 0%,transparent 65%)", pointerEvents:"none" }}/>
+        {/* Ganguly watermark */}
+        <img src={import.meta.env.BASE_URL + "bcpl-assets/ganguly_shoot.jpg"} alt="" aria-hidden="true"
+          style={{ position:"absolute", right:0, top:0, height:"100%", width:"auto", objectFit:"cover", objectPosition:"center top", opacity:0.13, pointerEvents:"none", userSelect:"none", filter:"grayscale(15%) contrast(1.05)", zIndex:0, maskImage:"linear-gradient(to left, rgba(0,0,0,0.9) 0%, transparent 65%)", WebkitMaskImage:"linear-gradient(to left, rgba(0,0,0,0.9) 0%, transparent 65%)" as any }}
+        />
 
         <div className="W" style={{ position:"relative", zIndex:1, paddingTop:"clamp(48px,8vw,80px)", paddingBottom:"clamp(48px,8vw,72px)" }}>
           <div className="hero-grid">
@@ -390,7 +394,7 @@ export function Home() {
 
               {/* CTAs */}
               <div style={{ display:"flex", flexWrap:"wrap", gap:12, marginBottom:32 }}>
-                <button className="btn-cta" style={{ fontSize:15, padding:"15px 32px" }} onClick={()=>navigate("/registration")}>Register Now — ₹299 →</button>
+                <button className="btn-cta" style={{ fontSize:15, padding:"15px 32px" }} onClick={()=>navigate("/register")}>Register Now — ₹299 →</button>
                 <a className="btn-ghost" href="#how-it-works" style={{ fontSize:14, padding:"14px 26px" }}>How It Works ↓</a>
               </div>
 
@@ -561,7 +565,7 @@ export function Home() {
                 </div>
               ))}
               <p style={{ fontSize:12, color:"rgba(255,255,255,.35)", marginTop:14, lineHeight:1.6 }}>Includes: Scout review slot · Video submission · Registration confirmation</p>
-              <button className="btn-cta" style={{ width:"100%", justifyContent:"center", marginTop:20, fontSize:14, padding:14 }} onClick={()=>navigate("/registration")}>Register Now →</button>
+              <button className="btn-cta" style={{ width:"100%", justifyContent:"center", marginTop:20, fontSize:14, padding:14 }} onClick={()=>navigate("/register")}>Register Now →</button>
             </div>
             <div className="card" style={{ padding:24, borderTop:"3px solid #E8B23D" }}>
               <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:20 }}>
@@ -653,9 +657,9 @@ export function Home() {
                   )}
                 </div>
 
-                {/* Arrow connector (hidden on mobile, shown via CSS below) */}
+                {/* Arrow connector (hidden on mobile via .tl-arrow CSS) */}
                 {i < TIMELINE.length-1 && (
-                  <div style={{ position:"absolute", top:"50%", right:-14, transform:"translateY(-50%)", zIndex:10, display:"flex", alignItems:"center", justifyContent:"center" }}>
+                  <div className="tl-arrow" style={{ position:"absolute", top:"50%", right:-14, transform:"translateY(-50%)", zIndex:10, display:"flex", alignItems:"center", justifyContent:"center" }}>
                     <div style={{ width:20, height:20, borderRadius:"50%", background:`${t.color}`, display:"flex", alignItems:"center", justifyContent:"center" }}>
                       <span style={{ fontSize:10, color:"#fff", fontWeight:900 }}>→</span>
                     </div>
@@ -672,10 +676,13 @@ export function Home() {
               .tl-grid::before{content:'';position:absolute;top:50%;left:0;right:0;height:2px;background:linear-gradient(90deg,#FF7A29,#E8B23D,#22C55E,#3B82F6,#6366F1);transform:translateY(-50%);z-index:0;border-radius:2px;opacity:.3;}
             }
             @media(max-width:767px){
-              .tl-grid{display:flex;flex-direction:column;gap:0;position:relative;}
-              .tl-grid::before{content:'';position:absolute;top:0;bottom:0;left:28px;width:2px;background:linear-gradient(180deg,#FF7A29,#E8B23D,#22C55E,#3B82F6,#6366F1);z-index:0;opacity:.3;border-radius:2px;}
-              .tl-card{display:flex;gap:16px;padding-bottom:24px;padding-left:8px;}
-              .tl-card > div:last-child{flex:1;text-align:left;margin:0;}
+              .tl-grid{display:grid;grid-template-columns:1fr;gap:12px;}
+              .tl-grid::before{display:none;}
+              .tl-card{padding-bottom:0;}
+              .tl-inner{text-align:left!important;display:flex;gap:14px;align-items:flex-start;padding:16px!important;}
+              .tl-inner > *{flex-shrink:0;}
+              .tl-inner > p,.tl-inner > div:last-child{flex:1;flex-shrink:1;}
+              .tl-arrow{display:none!important;}
             }
           `}</style>
 
@@ -691,9 +698,9 @@ export function Home() {
       </section>
 
       {/* ══════════════════════════════════════
-          MATCH CENTER + POINTS TABLE
+          MATCH CENTER + POINTS TABLE — only if live data available
       ══════════════════════════════════════ */}
-      <section style={{ padding:"clamp(60px,7vw,88px) 0", background:"#060C18", position:"relative", overflow:"hidden" }}>
+      {(liveMatches.length > 0 || liveTable.length > 0) && <section style={{ padding:"clamp(60px,7vw,88px) 0", background:"#060C18", position:"relative", overflow:"hidden" }}>
         <div style={{ position:"absolute", inset:0, backgroundImage:"linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px)", backgroundSize:"48px 48px", pointerEvents:"none" }}/>
         <div className="W" style={{ position:"relative", zIndex:1 }}>
           <div className="slbl">Live Season</div>
@@ -840,7 +847,7 @@ export function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </section>}
 
       {/* ══════════════════════════════════════
           10 FRANCHISE TEAMS
@@ -957,16 +964,16 @@ export function Home() {
             Join thousands of working professionals who have already taken the first step. Phase 1 closes 28 February 2026.
           </p>
           <div style={{ display:"flex", gap:14, justifyContent:"center", flexWrap:"wrap" }}>
-            <button className="btn-cta" style={{ fontSize:16, padding:"16px 36px" }} onClick={()=>navigate("/registration")}>🏏 Register Now — ₹299 →</button>
+            <button className="btn-cta" style={{ fontSize:16, padding:"16px 36px" }} onClick={()=>navigate("/register")}>🏏 Register Now — ₹299 →</button>
             <a className="btn-ghost" href="#how-it-works" style={{ fontSize:14, padding:"15px 28px" }}>Learn More</a>
           </div>
         </div>
       </section>
 
       {/* ══════════════════════════════════════
-          SPONSORS  (NEW!)
+          SPONSORS  — only show if sponsors exist
       ══════════════════════════════════════ */}
-      <section style={{ padding:"clamp(40px,6vw,72px) 0", background:"#040810", borderTop:"1px solid rgba(255,255,255,.05)" }}>
+      {SPONSORS.length > 0 && <section style={{ padding:"clamp(40px,6vw,72px) 0", background:"#040810", borderTop:"1px solid rgba(255,255,255,.05)" }}>
         <div className="W">
           <div style={{ textAlign:"center", marginBottom:36 }}>
             <div className="slbl" style={{ justifyContent:"center" }}>Our Partners</div>
@@ -1037,7 +1044,7 @@ export function Home() {
             </a>
           </div>
         </div>
-      </section>
+      </section>}
 
       {/* ══════════════════════════════════════
           FOOTER  (FIXED)
@@ -1100,6 +1107,21 @@ export function Home() {
 
           {/* Bottom bar — single line */}
           <div style={{ borderTop:"1px solid rgba(255,255,255,.05)", paddingTop:16 }}>
+            {/* Social Media Links */}
+            <div style={{ display:"flex", gap:10, justifyContent:"center", marginBottom:18 }}>
+              {[
+                { icon:"📸", label:"Instagram", href:"https://instagram.com/bcplt20" },
+                { icon:"▶️", label:"YouTube",   href:"https://youtube.com/@bcplt20" },
+                { icon:"🐦", label:"Twitter",   href:"https://twitter.com/bcplt20" },
+                { icon:"💼", label:"LinkedIn",  href:"https://linkedin.com/company/bcplt20" },
+              ].map(s=>(
+                <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" title={s.label}
+                  style={{ width:36, height:36, borderRadius:8, background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.08)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:15, textDecoration:"none", transition:"border-color .2s,background .2s" }}
+                  onMouseEnter={e=>{ e.currentTarget.style.borderColor="#FF7A29"; e.currentTarget.style.background="rgba(255,122,41,.1)"; }}
+                  onMouseLeave={e=>{ e.currentTarget.style.borderColor="rgba(255,255,255,.08)"; e.currentTarget.style.background="rgba(255,255,255,.05)"; }}
+                >{s.icon}</a>
+              ))}
+            </div>
             <div className="foot-bottom">
               <p className="mont" style={{ fontSize:11, color:"rgba(255,255,255,.2)", fontWeight:600 }}>© 2026 BCPL T20 · Kriparti Playing11 Pvt. Ltd. · All Rights Reserved.</p>
               <div className="foot-legal-links">

@@ -69,7 +69,6 @@ export function Registration() {
   const [name, setName]         = useState('');
   const [email, setEmail]       = useState('');
   const [phone, setPhone]       = useState('');
-  const [company, setCompany]   = useState('');
   const [dob, setDob]           = useState('');
   const [role, setRole]         = useState<typeof ROLES[0] | null>(null);
   const [city, setCity]         = useState('');
@@ -82,11 +81,11 @@ export function Registration() {
   const price       = role?.phase1 ?? 299;
   const phase2price = role?.phase2 ?? 2000;
   const canNext     =
-    step === 1 ? !!(name && email && phone && company) :
+    step === 1 ? !!(name && email && phone) :
     step === 2 ? !!role :
     step === 3 ? !!city : agreed;
 
-  const NAV = ['Home','Match Center','Teams','Sponsors','Photos','Videos','About','FAQ','Contact'];
+  const NAV_LINKS: [string,string][] = [['Home','/'],['Match Center','/match-center'],['Teams','/teams'],['Sponsors','/sponsors'],['About','/about'],['FAQ','/faq'],['Contact','/contact']];
 
   return (
     <div style={{ background:'#06101E', minHeight:'100vh', color:'#F0EDE8', fontFamily:"'Inter',sans-serif", overflowX:'hidden', paddingBottom:'calc(100px + env(safe-area-inset-bottom))' }}>
@@ -310,8 +309,8 @@ export function Registration() {
           </div>
           {/* Desktop nav */}
           <div className="desk-nav">
-            {NAV.map(l => <a key={l} href="#" style={{ color:'rgba(255,255,255,0.6)', fontSize:12, fontWeight:600, textDecoration:'none', letterSpacing:'.04em', transition:'color .15s' }}>{l}</a>)}
-            <button className="btn-primary" style={{ padding:'10px 24px', fontSize:12 }}>REGISTER NOW →</button>
+            {NAV_LINKS.map(([l,h]) => <a key={l} href={h} style={{ color:'rgba(255,255,255,0.6)', fontSize:12, fontWeight:600, textDecoration:'none', letterSpacing:'.04em', transition:'color .15s' }}>{l}</a>)}
+            <a href="/register" className="btn-primary" style={{ padding:'10px 24px', fontSize:12, textDecoration:'none' }}>REGISTER NOW →</a>
           </div>
           {/* Hamburger */}
           <button className="ham-btn" onClick={() => setMenuOpen(o => !o)}>
@@ -324,8 +323,8 @@ export function Registration() {
       {menuOpen && (
         <div style={{ position:'fixed', inset:0, background:'#040C18', zIndex:400, display:'flex', flexDirection:'column', padding:'72px 24px 40px', overflowY:'auto' }}>
           <button onClick={() => setMenuOpen(false)} style={{ position:'absolute', top:16, right:16, background:'rgba(255,255,255,0.07)', border:'1px solid rgba(255,255,255,0.1)', color:'#fff', width:38, height:38, borderRadius:4, cursor:'pointer', fontSize:18 }}>✕</button>
-          {NAV.map(l => <a key={l} href="#" style={{ color:'rgba(255,255,255,0.85)', fontWeight:700, fontSize:18, fontFamily:'Montserrat,sans-serif', textDecoration:'none', padding:'14px 0', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>{l}</a>)}
-          <button className="btn-primary" style={{ marginTop:24, padding:'16px', fontSize:15 }}>REGISTER NOW →</button>
+          {NAV_LINKS.map(([l,h]) => <a key={l} href={h} onClick={()=>setMenuOpen(false)} style={{ color:'rgba(255,255,255,0.85)', fontWeight:700, fontSize:18, fontFamily:'Montserrat,sans-serif', textDecoration:'none', padding:'14px 0', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>{l}</a>)}
+          <a href="/register" className="btn-primary" style={{ marginTop:24, padding:'16px', fontSize:15, textAlign:'center', textDecoration:'none' }}>REGISTER NOW →</a>
         </div>
       )}
 
@@ -429,6 +428,7 @@ export function Registration() {
                 <div style={{ borderLeft:'3px solid #FF7A29', paddingLeft:14, marginBottom:28 }}>
                   <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(18px,5vw,22px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em' }}>Your Details</div>
                   <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginTop:4 }}>As per Aadhaar / PAN — used for franchise records</div>
+                  <a href="/eligibility" style={{ fontSize:11, color:'#FF7A29', textDecoration:'none', fontWeight:700, display:'inline-block', marginTop:6 }}>Check eligibility criteria →</a>
                 </div>
 
                 <div style={{ display:'grid', gridTemplateColumns:'1fr', gap:20 }}>
@@ -438,23 +438,17 @@ export function Registration() {
                   </div>
                   <div className="field-grid-2">
                     <div>
-                      <label className="field-lbl">Work Email *</label>
-                      <input className="field-inp" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@company.com" />
+                      <label className="field-lbl">Email *</label>
+                      <input className="field-inp" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" />
                     </div>
                     <div>
                       <label className="field-lbl">Phone *</label>
                       <input className="field-inp" type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="+91 98765 43210" />
                     </div>
                   </div>
-                  <div className="field-grid-2">
-                    <div>
-                      <label className="field-lbl">Company / Organisation *</label>
-                      <input className="field-inp" value={company} onChange={e => setCompany(e.target.value)} placeholder="Your Employer / Business" />
-                    </div>
-                    <div>
-                      <label className="field-lbl">Date of Birth (18–45 yrs)</label>
-                      <input className="field-inp" type="date" value={dob} onChange={e => setDob(e.target.value)} style={{ colorScheme:'dark' }} />
-                    </div>
+                  <div>
+                    <label className="field-lbl">Date of Birth (18–45 yrs)</label>
+                    <input className="field-inp" type="date" value={dob} onChange={e => setDob(e.target.value)} style={{ colorScheme:'dark' }} />
                   </div>
                 </div>
 
@@ -667,9 +661,9 @@ export function Registration() {
                   <input type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)} style={{ marginTop:2, accentColor:'#FF7A29', width:16, height:16, flexShrink:0 }} />
                   <span style={{ fontSize:12, color:'rgba(255,255,255,0.5)', lineHeight:1.6 }}>
                     I confirm I am a working professional aged 18–45, not under a first-class cricket contract, and I agree to the{' '}
-                    <a href="#" style={{ color:'#FF7A29', textDecoration:'none', fontWeight:600 }}>Terms & Conditions</a>,{' '}
-                    <a href="#" style={{ color:'#FF7A29', textDecoration:'none', fontWeight:600 }}>Refund Policy</a>, and{' '}
-                    <a href="#" style={{ color:'#FF7A29', textDecoration:'none', fontWeight:600 }}>Eligibility Criteria</a>.
+                    <a href="/terms" style={{ color:'#FF7A29', textDecoration:'none', fontWeight:600 }}>Terms & Conditions</a>,{' '}
+                    <a href="/refunds" style={{ color:'#FF7A29', textDecoration:'none', fontWeight:600 }}>Refund Policy</a>, and{' '}
+                    <a href="/eligibility" style={{ color:'#FF7A29', textDecoration:'none', fontWeight:600 }}>Eligibility Criteria</a>.
                   </span>
                 </label>
 
