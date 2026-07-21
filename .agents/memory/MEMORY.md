@@ -1,2 +1,4 @@
 - [BCPL Logo Extraction](bcpl-logo.md) — brand book PDF (107MB) → PyMuPDF via `uv run --with pymupdf` to render pages as PNG; ball icon at public/bcpl-assets/bcpl-ball-clean.png
 - [GitHub file size limit](github-limits.md) — PDF >100MB rejected by GitHub; always git rm --cached large files before push
+- [BCPL deploy pipeline](deploy-pipeline.md) — EC2 pulls from GitHub; commits/task-merges in Replit are invisible to prod until `git push origin main`
+- [Edit tool $ quirk](edit-tool-dollar-quirk.md) — replacements containing ` sequences (SQL regex anchors) can corrupt files; use WriteFile instead
