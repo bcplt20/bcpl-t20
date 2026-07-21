@@ -813,8 +813,11 @@ function ContractModal({ c, onClose }: { c: Contract; onClose: ()=>void }) {
   const cType = c.contractType || "Player";
 
   function downloadPDF() {
-    const logoUrl = `${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/bcpl-logo-white.png`;
-    const ballUrl = `${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/bcpl-ball-transparent.png`;
+    const base = `${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/`;
+    const logoUrl  = base + "bcpl-logo-white.png";
+    const ballUrl  = base + "bcpl-ball-transparent.png";
+    const sigUrl   = base + "bcpl-signature.png";
+    const stampUrl = base + "bcpl-stamp.png";
     const w = window.open("", "_blank");
     if (!w) return;
     const cType = c.contractType || "Player";
@@ -862,8 +865,8 @@ function ContractModal({ c, onClose }: { c: Contract; onClose: ()=>void }) {
         color:#7A3A0A;letter-spacing:.22em;text-align:center;
         border-bottom:1px solid #EDE0D0;font-family:'Arial',sans-serif}
 
-      /* ── Body — extra padding-bottom so nothing hides behind fixed footer ── */
-      .body{padding:28px 40px 110px;max-width:860px;margin:0 auto;position:relative;z-index:1}
+      /* ── Body ── */
+      .body{padding:28px 40px 40px;max-width:860px;margin:0 auto;position:relative;z-index:1}
 
       /* ── Contract badge ── */
       .contract-badge{
@@ -882,28 +885,35 @@ function ContractModal({ c, onClose }: { c: Contract; onClose: ()=>void }) {
         font-family:'Georgia',serif;font-size:11px;line-height:1.88;color:#1a1a1a}
 
       /* ── Signature block ── */
-      .sig-block{margin-top:38px;border-top:1.5px solid #E2D4C4;padding-top:26px;display:flex;gap:60px}
+      .sig-block{margin-top:38px;border-top:1.5px solid #E2D4C4;padding-top:26px;display:flex;gap:40px}
       .sig-line{flex:1}
       .sig-line .label{font-size:8.5px;color:#aaa;text-transform:uppercase;
-        letter-spacing:.08em;margin-bottom:28px;font-family:'Arial',sans-serif}
+        letter-spacing:.08em;margin-bottom:10px;font-family:'Arial',sans-serif}
+      .sig-img{height:64px;object-fit:contain;display:block;margin-bottom:4px}
+      .stamp-img{height:90px;object-fit:contain;display:block;margin-bottom:4px;opacity:0.85}
       .sig-line .line{border-bottom:1.5px solid #333;margin-bottom:5px}
-      .sig-line .name{font-size:10px;color:#666;font-family:'Arial',sans-serif}
+      .sig-line .name{font-size:10px;color:#444;font-family:'Arial',sans-serif;font-weight:600}
+      .sig-line .desig{font-size:8.5px;color:#888;font-family:'Arial',sans-serif;margin-top:2px}
 
-      /* ── Page footer — fixed, premium dark ── */
+      /* ── Page footer — at bottom of doc (not fixed, avoids content cut) ── */
       .pg-footer{
-        position:fixed;bottom:0;left:0;right:0;
+        margin-top:40px;
         background:linear-gradient(120deg,#060F25,#0D1E44);
-        border-top:3px solid #FF6B00;padding:7px 36px;
+        border-top:3px solid #FF6B00;padding:10px 36px;
         font-size:7.5px;color:rgba(255,255,255,0.4);
         display:flex;justify-content:space-between;align-items:center;
         -webkit-print-color-adjust:exact;print-color-adjust:exact;
-        z-index:2;font-family:'Arial',sans-serif;letter-spacing:.03em}
+        font-family:'Arial',sans-serif;letter-spacing:.03em}
       .pg-footer strong{color:#E8B23D}
 
       @media print{
-        .watermark,.pg-footer{position:fixed}
-        @page{margin:0}
+        .watermark{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%)}
+        @page{margin:12mm 14mm 18mm 14mm;size:A4}
         body{margin:0}
+        pre{page-break-inside:auto}
+        .sig-block{page-break-inside:avoid}
+        .pg-footer{position:fixed;bottom:0;left:0;right:0;margin-top:0}
+        .body{padding-bottom:60px}
       }
     </style></head>
     <body>
@@ -940,13 +950,18 @@ function ContractModal({ c, onClose }: { c: Contract; onClose: ()=>void }) {
         <div class="sig-block">
           <div class="sig-line">
             <div class="label">Authorised Signatory — BCPL</div>
+            <img src="${sigUrl}" class="sig-img" alt="Signature"/>
+            <img src="${stampUrl}" class="stamp-img" alt="BCPL Stamp"/>
             <div class="line"></div>
-            <div class="name">For Bhartiya Corporate Premier League Pvt. Ltd.</div>
+            <div class="name">Saurabh Jha</div>
+            <div class="desig">Founder &amp; Director — Bhartiya Corporate Premier League Pvt. Ltd.</div>
           </div>
           <div class="sig-line">
             <div class="label">Signature of ${cType === "Brand Ambassador" ? "Ambassador" : "Party"}</div>
+            <div style="height:80px"></div>
             <div class="line"></div>
             <div class="name">${c.player}</div>
+            <div class="desig">${c.role}${c.team && c.team !== "BCPL (League)" && c.team !== "Individual" ? " · " + c.team : ""}</div>
           </div>
         </div>
       </div>

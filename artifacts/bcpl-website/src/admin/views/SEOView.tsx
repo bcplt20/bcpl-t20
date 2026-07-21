@@ -2,13 +2,13 @@ import { useState, useEffect } from "react";
 
 /* ─ Data ─ */
 const PAGES = [
-  { page:"Home",         slug:"/",              title:"BCPL T20 – India's Biggest Corporate Cricket League | Season 5", desc:"Register for BCPL T20 Season 5. India's largest corporate T20 cricket league. ₹6 Crore prize pool. Open to all working professionals. Phase 1 starts ₹299.", score:91 },
-  { page:"Registration", slug:"/registration",  title:"Register for BCPL T20 Season 5 | ₹299 Only | Corporate Cricket",  desc:"Sign up for BCPL T20 Season 5 in 3 easy steps. Pay ₹299 for Phase 1. Upload trial video. Get selected for franchise auction. India's biggest working professionals cricket league.", score:88 },
-  { page:"Teams",        slug:"/teams",         title:"BCPL T20 Teams – 10 Franchise Teams | Season 5 Squads",           desc:"Explore all 10 BCPL T20 franchise teams, their squads, captains, and season stats. Rajasthan Scorchers, Mumbai Mavericks, Delhi Suryas and more.",                      score:76 },
-  { page:"Match Center", slug:"/match-center",  title:"BCPL T20 Live Scores & Match Schedule | Season 5",                desc:"Get live scores, match schedule, points table and highlights from BCPL T20 Season 5. Stay updated with all corporate cricket matches across India.",                      score:72 },
-  { page:"About",        slug:"/about",         title:"About BCPL T20 – BCPL | Corporate Cricket India",   desc:"Learn about BCPL T20, India's premier corporate T20 cricket league by BCPL. Backed by Sourav Ganguly. 4 seasons, ₹14 Crore distributed.",               score:80 },
-  { page:"Sponsors",     slug:"/sponsors",      title:"BCPL T20 Sponsors & Partners | Season 5 Sponsorship",             desc:"BCPL T20 sponsorship opportunities for brands. Reach 8,000+ cricket-loving working professionals across 50+ cities. Title, Associate, and Official partners.",    score:65 },
-  { page:"FAQ",          slug:"/faq",           title:"BCPL T20 FAQ – Registration, Fees, Rules | Season 5",             desc:"Find answers to common BCPL T20 questions: registration fees, Phase 1 & Phase 2 process, trial cities, eligibility, and refund policy.",                             score:83 },
+  { page:"Home",         slug:"/",              title:"BCPL T20 – India's Biggest Corporate Cricket League | Season 5", desc:"Register for BCPL T20 Season 5. India's largest corporate T20 cricket league. ₹6 Crore prize pool. Open to all working professionals. Phase 1 starts ₹299.", score:0 },
+  { page:"Registration", slug:"/registration",  title:"Register for BCPL T20 Season 5 | ₹299 Only | Corporate Cricket",  desc:"Sign up for BCPL T20 Season 5 in 3 easy steps. Pay ₹299 for Phase 1. Upload trial video. Get selected for franchise auction. India's biggest working professionals cricket league.", score:0 },
+  { page:"Teams",        slug:"/teams",         title:"BCPL T20 Teams – 10 Franchise Teams | Season 5 Squads",           desc:"Explore all 10 BCPL T20 franchise teams, their squads, captains, and season stats. Rajasthan Scorchers, Mumbai Mavericks, Delhi Suryas and more.",                      score:0 },
+  { page:"Match Center", slug:"/match-center",  title:"BCPL T20 Live Scores & Match Schedule | Season 5",                desc:"Get live scores, match schedule, points table and highlights from BCPL T20 Season 5. Stay updated with all corporate cricket matches across India.",                      score:0 },
+  { page:"About",        slug:"/about",         title:"About BCPL T20 – BCPL | Corporate Cricket India",   desc:"Learn about BCPL T20, India's premier corporate T20 cricket league by BCPL. Backed by Sourav Ganguly. 4 seasons, ₹14 Crore distributed.",               score:0 },
+  { page:"Sponsors",     slug:"/sponsors",      title:"BCPL T20 Sponsors & Partners | Season 5 Sponsorship",             desc:"BCPL T20 sponsorship opportunities for brands. Reach 8,000+ cricket-loving working professionals across 50+ cities. Title, Associate, and Official partners.",    score:0 },
+  { page:"FAQ",          slug:"/faq",           title:"BCPL T20 FAQ – Registration, Fees, Rules | Season 5",             desc:"Find answers to common BCPL T20 questions: registration fees, Phase 1 & Phase 2 process, trial cities, eligibility, and refund policy.",                             score:0 },
 ];
 
 const KEYWORDS = [
@@ -143,17 +143,17 @@ export default function SEOView() {
           <div style={{ fontSize:12, color:"#64748B", marginTop:2 }}>Full-stack SEO — meta, keywords, schema, backlinks, technical audit</div>
         </div>
         <div style={{ display:"flex", gap:8 }}>
-          <button style={{ padding:"9px 16px", borderRadius:9, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontSize:12, cursor:"pointer" }}>🗺 Generate Sitemap</button>
-          <button style={{ padding:"9px 16px", borderRadius:9, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer" }}>⬇ Export SEO Report</button>
+          <button onClick={()=>alert("Sitemap generation will be available once the site is live and GSC is connected.")} style={{ padding:"9px 16px", borderRadius:9, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontSize:12, cursor:"pointer" }}>🗺 Generate Sitemap</button>
+          <button onClick={()=>alert("No SEO data to export yet. Connect Google Search Console and gather data first.")} style={{ padding:"9px 16px", borderRadius:9, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer" }}>⬇ Export SEO Report</button>
         </div>
       </div>
 
       {/* Overview Cards */}
       <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:12 }}>
         {[
-          { label:"Avg SEO Score",       value:`${avgScore}/100`,        sub:"Across all pages",       color:"#10B981", icon:"📈" },
-          { label:"Organic Visitors",    value:"2,840",                  sub:"Last 30 days",           color:"#6366F1", icon:"👁"  },
-          { label:"Ranking Keywords",    value:"8",                      sub:`${KEYWORDS.filter(k=>k.pos<=3).length} in top 3`, color:"#FF6B00", icon:"🔑" },
+          { label:"Avg SEO Score",       value:"0/100",   sub:"No data yet",            color:"#475569", icon:"📈" },
+          { label:"Organic Visitors",    value:"0",       sub:"Connect GSC to track",   color:"#475569", icon:"👁"  },
+          { label:"Ranking Keywords",    value:"0",       sub:"0 in top 3",             color:"#475569", icon:"🔑" },
           { label:"Tech Audit",          value:`${goodTech}/${TECH_AUDIT.length}`,sub:"Checks passed",color:"#F59E0B", icon:"⚙️" },
         ].map(s=>(
           <div key={s.label} style={{ ...card, borderTop:`3px solid ${s.color}` }}>
@@ -381,7 +381,7 @@ export default function SEOView() {
               </div>
             </div>
             <div style={{ marginLeft:"auto", flexShrink:0 }}>
-              <button style={{ padding:"9px 18px", borderRadius:9, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer" }}>Re-run Audit</button>
+              <button onClick={()=>alert("Technical audit will run once the site is deployed and indexed.")} style={{ padding:"9px 18px", borderRadius:9, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer" }}>Re-run Audit</button>
             </div>
           </div>
 

@@ -20,11 +20,41 @@ const POOL: { id:number; name:string; role:string; city:string; phase1Score:numb
 export default function AuctionView() {
   const [currentIdx, setCurrentIdx] = useState(0);
   const [bidHistory, setBidHistory] = useState<{team:string,amount:number}[]>([]);
-  const [currentBid, setCurrentBid] = useState(POOL[0].base);
+  const [currentBid, setCurrentBid] = useState(POOL[0]?.base ?? 50000);
   const [soldPlayers, setSoldPlayers] = useState<{player:typeof POOL[0],team:string,amount:number}[]>([]);
   const [timer, setTimer] = useState(30);
   const [running, setRunning] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState(0);
+
+  // Empty pool guard — Phase 2 not yet completed
+  if (POOL.length === 0) {
+    return (
+      <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
+        <div>
+          <div style={{ fontSize:20, fontWeight:800, color:"#F1F5F9" }}>Live Auction Simulator</div>
+          <div style={{ fontSize:12, color:"#64748B", marginTop:2 }}>Real-time franchise auction — IPL-style bidding for BCPL Season 5</div>
+        </div>
+        <div style={{ background:"linear-gradient(135deg,#0D1526,#0A1020)", border:"1px solid #1E293B", borderRadius:20, padding:"60px 40px", textAlign:"center" }}>
+          <div style={{ fontSize:48, marginBottom:20 }}>🔨</div>
+          <div style={{ fontSize:18, fontWeight:800, color:"#F1F5F9", marginBottom:10 }}>Auction Not Started Yet</div>
+          <div style={{ fontSize:13, color:"#475569", lineHeight:1.7, maxWidth:480, margin:"0 auto" }}>
+            The player pool will be populated after Phase 2 selection is complete.<br/>
+            Once players are selected, the Live Auction Simulator will be activated here.
+          </div>
+          <div style={{ display:"flex", gap:12, justifyContent:"center", marginTop:28, flexWrap:"wrap" }}>
+            {TEAMS.map(t=>(
+              <div key={t.name} style={{ padding:"6px 14px", borderRadius:8, background:`${t.color}15`, border:`1px solid ${t.color}40`, fontSize:11, fontWeight:700, color:t.color }}>
+                {t.name}
+              </div>
+            ))}
+          </div>
+          <div style={{ marginTop:24, fontSize:12, color:"#334155" }}>
+            {TEAMS.length} franchise teams ready · ₹30L budget each · Total pool: ₹{(TEAMS.length*30).toLocaleString("en-IN")}L
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const player = POOL[currentIdx];
 
