@@ -135,7 +135,7 @@ export function AuctionSelected() {
                 style={{ height:72, width:72, objectFit:'contain', filter:'drop-shadow(0 4px 20px rgba(232,178,61,0.6)) brightness(1.1)' }}/>
             </div>
             <h1 style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(28px,6vw,64px)', lineHeight:1.05, color:'#fff', textTransform:'uppercase', marginBottom:16, letterSpacing:'-0.01em' }}>
-              YOU ARE <span className="shimmer-gold">AUCTION</span><br/>SHORTLISTED
+              YOU ARE <span className="shimmer-gold">SHORTLISTED</span><br/>FOR AUCTION
             </h1>
             <p style={{ fontFamily:'Inter,sans-serif', fontSize:'clamp(14px,2vw,17px)', color:'rgba(255,255,255,0.6)', lineHeight:1.6, maxWidth:520, margin:'0 auto 32px' }}>
               Congratulations! All 10 BCPL franchise coaches have reviewed your trial performance. Your profile is now live for the Season 5 Franchise Auction.
@@ -162,8 +162,8 @@ export function AuctionSelected() {
               </div>
               <div style={{ textAlign:'right', minWidth:100 }}>
                 <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:10, color:'rgba(255,255,255,0.35)', letterSpacing:'.1em', marginBottom:4 }}>BASE PRICE</div>
-                <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:24, color:'#E8B23D' }}>₹1L</div>
-                <div style={{ fontFamily:'Inter,sans-serif', fontSize:11, color:'rgba(255,255,255,0.3)', marginTop:2 }}>Starting bid</div>
+                <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:24, color:'#E8B23D' }}>₹2L</div>
+                <div style={{ fontFamily:'Inter,sans-serif', fontSize:11, color:'rgba(255,255,255,0.3)', marginTop:2 }}>Max: ₹20L</div>
               </div>
             </div>
             <div style={{ marginTop:20, paddingTop:16, borderTop:'1px solid rgba(255,255,255,0.06)', display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:8 }}>
@@ -205,7 +205,7 @@ export function AuctionSelected() {
           <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(260px,1fr))', gap:12 }}>
             {[
               { icon:'📋', title:'Your Profile Goes Live', body:'All 10 franchise owners + coaching staff receive your full player profile — video, trial scores, and physical data.' },
-              { icon:'🔨', title:'Franchises Place Bids', body:'Bidding starts at your base price (₹1L for Batsman). Each franchise can raise bids in ₹25K–₹1L increments.' },
+              { icon:'🔨', title:'Franchises Place Bids', body:'Bidding starts at base price ₹2L. Franchises can raise bids up to a maximum of ₹20L per player.' },
               { icon:'💰', title:'Highest Bidder Signs You', body:'The franchise with the final highest bid secures you for Season 5. Payment is made to BCPL, you receive your team contract.' },
               { icon:'📱', title:'You Are Notified Live', body:'You will receive an SMS + WhatsApp alert the moment your name is called and when bidding concludes.' },
             ].map(card=>(
