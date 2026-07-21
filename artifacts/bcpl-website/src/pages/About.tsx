@@ -1,4 +1,5 @@
 import React from 'react';
+import { BCPLFooter } from '../components/BCPLFooter';
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
@@ -85,7 +86,7 @@ function Navbar() {
         <div className="wrap" style={{height:64,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
           <a href="/" style={{display:'flex',alignItems:'center',gap:8,textDecoration:'none'}}>
             <div style={{width:36,height:36,borderRadius:'50%',overflow:'hidden',flexShrink:0}}>
-              <img src="/bcpl-website/bcpl-assets/bcpl-ball-clean.png" alt="BCPL" style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:'top center'}}/>
+              <img src={import.meta.env.BASE_URL + "bcpl-assets/bcpl-ball-color.jpg"} alt="BCPL" style={{width:'100%',height:'100%',objectFit:'cover'}}/>
             </div>
             <div>
               <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:18,lineHeight:1}}>
@@ -121,37 +122,6 @@ function Navbar() {
   );
 }
 
-function Footer() {
-  return (
-    <footer style={{background:'#040C18',borderTop:'1px solid rgba(255,255,255,0.05)',padding:'48px 0 32px',position:'relative',zIndex:10}}>
-      <div className="wrap">
-        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:40,marginBottom:40}}>
-          <div>
-            <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:26,marginBottom:8}}><span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff'}}>T20</span></div>
-            <div style={{color:'rgba(255,255,255,0.4)',fontSize:11,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'0.1em',marginBottom:12}}>SEASON 5 · 2025</div>
-            <div style={{color:'rgba(255,255,255,0.5)',fontSize:13,fontFamily:'Inter,sans-serif',lineHeight:1.6}}>#OfficeSeStadiumtak<br/>Relive the dream. Rediscover the thrill.</div>
-          </div>
-          <div>
-            <div style={{color:'rgba(255,255,255,0.3)',fontSize:11,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'0.1em',marginBottom:16,textTransform:'uppercase'}}>League</div>
-            {[['Schedule','/schedule'],['Match Center','/match-center'],['Teams','/teams'],['Points Table','/points-table'],['Photos','/photos'],['Videos','/videos']].map(([l,h])=>(
-              <a key={l} href={h} style={{display:'block',color:'rgba(255,255,255,0.55)',fontSize:14,fontFamily:'Inter,sans-serif',textDecoration:'none',marginBottom:9,transition:'color 0.2s'}}>{l}</a>
-            ))}
-          </div>
-          <div>
-            <div style={{color:'rgba(255,255,255,0.3)',fontSize:11,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'0.1em',marginBottom:16,textTransform:'uppercase'}}>Info</div>
-            {[['About','/about'],['FAQ','/faq'],['Contact','/contact'],['Terms','/terms'],['Privacy','/privacy'],['Refunds','/refunds'],['Eligibility','/eligibility']].map(([l,h])=>(
-              <a key={l} href={h} style={{display:'block',color:'rgba(255,255,255,0.55)',fontSize:14,fontFamily:'Inter,sans-serif',textDecoration:'none',marginBottom:9,transition:'color 0.2s'}}>{l}</a>
-            ))}
-          </div>
-        </div>
-        <div style={{borderTop:'1px solid rgba(255,255,255,0.06)',paddingTop:24,display:'flex',flexWrap:'wrap',gap:12,justifyContent:'space-between',alignItems:'center'}}>
-          <div style={{color:'rgba(255,255,255,0.3)',fontSize:12,fontFamily:'Inter,sans-serif'}}>© 2025 BCPL T20 Pvt. Ltd. | www.bcpl-t20.com</div>
-          <div style={{color:'rgba(255,255,255,0.25)',fontSize:12,fontFamily:'Inter,sans-serif'}}>All rights reserved.</div>
-        </div>
-      </div>
-    </footer>
-  );
-}
 
 function MobileStickyCTA() {
   return (
@@ -333,7 +303,7 @@ export function About() {
 
       {/* ── FLOATING REGISTER BUTTON ── */}
       <a className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>🏏 REGISTER NOW &rarr;</a>
-      <Footer/>
+      <BCPLFooter />
       <MobileStickyCTA/>
     </div>
   );

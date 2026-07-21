@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useLocation } from 'wouter';
+import { BCPLFooter } from '../components/BCPLFooter';
 
 /*
   BCPL T20 — Bhartiya Corporate Premier League
@@ -338,7 +339,7 @@ export function Registration() {
           {/* Logo — click to go home */}
           <div style={{ display:'flex', alignItems:'center', gap:10, cursor:'pointer' }} onClick={()=>navigate('/')}>
             <div style={{ width:36, height:36, borderRadius:'50%', overflow:'hidden', flexShrink:0, border:'2px solid rgba(255,122,41,0.45)', boxShadow:'0 0 10px rgba(255,122,41,0.3)' }}>
-              <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-ball-clean.png'} alt="BCPL" style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'top center' }}/>
+              <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-ball-color.jpg'} alt="BCPL" style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'top center' }}/>
             </div>
             <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, lineHeight:1 }}>
               <span style={{ color:'#FF7A29' }}>BCPL</span>
@@ -897,6 +898,9 @@ export function Registration() {
           </div>
         </div>
       </div>
+
+      {/* Footer */}
+      <BCPLFooter />
 
       {/* ═══════════════ MOBILE STICKY CTA ═══════════════ */}
       <div className="bot-cta" style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:500, padding:'10px 16px calc(20px + env(safe-area-inset-bottom))', background:'rgba(4,10,20,0.98)', backdropFilter:'blur(20px)', borderTop:'2px solid #FF7A29', gap:10 }}>

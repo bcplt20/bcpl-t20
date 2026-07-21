@@ -1,4 +1,5 @@
 import React from 'react';
+import { BCPLFooter } from '../components/BCPLFooter';
 
 function AnnBar() {
   return (
@@ -49,42 +50,6 @@ function Navbar({open,setOpen}:{open:boolean,setOpen:(v:boolean)=>void}) {
   );
 }
 
-function Footer() {
-  return (
-    <footer style={{background:'#040C18',borderTop:'1px solid rgba(255,255,255,0.05)',padding:'48px 0 32px'}}>
-      <div className="wrap">
-        <div className="footer-grid" style={{display:'grid',gap:32,marginBottom:32}}>
-          <div>
-            <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,marginBottom:8}}>
-              <span style={{color:'#FF7A29'}}>BCPL</span><span style={{color:'#fff',marginLeft:4}}>T20</span>
-            </div>
-            <div style={{fontSize:11,color:'rgba(255,122,41,0.7)',fontWeight:700,letterSpacing:'0.08em',marginBottom:10}}>SEASON 5 · 2025</div>
-            <p style={{color:'rgba(255,255,255,0.4)',fontSize:13,lineHeight:1.7,marginBottom:8,maxWidth:280}}>Relive the dream. Rediscover the thrill. World's largest corporate cricket league.</p>
-            <p style={{color:'rgba(255,122,41,0.6)',fontSize:12,fontWeight:700}}>#OfficeSeStadiumtak</p>
-          </div>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
-            <div>
-              <div style={{color:'rgba(255,255,255,0.3)',fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:12}}>League</div>
-              {[['Schedule','/schedule'],['Match Center','/match-center'],['Teams','/teams'],['Points Table','/points-table'],['Photos','/photos'],['Videos','/videos']].map(([l,h])=>(
-                <div key={l} style={{marginBottom:8}}><a href={h} style={{color:'rgba(255,255,255,0.55)',fontSize:13,textDecoration:'none'}}>{l}</a></div>
-              ))}
-            </div>
-            <div>
-              <div style={{color:'rgba(255,255,255,0.3)',fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:12}}>Info</div>
-              {[['About','/about'],['FAQ','/faq'],['Contact','/contact'],['Terms','/terms'],['Privacy','/privacy'],['Refunds','/refunds'],['Eligibility','/eligibility']].map(([l,h])=>(
-                <div key={l} style={{marginBottom:8}}><a href={h} style={{color:'rgba(255,255,255,0.55)',fontSize:13,textDecoration:'none'}}>{l}</a></div>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div style={{borderTop:'1px solid rgba(255,255,255,0.05)',paddingTop:20,display:'flex',flexWrap:'wrap',gap:12,justifyContent:'space-between',alignItems:'center'}}>
-          <div style={{color:'rgba(255,255,255,0.28)',fontSize:11}}>© 2025 BCPL T20 Pvt. Ltd. | www.bcpl-t20.com</div>
-          <div style={{color:'rgba(255,255,255,0.28)',fontSize:11}}>All rights reserved</div>
-        </div>
-      </div>
-    </footer>
-  );
-}
 
 function MobileCTA() {
   return (
@@ -408,7 +373,7 @@ export function EligibilityCriteria() {
           </div>
         </div>
 
-        <Footer/>
+        <BCPLFooter />
       </div>
       <MobileCTA/>
       <a className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>🏏 REGISTER NOW →</a>

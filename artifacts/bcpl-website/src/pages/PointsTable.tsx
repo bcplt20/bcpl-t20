@@ -120,7 +120,7 @@ function Navbar() {
         <div className="wrap" style={{height:64,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
           <a href="/" style={{display:'flex',alignItems:'center',gap:8,textDecoration:'none',cursor:'pointer'}}>
             <div style={{width:36,height:36,borderRadius:'50%',overflow:'hidden',flexShrink:0}}>
-              <img src="/bcpl-website/bcpl-assets/bcpl-ball-clean.png" alt="BCPL" style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:'top center'}}/>
+              <img src="/bcpl-website/bcpl-assets/bcpl-ball-color.jpg" alt="BCPL" style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:'top center'}}/>
             </div>
             <div>
               <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:18,lineHeight:1}}>
