@@ -40,7 +40,7 @@ pnpm run build
 # ── 4. Build frontend ────────────────────────────────────────
 echo "🎨 Building frontend..."
 cd $APP_DIR/artifacts/bcpl-website
-VITE_API_URL="https://bcplt20.com" pnpm run build
+BASE_PATH=/bcpl-website/ VITE_API_URL="https://bcplt20.com" pnpm run build
 
 # ── 5. Run DB migrations ─────────────────────────────────────
 echo "🗄️  Running database migrations..."
