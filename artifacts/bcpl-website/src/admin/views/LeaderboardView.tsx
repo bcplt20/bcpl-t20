@@ -1,16 +1,8 @@
 import { useState, useEffect } from "react";
 import { getPointsTable, updatePointsRow } from "../../lib/api";
 
-const PLAYERS = [
-  { rank:1,  name:"Arjun Patel",    team:"Rajasthan Scorchers",  role:"Batsman",    runs:420, avg:52.5, sr:142.3, wickets:0,  economy:0,   matches:9, hs:"98*", fours:45, sixes:18 },
-  { rank:2,  name:"Kiran Sharma",   team:"Bengaluru Bulls",      role:"All-Rounder",runs:380, avg:47.5, sr:138.2, wickets:12, economy:7.2, matches:9, hs:"76",  fours:38, sixes:14 },
-  { rank:3,  name:"Dev Mehta",      team:"Delhi Suryas",         role:"Batsman",    runs:352, avg:44.0, sr:134.8, wickets:0,  economy:0,   matches:9, hs:"81",  fours:36, sixes:11 },
-  { rank:4,  name:"Rahul Verma",    team:"Mumbai Mavericks",     role:"Batsman",    runs:318, avg:39.75,sr:129.3, wickets:0,  economy:0,   matches:9, hs:"72*", fours:32, sixes:9  },
-  { rank:5,  name:"Amit Singh",     team:"Mumbai Mavericks",     role:"Bowler",     runs:42,  avg:10.5, sr:88.4,  wickets:18, economy:6.8, matches:9, hs:"18",  fours:4,  sixes:1  },
-  { rank:6,  name:"Suresh Nair",    team:"Chennai Challengers",  role:"WK-Batsman", runs:298, avg:37.25,sr:126.8, wickets:0,  economy:0,   matches:9, hs:"65",  fours:28, sixes:8  },
-  { rank:7,  name:"Priya Nair",     team:"Rajasthan Scorchers",  role:"All-Rounder",runs:260, avg:32.5, sr:122.0, wickets:9,  economy:7.9, matches:9, hs:"58",  fours:24, sixes:6  },
-  { rank:8,  name:"Rohit Das",      team:"Bengaluru Bulls",      role:"Bowler",     runs:18,  avg:6.0,  sr:72.0,  wickets:15, economy:7.4, matches:8, hs:"12",  fours:2,  sixes:0  },
-];
+// No match stats yet — will populate after first matches are played
+const PLAYERS: { rank:number; name:string; team:string; role:string; runs:number; avg:number; sr:number; wickets:number; economy:number; matches:number; hs:string; fours:number; sixes:number }[] = [];
 
 const ALL_TEAMS_LIST = [
   "Mumbai Mavericks","Kolkata Tigers","Rajasthan Scorchers","Punjab Warriors",
@@ -23,23 +15,13 @@ const TEAM_COLORS: Record<string,string> = {
 };
 
 type PtRow = { team:string; p:number; w:number; l:number; nr:number; pts:number; nrr:string; form:string[]; };
-const INIT_TABLE: PtRow[] = [
-  { team:"Kolkata Tigers",      p:12, w:9, l:2, nr:1, pts:19, nrr:"+1.245", form:["W","W","W","L","W"] },
-  { team:"Mumbai Mavericks",    p:12, w:8, l:3, nr:1, pts:17, nrr:"+0.876", form:["W","W","L","W","W"] },
-  { team:"Lucknow Nawabs",      p:12, w:7, l:4, nr:1, pts:15, nrr:"+0.543", form:["W","L","W","W","L"] },
-  { team:"Hyderabad Hawks",     p:12, w:7, l:5, nr:0, pts:14, nrr:"+0.321", form:["W","W","L","W","L"] },
-  { team:"Delhi Suryas",        p:12, w:6, l:5, nr:1, pts:13, nrr:"+0.112", form:["L","W","W","L","W"] },
-  { team:"Chennai Thalaivas",   p:12, w:5, l:6, nr:1, pts:11, nrr:"-0.088", form:["W","L","L","W","L"] },
-  { team:"Rajasthan Scorchers", p:12, w:4, l:7, nr:1, pts:9,  nrr:"-0.234", form:["L","W","L","L","W"] },
-  { team:"Punjab Warriors",     p:11, w:4, l:7, nr:0, pts:8,  nrr:"-0.456", form:["L","L","W","L","W"] },
-  { team:"Bengaluru Rockets",   p:12, w:3, l:8, nr:1, pts:7,  nrr:"-0.678", form:["L","L","W","L","L"] },
-  { team:"Ahmedabad Lions",     p:11, w:2, l:9, nr:0, pts:4,  nrr:"-1.234", form:["L","L","L","W","L"] },
-];
+// No matches played yet — enter via edit mode once season begins
+const INIT_TABLE: PtRow[] = [];
 
 type Group = { id:string; name:string; teams:string[]; };
 
 export default function LeaderboardView() {
-  const [tab,       setTab]       = useState<"batting"|"bowling"|"points"|"groups">("batting");
+  const [tab,       setTab]       = useState<"batting"|"bowling"|"points"|"groups">("points");
   const [tableData, setTableData] = useState<PtRow[]>(INIT_TABLE);
   const [editMode,  setEditMode]  = useState(false);
   const [editRows,  setEditRows]  = useState<PtRow[]>(INIT_TABLE);

@@ -80,12 +80,28 @@ export function Registration() {
   const filtered    = CITIES.filter(c => c.toLowerCase().includes(cityQ.toLowerCase()));
   const price       = role?.phase1 ?? 299;
   const phase2price = role?.phase2 ?? 2000;
-  const canNext     =
-    step === 1 ? !!(name && email && phone) :
+
+  /* DOB age validation — 18 to 45 years */
+  const today   = new Date();
+  const maxDob  = new Date(today.getFullYear()-18, today.getMonth(), today.getDate()).toISOString().split('T')[0];
+  const minDob  = new Date(today.getFullYear()-45, today.getMonth(), today.getDate()).toISOString().split('T')[0];
+  const dobValid = dob >= minDob && dob <= maxDob;
+  const ageError = dob && !dobValid
+    ? (dob > maxDob ? 'You must be at least 18 years old to register.' : 'Maximum age limit is 45 years.')
+    : '';
+
+  const canNext =
+    step === 1 ? !!(name && email && phone.length === 10 && dob && dobValid) :
     step === 2 ? !!role :
     step === 3 ? !!city : agreed;
 
-  const NAV_LINKS: [string,string][] = [['Home','/'],['Match Center','/match-center'],['Teams','/teams'],['Sponsors','/sponsors'],['About','/about'],['FAQ','/faq'],['Contact','/contact']];
+  /* Login modal state */
+  const [showLogin, setShowLogin] = useState(false);
+  const [loginPhone, setLoginPhone] = useState('');
+  const [loginOtp, setLoginOtp] = useState('');
+  const [loginStep, setLoginStep] = useState<'phone'|'otp'>('phone');
+
+  const NAV_LINKS: [string,string][] = [['Home','/'],['Match Center','/match-center'],['Teams','/teams'],['Sponsors','/sponsors'],['About','/about'],['FAQ','/faq'],['Contact','/contact'],['Login','#login']];
 
   return (
     <div style={{ background:'#06101E', minHeight:'100vh', color:'#F0EDE8', fontFamily:"'Inter',sans-serif", overflowX:'hidden', paddingBottom:'calc(100px + env(safe-area-inset-bottom))' }}>
@@ -442,21 +458,57 @@ export function Registration() {
                       <input className="field-inp" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" />
                     </div>
                     <div>
-                      <label className="field-lbl">Phone *</label>
-                      <input className="field-inp" type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="+91 98765 43210" />
+                      <label className="field-lbl">Phone * (10 digits)</label>
+                      <input className="field-inp" type="tel" value={phone}
+                        onChange={e => { const v = e.target.value.replace(/\D/g,''); if(v.length<=10) setPhone(v); }}
+                        placeholder="9876543210" maxLength={10} inputMode="numeric" />
+                      {phone.length > 0 && phone.length < 10 && <div style={{fontSize:10,color:'#EF4444',marginTop:4}}>{10 - phone.length} more digits needed</div>}
                     </div>
                   </div>
                   <div>
                     <label className="field-lbl">Date of Birth (18–45 yrs)</label>
-                    <input className="field-inp" type="date" value={dob} onChange={e => setDob(e.target.value)} style={{ colorScheme:'dark' }} />
+                    <input className="field-inp" type="date" value={dob} onChange={e => setDob(e.target.value)} min={minDob} max={maxDob} style={{ colorScheme:'dark' }} />
+                    {ageError && <div style={{fontSize:11,color:'#EF4444',marginTop:5,fontWeight:600}}>⚠ {ageError}</div>}
                   </div>
                 </div>
 
                 {/* Already registered? */}
                 <div style={{ marginTop:20, padding:'12px 16px', background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.08)', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:10 }}>
                   <span style={{ fontSize:12, color:'rgba(255,255,255,0.45)' }}>Already registered Phase 1? Upload your video directly.</span>
-                  <button style={{ background:'none', border:'1px solid rgba(255,255,255,0.15)', color:'rgba(255,255,255,0.6)', fontSize:11, fontWeight:700, padding:'6px 14px', cursor:'pointer', fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em', flexShrink:0 }}>LOGIN →</button>
+                  <button onClick={() => { setShowLogin(true); setLoginStep('phone'); setLoginPhone(''); setLoginOtp(''); }} style={{ background:'none', border:'1px solid rgba(255,122,41,0.4)', color:'#FF7A29', fontSize:11, fontWeight:700, padding:'6px 14px', cursor:'pointer', fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em', flexShrink:0, borderRadius:6 }}>LOGIN →</button>
                 </div>
+
+                {/* Login Modal */}
+                {showLogin && (
+                  <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.85)', zIndex:999, display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}>
+                    <div style={{ background:'#0C1A2E', border:'1px solid rgba(255,122,41,0.3)', borderRadius:16, padding:28, width:'100%', maxWidth:380, position:'relative' }}>
+                      <button onClick={() => setShowLogin(false)} style={{ position:'absolute', top:12, right:14, background:'none', border:'none', color:'rgba(255,255,255,0.4)', fontSize:18, cursor:'pointer' }}>✕</button>
+                      <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:18, color:'#fff', marginBottom:6 }}>Registered Player Login</div>
+                      <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginBottom:20 }}>Enter your registered mobile number to continue.</div>
+                      {loginStep === 'phone' ? (<>
+                        <label style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.5)', letterSpacing:'.08em', display:'block', marginBottom:6 }}>MOBILE NUMBER</label>
+                        <input className="field-inp" type="tel" inputMode="numeric" maxLength={10} value={loginPhone}
+                          onChange={e => { const v=e.target.value.replace(/\D/g,''); if(v.length<=10) setLoginPhone(v); }}
+                          placeholder="10-digit number" style={{ marginBottom:16, width:'100%' }} />
+                        <button disabled={loginPhone.length!==10} onClick={() => setLoginStep('otp')}
+                          style={{ width:'100%', padding:'13px 0', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', opacity:loginPhone.length!==10?0.5:1 }}>
+                          Send OTP →
+                        </button>
+                      </>) : (<>
+                        <div style={{ fontSize:12, color:'#22C55E', marginBottom:12 }}>✅ OTP sent to +91 {loginPhone}</div>
+                        <label style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.5)', letterSpacing:'.08em', display:'block', marginBottom:6 }}>ENTER OTP</label>
+                        <input className="field-inp" type="tel" inputMode="numeric" maxLength={6} value={loginOtp}
+                          onChange={e => { const v=e.target.value.replace(/\D/g,''); if(v.length<=6) setLoginOtp(v); }}
+                          placeholder="6-digit OTP" style={{ marginBottom:16, width:'100%', letterSpacing:'0.3em', fontSize:20, textAlign:'center' }} />
+                        <button disabled={loginOtp.length!==6} onClick={() => { alert('Login feature coming soon — OTP verification will be active once payment gateway is live.'); setShowLogin(false); }}
+                          style={{ width:'100%', padding:'13px 0', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', opacity:loginOtp.length!==6?0.5:1 }}>
+                          Verify & Login →
+                        </button>
+                        <button onClick={() => setLoginStep('phone')} style={{ width:'100%', marginTop:8, padding:'10px', background:'none', border:'1px solid rgba(255,255,255,0.1)', borderRadius:10, color:'rgba(255,255,255,0.4)', fontSize:12, cursor:'pointer' }}>← Change Number</button>
+                      </>)}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -485,7 +537,7 @@ export function Registration() {
                           <span style={{ fontSize:28 }}>{r.emoji}</span>
                           {r.premium && (
                             <div style={{ background:'rgba(245,158,11,0.15)', border:'1px solid rgba(245,158,11,0.4)', padding:'2px 8px', fontSize:8, fontWeight:900, fontFamily:'Montserrat,sans-serif', letterSpacing:'.14em', color:'#F59E0B' }}>
-                              PREMIUM
+                              MOST VALUED
                             </div>
                           )}
                           {role?.id === r.id && (
@@ -495,23 +547,23 @@ export function Registration() {
 
                         {/* Name */}
                         <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:15, color:'#fff', textTransform:'uppercase', letterSpacing:'.04em', marginBottom:4 }}>{r.label}</div>
-                        <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)', marginBottom:14, lineHeight:1.4 }}>{r.desc}</div>
+                        <div style={{ fontSize:13, color:'rgba(255,255,255,0.55)', marginBottom:14, lineHeight:1.5 }}>{r.desc}</div>
 
                         {/* Price rows */}
-                        <div style={{ borderTop:'1px solid rgba(255,255,255,0.07)', paddingTop:12, display:'flex', flexDirection:'column', gap:6 }}>
+                        <div style={{ borderTop:'1px solid rgba(255,255,255,0.07)', paddingTop:12, display:'flex', flexDirection:'column', gap:8 }}>
                           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
                             <div>
-                              <div style={{ fontSize:9, fontWeight:700, color:'#FF7A29', letterSpacing:'.12em', fontFamily:'Montserrat,sans-serif' }}>PHASE 1</div>
-                              <div style={{ fontSize:9, color:'rgba(255,255,255,0.35)' }}>Video Trial Entry</div>
+                              <div style={{ fontSize:11, fontWeight:700, color:'#FF7A29', letterSpacing:'.1em', fontFamily:'Montserrat,sans-serif' }}>PHASE 1</div>
+                              <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)' }}>Video Trial Entry</div>
                             </div>
-                            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:22, color: role?.id===r.id ? r.color : '#fff' }}>₹{r.phase1}</div>
+                            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:24, color: role?.id===r.id ? r.color : '#fff' }}>₹{r.phase1}</div>
                           </div>
                           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', opacity:.55 }}>
                             <div>
-                              <div style={{ fontSize:9, fontWeight:700, color:'#E8B23D', letterSpacing:'.12em', fontFamily:'Montserrat,sans-serif' }}>PHASE 2 🔒</div>
-                              <div style={{ fontSize:9, color:'rgba(255,255,255,0.35)' }}>Physical Trial (if selected)</div>
+                              <div style={{ fontSize:11, fontWeight:700, color:'#E8B23D', letterSpacing:'.1em', fontFamily:'Montserrat,sans-serif' }}>PHASE 2 🔒</div>
+                              <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)' }}>Physical Trial (if selected)</div>
                             </div>
-                            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:16, color:'rgba(232,178,61,0.7)' }}>₹{r.phase2.toLocaleString()}</div>
+                            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:18, color:'rgba(232,178,61,0.7)' }}>₹{r.phase2.toLocaleString()}</div>
                           </div>
                         </div>
                       </div>
@@ -537,7 +589,7 @@ export function Registration() {
               <div className="step-enter">
                 <div style={{ borderLeft:'3px solid #FF7A29', paddingLeft:14, marginBottom:24 }}>
                   <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(18px,5vw,22px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em' }}>Trial City</div>
-                  <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginTop:4 }}>21 cities across India. Choose nearest to your home or workplace.</div>
+                  <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginTop:4 }}>50+ cities across India. Choose the city nearest to your home or workplace.</div>
                 </div>
 
                 {/* Search */}
@@ -575,7 +627,7 @@ export function Registration() {
                     <span style={{ fontSize:20 }}>📍</span>
                     <div>
                       <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:16, color:'#22C55E' }}>{city}</div>
-                      <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)', marginTop:2 }}>Phase 1 & Phase 2 trials will be conducted here</div>
+                      <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)', marginTop:2 }}>If selected in Phase 1, your physical trial will be held in this city</div>
                     </div>
                   </div>
                 )}
@@ -630,11 +682,10 @@ export function Registration() {
                         {[
                           '✅ BCCI-certified scout evaluation',
                           '✅ Result within 7 working days',
-                          '✅ Franchise auction eligibility',
-                          '✅ Zero auction/tournament fee',
-                          '✅ 7-day refund if not reviewed',
+                          '✅ Zero auction / tournament fee',
+                          '✅ 7-day result guarantee (or refund)',
                           '✅ Phase 2 invite if selected',
-                        ].map(t => <div key={t} style={{ fontSize:11, color:'rgba(255,255,255,0.55)' }}>{t}</div>)}
+                        ].map(t => <div key={t} style={{ fontSize:12, color:'rgba(255,255,255,0.65)', lineHeight:1.5 }}>{t}</div>)}
                       </div>
                     </div>
 
@@ -672,11 +723,21 @@ export function Registration() {
                   className="btn-primary"
                   disabled={!agreed}
                   style={{ width:'100%', padding:'20px 0', fontSize:17, clipPath:'none', borderRadius:12, letterSpacing:'.08em' }}
+                  onClick={() => agreed && alert('Payment gateway (Cashfree) will be live soon. Your registration details have been noted!')}
                 >
                   🏏 &nbsp;PAY ₹{price} · ENTER PHASE 1 TRIALS
                 </button>
+                {/* TEMP: Dummy pay for testing flow */}
+                {agreed && (
+                  <button
+                    style={{ width:'100%', marginTop:10, padding:'14px 0', background:'rgba(34,197,94,0.1)', border:'2px dashed rgba(34,197,94,0.4)', borderRadius:12, color:'#22C55E', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:13, cursor:'pointer', letterSpacing:'.06em' }}
+                    onClick={() => { window.location.href = '/phase1-receipt?name='+encodeURIComponent(name)+'&role='+encodeURIComponent(role?.label||'')+'&city='+encodeURIComponent(city)+'&amount='+price; }}
+                  >
+                    🧪 SKIP PAYMENT (TEST MODE) →
+                  </button>
+                )}
                 <div style={{ display:'flex', justifyContent:'center', gap:16, marginTop:12, flexWrap:'wrap' }}>
-                  {['🔒 Razorpay Secured','256-bit SSL','BCPL T20'].map(t => (
+                  {['🔒 Cashfree Secured','256-bit SSL','BCPL T20'].map(t => (
                     <span key={t} style={{ fontSize:10, color:'rgba(255,255,255,0.25)', fontWeight:600 }}>{t}</span>
                   ))}
                 </div>

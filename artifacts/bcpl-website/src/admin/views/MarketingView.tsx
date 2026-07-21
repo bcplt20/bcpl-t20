@@ -7,55 +7,28 @@ const PLATFORMS_COLOR: Record<string,string> = {
   Twitter:"#1DA1F2", Facebook:"#1877F2", Direct:"#6366F1", "Google Ads":"#4285F4",
 };
 
-const initReferrals = [
-  { id:1, code:"BCPL-INF01", name:"Rohit_Cricket22",  platform:"Instagram", clicks:4821, signups:1243, paid:987,  revenue:1243*299, active:true  },
-  { id:2, code:"BCPL-INF02", name:"BCPLOfficial",      platform:"YouTube",   clicks:3200, signups:987,  paid:743,  revenue:987*299,  active:true  },
-  { id:3, code:"BCPL-INF03", name:"CricketDhamaka",    platform:"WhatsApp",  clicks:2890, signups:743,  paid:612,  revenue:743*299,  active:true  },
-  { id:4, code:"BCPL-INF04", name:"SportsBhai",         platform:"Instagram", clicks:1980, signups:412,  paid:298,  revenue:412*299,  active:false },
-  { id:5, code:"BCPL-INF05", name:"RajCricket",         platform:"YouTube",   clicks:1540, signups:289,  paid:201,  revenue:289*299,  active:true  },
+// Empty until real campaign data comes in
+const initReferrals: { id:number; code:string; name:string; platform:string; clicks:number; signups:number; paid:number; revenue:number; active:boolean }[] = [];
+const platformPerf: { platform:string; signups:number; revenue:number; cac:number }[] = [
+  { platform:"WhatsApp",  signups:0, revenue:0, cac:0 },
+  { platform:"Instagram", signups:0, revenue:0, cac:0 },
+  { platform:"YouTube",   signups:0, revenue:0, cac:0 },
+  { platform:"Facebook",  signups:0, revenue:0, cac:0 },
+  { platform:"Direct",    signups:0, revenue:0, cac:0 },
 ];
-
-const platformPerf = [
-  { platform:"WhatsApp",   signups:3200, revenue:320000, cac:18 },
-  { platform:"Instagram",  signups:2100, revenue:210000, cac:24 },
-  { platform:"YouTube",    signups:1800, revenue:180000, cac:31 },
-  { platform:"Twitter",    signups:420,  revenue:42000,  cac:58 },
-  { platform:"Facebook",   signups:310,  revenue:31000,  cac:62 },
-  { platform:"Direct",     signups:600,  revenue:60000,  cac:0  },
-];
-
-const conversionTrend = [
-  { day:"Jul 14", rate:14, spend:4200 }, { day:"Jul 15", rate:17, spend:5100 },
-  { day:"Jul 16", rate:15, spend:3800 }, { day:"Jul 17", rate:22, spend:6600 },
-  { day:"Jul 18", rate:19, spend:5700 }, { day:"Jul 19", rate:26, spend:7800 },
-  { day:"Jul 20", rate:24, spend:7200 },
-];
-
+const conversionTrend: { day:string; rate:number; spend:number }[] = [];
 const funnelStages = [
-  { name:"Visited Landing Page", value:14820, color:"#334155", pct:100 },
-  { name:"Started Registration", value:8430,  color:"#6366F1", pct:57  },
-  { name:"Phone OTP Verified",   value:6210,  color:"#3B82F6", pct:42  },
-  { name:"Phase 1 Paid",         value:3812,  color:"#F59E0B", pct:26  },
-  { name:"Video Uploaded",       value:2890,  color:"#FF6B00", pct:20  },
-  { name:"Phase 2 Selected",     value:1247,  color:"#10B981", pct:8.4 },
+  { name:"Visited Landing Page", value:0, color:"#334155", pct:100 },
+  { name:"Started Registration", value:0, color:"#6366F1", pct:0  },
+  { name:"Phone OTP Verified",   value:0, color:"#3B82F6", pct:0  },
+  { name:"Phase 1 Paid",         value:0, color:"#F59E0B", pct:0  },
+  { name:"Video Uploaded",       value:0, color:"#FF6B00", pct:0  },
+  { name:"Phase 2 Selected",     value:0, color:"#10B981", pct:0  },
 ];
-
 type Campaign = { id:number; name:string; channel:string; budget:number; spent:number; leads:number; conv:string; status:string; roi:string; startDate:string; endDate:string; goal:string; notes:string };
-const initCampaigns: Campaign[] = [
-  { id:1, name:"Season 5 Launch",   channel:"WhatsApp",  budget:50000, spent:41200, leads:2840, conv:"22%", status:"active",    roi:"+314%", startDate:"Jul 01", endDate:"Jul 31", goal:"Registrations", notes:"Peak season push" },
-  { id:2, name:"Ganguly Reel Push", channel:"Instagram", budget:30000, spent:30000, leads:1420, conv:"18%", status:"completed", roi:"+182%", startDate:"Jun 20", endDate:"Jul 10", goal:"Brand Awareness", notes:"Ambassador content" },
-  { id:3, name:"YouTube Cricket",    channel:"YouTube",   budget:25000, spent:18700, leads:890,  conv:"15%", status:"active",    roi:"+128%", startDate:"Jul 05", endDate:"Jul 30", goal:"Registrations", notes:"Tutorial-style ads" },
-  { id:4, name:"WhatsApp Blast #3", channel:"WhatsApp",  budget:8000,  spent:8000,  leads:640,  conv:"31%", status:"completed", roi:"+452%", startDate:"Jul 08", endDate:"Jul 09", goal:"Re-engagement",  notes:"Lapsed users" },
-  { id:5, name:"Google Search",      channel:"Google Ads",budget:40000, spent:22000, leads:380,  conv:"8%",  status:"active",    roi:"+48%",  startDate:"Jul 10", endDate:"Aug 10", goal:"Registrations", notes:"Branded + generic" },
-];
-
+const initCampaigns: Campaign[] = [];
 type ABTest = { id:number; name:string; hypothesis:string; varA:string; varB:string; convA:number; convB:number; traffic:number; sampleSize:number; winner:string; status:string; startDate:string };
-const initABTests: ABTest[] = [
-  { id:1, name:"Hero CTA Text",     hypothesis:"Urgent CTA drives more registrations",       varA:"Register Now — ₹299", varB:"Start Your Journey",  convA:24.2, convB:19.8, traffic:50, sampleSize:2400, winner:"A", status:"done",    startDate:"Jul 01" },
-  { id:2, name:"Pricing Section",   hypothesis:"Showing full journey first builds trust",    varA:"Phase 1 first",       varB:"Full journey first",    convA:21.4, convB:26.1, traffic:50, sampleSize:3100, winner:"B", status:"done",    startDate:"Jul 05" },
-  { id:3, name:"Ganguly Quote",     hypothesis:"Quote placement affects trust + conversion", varA:"Top of page",         varB:"After stats",           convA:22.8, convB:22.1, traffic:50, sampleSize:1840, winner:"A", status:"running", startDate:"Jul 18" },
-  { id:4, name:"Mobile CTA Button", hypothesis:"Fixed CTA increases mobile conversions",    varA:"Fixed bottom bar",    varB:"Inline only",           convA:31.2, convB:18.4, traffic:50, sampleSize:2200, winner:"A", status:"done",    startDate:"Jun 28" },
-];
+const initABTests: ABTest[] = [];
 
 /* ── Blank form templates ── */
 const blankCampaign = { name:"", channel:"WhatsApp", budget:"", startDate:"", endDate:"", goal:"Registrations", notes:"" };

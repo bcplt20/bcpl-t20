@@ -17,10 +17,11 @@ const TEAMS = [
   { name:"Bengaluru Rockets",      city:"Bengaluru",   color:"#EF4444", slug:"bengaluru_rockets"     },
 ];
 
-const NAV  = ["Home","Match Center","Teams","Sponsors","Photos","Videos","About","FAQ","Contact"];
+const NAV  = ["Home","Match Center","Teams","Sponsors","Photos","Videos","About","FAQ","Contact","Login"];
 const RTES: Record<string,string> = {
   "Home":"/","Match Center":"/match-center","Teams":"/teams","Sponsors":"/sponsors",
   "Photos":"/photos","Videos":"/videos","About":"/about","FAQ":"/faq","Contact":"/contact",
+  "Login":"/register#login",
 };
 
 const STATS = [

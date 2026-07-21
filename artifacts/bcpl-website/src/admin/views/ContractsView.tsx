@@ -1,14 +1,7 @@
 import { useState } from "react";
 
-const CONTRACTS = [
-  { id:"CON-001", player:"Rahul Verma",   team:"Mumbai Mavericks",    amount:200000, status:"Signed",   date:"Jul 18, 2026", expiry:"Mar 31, 2027" },
-  { id:"CON-002", player:"Arjun Patel",   team:"Rajasthan Scorchers", amount:350000, status:"Pending",  date:"Jul 19, 2026", expiry:"Mar 31, 2027" },
-  { id:"CON-003", player:"Kiran Sharma",  team:"Bengaluru Bulls",     amount:500000, status:"Pending",  date:"Jul 19, 2026", expiry:"Mar 31, 2027" },
-  { id:"CON-004", player:"Suresh Nair",   team:"Chennai Challengers", amount:150000, status:"Signed",   date:"Jul 17, 2026", expiry:"Mar 31, 2027" },
-  { id:"CON-005", player:"Dev Mehta",     team:"Delhi Suryas",        amount:175000, status:"Expired",  date:"Jan 10, 2026", expiry:"Jun 30, 2026" },
-  { id:"CON-006", player:"Amit Singh",    team:"Mumbai Mavericks",    amount:280000, status:"Signed",   date:"Jul 18, 2026", expiry:"Mar 31, 2027" },
-  { id:"CON-007", player:"Priya Nair",    team:"Rajasthan Scorchers", amount:220000, status:"Pending",  date:"Jul 20, 2026", expiry:"Mar 31, 2027" },
-];
+// No contracts yet — generate after auction via "+ Generate Contract"
+const CONTRACTS: { id:string; player:string; team:string; amount:number; status:string; date:string; expiry:string }[] = [];
 
 const statusColor=(s:string)=>s==="Signed"?"#10B981":s==="Pending"?"#F59E0B":"#EF4444";
 

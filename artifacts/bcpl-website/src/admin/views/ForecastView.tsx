@@ -1,12 +1,11 @@
 import { useState } from "react";
 
+// Actuals start at 0; targets are editable below
 const MONTHLY = [
-  { month:"May",   actual:420,  target:400,  revenue:125580 },
-  { month:"Jun",   actual:890,  target:800,  revenue:266110 },
-  { month:"Jul",   actual:1240, target:1200, revenue:370760 },
-  { month:"Aug",   actual:0,    target:1800, revenue:0 },
-  { month:"Sep",   actual:0,    target:1600, revenue:0 },
-  { month:"Oct",   actual:0,    target:800,  revenue:0 },
+  { month:"Jul",   actual:0, target:500,  revenue:0 },
+  { month:"Aug",   actual:0, target:1500, revenue:0 },
+  { month:"Sep",   actual:0, target:2000, revenue:0 },
+  { month:"Oct",   actual:0, target:2000, revenue:0 },
 ];
 
 const SCENARIOS = [
@@ -18,8 +17,9 @@ const SCENARIOS = [
 export default function ForecastView() {
   const [goal,     setGoal]     = useState(6000);
   const [avgRev,   setAvgRev]   = useState(299);
-  const [daysLeft, setDaysLeft] = useState(72);
+  const [daysLeft, setDaysLeft] = useState(180);
   const [scenario, setScenario] = useState(1);
+  const [editGoal, setEditGoal] = useState(false);
 
   const totalActual   = MONTHLY.reduce((a,m)=>a+m.actual,0);
   const totalTarget   = MONTHLY.reduce((a,m)=>a+m.target,0);

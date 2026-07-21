@@ -9,67 +9,22 @@ const GST_RATE   = 0.18;
 const CF_FEE     = 0.02;   // Cashfree 2% gateway fee
 const TDS_RATE   = 0.10;   // TDS on prizes
 const BCPL_GSTIN = "07AABCK9234P1ZX";
-const BCPL_ADDR  = "Kriparti Playing11 Pvt. Ltd., 4th Floor, Sector-44, Gurugram, Haryana - 122003";
+const BCPL_ADDR  = "Kriparthi Playing Eleven Pvt. Ltd. (BCPL T20), 4th Floor, Sector-44, Gurugram, Haryana - 122003";
 
-/* ─── Data ───────────────────────────────────────────────────── */
-const dailyRevenue = [
-  { day:"Jul 14", p1:12400, p2:4200,  refunds:600  },
-  { day:"Jul 15", p1:18700, p2:7800,  refunds:299  },
-  { day:"Jul 16", p1:14200, p2:5600,  refunds:900  },
-  { day:"Jul 17", p1:22100, p2:9400,  refunds:0    },
-  { day:"Jul 18", p1:28900, p2:14200, refunds:1197 },
-  { day:"Jul 19", p1:31400, p2:18700, refunds:598  },
-  { day:"Jul 20", p1:24800, p2:11200, refunds:299  },
-];
-
-const monthlyPL = [
-  { month:"Apr", revenue:82400,  gatewayCost:1648, gstPaid:12870, net:67882 },
-  { month:"May", revenue:118600, gatewayCost:2372, gstPaid:18540, net:97688 },
-  { month:"Jun", revenue:154200, gatewayCost:3084, gstPaid:24116, net:127000 },
-  { month:"Jul", revenue:198900, gatewayCost:3978, gstPaid:31100, net:163822 },
-];
-
+/* ─── Data — empty until real transactions come in ───────────── */
+const dailyRevenue: { day:string; p1:number; p2:number; refunds:number }[] = [];
+const monthlyPL: { month:string; revenue:number; gatewayCost:number; gstPaid:number; net:number }[] = [];
 const paymentMethods = [
-  { name:"UPI",         value:62, color:"#6366F1" },
-  { name:"Net Banking", value:19, color:"#FF6B00" },
-  { name:"Card",        value:14, color:"#10B981" },
-  { name:"Wallet",      value:5,  color:"#F59E0B" },
+  { name:"UPI",         value:0, color:"#6366F1" },
+  { name:"Net Banking", value:0, color:"#FF6B00" },
+  { name:"Card",        value:0, color:"#10B981" },
+  { name:"Wallet",      value:0, color:"#F59E0B" },
 ];
-
-const gstMonthly = [
-  { month:"Apr", collected:14832, remitted:14832, due:"Paid" },
-  { month:"May", collected:21348, remitted:21348, due:"Paid" },
-  { month:"Jun", collected:27756, remitted:24000, due:"Partial" },
-  { month:"Jul", collected:35802, remitted:0,     due:"Pending" },
-];
-
-type Txn = typeof TRANSACTIONS[0];
-const TRANSACTIONS = [
-  { id:"TXN001", name:"Arjun Sharma",  email:"arjun@gmail.com",  phone:"9876543210", gstin:"27AADCA2009R1Z7", type:"Phase 2" as const, amount:2000, method:"UPI",          time:"Today 8:24 PM",  status:"success"  as const },
-  { id:"TXN002", name:"Priya Patel",   email:"priya@gmail.com",  phone:"9812345678", gstin:"",              type:"Phase 1" as const, amount:299,  method:"Card",         time:"Today 7:51 PM",  status:"success"  as const },
-  { id:"TXN003", name:"Rahul Kumar",   email:"rahul@gmail.com",  phone:"9898989898", gstin:"",              type:"Phase 2" as const, amount:2000, method:"Net Banking",   time:"Today 6:38 PM",  status:"pending"  as const },
-  { id:"TXN004", name:"Sneha Verma",   email:"sneha@gmail.com",  phone:"9811223344", gstin:"",              type:"Phase 1" as const, amount:299,  method:"UPI",          time:"Today 5:12 PM",  status:"failed"   as const },
-  { id:"TXN005", name:"Vikas Singh",   email:"vikas@gmail.com",  phone:"9900112233", gstin:"07AAACR0038E1Z2",type:"Phase 1"as const, amount:399,  method:"UPI",          time:"Today 4:44 PM",  status:"success"  as const },
-  { id:"TXN006", name:"Deepak Gupta",  email:"deepak@gmail.com", phone:"9867453210", gstin:"",              type:"Phase 2" as const, amount:3000, method:"Wallet",        time:"Today 3:29 PM",  status:"success"  as const },
-  { id:"TXN007", name:"Meena Joshi",   email:"meena@gmail.com",  phone:"9701234567", gstin:"",              type:"Phase 1" as const, amount:299,  method:"UPI",          time:"Today 2:11 PM",  status:"refunded" as const },
-  { id:"TXN008", name:"Kavita Nair",   email:"kavita@gmail.com", phone:"9845671230", gstin:"32AAFCN0258Q1ZO",type:"Phase 2"as const, amount:2000, method:"Card",         time:"Today 1:05 PM",  status:"success"  as const },
-  { id:"TXN009", name:"Anil Reddy",    email:"anil@gmail.com",   phone:"9811001122", gstin:"",              type:"Phase 1" as const, amount:299,  method:"UPI",          time:"Yesterday 9:30 PM",status:"success" as const },
-  { id:"TXN010", name:"Sonia Mehta",   email:"sonia@gmail.com",  phone:"9788776655", gstin:"",              type:"Phase 1" as const, amount:299,  method:"Card",         time:"Yesterday 7:20 PM",status:"failed"  as const },
-];
-
-const REFUNDS = [
-  { id:"REF001", txnId:"TXN007", name:"Meena Joshi",  amount:299,  reason:"Player withdrew before review",   status:"processed", date:"Jul 18", method:"UPI",    days:2 },
-  { id:"REF002", txnId:"TXN-X1", name:"Karan Mehta",  amount:299,  reason:"Duplicate payment",               status:"processed", date:"Jul 16", method:"Card",   days:3 },
-  { id:"REF003", txnId:"TXN-X2", name:"Divya Rao",    amount:399,  reason:"Ineligible profile rejected",     status:"pending",   date:"Jul 20", method:"UPI",    days:0 },
-  { id:"REF004", txnId:"TXN-X3", name:"Suresh Kumar", amount:2000, reason:"Phase 2 fee — not selected error",status:"pending",   date:"Jul 20", method:"Net Banking", days:0 },
-];
-
-const TDS_PRIZES = [
-  { player:"Arjun Sharma",   prize:"₹50,000",  tds:"₹5,000",  net:"₹45,000", pan:"ABCPS1234D", status:"Deducted" },
-  { player:"Rahul Patel",    prize:"₹30,000",  tds:"₹3,000",  net:"₹27,000", pan:"XYZPR5678F", status:"Deducted" },
-  { player:"Priya Singh",    prize:"₹20,000",  tds:"₹2,000",  net:"₹18,000", pan:"MNOPQ9012G", status:"Pending"  },
-  { player:"Team MVP Bonus", prize:"₹1,00,000",tds:"₹10,000", net:"₹90,000", pan:"BCPLT20TEAM", status:"Pending" },
-];
+const gstMonthly: { month:string; collected:number; remitted:number; due:string }[] = [];
+type Txn = { id:string; name:string; email:string; phone:string; gstin:string; type:"Phase 1"|"Phase 2"; amount:number; method:string; time:string; status:"success"|"pending"|"failed"|"refunded" };
+const TRANSACTIONS: Txn[] = [];
+const REFUNDS: { id:string; txnId:string; name:string; amount:number; reason:string; status:string; date:string; method:string; days:number }[] = [];
+const TDS_PRIZES: { player:string; prize:string; tds:string; net:string; pan:string; status:string }[] = [];
 
 const SC: Record<string,{color:string;bg:string;label:string}> = {
   success:  { color:"#10B981", bg:"#10B98122", label:"Success"  },

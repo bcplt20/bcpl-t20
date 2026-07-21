@@ -1,14 +1,7 @@
 import { useState } from "react";
 
-const AFFILIATES = [
-  { id:"AFF-001", name:"Vikram Joshi",   city:"Mumbai",    referrals:142, paid:128, pending:14, commission:38400, earned:34560, status:"Active",  phone:"+91-98765-XXXXX", joined:"May 2026" },
-  { id:"AFF-002", name:"Pooja Singh",    city:"Delhi",     referrals:98,  paid:91,  pending:7,  commission:27300, earned:24570, status:"Active",  phone:"+91-98765-XXXXX", joined:"May 2026" },
-  { id:"AFF-003", name:"Ravi Kumar",     city:"Bengaluru", referrals:76,  paid:70,  pending:6,  commission:21000, earned:18900, status:"Active",  phone:"+91-98765-XXXXX", joined:"Jun 2026" },
-  { id:"AFF-004", name:"Anita Sharma",   city:"Hyderabad", referrals:54,  paid:54,  pending:0,  commission:16200, earned:16200, status:"Paid Out",phone:"+91-98765-XXXXX", joined:"Jun 2026" },
-  { id:"AFF-005", name:"Deepak Nair",    city:"Chennai",   referrals:48,  paid:40,  pending:8,  commission:12000, earned:10800, status:"Active",  phone:"+91-98765-XXXXX", joined:"Jun 2026" },
-  { id:"AFF-006", name:"Kavita Reddy",   city:"Pune",      referrals:31,  paid:28,  pending:3,  commission:8400,  earned:7560,  status:"Active",  phone:"+91-98765-XXXXX", joined:"Jul 2026" },
-  { id:"AFF-007", name:"Suresh Mehta",   city:"Kolkata",   referrals:22,  paid:18,  pending:4,  commission:5400,  earned:4320,  status:"Inactive",phone:"+91-98765-XXXXX", joined:"Jul 2026" },
-];
+// No affiliates yet — add via "+ Add Agent" button
+const AFFILIATES: { id:string; name:string; city:string; referrals:number; paid:number; pending:number; commission:number; earned:number; status:string; phone:string; joined:string }[] = [];
 
 const statusColor=(s:string)=>s==="Active"?"#10B981":s==="Paid Out"?"#6366F1":"#EF4444";
 

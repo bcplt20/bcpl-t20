@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const NAV_LINKS = ["Home", "Match Center", "Teams", "Sponsors", "Photos", "Videos", "About", "FAQ", "Contact"];
+const NAV_LINKS = ["Home", "Match Center", "Teams", "Sponsors", "Photos", "Videos", "About", "FAQ", "Contact", "Login"];
 
 const TICKER_TEXT = "🏏 SEASON 5 REGISTRATIONS OPEN · ₹6 CR PRIZE POOL · 21 TRIAL CITIES · BACKED BY SOURAV GANGULY · 10 FRANCHISE TEAMS · #OfficeSeStadiumtak";
 
@@ -77,6 +77,7 @@ const ROUTE_MAP: Record<string,string> = {
   'Contact':'/contact', 'CONTACT':'/contact',
   'Schedule':'/schedule',
   'Points Table':'/points-table',
+  'Login':'/register#login',
 };
 
 export function MatchCenter() {

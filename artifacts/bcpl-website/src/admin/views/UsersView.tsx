@@ -19,20 +19,8 @@ const CITIES: Record<string,string[]> = {
   Telangana: ["All Cities","Hyderabad","Warangal","Karimnagar"],
 };
 
-const allUsers = [
-  { id:1, name:"Arjun Sharma",   phone:"9876543210", email:"arjun@gmail.com",  state:"Rajasthan",   city:"Jaipur",     joined:"Jul 18", phase1:true,  phase2:true,  active:true,  kyc:"approved", video:true,  registered:true,  role:"Batsman"        },
-  { id:2, name:"Priya Patel",    phone:"9123456789", email:"priya@gmail.com",  state:"Gujarat",     city:"Ahmedabad",  joined:"Jul 17", phase1:true,  phase2:false, active:true,  kyc:"approved", video:true,  registered:true,  role:"All-rounder"    },
-  { id:3, name:"Rahul Kumar",    phone:"8765432109", email:"rahul@gmail.com",  state:"Maharashtra", city:"Mumbai",     joined:"Jul 16", phase1:true,  phase2:true,  active:true,  kyc:"pending",  video:false, registered:true,  role:"Bowler"         },
-  { id:4, name:"Sneha Verma",    phone:"7654321098", email:"sneha@gmail.com",  state:"UP",          city:"Lucknow",    joined:"Jul 15", phase1:false, phase2:false, active:false, kyc:"pending",  video:false, registered:true,  role:"Batsman"        },
-  { id:5, name:"Vikas Singh",    phone:"6543210987", email:"vikas@gmail.com",  state:"Punjab",      city:"Amritsar",   joined:"Jul 14", phase1:true,  phase2:false, active:true,  kyc:"approved", video:true,  registered:true,  role:"Wicket-keeper"  },
-  { id:6, name:"Anjali Rao",     phone:"9012345678", email:"anjali@gmail.com", state:"Karnataka",   city:"Bangalore",  joined:"Jul 14", phase1:false, phase2:false, active:false, kyc:"rejected", video:false, registered:false, role:"Bowler"         },
-  { id:7, name:"Deepak Gupta",   phone:"8901234567", email:"deepak@gmail.com", state:"Delhi",       city:"New Delhi",  joined:"Jul 13", phase1:true,  phase2:true,  active:true,  kyc:"approved", video:true,  registered:true,  role:"All-rounder"    },
-  { id:8, name:"Meena Joshi",    phone:"7890123456", email:"meena@gmail.com",  state:"MP",          city:"Bhopal",     joined:"Jul 12", phase1:true,  phase2:false, active:true,  kyc:"pending",  video:false, registered:true,  role:"Batsman"        },
-  { id:9, name:"Sanjay Yadav",   phone:"6789012345", email:"sanjay@gmail.com", state:"Bihar",       city:"Patna",      joined:"Jul 12", phase1:false, phase2:false, active:true,  kyc:"pending",  video:false, registered:false, role:"Bowler"         },
-  { id:10, name:"Kavita Nair",   phone:"5678901234", email:"kavita@gmail.com", state:"Kerala",      city:"Kochi",      joined:"Jul 11", phase1:true,  phase2:true,  active:true,  kyc:"approved", video:true,  registered:true,  role:"Wicket-keeper"  },
-  { id:11, name:"Ajay Sharma",   phone:"9988776655", email:"ajay@gmail.com",   state:"Rajasthan",   city:"Jaipur",     joined:"Jul 10", phase1:true,  phase2:false, active:false, kyc:"approved", video:true,  registered:true,  role:"Batsman"        },
-  { id:12, name:"Pooja Mehta",   phone:"9876001234", email:"pooja@gmail.com",  state:"Gujarat",     city:"Surat",      joined:"Jul 10", phase1:false, phase2:false, active:false, kyc:"pending",  video:false, registered:false, role:"All-rounder"    },
-];
+// No users yet — data will populate as registrations come in
+const allUsers: { id:number; name:string; phone:string; email:string; state:string; city:string; joined:string; phase1:boolean; phase2:boolean; active:boolean; kyc:string; video:boolean; registered:boolean; role:string }[] = [];
 
 type QuickFilter = "all"|"active"|"inactive"|"phase1"|"phase2"|"no_payment"|"no_video"|"registered"|"not_registered";
 
@@ -72,12 +60,12 @@ export default function UsersView() {
   });
 
   const stats = [
-    { label:"Total",         value:"8,430",  color:"#6366F1", q:"all"            as QuickFilter },
-    { label:"Active",        value:"3,218",  color:"#10B981", q:"active"         as QuickFilter },
-    { label:"Phase 1 Paid",  value:"3,812",  color:"#F59E0B", q:"phase1"         as QuickFilter },
-    { label:"Phase 2 Paid",  value:"1,247",  color:"#FF6B00", q:"phase2"         as QuickFilter },
-    { label:"No Payment",    value:"4,618",  color:"#EF4444", q:"no_payment"     as QuickFilter },
-    { label:"Not Registered",value:"2,180",  color:"#64748B", q:"not_registered" as QuickFilter },
+    { label:"Total",         value:filtered.length || 0, color:"#6366F1", q:"all"            as QuickFilter },
+    { label:"Active",        value:allUsers.filter(u=>u.active).length, color:"#10B981", q:"active" as QuickFilter },
+    { label:"Phase 1 Paid",  value:allUsers.filter(u=>u.phase1).length, color:"#F59E0B", q:"phase1" as QuickFilter },
+    { label:"Phase 2 Paid",  value:allUsers.filter(u=>u.phase2).length, color:"#FF6B00", q:"phase2" as QuickFilter },
+    { label:"No Payment",    value:allUsers.filter(u=>!u.phase1&&!u.phase2).length, color:"#EF4444", q:"no_payment" as QuickFilter },
+    { label:"Not Registered",value:allUsers.filter(u=>!u.registered).length, color:"#64748B", q:"not_registered" as QuickFilter },
   ];
 
   const card: React.CSSProperties = {
