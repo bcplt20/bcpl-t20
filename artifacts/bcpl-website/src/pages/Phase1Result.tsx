@@ -196,20 +196,6 @@ export function Phase1Result() {
                       <div style={{ fontSize:12, color:'rgba(255,255,255,0.55)' }}>Phase 2 spot reserved for <strong style={{ color:'#fff' }}>limited time</strong> only</div>
                     </div>
                   </div>
-                  {/* TEST MODE */}
-                  <div style={{ marginTop:14, textAlign:'center', borderTop:'1px dashed rgba(255,255,255,0.06)', paddingTop:12 }}>
-                    <div style={{ fontSize:10, color:'rgba(255,255,255,0.12)', marginBottom:6, letterSpacing:'.08em' }}>— TEST MODE ONLY —</div>
-                    <div style={{ display:'flex', gap:8, justifyContent:'center', flexWrap:'wrap' }}>
-                      <button onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/phase2/payment'; }}
-                        style={{ padding:'5px 12px', background:'none', border:'1px dashed rgba(232,178,61,0.3)', borderRadius:8, color:'rgba(232,178,61,0.5)', fontSize:11, cursor:'pointer', fontFamily:'Montserrat,sans-serif', fontWeight:700 }}>→ Phase 2 Payment</button>
-                      <button onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/phase2/payment-receipt'; }}
-                        style={{ padding:'5px 12px', background:'none', border:'1px dashed rgba(232,178,61,0.3)', borderRadius:8, color:'rgba(232,178,61,0.5)', fontSize:11, cursor:'pointer', fontFamily:'Montserrat,sans-serif', fontWeight:700 }}>→ Phase 2 Receipt</button>
-                      <button onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/phase2/kyc'; }}
-                        style={{ padding:'5px 12px', background:'none', border:'1px dashed rgba(232,178,61,0.3)', borderRadius:8, color:'rgba(232,178,61,0.5)', fontSize:11, cursor:'pointer', fontFamily:'Montserrat,sans-serif', fontWeight:700 }}>→ Phase 2 KYC</button>
-                      <button onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/phase2/kyc-approved'; }}
-                        style={{ padding:'5px 12px', background:'none', border:'1px dashed rgba(232,178,61,0.3)', borderRadius:8, color:'rgba(232,178,61,0.5)', fontSize:11, cursor:'pointer', fontFamily:'Montserrat,sans-serif', fontWeight:700 }}>→ KYC Approved</button>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
