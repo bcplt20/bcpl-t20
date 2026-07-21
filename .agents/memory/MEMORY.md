@@ -1,0 +1,2 @@
+- [BCPL Logo Extraction](bcpl-logo.md) — brand book PDF (107MB) → PyMuPDF via `uv run --with pymupdf` to render pages as PNG; ball icon at public/bcpl-assets/bcpl-ball-clean.png
+- [GitHub file size limit](github-limits.md) — PDF >100MB rejected by GitHub; always git rm --cached large files before push
