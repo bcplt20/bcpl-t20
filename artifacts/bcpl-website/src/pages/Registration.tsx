@@ -835,17 +835,8 @@ export function Registration() {
                 >
                   🏏 &nbsp;PAY ₹{Math.round(price * 1.18)} (incl. 18% GST) · ENTER PHASE 1
                 </button>
-                {/* TEMP: Dummy pay for testing flow */}
-                {agreed && (
-                  <button
-                    style={{ width:'100%', marginTop:10, padding:'14px 0', background:'rgba(34,197,94,0.1)', border:'2px dashed rgba(34,197,94,0.4)', borderRadius:12, color:'#22C55E', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:13, cursor:'pointer', letterSpacing:'.06em' }}
-                    onClick={() => { window.location.href = '/register/payment-receipt?name='+encodeURIComponent(name)+'&role='+encodeURIComponent(role?.label||'')+'&city='+encodeURIComponent(city)+'&amount='+price; }}
-                  >
-                    🧪 SKIP PAYMENT (TEST MODE) →
-                  </button>
-                )}
                 <div style={{ display:'flex', justifyContent:'center', gap:16, marginTop:12, flexWrap:'wrap' }}>
-                  {['🔒 Cashfree Secured','256-bit SSL','BCPL T20'].map(t => (
+                  {['🔒 Cashfree Secured','256-bit SSL','BCPL'].map(t => (
                     <span key={t} style={{ fontSize:10, color:'rgba(255,255,255,0.25)', fontWeight:600 }}>{t}</span>
                   ))}
                 </div>

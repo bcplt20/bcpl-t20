@@ -108,8 +108,8 @@ export function Phase1PaymentReceipt() {
             </div>
           </div>
           <div className="desk-nav">
-            {NAV.map(l => <a key={l} href="#" style={{ color:'rgba(255,255,255,0.6)', fontSize:12, fontWeight:600, textDecoration:'none', letterSpacing:'.04em' }}>{l}</a>)}
-            <button className="btn-primary" style={{ padding:'10px 24px', fontSize:12 }}>REGISTER NOW →</button>
+            {NAV.map(l => <a key={l} href={`/${import.meta.env.BASE_URL}#${l.toLowerCase().replace(/ /g,'-')}`} onClick={()=>{window.location.href='/'+import.meta.env.BASE_URL.replace(/^\//,'');}} style={{ color:'rgba(255,255,255,0.6)', fontSize:12, fontWeight:600, textDecoration:'none', letterSpacing:'.04em' }}>{l}</a>)}
+            <button className="btn-primary" onClick={()=>{window.location.href='/'+import.meta.env.BASE_URL.replace(/^\//,'');}} style={{ padding:'10px 24px', fontSize:12 }}>HOME →</button>
           </div>
           <button className="ham-btn" onClick={() => setMenuOpen(o => !o)}>
             {[0,1,2].map(i => <span key={i} style={{ display:'block', width:22, height:2, background:'#fff', borderRadius:1, transition:'all .25s', transform: i===0&&menuOpen ? 'rotate(45deg) translate(5px,5px)' : i===1&&menuOpen ? 'scaleX(0)' : i===2&&menuOpen ? 'rotate(-45deg) translate(5px,-5px)' : '' }} />)}
@@ -120,8 +120,8 @@ export function Phase1PaymentReceipt() {
       {menuOpen && (
         <div style={{ position:'fixed', inset:0, background:'#040C18', zIndex:400, display:'flex', flexDirection:'column', padding:'72px 24px 40px', overflowY:'auto' }}>
           <button onClick={() => setMenuOpen(false)} style={{ position:'absolute', top:16, right:16, background:'rgba(255,255,255,0.07)', border:'1px solid rgba(255,255,255,0.1)', color:'#fff', width:38, height:38, borderRadius:4, cursor:'pointer', fontSize:18 }}>✕</button>
-          {NAV.map(l => <a key={l} href="#" style={{ color:'rgba(255,255,255,0.85)', fontWeight:700, fontSize:18, fontFamily:'Montserrat,sans-serif', textDecoration:'none', padding:'14px 0', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>{l}</a>)}
-          <button className="btn-primary" style={{ marginTop:24, padding:'16px', fontSize:15 }}>REGISTER NOW →</button>
+          {NAV.map(l => <a key={l} href="#" onClick={()=>{setMenuOpen(false); window.location.href='/'+import.meta.env.BASE_URL.replace(/^\//,'');}} style={{ color:'rgba(255,255,255,0.85)', fontWeight:700, fontSize:18, fontFamily:'Montserrat,sans-serif', textDecoration:'none', padding:'14px 0', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>{l}</a>)}
+          <button className="btn-primary" onClick={()=>{setMenuOpen(false); window.location.href='/'+import.meta.env.BASE_URL.replace(/^\//,'');}} style={{ marginTop:24, padding:'16px', fontSize:15 }}>HOME →</button>
         </div>
       )}
 
@@ -235,7 +235,7 @@ export function Phase1PaymentReceipt() {
             <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, color:'#FF7A29', letterSpacing:'.04em', marginBottom:6, textTransform:'uppercase' }}>Upload Your Trial Video</div>
             <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:12 }}>
               <span style={{ width:6, height:6, borderRadius:'50%', background:'#FF7A29', display:'inline-block', animation:'liveBlip 1s infinite' }} />
-              <span style={{ fontSize:11, fontWeight:700, color:'rgba(255,122,41,0.8)', fontFamily:'Montserrat,sans-serif', letterSpacing:'.08em' }}>DEADLINE: WITHIN 7 DAYS</span>
+              <span style={{ fontSize:11, fontWeight:700, color:'rgba(255,122,41,0.8)', fontFamily:'Montserrat,sans-serif', letterSpacing:'.08em' }}>SUBMIT AS SOON AS POSSIBLE</span>
             </div>
             <p style={{ fontSize:12, color:'rgba(255,255,255,0.45)', lineHeight:1.6, marginBottom:16 }}>Record your 2-minute cricket trial video. Follow the guidelines for best results.</p>
             <button className="btn-primary" style={{ width:'100%', padding:'12px', fontSize:12 }}>UPLOAD NOW →</button>
@@ -244,11 +244,11 @@ export function Phase1PaymentReceipt() {
           {/* Step 2 */}
           <div className="next-card">
             <div style={{ fontSize:28, marginBottom:12 }}>⏱</div>
-            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, color:'#E8B23D', letterSpacing:'.04em', marginBottom:6, textTransform:'uppercase' }}>7-Day Scout Review</div>
+            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, color:'#E8B23D', letterSpacing:'.04em', marginBottom:6, textTransform:'uppercase' }}>Scout Review</div>
             <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:12 }}>
               <span style={{ fontSize:11, fontWeight:700, color:'rgba(232,178,61,0.7)', fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em' }}>BCCI-CERTIFIED EVALUATORS</span>
             </div>
-            <p style={{ fontSize:12, color:'rgba(255,255,255,0.45)', lineHeight:1.6 }}>Our trained scouts review every submission. Results sent to your registered email & WhatsApp within 7 working days.</p>
+            <p style={{ fontSize:12, color:'rgba(255,255,255,0.45)', lineHeight:1.6 }}>Our trained scouts review every submission. Selection results announced via your registered email & WhatsApp.</p>
           </div>
 
           {/* Step 3 */}
