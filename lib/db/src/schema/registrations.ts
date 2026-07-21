@@ -4,6 +4,8 @@ import { usersTable } from "./users";
 export const registrationsTable = pgTable("registrations", {
   id:           uuid("id").primaryKey().defaultRandom(),
   userId:       uuid("user_id").notNull().references(() => usersTable.id),
+  // Human-readable sequential ID per trial city: BCPL-DEL-1, BCPL-MUM-2 …
+  regNumber:    varchar("reg_number",  { length: 30 }).unique(),
   role:         varchar("role",        { length: 20 }).notNull(), // bat | bowl | wk | ar
   trialCity:    varchar("trial_city",  { length: 50 }),
   // pending | payment_done | video_submitted | selected | rejected

@@ -162,6 +162,9 @@ export function Registration() {
   const [regStatus, setRegStatus]       = useState<any>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
 
+  // Already-registered players don't need the blank form — show status card only
+  const isRegistered = loggedIn && !!regStatus?.registered;
+
   // On mount: if already authenticated, fetch registration status and redirect based on it
   useEffect(() => {
     if (isAuthenticated()) {
@@ -664,7 +667,8 @@ export function Registration() {
           {/* ─── LEFT: FORM ─── */}
           <div style={{ maxWidth:680 }}>
 
-            {/* Step progress bar */}
+            {/* Step progress bar — hidden for already-registered players */}
+            {!isRegistered && (
             <div className="step-row" style={{ marginBottom:32 }}>
               {[1,2,3,4].map((s,i) => (
                 <React.Fragment key={s}>
@@ -678,10 +682,12 @@ export function Registration() {
                 Step {step} of 4
               </div>
             </div>
+            )}
 
             {/* ─── STEP 1: Personal Details ─── */}
             {step === 1 && (
               <div className="step-enter">
+                {!isRegistered && (<>
                 <div style={{ borderLeft:'3px solid #FF7A29', paddingLeft:14, marginBottom:28 }}>
                   <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(18px,5vw,22px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em' }}>Your Details</div>
                   <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginTop:4 }}>As per Aadhaar / PAN — used for franchise records</div>
@@ -715,6 +721,7 @@ export function Registration() {
                     {ageError && <div style={{fontSize:11,color:'#EF4444',marginTop:5,fontWeight:600}}>⚠ {ageError}</div>}
                   </div>
                 </div>
+                </>)}
 
                 {/* Already registered? */}
                 {!loggedIn ? (
@@ -1139,6 +1146,7 @@ export function Registration() {
             )}
 
             {/* ─── NAV BUTTONS — hidden on mobile (sticky bottom CTA handles it) ─── */}
+            {!isRegistered && (
             <div className="form-nav-btns" style={{ gap:12, marginTop:28 }}>
               {step > 1 && (
                 <button className="btn-back" style={{ flex:1, padding:'14px', fontSize:13, letterSpacing:'.06em' }} onClick={() => setStep(s => s - 1)}>
@@ -1151,6 +1159,7 @@ export function Registration() {
                 </button>
               )}
             </div>
+            )}
           </div>
 
           {/* ─── RIGHT: Info sidebar (desktop) ─── */}
@@ -1233,8 +1242,8 @@ export function Registration() {
       {/* Footer */}
       <BCPLFooter />
 
-      {/* ═══════════════ MOBILE STICKY CTA — hidden on step 4 (inline pay button handles it) ═══════════════ */}
-      {step < 4 && (
+      {/* ═══════════════ MOBILE STICKY CTA — hidden on step 4 & for registered players ═══════════════ */}
+      {step < 4 && !isRegistered && (
         <div className="bot-cta" style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:500, padding:'10px 16px calc(20px + env(safe-area-inset-bottom))', background:'rgba(4,10,20,0.98)', backdropFilter:'blur(20px)', borderTop:'2px solid #FF7A29', gap:10 }}>
           <button
             className="btn-primary"

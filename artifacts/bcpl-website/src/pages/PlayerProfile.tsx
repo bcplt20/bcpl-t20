@@ -196,7 +196,8 @@ export function PlayerProfile() {
 
   const reg    = data?.registration;
   const user   = data?.user;
-  const regId  = reg?.id?.slice(0, 8).toUpperCase() ?? '—';
+  // Real sequential ID (BCPL-DEL-1) from API; fallback to short UUID for old cached data
+  const regId  = reg?.regNumber ?? (reg?.id ? 'BCPL-' + reg.id.slice(0, 8).toUpperCase() : '—');
 
   // ── Loading ────────────────────────────────────────────────────────────────
   if (loading) return (
@@ -307,7 +308,7 @@ export function PlayerProfile() {
                   {reg && <>
                     <span>{ROLE_ICON[reg.role] ?? '🏏'} {ROLE_LABEL[reg.role] ?? reg.role}</span>
                     <span>📍 {reg.trialCity}</span>
-                    <span>🆔 BCPL-{regId}</span>
+                    <span>🆔 {regId}</span>
                     <span>📅 {fmtDate(reg.createdAt)}</span>
                   </>}
                   {!reg && <span style={{ color:'#FF7A29' }}>Not yet registered</span>}
@@ -519,11 +520,11 @@ export function PlayerProfile() {
                 </button>
               )}
               <button className="btn-ghost"
-                onClick={() => { window.open('mailto:support@bcplt20.com?subject=BCPL%20Support%20-%20BCPL-'+regId, '_blank'); }}>
+                onClick={() => { window.open('mailto:support@bcplt20.com?subject=BCPL%20Support%20-%20'+regId, '_blank'); }}>
                 ✉️ Email Support
               </button>
               <button className="btn-ghost"
-                onClick={() => { window.open('https://wa.me/918800000000?text='+encodeURIComponent('Hi, I need help with my BCPL Season 5 registration. Player ID: BCPL-'+regId), '_blank'); }}>
+                onClick={() => { window.open('https://wa.me/918800000000?text='+encodeURIComponent('Hi, I need help with my BCPL Season 5 registration. Player ID: '+regId), '_blank'); }}>
                 📞 WhatsApp Help
               </button>
               <button className="btn-ghost" style={{ color:'#EF4444', borderColor:'rgba(239,68,68,0.25)' }}

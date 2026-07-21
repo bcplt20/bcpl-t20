@@ -12,11 +12,11 @@ const PHASE2_FEES: Record<string, number> = {
   bat: 2000, bowl: 2000, wk: 2000, ar: 3000,
 };
 
-function formatRegId(id: string, role: string, city: string) {
-  const roleCode = role === 'ar' ? 'AR' : role === 'bowl' ? 'BOW' : role === 'wk' ? 'WK' : 'BAT';
-  const cityCode = (city || 'XX').slice(0, 3).toUpperCase();
+function formatRegId(id: string, _role: string, city: string) {
+  // Fallback only — real sequential number comes from the API (regNumber)
+  const cityCode = (city || 'XX').replace(/[^A-Za-z]/g, '').slice(0, 3).toUpperCase();
   const suffix = id.replace(/-/g, '').slice(-4).toUpperCase();
-  return `BCPL-S5-${cityCode}-${roleCode}-${suffix}`;
+  return `BCPL-${cityCode}-${suffix}`;
 }
 
 export function Phase1Result() {
@@ -50,7 +50,7 @@ export function Phase1Result() {
       }
       setRole(s.role ?? 'bat');
       setCity(s.trialCity ?? '');
-      setRegId(s.registrationId ?? '');
+      setRegId(s.regNumber ?? s.registrationId ?? '');
       setPhase2Fee(Math.round((PHASE2_FEES[s.role ?? 'bat'] ?? 2000) * 1.18));
     }).catch((e: any) => {
       setError(e.message ?? 'Failed to load result. Please refresh.');
@@ -58,7 +58,8 @@ export function Phase1Result() {
   }, []);
 
   const roleLabel = ROLE_LABELS[role] ?? role;
-  const formattedId = regId ? formatRegId(regId, role, city) : '';
+  // If regId already looks like BCPL-XXX-N (from API), use it directly
+  const formattedId = regId ? (regId.startsWith('BCPL-') ? regId : formatRegId(regId, role, city)) : '';
 
   return (
     <div style={{ background:'#06101E', minHeight:'100vh', fontFamily:"'Inter',sans-serif", color:'#F0EDE8', overflowX:'hidden', paddingBottom:40 }}>

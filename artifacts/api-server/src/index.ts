@@ -1,6 +1,7 @@
 import app from "./app";
 import { logger } from "./lib/logger";
 import { sendVideoReminders } from "./routes/video";
+import { ensureRegNumbers } from "./routes/register";
 
 const port = Number(process.env["PORT"] ?? "8080");
 
@@ -14,6 +15,11 @@ app.listen(port, (err) => {
     process.exit(1);
   }
   logger.info({ port }, "Server listening");
+
+  // Idempotent migration: reg_number column + backfill (BCPL-DEL-1 style IDs)
+  ensureRegNumbers()
+    .then(() => logger.info("reg_number migration ensured"))
+    .catch((e) => logger.error({ err: e }, "reg_number migration failed"));
 });
 
 // ── Reminder scheduler: runs every 6 hours ──────────────────────────────────
