@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { adminGetRegistrations } from "../../lib/api";
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line
@@ -11,9 +12,7 @@ const TDS_RATE   = 0.10;   // TDS on prizes
 const BCPL_GSTIN = "07AAHCK4053D1ZS";
 const BCPL_ADDR  = "Kriparti Playing11 Private Limited, 2nd Floor Back Side, RZ-108, Indra Park, Uttam Nagar, West Delhi, Delhi - 110059";
 
-/* ─── Data — empty until real transactions come in ───────────── */
-const dailyRevenue: { day:string; p1:number; p2:number; refunds:number }[] = [];
-const monthlyPL: { month:string; revenue:number; gatewayCost:number; gstPaid:number; net:number }[] = [];
+/* ─── Data shapes ─────────────────────────────────────────────── */
 const paymentMethods = [
   { name:"UPI",         value:0, color:"#6366F1" },
   { name:"Net Banking", value:0, color:"#FF6B00" },
@@ -21,9 +20,35 @@ const paymentMethods = [
   { name:"Wallet",      value:0, color:"#F59E0B" },
 ];
 const gstMonthly: { month:string; collected:number; remitted:number; due:string }[] = [];
-type Txn = { id:string; name:string; email:string; phone:string; gstin:string; type:"Phase 1"|"Phase 2"; amount:number; method:string; time:string; status:"success"|"pending"|"failed"|"refunded" };
-const TRANSACTIONS: Txn[] = [];
+type Txn = { id:string; name:string; email:string; phone:string; gstin:string; type:"Phase 1"|"Phase 2"; amount:number; method:string; time:string; ts:number; status:"success"|"pending"|"failed"|"refunded" };
 const REFUNDS: { id:string; txnId:string; name:string; amount:number; reason:string; status:string; date:string; method:string; days:number }[] = [];
+
+const PAID_STATUSES = ["payment_done","video_submitted","selected","rejected"];
+
+type ApiReg = {
+  id:string; role:string; trialCity:string; phase1Status:string; phase2Status:string|null; createdAt:string;
+  user:{ id:string; name:string; phone:string; email:string }|null;
+  payment:{ id:string; amount:string; cashfreeOrderId:string; cashfreePaymentId:string|null; status:string; paidAt:string|null; createdAt:string }|null;
+  video:unknown|null;
+};
+
+const regToTxn = (r: ApiReg): Txn => {
+  const p = r.payment!;
+  const paid = p.status === "success" || p.status === "paid" || PAID_STATUSES.includes(r.phase1Status);
+  return {
+    id: p.cashfreeOrderId || p.id,
+    name: r.user?.name ?? "Unknown",
+    email: r.user?.email ?? "",
+    phone: r.user?.phone ?? "",
+    gstin: "",
+    type: "Phase 1",
+    amount: Math.round(Number(p.amount)),
+    method: "Cashfree",
+    time: new Date(p.paidAt ?? p.createdAt).toLocaleString("en-IN", { day:"2-digit", month:"short", hour:"2-digit", minute:"2-digit" }),
+    ts: new Date(p.paidAt ?? p.createdAt).getTime(),
+    status: paid ? "success" : p.status === "failed" ? "failed" : "pending",
+  };
+};
 const TDS_PRIZES: { player:string; prize:string; tds:string; net:string; pan:string; status:string }[] = [];
 
 const SC: Record<string,{color:string;bg:string;label:string}> = {
@@ -266,6 +291,43 @@ export default function FinanceView() {
   const [txnFilter, setTxnFilter] = useState<"all"|"success"|"pending"|"failed"|"refunded">("all");
   const [invoice,   setInvoice]   = useState<Txn|null>(null);
   const [search,    setSearch]    = useState("");
+  const [TRANSACTIONS, setTransactions] = useState<Txn[]>([]);
+  const [loadErr,   setLoadErr]   = useState("");
+
+  useEffect(() => {
+    adminGetRegistrations()
+      .then(({ registrations }) => {
+        const txns = (registrations as ApiReg[])
+          .filter(r => r.payment)
+          .map(regToTxn)
+          .sort((a,b)=>b.ts-a.ts);
+        setTransactions(txns);
+      })
+      .catch(e => setLoadErr(e.message));
+  }, []);
+
+  /* daily revenue (last 7 days) from successful transactions */
+  const now = Date.now();
+  const dailyRevenue = Array.from({length:7},(_,idx)=>{
+    const i = 6-idx;
+    const start = now-(i+1)*24*3600*1000, end = now-i*24*3600*1000;
+    const p1 = TRANSACTIONS.filter(t=>t.status==="success"&&t.type==="Phase 1"&&t.ts>=start&&t.ts<end).reduce((a,t)=>a+t.amount,0);
+    const p2 = TRANSACTIONS.filter(t=>t.status==="success"&&t.type==="Phase 2"&&t.ts>=start&&t.ts<end).reduce((a,t)=>a+t.amount,0);
+    return { day:new Date(end).toLocaleDateString("en-IN",{weekday:"short"}), p1, p2, refunds:0 };
+  });
+  const monthlyPL: { month:string; revenue:number; gatewayCost:number; gstPaid:number; net:number }[] = [];
+  {
+    const monthMap = new Map<string,number>();
+    for (const t of TRANSACTIONS) {
+      if (t.status !== "success") continue;
+      const month = new Date(t.ts).toLocaleDateString("en-IN",{month:"short"});
+      monthMap.set(month, (monthMap.get(month) ?? 0) + t.amount);
+    }
+    for (const [month, revenue] of monthMap) {
+      const gstPaid = Math.round(revenue*GST_RATE), gatewayCost = Math.round(revenue*CF_FEE);
+      monthlyPL.push({ month, revenue, gstPaid, gatewayCost, net: revenue-gstPaid-gatewayCost });
+    }
+  }
 
   const totalRevenue  = TRANSACTIONS.filter(t=>t.status==="success").reduce((a,t)=>a+t.amount,0);
   const totalGST      = Math.round(totalRevenue * GST_RATE);
@@ -287,6 +349,12 @@ export default function FinanceView() {
 
   return (
     <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
+
+      {loadErr && (
+        <div style={{ padding:"12px 16px", background:"#EF444415", border:"1px solid #EF444444", borderRadius:12, color:"#EF4444", fontSize:13 }}>
+          Failed to load transactions: {loadErr}
+        </div>
+      )}
 
       {/* ── Header ── */}
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
@@ -649,7 +717,7 @@ export default function FinanceView() {
                 <div key={r.id} style={{ padding:"16px", background:"#060B18", borderRadius:12, border:`1px solid ${r.status==="pending"?"#EF444430":"#1E293B"}` }}>
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:8 }}>
                     <div>
-                      <div style={{ display:"flex", align:"center", gap:10, marginBottom:4 }}>
+                      <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:4 }}>
                         <span style={{ fontSize:13, fontWeight:700, color:"#F1F5F9" }}>{r.name}</span>
                         <span style={{ fontFamily:"monospace", fontSize:11, color:"#475569", marginLeft:8 }}>{r.txnId}</span>
                       </div>

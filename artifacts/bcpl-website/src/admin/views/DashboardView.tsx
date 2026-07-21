@@ -1,43 +1,50 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid,
-  Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line
+  Tooltip, ResponsiveContainer, PieChart, Pie, Cell
 } from "recharts";
+import { adminGetStats, adminGetRegistrations } from "../../lib/api";
 
-// All real data should come from API — no fake data here
-const userGrowthData = {
-  today: [] as {time:string,users:number}[],
-  week:  [] as {time:string,users:number}[],
-  month: [] as {time:string,users:number}[],
+type Reg = {
+  id: string;
+  role: string;
+  trialCity: string;
+  phase1Status: string;
+  phase2Status: string | null;
+  createdAt: string;
+  user: { id: string; name: string; phone: string; email: string } | null;
+  payment: { status: string; amount: string; paidAt: string | null } | null;
+  video: { status: string; submittedAt: string } | null;
 };
 
-const revenueVsTarget: {day:string,actual:number,target:number}[] = [];
+type Stats = {
+  registrations: { total:number; paymentDone:number; videoSubmitted:number; selected:number; rejected:number };
+  videos: { total:number; pending:number; reviewed:number };
+  kyc: { total:number; pending:number; verified:number; failed:number };
+  users: { total:number };
+};
 
-const funnelData = [
-  { name:"Visited",     value:0, color:"#334155" },
-  { name:"Registered",  value:0, color:"#FF6B00" },
-  { name:"Phase 1 Paid",value:0, color:"#F59E0B" },
-  { name:"Phase 2 Paid",value:0, color:"#10B981" },
-];
+const PAID_STATUSES = ["payment_done","video_submitted","selected","rejected"];
+const isPaid = (r: Reg) => r.payment?.status === "paid" || PAID_STATUSES.includes(r.phase1Status);
+
+const CITY_COLORS = ["#FF6B00","#F59E0B","#10B981","#6366F1","#3B82F6","#EC4899"];
 
 const sourceData: {name:string,value:number,color:string}[] = [];
-
 const topInfluencers: {name:string,platform:string,clicks:number,signups:number,conversion:string,revenue:string}[] = [];
-
-const topCities: {city:string,signups:number,paid:number,pct:number,color:string}[] = [];
-
-const liveActivity: {msg:string,time:string,type:string}[] = [];
-
-const pendingActions = [
-  { icon:"🎬", count:0, label:"Videos pending review",     color:"#F59E0B", action:"Review Now"   },
-  { icon:"✅", count:0, label:"KYC approvals pending",      color:"#6366F1", action:"Approve"      },
-  { icon:"💳", count:0, label:"Failed payments to retry",   color:"#EF4444", action:"View Failed"  },
-  { icon:"📧", count:0, label:"Scout reports ready to send",color:"#10B981", action:"Send Reports" },
-];
 
 const activityColor: Record<string,string> = {
   payment:"#10B981", user:"#6366F1", media:"#F59E0B",
   team:"#FF6B00", referral:"#EC4899", match:"#3B82F6",
+};
+
+const timeAgo = (d: string) => {
+  const diff = Date.now() - new Date(d).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return "just now";
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  return `${Math.floor(h / 24)}d ago`;
 };
 
 const CustomTooltip = ({ active, payload, label }:any) => {
@@ -58,27 +65,121 @@ const CustomTooltip = ({ active, payload, label }:any) => {
 export default function DashboardView() {
   const [range, setRange] = useState<"today"|"week"|"month">("week");
   const [blast, setBlast] = useState(false);
+  const [stats, setStats] = useState<Stats|null>(null);
+  const [regs,  setRegs]  = useState<Reg[]>([]);
+  const [err,   setErr]   = useState("");
+
+  useEffect(() => {
+    Promise.all([adminGetStats(), adminGetRegistrations()])
+      .then(([s, r]) => { setStats(s); setRegs(r.registrations); })
+      .catch(e => setErr(e.message));
+  }, []);
 
   const card:React.CSSProperties = {
     background:"linear-gradient(135deg,#0D1526 0%,#0A1020 100%)",
     border:"1px solid #1E293B", borderRadius:16, padding:20,
   };
 
+  /* ── derived data ── */
+  const totalUsers   = stats?.users.total ?? 0;
+  const totalRegs    = stats?.registrations.total ?? 0;
+  const paidRegs     = regs.filter(isPaid);
+  const paidCount    = paidRegs.length;
+  const p1Revenue    = paidRegs.reduce((a,r)=>a+(r.payment ? Math.round(Number(r.payment.amount)) : 299),0);
+  const videosPending = stats?.videos.pending ?? 0;
+  const selectedCount = stats?.registrations.selected ?? 0;
+  const droppedOff   = regs.filter(r=>!isPaid(r)).length;
+  const now = Date.now();
+  const activeUsers  = regs.filter(r => now - new Date(r.createdAt).getTime() < 7*24*3600*1000).length;
+
   const metricCards = [
-    { label:"Live Right Now", value:"0",  sub:"No activity yet",          color:"#10B981", icon:"🟢", live:true  },
-    { label:"Total Users",    value:"0",  sub:"No registrations yet",     color:"#6366F1", icon:"👥"             },
-    { label:"Active Users",   value:"0",  sub:"last 7 days",              color:"#3B82F6", icon:"⚡"             },
-    { label:"Phase 1 Paid",   value:"0",  sub:"₹0 revenue",               color:"#F59E0B", icon:"💳"             },
-    { label:"Phase 2 Paid",   value:"0",  sub:"₹0 revenue",               color:"#FF6B00", icon:"🏆"             },
-    { label:"Dropped Off",    value:"0",  sub:"registered, no payment",   color:"#EF4444", icon:"❌"             },
+    { label:"Live Right Now", value:String(regs.filter(r=>now-new Date(r.createdAt).getTime()<3600*1000).length), sub:"registered in last hour", color:"#10B981", icon:"🟢", live:true },
+    { label:"Total Users",    value:totalUsers.toLocaleString(), sub:`${totalRegs} registrations`, color:"#6366F1", icon:"👥" },
+    { label:"Active Users",   value:activeUsers.toLocaleString(), sub:"registered last 7 days", color:"#3B82F6", icon:"⚡" },
+    { label:"Phase 1 Paid",   value:paidCount.toLocaleString(), sub:`₹${p1Revenue.toLocaleString()} revenue`, color:"#F59E0B", icon:"💳" },
+    { label:"Selected",       value:selectedCount.toLocaleString(), sub:"Phase 1 selected players", color:"#FF6B00", icon:"🏆" },
+    { label:"Dropped Off",    value:droppedOff.toLocaleString(), sub:"registered, no payment", color:"#EF4444", icon:"❌" },
   ];
 
   const weekTarget = 5000;
-  const weekActual = 0;
-  const targetPct  = 0;
+  const weekActual = paidCount;
+  const targetPct  = Math.min(100, Math.round((weekActual/weekTarget)*100));
+
+  const pendingActions = [
+    { icon:"🎬", count:videosPending, label:"Videos pending review", color:"#F59E0B", action:"Review Now" },
+    { icon:"✅", count:stats?.kyc.pending ?? 0, label:"KYC approvals pending", color:"#6366F1", action:"Approve" },
+    { icon:"💳", count:regs.filter(r=>r.payment && r.payment.status!=="paid" && !PAID_STATUSES.includes(r.phase1Status)).length, label:"Failed payments to retry", color:"#EF4444", action:"View Failed" },
+    { icon:"📧", count:selectedCount, label:"Scout reports ready to send", color:"#10B981", action:"Send Reports" },
+  ];
+
+  const funnelData = [
+    { name:"Visited",      value:Math.max(totalUsers, totalRegs), color:"#334155" },
+    { name:"Registered",   value:totalRegs, color:"#FF6B00" },
+    { name:"Phase 1 Paid", value:paidCount, color:"#F59E0B" },
+    { name:"Selected",     value:selectedCount, color:"#10B981" },
+  ];
+  const funnelMax = Math.max(1, ...funnelData.map(f=>f.value));
+
+  /* top cities from registrations */
+  const cityMap = new Map<string,{signups:number,paid:number}>();
+  for (const r of regs) {
+    const city = r.trialCity || "Unknown";
+    const e = cityMap.get(city) ?? { signups:0, paid:0 };
+    e.signups++; if (isPaid(r)) e.paid++;
+    cityMap.set(city, e);
+  }
+  const maxCity = Math.max(1, ...[...cityMap.values()].map(c=>c.signups));
+  const topCities = [...cityMap.entries()]
+    .sort((a,b)=>b[1].signups-a[1].signups)
+    .slice(0,6)
+    .map(([city,c],i)=>({ city, signups:c.signups, paid:c.paid, pct:Math.round((c.signups/maxCity)*100), color:CITY_COLORS[i%CITY_COLORS.length] }));
+
+  /* recent registrations as live activity */
+  const liveActivity = [...regs]
+    .sort((a,b)=>new Date(b.createdAt).getTime()-new Date(a.createdAt).getTime())
+    .slice(0,8)
+    .map(r=>({
+      msg: `${r.user?.name ?? "Player"} (${r.trialCity || "—"}) ${isPaid(r) ? "paid Phase 1 registration" : "registered — payment pending"}`,
+      time: timeAgo(r.createdAt),
+      type: isPaid(r) ? "payment" : "user",
+    }));
+
+  /* registration growth chart from real createdAt */
+  const buildGrowth = (bucketMs:number, buckets:number, fmt:(d:Date)=>string) => {
+    const out: {time:string,users:number}[] = [];
+    for (let i=buckets-1;i>=0;i--) {
+      const start = now - (i+1)*bucketMs, end = now - i*bucketMs;
+      out.push({
+        time: fmt(new Date(end)),
+        users: regs.filter(r=>{const t=new Date(r.createdAt).getTime();return t>=start&&t<end;}).length,
+      });
+    }
+    return out;
+  };
+  const userGrowthData = {
+    today: buildGrowth(3600*1000*3, 8, d=>d.toLocaleTimeString("en-IN",{hour:"numeric"})),
+    week:  buildGrowth(24*3600*1000, 7, d=>d.toLocaleDateString("en-IN",{weekday:"short"})),
+    month: buildGrowth(24*3600*1000*5, 6, d=>d.toLocaleDateString("en-IN",{day:"numeric",month:"short"})),
+  };
+
+  /* daily revenue vs target from paid registrations */
+  const revenueVsTarget = Array.from({length:7},(_,idx)=>{
+    const i = 6-idx;
+    const start = now-(i+1)*24*3600*1000, end = now-i*24*3600*1000;
+    const actual = paidRegs
+      .filter(r=>{const t=new Date(r.payment?.paidAt ?? r.createdAt).getTime();return t>=start&&t<end;})
+      .reduce((a,r)=>a+(r.payment ? Math.round(Number(r.payment.amount)) : 299),0);
+    return { day:new Date(end).toLocaleDateString("en-IN",{weekday:"short"}), actual, target:Math.round(weekTarget*299/7) };
+  });
 
   return (
     <div style={{ display:"flex", flexDirection:"column", gap:18 }}>
+
+      {err && (
+        <div style={{ padding:"12px 16px", background:"#EF444415", border:"1px solid #EF444444", borderRadius:12, color:"#EF4444", fontSize:13 }}>
+          Failed to load dashboard data: {err}
+        </div>
+      )}
 
       {/* ── Quick Actions ── */}
       <div style={{ display:"flex", gap:10, flexWrap:"wrap", alignItems:"center", justifyContent:"space-between" }}>
@@ -89,7 +190,12 @@ export default function DashboardView() {
         <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
           {[
             { label:"📢 WhatsApp Blast", action:()=>setBlast(true), style:{ background:"linear-gradient(135deg,#25D366,#128C4E)" }},
-            { label:"⬇ Export Data",    action:()=>{ const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,Name,Phone,Email,City,Role,Phase,Payment\n';a.download='bcpl_users_'+new Date().toISOString().slice(0,10)+'.csv';a.click(); },              style:{ background:"#1E293B", color:"#94A3B8", border:"1px solid #1E293B" }},
+            { label:"⬇ Export Data",    action:()=>{
+                const headers=["Name","Phone","Email","City","Role","Phase1 Status","Paid"];
+                const rows=regs.map(r=>[r.user?.name??"",r.user?.phone??"",r.user?.email??"",r.trialCity??"",r.role??"",r.phase1Status,isPaid(r)?"Yes":"No"]);
+                const csv=[headers,...rows].map(r=>r.join(",")).join("\n");
+                const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='bcpl_users_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+              }, style:{ background:"#1E293B", color:"#94A3B8", border:"1px solid #1E293B" }},
             { label:"📊 Full Report",   action:()=>window.print(),  style:{ background:"#1E293B", color:"#94A3B8", border:"1px solid #1E293B" }},
           ].map(b=>(
             <button key={b.label} onClick={b.action} style={{ padding:"9px 16px", borderRadius:9, border:"none", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer", ...b.style }}>{b.label}</button>
@@ -117,12 +223,12 @@ export default function DashboardView() {
       <div style={{ ...card, padding:"16px 20px" }}>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 }}>
           <div>
-            <div style={{ fontSize:13, fontWeight:700, color:"#F1F5F9" }}>🎯 Weekly Registration Target</div>
-            <div style={{ fontSize:11, color:"#64748B", marginTop:2 }}>{weekActual.toLocaleString()} of {weekTarget.toLocaleString()} paid registrations · Week Jul 14–20</div>
+            <div style={{ fontSize:13, fontWeight:700, color:"#F1F5F9" }}>🎯 Registration Target</div>
+            <div style={{ fontSize:11, color:"#64748B", marginTop:2 }}>{weekActual.toLocaleString()} of {weekTarget.toLocaleString()} paid registrations</div>
           </div>
           <div style={{ textAlign:"right" }}>
             <div style={{ fontSize:24, fontWeight:900, color:targetPct>=100?"#10B981":"#FF6B00" }}>{targetPct}%</div>
-            <div style={{ fontSize:10, color:"#475569" }}>{weekTarget-weekActual} remaining</div>
+            <div style={{ fontSize:10, color:"#475569" }}>{Math.max(0,weekTarget-weekActual)} remaining</div>
           </div>
         </div>
         <div style={{ height:10, borderRadius:5, background:"#1E293B", overflow:"hidden" }}>
@@ -205,9 +311,9 @@ export default function DashboardView() {
                 <span style={{ fontSize:12, fontWeight:700, color:"#F1F5F9" }}>{f.value.toLocaleString()}</span>
               </div>
               <div style={{ height:6, borderRadius:4, background:"#1E293B", overflow:"hidden" }}>
-                <div style={{ height:"100%", borderRadius:4, background:f.color, width:`${(f.value/14820)*100}%`, transition:"width 1s ease" }}/>
+                <div style={{ height:"100%", borderRadius:4, background:f.color, width:`${(f.value/funnelMax)*100}%`, transition:"width 1s ease" }}/>
               </div>
-              {i<funnelData.length-1&&(
+              {i<funnelData.length-1&&f.value>0&&(
                 <div style={{ fontSize:10, color:"#334155", marginTop:3 }}>
                   ↓ {Math.round((1-funnelData[i+1].value/f.value)*100)}% dropped
                 </div>
@@ -219,28 +325,35 @@ export default function DashboardView() {
         {/* Traffic Sources */}
         <div style={card}>
           <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9", marginBottom:12 }}>Traffic Sources</div>
-          <ResponsiveContainer width="100%" height={150}>
-            <PieChart>
-              <Pie data={sourceData} cx="50%" cy="50%" innerRadius={38} outerRadius={60} dataKey="value" strokeWidth={0}>
-                {sourceData.map((s,i)=><Cell key={i} fill={s.color}/>)}
-              </Pie>
-              <Tooltip formatter={(v:any)=>[`${v}%`,""]} contentStyle={{ background:"#0D1526", border:"1px solid #1E293B", borderRadius:8 }}/>
-            </PieChart>
-          </ResponsiveContainer>
-          {sourceData.map(s=>(
-            <div key={s.name} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:6 }}>
-              <div style={{ display:"flex", alignItems:"center", gap:7 }}>
-                <div style={{ width:8, height:8, borderRadius:2, background:s.color }}/>
-                <span style={{ fontSize:12, color:"#94A3B8" }}>{s.name}</span>
-              </div>
-              <span style={{ fontSize:12, fontWeight:700, color:"#F1F5F9" }}>{s.value}%</span>
-            </div>
-          ))}
+          {sourceData.length===0 ? (
+            <div style={{ padding:"40px 10px", textAlign:"center", color:"#334155", fontSize:12 }}>Source tracking not configured yet.</div>
+          ) : (
+            <>
+              <ResponsiveContainer width="100%" height={150}>
+                <PieChart>
+                  <Pie data={sourceData} cx="50%" cy="50%" innerRadius={38} outerRadius={60} dataKey="value" strokeWidth={0}>
+                    {sourceData.map((s,i)=><Cell key={i} fill={s.color}/>)}
+                  </Pie>
+                  <Tooltip formatter={(v:any)=>[`${v}%`,""]} contentStyle={{ background:"#0D1526", border:"1px solid #1E293B", borderRadius:8 }}/>
+                </PieChart>
+              </ResponsiveContainer>
+              {sourceData.map(s=>(
+                <div key={s.name} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:6 }}>
+                  <div style={{ display:"flex", alignItems:"center", gap:7 }}>
+                    <div style={{ width:8, height:8, borderRadius:2, background:s.color }}/>
+                    <span style={{ fontSize:12, color:"#94A3B8" }}>{s.name}</span>
+                  </div>
+                  <span style={{ fontSize:12, fontWeight:700, color:"#F1F5F9" }}>{s.value}%</span>
+                </div>
+              ))}
+            </>
+          )}
         </div>
 
         {/* Top Cities */}
         <div style={card}>
           <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9", marginBottom:16 }}>Top Cities</div>
+          {topCities.length===0 && <div style={{ padding:"30px 10px", textAlign:"center", color:"#334155", fontSize:12 }}>No registrations yet.</div>}
           <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
             {topCities.map((c,i)=>(
               <div key={c.city}>
@@ -263,10 +376,12 @@ export default function DashboardView() {
         </div>
       </div>
 
-      {/* ── Influencers + Live Activity ── */}
+      {/* ── Influencers + Recent Registrations ── */}
       <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:14 }}>
         <div style={card}>
           <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9", marginBottom:16 }}>Top Influencers</div>
+          {topInfluencers.length===0 && <div style={{ padding:"30px 10px", textAlign:"center", color:"#334155", fontSize:12 }}>Influencer tracking not configured yet.</div>}
+          {topInfluencers.length>0 && (
           <table style={{ width:"100%", borderCollapse:"collapse" }}>
             <thead>
               <tr style={{ borderBottom:"1px solid #1E293B" }}>
@@ -290,16 +405,18 @@ export default function DashboardView() {
               ))}
             </tbody>
           </table>
+          )}
         </div>
 
         <div style={card}>
           <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14 }}>
-            <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9" }}>Live Activity</div>
+            <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9" }}>Recent Registrations</div>
             <span style={{ display:"flex", alignItems:"center", gap:5, fontSize:11, color:"#10B981" }}>
               <span style={{ width:7, height:7, borderRadius:"50%", background:"#10B981", display:"inline-block", boxShadow:"0 0 5px #10B981" }}/>
               Live
             </span>
           </div>
+          {liveActivity.length===0 && <div style={{ padding:"30px 10px", textAlign:"center", color:"#334155", fontSize:12 }}>No registrations yet.</div>}
           <div style={{ display:"flex", flexDirection:"column", gap:0 }}>
             {liveActivity.map((a,i)=>(
               <div key={i} style={{ display:"flex", alignItems:"flex-start", gap:12, padding:"10px 0", borderBottom:i<liveActivity.length-1?"1px solid #0F1B2D":"none" }}>
@@ -323,7 +440,13 @@ export default function DashboardView() {
             <div style={{ marginBottom:12 }}>
               <label style={{ fontSize:11, color:"#64748B", fontWeight:700, display:"block", marginBottom:6 }}>Target Segment</label>
               <select style={{ width:"100%", padding:"10px 12px", background:"#060B18", border:"1px solid #1E293B", borderRadius:9, color:"#F1F5F9", fontSize:13, outline:"none" }}>
-                {["All registered users (0)","Phase 1 paid — no video (0)","Registered — no payment (0)","Phase 2 selected (0)","Specific city"].map(o=><option key={o}>{o}</option>)}
+                {[
+                  `All registered users (${totalRegs})`,
+                  `Phase 1 paid — no video (${regs.filter(r=>isPaid(r)&&!r.video).length})`,
+                  `Registered — no payment (${droppedOff})`,
+                  `Phase 1 selected (${selectedCount})`,
+                  "Specific city",
+                ].map(o=><option key={o}>{o}</option>)}
               </select>
             </div>
             <div style={{ marginBottom:12 }}>

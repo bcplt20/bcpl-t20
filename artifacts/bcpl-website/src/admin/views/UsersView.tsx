@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { adminGetRegistrations } from "../../lib/api";
 
 const STATES = ["All States","Rajasthan","Gujarat","Maharashtra","Delhi","Punjab","UP","Karnataka","Bihar","Kerala","MP","Haryana","West Bengal","Tamil Nadu","Telangana"];
 const CITIES: Record<string,string[]> = {
@@ -19,8 +20,49 @@ const CITIES: Record<string,string[]> = {
   Telangana: ["All Cities","Hyderabad","Warangal","Karimnagar"],
 };
 
-// No users yet — data will populate as registrations come in
-const allUsers: { id:number; name:string; phone:string; email:string; state:string; city:string; joined:string; phase1:boolean; phase2:boolean; active:boolean; kyc:string; video:boolean; registered:boolean; role:string }[] = [];
+// city → state reverse lookup for registrations (only trialCity is stored)
+const CITY_TO_STATE: Record<string,string> = {};
+for (const [st, cities] of Object.entries(CITIES)) {
+  if (st === "All States") continue;
+  for (const c of cities) if (c !== "All Cities") CITY_TO_STATE[c.toLowerCase()] = st;
+}
+
+const ROLE_LABEL: Record<string,string> = {
+  bat:"Batsman", bowl:"Bowler", ar:"All-rounder", wk:"Wicket-keeper",
+};
+
+const PAID_STATUSES = ["payment_done","video_submitted","selected","rejected"];
+
+type UserRow = { id:string; num:number; name:string; phone:string; email:string; state:string; city:string; joined:string; phase1:boolean; phase2:boolean; active:boolean; kyc:string; video:boolean; registered:boolean; role:string };
+
+type ApiReg = {
+  id:string; role:string; trialCity:string; phase1Status:string; phase2Status:string|null; createdAt:string;
+  user:{ id:string; name:string; phone:string; email:string }|null;
+  payment:{ status:string; amount:string; paidAt:string|null }|null;
+  video:{ status:string; submittedAt:string }|null;
+};
+
+const toRow = (r: ApiReg, i: number): UserRow => {
+  const city = r.trialCity || "—";
+  const paid1 = r.payment?.status === "paid" || PAID_STATUSES.includes(r.phase1Status);
+  return {
+    id: r.id,
+    num: i + 1,
+    name: r.user?.name ?? "Unknown",
+    phone: r.user?.phone ?? "",
+    email: r.user?.email ?? "",
+    state: CITY_TO_STATE[city.toLowerCase()] ?? "—",
+    city,
+    joined: r.createdAt ? new Date(r.createdAt).toLocaleDateString("en-IN", { day:"2-digit", month:"short", year:"numeric" }) : "—",
+    phase1: paid1,
+    phase2: ["payment_done","kyc_done","selected"].includes(r.phase2Status ?? ""),
+    active: r.createdAt ? Date.now() - new Date(r.createdAt).getTime() < 30*24*3600*1000 : false,
+    kyc: "pending",
+    video: !!r.video,
+    registered: true,
+    role: ROLE_LABEL[r.role] ?? r.role ?? "—",
+  };
+};
 
 type QuickFilter = "all"|"active"|"inactive"|"phase1"|"phase2"|"no_payment"|"no_video"|"registered"|"not_registered";
 
@@ -38,11 +80,21 @@ export default function UsersView() {
   const [state,    setState]    = useState("All States");
   const [city,     setCity]     = useState("All Cities");
   const [role,     setRole]     = useState("All Roles");
-  const [selected, setSelected] = useState<typeof allUsers[0]|null>(null);
+  const [selected, setSelected] = useState<UserRow|null>(null);
+  const [allUsers, setAllUsers] = useState<UserRow[]>([]);
+  const [loading,  setLoading]  = useState(true);
+  const [err,      setErr]      = useState("");
+
+  useEffect(() => {
+    adminGetRegistrations()
+      .then(({ registrations }) => setAllUsers((registrations as ApiReg[]).map(toRow)))
+      .catch(e => setErr(e.message))
+      .finally(() => setLoading(false));
+  }, []);
 
   const filtered = allUsers.filter(u => {
     const s = search.toLowerCase();
-    const matchSearch = !s || u.name.toLowerCase().includes(s) || u.phone.includes(s) || u.email.includes(s);
+    const matchSearch = !s || u.name.toLowerCase().includes(s) || u.phone.includes(s) || u.email.toLowerCase().includes(s);
     const matchState  = state==="All States" || u.state===state;
     const matchCity   = city==="All Cities"  || u.city===city;
     const matchRole   = role==="All Roles"   || u.role===role;
@@ -76,6 +128,12 @@ export default function UsersView() {
   return (
     <div style={{ display:"flex", gap:16 }}>
       <div style={{ flex:1, display:"flex", flexDirection:"column", gap:14, minWidth:0 }}>
+
+        {err && (
+          <div style={{ padding:"12px 16px", background:"#EF444415", border:"1px solid #EF444444", borderRadius:12, color:"#EF4444", fontSize:13 }}>
+            Failed to load users: {err}
+          </div>
+        )}
 
         {/* Stat Cards */}
         <div style={{ display:"grid", gridTemplateColumns:"repeat(6,1fr)", gap:10 }}>
@@ -194,7 +252,7 @@ export default function UsersView() {
                 }}>
                   <td style={{ padding:"13px 14px" }}>
                     <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-                      <div style={{ width:34, height:34, borderRadius:10, background:`hsl(${u.id*37},55%,32%)`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, fontWeight:800, color:"#fff", flexShrink:0 }}>{u.name[0]}</div>
+                      <div style={{ width:34, height:34, borderRadius:10, background:`hsl(${u.num*37},55%,32%)`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, fontWeight:800, color:"#fff", flexShrink:0 }}>{u.name[0]}</div>
                       <div>
                         <div style={{ fontSize:13, fontWeight:600, color:"#F1F5F9" }}>{u.name}</div>
                         <div style={{ fontSize:10, color:"#475569" }}>{u.phone}</div>
@@ -224,7 +282,9 @@ export default function UsersView() {
                 </tr>
               ))}
               {filtered.length===0 && (
-                <tr><td colSpan={9} style={{ padding:"40px", textAlign:"center", color:"#334155", fontSize:13 }}>No users match these filters.</td></tr>
+                <tr><td colSpan={9} style={{ padding:"40px", textAlign:"center", color:"#334155", fontSize:13 }}>
+                  {loading ? "Loading users…" : allUsers.length===0 ? "No registrations yet." : "No users match these filters."}
+                </td></tr>
               )}
             </tbody>
           </table>
@@ -236,7 +296,7 @@ export default function UsersView() {
         <div style={{ width:290, flexShrink:0, display:"flex", flexDirection:"column", gap:12 }}>
           <div style={{ ...card, textAlign:"center" }}>
             <button onClick={()=>setSelected(null)} style={{ float:"right", background:"none", border:"none", color:"#475569", cursor:"pointer", fontSize:18, lineHeight:1 }}>✕</button>
-            <div style={{ width:60, height:60, borderRadius:16, background:`hsl(${selected.id*37},55%,32%)`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:26, fontWeight:800, color:"#fff", margin:"24px auto 12px" }}>{selected.name[0]}</div>
+            <div style={{ width:60, height:60, borderRadius:16, background:`hsl(${selected.num*37},55%,32%)`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:26, fontWeight:800, color:"#fff", margin:"24px auto 12px" }}>{selected.name[0]}</div>
             <div style={{ fontSize:16, fontWeight:700, color:"#F1F5F9" }}>{selected.name}</div>
             <div style={{ fontSize:11, color:"#64748B", marginTop:2 }}>{selected.email}</div>
             <div style={{ fontSize:11, color:"#64748B" }}>{selected.phone}</div>

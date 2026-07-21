@@ -406,8 +406,8 @@ export function PlayerProfile() {
                 <div style={{ background:'rgba(255,255,255,0.03)', borderRadius:10, padding:'14px 14px' }}>
                   <div style={{ display:'flex', justifyContent:'space-between', marginBottom:4 }}>
                     <div style={{ fontSize:12, fontWeight:700, fontFamily:'Montserrat,sans-serif', color:'rgba(255,255,255,0.4)', textTransform:'uppercase', letterSpacing:'.06em' }}>Phase 1 Payment</div>
-                    <div style={tag(data.phase1Payment?.status==='paid' ? '#22C55E' : '#E8B23D')}>
-                      {data.phase1Payment?.status==='paid' ? '✓ Paid' : 'Pending'}
+                    <div style={tag((data.phase1Payment?.status==='paid' || ['payment_done','video_submitted','selected','rejected'].includes(reg.phase1Status)) ? '#22C55E' : '#E8B23D')}>
+                      {(data.phase1Payment?.status==='paid' || ['payment_done','video_submitted','selected','rejected'].includes(reg.phase1Status)) ? '✓ Paid' : 'Pending'}
                     </div>
                   </div>
                   {data.phase1Payment && <div style={{ fontSize:15, fontWeight:700, color:'#F0EDE8' }}>{fmtAmt(data.phase1Payment.amount)}</div>}
