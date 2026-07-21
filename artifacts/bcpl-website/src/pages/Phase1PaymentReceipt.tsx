@@ -91,7 +91,7 @@ const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-cen
         <div style={{ display:'flex', whiteSpace:'nowrap', animation:'tickerScroll 30s linear infinite' }}>
           {[...Array(4)].map((_,i) => (
             <span key={i} style={{ fontSize:11, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.1em', color:'#fff' }}>
-              &nbsp;🏏 SEASON 5 REGISTRATIONS OPEN &nbsp;·&nbsp; ₹6 CR PRIZE POOL &nbsp;·&nbsp; 50+ CITIES &nbsp;·&nbsp; BACKED BY SOURAV GANGULY &nbsp;·&nbsp; 10 FRANCHISE TEAMS &nbsp;·&nbsp; #OfficeSeStadiumtak &nbsp;·&nbsp;
+              &nbsp;🏏 SEASON 5 REGISTRATIONS OPEN &nbsp;·&nbsp; ₹6 CR PRIZE POOL &nbsp;·&nbsp; 50+ CITIES &nbsp;·&nbsp; 10 FRANCHISE TEAMS &nbsp;·&nbsp; #OfficeSeStadiumtak &nbsp;·&nbsp;
             </span>
           ))}
         </div>
@@ -192,14 +192,32 @@ const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-cen
               { label:'Role', val:'🏏 Batsman' },
               { label:'Trial City', val:'📍 Mumbai' },
               { label:'Registration No.', val:'BCPL-MUM-7432' },
-              { label:'Amount Paid', val:'₹299.00 ✅' },
               { label:'Payment Date', val:'15 Jan 2025, 11:42 AM' },
             ].map(r => (
               <div key={r.label} className="receipt-row">
                 <span className="receipt-label">{r.label}</span>
-                <span className="receipt-val" style={{ fontFamily: r.label==='Booking Ref' ? 'monospace' : 'Inter,sans-serif', color: r.label==='Amount Paid' ? '#22C55E' : '#F0EDE8' }}>{r.val}</span>
+                <span className="receipt-val">{r.val}</span>
               </div>
             ))}
+          </div>
+
+          {/* GST Breakdown */}
+          <div style={{ margin:'0', background:'rgba(255,122,41,0.04)', borderTop:'1px solid rgba(255,255,255,0.06)', padding:'16px 20px' }}>
+            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:9, letterSpacing:'.14em', color:'rgba(255,255,255,0.3)', textTransform:'uppercase', marginBottom:10 }}>Payment Breakdown</div>
+            {[
+              { label:'Taxable Amount', val:'₹253.39', dim:false },
+              { label:'CGST @ 9%',      val:'₹22.81',  dim:true  },
+              { label:'SGST @ 9%',      val:'₹22.81',  dim:true  },
+            ].map(r => (
+              <div key={r.label} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'5px 0', borderBottom:'1px solid rgba(255,255,255,0.04)' }}>
+                <span style={{ fontFamily:'Inter,sans-serif', fontSize:12, color: r.dim ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.6)', fontWeight:600 }}>{r.label}</span>
+                <span style={{ fontFamily:'Inter,sans-serif', fontSize:12, color: r.dim ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.7)', fontWeight:700 }}>{r.val}</span>
+              </div>
+            ))}
+            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'10px 0 2px', marginTop:6, borderTop:'1px solid rgba(255,122,41,0.3)' }}>
+              <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:13, color:'#FF7A29', letterSpacing:'.04em' }}>TOTAL PAID</span>
+              <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:16, color:'#22C55E' }}>₹299.00 ✅</span>
+            </div>
           </div>
 
           {/* Dashed divider */}
@@ -451,7 +469,10 @@ const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-cen
                           <tr><td>Phase</td><td>Phase 1 — Video Submission</td></tr>
                           <tr><td>Payment Date</td><td>15 Jan 2025, 11:42 AM</td></tr>
                           <tr><td>Payment Method</td><td>UPI / Online</td></tr>
-                          <tr class="amount-row"><td>Amount Paid</td><td>₹299.00 ✓</td></tr>
+                          <tr><td>Taxable Amount</td><td>₹253.39</td></tr>
+                          <tr><td>CGST @ 9%</td><td>₹22.81</td></tr>
+                          <tr><td>SGST @ 9%</td><td>₹22.81</td></tr>
+                          <tr class="amount-row"><td>Total Paid</td><td>₹299.00 ✓</td></tr>
                         </table>
 
                         <hr class="dashed"/>

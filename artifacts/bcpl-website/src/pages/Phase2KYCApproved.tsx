@@ -179,10 +179,9 @@ export function Phase2KYCApproved() {
               </div>
 
               {[
-                { label:'Phase 1 Booking Ref', value:'BCPL-S5-MUM-BAT-7432', mono:true },
-                { label:'Phase 2 Booking Ref', value:'BCPL-S5-P2-MUM-BAT-8821', mono:true },
-                { label:'T-Shirt Size', value:'L' },
-                { label:'Company', value:'Infosys Pvt. Ltd.' },
+                { label:'Registration No.', value:'BCPL-S5-7432', mono:true },
+                { label:'Email', value:'rahul.sharma@tcsmumbai.com', mono:false },
+                { label:'Phone', value:'+91 98765 43210', mono:false },
                 { label:'KYC Status', value:'✅ Verified', green:true },
               ].map(row => (
                 <div key={row.label} className="profile-info-row">
@@ -191,7 +190,12 @@ export function Phase2KYCApproved() {
                 </div>
               ))}
 
-              <button className="btn-outline" style={{ width:'100%', padding:'13px', marginTop:20, fontSize:13 }}>
+              <button className="btn-outline" style={{ width:'100%', padding:'13px', marginTop:20, fontSize:13 }} onClick={() => {
+                const logoUrl = `${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/bcpl-logo-white.png`;
+                const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>BCPL Player ID — Rahul Sharma</title><style>body{margin:0;background:#030E1C;display:flex;justify-content:center;padding:32px;font-family:'Segoe UI',sans-serif}.card{width:340px;background:linear-gradient(145deg,#0D1F3C,#06101E);border:1.5px solid rgba(255,122,41,0.45);border-radius:18px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.6)}.stripe{height:4px;background:linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)}.head{background:linear-gradient(135deg,#FF7A29,#C94E0E);padding:14px 20px}.head-title{font-size:10px;font-weight:800;color:rgba(255,255,255,0.9);letter-spacing:.18em}.head-sub{font-size:8px;color:rgba(255,255,255,0.65);margin-top:3px;letter-spacing:.1em}.body{padding:20px 22px 16px}.avatar{width:60px;height:60px;background:linear-gradient(135deg,#FF7A29,#C94E0E);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;margin-bottom:12px;box-shadow:0 4px 20px rgba(255,122,41,0.4)}.name{font-size:20px;font-weight:900;color:#fff;margin-bottom:3px}.role{font-size:11px;font-weight:800;color:#FF7A29;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px}hr{border:none;border-top:1px solid rgba(255,255,255,0.08);margin:12px 0}.row{display:flex;justify-content:space-between;margin-bottom:9px}.label{font-size:9px;font-weight:700;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:.08em}.val{font-size:11px;font-weight:700;color:rgba(255,255,255,0.8);text-align:right}.ref{font-family:monospace;color:#FF7A29;font-size:11px;font-weight:700}.foot{background:rgba(255,122,41,0.07);border-top:1px solid rgba(255,122,41,0.18);padding:12px 22px;display:flex;justify-content:space-between;align-items:center}.kyc{background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.4);border-radius:6px;padding:4px 11px;font-size:9px;font-weight:800;color:#22C55E;letter-spacing:.08em}.site{font-size:9px;color:rgba(255,255,255,0.25);font-weight:600}@media print{body{padding:0;background:#fff}.card{box-shadow:none}}</style></head><body><div class="card"><div class="stripe"></div><div class="head"><div class="head-title">BHARTIYA CORPORATE PREMIER LEAGUE</div><div class="head-sub">OFFICIAL PLAYER ID CARD · SEASON 5 · 2026–27</div></div><div class="body"><div class="avatar">RS</div><div class="name">Rahul Sharma</div><div class="role">🏏 Batsman · Mumbai</div><hr/><div class="row"><span class="label">Email</span><span class="val">rahul.sharma@tcsmumbai.com</span></div><div class="row"><span class="label">Phone</span><span class="val">+91 98765 43210</span></div><hr/><div class="row"><span class="label">Registration No.</span><span class="ref">BCPL-S5-7432</span></div><div class="row"><span class="label">KYC Status</span><span class="val" style="color:#22C55E">✅ Verified</span></div></div><div class="foot"><span class="site">bcplt20.com · BCPL Season 5</span><span class="kyc">KYC ✓ VERIFIED</span></div></div><script>window.onload=function(){window.print();}<\/script></body></html>`;
+                const win = window.open('', '_blank');
+                if(win){ win.document.write(html); win.document.close(); }
+              }}>
                 📄 Download Player ID Card →
               </button>
             </div>

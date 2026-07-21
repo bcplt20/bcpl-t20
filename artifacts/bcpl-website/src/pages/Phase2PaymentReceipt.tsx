@@ -55,7 +55,7 @@ const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-cen
         <div style={{ display:'flex', whiteSpace:'nowrap', animation:'tickerScroll 32s linear infinite' }}>
           {[...Array(4)].map((_,i) => (
             <span key={i} style={{ fontSize:11, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.1em', color:'#fff' }}>
-              &nbsp;🏏 SEASON 5 REGISTRATIONS OPEN &nbsp;·&nbsp; ₹6 CR PRIZE POOL &nbsp;·&nbsp; 50+ CITIES &nbsp;·&nbsp; BACKED BY SOURAV GANGULY &nbsp;·&nbsp; 10 FRANCHISE TEAMS &nbsp;·&nbsp; #OfficeSeStadiumtak &nbsp;·&nbsp;
+              &nbsp;🏏 SEASON 5 REGISTRATIONS OPEN &nbsp;·&nbsp; ₹6 CR PRIZE POOL &nbsp;·&nbsp; 50+ CITIES &nbsp;·&nbsp; 10 FRANCHISE TEAMS &nbsp;·&nbsp; #OfficeSeStadiumtak &nbsp;·&nbsp;
             </span>
           ))}
         </div>
@@ -120,20 +120,38 @@ const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-cen
               <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(13px,3vw,16px)', color:'#fff', textShadow:'0 2px 8px rgba(0,0,0,0.25)' }}>PHASE 2 PHYSICAL TRIAL — CONFIRMED</div>
             </div>
 
-            <div style={{ background:'#0A1727', padding:'22px 24px' }}>
+            <div style={{ background:'#0A1727', padding:'22px 24px 14px' }}>
               {[
                 ['Player','Rahul Sharma'],
                 ['Role','🏏 Batsman'],
                 ['Trial City','📍 Mumbai'],
-                ['Phase 2 Ref','BCPL-S5-P2-MUM-BAT-8821'],
-                ['Amount Paid','₹2,000'],
+                ['Registration No.','BCPL-S5-7432'],
                 ['Date','Dec 15, 2025'],
               ].map(([k,v]) => (
                 <div key={k} className="receipt-row">
                   <span style={{ fontSize:12, color:'rgba(255,255,255,0.4)', fontWeight:600, flexShrink:0 }}>{k}</span>
-                  <span style={{ fontSize: k==='Phase 2 Ref' ? 11 : 13, color: k==='Amount Paid' ? '#E8B23D' : k==='Phase 2 Ref' ? 'rgba(255,255,255,0.7)' : '#fff', fontWeight:700, fontFamily: k==='Phase 2 Ref' ? 'monospace' : 'Montserrat,sans-serif', textAlign:'right', wordBreak:'break-all' }}>{v}</span>
+                  <span style={{ fontSize: k==='Registration No.' ? 11 : 13, color: k==='Registration No.' ? 'rgba(255,255,255,0.7)' : '#fff', fontWeight:700, fontFamily: k==='Registration No.' ? 'monospace' : 'Montserrat,sans-serif', textAlign:'right', wordBreak:'break-all' }}>{v}</span>
                 </div>
               ))}
+            </div>
+
+            {/* GST Breakdown */}
+            <div style={{ background:'rgba(232,178,61,0.04)', borderTop:'1px solid rgba(232,178,61,0.15)', padding:'14px 24px' }}>
+              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:9, letterSpacing:'.14em', color:'rgba(255,255,255,0.3)', textTransform:'uppercase', marginBottom:10 }}>Payment Breakdown</div>
+              {[
+                { label:'Taxable Amount', val:'₹1,694.92', dim:false },
+                { label:'CGST @ 9%',      val:'₹152.54',  dim:true  },
+                { label:'SGST @ 9%',      val:'₹152.54',  dim:true  },
+              ].map(r => (
+                <div key={r.label} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'5px 0', borderBottom:'1px solid rgba(255,255,255,0.04)' }}>
+                  <span style={{ fontFamily:'Inter,sans-serif', fontSize:12, color: r.dim ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.6)', fontWeight:600 }}>{r.label}</span>
+                  <span style={{ fontFamily:'Inter,sans-serif', fontSize:12, color: r.dim ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.7)', fontWeight:700 }}>{r.val}</span>
+                </div>
+              ))}
+              <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'10px 0 2px', marginTop:6, borderTop:'1px solid rgba(232,178,61,0.35)' }}>
+                <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:13, color:'#E8B23D', letterSpacing:'.04em' }}>TOTAL PAID</span>
+                <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:16, color:'#22C55E' }}>₹2,000.00 ✅</span>
+              </div>
             </div>
 
             <div className="ticket-dashed" />
