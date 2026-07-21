@@ -448,11 +448,16 @@ export function PlayerProfile() {
               <div className="card" style={{ padding:"18px 22px" }}>
                 <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, color:"rgba(255,255,255,0.3)", letterSpacing:".12em", textTransform:"uppercase", marginBottom:14 }}>Quick Actions</div>
                 <div style={{ display:"flex", flexWrap:"wrap", gap:8 }}>
-                  <button className="btn-orange" style={{ fontSize:11, padding:"9px 16px" }}>📥 DOWNLOAD RECEIPT</button>
-                  <button className="btn-ghost" style={{ fontSize:11, padding:"9px 16px" }}>🖨 PRINT ID CARD</button>
-                  <button className="btn-ghost" style={{ fontSize:11, padding:"9px 16px" }}>📞 HELPLINE</button>
-                  <button className="btn-ghost" style={{ fontSize:11, padding:"9px 16px" }}>✉️ EMAIL SUPPORT</button>
-                  {phase !== "p1_registered" && <button className="btn-ghost" style={{ fontSize:11, padding:"9px 16px" }}>🎬 RE-WATCH VIDEO</button>}
+                  <button className="btn-orange" style={{ fontSize:11, padding:"9px 16px" }}
+                    onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/p1-receipt'; }}>📥 DOWNLOAD RECEIPT</button>
+                  <button className="btn-ghost" style={{ fontSize:11, padding:"9px 16px" }}
+                    onClick={() => { const BASE = import.meta.env.BASE_URL; const logoUrl = `${window.location.origin}${BASE}bcpl-assets/bcpl-logo-white.png`; const w = window.open('', '_blank'); if (!w) return; w.document.write(`<!DOCTYPE html><html><head><title>BCPL ID Card</title><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;background:#06101E;display:flex;align-items:center;justify-content:center;min-height:100vh;-webkit-print-color-adjust:exact;print-color-adjust:exact}.card{width:340px;background:linear-gradient(135deg,#0A1A30,#06101E);border:2px solid #FF7A29;border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.6)}.card-header{background:linear-gradient(135deg,#C94E0E,#FF7A29);padding:16px 20px;display:flex;align-items:center;gap:12px}.logo{width:44px;height:44px;object-fit:contain}.brand{font-size:16px;font-weight:900;color:#fff}.sub{font-size:9px;color:rgba(255,255,255,0.8);margin-top:2px}.card-body{padding:20px}.avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#FF7A29,#E8B23D);display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:12px}.name{font-size:18px;font-weight:900;color:#fff;margin-bottom:4px}.role{font-size:11px;color:#FF7A29;font-weight:700;letter-spacing:.1em;margin-bottom:16px}.row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:11px}.lbl{color:rgba(255,255,255,0.35);font-weight:700;text-transform:uppercase;letter-spacing:.08em}.val{color:#F0EDE8;font-weight:700}.ref{font-family:monospace;color:#FF7A29;font-size:10px}.card-footer{background:rgba(0,0,0,0.3);padding:12px 20px;text-align:center;font-size:9px;font-weight:800;color:#E8B23D;letter-spacing:.12em}@media print{body{background:#06101E}}</style></head><body><div class="card"><div class="card-header"><img class="logo" src="${logoUrl}" alt="BCPL"/><div><div class="brand">BCPL T20</div><div class="sub">Bhartiya Corporate Premier League</div></div></div><div class="card-body"><div class="avatar">🏏</div><div class="name">Rahul Sharma</div><div class="role">BATSMAN · SEASON 5</div><div class="row"><span class="lbl">ID</span><span class="val ref">BCPL-MUM-7432</span></div><div class="row"><span class="lbl">City</span><span class="val">Mumbai</span></div><div class="row"><span class="lbl">Phase 1</span><span class="val" style="color:#22C55E">Registered ✓</span></div><div class="row"><span class="lbl">Season</span><span class="val">Season 5 · 2026</span></div></div><div class="card-footer">#OfficeSeStadiumtak</div></div></body></html>`); w.document.close(); setTimeout(() => w.print(), 600); }}>🖨 PRINT ID CARD</button>
+                  <button className="btn-ghost" style={{ fontSize:11, padding:"9px 16px" }}
+                    onClick={() => window.open('https://wa.me/918800000000?text=' + encodeURIComponent('Hi, I need help with my BCPL Season 5 registration.'), '_blank')}>📞 HELPLINE</button>
+                  <button className="btn-ghost" style={{ fontSize:11, padding:"9px 16px" }}
+                    onClick={() => { window.location.href = 'mailto:support@bcplt20.com?subject=BCPL%20Season%205%20Support%20-%20BCPL-MUM-7432'; }}>✉️ EMAIL SUPPORT</button>
+                  {phase !== "p1_registered" && <button className="btn-ghost" style={{ fontSize:11, padding:"9px 16px" }}
+                    onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/upload-video'; }}>🎬 RE-WATCH VIDEO</button>}
                 </div>
               </div>
 
@@ -465,7 +470,7 @@ export function PlayerProfile() {
       <footer style={{ background:"#040A15", borderTop:"1px solid rgba(255,255,255,0.06)", padding:"20px 0" }}>
         <div className="wrap" style={{ display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:10 }}>
           <span style={{ fontFamily:"Inter,sans-serif", fontSize:12, color:"rgba(255,255,255,0.2)" }}>BCPL T20 · Season 5 · BCPL T20 Pvt. Ltd. · © 2026</span>
-          <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, letterSpacing:".1em", color:"#FF7A29" }}>#OfficeSeStadiumtak</span>
+          <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:10, letterSpacing:".1em", color:"#E8B23D" }}>#OfficeSeStadiumtak</span>
         </div>
       </footer>
     </div>

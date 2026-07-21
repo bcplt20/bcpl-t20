@@ -530,9 +530,10 @@ const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-cen
                 <span style={{ fontSize:9 }}>🏆</span>
                 <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:9, color:'#E8B23D', letterSpacing:'.12em' }}>SEASON 5</span>
               </div>
-          <div style={{ fontSize:11, color:'rgba(255,255,255,0.3)', letterSpacing:'.08em', textAlign:'center' }}>
-            Bhartiya Corporate Premier League &nbsp;·&nbsp; Season 5 &nbsp;·&nbsp; #OfficeSeStadiumtak
+          <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)', letterSpacing:'.06em', textAlign:'center' }}>
+            Bhartiya Corporate Premier League &nbsp;·&nbsp; Season 5
           </div>
+          <div style={{ fontSize:12, color:'#E8B23D', fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.1em' }}>#OfficeSeStadiumtak</div>
           <div style={{ fontSize:11, color:'rgba(255,255,255,0.2)', letterSpacing:'.06em' }}>
             © 2026 BCPL. All rights reserved.
           </div>

@@ -276,7 +276,7 @@ export function Phase1Result() {
                 <span style={{ fontSize:9 }}>🏆</span>
                 <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:9, color:'#E8B23D', letterSpacing:'.12em' }}>SEASON 5</span>
               </div>
-              <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)', marginTop:4 }}>#OfficeSeStadiumtak</div>
+              <div style={{ fontSize:11, color:'#E8B23D', fontWeight:700, fontFamily:'Montserrat,sans-serif', letterSpacing:'.08em', marginTop:6 }}>#OfficeSeStadiumtak</div>
             </div>
             <div className="footer-links">
               {['About','Teams','FAQ','Contact','Terms','Privacy','Refunds'].map(l => (
