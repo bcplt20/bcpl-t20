@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { adminGetRegistrations } from "../../lib/api";
+import { gstFromGross, inr } from "../../lib/gst";
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line
 } from "recharts";
 
 /* ─── Constants ─────────────────────────────────────────────── */
-const GST_RATE   = 0.18;
+/* Stored payment amounts are GST-INCLUSIVE — GST is extracted via lib/gst */
 const CF_FEE     = 0.02;   // Cashfree 2% gateway fee
 const TDS_RATE   = 0.10;   // TDS on prizes
 const BCPL_GSTIN = "07AAHCK4053D1ZS";
@@ -23,31 +24,38 @@ const gstMonthly: { month:string; collected:number; remitted:number; due:string 
 type Txn = { id:string; name:string; email:string; phone:string; gstin:string; type:"Phase 1"|"Phase 2"; amount:number; method:string; time:string; ts:number; status:"success"|"pending"|"failed"|"refunded" };
 const REFUNDS: { id:string; txnId:string; name:string; amount:number; reason:string; status:string; date:string; method:string; days:number }[] = [];
 
-const PAID_STATUSES = ["payment_done","video_submitted","selected","rejected"];
+const PAID_STATUSES    = ["payment_done","video_submitted","selected","rejected"];
+const P2_PAID_STATUSES = ["payment_done","kyc_done","selected","rejected"];
 
+type ApiPayment = { id:string; amount:string; cashfreeOrderId:string; cashfreePaymentId:string|null; status:string; paidAt:string|null; createdAt:string };
 type ApiReg = {
   id:string; role:string; trialCity:string; phase1Status:string; phase2Status:string|null; createdAt:string;
   user:{ id:string; name:string; phone:string; email:string }|null;
-  payment:{ id:string; amount:string; cashfreeOrderId:string; cashfreePaymentId:string|null; status:string; paidAt:string|null; createdAt:string }|null;
+  payment:ApiPayment|null;
+  phase2Payment:ApiPayment|null;
   video:unknown|null;
 };
 
-const regToTxn = (r: ApiReg): Txn => {
-  const p = r.payment!;
-  const paid = p.status === "success" || p.status === "paid" || PAID_STATUSES.includes(r.phase1Status);
-  return {
-    id: p.cashfreeOrderId || p.id,
-    name: r.user?.name ?? "Unknown",
-    email: r.user?.email ?? "",
-    phone: r.user?.phone ?? "",
-    gstin: "",
-    type: "Phase 1",
-    amount: Math.round(Number(p.amount)),
-    method: "Cashfree",
-    time: new Date(p.paidAt ?? p.createdAt).toLocaleString("en-IN", { day:"2-digit", month:"short", hour:"2-digit", minute:"2-digit" }),
-    ts: new Date(p.paidAt ?? p.createdAt).getTime(),
-    status: paid ? "success" : p.status === "failed" ? "failed" : "pending",
-  };
+const paymentToTxn = (r: ApiReg, p: ApiPayment, type: Txn["type"], paidByStatus: boolean): Txn => ({
+  id: p.cashfreeOrderId || p.id,
+  name: r.user?.name ?? "Unknown",
+  email: r.user?.email ?? "",
+  phone: r.user?.phone ?? "",
+  gstin: "",
+  type,
+  amount: Math.round(Number(p.amount)),
+  method: "Cashfree",
+  time: new Date(p.paidAt ?? p.createdAt).toLocaleString("en-IN", { day:"2-digit", month:"short", hour:"2-digit", minute:"2-digit" }),
+  ts: new Date(p.paidAt ?? p.createdAt).getTime(),
+  status: p.status === "success" || p.status === "paid" || paidByStatus ? "success" : p.status === "failed" ? "failed" : "pending",
+});
+
+/* one registration can yield both a Phase 1 and a Phase 2 transaction */
+const regToTxns = (r: ApiReg): Txn[] => {
+  const out: Txn[] = [];
+  if (r.payment)       out.push(paymentToTxn(r, r.payment,       "Phase 1", PAID_STATUSES.includes(r.phase1Status)));
+  if (r.phase2Payment) out.push(paymentToTxn(r, r.phase2Payment, "Phase 2", P2_PAID_STATUSES.includes(r.phase2Status ?? "")));
+  return out;
 };
 const TDS_PRIZES: { player:string; prize:string; tds:string; net:string; pan:string; status:string }[] = [];
 
@@ -63,10 +71,8 @@ function InvoiceModal({ txn, onClose }: { txn: Txn; onClose: () => void }) {
   const [email,   setEmail]   = useState(txn.email);
   const [sent,    setSent]    = useState(false);
   const [loading, setLoading] = useState(false);
-  const base = txn.amount;
-  const gst  = Math.round(base * GST_RATE);
-  const cgst = gst / 2, sgst = gst / 2;
-  const total = base + gst;
+  /* stored amount is GST-inclusive — extract base + GST out of it */
+  const { base, cgst, sgst, total } = gstFromGross(txn.amount);
   const invoiceNo = `BCPL/25-26/${txn.id}`;
   const today = new Date().toLocaleDateString("en-IN", { day:"2-digit", month:"long", year:"numeric" });
 
@@ -81,7 +87,6 @@ function InvoiceModal({ txn, onClose }: { txn: Txn; onClose: () => void }) {
             <button onClick={()=>{
               const w=window.open("","_blank");if(!w)return;
               const iNo=`BCPL/25-26/${txn.id}`;
-              const gst=Math.round(base*GST_RATE);const cgst=gst/2;const total=base+gst;
               w.document.write(`<!DOCTYPE html><html><head><title>${iNo}</title>
               <style>body{font-family:Arial,sans-serif;font-size:11px;padding:0;margin:0}
               .lh{display:flex;align-items:center;gap:16px;background:#FF6B00;padding:14px 30px;color:#fff}
@@ -149,7 +154,7 @@ function InvoiceModal({ txn, onClose }: { txn: Txn; onClose: () => void }) {
                 <div class="tax-box">
                   <div class="tax-row"><span>Subtotal</span><span>₹${base.toLocaleString()}</span></div>
                   <div class="tax-row"><span>CGST @ 9%</span><span>₹${cgst.toFixed(2)}</span></div>
-                  <div class="tax-row"><span>SGST @ 9%</span><span>₹${cgst.toFixed(2)}</span></div>
+                  <div class="tax-row"><span>SGST @ 9%</span><span>₹${sgst.toFixed(2)}</span></div>
                   <div class="total-row"><span>Total Payable</span><span>₹${total.toLocaleString()}</span></div>
                   <div style="font-size:8px;color:#888;margin-top:6px">Computer-generated invoice. Subject to Delhi jurisdiction.</div>
                 </div>
@@ -255,7 +260,7 @@ function InvoiceModal({ txn, onClose }: { txn: Txn; onClose: () => void }) {
                 <span style={{ fontSize:18, fontWeight:900, color:"#FF6B00" }}>₹{total.toLocaleString()}</span>
               </div>
               <div style={{ fontSize:10, color:"#334155", marginTop:6, lineHeight:1.5 }}>
-                Amount in words: <span style={{ color:"#475569" }}>Rupees {total === 353 ? "Three Hundred Fifty Three" : total === 470 ? "Four Hundred Seventy" : total === 2360 ? "Two Thousand Three Hundred Sixty" : total === 3540 ? "Three Thousand Five Hundred Forty" : total} Only</span>
+                Amount in words: <span style={{ color:"#475569" }}>Rupees {total === 353 ? "Three Hundred Fifty Three" : total === 471 ? "Four Hundred Seventy One" : total === 2360 ? "Two Thousand Three Hundred Sixty" : total === 3540 ? "Three Thousand Five Hundred Forty" : total} Only</span>
               </div>
             </div>
           </div>
@@ -298,8 +303,7 @@ export default function FinanceView() {
     adminGetRegistrations()
       .then(({ registrations }) => {
         const txns = (registrations as ApiReg[])
-          .filter(r => r.payment)
-          .map(regToTxn)
+          .flatMap(regToTxns)
           .sort((a,b)=>b.ts-a.ts);
         setTransactions(txns);
       })
@@ -324,13 +328,13 @@ export default function FinanceView() {
       monthMap.set(month, (monthMap.get(month) ?? 0) + t.amount);
     }
     for (const [month, revenue] of monthMap) {
-      const gstPaid = Math.round(revenue*GST_RATE), gatewayCost = Math.round(revenue*CF_FEE);
+      const gstPaid = Math.round(gstFromGross(revenue).gst), gatewayCost = Math.round(revenue*CF_FEE);
       monthlyPL.push({ month, revenue, gstPaid, gatewayCost, net: revenue-gstPaid-gatewayCost });
     }
   }
 
   const totalRevenue  = TRANSACTIONS.filter(t=>t.status==="success").reduce((a,t)=>a+t.amount,0);
-  const totalGST      = Math.round(totalRevenue * GST_RATE);
+  const totalGST      = Math.round(gstFromGross(totalRevenue).gst);   // GST included in collections
   const totalGW       = Math.round(totalRevenue * CF_FEE);
   const netRevenue    = totalRevenue - totalGST - totalGW;
   const totalRefunds  = REFUNDS.reduce((a,r)=>a+(r.status==="processed"?r.amount:0),0);
@@ -364,14 +368,14 @@ export default function FinanceView() {
         </div>
         <div style={{ display:"flex", gap:8 }}>
           <button onClick={()=>{
-            const headers=["TXN ID","Player","Email","Phone","Type","Amount","GST","Total","Method","Status","Time"];
-            const rows=TRANSACTIONS.map(t=>[t.id,t.name,t.email,t.phone,t.type,t.amount,Math.round(t.amount*GST_RATE),Math.round(t.amount*(1+GST_RATE)),t.method,t.status,t.time]);
+            const headers=["TXN ID","Player","Email","Phone","Type","Base","GST","Total Paid","Method","Status","Time"];
+            const rows=TRANSACTIONS.map(t=>{const g=gstFromGross(t.amount);return [t.id,t.name,t.email,t.phone,t.type,g.base,g.gst,t.amount,t.method,t.status,t.time];});
             const csv=[headers,...rows].map(r=>r.join(",")).join("\n");
             const a=document.createElement("a");a.href="data:text/csv;charset=utf-8,"+encodeURIComponent(csv);a.download=`bcpl_finance_${new Date().toISOString().slice(0,10)}.csv`;a.click();
           }} style={{ padding:"9px 16px", borderRadius:9, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontSize:12, cursor:"pointer" }}>⬇ Export CSV</button>
           <button onClick={()=>{
             const w=window.open("","_blank");if(!w)return;
-            const rows=TRANSACTIONS.filter(t=>t.status==="success").map((t,i)=>{const gst=Math.round(t.amount*GST_RATE);const total=t.amount+gst;return`<tr><td>BCPL/25-26/${t.id}</td><td>${t.name}</td><td>${t.email}</td><td>${t.type}</td><td>₹${t.amount.toLocaleString()}</td><td>₹${gst}</td><td style="font-weight:bold;color:#FF6B00">₹${total.toLocaleString()}</td></tr>`;}).join("");
+            const rows=TRANSACTIONS.filter(t=>t.status==="success").map(t=>{const g=gstFromGross(t.amount);return`<tr><td>BCPL/25-26/${t.id}</td><td>${t.name}</td><td>${t.email}</td><td>${t.type}</td><td>₹${inr(g.base)}</td><td>₹${inr(g.gst)}</td><td style="font-weight:bold;color:#FF6B00">₹${t.amount.toLocaleString()}</td></tr>`;}).join("");
             w.document.write(`<!DOCTYPE html><html><head><title>BCPL Bulk Invoices</title><style>body{font-family:Arial;font-size:11px;padding:20px}.header{display:flex;align-items:center;gap:16px;border-bottom:3px solid #FF6B00;padding-bottom:12px;margin-bottom:20px}.logo{width:52px;height:52px;border-radius:50%;overflow:hidden;border:2px solid #FF6B00}.logo img{width:100%;height:100%;object-fit:cover}h1{margin:0;font-size:18px;color:#FF6B00}p{margin:2px 0;font-size:10px;color:#555}table{width:100%;border-collapse:collapse}th{background:#FF6B00;color:#fff;padding:7px;text-align:left;font-size:10px}td{padding:6px;border-bottom:1px solid #eee;font-size:10px}tr:nth-child(even){background:#FFF5EE}.footer{margin-top:20px;font-size:9px;color:#999;border-top:1px solid #eee;padding-top:10px}@media print{body{padding:0}}</style></head><body>
             <div class="header"><div class="logo"><img src="${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/bcpl-ball-color.jpg"/></div>
             <div><h1>BCPL T20 — Bulk GST Invoices</h1><p>Kriparti Playing11 Private Limited · GSTIN: ${BCPL_GSTIN}</p><p>Season 5 (2026–27) · Generated: ${new Date().toLocaleDateString("en-IN")}</p></div></div>
@@ -380,7 +384,7 @@ export default function FinanceView() {
           }} style={{ padding:"9px 16px", borderRadius:9, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontSize:12, cursor:"pointer" }}>📄 Bulk Invoices</button>
           <button onClick={()=>{
             const w=window.open("","_blank");if(!w)return;
-            const rows=TRANSACTIONS.filter(t=>t.status==="success").map(t=>{const gst=Math.round(t.amount*GST_RATE);return`<tr><td>${t.id}</td><td>${t.name}</td><td>${t.gstin||"B2C"}</td><td>${t.type}</td><td>999299</td><td>18%</td><td>₹${t.amount}</td><td>₹${Math.round(gst/2)}</td><td>₹${Math.round(gst/2)}</td><td>₹${gst}</td></tr>`;}).join("");
+            const rows=TRANSACTIONS.filter(t=>t.status==="success").map(t=>{const g=gstFromGross(t.amount);return`<tr><td>${t.id}</td><td>${t.name}</td><td>${t.gstin||"B2C"}</td><td>${t.type}</td><td>999299</td><td>18%</td><td>₹${g.base}</td><td>₹${g.cgst}</td><td>₹${g.sgst}</td><td>₹${g.gst}</td></tr>`;}).join("");
             w.document.write(`<!DOCTYPE html><html><head><title>BCPL GSTR-1</title><style>body{font-family:Arial;font-size:10px;padding:20px}.header{display:flex;align-items:center;gap:16px;border-bottom:3px solid #FF6B00;padding-bottom:12px;margin-bottom:16px}.logo{width:48px;height:48px;border-radius:50%;overflow:hidden;border:2px solid #FF6B00}.logo img{width:100%;height:100%;object-fit:cover}h1{margin:0;font-size:16px;color:#FF6B00}p{margin:2px 0;font-size:9px;color:#555}table{width:100%;border-collapse:collapse;font-size:9px}th{background:#FF6B00;color:#fff;padding:5px;text-align:left}td{padding:4px 6px;border-bottom:1px solid #eee}.footer{margin-top:16px;font-size:8px;color:#999}@media print{body{padding:0}}</style></head><body>
             <div class="header"><div class="logo"><img src="${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/bcpl-ball-color.jpg"/></div>
             <div><h1>GSTR-1 Report — Outward Supply</h1><p>Kriparti Playing11 Private Limited · GSTIN: ${BCPL_GSTIN}</p><p>FY 2026–27 · Filed under Form GSTR-1 · Generated: ${new Date().toLocaleDateString("en-IN")}</p></div></div>
@@ -395,7 +399,7 @@ export default function FinanceView() {
         {[
           { label:"Total Revenue",    value:totalRevenue>0?`₹${(totalRevenue/100000).toFixed(2)}L`:"₹0", sub:`${TRANSACTIONS.filter(t=>t.status==="success").length} paid txns`, color:"#FF6B00", delta:"Season 5" },
           { label:"Net Revenue",      value:netRevenue>0?`₹${(netRevenue/1000).toFixed(1)}k`:"₹0", sub:"After GST & gateway fee",color:"#10B981",delta:"After deductions"},
-          { label:"GST Collected",    value:totalGST>0?`₹${(totalGST/1000).toFixed(1)}k`:"₹0",    sub:"18% on all payments",    color:"#6366F1", delta:"FY 26-27" },
+          { label:"GST Collected",    value:totalGST>0?`₹${(totalGST/1000).toFixed(1)}k`:"₹0",    sub:"18% included in price",    color:"#6366F1", delta:"FY 26-27" },
           { label:"Gateway Fees",     value:totalGW>0?`₹${(totalGW/1000).toFixed(1)}k`:"₹0",      sub:"Cashfree 2% fee",        color:"#F59E0B", delta:"CF charges" },
           { label:"Total Refunds",    value:`₹${totalRefunds}`,                  sub:`${REFUNDS.length} refund requests`,color:"#EF4444",delta:REFUNDS.length>0?`-₹${totalRefunds}`:"No refunds"},
           { label:"Pending Clearance",value:"₹0",                                sub:"Cashfree settlement",    color:"#3B82F6", delta:"T+2 days"  },
@@ -487,9 +491,9 @@ export default function FinanceView() {
               </thead>
               <tbody>
                 {filtered.map(t=>{
+                  const g   = gstFromGross(t.amount);
                   const gw  = Math.round(t.amount * CF_FEE);
-                  const gst = Math.round(t.amount * GST_RATE);
-                  const net = t.amount - gw - gst;
+                  const net = Math.round(t.amount - gw - g.gst);
                   return (
                     <tr key={t.id} style={{ borderBottom:"1px solid #0F1B2D" }}>
                       <td style={{ padding:"10px 10px", fontFamily:"monospace", fontSize:11, color:"#475569" }}>{t.id}</td>
@@ -500,7 +504,7 @@ export default function FinanceView() {
                       <td style={{ padding:"10px 10px" }}><span style={{ fontSize:11, padding:"2px 8px", borderRadius:4, background:t.type==="Phase 2"?"#10B98122":"#F59E0B22", color:t.type==="Phase 2"?"#10B981":"#F59E0B", fontWeight:700 }}>{t.type}</span></td>
                       <td style={{ padding:"10px 10px", fontSize:14, fontWeight:800, color:"#FF6B00" }}>₹{t.amount.toLocaleString()}</td>
                       <td style={{ padding:"10px 10px", fontSize:11, color:"#EF4444" }}>-₹{gw}</td>
-                      <td style={{ padding:"10px 10px", fontSize:11, color:"#6366F1" }}>₹{gst}</td>
+                      <td style={{ padding:"10px 10px", fontSize:11, color:"#6366F1" }}>₹{inr(g.gst)}</td>
                       <td style={{ padding:"10px 10px", fontSize:12, fontWeight:700, color:"#10B981" }}>₹{net}</td>
                       <td style={{ padding:"10px 10px", fontSize:12, color:"#94A3B8" }}>{t.method}</td>
                       <td style={{ padding:"10px 10px" }}><span style={{ padding:"3px 10px", borderRadius:20, fontSize:10, fontWeight:800, background:SC[t.status].bg, color:SC[t.status].color, textTransform:"capitalize" }}>{t.status}</span></td>
@@ -664,18 +668,18 @@ export default function FinanceView() {
               </thead>
               <tbody>
                 {TRANSACTIONS.filter(t=>t.status==="success").map(t=>{
-                  const gst = Math.round(t.amount * GST_RATE);
-                  const gw  = Math.round(t.amount * CF_FEE);
+                  const g  = gstFromGross(t.amount);
+                  const gw = Math.round(t.amount * CF_FEE);
                   return (
                     <tr key={t.id} style={{ borderBottom:"1px solid #0F1B2D" }}>
                       <td style={{ padding:"10px 10px", fontFamily:"monospace", fontSize:11, color:"#6366F1" }}>BCPL/25-26/{t.id}</td>
                       <td style={{ padding:"10px 10px", fontSize:13, fontWeight:600, color:"#F1F5F9" }}>{t.name}</td>
                       <td style={{ padding:"10px 10px" }}><span style={{ fontSize:11, padding:"2px 8px", borderRadius:4, background:t.type==="Phase 2"?"#10B98122":"#F59E0B22", color:t.type==="Phase 2"?"#10B981":"#F59E0B", fontWeight:700 }}>{t.type}</span></td>
-                      <td style={{ padding:"10px 10px", fontSize:12, color:"#94A3B8" }}>₹{t.amount.toLocaleString()}</td>
-                      <td style={{ padding:"10px 10px", fontSize:12, color:"#6366F1" }}>₹{gst}</td>
+                      <td style={{ padding:"10px 10px", fontSize:12, color:"#94A3B8" }}>₹{inr(g.base)}</td>
+                      <td style={{ padding:"10px 10px", fontSize:12, color:"#6366F1" }}>₹{inr(g.gst)}</td>
                       <td style={{ padding:"10px 10px", fontSize:12, color:"#EF4444" }}>₹{gw}</td>
-                      <td style={{ padding:"10px 10px", fontSize:12, fontWeight:700, color:"#10B981" }}>₹{(t.amount-gst-gw).toLocaleString()}</td>
-                      <td style={{ padding:"10px 10px", fontSize:13, fontWeight:800, color:"#FF6B00" }}>₹{(t.amount+gst).toLocaleString()}</td>
+                      <td style={{ padding:"10px 10px", fontSize:12, fontWeight:700, color:"#10B981" }}>₹{inr(Math.round(t.amount-g.gst-gw))}</td>
+                      <td style={{ padding:"10px 10px", fontSize:13, fontWeight:800, color:"#FF6B00" }}>₹{t.amount.toLocaleString()}</td>
                       <td style={{ padding:"10px 10px" }}>
                         <div style={{ display:"flex", gap:6 }}>
                           <button onClick={()=>setInvoice(t)} style={{ padding:"4px 10px", borderRadius:6, border:"1px solid #FF6B0044", background:"#FF6B0011", color:"#FF6B00", fontSize:11, cursor:"pointer", fontWeight:700 }}>View</button>

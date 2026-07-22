@@ -16,6 +16,7 @@ import {
   phase1VideosTable,
   kycRecordsTable,
   phase1PaymentsTable,
+  phase2PaymentsTable,
   trialVenuesTable,
   playerProfilesTable,
 } from "@workspace/db/schema";
@@ -139,11 +140,29 @@ router.get("/registrations", async (req, res) => {
     );
 
     // Fetch payments + videos in one sweep
-    const [allPayments, allVideos] = await Promise.all([
+    const [allPayments, allP2Payments, allVideos] = await Promise.all([
       db.select().from(phase1PaymentsTable),
+      db.select().from(phase2PaymentsTable),
       db.select().from(phase1VideosTable),
     ]);
-    const payMap = new Map(allPayments.map(p => [p.registrationId, p]));
+    // A registration can have several payment attempt rows — prefer the successful one,
+    // and among rows of the same class (paid vs not) keep the most recent attempt
+    const PAID_ROW = new Set(["success", "paid"]);
+    const pickPayments = <T extends { registrationId: string; status: string; createdAt: Date | string }>(rows: T[]) => {
+      const map = new Map<string, T>();
+      for (const p of rows) {
+        const cur = map.get(p.registrationId);
+        const better =
+          !cur ||
+          (!PAID_ROW.has(cur.status) && PAID_ROW.has(p.status)) ||
+          (PAID_ROW.has(cur.status) === PAID_ROW.has(p.status) &&
+            new Date(p.createdAt).getTime() > new Date(cur.createdAt).getTime());
+        if (better) map.set(p.registrationId, p);
+      }
+      return map;
+    };
+    const payMap   = pickPayments(allPayments);
+    const p2PayMap = pickPayments(allP2Payments);
     const vidMap = new Map(allVideos.map(v => [v.registrationId, v]));
 
     const registrations = filtered.map(r => ({
@@ -156,8 +175,9 @@ router.get("/registrations", async (req, res) => {
       videoDeadline:r.reg.videoDeadline,
       createdAt:    r.reg.createdAt,
       user: r.user ? { id: r.user.id, name: r.user.name, phone: r.user.phone, email: r.user.email } : null,
-      payment: payMap.get(r.reg.id) ?? null,
-      video:   vidMap.get(r.reg.id) ?? null,
+      payment:       payMap.get(r.reg.id) ?? null,
+      phase2Payment: p2PayMap.get(r.reg.id) ?? null,
+      video:         vidMap.get(r.reg.id) ?? null,
     }));
 
     res.json({ registrations, total: registrations.length });

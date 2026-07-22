@@ -14,6 +14,7 @@ type Reg = {
   createdAt: string;
   user: { id: string; name: string; phone: string; email: string } | null;
   payment: { status: string; amount: string; paidAt: string | null } | null;
+  phase2Payment: { status: string; amount: string; paidAt: string | null; createdAt: string } | null;
   video: { status: string; submittedAt: string } | null;
 };
 
@@ -25,7 +26,9 @@ type Stats = {
 };
 
 const PAID_STATUSES = ["payment_done","video_submitted","selected","rejected"];
-const isPaid = (r: Reg) => r.payment?.status === "paid" || PAID_STATUSES.includes(r.phase1Status);
+const isPaid = (r: Reg) => r.payment?.status === "paid" || r.payment?.status === "success" || PAID_STATUSES.includes(r.phase1Status);
+const P2_PAID_STATUSES = ["payment_done","kyc_done","selected","rejected"];
+const isP2Paid = (r: Reg) => r.phase2Payment?.status === "success" || P2_PAID_STATUSES.includes(r.phase2Status ?? "");
 
 const CITY_COLORS = ["#FF6B00","#F59E0B","#10B981","#6366F1","#3B82F6","#EC4899"];
 
@@ -85,7 +88,9 @@ export default function DashboardView() {
   const totalRegs    = stats?.registrations.total ?? 0;
   const paidRegs     = regs.filter(isPaid);
   const paidCount    = paidRegs.length;
-  const p1Revenue    = paidRegs.reduce((a,r)=>a+(r.payment ? Math.round(Number(r.payment.amount)) : 299),0);
+  const p1Revenue    = paidRegs.reduce((a,r)=>a+(r.payment ? Math.round(Number(r.payment.amount)) : 353),0);
+  const p2PaidRegs   = regs.filter(isP2Paid);
+  const p2Revenue    = p2PaidRegs.reduce((a,r)=>a+(r.phase2Payment ? Math.round(Number(r.phase2Payment.amount)) : 0),0);
   const videosPending = stats?.videos.pending ?? 0;
   const selectedCount = stats?.registrations.selected ?? 0;
   const droppedOff   = regs.filter(r=>!isPaid(r)).length;
@@ -97,6 +102,7 @@ export default function DashboardView() {
     { label:"Total Users",    value:totalUsers.toLocaleString(), sub:`${totalRegs} registrations`, color:"#6366F1", icon:"👥" },
     { label:"Active Users",   value:activeUsers.toLocaleString(), sub:"registered last 7 days", color:"#3B82F6", icon:"⚡" },
     { label:"Phase 1 Paid",   value:paidCount.toLocaleString(), sub:`₹${p1Revenue.toLocaleString()} revenue`, color:"#F59E0B", icon:"💳" },
+    { label:"Phase 2 Paid",   value:p2PaidRegs.length.toLocaleString(), sub:`₹${p2Revenue.toLocaleString()} revenue`, color:"#10B981", icon:"🎫" },
     { label:"Selected",       value:selectedCount.toLocaleString(), sub:"Phase 1 selected players", color:"#FF6B00", icon:"🏆" },
     { label:"Dropped Off",    value:droppedOff.toLocaleString(), sub:"registered, no payment", color:"#EF4444", icon:"❌" },
   ];
@@ -162,14 +168,17 @@ export default function DashboardView() {
     month: buildGrowth(24*3600*1000*5, 6, d=>d.toLocaleDateString("en-IN",{day:"numeric",month:"short"})),
   };
 
-  /* daily revenue vs target from paid registrations */
+  /* daily revenue vs target from paid registrations (Phase 1 + Phase 2) */
   const revenueVsTarget = Array.from({length:7},(_,idx)=>{
     const i = 6-idx;
     const start = now-(i+1)*24*3600*1000, end = now-i*24*3600*1000;
-    const actual = paidRegs
+    const p1 = paidRegs
       .filter(r=>{const t=new Date(r.payment?.paidAt ?? r.createdAt).getTime();return t>=start&&t<end;})
-      .reduce((a,r)=>a+(r.payment ? Math.round(Number(r.payment.amount)) : 299),0);
-    return { day:new Date(end).toLocaleDateString("en-IN",{weekday:"short"}), actual, target:Math.round(weekTarget*299/7) };
+      .reduce((a,r)=>a+(r.payment ? Math.round(Number(r.payment.amount)) : 353),0);
+    const p2 = p2PaidRegs
+      .filter(r=>{const p=r.phase2Payment;if(!p)return false;const t=new Date(p.paidAt ?? p.createdAt).getTime();return t>=start&&t<end;})
+      .reduce((a,r)=>a+Math.round(Number(r.phase2Payment!.amount)),0);
+    return { day:new Date(end).toLocaleDateString("en-IN",{weekday:"short"}), actual:p1+p2, target:Math.round(weekTarget*353/7) };
   });
 
   return (
@@ -204,7 +213,7 @@ export default function DashboardView() {
       </div>
 
       {/* ── Metric Cards ── */}
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:14 }}>
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:14 }}>
         {metricCards.map(m=>(
           <div key={m.label} style={{ ...card, borderLeft:`3px solid ${m.color}`, position:"relative", overflow:"hidden" }}>
             <div style={{ position:"absolute", top:0, right:0, width:80, height:80, background:`radial-gradient(circle,${m.color}18 0%,transparent 70%)`, borderRadius:"50%" }}/>
