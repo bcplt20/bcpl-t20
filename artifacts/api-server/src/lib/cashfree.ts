@@ -56,6 +56,28 @@ export async function createOrder(p: CreateOrderParams): Promise<CashfreeOrder |
   } catch (e) { console.error("[CF] createOrder error", e); return null; }
 }
 
+export const hasCashfreeCredentials = () => Boolean(APP_ID && SECRET);
+
+/**
+ * Fetch order status from Cashfree.
+ * order_status: ACTIVE | PAID | EXPIRED | TERMINATED | TERMINATION_REQUESTED
+ */
+export async function getOrderStatus(orderId: string): Promise<{ orderStatus: string } | null> {
+  if (!APP_ID || !SECRET) {
+    console.warn("[CF-STUB] getOrderStatus:", orderId);
+    return null;
+  }
+  try {
+    const res = await fetch(`${BASE_URL}/orders/${orderId}`, { headers: cfHeaders() });
+    if (!res.ok) {
+      console.error("[CF] getOrderStatus failed:", orderId, res.status, await res.text());
+      return null;
+    }
+    const data = (await res.json()) as { order_status?: string };
+    return data.order_status ? { orderStatus: data.order_status } : null;
+  } catch (e) { console.error("[CF] getOrderStatus error", e); return null; }
+}
+
 export async function getPaymentStatus(orderId: string): Promise<{ status: string; paymentId?: string } | null> {
   if (!APP_ID || !SECRET) {
     return { status: "SUCCESS", paymentId: `mock_pay_${Date.now()}` };

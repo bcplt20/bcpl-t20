@@ -3,6 +3,7 @@ import { logger } from "./lib/logger";
 import { sendVideoReminders } from "./routes/video";
 import { ensureRegNumbers } from "./routes/register";
 import { ensureKycPanVerified } from "./routes/kyc";
+import { reconcileAbandonedPayments } from "./lib/reconcilePayments";
 
 const port = Number(process.env["PORT"] ?? "8080");
 
@@ -46,5 +47,11 @@ setInterval(async () => {
     await sendVideoReminders();
   } catch (e) {
     logger.error({ err: e }, "Reminder scheduler failed");
+  }
+  try {
+    logger.info("Running abandoned payment reconciliation...");
+    await reconcileAbandonedPayments();
+  } catch (e) {
+    logger.error({ err: e }, "Payment reconciliation failed");
   }
 }, SIX_HOURS);
