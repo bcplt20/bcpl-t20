@@ -12,6 +12,7 @@ import scoringRouter  from "./scoring";
 import pointsRouter   from "./points";
 import settingsRouter from "./settings";
 import adminRouter    from "./admin";
+import marketingRouter from "./marketing";
 
 const router: IRouter = Router();
 
@@ -30,5 +31,7 @@ router.use("/teams",         teamsRouter);
 router.use("/settings",      settingsRouter);
 // Admin panel
 router.use("/admin",         adminRouter);
+// Marketing / referrals (public click+attribute, admin analytics & campaigns)
+router.use("/marketing",     marketingRouter);
 
 export default router;

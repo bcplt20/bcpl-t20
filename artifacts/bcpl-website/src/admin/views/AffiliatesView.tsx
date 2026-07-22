@@ -1,215 +1,232 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import {
+  listReferrals, createReferral, updateReferral, deleteReferral, referralLink,
+  type ReferralStat,
+} from "@/lib/marketingApi";
 
-// No affiliates yet — add via "+ Add Agent" button
-const AFFILIATES: { id:string; name:string; city:string; referrals:number; paid:number; pending:number; commission:number; earned:number; status:string; phone:string; joined:string }[] = [];
+/* ── Shared UI helpers (match admin styling) ── */
+function Modal({ onClose, children }: { onClose: () => void; children: React.ReactNode }) {
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "#00000088", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999 }} onClick={onClose}>
+      <div style={{ background: "#0D1526", border: "1px solid #1E293B", borderRadius: 20, padding: 28, width: 520, maxHeight: "90vh", overflowY: "auto" }} onClick={e => e.stopPropagation()}>
+        {children}
+      </div>
+    </div>
+  );
+}
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div style={{ marginBottom: 14 }}>
+      <label style={{ fontSize: 11, fontWeight: 700, color: "#475569", display: "block", marginBottom: 7, letterSpacing: .5, textTransform: "uppercase" }}>{label}</label>
+      {children}
+    </div>
+  );
+}
+const inp: React.CSSProperties = { width: "100%", padding: "10px 12px", background: "#060B18", border: "1px solid #1E293B", borderRadius: 9, color: "#F1F5F9", fontSize: 13, outline: "none", boxSizing: "border-box" };
+const card: React.CSSProperties = { background: "#0D1526", border: "1px solid #1E293B", borderRadius: 16, padding: 20 };
+const btnPrimary: React.CSSProperties = { background: "#FF6B00", color: "#fff", border: "none", borderRadius: 9, padding: "10px 18px", fontSize: 13, fontWeight: 800, cursor: "pointer" };
+const btnGhost: React.CSSProperties = { background: "#1E293B", color: "#CBD5E1", border: "none", borderRadius: 9, padding: "10px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer" };
+const th: React.CSSProperties = { textAlign: "left", padding: "10px 12px", fontSize: 10, fontWeight: 800, color: "#475569", letterSpacing: 1, textTransform: "uppercase", borderBottom: "1px solid #1E293B", whiteSpace: "nowrap" };
+const td: React.CSSProperties = { padding: "12px", fontSize: 13, color: "#E2E8F0", borderBottom: "1px solid #14203A", verticalAlign: "middle" };
+const inr = (n: number) => `₹${Math.round(n).toLocaleString("en-IN")}`;
 
-const statusColor=(s:string)=>s==="Active"?"#10B981":s==="Paid Out"?"#6366F1":"#EF4444";
+const blankAgent = { name: "", code: "", city: "", phone: "", email: "", commissionRate: "10", paidOut: "0" };
 
+function CopyLink({ code }: { code: string }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <button
+      onClick={() => {
+        navigator.clipboard?.writeText(referralLink(code)).catch(() => {});
+        setCopied(true); setTimeout(() => setCopied(false), 1500);
+      }}
+      title={referralLink(code)}
+      style={{ background: copied ? "#14532D" : "#1E293B", color: copied ? "#4ADE80" : "#93C5FD", border: "none", borderRadius: 7, padding: "5px 10px", fontSize: 11, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
+      {copied ? "✓ Copied" : "🔗 Copy"}
+    </button>
+  );
+}
+
+/* ═══════════════════════════════════════════════════
+   Affiliates = ground agents with referral codes (kind='agent').
+   Commission = attributed revenue × rate%; payouts recorded manually. */
 export default function AffiliatesView() {
-  const [sel,        setSel]       = useState<typeof AFFILIATES[0]|null>(null);
-  const [addOpen,    setAdd]       = useState(false);
-  const [ratesOpen,  setRatesOpen] = useState(false);
-  const [agentList,  setAgentList] = useState(AFFILIATES);
-  const [agentForm,  setAgentForm] = useState({ name:"", phone:"", city:"", email:"", commission:"270" });
-  const [rates,      setRates]     = useState([
-    { range:"1–50 referrals",   rate:270, label:"Standard (90% of ₹299)" },
-    { range:"51–100 referrals", rate:285, label:"Senior (95% of ₹299)"  },
-    { range:"100+ referrals",   rate:299, label:"Premium (100% of ₹299)" },
-  ]);
-  const [rateEdits,  setRateEdits] = useState(rates.map(r=>String(r.rate)));
-  const card:React.CSSProperties={background:"linear-gradient(135deg,#0D1526,#0A1020)",border:"1px solid #1E293B",borderRadius:16,padding:20};
-  const inp:React.CSSProperties={width:"100%",padding:"10px 12px",borderRadius:9,border:"1px solid #1E293B",background:"#060B18",color:"#E2E8F0",fontSize:13,outline:"none",boxSizing:"border-box"};
+  const [agents, setAgents] = useState<ReferralStat[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const totalReferrals  = AFFILIATES.reduce((a,x)=>a+x.referrals,0);
-  const totalCommission = AFFILIATES.reduce((a,x)=>a+x.commission,0);
-  const totalPaid       = AFFILIATES.reduce((a,x)=>a+x.earned,0);
-  const totalPending    = AFFILIATES.reduce((a,x)=>a+x.pending,0);
+  const load = useCallback(async () => {
+    setLoading(true); setError("");
+    try {
+      const r = await listReferrals();
+      setAgents(r.referrals.filter(x => x.kind === "agent"));
+    } catch (e: any) { setError(e.message ?? "Failed to load agents"); }
+    finally { setLoading(false); }
+  }, []);
+  useEffect(() => { load(); }, [load]);
+
+  const [modal, setModal] = useState<null | { id?: string; form: typeof blankAgent }>(null);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+
+  const save = async () => {
+    if (!modal) return;
+    const f = modal.form;
+    if (!f.name.trim()) { setErr("Name is required"); return; }
+    setBusy(true); setErr("");
+    try {
+      if (modal.id) {
+        await updateReferral(modal.id, {
+          name: f.name, city: f.city, phone: f.phone, email: f.email,
+          commissionRate: Number(f.commissionRate) || 0,
+          paidOut: Number(f.paidOut) || 0,
+        });
+      } else {
+        await createReferral({
+          name: f.name, code: f.code.trim() || undefined, kind: "agent", platform: "Offline",
+          city: f.city || undefined, phone: f.phone || undefined, email: f.email || undefined,
+          commissionRate: Number(f.commissionRate) || 0,
+        });
+      }
+      setModal(null); load();
+    } catch (e: any) { setErr(e.message ?? "Save failed"); }
+    finally { setBusy(false); }
+  };
+
+  const remove = async (id: string) => {
+    if (!confirm("Delete this agent? (Agents with signups can only be deactivated)")) return;
+    try { await deleteReferral(id); setModal(null); load(); }
+    catch (e: any) { setErr(e.message ?? "Delete failed"); }
+  };
+
+  if (loading) return <div style={{ color: "#64748B", padding: 40, fontSize: 14 }}>Loading agents…</div>;
+  if (error) return (
+    <div style={{ padding: 40 }}>
+      <div style={{ color: "#FCA5A5", fontSize: 14, marginBottom: 14 }}>⚠ {error}</div>
+      <button style={btnGhost} onClick={load}>Retry</button>
+    </div>
+  );
+
+  const totals = agents.reduce(
+    (a, r) => ({
+      signups: a.signups + r.signups,
+      paid: a.paid + r.paid,
+      revenue: a.revenue + r.revenue,
+      commission: a.commission + r.commission,
+      paidOut: a.paidOut + r.paidOut,
+    }),
+    { signups: 0, paid: 0, revenue: 0, commission: 0, paidOut: 0 },
+  );
+  const outstanding = Math.max(0, totals.commission - totals.paidOut);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:16}}>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-        <div>
-          <div style={{fontSize:20,fontWeight:800,color:"#F1F5F9"}}>Affiliate & Agent Manager</div>
-          <div style={{fontSize:12,color:"#64748B",marginTop:2}}>City-level agents — referral tracking, commission calculation, payout management</div>
+    <div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+        <div style={{ fontSize: 12, color: "#64748B" }}>
+          Ground agents get a personal link <span style={{ color: "#93C5FD", fontFamily: "monospace" }}>bcplt20.com/r/CODE</span>. Signups, payments and commission are tracked from real registrations.
         </div>
-        <div style={{display:"flex",gap:8}}>
-          <button style={{padding:"9px 16px",borderRadius:9,border:"1px solid #1E293B",background:"transparent",color:"#94A3B8",fontSize:12,cursor:"pointer"}}>⬇ Export Payouts</button>
-          <button onClick={()=>setAdd(true)} style={{padding:"9px 16px",borderRadius:9,border:"none",background:"linear-gradient(135deg,#FF6B00,#FF8C40)",color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer"}}>+ Add Agent</button>
-        </div>
+        <button style={btnPrimary} onClick={() => { setErr(""); setModal({ form: { ...blankAgent } }); }}>+ New Agent</button>
       </div>
 
-      <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12}}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 14, marginBottom: 20 }}>
         {[
-          {label:"Total Affiliates",   value:AFFILIATES.length,                  color:"#6366F1"},
-          {label:"Total Referrals",    value:totalReferrals.toLocaleString(),     color:"#10B981"},
-          {label:"Commission Owed",    value:`₹${(totalCommission/1000).toFixed(1)}K`, color:"#F59E0B"},
-          {label:"Already Paid",       value:`₹${(totalPaid/1000).toFixed(1)}K`, color:"#FF6B00"},
-        ].map(s=>(
-          <div key={s.label} style={{...card,borderTop:`3px solid ${s.color}`}}>
-            <div style={{fontSize:24,fontWeight:800,color:s.color}}>{s.value}</div>
-            <div style={{fontSize:11,color:"#64748B",marginTop:5}}>{s.label}</div>
+          { label: "Agents", value: `${agents.filter(a => a.active).length} active`, sub: `${agents.length} total` },
+          { label: "Signups", value: String(totals.signups), sub: `${totals.paid} paid` },
+          { label: "Attributed Revenue", value: inr(totals.revenue), sub: "from agent links" },
+          { label: "Commission Earned", value: inr(totals.commission), sub: "as per each agent's rate" },
+          { label: "Outstanding", value: inr(outstanding), sub: `${inr(totals.paidOut)} already paid out` },
+        ].map(k => (
+          <div key={k.label} style={card}>
+            <div style={{ fontSize: 10, fontWeight: 800, color: "#475569", letterSpacing: 1, textTransform: "uppercase", marginBottom: 8 }}>{k.label}</div>
+            <div style={{ fontSize: 22, fontWeight: 900, color: "#F1F5F9" }}>{k.value}</div>
+            <div style={{ fontSize: 11, color: "#64748B", marginTop: 4 }}>{k.sub}</div>
           </div>
         ))}
       </div>
 
-      {/* Commission rate card */}
-      <div style={{...card,display:"flex",gap:24,alignItems:"center",padding:"16px 24px"}}>
-        <div style={{fontSize:14,fontWeight:700,color:"#F1F5F9"}}>Commission Structure</div>
-        {rates.map(r=>(
-          <div key={r.range} style={{padding:"8px 16px",background:"#060B18",borderRadius:10,border:"1px solid #1E293B"}}>
-            <div style={{fontSize:11,color:"#FF6B00",fontWeight:700}}>₹{r.rate}/signup — {r.label}</div>
-            <div style={{fontSize:10,color:"#475569",marginTop:3}}>{r.range}</div>
-          </div>
-        ))}
-        <button onClick={()=>{ setRateEdits(rates.map(r=>String(r.rate))); setRatesOpen(true); }} style={{marginLeft:"auto",padding:"8px 16px",borderRadius:9,border:"1px solid #FF6B0044",background:"#FF6B0010",color:"#FF6B00",fontSize:12,cursor:"pointer",fontWeight:700}}>✏ Edit Rates</button>
-      </div>
-
-      <div style={card}>
-        <table style={{width:"100%",borderCollapse:"collapse"}}>
-          <thead>
-            <tr style={{borderBottom:"1px solid #1E293B"}}>
-              {["Agent","City","Referrals","Paid","Pending","Commission","Status","Actions"].map(h=>(
-                <th key={h} style={{padding:"8px 12px",textAlign:"left",fontSize:10,color:"#475569",fontWeight:700,textTransform:"uppercase"}}>{h}</th>
-              ))}
-            </tr>
-          </thead>
+      <div style={{ ...card, padding: 0, overflowX: "auto" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <thead><tr>
+            <th style={th}>Agent</th><th style={th}>Code</th><th style={th}>Link</th><th style={th}>City</th>
+            <th style={th}>Rate</th><th style={th}>Clicks</th><th style={th}>Signups</th><th style={th}>Paid</th>
+            <th style={th}>Revenue</th><th style={th}>Commission</th><th style={th}>Paid Out</th><th style={th}>Due</th>
+            <th style={th}>Status</th><th style={th}></th>
+          </tr></thead>
           <tbody>
-            {AFFILIATES.map((a,i)=>(
-              <tr key={i} style={{borderBottom:"1px solid #0F1B2D",cursor:"pointer"}} onClick={()=>setSel(s=>s?.id===a.id?null:a)}>
-                <td style={{padding:"13px 12px"}}>
-                  <div style={{fontSize:13,fontWeight:700,color:"#F1F5F9"}}>{a.name}</div>
-                  <div style={{fontSize:10,color:"#475569"}}>{a.id}</div>
-                </td>
-                <td style={{padding:"13px 12px",fontSize:12,color:"#94A3B8"}}>{a.city}</td>
-                <td style={{padding:"13px 12px",fontSize:14,fontWeight:800,color:"#FF6B00"}}>{a.referrals}</td>
-                <td style={{padding:"13px 12px",fontSize:13,color:"#10B981",fontWeight:700}}>{a.paid}</td>
-                <td style={{padding:"13px 12px",fontSize:13,color:a.pending>0?"#F59E0B":"#475569",fontWeight:700}}>{a.pending}</td>
-                <td style={{padding:"13px 12px",fontSize:13,fontWeight:700,color:"#F1F5F9"}}>₹{a.commission.toLocaleString()}</td>
-                <td style={{padding:"13px 12px"}}>
-                  <span style={{fontSize:10,fontWeight:800,padding:"3px 8px",borderRadius:6,background:`${statusColor(a.status)}22`,color:statusColor(a.status)}}>{a.status}</span>
-                </td>
-                <td style={{padding:"13px 12px"}}>
-                  <div style={{display:"flex",gap:6}}>
-                    <button onClick={e=>{e.stopPropagation();setSel(a)}} style={{padding:"4px 10px",borderRadius:6,border:"1px solid #1E293B",background:"transparent",color:"#94A3B8",fontSize:11,cursor:"pointer"}}>View</button>
-                    {a.pending>0&&<button onClick={e=>e.stopPropagation()} style={{padding:"4px 10px",borderRadius:6,border:"none",background:"#10B98120",color:"#10B981",fontSize:11,fontWeight:700,cursor:"pointer"}}>Pay</button>}
-                  </div>
-                </td>
-              </tr>
-            ))}
+            {agents.length === 0 && (
+              <tr><td style={{ ...td, color: "#475569", textAlign: "center", padding: 30 }} colSpan={14}>
+                No agents yet — add your first ground agent.
+              </td></tr>
+            )}
+            {agents.map(a => {
+              const due = Math.max(0, a.commission - a.paidOut);
+              return (
+                <tr key={a.id}>
+                  <td style={{ ...td, fontWeight: 700 }}>
+                    {a.name}
+                    <div style={{ fontSize: 11, color: "#64748B", fontWeight: 400, marginTop: 2 }}>{[a.phone, a.email].filter(Boolean).join(" · ") || "—"}</div>
+                  </td>
+                  <td style={{ ...td, fontFamily: "monospace", fontWeight: 800, color: "#FF9A57" }}>{a.code}</td>
+                  <td style={td}><CopyLink code={a.code} /></td>
+                  <td style={td}>{a.city || "—"}</td>
+                  <td style={td}>{a.commissionRate}%</td>
+                  <td style={td}>{a.clicks}</td>
+                  <td style={{ ...td, fontWeight: 800 }}>{a.signups}</td>
+                  <td style={{ ...td, color: "#4ADE80", fontWeight: 800 }}>{a.paid}</td>
+                  <td style={td}>{inr(a.revenue)}</td>
+                  <td style={{ ...td, fontWeight: 700 }}>{inr(a.commission)}</td>
+                  <td style={td}>{inr(a.paidOut)}</td>
+                  <td style={{ ...td, color: due > 0 ? "#FBBF24" : "#475569", fontWeight: 800 }}>{inr(due)}</td>
+                  <td style={td}>
+                    <button onClick={() => updateReferral(a.id, { active: !a.active }).then(load).catch(() => {})}
+                      style={{ background: a.active ? "#14532D" : "#1E293B", color: a.active ? "#4ADE80" : "#64748B", border: "none", borderRadius: 20, padding: "4px 12px", fontSize: 11, fontWeight: 800, cursor: "pointer" }}>
+                      {a.active ? "ACTIVE" : "PAUSED"}
+                    </button>
+                  </td>
+                  <td style={td}>
+                    <button onClick={() => { setErr(""); setModal({ id: a.id, form: { name: a.name, code: a.code, city: a.city ?? "", phone: a.phone ?? "", email: a.email ?? "", commissionRate: String(a.commissionRate), paidOut: String(a.paidOut) } }); }}
+                      style={{ background: "transparent", color: "#64748B", border: "none", cursor: "pointer", fontSize: 15 }}>✎</button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
 
-      {/* Add Agent Modal */}
-      {addOpen&&(
-        <div style={{position:"fixed",inset:0,background:"#00000088",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={()=>{ setAdd(false); setAgentForm({name:"",phone:"",city:"",email:"",commission:"270"}); }}>
-          <div style={{...card,width:440,padding:28}} onClick={e=>e.stopPropagation()}>
-            <div style={{fontSize:16,fontWeight:800,color:"#F1F5F9",marginBottom:4}}>+ Add New Agent</div>
-            <div style={{fontSize:12,color:"#64748B",marginBottom:20}}>City-level affiliate who brings player registrations</div>
-            <div style={{display:"flex",flexDirection:"column",gap:12}}>
-              {[
-                {label:"Full Name",   key:"name",  type:"text",  placeholder:"e.g. Ramesh Sharma"},
-                {label:"Mobile",      key:"phone", type:"tel",   placeholder:"e.g. 9876543210"},
-                {label:"City",        key:"city",  type:"text",  placeholder:"e.g. Jaipur"},
-                {label:"Email",       key:"email", type:"email", placeholder:"e.g. agent@email.com"},
-              ].map(f=>(
-                <div key={f.key}>
-                  <label style={{fontSize:11,fontWeight:700,color:"#475569",display:"block",marginBottom:6,textTransform:"uppercase"}}>{f.label}</label>
-                  <input type={f.type} value={agentForm[f.key as keyof typeof agentForm]} onChange={e=>setAgentForm(p=>({...p,[f.key]:e.target.value}))}
-                    placeholder={f.placeholder} style={inp}/>
-                </div>
-              ))}
-              <div>
-                <label style={{fontSize:11,fontWeight:700,color:"#475569",display:"block",marginBottom:6,textTransform:"uppercase"}}>Commission Rate</label>
-                <select value={agentForm.commission} onChange={e=>setAgentForm(p=>({...p,commission:e.target.value}))} style={inp as any}>
-                  <option value="270">₹270/signup — Standard (90% of ₹299)</option>
-                  <option value="285">₹285/signup — Senior (95% of ₹299)</option>
-                  <option value="299">₹299/signup — Premium (100% of ₹299)</option>
-                </select>
-              </div>
-              <div style={{padding:"10px 14px",borderRadius:9,background:"#10B98115",border:"1px solid #10B98130",fontSize:11,color:"#10B981"}}>
-                ✅ Agent will receive a unique referral link and QR code after activation.
-              </div>
-              <div style={{display:"flex",gap:10,marginTop:4}}>
-                <button onClick={()=>{ setAdd(false); setAgentForm({name:"",phone:"",city:"",email:"",commission:"270"}); }}
-                  style={{flex:1,padding:"11px",borderRadius:10,border:"1px solid #1E293B",background:"transparent",color:"#64748B",fontSize:13,cursor:"pointer"}}>Cancel</button>
-                <button disabled={!agentForm.name.trim()||!agentForm.phone.trim()||!agentForm.city.trim()}
-                  onClick={()=>{
-                    const code = agentForm.name.toLowerCase().replace(/\s+/g,"")+Math.floor(Math.random()*900+100);
-                    setAgentList(prev=>[...prev,{
-                      id:`AGT-${String(agentList.length+1).padStart(3,"0")}`,
-                      name:agentForm.name.trim(), phone:agentForm.phone.trim(), city:agentForm.city.trim(),
-                      referrals:0, paid:0, pending:0, commission:parseInt(agentForm.commission),
-                      earned:0, status:"Active", joined:new Date().toLocaleDateString("en-IN")
-                    }]);
-                    setAdd(false); setAgentForm({name:"",phone:"",city:"",email:"",commission:"270"});
-                    alert(`Agent ${agentForm.name} added! Referral code: ${code}`);
-                  }}
-                  style={{flex:2,padding:"11px",borderRadius:10,border:"none",background:"linear-gradient(135deg,#FF6B00,#FF8C40)",color:"#fff",fontWeight:700,fontSize:13,cursor:"pointer",
-                    opacity:agentForm.name.trim()&&agentForm.phone.trim()&&agentForm.city.trim()?1:0.5}}>
-                  ✅ Add Agent
-                </button>
-              </div>
+      {modal && (
+        <Modal onClose={() => setModal(null)}>
+          <div style={{ fontSize: 16, fontWeight: 800, color: "#F1F5F9", marginBottom: 18 }}>{modal.id ? "Edit Agent" : "New Agent"}</div>
+          <Field label="Name *"><input style={inp} value={modal.form.name} onChange={e => setModal({ ...modal, form: { ...modal.form, name: e.target.value } })} placeholder="e.g. Suresh Kumar" /></Field>
+          {!modal.id ? (
+            <Field label="Code (optional — auto-generated from name)">
+              <input style={{ ...inp, fontFamily: "monospace", textTransform: "uppercase" }} value={modal.form.code} onChange={e => setModal({ ...modal, form: { ...modal.form, code: e.target.value.toUpperCase() } })} placeholder="SURESH" />
+            </Field>
+          ) : (
+            <Field label="Code (locked — link may already be shared)">
+              <input style={{ ...inp, fontFamily: "monospace", opacity: .5 }} value={modal.form.code} disabled />
+            </Field>
+          )}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <Field label="City"><input style={inp} value={modal.form.city} onChange={e => setModal({ ...modal, form: { ...modal.form, city: e.target.value } })} /></Field>
+            <Field label="Phone"><input style={inp} value={modal.form.phone} onChange={e => setModal({ ...modal, form: { ...modal.form, phone: e.target.value } })} /></Field>
+          </div>
+          <Field label="Email"><input style={inp} value={modal.form.email} onChange={e => setModal({ ...modal, form: { ...modal.form, email: e.target.value } })} /></Field>
+          <Field label="Commission % (of attributed revenue)"><input style={inp} type="number" min={0} max={100} value={modal.form.commissionRate} onChange={e => setModal({ ...modal, form: { ...modal.form, commissionRate: e.target.value } })} /></Field>
+          {modal.id && (
+            <Field label="Total Paid Out (₹) — update after each payout">
+              <input style={inp} type="number" min={0} value={modal.form.paidOut} onChange={e => setModal({ ...modal, form: { ...modal.form, paidOut: e.target.value } })} />
+            </Field>
+          )}
+          {err && <div style={{ fontSize: 12, color: "#FCA5A5", marginBottom: 10 }}>⚠ {err}</div>}
+          <div style={{ display: "flex", gap: 10, justifyContent: "space-between", marginTop: 6 }}>
+            <div>{modal.id && <button style={{ ...btnGhost, color: "#FCA5A5" }} onClick={() => remove(modal.id!)}>Delete</button>}</div>
+            <div style={{ display: "flex", gap: 10 }}>
+              <button style={btnGhost} onClick={() => setModal(null)}>Cancel</button>
+              <button style={btnPrimary} onClick={save} disabled={busy}>{busy ? "Saving…" : "Save"}</button>
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Edit Commission Rates Modal */}
-      {ratesOpen&&(
-        <div style={{position:"fixed",inset:0,background:"#00000088",zIndex:300,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={()=>setRatesOpen(false)}>
-          <div style={{...card,width:460,padding:28}} onClick={e=>e.stopPropagation()}>
-            <div style={{fontSize:16,fontWeight:800,color:"#F1F5F9",marginBottom:4}}>✏ Edit Commission Rates</div>
-            <div style={{fontSize:12,color:"#64748B",marginBottom:20}}>Set the ₹/signup rate for each referral tier. Base registration is ₹299.</div>
-            <div style={{display:"flex",flexDirection:"column",gap:14}}>
-              {rates.map((r,i)=>(
-                <div key={i} style={{background:"#060B18",borderRadius:12,padding:"14px 16px",border:"1px solid #1E293B"}}>
-                  <div style={{fontSize:10,color:"#64748B",fontWeight:700,textTransform:"uppercase",marginBottom:8}}>{r.range}</div>
-                  <div style={{display:"flex",alignItems:"center",gap:12}}>
-                    <span style={{fontSize:13,color:"#94A3B8"}}>₹</span>
-                    <input type="number" min="0" max="299" value={rateEdits[i]}
-                      onChange={e=>setRateEdits(ed=>ed.map((v,j)=>j===i?e.target.value:v))}
-                      style={{...inp,flex:1,textAlign:"center",fontSize:20,fontWeight:800,color:"#FF6B00"}}/>
-                    <span style={{fontSize:12,color:"#475569"}}>per signup</span>
-                  </div>
-                  <div style={{fontSize:10,color:"#475569",marginTop:6}}>
-                    = {rateEdits[i] ? `${((parseInt(rateEdits[i])||0)/299*100).toFixed(1)}% of ₹299` : "—"}
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div style={{display:"flex",gap:10,marginTop:20}}>
-              <button onClick={()=>setRatesOpen(false)} style={{flex:1,padding:11,borderRadius:10,border:"1px solid #1E293B",background:"transparent",color:"#64748B",fontSize:13,cursor:"pointer"}}>Cancel</button>
-              <button onClick={()=>{
-                setRates(rs=>rs.map((r,i)=>({...r,rate:parseInt(rateEdits[i])||r.rate})));
-                setRatesOpen(false);
-              }} style={{flex:2,padding:11,borderRadius:10,border:"none",background:"linear-gradient(135deg,#FF6B00,#FF8C40)",color:"#fff",fontWeight:700,fontSize:13,cursor:"pointer"}}>
-                ✅ Save Rates
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Payout modal */}
-      {sel&&(
-        <div style={{position:"fixed",inset:0,background:"#00000080",zIndex:100,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={()=>setSel(null)}>
-          <div style={{...card,width:400,padding:28}} onClick={e=>e.stopPropagation()}>
-            <div style={{fontSize:16,fontWeight:800,color:"#F1F5F9",marginBottom:20}}>{sel.name} — {sel.city}</div>
-            <div style={{background:"#060B18",borderRadius:12,padding:16,border:"1px solid #1E293B",marginBottom:16}}>
-              {[["Referrals",sel.referrals],["Paid Registrations",sel.paid],["Pending",sel.pending],["Total Commission",`₹${sel.commission.toLocaleString()}`],["Already Paid",`₹${sel.earned.toLocaleString()}`],["Outstanding",`₹${(sel.commission-sel.earned).toLocaleString()}`]].map(([k,v])=>(
-                <div key={k} style={{display:"flex",justifyContent:"space-between",padding:"8px 0",borderBottom:"1px solid #0F1B2D"}}>
-                  <span style={{fontSize:12,color:"#475569"}}>{k}</span>
-                  <span style={{fontSize:12,fontWeight:700,color:"#F1F5F9"}}>{v}</span>
-                </div>
-              ))}
-            </div>
-            <div style={{display:"flex",gap:10}}>
-              <button onClick={()=>setSel(null)} style={{flex:1,padding:"11px",borderRadius:10,border:"1px solid #1E293B",background:"transparent",color:"#94A3B8",fontSize:12,cursor:"pointer"}}>Close</button>
-              <button style={{flex:1,padding:"11px",borderRadius:10,border:"none",background:"linear-gradient(135deg,#10B981,#059669)",color:"#fff",fontWeight:700,fontSize:12,cursor:"pointer"}}>💸 Process Payout</button>
-            </div>
-          </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

@@ -7,6 +7,7 @@
 - [Dev preview & API base](dev-preview-api.md) — preview now mirrors prod (vite /api proxy + BASE_URL fallback); if fetches hit a wrong host, check VITE_* env vars first; OTP readable from otp_sessions
 - [Stale lib/db dist declarations](db-schema-dist-declarations.md) — after schema changes run `tsc --build lib/db --force` or typecheck shows phantom "no exported member" errors; runtime uses src, not dist
 - [Express req.params typing](express-params-string.md) — req.params.X types as string|string[] here; wrap in String() before drizzle eq() or tsc fails
+- [Drizzle pg error codes](drizzle-pg-errors.md) — DrizzleQueryError hides the pg error (23505 etc.) in .cause chain; check cause codes, never top-level message
 - [Auction squad link](auction-squad-link.md) — sold players carry stats.regId; API enforces one-squad-per-registration (409); pool excludes taken regIds
 - [Brevo IP allowlist 401s](brevo-ip-allowlist.md) — "unrecognised IP" 401 = allowlist on, not a bad key; deactivate restriction (Replit IPs are dynamic)
 - [MSG91 SMS integration](msg91-sms.md) — v5 OTP + v2 sendsms shapes; balance.php 418 is a red herring; REAL keys in dev → shape-test only with impossible numbers like 123

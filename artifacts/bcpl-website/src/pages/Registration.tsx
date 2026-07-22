@@ -5,6 +5,9 @@ import { BCPLFooter } from '../components/BCPLFooter';
 import {
   sendOtp, verifyOtp, saveAuthToken, isAuthenticated,
   registerPhase1, createPhase1Payment, getRegistrationStatus,
+} from '@/lib/api';
+import { fireReferralAttribution } from '@/lib/marketingApi';
+import {
   getUploadUrl, confirmVideoUpload,
 } from '../lib/api';
 
@@ -278,10 +281,16 @@ export function Registration() {
       try {
         const reg = await registerPhase1({ role: role!.id, trialCity: city });
         regId = reg.registrationId;
+        // Referral attribution (fire-and-forget — never blocks payment)
+        fireReferralAttribution(regId);
       } catch (e: any) {
         // Already registered — get existing regId
         const status = await getRegistrationStatus() as any;
-        if (status?.registrationId) { regId = status.registrationId; }
+        if (status?.registrationId) {
+          regId = status.registrationId;
+          // Retry attribution too — backend keeps first code, so this is safe
+          fireReferralAttribution(regId);
+        }
         else throw e;
       }
       const pay = await createPhase1Payment(regId);

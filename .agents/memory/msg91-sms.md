@@ -14,3 +14,6 @@ SMS/OTP goes through MSG91 (owner's DLT templates + balance). Two endpoints, bot
 - **Real MSG91 keys are set in the dev workspace** — any payment/notify test with a plausible 10-digit number can send a REAL SMS. For shape tests use impossible recipients like `123` (MSG91 queues then drops; nobody receives).
 - MSG91 accepts sends even for garbage numbers (`type:"success"`), so API acceptance ≠ delivery; delivery failures (DLT text mismatch, blocked IP on prod) appear in MSG91 DLR + our `[SMS-FAILED]`/`[MSG91-OTP-FAILED]` logs.
 - Receipt SMS text must match the owner's DLT-approved templates or operators silently drop at delivery stage.
+
+## Minting a test login WITHOUT sending real SMS
+`POST /auth/send-otp` fires a REAL MSG91 SMS in dev (keys are live) — never call it with a plausible number. To get a real user token for e2e/curl tests, bypass it: `INSERT INTO otp_sessions (phone, otp_code, purpose, expires_at) VALUES ('9998887771','123456','register', now() + interval '10 minutes')` then `POST /auth/verify-otp` with that phone/otp (+ name/email for register) — verify-otp only checks the table. Clean up users/otp_sessions rows after.

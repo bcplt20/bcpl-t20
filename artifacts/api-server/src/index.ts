@@ -4,6 +4,7 @@ import { sendVideoReminders } from "./routes/video";
 import { ensureRegNumbers } from "./routes/register";
 import { ensureKycPanVerified, ensurePlayerProfiles } from "./routes/kyc";
 import { ensureTeams } from "./routes/teams";
+import { ensureMarketingTables } from "./routes/marketing";
 import { ensureNotificationErrorColumn } from "./lib/notify";
 import { reconcileAbandonedPayments } from "./lib/reconcilePayments";
 
@@ -23,6 +24,7 @@ async function start() {
       await ensureKycPanVerified();
       await ensurePlayerProfiles();
       await ensureTeams();
+      await ensureMarketingTables();
       await ensureNotificationErrorColumn();
       logger.info("startup migrations ensured");
       break;
