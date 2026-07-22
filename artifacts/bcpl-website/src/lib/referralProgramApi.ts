@@ -18,6 +18,13 @@ function getAdminToken(): string | null {
   try { return localStorage.getItem(ADMIN_TOKEN_KEY); } catch { return null; }
 }
 
+// Sliding session (mirrors api.ts): the server re-issues a fresh token via
+// this header once the current one is past half its life — persist it.
+function captureRenewedToken(res: Response): void {
+  const renewed = res.headers.get("x-bcpl-admin-token-renewed");
+  if (renewed) { try { localStorage.setItem(ADMIN_TOKEN_KEY, renewed); } catch {} }
+}
+
 async function adminReq<T = unknown>(method: string, path: string, body?: unknown): Promise<T> {
   const headers: Record<string, string> = { "Content-Type": "application/json" };
   const token = getAdminToken();
@@ -30,6 +37,7 @@ async function adminReq<T = unknown>(method: string, path: string, body?: unknow
     headers,
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
+  captureRenewedToken(res);
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: res.statusText }));
     throw new Error((err as { error?: string }).error ?? res.statusText);

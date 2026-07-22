@@ -212,6 +212,11 @@ export function clearAdminToken(): void {
   try { localStorage.removeItem(ADMIN_TOKEN_KEY); } catch {}
 }
 
+/** True when an admin token is stored (used on panel load to try restoring the session). */
+export function hasAdminToken(): boolean {
+  return Boolean(getAdminToken());
+}
+
 async function adminReq<T = unknown>(
   method: string,
   path: string,
@@ -228,6 +233,11 @@ async function adminReq<T = unknown>(
     headers,
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
+
+  // Sliding session: past half-life the server re-issues a fresh token on
+  // any admin response — swap it in silently so active admins stay logged in.
+  const renewed = res.headers.get("x-bcpl-admin-token-renewed");
+  if (renewed) saveAdminToken(renewed);
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: res.statusText }));
@@ -246,6 +256,10 @@ export const adminLogin = (password: string) =>
     if (!r.ok) { const e = await r.json().catch(() => ({})); throw new Error((e as any).error ?? "Login failed"); }
     return r.json() as Promise<{ success: boolean; token: string }>;
   });
+
+// Lightweight token check used on panel load to restore the session
+export const adminVerifySession = () =>
+  adminReq<{ success: boolean }>("GET", "/admin/session/verify");
 
 // Stats
 export const adminGetStats = () =>

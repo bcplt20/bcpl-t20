@@ -32,36 +32,85 @@ import { z } from "zod";
 const router = Router();
 
 /* ─── POST /api/admin/session ─────────────────────────────────────
-   Validate admin panel password → issue 8-hour JWT.
+   Validate admin panel password → issue a 24-hour JWT.
    Frontend stores token as x-bcpl-admin-token header on all requests.
+   Sliding session: requireAdmin re-issues a fresh token (response
+   header x-bcpl-admin-token-renewed) once half the life has passed,
+   so an ACTIVE admin is never logged out; ~24h of inactivity ends
+   the session.
 ──────────────────────────────────────────────────────────────────── */
+export const ADMIN_TOKEN_TTL = "24h";
+
+// Basic in-memory rate limit for wrong-password attempts (per IP).
+const LOGIN_WINDOW_MS = 15 * 60 * 1000;
+const LOGIN_MAX_FAILS = 5;
+const loginFails = new Map<string, { fails: number; resetAt: number }>();
+
+function loginClientIp(req: { headers: Record<string, unknown>; ip?: string }): string {
+  // Behind nginx the LAST x-forwarded-for entry is the proxy-appended real
+  // client IP; earlier entries can be spoofed by the client.
+  const xff = req.headers["x-forwarded-for"];
+  const raw = Array.isArray(xff) ? xff[xff.length - 1] : xff;
+  if (typeof raw === "string" && raw.trim()) {
+    const parts = raw.split(",").map(s => s.trim()).filter(Boolean);
+    if (parts.length) return parts[parts.length - 1];
+  }
+  return req.ip ?? "unknown";
+}
+
 router.post("/session", async (req, res) => {
   const { password } = req.body as { password?: string };
   const panelPassword = process.env.ADMIN_PANEL_PASSWORD;
   const sessionSecret = process.env.SESSION_SECRET || "dev-session-secret";
 
+  const ip = loginClientIp(req);
+  const now = Date.now();
+  if (loginFails.size > 1000) {
+    for (const [k, v] of loginFails) if (v.resetAt <= now) loginFails.delete(k);
+  }
+  const entry = loginFails.get(ip);
+  if (entry && entry.resetAt > now && entry.fails >= LOGIN_MAX_FAILS) {
+    const mins = Math.max(1, Math.ceil((entry.resetAt - now) / 60000));
+    res.status(429).json({ error: "Too many failed attempts. Try again in " + mins + " minute" + (mins === 1 ? "" : "s") + "." });
+    return;
+  }
+
   if (!panelPassword) {
-    // Dev mode with no password configured — allow
+    // Dev convenience only — production always requires the env var.
     if (process.env.NODE_ENV !== "production") {
-      const token = jwt.sign({ admin: true }, sessionSecret, { expiresIn: "8h" });
+      const token = jwt.sign({ admin: true }, sessionSecret, { expiresIn: ADMIN_TOKEN_TTL });
       res.json({ success: true, token });
       return;
     }
+    console.error("[ADMIN] ADMIN_PANEL_PASSWORD is not set — admin login is impossible in production");
     res.status(403).json({ error: "Admin panel not configured" });
     return;
   }
 
   if (!password || password !== panelPassword) {
+    const e = entry && entry.resetAt > now ? entry : { fails: 0, resetAt: now + LOGIN_WINDOW_MS };
+    e.fails += 1;
+    loginFails.set(ip, e);
+    console.warn("[ADMIN] wrong panel password attempt", { ip, fails: e.fails });
     res.status(401).json({ error: "Invalid admin password" });
     return;
   }
 
-  const token = jwt.sign({ admin: true }, sessionSecret, { expiresIn: "8h" });
+  loginFails.delete(ip);
+  const token = jwt.sign({ admin: true }, sessionSecret, { expiresIn: ADMIN_TOKEN_TTL });
   res.json({ success: true, token });
 });
 
 /* ─── All routes below require admin auth ─────────────────────── */
 router.use(requireAdmin);
+
+/* ─── GET /api/admin/session/verify ─────────────────────────────
+   Lightweight "is my stored token still valid?" check used by the
+   panel on page load to restore the session without re-login.
+   (requireAdmin above does the actual verification.) ──────────── */
+router.get("/session/verify", (_req, res) => {
+  res.json({ success: true });
+});
 
 /* ─── GET /api/admin/stats ─────────────────────────────────────── */
 router.get("/stats", async (_req, res) => {

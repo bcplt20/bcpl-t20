@@ -19,3 +19,8 @@ The website API client (`lib/api.ts` in the website artifact) has TWO ways to au
 Super-admin login in AdminShell AWAITS `POST /api/admin/session` (validated server-side against `ADMIN_PANEL_PASSWORD`) and saves the JWT **before** rendering the panel — previously views mounted first, fired token-less requests, got 403s, and cached empty states ("everything shows 0" symptom).
 
 **Failure handling:** if the session call fails, login proceeds ONLY when a legacy `VITE_ADMIN_KEY` is baked into the bundle (`hasLegacyAdminKey()` in api.ts); otherwise it shows an error instead of opening a dead panel. Do NOT make login unconditionally strict — EC2's env may rely on the legacy header, and hard-gating could lock the owner out. Logout clears the token (`clearAdminToken`). Co-admins (localStorage-defined) never get a JWT; they only work where the legacy header exists.
+
+## Sliding admin session (24h)
+Admin JWT is 24h; `requireAdmin` re-issues a fresh token via the `x-bcpl-admin-token-renewed` response header past half-life. **Every** admin API client must read that header and persist it — there are FIVE clients (api.ts + four deliberately duplicated: marketingApi, seoApi, adminToolsApi, referralProgramApi). A code review caught the four copies missing the mirror once already.
+**Why:** duplication was chosen to avoid merge conflicts between queued tasks; the cost is that ANY admin-auth scheme change must be mirrored in all five or some panel sections silently lose the behavior.
+**How to apply:** when touching admin auth (headers, renewal, login), grep `x-bcpl-admin-token` under `src/lib/` and update every match. Login password is server-side only (`ADMIN_PANEL_PASSWORD`, rate-limited) — never reintroduce a frontend-hardcoded password.

@@ -18,6 +18,13 @@ function getAdminToken(): string | null {
   try { return localStorage.getItem(ADMIN_TOKEN_KEY); } catch { return null; }
 }
 
+// Sliding session (mirrors api.ts): the server re-issues a fresh token via
+// this header once the current one is past half its life — persist it.
+function captureRenewedToken(res: Response): void {
+  const renewed = res.headers.get("x-bcpl-admin-token-renewed");
+  if (renewed) { try { localStorage.setItem(ADMIN_TOKEN_KEY, renewed); } catch {} }
+}
+
 function adminHeaders(json = true): Record<string, string> {
   const headers: Record<string, string> = {};
   if (json) headers["Content-Type"] = "application/json";
@@ -34,6 +41,7 @@ async function adminReq<T = unknown>(method: string, path: string, body?: unknow
     headers: adminHeaders(),
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
+  captureRenewedToken(res);
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: res.statusText }));
     throw new Error((err as { error?: string }).error ?? res.statusText);
@@ -120,6 +128,7 @@ export async function downloadCsv(dataset: ExportDataset, params: Record<string,
   const res = await fetch(`${BASE}/api/admin-tools/export/${dataset}${qs ? `?${qs}` : ""}`, {
     headers: adminHeaders(false),
   });
+  captureRenewedToken(res);
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: res.statusText }));
     throw new Error((err as { error?: string }).error ?? res.statusText);

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AdminSettingsView, { loadCoAdmins, ALL_SECTIONS } from "./views/AdminSettingsView";
 import type { CoAdmin } from "./views/AdminSettingsView";
 import DashboardView        from "./views/DashboardView";
@@ -31,7 +31,7 @@ import Phase1RegistrationsView from "./views/Phase1RegistrationsView";
 import Phase2KYCView           from "./views/Phase2KYCView";
 import FraudView            from "./views/FraudView";
 import ForecastView         from "./views/ForecastView";
-import { adminLogin, saveAdminToken, clearAdminToken, hasLegacyAdminKey } from "../lib/api";
+import { adminLogin, adminVerifySession, saveAdminToken, clearAdminToken, hasAdminToken } from "../lib/api";
 
 type NavItem  = { id: string; label: string; icon: string; badge?: string; badgeColor?: string };
 type NavGroup = { title: string; items: NavItem[] };
@@ -158,6 +158,11 @@ export default function AdminShell() {
   const [notifOpen,     setNotifOpen]    = useState(false);
   const [searchOpen,    setSearchOpen]   = useState(false);
   const [searchQ,       setSearchQ]      = useState("");
+  // True while we check a stored token on load (avoids login-form flash)
+  const [checkingSession, setCheckingSession] = useState(() => hasAdminToken());
+  // Header refresh control: bumping the key remounts the active section
+  const [refreshKey,    setRefreshKey]   = useState(0);
+  const [lastUpdated,   setLastUpdated]  = useState(() => new Date());
 
   const NOTIFS: { icon:string; text:string; time:string; unread:boolean }[] = [];
   const unreadCount = NOTIFS.filter(n => n.unread).length;
@@ -166,10 +171,25 @@ export default function AdminShell() {
   const navigate = (viewId: string, payload?: AdminNavPayload) => {
     setNavPayload(payload ?? null);
     setActive(viewId);
+    setLastUpdated(new Date()); // switching sections mounts fresh data
   };
 
-  /* ── Super Admin password (only this needs changing in code) ── */
-  const SUPER_ADMIN_PASSWORD = "BCPL@S5#2026!";
+  /* ── Restore session on load: stored token + server check → skip login ── */
+  useEffect(() => {
+    if (!hasAdminToken()) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        await adminVerifySession();
+        if (!cancelled) { setLoggedInAdmin(SUPER_ADMIN); setLoggedIn(true); }
+      } catch {
+        if (!cancelled) clearAdminToken(); // expired/invalid — back to login
+      } finally {
+        if (!cancelled) setCheckingSession(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   /* ── Nav filtering by permission ── */
   const isSuperAdmin = loggedInAdmin?.permissions?.includes("all") ?? false;
@@ -188,6 +208,18 @@ export default function AdminShell() {
   );
   const activeLabel = ALL_ITEMS.find(i => i.id === active)?.label || "Dashboard";
 
+  /* ── Checking a stored session — brief splash instead of login-form flash ── */
+  if (checkingSession && !loggedIn) {
+    return (
+      <div style={{ minHeight:"100vh", background:"radial-gradient(ellipse at 20% 50%,#0D1526 0%,#060B18 60%)", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:16, fontFamily:"'Inter',sans-serif" }}>
+        <div style={{ width:56, height:56, borderRadius:"50%", overflow:"hidden", border:"3px solid rgba(255,107,0,0.5)", boxShadow:"0 0 20px rgba(255,107,0,0.25)" }}>
+          <img src={import.meta.env.BASE_URL + "bcpl-assets/bcpl-ball-color.jpg"} alt="BCPL" style={{ width:"100%", height:"100%", objectFit:"cover" }}/>
+        </div>
+        <div style={{ fontSize:12, color:"#475569", letterSpacing:.5 }}>Restoring your session…</div>
+      </div>
+    );
+  }
+
   /* ── Login ── */
   if (!loggedIn) {
     const handleLogin = async () => {
@@ -195,10 +227,10 @@ export default function AdminShell() {
       if(!loginForm.email){ setLoginErr("Email address is required"); return; }
       if(!loginForm.password){ setLoginErr("Password is required"); return; }
       const emailL = loginForm.email.toLowerCase().trim();
-      // Check Super Admin first
-      if (emailL === SUPER_ADMIN.email && loginForm.password === SUPER_ADMIN_PASSWORD) {
-        // Get the admin API token BEFORE showing the panel, so the first
-        // view's API calls don't fire without it (they'd 403 and render empty).
+      // Super Admin → password verified by the SERVER only (ADMIN_PANEL_PASSWORD
+      // env). The token arrives BEFORE the panel renders, so the first view's
+      // API calls don't fire without it (they'd 403 and render empty).
+      if (emailL === SUPER_ADMIN.email) {
         setLoginBusy(true);
         try {
           const r = await adminLogin(loginForm.password);
@@ -206,16 +238,12 @@ export default function AdminShell() {
           setLoggedIn(true);
           setLoggedInAdmin(SUPER_ADMIN);
         } catch (e) {
-          if (hasLegacyAdminKey()) {
-            // Legacy header auth is configured in this build — panel still works without the JWT.
-            setLoggedIn(true);
-            setLoggedInAdmin(SUPER_ADMIN);
-          } else {
-            const msg = e instanceof Error ? e.message : "";
-            setLoginErr(msg === "Invalid admin password"
-              ? "The server rejected the admin password — server settings are out of date."
-              : "Could not verify with the server. Check that the site is online, then try again.");
-          }
+          const msg = e instanceof Error ? e.message : "";
+          setLoginErr(
+            msg === "Invalid admin password" ? "Incorrect password. Please try again." :
+            msg.startsWith("Too many failed attempts") ? msg :
+            msg === "Admin panel not configured" ? "Server login is not set up — ADMIN_PANEL_PASSWORD must be added on the server." :
+            "Could not verify with the server. Check that the site is online, then try again.");
         } finally {
           setLoginBusy(false);
         }
@@ -357,6 +385,19 @@ export default function AdminShell() {
             <div style={{ fontSize:11, color:"#334155", marginTop:5, lineHeight:1 }}>BCPL Season 5 · {new Date().toLocaleDateString("en-US",{ month:"long", day:"numeric", year:"numeric" })}</div>
           </div>
 
+          {/* Refresh current section */}
+          <div style={{ display:"flex", alignItems:"center", gap:10, flexShrink:0 }}>
+            <span style={{ fontSize:11, color:"#334155", lineHeight:1, whiteSpace:"nowrap" }}>
+              Last updated {lastUpdated.toLocaleTimeString("en-IN", { hour:"2-digit", minute:"2-digit" })}
+            </span>
+            <button onClick={()=>{ if(active==="live_scoring") return; setRefreshKey(k=>k+1); setLastUpdated(new Date()); }}
+              disabled={active==="live_scoring"}
+              title={active==="live_scoring" ? "Refresh is off here so live ball-by-ball entry isn't interrupted" : "Reload this section's data"}
+              style={{ height:34, display:"flex", alignItems:"center", gap:7, padding:"0 12px", borderRadius:9, border:"1px solid #1E293B", background:"#0D1526", color:"#64748B", cursor:active==="live_scoring"?"not-allowed":"pointer", opacity:active==="live_scoring"?0.45:1, fontSize:12, fontWeight:700, lineHeight:1, whiteSpace:"nowrap" }}>
+              <span style={{ fontSize:14, lineHeight:1 }}>↺</span> Refresh
+            </button>
+          </div>
+
           {/* Search */}
           <div style={{ position:"relative" }}>
             <button onClick={()=>setSearchOpen(s=>!s)} style={{ height:34, display:"flex", alignItems:"center", gap:8, padding:"0 12px", borderRadius:9, border:"1px solid #1E293B", background:"#0D1526", color:"#475569", cursor:"pointer", fontSize:12, lineHeight:1 }}>
@@ -422,8 +463,8 @@ export default function AdminShell() {
           {(searchOpen||notifOpen)&&<div style={{ position:"fixed", inset:0, zIndex:40 }} onClick={()=>{ setSearchOpen(false); setNotifOpen(false); }}/>}
         </header>
 
-        {/* Content */}
-        <main style={{ flex:1, overflowY:"auto", background:"#060B18", padding:24 }}>
+        {/* Content — key bump on ↺ remounts the active view, re-fetching its data */}
+        <main key={refreshKey} style={{ flex:1, overflowY:"auto", background:"#060B18", padding:24 }}>
           {renderView(active, navigate, navPayload)}
         </main>
       </div>
