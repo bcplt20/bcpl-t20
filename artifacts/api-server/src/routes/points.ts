@@ -69,7 +69,7 @@ router.put("/admin/points-table/:team", requireAdmin, async (req, res) => {
 
   const season = Number(req.query.season) || 5;
   const [row] = await db.select().from(pointsTableEntries)
-    .where(and(eq(pointsTableEntries.team, req.params.team), eq(pointsTableEntries.season, season)))
+    .where(and(eq(pointsTableEntries.team, String(req.params.team)), eq(pointsTableEntries.season, season)))
     .limit(1);
 
   if (!row) return void res.status(404).json({ error: "Team not found in points table" });

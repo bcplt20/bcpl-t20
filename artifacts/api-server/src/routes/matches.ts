@@ -132,7 +132,7 @@ router.get("/", async (req, res) => {
 
 // GET /api/matches/:id
 router.get("/:id", async (req, res) => {
-  const [match] = await db.select().from(matchesTable).where(eq(matchesTable.id, req.params.id)).limit(1);
+  const [match] = await db.select().from(matchesTable).where(eq(matchesTable.id, String(req.params.id))).limit(1);
   if (!match) return void res.status(404).json({ error: "Match not found" });
 
   const innings = await db.select().from(inningsTable)
@@ -144,7 +144,7 @@ router.get("/:id", async (req, res) => {
 
 // GET /api/matches/:id/live  (compact — polled every 5s by public website)
 router.get("/:id/live", async (req, res) => {
-  const [match] = await db.select().from(matchesTable).where(eq(matchesTable.id, req.params.id)).limit(1);
+  const [match] = await db.select().from(matchesTable).where(eq(matchesTable.id, String(req.params.id))).limit(1);
   if (!match) return void res.status(404).json({ error: "Match not found" });
 
   const innings = await db.select().from(inningsTable)
@@ -189,7 +189,7 @@ router.get("/:id/live", async (req, res) => {
 
 // GET /api/matches/:id/scorecard
 router.get("/:id/scorecard", async (req, res) => {
-  const [match] = await db.select().from(matchesTable).where(eq(matchesTable.id, req.params.id)).limit(1);
+  const [match] = await db.select().from(matchesTable).where(eq(matchesTable.id, String(req.params.id))).limit(1);
   if (!match) return void res.status(404).json({ error: "Match not found" });
 
   const innings = await db.select().from(inningsTable)
@@ -239,7 +239,7 @@ router.put("/admin/matches/:id/toss", requireAdmin, async (req, res) => {
 
   const [match] = await db.update(matchesTable)
     .set({ ...parsed.data, status: "toss_done", updatedAt: new Date() })
-    .where(eq(matchesTable.id, req.params.id))
+    .where(eq(matchesTable.id, String(req.params.id)))
     .returning();
 
   if (!match) return void res.status(404).json({ error: "Match not found" });
@@ -256,7 +256,7 @@ router.post("/admin/matches/:id/xi", requireAdmin, async (req, res) => {
   const parsed = schema.safeParse(req.body);
   if (!parsed.success) return void res.status(400).json({ error: parsed.error.issues[0].message });
 
-  const [match] = await db.select().from(matchesTable).where(eq(matchesTable.id, req.params.id)).limit(1);
+  const [match] = await db.select().from(matchesTable).where(eq(matchesTable.id, String(req.params.id))).limit(1);
   if (!match) return void res.status(404).json({ error: "Match not found" });
 
   const { xi1, xi2, battingTeam } = parsed.data;
@@ -308,7 +308,7 @@ router.put("/admin/matches/:id/status", requireAdmin, async (req, res) => {
 
   const [match] = await db.update(matchesTable)
     .set({ ...parsed.data, updatedAt: new Date() })
-    .where(eq(matchesTable.id, req.params.id))
+    .where(eq(matchesTable.id, String(req.params.id)))
     .returning();
 
   if (!match) return void res.status(404).json({ error: "Match not found" });

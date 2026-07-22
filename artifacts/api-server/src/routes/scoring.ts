@@ -61,7 +61,7 @@ router.post("/:matchId/ball", requireAdmin, async (req, res) => {
   } = parsed.data;
 
   // Load match + current innings
-  const [match] = await db.select().from(matchesTable).where(eq(matchesTable.id, req.params.matchId)).limit(1);
+  const [match] = await db.select().from(matchesTable).where(eq(matchesTable.id, String(req.params.matchId))).limit(1);
   if (!match) return void res.status(404).json({ error: "Match not found" });
   if (match.status !== "live" && match.status !== "innings2") {
     return void res.status(400).json({ error: "Match is not live" });
@@ -168,7 +168,7 @@ router.post("/:matchId/ball", requireAdmin, async (req, res) => {
     success:     true,
     delivery:    { over: fmtOvers(overNumber, newBalls||ballInOver), runs: totalRunsD, isWicket, commentary },
     inningsTotal:{ runs: newTotal, wickets: newWickets, overs: newOvers, balls: finalBalls },
-    inningsComplete,
+    inningsComplete: innsComplete,
   });
 });
 
@@ -187,7 +187,7 @@ function buildDis(type: string, fielder?: string, bowler?: string): string {
 
 /* ─── POST /api/admin/scoring/:matchId/innings-end ────────── */
 router.post("/:matchId/innings-end", requireAdmin, async (req, res) => {
-  const [match] = await db.select().from(matchesTable).where(eq(matchesTable.id, req.params.matchId)).limit(1);
+  const [match] = await db.select().from(matchesTable).where(eq(matchesTable.id, String(req.params.matchId))).limit(1);
   if (!match) return void res.status(404).json({ error: "Match not found" });
 
   // Mark current innings complete
@@ -224,7 +224,7 @@ router.post("/:matchId/innings-end", requireAdmin, async (req, res) => {
 /* ─── DELETE /api/admin/scoring/:matchId/ball (undo) ───────── */
 router.delete("/:matchId/ball", requireAdmin, async (req, res) => {
   const [inn] = await db.select().from(inningsTable)
-    .where(and(eq(inningsTable.matchId, req.params.matchId), eq(inningsTable.status, "live")))
+    .where(and(eq(inningsTable.matchId, String(req.params.matchId)), eq(inningsTable.status, "live")))
     .orderBy(desc(inningsTable.inningsNumber))
     .limit(1);
 
