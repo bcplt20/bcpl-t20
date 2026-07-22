@@ -55,7 +55,7 @@ async function buildScorecard(inningsId: string) {
       batMap.set(d.batterName, { name: d.batterName, runs: 0, balls: 0, fours: 0, sixes: 0, dismissal: "" });
     }
     const bat = batMap.get(d.batterName)!;
-    if (!d.extraType) {                        // legal delivery counts for batter
+    if (!d.extraType || d.extraType === "leg_bye" || d.extraType === "bye") {  // legal delivery counts for batter
       bat.balls++;
       bat.runs += d.runsOffBat;
       if (d.runsOffBat === 4) bat.fours++;
@@ -71,7 +71,7 @@ async function buildScorecard(inningsId: string) {
     }
     const bowl = bowlMap.get(d.bowlerName)!;
     bowl.runs += d.totalRuns;
-    if (!d.extraType || d.extraType === "no_ball") {
+    if (!d.extraType || d.extraType === "leg_bye" || d.extraType === "bye") {
       bowl.balls++;
       if (bowl.balls === 6) { bowl.overs++; bowl.balls = 0; }
     }
@@ -263,8 +263,11 @@ router.post("/admin/matches/:id/xi", requireAdmin, async (req, res) => {
   const isTeam1Batting = battingTeam === match.team1;
   const bowlingTeam    = isTeam1Batting ? match.team2 : match.team1;
 
-  // Delete old XI records for this match
+  // Re-setup = clean restart: wipe old XI records AND any existing innings
+  // (deliveries cascade with innings) so a match can never end up with
+  // duplicate innings-1 rows after a browser refresh + re-setup.
   await db.delete(matchXITable).where(eq(matchXITable.matchId, match.id));
+  await db.delete(inningsTable).where(eq(inningsTable.matchId, match.id));
 
   // Insert XI records
   const xiRows = [

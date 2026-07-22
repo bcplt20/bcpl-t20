@@ -730,7 +730,7 @@ export function Home() {
                         team1:   m.team1, t1Slug: TEAMS.find(t=>t.name===m.team1)?.slug||"", t1Color: TEAMS.find(t=>t.name===m.team1)?.color||"#64748B",
                         team2:   m.team2, t2Slug: TEAMS.find(t=>t.name===m.team2)?.slug||"", t2Color: TEAMS.find(t=>t.name===m.team2)?.color||"#64748B",
                         score1: "", score2: "",
-                        info:    `Match ${m.match_no} · ${m.venue}`,
+                        info:    `Match ${m.matchNo} · ${m.venue}`,
                         winner:  m.winner||"",
                       }))
                     : MATCHES
@@ -739,7 +739,7 @@ export function Home() {
                     const isUpcoming = m.status === "UPCOMING";
                     const isResult   = m.status === "RESULT";
                     return (
-                      <div key={i} style={{ background:"linear-gradient(135deg,#0A1727,#060C18)", border:`1px solid ${isLive?"rgba(239,68,68,.35)":"rgba(255,255,255,.07)"}`, borderRadius:14, padding:"14px 16px", position:"relative", overflow:"hidden", cursor:"pointer", transition:"transform .2s,border-color .2s" }}
+                      <div key={i} onClick={()=>navigate("/match-center")} style={{ background:"linear-gradient(135deg,#0A1727,#060C18)", border:`1px solid ${isLive?"rgba(239,68,68,.35)":"rgba(255,255,255,.07)"}`, borderRadius:14, padding:"14px 16px", position:"relative", overflow:"hidden", cursor:"pointer", transition:"transform .2s,border-color .2s" }}
                         onMouseEnter={e=>{ (e.currentTarget as HTMLElement).style.transform="translateY(-2px)"; (e.currentTarget as HTMLElement).style.borderColor=isLive?"rgba(239,68,68,.5)":"rgba(255,255,255,.14)"; }}
                         onMouseLeave={e=>{ (e.currentTarget as HTMLElement).style.transform=""; (e.currentTarget as HTMLElement).style.borderColor=isLive?"rgba(239,68,68,.35)":"rgba(255,255,255,.07)"; }}>
                         {isLive && <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 80% 60% at 50% 0%,rgba(239,68,68,.06) 0%,transparent 70%)", pointerEvents:"none" }}/>}

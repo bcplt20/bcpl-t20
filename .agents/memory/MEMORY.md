@@ -13,3 +13,5 @@
 - [MSG91 SMS integration](msg91-sms.md) — OTP must go via FLOW API (var1), OTP API fake-accepts then drops; accept≠delivery; keep IP Security OFF; real keys in dev — test with impossible numbers
 - [SEO meta serving](seo-meta-serving.md) — prod HTML is static via nginx; crawler-visible meta/OG/GSC must go through the Express HTML injector, not React; public/ files shadow Express routes
 - [S3 media library](s3-media-library.md) — media/ prefix private: display only via presigned viewUrl (1h); dev-origin PUTs DO pass CORS; keep confirm-key/CSV-formula/delete-abort guards
+- [Live scoring flow](scoring-flow.md) — client engine mirrors server /ball exactly (LB/B legal); finalization gated on ball persistence; /xi = clean restart (wipes innings); /innings-end idempotent
+- [API field-name traps](api-field-traps.md) — responses are drizzle camelCase (matchNo); snake_case reads render undefined silently; zod .datetime() needs toISOString, rejects datetime-local

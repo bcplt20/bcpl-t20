@@ -100,8 +100,8 @@ router.post("/:matchId/ball", requireAdmin, async (req, res) => {
     ? (lastDelivery[0].overNumber === overNumber ? lastDelivery[0].deliveryInOver + 1 : 1)
     : 1;
 
-  // Legal ball increments ball count
-  const isLegalBall = !isExtra;
+  // Legal ball increments ball count (byes/leg-byes ARE legal deliveries; only wides & no-balls are re-bowled)
+  const isLegalBall = !isWide && !isNB;
   const newBalls    = isLegalBall ? ballInOver + 1 : ballInOver;
   const overDone    = isLegalBall && newBalls === 6;
   const newOvers    = overDone ? inn.overs + 1 : inn.overs;
@@ -200,6 +200,15 @@ router.post("/:matchId/innings-end", requireAdmin, async (req, res) => {
 
   if (!inn1) return void res.status(400).json({ error: "1st innings not found" });
 
+  // Idempotent: if innings 2 already exists, return it instead of duplicating
+  const [existing2] = await db.select().from(inningsTable)
+    .where(and(eq(inningsTable.matchId, match.id), eq(inningsTable.inningsNumber, 2))).limit(1);
+  if (existing2) {
+    await db.update(matchesTable).set({ status: "live", updatedAt: new Date() })
+      .where(eq(matchesTable.id, match.id));
+    return void res.json({ success: true, innings2: existing2, target: existing2.target });
+  }
+
   const target = inn1.totalRuns + 1;
   const battingTeam = inn1.bowlingTeam; // now batting in 2nd
   const bowlingTeam = inn1.battingTeam;
@@ -242,8 +251,8 @@ router.delete("/:matchId/ball", requireAdmin, async (req, res) => {
   const newWickets = inn.totalWickets - (last.isWicket ? 1 : 0);
   const newExtras  = inn.extras - last.extrasRuns;
 
-  // Reverse ball count
-  const isLegal = !last.extraType;
+  // Reverse ball count (byes/leg-byes were legal deliveries)
+  const isLegal = last.extraType !== "wide" && last.extraType !== "no_ball";
   let newBalls = inn.balls;
   let newOvers = inn.overs;
   if (isLegal) {
