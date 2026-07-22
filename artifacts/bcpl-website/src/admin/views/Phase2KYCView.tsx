@@ -23,6 +23,16 @@ type KycRow = {
   role: string;
   trialCity: string;
   phase2Status: string | null;
+  // Employment + emergency contact (collected on the KYC page)
+  company?: string | null;
+  jobTitle?: string | null;
+  experience?: string | null;
+  linkedin?: string | null;
+  tshirtSize?: string | null;
+  emergencyName?: string | null;
+  emergencyRelation?: string | null;
+  emergencyPhone?: string | null;
+  bloodGroup?: string | null;
 };
 
 const KYC_STATUS_COLOR: Record<string, string> = {
@@ -272,6 +282,14 @@ export default function Phase2KYCView() {
                   { label:"Phone",       value: detail.phone },
                   { label:"Email",       value: detail.email },
                   { label:"Profession",  value: detail.profession ?? "Not provided" },
+                  { label:"Company",     value: detail.company ?? "Not provided" },
+                  { label:"Job Title",   value: detail.jobTitle ?? "Not provided" },
+                  { label:"Experience",  value: detail.experience ?? "Not provided" },
+                  { label:"LinkedIn",    value: detail.linkedin ?? "Not provided" },
+                  { label:"T-Shirt Size", value: detail.tshirtSize ?? "Not provided" },
+                  { label:"Emergency Contact", value: detail.emergencyName ? detail.emergencyName + (detail.emergencyRelation ? " (" + detail.emergencyRelation + ")" : "") : "Not provided" },
+                  { label:"Emergency Phone", value: detail.emergencyPhone ?? "Not provided" },
+                  { label:"Blood Group", value: detail.bloodGroup ?? "Not provided" },
                   { label:"Aadhaar Ref", value: detail.aadhaarRef ?? "Not provided" },
                   { label:"PAN Ref",     value: detail.panRef ?? "Not provided" },
                   { label:"PAN Auto-Verify", value: detail.panVerified === false ? "⚠ Needs manual check" : "✓ Verified via Cashfree" },

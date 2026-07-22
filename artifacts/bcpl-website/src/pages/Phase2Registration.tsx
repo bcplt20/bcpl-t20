@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { getRegistrationStatus, getMe } from '../lib/api';
 
 const BASE = import.meta.env.BASE_URL;
 const NAV = ['Home','Match Center','Teams','Sponsors','Photos','Videos','About','FAQ','Contact'];
 const NAV_ROUTES: Record<string,string> = { Home:'', 'Match Center':'match-center', Teams:'teams', Sponsors:'sponsors', Photos:'photos', Videos:'videos', About:'about', FAQ:'faq', Contact:'contact' };
-const STEPS = ['Professional Details','Emergency Contact','Declaration'];
 
 type LoadState = 'loading' | 'ok' | 'not_selected' | 'error';
 
@@ -18,17 +17,8 @@ export function Phase2Registration() {
   const [phase2Status, setPhase2Status] = useState<string|null>(null);
   const [menuOpen, setMenuOpen]     = useState(false);
 
-  // Form state
-  const [step, setStep]         = useState(1);
-  const [company, setCompany]   = useState('');
-  const [jobTitle, setJobTitle] = useState('');
-  const [experience, setExperience] = useState('');
-  const [linkedin, setLinkedin] = useState('');
-  const [tshirt, setTshirt]     = useState('');
-  const [ecName, setEcName]     = useState('');
-  const [ecRel, setEcRel]       = useState('');
-  const [ecPhone, setEcPhone]   = useState('');
-  const [bloodGroup, setBloodGroup] = useState('');
+  // Declarations — the only thing asked before payment.
+  // Employment + emergency details are collected during KYC, after payment.
   const [check1, setCheck1]     = useState(false);
   const [check2, setCheck2]     = useState(false);
   const [check3, setCheck3]     = useState(false);
@@ -50,14 +40,9 @@ export function Phase2Registration() {
     })();
   }, []);
 
-  const canNext =
-    step === 1 ? !!(company && jobTitle && experience && tshirt) :
-    step === 2 ? !!(ecName && ecRel && ecPhone && bloodGroup) :
-    (check1 && check2 && check3);
+  const canProceed = check1 && check2 && check3;
 
   const handleProceed = () => {
-    // Save form for display on KYC page
-    sessionStorage.setItem('bcpl_p2_profile', JSON.stringify({ company, jobTitle, experience, linkedin, tshirt, ecName, ecRel, ecPhone, bloodGroup }));
     window.location.href = BASE + 'register/phase2/payment';
   };
 
@@ -96,7 +81,6 @@ export function Phase2Registration() {
         @keyframes tickerScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
         @keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
         @keyframes shimGold{0%{background-position:-200% center}100%{background-position:200% center}}
-        @keyframes pulseOrange{0%,100%{box-shadow:0 0 0 0 rgba(255,122,41,0.6)}50%{box-shadow:0 0 0 10px rgba(255,122,41,0)}}
         @keyframes stepIn{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:translateX(0)}}
         .wrap{max-width:1200px;margin:0 auto;padding:0 16px}
         @media(min-width:768px){.wrap{padding:0 32px}}
@@ -109,21 +93,6 @@ export function Phase2Registration() {
         .btn-primary{background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:12px;color:#fff;font-family:Montserrat,sans-serif;font-weight:900;letter-spacing:0.06em;cursor:pointer;transition:filter .2s,transform .15s}
         .btn-primary:hover{filter:brightness(1.15);transform:translateY(-2px)}
         .btn-primary:disabled{opacity:.35;cursor:not-allowed;filter:none;transform:none}
-        .btn-back{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:12px;color:rgba(255,255,255,0.6);font-family:Montserrat,sans-serif;font-weight:700;cursor:pointer;transition:all .2s}
-        .btn-back:hover{background:rgba(255,255,255,0.09);color:#fff}
-        .field-inp{width:100%;background:#0C1A2E;border:none;border-bottom:2px solid rgba(255,122,41,0.4);color:#F0EDE8;padding:13px 14px;font-family:Inter,sans-serif;font-size:15px;outline:none;transition:all .2s}
-        .field-inp:focus{border-bottom-color:#FF7A29;background:#0E1F35}
-        .field-inp::placeholder{color:rgba(255,255,255,0.22)}
-        .field-inp[readonly]{opacity:.6;cursor:not-allowed}
-        .field-lbl{display:block;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,0.38);margin-bottom:6px;font-family:Montserrat,sans-serif}
-        .chip-btn{border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:8px 16px;font-size:12px;font-weight:700;font-family:Montserrat,sans-serif;cursor:pointer;transition:all .15s;background:transparent;color:rgba(255,255,255,0.55);letter-spacing:.04em}
-        .chip-btn:hover{border-color:#FF7A29;color:#FF7A29}
-        .chip-btn.sel{border-color:#FF7A29;background:rgba(255,122,41,0.12);color:#FF7A29}
-        .step-node{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Montserrat,sans-serif;font-weight:900;font-size:12px;border:2px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.3);background:transparent;transition:all .3s;flex-shrink:0}
-        .step-node.done{background:#22C55E;border-color:#22C55E;color:#fff}
-        .step-node.active{background:#FF7A29;border-color:#FF7A29;color:#fff;animation:pulseOrange 2s infinite}
-        .step-track{height:2px;flex:1;background:rgba(255,255,255,0.08);margin:0 4px;transition:background .4s}
-        .step-track.done{background:#22C55E}
         .step-enter{animation:stepIn .35s cubic-bezier(.34,1.56,.64,1) both}
         .check-row{display:flex;align-items:flex-start;gap:14px;cursor:pointer;padding:16px;border:1px solid rgba(255,255,255,0.07);background:#0A1727;transition:border-color .2s;border-radius:12px}
         .check-row:hover{border-color:rgba(255,122,41,0.3)}
@@ -132,11 +101,6 @@ export function Phase2Registration() {
         .custom-check.checked{background:#22C55E;border-color:#22C55E}
         .nav-link{font-size:12px;font-weight:700;font-family:Montserrat,sans-serif;letter-spacing:.08em;color:rgba(255,255,255,0.65);text-decoration:none;text-transform:uppercase;cursor:pointer;transition:color .2s;background:none;border:none}
         .nav-link:hover{color:#FF7A29}
-        .step-col{display:flex;flex-direction:column;align-items:center}
-        .step-label{font-size:8px;font-weight:700;font-family:Montserrat,sans-serif;letter-spacing:.06em;color:rgba(255,255,255,0.3);text-transform:uppercase;text-align:center;margin-top:4px;min-width:60px}
-        @media(max-width:400px){.step-label{display:none}}
-        .form-btns{margin-top:28px;display:flex;gap:12px;justify-content:space-between;flex-wrap:wrap}
-        .form-btns button{min-width:120px}
         .ticket{background:#0A1727;border:1px solid rgba(255,122,41,0.3);position:relative;overflow:visible}
         .ticket::before,.ticket::after{content:'';position:absolute;width:20px;height:20px;border-radius:50%;background:#06101E;top:50%;transform:translateY(-50%)}
         .ticket::before{left:-10px;border:1px solid rgba(255,122,41,0.3)}
@@ -203,140 +167,43 @@ export function Phase2Registration() {
           <h1 style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(22px,4vw,40px)', color:'#fff', letterSpacing:'.02em', lineHeight:1.1 }}>
             PHASE 2 — <span style={{ color:'#FF7A29' }}>PLAYER ONBOARDING</span>
           </h1>
-          <p style={{ color:'rgba(255,255,255,0.45)', fontSize:14, marginTop:10 }}>Complete your profile to proceed to Phase 2 payment</p>
-        </div>
-
-        {/* Step indicator */}
-        <div style={{ background:'#0A1727', border:'1px solid rgba(255,255,255,0.07)', borderRadius:12, padding:'16px 20px', marginBottom:32 }}>
-          <div style={{ display:'flex', alignItems:'center' }}>
-            {STEPS.map((s, i) => (
-              <React.Fragment key={i}>
-                <div className="step-col">
-                  <div className={`step-node ${i < step-1 ? 'done' : i === step-1 ? 'active' : ''}`}>{i < step-1 ? '✓' : i+1}</div>
-                  <span className="step-label" style={{ color: i === step-1 ? '#FF7A29' : i < step-1 ? '#22C55E' : 'rgba(255,255,255,0.3)' }}>{s}</span>
-                </div>
-                {i < STEPS.length-1 && <div className={`step-track ${i < step-1 ? 'done' : ''}`} style={{ marginBottom:20 }} />}
-              </React.Fragment>
-            ))}
-          </div>
+          <p style={{ color:'rgba(255,255,255,0.45)', fontSize:14, marginTop:10 }}>Confirm the declarations below to proceed to Phase 2 payment. Your remaining details will be collected during KYC, after payment.</p>
         </div>
 
         <div className="main-grid">
-          {/* Form */}
+          {/* Declaration — the only pre-payment step */}
           <div>
-            {step === 1 && (
-              <div className="step-enter" style={{ background:'#0A1727', border:'1px solid rgba(255,255,255,0.07)', borderRadius:12, padding:'24px 20px' }}>
-                <div style={{ borderLeft:'3px solid #FF7A29', paddingLeft:14, marginBottom:24 }}>
-                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:16, color:'#fff' }}>STEP 1 — Professional Details</div>
-                </div>
-                <div style={{ display:'grid', gap:20 }}>
-                  <div>
-                    <label className="field-lbl">Full Name <span style={{ color:'rgba(255,255,255,0.25)' }}>(from Phase 1)</span></label>
-                    <input className="field-inp" value={playerName} readOnly />
-                  </div>
-                  <div>
-                    <label className="field-lbl">Company / Organisation *</label>
-                    <input className="field-inp" placeholder="e.g. Infosys, Tata Consultancy…" value={company} onChange={e => setCompany(e.target.value)} />
-                  </div>
-                  <div>
-                    <label className="field-lbl">Job Title / Designation *</label>
-                    <input className="field-inp" placeholder="e.g. Senior Engineer, Product Manager…" value={jobTitle} onChange={e => setJobTitle(e.target.value)} />
-                  </div>
-                  <div>
-                    <label className="field-lbl">Years of Experience *</label>
-                    <div style={{ display:'flex', flexWrap:'wrap', gap:8, marginTop:4 }}>
-                      {['<1 yr','1–3 yr','3–5 yr','5–10 yr','10+ yr'].map(e => (
-                        <button key={e} className={`chip-btn ${experience===e?'sel':''}`} onClick={() => setExperience(e)}>{e}</button>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <label className="field-lbl">LinkedIn Profile <span style={{ color:'rgba(255,255,255,0.22)' }}>(optional)</span></label>
-                    <input className="field-inp" placeholder="linkedin.com/in/yourprofile" value={linkedin} onChange={e => setLinkedin(e.target.value)} />
-                  </div>
-                  <div>
-                    <label className="field-lbl">T-Shirt Size *</label>
-                    <div style={{ display:'flex', flexWrap:'wrap', gap:8, marginTop:4 }}>
-                      {['S','M','L','XL','XXL'].map(s => (
-                        <button key={s} className={`chip-btn ${tshirt===s?'sel':''}`} style={{ minWidth:48, textAlign:'center' }} onClick={() => setTshirt(s)}>{s}</button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                <div className="form-btns"><div />
-                  <button className="btn-primary" style={{ padding:'14px 28px', fontSize:13 }} disabled={!canNext} onClick={() => setStep(2)}>NEXT: EMERGENCY CONTACT →</button>
-                </div>
+            <div className="step-enter" style={{ background:'#0A1727', border:'1px solid rgba(255,255,255,0.07)', borderRadius:12, padding:'24px 20px' }}>
+              <div style={{ borderLeft:'3px solid #FF7A29', paddingLeft:14, marginBottom:24 }}>
+                <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:16, color:'#fff' }}>Terms &amp; Declaration</div>
+                <div style={{ color:'rgba(255,255,255,0.45)', fontSize:13, marginTop:4 }}>Please read and confirm each statement carefully</div>
               </div>
-            )}
-
-            {step === 2 && (
-              <div className="step-enter" style={{ background:'#0A1727', border:'1px solid rgba(255,255,255,0.07)', borderRadius:12, padding:'24px 20px' }}>
-                <div style={{ borderLeft:'3px solid #FF7A29', paddingLeft:14, marginBottom:24 }}>
-                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:16, color:'#fff' }}>STEP 2 — Emergency Contact</div>
-                </div>
-                <div style={{ display:'grid', gap:20 }}>
-                  <div>
-                    <label className="field-lbl">Contact Name *</label>
-                    <input className="field-inp" placeholder="Full name of emergency contact" value={ecName} onChange={e => setEcName(e.target.value)} />
+              <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
+                {[
+                  { val:check1, set:setCheck1, text:'I confirm that I have not played first-class cricket, IPL, or international cricket professionally.' },
+                  { val:check2, set:setCheck2, text:'I understand the trial terms, the franchise auction process, and the two-phase selection system.' },
+                  { val:check3, set:setCheck3, text:'I agree to abide by the BCPL Code of Conduct throughout Season 5.' },
+                ].map(({ val, set, text }, idx) => (
+                  <div key={idx} className={`check-row ${val?'checked':''}`} onClick={() => set(!val)}>
+                    <div className={`custom-check ${val?'checked':''}`}>{val && <span style={{ color:'#fff', fontSize:12, fontWeight:900 }}>✓</span>}</div>
+                    <span style={{ fontSize:14, color: val ? '#fff' : 'rgba(255,255,255,0.65)', lineHeight:1.5 }}>{text}</span>
                   </div>
-                  <div>
-                    <label className="field-lbl">Relationship *</label>
-                    <div style={{ display:'flex', flexWrap:'wrap', gap:8, marginTop:4 }}>
-                      {['Father','Mother','Spouse','Friend','Other'].map(r => (
-                        <button key={r} className={`chip-btn ${ecRel===r?'sel':''}`} onClick={() => setEcRel(r)}>{r}</button>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <label className="field-lbl">Phone Number *</label>
-                    <input className="field-inp" type="tel" placeholder="10-digit mobile number" value={ecPhone} onChange={e => setEcPhone(e.target.value)} />
-                  </div>
-                  <div>
-                    <label className="field-lbl">Blood Group *</label>
-                    <div style={{ display:'flex', flexWrap:'wrap', gap:8, marginTop:4 }}>
-                      {['A+','A-','B+','B-','AB+','AB-','O+','O-'].map(bg => (
-                        <button key={bg} className={`chip-btn ${bloodGroup===bg?'sel':''}`} style={{ minWidth:48, textAlign:'center' }} onClick={() => setBloodGroup(bg)}>{bg}</button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                <div className="form-btns">
-                  <button className="btn-back" style={{ padding:'12px 24px', fontSize:12 }} onClick={() => setStep(1)}>← BACK</button>
-                  <button className="btn-primary" style={{ padding:'14px 28px', fontSize:13 }} disabled={!canNext} onClick={() => setStep(3)}>NEXT: DECLARATION →</button>
-                </div>
+                ))}
               </div>
-            )}
-
-            {step === 3 && (
-              <div className="step-enter" style={{ background:'#0A1727', border:'1px solid rgba(255,255,255,0.07)', borderRadius:12, padding:'24px 20px' }}>
-                <div style={{ borderLeft:'3px solid #FF7A29', paddingLeft:14, marginBottom:24 }}>
-                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:16, color:'#fff' }}>STEP 3 — Declaration</div>
-                  <div style={{ color:'rgba(255,255,255,0.45)', fontSize:13, marginTop:4 }}>Please read and confirm each statement carefully</div>
+              {canProceed && (
+                <div style={{ marginTop:16, background:'rgba(34,197,94,0.08)', border:'1px solid rgba(34,197,94,0.25)', borderRadius:12, padding:'12px 16px', display:'flex', alignItems:'center', gap:10 }}>
+                  <span style={{ fontSize:16 }}>✅</span>
+                  <span style={{ fontSize:12, fontWeight:700, fontFamily:'Montserrat,sans-serif', color:'#22C55E' }}>All declarations confirmed. You may proceed.</span>
                 </div>
-                <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
-                  {[
-                    { val:check1, set:setCheck1, text:'I confirm that I have not played first-class cricket, IPL, or international cricket professionally.' },
-                    { val:check2, set:setCheck2, text:'I understand the trial terms, the franchise auction process, and the two-phase selection system.' },
-                    { val:check3, set:setCheck3, text:'I agree to abide by the BCPL Code of Conduct throughout Season 5.' },
-                  ].map(({ val, set, text }, idx) => (
-                    <div key={idx} className={`check-row ${val?'checked':''}`} onClick={() => set(!val)}>
-                      <div className={`custom-check ${val?'checked':''}`}>{val && <span style={{ color:'#fff', fontSize:12, fontWeight:900 }}>✓</span>}</div>
-                      <span style={{ fontSize:14, color: val ? '#fff' : 'rgba(255,255,255,0.65)', lineHeight:1.5 }}>{text}</span>
-                    </div>
-                  ))}
-                </div>
-                {canNext && (
-                  <div style={{ marginTop:16, background:'rgba(34,197,94,0.08)', border:'1px solid rgba(34,197,94,0.25)', borderRadius:12, padding:'12px 16px', display:'flex', alignItems:'center', gap:10 }}>
-                    <span style={{ fontSize:16 }}>✅</span>
-                    <span style={{ fontSize:12, fontWeight:700, fontFamily:'Montserrat,sans-serif', color:'#22C55E' }}>All declarations confirmed. You may proceed.</span>
-                  </div>
-                )}
-                <div className="form-btns">
-                  <button className="btn-back" style={{ padding:'12px 24px', fontSize:12 }} onClick={() => setStep(2)}>← BACK</button>
-                  <button className="btn-primary" style={{ padding:'16px 28px', fontSize:14 }} disabled={!canNext} onClick={handleProceed}>PROCEED TO PHASE 2 PAYMENT →</button>
-                </div>
+              )}
+              <div style={{ marginTop:16, background:'rgba(255,122,41,0.06)', border:'1px solid rgba(255,122,41,0.2)', borderRadius:12, padding:'12px 16px', display:'flex', alignItems:'flex-start', gap:10 }}>
+                <span style={{ fontSize:16 }}>📋</span>
+                <span style={{ fontSize:12, color:'rgba(255,255,255,0.55)', lineHeight:1.5 }}>Employment details, emergency contact, blood group and T-shirt size will be asked on the KYC page after your payment.</span>
               </div>
-            )}
+              <div style={{ marginTop:28, display:'flex', justifyContent:'flex-end' }}>
+                <button className="btn-primary" style={{ padding:'16px 28px', fontSize:14 }} disabled={!canProceed} onClick={handleProceed}>PROCEED TO PHASE 2 PAYMENT →</button>
+              </div>
+            </div>
           </div>
 
           {/* Sidebar */}
@@ -368,7 +235,7 @@ export function Phase2Registration() {
               </div>
               <div style={{ padding:'12px 24px', background:'rgba(232,178,61,0.06)', borderTop:'1px solid rgba(232,178,61,0.15)' }}>
                 <div style={{ fontSize:11, color:'#E8B23D', fontWeight:700, fontFamily:'Montserrat,sans-serif', lineHeight:1.5 }}>
-                  ⚡ Pay after completing this onboarding form.
+                  ⚡ Confirm the declarations, then pay to secure your trial slot.
                 </div>
               </div>
             </div>

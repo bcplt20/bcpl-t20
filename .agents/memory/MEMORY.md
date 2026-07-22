@@ -3,4 +3,5 @@
 - [BCPL deploy pipeline](deploy-pipeline.md) — EC2 pulls from GitHub; commits/task-merges in Replit are invisible to prod until `git push origin main`
 - [Edit tool $ quirk](edit-tool-dollar-quirk.md) — replacements containing ` sequences (SQL regex anchors) can corrupt files; use WriteFile instead
 - [Per-page navbars](per-page-navbars.md) — no shared navbar component; every page has its own desktop + mobile nav copy; grep desk-nav AND each mobile overlay or you WILL miss pages
-- [Dev preview API gap](dev-preview-api.md) — frontend /api calls 404 in Replit preview (no vite proxy; prod nginx routes /api); test against localhost:8080, send-otp returns devOtp
+- [Dev preview API gap](dev-preview-api.md) — frontend /api calls 404 in Replit preview (no vite proxy; prod nginx routes /api); test against localhost:8080; OTP readable from otp_sessions table
+- [Stale lib/db dist declarations](db-schema-dist-declarations.md) — after schema changes run `tsc --build lib/db --force` or typecheck shows phantom "no exported member" errors; runtime uses src, not dist

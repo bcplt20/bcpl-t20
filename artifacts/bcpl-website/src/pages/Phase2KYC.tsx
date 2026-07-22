@@ -25,10 +25,28 @@ const PROFESSIONS = [
   { id:'Other',                                       icon:'✨', label:'Other' },
 ];
 
+const EXPERIENCE_OPTS = ['<1 yr','1–3 yr','3–5 yr','5–10 yr','10+ yr'];
+const TSHIRT_OPTS     = ['S','M','L','XL','XXL'];
+const RELATION_OPTS   = ['Father','Mother','Spouse','Friend','Other'];
+const BLOOD_OPTS      = ['A+','A-','B+','B-','AB+','AB-','O+','O-'];
+
 type LoadState = 'loading' | 'ok' | 'not_eligible' | 'already_done' | 'error';
 
 function validateAadhaar(v: string) { return /^\d{12}$/.test(v.replace(/\s/g, '')); }
 function validatePan(v: string)     { return /^[A-Z]{5}\d{4}[A-Z]$/.test(v.toUpperCase()); }
+
+function ChipRow({ options, value, onChange, minWidth }: { options: string[]; value: string; onChange: (v: string) => void; minWidth?: number }) {
+  return (
+    <div style={{ display:'flex', flexWrap:'wrap', gap:8, marginTop:4 }}>
+      {options.map(o => (
+        <button key={o} onClick={() => onChange(o)}
+          style={{ padding:'9px 14px', minWidth, borderRadius:10, border: value===o ? '2px solid #FF7A29' : '1px solid rgba(255,255,255,0.1)', background: value===o ? 'rgba(255,122,41,0.12)' : 'rgba(255,255,255,0.03)', color: value===o ? '#FF7A29' : 'rgba(255,255,255,0.6)', fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:12, cursor:'pointer', textAlign:'center', transition:'all .18s' }}>
+          {o}
+        </button>
+      ))}
+    </div>
+  );
+}
 
 export function Phase2KYC() {
   const [loadState, setLoadState]   = useState<LoadState>('loading');
@@ -37,7 +55,20 @@ export function Phase2KYC() {
   const [role, setRole]             = useState('');
   const [menuOpen, setMenuOpen]     = useState(false);
 
-  // Form fields
+  // Employment details (moved here from the pre-payment form)
+  const [company, setCompany]       = useState('');
+  const [jobTitle, setJobTitle]     = useState('');
+  const [experience, setExperience] = useState('');
+  const [linkedin, setLinkedin]     = useState('');
+  const [tshirt, setTshirt]         = useState('');
+  // Emergency contact
+  const [ecName, setEcName]         = useState('');
+  const [ecRel, setEcRel]           = useState('');
+  const [ecPhone, setEcPhone]       = useState('');
+  const [ecPhoneErr, setEcPhoneErr] = useState('');
+  const [bloodGroup, setBloodGroup] = useState('');
+
+  // KYC form fields
   const [profession, setProfession] = useState('');
   const [aadhaar, setAadhaar]       = useState('');
   const [pan, setPan]               = useState('');
@@ -76,7 +107,28 @@ export function Phase2KYC() {
     })();
   }, []);
 
-  const canSubmit = !!profession && !!aadhaar && !!pan && !aadhaarErr && !panErr;
+  // Players who filled the old pre-payment form saved these in sessionStorage —
+  // recover them so nobody has to type twice.
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem('bcpl_p2_profile');
+      if (!saved) return;
+      const p = JSON.parse(saved);
+      if (p.company)    setCompany(p.company);
+      if (p.jobTitle)   setJobTitle(p.jobTitle);
+      if (p.experience) setExperience(p.experience);
+      if (p.linkedin)   setLinkedin(p.linkedin);
+      if (p.tshirt)     setTshirt(p.tshirt);
+      if (p.ecName)     setEcName(p.ecName);
+      if (p.ecRel)      setEcRel(p.ecRel);
+      if (p.ecPhone && /^\d{10}$/.test(p.ecPhone)) setEcPhone(p.ecPhone);
+      if (p.bloodGroup) setBloodGroup(p.bloodGroup);
+    } catch {}
+  }, []);
+
+  const employmentOk = !!(company.trim() && jobTitle.trim() && experience && tshirt);
+  const emergencyOk  = !!(ecName.trim() && ecRel && /^\d{10}$/.test(ecPhone) && bloodGroup);
+  const canSubmit = employmentOk && emergencyOk && !!profession && !!aadhaar && !!pan && !aadhaarErr && !panErr;
 
   const handleAadhaarBlur = () => {
     if (aadhaar && !validateAadhaar(aadhaar)) setAadhaarErr('Aadhaar must be 12 digits');
@@ -86,10 +138,15 @@ export function Phase2KYC() {
     if (pan && !validatePan(pan)) setPanErr('Enter a valid PAN (e.g. ABCDE1234F)');
     else setPanErr('');
   };
+  const handleEcPhoneBlur = () => {
+    if (ecPhone && !/^\d{10}$/.test(ecPhone)) setEcPhoneErr('Enter a 10-digit mobile number');
+    else setEcPhoneErr('');
+  };
 
   const handleSubmit = async () => {
     if (!validateAadhaar(aadhaar)) { setAadhaarErr('Aadhaar must be 12 digits'); return; }
     if (!validatePan(pan))         { setPanErr('Enter a valid PAN (e.g. ABCDE1234F)'); return; }
+    if (!/^\d{10}$/.test(ecPhone)) { setEcPhoneErr('Enter a 10-digit mobile number'); return; }
 
     setSubmitting(true); setSubmitErr('');
     try {
@@ -98,7 +155,18 @@ export function Phase2KYC() {
         profession,
         aadhaarNumber: aadhaar.replace(/\s/g, ''),
         panNumber: pan.toUpperCase(),
+        company: company.trim(),
+        jobTitle: jobTitle.trim(),
+        experience,
+        linkedin: linkedin.trim() || undefined,
+        tshirtSize: tshirt,
+        emergencyName: ecName.trim(),
+        emergencyRelation: ecRel,
+        emergencyPhone: ecPhone,
+        bloodGroup,
       });
+      // Details are now stored server-side — the sessionStorage copy is stale.
+      try { sessionStorage.removeItem('bcpl_p2_profile'); } catch {}
       setKycMsg(result.message);
       setKycId(result.kycId);
 
@@ -165,6 +233,10 @@ export function Phase2KYC() {
   const inp: React.CSSProperties = {
     width:'100%', background:'#060B18', border:'1px solid #1E293B', borderRadius:10, color:'#E2E8F0',
     padding:'12px 14px', fontSize:15, outline:'none', fontFamily:'Inter,sans-serif', letterSpacing:'.05em', boxSizing:'border-box',
+  };
+  const lbl: React.CSSProperties = {
+    display:'block', fontSize:10, fontWeight:700, letterSpacing:'.12em', color:'rgba(255,255,255,0.4)',
+    fontFamily:'Montserrat,sans-serif', marginBottom:8, textTransform:'uppercase',
   };
 
   return (
@@ -244,9 +316,9 @@ export function Phase2KYC() {
         {/* Page header */}
         <div style={{ borderLeft:'3px solid #FF7A29', paddingLeft:14, marginBottom:32 }}>
           <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(20px,4vw,28px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em', marginBottom:4 }}>
-            {kycStatus === 'verified' ? '✅ KYC Verified' : 'Identity Verification (KYC)'}
+            {kycStatus === 'verified' ? '✅ KYC Verified' : 'Player Details & KYC'}
           </div>
-          <div style={{ fontSize:13, color:'rgba(255,255,255,0.45)', marginBottom:10 }}>Required for BCCI compliance and franchise contract records</div>
+          <div style={{ fontSize:13, color:'rgba(255,255,255,0.45)', marginBottom:10 }}>Employment, emergency contact and identity verification — required for BCCI compliance and franchise contract records</div>
           <div style={{ display:'inline-flex', alignItems:'center', gap:6, padding:'5px 14px', fontSize:10, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.14em',
             background: kycStatus === 'verified' ? 'rgba(34,197,94,0.1)' : 'rgba(255,122,41,0.1)',
             border: kycStatus === 'verified' ? '1px solid rgba(34,197,94,0.35)' : '1px solid rgba(255,122,41,0.3)',
@@ -319,13 +391,75 @@ export function Phase2KYC() {
 
               <div style={{ marginTop:16, textAlign:'center', fontSize:12, color:'rgba(255,255,255,0.3)' }}>
                 OTP expires in 10 minutes. Didn't receive?{' '}
-                <button onClick={handleSubmit} style={{ background:'none', border:'none', color:'#FF7A29', cursor:'pointer', fontSize:12, fontWeight:700, padding:0 }}>Resend</button>
+                <button onClick={handleSubmit} disabled={submitting} style={{ background:'none', border:'none', color: submitting ? 'rgba(255,255,255,0.3)' : '#FF7A29', cursor: submitting ? 'wait' : 'pointer', fontSize:12, fontWeight:700, padding:0 }}>{submitting ? 'Resending…' : 'Resend'}</button>
               </div>
+              {submitErr && (
+                <div style={{ fontSize:11, color:'#EF4444', marginTop:10, textAlign:'center' }}>⚠ {submitErr}</div>
+              )}
             </div>
           </div>
         ) : (
-          /* Main KYC Form */
+          /* Main form: employment + emergency contact + KYC */
           <>
+            {/* Employment Details (moved here from the pre-payment form) */}
+            <div style={{ background:'#0A1727', border:'1px solid rgba(255,122,41,0.2)', borderRadius:12, padding:'20px 18px', marginBottom:24 }}>
+              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, color:'#FF7A29', letterSpacing:'.06em', marginBottom:4 }}>EMPLOYMENT DETAILS *</div>
+              <div style={{ fontSize:12, color:'rgba(255,255,255,0.35)', marginBottom:16 }}>BCPL is for working professionals — tell us where you work</div>
+              <div style={{ display:'grid', gap:18 }}>
+                <div>
+                  <label style={lbl}>Company / Organisation *</label>
+                  <input style={inp} placeholder="e.g. Infosys, Tata Consultancy…" value={company} onChange={e => setCompany(e.target.value)} />
+                </div>
+                <div>
+                  <label style={lbl}>Job Title / Designation *</label>
+                  <input style={inp} placeholder="e.g. Senior Engineer, Product Manager…" value={jobTitle} onChange={e => setJobTitle(e.target.value)} />
+                </div>
+                <div>
+                  <label style={lbl}>Years of Experience *</label>
+                  <ChipRow options={EXPERIENCE_OPTS} value={experience} onChange={setExperience} />
+                </div>
+                <div>
+                  <label style={lbl}>LinkedIn Profile <span style={{ color:'rgba(255,255,255,0.22)', textTransform:'none' }}>(optional)</span></label>
+                  <input style={inp} placeholder="linkedin.com/in/yourprofile" value={linkedin} onChange={e => setLinkedin(e.target.value)} />
+                </div>
+                <div>
+                  <label style={lbl}>T-Shirt Size *</label>
+                  <ChipRow options={TSHIRT_OPTS} value={tshirt} onChange={setTshirt} minWidth={48} />
+                </div>
+              </div>
+            </div>
+
+            {/* Emergency Contact */}
+            <div style={{ background:'#0A1727', border:'1px solid rgba(255,122,41,0.2)', borderRadius:12, padding:'20px 18px', marginBottom:24 }}>
+              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, color:'#FF7A29', letterSpacing:'.06em', marginBottom:4 }}>EMERGENCY CONTACT *</div>
+              <div style={{ fontSize:12, color:'rgba(255,255,255,0.35)', marginBottom:16 }}>Required for physical trials — who should we call in an emergency?</div>
+              <div style={{ display:'grid', gap:18 }}>
+                <div>
+                  <label style={lbl}>Contact Name *</label>
+                  <input style={inp} placeholder="Full name of emergency contact" value={ecName} onChange={e => setEcName(e.target.value)} />
+                </div>
+                <div>
+                  <label style={lbl}>Relationship *</label>
+                  <ChipRow options={RELATION_OPTS} value={ecRel} onChange={setEcRel} />
+                </div>
+                <div>
+                  <label style={lbl}>Phone Number *</label>
+                  <input
+                    style={{ ...inp, borderColor: ecPhoneErr ? '#EF4444' : (/^\d{10}$/.test(ecPhone) ? '#22C55E' : '#1E293B') }}
+                    type="tel" inputMode="numeric" maxLength={10} placeholder="10-digit mobile number"
+                    value={ecPhone}
+                    onChange={e => { setEcPhone(e.target.value.replace(/\D/g,'')); setEcPhoneErr(''); }}
+                    onBlur={handleEcPhoneBlur}
+                  />
+                  {ecPhoneErr && <div style={{ fontSize:11, color:'#EF4444', marginTop:6 }}>⚠ {ecPhoneErr}</div>}
+                </div>
+                <div>
+                  <label style={lbl}>Blood Group *</label>
+                  <ChipRow options={BLOOD_OPTS} value={bloodGroup} onChange={setBloodGroup} minWidth={48} />
+                </div>
+              </div>
+            </div>
+
             {/* Profession selector */}
             <div style={{ background:'#0A1727', border:'1px solid rgba(255,122,41,0.2)', borderRadius:12, padding:'20px 18px', marginBottom:24 }}>
               <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, color:'#FF7A29', letterSpacing:'.06em', marginBottom:4 }}>YOUR PROFESSION *</div>
@@ -426,7 +560,9 @@ export function Phase2KYC() {
             </button>
             {!canSubmit && (
               <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginTop:10 }}>
-                {!profession ? '• Select your profession' : ''}
+                {!employmentOk ? '• Complete employment details' : ''}
+                {!emergencyOk ? ' • Complete emergency contact (10-digit phone + blood group)' : ''}
+                {!profession ? ' • Select your profession' : ''}
                 {!aadhaar || !validateAadhaar(aadhaar) ? ' • Enter valid Aadhaar (12 digits)' : ''}
                 {!pan || !validatePan(pan) ? ' • Enter valid PAN' : ''}
               </div>

@@ -3,6 +3,7 @@ import { db } from "@workspace/db";
 import {
   registrationsTable, kycRecordsTable,
   usersTable, notificationLogsTable,
+  playerProfilesTable,
 } from "@workspace/db/schema";
 import { eq, and, desc, sql } from "drizzle-orm";
 import { requireAuth, type AuthRequest } from "../middlewares/auth";
@@ -30,6 +31,30 @@ export async function ensureKycPanVerified(): Promise<void> {
     WHERE status = 'verified' AND aadhaar_verified = false
   `);
   console.log("[MIGRATE] kyc_records.pan_verified + aadhaar_verified ready");
+}
+
+// ─── Startup migration: player_profiles table (employment + emergency contact) ──
+// These details used to live only in browser sessionStorage; now they are
+// collected on the KYC page (after Phase 2 payment) and stored here.
+export async function ensurePlayerProfiles(): Promise<void> {
+  await db.execute(sql`
+    CREATE TABLE IF NOT EXISTS player_profiles (
+      id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+      registration_id uuid NOT NULL UNIQUE REFERENCES registrations(id),
+      company varchar(150),
+      job_title varchar(150),
+      experience varchar(20),
+      linkedin varchar(200),
+      tshirt_size varchar(5),
+      emergency_name varchar(100),
+      emergency_relation varchar(30),
+      emergency_phone varchar(15),
+      blood_group varchar(5),
+      created_at timestamptz NOT NULL DEFAULT now(),
+      updated_at timestamptz NOT NULL DEFAULT now()
+    )
+  `);
+  console.log("[MIGRATE] player_profiles ready");
 }
 
 export const PROFESSIONS = [
@@ -71,20 +96,33 @@ export async function markKycVerified(kycId: string, registrationId: string, use
 }
 
 // ─── POST /api/kyc/initiate ───────────────────────────────────────────────────
-// Verifies PAN instantly + initiates Aadhaar OTP
+// Verifies PAN instantly + initiates Aadhaar OTP.
+// Also stores employment + emergency-contact details (moved here from the
+// pre-payment form so players pay first, then fill the rest).
 router.post("/initiate", requireAuth, async (req: AuthRequest, res) => {
   const schema = z.object({
     registrationId: z.string().uuid(),
     profession:     z.enum(PROFESSIONS),
     aadhaarNumber:  z.string().regex(/^\d{12}$/, "Aadhaar must be 12 digits"),
     panNumber:      z.string().regex(/^[A-Z]{5}\d{4}[A-Z]$/, "Invalid PAN format"),
+    // Employment + emergency contact — optional so older clients that don't
+    // send them keep working; the new KYC form always sends them.
+    company:           z.string().trim().max(150).optional(),
+    jobTitle:          z.string().trim().max(150).optional(),
+    experience:        z.string().trim().max(20).optional(),
+    linkedin:          z.string().trim().max(200).optional(),
+    tshirtSize:        z.enum(["S", "M", "L", "XL", "XXL"]).optional(),
+    emergencyName:     z.string().trim().max(100).optional(),
+    emergencyRelation: z.string().trim().max(30).optional(),
+    emergencyPhone:    z.string().trim().regex(/^\d{10}$/, "Emergency contact number must be 10 digits").optional(),
+    bloodGroup:        z.enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]).optional(),
   });
   const parsed = schema.safeParse(req.body);
   if (!parsed.success) {
     return void res.status(400).json({ error: parsed.error.issues[0].message });
   }
 
-  const { registrationId, profession, aadhaarNumber, panNumber } = parsed.data;
+  const { registrationId, profession, aadhaarNumber, panNumber, ...profile } = parsed.data;
 
   const [reg] = await db.select().from(registrationsTable).where(
     and(
@@ -96,6 +134,28 @@ router.post("/initiate", requireAuth, async (req: AuthRequest, res) => {
   if (!reg) return void res.status(404).json({ error: "Registration not found" });
   if (reg.phase2Status !== "payment_done") {
     return void res.status(400).json({ error: "Complete Phase 2 payment first" });
+  }
+
+  // Save employment + emergency details BEFORE the KYC vendor calls, so the
+  // player never has to re-type them even if PAN/Aadhaar verification fails.
+  const profileValues = {
+    company:           profile.company           || undefined,
+    jobTitle:          profile.jobTitle          || undefined,
+    experience:        profile.experience        || undefined,
+    linkedin:          profile.linkedin          || undefined,
+    tshirtSize:        profile.tshirtSize        || undefined,
+    emergencyName:     profile.emergencyName     || undefined,
+    emergencyRelation: profile.emergencyRelation || undefined,
+    emergencyPhone:    profile.emergencyPhone    || undefined,
+    bloodGroup:        profile.bloodGroup        || undefined,
+  };
+  if (Object.values(profileValues).some(v => v !== undefined)) {
+    await db.insert(playerProfilesTable)
+      .values({ registrationId, ...profileValues })
+      .onConflictDoUpdate({
+        target: playerProfilesTable.registrationId,
+        set: { ...profileValues, updatedAt: new Date() },
+      });
   }
 
   // Get player name for PAN verification

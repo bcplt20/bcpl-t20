@@ -358,6 +358,16 @@ export const initiateKyc = (data: {
   profession: string;
   aadhaarNumber: string;
   panNumber: string;
+  // Employment + emergency contact (collected on the KYC page after payment)
+  company?: string;
+  jobTitle?: string;
+  experience?: string;
+  linkedin?: string;
+  tshirtSize?: string;
+  emergencyName?: string;
+  emergencyRelation?: string;
+  emergencyPhone?: string;
+  bloodGroup?: string;
 }) => req<{
   success: boolean; kycId: string; status: string; message: string;
   aadhaarRefId?: string; panVerified?: boolean;

@@ -17,6 +17,7 @@ import {
   kycRecordsTable,
   phase1PaymentsTable,
   trialVenuesTable,
+  playerProfilesTable,
 } from "@workspace/db/schema";
 import { eq, desc, count, and } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
@@ -403,10 +404,11 @@ router.get("/kyc", async (req, res) => {
     const { status } = req.query as Record<string, string>;
 
     const rows = await db
-      .select({ kyc: kycRecordsTable, reg: registrationsTable, user: usersTable })
+      .select({ kyc: kycRecordsTable, reg: registrationsTable, user: usersTable, profile: playerProfilesTable })
       .from(kycRecordsTable)
       .leftJoin(registrationsTable, eq(kycRecordsTable.registrationId, registrationsTable.id))
       .leftJoin(usersTable, eq(registrationsTable.userId, usersTable.id))
+      .leftJoin(playerProfilesTable, eq(playerProfilesTable.registrationId, kycRecordsTable.registrationId))
       .orderBy(desc(kycRecordsTable.createdAt));
 
     let filtered = rows;
@@ -430,6 +432,16 @@ router.get("/kyc", async (req, res) => {
       role:           r.reg?.role ?? "",
       trialCity:      r.reg?.trialCity ?? "",
       phase2Status:   r.reg?.phase2Status ?? null,
+      // Employment + emergency contact (collected on the KYC page)
+      company:           r.profile?.company ?? null,
+      jobTitle:          r.profile?.jobTitle ?? null,
+      experience:        r.profile?.experience ?? null,
+      linkedin:          r.profile?.linkedin ?? null,
+      tshirtSize:        r.profile?.tshirtSize ?? null,
+      emergencyName:     r.profile?.emergencyName ?? null,
+      emergencyRelation: r.profile?.emergencyRelation ?? null,
+      emergencyPhone:    r.profile?.emergencyPhone ?? null,
+      bloodGroup:        r.profile?.bloodGroup ?? null,
     }));
 
     res.json({ kyc, total: kyc.length });
