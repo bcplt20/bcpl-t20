@@ -3,6 +3,7 @@ import { logger } from "./lib/logger";
 import { sendVideoReminders } from "./routes/video";
 import { ensureRegNumbers } from "./routes/register";
 import { ensureKycPanVerified, ensurePlayerProfiles } from "./routes/kyc";
+import { ensureTeams } from "./routes/teams";
 import { reconcileAbandonedPayments } from "./lib/reconcilePayments";
 
 const port = Number(process.env["PORT"] ?? "8080");
@@ -20,6 +21,7 @@ async function start() {
       await ensureRegNumbers();
       await ensureKycPanVerified();
       await ensurePlayerProfiles();
+      await ensureTeams();
       logger.info("startup migrations ensured");
       break;
     } catch (e) {

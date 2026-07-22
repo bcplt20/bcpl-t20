@@ -1,54 +1,57 @@
 import React from 'react';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { NavUser } from '../components/NavUser';
+import { getTeams, type ApiTeam } from '../lib/api';
 
-const L = import.meta.env.BASE_URL + "bcpl-assets/logos/";
-
-const ALL_TEAMS = [
-  { name:"Rajasthan Scorchers", abbr:"RS", city:"Jaipur",     color:"#E97B6B", logo:`${L}rajasthan_scorchers.png` },
-  { name:"Punjab Warriors",     abbr:"PW", city:"Chandigarh", color:"#DC2626", logo:`${L}punjab_warriors.png`     },
-  { name:"Kolkata Tigers",      abbr:"KT", city:"Kolkata",    color:"#F97316", logo:`${L}kolkata_tigers.png`      },
-  { name:"Lucknow Nawabs",      abbr:"LN", city:"Lucknow",    color:"#F59E0B", logo:`${L}lucknow_nawabs.png`      },
-  { name:"Mumbai Mavericks",    abbr:"MM", city:"Mumbai",     color:"#3B82F6", logo:`${L}mumbai_mavericks.png`    },
-  { name:"Hyderabad Hawks",     abbr:"HH", city:"Hyderabad",  color:"#16A34A", logo:`${L}hyderabad_hawks.png`     },
-  { name:"Delhi Suryas",        abbr:"DS", city:"Delhi",      color:"#6366F1", logo:`${L}delhi_suryas.png`        },
-  { name:"Chennai Thalaivas",   abbr:"CT", city:"Chennai",    color:"#2563EB", logo:`${L}chennai_thalaivas.png`   },
-  { name:"Ahmedabad Lions",     abbr:"AL", city:"Ahmedabad",  color:"#B91C1C", logo:`${L}ahmedabad_lions.png`     },
-  { name:"Bengaluru Rockets",   abbr:"BR", city:"Bengaluru",  color:"#EF4444", logo:`${L}bengaluru_rockets.png`   },
+/* Canonical display order (Group A = first 5, Group B = last 5) */
+const CANON_ORDER = [
+  "Rajasthan Scorchers", "Punjab Warriors", "Kolkata Tigers", "Lucknow Nawabs", "Mumbai Mavericks",
+  "Hyderabad Hawks", "Delhi Suryas", "Chennai Thalaivas", "Ahmedabad Lions", "Bengaluru Rockets",
 ];
-const GROUP_A = ALL_TEAMS.slice(0,5);
-const GROUP_B = ALL_TEAMS.slice(5);
 
-function TeamCard({ t, i }: { t:typeof ALL_TEAMS[0]; i:number }) {
+const asset = (url: string) =>
+  !url ? "" : url.startsWith("data:") || url.startsWith("http") ? url : import.meta.env.BASE_URL + url.replace(/^\//, "");
+
+const abbrOf = (name: string) => name.split(/\s+/).map(w => w[0]).join("").slice(0, 2).toUpperCase();
+
+type CardTeam = { slug: string; name: string; abbr: string; city: string; color: string; logo: string; playerCount: number };
+
+function TeamCard({ t }: { t: CardTeam }) {
   const [hov, setHov] = React.useState(false);
   return (
-    <div onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
-      style={{ background:"#0A1727", border:`1.5px solid ${hov ? t.color : "rgba(255,255,255,0.07)"}`, borderRadius:12, borderTop:`3px solid ${t.color}`, padding:"20px 18px", transition:"all 0.25s", boxShadow:hov?`0 12px 40px ${t.color}22,0 0 0 1px ${t.color}33`:"none", cursor:"pointer", position:"relative", overflow:"hidden" }}>
-      {/* Watermark logo */}
-      <img src={t.logo} alt={t.name} style={{ position:"absolute", right:"-6%", bottom:"-6%", width:"72%", height:"72%", objectFit:"contain", opacity:0.055, pointerEvents:"none", transition:"opacity 0.3s", filter:"grayscale(20%)" }} />
+    <a href={`/team/${t.slug}`} style={{ textDecoration: "none", color: "inherit", display: "block" }}>
+      <div onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
+        style={{ background:"#0A1727", border:`1.5px solid ${hov ? t.color : "rgba(255,255,255,0.07)"}`, borderRadius:12, borderTop:`3px solid ${t.color}`, padding:"20px 18px", transition:"all 0.25s", boxShadow:hov?`0 12px 40px ${t.color}22,0 0 0 1px ${t.color}33`:"none", cursor:"pointer", position:"relative", overflow:"hidden" }}>
+        {/* Watermark logo */}
+        {t.logo && <img src={t.logo} alt={t.name} style={{ position:"absolute", right:"-6%", bottom:"-6%", width:"72%", height:"72%", objectFit:"contain", opacity:0.055, pointerEvents:"none", transition:"opacity 0.3s", filter:"grayscale(20%)" }} />}
 
-      {/* Top row: logo badge + name */}
-      <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:16, position:"relative", zIndex:1 }}>
-        <div style={{ width:52, height:52, background:"rgba(255,255,255,0.96)", borderRadius:14, border:`2px solid ${t.color}55`, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", boxShadow:`0 6px 20px ${t.color}44` }}>
-          <img src={t.logo} alt={t.name} style={{ width:"87%", height:"87%", objectFit:"contain" }} />
+        {/* Top row: logo badge + name */}
+        <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:16, position:"relative", zIndex:1 }}>
+          <div style={{ width:52, height:52, background:"rgba(255,255,255,0.96)", borderRadius:14, border:`2px solid ${t.color}55`, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", boxShadow:`0 6px 20px ${t.color}44` }}>
+            {t.logo
+              ? <img src={t.logo} alt={t.name} style={{ width:"87%", height:"87%", objectFit:"contain" }} />
+              : <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:16, color:t.color }}>{t.abbr}</span>}
+          </div>
+          <div>
+            <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:16, color:"#fff", lineHeight:1.2, marginBottom:4 }}>{t.name}</div>
+            <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:11, color:t.color, letterSpacing:".08em", textTransform:"uppercase" }}>{t.city}</div>
+          </div>
         </div>
-        <div>
-          <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:16, color:"#fff", lineHeight:1.2, marginBottom:4 }}>{t.name}</div>
-          <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:11, color:t.color, letterSpacing:".08em", textTransform:"uppercase" }}>{t.city}</div>
+
+        {/* Season tag */}
+        <div style={{ marginBottom:14, position:"relative", zIndex:1 }}>
+          <span style={{ background:`${t.color}12`, border:`1px solid ${t.color}30`, borderRadius:8, color:t.color, fontSize:10, fontWeight:700, padding:"3px 10px", fontFamily:"Montserrat,sans-serif", letterSpacing:".06em" }}>
+            {t.playerCount > 0 ? `SQUAD · ${t.playerCount} PLAYER${t.playerCount > 1 ? "S" : ""}` : "SEASON 5 FRANCHISE"}
+          </span>
+        </div>
+
+        {/* View squad link */}
+        <div style={{ display:"flex", alignItems:"center", gap:6, color:"#FF7A29", fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:12, position:"relative", zIndex:1 }}>
+          <span>View Squad</span>
+          <span style={{ transition:"transform 0.2s", transform:hov?"translateX(4px)":"none" }}>→</span>
         </div>
       </div>
-
-      {/* Season tag */}
-      <div style={{ marginBottom:14, position:"relative", zIndex:1 }}>
-        <span style={{ background:`${t.color}12`, border:`1px solid ${t.color}30`, borderRadius:8, color:t.color, fontSize:10, fontWeight:700, padding:"3px 10px", fontFamily:"Montserrat,sans-serif", letterSpacing:".06em" }}>SEASON 5 FRANCHISE</span>
-      </div>
-
-      {/* View squad link */}
-      <div style={{ display:"flex", alignItems:"center", gap:6, color:"#FF7A29", fontFamily:"Montserrat,sans-serif", fontWeight:700, fontSize:12, position:"relative", zIndex:1 }}>
-        <span>View Squad</span>
-        <span style={{ transition:"transform 0.2s", transform:hov?"translateX(4px)":"none" }}>→</span>
-      </div>
-    </div>
+    </a>
   );
 }
 
@@ -69,6 +72,26 @@ const ROUTE_MAP: Record<string,string> = {
 
 export function Teams() {
   const [menuOpen, setMenuOpen] = React.useState(false);
+  const [teams, setTeams] = React.useState<CardTeam[] | null>(null);
+  const [loadErr, setLoadErr] = React.useState("");
+
+  React.useEffect(() => {
+    getTeams(5)
+      .then(d => {
+        const ordered = [...(d.teams || [])].sort((a, b) => {
+          const ia = CANON_ORDER.indexOf(a.name), ib = CANON_ORDER.indexOf(b.name);
+          return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib) || a.name.localeCompare(b.name);
+        });
+        setTeams(ordered.map((t: ApiTeam) => ({
+          slug: t.slug, name: t.name, abbr: abbrOf(t.name), city: t.city,
+          color: t.color || "#FF7A29", logo: asset(t.logoUrl), playerCount: t.playerCount || 0,
+        })));
+      })
+      .catch(e => setLoadErr(e?.message || "Could not load teams"));
+  }, []);
+
+  const groupA = teams ? teams.slice(0, 5) : [];
+  const groupB = teams ? teams.slice(5) : [];
 
   return (
     <div style={{ background:"#06101E", color:"#fff", minHeight:"100vh", overflowX:"hidden", fontFamily:"Inter,sans-serif" }}>
@@ -180,13 +203,17 @@ export function Teams() {
           </p>
 
           {/* Logo parade */}
-          <div style={{ display:"flex", justifyContent:"center", flexWrap:"wrap", gap:10, marginBottom:0 }}>
-            {ALL_TEAMS.map(t=>(
-              <div key={t.abbr} style={{ width:48, height:48, background:"rgba(255,255,255,0.96)", borderRadius:14, padding:5, display:"flex", alignItems:"center", justifyContent:"center", boxShadow:`0 4px 16px ${t.color}44`, border:`2px solid ${t.color}55` }}>
-                <img src={t.logo} alt={t.abbr} style={{ width:"88%", height:"88%", objectFit:"contain" }} />
-              </div>
-            ))}
-          </div>
+          {teams && (
+            <div style={{ display:"flex", justifyContent:"center", flexWrap:"wrap", gap:10, marginBottom:0 }}>
+              {teams.map(t=>(
+                <a key={t.slug} href={`/team/${t.slug}`} style={{ width:48, height:48, background:"rgba(255,255,255,0.96)", borderRadius:14, padding:5, display:"flex", alignItems:"center", justifyContent:"center", boxShadow:`0 4px 16px ${t.color}44`, border:`2px solid ${t.color}55`, textDecoration:"none" }}>
+                  {t.logo
+                    ? <img src={t.logo} alt={t.abbr} style={{ width:"88%", height:"88%", objectFit:"contain" }} />
+                    : <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:13, color:t.color }}>{t.abbr}</span>}
+                </a>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -202,33 +229,55 @@ export function Teams() {
         </div>
       </section>
 
+      {/* LOADING / ERROR */}
+      {!teams && !loadErr && (
+        <section style={{ padding:"0 0 56px" }}>
+          <div className="wrap" style={{ textAlign:"center", color:"rgba(255,255,255,0.4)", fontFamily:"Inter,sans-serif", fontSize:14, padding:"40px 0" }}>
+            Loading teams…
+          </div>
+        </section>
+      )}
+      {loadErr && (
+        <section style={{ padding:"0 0 56px" }}>
+          <div className="wrap">
+            <div style={{ background:"rgba(232,73,63,0.08)", border:"1px solid rgba(232,73,63,0.3)", borderRadius:12, padding:"18px 20px", textAlign:"center", color:"#F87171", fontFamily:"Inter,sans-serif", fontSize:14 }}>
+              Could not load teams right now — please refresh the page to try again.
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* GROUP A */}
-      <section style={{ padding:"0 0 56px" }}>
-        <div className="wrap">
-          <div style={{ display:"flex", alignItems:"center", gap:14, marginBottom:28 }}>
-            <div style={{ flex:1, height:1, background:"linear-gradient(90deg,rgba(255,122,41,0.7),transparent)" }}/>
-            <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:12, color:"#FF7A29", letterSpacing:".15em" }}>GROUP A</span>
-            <div style={{ flex:1, height:1, background:"linear-gradient(270deg,rgba(255,122,41,0.7),transparent)" }}/>
+      {teams && groupA.length > 0 && (
+        <section style={{ padding:"0 0 56px" }}>
+          <div className="wrap">
+            <div style={{ display:"flex", alignItems:"center", gap:14, marginBottom:28 }}>
+              <div style={{ flex:1, height:1, background:"linear-gradient(90deg,rgba(255,122,41,0.7),transparent)" }}/>
+              <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:12, color:"#FF7A29", letterSpacing:".15em" }}>GROUP A</span>
+              <div style={{ flex:1, height:1, background:"linear-gradient(270deg,rgba(255,122,41,0.7),transparent)" }}/>
+            </div>
+            <div className="teams-grid">
+              {groupA.map(t=><TeamCard key={t.slug} t={t}/>)}
+            </div>
           </div>
-          <div className="teams-grid">
-            {GROUP_A.map((t,i)=><TeamCard key={t.abbr} t={t} i={i}/>)}
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* GROUP B */}
-      <section style={{ padding:"0 0 56px" }}>
-        <div className="wrap">
-          <div style={{ display:"flex", alignItems:"center", gap:14, marginBottom:28 }}>
-            <div style={{ flex:1, height:1, background:"linear-gradient(90deg,rgba(255,122,41,0.7),transparent)" }}/>
-            <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:12, color:"#FF7A29", letterSpacing:".15em" }}>GROUP B</span>
-            <div style={{ flex:1, height:1, background:"linear-gradient(270deg,rgba(255,122,41,0.7),transparent)" }}/>
+      {teams && groupB.length > 0 && (
+        <section style={{ padding:"0 0 56px" }}>
+          <div className="wrap">
+            <div style={{ display:"flex", alignItems:"center", gap:14, marginBottom:28 }}>
+              <div style={{ flex:1, height:1, background:"linear-gradient(90deg,rgba(255,122,41,0.7),transparent)" }}/>
+              <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:12, color:"#FF7A29", letterSpacing:".15em" }}>GROUP B</span>
+              <div style={{ flex:1, height:1, background:"linear-gradient(270deg,rgba(255,122,41,0.7),transparent)" }}/>
+            </div>
+            <div className="teams-grid">
+              {groupB.map(t=><TeamCard key={t.slug} t={t}/>)}
+            </div>
           </div>
-          <div className="teams-grid">
-            {GROUP_B.map((t,i)=><TeamCard key={t.abbr} t={t} i={i}/>)}
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* CTA */}
       <section style={{ padding:"0 0 80px" }}>

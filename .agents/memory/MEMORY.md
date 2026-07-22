@@ -5,3 +5,5 @@
 - [Per-page navbars](per-page-navbars.md) — no shared navbar component; every page has its own desktop + mobile nav copy; grep desk-nav AND each mobile overlay or you WILL miss pages
 - [Dev preview API gap](dev-preview-api.md) — frontend /api calls 404 in Replit preview (no vite proxy; prod nginx routes /api); test against localhost:8080; OTP readable from otp_sessions table
 - [Stale lib/db dist declarations](db-schema-dist-declarations.md) — after schema changes run `tsc --build lib/db --force` or typecheck shows phantom "no exported member" errors; runtime uses src, not dist
+- [Express req.params typing](express-params-string.md) — req.params.X types as string|string[] here; wrap in String() before drizzle eq() or tsc fails
+- [Auction squad link](auction-squad-link.md) — sold players carry stats.regId; API enforces one-squad-per-registration (409); pool excludes taken regIds

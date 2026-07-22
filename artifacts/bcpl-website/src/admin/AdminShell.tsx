@@ -103,7 +103,7 @@ function Icon({ ch }: { ch: string }) {
   );
 }
 
-function renderView(id: string) {
+function renderView(id: string, setActive: (viewId: string) => void) {
   switch (id) {
     case "dashboard":      return <DashboardView />;
     case "users":          return <UsersView />;
@@ -114,7 +114,7 @@ function renderView(id: string) {
     case "affiliates":     return <AffiliatesView />;
     case "push":           return <PushNotificationsView />;
     case "content_cal":    return <ContentCalendarView />;
-    case "matches":        return <MatchesView />;
+    case "matches":        return <MatchesView onOpenScoring={() => setActive("live_scoring")} />;
     case "live_scoring":   return <LiveScoringView />;
     case "teams":          return <TeamsView />;
     case "selection":      return <SelectionView />;
@@ -399,7 +399,7 @@ export default function AdminShell() {
 
         {/* Content */}
         <main style={{ flex:1, overflowY:"auto", background:"#060B18", padding:24 }}>
-          {renderView(active)}
+          {renderView(active, setActive)}
         </main>
       </div>
     </div>

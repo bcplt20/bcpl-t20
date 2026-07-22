@@ -7,6 +7,7 @@ import videoRouter    from "./video";
 import kycRouter      from "./kyc";
 import userRouter     from "./user";
 import matchesRouter  from "./matches";
+import teamsRouter    from "./teams";
 import scoringRouter  from "./scoring";
 import pointsRouter   from "./points";
 import adminRouter    from "./admin";
@@ -24,6 +25,7 @@ router.use("/user",          userRouter);
 router.use("/matches",       matchesRouter);
 router.use("/scoring",       scoringRouter);
 router.use("/points-table",  pointsRouter);
+router.use("/teams",         teamsRouter);
 // Admin panel
 router.use("/admin",         adminRouter);
 

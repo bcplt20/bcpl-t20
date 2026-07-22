@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavUser } from '../components/NavUser';
 import { BCPLFooter } from '../components/BCPLFooter';
+import { getMatches } from '../lib/api';
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap');
@@ -157,27 +158,21 @@ interface Match {
   day: string;
   month: string;
   weekday: string;
-  dateKey: string;
+  matchNo: number;
   teamA: string;
-  teamAEmoji: string;
-  teamAFull: string;
   teamB: string;
-  teamBEmoji: string;
-  teamBFull: string;
   status: MatchStatus;
   venue: string;
   time: string;
   result?: string;
-  marquee?: boolean;
-  final?: boolean;
-  semifinal?: boolean;
   monthGroup: string;
+  sortKey: string;
 }
 
-// Season 4 fixtures will be published once trial phase is complete
-const ALL_MATCHES: Match[] = [];
-
-const TEAMS = ['All Teams','Mumbai Mavericks','Delhi Dynamos','Pune Panthers','Kolkata Knights','Ahmedabad Lions','Bangalore Bulls','Chennai Chiefs','Hyderabad Hawks','Jaipur Jaguars','Lucknow Nawabs'];
+type ApiMatchRow = {
+  id: string; matchNo: number; team1: string; team2: string; venue: string;
+  scheduledAt: string | null; status: string; winner: string | null; resultDesc: string | null;
+};
 
 function StatusPill({status}: {status: MatchStatus}) {
   if (status === 'LIVE') return (
@@ -199,14 +194,64 @@ function StatusPill({status}: {status: MatchStatus}) {
 export function Schedule() {
   const [activeTab, setActiveTab] = React.useState<'All'|'Upcoming'|'Completed'|'Live'>('All');
   const [teamFilter, setTeamFilter] = React.useState('All Teams');
+  const [apiMatches, setApiMatches] = React.useState<ApiMatchRow[] | null>(null);
+  const [loadErr, setLoadErr] = React.useState('');
 
-  const filtered = ALL_MATCHES.filter(m => {
+  React.useEffect(() => {
+    getMatches(5)
+      .then((d: any) => setApiMatches(((d as any).matches || []) as ApiMatchRow[]))
+      .catch((e: any) => setLoadErr(e?.message || 'Could not load fixtures'));
+  }, []);
+
+  const allMatches: Match[] = React.useMemo(() => {
+    if (!apiMatches) return [];
+    return apiMatches
+      .filter(m => m.status !== 'cancelled')
+      .map(m => {
+        const dt = m.scheduledAt ? new Date(m.scheduledAt) : null;
+        const fmt = (opt: Intl.DateTimeFormatOptions) =>
+          dt ? dt.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', ...opt }) : '';
+        const status: MatchStatus =
+          m.status === 'live' ? 'LIVE'
+          : (m.status === 'completed' || m.status === 'abandoned') ? 'COMPLETED'
+          : dt ? 'UPCOMING' : 'TBD';
+        return {
+          day: dt ? fmt({ day: '2-digit' }) : '—',
+          month: dt ? fmt({ month: 'short' }).toUpperCase() : 'TBD',
+          weekday: dt ? fmt({ weekday: 'short' }).toUpperCase() : '',
+          matchNo: m.matchNo,
+          teamA: m.team1,
+          teamB: m.team2,
+          status,
+          venue: m.venue || 'Venue TBA',
+          time: dt ? `${fmt({ hour: 'numeric', minute: '2-digit', hour12: true })} IST` : 'Time TBD',
+          result: m.status === 'abandoned'
+            ? (m.resultDesc || 'Match abandoned — no result')
+            : m.status === 'completed'
+              ? (m.resultDesc || (m.winner ? `${m.winner} won` : undefined))
+              : undefined,
+          monthGroup: dt ? fmt({ month: 'long', year: 'numeric' }).toUpperCase() : 'DATE TO BE ANNOUNCED',
+          sortKey: dt ? dt.toISOString() : '9999-12-31',
+        };
+      })
+      .sort((a, b) => a.sortKey.localeCompare(b.sortKey));
+  }, [apiMatches]);
+
+  const teamOptions = React.useMemo(() => {
+    const names = new Set<string>();
+    allMatches.forEach(m => { names.add(m.teamA); names.add(m.teamB); });
+    return ['All Teams', ...Array.from(names).sort()];
+  }, [allMatches]);
+
+  const loading = apiMatches === null && !loadErr;
+
+  const filtered = allMatches.filter(m => {
     const tabOk = activeTab === 'All' ||
       (activeTab === 'Upcoming' && (m.status === 'UPCOMING' || m.status === 'TBD')) ||
       (activeTab === 'Completed' && m.status === 'COMPLETED') ||
       (activeTab === 'Live' && m.status === 'LIVE');
     const teamOk = teamFilter === 'All Teams' ||
-      m.teamAFull === teamFilter || m.teamBFull === teamFilter;
+      m.teamA === teamFilter || m.teamB === teamFilter;
     return tabOk && teamOk;
   });
 
@@ -228,15 +273,15 @@ export function Schedule() {
         <div style={{padding:'clamp(40px,6vw,60px) 0 clamp(28px,4vw,48px)',textAlign:'center',position:'relative'}}>
           <div className="wrap">
             <div style={{marginBottom:16,display:'flex',justifyContent:'center'}}>
-              <span className="tag-pill">📅 SEASON 4 FIXTURES</span>
+              <span className="tag-pill">📅 SEASON 5 FIXTURES</span>
             </div>
             <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(32px,6vw,72px)',lineHeight:1.05,marginBottom:12,color:'#fff'}}>
-              SEASON 4
+              SEASON 5
             </h1>
             <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(32px,6vw,72px)',lineHeight:1.05,marginBottom:24}}>
               <span className="shimmer-gold">FIXTURES.</span>
             </h1>
-            <p style={{color:'rgba(255,255,255,0.45)',fontSize:15,fontFamily:'Inter,sans-serif',maxWidth:520,margin:'0 auto'}}>Season 4 trial phase is ongoing — full fixture list will be published once teams are finalized.</p>
+            <p style={{color:'rgba(255,255,255,0.45)',fontSize:15,fontFamily:'Inter,sans-serif',maxWidth:520,margin:'0 auto'}}>Every Season 5 match — dates, venues and results — appears here as soon as it is announced.</p>
           </div>
         </div>
 
@@ -255,17 +300,29 @@ export function Schedule() {
                 onChange={e=>setTeamFilter(e.target.value)}
                 className="team-select"
               >
-                {TEAMS.map(t=><option key={t} value={t} style={{background:'#0A1628'}}>{t}</option>)}
+                {teamOptions.map(t=><option key={t} value={t} style={{background:'#0A1628'}}>{t}</option>)}
               </select>
             </div>
           </div>
 
+          {/* LOADING */}
+          {loading && (
+            <div style={{textAlign:'center',padding:'60px 0',color:'rgba(255,255,255,0.35)',fontFamily:'Inter,sans-serif',fontSize:15}}>Loading fixtures…</div>
+          )}
+
+          {/* ERROR */}
+          {loadErr && (
+            <div style={{background:'rgba(232,73,63,0.08)',border:'1px solid rgba(232,73,63,0.3)',borderRadius:12,padding:'18px 20px',textAlign:'center',color:'#F87171',fontFamily:'Inter,sans-serif',fontSize:14,marginBottom:24}}>
+              Could not load fixtures right now — please refresh the page to try again.
+            </div>
+          )}
+
           {/* UPCOMING NOTICE */}
-          {ALL_MATCHES.length === 0 && (
+          {!loading && !loadErr && allMatches.length === 0 && (
             <div style={{textAlign:'center',padding:'clamp(60px,10vw,100px) 20px'}}>
               <div style={{fontSize:64,marginBottom:20}}>🏏</div>
               <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,4vw,36px)',color:'#fff',marginBottom:12}}>Fixtures Coming Soon</div>
-              <p style={{color:'rgba(255,255,255,0.45)',fontSize:15,maxWidth:440,margin:'0 auto 28px',lineHeight:1.7}}>Season 4 trial phase is currently in progress. The complete fixture schedule will be published here once all 10 franchises confirm their squads after the auction.</p>
+              <p style={{color:'rgba(255,255,255,0.45)',fontSize:15,maxWidth:440,margin:'0 auto 28px',lineHeight:1.7}}>The complete Season 5 fixture list will be published here after the players' auction in August 2026. The tournament begins in September 2026.</p>
               <div style={{display:'inline-flex',alignItems:'center',gap:8,background:'rgba(255,122,41,0.1)',border:'1px solid rgba(255,122,41,0.3)',borderRadius:20,padding:'8px 20px'}}>
                 <span style={{width:8,height:8,borderRadius:'50%',background:'#FF7A29',display:'inline-block',animation:'liveBlip 1.2s infinite'}}/>
                 <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:12,color:'#FF7A29',letterSpacing:'.08em'}}>REGISTRATIONS OPEN — SEASON 5</span>
@@ -274,7 +331,7 @@ export function Schedule() {
           )}
 
           {/* MATCH GROUPS */}
-          {Object.entries(groups).length === 0 && ALL_MATCHES.length > 0 && (
+          {!loading && Object.entries(groups).length === 0 && allMatches.length > 0 && (
             <div style={{textAlign:'center',padding:'60px 0',color:'rgba(255,255,255,0.3)',fontFamily:'Inter,sans-serif',fontSize:15}}>No matches found for this filter.</div>
           )}
 
@@ -289,56 +346,39 @@ export function Schedule() {
               <div style={{display:'flex',flexDirection:'column',gap:12}}>
                 {matches.map((m, i) => (
                   <div
-                    key={i}
+                    key={`${m.matchNo}-${i}`}
                     className="glass-card match-card"
                     style={{
                       padding:'16px 16px',
-                      border: m.final ? '1px solid rgba(232,178,61,0.4)' : m.marquee ? '1px solid rgba(232,178,61,0.5)' : '1px solid rgba(255,255,255,0.09)',
-                      background: m.final ? 'linear-gradient(135deg,rgba(232,178,61,0.1),rgba(15,34,71,0.9))' : m.marquee ? 'linear-gradient(135deg,rgba(232,178,61,0.07),rgba(15,34,71,0.9))' : undefined,
+                      border:'1px solid rgba(255,255,255,0.09)',
                       animation:`fadeSlide 0.3s ${i*0.05}s ease both`,
                     }}
                   >
-                    {m.final && (
-                      <div style={{marginBottom:10,display:'flex',alignItems:'center',gap:8}}>
-                        <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:11,color:'#E8B23D',letterSpacing:'0.15em'}}>🏆 GRAND FINAL</span>
-                      </div>
-                    )}
-                    {m.semifinal && (
-                      <div style={{marginBottom:10}}>
-                        <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:11,color:'rgba(255,122,41,0.8)',letterSpacing:'0.12em'}}>🏏 PLAYOFF</span>
-                      </div>
-                    )}
-                    {m.marquee && (
-                      <div style={{marginBottom:8}}>
-                        <span style={{background:'rgba(232,178,61,0.12)',border:'1px solid rgba(232,178,61,0.3)',borderRadius:6,padding:'2px 10px',fontSize:10,fontFamily:'Montserrat,sans-serif',fontWeight:700,color:'#E8B23D',letterSpacing:'0.1em'}}>⭐ MARQUEE MATCH</span>
-                      </div>
-                    )}
                     <div className="match-row-inner" style={{display:'flex',alignItems:'center',gap:12,flexWrap:'wrap'}}>
                       {/* Date box */}
                       <div
                         className="match-date-box"
                         style={{
                           width:64,height:70,borderRadius:12,flexShrink:0,
-                          background: m.final ? 'linear-gradient(135deg,#E8B23D,#C4922A)' : 'linear-gradient(135deg,rgba(255,122,41,0.25),rgba(232,97,26,0.15))',
-                          border: m.final ? 'none' : '1px solid rgba(255,122,41,0.2)',
+                          background:'linear-gradient(135deg,rgba(255,122,41,0.25),rgba(232,97,26,0.15))',
+                          border:'1px solid rgba(255,122,41,0.2)',
                           display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:1
                         }}
                       >
-                        <div className="match-date-day" style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:26,color: m.final ? '#060E1C' :'#FF7A29',lineHeight:1}}>{m.day}</div>
-                        <div style={{fontSize:11,fontFamily:'Montserrat,sans-serif',fontWeight:700,color: m.final ? 'rgba(6,14,28,0.7)' : 'rgba(255,122,41,0.7)',letterSpacing:'0.06em'}}>{m.month}</div>
-                        <div style={{fontSize:10,fontFamily:'Inter,sans-serif',color: m.final ? 'rgba(6,14,28,0.5)' : 'rgba(255,255,255,0.3)'}}>{m.weekday}</div>
+                        <div className="match-date-day" style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:26,color:'#FF7A29',lineHeight:1}}>{m.day}</div>
+                        <div style={{fontSize:11,fontFamily:'Montserrat,sans-serif',fontWeight:700,color:'rgba(255,122,41,0.7)',letterSpacing:'0.06em'}}>{m.month}</div>
+                        <div style={{fontSize:10,fontFamily:'Inter,sans-serif',color:'rgba(255,255,255,0.3)'}}>{m.weekday}</div>
                       </div>
 
                       {/* Teams */}
                       <div style={{flex:1,minWidth:120}}>
                         <div style={{display:'flex',alignItems:'center',gap:8,flexWrap:'wrap',marginBottom:6}}>
-                          <span style={{fontSize:18}}>{m.teamAEmoji}</span>
                           <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:16,color:'#fff'}}>{m.teamA}</span>
                           <span style={{color:'rgba(255,255,255,0.3)',fontSize:13,fontFamily:'Inter,sans-serif'}}>vs</span>
-                          <span style={{fontSize:18}}>{m.teamBEmoji}</span>
                           <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:16,color:'#fff'}}>{m.teamB}</span>
                         </div>
                         <div style={{display:'flex',flexWrap:'wrap',gap:8,alignItems:'center'}}>
+                          <span style={{fontSize:12,color:'rgba(255,122,41,0.7)',fontFamily:'Montserrat,sans-serif',fontWeight:700}}>Match {m.matchNo}</span>
                           <span style={{fontSize:12,color:'rgba(255,255,255,0.35)',fontFamily:'Inter,sans-serif'}}>📍 {m.venue}</span>
                           <span style={{fontSize:12,color:'rgba(255,255,255,0.25)',fontFamily:'Inter,sans-serif'}}>· {m.time}</span>
                         </div>
@@ -359,15 +399,6 @@ export function Schedule() {
               </div>
             </div>
           ))}
-
-          {/* Download CTA */}
-          <div style={{textAlign:'center',marginTop:16}}>
-            <button style={{background:'transparent',border:'1.5px solid rgba(255,255,255,0.2)',borderRadius:14,color:'rgba(255,255,255,0.7)',fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:14,padding:'14px 32px',cursor:'pointer',transition:'all 0.2s',letterSpacing:'0.04em'}}
-              onMouseEnter={e=>{(e.currentTarget as HTMLButtonElement).style.borderColor='rgba(255,122,41,0.5)';(e.currentTarget as HTMLButtonElement).style.color='#FF7A29';}}
-              onMouseLeave={e=>{(e.currentTarget as HTMLButtonElement).style.borderColor='rgba(255,255,255,0.2)';(e.currentTarget as HTMLButtonElement).style.color='rgba(255,255,255,0.7)';}}>
-              📅 Download Full Schedule (PDF)
-            </button>
-          </div>
 
         </div>
         <BCPLFooter />

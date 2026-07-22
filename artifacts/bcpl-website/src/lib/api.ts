@@ -380,3 +380,43 @@ export const verifyKycOtp = (data: {
 }) => req<{ success: boolean; status: string; message: string }>(
   "POST", "/kyc/verify-otp", data
 );
+
+/* ─── Teams & Squads ───────────────────────────────── */
+
+export type ApiTeam = {
+  id: string; season: number; slug: string; name: string; city: string;
+  color: string; secondColor: string; logoUrl: string;
+  captain: string; coach: string; owner: string; homeGround: string;
+  titlesWon: number; playerCount?: number;
+};
+
+export type ApiTeamPlayer = {
+  id: string; teamId: string; name: string; role: string; age: number | null;
+  state: string; photoUrl: string; battingStyle: string; bowlingStyle: string;
+  jerseyNo: string; nationality: string; isCaptain: boolean; isViceCaptain: boolean;
+  auctionPrice: string; stats: Record<string, unknown>;
+};
+
+export const getTeams = (season = 5) =>
+  req<{ teams: ApiTeam[] }>("GET", `/teams?season=${season}`);
+
+export const getTeamDetail = (slugOrId: string) =>
+  req<{ team: ApiTeam; players: ApiTeamPlayer[] }>("GET", `/teams/${slugOrId}`);
+
+export const adminCreateTeam = (data: { name: string } & Partial<Omit<ApiTeam, "id" | "slug">>) =>
+  req<{ success: boolean; team: ApiTeam }>("POST", "/teams/admin/teams", data, true);
+
+export const adminUpdateTeam = (id: string, data: Partial<Omit<ApiTeam, "id" | "slug">>) =>
+  req<{ success: boolean; team: ApiTeam }>("PUT", `/teams/admin/teams/${id}`, data, true);
+
+export const adminDeleteTeam = (id: string) =>
+  req<{ success: boolean }>("DELETE", `/teams/admin/teams/${id}`, undefined, true);
+
+export const adminAddTeamPlayer = (teamId: string, data: Partial<Omit<ApiTeamPlayer, "id" | "teamId">> & { name: string }) =>
+  req<{ success: boolean; player: ApiTeamPlayer }>("POST", `/teams/admin/teams/${teamId}/players`, data, true);
+
+export const adminUpdateTeamPlayer = (playerId: string, data: Partial<Omit<ApiTeamPlayer, "id" | "teamId">>) =>
+  req<{ success: boolean; player: ApiTeamPlayer }>("PUT", `/teams/admin/players/${playerId}`, data, true);
+
+export const adminDeleteTeamPlayer = (playerId: string) =>
+  req<{ success: boolean }>("DELETE", `/teams/admin/players/${playerId}`, undefined, true);
