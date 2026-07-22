@@ -17,7 +17,13 @@ const TEST_SESSION_SECRET = "test-session-secret-for-vitest";
 process.env.ADMIN_PANEL_PASSWORD = TEST_PANEL_PASSWORD;
 process.env.SESSION_SECRET = TEST_SESSION_SECRET;
 
+vi.mock("../src/lib/email", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../src/lib/email")>();
+  return { ...actual, sendEmail: vi.fn(async () => ({ ok: true })) };
+});
+
 const { default: app } = await import("../src/app");
+const { sendEmail } = await import("../src/lib/email");
 const { __resetAdminLoginRateLimit } = await import("../src/routes/admin");
 
 const ORIGINAL_ENV = { ...process.env };
@@ -151,6 +157,24 @@ describe("global circuit breaker (50 fails across ALL IPs / 15 min)", () => {
       String(args[0]).includes("circuit breaker TRIPPED")
     );
     expect(alerted).toBe(true);
+  });
+
+  it("emails the admin exactly once per lockout window when the breaker trips", async () => {
+    const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.mocked(sendEmail).mockClear();
+    await failFromRotatingIps(50);
+
+    expect(sendEmail).toHaveBeenCalledTimes(1);
+    const args = vi.mocked(sendEmail).mock.calls[0][0];
+    expect(args.subject).toMatch(/locked down|brute-force/i);
+    expect(args.htmlContent).toContain("50");           // fail count
+    expect(args.htmlContent).toMatch(/Lockout ends/i);  // expiry included
+
+    // Further blocked attempts within the same window send NO more email
+    await attempt(freshIp(), "wrong-password");
+    await attempt(freshIp(), "wrong-password");
+    expect(sendEmail).toHaveBeenCalledTimes(1);
+    errSpy.mockRestore();
   });
 
   it("49 failures do NOT trip the breaker — a fresh IP can still log in", async () => {

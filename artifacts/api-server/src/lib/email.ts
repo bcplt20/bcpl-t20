@@ -346,6 +346,29 @@ export function tplKycComplete(name: string, city: string) {
   };
 }
 
+// ── Admin alert: global login circuit breaker tripped ────────────────────────
+export function tplAdminLoginLockdown(p: { failCount: number; trippedAt: Date; lockedUntil: Date }) {
+  const fmt = (d: Date) =>
+    d.toLocaleString("en-IN", { timeZone: "Asia/Kolkata", day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true }) + " IST";
+  return {
+    subject: "🚨 BCPL Admin ALERT — Login locked down: possible brute-force attack",
+    htmlContent: wrap(`
+      <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);border-radius:12px;padding:24px;margin-bottom:20px;">
+        <h2 style="color:#EF4444;margin:0 0 8px;font-size:20px;">🚨 Admin Login Locked Down</h2>
+        <p style="color:rgba(255,255,255,0.7);margin:0;font-size:14px;">The global admin-login circuit breaker has <strong style="color:#EF4444;">TRIPPED</strong>. Too many failed admin login attempts across all IPs — this looks like a distributed brute-force attack. Admin login is temporarily blocked for everyone.</p>
+      </div>
+      <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
+        <tr><td style="padding:11px;border-bottom:1px solid rgba(255,255,255,0.07);color:rgba(255,255,255,0.5);font-size:13px;">Tripped at</td><td style="padding:11px;border-bottom:1px solid rgba(255,255,255,0.07);color:#fff;font-weight:bold;font-size:13px;">${fmt(p.trippedAt)}</td></tr>
+        <tr><td style="padding:11px;border-bottom:1px solid rgba(255,255,255,0.07);color:rgba(255,255,255,0.5);font-size:13px;">Failed attempts (15 min)</td><td style="padding:11px;border-bottom:1px solid rgba(255,255,255,0.07);color:#EF4444;font-weight:bold;font-size:13px;">${p.failCount}</td></tr>
+        <tr><td style="padding:11px;color:rgba(255,255,255,0.5);font-size:13px;">Lockout ends</td><td style="padding:11px;color:#22C55E;font-weight:bold;font-size:13px;">${fmt(p.lockedUntil)}</td></tr>
+      </table>
+      <div style="background:rgba(255,255,255,0.03);border-radius:8px;padding:14px;">
+        <div style="font-size:10px;color:rgba(255,255,255,0.25);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;">What this means</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.45);line-height:1.9;">🔒 All admin login attempts are blocked until the lockout ends — including yours.<br/>🛡️ No action is required to restore access; the lockout lifts automatically.<br/>🔑 If attacks continue, consider rotating the admin panel password.</div>
+      </div>`),
+  };
+}
+
 // ── Template 11: GST Tax Invoice ──────────────────────────────────────────────
 const BCPL_GSTIN = "07AAHCK4053D1ZS";
 const BCPL_ADDR  = "Kriparti Playing11 Private Limited, 2nd Floor Back Side, RZ-108, Indra Park, Uttam Nagar, West Delhi, Delhi - 110059";
