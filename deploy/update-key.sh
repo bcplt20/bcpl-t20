@@ -45,7 +45,7 @@ source "$ENV_FILE"
 set +o allexport
 cd "$APP_DIR"
 if command -v pm2 >/dev/null 2>&1 && pm2 list 2>/dev/null | grep -q "bcpl-api"; then
-  pm2 reload ecosystem.config.js --update-env
+  pm2 reload deploy/ecosystem.config.js --update-env
   echo "🔄 Server reload ho gaya — nayi key ab LIVE hai."
 else
   echo "ℹ️  PM2 abhi nahi chal raha — agli baar 'bash deploy/deploy.sh' par live ho jayegi."

@@ -110,9 +110,9 @@ DATABASE_URL=$DATABASE_URL pnpm exec drizzle-kit push --yes 2>/dev/null || true
 echo "🔄 Reloading PM2..."
 cd $APP_DIR
 if pm2 list | grep -q "bcpl-api"; then
-  pm2 reload ecosystem.config.js --update-env
+  pm2 reload deploy/ecosystem.config.js --update-env
 else
-  pm2 start ecosystem.config.js
+  pm2 start deploy/ecosystem.config.js
 fi
 pm2 save
 
