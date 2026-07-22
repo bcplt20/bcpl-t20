@@ -24,7 +24,6 @@ const PROFESSIONS = [
   { id:'Other',                                       icon:'✨', label:'Other' },
 ];
 
-const EXPERIENCE_OPTS = ['<1 yr','1–3 yr','3–5 yr','5–10 yr','10+ yr'];
 const TSHIRT_OPTS     = ['S','M','L','XL','XXL'];
 const RELATION_OPTS   = ['Father','Mother','Spouse','Friend','Other'];
 const BLOOD_OPTS      = ['A+','A-','B+','B-','AB+','AB-','O+','O-'];
@@ -38,7 +37,7 @@ function ChipRow({ options, value, onChange, minWidth }: { options: string[]; va
   return (
     <div style={{ display:'flex', flexWrap:'wrap', gap:8, marginTop:4 }}>
       {options.map(o => (
-        <button key={o} onClick={() => onChange(o)}
+        <button key={o} onClick={() => onChange(value === o ? '' : o)}
           style={{ padding:'9px 14px', minWidth, borderRadius:10, border: value===o ? '2px solid #FF7A29' : '1px solid rgba(255,255,255,0.1)', background: value===o ? 'rgba(255,122,41,0.12)' : 'rgba(255,255,255,0.03)', color: value===o ? '#FF7A29' : 'rgba(255,255,255,0.6)', fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:12, cursor:'pointer', textAlign:'center', transition:'all .18s' }}>
           {o}
         </button>
@@ -53,11 +52,7 @@ export function Phase2KYC() {
   const [city, setCity]             = useState('');
   const [role, setRole]             = useState('');
 
-  // Employment details (moved here from the pre-payment form)
-  const [company, setCompany]       = useState('');
-  const [jobTitle, setJobTitle]     = useState('');
-  const [experience, setExperience] = useState('');
-  const [linkedin, setLinkedin]     = useState('');
+  // Jersey size — the only field kept from the removed employment card
   const [tshirt, setTshirt]         = useState('');
   // Emergency contact
   const [ecName, setEcName]         = useState('');
@@ -112,10 +107,6 @@ export function Phase2KYC() {
       const saved = sessionStorage.getItem('bcpl_p2_profile');
       if (!saved) return;
       const p = JSON.parse(saved);
-      if (p.company)    setCompany(p.company);
-      if (p.jobTitle)   setJobTitle(p.jobTitle);
-      if (p.experience) setExperience(p.experience);
-      if (p.linkedin)   setLinkedin(p.linkedin);
       if (p.tshirt)     setTshirt(p.tshirt);
       if (p.ecName)     setEcName(p.ecName);
       if (p.ecRel)      setEcRel(p.ecRel);
@@ -124,9 +115,9 @@ export function Phase2KYC() {
     } catch {}
   }, []);
 
-  const employmentOk = !!(company.trim() && jobTitle.trim() && experience && tshirt);
-  const emergencyOk  = !!(ecName.trim() && ecRel && /^\d{10}$/.test(ecPhone) && bloodGroup);
-  const canSubmit = employmentOk && emergencyOk && !!profession && !!aadhaar && !!pan && !aadhaarErr && !panErr;
+  // Blood group is deliberately NOT required — many players don't know theirs.
+  const emergencyOk  = !!(ecName.trim() && ecRel && /^\d{10}$/.test(ecPhone));
+  const canSubmit = !!tshirt && emergencyOk && !!profession && !!aadhaar && !!pan && !aadhaarErr && !panErr;
 
   const handleAadhaarBlur = () => {
     if (aadhaar && !validateAadhaar(aadhaar)) setAadhaarErr('Aadhaar must be 12 digits');
@@ -145,6 +136,12 @@ export function Phase2KYC() {
     if (!validateAadhaar(aadhaar)) { setAadhaarErr('Aadhaar must be 12 digits'); return; }
     if (!validatePan(pan))         { setPanErr('Enter a valid PAN (e.g. ABCDE1234F)'); return; }
     if (!/^\d{10}$/.test(ecPhone)) { setEcPhoneErr('Enter a 10-digit mobile number'); return; }
+    // Defensive: canSubmit already gates these, but this path is also reused
+    // for OTP resend — never let a submit through without the required set.
+    if (!profession || !tshirt || !ecName.trim() || !ecRel) {
+      setSubmitErr('Please complete profession, T-shirt size and emergency contact before submitting.');
+      return;
+    }
 
     setSubmitting(true); setSubmitErr('');
     try {
@@ -153,15 +150,12 @@ export function Phase2KYC() {
         profession,
         aadhaarNumber: aadhaar.replace(/\s/g, ''),
         panNumber: pan.toUpperCase(),
-        company: company.trim(),
-        jobTitle: jobTitle.trim(),
-        experience,
-        linkedin: linkedin.trim() || undefined,
         tshirtSize: tshirt,
         emergencyName: ecName.trim(),
         emergencyRelation: ecRel,
         emergencyPhone: ecPhone,
-        bloodGroup,
+        // Optional — sending '' would fail the server's enum check
+        bloodGroup: bloodGroup || undefined,
       });
       // Details are now stored server-side — the sessionStorage copy is stale.
       try { sessionStorage.removeItem('bcpl_p2_profile'); } catch {}
@@ -289,7 +283,7 @@ export function Phase2KYC() {
           <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(20px,4vw,28px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em', marginBottom:4 }}>
             {kycStatus === 'verified' ? '✅ KYC Verified' : 'Player Details & KYC'}
           </div>
-          <div style={{ fontSize:13, color:'rgba(255,255,255,0.45)', marginBottom:10 }}>Employment, emergency contact and identity verification — required for BCCI compliance and franchise contract records</div>
+          <div style={{ fontSize:13, color:'rgba(255,255,255,0.45)', marginBottom:10 }}>Emergency contact and identity verification — required for BCCI compliance and franchise contract records</div>
           <div style={{ display:'inline-flex', alignItems:'center', gap:6, padding:'5px 14px', fontSize:10, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.14em',
             background: kycStatus === 'verified' ? 'rgba(34,197,94,0.1)' : 'rgba(255,122,41,0.1)',
             border: kycStatus === 'verified' ? '1px solid rgba(34,197,94,0.35)' : '1px solid rgba(255,122,41,0.3)',
@@ -370,36 +364,15 @@ export function Phase2KYC() {
             </div>
           </div>
         ) : (
-          /* Main form: employment + emergency contact + KYC */
+          /* Main form: jersey size + emergency contact + KYC */
           <>
-            {/* Employment Details (moved here from the pre-payment form) */}
+            {/* T-Shirt Size — kept for jerseys after the employment card was removed */}
             <div style={{ background:'#0A1727', border:'1px solid rgba(255,122,41,0.2)', borderRadius:12, padding:'20px 18px', marginBottom:24 }}>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, color:'#FF7A29', letterSpacing:'.06em', marginBottom:4 }}>EMPLOYMENT DETAILS *</div>
-              <div style={{ fontSize:12, color:'rgba(255,255,255,0.35)', marginBottom:16 }}>BCPL is for working professionals — tell us where you work</div>
-              <div style={{ display:'grid', gap:18 }}>
-                <div>
-                  <label style={lbl}>Company / Organisation *</label>
-                  <input style={inp} placeholder="e.g. Infosys, Tata Consultancy…" value={company} onChange={e => setCompany(e.target.value)} />
-                </div>
-                <div>
-                  <label style={lbl}>Job Title / Designation *</label>
-                  <input style={inp} placeholder="e.g. Senior Engineer, Product Manager…" value={jobTitle} onChange={e => setJobTitle(e.target.value)} />
-                </div>
-                <div>
-                  <label style={lbl}>Years of Experience *</label>
-                  <ChipRow options={EXPERIENCE_OPTS} value={experience} onChange={setExperience} />
-                </div>
-                <div>
-                  <label style={lbl}>LinkedIn Profile <span style={{ color:'rgba(255,255,255,0.22)', textTransform:'none' }}>(optional)</span></label>
-                  <input style={inp} placeholder="linkedin.com/in/yourprofile" value={linkedin} onChange={e => setLinkedin(e.target.value)} />
-                </div>
-                <div>
-                  <label style={lbl}>T-Shirt Size *</label>
-                  <ChipRow options={TSHIRT_OPTS} value={tshirt} onChange={setTshirt} minWidth={48} />
-                  <div style={{ marginTop:8, fontSize:11, color:'rgba(255,255,255,0.45)', lineHeight:1.55 }}>
-                    ℹ️ Only for tournament purpose — this size is used to prepare match jerseys for players who play in the tournament. Registration does not include a free T-shirt.
-                  </div>
-                </div>
+              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, color:'#FF7A29', letterSpacing:'.06em', marginBottom:4 }}>T-SHIRT SIZE *</div>
+              <div style={{ fontSize:12, color:'rgba(255,255,255,0.35)', marginBottom:16 }}>Used to prepare match jerseys for players who make it to the tournament</div>
+              <ChipRow options={TSHIRT_OPTS} value={tshirt} onChange={setTshirt} minWidth={48} />
+              <div style={{ marginTop:8, fontSize:11, color:'rgba(255,255,255,0.45)', lineHeight:1.55 }}>
+                ℹ️ Only for tournament purpose — registration does not include a free T-shirt.
               </div>
             </div>
 
@@ -428,8 +401,11 @@ export function Phase2KYC() {
                   {ecPhoneErr && <div style={{ fontSize:11, color:'#EF4444', marginTop:6 }}>⚠ {ecPhoneErr}</div>}
                 </div>
                 <div>
-                  <label style={lbl}>Blood Group *</label>
+                  <label style={lbl}>Blood Group <span style={{ color:'rgba(255,255,255,0.22)', textTransform:'none' }}>(optional)</span></label>
                   <ChipRow options={BLOOD_OPTS} value={bloodGroup} onChange={setBloodGroup} minWidth={48} />
+                  <div style={{ marginTop:8, fontSize:11, color:'rgba(255,255,255,0.45)' }}>
+                    Pick it if you know it — helps us in a medical emergency. You can skip this.
+                  </div>
                 </div>
               </div>
             </div>
@@ -534,8 +510,8 @@ export function Phase2KYC() {
             </button>
             {!canSubmit && (
               <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginTop:10 }}>
-                {!employmentOk ? '• Complete employment details' : ''}
-                {!emergencyOk ? ' • Complete emergency contact (10-digit phone + blood group)' : ''}
+                {!tshirt ? '• Select your T-shirt size' : ''}
+                {!emergencyOk ? ' • Complete emergency contact (name, relation + 10-digit phone)' : ''}
                 {!profession ? ' • Select your profession' : ''}
                 {!aadhaar || !validateAadhaar(aadhaar) ? ' • Enter valid Aadhaar (12 digits)' : ''}
                 {!pan || !validatePan(pan) ? ' • Enter valid PAN' : ''}
