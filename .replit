@@ -49,7 +49,6 @@ BREVO_FROM_EMAIL = "info@bcplt20.com"
 CASHFREE_ENV = "PROD"
 SITE_URL = "https://bcplt20.com/bcpl-website"
 VITE_ADMIN_KEY = ""
-VITE_API_URL = "https://elite-user-experience.replit.app"
 ADMIN_PANEL_PASSWORD = "BCPL@S5#2026!"
 
 [nix]

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { adminGetRegistrations } from "../../lib/api";
+import { adminGetRegistrations, adminUpdateKycStatus } from "../../lib/api";
 
 const STATES = ["All States","Rajasthan","Gujarat","Maharashtra","Delhi","Punjab","UP","Karnataka","Bihar","Kerala","MP","Haryana","West Bengal","Tamil Nadu","Telangana"];
 const CITIES: Record<string,string[]> = {
@@ -33,13 +33,14 @@ const ROLE_LABEL: Record<string,string> = {
 
 const PAID_STATUSES = ["payment_done","video_submitted","selected","rejected"];
 
-type UserRow = { id:string; num:number; name:string; phone:string; email:string; state:string; city:string; joined:string; phase1:boolean; phase2:boolean; active:boolean; kyc:string; video:boolean; videoUrl:string|null; registered:boolean; role:string };
+type UserRow = { id:string; num:number; name:string; phone:string; email:string; state:string; city:string; joined:string; phase1:boolean; phase2:boolean; active:boolean; kyc:string; kycId:string|null; video:boolean; videoUrl:string|null; registered:boolean; role:string };
 
 type ApiReg = {
   id:string; role:string; trialCity:string; phase1Status:string; phase2Status:string|null; createdAt:string;
   user:{ id:string; name:string; phone:string; email:string }|null;
   payment:{ status:string; amount:string; paidAt:string|null }|null;
   video:{ status:string; submittedAt:string; s3Url?:string|null }|null;
+  kyc?:{ id:string; status:string; panVerified:boolean; verifiedAt:string|null }|null;
 };
 
 const toRow = (r: ApiReg, i: number): UserRow => {
@@ -57,7 +58,8 @@ const toRow = (r: ApiReg, i: number): UserRow => {
     phase1: paid1,
     phase2: ["payment_done","kyc_done","selected"].includes(r.phase2Status ?? ""),
     active: r.createdAt ? Date.now() - new Date(r.createdAt).getTime() < 30*24*3600*1000 : false,
-    kyc: "pending",
+    kyc: r.kyc?.status ?? "not_started",
+    kycId: r.kyc?.id ?? null,
     video: !!r.video,
     videoUrl: r.video?.s3Url ?? null,
     registered: true,
@@ -72,11 +74,15 @@ const quickLabels: Record<QuickFilter,string> = {
   no_payment:"No Payment", no_video:"No Video", registered:"Registered", not_registered:"Not Registered",
 };
 
-const kycColor = (k:string) => k==="approved"?"#10B981":k==="rejected"?"#EF4444":"#F59E0B";
+const KYC_LABEL: Record<string,string> = { not_started:"Not submitted", pending:"Pending", verified:"Verified", failed:"Failed" };
+const kycColor = (k:string) => k==="verified"?"#10B981":k==="failed"?"#EF4444":k==="pending"?"#F59E0B":"#475569";
 const roleColor = (r:string) => r==="Batsman"?"#3B82F6":r==="Bowler"?"#EF4444":r==="All-rounder"?"#FF6B00":"#10B981";
 
-export default function UsersView() {
-  const [quick,    setQuick]    = useState<QuickFilter>("all");
+type NavPayload = { quick?: string; filter?: string; focusId?: string };
+
+export default function UsersView({ onNavigate, initialQuick }: { onNavigate?: (tab: string, payload?: NavPayload) => void; initialQuick?: string }) {
+  const validQuick = (Object.keys(quickLabels) as QuickFilter[]).includes(initialQuick as QuickFilter) ? (initialQuick as QuickFilter) : "all";
+  const [quick,    setQuick]    = useState<QuickFilter>(validQuick);
   const [search,   setSearch]   = useState("");
   const [state,    setState]    = useState("All States");
   const [city,     setCity]     = useState("All Cities");
@@ -92,6 +98,21 @@ export default function UsersView() {
       .catch(e => setErr(e.message))
       .finally(() => setLoading(false));
   }, []);
+
+  const [kycBusy, setKycBusy] = useState(false);
+  const updateKyc = async (status: "verified" | "failed") => {
+    if (!selected?.kycId) return;
+    setKycBusy(true);
+    try {
+      await adminUpdateKycStatus(selected.kycId, status);
+      setAllUsers(prev => prev.map(u => u.id === selected.id ? { ...u, kyc: status } : u));
+      setSelected(s => s ? { ...s, kyc: status } : s);
+    } catch (e: any) {
+      alert("KYC update failed: " + e.message);
+    } finally {
+      setKycBusy(false);
+    }
+  };
 
   const filtered = allUsers.filter(u => {
     const s = search.toLowerCase();
@@ -271,7 +292,7 @@ export default function UsersView() {
                   <td style={{ padding:"13px 14px", textAlign:"center" }}><span style={{ fontSize:15 }}>{u.phase1?"✅":"❌"}</span></td>
                   <td style={{ padding:"13px 14px", textAlign:"center" }}><span style={{ fontSize:15 }}>{u.phase2?"✅":"❌"}</span></td>
                   <td style={{ padding:"13px 14px" }}>
-                    <span style={{ padding:"3px 8px", borderRadius:5, fontSize:10, fontWeight:700, background:kycColor(u.kyc)+"22", color:kycColor(u.kyc) }}>{u.kyc}</span>
+                    <span style={{ padding:"3px 8px", borderRadius:5, fontSize:10, fontWeight:700, background:kycColor(u.kyc)+"22", color:kycColor(u.kyc) }}>{KYC_LABEL[u.kyc] ?? u.kyc}</span>
                   </td>
                   <td style={{ padding:"13px 14px" }}>{u.video?(u.videoUrl?<a href={u.videoUrl} target="_blank" rel="noreferrer" title="Watch video in new tab" onClick={e=>e.stopPropagation()} style={{ padding:"3px 10px", borderRadius:5, fontSize:10, fontWeight:700, background:"#3B82F622", color:"#3B82F6", border:"1px solid #3B82F644", textDecoration:"none", display:"inline-block" }}>🎥 Watch</a>:<span style={{ padding:"3px 10px", borderRadius:5, fontSize:10, fontWeight:700, background:"#3B82F622", color:"#3B82F6" }}>🎥 Yes</span>):<span style={{ fontSize:11, color:"#334155" }}>—</span>}</td>
                   <td style={{ padding:"13px 14px" }}>
@@ -301,16 +322,21 @@ export default function UsersView() {
             <div style={{ fontSize:16, fontWeight:700, color:"#F1F5F9" }}>{selected.name}</div>
             <div style={{ fontSize:11, color:"#64748B", marginTop:2 }}>{selected.email}</div>
             <div style={{ fontSize:11, color:"#64748B" }}>{selected.phone}</div>
+            <div onClick={()=>onNavigate?.("phase1_regs",{ focusId:selected.id })} title="Open the full registration record"
+              style={{ fontSize:10, color:"#6366F1", marginTop:8, cursor:"pointer", wordBreak:"break-all", textDecoration:"underline" }}>
+              Reg ID: {selected.id}
+            </div>
             <span style={{ display:"inline-block", margin:"10px 0 4px", padding:"3px 10px", borderRadius:5, fontSize:11, fontWeight:700, background:roleColor(selected.role)+"22", color:roleColor(selected.role) }}>{selected.role}</span>
             <div style={{ display:"flex", gap:8, marginTop:12 }}>
-              <button style={{ flex:1, padding:"9px 0", borderRadius:8, border:"none", background:"#1E293B", color:"#94A3B8", fontSize:11, cursor:"pointer", fontWeight:600 }}>Message</button>
-              <button style={{ flex:1, padding:"9px 0", borderRadius:8, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontSize:11, cursor:"pointer", fontWeight:700 }}>Full Profile</button>
+              {selected.email ? (
+                <a href={`mailto:${selected.email}?subject=${encodeURIComponent("BCPL T20 — About your registration")}`}
+                  style={{ flex:1, padding:"9px 0", borderRadius:8, border:"none", background:"#1E293B", color:"#94A3B8", fontSize:11, cursor:"pointer", fontWeight:600, textDecoration:"none", textAlign:"center" }}>✉ Message</a>
+              ) : (
+                <button disabled title="No email on record" style={{ flex:1, padding:"9px 0", borderRadius:8, border:"none", background:"#11182B", color:"#334155", fontSize:11, cursor:"not-allowed", fontWeight:600 }}>✉ Message</button>
+              )}
+              <button onClick={()=>onNavigate?.("phase1_regs",{ focusId:selected.id })}
+                style={{ flex:1, padding:"9px 0", borderRadius:8, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontSize:11, cursor:"pointer", fontWeight:700 }}>Full Profile</button>
             </div>
-            <button
-              onClick={() => { if(confirm(`Delete all data for ${selected.name}? This cannot be undone.`)) setSelected(null); }}
-              style={{ width:"100%", marginTop:8, padding:"9px 0", borderRadius:8, border:"1px solid #EF444440", background:"#EF444410", color:"#EF4444", fontSize:11, cursor:"pointer", fontWeight:700 }}>
-              🗑 Delete User & All Data
-            </button>
           </div>
           <div style={{ ...card, padding:16 }}>
             <div style={{ fontSize:11, fontWeight:700, color:"#475569", marginBottom:12, textTransform:"uppercase", letterSpacing:.5 }}>Payment Status</div>
@@ -323,10 +349,19 @@ export default function UsersView() {
           </div>
           <div style={{ ...card, padding:16 }}>
             <div style={{ fontSize:11, fontWeight:700, color:"#475569", marginBottom:10, textTransform:"uppercase", letterSpacing:.5 }}>KYC Verification</div>
-            <div style={{ display:"flex", gap:8 }}>
-              <button style={{ flex:1, padding:"8px 0", borderRadius:8, border:"1px solid #10B981", background:"#10B98115", color:"#10B981", fontSize:11, cursor:"pointer", fontWeight:700 }}>✓ Approve</button>
-              <button style={{ flex:1, padding:"8px 0", borderRadius:8, border:"1px solid #EF4444", background:"#EF444415", color:"#EF4444", fontSize:11, cursor:"pointer", fontWeight:700 }}>✕ Reject</button>
+            <div style={{ marginBottom:10 }}>
+              <span style={{ padding:"3px 9px", borderRadius:5, fontSize:10, fontWeight:700, background:kycColor(selected.kyc)+"22", color:kycColor(selected.kyc) }}>{KYC_LABEL[selected.kyc] ?? selected.kyc}</span>
             </div>
+            {selected.kycId ? (
+              <div style={{ display:"flex", gap:8 }}>
+                <button disabled={kycBusy||selected.kyc==="verified"} onClick={()=>updateKyc("verified")}
+                  style={{ flex:1, padding:"8px 0", borderRadius:8, border:"1px solid #10B981", background:"#10B98115", color:"#10B981", fontSize:11, cursor:kycBusy||selected.kyc==="verified"?"not-allowed":"pointer", fontWeight:700, opacity:kycBusy||selected.kyc==="verified"?0.5:1 }}>✓ Approve</button>
+                <button disabled={kycBusy||selected.kyc==="failed"} onClick={()=>updateKyc("failed")}
+                  style={{ flex:1, padding:"8px 0", borderRadius:8, border:"1px solid #EF4444", background:"#EF444415", color:"#EF4444", fontSize:11, cursor:kycBusy||selected.kyc==="failed"?"not-allowed":"pointer", fontWeight:700, opacity:kycBusy||selected.kyc==="failed"?0.5:1 }}>✕ Reject</button>
+              </div>
+            ) : (
+              <div style={{ fontSize:12, color:"#334155" }}>KYC not submitted yet</div>
+            )}
           </div>
           <div style={{ ...card, padding:16 }}>
             <div style={{ fontSize:11, fontWeight:700, color:"#475569", marginBottom:10, textTransform:"uppercase", letterSpacing:.5 }}>Selection Video</div>

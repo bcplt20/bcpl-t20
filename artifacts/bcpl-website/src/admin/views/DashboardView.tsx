@@ -65,7 +65,9 @@ const CustomTooltip = ({ active, payload, label }:any) => {
   return null;
 };
 
-export default function DashboardView({ onNavigate }: { onNavigate?: (tab: string) => void }) {
+type NavPayload = { quick?: string; filter?: string; focusId?: string };
+
+export default function DashboardView({ onNavigate }: { onNavigate?: (tab: string, payload?: NavPayload) => void }) {
   const [range, setRange] = useState<"today"|"week"|"month">("week");
   const [blast, setBlast] = useState(false);
   const [stats, setStats] = useState<Stats|null>(null);
@@ -97,14 +99,14 @@ export default function DashboardView({ onNavigate }: { onNavigate?: (tab: strin
   const now = Date.now();
   const activeUsers  = regs.filter(r => now - new Date(r.createdAt).getTime() < 7*24*3600*1000).length;
 
-  const metricCards = [
-    { label:"Live Right Now", value:String(regs.filter(r=>now-new Date(r.createdAt).getTime()<3600*1000).length), sub:"registered in last hour", color:"#10B981", icon:"🟢", live:true },
-    { label:"Total Users",    value:totalUsers.toLocaleString(), sub:`${totalRegs} registrations`, color:"#6366F1", icon:"👥" },
-    { label:"Active Users",   value:activeUsers.toLocaleString(), sub:"registered last 7 days", color:"#3B82F6", icon:"⚡" },
-    { label:"Phase 1 Paid",   value:paidCount.toLocaleString(), sub:`₹${p1Revenue.toLocaleString()} revenue`, color:"#F59E0B", icon:"💳" },
-    { label:"Phase 2 Paid",   value:p2PaidRegs.length.toLocaleString(), sub:`₹${p2Revenue.toLocaleString()} revenue`, color:"#10B981", icon:"🎫" },
-    { label:"Selected",       value:selectedCount.toLocaleString(), sub:"Phase 1 selected players", color:"#FF6B00", icon:"🏆" },
-    { label:"Dropped Off",    value:droppedOff.toLocaleString(), sub:"registered, no payment", color:"#EF4444", icon:"❌" },
+  const metricCards: { label:string; value:string; sub:string; color:string; icon:string; live?:boolean; tab:string; payload?:NavPayload }[] = [
+    { label:"Live Right Now", value:String(regs.filter(r=>now-new Date(r.createdAt).getTime()<3600*1000).length), sub:"registered in last hour", color:"#10B981", icon:"🟢", live:true, tab:"users", payload:{ quick:"active" } },
+    { label:"Total Users",    value:totalUsers.toLocaleString(), sub:`${totalRegs} registrations`, color:"#6366F1", icon:"👥", tab:"users" },
+    { label:"Active Users",   value:activeUsers.toLocaleString(), sub:"registered last 7 days", color:"#3B82F6", icon:"⚡", tab:"users", payload:{ quick:"active" } },
+    { label:"Phase 1 Paid",   value:paidCount.toLocaleString(), sub:`₹${p1Revenue.toLocaleString()} revenue`, color:"#F59E0B", icon:"💳", tab:"finance" },
+    { label:"Phase 2 Paid",   value:p2PaidRegs.length.toLocaleString(), sub:`₹${p2Revenue.toLocaleString()} revenue`, color:"#10B981", icon:"🎫", tab:"finance" },
+    { label:"Selected",       value:selectedCount.toLocaleString(), sub:"Phase 1 selected players", color:"#FF6B00", icon:"🏆", tab:"phase1_regs", payload:{ filter:"selected" } },
+    { label:"Dropped Off",    value:droppedOff.toLocaleString(), sub:"registered, no payment", color:"#EF4444", icon:"❌", tab:"users", payload:{ quick:"no_payment" } },
   ];
 
   const weekTarget = 5000;
@@ -112,11 +114,11 @@ export default function DashboardView({ onNavigate }: { onNavigate?: (tab: strin
   const targetPct  = Math.min(100, Math.round((weekActual/weekTarget)*100));
 
   /* each pending-action card navigates to its admin tab */
-  const pendingActions = [
+  const pendingActions: { icon:string; count:number; label:string; color:string; action:string; tab:string; payload?:NavPayload }[] = [
     { icon:"🎬", count:videosPending, label:"Videos pending review", color:"#F59E0B", action:"Review Now", tab:"video_review" },
     { icon:"✅", count:stats?.kyc.pending ?? 0, label:"KYC approvals pending", color:"#6366F1", action:"Approve", tab:"phase2_kyc" },
     { icon:"💳", count:regs.filter(r=>r.payment && r.payment.status==="failed" && !PAID_STATUSES.includes(r.phase1Status)).length, label:"Failed payments to retry", color:"#EF4444", action:"View Failed", tab:"finance" },
-    { icon:"📧", count:selectedCount, label:"Scout reports ready to send", color:"#10B981", action:"Send Reports", tab:"phase1_regs" },
+    { icon:"📧", count:selectedCount, label:"Phase 1 selected players", color:"#10B981", action:"View Selected", tab:"phase1_regs", payload:{ filter:"selected" } },
   ];
 
   const funnelData = [
@@ -216,7 +218,8 @@ export default function DashboardView({ onNavigate }: { onNavigate?: (tab: strin
       {/* ── Metric Cards ── */}
       <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:14 }}>
         {metricCards.map(m=>(
-          <div key={m.label} style={{ ...card, borderLeft:`3px solid ${m.color}`, position:"relative", overflow:"hidden" }}>
+          <div key={m.label} onClick={()=>onNavigate?.(m.tab, m.payload)} title="Tap to see details"
+            style={{ ...card, borderLeft:`3px solid ${m.color}`, position:"relative", overflow:"hidden", cursor:"pointer" }}>
             <div style={{ position:"absolute", top:0, right:0, width:80, height:80, background:`radial-gradient(circle,${m.color}18 0%,transparent 70%)`, borderRadius:"50%" }}/>
             <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:10 }}>
               <span style={{ fontSize:18 }}>{m.icon}</span>
@@ -253,7 +256,7 @@ export default function DashboardView({ onNavigate }: { onNavigate?: (tab: strin
       {/* ── Pending Actions ── */}
       <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:10 }}>
         {pendingActions.map(a=>(
-          <div key={a.label} onClick={()=>onNavigate?.(a.tab)} title={`Open ${a.label}`}
+          <div key={a.label} onClick={()=>onNavigate?.(a.tab, a.payload)} title={`Open ${a.label}`}
             style={{ ...card, padding:"14px 16px", borderTop:`2px solid ${a.color}`, cursor:"pointer" }}>
             <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:8 }}>
               <span style={{ fontSize:22 }}>{a.icon}</span>
@@ -262,7 +265,7 @@ export default function DashboardView({ onNavigate }: { onNavigate?: (tab: strin
               </div>
             </div>
             <div style={{ fontSize:12, color:"rgba(255,255,255,.6)", marginBottom:8 }}>{a.label}</div>
-            <button onClick={e=>{ e.stopPropagation(); onNavigate?.(a.tab); }}
+            <button onClick={e=>{ e.stopPropagation(); onNavigate?.(a.tab, a.payload); }}
               style={{ padding:"5px 12px", borderRadius:7, border:`1px solid ${a.color}44`, background:a.color+"11", color:a.color, fontSize:11, fontWeight:700, cursor:"pointer" }}>{a.action}</button>
           </div>
         ))}
@@ -470,7 +473,8 @@ export default function DashboardView({ onNavigate }: { onNavigate?: (tab: strin
             </div>
             <div style={{ display:"flex", gap:10 }}>
               <button onClick={()=>setBlast(false)} style={{ flex:1, padding:"11px 0", borderRadius:10, border:"1px solid #1E293B", background:"transparent", color:"#64748B", fontSize:13, cursor:"pointer" }}>Cancel</button>
-              <button style={{ flex:1, padding:"11px 0", borderRadius:10, border:"none", background:"linear-gradient(135deg,#25D366,#128C4E)", color:"#fff", fontSize:13, fontWeight:700, cursor:"pointer" }}>Send Blast</button>
+              <button disabled title="Interakt API is not configured yet, so sending is disabled"
+                style={{ flex:1, padding:"11px 0", borderRadius:10, border:"1px solid #1E293B", background:"#1E293B", color:"#475569", fontSize:13, fontWeight:700, cursor:"not-allowed" }}>Send Blast (setup required)</button>
             </div>
           </div>
         </div>

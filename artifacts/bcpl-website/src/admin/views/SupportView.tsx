@@ -27,7 +27,6 @@ export default function SupportView() {
         </div>
         <div style={{ display:"flex", gap:8, alignItems:"center" }}>
           <span style={{ fontSize:12, fontWeight:700, color:"#EF4444", background:"#EF444415", padding:"6px 12px", borderRadius:8, border:"1px solid #EF444430" }}>{open} Open</span>
-          <button style={{ padding:"9px 16px", borderRadius:9, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer" }}>+ New Ticket</button>
         </div>
       </div>
 
@@ -55,6 +54,11 @@ export default function SupportView() {
               <button key={c} onClick={()=>setFilter(c)} style={{ padding:"6px 14px", borderRadius:8, border:`1px solid ${filter===c?"#FF6B00":"#1E293B"}`, background:filter===c?"#FF6B0022":"transparent", color:filter===c?"#FF6B00":"#64748B", fontSize:11, fontWeight:700, cursor:"pointer" }}>{c}</button>
             ))}
           </div>
+          {filtered.length===0 && (
+            <div style={{ ...card, padding:"36px 16px", textAlign:"center", color:"#334155", fontSize:12 }}>
+              No support tickets yet — player queries will appear here.
+            </div>
+          )}
           {filtered.map(t=>{
             const slaOk = t.elapsed < t.slaHours;
             return (

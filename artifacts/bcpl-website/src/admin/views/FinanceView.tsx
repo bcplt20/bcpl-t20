@@ -309,12 +309,67 @@ function InvoiceModal({ txn, onClose }: { txn: Txn; onClose: () => void }) {
   );
 }
 
+/* ─── Transaction Detail Modal ──────────────────────────────── */
+function TxnDetailModal({ txn, onOpenInvoice, onOpenReg, onClose }: { txn: Txn; onOpenInvoice: () => void; onOpenReg: () => void; onClose: () => void }) {
+  const { base, cgst, sgst, gst } = gstFromGross(txn.amount);
+  const gw  = Math.round(txn.amount * CF_FEE);
+  const net = Math.round(txn.amount - gw - gst);
+  const sc  = SC[txn.status];
+  const row = (l: string, v: React.ReactNode) => (
+    <div key={l} style={{ display:"flex", justifyContent:"space-between", gap:12, padding:"9px 0", borderBottom:"1px solid #1E293B" }}>
+      <span style={{ fontSize:12, color:"#64748B", flexShrink:0 }}>{l}</span>
+      <span style={{ fontSize:13, color:"#F1F5F9", fontWeight:600, textAlign:"right", wordBreak:"break-all" }}>{v}</span>
+    </div>
+  );
+  return (
+    <div style={{ position:"fixed", inset:0, background:"#000000CC", display:"flex", alignItems:"center", justifyContent:"center", zIndex:1000, padding:16 }} onClick={onClose}>
+      <div style={{ background:"#0D1526", border:"1px solid #1E293B", borderRadius:20, width:"100%", maxWidth:480, maxHeight:"92vh", overflowY:"auto" }} onClick={e=>e.stopPropagation()}>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"16px 24px", borderBottom:"1px solid #1E293B" }}>
+          <div style={{ fontSize:15, fontWeight:800, color:"#F1F5F9" }}>💳 Transaction Details</div>
+          <button onClick={onClose} style={{ padding:"6px 12px", borderRadius:8, border:"none", background:"#1E293B", color:"#64748B", fontSize:12, cursor:"pointer" }}>✕</button>
+        </div>
+        <div style={{ padding:"20px 24px" }}>
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14, gap:10 }}>
+            <div style={{ minWidth:0 }}>
+              <div style={{ fontSize:17, fontWeight:800, color:"#F1F5F9" }}>{txn.name}</div>
+              <div style={{ fontSize:12, color:"#64748B", marginTop:2, wordBreak:"break-all" }}>{txn.email || "—"} · {txn.phone || "—"}</div>
+            </div>
+            <span style={{ padding:"4px 12px", borderRadius:20, fontSize:11, fontWeight:800, background:sc.bg, color:sc.color, flexShrink:0 }}>{sc.label}</span>
+          </div>
+          {row("TXN ID", <span style={{ fontFamily:"monospace" }}>{txn.id}</span>)}
+          {row("Phase", txn.type)}
+          {row("Method", txn.method)}
+          {row("Time", txn.time)}
+          {row("Amount charged", <span style={{ color:"#FF6B00", fontWeight:800 }}>₹{txn.amount.toLocaleString()}</span>)}
+          {row("Base (before GST)", `₹${inr(base)}`)}
+          {row("CGST @ 9%", `₹${cgst.toFixed(2)}`)}
+          {row("SGST @ 9%", `₹${sgst.toFixed(2)}`)}
+          {row("Gateway fee (2% est.)", <span style={{ color:"#EF4444" }}>-₹{gw}</span>)}
+          {row("Net to BCPL", <span style={{ color:"#10B981", fontWeight:800 }}>₹{net}</span>)}
+          <div onClick={onOpenReg} title="Open this player's registration"
+            style={{ marginTop:14, padding:"10px 12px", background:"#080E1C", border:"1px solid #1E293B", borderRadius:10, cursor:"pointer" }}>
+            <div style={{ fontSize:9, fontWeight:800, color:"#475569", letterSpacing:1, marginBottom:4 }}>REGISTRATION ID — TAP TO OPEN</div>
+            <div style={{ fontSize:11, color:"#6366F1", fontFamily:"monospace", wordBreak:"break-all", textDecoration:"underline" }}>{txn.regId}</div>
+          </div>
+          <div style={{ display:"flex", gap:10, marginTop:16 }}>
+            {txn.status === "success" && (
+              <button onClick={onOpenInvoice} style={{ flex:1, padding:"11px 0", borderRadius:10, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontSize:13, fontWeight:700, cursor:"pointer" }}>📄 GST Invoice</button>
+            )}
+            <button onClick={onClose} style={{ flex:1, padding:"11px 0", borderRadius:10, border:"1px solid #1E293B", background:"transparent", color:"#64748B", fontSize:13, cursor:"pointer" }}>Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Main View ──────────────────────────────────────────────── */
-export default function FinanceView() {
+export default function FinanceView({ onNavigate }: { onNavigate?: (tab: string, payload?: { quick?: string; filter?: string; focusId?: string }) => void }) {
   type Tab = "overview"|"pl"|"gst"|"invoices"|"refunds"|"tds";
   const [tab,       setTab]       = useState<Tab>("overview");
   const [txnFilter, setTxnFilter] = useState<"all"|"success"|"pending"|"failed"|"refunded">("all");
   const [invoice,   setInvoice]   = useState<Txn|null>(null);
+  const [txnDetail, setTxnDetail] = useState<Txn|null>(null);
   const [search,    setSearch]    = useState("");
   const [TRANSACTIONS, setTransactions] = useState<Txn[]>([]);
   const [loadErr,   setLoadErr]   = useState("");
@@ -515,7 +570,7 @@ export default function FinanceView() {
                   const gw  = Math.round(t.amount * CF_FEE);
                   const net = Math.round(t.amount - gw - g.gst);
                   return (
-                    <tr key={t.id} style={{ borderBottom:"1px solid #0F1B2D" }}>
+                    <tr key={t.id} onClick={()=>setTxnDetail(t)} title="Tap for full details" style={{ borderBottom:"1px solid #0F1B2D", cursor:"pointer" }}>
                       <td style={{ padding:"10px 10px", fontFamily:"monospace", fontSize:11, color:"#475569" }}>{t.id}</td>
                       <td style={{ padding:"10px 10px" }}>
                         <div style={{ fontSize:13, fontWeight:600, color:"#F1F5F9" }}>{t.name}</div>
@@ -530,12 +585,15 @@ export default function FinanceView() {
                       <td style={{ padding:"10px 10px" }}><span style={{ padding:"3px 10px", borderRadius:20, fontSize:10, fontWeight:800, background:SC[t.status].bg, color:SC[t.status].color, textTransform:"capitalize" }}>{t.status}</span></td>
                       <td style={{ padding:"10px 10px" }}>
                         {t.status==="success"
-                          ? <button onClick={()=>setInvoice(t)} style={{ padding:"4px 10px", borderRadius:6, border:"1px solid #FF6B0044", background:"#FF6B0011", color:"#FF6B00", fontSize:11, cursor:"pointer", fontWeight:700 }}>📄 GST</button>
+                          ? <button onClick={e=>{ e.stopPropagation(); setInvoice(t); }} style={{ padding:"4px 10px", borderRadius:6, border:"1px solid #FF6B0044", background:"#FF6B0011", color:"#FF6B00", fontSize:11, cursor:"pointer", fontWeight:700 }}>📄 GST</button>
                           : <span style={{ fontSize:10, color:"#334155" }}>—</span>}
                       </td>
                     </tr>
                   );
                 })}
+                {filtered.length===0 && (
+                  <tr><td colSpan={10} style={{ padding:"32px 10px", textAlign:"center", color:"#334155", fontSize:12 }}>No transactions{txnFilter!=="all"?` with status "${txnFilter}"`:" yet"}.</td></tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -670,8 +728,6 @@ export default function FinanceView() {
         <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
           <div style={{ display:"flex", gap:10, alignItems:"center" }}>
             <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search by player name or TXN ID…" style={{ flex:1, padding:"10px 14px", background:"#0D1526", border:"1px solid #1E293B", borderRadius:10, color:"#F1F5F9", fontSize:13, outline:"none" }}/>
-            <button style={{ padding:"10px 18px", borderRadius:10, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontSize:12, cursor:"pointer" }}>⬇ Bulk Download</button>
-            <button style={{ padding:"10px 18px", borderRadius:10, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer" }}>📧 Send All</button>
           </div>
           <div style={card}>
             <div style={{ display:"flex", justifyContent:"space-between", marginBottom:14 }}>
@@ -691,7 +747,7 @@ export default function FinanceView() {
                   const g  = gstFromGross(t.amount);
                   const gw = Math.round(t.amount * CF_FEE);
                   return (
-                    <tr key={t.id} style={{ borderBottom:"1px solid #0F1B2D" }}>
+                    <tr key={t.id} onClick={()=>setTxnDetail(t)} title="Tap for full details" style={{ borderBottom:"1px solid #0F1B2D", cursor:"pointer" }}>
                       <td style={{ padding:"10px 10px", fontFamily:"monospace", fontSize:11, color:"#6366F1" }}>BCPL/25-26/{t.id}</td>
                       <td style={{ padding:"10px 10px", fontSize:13, fontWeight:600, color:"#F1F5F9" }}>{t.name}</td>
                       <td style={{ padding:"10px 10px" }}><span style={{ fontSize:11, padding:"2px 8px", borderRadius:4, background:t.type==="Phase 2"?"#10B98122":"#F59E0B22", color:t.type==="Phase 2"?"#10B981":"#F59E0B", fontWeight:700 }}>{t.type}</span></td>
@@ -702,13 +758,16 @@ export default function FinanceView() {
                       <td style={{ padding:"10px 10px", fontSize:13, fontWeight:800, color:"#FF6B00" }}>₹{t.amount.toLocaleString()}</td>
                       <td style={{ padding:"10px 10px" }}>
                         <div style={{ display:"flex", gap:6 }}>
-                          <button onClick={()=>setInvoice(t)} style={{ padding:"4px 10px", borderRadius:6, border:"1px solid #FF6B0044", background:"#FF6B0011", color:"#FF6B00", fontSize:11, cursor:"pointer", fontWeight:700 }}>View</button>
-                          <button onClick={()=>setInvoice(t)} style={{ padding:"4px 10px", borderRadius:6, border:"1px solid #6366F144", background:"#6366F111", color:"#6366F1", fontSize:11, cursor:"pointer" }}>Email</button>
+                          <button onClick={e=>{ e.stopPropagation(); setInvoice(t); }} style={{ padding:"4px 10px", borderRadius:6, border:"1px solid #FF6B0044", background:"#FF6B0011", color:"#FF6B00", fontSize:11, cursor:"pointer", fontWeight:700 }}>View</button>
+                          <button onClick={e=>{ e.stopPropagation(); setInvoice(t); }} style={{ padding:"4px 10px", borderRadius:6, border:"1px solid #6366F144", background:"#6366F111", color:"#6366F1", fontSize:11, cursor:"pointer" }}>Email</button>
                         </div>
                       </td>
                     </tr>
                   );
                 })}
+                {TRANSACTIONS.filter(t=>t.status==="success").length===0 && (
+                  <tr><td colSpan={9} style={{ padding:"32px 10px", textAlign:"center", color:"#334155", fontSize:12 }}>No invoices yet — invoices appear when payments succeed.</td></tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -734,9 +793,13 @@ export default function FinanceView() {
           <div style={card}>
             <div style={{ display:"flex", justifyContent:"space-between", marginBottom:14 }}>
               <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9" }}>Refund Requests</div>
-              <button style={{ padding:"7px 14px", borderRadius:9, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer" }}>+ Process Batch</button>
             </div>
             <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+              {REFUNDS.length===0 && (
+                <div style={{ padding:"36px 16px", textAlign:"center", color:"#334155", fontSize:12, background:"#060B18", borderRadius:12, border:"1px dashed #1E293B" }}>
+                  No refund requests yet.
+                </div>
+              )}
               {REFUNDS.map(r=>(
                 <div key={r.id} style={{ padding:"16px", background:"#060B18", borderRadius:12, border:`1px solid ${r.status==="pending"?"#EF444430":"#1E293B"}` }}>
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:8 }}>
@@ -778,11 +841,12 @@ export default function FinanceView() {
             </div>
           </div>
           <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:12 }}>
+            {/* Values derive from TDS_PRIZES — no prize money has been disbursed yet */}
             {[
-              { l:"Total Prize Disbursed", v:"₹2,00,000", c:"#FF6B00" },
-              { l:"TDS Deducted (30%)",    v:"₹20,000",   c:"#EF4444" },
-              { l:"Net Prize Paid",        v:"₹1,80,000", c:"#10B981" },
-              { l:"Pending TDS Deposit",   v:"₹12,000",   c:"#F59E0B" },
+              { l:"Total Prize Disbursed", v:"₹0", c:"#FF6B00" },
+              { l:"TDS Deducted (30%)",    v:"₹0", c:"#EF4444" },
+              { l:"Net Prize Paid",        v:"₹0", c:"#10B981" },
+              { l:"Pending TDS Deposit",   v:"₹0", c:"#F59E0B" },
             ].map(s=>(
               <div key={s.l} style={{ ...card, borderTop:`3px solid ${s.c}` }}>
                 <div style={{ fontSize:22, fontWeight:800, color:s.c }}>{s.v}</div>
@@ -793,7 +857,6 @@ export default function FinanceView() {
           <div style={card}>
             <div style={{ display:"flex", justifyContent:"space-between", marginBottom:14 }}>
               <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9" }}>Prize TDS Records</div>
-              <button style={{ padding:"7px 14px", borderRadius:9, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontSize:12, cursor:"pointer" }}>⬇ Form 27Q</button>
             </div>
             <table style={{ width:"100%", borderCollapse:"collapse" }}>
               <thead>
@@ -804,6 +867,9 @@ export default function FinanceView() {
                 </tr>
               </thead>
               <tbody>
+                {TDS_PRIZES.length===0 && (
+                  <tr><td colSpan={6} style={{ padding:"32px 10px", textAlign:"center", color:"#334155", fontSize:12 }}>No prize money disbursed yet — TDS records will appear here.</td></tr>
+                )}
                 {TDS_PRIZES.map((t,i)=>(
                   <tr key={i} style={{ borderBottom:"1px solid #0F1B2D" }}>
                     <td style={{ padding:"11px 10px", fontSize:13, fontWeight:600, color:"#F1F5F9" }}>{t.player}</td>
@@ -821,6 +887,14 @@ export default function FinanceView() {
       )}
 
       {invoice && <InvoiceModal txn={invoice} onClose={()=>setInvoice(null)}/>}
+      {txnDetail && (
+        <TxnDetailModal
+          txn={txnDetail}
+          onClose={()=>setTxnDetail(null)}
+          onOpenInvoice={()=>{ setInvoice(txnDetail); setTxnDetail(null); }}
+          onOpenReg={()=>onNavigate?.("phase1_regs",{ focusId:txnDetail.regId })}
+        />
+      )}
     </div>
   );
 }

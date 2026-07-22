@@ -57,6 +57,19 @@ export default defineConfig({
     fs: {
       strict: true,
     },
+    // Dev-only: forward API calls to the local Express server,
+    // mirroring what nginx does in production.
+    proxy: {
+      [`${basePath}api`]: {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        rewrite: (p: string) => p.replace(`${basePath}api`, '/api'),
+      },
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      },
+    },
   },
   preview: {
     port,

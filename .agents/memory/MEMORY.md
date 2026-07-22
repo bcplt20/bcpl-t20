@@ -4,7 +4,7 @@
 - [Edit tool $ quirk](edit-tool-dollar-quirk.md) — replacements containing ` sequences (SQL regex anchors) can corrupt files; use WriteFile instead
 - [Site header](per-page-navbars.md) — all 31 pages now use shared SiteHeader (sh- CSS, 60px sticky nav, CTA hidden <640px); page sticky elements offset top:60
 - [Admin API auth](admin-api-auth.md) — admin views must call adminReq (session token), never req(...,true)/VITE_ADMIN_KEY (403s or leaks key in prod bundle); teams admin fns = known debt
-- [Dev preview API gap](dev-preview-api.md) — frontend /api calls 404 in Replit preview (no vite proxy; prod nginx routes /api); test against localhost:8080; OTP readable from otp_sessions table
+- [Dev preview & API base](dev-preview-api.md) — preview now mirrors prod (vite /api proxy + BASE_URL fallback); if fetches hit a wrong host, check VITE_* env vars first; OTP readable from otp_sessions
 - [Stale lib/db dist declarations](db-schema-dist-declarations.md) — after schema changes run `tsc --build lib/db --force` or typecheck shows phantom "no exported member" errors; runtime uses src, not dist
 - [Express req.params typing](express-params-string.md) — req.params.X types as string|string[] here; wrap in String() before drizzle eq() or tsc fails
 - [Auction squad link](auction-squad-link.md) — sold players carry stats.regId; API enforces one-squad-per-registration (409); pool excludes taken regIds

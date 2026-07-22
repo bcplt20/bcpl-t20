@@ -17,10 +17,6 @@ export default function FraudView() {
           <div style={{fontSize:20,fontWeight:800,color:"#F1F5F9"}}>Fraud Detection</div>
           <div style={{fontSize:12,color:"#64748B",marginTop:2}}>Detect duplicate registrations, fake phones, self-referrals, VPN abuse — auto-flagged</div>
         </div>
-        <div style={{display:"flex",gap:8}}>
-          <button style={{padding:"9px 16px",borderRadius:9,border:"1px solid #1E293B",background:"transparent",color:"#94A3B8",fontSize:12,cursor:"pointer"}}>⬇ Export Fraud Report</button>
-          <button style={{padding:"9px 16px",borderRadius:9,border:"none",background:"#EF444422",color:"#EF4444",fontSize:12,fontWeight:700,cursor:"pointer",border:"1px solid #EF444440"} as any}>🛡 Run Scan Now</button>
-        </div>
       </div>
 
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12}}>
@@ -37,20 +33,15 @@ export default function FraudView() {
         ))}
       </div>
 
-      {/* Alert banner */}
-      <div style={{padding:"14px 20px",background:"#EF444410",border:"1px solid #EF444430",borderRadius:12,display:"flex",gap:12,alignItems:"center"}}>
-        <span style={{fontSize:20,lineHeight:1}}>🚨</span>
-        <div>
-          <div style={{fontSize:13,fontWeight:700,color:"#EF4444"}}>2 High-Risk flags need immediate action</div>
-          <div style={{fontSize:11,color:"#94A3B8",marginTop:2}}>Duplicate phone + mass IP registration detected in last 4 hours. Review and block before payment processing.</div>
-        </div>
-        <button style={{marginLeft:"auto",padding:"8px 16px",borderRadius:8,border:"none",background:"#EF4444",color:"#fff",fontSize:11,fontWeight:700,cursor:"pointer",flexShrink:0}}>Review Now</button>
-      </div>
-
       <div style={{display:"grid",gridTemplateColumns:sel?"1fr 380px":"1fr",gap:16}}>
         <div style={card}>
           <div style={{fontSize:14,fontWeight:700,color:"#F1F5F9",marginBottom:16}}>Flagged Cases</div>
           <div style={{display:"flex",flexDirection:"column",gap:8}}>
+            {FLAGS.length===0&&(
+              <div style={{padding:"36px 16px",textAlign:"center",color:"#334155",fontSize:12,background:"#060B18",borderRadius:12,border:"1px dashed #1E293B"}}>
+                No fraud flags yet — flagged registrations will appear here.
+              </div>
+            )}
             {FLAGS.map((f,i)=>(
               <div key={i} onClick={()=>setSel(s=>s?.id===f.id?null:f)} style={{padding:"14px 16px",background:"#060B18",borderRadius:12,border:`1px solid ${sel?.id===f.id?"#FF6B0060":riskColor(f.risk)+"20"}`,cursor:"pointer",display:"flex",gap:14,alignItems:"flex-start"}}>
                 <span style={{fontSize:10,fontWeight:800,padding:"3px 8px",borderRadius:6,background:`${riskColor(f.risk)}22`,color:riskColor(f.risk),flexShrink:0,marginTop:1}}>{f.risk}</span>
@@ -58,10 +49,6 @@ export default function FraudView() {
                   <div style={{fontSize:13,fontWeight:700,color:"#F1F5F9"}}>{f.type}</div>
                   <div style={{fontSize:11,color:"#475569",marginTop:2}}>{f.players.slice(0,2).join(", ")}{f.players.length>2?` +${f.players.length-2} more`:""}</div>
                   <div style={{fontSize:11,color:"#334155",marginTop:3}}>IP: {f.ip} · {f.created}</div>
-                </div>
-                <div style={{display:"flex",gap:6,flexShrink:0}}>
-                  <button onClick={e=>{e.stopPropagation()}} style={{padding:"4px 10px",borderRadius:6,border:"none",background:"#EF444422",color:"#EF4444",fontSize:11,fontWeight:700,cursor:"pointer"}}>Block</button>
-                  <button onClick={e=>{e.stopPropagation()}} style={{padding:"4px 10px",borderRadius:6,border:"none",background:"#10B98122",color:"#10B981",fontSize:11,cursor:"pointer"}}>Ignore</button>
                 </div>
               </div>
             ))}
@@ -90,10 +77,6 @@ export default function FraudView() {
                   <div key={i} style={{padding:"7px 10px",background:"#0D1526",borderRadius:7,marginBottom:4,fontSize:12,color:"#F1F5F9",border:"1px solid #1E293B"}}>{p}</div>
                 ))}
               </div>
-              <div style={{display:"flex",gap:8}}>
-                <button style={{flex:1,padding:"10px",borderRadius:9,border:"none",background:"#EF4444",color:"#fff",fontWeight:800,fontSize:12,cursor:"pointer"}}>🚫 Block All + Refund</button>
-                <button style={{flex:1,padding:"10px",borderRadius:9,border:"none",background:"#F59E0B22",color:"#F59E0B",fontWeight:700,fontSize:12,cursor:"pointer",border:"1px solid #F59E0B40"} as any}>⚠ Flag for Review</button>
-              </div>
             </div>
           </div>
         )}
@@ -111,6 +94,9 @@ export default function FraudView() {
             </tr>
           </thead>
           <tbody>
+            {BLOCKED.length===0&&(
+              <tr><td colSpan={5} style={{padding:"32px 12px",textAlign:"center",color:"#334155",fontSize:12}}>No IPs blocked yet.</td></tr>
+            )}
             {BLOCKED.map((b,i)=>(
               <tr key={i} style={{borderBottom:"1px solid #0F1B2D"}}>
                 <td style={{padding:"12px 12px",fontSize:12,fontFamily:"monospace",color:"#F1F5F9"}}>{b.ip}</td>

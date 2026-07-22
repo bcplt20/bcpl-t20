@@ -33,7 +33,7 @@ import Phase2KYCView           from "./views/Phase2KYCView";
 import FraudView            from "./views/FraudView";
 import ForecastView         from "./views/ForecastView";
 import SponsorROIView       from "./views/SponsorROIView";
-import { adminLogin, saveAdminToken } from "../lib/api";
+import { adminLogin, saveAdminToken, clearAdminToken, hasLegacyAdminKey } from "../lib/api";
 
 type NavItem  = { id: string; label: string; icon: string; badge?: string; badgeColor?: string };
 type NavGroup = { title: string; items: NavItem[] };
@@ -49,12 +49,12 @@ const NAV: NavGroup[] = [
     { id:"marketing",    label:"Marketing",         icon:"◎", badge:"New", badgeColor:"#FF6B00" },
     { id:"seo",          label:"SEO Manager",       icon:"⌖" },
     { id:"affiliates",   label:"Agents & Affiliates",icon:"⊟" },
-    { id:"push",         label:"Push Notifications",icon:"●", badge:"5.8K", badgeColor:"#6366F1" },
+    { id:"push",         label:"Push Notifications",icon:"●" },
     { id:"content_cal",  label:"Content Calendar",  icon:"▤" },
   ]},
   { title: "LEAGUE", items: [
     { id:"matches",      label:"Matches",           icon:"◐" },
-    { id:"live_scoring", label:"Live Scoring",      icon:"●", badge:"1 Live", badgeColor:"#EF4444" },
+    { id:"live_scoring", label:"Live Scoring",      icon:"●" },
     { id:"teams",        label:"Teams",             icon:"▨" },
     { id:"selection",    label:"Selection",         icon:"✓", badge:"Phase 1", badgeColor:"#F59E0B" },
     { id:"auction",      label:"Live Auction",      icon:"⊕", badge:"New", badgeColor:"#FF6B00" },
@@ -69,11 +69,11 @@ const NAV: NavGroup[] = [
   { title: "PLAYERS", items: [
     { id:"player_profiles",label:"Player Profiles", icon:"⊞" },
     { id:"whatsapp_tpl", label:"WhatsApp Templates",icon:"◎" },
-    { id:"fraud",        label:"Fraud Detection",   icon:"⌖", badge:"2 High", badgeColor:"#EF4444" },
+    { id:"fraud",        label:"Fraud Detection",   icon:"⌖" },
   ]},
   { title: "TRIALS", items: [
     { id:"trial_cities", label:"Trial Cities",      icon:"◐" },
-    { id:"support",      label:"Support Tickets",   icon:"●", badge:"5 Open", badgeColor:"#EF4444" },
+    { id:"support",      label:"Support Tickets",   icon:"●" },
   ]},
   { title: "CONTENT", items: [
     { id:"media",        label:"Photos & Videos",   icon:"▨" },
@@ -103,25 +103,28 @@ function Icon({ ch }: { ch: string }) {
   );
 }
 
-function renderView(id: string, setActive: (viewId: string) => void) {
+export type AdminNavPayload = { quick?: string; filter?: string; focusId?: string };
+
+function renderView(id: string, navigate: (viewId: string, payload?: AdminNavPayload) => void, payload: AdminNavPayload | null) {
+  const pk = JSON.stringify(payload ?? {});
   switch (id) {
-    case "dashboard":      return <DashboardView onNavigate={setActive} />;
-    case "users":          return <UsersView />;
-    case "finance":        return <FinanceView />;
+    case "dashboard":      return <DashboardView onNavigate={navigate} />;
+    case "users":          return <UsersView key={"u"+pk} onNavigate={navigate} initialQuick={payload?.quick} />;
+    case "finance":        return <FinanceView key={"fin"+pk} onNavigate={navigate} />;
     case "forecast":       return <ForecastView />;
     case "marketing":      return <MarketingView />;
     case "seo":            return <SEOView />;
     case "affiliates":     return <AffiliatesView />;
     case "push":           return <PushNotificationsView />;
     case "content_cal":    return <ContentCalendarView />;
-    case "matches":        return <MatchesView onOpenScoring={() => setActive("live_scoring")} />;
+    case "matches":        return <MatchesView onOpenScoring={() => navigate("live_scoring")} />;
     case "live_scoring":   return <LiveScoringView />;
     case "teams":          return <TeamsView />;
     case "selection":      return <SelectionView />;
     case "auction":        return <AuctionView />;
     case "leaderboard":    return <LeaderboardView />;
     case "contracts":      return <ContractsView />;
-    case "phase1_regs":    return <Phase1RegistrationsView />;
+    case "phase1_regs":    return <Phase1RegistrationsView key={"p1"+pk} onNavigate={navigate} focusId={payload?.focusId} initialFilter={payload?.filter} />;
     case "video_review":   return <VideoReviewView />;
     case "phase2_kyc":     return <Phase2KYCView />;
     case "player_profiles":return <PlayerProfilesView />;
@@ -137,7 +140,7 @@ function renderView(id: string, setActive: (viewId: string) => void) {
     case "data_export":    return <DataExportView />;
     case "roles":          return <RolesView />;
     case "admin_settings": return <AdminSettingsView />;
-    default:               return <DashboardView onNavigate={setActive} />;
+    default:               return <DashboardView onNavigate={navigate} />;
   }
 }
 
@@ -151,10 +154,12 @@ const SUPER_ADMIN = {
 
 export default function AdminShell() {
   const [active,        setActive]       = useState("dashboard");
+  const [navPayload,    setNavPayload]   = useState<AdminNavPayload | null>(null);
   const [loggedIn,      setLoggedIn]     = useState(false);
   const [loggedInAdmin, setLoggedInAdmin]= useState<typeof SUPER_ADMIN & { password?:string } | null>(null);
   const [collapsed,     setCollapsed]    = useState(false);
   const [loginForm,     setLoginForm]    = useState({ email:"", password:"" });
+  const [loginBusy,     setLoginBusy]    = useState(false);
   const [loginErr,      setLoginErr]     = useState("");
   const [notifOpen,     setNotifOpen]    = useState(false);
   const [searchOpen,    setSearchOpen]   = useState(false);
@@ -162,6 +167,12 @@ export default function AdminShell() {
 
   const NOTIFS: { icon:string; text:string; time:string; unread:boolean }[] = [];
   const unreadCount = NOTIFS.filter(n => n.unread).length;
+
+  /* ── Cross-view navigation: switch tab + optional payload (focusId / filter / quick) ── */
+  const navigate = (viewId: string, payload?: AdminNavPayload) => {
+    setNavPayload(payload ?? null);
+    setActive(viewId);
+  };
 
   /* ── Super Admin password (only this needs changing in code) ── */
   const SUPER_ADMIN_PASSWORD = "BCPL@S5#2026!";
@@ -185,16 +196,35 @@ export default function AdminShell() {
 
   /* ── Login ── */
   if (!loggedIn) {
-    const handleLogin = () => {
+    const handleLogin = async () => {
+      if(loginBusy) return;
       if(!loginForm.email){ setLoginErr("Email address is required"); return; }
       if(!loginForm.password){ setLoginErr("Password is required"); return; }
       const emailL = loginForm.email.toLowerCase().trim();
       // Check Super Admin first
       if (emailL === SUPER_ADMIN.email && loginForm.password === SUPER_ADMIN_PASSWORD) {
-        setLoggedIn(true);
-        setLoggedInAdmin(SUPER_ADMIN);
-        // Fetch admin API token silently (used for all admin API calls)
-        adminLogin(loginForm.password).then(r => saveAdminToken(r.token)).catch(() => {});
+        // Get the admin API token BEFORE showing the panel, so the first
+        // view's API calls don't fire without it (they'd 403 and render empty).
+        setLoginBusy(true);
+        try {
+          const r = await adminLogin(loginForm.password);
+          saveAdminToken(r.token);
+          setLoggedIn(true);
+          setLoggedInAdmin(SUPER_ADMIN);
+        } catch (e) {
+          if (hasLegacyAdminKey()) {
+            // Legacy header auth is configured in this build — panel still works without the JWT.
+            setLoggedIn(true);
+            setLoggedInAdmin(SUPER_ADMIN);
+          } else {
+            const msg = e instanceof Error ? e.message : "";
+            setLoginErr(msg === "Invalid admin password"
+              ? "The server rejected the admin password — server settings are out of date."
+              : "Could not verify with the server. Check that the site is online, then try again.");
+          }
+        } finally {
+          setLoginBusy(false);
+        }
         return;
       }
       // Check co-admins from localStorage
@@ -236,9 +266,9 @@ export default function AdminShell() {
                 style={{ width:"100%", padding:"12px 14px", borderRadius:10, border:`1px solid ${loginErr?"#EF4444":"#1E293B"}`, background:"#080E1C", color:"#E2E8F0", fontSize:14, outline:"none", boxSizing:"border-box", lineHeight:1 }}/>
               {loginErr&&<div style={{ fontSize:11, color:"#EF4444", marginTop:6 }}>⚠ {loginErr}</div>}
             </div>
-            <button onClick={handleLogin}
-              style={{ marginTop:4, width:"100%", padding:14, borderRadius:12, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontWeight:800, fontSize:15, cursor:"pointer", letterSpacing:.5, lineHeight:1 }}>
-              Sign In →
+            <button onClick={handleLogin} disabled={loginBusy}
+              style={{ marginTop:4, width:"100%", padding:14, borderRadius:12, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontWeight:800, fontSize:15, cursor:loginBusy?"wait":"pointer", opacity:loginBusy?0.7:1, letterSpacing:.5, lineHeight:1 }}>
+              {loginBusy ? "Signing in…" : "Sign In →"}
             </button>
           </div>
           <div style={{ textAlign:"center", marginTop:20 }}>
@@ -287,7 +317,7 @@ export default function AdminShell() {
               {group.items.map(item=>{
                 const on = active===item.id;
                 return (
-                  <button key={item.id} onClick={()=>setActive(item.id)} title={collapsed?item.label:undefined}
+                  <button key={item.id} onClick={()=>navigate(item.id)} title={collapsed?item.label:undefined}
                     style={{ width:"100%", height:36, padding:collapsed?"0":"0 10px", marginBottom:2, borderRadius:9, border:"none", borderLeft:`2px solid ${on?"#FF6B00":"transparent"}`, background:on?"#FF6B0018":"transparent", color:on?"#FF6B00":"#4B5775", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:collapsed?"center":"flex-start", gap:10, transition:"background .12s,color .12s" }}>
                     <Icon ch={item.icon}/>
                     {!collapsed&&(
@@ -316,7 +346,7 @@ export default function AdminShell() {
                 <div style={{ fontSize:12, fontWeight:700, color:"#CBD5E1", lineHeight:1, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{loggedInAdmin?.name||"Admin"}</div>
                 <div style={{ fontSize:10, color:"#334155", marginTop:4, lineHeight:1 }}>{loggedInAdmin?.role||"Super Admin"}</div>
               </div>
-              <button onClick={()=>{ setLoggedIn(false); setLoggedInAdmin(null); setLoginForm({email:"",password:""}); setLoginErr(""); }}
+              <button onClick={()=>{ clearAdminToken(); setLoggedIn(false); setLoggedInAdmin(null); setLoginForm({email:"",password:""}); setLoginErr(""); }}
                 style={{ width:28, height:28, display:"flex", alignItems:"center", justifyContent:"center", background:"none", border:"none", color:"#334155", cursor:"pointer", fontSize:14, flexShrink:0, lineHeight:1, borderRadius:6 }} title="Sign out">⎋</button>
             </>
           )}
@@ -330,7 +360,7 @@ export default function AdminShell() {
         <header style={{ height:60, background:"#080E1C", borderBottom:"1px solid #0F172A", display:"flex", alignItems:"center", padding:"0 24px", gap:14, flexShrink:0 }}>
           <div style={{ flex:1 }}>
             <div style={{ fontSize:14, fontWeight:700, color:"#E2E8F0", lineHeight:1 }}>{activeLabel}</div>
-            <div style={{ fontSize:11, color:"#334155", marginTop:5, lineHeight:1 }}>BCPL Season 5 · July 20, 2026</div>
+            <div style={{ fontSize:11, color:"#334155", marginTop:5, lineHeight:1 }}>BCPL Season 5 · {new Date().toLocaleDateString("en-US",{ month:"long", day:"numeric", year:"numeric" })}</div>
           </div>
 
           {/* Search */}
@@ -348,7 +378,7 @@ export default function AdminShell() {
                 </div>
                 <div style={{ maxHeight:360, overflowY:"auto" }}>
                   {SEARCH_ITEMS.map(item=>(
-                    <button key={item.id} onClick={()=>{ setActive(item.id); setSearchOpen(false); setSearchQ(""); }}
+                    <button key={item.id} onClick={()=>{ navigate(item.id); setSearchOpen(false); setSearchQ(""); }}
                       style={{ width:"100%", height:40, padding:"0 14px", border:"none", background:"transparent", color:"#CBD5E1", cursor:"pointer", display:"flex", alignItems:"center", gap:10, textAlign:"left" }}>
                       <Icon ch={item.icon}/>
                       <span style={{ fontSize:13, lineHeight:1 }}>{item.label}</span>
@@ -378,7 +408,7 @@ export default function AdminShell() {
               <div style={{ position:"absolute", top:"calc(100% + 8px)", right:0, width:320, background:"#0D1526", border:"1px solid #1E293B", borderRadius:16, overflow:"hidden", zIndex:50, boxShadow:"0 20px 40px #00000060" }}>
                 <div style={{ height:48, padding:"0 18px", borderBottom:"1px solid #1E293B", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
                   <span style={{ fontWeight:700, fontSize:13, lineHeight:1, color:"#F1F5F9" }}>Notifications</span>
-                  <span style={{ fontSize:11, color:"#FF6B00", cursor:"pointer", fontWeight:600, lineHeight:1 }}>Mark all read</span>
+                  {NOTIFS.length>0&&<span style={{ fontSize:11, color:"#FF6B00", cursor:"pointer", fontWeight:600, lineHeight:1 }}>Mark all read</span>}
                 </div>
                 {NOTIFS.map((n,i)=>(
                   <div key={i} style={{ padding:"12px 18px", borderBottom:"1px solid #0F172A", display:"flex", gap:12, alignItems:"center", background:n.unread?"#FF6B0005":"transparent" }}>
@@ -390,6 +420,7 @@ export default function AdminShell() {
                     {n.unread&&<div style={{ width:7, height:7, borderRadius:"50%", background:"#FF6B00", flexShrink:0 }}/>}
                   </div>
                 ))}
+                {NOTIFS.length===0&&<div style={{ padding:"24px 18px", color:"#475569", fontSize:12, textAlign:"center" }}>No notifications yet</div>}
               </div>
             )}
           </div>
@@ -399,7 +430,7 @@ export default function AdminShell() {
 
         {/* Content */}
         <main style={{ flex:1, overflowY:"auto", background:"#060B18", padding:24 }}>
-          {renderView(active, setActive)}
+          {renderView(active, navigate, navPayload)}
         </main>
       </div>
     </div>

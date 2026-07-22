@@ -142,11 +142,12 @@ router.get("/registrations", async (req, res) => {
       r.reg.trialCity?.toLowerCase().includes(trialCity.toLowerCase())
     );
 
-    // Fetch payments + videos in one sweep
-    const [allPayments, allP2Payments, allVideos] = await Promise.all([
+    // Fetch payments + videos + kyc in one sweep
+    const [allPayments, allP2Payments, allVideos, allKyc] = await Promise.all([
       db.select().from(phase1PaymentsTable),
       db.select().from(phase2PaymentsTable),
       db.select().from(phase1VideosTable),
+      db.select().from(kycRecordsTable),
     ]);
     // A registration can have several payment attempt rows — prefer the successful one,
     // and among rows of the same class (paid vs not) keep the most recent attempt
@@ -167,6 +168,14 @@ router.get("/registrations", async (req, res) => {
     const payMap   = pickPayments(allPayments);
     const p2PayMap = pickPayments(allP2Payments);
     const vidMap = new Map(allVideos.map(v => [v.registrationId, v]));
+    // Latest KYC record per registration (real status for the Users view)
+    const kycMap = new Map<string, (typeof allKyc)[number]>();
+    for (const k of allKyc) {
+      const cur = kycMap.get(k.registrationId);
+      if (!cur || new Date(k.createdAt).getTime() > new Date(cur.createdAt).getTime()) {
+        kycMap.set(k.registrationId, k);
+      }
+    }
 
     const registrations = filtered.map(r => ({
       id:           r.reg.id,
@@ -181,6 +190,10 @@ router.get("/registrations", async (req, res) => {
       payment:       payMap.get(r.reg.id) ?? null,
       phase2Payment: p2PayMap.get(r.reg.id) ?? null,
       video:         vidMap.get(r.reg.id) ?? null,
+      kyc: (() => {
+        const k = kycMap.get(r.reg.id);
+        return k ? { id: k.id, status: k.status, panVerified: k.panVerified, verifiedAt: k.verifiedAt } : null;
+      })(),
     }));
 
     res.json({ registrations, total: registrations.length });

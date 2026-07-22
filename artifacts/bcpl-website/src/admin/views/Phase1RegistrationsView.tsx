@@ -15,6 +15,7 @@ type Reg = {
   user: { id: string; name: string; phone: string; email: string } | null;
   payment: { status: string; amount: string; paidAt: string | null } | null;
   video: { status: string; submittedAt: string; s3Url: string | null } | null;
+  kyc?: { id: string; status: string; panVerified: boolean; verifiedAt: string | null } | null;
 };
 
 const ROLE_LABEL: Record<string, string> = {
@@ -51,16 +52,22 @@ function Badge({ status, map, colorMap }: { status: string; map: Record<string,s
   );
 }
 
-export default function Phase1RegistrationsView() {
+const P1_FILTERS = ["all", "pending", "payment_done", "video_submitted", "selected", "rejected"];
+
+type NavPayload = { quick?: string; filter?: string; focusId?: string };
+
+export default function Phase1RegistrationsView({ onNavigate, focusId, initialFilter }: { onNavigate?: (tab: string, payload?: NavPayload) => void; focusId?: string; initialFilter?: string }) {
   const [rows, setRows]         = useState<Reg[]>([]);
   const [stats, setStats]       = useState<any>(null);
-  const [filter, setFilter]     = useState("all");
+  const [filter, setFilter]     = useState(initialFilter && P1_FILTERS.includes(initialFilter) ? initialFilter : "all");
   const [roleF, setRoleF]       = useState("all");
   const [cityQ, setCityQ]       = useState("");
   const [search, setSearch]     = useState("");
   const [loading, setLoading]   = useState(true);
   const [err, setErr]           = useState("");
   const [acting, setActing]     = useState<string | null>(null);
+  const [detail, setDetail]     = useState<Reg | null>(null);
+  const [focusDone, setFocusDone] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true); setErr("");
@@ -84,11 +91,21 @@ export default function Phase1RegistrationsView() {
 
   useEffect(() => { load(); }, [load]);
 
+  /* Auto-open the record another view asked us to focus (tapped reg ID) */
+  useEffect(() => {
+    if (focusId && !focusDone && rows.length > 0) {
+      const r = rows.find(x => x.id === focusId);
+      if (r) setDetail(r);
+      setFocusDone(true);
+    }
+  }, [rows, focusId, focusDone]);
+
   const setPhase1Status = async (id: string, status: string) => {
     setActing(id);
     try {
       await adminUpdatePhase1Status(id, status);
       setRows(prev => prev.map(r => r.id === id ? { ...r, phase1Status: status } : r));
+      setDetail(d => d && d.id === id ? { ...d, phase1Status: status } : d);
       if (stats) {
         // Refresh stats silently
         adminGetStats().then(setStats).catch(() => {});
@@ -125,7 +142,8 @@ export default function Phase1RegistrationsView() {
   ] : [];
 
   return (
-    <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
+    <div style={{ display:"flex", gap:16, alignItems:"flex-start" }}>
+    <div style={{ flex:1, minWidth:0, display:"flex", flexDirection:"column", gap:16 }}>
 
       {/* Header */}
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", flexWrap:"wrap", gap:10 }}>
@@ -214,7 +232,8 @@ export default function Phase1RegistrationsView() {
               </thead>
               <tbody>
                 {displayed.map((r, i) => (
-                  <tr key={r.id} style={{ borderBottom:"1px solid #0F172A", background:i%2===0?"transparent":"#0A111C" }}>
+                  <tr key={r.id} onClick={() => setDetail(r)} title="Tap for full details"
+                    style={{ borderBottom:"1px solid #0F172A", cursor:"pointer", background:detail?.id===r.id?"#FF6B0012":(i%2===0?"transparent":"#0A111C") }}>
                     {/* Player */}
                     <td style={{ padding:"10px 12px" }}>
                       <div style={{ fontWeight:700, color:"#F1F5F9" }}>{r.user?.name ?? "—"}</div>
@@ -246,7 +265,7 @@ export default function Phase1RegistrationsView() {
                         <div style={{ display:"flex", flexDirection:"column", gap:3 }}>
                           <Badge status={r.video.status} map={{ submitted:"Submitted", reviewed:"Reviewed" }} colorMap={{ submitted:"#A855F7", reviewed:"#10B981" }} />
                           {r.video.s3Url && (
-                            <a href={r.video.s3Url} target="_blank" rel="noreferrer" title="Watch video in new tab"
+                            <a href={r.video.s3Url} target="_blank" rel="noreferrer" title="Watch video in new tab" onClick={e => e.stopPropagation()}
                               style={{ fontSize:10, fontWeight:700, color:"#6366F1", textDecoration:"none", padding:"3px 8px", borderRadius:5, background:"#6366F118", border:"1px solid #6366F140", display:"inline-block", width:"fit-content" }}>▶ Watch</a>
                           )}
                         </div>
@@ -262,7 +281,7 @@ export default function Phase1RegistrationsView() {
                         {r.phase1Status !== "selected" && (
                           <button
                             disabled={acting === r.id}
-                            onClick={() => setPhase1Status(r.id, "selected")}
+                            onClick={e => { e.stopPropagation(); setPhase1Status(r.id, "selected"); }}
                             style={{ padding:"5px 10px", borderRadius:6, border:"1px solid #10B98140", background:"#10B98115", color:"#10B981", fontSize:10, fontWeight:700, cursor:"pointer", whiteSpace:"nowrap", opacity:acting===r.id?0.5:1 }}>
                             ✓ Select
                           </button>
@@ -270,7 +289,7 @@ export default function Phase1RegistrationsView() {
                         {r.phase1Status !== "rejected" && (
                           <button
                             disabled={acting === r.id}
-                            onClick={() => setPhase1Status(r.id, "rejected")}
+                            onClick={e => { e.stopPropagation(); setPhase1Status(r.id, "rejected"); }}
                             style={{ padding:"5px 10px", borderRadius:6, border:"1px solid #EF444440", background:"#EF444415", color:"#EF4444", fontSize:10, fontWeight:700, cursor:"pointer", whiteSpace:"nowrap", opacity:acting===r.id?0.5:1 }}>
                             ✗ Reject
                           </button>
@@ -278,7 +297,7 @@ export default function Phase1RegistrationsView() {
                         {(r.phase1Status === "selected" || r.phase1Status === "rejected") && (
                           <button
                             disabled={acting === r.id}
-                            onClick={() => setPhase1Status(r.id, "pending")}
+                            onClick={e => { e.stopPropagation(); setPhase1Status(r.id, "pending"); }}
                             style={{ padding:"5px 10px", borderRadius:6, border:"1px solid #64748B40", background:"#64748B15", color:"#64748B", fontSize:10, fontWeight:700, cursor:"pointer", whiteSpace:"nowrap", opacity:acting===r.id?0.5:1 }}>
                             ↺ Reset
                           </button>
@@ -296,6 +315,89 @@ export default function Phase1RegistrationsView() {
       <div style={{ fontSize:11, color:"#334155", textAlign:"right" }}>
         {!loading && `${displayed.length} registration${displayed.length !== 1 ? "s" : ""} shown`}
       </div>
+    </div>
+
+    {/* ── Detail drawer ── */}
+    {detail && (() => {
+      const fmtDT = (d?: string | null) => d ? new Date(d).toLocaleString("en-IN", { day:"2-digit", month:"short", year:"numeric", hour:"2-digit", minute:"2-digit" }) : null;
+      const paid = detail.payment?.status === "success" || ["payment_done","video_submitted","selected","rejected"].includes(detail.phase1Status);
+      const journey = [
+        { label:"Registered", time:fmtDT(detail.createdAt), done:true },
+        { label:"Phase 1 payment", time:fmtDT(detail.payment?.paidAt), done:paid },
+        { label:"Video submitted", time:fmtDT(detail.video?.submittedAt), done:!!detail.video },
+        { label:detail.phase1Status==="selected"?"Selected":detail.phase1Status==="rejected"?"Rejected":"Selection decision", time:null as string | null, done:["selected","rejected"].includes(detail.phase1Status) },
+      ];
+      const row = (label: string, value: React.ReactNode) => (
+        <div key={label} style={{ display:"flex", justifyContent:"space-between", gap:10, padding:"7px 0", borderBottom:"1px solid #0F172A" }}>
+          <span style={{ fontSize:11, color:"#475569", flexShrink:0 }}>{label}</span>
+          <span style={{ fontSize:12, color:"#CBD5E1", textAlign:"right", wordBreak:"break-word" }}>{value}</span>
+        </div>
+      );
+      return (
+        <aside style={{ width:320, flexShrink:0, display:"flex", flexDirection:"column", gap:12 }}>
+          <div style={{ ...card, position:"relative" }}>
+            <button onClick={() => setDetail(null)} title="Close"
+              style={{ position:"absolute", top:14, right:14, background:"none", border:"none", color:"#475569", cursor:"pointer", fontSize:17, lineHeight:1 }}>✕</button>
+            <div style={{ fontSize:16, fontWeight:800, color:"#F1F5F9", paddingRight:24 }}>{detail.user?.name ?? "Unknown player"}</div>
+            <div style={{ fontSize:11, color:"#64748B", marginTop:4 }}>{ROLE_LABEL[detail.role] ?? detail.role} · {detail.trialCity || "—"}</div>
+            <div style={{ marginTop:10, padding:"8px 10px", background:"#080E1C", border:"1px solid #1E293B", borderRadius:8 }}>
+              <div style={{ fontSize:9, fontWeight:800, color:"#475569", letterSpacing:1, marginBottom:4 }}>REGISTRATION ID</div>
+              <div style={{ fontSize:11, color:"#94A3B8", fontFamily:"monospace", wordBreak:"break-all" }}>{detail.id}</div>
+            </div>
+            <div style={{ marginTop:10 }}>
+              {row("Phone", detail.user?.phone ?? "—")}
+              {row("Email", detail.user?.email ? <a href={`mailto:${detail.user.email}`} style={{ color:"#6366F1" }}>{detail.user.email}</a> : "—")}
+              {row("Phase 1", <Badge status={detail.phase1Status} map={P1_STATUS_LABEL} colorMap={P1_STATUS_COLOR} />)}
+              {row("Phase 2", detail.phase2Status ? <Badge status={detail.phase2Status} map={{ payment_done:"Payment Done", kyc_done:"KYC Done", selected:"Selected", rejected:"Rejected" }} colorMap={{ payment_done:"#3B82F6", kyc_done:"#A855F7", selected:"#10B981", rejected:"#EF4444" }} /> : <span style={{ color:"#334155" }}>Not started</span>)}
+              {row("Payment", detail.payment ? `${detail.payment.status === "success" ? "Paid" : detail.payment.status} · ₹${detail.payment.amount}` : "No payment")}
+              {row("Paid at", fmtDT(detail.payment?.paidAt) ?? "—")}
+              {row("Video", detail.video ? (detail.video.s3Url ? <a href={detail.video.s3Url} target="_blank" rel="noreferrer" style={{ color:"#6366F1" }}>▶ Watch</a> : detail.video.status) : "No video")}
+              {row("KYC", detail.kyc ? <Badge status={detail.kyc.status} map={{ pending:"Pending", verified:"Verified", failed:"Failed" }} colorMap={{ pending:"#F59E0B", verified:"#10B981", failed:"#EF4444" }} /> : <span style={{ color:"#334155" }}>Not submitted</span>)}
+            </div>
+            {detail.kyc && (
+              <button onClick={() => onNavigate?.("phase2_kyc")}
+                style={{ width:"100%", marginTop:12, padding:"8px 0", borderRadius:8, border:"1px solid #A855F744", background:"#A855F715", color:"#A855F7", fontSize:11, fontWeight:700, cursor:"pointer" }}>
+                Open in Phase 2 · KYC
+              </button>
+            )}
+          </div>
+
+          <div style={{ ...card, padding:16 }}>
+            <div style={{ fontSize:11, fontWeight:700, color:"#475569", marginBottom:12, textTransform:"uppercase", letterSpacing:.5 }}>Journey</div>
+            {journey.map((s, i) => (
+              <div key={s.label} style={{ display:"flex", gap:10, alignItems:"stretch" }}>
+                <div style={{ display:"flex", flexDirection:"column", alignItems:"center", flexShrink:0 }}>
+                  <div style={{ width:10, height:10, borderRadius:"50%", background:s.done?"#10B981":"#1E293B", border:`2px solid ${s.done?"#10B981":"#334155"}`, marginTop:2 }}/>
+                  {i<journey.length-1 && <div style={{ width:2, flex:1, minHeight:14, background:s.done?"#10B98144":"#1E293B", marginTop:2, marginBottom:2 }}/>}
+                </div>
+                <div style={{ paddingBottom:i<journey.length-1?12:0 }}>
+                  <div style={{ fontSize:12, fontWeight:600, color:s.done?"#CBD5E1":"#475569" }}>{s.label}</div>
+                  {s.time && <div style={{ fontSize:10, color:"#475569", marginTop:2 }}>{s.time}</div>}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ ...card, padding:16 }}>
+            <div style={{ fontSize:11, fontWeight:700, color:"#475569", marginBottom:10, textTransform:"uppercase", letterSpacing:.5 }}>Actions</div>
+            <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
+              {detail.phase1Status !== "selected" && (
+                <button disabled={acting===detail.id} onClick={() => setPhase1Status(detail.id, "selected")}
+                  style={{ flex:1, padding:"8px 0", borderRadius:8, border:"1px solid #10B98140", background:"#10B98115", color:"#10B981", fontSize:11, fontWeight:700, cursor:"pointer", opacity:acting===detail.id?0.5:1 }}>✓ Select</button>
+              )}
+              {detail.phase1Status !== "rejected" && (
+                <button disabled={acting===detail.id} onClick={() => setPhase1Status(detail.id, "rejected")}
+                  style={{ flex:1, padding:"8px 0", borderRadius:8, border:"1px solid #EF444440", background:"#EF444415", color:"#EF4444", fontSize:11, fontWeight:700, cursor:"pointer", opacity:acting===detail.id?0.5:1 }}>✗ Reject</button>
+              )}
+              {(detail.phase1Status === "selected" || detail.phase1Status === "rejected") && (
+                <button disabled={acting===detail.id} onClick={() => setPhase1Status(detail.id, "pending")}
+                  style={{ flex:1, padding:"8px 0", borderRadius:8, border:"1px solid #64748B40", background:"#64748B15", color:"#64748B", fontSize:11, fontWeight:700, cursor:"pointer", opacity:acting===detail.id?0.5:1 }}>↺ Reset</button>
+              )}
+            </div>
+          </div>
+        </aside>
+      );
+    })()}
     </div>
   );
 }

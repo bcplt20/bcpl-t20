@@ -6,8 +6,20 @@
 
 import { getSession, saveSession, clearSession } from "./auth";
 
-const BASE = (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "");
+/**
+ * API base URL:
+ * 1. VITE_API_URL wins when set (explicit override).
+ * 2. Otherwise fall back to the app's base path — "/" in production
+ *    (nginx routes /api), "/bcpl-website/" in the Replit dev preview
+ *    (vite dev proxy routes it to the local API server).
+ */
+const BASE =
+  (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "") ||
+  (import.meta.env.BASE_URL === "/" ? "" : import.meta.env.BASE_URL.replace(/\/$/, ""));
 const ADMIN_KEY = import.meta.env.VITE_ADMIN_KEY ?? "";
+
+// True when a legacy VITE_ADMIN_KEY is baked into the bundle (old header auth fallback).
+export const hasLegacyAdminKey = () => Boolean(ADMIN_KEY);
 
 /** Reading via getSession() also refreshes the 48h inactivity window on every API call. */
 function getStoredToken(): string | null {

@@ -111,6 +111,9 @@ export default function SelectionView() {
             </tr>
           </thead>
           <tbody>
+            {filtered.length === 0 && (
+              <tr><td colSpan={8} style={{ padding: "36px 16px", textAlign: "center", color: "#334155", fontSize: 12 }}>No players to review yet — Phase 1 submissions will appear here once videos are scored.</td></tr>
+            )}
             {filtered.sort((a, b) => b.score - a.score).map(p => (
               <tr key={p.id} style={{ borderBottom: "1px solid #0F1B2D" }}>
                 <td style={{ padding: "14px 16px" }}>
