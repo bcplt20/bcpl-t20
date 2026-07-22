@@ -11,3 +11,4 @@
 - [Auction squad link](auction-squad-link.md) — sold players carry stats.regId; API enforces one-squad-per-registration (409); pool excludes taken regIds
 - [Brevo IP allowlist 401s](brevo-ip-allowlist.md) — "unrecognised IP" 401 = allowlist on, not a bad key; deactivate restriction (Replit IPs are dynamic)
 - [MSG91 SMS integration](msg91-sms.md) — v5 OTP + v2 sendsms shapes; balance.php 418 is a red herring; REAL keys in dev → shape-test only with impossible numbers like 123
+- [SEO meta serving](seo-meta-serving.md) — prod HTML is static via nginx; crawler-visible meta/OG/GSC must go through the Express HTML injector, not React; public/ files shadow Express routes

@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Route, Switch, Router as WouterRouter, useLocation } from 'wouter';
 import { LoginModal } from './components/LoginModal';
+import { SiteMeta } from './components/SiteMeta';
 
 // All BCPL pages
 import { Home }                from '@/pages/Home';
@@ -58,6 +59,7 @@ function Router() {
   return (
     <>
       <ScrollToTop />
+      <SiteMeta />
       <Switch>
         {/* Main pages */}
         <Route path="/"            component={Home} />

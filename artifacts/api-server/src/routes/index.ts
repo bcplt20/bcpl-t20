@@ -13,6 +13,7 @@ import pointsRouter   from "./points";
 import settingsRouter from "./settings";
 import adminRouter    from "./admin";
 import marketingRouter from "./marketing";
+import seoRouter      from "./seo";
 
 const router: IRouter = Router();
 
@@ -33,5 +34,7 @@ router.use("/settings",      settingsRouter);
 router.use("/admin",         adminRouter);
 // Marketing / referrals (public click+attribute, admin analytics & campaigns)
 router.use("/marketing",     marketingRouter);
+// SEO (public meta for the site + admin editors)
+router.use("/seo",           seoRouter);
 
 export default router;
