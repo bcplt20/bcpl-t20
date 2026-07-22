@@ -27,6 +27,38 @@ else
   exit 1
 fi
 
+# ── 1a2. Ek-baar ka AUTO-SETUP (locked seed file) ────────────
+# Replit assistant ne sari nayi keys (MSG91, nayi Brevo key, admin
+# password) ek encrypted file me daal di hain. Sirf unlock code
+# chahiye — wo Replit chat me diya gaya hai.
+SEED="$APP_DIR/deploy/env.seed.enc"
+if [ -f "$SEED" ] && ! grep -q '^SEED_APPLIED_V2=1' "$APP_DIR/.env.production"; then
+  echo ""
+  echo "🔐 Ek-baar ka setup: sari nayi keys ek locked file me taiyar hain."
+  read -r -p "👉 Unlock code daalo (Replit chat me mila hai), phir Enter: " SEED_CODE
+  TMP_SEED=$(mktemp)
+  if [ -n "$SEED_CODE" ] && openssl enc -d -aes-256-cbc -pbkdf2 -iter 100000 -in "$SEED" -pass "pass:$SEED_CODE" -out "$TMP_SEED" 2>/dev/null; then
+    cp "$APP_DIR/.env.production" "$APP_DIR/.env.production.backup-$(date +%Y%m%d-%H%M%S)"
+    while IFS= read -r line; do
+      K="${line%%=*}"
+      [ -z "$K" ] && continue
+      grep -v "^${K}=" "$APP_DIR/.env.production" > "$APP_DIR/.env.production.tmp" || true
+      mv "$APP_DIR/.env.production.tmp" "$APP_DIR/.env.production"
+      printf '%s\n' "$line" >> "$APP_DIR/.env.production"
+    done < "$TMP_SEED"
+    echo "SEED_APPLIED_V2=1" >> "$APP_DIR/.env.production"
+    # nayi values isi run me lagoo karo
+    set -o allexport
+    # shellcheck disable=SC1090
+    source "$APP_DIR/.env.production"
+    set +o allexport
+    echo "✅ Sari keys apne aap set ho gayin (MSG91 + nayi Brevo key + admin password)."
+  else
+    echo "❌ Code galat hai ya khali — koi baat nahi, ab script keys alag-alag poochhegi."
+  fi
+  rm -f "$TMP_SEED"
+fi
+
 # ── 1b. Zaroori keys check (one-time setup, no nano needed) ──
 # In keys ke bina admin-login / OTP-SMS / email kaam nahi karte.
 # Jo key .env.production me nahi hogi, script yahin poochh kar
