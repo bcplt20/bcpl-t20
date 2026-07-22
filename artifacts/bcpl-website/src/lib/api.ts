@@ -1,11 +1,11 @@
 /**
  * BCPL API Client
  * All calls go to the API server (VITE_API_URL).
- * Admin calls include the x-bcpl-admin header automatically.
+ * Admin calls go through adminReq (session token) from adminHttp.ts.
  */
 
 import { getSession, saveSession, clearSession } from "./auth";
-import { BASE, ADMIN_KEY, adminReq } from "./adminHttp";
+import { BASE, adminReq } from "./adminHttp";
 
 // Shared admin plumbing lives in adminHttp.ts (single source of truth).
 export {
@@ -24,10 +24,8 @@ async function req<T = unknown>(
   method: string,
   path: string,
   body?: unknown,
-  isAdmin = false,
 ): Promise<T> {
   const headers: Record<string, string> = { "Content-Type": "application/json" };
-  if (isAdmin && ADMIN_KEY) headers["x-bcpl-admin"] = ADMIN_KEY;
   const token = getStoredToken();
   if (token) headers["Authorization"] = `Bearer ${token}`;
 
@@ -135,21 +133,21 @@ export const createMatch = (data: {
   matchNo: number; season?: number;
   team1: string; team2: string;
   venue: string; scheduledAt?: string;
-}) => req<{ match: any }>("POST", "/matches/admin/matches", data, true);
+}) => adminReq<{ match: any }>("POST", "/matches/admin/matches", data);
 
 export const recordToss = (matchId: string, data: {
   tossWinner: string; tossDecision: "bat" | "field";
-}) => req<{ match: any }>("PUT", `/matches/admin/matches/${matchId}/toss`, data, true);
+}) => adminReq<{ match: any }>("PUT", `/matches/admin/matches/${matchId}/toss`, data);
 
 export const setPlayingXI = (matchId: string, data: {
   xi1: { name: string; role: string }[];
   xi2: { name: string; role: string }[];
   battingTeam: string;
-}) => req<{ innings: any }>("POST", `/matches/admin/matches/${matchId}/xi`, data, true);
+}) => adminReq<{ innings: any }>("POST", `/matches/admin/matches/${matchId}/xi`, data);
 
 export const updateMatchStatus = (matchId: string, data: {
   status: string; winner?: string; resultDesc?: string; playerOfMatch?: string;
-}) => req<{ match: any }>("PUT", `/matches/admin/matches/${matchId}/status`, data, true);
+}) => adminReq<{ match: any }>("PUT", `/matches/admin/matches/${matchId}/status`, data);
 
 /* ─── Scoring ──────────────────────────────────────── */
 
@@ -162,17 +160,17 @@ export const recordBall = (matchId: string, data: {
   fielderName?: string;
   nonStrikerOut?: boolean;
   customCommentary?: string;
-}) => req<{ success: boolean; inningsComplete: boolean }>(
-  "POST", `/scoring/admin/scoring/${matchId}/ball`, data, true
+}) => adminReq<{ success: boolean; inningsComplete: boolean }>(
+  "POST", `/scoring/admin/scoring/${matchId}/ball`, data
 );
 
 export const endInnings = (matchId: string) =>
-  req<{ innings2: any; target: number }>(
-    "POST", `/scoring/admin/scoring/${matchId}/innings-end`, {}, true
+  adminReq<{ innings2: any; target: number }>(
+    "POST", `/scoring/admin/scoring/${matchId}/innings-end`, {}
   );
 
 export const undoBall = (matchId: string) =>
-  req<{ success: boolean }>("DELETE", `/scoring/admin/scoring/${matchId}/ball`, undefined, true);
+  adminReq<{ success: boolean }>("DELETE", `/scoring/admin/scoring/${matchId}/ball`);
 
 /* ─── Points Table ─────────────────────────────────── */
 
@@ -182,13 +180,13 @@ export const getPointsTable = (season = 5) =>
 export const updatePointsRow = (team: string, data: {
   played?: number; won?: number; lost?: number; noResult?: number; nrr?: number; form?: string[];
 }, season = 5) =>
-  req<{ row: any }>(
-    "PUT", `/points-table/admin/points-table/${encodeURIComponent(team)}?season=${season}`, data, true
+  adminReq<{ row: any }>(
+    "PUT", `/points-table/admin/points-table/${encodeURIComponent(team)}?season=${season}`, data
   );
 
 export const recordMatchResult = (data: {
   winner?: string; loser?: string; noResult?: boolean; season?: number;
-}) => req("POST", "/points-table/admin/points-table/result", data, true);
+}) => adminReq("POST", "/points-table/admin/points-table/result", data);
 
 /* ─── Admin Panel API (adminReq imported from adminHttp.ts) ────── */
 
@@ -375,22 +373,22 @@ export const getTeamDetail = (slugOrId: string) =>
   req<{ team: ApiTeam; players: ApiTeamPlayer[] }>("GET", `/teams/${slugOrId}`);
 
 export const adminCreateTeam = (data: { name: string } & Partial<Omit<ApiTeam, "id" | "slug">>) =>
-  req<{ success: boolean; team: ApiTeam }>("POST", "/teams/admin/teams", data, true);
+  adminReq<{ success: boolean; team: ApiTeam }>("POST", "/teams/admin/teams", data);
 
 export const adminUpdateTeam = (id: string, data: Partial<Omit<ApiTeam, "id" | "slug">>) =>
-  req<{ success: boolean; team: ApiTeam }>("PUT", `/teams/admin/teams/${id}`, data, true);
+  adminReq<{ success: boolean; team: ApiTeam }>("PUT", `/teams/admin/teams/${id}`, data);
 
 export const adminDeleteTeam = (id: string) =>
-  req<{ success: boolean }>("DELETE", `/teams/admin/teams/${id}`, undefined, true);
+  adminReq<{ success: boolean }>("DELETE", `/teams/admin/teams/${id}`);
 
 export const adminAddTeamPlayer = (teamId: string, data: Partial<Omit<ApiTeamPlayer, "id" | "teamId">> & { name: string }) =>
-  req<{ success: boolean; player: ApiTeamPlayer }>("POST", `/teams/admin/teams/${teamId}/players`, data, true);
+  adminReq<{ success: boolean; player: ApiTeamPlayer }>("POST", `/teams/admin/teams/${teamId}/players`, data);
 
 export const adminUpdateTeamPlayer = (playerId: string, data: Partial<Omit<ApiTeamPlayer, "id" | "teamId">>) =>
-  req<{ success: boolean; player: ApiTeamPlayer }>("PUT", `/teams/admin/players/${playerId}`, data, true);
+  adminReq<{ success: boolean; player: ApiTeamPlayer }>("PUT", `/teams/admin/players/${playerId}`, data);
 
 export const adminDeleteTeamPlayer = (playerId: string) =>
-  req<{ success: boolean }>("DELETE", `/teams/admin/players/${playerId}`, undefined, true);
+  adminReq<{ success: boolean }>("DELETE", `/teams/admin/players/${playerId}`);
 
 /* ─── Site settings (admin-managed key-value, e.g. sample videos) ── */
 
