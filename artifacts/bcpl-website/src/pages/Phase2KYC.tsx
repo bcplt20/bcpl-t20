@@ -396,6 +396,9 @@ export function Phase2KYC() {
                 <div>
                   <label style={lbl}>T-Shirt Size *</label>
                   <ChipRow options={TSHIRT_OPTS} value={tshirt} onChange={setTshirt} minWidth={48} />
+                  <div style={{ marginTop:8, fontSize:11, color:'rgba(255,255,255,0.45)', lineHeight:1.55 }}>
+                    ℹ️ Only for tournament purpose — this size is used to prepare match jerseys for players who play in the tournament. Registration does not include a free T-shirt.
+                  </div>
                 </div>
               </div>
             </div>
