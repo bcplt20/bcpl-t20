@@ -12,6 +12,10 @@ Theek karne ke liye:
 1. [Brevo dashboard](https://app.brevo.com) me login karein → **SMTP & API** → **API Keys** → nayi key banayein (v3 key).
 2. Check karein ki **sender verified** hai: Brevo → **Senders & IP** → `info@bcplt20.com` verified hona chahiye
    (agar nahi hai to "Add a sender" karke email verify karein).
+3. **IP restriction:** Agar Brevo me "Authorised IPs" security on hai
+   ([app.brevo.com/security/authorised_ips](https://app.brevo.com/security/authorised_ips)) to server ki IP
+   whitelist me honi chahiye, warna har email 401 "unrecognised IP address" se fail hogi.
+   **Aasan tareeka: yeh restriction deactivate kar dein** — kyunki server/Replit ki IP badalti rehti hai.
 3. EC2 server par key update karein:
    ```bash
    cd /home/ubuntu/app
