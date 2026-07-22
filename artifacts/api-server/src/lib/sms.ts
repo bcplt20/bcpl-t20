@@ -1,4 +1,5 @@
 // 2Factor OTP service — https://2factor.in
+import type { SendResult } from "./notify";
 
 const API_KEY = process.env.TWOFACTOR_API_KEY;
 
@@ -23,19 +24,25 @@ export async function sendOtp(phone: string, otp: string): Promise<boolean> {
 }
 
 /** Send transactional SMS (non-OTP) */
-export async function sendSms(phone: string, message: string): Promise<boolean> {
+export async function sendSms(phone: string, message: string): Promise<SendResult> {
   if (!API_KEY) {
-    console.warn(`[SMS-STUB] To ${phone}: ${message}`);
-    return true;
+    console.warn(`[SMS-SKIPPED] TWOFACTOR_API_KEY not set — SMS NOT sent | to=${phone}`);
+    return { ok: false, skipped: true, error: "TWOFACTOR_API_KEY not configured on this server" };
   }
   try {
     const url = `https://2factor.in/API/V1/${API_KEY}/ADDON_SERVICES/SEND/TSMS?To=${phone}&Msg=${encodeURIComponent(message)}`;
     const res  = await fetch(url);
-    const data = (await res.json()) as { Status: string };
-    console.log("[2Factor] sendSms response:", JSON.stringify(data));
-    return data.Status === "Success";
+    const raw  = await res.text();
+    let data: { Status?: string; Details?: string } = {};
+    try { data = JSON.parse(raw); } catch { /* non-JSON error body */ }
+    if (data.Status === "Success") {
+      console.log(`[SMS-SENT] to=${phone} | ${raw.slice(0, 150)}`);
+      return { ok: true };
+    }
+    console.error(`[SMS-FAILED] 2Factor rejected | to=${phone} | HTTP ${res.status} | ${raw.slice(0, 300)}`);
+    return { ok: false, error: `2Factor: ${(data.Details || raw).slice(0, 300)}` };
   } catch (e) {
-    console.error("[2Factor] sendSms failed:", e);
-    return false;
+    console.error(`[SMS-FAILED] exception | to=${phone}`, e);
+    return { ok: false, error: String((e as Error)?.message ?? e).slice(0, 300) };
   }
 }

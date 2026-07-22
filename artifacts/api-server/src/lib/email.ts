@@ -1,4 +1,7 @@
 // Brevo (Sendinblue) email service — https://brevo.com
+import type { SendResult } from "./notify";
+import { inr, type GstBreakup } from "./gst";
+
 const API_KEY    = process.env.BREVO_API_KEY;
 const FROM_EMAIL = process.env.BREVO_FROM_EMAIL || "info@bcplt20.com";
 const FROM_NAME  = "BCPL T20";
@@ -21,10 +24,10 @@ interface SendEmailParams {
   htmlContent: string;
 }
 
-export async function sendEmail({ to, toName, subject, htmlContent }: SendEmailParams): Promise<boolean> {
+export async function sendEmail({ to, toName, subject, htmlContent }: SendEmailParams): Promise<SendResult> {
   if (!API_KEY) {
-    console.warn(`[EMAIL-STUB] To: ${to} | Subject: ${subject}`);
-    return true;
+    console.warn(`[EMAIL-SKIPPED] BREVO_API_KEY not set — email NOT sent | to=${to} | subject="${subject}"`);
+    return { ok: false, skipped: true, error: "BREVO_API_KEY not configured on this server" };
   }
   try {
     const res = await fetch("https://api.brevo.com/v3/smtp/email", {
@@ -37,11 +40,17 @@ export async function sendEmail({ to, toName, subject, htmlContent }: SendEmailP
         htmlContent,
       }),
     });
-    if (!res.ok) console.error("[EMAIL] Failed:", await res.text());
-    return res.ok;
+    if (!res.ok) {
+      const body = await res.text();
+      console.error(`[EMAIL-FAILED] Brevo HTTP ${res.status} | to=${to} | subject="${subject}" | ${body}`);
+      return { ok: false, error: `Brevo HTTP ${res.status}: ${body.slice(0, 300)}` };
+    }
+    const data = (await res.json().catch(() => ({}))) as { messageId?: string };
+    console.log(`[EMAIL-SENT] to=${to} | messageId=${data.messageId ?? "?"} | subject="${subject}"`);
+    return { ok: true };
   } catch (e) {
-    console.error("[EMAIL] sendEmail error", e);
-    return false;
+    console.error(`[EMAIL-FAILED] exception | to=${to}`, e);
+    return { ok: false, error: String((e as Error)?.message ?? e).slice(0, 300) };
   }
 }
 
@@ -334,5 +343,62 @@ export function tplKycComplete(name: string, city: string) {
         </div>
       </div>
       ${btn("CHECK MY STATUS →", `${SITE_URL}/register/result`)}`),
+  };
+}
+
+// ── Template 11: GST Tax Invoice ──────────────────────────────────────────────
+const BCPL_GSTIN = "07AAHCK4053D1ZS";
+const BCPL_ADDR  = "Kriparti Playing11 Private Limited, 2nd Floor Back Side, RZ-108, Indra Park, Uttam Nagar, West Delhi, Delhi - 110059";
+
+export function tplInvoice(p: {
+  name: string;
+  invoiceNo: string;
+  phase: 1 | 2;
+  txnId: string;
+  paidAt: Date | string;
+  breakup: GstBreakup;
+}) {
+  const { base, cgst, sgst, total } = p.breakup;
+  const dateStr = new Date(p.paidAt).toLocaleDateString("en-IN", { day: "2-digit", month: "long", year: "numeric" });
+  const desc = p.phase === 1
+    ? "Online Scout Review &amp; Video Submission"
+    : "Physical Trial Entry &amp; Franchise Auction Eligibility";
+  const row = (l: string, v: string, strong = false) =>
+    `<div style="display:flex;justify-content:space-between;padding:${strong ? "10px 0 0" : "6px 0"};${strong ? "margin-top:4px;border-top:2px solid rgba(255,122,41,0.35);" : "border-bottom:1px solid rgba(255,255,255,0.07);"}">
+      <span style="font-size:${strong ? 14 : 12}px;color:${strong ? "#F0EDE8" : "rgba(255,255,255,0.5)"};font-weight:${strong ? 800 : 400};">${l}</span>
+      <span style="font-size:${strong ? 16 : 12}px;color:${strong ? "#FF7A29" : "#F0EDE8"};font-weight:${strong ? 900 : 600};">${v}</span>
+    </div>`;
+  return {
+    subject: `📄 BCPL T20 — Tax Invoice ${p.invoiceNo}`,
+    htmlContent: wrap(`
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid rgba(255,122,41,0.4);">
+        <div>
+          <div style="display:inline-block;background:#FF7A29;color:#fff;padding:5px 14px;border-radius:6px;font-weight:900;font-size:11px;letter-spacing:1px;margin-bottom:8px;">TAX INVOICE</div>
+          <div style="font-size:13px;color:#fff;font-weight:700;">Invoice No: <span style="font-family:monospace;">${p.invoiceNo}</span></div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:2px;">Payment Date: ${dateStr}</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px;">HSN/SAC: 999299 — Sports Event Services · GST 18% (CGST 9% + SGST 9%)</div>
+        </div>
+      </div>
+      <div style="background:#0A1727;border-radius:12px;padding:16px 18px;margin-bottom:16px;">
+        <div style="font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Issued By (Supplier)</div>
+        <div style="font-size:13px;color:#fff;font-weight:700;">Kriparti Playing11 Pvt. Ltd.</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:3px;line-height:1.6;">GSTIN: <strong style="color:#E8B23D;">${BCPL_GSTIN}</strong><br/>${BCPL_ADDR}</div>
+      </div>
+      <div style="background:#0A1727;border-radius:12px;padding:16px 18px;margin-bottom:16px;">
+        <div style="font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Bill To (Recipient)</div>
+        <div style="font-size:13px;color:#fff;font-weight:700;">${p.name}</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:3px;">TXN ID: <span style="font-family:monospace;">${p.txnId}</span> · Method: Cashfree</div>
+      </div>
+      <div style="background:rgba(255,122,41,0.06);border:1px solid rgba(255,122,41,0.2);border-radius:12px;padding:16px 18px;margin-bottom:16px;">
+        <div style="font-size:12px;color:#F0EDE8;font-weight:700;margin-bottom:2px;">BCPL T20 Season 5 — Phase ${p.phase} Registration</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:12px;">${desc}</div>
+        ${row("Taxable Value (Base)", `₹${inr(base)}`)}
+        ${row("CGST @ 9%", `₹${inr(cgst)}`)}
+        ${row("SGST @ 9%", `₹${inr(sgst)}`)}
+        ${row("Total Paid", `₹${inr(total)}`, true)}
+      </div>
+      <div style="background:rgba(255,255,255,0.03);border-radius:8px;padding:12px 14px;font-size:10px;color:rgba(255,255,255,0.3);line-height:1.6;">
+        This is a computer-generated invoice and does not require a physical signature. Amount is inclusive of GST. Subject to Delhi jurisdiction.
+      </div>`),
   };
 }

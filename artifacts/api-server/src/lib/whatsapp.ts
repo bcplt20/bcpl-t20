@@ -1,5 +1,7 @@
 // Interakt WhatsApp Business API — https://interakt.ai
 // Recommend: Sign up at https://www.interakt.ai — ₹999/month, easy India setup
+import type { SendResult } from "./notify";
+
 const API_KEY = process.env.INTERAKT_API_KEY;
 
 interface WaMessage {
@@ -9,10 +11,10 @@ interface WaMessage {
   headerValues?: string[];
 }
 
-export async function sendWhatsApp({ phone, templateName, bodyValues, headerValues }: WaMessage): Promise<boolean> {
+export async function sendWhatsApp({ phone, templateName, bodyValues, headerValues }: WaMessage): Promise<SendResult> {
   if (!API_KEY) {
-    console.warn(`[WA-STUB] Template: ${templateName} | To: ${phone} | Values: ${bodyValues.join(", ")}`);
-    return true;
+    console.warn(`[WA-SKIPPED] INTERAKT_API_KEY not set — WhatsApp NOT sent | template=${templateName} | to=${phone}`);
+    return { ok: false, skipped: true, error: "INTERAKT_API_KEY not configured on this server" };
   }
   try {
     const cleanPhone = phone.replace(/\D/g, "").replace(/^91/, "");
@@ -35,11 +37,18 @@ export async function sendWhatsApp({ phone, templateName, bodyValues, headerValu
         },
       }),
     });
-    const data = (await res.json()) as { result: boolean };
-    return data.result === true;
+    const raw = await res.text();
+    let data: { result?: boolean; message?: string } = {};
+    try { data = JSON.parse(raw); } catch { /* non-JSON error body */ }
+    if (data.result === true) {
+      console.log(`[WA-SENT] template=${templateName} | to=${phone}`);
+      return { ok: true };
+    }
+    console.error(`[WA-FAILED] Interakt rejected | template=${templateName} | to=${phone} | HTTP ${res.status} | ${raw.slice(0, 300)}`);
+    return { ok: false, error: `Interakt: ${(data.message || raw).slice(0, 300)}` };
   } catch (e) {
-    console.error("[WA] sendWhatsApp failed", e);
-    return false;
+    console.error(`[WA-FAILED] exception | template=${templateName} | to=${phone}`, e);
+    return { ok: false, error: String((e as Error)?.message ?? e).slice(0, 300) };
   }
 }
 

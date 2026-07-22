@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { adminGetRegistrations } from "../../lib/api";
+import { adminGetRegistrations, adminSendInvoice } from "../../lib/api";
 import { gstFromGross, inr } from "../../lib/gst";
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid,
@@ -21,7 +21,7 @@ const paymentMethods = [
   { name:"Wallet",      value:0, color:"#F59E0B" },
 ];
 const gstMonthly: { month:string; collected:number; remitted:number; due:string }[] = [];
-type Txn = { id:string; name:string; email:string; phone:string; gstin:string; type:"Phase 1"|"Phase 2"; amount:number; method:string; time:string; ts:number; status:"success"|"pending"|"failed"|"refunded" };
+type Txn = { id:string; regId:string; name:string; email:string; phone:string; gstin:string; type:"Phase 1"|"Phase 2"; amount:number; method:string; time:string; ts:number; status:"success"|"pending"|"failed"|"refunded" };
 const REFUNDS: { id:string; txnId:string; name:string; amount:number; reason:string; status:string; date:string; method:string; days:number }[] = [];
 
 const PAID_STATUSES    = ["payment_done","video_submitted","selected","rejected"];
@@ -38,6 +38,7 @@ type ApiReg = {
 
 const paymentToTxn = (r: ApiReg, p: ApiPayment, type: Txn["type"], paidByStatus: boolean): Txn => ({
   id: p.cashfreeOrderId || p.id,
+  regId: r.id,
   name: r.user?.name ?? "Unknown",
   email: r.user?.email ?? "",
   phone: r.user?.phone ?? "",
@@ -71,6 +72,7 @@ function InvoiceModal({ txn, onClose }: { txn: Txn; onClose: () => void }) {
   const [email,   setEmail]   = useState(txn.email);
   const [sent,    setSent]    = useState(false);
   const [loading, setLoading] = useState(false);
+  const [sendErr, setSendErr] = useState("");
   /* stored amount is GST-inclusive — extract base + GST out of it */
   const { base, cgst, sgst, total } = gstFromGross(txn.amount);
   const invoiceNo = `BCPL/25-26/${txn.id}`;
@@ -275,12 +277,30 @@ function InvoiceModal({ txn, onClose }: { txn: Txn; onClose: () => void }) {
             {sent
               ? <div style={{ background:"#10B98122", border:"1px solid #10B98144", borderRadius:10, padding:"12px 16px", color:"#10B981", fontWeight:700, textAlign:"center" }}>✅ Invoice sent to {email}</div>
               : (
-                <div style={{ display:"flex", gap:10 }}>
-                  <input value={email} onChange={e=>setEmail(e.target.value)} style={{ flex:1, padding:"10px 14px", background:"#060B18", border:"1px solid #1E293B", borderRadius:10, color:"#F1F5F9", fontSize:13, outline:"none" }}/>
-                  <button onClick={()=>{ setLoading(true); setTimeout(()=>{ setLoading(false); setSent(true); },1600); }} disabled={loading} style={{ padding:"10px 20px", borderRadius:10, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontSize:13, fontWeight:700, cursor:"pointer" }}>
-                    {loading ? "Sending…" : "Send Invoice"}
-                  </button>
-                </div>
+                <>
+                  <div style={{ display:"flex", gap:10 }}>
+                    <input value={email} onChange={e=>setEmail(e.target.value)} style={{ flex:1, padding:"10px 14px", background:"#060B18", border:"1px solid #1E293B", borderRadius:10, color:"#F1F5F9", fontSize:13, outline:"none" }}/>
+                    <button
+                      onClick={async()=>{
+                        setLoading(true); setSendErr("");
+                        try {
+                          const r = await adminSendInvoice(txn.regId, txn.type === "Phase 1" ? 1 : 2, email.trim() || undefined);
+                          setEmail(r.sentTo); setSent(true);
+                        } catch (e) {
+                          setSendErr(e instanceof Error ? e.message : "Failed to send invoice");
+                        } finally { setLoading(false); }
+                      }}
+                      disabled={loading}
+                      style={{ padding:"10px 20px", borderRadius:10, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontSize:13, fontWeight:700, cursor: loading ? "wait" : "pointer", opacity: loading ? 0.7 : 1 }}>
+                      {loading ? "Sending…" : "Send Invoice"}
+                    </button>
+                  </div>
+                  {sendErr && (
+                    <div style={{ marginTop:10, background:"#EF444422", border:"1px solid #EF444444", borderRadius:10, padding:"10px 14px", color:"#EF4444", fontSize:12, fontWeight:600 }}>
+                      ❌ {sendErr}
+                    </div>
+                  )}
+                </>
               )}
           </div>
         </div>

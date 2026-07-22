@@ -4,7 +4,6 @@ import { db } from "@workspace/db";
 import {
   registrationsTable, usersTable,
   phase1PaymentsTable, phase2PaymentsTable,
-  notificationLogsTable,
 } from "@workspace/db/schema";
 import { eq, and, or, isNull } from "drizzle-orm";
 import { requireAuth, type AuthRequest } from "../middlewares/auth";
@@ -12,6 +11,7 @@ import { createOrder, getPaymentStatus } from "../lib/cashfree";
 import { sendEmail, tplPhase1Receipt, tplPhase2Receipt } from "../lib/email";
 import { sendSms } from "../lib/sms";
 import { sendWhatsApp, WA } from "../lib/whatsapp";
+import { logNotifications } from "../lib/notify";
 import { FEES } from "./register";
 import { z } from "zod";
 
@@ -28,16 +28,14 @@ async function notifyPhase1Success(
   const email = tplPhase1Receipt(user.name, reg.role, amount, reg.id, reg.trialCity ?? "TBD");
   const smsMsg = `Welcome to BCPL T20 Season 5! Registered as ${reg.role.toUpperCase()}. Reg ID: ${reg.id.slice(0,8).toUpperCase()}. Upload trial video within 15 days. #OfficeSeStadiumtak`;
 
-  await Promise.allSettled([
+  // Send on all channels in parallel (helpers never throw), then record the
+  // REAL outcome of each attempt in notification_logs.
+  const [em, sm, wa] = await Promise.all([
     sendEmail({ to: user.email, toName: user.name, ...email }),
     sendSms(user.phone, smsMsg),
     sendWhatsApp({ phone: user.phone, templateName: WA.PHASE1_RECEIPT, bodyValues: [user.name, reg.role.toUpperCase(), reg.trialCity ?? "TBD", `₹${amount}`] }),
-    db.insert(notificationLogsTable).values([
-      { userId: user.id, type: "email",     template: "phase1_receipt" },
-      { userId: user.id, type: "sms",       template: "phase1_receipt" },
-      { userId: user.id, type: "whatsapp",  template: "phase1_receipt" },
-    ]),
   ]);
+  await logNotifications(user.id, "phase1_receipt", { email: em, sms: sm, whatsapp: wa });
 }
 
 async function notifyPhase2Success(
@@ -45,16 +43,12 @@ async function notifyPhase2Success(
   amount: number,
 ) {
   const email = tplPhase2Receipt(user.name, amount);
-  await Promise.allSettled([
+  const [em, sm, wa] = await Promise.all([
     sendEmail({ to: user.email, toName: user.name, ...email }),
     sendSms(user.phone, `BCPL T20: Phase 2 payment of ₹${amount} confirmed! Please complete your KYC. -BCPL T20`),
     sendWhatsApp({ phone: user.phone, templateName: WA.PHASE2_RECEIPT, bodyValues: [user.name, `₹${amount}`] }),
-    db.insert(notificationLogsTable).values([
-      { userId: user.id, type: "email",    template: "phase2_receipt" },
-      { userId: user.id, type: "sms",      template: "phase2_receipt" },
-      { userId: user.id, type: "whatsapp", template: "phase2_receipt" },
-    ]),
   ]);
+  await logNotifications(user.id, "phase2_receipt", { email: em, sms: sm, whatsapp: wa });
 }
 
 // ── PHASE 1 ──────────────────────────────────────────────────────────────────

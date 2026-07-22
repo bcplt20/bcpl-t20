@@ -437,3 +437,10 @@ export const adminGetSampleUploadUrl = (contentType: string) =>
   adminReq<{ success: boolean; presignedUrl: string; s3Key: string; publicUrl: string }>(
     "POST", "/settings/admin/upload-url", { contentType }
   );
+
+// Finance — send a real GST invoice email to the player
+export const adminSendInvoice = (registrationId: string, phase: 1 | 2, email?: string) =>
+  adminReq<{ success: boolean; sentTo: string; invoiceNo: string }>(
+    "POST", "/admin/invoice/send",
+    { registrationId, phase, ...(email ? { email } : {}) }
+  );

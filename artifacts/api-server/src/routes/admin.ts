@@ -23,8 +23,11 @@ import {
 import { eq, desc, count, and } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { markKycVerified } from "./kyc";
-import { sendEmail, tplPhase1Selected, tplPhase1Rejected, tplTrialVenueAnnounced } from "../lib/email";
+import { sendEmail, tplPhase1Selected, tplPhase1Rejected, tplTrialVenueAnnounced, tplInvoice } from "../lib/email";
 import { sendSms } from "../lib/sms";
+import { logNotifications } from "../lib/notify";
+import { gstFromGross } from "../lib/gst";
+import { z } from "zod";
 
 const router = Router();
 
@@ -401,8 +404,8 @@ router.post("/trial-venues/:id/announce", async (req, res) => {
         user.name, venueRow.city, venueRow.venue,
         venueRow.trialDate, venueRow.trialTime, venueRow.reportingTime
       );
-      const emailOk = await sendEmail({ to: user.email, toName: user.name, subject: tpl.subject, htmlContent: tpl.htmlContent });
-      if (emailOk) {
+      const emailRes = await sendEmail({ to: user.email, toName: user.name, subject: tpl.subject, htmlContent: tpl.htmlContent });
+      if (emailRes.ok || emailRes.skipped) {
         await sendSms(user.phone, `BCPL T20 Season 5: Your Phase 2 trial is confirmed! Venue: ${venueRow.venue}, ${venueRow.city} on ${venueRow.trialDate} at ${venueRow.trialTime}. Reporting: ${venueRow.reportingTime}. - BCPL T20`).catch(() => {});
         sent++;
       }
@@ -505,6 +508,75 @@ router.put("/kyc/:id/status", async (req, res) => {
     res.json({ success: true, kyc: updated });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+/* ── POST /api/admin/invoice/send — email a real GST tax invoice ──────────
+ * Finds the successful payment for the registration+phase, extracts GST out
+ * of the stored gross amount (amounts are GST-inclusive), sends the invoice
+ * email and records the attempt in notification_logs. Fails loudly. */
+const invoiceSchema = z.object({
+  registrationId: z.string().uuid(),
+  phase: z.union([z.literal(1), z.literal(2)]),
+  email: z.string().email().optional(),
+});
+
+router.post("/invoice/send", requireAdmin, async (req, res) => {
+  const parsed = invoiceSchema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: "registrationId (uuid) and phase (1 or 2) required; email optional" });
+    return;
+  }
+  const { registrationId, phase, email: emailOverride } = parsed.data;
+  try {
+    const rows = await db
+      .select({ reg: registrationsTable, user: usersTable })
+      .from(registrationsTable)
+      .innerJoin(usersTable, eq(registrationsTable.userId, usersTable.id))
+      .where(eq(registrationsTable.id, registrationId))
+      .limit(1);
+    if (!rows[0]) { res.status(404).json({ error: "Registration not found" }); return; }
+    const { user } = rows[0];
+
+    const payTable = phase === 1 ? phase1PaymentsTable : phase2PaymentsTable;
+    const pays = await db.select().from(payTable).where(eq(payTable.registrationId, registrationId));
+    const PAID = new Set(["success", "paid"]);
+    const pay = pays
+      .filter(p => PAID.has(p.status))
+      .sort((a, b) => new Date(b.paidAt ?? b.createdAt).getTime() - new Date(a.paidAt ?? a.createdAt).getTime())[0];
+    if (!pay) {
+      res.status(404).json({ error: `No successful Phase ${phase} payment found for this registration` });
+      return;
+    }
+
+    const breakup   = gstFromGross(Math.round(Number(pay.amount)));
+    const invoiceNo = `BCPL/25-26/${pay.cashfreeOrderId || pay.id}`;
+    const to        = emailOverride || user.email;
+    const tpl = tplInvoice({
+      name: user.name,
+      invoiceNo,
+      phase,
+      txnId: pay.cashfreeOrderId || pay.id,
+      paidAt: pay.paidAt ?? pay.createdAt,
+      breakup,
+    });
+
+    const result = await sendEmail({ to, toName: user.name, subject: tpl.subject, htmlContent: tpl.htmlContent });
+    await logNotifications(user.id, `invoice_phase${phase}`, { email: result });
+
+    if (!result.ok) {
+      res.status(502).json({
+        success: false,
+        error: result.skipped
+          ? "Email is not configured on this server (BREVO_API_KEY missing)"
+          : result.error ?? "Email provider rejected the send",
+      });
+      return;
+    }
+    res.json({ success: true, sentTo: to, invoiceNo });
+  } catch (err: any) {
+    console.error("[admin/invoice] failed", err);
+    res.status(500).json({ error: err.message ?? "Failed to send invoice" });
   }
 });
 
