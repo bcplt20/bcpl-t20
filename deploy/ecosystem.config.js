@@ -26,6 +26,9 @@ module.exports = {
         JWT_SECRET:     process.env.JWT_SECRET,
         SESSION_SECRET: process.env.SESSION_SECRET,
         ADMIN_SECRET:   process.env.ADMIN_SECRET,
+        // Admin panel login password (server-side check — REQUIRED,
+        // warna production me admin login 403 dega)
+        ADMIN_PANEL_PASSWORD: process.env.ADMIN_PANEL_PASSWORD,
 
         // ── SMS / Email / WhatsApp / Payment ────────────────
         TWOFACTOR_API_KEY: process.env.TWOFACTOR_API_KEY,
