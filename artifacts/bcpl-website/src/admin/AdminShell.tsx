@@ -105,7 +105,7 @@ function Icon({ ch }: { ch: string }) {
 
 function renderView(id: string, setActive: (viewId: string) => void) {
   switch (id) {
-    case "dashboard":      return <DashboardView />;
+    case "dashboard":      return <DashboardView onNavigate={setActive} />;
     case "users":          return <UsersView />;
     case "finance":        return <FinanceView />;
     case "forecast":       return <ForecastView />;
@@ -137,7 +137,7 @@ function renderView(id: string, setActive: (viewId: string) => void) {
     case "data_export":    return <DataExportView />;
     case "roles":          return <RolesView />;
     case "admin_settings": return <AdminSettingsView />;
-    default:               return <DashboardView />;
+    default:               return <DashboardView onNavigate={setActive} />;
   }
 }
 

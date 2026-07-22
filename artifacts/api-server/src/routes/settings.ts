@@ -50,7 +50,7 @@ router.get("/:key", async (req, res) => {
     return res.status(404).json({ error: "Unknown setting" });
   }
   const rows = await db.select().from(siteSettingsTable).where(eq(siteSettingsTable.key, key)).limit(1);
-  res.json({ key, value: rows[0]?.value ?? null, updatedAt: rows[0]?.updatedAt ?? null });
+  return res.json({ key, value: rows[0]?.value ?? null, updatedAt: rows[0]?.updatedAt ?? null });
 });
 
 /* ── PUT /api/settings/admin/:key ── */
@@ -87,7 +87,7 @@ router.put("/admin/:key", requireAdmin, async (req, res) => {
     .onConflictDoUpdate({ target: siteSettingsTable.key, set: { value, updatedAt: now } });
 
   logger.info({ key }, "site setting updated by admin");
-  res.json({ success: true, key, value });
+  return res.json({ success: true, key, value });
 });
 
 /* ── POST /api/settings/admin/upload-url (sample video S3 upload) ── */
@@ -106,7 +106,7 @@ router.post("/admin/upload-url", requireAdmin, async (req, res) => {
   }
   const s3Key = "samples/" + randomUUID() + "." + ext;
   const presignedUrl = await getUploadPresignedUrl(s3Key, contentType);
-  res.json({ success: true, presignedUrl, s3Key, publicUrl: getS3Url(s3Key) });
+  return res.json({ success: true, presignedUrl, s3Key, publicUrl: getS3Url(s3Key) });
 });
 
 export default router;

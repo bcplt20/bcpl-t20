@@ -33,13 +33,13 @@ const ROLE_LABEL: Record<string,string> = {
 
 const PAID_STATUSES = ["payment_done","video_submitted","selected","rejected"];
 
-type UserRow = { id:string; num:number; name:string; phone:string; email:string; state:string; city:string; joined:string; phase1:boolean; phase2:boolean; active:boolean; kyc:string; video:boolean; registered:boolean; role:string };
+type UserRow = { id:string; num:number; name:string; phone:string; email:string; state:string; city:string; joined:string; phase1:boolean; phase2:boolean; active:boolean; kyc:string; video:boolean; videoUrl:string|null; registered:boolean; role:string };
 
 type ApiReg = {
   id:string; role:string; trialCity:string; phase1Status:string; phase2Status:string|null; createdAt:string;
   user:{ id:string; name:string; phone:string; email:string }|null;
   payment:{ status:string; amount:string; paidAt:string|null }|null;
-  video:{ status:string; submittedAt:string }|null;
+  video:{ status:string; submittedAt:string; s3Url?:string|null }|null;
 };
 
 const toRow = (r: ApiReg, i: number): UserRow => {
@@ -59,6 +59,7 @@ const toRow = (r: ApiReg, i: number): UserRow => {
     active: r.createdAt ? Date.now() - new Date(r.createdAt).getTime() < 30*24*3600*1000 : false,
     kyc: "pending",
     video: !!r.video,
+    videoUrl: r.video?.s3Url ?? null,
     registered: true,
     role: ROLE_LABEL[r.role] ?? r.role ?? "—",
   };
@@ -272,7 +273,7 @@ export default function UsersView() {
                   <td style={{ padding:"13px 14px" }}>
                     <span style={{ padding:"3px 8px", borderRadius:5, fontSize:10, fontWeight:700, background:kycColor(u.kyc)+"22", color:kycColor(u.kyc) }}>{u.kyc}</span>
                   </td>
-                  <td style={{ padding:"13px 14px" }}>{u.video?<span style={{ padding:"3px 10px", borderRadius:5, fontSize:10, fontWeight:700, background:"#3B82F622", color:"#3B82F6" }}>🎥 Yes</span>:<span style={{ fontSize:11, color:"#334155" }}>—</span>}</td>
+                  <td style={{ padding:"13px 14px" }}>{u.video?(u.videoUrl?<a href={u.videoUrl} target="_blank" rel="noreferrer" title="Watch video in new tab" onClick={e=>e.stopPropagation()} style={{ padding:"3px 10px", borderRadius:5, fontSize:10, fontWeight:700, background:"#3B82F622", color:"#3B82F6", border:"1px solid #3B82F644", textDecoration:"none", display:"inline-block" }}>🎥 Watch</a>:<span style={{ padding:"3px 10px", borderRadius:5, fontSize:10, fontWeight:700, background:"#3B82F622", color:"#3B82F6" }}>🎥 Yes</span>):<span style={{ fontSize:11, color:"#334155" }}>—</span>}</td>
                   <td style={{ padding:"13px 14px" }}>
                     <span style={{ display:"flex", alignItems:"center", gap:5, fontSize:11, fontWeight:700, color:u.active?"#10B981":"#475569" }}>
                       <span style={{ width:6, height:6, borderRadius:"50%", background:u.active?"#10B981":"#475569", display:"inline-block" }}/>
@@ -329,8 +330,14 @@ export default function UsersView() {
           </div>
           <div style={{ ...card, padding:16 }}>
             <div style={{ fontSize:11, fontWeight:700, color:"#475569", marginBottom:10, textTransform:"uppercase", letterSpacing:.5 }}>Selection Video</div>
-            {selected.video
-              ? <div style={{ background:"#060B18", borderRadius:10, aspectRatio:"16/9", display:"flex", alignItems:"center", justifyContent:"center", fontSize:32, cursor:"pointer", border:"1px solid #1E293B" }}>▶️</div>
+            {selected.video && selected.videoUrl
+              ? <a href={selected.videoUrl} target="_blank" rel="noreferrer" title="Watch video in new tab"
+                  style={{ background:"#060B18", borderRadius:10, aspectRatio:"16/9", display:"flex", flexDirection:"column", gap:6, alignItems:"center", justifyContent:"center", cursor:"pointer", border:"1px solid #1E293B", textDecoration:"none" }}>
+                  <span style={{ fontSize:32 }}>▶️</span>
+                  <span style={{ fontSize:11, fontWeight:700, color:"#3B82F6" }}>Watch video</span>
+                </a>
+              : selected.video
+              ? <div style={{ padding:"16px", textAlign:"center", color:"#64748B", fontSize:12, background:"#060B18", borderRadius:10, border:"1px solid #1E293B" }}>Video submitted — link unavailable</div>
               : <div style={{ padding:"16px", textAlign:"center", color:"#334155", fontSize:12, background:"#060B18", borderRadius:10, border:"1px dashed #1E293B" }}>No video uploaded</div>}
           </div>
         </div>

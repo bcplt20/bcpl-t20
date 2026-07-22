@@ -246,8 +246,8 @@ export default function Phase1RegistrationsView() {
                         <div style={{ display:"flex", flexDirection:"column", gap:3 }}>
                           <Badge status={r.video.status} map={{ submitted:"Submitted", reviewed:"Reviewed" }} colorMap={{ submitted:"#A855F7", reviewed:"#10B981" }} />
                           {r.video.s3Url && (
-                            <a href={r.video.s3Url} target="_blank" rel="noreferrer"
-                              style={{ fontSize:10, color:"#6366F1", textDecoration:"none" }}>▶ Watch</a>
+                            <a href={r.video.s3Url} target="_blank" rel="noreferrer" title="Watch video in new tab"
+                              style={{ fontSize:10, fontWeight:700, color:"#6366F1", textDecoration:"none", padding:"3px 8px", borderRadius:5, background:"#6366F118", border:"1px solid #6366F140", display:"inline-block", width:"fit-content" }}>▶ Watch</a>
                           )}
                         </div>
                       ) : <span style={{ color:"#334155", fontSize:11 }}>No video</span>}

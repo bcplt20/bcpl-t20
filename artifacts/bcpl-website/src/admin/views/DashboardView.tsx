@@ -65,7 +65,7 @@ const CustomTooltip = ({ active, payload, label }:any) => {
   return null;
 };
 
-export default function DashboardView() {
+export default function DashboardView({ onNavigate }: { onNavigate?: (tab: string) => void }) {
   const [range, setRange] = useState<"today"|"week"|"month">("week");
   const [blast, setBlast] = useState(false);
   const [stats, setStats] = useState<Stats|null>(null);
@@ -111,11 +111,12 @@ export default function DashboardView() {
   const weekActual = paidCount;
   const targetPct  = Math.min(100, Math.round((weekActual/weekTarget)*100));
 
+  /* each pending-action card navigates to its admin tab */
   const pendingActions = [
-    { icon:"🎬", count:videosPending, label:"Videos pending review", color:"#F59E0B", action:"Review Now" },
-    { icon:"✅", count:stats?.kyc.pending ?? 0, label:"KYC approvals pending", color:"#6366F1", action:"Approve" },
-    { icon:"💳", count:regs.filter(r=>r.payment && r.payment.status!=="paid" && !PAID_STATUSES.includes(r.phase1Status)).length, label:"Failed payments to retry", color:"#EF4444", action:"View Failed" },
-    { icon:"📧", count:selectedCount, label:"Scout reports ready to send", color:"#10B981", action:"Send Reports" },
+    { icon:"🎬", count:videosPending, label:"Videos pending review", color:"#F59E0B", action:"Review Now", tab:"video_review" },
+    { icon:"✅", count:stats?.kyc.pending ?? 0, label:"KYC approvals pending", color:"#6366F1", action:"Approve", tab:"phase2_kyc" },
+    { icon:"💳", count:regs.filter(r=>r.payment && r.payment.status==="failed" && !PAID_STATUSES.includes(r.phase1Status)).length, label:"Failed payments to retry", color:"#EF4444", action:"View Failed", tab:"finance" },
+    { icon:"📧", count:selectedCount, label:"Scout reports ready to send", color:"#10B981", action:"Send Reports", tab:"phase1_regs" },
   ];
 
   const funnelData = [
@@ -252,7 +253,8 @@ export default function DashboardView() {
       {/* ── Pending Actions ── */}
       <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:10 }}>
         {pendingActions.map(a=>(
-          <div key={a.label} style={{ ...card, padding:"14px 16px", borderTop:`2px solid ${a.color}`, cursor:"pointer" }}>
+          <div key={a.label} onClick={()=>onNavigate?.(a.tab)} title={`Open ${a.label}`}
+            style={{ ...card, padding:"14px 16px", borderTop:`2px solid ${a.color}`, cursor:"pointer" }}>
             <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:8 }}>
               <span style={{ fontSize:22 }}>{a.icon}</span>
               <div style={{ width:32, height:32, borderRadius:8, background:a.color+"22", border:`1px solid ${a.color}44`, display:"flex", alignItems:"center", justifyContent:"center" }}>
@@ -260,7 +262,8 @@ export default function DashboardView() {
               </div>
             </div>
             <div style={{ fontSize:12, color:"rgba(255,255,255,.6)", marginBottom:8 }}>{a.label}</div>
-            <button style={{ padding:"5px 12px", borderRadius:7, border:`1px solid ${a.color}44`, background:a.color+"11", color:a.color, fontSize:11, fontWeight:700, cursor:"pointer" }}>{a.action}</button>
+            <button onClick={e=>{ e.stopPropagation(); onNavigate?.(a.tab); }}
+              style={{ padding:"5px 12px", borderRadius:7, border:`1px solid ${a.color}44`, background:a.color+"11", color:a.color, fontSize:11, fontWeight:700, cursor:"pointer" }}>{a.action}</button>
           </div>
         ))}
       </div>
