@@ -1,4 +1,5 @@
-import { Router } from "express";
+import { Router, type Request } from "express";
+import crypto from "node:crypto";
 import { db } from "@workspace/db";
 import {
   registrationsTable, usersTable,
@@ -208,9 +209,34 @@ router.post("/phase2/verify", requireAuth, async (req: AuthRequest, res) => {
   res.json({ success: true, registrationId: reg.id });
 });
 
+// Verify Cashfree webhook signature: HMAC-SHA256(timestamp + rawBody, CASHFREE_SECRET_KEY), base64
+function verifyCashfreeSignature(req: Request & { rawBody?: Buffer }): boolean {
+  const signature = req.headers["x-webhook-signature"];
+  const timestamp = req.headers["x-webhook-timestamp"];
+  const secret = process.env.CASHFREE_SECRET_KEY;
+  if (!secret || typeof signature !== "string" || typeof timestamp !== "string" || !req.rawBody) {
+    return false;
+  }
+  const expected = crypto
+    .createHmac("sha256", secret)
+    .update(timestamp + req.rawBody.toString("utf8"))
+    .digest("base64");
+  const a = Buffer.from(expected);
+  const b = Buffer.from(signature);
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
+}
+
 // POST /api/payment/webhook  — Cashfree webhook backup
 router.post("/webhook", async (req, res) => {
   // Cashfree sends this on payment completion — backup to redirect flow
+  if (!verifyCashfreeSignature(req)) {
+    console.error("[WEBHOOK] rejected: invalid or missing x-webhook-signature", {
+      hasSignature: !!req.headers["x-webhook-signature"],
+      hasTimestamp: !!req.headers["x-webhook-timestamp"],
+      ip: req.ip,
+    });
+    return void res.status(401).json({ error: "Invalid webhook signature" });
+  }
   try {
     const body = req.body as { data?: { order?: { order_id: string }; payment?: { payment_status: string; cf_payment_id: string } } };
     const orderId = body.data?.order?.order_id;
