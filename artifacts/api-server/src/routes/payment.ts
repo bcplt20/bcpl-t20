@@ -40,6 +40,23 @@ async function notifyPhase1Success(
   ]);
 }
 
+async function notifyPhase2Success(
+  user: { id: string; name: string; email: string; phone: string },
+  amount: number,
+) {
+  const email = tplPhase2Receipt(user.name, amount);
+  await Promise.allSettled([
+    sendEmail({ to: user.email, toName: user.name, ...email }),
+    sendSms(user.phone, `BCPL T20: Phase 2 payment of ₹${amount} confirmed! Please complete your KYC. -BCPL T20`),
+    sendWhatsApp({ phone: user.phone, templateName: WA.PHASE2_RECEIPT, bodyValues: [user.name, `₹${amount}`] }),
+    db.insert(notificationLogsTable).values([
+      { userId: user.id, type: "email",    template: "phase2_receipt" },
+      { userId: user.id, type: "sms",      template: "phase2_receipt" },
+      { userId: user.id, type: "whatsapp", template: "phase2_receipt" },
+    ]),
+  ]);
+}
+
 // ── PHASE 1 ──────────────────────────────────────────────────────────────────
 
 // POST /api/payment/phase1/create  — create Cashfree order
@@ -111,11 +128,15 @@ router.post("/phase1/verify", requireAuth, async (req: AuthRequest, res) => {
   if (!rows[0]) return void res.status(404).json({ error: "Record not found" });
   const { pay, reg, user } = rows[0];
 
-  await db.update(registrationsTable).set({ phase1Status: "payment_done", updatedAt: new Date() })
-    .where(eq(registrationsTable.id, reg.id));
+  const flipped = await db.update(registrationsTable).set({ phase1Status: "payment_done", updatedAt: new Date() })
+    .where(and(eq(registrationsTable.id, reg.id), eq(registrationsTable.phase1Status, "pending")))
+    .returning({ id: registrationsTable.id });
 
-  // Fire notifications async
-  notifyPhase1Success(user, { id: reg.id, role: reg.role, trialCity: reg.trialCity }, parseInt(pay.amount));
+  // Fire notifications async — only if this call confirmed the payment
+  // (skips duplicates when the webhook already confirmed & notified)
+  if (flipped[0]) {
+    notifyPhase1Success(user, { id: reg.id, role: reg.role, trialCity: reg.trialCity }, parseInt(pay.amount));
+  }
 
   res.json({ success: true, registrationId: reg.id });
 });
@@ -191,20 +212,14 @@ router.post("/phase2/verify", requireAuth, async (req: AuthRequest, res) => {
   if (!rows[0]) return void res.status(404).json({ error: "Record not found" });
   const { pay, reg, user } = rows[0];
 
-  await db.update(registrationsTable).set({ phase2Status: "payment_done", updatedAt: new Date() })
-    .where(eq(registrationsTable.id, reg.id));
+  const flipped = await db.update(registrationsTable).set({ phase2Status: "payment_done", updatedAt: new Date() })
+    .where(and(
+      eq(registrationsTable.id, reg.id),
+      or(isNull(registrationsTable.phase2Status), eq(registrationsTable.phase2Status, "pending")),
+    ))
+    .returning({ id: registrationsTable.id });
 
-  const email = tplPhase2Receipt(user.name, parseInt(pay.amount));
-  Promise.allSettled([
-    sendEmail({ to: user.email, toName: user.name, ...email }),
-    sendSms(user.phone, `BCPL T20: Phase 2 payment of ₹${pay.amount} confirmed! Please complete your KYC. -BCPL T20`),
-    sendWhatsApp({ phone: user.phone, templateName: WA.PHASE2_RECEIPT, bodyValues: [user.name, `₹${pay.amount}`] }),
-    db.insert(notificationLogsTable).values([
-      { userId: user.id, type: "email",    template: "phase2_receipt" },
-      { userId: user.id, type: "sms",      template: "phase2_receipt" },
-      { userId: user.id, type: "whatsapp", template: "phase2_receipt" },
-    ]),
-  ]);
+  if (flipped[0]) notifyPhase2Success(user, parseInt(pay.amount));
 
   res.json({ success: true, registrationId: reg.id });
 });
@@ -252,12 +267,28 @@ router.post("/webhook", async (req, res) => {
 
         // Keep registration in sync even if the user never returns to the site
         if (updated[0]) {
-          await db.update(registrationsTable)
+          const flipped = await db.update(registrationsTable)
             .set({ phase1Status: "payment_done", updatedAt: new Date() })
             .where(and(
               eq(registrationsTable.id, updated[0].registrationId),
               eq(registrationsTable.phase1Status, "pending"),
-            ));
+            ))
+            .returning({ id: registrationsTable.id });
+
+          // Only notify when this webhook actually confirmed the registration
+          // (avoids duplicates when the redirect /verify flow already notified)
+          if (flipped[0]) {
+            const rows = await db.select({ pay: phase1PaymentsTable, reg: registrationsTable, user: usersTable })
+              .from(phase1PaymentsTable)
+              .innerJoin(registrationsTable, eq(phase1PaymentsTable.registrationId, registrationsTable.id))
+              .innerJoin(usersTable, eq(registrationsTable.userId, usersTable.id))
+              .where(eq(phase1PaymentsTable.cashfreeOrderId, orderId)).limit(1);
+            if (rows[0]) {
+              const { pay, reg, user } = rows[0];
+              notifyPhase1Success(user, { id: reg.id, role: reg.role, trialCity: reg.trialCity }, parseInt(pay.amount))
+                .catch((e) => console.error("[WEBHOOK] phase1 notify error", e));
+            }
+          }
         }
       } else if (orderId.startsWith("p2_")) {
         const updated = await db.update(phase2PaymentsTable)
@@ -266,12 +297,25 @@ router.post("/webhook", async (req, res) => {
           .returning({ registrationId: phase2PaymentsTable.registrationId });
 
         if (updated[0]) {
-          await db.update(registrationsTable)
+          const flipped = await db.update(registrationsTable)
             .set({ phase2Status: "payment_done", updatedAt: new Date() })
             .where(and(
               eq(registrationsTable.id, updated[0].registrationId),
               or(isNull(registrationsTable.phase2Status), eq(registrationsTable.phase2Status, "pending")),
-            ));
+            ))
+            .returning({ id: registrationsTable.id });
+
+          if (flipped[0]) {
+            const rows = await db.select({ pay: phase2PaymentsTable, user: usersTable })
+              .from(phase2PaymentsTable)
+              .innerJoin(registrationsTable, eq(phase2PaymentsTable.registrationId, registrationsTable.id))
+              .innerJoin(usersTable, eq(registrationsTable.userId, usersTable.id))
+              .where(eq(phase2PaymentsTable.cashfreeOrderId, orderId)).limit(1);
+            if (rows[0]) {
+              notifyPhase2Success(rows[0].user, parseInt(rows[0].pay.amount))
+                .catch((e) => console.error("[WEBHOOK] phase2 notify error", e));
+            }
+          }
         }
       }
     }

@@ -47,7 +47,7 @@ void ensureSettingsTable();
 router.get("/:key", async (req, res) => {
   const key = String(req.params.key);
   if (!PUBLIC_KEYS.has(key)) {
-    return res.status(404).json({ error: "Unknown setting" });
+    return void res.status(404).json({ error: "Unknown setting" });
   }
   const rows = await db.select().from(siteSettingsTable).where(eq(siteSettingsTable.key, key)).limit(1);
   return res.json({ key, value: rows[0]?.value ?? null, updatedAt: rows[0]?.updatedAt ?? null });
@@ -67,18 +67,18 @@ const sampleVideosSchema = z.record(
 router.put("/admin/:key", requireAdmin, async (req, res) => {
   const key = String(req.params.key);
   if (!WRITABLE_KEYS.has(key)) {
-    return res.status(400).json({ error: "Unknown setting key" });
+    return void res.status(400).json({ error: "Unknown setting key" });
   }
 
   let value: Record<string, unknown>;
   if (key === "sample_videos") {
     const parsed = sampleVideosSchema.safeParse(req.body?.value);
     if (!parsed.success) {
-      return res.status(400).json({ error: "Invalid sample_videos value: expected { batsman|bowler|wicket-keeper|all-rounder: { url } | null }" });
+      return void res.status(400).json({ error: "Invalid sample_videos value: expected { batsman|bowler|wicket-keeper|all-rounder: { url } | null }" });
     }
     value = parsed.data as Record<string, unknown>;
   } else {
-    return res.status(400).json({ error: "Unknown setting key" });
+    return void res.status(400).json({ error: "Unknown setting key" });
   }
 
   const now = new Date();
@@ -102,7 +102,7 @@ router.post("/admin/upload-url", requireAdmin, async (req, res) => {
   const contentType = String(req.body?.contentType ?? "");
   const ext = ALLOWED_VIDEO_TYPES[contentType];
   if (!ext) {
-    return res.status(400).json({ error: "contentType must be one of: " + Object.keys(ALLOWED_VIDEO_TYPES).join(", ") });
+    return void res.status(400).json({ error: "contentType must be one of: " + Object.keys(ALLOWED_VIDEO_TYPES).join(", ") });
   }
   const s3Key = "samples/" + randomUUID() + "." + ext;
   const presignedUrl = await getUploadPresignedUrl(s3Key, contentType);
