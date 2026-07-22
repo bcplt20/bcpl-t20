@@ -2,7 +2,7 @@ import { Router } from "express";
 import { db } from "@workspace/db";
 import { usersTable, otpSessionsTable } from "@workspace/db/schema";
 import { eq, and, gt, isNull } from "drizzle-orm";
-import { sendOtp } from "../lib/sms";
+import { sendOtp, otpConfigured } from "../lib/sms";
 import { signToken } from "../lib/auth";
 import { requireAuth, type AuthRequest } from "../middlewares/auth";
 import { z } from "zod";
@@ -31,8 +31,8 @@ router.post("/send-otp", async (req, res) => {
   const sent = await sendOtp(phone, otp);
   if (!sent) return void res.status(500).json({ error: "Failed to send OTP. Please try again." });
 
-  // In dev mode (no SMS key), return OTP so the UI can show it
-  const devOtp = !process.env.MSG91_AUTH_KEY ? (globalThis as any).__lastDevOtp : undefined;
+  // In dev mode (no real SMS delivery configured), return OTP so the UI can show it
+  const devOtp = !otpConfigured ? (globalThis as any).__lastDevOtp : undefined;
   res.json({ success: true, message: "OTP sent to " + phone, ...(devOtp ? { devOtp } : {}) });
 });
 

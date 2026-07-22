@@ -31,17 +31,44 @@ Env variables jo email ke liye lagte hain:
 | `BREVO_FROM_EMAIL` | Sender email (default: `info@bcplt20.com`) | Optional — par Brevo me verified hona chahiye |
 | `SITE_URL` | Email ke buttons/links ke liye (`https://bcplt20.com`) | ✅ Haan |
 
-## SMS (2Factor)
+## SMS (MSG91)
 
-- OTP SMS chal rahe hain (balance: ~152).
-- **Receipt SMS** alag service se jaate hain (Transactional SMS addon — balance ~₹200 hai).
-- Dhyaan: India me transactional SMS ke liye **DLT-approved template** chahiye. Agar SMS fail ho raha hai
-  to 2Factor dashboard me TSMS template approve karwana hoga.
-- Alag task already bana hai: **MSG91 par switch (Task #23)** — aapke approved templates wahan hain.
+SMS ab **MSG91** se jaate hain (login OTP + receipt SMS dono) — aapke approved DLT templates
+aur balance wahin hain. Code taiyaar hai; bas 3 cheezein chahiye:
 
-| Variable | Kya hai |
-|---|---|
-| `TWOFACTOR_API_KEY` | 2Factor API key (OTP + SMS dono ke liye) |
+### 1. IP whitelist (sabse pehle — isi wajah se SMS block ho rahe the)
+
+MSG91 dashboard me **Settings → Security → IP Security / Whitelist IP** kholein aur server ki IP add karein
+(MSG91 ne jo email bheja tha, usme bhi iska direct link hai). EC2 server ki IP nikaalne ke liye
+server par yeh chalayein: `curl ifconfig.me`
+
+### 2. Env variables (EC2 ke `.env` me)
+
+| Variable | Kya hai | Kahan milega |
+|---|---|---|
+| `MSG91_AUTH_KEY` | MSG91 Auth Key | MSG91 dashboard → upar-right username → **Authkey** |
+| `MSG91_OTP_TEMPLATE_ID` | Approved OTP template ki ID | MSG91 → **OTP** section → templates |
+| `MSG91_SENDER_ID` | 6-letter DLT sender ID (jaise `KRIPLA`) | MSG91 → DLT / Sender ID settings |
+
+```bash
+cd /home/ubuntu/app
+nano .env        # upar wali 3 lines add karein
+pm2 restart all --update-env
+```
+
+(Purani `TWOFACTOR_API_KEY` ab istemaal nahi hoti — .env se hata sakte hain.)
+
+### 3. Check kaise karein ki SMS ja rahe hain
+
+```bash
+pm2 logs --lines 200 | grep -E "MSG91|SMS-SENT|SMS-FAILED"
+```
+
+- `[MSG91-OTP-SENT]` / `[SMS-SENT]` = MSG91 ne message accept kar liya
+- `[MSG91-OTP-FAILED]` / `[SMS-FAILED]` = exact wajah saath me hogi (IP blocked / template mismatch / balance)
+
+Dhyaan: receipt SMS ka **text aapke DLT-approved template se match hona chahiye**, warna operator
+use rok dega — mismatch par log me error dikh jayega.
 
 ## WhatsApp (Interakt)
 
