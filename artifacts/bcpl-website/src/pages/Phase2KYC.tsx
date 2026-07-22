@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { BCPLFooter } from '../components/BCPLFooter';
+import { SiteHeader } from '../components/SiteHeader';
 import { getRegistrationStatus, initiateKyc, verifyKycOtp } from '../lib/api';
 
 const BASE = import.meta.env.BASE_URL;
-const NAV = ['Home','Match Center','Teams','Sponsors','Photos','Videos','About','FAQ','Contact'];
-const NAV_ROUTES: Record<string,string> = { Home:'', 'Match Center':'match-center', Teams:'teams', Sponsors:'sponsors', Photos:'photos', Videos:'videos', About:'about', FAQ:'faq', Contact:'contact' };
 
 // Must match backend enum exactly
 const PROFESSIONS = [
@@ -53,7 +52,6 @@ export function Phase2KYC() {
   const [regId, setRegId]           = useState('');
   const [city, setCity]             = useState('');
   const [role, setRole]             = useState('');
-  const [menuOpen, setMenuOpen]     = useState(false);
 
   // Employment details (moved here from the pre-payment form)
   const [company, setCompany]       = useState('');
@@ -269,34 +267,7 @@ export function Phase2KYC() {
         footer a:hover{color:#FF7A29}
       `}</style>
 
-      {/* Sticky header */}
-      <div style={{ position:'sticky', top:0, zIndex:300 }}>
-        <div style={{ background:'linear-gradient(90deg,#C94E0E,#FF7A29,#E8611A,#FF7A29,#C94E0E)', backgroundSize:'300% 100%', animation:'gradShift 4s ease infinite', overflow:'hidden', height:34, display:'flex', alignItems:'center' }}>
-          <div style={{ display:'flex', whiteSpace:'nowrap', animation:'tickerScroll 28s linear infinite' }}>
-            {[...Array(4)].map((_,i) => (
-              <span key={i} style={{ fontSize:11, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.1em', color:'#fff' }}>
-                &nbsp;🏏 SEASON 5 REGISTRATIONS OPEN &nbsp;·&nbsp; ₹6 CR PRIZE POOL &nbsp;·&nbsp; BACKED BY SOURAV GANGULY &nbsp;·&nbsp; #OfficeSeStadiumtak &nbsp;·&nbsp;
-              </span>
-            ))}
-          </div>
-        </div>
-        <nav style={{ background:'rgba(6,16,30,0.97)', backdropFilter:'blur(20px)', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
-          <div style={{ height:2, background:'linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)', backgroundSize:'200%', animation:'shimGold 4s linear infinite' }} />
-          <div className="wrap" style={{ height:60, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-            <a href={BASE} style={{ display:'flex', alignItems:'center', gap:8, textDecoration:'none', flexShrink:0 }}>
-              <img src={BASE + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL" style={{ height:36, maxWidth:100, width:'auto', objectFit:'contain', filter:'brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.7))' }}/>
-              <div style={{ display:'inline-flex', alignItems:'center', gap:4, background:'rgba(232,178,61,0.12)', border:'1px solid rgba(232,178,61,0.5)', borderRadius:6, padding:'3px 10px' }}>
-                <span style={{ fontSize:9 }}>🏆</span>
-                <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:9, color:'#E8B23D', letterSpacing:'.12em' }}>SEASON 5</span>
-              </div>
-            </a>
-            <div className="desk-nav">{NAV.map(l => <a key={l} href={BASE + NAV_ROUTES[l]} className="nav-link">{l}</a>)}</div>
-            <button className="ham-btn" onClick={() => setMenuOpen(o => !o)}>
-              {[0,1,2].map(i => <span key={i} style={{ display:'block', width:22, height:2, background:'#fff', borderRadius:1 }} />)}
-            </button>
-          </div>
-        </nav>
-      </div>
+      <SiteHeader />
 
       {/* Progress bar */}
       <div style={{ background:'rgba(232,178,61,0.08)', borderBottom:'1px solid rgba(232,178,61,0.2)', padding:'10px 0' }}>

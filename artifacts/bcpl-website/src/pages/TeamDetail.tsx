@@ -1,70 +1,7 @@
 import React from 'react';
 import { BCPLFooter } from '../components/BCPLFooter';
-import { NavUser } from '../components/NavUser';
+import { SiteHeader } from '../components/SiteHeader';
 import { getTeamDetail, getPointsTable, getMatches, type ApiTeam, type ApiTeamPlayer } from '../lib/api';
-
-const ROUTE_MAP: Record<string,string> = {
-  'Home':'/', 'HOME':'/',
-  'Match Center':'/match-center', 'MATCH CENTER':'/match-center',
-  'Teams':'/teams', 'TEAMS':'/teams',
-  'Sponsors':'/sponsors', 'SPONSORS':'/sponsors',
-  'Photos':'/photos', 'PHOTOS':'/photos',
-  'Videos':'/videos', 'VIDEOS':'/videos',
-  'About':'/about', 'ABOUT':'/about',
-  'FAQ':'/faq',
-  'Contact':'/contact', 'CONTACT':'/contact',
-  'Schedule':'/schedule',
-  'Points Table':'/points-table',
-};
-
-function Navbar() {
-  const [open, setOpen] = React.useState(false);
-  const links = [['Home','home'],['Match Center','matchcenter'],['Teams','teams'],['Sponsors','sponsors'],['Photos','photos'],['Videos','videos'],['About','about'],['FAQ','faq'],['Contact','contact']];
-  return (
-    <>
-      <div style={{background:'linear-gradient(90deg,#C94E0E,#FF7A29,#E8611A,#FF7A29,#C94E0E)',backgroundSize:'300% 100%',animation:'gradShift 4s ease infinite',color:'#fff',padding:'11px 20px',textAlign:'center',fontSize:12,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'0.04em',zIndex:10,position:'relative'}}>
-        <span>🏏 BCPL Season 5 — Trials Open in 75 Cities</span>
-        <span style={{margin:'0 12px',opacity:0.5}}>|</span>
-        <span>Register for ₹299 Only</span>
-        <span style={{margin:'0 12px',opacity:0.5}}>|</span>
-        <span>#OfficeSeStadiumtak</span>
-      </div>
-      <nav style={{position:'sticky',top:0,zIndex:200,background:'rgba(6,14,28,0.96)',backdropFilter:'blur(24px)',borderBottom:'1px solid rgba(255,255,255,0.07)',boxShadow:'0 1px 0 0 rgba(255,122,41,0.25)'}}>
-        <div className="wrap" style={{height:64,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-          <a href="/" style={{display:'flex',flexDirection:'row',alignItems:'center',gap:8,textDecoration:'none',flexShrink:0,whiteSpace:'nowrap'}}>
-            <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL"
-              style={{height:36,maxWidth:100,width:'auto',objectFit:'contain',display:'block',filter:'brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.7))',flexShrink:0}}/>
-            <div style={{display:'inline-flex',alignItems:'center',gap:4,background:'rgba(232,178,61,0.12)',border:'1px solid rgba(232,178,61,0.5)',borderRadius:6,padding:'3px 10px',flexShrink:0}}>
-              <span style={{fontSize:9}}>🏆</span>
-              <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:9,color:'#E8B23D',letterSpacing:'.12em'}}>SEASON 5</span>
-            </div>
-          </a>
-          <div className="desk-nav">
-            {links.map(([l,k])=><a key={k} href={ROUTE_MAP[l]||'#'} style={{color:k==='teams'?'#FF7A29':'rgba(255,255,255,0.7)',fontWeight:600,fontSize:13,textDecoration:'none',fontFamily:'Inter,sans-serif',borderBottom:k==='teams'?'2px solid #FF7A29':'2px solid transparent',paddingBottom:2}}>{l}</a>)}
-            <NavUser variant="desktop"/>
-            <a href="/register" className="btn-fire" style={{padding:'9px 20px',fontSize:13,textDecoration:'none',display:'inline-flex',alignItems:'center'}}>Register ₹299</a>
-          </div>
-          <button className="ham-btn" onClick={()=>setOpen(o=>!o)} style={{flexDirection:'column',gap:5,background:'none',border:'none',cursor:'pointer',padding:8}}>
-            <span style={{display:'block',width:22,height:2,background:'#fff',borderRadius:12,transition:'all 0.25s',transform:open?'rotate(45deg) translate(5px,5px)':''}}/>
-            <span style={{display:'block',width:22,height:2,background:'#fff',borderRadius:12,transition:'all 0.25s',transform:open?'scaleX(0)':''}}/>
-            <span style={{display:'block',width:22,height:2,background:'#fff',borderRadius:12,transition:'all 0.25s',transform:open?'rotate(-45deg) translate(5px,-5px)':''}}/>
-          </button>
-        </div>
-      </nav>
-      {open&&(
-        <div style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'#06101E',zIndex:300,display:'flex',flexDirection:'column',padding:'80px 24px 40px',overflowY:'auto'}}>
-          <button onClick={()=>setOpen(false)} style={{position:'absolute',top:20,right:20,background:'none',border:'none',color:'rgba(255,255,255,0.5)',fontSize:28,cursor:'pointer'}}>✕</button>
-          <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL" style={{height:36,width:'auto',objectFit:'contain',marginBottom:32,filter:'brightness(1.3)'}}/>
-          {[['🏠 Home','Home'],['🔴 Match Center','Match Center'],['🏏 Teams','Teams'],['🤝 Sponsors','Sponsors'],['📷 Photos','Photos'],['▶️ Videos','Videos'],['ℹ️ About','About'],['❓ FAQ','FAQ'],['✉️ Contact','Contact']].map(([label,key])=>(
-            <a key={key} href={ROUTE_MAP[key]||'#'} onClick={()=>setOpen(false)} style={{color:'rgba(255,255,255,0.85)',fontWeight:700,fontSize:18,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,0.07)',display:'block'}}>{label}</a>
-          ))}
-          <NavUser variant="mobile" onNavigate={()=>setOpen(false)}/>
-          <a href="/register" className="btn-fire" style={{marginTop:32,height:52,fontSize:16,borderRadius:14,width:'100%',textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>📝 Register for ₹299 →</a>
-        </div>
-      )}
-    </>
-  );
-}
 
 const asset = (url: string) =>
   !url ? "" : url.startsWith("data:") || url.startsWith("http") ? url : import.meta.env.BASE_URL + url.replace(/^\//, "");
@@ -214,7 +151,7 @@ export function TeamDetail() {
       </div>
 
       <div style={{position:'relative',zIndex:1}}>
-        <Navbar/>
+        <SiteHeader active="Teams" />
 
         {/* LOADING */}
         {loading && (
@@ -279,7 +216,7 @@ export function TeamDetail() {
             )}
 
             {/* TAB BAR */}
-            <div style={{position:'sticky',top:64,zIndex:100,background:'rgba(6,14,28,0.97)',backdropFilter:'blur(20px)',borderBottom:'1px solid rgba(255,255,255,0.07)',marginBottom:40}}>
+            <div style={{position:'sticky',top:60,zIndex:100,background:'rgba(6,14,28,0.97)',backdropFilter:'blur(20px)',borderBottom:'1px solid rgba(255,255,255,0.07)',marginBottom:40}}>
               <div className="wrap">
                 <div style={{display:'flex',gap:0}}>
                   {tabs.map((t,i)=>(

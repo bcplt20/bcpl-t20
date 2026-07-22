@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { SiteHeader } from '../components/SiteHeader';
 import { useLocation } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
-import { NavUser } from '../components/NavUser';
 import {
   sendOtp, verifyOtp, saveAuthToken, isAuthenticated,
   registerPhase1, createPhase1Payment, getRegistrationStatus,
@@ -104,6 +104,12 @@ const JOURNEY = [
 export function Registration() {
   const [, navigate]            = useLocation();
   const [step, setStep]         = useState(1); // 1:details 2:role 3:city 4:pay
+
+  // Mobile fix: jump back to the top whenever the wizard step changes,
+  // otherwise the next step opens scrolled to the bottom (city list hidden).
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [step]);
   const [name, setName]         = useState('');
   const [email, setEmail]       = useState('');
   const [phone, setPhone]       = useState('');
@@ -113,7 +119,6 @@ export function Registration() {
   const [cityQ, setCityQ]       = useState('');
   const [showDrop, setShowDrop] = useState(false);
   const [agreed, setAgreed]     = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
 
   const filtered    = CITIES.filter(c => c.toLowerCase().includes(cityQ.toLowerCase()));
   const price       = role?.phase1 ?? 299;
@@ -342,7 +347,6 @@ export function Registration() {
     }
   };
 
-  const NAV_LINKS: [string,string][] = [['Home','/'],['Match Center','/match-center'],['Teams','/teams'],['Sponsors','/sponsors'],['About','/about'],['FAQ','/faq'],['Contact','/contact'],['Login','#login']];
 
   return (
     <div style={{ background:'#06101E', minHeight:'100vh', color:'#F0EDE8', fontFamily:"'Inter',sans-serif", overflowX:'hidden', paddingBottom:'calc(100px + env(safe-area-inset-bottom))' }}>
@@ -540,58 +544,8 @@ export function Registration() {
         .city-chips-wrap{display:flex;flex-wrap:wrap;gap:8px;max-height:300px;overflow-y:auto;-webkit-overflow-scrolling:touch}
       `}</style>
 
-      {/* ═══════════════ STICKY TOP WRAPPER (ticker + nav) ═══════════════ */}
-      <div style={{ position:'sticky', top:0, zIndex:300 }}>
-
-      {/* ═══════════════ TICKER BAR ═══════════════ */}
-      <div style={{ background:'linear-gradient(90deg,#C94E0E,#FF7A29,#E8611A,#FF7A29,#C94E0E)', backgroundSize:'300% 100%', animation:'gradShift 4s ease infinite', overflow:'hidden', height:34, display:'flex', alignItems:'center' }}>
-        <div style={{ display:'flex', whiteSpace:'nowrap', animation:'tickerScroll 30s linear infinite', gap:0 }}>
-          {[...Array(4)].map((_,i) => (
-            <span key={i} style={{ fontSize:11, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.1em', color:'#fff', paddingRight:0 }}>
-              &nbsp;🏏 SEASON 5 REGISTRATIONS OPEN &nbsp;·&nbsp; ₹6 CR PRIZE POOL &nbsp;·&nbsp; 50+ CITIES &nbsp;·&nbsp; BACKED BY SOURAV GANGULY &nbsp;·&nbsp; 10 FRANCHISE TEAMS &nbsp;·&nbsp; #OfficeSeStadiumtak &nbsp;·&nbsp;
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* ═══════════════ NAVBAR ═══════════════ */}
-      <nav style={{ background:'rgba(6,16,30,0.97)', backdropFilter:'blur(20px)', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
-        {/* Orange top accent line */}
-        <div style={{ height:2, background:'linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)', backgroundSize:'200%', animation:'shimGold 4s linear infinite' }} />
-        <div className="wrap" style={{ height:60, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-          {/* Logo — click to go home */}
-          <div style={{ display:'flex', alignItems:'center', gap:10, cursor:'pointer', flexShrink:0 }} onClick={()=>navigate('/')}>
-            <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL" style={{ height:42, width:'auto', objectFit:'contain', display:'block', filter:'brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.7))' }}/>
-            <div style={{ display:'inline-flex', alignItems:'center', gap:4, background:'rgba(232,178,61,0.12)', border:'1px solid rgba(232,178,61,0.5)', borderRadius:6, padding:'3px 10px', whiteSpace:'nowrap', flexShrink:0 }}>
-              <span style={{ fontSize:9 }}>🏆</span>
-              <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:9, color:'#E8B23D', letterSpacing:'.12em' }}>SEASON 5</span>
-            </div>
-          </div>
-          {/* Desktop nav */}
-          <div className="desk-nav">
-            {NAV_LINKS.map(([l,h]) => l === 'Login'
-              ? <NavUser key={l} variant="desktop"/>
-              : <a key={l} href={h} style={{ color:'rgba(255,255,255,0.6)', fontSize:12, fontWeight:600, textDecoration:'none', letterSpacing:'.04em', transition:'color .15s' }}>{l}</a>)}
-            <a href="/register" className="btn-primary" style={{ padding:'10px 24px', fontSize:12, textDecoration:'none' }}>REGISTER NOW →</a>
-          </div>
-          {/* Hamburger */}
-          <button className="ham-btn" onClick={() => setMenuOpen(o => !o)}>
-            {[0,1,2].map(i => <span key={i} style={{ display:'block', width:22, height:2, background:'#fff', borderRadius:1, transition:'all .25s', transform: i===0&&menuOpen ? 'rotate(45deg) translate(5px,5px)' : i===1&&menuOpen ? 'scaleX(0)' : i===2&&menuOpen ? 'rotate(-45deg) translate(5px,-5px)' : '' }} />)}
-          </button>
-        </div>
-      </nav>
-      </div>{/* end sticky top wrapper */}
-
-      {/* Mobile menu */}
-      {menuOpen && (
-        <div style={{ position:'fixed', inset:0, background:'#040C18', zIndex:400, display:'flex', flexDirection:'column', padding:'72px 24px 40px', overflowY:'auto' }}>
-          <button onClick={() => setMenuOpen(false)} style={{ position:'absolute', top:16, right:16, background:'rgba(255,255,255,0.07)', border:'1px solid rgba(255,255,255,0.1)', color:'#fff', width:38, height:38, borderRadius:4, cursor:'pointer', fontSize:18 }}>✕</button>
-          {NAV_LINKS.map(([l,h]) => l === 'Login'
-            ? <NavUser key={l} variant="mobile" onNavigate={()=>setMenuOpen(false)}/>
-            : <a key={l} href={h} onClick={()=>setMenuOpen(false)} style={{ color:'rgba(255,255,255,0.85)', fontWeight:700, fontSize:18, fontFamily:'Montserrat,sans-serif', textDecoration:'none', padding:'14px 0', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>{l}</a>)}
-          <a href="/register" className="btn-primary" style={{ marginTop:24, padding:'16px', fontSize:15, textAlign:'center', textDecoration:'none' }}>REGISTER NOW →</a>
-        </div>
-      )}
+      {/* ═══════════════ SHARED HEADER (ticker + navbar) ═══════════════ */}
+      <SiteHeader />
 
       {/* ═══════════════ HERO ═══════════════ */}
       <div style={{ position:'relative', overflow:'hidden', background:'#06101E', paddingTop:40, paddingBottom:0 }}>

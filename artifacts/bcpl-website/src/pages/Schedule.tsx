@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavUser } from '../components/NavUser';
+import { SiteHeader } from '../components/SiteHeader';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { getMatches } from '../lib/api';
 
@@ -79,78 +79,6 @@ function AmbientBg() {
     </div>
   );
 }
-
-function AnnouncementBar() {
-  return (
-    <div style={{background:'linear-gradient(90deg,#C94E0E,#FF7A29,#E8611A,#FF7A29,#C94E0E)',backgroundSize:'300% 100%',animation:'gradShift 4s ease infinite',color:'#fff',padding:'11px 20px',textAlign:'center',position:'relative',zIndex:10,fontSize:12,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'0.06em'}}>
-      <span>🏏 BCPL T20 SEASON 5 — REGISTRATIONS OPEN</span>
-      <span style={{margin:'0 14px',opacity:0.5}}>|</span>
-      <span>₹299 onwards · 75 cities · 10 teams</span>
-      <span style={{margin:'0 14px',opacity:0.5}}>|</span>
-      <span style={{color:'rgba(255,255,255,0.85)'}}>#OfficeSeStadiumtak</span>
-    </div>
-  );
-}
-
-const ROUTE_MAP: Record<string,string> = {
-  'Home':'/', 'HOME':'/',
-  '🏠 Home':'/', 'Match Center':'/match-center', 'MATCH CENTER':'/match-center',
-  '🔴 Match Center':'/match-center',
-  'Teams':'/teams', 'TEAMS':'/teams', '🏏 Teams':'/teams',
-  'Sponsors':'/sponsors', 'SPONSORS':'/sponsors', '🤝 Sponsors':'/sponsors',
-  'Photos':'/photos', 'PHOTOS':'/photos', '📷 Photos':'/photos',
-  'Videos':'/videos', 'VIDEOS':'/videos', '▶️ Videos':'/videos',
-  'About':'/about', 'ABOUT':'/about', 'ℹ️ About':'/about',
-  'FAQ':'/faq', '❓ FAQ':'/faq',
-  'Contact':'/contact', 'CONTACT':'/contact', '✉️ Contact':'/contact',
-  'Schedule':'/schedule',
-  'Points Table':'/points-table',
-};
-
-function Navbar() {
-  const [open, setOpen] = React.useState(false);
-  const links = [['Home','/'],['Match Center','/match-center'],['Teams','/teams'],['Sponsors','/sponsors'],['Photos','/photos'],['Videos','/videos'],['About','/about'],['FAQ','/faq'],['Contact','/contact'],['Login','/register#login']];
-  return (
-    <>
-      <nav style={{position:'sticky',top:0,zIndex:200,background:'rgba(6,14,28,0.96)',backdropFilter:'blur(24px)',borderBottom:'1px solid rgba(255,255,255,0.07)',boxShadow:'0 1px 0 0 rgba(255,122,41,0.25)'}}>
-        <div className="wrap" style={{height:64,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-          <a href="/" style={{display:'flex',alignItems:'center',gap:8,textDecoration:'none',flexShrink:0,whiteSpace:'nowrap'}}>
-            <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL"
-              style={{height:36,maxWidth:100,width:'auto',objectFit:'contain',display:'block',filter:'brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.7))',flexShrink:0}}/>
-            <div style={{display:'inline-flex',alignItems:'center',gap:4,background:'rgba(232,178,61,0.12)',border:'1px solid rgba(232,178,61,0.5)',borderRadius:6,padding:'3px 10px',flexShrink:0}}>
-              <span style={{fontSize:9}}>🏆</span>
-              <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:9,color:'#E8B23D',letterSpacing:'.12em'}}>SEASON 5</span>
-            </div>
-          </a>
-          <div className="desk-nav">
-            {links.map(([l,h])=>(
-              l === 'Login'
-                ? <NavUser key={l} variant="desktop"/>
-                : <a key={l} href={h} style={{color: l==='Schedule'?'#FF7A29':'rgba(255,255,255,0.72)',fontSize:13,fontWeight:600,fontFamily:'Inter,sans-serif',textDecoration:'none',borderBottom: l==='Schedule'?'2px solid #FF7A29':'2px solid transparent',paddingBottom:2}}>{l}</a>
-            ))}
-          </div>
-          <button className="ham-btn" onClick={()=>setOpen(o=>!o)} style={{flexDirection:'column',gap:5,background:'none',border:'none',cursor:'pointer',padding:8,zIndex:201}}>
-            <span style={{display:'block',width:24,height:2,background:'#fff',borderRadius:12,transition:'all 0.25s',transform:open?'rotate(45deg) translate(5px,5px)':''}}/>
-            <span style={{display:'block',width:24,height:2,background:'#fff',borderRadius:12,transition:'all 0.25s',transform:open?'scaleX(0)':''}}/>
-            <span style={{display:'block',width:24,height:2,background:'#fff',borderRadius:12,transition:'all 0.25s',transform:open?'rotate(-45deg) translate(5px,-5px)':''}}/>
-          </button>
-        </div>
-      </nav>
-      {open && (
-        <div style={{position:'fixed',inset:0,background:'#06101E',zIndex:300,display:'flex',flexDirection:'column',padding:'80px 28px 40px',overflowY:'auto'}}>
-          <button onClick={()=>setOpen(false)} style={{position:'absolute',top:18,right:18,background:'none',border:'none',color:'rgba(255,255,255,0.5)',fontSize:28,cursor:'pointer',lineHeight:1}}>✕</button>
-          <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL" style={{height:36,width:'auto',objectFit:'contain',marginBottom:32,filter:'brightness(1.3)'}}/>
-          {[['🏠 Home','/'],['🔴 Match Center','/match-center'],['🏏 Teams','/teams'],['🤝 Sponsors','/sponsors'],['📷 Photos','/photos'],['▶️ Videos','/videos'],['ℹ️ About','/about'],['❓ FAQ','/faq'],['✉️ Contact','/contact'],['🔑 Login','#']].map(([l,h])=>(
-            l.includes('Login')
-              ? <NavUser key={l} variant="mobile" onNavigate={()=>setOpen(false)}/>
-              : <a key={l} href={h} onClick={()=>setOpen(false)} style={{color:'rgba(255,255,255,0.85)',fontWeight:700,fontSize:18,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,0.07)',display:'block'}}>{l}</a>
-          ))}
-        </div>
-      )}
-    </>
-  );
-}
-
 
 type MatchStatus = 'COMPLETED' | 'LIVE' | 'UPCOMING' | 'TBD';
 
@@ -266,8 +194,7 @@ export function Schedule() {
       <style>{CSS}</style>
       <AmbientBg/>
       <div style={{position:'relative',zIndex:10}}>
-        <AnnouncementBar/>
-        <Navbar/>
+        <SiteHeader />
 
         {/* HERO */}
         <div style={{padding:'clamp(40px,6vw,60px) 0 clamp(28px,4vw,48px)',textAlign:'center',position:'relative'}}>

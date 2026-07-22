@@ -1,62 +1,6 @@
 import React from 'react';
 import { BCPLFooter } from '../components/BCPLFooter';
-import { NavUser } from '../components/NavUser';
-
-function AnnBar() {
-  return (
-    <div style={{background:'linear-gradient(90deg,#C94E0E,#FF7A29,#E8611A,#FF7A29,#C94E0E)',backgroundSize:'300% 100%',animation:'gradShift 4s ease infinite',color:'#fff',padding:'11px 20px',textAlign:'center',fontSize:13,fontWeight:700,fontFamily:'Montserrat,sans-serif',zIndex:10,position:'relative',display:'flex',alignItems:'center',justifyContent:'center',gap:0,flexWrap:'wrap'}}>
-      <span>🏏 Season 5 Registrations OPEN</span>
-      <span style={{display:'inline-block',width:1,height:14,background:'rgba(255,255,255,0.4)',margin:'0 14px',verticalAlign:'middle'}}/>
-      <span>75 Cities · 10 Teams · ₹299 Only</span>
-      <span style={{display:'inline-block',width:1,height:14,background:'rgba(255,255,255,0.4)',margin:'0 14px',verticalAlign:'middle'}}/>
-      <span>#OfficeSeStadiumtak</span>
-    </div>
-  );
-}
-
-function Navbar({open,setOpen}:{open:boolean,setOpen:(v:boolean)=>void}) {
-  const links=[['🏠 Home','/'],['🔴 Match Center','/match-center'],['🏏 Teams','/teams'],['🤝 Sponsors','/sponsors'],['📷 Photos','/photos'],['▶️ Videos','/videos'],['ℹ️ About','/about'],['❓ FAQ','/faq'],['✉️ Contact','/contact']];
-  return (
-    <>
-      <nav style={{position:'sticky',top:0,zIndex:200,background:'rgba(6,14,28,0.96)',backdropFilter:'blur(24px)',borderBottom:'1px solid rgba(255,255,255,0.07)',boxShadow:'0 1px 0 0 rgba(255,122,41,0.25)'}}>
-        <div className="wrap" style={{height:64,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-          <a href="/" style={{display:'flex',flexDirection:'row',alignItems:'center',gap:8,textDecoration:'none',flexShrink:0,whiteSpace:'nowrap'}}>
-            <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL"
-              style={{height:36,maxWidth:100,width:'auto',objectFit:'contain',display:'block',filter:'brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.7))',flexShrink:0}}/>
-            <div style={{display:'inline-flex',alignItems:'center',gap:4,background:'rgba(232,178,61,0.12)',border:'1px solid rgba(232,178,61,0.5)',borderRadius:6,padding:'3px 10px',flexShrink:0}}>
-              <span style={{fontSize:9}}>🏆</span>
-              <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:9,color:'#E8B23D',letterSpacing:'.12em'}}>SEASON 5</span>
-            </div>
-          </a>
-          <div className="desk-nav">
-            {[['Home','/'],['Match Center','/match-center'],['Teams','/teams'],['Sponsors','/sponsors'],['Photos','/photos'],['Videos','/videos'],['About','/about'],['FAQ','/faq'],['Contact','/contact']].map(([l,h])=>(
-              <a key={l} href={h} style={{color:'rgba(255,255,255,0.7)',fontWeight:600,fontSize:13,textDecoration:'none',fontFamily:'Inter,sans-serif'}}>{l}</a>
-            ))}
-            <NavUser variant="desktop"/>
-            <a href="/register" className="btn-fire" style={{padding:'10px 20px',fontSize:13,textDecoration:'none'}}>Register ₹299</a>
-          </div>
-          <button className="ham-btn" onClick={()=>setOpen(!open)} style={{flexDirection:'column',gap:5,background:'none',border:'none',cursor:'pointer',padding:8,zIndex:201,display:'flex'}}>
-            <span style={{display:'block',width:22,height:2,background:'#fff',borderRadius:12,transition:'all 0.25s',transform:open?'rotate(45deg) translate(5px,5px)':''}}/>
-            <span style={{display:'block',width:22,height:2,background:'#fff',borderRadius:12,transition:'all 0.25s',transform:open?'scaleX(0)':''}}/>
-            <span style={{display:'block',width:22,height:2,background:'#fff',borderRadius:12,transition:'all 0.25s',transform:open?'rotate(-45deg) translate(5px,-5px)':''}}/>
-          </button>
-        </div>
-      </nav>
-      {open&&(
-        <div style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'#06101E',zIndex:199,display:'flex',flexDirection:'column',padding:'80px 24px 40px',overflowY:'auto'}}>
-          <button onClick={()=>setOpen(false)} style={{position:'absolute',top:16,right:16,background:'none',border:'none',color:'rgba(255,255,255,0.5)',fontSize:28,cursor:'pointer',lineHeight:1}}>✕</button>
-          <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL" style={{height:36,width:'auto',objectFit:'contain',marginBottom:32,filter:'brightness(1.3)'}}/>
-          {links.map(([l,h])=>(
-            <a key={l} href={h} onClick={()=>setOpen(false)} style={{color:'rgba(255,255,255,0.85)',fontWeight:700,fontSize:18,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'13px 0',borderBottom:'1px solid rgba(255,255,255,0.07)',display:'flex',alignItems:'center',minHeight:44}}>{l}</a>
-          ))}
-          <NavUser variant="mobile" onNavigate={()=>setOpen(false)}/>
-          <button className="btn-fire" style={{marginTop:28,height:52,fontSize:16,width:'100%'}}>📝 Register for ₹299 →</button>
-        </div>
-      )}
-    </>
-  );
-}
-
+import { SiteHeader } from '../components/SiteHeader';
 
 function MobileCTA() {
   return (
@@ -72,7 +16,6 @@ const OrangeDot = () => (
 );
 
 export function Refunds() {
-  const [open,setOpen]=React.useState(false);
   const [regId,setRegId]=React.useState('');
   const [reason,setReason]=React.useState('');
   const [submitted,setSubmitted]=React.useState(false);
@@ -146,8 +89,7 @@ export function Refunds() {
       </div>
 
       <div style={{position:'relative',zIndex:1}}>
-        <AnnBar/>
-        <Navbar open={open} setOpen={setOpen}/>
+        <SiteHeader />
 
         <section style={{padding:'clamp(40px,8vw,72px) 0 40px',textAlign:'center',animation:'fadeSlide 0.6s ease both'}}>
           <div className="wrap">

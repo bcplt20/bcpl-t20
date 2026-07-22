@@ -15,3 +15,4 @@ export * from "./match_xi";
 export * from "./points_table";
 export * from "./trial_venues";
 export * from "./teams";
+export * from "./settings";

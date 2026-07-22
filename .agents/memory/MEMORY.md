@@ -2,7 +2,8 @@
 - [GitHub file size limit](github-limits.md) — PDF >100MB rejected by GitHub; always git rm --cached large files before push
 - [BCPL deploy pipeline](deploy-pipeline.md) — EC2 pulls from GitHub; commits/task-merges in Replit are invisible to prod until `git push origin main`
 - [Edit tool $ quirk](edit-tool-dollar-quirk.md) — replacements containing ` sequences (SQL regex anchors) can corrupt files; use WriteFile instead
-- [Per-page navbars](per-page-navbars.md) — no shared navbar component; every page has its own desktop + mobile nav copy; grep desk-nav AND each mobile overlay or you WILL miss pages
+- [Site header](per-page-navbars.md) — all 31 pages now use shared SiteHeader (sh- CSS, 60px sticky nav, CTA hidden <640px); page sticky elements offset top:60
+- [Admin API auth](admin-api-auth.md) — admin views must call adminReq (session token), never req(...,true)/VITE_ADMIN_KEY (403s or leaks key in prod bundle); teams admin fns = known debt
 - [Dev preview API gap](dev-preview-api.md) — frontend /api calls 404 in Replit preview (no vite proxy; prod nginx routes /api); test against localhost:8080; OTP readable from otp_sessions table
 - [Stale lib/db dist declarations](db-schema-dist-declarations.md) — after schema changes run `tsc --build lib/db --force` or typecheck shows phantom "no exported member" errors; runtime uses src, not dist
 - [Express req.params typing](express-params-string.md) — req.params.X types as string|string[] here; wrap in String() before drizzle eq() or tsc fails

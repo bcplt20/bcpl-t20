@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { BCPLFooter } from '../components/BCPLFooter';
+import { SiteHeader } from '../components/SiteHeader';
 import { getDashboard } from '../lib/api';
 import { getSession } from '../lib/auth';
-
-const NAV = ['Home','Match Center','Teams','Sponsors','Photos','Videos','About','FAQ','Contact'];
-const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-center', 'Teams':'teams', 'Sponsors':'sponsors', 'Photos':'photos', 'Videos':'videos', 'About':'about', 'FAQ':'faq', 'Contact':'contact' };
 
 const ROADMAP = [
   { icon:'📝', label:'Register',     done:true  },
@@ -17,7 +15,6 @@ const ROADMAP = [
 ];
 
 export function Phase2KYCApproved() {
-  const [menuOpen,  setMenuOpen]  = useState(false);
   const [playerName, setPlayerName] = useState('Player');
   const [playerCity, setPlayerCity] = useState('—');
   const [regIdShort, setRegIdShort] = useState('—');
@@ -92,47 +89,7 @@ export function Phase2KYCApproved() {
         .hero-chips{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
       `}</style>
 
-      <div style={{ position:'sticky', top:0, zIndex:300 }}>
-      {/* ── TICKER ── */}
-      <div style={{ background:'linear-gradient(90deg,#C94E0E,#FF7A29,#E8611A,#FF7A29,#C94E0E)', backgroundSize:'300% 100%', animation:'gradShift 4s ease infinite', overflow:'hidden', height:34, display:'flex', alignItems:'center' }}>
-        <div style={{ display:'flex', whiteSpace:'nowrap', animation:'tickerScroll 28s linear infinite' }}>
-          {[...Array(4)].map((_,i) => (
-            <span key={i} style={{ fontSize:11, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.1em', color:'#fff' }}>
-              &nbsp;🏏 SEASON 5 REGISTRATIONS OPEN &nbsp;·&nbsp; ₹6 CR PRIZE POOL &nbsp;·&nbsp; 50+ CITIES &nbsp;·&nbsp; BACKED BY SOURAV GANGULY &nbsp;·&nbsp; 10 FRANCHISE TEAMS &nbsp;·&nbsp; #OfficeSeStadiumtak &nbsp;·&nbsp;
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* ── NAVBAR ── */}
-      <nav style={{ background:'rgba(6,16,30,0.97)', backdropFilter:'blur(20px)', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
-        <div style={{ height:2, background:'linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)', backgroundSize:'200%', animation:'shimGold 4s linear infinite' }} />
-        <div className="wrap" style={{ height:60, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-          <a href="/" style={{ display:'flex', alignItems:'center', gap:10, textDecoration:'none' }}>
-                          <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL" style={{ height:42, width:'auto', objectFit:'contain', display:'block', filter:'brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.7))' }}/>
-              <div style={{ display:'inline-flex', alignItems:'center', gap:4, background:'rgba(232,178,61,0.12)', border:'1px solid rgba(232,178,61,0.5)', borderRadius:6, padding:'3px 10px' }}>
-                <span style={{ fontSize:9 }}>🏆</span>
-                <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:9, color:'#E8B23D', letterSpacing:'.12em' }}>SEASON 5</span>
-              </div>
-          </a>
-          <div className="desk-nav">
-            {NAV.map(l => <a key={l} href={'/' + NAV_ROUTES[l]} style={{ color:'rgba(255,255,255,0.6)', fontSize:12, fontWeight:600, textDecoration:'none', letterSpacing:'.04em' }}>{l}</a>)}
-            <button className="btn-primary" style={{ padding:'10px 24px', fontSize:12 }}>REGISTER NOW →</button>
-          </div>
-          <button className="ham-btn" onClick={() => setMenuOpen(o => !o)}>
-            {[0,1,2].map(i => <span key={i} style={{ display:'block', width:22, height:2, background:'#fff', borderRadius:1 }} />)}
-          </button>
-        </div>
-      </nav>
-      </div>{/* /sticky-top */}
-
-      {menuOpen && (
-        <div style={{ position:'fixed', inset:0, background:'#040C18', zIndex:400, display:'flex', flexDirection:'column', padding:'72px 24px 40px', overflowY:'auto' }}>
-          <button onClick={() => setMenuOpen(false)} style={{ position:'absolute', top:16, right:16, background:'rgba(255,255,255,0.07)', border:'1px solid rgba(255,255,255,0.1)', color:'#fff', width:38, height:38, borderRadius:4, cursor:'pointer', fontSize:18 }}>✕</button>
-          {NAV.map(l => <a key={l} href={'/' + NAV_ROUTES[l]} onClick={()=>setMenuOpen(false)} style={{ color:'rgba(255,255,255,0.85)', fontWeight:700, fontSize:18, fontFamily:'Montserrat,sans-serif', textDecoration:'none', padding:'14px 0', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>{l}</a>)}
-          <button className="btn-primary" style={{ marginTop:24, padding:'16px', fontSize:15 }}>REGISTER NOW →</button>
-        </div>
-      )}
+      <SiteHeader />
 
       {/* ── VERIFIED HERO BANNER ── */}
       <div style={{ background:'linear-gradient(135deg,#060C18,#0A1F12)', borderBottom:'2px solid rgba(34,197,94,0.3)', padding:'40px 0' }}>

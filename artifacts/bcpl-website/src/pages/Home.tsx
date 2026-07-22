@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { getMatches, getPointsTable } from "../lib/api";
 import { BCPLFooter } from "../components/BCPLFooter";
-import { NavUser } from "../components/NavUser";
+import { SiteHeader } from "../components/SiteHeader";
 
 const L = import.meta.env.BASE_URL + "bcpl-assets/logos/";
 
@@ -19,12 +19,6 @@ const TEAMS = [
   { name:"Bengaluru Rockets",      city:"Bengaluru",   color:"#EF4444", slug:"bengaluru_rockets"     },
 ];
 
-const NAV  = ["Home","Match Center","Teams","Sponsors","Photos","Videos","About","FAQ","Contact","Login"];
-const RTES: Record<string,string> = {
-  "Home":"/","Match Center":"/match-center","Teams":"/teams","Sponsors":"/sponsors",
-  "Photos":"/photos","Videos":"/videos","About":"/about","FAQ":"/faq","Contact":"/contact",
-  "Login":"/register#login",
-};
 
 const STATS = [
   { value:"₹6 Cr+", label:"Prize Pool",      color:"#FF7A29" },
@@ -80,7 +74,6 @@ const SPONSORS: {tier:string,name:string,logo:string,color:string}[] = [];
 
 /* ═══════════════════════════════════════════════════════════ */
 export function Home() {
-  const [menuOpen,  setMenuOpen]  = useState(false);
   const [faqOpen,   setFaqOpen]   = useState<number|null>(null);
   const [countdown, setCountdown] = useState({ d:47, h:14, m:22, s:45 });
   const [bannerIdx, setBannerIdx] = useState(0);
@@ -304,16 +297,8 @@ export function Home() {
         }
       `}</style>
 
-      {/* ══ TICKER ══ */}
-      <div style={{ background:"linear-gradient(90deg,#C94E0E,#FF7A29)", height:34, overflow:"hidden", display:"flex", alignItems:"center" }}>
-        <div style={{ display:"flex", whiteSpace:"nowrap", animation:"ticker 36s linear infinite" }}>
-          {[0,1].map(i=>(
-            <span key={i} className="mont" style={{ fontSize:11, fontWeight:800, letterSpacing:".1em", color:"#fff", paddingRight:80 }}>
-              🏏 SEASON 5 OPEN &nbsp;·&nbsp; ₹6 CR+ PRIZE POOL &nbsp;·&nbsp; 10 FRANCHISE TEAMS &nbsp;·&nbsp; 50+ CITIES &nbsp;·&nbsp; REGISTER AT ₹299 &nbsp;·&nbsp; SOURAV GANGULY &nbsp;·&nbsp; #OfficeSeStadiumtak &nbsp;&nbsp;&nbsp;
-            </span>
-          ))}
-        </div>
-      </div>
+      {/* ══ SHARED HEADER (ticker + navbar) ══ */}
+      <SiteHeader active="Home" />
 
       {/* ══ ANNOUNCEMENT BANNER ══ */}
       <div style={{ background:B.color, borderBottom:`1px solid ${B.border}33`, padding:"10px 0", overflow:"hidden" }}>
@@ -328,52 +313,6 @@ export function Home() {
           </div>
         </div>
       </div>
-
-      {/* ══ NAVBAR ══ */}
-      <nav style={{ position:"sticky", top:0, zIndex:200, background:"rgba(6,16,30,.97)", backdropFilter:"blur(20px)", borderBottom:"1px solid rgba(255,255,255,.06)" }}>
-        <div className="W" style={{ height:60, display:"flex", alignItems:"center", justifyContent:"space-between", gap:16 }}>
-
-          {/* Logo */}
-          <a href="/" style={{ display:"flex", alignItems:"center", gap:10, flexShrink:0, textDecoration:"none" }}>
-            <img src={import.meta.env.BASE_URL + "bcpl-assets/bcpl-logo-white.png"} alt="BCPL" style={{ height:42, width:"auto", objectFit:"contain", display:"block", filter:"brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.7))" }}/>
-            <div style={{ display:"inline-flex", alignItems:"center", gap:4, background:"rgba(232,178,61,0.12)", border:"1px solid rgba(232,178,61,0.5)", borderRadius:6, padding:"3px 10px" }}>
-              <span style={{ fontSize:9 }}>🏆</span>
-              <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:9, color:"#E8B23D", letterSpacing:".12em" }}>SEASON 5</span>
-            </div>
-          </a>
-
-          {/* Desktop Nav */}
-          <nav className="desk-links">
-            {NAV.map(n=> n==="Login"
-              ? <NavUser key={n} variant="desktop"/>
-              : <a key={n} href={RTES[n]||"/"} className="nav-link" style={{textDecoration:"none"}}>{n}</a>
-            )}
-          </nav>
-
-          {/* Right */}
-          <div style={{ display:"flex", alignItems:"center", gap:10, flexShrink:0 }}>
-            <button className="btn-cta nav-reg-btn" style={{ fontSize:12, padding:"9px 18px" }} onClick={()=>navigate("/register")}>Register Now →</button>
-            <button className="ham" onClick={()=>setMenuOpen(true)} style={{ display:"flex", flexDirection:"column", gap:5, background:"none", border:"none", cursor:"pointer", padding:8 }}>
-              {[0,1,2].map(i=><span key={i} style={{ width:22, height:2, background:"#fff", display:"block" }}/>)}
-            </button>
-          </div>
-        </div>
-      </nav>
-
-      {/* Mobile Menu */}
-      {menuOpen&&(
-        <div className="mob-menu">
-          <button onClick={()=>setMenuOpen(false)} style={{ position:"fixed", top:18, right:22, background:"none", border:"none", color:"#fff", fontSize:28, cursor:"pointer", zIndex:1001, lineHeight:1 }}>✕</button>
-          {NAV.map(n=>(
-            n==="Login"
-              ? <NavUser key={n} variant="mobile" onNavigate={()=>setMenuOpen(false)}/>
-              : <a key={n} href={RTES[n]||"/"} className="mob-link" onClick={()=>setMenuOpen(false)} style={{textDecoration:"none"}}>{n}</a>
-          ))}
-          <button className="btn-cta" style={{ marginTop:24, width:"100%", justifyContent:"center", fontSize:16, padding:16 }} onClick={()=>{ setMenuOpen(false); navigate("/register"); }}>
-            Register Now — ₹299 →
-          </button>
-        </div>
-      )}
 
       {/* ══════════════════════════════════════
           HERO SECTION

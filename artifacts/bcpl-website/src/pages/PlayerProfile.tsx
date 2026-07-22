@@ -1,14 +1,10 @@
 import { useState, useEffect } from 'react';
 import { BCPLFooter } from '../components/BCPLFooter';
+import { SiteHeader } from '../components/SiteHeader';
 import { getDashboard, getPlayerTrialVenue } from '../lib/api';
 import { clearSession, getSession } from '../lib/auth';
 
 const BASE = import.meta.env.BASE_URL;
-const NAV  = ['Home','Match Center','Teams','Sponsors','About','FAQ','Contact'];
-const NAV_ROUTES: Record<string,string> = {
-  'Home':'','Match Center':'match-center','Teams':'teams',
-  'Sponsors':'sponsors','About':'about','FAQ':'faq','Contact':'contact',
-};
 
 // ── Role display labels ───────────────────────────────────────────────────────
 const ROLE_LABEL: Record<string,string> = {
@@ -172,7 +168,6 @@ const inp: React.CSSProperties = {
 
 // ─────────────────────────────────────────────────────────────────────────────
 export function PlayerProfile() {
-  const [menuOpen, setMenuOpen] = useState(false);
   const [loading,  setLoading]  = useState(true);
   const [data,     setData]     = useState<any>(null);
   const [venue,    setVenue]    = useState<any>(null);
@@ -242,41 +237,7 @@ export function PlayerProfile() {
         @keyframes pulseOr{0%,100%{box-shadow:0 0 0 0 rgba(255,122,41,0.4)}50%{box-shadow:0 0 0 10px rgba(255,122,41,0)}}
       `}</style>
 
-      {/* ── NAV ── */}
-      <nav style={{ borderBottom:'1px solid rgba(255,255,255,0.06)', padding:'0 16px', position:'sticky', top:0, background:'rgba(6,16,30,0.95)', backdropFilter:'blur(12px)', zIndex:100 }}>
-        <div style={{ maxWidth:1200, margin:'0 auto', display:'flex', alignItems:'center', justifyContent:'space-between', height:64 }}>
-          <a href={BASE} style={{ display:'flex', alignItems:'center', gap:10, textDecoration:'none' }}>
-            <img src={BASE+'bcpl-assets/bcpl-logo-white.png'} alt="BCPL" style={{ height:36 }} />
-          </a>
-          <div className="desk-nav">
-            {NAV.map(n => (
-              <a key={n} href={BASE+NAV_ROUTES[n]}
-                style={{ color:'rgba(255,255,255,0.6)', textDecoration:'none', fontSize:13, fontWeight:600, fontFamily:'Montserrat,sans-serif', letterSpacing:'.04em', transition:'color .18s' }}
-                onMouseEnter={e=>(e.currentTarget.style.color='#FF7A29')}
-                onMouseLeave={e=>(e.currentTarget.style.color='rgba(255,255,255,0.6)')}
-              >{n}</a>
-            ))}
-          </div>
-          <div style={{ display:'flex', alignItems:'center', gap:12 }}>
-            <div style={{ width:34, height:34, borderRadius:'50%', background:'linear-gradient(135deg,#FF7A29,#E8B23D)', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, color:'#fff' }}>
-              {user?.name?.charAt(0).toUpperCase() ?? '?'}
-            </div>
-            <button className="ham-btn" onClick={() => setMenuOpen(o => !o)}>
-              {[0,1,2].map(i => <span key={i} style={{ width:22, height:2, background:'rgba(255,255,255,0.7)', borderRadius:2 }} />)}
-            </button>
-          </div>
-        </div>
-        {menuOpen && (
-          <div style={{ borderTop:'1px solid rgba(255,255,255,0.08)', padding:'12px 0', display:'flex', flexDirection:'column', gap:4 }}>
-            {NAV.map(n => (
-              <a key={n} href={BASE+NAV_ROUTES[n]} onClick={() => setMenuOpen(false)}
-                style={{ padding:'10px 16px', color:'rgba(255,255,255,0.7)', textDecoration:'none', fontSize:14, fontFamily:'Montserrat,sans-serif', fontWeight:700 }}>
-                {n}
-              </a>
-            ))}
-          </div>
-        )}
-      </nav>
+      <SiteHeader />
 
       <main style={{ paddingTop:32 }}>
         <div className="wrap">

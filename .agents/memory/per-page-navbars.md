@@ -1,15 +1,13 @@
 ---
-name: Per-page navbars on BCPL site
-description: Every page embeds its own copy of the navbar; nav changes must be applied file-by-file and it is easy to miss pages
+name: Site header — shared SiteHeader component
+description: All pages now use one shared header; how it works and what to watch when touching it
 ---
 
-# Per-page navbars
+**Current state:** every page (31 files incl. not-found) renders `<SiteHeader active="..." />` from `src/components/SiteHeader.tsx`. The old copy-pasted per-page navbars/AnnouncementBars are GONE. Header = orange ticker + sticky navbar (60px) + mobile hamburger overlay; CSS is self-contained with `sh-` prefixed classes and a `shTicker` keyframe to avoid collisions with page-local styles.
 
-The BCPL website has NO shared navbar component. Every page under `src/pages/` embeds its own copy of the desktop nav (`.desk-nav`) AND its own mobile hamburger overlay. Several pages also keep the nav links in a local `links` array while others inline the array in JSX — the markup drifts slightly per page.
-
-**Why:** During the "name in header" task, 16 pages were updated and a review still found 3 more public pages (TeamDetail, CodeOfConduct, CricketRulebook) plus 4 pages whose mobile menus were missed even though their desktop navs were updated.
-
-**How to apply:** For any nav-wide change, enumerate ALL render sites first:
-- `grep -l "desk-nav" src/pages/*.tsx` for desktop navs
-- separately check each page's mobile overlay (`open&&(` / `menuOpen` blocks) — desktop and mobile are separate copies
-- journey/auction pages (Phase1*, Phase2*, Auction*, TeamSelected) have purpose-built headers — decide explicitly whether they are in scope, and say so.
+Watch-outs:
+- `active` prop must be one of the NAV labels (Home, Match Center, Teams, Sponsors, Photos, Videos, About, FAQ, Contact); flow/legal pages pass none.
+- Page-local sticky elements must offset `top:60` (navbar height). TeamDetail's tab bar had `top:64` and left a 4px gap.
+- On <640px the navbar CTA is hidden (`sh-cta-desk`) so the hamburger fits in 402px viewports; the mobile overlay menu carries its own Register button. Don't re-add a visible CTA on mobile without checking 402px width.
+- Old unused header CSS rules (`.desk-nav`, `.ham-btn`, ticker keyframes) intentionally remain inside many pages' `<style>` blocks — harmless; don't "fix" them into new markup.
+- Login entry is `NavUser` inside SiteHeader; pages should not import NavUser directly anymore.

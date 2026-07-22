@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { adminGetVideos, adminReviewVideo, adminUpdatePhase1Status } from "../../lib/api";
+import { SampleVideosCard } from "./SampleVideosCard";
 
 type Video = {
   id: string;
@@ -112,6 +113,9 @@ export default function VideoReviewView() {
           </button>
         </div>
       </div>
+
+      {/* Sample videos shown to players (admin-managed) */}
+      <SampleVideosCard />
 
       {err && (
         <div style={{ padding:14, borderRadius:10, background:"#EF444415", border:"1px solid #EF444440", color:"#EF4444", fontSize:12 }}>

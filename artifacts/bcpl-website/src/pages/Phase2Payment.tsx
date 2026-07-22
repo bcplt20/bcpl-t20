@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { BCPLFooter } from '../components/BCPLFooter';
+import { SiteHeader } from '../components/SiteHeader';
 import { getRegistrationStatus, getMe, createPhase2Payment, verifyPhase2Payment } from '../lib/api';
 
 const BASE = import.meta.env.BASE_URL;
-const NAV = ['Home','Match Center','Teams','Sponsors','Photos','Videos','About','FAQ','Contact'];
-const NAV_ROUTES: Record<string,string> = { Home:'', 'Match Center':'match-center', Teams:'teams', Sponsors:'sponsors', Photos:'photos', Videos:'videos', About:'about', FAQ:'faq', Contact:'contact' };
 
 type LoadState = 'loading' | 'ok' | 'already_paid' | 'not_selected' | 'error';
 
@@ -18,7 +17,6 @@ export function Phase2Payment() {
   const [agreed, setAgreed]         = useState(false);
   const [payLoading, setPayLoading] = useState(false);
   const [payError, setPayError]     = useState('');
-  const [menuOpen, setMenuOpen]     = useState(false);
 
   // Load Cashfree SDK
   useEffect(() => {
@@ -133,39 +131,7 @@ export function Phase2Payment() {
         @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
       `}</style>
 
-      {/* Sticky header */}
-      <div style={{ position:'sticky', top:0, zIndex:300 }}>
-        <div style={{ background:'linear-gradient(90deg,#C94E0E,#FF7A29,#E8611A,#FF7A29,#C94E0E)', backgroundSize:'300% 100%', animation:'gradShift 4s ease infinite', overflow:'hidden', height:34, display:'flex', alignItems:'center' }}>
-          <div style={{ display:'flex', whiteSpace:'nowrap', animation:'tickerScroll 32s linear infinite' }}>
-            {[...Array(4)].map((_,i) => (
-              <span key={i} style={{ fontSize:11, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.1em', color:'#fff' }}>
-                &nbsp;🏏 SEASON 5 REGISTRATIONS OPEN &nbsp;·&nbsp; ₹6 CR PRIZE POOL &nbsp;·&nbsp; 50+ CITIES &nbsp;·&nbsp; BACKED BY SOURAV GANGULY &nbsp;·&nbsp; #OfficeSeStadiumtak &nbsp;·&nbsp;
-              </span>
-            ))}
-          </div>
-        </div>
-        <nav style={{ background:'rgba(6,16,30,0.97)', backdropFilter:'blur(20px)', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
-          <div style={{ height:2, background:'linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)', backgroundSize:'200%', animation:'shimGold 4s linear infinite' }} />
-          <div className="wrap" style={{ maxWidth:1200, height:60, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-            <a href={BASE} style={{ display:'flex', alignItems:'center', gap:8, textDecoration:'none', flexShrink:0 }}>
-              <img src={BASE + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL" style={{ height:36, maxWidth:100, width:'auto', objectFit:'contain', filter:'brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.7))' }}/>
-              <div style={{ display:'inline-flex', alignItems:'center', gap:4, background:'rgba(232,178,61,0.12)', border:'1px solid rgba(232,178,61,0.5)', borderRadius:6, padding:'3px 10px' }}>
-                <span style={{ fontSize:9 }}>🏆</span>
-                <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:9, color:'#E8B23D', letterSpacing:'.12em' }}>SEASON 5</span>
-              </div>
-            </a>
-            <div className="desk-nav">{NAV.map(n => <a key={n} href={BASE + NAV_ROUTES[n]} className="nav-link">{n}</a>)}</div>
-            <button className="ham-btn" onClick={() => setMenuOpen(o => !o)}>
-              {[0,1,2].map(i => <span key={i} style={{ width:24, height:2, background:'#fff', display:'block', borderRadius:12, transition:'all .3s', transform: menuOpen?(i===0?'rotate(45deg) translate(5px,5px)':i===2?'rotate(-45deg) translate(5px,-5px)':'scaleX(0)'):'none', opacity:menuOpen&&i===1?0:1 }} />)}
-            </button>
-          </div>
-          {menuOpen && (
-            <div style={{ background:'#0A1727', borderTop:'1px solid rgba(255,255,255,0.07)', padding:'12px 0' }}>
-              {NAV.map(n => <a key={n} href={BASE + NAV_ROUTES[n]} onClick={() => setMenuOpen(false)} style={{ padding:'10px 24px', fontSize:13, fontWeight:700, fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em', color:'rgba(255,255,255,0.7)', textTransform:'uppercase', textDecoration:'none', display:'block' }}>{n}</a>)}
-            </div>
-          )}
-        </nav>
-      </div>
+      <SiteHeader />
 
       <div className="wrap" style={{ paddingTop:32 }}>
         {/* Selected banner */}

@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BCPLFooter } from '../components/BCPLFooter';
+import { SiteHeader } from '../components/SiteHeader';
 
-const NAV = ['Home','Match Center','Teams','Sponsors','Photos','Videos','About','FAQ','Contact'];
-const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-center', 'Teams':'teams', 'Sponsors':'sponsors', 'Photos':'photos', 'Videos':'videos', 'About':'about', 'FAQ':'faq', 'Contact':'contact' };
 const BOOKING_REF = 'BCPL-S5-7432';
 
 const TEAMS = [
@@ -28,8 +27,6 @@ const ROADMAP = [
 ];
 
 export function AuctionSelected() {
-  const [menuOpen, setMenuOpen] = useState(false);
-
   return (
     <div style={{ background:'#06101E', minHeight:'100vh', fontFamily:"'Inter',sans-serif", color:'#F0EDE8', overflowX:'hidden', paddingBottom:100 }}>
       <style>{`
@@ -73,48 +70,7 @@ export function AuctionSelected() {
         .rail-conn{flex:1;height:2px;align-self:center;margin-top:-30px;min-width:20px;max-width:60px}
       `}</style>
 
-      {/* TICKER */}
-      <div style={{ background:'linear-gradient(90deg,#C9960E,#E8B23D,#C49A1E,#E8B23D,#C9960E)', backgroundSize:'300% 100%', animation:'gradShift 4s ease infinite', overflow:'hidden', height:34, display:'flex', alignItems:'center' }}>
-        <div style={{ display:'flex', whiteSpace:'nowrap', animation:'tickerScroll 28s linear infinite' }}>
-          {[...Array(4)].map((_,i)=>(
-            <span key={i} style={{ fontSize:11, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.1em', color:'#060C18' }}>
-              &nbsp;&nbsp;&nbsp;🏆 AUCTION SHORTLISTED · BCPL SEASON 5 · REF: {BOOKING_REF} · FRANCHISE AUCTION COMING · ₹6 CR PRIZE POOL · #OfficeSeStadiumtak&nbsp;&nbsp;&nbsp;
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* NAVBAR */}
-      <nav style={{ position:'sticky', top:0, zIndex:200, background:'rgba(6,16,30,0.97)', backdropFilter:'blur(20px)', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
-        <div className="wrap" style={{ height:64, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-          <a href="/" style={{ display:'flex', flexDirection:'row', alignItems:'center', gap:8, flexShrink:0, whiteSpace:'nowrap', textDecoration:'none' }}>
-            <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL"
-              style={{ height:36, maxWidth:100, width:'auto', objectFit:'contain', display:'block', filter:'brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.7))', flexShrink:0 }}/>
-            <div style={{ display:'inline-flex', alignItems:'center', gap:4, background:'rgba(232,178,61,0.12)', border:'1px solid rgba(232,178,61,0.5)', borderRadius:6, padding:'3px 10px', flexShrink:0 }}>
-              <span style={{ fontSize:9 }}>🏆</span>
-              <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:9, color:'#E8B23D', letterSpacing:'.12em' }}>SEASON 5</span>
-            </div>
-          </a>
-          <nav className="desk-nav">
-            {NAV.map(l=><a key={l} href={'/' + NAV_ROUTES[l]} style={{ fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:12, color:'rgba(255,255,255,0.6)', textDecoration:'none', letterSpacing:'.08em', textTransform:'uppercase' }}>{l}</a>)}
-          </nav>
-          <div style={{ display:'flex', alignItems:'center', gap:12 }}>
-            <div style={{ background:'rgba(232,178,61,0.12)', border:'1px solid rgba(232,178,61,0.3)', borderRadius:12, padding:'6px 14px', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:11, color:'#E8B23D', letterSpacing:'.06em' }}>
-              🔨 AUCTION SHORTLISTED
-            </div>
-            <button className="ham-btn" onClick={()=>setMenuOpen(true)}>
-              {[0,1,2].map(i=><span key={i} style={{ width:24, height:2, background:'#fff', display:'block' }} />)}
-            </button>
-          </div>
-        </div>
-      </nav>
-
-      {menuOpen && (
-        <div className="mob-menu">
-          <button className="close-btn" onClick={()=>setMenuOpen(false)}>✕</button>
-          {NAV.map(l=><a key={l} href={'/' + NAV_ROUTES[l]} className="mob-menu-link" onClick={()=>setMenuOpen(false)} style={{textDecoration:'none'}}>{l}</a>)}
-        </div>
-      )}
+      <SiteHeader />
 
       {/* HERO — AUCTION SHORTLISTED */}
       <section style={{ padding:'60px 0 0', background:'linear-gradient(180deg,#06101E 0%,#081420 100%)', position:'relative', overflow:'hidden' }}>

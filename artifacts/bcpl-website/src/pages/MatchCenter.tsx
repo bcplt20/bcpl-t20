@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { BCPLFooter } from '../components/BCPLFooter';
-import { NavUser } from '../components/NavUser';
+import { SiteHeader } from '../components/SiteHeader';
 import { getMatches, getPointsTable } from '../lib/api';
-
-const NAV_LINKS = ["Home", "Match Center", "Teams", "Sponsors", "Photos", "Videos", "About", "FAQ", "Contact", "Login"];
-
-const TICKER_TEXT = "🏏 SEASON 5 REGISTRATIONS OPEN · ₹6 CR PRIZE POOL · 50+ CITIES · 10 FRANCHISE TEAMS · #OfficeSeStadiumtak";
 
 const CITIES = [
   "Mumbai", "Delhi", "Bengaluru", "Hyderabad", "Pune", "Chennai", "Kolkata", "Ahmedabad",
@@ -91,7 +87,6 @@ const ROUTE_MAP: Record<string,string> = {
 };
 
 export function MatchCenter() {
-  const [menuOpen, setMenuOpen] = useState(false);
   const [matches,  setMatches]  = useState<any[]>([]);
   const [points,   setPoints]   = useState<any[]>([]);
 
@@ -194,57 +189,7 @@ export function MatchCenter() {
         }
       `}</style>
 
-      {/* TICKER BAR */}
-      <div style={{ background: "linear-gradient(90deg,#C94E0E,#FF7A29,#E8611A)", overflow: "hidden", height: 36, display: "flex", alignItems: "center", position: "relative", zIndex: 10 }}>
-        <div style={{ display: "flex", whiteSpace: "nowrap", animation: "tickerScroll 32s linear infinite" }}>
-          {[0, 1].map(i => (
-            <span key={i} style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 11, letterSpacing: "0.1em", color: "#fff", paddingRight: 80 }}>
-              {TICKER_TEXT} &nbsp;&nbsp;&nbsp; {TICKER_TEXT} &nbsp;&nbsp;&nbsp;
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* NAVBAR */}
-      <nav style={{ position: "sticky", top: 0, zIndex: 200, background: "rgba(6,16,30,0.97)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-        <div className="wrap" style={{ height: 64, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <a href="/" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none", flexShrink: 0, whiteSpace: "nowrap" }}>
-            <img src={import.meta.env.BASE_URL + "bcpl-assets/bcpl-logo-white.png"} alt="BCPL"
-              style={{ height: 36, maxWidth: 100, width: "auto", objectFit: "contain", display: "block", filter: "brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.7))", flexShrink: 0 }}/>
-            <div style={{ display: "inline-flex", alignItems: "center", gap: 4, background: "rgba(232,178,61,0.12)", border: "1px solid rgba(232,178,61,0.5)", borderRadius: 6, padding: "3px 10px", flexShrink: 0 }}>
-              <span style={{ fontSize: 9 }}>🏆</span>
-              <span style={{ fontFamily: "Montserrat,sans-serif", fontWeight: 900, fontSize: 9, color: "#E8B23D", letterSpacing: ".12em" }}>SEASON 5</span>
-            </div>
-          </a>
-
-          <nav className="desk-nav">
-            {NAV_LINKS.map(link => (
-              link === "Login"
-                ? <NavUser key={link} variant="desktop"/>
-                : <a key={link} className={`nav-link${link === "Match Center" ? " active" : ""}`} href={ROUTE_MAP[link]||"#"}>{link}</a>
-            ))}
-          </nav>
-
-          <button className="ham-btn" onClick={() => setMenuOpen(true)}>
-            <span className="ham-bar" />
-            <span className="ham-bar" />
-            <span className="ham-bar" />
-          </button>
-        </div>
-      </nav>
-
-      {/* Mobile Menu */}
-      {menuOpen && (
-        <div className="mob-menu">
-          <button className="close-btn" onClick={() => setMenuOpen(false)}>✕</button>
-          <img src={import.meta.env.BASE_URL + "bcpl-assets/bcpl-logo-white.png"} alt="BCPL" style={{ height: 36, width: "auto", objectFit: "contain", marginBottom: 8, filter: "brightness(1.3)" }}/>
-          {NAV_LINKS.map(link => (
-            link === "Login"
-              ? <NavUser key={link} variant="mobile" onNavigate={() => setMenuOpen(false)}/>
-              : <a key={link} className="mob-menu-link" href={ROUTE_MAP[link]||"#"} onClick={() => setMenuOpen(false)}>{link}</a>
-          ))}
-        </div>
-      )}
+      <SiteHeader active="Match Center" />
 
       {/* HERO */}
       <section style={{ background: "#06101E", padding: "clamp(40px,6vw,60px) 0 clamp(28px,4vw,48px)", position: "relative", overflow: "hidden" }}>

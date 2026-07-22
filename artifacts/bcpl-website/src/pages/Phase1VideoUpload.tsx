@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { BCPLFooter } from '../components/BCPLFooter';
+import { SiteHeader } from '../components/SiteHeader';
 import {
-  getRegistrationStatus, getMe, getUploadUrl, confirmVideoUpload,
+  getRegistrationStatus, getMe, getUploadUrl, confirmVideoUpload, getSiteSetting,
+  type SampleVideos, type SampleVideoEntry, type SampleVideoRole,
 } from '../lib/api';
 
 // ── Role metadata ────────────────────────────────────────────────────────────
@@ -41,9 +43,10 @@ const ALLOWED_TYPES: Record<string, string> = {
 const MAX_SIZE = 500 * 1024 * 1024; // 500 MB
 
 export function Phase1VideoUpload() {
-  const [menuOpen, setMenuOpen]     = useState(false);
   const [dragging, setDragging]     = useState(false);
   const [activeVideo, setActiveVideo] = useState<number | null>(null);
+  const [samples, setSamples]         = useState<SampleVideos | null>(null);
+  const [samplesErr, setSamplesErr]   = useState(false);
 
   // Data from API
   const [uploadState, setUploadState] = useState<UploadState>('loading');
@@ -61,8 +64,9 @@ export function Phase1VideoUpload() {
   const [progress, setProgress]     = useState(0);
   const fileInputRef                = useRef<HTMLInputElement>(null);
 
-  const NAV = ['Home','Match Center','Teams','Sponsors','Photos','Videos','About','FAQ','Contact'];
-  const NAV_ROUTES: Record<string,string> = { Home:'', 'Match Center':'match-center', Teams:'teams', Sponsors:'sponsors', Photos:'photos', Videos:'videos', About:'about', FAQ:'faq', Contact:'contact' };
+  /** Admin-uploaded sample video for a role card (null = none uploaded yet). */
+  const sampleFor = (roleName: string): SampleVideoEntry | null =>
+    (samples?.[roleName.toLowerCase() as SampleVideoRole] ?? null);
 
   // ── Load registration data on mount ────────────────────────────────────────
   useEffect(() => {
@@ -110,6 +114,13 @@ export function Phase1VideoUpload() {
         setUploadState('not_registered');
       }
     })();
+  }, []);
+
+  // ── Admin-managed sample videos (site settings) ────────────────────────────
+  useEffect(() => {
+    getSiteSetting<SampleVideos>('sample_videos')
+      .then(r => setSamples(r.value ?? {}))
+      .catch(() => { setSamples({}); setSamplesErr(true); });
   }, []);
 
   // ── File validation ────────────────────────────────────────────────────────
@@ -331,45 +342,7 @@ export function Phase1VideoUpload() {
         .progress-fill{height:100%;background:linear-gradient(90deg,#FF7A29,#E8B23D);border-radius:3px;transition:width .3s ease;animation:progressPulse 1.5s ease infinite;}
       `}</style>
 
-      {/* ── STICKY TOP ── */}
-      <div style={{ position:'sticky', top:0, zIndex:300 }}>
-        <div style={{ background:'linear-gradient(90deg,#C94E0E,#FF7A29,#E8611A,#FF7A29,#C94E0E)', backgroundSize:'300% 100%', animation:'gradShift 4s ease infinite', overflow:'hidden', height:34, display:'flex', alignItems:'center' }}>
-          <div style={{ display:'flex', whiteSpace:'nowrap', animation:'tickerScroll 30s linear infinite' }}>
-            {[...Array(4)].map((_,i) => (
-              <span key={i} style={{ fontSize:11, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.1em', color:'#fff' }}>
-                &nbsp;🏏 SEASON 5 REGISTRATIONS OPEN &nbsp;·&nbsp; ₹6 CR PRIZE POOL &nbsp;·&nbsp; 50+ CITIES &nbsp;·&nbsp; BACKED BY SOURAV GANGULY &nbsp;·&nbsp; 10 FRANCHISE TEAMS &nbsp;·&nbsp; #OfficeSeStadiumtak &nbsp;·&nbsp;
-              </span>
-            ))}
-          </div>
-        </div>
-        <nav style={{ background:'rgba(6,16,30,0.97)', backdropFilter:'blur(20px)', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
-          <div style={{ height:2, background:'linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)', backgroundSize:'200%', animation:'shimGold 4s linear infinite' }} />
-          <div className="wrap" style={{ height:60, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-            <a href={import.meta.env.BASE_URL} style={{ display:'flex', alignItems:'center', gap:10, textDecoration:'none' }}>
-              <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL" style={{ height:42, width:'auto', objectFit:'contain', display:'block', filter:'brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.7))' }}/>
-              <div style={{ display:'inline-flex', alignItems:'center', gap:4, background:'rgba(232,178,61,0.12)', border:'1px solid rgba(232,178,61,0.5)', borderRadius:6, padding:'3px 10px' }}>
-                <span style={{ fontSize:9 }}>🏆</span>
-                <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:9, color:'#E8B23D', letterSpacing:'.12em' }}>SEASON 5</span>
-              </div>
-            </a>
-            <div className="desk-nav">
-              {NAV.map(l => <a key={l} href={import.meta.env.BASE_URL + NAV_ROUTES[l]} style={{ color:'rgba(255,255,255,0.6)', fontSize:12, fontWeight:600, textDecoration:'none', letterSpacing:'.04em' }}>{l}</a>)}
-              <button className="btn-primary" style={{ padding:'10px 24px', fontSize:12 }} onClick={() => window.location.href = import.meta.env.BASE_URL + 'register'}>REGISTER NOW →</button>
-            </div>
-            <button className="ham-btn" onClick={() => setMenuOpen(o => !o)}>
-              {[0,1,2].map(i => <span key={i} style={{ display:'block', width:22, height:2, background:'#fff', borderRadius:1, transition:'all .25s', transform: i===0&&menuOpen?'rotate(45deg) translate(5px,5px)':i===1&&menuOpen?'scaleX(0)':i===2&&menuOpen?'rotate(-45deg) translate(5px,-5px)':'' }} />)}
-            </button>
-          </div>
-        </nav>
-      </div>
-
-      {menuOpen && (
-        <div style={{ position:'fixed', inset:0, background:'#040C18', zIndex:400, display:'flex', flexDirection:'column', padding:'72px 24px 40px', overflowY:'auto' }}>
-          <button onClick={() => setMenuOpen(false)} style={{ position:'absolute', top:16, right:16, background:'rgba(255,255,255,0.07)', border:'1px solid rgba(255,255,255,0.1)', color:'#fff', width:38, height:38, borderRadius:4, cursor:'pointer', fontSize:18 }}>✕</button>
-          {NAV.map(l => <a key={l} href={import.meta.env.BASE_URL + NAV_ROUTES[l]} onClick={()=>setMenuOpen(false)} style={{ color:'rgba(255,255,255,0.85)', fontWeight:700, fontSize:18, fontFamily:'Montserrat,sans-serif', textDecoration:'none', padding:'14px 0', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>{l}</a>)}
-          <button className="btn-primary" style={{ marginTop:24, padding:'16px', fontSize:15 }} onClick={() => window.location.href = import.meta.env.BASE_URL + 'register'}>REGISTER NOW →</button>
-        </div>
-      )}
+      <SiteHeader />
 
       {/* ── PAGE HEADER ── */}
       <div style={{ background:'linear-gradient(180deg,#060C18 0%,#06101E 100%)', borderBottom:'1px solid rgba(255,255,255,0.06)', paddingTop:36, paddingBottom:32 }}>
@@ -559,7 +532,7 @@ export function Phase1VideoUpload() {
               <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:12, letterSpacing:'.16em', color:'rgba(255,255,255,0.4)', marginBottom:6, textTransform:'uppercase' }}>🎬 Sample Trial Videos</div>
               <div style={{ color:'rgba(255,255,255,0.6)', fontSize:13, lineHeight:1.5, maxWidth:520 }}>Watch before filming your own trial video.</div>
             </div>
-            <div style={{ background:'rgba(34,197,94,0.1)', border:'1px solid rgba(34,197,94,0.3)', borderRadius:10, padding:'7px 14px', fontSize:11, color:'#22C55E', fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em', flexShrink:0 }}>✓ Season 4 Best Entries</div>
+            <div style={{ background: samples && Object.values(samples).some(Boolean) ? 'rgba(34,197,94,0.1)' : 'rgba(255,255,255,0.05)', border: samples && Object.values(samples).some(Boolean) ? '1px solid rgba(34,197,94,0.3)' : '1px solid rgba(255,255,255,0.12)', borderRadius:10, padding:'7px 14px', fontSize:11, color: samples && Object.values(samples).some(Boolean) ? '#22C55E' : 'rgba(255,255,255,0.45)', fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em', flexShrink:0 }}>{samples && Object.values(samples).some(Boolean) ? '✓ Official Samples' : 'Samples Coming Soon'}</div>
           </div>
           <div className="sample-grid">
             {SAMPLE_VIDEOS.map((v, idx) => (
@@ -567,7 +540,7 @@ export function Phase1VideoUpload() {
                 <div style={{ background:v.gradient, height:160, position:'relative', display:'flex', flexDirection:'column', justifyContent:'flex-end', padding:'12px 14px' }}>
                   <div style={{ position:'absolute', inset:0, opacity:.06, backgroundImage:'repeating-linear-gradient(0deg,#fff 0px,#fff 1px,transparent 1px,transparent 20px)', pointerEvents:'none' }} />
                   <div style={{ position:'absolute', top:10, right:10, background:`${v.color}33`, border:`1px solid ${v.color}66`, borderRadius:6, padding:'3px 8px', fontSize:9, fontWeight:900, fontFamily:'Montserrat,sans-serif', letterSpacing:'.08em', color:v.color }}>{v.badge}</div>
-                  <div style={{ position:'absolute', top:10, left:10, background:'rgba(0,0,0,0.6)', borderRadius:6, padding:'3px 8px', fontSize:10, fontWeight:700, color:'#fff' }}>⏱ {v.duration}</div>
+                  {sampleFor(v.role) && <div style={{ position:'absolute', top:10, left:10, background:'rgba(34,197,94,0.25)', border:'1px solid rgba(34,197,94,0.5)', borderRadius:6, padding:'3px 8px', fontSize:9, fontWeight:800, color:'#4ADE80' }}>▶ AVAILABLE</div>}
                   <div style={{ position:'absolute', top:'50%', left:'50%', transform:'translate(-50%,-60%)', fontSize:42, opacity:.4 }}>{v.icon}</div>
                   <div className="play-btn">▶</div>
                   <div style={{ position:'relative', zIndex:1 }}>
@@ -616,18 +589,27 @@ export function Phase1VideoUpload() {
                 <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:15, color:'#fff' }}>
                   {SAMPLE_VIDEOS[activeVideo].icon} {SAMPLE_VIDEOS[activeVideo].role} — Sample Trial Video
                 </div>
-                <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)', marginTop:3 }}>Season 4 best entry · {SAMPLE_VIDEOS[activeVideo].duration}</div>
+                <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)', marginTop:3 }}>{sampleFor(SAMPLE_VIDEOS[activeVideo].role) ? (sampleFor(SAMPLE_VIDEOS[activeVideo].role)!.label || 'Official BCPL sample video') : 'Awaiting official upload'}</div>
               </div>
               <button onClick={() => setActiveVideo(null)} style={{ background:'rgba(255,255,255,0.08)', border:'1px solid rgba(255,255,255,0.12)', color:'#fff', width:34, height:34, borderRadius:8, cursor:'pointer', fontSize:16, display:'flex', alignItems:'center', justifyContent:'center' }}>✕</button>
             </div>
-            <div style={{ background:SAMPLE_VIDEOS[activeVideo].gradient, height:240, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:12, position:'relative', overflow:'hidden' }}>
-              <div style={{ position:'absolute', inset:0, opacity:.05, backgroundImage:'repeating-linear-gradient(0deg,#fff 0px,#fff 1px,transparent 1px,transparent 20px)' }} />
-              <div style={{ fontSize:56, opacity:.3 }}>{SAMPLE_VIDEOS[activeVideo].icon}</div>
-              <div style={{ color:'rgba(255,255,255,0.5)', fontSize:13, textAlign:'center', padding:'0 24px', lineHeight:1.6, position:'relative' }}>
-                Sample videos available after Season 4 entries are approved.<br />
-                <span style={{ color:'rgba(255,255,255,0.3)', fontSize:11 }}>Use the YouTube guide below ↓</span>
+            {sampleFor(SAMPLE_VIDEOS[activeVideo].role) ? (
+              <video
+                key={SAMPLE_VIDEOS[activeVideo].role}
+                src={sampleFor(SAMPLE_VIDEOS[activeVideo].role)!.url}
+                controls autoPlay playsInline
+                style={{ width:'100%', maxHeight:340, background:'#000', display:'block' }}
+              />
+            ) : (
+              <div style={{ background:SAMPLE_VIDEOS[activeVideo].gradient, height:240, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:12, position:'relative', overflow:'hidden' }}>
+                <div style={{ position:'absolute', inset:0, opacity:.05, backgroundImage:'repeating-linear-gradient(0deg,#fff 0px,#fff 1px,transparent 1px,transparent 20px)' }} />
+                <div style={{ fontSize:56, opacity:.3 }}>{SAMPLE_VIDEOS[activeVideo].icon}</div>
+                <div style={{ color:'rgba(255,255,255,0.5)', fontSize:13, textAlign:'center', padding:'0 24px', lineHeight:1.6, position:'relative' }}>
+                  {samplesErr ? 'Sample videos could not be loaded right now. Please refresh the page.' : 'The official sample video for this role has not been uploaded yet.'}<br />
+                  <span style={{ color:'rgba(255,255,255,0.3)', fontSize:11 }}>Use the YouTube reference below ↓</span>
+                </div>
               </div>
-            </div>
+            )}
             <div style={{ padding:'16px 20px', borderTop:'1px solid rgba(255,255,255,0.06)', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
               <div style={{ fontSize:11, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.1em', color:'rgba(255,255,255,0.3)', marginBottom:8, textTransform:'uppercase' }}>What Scouts Look For</div>
               <div style={{ fontSize:13, color:'rgba(255,255,255,0.65)', lineHeight:1.6 }}>{SAMPLE_VIDEOS[activeVideo].what}</div>

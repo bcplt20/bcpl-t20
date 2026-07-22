@@ -420,3 +420,20 @@ export const adminUpdateTeamPlayer = (playerId: string, data: Partial<Omit<ApiTe
 
 export const adminDeleteTeamPlayer = (playerId: string) =>
   req<{ success: boolean }>("DELETE", `/teams/admin/players/${playerId}`, undefined, true);
+
+/* ─── Site settings (admin-managed key-value, e.g. sample videos) ── */
+
+export interface SampleVideoEntry { url: string; label?: string; uploadedAt?: string }
+export type SampleVideoRole = 'batsman' | 'bowler' | 'wicket-keeper' | 'all-rounder';
+export type SampleVideos = Partial<Record<SampleVideoRole, SampleVideoEntry | null>>;
+
+export const getSiteSetting = <T = unknown>(key: string) =>
+  req<{ key: string; value: T | null; updatedAt: string | null }>("GET", `/settings/${key}`);
+
+export const adminSetSiteSetting = (key: string, value: unknown) =>
+  adminReq<{ success: boolean; key: string }>("PUT", `/settings/admin/${key}`, { value });
+
+export const adminGetSampleUploadUrl = (contentType: string) =>
+  adminReq<{ success: boolean; presignedUrl: string; s3Key: string; publicUrl: string }>(
+    "POST", "/settings/admin/upload-url", { contentType }
+  );

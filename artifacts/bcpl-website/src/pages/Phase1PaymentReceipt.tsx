@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BCPLFooter } from '../components/BCPLFooter';
+import { SiteHeader } from '../components/SiteHeader';
 import { verifyPhase1Payment, getMe, getRegistrationStatus } from '../lib/api';
 
 const ROLE_LABELS: Record<string, string> = {
@@ -7,8 +8,6 @@ const ROLE_LABELS: Record<string, string> = {
 };
 
 export function Phase1PaymentReceipt() {
-  const [menuOpen, setMenuOpen] = useState(false);
-
   /* ── Real receipt data ── */
   const [receiptLoading, setReceiptLoading] = useState(true);
   const [receiptError, setReceiptError] = useState('');
@@ -48,8 +47,6 @@ export function Phase1PaymentReceipt() {
       } finally { setReceiptLoading(false); }
     })();
   }, []);
-  const NAV = ['Home','Match Center','Teams','Sponsors','Photos','Videos','About','FAQ','Contact'];
-const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-center', 'Teams':'teams', 'Sponsors':'sponsors', 'Photos':'photos', 'Videos':'videos', 'About':'about', 'FAQ':'faq', 'Contact':'contact' };
 
   return (
     <div style={{ background:'#06101E', minHeight:'100vh', color:'#F0EDE8', fontFamily:"'Inter',sans-serif", overflowX:'hidden', paddingBottom:80 }}>
@@ -130,47 +127,7 @@ const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-cen
         .barcode-wrap{background:#060C18;padding:14px 20px;display:flex;align-items:flex-end;gap:0;border-top:1px solid rgba(255,255,255,0.05);overflow:hidden}
       `}</style>
 
-      <div style={{ position:'sticky', top:0, zIndex:300 }}>
-      {/* ── TICKER ── */}
-      <div style={{ background:'linear-gradient(90deg,#C94E0E,#FF7A29,#E8611A,#FF7A29,#C94E0E)', backgroundSize:'300% 100%', animation:'gradShift 4s ease infinite', overflow:'hidden', height:34, display:'flex', alignItems:'center' }}>
-        <div style={{ display:'flex', whiteSpace:'nowrap', animation:'tickerScroll 30s linear infinite' }}>
-          {[...Array(4)].map((_,i) => (
-            <span key={i} style={{ fontSize:11, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.1em', color:'#fff' }}>
-              &nbsp;🏏 SEASON 5 REGISTRATIONS OPEN &nbsp;·&nbsp; ₹6 CR PRIZE POOL &nbsp;·&nbsp; 50+ CITIES &nbsp;·&nbsp; 10 FRANCHISE TEAMS &nbsp;·&nbsp; #OfficeSeStadiumtak &nbsp;·&nbsp;
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* ── NAVBAR ── */}
-      <nav style={{ background:'rgba(6,16,30,0.97)', backdropFilter:'blur(20px)', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
-        <div style={{ height:2, background:'linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)', backgroundSize:'200%', animation:'shimGold 4s linear infinite' }} />
-        <div className="wrap" style={{ height:60, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-          <a href="/" style={{ display:'flex', alignItems:'center', gap:10, textDecoration:'none' }}>
-                          <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL" style={{ height:42, width:'auto', objectFit:'contain', display:'block', filter:'brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,0.7))' }}/>
-              <div style={{ display:'inline-flex', alignItems:'center', gap:4, background:'rgba(232,178,61,0.12)', border:'1px solid rgba(232,178,61,0.5)', borderRadius:6, padding:'3px 10px' }}>
-                <span style={{ fontSize:9 }}>🏆</span>
-                <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:9, color:'#E8B23D', letterSpacing:'.12em' }}>SEASON 5</span>
-              </div>
-          </a>
-          <div className="desk-nav">
-            {NAV.map(l => <a key={l} href={'/' + NAV_ROUTES[l]} style={{ color:'rgba(255,255,255,0.6)', fontSize:12, fontWeight:600, textDecoration:'none', letterSpacing:'.04em' }}>{l}</a>)}
-            <button className="btn-primary" onClick={()=>{window.location.href='/'+import.meta.env.BASE_URL.replace(/^\//,'');}} style={{ padding:'10px 24px', fontSize:12 }}>HOME →</button>
-          </div>
-          <button className="ham-btn" onClick={() => setMenuOpen(o => !o)}>
-            {[0,1,2].map(i => <span key={i} style={{ display:'block', width:22, height:2, background:'#fff', borderRadius:1, transition:'all .25s', transform: i===0&&menuOpen ? 'rotate(45deg) translate(5px,5px)' : i===1&&menuOpen ? 'scaleX(0)' : i===2&&menuOpen ? 'rotate(-45deg) translate(5px,-5px)' : '' }} />)}
-          </button>
-        </div>
-      </nav>
-      </div>{/* /sticky-top */}
-
-      {menuOpen && (
-        <div style={{ position:'fixed', inset:0, background:'#040C18', zIndex:400, display:'flex', flexDirection:'column', padding:'72px 24px 40px', overflowY:'auto' }}>
-          <button onClick={() => setMenuOpen(false)} style={{ position:'absolute', top:16, right:16, background:'rgba(255,255,255,0.07)', border:'1px solid rgba(255,255,255,0.1)', color:'#fff', width:38, height:38, borderRadius:4, cursor:'pointer', fontSize:18 }}>✕</button>
-          {NAV.map(l => <a key={l} href={'/' + NAV_ROUTES[l]} onClick={()=>setMenuOpen(false)} style={{ color:'rgba(255,255,255,0.85)', fontWeight:700, fontSize:18, fontFamily:'Montserrat,sans-serif', textDecoration:'none', padding:'14px 0', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>{l}</a>)}
-          <button className="btn-primary" onClick={()=>{ setMenuOpen(false); window.location.href = import.meta.env.BASE_URL; }} style={{ marginTop:24, padding:'16px', fontSize:15 }}>HOME →</button>
-        </div>
-      )}
+      <SiteHeader />
 
       {/* ── HERO ── */}
       <div style={{ position:'relative', overflow:'hidden', background:'linear-gradient(180deg,#06101E 0%,#060C18 100%)', paddingTop:60, paddingBottom:56, textAlign:'center' }}>
