@@ -159,22 +159,45 @@ describe("global circuit breaker (50 fails across ALL IPs / 15 min)", () => {
     expect(alerted).toBe(true);
   });
 
-  it("emails the admin exactly once per lockout window when the breaker trips", async () => {
+  it("emails the admin's ADMIN_ALERT_EMAIL exactly once per lockout window when the breaker trips", async () => {
     const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    process.env.ADMIN_ALERT_EMAIL = "admin-inbox@example.com";
     vi.mocked(sendEmail).mockClear();
-    await failFromRotatingIps(50);
+    try {
+      await failFromRotatingIps(50);
 
-    expect(sendEmail).toHaveBeenCalledTimes(1);
-    const args = vi.mocked(sendEmail).mock.calls[0][0];
-    expect(args.subject).toMatch(/locked down|brute-force/i);
-    expect(args.htmlContent).toContain("50");           // fail count
-    expect(args.htmlContent).toMatch(/Lockout ends/i);  // expiry included
+      expect(sendEmail).toHaveBeenCalledTimes(1);
+      const args = vi.mocked(sendEmail).mock.calls[0][0];
+      expect(args.to).toBe("admin-inbox@example.com");
+      expect(args.subject).toMatch(/locked down|brute-force/i);
+      expect(args.htmlContent).toContain("50");           // fail count
+      expect(args.htmlContent).toMatch(/Lockout ends/i);  // expiry included
 
-    // Further blocked attempts within the same window send NO more email
-    await attempt(freshIp(), "wrong-password");
-    await attempt(freshIp(), "wrong-password");
-    expect(sendEmail).toHaveBeenCalledTimes(1);
-    errSpy.mockRestore();
+      // Further blocked attempts within the same window send NO more email
+      await attempt(freshIp(), "wrong-password");
+      await attempt(freshIp(), "wrong-password");
+      expect(sendEmail).toHaveBeenCalledTimes(1);
+    } finally {
+      delete process.env.ADMIN_ALERT_EMAIL;
+      errSpy.mockRestore();
+    }
+  });
+
+  it("does NOT email the sender address when ADMIN_ALERT_EMAIL is unset — logs loudly instead", async () => {
+    const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    delete process.env.ADMIN_ALERT_EMAIL;
+    vi.mocked(sendEmail).mockClear();
+    try {
+      await failFromRotatingIps(50);
+
+      expect(sendEmail).not.toHaveBeenCalled();
+      const warned = errSpy.mock.calls.some(args =>
+        String(args[0]).includes("ADMIN_ALERT_EMAIL is not set")
+      );
+      expect(warned).toBe(true);
+    } finally {
+      errSpy.mockRestore();
+    }
   });
 
   it("49 failures do NOT trip the breaker — a fresh IP can still log in", async () => {

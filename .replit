@@ -65,6 +65,7 @@ CASHFREE_ENV = "PROD"
 SITE_URL = "https://bcplt20.com/bcpl-website"
 VITE_ADMIN_KEY = ""
 ADMIN_PANEL_PASSWORD = "BCPL@S5#2026!"
+ADMIN_ALERT_EMAIL = "saurabhjha@bcplt20.com"
 
 [nix]
 channel = "stable-25_05"

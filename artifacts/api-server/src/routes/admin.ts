@@ -23,7 +23,7 @@ import {
 import { eq, desc, count, and } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { markKycVerified } from "./kyc";
-import { sendEmail, tplPhase1Selected, tplPhase1Rejected, tplTrialVenueAnnounced, tplInvoice, tplAdminLoginLockdown } from "../lib/email";
+import { sendEmail, adminAlertRecipient, tplPhase1Selected, tplPhase1Rejected, tplTrialVenueAnnounced, tplInvoice, tplAdminLoginLockdown } from "../lib/email";
 import { sendSms } from "../lib/sms";
 import { logNotifications } from "../lib/notify";
 import { gstFromGross } from "../lib/gst";
@@ -133,14 +133,18 @@ router.post("/session", async (req, res) => {
       );
       // Fire-and-forget email alert to the admin. The `tripped` flag above
       // guarantees at most one email per lockout window.
-      const alertTo = process.env.ADMIN_ALERT_EMAIL || process.env.BREVO_FROM_EMAIL || "info@bcplt20.com";
-      const tpl = tplAdminLoginLockdown({
-        failCount: globalLoginFails.fails,
-        trippedAt: new Date(now),
-        lockedUntil: new Date(globalLoginFails.resetAt),
-      });
-      sendEmail({ to: alertTo, toName: "BCPL Admin", subject: tpl.subject, htmlContent: tpl.htmlContent })
-        .catch(e => console.error("[ADMIN][ALERT] lockdown alert email failed", e));
+      const alertTo = adminAlertRecipient();
+      if (alertTo) {
+        const tpl = tplAdminLoginLockdown({
+          failCount: globalLoginFails.fails,
+          trippedAt: new Date(now),
+          lockedUntil: new Date(globalLoginFails.resetAt),
+        });
+        sendEmail({ to: alertTo, toName: "BCPL Admin", subject: tpl.subject, htmlContent: tpl.htmlContent })
+          .catch(e => console.error("[ADMIN][ALERT] lockdown alert email failed", e));
+      } else {
+        console.error("[ADMIN][ALERT] ADMIN_ALERT_EMAIL is not set — lockdown alert email NOT sent. Set ADMIN_ALERT_EMAIL to the admin's monitored inbox.");
+      }
     }
     console.warn("[ADMIN] wrong panel password attempt", { ip, fails: e.fails, globalFails: globalLoginFails.fails });
     res.status(401).json({ error: "Invalid admin password" });

@@ -17,6 +17,18 @@ const YOUTUBE_URL     = "https://www.youtube.com/@bcplt20league";
 const YOUTUBE         = "@bcplt20league";
 const WEBSITE         = "bcplt20.com";
 
+/**
+ * Single source of truth for where admin alert emails go
+ * (lockdown alerts, KYC manual-review alerts, etc.).
+ * Returns null when no dedicated admin inbox is configured — callers
+ * should then skip sending and log loudly instead of mailing the
+ * sender address (which nobody monitors).
+ */
+export function adminAlertRecipient(): string | null {
+  const to = process.env.ADMIN_ALERT_EMAIL?.trim();
+  return to ? to : null;
+}
+
 interface SendEmailParams {
   to: string;
   toName: string;
