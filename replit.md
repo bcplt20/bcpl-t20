@@ -34,7 +34,8 @@ _Describe the high-level user-facing capabilities of this app once they exist._
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- Communicate in simple Hinglish (Roman script); the user is non-technical — avoid jargon, give short numbered steps.
+- For anything on the production EC2 server, give browser-based instructions (AWS Console → EC2 → Connect → EC2 Instance Connect), not SSH/.pem workflows.
 
 ## Gotchas
 
