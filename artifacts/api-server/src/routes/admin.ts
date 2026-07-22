@@ -24,7 +24,7 @@ import { eq, desc, count, and } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { markKycVerified } from "./kyc";
 import { sendEmail, adminAlertRecipient, tplPhase1Selected, tplPhase1Rejected, tplTrialVenueAnnounced, tplInvoice, tplAdminLoginLockdown } from "../lib/email";
-import { sendSms } from "../lib/sms";
+import { sendSms, adminAlertPhone } from "../lib/sms";
 import { logNotifications } from "../lib/notify";
 import { gstFromGross } from "../lib/gst";
 import { z } from "zod";
@@ -144,6 +144,24 @@ router.post("/session", async (req, res) => {
           .catch(e => console.error("[ADMIN][ALERT] lockdown alert email failed", e));
       } else {
         console.error("[ADMIN][ALERT] ADMIN_ALERT_EMAIL is not set — lockdown alert email NOT sent. Set ADMIN_ALERT_EMAIL to the admin's monitored inbox.");
+      }
+      // Fire-and-forget SMS alert too — email can be missed during a live
+      // attack. Same `tripped` dedupe: at most one SMS per lockout window.
+      // NOTE: text must match a DLT-approved transactional template on the
+      // owner's MSG91 account, or Indian operators will silently drop it.
+      const alertPhone = adminAlertPhone();
+      if (alertPhone) {
+        const lockedUntil = new Date(globalLoginFails.resetAt);
+        const hh = String(lockedUntil.getHours()).padStart(2, "0");
+        const mm = String(lockedUntil.getMinutes()).padStart(2, "0");
+        const smsMsg =
+          `BCPL ALERT: Admin login locked after ${globalLoginFails.fails} failed attempts. ` +
+          `Locked until ${hh}:${mm}. Possible attack in progress. - BCPL T20`;
+        sendSms(alertPhone, smsMsg)
+          .then(r => { if (!r.ok) console.error("[ADMIN][ALERT] lockdown alert SMS failed", r.error ?? "(skipped)"); })
+          .catch(e => console.error("[ADMIN][ALERT] lockdown alert SMS failed", e));
+      } else {
+        console.error("[ADMIN][ALERT] ADMIN_ALERT_PHONE is not set — lockdown alert SMS NOT sent. Set ADMIN_ALERT_PHONE to the admin's 10-digit mobile number.");
       }
     }
     console.warn("[ADMIN] wrong panel password attempt", { ip, fails: e.fails, globalFails: globalLoginFails.fails });

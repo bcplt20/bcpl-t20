@@ -16,6 +16,22 @@ export const otpConfigured = Boolean(AUTH_KEY && OTP_TEMPLATE_ID);
 
 type Msg91Response = { type?: string; message?: string };
 
+/**
+ * Single source of truth for where admin alert SMSes go (lockdown alerts etc.).
+ * Returns null when no admin phone is configured — callers should then skip
+ * sending and log loudly instead.
+ * Expected format: 10-digit Indian mobile (same shape sendSms takes).
+ */
+export function adminAlertPhone(): string | null {
+  const raw = process.env.ADMIN_ALERT_PHONE?.trim();
+  if (!raw) return null;
+  // Normalize common prefixes (+91 / 91 / 0) down to the bare 10 digits.
+  const digits = raw.replace(/[^0-9]/g, "");
+  if (digits.length === 12 && digits.startsWith("91")) return digits.slice(2);
+  if (digits.length === 11 && digits.startsWith("0")) return digits.slice(1);
+  return digits.length === 10 ? digits : null;
+}
+
 /** Send login OTP via MSG91's dedicated OTP API (we generate + verify the OTP
  *  ourselves in otp_sessions; MSG91 only delivers it). */
 export async function sendOtp(phone: string, otp: string): Promise<boolean> {

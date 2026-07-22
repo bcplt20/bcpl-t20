@@ -22,8 +22,14 @@ vi.mock("../src/lib/email", async (importOriginal) => {
   return { ...actual, sendEmail: vi.fn(async () => ({ ok: true })) };
 });
 
+vi.mock("../src/lib/sms", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../src/lib/sms")>();
+  return { ...actual, sendSms: vi.fn(async () => ({ ok: true })) };
+});
+
 const { default: app } = await import("../src/app");
 const { sendEmail } = await import("../src/lib/email");
+const { sendSms } = await import("../src/lib/sms");
 const { __resetAdminLoginRateLimit } = await import("../src/routes/admin");
 
 const ORIGINAL_ENV = { ...process.env };
@@ -179,6 +185,59 @@ describe("global circuit breaker (50 fails across ALL IPs / 15 min)", () => {
       expect(sendEmail).toHaveBeenCalledTimes(1);
     } finally {
       delete process.env.ADMIN_ALERT_EMAIL;
+      errSpy.mockRestore();
+    }
+  });
+
+  it("texts ADMIN_ALERT_PHONE exactly once per lockout window when the breaker trips", async () => {
+    const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    process.env.ADMIN_ALERT_PHONE = "9876543210";
+    vi.mocked(sendSms).mockClear();
+    try {
+      await failFromRotatingIps(50);
+
+      expect(sendSms).toHaveBeenCalledTimes(1);
+      const [phone, msg] = vi.mocked(sendSms).mock.calls[0];
+      expect(phone).toBe("9876543210");
+      expect(msg).toContain("50");                 // fail count
+      expect(msg).toMatch(/locked until \d{2}:\d{2}/i); // lockout end time
+
+      // Further blocked attempts within the same window send NO more SMS
+      await attempt(freshIp(), "wrong-password");
+      await attempt(freshIp(), "wrong-password");
+      expect(sendSms).toHaveBeenCalledTimes(1);
+    } finally {
+      delete process.env.ADMIN_ALERT_PHONE;
+      errSpy.mockRestore();
+    }
+  });
+
+  it("normalizes +91-prefixed ADMIN_ALERT_PHONE to the bare 10 digits", async () => {
+    const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    process.env.ADMIN_ALERT_PHONE = "+91 98765 43210";
+    vi.mocked(sendSms).mockClear();
+    try {
+      await failFromRotatingIps(50);
+      expect(sendSms).toHaveBeenCalledTimes(1);
+      expect(vi.mocked(sendSms).mock.calls[0][0]).toBe("9876543210");
+    } finally {
+      delete process.env.ADMIN_ALERT_PHONE;
+      errSpy.mockRestore();
+    }
+  });
+
+  it("does NOT send SMS when ADMIN_ALERT_PHONE is unset — logs loudly instead", async () => {
+    const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    delete process.env.ADMIN_ALERT_PHONE;
+    vi.mocked(sendSms).mockClear();
+    try {
+      await failFromRotatingIps(50);
+      expect(sendSms).not.toHaveBeenCalled();
+      const warned = errSpy.mock.calls.some(args =>
+        String(args[0]).includes("ADMIN_ALERT_PHONE is not set")
+      );
+      expect(warned).toBe(true);
+    } finally {
       errSpy.mockRestore();
     }
   });
