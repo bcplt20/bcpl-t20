@@ -43,6 +43,13 @@ export default function VideoReviewView({ refreshTick = 0 }: { refreshTick?: num
     try {
       const { videos: v } = await adminGetVideos(filter === "all" ? undefined : filter);
       setVideos(v);
+      // Keep the open detail panel in sync with fresh data (match by id).
+      // If the selected video is no longer in the filtered list, keep showing the last snapshot.
+      setSel(prev => {
+        if (!prev) return prev;
+        const fresh = v.find((x: Video) => x.id === prev.id);
+        return fresh ?? prev;
+      });
     } catch (e: any) {
       setErr(e.message);
     } finally {
