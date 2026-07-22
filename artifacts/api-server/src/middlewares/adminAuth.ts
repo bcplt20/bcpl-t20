@@ -4,7 +4,12 @@ import jwt from "jsonwebtoken";
 /**
  * Admin gate — accepts either:
  *  1. x-bcpl-admin-token: <JWT issued by POST /api/admin/session>
- *  2. x-bcpl-admin: <ADMIN_SECRET env var>   (legacy / server-to-server)
+ *  2. x-bcpl-admin: <ADMIN_SECRET env var>   (server-to-server only)
+ *
+ * Decision (2026-07-22): the website NEVER sends x-bcpl-admin anymore —
+ * the VITE_ADMIN_KEY client fallback was removed so no admin key can be
+ * baked into the JS bundle. The x-bcpl-admin header is intentionally kept
+ * server-side for server-to-server/ops calls (curl, cron, scripts).
  *
  * Sliding session: when a valid panel JWT is past HALF its lifetime, a
  * fresh 24h token is attached to the response as the

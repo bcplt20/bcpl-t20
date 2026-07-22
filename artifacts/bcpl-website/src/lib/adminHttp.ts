@@ -4,7 +4,7 @@
  * Every admin API module (api.ts, marketingApi.ts, seoApi.ts,
  * adminToolsApi.ts, referralProgramApi.ts) imports from here.
  * Do NOT copy this logic into other modules: auth-scheme changes
- * (token header, legacy fallback, sliding-session renewal, error shape)
+ * (token header, sliding-session renewal, error shape)
  * must be made in exactly one place — this file.
  */
 
@@ -18,11 +18,6 @@
 export const BASE =
   (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "") ||
   (import.meta.env.BASE_URL === "/" ? "" : import.meta.env.BASE_URL.replace(/\/$/, ""));
-
-export const ADMIN_KEY = import.meta.env.VITE_ADMIN_KEY ?? "";
-
-// True when a legacy VITE_ADMIN_KEY is baked into the bundle (old header auth fallback).
-export const hasLegacyAdminKey = () => Boolean(ADMIN_KEY);
 
 const ADMIN_TOKEN_KEY = "bcpl_admin_token_v1";
 
@@ -52,14 +47,12 @@ export function captureRenewedToken(res: Response): void {
   if (renewed) saveAdminToken(renewed);
 }
 
-/** Admin auth headers: session token, with legacy key fallback. */
+/** Admin auth headers: session token only (never a baked-in key). */
 export function adminHeaders(json = true): Record<string, string> {
   const headers: Record<string, string> = {};
   if (json) headers["Content-Type"] = "application/json";
   const token = getAdminToken();
   if (token) headers["x-bcpl-admin-token"] = token;
-  // Legacy fallback for old header-key auth
-  if (!token && ADMIN_KEY) headers["x-bcpl-admin"] = ADMIN_KEY;
   return headers;
 }
 

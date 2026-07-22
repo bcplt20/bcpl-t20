@@ -9,7 +9,6 @@ import { BASE, adminReq } from "./adminHttp";
 
 // Shared admin plumbing lives in adminHttp.ts (single source of truth).
 export {
-  hasLegacyAdminKey,
   saveAdminToken,
   clearAdminToken,
   hasAdminToken,
