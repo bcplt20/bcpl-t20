@@ -20,14 +20,19 @@ if [ "$(id -u)" -ne 0 ]; then
 fi
 
 # ── 1. Live config file dhundo ───────────────────────────────
+# (-R: symlinks follow karta hai — sites-enabled me symlinks hote hain)
 CONF=""
-for f in $(grep -rls "bcplt20\.com" /etc/nginx/sites-enabled /etc/nginx/conf.d 2>/dev/null || true); do
+for f in $(grep -Rls "bcplt20\.com" /etc/nginx 2>/dev/null || true); do
   rf=$(readlink -f "$f")
-  if grep -q "location /api/" "$rf"; then CONF="$rf"; break; fi
+  case "$rf" in *.backup-*) continue ;; esac
+  if grep -q "location /api" "$rf"; then CONF="$rf"; break; fi
 done
 if [ -z "$CONF" ]; then
   echo "❌ bcplt20.com wali nginx file nahi mili (/etc/nginx me)."
-  echo "   Ye chala kar output mujhe (Replit chat me) bhej do:  ls -la /etc/nginx/sites-enabled /etc/nginx/conf.d"
+  echo "── Neeche ka PURA output copy karke Replit chat me bhej do: ──"
+  ls -la /etc/nginx /etc/nginx/sites-enabled /etc/nginx/conf.d 2>/dev/null || true
+  echo "── server_name wali files: ──"
+  grep -Rl "server_name" /etc/nginx 2>/dev/null || true
   exit 1
 fi
 echo "📄 Nginx file mili: $CONF"
@@ -74,7 +79,7 @@ cat > "$BLOCK" <<'NGINXBLOCK'
 
 NGINXBLOCK
 awk -v bf="$BLOCK" '
-  /location[[:space:]]+\/api\// && !done { while ((getline l < bf) > 0) print l; done=1 }
+  /location[[:space:]]+\/api/ && !done { while ((getline l < bf) > 0) print l; done=1 }
   { print }
 ' "$CONF" > "$CONF.tmp"
 rm -f "$BLOCK"
