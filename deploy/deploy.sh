@@ -27,22 +27,32 @@ else
   exit 1
 fi
 
-# ── 1b. Admin panel password (one-time setup, no nano needed) ─
-# Agar .env.production me ADMIN_PANEL_PASSWORD nahi hai to script
-# yahin poochh kar khud save kar lega.
-if ! grep -q '^ADMIN_PANEL_PASSWORD=..*' "$APP_DIR/.env.production"; then
-  echo ""
-  echo "⚠️  Admin panel ka password .env.production me nahi mila."
-  read -r -p "👉 Wahi password type karo jo aap admin login me daalte ho, phir Enter: " ADMIN_PW
-  if [ -z "$ADMIN_PW" ]; then
-    echo "❌ Khali password — dobara 'bash deploy/deploy.sh' chalao."
-    exit 1
+# ── 1b. Zaroori keys check (one-time setup, no nano needed) ──
+# In keys ke bina admin-login / OTP-SMS / email kaam nahi karte.
+# Jo key .env.production me nahi hogi, script yahin poochh kar
+# khud save kar lega — aap bas paste karke Enter dabao.
+REQUIRED_KEYS="ADMIN_PANEL_PASSWORD MSG91_AUTH_KEY MSG91_OTP_TEMPLATE_ID MSG91_SENDER_ID BREVO_API_KEY"
+for KEY in $REQUIRED_KEYS; do
+  if ! grep -q "^${KEY}=..*" "$APP_DIR/.env.production"; then
+    case "$KEY" in
+      ADMIN_PANEL_PASSWORD) HINT="wahi password jo aap admin login me daalte ho" ;;
+      MSG91_*)              HINT="MSG91 dashboard ya Replit ke Secrets pane se copy karo" ;;
+      BREVO_API_KEY)        HINT="Brevo ki API key (nayi wali) paste karo" ;;
+      *)                    HINT="value paste karo" ;;
+    esac
+    echo ""
+    echo "⚠️  $KEY .env.production me nahi mila."
+    read -r -p "👉 $KEY — $HINT, phir Enter: " VAL
+    if [ -z "$VAL" ]; then
+      echo "❌ Khali value — dobara 'bash deploy/deploy.sh' chalao."
+      exit 1
+    fi
+    printf '%s=%s\n' "$KEY" "$VAL" >> "$APP_DIR/.env.production"
+    echo "✅ $KEY save ho gaya (.env.production me)"
   fi
-  printf 'ADMIN_PANEL_PASSWORD=%s\n' "$ADMIN_PW" >> "$APP_DIR/.env.production"
-  echo "✅ Password save ho gaya (.env.production me)"
-fi
-# (pm2 ko pass karne ke liye export — chahe abhi save hua ho ya pehle se ho)
-export ADMIN_PANEL_PASSWORD="${ADMIN_PANEL_PASSWORD:-$(grep '^ADMIN_PANEL_PASSWORD=' "$APP_DIR/.env.production" | tail -n1 | cut -d= -f2-)}"
+  # (pm2 ko pass karne ke liye export — chahe abhi save hua ho ya pehle se)
+  export "$KEY"="$(grep "^${KEY}=" "$APP_DIR/.env.production" | tail -n1 | cut -d= -f2-)"
+done
 
 # ── 2. Install dependencies ──────────────────────────────────
 echo "📦 Installing dependencies..."

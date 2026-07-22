@@ -30,8 +30,12 @@ module.exports = {
         // warna production me admin login 403 dega)
         ADMIN_PANEL_PASSWORD: process.env.ADMIN_PANEL_PASSWORD,
 
-        // ── SMS / Email / WhatsApp / Payment ────────────────
-        TWOFACTOR_API_KEY: process.env.TWOFACTOR_API_KEY,
+        // ── SMS (MSG91 — OTP + notifications) ───────────────
+        MSG91_AUTH_KEY:        process.env.MSG91_AUTH_KEY,
+        MSG91_OTP_TEMPLATE_ID: process.env.MSG91_OTP_TEMPLATE_ID,
+        MSG91_SENDER_ID:       process.env.MSG91_SENDER_ID,
+
+        // ── Email / WhatsApp / Payment ───────────────────────
         BREVO_API_KEY:     process.env.BREVO_API_KEY,
         BREVO_FROM_EMAIL:  "noreply@bcplt20.com",
         INTERAKT_API_KEY:  process.env.INTERAKT_API_KEY,
