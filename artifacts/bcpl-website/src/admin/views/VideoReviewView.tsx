@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { adminGetVideos, adminReviewVideo, adminUpdatePhase1Status } from "../../lib/api";
 import { SampleVideosCard } from "./SampleVideosCard";
 
@@ -29,7 +29,7 @@ function fmtDur(sec: number | null) {
   return `${m}:${String(s).padStart(2, "0")}`;
 }
 
-export default function VideoReviewView() {
+export default function VideoReviewView({ refreshTick = 0 }: { refreshTick?: number } = {}) {
   const [videos, setVideos]     = useState<Video[]>([]);
   const [filter, setFilter]     = useState("all");
   const [loading, setLoading]   = useState(true);
@@ -37,19 +37,25 @@ export default function VideoReviewView() {
   const [sel, setSel]           = useState<Video | null>(null);
   const [acting, setActing]     = useState<string | null>(null);
 
-  const load = useCallback(async () => {
-    setLoading(true); setErr("");
+  const load = useCallback(async (silent = false) => {
+    if (!silent) setLoading(true);
+    setErr("");
     try {
       const { videos: v } = await adminGetVideos(filter === "all" ? undefined : filter);
       setVideos(v);
     } catch (e: any) {
       setErr(e.message);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   }, [filter]);
 
   useEffect(() => { load(); }, [load]);
+
+  /* Auto-refresh (AdminShell tick): refetch in place — no spinner, no remount */
+  const loadRef = useRef(load);
+  loadRef.current = load;
+  useEffect(() => { if (refreshTick > 0) loadRef.current(true); }, [refreshTick]);
 
   const markReviewed = async (id: string) => {
     setActing(id);
@@ -108,7 +114,7 @@ export default function VideoReviewView() {
               {pending} Pending
             </span>
           )}
-          <button onClick={load} style={{ padding:"9px 16px", borderRadius:9, border:"1px solid #1E293B", background:"transparent", color:"#64748B", fontSize:12, fontWeight:700, cursor:"pointer" }}>
+          <button onClick={() => load()} style={{ padding:"9px 16px", borderRadius:9, border:"1px solid #1E293B", background:"transparent", color:"#64748B", fontSize:12, fontWeight:700, cursor:"pointer" }}>
             ↺ Refresh
           </button>
         </div>
@@ -119,7 +125,7 @@ export default function VideoReviewView() {
 
       {err && (
         <div style={{ padding:14, borderRadius:10, background:"#EF444415", border:"1px solid #EF444440", color:"#EF4444", fontSize:12 }}>
-          ⚠ {err} — <button onClick={load} style={{ background:"none", border:"none", color:"#EF4444", cursor:"pointer", fontWeight:700, fontSize:12 }}>Retry</button>
+          ⚠ {err} — <button onClick={() => load()} style={{ background:"none", border:"none", color:"#EF4444", cursor:"pointer", fontWeight:700, fontSize:12 }}>Retry</button>
         </div>
       )}
 

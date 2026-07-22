@@ -120,7 +120,7 @@ function renderView(id: string, navigate: (viewId: string, payload?: AdminNavPay
     case "leaderboard":    return <LeaderboardView />;
     case "contracts":      return <ContractsView />;
     case "phase1_regs":    return <Phase1RegistrationsView key={"p1"+pk} onNavigate={navigate} focusId={payload?.focusId} initialFilter={payload?.filter} refreshTick={autoTick} />;
-    case "video_review":   return <VideoReviewView />;
+    case "video_review":   return <VideoReviewView refreshTick={autoTick} />;
     case "phase2_kyc":     return <Phase2KYCView refreshTick={autoTick} />;
     case "player_profiles":return <PlayerProfilesView />;
     case "whatsapp_tpl":   return <WhatsAppTemplatesView />;
@@ -198,7 +198,7 @@ export default function AdminShell() {
      its data every 90s — but only when the browser tab is visible (saves
      server load). Views refetch in place (no remount, no flicker).
      Live Scoring (and other views) are untouched; they keep their own flows. ── */
-  const AUTO_REFRESH_VIEWS = ["dashboard", "phase1_regs", "phase2_kyc", "users", "finance"];
+  const AUTO_REFRESH_VIEWS = ["dashboard", "phase1_regs", "video_review", "phase2_kyc", "users", "finance"];
   useEffect(() => {
     if (!loggedIn || !AUTO_REFRESH_VIEWS.includes(active)) return;
     const id = setInterval(() => {
