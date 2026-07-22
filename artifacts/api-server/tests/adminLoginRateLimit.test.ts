@@ -6,6 +6,8 @@
  *  - correct password after the lockout window expires → 200 (lockout resets)
  *  - spoofed EARLY x-forwarded-for entries do not evade the per-IP counter
  *    (only the LAST, proxy-appended entry identifies the client)
+ *  - GLOBAL circuit breaker: 50 fails across ALL IPs / 15 min → 429 for
+ *    everyone (even fresh IPs and the correct password) until the window ends
  */
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import request from "supertest";
@@ -16,6 +18,7 @@ process.env.ADMIN_PANEL_PASSWORD = TEST_PANEL_PASSWORD;
 process.env.SESSION_SECRET = TEST_SESSION_SECRET;
 
 const { default: app } = await import("../src/app");
+const { __resetAdminLoginRateLimit } = await import("../src/routes/admin");
 
 const ORIGINAL_ENV = { ...process.env };
 beforeEach(() => {
@@ -113,5 +116,61 @@ describe("POST /api/admin/session brute-force lockout", () => {
 
     const res = await attempt(otherIp, TEST_PANEL_PASSWORD);
     expect(res.status).toBe(200);
+  });
+});
+
+describe("global circuit breaker (50 fails across ALL IPs / 15 min)", () => {
+  beforeEach(() => __resetAdminLoginRateLimit());
+  afterEach(() => __resetAdminLoginRateLimit());
+
+  /** Rack up `n` failures, each from a brand-new IP (per-IP limit never trips). */
+  async function failFromRotatingIps(n: number) {
+    for (let i = 0; i < n; i++) {
+      const res = await attempt(freshIp(), "wrong-password");
+      expect(res.status).toBe(401);
+    }
+  }
+
+  it("50 failures from rotating IPs → 429 for everyone, even a fresh IP with the correct password", async () => {
+    await failFromRotatingIps(50);
+
+    // Fresh IP, wrong password → blocked globally
+    const blockedWrong = await attempt(freshIp(), "wrong-password");
+    expect(blockedWrong.status).toBe(429);
+    expect(blockedWrong.body.error).toMatch(/temporarily locked|unusual activity/i);
+
+    // Fresh IP, CORRECT password → still blocked while tripped
+    const blockedCorrect = await attempt(freshIp(), TEST_PANEL_PASSWORD);
+    expect(blockedCorrect.status).toBe(429);
+  });
+
+  it("logs an admin alert when the breaker trips", async () => {
+    const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    await failFromRotatingIps(50);
+    const alerted = errSpy.mock.calls.some(args =>
+      String(args[0]).includes("circuit breaker TRIPPED")
+    );
+    expect(alerted).toBe(true);
+  });
+
+  it("49 failures do NOT trip the breaker — a fresh IP can still log in", async () => {
+    await failFromRotatingIps(49);
+    const res = await attempt(freshIp(), TEST_PANEL_PASSWORD);
+    expect(res.status).toBe(200);
+  });
+
+  it("breaker resets after the 15-minute window — login works again", async () => {
+    await failFromRotatingIps(50);
+    expect((await attempt(freshIp(), TEST_PANEL_PASSWORD)).status).toBe(429);
+
+    const realNow = Date.now();
+    const nowSpy = vi.spyOn(Date, "now").mockReturnValue(realNow + 16 * 60 * 1000);
+    try {
+      const res = await attempt(freshIp(), TEST_PANEL_PASSWORD);
+      expect(res.status).toBe(200);
+      expect(res.body.token).toBeTruthy();
+    } finally {
+      nowSpy.mockRestore();
+    }
   });
 });

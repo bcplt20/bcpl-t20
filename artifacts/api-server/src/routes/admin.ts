@@ -46,6 +46,20 @@ const LOGIN_WINDOW_MS = 15 * 60 * 1000;
 const LOGIN_MAX_FAILS = 5;
 const loginFails = new Map<string, { fails: number; resetAt: number }>();
 
+// Global circuit breaker: too many failures across ALL IPs (botnet / IP
+// rotation) → brief lockout for everyone + admin alert in the logs.
+const GLOBAL_LOGIN_WINDOW_MS = 15 * 60 * 1000;
+const GLOBAL_LOGIN_MAX_FAILS = 50;
+const globalLoginFails = { fails: 0, resetAt: 0, tripped: false };
+
+/** Test-only: reset both the per-IP and global login failure counters. */
+export function __resetAdminLoginRateLimit() {
+  loginFails.clear();
+  globalLoginFails.fails = 0;
+  globalLoginFails.resetAt = 0;
+  globalLoginFails.tripped = false;
+}
+
 function loginClientIp(req: { headers: Record<string, unknown>; ip?: string }): string {
   // Behind nginx the LAST x-forwarded-for entry is the proxy-appended real
   // client IP; earlier entries can be spoofed by the client.
@@ -68,6 +82,18 @@ router.post("/session", async (req, res) => {
   if (loginFails.size > 1000) {
     for (const [k, v] of loginFails) if (v.resetAt <= now) loginFails.delete(k);
   }
+  // Global circuit breaker check (before per-IP so rotating IPs can't evade it)
+  if (globalLoginFails.resetAt <= now) {
+    globalLoginFails.fails = 0;
+    globalLoginFails.resetAt = 0;
+    globalLoginFails.tripped = false;
+  }
+  if (globalLoginFails.fails >= GLOBAL_LOGIN_MAX_FAILS) {
+    const mins = Math.max(1, Math.ceil((globalLoginFails.resetAt - now) / 60000));
+    res.status(429).json({ error: "Admin login is temporarily locked due to unusual activity. Try again in " + mins + " minute" + (mins === 1 ? "" : "s") + "." });
+    return;
+  }
+
   const entry = loginFails.get(ip);
   if (entry && entry.resetAt > now && entry.fails >= LOGIN_MAX_FAILS) {
     const mins = Math.max(1, Math.ceil((entry.resetAt - now) / 60000));
@@ -91,7 +117,22 @@ router.post("/session", async (req, res) => {
     const e = entry && entry.resetAt > now ? entry : { fails: 0, resetAt: now + LOGIN_WINDOW_MS };
     e.fails += 1;
     loginFails.set(ip, e);
-    console.warn("[ADMIN] wrong panel password attempt", { ip, fails: e.fails });
+    // Count toward the global circuit breaker too
+    if (globalLoginFails.resetAt <= now) {
+      globalLoginFails.fails = 0;
+      globalLoginFails.tripped = false;
+      globalLoginFails.resetAt = now + GLOBAL_LOGIN_WINDOW_MS;
+    }
+    globalLoginFails.fails += 1;
+    if (globalLoginFails.fails >= GLOBAL_LOGIN_MAX_FAILS && !globalLoginFails.tripped) {
+      globalLoginFails.tripped = true;
+      console.error(
+        "[ADMIN][ALERT] Global admin-login circuit breaker TRIPPED: " +
+        globalLoginFails.fails + " failed attempts across all IPs within 15 minutes. " +
+        "Admin login is locked for everyone until " + new Date(globalLoginFails.resetAt).toISOString() + ". Possible distributed brute-force attack."
+      );
+    }
+    console.warn("[ADMIN] wrong panel password attempt", { ip, fails: e.fails, globalFails: globalLoginFails.fails });
     res.status(401).json({ error: "Invalid admin password" });
     return;
   }
