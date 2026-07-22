@@ -1,9 +1,15 @@
 /**
- * BCPL Auth — localStorage session with 48-hour expiry
+ * BCPL Auth — localStorage session with 48-hour *inactivity* expiry.
+ * Any session read (page visit / API call) refreshes the activity window,
+ * so active players stay logged in; only 48 hours of no activity logs out.
  */
 
-const AUTH_KEY   = 'bcpl_auth_v1';
-const SESSION_MS = 48 * 60 * 60 * 1000; // 48 hours
+const AUTH_KEY       = 'bcpl_auth_v1';
+const IDLE_MS        = 48 * 60 * 60 * 1000; // 48 hours of inactivity
+const TOUCH_EVERY_MS = 60 * 1000;           // persist activity at most once/min
+
+/** Fired on login/logout so navbars across the app re-render */
+export const AUTH_CHANGED_EVENT = 'bcpl:authChanged';
 
 export interface AuthUser {
   id: string;
@@ -16,17 +22,39 @@ export interface AuthSession {
   token: string;
   user: AuthUser;
   loginTime: number;
+  lastActivity?: number;
 }
 
-/** Read session; returns null if missing or expired */
+function emitAuthChanged(): void {
+  try { window.dispatchEvent(new Event(AUTH_CHANGED_EVENT)); } catch { /* SSR/no-window */ }
+}
+
+/**
+ * Read session; returns null if missing or idle-expired.
+ * Every successful read counts as activity and extends the 48h window
+ * (writes are throttled to once per minute).
+ */
 export function getSession(): AuthSession | null {
   try {
     const raw = localStorage.getItem(AUTH_KEY);
     if (!raw) return null;
     const session: AuthSession = JSON.parse(raw);
-    if (Date.now() - session.loginTime > SESSION_MS) {
+    if (!session?.token || !session?.user) {
       localStorage.removeItem(AUTH_KEY);
       return null;
+    }
+    const now = Date.now();
+    // Sessions written by older clients may lack these fields — backfill.
+    if (!session.loginTime) session.loginTime = now;
+    const last = session.lastActivity ?? session.loginTime;
+    if (now - last > IDLE_MS) {
+      localStorage.removeItem(AUTH_KEY);
+      emitAuthChanged();
+      return null;
+    }
+    if (!session.lastActivity || now - session.lastActivity > TOUCH_EVERY_MS) {
+      session.lastActivity = now;
+      localStorage.setItem(AUTH_KEY, JSON.stringify(session));
     }
     return session;
   } catch {
@@ -36,13 +64,16 @@ export function getSession(): AuthSession | null {
 
 /** Persist a fresh session */
 export function saveSession(token: string, user: AuthUser): void {
-  const session: AuthSession = { token, user, loginTime: Date.now() };
+  const now = Date.now();
+  const session: AuthSession = { token, user, loginTime: now, lastActivity: now };
   localStorage.setItem(AUTH_KEY, JSON.stringify(session));
+  emitAuthChanged();
 }
 
 /** Clear session (logout) */
 export function clearSession(): void {
   localStorage.removeItem(AUTH_KEY);
+  emitAuthChanged();
 }
 
 /** Open the global login modal from any page */

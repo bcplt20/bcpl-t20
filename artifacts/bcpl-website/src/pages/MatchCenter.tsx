@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { BCPLFooter } from '../components/BCPLFooter';
+import { NavUser } from '../components/NavUser';
 import { getMatches, getPointsTable } from '../lib/api';
 
 const NAV_LINKS = ["Home", "Match Center", "Teams", "Sponsors", "Photos", "Videos", "About", "FAQ", "Contact", "Login"];
@@ -218,7 +219,9 @@ export function MatchCenter() {
 
           <nav className="desk-nav">
             {NAV_LINKS.map(link => (
-              <a key={link} className={`nav-link${link === "Match Center" ? " active" : ""}`} href={ROUTE_MAP[link]||"#"}>{link}</a>
+              link === "Login"
+                ? <NavUser key={link} variant="desktop"/>
+                : <a key={link} className={`nav-link${link === "Match Center" ? " active" : ""}`} href={ROUTE_MAP[link]||"#"}>{link}</a>
             ))}
           </nav>
 
@@ -236,7 +239,9 @@ export function MatchCenter() {
           <button className="close-btn" onClick={() => setMenuOpen(false)}>✕</button>
           <img src={import.meta.env.BASE_URL + "bcpl-assets/bcpl-logo-white.png"} alt="BCPL" style={{ height: 36, width: "auto", objectFit: "contain", marginBottom: 8, filter: "brightness(1.3)" }}/>
           {NAV_LINKS.map(link => (
-            <a key={link} className="mob-menu-link" href={ROUTE_MAP[link]||"#"} onClick={() => setMenuOpen(false)}>{link}</a>
+            link === "Login"
+              ? <NavUser key={link} variant="mobile" onNavigate={() => setMenuOpen(false)}/>
+              : <a key={link} className="mob-menu-link" href={ROUTE_MAP[link]||"#"} onClick={() => setMenuOpen(false)}>{link}</a>
           ))}
         </div>
       )}

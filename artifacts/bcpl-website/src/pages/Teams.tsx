@@ -1,5 +1,6 @@
 import React from 'react';
 import { BCPLFooter } from '../components/BCPLFooter';
+import { NavUser } from '../components/NavUser';
 
 const L = import.meta.env.BASE_URL + "bcpl-assets/logos/";
 
@@ -136,6 +137,7 @@ export function Teams() {
             {["Home","Match Center","Teams","Sponsors","Photos","Videos","About","FAQ","Contact"].map(l=>(
               <a key={l} className={`nav-link${l==="Teams"?" active":""}`} href={ROUTE_MAP[l]||"#"}>{l}</a>
             ))}
+            <NavUser variant="desktop"/>
           </div>
           <button
             className="ham-btn"
@@ -157,6 +159,7 @@ export function Teams() {
           {[["🏠 Home","Home"],["🔴 Match Center","Match Center"],["🏏 Teams","Teams"],["🤝 Sponsors","Sponsors"],["📷 Photos","Photos"],["▶️ Videos","Videos"],["ℹ️ About","About"],["❓ FAQ","FAQ"],["✉️ Contact","Contact"]].map(([label, key])=>(
             <a key={key} href={ROUTE_MAP[key]||"#"} className="mob-menu-link" onClick={() => setMenuOpen(false)}>{label}</a>
           ))}
+          <NavUser variant="mobile" onNavigate={() => setMenuOpen(false)}/>
           <a href="/register" className="btn-orange" style={{ marginTop:16, height:52, fontSize:15, borderRadius:14, width:"100%", textDecoration:"none", display:"flex", alignItems:"center", justifyContent:"center" }}>📝 REGISTER NOW →</a>
         </div>
       )}

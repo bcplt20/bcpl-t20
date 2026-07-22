@@ -1,5 +1,6 @@
 import React from 'react';
 import { BCPLFooter } from '../components/BCPLFooter';
+import { NavUser } from '../components/NavUser';
 
 function AnnBar() {
   return (
@@ -28,9 +29,10 @@ function Navbar({open,setOpen}:{open:boolean,setOpen:(v:boolean)=>void}) {
             </div>
           </a>
           <div className="desk-nav">
-            {[['Home','/'],['Match Center','/match-center'],['Teams','/teams'],['Sponsors','/sponsors'],['Photos','/photos'],['Videos','/videos'],['About','/about'],['FAQ','/faq'],['Contact','/contact'],['Login','/register#login']].map(([l,h])=>(
+            {[['Home','/'],['Match Center','/match-center'],['Teams','/teams'],['Sponsors','/sponsors'],['Photos','/photos'],['Videos','/videos'],['About','/about'],['FAQ','/faq'],['Contact','/contact']].map(([l,h])=>(
               <a key={l} href={h} style={{color:'rgba(255,255,255,0.7)',fontWeight:600,fontSize:13,textDecoration:'none',fontFamily:'Inter,sans-serif'}}>{l}</a>
             ))}
+            <NavUser variant="desktop"/>
             <a href="/register" className="btn-fire" style={{padding:'10px 20px',fontSize:13,textDecoration:'none'}}>Register ₹299</a>
           </div>
           <button className="ham-btn" onClick={()=>setOpen(!open)} style={{flexDirection:'column',gap:5,background:'none',border:'none',cursor:'pointer',padding:8,zIndex:201,display:'flex'}}>
@@ -47,6 +49,7 @@ function Navbar({open,setOpen}:{open:boolean,setOpen:(v:boolean)=>void}) {
           {links.map(([l,h])=>(
             <a key={l} href={h} onClick={()=>setOpen(false)} style={{color:'rgba(255,255,255,0.85)',fontWeight:700,fontSize:18,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'13px 0',borderBottom:'1px solid rgba(255,255,255,0.07)',display:'flex',alignItems:'center',minHeight:44}}>{l}</a>
           ))}
+          <NavUser variant="mobile" onNavigate={()=>setOpen(false)}/>
           <button className="btn-fire" style={{marginTop:28,height:52,fontSize:16,width:'100%'}}>📝 Register for ₹299 →</button>
         </div>
       )}

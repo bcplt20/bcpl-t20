@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { getDashboard, getPlayerTrialVenue } from '../lib/api';
+import { clearSession, getSession } from '../lib/auth';
 
 const BASE = import.meta.env.BASE_URL;
 const NAV  = ['Home','Match Center','Teams','Sponsors','About','FAQ','Contact'];
@@ -178,8 +179,8 @@ export function PlayerProfile() {
   const [error,    setError]    = useState('');
 
   useEffect(() => {
-    const token = localStorage.getItem('bcpl_auth_v1');
-    if (!token) { window.location.href = BASE + 'register'; return; }
+    const session = getSession();
+    if (!session) { window.location.href = BASE + 'register'; return; }
 
     Promise.all([getDashboard(), getPlayerTrialVenue()])
       .then(([dash, tv]) => {
@@ -528,7 +529,7 @@ export function PlayerProfile() {
                 📞 WhatsApp Help
               </button>
               <button className="btn-ghost" style={{ color:'#EF4444', borderColor:'rgba(239,68,68,0.25)' }}
-                onClick={() => { localStorage.removeItem('bcpl_auth_v1'); window.location.href = BASE; }}>
+                onClick={() => { clearSession(); window.location.href = BASE; }}>
                 🚪 Sign Out
               </button>
             </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { getDashboard } from '../lib/api';
+import { getSession } from '../lib/auth';
 
 const NAV = ['Home','Match Center','Teams','Sponsors','Photos','Videos','About','FAQ','Contact'];
 const NAV_ROUTES: Record<string,string> = { 'Home':'', 'Match Center':'match-center', 'Teams':'teams', 'Sponsors':'sponsors', 'Photos':'photos', 'Videos':'videos', 'About':'about', 'FAQ':'faq', 'Contact':'contact' };
@@ -26,8 +27,8 @@ export function Phase2KYCApproved() {
   const BASE = import.meta.env.BASE_URL;
 
   useEffect(() => {
-    const token = localStorage.getItem('bcpl_auth_v1');
-    if (!token) { window.location.href = BASE + 'register'; return; }
+    const session = getSession();
+    if (!session) { window.location.href = BASE + 'register'; return; }
     getDashboard().then(d => {
       if (d.user)         setPlayerName(d.user.name);
       if (d.user?.email)  setPlayerEmail(d.user.email);

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
+import { NavUser } from '../components/NavUser';
 import {
   sendOtp, verifyOtp, saveAuthToken, isAuthenticated,
   registerPhase1, createPhase1Payment, getRegistrationStatus,
@@ -568,7 +569,9 @@ export function Registration() {
           </div>
           {/* Desktop nav */}
           <div className="desk-nav">
-            {NAV_LINKS.map(([l,h]) => <a key={l} href={h} style={{ color:'rgba(255,255,255,0.6)', fontSize:12, fontWeight:600, textDecoration:'none', letterSpacing:'.04em', transition:'color .15s' }}>{l}</a>)}
+            {NAV_LINKS.map(([l,h]) => l === 'Login'
+              ? <NavUser key={l} variant="desktop"/>
+              : <a key={l} href={h} style={{ color:'rgba(255,255,255,0.6)', fontSize:12, fontWeight:600, textDecoration:'none', letterSpacing:'.04em', transition:'color .15s' }}>{l}</a>)}
             <a href="/register" className="btn-primary" style={{ padding:'10px 24px', fontSize:12, textDecoration:'none' }}>REGISTER NOW →</a>
           </div>
           {/* Hamburger */}
@@ -583,7 +586,9 @@ export function Registration() {
       {menuOpen && (
         <div style={{ position:'fixed', inset:0, background:'#040C18', zIndex:400, display:'flex', flexDirection:'column', padding:'72px 24px 40px', overflowY:'auto' }}>
           <button onClick={() => setMenuOpen(false)} style={{ position:'absolute', top:16, right:16, background:'rgba(255,255,255,0.07)', border:'1px solid rgba(255,255,255,0.1)', color:'#fff', width:38, height:38, borderRadius:4, cursor:'pointer', fontSize:18 }}>✕</button>
-          {NAV_LINKS.map(([l,h]) => <a key={l} href={h} onClick={()=>setMenuOpen(false)} style={{ color:'rgba(255,255,255,0.85)', fontWeight:700, fontSize:18, fontFamily:'Montserrat,sans-serif', textDecoration:'none', padding:'14px 0', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>{l}</a>)}
+          {NAV_LINKS.map(([l,h]) => l === 'Login'
+            ? <NavUser key={l} variant="mobile" onNavigate={()=>setMenuOpen(false)}/>
+            : <a key={l} href={h} onClick={()=>setMenuOpen(false)} style={{ color:'rgba(255,255,255,0.85)', fontWeight:700, fontSize:18, fontFamily:'Montserrat,sans-serif', textDecoration:'none', padding:'14px 0', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>{l}</a>)}
           <a href="/register" className="btn-primary" style={{ marginTop:24, padding:'16px', fontSize:15, textAlign:'center', textDecoration:'none' }}>REGISTER NOW →</a>
         </div>
       )}

@@ -4,17 +4,14 @@
  * Admin calls include the x-bcpl-admin header automatically.
  */
 
+import { getSession, saveSession, clearSession } from "./auth";
+
 const BASE = (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "");
 const ADMIN_KEY = import.meta.env.VITE_ADMIN_KEY ?? "";
-const AUTH_KEY  = "bcpl_auth_v1";
 
+/** Reading via getSession() also refreshes the 48h inactivity window on every API call. */
 function getStoredToken(): string | null {
-  try {
-    const raw = localStorage.getItem(AUTH_KEY);
-    if (!raw) return null;
-    const s = JSON.parse(raw);
-    return s?.token ?? null;
-  } catch { return null; }
+  return getSession()?.token ?? null;
 }
 
 async function req<T = unknown>(
@@ -311,19 +308,15 @@ export const adminUpdateKycStatus = (id: string, status: string) =>
 /* ─── Auth token helpers ───────────────────────────────── */
 
 export function saveAuthToken(token: string, user: any): void {
-  try { localStorage.setItem(AUTH_KEY, JSON.stringify({ token, user })); } catch {}
+  saveSession(token, user);
 }
 
 export function getAuthUser(): any | null {
-  try {
-    const raw = localStorage.getItem(AUTH_KEY);
-    if (!raw) return null;
-    return JSON.parse(raw)?.user ?? null;
-  } catch { return null; }
+  return getSession()?.user ?? null;
 }
 
 export function clearAuthToken(): void {
-  try { localStorage.removeItem(AUTH_KEY); } catch {}
+  clearSession();
 }
 
 export function isAuthenticated(): boolean {

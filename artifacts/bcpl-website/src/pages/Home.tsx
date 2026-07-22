@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { getMatches, getPointsTable } from "../lib/api";
 import { BCPLFooter } from "../components/BCPLFooter";
-import { openLoginModal } from "../lib/auth";
+import { NavUser } from "../components/NavUser";
 
 const L = import.meta.env.BASE_URL + "bcpl-assets/logos/";
 
@@ -345,7 +345,7 @@ export function Home() {
           {/* Desktop Nav */}
           <nav className="desk-links">
             {NAV.map(n=> n==="Login"
-              ? <span key={n} className="nav-link" style={{cursor:"pointer",color:"#FF7A29",fontWeight:800}} onClick={openLoginModal}>{n}</span>
+              ? <NavUser key={n} variant="desktop"/>
               : <a key={n} href={RTES[n]||"/"} className="nav-link" style={{textDecoration:"none"}}>{n}</a>
             )}
           </nav>
@@ -366,7 +366,7 @@ export function Home() {
           <button onClick={()=>setMenuOpen(false)} style={{ position:"fixed", top:18, right:22, background:"none", border:"none", color:"#fff", fontSize:28, cursor:"pointer", zIndex:1001, lineHeight:1 }}>✕</button>
           {NAV.map(n=>(
             n==="Login"
-              ? <div key={n} className="mob-link" style={{color:"#FF7A29"}} onClick={()=>{ setMenuOpen(false); openLoginModal(); }}>{n}</div>
+              ? <NavUser key={n} variant="mobile" onNavigate={()=>setMenuOpen(false)}/>
               : <a key={n} href={RTES[n]||"/"} className="mob-link" onClick={()=>setMenuOpen(false)} style={{textDecoration:"none"}}>{n}</a>
           ))}
           <button className="btn-cta" style={{ marginTop:24, width:"100%", justifyContent:"center", fontSize:16, padding:16 }} onClick={()=>{ setMenuOpen(false); navigate("/register"); }}>

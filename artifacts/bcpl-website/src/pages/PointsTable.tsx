@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BCPLFooter } from '../components/BCPLFooter';
+import { NavUser } from '../components/NavUser';
 import { getPointsTable } from '../lib/api';
 
 const CSS = `
@@ -130,7 +131,9 @@ function Navbar() {
           </a>
           <div className="desk-nav">
             {links.map(([l,h])=>(
-              <a key={l} href={h} style={{color:l==='Login'?'#FF7A29':'rgba(255,255,255,0.72)',fontSize:13,fontWeight:600,fontFamily:'Inter,sans-serif',textDecoration:'none',borderBottom:'2px solid transparent',paddingBottom:2}}>{l}</a>
+              l==='Login'
+                ? <NavUser key={l} variant="desktop"/>
+                : <a key={l} href={h} style={{color:'rgba(255,255,255,0.72)',fontSize:13,fontWeight:600,fontFamily:'Inter,sans-serif',textDecoration:'none',borderBottom:'2px solid transparent',paddingBottom:2}}>{l}</a>
             ))}
             <a href="/register" className="btn-fire" style={{padding:'10px 22px',fontSize:13,borderRadius:12,textDecoration:'none',display:'inline-flex',alignItems:'center'}}>Register ₹299</a>
           </div>
@@ -145,9 +148,10 @@ function Navbar() {
         <div style={{position:'fixed',inset:0,background:'#06101E',zIndex:300,display:'flex',flexDirection:'column',padding:'80px 28px 40px',overflowY:'auto'}}>
           <button onClick={()=>setOpen(false)} style={{position:'absolute',top:18,right:18,background:'none',border:'none',color:'rgba(255,255,255,0.5)',fontSize:28,cursor:'pointer',lineHeight:1}}>✕</button>
           <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL" style={{height:36,width:'auto',objectFit:'contain',marginBottom:32,filter:'brightness(1.3)'}}/>
-          {[['🏠 Home','/'],['🔴 Match Center','/match-center'],['🏏 Teams','/teams'],['🤝 Sponsors','/sponsors'],['📷 Photos','/photos'],['▶️ Videos','/videos'],['ℹ️ About','/about'],['❓ FAQ','/faq'],['✉️ Contact','/contact'],['🔑 Login','/register#login']].map(([l,h])=>(
-            <a key={l} href={h} onClick={()=>setOpen(false)} style={{color:l.includes('Login')?'#FF7A29':'rgba(255,255,255,0.85)',fontWeight:700,fontSize:18,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,0.07)',display:'block'}}>{l}</a>
+          {[['🏠 Home','/'],['🔴 Match Center','/match-center'],['🏏 Teams','/teams'],['🤝 Sponsors','/sponsors'],['📷 Photos','/photos'],['▶️ Videos','/videos'],['ℹ️ About','/about'],['❓ FAQ','/faq'],['✉️ Contact','/contact']].map(([l,h])=>(
+            <a key={l} href={h} onClick={()=>setOpen(false)} style={{color:'rgba(255,255,255,0.85)',fontWeight:700,fontSize:18,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,0.07)',display:'block'}}>{l}</a>
           ))}
+          <NavUser variant="mobile" onNavigate={()=>setOpen(false)}/>
           <a href="/register" className="btn-fire" style={{marginTop:32,height:54,fontSize:16,borderRadius:14,width:'100%',display:'flex',alignItems:'center',justifyContent:'center',textDecoration:'none'}}>📝 Register for ₹299 →</a>
         </div>
       )}

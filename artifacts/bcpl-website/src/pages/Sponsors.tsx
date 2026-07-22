@@ -1,5 +1,6 @@
 import React from 'react';
 import { BCPLFooter } from '../components/BCPLFooter';
+import { NavUser } from '../components/NavUser';
 
 function Navbar() {
   const [open, setOpen] = React.useState(false);
@@ -25,6 +26,7 @@ function Navbar() {
           </div>
           <div className="desk-nav">
             {links.map(([l,k])=><a key={k} href={({home:'/',matchcenter:'/match-center',teams:'/teams',sponsors:'/sponsors',photos:'/photos',videos:'/videos',about:'/about',faq:'/faq',contact:'/contact'} as Record<string,string>)[k]||'/'} style={{color:k==='sponsors'?'#FF7A29':'rgba(255,255,255,0.7)',fontWeight:600,fontSize:13,textDecoration:'none',fontFamily:'Inter,sans-serif',borderBottom:k==='sponsors'?'2px solid #FF7A29':'2px solid transparent',paddingBottom:2}}>{l}</a>)}
+            <NavUser variant="desktop"/>
           </div>
           <button className="ham-btn" onClick={()=>setOpen(o=>!o)} style={{flexDirection:'column',gap:5,background:'none',border:'none',cursor:'pointer',padding:8}}>
             <span style={{display:'block',width:22,height:2,background:'#fff',borderRadius:12,transition:'all 0.25s',transform:open?'rotate(45deg) translate(5px,5px)':''}}/>
@@ -40,6 +42,7 @@ function Navbar() {
           {[['🏠 Home','home'],['🔴 Match Center','mc'],['🏏 Teams','teams'],['🤝 Sponsors','sp'],['📷 Photos','ph'],['▶️ Videos','vid'],['ℹ️ About','about'],['❓ FAQ','faq'],['✉️ Contact','contact']].map(([l,k])=>(
             <a key={k} href={ROUTE_MAP[l]||'/'} onClick={()=>setOpen(false)} style={{color:'rgba(255,255,255,0.85)',fontWeight:700,fontSize:18,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,0.07)'}}>{l}</a>
           ))}
+          <NavUser variant="mobile" onNavigate={()=>setOpen(false)}/>
           <a href="/register" className="btn-fire" style={{marginTop:32,height:52,fontSize:16,borderRadius:14,width:'100%',textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>📝 Register for ₹299 →</a>
         </div>
       )}

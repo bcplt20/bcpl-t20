@@ -1,5 +1,5 @@
 import React from 'react';
-import { openLoginModal } from '../lib/auth';
+import { NavUser } from '../components/NavUser';
 import { BCPLFooter } from '../components/BCPLFooter';
 
 const CSS = `
@@ -124,7 +124,7 @@ function Navbar() {
           <div className="desk-nav">
             {links.map(([l,h])=>(
               l === 'Login'
-                ? <span key={l} onClick={openLoginModal} style={{color:'#FF7A29',fontSize:13,fontWeight:700,fontFamily:'Inter,sans-serif',cursor:'pointer'}}>{l}</span>
+                ? <NavUser key={l} variant="desktop"/>
                 : <a key={l} href={h} style={{color: l==='Schedule'?'#FF7A29':'rgba(255,255,255,0.72)',fontSize:13,fontWeight:600,fontFamily:'Inter,sans-serif',textDecoration:'none',borderBottom: l==='Schedule'?'2px solid #FF7A29':'2px solid transparent',paddingBottom:2}}>{l}</a>
             ))}
           </div>
@@ -141,7 +141,7 @@ function Navbar() {
           <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL" style={{height:36,width:'auto',objectFit:'contain',marginBottom:32,filter:'brightness(1.3)'}}/>
           {[['🏠 Home','/'],['🔴 Match Center','/match-center'],['🏏 Teams','/teams'],['🤝 Sponsors','/sponsors'],['📷 Photos','/photos'],['▶️ Videos','/videos'],['ℹ️ About','/about'],['❓ FAQ','/faq'],['✉️ Contact','/contact'],['🔑 Login','#']].map(([l,h])=>(
             l.includes('Login')
-              ? <span key={l} onClick={()=>{ setOpen(false); openLoginModal(); }} style={{color:'#FF7A29',fontWeight:700,fontSize:18,fontFamily:'Montserrat,sans-serif',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,0.07)',display:'block',cursor:'pointer'}}>{l}</span>
+              ? <NavUser key={l} variant="mobile" onNavigate={()=>setOpen(false)}/>
               : <a key={l} href={h} onClick={()=>setOpen(false)} style={{color:'rgba(255,255,255,0.85)',fontWeight:700,fontSize:18,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,0.07)',display:'block'}}>{l}</a>
           ))}
         </div>

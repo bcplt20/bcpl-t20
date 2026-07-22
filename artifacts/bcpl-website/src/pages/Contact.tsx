@@ -1,5 +1,6 @@
 import React from 'react';
 import { BCPLFooter } from '../components/BCPLFooter';
+import { NavUser } from '../components/NavUser';
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
@@ -94,6 +95,7 @@ function Navbar() {
             {links.map(l=>(
               <a key={l} href={ROUTE_MAP[l]||'/'} style={{color:l==='Contact'?'#FF7A29':'rgba(255,255,255,0.75)',fontWeight:600,fontSize:13.5,textDecoration:'none',fontFamily:'Inter,sans-serif',transition:'color 0.2s'}}>{l}</a>
             ))}
+            <NavUser variant="desktop"/>
           </div>
           <button className="ham-btn" onClick={()=>setOpen(o=>!o)} style={{flexDirection:'column',gap:5,background:'none',border:'none',cursor:'pointer',padding:8,zIndex:201}}>
             <span style={{display:'block',width:22,height:2,background:'#fff',borderRadius:12,transition:'all 0.25s',transform:open?'rotate(45deg) translate(5px,5px)':''}}/>
@@ -109,6 +111,7 @@ function Navbar() {
           {links.map(l=>(
             <a key={l} href={ROUTE_MAP[l]||'/'} onClick={()=>setOpen(false)} style={{color:'rgba(255,255,255,0.88)',fontWeight:700,fontSize:20,textDecoration:'none',fontFamily:'Montserrat,sans-serif',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,0.07)'}}>{l}</a>
           ))}
+          <NavUser variant="mobile" onNavigate={()=>setOpen(false)}/>
           <a href="/register" className="btn-fire" style={{marginTop:32,height:54,fontSize:17,width:'100%',textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>📝 Register for ₹299 →</a>
         </div>
       )}
