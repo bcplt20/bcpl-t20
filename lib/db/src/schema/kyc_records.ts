@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, timestamp, boolean } from "drizzle-orm/pg-core";
 import { registrationsTable } from "./registrations";
 
 export const kycRecordsTable = pgTable("kyc_records", {
@@ -10,6 +10,8 @@ export const kycRecordsTable = pgTable("kyc_records", {
   cashfreeKycId:  varchar("cashfree_kyc_id", { length: 100 }),
   // pending | verified | failed
   status:         varchar("status", { length: 20 }).default("pending").notNull(),
+  // false = Cashfree auto-verify unavailable, PAN needs manual review by admin
+  panVerified:    boolean("pan_verified").default(true).notNull(),
   verifiedAt:     timestamp("verified_at",  { withTimezone: true }),
   createdAt:      timestamp("created_at",   { withTimezone: true }).defaultNow().notNull(),
 });

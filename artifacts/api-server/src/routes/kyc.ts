@@ -4,7 +4,7 @@ import {
   registrationsTable, kycRecordsTable,
   usersTable, notificationLogsTable,
 } from "@workspace/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, desc, sql } from "drizzle-orm";
 import { requireAuth, type AuthRequest } from "../middlewares/auth";
 import { verifyPan, initiateAadhaarOtp, verifyAadhaarOtp } from "../lib/cashfree";
 import { sendEmail, tplKycComplete } from "../lib/email";
@@ -13,6 +13,15 @@ import { sendWhatsApp, WA } from "../lib/whatsapp";
 import { z } from "zod";
 
 const router = Router();
+
+// ─── Startup migration: add pan_verified column (idempotent) ─────────────────
+export async function ensureKycPanVerified(): Promise<void> {
+  await db.execute(sql`
+    ALTER TABLE kyc_records
+    ADD COLUMN IF NOT EXISTS pan_verified boolean NOT NULL DEFAULT true
+  `);
+  console.log("[MIGRATE] kyc_records.pan_verified ready");
+}
 
 export const PROFESSIONS = [
   "Business Owner", "Salaried Employee", "Doctor", "Engineer",
@@ -23,7 +32,9 @@ export const PROFESSIONS = [
 ] as const;
 
 // ─── Helper: mark KYC + registration as verified ─────────────────────────────
-async function markKycVerified(kycId: string, registrationId: string, userId: string) {
+// Single path for OTP success, admin approval and webhook — keeps kyc_records
+// and registrations.phase2Status in sync and sends player notifications.
+export async function markKycVerified(kycId: string, registrationId: string, userId: string) {
   await Promise.all([
     db.update(kycRecordsTable)
       .set({ status: "verified", verifiedAt: new Date() })
@@ -81,38 +92,79 @@ router.post("/initiate", requireAuth, async (req: AuthRequest, res) => {
   // Get player name for PAN verification
   const [user] = await db.select().from(usersTable).where(eq(usersTable.id, req.user!.userId)).limit(1);
 
+  // Re-submission guard: reuse the newest existing KYC row instead of piling up duplicates
+  const [existingKyc] = await db.select().from(kycRecordsTable)
+    .where(eq(kycRecordsTable.registrationId, registrationId))
+    .orderBy(desc(kycRecordsTable.createdAt))
+    .limit(1);
+  if (existingKyc && existingKyc.status === "verified") {
+    return void res.json({ success: true, kycId: existingKyc.id, status: "verified", message: "KYC already verified." });
+  }
+  const upsertKyc = async (values: { panRef: string; aadhaarRef: string; panVerified: boolean }) => {
+    if (existingKyc) {
+      const [row] = await db.update(kycRecordsTable)
+        .set({ profession, ...values, status: "pending" })
+        .where(eq(kycRecordsTable.id, existingKyc.id))
+        .returning();
+      return row;
+    }
+    const [row] = await db.insert(kycRecordsTable).values({
+      registrationId,
+      profession,
+      cashfreeKycId: `kyc_${registrationId.slice(0, 8)}_${Date.now()}`,
+      ...values,
+      status: "pending",
+    }).returning();
+    return row;
+  };
+
   // Run PAN verify + Aadhaar OTP initiation in parallel
   const [panResult, aadhaarResult] = await Promise.all([
     verifyPan(panNumber, user?.name ?? registrationId),
     initiateAadhaarOtp(aadhaarNumber),
   ]);
 
-  if (!panResult) {
-    return void res.status(502).json({ error: "PAN verification service unavailable. Try again." });
+  // Cashfree explicitly rejected this PAN → genuinely wrong number, block with a clear message
+  if (panResult.outcome === "invalid") {
+    return void res.status(400).json({
+      error: "PAN verification failed. Please enter the exact 10-character PAN printed on your PAN card.",
+    });
   }
-  if (!panResult.valid) {
-    return void res.status(400).json({ error: "PAN verification failed. Please check your PAN number." });
+
+  // valid → auto-verified. service_error / not_configured → accept but flag for manual review.
+  const panVerified = panResult.outcome === "valid";
+  const panRef = panVerified ? panResult.referenceId : `manual_review_${Date.now()}`;
+  if (!panVerified) {
+    console.warn("[KYC] PAN auto-verify unavailable — flagged for manual review", {
+      registrationId, reason: panResult.outcome,
+      detail: panResult.outcome === "service_error" ? panResult.detail : undefined,
+    });
   }
+
   if (!aadhaarResult) {
-    return void res.status(502).json({ error: "Aadhaar OTP service unavailable. Try again." });
+    // Aadhaar OTP service also unavailable — accept the documents and verify manually.
+    // A paying player must never be blocked by a vendor outage.
+    const kyc = await upsertKyc({ panRef, aadhaarRef: `manual_review_${Date.now()}`, panVerified });
+    return void res.json({
+      success: true,
+      kycId:   kyc.id,
+      status:  "MANUAL_REVIEW",
+      message: "Documents received ✓. Our team will verify your KYC within 24–48 hours. You will get an SMS + email once verified.",
+    });
   }
 
   // Store KYC record with panRef + aadhaarRef
-  const [kyc] = await db.insert(kycRecordsTable).values({
-    registrationId,
-    profession,
-    cashfreeKycId: `kyc_${registrationId.slice(0, 8)}_${Date.now()}`,
-    panRef:        panResult.referenceId,
-    aadhaarRef:    aadhaarResult.referenceId,
-    status:        "pending",
-  }).returning();
+  const kyc = await upsertKyc({ panRef, aadhaarRef: aadhaarResult.referenceId, panVerified });
 
   res.json({
     success:       true,
     kycId:         kyc.id,
     status:        "OTP_SENT",
     aadhaarRefId:  aadhaarResult.referenceId,
-    message:       "PAN verified ✓. OTP sent to Aadhaar-linked mobile number.",
+    panVerified,
+    message:       panVerified
+      ? "PAN verified ✓. OTP sent to Aadhaar-linked mobile number."
+      : "PAN received — our team will verify it. OTP sent to Aadhaar-linked mobile number.",
   });
 });
 

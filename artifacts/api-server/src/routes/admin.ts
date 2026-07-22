@@ -20,6 +20,7 @@ import {
 } from "@workspace/db/schema";
 import { eq, desc, count, and } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
+import { markKycVerified } from "./kyc";
 import { sendEmail, tplPhase1Selected, tplPhase1Rejected, tplTrialVenueAnnounced } from "../lib/email";
 import { sendSms } from "../lib/sms";
 
@@ -419,6 +420,7 @@ router.get("/kyc", async (req, res) => {
       panRef:         r.kyc.panRef,
       cashfreeKycId:  r.kyc.cashfreeKycId,
       status:         r.kyc.status,
+      panVerified:    r.kyc.panVerified,
       verifiedAt:     r.kyc.verifiedAt,
       createdAt:      r.kyc.createdAt,
       player:         r.user?.name ?? "Unknown",
@@ -446,9 +448,24 @@ router.put("/kyc/:id/status", async (req, res) => {
       res.status(400).json({ error: "status must be pending, verified, or failed" });
       return;
     }
+
+    if (status === "verified") {
+      // Admin approval = PAN manually checked → clear the manual-review flag and go
+      // through the same path as OTP success (syncs registration + notifies player).
+      const [kyc] = await db.select().from(kycRecordsTable).where(eq(kycRecordsTable.id, id)).limit(1);
+      if (!kyc) { res.status(404).json({ error: "KYC record not found" }); return; }
+      const [reg] = await db.select().from(registrationsTable)
+        .where(eq(registrationsTable.id, kyc.registrationId)).limit(1);
+      await db.update(kycRecordsTable).set({ panVerified: true }).where(eq(kycRecordsTable.id, id));
+      await markKycVerified(kyc.id, kyc.registrationId, reg?.userId ?? "admin");
+      const [updated] = await db.select().from(kycRecordsTable).where(eq(kycRecordsTable.id, id)).limit(1);
+      res.json({ success: true, kyc: updated });
+      return;
+    }
+
     const [updated] = await db
       .update(kycRecordsTable)
-      .set({ status, verifiedAt: status === "verified" ? new Date() : null })
+      .set({ status, verifiedAt: null })
       .where(eq(kycRecordsTable.id, id))
       .returning();
     if (!updated) { res.status(404).json({ error: "KYC record not found" }); return; }

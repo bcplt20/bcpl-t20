@@ -13,6 +13,7 @@ type KycRow = {
   panRef: string | null;
   cashfreeKycId: string | null;
   status: string;
+  panVerified?: boolean;
   verifiedAt: string | null;
   createdAt: string;
   player: string;
@@ -210,7 +211,14 @@ export default function Phase2KYCView() {
                       {/* Profession */}
                       <td style={{ padding:"10px 12px", color:"#94A3B8" }}>{r.profession ?? "—"}</td>
                       {/* KYC Status */}
-                      <td style={{ padding:"10px 12px" }}><StatusBadge status={r.status} /></td>
+                      <td style={{ padding:"10px 12px" }}>
+                        <StatusBadge status={r.status} />
+                        {r.panVerified === false && (
+                          <div style={{ fontSize:9, color:"#F59E0B", marginTop:3, fontWeight:700, whiteSpace:"nowrap" }}>
+                            ⚠ PAN: manual check
+                          </div>
+                        )}
+                      </td>
                       {/* Submitted */}
                       <td style={{ padding:"10px 12px", color:"#475569", whiteSpace:"nowrap" }}>
                         {r.createdAt ? new Date(r.createdAt).toLocaleDateString("en-IN", { day:"2-digit", month:"short" }) : "—"}
@@ -265,6 +273,7 @@ export default function Phase2KYCView() {
                   { label:"Profession",  value: detail.profession ?? "Not provided" },
                   { label:"Aadhaar Ref", value: detail.aadhaarRef ?? "Not provided" },
                   { label:"PAN Ref",     value: detail.panRef ?? "Not provided" },
+                  { label:"PAN Auto-Verify", value: detail.panVerified === false ? "⚠ Needs manual check" : "✓ Verified via Cashfree" },
                   { label:"Cashfree ID", value: detail.cashfreeKycId ?? "Not linked" },
                   { label:"Phase 2",     value: detail.phase2Status ?? "—" },
                 ].map(item => (

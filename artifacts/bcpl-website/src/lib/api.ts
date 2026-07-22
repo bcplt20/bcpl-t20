@@ -367,7 +367,7 @@ export const initiateKyc = (data: {
   panNumber: string;
 }) => req<{
   success: boolean; kycId: string; status: string; message: string;
-  aadhaarRefId?: string;
+  aadhaarRefId?: string; panVerified?: boolean;
 }>("POST", "/kyc/initiate", data);
 
 export const verifyKycOtp = (data: {

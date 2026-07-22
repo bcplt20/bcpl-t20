@@ -82,15 +82,22 @@ const verifyHeaders = () => ({
 });
 
 /**
- * Verify PAN via Cashfree Verification Suite
- * Returns: { valid: boolean; name: string; referenceId: string }
+ * Verify PAN via Cashfree Verification Suite.
+ * Distinguishes a genuinely wrong PAN from a service/config problem so the
+ * caller never blames the player for a vendor outage.
  */
-export async function verifyPan(pan: string, name: string): Promise<{
-  valid: boolean; name: string; referenceId: string;
-} | null> {
+export type PanVerifyResult =
+  | { outcome: "valid"; name: string; referenceId: string }
+  | { outcome: "invalid"; panStatus: string }        // Cashfree explicitly rejected this PAN
+  | { outcome: "service_error"; detail: string }     // auth/IP-whitelist/outage/unknown response
+  | { outcome: "not_configured" };                   // env vars missing (dev)
+
+const maskPan = (p: string) => p.slice(0, 2) + "******" + p.slice(-2);
+
+export async function verifyPan(pan: string, name: string): Promise<PanVerifyResult> {
   if (!VERIFY_APP_ID || !VERIFY_SECRET) {
-    console.warn("[CF-STUB] verifyPan — credentials not set, returning mock");
-    return { valid: true, name, referenceId: `mock_pan_${Date.now()}` };
+    console.warn("[CF-VERIFY] PAN check skipped — CF_VERIFY_APP_ID / CF_VERIFY_SECRET not set");
+    return { outcome: "not_configured" };
   }
   try {
     const res = await fetch("https://api.cashfree.com/verification/pan", {
@@ -98,18 +105,50 @@ export async function verifyPan(pan: string, name: string): Promise<{
       headers: verifyHeaders(),
       body: JSON.stringify({ pan, name }),
     });
-    const data = await res.json() as any;
-    if (!res.ok) {
-      console.error("[CF] verifyPan failed:", data);
-      return null;
-    }
-    // pan_status: "VALID" | "INVALID" | "NOT_FOUND" | "PENDING"
-    return {
-      valid:       data.pan_status === "VALID",
-      name:        data.name_on_pan ?? name,
-      referenceId: data.reference_id ?? `pan_${Date.now()}`,
+    const raw = await res.text();
+    let data: any = {};
+    try { data = JSON.parse(raw); } catch { /* non-JSON body (e.g. HTML error page) */ }
+
+    // Redacted diagnostic view: scalar status/error fields only — never names, DOB or echoes of the PAN
+    const safeBody = {
+      status: data.status, pan_status: data.pan_status, valid: data.valid,
+      code: data.code, type: data.type, message: data.message, error: data.error,
+      keys: Object.keys(data),
     };
-  } catch (e) { console.error("[CF] verifyPan error", e); return null; }
+
+    if (!res.ok) {
+      // 401 = wrong keys · 403 = IP not whitelisted / Verification Suite not activated
+      console.error("[CF-VERIFY] PAN API error", {
+        httpStatus: res.status, pan: maskPan(pan),
+        ...safeBody,
+        nonJsonBody: Object.keys(data).length === 0 ? raw.slice(0, 200) : undefined,
+      });
+      return { outcome: "service_error", detail: `HTTP ${res.status}` };
+    }
+
+    const panStatus = String(data.pan_status ?? data.status ?? "").toUpperCase();
+    console.info("[CF-VERIFY] PAN API response", {
+      httpStatus: res.status, pan: maskPan(pan), panStatus,
+      valid: data.valid, referenceId: data.reference_id,
+    });
+
+    if (panStatus === "VALID" || data.valid === true) {
+      return {
+        outcome:     "valid",
+        name:        data.name_on_pan ?? data.registered_name ?? name,
+        referenceId: String(data.reference_id ?? `pan_${Date.now()}`),
+      };
+    }
+    if (data.valid === false || ["INVALID", "NOT_FOUND", "INVALID_PAN", "FAILED"].includes(panStatus)) {
+      return { outcome: "invalid", panStatus: panStatus || "INVALID" };
+    }
+    // 2xx but no recognizable verdict — account misconfigured or response shape changed
+    console.error("[CF-VERIFY] PAN API unrecognized response", { pan: maskPan(pan), ...safeBody });
+    return { outcome: "service_error", detail: `unrecognized pan_status "${panStatus}"` };
+  } catch (e) {
+    console.error("[CF-VERIFY] PAN API network error", e);
+    return { outcome: "service_error", detail: "network" };
+  }
 }
 
 /**
@@ -162,62 +201,3 @@ export async function verifyAadhaarOtp(referenceId: string, otp: string): Promis
   } catch (e) { console.error("[CF] verifyAadhaarOtp error", e); return null; }
 }
 
-/**
- * Combined KYC — verifies PAN + initiates Aadhaar OTP in parallel.
- * Called from kyc.ts route. Returns kycId (stored in DB) and status.
- */
-export async function initiateKyc(params: {
-  referenceId: string;   // registrationId
-  aadhaarNumber?: string;
-  panNumber?: string;
-  playerName?: string;
-}): Promise<{ kycId: string; status: string; aadhaarRefId?: string } | null> {
-  if (!VERIFY_APP_ID || !VERIFY_SECRET) {
-    console.warn("[CF-STUB] initiateKyc — credentials not configured");
-    return { kycId: `mock_kyc_${Date.now()}`, status: "PENDING" };
-  }
-
-  let panValid    = false;
-  let aadhaarRefId: string | undefined;
-
-  const tasks: Promise<void>[] = [];
-
-  // PAN verification
-  if (params.panNumber) {
-    tasks.push(
-      verifyPan(params.panNumber, params.playerName ?? params.referenceId)
-        .then(r => { if (r?.valid) panValid = true; })
-        .catch(() => {})
-    );
-  }
-
-  // Aadhaar OTP initiation
-  if (params.aadhaarNumber) {
-    tasks.push(
-      initiateAadhaarOtp(params.aadhaarNumber)
-        .then(r => { if (r) aadhaarRefId = r.referenceId; })
-        .catch(() => {})
-    );
-  }
-
-  await Promise.all(tasks);
-
-  // If both docs provided: success only when PAN valid + Aadhaar OTP initiated
-  // If only PAN: instant verification
-  if (params.panNumber && !params.aadhaarNumber) {
-    return {
-      kycId:  `pan_${params.referenceId}_${Date.now()}`,
-      status: panValid ? "VALID" : "FAILED",
-    };
-  }
-
-  if (aadhaarRefId) {
-    return {
-      kycId:       `kyc_${params.referenceId}_${Date.now()}`,
-      status:      "OTP_SENT",   // frontend will collect OTP and call /kyc/verify-otp
-      aadhaarRefId,
-    };
-  }
-
-  return { kycId: `kyc_${params.referenceId}_${Date.now()}`, status: "PENDING" };
-}

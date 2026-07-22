@@ -48,6 +48,7 @@ export function Phase2KYC() {
   const [submitting, setSubmitting]     = useState(false);
   const [submitErr, setSubmitErr]       = useState('');
   const [kycStatus, setKycStatus]       = useState<'pending'|'verified'|null>(null);
+  const [panAutoVerified, setPanAutoVerified] = useState(true);
   const [kycMsg, setKycMsg]             = useState('');
   // OTP step
   const [kycId, setKycId]               = useState('');
@@ -102,7 +103,8 @@ export function Phase2KYC() {
       setKycId(result.kycId);
 
       if (result.status === 'OTP_SENT' && result.aadhaarRefId) {
-        // PAN verified ✓ — now collect Aadhaar OTP
+        // PAN checked — now collect Aadhaar OTP
+        setPanAutoVerified(result.panVerified !== false);
         setAadhaarRefId(result.aadhaarRefId);
       } else if (result.status === 'verified' || result.status === 'VALID') {
         setKycStatus('verified');
@@ -278,7 +280,14 @@ export function Phase2KYC() {
           <div style={{ background:'rgba(34,197,94,0.04)', border:'1px solid rgba(34,197,94,0.2)', borderRadius:12, padding:'32px 24px', marginBottom:32 }}>
             <div style={{ textAlign:'center', marginBottom:28 }}>
               <div style={{ fontSize:40, marginBottom:12 }}>📱</div>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'#22C55E', marginBottom:8 }}>PAN Verified ✓</div>
+              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'#22C55E', marginBottom:8 }}>
+                {panAutoVerified ? 'PAN Verified ✓' : 'Documents Received ✓'}
+              </div>
+              {!panAutoVerified && (
+                <div style={{ fontSize:12, color:'#FF7A29', marginBottom:8 }}>
+                  PAN will be verified by our team — no action needed from you.
+                </div>
+              )}
               <div style={{ fontSize:14, color:'rgba(255,255,255,0.6)', maxWidth:380, margin:'0 auto' }}>
                 An OTP has been sent to your <strong style={{ color:'#fff' }}>Aadhaar-linked mobile number</strong>. Enter it below to complete verification.
               </div>

@@ -2,6 +2,7 @@ import app from "./app";
 import { logger } from "./lib/logger";
 import { sendVideoReminders } from "./routes/video";
 import { ensureRegNumbers } from "./routes/register";
+import { ensureKycPanVerified } from "./routes/kyc";
 
 const port = Number(process.env["PORT"] ?? "8080");
 
@@ -10,14 +11,17 @@ if (Number.isNaN(port) || port <= 0) {
 }
 
 async function start() {
-  // Idempotent migration BEFORE accepting traffic: reg_number column + backfill (BCPL-DEL-1 style IDs)
+  // Idempotent migrations BEFORE accepting traffic:
+  //  - reg_number column + backfill (BCPL-DEL-1 style IDs)
+  //  - kyc_records.pan_verified flag (manual-review fallback)
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
       await ensureRegNumbers();
-      logger.info("reg_number migration ensured");
+      await ensureKycPanVerified();
+      logger.info("startup migrations ensured");
       break;
     } catch (e) {
-      logger.error({ err: e, attempt }, "reg_number migration failed");
+      logger.error({ err: e, attempt }, "startup migration failed");
       if (attempt < 3) await new Promise((r) => setTimeout(r, 2000));
     }
   }
