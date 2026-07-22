@@ -15,3 +15,4 @@
 - [S3 media library](s3-media-library.md) — media/ prefix private: display only via presigned viewUrl (1h); dev-origin PUTs DO pass CORS; keep confirm-key/CSV-formula/delete-abort guards
 - [Live scoring flow](scoring-flow.md) — client engine mirrors server /ball exactly (LB/B legal); finalization gated on ball persistence; /xi = clean restart (wipes innings); /innings-end idempotent
 - [API field-name traps](api-field-traps.md) — responses are drizzle camelCase (matchNo); snake_case reads render undefined silently; zod .datetime() needs toISOString, rejects datetime-local
+- [Cashfree verification](cashfree-verification.md) — CF_VERIFY_* creds separate from payment keys, prod-only (dev = stub mode); "service unavailable" 502 = payload bug until proven otherwise
