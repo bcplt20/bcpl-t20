@@ -657,6 +657,7 @@ export function Registration() {
                   <div>
                     <label className="field-lbl">Full Name *</label>
                     <input className="field-inp" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Rahul Kumar Sharma" autoFocus />
+                    <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)', marginTop:5 }}>Name as per PAN card and Aadhaar card</div>
                   </div>
                   <div className="field-grid-2">
                     <div>
