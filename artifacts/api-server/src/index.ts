@@ -5,6 +5,7 @@ import { ensureRegNumbers } from "./routes/register";
 import { ensureKycPanVerified, ensurePlayerProfiles } from "./routes/kyc";
 import { ensureTeams } from "./routes/teams";
 import { ensureMarketingTables } from "./routes/marketing";
+import { ensureReferralProgramTables } from "./routes/referralProgram";
 import { ensureAdminContentTables } from "./routes/adminTools";
 import { ensureNotificationErrorColumn } from "./lib/notify";
 import { reconcileAbandonedPayments } from "./lib/reconcilePayments";
@@ -26,6 +27,7 @@ async function start() {
       await ensurePlayerProfiles();
       await ensureTeams();
       await ensureMarketingTables();
+      await ensureReferralProgramTables(); // needs referral_codes from ensureMarketingTables
       await ensureAdminContentTables();
       await ensureNotificationErrorColumn();
       logger.info("startup migrations ensured");

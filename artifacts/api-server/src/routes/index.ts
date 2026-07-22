@@ -15,6 +15,7 @@ import adminRouter    from "./admin";
 import marketingRouter from "./marketing";
 import seoRouter      from "./seo";
 import adminToolsRouter from "./adminTools";
+import referralProgramRouter from "./referralProgram";
 
 const router: IRouter = Router();
 
@@ -39,5 +40,7 @@ router.use("/marketing",     marketingRouter);
 router.use("/seo",           seoRouter);
 // Admin content tools (CSV export, forecast, planner, WA templates, media library)
 router.use("/admin-tools",   adminToolsRouter);
+// Player referral program (personal codes, reward ladder, leaderboard)
+router.use("/referral",      referralProgramRouter);
 
 export default router;

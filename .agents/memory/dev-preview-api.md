@@ -17,3 +17,6 @@ The preview historically 404'd all `/api` calls. Two separate causes, both fixed
 - Direct API: `http://localhost:8080/api/...`; admin header `x-bcpl-admin: $ADMIN_SECRET` works server-to-server.
 - OTP in dev: `POST /api/auth/send-otp` returns `devOtp` only when `MSG91_AUTH_KEY` is unset; otherwise read from DB: `SELECT otp_code FROM otp_sessions WHERE phone='…' AND used_at IS NULL ORDER BY created_at DESC LIMIT 1`.
 - E2E seed data: insert user→registration→phase1_payment(success)→phase1_video via one CTE INSERT; delete in reverse order after.
+
+## Dev e2e user creation recipe
+send-otp inserts the OTP row BEFORE attempting MSG91 delivery, so full e2e flows work in dev: POST /api/auth/send-otp (99999999xx test number) → read otp_code from otp_sessions → verify-otp returns Bearer token → register/phase1 → simulate payment with raw INSERT INTO phase1_payments (status 'success'). Clean up test rows afterwards.

@@ -21,5 +21,6 @@ export * from "./admin_content";
 // Marketing & referrals
 export * from "./referral_codes";
 export * from "./referral_signups";
+export * from "./referral_rewards";
 export * from "./marketing_campaigns";
 export * from "./email_campaigns";

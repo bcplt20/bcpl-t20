@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { getDashboard, getPlayerTrialVenue } from '../lib/api';
+import { ReferralCard } from '../components/ReferralCard';
 import { clearSession, getSession } from '../lib/auth';
 
 const BASE = import.meta.env.BASE_URL;
@@ -458,6 +459,9 @@ export function PlayerProfile() {
               </div>
             </div>
           )}
+
+          {/* ── REFER & EARN (renders only for Phase-1-paid players) ── */}
+          <ReferralCard />
 
           {/* ── QUICK ACTIONS ── */}
           <div style={{ ...card, animation:'fadeUp .5s .28s ease both' }}>

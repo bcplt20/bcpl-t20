@@ -3,6 +3,7 @@ import {
   listReferrals, createReferral, updateReferral, deleteReferral, referralLink,
   type ReferralStat,
 } from "@/lib/marketingApi";
+import { PlayerReferralsPanel } from "./PlayerReferralsView";
 
 /* ── Shared UI helpers (match admin styling) ── */
 function Modal({ onClose, children }: { onClose: () => void; children: React.ReactNode }) {
@@ -48,9 +49,35 @@ function CopyLink({ code }: { code: string }) {
 }
 
 /* ═══════════════════════════════════════════════════
-   Affiliates = ground agents with referral codes (kind='agent').
-   Commission = attributed revenue × rate%; payouts recorded manually. */
+   Agents & Affiliates — two referral programs share this section:
+   · Ground Agents (kind='agent'): added manually, commission-based.
+   · Player Referrals (kind='player'): automatic personal links for every
+     Phase-1-paid player, milestone rewards instead of commission. */
 export default function AffiliatesView() {
+  const [tab, setTab] = useState<"agents" | "players">("agents");
+  return (
+    <div>
+      <div style={{ display: "flex", gap: 8, marginBottom: 18 }}>
+        {([["agents", "🤝 Ground Agents"], ["players", "🏏 Player Referrals"]] as const).map(([k, label]) => (
+          <button key={k} onClick={() => setTab(k)}
+            style={{
+              background: tab === k ? "#FF6B00" : "#0D1526",
+              color: tab === k ? "#fff" : "#94A3B8",
+              border: tab === k ? "1px solid #FF6B00" : "1px solid #1E293B",
+              borderRadius: 9, padding: "9px 18px", fontSize: 13, fontWeight: 800, cursor: "pointer",
+            }}>
+            {label}
+          </button>
+        ))}
+      </div>
+      {tab === "agents" ? <AgentsPanel /> : <PlayerReferralsPanel />}
+    </div>
+  );
+}
+
+/* Ground agents with referral codes (kind='agent').
+   Commission = attributed revenue × rate%; payouts recorded manually. */
+function AgentsPanel() {
   const [agents, setAgents] = useState<ReferralStat[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");

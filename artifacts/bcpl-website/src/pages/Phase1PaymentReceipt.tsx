@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { verifyPhase1Payment, getMe, getRegistrationStatus } from '../lib/api';
+import { ReferralShareBanner } from '../components/ReferralCard';
 
 const ROLE_LABELS: Record<string, string> = {
   bat: '🏏 Batsman', bowl: '🎳 Bowler', wk: '🧤 Wicket-Keeper', ar: '⭐ All-Rounder',
@@ -306,8 +307,13 @@ export function Phase1PaymentReceipt() {
         </div>
       </div>
 
-      {/* ── SHARE SECTION ── */}
+      {/* ── REFER & EARN (personal link — renders once payment is verified) ── */}
       <div className="wrap" style={{ marginTop:48 }}>
+        <ReferralShareBanner />
+      </div>
+
+      {/* ── SHARE SECTION ── */}
+      <div className="wrap" style={{ marginTop:32 }}>
         <div style={{ background:'#0A1727', border:'1px solid rgba(255,255,255,0.08)', borderRadius:12, padding:'28px 20px', textAlign:'center' }}>
           <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:13, letterSpacing:'.16em', color:'rgba(255,255,255,0.4)', marginBottom:6, textTransform:'uppercase' }}>Share Your Achievement</div>
           <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'#fff', marginBottom:24 }}>Tell the world you're in the trials! 🏏</div>

@@ -1,8 +1,9 @@
 import { pgTable, uuid, varchar, numeric, integer, boolean, timestamp } from "drizzle-orm/pg-core";
+import { usersTable } from "./users";
 
 /** Referral / affiliate links: bcplt20.com/r/CODE
- *  kind: 'influencer' (Marketing → Referrals) | 'agent' (Affiliates view).
- *  'player' is reserved for the future player-referral program. */
+ *  kind: 'influencer' (Marketing → Referrals) | 'agent' (Affiliates view)
+ *      | 'player' (auto-generated personal codes for the player referral program). */
 export const referralCodesTable = pgTable("referral_codes", {
   id:             uuid("id").primaryKey().defaultRandom(),
   code:           varchar("code", { length: 30 }).notNull().unique(),
@@ -12,6 +13,8 @@ export const referralCodesTable = pgTable("referral_codes", {
   city:           varchar("city", { length: 50 }),
   phone:          varchar("phone", { length: 15 }),
   email:          varchar("email", { length: 255 }),
+  /** Owning player (kind='player' codes only) — one personal code per user. */
+  userId:         uuid("user_id").unique().references(() => usersTable.id),
   /** % of attributed revenue owed as commission (agents). */
   commissionRate: numeric("commission_rate", { precision: 5, scale: 2 }).default("0").notNull(),
   /** Manual payout bookkeeping — how much has actually been paid to the agent. */

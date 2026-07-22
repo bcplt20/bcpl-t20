@@ -11,7 +11,7 @@ import {
   phase1VideosTable,
   phase2PaymentsTable,
 } from "@workspace/db/schema";
-import { eq, and, desc, sql, inArray } from "drizzle-orm";
+import { eq, ne, and, desc, sql, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { requireAuth, type AuthRequest } from "../middlewares/auth";
 import { requireAdmin } from "../middlewares/adminAuth";
@@ -21,11 +21,12 @@ import { logger } from "../lib/logger";
 const router = Router();
 
 /* Payment rows that count as money received (webhook writes "success",
- * older reconciliation wrote "paid"). */
-const PAID_STATUSES = ["success", "paid"];
+ * older reconciliation wrote "paid"). Shared with the player referral
+ * program so "paid referral" always means the same thing. */
+export const PAID_STATUSES = ["success", "paid"];
 
 /** Postgres unique_violation (23505) — drizzle wraps the pg error in .cause. */
-function isUniqueViolation(e: unknown): boolean {
+export function isUniqueViolation(e: unknown): boolean {
   let cur = e as { code?: string; message?: string; cause?: unknown } | undefined;
   for (let depth = 0; cur && depth < 4; depth++) {
     if (cur.code === "23505") return true;
@@ -144,11 +145,16 @@ router.post("/attribute", requireAuth, async (req: AuthRequest, res) => {
   }
 
   const [rc] = await db
-    .select({ id: referralCodesTable.id })
+    .select({ id: referralCodesTable.id, userId: referralCodesTable.userId })
     .from(referralCodesTable)
     .where(and(eq(referralCodesTable.code, code), eq(referralCodesTable.active, true)));
   if (!rc) {
     // Unknown/inactive code — ignore silently so the registration flow never breaks.
+    res.json({ ok: true, attributed: false });
+    return;
+  }
+  if (rc.userId && rc.userId === req.user!.userId) {
+    // Self-referral guard: a player opening their own link can't refer themselves.
     res.json({ ok: true, attributed: false });
     return;
   }
@@ -244,9 +250,13 @@ type CodeStats = {
 };
 
 async function computeReferralStats() {
+  // Player referral codes (kind='player') are managed by the player referral
+  // program (/api/referral) — exclude them here so the marketing screens stay
+  // agent/influencer-only and don't balloon as player codes grow.
   const codes = await db
     .select()
     .from(referralCodesTable)
+    .where(ne(referralCodesTable.kind, "player"))
     .orderBy(desc(referralCodesTable.createdAt));
   const signups = await db
     .select({
@@ -405,6 +415,19 @@ router.put("/referrals/:id", requireAdmin, async (req, res) => {
     res.status(400).json({ error: parsed.error.issues[0]?.message ?? "Invalid payload" });
     return;
   }
+  const [existingRc] = await db
+    .select({ kind: referralCodesTable.kind })
+    .from(referralCodesTable)
+    .where(eq(referralCodesTable.id, id))
+    .limit(1);
+  if (!existingRc) {
+    res.status(404).json({ error: "Referral code not found" });
+    return;
+  }
+  if (existingRc.kind === "player") {
+    res.status(400).json({ error: "Player referral codes are managed in Agents & Affiliates → Player Referrals" });
+    return;
+  }
   const d = parsed.data;
   const patch: Record<string, unknown> = { updatedAt: new Date() };
   if (d.name !== undefined) patch.name = d.name;
@@ -432,11 +455,15 @@ router.put("/referrals/:id", requireAdmin, async (req, res) => {
 router.delete("/referrals/:id", requireAdmin, async (req, res) => {
   const id = String(req.params.id);
   const [rc] = await db
-    .select({ code: referralCodesTable.code })
+    .select({ code: referralCodesTable.code, kind: referralCodesTable.kind })
     .from(referralCodesTable)
     .where(eq(referralCodesTable.id, id));
   if (!rc) {
     res.status(404).json({ error: "Referral code not found" });
+    return;
+  }
+  if (rc.kind === "player") {
+    res.status(400).json({ error: "Player referral codes are managed in Agents & Affiliates → Player Referrals" });
     return;
   }
   const [cnt] = await db
