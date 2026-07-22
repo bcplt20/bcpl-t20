@@ -42,11 +42,21 @@ export async function sendOtp(phone: string, otp: string): Promise<boolean> {
   }
 
   try {
-    // MSG91 expects 91XXXXXXXXXX (no + sign)
-    const url = `https://control.msg91.com/api/v5/otp?template_id=${encodeURIComponent(OTP_TEMPLATE_ID)}&mobile=91${phone}&otp=${otp}`;
-    const res = await fetch(url, {
+    // MSG91 Flow API — NOT the dedicated OTP API. The owner's DLT-approved
+    // template in this account is a FLOW template ("Your OTP is ##var1## …"),
+    // and the OTP API only accepts OTP-section templates: it ACCEPTS the send
+    // (type:success) but the delivery report then fails with "Template ID
+    // Missing or Invalid Template" and no SMS arrives. The Flow API delivers
+    // through the same approved template + DLT mapping (verified live 22 Jul).
+    // We generate + verify OTPs ourselves (otp_sessions); MSG91 only delivers.
+    const res = await fetch("https://control.msg91.com/api/v5/flow/", {
       method: "POST",
       headers: { authkey: AUTH_KEY, "content-type": "application/json" },
+      body: JSON.stringify({
+        template_id: OTP_TEMPLATE_ID,
+        short_url: "0",
+        recipients: [{ mobiles: `91${phone}`, var1: otp }], // template var is ##var1##
+      }),
     });
     const raw = await res.text();
     let data: Msg91Response = {};
