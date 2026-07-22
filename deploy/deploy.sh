@@ -32,7 +32,7 @@ fi
 # password) ek encrypted file me daal di hain. Sirf unlock code
 # chahiye — wo Replit chat me diya gaya hai.
 SEED="$APP_DIR/deploy/env.seed.enc"
-if [ -f "$SEED" ] && ! grep -q '^SEED_APPLIED_V2=1' "$APP_DIR/.env.production"; then
+if [ -f "$SEED" ] && ! grep -q '^SEED_APPLIED_V3=1' "$APP_DIR/.env.production"; then
   echo ""
   echo "🔐 Ek-baar ka setup: sari nayi keys ek locked file me taiyar hain."
   read -r -p "👉 Unlock code daalo (Replit chat me mila hai), phir Enter: " SEED_CODE
@@ -46,7 +46,7 @@ if [ -f "$SEED" ] && ! grep -q '^SEED_APPLIED_V2=1' "$APP_DIR/.env.production"; 
       mv "$APP_DIR/.env.production.tmp" "$APP_DIR/.env.production"
       printf '%s\n' "$line" >> "$APP_DIR/.env.production"
     done < "$TMP_SEED"
-    echo "SEED_APPLIED_V2=1" >> "$APP_DIR/.env.production"
+    echo "SEED_APPLIED_V3=1" >> "$APP_DIR/.env.production"
     # nayi values isi run me lagoo karo
     set -o allexport
     # shellcheck disable=SC1090
