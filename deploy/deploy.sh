@@ -99,7 +99,9 @@ pnpm run build
 # ── 4. Build frontend ────────────────────────────────────────
 echo "🎨 Building frontend..."
 cd $APP_DIR/artifacts/bcpl-website
-BASE_PATH=/bcpl-website/ VITE_API_URL="https://bcplt20.com" pnpm run build
+# PROD par site root domain (bcplt20.com) par chalti hai — BASE_PATH=/ hi hona chahiye.
+# (/bcpl-website/ sirf Replit dev preview ka path hai — usse assets 404 ho jaate hain)
+BASE_PATH=/ VITE_API_URL="https://bcplt20.com" pnpm run build
 
 # ── 5. Run DB migrations ─────────────────────────────────────
 echo "🗄️  Running database migrations..."
@@ -119,6 +121,6 @@ pm2 save
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "  ✅ Deployment Complete!"
-echo "  API:     https://bcplt20.com/api/health"
-echo "  Website: https://bcplt20.com/bcpl-website/"
+echo "  API:     https://bcplt20.com/api/healthz"
+echo "  Website: https://bcplt20.com"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
