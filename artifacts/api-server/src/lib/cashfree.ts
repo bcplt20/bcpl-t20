@@ -191,8 +191,17 @@ export async function initiateAadhaarOtp(aadhaarNumber: string): Promise<{
       body: JSON.stringify({ aadhaar_number: aadhaarNumber }),
     });
     const data = await res.json() as any;
-    if (!res.ok) { console.error("[CF] initiateAadhaarOtp failed:", data); return null; }
-    return { referenceId: data.reference_id ?? data.ref_id };
+    if (!res.ok) {
+      console.error("[CF] initiateAadhaarOtp failed:", { http: res.status, code: data?.code, type: data?.type, message: data?.message, status: data?.status });
+      return null;
+    }
+    // Docs: 200 → { status: "SUCCESS", message: "OTP sent successfully", ref_id: 21637861 }
+    const refId = data.ref_id ?? data.reference_id;
+    if (refId === undefined || refId === null) {
+      console.error("[CF] initiateAadhaarOtp: no ref_id in response", { status: data?.status, message: data?.message });
+      return null;
+    }
+    return { referenceId: String(refId) };
   } catch (e) { console.error("[CF] initiateAadhaarOtp error", e); return null; }
 }
 
@@ -210,12 +219,23 @@ export async function verifyAadhaarOtp(referenceId: string, otp: string): Promis
     const res = await fetch("https://api.cashfree.com/verification/offline-aadhaar/verify", {
       method: "POST",
       headers: verifyHeaders(),
-      body: JSON.stringify({ reference_id: referenceId, otp }),
+      // Docs contract: { otp, ref_id } — NOT reference_id (that mismatch made
+      // Cashfree 400 every verify, shown to players as "service unavailable")
+      body: JSON.stringify({ ref_id: String(referenceId), otp }),
     });
     const data = await res.json() as any;
-    if (!res.ok) { console.error("[CF] verifyAadhaarOtp failed:", data); return null; }
+    if (!res.ok) {
+      // Redacted: scalar error fields only — never name/dob/address/photo
+      console.error("[CF] verifyAadhaarOtp failed:", { http: res.status, code: data?.code, type: data?.type, message: data?.message });
+      // A wrong/expired OTP comes back as an error response — that is the
+      // player's problem to retry, not a vendor outage.
+      const errText = `${data?.message ?? ""} ${data?.code ?? ""}`.toLowerCase();
+      if (errText.includes("otp")) return { valid: false, name: "" };
+      return null;
+    }
+    // Docs: 200 → { status: "VALID", name, dob, address, ... }
     return {
-      valid:   data.status === "SUCCESS",
+      valid:   data.status === "VALID",
       name:    data.name ?? "",
       dob:     data.dob  ?? "",
       address: data.address ?? "",

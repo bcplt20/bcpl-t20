@@ -202,6 +202,10 @@ export function PlayerProfile() {
       <div style={{ textAlign:'center' }}>
         <div style={{ width:40, height:40, border:'3px solid rgba(255,122,41,0.2)', borderTop:'3px solid #FF7A29', borderRadius:'50%', animation:'spin 1s linear infinite', margin:'0 auto 16px' }} />
         <div style={{ color:'rgba(255,255,255,0.4)', fontSize:13 }}>Loading your profile…</div>
+        <button onClick={() => { clearSession(); window.location.href = BASE; }}
+          style={{ marginTop:18, background:'none', border:'none', color:'rgba(255,255,255,0.35)', fontSize:12, textDecoration:'underline', cursor:'pointer' }}>
+          Sign out
+        </button>
         <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
       </div>
     </div>
@@ -210,7 +214,13 @@ export function PlayerProfile() {
   // ── Error ──────────────────────────────────────────────────────────────────
   if (error) return (
     <div style={{ background:'#06101E', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', padding:24 }}>
-      <div style={{ textAlign:'center', color:'#EF4444', fontSize:15 }}>{error}</div>
+      <div style={{ textAlign:'center' }}>
+        <div style={{ color:'#EF4444', fontSize:15, marginBottom:20 }}>{error}</div>
+        <button onClick={() => { clearSession(); window.location.href = BASE; }}
+          style={{ background:'rgba(255,255,255,0.05)', border:'1px solid rgba(239,68,68,0.35)', borderRadius:10, color:'#EF4444', fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:12, letterSpacing:'.04em', padding:'10px 20px', cursor:'pointer' }}>
+          🚪 Sign Out
+        </button>
+      </div>
     </div>
   );
 
@@ -277,6 +287,10 @@ export function PlayerProfile() {
                   {!reg && <span style={{ color:'#FF7A29' }}>Not yet registered</span>}
                 </div>
               </div>
+              <button className="btn-ghost" style={{ color:'#EF4444', borderColor:'rgba(239,68,68,0.25)', marginLeft:'auto', alignSelf:'flex-start', flexShrink:0 }}
+                onClick={() => { clearSession(); window.location.href = BASE; }}>
+                🚪 Sign Out
+              </button>
             </div>
           </div>
 
