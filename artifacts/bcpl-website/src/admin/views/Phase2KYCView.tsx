@@ -14,6 +14,7 @@ type KycRow = {
   cashfreeKycId: string | null;
   status: string;
   panVerified?: boolean;
+  aadhaarVerified?: boolean;
   verifiedAt: string | null;
   createdAt: string;
   player: string;
@@ -274,6 +275,7 @@ export default function Phase2KYCView() {
                   { label:"Aadhaar Ref", value: detail.aadhaarRef ?? "Not provided" },
                   { label:"PAN Ref",     value: detail.panRef ?? "Not provided" },
                   { label:"PAN Auto-Verify", value: detail.panVerified === false ? "⚠ Needs manual check" : "✓ Verified via Cashfree" },
+                  { label:"Aadhaar OTP", value: detail.aadhaarVerified ? "✓ Completed by player" : "Not completed" },
                   { label:"Cashfree ID", value: detail.cashfreeKycId ?? "Not linked" },
                   { label:"Phase 2",     value: detail.phase2Status ?? "—" },
                 ].map(item => (

@@ -419,9 +419,10 @@ router.get("/kyc", async (req, res) => {
       aadhaarRef:     r.kyc.aadhaarRef,
       panRef:         r.kyc.panRef,
       cashfreeKycId:  r.kyc.cashfreeKycId,
-      status:         r.kyc.status,
-      panVerified:    r.kyc.panVerified,
-      verifiedAt:     r.kyc.verifiedAt,
+      status:          r.kyc.status,
+      panVerified:     r.kyc.panVerified,
+      aadhaarVerified: r.kyc.aadhaarVerified,
+      verifiedAt:      r.kyc.verifiedAt,
       createdAt:      r.kyc.createdAt,
       player:         r.user?.name ?? "Unknown",
       phone:          r.user?.phone ?? "",
@@ -456,7 +457,7 @@ router.put("/kyc/:id/status", async (req, res) => {
       if (!kyc) { res.status(404).json({ error: "KYC record not found" }); return; }
       const [reg] = await db.select().from(registrationsTable)
         .where(eq(registrationsTable.id, kyc.registrationId)).limit(1);
-      await db.update(kycRecordsTable).set({ panVerified: true }).where(eq(kycRecordsTable.id, id));
+      await db.update(kycRecordsTable).set({ panVerified: true, aadhaarVerified: true }).where(eq(kycRecordsTable.id, id));
       await markKycVerified(kyc.id, kyc.registrationId, reg?.userId ?? "admin");
       const [updated] = await db.select().from(kycRecordsTable).where(eq(kycRecordsTable.id, id)).limit(1);
       res.json({ success: true, kyc: updated });

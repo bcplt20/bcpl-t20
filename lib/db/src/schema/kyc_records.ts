@@ -12,6 +12,8 @@ export const kycRecordsTable = pgTable("kyc_records", {
   status:         varchar("status", { length: 20 }).default("pending").notNull(),
   // false = Cashfree auto-verify unavailable, PAN needs manual review by admin
   panVerified:    boolean("pan_verified").default(true).notNull(),
+  // true = player completed Aadhaar OTP successfully
+  aadhaarVerified: boolean("aadhaar_verified").default(false).notNull(),
   verifiedAt:     timestamp("verified_at",  { withTimezone: true }),
   createdAt:      timestamp("created_at",   { withTimezone: true }).defaultNow().notNull(),
 });

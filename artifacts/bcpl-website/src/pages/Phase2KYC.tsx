@@ -128,6 +128,10 @@ export function Phase2KYC() {
         setKycStatus('verified');
         setKycMsg(result.message);
         setTimeout(() => { window.location.href = BASE + 'register/phase2/kyc-approved'; }, 2000);
+      } else if (result.status === 'MANUAL_REVIEW') {
+        // Aadhaar OTP done; PAN awaits manual check by the team
+        setKycStatus('pending');
+        setKycMsg(result.message);
       } else {
         setOtpErr(result.message || 'Verification failed. Try again.');
       }

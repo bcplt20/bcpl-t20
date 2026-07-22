@@ -14,13 +14,22 @@ import { z } from "zod";
 
 const router = Router();
 
-// ─── Startup migration: add pan_verified column (idempotent) ─────────────────
+// ─── Startup migration: add pan_verified / aadhaar_verified columns (idempotent) ──
 export async function ensureKycPanVerified(): Promise<void> {
   await db.execute(sql`
     ALTER TABLE kyc_records
     ADD COLUMN IF NOT EXISTS pan_verified boolean NOT NULL DEFAULT true
   `);
-  console.log("[MIGRATE] kyc_records.pan_verified ready");
+  await db.execute(sql`
+    ALTER TABLE kyc_records
+    ADD COLUMN IF NOT EXISTS aadhaar_verified boolean NOT NULL DEFAULT false
+  `);
+  // Records verified before this column existed completed Aadhaar OTP
+  await db.execute(sql`
+    UPDATE kyc_records SET aadhaar_verified = true
+    WHERE status = 'verified' AND aadhaar_verified = false
+  `);
+  console.log("[MIGRATE] kyc_records.pan_verified + aadhaar_verified ready");
 }
 
 export const PROFESSIONS = [
@@ -103,7 +112,7 @@ router.post("/initiate", requireAuth, async (req: AuthRequest, res) => {
   const upsertKyc = async (values: { panRef: string; aadhaarRef: string; panVerified: boolean }) => {
     if (existingKyc) {
       const [row] = await db.update(kycRecordsTable)
-        .set({ profession, ...values, status: "pending" })
+        .set({ profession, ...values, status: "pending", aadhaarVerified: false })
         .where(eq(kycRecordsTable.id, existingKyc.id))
         .returning();
       return row;
@@ -205,6 +214,24 @@ router.post("/verify-otp", requireAuth, async (req: AuthRequest, res) => {
     return void res.status(400).json({ error: "Incorrect OTP or OTP expired. Please try again." });
   }
 
+  // Aadhaar OTP passed
+  await db.update(kycRecordsTable)
+    .set({ aadhaarVerified: true })
+    .where(eq(kycRecordsTable.id, kyc.id));
+
+  // If PAN could not be auto-verified, KYC must stay pending until an admin
+  // approves the PAN (admin Verify sets pan_verified=true and completes KYC).
+  if (!kyc.panVerified) {
+    console.warn("[KYC] Aadhaar OTP done but PAN pending manual review — KYC stays pending", {
+      kycId: kyc.id, registrationId,
+    });
+    return void res.json({
+      success: true,
+      status:  "MANUAL_REVIEW",
+      message: "Aadhaar verified ✓. Your PAN will be checked by our team within 24–48 hours. You will get an SMS + email once your KYC is complete.",
+    });
+  }
+
   // Mark verified
   await markKycVerified(kyc.id, registrationId, req.user!.userId);
 
@@ -224,7 +251,14 @@ router.post("/webhook", async (req, res) => {
         .where(eq(kycRecordsTable.aadhaarRef, reference_id))
         .limit(1);
       if (kyc && kyc.status !== "verified") {
-        await markKycVerified(kyc.id, kyc.registrationId, "webhook");
+        await db.update(kycRecordsTable)
+          .set({ aadhaarVerified: true })
+          .where(eq(kycRecordsTable.id, kyc.id));
+        if (kyc.panVerified) {
+          await markKycVerified(kyc.id, kyc.registrationId, "webhook");
+        } else {
+          console.warn("[KYC-WEBHOOK] Aadhaar verified but PAN pending manual review — KYC stays pending", { kycId: kyc.id });
+        }
       }
     }
   } catch (e) { console.error("[KYC-WEBHOOK]", e); }
