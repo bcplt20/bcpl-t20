@@ -364,7 +364,7 @@ function TxnDetailModal({ txn, onOpenInvoice, onOpenReg, onClose }: { txn: Txn; 
 }
 
 /* ─── Main View ──────────────────────────────────────────────── */
-export default function FinanceView({ onNavigate }: { onNavigate?: (tab: string, payload?: { quick?: string; filter?: string; focusId?: string }) => void }) {
+export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigate?: (tab: string, payload?: { quick?: string; filter?: string; focusId?: string }) => void; refreshTick?: number }) {
   type Tab = "overview"|"pl"|"gst"|"invoices"|"refunds"|"tds";
   const [tab,       setTab]       = useState<Tab>("overview");
   const [txnFilter, setTxnFilter] = useState<"all"|"success"|"pending"|"failed"|"refunded">("all");
@@ -374,6 +374,8 @@ export default function FinanceView({ onNavigate }: { onNavigate?: (tab: string,
   const [TRANSACTIONS, setTransactions] = useState<Txn[]>([]);
   const [loadErr,   setLoadErr]   = useState("");
 
+  // Fetches on mount and again whenever refreshTick bumps (auto-refresh).
+  // Data swaps in place — no remount, no flicker.
   useEffect(() => {
     adminGetRegistrations()
       .then(({ registrations }) => {
@@ -381,9 +383,10 @@ export default function FinanceView({ onNavigate }: { onNavigate?: (tab: string,
           .flatMap(regToTxns)
           .sort((a,b)=>b.ts-a.ts);
         setTransactions(txns);
+        setLoadErr("");
       })
       .catch(e => setLoadErr(e.message));
-  }, []);
+  }, [refreshTick]);
 
   /* daily revenue (last 7 days) from successful transactions */
   const now = Date.now();

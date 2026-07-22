@@ -105,8 +105,8 @@ function renderView(id: string, navigate: (viewId: string, payload?: AdminNavPay
   const pk = JSON.stringify(payload ?? {});
   switch (id) {
     case "dashboard":      return <DashboardView onNavigate={navigate} refreshTick={autoTick} />;
-    case "users":          return <UsersView key={"u"+pk} onNavigate={navigate} initialQuick={payload?.quick} />;
-    case "finance":        return <FinanceView key={"fin"+pk} onNavigate={navigate} />;
+    case "users":          return <UsersView key={"u"+pk} onNavigate={navigate} initialQuick={payload?.quick} refreshTick={autoTick} />;
+    case "finance":        return <FinanceView key={"fin"+pk} onNavigate={navigate} refreshTick={autoTick} />;
     case "forecast":       return <ForecastView />;
     case "marketing":      return <MarketingView />;
     case "seo":            return <SEOView />;
@@ -119,9 +119,9 @@ function renderView(id: string, navigate: (viewId: string, payload?: AdminNavPay
     case "auction":        return <AuctionView />;
     case "leaderboard":    return <LeaderboardView />;
     case "contracts":      return <ContractsView />;
-    case "phase1_regs":    return <Phase1RegistrationsView key={"p1"+pk} onNavigate={navigate} focusId={payload?.focusId} initialFilter={payload?.filter} />;
+    case "phase1_regs":    return <Phase1RegistrationsView key={"p1"+pk} onNavigate={navigate} focusId={payload?.focusId} initialFilter={payload?.filter} refreshTick={autoTick} />;
     case "video_review":   return <VideoReviewView />;
-    case "phase2_kyc":     return <Phase2KYCView />;
+    case "phase2_kyc":     return <Phase2KYCView refreshTick={autoTick} />;
     case "player_profiles":return <PlayerProfilesView />;
     case "whatsapp_tpl":   return <WhatsAppTemplatesView />;
     case "fraud":          return <FraudView />;
@@ -194,11 +194,13 @@ export default function AdminShell() {
     return () => { cancelled = true; };
   }, []);
 
-  /* ── Auto-refresh: while the Analytics dashboard is open, re-fetch its data
-     every 90s — but only when the browser tab is visible (saves server load).
+  /* ── Auto-refresh: while one of the long-lived admin views is open, re-fetch
+     its data every 90s — but only when the browser tab is visible (saves
+     server load). Views refetch in place (no remount, no flicker).
      Live Scoring (and other views) are untouched; they keep their own flows. ── */
+  const AUTO_REFRESH_VIEWS = ["dashboard", "phase1_regs", "phase2_kyc", "users", "finance"];
   useEffect(() => {
-    if (!loggedIn || active !== "dashboard") return;
+    if (!loggedIn || !AUTO_REFRESH_VIEWS.includes(active)) return;
     const id = setInterval(() => {
       if (document.visibilityState !== "visible") return; // paused while tab hidden
       setAutoTick(t => t + 1);

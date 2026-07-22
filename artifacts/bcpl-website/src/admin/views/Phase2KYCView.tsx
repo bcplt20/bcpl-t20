@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   adminGetKyc,
   adminUpdateKycStatus,
@@ -65,7 +65,7 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-export default function Phase2KYCView() {
+export default function Phase2KYCView({ refreshTick = 0 }: { refreshTick?: number } = {}) {
   const [rows, setRows]       = useState<KycRow[]>([]);
   const [stats, setStats]     = useState<any>(null);
   const [filter, setFilter]   = useState("all");
@@ -75,8 +75,9 @@ export default function Phase2KYCView() {
   const [acting, setActing]   = useState<string | null>(null);
   const [detail, setDetail]   = useState<KycRow | null>(null);
 
-  const load = useCallback(async () => {
-    setLoading(true); setErr("");
+  const load = useCallback(async (silent = false) => {
+    if (!silent) setLoading(true);
+    setErr("");
     try {
       const [kycRes, s] = await Promise.all([
         adminGetKyc(filter === "all" ? undefined : filter),
@@ -87,11 +88,16 @@ export default function Phase2KYCView() {
     } catch (e: any) {
       setErr(e.message);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   }, [filter]);
 
   useEffect(() => { load(); }, [load]);
+
+  /* Auto-refresh (AdminShell tick): refetch in place — no spinner, no remount */
+  const loadRef = useRef(load);
+  loadRef.current = load;
+  useEffect(() => { if (refreshTick > 0) loadRef.current(true); }, [refreshTick]);
 
   const updateStatus = async (id: string, status: string) => {
     setActing(id);
@@ -131,14 +137,14 @@ export default function Phase2KYCView() {
             Review and approve KYC submissions from Phase 2 selected players
           </div>
         </div>
-        <button onClick={load} style={{ padding:"9px 16px", borderRadius:9, border:"1px solid #1E293B", background:"transparent", color:"#64748B", fontSize:12, fontWeight:700, cursor:"pointer" }}>
+        <button onClick={() => load()} style={{ padding:"9px 16px", borderRadius:9, border:"1px solid #1E293B", background:"transparent", color:"#64748B", fontSize:12, fontWeight:700, cursor:"pointer" }}>
           ↺ Refresh
         </button>
       </div>
 
       {err && (
         <div style={{ padding:14, borderRadius:10, background:"#EF444415", border:"1px solid #EF444440", color:"#EF4444", fontSize:12 }}>
-          ⚠ {err} — <button onClick={load} style={{ background:"none", border:"none", color:"#EF4444", cursor:"pointer", fontWeight:700, fontSize:12 }}>Retry</button>
+          ⚠ {err} — <button onClick={() => load()} style={{ background:"none", border:"none", color:"#EF4444", cursor:"pointer", fontWeight:700, fontSize:12 }}>Retry</button>
         </div>
       )}
 

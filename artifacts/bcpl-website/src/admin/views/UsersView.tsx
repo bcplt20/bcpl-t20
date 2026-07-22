@@ -80,7 +80,7 @@ const roleColor = (r:string) => r==="Batsman"?"#3B82F6":r==="Bowler"?"#EF4444":r
 
 type NavPayload = { quick?: string; filter?: string; focusId?: string };
 
-export default function UsersView({ onNavigate, initialQuick }: { onNavigate?: (tab: string, payload?: NavPayload) => void; initialQuick?: string }) {
+export default function UsersView({ onNavigate, initialQuick, refreshTick = 0 }: { onNavigate?: (tab: string, payload?: NavPayload) => void; initialQuick?: string; refreshTick?: number }) {
   const validQuick = (Object.keys(quickLabels) as QuickFilter[]).includes(initialQuick as QuickFilter) ? (initialQuick as QuickFilter) : "all";
   const [quick,    setQuick]    = useState<QuickFilter>(validQuick);
   const [search,   setSearch]   = useState("");
@@ -92,12 +92,14 @@ export default function UsersView({ onNavigate, initialQuick }: { onNavigate?: (
   const [loading,  setLoading]  = useState(true);
   const [err,      setErr]      = useState("");
 
+  // Fetches on mount and again whenever refreshTick bumps (auto-refresh).
+  // Data swaps in place — the table stays on screen until new rows land.
   useEffect(() => {
     adminGetRegistrations()
-      .then(({ registrations }) => setAllUsers((registrations as ApiReg[]).map(toRow)))
+      .then(({ registrations }) => { setAllUsers((registrations as ApiReg[]).map(toRow)); setErr(""); })
       .catch(e => setErr(e.message))
       .finally(() => setLoading(false));
-  }, []);
+  }, [refreshTick]);
 
   const [kycBusy, setKycBusy] = useState(false);
   const updateKyc = async (status: "verified" | "failed") => {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   adminGetRegistrations,
   adminUpdatePhase1Status,
@@ -56,7 +56,7 @@ const P1_FILTERS = ["all", "pending", "payment_done", "video_submitted", "select
 
 type NavPayload = { quick?: string; filter?: string; focusId?: string };
 
-export default function Phase1RegistrationsView({ onNavigate, focusId, initialFilter }: { onNavigate?: (tab: string, payload?: NavPayload) => void; focusId?: string; initialFilter?: string }) {
+export default function Phase1RegistrationsView({ onNavigate, focusId, initialFilter, refreshTick = 0 }: { onNavigate?: (tab: string, payload?: NavPayload) => void; focusId?: string; initialFilter?: string; refreshTick?: number }) {
   const [rows, setRows]         = useState<Reg[]>([]);
   const [stats, setStats]       = useState<any>(null);
   const [filter, setFilter]     = useState(initialFilter && P1_FILTERS.includes(initialFilter) ? initialFilter : "all");
@@ -69,8 +69,9 @@ export default function Phase1RegistrationsView({ onNavigate, focusId, initialFi
   const [detail, setDetail]     = useState<Reg | null>(null);
   const [focusDone, setFocusDone] = useState(false);
 
-  const load = useCallback(async () => {
-    setLoading(true); setErr("");
+  const load = useCallback(async (silent = false) => {
+    if (!silent) setLoading(true);
+    setErr("");
     try {
       const params: Record<string, string> = {};
       if (filter !== "all") params.phase1Status = filter;
@@ -85,11 +86,16 @@ export default function Phase1RegistrationsView({ onNavigate, focusId, initialFi
     } catch (e: any) {
       setErr(e.message);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   }, [filter, roleF, cityQ]);
 
   useEffect(() => { load(); }, [load]);
+
+  /* Auto-refresh (AdminShell tick): refetch in place — no spinner, no remount */
+  const loadRef = useRef(load);
+  loadRef.current = load;
+  useEffect(() => { if (refreshTick > 0) loadRef.current(true); }, [refreshTick]);
 
   /* Auto-open the record another view asked us to focus (tapped reg ID) */
   useEffect(() => {
@@ -153,7 +159,7 @@ export default function Phase1RegistrationsView({ onNavigate, focusId, initialFi
             Manage all Phase 1 registrations — review payments, videos and selection decisions
           </div>
         </div>
-        <button onClick={load} style={{ padding:"9px 16px", borderRadius:9, border:"1px solid #1E293B", background:"transparent", color:"#64748B", fontSize:12, fontWeight:700, cursor:"pointer" }}>
+        <button onClick={() => load()} style={{ padding:"9px 16px", borderRadius:9, border:"1px solid #1E293B", background:"transparent", color:"#64748B", fontSize:12, fontWeight:700, cursor:"pointer" }}>
           ↺ Refresh
         </button>
       </div>
@@ -161,7 +167,7 @@ export default function Phase1RegistrationsView({ onNavigate, focusId, initialFi
       {/* Error */}
       {err && (
         <div style={{ padding:14, borderRadius:10, background:"#EF444415", border:"1px solid #EF444440", color:"#EF4444", fontSize:12 }}>
-          ⚠ {err} — <button onClick={load} style={{ background:"none", border:"none", color:"#EF4444", cursor:"pointer", fontWeight:700, fontSize:12 }}>Retry</button>
+          ⚠ {err} — <button onClick={() => load()} style={{ background:"none", border:"none", color:"#EF4444", cursor:"pointer", fontWeight:700, fontSize:12 }}>Retry</button>
         </div>
       )}
 
