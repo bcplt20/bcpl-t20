@@ -5,21 +5,15 @@
  */
 
 import { getSession, saveSession, clearSession } from "./auth";
+import { BASE, ADMIN_KEY, adminReq } from "./adminHttp";
 
-/**
- * API base URL:
- * 1. VITE_API_URL wins when set (explicit override).
- * 2. Otherwise fall back to the app's base path — "/" in production
- *    (nginx routes /api), "/bcpl-website/" in the Replit dev preview
- *    (vite dev proxy routes it to the local API server).
- */
-const BASE =
-  (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "") ||
-  (import.meta.env.BASE_URL === "/" ? "" : import.meta.env.BASE_URL.replace(/\/$/, ""));
-const ADMIN_KEY = import.meta.env.VITE_ADMIN_KEY ?? "";
-
-// True when a legacy VITE_ADMIN_KEY is baked into the bundle (old header auth fallback).
-export const hasLegacyAdminKey = () => Boolean(ADMIN_KEY);
+// Shared admin plumbing lives in adminHttp.ts (single source of truth).
+export {
+  hasLegacyAdminKey,
+  saveAdminToken,
+  clearAdminToken,
+  hasAdminToken,
+} from "./adminHttp";
 
 /** Reading via getSession() also refreshes the 48h inactivity window on every API call. */
 function getStoredToken(): string | null {
@@ -196,55 +190,7 @@ export const recordMatchResult = (data: {
   winner?: string; loser?: string; noResult?: boolean; season?: number;
 }) => req("POST", "/points-table/admin/points-table/result", data, true);
 
-/* ─── Admin Panel API ──────────────────────────────────────────── */
-
-const ADMIN_TOKEN_KEY = "bcpl_admin_token_v1";
-
-function getAdminToken(): string | null {
-  try { return localStorage.getItem(ADMIN_TOKEN_KEY); } catch { return null; }
-}
-
-export function saveAdminToken(token: string): void {
-  try { localStorage.setItem(ADMIN_TOKEN_KEY, token); } catch {}
-}
-
-export function clearAdminToken(): void {
-  try { localStorage.removeItem(ADMIN_TOKEN_KEY); } catch {}
-}
-
-/** True when an admin token is stored (used on panel load to try restoring the session). */
-export function hasAdminToken(): boolean {
-  return Boolean(getAdminToken());
-}
-
-async function adminReq<T = unknown>(
-  method: string,
-  path: string,
-  body?: unknown,
-): Promise<T> {
-  const headers: Record<string, string> = { "Content-Type": "application/json" };
-  const token = getAdminToken();
-  if (token) headers["x-bcpl-admin-token"] = token;
-  // Legacy fallback for server-to-server calls
-  if (!token && ADMIN_KEY) headers["x-bcpl-admin"] = ADMIN_KEY;
-
-  const res = await fetch(`${BASE}/api${path}`, {
-    method,
-    headers,
-    body: body !== undefined ? JSON.stringify(body) : undefined,
-  });
-
-  // Sliding session: past half-life the server re-issues a fresh token on
-  // any admin response — swap it in silently so active admins stay logged in.
-  const renewed = res.headers.get("x-bcpl-admin-token-renewed");
-  if (renewed) saveAdminToken(renewed);
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: res.statusText }));
-    throw new Error((err as any).error ?? res.statusText);
-  }
-  return res.json() as Promise<T>;
-}
+/* ─── Admin Panel API (adminReq imported from adminHttp.ts) ────── */
 
 // Admin session (login)
 export const adminLogin = (password: string) =>

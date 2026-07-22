@@ -1,49 +1,11 @@
 /**
  * Player referral program API client.
  *
- * NOTE: BASE and adminReq are deliberately DUPLICATED from api.ts (same
- * pattern as marketingApi.ts). Several queued tasks edit api.ts, and keeping
- * this module fully self-contained avoids merge conflicts. If the admin auth
- * scheme changes in api.ts, mirror it here.
+ * Admin request plumbing (auth headers, sliding-session renewal, error
+ * shape) is shared via adminHttp.ts — the single source of truth.
  */
 import { getSession } from "./auth";
-
-const BASE =
-  (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "") ||
-  (import.meta.env.BASE_URL === "/" ? "" : import.meta.env.BASE_URL.replace(/\/$/, ""));
-const ADMIN_KEY = import.meta.env.VITE_ADMIN_KEY ?? "";
-const ADMIN_TOKEN_KEY = "bcpl_admin_token_v1";
-
-function getAdminToken(): string | null {
-  try { return localStorage.getItem(ADMIN_TOKEN_KEY); } catch { return null; }
-}
-
-// Sliding session (mirrors api.ts): the server re-issues a fresh token via
-// this header once the current one is past half its life — persist it.
-function captureRenewedToken(res: Response): void {
-  const renewed = res.headers.get("x-bcpl-admin-token-renewed");
-  if (renewed) { try { localStorage.setItem(ADMIN_TOKEN_KEY, renewed); } catch {} }
-}
-
-async function adminReq<T = unknown>(method: string, path: string, body?: unknown): Promise<T> {
-  const headers: Record<string, string> = { "Content-Type": "application/json" };
-  const token = getAdminToken();
-  if (token) headers["x-bcpl-admin-token"] = token;
-  // Legacy fallback (mirrors api.ts adminReq)
-  if (!token && ADMIN_KEY) headers["x-bcpl-admin"] = ADMIN_KEY;
-
-  const res = await fetch(`${BASE}/api${path}`, {
-    method,
-    headers,
-    body: body !== undefined ? JSON.stringify(body) : undefined,
-  });
-  captureRenewedToken(res);
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: res.statusText }));
-    throw new Error((err as { error?: string }).error ?? res.statusText);
-  }
-  return res.json() as Promise<T>;
-}
+import { BASE, adminReq } from "./adminHttp";
 
 /** Player-authenticated GET (Bearer token from the OTP session). */
 async function playerReq<T = unknown>(path: string): Promise<T> {

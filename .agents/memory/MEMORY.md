@@ -3,7 +3,7 @@
 - [BCPL deploy pipeline](deploy-pipeline.md) — EC2 pulls from GitHub; commits/task-merges in Replit are invisible to prod until `git push origin main`
 - [Edit tool $ quirk](edit-tool-dollar-quirk.md) — replacements containing ` sequences (SQL regex anchors) can corrupt files; use WriteFile instead
 - [Site header](per-page-navbars.md) — all 31 pages now use shared SiteHeader (sh- CSS, 60px sticky nav, CTA hidden <640px); page sticky elements offset top:60
-- [Admin API auth](admin-api-auth.md) — admin views must call adminReq (session token), never req(...,true)/VITE_ADMIN_KEY (403s or leaks key in prod bundle); teams admin fns = known debt
+- [Admin API auth](admin-api-auth.md) — admin plumbing now lives ONLY in lib/adminHttp.ts (shared adminReq); never re-duplicate it or use req(...,true)/VITE_ADMIN_KEY; teams/matches admin fns = known debt
 - [Dev preview & API base](dev-preview-api.md) — preview now mirrors prod (vite /api proxy + BASE_URL fallback); if fetches hit a wrong host, check VITE_* env vars first; OTP readable from otp_sessions
 - [Stale lib/db dist declarations](db-schema-dist-declarations.md) — after schema changes run `tsc --build lib/db --force` or typecheck shows phantom "no exported member" errors; runtime uses src, not dist
 - [Express req.params typing](express-params-string.md) — req.params.X types as string|string[] here; wrap in String() before drizzle eq() or tsc fails
