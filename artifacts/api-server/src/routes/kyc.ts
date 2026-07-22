@@ -8,7 +8,7 @@ import {
 import { eq, and, desc, sql } from "drizzle-orm";
 import { requireAuth, type AuthRequest } from "../middlewares/auth";
 import { verifyPan, initiateAadhaarOtp, verifyAadhaarOtp } from "../lib/cashfree";
-import { sendEmail, tplKycComplete } from "../lib/email";
+import { sendEmail, tplKycComplete, adminAlertRecipient, tplKycManualReview } from "../lib/email";
 import { sendSms } from "../lib/sms";
 import { sendWhatsApp, WA } from "../lib/whatsapp";
 import { z } from "zod";
@@ -92,6 +92,50 @@ export async function markKycVerified(kycId: string, registrationId: string, use
         { userId: user.id, type: "whatsapp", template: "kyc_complete" },
       ]),
     ]);
+  }
+}
+
+// ─── Admin alert: KYC parked for manual review ───────────────────────────────
+// Fire-and-forget: must never block or fail the player's request. Call sites
+// guard so this fires only on the transition INTO a manual-review state —
+// the admin gets exactly one email per parked KYC, not one per player retry.
+async function alertAdminKycManualReview(p: {
+  registrationId: string;
+  panVerified: boolean;
+  aadhaarVerified: boolean;
+  reason: string;
+}): Promise<void> {
+  try {
+    const alertTo = adminAlertRecipient();
+    if (!alertTo) {
+      console.error(
+        "[KYC][ALERT] ADMIN_ALERT_EMAIL is not set — KYC manual-review alert NOT sent. " +
+        "Set ADMIN_ALERT_EMAIL to the admin's monitored inbox.",
+        { registrationId: p.registrationId, reason: p.reason },
+      );
+      return;
+    }
+    const [row] = await db.select({
+      name:  usersTable.name,
+      phone: usersTable.phone,
+      city:  registrationsTable.trialCity,
+    }).from(registrationsTable)
+      .innerJoin(usersTable, eq(usersTable.id, registrationsTable.userId))
+      .where(eq(registrationsTable.id, p.registrationId))
+      .limit(1);
+    const tpl = tplKycManualReview({
+      playerName:      row?.name ?? "Unknown player",
+      playerPhone:     row?.phone ?? "—",
+      regIdShort:      p.registrationId.slice(0, 8).toUpperCase(),
+      trialCity:       row?.city ?? "TBD",
+      panVerified:     p.panVerified,
+      aadhaarVerified: p.aadhaarVerified,
+      reason:          p.reason,
+      flaggedAt:       new Date(),
+    });
+    await sendEmail({ to: alertTo, toName: "BCPL Admin", subject: tpl.subject, htmlContent: tpl.htmlContent });
+  } catch (e) {
+    console.error("[KYC][ALERT] manual-review alert email failed", e);
   }
 }
 
@@ -214,6 +258,22 @@ router.post("/initiate", requireAuth, async (req: AuthRequest, res) => {
     // Aadhaar OTP service also unavailable — accept the documents and verify manually.
     // A paying player must never be blocked by a vendor outage.
     const kyc = await upsertKyc({ panRef, aadhaarRef: `manual_review_${Date.now()}`, panVerified });
+    // Alert admin once: skip only when this registration is ALREADY sitting in
+    // pending manual review (player retrying while the vendor is still down).
+    // A previously failed/rejected row re-entering review must alert again.
+    const alreadyParked =
+      existingKyc?.status === "pending" &&
+      (existingKyc.aadhaarRef?.startsWith("manual_review") ?? false);
+    if (!alreadyParked) {
+      void alertAdminKycManualReview({
+        registrationId,
+        panVerified,
+        aadhaarVerified: false,
+        reason: panVerified
+          ? "Aadhaar OTP service was unavailable — verify Aadhaar manually"
+          : "Aadhaar OTP service AND PAN auto-verify were unavailable — verify both manually",
+      });
+    }
     return void res.json({
       success: true,
       kycId:   kyc.id,
@@ -274,10 +334,16 @@ router.post("/verify-otp", requireAuth, async (req: AuthRequest, res) => {
     return void res.status(400).json({ error: "Incorrect OTP or OTP expired. Please try again." });
   }
 
-  // Aadhaar OTP passed
-  await db.update(kycRecordsTable)
+  // Aadhaar OTP passed — conditional update so the false→true transition is
+  // detected atomically: of concurrent OTP + webhook deliveries, exactly one
+  // sees the row flip (Postgres row lock), so at most one admin alert fires.
+  const transitioned = (await db.update(kycRecordsTable)
     .set({ aadhaarVerified: true })
-    .where(eq(kycRecordsTable.id, kyc.id));
+    .where(and(
+      eq(kycRecordsTable.id, kyc.id),
+      eq(kycRecordsTable.aadhaarVerified, false),
+    ))
+    .returning({ id: kycRecordsTable.id })).length > 0;
 
   // If PAN could not be auto-verified, KYC must stay pending until an admin
   // approves the PAN (admin Verify sets pan_verified=true and completes KYC).
@@ -285,6 +351,14 @@ router.post("/verify-otp", requireAuth, async (req: AuthRequest, res) => {
     console.warn("[KYC] Aadhaar OTP done but PAN pending manual review — KYC stays pending", {
       kycId: kyc.id, registrationId,
     });
+    if (transitioned) {
+      void alertAdminKycManualReview({
+        registrationId,
+        panVerified: false,
+        aadhaarVerified: true,
+        reason: "Aadhaar verified by OTP; PAN could not be auto-verified — approve PAN manually",
+      });
+    }
     return void res.json({
       success: true,
       status:  "MANUAL_REVIEW",
@@ -311,13 +385,27 @@ router.post("/webhook", async (req, res) => {
         .where(eq(kycRecordsTable.aadhaarRef, reference_id))
         .limit(1);
       if (kyc && kyc.status !== "verified") {
-        await db.update(kycRecordsTable)
+        // Same atomic transition guard as verify-otp: only the request that
+        // actually flips aadhaar_verified false→true may alert the admin.
+        const transitioned = (await db.update(kycRecordsTable)
           .set({ aadhaarVerified: true })
-          .where(eq(kycRecordsTable.id, kyc.id));
+          .where(and(
+            eq(kycRecordsTable.id, kyc.id),
+            eq(kycRecordsTable.aadhaarVerified, false),
+          ))
+          .returning({ id: kycRecordsTable.id })).length > 0;
         if (kyc.panVerified) {
           await markKycVerified(kyc.id, kyc.registrationId, "webhook");
         } else {
           console.warn("[KYC-WEBHOOK] Aadhaar verified but PAN pending manual review — KYC stays pending", { kycId: kyc.id });
+          if (transitioned) {
+            void alertAdminKycManualReview({
+              registrationId: kyc.registrationId,
+              panVerified: false,
+              aadhaarVerified: true,
+              reason: "Aadhaar verified via Cashfree webhook; PAN could not be auto-verified — approve PAN manually",
+            });
+          }
         }
       }
     }

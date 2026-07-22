@@ -29,6 +29,8 @@ module.exports = {
         // Admin panel login password (server-side check — REQUIRED,
         // warna production me admin login 403 dega)
         ADMIN_PANEL_PASSWORD: process.env.ADMIN_PANEL_PASSWORD,
+        // Admin alert inbox (lockdown + KYC manual-review alerts)
+        ADMIN_ALERT_EMAIL:    process.env.ADMIN_ALERT_EMAIL,
 
         // ── SMS (MSG91 — OTP + notifications) ───────────────
         MSG91_AUTH_KEY:        process.env.MSG91_AUTH_KEY,

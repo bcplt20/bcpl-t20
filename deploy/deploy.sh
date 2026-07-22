@@ -63,7 +63,7 @@ fi
 # In keys ke bina admin-login / OTP-SMS / email kaam nahi karte.
 # Jo key .env.production me nahi hogi, script yahin poochh kar
 # khud save kar lega — aap bas paste karke Enter dabao.
-REQUIRED_KEYS="ADMIN_PANEL_PASSWORD MSG91_AUTH_KEY MSG91_OTP_TEMPLATE_ID MSG91_SENDER_ID BREVO_API_KEY"
+REQUIRED_KEYS="ADMIN_PANEL_PASSWORD MSG91_AUTH_KEY MSG91_OTP_TEMPLATE_ID MSG91_SENDER_ID BREVO_API_KEY ADMIN_ALERT_EMAIL"
 for KEY in $REQUIRED_KEYS; do
   if ! grep -q "^${KEY}=..*" "$APP_DIR/.env.production"; then
     case "$KEY" in

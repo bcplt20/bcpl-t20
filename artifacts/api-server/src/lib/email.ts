@@ -381,6 +381,50 @@ export function tplAdminLoginLockdown(p: { failCount: number; trippedAt: Date; l
   };
 }
 
+// ── Admin alert: KYC parked for manual review ────────────────────────────────
+export function tplKycManualReview(p: {
+  playerName: string;
+  playerPhone: string;
+  regIdShort: string;
+  trialCity: string;
+  panVerified: boolean;
+  aadhaarVerified: boolean;
+  reason: string;
+  flaggedAt: Date;
+}) {
+  const fmt = (d: Date) =>
+    d.toLocaleString("en-IN", { timeZone: "Asia/Kolkata", day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true }) + " IST";
+  const status = (ok: boolean) =>
+    ok
+      ? `<span style="color:#22C55E;font-weight:bold;">✓ Verified</span>`
+      : `<span style="color:#F59E0B;font-weight:bold;">⏳ Needs manual review</span>`;
+  const row = (label: string, value: string, last = false) =>
+    `<tr><td style="padding:11px;${last ? "" : "border-bottom:1px solid rgba(255,255,255,0.07);"}color:rgba(255,255,255,0.5);font-size:13px;">${label}</td><td style="padding:11px;${last ? "" : "border-bottom:1px solid rgba(255,255,255,0.07);"}color:#fff;font-weight:bold;font-size:13px;">${value}</td></tr>`;
+  return {
+    subject: `📋 BCPL Admin — KYC needs manual review: ${p.playerName} (${p.regIdShort})`,
+    htmlContent: wrap(`
+      <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.3);border-radius:12px;padding:24px;margin-bottom:20px;">
+        <h2 style="color:#F59E0B;margin:0 0 8px;font-size:20px;">📋 KYC Needs Manual Review</h2>
+        <p style="color:rgba(255,255,255,0.7);margin:0;font-size:14px;">A paying player's KYC could not be auto-verified and is now <strong style="color:#F59E0B;">waiting for your review</strong>. The player was promised verification within <strong style="color:#fff;">24–48 hours</strong>.</p>
+      </div>
+      <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
+        ${row("Player", p.playerName)}
+        ${row("Phone", p.playerPhone)}
+        ${row("Registration ID", `<span style="font-family:monospace;">${p.regIdShort}</span>`)}
+        ${row("Trial City", p.trialCity)}
+        ${row("PAN", status(p.panVerified))}
+        ${row("Aadhaar", status(p.aadhaarVerified))}
+        ${row("Why flagged", `<span style="font-weight:400;color:rgba(255,255,255,0.75);">${p.reason}</span>`)}
+        ${row("Flagged at", fmt(p.flaggedAt), true)}
+      </table>
+      <div style="background:rgba(255,255,255,0.03);border-radius:8px;padding:14px;margin-bottom:8px;">
+        <div style="font-size:10px;color:rgba(255,255,255,0.25);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;">What to do</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.45);line-height:1.9;">1️⃣ Open the admin panel → KYC section<br/>2️⃣ Check the player's PAN/Aadhaar details<br/>3️⃣ Press Verify — the player gets SMS + email automatically</div>
+      </div>
+      <div style="text-align:center;">${btn("OPEN ADMIN PANEL →", `${SITE_URL}/admin`, "#F59E0B")}</div>`),
+  };
+}
+
 // ── Template 11: GST Tax Invoice ──────────────────────────────────────────────
 const BCPL_GSTIN = "07AAHCK4053D1ZS";
 const BCPL_ADDR  = "Kriparti Playing11 Private Limited, 2nd Floor Back Side, RZ-108, Indra Park, Uttam Nagar, West Delhi, Delhi - 110059";
