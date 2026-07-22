@@ -1,22 +1,28 @@
 ---
 name: MSG91 SMS integration
-description: Which MSG91 APIs this project uses, how to dry-run them safely, and quirks (balance.php 418, legacy env fallback)
+description: How OTP/SMS delivery actually works in this account — flow API route, template/DLT gotchas, testing rules
 ---
 
-SMS/OTP goes through MSG91 (owner's DLT templates + balance). Two endpoints, both verified working from a Replit egress IP with the owner's authkey:
+# MSG91 SMS integration (BCPL)
 
-- OTP: `POST https://control.msg91.com/api/v5/otp?template_id=..&mobile=91<10digit>&otp=..` with `authkey` header → `{type:"success",request_id}` .
-- Transactional: `POST https://api.msg91.com/api/v2/sendsms` with `authkey` header, body `{sender, route:"4", country:"91", sms:[{message,to:[<10digit>]}]}` → `{type:"success",message:<requestId>}`.
+## THE core lesson: OTP delivery goes through the FLOW API, not the OTP API
+- This account's only DLT-approved template is a **flow template**: "Your OTP is ##var1## … Team, Kriparti", sender **KRIPLA**, dlt_verified=10.
+- The dedicated OTP API (`/api/v5/otp?template_id=…&mobile=…&otp=…`) **accepts** that template ID (`type:success` + request_id) but the delivery report then fails with **"Template ID Missing or Invalid Template"** — it only takes OTP-section templates. No SMS arrives despite success logs.
+- Fix that works (verified live 22 Jul 2026): `POST /api/v5/flow/` with `{template_id, short_url:"0", recipients:[{mobiles:"91XXXXXXXXXX", var1:"<otp>"}]}` — same env `MSG91_OTP_TEMPLATE_ID`, delivers via the approved DLT mapping. `sendOtp()` in sms.ts now does this; the var name is **var1**, not otp.
+- We generate + verify OTPs ourselves in `otp_sessions`; MSG91 is delivery-only, so any SMS route works.
 
-**Quirks / lessons:**
-- Legacy `balance.php?type=4` returns `{"msg":"418","msgType":"error"}` even when the key works on v5/v2 — do NOT treat 418 as a broken key; it's a legacy-endpoint red herring.
-- Env: `MSG91_OTP_TEMPLATE_ID` (new) falls back to legacy `MSG91_TEMPLATE_ID` (old-era EC2 .env may still carry it). `MSG91_SENDER_ID` ≈ KRIPLA. OTP needs authkey+template; transactional needs authkey+sender.
-- **Real MSG91 keys are set in the dev workspace** — any payment/notify test with a plausible 10-digit number can send a REAL SMS. For shape tests use impossible recipients like `123` (MSG91 queues then drops; nobody receives).
-- MSG91 accepts sends even for garbage numbers (`type:"success"`), so API acceptance ≠ delivery; delivery failures (DLT text mismatch, blocked IP on prod) appear in MSG91 DLR + our `[SMS-FAILED]`/`[MSG91-OTP-FAILED]` logs.
-- Receipt SMS text must match the owner's DLT-approved templates or operators silently drop at delivery stage.
+## Why: accept-time success ≠ delivery
+MSG91 queues first, validates template/DLT at delivery. **Never trust `type:success`** — confirm on the phone or in dashboard delivery report. Report/panel APIs (delivery logs, `otp/templates` list, balance.php → 418) are panel-auth only → 401/junk with authkey; delivery status is dashboard-only.
 
-## Minting a test login WITHOUT sending real SMS
-`POST /auth/send-otp` fires a REAL MSG91 SMS in dev (keys are live) — never call it with a plausible number. To get a real user token for e2e/curl tests, bypass it: `INSERT INTO otp_sessions (phone, otp_code, purpose, expires_at) VALUES ('9998887771','123456','register', now() + interval '10 minutes')` then `POST /auth/verify-otp` with that phone/otp (+ name/email for register) — verify-otp only checks the table. Clean up users/otp_sessions rows after.
+## Useful authkey-readable endpoints (worked!)
+- `GET /api/v5/flows` — lists all flow templates (id + name).
+- `GET /api/v5/sms/getTemplateVersions?template_id=<id>` — full template text, sender, DLT_ID, `dlt_verified` (10=approved; 5 + dlt_reason "Template not matched on DLT" = unusable).
 
-## IP Security silent drop (July 2026)
-MSG91 IP Security ON → API still returns type:success but delivery report shows "IP not whitelisted" and SMS is silently dropped. Symptom: [MSG91-OTP-SENT] in logs, no SMS on phone. Fix: dashboard → Settings → IP Security → disable (Brevo precedent) or whitelist EC2 IP (breaks if IP changes). API-side report endpoints 401 — delivery status only visible in dashboard.
+## Account facts
+- Approved: "Otp" flow (68395f49…, KRIPLA header, Kriparti wording) = current `MSG91_OTP_TEMPLATE_ID`.
+- "BCPL" flow (68306c2d…) is **DLT-rejected** ("Template not matched on DLT") — players see sender KRIPLA/"Team, Kriparti" until owner gets a BCPL-worded template approved on the DLT portal, then update env.
+- IP Security setting silently drops accepted messages ("IP not whitelisted" in dashboard) — keep it OFF (Replit/EC2 IPs vary). Same class of issue as Brevo allowlist.
+
+## How to apply / test safely
+- Workspace dev has REAL keys → flow API sends REAL SMS. Shape-test only with impossible numbers like `91123`; end-to-end test only to owner's phone (8368444754) with his OK. Dev OTP readable from `otp_sessions` — delivery not needed for flow testing.
+- Notification SMS (`sendSms`, v2 sendsms route 4, MSG91_SENDER_ID) still unproven for delivery — same DLT matching risk; verify on dashboard when it matters.
