@@ -17,3 +17,6 @@ SMS/OTP goes through MSG91 (owner's DLT templates + balance). Two endpoints, bot
 
 ## Minting a test login WITHOUT sending real SMS
 `POST /auth/send-otp` fires a REAL MSG91 SMS in dev (keys are live) — never call it with a plausible number. To get a real user token for e2e/curl tests, bypass it: `INSERT INTO otp_sessions (phone, otp_code, purpose, expires_at) VALUES ('9998887771','123456','register', now() + interval '10 minutes')` then `POST /auth/verify-otp` with that phone/otp (+ name/email for register) — verify-otp only checks the table. Clean up users/otp_sessions rows after.
+
+## IP Security silent drop (July 2026)
+MSG91 IP Security ON → API still returns type:success but delivery report shows "IP not whitelisted" and SMS is silently dropped. Symptom: [MSG91-OTP-SENT] in logs, no SMS on phone. Fix: dashboard → Settings → IP Security → disable (Brevo precedent) or whitelist EC2 IP (breaks if IP changes). API-side report endpoints 401 — delivery status only visible in dashboard.
