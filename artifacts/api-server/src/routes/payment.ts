@@ -12,7 +12,7 @@ import { sendEmail, tplPhase1Receipt, tplPhase2Receipt } from "../lib/email";
 import { sendSms } from "../lib/sms";
 import { sendWhatsApp, WA } from "../lib/whatsapp";
 import { logNotifications } from "../lib/notify";
-import { FEES } from "./register";
+import { FEES, assignRegNumber } from "./register";
 import { z } from "zod";
 
 const router = Router();
@@ -22,11 +22,12 @@ const API_URL  = process.env.API_URL  || "https://elite-user-experience.replit.a
 
 async function notifyPhase1Success(
   user: { id: string; name: string; email: string; phone: string },
-  reg:  { id: string; role: string; trialCity: string | null },
+  reg:  { id: string; role: string; trialCity: string | null; regNumber?: string | null },
   amount: number,
 ) {
-  const email = tplPhase1Receipt(user.name, reg.role, amount, reg.id, reg.trialCity ?? "TBD");
-  const smsMsg = `Welcome to BCPL T20 Season 5! Registered as ${reg.role.toUpperCase()}. Reg ID: ${reg.id.slice(0,8).toUpperCase()}. Upload trial video within 15 days. #OfficeSeStadiumtak`;
+  const regNo = reg.regNumber ?? reg.id.slice(0, 8).toUpperCase();
+  const email = tplPhase1Receipt(user.name, reg.role, amount, regNo, reg.trialCity ?? "TBD");
+  const smsMsg = `Welcome to BCPL T20 Season 5! Registered as ${reg.role.toUpperCase()}. Reg No: ${regNo}. Upload trial video within 15 days. #OfficeSeStadiumtak`;
 
   // Send on all channels in parallel (helpers never throw), then record the
   // REAL outcome of each attempt in notification_logs.
@@ -126,13 +127,17 @@ router.post("/phase1/verify", requireAuth, async (req: AuthRequest, res) => {
     .where(and(eq(registrationsTable.id, reg.id), eq(registrationsTable.phase1Status, "pending")))
     .returning({ id: registrationsTable.id });
 
+  // Payment confirmed → hand out the sequential player number (idempotent:
+  // returns the existing number when the webhook already assigned it).
+  const regNumber = await assignRegNumber(reg.id);
+
   // Fire notifications async — only if this call confirmed the payment
   // (skips duplicates when the webhook already confirmed & notified)
   if (flipped[0]) {
-    notifyPhase1Success(user, { id: reg.id, role: reg.role, trialCity: reg.trialCity }, parseInt(pay.amount));
+    notifyPhase1Success(user, { id: reg.id, role: reg.role, trialCity: reg.trialCity, regNumber }, parseInt(pay.amount));
   }
 
-  res.json({ success: true, registrationId: reg.id });
+  res.json({ success: true, registrationId: reg.id, regNumber });
 });
 
 // ── PHASE 2 ──────────────────────────────────────────────────────────────────
@@ -272,6 +277,7 @@ router.post("/webhook", async (req, res) => {
           // Only notify when this webhook actually confirmed the registration
           // (avoids duplicates when the redirect /verify flow already notified)
           if (flipped[0]) {
+            const regNumber = await assignRegNumber(updated[0].registrationId);
             const rows = await db.select({ pay: phase1PaymentsTable, reg: registrationsTable, user: usersTable })
               .from(phase1PaymentsTable)
               .innerJoin(registrationsTable, eq(phase1PaymentsTable.registrationId, registrationsTable.id))
@@ -279,7 +285,7 @@ router.post("/webhook", async (req, res) => {
               .where(eq(phase1PaymentsTable.cashfreeOrderId, orderId)).limit(1);
             if (rows[0]) {
               const { pay, reg, user } = rows[0];
-              notifyPhase1Success(user, { id: reg.id, role: reg.role, trialCity: reg.trialCity }, parseInt(pay.amount))
+              notifyPhase1Success(user, { id: reg.id, role: reg.role, trialCity: reg.trialCity, regNumber }, parseInt(pay.amount))
                 .catch((e) => console.error("[WEBHOOK] phase1 notify error", e));
             }
           }

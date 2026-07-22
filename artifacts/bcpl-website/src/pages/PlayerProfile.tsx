@@ -194,7 +194,10 @@ export function PlayerProfile() {
   const reg    = data?.registration;
   const user   = data?.user;
   // Real sequential ID (BCPL-DEL-1) from API; fallback to short UUID for old cached data
-  const regId  = reg?.regNumber ?? (reg?.id ? 'BCPL-' + reg.id.slice(0, 8).toUpperCase() : '—');
+  // Sequential player number (BCPL-DEL-1) is assigned when Phase 1 payment
+  // succeeds. Unpaid players get a neutral support reference — never a fake
+  // BCPL-looking ID.
+  const regId  = reg?.regNumber ?? (reg?.id ? 'REF-' + reg.id.slice(0, 6).toUpperCase() : '—');
 
   // ── Loading ────────────────────────────────────────────────────────────────
   if (loading) return (

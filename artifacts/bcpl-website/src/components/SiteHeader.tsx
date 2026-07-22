@@ -50,11 +50,11 @@ export function SiteHeader({ active }: { active?: string }) {
       <style>{CSS}</style>
 
       {/* ══ TICKER ══ */}
-      <div style={{ background: "linear-gradient(90deg,#C94E0E,#FF7A29)", height: 34, overflow: "hidden", display: "flex", alignItems: "center" }}>
+      <div style={{ background: "#081525", borderBottom: "1px solid rgba(232,178,61,.25)", height: 34, overflow: "hidden", display: "flex", alignItems: "center" }}>
         <div style={{ display: "flex", whiteSpace: "nowrap", animation: "shTicker 36s linear infinite" }}>
           {[0, 1].map(i => (
-            <span key={i} style={{ fontFamily: "'Montserrat',sans-serif", fontSize: 11, fontWeight: 800, letterSpacing: ".1em", color: "#fff", paddingRight: 80 }}>
-              🏏 SEASON 5 OPEN &nbsp;·&nbsp; ₹6 CR+ PRIZE POOL &nbsp;·&nbsp; 10 FRANCHISE TEAMS &nbsp;·&nbsp; 50+ CITIES &nbsp;·&nbsp; REGISTER AT ₹299 &nbsp;·&nbsp; SOURAV GANGULY &nbsp;·&nbsp; #OfficeSeStadiumtak &nbsp;&nbsp;&nbsp;
+            <span key={i} style={{ fontFamily: "'Montserrat',sans-serif", fontSize: 11, fontWeight: 800, letterSpacing: ".14em", color: "#E8B23D", paddingRight: 80 }}>
+              🏏 SEASON 5 OPEN <span style={{ color: "rgba(232,178,61,.35)" }}>&nbsp;·&nbsp;</span> ₹6 CR+ PRIZE POOL <span style={{ color: "rgba(232,178,61,.35)" }}>&nbsp;·&nbsp;</span> 10 FRANCHISE TEAMS <span style={{ color: "rgba(232,178,61,.35)" }}>&nbsp;·&nbsp;</span> 50+ CITIES <span style={{ color: "rgba(232,178,61,.35)" }}>&nbsp;·&nbsp;</span> REGISTER AT ₹299 <span style={{ color: "rgba(232,178,61,.35)" }}>&nbsp;·&nbsp;</span> SOURAV GANGULY <span style={{ color: "rgba(232,178,61,.35)" }}>&nbsp;·&nbsp;</span> #OfficeSeStadiumtak &nbsp;&nbsp;&nbsp;
             </span>
           ))}
         </div>

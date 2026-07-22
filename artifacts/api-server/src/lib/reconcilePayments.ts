@@ -9,6 +9,7 @@ import {
 } from "@workspace/db/schema";
 import { eq, and, or, isNull, lt } from "drizzle-orm";
 import { getOrderStatus, getPaymentStatus, hasCashfreeCredentials } from "./cashfree";
+import { assignRegNumber } from "../routes/register";
 import { logger } from "./logger";
 
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
@@ -31,6 +32,10 @@ async function markSuccess(phase: Phase, orderId: string, paymentId?: string) {
         eq(registrationsTable.id, updated[0].registrationId),
         eq(registrationsTable.phase1Status, "pending"),
       ));
+    // Reconciled successes must get their sequential player number too — the
+    // player DID pay, they just missed the webhook/verify path.
+    try { await assignRegNumber(updated[0].registrationId); }
+    catch (e) { logger.error({ err: e, orderId }, "Reg number assignment failed during reconcile"); }
   } else {
     await db.update(registrationsTable)
       .set({ phase2Status: "payment_done", updatedAt: new Date() })

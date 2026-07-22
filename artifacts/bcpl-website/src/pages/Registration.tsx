@@ -165,6 +165,7 @@ export function Registration() {
   const [payOtp, setPayOtp]             = useState('');
   const [payOtpLoading, setPayOtpLoading] = useState(false);
   const [payOtpError, setPayOtpError]   = useState('');
+  const [payOtpAlreadyReg, setPayOtpAlreadyReg] = useState(false);
   const [payOtpTimer, setPayOtpTimer]   = useState(0);
 
   // Registration status for already-registered/logged-in players
@@ -322,13 +323,17 @@ export function Registration() {
   }
 
   const handlePayOtpSend = async () => {
-    setPayOtpLoading(true); setPayOtpError('');
+    setPayOtpLoading(true); setPayOtpError(''); setPayOtpAlreadyReg(false);
     try {
       const r = await sendOtp(phone, 'register');
       if (r.devOtp) console.info('[DEV OTP]', r.devOtp);
       setPayOtpStep('otp');
       startPayOtpTimer();
-    } catch (e: any) { setPayOtpError(e.message ?? 'Failed to send OTP'); }
+    } catch (e: any) {
+      // Number already registered — no OTP was sent; guide the player to login
+      if (e?.code === 'ALREADY_REGISTERED' || e?.status === 409) setPayOtpAlreadyReg(true);
+      setPayOtpError(e.message ?? 'Failed to send OTP');
+    }
     finally { setPayOtpLoading(false); }
   };
 
@@ -692,13 +697,9 @@ export function Registration() {
                 </div>
                 </>)}
 
-                {/* Already registered? */}
-                {!loggedIn ? (
-                  <div style={{ marginTop:20, padding:'12px 16px', background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.08)', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:10 }}>
-                    <span style={{ fontSize:12, color:'rgba(255,255,255,0.45)' }}>Already registered Phase 1? Login to upload video or check status.</span>
-                    <button onClick={() => { setShowLogin(true); setLoginStep('phone'); setLoginPhone(''); setLoginOtp(''); }} style={{ background:'none', border:'1px solid rgba(255,122,41,0.4)', color:'#FF7A29', fontSize:11, fontWeight:700, padding:'6px 14px', cursor:'pointer', fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em', flexShrink:0, borderRadius:6 }}>LOGIN →</button>
-                  </div>
-                ) : (
+                {/* Status-aware section — appears after login (via the header
+                    login or the already-registered redirect in the OTP modal) */}
+                {!loggedIn ? null : (
                   /* ── STATUS-AWARE SECTION (shown after login) ── */
                   <div style={{ marginTop:20 }}>
                     {/* Logged-in banner */}
@@ -1180,7 +1181,13 @@ export function Registration() {
                 <span style={{ padding:'0 12px', height:46, display:'flex', alignItems:'center', background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,122,41,0.25)', borderRight:'none', fontSize:14, fontWeight:700, color:'rgba(255,255,255,0.6)', flexShrink:0 }}>+91</span>
                 <div className="field-inp" style={{ flex:1, display:'flex', alignItems:'center', borderLeft:'none', pointerEvents:'none', opacity:.7 }}>{phone}</div>
               </div>
-              {payOtpError && <div style={{ fontSize:12, color:'#EF4444', marginBottom:10, fontWeight:600 }}>⚠ {payOtpError}</div>}
+              {payOtpError && <div style={{ fontSize:12, color: payOtpAlreadyReg ? '#FBB724' : '#EF4444', marginBottom:10, fontWeight:600 }}>⚠ {payOtpError}</div>}
+              {payOtpAlreadyReg && (
+                <button onClick={() => { setShowPayOtp(false); setPayOtpAlreadyReg(false); setPayOtpError(''); setShowLogin(true); setLoginStep('phone'); setLoginPhone(phone); setLoginOtp(''); }}
+                  style={{ width:'100%', padding:'13px 0', marginBottom:10, background:'linear-gradient(135deg,#22C55E,#16A34A)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', letterSpacing:'.04em' }}>
+                  LOGIN & CONTINUE →
+                </button>
+              )}
               <button disabled={payOtpLoading} onClick={handlePayOtpSend}
                 style={{ width:'100%', padding:'13px 0', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', opacity:payOtpLoading?0.5:1 }}>
                 {payOtpLoading ? '⏳ Sending...' : `Send OTP to +91 ${phone} →`}

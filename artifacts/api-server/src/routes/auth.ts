@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
-import { usersTable, otpSessionsTable } from "@workspace/db/schema";
+import { usersTable, otpSessionsTable, registrationsTable } from "@workspace/db/schema";
 import { eq, and, gt, isNull } from "drizzle-orm";
 import { sendOtp, otpConfigured } from "../lib/sms";
 import { signToken } from "../lib/auth";
@@ -23,6 +23,27 @@ router.post("/send-otp", async (req, res) => {
   if (!parsed.success) return void res.status(400).json({ error: parsed.error.issues[0].message });
 
   const { phone, purpose } = parsed.data;
+
+  // Gate BEFORE sending any SMS — don't waste an OTP on a doomed flow.
+  const [existingUser] = await db.select().from(usersTable).where(eq(usersTable.phone, phone)).limit(1);
+  const existingReg = existingUser
+    ? (await db.select({ id: registrationsTable.id }).from(registrationsTable)
+        .where(eq(registrationsTable.userId, existingUser.id)).limit(1))[0]
+    : undefined;
+
+  if (purpose === "register" && existingReg) {
+    return void res.status(409).json({
+      error: "This mobile number is already registered for Season 5. Please login to continue where you left off.",
+      code:  "ALREADY_REGISTERED",
+    });
+  }
+  if (purpose === "login" && !existingReg) {
+    return void res.status(404).json({
+      error: "No registration found for this number. Please register first.",
+      code:  "NOT_REGISTERED",
+    });
+  }
+
   const otp       = generateOtp();
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 min
 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
-import { getRegistrationStatus, initiateKyc, verifyKycOtp } from '../lib/api';
+import { getRegistrationStatus, initiateKyc, verifyKycOtp, getKycProgress, kycAadhaarOtp, kycVerifyPan } from '../lib/api';
 
 const BASE = import.meta.env.BASE_URL;
 
@@ -74,6 +74,8 @@ export function Phase2KYC() {
   const [kycStatus, setKycStatus]       = useState<'pending'|'verified'|null>(null);
   const [panAutoVerified, setPanAutoVerified] = useState(true);
   const [kycMsg, setKycMsg]             = useState('');
+  // Resume-mid-way: which single step is left for this player
+  const [resumeMode, setResumeMode]     = useState<'none'|'aadhaar'|'pan'>('none');
   // OTP step
   const [kycId, setKycId]               = useState('');
   const [aadhaarRefId, setAadhaarRefId] = useState('');
@@ -92,9 +94,35 @@ export function Phase2KYC() {
           if (status.phase2Status === 'kyc_done') { setLoadState('already_done'); return; }
           setLoadState('not_eligible'); return;
         }
-        setRegId(status.registrationId || '');
+        const rid = status.registrationId || '';
+        setRegId(rid);
         setCity(status.trialCity || '');
         setRole(status.role || '');
+        // Resume support: find out what's already done so the player never
+        // re-enters verified documents (and is never re-billed).
+        try {
+          const prog = await getKycProgress(rid);
+          if (prog.profile) {
+            if (prog.profile.tshirtSize)        setTshirt(prog.profile.tshirtSize);
+            if (prog.profile.emergencyName)     setEcName(prog.profile.emergencyName);
+            if (prog.profile.emergencyRelation) setEcRel(prog.profile.emergencyRelation);
+            if (prog.profile.emergencyPhone && /^\d{10}$/.test(prog.profile.emergencyPhone)) setEcPhone(prog.profile.emergencyPhone);
+            if (prog.profile.bloodGroup)        setBloodGroup(prog.profile.bloodGroup);
+          }
+          if (prog.hasKyc && prog.profession) setProfession(prog.profession);
+          if (prog.hasKyc && prog.status === 'pending') {
+            if (!prog.aadhaarVerified) {
+              setResumeMode('aadhaar');                        // only Aadhaar OTP left
+              setPanAutoVerified(prog.panVerified !== false);
+            } else if (!prog.panVerified) {
+              setResumeMode('pan');                            // only PAN left
+            } else {
+              setKycStatus('pending');                         // both done, awaiting sync
+            }
+          } else if (prog.hasKyc && prog.status === 'verified') {
+            setKycStatus('verified');
+          }
+        } catch {}
         setLoadState('ok');
       } catch { setLoadState('error'); }
     })();
@@ -177,6 +205,66 @@ export function Phase2KYC() {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  // ── Resume-mid-way handlers ────────────────────────────────────────────────
+  // Aadhaar-only resume: NEVER re-runs the billed PAN check.
+  const handleAadhaarResume = async () => {
+    if (!validateAadhaar(aadhaar)) { setAadhaarErr('Aadhaar must be 12 digits'); return; }
+    setSubmitting(true); setSubmitErr('');
+    try {
+      const result = await kycAadhaarOtp({ registrationId: regId, aadhaarNumber: aadhaar.replace(/\s/g, '') });
+      setKycMsg(result.message);
+      if (result.status === 'OTP_SENT' && result.aadhaarRefId) {
+        setPanAutoVerified(result.panVerified !== false);
+        setAadhaarRefId(result.aadhaarRefId);
+      } else if (result.status === 'verified') {
+        setKycStatus('verified');
+        setTimeout(() => { window.location.href = BASE + 'register/phase2/kyc-approved'; }, 2000);
+      } else if (result.status === 'AADHAAR_DONE') {
+        setResumeMode('pan');
+      }
+    } catch (e: any) {
+      setSubmitErr(e.message || 'Could not send OTP. Please try again.');
+    } finally { setSubmitting(false); }
+  };
+
+  // PAN-only resume for players whose Aadhaar OTP is already done.
+  const handlePanResume = async () => {
+    if (!validatePan(pan)) { setPanErr('Enter a valid PAN (e.g. ABCDE1234F)'); return; }
+    setSubmitting(true); setSubmitErr('');
+    try {
+      const result = await kycVerifyPan({ registrationId: regId, panNumber: pan.toUpperCase() });
+      setKycMsg(result.message);
+      if (result.status === 'verified') {
+        setKycStatus('verified');
+        setTimeout(() => { window.location.href = BASE + 'register/phase2/kyc-approved'; }, 2000);
+      } else if (result.status === 'MANUAL_REVIEW') {
+        setKycStatus('pending');
+      } else if (result.status === 'PAN_VERIFIED') {
+        setResumeMode('aadhaar');   // PAN done — Aadhaar OTP still pending
+        setPanAutoVerified(true);
+      }
+    } catch (e: any) {
+      setSubmitErr(e.message || 'PAN verification failed. Please try again.');
+    } finally { setSubmitting(false); }
+  };
+
+  // OTP "Resend" — Aadhaar OTP only. The old path re-ran the whole initiate
+  // call (including a freshly billed PAN check) on every click.
+  const handleOtpResend = async () => {
+    if (!validateAadhaar(aadhaar)) {
+      setSubmitErr('Re-enter your 12-digit Aadhaar to resend the OTP.');
+      setAadhaarRefId(''); setResumeMode('aadhaar');
+      return;
+    }
+    setSubmitting(true); setSubmitErr('');
+    try {
+      const result = await kycAadhaarOtp({ registrationId: regId, aadhaarNumber: aadhaar.replace(/\s/g, '') });
+      if (result.status === 'OTP_SENT' && result.aadhaarRefId) setAadhaarRefId(result.aadhaarRefId);
+      else setSubmitErr(result.message || 'Could not resend OTP.');
+    } catch (e: any) { setSubmitErr(e.message || 'Could not resend OTP.'); }
+    finally { setSubmitting(false); }
   };
 
   const handleOtpVerify = async () => {
@@ -356,11 +444,71 @@ export function Phase2KYC() {
 
               <div style={{ marginTop:16, textAlign:'center', fontSize:12, color:'rgba(255,255,255,0.3)' }}>
                 OTP expires in 10 minutes. Didn't receive?{' '}
-                <button onClick={handleSubmit} disabled={submitting} style={{ background:'none', border:'none', color: submitting ? 'rgba(255,255,255,0.3)' : '#FF7A29', cursor: submitting ? 'wait' : 'pointer', fontSize:12, fontWeight:700, padding:0 }}>{submitting ? 'Resending…' : 'Resend'}</button>
+                <button onClick={handleOtpResend} disabled={submitting} style={{ background:'none', border:'none', color: submitting ? 'rgba(255,255,255,0.3)' : '#FF7A29', cursor: submitting ? 'wait' : 'pointer', fontSize:12, fontWeight:700, padding:0 }}>{submitting ? 'Resending…' : 'Resend'}</button>
               </div>
               {submitErr && (
                 <div style={{ fontSize:11, color:'#EF4444', marginTop:10, textAlign:'center' }}>⚠ {submitErr}</div>
               )}
+            </div>
+          </div>
+        ) : resumeMode === 'aadhaar' ? (
+          /* ── RESUME: only the Aadhaar OTP step is left ── */
+          <div style={{ background:'#0A1727', border:'1px solid rgba(232,178,61,0.28)', borderRadius:12, padding:'32px 24px', marginBottom:32 }}>
+            <div style={{ textAlign:'center', marginBottom:24 }}>
+              <div style={{ fontSize:40, marginBottom:12 }}>🪪</div>
+              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'#E8B23D', marginBottom:8 }}>Resume Your KYC</div>
+              <div style={{ fontSize:13, color: panAutoVerified ? '#22C55E' : '#FF7A29', fontWeight:600, marginBottom:6 }}>
+                {panAutoVerified ? '✓ PAN already verified — it will not be checked again' : 'PAN is with our team for review — no action needed on PAN'}
+              </div>
+              <div style={{ fontSize:13, color:'rgba(255,255,255,0.55)', maxWidth:420, margin:'0 auto' }}>
+                Only the Aadhaar OTP step is left. For your privacy we never store your Aadhaar number — enter it again to receive a fresh OTP.
+              </div>
+            </div>
+            <div style={{ maxWidth:340, margin:'0 auto' }}>
+              <label style={lbl}>AADHAAR NUMBER *</label>
+              <input
+                style={{ ...inp, borderColor: aadhaarErr ? '#EF4444' : (aadhaar && validateAadhaar(aadhaar) ? '#22C55E' : '#1E293B') }}
+                type="text" inputMode="numeric" maxLength={14} placeholder="XXXX XXXX XXXX"
+                value={aadhaar} onChange={e => { setAadhaar(e.target.value); setAadhaarErr(''); }}
+                onBlur={handleAadhaarBlur}
+              />
+              {aadhaarErr && <div style={{ fontSize:11, color:'#EF4444', marginTop:6 }}>⚠ {aadhaarErr}</div>}
+              {submitErr && <div style={{ fontSize:12, color:'#EF4444', marginTop:10 }}>⚠ {submitErr}</div>}
+              <button className="btn-primary" style={{ marginTop:18, width:'100%', padding:'15px 0', fontSize:14 }}
+                disabled={submitting || !validateAadhaar(aadhaar)} onClick={handleAadhaarResume}>
+                {submitting ? 'SENDING OTP…' : 'SEND AADHAAR OTP →'}
+              </button>
+              <button onClick={() => setResumeMode('none')}
+                style={{ marginTop:12, width:'100%', background:'none', border:'none', color:'rgba(255,255,255,0.35)', fontSize:12, cursor:'pointer' }}>
+                ← Fill the full form again instead
+              </button>
+            </div>
+          </div>
+        ) : resumeMode === 'pan' ? (
+          /* ── RESUME: Aadhaar done, only PAN is left ── */
+          <div style={{ background:'#0A1727', border:'1px solid rgba(34,197,94,0.28)', borderRadius:12, padding:'32px 24px', marginBottom:32 }}>
+            <div style={{ textAlign:'center', marginBottom:24 }}>
+              <div style={{ fontSize:40, marginBottom:12 }}>📋</div>
+              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'#22C55E', marginBottom:8 }}>Almost Done — PAN Verification</div>
+              <div style={{ fontSize:13, color:'#22C55E', fontWeight:600, marginBottom:6 }}>✓ Aadhaar already verified — no OTP needed again</div>
+              <div style={{ fontSize:13, color:'rgba(255,255,255,0.55)', maxWidth:420, margin:'0 auto' }}>
+                Enter your PAN to finish KYC. If the PAN service is down, our team verifies it manually within 24–48 hours.
+              </div>
+            </div>
+            <div style={{ maxWidth:340, margin:'0 auto' }}>
+              <label style={lbl}>PAN NUMBER *</label>
+              <input
+                style={{ ...inp, textTransform:'uppercase', borderColor: panErr ? '#EF4444' : (pan && validatePan(pan) ? '#22C55E' : '#1E293B') }}
+                type="text" maxLength={10} placeholder="ABCDE1234F"
+                value={pan} onChange={e => { setPan(e.target.value.toUpperCase()); setPanErr(''); }}
+                onBlur={handlePanBlur}
+              />
+              {panErr && <div style={{ fontSize:11, color:'#EF4444', marginTop:6 }}>⚠ {panErr}</div>}
+              {submitErr && <div style={{ fontSize:12, color:'#EF4444', marginTop:10 }}>⚠ {submitErr}</div>}
+              <button className="btn-primary" style={{ marginTop:18, width:'100%', padding:'15px 0', fontSize:14 }}
+                disabled={submitting || !validatePan(pan)} onClick={handlePanResume}>
+                {submitting ? 'VERIFYING…' : 'VERIFY PAN & FINISH →'}
+              </button>
             </div>
           </div>
         ) : (

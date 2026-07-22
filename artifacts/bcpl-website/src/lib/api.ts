@@ -36,7 +36,10 @@ async function req<T = unknown>(
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: res.statusText }));
-    throw new Error((err as any).error ?? res.statusText);
+    const e = new Error((err as any).error ?? res.statusText) as Error & { status?: number; code?: string };
+    e.status = res.status;
+    e.code   = (err as any).code;
+    throw e;
   }
   return res.json() as Promise<T>;
 }
@@ -308,7 +311,7 @@ export const createPhase1Payment = (registrationId: string) =>
   );
 
 export const verifyPhase1Payment = (orderId: string) =>
-  req<{ success: boolean; registrationId: string }>(
+  req<{ success: boolean; registrationId: string; regNumber?: string | null }>(
     "POST", "/payment/phase1/verify", { orderId }
   );
 
@@ -348,6 +351,34 @@ export const verifyKycOtp = (data: {
 }) => req<{ success: boolean; status: string; message: string }>(
   "POST", "/kyc/verify-otp", data
 );
+
+/** Where the player left off in KYC — powers the resume-mid-way flow. */
+export const getKycProgress = (registrationId: string) =>
+  req<{
+    hasKyc: boolean;
+    status?: string;
+    panVerified?: boolean;
+    aadhaarVerified?: boolean;
+    aadhaarParked?: boolean;
+    profession?: string;
+    profile?: {
+      tshirtSize?: string | null; emergencyName?: string | null;
+      emergencyRelation?: string | null; emergencyPhone?: string | null;
+      bloodGroup?: string | null;
+    } | null;
+  }>("GET", `/kyc/progress/${registrationId}`);
+
+/** (Re)send Aadhaar OTP only — never re-runs the billed PAN check. */
+export const kycAadhaarOtp = (data: { registrationId: string; aadhaarNumber: string }) =>
+  req<{ success: boolean; status: string; aadhaarRefId?: string; panVerified?: boolean; message: string }>(
+    "POST", "/kyc/aadhaar-otp", data
+  );
+
+/** Verify PAN only — for players whose Aadhaar OTP is already done. */
+export const kycVerifyPan = (data: { registrationId: string; panNumber: string }) =>
+  req<{ success: boolean; status: string; message: string }>(
+    "POST", "/kyc/verify-pan", data
+  );
 
 /* ─── Teams & Squads ───────────────────────────────── */
 

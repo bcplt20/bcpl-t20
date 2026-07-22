@@ -46,10 +46,11 @@ const FAQS = [
 ];
 
 /* Announcement banners that rotate */
+/* Announcement strip — one consistent premium navy/gold treatment */
 const BANNERS = [
-  { text:"🎁 Refer a friend and get ₹50 cashback on your next phase fee!", cta:"Refer Now", color:"#1a3a1a", border:"#22C55E", textCol:"#22C55E", ctaCol:"#22C55E" },
-  { text:"⏰ Last date for Phase 1 registration is 28th February 2027 — Don't miss out!", cta:"Register Now", color:"#1a1a0a", border:"#FF7A29", textCol:"#FF7A29", ctaCol:"#FF7A29" },
-  { text:"🏏 New cities added! Trials now in 50+ cities across India. Check your city →", cta:"View Cities", color:"#0a1a2e", border:"#3B82F6", textCol:"#60A5FA", ctaCol:"#60A5FA" },
+  { text:"🎁 Refer a friend and get ₹50 cashback on your next phase fee!", cta:"Refer Now" },
+  { text:"⏰ Last date for Phase 1 registration is 28th February 2027 — Don't miss out!", cta:"Register Now" },
+  { text:"🏏 New cities added! Trials now in 50+ cities across India. Check your city →", cta:"View Cities" },
 ];
 
 /* Season timeline */
@@ -164,7 +165,7 @@ export function Home() {
         @keyframes shimmer  {0%{left:-100%}100%{left:200%}}
         @keyframes float    {0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
         @keyframes glow     {0%,100%{text-shadow:0 0 20px rgba(255,122,41,.3)}50%{text-shadow:0 0 40px rgba(255,122,41,.7),0 0 80px rgba(255,122,41,.3)}}
-        @keyframes s5spin   {0%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}100%{transform:rotate(-2deg)}}
+        @keyframes s5sheen  {0%{background-position:200% center}100%{background-position:-200% center}}
         @keyframes tlPop    {from{opacity:0;transform:scale(.85) translateY(12px)}to{opacity:1;transform:scale(1) translateY(0)}}
         @keyframes railGrow {from{height:0}to{height:100%}}
 
@@ -236,7 +237,6 @@ export function Home() {
         .shim-gold{background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradMove 3s ease infinite;}
 
         /* S5 badge glow */
-        .s5-badge{animation:s5spin 3s ease-in-out infinite;}
 
         /* S5 nav badge pulse */
         @keyframes s5NavPulse{0%,100%{box-shadow:0 0 6px rgba(232,178,61,.3)}50%{box-shadow:0 0 16px rgba(232,178,61,.7),0 0 28px rgba(232,178,61,.3)}}
@@ -300,15 +300,15 @@ export function Home() {
       {/* ══ SHARED HEADER (ticker + navbar) ══ */}
       <SiteHeader active="Home" />
 
-      {/* ══ ANNOUNCEMENT BANNER ══ */}
-      <div style={{ background:B.color, borderBottom:`1px solid ${B.border}33`, padding:"10px 0", overflow:"hidden" }}>
+      {/* ══ ANNOUNCEMENT BANNER — navy glass + gold accents ══ */}
+      <div style={{ background:"linear-gradient(90deg,#0A1727 0%,#0D1E36 55%,#0A1727 100%)", borderBottom:"1px solid rgba(232,178,61,.22)", padding:"10px 0", overflow:"hidden" }}>
         <div className="W" style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:12, flexWrap:"wrap" }}>
-          <span className={bannerOut?"banner-out":"banner-in"} style={{ fontSize:"clamp(12px,2vw,13px)", color:B.textCol, fontWeight:600, flex:1, minWidth:0 }}>{B.text}</span>
-          <button onClick={()=>navigate("/register")} style={{ padding:"5px 16px", borderRadius:8, border:`1px solid ${B.ctaCol}55`, background:"transparent", color:B.ctaCol, fontSize:12, fontWeight:700, cursor:"pointer", whiteSpace:"nowrap", flexShrink:0 }}>{B.cta} →</button>
+          <span className={bannerOut?"banner-out":"banner-in"} style={{ fontSize:"clamp(12px,2vw,13px)", color:"rgba(240,237,232,.88)", fontWeight:600, flex:1, minWidth:0 }}>{B.text}</span>
+          <button onClick={()=>navigate("/register")} style={{ padding:"5px 16px", borderRadius:8, border:"1px solid rgba(232,178,61,.45)", background:"rgba(232,178,61,.06)", color:"#E8B23D", fontSize:12, fontWeight:700, cursor:"pointer", whiteSpace:"nowrap", flexShrink:0 }}>{B.cta} →</button>
           {/* Dots */}
           <div style={{ display:"flex", gap:5, flexShrink:0 }}>
             {BANNERS.map((_,i)=>(
-              <button key={i} onClick={()=>setBannerIdx(i)} style={{ width:i===bannerIdx?20:6, height:6, borderRadius:3, border:"none", background:i===bannerIdx?B.ctaCol:"rgba(255,255,255,.2)", cursor:"pointer", padding:0, transition:"width .3s,background .3s" }}/>
+              <button key={i} onClick={()=>setBannerIdx(i)} style={{ width:i===bannerIdx?20:6, height:6, borderRadius:3, border:"none", background:i===bannerIdx?"#E8B23D":"rgba(255,255,255,.2)", cursor:"pointer", padding:0, transition:"width .3s,background .3s" }}/>
             ))}
           </div>
         </div>
@@ -334,18 +334,18 @@ export function Home() {
 
             {/* Left: Text */}
             <div style={{ flex:1 }}>
-              {/* SEASON 5 GLORIFIED BADGE */}
+              {/* SEASON 5 BADGE — premium navy glass with refined gold */}
               <div style={{ display:"inline-flex", alignItems:"center", gap:12, marginBottom:20 }}>
-                <div className="s5-badge" style={{ display:"inline-flex", alignItems:"center", gap:10, background:"linear-gradient(135deg,rgba(232,178,61,.15),rgba(232,178,61,.05))", border:"1.5px solid rgba(232,178,61,.5)", borderRadius:16, padding:"8px 18px", boxShadow:"0 0 24px rgba(232,178,61,.2), inset 0 1px 0 rgba(232,178,61,.3)" }}>
-                  <span style={{ fontSize:18, lineHeight:1 }}>🏆</span>
+                <div className="s5-badge" style={{ display:"inline-flex", alignItems:"center", gap:12, background:"linear-gradient(135deg,rgba(10,23,39,.92),rgba(13,30,54,.78))", border:"1px solid rgba(232,178,61,.38)", borderRadius:12, padding:"9px 18px", boxShadow:"0 10px 30px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06)", backdropFilter:"blur(8px)" }}>
+                  <img src={import.meta.env.BASE_URL + "bcpl-assets/bcpl-ball-clean.png"} alt="" aria-hidden="true" style={{ width:22, height:22, objectFit:"contain" }}/>
                   <div>
-                    <div className="mont" style={{ fontWeight:900, fontSize:16, color:"#E8B23D", letterSpacing:".06em", lineHeight:1, animation:"glow 2.5s ease infinite" }}>SEASON 5</div>
-                    <div className="mont" style={{ fontWeight:700, fontSize:9, color:"rgba(232,178,61,.6)", letterSpacing:".12em", textTransform:"uppercase", marginTop:2, lineHeight:1 }}>BCPL · 2026–27</div>
+                    <div className="mont" style={{ fontWeight:900, fontSize:15, letterSpacing:".14em", lineHeight:1, background:"linear-gradient(100deg,#E8B23D 20%,#F7DE9A 40%,#E8B23D 60%)", backgroundSize:"200% auto", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text", animation:"s5sheen 5s linear infinite" }}>SEASON 5</div>
+                    <div className="mont" style={{ fontWeight:700, fontSize:9, color:"rgba(240,237,232,.5)", letterSpacing:".22em", textTransform:"uppercase", marginTop:3, lineHeight:1 }}>BCPL · 2026–27</div>
                   </div>
-                  <div style={{ width:1, height:28, background:"rgba(232,178,61,.3)" }}/>
-                  <div style={{ display:"flex", alignItems:"center", gap:5 }}>
-                    <span style={{ width:6, height:6, borderRadius:"50%", background:"#22C55E", display:"inline-block", animation:"blip 1.2s infinite" }}/>
-                    <span className="mont" style={{ fontSize:10, fontWeight:800, color:"#22C55E", letterSpacing:".1em" }}>REGISTRATIONS OPEN</span>
+                  <div style={{ width:1, height:26, background:"rgba(255,255,255,.12)" }}/>
+                  <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+                    <span style={{ width:6, height:6, borderRadius:"50%", background:"#22C55E", boxShadow:"0 0 8px rgba(34,197,94,.6)", display:"inline-block", animation:"blip 2.4s ease infinite" }}/>
+                    <span className="mont" style={{ fontSize:10, fontWeight:800, color:"rgba(240,237,232,.85)", letterSpacing:".14em" }}>REGISTRATIONS OPEN</span>
                   </div>
                 </div>
               </div>

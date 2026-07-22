@@ -114,7 +114,7 @@ const btn = (text: string, href: string, color = "#FF7A29") =>
   `<a href="${href}" style="display:inline-block;margin-top:16px;background:${color};color:#fff;text-decoration:none;padding:13px 32px;border-radius:8px;font-weight:bold;font-size:14px;letter-spacing:.5px;">${text}</a>`;
 
 // ── Template 1: Phase 1 Registration Confirmed ────────────────────────────────
-export function tplPhase1Receipt(name: string, role: string, amount: number, regId: string, city: string) {
+export function tplPhase1Receipt(name: string, role: string, amount: number, regNo: string, city: string) {
   return {
     subject: "🏏 BCPL T20 Season 5 — Registration Confirmed!",
     htmlContent: wrap(`
@@ -123,7 +123,7 @@ export function tplPhase1Receipt(name: string, role: string, amount: number, reg
         <p style="color:rgba(255,255,255,0.7);margin:0;font-size:14px;">Dear <strong>${name}</strong>, you are registered for BCPL Season 5 Phase 1 trials.</p>
       </div>
       <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
-        <tr><td style="padding:11px;border-bottom:1px solid rgba(255,255,255,0.07);color:rgba(255,255,255,0.5);font-size:13px;">Registration ID</td><td style="padding:11px;border-bottom:1px solid rgba(255,255,255,0.07);color:#fff;font-weight:bold;font-family:monospace;font-size:13px;">${regId.slice(0,8).toUpperCase()}</td></tr>
+        <tr><td style="padding:11px;border-bottom:1px solid rgba(255,255,255,0.07);color:rgba(255,255,255,0.5);font-size:13px;">Registration No.</td><td style="padding:11px;border-bottom:1px solid rgba(255,255,255,0.07);color:#fff;font-weight:bold;font-family:monospace;font-size:13px;">${regNo}</td></tr>
         <tr><td style="padding:11px;border-bottom:1px solid rgba(255,255,255,0.07);color:rgba(255,255,255,0.5);font-size:13px;">Role</td><td style="padding:11px;border-bottom:1px solid rgba(255,255,255,0.07);color:#FF7A29;font-weight:bold;font-size:13px;">${role.toUpperCase()}</td></tr>
         <tr><td style="padding:11px;border-bottom:1px solid rgba(255,255,255,0.07);color:rgba(255,255,255,0.5);font-size:13px;">Trial City</td><td style="padding:11px;border-bottom:1px solid rgba(255,255,255,0.07);color:#fff;font-size:13px;">${city}</td></tr>
         <tr><td style="padding:11px;color:rgba(255,255,255,0.5);font-size:13px;">Amount Paid</td><td style="padding:11px;color:#22C55E;font-weight:bold;font-size:22px;">₹${amount}</td></tr>

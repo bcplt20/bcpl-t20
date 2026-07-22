@@ -1,4 +1,5 @@
-import { Router } from "express";
+import { Router, type Request } from "express";
+import crypto from "node:crypto";
 import { db } from "@workspace/db";
 import {
   registrationsTable, kycRecordsTable,
@@ -213,10 +214,15 @@ router.post("/initiate", requireAuth, async (req: AuthRequest, res) => {
   if (existingKyc && existingKyc.status === "verified") {
     return void res.json({ success: true, kycId: existingKyc.id, status: "verified", message: "KYC already verified." });
   }
+  // Resume-safety: never re-run (and re-bill) a verification that has already
+  // passed. A verified PAN stays verified; a verified Aadhaar stays verified.
+  const skipPan     = existingKyc?.panVerified === true;
+  const skipAadhaar = existingKyc?.aadhaarVerified === true;
+
   const upsertKyc = async (values: { panRef: string; aadhaarRef: string; panVerified: boolean }) => {
     if (existingKyc) {
       const [row] = await db.update(kycRecordsTable)
-        .set({ profession, ...values, status: "pending", aadhaarVerified: false })
+        .set({ profession, ...values, status: "pending", aadhaarVerified: skipAadhaar })
         .where(eq(kycRecordsTable.id, existingKyc.id))
         .returning();
       return row;
@@ -231,10 +237,15 @@ router.post("/initiate", requireAuth, async (req: AuthRequest, res) => {
     return row;
   };
 
-  // Run PAN verify + Aadhaar OTP initiation in parallel
+  // Run PAN verify + Aadhaar OTP initiation in parallel — skipping any paid
+  // vendor call whose successful result is already on file.
   const [panResult, aadhaarResult] = await Promise.all([
-    verifyPan(panNumber, user?.name ?? registrationId),
-    initiateAadhaarOtp(aadhaarNumber),
+    skipPan
+      ? Promise.resolve({ outcome: "valid", referenceId: existingKyc!.panRef ?? `kept_${Date.now()}` } as Awaited<ReturnType<typeof verifyPan>>)
+      : verifyPan(panNumber, user?.name ?? registrationId),
+    skipAadhaar
+      ? Promise.resolve({ referenceId: existingKyc!.aadhaarRef ?? `kept_${Date.now()}` })
+      : initiateAadhaarOtp(aadhaarNumber),
   ]);
 
   // Cashfree explicitly rejected this PAN → genuinely wrong number, block with a clear message
@@ -285,6 +296,21 @@ router.post("/initiate", requireAuth, async (req: AuthRequest, res) => {
   // Store KYC record with panRef + aadhaarRef
   const kyc = await upsertKyc({ panRef, aadhaarRef: aadhaarResult.referenceId, panVerified });
 
+  // Aadhaar was already OTP-verified on a previous attempt — nothing left for
+  // the player to do on that side.
+  if (skipAadhaar) {
+    if (panVerified) {
+      await markKycVerified(kyc.id, registrationId, req.user!.userId);
+      return void res.json({ success: true, kycId: kyc.id, status: "verified", message: "KYC verified! Trial details will be shared when announced." });
+    }
+    return void res.json({
+      success: true,
+      kycId:   kyc.id,
+      status:  "MANUAL_REVIEW",
+      message: "Aadhaar already verified ✓. Your PAN will be checked by our team within 24–48 hours.",
+    });
+  }
+
   res.json({
     success:       true,
     kycId:         kyc.id,
@@ -292,7 +318,7 @@ router.post("/initiate", requireAuth, async (req: AuthRequest, res) => {
     aadhaarRefId:  aadhaarResult.referenceId,
     panVerified,
     message:       panVerified
-      ? "PAN verified ✓. OTP sent to Aadhaar-linked mobile number."
+      ? (skipPan ? "PAN already verified ✓. OTP sent to Aadhaar-linked mobile number." : "PAN verified ✓. OTP sent to Aadhaar-linked mobile number.")
       : "PAN received — our team will verify it. OTP sent to Aadhaar-linked mobile number.",
   });
 });
@@ -311,6 +337,19 @@ router.post("/verify-otp", requireAuth, async (req: AuthRequest, res) => {
   }
 
   const { registrationId, aadhaarRefId, otp } = parsed.data;
+
+  // Ownership guard (IDOR): the registration must belong to the caller
+  const [ownedReg] = await db.select({ id: registrationsTable.id }).from(registrationsTable)
+    .where(and(
+      eq(registrationsTable.id, registrationId),
+      eq(registrationsTable.userId, req.user!.userId),
+    )).limit(1);
+  if (!ownedReg) return void res.status(404).json({ error: "Registration not found." });
+
+  // Throttle OTP guesses per registration (vendor also enforces its own cap)
+  if (!vendorCallAllowed(`votp:${registrationId}`, 10)) {
+    return void res.status(429).json({ error: "Too many attempts. Please wait 10 minutes and try again." });
+  }
 
   // Fetch KYC record
   const [kyc] = await db.select().from(kycRecordsTable)
@@ -376,8 +415,196 @@ router.post("/verify-otp", requireAuth, async (req: AuthRequest, res) => {
   });
 });
 
+// ─── Per-registration throttle for billed vendor calls ───────────────────────
+// Aadhaar OTP sends and PAN lookups cost money per call; cap the damage a
+// stuck client (or an abusive logged-in user) can do. In-memory is fine —
+// single-process server, and the vendor enforces its own harder limits.
+const vendorCallLog = new Map<string, number[]>();
+function vendorCallAllowed(key: string, max = 6, windowMs = 10 * 60_000): boolean {
+  const now = Date.now();
+  const hits = (vendorCallLog.get(key) ?? []).filter(t => now - t < windowMs);
+  if (hits.length >= max) { vendorCallLog.set(key, hits); return false; }
+  hits.push(now);
+  vendorCallLog.set(key, hits);
+  if (vendorCallLog.size > 5000) {
+    for (const [k, v] of vendorCallLog) {
+      if (v.every(t => now - t >= windowMs)) vendorCallLog.delete(k);
+    }
+  }
+  return true;
+}
+
+// ─── Helper: load a registration (ownership-checked) + its newest KYC row ────
+async function loadOwnedKyc(registrationId: string, userId: string) {
+  const [reg] = await db.select().from(registrationsTable).where(and(
+    eq(registrationsTable.id, registrationId),
+    eq(registrationsTable.userId, userId),
+  )).limit(1);
+  if (!reg) return { reg: null, kyc: null };
+  const [kyc] = await db.select().from(kycRecordsTable)
+    .where(eq(kycRecordsTable.registrationId, registrationId))
+    .orderBy(desc(kycRecordsTable.createdAt))
+    .limit(1);
+  return { reg, kyc: kyc ?? null };
+}
+
+// ─── GET /api/kyc/progress/:registrationId ────────────────────────────────────
+// Where did the player leave off? Used by the KYC page to resume mid-way
+// instead of restarting (and re-billing) the whole flow.
+router.get("/progress/:registrationId", requireAuth, async (req: AuthRequest, res) => {
+  const registrationId = String(req.params.registrationId);
+  if (!/^[0-9a-f-]{36}$/i.test(registrationId)) {
+    return void res.status(400).json({ error: "Invalid registrationId" });
+  }
+  const { reg, kyc } = await loadOwnedKyc(registrationId, req.user!.userId);
+  if (!reg) return void res.status(404).json({ error: "Registration not found" });
+
+  const [profile] = await db.select().from(playerProfilesTable)
+    .where(eq(playerProfilesTable.registrationId, registrationId)).limit(1);
+
+  if (!kyc) return void res.json({ hasKyc: false, profile: profile ?? null });
+  res.json({
+    hasKyc:          true,
+    status:          kyc.status,
+    panVerified:     kyc.panVerified,
+    aadhaarVerified: kyc.aadhaarVerified,
+    aadhaarParked:   kyc.aadhaarRef?.startsWith("manual_review") ?? false,
+    profession:      kyc.profession,
+    profile:         profile ?? null,
+  });
+});
+
+// ─── POST /api/kyc/aadhaar-otp ────────────────────────────────────────────────
+// Resume/resend: (re)send the Aadhaar OTP WITHOUT touching PAN — used by the
+// resume flow and the "Resend OTP" button so the PAN check is never re-billed.
+router.post("/aadhaar-otp", requireAuth, async (req: AuthRequest, res) => {
+  const schema = z.object({
+    registrationId: z.string().uuid(),
+    aadhaarNumber:  z.string().regex(/^\d{12}$/, "Aadhaar must be 12 digits"),
+  });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) return void res.status(400).json({ error: parsed.error.issues[0].message });
+
+  const { registrationId, aadhaarNumber } = parsed.data;
+  const { reg, kyc } = await loadOwnedKyc(registrationId, req.user!.userId);
+  if (!reg) return void res.status(404).json({ error: "Registration not found" });
+  if (!kyc) return void res.status(404).json({ error: "No KYC submission found. Please fill the KYC form first." });
+  if (kyc.status === "verified") {
+    return void res.json({ success: true, status: "verified", message: "KYC already verified." });
+  }
+  if (kyc.aadhaarVerified) {
+    return void res.json({ success: true, status: "AADHAAR_DONE", message: "Aadhaar is already verified. Only PAN is pending." });
+  }
+
+  // Billed vendor call — throttle per registration
+  if (!vendorCallAllowed(`aotp:${registrationId}`)) {
+    return void res.status(429).json({ error: "Too many OTP requests. Please wait 10 minutes and try again." });
+  }
+
+  const result = await initiateAadhaarOtp(aadhaarNumber);
+  if (!result) {
+    return void res.status(503).json({
+      error: "Aadhaar OTP service is temporarily unavailable. Please try again in some time — our team also verifies parked documents manually.",
+    });
+  }
+  await db.update(kycRecordsTable)
+    .set({ aadhaarRef: result.referenceId })
+    .where(eq(kycRecordsTable.id, kyc.id));
+
+  res.json({
+    success:      true,
+    status:       "OTP_SENT",
+    aadhaarRefId: result.referenceId,
+    panVerified:  kyc.panVerified,
+    message:      "OTP sent to your Aadhaar-linked mobile number.",
+  });
+});
+
+// ─── POST /api/kyc/verify-pan ─────────────────────────────────────────────────
+// Resume: PAN retry for players whose Aadhaar is already verified — no Aadhaar
+// OTP re-run, no duplicate billing.
+router.post("/verify-pan", requireAuth, async (req: AuthRequest, res) => {
+  const schema = z.object({
+    registrationId: z.string().uuid(),
+    panNumber:      z.string().regex(/^[A-Z]{5}\d{4}[A-Z]$/, "Invalid PAN format"),
+  });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) return void res.status(400).json({ error: parsed.error.issues[0].message });
+
+  const { registrationId, panNumber } = parsed.data;
+  const { reg, kyc } = await loadOwnedKyc(registrationId, req.user!.userId);
+  if (!reg) return void res.status(404).json({ error: "Registration not found" });
+  if (!kyc) return void res.status(404).json({ error: "No KYC submission found. Please fill the KYC form first." });
+  if (kyc.status === "verified") {
+    return void res.json({ success: true, status: "verified", message: "KYC already verified." });
+  }
+  if (kyc.panVerified) {
+    return void res.json({ success: true, status: "PAN_DONE", message: "PAN is already verified." });
+  }
+
+  // Billed vendor call — throttle per registration
+  if (!vendorCallAllowed(`pan:${registrationId}`)) {
+    return void res.status(429).json({ error: "Too many attempts. Please wait 10 minutes and try again." });
+  }
+
+  const [user] = await db.select().from(usersTable).where(eq(usersTable.id, req.user!.userId)).limit(1);
+  const result = await verifyPan(panNumber, user?.name ?? registrationId);
+
+  if (result.outcome === "invalid") {
+    return void res.status(400).json({
+      error: "PAN verification failed. Please enter the exact 10-character PAN printed on your PAN card.",
+    });
+  }
+  if (result.outcome !== "valid") {
+    // Vendor down / not configured — the KYC stays parked for manual review
+    // (admin was already alerted when it was first parked).
+    return void res.json({
+      success: true,
+      status:  "MANUAL_REVIEW",
+      message: "PAN verification service is unavailable right now. Our team will verify your PAN manually within 24–48 hours.",
+    });
+  }
+
+  await db.update(kycRecordsTable)
+    .set({ panVerified: true, panRef: result.referenceId })
+    .where(eq(kycRecordsTable.id, kyc.id));
+
+  if (kyc.aadhaarVerified) {
+    await markKycVerified(kyc.id, registrationId, req.user!.userId);
+    return void res.json({ success: true, status: "verified", message: "KYC verified! Trial details will be shared when announced." });
+  }
+  res.json({ success: true, status: "PAN_VERIFIED", message: "PAN verified ✓. Now complete the Aadhaar OTP step." });
+});
+
 // ─── POST /api/kyc/webhook — Cashfree KYC webhook (backup) ───────────────────
+// Signature is mandatory: an unauthenticated request must never be able to
+// flip KYC state. Cashfree signs webhooks as base64(HMAC-SHA256(timestamp +
+// rawBody, secret)); verification-suite hooks are signed with the verify-suite
+// secret, so accept a valid signature from either configured secret.
+function verifyKycWebhookSignature(req: Request & { rawBody?: Buffer }): boolean {
+  const signature = req.headers["x-webhook-signature"];
+  const timestamp = req.headers["x-webhook-timestamp"];
+  if (typeof signature !== "string" || typeof timestamp !== "string" || !req.rawBody) return false;
+  const secrets = [process.env.CF_VERIFY_SECRET, process.env.CASHFREE_SECRET_KEY]
+    .filter((s): s is string => !!s);
+  const sig = Buffer.from(signature);
+  return secrets.some(secret => {
+    const expected = Buffer.from(
+      crypto.createHmac("sha256", secret).update(timestamp + req.rawBody!.toString("utf8")).digest("base64"),
+    );
+    return expected.length === sig.length && crypto.timingSafeEqual(expected, sig);
+  });
+}
+
 router.post("/webhook", async (req, res) => {
+  if (!verifyKycWebhookSignature(req as Request & { rawBody?: Buffer })) {
+    console.error("[KYC-WEBHOOK] rejected: invalid or missing x-webhook-signature", {
+      hasSignature: !!req.headers["x-webhook-signature"],
+      hasTimestamp: !!req.headers["x-webhook-timestamp"],
+      ip: req.ip,
+    });
+    return void res.status(401).json({ error: "Invalid webhook signature" });
+  }
   try {
     const { reference_id, status } = req.body as { reference_id?: string; status?: string };
     if (reference_id && (status === "VALID" || status === "verified" || status === "SUCCESS")) {

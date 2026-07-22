@@ -16,6 +16,7 @@ export function Phase1PaymentReceipt() {
   const [playerRole, setPlayerRole] = useState('');
   const [playerCity, setPlayerCity] = useState('');
   const [regId, setRegId] = useState('');
+  const [regNumber, setRegNumber] = useState('');   // sequential BCPL-DEL-1 style number
   const [paidAmount, setPaidAmount] = useState(0);
   const [paymentDate, setPaymentDate] = useState('');
 
@@ -39,6 +40,7 @@ export function Phase1PaymentReceipt() {
         setPlayerRole(ROLE_LABELS[role] ?? role);
         setPlayerCity(city);
         setRegId((statusRes as any).registrationId ?? verifyRes.registrationId ?? '');
+        setRegNumber(verifyRes.regNumber ?? (statusRes as any).regNumber ?? '');
         // Show GST-inclusive amount (base * 1.18, same formula as API)
         const baseFee = fees.phase1 ?? 299;
         setPaidAmount(Math.round(baseFee * 1.18));
@@ -173,7 +175,7 @@ export function Phase1PaymentReceipt() {
           <div className="fade-up fade-up-4" style={{ display:'inline-block', background:'#060C18', border:'1px solid rgba(255,122,41,0.4)', padding:'12px 20px', borderRadius:12, marginBottom:0, maxWidth:'100%', overflow:'hidden' }}>
             <div style={{ fontSize:9, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.18em', color:'rgba(255,255,255,0.35)', marginBottom:4 }}>REGISTRATION NUMBER</div>
             <div style={{ fontFamily:'monospace', fontSize:'clamp(13px,4vw,18px)', fontWeight:700, color:'#FF7A29', letterSpacing:'.12em', wordBreak:'break-all' }}>
-              {regId ? regId.slice(0,8).toUpperCase() : '—'}
+              {regNumber || (regId ? regId.slice(0,8).toUpperCase() : '—')}
             </div>
           </div>
           )}
@@ -204,7 +206,7 @@ export function Phase1PaymentReceipt() {
               { label:'Player Name',      val: playerName || '—' },
               { label:'Role',             val: playerRole || '—' },
               { label:'Trial City',       val: playerCity ? `📍 ${playerCity}` : '—' },
-              { label:'Registration No.', val: regId ? regId.slice(0,8).toUpperCase() : '—' },
+              { label:'Registration No.', val: regNumber || (regId ? regId.slice(0,8).toUpperCase() : '—') },
               { label:'Payment Date',     val: paymentDate || '—' },
             ].map(r => (
               <div key={r.label} className="receipt-row">
@@ -336,7 +338,11 @@ export function Phase1PaymentReceipt() {
                 const stampUrl = `${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/bcpl-stamp.png`;
                 const w = window.open('', '_blank');
                 if (!w) return;
-                w.document.write(`<!DOCTYPE html><html><head><title>BCPL Registration Receipt — BCPL-MUM-7432</title>
+                const printRegNo   = regNumber || (regId ? regId.slice(0,8).toUpperCase() : '—');
+                const printGstAmt  = Math.round((paidAmount * 9 / 118) * 100) / 100;   // 9% GST component of the inclusive total
+                const printGst     = printGstAmt.toFixed(2);
+                const printTaxable = (paidAmount - 2 * printGstAmt).toFixed(2);
+                w.document.write(`<!DOCTYPE html><html><head><title>BCPL Registration Receipt — ${printRegNo}</title>
                 <style>
                   *{box-sizing:border-box;margin:0;padding:0}
                   body{font-family:'Arial',sans-serif;background:#06101E;color:#F0EDE8;min-height:100vh;position:relative;-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -479,7 +485,7 @@ export function Phase1PaymentReceipt() {
                       </div>
                       <div class="reg-badge">
                         <div class="reg-label">Registration Number</div>
-                        <div class="reg-num">BCPL-MUM-7432</div>
+                        <div class="reg-num">${printRegNo}</div>
                       </div>
                     </div>
 
@@ -488,17 +494,17 @@ export function Phase1PaymentReceipt() {
                       <div class="receipt-card">
                         <div class="receipt-card-header">🧾 &nbsp;Payment Receipt</div>
                         <table class="receipt-table">
-                          <tr><td>Player Name</td><td>Rahul Sharma</td></tr>
-                          <tr><td>Registration No.</td><td style="font-family:monospace;color:#FF7A29">BCPL-MUM-7432</td></tr>
-                          <tr><td>Role</td><td>🏏 Batsman</td></tr>
-                          <tr><td>Trial City</td><td>📍 Mumbai</td></tr>
+                          <tr><td>Player Name</td><td>${playerName || '—'}</td></tr>
+                          <tr><td>Registration No.</td><td style="font-family:monospace;color:#FF7A29">${printRegNo}</td></tr>
+                          <tr><td>Role</td><td>🏏 ${playerRole || '—'}</td></tr>
+                          <tr><td>Trial City</td><td>📍 ${playerCity || '—'}</td></tr>
                           <tr><td>Phase</td><td>Phase 1 — Video Submission</td></tr>
-                          <tr><td>Payment Date</td><td>15 Jan 2025, 11:42 AM</td></tr>
+                          <tr><td>Payment Date</td><td>${paymentDate || '—'}</td></tr>
                           <tr><td>Payment Method</td><td>UPI / Online</td></tr>
-                          <tr><td>Taxable Amount</td><td>₹253.39</td></tr>
-                          <tr><td>CGST @ 9%</td><td>₹22.81</td></tr>
-                          <tr><td>SGST @ 9%</td><td>₹22.81</td></tr>
-                          <tr class="amount-row"><td>Total Paid</td><td>₹299.00 ✓</td></tr>
+                          <tr><td>Taxable Amount</td><td>₹${printTaxable}</td></tr>
+                          <tr><td>CGST @ 9%</td><td>₹${printGst}</td></tr>
+                          <tr><td>SGST @ 9%</td><td>₹${printGst}</td></tr>
+                          <tr class="amount-row"><td>Total Paid</td><td>₹${paidAmount.toFixed(2)} ✓</td></tr>
                         </table>
 
                         <hr class="dashed"/>
@@ -514,7 +520,7 @@ export function Phase1PaymentReceipt() {
                             const h = [22,32,16,38,20,28,14,36,18,30,24,40,26,16,34,22,28,12,36,22,30,16,34,20,26,14,32,22,38,18,28,20,34,14,30,24,18,40,22,30,16,36,20,28,12,34,20,18][i % 48];
                             return `<div class="barcode-bar" style="height:${h}px"></div>`;
                           }).join('')}
-                          <div class="barcode-text">BCPL-S5-MUM-BAT-7432</div>
+                          <div class="barcode-text">${printRegNo}</div>
                         </div>
                       </div>
 
@@ -566,7 +572,7 @@ export function Phase1PaymentReceipt() {
 
                   <!-- Footer -->
                   <div class="footer">
-                    <span>Ref: <strong>BCPL-MUM-7432</strong></span>
+                    <span>Ref: <strong>${printRegNo}</strong></span>
                     <span><strong>BCPL</strong> — Bhartiya Corporate Premier League · Season 5 · Official Receipt</span>
                     <span>© 2026 Kriparti Playing11 Pvt. Ltd.</span>
                   </div>
