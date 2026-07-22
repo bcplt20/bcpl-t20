@@ -27,6 +27,23 @@ else
   exit 1
 fi
 
+# ── 1b. Admin panel password (one-time setup, no nano needed) ─
+# Agar .env.production me ADMIN_PANEL_PASSWORD nahi hai to script
+# yahin poochh kar khud save kar lega.
+if ! grep -q '^ADMIN_PANEL_PASSWORD=..*' "$APP_DIR/.env.production"; then
+  echo ""
+  echo "⚠️  Admin panel ka password .env.production me nahi mila."
+  read -r -p "👉 Wahi password type karo jo aap admin login me daalte ho, phir Enter: " ADMIN_PW
+  if [ -z "$ADMIN_PW" ]; then
+    echo "❌ Khali password — dobara 'bash deploy/deploy.sh' chalao."
+    exit 1
+  fi
+  printf 'ADMIN_PANEL_PASSWORD=%s\n' "$ADMIN_PW" >> "$APP_DIR/.env.production"
+  echo "✅ Password save ho gaya (.env.production me)"
+fi
+# (pm2 ko pass karne ke liye export — chahe abhi save hua ho ya pehle se ho)
+export ADMIN_PANEL_PASSWORD="${ADMIN_PANEL_PASSWORD:-$(grep '^ADMIN_PANEL_PASSWORD=' "$APP_DIR/.env.production" | tail -n1 | cut -d= -f2-)}"
+
 # ── 2. Install dependencies ──────────────────────────────────
 echo "📦 Installing dependencies..."
 cd $APP_DIR
