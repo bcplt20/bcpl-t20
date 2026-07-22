@@ -14,6 +14,7 @@ import settingsRouter from "./settings";
 import adminRouter    from "./admin";
 import marketingRouter from "./marketing";
 import seoRouter      from "./seo";
+import adminToolsRouter from "./adminTools";
 
 const router: IRouter = Router();
 
@@ -36,5 +37,7 @@ router.use("/admin",         adminRouter);
 router.use("/marketing",     marketingRouter);
 // SEO (public meta for the site + admin editors)
 router.use("/seo",           seoRouter);
+// Admin content tools (CSV export, forecast, planner, WA templates, media library)
+router.use("/admin-tools",   adminToolsRouter);
 
 export default router;

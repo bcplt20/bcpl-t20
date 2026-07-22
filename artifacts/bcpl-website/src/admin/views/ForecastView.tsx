@@ -1,179 +1,260 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { getForecast, saveForecastSettings, monthLabel, type ForecastData } from "../../lib/adminToolsApi";
 
-type MonthEntry = { month:string; actual:number; target:number; revenue:number };
-// Actuals start at 0; targets are editable
-const INIT_MONTHLY: MonthEntry[] = [
-  { month:"Jul",   actual:0, target:500,  revenue:0 },
-  { month:"Aug",   actual:0, target:1500, revenue:0 },
-  { month:"Sep",   actual:0, target:2000, revenue:0 },
-  { month:"Oct",   actual:0, target:2000, revenue:0 },
-];
+/* Registration forecast — actuals come straight from the database
+ * (registrations + successful payments). The admin sets the goal, season
+ * start date and monthly targets; projections simply carry the current
+ * 14-day pace forward. It's math, not a promise. */
 
-const SCENARIOS = [
-  { label:"Conservative", multiplier:0.85, color:"#EF4444" },
-  { label:"Expected",     multiplier:1.00, color:"#F59E0B" },
-  { label:"Optimistic",   multiplier:1.20, color:"#10B981" },
-];
+const card: React.CSSProperties = { background: "linear-gradient(135deg,#0D1526,#0A1020)", border: "1px solid #1E293B", borderRadius: 16, padding: 20 };
+const inputStyle: React.CSSProperties = { width: "100%", padding: "9px 12px", background: "#060B18", border: "1px solid #1E293B", borderRadius: 10, color: "#F1F5F9", fontSize: 13, outline: "none" };
+const labelStyle: React.CSSProperties = { fontSize: 11, fontWeight: 700, color: "#64748B", display: "block", marginBottom: 6 };
+const btnPrimary: React.CSSProperties = { padding: "10px 18px", borderRadius: 10, border: "none", background: "linear-gradient(135deg,#FF6B00,#FF8C40)", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer" };
+
+const fmtINR = (n: number) => "₹" + Math.round(n).toLocaleString("en-IN");
 
 export default function ForecastView() {
-  const [goal,      setGoal]      = useState(6000);
-  const [avgRev,    setAvgRev]    = useState(299);
-  const [daysLeft,  setDaysLeft]  = useState(180);
-  const [scenario,  setScenario]  = useState(1);
-  const [editGoal,  setEditGoal]  = useState(false);
-  const [monthly,   setMonthly]   = useState<MonthEntry[]>(INIT_MONTHLY);
-  const [addOpen,   setAddOpen]   = useState(false);
-  const [editIdx,   setEditIdx]   = useState<number|null>(null);
-  const [addForm,   setAddForm]   = useState({ month:"", target:"", actual:"" });
+  const [data, setData] = useState<ForecastData | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [goal, setGoal] = useState("500");
+  const [seasonStart, setSeasonStart] = useState("");
+  const [targets, setTargets] = useState<Record<string, string>>({});
+  const [newMonth, setNewMonth] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [savedMsg, setSavedMsg] = useState(false);
 
-  const totalActual   = monthly.reduce((a,m)=>a+m.actual,0);
-  const totalTarget   = monthly.reduce((a,m)=>a+m.target,0);
-  const pct           = Math.round(totalActual/goal*100);
-  const remaining     = goal - totalActual;
-  const dailyNeeded   = Math.ceil(remaining / Math.max(daysLeft,1));
-  const projTotal     = Math.round(totalActual + (dailyNeeded * daysLeft * SCENARIOS[scenario].multiplier));
-  const projRevenue   = projTotal * avgRev;
+  async function load() {
+    try {
+      const d = await getForecast();
+      setData(d);
+      setGoal(String(d.settings.goal));
+      setSeasonStart(d.settings.seasonStart ?? "");
+      setTargets(Object.fromEntries(Object.entries(d.settings.targets).map(([k, v]) => [k, String(v)])));
+    } catch (e) {
+      setError((e as Error).message);
+    }
+  }
+  useEffect(() => { void load(); }, []);
 
-  const maxBar = Math.max(...monthly.map(m=>Math.max(m.actual,m.target)), 1);
-  const card:React.CSSProperties={background:"linear-gradient(135deg,#0D1526,#0A1020)",border:"1px solid #1E293B",borderRadius:16,padding:20};
+  async function save() {
+    if (saving) return;
+    const goalNum = parseInt(goal, 10);
+    if (!goalNum || goalNum < 1) {
+      setError("Goal must be at least 1");
+      return;
+    }
+    setSaving(true);
+    setError(null);
+    try {
+      const cleanTargets: Record<string, number> = {};
+      for (const [k, v] of Object.entries(targets)) {
+        const n = parseInt(v, 10);
+        if (/^\d{4}-\d{2}$/.test(k) && Number.isFinite(n) && n > 0) cleanTargets[k] = n;
+      }
+      await saveForecastSettings({ goal: goalNum, seasonStart: seasonStart || null, targets: cleanTargets });
+      await load();
+      setSavedMsg(true);
+      setTimeout(() => setSavedMsg(false), 2500);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  const rows = useMemo(() => {
+    if (!data) return [];
+    const map = new Map(data.monthly.map(m => [m.month, m]));
+    for (const k of Object.keys(targets)) {
+      if (!map.has(k) && /^\d{4}-\d{2}$/.test(k)) {
+        map.set(k, { month: k, registrations: 0, paidRegistrations: 0, revenue: 0 });
+      }
+    }
+    return [...map.values()].sort((a, b) => a.month.localeCompare(b.month));
+  }, [data, targets]);
+
+  const maxBar = useMemo(() => {
+    let m = 1;
+    for (const r of rows) {
+      m = Math.max(m, r.registrations, parseInt(targets[r.month] ?? "0", 10) || 0);
+    }
+    return m;
+  }, [rows, targets]);
+
+  const projection = useMemo(() => {
+    if (!data) return null;
+    const dailyPace = data.pace14d.registrations / 14;
+    const dailyRevenue = data.pace14d.revenue / 14;
+    let horizonDays = 30;
+    let horizonLabel = "in the next 30 days";
+    if (seasonStart) {
+      const days = Math.ceil((new Date(seasonStart + "T00:00:00").getTime() - Date.now()) / 86_400_000);
+      if (days > 0) {
+        horizonDays = days;
+        horizonLabel = `by season start (${days} days left)`;
+      }
+    }
+    const goalNum = parseInt(goal, 10) || data.settings.goal;
+    const scenarios = [
+      { name: "Slower (×0.7)", mult: 0.7, color: "#94A3B8" },
+      { name: "Current pace", mult: 1, color: "#FF8C40" },
+      { name: "Faster (×1.3)", mult: 1.3, color: "#22C55E" },
+    ].map(s => {
+      const projected = Math.round(data.totals.registrations + dailyPace * horizonDays * s.mult);
+      return { ...s, projected, gap: projected - goalNum, revenue: data.totals.revenue + dailyRevenue * horizonDays * s.mult };
+    });
+    return { dailyPace, horizonDays, horizonLabel, goalNum, scenarios };
+  }, [data, seasonStart, goal]);
+
+  if (!data) {
+    return (
+      <div style={{ ...card, textAlign: "center", color: "#64748B", fontSize: 13 }}>
+        {error ? `Could not load forecast: ${error}` : "Loading live numbers…"}
+      </div>
+    );
+  }
+
+  const goalNum = parseInt(goal, 10) || data.settings.goal;
+  const progressPct = Math.min(100, (data.totals.registrations / goalNum) * 100);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:16}}>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
         <div>
-          <div style={{fontSize:20,fontWeight:800,color:"#F1F5F9"}}>Revenue Forecasting</div>
-          <div style={{fontSize:12,color:"#64748B",marginTop:2}}>Season 5 trajectory — actual vs target with scenario planning</div>
+          <div style={{ fontSize: 20, fontWeight: 800, color: "#F1F5F9" }}>Registration Forecast</div>
+          <div style={{ fontSize: 12, color: "#64748B", marginTop: 2 }}>
+            Actuals are live from the database. Projections carry your current 14-day pace forward — math, not a promise.
+          </div>
         </div>
-        <div style={{display:"flex",gap:8}}>
-          <button onClick={()=>setAddOpen(true)} style={{padding:"9px 16px",borderRadius:9,border:"1px solid #FF6B00",background:"#FF6B0018",color:"#FF6B00",fontSize:12,fontWeight:700,cursor:"pointer"}}>+ Add Month</button>
-          <button onClick={()=>{ const rows=monthly.map(m=>`${m.month},${m.actual},${m.target},${m.revenue}`).join('\n'); const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,Month,Actual,Target,Revenue\n'+rows;a.download='bcpl_forecast.csv';a.click(); }} style={{padding:"9px 16px",borderRadius:9,border:"none",background:"linear-gradient(135deg,#FF6B00,#FF8C40)",color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer"}}>⬇ Export</button>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          {savedMsg && <span style={{ fontSize: 12, color: "#22C55E", fontWeight: 700 }}>✓ Saved</span>}
+          <button onClick={() => void save()} disabled={saving} style={{ ...btnPrimary, opacity: saving ? 0.6 : 1 }}>
+            {saving ? "Saving…" : "Save Goal & Targets"}
+          </button>
         </div>
       </div>
 
-      {/* Key metrics */}
-      <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12}}>
+      {error && (
+        <div style={{ background: "#EF444422", border: "1px solid #EF4444", borderRadius: 10, padding: "10px 14px", color: "#FCA5A5", fontSize: 13, display: "flex", justifyContent: "space-between", gap: 10 }}>
+          <span>{error}</span>
+          <button onClick={() => setError(null)} style={{ background: "none", border: "none", color: "#FCA5A5", cursor: "pointer" }}>✕</button>
+        </div>
+      )}
+
+      {/* Live stat cards */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12 }}>
         {[
-          {label:"Registered So Far",  value:totalActual.toLocaleString(), sub:`of ${goal.toLocaleString()} goal`, color:"#FF6B00"},
-          {label:"Revenue So Far",     value:`₹${(monthly.reduce((a,m)=>a+m.revenue,0)/100000).toFixed(1)}L`, sub:"Phase 1 only",color:"#10B981"},
-          {label:"Daily Pace Needed",  value:dailyNeeded, sub:`next ${daysLeft} days`,color:"#6366F1"},
-          {label:"Projected Final",    value:projTotal.toLocaleString(), sub:SCENARIOS[scenario].label,color:SCENARIOS[scenario].color},
-        ].map(s=>(
-          <div key={s.label} style={{...card,borderTop:`3px solid ${s.color}`}}>
-            <div style={{fontSize:24,fontWeight:800,color:s.color}}>{s.value}</div>
-            <div style={{fontSize:11,color:"#F1F5F9",fontWeight:600,marginTop:4}}>{s.label}</div>
-            <div style={{fontSize:10,color:"#475569",marginTop:2}}>{s.sub}</div>
+          { label: "Total registrations", value: String(data.totals.registrations), sub: "all time", color: "#F1F5F9" },
+          { label: "Paid registrations", value: String(data.totals.paidRegistrations), sub: "successful Phase-1 payments", color: "#22C55E" },
+          { label: "Revenue collected", value: fmtINR(data.totals.revenue), sub: "Phase 1 + Phase 2", color: "#FF8C40" },
+          { label: "Last 14 days", value: String(data.pace14d.registrations), sub: `new registrations · ${fmtINR(data.pace14d.revenue)}`, color: "#3B82F6" },
+        ].map(s => (
+          <div key={s.label} style={{ ...card, padding: 16 }}>
+            <div style={{ fontSize: 22, fontWeight: 800, color: s.color }}>{s.value}</div>
+            <div style={{ fontSize: 11, color: "#94A3B8", marginTop: 4, fontWeight: 700 }}>{s.label}</div>
+            <div style={{ fontSize: 10, color: "#475569", marginTop: 2 }}>{s.sub}</div>
           </div>
         ))}
       </div>
 
-      {/* Progress ring + controls */}
-      <div style={{display:"grid",gridTemplateColumns:"280px 1fr",gap:16}}>
-        <div style={{...card,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:16}}>
-          <div style={{width:140,height:140,borderRadius:"50%",background:`conic-gradient(#FF6B00 ${pct*3.6}deg,#1E293B 0)`,display:"flex",alignItems:"center",justifyContent:"center"}}>
-            <div style={{width:110,height:110,borderRadius:"50%",background:"#0A1020",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:2}}>
-              <span style={{fontSize:28,fontWeight:900,color:"#FF6B00"}}>{pct}%</span>
-              <span style={{fontSize:10,color:"#475569"}}>of goal</span>
-            </div>
+      {/* Goal + progress */}
+      <div style={card}>
+        <div style={{ display: "grid", gridTemplateColumns: "160px 200px 1fr", gap: 16, alignItems: "end" }}>
+          <div>
+            <label style={labelStyle}>SEASON GOAL (registrations)</label>
+            <input type="number" min={1} value={goal} onChange={e => setGoal(e.target.value)} style={inputStyle} />
           </div>
-          <div style={{width:"100%"}}>
-            <div style={{display:"flex",justifyContent:"space-between",marginBottom:8}}>
-              <span style={{fontSize:11,color:"#64748B"}}>Season Goal</span>
-              <span style={{fontSize:11,fontWeight:700,color:"#F1F5F9"}}>{goal.toLocaleString()}</span>
+          <div>
+            <label style={labelStyle}>SEASON START DATE (optional)</label>
+            <input type="date" value={seasonStart} onChange={e => setSeasonStart(e.target.value)} style={inputStyle} />
+          </div>
+          <div>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "#94A3B8", marginBottom: 6 }}>
+              <span style={{ fontWeight: 700 }}>Progress to goal</span>
+              <span>{data.totals.registrations} / {goalNum} ({progressPct.toFixed(1)}%)</span>
             </div>
-            <input type="range" min={3000} max={10000} step={500} value={goal} onChange={e=>setGoal(+e.target.value)}
-              style={{width:"100%",accentColor:"#FF6B00",cursor:"pointer"}}/>
-            <div style={{display:"flex",justifyContent:"space-between",marginTop:8}}>
-              <span style={{fontSize:11,color:"#64748B"}}>Avg Revenue/Registration</span>
-              <span style={{fontSize:11,fontWeight:700,color:"#F1F5F9"}}>₹{avgRev}</span>
+            <div style={{ height: 10, borderRadius: 5, background: "#1E293B", overflow: "hidden" }}>
+              <div style={{ height: "100%", width: `${progressPct}%`, background: "linear-gradient(90deg,#FF6B00,#FF8C40)", transition: "width .3s" }} />
             </div>
-            <input type="range" min={250} max={500} step={10} value={avgRev} onChange={e=>setAvgRev(+e.target.value)}
-              style={{width:"100%",accentColor:"#10B981",cursor:"pointer",marginTop:6}}/>
           </div>
         </div>
+      </div>
 
-        {/* Bar chart */}
-        <div style={card}>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
-            <div style={{fontSize:13,fontWeight:700,color:"#F1F5F9"}}>Monthly Registrations — Actual vs Target</div>
-            <div style={{display:"flex",gap:12}}>
-              <div style={{display:"flex",alignItems:"center",gap:6}}><div style={{width:10,height:10,borderRadius:2,background:"#FF6B00"}}/><span style={{fontSize:11,color:"#64748B"}}>Actual</span></div>
-              <div style={{display:"flex",alignItems:"center",gap:6}}><div style={{width:10,height:10,borderRadius:2,background:"#1E3A5F"}}/><span style={{fontSize:11,color:"#64748B"}}>Target</span></div>
-            </div>
+      {/* Monthly actuals + targets */}
+      <div style={card}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14, gap: 10, flexWrap: "wrap" }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9" }}>Month by month — actual vs your target</div>
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <input type="month" value={newMonth} onChange={e => setNewMonth(e.target.value)} style={{ ...inputStyle, width: 160, padding: "7px 10px" }} />
+            <button
+              onClick={() => {
+                if (/^\d{4}-\d{2}$/.test(newMonth) && !(newMonth in targets)) {
+                  setTargets(t => ({ ...t, [newMonth]: "" }));
+                  setNewMonth("");
+                }
+              }}
+              style={{ ...btnPrimary, padding: "8px 14px", fontSize: 12 }}>
+              + Add target month
+            </button>
           </div>
-          <div style={{display:"flex",gap:16,alignItems:"flex-end",height:180}}>
-            {monthly.map((m,i)=>(
-              <div key={i} style={{flex:1,display:"flex",gap:3,alignItems:"flex-end",height:"100%",position:"relative"}} title={`Target: ${m.target} | Actual: ${m.actual}`}>
-                <div style={{flex:1,display:"flex",flexDirection:"column",justifyContent:"flex-end",gap:2}}>
-                  <div style={{background:m.actual>0?"#FF6B00":"#FF6B0030",borderRadius:"4px 4px 0 0",height:`${(m.actual/maxBar)*160}px`,minHeight:m.actual>0?4:0,transition:"height .4s"}}/>
-                  <div style={{background:"#1E3A5F",borderRadius:"4px 4px 0 0",height:`${(m.target/maxBar)*160}px`,opacity:0.7}}/>
-                  <div style={{display:"flex",justifyContent:"center",alignItems:"center",gap:3,marginTop:6}}>
-                    <span style={{fontSize:9,color:"#475569",whiteSpace:"nowrap"}}>{m.month}</span>
-                    <button onClick={()=>{setEditIdx(i);setAddForm({month:m.month,target:String(m.target),actual:String(m.actual)});setAddOpen(true);}}
-                      style={{fontSize:8,padding:"1px 4px",borderRadius:3,border:"1px solid #1E293B",background:"transparent",color:"#475569",cursor:"pointer"}}>✏</button>
+        </div>
+        {rows.length === 0 ? (
+          <div style={{ fontSize: 12, color: "#475569" }}>No registrations yet — data appears here as players sign up.</div>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "90px 1fr 70px 70px 110px 90px", gap: 10, fontSize: 10, fontWeight: 800, color: "#475569" }}>
+              <span>MONTH</span><span>REGISTRATIONS</span><span style={{ textAlign: "right" }}>TOTAL</span>
+              <span style={{ textAlign: "right" }}>PAID</span><span style={{ textAlign: "right" }}>REVENUE</span><span style={{ textAlign: "right" }}>TARGET</span>
+            </div>
+            {rows.map(r => {
+              const t = parseInt(targets[r.month] ?? "0", 10) || 0;
+              const hit = t > 0 && r.registrations >= t;
+              return (
+                <div key={r.month} style={{ display: "grid", gridTemplateColumns: "90px 1fr 70px 70px 110px 90px", gap: 10, alignItems: "center" }}>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: "#94A3B8" }}>{monthLabel(r.month)}</span>
+                  <div style={{ height: 14, borderRadius: 7, background: "#1E293B", overflow: "hidden", position: "relative" }}>
+                    <div style={{ height: "100%", width: `${(r.registrations / maxBar) * 100}%`, background: hit ? "linear-gradient(90deg,#16A34A,#22C55E)" : "linear-gradient(90deg,#FF6B00,#FF8C40)" }} />
+                    {t > 0 && (
+                      <div title={`Target: ${t}`} style={{ position: "absolute", top: 0, bottom: 0, left: `${Math.min(100, (t / maxBar) * 100)}%`, width: 2, background: "#F1F5F9AA" }} />
+                    )}
                   </div>
+                  <span style={{ fontSize: 12, fontWeight: 800, color: "#F1F5F9", textAlign: "right" }}>{r.registrations}</span>
+                  <span style={{ fontSize: 12, color: "#22C55E", textAlign: "right" }}>{r.paidRegistrations}</span>
+                  <span style={{ fontSize: 12, color: "#FF8C40", textAlign: "right" }}>{fmtINR(r.revenue)}</span>
+                  <input type="number" min={0} placeholder="—" value={targets[r.month] ?? ""}
+                    onChange={e => setTargets(prev => ({ ...prev, [r.month]: e.target.value }))}
+                    style={{ ...inputStyle, padding: "6px 8px", fontSize: 12, textAlign: "right" }} />
+                </div>
+              );
+            })}
+          </div>
+        )}
+        <div style={{ fontSize: 11, color: "#475569", marginTop: 12 }}>
+          Total = all registrations that month · Paid = successful Phase-1 payments · targets are saved with the button above.
+        </div>
+      </div>
+
+      {/* Projections */}
+      {projection && (
+        <div style={card}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>
+            If the current pace continues — projected total {projection.horizonLabel}
+          </div>
+          <div style={{ fontSize: 11, color: "#475569", marginBottom: 14 }}>
+            Current pace: {projection.dailyPace.toFixed(1)} registrations/day (14-day average).
+            {!seasonStart && " Set a season start date above to project until the season."}
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 12 }}>
+            {projection.scenarios.map(s => (
+              <div key={s.name} style={{ border: `1px solid ${s.color}44`, borderRadius: 12, padding: 16, background: `${s.color}0A` }}>
+                <div style={{ fontSize: 11, fontWeight: 800, color: s.color, marginBottom: 8 }}>{s.name}</div>
+                <div style={{ fontSize: 24, fontWeight: 800, color: "#F1F5F9" }}>{s.projected}</div>
+                <div style={{ fontSize: 11, color: "#94A3B8", marginTop: 2 }}>registrations · {fmtINR(s.revenue)} revenue</div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: s.gap >= 0 ? "#22C55E" : "#FCA5A5", marginTop: 8 }}>
+                  {s.gap >= 0 ? `✓ Goal +${s.gap}` : `${Math.abs(s.gap)} short of the ${projection.goalNum} goal`}
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Scenarios */}
-      <div style={card}>
-        <div style={{fontSize:14,fontWeight:700,color:"#F1F5F9",marginBottom:16}}>Scenario Planning</div>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12}}>
-          {SCENARIOS.map((s,i)=>(
-            <div key={i} onClick={()=>setScenario(i)} style={{padding:"18px",borderRadius:12,border:`2px solid ${scenario===i?s.color:s.color+"30"}`,background:scenario===i?`${s.color}12`:"transparent",cursor:"pointer",textAlign:"center"}}>
-              <div style={{fontSize:13,fontWeight:700,color:s.color,marginBottom:10}}>{s.label}</div>
-              <div style={{fontSize:28,fontWeight:900,color:s.color}}>{Math.round(projTotal*s.multiplier/SCENARIOS[scenario].multiplier).toLocaleString()}</div>
-              <div style={{fontSize:11,color:"#64748B",marginTop:4}}>projected registrations</div>
-              <div style={{fontSize:14,fontWeight:700,color:s.color,marginTop:8}}>₹{((Math.round(projTotal*s.multiplier/SCENARIOS[scenario].multiplier)*avgRev)/100000).toFixed(1)}L</div>
-              <div style={{fontSize:10,color:"#475569"}}>projected revenue</div>
-            </div>
-          ))}
-        </div>
-        <div style={{marginTop:14,padding:"12px 16px",background:"#060B18",borderRadius:10,border:"1px solid #1E293B"}}>
-          <div style={{fontSize:12,color:"#94A3B8",lineHeight:1.6}}>
-            💡 At current pace of <strong style={{color:"#FF6B00"}}>{Math.round(totalActual/62)} registrations/day</strong>, you need <strong style={{color:"#10B981"}}>{dailyNeeded}/day</strong> to hit the {goal.toLocaleString()} goal by Season 5 start (in {daysLeft} days).
-            Estimated Phase 1 revenue at ₹{avgRev}/reg: <strong style={{color:"#10B981"}}>₹{(projRevenue/100000).toFixed(1)}L</strong>.
-          </div>
-        </div>
-      </div>
-
-      {/* Add / Edit Month Modal */}
-      {addOpen&&(
-        <div style={{position:"fixed",inset:0,background:"#00000088",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={()=>{setAddOpen(false);setEditIdx(null);setAddForm({month:"",target:"",actual:""});}}>
-          <div style={{...card,width:400,padding:28}} onClick={e=>e.stopPropagation()}>
-            <div style={{fontSize:16,fontWeight:800,color:"#F1F5F9",marginBottom:20}}>{editIdx!==null?"✏ Edit Month Target":"+ Add Forecast Month"}</div>
-            {[
-              {label:"Month Name",key:"month",type:"text",placeholder:"e.g. Nov"},
-              {label:"Registration Target",key:"target",type:"number",placeholder:"e.g. 2000"},
-              {label:"Actual Registrations",key:"actual",type:"number",placeholder:"e.g. 0"},
-            ].map(f=>(
-              <div key={f.key} style={{marginBottom:14}}>
-                <label style={{fontSize:11,fontWeight:700,color:"#475569",display:"block",marginBottom:6,textTransform:"uppercase"}}>{f.label}</label>
-                <input type={f.type} value={addForm[f.key as keyof typeof addForm]} onChange={e=>setAddForm(p=>({...p,[f.key]:e.target.value}))}
-                  placeholder={f.placeholder}
-                  style={{width:"100%",padding:"10px 12px",borderRadius:9,border:"1px solid #1E293B",background:"#060B18",color:"#E2E8F0",fontSize:13,outline:"none",boxSizing:"border-box"}}/>
-              </div>
-            ))}
-            <div style={{display:"flex",gap:10,marginTop:8}}>
-              {editIdx!==null&&(
-                <button onClick={()=>{ setMonthly(m=>m.filter((_,i)=>i!==editIdx)); setAddOpen(false);setEditIdx(null);setAddForm({month:"",target:"",actual:""}); }}
-                  style={{padding:"11px 16px",borderRadius:10,border:"1px solid #EF444444",background:"transparent",color:"#EF4444",fontSize:12,cursor:"pointer",fontWeight:700}}>🗑 Remove</button>
-              )}
-              <button onClick={()=>{setAddOpen(false);setEditIdx(null);setAddForm({month:"",target:"",actual:""}); }} style={{flex:1,padding:"11px",borderRadius:10,border:"1px solid #1E293B",background:"transparent",color:"#64748B",fontSize:13,cursor:"pointer"}}>Cancel</button>
-              <button onClick={()=>{
-                if(!addForm.month.trim()||!addForm.target) return;
-                const entry:MonthEntry={month:addForm.month.trim(),target:parseInt(addForm.target)||0,actual:parseInt(addForm.actual)||0,revenue:(parseInt(addForm.actual)||0)*avgRev};
-                if(editIdx!==null){ setMonthly(m=>m.map((x,i)=>i===editIdx?entry:x)); }
-                else { setMonthly(m=>[...m,entry]); }
-                setAddOpen(false);setEditIdx(null);setAddForm({month:"",target:"",actual:""});
-              }} disabled={!addForm.month.trim()||!addForm.target}
-                style={{flex:2,padding:"11px",borderRadius:10,border:"none",background:"linear-gradient(135deg,#FF6B00,#FF8C40)",color:"#fff",fontWeight:700,fontSize:13,cursor:"pointer",opacity:addForm.month.trim()&&addForm.target?1:0.5}}>
-                {editIdx!==null?"Save Changes":"Add Month"}
-              </button>
-            </div>
           </div>
         </div>
       )}

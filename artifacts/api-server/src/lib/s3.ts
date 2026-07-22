@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 const BUCKET = process.env.AWS_S3_BUCKET  || "bcpl-trial-videos";
@@ -40,4 +40,12 @@ export function getS3Url(key: string): string {
 export async function deleteObject(key: string): Promise<void> {
   if (!process.env.AWS_ACCESS_KEY_ID) return;
   await getS3().send(new DeleteObjectCommand({ Bucket: BUCKET, Key: key }));
+}
+
+/** Pre-signed GET URL (1 h) — lets the admin panel preview objects even when
+ *  the bucket/prefix is not public-read. Falls back to the plain URL without creds. */
+export async function getDownloadPresignedUrl(key: string): Promise<string> {
+  if (!process.env.AWS_ACCESS_KEY_ID) return getS3Url(key);
+  const cmd = new GetObjectCommand({ Bucket: BUCKET, Key: key });
+  return getSignedUrl(getS3(), cmd, { expiresIn: 3600 });
 }

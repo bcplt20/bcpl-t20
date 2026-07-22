@@ -16,6 +16,8 @@ export * from "./points_table";
 export * from "./trial_venues";
 export * from "./teams";
 export * from "./settings";
+// Admin content tools (media library, content calendar, WhatsApp templates)
+export * from "./admin_content";
 // Marketing & referrals
 export * from "./referral_codes";
 export * from "./referral_signups";

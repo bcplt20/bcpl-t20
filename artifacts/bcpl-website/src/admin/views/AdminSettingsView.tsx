@@ -20,7 +20,6 @@ export const ALL_SECTIONS = [
   { id:"marketing",       label:"Marketing",             group:"Growth"    },
   { id:"seo",             label:"SEO Manager",           group:"Growth"    },
   { id:"affiliates",      label:"Agents & Affiliates",   group:"Growth"    },
-  { id:"push",            label:"Push Notifications",    group:"Growth"    },
   { id:"content_cal",     label:"Content Calendar",      group:"Growth"    },
   { id:"matches",         label:"Matches",               group:"League"    },
   { id:"live_scoring",    label:"Live Scoring",          group:"League"    },
@@ -39,7 +38,6 @@ export const ALL_SECTIONS = [
   { id:"banners",         label:"Banners",               group:"Content"   },
   { id:"cms",             label:"CMS / Pages",           group:"Content"   },
   { id:"sponsors",        label:"Sponsors",              group:"Sponsors"  },
-  { id:"sponsor_roi",     label:"Sponsor ROI",           group:"Sponsors"  },
   { id:"data_export",     label:"Data Export",           group:"Tools"     },
   { id:"roles",           label:"Roles & Access",        group:"Tools"     },
 ];
@@ -68,7 +66,7 @@ const PRESET_ROLES = [
   { label:"Full Access (Super Admin)", perms:["all"] },
   { label:"Finance Only",             perms:["dashboard","finance","forecast","data_export"] },
   { label:"Operations",               perms:["dashboard","matches","live_scoring","teams","selection","support","trial_cities"] },
-  { label:"Marketing & Growth",       perms:["dashboard","marketing","seo","affiliates","push","content_cal","media","banners","cms","leaderboard"] },
+  { label:"Marketing & Growth",       perms:["dashboard","marketing","seo","affiliates","content_cal","media","banners","cms","leaderboard"] },
   { label:"Player Management",        perms:["dashboard","users","video_review","player_profiles","fraud","contracts","support"] },
   { label:"Custom",                   perms:[] },
 ];

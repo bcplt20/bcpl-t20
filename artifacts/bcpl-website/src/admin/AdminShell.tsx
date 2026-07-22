@@ -22,7 +22,6 @@ import AuctionView          from "./views/AuctionView";
 import ContractsView        from "./views/ContractsView";
 import SupportView          from "./views/SupportView";
 import ContentCalendarView  from "./views/ContentCalendarView";
-import PushNotificationsView from "./views/PushNotificationsView";
 import LeaderboardView      from "./views/LeaderboardView";
 import WhatsAppTemplatesView from "./views/WhatsAppTemplatesView";
 import DataExportView       from "./views/DataExportView";
@@ -32,7 +31,6 @@ import Phase1RegistrationsView from "./views/Phase1RegistrationsView";
 import Phase2KYCView           from "./views/Phase2KYCView";
 import FraudView            from "./views/FraudView";
 import ForecastView         from "./views/ForecastView";
-import SponsorROIView       from "./views/SponsorROIView";
 import { adminLogin, saveAdminToken, clearAdminToken, hasLegacyAdminKey } from "../lib/api";
 
 type NavItem  = { id: string; label: string; icon: string; badge?: string; badgeColor?: string };
@@ -49,7 +47,6 @@ const NAV: NavGroup[] = [
     { id:"marketing",    label:"Marketing",         icon:"◎", badge:"New", badgeColor:"#FF6B00" },
     { id:"seo",          label:"SEO Manager",       icon:"⌖" },
     { id:"affiliates",   label:"Agents & Affiliates",icon:"⊟" },
-    { id:"push",         label:"Push Notifications",icon:"●" },
     { id:"content_cal",  label:"Content Calendar",  icon:"▤" },
   ]},
   { title: "LEAGUE", items: [
@@ -82,7 +79,6 @@ const NAV: NavGroup[] = [
   ]},
   { title: "SPONSORS", items: [
     { id:"sponsors",     label:"Sponsors",          icon:"⊟" },
-    { id:"sponsor_roi",  label:"Sponsor ROI",       icon:"↗" },
   ]},
   { title: "TOOLS", items: [
     { id:"data_export",     label:"Data Export",        icon:"⊕" },
@@ -115,7 +111,6 @@ function renderView(id: string, navigate: (viewId: string, payload?: AdminNavPay
     case "marketing":      return <MarketingView />;
     case "seo":            return <SEOView />;
     case "affiliates":     return <AffiliatesView />;
-    case "push":           return <PushNotificationsView />;
     case "content_cal":    return <ContentCalendarView />;
     case "matches":        return <MatchesView onOpenScoring={() => navigate("live_scoring")} />;
     case "live_scoring":   return <LiveScoringView />;
@@ -136,7 +131,6 @@ function renderView(id: string, navigate: (viewId: string, payload?: AdminNavPay
     case "banners":        return <BannersView />;
     case "cms":            return <CMSView />;
     case "sponsors":       return <SponsorsView />;
-    case "sponsor_roi":    return <SponsorROIView />;
     case "data_export":    return <DataExportView />;
     case "roles":          return <RolesView />;
     case "admin_settings": return <AdminSettingsView />;
