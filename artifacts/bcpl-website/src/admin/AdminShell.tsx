@@ -101,10 +101,10 @@ function Icon({ ch }: { ch: string }) {
 
 export type AdminNavPayload = { quick?: string; filter?: string; focusId?: string };
 
-function renderView(id: string, navigate: (viewId: string, payload?: AdminNavPayload) => void, payload: AdminNavPayload | null) {
+function renderView(id: string, navigate: (viewId: string, payload?: AdminNavPayload) => void, payload: AdminNavPayload | null, autoTick: number) {
   const pk = JSON.stringify(payload ?? {});
   switch (id) {
-    case "dashboard":      return <DashboardView onNavigate={navigate} />;
+    case "dashboard":      return <DashboardView onNavigate={navigate} refreshTick={autoTick} />;
     case "users":          return <UsersView key={"u"+pk} onNavigate={navigate} initialQuick={payload?.quick} />;
     case "finance":        return <FinanceView key={"fin"+pk} onNavigate={navigate} />;
     case "forecast":       return <ForecastView />;
@@ -163,6 +163,9 @@ export default function AdminShell() {
   // Header refresh control: bumping the key remounts the active section
   const [refreshKey,    setRefreshKey]   = useState(0);
   const [lastUpdated,   setLastUpdated]  = useState(() => new Date());
+  // Auto-refresh tick: bumped on a gentle interval so the Dashboard re-fetches
+  // its data in place (no remount, no flicker) while its tab is visible
+  const [autoTick,      setAutoTick]     = useState(0);
 
   const NOTIFS: { icon:string; text:string; time:string; unread:boolean }[] = [];
   const unreadCount = NOTIFS.filter(n => n.unread).length;
@@ -190,6 +193,19 @@ export default function AdminShell() {
     })();
     return () => { cancelled = true; };
   }, []);
+
+  /* ── Auto-refresh: while the Analytics dashboard is open, re-fetch its data
+     every 90s — but only when the browser tab is visible (saves server load).
+     Live Scoring (and other views) are untouched; they keep their own flows. ── */
+  useEffect(() => {
+    if (!loggedIn || active !== "dashboard") return;
+    const id = setInterval(() => {
+      if (document.visibilityState !== "visible") return; // paused while tab hidden
+      setAutoTick(t => t + 1);
+      setLastUpdated(new Date());
+    }, 90_000);
+    return () => clearInterval(id);
+  }, [loggedIn, active]);
 
   /* ── Nav filtering by permission ── */
   const isSuperAdmin = loggedInAdmin?.permissions?.includes("all") ?? false;
@@ -465,7 +481,7 @@ export default function AdminShell() {
 
         {/* Content — key bump on ↺ remounts the active view, re-fetching its data */}
         <main key={refreshKey} style={{ flex:1, overflowY:"auto", background:"#060B18", padding:24 }}>
-          {renderView(active, navigate, navPayload)}
+          {renderView(active, navigate, navPayload, autoTick)}
         </main>
       </div>
     </div>

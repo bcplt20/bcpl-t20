@@ -67,18 +67,22 @@ const CustomTooltip = ({ active, payload, label }:any) => {
 
 type NavPayload = { quick?: string; filter?: string; focusId?: string };
 
-export default function DashboardView({ onNavigate }: { onNavigate?: (tab: string, payload?: NavPayload) => void }) {
+export default function DashboardView({ onNavigate, refreshTick = 0 }: { onNavigate?: (tab: string, payload?: NavPayload) => void; refreshTick?: number }) {
   const [range, setRange] = useState<"today"|"week"|"month">("week");
   const [blast, setBlast] = useState(false);
   const [stats, setStats] = useState<Stats|null>(null);
   const [regs,  setRegs]  = useState<Reg[]>([]);
   const [err,   setErr]   = useState("");
 
+  // Fetches on mount and again whenever refreshTick bumps (auto-refresh).
+  // Data swaps in place — existing numbers stay on screen until new ones land.
   useEffect(() => {
+    let cancelled = false;
     Promise.all([adminGetStats(), adminGetRegistrations()])
-      .then(([s, r]) => { setStats(s); setRegs(r.registrations); })
-      .catch(e => setErr(e.message));
-  }, []);
+      .then(([s, r]) => { if (!cancelled) { setStats(s); setRegs(r.registrations); setErr(""); } })
+      .catch(e => { if (!cancelled) setErr(e.message); });
+    return () => { cancelled = true; };
+  }, [refreshTick]);
 
   const card:React.CSSProperties = {
     background:"linear-gradient(135deg,#0D1526 0%,#0A1020 100%)",
