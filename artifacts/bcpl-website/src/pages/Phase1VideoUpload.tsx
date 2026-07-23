@@ -35,6 +35,26 @@ function getDaysLeft(deadline: string | null | undefined): number {
   return Math.max(0, Math.ceil(ms / (1000 * 60 * 60 * 24)));
 }
 
+/** Live countdown to the upload deadline — ticks every second. */
+function useCountdown(deadline: string | null) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const iv = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(iv);
+  }, []);
+  if (!deadline) return null;
+  const ms = new Date(deadline).getTime() - now;
+  if (ms <= 0) return { d: 0, h: 0, m: 0, s: 0, expired: true, urgent: true };
+  return {
+    d: Math.floor(ms / 86400000),
+    h: Math.floor(ms / 3600000) % 24,
+    m: Math.floor(ms / 60000) % 60,
+    s: Math.floor(ms / 1000) % 60,
+    expired: false,
+    urgent: ms < 24 * 3600000,
+  };
+}
+
 const ALLOWED_TYPES: Record<string, string> = {
   'video/mp4': 'mp4',
   'video/quicktime': 'mov',
@@ -54,6 +74,7 @@ export function Phase1VideoUpload() {
   const [uploadState, setUploadState] = useState<UploadState>('loading');
   const [errMsg, setErrMsg]           = useState('');
   const [regId, setRegId]             = useState('');
+  const [regNumber, setRegNumber]     = useState<string | null>(null);
   const [role, setRole]               = useState('bat');
   const [city, setCity]               = useState('');
   const [userName, setUserName]       = useState('');
@@ -65,6 +86,14 @@ export function Phase1VideoUpload() {
   const [fileErr, setFileErr]       = useState('');
   const [progress, setProgress]     = useState(0);
   const fileInputRef                = useRef<HTMLInputElement>(null);
+
+  // Live deadline countdown; flips the page to deadline_passed mid-session.
+  const cd = useCountdown(deadline);
+  useEffect(() => {
+    if (cd?.expired && (uploadState === 'idle' || uploadState === 'file_selected')) {
+      setUploadState('deadline_passed');
+    }
+  }, [cd?.expired, uploadState]);
 
   /** Admin-uploaded sample video for a role card (null = none uploaded yet). */
   const sampleFor = (roleName: string): SampleVideoEntry | null =>
@@ -92,6 +121,7 @@ export function Phase1VideoUpload() {
         if (reg.phase1Status === 'pending') { setUploadState('not_registered'); return; }
 
         setRegId(reg.registrationId ?? '');
+        setRegNumber((reg as any).regNumber ?? null);
         setRole(reg.role ?? 'bat');
         setCity(reg.trialCity ?? '');
         setDeadline(reg.videoDeadline ?? null);
@@ -351,30 +381,58 @@ export function Phase1VideoUpload() {
               </h1>
               <p style={{ color:'var(--ink-3)', fontSize:14, lineHeight:1.6, maxWidth:480 }}>{t('Your video is your ticket to the ground trials. Make every second count.', 'आपका वीडियो ग्राउंड ट्रायल्स के लिए आपका टिकट है। हर सेकंड का महत्व है।')}</p>
             </div>
-            {/* Deadline badge */}
-            {daysLeft > 0 && (
-              <div style={{ display:'flex', alignItems:'center', gap:10, background: daysLeft <= 5 ? 'rgba(239,68,68,0.1)' : 'rgba(255,122,41,0.1)', border:`1px solid ${daysLeft <= 5 ? 'rgba(239,68,68,0.4)' : 'rgba(255,122,41,0.4)'}`, padding:'12px 20px', borderRadius:'var(--r)', animation:'pulseDanger 2s ease-in-out infinite', flexShrink:0 }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={daysLeft <= 5 ? 'var(--red)' : 'var(--orange)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                <div>
-                  <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:15, color: daysLeft <= 5 ? 'var(--red)' : 'var(--orange)', letterSpacing:'.08em', textTransform:'uppercase' }}>{daysLeft} {t(`DAY${daysLeft !== 1 ? 'S' : ''} REMAINING`, `दिन शेष`)}</div>
-                  <div style={{ fontSize:11, color: daysLeft <= 5 ? 'rgba(239,68,68,0.7)' : 'rgba(255,122,41,0.7)', fontWeight:600 }}>{t('Upload before deadline', 'अंतिम तिथि से पहले अपलोड करें')}</div>
+            {/* Live deadline countdown (DD:HH:MM:SS) */}
+            {cd && !cd.expired && (
+              <div style={{ flexShrink:0, background: cd.urgent ? 'rgba(239,68,68,0.08)' : 'rgba(255,122,41,0.07)', border: '1px solid ' + (cd.urgent ? 'rgba(239,68,68,0.4)' : 'rgba(255,122,41,0.35)'), borderRadius:'var(--r)', padding:'12px 16px', animation: cd.urgent ? 'pulseDanger 2s ease-in-out infinite' : 'none' }}>
+                <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:11, letterSpacing:'.16em', color: cd.urgent ? 'var(--red)' : 'var(--orange)', textTransform:'uppercase', textAlign:'center', marginBottom:8 }}>
+                  {t('UPLOAD WINDOW CLOSES IN', 'अपलोड विंडो बंद होने में')}
+                </div>
+                <div style={{ display:'flex', gap:6, justifyContent:'center' }}>
+                  {([[cd.d, t('DAYS','दिन')], [cd.h, t('HRS','घंटे')], [cd.m, t('MIN','मिनट')], [cd.s, t('SEC','सेकंड')]] as [number, string][]).map(([v, lbl], i) => (
+                    <div key={i} style={{ textAlign:'center', minWidth:46 }}>
+                      <div style={{ background:'rgba(0,0,0,0.35)', border:'1px solid ' + (cd.urgent ? 'rgba(239,68,68,0.35)' : 'rgba(255,255,255,0.1)'), borderRadius:8, padding:'8px 6px', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:22, lineHeight:1, color: cd.urgent ? 'var(--red)' : 'var(--ink)', fontVariantNumeric:'tabular-nums' }}>
+                        {String(v).padStart(2, '0')}
+                      </div>
+                      <div style={{ fontSize:9, fontWeight:800, letterSpacing:'.12em', color:'var(--ink-3)', marginTop:4, textTransform:'uppercase' }}>{lbl}</div>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
           </div>
 
-          {/* Player summary bar */}
-          <div style={{ display:'flex', gap:8, flexWrap:'wrap', marginTop:28 }}>
-            {[
-              { label: roleMeta.label,  bg:'rgba(59,130,246,0.12)', border:'rgba(59,130,246,0.35)', color:'#60A5FA' },
-              { label: city || 'TBD',    bg:'rgba(255,122,41,0.1)', border:'rgba(255,122,41,0.35)', color:'var(--orange)' },
-              { label: shortRegId,        bg:'rgba(255,255,255,0.04)', border:'rgba(255,255,255,0.1)', color:'var(--ink-2)' },
-              { label:`PAID ₹${phase1Fee}`, bg:'rgba(34,197,94,0.1)', border:'rgba(34,197,94,0.35)', color:'var(--green)' },
-            ].map(c => (
-              <span key={c.label} className="info-chip" style={{ background:c.bg, border:`1px solid ${c.border}`, color:c.color }}>
-                {c.label}
-              </span>
-            ))}
+          {/* ── DIGITAL PLAYER CARD ── */}
+          <div style={{ marginTop:28, maxWidth:520, background:'linear-gradient(145deg,rgba(255,255,255,0.05),rgba(255,255,255,0.015))', border:'1px solid var(--line)', borderRadius:'var(--r)', overflow:'hidden' }}>
+            <div style={{ background:'linear-gradient(135deg,var(--orange),var(--orange-2))', padding:'10px 18px', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+              <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:11, letterSpacing:'.2em', color:'rgba(255,255,255,0.85)' }}>BCPL · {t('SEASON 5', 'सीज़न 5')}</span>
+              <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:11, letterSpacing:'.14em', color:'#fff', background:'rgba(0,0,0,0.25)', padding:'3px 10px', borderRadius:12 }}>{t('OFFICIAL PLAYER CARD', 'आधिकारिक प्लेयर कार्ड')}</span>
+            </div>
+            <div style={{ padding:'16px 18px' }}>
+              <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', gap:12, flexWrap:'wrap', marginBottom:14 }}>
+                <div style={{ minWidth:0 }}>
+                  <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:22, color:'var(--ink)', textTransform:'uppercase', letterSpacing:'.02em', lineHeight:1.1 }}>{userName || t('BCPL PLAYER', 'BCPL खिलाड़ी')}</div>
+                  <div style={{ fontSize:11, color:'var(--ink-3)', fontWeight:600, marginTop:3 }}>{t('Phase 1 · Video Trial', 'Phase 1 · वीडियो ट्रायल')}</div>
+                </div>
+                <div style={{ textAlign:'right' }}>
+                  <div style={{ fontSize:9, fontWeight:800, letterSpacing:'.16em', color:'var(--ink-3)', marginBottom:3 }}>{t('PLAYER ID', 'प्लेयर ID')}</div>
+                  <div style={{ fontFamily:'monospace', fontWeight:700, fontSize:16, color:'var(--gold)', letterSpacing:'.04em' }}>{regNumber ?? shortRegId}</div>
+                </div>
+              </div>
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:10, borderTop:'1px solid rgba(255,255,255,0.06)', paddingTop:12 }}>
+                <div>
+                  <div style={{ fontSize:9, fontWeight:800, letterSpacing:'.14em', color:'var(--ink-3)', marginBottom:3 }}>{t('ROLE', 'भूमिका')}</div>
+                  <div style={{ fontSize:13, fontWeight:700, color:'#60A5FA' }}>{roleMeta.label}</div>
+                </div>
+                <div>
+                  <div style={{ fontSize:9, fontWeight:800, letterSpacing:'.14em', color:'var(--ink-3)', marginBottom:3 }}>{t('TRIAL CITY', 'ट्रायल शहर')}</div>
+                  <div style={{ fontSize:13, fontWeight:700, color:'var(--orange)' }}>{city || 'TBD'}</div>
+                </div>
+                <div>
+                  <div style={{ fontSize:9, fontWeight:800, letterSpacing:'.14em', color:'var(--ink-3)', marginBottom:3 }}>{t('STATUS', 'स्थिति')}</div>
+                  <div style={{ fontSize:13, fontWeight:700, color:'var(--green)' }}>✓ {t('PAID', 'भुगतान')} ₹{phase1Fee}</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

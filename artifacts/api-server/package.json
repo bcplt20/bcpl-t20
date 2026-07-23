@@ -13,6 +13,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1090.0",
     "@aws-sdk/s3-request-presigner": "^3.1090.0",
+    "@google/genai": "^2.13.0",
     "@workspace/api-zod": "workspace:*",
     "@workspace/db": "workspace:*",
     "cookie-parser": "^1.4.7",
@@ -20,6 +21,7 @@
     "drizzle-orm": "catalog:",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
+    "pg-boss": "^12.26.2",
     "pino": "^9.14.0",
     "pino-http": "^10.5.0",
     "zod": "catalog:"

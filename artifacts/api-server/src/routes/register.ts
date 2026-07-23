@@ -1,8 +1,9 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
-import { registrationsTable } from "@workspace/db/schema";
+import { registrationsTable, usersTable } from "@workspace/db/schema";
 import { eq, and, like, isNull, sql } from "drizzle-orm";
 import { requireAuth, type AuthRequest } from "../middlewares/auth";
+import { isAgeEligible, AGE_INELIGIBLE_MESSAGE } from "../lib/age";
 import { z } from "zod";
 
 const router = Router();
@@ -128,11 +129,18 @@ router.post("/phase1", requireAuth, async (req: AuthRequest, res) => {
   const schema = z.object({
     role:      z.enum(["bat", "bowl", "wk", "ar"]),
     trialCity: z.string().min(2).max(50),
+    dob:       z.string({ message: "Date of birth required — please refresh the page" })
+                .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date of birth"),
   });
   const parsed = schema.safeParse(req.body);
   if (!parsed.success) return void res.status(400).json({ error: parsed.error.issues[0].message });
 
-  const { role, trialCity } = parsed.data;
+  const { role, trialCity, dob } = parsed.data;
+
+  // AGE GATE (18–45 inclusive): stop ineligible players BEFORE any payment.
+  if (!isAgeEligible(dob)) {
+    return void res.status(403).json({ error: AGE_INELIGIBLE_MESSAGE, code: "AGE_INELIGIBLE" });
+  }
 
   // Check already registered
   const [existing] = await db.select().from(registrationsTable)
@@ -146,6 +154,13 @@ router.post("/phase1", requireAuth, async (req: AuthRequest, res) => {
     });
   }
 
+  // Persist DOB on the user record (identity data, reused across seasons).
+  await db.update(usersTable)
+    .set({ dob, updatedAt: new Date() })
+    .where(eq(usersTable.id, req.user!.userId));
+
+  // Provisional deadline; the real upload window starts at payment success
+  // (phase1PaidAt + uploadWindowDays) — see payment.ts.
   const videoDeadline = new Date(Date.now() + 15 * 24 * 60 * 60 * 1000); // 15 days
 
   // NOTE: the sequential reg number (BCPL-DEL-1 …) is NOT assigned here —
@@ -176,8 +191,13 @@ router.get("/status", requireAuth, async (req: AuthRequest, res) => {
 
   if (!reg) return void res.json({ registered: false });
 
+  const [u] = await db.select({ dob: usersTable.dob }).from(usersTable)
+    .where(eq(usersTable.id, req.user!.userId)).limit(1);
+
   res.json({
     registered:     true,
+    dob:            u?.dob ?? null,
+    ageEligible:    u?.dob ? isAgeEligible(u.dob) : null,
     registrationId: reg.id,
     regNumber:      reg.regNumber,
     role:           reg.role,
@@ -187,6 +207,23 @@ router.get("/status", requireAuth, async (req: AuthRequest, res) => {
     videoDeadline:  reg.videoDeadline,
     fees:           FEES[reg.role],
   });
+});
+
+// PATCH /api/register/dob — DOB backfill for users who registered before the
+// age gate existed (they hit code DOB_REQUIRED at payment time).
+router.patch("/dob", requireAuth, async (req: AuthRequest, res) => {
+  const parsed = z.object({
+    dob: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date of birth"),
+  }).safeParse(req.body);
+  if (!parsed.success) return void res.status(400).json({ error: parsed.error.issues[0].message });
+
+  if (!isAgeEligible(parsed.data.dob)) {
+    return void res.status(403).json({ error: AGE_INELIGIBLE_MESSAGE, code: "AGE_INELIGIBLE" });
+  }
+  await db.update(usersTable)
+    .set({ dob: parsed.data.dob, updatedAt: new Date() })
+    .where(eq(usersTable.id, req.user!.userId));
+  res.json({ success: true });
 });
 
 export default router;

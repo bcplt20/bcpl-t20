@@ -16,3 +16,5 @@ description: KYC (PAN/Aadhaar) verification env split, stub mode, and how vendor
 **How to apply:** any change to KYC verification calls → update the contract test alongside; when the owner reports vendor errors, reproduce via docs + mocked tests, not dev API calls.
 
 **Webhook auth rule:** every state-mutating Cashfree webhook must carry the same guard as the payment one — base64 HMAC-SHA256(timestamp + rawBody) via x-webhook-signature, timingSafeEqual. KYC webhook accepts CF_VERIFY_SECRET or CASHFREE_SECRET_KEY (verification-suite hooks sign with the verify secret). Unsigned → 401. When adding any new webhook route, copy this guard — an architect review caught the KYC one shipping without it.
+
+- **createOrder is NOT stubbed when CASHFREE_APP_ID/SECRET_KEY are set — and they ARE set in dev.** A "stub exists in code" grep is not proof: my age-gate test (2026-07-23) created a REAL pending order in production Cashfree. Never call /payment/*/create in tests; check the runtime key-gating, not code presence.

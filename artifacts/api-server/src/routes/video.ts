@@ -67,6 +67,12 @@ router.post("/confirm", requireAuth, async (req: AuthRequest, res) => {
 
   if (!reg) return void res.status(404).json({ error: "Registration not found" });
 
+  // Deadline enforced on confirm too — a presigned URL fetched before the
+  // deadline must not allow a post-deadline submission.
+  if (reg.videoDeadline && reg.videoDeadline < new Date()) {
+    return void res.status(400).json({ error: "Video upload deadline has passed" });
+  }
+
   const s3Url = getS3Url(s3Key);
 
   await db.insert(phase1VideosTable).values({ registrationId, s3Key, s3Url, status: "submitted" });

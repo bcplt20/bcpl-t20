@@ -4,7 +4,7 @@ import { Link, useLocation } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import {
   sendOtp, verifyOtp, saveAuthToken, isAuthenticated,
-  registerPhase1, createPhase1Payment, getRegistrationStatus,
+  registerPhase1, createPhase1Payment, getRegistrationStatus, updateDob,
 } from '@/lib/api';
 import { fireReferralAttribution } from '@/lib/marketingApi';
 import {
@@ -280,11 +280,13 @@ export function Registration() {
     try {
       let regId: string;
       try {
-        const reg = await registerPhase1({ role: role!.id, trialCity: city });
+        const reg = await registerPhase1({ role: role!.id, trialCity: city, dob });
         regId = reg.registrationId;
         // Referral attribution (fire-and-forget — never blocks payment)
         fireReferralAttribution(regId);
       } catch (e: any) {
+        // Age gate: hard stop — never proceed toward payment
+        if (e?.code === 'AGE_INELIGIBLE') { setPayError(e.message); setPayLoading(false); return; }
         // Already registered — get existing regId
         const status = await getRegistrationStatus() as any;
         if (status?.registrationId) {
@@ -294,7 +296,16 @@ export function Registration() {
         }
         else throw e;
       }
-      const pay = await createPhase1Payment(regId);
+      let pay;
+      try {
+        pay = await createPhase1Payment(regId);
+      } catch (e: any) {
+        // Player registered before the age gate existed — backfill DOB and retry once
+        if (e?.code === 'DOB_REQUIRED' && dob && dobValid) {
+          await updateDob(dob);
+          pay = await createPhase1Payment(regId);
+        } else throw e;
+      }
       // Store data for receipt page
       sessionStorage.setItem('bcpl_p1_pending', JSON.stringify({ amount: pay.amount, orderId: pay.orderId }));
       // Open Cashfree
@@ -690,9 +701,10 @@ export function Registration() {
                     </div>
                   </div>
                   <div>
-                    <label className="field-lbl">Date of Birth (18–45 yrs)</label>
+                    <label className="field-lbl">Date of Birth (18–45 yrs) *</label>
                     <input className="field-inp" type="date" value={dob} onChange={e => setDob(e.target.value)} min={minDob} max={maxDob} style={{ colorScheme:'dark' }} />
                     {ageError && <div style={{fontSize:11,color:'#EF4444',marginTop:5,fontWeight:600}}>⚠ {ageError}</div>}
+                    {dob && dobValid && <div style={{fontSize:11,color:'#22C55E',marginTop:5,fontWeight:700,letterSpacing:'.04em'}}>✅ AGE ELIGIBILITY — CONFIRMED</div>}
                   </div>
                 </div>
                 </>)}
@@ -725,16 +737,26 @@ export function Registration() {
                         <div style={{ fontSize:22, marginBottom:8 }}>⏳</div>
                         <div style={{ fontSize:14, fontWeight:800, color:'#FBB724', fontFamily:'Montserrat,sans-serif' }}>Payment Pending</div>
                         <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:6, marginBottom:14 }}>Complete your Phase 1 payment to activate your registration.</div>
-                        <button onClick={async()=>{
+                        {/* DOB backfill: players registered before the age gate existed */}
+                        {!regStatus?.dob && (
+                          <div style={{ maxWidth:280, margin:'0 auto 14px', textAlign:'left' }}>
+                            <label className="field-lbl">Date of Birth (18–45 yrs) *</label>
+                            <input className="field-inp" type="date" value={dob} onChange={e => setDob(e.target.value)} min={minDob} max={maxDob} style={{ colorScheme:'dark' }} />
+                            {ageError && <div style={{fontSize:11,color:'#EF4444',marginTop:5,fontWeight:600}}>⚠ {ageError}</div>}
+                            {dob && dobValid && <div style={{fontSize:11,color:'#22C55E',marginTop:5,fontWeight:700}}>✅ AGE ELIGIBILITY — CONFIRMED</div>}
+                          </div>
+                        )}
+                        <button disabled={!regStatus?.dob && !(dob && dobValid)} onClick={async()=>{
                           try {
                             setPayLoading(true);
+                            if (!regStatus?.dob && dob && dobValid) await updateDob(dob);
                             const pay = await createPhase1Payment(regStatus.registrationId);
                             sessionStorage.setItem('bcpl_p1_pending', JSON.stringify({ amount: pay.amount, orderId: pay.orderId }));
                             await loadCashfreeSDK();
                             const cf = (window as any).Cashfree({ mode:'production' });
                             cf.checkout({ paymentSessionId: pay.paymentSessionId });
                           } catch(e:any){ alert(e.message); } finally { setPayLoading(false); }
-                        }} style={{ padding:'12px 28px', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer' }}>
+                        }} style={{ padding:'12px 28px', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', opacity:(!regStatus?.dob && !(dob && dobValid)) ? .5 : 1 }}>
                           {payLoading ? '⏳ Processing...' : '💳 COMPLETE PAYMENT →'}
                         </button>
                       </div>
@@ -1023,6 +1045,7 @@ export function Registration() {
                         { l:'PLAYER NAME', v:name || '—' },
                         { l:'ROLE', v:role ? `${role.emoji} ${role.label}` : '—' },
                         { l:'TRIAL CITY', v:city || '—' },
+                        { l:'AGE ELIGIBILITY', v:dob && dobValid ? '✓ Eligible (18–45)' : '—' },
                         { l:'SEASON', v:'5 · 2025–26' },
                       ].map(row => (
                         <div key={row.l} style={{ padding:'10px 0', borderBottom:'1px solid rgba(255,255,255,0.05)' }}>

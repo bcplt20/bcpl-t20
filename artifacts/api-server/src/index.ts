@@ -9,6 +9,7 @@ import { ensureMarketingTables } from "./routes/marketing";
 import { ensureReferralProgramTables } from "./routes/referralProgram";
 import { ensureAdminContentTables } from "./routes/adminTools";
 import { ensureNotificationErrorColumn } from "./lib/notify";
+import { ensurePhase1AiTables } from "./lib/phase1Migrations";
 import { reconcileAbandonedPayments } from "./lib/reconcilePayments";
 
 const port = Number(process.env["PORT"] ?? "8080");
@@ -32,6 +33,7 @@ async function start() {
       await ensureReferralProgramTables(); // needs referral_codes from ensureMarketingTables
       await ensureAdminContentTables();
       await ensureNotificationErrorColumn();
+      await ensurePhase1AiTables(); // Phase 1 AI evaluation pipeline
       logger.info("startup migrations ensured");
       break;
     } catch (e) {

@@ -297,11 +297,15 @@ export function isAuthenticated(): boolean {
 
 /* ─── Registration ─────────────────────────────────────── */
 
-export const registerPhase1 = (data: { role: string; trialCity: string }) =>
+export const registerPhase1 = (data: { role: string; trialCity: string; dob: string }) =>
   req<{
     success: boolean; registrationId: string;
     role: string; trialCity: string; phase1Fee: number; videoDeadline: string;
   }>("POST", "/register/phase1", data);
+
+/** DOB backfill for players who registered before the age gate existed. */
+export const updateDob = (dob: string) =>
+  req<{ success: boolean }>("PATCH", "/register/dob", { dob });
 
 /* ─── Payments ─────────────────────────────────────────── */
 

@@ -13,6 +13,8 @@ import { sendSms } from "../lib/sms";
 import { sendWhatsApp, WA } from "../lib/whatsapp";
 import { logNotifications } from "../lib/notify";
 import { FEES, assignRegNumber } from "./register";
+import { isAgeEligible, AGE_INELIGIBLE_MESSAGE } from "../lib/age";
+import { getPhase1Config } from "../lib/phase1Config";
 import { z } from "zod";
 
 const router = Router();
@@ -24,10 +26,11 @@ async function notifyPhase1Success(
   user: { id: string; name: string; email: string; phone: string },
   reg:  { id: string; role: string; trialCity: string | null; regNumber?: string | null },
   amount: number,
+  windowDays = 15,
 ) {
   const regNo = reg.regNumber ?? reg.id.slice(0, 8).toUpperCase();
   const email = tplPhase1Receipt(user.name, reg.role, amount, regNo, reg.trialCity ?? "TBD");
-  const smsMsg = `Welcome to BCPL T20 Season 5! Registered as ${reg.role.toUpperCase()}. Reg No: ${regNo}. Upload trial video within 15 days. #OfficeSeStadiumtak`;
+  const smsMsg = "Welcome to BCPL T20 Season 5! Registered as " + reg.role.toUpperCase() + ". Reg No: " + regNo + ". Upload trial video within " + windowDays + " days. #OfficeSeStadiumtak";
 
   // Send on all channels in parallel (helpers never throw), then record the
   // REAL outcome of each attempt in notification_logs.
@@ -71,6 +74,17 @@ router.post("/phase1/create", requireAuth, async (req: AuthRequest, res) => {
   if (!rows[0]) return void res.status(404).json({ error: "Registration not found" });
   const { reg, user } = rows[0];
   if (reg.phase1Status !== "pending") return void res.status(400).json({ error: "Payment already completed" });
+
+  // AGE GATE (18–45): never collect payment from an ineligible player.
+  if (!user.dob) {
+    return void res.status(403).json({
+      error: "Date of birth required before payment. Please refresh and complete your details.",
+      code:  "DOB_REQUIRED",
+    });
+  }
+  if (!isAgeEligible(user.dob)) {
+    return void res.status(403).json({ error: AGE_INELIGIBLE_MESSAGE, code: "AGE_INELIGIBLE" });
+  }
 
   const amount  = Math.round(FEES[reg.role].phase1 * 1.18); // base + 18% GST
   const orderId = `p1_${reg.id.slice(0, 8)}_${Date.now()}`;
@@ -134,7 +148,12 @@ router.post("/phase1/verify", requireAuth, async (req: AuthRequest, res) => {
   // Fire notifications async — only if this call confirmed the payment
   // (skips duplicates when the webhook already confirmed & notified)
   if (flipped[0]) {
-    notifyPhase1Success(user, { id: reg.id, role: reg.role, trialCity: reg.trialCity, regNumber }, parseInt(pay.amount));
+    // Upload window starts NOW (payment success), not at registration time.
+    const cfg = await getPhase1Config();
+    const videoDeadline = new Date(Date.now() + cfg.uploadWindowDays * 24 * 60 * 60 * 1000);
+    await db.update(registrationsTable).set({ videoDeadline, updatedAt: new Date() })
+      .where(eq(registrationsTable.id, reg.id));
+    notifyPhase1Success(user, { id: reg.id, role: reg.role, trialCity: reg.trialCity, regNumber }, parseInt(pay.amount), cfg.uploadWindowDays);
   }
 
   res.json({ success: true, registrationId: reg.id, regNumber });
@@ -278,6 +297,11 @@ router.post("/webhook", async (req, res) => {
           // (avoids duplicates when the redirect /verify flow already notified)
           if (flipped[0]) {
             const regNumber = await assignRegNumber(updated[0].registrationId);
+            // Upload window starts at payment success (mirror of the /verify path)
+            const cfg = await getPhase1Config();
+            await db.update(registrationsTable)
+              .set({ videoDeadline: new Date(Date.now() + cfg.uploadWindowDays * 24 * 60 * 60 * 1000), updatedAt: new Date() })
+              .where(eq(registrationsTable.id, updated[0].registrationId));
             const rows = await db.select({ pay: phase1PaymentsTable, reg: registrationsTable, user: usersTable })
               .from(phase1PaymentsTable)
               .innerJoin(registrationsTable, eq(phase1PaymentsTable.registrationId, registrationsTable.id))
@@ -285,7 +309,7 @@ router.post("/webhook", async (req, res) => {
               .where(eq(phase1PaymentsTable.cashfreeOrderId, orderId)).limit(1);
             if (rows[0]) {
               const { pay, reg, user } = rows[0];
-              notifyPhase1Success(user, { id: reg.id, role: reg.role, trialCity: reg.trialCity, regNumber }, parseInt(pay.amount))
+              notifyPhase1Success(user, { id: reg.id, role: reg.role, trialCity: reg.trialCity, regNumber }, parseInt(pay.amount), cfg.uploadWindowDays)
                 .catch((e) => console.error("[WEBHOOK] phase1 notify error", e));
             }
           }
