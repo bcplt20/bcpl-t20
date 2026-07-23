@@ -25,7 +25,9 @@ import {
   aiEvaluationPassesTable,
   rankingSnapshotsTable,
 } from "@workspace/db/schema";
-import { eq, desc, count, and } from "drizzle-orm";
+import { eq, desc, count, and, inArray } from "drizzle-orm";
+import { sendVideoReminders } from "./video";
+import { sendPaymentReminders, remindersEnabled } from "../lib/reminders";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { markKycVerified } from "./kyc";
 import { sendEmail, adminAlertRecipient, tplPhase1ResultReady, tplTrialVenueAnnounced, tplInvoice, tplAdminLoginLockdown } from "../lib/email";
@@ -806,6 +808,83 @@ router.post("/invoice/send", requireAdmin, async (req, res) => {
   }
 });
 
+
+/* ─── GET /api/admin/marketing/abandoned ──────────────────────────
+   Registration-recovery segment: players who registered but never
+   completed Phase 1 payment, with attempt + reminder context. */
+router.get("/marketing/abandoned", async (_req, res) => {
+  try {
+    const rows = await db.select({ reg: registrationsTable, user: usersTable })
+      .from(registrationsTable)
+      .innerJoin(usersTable, eq(registrationsTable.userId, usersTable.id))
+      .where(eq(registrationsTable.phase1Status, "pending"))
+      .orderBy(desc(registrationsTable.createdAt))
+      .limit(500);
+
+    const ids = rows.map(r => r.reg.id);
+    const payMap = new Map<string, { attempts: number; last: string | null }>();
+    const remCount = new Map<string, number>();
+    if (ids.length) {
+      const pays = await db.select().from(phase1PaymentsTable)
+        .where(inArray(phase1PaymentsTable.registrationId, ids))
+        .orderBy(desc(phase1PaymentsTable.createdAt));
+      for (const p of pays) {
+        const cur = payMap.get(p.registrationId) ?? { attempts: 0, last: null };
+        cur.attempts += 1;
+        if (cur.last === null) cur.last = p.status;
+        payMap.set(p.registrationId, cur);
+      }
+      const userIds = rows.map(r => r.user.id);
+      const rems = await db.select({ userId: notificationLogsTable.userId, dedupeKey: notificationLogsTable.dedupeKey })
+        .from(notificationLogsTable)
+        .where(inArray(notificationLogsTable.userId, userIds));
+      for (const n of rems) {
+        if (n.dedupeKey && n.dedupeKey.startsWith("p1_pay_reminder_")) {
+          remCount.set(n.userId, (remCount.get(n.userId) ?? 0) + 1);
+        }
+      }
+    }
+
+    const now = Date.now();
+    res.json({
+      abandoned: rows.map(({ reg, user }) => {
+        const pp = payMap.get(reg.id);
+        return {
+          registrationId: reg.id,
+          name: user.name,
+          phone: user.phone,
+          email: user.email,
+          city: reg.trialCity,
+          role: reg.role,
+          registeredAt: reg.createdAt,
+          ageHours: Math.floor((now - reg.createdAt.getTime()) / 3600000),
+          paymentAttempts: pp ? pp.attempts : 0,
+          lastAttemptStatus: pp ? pp.last : null,
+          remindersSent: remCount.get(user.id) ?? 0,
+        };
+      }),
+    });
+  } catch (err: any) {
+    console.error("[admin/marketing/abandoned]", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/* ─── POST /api/admin/jobs/run-reminders ──────────────────────────
+   Manual trigger for the reminder sweeps. Defaults to dryRun:true —
+   pass { "dryRun": false } to actually send. Idempotent either way:
+   dedupe keys guarantee one send per player per bucket, ever. */
+router.post("/jobs/run-reminders", async (req, res) => {
+  try {
+    const dryRun = req.body && req.body.dryRun === false ? false : true;
+    const videoCount = await sendVideoReminders({ dryRun });
+    const pay = await sendPaymentReminders({ dryRun });
+    res.json({ remindersEnabledInEnv: remindersEnabled(), videoReminders: videoCount, ...pay });
+  } catch (err: any) {
+    console.error("[admin/jobs/run-reminders]", err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 /* ─── GET /api/admin/players/:key/journey ─────────────────────────
    Master Player Journey aggregation — ONE call returns everything the

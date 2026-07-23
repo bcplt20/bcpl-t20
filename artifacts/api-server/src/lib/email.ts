@@ -486,3 +486,36 @@ export function tplInvoice(p: {
       </div>`),
   };
 }
+
+
+// ── Payment reminders (Stage 2 — factual copy only, no promises) ─────────────
+export function tplPhase1PaymentReminder(name: string, city: string, urgent: boolean) {
+  return {
+    subject: urgent
+      ? "Your BCPL T20 registration is still incomplete"
+      : "Complete your BCPL T20 registration — payment pending",
+    htmlContent: wrap(`
+      <div style="background:#0A1727;border-radius:12px;padding:24px;border-left:4px solid #FF7A29;margin-bottom:20px;">
+        <h2 style="color:#FF7A29;margin:0 0 8px;font-size:20px;">Payment Pending</h2>
+        <p style="color:rgba(255,255,255,0.7);margin:0;font-size:14px;">Dear <strong>${name}</strong>, your BCPL T20 Season 5 registration${city ? " for <strong>" + city + "</strong>" : ""} is saved, but the Phase 1 payment is still pending.</p>
+      </div>
+      <p style="color:rgba(255,255,255,0.65);font-size:13px;margin:0 0 6px;">Complete the payment to receive your Player ID and start your 15-day video window.</p>
+      <p style="color:rgba(255,255,255,0.4);font-size:12px;margin:0;">Login with your registered phone number — your details are already filled in.</p>
+      ${btn("COMPLETE PAYMENT →", `${SITE_URL}/register`)}
+    `),
+  };
+}
+
+export function tplPhase2PaymentReminder(name: string) {
+  return {
+    subject: "Phase 1 cleared — your Phase 2 payment is pending",
+    htmlContent: wrap(`
+      <div style="background:#0A1727;border-radius:12px;padding:24px;border-left:4px solid #22C55E;margin-bottom:20px;">
+        <h2 style="color:#22C55E;margin:0 0 8px;font-size:20px;">You cleared Phase 1!</h2>
+        <p style="color:rgba(255,255,255,0.7);margin:0;font-size:14px;">Dear <strong>${name}</strong>, your Phase 1 result is out and you have qualified. Your Phase 2 payment is still pending.</p>
+      </div>
+      <p style="color:rgba(255,255,255,0.65);font-size:13px;margin:0 0 6px;">Complete the Phase 2 payment to proceed to identity verification (KYC) and the physical trial round.</p>
+      ${btn("COMPLETE PHASE 2 →", `${SITE_URL}/register`)}
+    `),
+  };
+}

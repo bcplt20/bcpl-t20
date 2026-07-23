@@ -325,9 +325,20 @@ router.get("/status", requireAuth, async (req: AuthRequest, res) => {
 
 // ── Internal: send reminder emails (called by scheduler) ───────────────────
 
-export async function sendVideoReminders() {
+export async function sendVideoReminders(opts?: { dryRun?: boolean }): Promise<number> {
+  const dryRun = opts?.dryRun ?? false;
+  let sent = 0;
   const now = new Date();
   const dayMs = 24 * 60 * 60 * 1000;
+
+  // Nudge checkpoints derive from the CONFIGURED upload window so they always
+  // exist inside the actual window (config default 7 → nudges at 4-left and
+  // 1-left; window 15 → 12, 9 and 1). Hardcoding day numbers here silently
+  // kills reminders whenever the window setting changes.
+  const cfg = await getPhase1Config();
+  const windowDays = cfg.uploadWindowDays;
+  const midA = windowDays - 3; // "day 3 of the window" nudge
+  const midB = windowDays - 6; // "day 6 of the window" nudge (only if distinct from urgent)
 
   const registrations = await db.select({ reg: registrationsTable, user: usersTable })
     .from(registrationsTable)
@@ -340,8 +351,9 @@ export async function sendVideoReminders() {
     if (msLeft <= 0) continue;
     const daysLeft = Math.ceil(msLeft / dayMs);
 
-    // 7-day window: mid-window nudge (4 days left ≈ day 3) and urgent nudge (1 day left ≈ day 6)
-    const isMid = daysLeft === 4;
+    // Dedupe keys are per-daysLeft, so a schedule/window change can never
+    // double-send to players already reminded at a given days-left mark.
+    const isMid = (midA > 1 && daysLeft === midA) || (midB > 1 && daysLeft === midB);
     const isUrgent = daysLeft === 1;
     if (!isMid && !isUrgent) continue;
 
@@ -349,6 +361,12 @@ export async function sendVideoReminders() {
     // authority. Only the tick that WINS the insert sends anything, so
     // overlapping scheduler runs can never double-send.
     const dedupeKey = "p1_video_reminder_" + reg.id + "_d" + daysLeft;
+    if (dryRun) {
+      const [seen] = await db.select({ id: notificationLogsTable.id }).from(notificationLogsTable)
+        .where(eq(notificationLogsTable.dedupeKey, dedupeKey)).limit(1);
+      if (!seen) { sent++; logger.info({ registrationId: reg.id, daysLeft }, "video reminder DRY RUN — would send"); }
+      continue;
+    }
     const reserved = await db.insert(notificationLogsTable)
       .values({ userId: user.id, type: "email", template: "video_reminder_d" + daysLeft, dedupeKey })
       .onConflictDoNothing()
@@ -365,7 +383,9 @@ export async function sendVideoReminders() {
       sendWhatsApp({ phone: user.phone, templateName: WA.VIDEO_REMINDER, bodyValues: [user.name, daysLeft.toString()] }),
     ]);
     logger.info({ registrationId: reg.id, daysLeft }, "phase1 video reminder sent");
+    sent++;
   }
+  return sent;
 }
 
 /** §§35–39 — player-facing result. Only released data leaves this endpoint:

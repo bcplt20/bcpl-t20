@@ -177,3 +177,21 @@ export const sendEmailCampaign = (data: {
   audience: { stage: AudienceStage; city?: string };
   testedEmail: string;
 }) => adminReq<{ success: boolean; campaign: EmailCampaign }>("POST", "/marketing/email-campaigns/send", data);
+
+
+/* ─── Abandoned registrations (registration recovery segment) ── */
+export interface AbandonedRow {
+  registrationId: string;
+  name: string;
+  phone: string;
+  email: string;
+  city: string | null;
+  role: string;
+  registeredAt: string;
+  ageHours: number;
+  paymentAttempts: number;
+  lastAttemptStatus: string | null;
+  remindersSent: number;
+}
+export const adminGetAbandoned = () =>
+  adminReq<{ abandoned: AbandonedRow[] }>("GET", "/admin/marketing/abandoned");

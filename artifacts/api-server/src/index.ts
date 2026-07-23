@@ -15,6 +15,7 @@ import { ensureAdminContentTables } from "./routes/adminTools";
 import { ensureNotificationErrorColumn } from "./lib/notify";
 import { ensurePhase1AiTables } from "./lib/phase1Migrations";
 import { reconcileAbandonedPayments } from "./lib/reconcilePayments";
+import { sendPaymentReminders, remindersEnabled } from "./lib/reminders";
 
 const port = Number(process.env["PORT"] ?? "8080");
 
@@ -57,23 +58,35 @@ async function start() {
 
 void start();
 
-// ── Reminder scheduler: runs every 6 hours ──────────────────────────────────
-// Sends video upload reminders at Day 3 (4 days left) and Day 6 (1 day left)
+// ── Reminder scheduler: every 6 hours (plus a startup sweep after 90s) ──────
+// Video nudges (day-3 / day-6 / last-day) + payment reminders (P1 abandoned,
+// P2 pending) + Cashfree reconciliation. Real sends happen only when
+// remindersEnabled() — production, or REMINDERS_ENABLED=1 — otherwise every
+// sweep is a logged DRY RUN. Dedupe keys on notification_logs guarantee each
+// player gets each reminder at most once, ever, even across restarts.
 const SIX_HOURS = 6 * 60 * 60 * 1000;
-setInterval(async () => {
+async function reminderTick(): Promise<void> {
+  const dryRun = !remindersEnabled();
   try {
-    logger.info("Running video reminder check...");
-    await sendVideoReminders();
+    const n = await sendVideoReminders({ dryRun });
+    if (n > 0) logger.info({ dryRun, count: n }, "video reminders processed");
   } catch (e) {
     logger.error({ err: e }, "Reminder scheduler failed");
   }
   try {
-    logger.info("Running abandoned payment reconciliation...");
+    const r = await sendPaymentReminders({ dryRun });
+    if (r.p1Candidates || r.p2Candidates) logger.info(r, "payment reminders processed");
+  } catch (e) {
+    logger.error({ err: e }, "Payment reminder sweep failed");
+  }
+  try {
     await reconcileAbandonedPayments();
   } catch (e) {
     logger.error({ err: e }, "Payment reconciliation failed");
   }
-}, SIX_HOURS);
+}
+setTimeout(() => { void reminderTick(); }, 90_000);
+setInterval(() => { void reminderTick(); }, SIX_HOURS);
 
 // ── Phase 1 video validation worker: every 2 minutes ────────────────────────
 // Technical ffprobe validation of new submissions (pipeline stage

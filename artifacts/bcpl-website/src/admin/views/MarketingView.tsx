@@ -4,6 +4,7 @@ import {
   listCampaigns, createCampaign, updateCampaign, deleteCampaign,
   listEmailCampaigns, previewAudience, sendTestEmail, sendEmailCampaign, referralLink,
   type FunnelData, type ReferralStat, type Campaign, type EmailCampaign, type AudienceStage,
+  adminGetAbandoned, type AbandonedRow,
 } from "@/lib/marketingApi";
 
 /* ── Shared UI helpers ── */
@@ -74,6 +75,54 @@ const blankReferral = { name: "", code: "", platform: "Instagram", city: "", pho
 const blankCampaign = { name: "", channel: "WhatsApp", budget: "", spent: "", startDate: "", endDate: "", goal: "", status: "active", notes: "" };
 
 /* ═══════════════════════════════════════════════════ */
+function AbandonedSection() {
+  const [rows, setRows] = useState<AbandonedRow[] | null>(null);
+  const [err, setErr] = useState("");
+  useEffect(() => {
+    adminGetAbandoned().then(d => setRows(d.abandoned)).catch(e => setErr(e?.message || "Failed to load abandoned registrations"));
+  }, []);
+  const fmtAge = (h: number) => (h < 24 ? h + "h" : Math.floor(h / 24) + "d " + (h % 24) + "h");
+  const td: React.CSSProperties = { padding: "8px 10px", borderBottom: "1px solid #131C2E", color: "#94A3B8" };
+  return (
+    <div style={{ ...card, marginTop: 16 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+        <h3 style={{ margin: 0, fontSize: 15, fontWeight: 800, color: "#F1F5F9" }}>Abandoned Registrations</h3>
+        <span style={{ fontSize: 11, fontWeight: 800, color: "#F59E0B", background: "#F59E0B1A", border: "1px solid #F59E0B44", padding: "2px 9px", borderRadius: 999 }}>{rows ? rows.length : "…"}</span>
+      </div>
+      <div style={{ fontSize: 12, color: "#64748B", marginBottom: 12 }}>
+        Registered but Phase 1 payment pending. Auto-reminders go out at 24h and 72h — once each per player, never duplicated.
+      </div>
+      {err && <div style={{ color: "#FCA5A5", fontSize: 12.5 }}>{err}</div>}
+      {rows && rows.length === 0 && <div style={{ color: "#64748B", fontSize: 13 }}>No abandoned registrations right now.</div>}
+      {rows && rows.length > 0 && (
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12.5 }}>
+            <thead><tr>
+              {["Player", "Phone", "City", "Waiting", "Attempts", "Last attempt", "Reminders"].map(h => (
+                <th key={h} style={{ textAlign: "left", padding: "8px 10px", color: "#64748B", fontSize: 10.5, letterSpacing: ".07em", textTransform: "uppercase", borderBottom: "1px solid #1E293B" }}>{h}</th>
+              ))}
+            </tr></thead>
+            <tbody>
+              {rows.slice(0, 100).map(r => (
+                <tr key={r.registrationId}>
+                  <td style={{ ...td, color: "#E2E8F0", fontWeight: 700 }}>{r.name}</td>
+                  <td style={{ ...td, fontFamily: "monospace" }}>{r.phone}</td>
+                  <td style={td}>{r.city || "—"}</td>
+                  <td style={{ ...td, color: "#F59E0B", fontWeight: 700 }}>{fmtAge(r.ageHours)}</td>
+                  <td style={td}>{r.paymentAttempts}</td>
+                  <td style={{ ...td, color: r.lastAttemptStatus === "failed" ? "#FCA5A5" : "#94A3B8" }}>{r.lastAttemptStatus || "none"}</td>
+                  <td style={{ ...td, color: r.remindersSent ? "#10B981" : "#64748B" }}>{r.remindersSent}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {rows.length > 100 && <div style={{ color: "#475569", fontSize: 12, marginTop: 8 }}>Showing first 100 of {rows.length}.</div>}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function MarketingView() {
   const [tab, setTab] = useState<"funnel" | "referrals" | "platforms" | "campaigns" | "email">("funnel");
   const [funnel, setFunnel] = useState<FunnelData | null>(null);
@@ -590,6 +639,7 @@ export default function MarketingView() {
           </div>
         </Modal>
       )}
+      {tab === "funnel" && <AbandonedSection />}
     </div>
   );
 }
