@@ -819,7 +819,7 @@ export function Registration() {
                         <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:8, marginBottom:16, lineHeight:1.7 }}>
                           You've cleared Phase 1. Pay the Phase 2 fee to confirm your physical trial slot.
                         </div>
-                        <button onClick={()=>window.location.href='/register/phase2'} style={{ padding:'12px 28px', background:'linear-gradient(135deg,#22C55E,#16A34A)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer' }}>
+                        <button onClick={()=>navigate('/register/phase2')} style={{ padding:'12px 28px', background:'linear-gradient(135deg,#22C55E,#16A34A)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer' }}>
                           🏟 PAY PHASE 2 FEE →
                         </button>
                       </div>

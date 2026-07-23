@@ -19,7 +19,6 @@ import { getMyResult, isAuthenticated, type MyResult } from '../lib/api';
 import { useLang } from '../lib/i18n';
 import { Link, useLocation } from 'wouter';
 
-const BASE = import.meta.env.BASE_URL;
 
 const ROLE_LABELS: Record<string, { en: string; hi: string }> = {
   bat:  { en: 'Batsman',       hi: 'बल्लेबाज़' },
@@ -341,7 +340,7 @@ export function Phase1Result() {
                    'आपका Phase 1 निर्णय SMS और ईमेल के माध्यम से घोषित कर दिया गया है। आपका विस्तृत 100-पॉइंट स्कोरकार्ड जल्द ही यहाँ दिखाई देगा।')}
               </div>
               {r.phase1Status === 'selected' && (
-                <Link href={BASE + 'register/phase2'} className="btn-orange" style={{ marginTop:32, padding:'16px 36px' }}>
+                <Link href="/register/phase2" className="btn-orange" style={{ marginTop:32, padding:'16px 36px' }}>
                   {t('CONTINUE TO PHASE 2', 'PHASE 2 की ओर बढ़ें')} →
                 </Link>
               )}
@@ -640,7 +639,7 @@ export function Phase1Result() {
                   {t(`Congratulations on passing Phase 1. Your next step is the Phase 2 physical ground trial in ${r.trialCity}. Complete your Phase 2 payment (₹${phase2Fee}) to secure your trial slot.`,
                      `Phase 1 पास करने पर बधाई। आपका अगला कदम ${r.trialCity} में Phase 2 फिजिकल ग्राउंड ट्रायल है। अपना ट्रायल स्लॉट सुरक्षित करने के लिए अपना Phase 2 भुगतान (₹${phase2Fee}) पूरा करें।`)}
                 </p>
-                <Link href={BASE + 'register/phase2'} className="btn-orange" style={{ padding:'16px 36px', fontSize:16, width:'100%', maxWidth:320 }}>
+                <Link href="/register/phase2" className="btn-orange" style={{ padding:'16px 36px', fontSize:16, width:'100%', maxWidth:320 }}>
                   {t('PROCEED TO PHASE 2', 'PHASE 2 की ओर बढ़ें')} →
                 </Link>
               </div>

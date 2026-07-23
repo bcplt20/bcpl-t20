@@ -40,6 +40,13 @@ export function Phase2Registration() {
     })();
   }, []);
 
+  // Already past phase-2 registration → continue to payment (effect-driven, never during render)
+  useEffect(() => {
+    if (loadState === 'ok' && phase2Status && phase2Status !== 'pending') {
+      setLocation('/register/phase2/payment');
+    }
+  }, [loadState, phase2Status, setLocation]);
+
   const canProceed = check1 && check2 && check3;
 
   const handleProceed = () => {
@@ -69,8 +76,7 @@ export function Phase2Registration() {
   );
 
   if (phase2Status && phase2Status !== 'pending') {
-    setLocation('/register/phase2/payment');
-    return null;
+    return null; // redirect handled by the effect above
   }
 
   return (
