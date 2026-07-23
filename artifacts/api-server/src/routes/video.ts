@@ -8,7 +8,7 @@ import { eq, and } from "drizzle-orm";
 import { requireAuth, type AuthRequest } from "../middlewares/auth";
 import { getUploadPresignedUrl, getS3Url, headS3Object, deleteObject } from "../lib/s3";
 import { getPhase1Config, getPhase1Instructions, type Phase1Instructions } from "../lib/phase1Config";
-import { sendEmail, tplVideoSubmitted, tplVideoReminderDay5, tplVideoReminderDay10 } from "../lib/email";
+import { sendEmail, tplVideoSubmitted, tplVideoReminder } from "../lib/email";
 import { sendSms } from "../lib/sms";
 import { sendWhatsApp, WA } from "../lib/whatsapp";
 import { logger } from "../lib/logger";
@@ -39,11 +39,14 @@ async function loadOwnedRegistration(userId: string, registrationId: string) {
   return reg;
 }
 
-/** Every confirmed upload inserts one phase1_videos row, so attempts used = row count. */
-async function countAttempts(registrationId: string): Promise<number> {
-  const rows = await db.select({ id: phase1VideosTable.id }).from(phase1VideosTable)
-    .where(eq(phase1VideosTable.registrationId, registrationId));
-  return rows.length;
+/** pg error codes hide inside DrizzleQueryError's .cause chain. */
+function isUniqueViolation(e: unknown): boolean {
+  let cur = e as { code?: string; cause?: unknown } | undefined;
+  while (cur) {
+    if (cur.code === "23505") return true;
+    cur = cur.cause as { code?: string; cause?: unknown } | undefined;
+  }
+  return false;
 }
 
 // POST /api/video/upload-url  — get S3 presigned URL to upload directly from browser
@@ -69,9 +72,11 @@ router.post("/upload-url", requireAuth, async (req: AuthRequest, res) => {
     return void res.status(400).json({ error: "Video upload deadline has passed" });
   }
 
+  // Advisory check for fast UX feedback — /confirm re-checks atomically.
   const maxAttempts = 1 + cfg.maxReuploads;
-  const attemptsUsed = await countAttempts(registrationId);
-  if (attemptsUsed >= maxAttempts) {
+  const attempts = await db.select({ id: phase1VideosTable.id }).from(phase1VideosTable)
+    .where(eq(phase1VideosTable.registrationId, registrationId));
+  if (attempts.length >= maxAttempts) {
     return void res.status(400).json({ error: "Re-upload limit reached", code: "REUPLOAD_LIMIT" });
   }
 
@@ -100,6 +105,7 @@ router.post("/confirm", requireAuth, async (req: AuthRequest, res) => {
 
   const { registrationId, s3Key, declarationAccepted, durationSeconds } = parsed.data;
   const cfg = await getPhase1Config();
+  const maxAttempts = 1 + cfg.maxReuploads;
 
   if (declarationAccepted !== true) {
     return void res.status(400).json({
@@ -108,23 +114,16 @@ router.post("/confirm", requireAuth, async (req: AuthRequest, res) => {
     });
   }
 
+  // Cheap pre-checks before any S3 round-trip. All of them are re-checked
+  // under the row lock inside the transaction below.
   const reg = await loadOwnedRegistration(req.user!.userId, registrationId);
   if (!reg) return void res.status(404).json({ error: "Registration not found" });
 
   if (reg.phase1Status !== "payment_done" && reg.phase1Status !== "video_submitted") {
     return void res.status(400).json({ error: "Complete Phase 1 payment first" });
   }
-
-  // Deadline enforced on confirm too — a presigned URL fetched before the
-  // deadline must not allow a post-deadline submission.
   if (reg.videoDeadline && reg.videoDeadline < new Date()) {
     return void res.status(400).json({ error: "Video upload deadline has passed" });
-  }
-
-  const maxAttempts = 1 + cfg.maxReuploads;
-  const attemptsUsed = await countAttempts(registrationId);
-  if (attemptsUsed >= maxAttempts) {
-    return void res.status(400).json({ error: "Re-upload limit reached", code: "REUPLOAD_LIMIT" });
   }
 
   // The key must be one WE issued for this exact user + registration.
@@ -134,7 +133,8 @@ router.post("/confirm", requireAuth, async (req: AuthRequest, res) => {
   }
 
   // Never trust the client: verify the object actually landed in S3 and
-  // capture size/type/etag from storage itself.
+  // capture size/type/etag from storage itself. (Network I/O stays outside
+  // the transaction.)
   const head = await headS3Object(s3Key);
   if (!head.exists) {
     return void res.status(400).json({ error: "Upload not found in storage. Please try uploading again." });
@@ -159,34 +159,87 @@ router.post("/confirm", requireAuth, async (req: AuthRequest, res) => {
   }
 
   const s3Url = getS3Url(s3Key);
-  const attemptNumber = attemptsUsed + 1;
 
-  // A re-upload replaces the earlier submission.
-  if (attemptsUsed > 0) {
-    await db.update(phase1VideosTable)
-      .set({ status: "superseded" })
-      .where(and(
-        eq(phase1VideosTable.registrationId, registrationId),
-        eq(phase1VideosTable.status, "submitted"),
-      ));
+  // Atomic section: lock the registration row, then count → supersede →
+  // insert → status flip. Concurrent confirms serialise on the lock, so the
+  // attempt cap and single-active-submission invariants hold. Unique indexes
+  // (registration_id, attempt_number) and (registration_id WHERE submitted)
+  // are DB-level backstops.
+  type TxFail = { fail: "gone" | "status" | "deadline" | "limit" };
+  type TxOk = { attemptNumber: number };
+  let outcome: TxFail | TxOk;
+  try {
+    outcome = await db.transaction(async (tx): Promise<TxFail | TxOk> => {
+      const [locked] = await tx.select({
+        id: registrationsTable.id,
+        phase1Status: registrationsTable.phase1Status,
+        videoDeadline: registrationsTable.videoDeadline,
+      }).from(registrationsTable)
+        .where(and(
+          eq(registrationsTable.id, registrationId),
+          eq(registrationsTable.userId, req.user!.userId),
+        ))
+        .for("update")
+        .limit(1);
+      if (!locked) return { fail: "gone" };
+      if (locked.phase1Status !== "payment_done" && locked.phase1Status !== "video_submitted") return { fail: "status" };
+      if (locked.videoDeadline && locked.videoDeadline < new Date()) return { fail: "deadline" };
+
+      const rows = await tx.select({ id: phase1VideosTable.id }).from(phase1VideosTable)
+        .where(eq(phase1VideosTable.registrationId, registrationId));
+      const attemptsUsed = rows.length;
+      if (attemptsUsed >= maxAttempts) return { fail: "limit" };
+
+      // A re-upload replaces the earlier submission.
+      if (attemptsUsed > 0) {
+        await tx.update(phase1VideosTable)
+          .set({ status: "superseded" })
+          .where(and(
+            eq(phase1VideosTable.registrationId, registrationId),
+            eq(phase1VideosTable.status, "submitted"),
+          ));
+      }
+
+      await tx.insert(phase1VideosTable).values({
+        registrationId,
+        s3Key,
+        s3Url,
+        status: "submitted",
+        mimeType: head.contentType,
+        sizeBytes: head.sizeBytes || null,
+        etag: head.etag,
+        declarationAccepted: true,
+        attemptNumber: attemptsUsed + 1,
+        durationSeconds: durationSeconds ?? null,
+      });
+      await tx.update(registrationsTable)
+        .set({ phase1Status: "video_submitted", updatedAt: new Date() })
+        .where(eq(registrationsTable.id, registrationId));
+
+      return { attemptNumber: attemptsUsed + 1 };
+    });
+  } catch (e) {
+    if (isUniqueViolation(e)) {
+      // Backstop indexes fired — another confirm won the race.
+      deleteObject(s3Key).catch(() => {});
+      return void res.status(409).json({ error: "Another upload was just processed. Please refresh and check your status." });
+    }
+    throw e;
   }
 
-  await db.insert(phase1VideosTable).values({
-    registrationId,
-    s3Key,
-    s3Url,
-    status: "submitted",
-    mimeType: head.contentType,
-    sizeBytes: head.sizeBytes || null,
-    etag: head.etag,
-    declarationAccepted: true,
-    attemptNumber,
-    durationSeconds: durationSeconds ?? null,
-  });
-  await db.update(registrationsTable).set({ phase1Status: "video_submitted", updatedAt: new Date() })
-    .where(eq(registrationsTable.id, registrationId));
+  if ("fail" in outcome) {
+    // Object can't be accepted — don't leave it orphaned in the bucket.
+    deleteObject(s3Key).catch(() => {});
+    if (outcome.fail === "gone")     return void res.status(404).json({ error: "Registration not found" });
+    if (outcome.fail === "status")   return void res.status(400).json({ error: "Complete Phase 1 payment first" });
+    if (outcome.fail === "deadline") return void res.status(400).json({ error: "Video upload deadline has passed" });
+    return void res.status(400).json({ error: "Re-upload limit reached", code: "REUPLOAD_LIMIT" });
+  }
 
-  // Notifications only on the FIRST submission — re-uploads shouldn't spam.
+  const attemptNumber = outcome.attemptNumber;
+
+  // Notifications only on the FIRST submission — the transaction guarantees
+  // exactly one request ever sees attemptNumber === 1.
   if (attemptNumber === 1) {
     const [user] = await db.select().from(usersTable).where(eq(usersTable.id, req.user!.userId)).limit(1);
     if (user) {
@@ -287,14 +340,17 @@ export async function sendVideoReminders() {
     const isUrgent = daysLeft === 1;
     if (!isMid && !isUrgent) continue;
 
-    // Idempotent per registration + reminder slot — the scheduler ticks every
-    // few hours, so without this the same reminder would repeat all day.
+    // Reserve-first dedupe: the partial unique index on dedupe_key is the
+    // authority. Only the tick that WINS the insert sends anything, so
+    // overlapping scheduler runs can never double-send.
     const dedupeKey = "p1_video_reminder_" + reg.id + "_d" + daysLeft;
-    const already = await db.select({ id: notificationLogsTable.id }).from(notificationLogsTable)
-      .where(eq(notificationLogsTable.dedupeKey, dedupeKey)).limit(1);
-    if (already.length) continue;
+    const reserved = await db.insert(notificationLogsTable)
+      .values({ userId: user.id, type: "email", template: "video_reminder_d" + daysLeft, dedupeKey })
+      .onConflictDoNothing()
+      .returning({ id: notificationLogsTable.id });
+    if (!reserved.length) continue;
 
-    const email = isMid ? tplVideoReminderDay5(user.name) : tplVideoReminderDay10(user.name);
+    const email = tplVideoReminder(user.name, daysLeft);
     const smsText = isMid
       ? "BCPL T20: Only " + daysLeft + " days left to upload your trial video! Login at bcplt20.com to upload. -BCPL T20"
       : "BCPL T20 URGENT: Only 1 day left! Upload your trial video NOW before your window closes. bcplt20.com -BCPL T20";
@@ -302,7 +358,6 @@ export async function sendVideoReminders() {
       sendEmail({ to: user.email, toName: user.name, ...email }),
       sendSms(user.phone, smsText),
       sendWhatsApp({ phone: user.phone, templateName: WA.VIDEO_REMINDER, bodyValues: [user.name, daysLeft.toString()] }),
-      db.insert(notificationLogsTable).values({ userId: user.id, type: "email", template: "video_reminder_d" + daysLeft, dedupeKey }).onConflictDoNothing(),
     ]);
     logger.info({ registrationId: reg.id, daysLeft }, "phase1 video reminder sent");
   }

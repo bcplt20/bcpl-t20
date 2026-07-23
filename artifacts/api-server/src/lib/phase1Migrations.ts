@@ -131,5 +131,27 @@ export async function ensurePhase1AiTables() {
   await db.execute(sql`CREATE INDEX IF NOT EXISTS audit_logs_entity_idx ON audit_logs (entity, entity_key)`);
   await db.execute(sql`CREATE INDEX IF NOT EXISTS audit_logs_created_idx ON audit_logs (created_at)`);
 
+  // ── phase1_videos integrity backstops ──
+  // Historic data hygiene first (idempotent), then unique indexes that make
+  // the confirm-transaction invariants impossible to violate at the DB level.
+  await db.execute(sql`
+    WITH ranked AS (
+      SELECT id, row_number() OVER (PARTITION BY registration_id ORDER BY submitted_at ASC NULLS LAST, id) AS rn
+      FROM phase1_videos
+    )
+    UPDATE phase1_videos v SET attempt_number = r.rn
+    FROM ranked r WHERE v.id = r.id AND v.attempt_number IS DISTINCT FROM r.rn
+  `);
+  await db.execute(sql`
+    UPDATE phase1_videos SET status = 'superseded'
+    WHERE status = 'submitted' AND id NOT IN (
+      SELECT DISTINCT ON (registration_id) id FROM phase1_videos
+      WHERE status = 'submitted'
+      ORDER BY registration_id, submitted_at DESC NULLS LAST, id DESC
+    )
+  `);
+  await db.execute(sql`CREATE UNIQUE INDEX IF NOT EXISTS phase1_videos_reg_attempt_uq ON phase1_videos (registration_id, attempt_number)`);
+  await db.execute(sql`CREATE UNIQUE INDEX IF NOT EXISTS phase1_videos_one_submitted_uq ON phase1_videos (registration_id) WHERE status = 'submitted'`);
+
   logger.info("phase1 AI pipeline tables ensured");
 }

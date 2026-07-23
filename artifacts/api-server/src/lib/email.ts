@@ -161,60 +161,53 @@ export function tplVideoSubmitted(name: string) {
       </div>
       <div style="background:rgba(255,255,255,0.03);border-radius:8px;padding:12px 16px;">
         <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.05);"><span style="font-size:12px;color:rgba(255,255,255,0.4);">Status</span><span style="font-size:12px;color:#22C55E;font-weight:700;">✅ Under Review</span></div>
-        <div style="display:flex;justify-content:space-between;padding:7px 0;"><span style="font-size:12px;color:rgba(255,255,255,0.4);">Expected Result By</span><span style="font-size:12px;color:#FF7A29;font-weight:700;">Within 15 Working Days</span></div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;"><span style="font-size:12px;color:rgba(255,255,255,0.4);">Expected Result By</span><span style="font-size:12px;color:#FF7A29;font-weight:700;">Soon — via SMS + Email</span></div>
       </div>`),
   };
 }
 
-// ── Template 3: Video Upload Reminder — Day 5 (10 days left) ─────────────────
-export function tplVideoReminderDay5(name: string) {
+// ── Template 3: Video Upload Reminder (7-day window: mid nudge + final-day urgent) ─
+export function tplVideoReminder(name: string, daysLeft: number) {
+  if (daysLeft <= 1) {
+    return {
+      subject: "🚨 BCPL T20 — FINAL DAY: Upload Your Trial Video Now",
+      htmlContent: wrap(`
+        <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);border-radius:12px;padding:24px;margin-bottom:20px;">
+          <h2 style="color:#EF4444;margin:0 0 8px;font-size:20px;">🚨 URGENT — Only 1 Day Left!</h2>
+          <p style="color:rgba(255,255,255,0.7);margin:0 0 8px;font-size:14px;">Dear <strong>${name}</strong>, your video upload window closes in less than 24 hours.</p>
+          <p style="color:rgba(255,255,255,0.5);margin:0;font-size:13px;">⚠️ <strong style="color:#EF4444;">If you don't upload before the deadline, your trial slot expires</strong> and no further extensions will be granted.</p>
+        </div>
+        <div style="background:rgba(255,255,255,0.03);border-radius:8px;padding:16px;margin-bottom:16px;">
+          <div style="display:flex;align-items:center;gap:14px;">
+            <div style="font-size:40px;">🏏</div>
+            <div>
+              <div style="font-size:14px;color:#fff;font-weight:700;margin-bottom:4px;">Don't Miss Your Chance!</div>
+              <div style="font-size:13px;color:rgba(255,255,255,0.5);">You've already paid. Upload your 30–60 second skill video now — it takes less than 5 minutes.</div>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:center;">
+          ${btn("🚨 UPLOAD NOW →", `${SITE_URL}/register/upload-video`, "#EF4444")}
+          <div style="font-size:11px;color:rgba(255,255,255,0.2);margin-top:8px;">This is your final reminder.</div>
+        </div>`),
+    };
+  }
   return {
-    subject: "⏰ BCPL T20 — 10 Days Left! Upload Your Trial Video",
+    subject: `⏰ BCPL T20 — ${daysLeft} Days Left! Upload Your Trial Video`,
     htmlContent: wrap(`
       <div style="background:#0A1727;border-radius:12px;padding:24px;border-left:4px solid #F59E0B;margin-bottom:20px;">
-        <h2 style="color:#F59E0B;margin:0 0 8px;font-size:20px;">⏰ 10 Days Left — Upload Your Video!</h2>
-        <p style="color:rgba(255,255,255,0.7);margin:0 0 8px;font-size:14px;">Dear <strong>${name}</strong>, you registered 5 days ago but haven't uploaded your trial video yet.</p>
-        <p style="color:rgba(255,255,255,0.5);margin:0;font-size:13px;">You have <strong style="color:#F59E0B;">10 more days</strong> to upload. After the deadline, your registration expires and you cannot upload.</p>
+        <h2 style="color:#F59E0B;margin:0 0 8px;font-size:20px;">⏰ ${daysLeft} Days Left — Upload Your Video!</h2>
+        <p style="color:rgba(255,255,255,0.7);margin:0 0 8px;font-size:14px;">Dear <strong>${name}</strong>, your payment is confirmed but your trial video hasn't been uploaded yet.</p>
+        <p style="color:rgba(255,255,255,0.5);margin:0;font-size:13px;">You have <strong style="color:#F59E0B;">${daysLeft} more days</strong> to upload. After the deadline your trial slot expires and you cannot upload.</p>
       </div>
       <div style="background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.2);border-radius:12px;padding:18px;margin-bottom:16px;">
         <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:10px;letter-spacing:1px;text-transform:uppercase;">Video Requirements</div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.6);line-height:1.9;">🎬 Duration: Max 2 minutes<br/>📱 Format: Any (MP4, MOV, etc.)<br/>🏏 Content: Batting, Bowling or Fielding — your choice<br/>💡 Good lighting, clear frame — no filter needed</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.6);line-height:1.9;">🎬 Duration: 30–60 seconds<br/>📱 Format: MP4, MOV, AVI or WEBM<br/>🏏 Content: skills for YOUR selected role — see instructions on the upload page<br/>💡 Good lighting, clear frame — no filters or editing</div>
       </div>
       <div style="text-align:center;">
         ${btn("UPLOAD VIDEO NOW →", `${SITE_URL}/register/upload-video`, "#F59E0B")}
       </div>`),
   };
-}
-
-// ── Template 4: Video Upload Reminder — Day 10 (5 days left, urgent) ──────────
-export function tplVideoReminderDay10(name: string) {
-  return {
-    subject: "🚨 BCPL T20 — URGENT: Only 5 Days Left! Upload Now",
-    htmlContent: wrap(`
-      <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);border-radius:12px;padding:24px;margin-bottom:20px;">
-        <h2 style="color:#EF4444;margin:0 0 8px;font-size:20px;">🚨 URGENT — Only 5 Days Left!</h2>
-        <p style="color:rgba(255,255,255,0.7);margin:0 0 8px;font-size:14px;">Dear <strong>${name}</strong>, it has been 10 days since registration and your trial video is still not uploaded.</p>
-        <p style="color:rgba(255,255,255,0.5);margin:0;font-size:13px;">⚠️ <strong style="color:#EF4444;">If you don't upload within 5 days, your registration will expire</strong> and your slot will be lost permanently.</p>
-      </div>
-      <div style="background:rgba(255,255,255,0.03);border-radius:8px;padding:16px;margin-bottom:16px;">
-        <div style="display:flex;align-items:center;gap:14px;">
-          <div style="font-size:40px;">🏏</div>
-          <div>
-            <div style="font-size:14px;color:#fff;font-weight:700;margin-bottom:4px;">Don't Miss Your Chance!</div>
-            <div style="font-size:13px;color:rgba(255,255,255,0.5);">You've already paid ₹299. Upload your 2-minute video now and let BCCI-certified scouts evaluate your potential.</div>
-          </div>
-        </div>
-      </div>
-      <div style="text-align:center;">
-        ${btn("🚨 UPLOAD NOW — 5 DAYS LEFT →", `${SITE_URL}/register/upload-video`, "#EF4444")}
-        <div style="font-size:11px;color:rgba(255,255,255,0.2);margin-top:8px;">This is your final reminder. No further extensions will be granted.</div>
-      </div>`),
-  };
-}
-
-// ── Template 5 (legacy): Generic video reminder ───────────────────────────────
-export function tplVideoReminder(name: string, daysLeft: number) {
-  return daysLeft >= 8 ? tplVideoReminderDay5(name) : tplVideoReminderDay10(name);
 }
 
 // ── Template 6: Phase 1 Selected for Phase 2 ──────────────────────────────────
