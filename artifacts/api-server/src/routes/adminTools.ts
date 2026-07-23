@@ -28,6 +28,8 @@ import { getUploadPresignedUrl, getDownloadPresignedUrl, getS3Url, deleteObject 
 import { runVideoValidations } from "../lib/videoValidation";
 import { runAiValidityChecks } from "../lib/aiPipeline";
 import { runAiScoringPasses } from "../lib/aiScoring";
+import { runResultReleases } from "../lib/resultRelease";
+import { getPhase1Config, updatePhase1Config } from "../lib/phase1Config";
 
 const router = Router();
 router.use(requireAdmin);
@@ -49,6 +51,26 @@ router.post("/phase1/run-ai", async (_req: Request, res: Response) => {
 router.post("/phase1/run-scoring", async (_req: Request, res: Response) => {
   const result = await runAiScoringPasses(10);
   res.json({ success: true, ...result });
+});
+
+// Manual result-release sweep (§§32–35 — gated on resultReleaseEnabled).
+router.post("/phase1/run-release", async (_req: Request, res: Response) => {
+  const result = await runResultReleases(50);
+  res.json({ success: true, ...result });
+});
+
+// Phase 1 pipeline config — read + patch (audited, cache-busting).
+router.get("/phase1/config", async (_req: Request, res: Response) => {
+  const cfg = await getPhase1Config();
+  res.json({ success: true, config: cfg });
+});
+router.patch("/phase1/config", async (req: Request, res: Response) => {
+  try {
+    const updated = await updatePhase1Config(req.body, "admin-tools", req.ip);
+    res.json({ success: true, config: updated });
+  } catch (e) {
+    res.status(400).json({ error: "Invalid config patch: " + String(e).slice(0, 300) });
+  }
 });
 
 /* Payment rows that count as money received (mirrors marketing.ts). */

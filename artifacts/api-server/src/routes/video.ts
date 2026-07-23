@@ -2,9 +2,9 @@ import { Router } from "express";
 import { db } from "@workspace/db";
 import {
   registrationsTable, phase1VideosTable, phase1EvaluationsTable,
-  usersTable, notificationLogsTable,
+  usersTable, notificationLogsTable, rankingSnapshotsTable,
 } from "@workspace/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 import { requireAuth, type AuthRequest } from "../middlewares/auth";
 import { getUploadPresignedUrl, getS3Url, headS3Object, deleteObject } from "../lib/s3";
 import { getPhase1Config, getPhase1Instructions, type Phase1Instructions } from "../lib/phase1Config";
@@ -12,7 +12,7 @@ import { sendEmail, tplVideoSubmitted, tplVideoReminder } from "../lib/email";
 import { sendSms } from "../lib/sms";
 import { sendWhatsApp, WA } from "../lib/whatsapp";
 import { logger } from "../lib/logger";
-import { normalizeRole } from "../lib/phase1Roles";
+import { normalizeRole, ROLE_LABELS } from "../lib/phase1Roles";
 import { z } from "zod";
 
 const router = Router();
@@ -367,5 +367,54 @@ export async function sendVideoReminders() {
     logger.info({ registrationId: reg.id, daysLeft }, "phase1 video reminder sent");
   }
 }
+
+/** §§35–39 — player-facing result. Only released data leaves this endpoint:
+ *  ranks come from the frozen snapshot (§34), never live recomputes, and no
+ *  AI internals (passes, variance, models, providers) are ever exposed. */
+router.get("/result", requireAuth, async (req: AuthRequest, res) => {
+  const registrationId = String(req.query.registrationId ?? "");
+  if (!registrationId) return void res.status(400).json({ error: "registrationId required" });
+  const reg = await loadOwnedRegistration(req.user!.userId, registrationId);
+  if (!reg) return void res.status(404).json({ error: "Registration not found" });
+
+  const evals = await db.select().from(phase1EvaluationsTable)
+    .where(eq(phase1EvaluationsTable.registrationId, registrationId))
+    .orderBy(desc(phase1EvaluationsTable.attemptNumber));
+  const released = evals.find((e) => e.status === "result_released");
+  if (!released) {
+    const scheduled = evals.find((e) => e.status === "scored" || e.status === "releasing");
+    return void res.json({
+      released: false,
+      status: scheduled ? "scheduled" : "processing",
+      expectedBy: scheduled?.resultReleaseAt ?? null,
+    });
+  }
+
+  const [snap] = await db.select().from(rankingSnapshotsTable)
+    .where(eq(rankingSnapshotsTable.registrationId, registrationId)).limit(1);
+  const [user] = await db.select({ name: usersTable.name }).from(usersTable)
+    .where(eq(usersTable.id, reg.userId)).limit(1);
+
+  res.json({
+    released: true,
+    result: released.result === "qualified" ? "qualified" : "not_shortlisted",
+    score: released.finalScore,
+    categoryScores: released.categoryScores ?? null,
+    strongestArea: released.strongestArea,
+    improvementArea: released.improvementArea,
+    ranks: snap ? {
+      cityRank: snap.cityRank, cityTotal: snap.cityTotal,
+      roleRank: snap.roleRank, roleTotal: snap.roleTotal,
+      percentile: snap.percentile,
+    } : null,
+    releasedAt: released.resultReleasedAt,
+    name: user?.name ?? "",
+    role: reg.role,
+    roleLabel: ROLE_LABELS[normalizeRole(reg.role)],
+    city: reg.trialCity,
+    regNumber: reg.regNumber,
+    phase1Status: reg.phase1Status,
+  });
+});
 
 export default router;

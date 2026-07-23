@@ -3,6 +3,7 @@ import { logger } from "./lib/logger";
 import { runVideoValidations } from "./lib/videoValidation";
 import { runAiValidityChecks } from "./lib/aiPipeline";
 import { runAiScoringPasses } from "./lib/aiScoring";
+import { runResultReleases } from "./lib/resultRelease";
 import { sendVideoReminders } from "./routes/video";
 import { ensureRegNumbers } from "./routes/register";
 import { ensurePhase1Scores } from "./routes/results";
@@ -96,6 +97,12 @@ async function phase1PipelineTick(label: string): Promise<void> {
     if (s.claimed > 0) logger.info(s, label + ": ai scoring");
   } catch (e) {
     logger.error({ err: e }, label + ": ai scoring failed");
+  }
+  try {
+    const rel = await runResultReleases(50);
+    if (rel.claimed > 0) logger.info(rel, label + ": result release");
+  } catch (e) {
+    logger.error({ err: e }, label + ": result release failed");
   }
 }
 setTimeout(() => { void phase1PipelineTick("startup sweep"); }, 20_000);
