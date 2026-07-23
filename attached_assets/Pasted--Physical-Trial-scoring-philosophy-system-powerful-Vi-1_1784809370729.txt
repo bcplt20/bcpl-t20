@@ -1,0 +1,164 @@
+और Physical Trial में भी यही scoring philosophy जारी रखें
+
+यहीं system बहुत powerful बन सकता है।
+
+Video Trial:
+
+PHASE 1
+
+85/100
+
+फिर Physical Trial के बाद:
+
+PHASE 2 — PHYSICAL TRIAL
+
+Batting/Bowling: 88
+Fitness: 82
+Fielding: 79
+Game Situation: 91
+
+PHYSICAL TRIAL SCORE
+
+86/100
+
+फिर:
+
+Delhi Physical Trial Rank
+
+#31
+
+और आगे selected हुआ:
+
+AUCTION POOL QUALIFIED 🏏
+
+अब उसका card:
+
+VIDEO SCORE — 85
+
+PHYSICAL SCORE — 86
+
+DELHI RANK — #31
+
+AUCTION POOL ✓
+
+यह player के लिए achievement बन जाएगा।
+
+⸻
+
+पूरी journey एक card में evolve होगी
+
+Stage 1
+
+REGISTERED
+BCPL ID
+
+↓
+
+Stage 2
+
+VIDEO SUBMITTED
+Under Evaluation
+
+↓
+
+Stage 3
+
+PHASE 1 RESULT
+85/100 • Delhi #247
+
+↓
+
+Stage 4
+
+PHASE 1 QUALIFIED ✓
+
+↓
+
+Stage 5
+
+PHASE 2 VERIFIED ✓
+
+↓
+
+Stage 6
+
+PHYSICAL TRIAL
+86/100 • Delhi #31
+
+↓
+
+Stage 7
+
+AUCTION POOL QUALIFIED ✓
+
+↓
+
+Stage 8
+
+AUCTION
+
+SOLD — ₹8,50,000
+
+↓
+
+Stage 9
+
+MUMBAI TIGERS
+
+BCPL PLAYER
+
+अब सोचिए उसी digital card ने journey कहाँ शुरू की थी:
+
+₹299 Registered
+
+और कहाँ पहुँचा:
+
+₹8.5L • Mumbai Tigers • BCPL Player
+
+यही चीज BCPL को technologically और emotionally बहुत premium बना सकती है।
+
+मेरी proposed complete UX chain
+
+Landing Page
+
+→ Register ₹299
+
+→ Name + Mobile OTP + Email + DOB → 18–45 Live Eligibility
+
+→ Role + Physical Trial City
+
+→ Review details
+
+→ Pay ₹299
+
+→ 🎫 BCPL Player ID/Card Generated
+
+→ 7-Day Video Upload Countdown
+
+→ Day 3 Reminder → Day 6 Final Reminder
+
+→ Video Submitted
+
+→ 15-Day Evaluation Countdown
+
+→ Selector Evaluation → Standardized 100-Point Score
+
+→ Score + City Rank + Role Rank + Percentile
+
+→ RESULT
+
+↙️ QUALIFIED | NOT SHORTLISTED ↘️
+
+Qualified → 85/100 • Delhi #247 • Phase 1 Qualified → Phase 2 declarations → Payment → Aadhaar/PAN → Employment → Emergency → T-shirt → Verification → Physical Trial → New Score/Rank → Auction Pool.
+
+Non-shortlisted → 67/100 • Delhi #4,821 • Review Complete → Performance Breakdown → Strength → Improvement Area → Genuine Selector Note → Future opportunity information → Process feedback.
+
+इस पूरे concept को मैं एक नाम भी दूँगा:
+
+BCPL PLAYER JOURNEY™
+
+और उसके अंदर:
+
+MY PLAYER CARD • MY SCORE • MY RANK • MY JOURNEY
+
+यह सिर्फ registration UX नहीं रहेगा। यह BCPL का अपना player evaluation ecosystem बन सकता है—और खासकर 10 लाख registrations के scale पर, player को transparent score/ranking देना आपके सबसे बड़े trust differentiators में से एक हो सकता है।

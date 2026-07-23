@@ -2,6 +2,7 @@ import app from "./app";
 import { logger } from "./lib/logger";
 import { sendVideoReminders } from "./routes/video";
 import { ensureRegNumbers } from "./routes/register";
+import { ensurePhase1Scores } from "./routes/results";
 import { ensureKycPanVerified, ensurePlayerProfiles } from "./routes/kyc";
 import { ensureTeams } from "./routes/teams";
 import { ensureMarketingTables } from "./routes/marketing";
@@ -23,6 +24,7 @@ async function start() {
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
       await ensureRegNumbers();
+      await ensurePhase1Scores();
       await ensureKycPanVerified();
       await ensurePlayerProfiles();
       await ensureTeams();

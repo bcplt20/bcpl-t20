@@ -1,0 +1,650 @@
+BCPL Website V3 — मेरा पूरा A-to-Z direction
+
+मेरे हिसाब से website को तीन चीजों का combination बनना चाहिए:
+
+IPL-level League Website + Nike-style Sports Visuals + Fintech-level Registration UX
+
+अर्थात exciting भी, trustworthy भी और बहुत आसान भी।
+
+⸻
+
+1. सबसे पहले पूरे website की Design Language बदलें
+
+अभी बहुत सारे sections individually ठीक हैं, लेकिन collectively एक single premium design system जैसा feel कम आता है।
+
+पूरी website के लिए एक fixed system रखें:
+
+Background: Deep BCPL dark / near-black
+Primary: Brand-book BCPL colour
+Accent: सिर्फ important information/CTA
+Typography: Bold condensed sports headline + clean modern body font
+Cards: कम borders, ज्यादा depth/spacing
+Corners: एक consistent radius
+Icons: एक ही icon family
+Animation: subtle, fast, purposeful
+
+और सबसे important:
+
+कम चीजें, बड़ी चीजें।
+
+Premium website में screen भरने के लिए 12 cards नहीं चाहिए।
+
+एक शानदार photograph + एक powerful number + एक powerful sentence कई बार ज्यादा premium लगता है।
+
+⸻
+
+2. English + Hindi simultaneously दिखाना बंद करूँगा
+
+Current homepage पर English के साथ Hindi translation लगातार दिखाई देती है, जिससे information density बहुत बढ़ जाती है। 
+
+Header:
+
+EN | हिंदी
+
+English चुना → पूरा English.
+
+हिंदी चुना → पूरा हिंदी.
+
+यह अकेला change website को काफी cleaner कर देगा।
+
+⸻
+
+3. HEADER
+
+Desktop
+
+BCPL LOGO
+
+Season 5 | Teams | Players | Matches | Auction | Media | About
+
+EN ▼   Login
+
+REGISTER NOW
+
+Header transparent हो।
+
+Hero scroll होने पर dark glass effect:
+
+backdrop blur + subtle border
+
+Mobile
+
+☰    BCPL LOGO        REGISTER
+
+बस।
+
+15 menu items mobile header में नहीं।
+
+⸻
+
+4. HOMEPAGE HERO — सबसे बड़ा visual change
+
+Current messaging:
+
+YOUR CRICKET DREAM ISN’T OVER
+
+अच्छी line है। इसे retain करूँगा। 
+
+लेकिन presentation पूरी बदलूँगा।
+
+Full viewport cinematic video/photo:
+
+stadium lights
+real BCPL players
+auction
+crowd
+Sourav Ganguly
+trophy
+
+ऊपर छोटा:
+
+BHARTIYA CORPORATE PREMIER LEAGUE • SEASON 5
+
+फिर huge:
+
+YOUR CRICKET
+
+DREAM ISN’T OVER.
+
+नीचे:
+
+India’s stage for working professionals to compete, get selected and play big.
+
+फिर सिर्फ दो buttons:
+
+REGISTER FOR ₹299
+
+EXPLORE SEASON 5
+
+और नीचे floating stats:
+
+10 CITIES | 10 TEAMS | ₹6 CR PRIZE POOL | ₹20L MAX AUCTION VALUE
+
+⸻
+
+5. Hero के नीचे बहुत premium “League Strip”
+
+पूरा horizontal animated ticker:
+
+SEASON 5 • 10 CITIES • 10 TEAMS • ₹6 CR PRIZE POOL • INTERNATIONAL STADIUMS • LIVE PLAYER AUCTION • ₹2L–₹20L PLAYER VALUE
+
+यह sports broadcast जैसा feel देगा।
+
+⸻
+
+6. Sourav Ganguly को छोटी section नहीं — major visual asset बनाइए
+
+Current site में ambassador section है। 
+
+मैं full-screen split section बनाऊँगा।
+
+Left 55%:
+
+Sourav Ganguly की शानदार original high-resolution photograph
+
+Right:
+
+OFFICIAL BRAND AMBASSADOR
+
+SOURAV
+
+GANGULY
+
+उनका approved quote.
+
+WATCH HIS MESSAGE ▶
+
+नीचे तीन proof points.
+
+यह section website का major credibility moment होना चाहिए।
+
+⸻
+
+7. “Two Payments. Nothing After.” retain करें
+
+यह current website के strongest sections में से है। 
+
+लेकिन अभी इसे pricing table जैसा कम और visual journey जैसा ज्यादा करें:
+
+YOUR PATH TO BCPL
+
+01
+
+₹299
+
+PHASE 1
+Video Evaluation
+
+→
+
+02
+
+₹2,000
+
+PHASE 2
+Physical Trial
+
+→
+
+03
+
+₹0
+
+AFTER SELECTION
+Auction • Team • Tournament
+
+All-rounder pricing applicable होने पर उसी component में dynamic toggle/footnote.
+
+इससे ₹299 instantly समझ आता है।
+
+⸻
+
+8. Registration Flow — हमारी पिछली पूरी discussion इसी website में
+
+यह सबसे important conversion component होगा।
+
+PHASE 1
+
+Screen A
+
+CREATE YOUR PLAYER PROFILE
+
+Name
+Mobile + OTP
+Email
+DOB
+
+DOB → automatic:
+
+✓ AGE ELIGIBLE
+
+18–45 eligibility confirmed
+
+Role:
+
+Batsman | Bowler | All-Rounder | WK
+
+Trial City:
+
+Delhi | Mumbai | etc.
+
+CONTINUE
+
+⸻
+
+Screen B
+
+PHASE 1 — ₹299
+
+Player summary.
+
+फिर:
+
+Pay → Upload Video → Evaluation → Result
+
+PAY ₹299
+
+⸻
+
+Payment Success
+
+WELCOME TO BCPL
+
+फिर पहली बार उसका:
+
+BCPL PLAYER CARD
+
+Photo बाद में upload हो तो placeholder.
+
+SAURABH JHA
+
+ALL-ROUNDER
+
+DELHI
+
+BCPL-S5-DL-28471
+
+PHASE 1 • ACTIVE
+
+⸻
+
+9. VIDEO UPLOAD DASHBOARD
+
+COMPLETE YOUR PHASE 1
+
+UPLOAD WITHIN
+
+06 : 18 : 42 : 17
+
+DAYS HOURS MIN SEC
+
+UPLOAD VIDEO
+
+और exact deadline:
+
+29 July • 11:59 PM
+
+आपके अनुसार:
+
+Day 3 → Reminder
+
+Day 6 → Final Reminder
+
+Email + consent होने पर WhatsApp/SMS भी।
+
+⸻
+
+10. Video upload होते ही
+
+Dashboard automatically:
+
+✓ VIDEO RECEIVED
+
+YOUR EVALUATION HAS STARTED
+
+Result expected within
+
+14 : 23 : 41 : 08
+
+Player card:
+
+PHASE 1
+
+UNDER REVIEW 🟡
+
+नीचे:
+
+Registration ✓ → Video ✓ → Evaluation ● → Result ○
+
+⸻
+
+11. RESULT SYSTEM — selected और non-selected दोनों
+
+यह BCPL का signature digital feature बनाया जा सकता है।
+
+एक BCPL Player Score™ framework.
+
+उदाहरण:
+
+85
+
+/100
+
+Role Skill — 32/35
+Technique — 21/25
+Execution — 12/15
+Game Awareness — 8/10
+Movement — 8/10
+Video Evidence — 4/5
+
+फिर:
+
+DELHI RANK
+
+#247
+
+247 of 18,420 evaluated Delhi players
+
+और अगर data statistically meaningful है:
+
+ALL-ROUNDER RANK
+
+#38 / 3,140
+
+TOP 1.4%
+
+सभी scores/ranks actual evaluation data से ही generate हों।
+
+⸻
+
+12. SELECTED PLAYER
+
+Result open होने पर थोड़ा theatrical moment रखें।
+
+BCPL animation.
+
+Floodlights.
+
+फिर:
+
+YOU’VE MADE IT.
+
+PHASE 1 QUALIFIED ✓
+
+Player Card gold/premium variant:
+
+SAURABH JHA
+
+ALL-ROUNDER • DELHI
+
+85/100
+
+DELHI RANK #247
+
+ALL-ROUNDER RANK #38
+
+PHASE 1 QUALIFIED ✓
+
+और:
+
+CONTINUE TO PHASE 2 →
+
+⸻
+
+13. NON-SELECTED PLAYER
+
+इसे उतनी ही अच्छी design treatment दें।
+
+YOUR BCPL ASSESSMENT
+
+IS COMPLETE.
+
+SAURABH JHA
+
+BATSMAN • DELHI
+
+67/100
+
+Delhi Rank #4,821
+
+PHASE 1 REVIEW COMPLETED ✓
+
+फिर:
+
+Your Strength
+
+Shot Selection — Strong
+
+Area to Improve
+
+Footwork — Developing
+
+BCPL Assessment
+
+Genuine standardized feedback.
+
+फिर:
+
+You haven’t progressed to Phase 2 in this selection cycle.
+
+और:
+
+THIS ATTEMPT ENDS HERE.
+
+YOUR CRICKET JOURNEY DOESN’T HAVE TO.
+
+अगर future attempt permitted है तो:
+
+PREPARE FOR THE NEXT BCPL OPPORTUNITY
+
+“Rejected” / “Failed” नहीं।
+
+⸻
+
+14. Phase 2
+
+Selected player:
+
+THREE DECLARATIONS
+
+Working Professional ✓
+Required Cricket Gap ✓
+Verification/T&C ✓
+
+↓
+
+PHASE 2 PAYMENT
+
+↓
+
+अब तीन small screens:
+
+IDENTITY
+
+Aadhaar → API → ✓
+PAN → API → ✓
+
+↓
+
+PROFESSIONAL DETAILS
+
+Employment category → conditional questions
+
+↓
+
+PLAYER ESSENTIALS
+
+Emergency contact
+T-shirt size
+
+↓
+
+PHASE 2 COMPLETE ✓
+
+Player Card फिर evolve.
+
+⸻
+
+15. PLAYER DASHBOARD
+
+यह website का सबसे important नया page होगा।
+
+Mobile app जैसा दिखे।
+
+Top:
+
+Good evening, Saurabh 👋
+
+Player card.
+
+फिर:
+
+MY BCPL JOURNEY
+
+REGISTERED ✓
+
+VIDEO SUBMITTED ✓
+
+PHASE 1 — 85/100 ✓
+
+DELHI RANK — #247
+
+PHASE 2 ●
+
+PHYSICAL TRIAL ○
+
+FINAL SELECTION 🔒
+
+AUCTION 🔒
+
+TEAM 🔒
+
+हर stage unlock होता जाए।
+
+⸻
+
+16. TEAMS PAGE
+
+Current site 10 city franchises promote करती है। 
+
+अब /teams सिर्फ logo grid नहीं होना चाहिए।
+
+Hero:
+
+10 CITIES.
+
+ONE CHAMPION.
+
+नीचे large franchise cards.
+
+Logo
+City
+Team name
+Stadium/identity imagery
+
+Tap →
+
+TEAM DETAIL PAGE
+
+Team hero
+Owner
+Captain
+Coach
+Squad
+Fixtures
+Results
+Stats
+Photos
+Videos
+
+Mobile पर horizontal player cards.
+
+⸻
+
+17. PLAYERS PAGE — नया
+
+BCPL PLAYERS
+
+Search:
+
+Search player...
+
+Filters:
+
+Team | Role | City | Season
+
+Cards:
+
+Photo
+Name
+Role
+Team
+Matches
+Runs/Wickets
+Auction Value
+
+Tap → full player profile.
+
+यह website को actual sports database feel देगा।
+
+⸻
+
+18. AUCTION PAGE
+
+इसे मैं major page बनाऊँगा।
+
+BCPL PLAYER AUCTION
+
+Hero background: real auction.
+
+Sections:
+
+TOP BUYS
+
+LATEST SOLD
+
+TEAM PURSE
+
+AUCTION POOL
+
+AUCTION RESULTS
+
+Player card:
+
+SOLD
+
+SAURABH JHA
+
+ALL-ROUNDER
+
+Delhi Rank #31
+
+₹8.5 LAKH
+
+MUMBAI
+
+यह section visually शानदार हो सकता है।
+
+⸻
+
+19. MATCH CENTRE
+
+Tournament के दौरान homepage registration website नहीं रहनी चाहिए।
+
+Top hero dynamically:
+
+LIVE
+
+DELHI 184/6
+
+vs
+
+MUMBAI 146/4
+
+17.2 OVERS
+
+LIVE SCORECARD
+
+और Match Centre:
+
+Fixtures | Live | Results

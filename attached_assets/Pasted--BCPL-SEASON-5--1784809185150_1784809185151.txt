@@ -1,0 +1,77 @@
+                    BCPL SEASON 5
+                         │
+                         ▼
+                ┌─────────────────┐
+                │ REGISTER NOW    │
+                │     ₹299        │
+                └────────┬────────┘
+                         ▼
+              ┌──────────────────────┐
+              │ BASIC PLAYER PROFILE │
+              │                      │
+              │ • Full Name          │
+              │ • Mobile + OTP       │
+              │ • Email              │
+              │ • Date of Birth      │
+              │ • Playing Role       │
+              │ • Trial City         │
+              └──────────┬───────────┘
+                         │
+                         ▼
+                 AGE CHECK 18–45
+                    │          │
+                  YES          NO
+                    │          │
+                    ▼          ▼
+                CONTINUE     STOP
+                    │
+                    ▼
+              ┌──────────────┐
+              │ PAY ₹299     │
+              │ PHASE 1      │
+              └──────┬───────┘
+                     ▼
+             REGISTRATION COMPLETE
+                     │
+                     ▼
+              PLAYER ID CREATED
+                     │
+                     ▼
+        ┌────────────────────────────┐
+        │ BCPL DIGITAL PLAYER CARD   │
+        │                            │
+        │ SAURABH JHA                │
+        │ ALL-ROUNDER                │
+        │ DELHI                      │
+        │ BCPL-S5-DL-XXXXXX          │
+        │                            │
+        │ PHASE 1 • ACTIVE           │
+        └─────────────┬──────────────┘
+                      ▼
+              7-DAY VIDEO TIMER
+                      │
+             ┌────────┴────────┐
+             │                 │
+         UPLOADED          NOT UPLOADED
+             │                 │
+             │           Day 3 Reminder
+             │           Day 6 Reminder
+             │                 │
+             ▼                 ▼
+        VIDEO RECEIVED      DEADLINE
+             │
+             ▼
+       15-DAY REVIEW TIMER
+             │
+             ▼
+        VIDEO EVALUATION
+             │
+             ▼
+       SCORE + CITY RANK
+             │
+       ┌─────┴──────┐
+       ▼            ▼
+   QUALIFIED    NOT SHORTLISTED
+       │            │
+       ▼            ▼
+    PHASE 2      ASSESSMENT

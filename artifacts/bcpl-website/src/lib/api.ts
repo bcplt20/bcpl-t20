@@ -443,3 +443,42 @@ export const adminSendInvoice = (registrationId: string, phase: 1 | 2, email?: s
     "POST", "/admin/invoice/send",
     { registrationId, phase, ...(email ? { email } : {}) }
   );
+
+/* ─── Phase 1 Result — BCPL Player Journey (100-point scoring) ── */
+
+export interface ResultBreakdownItem { key: string; score: number; max: number }
+export interface MyResult {
+  available: boolean;
+  reason?: 'not_registered' | 'payment_pending' | 'video_pending' | 'under_review' | 'score_pending';
+  phase1Status?: string;
+  decision?: 'qualified' | 'not_shortlisted';
+  name?: string;
+  regNumber?: string | null;
+  role?: string;
+  trialCity?: string;
+  total?: number;
+  breakdown?: ResultBreakdownItem[];
+  selectorNote?: string | null;
+  cityRank?: number;
+  cityCount?: number;
+  roleRank?: number;
+  roleCount?: number;
+  scoredAt?: string;
+}
+
+export const getMyResult = () => req<MyResult>("GET", "/results/me");
+
+export interface Phase1ScoreInput {
+  roleSkill: number;      // /35
+  technique: number;      // /25
+  execution: number;      // /15
+  gameAwareness: number;  // /10
+  movement: number;       // /10
+  videoEvidence: number;  // /5
+  selectorNote?: string | null;
+}
+export interface Phase1ScoreSaved extends Phase1ScoreInput { total: number }
+
+export const adminSaveScore = (registrationId: string, data: Phase1ScoreInput) =>
+  adminReq<{ success: boolean; score: Phase1ScoreSaved }>(
+    "PUT", `/admin/registrations/${registrationId}/score`, data);

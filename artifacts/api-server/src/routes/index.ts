@@ -12,6 +12,7 @@ import scoringRouter  from "./scoring";
 import pointsRouter   from "./points";
 import settingsRouter from "./settings";
 import adminRouter    from "./admin";
+import resultsRouter  from "./results";
 import marketingRouter from "./marketing";
 import seoRouter      from "./seo";
 import adminToolsRouter from "./adminTools";
@@ -26,6 +27,8 @@ router.use("/payment",       paymentRouter);
 router.use("/video",         videoRouter);
 router.use("/kyc",           kycRouter);
 router.use("/user",          userRouter);
+// Phase 1 result (100-point score, city/role rank) — BCPL Player Journey
+router.use("/results",       resultsRouter);
 // League
 router.use("/matches",       matchesRouter);
 router.use("/scoring",       scoringRouter);

@@ -1,6 +1,17 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { adminGetVideos, adminReviewVideo, adminUpdatePhase1Status } from "../../lib/api";
+import { adminGetVideos, adminReviewVideo, adminUpdatePhase1Status, adminSaveScore } from "../../lib/api";
 import { SampleVideosCard } from "./SampleVideosCard";
+
+type Score = {
+  roleSkill: number;
+  technique: number;
+  execution: number;
+  gameAwareness: number;
+  movement: number;
+  videoEvidence: number;
+  total: number;
+  selectorNote: string | null;
+};
 
 type Video = {
   id: string;
@@ -14,7 +25,21 @@ type Video = {
   phone: string;
   role: string;
   trialCity: string;
+  phase1Status: string;
+  p1Status?: string;
+  score: Score | null;
 };
+
+/* BCPL 100-point scoring framework (maxima mirror the API) */
+const CRITERIA = [
+  { key: "roleSkill",     label: "Role Skill",          max: 35 },
+  { key: "technique",     label: "Technique & Basics",  max: 25 },
+  { key: "execution",     label: "Control & Execution", max: 15 },
+  { key: "gameAwareness", label: "Game Awareness",      max: 10 },
+  { key: "movement",      label: "Athletic Movement",   max: 10 },
+  { key: "videoEvidence", label: "Video Quality",       max: 5  },
+] as const;
+type CritKey = typeof CRITERIA[number]["key"];
 
 const ROLE_LABEL: Record<string, string> = {
   bat: "Bat", bowl: "Bowl", wk: "WK", ar: "AR",
@@ -96,6 +121,12 @@ export default function VideoReviewView({ refreshTick = 0 }: { refreshTick?: num
     } finally {
       setActing(null);
     }
+  };
+
+  /* Score saved → update the list + open panel in place */
+  const applyScore = (video: Video, score: Score) => {
+    setVideos(prev => prev.map(x => x.registrationId === video.registrationId ? { ...x, score } : x));
+    setSel(s => s && s.registrationId === video.registrationId ? { ...s, score } : s);
   };
 
   const pending   = videos.filter(v => v.status === "submitted").length;
@@ -195,6 +226,11 @@ export default function VideoReviewView({ refreshTick = 0 }: { refreshTick?: num
                   <div style={{ position:"absolute", top:7, left:8, background:`${statusColor(v.status)}22`, borderRadius:4, padding:"2px 7px", fontSize:9, fontWeight:800, color:statusColor(v.status), border:`1px solid ${statusColor(v.status)}44` }}>
                     {v.status === "reviewed" ? "Reviewed" : "Pending"}
                   </div>
+                  {v.score && (
+                    <div style={{ position:"absolute", top:7, right:8, background:"#E8B23D22", borderRadius:4, padding:"2px 7px", fontSize:9, fontWeight:800, color:"#E8B23D", border:"1px solid #E8B23D44" }}>
+                      ★ {v.score.total}/100
+                    </div>
+                  )}
                 </div>
                 <div style={{ fontSize:13, fontWeight:700, color:"#F1F5F9" }}>{v.player}</div>
                 <div style={{ fontSize:11, color:"#475569", marginTop:2 }}>
@@ -252,6 +288,7 @@ export default function VideoReviewView({ refreshTick = 0 }: { refreshTick?: num
                     { label:"Duration",  value: fmtDur(sel.durationSeconds) },
                     { label:"Submitted", value: sel.submittedAt ? new Date(sel.submittedAt).toLocaleString("en-IN") : "—" },
                     { label:"Status",    value: sel.status === "reviewed" ? "✓ Reviewed" : "⏳ Pending" },
+                    { label:"Decision",  value: (sel.p1Status ?? sel.phase1Status) === "selected" ? "✓ Selected" : (sel.p1Status ?? sel.phase1Status) === "rejected" ? "✗ Rejected" : "— Not decided" },
                   ].map(item => (
                     <div key={item.label} style={{ display:"flex", justifyContent:"space-between", padding:"6px 0", borderBottom:"1px solid #0F172A" }}>
                       <span style={{ fontSize:11, color:"#475569", fontWeight:600 }}>{item.label}</span>
@@ -282,6 +319,9 @@ export default function VideoReviewView({ refreshTick = 0 }: { refreshTick?: num
                     </div>
                   )}
                 </div>
+
+                {/* 100-point scoring — BCPL Player Journey */}
+                <ScoreEditor key={sel.registrationId} video={sel} onSaved={applyScore} />
 
                 {/* Select / Reject — triggers email + SMS */}
                 <div style={{ background:"rgba(255,255,255,0.03)", border:"1px solid rgba(255,255,255,0.07)", borderRadius:10, padding:12 }}>
@@ -315,6 +355,108 @@ export default function VideoReviewView({ refreshTick = 0 }: { refreshTick?: num
           {videos.length} video{videos.length !== 1 ? "s" : ""} total
         </div>
       )}
+    </div>
+  );
+}
+
+/* ── 100-point score editor (per selected video) ─────────────────────
+   Player sees this breakdown on their result page AFTER the scout
+   decision (SELECT / REJECT) is announced. Save score first, then decide. */
+function ScoreEditor({ video, onSaved }: { video: Video; onSaved: (v: Video, s: Score) => void }) {
+  type Draft = Record<CritKey, number | "">;
+  const init = (): Draft => ({
+    roleSkill:     video.score ? video.score.roleSkill     : "",
+    technique:     video.score ? video.score.technique     : "",
+    execution:     video.score ? video.score.execution     : "",
+    gameAwareness: video.score ? video.score.gameAwareness : "",
+    movement:      video.score ? video.score.movement      : "",
+    videoEvidence: video.score ? video.score.videoEvidence : "",
+  });
+  const [draft, setDraft]   = useState<Draft>(init);
+  const [note, setNote]     = useState(video.score?.selectorNote ?? "");
+  const [saving, setSaving] = useState(false);
+  const [msg, setMsg]       = useState("");
+
+  const total    = CRITERIA.reduce((s, c) => s + (draft[c.key] === "" ? 0 : Number(draft[c.key])), 0);
+  const complete = CRITERIA.every(c => draft[c.key] !== "");
+
+  const setVal = (key: CritKey, max: number, raw: string) => {
+    if (raw === "") { setDraft(d => ({ ...d, [key]: "" })); return; }
+    const n = Math.floor(Number(raw));
+    if (Number.isNaN(n)) return;
+    setDraft(d => ({ ...d, [key]: Math.max(0, Math.min(max, n)) }));
+  };
+
+  const save = async () => {
+    if (!complete) { setMsg("⚠ Fill all 6 criteria before saving"); return; }
+    setSaving(true); setMsg("");
+    try {
+      const res = await adminSaveScore(video.registrationId, {
+        roleSkill:     Number(draft.roleSkill),
+        technique:     Number(draft.technique),
+        execution:     Number(draft.execution),
+        gameAwareness: Number(draft.gameAwareness),
+        movement:      Number(draft.movement),
+        videoEvidence: Number(draft.videoEvidence),
+        selectorNote:  note.trim() || null,
+      });
+      onSaved(video, { ...res.score, selectorNote: note.trim() || null });
+      setMsg("✓ Score saved — " + res.score.total + "/100");
+    } catch (e: any) {
+      setMsg("✗ " + e.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div style={{ background:"rgba(232,178,61,0.04)", border:"1px solid rgba(232,178,61,0.25)", borderRadius:10, padding:12, marginBottom:8 }}>
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 }}>
+        <div style={{ fontSize:10, fontWeight:700, color:"#E8B23D", letterSpacing:".08em", textTransform:"uppercase" }}>
+          ★ BCPL Score — 100-point system
+        </div>
+        <div style={{ fontSize:13, fontWeight:900, color: complete ? "#E8B23D" : "#475569", fontFamily:"Montserrat,sans-serif" }}>
+          {total}/100
+        </div>
+      </div>
+
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8, marginBottom:10 }}>
+        {CRITERIA.map(c => (
+          <div key={c.key}>
+            <div style={{ fontSize:9.5, color:"#64748B", fontWeight:700, marginBottom:3 }}>
+              {c.label} <span style={{ color:"#334155" }}>/{c.max}</span>
+            </div>
+            <input
+              type="number" min={0} max={c.max} inputMode="numeric"
+              value={draft[c.key]}
+              onChange={e => setVal(c.key, c.max, e.target.value)}
+              placeholder={"0–" + c.max}
+              style={{ width:"100%", padding:"8px 10px", borderRadius:8, border:"1px solid #1E293B", background:"#0F172A", color:"#F1F5F9", fontSize:13, fontWeight:700, outline:"none" }}
+            />
+          </div>
+        ))}
+      </div>
+
+      <textarea
+        value={note}
+        onChange={e => setNote(e.target.value.slice(0, 600))}
+        placeholder="Selector's note (optional) — the player will read this on their result page. Honest, respectful feedback only."
+        rows={2}
+        style={{ width:"100%", padding:"9px 10px", borderRadius:8, border:"1px solid #1E293B", background:"#0F172A", color:"#F1F5F9", fontSize:12, outline:"none", resize:"vertical", marginBottom:8, fontFamily:"inherit" }}
+      />
+
+      <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+        <button
+          disabled={saving || !complete}
+          onClick={save}
+          style={{ padding:"9px 18px", borderRadius:8, border:"none", background: complete ? "linear-gradient(135deg,#E8B23D,#C4901E)" : "#1E293B", color: complete ? "#081020" : "#475569", fontWeight:900, fontSize:12, cursor: complete ? "pointer" : "not-allowed", opacity: saving ? 0.6 : 1 }}>
+          {saving ? "Saving…" : video.score ? "Update Score" : "Save Score"}
+        </button>
+        {msg && <span style={{ fontSize:11, fontWeight:700, color: msg.startsWith("✓") ? "#10B981" : "#F59E0B" }}>{msg}</span>}
+      </div>
+      <div style={{ fontSize:9.5, color:"#334155", marginTop:7, lineHeight:1.5 }}>
+        Player sees this scorecard (with city rank) after you announce the decision below. No cut-off is shown to players.
+      </div>
     </div>
   );
 }

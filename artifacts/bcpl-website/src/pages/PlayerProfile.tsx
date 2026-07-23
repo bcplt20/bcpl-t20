@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
-import { getDashboard, getPlayerTrialVenue } from '../lib/api';
+import { getDashboard, getPlayerTrialVenue, getMyResult, type MyResult } from '../lib/api';
 import { ReferralCard } from '../components/ReferralCard';
 import { clearSession, getSession } from '../lib/auth';
 
@@ -172,16 +172,18 @@ export function PlayerProfile() {
   const [loading,  setLoading]  = useState(true);
   const [data,     setData]     = useState<any>(null);
   const [venue,    setVenue]    = useState<any>(null);
+  const [myResult, setMyResult] = useState<MyResult | null>(null);
   const [error,    setError]    = useState('');
 
   useEffect(() => {
     const session = getSession();
     if (!session) { window.location.href = BASE + 'register'; return; }
 
-    Promise.all([getDashboard(), getPlayerTrialVenue()])
-      .then(([dash, tv]) => {
+    Promise.all([getDashboard(), getPlayerTrialVenue(), getMyResult().catch(() => null)])
+      .then(([dash, tv, res]) => {
         setData(dash);
         if (tv.found) setVenue(tv.venue);
+        if (res && res.available) setMyResult(res);
       })
       .catch(() => setError('Could not load your profile. Please refresh.'))
       .finally(() => setLoading(false));
@@ -296,6 +298,25 @@ export function PlayerProfile() {
               </button>
             </div>
           </div>
+
+          {/* ── PHASE 1 RESULT READY ── */}
+          {myResult?.available && (
+            <div style={{ ...card, background:'linear-gradient(120deg,rgba(232,178,61,0.14),rgba(255,122,41,0.06))', border:'1px solid rgba(232,178,61,0.45)', marginBottom:20, animation:'fadeUp .5s .04s ease both', display:'flex', alignItems:'center', gap:16, flexWrap:'wrap' }}>
+              <div style={{ fontSize:34 }}>🏏</div>
+              <div style={{ flex:1, minWidth:220 }}>
+                <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:15, color:'#E8B23D', marginBottom:4, letterSpacing:'.04em' }}>
+                  YOUR PHASE 1 RESULT IS READY
+                </div>
+                <div style={{ fontSize:13, color:'rgba(255,255,255,0.6)' }}>
+                  Your full 100-point scorecard from BCCI-certified scouts is waiting.
+                </div>
+              </div>
+              <button className="btn-orange" style={{ background:'linear-gradient(135deg,#E8B23D,#C4901E)', color:'#081020' }}
+                onClick={() => { window.location.href = BASE + 'register/result'; }}>
+                VIEW MY RESULT →
+              </button>
+            </div>
+          )}
 
           {/* ── JOURNEY TIMELINE ── */}
           <div style={{ ...card, animation:'fadeUp .5s .07s ease both' }}>

@@ -14,6 +14,7 @@ import {
   registrationsTable,
   usersTable,
   phase1VideosTable,
+  phase1ScoresTable,
   kycRecordsTable,
   phase1PaymentsTable,
   phase2PaymentsTable,
@@ -371,6 +372,57 @@ router.put("/registrations/:id/phase1-status", async (req, res) => {
   }
 });
 
+/* ─── PUT /api/admin/registrations/:id/score ─────────────────────
+   BCPL 100-point Phase 1 evaluation (upsert). Total is always
+   recomputed server-side. Maxima mirror SCORE_CRITERIA in results.ts. */
+router.put("/registrations/:id/score", async (req, res) => {
+  try {
+    const id = String(req.params.id);
+    const schema = z.object({
+      roleSkill:     z.number().int().min(0).max(35),
+      technique:     z.number().int().min(0).max(25),
+      execution:     z.number().int().min(0).max(15),
+      gameAwareness: z.number().int().min(0).max(10),
+      movement:      z.number().int().min(0).max(10),
+      videoEvidence: z.number().int().min(0).max(5),
+      selectorNote:  z.string().trim().max(600).optional().nullable(),
+    });
+    const parsed = schema.safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({ error: parsed.error.issues[0].message });
+      return;
+    }
+    const d = parsed.data;
+
+    const [reg] = await db.select().from(registrationsTable)
+      .where(eq(registrationsTable.id, id)).limit(1);
+    if (!reg) { res.status(404).json({ error: "Registration not found" }); return; }
+
+    const total = d.roleSkill + d.technique + d.execution + d.gameAwareness + d.movement + d.videoEvidence;
+    const values = {
+      registrationId: id,
+      roleSkill:      d.roleSkill,
+      technique:      d.technique,
+      execution:      d.execution,
+      gameAwareness:  d.gameAwareness,
+      movement:       d.movement,
+      videoEvidence:  d.videoEvidence,
+      total,
+      selectorNote:   d.selectorNote?.trim() ? d.selectorNote.trim() : null,
+      updatedAt:      new Date(),
+    };
+    const [saved] = await db.insert(phase1ScoresTable)
+      .values(values)
+      .onConflictDoUpdate({ target: phase1ScoresTable.registrationId, set: values })
+      .returning();
+
+    res.json({ success: true, score: saved });
+  } catch (err: any) {
+    console.error("[admin/score]", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 /* ─── PUT /api/admin/registrations/:id/phase2-status ───────────── */
 router.put("/registrations/:id/phase2-status", async (req, res) => {
   try {
@@ -399,10 +451,11 @@ router.get("/videos", async (req, res) => {
     const { status } = req.query as Record<string, string>;
 
     const rows = await db
-      .select({ video: phase1VideosTable, reg: registrationsTable, user: usersTable })
+      .select({ video: phase1VideosTable, reg: registrationsTable, user: usersTable, score: phase1ScoresTable })
       .from(phase1VideosTable)
       .leftJoin(registrationsTable, eq(phase1VideosTable.registrationId, registrationsTable.id))
       .leftJoin(usersTable, eq(registrationsTable.userId, usersTable.id))
+      .leftJoin(phase1ScoresTable, eq(phase1VideosTable.registrationId, phase1ScoresTable.registrationId))
       .orderBy(desc(phase1VideosTable.submittedAt));
 
     let filtered = rows;
@@ -420,6 +473,17 @@ router.get("/videos", async (req, res) => {
       phone:           r.user?.phone ?? "",
       role:            r.reg?.role ?? "",
       trialCity:       r.reg?.trialCity ?? "",
+      phase1Status:    r.reg?.phase1Status ?? "",
+      score: r.score ? {
+        roleSkill:     r.score.roleSkill,
+        technique:     r.score.technique,
+        execution:     r.score.execution,
+        gameAwareness: r.score.gameAwareness,
+        movement:      r.score.movement,
+        videoEvidence: r.score.videoEvidence,
+        total:         r.score.total,
+        selectorNote:  r.score.selectorNote,
+      } : null,
     }));
 
     res.json({ videos, total: videos.length });

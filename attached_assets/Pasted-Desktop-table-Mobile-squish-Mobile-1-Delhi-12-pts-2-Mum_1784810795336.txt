@@ -1,0 +1,487 @@
+Desktop table.
+
+Mobile पर इसे squish मत करें।
+
+Mobile:
+
+1 Delhi — 12 pts
+
+2 Mumbai — 10 pts
+
+expand → P/W/L/NRR.
+
+यह responsive UX का important example है: desktop design को छोटा करके mobile design नहीं बनता।
+
+⸻
+
+21. SEASON 5 PAGE
+
+Current roadmap homepage पर है। 
+
+Dedicated Season page:
+
+SEASON 5
+
+Registration
+Cities
+Trials
+Teams
+Auction
+Fixtures
+Results
+Prize Money
+Important Dates
+
+एक interactive timeline.
+
+⸻
+
+22. TRIAL CITIES PAGE
+
+बहुत important.
+
+FIND YOUR BCPL TRIAL
+
+City search.
+
+Delhi NCR
+
+Trial period
+Venue — जब finalized हो
+Registration status
+Players registered
+Directions
+
+REGISTER FOR DELHI
+
+City pages SEO में भी useful हो सकते हैं।
+
+⸻
+
+23. MEDIA CENTRE
+
+Current photos और videos अलग sections हैं। 
+
+एक premium hub:
+
+LATEST | MATCHES | AUCTION | INTERVIEWS | BEHIND THE SCENES | PHOTOS
+
+Netflix जैसी large thumbnails.
+
+Video hover/preview desktop पर.
+
+Mobile swipe carousel.
+
+⸻
+
+24. NEWSROOM
+
+यह missing professional layer है।
+
+BCPL NEWSROOM
+
+Press Releases
+Announcements
+Trial Updates
+Team News
+Auction News
+Tournament News
+
+हर article का proper page.
+
+इससे Google search presence भी improve होगी।
+
+⸻
+
+25. ABOUT BCPL
+
+Current About content काफी छोटा है। 
+
+Dedicated page cinematic storytelling करे:
+
+WHY BCPL EXISTS
+
+फिर:
+
+The Problem
+
+Millions stop competitive cricket because life/work takes over.
+
+↓
+
+The Mission
+
+Give working professionals a structured competitive platform.
+
+↓
+
+BCPL history / seasons.
+
+↓
+
+Leadership
+
+↓
+
+Brand Ambassador
+
+↓
+
+Infrastructure
+
+↓
+
+Previous seasons
+
+↓
+
+Vision.
+
+यह corporate/investor/sponsor visitor के लिए भी credible लगेगा।
+
+⸻
+
+26. TRUST & TRANSPARENCY PAGE
+
+मेरे हिसाब से नया होना चाहिए।
+
+HOW BCPL SELECTION WORKS
+
+Video evaluation methodology
+Physical trials
+Scoring framework
+Ranking methodology
+Selectors/scouts
+Fees
+Eligibility
+Disqualification
+Appeal/support process
+
+यहीं Player Score और Ranking methodology explain करें।
+
+यह future complaints रोकने में बहुत useful होगा।
+
+⸻
+
+27. FAQ
+
+Current footer में FAQ है। 
+
+इसे searchable बनाएं:
+
+Ask a question...
+
+Categories:
+
+Registration
+Payment
+Video Trial
+Physical Trial
+Eligibility
+Selection
+Auction
+Tournament
+
+Mobile accordion.
+
+⸻
+
+28. Legal pages
+
+Current footer में Terms, Refunds & Cancellations, Privacy, Eligibility, Code of Conduct, Rulebook आदि हैं। 
+
+इन्हें boring PDF dump जैसा न रखें।
+
+Proper readable web pages:
+
+Left sticky contents — desktop.
+
+Mobile:
+
+Jump to section ▼
+
+Particularly:
+
+Eligibility
+
+Fees
+
+Refunds
+
+Selection
+
+Data/KYC
+
+बहुत clear हों।
+
+⸻
+
+अब MOBILE + TABLET + LAPTOP + DESKTOP
+
+यह redesign का mandatory part होना चाहिए।
+
+मैं developer को “responsive” बोलकर नहीं छोड़ूँगा।
+
+चार layouts explicitly design करवाऊँगा:
+
+Mobile
+
+360–480 px
+
+Tablet
+
+768–1024 px
+
+Laptop
+
+1280–1440 px
+
+Large Desktop
+
+1440–1920+ px
+
+और intermediate widths fluid हों।
+
+⸻
+
+Mobile पर homepage अलग behave करे
+
+Desktop hero 16:9 cinematic.
+
+Mobile पर वही desktop photo crop करके मत डालिए।
+
+Separate 9:16 hero asset बनाइए।
+
+Subject center-safe.
+
+Text 2–3 lines max.
+
+CTA bottom:
+
+REGISTER ₹299
+
+और पूरे registration funnel में sticky bottom CTA.
+
+⸻
+
+Mobile Navigation
+
+Bottom nav player dashboard में:
+
+Home
+
+Journey
+
+Card
+
+Support
+
+Profile
+
+यह app-like experience देगा।
+
+Public website पर normal hamburger पर्याप्त है।
+
+⸻
+
+Touch targets
+
+हर button minimum लगभग 44–48px height.
+
+Cards के बीच पर्याप्त gap.
+
+Dropdown finger-friendly.
+
+OTP auto-focus.
+
+DOB native date picker + eligibility feedback.
+
+Phone number numeric keyboard.
+
+Email keyboard.
+
+Video upload सीधे:
+
+Camera / Gallery / Files
+
+यह छोटी चीजें mobile conversion पर बड़ा असर डालती हैं।
+
+⸻
+
+Tablet/iPad
+
+iPad को giant mobile मत बनाइए।
+
+2-column layouts:
+
+Player Card | Journey
+
+Teams → 2/3-column
+
+Gallery → 2/3-column
+
+Registration form center में ~600px max width.
+
+Landscape orientation भी test हो।
+
+⸻
+
+Laptop/Desktop
+
+Content पूरे 1920px में stretch नहीं होना चाहिए।
+
+Main content max-width roughly:
+
+1200–1440px
+
+लेकिन hero/background media full bleed.
+
+इससे premium whitespace मिलता है।
+
+⸻
+
+Performance बहुत important
+
+अगर cinematic website बनाते हुए 20MB videos डाल दिए तो mobile पर premiumness खत्म।
+
+इसलिए:
+
+Hero video optimized
+WebP/AVIF images
+responsive image sizes
+lazy loading
+video poster image
+below-fold media lazy
+fonts limited
+animations GPU-friendly
+
+Target:
+
+Fast 4G पर भी hero जल्दी दिखाई दे।
+
+Premium ≠ heavy website.
+
+⸻
+
+एक और चीज: Animation
+
+पूरी website animation से भरना नहीं।
+
+बस:
+
+Hero slow cinematic motion
+Numbers count-up
+Player card reveal
+Score circle animation
+Rank reveal
+Timeline progress
+Auction SOLD animation
+Result reveal
+
+बाकी शांत।
+
+Premium design में restraint बहुत important है।
+
+⸻
+
+Homepage final order
+
+अगर मैं developer को exact sequence दूँ:
+
+Header
+
+↓
+
+Cinematic Hero
+
+↓
+
+League Stats Strip
+
+↓
+
+45-sec BCPL Film
+
+↓
+
+Sourav Ganguly
+
+↓
+
+Two Payments. Nothing After.
+
+↓
+
+Your BCPL Journey
+
+↓
+
+10 Teams
+
+↓
+
+Prize Money / Auction
+
+↓
+
+Real Player Stories
+
+↓
+
+Season 5 Roadmap
+
+↓
+
+Trial Cities
+
+↓
+
+Latest BCPL
+
+↓
+
+Media
+
+↓
+
+Trust & Transparency
+
+↓
+
+FAQ
+
+↓
+
+YOUR CRICKET DREAM ISN’T OVER.
+
+REGISTER FOR ₹299
+
+↓
+
+Premium Footer
+
+इसमें current homepage का काफी content बच जाएगा—हम सिर्फ उसकी hierarchy और presentation बदल रहे हैं।
+
+⸻
+
+और पूरी website architecture
+
+Public: Home • Season 5 • Teams • Players • Trials • Matches • Standings • Auction • Media • News • About • Trust & Transparency • FAQ • Contact
+
+Player: Register • Login • My Dashboard • My Player Card • Upload Video • My Score • My Rank • Phase 2 • Verification • Trial Details • Results • Support
+
+Legal: Eligibility • Cricket Rulebook • Code of Conduct • PMO Guidelines • Terms • Privacy • Refund/Cancellation
+
+इस architecture के बाद BCPL के तीन अलग experiences होंगे:
+
+New visitor: “ये league बड़ी और credible है।”
+
+Registering player: “यह process आसान और transparent है।”
+
+Registered player: “मेरी अपनी BCPL journey चल रही है।”
+
+यही अभी missing premium layer है।
+
+और खासकर Player Card + Score /100 + City Rank + Role Rank + evolving Journey वाला जो हमने बनाया है, मैं उसे website redesign का central product feature बनाऊँगा—सिर्फ registration page का feature नहीं। इससे BCPL की अपनी recognizable digital identity बन सकती है।
+
+अगर आप इसे implement करवाने जा रहे हैं, तो अगला practical step page-by-page developer/UI specification बनाना होगा—हर page पर desktop, iPad और mobile में exactly कौन सा section कहाँ होगा, कौन सा button होगा और कौन सा data/API चाहिए।
