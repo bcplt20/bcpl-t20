@@ -32,7 +32,7 @@ import {
 import { eq, desc, count, and, inArray, lt, gte, isNotNull, sql } from "drizzle-orm";
 import { sendVideoReminders } from "./video";
 import { sendPaymentReminders, remindersEnabled } from "../lib/reminders";
-import { requireAdmin, trialCityScope } from "../middlewares/adminAuth";
+import { requireAdmin, requireRole, trialCityScope } from "../middlewares/adminAuth";
 import { adminUsersTable } from "@workspace/db/schema";
 import { verifyPassword, signAdminToken, publicAdmin, permissionsForRole } from "./adminUsers";
 import { writeAudit } from "../lib/audit";
@@ -757,6 +757,13 @@ router.get("/kyc", async (req, res) => {
       panVerified:     r.kyc.panVerified,
       aadhaarVerified: r.kyc.aadhaarVerified,
       verifiedAt:      r.kyc.verifiedAt,
+      /* Stage 6 — employment verification */
+      employmentCategory:      r.kyc.employmentCategory,
+      employmentStatus:        r.kyc.employmentStatus,
+      employmentVerifiedAt:    r.kyc.employmentVerifiedAt,
+      employmentMethod:        r.kyc.employmentMethod,
+      employmentReference:     r.kyc.employmentReference,
+      employmentFailureReason: r.kyc.employmentFailureReason,
       createdAt:      r.kyc.createdAt,
       player:         r.user?.name ?? "Unknown",
       phone:          r.user?.phone ?? "",
@@ -779,6 +786,61 @@ router.get("/kyc", async (req, res) => {
     res.json({ kyc, total: kyc.length, masked: !reveal, canReveal });
   } catch (err: any) {
     console.error("[admin/kyc]", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/* ─── PATCH /api/admin/kyc/:id/employment — Stage 6 ──────────────
+   Employment / professional verification status, set by KYC team.
+   pending | verified | failed | more_information_required            */
+const EMPLOYMENT_STATUSES = ["pending", "verified", "failed", "more_information_required"] as const;
+const EMPLOYMENT_CATEGORIES = ["salaried", "business_owner", "self_employed", "professional", "government", "other_approved"] as const;
+
+router.patch("/kyc/:id/employment", requireRole("KYC_TEAM"), async (req, res) => {
+  try {
+    const id = String(req.params.id);
+    const b = (req.body ?? {}) as Record<string, unknown>;
+    const status = String(b.status ?? "");
+    if (!EMPLOYMENT_STATUSES.includes(status as never)) {
+      res.status(400).json({ error: "status must be one of: " + EMPLOYMENT_STATUSES.join(", ") });
+      return;
+    }
+    const category = b.category !== undefined ? String(b.category) : undefined;
+    if (category !== undefined && !EMPLOYMENT_CATEGORIES.includes(category as never)) {
+      res.status(400).json({ error: "Invalid employment category" });
+      return;
+    }
+    const failureReason = b.failureReason !== undefined ? String(b.failureReason).slice(0, 500) : undefined;
+    if (status === "failed" && !failureReason) {
+      res.status(400).json({ error: "failureReason is required when marking employment verification as failed" });
+      return;
+    }
+    const [existing] = await db.select().from(kycRecordsTable).where(eq(kycRecordsTable.id, String(id))).limit(1);
+    if (!existing) { res.status(404).json({ error: "KYC record not found" }); return; }
+
+    const now = new Date();
+    const [updated] = await db.update(kycRecordsTable).set({
+      employmentStatus: status,
+      employmentVerifiedAt: status === "verified" ? now : null,
+      employmentMethod: b.method !== undefined
+        ? String(b.method).slice(0, 60)
+        : (status === "verified" ? (existing.employmentMethod ?? "manual") : existing.employmentMethod),
+      employmentReference: b.reference !== undefined ? String(b.reference).slice(0, 200) : existing.employmentReference,
+      employmentFailureReason: status === "failed" ? (failureReason ?? null) : null,
+      ...(category !== undefined ? { employmentCategory: category } : {}),
+    }).where(eq(kycRecordsTable.id, String(id))).returning();
+
+    void writeAudit(req, {
+      action: "kyc.employment_status", entity: "kyc_records", entityKey: String(id),
+      oldValue: { employmentStatus: existing.employmentStatus },
+      newValue: {
+        employmentStatus: status, method: updated.employmentMethod,
+        reference: updated.employmentReference, failureReason: updated.employmentFailureReason,
+      },
+    });
+    res.json({ success: true, kyc: updated });
+  } catch (err: any) {
+    console.error("[admin/kyc/employment]", err);
     res.status(500).json({ error: err.message });
   }
 });

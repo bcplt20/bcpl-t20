@@ -3,6 +3,8 @@ import {
   adminGetKyc,
   adminUpdateKycStatus,
   adminGetStats,
+  adminSetKycEmployment,
+  type EmploymentStatus,
 } from "../../lib/api";
 
 type KycRow = {
@@ -33,6 +35,13 @@ type KycRow = {
   emergencyRelation?: string | null;
   emergencyPhone?: string | null;
   bloodGroup?: string | null;
+  // Stage 6 — employment verification
+  employmentCategory?: string | null;
+  employmentStatus?: string | null;
+  employmentVerifiedAt?: string | null;
+  employmentMethod?: string | null;
+  employmentReference?: string | null;
+  employmentFailureReason?: string | null;
 };
 
 const KYC_STATUS_COLOR: Record<string, string> = {
@@ -49,6 +58,14 @@ const KYC_STATUS_LABEL: Record<string, string> = {
 
 const ROLE_LABEL: Record<string, string> = {
   bat: "Batsman", bowl: "Bowler", wk: "Wicketkeeper", ar: "All-rounder",
+};
+
+/* Stage 6 — employment verification status colours */
+const EMP_STATUS_COLOR: Record<string, string> = {
+  pending: "#64748B", verified: "#10B981", failed: "#EF4444", more_information_required: "#F59E0B",
+};
+const EMP_STATUS_LABEL: Record<string, string> = {
+  pending: "Pending", verified: "Verified", failed: "Failed", more_information_required: "More Info Needed",
 };
 
 function StatusBadge({ status }: { status: string }) {
@@ -74,6 +91,8 @@ export default function Phase2KYCView({ refreshTick = 0 }: { refreshTick?: numbe
   const [err, setErr]         = useState("");
   const [acting, setActing]   = useState<string | null>(null);
   const [detail, setDetail]   = useState<KycRow | null>(null);
+  const [empMethod, setEmpMethod] = useState("");
+  const [empRef, setEmpRef]       = useState("");
 
   const load = useCallback(async (silent = false) => {
     if (!silent) setLoading(true);
@@ -99,6 +118,13 @@ export default function Phase2KYCView({ refreshTick = 0 }: { refreshTick?: numbe
   loadRef.current = load;
   useEffect(() => { if (refreshTick > 0) loadRef.current(true); }, [refreshTick]);
 
+  /* Stage 6: prefill employment method/reference when a row is opened */
+  useEffect(() => {
+    setEmpMethod(detail?.employmentMethod ?? "");
+    setEmpRef(detail?.employmentReference ?? "");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [detail?.id]);
+
   const updateStatus = async (id: string, status: string) => {
     setActing(id);
     try {
@@ -106,6 +132,32 @@ export default function Phase2KYCView({ refreshTick = 0 }: { refreshTick?: numbe
       setRows(prev => prev.map(r => r.id === id ? { ...r, status, verifiedAt: status === "verified" ? new Date().toISOString() : r.verifiedAt } : r));
       if (detail?.id === id) setDetail(d => d ? { ...d, status } : d);
       adminGetStats().then(setStats).catch(() => {});
+    } catch (e: any) {
+      alert("Error: " + e.message);
+    } finally {
+      setActing(null);
+    }
+  };
+
+  /* Stage 6 — employment verification action */
+  const setEmployment = async (id: string, status: EmploymentStatus) => {
+    let failureReason: string | undefined;
+    if (status === "failed") {
+      const r = prompt("Failure reason (required — shown to the KYC team, not the player):");
+      if (!r || !r.trim()) return;
+      failureReason = r.trim();
+    }
+    setActing(id);
+    try {
+      const res = await adminSetKycEmployment(id, {
+        status,
+        ...(failureReason ? { failureReason } : {}),
+        ...(empMethod.trim() ? { method: empMethod.trim() } : {}),
+        ...(empRef.trim() ? { reference: empRef.trim() } : {}),
+      });
+      const k = res.kyc as unknown as Partial<KycRow>;
+      setRows(prev => prev.map(r => r.id === id ? { ...r, ...k } : r));
+      setDetail(d => d && d.id === id ? { ...d, ...k } : d);
     } catch (e: any) {
       alert("Error: " + e.message);
     } finally {
@@ -235,6 +287,11 @@ export default function Phase2KYCView({ refreshTick = 0 }: { refreshTick?: numbe
                             ⚠ PAN: manual check
                           </div>
                         )}
+                        {r.employmentStatus && r.employmentStatus !== "verified" && (
+                          <div style={{ fontSize:9, marginTop:3, fontWeight:700, whiteSpace:"nowrap", color: EMP_STATUS_COLOR[r.employmentStatus] ?? "#64748B" }}>
+                            EMP: {EMP_STATUS_LABEL[r.employmentStatus] ?? r.employmentStatus}
+                          </div>
+                        )}
                       </td>
                       {/* Submitted */}
                       <td style={{ padding:"10px 12px", color:"#475569", whiteSpace:"nowrap" }}>
@@ -302,6 +359,8 @@ export default function Phase2KYCView({ refreshTick = 0 }: { refreshTick?: numbe
                   { label:"Aadhaar OTP", value: detail.aadhaarVerified ? "✓ Completed by player" : "Not completed" },
                   { label:"Cashfree ID", value: detail.cashfreeKycId ?? "Not linked" },
                   { label:"Phase 2",     value: detail.phase2Status ?? "—" },
+                  { label:"Emp. Category", value: detail.employmentCategory ?? "Not set" },
+                  { label:"Emp. Reference", value: detail.employmentReference ?? "—" },
                 ].map(item => (
                   <div key={item.label} style={{ display:"flex", justifyContent:"space-between", padding:"8px 0", borderBottom:"1px solid #0F172A" }}>
                     <span style={{ fontSize:11, color:"#475569", fontWeight:600 }}>{item.label}</span>
@@ -317,6 +376,53 @@ export default function Phase2KYCView({ refreshTick = 0 }: { refreshTick?: numbe
                     Verified: {new Date(detail.verifiedAt).toLocaleString("en-IN")}
                   </div>
                 )}
+              </div>
+
+              {/* Stage 6 — Employment verification */}
+              <div style={{ marginTop:16, paddingTop:14, borderTop:"1px solid #1E293B" }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 }}>
+                  <span style={{ fontSize:12, fontWeight:800, color:"#F1F5F9" }}>Employment Verification</span>
+                  <span style={{
+                    display:"inline-block", padding:"3px 9px", borderRadius:6, fontSize:10, fontWeight:800, whiteSpace:"nowrap",
+                    background:(EMP_STATUS_COLOR[detail.employmentStatus ?? "pending"] ?? "#64748B") + "22",
+                    color: EMP_STATUS_COLOR[detail.employmentStatus ?? "pending"] ?? "#64748B",
+                    border:"1px solid " + (EMP_STATUS_COLOR[detail.employmentStatus ?? "pending"] ?? "#64748B") + "44",
+                  }}>
+                    {EMP_STATUS_LABEL[detail.employmentStatus ?? "pending"] ?? detail.employmentStatus}
+                  </span>
+                </div>
+                {detail.employmentVerifiedAt && (
+                  <div style={{ fontSize:10, color:"#475569", marginBottom:8 }}>
+                    Verified: {new Date(detail.employmentVerifiedAt).toLocaleString("en-IN")}{detail.employmentMethod ? " · via " + detail.employmentMethod : ""}
+                  </div>
+                )}
+                {detail.employmentStatus === "failed" && detail.employmentFailureReason && (
+                  <div style={{ fontSize:10, color:"#EF4444", marginBottom:8 }}>Reason: {detail.employmentFailureReason}</div>
+                )}
+                <div style={{ display:"flex", gap:6, marginBottom:8 }}>
+                  <input value={empMethod} onChange={e => setEmpMethod(e.target.value)} placeholder="Method (HR call, document…)"
+                    style={{ flex:1, padding:"7px 10px", borderRadius:7, border:"1px solid #1E293B", background:"#080E1C", color:"#E2E8F0", fontSize:11, outline:"none", minWidth:0 }} />
+                  <input value={empRef} onChange={e => setEmpRef(e.target.value)} placeholder="Reference"
+                    style={{ flex:1, padding:"7px 10px", borderRadius:7, border:"1px solid #1E293B", background:"#080E1C", color:"#E2E8F0", fontSize:11, outline:"none", minWidth:0 }} />
+                </div>
+                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:6 }}>
+                  <button disabled={acting===detail.id} onClick={() => setEmployment(detail.id, "verified")}
+                    style={{ padding:"8px 6px", borderRadius:8, border:"1px solid #10B98140", background:"#10B98115", color:"#10B981", fontWeight:700, fontSize:11, cursor:"pointer", opacity:acting===detail.id?0.5:1 }}>
+                    Mark Verified
+                  </button>
+                  <button disabled={acting===detail.id} onClick={() => setEmployment(detail.id, "failed")}
+                    style={{ padding:"8px 6px", borderRadius:8, border:"1px solid #EF444440", background:"#EF444415", color:"#EF4444", fontWeight:700, fontSize:11, cursor:"pointer", opacity:acting===detail.id?0.5:1 }}>
+                    Mark Failed
+                  </button>
+                  <button disabled={acting===detail.id} onClick={() => setEmployment(detail.id, "more_information_required")}
+                    style={{ padding:"8px 6px", borderRadius:8, border:"1px solid #F59E0B40", background:"#F59E0B15", color:"#F59E0B", fontWeight:700, fontSize:11, cursor:"pointer", opacity:acting===detail.id?0.5:1 }}>
+                    Need More Info
+                  </button>
+                  <button disabled={acting===detail.id} onClick={() => setEmployment(detail.id, "pending")}
+                    style={{ padding:"8px 6px", borderRadius:8, border:"1px solid #64748B40", background:"#64748B15", color:"#64748B", fontWeight:700, fontSize:11, cursor:"pointer", opacity:acting===detail.id?0.5:1 }}>
+                    Reset Pending
+                  </button>
+                </div>
               </div>
 
               <div style={{ display:"flex", gap:8, marginTop:20 }}>

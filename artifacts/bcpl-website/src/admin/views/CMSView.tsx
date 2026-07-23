@@ -1,198 +1,368 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import {
+  getSiteSetting,
+  adminSetSiteSetting,
+  adminGetSampleUploadUrl,
+  type HomepageConfig,
+} from "../../lib/api";
 
-type FAQ = { id:number; q:string; a:string };
+/**
+ * Stage 6 — Homepage CMS.
+ * Server-backed editor for the `homepage_config` site setting
+ * (writable by CONTENT_TEAM + SUPER_ADMIN).
+ *
+ * All values are DISPLAY values for the public site. Payment amounts
+ * actually charged at checkout stay configured in the payment system —
+ * content admins cannot change business rules from here.
+ */
 
-const SECTIONS = [
-  { id:"hero",        label:"Hero Banner",       icon:"🏠" },
-  { id:"about",       label:"About BCPL",        icon:"ℹ️" },
-  { id:"howit",       label:"How It Works",      icon:"📋" },
-  { id:"prizes",      label:"Prize Money",       icon:"🏆" },
-  { id:"faq",         label:"FAQ",               icon:"❓" },
-  { id:"eligibility", label:"Eligibility",       icon:"✅" },
-  { id:"rules",       label:"Cricket Rules",     icon:"📖" },
-  { id:"contact",     label:"Contact Info",      icon:"📞" },
-  { id:"ticker",      label:"News Ticker",       icon:"📢" },
-  { id:"phases",      label:"Registration Phases",icon:"💳" },
+type HeroField = "heroDesktopUrl" | "heroTabletUrl" | "heroMobileUrl" | "heroPosterUrl";
+
+const HERO_SLOTS: { field: HeroField; label: string; accept: string; hint: string }[] = [
+  { field: "heroDesktopUrl", label: "Hero Video — Desktop", accept: "video/mp4,video/webm,video/quicktime", hint: "MP4 / WebM, landscape" },
+  { field: "heroTabletUrl",  label: "Hero Video — Tablet",  accept: "video/mp4,video/webm,video/quicktime", hint: "MP4 / WebM" },
+  { field: "heroMobileUrl",  label: "Hero Video — Mobile",  accept: "video/mp4,video/webm,video/quicktime", hint: "MP4 / WebM, portrait" },
+  { field: "heroPosterUrl",  label: "Hero Poster Image",    accept: "image/jpeg,image/png,image/webp",      hint: "JPG / PNG / WebP fallback frame" },
 ];
 
-const CONTENT: Record<string,{title:string;body:string}> = {
-  hero:        { title:"BCPL T20 Season 5 — Registration Open", body:"India's biggest T20 cricket league is back for Season 5! 10 franchise teams. 50+ cities. ₹6 Cr prize pool. Open for all working professionals." },
-  about:       { title:"About BCPL T20", body:"BCPL T20 is India's premier corporate T20 franchise cricket league. Founded in 2020, the league has grown to 10 franchise teams across 50+ cities with over ₹14 Crore distributed across 4 seasons." },
-  howit:       { title:"How It Works", body:"1. Register online & pay ₹299 (Bat/Bowl/WK) or ₹399 (All-rounder)\n2. Upload your 2-min selection video from any cricket ground\n3. BCCI-certified scouts review your video within 7 days\n4. If selected → Pay Phase 2 fee (₹2,000 or ₹3,000)\n5. Attend physical trials at your city ground\n6. Get auctioned to a BCPL franchise — Play Season 5!" },
-  prizes:      { title:"Prize Money — BCPL Season 5", body:"🏆 Champion Team: ₹2,50,00,000\n🥈 Runner-Up: ₹1,00,00,000\n🥉 3rd Place: ₹50,00,000\n🏏 Best Batsman: ₹5,00,000\n🎳 Best Bowler: ₹5,00,000\n⭐ Most Valuable Player: ₹10,00,000\n🤝 Fair Play Award: ₹2,00,000" },
-  eligibility: { title:"Eligibility Criteria", body:"• Age: 18 years and above\n• Indian citizen (Aadhaar/PAN required for KYC)\n• No active BCCI/state board contract\n• Working professional (any sector)\n• Good physical fitness\n• Available for matches as per schedule" },
-  rules:       { title:"BCPL Cricket Rules", body:"Format: T20 (20 overs per side)\nTeams: 10 franchises, 15 players each\nLeague: Double round-robin, top 4 to playoffs\nDRS: 1 review per innings per team\nNo-Ball: Free hit on no-balls\nUmpire: Third umpire available for disputes" },
-  contact:     { title:"Contact BCPL T20", body:"📧 Email: support@bcplt20.com\n📞 Phone: +91 91513 46555\n🏢 Address: BCPL Office, Vadodara, Gujarat – 390001\n💬 WhatsApp: +91 91513 46555\n📸 Instagram: @bcpl.t20 (instagram.com/bcpl.t20)\n👥 Facebook: bhartiyacorporatepremierleague\n🐦 X/Twitter: @BCPLT20League (x.com/BCPLT20League)\n▶️ YouTube: @bcplt20league" },
-  ticker:      { title:"News Ticker Text", body:"🏏 SEASON 5 OPEN · ₹6 CR PRIZE POOL · 50+ CITIES · SOURAV GANGULY · 10 FRANCHISE TEAMS · REGISTER NOW AT ₹299 · #OfficeSeStadiumtak" },
-  phases:      { title:"Registration Phases", body:"PHASE 1:\n• Bat/Bowl/WK: ₹299\n• All-Rounder: ₹399\n• Includes: Video submission slot, Scout review\n\nPHASE 2 (Only if selected):\n• Bat/Bowl/WK: ₹2,000\n• All-Rounder: ₹3,000\n• Includes: Physical trial entry, Franchise auction eligibility\n\nNO HIDDEN COSTS. If not selected for Phase 2, no further payment needed." },
-};
-
-const initFAQs:FAQ[] = [
-  { id:1, q:"What is BCPL T20?", a:"BCPL T20 is India's biggest corporate T20 franchise cricket league, open to all working professionals aged 18 and above. It gives office-goers the chance to play professional-style cricket." },
-  { id:2, q:"How much do I pay in Phase 1?", a:"Phase 1 registration is ₹299 for Batsman, Bowler, or Wicket-keeper roles, and ₹399 for All-rounders. This includes your video submission slot and scout review." },
-  { id:3, q:"Do I have to pay for Phase 2 upfront?", a:"No! Phase 2 payment is only required if you are selected after Phase 1 scout review. There is absolutely no commitment or upfront payment for Phase 2." },
-  { id:4, q:"How much is Phase 2?", a:"Phase 2 registration is ₹2,000 for Bat/Bowl/WK roles and ₹3,000 for All-rounders. This covers your physical trial entry and franchise auction eligibility." },
-  { id:5, q:"Who reviews the Phase 1 video?", a:"All Phase 1 videos are reviewed by BCCI-certified cricket scouts. Results are communicated within 7 working days of submission." },
-  { id:6, q:"Are there any hidden costs?", a:"Absolutely not. If you are not selected for Phase 2, you pay nothing more. The total maximum cost is ₹299/₹399 (Phase 1) + ₹2,000/₹3,000 (Phase 2 only if selected) = ₹2,299 to ₹3,399." },
-  { id:7, q:"What cities have physical trials?", a:"BCPL Season 5 has physical trials in 50+ cities across India including Mumbai, Delhi, Bangalore, Hyderabad, Chennai, Kolkata, Pune, Ahmedabad, Jaipur, Lucknow, and more." },
-  { id:8, q:"When does Season 5 start?", a:"BCPL Season 5 is scheduled for September–October 2026. Registrations are open now (Phase 1). Physical trials run from March–June 2026." },
+const REG_STATUS: { value: NonNullable<HomepageConfig["registrationStatus"]>; label: string; color: string }[] = [
+  { value: "open",        label: "Open",        color: "#10B981" },
+  { value: "coming_soon", label: "Coming Soon", color: "#F59E0B" },
+  { value: "closed",      label: "Closed",      color: "#EF4444" },
 ];
 
 export default function CMSView() {
-  const [section,   setSection]   = useState("hero");
-  const [forms,     setForms]     = useState<Record<string,{title:string;body:string}>>(CONTENT);
-  const [faqs,      setFaqs]      = useState<FAQ[]>(initFAQs);
-  const [saved,     setSaved]     = useState<string|null>(null);
-  const [editingFaq,setEditingFaq]= useState<FAQ|null>(null);
-  const [newFaq,    setNewFaq]    = useState({ q:"", a:"" });
-  const [showAddFaq,setShowAddFaq]= useState(false);
+  const [cfg, setCfg]           = useState<HomepageConfig>({});
+  const [loading, setLoading]   = useState(true);
+  const [saving, setSaving]     = useState(false);
+  const [uploading, setUploading] = useState<string | null>(null);
+  const [msg, setMsg]           = useState("");
 
-  const save = () => { setSaved(section); setTimeout(()=>setSaved(null),2200); };
+  const fileRef = useRef<HTMLInputElement>(null);
+  const pendingField = useRef<HeroField | null>(null);
 
-  const saveFaq = () => {
-    if(!newFaq.q||!newFaq.a) return;
-    setFaqs(f=>[...f,{id:Date.now(),...newFaq}]);
-    setNewFaq({q:"",a:""});
-    setShowAddFaq(false);
+  useEffect(() => {
+    (async () => {
+      try {
+        const r = await getSiteSetting<HomepageConfig>("homepage_config");
+        setCfg(r.value ?? {});
+      } catch { /* start blank */ }
+      finally { setLoading(false); }
+    })();
+  }, []);
+
+  /* ── upload flow: presigned PUT to S3 (cms/ prefix) ── */
+  const pickFile = (field: HeroField, accept: string) => {
+    pendingField.current = field;
+    if (fileRef.current) {
+      fileRef.current.accept = accept;
+      fileRef.current.value = "";
+      fileRef.current.click();
+    }
   };
-  const updateFaq = () => {
-    if(!editingFaq) return;
-    setFaqs(f=>f.map(x=>x.id===editingFaq.id?editingFaq:x));
-    setEditingFaq(null);
+
+  const onFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    const field = pendingField.current;
+    if (!file || !field) return;
+    setUploading(field);
+    setMsg("");
+    try {
+      const { presignedUrl, publicUrl } = await adminGetSampleUploadUrl(file.type, "cms");
+      const put = await fetch(presignedUrl, { method: "PUT", body: file, headers: { "Content-Type": file.type } });
+      if (!put.ok) throw new Error("Upload failed (HTTP " + put.status + ")");
+      setCfg(c => ({ ...c, [field]: publicUrl }));
+      setMsg("Uploaded — remember to press Save to publish the new URL.");
+    } catch (err: any) {
+      setMsg("Error: " + err.message);
+    } finally {
+      setUploading(null);
+      pendingField.current = null;
+    }
   };
 
-  const card:React.CSSProperties = { background:"linear-gradient(135deg,#0D1526 0%,#0A1020 100%)", border:"1px solid #1E293B", borderRadius:16, padding:20 };
+  /* ── list editors ── */
+  const setDate = (i: number, k: "label" | "date", v: string) =>
+    setCfg(c => ({ ...c, importantDates: (c.importantDates ?? []).map((d, j) => j === i ? { ...d, [k]: v } : d) }));
+  const addDate = () =>
+    setCfg(c => ({ ...c, importantDates: [...(c.importantDates ?? []), { label: "", date: "" }] }));
+  const rmDate = (i: number) =>
+    setCfg(c => ({ ...c, importantDates: (c.importantDates ?? []).filter((_, j) => j !== i) }));
+
+  const setStat = (i: number, k: "label" | "value", v: string) =>
+    setCfg(c => ({ ...c, stats: (c.stats ?? []).map((d, j) => j === i ? { ...d, [k]: v } : d) }));
+  const addStat = () =>
+    setCfg(c => ({ ...c, stats: [...(c.stats ?? []), { label: "", value: "" }] }));
+  const rmStat = (i: number) =>
+    setCfg(c => ({ ...c, stats: (c.stats ?? []).filter((_, j) => j !== i) }));
+
+  /* ── save (strict schema server-side: send only meaningful keys) ── */
+  const buildPayload = (): HomepageConfig => {
+    const out: HomepageConfig = {};
+    for (const s of HERO_SLOTS) {
+      const v = (cfg[s.field] ?? "").trim();
+      if (v) out[s.field] = v;
+    }
+    if (cfg.seasonNumber !== undefined) out.seasonNumber = cfg.seasonNumber;
+    if (cfg.registrationStatus) out.registrationStatus = cfg.registrationStatus;
+    for (const k of ["phase1FeeStandard", "phase1FeeAllRounder", "phase2FeeStandard", "phase2FeeAllRounder"] as const) {
+      if (cfg[k] !== undefined) out[k] = cfg[k];
+    }
+    if (cfg.prizePool?.trim()) out.prizePool = cfg.prizePool.trim();
+    if (cfg.auctionValue?.trim()) out.auctionValue = cfg.auctionValue.trim();
+    const dates = (cfg.importantDates ?? []).map(d => ({ label: d.label.trim(), date: d.date.trim() })).filter(d => d.label && d.date);
+    if (dates.length) out.importantDates = dates;
+    const stats = (cfg.stats ?? []).map(s => ({ label: s.label.trim(), value: s.value.trim() })).filter(s => s.label && s.value);
+    if (stats.length) out.stats = stats;
+    const links: NonNullable<HomepageConfig["socialLinks"]> = {};
+    for (const k of ["instagram", "youtube", "x", "facebook"] as const) {
+      const v = (cfg.socialLinks?.[k] ?? "").trim();
+      if (v) links[k] = v;
+    }
+    if (Object.keys(links).length) out.socialLinks = links;
+    if (cfg.supportEmail?.trim()) out.supportEmail = cfg.supportEmail.trim();
+    if (cfg.supportPhone?.trim()) out.supportPhone = cfg.supportPhone.trim();
+    return out;
+  };
+
+  const save = async () => {
+    setSaving(true);
+    setMsg("");
+    try {
+      await adminSetSiteSetting("homepage_config", buildPayload());
+      setMsg("Saved — values stored. They appear on the public homepage once the Phase C wiring ships.");
+    } catch (e: any) {
+      setMsg("Error: " + e.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  /* ── styles ── */
+  const card: React.CSSProperties = {
+    background: "linear-gradient(135deg,#0D1526,#0A1020)",
+    border: "1px solid #1E293B", borderRadius: 16, padding: 20,
+  };
+  const inp: React.CSSProperties = {
+    padding: "9px 12px", borderRadius: 8, border: "1px solid #1E293B",
+    background: "#080E1C", color: "#E2E8F0", fontSize: 12, outline: "none", width: "100%",
+  };
+  const lbl: React.CSSProperties = {
+    fontSize: 10, fontWeight: 700, color: "#64748B", textTransform: "uppercase",
+    letterSpacing: "0.06em", marginBottom: 5, display: "block",
+  };
+  const sectionTitle: React.CSSProperties = { fontSize: 14, fontWeight: 800, color: "#F1F5F9", marginBottom: 4 };
+  const sectionSub: React.CSSProperties = { fontSize: 11, color: "#64748B", marginBottom: 14 };
+  const smallBtn: React.CSSProperties = {
+    padding: "7px 12px", borderRadius: 8, border: "1px solid #1E293B", background: "transparent",
+    color: "#94A3B8", fontSize: 11, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap",
+  };
+
+  const numField = (key: "phase1FeeStandard" | "phase1FeeAllRounder" | "phase2FeeStandard" | "phase2FeeAllRounder", label: string) => (
+    <div>
+      <label style={lbl}>{label}</label>
+      <input
+        type="number" min={0} value={cfg[key] ?? ""} style={inp}
+        onChange={e => {
+          const v = e.target.value;
+          setCfg(c => ({ ...c, [key]: v === "" ? undefined : Math.max(0, Math.floor(Number(v))) }));
+        }}
+      />
+    </div>
+  );
+
+  if (loading) {
+    return <div style={{ padding: 60, textAlign: "center", color: "#334155", fontSize: 14 }}>Loading homepage configuration…</div>;
+  }
 
   return (
-    <div style={{ display:"grid", gridTemplateColumns:"210px 1fr", gap:16, height:"100%" }}>
-      {/* Sidebar */}
-      <div style={{ ...card, padding:0, overflow:"hidden" }}>
-        <div style={{ padding:"14px 16px", borderBottom:"1px solid #1E293B", fontSize:11, fontWeight:800, color:"#475569", textTransform:"uppercase", letterSpacing:.5 }}>Page Sections</div>
-        <div style={{ display:"flex", flexDirection:"column" }}>
-          {SECTIONS.map(s=>(
-            <button key={s.id} onClick={()=>setSection(s.id)} style={{ padding:"12px 16px", border:"none", background:section===s.id?"#FF6B0015":"transparent", borderLeft:`3px solid ${section===s.id?"#FF6B00":"transparent"}`, cursor:"pointer", display:"flex", alignItems:"center", gap:10, textAlign:"left" }}>
-              <span style={{ fontSize:16 }}>{s.icon}</span>
-              <span style={{ fontSize:12, color:section===s.id?"#FF6B00":"#94A3B8", fontWeight:section===s.id?700:500 }}>{s.label}</span>
-            </button>
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <input type="file" ref={fileRef} style={{ display: "none" }} onChange={onFile} />
+
+      {/* Header */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 10 }}>
+        <div>
+          <div style={{ fontSize: 20, fontWeight: 800, color: "#F1F5F9" }}>Content Management · Homepage</div>
+          <div style={{ fontSize: 12, color: "#64748B", marginTop: 2 }}>
+            Server-backed homepage configuration — editable by Content team
+          </div>
+        </div>
+        <button onClick={save} disabled={saving}
+          style={{ padding: "10px 22px", borderRadius: 10, border: "none", background: "#FF6B00", color: "#fff", fontSize: 13, fontWeight: 800, cursor: "pointer", opacity: saving ? 0.6 : 1 }}>
+          {saving ? "Saving…" : "Save Changes"}
+        </button>
+      </div>
+
+      {msg && (
+        <div style={{
+          padding: 12, borderRadius: 10, fontSize: 12,
+          background: msg.startsWith("Error") ? "#EF444415" : "#10B98115",
+          border: msg.startsWith("Error") ? "1px solid #EF444440" : "1px solid #10B98140",
+          color: msg.startsWith("Error") ? "#EF4444" : "#10B981",
+        }}>
+          {msg}
+        </div>
+      )}
+
+      <div style={{ padding: 12, borderRadius: 10, background: "#F59E0B10", border: "1px solid #F59E0B30", color: "#F59E0B", fontSize: 11, lineHeight: 1.5 }}>
+        Display values only — the amounts actually charged at checkout are configured in the payment system and do not change from this page.
+        Saved values go live on the public homepage with the upcoming Phase C wiring.
+      </div>
+
+      {/* Hero media */}
+      <div style={card}>
+        <div style={sectionTitle}>Hero Media</div>
+        <div style={sectionSub}>Background videos per device + poster image. Upload stores the file and fills the URL; Save publishes it.</div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 14 }}>
+          {HERO_SLOTS.map(s => (
+            <div key={s.field}>
+              <label style={lbl}>{s.label}</label>
+              <div style={{ display: "flex", gap: 8 }}>
+                <input value={cfg[s.field] ?? ""} placeholder="https://…" style={{ ...inp, minWidth: 0 }}
+                  onChange={e => setCfg(c => ({ ...c, [s.field]: e.target.value }))} />
+                <button onClick={() => pickFile(s.field, s.accept)} disabled={uploading !== null}
+                  style={{ ...smallBtn, borderColor: "#FF6B0040", color: "#FF6B00", opacity: uploading && uploading !== s.field ? 0.5 : 1 }}>
+                  {uploading === s.field ? "Uploading…" : "Upload"}
+                </button>
+              </div>
+              <div style={{ fontSize: 10, color: "#334155", marginTop: 4 }}>
+                {s.hint}
+                {cfg[s.field] ? (
+                  <>
+                    {" · "}
+                    <a href={cfg[s.field]} target="_blank" rel="noreferrer" style={{ color: "#64748B" }}>preview current</a>
+                  </>
+                ) : null}
+              </div>
+            </div>
           ))}
         </div>
       </div>
 
-      {/* Editor Panel */}
-      <div style={{ display:"flex", flexDirection:"column", gap:14, minWidth:0 }}>
-
-        {/* FAQ Special Editor */}
-        {section==="faq" ? (
-          <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-              <div>
-                <div style={{ fontSize:16, fontWeight:800, color:"#F1F5F9" }}>FAQ Manager</div>
-                <div style={{ fontSize:12, color:"#64748B", marginTop:2 }}>Manage frequently asked questions — displayed on the website</div>
-              </div>
-              <button onClick={()=>setShowAddFaq(true)} style={{ padding:"9px 18px", borderRadius:9, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer" }}>+ Add FAQ</button>
-            </div>
-
-            {faqs.map((faq,i)=>(
-              <div key={faq.id} style={card}>
-                {editingFaq?.id===faq.id ? (
-                  <div>
-                    <div style={{ marginBottom:12 }}>
-                      <label style={{ fontSize:11, color:"#64748B", fontWeight:700, display:"block", marginBottom:5 }}>QUESTION</label>
-                      <input value={editingFaq.q} onChange={e=>setEditingFaq(f=>f?{...f,q:e.target.value}:f)}
-                        style={{ width:"100%", padding:"10px 12px", background:"#060B18", border:"1px solid #FF6B0055", borderRadius:9, color:"#F1F5F9", fontSize:13, outline:"none", boxSizing:"border-box" }}/>
-                    </div>
-                    <div style={{ marginBottom:14 }}>
-                      <label style={{ fontSize:11, color:"#64748B", fontWeight:700, display:"block", marginBottom:5 }}>ANSWER</label>
-                      <textarea value={editingFaq.a} onChange={e=>setEditingFaq(f=>f?{...f,a:e.target.value}:f)} rows={4}
-                        style={{ width:"100%", padding:"10px 12px", background:"#060B18", border:"1px solid #FF6B0055", borderRadius:9, color:"#F1F5F9", fontSize:13, outline:"none", resize:"vertical", boxSizing:"border-box" }}/>
-                    </div>
-                    <div style={{ display:"flex", gap:8 }}>
-                      <button onClick={()=>setEditingFaq(null)} style={{ padding:"8px 16px", borderRadius:8, border:"1px solid #1E293B", background:"transparent", color:"#64748B", fontSize:12, cursor:"pointer" }}>Cancel</button>
-                      <button onClick={updateFaq} style={{ padding:"8px 16px", borderRadius:8, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer" }}>Save</button>
-                    </div>
-                  </div>
-                ) : (
-                  <div>
-                    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:12 }}>
-                      <div style={{ flex:1 }}>
-                        <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:10 }}>
-                          <span style={{ width:24, height:24, borderRadius:"50%", background:"#FF6B0022", border:"1px solid #FF6B0044", display:"flex", alignItems:"center", justifyContent:"center", fontSize:11, fontWeight:800, color:"#FF6B00", flexShrink:0 }}>{i+1}</span>
-                          <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9" }}>Q: {faq.q}</div>
-                        </div>
-                        {/* Website preview */}
-                        <div style={{ background:"#060B18", borderRadius:9, padding:"12px 14px", border:"1px solid #0F1B2D" }}>
-                          <div style={{ fontSize:12, color:"#94A3B8", lineHeight:1.6 }}><span style={{ color:"#10B981", fontWeight:700 }}>A:</span> {faq.a}</div>
-                        </div>
-                      </div>
-                      <div style={{ display:"flex", gap:7, flexShrink:0 }}>
-                        <button onClick={()=>setEditingFaq({...faq})} style={{ padding:"6px 12px", borderRadius:7, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontSize:11, cursor:"pointer" }}>✏️</button>
-                        <button onClick={()=>setFaqs(f=>f.filter(x=>x.id!==faq.id))} style={{ padding:"6px 12px", borderRadius:7, border:"1px solid #EF444444", background:"transparent", color:"#EF4444", fontSize:11, cursor:"pointer" }}>🗑</button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-
-            {/* Add FAQ inline form */}
-            {showAddFaq&&(
-              <div style={{ ...card, borderStyle:"dashed" }}>
-                <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9", marginBottom:14 }}>New FAQ</div>
-                <div style={{ marginBottom:12 }}>
-                  <label style={{ fontSize:11, color:"#64748B", fontWeight:700, display:"block", marginBottom:5 }}>QUESTION</label>
-                  <input value={newFaq.q} onChange={e=>setNewFaq(p=>({...p,q:e.target.value}))} placeholder="e.g. What is the registration fee?"
-                    style={{ width:"100%", padding:"10px 12px", background:"#060B18", border:"1px solid #1E293B", borderRadius:9, color:"#F1F5F9", fontSize:13, outline:"none", boxSizing:"border-box" }}/>
-                </div>
-                <div style={{ marginBottom:14 }}>
-                  <label style={{ fontSize:11, color:"#64748B", fontWeight:700, display:"block", marginBottom:5 }}>ANSWER</label>
-                  <textarea value={newFaq.a} onChange={e=>setNewFaq(p=>({...p,a:e.target.value}))} rows={4} placeholder="Type the detailed answer here..."
-                    style={{ width:"100%", padding:"10px 12px", background:"#060B18", border:"1px solid #1E293B", borderRadius:9, color:"#F1F5F9", fontSize:13, outline:"none", resize:"vertical", boxSizing:"border-box" }}/>
-                </div>
-                <div style={{ display:"flex", gap:8 }}>
-                  <button onClick={()=>setShowAddFaq(false)} style={{ padding:"9px 18px", borderRadius:9, border:"1px solid #1E293B", background:"transparent", color:"#64748B", fontSize:12, cursor:"pointer" }}>Cancel</button>
-                  <button onClick={saveFaq} style={{ padding:"9px 18px", borderRadius:9, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer" }}>Add FAQ</button>
-                </div>
-              </div>
-            )}
+      {/* Season & registration status */}
+      <div style={card}>
+        <div style={sectionTitle}>Season & Registration Status</div>
+        <div style={sectionSub}>Shown in the hero and registration sections.</div>
+        <div style={{ display: "flex", gap: 20, flexWrap: "wrap", alignItems: "flex-end" }}>
+          <div style={{ width: 140 }}>
+            <label style={lbl}>Season Number</label>
+            <input type="number" min={1} max={99} value={cfg.seasonNumber ?? ""} style={inp}
+              onChange={e => setCfg(c => ({ ...c, seasonNumber: e.target.value === "" ? undefined : Math.max(1, Math.floor(Number(e.target.value))) }))} />
           </div>
-
-        ) : (
-          /* Standard Section Editor */
-          <>
-            <div style={card}>
-              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
-                <div>
-                  <div style={{ fontSize:16, fontWeight:800, color:"#F1F5F9" }}>{SECTIONS.find(s=>s.id===section)?.label}</div>
-                  <div style={{ fontSize:11, color:"#475569", marginTop:3 }}>Edit content displayed on the public website</div>
-                </div>
-                {saved===section&&<span style={{ fontSize:12, color:"#10B981", fontWeight:700, background:"#10B98122", padding:"4px 12px", borderRadius:8 }}>✓ Saved!</span>}
-              </div>
-              <div style={{ marginBottom:14 }}>
-                <label style={{ fontSize:11, fontWeight:700, color:"#475569", letterSpacing:.5, display:"block", marginBottom:6 }}>SECTION TITLE</label>
-                <input value={forms[section]?.title||""} onChange={e=>setForms(f=>({...f,[section]:{...f[section],title:e.target.value}}))}
-                  style={{ width:"100%", padding:"10px 12px", background:"#060B18", border:"1px solid #1E293B", borderRadius:9, color:"#F1F5F9", fontSize:14, fontWeight:600, outline:"none", boxSizing:"border-box" }}/>
-              </div>
-              <div style={{ marginBottom:18 }}>
-                <label style={{ fontSize:11, fontWeight:700, color:"#475569", letterSpacing:.5, display:"block", marginBottom:6 }}>CONTENT</label>
-                <textarea value={forms[section]?.body||""} onChange={e=>setForms(f=>({...f,[section]:{...f[section],body:e.target.value}}))}
-                  rows={10} style={{ width:"100%", padding:"10px 12px", background:"#060B18", border:"1px solid #1E293B", borderRadius:9, color:"#F1F5F9", fontSize:13, outline:"none", resize:"vertical", boxSizing:"border-box", lineHeight:1.65 }}/>
-              </div>
-              <div style={{ display:"flex", gap:10 }}>
-                <button onClick={save} style={{ padding:"10px 24px", borderRadius:9, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontWeight:700, fontSize:13, cursor:"pointer" }}>Save Changes</button>
-                <button onClick={()=>setForms(f=>({...f,[section]:CONTENT[section]}))} style={{ padding:"10px 24px", borderRadius:9, border:"1px solid #EF444444", background:"transparent", color:"#EF4444", fontSize:13, cursor:"pointer" }}>Reset to Default</button>
-              </div>
+          <div>
+            <label style={lbl}>Registration Status</label>
+            <div style={{ display: "flex", gap: 6 }}>
+              {REG_STATUS.map(s => {
+                const active = cfg.registrationStatus === s.value;
+                return (
+                  <button key={s.value} onClick={() => setCfg(c => ({ ...c, registrationStatus: s.value }))}
+                    style={{
+                      padding: "8px 14px", borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: "pointer",
+                      border: "1px solid " + (active ? s.color : "#1E293B"),
+                      background: active ? s.color + "22" : "transparent",
+                      color: active ? s.color : "#64748B",
+                    }}>
+                    {s.label}
+                  </button>
+                );
+              })}
             </div>
+          </div>
+        </div>
+      </div>
 
-            {/* Preview */}
-            <div style={card}>
-              <div style={{ fontSize:11, fontWeight:800, color:"#475569", letterSpacing:.5, marginBottom:14, textTransform:"uppercase" }}>Live Preview — As Shown on Website</div>
-              <div style={{ background:"#060B18", borderRadius:10, padding:"20px 24px", border:"1px solid #0F172A" }}>
-                <div style={{ fontSize:18, fontWeight:900, color:"#F1F5F9", marginBottom:12 }}>{forms[section]?.title}</div>
-                <div style={{ fontSize:13, color:"#94A3B8", lineHeight:1.8, whiteSpace:"pre-line" }}>{forms[section]?.body}</div>
-              </div>
+      {/* Fees + key numbers */}
+      <div style={card}>
+        <div style={sectionTitle}>Fees & Key Numbers (display)</div>
+        <div style={sectionSub}>Numbers shown on the homepage. Checkout amounts stay controlled by the payment system.</div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 14 }}>
+          {numField("phase1FeeStandard", "Phase 1 — Bat/Bowl/WK (₹)")}
+          {numField("phase1FeeAllRounder", "Phase 1 — All-Rounder (₹)")}
+          {numField("phase2FeeStandard", "Phase 2 — Bat/Bowl/WK (₹)")}
+          {numField("phase2FeeAllRounder", "Phase 2 — All-Rounder (₹)")}
+          <div>
+            <label style={lbl}>Prize Pool (text)</label>
+            <input value={cfg.prizePool ?? ""} placeholder="₹6 Cr" style={inp}
+              onChange={e => setCfg(c => ({ ...c, prizePool: e.target.value }))} />
+          </div>
+          <div>
+            <label style={lbl}>Auction Value (text)</label>
+            <input value={cfg.auctionValue ?? ""} placeholder="₹20 L" style={inp}
+              onChange={e => setCfg(c => ({ ...c, auctionValue: e.target.value }))} />
+          </div>
+        </div>
+      </div>
+
+      {/* Important dates */}
+      <div style={card}>
+        <div style={sectionTitle}>Important Dates</div>
+        <div style={sectionSub}>Up to 12 rows — label + free-text date.</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {(cfg.importantDates ?? []).map((d, i) => (
+            <div key={i} style={{ display: "flex", gap: 8 }}>
+              <input value={d.label} placeholder="Label (e.g. Phase 1 closes)" style={{ ...inp, flex: 2, minWidth: 0 }}
+                onChange={e => setDate(i, "label", e.target.value)} />
+              <input value={d.date} placeholder="Date (e.g. 28 Feb 2027)" style={{ ...inp, flex: 1, minWidth: 0 }}
+                onChange={e => setDate(i, "date", e.target.value)} />
+              <button onClick={() => rmDate(i)} style={{ ...smallBtn, color: "#EF4444", borderColor: "#EF444430" }}>×</button>
             </div>
-          </>
-        )}
+          ))}
+          {(cfg.importantDates ?? []).length < 12 && (
+            <button onClick={addDate} style={{ ...smallBtn, alignSelf: "flex-start" }}>+ Add date</button>
+          )}
+        </div>
+      </div>
+
+      {/* Homepage stats */}
+      <div style={card}>
+        <div style={sectionTitle}>Homepage Stats</div>
+        <div style={sectionSub}>Up to 8 headline numbers (e.g. Cities → 50+).</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {(cfg.stats ?? []).map((s, i) => (
+            <div key={i} style={{ display: "flex", gap: 8 }}>
+              <input value={s.label} placeholder="Label (e.g. Cities)" style={{ ...inp, flex: 2, minWidth: 0 }}
+                onChange={e => setStat(i, "label", e.target.value)} />
+              <input value={s.value} placeholder="Value (e.g. 50+)" style={{ ...inp, flex: 1, minWidth: 0 }}
+                onChange={e => setStat(i, "value", e.target.value)} />
+              <button onClick={() => rmStat(i)} style={{ ...smallBtn, color: "#EF4444", borderColor: "#EF444430" }}>×</button>
+            </div>
+          ))}
+          {(cfg.stats ?? []).length < 8 && (
+            <button onClick={addStat} style={{ ...smallBtn, alignSelf: "flex-start" }}>+ Add stat</button>
+          )}
+        </div>
+      </div>
+
+      {/* Social + support */}
+      <div style={card}>
+        <div style={sectionTitle}>Social Links & Support</div>
+        <div style={sectionSub}>Footer and contact details.</div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 14 }}>
+          {(["instagram", "youtube", "x", "facebook"] as const).map(k => (
+            <div key={k}>
+              <label style={lbl}>{k === "x" ? "X / Twitter" : k.charAt(0).toUpperCase() + k.slice(1)}</label>
+              <input value={cfg.socialLinks?.[k] ?? ""} placeholder="https://…" style={inp}
+                onChange={e => setCfg(c => ({ ...c, socialLinks: { ...(c.socialLinks ?? {}), [k]: e.target.value } }))} />
+            </div>
+          ))}
+          <div>
+            <label style={lbl}>Support Email</label>
+            <input value={cfg.supportEmail ?? ""} placeholder="support@bcplt20.com" style={inp}
+              onChange={e => setCfg(c => ({ ...c, supportEmail: e.target.value }))} />
+          </div>
+          <div>
+            <label style={lbl}>Support Phone</label>
+            <input value={cfg.supportPhone ?? ""} placeholder="+91 …" style={inp}
+              onChange={e => setCfg(c => ({ ...c, supportPhone: e.target.value }))} />
+          </div>
+        </div>
+      </div>
+
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <button onClick={save} disabled={saving}
+          style={{ padding: "10px 22px", borderRadius: 10, border: "none", background: "#FF6B00", color: "#fff", fontSize: 13, fontWeight: 800, cursor: "pointer", opacity: saving ? 0.6 : 1 }}>
+          {saving ? "Saving…" : "Save Changes"}
+        </button>
       </div>
     </div>
   );

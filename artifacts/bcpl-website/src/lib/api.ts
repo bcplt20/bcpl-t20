@@ -525,10 +525,57 @@ export const getSiteSetting = <T = unknown>(key: string) =>
 export const adminSetSiteSetting = (key: string, value: unknown) =>
   adminReq<{ success: boolean; key: string }>("PUT", `/settings/admin/${key}`, { value });
 
-export const adminGetSampleUploadUrl = (contentType: string) =>
+export const adminGetSampleUploadUrl = (contentType: string, purpose?: "cms") =>
   adminReq<{ success: boolean; presignedUrl: string; s3Key: string; publicUrl: string }>(
-    "POST", "/settings/admin/upload-url", { contentType }
+    "POST", "/settings/admin/upload-url", { contentType, ...(purpose ? { purpose } : {}) }
   );
+
+/* ─── Stage 6: homepage CMS config (display values for the public site) ── */
+export interface HomepageDateItem { label: string; date: string }
+export interface HomepageStatItem { label: string; value: string }
+export interface HomepageConfig {
+  heroDesktopUrl?: string; heroTabletUrl?: string; heroMobileUrl?: string; heroPosterUrl?: string;
+  seasonNumber?: number;
+  registrationStatus?: "open" | "closed" | "coming_soon";
+  phase1FeeStandard?: number; phase1FeeAllRounder?: number;
+  phase2FeeStandard?: number; phase2FeeAllRounder?: number;
+  prizePool?: string; auctionValue?: string;
+  importantDates?: HomepageDateItem[];
+  stats?: HomepageStatItem[];
+  socialLinks?: { instagram?: string; youtube?: string; x?: string; facebook?: string };
+  supportEmail?: string; supportPhone?: string;
+}
+
+/* ─── Stage 6: employment verification (KYC team) ── */
+export type EmploymentStatus = "pending" | "verified" | "failed" | "more_information_required";
+export const adminSetKycEmployment = (
+  id: string,
+  data: { status: EmploymentStatus; method?: string; reference?: string; failureReason?: string; category?: string },
+) => adminReq<{ success: boolean; kyc: Record<string, unknown> }>("PATCH", `/admin/kyc/${id}/employment`, data);
+
+/* ─── Stage 6: fraud flags ── */
+export interface FraudFlagRow {
+  id: string; registrationId: string; type: string; status: string;
+  reasonCode: string | null; detail: Record<string, unknown> | null;
+  note: string | null; createdBy: string | null; reviewedBy: string | null;
+  reviewedAt: string | null; createdAt: string; updatedAt: string;
+  regNumber: string | null; player: string; phone: string; trialCity: string;
+}
+export const adminGetFraudFlags = (filters?: { status?: string; type?: string }) => {
+  const qs = new URLSearchParams();
+  if (filters?.status) qs.set("status", filters.status);
+  if (filters?.type) qs.set("type", filters.type);
+  const q = qs.toString();
+  return adminReq<{ flags: FraudFlagRow[]; counts: Record<string, number>; total: number }>(
+    "GET", "/admin/fraud" + (q ? "?" + q : "")
+  );
+};
+export const adminRunFraudScan = () =>
+  adminReq<{ success: boolean; candidates: number; created: number; byType: Record<string, number> }>(
+    "POST", "/admin/fraud/scan"
+  );
+export const adminFraudFlagAction = (id: string, action: "clear" | "block" | "reflag", note?: string) =>
+  adminReq<{ success: boolean; flag: FraudFlagRow }>("PATCH", `/admin/fraud/${id}`, { action, ...(note !== undefined ? { note } : {}) });
 
 // Finance — send a real GST invoice email to the player
 export const adminSendInvoice = (registrationId: string, phase: 1 | 2, email?: string) =>

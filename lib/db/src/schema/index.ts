@@ -35,3 +35,5 @@ export * from "./phase1_feedback";
 // Stage 5 — finance refunds + server-side RBAC
 export * from "./refunds";
 export * from "./admin_users";
+// Stage 6 — fraud detection extensions
+export * from "./fraud_flags";

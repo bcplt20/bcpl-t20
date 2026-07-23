@@ -15,6 +15,15 @@ export const kycRecordsTable = pgTable("kyc_records", {
   // true = player completed Aadhaar OTP successfully
   aadhaarVerified: boolean("aadhaar_verified").default(false).notNull(),
   verifiedAt:     timestamp("verified_at",  { withTimezone: true }),
+  /* ── Employment / professional verification (Stage 6) ──
+     Category chosen by the player; status set by KYC team.
+     employment_status: pending | verified | failed | more_information_required */
+  employmentCategory:      varchar("employment_category", { length: 40 }),
+  employmentStatus:        varchar("employment_status", { length: 32 }).default("pending").notNull(),
+  employmentVerifiedAt:    timestamp("employment_verified_at", { withTimezone: true }),
+  employmentMethod:        varchar("employment_method", { length: 60 }),
+  employmentReference:     varchar("employment_reference", { length: 200 }),
+  employmentFailureReason: varchar("employment_failure_reason", { length: 500 }),
   createdAt:      timestamp("created_at",   { withTimezone: true }).defaultNow().notNull(),
 });
 

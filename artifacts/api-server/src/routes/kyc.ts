@@ -641,3 +641,14 @@ router.post("/webhook", async (req, res) => {
 });
 
 export default router;
+
+/* ── Stage 6: employment verification columns (idempotent migration) ── */
+export async function ensureKycEmployment(): Promise<void> {
+  await db.execute(sql`ALTER TABLE kyc_records ADD COLUMN IF NOT EXISTS employment_category varchar(40)`);
+  await db.execute(sql`ALTER TABLE kyc_records ADD COLUMN IF NOT EXISTS employment_status varchar(32) NOT NULL DEFAULT 'pending'`);
+  await db.execute(sql`ALTER TABLE kyc_records ADD COLUMN IF NOT EXISTS employment_verified_at timestamptz`);
+  await db.execute(sql`ALTER TABLE kyc_records ADD COLUMN IF NOT EXISTS employment_method varchar(60)`);
+  await db.execute(sql`ALTER TABLE kyc_records ADD COLUMN IF NOT EXISTS employment_reference varchar(200)`);
+  await db.execute(sql`ALTER TABLE kyc_records ADD COLUMN IF NOT EXISTS employment_failure_reason varchar(500)`);
+  console.log("[MIGRATE] kyc_records employment columns ready");
+}

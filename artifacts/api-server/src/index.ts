@@ -7,7 +7,7 @@ import { runResultReleases } from "./lib/resultRelease";
 import { sendVideoReminders } from "./routes/video";
 import { ensureRegNumbers } from "./routes/register";
 import { ensurePhase1Scores } from "./routes/results";
-import { ensureKycPanVerified, ensurePlayerProfiles } from "./routes/kyc";
+import { ensureKycPanVerified, ensurePlayerProfiles, ensureKycEmployment } from "./routes/kyc";
 import { ensureTeams } from "./routes/teams";
 import { ensureMarketingTables } from "./routes/marketing";
 import { ensureReferralProgramTables } from "./routes/referralProgram";
@@ -17,6 +17,7 @@ import { ensurePhase1AiTables } from "./lib/phase1Migrations";
 import { ensureTrialsTables } from "./routes/trials";
 import { ensureAdminUsersTable } from "./routes/adminUsers";
 import { ensureRefundsTables } from "./routes/refunds";
+import { ensureFraudTables } from "./routes/fraud";
 import { recordJobRun } from "./lib/heartbeat";
 import { reconcileAbandonedPayments } from "./lib/reconcilePayments";
 import { sendPaymentReminders, remindersEnabled } from "./lib/reminders";
@@ -37,6 +38,7 @@ async function start() {
       await ensurePhase1Scores();
       await ensureKycPanVerified();
       await ensurePlayerProfiles();
+      await ensureKycEmployment(); // Stage 6 employment verification
       await ensureTeams();
       await ensureMarketingTables();
       await ensureReferralProgramTables(); // needs referral_codes from ensureMarketingTables
@@ -45,6 +47,7 @@ async function start() {
       await ensurePhase1AiTables(); // Phase 1 AI evaluation pipeline
       await ensureTrialsTables(); // Physical trials suite (Stage 4)
       await ensureAdminUsersTable(); // Stage 5 server-side RBAC
+      await ensureFraudTables(); // Stage 6 fraud flag extensions
       await ensureRefundsTables(); // Stage 5 finance refunds
       logger.info("startup migrations ensured");
       break;
