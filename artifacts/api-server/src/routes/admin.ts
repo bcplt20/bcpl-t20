@@ -20,11 +20,12 @@ import {
   phase2PaymentsTable,
   trialVenuesTable,
   playerProfilesTable,
+  notificationLogsTable,
 } from "@workspace/db/schema";
 import { eq, desc, count, and } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { markKycVerified } from "./kyc";
-import { sendEmail, adminAlertRecipient, tplPhase1Selected, tplPhase1Rejected, tplTrialVenueAnnounced, tplInvoice, tplAdminLoginLockdown } from "../lib/email";
+import { sendEmail, adminAlertRecipient, tplPhase1ResultReady, tplTrialVenueAnnounced, tplInvoice, tplAdminLoginLockdown } from "../lib/email";
 import { sendSms, adminAlertPhone } from "../lib/sms";
 import { logNotifications } from "../lib/notify";
 import { gstFromGross } from "../lib/gst";
@@ -353,16 +354,22 @@ router.put("/registrations/:id/phase1-status", async (req, res) => {
 
       if (userRow?.user) {
         const { name, email, phone } = userRow.user;
-        const tpl = status === "selected" ? tplPhase1Selected(name) : tplPhase1Rejected(name);
-        const smsMsg = status === "selected"
-          ? `Congratulations ${name}! You have been SELECTED for BCPL T20 Season 5 Phase 2 trials. Login to bcplt20.com to proceed. - BCPL T20`
-          : `Dear ${name}, thank you for participating in BCPL Season 5. Phase 1 result is out. Visit bcplt20.com for details. - BCPL T20`;
-
-        // Don't await — fire and forget
-        sendEmail({ to: email, toName: name, subject: tpl.subject, htmlContent: tpl.htmlContent })
-          .catch(e => console.error("[admin] email failed", e));
-        sendSms(phone, smsMsg)
-          .catch(e => console.error("[admin] sms failed", e));
+        // §82: result notifications are outcome-neutral — the result (and the
+        // §83 congratulations, on first view) live in the player dashboard.
+        // Reserve-first log = exactly-once per registration, even on re-decides.
+        const reserved = await db.insert(notificationLogsTable)
+          .values({ userId: updated.userId, type: "email", template: "phase1_result", dedupeKey: "p1_result_legacy_" + updated.id })
+          .onConflictDoNothing()
+          .returning({ id: notificationLogsTable.id });
+        if (reserved.length > 0) {
+          const tpl = tplPhase1ResultReady(name);
+          const smsMsg = "BCPL T20: Hi " + name + ", your Phase 1 result is now available. View it in your Player Dashboard at bcplt20.com -BCPL T20";
+          // Don't await — fire and forget
+          sendEmail({ to: email, toName: name, subject: tpl.subject, htmlContent: tpl.htmlContent })
+            .catch(e => console.error("[admin] email failed", e));
+          sendSms(phone, smsMsg)
+            .catch(e => console.error("[admin] sms failed", e));
+        }
       }
     }
 

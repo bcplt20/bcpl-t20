@@ -28,12 +28,14 @@ import { db } from "@workspace/db";
 import {
   registrationsTable, phase1ScoresTable, usersTable,
   phase1EvaluationsTable, rankingSnapshotsTable, phase1FeedbackTable,
+  notificationLogsTable,
 } from "@workspace/db/schema";
 import { eq, and, desc, sql } from "drizzle-orm";
 import { requireAuth, type AuthRequest } from "../middlewares/auth";
 import { getPhase1Rubrics } from "../lib/phase1Config";
 import { normalizeRole } from "../lib/phase1Roles";
 import { logger } from "../lib/logger";
+import { sendEmail, tplPhase1Selected } from "../lib/email";
 
 const router = Router();
 
@@ -116,8 +118,25 @@ router.get("/me", requireAuth, async (req: AuthRequest, res) => {
 
       const [snap] = await db.select().from(rankingSnapshotsTable)
         .where(eq(rankingSnapshotsTable.registrationId, reg.id)).limit(1);
-      const [userRow] = await db.select({ name: usersTable.name })
+      const [userRow] = await db.select({ name: usersTable.name, email: usersTable.email })
         .from(usersTable).where(eq(usersTable.id, reg.userId)).limit(1);
+
+      // §83: the congratulations email fires on FIRST VIEW of a qualified
+      // result (the release email is outcome-neutral per §82). Reserve-first
+      // dedupe makes this exactly-once; fire-and-forget keeps the response fast.
+      if (released.result === "qualified" && userRow?.email) {
+        const cName = userRow.name ?? "";
+        const cEmail = userRow.email;
+        void (async () => {
+          const reserved = await db.insert(notificationLogsTable)
+            .values({ userId: reg.userId, type: "email", template: "phase1_congrats", dedupeKey: "p1_congrats_" + released.id })
+            .onConflictDoNothing()
+            .returning({ id: notificationLogsTable.id });
+          if (reserved.length > 0) {
+            await sendEmail({ to: cEmail, toName: cName, ...tplPhase1Selected(cName) });
+          }
+        })().catch((e) => logger.warn({ err: e, evalId: released.id }, "phase1 congrats email failed"));
+      }
 
       return void res.json({
         available:    true,
@@ -171,8 +190,30 @@ router.get("/me", requireAuth, async (req: AuthRequest, res) => {
     `);
     const rank = rowsOf(rankRes)[0] ?? {};
 
-    const [userRow] = await db.select({ name: usersTable.name })
+    const [userRow] = await db.select({ name: usersTable.name, email: usersTable.email })
       .from(usersTable).where(eq(usersTable.id, reg.userId)).limit(1);
+
+    // §83 (legacy path): congratulations on first view — but only for
+    // decisions made under the new neutral-release flow (the legacy release
+    // log row exists). Players decided before this change already received
+    // the old outcome email and must not get a surprise congrats now.
+    if (reg.phase1Status === "selected" && userRow?.email) {
+      const cName = userRow.name ?? "";
+      const cEmail = userRow.email;
+      void (async () => {
+        const [releaseLog] = await db.select({ id: notificationLogsTable.id })
+          .from(notificationLogsTable)
+          .where(eq(notificationLogsTable.dedupeKey, "p1_result_legacy_" + reg.id)).limit(1);
+        if (!releaseLog) return;
+        const reserved = await db.insert(notificationLogsTable)
+          .values({ userId: reg.userId, type: "email", template: "phase1_congrats", dedupeKey: "p1_congrats_legacy_" + reg.id })
+          .onConflictDoNothing()
+          .returning({ id: notificationLogsTable.id });
+        if (reserved.length > 0) {
+          await sendEmail({ to: cEmail, toName: cName, ...tplPhase1Selected(cName) });
+        }
+      })().catch((e) => logger.warn({ err: e, regId: reg.id }, "phase1 legacy congrats email failed"));
+    }
 
     const breakdown = SCORE_CRITERIA.map(c => ({
       key: c.key,

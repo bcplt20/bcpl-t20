@@ -60,6 +60,63 @@ router.post("/phase1/run-release", async (_req: Request, res: Response) => {
 });
 
 // Phase 1 pipeline config — read + patch (audited, cache-busting).
+// §75 observability + §76 cost aggregates — feeds the admin monitoring view.
+router.get("/phase1/stats", async (_req: Request, res: Response) => {
+  try {
+    const rows = (r: unknown): Array<Record<string, unknown>> =>
+      Array.isArray(r) ? r : ((r as { rows?: Array<Record<string, unknown>> })?.rows ?? []);
+    const [regTotal, byCity, byRole, byP1Status, vids, vidPending, evalByStatus, evalAgg, released, backlog, evalErrors, passes, notifs] = await Promise.all([
+      db.execute(sql`SELECT count(*)::int AS n FROM registrations`),
+      db.execute(sql`SELECT coalesce(trial_city,'unknown') AS k, count(*)::int AS n FROM registrations GROUP BY 1 ORDER BY 2 DESC`),
+      db.execute(sql`SELECT CASE WHEN lower(coalesce(role,''))='bowl' OR lower(coalesce(role,'')) LIKE 'bowler%' THEN 'bowl'
+                            WHEN lower(coalesce(role,''))='ar' OR lower(coalesce(role,'')) LIKE 'all%' THEN 'ar'
+                            WHEN lower(coalesce(role,''))='wk' OR lower(coalesce(role,'')) LIKE 'wicket%' OR lower(coalesce(role,'')) LIKE 'keep%' THEN 'wk'
+                            ELSE 'bat' END AS k, count(*)::int AS n FROM registrations GROUP BY 1`),
+      db.execute(sql`SELECT coalesce(phase1_status,'none') AS k, count(*)::int AS n FROM registrations GROUP BY 1`),
+      db.execute(sql`SELECT status AS k, count(*)::int AS n, coalesce(sum(size_bytes),0)::bigint AS bytes FROM phase1_videos GROUP BY 1`),
+      db.execute(sql`SELECT count(*)::int AS n FROM registrations r WHERE r.phase1_status='payment_done'
+                     AND NOT EXISTS (SELECT 1 FROM phase1_videos v WHERE v.registration_id=r.id AND v.status='submitted')`),
+      db.execute(sql`SELECT status AS k, count(*)::int AS n FROM phase1_evaluations GROUP BY 1`),
+      db.execute(sql`SELECT coalesce(avg(processing_ms),0)::int AS avg_ms, coalesce(avg(final_score),0)::float AS avg_score FROM phase1_evaluations WHERE final_score IS NOT NULL`),
+      db.execute(sql`SELECT coalesce(result,'pending') AS k, count(*)::int AS n FROM phase1_evaluations WHERE status='result_released' GROUP BY 1`),
+      db.execute(sql`SELECT count(*)::int AS n FROM phase1_evaluations WHERE status='scored' AND result_release_at <= now()`),
+      db.execute(sql`SELECT count(*)::int AS n FROM phase1_evaluations WHERE error IS NOT NULL AND status NOT IN ('result_released','scored','skipped')`),
+      db.execute(sql`SELECT count(*)::int AS total, count(DISTINCT evaluation_id)::int AS evals FROM ai_evaluation_passes`),
+      db.execute(sql`SELECT status AS k, count(*)::int AS n FROM notification_logs
+                     WHERE template IN ('phase1_result','phase1_congrats','video_reupload_required') GROUP BY 1`),
+    ]);
+    const kv = (r: unknown) => Object.fromEntries(rows(r).map((x) => [String(x.k), Number(x.n)]));
+    const vidRows = rows(vids);
+    const agg = rows(evalAgg)[0] ?? {};
+    const passRow = rows(passes)[0] ?? {};
+    const passEvals = Number(passRow.evals ?? 0);
+    res.json({
+      generatedAt: new Date().toISOString(),
+      registrations: { total: Number(rows(regTotal)[0]?.n ?? 0), byCity: kv(byCity), byRole: kv(byRole), byPhase1Status: kv(byP1Status) },
+      videos: {
+        awaitingUpload: Number(rows(vidPending)[0]?.n ?? 0),
+        byStatus: Object.fromEntries(vidRows.map((x) => [String(x.k), Number(x.n)])),
+        storageBytes: vidRows.reduce((s, x) => s + Number(x.bytes ?? 0), 0),
+      },
+      evaluations: {
+        byStatus: kv(evalByStatus),
+        avgProcessingMs: Number(agg.avg_ms ?? 0),
+        avgFinalScore: Math.round(Number(agg.avg_score ?? 0) * 10) / 10,
+        released: kv(released),
+        releaseBacklog: Number(rows(backlog)[0]?.n ?? 0),
+        rowsWithErrors: Number(rows(evalErrors)[0]?.n ?? 0),
+      },
+      cost: {
+        aiPassesTotal: Number(passRow.total ?? 0),
+        avgPassesPerEvaluation: passEvals > 0 ? Math.round((Number(passRow.total ?? 0) / passEvals) * 10) / 10 : 0,
+      },
+      notifications: kv(notifs),
+    });
+  } catch (e) {
+    res.status(500).json({ error: "stats_failed", detail: String(e).slice(0, 300) });
+  }
+});
+
 router.get("/phase1/config", async (_req: Request, res: Response) => {
   const cfg = await getPhase1Config();
   res.json({ success: true, config: cfg });

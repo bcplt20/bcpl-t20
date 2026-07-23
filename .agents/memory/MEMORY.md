@@ -20,3 +20,5 @@
 - [Cashfree verification](cashfree-verification.md) — CF_VERIFY_* creds separate from payment keys, prod-only (dev = stub mode); "service unavailable" 502 = payload bug until proven otherwise
 - [V3 design language](v3-design-language.md) — emoji icons are deliberate (Home.tsx reference), never strip; internal links = wouter Link only; audit-grep patterns
 - [Subagent briefs](subagent-briefs.md) — end multi-page briefs with "complete ALL, do not stop to ask"; verify via git status, not the report
+- [Phase1 worker CAS claims](phase1-worker-cas.md) — workers stamp claim_token, write via casEvalUpdate only; snapshots frozen; tests assert DB end-state, never run counts
+- [Phase1 AI gate](phase1-ai-gate.md) — aiEnabled gates mock AND real; mock blocked in prod without PHASE1_ALLOW_MOCK=1; E2E must PATCH aiEnabled + sleep 31, reset in traps

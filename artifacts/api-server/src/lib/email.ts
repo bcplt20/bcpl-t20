@@ -227,55 +227,50 @@ export function tplVideoReuploadRequired(name: string, reasonLine: string) {
   };
 }
 
-// ── Template 6: Phase 1 Selected for Phase 2 ──────────────────────────────────
-export function tplPhase1Selected(name: string) {
+// ── Template 6: Phase 1 Result Ready (§82 — outcome-neutral release email) ───
+export function tplPhase1ResultReady(name: string) {
   return {
-    subject: "🎉 BCPL T20 — Congratulations! You are Selected for Phase 2!",
+    subject: "Your BCPL Phase 1 Result Is Ready",
     htmlContent: wrap(`
       <div style="text-align:center;margin-bottom:24px;">
-        <div style="display:inline-flex;align-items:center;justify-content:center;width:80px;height:80px;border-radius:50%;background:rgba(34,197,94,0.15);border:2px solid #22C55E;font-size:42px;margin-bottom:12px;">🎉</div>
-        <div style="font-size:30px;font-weight:900;color:#22C55E;letter-spacing:-1px;font-family:Arial,sans-serif;">YOU'RE SELECTED!</div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-top:4px;">Phase 2 Physical Trials के लिए</div>
+        <div style="display:inline-flex;align-items:center;justify-content:center;width:80px;height:80px;border-radius:50%;background:rgba(232,178,61,0.12);border:2px solid #E8B23D;font-size:38px;margin-bottom:12px;">📊</div>
+        <div style="font-size:28px;font-weight:900;color:#E8B23D;letter-spacing:-0.5px;font-family:Arial,sans-serif;">YOUR RESULT IS READY</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-top:4px;">BCPL Season 5 · Phase 1 Video Trial</div>
       </div>
-      <div style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.25);border-radius:12px;padding:24px;margin-bottom:20px;">
-        <p style="color:rgba(255,255,255,0.7);margin:0 0 8px;font-size:14px;">Dear <strong>${name}</strong>, our BCCI-certified scouts have reviewed your video and <strong style="color:#22C55E;">selected you for Phase 2 Physical Trials!</strong></p>
-        <p style="color:rgba(255,255,255,0.5);margin:0;font-size:13px;">You are among the <strong style="color:#fff;">top players</strong> selected from your city. Congratulations!</p>
+      <div style="background:rgba(232,178,61,0.06);border:1px solid rgba(232,178,61,0.2);border-radius:12px;padding:24px;margin-bottom:20px;">
+        <p style="color:rgba(255,255,255,0.75);margin:0 0 8px;font-size:14px;">Hi <strong>${name}</strong>,</p>
+        <p style="color:rgba(255,255,255,0.6);margin:0 0 8px;font-size:14px;">Your BCPL Season 5 Phase 1 assessment is complete.</p>
+        <p style="color:rgba(255,255,255,0.6);margin:0;font-size:14px;">Your result is now available in your <strong style="color:#fff;">BCPL Player Dashboard</strong>.</p>
       </div>
-      <div style="background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.12);border-radius:12px;padding:18px;margin-bottom:20px;">
-        <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:14px;letter-spacing:1px;text-transform:uppercase;">Phase 2 — What's Next</div>
-        <div style="display:flex;flex-direction:column;gap:10px;">
-          <div style="display:flex;gap:14px;padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;"><span style="font-size:20px;">💰</span><div><div style="font-size:13px;color:#fff;font-weight:700;margin-bottom:2px;">Phase 2 Fee Pay करें</div><div style="font-size:12px;color:rgba(255,255,255,0.5);">₹2,000 (Bat/Bowl/WK) · ₹3,000 (All-Rounder)</div></div></div>
-          <div style="display:flex;gap:14px;padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;"><span style="font-size:20px;">📋</span><div><div style="font-size:13px;color:#fff;font-weight:700;margin-bottom:2px;">KYC Complete करें</div><div style="font-size:12px;color:rgba(255,255,255,0.5);">Aadhaar + PAN — trial slot confirm होगा</div></div></div>
-          <div style="display:flex;gap:14px;padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;"><span style="font-size:20px;">🏟️</span><div><div style="font-size:13px;color:#fff;font-weight:700;margin-bottom:2px;">Physical Trial Attend करें</div><div style="font-size:12px;color:rgba(255,255,255,0.5);">Venue + Date जल्द announce होगा</div></div></div>
-          <div style="display:flex;gap:14px;padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;"><span style="font-size:20px;">🔨</span><div><div style="font-size:13px;color:#fff;font-weight:700;margin-bottom:2px;">Franchise Auction</div><div style="font-size:12px;color:rgba(255,255,255,0.5);">10 franchise teams में draft होंगे</div></div></div>
-        </div>
-      </div>
-      <div style="text-align:center;">${btn("PROCEED TO PHASE 2 →", `${SITE_URL}/register/phase2`, "#22C55E")}</div>`),
+      <div style="text-align:center;margin-bottom:8px;">${btn("VIEW MY RESULT →", `${SITE_URL}/register/result`, "#E8B23D")}</div>
+      <p style="text-align:center;color:rgba(255,255,255,0.3);font-size:12px;margin:12px 0 0;">Prepared under the BCPL Season 5 selection methodology.</p>`),
   };
 }
 
-// ── Template 7: Phase 1 NOT Selected ─────────────────────────────────────────
-export function tplPhase1Rejected(name: string) {
+// ── Template 7: Phase 1 Qualified (§83 — sent on first view of the result) ───
+export function tplPhase1Selected(name: string) {
   return {
-    subject: "BCPL T20 Season 5 — Phase 1 Result",
+    subject: "Congratulations — You've Cleared BCPL Phase 1",
     htmlContent: wrap(`
-      <div style="background:#0A1727;border-radius:12px;padding:24px;border-left:4px solid rgba(255,255,255,0.15);margin-bottom:20px;">
-        <h2 style="color:#fff;margin:0 0 10px;font-size:20px;">Phase 1 Result</h2>
-        <p style="color:rgba(255,255,255,0.7);margin:0 0 8px;font-size:14px;">Dear <strong>${name}</strong>, thank you for participating in BCPL Season 5 Phase 1 trials.</p>
-        <p style="color:rgba(255,255,255,0.5);margin:0;font-size:13px;">After careful evaluation by our BCCI-certified scouts, you have not been selected for Phase 2 this time.</p>
+      <div style="text-align:center;margin-bottom:24px;">
+        <div style="display:inline-flex;align-items:center;justify-content:center;width:80px;height:80px;border-radius:50%;background:rgba(34,197,94,0.15);border:2px solid #22C55E;font-size:42px;margin-bottom:12px;">🎉</div>
+        <div style="font-size:30px;font-weight:900;color:#22C55E;letter-spacing:-1px;font-family:Arial,sans-serif;">PHASE 1 CLEARED!</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-top:4px;">Next Milestone — Phase 2 Physical Trials</div>
       </div>
-      <div style="background:rgba(255,122,41,0.06);border:1px solid rgba(255,122,41,0.15);border-radius:12px;padding:20px;margin-bottom:20px;">
-        <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:14px;letter-spacing:1px;text-transform:uppercase;">Don't Give Up — Keep Going!</div>
+      <div style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.25);border-radius:12px;padding:24px;margin-bottom:20px;">
+        <p style="color:rgba(255,255,255,0.7);margin:0 0 8px;font-size:14px;">Dear <strong>${name}</strong>, your Phase 1 video assessment is complete and <strong style="color:#22C55E;">you have qualified for Phase 2 Physical Trials!</strong></p>
+        <p style="color:rgba(255,255,255,0.5);margin:0;font-size:13px;">Your detailed score card and city ranking are waiting in your Player Dashboard.</p>
+      </div>
+      <div style="background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.12);border-radius:12px;padding:18px;margin-bottom:20px;">
+        <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:14px;letter-spacing:1px;text-transform:uppercase;">Next Milestone — Phase 2</div>
         <div style="display:flex;flex-direction:column;gap:10px;">
-          <div style="display:flex;gap:12px;align-items:flex-start;"><span style="font-size:18px;margin-top:2px;">💪</span><div style="font-size:13px;color:rgba(255,255,255,0.6);">Cricket is a game of consistency. Keep practicing and come back stronger.</div></div>
-          <div style="display:flex;gap:12px;align-items:flex-start;"><span style="font-size:18px;margin-top:2px;">🏏</span><div style="font-size:13px;color:rgba(255,255,255,0.6);"><strong style="color:#FF7A29;">Season 6 &amp; Season 7</strong> registrations will open — you can try again next year!</div></div>
-          <div style="display:flex;gap:12px;align-items:flex-start;"><span style="font-size:18px;margin-top:2px;">📱</span><div style="font-size:13px;color:rgba(255,255,255,0.6);">Follow us on Instagram <strong style="color:#fff;">${INSTAGRAM}</strong> for Season 6 updates.</div></div>
+          <div style="display:flex;gap:14px;padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;"><span style="font-size:20px;">✅</span><div><div style="font-size:13px;color:#fff;font-weight:700;margin-bottom:2px;">Eligibility Declarations confirm करें</div><div style="font-size:12px;color:rgba(255,255,255,0.5);">Working-professional rules और terms accept करें</div></div></div>
+          <div style="display:flex;gap:14px;padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;"><span style="font-size:20px;">💰</span><div><div style="font-size:13px;color:#fff;font-weight:700;margin-bottom:2px;">Phase 2 Fee Pay करें</div><div style="font-size:12px;color:rgba(255,255,255,0.5);">आपके role के अनुसार fee payment page पर दिखेगी</div></div></div>
+          <div style="display:flex;gap:14px;padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;"><span style="font-size:20px;">📋</span><div><div style="font-size:13px;color:#fff;font-weight:700;margin-bottom:2px;">KYC Complete करें</div><div style="font-size:12px;color:rgba(255,255,255,0.5);">Aadhaar + PAN — trial slot confirm होगा</div></div></div>
+          <div style="display:flex;gap:14px;padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;"><span style="font-size:20px;">🏟️</span><div><div style="font-size:13px;color:#fff;font-weight:700;margin-bottom:2px;">Physical Trial Attend करें</div><div style="font-size:12px;color:rgba(255,255,255,0.5);">Venue + Date जल्द announce होगा</div></div></div>
         </div>
       </div>
-      <div style="text-align:center;padding:16px;background:rgba(255,255,255,0.03);border-radius:8px;">
-        <div style="font-size:18px;font-weight:900;color:#FF7A29;font-family:Arial,sans-serif;letter-spacing:1px;">#OfficeSeStadiumtak</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:4px;">Every great player started somewhere. Your journey continues.</div>
-      </div>`),
+      <div style="text-align:center;">${btn("CONTINUE TO PHASE 2 →", `${SITE_URL}/register/phase2`, "#22C55E")}</div>`),
   };
 }
 

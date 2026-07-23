@@ -25,7 +25,7 @@ import {
 import { eq, and, lt, lte, asc, inArray, isNotNull } from "drizzle-orm";
 import { getPhase1Config, type Phase1Config } from "./phase1Config";
 import { casEvalUpdate } from "./evalClaims";
-import { sendEmail, tplPhase1Selected, tplPhase1Rejected } from "./email";
+import { sendEmail, tplPhase1ResultReady } from "./email";
 import { sendSms } from "./sms";
 import { normalizeRole } from "./phase1Roles";
 import { logger } from "./logger";
@@ -178,10 +178,10 @@ async function processRelease(evalRow: EvalRow, cfg: Phase1Config, out: ReleaseR
       .onConflictDoNothing()
       .returning({ id: notificationLogsTable.id });
     if (reserved.length > 0) {
-      const email = qualified ? tplPhase1Selected(row.name) : tplPhase1Rejected(row.name);
-      const sms = qualified
-        ? "BCPL T20: Congratulations " + row.name + "! You have QUALIFIED for Phase 2. See your result at bcplt20.com -BCPL T20"
-        : "BCPL T20: Your Phase 1 review is complete. View your result and feedback at bcplt20.com -BCPL T20";
+      // §82: the release notification is outcome-neutral — the result itself
+      // (and the §83 congratulations, on first view) live in the dashboard.
+      const email = tplPhase1ResultReady(row.name);
+      const sms = "BCPL T20: Hi " + row.name + ", your Phase 1 result is now available. View it in your Player Dashboard at bcplt20.com -BCPL T20";
       const results = await Promise.allSettled([
         sendEmail({ to: row.email, toName: row.name, ...email }),
         sendSms(row.phone, sms),

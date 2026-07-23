@@ -683,7 +683,13 @@ export function Phase1Result() {
             <div style={{ marginTop:48 }}>
               <div style={{ background:'var(--panel)', border:'1px solid var(--gold)', borderRadius:'var(--r)', padding:32, textAlign:'center', position:'relative', overflow:'hidden' }}>
                 <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 50% 0%, rgba(232,178,61,0.15) 0%, transparent 60%)', pointerEvents:'none' }} />
-                <h3 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:26, color:'var(--gold)', textTransform:'uppercase', marginBottom:12, letterSpacing:'.04em' }}>
+                <div style={{ position:'relative', fontSize:11, fontWeight:800, letterSpacing:'.24em', color:'rgba(255,255,255,0.45)', textTransform:'uppercase', marginBottom:6 }}>
+                  {t('NEXT MILESTONE', 'अगला पड़ाव')}
+                </div>
+                <div style={{ position:'relative', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:44, lineHeight:1, color:'#fff', letterSpacing:'.05em', marginBottom:10 }}>
+                  PHASE 2
+                </div>
+                <h3 style={{ position:'relative', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:22, color:'var(--gold)', textTransform:'uppercase', marginBottom:12, letterSpacing:'.04em' }}>
                   {t('Prepare For The Physical Trial', 'फिजिकल ट्रायल की तैयारी करें')}
                 </h3>
                 <p style={{ color:'var(--ink-2)', fontSize:15, lineHeight:1.6, maxWidth:480, margin:'0 auto 24px' }}>
