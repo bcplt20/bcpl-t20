@@ -53,7 +53,7 @@ export function BCPLFooter() {
               </div>
             </Link>
             <p style={{ fontSize:12, color:"rgba(255,255,255,.3)", lineHeight:1.7, maxWidth:230, marginTop:0, marginBottom:10 }}>
-              India's Biggest Corporate Cricket League. From office to stadium — Season 5, 2026–27.
+              India's Corporate Cricket League. From office to stadium — Season 5, 2026–27.
             </p>
             <div style={{ fontSize:11, color:"rgba(232,178,61,.55)", fontWeight:700, marginBottom:6 }}>Brand Ambassador — Sourav Ganguly</div>
             <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:13, background:"linear-gradient(90deg,#FF7A29,#FFB347)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>#OfficeSeStadiumTak</div>

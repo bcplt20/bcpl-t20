@@ -69,7 +69,7 @@ export function Phase2Registration() {
     <div style={{ background:'var(--bg)', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:16, padding:24, fontFamily:'var(--font-body)', textAlign:'center' }}>
       <div style={{ fontSize:48 }}>🏏</div>
       <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:32, color:'#fff', textTransform:'uppercase' }}>{t("Phase 2 Not Accessible Yet", "फेज 2 अभी उपलब्ध नहीं है")}</div>
-      <div style={{ fontSize:15, color:'#64748B', maxWidth:400, lineHeight:1.6 }}>{t("Phase 2 is only available after your Phase 1 video has been reviewed and you've been selected by scouts.", "फेज 2 केवल तभी उपलब्ध है जब आपके वीडियो का रिव्यू हो चुका हो और आपको चुना गया हो।")}</div>
+      <div style={{ fontSize:15, color:'#64748B', maxWidth:400, lineHeight:1.6 }}>{t("Phase 2 is only available after you have qualified through BCPL's Phase 1 evaluation.", "फेज 2 केवल तभी उपलब्ध है जब आप फेज 1 evaluation में qualify कर चुके हों।")}</div>
       <Link href="/register/upload-video" className="btn-cta" style={{ marginTop:16 }}>{t("Go to Video Upload →", "वीडियो अपलोड पर जाएं →")}</Link>
       <style>{`.btn-cta{display:inline-flex;align-items:center;background:linear-gradient(135deg,var(--orange),var(--orange-2));border:none;border-radius:14px;color:#fff;font-family:var(--font-head);font-weight:900;letter-spacing:0.04em;padding:16px 32px;font-size:16px;text-decoration:none;text-transform:uppercase;transition:opacity 0.2s,transform 0.15s;box-shadow:0 6px 24px rgba(255,122,41,0.35);}`}</style>
     </div>
@@ -118,7 +118,7 @@ export function Phase2Registration() {
           <span style={{ fontSize: 24 }}>✅</span>
           <div style={{ flex: 1 }}>
             <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 16, color: 'var(--green)', letterSpacing: '.06em', textTransform: 'uppercase' }}>{t("PHASE 1 CLEARED", "फेज 1 क्लियर")}</div>
-            <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', marginTop: 2 }}>{t(`Scout Selected · 🏏 ${role} · ${city}`, `स्काउट द्वारा चयनित · 🏏 ${role} · ${city}`)}</div>
+            <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', marginTop: 2 }}>{t(`Phase 1 Qualified · 🏏 ${role} · ${city}`, `फेज 1 क्वालिफाइड · 🏏 ${role} · ${city}`)}</div>
           </div>
         </div>
 

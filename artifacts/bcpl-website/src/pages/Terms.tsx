@@ -119,11 +119,11 @@ export function Terms() {
       'In case of payment failure with amount debited, contact support@bcplt20.com within 48 hours',
     ]},
     {n:4,icon:'🏆',titleEn:'Selection Process',titleHi:'चयन प्रक्रिया',items:[
-      'Selection is entirely merit-based, assessed by BCPL-appointed scouts via submitted video',
+      'Selection is entirely merit-based, assessed through the BCPL Phase 1 evaluation process via submitted video',
       'BCPL\'s selection decision is final, conclusive, and binding — no appeal process exists',
       'Shortlisted players will be notified via registered email and phone number',
       'BCPL makes no guarantee of selection, trial invitation, or match participation',
-      'Scouts evaluate role-specific skills; registration fee is for scouting access, not guaranteed selection',
+      'Role-specific skills are evaluated against BCPL assessment criteria; the registration fee is for Phase 1 evaluation access, not guaranteed selection',
     ]},
     {n:5,icon:'🤝',titleEn:'Player Obligations',titleHi:'खिलाड़ी के दायित्व',items:[
       'Shortlisted players must attend scheduled trials at the designated city venue on time',

@@ -366,7 +366,7 @@ export function Phase2KYC() {
             {kycStatus === 'verified' ? t("✅ KYC Verified", "✅ KYC वेरीफाइड") : t("Player Details & KYC", "प्लेयर जानकारी और KYC")}
           </div>
           <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.5)', marginBottom: 16, lineHeight: 1.6, maxWidth: 600 }}>
-            {t("Emergency contact and identity verification — required for BCCI compliance and franchise contract records.", "आपातकालीन संपर्क और पहचान वेरिफिकेशन — BCCI नियमों और फ्रैंचाइज़ी कॉन्ट्रैक्ट के लिए आवश्यक।")}
+            {t("Emergency contact and identity verification — required for compliance and franchise contract records.", "आपातकालीन संपर्क और पहचान वेरिफिकेशन — compliance और फ्रैंचाइज़ी कॉन्ट्रैक्ट के लिए आवश्यक।")}
           </div>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', fontSize: 11, fontWeight: 900, fontFamily: 'var(--font-head)', letterSpacing: '.14em', textTransform: 'uppercase',
             background: kycStatus === 'verified' ? 'rgba(34,197,94,0.1)' : 'rgba(255,122,41,0.1)',
@@ -575,7 +575,7 @@ export function Phase2KYC() {
 
             <div className="card">
               <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 22, color: '#fff', marginBottom: 6, textTransform: 'uppercase' }}>{t("3. Identity Verification", "3. पहचान वेरिफिकेशन")}</div>
-              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', marginBottom: 24 }}>{t("BCCI compliance and franchise record requirements. Aadhaar OTP will be sent.", "BCCI नियमों और फ्रैंचाइज़ी रिकॉर्ड के लिए आवश्यक। आधार OTP भेजा जाएगा।")}</div>
+              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', marginBottom: 24 }}>{t("Compliance and franchise record requirements. Aadhaar OTP will be sent.", "Compliance और फ्रैंचाइज़ी रिकॉर्ड के लिए आवश्यक। आधार OTP भेजा जाएगा।")}</div>
 
               <div className="grid2">
                 <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--line)', padding: '24px', borderRadius: 'var(--r)' }}>

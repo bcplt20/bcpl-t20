@@ -405,8 +405,8 @@ export function Phase1Result() {
                 {t('Your Video is Under Review', 'आपका वीडियो समीक्षा के अधीन है')}
               </div>
               <div style={{ fontSize:15, color:'var(--ink-2)', maxWidth:480, margin:'0 auto', lineHeight:1.7 }}>
-                {t('BCCI-certified scouts are doing a full 100-point evaluation of your trial video. You will get SMS + email the moment your result is ready.',
-                   'BCCI-certified scouts आपके ट्रायल वीडियो का पूरा 100-पॉइंट मूल्यांकन कर रहे हैं। आपका परिणाम तैयार होते ही आपको SMS + ईमेल मिल जाएगा।')}
+                {t('Your trial video is going through a full 100-point evaluation against BCPL\'s Phase 1 assessment criteria. You will get SMS + email the moment your result is ready.',
+                   'आपका ट्रायल वीडियो BCPL के Phase 1 मूल्यांकन criteria के अनुसार पूरा 100-पॉइंट evaluation से गुज़र रहा है। आपका परिणाम तैयार होते ही आपको SMS + ईमेल मिल जाएगा।')}
               </div>
             </>
           )}
@@ -432,8 +432,8 @@ export function Phase1Result() {
               </span>
             </h1>
             <p style={{ color:'var(--ink-2)', fontSize:16, maxWidth:480, margin:'0 auto 36px', lineHeight:1.7, animation:'fadeUp .5s .1s ease both' }}>
-              {t('BCCI-certified scouts have completed a full 100-point evaluation of your trial video.',
-                 'BCCI-certified scouts ने आपके ट्रायल वीडियो का पूरा 100-पॉइंट मूल्यांकन पूरा कर लिया है।')}
+              {t('Your trial video has completed a full 100-point evaluation against BCPL\'s Phase 1 assessment criteria.',
+                 'आपके ट्रायल वीडियो का BCPL के Phase 1 criteria के अनुसार पूरा 100-पॉइंट evaluation हो चुका है।')}
             </p>
             <button className="btn-gold" onClick={reveal}
               style={{ padding:'18px 48px', animation:'fadeUp .5s .18s ease both, glowPulse 2.4s ease infinite' }}>
@@ -576,7 +576,7 @@ export function Phase1Result() {
               {t('SAVE CARD', 'कार्ड सेव करें')}
             </button>
             <button className="btn-ghost" style={{ flex:1 }} onClick={() => {
-                const msg = encodeURIComponent(t(`🏏 I scored ${r.total}/100 in the BCPL Season 5 Phase 1 Trials! India's biggest corporate cricket league. Check it out at https://bcplt20.com`, `🏏 मैंने BCPL Season 5 Phase 1 Trials में ${r.total}/100 स्कोर किया! भारत की सबसे बड़ी कॉर्पोरेट क्रिकेट लीग। https://bcplt20.com पर देखें`));
+                const msg = encodeURIComponent(t(`🏏 I scored ${r.total}/100 in the BCPL Season 5 Phase 1 Trials! India's corporate cricket league. Check it out at https://bcplt20.com`, `🏏 मैंने BCPL Season 5 Phase 1 Trials में ${r.total}/100 स्कोर किया! भारत की कॉर्पोरेट क्रिकेट लीग। https://bcplt20.com पर देखें`));
                 window.open(`https://wa.me/?text=${msg}`, '_blank');
               }}>
               {t('SHARE', 'शेयर करें')}

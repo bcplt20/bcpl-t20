@@ -236,7 +236,7 @@ router.post("/confirm", requireAuth, async (req: AuthRequest, res) => {
       const email = tplVideoSubmitted(user.name);
       Promise.allSettled([
         sendEmail({ to: user.email, toName: user.name, ...email }),
-        sendSms(user.phone, "BCPL T20: Your trial video has been received! Our scouts will review it and share your result soon. Stay tuned! -BCPL T20"),
+        sendSms(user.phone, "BCPL T20: Your trial video has been received! It will now go through BCPL's Phase 1 evaluation. We'll notify you when your result is ready. -BCPL T20"),
         sendWhatsApp({ phone: user.phone, templateName: WA.VIDEO_SUBMITTED, bodyValues: [user.name] }),
         db.insert(notificationLogsTable).values([
           { userId: user.id, type: "email",    template: "video_submitted", dedupeKey: "p1_video_submitted_email_" + registrationId },

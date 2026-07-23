@@ -12,7 +12,7 @@ import {
 
 /*
   BCPL T20 — Bhartiya Corporate Premier League
-  World's largest corporate cricket league for working professionals
+  India's corporate cricket league for working professionals
   Run by BCPL T20 Pvt. Ltd. | Brand Ambassador: Sourav Ganguly
   ₹6 Cr Season 5 Prize Pool | 10 Franchise Teams | 21 Trial Cities
 
@@ -20,9 +20,9 @@ import {
   ┌─────────────────────────────────────────────────────────────────┐
   │ PHASE 1 (Video Trial)                                           │
   │  → Register + Pay ₹299 (Bat/Bowl/WK) or ₹399 (All-Rounder)    │
-  │  → Upload your 2-minute trial video                            │
-  │  → BCCI-certified scouts evaluate                               │
-  │  → Result within 7 working days                                │
+  │  → Upload your 30–60 second trial video                        │
+  │  → Video evaluated against BCPL's Phase 1 criteria             │
+  │  → Result within 48 hours                                      │
   │                                                                 │
   │ PHASE 2 (Physical Trial) — only if selected                    │
   │  → Physical trial at your trial city                           │
@@ -97,7 +97,7 @@ const CITIES = [
 const JOURNEY = [
   { phase:'P1', icon:'📝', label:'Register',   sub:'Fill form + pay entry fee',          done:false, active:true  },
   { phase:'P1', icon:'🎬', label:'Upload Video',sub:'2-min trial clip',                  done:false, active:false },
-  { phase:'P1', icon:'⏱',  label:'7-Day Result',sub:'BCCI scouts evaluate',              done:false, active:false },
+  { phase:'P1', icon:'⏱',  label:'48-Hour Result',sub:'Criteria-based evaluation',        done:false, active:false },
   { phase:'P2', icon:'🏟', label:'Physical Trial',sub:'At your city (if selected)',      done:false, active:false },
   { phase:'P2', icon:'🔨', label:'Auction',    sub:'Franchises bid on you',              done:false, active:false },
   { phase:'P2', icon:'🏆', label:'Play BCPL',  sub:'Represent your franchise',           done:false, active:false },
@@ -544,7 +544,7 @@ export function Registration() {
             <span style={{ background:'linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)', backgroundSize:'200%', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text', animation:'shimGold 3s linear infinite', display:'block' }}>BIG LEAGUE.</span>
           </h1>
           <p style={{ color:'rgba(255,255,255,0.45)', fontSize:14, maxWidth:480, lineHeight:1.6, marginBottom:32 }}>
-            India's biggest corporate T20 league. 10 franchise teams. BCCI-certified scouts. You send one video — we decide your future in cricket.
+            India's corporate T20 cricket league for working professionals. 10 franchise teams. You send one video — compete for your place in cricket.
           </p>
 
           {/* ─── JOURNEY RAIL ─── */}
@@ -732,8 +732,8 @@ export function Registration() {
                         <div style={{ fontSize:32, marginBottom:10 }}>🎬</div>
                         <div style={{ fontSize:15, fontWeight:800, color:'#A855F7', fontFamily:'Montserrat,sans-serif' }}>Video Under Review</div>
                         <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:8, lineHeight:1.7 }}>
-                          Your trial video has been received by our BCPL scouts.<br/>
-                          Result will be shared via <strong style={{color:'rgba(255,255,255,0.7)'}}>SMS + Email</strong> within 15 working days.
+                          Your Phase 1 submission is going through BCPL's evaluation process.<br/>
+                          Result will be shared via <strong style={{color:'rgba(255,255,255,0.7)'}}>SMS + Email</strong> within 48 hours.
                         </div>
                       </div>
                     )}
@@ -806,7 +806,7 @@ export function Registration() {
               <div className="step-enter">
                 <div style={{ borderLeft:'3px solid #FF7A29', paddingLeft:14, marginBottom:28 }}>
                   <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(18px,5vw,22px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em' }}>Your Role</div>
-                  <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginTop:4 }}>Scouts evaluate you specifically for this role. Every player brings equal value to the game.</div>
+                  <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginTop:4 }}>Your video is assessed against role-specific criteria. Every role brings equal value to the game.</div>
                 </div>
 
                 <div className="roles-grid">
@@ -875,7 +875,7 @@ export function Registration() {
               <div className="step-enter">
                 <div style={{ borderLeft:'3px solid #FF7A29', paddingLeft:14, marginBottom:24 }}>
                   <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(18px,5vw,22px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em' }}>Trial City</div>
-                  <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginTop:4 }}>50+ cities across India. Choose the city nearest to your home or workplace.</div>
+                  <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginTop:4 }}>Cities across India. Choose the city nearest to your home or workplace.</div>
                 </div>
 
                 {/* Search */}
@@ -925,7 +925,7 @@ export function Registration() {
               <div className="step-enter">
                 <div style={{ borderLeft:'3px solid #FF7A29', paddingLeft:14, marginBottom:24 }}>
                   <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(18px,5vw,22px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em' }}>Confirm & Pay</div>
-                  <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginTop:4 }}>Phase 1 entry fee. No hidden charges. Phase 2 fee payable only if selected.</div>
+                  <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginTop:4 }}>Phase 1 entry fee. Phase 2 fee is payable only if you qualify and choose to proceed.</div>
                 </div>
 
                 {/* ── MATCH TICKET ── */}
@@ -967,10 +967,10 @@ export function Registration() {
                       <div style={{ fontSize:9, fontWeight:700, fontFamily:'Montserrat,sans-serif', letterSpacing:'.14em', color:'rgba(255,255,255,0.3)', marginBottom:10 }}>WHAT YOU GET</div>
                       <div className="what-you-get-grid">
                         {[
-                          '✅ BCCI-certified scout evaluation',
+                          '✅ Criteria-based video assessment',
                           '✅ Selection results announced promptly',
                           '✅ Zero auction / tournament fee',
-                          '✅ Result guarantee (or full refund)',
+                          '✅ Transparent result process',
                           '✅ Phase 2 invite if selected',
                         ].map(t => <div key={t} style={{ fontSize:12, color:'rgba(255,255,255,0.65)', lineHeight:1.5 }}>{t}</div>)}
                       </div>

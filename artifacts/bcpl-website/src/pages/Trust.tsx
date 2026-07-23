@@ -113,7 +113,7 @@ export function Trust() {
               </div>
             </div>
             <p style={{color:'rgba(255,255,255,0.72)',fontSize:15,lineHeight:1.8,marginBottom:24}}>
-              {t("Every video submitted to BCPL is reviewed by BCCI-certified cricket scouts. Your video is evaluated anonymously — the scout does not see your name, city, or any personal details. They see only your cricket skills.","BCPL को submit किया गया हर video BCCI-certified cricket scouts द्वारा देखा जाता है। आपका video गुमनाम रूप से evaluate किया जाता है — scout आपका नाम, शहर, या कोई व्यक्तिगत जानकारी नहीं देखता। वे सिर्फ आपकी cricket skills देखते हैं।")}
+              {t("Your video is evaluated against BCPL's Phase 1 assessment criteria. The assessment is role-specific and criteria-based — your name, city and personal details play no part in your score. Only your cricket skills are assessed.","आपका video BCPL के Phase 1 assessment criteria पर evaluate किया जाता है। यह assessment role-specific और criteria-based है — आपके score में आपका नाम, शहर या व्यक्तिगत जानकारी की कोई भूमिका नहीं होती। सिर्फ आपकी cricket skills assess होती हैं।")}
             </p>
             <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:16}}>
               {[
@@ -215,7 +215,7 @@ export function Trust() {
               </div>
             </div>
             <p style={{color:'rgba(255,255,255,0.72)',fontSize:15,lineHeight:1.8,marginBottom:24}}>
-              {t("Top-ranked players from Phase 1 receive an invitation to physical trials in their city. Trials are conducted at professional cricket grounds. BCCI-certified coaches evaluate players live on standardized drills: batting nets, bowling spells, fielding circuits, match simulations.","Phase 1 से top-ranked players को अपने शहर में physical trials का invitation मिलता है। Trials professional cricket grounds पर conduct किए जाते हैं। BCCI-certified coaches live standardized drills पर players को evaluate करते हैं: batting nets, bowling spells, fielding circuits, match simulations।")}
+              {t("Top-ranked players from Phase 1 receive an invitation to physical trials in their city. Trials are conducted at professional cricket grounds. Experienced coaches evaluate players live on standardized drills: batting nets, bowling spells, fielding circuits, match simulations.","Phase 1 से top-ranked players को अपने शहर में physical trials का invitation मिलता है। Trials professional cricket grounds पर conduct किए जाते हैं। Experienced coaches live standardized drills पर players को evaluate करते हैं: batting nets, bowling spells, fielding circuits, match simulations।")}
             </p>
             <div style={{background:'rgba(34,197,94,0.06)',border:'1px solid rgba(34,197,94,0.2)',borderRadius:12,padding:'20px 24px'}}>
               <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:14,color:'#22C55E',marginBottom:12}}>{t("Phase 2 Fee Structure","Phase 2 Fee Structure")}</div>
@@ -230,7 +230,7 @@ export function Trust() {
                 </div>
               </div>
               <p style={{color:'rgba(255,255,255,0.55)',fontSize:13,marginTop:16,lineHeight:1.6}}>
-                {t("Phase 2 fee covers: professional ground booking, BCCI-certified coaching evaluation, match simulation setup, video documentation of your trial, and detailed performance report.","Phase 2 fee में शामिल है: professional ground booking, BCCI-certified coaching evaluation, match simulation setup, आपके trial का video documentation, और detailed performance report।")}
+                {t("Phase 2 fee covers: professional ground booking, professional coaching evaluation, match simulation setup, video documentation of your trial, and detailed performance report.","Phase 2 fee में शामिल है: professional ground booking, professional coaching evaluation, match simulation setup, आपके trial का video documentation, और detailed performance report।")}
               </p>
             </div>
           </div>
@@ -256,7 +256,7 @@ export function Trust() {
                   {en:'Working professional: salaried employee, self-employed, freelancer, or business owner',hi:'Working professional: salaried employee, self-employed, freelancer, या business owner'},
                   {en:'Currently employed or actively running a business',hi:'वर्तमान में employed या सक्रिय रूप से business चला रहे हैं'},
                   {en:'Valid Indian ID proof for KYC (Aadhaar + PAN)',hi:'KYC के लिए valid Indian ID proof (Aadhaar + PAN)'},
-                  {en:'No active contracts with BCCI/state cricket associations',hi:'BCCI/state cricket associations के साथ कोई active contract नहीं'},
+                  {en:'No active contracts with state or national cricket associations',hi:'State या national cricket associations के साथ कोई active contract नहीं'},
                 ].map((r,i)=>(
                   <li key={i} style={{display:'flex',alignItems:'flex-start',gap:12,marginBottom:10}}>
                     <span style={{color:'#8B5CF6',fontSize:18,flexShrink:0}}>✓</span>

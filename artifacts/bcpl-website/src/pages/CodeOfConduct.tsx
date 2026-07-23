@@ -193,7 +193,7 @@ export function CodeOfConduct() {
               <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>4. Anti-Doping Policy</h2>
             </div>
             <p style={{color:'rgba(255,255,255,0.75)',fontSize:'clamp(14px,2vw,15px)',lineHeight:1.8,marginBottom:14}}>
-              BCPL T20 follows all BCCI and WADA anti-doping guidelines in both letter and spirit. A clean sport is a fair sport.
+              BCPL T20 follows recognised anti-doping principles aligned with WADA guidelines, in both letter and spirit. A clean sport is a fair sport.
             </p>
             <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:10}}>
               {[

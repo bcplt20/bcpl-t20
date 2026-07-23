@@ -59,9 +59,9 @@ const PROOF = [
 /* ── ROAD TO BCPL — the single journey ── */
 const ROAD = [
   { icon:"📋", en:"Register",        hi:"रजिस्टर",        date:"Oct '26 – Feb '27", fee:"₹299 / ₹399",     descEn:"Pick your role, pay online — done in 5 minutes.",                    descHi:"Role चुनें, online payment करें — 5 मिनट में हो गया।",              color:"#FF7A29", live:true },
-  { icon:"🎬", en:"Video Trial",     hi:"वीडियो ट्रायल",  date:"Within 7 days",     fee:null,               descEn:"Upload a 2-minute cricket clip from any ground in India.",           descHi:"किसी भी मैदान से 2 मिनट की cricket clip upload करें।",             color:"#FF9350" },
-  { icon:"🔍", en:"Scout Review",    hi:"स्काउट रिव्यू",  date:"15 working days",   fee:null,               descEn:"BCCI-certified scouts review every video — or full refund.",         descHi:"BCCI-certified scouts हर video देखते हैं — वरना पूरा refund।",      color:"#E8B23D" },
-  { icon:"🏟", en:"Physical Trial",  hi:"फिजिकल ट्रायल",  date:"Mar – Jun '27",     fee:"₹2,000 / ₹3,000",  descEn:"Only if selected — live trials in 50+ cities.",                      descHi:"सिर्फ select होने पर — 50+ शहरों में live trial।",                  color:"#F0C860" },
+  { icon:"🎬", en:"Video Trial",     hi:"वीडियो ट्रायल",  date:"Within 15 days",    fee:null,               descEn:"Upload a 30–60 second cricket clip from any ground in India.",       descHi:"किसी भी मैदान से 30–60 second की cricket clip upload करें।",             color:"#FF9350" },
+  { icon:"🔍", en:"Phase 1 Result",  hi:"फेज़ 1 रिज़ल्ट", date:"Within 48 hours",   fee:null,               descEn:"Your video is evaluated against BCPL's Phase 1 assessment criteria.", descHi:"आपका video BCPL के Phase 1 assessment criteria पर evaluate होता है।", color:"#E8B23D" },
+  { icon:"🏟", en:"Physical Trial",  hi:"फिजिकल ट्रायल",  date:"Mar – Jun '27",     fee:"₹2,000 / ₹3,000",  descEn:"Only if selected — live trials across cities in India.",             descHi:"सिर्फ select होने पर — भारत के शहरों में live trial।",              color:"#F0C860" },
   { icon:"🔨", en:"Live Auction",    hi:"लाइव ऑक्शन",     date:"Aug '27",           fee:null,               descEn:"10 franchises bid for you. Top bid so far: ₹20 Lakh.",                descHi:"10 franchises आपके लिए बोली लगाती हैं। Top bid: ₹20 लाख।",          color:"#3B82F6" },
   { icon:"👕", en:"Your Team",       hi:"आपकी टीम",       date:"Sep '27",           fee:null,               descEn:"Wear your franchise jersey — you're a drafted player now.",          descHi:"Franchise की jersey पहनिए — अब आप drafted player हैं।",             color:"#22C55E" },
   { icon:"🏆", en:"The Stadium",     hi:"स्टेडियम",       date:"Sep – Oct '27",     fee:null,               descEn:"Season 5 under the floodlights. ₹6 Crore prize pool.",               descHi:"Floodlights के नीचे Season 5 । ₹6 करोड़ prize pool।",               color:"#A78BFA" },
@@ -94,17 +94,17 @@ const FAQS = [
     aEn:"Only if selected. Phase 2 fee is ₹2,000 (Bat/Bowl/WK) or ₹3,000 (All-rounder). Not selected = pay nothing more.",
     aHi:"सिर्फ select होने पर। Phase 2 fee ₹2,000 (Bat/Bowl/WK) या ₹3,000 (All-rounder)। Select नहीं हुए = कुछ नहीं देना।" },
   { qEn:"Are there hidden costs?",               qHi:"क्या कोई छिपे हुए charges हैं?",
-    aEn:"Zero. Maximum total cost is ₹2,299–₹3,399 for your entire BCPL journey — registration to franchise auction.",
-    aHi:"बिल्कुल नहीं। पूरे BCPL सफर की अधिकतम कुल लागत ₹2,299–₹3,399 है — registration से लेकर auction तक।" },
+    aEn:"The Phase 2 fee is payable only if you qualify and choose to proceed. Maximum total cost is ₹2,299–₹3,399 for your entire BCPL journey — registration to franchise auction.",
+    aHi:"Phase 2 fee सिर्फ तभी देनी होती है जब आप qualify करें और आगे बढ़ना चुनें। पूरे BCPL सफर की अधिकतम कुल लागत ₹2,299–₹3,399 है — registration से लेकर auction तक।" },
   { qEn:"Who reviews my Phase 1 video?",         qHi:"मेरा Phase 1 video कौन देखता है?",
-    aEn:"BCCI-certified cricket scouts review every video. Results sent within 15 working days of submission.",
-    aHi:"BCCI-certified cricket scouts हर video देखते हैं। Result 15 working days में SMS/email से मिलता है।" },
+    aEn:"Your video is evaluated against BCPL's Phase 1 assessment criteria. Results are released within 48 hours of submission.",
+    aHi:"आपका video BCPL के Phase 1 assessment criteria पर evaluate होता है। Result submission के 48 घंटे के भीतर SMS/email से मिलता है।" },
   { qEn:"Which cities have physical trials?",    qHi:"Physical trials किन शहरों में होंगे?",
-    aEn:"50+ cities including Mumbai, Delhi, Bengaluru, Hyderabad, Chennai, Kolkata, Ahmedabad, Jaipur, Lucknow, Pune, Surat, Nagpur, Indore, Bhopal, Patna, Kochi, and many more.",
-    aHi:"50+ शहर — Mumbai, Delhi, Bengaluru, Hyderabad, Chennai, Kolkata, Ahmedabad, Jaipur, Lucknow, Pune, Surat, Nagpur, Indore, Bhopal, Patna, Kochi और भी कई।" },
+    aEn:"Cities across India including Mumbai, Delhi, Bengaluru, Hyderabad, Chennai, Kolkata, Ahmedabad, Jaipur, Lucknow, Pune, Surat, Nagpur, Indore, Bhopal, Patna, Kochi, and many more.",
+    aHi:"भारत भर के शहर — Mumbai, Delhi, Bengaluru, Hyderabad, Chennai, Kolkata, Ahmedabad, Jaipur, Lucknow, Pune, Surat, Nagpur, Indore, Bhopal, Patna, Kochi और भी कई।" },
   { qEn:"What if I'm not selected for Phase 2?", qHi:"अगर मैं Phase 2 के लिए select नहीं हुआ तो?",
-    aEn:"You simply don't pay for Phase 2. Your Phase 1 fee covers the scout review and there is no further obligation.",
-    aHi:"तो Phase 2 का कुछ भी नहीं देना। Phase 1 fee में scout review शामिल है — उसके बाद कोई obligation नहीं।" },
+    aEn:"You simply don't pay for Phase 2. Your Phase 1 fee covers registration and the Phase 1 video assessment, and there is no further obligation.",
+    aHi:"तो Phase 2 का कुछ भी नहीं देना। Phase 1 fee में registration और Phase 1 video assessment शामिल है — उसके बाद कोई obligation नहीं।" },
 ];
 
 /* ── YouTube URL → embeddable URL (strict host allowlist; null = not embeddable) ── */
@@ -408,8 +408,8 @@ export function Home() {
             </div>
 
             <p style={{ fontSize:"clamp(14px,2vw,16px)", color:"rgba(255,255,255,.68)", lineHeight:1.7, marginBottom:12, maxWidth:500 }}>
-              {t("India's stage for working professionals to compete, get selected and play big — real scouts, franchise auction, floodlit stadiums.",
-                 "Working professionals के लिए भारत का मंच — compete कीजिए, select होइए, बड़ा खेलिए। असली scouts, franchise auction, floodlit stadiums।")}
+              {t("India's stage for working professionals to compete, get selected and play big — a structured selection process, franchise auction, floodlit stadiums.",
+                 "Working professionals के लिए भारत का मंच — compete कीजिए, select होइए, बड़ा खेलिए। एक structured selection process, franchise auction, floodlit stadiums।")}
             </p>
             <div className="mont" style={{ fontWeight:900, fontSize:"clamp(15px,2.4vw,19px)", marginBottom:28 }}>
               <span className="shim">#OfficeSeStadiumTak</span>
@@ -706,9 +706,9 @@ export function Home() {
           {/* Guarantees — single home for trust chips */}
           <div style={{ display:"flex", flexWrap:"wrap", gap:10, marginBottom:26 }}>
             {[
-              { icon:"✅", en:"Zero hidden costs — ever",           hi:"कोई छिपे charges नहीं — कभी नहीं" },
+              { icon:"✅", en:"Transparent Fee Structure",           hi:"पारदर्शी Fee Structure" },
               { icon:"🛡", en:"Phase 2 only if selected",           hi:"Phase 2 सिर्फ select होने पर" },
-              { icon:"⏱", en:"15-day result — or full refund",     hi:"15 दिन में result — वरना पूरा refund" },
+              { icon:"⏱", en:"Result within 48 hours",             hi:"48 घंटे में result" },
               { icon:"🔒", en:"Secure payment via Cashfree",        hi:"Cashfree से सुरक्षित payment" },
             ].map(g=>(
               <div key={g.en} style={{ display:"flex", alignItems:"center", gap:7, background:"rgba(34,197,94,.07)", border:"1px solid rgba(34,197,94,.22)", borderRadius:10, padding:"7px 13px" }}>
@@ -736,7 +736,7 @@ export function Home() {
                   <span className="mont" style={{ fontWeight:900, fontSize:18, color:"#FF7A29" }}>{r.price}</span>
                 </div>
               ))}
-              <p style={{ fontSize:12, color:"rgba(255,255,255,.35)", marginTop:14, lineHeight:1.6 }}>{t("Includes: Scout review slot · Video submission · Registration confirmation","शामिल: Scout review slot · Video submission · Registration confirmation")}</p>
+              <p style={{ fontSize:12, color:"rgba(255,255,255,.35)", marginTop:14, lineHeight:1.6 }}>{t("Includes: Phase 1 assessment · Video submission · Registration confirmation","शामिल: Phase 1 assessment · Video submission · Registration confirmation")}</p>
               <button className="btn-cta" style={{ width:"100%", justifyContent:"center", marginTop:20, fontSize:14, padding:14 }} onClick={()=>navigate("/register")}>{t("Register Now","अभी रजिस्टर करें")} →</button>
             </div>
             <div className="card" style={{ padding:24, borderTop:"3px solid #E8B23D" }}>

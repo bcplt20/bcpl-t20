@@ -18,7 +18,8 @@
 - [Live scoring flow](scoring-flow.md) — client engine mirrors server /ball exactly (LB/B legal); finalization gated on ball persistence; /xi = clean restart (wipes innings); /innings-end idempotent
 - [API field-name traps](api-field-traps.md) — drizzle camelCase responses; zod .datetime() needs toISOString; registrations.role has 2 historic formats (bat/Batsman) — normalise on read
 - [Cashfree verification](cashfree-verification.md) — CF_VERIFY_* creds separate from payment keys, prod-only (dev = stub mode); "service unavailable" 502 = payload bug until proven otherwise
-- [V3 design language](v3-design-language.md) — emoji icons are deliberate (Home.tsx reference), never strip; internal links = wouter Link only; audit-grep patterns
+- [V3 design language](v3-design-language.md) — PARTLY SUPERSEDED by 2026 master spec (premium look, no childish graphics; emoji sweep pending); internal links = wouter Link only; audit-grep patterns
+- [Copy compliance rules](copy-compliance-rules.md) — no scout/BCCI/superlative/absolute-promise copy anywhere; 48h result, 30–60s video, 15-day window; grep gate for every new template/page
 - [Subagent briefs](subagent-briefs.md) — end multi-page briefs with "complete ALL, do not stop to ask"; verify via git status, not the report
 - [Phase1 worker CAS claims](phase1-worker-cas.md) — workers stamp claim_token, write via casEvalUpdate only; snapshots frozen; tests assert DB end-state, never run counts
 - [Phase1 AI gate](phase1-ai-gate.md) — aiEnabled gates mock AND real; mock blocked in prod without PHASE1_ALLOW_MOCK=1; E2E must PATCH aiEnabled + sleep 31, reset in traps

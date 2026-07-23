@@ -250,7 +250,7 @@ export function Phase1PaymentReceipt() {
           <div style={{ padding:'14px 20px', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:8 }}>
             <div>
               <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:11, letterSpacing:'.14em', color:'rgba(255,255,255,0.5)', textTransform:'uppercase' }}>PHASE 2 STATUS</div>
-              <div style={{ fontSize:13, color:'rgba(255,255,255,0.6)', marginTop:3 }}>🔒 Locked — You'll be notified if selected by scouts</div>
+              <div style={{ fontSize:13, color:'rgba(255,255,255,0.6)', marginTop:3 }}>🔒 Locked — You'll be notified when your result is released</div>
             </div>
             <span style={{ background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', padding:'5px 12px', borderRadius:12, fontSize:10, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.12em', color:'rgba(255,255,255,0.4)' }}>PENDING</span>
           </div>
@@ -280,7 +280,7 @@ export function Phase1PaymentReceipt() {
               <span style={{ width:6, height:6, borderRadius:'50%', background:'#FF7A29', display:'inline-block', animation:'liveBlip 1s infinite' }} />
               <span style={{ fontSize:11, fontWeight:700, color:'rgba(255,122,41,0.8)', fontFamily:'Montserrat,sans-serif', letterSpacing:'.08em' }}>SUBMIT AS SOON AS POSSIBLE</span>
             </div>
-            <p style={{ fontSize:12, color:'rgba(255,255,255,0.45)', lineHeight:1.6, marginBottom:16 }}>Record your 2-minute cricket trial video. Follow the guidelines for best results.</p>
+            <p style={{ fontSize:12, color:'rgba(255,255,255,0.45)', lineHeight:1.6, marginBottom:16 }}>Record your 30–60 second cricket trial video. Follow the guidelines for best results.</p>
             <button className="btn-primary" style={{ width:'100%', padding:'12px', fontSize:12 }}
               onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/upload-video'; }}>
               UPLOAD NOW →
@@ -290,11 +290,11 @@ export function Phase1PaymentReceipt() {
           {/* Step 2 */}
           <div className="next-card">
             <div style={{ fontSize:28, marginBottom:12 }}>⏱</div>
-            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, color:'#E8B23D', letterSpacing:'.04em', marginBottom:6, textTransform:'uppercase' }}>Scout Review</div>
+            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, color:'#E8B23D', letterSpacing:'.04em', marginBottom:6, textTransform:'uppercase' }}>Phase 1 Evaluation</div>
             <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:12 }}>
-              <span style={{ fontSize:11, fontWeight:700, color:'rgba(232,178,61,0.7)', fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em' }}>BCCI-CERTIFIED EVALUATORS</span>
+              <span style={{ fontSize:11, fontWeight:700, color:'rgba(232,178,61,0.7)', fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em' }}>CRITERIA-BASED ASSESSMENT</span>
             </div>
-            <p style={{ fontSize:12, color:'rgba(255,255,255,0.45)', lineHeight:1.6 }}>Our trained scouts review every submission. Selection results announced via your registered email & WhatsApp.</p>
+            <p style={{ fontSize:12, color:'rgba(255,255,255,0.45)', lineHeight:1.6 }}>Every submission is evaluated against BCPL's Phase 1 assessment criteria. Results announced via your registered email & WhatsApp.</p>
           </div>
 
           {/* Step 3 */}
@@ -304,7 +304,7 @@ export function Phase1PaymentReceipt() {
             <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:12 }}>
               <span style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.3)', fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em' }}>PHYSICAL TRIAL · LOCKED</span>
             </div>
-            <p style={{ fontSize:12, color:'rgba(255,255,255,0.35)', lineHeight:1.6 }}>If selected by scouts, you'll be invited to the physical ground trial. Pay ₹2,000 only after selection — not before.</p>
+            <p style={{ fontSize:12, color:'rgba(255,255,255,0.35)', lineHeight:1.6 }}>If you qualify through Phase 1, you'll be invited to the physical ground trial. The Phase 2 fee becomes payable only if you qualify through Phase 1 and choose to proceed.</p>
           </div>
         </div>
       </div>
@@ -322,7 +322,7 @@ export function Phase1PaymentReceipt() {
           <div className="share-btns">
             <button className="share-btn" style={{ background:'#25D366', color:'#fff' }}
               onClick={() => {
-                const msg = encodeURIComponent("🏏 I just registered for BCPL Season 5 trials! India's biggest corporate cricket league. Register at https://bcplt20.com #OfficeSeStadiumTak");
+                const msg = encodeURIComponent("🏏 I just registered for BCPL Season 5 trials! India's corporate cricket league. Register at https://bcplt20.com #OfficeSeStadiumTak");
                 window.open(`https://wa.me/?text=${msg}`, '_blank');
               }}>
               💬 Share on WhatsApp
@@ -469,7 +469,7 @@ export function Phase1PaymentReceipt() {
                       <div class="logo-circle"><img src="${logoUrl}" alt="BCPL"/></div>
                       <div class="header-text">
                         <div class="brand">BCPL — Bhartiya Corporate Premier League</div>
-                        <div class="sub">India's Biggest Corporate Cricket League · Season 5</div>
+                        <div class="sub">India's Corporate Cricket League · Season 5</div>
                         <div class="addr">Kriparti Playing11 Pvt. Ltd. &nbsp;·&nbsp; 2nd Floor, RZ-108, Indra Park, Uttam Nagar, New Delhi — 110059</div>
                         <div class="addr">legal@bcplt20.com &nbsp;·&nbsp; www.bcplt20.com &nbsp;·&nbsp; GSTIN: 07AAHCK4053D1ZS</div>
                       </div>
@@ -511,7 +511,7 @@ export function Phase1PaymentReceipt() {
 
                         <div style="padding:14px 20px;display:flex;justify-content:space-between;align-items:center">
                           <div style="font-size:11px;color:rgba(255,255,255,0.4)">Phase 2 Status</div>
-                          <div style="font-size:11px;color:rgba(255,255,255,0.35);font-weight:700">🔒 Locked — Pending scout review</div>
+                          <div style="font-size:11px;color:rgba(255,255,255,0.35);font-weight:700">🔒 Locked — Pending evaluation</div>
                         </div>
 
                         <!-- Barcode -->
@@ -531,21 +531,21 @@ export function Phase1PaymentReceipt() {
                           <div class="step-num">1</div>
                           <div>
                             <div class="step-label">🎬 Upload Your Trial Video</div>
-                            <div class="step-desc">Record a 2-minute cricket video and upload it via bcplt20.com within 15 days of registration.</div>
+                            <div class="step-desc">Record a 30–60 second cricket video and upload it via bcplt20.com within 15 days of registration.</div>
                           </div>
                         </div>
                         <div class="step-row">
                           <div class="step-num">2</div>
                           <div>
-                            <div class="step-label">⏱ Await Scout Review</div>
-                            <div class="step-desc">BCCI-certified scouts review your video. Selection results announced via email & WhatsApp.</div>
+                            <div class="step-label">⏱ Evaluation In Progress</div>
+                            <div class="step-desc">Your video is evaluated against BCPL's Phase 1 assessment criteria. Results announced via email & WhatsApp.</div>
                           </div>
                         </div>
                         <div class="step-row">
                           <div class="step-num">3</div>
                           <div>
                             <div class="step-label">🔓 Phase 2 (If Selected)</div>
-                            <div class="step-desc">Selected players get an invite for the physical ground trial. Pay ₹2,000 only after selection.</div>
+                            <div class="step-desc">Qualified players get an invite for the physical ground trial. The Phase 2 fee becomes payable only if you qualify through Phase 1 and choose to proceed.</div>
                           </div>
                         </div>
                       </div>

@@ -274,7 +274,7 @@ export function EligibilityCriteria() {
               <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>5. Required Documents</h2>
             </div>
             <p style={{color:'rgba(255,255,255,0.75)',fontSize:'clamp(14px,2vw,15px)',lineHeight:1.8,marginBottom:18}}>
-              Documents are submitted after shortlisting. Keep these ready before registration so you're prepared when scouts call.
+              Documents are submitted after shortlisting. Keep these ready before registration so you're prepared when the BCPL team contacts you.
             </p>
             <div style={{display:'grid',gap:12}}>
               {[

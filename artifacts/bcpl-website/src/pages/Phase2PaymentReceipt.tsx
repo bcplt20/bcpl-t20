@@ -165,7 +165,7 @@ export function Phase2PaymentReceipt() {
           <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 13, letterSpacing: '.18em', color: 'rgba(255,255,255,0.4)', marginBottom: 20, textTransform: 'uppercase' }}>{t("Next Steps", "अगले कदम")}</div>
           <div className="next-grid">
             {[
-              { icon:'🪪', title: t('Complete KYC', 'KYC पूरा करें'), desc: t('Aadhaar + PAN required for BCCI compliance and franchise records.', 'BCCI नियमों और फ्रैंचाइज़ी रिकॉर्ड के लिए आधार + पैन आवश्यक।'), cta: t('COMPLETE KYC →', 'KYC पूरा करें →'), ctaColor: 'var(--orange)', topColor: 'var(--orange)', href: '/register/phase2/kyc' },
+              { icon:'🪪', title: t('Complete KYC', 'KYC पूरा करें'), desc: t('Aadhaar + PAN required for compliance and franchise records.', 'Compliance और फ्रैंचाइज़ी रिकॉर्ड के लिए आधार + पैन आवश्यक।'), cta: t('COMPLETE KYC →', 'KYC पूरा करें →'), ctaColor: 'var(--orange)', topColor: 'var(--orange)', href: '/register/phase2/kyc' },
               { icon:'📅', title: t('Trial Date Announcement', 'ट्रायल की तारीख'), desc: t('SMS + Email notification 30 days before your trial date. Check your phone.', 'ट्रायल से 30 दिन पहले SMS + ईमेल से सूचना।'), cta: null, ctaColor: '', topColor: 'var(--gold)', href: null },
               { icon:'💬', title: t('Stay Updated', 'अपडेट रहें'), desc: t('Keep your email and phone number active. All updates go there directly.', 'अपना ईमेल और फोन चालू रखें। सभी अपडेट वहीं मिलेंगे।'), cta: null, ctaColor: '', topColor: 'var(--green)', href: null },
             ].map(({ icon, title, desc, cta, ctaColor, topColor, href }) => (

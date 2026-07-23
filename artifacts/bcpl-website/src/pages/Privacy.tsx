@@ -107,14 +107,14 @@ export function Privacy() {
     ]},
     {n:2,icon:'🔧',titleEn:'How We Use Your Data',titleHi:'हम डेटा का उपयोग कैसे करते हैं',items:[
       'Processing your registration and generating your unique BCPL Registration ID',
-      'Sharing your cricket profile with authorised BCPL scouts for video evaluation',
+      'Processing your trial video and cricket profile through the BCPL Phase 1 evaluation system',
       'Communicating shortlisting results, trial schedules, and selection updates',
       'Match scheduling, team assignment, and tournament logistics coordination',
       'Sending important league updates, season announcements, and newsletters (opt-out available)',
       'Improving our platform and user experience via anonymised analytics data',
     ]},
     {n:3,icon:'🤝',titleEn:'Data Sharing',titleHi:'डेटा साझाकरण',items:[
-      'Shortlisted player profiles (name, video, cricket role) are shared with franchise team scouts',
+      'Shortlisted player profiles (name, video, cricket role) are shared with franchise team management',
       'Payment transaction data is processed by Cashfree under their separate Privacy Policy',
       'Aggregated, anonymised statistics may be shared with sponsors for league reporting',
       'We NEVER sell, rent, or trade your personal data to any third party — ever',

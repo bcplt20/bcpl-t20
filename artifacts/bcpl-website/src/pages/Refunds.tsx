@@ -200,7 +200,7 @@ export function Refunds() {
             <p style={{color:'rgba(255,255,255,0.65)',fontSize:14,lineHeight:1.7,marginBottom:16}}>Except for the 3 specific cases above, <strong style={{color:'#E8493F'}}>all fees are strictly non-refundable</strong>. This includes but is not limited to:</p>
             <div style={{display:'grid',gap:10}}>
               {[
-                {icon:'🎥',text:'After your trial video has been uploaded and scout review has begun'},
+                {icon:'🎥',text:'After your trial video has been uploaded and Phase 1 evaluation has begun'},
                 {icon:'📅',text:'Change of mind after registration'},
                 {icon:'🏆',text:'After receiving shortlisting notification or selection result'},
                 {icon:'🔍',text:'If found ineligible due to misrepresentation of age, professional status, or cricket experience'},

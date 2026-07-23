@@ -101,7 +101,7 @@ export function Sponsors() {
               <span className="shimmer-gold" style={{display:'block'}}>BEHIND THE DREAM.</span>
             </h1>
             <p style={{color:'rgba(255,255,255,0.55)',fontSize:17,lineHeight:1.7,maxWidth:520,margin:'0 auto',fontFamily:'Inter,sans-serif'}}>
-              Our partners share our passion for cricket and corporate excellence. Together, we're building India's biggest corporate cricket movement.
+              Our partners share our passion for cricket and corporate excellence. Together, we're building India's corporate cricket movement.
             </p>
           </div>
         </section>
@@ -112,7 +112,7 @@ export function Sponsors() {
             <div style={{textAlign:'center',marginBottom:40}}>
               <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:16,color:'#fff',marginBottom:8}}>Sponsorship Opportunities — Season 5</div>
               <p style={{color:'rgba(255,255,255,0.45)',fontSize:14,fontFamily:'Inter,sans-serif',maxWidth:480,margin:'0 auto'}}>
-                We are actively seeking brand partners for BCPL Season 5. Reach 5,000+ active cricketers across India.
+                We are actively seeking brand partners for BCPL Season 5. Reach working-professional cricketers across India.
               </p>
             </div>
             <div style={{display:'grid',gridTemplateColumns:'1fr',gap:20}}>
@@ -140,13 +140,13 @@ export function Sponsors() {
                 <div className="tag-pill" style={{marginBottom:16}}>🤝 PARTNER WITH US</div>
                 <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,4vw,40px)',color:'#fff',marginBottom:12}}>Become a Sponsor</h2>
                 <p style={{color:'rgba(255,255,255,0.5)',fontSize:15,lineHeight:1.7,maxWidth:480,margin:'0 auto',fontFamily:'Inter,sans-serif'}}>
-                  Reach 5,000+ active cricketers across 75 cities. Be part of India's biggest corporate cricket movement.
+                  Reach an engaged national audience of working-professional cricketers. Be part of India's corporate cricket movement.
                 </p>
               </div>
 
               {/* STATS */}
               <div className="stats-row" style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:14,marginBottom:40}}>
-                {[{val:'5,000+',label:'Active Cricketers'},{val:'75',label:'Trial Cities'},{val:'Pan-India',label:'Reach'},{val:'Season 5',label:'Since 2020'}].map((s,i)=>(
+                {[{val:'Nationwide',label:'Active Cricketers'},{val:'Multi-City',label:'Trial Cities'},{val:'Pan-India',label:'Reach'},{val:'Season 5',label:'Since 2020'}].map((s,i)=>(
                   <div key={i} style={{background:'rgba(255,122,41,0.06)',border:'1px solid rgba(255,122,41,0.15)',borderRadius:14,padding:'20px 16px',textAlign:'center'}}>
                     <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,color:'#FF7A29',marginBottom:4}}>{s.val}</div>
                     <div style={{color:'rgba(255,255,255,0.45)',fontSize:12,fontFamily:'Inter,sans-serif',letterSpacing:'0.04em'}}>{s.label}</div>

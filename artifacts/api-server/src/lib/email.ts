@@ -95,7 +95,7 @@ const footer = `
     </div>
     <p style="color:rgba(255,255,255,0.2);font-size:10px;margin:0;line-height:1.7;">
       BCPL T20 · Kriparti Playing 11 Pvt. Ltd.<br/>
-      India's Biggest Corporate Cricket League<br/>
+      India's Corporate Cricket League<br/>
       <span style="color:rgba(255,255,255,0.12);">${FROM_EMAIL} · ${WEBSITE}</span>
     </p>
   </div>`;
@@ -130,13 +130,13 @@ export function tplPhase1Receipt(name: string, role: string, amount: number, reg
       </table>
       <div style="background:rgba(255,122,41,0.08);border:1px solid rgba(255,122,41,0.25);border-radius:12px;padding:20px;margin-bottom:16px;">
         <h3 style="color:#FF7A29;margin:0 0 8px;font-size:15px;">📹 Next Step — Upload Your Trial Video</h3>
-        <p style="color:rgba(255,255,255,0.65);margin:0 0 6px;font-size:13px;">You have <strong style="color:#fff;">15 days</strong> to upload your 2-minute trial video. Login with your phone number anytime to upload.</p>
+        <p style="color:rgba(255,255,255,0.65);margin:0 0 6px;font-size:13px;">You have <strong style="color:#fff;">15 days</strong> to upload your 30–60 second trial video. Login with your phone number anytime to upload.</p>
         <p style="color:rgba(255,255,255,0.4);margin:0;font-size:12px;">⏰ Deadline: 15 days from registration &nbsp;|&nbsp; ❌ Late uploads NOT accepted</p>
         ${btn("UPLOAD VIDEO NOW →", `${SITE_URL}/register/upload-video`)}
       </div>
       <div style="background:rgba(255,255,255,0.03);border-radius:8px;padding:14px;">
         <div style="font-size:10px;color:rgba(255,255,255,0.25);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;">Important Notes</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.45);line-height:1.9;">🎬 Video: 2 minutes max — batting, bowling or fielding<br/>📱 Login with the same phone number used during registration<br/>📩 Phase 1 result will be announced within <strong style="color:rgba(255,255,255,0.7);">15 working days</strong> of video submission</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.45);line-height:1.9;">🎬 Video: 30–60 seconds — batting, bowling or fielding<br/>📱 Login with the same phone number used during registration<br/>📩 Phase 1 result is typically released within <strong style="color:rgba(255,255,255,0.7);">48 hours</strong> of video submission</div>
       </div>`),
   };
 }
@@ -144,19 +144,19 @@ export function tplPhase1Receipt(name: string, role: string, amount: number, reg
 // ── Template 2: Video Submitted ────────────────────────────────────────────────
 export function tplVideoSubmitted(name: string) {
   return {
-    subject: "🎬 BCPL T20 — Video Received! Result in 15 Days",
+    subject: "🎬 BCPL T20 — Video Received! Result within 48 Hours",
     htmlContent: wrap(`
       <div style="background:#0A1727;border-radius:12px;padding:24px;border-left:4px solid #3B82F6;margin-bottom:20px;">
         <h2 style="color:#3B82F6;margin:0 0 10px;font-size:20px;">📹 Video Received!</h2>
         <p style="color:rgba(255,255,255,0.7);margin:0 0 8px;font-size:14px;">Dear <strong>${name}</strong>, your trial video has been submitted successfully.</p>
-        <p style="color:rgba(255,255,255,0.5);margin:0;font-size:13px;">Our BCCI-certified scouts will review it within <strong style="color:#fff;">15 working days</strong>. We'll notify you on Email, SMS and WhatsApp.</p>
+        <p style="color:rgba(255,255,255,0.5);margin:0;font-size:13px;">Your video will be evaluated against BCPL's Phase 1 assessment criteria. Your result is typically released within <strong style="color:#fff;">48 hours</strong> — we'll notify you on Email, SMS and WhatsApp.</p>
       </div>
       <div style="background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.15);border-radius:12px;padding:20px;margin-bottom:16px;">
         <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:14px;letter-spacing:1px;text-transform:uppercase;">What Happens Next</div>
         <div style="display:flex;flex-direction:column;gap:10px;">
-          <div style="display:flex;align-items:center;gap:12px;"><div style="min-width:28px;height:28px;background:rgba(59,130,246,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;">🔍</div><div style="font-size:13px;color:rgba(255,255,255,0.65);">BCCI-certified scouts आपका video review करेंगे</div></div>
+          <div style="display:flex;align-items:center;gap:12px;"><div style="min-width:28px;height:28px;background:rgba(59,130,246,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;">🔍</div><div style="font-size:13px;color:rgba(255,255,255,0.65);">आपका video BCPL के Phase 1 assessment criteria पर evaluate होगा</div></div>
           <div style="display:flex;align-items:center;gap:12px;"><div style="min-width:28px;height:28px;background:rgba(59,130,246,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;">📊</div><div style="font-size:13px;color:rgba(255,255,255,0.65);">Technique, fitness और potential को rate किया जाएगा</div></div>
-          <div style="display:flex;align-items:center;gap:12px;"><div style="min-width:28px;height:28px;background:rgba(59,130,246,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;">📩</div><div style="font-size:13px;color:rgba(255,255,255,0.65);">Result Email + SMS + WhatsApp पर 15 working days में आएगा</div></div>
+          <div style="display:flex;align-items:center;gap:12px;"><div style="min-width:28px;height:28px;background:rgba(59,130,246,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;">📩</div><div style="font-size:13px;color:rgba(255,255,255,0.65);">Result Email + SMS + WhatsApp पर 48 hours में आएगा</div></div>
         </div>
       </div>
       <div style="background:rgba(255,255,255,0.03);border-radius:8px;padding:12px 16px;">
@@ -445,7 +445,7 @@ export function tplInvoice(p: {
   const { base, cgst, sgst, total } = p.breakup;
   const dateStr = new Date(p.paidAt).toLocaleDateString("en-IN", { day: "2-digit", month: "long", year: "numeric" });
   const desc = p.phase === 1
-    ? "Online Scout Review &amp; Video Submission"
+    ? "Online Video Submission &amp; Evaluation"
     : "Physical Trial Entry &amp; Franchise Auction Eligibility";
   const row = (l: string, v: string, strong = false) =>
     `<div style="display:flex;justify-content:space-between;padding:${strong ? "10px 0 0" : "6px 0"};${strong ? "margin-top:4px;border-top:2px solid rgba(255,122,41,0.35);" : "border-bottom:1px solid rgba(255,255,255,0.07);"}">

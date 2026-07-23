@@ -80,21 +80,21 @@ function MobileStickyCTA() {
 
 const stats = [
   {num:'2.5L+',labelEn:'Players',labelHi:'खिलाड़ी',subEn:'registered across all seasons',subHi:'सभी seasons में register'},
-  {num:'75+',labelEn:'Trial Cities',labelHi:'Trial शहर',subEn:'across India',subHi:'पूरे भारत में'},
+  {num:'Pan-India',labelEn:'Trial Network',labelHi:'Trial नेटवर्क',subEn:'growing every season',subHi:'हर season बढ़ रहा'},
   {num:'4',labelEn:'Seasons',labelHi:'Seasons',subEn:'completed since 2023',subHi:'2023 से पूरे'},
   {num:'10',labelEn:'Franchises',labelHi:'Franchises',subEn:'competing in Season 5',subHi:'Season 5 में'},
 ];
 
 const timeline = [
-  {year:'2023',textEn:'Season 1 — Founded in Delhi. Working professionals took the field for the first time. 500+ players, 5 trial cities, 1 unforgettable dream born.',textHi:'Season 1 — Delhi में शुरुआत। Working professionals पहली बार मैदान में उतरे। 500+ खिलाड़ी, 5 trial शहर, एक अविस्मरणीय सपना।'},
-  {year:'2024',textEn:'Season 2 — Growth exploded. 25,000+ players across 50+ cities. Franchise auction system introduced. Corporate cricket found its identity.',textHi:'Season 2 — तेज़ी से बढ़ोतरी। 50+ शहरों में 25,000+ खिलाड़ी। Franchise auction system शुरू। Corporate cricket को अपनी पहचान मिली।'},
-  {year:'2025',textEn:'Season 3 & 4 — Two powerful seasons. 1 Lakh+ registrations, 50+ trial cities, national media coverage. BCPL became India\'s largest corporate cricket league.',textHi:'Season 3 और 4 — दो शानदार seasons। 1 लाख+ registrations, 50+ trial cities, national media coverage। BCPL भारत की सबसे बड़ी corporate cricket league बनी।'},
-  {year:'2026',textEn:'Season 4 concluded — 2 Lakh+ players registered. 50+ cities. Tournament held in October 2026. The stage was set for the grandest season.',textHi:'Season 4 समाप्त — 2 लाख+ खिलाड़ी register। 50+ शहर। October 2026 में tournament हुआ। सबसे बड़े season के लिए तैयारी।'},
-  {year:'2026–27',textEn:'Season 5 — Registrations open now. 75+ trial cities. 10 franchise teams. ₹6 Crore prize pool. India\'s biggest corporate cricket league awaits you.',textHi:'Season 5 — Registrations अब खुले हैं। 75+ trial cities। 10 franchise teams। ₹6 करोड़ prize pool। भारत की सबसे बड़ी corporate cricket league आपका इंतज़ार कर रही है।'},
+  {year:'2023',textEn:'Season 1 — Founded in Delhi. Working professionals took the field for the first time. One unforgettable dream born.',textHi:'Season 1 — Delhi में शुरुआत। Working professionals पहली बार मैदान में उतरे। एक अविस्मरणीय सपना जन्मा।'},
+  {year:'2024',textEn:'Season 2 — Growth exploded. Players joined from cities across India. Franchise auction system introduced. Corporate cricket found its identity.',textHi:'Season 2 — तेज़ी से बढ़ोतरी। पूरे भारत के शहरों से खिलाड़ी जुड़े। Franchise auction system शुरू। Corporate cricket को अपनी पहचान मिली।'},
+  {year:'2025',textEn:'Season 3 & 4 — Two powerful seasons. Registrations grew rapidly across cities, with national media coverage. BCPL established itself as India\'s corporate cricket league.',textHi:'Season 3 और 4 — दो शानदार seasons। Registrations कई शहरों में तेज़ी से बढ़े, national media coverage भी मिला। BCPL भारत की corporate cricket league के रूप में स्थापित हुई।'},
+  {year:'2026',textEn:'Season 4 concluded — a large wave of players registered across cities. Tournament held in October 2026. The stage was set for the grandest season.',textHi:'Season 4 समाप्त — कई शहरों से खिलाड़ियों की बड़ी लहर register हुई। October 2026 में tournament हुआ। सबसे बड़े season के लिए तैयारी।'},
+  {year:'2026–27',textEn:'Season 5 — Registrations open now. Trial cities across India. 10 franchise teams. ₹6 Crore prize pool. India\'s corporate cricket league for working professionals awaits you.',textHi:'Season 5 — Registrations अब खुले हैं। पूरे भारत में trial cities। 10 franchise teams। ₹6 करोड़ prize pool। Working professionals के लिए भारत की corporate cricket league आपका इंतज़ार कर रही है।'},
 ];
 
 const diffs = [
-  {icon:'🏏',titleEn:'vs Local Cricket',titleHi:'vs Local Cricket',bodyEn:'No politics. No favoritism. Pure merit through video scouting. Every applicant gets a fair, anonymous evaluation.',bodyHi:'कोई पक्षपात नहीं। Pure merit through video scouting। हर applicant को fair, anonymous evaluation मिलती है।'},
+  {icon:'🏏',titleEn:'vs Local Cricket',titleHi:'vs Local Cricket',bodyEn:'No politics. No favoritism. Pure merit through criteria-based video assessment. Every applicant gets a fair, anonymous evaluation.',bodyHi:'कोई पक्षपात नहीं। Pure merit through criteria-based video assessment। हर applicant को fair, anonymous evaluation मिलती है।'},
   {icon:'🏟️',titleEn:'vs Amateur Leagues',titleHi:'vs Amateur Leagues',bodyEn:'Professional grounds. Franchise system. Real auctions. This is as close to IPL as corporate cricket gets.',bodyHi:'Professional grounds। Franchise system। Real auctions। Corporate cricket में IPL के सबसे करीब।'},
   {icon:'💰',titleEn:'vs Doing Nothing',titleHi:'vs कुछ न करना',bodyEn:'₹299 gets you in. No other league offers this entry point for a shot at professional-grade cricket.',bodyHi:'₹299 में entry। कोई दूसरी league इतने कम में professional-grade cricket का मौका नहीं देती।'},
 ];
@@ -134,7 +134,7 @@ export function About() {
             {t("MEET STADIUMS.","स्टेडियम बनती हैं।")}
           </h1>
           <p style={{color:'rgba(255,255,255,0.65)',fontSize:18,maxWidth:600,margin:'0 auto',lineHeight:1.7,animation:'floatUp 0.7s ease 0.3s both'}}>
-            {t("The world's largest corporate cricket league. Turning working professionals into franchise cricketers since 2023.","दुनिया की सबसे बड़ी कॉर्पोरेट क्रिकेट लीग। 2023 से working professionals को franchise cricketers बना रहे हैं।")}
+            {t("India's corporate cricket league. Turning working professionals into franchise cricketers since 2023.","भारत की कॉर्पोरेट क्रिकेट लीग। 2023 से working professionals को franchise cricketers बना रहे हैं।")}
           </p>
         </div>
       </section>
@@ -223,7 +223,7 @@ export function About() {
           <div className="glass-card" style={{display:'flex',flexWrap:'wrap',gap:0,maxWidth:860,margin:'0 auto 48px',borderTop:'3px solid #E8B23D',overflow:'hidden',animation:'fadeSlide 0.7s ease both'}}>
             <div style={{flexShrink:0,width:'clamp(160px,35%,280px)',background:'linear-gradient(180deg,rgba(232,178,61,0.08) 0%,rgba(6,14,28,0) 100%)'}}>
               <img
-                src="https://www.bcpl-t20.com/wp-content/uploads/2025/07/saurabh.png"
+                src={import.meta.env.BASE_URL + 'bcpl-assets/people/saurabh.png'}
                 alt="Saurabh Jha"
                 style={{width:'100%',height:'100%',minHeight:220,objectFit:'cover',objectPosition:'top',display:'block'}}
                 onError={(e)=>{ (e.target as HTMLImageElement).src='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="280" height="280" viewBox="0 0 280 280"><rect fill="%23132040" width="280" height="280"/><text fill="%23FF7A29" font-size="72" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle" x="140" y="140">SJ</text></svg>'; }}
@@ -237,7 +237,7 @@ export function About() {
               <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:6,lineHeight:1.1}}>Saurabh Jha</div>
               <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:14,color:'#FF7A29',letterSpacing:'.06em',marginBottom:20}}>{t("Founder & Chairman","संस्थापक और अध्यक्ष")}</div>
               <p style={{color:'rgba(255,255,255,0.65)',fontSize:14,lineHeight:1.8,maxWidth:420}}>
-                {t("Visionary behind Bharatiya Corporate Premier League — the world's largest corporate cricket tournament. Conceptualized under Kriparti Playing 11 Private Limited, Saurabh built BCPL from the ground up to give every working professional a real shot at professional cricket.","Bharatiya Corporate Premier League के visionary — दुनिया की सबसे बड़ी corporate cricket tournament। Kriparti Playing 11 Private Limited के तहत conceptualize किया, Saurabh ने BCPL को ground से build किया ताकि हर working professional को professional cricket का असली मौका मिल सके।")}
+                {t("Visionary behind Bharatiya Corporate Premier League. Conceptualized under Kriparti Playing 11 Private Limited, Saurabh built BCPL from the ground up to give every working professional a real shot at professional cricket.","Bharatiya Corporate Premier League के visionary। Kriparti Playing 11 Private Limited के तहत conceptualize किया, Saurabh ने BCPL को ground से build किया ताकि हर working professional को professional cricket का असली मौका मिल सके।")}
               </p>
             </div>
           </div>
@@ -254,7 +254,7 @@ export function About() {
               <div key={i} className="glass-card" style={{overflow:'hidden',display:'flex',flexDirection:'column',animation:`fadeSlide 0.6s ease ${0.1+i*0.1}s both`,transition:'transform 0.2s',borderTop:'2px solid rgba(255,122,41,0.3)'}}>
                 <div style={{position:'relative',paddingTop:'100%',background:'linear-gradient(180deg,rgba(255,122,41,0.06) 0%,rgba(6,14,28,0) 100%)'}}>
                   <img
-                    src={`https://www.bcpl-t20.com/wp-content/uploads/2025/07/${m.photo}.png`}
+                    src={import.meta.env.BASE_URL + `bcpl-assets/people/${m.photo}.png`}
                     alt={m.name}
                     style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:'top'}}
                     onError={(e)=>{ (e.target as HTMLImageElement).style.display='none'; }}
@@ -291,7 +291,7 @@ export function About() {
               </div>
             </div>
             <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))',gap:16,marginBottom:24}}>
-              {['✅ BCCI-Connected Scouting','✅ Professional Grounds','✅ Zero Hidden Fees','✅ Transparent Selection Process'].map((f,i)=>(
+              {['✅ Structured Assessment Process','✅ Professional Grounds','✅ Transparent Fee Structure','✅ Transparent Selection Process'].map((f,i)=>(
                 <div key={i} style={{color:'rgba(255,255,255,0.75)',fontSize:14,fontFamily:'Inter,sans-serif'}}>{f}</div>
               ))}
             </div>

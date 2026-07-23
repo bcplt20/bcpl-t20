@@ -88,13 +88,13 @@ function getBannerConfig(step: Step, data: any, venue: any, t: any) {
     upload_video: {
       color:'var(--orange)', bg:'rgba(255,122,41,0.08)', icon:'🎬',
       title: t('Upload Your Trial Video', 'अपना ट्रायल वीडियो अपलोड करें'),
-      body: t(`Hi ${name}! Your Phase 1 registration is done. Upload your 2-minute trial video before ${dl} for scout review.`, `नमस्ते ${name}! आपका फेज 1 रजिस्ट्रेशन हो गया है। स्काउट रिव्यू के लिए ${dl} से पहले अपना 2 मिनट का ट्रायल वीडियो अपलोड करें।`),
+      body: t(`Hi ${name}! Your Phase 1 registration is done. Upload your 30–60 second trial video before ${dl} for Phase 1 evaluation.`, `नमस्ते ${name}! आपका फेज 1 रजिस्ट्रेशन हो गया है। Phase 1 evaluation के लिए ${dl} से पहले अपना 30–60 सेकंड का ट्रायल वीडियो अपलोड करें।`),
       cta: t('UPLOAD VIDEO →', 'वीडियो अपलोड करें →'), ctaPath:'/register/upload-video',
     },
     under_review: {
       color:'var(--gold)', bg:'rgba(232,178,61,0.08)', icon:'🔍',
-      title: t('Video Under Scout Review', 'वीडियो स्काउट रिव्यू में है'),
-      body: t('Your video is being reviewed by BCCI-certified scouts. This takes up to 15 working days. You will receive an SMS + Email with the result.', 'आपके वीडियो का रिव्यू BCCI-प्रमाणित स्काउट्स द्वारा किया जा रहा है। इसमें 15 कार्य दिवस तक लग सकते हैं। आपको परिणाम के साथ एक SMS + ईमेल मिलेगा।'),
+      title: t('Video Under Evaluation', 'वीडियो evaluation में है'),
+      body: t('Your Phase 1 submission goes through BCPL\'s evaluation process against the Phase 1 assessment criteria. Your result is typically released within 48 hours. You will receive an SMS + Email with the result.', 'आपका Phase 1 submission BCPL के Phase 1 assessment criteria पर evaluate किया जा रहा है। आपका result आमतौर पर 48 घंटे में release होता है। आपको परिणाम के साथ एक SMS + ईमेल मिलेगा।'),
     },
     rejected: {
       color:'var(--red)', bg:'rgba(239,68,68,0.08)', icon:'❌',
@@ -104,7 +104,7 @@ function getBannerConfig(step: Step, data: any, venue: any, t: any) {
     p2_register: {
       color:'var(--green)', bg:'rgba(34,197,94,0.08)', icon:'⭐',
       title: t('Congratulations! Selected for Phase 2', 'बधाई हो! फेज 2 के लिए चुने गए'),
-      body: t(`${name}, you've cleared Phase 1 scout review! Complete Phase 2 registration and pay the trial fee to secure your spot at the ${city} physical trial.`, `${name}, आपने फेज 1 स्काउट रिव्यू पास कर लिया है! फेज 2 रजिस्ट्रेशन पूरा करें और ${city} फिजिकल ट्रायल में अपनी जगह पक्की करने के लिए ट्रायल फीस का भुगतान करें।`),
+      body: t(`${name}, you've cleared Phase 1 evaluation! Complete Phase 2 registration and pay the trial fee to secure your spot at the ${city} physical trial.`, `${name}, आपने फेज 1 evaluation पास कर लिया है! फेज 2 रजिस्ट्रेशन पूरा करें और ${city} फिजिकल ट्रायल में अपनी जगह पक्की करने के लिए ट्रायल फीस का भुगतान करें।`),
       cta: t('COMPLETE PHASE 2 →', 'फेज 2 पूरा करें →'), ctaPath:'/register/phase2',
     },
     p2_kyc: {
@@ -416,7 +416,7 @@ export function PlayerProfile() {
                         {t("YOUR PHASE 1 RESULT IS READY", "आपका फेज 1 परिणाम तैयार है")}
                       </div>
                       <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.7)', lineHeight: 1.5 }}>
-                        {t("Your full 100-point scorecard from BCCI-certified scouts is waiting.", "BCCI-प्रमाणित स्काउट्स द्वारा आपका पूरा 100-पॉइंट स्कोरकार्ड तैयार है।")}
+                        {t("Your full 100-point scorecard from BCPL's Phase 1 evaluation is waiting.", "BCPL के Phase 1 evaluation से आपका पूरा 100-पॉइंट स्कोरकार्ड तैयार है।")}
                       </div>
                     </div>
                     <button className="btn-orange" style={{ background: 'linear-gradient(135deg, var(--gold), #C4901E)', color: '#000', boxShadow: '0 6px 20px rgba(232,178,61,0.3)' }}

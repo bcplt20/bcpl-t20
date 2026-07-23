@@ -82,7 +82,7 @@ export function Phase2Payment() {
     <div style={{ background:'var(--bg)', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:16, padding:24, fontFamily:'var(--font-body)', textAlign:'center' }}>
       <div style={{ fontSize:48 }}>🏏</div>
       <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:28, color:'#fff', textTransform:'uppercase' }}>{t("Not Eligible for Phase 2", "फेज 2 के लिए पात्र नहीं")}</div>
-      <div style={{ fontSize:14, color:'#64748B', maxWidth:360 }}>{t("Phase 2 payment is only available after scout selection in Phase 1.", "फेज 2 पेमेंट केवल फेज 1 में स्काउट चयन के बाद उपलब्ध है।")}</div>
+      <div style={{ fontSize:14, color:'#64748B', maxWidth:360 }}>{t("Phase 2 payment is only available after qualifying in Phase 1.", "फेज 2 पेमेंट केवल फेज 1 qualify करने के बाद उपलब्ध है।")}</div>
       <Link href="/register/upload-video" className="btn-cta" style={{ marginTop:8 }}>{t("Go to Video Upload →", "वीडियो अपलोड पर जाएं →")}</Link>
       <style>{`.btn-cta{display:inline-flex;align-items:center;background:linear-gradient(135deg,var(--orange),var(--orange-2));border:none;border-radius:14px;color:#fff;font-family:var(--font-head);font-weight:900;letter-spacing:0.04em;padding:14px 28px;text-transform:uppercase;text-decoration:none;}`}</style>
     </div>

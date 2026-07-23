@@ -18,9 +18,9 @@ const ROLE_META: Record<string, { label: string; color: string; req: string; tip
 
 const SAMPLE_VIDEOS = [
   { role:'Batsman',       color:'#3B82F6', gradient:'linear-gradient(135deg,#0a1f44 0%,#1a3a6e 50%,#0d2a52 100%)', duration:'1:52', description:'Cover drive · Pull shot · Sweep shot · Footwork', what:'Watch how to demonstrate 3+ strokes clearly on camera — stance, backlift, and follow-through all visible.', ytSearch:'cricket batting trial video technique showcase', badge:'Most Selected', badgeColor:'#3B82F6' },
-  { role:'Bowler',        color:'#8B5CF6', gradient:'linear-gradient(135deg,#1a0a44 0%,#3a1a6e 50%,#2a0d52 100%)', duration:'1:48', description:'Outswinger · Yorker · Change of pace · Run-up', what:'Full run-up visible, delivery stride, ball release — scouts check your action, seam position, and variation.', ytSearch:'cricket bowling trial video technique fast medium spin', badge:'High Demand', badgeColor:'#8B5CF6' },
+  { role:'Bowler',        color:'#8B5CF6', gradient:'linear-gradient(135deg,#1a0a44 0%,#3a1a6e 50%,#2a0d52 100%)', duration:'1:48', description:'Outswinger · Yorker · Change of pace · Run-up', what:'Full run-up visible, delivery stride, ball release — your action, seam position, and variation are assessed against the criteria.', ytSearch:'cricket bowling trial video technique fast medium spin', badge:'High Demand', badgeColor:'#8B5CF6' },
   { role:'Wicket-Keeper', color:'#06B6D4', gradient:'linear-gradient(135deg,#041f2e 0%,#0a3d4f 50%,#062a3a 100%)', duration:'1:55', description:'Standing up · Stumpings · Catches · Wide takes', what:'Film at chest height from mid-off angle — glove positioning, quick release, and agility are key scoring factors.', ytSearch:'cricket wicket keeper trial video stumping catch technique', badge:'Rare Role', badgeColor:'#06B6D4' },
-  { role:'All-Rounder',   color:'#E8B23D', gradient:'linear-gradient(135deg,#2e1f04 0%,#4f3a0a 50%,#3a2a06 100%)', duration:'2:00', description:'1 min batting · 1 min bowling · Clear transitions', what:'Split exactly 50-50. Use a visible title card between segments. Scouts look for equal competence in both skills.', ytSearch:'cricket all rounder trial video batting bowling showcase', badge:'Top Auction', badgeColor:'#E8B23D' },
+  { role:'All-Rounder',   color:'#E8B23D', gradient:'linear-gradient(135deg,#2e1f04 0%,#4f3a0a 50%,#3a2a06 100%)', duration:'2:00', description:'1 min batting · 1 min bowling · Clear transitions', what:'Split exactly 50-50. Use a visible title card between segments. The criteria look for equal competence in both skills.', ytSearch:'cricket all rounder trial video batting bowling showcase', badge:'Top Auction', badgeColor:'#E8B23D' },
 ];
 
 type UploadState = 'loading' | 'not_registered' | 'deadline_passed' | 'already_uploaded' | 'idle' | 'file_selected' | 'uploading' | 'confirming' | 'success' | 'error';
@@ -371,9 +371,9 @@ export function Phase1VideoUpload() {
             <>
               <h2 style={{ color:'var(--green)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:28, marginBottom:12, textTransform:'uppercase' }}>{t('Video Already Submitted!', 'वीडियो पहले ही सबमिट किया जा चुका है!')}</h2>
               <p style={{ color:'var(--ink-2)', fontSize:14, marginBottom:8, lineHeight:1.7 }}>
-                {userName ? userName + ', ' : ''}{t('your trial video is with our BCCI-certified scouts.', 'आपका ट्रायल वीडियो हमारे BCCI-certified scouts के पास है।')}
+                {userName ? userName + ', ' : ''}{t('your Phase 1 submission is going through BCPL\'s evaluation process.', 'आपका Phase 1 सबमिशन BCPL की evaluation process से गुज़र रहा है।')}
               </p>
-              <p style={{ color:'var(--ink-3)', fontSize:13, marginBottom:28 }}>{t('Result will be sent via Email, SMS and WhatsApp within ', 'परिणाम ईमेल, SMS और WhatsApp के माध्यम से ')}<strong style={{ color:'var(--ink)' }}>{t('15 working days', '15 कार्य दिवसों')}</strong>{t('.', ' के भीतर भेजा जाएगा।')}</p>
+              <p style={{ color:'var(--ink-3)', fontSize:13, marginBottom:28 }}>{t('Result will be sent via Email, SMS and WhatsApp ', 'परिणाम ईमेल, SMS और WhatsApp के माध्यम से ')}<strong style={{ color:'var(--ink)' }}>{t('within 48 hours', '48 घंटों')}</strong>{t('.', ' के भीतर भेजा जाएगा।')}</p>
             </>
           )}
           <div style={{ display:'flex', flexDirection:'column', gap:12, alignItems:'center' }}>
@@ -412,7 +412,7 @@ export function Phase1VideoUpload() {
             {userName ? t(`Well done, ${userName}! `, `शाबाश, ${userName}! `) : ''}{t('Your trial video has been received successfully.', 'आपका ट्रायल वीडियो सफलतापूर्वक प्राप्त हो गया है।')}
           </p>
           <p style={{ color:'var(--ink-3)', fontSize:13, marginBottom:28, lineHeight:1.7 }}>
-            {t('Our BCCI-certified scouts will review it within ', 'हमारे BCCI-certified scouts इसकी समीक्षा ')}<strong style={{ color:'var(--ink)' }}>{t('15 working days', '15 कार्य दिवसों')}</strong>{t('.', ' के भीतर करेंगे।')}<br />
+            {t('Your video is evaluated against BCPL\'s Phase 1 assessment criteria ', 'आपका वीडियो BCPL के Phase 1 assessment criteria के अनुसार ')}<strong style={{ color:'var(--ink)' }}>{t('within 48 hours', '48 घंटों')}</strong>{t('.', ' के भीतर evaluate किया जाता है।')}<br />
             {t('Result will arrive on ', 'परिणाम ')}<strong style={{ color:'var(--orange)' }}>{t('Email + SMS + WhatsApp', 'ईमेल + SMS + WhatsApp')}</strong>{t('.', ' पर आएगा।')}
           </p>
           <div style={{ background:'rgba(34,197,94,0.06)', border:'1px solid rgba(34,197,94,0.2)', borderRadius:'var(--r)', padding:16, marginBottom:24 }}>
@@ -422,7 +422,7 @@ export function Phase1VideoUpload() {
             </div>
             <div style={{ display:'flex', justifyContent:'space-between', padding:'8px 0' }}>
               <span style={{ color:'var(--ink-3)', fontSize:13, fontWeight:600 }}>{t('Expected Result', 'अपेक्षित परिणाम')}</span>
-              <span style={{ color:'var(--orange)', fontWeight:800, fontSize:13 }}>{t('Within 15 Working Days', '15 कार्य दिवसों के भीतर')}</span>
+              <span style={{ color:'var(--orange)', fontWeight:800, fontSize:13 }}>{t('Within 48 Hours', '48 घंटों के भीतर')}</span>
             </div>
           </div>
           <div style={{ display:'flex', gap:12, flexWrap:'wrap', justifyContent:'center' }}>
@@ -652,7 +652,7 @@ export function Phase1VideoUpload() {
                       </span>
                     </label>
                     <button className="btn-primary" style={{ width:'100%', justifyContent:'center' }} onClick={handleSubmit} disabled={!declAccepted}>
-                      {t('UPLOAD TO BCPL SCOUTS', 'BCPL SCOUTS को अपलोड करें')} →
+                      {t('SUBMIT FOR EVALUATION', 'EVALUATION के लिए सबमिट करें')} →
                     </button>
                   </div>
                 )}
