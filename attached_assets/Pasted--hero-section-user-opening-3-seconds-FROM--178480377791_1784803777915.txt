@@ -1,0 +1,135 @@
+सबसे पहले hero section को बदलना चाहिए। अभी user को opening 3 seconds में यह महसूस होना चाहिए:
+
+FROM OFFICE TO STADIUM.
+YOUR CRICKET DREAM ISN’T OVER.
+India’s biggest platform for working professionals to play competitive cricket.
+Season 5 Registrations Open
+[ REGISTER FOR ₹299 ] [ WATCH BCPL STORY ▶ ]
+
+और इसके background में generic cricket stock photo नहीं—actual BCPL stadium / auction / player / Ganguly footage का cinematic montage होना चाहिए।
+
+इसके ठीक नीचे मैं ₹299 explain करने की बजाय एक premium credibility bar रखूंगा:
+
+10 Teams • 21+ Trial Cities • ₹2L–₹20L Player Auction • ₹6 Cr Prize Pool • International Stadiums
+
+फिर एक बहुत important section:
+
+THIS IS NOT JUST ANOTHER CRICKET TOURNAMENT
+
+यहां 20–30 second video हो:
+Office → kit bag → trial → selection → auction hammer → jersey → international stadium → crowd.
+
+उसके बाद:
+
+YOUR ROAD TO BCPL
+
+REGISTER → VIDEO TRIAL → PHYSICAL TRIAL → SELECTION → AUCTION → TEAM → STADIUM
+
+अभी website यही information देती है, लेकिन इसे text/process explanation की जगह visual journey बनाना ज्यादा powerful होगा। 
+
+Ganguly section को मैं काफी upgrade करूंगा
+
+अभी Sourav Ganguly का association बहुत valuable credibility asset है। External coverage भी उन्हें BCPL brand ambassador के रूप में report करती है।
+
+इसे एक full-width section बनाया जा सकता है:
+
+SOURAV GANGULY × BCPL
+
+Large authentic image/video on one side और दूसरी तरफ:
+
+“A platform built to discover India’s hidden cricketing talent.”
+
+Watch Dada's Message ▶
+
+इससे user को immediately लगेगा कि यह कोई random ₹299 cricket registration website नहीं बल्कि established sports property है।
+
+एक और बड़ा बदलाव: ₹299 को बार-बार बेचने के बजाय DREAM को बेचिए
+
+₹299 conversion के लिए जरूरी है, लेकिन homepage पर बहुत जल्दी fees/pricing language आने से brand थोड़ा transactional लग सकता है।
+
+Order ideally:
+
+Dream → Credibility → Opportunity → Proof → Process → Fees → Registration
+
+ना कि:
+
+₹299 → ₹399 → ₹2000 → ₹3000 → explanation…
+
+Fees completely transparent रहें—यह बहुत अच्छी बात है—लेकिन थोड़ा नीचे।
+
+Social proof बहुत ज्यादा बढ़ाना चाहिए
+
+एक section:
+
+REAL PLAYERS. REAL AUCTIONS. REAL STADIUMS.
+
+और actual Season 3/4 material:
+
+player auction clips
+trial crowds
+stadium matches
+team jerseys
+selected players
+player salary/auction stories
+behind-the-scenes
+press logos
+
+इससे registration conversion में शायद visual redesign से भी ज्यादा फायदा हो सकता है, क्योंकि user का सबसे बड़ा सवाल होगा: “क्या यह genuinely इतना बड़ा opportunity है?”
+
+Homepage structure मैं ऐसा रखूंगा
+
+1. Cinematic Hero
+2. BCPL credibility numbers
+3. 30-sec “What is BCPL?” video
+4. Sourav Ganguly × BCPL
+5. Your Journey: Office → Stadium
+6. Season 5 Teams
+7. Prize Pool + Player Auction Opportunity
+8. Season 4 highlights
+9. Real selected-player stories
+10. Trial cities / India map
+11. Transparent fees
+12. FAQs
+13. Final high-impact registration CTA
+14. Professional footer
+
+और mobile पर bottom में permanently:
+
+₹299 Registration | REGISTER NOW
+
+इससे user को registration button खोजने की जरूरत नहीं पड़ेगी।
+
+एक चीज मैं जरूर हटाऊंगा/बदलूंगा
+
+हर English sentence के तुरंत साथ Hindi sentence दिखाना accessibility के लिए अच्छा intention है, लेकिन visual hierarchy को काफी clutter करता है। वर्तमान homepage में यह pattern लगभग पूरे page में है। 
+
+Top-right:
+
+EN | हिंदी
+
+करके पूरी website language switch कराना ज्यादा standard और premium लगेगा।
+
+⸻
+
+Overall assessment
+
+अगर मैं current website को roughly judge करूँ:
+
+Information/content: 9/10
+Clarity: 8/10
+Trust information: 8/10
+Visual hierarchy: 6.5–7/10
+Premium sports-league feeling: 6/10
+Conversion potential: 7/10
+
+Website खराब नहीं है। असल opportunity redesign से ज्यादा “positioning upgrade” की है।
+
+BCPL को ₹299 cricket trial website की तरह नहीं दिखना चाहिए।
+
+इसे देखकर user को feel होना चाहिए:
+
+“This is India’s pathway from ordinary working professional to professional-style cricket.”
+
+और आपके 10 लाख registrations वाले लक्ष्य को देखते हुए, मैं website को सिर्फ सुंदर नहीं बनाऊंगा—हर section का purpose registration conversion होगा।
+
+अगर आप चाहें तो मैं अगला काम और practical कर सकता हूँ: current bcplt20.com को section-by-section लेकर exact नया homepage UX/UI blueprint बनाऊँ—क्या हटेगा, क्या रहेगा, कौन-सा banner होगा, कौन-सा text होगा, buttons कहाँ होंगे, desktop + mobile दोनों। उसके बाद उसी blueprint का actual visual homepage design/mockup भी बना सकते हैं।

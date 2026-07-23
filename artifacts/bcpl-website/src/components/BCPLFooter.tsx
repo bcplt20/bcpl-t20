@@ -1,4 +1,6 @@
 import React from "react";
+import { Link, useLocation } from "wouter";
+import { openLoginModal, getSession } from "../lib/auth";
 
 const BASE = import.meta.env.BASE_URL;
 
@@ -9,21 +11,25 @@ const SOCIAL = [
   { label:"Facebook",  href:"https://www.facebook.com/bhartiyacorporatepremierleague",     path:"M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.34 11.93 5.96 14.22 5.96C15.31 5.96 16.45 6.15 16.45 6.15V8.62H15.19C13.95 8.62 13.56 9.39 13.56 10.18V12.06H16.34L15.89 14.96H13.56V21.96A10 10 0 0 0 22 12.06C22 6.53 17.5 2.04 12 2.04Z" },
 ];
 
-const COL_LEAGUE  = [["About","/about"],["Teams","/teams"],["Schedule","/schedule"],["Points Table","/points-table"],["Sponsors","/sponsors"]];
-const COL_REG     = [["Phase 1 Registration","/register"],["Eligibility Criteria","/eligibility"],["FAQ","/faq"],["Cricket Rules","/cricket-rulebook"],["Code of Conduct","/code-of-conduct"]];
-const COL_LEGAL   = [["Privacy Policy","/privacy"],["Terms & Conditions","/terms"],["Refund Policy","/refunds"],["Contact Us","/contact"]];
+/* Categorized mega-footer — every page of the site reachable from here */
+const COLS: { title: string; links: [string, string][] }[] = [
+  { title: "League",  links: [["About BCPL","/about"],["Teams","/teams"],["Match Center","/match-center"],["Schedule","/schedule"],["Points Table","/points-table"],["Sponsors","/sponsors"]] },
+  { title: "Players", links: [["Register — Phase 1","/register"],["Player Login","__login"],["Eligibility Criteria","/eligibility"],["Cricket Rulebook","/cricket-rulebook"],["Code of Conduct","/code-of-conduct"],["FAQ","/faq"]] },
+  { title: "Media",   links: [["Photo Gallery","/photos"],["Videos","/videos"],["Contact Us","/contact"]] },
+  { title: "Legal",   links: [["Privacy Policy","/privacy"],["Terms & Conditions","/terms"],["Refund Policy","/refunds"]] },
+];
 
 const lnk: React.CSSProperties = { fontSize:13, color:"rgba(255,255,255,.38)", textDecoration:"none", display:"block" };
 
 export function BCPLFooter() {
+  const [, navigate] = useLocation();
   return (
-    <footer style={{ background:"#030710", borderTop:"1px solid rgba(255,255,255,.05)", padding:"clamp(32px,5vw,52px) 0 20px", fontFamily:"Montserrat,Inter,sans-serif" }}>
+    <footer style={{ background:"#030710", borderTop:"1px solid rgba(255,255,255,.05)", padding:"clamp(36px,5vw,56px) 0 20px", fontFamily:"Montserrat,Inter,sans-serif" }}>
       <style>{`
         .bcpl-foot-wrap { max-width:1200px; margin:0 auto; padding:0 clamp(16px,4vw,40px); }
-        .bcpl-foot-cols { display:grid; grid-template-columns:220px 1fr 1fr 1fr; gap:40px; margin-bottom:32px; }
-        @media(max-width:900px){ .bcpl-foot-cols{grid-template-columns:1fr 1fr 1fr;} .bcpl-foot-brand{grid-column:1/-1;} }
-        @media(max-width:540px){ .bcpl-foot-cols{grid-template-columns:1fr 1fr;} .bcpl-foot-brand{grid-column:1/-1;} }
-        @media(max-width:380px){ .bcpl-foot-cols{grid-template-columns:1fr;} }
+        .bcpl-foot-cols { display:grid; grid-template-columns:240px repeat(4,1fr); gap:36px; margin-bottom:36px; }
+        @media(max-width:1000px){ .bcpl-foot-cols{grid-template-columns:1fr 1fr 1fr 1fr;} .bcpl-foot-brand{grid-column:1/-1;} }
+        @media(max-width:640px){ .bcpl-foot-cols{grid-template-columns:1fr 1fr;} .bcpl-foot-brand{grid-column:1/-1;} }
         .bcpl-foot-link:hover{ color:#FF7A29!important; }
         .bcpl-soc:hover{ border-color:#FF7A29!important; background:rgba(255,122,41,.12)!important; }
         .bcpl-foot-bottom{ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; }
@@ -38,46 +44,35 @@ export function BCPLFooter() {
         <div className="bcpl-foot-cols">
           {/* Brand */}
           <div className="bcpl-foot-brand">
-            <a href="/" style={{ display:"flex", alignItems:"center", gap:10, textDecoration:"none", marginBottom:12, flexWrap:"nowrap" }}>
+            <Link href="/" style={{ display:"flex", alignItems:"center", gap:10, textDecoration:"none", marginBottom:12, flexWrap:"nowrap" }}>
               <img src={BASE + "bcpl-assets/bcpl-logo-white.png"} alt="BCPL"
                 style={{ height:38, maxWidth:120, width:"auto", objectFit:"contain", display:"block", flexShrink:0 }}/>
               <div style={{ display:"inline-flex", alignItems:"center", gap:4, background:"rgba(232,178,61,0.1)", border:"1px solid rgba(232,178,61,0.4)", borderRadius:6, padding:"3px 9px", flexShrink:0, whiteSpace:"nowrap" }}>
                 <span className="s5-trophy" style={{ fontSize:9 }}>🏆</span>
                 <span className="s5-badge-text" style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:9, color:"#E8B23D", letterSpacing:".12em" }}>SEASON 5</span>
               </div>
-            </a>
-            <p style={{ fontSize:12, color:"rgba(255,255,255,.3)", lineHeight:1.7, maxWidth:200, marginTop:0 }}>India's Biggest Corporate Cricket League. Season 5 — 2026–27.</p>
+            </Link>
+            <p style={{ fontSize:12, color:"rgba(255,255,255,.3)", lineHeight:1.7, maxWidth:230, marginTop:0, marginBottom:10 }}>
+              India's Biggest Corporate Cricket League. From office to stadium — Season 5, 2026–27.
+            </p>
+            <div style={{ fontSize:11, color:"rgba(232,178,61,.55)", fontWeight:700, marginBottom:6 }}>Brand Ambassador — Sourav Ganguly</div>
+            <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:13, background:"linear-gradient(90deg,#FF7A29,#FFB347)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>#OfficeSeStadiumTak</div>
           </div>
 
-          {/* League */}
-          <div>
-            <div style={{ fontWeight:800, fontSize:10, letterSpacing:".1em", color:"rgba(255,255,255,.35)", textTransform:"uppercase", marginBottom:12 }}>League</div>
-            <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
-              {COL_LEAGUE.map(([l,h])=>(
-                <a key={l} href={h} className="bcpl-foot-link" style={lnk}>{l}</a>
-              ))}
+          {COLS.map(col => (
+            <div key={col.title}>
+              <div style={{ fontWeight:800, fontSize:10, letterSpacing:".1em", color:"rgba(255,255,255,.35)", textTransform:"uppercase", marginBottom:12 }}>{col.title}</div>
+              <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+                {col.links.map(([l,h])=>
+                  h === "__login"
+                    ? <button key={l} type="button" className="bcpl-foot-link"
+                        onClick={()=>{ if (getSession()) { navigate("/profile"); } else { openLoginModal(); } }}
+                        style={{ ...lnk, background:"none", border:"none", padding:0, cursor:"pointer", textAlign:"left", fontFamily:"inherit" }}>{l}</button>
+                    : <Link key={l} href={h} className="bcpl-foot-link" style={lnk}>{l}</Link>
+                )}
+              </div>
             </div>
-          </div>
-
-          {/* Register */}
-          <div>
-            <div style={{ fontWeight:800, fontSize:10, letterSpacing:".1em", color:"rgba(255,255,255,.35)", textTransform:"uppercase", marginBottom:12 }}>Register</div>
-            <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
-              {COL_REG.map(([l,h])=>(
-                <a key={l} href={h} className="bcpl-foot-link" style={lnk}>{l}</a>
-              ))}
-            </div>
-          </div>
-
-          {/* Legal */}
-          <div>
-            <div style={{ fontWeight:800, fontSize:10, letterSpacing:".1em", color:"rgba(255,255,255,.35)", textTransform:"uppercase", marginBottom:12 }}>Legal</div>
-            <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
-              {COL_LEGAL.map(([l,h])=>(
-                <a key={l} href={h} className="bcpl-foot-link" style={lnk}>{l}</a>
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
 
         {/* Bottom */}
@@ -95,11 +90,11 @@ export function BCPLFooter() {
           <div className="bcpl-foot-bottom">
             <p style={{ fontSize:11, color:"rgba(255,255,255,.2)", fontWeight:600 }}>© 2026–27 BCPL — Bhartiya Corporate Premier League · All Rights Reserved.</p>
             <div className="bcpl-foot-legal">
-              <a href="/privacy"  style={{ fontSize:11, color:"rgba(255,255,255,.2)", textDecoration:"none" }} className="bcpl-foot-link">Privacy Policy</a>
+              <Link href="/privacy"  style={{ fontSize:11, color:"rgba(255,255,255,.2)", textDecoration:"none" }} className="bcpl-foot-link">Privacy Policy</Link>
               <span style={{ color:"rgba(255,255,255,.1)", fontSize:10 }}>|</span>
-              <a href="/terms"    style={{ fontSize:11, color:"rgba(255,255,255,.2)", textDecoration:"none" }} className="bcpl-foot-link">Terms</a>
+              <Link href="/terms"    style={{ fontSize:11, color:"rgba(255,255,255,.2)", textDecoration:"none" }} className="bcpl-foot-link">Terms</Link>
               <span style={{ color:"rgba(255,255,255,.1)", fontSize:10 }}>|</span>
-              <a href="/refunds"  style={{ fontSize:11, color:"rgba(255,255,255,.2)", textDecoration:"none" }} className="bcpl-foot-link">Refund Policy</a>
+              <Link href="/refunds"  style={{ fontSize:11, color:"rgba(255,255,255,.2)", textDecoration:"none" }} className="bcpl-foot-link">Refund Policy</Link>
               <span style={{ color:"rgba(255,255,255,.1)", fontSize:10 }}>|</span>
               <span style={{ fontSize:11, color:"rgba(255,255,255,.15)" }}>Made with 🏏 in India</span>
             </div>

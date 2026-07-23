@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Route, Switch, Router as WouterRouter, useLocation } from 'wouter';
 import { LoginModal } from './components/LoginModal';
 import { SiteMeta } from './components/SiteMeta';
+import { LangProvider } from './lib/i18n';
 
 // All BCPL pages
 import { Home }                from '@/pages/Home';
@@ -118,9 +119,11 @@ function Router() {
 export default function App() {
   const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   return (
-    <WouterRouter base={base}>
-      <Router />
-      <LoginModal />
-    </WouterRouter>
+    <LangProvider>
+      <WouterRouter base={base}>
+        <Router />
+        <LoginModal />
+      </WouterRouter>
+    </LangProvider>
   );
 }
