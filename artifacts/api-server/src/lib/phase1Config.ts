@@ -45,8 +45,11 @@ export const phase1ConfigBase = z.object({
   minAiConfidence:  z.number().min(0).max(1).default(0.8),
 
   // Models & versioning
-  geminiPrimaryModel:    z.string().min(1).default("gemini-2.5-flash"),
-  geminiValidationModel: z.string().min(1).default("gemini-2.5-flash-lite"),
+  // Pinned stable models (July 2026). The 2.5 family 404s for API keys created
+  // after mid-2026 ("no longer available to new users"), so keep these current.
+  // GEMINI_PRIMARY_MODEL / GEMINI_VALIDATION_MODEL env vars override without a deploy.
+  geminiPrimaryModel:    z.string().min(1).default("gemini-3.5-flash"),
+  geminiValidationModel: z.string().min(1).default("gemini-3.1-flash-lite"),
   promptVersion:     z.string().min(1).default("V1"),
   rubricVersion:     z.string().min(1).default("V1"),
   assessmentVersion: z.string().min(1).default("V1"),

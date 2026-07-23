@@ -21,6 +21,7 @@ import {
   trialVenuesTable,
   playerProfilesTable,
   notificationLogsTable,
+  phase1EvaluationsTable,
 } from "@workspace/db/schema";
 import { eq, desc, count, and } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
@@ -336,6 +337,23 @@ router.put("/registrations/:id/phase1-status", async (req, res) => {
     if (!status || !valid.includes(status)) {
       res.status(400).json({ error: `status must be one of: ${valid.join(", ")}` });
       return;
+    }
+    // Ownership guard (§34/§82): registrations with an AI evaluation are
+    // decided by the pipeline and announced by the release worker. A manual
+    // decide here would race that worker (it overwrites phase1_status from
+    // the evaluation result) and double-notify under a second dedupe key —
+    // so selected/rejected is reserved for legacy registrations only.
+    if (status === "selected" || status === "rejected") {
+      const [aiEval] = await db.select({ id: phase1EvaluationsTable.id })
+        .from(phase1EvaluationsTable)
+        .where(eq(phase1EvaluationsTable.registrationId, String(id)))
+        .limit(1);
+      if (aiEval) {
+        res.status(409).json({
+          error: "This registration is managed by the AI evaluation pipeline; its result is decided and announced automatically. Manual selection applies only to legacy registrations without an AI evaluation.",
+        });
+        return;
+      }
     }
     const [updated] = await db
       .update(registrationsTable)
