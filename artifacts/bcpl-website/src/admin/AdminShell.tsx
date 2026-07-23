@@ -184,6 +184,15 @@ export default function AdminShell() {
   // Auto-refresh tick: bumped on a gentle interval so the Dashboard re-fetches
   // its data in place (no remount, no flicker) while its tab is visible
   const [autoTick,      setAutoTick]     = useState(0);
+  // Mobile layout: sidebar becomes an off-canvas drawer, topbar gets ☰ + sign-out
+  const [isMobile,   setIsMobile]   = useState(() => typeof window !== "undefined" && window.matchMedia("(max-width: 860px)").matches);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 860px)");
+    const onChange = () => { setIsMobile(mq.matches); if (!mq.matches) setDrawerOpen(false); };
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
 
   const NOTIFS: { icon:string; text:string; time:string; unread:boolean }[] = [];
   const unreadCount = NOTIFS.filter(n => n.unread).length;
@@ -318,7 +327,7 @@ export default function AdminShell() {
       <div style={{ minHeight:"100vh", background:"radial-gradient(ellipse at 20% 50%,#0D1526 0%,#060B18 60%)", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"'Inter',sans-serif" }}>
         <div style={{ position:"fixed", top:-100, left:-100, width:400, height:400, borderRadius:"50%", background:"#FF6B0008", filter:"blur(80px)", pointerEvents:"none" }}/>
         <div style={{ position:"fixed", bottom:-100, right:-100, width:500, height:500, borderRadius:"50%", background:"#3B82F605", filter:"blur(100px)", pointerEvents:"none" }}/>
-        <div style={{ width:420, padding:40, background:"#0D1526", border:"1px solid #1E293B", borderRadius:24, boxShadow:"0 40px 80px #00000060" }}>
+        <div style={{ width:"min(420px, calc(100vw - 32px))", padding:"clamp(24px, 6vw, 40px)", boxSizing:"border-box" as const, background:"#0D1526", border:"1px solid #1E293B", borderRadius:24, boxShadow:"0 40px 80px #00000060" }}>
           <div style={{ textAlign:"center", marginBottom:36 }}>
             <div style={{ width:72, height:72, borderRadius:"50%", overflow:"hidden", border:"3px solid rgba(255,107,0,0.5)", boxShadow:"0 0 24px rgba(255,107,0,0.3)", display:"inline-flex", alignItems:"center", justifyContent:"center", marginBottom:14 }}>
               <img src={import.meta.env.BASE_URL + "bcpl-assets/bcpl-ball-color.jpg"} alt="BCPL" style={{ width:"100%", height:"100%", objectFit:"cover" }}/>
@@ -358,27 +367,29 @@ export default function AdminShell() {
     );
   }
 
+  const effCollapsed = isMobile ? false : collapsed;
+  const doLogout = () => { clearAdminToken(); setLoggedIn(false); setLoggedInAdmin(null); setLoginForm({email:"",password:""}); setLoginErr(""); setDrawerOpen(false); };
   const W = collapsed ? 64 : 224;
 
   return (
     <div style={{ display:"flex", height:"100vh", background:"#060B18", fontFamily:"'Inter',sans-serif", overflow:"hidden" }}>
 
       {/* ══ SIDEBAR ══ */}
-      <aside style={{ width:W, flexShrink:0, background:"#080E1C", borderRight:"1px solid #0F172A", display:"flex", flexDirection:"column", transition:"width .22s cubic-bezier(.4,0,.2,1)", overflow:"hidden" }}>
+      <aside style={ isMobile ? { position:"fixed", top:0, bottom:0, left:drawerOpen?0:-264, width:240, zIndex:1200, background:"#080E1C", borderRight:"1px solid #0F172A", display:"flex", flexDirection:"column", transition:"left .25s cubic-bezier(.4,0,.2,1)", overflow:"hidden", boxShadow:drawerOpen?"0 0 44px rgba(0,0,0,0.65)":"none" } : { width:W, flexShrink:0, background:"#080E1C", borderRight:"1px solid #0F172A", display:"flex", flexDirection:"column", transition:"width .22s cubic-bezier(.4,0,.2,1)", overflow:"hidden" }}>
 
         {/* Brand */}
-        <div style={{ height:60, paddingLeft:collapsed?0:12, paddingRight:collapsed?0:10, borderBottom:"1px solid #0F172A", display:"flex", alignItems:"center", justifyContent:collapsed?"center":"flex-start", gap:10, flexShrink:0 }}>
+        <div style={{ height:60, paddingLeft:effCollapsed?0:12, paddingRight:effCollapsed?0:10, borderBottom:"1px solid #0F172A", display:"flex", alignItems:"center", justifyContent:effCollapsed?"center":"flex-start", gap:10, flexShrink:0 }}>
           <div style={{ width:32, height:32, borderRadius:"50%", overflow:"hidden", border:"2px solid rgba(255,107,0,0.55)", boxShadow:"0 0 10px rgba(255,107,0,0.3)", flexShrink:0 }}>
             <img src={import.meta.env.BASE_URL + "bcpl-assets/bcpl-ball-color.jpg"} alt="BCPL" style={{ width:"100%", height:"100%", objectFit:"cover" }}/>
           </div>
-          {!collapsed&&(
+          {!effCollapsed&&(
             <div style={{ flex:1, minWidth:0 }}>
               <div style={{ fontWeight:900, fontSize:13, color:"#FF6B00", letterSpacing:.5, lineHeight:1, whiteSpace:"nowrap" }}>BCPL Admin</div>
               <div style={{ fontSize:10, color:"#334155", marginTop:3, lineHeight:1, whiteSpace:"nowrap" }}>Season 5 · 2026–27</div>
             </div>
           )}
-          <button onClick={()=>setCollapsed(c=>!c)} style={{ width:24, height:24, display:"flex", alignItems:"center", justifyContent:"center", background:"none", border:"none", color:"#334155", cursor:"pointer", fontSize:16, flexShrink:0, lineHeight:1, padding:0 }}>
-            {collapsed?"›":"‹"}
+          <button onClick={()=>{ if(isMobile){ setDrawerOpen(false); } else { setCollapsed(c=>!c); } }} style={{ width:24, height:24, display:"flex", alignItems:"center", justifyContent:"center", background:"none", border:"none", color:"#334155", cursor:"pointer", fontSize:16, flexShrink:0, lineHeight:1, padding:0 }}>
+            {isMobile?"✕":effCollapsed?"›":"‹"}
           </button>
         </div>
 
@@ -386,7 +397,7 @@ export default function AdminShell() {
         <nav style={{ flex:1, padding:"10px 8px", overflowY:"auto", overflowX:"hidden" }}>
           {visibleNAV.map(group=>(
             <div key={group.title} style={{ marginBottom:14 }}>
-              {!collapsed&&(
+              {!effCollapsed&&(
                 <div style={{ height:26, display:"flex", alignItems:"center", paddingLeft:8 }}>
                   <span style={{ fontSize:9, fontWeight:800, color:"#1E3A5F", letterSpacing:1.5, textTransform:"uppercase", lineHeight:1 }}>{group.title}</span>
                 </div>
@@ -394,10 +405,10 @@ export default function AdminShell() {
               {group.items.map(item=>{
                 const on = active===item.id;
                 return (
-                  <button key={item.id} onClick={()=>navigate(item.id)} title={collapsed?item.label:undefined}
-                    style={{ width:"100%", height:36, padding:collapsed?"0":"0 10px", marginBottom:2, borderRadius:9, border:"none", borderLeft:`2px solid ${on?"#FF6B00":"transparent"}`, background:on?"#FF6B0018":"transparent", color:on?"#FF6B00":"#4B5775", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:collapsed?"center":"flex-start", gap:10, transition:"background .12s,color .12s" }}>
+                  <button key={item.id} onClick={()=>{ navigate(item.id); if(isMobile) setDrawerOpen(false); }} title={effCollapsed?item.label:undefined}
+                    style={{ width:"100%", height:36, padding:effCollapsed?"0":"0 10px", marginBottom:2, borderRadius:9, border:"none", borderLeft:`2px solid ${on?"#FF6B00":"transparent"}`, background:on?"#FF6B0018":"transparent", color:on?"#FF6B00":"#4B5775", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:effCollapsed?"center":"flex-start", gap:10, transition:"background .12s,color .12s" }}>
                     <Icon ch={item.icon}/>
-                    {!collapsed&&(
+                    {!effCollapsed&&(
                       <>
                         <span style={{ flex:1, fontSize:12.5, fontWeight:on?600:400, textAlign:"left", whiteSpace:"nowrap", lineHeight:1, letterSpacing:.1 }}>{item.label}</span>
                         {item.badge&&(
@@ -413,28 +424,35 @@ export default function AdminShell() {
         </nav>
 
         {/* Profile footer */}
-        <div style={{ height:56, paddingLeft:collapsed?0:12, paddingRight:collapsed?0:10, borderTop:"1px solid #0F172A", display:"flex", alignItems:"center", justifyContent:collapsed?"center":"flex-start", gap:10, flexShrink:0 }}>
+        <div style={{ height:56, paddingLeft:effCollapsed?0:12, paddingRight:effCollapsed?0:10, borderTop:"1px solid #0F172A", display:"flex", alignItems:"center", justifyContent:effCollapsed?"center":"flex-start", gap:10, flexShrink:0 }}>
           <div style={{ width:30, height:30, borderRadius:8, background:"#FF6B0020", border:"2px solid #FF6B0040", display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, fontWeight:800, color:"#FF6B00", flexShrink:0, lineHeight:1 }}>
             {(loggedInAdmin?.name||"A").charAt(0).toUpperCase()}
           </div>
-          {!collapsed&&(
+          {!effCollapsed&&(
             <>
               <div style={{ flex:1, minWidth:0 }}>
                 <div style={{ fontSize:12, fontWeight:700, color:"#CBD5E1", lineHeight:1, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{loggedInAdmin?.name||"Admin"}</div>
                 <div style={{ fontSize:10, color:"#334155", marginTop:4, lineHeight:1 }}>{loggedInAdmin?.role||"Super Admin"}</div>
               </div>
-              <button onClick={()=>{ clearAdminToken(); setLoggedIn(false); setLoggedInAdmin(null); setLoginForm({email:"",password:""}); setLoginErr(""); }}
-                style={{ width:28, height:28, display:"flex", alignItems:"center", justifyContent:"center", background:"none", border:"none", color:"#334155", cursor:"pointer", fontSize:14, flexShrink:0, lineHeight:1, borderRadius:6 }} title="Sign out">⎋</button>
+              <button onClick={doLogout}
+                style={{ width:28, height:28, display:"flex", alignItems:"center", justifyContent:"center", background:"none", border:"none", color:"#EF4444", cursor:"pointer", fontSize:16, flexShrink:0, lineHeight:1, borderRadius:6 }} title="Sign out">⎋</button>
             </>
           )}
         </div>
       </aside>
 
+      {isMobile && drawerOpen && (
+        <div onClick={()=>setDrawerOpen(false)} style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.55)", zIndex:1100 }}/>
+      )}
+
       {/* ══ MAIN ══ */}
       <div style={{ flex:1, display:"flex", flexDirection:"column", overflow:"hidden" }}>
 
         {/* Top bar */}
-        <header style={{ height:60, background:"#080E1C", borderBottom:"1px solid #0F172A", display:"flex", alignItems:"center", padding:"0 24px", gap:14, flexShrink:0 }}>
+        <header style={{ height:60, background:"#080E1C", borderBottom:"1px solid #0F172A", display:"flex", alignItems:"center", padding:isMobile?"0 12px":"0 24px", gap:isMobile?10:14, flexShrink:0 }}>
+          {isMobile && (
+            <button onClick={()=>setDrawerOpen(true)} aria-label="Open menu" style={{ width:38, height:38, borderRadius:9, border:"1px solid #1E293B", background:"#0D1526", color:"#CBD5E1", cursor:"pointer", fontSize:17, lineHeight:1, flexShrink:0 }}>☰</button>
+          )}
           <div style={{ flex:1 }}>
             <div style={{ fontSize:14, fontWeight:700, color:"#E2E8F0", lineHeight:1 }}>{activeLabel}</div>
             <div style={{ fontSize:11, color:"#334155", marginTop:5, lineHeight:1 }}>BCPL Season 5 · {new Date().toLocaleDateString("en-US",{ month:"long", day:"numeric", year:"numeric" })}</div>
@@ -442,9 +460,11 @@ export default function AdminShell() {
 
           {/* Refresh current section */}
           <div style={{ display:"flex", alignItems:"center", gap:10, flexShrink:0 }}>
+            {!isMobile && (
             <span style={{ fontSize:11, color:"#334155", lineHeight:1, whiteSpace:"nowrap" }}>
               Last updated {lastUpdated.toLocaleTimeString("en-IN", { hour:"2-digit", minute:"2-digit" })}
             </span>
+            )}
             <button onClick={()=>{ if(active==="live_scoring") return; setRefreshKey(k=>k+1); setLastUpdated(new Date()); }}
               disabled={active==="live_scoring"}
               title={active==="live_scoring" ? "Refresh is off here so live ball-by-ball entry isn't interrupted" : "Reload this section's data"}
@@ -454,6 +474,7 @@ export default function AdminShell() {
           </div>
 
           {/* Search */}
+          {!isMobile && (
           <div style={{ position:"relative" }}>
             <button onClick={()=>setSearchOpen(s=>!s)} style={{ height:34, display:"flex", alignItems:"center", gap:8, padding:"0 12px", borderRadius:9, border:"1px solid #1E293B", background:"#0D1526", color:"#475569", cursor:"pointer", fontSize:12, lineHeight:1 }}>
               <span style={{ fontSize:13, lineHeight:1 }}>⌖</span>
@@ -479,12 +500,15 @@ export default function AdminShell() {
               </div>
             )}
           </div>
+          )}
 
           {/* Live pill */}
+          {!isMobile && (
           <div style={{ height:30, display:"flex", alignItems:"center", gap:7, background:"#47556910", border:"1px solid #47556930", borderRadius:20, padding:"0 12px", flexShrink:0 }}>
             <div style={{ width:7, height:7, borderRadius:"50%", background:"#475569", flexShrink:0 }}/>
             <span style={{ fontSize:12, fontWeight:700, color:"#475569", lineHeight:1, whiteSpace:"nowrap" }}>0 Live</span>
           </div>
+          )}
 
           {/* Notifications */}
           <div style={{ position:"relative" }}>
@@ -515,11 +539,15 @@ export default function AdminShell() {
             )}
           </div>
 
+          {isMobile && (
+            <button onClick={doLogout} title="Sign out" aria-label="Sign out" style={{ width:38, height:38, borderRadius:9, border:"1px solid rgba(239,68,68,0.35)", background:"rgba(239,68,68,0.08)", color:"#EF4444", cursor:"pointer", fontSize:16, lineHeight:1, flexShrink:0 }}>⎋</button>
+          )}
+
           {(searchOpen||notifOpen)&&<div style={{ position:"fixed", inset:0, zIndex:40 }} onClick={()=>{ setSearchOpen(false); setNotifOpen(false); }}/>}
         </header>
 
         {/* Content — key bump on ↺ remounts the active view, re-fetching its data */}
-        <main key={refreshKey} style={{ flex:1, overflowY:"auto", background:"#060B18", padding:24 }}>
+        <main key={refreshKey} style={{ flex:1, overflowY:"auto", overflowX:"auto", background:"#060B18", padding:isMobile?12:24 }}>
           {renderView(active, navigate, navPayload, autoTick)}
         </main>
       </div>

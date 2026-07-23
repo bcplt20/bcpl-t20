@@ -177,6 +177,13 @@ export function PlayerProfile() {
   const user   = data?.user;
   const regId  = reg?.regNumber ?? (reg?.id ? 'REF-' + reg.id.slice(0, 6).toUpperCase() : '—');
 
+  // Payment rows may carry gateway statuses ('success'/'captured') instead of 'paid',
+  // and old/manual registrations may lack a payment row entirely while the
+  // registration status already proves payment — trust either signal.
+  const paidish = (s: unknown) => ['paid', 'success', 'captured'].includes(String(s ?? '').toLowerCase());
+  const p1Paid = paidish(data?.phase1Payment?.status) || ['payment_done','video_submitted','selected','rejected'].includes(reg?.phase1Status ?? '');
+  const p2Paid = paidish(data?.phase2Payment?.status) || ['payment_done','kyc_done','kyc_approved','trial_cleared','auction_shortlisted','team_signed'].includes(reg?.phase2Status ?? '');
+
   if (loading) return (
     <div style={{ background:'var(--bg)', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center' }}>
       <div style={{ textAlign:'center' }}>
@@ -347,8 +354,8 @@ export function PlayerProfile() {
                       <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '12px', padding: '16px', border: '1px solid var(--line)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                           <div style={{ fontSize: 11, fontWeight: 800, fontFamily: 'var(--font-head)', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t("Phase 1 Payment", "फेज 1 पेमेंट")}</div>
-                          <div className="tag" style={{ background: (data.phase1Payment?.status === 'paid' || ['payment_done','video_submitted','selected','rejected'].includes(reg.phase1Status)) ? 'rgba(34,197,94,0.1)' : 'rgba(232,178,61,0.1)', borderColor: (data.phase1Payment?.status === 'paid' || ['payment_done','video_submitted','selected','rejected'].includes(reg.phase1Status)) ? 'rgba(34,197,94,0.3)' : 'rgba(232,178,61,0.3)', color: (data.phase1Payment?.status === 'paid' || ['payment_done','video_submitted','selected','rejected'].includes(reg.phase1Status)) ? 'var(--green)' : 'var(--gold)', padding: '4px 10px', fontSize: 10 }}>
-                            {(data.phase1Payment?.status === 'paid' || ['payment_done','video_submitted','selected','rejected'].includes(reg.phase1Status)) ? t('✓ Paid', '✓ पेड') : t('Pending', 'पेंडिंग')}
+                          <div className="tag" style={{ background: p1Paid ? 'rgba(34,197,94,0.1)' : 'rgba(232,178,61,0.1)', borderColor: p1Paid ? 'rgba(34,197,94,0.3)' : 'rgba(232,178,61,0.3)', color: p1Paid ? 'var(--green)' : 'var(--gold)', padding: '4px 10px', fontSize: 10 }}>
+                            {p1Paid ? t('✓ Paid', '✓ पेड') : t('Pending', 'पेंडिंग')}
                           </div>
                         </div>
                         {data.phase1Payment && <div style={{ fontSize: 20, fontWeight: 700, color: '#fff', fontFamily: 'var(--font-head)' }}>{fmtAmt(data.phase1Payment.amount)}</div>}
@@ -375,17 +382,17 @@ export function PlayerProfile() {
                       </div>
 
                       {/* Phase 2 Payment */}
-                      {(reg.phase1Status === 'selected' || data.phase2Payment) && (
+                      {(reg.phase1Status === 'selected' || data.phase2Payment || p2Paid) && (
                         <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '12px', padding: '16px', border: '1px solid var(--line)' }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                             <div style={{ fontSize: 11, fontWeight: 800, fontFamily: 'var(--font-head)', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t("Phase 2 Payment", "फेज 2 पेमेंट")}</div>
-                            <div className="tag" style={{ background: data.phase2Payment?.status === 'paid' ? 'rgba(34,197,94,0.1)' : 'rgba(255,122,41,0.1)', borderColor: data.phase2Payment?.status === 'paid' ? 'rgba(34,197,94,0.3)' : 'rgba(255,122,41,0.3)', color: data.phase2Payment?.status === 'paid' ? 'var(--green)' : 'var(--orange)', padding: '4px 10px', fontSize: 10 }}>
-                              {data.phase2Payment?.status === 'paid' ? t('✓ Paid', '✓ पेड') : t('Pending', 'पेंडिंग')}
+                            <div className="tag" style={{ background: p2Paid ? 'rgba(34,197,94,0.1)' : 'rgba(255,122,41,0.1)', borderColor: p2Paid ? 'rgba(34,197,94,0.3)' : 'rgba(255,122,41,0.3)', color: p2Paid ? 'var(--green)' : 'var(--orange)', padding: '4px 10px', fontSize: 10 }}>
+                              {p2Paid ? t('✓ Paid', '✓ पेड') : t('Pending', 'पेंडिंग')}
                             </div>
                           </div>
                           {data.phase2Payment && <div style={{ fontSize: 20, fontWeight: 700, color: '#fff', fontFamily: 'var(--font-head)' }}>{fmtAmt(data.phase2Payment.amount)}</div>}
                           {data.phase2Payment?.paidAt && <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', marginTop: 4 }}>{fmtDate(data.phase2Payment.paidAt)}</div>}
-                          {!data.phase2Payment && (
+                          {!data.phase2Payment && !p2Paid && (
                             <button onClick={() => { setLocation('/register/phase2'); }}
                               style={{ marginTop: 8, padding: '8px 16px', fontSize: 11, fontWeight: 800, fontFamily: 'var(--font-head)', background: 'rgba(255,122,41,0.1)', border: '1px solid rgba(255,122,41,0.4)', color: 'var(--orange)', borderRadius: '8px', cursor: 'pointer', textTransform: 'uppercase' }}>
                               {t("PAY NOW →", "अभी पेमेंट करें →")}
