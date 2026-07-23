@@ -1,6 +1,9 @@
 import React from 'react';
+import { Link } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
+import { useLang } from '../lib/i18n';
+import { exists } from 'fs';
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
@@ -69,31 +72,31 @@ function AmbientBg() {
 function MobileStickyCTA() {
   return (
     <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',padding:'10px 16px calc(16px + env(safe-area-inset-bottom))',gap:10}}>
-      <a href="/register" className="btn-fire" style={{flex:2,height:52,fontSize:15,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register ₹299 →</a>
+      <Link href="/register" className="btn-fire" style={{flex:2,height:52,fontSize:15,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register ₹299 →</Link>
       <a href="https://wa.me/919151346555" target="_blank" rel="noopener noreferrer" className="btn-wa" style={{flex:1,height:52,fontSize:14,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>💬 WhatsApp</a>
     </div>
   );
 }
 
 const stats = [
-  {num:'2 Lakh+',label:'Players',sub:'registered across all seasons'},
-  {num:'75+',label:'Trial Cities',sub:'across India'},
-  {num:'4',label:'Seasons',sub:'completed since 2023'},
-  {num:'10',label:'Franchises',sub:'competing in Season 5'},
+  {num:'2.5L+',labelEn:'Players',labelHi:'खिलाड़ी',subEn:'registered across all seasons',subHi:'सभी seasons में register'},
+  {num:'75+',labelEn:'Trial Cities',labelHi:'Trial शहर',subEn:'across India',subHi:'पूरे भारत में'},
+  {num:'4',labelEn:'Seasons',labelHi:'Seasons',subEn:'completed since 2023',subHi:'2023 से पूरे'},
+  {num:'10',labelEn:'Franchises',labelHi:'Franchises',subEn:'competing in Season 5',subHi:'Season 5 में'},
 ];
 
 const timeline = [
-  {year:'2023', icon:'🌱', text:'Season 1 — Founded in Delhi. Working professionals took the field for the first time. 500+ players, 5 trial cities, 1 unforgettable dream born.'},
-  {year:'2024', icon:'📈', text:'Season 2 — Growth exploded. 25,000+ players across 50+ cities. Franchise auction system introduced. Corporate cricket found its identity.'},
-  {year:'2025', icon:'🏟️', text:'Season 3 & 4 — Two powerful seasons. 1 Lakh+ registrations, 50+ trial cities, national media coverage. BCPL became India\'s largest corporate cricket league.'},
-  {year:'2026', icon:'🏆', text:'Season 4 concluded — 2 Lakh+ players registered. 50+ cities. Tournament to be held in October 2026. The stage is set for the grandest season yet.'},
-  {year:'2026–27', icon:'🚀', text:'Season 5 — Registrations open now. 75+ trial cities. 10 franchise teams. ₹6 Crore prize pool. #OfficeSeStadiumtak. India\'s biggest corporate cricket league awaits you.'},
+  {year:'2023',textEn:'Season 1 — Founded in Delhi. Working professionals took the field for the first time. 500+ players, 5 trial cities, 1 unforgettable dream born.',textHi:'Season 1 — Delhi में शुरुआत। Working professionals पहली बार मैदान में उतरे। 500+ खिलाड़ी, 5 trial शहर, एक अविस्मरणीय सपना।'},
+  {year:'2024',textEn:'Season 2 — Growth exploded. 25,000+ players across 50+ cities. Franchise auction system introduced. Corporate cricket found its identity.',textHi:'Season 2 — तेज़ी से बढ़ोतरी। 50+ शहरों में 25,000+ खिलाड़ी। Franchise auction system शुरू। Corporate cricket को अपनी पहचान मिली।'},
+  {year:'2025',textEn:'Season 3 & 4 — Two powerful seasons. 1 Lakh+ registrations, 50+ trial cities, national media coverage. BCPL became India\'s largest corporate cricket league.',textHi:'Season 3 और 4 — दो शानदार seasons। 1 लाख+ registrations, 50+ trial cities, national media coverage। BCPL भारत की सबसे बड़ी corporate cricket league बनी।'},
+  {year:'2026',textEn:'Season 4 concluded — 2 Lakh+ players registered. 50+ cities. Tournament held in October 2026. The stage was set for the grandest season.',textHi:'Season 4 समाप्त — 2 लाख+ खिलाड़ी register। 50+ शहर। October 2026 में tournament हुआ। सबसे बड़े season के लिए तैयारी।'},
+  {year:'2026–27',textEn:'Season 5 — Registrations open now. 75+ trial cities. 10 franchise teams. ₹6 Crore prize pool. India\'s biggest corporate cricket league awaits you.',textHi:'Season 5 — Registrations अब खुले हैं। 75+ trial cities। 10 franchise teams। ₹6 करोड़ prize pool। भारत की सबसे बड़ी corporate cricket league आपका इंतज़ार कर रही है।'},
 ];
 
 const diffs = [
-  {icon:'🏏',title:'vs Local Cricket',body:'No politics. No favoritism. Pure merit through video scouting. Every applicant gets a fair, anonymous evaluation.'},
-  {icon:'🏟️',title:'vs Amateur Leagues',body:'Professional grounds. Franchise system. Real auctions. This is as close to IPL as corporate cricket gets.'},
-  {icon:'💰',title:'vs Doing Nothing',body:'₹299 gets you in. No other league offers this entry point for a shot at professional-grade cricket.'},
+  {icon:'🏏',titleEn:'vs Local Cricket',titleHi:'vs Local Cricket',bodyEn:'No politics. No favoritism. Pure merit through video scouting. Every applicant gets a fair, anonymous evaluation.',bodyHi:'कोई पक्षपात नहीं। Pure merit through video scouting। हर applicant को fair, anonymous evaluation मिलती है।'},
+  {icon:'🏟️',titleEn:'vs Amateur Leagues',titleHi:'vs Amateur Leagues',bodyEn:'Professional grounds. Franchise system. Real auctions. This is as close to IPL as corporate cricket gets.',bodyHi:'Professional grounds। Franchise system। Real auctions। Corporate cricket में IPL के सबसे करीब।'},
+  {icon:'💰',titleEn:'vs Doing Nothing',titleHi:'vs कुछ न करना',bodyEn:'₹299 gets you in. No other league offers this entry point for a shot at professional-grade cricket.',bodyHi:'₹299 में entry। कोई दूसरी league इतने कम में professional-grade cricket का मौका नहीं देती।'},
 ];
 
 
@@ -112,6 +115,8 @@ const ROUTE_MAP: Record<string,string> = {
 };
 
 export function About() {
+  const { t } = useLang();
+
   return (
     <div style={{minHeight:'100vh',background:'#060E1C',fontFamily:'Inter,sans-serif',position:'relative'}}>
       <style>{CSS}</style>
@@ -121,28 +126,28 @@ export function About() {
       {/* HERO */}
       <section style={{position:'relative',zIndex:1,padding:'100px 0 80px',textAlign:'center'}}>
         <div className="wrap">
-          <div className="tag-pill" style={{marginBottom:24,animation:'floatUp 0.6s ease both'}}>OUR STORY</div>
+          <div className="tag-pill" style={{marginBottom:24,animation:'floatUp 0.6s ease both'}}>{t("OUR STORY","हमारी कहानी")}</div>
           <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(40px,7vw,80px)',lineHeight:1.05,color:'#fff',marginBottom:12,animation:'floatUp 0.7s ease 0.1s both'}}>
-            WHERE OFFICES
+            {t("WHERE OFFICES","जहां ऑफिसें")}
           </h1>
           <h1 className="shimmer-gold" style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(40px,7vw,80px)',lineHeight:1.05,marginBottom:28,animation:'floatUp 0.7s ease 0.2s both'}}>
-            MEET STADIUMS.
+            {t("MEET STADIUMS.","स्टेडियम बनती हैं।")}
           </h1>
           <p style={{color:'rgba(255,255,255,0.65)',fontSize:18,maxWidth:600,margin:'0 auto',lineHeight:1.7,animation:'floatUp 0.7s ease 0.3s both'}}>
-            The world's largest corporate cricket league. Turning working professionals into franchise cricketers since 2020.
+            {t("The world's largest corporate cricket league. Turning working professionals into franchise cricketers since 2023.","दुनिया की सबसे बड़ी कॉर्पोरेट क्रिकेट लीग। 2023 से working professionals को franchise cricketers बना रहे हैं।")}
           </p>
         </div>
       </section>
 
-      {/* MISSION CARD */}
+      {/* THE PROBLEM → THE MISSION */}
       <section style={{position:'relative',zIndex:1,padding:'0 0 80px'}}>
         <div className="wrap">
           <div className="glass-card" style={{padding:'clamp(20px,5vw,40px) clamp(16px,4vw,48px)',borderLeft:'3px solid #E8B23D',maxWidth:860,margin:'0 auto',animation:'fadeSlide 0.8s ease 0.4s both'}}>
             <div style={{fontSize:32,marginBottom:16}}>💡</div>
             <p style={{color:'rgba(255,255,255,0.88)',fontSize:'clamp(17px,2.2vw,21px)',lineHeight:1.75,fontStyle:'italic'}}>
-              "We believe every corporate professional who watched IPL and thought <span style={{color:'#FF7A29',fontWeight:700}}>'I could have played'</span> — deserves a real shot. BCPL exists to give them that shot."
+              {t("Every working professional who watched IPL and thought 'I could have played' deserves a real shot. Millions stopped competitive cricket when work took over. BCPL exists to give them the stage they never got.","हर working professional जो IPL देखते हुए सोचता है 'मैं भी खेल सकता था' — उसे एक असली मौका मिलना चाहिए। लाखों लोगों ने काम की वजह से competitive cricket छोड़ दी। BCPL उन्हें वो stage देने के लिए है जो उन्हें कभी नहीं मिला।")}
             </p>
-            <div style={{marginTop:20,color:'rgba(255,255,255,0.35)',fontSize:13,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'0.08em'}}>— BCPL FOUNDING MISSION</div>
+            <div style={{marginTop:20,color:'rgba(255,255,255,0.35)',fontSize:13,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'0.08em'}}>— {t("BCPL FOUNDING MISSION","BCPL की स्थापना मिशन")}</div>
           </div>
         </div>
       </section>
@@ -154,8 +159,8 @@ export function About() {
             {stats.map((s,i)=>(
               <div key={i} className="glass-card" style={{padding:'36px 24px',textAlign:'center',animation:`countUp 3s ease ${i*0.4}s infinite`}}>
                 <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:52,color:'#FF7A29',lineHeight:1,marginBottom:8}}>{s.num}</div>
-                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:16,color:'#fff',marginBottom:6}}>{s.label}</div>
-                <div style={{color:'rgba(255,255,255,0.4)',fontSize:12,fontFamily:'Inter,sans-serif'}}>{s.sub}</div>
+                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:16,color:'#fff',marginBottom:6}}>{t(s.labelEn,s.labelHi)}</div>
+                <div style={{color:'rgba(255,255,255,0.4)',fontSize:12,fontFamily:'Inter,sans-serif'}}>{t(s.subEn,s.subHi)}</div>
               </div>
             ))}
           </div>
@@ -166,18 +171,18 @@ export function About() {
       <section style={{position:'relative',zIndex:1,padding:'0 0 80px'}}>
         <div className="wrap">
           <div style={{textAlign:'center',marginBottom:48}}>
-            <div className="tag-pill" style={{marginBottom:16}}>OUR JOURNEY</div>
-            <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(28px,4vw,44px)',color:'#fff'}}>Five Seasons of <span className="shimmer-gold">Legacy</span></h2>
+            <div className="tag-pill" style={{marginBottom:16}}>{t("OUR JOURNEY","हमारा सफर")}</div>
+            <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(28px,4vw,44px)',color:'#fff'}}>{t("Five Seasons of ","पाँच Seasons की ")} <span className="shimmer-gold">{t("Legacy","विरासत")}</span></h2>
           </div>
           <div style={{position:'relative',maxWidth:700,margin:'0 auto'}}>
             <div style={{position:'absolute',left:28,top:0,bottom:0,width:2,background:'linear-gradient(180deg,#E8B23D,rgba(232,178,61,0.2))'}}/>
-            {timeline.map((t,i)=>(
+            {timeline.map((tm,i)=>(
               <div key={i} style={{display:'flex',gap:28,marginBottom:i<timeline.length-1?40:0,position:'relative',animation:`fadeSlide 0.6s ease ${i*0.15}s both`}}>
                 <div style={{width:58,height:58,borderRadius:'50%',background:'linear-gradient(135deg,#FF7A29,#C94E0E)',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:13,color:'#fff',flexShrink:0,zIndex:1,boxShadow:'0 0 0 4px rgba(255,122,41,0.2)'}}>
-                  {t.year}
+                  {tm.year}
                 </div>
                 <div className="glass-card" style={{flex:1,padding:'20px 24px'}}>
-                  <p style={{color:'rgba(255,255,255,0.82)',fontSize:15,lineHeight:1.6}}>{t.text}</p>
+                  <p style={{color:'rgba(255,255,255,0.82)',fontSize:15,lineHeight:1.6}}>{t(tm.textEn,tm.textHi)}</p>
                 </div>
               </div>
             ))}
@@ -189,15 +194,15 @@ export function About() {
       <section style={{position:'relative',zIndex:1,padding:'0 0 80px'}}>
         <div className="wrap">
           <div style={{textAlign:'center',marginBottom:48}}>
-            <div className="tag-pill" style={{marginBottom:16}}>WHY BCPL</div>
-            <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(28px,4vw,44px)',color:'#fff'}}>How We're <span className="shimmer-gold">Different</span></h2>
+            <div className="tag-pill" style={{marginBottom:16}}>{t("WHY BCPL","क्यों BCPL")}</div>
+            <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(28px,4vw,44px)',color:'#fff'}}>{t("How We're ","हम कैसे ")} <span className="shimmer-gold">{t("Different","अलग हैं")}</span></h2>
           </div>
           <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(260px,1fr))',gap:24}}>
             {diffs.map((d,i)=>(
               <div key={i} className="glass-card" style={{padding:'36px 28px',borderTop:'3px solid #FF7A29',transition:'transform 0.2s',animation:`fadeSlide 0.7s ease ${i*0.15}s both`}}>
                 <div style={{fontSize:36,marginBottom:16}}>{d.icon}</div>
-                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:17,color:'#FF7A29',marginBottom:12}}>{d.title}</div>
-                <p style={{color:'rgba(255,255,255,0.7)',fontSize:14,lineHeight:1.7}}>{d.body}</p>
+                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:17,color:'#FF7A29',marginBottom:12}}>{t(d.titleEn,d.titleHi)}</div>
+                <p style={{color:'rgba(255,255,255,0.7)',fontSize:14,lineHeight:1.7}}>{t(d.bodyEn,d.bodyHi)}</p>
               </div>
             ))}
           </div>
@@ -208,9 +213,9 @@ export function About() {
       <section style={{position:'relative',zIndex:1,padding:'0 0 80px'}}>
         <div className="wrap">
           <div style={{textAlign:'center',marginBottom:56}}>
-            <div className="tag-pill" style={{marginBottom:16}}>THE PEOPLE BEHIND BCPL</div>
+            <div className="tag-pill" style={{marginBottom:16}}>{t("THE PEOPLE BEHIND BCPL","BCPL की टीम")}</div>
             <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(28px,4vw,44px)',color:'#fff'}}>
-              Meet Our <span className="shimmer-gold">Team</span>
+              {t("Meet Our ","हमारी ")} <span className="shimmer-gold">{t("Team","टीम")}</span>
             </h2>
           </div>
 
@@ -227,12 +232,12 @@ export function About() {
             <div style={{flex:1,minWidth:220,padding:'clamp(24px,4vw,40px)'}}>
               <div style={{display:'inline-flex',alignItems:'center',gap:8,background:'rgba(232,178,61,0.12)',border:'1px solid rgba(232,178,61,0.35)',borderRadius:100,padding:'5px 14px',marginBottom:18}}>
                 <span style={{width:8,height:8,borderRadius:'50%',background:'#E8B23D',display:'inline-block'}}/>
-                <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:11,color:'#E8B23D',letterSpacing:'.12em'}}>FOUNDER</span>
+                <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:11,color:'#E8B23D',letterSpacing:'.12em'}}>{t("FOUNDER","संस्थापक")}</span>
               </div>
               <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:6,lineHeight:1.1}}>Saurabh Jha</div>
-              <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:14,color:'#FF7A29',letterSpacing:'.06em',marginBottom:20}}>Founder &amp; Chairman</div>
+              <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:14,color:'#FF7A29',letterSpacing:'.06em',marginBottom:20}}>{t("Founder & Chairman","संस्थापक और अध्यक्ष")}</div>
               <p style={{color:'rgba(255,255,255,0.65)',fontSize:14,lineHeight:1.8,maxWidth:420}}>
-                Visionary behind Bharatiya Corporate Premier League — the world's largest corporate cricket tournament. Conceptualized under Kriparti Playing 11 Private Limited, Saurabh built BCPL from the ground up to give every working professional a real shot at professional cricket.
+                {t("Visionary behind Bharatiya Corporate Premier League — the world's largest corporate cricket tournament. Conceptualized under Kriparti Playing 11 Private Limited, Saurabh built BCPL from the ground up to give every working professional a real shot at professional cricket.","Bharatiya Corporate Premier League के visionary — दुनिया की सबसे बड़ी corporate cricket tournament। Kriparti Playing 11 Private Limited के तहत conceptualize किया, Saurabh ने BCPL को ground से build किया ताकि हर working professional को professional cricket का असली मौका मिल सके।")}
               </p>
             </div>
           </div>
@@ -299,15 +304,15 @@ export function About() {
       <section style={{position:'relative',zIndex:1,padding:'0 0 120px',textAlign:'center'}}>
         <div className="wrap">
           <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(24px,3.5vw,40px)',color:'#fff',marginBottom:12}}>
-            Join <span style={{color:'#FF7A29'}}>2.5 Lakh+</span> players who took their shot
+            {t("Join ","शामिल हों ")} <span style={{color:'#FF7A29'}}>2.5 {t("Lakh+","लाख+")}</span> {t(" players who took their shot"," खिलाड़ियों के साथ जिन्होंने अपना मौका लिया")}
           </h2>
-          <p style={{color:'rgba(255,255,255,0.5)',fontSize:15,marginBottom:32}}>Registration open now. ₹299 only.</p>
-          <a href="/register" className="btn-fire" style={{padding:'18px 48px',fontSize:17,textDecoration:'none',display:'inline-block'}}>Register for ₹299 →</a>
+          <p style={{color:'rgba(255,255,255,0.5)',fontSize:15,marginBottom:32}}>{t("Registration open now. ₹299 only.","Registration अब खुले हैं। सिर्फ ₹299।")}</p>
+          <Link href="/register" className="btn-fire" style={{padding:'18px 48px',fontSize:17,textDecoration:'none',display:'inline-block'}}>{t("Register for ₹299 →","₹299 में Register करें →")}</Link>
         </div>
       </section>
 
       {/* ── FLOATING REGISTER BUTTON ── */}
-      <a className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>🏏 REGISTER NOW &rarr;</a>
+      <Link className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>🏏 {t("REGISTER NOW","अभी REGISTER करें")} &rarr;</Link>
       <BCPLFooter />
       <MobileStickyCTA/>
     </div>

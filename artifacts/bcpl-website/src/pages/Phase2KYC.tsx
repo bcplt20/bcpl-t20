@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { getRegistrationStatus, initiateKyc, verifyKycOtp, getKycProgress, kycAadhaarOtp, kycVerifyPan } from '../lib/api';
-
-const BASE = import.meta.env.BASE_URL;
+import { useLang } from '../lib/i18n';
 
 // Must match backend enum exactly
 const PROFESSIONS = [
@@ -35,10 +35,10 @@ function validatePan(v: string)     { return /^[A-Z]{5}\d{4}[A-Z]$/.test(v.toUpp
 
 function ChipRow({ options, value, onChange, minWidth }: { options: string[]; value: string; onChange: (v: string) => void; minWidth?: number }) {
   return (
-    <div style={{ display:'flex', flexWrap:'wrap', gap:8, marginTop:4 }}>
+    <div style={{ display:'flex', flexWrap:'wrap', gap:10, marginTop:8 }}>
       {options.map(o => (
         <button key={o} onClick={() => onChange(value === o ? '' : o)}
-          style={{ padding:'9px 14px', minWidth, borderRadius:10, border: value===o ? '2px solid #FF7A29' : '1px solid rgba(255,255,255,0.1)', background: value===o ? 'rgba(255,122,41,0.12)' : 'rgba(255,255,255,0.03)', color: value===o ? '#FF7A29' : 'rgba(255,255,255,0.6)', fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:12, cursor:'pointer', textAlign:'center', transition:'all .18s' }}>
+          style={{ padding:'12px 18px', minWidth, borderRadius:'var(--r)', border: value===o ? '2px solid var(--orange)' : '1px solid var(--line)', background: value===o ? 'rgba(255,122,41,0.1)' : 'rgba(255,255,255,0.03)', color: value===o ? 'var(--orange)' : 'rgba(255,255,255,0.6)', fontFamily:'var(--font-body)', fontWeight:600, fontSize:14, cursor:'pointer', textAlign:'center', transition:'all .2s' }}>
           {o}
         </button>
       ))}
@@ -82,6 +82,9 @@ export function Phase2KYC() {
   const [otp, setOtp]                   = useState('');
   const [otpErr, setOtpErr]             = useState('');
   const [otpLoading, setOtpLoading]     = useState(false);
+
+  const [, setLocation] = useLocation();
+  const { t } = useLang();
 
   useEffect(() => {
     (async () => {
@@ -182,7 +185,6 @@ export function Phase2KYC() {
         emergencyName: ecName.trim(),
         emergencyRelation: ecRel,
         emergencyPhone: ecPhone,
-        // Optional — sending '' would fail the server's enum check
         bloodGroup: bloodGroup || undefined,
       });
       // Details are now stored server-side — the sessionStorage copy is stale.
@@ -196,7 +198,7 @@ export function Phase2KYC() {
         setAadhaarRefId(result.aadhaarRefId);
       } else if (result.status === 'verified' || result.status === 'VALID') {
         setKycStatus('verified');
-        setTimeout(() => { window.location.href = BASE + 'register/phase2/kyc-approved'; }, 2000);
+        setTimeout(() => { setLocation('/register/phase2/kyc-approved'); }, 2000);
       } else {
         setKycStatus('pending');
       }
@@ -207,7 +209,6 @@ export function Phase2KYC() {
     }
   };
 
-  // ── Resume-mid-way handlers ────────────────────────────────────────────────
   // Aadhaar-only resume: NEVER re-runs the billed PAN check.
   const handleAadhaarResume = async () => {
     if (!validateAadhaar(aadhaar)) { setAadhaarErr('Aadhaar must be 12 digits'); return; }
@@ -220,7 +221,7 @@ export function Phase2KYC() {
         setAadhaarRefId(result.aadhaarRefId);
       } else if (result.status === 'verified') {
         setKycStatus('verified');
-        setTimeout(() => { window.location.href = BASE + 'register/phase2/kyc-approved'; }, 2000);
+        setTimeout(() => { setLocation('/register/phase2/kyc-approved'); }, 2000);
       } else if (result.status === 'AADHAAR_DONE') {
         setResumeMode('pan');
       }
@@ -238,7 +239,7 @@ export function Phase2KYC() {
       setKycMsg(result.message);
       if (result.status === 'verified') {
         setKycStatus('verified');
-        setTimeout(() => { window.location.href = BASE + 'register/phase2/kyc-approved'; }, 2000);
+        setTimeout(() => { setLocation('/register/phase2/kyc-approved'); }, 2000);
       } else if (result.status === 'MANUAL_REVIEW') {
         setKycStatus('pending');
       } else if (result.status === 'PAN_VERIFIED') {
@@ -250,8 +251,6 @@ export function Phase2KYC() {
     } finally { setSubmitting(false); }
   };
 
-  // OTP "Resend" — Aadhaar OTP only. The old path re-ran the whole initiate
-  // call (including a freshly billed PAN check) on every click.
   const handleOtpResend = async () => {
     if (!validateAadhaar(aadhaar)) {
       setSubmitErr('Re-enter your 12-digit Aadhaar to resend the OTP.');
@@ -275,9 +274,8 @@ export function Phase2KYC() {
       if (result.status === 'verified') {
         setKycStatus('verified');
         setKycMsg(result.message);
-        setTimeout(() => { window.location.href = BASE + 'register/phase2/kyc-approved'; }, 2000);
+        setTimeout(() => { setLocation('/register/phase2/kyc-approved'); }, 2000);
       } else if (result.status === 'MANUAL_REVIEW') {
-        // Aadhaar OTP done; PAN awaits manual check by the team
         setKycStatus('pending');
         setKycMsg(result.message);
       } else {
@@ -290,384 +288,344 @@ export function Phase2KYC() {
     }
   };
 
-  // Shared loading/error/guard screens
   if (loadState === 'loading') return (
-    <div style={{ background:'#06101E', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', color:'#64748B', fontFamily:'Inter,sans-serif' }}>Loading…</div>
+    <div style={{ background:'var(--bg)', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', color:'#64748B', fontFamily:'var(--font-body)' }}>{t("Loading…", "लोड हो रहा है…")}</div>
   );
   if (loadState === 'already_done') return (
-    <div style={{ background:'#06101E', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:14, padding:24, textAlign:'center', fontFamily:'Inter,sans-serif' }}>
-      <div style={{ fontSize:48 }}>✅</div>
-      <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:22, color:'#22C55E' }}>KYC Already Verified</div>
-      <a href={BASE + 'register/phase2/kyc-approved'} style={{ padding:'12px 28px', borderRadius:12, background:'linear-gradient(135deg,#FF7A29,#D95E10)', color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:13, textDecoration:'none' }}>View KYC Status →</a>
+    <div style={{ background:'var(--bg)', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:16, padding:24, textAlign:'center', fontFamily:'var(--font-body)' }}>
+      <div style={{ fontSize:56 }}>✅</div>
+      <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:32, color:'var(--green)', textTransform:'uppercase' }}>{t("KYC Already Verified", "KYC पहले ही वेरीफाई हो चुका है")}</div>
+      <Link href="/register/phase2/kyc-approved" className="btn-cta" style={{ marginTop:16 }}>{t("View KYC Status →", "KYC स्टेटस देखें →")}</Link>
+      <style>{`.btn-cta{display:inline-flex;align-items:center;background:linear-gradient(135deg,var(--orange),var(--orange-2));border:none;border-radius:14px;color:#fff;font-family:var(--font-head);font-weight:900;letter-spacing:0.04em;padding:14px 28px;text-transform:uppercase;text-decoration:none;}`}</style>
     </div>
   );
   if (loadState === 'not_eligible' || loadState === 'error') return (
-    <div style={{ background:'#06101E', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:14, padding:24, textAlign:'center', fontFamily:'Inter,sans-serif' }}>
-      <div style={{ fontSize:48 }}>🔒</div>
-      <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'#F1F5F9' }}>KYC Not Available</div>
-      <div style={{ fontSize:13, color:'#64748B', maxWidth:380 }}>Complete Phase 2 payment first, then return here for KYC.</div>
-      <a href={BASE + 'register/phase2/payment'} style={{ padding:'12px 28px', borderRadius:12, background:'linear-gradient(135deg,#FF7A29,#D95E10)', color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:13, textDecoration:'none' }}>Go to Phase 2 Payment →</a>
+    <div style={{ background:'var(--bg)', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:16, padding:24, textAlign:'center', fontFamily:'var(--font-body)' }}>
+      <div style={{ fontSize:56 }}>🔒</div>
+      <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:32, color:'#fff', textTransform:'uppercase' }}>{t("KYC Not Available", "KYC उपलब्ध नहीं")}</div>
+      <div style={{ fontSize:15, color:'#64748B', maxWidth:400, lineHeight:1.6 }}>{t("Complete Phase 2 payment first, then return here for KYC.", "पहले फेज 2 पेमेंट पूरा करें, फिर KYC के लिए यहां लौटें।")}</div>
+      <Link href="/register/phase2/payment" className="btn-cta" style={{ marginTop:16 }}>{t("Go to Phase 2 Payment →", "फेज 2 पेमेंट पर जाएं →")}</Link>
+      <style>{`.btn-cta{display:inline-flex;align-items:center;background:linear-gradient(135deg,var(--orange),var(--orange-2));border:none;border-radius:14px;color:#fff;font-family:var(--font-head);font-weight:900;letter-spacing:0.04em;padding:14px 28px;text-transform:uppercase;text-decoration:none;}`}</style>
     </div>
   );
 
   const inp: React.CSSProperties = {
-    width:'100%', background:'#060B18', border:'1px solid #1E293B', borderRadius:10, color:'#E2E8F0',
-    padding:'12px 14px', fontSize:15, outline:'none', fontFamily:'Inter,sans-serif', letterSpacing:'.05em', boxSizing:'border-box',
+    width: '100%', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--line)', borderRadius: '12px', color: '#fff',
+    padding: '16px', fontSize: 16, outline: 'none', fontFamily: 'var(--font-body)', transition: 'border-color 0.2s', boxSizing: 'border-box'
   };
   const lbl: React.CSSProperties = {
-    display:'block', fontSize:10, fontWeight:700, letterSpacing:'.12em', color:'rgba(255,255,255,0.4)',
-    fontFamily:'Montserrat,sans-serif', marginBottom:8, textTransform:'uppercase',
+    display: 'block', fontSize: 11, fontWeight: 800, letterSpacing: '.12em', color: 'rgba(255,255,255,0.4)',
+    fontFamily: 'var(--font-head)', marginBottom: 10, textTransform: 'uppercase'
   };
 
   return (
-    <div style={{ background:'#06101E', minHeight:'100vh', fontFamily:"'Inter',sans-serif", color:'#F0EDE8', overflowX:'hidden', paddingBottom:80 }}>
+    <div className="page-root">
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap');
-        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-        .wrap{max-width:900px;margin:0 auto;padding:0 16px}
-        @media(min-width:768px){.wrap{padding:0 32px}}
-        .desk-nav{display:none}
-        @media(min-width:1024px){.desk-nav{display:flex;align-items:center;gap:20px}}
-        .ham-btn{display:flex;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
-        @media(min-width:1024px){.ham-btn{display:none}}
-        .btn-primary{background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:12px;color:#fff;font-family:Montserrat,sans-serif;font-weight:900;letter-spacing:.06em;cursor:pointer;transition:all .2s}
-        .btn-primary:hover{filter:brightness(1.15);transform:translateY(-2px)}
-        .btn-primary:disabled{opacity:.35;cursor:not-allowed;filter:none;transform:none}
-        @keyframes tickerScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-        @keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-        @keyframes shimGold{0%{background-position:-200% center}100%{background-position:200% center}}
-        @keyframes liveBlip{0%,100%{opacity:1}50%{opacity:0.1}}
-        @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-        @keyframes scaleIn{from{transform:scale(0.5);opacity:0}to{transform:scale(1);opacity:1}}
-        @keyframes verifiedPulse{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,0.4)}50%{box-shadow:0 0 0 12px rgba(34,197,94,0)}}
-        .upload-grid{display:grid;grid-template-columns:1fr;gap:20px;margin-bottom:24px}
-        @media(min-width:640px){.upload-grid{grid-template-columns:1fr 1fr}}
-        .doc-card{background:#0A1727;border:1px solid rgba(255,255,255,0.08);padding:20px 16px;border-radius:12px;width:100%}
-        .nav-link{font-size:12px;font-weight:700;font-family:Montserrat,sans-serif;letter-spacing:.08em;color:rgba(255,255,255,0.65);text-decoration:none;text-transform:uppercase;cursor:pointer;transition:color .2s;background:none;border:none}
-        .nav-link:hover{color:#FF7A29}
-        footer a{color:rgba(255,255,255,0.45);text-decoration:none}
-        footer a:hover{color:#FF7A29}
+        .page-root { background: var(--bg); min-height: 100vh; font-family: var(--font-body); color: var(--ink); overflow-x: hidden; padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
+        .W { max-width: 800px; margin: 0 auto; padding: 0 20px; }
+        @media (min-width: 768px) { .W { padding: 0 32px; } }
+        
+        .btn-primary { background: linear-gradient(135deg, var(--orange), var(--orange-2)); border: none; border-radius: var(--r); color: #fff; font-family: var(--font-head); font-weight: 900; letter-spacing: .06em; cursor: pointer; transition: all .2s; text-transform: uppercase; }
+        .btn-primary:hover { filter: brightness(1.1); transform: translateY(-2px); }
+        .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; filter: none; transform: none; }
+        
+        .card { background: var(--panel); border: 1px solid var(--line); padding: 32px 24px; border-radius: var(--r); width: 100%; margin-bottom: 32px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .grid2 { display: grid; grid-template-columns: 1fr; gap: 24px; }
+        @media (min-width: 640px) { .grid2 { grid-template-columns: 1fr 1fr; } }
+        
+        @keyframes verifiedPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); } 50% { box-shadow: 0 0 0 12px rgba(34,197,94,0); } }
+        @keyframes liveBlip { 0%,100% { opacity: 1; } 50% { opacity: 0.2; } }
+        @keyframes scaleIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        
+        input:focus { border-color: var(--orange) !important; }
+        
+        .stick-cta { position: fixed; bottom: 0; left: 0; right: 0; padding: 16px 20px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); background: rgba(3,7,16,0.95); backdrop-filter: blur(12px); border-top: 1px solid rgba(255,122,41,0.3); z-index: 1000; }
+        @media (min-width: 768px) { .stick-cta { display: none; } }
       `}</style>
 
       <SiteHeader />
 
       {/* Progress bar */}
-      <div style={{ background:'rgba(232,178,61,0.08)', borderBottom:'1px solid rgba(232,178,61,0.2)', padding:'10px 0' }}>
-        <div className="wrap" style={{ display:'flex', alignItems:'center', gap:8, flexWrap:'wrap', fontSize:12, fontWeight:700, color:'#E8B23D', fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em' }}>
-          <span style={{ color:'#22C55E' }}>✓</span> PHASE 1 CLEARED
-          <span style={{ color:'rgba(255,255,255,0.2)' }}>·</span>
-          <span style={{ color:'#22C55E' }}>✓</span> PHASE 2 PAID
-          <span style={{ color:'rgba(255,255,255,0.2)' }}>·</span>
-          <span style={{ color: kycStatus === 'verified' ? '#22C55E' : 'rgba(255,255,255,0.35)' }}>
-            {kycStatus === 'verified' ? '✓ KYC VERIFIED' : '→ KYC PENDING'}
+      <div style={{ background: 'rgba(232,178,61,0.06)', borderBottom: '1px solid rgba(232,178,61,0.2)', padding: '12px 0' }}>
+        <div className="W" style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', fontSize: 13, fontWeight: 800, color: 'var(--gold)', fontFamily: 'var(--font-head)', letterSpacing: '.06em', textTransform: 'uppercase' }}>
+          <span style={{ color: 'var(--green)' }}>✓</span> {t("PHASE 1 CLEARED", "फेज 1 क्लियर")}
+          <span style={{ color: 'rgba(255,255,255,0.2)' }}>·</span>
+          <span style={{ color: 'var(--green)' }}>✓</span> {t("PHASE 2 PAID", "फेज 2 पेड")}
+          <span style={{ color: 'rgba(255,255,255,0.2)' }}>·</span>
+          <span style={{ color: kycStatus === 'verified' ? 'var(--green)' : 'rgba(255,255,255,0.4)' }}>
+            {kycStatus === 'verified' ? t("✓ KYC VERIFIED", "✓ KYC वेरीफाइड") : t("→ KYC PENDING", "→ KYC पेंडिंग")}
           </span>
-          <span style={{ marginLeft:'auto', fontSize:11, color:'rgba(255,255,255,0.4)' }}>🏏 {role} · {city}</span>
+          <span style={{ marginLeft: 'auto', fontSize: 12, color: 'rgba(255,255,255,0.5)' }}>🏏 {role} · {city}</span>
         </div>
       </div>
 
-      <div className="wrap" style={{ paddingTop:40 }}>
+      <div className="W" style={{ paddingTop: 40 }}>
         {/* Page header */}
-        <div style={{ borderLeft:'3px solid #FF7A29', paddingLeft:14, marginBottom:32 }}>
-          <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(20px,4vw,28px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em', marginBottom:4 }}>
-            {kycStatus === 'verified' ? '✅ KYC Verified' : 'Player Details & KYC'}
+        <div style={{ borderLeft: '4px solid var(--orange)', paddingLeft: 16, marginBottom: 40 }}>
+          <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(28px, 5vw, 40px)', color: '#fff', textTransform: 'uppercase', letterSpacing: '.02em', marginBottom: 8, lineHeight: 1.1 }}>
+            {kycStatus === 'verified' ? t("✅ KYC Verified", "✅ KYC वेरीफाइड") : t("Player Details & KYC", "प्लेयर जानकारी और KYC")}
           </div>
-          <div style={{ fontSize:13, color:'rgba(255,255,255,0.45)', marginBottom:10 }}>Emergency contact and identity verification — required for BCCI compliance and franchise contract records</div>
-          <div style={{ display:'inline-flex', alignItems:'center', gap:6, padding:'5px 14px', fontSize:10, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.14em',
+          <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.5)', marginBottom: 16, lineHeight: 1.6, maxWidth: 600 }}>
+            {t("Emergency contact and identity verification — required for BCCI compliance and franchise contract records.", "आपातकालीन संपर्क और पहचान वेरिफिकेशन — BCCI नियमों और फ्रैंचाइज़ी कॉन्ट्रैक्ट के लिए आवश्यक।")}
+          </div>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', fontSize: 11, fontWeight: 900, fontFamily: 'var(--font-head)', letterSpacing: '.14em', textTransform: 'uppercase',
             background: kycStatus === 'verified' ? 'rgba(34,197,94,0.1)' : 'rgba(255,122,41,0.1)',
-            border: kycStatus === 'verified' ? '1px solid rgba(34,197,94,0.35)' : '1px solid rgba(255,122,41,0.3)',
-            color: kycStatus === 'verified' ? '#22C55E' : '#FF7A29',
+            border: kycStatus === 'verified' ? '1px solid rgba(34,197,94,0.4)' : '1px solid rgba(255,122,41,0.4)',
+            color: kycStatus === 'verified' ? 'var(--green)' : 'var(--orange)',
+            borderRadius: 8,
             animation: kycStatus === 'verified' ? 'verifiedPulse 2s ease infinite' : 'none',
           }}>
-            {kycStatus === 'verified' ? '✅ KYC COMPLETE — CLEARED FOR PHYSICAL TRIAL' : (
-              <><span style={{ width:6, height:6, borderRadius:'50%', background:'#FF7A29', display:'inline-block', animation:'liveBlip 1.2s ease infinite' }} />⏳ PENDING VERIFICATION</>
+            {kycStatus === 'verified' ? t("✅ KYC COMPLETE — CLEARED FOR PHYSICAL TRIAL", "✅ KYC पूरा — फिजिकल ट्रायल के लिए क्लियर") : (
+              <><span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--orange)', display: 'inline-block', animation: 'liveBlip 1.2s ease infinite' }} /> {t("⏳ PENDING VERIFICATION", "⏳ वेरिफिकेशन पेंडिंग")}</>
             )}
           </div>
         </div>
 
         {/* VERIFIED STATE */}
         {kycStatus === 'verified' ? (
-          <div style={{ background:'rgba(34,197,94,0.06)', border:'1px solid rgba(34,197,94,0.25)', padding:'40px 24px', textAlign:'center', marginBottom:32, borderRadius:12 }}>
-            <div style={{ fontSize:64, marginBottom:16, animation:'scaleIn .5s cubic-bezier(.34,1.56,.64,1) both' }}>✅</div>
-            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(20px,4vw,28px)', color:'#22C55E', marginBottom:8 }}>KYC VERIFICATION COMPLETE</div>
-            <div style={{ fontSize:14, color:'rgba(255,255,255,0.55)', marginBottom:20 }}>{kycMsg || 'All documents verified. You are cleared for BCPL Season 5 Physical Trials.'}</div>
-            <div style={{ display:'flex', justifyContent:'center', gap:12, flexWrap:'wrap', marginBottom:24 }}>
-              {['🪪 Aadhaar ✓','📋 PAN ✓','👤 Identity ✓'].map(t => (
-                <div key={t} style={{ background:'rgba(34,197,94,0.12)', border:'1px solid rgba(34,197,94,0.3)', padding:'8px 20px', fontSize:12, fontWeight:700, color:'#22C55E', fontFamily:'Montserrat,sans-serif', borderRadius:8 }}>{t}</div>
+          <div style={{ background: 'rgba(34,197,94,0.06)', border: '1px solid rgba(34,197,94,0.3)', padding: '48px 24px', textAlign: 'center', marginBottom: 40, borderRadius: 'var(--r)' }}>
+            <div style={{ fontSize: 72, marginBottom: 20, animation: 'scaleIn .5s cubic-bezier(.34,1.56,.64,1) both' }}>✅</div>
+            <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(24px, 5vw, 36px)', color: 'var(--green)', marginBottom: 12, textTransform: 'uppercase' }}>{t("KYC VERIFICATION COMPLETE", "KYC वेरिफिकेशन पूरा")}</div>
+            <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.6)', marginBottom: 24, lineHeight: 1.6 }}>{kycMsg || t('All documents verified. You are cleared for BCPL Season 5 Physical Trials.', 'सभी दस्तावेज़ वेरीफाई हो गए हैं। आप फिजिकल ट्रायल के लिए क्लियर हैं।')}</div>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap', marginBottom: 32 }}>
+              {['🪪 Aadhaar ✓', '📋 PAN ✓', '👤 Identity ✓'].map(t => (
+                <div key={t} style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.4)', padding: '10px 24px', fontSize: 14, fontWeight: 800, color: 'var(--green)', fontFamily: 'var(--font-head)', borderRadius: 10, textTransform: 'uppercase' }}>{t}</div>
               ))}
             </div>
-            <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)' }}>Redirecting to your dashboard…</div>
+            <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>{t("Redirecting to your dashboard…", "आपके डैशबोर्ड पर ले जा रहे हैं…")}</div>
           </div>
         ) : kycStatus === 'pending' ? (
           /* KYC Submitted — Pending */
-          <div style={{ background:'rgba(255,122,41,0.06)', border:'1px solid rgba(255,122,41,0.25)', padding:'40px 24px', textAlign:'center', borderRadius:12, marginBottom:32 }}>
-            <div style={{ fontSize:48, marginBottom:16 }}>⏳</div>
-            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:22, color:'#FF7A29', marginBottom:8 }}>KYC Submitted for Review</div>
-            <div style={{ fontSize:14, color:'rgba(255,255,255,0.55)', maxWidth:420, margin:'0 auto' }}>{kycMsg || 'Your documents are under review. You will receive an SMS + Email when verified (usually within 24 hours).'}</div>
+          <div style={{ background: 'rgba(255,122,41,0.06)', border: '1px solid rgba(255,122,41,0.3)', padding: '48px 24px', textAlign: 'center', borderRadius: 'var(--r)', marginBottom: 40 }}>
+            <div style={{ fontSize: 56, marginBottom: 20 }}>⏳</div>
+            <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(24px, 5vw, 32px)', color: 'var(--orange)', marginBottom: 12, textTransform: 'uppercase' }}>{t("KYC Submitted for Review", "KYC रिव्यू के लिए सबमिट हो गया")}</div>
+            <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.6)', maxWidth: 500, margin: '0 auto', lineHeight: 1.6 }}>{kycMsg || t('Your documents are under review. You will receive an SMS + Email when verified (usually within 24 hours).', 'आपके दस्तावेज़ों की जाँच हो रही है। वेरीफाई होने पर आपको SMS + ईमेल मिलेगा (आमतौर पर 24 घंटे में)।')}</div>
           </div>
         ) : aadhaarRefId ? (
           /* ── STEP 2: Aadhaar OTP ── */
-          <div style={{ background:'rgba(34,197,94,0.04)', border:'1px solid rgba(34,197,94,0.2)', borderRadius:12, padding:'32px 24px', marginBottom:32 }}>
-            <div style={{ textAlign:'center', marginBottom:28 }}>
-              <div style={{ fontSize:40, marginBottom:12 }}>📱</div>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'#22C55E', marginBottom:8 }}>
-                {panAutoVerified ? 'PAN Verified ✓' : 'Documents Received ✓'}
+          <div style={{ background: 'rgba(34,197,94,0.04)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 'var(--r)', padding: '40px 24px', marginBottom: 40 }}>
+            <div style={{ textAlign: 'center', marginBottom: 32 }}>
+              <div style={{ fontSize: 48, marginBottom: 16 }}>📱</div>
+              <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(24px, 4vw, 28px)', color: 'var(--green)', marginBottom: 12, textTransform: 'uppercase' }}>
+                {panAutoVerified ? t('PAN Verified ✓', 'PAN वेरीफाइड ✓') : t('Documents Received ✓', 'दस्तावेज़ प्राप्त ✓')}
               </div>
               {!panAutoVerified && (
-                <div style={{ fontSize:12, color:'#FF7A29', marginBottom:8 }}>
-                  PAN will be verified by our team — no action needed from you.
+                <div style={{ fontSize: 14, color: 'var(--orange)', marginBottom: 12, fontWeight: 600 }}>
+                  {t('PAN will be verified by our team — no action needed from you.', 'PAN हमारी टीम द्वारा वेरीफाई किया जाएगा — आपको कुछ करने की जरूरत नहीं है।')}
                 </div>
               )}
-              <div style={{ fontSize:14, color:'rgba(255,255,255,0.6)', maxWidth:380, margin:'0 auto' }}>
-                An OTP has been sent to your <strong style={{ color:'#fff' }}>Aadhaar-linked mobile number</strong>. Enter it below to complete verification.
+              <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.6)', maxWidth: 440, margin: '0 auto', lineHeight: 1.6 }}>
+                {t("An OTP has been sent to your Aadhaar-linked mobile number. Enter it below to complete verification.", "आपके आधार से जुड़े मोबाइल नंबर पर एक OTP भेजा गया है। वेरिफिकेशन पूरा करने के लिए इसे नीचे दर्ज करें।")}
               </div>
             </div>
 
-            <div style={{ maxWidth:320, margin:'0 auto' }}>
-              <label style={{ display:'block', fontSize:10, fontWeight:700, letterSpacing:'.12em', color:'rgba(255,255,255,0.4)', fontFamily:'Montserrat,sans-serif', marginBottom:8, textTransform:'uppercase' }}>
-                AADHAAR OTP (6 digits) *
-              </label>
+            <div style={{ maxWidth: 360, margin: '0 auto' }}>
+              <label style={lbl}>{t("AADHAAR OTP (6 digits) *", "आधार OTP (6 अंक) *")}</label>
               <input
-                style={{ ...inp, letterSpacing:'0.25em', fontSize:22, textAlign:'center', borderColor: otpErr ? '#EF4444' : (otp.length === 6 ? '#22C55E' : '#1E293B') }}
+                style={{ ...inp, letterSpacing: '0.25em', fontSize: 28, textAlign: 'center', fontWeight: 700, borderColor: otpErr ? 'var(--red)' : (otp.length === 6 ? 'var(--green)' : 'var(--line)') }}
                 type="text" inputMode="numeric" maxLength={6} placeholder="• • • • • •"
                 value={otp}
                 onChange={e => { setOtp(e.target.value.replace(/\D/g,'')); setOtpErr(''); }}
               />
-              {otpErr && <div style={{ fontSize:11, color:'#EF4444', marginTop:6, textAlign:'center' }}>⚠ {otpErr}</div>}
+              {otpErr && <div style={{ fontSize: 13, color: 'var(--red)', marginTop: 8, textAlign: 'center', fontWeight: 600 }}>⚠ {otpErr}</div>}
 
               <button
                 onClick={handleOtpVerify}
                 disabled={otpLoading || otp.length !== 6}
-                style={{ marginTop:20, width:'100%', background: otp.length===6 ? 'linear-gradient(135deg,#22C55E,#16A34A)' : 'rgba(255,255,255,0.07)', color: otp.length===6 ? '#fff' : 'rgba(255,255,255,0.35)', border:'none', borderRadius:10, padding:'16px 24px', fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, letterSpacing:'.08em', cursor: otp.length===6 ? 'pointer' : 'not-allowed', transition:'all .2s' }}
+                style={{ marginTop: 24, width: '100%', background: otp.length === 6 ? 'linear-gradient(135deg,var(--green),#16A34A)' : 'rgba(255,255,255,0.05)', color: otp.length === 6 ? '#fff' : 'rgba(255,255,255,0.3)', border: 'none', borderRadius: '12px', padding: '18px 24px', fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 16, letterSpacing: '.08em', cursor: otp.length === 6 ? 'pointer' : 'not-allowed', transition: 'all .2s', textTransform: 'uppercase' }}
               >
-                {otpLoading ? 'VERIFYING…' : 'VERIFY & COMPLETE KYC →'}
+                {otpLoading ? t('VERIFYING…', 'वेरीफाई हो रहा है…') : t('VERIFY & COMPLETE KYC →', 'वेरीफाई और KYC पूरा करें →')}
               </button>
 
-              <div style={{ marginTop:16, textAlign:'center', fontSize:12, color:'rgba(255,255,255,0.3)' }}>
-                OTP expires in 10 minutes. Didn't receive?{' '}
-                <button onClick={handleOtpResend} disabled={submitting} style={{ background:'none', border:'none', color: submitting ? 'rgba(255,255,255,0.3)' : '#FF7A29', cursor: submitting ? 'wait' : 'pointer', fontSize:12, fontWeight:700, padding:0 }}>{submitting ? 'Resending…' : 'Resend'}</button>
+              <div style={{ marginTop: 20, textAlign: 'center', fontSize: 14, color: 'rgba(255,255,255,0.4)' }}>
+                {t("OTP expires in 10 minutes. Didn't receive?", "OTP 10 मिनट में एक्सपायर हो जाएगा। नहीं मिला?")}{' '}
+                <button onClick={handleOtpResend} disabled={submitting} style={{ background: 'none', border: 'none', color: submitting ? 'rgba(255,255,255,0.3)' : 'var(--orange)', cursor: submitting ? 'wait' : 'pointer', fontSize: 14, fontWeight: 700, padding: 0 }}>{submitting ? t('Resending…', 'दोबारा भेज रहे हैं…') : t('Resend', 'दोबारा भेजें')}</button>
               </div>
               {submitErr && (
-                <div style={{ fontSize:11, color:'#EF4444', marginTop:10, textAlign:'center' }}>⚠ {submitErr}</div>
+                <div style={{ fontSize: 13, color: 'var(--red)', marginTop: 12, textAlign: 'center', fontWeight: 600 }}>⚠ {submitErr}</div>
               )}
             </div>
           </div>
         ) : resumeMode === 'aadhaar' ? (
           /* ── RESUME: only the Aadhaar OTP step is left ── */
-          <div style={{ background:'#0A1727', border:'1px solid rgba(232,178,61,0.28)', borderRadius:12, padding:'32px 24px', marginBottom:32 }}>
-            <div style={{ textAlign:'center', marginBottom:24 }}>
-              <div style={{ fontSize:40, marginBottom:12 }}>🪪</div>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'#E8B23D', marginBottom:8 }}>Resume Your KYC</div>
-              <div style={{ fontSize:13, color: panAutoVerified ? '#22C55E' : '#FF7A29', fontWeight:600, marginBottom:6 }}>
-                {panAutoVerified ? '✓ PAN already verified — it will not be checked again' : 'PAN is with our team for review — no action needed on PAN'}
+          <div style={{ background: 'var(--panel)', border: '1px solid rgba(232,178,61,0.4)', borderRadius: 'var(--r)', padding: '40px 24px', marginBottom: 40, boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }}>
+            <div style={{ textAlign: 'center', marginBottom: 32 }}>
+              <div style={{ fontSize: 48, marginBottom: 16 }}>🪪</div>
+              <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(24px, 4vw, 32px)', color: 'var(--gold)', marginBottom: 12, textTransform: 'uppercase' }}>{t("Resume Your KYC", "अपना KYC फिर से शुरू करें")}</div>
+              <div style={{ fontSize: 15, color: panAutoVerified ? 'var(--green)' : 'var(--orange)', fontWeight: 700, marginBottom: 12 }}>
+                {panAutoVerified ? t('✓ PAN already verified — it will not be checked again', '✓ PAN पहले ही वेरीफाइड है — इसे दोबारा चेक नहीं किया जाएगा') : t('PAN is with our team for review — no action needed on PAN', 'PAN हमारी टीम के पास रिव्यू के लिए है — आपको कुछ करने की जरूरत नहीं है')}
               </div>
-              <div style={{ fontSize:13, color:'rgba(255,255,255,0.55)', maxWidth:420, margin:'0 auto' }}>
-                Only the Aadhaar OTP step is left. For your privacy we never store your Aadhaar number — enter it again to receive a fresh OTP.
+              <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.6)', maxWidth: 480, margin: '0 auto', lineHeight: 1.6 }}>
+                {t("Only the Aadhaar OTP step is left. For your privacy we never store your Aadhaar number — enter it again to receive a fresh OTP.", "केवल आधार OTP स्टेप बचा है। आपकी गोपनीयता के लिए हम कभी आपका आधार नंबर सेव नहीं करते — नया OTP पाने के लिए इसे दोबारा दर्ज करें।")}
               </div>
             </div>
-            <div style={{ maxWidth:340, margin:'0 auto' }}>
-              <label style={lbl}>AADHAAR NUMBER *</label>
+            <div style={{ maxWidth: 400, margin: '0 auto' }}>
+              <label style={lbl}>{t("AADHAAR NUMBER *", "आधार नंबर *")}</label>
               <input
-                style={{ ...inp, borderColor: aadhaarErr ? '#EF4444' : (aadhaar && validateAadhaar(aadhaar) ? '#22C55E' : '#1E293B') }}
+                style={{ ...inp, borderColor: aadhaarErr ? 'var(--red)' : (aadhaar && validateAadhaar(aadhaar) ? 'var(--green)' : 'var(--line)') }}
                 type="text" inputMode="numeric" maxLength={14} placeholder="XXXX XXXX XXXX"
                 value={aadhaar} onChange={e => { setAadhaar(e.target.value); setAadhaarErr(''); }}
                 onBlur={handleAadhaarBlur}
               />
-              {aadhaarErr && <div style={{ fontSize:11, color:'#EF4444', marginTop:6 }}>⚠ {aadhaarErr}</div>}
-              {submitErr && <div style={{ fontSize:12, color:'#EF4444', marginTop:10 }}>⚠ {submitErr}</div>}
-              <button className="btn-primary" style={{ marginTop:18, width:'100%', padding:'15px 0', fontSize:14 }}
+              {aadhaarErr && <div style={{ fontSize: 13, color: 'var(--red)', marginTop: 8, fontWeight: 600 }}>⚠ {aadhaarErr}</div>}
+              {submitErr && <div style={{ fontSize: 13, color: 'var(--red)', marginTop: 12, fontWeight: 600 }}>⚠ {submitErr}</div>}
+              
+              <button className="btn-primary" style={{ marginTop: 24, width: '100%', padding: '18px 0', fontSize: 16 }}
                 disabled={submitting || !validateAadhaar(aadhaar)} onClick={handleAadhaarResume}>
-                {submitting ? 'SENDING OTP…' : 'SEND AADHAAR OTP →'}
+                {submitting ? t('SENDING OTP…', 'OTP भेज रहे हैं…') : t('SEND AADHAAR OTP →', 'आधार OTP भेजें →')}
               </button>
+              
               <button onClick={() => setResumeMode('none')}
-                style={{ marginTop:12, width:'100%', background:'none', border:'none', color:'rgba(255,255,255,0.35)', fontSize:12, cursor:'pointer' }}>
-                ← Fill the full form again instead
+                style={{ marginTop: 16, width: '100%', background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', fontSize: 13, fontWeight: 600, cursor: 'pointer', padding: 8 }}>
+                {t("← Fill the full form again instead", "← इसके बजाय पूरा फॉर्म दोबारा भरें")}
               </button>
             </div>
           </div>
         ) : resumeMode === 'pan' ? (
           /* ── RESUME: Aadhaar done, only PAN is left ── */
-          <div style={{ background:'#0A1727', border:'1px solid rgba(34,197,94,0.28)', borderRadius:12, padding:'32px 24px', marginBottom:32 }}>
-            <div style={{ textAlign:'center', marginBottom:24 }}>
-              <div style={{ fontSize:40, marginBottom:12 }}>📋</div>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'#22C55E', marginBottom:8 }}>Almost Done — PAN Verification</div>
-              <div style={{ fontSize:13, color:'#22C55E', fontWeight:600, marginBottom:6 }}>✓ Aadhaar already verified — no OTP needed again</div>
-              <div style={{ fontSize:13, color:'rgba(255,255,255,0.55)', maxWidth:420, margin:'0 auto' }}>
-                Enter your PAN to finish KYC. If the PAN service is down, our team verifies it manually within 24–48 hours.
+          <div style={{ background: 'var(--panel)', border: '1px solid rgba(34,197,94,0.4)', borderRadius: 'var(--r)', padding: '40px 24px', marginBottom: 40, boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }}>
+            <div style={{ textAlign: 'center', marginBottom: 32 }}>
+              <div style={{ fontSize: 48, marginBottom: 16 }}>📋</div>
+              <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(24px, 4vw, 32px)', color: 'var(--green)', marginBottom: 12, textTransform: 'uppercase' }}>{t("Almost Done — PAN Verification", "लगभग पूरा — PAN वेरिफिकेशन")}</div>
+              <div style={{ fontSize: 15, color: 'var(--green)', fontWeight: 700, marginBottom: 12 }}>
+                {t('✓ Aadhaar OTP verified', '✓ आधार OTP वेरीफाइड')}
+              </div>
+              <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.6)', maxWidth: 480, margin: '0 auto', lineHeight: 1.6 }}>
+                {t("Your Aadhaar is verified. Please provide your PAN number to complete the final compliance step.", "आपका आधार वेरीफाइड है। अंतिम स्टेप पूरा करने के लिए कृपया अपना PAN नंबर दें।")}
               </div>
             </div>
-            <div style={{ maxWidth:340, margin:'0 auto' }}>
-              <label style={lbl}>PAN NUMBER *</label>
+            <div style={{ maxWidth: 400, margin: '0 auto' }}>
+              <label style={lbl}>{t("PAN NUMBER *", "PAN नंबर *")}</label>
               <input
-                style={{ ...inp, textTransform:'uppercase', borderColor: panErr ? '#EF4444' : (pan && validatePan(pan) ? '#22C55E' : '#1E293B') }}
+                style={{ ...inp, textTransform: 'uppercase', borderColor: panErr ? 'var(--red)' : (pan && validatePan(pan) ? 'var(--green)' : 'var(--line)') }}
                 type="text" maxLength={10} placeholder="ABCDE1234F"
                 value={pan} onChange={e => { setPan(e.target.value.toUpperCase()); setPanErr(''); }}
                 onBlur={handlePanBlur}
               />
-              {panErr && <div style={{ fontSize:11, color:'#EF4444', marginTop:6 }}>⚠ {panErr}</div>}
-              {submitErr && <div style={{ fontSize:12, color:'#EF4444', marginTop:10 }}>⚠ {submitErr}</div>}
-              <button className="btn-primary" style={{ marginTop:18, width:'100%', padding:'15px 0', fontSize:14 }}
+              {panErr && <div style={{ fontSize: 13, color: 'var(--red)', marginTop: 8, fontWeight: 600 }}>⚠ {panErr}</div>}
+              {submitErr && <div style={{ fontSize: 13, color: 'var(--red)', marginTop: 12, fontWeight: 600 }}>⚠ {submitErr}</div>}
+              
+              <button className="btn-primary" style={{ marginTop: 24, width: '100%', padding: '18px 0', fontSize: 16 }}
                 disabled={submitting || !validatePan(pan)} onClick={handlePanResume}>
-                {submitting ? 'VERIFYING…' : 'VERIFY PAN & FINISH →'}
+                {submitting ? t('VERIFYING PAN…', 'PAN वेरीफाई हो रहा है…') : t('VERIFY PAN & COMPLETE KYC →', 'PAN वेरीफाई करें और KYC पूरा करें →')}
+              </button>
+              
+              <button onClick={() => setResumeMode('none')}
+                style={{ marginTop: 16, width: '100%', background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', fontSize: 13, fontWeight: 600, cursor: 'pointer', padding: 8 }}>
+                {t("← Fill the full form again instead", "← इसके बजाय पूरा फॉर्म दोबारा भरें")}
               </button>
             </div>
           </div>
         ) : (
-          /* Main form: jersey size + emergency contact + KYC */
-          <>
-            {/* T-Shirt Size — kept for jerseys after the employment card was removed */}
-            <div style={{ background:'#0A1727', border:'1px solid rgba(255,122,41,0.2)', borderRadius:12, padding:'20px 18px', marginBottom:24 }}>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, color:'#FF7A29', letterSpacing:'.06em', marginBottom:4 }}>T-SHIRT SIZE *</div>
-              <div style={{ fontSize:12, color:'rgba(255,255,255,0.35)', marginBottom:16 }}>Used to prepare match jerseys for players who make it to the tournament</div>
-              <ChipRow options={TSHIRT_OPTS} value={tshirt} onChange={setTshirt} minWidth={48} />
-              <div style={{ marginTop:8, fontSize:11, color:'rgba(255,255,255,0.45)', lineHeight:1.55 }}>
-                ℹ️ Only for tournament purpose — registration does not include a free T-shirt.
-              </div>
-            </div>
+          /* ── STEP 1: Full Form ── */
+          <div>
+            <div className="card">
+              <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 22, color: '#fff', marginBottom: 6, textTransform: 'uppercase' }}>{t("1. Player Essentials", "1. प्लेयर की जरूरी जानकारी")}</div>
+              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', marginBottom: 24 }}>{t("Required for match jerseys and on-ground safety.", "मैच जर्सी और मैदान पर सुरक्षा के लिए आवश्यक।")}</div>
 
-            {/* Emergency Contact */}
-            <div style={{ background:'#0A1727', border:'1px solid rgba(255,122,41,0.2)', borderRadius:12, padding:'20px 18px', marginBottom:24 }}>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, color:'#FF7A29', letterSpacing:'.06em', marginBottom:4 }}>EMERGENCY CONTACT *</div>
-              <div style={{ fontSize:12, color:'rgba(255,255,255,0.35)', marginBottom:16 }}>Required for physical trials — who should we call in an emergency?</div>
-              <div style={{ display:'grid', gap:18 }}>
+              <div className="grid2">
                 <div>
-                  <label style={lbl}>Contact Name *</label>
-                  <input style={inp} placeholder="Full name of emergency contact" value={ecName} onChange={e => setEcName(e.target.value)} />
+                  <label style={lbl}>{t("T-SHIRT SIZE *", "टी-शर्ट का साइज़ *")}</label>
+                  <ChipRow options={TSHIRT_OPTS} value={tshirt} onChange={setTshirt} minWidth={48} />
                 </div>
                 <div>
-                  <label style={lbl}>Relationship *</label>
-                  <ChipRow options={RELATION_OPTS} value={ecRel} onChange={setEcRel} />
-                </div>
-                <div>
-                  <label style={lbl}>Phone Number *</label>
-                  <input
-                    style={{ ...inp, borderColor: ecPhoneErr ? '#EF4444' : (/^\d{10}$/.test(ecPhone) ? '#22C55E' : '#1E293B') }}
-                    type="tel" inputMode="numeric" maxLength={10} placeholder="10-digit mobile number"
-                    value={ecPhone}
-                    onChange={e => { setEcPhone(e.target.value.replace(/\D/g,'')); setEcPhoneErr(''); }}
-                    onBlur={handleEcPhoneBlur}
-                  />
-                  {ecPhoneErr && <div style={{ fontSize:11, color:'#EF4444', marginTop:6 }}>⚠ {ecPhoneErr}</div>}
-                </div>
-                <div>
-                  <label style={lbl}>Blood Group <span style={{ color:'rgba(255,255,255,0.22)', textTransform:'none' }}>(optional)</span></label>
+                  <label style={lbl}>{t("BLOOD GROUP", "ब्लड ग्रुप")}</label>
                   <ChipRow options={BLOOD_OPTS} value={bloodGroup} onChange={setBloodGroup} minWidth={48} />
-                  <div style={{ marginTop:8, fontSize:11, color:'rgba(255,255,255,0.45)' }}>
-                    Pick it if you know it — helps us in a medical emergency. You can skip this.
+                </div>
+              </div>
+
+              <div style={{ marginTop: 32, paddingTop: 32, borderTop: '1px solid var(--line)' }}>
+                <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 16, color: '#fff', marginBottom: 20, textTransform: 'uppercase' }}>{t("Emergency Contact", "आपातकालीन संपर्क")}</div>
+                <div className="grid2">
+                  <div>
+                    <label style={lbl}>{t("CONTACT PERSON NAME *", "संपर्क व्यक्ति का नाम *")}</label>
+                    <input style={inp} placeholder={t("Full Name", "पूरा नाम")} value={ecName} onChange={e => setEcName(e.target.value)} />
+                  </div>
+                  <div>
+                    <label style={lbl}>{t("RELATION *", "रिश्ता *")}</label>
+                    <select style={{ ...inp, appearance: 'none', color: ecRel ? '#fff' : 'rgba(255,255,255,0.4)' }} value={ecRel} onChange={e => setEcRel(e.target.value)}>
+                      <option value="" disabled>{t("Select Relation", "रिश्ता चुनें")}</option>
+                      {RELATION_OPTS.map(o => <option key={o} value={o} style={{ color: '#000' }}>{o}</option>)}
+                    </select>
                   </div>
                 </div>
+                <div style={{ marginTop: 24, maxWidth: 400 }}>
+                  <label style={lbl}>{t("EMERGENCY MOBILE NUMBER *", "आपातकालीन मोबाइल नंबर *")}</label>
+                  <input style={{ ...inp, borderColor: ecPhoneErr ? 'var(--red)' : 'var(--line)' }} type="tel" maxLength={10} placeholder="10-digit number" value={ecPhone} onChange={e => { setEcPhone(e.target.value.replace(/\D/g,'')); setEcPhoneErr(''); }} onBlur={handleEcPhoneBlur} />
+                  {ecPhoneErr && <div style={{ fontSize: 12, color: 'var(--red)', marginTop: 8, fontWeight: 600 }}>⚠ {ecPhoneErr}</div>}
+                </div>
               </div>
             </div>
 
-            {/* Profession selector */}
-            <div style={{ background:'#0A1727', border:'1px solid rgba(255,122,41,0.2)', borderRadius:12, padding:'20px 18px', marginBottom:24 }}>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, color:'#FF7A29', letterSpacing:'.06em', marginBottom:4 }}>YOUR PROFESSION *</div>
-              <div style={{ fontSize:12, color:'rgba(255,255,255,0.35)', marginBottom:16 }}>Select the field you currently work in</div>
-              <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(110px,1fr))', gap:8 }}>
+            <div className="card">
+              <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 22, color: '#fff', marginBottom: 6, textTransform: 'uppercase' }}>{t("2. Employment Details", "2. रोज़गार की जानकारी")}</div>
+              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', marginBottom: 24 }}>{t("Required to confirm working professional eligibility.", "वर्किंग प्रोफेशनल योग्यता की पुष्टि के लिए आवश्यक।")}</div>
+              
+              <label style={lbl}>{t("SELECT YOUR PROFESSION *", "अपना पेशा चुनें *")}</label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 12, marginTop: 12 }}>
                 {PROFESSIONS.map(p => (
                   <button key={p.id} onClick={() => setProfession(p.id)}
-                    style={{ padding:'10px 8px', borderRadius:10, border: profession===p.id?'2px solid #FF7A29':'1px solid rgba(255,255,255,0.1)', background: profession===p.id?'rgba(255,122,41,0.12)':'rgba(255,255,255,0.03)', color: profession===p.id?'#FF7A29':'rgba(255,255,255,0.6)', fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:11, cursor:'pointer', textAlign:'center', transition:'all .18s', display:'flex', flexDirection:'column', alignItems:'center', gap:6 }}>
-                    <span style={{ fontSize:20 }}>{p.icon}</span>
-                    {p.label}
+                    style={{ padding: '16px', borderRadius: '12px', border: profession === p.id ? '2px solid var(--orange)' : '1px solid var(--line)', background: profession === p.id ? 'rgba(255,122,41,0.08)' : 'rgba(255,255,255,0.02)', color: profession === p.id ? 'var(--orange)' : 'rgba(255,255,255,0.7)', fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 14, cursor: 'pointer', textAlign: 'left', transition: 'all .2s', display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <span style={{ fontSize: 20 }}>{p.icon}</span>
+                    <span style={{ lineHeight: 1.3 }}>{p.label}</span>
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Document Numbers */}
-            <div className="upload-grid">
-              {/* Aadhaar */}
-              <div className="doc-card">
-                <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:20 }}>
-                  <span style={{ fontSize:24 }}>🪪</span>
-                  <div>
-                    <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:16, color:'#fff', textTransform:'uppercase' }}>Aadhaar Card</div>
-                    <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)' }}>12-digit Aadhaar number</div>
-                  </div>
-                </div>
-                <div>
-                  <label style={{ display:'block', fontSize:10, fontWeight:700, letterSpacing:'.12em', color:'rgba(255,255,255,0.4)', fontFamily:'Montserrat,sans-serif', marginBottom:8, textTransform:'uppercase' }}>AADHAAR NUMBER *</label>
+            <div className="card">
+              <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 22, color: '#fff', marginBottom: 6, textTransform: 'uppercase' }}>{t("3. Identity Verification", "3. पहचान वेरिफिकेशन")}</div>
+              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', marginBottom: 24 }}>{t("BCCI compliance and franchise record requirements. Aadhaar OTP will be sent.", "BCCI नियमों और फ्रैंचाइज़ी रिकॉर्ड के लिए आवश्यक। आधार OTP भेजा जाएगा।")}</div>
+
+              <div className="grid2">
+                <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--line)', padding: '24px', borderRadius: 'var(--r)' }}>
+                  <div style={{ fontSize: 32, marginBottom: 12 }}>🪪</div>
+                  <label style={lbl}>{t("AADHAAR NUMBER *", "आधार नंबर *")}</label>
                   <input
-                    style={{ ...inp, borderColor: aadhaarErr ? '#EF4444' : (aadhaar && validateAadhaar(aadhaar) ? '#22C55E' : '#1E293B') }}
+                    style={{ ...inp, borderColor: aadhaarErr ? 'var(--red)' : (aadhaar && validateAadhaar(aadhaar) ? 'var(--green)' : 'var(--line)') }}
                     type="text" inputMode="numeric" maxLength={14} placeholder="XXXX XXXX XXXX"
                     value={aadhaar} onChange={e => { setAadhaar(e.target.value); setAadhaarErr(''); }}
                     onBlur={handleAadhaarBlur}
                   />
-                  {aadhaarErr && <div style={{ fontSize:11, color:'#EF4444', marginTop:6 }}>⚠ {aadhaarErr}</div>}
-                  {aadhaar && validateAadhaar(aadhaar) && !aadhaarErr && <div style={{ fontSize:11, color:'#22C55E', marginTop:6 }}>✓ Valid Aadhaar number</div>}
+                  {aadhaarErr && <div style={{ fontSize: 12, color: 'var(--red)', marginTop: 8, fontWeight: 600 }}>⚠ {aadhaarErr}</div>}
+                  <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', marginTop: 12, lineHeight: 1.5 }}>{t("An OTP will be sent to the mobile number linked with this Aadhaar.", "इस आधार से जुड़े मोबाइल नंबर पर एक OTP भेजा जाएगा।")}</div>
                 </div>
-                <div style={{ marginTop:14, fontSize:11, color:'rgba(255,255,255,0.3)', fontStyle:'italic' }}>⚠️ Name on Aadhaar must match your registered name</div>
-              </div>
 
-              {/* PAN */}
-              <div className="doc-card">
-                <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:20 }}>
-                  <span style={{ fontSize:24 }}>📋</span>
-                  <div>
-                    <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:16, color:'#fff', textTransform:'uppercase' }}>PAN Card</div>
-                    <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)' }}>10-character PAN number</div>
-                  </div>
-                </div>
-                <div>
-                  <label style={{ display:'block', fontSize:10, fontWeight:700, letterSpacing:'.12em', color:'rgba(255,255,255,0.4)', fontFamily:'Montserrat,sans-serif', marginBottom:8, textTransform:'uppercase' }}>PAN NUMBER *</label>
+                <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--line)', padding: '24px', borderRadius: 'var(--r)' }}>
+                  <div style={{ fontSize: 32, marginBottom: 12 }}>📋</div>
+                  <label style={lbl}>{t("PAN NUMBER *", "PAN नंबर *")}</label>
                   <input
-                    style={{ ...inp, textTransform:'uppercase', borderColor: panErr ? '#EF4444' : (pan && validatePan(pan) ? '#22C55E' : '#1E293B') }}
+                    style={{ ...inp, textTransform: 'uppercase', borderColor: panErr ? 'var(--red)' : (pan && validatePan(pan) ? 'var(--green)' : 'var(--line)') }}
                     type="text" maxLength={10} placeholder="ABCDE1234F"
                     value={pan} onChange={e => { setPan(e.target.value.toUpperCase()); setPanErr(''); }}
                     onBlur={handlePanBlur}
                   />
-                  {panErr && <div style={{ fontSize:11, color:'#EF4444', marginTop:6 }}>⚠ {panErr}</div>}
-                  {pan && validatePan(pan) && !panErr && <div style={{ fontSize:11, color:'#22C55E', marginTop:6 }}>✓ Valid PAN format</div>}
-                </div>
-                <div style={{ marginTop:14, background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.07)', padding:'14px', borderRadius:8 }}>
-                  <div style={{ fontSize:10, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.14em', color:'rgba(255,255,255,0.4)', marginBottom:8 }}>WHY WE NEED THIS</div>
-                  {['BCCI compliance for league participation', 'Franchise contract records', 'Prize money distribution & TDS', 'Anti-impersonation verification'].map(r => (
-                    <div key={r} style={{ fontSize:11, color:'rgba(255,255,255,0.5)', marginBottom:5, display:'flex', gap:6 }}>
-                      <span style={{ color:'rgba(255,122,41,0.6)', flexShrink:0 }}>→</span>{r}
-                    </div>
-                  ))}
+                  {panErr && <div style={{ fontSize: 12, color: 'var(--red)', marginTop: 8, fontWeight: 600 }}>⚠ {panErr}</div>}
+                  <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', marginTop: 12, lineHeight: 1.5 }}>{t("Required for franchise contract and prize money tax compliance.", "फ्रैंचाइज़ी कॉन्ट्रैक्ट और इनामी राशि के टैक्स नियमों के लिए आवश्यक।")}</div>
                 </div>
               </div>
-            </div>
 
-            {/* Privacy notice */}
-            <div style={{ background:'rgba(255,255,255,0.02)', border:'1px solid rgba(255,255,255,0.06)', padding:'14px 16px', display:'flex', alignItems:'flex-start', gap:12, marginBottom:24, borderRadius:8 }}>
-              <span style={{ fontSize:24, flexShrink:0 }}>🔒</span>
-              <div style={{ fontSize:12, color:'rgba(255,255,255,0.45)', lineHeight:1.6 }}>
-                <strong style={{ color:'rgba(255,255,255,0.7)' }}>Privacy Assured.</strong> Your Aadhaar and PAN numbers are encrypted and verified through Cashfree's secured KYC gateway. We never store raw numbers — only the verification reference ID. Compliant with IT Act, 2000 and UIDAI guidelines.
+              {submitErr && <div style={{ padding: '16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.4)', borderRadius: '12px', color: 'var(--red)', fontSize: 14, marginTop: 24, fontWeight: 600 }}>⚠ {submitErr}</div>}
+
+              <div className="desk-only-btn" style={{ marginTop: 32 }}>
+                <style>{`@media(max-width: 767px){ .desk-only-btn { display: none !important; } }`}</style>
+                <button className="btn-primary" style={{ width: '100%', padding: '20px', fontSize: 16 }} disabled={!canSubmit || submitting} onClick={handleSubmit}>
+                  {submitting ? t('VERIFYING DOCUMENTS…', 'दस्तावेज़ों की जाँच हो रही है…') : t('PROCEED TO AADHAAR OTP →', 'आधार OTP के लिए आगे बढ़ें →')}
+                </button>
               </div>
             </div>
-
-            {/* Error */}
-            {submitErr && (
-              <div style={{ padding:'12px 16px', background:'#EF444415', border:'1px solid #EF444440', borderRadius:10, color:'#EF4444', fontSize:13, marginBottom:16 }}>⚠ {submitErr}</div>
-            )}
-
-            {/* Submit */}
-            <button
-              className="btn-primary"
-              style={{ padding:'18px 32px', fontSize:15, letterSpacing:'.06em', width:'100%', maxWidth:400 }}
-              disabled={!canSubmit || submitting}
-              onClick={handleSubmit}
-            >
-              {submitting ? (
-                <span style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:10 }}>
-                  <span style={{ display:'inline-block', width:16, height:16, border:'2px solid rgba(255,255,255,0.3)', borderTopColor:'#fff', borderRadius:'50%', animation:'spin .8s linear infinite' }} />
-                  VERIFYING…
-                </span>
-              ) : 'SUBMIT FOR KYC VERIFICATION →'}
-            </button>
-            {!canSubmit && (
-              <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginTop:10 }}>
-                {!tshirt ? '• Select your T-shirt size' : ''}
-                {!emergencyOk ? ' • Complete emergency contact (name, relation + 10-digit phone)' : ''}
-                {!profession ? ' • Select your profession' : ''}
-                {!aadhaar || !validateAadhaar(aadhaar) ? ' • Enter valid Aadhaar (12 digits)' : ''}
-                {!pan || !validatePan(pan) ? ' • Enter valid PAN' : ''}
-              </div>
-            )}
-          </>
+          </div>
         )}
       </div>
+
+      {/* Mobile Sticky CTA */}
+      {!aadhaarRefId && resumeMode === 'none' && kycStatus !== 'verified' && kycStatus !== 'pending' && (
+        <div className="stick-cta">
+          <button className="btn-primary" style={{ width: '100%', padding: '16px 20px', fontSize: 16 }} disabled={!canSubmit || submitting} onClick={handleSubmit}>
+            {submitting ? t('VERIFYING…', 'वेरीफाई हो रहा है…') : t('PROCEED TO OTP →', 'OTP के लिए आगे बढ़ें →')}
+          </button>
+        </div>
+      )}
 
       <BCPLFooter />
     </div>

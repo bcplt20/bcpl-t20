@@ -1,6 +1,8 @@
 import React from 'react';
+import { Link } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
+import { useLang } from '../lib/i18n';
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
@@ -123,7 +125,7 @@ function AmbientBg() {
 function MobileStickyCTA() {
   return (
     <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',padding:'10px 16px calc(16px + env(safe-area-inset-bottom))',gap:10}}>
-      <a href="/register" className="btn-fire" style={{flex:2,height:52,fontSize:15,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register ₹299 →</a>
+      <Link href="/register" className="btn-fire" style={{flex:2,height:52,fontSize:15,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register ₹299 →</Link>
       <a href="https://wa.me/919151346555" target="_blank" rel="noopener noreferrer" className="btn-wa" style={{flex:1,height:52,fontSize:14,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>💬 WhatsApp</a>
     </div>
   );
@@ -145,6 +147,7 @@ const ROUTE_MAP: Record<string,string> = {
 };
 
 export function Photos() {
+  const { t } = useLang();
   const [filter, setFilter] = React.useState('All Photos');
   const [season, setSeason] = React.useState('Season 5');
   const [visible, setVisible] = React.useState(12);
@@ -162,15 +165,15 @@ export function Photos() {
       {/* HERO */}
       <section style={{position:'relative',zIndex:1,padding:'100px 0 60px',textAlign:'center'}}>
         <div className="wrap">
-          <div className="tag-pill" style={{marginBottom:24,animation:'floatUp 0.6s ease both'}}>SEASON 5 GALLERY</div>
+          <div className="tag-pill" style={{marginBottom:24,animation:'floatUp 0.6s ease both'}}>{t("SEASON 5 GALLERY","SEASON 5 GALLERY")}</div>
           <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(40px,7vw,80px)',lineHeight:1.05,color:'#fff',marginBottom:12,animation:'floatUp 0.7s ease 0.1s both'}}>
-            MOMENTS THAT
+            {t("MOMENTS THAT","वो पल जो")}
           </h1>
           <h1 className="shimmer-gold" style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(40px,7vw,80px)',lineHeight:1.05,marginBottom:24,animation:'floatUp 0.7s ease 0.2s both'}}>
-            DEFINE US.
+            {t("DEFINE US.","हमें परिभाषित करते हैं।")}
           </h1>
           <p style={{color:'rgba(255,255,255,0.6)',fontSize:18,maxWidth:520,margin:'0 auto',lineHeight:1.7,animation:'floatUp 0.7s ease 0.3s both'}}>
-            Every boundary. Every wicket. Every dream realized.
+            {t("Every boundary. Every wicket. Every dream realized.","हर boundary। हर wicket। हर सपना साकार।")}
           </p>
         </div>
       </section>
@@ -181,21 +184,21 @@ export function Photos() {
           <div className="glass-card" style={{padding:'clamp(40px,8vw,80px) clamp(20px,5vw,60px)',textAlign:'center',maxWidth:600,margin:'0 auto',border:'1px solid rgba(255,122,41,0.15)',animation:'fadeSlide 0.7s ease both'}}>
             <div style={{fontSize:64,marginBottom:20}}>📷</div>
             <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,4vw,32px)',color:'#fff',marginBottom:12,lineHeight:1.2}}>
-              Photos Will Be<br/>
-              <span className="shimmer-gold">Uploaded Soon</span>
+              {t("Photos Will Be","Photos जल्द ही")}<br/>
+              <span className="shimmer-gold">{t("Uploaded Soon","Upload होंगी")}</span>
             </h2>
             <p style={{color:'rgba(255,255,255,0.5)',fontSize:15,lineHeight:1.7,maxWidth:420,margin:'0 auto 28px',fontFamily:'Inter,sans-serif'}}>
-              Match day galleries, trial ground moments, auction highlights, and celebrations — all coming as Season 5 unfolds.
+              {t("Match day galleries, trial ground moments, auction highlights, and celebrations — all coming as Season 5 unfolds.","Match day galleries, trial ground moments, auction highlights, और celebrations — सब Season 5 के साथ आएंगी।")}
             </p>
             <a href="https://www.instagram.com/bcplt20" target="_blank" rel="noopener noreferrer"
               style={{display:'inline-flex',alignItems:'center',gap:10,padding:'14px 32px',borderRadius:14,background:'linear-gradient(135deg,#E1306C,#F77737,#FCAF45)',border:'none',color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:14,cursor:'pointer',letterSpacing:'0.02em',textDecoration:'none'}}>
-              📸 Follow @bcplt20 for Updates
+              📸 {t("Follow @bcplt20 for Updates","@bcplt20 Follow करें")}
             </a>
           </div>
         </div>
       </section>
       {/* ── FLOATING REGISTER BUTTON ── */}
-      <a className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>🏏 REGISTER NOW &rarr;</a>
+      <Link className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>🏏 {t("REGISTER NOW","अभी REGISTER करें")} &rarr;</Link>
       <BCPLFooter />
       <MobileStickyCTA/>
     </div>

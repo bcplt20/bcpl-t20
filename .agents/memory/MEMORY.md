@@ -18,3 +18,5 @@
 - [Live scoring flow](scoring-flow.md) — client engine mirrors server /ball exactly (LB/B legal); finalization gated on ball persistence; /xi = clean restart (wipes innings); /innings-end idempotent
 - [API field-name traps](api-field-traps.md) — drizzle camelCase responses; zod .datetime() needs toISOString; registrations.role has 2 historic formats (bat/Batsman) — normalise on read
 - [Cashfree verification](cashfree-verification.md) — CF_VERIFY_* creds separate from payment keys, prod-only (dev = stub mode); "service unavailable" 502 = payload bug until proven otherwise
+- [V3 design language](v3-design-language.md) — emoji icons are deliberate (Home.tsx reference), never strip; internal links = wouter Link only; audit-grep patterns
+- [Subagent briefs](subagent-briefs.md) — end multi-page briefs with "complete ALL, do not stop to ask"; verify via git status, not the report

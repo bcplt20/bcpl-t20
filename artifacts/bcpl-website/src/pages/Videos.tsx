@@ -1,6 +1,8 @@
 import React from 'react';
+import { Link } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
+import { useLang } from '../lib/i18n';
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
@@ -86,7 +88,7 @@ function AmbientBg() {
 function MobileStickyCTA() {
   return (
     <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',padding:'10px 16px calc(16px + env(safe-area-inset-bottom))',gap:10}}>
-      <a href="/register" className="btn-fire" style={{flex:2,height:52,fontSize:15,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register ₹299 →</a>
+      <Link href="/register" className="btn-fire" style={{flex:2,height:52,fontSize:15,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register ₹299 →</Link>
       <a href="https://wa.me/919151346555" target="_blank" rel="noopener noreferrer" className="btn-wa" style={{flex:1,height:52,fontSize:14,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>💬 WhatsApp</a>
     </div>
   );
@@ -118,6 +120,7 @@ const ROUTE_MAP: Record<string,string> = {
 };
 
 export function Videos() {
+  const { t } = useLang();
   const [tab, setTab] = React.useState('All');
 
   const filtered = tab==='All' ? VIDEOS : VIDEOS.filter(v => TAB_MAP[tab]?.includes(v.cat));
@@ -133,13 +136,13 @@ export function Videos() {
         <div className="wrap">
           <div className="tag-pill" style={{marginBottom:24,animation:'floatUp 0.6s ease both'}}>BCPL TV</div>
           <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(40px,7vw,80px)',lineHeight:1.05,color:'#fff',marginBottom:12,animation:'floatUp 0.7s ease 0.1s both'}}>
-            WATCH EVERY
+            {t("WATCH EVERY","हर पल")}
           </h1>
           <h1 className="shimmer-gold" style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(40px,7vw,80px)',lineHeight:1.05,marginBottom:24,animation:'floatUp 0.7s ease 0.2s both'}}>
-            MOMENT.
+            {t("MOMENT.","देखिए।")}
           </h1>
           <p style={{color:'rgba(255,255,255,0.6)',fontSize:18,maxWidth:520,margin:'0 auto',lineHeight:1.7,animation:'floatUp 0.7s ease 0.3s both'}}>
-            Highlights, interviews, replays — your BCPL content hub.
+            {t("Highlights, interviews, replays — your BCPL content hub.","Highlights, interviews, replays — आपका BCPL content hub।")}
           </p>
         </div>
       </section>
@@ -163,10 +166,10 @@ export function Videos() {
           {filtered.length === 0 && (
             <div style={{textAlign:'center',padding:'60px 20px'}}>
               <div style={{fontSize:48,marginBottom:16}}>📹</div>
-              <h3 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,color:'rgba(255,255,255,0.7)',marginBottom:10}}>No videos yet</h3>
-              <p style={{color:'rgba(255,255,255,0.4)',fontSize:15,fontFamily:'Inter,sans-serif',maxWidth:400,margin:'0 auto 24px',lineHeight:1.6}}>Match highlights and event videos will appear here once the season begins.</p>
+              <h3 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,color:'rgba(255,255,255,0.7)',marginBottom:10}}>{t("No videos yet","अभी कोई videos नहीं")}</h3>
+              <p style={{color:'rgba(255,255,255,0.4)',fontSize:15,fontFamily:'Inter,sans-serif',maxWidth:400,margin:'0 auto 24px',lineHeight:1.6}}>{t("Match highlights and event videos will appear here once the season begins.","Match highlights और event videos season शुरू होने पर यहां दिखेंगे।")}</p>
               <a href="https://www.youtube.com/@bcplt20" target="_blank" rel="noopener noreferrer" style={{display:'inline-flex',alignItems:'center',gap:8,padding:'14px 32px',borderRadius:14,background:'#FF0000',border:'none',color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,cursor:'pointer',textDecoration:'none',letterSpacing:'0.02em'}}>
-                <span>▶</span> Subscribe to BCPL TV
+                <span>▶</span> {t("Subscribe to BCPL TV","BCPL TV Subscribe करें")}
               </a>
             </div>
           )}
@@ -207,14 +210,14 @@ export function Videos() {
         <div className="wrap">
           <div className="glass-card" style={{padding:'clamp(20px,5vw,48px) clamp(16px,4vw,48px)',textAlign:'center',maxWidth:640,margin:'0 auto',border:'1px solid rgba(255,122,41,0.15)'}}>
             <div style={{fontSize:44,marginBottom:12}}>▶️</div>
-            <h3 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,color:'#fff',marginBottom:6}}>Subscribe to BCPL TV</h3>
-            <div style={{color:'rgba(255,255,255,0.4)',fontSize:14,marginBottom:24,fontFamily:'Inter,sans-serif'}}>23K subscribers · New videos every match day</div>
+            <h3 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,color:'#fff',marginBottom:6}}>{t("Subscribe to BCPL TV","BCPL TV Subscribe करें")}</h3>
+            <div style={{color:'rgba(255,255,255,0.4)',fontSize:14,marginBottom:24,fontFamily:'Inter,sans-serif'}}>{t("23K subscribers · New videos every match day","23K subscribers · हर match day नई videos")}</div>
             <div style={{display:'flex',gap:14,justifyContent:'center',flexWrap:'wrap'}}>
               <a href="https://www.youtube.com/@bcplt20" target="_blank" rel="noopener noreferrer" style={{padding:'14px 36px',borderRadius:14,background:'#FF0000',border:'none',color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,cursor:'pointer',display:'flex',alignItems:'center',gap:8,letterSpacing:'0.02em',textDecoration:'none'}}>
-                <span>▶</span> Subscribe
+                <span>▶</span> {t("Subscribe","Subscribe")}
               </a>
               <a href="https://www.youtube.com/@bcplt20?sub_confirmation=1" target="_blank" rel="noopener noreferrer" style={{padding:'14px 28px',borderRadius:14,background:'rgba(255,255,255,0.06)',border:'1.5px solid rgba(255,255,255,0.15)',color:'rgba(255,255,255,0.7)',fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:15,cursor:'pointer',textDecoration:'none',display:'inline-flex',alignItems:'center',gap:8}}>
-                🔔 Enable Alerts
+                🔔 {t("Enable Alerts","Alerts चालू करें")}
               </a>
             </div>
           </div>
@@ -222,7 +225,7 @@ export function Videos() {
       </section>
 
       {/* ── FLOATING REGISTER BUTTON ── */}
-      <a className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>🏏 REGISTER NOW &rarr;</a>
+      <Link className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>🏏 {t("REGISTER NOW","अभी REGISTER करें")} &rarr;</Link>
       <BCPLFooter />
       <MobileStickyCTA/>
     </div>

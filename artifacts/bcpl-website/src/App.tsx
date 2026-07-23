@@ -37,6 +37,8 @@ import { AuctionSelected }     from '@/pages/AuctionSelected';
 import { AuctionLive }         from '@/pages/AuctionLive';
 import { TeamSelected }        from '@/pages/TeamSelected';
 import { PlayerProfile }       from '@/pages/PlayerProfile';
+import { Players }             from '@/pages/Players';
+import { Trust }               from '@/pages/Trust';
 import AdminPanel              from '@/admin/AdminPanel';
 
 // Scroll to top on every route change
@@ -77,12 +79,14 @@ function Router() {
 
         {/* Team detail */}
         <Route path="/team/:slug"  component={TeamDetail} />
+        <Route path="/players"     component={Players} />
 
         {/* Legal & policy pages */}
         <Route path="/code-of-conduct"  component={CodeOfConduct} />
         <Route path="/cricket-rulebook" component={CricketRulebook} />
         <Route path="/eligibility"      component={EligibilityCriteria} />
         <Route path="/privacy"          component={Privacy} />
+        <Route path="/trust"            component={Trust} />
         <Route path="/refunds"          component={Refunds} />
         <Route path="/terms"            component={Terms} />
 

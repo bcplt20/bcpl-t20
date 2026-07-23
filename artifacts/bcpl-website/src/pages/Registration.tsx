@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { SiteHeader } from '../components/SiteHeader';
-import { useLocation } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import {
   sendOtp, verifyOtp, saveAuthToken, isAuthenticated,
@@ -664,7 +664,7 @@ export function Registration() {
                 <div style={{ borderLeft:'3px solid #FF7A29', paddingLeft:14, marginBottom:28 }}>
                   <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(18px,5vw,22px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em' }}>Your Details</div>
                   <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginTop:4 }}>As per Aadhaar / PAN — used for franchise records</div>
-                  <a href="/eligibility" style={{ fontSize:11, color:'#FF7A29', textDecoration:'none', fontWeight:700, display:'inline-block', marginTop:6 }}>Check eligibility criteria →</a>
+                  <Link href="/eligibility" style={{ fontSize:11, color:'#FF7A29', textDecoration:'none', fontWeight:700, display:'inline-block', marginTop:6 }}>Check eligibility criteria →</Link>
                 </div>
 
                 <div style={{ display:'grid', gridTemplateColumns:'1fr', gap:20 }}>
@@ -1071,9 +1071,9 @@ export function Registration() {
                   <input type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)} style={{ marginTop:2, accentColor:'#FF7A29', width:16, height:16, flexShrink:0 }} />
                   <span style={{ fontSize:12, color:'rgba(255,255,255,0.5)', lineHeight:1.6 }}>
                     I confirm I am a working professional aged 18–45, not under a first-class cricket contract, and I agree to the{' '}
-                    <a href="/terms" style={{ color:'#FF7A29', textDecoration:'none', fontWeight:600 }}>Terms & Conditions</a>,{' '}
-                    <a href="/refunds" style={{ color:'#FF7A29', textDecoration:'none', fontWeight:600 }}>Refund Policy</a>, and{' '}
-                    <a href="/eligibility" style={{ color:'#FF7A29', textDecoration:'none', fontWeight:600 }}>Eligibility Criteria</a>.
+                    <Link href="/terms" style={{ color:'#FF7A29', textDecoration:'none', fontWeight:600 }}>Terms & Conditions</Link>,{' '}
+                    <Link href="/refunds" style={{ color:'#FF7A29', textDecoration:'none', fontWeight:600 }}>Refund Policy</Link>, and{' '}
+                    <Link href="/eligibility" style={{ color:'#FF7A29', textDecoration:'none', fontWeight:600 }}>Eligibility Criteria</Link>.
                   </span>
                 </label>
 

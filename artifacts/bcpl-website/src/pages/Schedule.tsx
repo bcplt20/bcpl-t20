@@ -1,7 +1,9 @@
 import React from 'react';
+import { Link } from 'wouter';
 import { SiteHeader } from '../components/SiteHeader';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { getMatches } from '../lib/api';
+import { useLang } from '../lib/i18n';
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap');
@@ -120,6 +122,7 @@ function StatusPill({status}: {status: MatchStatus}) {
 }
 
 export function Schedule() {
+  const { t } = useLang();
   const [activeTab, setActiveTab] = React.useState<'All'|'Upcoming'|'Completed'|'Live'>('All');
   const [teamFilter, setTeamFilter] = React.useState('All Teams');
   const [apiMatches, setApiMatches] = React.useState<ApiMatchRow[] | null>(null);
@@ -200,15 +203,19 @@ export function Schedule() {
         <div style={{padding:'clamp(40px,6vw,60px) 0 clamp(28px,4vw,48px)',textAlign:'center',position:'relative'}}>
           <div className="wrap">
             <div style={{marginBottom:16,display:'flex',justifyContent:'center'}}>
-              <span className="tag-pill">📅 SEASON 5 FIXTURES</span>
+              <span className="tag-pill">
+                {t("📅 SEASON 5 FIXTURES", "📅 सीज़न 5 फिक्स्चर")}
+              </span>
             </div>
             <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(32px,6vw,72px)',lineHeight:1.05,marginBottom:12,color:'#fff'}}>
-              SEASON 5
+              {t("SEASON 5", "सीज़न 5")}
             </h1>
             <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(32px,6vw,72px)',lineHeight:1.05,marginBottom:24}}>
-              <span className="shimmer-gold">FIXTURES.</span>
+              <span className="shimmer-gold">{t("FIXTURES.", "फिक्स्चर।")}</span>
             </h1>
-            <p style={{color:'rgba(255,255,255,0.45)',fontSize:15,fontFamily:'Inter,sans-serif',maxWidth:520,margin:'0 auto'}}>Every Season 5 match — dates, venues and results — appears here as soon as it is announced.</p>
+            <p style={{color:'rgba(255,255,255,0.45)',fontSize:15,fontFamily:'Inter,sans-serif',maxWidth:520,margin:'0 auto'}}>
+              {t("Every Season 5 match — dates, venues and results — appears here as soon as it is announced.", "हर Season 5 match — तारीख, venue और result — announce होते ही यहाँ दिखेगा।")}
+            </p>
           </div>
         </div>
 
@@ -248,11 +255,17 @@ export function Schedule() {
           {!loading && !loadErr && allMatches.length === 0 && (
             <div style={{textAlign:'center',padding:'clamp(60px,10vw,100px) 20px'}}>
               <div style={{fontSize:64,marginBottom:20}}>🏏</div>
-              <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,4vw,36px)',color:'#fff',marginBottom:12}}>Fixtures Coming Soon</div>
-              <p style={{color:'rgba(255,255,255,0.45)',fontSize:15,maxWidth:440,margin:'0 auto 28px',lineHeight:1.7}}>The complete Season 5 fixture list will be published here after the players' auction in August 2026. The tournament begins in September 2026.</p>
+              <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,4vw,36px)',color:'#fff',marginBottom:12}}>
+                {t("Fixtures Coming Soon", "Fixtures जल्द आएंगे")}
+              </div>
+              <p style={{color:'rgba(255,255,255,0.45)',fontSize:15,maxWidth:440,margin:'0 auto 28px',lineHeight:1.7}}>
+                {t("The complete Season 5 fixture list will be published here after the players' auction in August 2026. The tournament begins in September 2026.", "पूरी Season 5 fixture list players' auction (Aug 2026) के बाद यहाँ publish होगी। Tournament Sep 2026 में शुरू होगा।")}
+              </p>
               <div style={{display:'inline-flex',alignItems:'center',gap:8,background:'rgba(255,122,41,0.1)',border:'1px solid rgba(255,122,41,0.3)',borderRadius:20,padding:'8px 20px'}}>
                 <span style={{width:8,height:8,borderRadius:'50%',background:'#FF7A29',display:'inline-block',animation:'liveBlip 1.2s infinite'}}/>
-                <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:12,color:'#FF7A29',letterSpacing:'.08em'}}>REGISTRATIONS OPEN — SEASON 5</span>
+                <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:12,color:'#FF7A29',letterSpacing:'.08em'}}>
+                  {t("REGISTRATIONS OPEN — SEASON 5", "रजिस्ट्रेशन खुले हैं — सीज़न 5")}
+                </span>
               </div>
             </div>
           )}
@@ -332,12 +345,16 @@ export function Schedule() {
 
         {/* MOBILE STICKY CTA */}
         <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',padding:'10px 16px 18px',gap:10}}>
-          <a href="/register" className="btn-fire" style={{flex:2,height:52,fontSize:15,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register ₹299 →</a>
+          <Link href="/register" className="btn-fire" style={{flex:2,height:52,fontSize:15,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>
+            {t("Register ₹299 →", "रजिस्टर करें ₹299 →")}
+          </Link>
           <a href="https://wa.me/919151346555" target="_blank" rel="noopener noreferrer" className="btn-wa" style={{flex:1,height:52,fontSize:14,borderRadius:14,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>💬 WhatsApp</a>
         </div>
       </div>
       {/* ── FLOATING REGISTER BUTTON ── */}
-      <a className="float-reg-btn float-reg-pulse" href="/register" style={{textDecoration:"none"}}>🏏 REGISTER NOW →</a>
+      <Link href="/register" className="float-reg-btn float-reg-pulse" style={{textDecoration:"none"}}>
+        {t("🏏 REGISTER NOW →", "🏏 अभी रजिस्टर करें →")}
+      </Link>
     </div>
   );
 }

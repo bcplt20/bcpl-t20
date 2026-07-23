@@ -1,7 +1,9 @@
 import React from 'react';
+import { Link } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { getTeamDetail, getPointsTable, getMatches, type ApiTeam, type ApiTeamPlayer } from '../lib/api';
+import { useLang } from '../lib/i18n';
 
 const asset = (url: string) =>
   !url ? "" : url.startsWith("data:") || url.startsWith("http") ? url : import.meta.env.BASE_URL + url.replace(/^\//, "");
@@ -15,8 +17,9 @@ type PtsRow = { team: string; played: number; won: number; lost: number; noResul
 type Match  = { id: string; matchNo: number; team1: string; team2: string; venue: string; scheduledAt: string | null; status: string; winner: string | null; resultDesc: string | null };
 
 export function TeamDetail() {
+  const { t } = useLang();
   const [tab, setTab] = React.useState(0);
-  const tabs = ['Squad','Results','About'];
+  const tabs = [t('Squad', 'Squad'), t('Results', 'Results'), t('About', 'About')];
 
   const slug = React.useMemo(() => {
     const parts = window.location.pathname.split('/').filter(Boolean);
@@ -171,7 +174,7 @@ export function TeamDetail() {
               <p style={{color:'rgba(255,255,255,0.5)',fontSize:14,lineHeight:1.7,marginBottom:24,fontFamily:'Inter,sans-serif'}}>
                 {notFound ? 'This team does not exist or may have been removed.' : 'Something went wrong — please refresh the page to try again.'}
               </p>
-              <a href="/teams" className="btn-fire" style={{padding:'13px 28px',fontSize:14,borderRadius:12,textDecoration:'none',display:'inline-block'}}>← All Teams</a>
+              <Link href="/teams" className="btn-fire" style={{padding:'13px 28px',fontSize:14,borderRadius:12,textDecoration:'none',display:'inline-block'}}>← All Teams</Link>
             </div>
           </div>
         )}
@@ -241,7 +244,7 @@ export function TeamDetail() {
                       <p style={{color:'rgba(255,255,255,0.5)',fontSize:14,lineHeight:1.7,maxWidth:440,margin:'0 auto 24px',fontFamily:'Inter,sans-serif'}}>
                         The {team.name} squad will be finalised at the BCPL Season 5 players' auction in August 2026. Register now for your chance to be picked.
                       </p>
-                      <a href="/register" className="btn-fire" style={{padding:'13px 28px',fontSize:14,borderRadius:12,textDecoration:'none',display:'inline-block'}}>🏏 Register for ₹299 →</a>
+                      <Link href="/register" className="btn-fire" style={{padding:'13px 28px',fontSize:14,borderRadius:12,textDecoration:'none',display:'inline-block'}}>🏏 Register for ₹299 →</Link>
                     </div>
                   )
                   : (
@@ -345,8 +348,8 @@ export function TeamDetail() {
                     Register today and get your shot at representing {team.city || 'your city'} on the BCPL stage. All roles open — Bat, Bowl, WK, All-Rounder.
                   </p>
                   <div className="cta-buttons" style={{display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap'}}>
-                    <a href="/register" className="btn-fire" style={{padding:'16px 32px',fontSize:15,borderRadius:14,textDecoration:'none',display:'inline-flex',alignItems:'center',gap:8}}>🏏 Register for ₹299 →</a>
-                    <a href="/teams" style={{padding:'16px 24px',fontSize:15,borderRadius:14,background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.15)',color:'rgba(255,255,255,0.8)',fontFamily:'Montserrat,sans-serif',fontWeight:700,textDecoration:'none',display:'inline-flex',alignItems:'center'}}>← All Teams</a>
+                    <Link href="/register" className="btn-fire" style={{padding:'16px 32px',fontSize:15,borderRadius:14,textDecoration:'none',display:'inline-flex',alignItems:'center',gap:8}}>🏏 Register for ₹299 →</Link>
+                    <Link href="/teams" style={{padding:'16px 24px',fontSize:15,borderRadius:14,background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.15)',color:'rgba(255,255,255,0.8)',fontFamily:'Montserrat,sans-serif',fontWeight:700,textDecoration:'none',display:'inline-flex',alignItems:'center'}}>← All Teams</Link>
                   </div>
                 </div>
               </div>
@@ -356,13 +359,15 @@ export function TeamDetail() {
 
         {/* Mobile Sticky CTA */}
         <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',padding:'10px 16px 18px',gap:10}}>
-          <a href="/register" className="btn-fire" style={{flex:1,height:52,fontSize:14,borderRadius:14,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register ₹299 →</a>
+          <Link href="/register" className="btn-fire" style={{flex:1,height:52,fontSize:14,borderRadius:14,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register ₹299 →</Link>
         </div>
 
         <BCPLFooter />
       </div>
       {/* ── FLOATING REGISTER BUTTON ── */}
-      <a className="float-reg-btn float-reg-pulse" href="/register" style={{textDecoration:"none"}}>🏏 REGISTER NOW →</a>
+      <Link href="/register" className="float-reg-btn float-reg-pulse" style={{textDecoration:"none"}}>
+        {t("🏏 REGISTER NOW →", "🏏 अभी रजिस्टर करें →")}
+      </Link>
     </div>
   );
 }

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { verifyPhase2Payment, getRegistrationStatus, getMe } from '../lib/api';
-
-const BASE = import.meta.env.BASE_URL;
+import { useLang } from '../lib/i18n';
 
 export function Phase2PaymentReceipt() {
   const [state, setState] = useState<'verifying' | 'success' | 'error'>('verifying');
@@ -14,6 +14,9 @@ export function Phase2PaymentReceipt() {
   const [amount, setAmount] = useState(2000);
   const [paidAt, setPaidAt] = useState('');
   const [errMsg, setErrMsg] = useState('');
+
+  const [, setLocation] = useLocation();
+  const { t } = useLang();
 
   useEffect(() => {
     (async () => {
@@ -39,19 +42,20 @@ export function Phase2PaymentReceipt() {
   }, []);
 
   if (state === 'verifying') return (
-    <div style={{ background:'#06101E', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:14, color:'#64748B', fontFamily:'Inter,sans-serif' }}>
-      <div style={{ width:36, height:36, border:'3px solid rgba(232,178,61,0.3)', borderTopColor:'#E8B23D', borderRadius:'50%', animation:'spin .8s linear infinite' }} />
+    <div style={{ background:'var(--bg)', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:20, color:'#64748B', fontFamily:'var(--font-body)' }}>
+      <div style={{ width:48, height:48, border:'4px solid rgba(232,178,61,0.2)', borderTopColor:'var(--gold)', borderRadius:'50%', animation:'spin 1s linear infinite' }} />
       <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
-      Verifying your payment…
+      <div style={{ fontFamily:'var(--font-head)', fontSize:18, fontWeight:700, letterSpacing:'.06em', color:'#fff', textTransform:'uppercase' }}>{t("Verifying your payment…", "आपका पेमेंट वेरिफाई हो रहा है…")}</div>
     </div>
   );
 
   if (state === 'error') return (
-    <div style={{ background:'#06101E', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:14, padding:24, fontFamily:'Inter,sans-serif', textAlign:'center' }}>
-      <div style={{ fontSize:48 }}>⚠️</div>
-      <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'#EF4444' }}>Verification Issue</div>
-      <div style={{ fontSize:13, color:'#64748B', maxWidth:380 }}>{errMsg || 'Could not verify payment. If you paid, your slot is still confirmed. Please contact support.'}</div>
-      <a href={BASE + 'register/phase2/kyc'} style={{ padding:'12px 28px', borderRadius:12, background:'linear-gradient(135deg,#FF7A29,#D95E10)', color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:13, textDecoration:'none' }}>Try KYC Anyway →</a>
+    <div style={{ background:'var(--bg)', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:16, padding:24, fontFamily:'var(--font-body)', textAlign:'center' }}>
+      <div style={{ fontSize:56 }}>⚠️</div>
+      <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:32, color:'var(--red)', textTransform:'uppercase' }}>{t("Verification Issue", "वेरिफिकेशन समस्या")}</div>
+      <div style={{ fontSize:15, color:'#64748B', maxWidth:400, lineHeight:1.6 }}>{errMsg || t('Could not verify payment. If you paid, your slot is still confirmed. Please contact support.', 'पेमेंट वेरिफाई नहीं हो सका। यदि आपने पेमेंट कर दिया है, तो आपकी जगह पक्की है।')}</div>
+      <Link href="/register/phase2/kyc" className="btn-cta" style={{ marginTop:16 }}>{t("Try KYC Anyway →", "फिर भी KYC का प्रयास करें →")}</Link>
+      <style>{`.btn-cta{display:inline-flex;align-items:center;background:linear-gradient(135deg,var(--orange),var(--orange-2));border:none;border-radius:14px;color:#fff;font-family:var(--font-head);font-weight:900;letter-spacing:0.04em;padding:14px 28px;text-transform:uppercase;text-decoration:none;}`}</style>
     </div>
   );
 
@@ -60,136 +64,119 @@ export function Phase2PaymentReceipt() {
   const halfGst = Math.round(gst / 2);
 
   return (
-    <div style={{ background:'#06101E', minHeight:'100vh', color:'#F0EDE8', fontFamily:"'Inter',sans-serif", overflowX:'hidden', paddingBottom:80 }}>
+    <div className="page-root">
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap');
-        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-        @keyframes tickerScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-        @keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-        @keyframes shimGold{0%{background-position:-200% center}100%{background-position:200% center}}
-        @keyframes shimmerAnim{0%{background-position:-200% center}100%{background-position:200% center}}
-        @keyframes scaleIn{from{opacity:0;transform:scale(0.7)}to{opacity:1;transform:scale(1)}}
-        @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-        .wrap{max-width:900px;margin:0 auto;padding:0 16px}
-        @media(min-width:768px){.wrap{padding:0 32px}}
-        .desk-nav{display:none}
-        @media(min-width:1024px){.desk-nav{display:flex;align-items:center;gap:18px}}
-        .ham-btn{display:flex;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
-        @media(min-width:1024px){.ham-btn{display:none}}
-        .nav-link{font-size:12px;font-weight:700;font-family:Montserrat,sans-serif;letter-spacing:.08em;color:rgba(255,255,255,0.65);text-decoration:none;text-transform:uppercase;cursor:pointer;transition:color .2s;background:none;border:none}
-        .nav-link:hover{color:#FF7A29}
-        .hero-check{animation:scaleIn .6s cubic-bezier(.34,1.56,.64,1) both}
-        .hero-title{animation:fadeUp .5s .2s ease both}
-        .ticket{background:#0A1727;border:1px solid rgba(232,178,61,0.4);position:relative;overflow:visible;width:100%;max-width:100%}
-        .ticket::before,.ticket::after{content:'';position:absolute;width:22px;height:22px;border-radius:50%;background:#06101E;top:50%;transform:translateY(-50%);z-index:2}
-        .ticket::before{left:-11px;border:1px solid rgba(232,178,61,0.4)}
-        .ticket::after{right:-11px;border:1px solid rgba(232,178,61,0.4)}
-        @media(max-width:480px){.ticket::before,.ticket::after{display:none}}
-        .ticket-dashed{border-top:2px dashed rgba(232,178,61,0.25);margin:0 24px}
-        .receipt-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);gap:8px}
-        .receipt-row:last-child{border-bottom:none}
-        .next-steps-grid{display:grid;grid-template-columns:1fr;gap:16px}
-        @media(min-width:600px){.next-steps-grid{grid-template-columns:repeat(3,1fr)}}
-        .next-card{background:#0A1727;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:22px 20px;border-top:3px solid #FF7A29}
-        .chip-pill{display:inline-flex;align-items:center;gap:6px;border-radius:12px;padding:6px 14px;font-size:11px;font-weight:700;font-family:Montserrat,sans-serif;letter-spacing:.06em;border:1px solid}
-        footer a{color:rgba(255,255,255,0.45);text-decoration:none}
-        footer a:hover{color:#FF7A29}
+        .page-root { background: var(--bg); min-height: 100vh; color: var(--ink); font-family: var(--font-body); overflow-x: hidden; padding-bottom: 80px; }
+        .W { max-width: 800px; margin: 0 auto; padding: 0 20px; }
+        @media (min-width: 768px) { .W { padding: 0 32px; } }
+        
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes shimmerAnim { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
+        
+        .ticket { background: var(--panel); border: 1px solid rgba(232,178,61,0.4); border-radius: var(--r); position: relative; overflow: hidden; margin-bottom: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); animation: fadeUp 0.6s 0.2s ease both; }
+        .ticket-dash { border-top: 2px dashed rgba(232,178,61,0.25); margin: 0 24px; position: relative; }
+        .ticket-dash::before, .ticket-dash::after { content:''; position:absolute; width:24px; height:24px; background:var(--bg); border-radius:50%; top:-12px; }
+        .ticket-dash::before { left:-36px; border-right: 1px solid rgba(232,178,61,0.4); }
+        .ticket-dash::after { right:-36px; border-left: 1px solid rgba(232,178,61,0.4); }
+        
+        .next-card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 24px; border-top: 3px solid var(--orange); transition: transform 0.2s; }
+        .next-card:hover { transform: translateY(-4px); border-color: rgba(255,122,41,0.3); }
+        .next-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media (min-width: 640px) { .next-grid { grid-template-columns: repeat(3, 1fr); } }
+        
+        .btn-kyc { background: transparent; border: 1px solid rgba(232,178,61,0.6); border-radius: var(--r); color: var(--gold); font-family: var(--font-head); font-weight: 800; font-size: 14px; letter-spacing: .08em; cursor: pointer; padding: 12px 24px; text-transform: uppercase; text-decoration: none; display: inline-block; transition: all 0.2s; }
+        .btn-kyc:hover { background: rgba(232,178,61,0.1); transform: translateY(-2px); }
       `}</style>
 
       <SiteHeader />
 
-      <div className="wrap" style={{ paddingTop:0 }}>
+      <div className="W">
         {/* Hero */}
-        <div style={{ position:'relative', overflow:'hidden', padding:'60px 0 48px', textAlign:'center' }}>
-          <div style={{ position:'absolute', inset:0, background:'repeating-linear-gradient(135deg,rgba(232,178,61,0.04) 0px,rgba(232,178,61,0.04) 1px,transparent 1px,transparent 40px)', pointerEvents:'none' }} />
-          <div style={{ position:'absolute', top:0, left:0, right:0, height:3, background:'linear-gradient(90deg,transparent,#E8B23D,transparent)' }} />
-          <div className="hero-check" style={{ width:88, height:88, borderRadius:'50%', background:'linear-gradient(135deg,#E8B23D,#B8860B)', margin:'0 auto 24px', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 0 0 12px rgba(232,178,61,0.1), 0 0 0 24px rgba(232,178,61,0.05)' }}>
-            <span style={{ fontSize:40, lineHeight:1 }}>✓</span>
+        <div style={{ padding: '60px 0 48px', textAlign: 'center' }}>
+          <div style={{ width: 96, height: 96, borderRadius: '50%', background: 'linear-gradient(135deg, var(--gold), #B8860B)', margin: '0 auto 24px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 0 12px rgba(232,178,61,0.1), 0 0 0 24px rgba(232,178,61,0.05)', animation: 'scaleIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both' }}>
+            <span style={{ fontSize: 48, color: '#000', lineHeight: 1 }}>✓</span>
           </div>
-          <h1 className="hero-title" style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(24px,5vw,52px)', color:'#fff', lineHeight:1.05, letterSpacing:'.01em' }}>
-            PHYSICAL TRIAL SLOT<br/>
-            <span style={{ background:'linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D)', backgroundSize:'200% auto', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text', animation:'shimmerAnim 2.5s linear infinite', display:'inline-block' }}>SECURED.</span>
+          <h1 style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(32px, 6vw, 64px)', color: '#fff', lineHeight: 1.05, textTransform: 'uppercase', animation: 'fadeUp 0.5s 0.2s ease both' }}>
+            {t("PHYSICAL TRIAL SLOT", "फिजिकल ट्रायल जगह")}<br/>
+            <span style={{ background: 'linear-gradient(90deg, var(--gold), #FFD700, var(--gold))', backgroundSize: '200% auto', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', animation: 'shimmerAnim 2.5s linear infinite', display: 'inline-block' }}>{t("SECURED.", "पक्की हो गई।")}</span>
           </h1>
-          <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(13px,2.5vw,20px)', color:'rgba(255,255,255,0.45)', marginTop:12, letterSpacing:'.06em', animation:'fadeUp .5s .35s ease both' }}>SEE YOU ON THE GROUND.</div>
-          <div style={{ display:'flex', flexWrap:'wrap', justifyContent:'center', gap:10, marginTop:28 }}>
-            <span className="chip-pill" style={{ background:'rgba(255,122,41,0.1)', borderColor:'rgba(255,122,41,0.4)', color:'#FF7A29' }}>🏏 {role}</span>
-            <span className="chip-pill" style={{ background:'rgba(232,178,61,0.08)', borderColor:'rgba(232,178,61,0.35)', color:'#E8B23D' }}>📍 {city}</span>
-            <span className="chip-pill" style={{ background:'rgba(255,255,255,0.04)', borderColor:'rgba(255,255,255,0.12)', color:'rgba(255,255,255,0.6)', fontFamily:'monospace', fontSize:10 }}>REF: {regId.slice(0,8).toUpperCase()}</span>
+          <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 'clamp(14px, 3vw, 20px)', color: 'rgba(255,255,255,0.5)', marginTop: 16, letterSpacing: '.1em', textTransform: 'uppercase', animation: 'fadeUp 0.5s 0.3s ease both' }}>
+            {t("SEE YOU ON THE GROUND.", "मैदान पर मिलते हैं।")}
           </div>
         </div>
 
         {/* Gold ticket receipt */}
-        <div style={{ maxWidth:640, margin:'0 auto 48px' }}>
-          <div className="ticket">
-            <div style={{ background:'linear-gradient(135deg,#E8B23D,#B8860B)', padding:'20px 24px' }}>
-              <div style={{ fontSize:9, fontWeight:900, fontFamily:'Montserrat,sans-serif', letterSpacing:'.2em', color:'rgba(0,0,0,0.5)', marginBottom:5, textTransform:'uppercase' }}>Official Confirmation · BCPL Season 5</div>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(13px,3vw,16px)', color:'#fff', textShadow:'0 2px 8px rgba(0,0,0,0.25)' }}>PHASE 2 PHYSICAL TRIAL — CONFIRMED</div>
+        <div className="ticket">
+          <div style={{ background: 'linear-gradient(135deg, var(--gold), #B8860B)', padding: '24px 32px' }}>
+            <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 11, letterSpacing: '.2em', color: 'rgba(0,0,0,0.6)', marginBottom: 8, textTransform: 'uppercase' }}>{t("Official Confirmation · BCPL Season 5", "आधिकारिक पुष्टि · BCPL सीजन 5")}</div>
+            <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(16px, 4vw, 22px)', color: '#fff', textTransform: 'uppercase', textShadow: '0 2px 10px rgba(0,0,0,0.3)' }}>
+              {t("PHASE 2 PHYSICAL TRIAL — CONFIRMED", "फेज 2 फिजिकल ट्रायल — पक्का")}
             </div>
+          </div>
 
-            <div style={{ background:'#0A1727', padding:'22px 24px 14px' }}>
-              {[
-                ['Player',          playerName],
-                ['Role',            '🏏 ' + role],
-                ['Trial City',      '📍 ' + city],
-                ['Registration No.', regId.slice(0,8).toUpperCase()],
-                ['Payment Date',    paidAt],
-              ].map(([k,v]) => (
-                <div key={k} className="receipt-row">
-                  <span style={{ fontSize:12, color:'rgba(255,255,255,0.4)', fontWeight:600, flexShrink:0 }}>{k}</span>
-                  <span style={{ fontSize: k==='Registration No.'?11:13, color:'#fff', fontWeight:700, fontFamily: k==='Registration No.'?'monospace':'Montserrat,sans-serif', textAlign:'right', wordBreak:'break-all' }}>{v}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* GST breakdown */}
-            <div style={{ background:'rgba(232,178,61,0.04)', borderTop:'1px solid rgba(232,178,61,0.15)', padding:'14px 24px' }}>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:9, letterSpacing:'.14em', color:'rgba(255,255,255,0.3)', textTransform:'uppercase', marginBottom:10 }}>Payment Breakdown</div>
-              {[
-                { label:'Taxable Amount', val:`₹${taxBase.toLocaleString()}`, dim:false },
-                { label:'CGST @ 9%',      val:`₹${halfGst.toLocaleString()}`, dim:true },
-                { label:'SGST @ 9%',      val:`₹${halfGst.toLocaleString()}`, dim:true },
-              ].map(r => (
-                <div key={r.label} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'5px 0', borderBottom:'1px solid rgba(255,255,255,0.04)' }}>
-                  <span style={{ fontFamily:'Inter,sans-serif', fontSize:12, color: r.dim?'rgba(255,255,255,0.35)':'rgba(255,255,255,0.6)', fontWeight:600 }}>{r.label}</span>
-                  <span style={{ fontFamily:'Inter,sans-serif', fontSize:12, color: r.dim?'rgba(255,255,255,0.35)':'rgba(255,255,255,0.7)', fontWeight:700 }}>{r.val}</span>
-                </div>
-              ))}
-              <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'10px 0 2px', marginTop:6, borderTop:'1px solid rgba(232,178,61,0.35)' }}>
-                <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:13, color:'#E8B23D', letterSpacing:'.04em' }}>TOTAL PAID</span>
-                <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:16, color:'#22C55E' }}>₹{amount.toLocaleString()} ✅</span>
+          <div style={{ padding: '32px 32px 24px', background: 'var(--panel)' }}>
+            {[
+              [t('Player', 'प्लेयर'), playerName],
+              [t('Role', 'रोल'), '🏏 ' + role],
+              [t('Trial City', 'ट्रायल शहर'), '📍 ' + city],
+              [t('Registration No.', 'रजिस्ट्रेशन नं.'), regId.slice(0,8).toUpperCase()],
+              [t('Payment Date', 'पेमेंट की तारीख'), paidAt],
+            ].map(([k,v]) => (
+              <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid rgba(255,255,255,0.06)', fontSize: 14 }}>
+                <span style={{ color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>{k}</span>
+                <span style={{ color: '#fff', fontWeight: 700 }}>{v}</span>
               </div>
-            </div>
+            ))}
+          </div>
 
-            <div className="ticket-dashed" />
-
-            <div style={{ background:'#0A1727', padding:'16px 24px 20px', display:'flex', alignItems:'center', gap:12, flexWrap:'wrap' }}>
-              <span style={{ fontSize:18 }}>📋</span>
-              <div style={{ flex:1 }}>
-                <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:12, color:'#E8B23D', letterSpacing:'.08em' }}>NEXT STEP</div>
-                <div style={{ fontSize:13, color:'rgba(255,255,255,0.65)', marginTop:2 }}>Complete KYC verification — Aadhaar + PAN required</div>
+          <div style={{ background: 'rgba(232,178,61,0.04)', borderTop: '1px solid rgba(232,178,61,0.2)', padding: '20px 32px' }}>
+            <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 11, letterSpacing: '.14em', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginBottom: 12 }}>{t("Payment Breakdown", "पेमेंट विवरण")}</div>
+            {[
+              { label: t('Taxable Amount', 'कर योग्य राशि'), val: `₹${taxBase.toLocaleString('en-IN')}`, dim: false },
+              { label: 'CGST @ 9%', val: `₹${halfGst.toLocaleString('en-IN')}`, dim: true },
+              { label: 'SGST @ 9%', val: `₹${halfGst.toLocaleString('en-IN')}`, dim: true },
+            ].map(r => (
+              <div key={r.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0' }}>
+                <span style={{ fontSize: 13, color: r.dim ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.6)', fontWeight: 600 }}>{r.label}</span>
+                <span style={{ fontSize: 13, color: r.dim ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.8)', fontWeight: 700 }}>{r.val}</span>
               </div>
-              <button onClick={() => { window.location.href = BASE + 'register/phase2/kyc'; }} style={{ flexShrink:0, background:'transparent', border:'1px solid rgba(232,178,61,0.5)', borderRadius:12, color:'#E8B23D', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:11, letterSpacing:'.1em', cursor:'pointer', padding:'9px 18px' }}>COMPLETE KYC →</button>
+            ))}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0 0', marginTop: 12, borderTop: '1px solid rgba(232,178,61,0.3)' }}>
+              <span style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 16, color: 'var(--gold)', letterSpacing: '.06em', textTransform: 'uppercase' }}>{t("TOTAL PAID", "कुल भुगतान")}</span>
+              <span style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 24, color: 'var(--green)' }}>₹{amount.toLocaleString('en-IN')} ✅</span>
             </div>
+          </div>
+
+          <div className="ticket-dash" />
+
+          <div style={{ background: 'var(--panel)', padding: '24px 32px', display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap' }}>
+            <span style={{ fontSize: 32 }}>📋</span>
+            <div style={{ flex: 1, minWidth: 200 }}>
+              <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 14, color: 'var(--gold)', letterSpacing: '.1em', textTransform: 'uppercase' }}>{t("NEXT STEP", "अगला कदम")}</div>
+              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)', marginTop: 4 }}>{t("Complete KYC verification — Aadhaar + PAN required", "KYC पूरा करें — आधार और पैन जरूरी")}</div>
+            </div>
+            <Link href="/register/phase2/kyc" className="btn-kyc">{t("COMPLETE KYC →", "KYC पूरा करें →")}</Link>
           </div>
         </div>
 
         {/* Next steps */}
-        <div>
-          <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:11, letterSpacing:'.18em', color:'rgba(255,255,255,0.35)', marginBottom:20, textTransform:'uppercase' }}>Next Steps</div>
-          <div className="next-steps-grid">
+        <div style={{ animation: 'fadeUp 0.6s 0.4s ease both' }}>
+          <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 13, letterSpacing: '.18em', color: 'rgba(255,255,255,0.4)', marginBottom: 20, textTransform: 'uppercase' }}>{t("Next Steps", "अगले कदम")}</div>
+          <div className="next-grid">
             {[
-              { icon:'🪪', title:'Complete KYC', desc:'Aadhaar + PAN required for BCCI compliance and franchise records.', cta:'COMPLETE KYC →', ctaColor:'#FF7A29', topColor:'#FF7A29', href: BASE + 'register/phase2/kyc' },
-              { icon:'📅', title:'Trial Date Announcement', desc:'SMS + Email notification 30 days before your trial date. Check your phone.', cta:null, ctaColor:'', topColor:'#E8B23D', href: null },
-              { icon:'💬', title:'Stay Updated', desc:'Keep your email and phone number active. All updates go there directly.', cta:null, ctaColor:'', topColor:'#25D366', href: null },
+              { icon:'🪪', title: t('Complete KYC', 'KYC पूरा करें'), desc: t('Aadhaar + PAN required for BCCI compliance and franchise records.', 'BCCI नियमों और फ्रैंचाइज़ी रिकॉर्ड के लिए आधार + पैन आवश्यक।'), cta: t('COMPLETE KYC →', 'KYC पूरा करें →'), ctaColor: 'var(--orange)', topColor: 'var(--orange)', href: '/register/phase2/kyc' },
+              { icon:'📅', title: t('Trial Date Announcement', 'ट्रायल की तारीख'), desc: t('SMS + Email notification 30 days before your trial date. Check your phone.', 'ट्रायल से 30 दिन पहले SMS + ईमेल से सूचना।'), cta: null, ctaColor: '', topColor: 'var(--gold)', href: null },
+              { icon:'💬', title: t('Stay Updated', 'अपडेट रहें'), desc: t('Keep your email and phone number active. All updates go there directly.', 'अपना ईमेल और फोन चालू रखें। सभी अपडेट वहीं मिलेंगे।'), cta: null, ctaColor: '', topColor: 'var(--green)', href: null },
             ].map(({ icon, title, desc, cta, ctaColor, topColor, href }) => (
-              <div key={title} className="next-card" style={{ borderTopColor:topColor }}>
-                <div style={{ fontSize:28, marginBottom:12 }}>{icon}</div>
-                <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:15, color:'#fff', marginBottom:8 }}>{title}</div>
-                <div style={{ fontSize:13, color:'rgba(255,255,255,0.5)', lineHeight:1.6, marginBottom: cta?16:0 }}>{desc}</div>
+              <div key={title} className="next-card" style={{ borderTopColor: topColor }}>
+                <div style={{ fontSize: 32, marginBottom: 16 }}>{icon}</div>
+                <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 20, color: '#fff', marginBottom: 8, textTransform: 'uppercase' }}>{title}</div>
+                <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6, marginBottom: cta ? 20 : 0 }}>{desc}</div>
                 {cta && href && (
-                  <button onClick={() => { window.location.href = href; }} style={{ background:'transparent', border:`1px solid ${ctaColor}60`, borderRadius:12, color:ctaColor, fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:11, letterSpacing:'.1em', cursor:'pointer', padding:'8px 16px' }}>
+                  <Link href={href} style={{ background: 'transparent', border: `1px solid ${ctaColor}60`, borderRadius: 'var(--r)', color: ctaColor, fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 13, letterSpacing: '.08em', cursor: 'pointer', padding: '10px 20px', textDecoration: 'none', display: 'inline-block', textTransform: 'uppercase' }}>
                     {cta}
-                  </button>
+                  </Link>
                 )}
               </div>
             ))}

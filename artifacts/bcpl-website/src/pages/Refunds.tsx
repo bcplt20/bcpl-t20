@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 
@@ -330,7 +331,7 @@ export function Refunds() {
         <BCPLFooter />
       </div>
       <MobileCTA/>
-      <a className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>🏏 REGISTER NOW →</a>
+      <Link className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>🏏 REGISTER NOW →</Link>
     </div>
   );
 }

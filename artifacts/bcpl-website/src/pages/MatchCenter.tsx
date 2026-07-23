@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
+import { Link } from "wouter";
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { getMatches, getPointsTable, getScorecard, getTeams } from '../lib/api';
+import { useLang } from '../lib/i18n';
 
 /* ─── Helpers ─────────────────────────────────────────── */
 const initials = (name: string) =>
@@ -27,6 +29,7 @@ const STATUS_META: Record<UiStatus, { label: string; color: string }> = {
 };
 
 export function MatchCenter() {
+  const { t } = useLang();
   const [matches, setMatches] = useState<any[]>([]);
   const [points,  setPoints]  = useState<any[]>([]);
   const [teamColors, setTeamColors] = useState<Record<string, string>>({});
@@ -233,12 +236,14 @@ export function MatchCenter() {
         <div style={{ position: "absolute", top: 0, left: 0, width: "3px", height: "100%", background: "linear-gradient(180deg,transparent,#FF7A29 30%,#FF7A29 70%,transparent)", opacity: 0.35 }} />
         <div className="wrap">
           <div style={{ animation: "fadeUp 0.7s ease both" }}>
-            <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 11, letterSpacing: "0.1em", color: "#E8B23D" }}>SEASON 5 · 2025–26</span>
+            <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 11, letterSpacing: "0.1em", color: "#E8B23D" }}>
+              {t("SEASON 5 · 2025–26", "सीज़न 5 · 2025–26")}
+            </span>
             <h1 style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: "clamp(24px, 5vw, 52px)", color: "#fff", textTransform: "uppercase", letterSpacing: "-0.01em", lineHeight: 1.05, margin: "10px 0 12px" }}>
-              MATCH <span style={{ color: "#FF7A29" }}>CENTER</span>
+              {t("MATCH", "MATCH")} <span style={{ color: "#FF7A29" }}>{t("CENTER", "CENTER")}</span>
             </h1>
             <p style={{ fontFamily: "Inter, sans-serif", fontSize: "clamp(14px, 1.8vw, 16px)", color: "rgba(255,255,255,0.5)", lineHeight: 1.6, maxWidth: 520 }}>
-              Live scores, full match scorecards and the Season 5 points table.
+              {t("Live scores, full match scorecards and the Season 5 points table.", "Live scores, पूरे match scorecards और Season 5 points table।")}
             </p>
           </div>
         </div>
@@ -255,9 +260,11 @@ export function MatchCenter() {
           {sorted.length === 0 && (
             <div style={{ textAlign: "center", padding: "48px 20px", background: "#0A1727", borderRadius: 16, border: "1px solid rgba(255,255,255,0.07)" }}>
               <div style={{ fontSize: 48, marginBottom: 16 }}>🏏</div>
-              <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 20, color: "#fff", marginBottom: 8 }}>No Matches Scheduled Yet</div>
+              <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 20, color: "#fff", marginBottom: 8 }}>
+                {t("No Matches Scheduled Yet", "अभी कोई matches scheduled नहीं हैं")}
+              </div>
               <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 14, fontFamily: "Inter, sans-serif", maxWidth: 360, margin: "0 auto" }}>
-                Match fixtures, live scores and results will appear here as soon as they are announced.
+                {t("Match fixtures, live scores and results will appear here as soon as they are announced.", "Match fixtures, live scores और results यहाँ दिखेंगे जैसे ही announce होंगे।")}
               </p>
             </div>
           )}
@@ -337,9 +344,11 @@ export function MatchCenter() {
           {points.length === 0 && (
             <div style={{ textAlign: "center", padding: "48px 20px", background: "#0A1727", borderRadius: 16, border: "1px solid rgba(255,255,255,0.07)" }}>
               <div style={{ fontSize: 48, marginBottom: 16 }}>🏆</div>
-              <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 20, color: "#fff", marginBottom: 8 }}>Standings Coming Soon</div>
+              <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 20, color: "#fff", marginBottom: 8 }}>
+                {t("Standings Coming Soon", "Standings जल्द आएंगे")}
+              </div>
               <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 14, fontFamily: "Inter, sans-serif", maxWidth: 360, margin: "0 auto" }}>
-                The points table will update in real time once Season 5 matches begin.
+                {t("The points table will update in real time once Season 5 matches begin.", "Season 5 के matches शुरू होते ही points table real time में update होगी।")}
               </p>
             </div>
           )}
@@ -373,6 +382,11 @@ export function MatchCenter() {
       </section>
 
       <BCPLFooter />
+
+      {/* Floating register button */}
+      <Link href="/register" style={{ position: "fixed", bottom: 28, right: 28, zIndex: 900, background: "linear-gradient(135deg,#FF7A29,#D95E10)", border: "none", borderRadius: 12, color: "#fff", fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 13, letterSpacing: ".06em", padding: "14px 22px", textTransform: "uppercase", textDecoration: "none", display: "flex", alignItems: "center", gap: 8, boxShadow: "0 8px 32px rgba(255,122,41,0.45)", clipPath: "polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%)", transition: "opacity .2s, transform .15s" }} onMouseEnter={e => { e.currentTarget.style.opacity = ".9"; e.currentTarget.style.transform = "translateY(-2px)"; }} onMouseLeave={e => { e.currentTarget.style.opacity = "1"; e.currentTarget.style.transform = "translateY(0)"; }}>
+        {t("🏏 REGISTER NOW →", "🏏 अभी रजिस्टर करें →")}
+      </Link>
     </div>
   );
 }

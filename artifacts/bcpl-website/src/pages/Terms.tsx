@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Link } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
+import { useLang } from '../lib/i18n';
 
 function MobileCTA() {
+  const { t } = useLang();
   return (
     <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,padding:'10px 16px 18px',background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',gap:10}}>
-      <a href="/register" className="btn-fire" style={{flex:2,height:52,fontSize:15,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register ₹299 →</a>
-      <a href="https://wa.me/919151346555" target="_blank" rel="noopener noreferrer" className="btn-wa" style={{flex:1,height:52,fontSize:14,borderRadius:14,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>💬 WhatsApp</a>
+      <Link href="/register" className="btn-fire" style={{flex:2,height:52,fontSize:15,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>{t("Register ₹299 →","रजिस्टर ₹299 →")}</Link>
+      <a href="https://wa.me/919151346555" target="_blank" rel="noopener noreferrer" className="btn-wa" style={{flex:1,height:52,fontSize:14,borderRadius:14,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>WhatsApp</a>
     </div>
   );
 }
@@ -16,6 +19,28 @@ const OrangeDot = () => (
 );
 
 export function Terms() {
+  const { t } = useLang();
+  const [activeSection, setActiveSection] = useState<number | null>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  // Scroll spy for desktop sticky TOC
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const id = entry.target.id;
+            const num = parseInt(id.replace('section-', ''));
+            if (!isNaN(num)) setActiveSection(num);
+          }
+        });
+      },
+      { threshold: 0.5, rootMargin: '-100px 0px -60% 0px' }
+    );
+    const sections = contentRef.current?.querySelectorAll('[id^="section-"]');
+    sections?.forEach(s => observer.observe(s));
+    return () => observer.disconnect();
+  }, []);
 
   const css = `
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap');
@@ -39,6 +64,17 @@ export function Terms() {
     .float-reg-btn:hover{opacity:.9;transform:translateY(-2px);}
     .float-reg-pulse{animation:floatPulse 2.5s ease-in-out infinite;}
     @media(max-width:1023px){.float-reg-btn{display:none!important;}}
+    .legal-layout{display:grid;gap:40px;}
+    @media(min-width:1024px){.legal-layout{grid-template-columns:260px 1fr;gap:56px;align-items:start;}}
+    .toc-sticky{position:sticky;top:80px;display:none;}
+    @media(min-width:1024px){.toc-sticky{display:block;}}
+    .toc-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;cursor:pointer;transition:all .2s;text-decoration:none;color:rgba(255,255,255,.6);font-size:14px;border:1px solid transparent;min-height:44px;}
+    .toc-item:hover{background:rgba(255,122,41,.08);color:#FF7A29;border-color:rgba(255,122,41,.2);}
+    .toc-item.active{background:rgba(255,122,41,.12);color:#FF7A29;border-color:rgba(255,122,41,.35);font-weight:700;}
+    .toc-num{width:26px;height:26px;border-radius:50%;background:rgba(255,122,41,.15);border:1px solid rgba(255,122,41,.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#FF7A29;flex-shrink:0;font-family:Montserrat,sans-serif;}
+    .mobile-jump{display:block;margin-bottom:24px;}
+    @media(min-width:1024px){.mobile-jump{display:none;}}
+    .jump-select{width:100%;background:rgba(10,23,39,.9);border:1.5px solid rgba(255,122,41,.3);border-radius:var(--r);color:#F0EDE8;padding:14px 16px;font-family:Inter,sans-serif;font-size:15px;font-weight:600;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='%23FF7A29'%3E%3Cpath d='M0 0l6 8 6-8z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;background-size:12px;padding-right:44px;min-height:52px;}
     @keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
     @keyframes pulseGlow{0%,100%{box-shadow:0 0 16px rgba(255,122,41,0.4)}50%{box-shadow:0 0 36px rgba(255,122,41,0.8),0 0 60px rgba(255,122,41,0.3)}}
     @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
@@ -61,56 +97,56 @@ export function Terms() {
   ];
 
   const sections = [
-    {n:1,icon:'✅',title:'Acceptance of Terms',items:[
+    {n:1,icon:'✅',titleEn:'Acceptance of Terms',titleHi:'नियम स्वीकृति',items:[
       'By completing registration on www.bcplt20.com, you unconditionally accept these Terms & Conditions',
       'Acceptance is binding on you and any person or entity you represent',
       'If you do not agree with any part of these terms, do not proceed with registration',
       'BCPL reserves the right to update these terms at any time; updated terms govern immediately upon posting',
       'Continued participation after an update constitutes acceptance of revised terms',
     ]},
-    {n:2,icon:'📝',title:'Registration & Eligibility',items:[
+    {n:2,icon:'📝',titleEn:'Registration & Eligibility',titleHi:'रजिस्ट्रेशन और योग्यता',items:[
       'Registrations are open exclusively to working professionals aged 18 years and above',
       'Only one registration per person is permitted per season — duplicate registrations will be cancelled without refund',
       'Providing false information (profession, age, identity) constitutes fraud and results in immediate disqualification',
       'BCPL reserves the right to verify eligibility at any stage, including post-selection',
       'Registration is personal and non-transferable; you may not register on behalf of another person',
     ]},
-    {n:3,icon:'💳',title:'Payment Terms',items:[
+    {n:3,icon:'💳',titleEn:'Payment Terms',titleHi:'भुगतान शर्तें',items:[
       'Registration fee: ₹299 (Batsman/Bowler/Wicketkeeper) or ₹399 (All-Rounder) — GST inclusive',
       'Payments processed securely via Cashfree; BCPL does not store card or UPI details',
       'Registration fees are non-refundable once a cricket video has been uploaded',
       'Within 15 days of registration (before video upload), a full refund may be requested',
       'In case of payment failure with amount debited, contact support@bcplt20.com within 48 hours',
     ]},
-    {n:4,icon:'🏆',title:'Selection Process',items:[
+    {n:4,icon:'🏆',titleEn:'Selection Process',titleHi:'चयन प्रक्रिया',items:[
       'Selection is entirely merit-based, assessed by BCPL-appointed scouts via submitted video',
       'BCPL\'s selection decision is final, conclusive, and binding — no appeal process exists',
       'Shortlisted players will be notified via registered email and phone number',
       'BCPL makes no guarantee of selection, trial invitation, or match participation',
       'Scouts evaluate role-specific skills; registration fee is for scouting access, not guaranteed selection',
     ]},
-    {n:5,icon:'🤝',title:'Player Obligations',items:[
+    {n:5,icon:'🤝',titleEn:'Player Obligations',titleHi:'खिलाड़ी के दायित्व',items:[
       'Shortlisted players must attend scheduled trials at the designated city venue on time',
       'Players must maintain conduct standards as outlined in the BCPL Code of Conduct at all times',
       'By registering, players grant BCPL irrevocable media consent for photos, videos, and broadcast coverage',
       'Players must maintain their own medical fitness and carry personal health insurance',
       'Players must notify BCPL immediately of any change in eligibility status after registration',
     ]},
-    {n:6,icon:'©',title:'Intellectual Property',items:[
+    {n:6,icon:'©',titleEn:'Intellectual Property',titleHi:'बौद्धिक संपदा',items:[
       'BCPL owns all match footage, broadcast content, highlight reels, and official photographs',
       'Players may share their own personal performance clips on social media for personal promotion',
       'BCPL name, logo, team names, and all associated marks are registered trademarks of BCPL T20 Pvt. Ltd.',
       'Unauthorised commercial use of BCPL brand assets is prohibited and actionable',
       'Players may not license or sell BCPL content without explicit written consent',
     ]},
-    {n:7,icon:'⚠️',title:'Limitation of Liability',items:[
+    {n:7,icon:'⚠️',titleEn:'Limitation of Liability',titleHi:'दायित्व की सीमा',items:[
       'Players participate in BCPL matches and trials entirely at their own risk',
       'BCPL is not liable for any injury, illness, or accident occurring during matches, trials, or travel',
       'BCPL is not liable for any indirect, consequential, or special losses arising from participation or non-selection',
       'BCPL\'s total liability in any circumstances shall not exceed the registration fee paid',
       'Players are advised to maintain personal accident and health insurance for the duration of the tournament',
     ]},
-    {n:8,icon:'⚖️',title:'Governing Law & Disputes',items:[
+    {n:8,icon:'⚖️',titleEn:'Governing Law & Disputes',titleHi:'कानून और विवाद',items:[
       'These Terms are governed by the laws of the Republic of India',
       'Courts of Delhi shall have exclusive jurisdiction over all disputes arising from these Terms',
       'Disputes must first be submitted to BCPL\'s Grievance Redressal process — email support@bcplt20.com',
@@ -143,70 +179,124 @@ export function Terms() {
       <div style={{position:'relative',zIndex:1}}>
         <SiteHeader />
 
-        <section style={{padding:'clamp(40px,8vw,72px) 0 40px',textAlign:'center',animation:'fadeSlide 0.6s ease both'}}>
+        <section style={{padding:'clamp(48px,8vw,80px) 0 clamp(40px,6vw,56px)',textAlign:'center',animation:'fadeSlide 0.6s ease both'}}>
           <div className="wrap">
-            <div className="tag-pill" style={{marginBottom:20}}>⚖️ LEGAL</div>
-            <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(32px,7vw,72px)',lineHeight:1.05,marginBottom:8}}>
-              <span style={{color:'#fff',display:'block'}}>TERMS &</span>
-              <span className="shimmer-gold" style={{display:'block'}}>CONDITIONS.</span>
+            <div className="tag-pill" style={{marginBottom:20}}>⚖️ {t("LEGAL","कानूनी")}</div>
+            <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(36px,7vw,72px)',lineHeight:1,marginBottom:12,letterSpacing:'.01em'}}>
+              <span style={{color:'#fff',display:'block'}}>{t("TERMS &","नियम और")}</span>
+              <span className="shimmer-gold" style={{display:'block'}}>{t("CONDITIONS","शर्तें")}</span>
             </h1>
-            <p style={{color:'rgba(255,255,255,0.5)',fontSize:13,fontWeight:600,letterSpacing:'0.05em',marginTop:16,fontFamily:'Montserrat,sans-serif'}}>Last updated: January 15, 2025</p>
-            <p style={{color:'rgba(255,255,255,0.65)',fontSize:'clamp(14px,2vw,16px)',lineHeight:1.7,maxWidth:600,margin:'16px auto 0'}}>
-              Please read these Terms & Conditions carefully before registering for BCPL T20 Season 5. These terms govern your participation in the league.
+            <p style={{color:'rgba(255,255,255,0.48)',fontSize:12,fontWeight:700,letterSpacing:'0.06em',marginTop:18,fontFamily:'Montserrat,sans-serif',textTransform:'uppercase'}}>{t("Last updated: January 15, 2025","अपडेट: 15 जनवरी 2025")}</p>
+            <p style={{color:'rgba(255,255,255,0.68)',fontSize:'clamp(14px,2vw,16px)',lineHeight:1.7,maxWidth:640,margin:'20px auto 0'}}>
+              {t(
+                "Please read these Terms & Conditions carefully before registering for BCPL T20 Season 5. These terms govern your participation in the league.",
+                "BCPL T20 Season 5 में रजिस्ट्रेशन से पहले ये नियम और शर्तें ध्यान से पढ़ें। ये आपकी लीग में भागीदारी को नियंत्रित करती हैं।"
+              )}
             </p>
           </div>
         </section>
 
-        <div className="wrap" style={{maxWidth:860,margin:'0 auto',paddingBottom:40}}>
-
-          <div style={{display:'flex',flexWrap:'wrap',gap:8,marginBottom:24,animation:'fadeSlide 0.5s ease 0.1s both'}}>
-            {sections.map(s=>(
-              <span key={s.n} style={{background:'rgba(255,122,41,0.1)',border:'1px solid rgba(255,122,41,0.25)',borderRadius:8,padding:'5px 12px',fontSize:12,color:'rgba(255,255,255,0.7)',cursor:'pointer',fontFamily:'Montserrat,sans-serif',fontWeight:600,minHeight:36,display:'inline-flex',alignItems:'center'}}>
-                {s.n}. {s.title}
-              </span>
-            ))}
-          </div>
-
-          {sections.map((s,idx)=>(
-            <div key={s.n} className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:20,animation:`fadeSlide 0.5s ease ${0.1+idx*0.07}s both`}}>
-              <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18,flexWrap:'wrap'}}>
-                <div style={{width:32,height:32,borderRadius:'50%',background:'linear-gradient(135deg,rgba(255,122,41,0.3),rgba(232,178,61,0.2))',border:'1px solid rgba(255,122,41,0.4)',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:13,color:'#FF7A29',flexShrink:0}}>{s.n}</div>
-                <span style={{fontSize:22}}>{s.icon}</span>
-                <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>{s.title}</h2>
-              </div>
-              <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:10}}>
-                {s.items.map((item,i)=>(
-                  <li key={i} style={{display:'flex',alignItems:'flex-start',color:'rgba(255,255,255,0.75)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.8}}>
-                    <OrangeDot/>{item}
-                  </li>
+        <div className="wrap" style={{maxWidth:1280,margin:'0 auto',paddingBottom:56}}>
+          <div className="legal-layout">
+            
+            {/* DESKTOP STICKY TOC */}
+            <aside className="toc-sticky">
+              <div style={{background:'linear-gradient(165deg,#0C1C30,#07101E)',border:'1px solid rgba(255,255,255,.09)',borderRadius:14,padding:'18px 14px',marginBottom:16}}>
+                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:13,letterSpacing:'.08em',color:'#E8B23D',marginBottom:14,textTransform:'uppercase'}}>{t("Contents","विषय-सूची")}</div>
+                {sections.map(s=>(
+                  <a
+                    key={s.n}
+                    href={`#section-${s.n}`}
+                    className={`toc-item${activeSection===s.n?' active':''}`}
+                    onClick={(e)=>{
+                      e.preventDefault();
+                      document.getElementById(`section-${s.n}`)?.scrollIntoView({behavior:'smooth',block:'start'});
+                      setActiveSection(s.n);
+                    }}
+                  >
+                    <div className="toc-num">{s.n}</div>
+                    <span style={{flex:1,fontSize:13}}>{t(s.titleEn,s.titleHi)}</span>
+                  </a>
                 ))}
-              </ul>
-            </div>
-          ))}
+              </div>
+            </aside>
 
-          <div style={{background:'rgba(255,122,41,0.08)',border:'1px solid rgba(255,122,41,0.4)',borderLeft:'3px solid #FF7A29',borderRadius:16,padding:'20px clamp(16px,4vw,24px)',marginBottom:20,animation:'borderGlow 3s ease-in-out infinite'}}>
-            <div style={{display:'flex',gap:12,alignItems:'flex-start'}}>
-              <span style={{fontSize:24,flexShrink:0}}>📬</span>
-              <div>
-                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#FF7A29',marginBottom:6}}>Questions About These Terms?</div>
-                <p style={{color:'rgba(255,255,255,0.85)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
-                  Contact our legal team at <strong style={{color:'#E8B23D'}}>support@bcplt20.com</strong> or write to: BCPL T20 Pvt. Ltd., New Delhi, India. We aim to respond within 5 business days.
+            {/* CONTENT */}
+            <div ref={contentRef}>
+              {/* MOBILE JUMP SELECTOR */}
+              <div className="mobile-jump">
+                <select
+                  className="jump-select"
+                  value={activeSection || ''}
+                  onChange={(e)=>{
+                    const n = parseInt(e.target.value);
+                    if(!isNaN(n)) document.getElementById(`section-${n}`)?.scrollIntoView({behavior:'smooth',block:'start'});
+                  }}
+                >
+                  <option value="">{t("Jump to section...","विषय पर जाएं...")}</option>
+                  {sections.map(s=>(
+                    <option key={s.n} value={s.n}>{s.n}. {t(s.titleEn,s.titleHi)}</option>
+                  ))}
+                </select>
+              </div>
+
+              {sections.map((s,idx)=>(
+                <div key={s.n} id={`section-${s.n}`} className="glass-card" style={{padding:'clamp(22px,4vw,34px) clamp(18px,4vw,38px)',marginBottom:20,animation:`fadeSlide 0.5s ease ${0.08+idx*0.05}s both`,scrollMarginTop:'100px'}}>
+                  <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:20,flexWrap:'wrap'}}>
+                    <div style={{width:36,height:36,borderRadius:'50%',background:'linear-gradient(135deg,rgba(255,122,41,0.25),rgba(232,178,61,0.18))',border:'1px solid rgba(255,122,41,0.4)',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:14,color:'#FF7A29',flexShrink:0}}>{s.n}</div>
+                    <span style={{fontSize:24,lineHeight:1}}>{s.icon}</span>
+                    <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(17px,3vw,21px)',color:'#fff',lineHeight:1.2}}>{t(s.titleEn,s.titleHi)}</h2>
+                  </div>
+                  <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:12}}>
+                    {s.items.map((item,i)=>(
+                      <li key={i} style={{display:'flex',alignItems:'flex-start',gap:12,color:'rgba(255,255,255,0.78)',fontSize:'clamp(13px,2vw,15px)',lineHeight:1.75}}>
+                        <OrangeDot/><span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+
+              <div style={{background:'rgba(255,122,41,0.08)',border:'1px solid rgba(255,122,41,0.38)',borderLeft:'3px solid #FF7A29',borderRadius:14,padding:'20px clamp(18px,4vw,26px)',marginBottom:24,animation:'borderGlow 3s ease-in-out infinite'}}>
+                <div style={{display:'flex',gap:14,alignItems:'flex-start'}}>
+                  <span style={{fontSize:26,flexShrink:0,lineHeight:1}}>📬</span>
+                  <div>
+                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#FF7A29',marginBottom:7,letterSpacing:'.01em'}}>{t("Questions About These Terms?","इन शर्तों के बारे में सवाल?")}</div>
+                    <p style={{color:'rgba(255,255,255,0.85)',fontSize:'clamp(13px,2vw,15px)',lineHeight:1.7}}>
+                      {t(
+                        "Contact our legal team at",
+                        "हमारी legal team से संपर्क करें"
+                      )} <strong style={{color:'#E8B23D'}}>support@bcplt20.com</strong>{t(
+                        " or write to: BCPL T20 Pvt. Ltd., New Delhi, India. We aim to respond within 5 business days.",
+                        " या लिखें: BCPL T20 Pvt. Ltd., New Delhi, India. हम 5 business days में जवाब देते हैं।"
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="glass-card" style={{padding:'clamp(24px,4vw,36px)',textAlign:'center'}}>
+                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(19px,3vw,23px)',marginBottom:10,lineHeight:1.2}}>{t("Ready to Join BCPL T20?","BCPL T20 join करने के लिए तैयार हैं?")}</div>
+                <p style={{color:'rgba(255,255,255,0.62)',fontSize:14,marginBottom:22,lineHeight:1.6}}>
+                  {t(
+                    "By registering, you accept these terms. See you on the field!",
+                    "रजिस्टर करके आप ये शर्तें स्वीकार करते हैं। मैदान में मिलेंगे!"
+                  )}
                 </p>
+                <Link href="/register" className="btn-fire" style={{padding:'15px 38px',fontSize:16,width:'100%',maxWidth:320,textDecoration:'none',display:'inline-flex',alignItems:'center',justifyContent:'center'}}>
+                  {t("Register for ₹299 →","₹299 में रजिस्टर करें →")}
+                </Link>
               </div>
             </div>
-          </div>
-
-          <div className="glass-card" style={{padding:'clamp(20px,4vw,32px)',textAlign:'center'}}>
-            <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(18px,3vw,22px)',marginBottom:8}}>Ready to Join BCPL T20?</div>
-            <p style={{color:'rgba(255,255,255,0.6)',fontSize:14,marginBottom:20}}>By registering, you accept these terms. See you on the field!</p>
-            <a href="/register" className="btn-fire" style={{padding:'14px 36px',fontSize:16,width:'100%',maxWidth:300,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register for ₹299 →</a>
           </div>
         </div>
 
         <BCPLFooter />
       </div>
       <MobileCTA/>
-      <a className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>🏏 REGISTER NOW →</a>
+      <Link className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>
+        {t("🏏 REGISTER NOW →","🏏 अभी रजिस्टर करें →")}
+      </Link>
     </div>
   );
 }

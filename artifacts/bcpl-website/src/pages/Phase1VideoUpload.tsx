@@ -5,20 +5,21 @@ import {
   getRegistrationStatus, getMe, getUploadUrl, confirmVideoUpload, getSiteSetting,
   type SampleVideos, type SampleVideoEntry, type SampleVideoRole,
 } from '../lib/api';
+import { useLang } from '@/lib/i18n';
 
 // ── Role metadata ────────────────────────────────────────────────────────────
-const ROLE_META: Record<string, { label: string; icon: string; color: string; req: string; tips: string[] }> = {
-  bat:  { label:'Batsman',       icon:'🏏', color:'#3B82F6', req:'Show 3+ strokes: drives, pulls & sweeps',       tips:['Cover drive off front foot','Pull shot to leg side','Reverse or conventional sweep'] },
-  bowl: { label:'Bowler',        icon:'🎳', color:'#8B5CF6', req:'5+ deliveries — mix pace & swing',              tips:['Outswinger & inswinger pair','Yorker delivery','Change of pace ball'] },
-  wk:   { label:'Wicket-Keeper', icon:'🧤', color:'#06B6D4', req:'3+ takes & stumpings, glove work',              tips:['Caught behind the stumps','Quick stumping drill','Wide ball diving take'] },
-  ar:   { label:'All-Rounder',   icon:'⭐', color:'#E8B23D', req:'2 min split — 1 min bat + 1 min bowl',          tips:['Batting first half','Bowling second half','Clear scene transitions'] },
+const ROLE_META: Record<string, { label: string; color: string; req: string; tips: string[] }> = {
+  bat:  { label:'Batsman',       color:'#3B82F6', req:'Show 3+ strokes: drives, pulls & sweeps',       tips:['Cover drive off front foot','Pull shot to leg side','Reverse or conventional sweep'] },
+  bowl: { label:'Bowler',        color:'#8B5CF6', req:'5+ deliveries — mix pace & swing',              tips:['Outswinger & inswinger pair','Yorker delivery','Change of pace ball'] },
+  wk:   { label:'Wicket-Keeper', color:'#06B6D4', req:'3+ takes & stumpings, glove work',              tips:['Caught behind the stumps','Quick stumping drill','Wide ball diving take'] },
+  ar:   { label:'All-Rounder',   color:'#E8B23D', req:'2 min split — 1 min bat + 1 min bowl',          tips:['Batting first half','Bowling second half','Clear scene transitions'] },
 };
 
 const SAMPLE_VIDEOS = [
-  { role:'Batsman',       icon:'🏏', color:'#3B82F6', gradient:'linear-gradient(135deg,#0a1f44 0%,#1a3a6e 50%,#0d2a52 100%)', duration:'1:52', description:'Cover drive · Pull shot · Sweep shot · Footwork', what:'Watch how to demonstrate 3+ strokes clearly on camera — stance, backlift, and follow-through all visible.', ytSearch:'cricket batting trial video technique showcase', badge:'Most Selected', badgeColor:'#3B82F6' },
-  { role:'Bowler',        icon:'🎳', color:'#8B5CF6', gradient:'linear-gradient(135deg,#1a0a44 0%,#3a1a6e 50%,#2a0d52 100%)', duration:'1:48', description:'Outswinger · Yorker · Change of pace · Run-up', what:'Full run-up visible, delivery stride, ball release — scouts check your action, seam position, and variation.', ytSearch:'cricket bowling trial video technique fast medium spin', badge:'High Demand', badgeColor:'#8B5CF6' },
-  { role:'Wicket-Keeper', icon:'🧤', color:'#06B6D4', gradient:'linear-gradient(135deg,#041f2e 0%,#0a3d4f 50%,#062a3a 100%)', duration:'1:55', description:'Standing up · Stumpings · Catches · Wide takes', what:'Film at chest height from mid-off angle — glove positioning, quick release, and agility are key scoring factors.', ytSearch:'cricket wicket keeper trial video stumping catch technique', badge:'Rare Role', badgeColor:'#06B6D4' },
-  { role:'All-Rounder',   icon:'⭐', color:'#E8B23D', gradient:'linear-gradient(135deg,#2e1f04 0%,#4f3a0a 50%,#3a2a06 100%)', duration:'2:00', description:'1 min batting · 1 min bowling · Clear transitions', what:'Split exactly 50-50. Use a visible title card between segments. Scouts look for equal competence in both skills.', ytSearch:'cricket all rounder trial video batting bowling showcase', badge:'Top Auction', badgeColor:'#E8B23D' },
+  { role:'Batsman',       color:'#3B82F6', gradient:'linear-gradient(135deg,#0a1f44 0%,#1a3a6e 50%,#0d2a52 100%)', duration:'1:52', description:'Cover drive · Pull shot · Sweep shot · Footwork', what:'Watch how to demonstrate 3+ strokes clearly on camera — stance, backlift, and follow-through all visible.', ytSearch:'cricket batting trial video technique showcase', badge:'Most Selected', badgeColor:'#3B82F6' },
+  { role:'Bowler',        color:'#8B5CF6', gradient:'linear-gradient(135deg,#1a0a44 0%,#3a1a6e 50%,#2a0d52 100%)', duration:'1:48', description:'Outswinger · Yorker · Change of pace · Run-up', what:'Full run-up visible, delivery stride, ball release — scouts check your action, seam position, and variation.', ytSearch:'cricket bowling trial video technique fast medium spin', badge:'High Demand', badgeColor:'#8B5CF6' },
+  { role:'Wicket-Keeper', color:'#06B6D4', gradient:'linear-gradient(135deg,#041f2e 0%,#0a3d4f 50%,#062a3a 100%)', duration:'1:55', description:'Standing up · Stumpings · Catches · Wide takes', what:'Film at chest height from mid-off angle — glove positioning, quick release, and agility are key scoring factors.', ytSearch:'cricket wicket keeper trial video stumping catch technique', badge:'Rare Role', badgeColor:'#06B6D4' },
+  { role:'All-Rounder',   color:'#E8B23D', gradient:'linear-gradient(135deg,#2e1f04 0%,#4f3a0a 50%,#3a2a06 100%)', duration:'2:00', description:'1 min batting · 1 min bowling · Clear transitions', what:'Split exactly 50-50. Use a visible title card between segments. Scouts look for equal competence in both skills.', ytSearch:'cricket all rounder trial video batting bowling showcase', badge:'Top Auction', badgeColor:'#E8B23D' },
 ];
 
 type UploadState = 'loading' | 'not_registered' | 'deadline_passed' | 'already_uploaded' | 'idle' | 'file_selected' | 'uploading' | 'confirming' | 'success' | 'error';
@@ -43,6 +44,7 @@ const ALLOWED_TYPES: Record<string, string> = {
 const MAX_SIZE = 500 * 1024 * 1024; // 500 MB
 
 export function Phase1VideoUpload() {
+  const { t } = useLang();
   const [dragging, setDragging]     = useState(false);
   const [activeVideo, setActiveVideo] = useState<number | null>(null);
   const [samples, setSamples]         = useState<SampleVideos | null>(null);
@@ -98,7 +100,7 @@ export function Phase1VideoUpload() {
         if (reg.phase1Status === 'video_submitted' || reg.phase1Status === 'selected' || reg.phase1Status === 'rejected' || reg.phase1Status === 'p1_selected' || reg.phase1Status === 'p1_rejected') {
           // Redirect to result page if selected/rejected, otherwise show already-uploaded
           if (reg.phase1Status === 'selected' || reg.phase1Status === 'rejected') {
-            window.location.replace('/register/result');
+            window.location.replace(import.meta.env.BASE_URL + 'register/result');
             return;
           }
           setUploadState('already_uploaded'); return;
@@ -128,14 +130,14 @@ export function Phase1VideoUpload() {
     setFileErr('');
     if (!f) return;
     if (!ALLOWED_TYPES[f.type]) {
-      setFileErr('Invalid format. Please upload MP4, MOV, AVI, or WebM.'); return;
+      setFileErr(t('Invalid format. Please upload MP4, MOV, AVI, or WebM.', 'अमान्य प्रारूप। कृपया MP4, MOV, AVI, या WebM अपलोड करें।')); return;
     }
     if (f.size > MAX_SIZE) {
-      setFileErr(`File too large (${formatFileSize(f.size)}). Max 500 MB.`); return;
+      setFileErr(t(`File too large (${formatFileSize(f.size)}). Max 500 MB.`, `फ़ाइल बहुत बड़ी है (${formatFileSize(f.size)})। अधिकतम 500 MB.`)); return;
     }
     setFile(f);
     setUploadState('file_selected');
-  }, []);
+  }, [t]);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault(); setDragging(false);
@@ -177,10 +179,10 @@ export function Phase1VideoUpload() {
       setProgress(100);
       setUploadState('success');
     } catch (e: any) {
-      setErrMsg(e?.message ?? 'Upload failed. Please try again.');
+      setErrMsg(e?.message ?? t('Upload failed. Please try again.', 'अपलोड विफल रहा। कृपया पुनः प्रयास करें।'));
       setUploadState('file_selected');
     }
-  }, [file, regId]);
+  }, [file, regId, t]);
 
   // ── Computed ───────────────────────────────────────────────────────────────
   const roleMeta    = ROLE_META[role] ?? ROLE_META.bat;
@@ -190,9 +192,9 @@ export function Phase1VideoUpload() {
   // ── Full-page states ───────────────────────────────────────────────────────
   if (uploadState === 'loading') {
     return (
-      <div style={{ background:'#06101E', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:16 }}>
-        <div style={{ fontSize:36, animation:'spin 1s linear infinite' }}>⚡</div>
-        <div style={{ color:'rgba(255,255,255,0.5)', fontSize:14 }}>Loading your registration…</div>
+      <div style={{ background:'var(--bg)', minHeight:'100dvh', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:16, fontFamily:'var(--font-body)' }}>
+        <div style={{ width:40, height:40, border:'3px solid rgba(232,178,61,0.2)', borderTopColor:'var(--gold)', borderRadius:'50%', animation:'spin 1s linear infinite' }} />
+        <div style={{ color:'var(--ink-3)', fontSize:14 }}>{t('Loading your registration…', 'आपका रजिस्ट्रेशन लोड हो रहा है…')}</div>
         <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
       </div>
     );
@@ -200,13 +202,15 @@ export function Phase1VideoUpload() {
 
   if (uploadState === 'not_registered') {
     return (
-      <div style={{ background:'#06101E', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', padding:24 }}>
+      <div style={{ background:'var(--bg)', minHeight:'100dvh', display:'flex', alignItems:'center', justifyContent:'center', padding:24, fontFamily:'var(--font-body)' }}>
         <div style={{ maxWidth:420, textAlign:'center' }}>
-          <div style={{ fontSize:48, marginBottom:16 }}>🏏</div>
-          <h2 style={{ color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:22, marginBottom:12 }}>Registration Required</h2>
-          <p style={{ color:'rgba(255,255,255,0.5)', fontSize:14, marginBottom:24, lineHeight:1.7 }}>Please complete Phase 1 registration and payment before uploading your trial video.</p>
-          <a href={import.meta.env.BASE_URL + 'register'} style={{ display:'inline-block', background:'#FF7A29', color:'#fff', textDecoration:'none', padding:'13px 32px', borderRadius:10, fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14 }}>
-            REGISTER NOW →
+          <div style={{ width:80, height:80, margin:'0 auto 20px', background:'rgba(255,122,41,0.1)', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center' }}>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h2 style={{ color:'var(--ink)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:28, marginBottom:12, textTransform:'uppercase' }}>{t('Registration Required', 'रजिस्ट्रेशन आवश्यक है')}</h2>
+          <p style={{ color:'var(--ink-3)', fontSize:14, marginBottom:24, lineHeight:1.7 }}>{t('Please complete Phase 1 registration and payment before uploading your trial video.', 'अपना ट्रायल वीडियो अपलोड करने से पहले कृपया Phase 1 रजिस्ट्रेशन और भुगतान पूरा करें।')}</p>
+          <a href={import.meta.env.BASE_URL + 'register'} style={{ display:'inline-flex', alignItems:'center', gap:8, background:'linear-gradient(135deg,var(--orange),var(--orange-2))', color:'#fff', textDecoration:'none', padding:'14px 32px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:15, letterSpacing:'.08em', textTransform:'uppercase' }}>
+            {t('REGISTER NOW', 'अभी रजिस्टर करें')} →
           </a>
         </div>
       </div>
@@ -215,16 +219,18 @@ export function Phase1VideoUpload() {
 
   if (uploadState === 'deadline_passed') {
     return (
-      <div style={{ background:'#06101E', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', padding:24 }}>
+      <div style={{ background:'var(--bg)', minHeight:'100dvh', display:'flex', alignItems:'center', justifyContent:'center', padding:24, fontFamily:'var(--font-body)' }}>
         <div style={{ maxWidth:440, textAlign:'center' }}>
-          <div style={{ fontSize:48, marginBottom:16 }}>⏰</div>
-          <h2 style={{ color:'#EF4444', fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:22, marginBottom:12 }}>Upload Deadline Passed</h2>
-          <p style={{ color:'rgba(255,255,255,0.5)', fontSize:14, marginBottom:24, lineHeight:1.7 }}>Your 15-day video upload window has expired. Unfortunately, late submissions cannot be accepted for Phase 1 review.</p>
-          <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:12, padding:16, marginBottom:24 }}>
-            <p style={{ color:'rgba(255,255,255,0.4)', fontSize:13 }}>Season 6 registrations will open soon. Follow us on <strong style={{ color:'#FF7A29' }}>@bcpl.t20</strong> for updates.</p>
+          <div style={{ width:80, height:80, margin:'0 auto 20px', background:'rgba(239,68,68,0.1)', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center' }}>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--red)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
           </div>
-          <a href="https://www.instagram.com/bcpl.t20" target="_blank" rel="noreferrer" style={{ display:'inline-block', background:'rgba(255,122,41,0.12)', border:'1px solid rgba(255,122,41,0.4)', color:'#FF7A29', textDecoration:'none', padding:'12px 28px', borderRadius:10, fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:13 }}>
-            📸 FOLLOW @bcpl.t20
+          <h2 style={{ color:'var(--red)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:28, marginBottom:12, textTransform:'uppercase' }}>{t('Upload Deadline Passed', 'अपलोड की समय सीमा समाप्त')}</h2>
+          <p style={{ color:'var(--ink-3)', fontSize:14, marginBottom:24, lineHeight:1.7 }}>{t('Your video upload window has expired. Unfortunately, late submissions cannot be accepted for Phase 1 review.', 'आपकी वीडियो अपलोड विंडो समाप्त हो गई है। दुर्भाग्य से, Phase 1 समीक्षा के लिए देर से सबमिशन स्वीकार नहीं किए जा सकते।')}</p>
+          <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid var(--line)', borderRadius:'var(--r)', padding:16, marginBottom:24 }}>
+            <p style={{ color:'var(--ink-3)', fontSize:13 }}>{t('Season 6 registrations will open soon. Follow us on ', 'Season 6 के रजिस्ट्रेशन जल्द ही खुलेंगे। अपडेट के लिए ')}<strong style={{ color:'var(--orange)' }}>@bcpl.t20</strong>{t(' for updates.', ' को फॉलो करें।')}</p>
+          </div>
+          <a href="https://www.instagram.com/bcpl.t20" target="_blank" rel="noreferrer" style={{ display:'inline-block', background:'rgba(255,122,41,0.12)', border:'1px solid rgba(255,122,41,0.4)', color:'var(--orange)', textDecoration:'none', padding:'12px 28px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:14, letterSpacing:'.06em', textTransform:'uppercase' }}>
+            {t('FOLLOW @bcpl.t20', '@bcpl.t20 को फॉलो करें')}
           </a>
         </div>
       </div>
@@ -233,16 +239,18 @@ export function Phase1VideoUpload() {
 
   if (uploadState === 'already_uploaded') {
     return (
-      <div style={{ background:'#06101E', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', padding:24 }}>
+      <div style={{ background:'var(--bg)', minHeight:'100dvh', display:'flex', alignItems:'center', justifyContent:'center', padding:24, fontFamily:'var(--font-body)' }}>
         <div style={{ maxWidth:440, textAlign:'center' }}>
-          <div style={{ width:80, height:80, borderRadius:'50%', background:'rgba(34,197,94,0.15)', border:'2px solid #22C55E', display:'flex', alignItems:'center', justifyContent:'center', fontSize:40, margin:'0 auto 20px' }}>✅</div>
-          <h2 style={{ color:'#22C55E', fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:24, marginBottom:12 }}>Video Already Submitted!</h2>
-          <p style={{ color:'rgba(255,255,255,0.55)', fontSize:14, marginBottom:8, lineHeight:1.7 }}>
-            {userName ? `${userName}, your` : 'Your'} trial video is with our BCCI-certified scouts.
+          <div style={{ width:80, height:80, borderRadius:'50%', background:'rgba(34,197,94,0.15)', border:'2px solid var(--green)', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 20px' }}>
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <h2 style={{ color:'var(--green)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:28, marginBottom:12, textTransform:'uppercase' }}>{t('Video Already Submitted!', 'वीडियो पहले ही सबमिट किया जा चुका है!')}</h2>
+          <p style={{ color:'var(--ink-2)', fontSize:14, marginBottom:8, lineHeight:1.7 }}>
+            {userName ? `${userName}, ` : ''}{t('your trial video is with our BCCI-certified scouts.', 'आपका ट्रायल वीडियो हमारे BCCI-certified scouts के पास है।')}
           </p>
-          <p style={{ color:'rgba(255,255,255,0.4)', fontSize:13, marginBottom:28 }}>Result will be sent via Email, SMS and WhatsApp within <strong style={{ color:'#fff' }}>15 working days</strong>.</p>
-          <a href={import.meta.env.BASE_URL + 'register/result'} style={{ display:'inline-block', background:'#22C55E', color:'#fff', textDecoration:'none', padding:'13px 32px', borderRadius:10, fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14 }}>
-            CHECK MY STATUS →
+          <p style={{ color:'var(--ink-3)', fontSize:13, marginBottom:28 }}>{t('Result will be sent via Email, SMS and WhatsApp within ', 'परिणाम ईमेल, SMS और WhatsApp के माध्यम से ')}<strong style={{ color:'var(--ink)' }}>{t('15 working days', '15 कार्य दिवसों')}</strong>{t('.', ' के भीतर भेजा जाएगा।')}</p>
+          <a href={import.meta.env.BASE_URL + 'register/result'} style={{ display:'inline-block', background:'var(--green)', color:'#fff', textDecoration:'none', padding:'14px 32px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:15, letterSpacing:'.06em', textTransform:'uppercase' }}>
+            {t('CHECK MY STATUS', 'मेरा स्टेटस देखें')} →
           </a>
         </div>
       </div>
@@ -251,37 +259,38 @@ export function Phase1VideoUpload() {
 
   if (uploadState === 'success') {
     return (
-      <div style={{ background:'#06101E', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', padding:24 }}>
+      <div style={{ background:'var(--bg)', minHeight:'100dvh', display:'flex', alignItems:'center', justifyContent:'center', padding:24, fontFamily:'var(--font-body)' }}>
         <style>{`
           @keyframes popIn{0%{transform:scale(0.5);opacity:0}70%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
-          @keyframes confettiFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(120px) rotate(720deg);opacity:0}}
         `}</style>
         <div style={{ maxWidth:480, textAlign:'center' }}>
-          <div style={{ width:100, height:100, borderRadius:'50%', background:'linear-gradient(135deg,rgba(34,197,94,0.2),rgba(34,197,94,0.05))', border:'3px solid #22C55E', display:'flex', alignItems:'center', justifyContent:'center', fontSize:48, margin:'0 auto 24px', animation:'popIn .5s cubic-bezier(.34,1.56,.64,1)' }}>🎉</div>
-          <h2 style={{ color:'#22C55E', fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:28, letterSpacing:'-.01em', marginBottom:8 }}>VIDEO SUBMITTED!</h2>
-          <p style={{ color:'rgba(255,255,255,0.6)', fontSize:15, marginBottom:6, lineHeight:1.6 }}>
-            {userName ? `Well done, ${userName}! ` : ''}Your trial video has been received successfully.
+          <div style={{ width:100, height:100, borderRadius:'50%', background:'linear-gradient(135deg,rgba(34,197,94,0.2),rgba(34,197,94,0.05))', border:'3px solid var(--green)', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 24px', animation:'popIn .5s cubic-bezier(.34,1.56,.64,1)' }}>
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <h2 style={{ color:'var(--green)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:32, letterSpacing:'-.01em', marginBottom:8, textTransform:'uppercase' }}>{t('VIDEO SUBMITTED!', 'वीडियो सबमिट हो गया!')}</h2>
+          <p style={{ color:'var(--ink-2)', fontSize:15, marginBottom:6, lineHeight:1.6 }}>
+            {userName ? t(`Well done, ${userName}! `, `शाबाश, ${userName}! `) : ''}{t('Your trial video has been received successfully.', 'आपका ट्रायल वीडियो सफलतापूर्वक प्राप्त हो गया है।')}
           </p>
-          <p style={{ color:'rgba(255,255,255,0.4)', fontSize:13, marginBottom:28, lineHeight:1.7 }}>
-            Our BCCI-certified scouts will review it within <strong style={{ color:'#fff' }}>15 working days</strong>.<br />
-            Result will arrive on <strong style={{ color:'#FF7A29' }}>Email + SMS + WhatsApp</strong>.
+          <p style={{ color:'var(--ink-3)', fontSize:13, marginBottom:28, lineHeight:1.7 }}>
+            {t('Our BCCI-certified scouts will review it within ', 'हमारे BCCI-certified scouts इसकी समीक्षा ')}<strong style={{ color:'var(--ink)' }}>{t('15 working days', '15 कार्य दिवसों')}</strong>{t('.', ' के भीतर करेंगे।')}<br />
+            {t('Result will arrive on ', 'परिणाम ')}<strong style={{ color:'var(--orange)' }}>{t('Email + SMS + WhatsApp', 'ईमेल + SMS + WhatsApp')}</strong>{t('.', ' पर आएगा।')}
           </p>
-          <div style={{ background:'rgba(34,197,94,0.06)', border:'1px solid rgba(34,197,94,0.2)', borderRadius:12, padding:16, marginBottom:24 }}>
-            <div style={{ display:'flex', justifyContent:'space-between', padding:'6px 0', borderBottom:'1px solid rgba(255,255,255,0.05)' }}>
-              <span style={{ color:'rgba(255,255,255,0.4)', fontSize:12 }}>Status</span>
-              <span style={{ color:'#22C55E', fontWeight:700, fontSize:12 }}>✅ Under Review</span>
+          <div style={{ background:'rgba(34,197,94,0.06)', border:'1px solid rgba(34,197,94,0.2)', borderRadius:'var(--r)', padding:16, marginBottom:24 }}>
+            <div style={{ display:'flex', justifyContent:'space-between', padding:'8px 0', borderBottom:'1px solid rgba(255,255,255,0.05)' }}>
+              <span style={{ color:'var(--ink-3)', fontSize:13, fontWeight:600 }}>{t('Status', 'स्थिति')}</span>
+              <span style={{ color:'var(--green)', fontWeight:800, fontSize:13 }}>✓ {t('Under Review', 'समीक्षा के अधीन')}</span>
             </div>
-            <div style={{ display:'flex', justifyContent:'space-between', padding:'6px 0' }}>
-              <span style={{ color:'rgba(255,255,255,0.4)', fontSize:12 }}>Expected Result</span>
-              <span style={{ color:'#FF7A29', fontWeight:700, fontSize:12 }}>Within 15 Working Days</span>
+            <div style={{ display:'flex', justifyContent:'space-between', padding:'8px 0' }}>
+              <span style={{ color:'var(--ink-3)', fontSize:13, fontWeight:600 }}>{t('Expected Result', 'अपेक्षित परिणाम')}</span>
+              <span style={{ color:'var(--orange)', fontWeight:800, fontSize:13 }}>{t('Within 15 Working Days', '15 कार्य दिवसों के भीतर')}</span>
             </div>
           </div>
           <div style={{ display:'flex', gap:12, flexWrap:'wrap', justifyContent:'center' }}>
-            <a href={import.meta.env.BASE_URL + 'register/result'} style={{ flex:1, minWidth:160, display:'block', background:'#22C55E', color:'#fff', textDecoration:'none', padding:'13px 24px', borderRadius:10, fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14 }}>
-              CHECK MY STATUS →
+            <a href={import.meta.env.BASE_URL + 'register/result'} style={{ flex:1, minWidth:160, display:'block', background:'var(--green)', color:'#fff', textDecoration:'none', padding:'14px 24px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:15, letterSpacing:'.06em', textTransform:'uppercase' }}>
+              {t('CHECK MY STATUS', 'मेरा स्टेटस देखें')} →
             </a>
-            <a href={import.meta.env.BASE_URL} style={{ flex:1, minWidth:160, display:'block', background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.12)', color:'rgba(255,255,255,0.6)', textDecoration:'none', padding:'13px 24px', borderRadius:10, fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:14 }}>
-              GO HOME
+            <a href={import.meta.env.BASE_URL} style={{ flex:1, minWidth:160, display:'block', background:'rgba(255,255,255,0.06)', border:'1px solid var(--line)', color:'var(--ink-2)', textDecoration:'none', padding:'14px 24px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:15, letterSpacing:'.06em', textTransform:'uppercase' }}>
+              {t('GO HOME', 'होम पर जाएं')}
             </a>
           </div>
         </div>
@@ -294,89 +303,76 @@ export function Phase1VideoUpload() {
   const isFileReady  = uploadState === 'file_selected';
 
   return (
-    <div style={{ background:'#06101E', minHeight:'100vh', color:'#F0EDE8', fontFamily:"'Inter',sans-serif", overflowX:'hidden', paddingBottom:'calc(120px + env(safe-area-inset-bottom))' }}>
+    <div style={{ background:'var(--bg)', minHeight:'100dvh', color:'var(--ink)', fontFamily:"var(--font-body)", overflowX:'hidden', paddingBottom:'calc(120px + env(safe-area-inset-bottom))' }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap');
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-        @keyframes tickerScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-        @keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-        @keyframes shimGold{0%{background-position:-200% center}100%{background-position:200% center}}
         @keyframes pulseDanger{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.5)}50%{box-shadow:0 0 0 10px rgba(239,68,68,0)}}
         @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
         @keyframes uploadBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
         @keyframes progressPulse{0%,100%{opacity:1}50%{opacity:0.7}}
-        .wrap{max-width:1140px;margin:0 auto;padding:0 16px}
-        @media(min-width:768px){.wrap{padding:0 32px}}
-        .desk-nav{display:none}
-        @media(min-width:1024px){.desk-nav{display:flex;align-items:center;gap:20px}}
-        .ham-btn{display:flex;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
-        @media(min-width:1024px){.ham-btn{display:none}}
-        .btn-primary{background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:12px;color:#fff;font-family:Montserrat,sans-serif;font-weight:900;letter-spacing:0.06em;cursor:pointer;transition:transform .15s,filter .2s;}
+        
+        .W{max-width:1140px;margin:0 auto;padding:0 20px}
+        @media(min-width:768px){.W{padding:0 32px}}
+        
+        .btn-primary{background:linear-gradient(135deg,var(--orange),var(--orange-2));border:none;border-radius:var(--r);color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:900;fontSize:15px;letter-spacing:0.06em;cursor:pointer;transition:transform .15s,filter .2s;text-transform:uppercase;padding:16px 32px;}
         .btn-primary:hover:not(:disabled){filter:brightness(1.15);transform:translateY(-2px)}
         .btn-primary:disabled{opacity:0.5;cursor:not-allowed}
-        .upload-zone{border:2px dashed rgba(255,122,41,0.35);background:#060C18;border-radius:12px;padding:40px 20px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;min-height:200px;width:100%;}
-        .upload-zone:hover,.upload-zone.drag{border-color:#FF7A29;background:rgba(255,122,41,0.04)}
-        .guideline-card{background:#060C18;border-left:3px solid #FF7A29;padding:14px 16px;border-radius:0;margin-bottom:10px;}
+        
+        .upload-zone{border:2px dashed rgba(255,122,41,0.35);background:var(--panel);border-radius:var(--r);padding:48px 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;transition:all .2s;min-height:260px;width:100%;}
+        .upload-zone:hover,.upload-zone.drag{border-color:var(--orange);background:rgba(255,122,41,0.06)}
+        
+        .guideline-card{background:var(--panel);border-left:3px solid var(--orange);padding:18px 20px;border-radius:0 var(--r) var(--r) 0;margin-bottom:12px;border-top:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line);}
         .guideline-card:last-child{margin-bottom:0}
-        .tip-check{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:13px;color:rgba(255,255,255,0.65);line-height:1.5;}
+        .tip-check{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:14px;color:var(--ink-2);line-height:1.5;font-weight:500;}
         .tip-check:last-child{border-bottom:none}
-        .info-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:12px;font-family:Montserrat,sans-serif;font-weight:700;font-size:11px;letter-spacing:.06em;}
-        .two-col{display:flex;flex-direction:column;gap:24px}
-        @media(min-width:900px){.two-col{flex-direction:row;gap:32px}}
+        
+        .info-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px;letter-spacing:.08em;text-transform:uppercase;}
+        
+        .two-col{display:flex;flex-direction:column;gap:32px}
+        @media(min-width:900px){.two-col{flex-direction:row;gap:40px}}
         .col-left{flex:1;min-width:0}
         .col-right{flex:1;min-width:0}
-        .format-chips{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
-        .format-chip{flex:1;min-width:80px;background:#060C18;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:10px 14px}
-        .filming-grid{display:grid;grid-template-columns:1fr;gap:0}
-        @media(min-width:600px){.filming-grid{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}}
-        .sample-grid{display:grid;grid-template-columns:1fr;gap:16px}
-        @media(min-width:600px){.sample-grid{grid-template-columns:1fr 1fr}}
-        @media(min-width:1000px){.sample-grid{grid-template-columns:repeat(4,1fr)}}
-        .sample-card{position:relative;border-radius:14px;overflow:hidden;cursor:pointer;border:1px solid rgba(255,255,255,0.07);transition:transform .2s,box-shadow .2s;}
-        .sample-card:hover{transform:translateY(-4px)}
-        .sample-card:hover .play-btn{transform:translate(-50%,-50%) scale(1.12)}
-        .play-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:52px;height:52px;border-radius:50%;background:rgba(255,122,41,0.9);display:flex;align-items:center;justify-content:center;font-size:18px;transition:transform .2s;box-shadow:0 4px 24px rgba(255,122,41,0.5);border:2px solid rgba(255,255,255,0.3);}
-        .video-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;z-index:800;padding:16px;}
-        .video-modal{background:#060C18;border-radius:16px;border:1px solid rgba(255,255,255,0.12);width:100%;max-width:640px;overflow:hidden;}
-        .progress-bar{height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;margin-top:10px;}
-        .progress-fill{height:100%;background:linear-gradient(90deg,#FF7A29,#E8B23D);border-radius:3px;transition:width .3s ease;animation:progressPulse 1.5s ease infinite;}
+        
+        .progress-bar{height:8px;background:rgba(255,255,255,0.08);border-radius:4px;overflow:hidden;margin-top:12px;}
+        .progress-fill{height:100%;background:linear-gradient(90deg,var(--orange),var(--gold));border-radius:4px;transition:width .3s ease;animation:progressPulse 1.5s ease infinite;}
       `}</style>
 
       <SiteHeader />
 
       {/* ── PAGE HEADER ── */}
-      <div style={{ background:'linear-gradient(180deg,#060C18 0%,#06101E 100%)', borderBottom:'1px solid rgba(255,255,255,0.06)', paddingTop:36, paddingBottom:32 }}>
-        <div className="wrap">
+      <div style={{ background:'linear-gradient(180deg,#030A16 0%,var(--bg) 100%)', borderBottom:'1px solid rgba(255,255,255,0.06)', paddingTop:40, paddingBottom:36 }}>
+        <div className="W">
           <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', flexWrap:'wrap', gap:16 }}>
             <div style={{ flex:1, minWidth:0 }}>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:11, letterSpacing:'.2em', color:'rgba(255,255,255,0.3)', marginBottom:10, textTransform:'uppercase' }}>Phase 1 · Step 2 of 3</div>
-              <h1 style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(24px,5vw,44px)', color:'#fff', letterSpacing:'-.01em', textTransform:'uppercase', lineHeight:.95, marginBottom:8 }}>
-                {userName ? `${userName.split(' ')[0]}, upload your` : 'UPLOAD YOUR'}<br /><span style={{ color:'#FF7A29' }}>TRIAL VIDEO</span>
+              <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:12, letterSpacing:'.18em', color:'var(--ink-3)', marginBottom:10, textTransform:'uppercase' }}>{t('Phase 1 · Step 2 of 3', 'Phase 1 · चरण 2 / 3')}</div>
+              <h1 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'clamp(32px,6vw,48px)', color:'var(--ink)', letterSpacing:'-.01em', textTransform:'uppercase', lineHeight:.95, marginBottom:10 }}>
+                {userName ? t(`${userName.split(' ')[0]}, upload your`, `${userName.split(' ')[0]}, अपना`) : t('UPLOAD YOUR', 'अपना')}<br /><span style={{ color:'var(--orange)' }}>{t('TRIAL VIDEO', 'ट्रायल वीडियो अपलोड करें')}</span>
               </h1>
-              <p style={{ color:'rgba(255,255,255,0.45)', fontSize:13, lineHeight:1.6, maxWidth:460 }}>Your video is your ticket to the ground trials. Make every second count.</p>
+              <p style={{ color:'var(--ink-3)', fontSize:14, lineHeight:1.6, maxWidth:480 }}>{t('Your video is your ticket to the ground trials. Make every second count.', 'आपका वीडियो ग्राउंड ट्रायल्स के लिए आपका टिकट है। हर सेकंड का महत्व है।')}</p>
             </div>
             {/* Deadline badge */}
             {daysLeft > 0 && (
-              <div style={{ display:'flex', alignItems:'center', gap:8, background: daysLeft <= 5 ? 'rgba(239,68,68,0.1)' : 'rgba(255,122,41,0.1)', border:`1px solid ${daysLeft <= 5 ? 'rgba(239,68,68,0.4)' : 'rgba(255,122,41,0.4)'}`, padding:'10px 16px', borderRadius:12, animation:'pulseDanger 2s ease-in-out infinite', flexShrink:0 }}>
-                <span style={{ fontSize:14 }}>{daysLeft <= 5 ? '🚨' : '⚠️'}</span>
+              <div style={{ display:'flex', alignItems:'center', gap:10, background: daysLeft <= 5 ? 'rgba(239,68,68,0.1)' : 'rgba(255,122,41,0.1)', border:`1px solid ${daysLeft <= 5 ? 'rgba(239,68,68,0.4)' : 'rgba(255,122,41,0.4)'}`, padding:'12px 20px', borderRadius:'var(--r)', animation:'pulseDanger 2s ease-in-out infinite', flexShrink:0 }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={daysLeft <= 5 ? 'var(--red)' : 'var(--orange)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 <div>
-                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:12, color: daysLeft <= 5 ? '#EF4444' : '#FF7A29', letterSpacing:'.1em' }}>{daysLeft} DAY{daysLeft !== 1 ? 'S' : ''} REMAINING</div>
-                  <div style={{ fontSize:10, color: daysLeft <= 5 ? 'rgba(239,68,68,0.7)' : 'rgba(255,122,41,0.7)', fontWeight:600 }}>Upload before deadline</div>
+                  <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:15, color: daysLeft <= 5 ? 'var(--red)' : 'var(--orange)', letterSpacing:'.08em', textTransform:'uppercase' }}>{daysLeft} {t(`DAY${daysLeft !== 1 ? 'S' : ''} REMAINING`, `दिन शेष`)}</div>
+                  <div style={{ fontSize:11, color: daysLeft <= 5 ? 'rgba(239,68,68,0.7)' : 'rgba(255,122,41,0.7)', fontWeight:600 }}>{t('Upload before deadline', 'अंतिम तिथि से पहले अपलोड करें')}</div>
                 </div>
               </div>
             )}
           </div>
 
           {/* Player summary bar */}
-          <div style={{ display:'flex', gap:8, flexWrap:'wrap', marginTop:24 }}>
+          <div style={{ display:'flex', gap:8, flexWrap:'wrap', marginTop:28 }}>
             {[
-              { icon: roleMeta.icon, label: roleMeta.label,  bg:'rgba(59,130,246,0.12)', border:'rgba(59,130,246,0.35)', color:'#60A5FA' },
-              { icon:'📍',           label: city || 'TBD',    bg:'rgba(255,122,41,0.1)', border:'rgba(255,122,41,0.35)', color:'#FF7A29' },
-              { icon:'🎫',           label: shortRegId,        bg:'rgba(255,255,255,0.04)', border:'rgba(255,255,255,0.1)', color:'rgba(255,255,255,0.55)' },
-              { icon:'✅',           label:`PAID ₹${phase1Fee}`, bg:'rgba(34,197,94,0.1)', border:'rgba(34,197,94,0.35)', color:'#22C55E' },
+              { label: roleMeta.label,  bg:'rgba(59,130,246,0.12)', border:'rgba(59,130,246,0.35)', color:'#60A5FA' },
+              { label: city || 'TBD',    bg:'rgba(255,122,41,0.1)', border:'rgba(255,122,41,0.35)', color:'var(--orange)' },
+              { label: shortRegId,        bg:'rgba(255,255,255,0.04)', border:'rgba(255,255,255,0.1)', color:'var(--ink-2)' },
+              { label:`PAID ₹${phase1Fee}`, bg:'rgba(34,197,94,0.1)', border:'rgba(34,197,94,0.35)', color:'var(--green)' },
             ].map(c => (
               <span key={c.label} className="info-chip" style={{ background:c.bg, border:`1px solid ${c.border}`, color:c.color }}>
-                {c.icon} {c.label}
+                {c.label}
               </span>
             ))}
           </div>
@@ -384,29 +380,29 @@ export function Phase1VideoUpload() {
       </div>
 
       {/* ── MAIN CONTENT ── */}
-      <div className="wrap" style={{ marginTop:36 }}>
+      <div className="W" style={{ marginTop:40 }}>
         <div className="two-col">
 
           {/* ── LEFT: Upload zone ── */}
           <div className="col-left">
-            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:10, letterSpacing:'.18em', color:'rgba(255,255,255,0.3)', marginBottom:14, textTransform:'uppercase' }}>Upload Zone</div>
+            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:13, letterSpacing:'.16em', color:'var(--ink-3)', marginBottom:16, textTransform:'uppercase' }}>{t('Upload Zone', 'अपलोड ज़ोन')}</div>
 
             {/* Uploading progress */}
             {isUploading && (
-              <div style={{ background:'#0A1727', border:'1px solid rgba(255,122,41,0.3)', borderRadius:12, padding:24, marginBottom:16, textAlign:'center' }}>
-                <div style={{ fontSize:32, marginBottom:12, animation:'uploadBounce 1s ease-in-out infinite' }}>
-                  {uploadState === 'confirming' ? '⚡' : '📤'}
+              <div style={{ background:'var(--panel)', border:'1px solid rgba(255,122,41,0.4)', borderRadius:'var(--r)', padding:32, marginBottom:16, textAlign:'center' }}>
+                <div style={{ margin:'0 auto 16px', animation:'uploadBounce 1.5s ease-in-out infinite', width:48, height:48, background:'rgba(255,122,41,0.1)', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center' }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/><polyline points="16 16 12 12 8 16"/></svg>
                 </div>
-                <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:15, color:'#FF7A29', marginBottom:8 }}>
-                  {uploadState === 'confirming' ? 'FINALISING…' : `UPLOADING… ${progress}%`}
+                <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:20, color:'var(--orange)', marginBottom:8, textTransform:'uppercase', letterSpacing:'.04em' }}>
+                  {uploadState === 'confirming' ? t('FINALISING…', 'अंतिम रूप दिया जा रहा है…') : t(`UPLOADING… ${progress}%`, `अपलोड हो रहा है… ${progress}%`)}
                 </div>
-                <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginBottom:10 }}>
+                <div style={{ fontSize:13, color:'var(--ink-3)', marginBottom:16, fontWeight:500 }}>
                   {file?.name} &nbsp;·&nbsp; {file ? formatFileSize(file.size) : ''}
                 </div>
                 <div className="progress-bar">
                   <div className="progress-fill" style={{ width:`${progress}%` }} />
                 </div>
-                <div style={{ fontSize:11, color:'rgba(255,255,255,0.3)', marginTop:8 }}>Do not close this page</div>
+                <div style={{ fontSize:12, color:'var(--ink-3)', marginTop:12, fontWeight:600 }}>{t('Please do not close this page', 'कृपया इस पेज को बंद न करें')}</div>
               </div>
             )}
 
@@ -427,239 +423,106 @@ export function Phase1VideoUpload() {
                     style={{ display:'none' }}
                     onChange={e => handleFile(e.target.files?.[0] ?? null)}
                   />
-                  <div style={{ fontSize:44, marginBottom:16, animation:'uploadBounce 2s ease-in-out infinite' }}>🎬</div>
-                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:16, color:'#fff', letterSpacing:'.04em', marginBottom:8 }}>DRAG &amp; DROP YOUR VIDEO</div>
-                  <div style={{ fontSize:12, color:'rgba(255,255,255,0.35)', marginBottom:24, lineHeight:1.6 }}>
-                    MP4 &nbsp;·&nbsp; MOV &nbsp;·&nbsp; AVI &nbsp;·&nbsp; WebM &nbsp;·&nbsp; Max 500MB &nbsp;·&nbsp; Max 2 minutes
+                  <div style={{ width:64, height:64, borderRadius:'50%', background:'linear-gradient(135deg,var(--orange),var(--orange-2))', display:'flex', alignItems:'center', justifyContent:'center', marginBottom:20, boxShadow:'0 8px 24px rgba(255,122,41,0.3)', color:'#fff' }}>
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
                   </div>
-                  <span style={{ display:'inline-block', background:'rgba(255,122,41,0.12)', border:'1px solid rgba(255,122,41,0.4)', color:'#FF7A29', padding:'10px 24px', borderRadius:12, fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:13, letterSpacing:'.08em', cursor:'pointer' }}>
-                    + Browse Files
+                  <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:24, color:'var(--ink)', letterSpacing:'.04em', marginBottom:12, textTransform:'uppercase' }}>{t('Select Trial Video', 'ट्रायल वीडियो चुनें')}</div>
+                  <div style={{ fontSize:14, color:'var(--ink-2)', marginBottom:24, lineHeight:1.6, fontWeight:500 }}>
+                    {t('Tap to choose from ', 'चुनने के लिए टैप करें ')}<strong style={{ color:'var(--ink)' }}>{t('Camera, Gallery, or Files', 'कैमरा, गैलरी, या फ़ाइलें')}</strong>
+                  </div>
+                  <div style={{ display:'flex', gap:10, flexWrap:'wrap', justifyContent:'center', marginBottom:28 }}>
+                    <span style={{ fontSize:12, color:'var(--ink-3)', background:'rgba(255,255,255,0.04)', padding:'6px 12px', borderRadius:16, border:'1px solid var(--line)' }}>MP4 / MOV / AVI</span>
+                    <span style={{ fontSize:12, color:'var(--ink-3)', background:'rgba(255,255,255,0.04)', padding:'6px 12px', borderRadius:16, border:'1px solid var(--line)' }}>{t('Max 500MB', 'अधिकतम 500MB')}</span>
+                    <span style={{ fontSize:12, color:'var(--ink-3)', background:'rgba(255,255,255,0.04)', padding:'6px 12px', borderRadius:16, border:'1px solid var(--line)' }}>{t('Max 2 Minutes', 'अधिकतम 2 मिनट')}</span>
+                  </div>
+                  <span style={{ display:'inline-block', background:'rgba(255,122,41,0.1)', border:'1px solid rgba(255,122,41,0.4)', color:'var(--orange)', padding:'12px 28px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:15, letterSpacing:'.08em', cursor:'pointer', textTransform:'uppercase' }}>
+                    {t('+ BROWSE FILES', '+ फ़ाइलें ब्राउज़ करें')}
                   </span>
                 </div>
 
                 {/* File error */}
                 {fileErr && (
-                  <div style={{ marginTop:10, background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.3)', borderRadius:8, padding:'10px 14px', fontSize:13, color:'#EF4444' }}>
-                    ❌ {fileErr}
+                  <div style={{ marginTop:16, background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.3)', borderRadius:'var(--r)', padding:'14px 18px', fontSize:14, color:'var(--red)', fontWeight:600 }}>
+                    ⚠ {fileErr}
                   </div>
                 )}
 
                 {/* Upload error */}
                 {errMsg && (
-                  <div style={{ marginTop:10, background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.3)', borderRadius:8, padding:'10px 14px', fontSize:13, color:'#EF4444' }}>
-                    ⚠️ {errMsg} — <button onClick={() => setErrMsg('')} style={{ background:'none', border:'none', color:'#FF7A29', cursor:'pointer', fontSize:13, fontWeight:700, textDecoration:'underline' }}>Try again</button>
+                  <div style={{ marginTop:16, background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.3)', borderRadius:'var(--r)', padding:'14px 18px', fontSize:14, color:'var(--red)', fontWeight:600 }}>
+                    ⚠ {errMsg}
                   </div>
                 )}
 
-                {/* Selected file info */}
-                {file && isFileReady && (
-                  <div style={{ marginTop:16, background:'#0A1727', border:'1px solid #22C55E', borderRadius:12, padding:'14px 16px', display:'flex', alignItems:'center', gap:14, flexWrap:'wrap' }}>
-                    <div style={{ width:40, height:40, background:'rgba(34,197,94,0.12)', border:'1px solid rgba(34,197,94,0.4)', borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', fontSize:18, flexShrink:0 }}>🎥</div>
-                    <div style={{ flex:1, minWidth:0 }}>
-                      <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:13, color:'#22C55E', letterSpacing:'.02em', marginBottom:3, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>✅ {file.name}</div>
-                      <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)', display:'flex', gap:8, flexWrap:'wrap' }}>
-                        <span>{formatFileSize(file.size)}</span>
-                        <span>·</span>
-                        <span>{file.type.split('/')[1].toUpperCase()}</span>
-                        <span>·</span>
-                        <span style={{ color:'#22C55E', fontWeight:700 }}>Ready to submit</span>
+                {/* Selected file confirmation */}
+                {isFileReady && file && !fileErr && (
+                  <div style={{ marginTop:24, background:'var(--panel)', border:'1px solid var(--line)', borderRadius:'var(--r)', padding:20 }}>
+                    <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:20, gap:16, flexWrap:'wrap' }}>
+                      <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+                        <div style={{ width:40, height:40, background:'rgba(34,197,94,0.1)', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', color:'var(--green)' }}>
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div>
+                          <div style={{ fontSize:14, fontWeight:600, color:'var(--ink)', wordBreak:'break-all' }}>{file.name}</div>
+                          <div style={{ fontSize:12, color:'var(--ink-3)', marginTop:4 }}>{formatFileSize(file.size)} • {t('Ready to upload', 'अपलोड के लिए तैयार')}</div>
+                        </div>
                       </div>
+                      <button onClick={() => setFile(null)} style={{ background:'none', border:'none', color:'var(--red)', fontSize:13, fontWeight:600, cursor:'pointer', padding:'8px 12px' }}>
+                        {t('Remove', 'हटाएं')}
+                      </button>
                     </div>
-                    <button onClick={() => { setFile(null); setUploadState('idle'); setFileErr(''); }} style={{ background:'rgba(239,68,68,0.1)', border:'1px solid rgba(239,68,68,0.3)', color:'#EF4444', borderRadius:8, padding:'6px 12px', fontSize:12, cursor:'pointer', fontWeight:700, flexShrink:0 }}>
-                      ✕ Remove
+                    <button className="btn-primary" style={{ width:'100%', justifyContent:'center' }} onClick={handleSubmit}>
+                      {t('UPLOAD TO BCPL SCOUTS', 'BCPL SCOUTS को अपलोड करें')} →
                     </button>
                   </div>
                 )}
               </>
             )}
-
-            {/* Format info */}
-            <div className="format-chips">
-              {[
-                { label:'Max Size', val:'500 MB' },
-                { label:'Max Duration', val:'2 min' },
-                { label:'Formats', val:'MP4, MOV, AVI, WebM' },
-              ].map(f => (
-                <div key={f.label} className="format-chip">
-                  <div style={{ fontSize:9, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.14em', color:'rgba(255,255,255,0.3)', marginBottom:3 }}>{f.label}</div>
-                  <div style={{ fontSize:13, fontWeight:700, color:'#FF7A29' }}>{f.val}</div>
-                </div>
-              ))}
-            </div>
           </div>
 
           {/* ── RIGHT: Guidelines ── */}
           <div className="col-right">
-            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:10, letterSpacing:'.18em', color:'rgba(255,255,255,0.3)', marginBottom:14, textTransform:'uppercase' }}>What Scouts Look For</div>
-            <div style={{ background:'#0A1727', border:'1px solid rgba(255,255,255,0.08)', borderRadius:12, padding:'0 0 4px' }}>
-              <div style={{ borderLeft:`4px solid ${roleMeta.color}`, padding:'16px 20px', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
-                <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, color:roleMeta.color, letterSpacing:'.06em', textTransform:'uppercase' }}>
-                  {roleMeta.icon} {roleMeta.label} Guidelines
-                </div>
-                <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)', marginTop:2 }}>
-                  {roleMeta.req}
-                </div>
+            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:13, letterSpacing:'.16em', color:'var(--ink-3)', marginBottom:16, textTransform:'uppercase' }}>{t('Filming Guidelines', 'फिल्मांकन दिशानिर्देश')}</div>
+            
+            <div className="guideline-card">
+              <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:18, color:'var(--ink)', marginBottom:12, textTransform:'uppercase', letterSpacing:'.04em' }}>
+                {t('For', 'के लिए')} {t(roleMeta.label, roleMeta.label)}
               </div>
-              <div style={{ padding:'12px 16px', display:'flex', flexDirection:'column', gap:10 }}>
-                {Object.entries(ROLE_META).map(([key, r]) => (
-                  <div className="guideline-card" key={key} style={{ borderLeftColor: r.color, opacity: key === role ? 1 : 0.55 }}>
-                    <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:8 }}>
-                      <span style={{ fontSize:20 }}>{r.icon}</span>
-                      <div>
-                        <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:13, color: key === role ? '#fff' : 'rgba(255,255,255,0.6)', letterSpacing:'.03em', display:'flex', alignItems:'center', gap:6 }}>
-                          {r.label}
-                          {key === role && <span style={{ fontSize:9, fontWeight:900, background:r.color, color:'#fff', borderRadius:4, padding:'2px 6px', letterSpacing:'.08em' }}>YOUR ROLE</span>}
-                        </div>
-                        <div style={{ fontSize:11, color:r.color, fontWeight:700 }}>{r.req}</div>
-                      </div>
-                    </div>
-                    <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
-                      {r.tips.map(t => (
-                        <span key={t} style={{ fontSize:10, color:'rgba(255,255,255,0.45)', background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', padding:'3px 9px', borderRadius:12, fontWeight:600 }}>{t}</span>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ── SAMPLE VIDEOS ── */}
-        <div style={{ marginTop:36, background:'#0A1727', border:'1px solid rgba(255,255,255,0.08)', borderRadius:12, padding:'24px 20px' }}>
-          <div style={{ display:'flex', alignItems:'flex-end', justifyContent:'space-between', flexWrap:'wrap', gap:12, marginBottom:20 }}>
-            <div>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:12, letterSpacing:'.16em', color:'rgba(255,255,255,0.4)', marginBottom:6, textTransform:'uppercase' }}>🎬 Sample Trial Videos</div>
-              <div style={{ color:'rgba(255,255,255,0.6)', fontSize:13, lineHeight:1.5, maxWidth:520 }}>Watch before filming your own trial video.</div>
-            </div>
-            <div style={{ background: samples && Object.values(samples).some(Boolean) ? 'rgba(34,197,94,0.1)' : 'rgba(255,255,255,0.05)', border: samples && Object.values(samples).some(Boolean) ? '1px solid rgba(34,197,94,0.3)' : '1px solid rgba(255,255,255,0.12)', borderRadius:10, padding:'7px 14px', fontSize:11, color: samples && Object.values(samples).some(Boolean) ? '#22C55E' : 'rgba(255,255,255,0.45)', fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em', flexShrink:0 }}>{samples && Object.values(samples).some(Boolean) ? '✓ Official Samples' : 'Samples Coming Soon'}</div>
-          </div>
-          <div className="sample-grid">
-            {SAMPLE_VIDEOS.map((v, idx) => (
-              <div key={v.role} className="sample-card" onClick={() => setActiveVideo(idx)} style={{ boxShadow:`0 4px 24px ${v.color}18` }}>
-                <div style={{ background:v.gradient, height:160, position:'relative', display:'flex', flexDirection:'column', justifyContent:'flex-end', padding:'12px 14px' }}>
-                  <div style={{ position:'absolute', inset:0, opacity:.06, backgroundImage:'repeating-linear-gradient(0deg,#fff 0px,#fff 1px,transparent 1px,transparent 20px)', pointerEvents:'none' }} />
-                  <div style={{ position:'absolute', top:10, right:10, background:`${v.color}33`, border:`1px solid ${v.color}66`, borderRadius:6, padding:'3px 8px', fontSize:9, fontWeight:900, fontFamily:'Montserrat,sans-serif', letterSpacing:'.08em', color:v.color }}>{v.badge}</div>
-                  {sampleFor(v.role) && <div style={{ position:'absolute', top:10, left:10, background:'rgba(34,197,94,0.25)', border:'1px solid rgba(34,197,94,0.5)', borderRadius:6, padding:'3px 8px', fontSize:9, fontWeight:800, color:'#4ADE80' }}>▶ AVAILABLE</div>}
-                  <div style={{ position:'absolute', top:'50%', left:'50%', transform:'translate(-50%,-60%)', fontSize:42, opacity:.4 }}>{v.icon}</div>
-                  <div className="play-btn">▶</div>
-                  <div style={{ position:'relative', zIndex:1 }}>
-                    <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:13, color:'#fff', letterSpacing:'.06em' }}>{v.icon} {v.role}</div>
-                    <div style={{ fontSize:10, color:'rgba(255,255,255,0.5)', marginTop:2 }}>{v.description}</div>
-                  </div>
-                </div>
-                <div style={{ background:'#060C18', padding:'12px 14px', borderTop:`2px solid ${v.color}44` }}>
-                  <div style={{ fontSize:11, color:'rgba(255,255,255,0.5)', lineHeight:1.55 }}>{v.what}</div>
-                  <div style={{ marginTop:10, display:'flex', alignItems:'center', gap:6 }}>
-                    <div style={{ width:8, height:8, borderRadius:'50%', background:v.color, flexShrink:0 }} />
-                    <span style={{ fontSize:10, color:v.color, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em' }}>WATCH SAMPLE ▶</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* ── FILMING TIPS ── */}
-        <div style={{ marginTop:36, background:'#0A1727', border:'1px solid rgba(255,255,255,0.08)', borderRadius:12, padding:'24px 20px' }}>
-          <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:12, letterSpacing:'.16em', color:'rgba(255,255,255,0.4)', marginBottom:16, textTransform:'uppercase' }}>📹 Filming Tips</div>
-          <div className="filming-grid">
-            {[
-              { ok:true,  tip:'Good natural light or indoor stadium lighting' },
-              { ok:true,  tip:'Camera at stumps height, side-on angle for batting/bowling' },
-              { ok:true,  tip:'Wear proper cricket gear: whites or team kit' },
-              { ok:false, tip:'No watermarks, brand logos, or social media handles' },
-              { ok:false, tip:'No selfie-style or front-facing camera clips' },
-            ].map(t => (
-              <div key={t.tip} className="tip-check">
-                <span style={{ fontSize:15, flexShrink:0, color: t.ok ? '#22C55E' : '#EF4444' }}>{t.ok ? '✓' : '✗'}</span>
-                <span style={{ color: t.ok ? 'rgba(255,255,255,0.65)' : 'rgba(239,68,68,0.75)' }}>{t.tip}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* ── VIDEO MODAL ── */}
-      {activeVideo !== null && (
-        <div className="video-modal-overlay" onClick={() => setActiveVideo(null)}>
-          <div className="video-modal" onClick={e => e.stopPropagation()}>
-            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'16px 20px', borderBottom:'1px solid rgba(255,255,255,0.08)' }}>
+              <p style={{ fontSize:14, color:'var(--orange)', fontWeight:600, marginBottom:16, lineHeight:1.5 }}>
+                {t(roleMeta.req, roleMeta.req)}
+              </p>
               <div>
-                <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:15, color:'#fff' }}>
-                  {SAMPLE_VIDEOS[activeVideo].icon} {SAMPLE_VIDEOS[activeVideo].role} — Sample Trial Video
-                </div>
-                <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)', marginTop:3 }}>{sampleFor(SAMPLE_VIDEOS[activeVideo].role) ? (sampleFor(SAMPLE_VIDEOS[activeVideo].role)!.label || 'Official BCPL sample video') : 'Awaiting official upload'}</div>
-              </div>
-              <button onClick={() => setActiveVideo(null)} style={{ background:'rgba(255,255,255,0.08)', border:'1px solid rgba(255,255,255,0.12)', color:'#fff', width:34, height:34, borderRadius:8, cursor:'pointer', fontSize:16, display:'flex', alignItems:'center', justifyContent:'center' }}>✕</button>
-            </div>
-            {sampleFor(SAMPLE_VIDEOS[activeVideo].role) ? (
-              <video
-                key={SAMPLE_VIDEOS[activeVideo].role}
-                src={sampleFor(SAMPLE_VIDEOS[activeVideo].role)!.url}
-                controls autoPlay playsInline
-                style={{ width:'100%', maxHeight:340, background:'#000', display:'block' }}
-              />
-            ) : (
-              <div style={{ background:SAMPLE_VIDEOS[activeVideo].gradient, height:240, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:12, position:'relative', overflow:'hidden' }}>
-                <div style={{ position:'absolute', inset:0, opacity:.05, backgroundImage:'repeating-linear-gradient(0deg,#fff 0px,#fff 1px,transparent 1px,transparent 20px)' }} />
-                <div style={{ fontSize:56, opacity:.3 }}>{SAMPLE_VIDEOS[activeVideo].icon}</div>
-                <div style={{ color:'rgba(255,255,255,0.5)', fontSize:13, textAlign:'center', padding:'0 24px', lineHeight:1.6, position:'relative' }}>
-                  {samplesErr ? 'Sample videos could not be loaded right now. Please refresh the page.' : 'The official sample video for this role has not been uploaded yet.'}<br />
-                  <span style={{ color:'rgba(255,255,255,0.3)', fontSize:11 }}>Use the YouTube reference below ↓</span>
-                </div>
-              </div>
-            )}
-            <div style={{ padding:'16px 20px', borderTop:'1px solid rgba(255,255,255,0.06)', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
-              <div style={{ fontSize:11, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.1em', color:'rgba(255,255,255,0.3)', marginBottom:8, textTransform:'uppercase' }}>What Scouts Look For</div>
-              <div style={{ fontSize:13, color:'rgba(255,255,255,0.65)', lineHeight:1.6 }}>{SAMPLE_VIDEOS[activeVideo].what}</div>
-              <div style={{ marginTop:10, display:'flex', gap:6, flexWrap:'wrap' }}>
-                {SAMPLE_VIDEOS[activeVideo].description.split(' · ').map(tag => (
-                  <span key={tag} style={{ fontSize:10, color:SAMPLE_VIDEOS[activeVideo].color, background:`${SAMPLE_VIDEOS[activeVideo].color}15`, border:`1px solid ${SAMPLE_VIDEOS[activeVideo].color}33`, padding:'3px 10px', borderRadius:12, fontWeight:700 }}>{tag}</span>
+                {roleMeta.tips.map((tip, i) => (
+                  <div key={i} className="tip-check">
+                    <div style={{ color:'var(--green)', flexShrink:0 }}>✓</div>
+                    <div>{t(tip, tip)}</div>
+                  </div>
                 ))}
               </div>
             </div>
-            <div style={{ padding:'14px 20px', display:'flex', gap:10, flexWrap:'wrap' }}>
-              <a href={`https://www.youtube.com/results?search_query=${encodeURIComponent(SAMPLE_VIDEOS[activeVideo].ytSearch)}`} target="_blank" rel="noreferrer" style={{ flex:1, display:'flex', alignItems:'center', justifyContent:'center', gap:8, padding:'11px 16px', background:'rgba(255,0,0,0.12)', border:'1px solid rgba(255,0,0,0.35)', borderRadius:10, color:'#FF4444', fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:12, letterSpacing:'.06em', textDecoration:'none' }}>
-                ▶ Watch Reference on YouTube
-              </a>
-              <button onClick={() => setActiveVideo(null)} style={{ padding:'11px 16px', background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.12)', borderRadius:10, color:'rgba(255,255,255,0.5)', fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:12, cursor:'pointer' }}>Close</button>
+
+            <div style={{ background:'var(--panel)', border:'1px solid var(--line)', borderRadius:'var(--r)', padding:'20px', marginTop:16 }}>
+              <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:12 }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--ink-2)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12h4l3-9 5 18 3-9h5"/></svg>
+                <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:16, color:'var(--ink)', textTransform:'uppercase', letterSpacing:'.04em' }}>{t('Important Rules', 'महत्वपूर्ण नियम')}</div>
+              </div>
+              <ul style={{ listStyle:'none', padding:0, margin:0 }}>
+                <li style={{ fontSize:13, color:'var(--ink-2)', marginBottom:10, paddingLeft:20, position:'relative', lineHeight:1.6 }}>
+                  <span style={{ position:'absolute', left:0, color:'var(--orange)' }}>•</span>
+                  {t('Shoot horizontally (landscape mode).', 'हॉरिजॉन्टल (लैंडस्केप मोड) में शूट करें।')}
+                </li>
+                <li style={{ fontSize:13, color:'var(--ink-2)', marginBottom:10, paddingLeft:20, position:'relative', lineHeight:1.6 }}>
+                  <span style={{ position:'absolute', left:0, color:'var(--orange)' }}>•</span>
+                  {t('Ensure good lighting and stable camera.', 'सुनिश्चित करें कि अच्छी रोशनी हो और कैमरा स्थिर हो।')}
+                </li>
+                <li style={{ fontSize:13, color:'var(--ink-2)', paddingLeft:20, position:'relative', lineHeight:1.6 }}>
+                  <span style={{ position:'absolute', left:0, color:'var(--orange)' }}>•</span>
+                  {t('No editing or background music. Raw footage only.', 'कोई एडिटिंग या बैकग्राउंड म्यूजिक नहीं। केवल मूल फुटेज।')}
+                </li>
+              </ul>
             </div>
           </div>
-        </div>
-      )}
 
-      {/* ── STICKY BOTTOM BANNER ── */}
-      <div style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:500, background:'rgba(4,10,20,0.98)', backdropFilter:'blur(20px)', borderTop:'2px solid #FF7A29', padding:`10px 16px calc(10px + env(safe-area-inset-bottom))` }}>
-        <div style={{ maxWidth:1140, margin:'0 auto', display:'flex', flexDirection:'column', gap:8 }}>
-          <div style={{ display:'flex', alignItems:'flex-start', gap:8 }}>
-            <span style={{ fontSize:14, flexShrink:0, lineHeight:1.4 }}>{daysLeft <= 5 ? '🚨' : '⚠️'}</span>
-            <span style={{ fontSize:11, color:'rgba(255,255,255,0.6)', lineHeight:1.4 }}>
-              <strong style={{ color: daysLeft <= 5 ? '#EF4444' : '#FF7A29', fontFamily:'Montserrat,sans-serif', letterSpacing:'.04em' }}>
-                {isUploading
-                  ? (uploadState === 'confirming' ? 'FINALISING YOUR UPLOAD…' : `UPLOADING — ${progress}% COMPLETE`)
-                  : isFileReady
-                    ? `${file?.name} — READY TO SUBMIT`
-                    : `UPLOAD WITHIN ${daysLeft} DAY${daysLeft !== 1 ? 'S' : ''}.`
-                }
-              </strong>
-              {!isUploading && !isFileReady && ' Late submissions will not be reviewed.'}
-            </span>
-          </div>
-          <div style={{ display:'flex', gap:10, alignItems:'center' }}>
-            <button
-              className="btn-primary"
-              style={{ flex:1, padding:'11px 16px', fontSize:13, whiteSpace:'nowrap' }}
-              disabled={!isFileReady || isUploading}
-              onClick={isFileReady ? handleSubmit : () => fileInputRef.current?.click()}
-            >
-              {isUploading
-                ? (uploadState === 'confirming' ? 'FINALISING…' : `UPLOADING ${progress}%…`)
-                : isFileReady
-                  ? 'SUBMIT VIDEO →'
-                  : 'SELECT VIDEO →'}
-            </button>
-          </div>
         </div>
       </div>
 

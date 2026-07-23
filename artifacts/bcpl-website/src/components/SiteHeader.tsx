@@ -22,6 +22,7 @@ type NavItem = { key: string; en: string; hi: string; href: string };
 
 const LINKS: NavItem[] = [
   { key: "Teams",   en: "Teams",   hi: "टीमें",   href: "/teams" },
+  { key: "Players", en: "Players", hi: "खिलाड़ी", href: "/players" },
   { key: "Matches", en: "Matches", hi: "मैच",     href: "/match-center" },
   { key: "Media",   en: "Media",   hi: "मीडिया",  href: "/photos" },
   { key: "About",   en: "About",   hi: "परिचय",   href: "/about" },
@@ -31,10 +32,12 @@ const LINKS: NavItem[] = [
 const MOB_LINKS: NavItem[] = [
   { key: "Home",    en: "Home",    hi: "होम",     href: "/" },
   { key: "Teams",   en: "Teams",   hi: "टीमें",   href: "/teams" },
+  { key: "Players", en: "Players", hi: "खिलाड़ी", href: "/players" },
   { key: "Matches", en: "Matches", hi: "मैच",     href: "/match-center" },
   { key: "Photos",  en: "Photos",  hi: "फ़ोटो",   href: "/photos" },
   { key: "Videos",  en: "Videos",  hi: "वीडियो",  href: "/videos" },
   { key: "About",   en: "About",   hi: "परिचय",   href: "/about" },
+  { key: "Trust",   en: "Selection Process", hi: "चयन प्रक्रिया", href: "/trust" },
   { key: "Contact", en: "Contact", hi: "संपर्क",  href: "/contact" },
 ];
 

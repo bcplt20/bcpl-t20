@@ -1,6 +1,8 @@
 import React from 'react';
+import { Link } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
+import { useLang } from '../lib/i18n';
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
@@ -67,7 +69,7 @@ function AmbientBg() {
 function MobileStickyCTA() {
   return (
     <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',padding:'10px 16px calc(16px + env(safe-area-inset-bottom))',gap:10}}>
-      <a href="/register" className="btn-fire" style={{flex:2,height:52,fontSize:15,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register ₹299 →</a>
+      <Link href="/register" className="btn-fire" style={{flex:2,height:52,fontSize:15,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register ₹299 →</Link>
       <a href="https://wa.me/919151346555" target="_blank" rel="noopener noreferrer" className="btn-wa" style={{flex:1,height:52,fontSize:14,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>💬 WhatsApp</a>
     </div>
   );
@@ -89,6 +91,7 @@ const ROUTE_MAP: Record<string,string> = {
 };
 
 export function Contact() {
+  const { t } = useLang();
   const [form, setForm] = React.useState({name:'',email:'',phone:'',subject:'',message:''});
   const [sent, setSent] = React.useState(false);
 
@@ -107,15 +110,15 @@ export function Contact() {
       {/* HERO */}
       <section style={{position:'relative',zIndex:1,padding:'100px 0 80px',textAlign:'center'}}>
         <div className="wrap">
-          <div className="tag-pill" style={{marginBottom:24,animation:'floatUp 0.6s ease both'}}>GET IN TOUCH</div>
+          <div className="tag-pill" style={{marginBottom:24,animation:'floatUp 0.6s ease both'}}>{t("GET IN TOUCH","संपर्क करें")}</div>
           <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(40px,7vw,80px)',lineHeight:1.05,color:'#fff',marginBottom:12,animation:'floatUp 0.7s ease 0.1s both'}}>
-            WE'RE HERE
+            {t("WE'RE HERE","हम यहां हैं")}
           </h1>
           <h1 className="shimmer-gold" style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(40px,7vw,80px)',lineHeight:1.05,marginBottom:28,animation:'floatUp 0.7s ease 0.2s both'}}>
-            FOR YOU.
+            {t("FOR YOU.","आपके लिए।")}
           </h1>
           <p style={{color:'rgba(255,255,255,0.6)',fontSize:18,maxWidth:520,margin:'0 auto',lineHeight:1.7,animation:'floatUp 0.7s ease 0.3s both'}}>
-            Questions about registration, results, or anything else? We're here to help, fast.
+            {t("Questions about registration, results, or anything else? We're here to help, fast.","Registration, results, या कुछ और के बारे में सवाल? हम यहां हैं मदद के लिए, तेज़ी से।")}
           </p>
         </div>
       </section>
@@ -128,11 +131,11 @@ export function Contact() {
             <div className="glass-card contact-method-card" style={{padding:'36px 28px',border:'1px solid rgba(37,211,102,0.25)',boxShadow:'0 0 40px rgba(37,211,102,0.06)',animation:'fadeSlide 0.6s ease 0.1s both'}}>
               <div style={{fontSize:44,marginBottom:16}}>📱</div>
               <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:20,color:'#fff',marginBottom:8}}>WhatsApp</div>
-              <div style={{color:'rgba(255,255,255,0.55)',fontSize:14,lineHeight:1.6,marginBottom:8}}>Fastest response.</div>
-              <div style={{color:'#25D366',fontSize:13,fontWeight:600,marginBottom:24}}>Reply within 2 hours</div>
+              <div style={{color:'rgba(255,255,255,0.55)',fontSize:14,lineHeight:1.6,marginBottom:8}}>{t("Fastest response.","सबसे तेज़ जवाब।")}</div>
+              <div style={{color:'#25D366',fontSize:13,fontWeight:600,marginBottom:24}}>{t("Reply within 2 hours","2 घंटे में जवाब")}</div>
               <a href="https://wa.me/919151346555" target="_blank" rel="noopener noreferrer" style={{textDecoration:'none'}}>
                 <button style={{width:'100%',height:48,borderRadius:14,background:'linear-gradient(135deg,#25D366,#1BA851)',border:'none',color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,cursor:'pointer',transition:'transform 0.15s'}}>
-                  Chat Now →
+                  {t("Chat Now →","अभी Chat करें →")}
                 </button>
               </a>
             </div>
@@ -142,10 +145,10 @@ export function Contact() {
               <div style={{fontSize:44,marginBottom:16}}>📧</div>
               <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:20,color:'#fff',marginBottom:8}}>Email</div>
               <div style={{color:'#06B6D4',fontSize:15,fontWeight:700,marginBottom:4}}>support@bcplt20.com</div>
-              <div style={{color:'rgba(255,255,255,0.45)',fontSize:13,lineHeight:1.6,marginBottom:24}}>Response within 24 hours</div>
+              <div style={{color:'rgba(255,255,255,0.45)',fontSize:13,lineHeight:1.6,marginBottom:24}}>{t("Response within 24 hours","24 घंटे में जवाब")}</div>
               <a href="mailto:support@bcplt20.com" style={{textDecoration:'none'}}>
                 <button style={{width:'100%',height:48,borderRadius:14,background:'linear-gradient(135deg,#06B6D4,#0891B2)',border:'none',color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,cursor:'pointer',transition:'transform 0.15s'}}>
-                  Send Email →
+                  {t("Send Email →","Email भेजें →")}
                 </button>
               </a>
             </div>
@@ -153,12 +156,12 @@ export function Contact() {
             {/* Call */}
             <div className="glass-card contact-method-card" style={{padding:'36px 28px',border:'1px solid rgba(139,92,246,0.25)',boxShadow:'0 0 40px rgba(139,92,246,0.06)',animation:'fadeSlide 0.6s ease 0.3s both'}}>
               <div style={{fontSize:44,marginBottom:16}}>📞</div>
-              <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:20,color:'#fff',marginBottom:8}}>Call Us</div>
+              <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:20,color:'#fff',marginBottom:8}}>{t("Call Us","Call करें")}</div>
               <div style={{color:'#8B5CF6',fontSize:15,fontWeight:700,marginBottom:4}}>+91 91513 46555</div>
-              <div style={{color:'rgba(255,255,255,0.45)',fontSize:13,lineHeight:1.6,marginBottom:24}}>Mon–Sat 10AM–7PM IST</div>
+              <div style={{color:'rgba(255,255,255,0.45)',fontSize:13,lineHeight:1.6,marginBottom:24}}>{t("Mon–Sat 10AM–7PM IST","सोम–शनि 10AM–7PM IST")}</div>
               <a href="tel:+919151346555" style={{textDecoration:'none'}}>
                 <button style={{width:'100%',height:48,borderRadius:14,background:'linear-gradient(135deg,#8B5CF6,#7C3AED)',border:'none',color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,cursor:'pointer',transition:'transform 0.15s'}}>
-                  Call Now →
+                  {t("Call Now →","अभी Call करें →")}
                 </button>
               </a>
             </div>
@@ -182,49 +185,49 @@ export function Contact() {
       `}</style>
 
             <div className="glass-card" style={{padding:'clamp(20px,5vw,40px)',animation:'fadeSlide 0.7s ease 0.2s both'}}>
-              <div className="tag-pill" style={{marginBottom:20}}>SEND A MESSAGE</div>
-              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:28,color:'#fff',marginBottom:8}}>Drop Us a Line</h2>
-              <p style={{color:'rgba(255,255,255,0.5)',fontSize:14,marginBottom:32,lineHeight:1.6}}>Fill out the form and our team will get back to you within 24 hours.</p>
+              <div className="tag-pill" style={{marginBottom:20}}>{t("SEND A MESSAGE","संदेश भेजें")}</div>
+              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:28,color:'#fff',marginBottom:8}}>{t("Drop Us a Line","हमें लिखें")}</h2>
+              <p style={{color:'rgba(255,255,255,0.5)',fontSize:14,marginBottom:32,lineHeight:1.6}}>{t("Fill out the form and our team will get back to you within 24 hours.","Form भरें और हमारी team 24 घंटे में आपसे संपर्क करेगी।")}</p>
 
               {sent ? (
                 <div style={{textAlign:'center',padding:'40px 20px'}}>
                   <div style={{fontSize:48,marginBottom:16}}>✅</div>
-                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:20,color:'#22C55E',marginBottom:8}}>Message Sent!</div>
-                  <div style={{color:'rgba(255,255,255,0.6)',fontSize:14}}>We'll get back to you within 24 hours.</div>
+                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:20,color:'#22C55E',marginBottom:8}}>{t("Message Sent!","संदेश भेज दिया!")}</div>
+                  <div style={{color:'rgba(255,255,255,0.6)',fontSize:14}}>{t("We'll get back to you within 24 hours.","हम 24 घंटे में आपसे संपर्क करेंगे।")}</div>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit}>
                   <div className="form-name-row">
                     <div>
-                      <label className="lbl">Full Name *</label>
-                      <input className="inp" placeholder="Rahul Sharma" required value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))}/>
+                      <label className="lbl">{t("Full Name *","पूरा नाम *")}</label>
+                      <input className="inp" placeholder={t("Rahul Sharma","राहुल शर्मा")} required value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))}/>
                     </div>
                     <div>
-                      <label className="lbl">Work Email *</label>
+                      <label className="lbl">{t("Work Email *","Work Email *")}</label>
                       <input className="inp" type="email" placeholder="rahul@company.com" required value={form.email} onChange={e=>setForm(f=>({...f,email:e.target.value}))}/>
                     </div>
                   </div>
                   <div style={{marginBottom:16}}>
-                    <label className="lbl">Phone Number</label>
+                    <label className="lbl">{t("Phone Number","Phone Number")}</label>
                     <input className="inp" placeholder="+91 98765 43210" value={form.phone} onChange={e=>setForm(f=>({...f,phone:e.target.value}))}/>
                   </div>
                   <div style={{marginBottom:16}}>
-                    <label className="lbl">Subject</label>
+                    <label className="lbl">{t("Subject","विषय")}</label>
                     <select className="inp" value={form.subject} onChange={e=>setForm(f=>({...f,subject:e.target.value}))} style={{color:form.subject?'#F8F4EE':'rgba(255,255,255,0.28)'}}>
-                      <option value="" disabled>Select a subject...</option>
-                      <option value="registration">Registration Query</option>
-                      <option value="result">Result Query</option>
-                      <option value="sponsorship">Sponsorship</option>
-                      <option value="general">General</option>
-                      <option value="technical">Technical Issue</option>
+                      <option value="" disabled>{t("Select a subject...","विषय चुनें...")}</option>
+                      <option value="registration">{t("Registration Query","Registration Query")}</option>
+                      <option value="result">{t("Result Query","Result Query")}</option>
+                      <option value="sponsorship">{t("Sponsorship","Sponsorship")}</option>
+                      <option value="general">{t("General","सामान्य")}</option>
+                      <option value="technical">{t("Technical Issue","Technical Issue")}</option>
                     </select>
                   </div>
                   <div style={{marginBottom:24}}>
-                    <label className="lbl">Message</label>
-                    <textarea className="inp" rows={5} placeholder="Tell us how we can help..." value={form.message} onChange={e=>setForm(f=>({...f,message:e.target.value}))} style={{resize:'vertical',minHeight:120}}/>
+                    <label className="lbl">{t("Message","संदेश")}</label>
+                    <textarea className="inp" rows={5} placeholder={t("Tell us how we can help...","बताएं कि हम कैसे मदद कर सकते हैं...")} value={form.message} onChange={e=>setForm(f=>({...f,message:e.target.value}))} style={{resize:'vertical',minHeight:120}}/>
                   </div>
                   <button type="submit" className="btn-fire" style={{width:'100%',height:54,fontSize:16}}>
-                    Send Message →
+                    {t("Send Message →","संदेश भेजें →")}
                   </button>
                 </form>
               )}
@@ -234,16 +237,18 @@ export function Contact() {
             <div style={{display:'flex',flexDirection:'column',gap:20}}>
               <div className="glass-card" style={{padding:'32px',animation:'fadeSlide 0.7s ease 0.35s both'}}>
                 <div style={{fontSize:32,marginBottom:12}}>❓</div>
-                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:18,color:'#fff',marginBottom:8}}>Common Questions?</div>
-                <p style={{color:'rgba(255,255,255,0.55)',fontSize:14,marginBottom:20,lineHeight:1.6}}>Quick answers to the most frequent queries:</p>
+                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:18,color:'#fff',marginBottom:8}}>{t("Common Questions?","आम सवाल?")}</div>
+                <p style={{color:'rgba(255,255,255,0.55)',fontSize:14,marginBottom:20,lineHeight:1.6}}>{t("Quick answers to the most frequent queries:","सबसे frequent queries के quick answers:")}</p>
                 <div style={{display:'flex',flexWrap:'wrap',gap:8,marginBottom:20}}>
-                  {['Refund policy','Eligibility','Video format','Results timeline'].map(chip=>(
-                    <span key={chip} style={{background:'rgba(255,122,41,0.1)',border:'1px solid rgba(255,122,41,0.25)',borderRadius:100,padding:'6px 14px',fontSize:12,color:'#FF7A29',fontFamily:'Montserrat,sans-serif',fontWeight:700,cursor:'pointer'}}>
+                  {[t("Refund policy","Refund policy"),t("Eligibility","पात्रता"),t("Video format","Video format"),t("Results timeline","Result timeline")].map((chip,idx)=>(
+                    <span key={idx} style={{background:'rgba(255,122,41,0.1)',border:'1px solid rgba(255,122,41,0.25)',borderRadius:100,padding:'6px 14px',fontSize:12,color:'#FF7A29',fontFamily:'Montserrat,sans-serif',fontWeight:700,cursor:'pointer'}}>
                       {chip}
                     </span>
                   ))}
                 </div>
-                <button className="btn-fire" style={{width:'100%',height:46,fontSize:14}}>Check Full FAQ →</button>
+                <Link href="/faq" style={{textDecoration:'none',display:'block'}}>
+                  <button className="btn-fire" style={{width:'100%',height:46,fontSize:14}}>{t("Check Full FAQ →","पूरा FAQ देखें →")}</button>
+                </Link>
               </div>
 
               <div className="glass-card" style={{padding:'28px',animation:'fadeSlide 0.7s ease 0.45s both'}}>
@@ -274,7 +279,7 @@ export function Contact() {
       <BCPLFooter />
       <MobileStickyCTA/>
       {/* ── FLOATING REGISTER BUTTON ── */}
-      <a className="float-reg-btn float-reg-pulse" href="/register" style={{textDecoration:"none"}}>🏏 REGISTER NOW →</a>
+      <Link className="float-reg-btn float-reg-pulse" href="/register" style={{textDecoration:"none"}}>🏏 {t("REGISTER NOW","अभी REGISTER करें")} →</Link>
     </div>
   );
 }

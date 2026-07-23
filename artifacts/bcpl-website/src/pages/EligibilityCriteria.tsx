@@ -1,11 +1,12 @@
 import React from 'react';
+import { Link } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 
 function MobileCTA() {
   return (
     <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,padding:'10px 16px 18px',background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',gap:10}}>
-      <a href="/register" className="btn-fire" style={{flex:2,height:52,fontSize:15,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register ₹299 →</a>
+      <Link href="/register" className="btn-fire" style={{flex:2,height:52,fontSize:15,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register ₹299 →</Link>
       <button className="btn-wa" style={{flex:1,height:52,fontSize:14,borderRadius:14}}>💬 WhatsApp</button>
     </div>
   );
@@ -146,7 +147,7 @@ export function EligibilityCriteria() {
                     <div style={{fontSize:32,marginBottom:8}}>🎉</div>
                     <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:20,color:'#22C55E',marginBottom:8}}>You're Eligible!</div>
                     <p style={{color:'rgba(255,255,255,0.7)',fontSize:14,marginBottom:16}}>You qualify for BCPL T20 Season 5. Secure your spot now!</p>
-                    <a href="/register" className="btn-fire" style={{padding:'14px 32px',fontSize:15,width:'100%',maxWidth:260,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register Now →</a>
+                    <Link href="/register" className="btn-fire" style={{padding:'14px 32px',fontSize:15,width:'100%',maxWidth:260,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register Now →</Link>
                   </div>
                 ) : anyNo ? (
                   <div style={{background:'rgba(232,73,63,0.1)',border:'2px solid rgba(232,73,63,0.4)',borderRadius:16,padding:'20px 24px',textAlign:'center'}}>
@@ -316,7 +317,7 @@ export function EligibilityCriteria() {
             <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(18px,3vw,22px)',marginBottom:8}}>Meet All Criteria?</div>
             <p style={{color:'rgba(255,255,255,0.6)',fontSize:14,marginBottom:20}}>Join 75 cities, 10 franchise teams, and thousands of corporate cricketers. Your stadium moment awaits.</p>
             <div style={{display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap'}}>
-              <a href="/register" className="btn-fire" style={{padding:'14px 36px',fontSize:16,flex:'1 1 200px',maxWidth:280,textDecoration:'none',display:'inline-flex',alignItems:'center',justifyContent:'center'}}>Register ₹299 →</a>
+              <Link href="/register" className="btn-fire" style={{padding:'14px 36px',fontSize:16,flex:'1 1 200px',maxWidth:280,textDecoration:'none',display:'inline-flex',alignItems:'center',justifyContent:'center'}}>Register ₹299 →</Link>
               <button className="btn-wa" style={{padding:'14px 24px',fontSize:15,borderRadius:14,flex:'1 1 160px',maxWidth:200}}>💬 Ask on WhatsApp</button>
             </div>
           </div>
@@ -325,7 +326,7 @@ export function EligibilityCriteria() {
         <BCPLFooter />
       </div>
       <MobileCTA/>
-      <a className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>🏏 REGISTER NOW →</a>
+      <Link className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>🏏 REGISTER NOW →</Link>
     </div>
   );
 }

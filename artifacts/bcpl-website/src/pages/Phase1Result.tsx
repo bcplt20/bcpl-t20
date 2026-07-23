@@ -17,14 +17,15 @@ import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { getMyResult, isAuthenticated, type MyResult } from '../lib/api';
 import { useLang } from '../lib/i18n';
+import { Link, useLocation } from 'wouter';
 
 const BASE = import.meta.env.BASE_URL;
 
-const ROLE_LABELS: Record<string, { en: string; hi: string; icon: string }> = {
-  bat:  { en: 'Batsman',       hi: 'बल्लेबाज़',      icon: '🏏' },
-  bowl: { en: 'Bowler',        hi: 'गेंदबाज़',       icon: '🎯' },
-  wk:   { en: 'Wicket-Keeper', hi: 'विकेट-कीपर',   icon: '🧤' },
-  ar:   { en: 'All-Rounder',   hi: 'ऑल-राउंडर',    icon: '⚡' },
+const ROLE_LABELS: Record<string, { en: string; hi: string }> = {
+  bat:  { en: 'Batsman',       hi: 'बल्लेबाज़' },
+  bowl: { en: 'Bowler',        hi: 'गेंदबाज़' },
+  wk:   { en: 'Wicket-Keeper', hi: 'विकेट-कीपर' },
+  ar:   { en: 'All-Rounder',   hi: 'ऑल-राउंडर' },
 };
 const PHASE2_FEES: Record<string, number> = { bat: 2000, bowl: 2000, wk: 2000, ar: 3000 };
 
@@ -92,8 +93,8 @@ async function downloadShareCard(r: MyResult, roleLabel: string, qualified: bool
   if (!ctx) return;
   try {
     await Promise.all([
-      document.fonts.load('900 300px Montserrat'),
-      document.fonts.load('800 44px Montserrat'),
+      document.fonts.load('900 300px "Barlow Condensed"'),
+      document.fonts.load('800 44px "Barlow Condensed"'),
       document.fonts.load('700 30px Inter'),
     ]);
   } catch { /* fallback fonts are fine */ }
@@ -112,23 +113,23 @@ async function downloadShareCard(r: MyResult, roleLabel: string, qualified: bool
   ctx.strokeRect(56, 56, W - 112, H - 112);
 
   ctx.textAlign = 'center';
-  ctx.fillStyle = '#E8B23D'; ctx.font = '800 46px Montserrat, sans-serif';
+  ctx.fillStyle = '#E8B23D'; ctx.font = '800 46px "Barlow Condensed", sans-serif';
   ctx.fillText('BCPL • SEASON 5', W / 2, 160);
   ctx.fillStyle = 'rgba(255,255,255,0.55)'; ctx.font = '700 30px Inter, sans-serif';
   ctx.fillText('PHASE 1 — VIDEO TRIAL ASSESSMENT', W / 2, 215);
 
   const name = (r.name || '').toUpperCase();
-  ctx.fillStyle = '#FFFFFF'; ctx.font = '900 74px Montserrat, sans-serif';
+  ctx.fillStyle = '#FFFFFF'; ctx.font = '900 74px "Barlow Condensed", sans-serif';
   ctx.fillText(name.length > 18 ? name.slice(0, 17) + '…' : name, W / 2, 345);
-  ctx.fillStyle = '#FF7A29'; ctx.font = '800 38px Montserrat, sans-serif';
+  ctx.fillStyle = '#FF7A29'; ctx.font = '800 38px "Barlow Condensed", sans-serif';
   ctx.fillText(roleLabel.toUpperCase() + (r.trialCity ? '  •  ' + r.trialCity.toUpperCase() : ''), W / 2, 410);
 
-  ctx.fillStyle = '#E8B23D'; ctx.font = '900 300px Montserrat, sans-serif';
+  ctx.fillStyle = '#E8B23D'; ctx.font = '900 300px "Barlow Condensed", sans-serif';
   ctx.fillText(String(r.total ?? 0), W / 2, 790);
-  ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.font = '800 44px Montserrat, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.font = '800 44px "Barlow Condensed", sans-serif';
   ctx.fillText('/ 100  BCPL SCORE', W / 2, 865);
 
-  ctx.fillStyle = '#FFFFFF'; ctx.font = '800 46px Montserrat, sans-serif';
+  ctx.fillStyle = '#FFFFFF'; ctx.font = '800 46px "Barlow Condensed", sans-serif';
   ctx.fillText((r.trialCity || '').toUpperCase() + ' RANK  #' + (r.cityRank ?? '—'), W / 2, 985);
   ctx.fillStyle = 'rgba(255,255,255,0.45)'; ctx.font = '700 30px Inter, sans-serif';
   ctx.fillText('among ' + (r.cityCount ?? 0) + ' evaluated players', W / 2, 1035);
@@ -136,12 +137,12 @@ async function downloadShareCard(r: MyResult, roleLabel: string, qualified: bool
   if (qualified) {
     ctx.fillStyle = 'rgba(34,197,94,0.15)'; rr(ctx, W / 2 - 330, 1085, 660, 92, 46); ctx.fill();
     ctx.strokeStyle = '#22C55E'; ctx.lineWidth = 3; rr(ctx, W / 2 - 330, 1085, 660, 92, 46); ctx.stroke();
-    ctx.fillStyle = '#22C55E'; ctx.font = '900 42px Montserrat, sans-serif';
+    ctx.fillStyle = '#22C55E'; ctx.font = '900 42px "Barlow Condensed", sans-serif';
     ctx.fillText('✓ QUALIFIED FOR PHASE 2', W / 2, 1147);
   } else {
     ctx.fillStyle = 'rgba(255,255,255,0.08)'; rr(ctx, W / 2 - 300, 1085, 600, 92, 46); ctx.fill();
     ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 3; rr(ctx, W / 2 - 300, 1085, 600, 92, 46); ctx.stroke();
-    ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.font = '900 42px Montserrat, sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.font = '900 42px "Barlow Condensed", sans-serif';
     ctx.fillText('SEASON 5 TRIALIST', W / 2, 1147);
   }
 
@@ -186,6 +187,7 @@ function demoResult(kind: string): MyResult {
 /* ═══════════════════════════════════════════════════════════════ */
 export function Phase1Result() {
   const { t } = useLang();
+  const [, navigate]          = useLocation();
   const [loading, setLoading] = useState(true);
   const [error, setError]     = useState('');
   const [result, setResult]   = useState<MyResult | null>(null);
@@ -206,36 +208,35 @@ export function Phase1Result() {
         return;
       }
     }
-    if (!isAuthenticated()) { window.location.replace(BASE + 'register'); return; }
+    if (!isAuthenticated()) { navigate('/register'); return; }
     getMyResult()
       .then(r => {
-        // Pre-result states keep their original destinations (old page behavior):
-        // not yet paid → registration; paid but no video → upload page.
+        // Pre-result states keep their original destinations:
         if (r.reason === 'not_registered' || r.phase1Status === 'pending') {
-          window.location.replace(BASE + 'register'); return;
+          navigate('/register'); return;
         }
         if (r.phase1Status === 'payment_done') {
-          window.location.replace(BASE + 'register/upload-video'); return;
+          navigate('/register/upload-video'); return;
         }
         setResult(r);
       })
-      .catch((e: any) => setError(e?.message ?? 'Failed to load result. Please refresh.'))
+      .catch((e: any) => setError(e?.message ?? t('Failed to load result. Please refresh.', 'रिजल्ट लोड करने में विफल। कृपया रीफ्रेश करें।')))
       .finally(() => setLoading(false));
     return () => { timers.current.forEach(id => window.clearTimeout(id)); };
-  }, []);
+  }, [navigate, t]);
 
   const reveal = () => {
     setFlash(true);
     setStage('result');
     timers.current.push(window.setTimeout(() => setFlash(false), 950));
     timers.current.push(window.setTimeout(() => setBarsOn(true), 350));
-    try { window.scrollTo({ top: 0 }); } catch { /* noop */ }
+    try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch { /* noop */ }
   };
 
   const r = result;
   const qualified = r?.decision === 'qualified';
   const role      = normRole(r?.role);
-  const roleInfo  = ROLE_LABELS[role] ?? { en: r?.role ?? '', hi: r?.role ?? '', icon: '🏏' };
+  const roleInfo  = ROLE_LABELS[role] ?? { en: r?.role ?? '', hi: r?.role ?? '' };
   const roleLabel = t(roleInfo.en, roleInfo.hi);
   const phase2Fee = Math.round((PHASE2_FEES[role] ?? 2000) * 1.18);
 
@@ -250,100 +251,112 @@ export function Phase1Result() {
   const showRole   = !!r?.roleCount && r.roleCount >= 20;
 
   const initials = (r?.name ?? '')
-    .split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]?.toUpperCase() ?? '').join('') || '🏏';
+    .split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]?.toUpperCase() ?? '').join('') || '';
 
-  const statusColor = qualified ? '#22C55E' : '#7FB4E8';
+  const statusColor = qualified ? 'var(--green)' : 'var(--ink-2)';
+  const scoreValue = r?.total ?? 0;
+  // Circle circumference is 2 * PI * r = 2 * 3.14159 * 46 = 289.026
+  const circ = 289.026;
+  const dashoffset = circ - (circ * scoreValue / 100);
 
   return (
-    <div style={{ background:'#06101E', minHeight:'100vh', fontFamily:"'Inter',sans-serif", color:'#F0EDE8', overflowX:'hidden' }}>
+    <div style={{ background:'var(--bg)', minHeight:'100dvh', fontFamily:"var(--font-body)", color:'var(--ink)', overflowX:'hidden' }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap');
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-        .wrap{max-width:1200px;margin:0 auto;padding:0 16px}
-        @media(min-width:768px){.wrap{padding:0 32px}}
-        .desk-nav{display:none}
-        @media(min-width:1024px){.desk-nav{display:flex;align-items:center;gap:20px}}
-        .ham-btn{display:flex;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
-        @media(min-width:1024px){.ham-btn{display:none}}
-        .rwrap{max-width:680px;margin:0 auto;padding:0 16px}
-        .btn-gold{background:linear-gradient(135deg,#E8B23D,#C4901E);border:none;border-radius:12px;color:#081020;font-family:Montserrat,sans-serif;font-weight:900;letter-spacing:.06em;cursor:pointer;transition:transform .15s,filter .2s}
+        .W{max-width:1200px;margin:0 auto;padding:0 20px}
+        @media(min-width:768px){.W{padding:0 32px}}
+        .rwrap{max-width:680px;margin:0 auto;padding:0 20px}
+        
+        .btn-gold{background:linear-gradient(135deg,var(--gold),#C4901E);border:none;border-radius:var(--r);color:#081020;font-family:'Barlow Condensed',sans-serif;font-weight:900;fontSize:16px;letter-spacing:.08em;cursor:pointer;transition:transform .15s,filter .2s;text-transform:uppercase;display:inline-flex;align-items:center;justify-content:center;}
         .btn-gold:hover{filter:brightness(1.1);transform:translateY(-2px)}
-        .btn-orange{background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:12px;color:#fff;font-family:Montserrat,sans-serif;font-weight:900;letter-spacing:.06em;cursor:pointer;transition:transform .15s,filter .2s}
+        .btn-orange{background:linear-gradient(135deg,var(--orange),var(--orange-2));border:none;border-radius:var(--r);color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:900;fontSize:16px;letter-spacing:.08em;cursor:pointer;transition:transform .15s,filter .2s;text-transform:uppercase;display:inline-flex;align-items:center;justify-content:center;}
         .btn-orange:hover{filter:brightness(1.12);transform:translateY(-2px)}
-        .btn-ghost{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.14);border-radius:12px;color:rgba(255,255,255,0.75);font-family:Montserrat,sans-serif;font-weight:800;cursor:pointer;transition:all .2s}
-        .btn-ghost:hover{border-color:#E8B23D;color:#E8B23D}
-        .rcard{background:#0A1727;border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:24px 20px;margin-bottom:18px}
-        @media(min-width:640px){.rcard{padding:28px 28px}}
-        .grid2r{display:grid;grid-template-columns:1fr;gap:14px}
+        .btn-ghost{background:rgba(255,255,255,0.05);border:1px solid var(--line);border-radius:var(--r);color:var(--ink-2);font-family:'Barlow Condensed',sans-serif;font-weight:800;fontSize:15px;letter-spacing:.06em;cursor:pointer;transition:all .2s;text-transform:uppercase;display:inline-flex;align-items:center;justify-content:center;}
+        .btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+        
+        .rcard{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:24px 20px;margin-bottom:16px}
+        @media(min-width:640px){.rcard{padding:32px}}
+        .grid2r{display:grid;grid-template-columns:1fr;gap:16px}
         @media(min-width:600px){.grid2r{grid-template-columns:1fr 1fr}}
+        
         @keyframes spin{to{transform:rotate(360deg)}}
-        @keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
-        @keyframes cardIn{0%{opacity:0;transform:scale(.86) translateY(30px)}60%{transform:scale(1.02) translateY(-4px)}100%{opacity:1;transform:scale(1) translateY(0)}}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes cardIn{0%{opacity:0;transform:scale(.9) translateY(30px)}60%{transform:scale(1.02) translateY(-4px)}100%{opacity:1;transform:scale(1) translateY(0)}}
         @keyframes flashOut{0%{opacity:1}100%{opacity:0}}
         @keyframes shimGold{0%{background-position:-200% center}100%{background-position:200% center}}
-        @keyframes glowPulse{0%,100%{box-shadow:0 0 60px rgba(232,178,61,0.18)}50%{box-shadow:0 0 110px rgba(232,178,61,0.34)}}
-        @keyframes ballFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
-        @keyframes confFall{0%{transform:translateY(-8vh) rotate(0)}100%{transform:translateY(105vh) rotate(720deg)}}
-        .conf{position:fixed;top:0;width:9px;height:15px;z-index:60;pointer-events:none;animation:confFall linear forwards}
+        @keyframes glowPulse{0%,100%{box-shadow:0 0 60px rgba(232,178,61,0.15)}50%{box-shadow:0 0 100px rgba(232,178,61,0.3)}}
+        @keyframes iconFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+        @keyframes confFall{0%{transform:translateY(-10vh) rotate(0)}100%{transform:translateY(110vh) rotate(720deg)}}
+        .conf{position:fixed;top:0;width:10px;height:16px;z-index:60;pointer-events:none;animation:confFall linear forwards}
+
+        .score-circle-wrap { position: relative; width: 220px; height: 220px; margin: 0 auto 16px; display:flex; align-items:center; justify-content:center; }
+        @media(min-width:480px){.score-circle-wrap { width: 260px; height: 260px; }}
+        .score-circle-svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
       `}</style>
 
       <SiteHeader />
       {demo && (
-        <div style={{ position:'fixed', bottom:10, left:10, zIndex:99, background:'#7C3AED', color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:10, letterSpacing:'.1em', padding:'4px 10px', borderRadius:6, opacity:.85 }}>
+        <div style={{ position:'fixed', bottom:10, left:10, zIndex:99, background:'#7C3AED', color:'#fff', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:12, letterSpacing:'.1em', padding:'6px 12px', borderRadius:6, opacity:.9, textTransform:'uppercase' }}>
           DEV PREVIEW — SAMPLE DATA
         </div>
       )}
 
       {/* ── LOADING ── */}
       {loading && (
-        <div style={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', minHeight:'60vh', gap:16 }}>
-          <div style={{ width:40, height:40, border:'3px solid rgba(232,178,61,0.2)', borderTopColor:'#E8B23D', borderRadius:'50%', animation:'spin 1s linear infinite' }} />
-          <div style={{ fontSize:13, color:'rgba(255,255,255,0.4)', fontFamily:'Montserrat,sans-serif', fontWeight:700 }}>
-            {t('Loading your result…', 'आपका result लोड हो रहा है…')}
+        <div style={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', minHeight:'60dvh', gap:16 }}>
+          <div style={{ width:48, height:48, border:'4px solid rgba(232,178,61,0.15)', borderTopColor:'var(--gold)', borderRadius:'50%', animation:'spin 1s linear infinite' }} />
+          <div style={{ fontSize:15, color:'var(--ink-3)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, letterSpacing:'.06em', textTransform:'uppercase' }}>
+            {t('Loading your result…', 'आपका रिजल्ट लोड हो रहा है…')}
           </div>
         </div>
       )}
 
       {/* ── ERROR ── */}
       {!loading && error && (
-        <div className="rwrap" style={{ paddingTop:60, textAlign:'center', paddingBottom:80 }}>
-          <div style={{ fontSize:32, marginBottom:12 }}>⚠️</div>
-          <div style={{ fontSize:15, color:'#EF4444', marginBottom:16 }}>{error}</div>
-          <button onClick={() => window.location.reload()} className="btn-orange" style={{ padding:'12px 28px', fontSize:13 }}>
-            {t('Refresh →', 'दोबारा लोड करें →')}
+        <div className="rwrap" style={{ paddingTop:80, textAlign:'center', paddingBottom:80 }}>
+          <div style={{ width:80, height:80, margin:'0 auto 20px', background:'rgba(239,68,68,0.1)', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', color:'var(--red)' }}>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div style={{ fontSize:15, color:'var(--red)', marginBottom:24, fontWeight:600 }}>{error}</div>
+          <button onClick={() => window.location.reload()} className="btn-orange" style={{ padding:'14px 32px' }}>
+            {t('REFRESH', 'रीफ्रेश')} →
           </button>
         </div>
       )}
 
       {/* ── STILL UNDER REVIEW (no score / no decision yet) ── */}
       {!loading && !error && r && !r.available && (
-        <div className="rwrap" style={{ paddingTop:60, textAlign:'center', paddingBottom:100 }}>
+        <div className="rwrap" style={{ paddingTop:80, textAlign:'center', paddingBottom:100 }}>
           {r.phase1Status === 'selected' || r.phase1Status === 'rejected' ? (
             <>
-              <div style={{ fontSize:48, marginBottom:16 }}>📋</div>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:24, color:'#E8B23D', marginBottom:12 }}>
-                {t('Your scorecard is being finalised', 'आपका scorecard तैयार हो रहा है')}
+              <div style={{ width:80, height:80, margin:'0 auto 20px', background:'rgba(232,178,61,0.1)', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', color:'var(--gold)' }}>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
               </div>
-              <div style={{ fontSize:14, color:'rgba(255,255,255,0.5)', maxWidth:480, margin:'0 auto', lineHeight:1.7 }}>
+              <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:32, color:'var(--gold)', marginBottom:16, textTransform:'uppercase' }}>
+                {t('Your scorecard is being finalised', 'आपका स्कोरकार्ड तैयार किया जा रहा है')}
+              </div>
+              <div style={{ fontSize:15, color:'var(--ink-2)', maxWidth:480, margin:'0 auto', lineHeight:1.7 }}>
                 {t('Your Phase 1 decision has been announced by SMS & email. Your detailed 100-point scorecard will appear here shortly.',
-                   'आपका Phase 1 decision SMS और email से भेज दिया गया है। आपका detailed 100-point scorecard जल्द ही यहाँ दिखेगा।')}
+                   'आपका Phase 1 निर्णय SMS और ईमेल के माध्यम से घोषित कर दिया गया है। आपका विस्तृत 100-पॉइंट स्कोरकार्ड जल्द ही यहाँ दिखाई देगा।')}
               </div>
               {r.phase1Status === 'selected' && (
-                <button className="btn-orange" style={{ marginTop:24, padding:'14px 30px', fontSize:13 }}
-                  onClick={() => { window.location.href = BASE + 'register/phase2'; }}>
-                  {t('CONTINUE TO PHASE 2 →', 'PHASE 2 की ओर बढ़ें →')}
-                </button>
+                <Link href={BASE + 'register/phase2'} className="btn-orange" style={{ marginTop:32, padding:'16px 36px' }}>
+                  {t('CONTINUE TO PHASE 2', 'PHASE 2 की ओर बढ़ें')} →
+                </Link>
               )}
             </>
           ) : (
             <>
-              <div style={{ fontSize:48, marginBottom:16, animation:'ballFloat 3s ease-in-out infinite', display:'inline-block' }}>🎬</div>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:24, color:'#A855F7', marginBottom:12 }}>
-                {t('Your Video is Under Review', 'आपकी video review में है')}
+              <div style={{ width:96, height:96, margin:'0 auto 24px', background:'rgba(168,85,247,0.1)', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', color:'#A855F7', animation:'iconFloat 3s ease-in-out infinite' }}>
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
               </div>
-              <div style={{ fontSize:14, color:'rgba(255,255,255,0.5)', maxWidth:480, margin:'0 auto', lineHeight:1.7 }}>
+              <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:32, color:'#A855F7', marginBottom:16, textTransform:'uppercase' }}>
+                {t('Your Video is Under Review', 'आपका वीडियो समीक्षा के अधीन है')}
+              </div>
+              <div style={{ fontSize:15, color:'var(--ink-2)', maxWidth:480, margin:'0 auto', lineHeight:1.7 }}>
                 {t('BCCI-certified scouts are doing a full 100-point evaluation of your trial video. You will get SMS + email the moment your result is ready.',
-                   'BCCI-certified scouts आपकी trial video का पूरा 100-point evaluation कर रहे हैं। Result तैयार होते ही आपको SMS + email मिलेगा।')}
+                   'BCCI-certified scouts आपके ट्रायल वीडियो का पूरा 100-पॉइंट मूल्यांकन कर रहे हैं। आपका परिणाम तैयार होते ही आपको SMS + ईमेल मिल जाएगा।')}
               </div>
             </>
           )}
@@ -352,30 +365,32 @@ export function Phase1Result() {
 
       {/* ── ANTICIPATION ── */}
       {!loading && !error && r?.available && stage === 'intro' && (
-        <div style={{ position:'relative', minHeight:'78vh', display:'flex', alignItems:'center', justifyContent:'center', overflow:'hidden' }}>
-          <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 50% 30%, rgba(232,178,61,0.13) 0%, transparent 55%)', pointerEvents:'none' }} />
-          <div style={{ position:'absolute', inset:0, backgroundImage:'repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0 1px, transparent 1px 32px)', pointerEvents:'none' }} />
-          <div className="rwrap" style={{ textAlign:'center', position:'relative', zIndex:1, padding:'70px 16px' }}>
-            <div style={{ fontSize:64, marginBottom:22, animation:'ballFloat 3s ease-in-out infinite', display:'inline-block', filter:'drop-shadow(0 0 26px rgba(232,178,61,0.5))' }}>🏏</div>
-            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:12, letterSpacing:'.24em', color:'#E8B23D', marginBottom:14 }}>
+        <div style={{ position:'relative', minHeight:'80dvh', display:'flex', alignItems:'center', justifyContent:'center', overflow:'hidden' }}>
+          <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 50% 30%, rgba(232,178,61,0.1) 0%, transparent 60%)', pointerEvents:'none' }} />
+          <div style={{ position:'absolute', inset:0, backgroundImage:'repeating-linear-gradient(45deg, rgba(255,255,255,0.01) 0 1px, transparent 1px 32px)', pointerEvents:'none' }} />
+          <div className="rwrap" style={{ textAlign:'center', position:'relative', zIndex:1, padding:'64px 20px' }}>
+            <div style={{ width:100, height:100, margin:'0 auto 24px', background:'rgba(232,178,61,0.1)', border:'1px solid rgba(232,178,61,0.3)', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', color:'var(--gold)', animation:'iconFloat 3s ease-in-out infinite, glowPulse 2.4s ease infinite' }}>
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:14, letterSpacing:'.24em', color:'var(--gold)', marginBottom:16, textTransform:'uppercase' }}>
               BCPL SEASON 5 — {t('PHASE 1 ASSESSMENT', 'PHASE 1 मूल्यांकन')}
             </div>
-            <h1 style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(34px,7vw,64px)', lineHeight:1, textTransform:'uppercase', marginBottom:18, animation:'fadeUp .5s ease both' }}>
-              <span style={{ color:'#fff', display:'block' }}>{t('YOUR RESULT', 'आपका RESULT')}</span>
-              <span style={{ background:'linear-gradient(90deg,#E8B23D,#FFE9A8,#E8B23D)', backgroundSize:'200%', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text', animation:'shimGold 3s linear infinite', display:'block' }}>
+            <h1 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'clamp(42px,8vw,72px)', lineHeight:.95, textTransform:'uppercase', marginBottom:20, animation:'fadeUp .5s ease both' }}>
+              <span style={{ color:'var(--ink)', display:'block' }}>{t('YOUR RESULT', 'आपका परिणाम')}</span>
+              <span style={{ background:'linear-gradient(90deg,var(--gold),#FFE9A8,var(--gold))', backgroundSize:'200%', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text', animation:'shimGold 3s linear infinite', display:'block' }}>
                 {t('IS READY', 'तैयार है')}
               </span>
             </h1>
-            <p style={{ color:'rgba(255,255,255,0.55)', fontSize:15, maxWidth:460, margin:'0 auto 30px', lineHeight:1.7, animation:'fadeUp .5s .1s ease both' }}>
+            <p style={{ color:'var(--ink-2)', fontSize:16, maxWidth:480, margin:'0 auto 36px', lineHeight:1.7, animation:'fadeUp .5s .1s ease both' }}>
               {t('BCCI-certified scouts have completed a full 100-point evaluation of your trial video.',
-                 'BCCI-certified scouts ने आपकी trial video का पूरा 100-point evaluation कर लिया है।')}
+                 'BCCI-certified scouts ने आपके ट्रायल वीडियो का पूरा 100-पॉइंट मूल्यांकन पूरा कर लिया है।')}
             </p>
             <button className="btn-gold" onClick={reveal}
-              style={{ padding:'18px 44px', fontSize:15, animation:'fadeUp .5s .18s ease both, glowPulse 2.4s ease infinite' }}>
-              {t('VIEW MY RESULT →', 'मेरा RESULT देखें →')}
+              style={{ padding:'18px 48px', animation:'fadeUp .5s .18s ease both, glowPulse 2.4s ease infinite' }}>
+              {t('VIEW MY RESULT', 'मेरा परिणाम देखें')} →
             </button>
-            <div style={{ marginTop:22, fontSize:12, color:'rgba(255,255,255,0.35)', animation:'fadeUp .5s .25s ease both' }}>
-              {t('Every submitted video gets a complete evaluation.', 'हर submit हुई video का पूरा evaluation किया जाता है।')}
+            <div style={{ marginTop:24, fontSize:13, color:'var(--ink-3)', fontWeight:500, animation:'fadeUp .5s .25s ease both' }}>
+              {t('Every submitted video gets a complete evaluation.', 'सबमिट किए गए प्रत्येक वीडियो का पूरा मूल्यांकन किया जाता है।')}
             </div>
           </div>
         </div>
@@ -390,256 +405,248 @@ export function Phase1Result() {
       {stage === 'result' && qualified && flash && Array.from({ length: 14 }).map((_, i) => (
         <div key={i} className="conf" style={{
           left: (4 + i * 7) + '%',
-          background: i % 3 === 0 ? '#E8B23D' : i % 3 === 1 ? '#FF7A29' : '#22C55E',
+          background: i % 3 === 0 ? 'var(--gold)' : i % 3 === 1 ? 'var(--orange)' : 'var(--green)',
           animationDuration: (2.2 + (i % 5) * 0.4) + 's',
           animationDelay: (i % 7) * 0.12 + 's',
-          borderRadius: 2,
+          borderRadius: 4,
         }} />
       ))}
 
       {/* ── RESULT ── */}
       {!loading && !error && r?.available && stage === 'result' && (
-        <div className="rwrap" style={{ paddingTop:34, paddingBottom:90 }}>
+        <div className="rwrap" style={{ paddingTop:40, paddingBottom:90 }}>
 
           {/* ═══ PLAYER SCORECARD ═══ */}
-          <div style={{ borderRadius:22, padding:2, background: qualified
-              ? 'linear-gradient(135deg,#E8B23D,#7A5A14 40%,#E8B23D 70%,#FFE9A8)'
-              : 'linear-gradient(135deg,rgba(127,180,232,0.8),rgba(46,80,115,0.7) 45%,rgba(127,180,232,0.65))',
-            animation:'cardIn .7s cubic-bezier(.34,1.4,.64,1) both', marginBottom:18,
-            boxShadow: qualified ? '0 24px 70px rgba(232,178,61,0.16)' : '0 24px 70px rgba(90,140,190,0.12)' }}>
-            <div style={{ borderRadius:20, background:'linear-gradient(160deg,#0D1F35 0%,#081527 55%,#0A1727 100%)', padding:'26px 22px', position:'relative', overflow:'hidden' }}>
+          <div style={{ borderRadius:24, padding:2, background: qualified
+              ? 'linear-gradient(135deg,var(--gold),#7A5A14 40%,var(--gold) 70%,#FFE9A8)'
+              : 'linear-gradient(135deg,rgba(127,180,232,0.6),rgba(46,80,115,0.5) 45%,rgba(127,180,232,0.4))',
+            animation:'cardIn .7s cubic-bezier(.34,1.4,.64,1) both', marginBottom:24,
+            boxShadow: qualified ? '0 24px 70px rgba(232,178,61,0.16)' : '0 24px 70px rgba(90,140,190,0.08)' }}>
+            <div style={{ borderRadius:22, background:'var(--panel)', padding:'32px 24px', position:'relative', overflow:'hidden' }}>
               <div style={{ position:'absolute', inset:0, backgroundImage:'repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0 1px, transparent 1px 26px)', pointerEvents:'none' }} />
-              <div style={{ position:'absolute', top:-90, right:-60, width:260, height:260, borderRadius:'50%', background: qualified ? 'radial-gradient(circle, rgba(232,178,61,0.16), transparent 65%)' : 'radial-gradient(circle, rgba(127,180,232,0.12), transparent 65%)', pointerEvents:'none' }} />
+              <div style={{ position:'absolute', top:-120, right:-80, width:300, height:300, borderRadius:'50%', background: qualified ? 'radial-gradient(circle, rgba(232,178,61,0.15), transparent 65%)' : 'radial-gradient(circle, rgba(127,180,232,0.1), transparent 65%)', pointerEvents:'none' }} />
 
               {/* top strip */}
-              <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:22, position:'relative' }}>
-                <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:13, letterSpacing:'.2em', color:'#E8B23D' }}>BCPL <span style={{ color:'rgba(255,255,255,0.4)' }}>•</span> S5</div>
+              <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:28, position:'relative' }}>
+                <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:15, letterSpacing:'.2em', color: qualified ? 'var(--gold)' : 'var(--ink-2)' }}>BCPL <span style={{ color:'var(--line)' }}>•</span> S5</div>
                 {r.regNumber && (
-                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:10, letterSpacing:'.1em', color:'rgba(255,255,255,0.45)', border:'1px solid rgba(255,255,255,0.14)', borderRadius:8, padding:'4px 10px' }}>
-                    🎟 {r.regNumber}
+                  <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:12, letterSpacing:'.1em', color:'var(--ink-3)', border:'1px solid var(--line)', borderRadius:12, padding:'6px 12px' }}>
+                    {r.regNumber}
                   </div>
                 )}
               </div>
 
               {/* identity */}
               <div style={{ textAlign:'center', position:'relative' }}>
-                <div style={{ width:92, height:92, borderRadius:'50%', margin:'0 auto 14px', background:'linear-gradient(135deg,#FF7A29,#E8B23D)', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:34, color:'#fff', border:'3px solid rgba(255,255,255,0.18)', boxShadow:'0 10px 34px rgba(255,122,41,0.35)' }}>
+                <div style={{ width:100, height:100, borderRadius:'50%', margin:'0 auto 16px', background: qualified ? 'linear-gradient(135deg,var(--orange),var(--gold))' : 'linear-gradient(135deg,#3B82F6,#1E40AF)', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:36, color:'#fff', border:'4px solid rgba(255,255,255,0.1)', boxShadow: qualified ? '0 12px 40px rgba(255,122,41,0.35)' : 'none' }}>
                   {initials}
                 </div>
-                <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(22px,5vw,30px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em', marginBottom:8 }}>
+                <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'clamp(28px,6vw,36px)', color:'var(--ink)', textTransform:'uppercase', letterSpacing:'.02em', marginBottom:10 }}>
                   {r.name}
                 </div>
-                <div style={{ display:'flex', justifyContent:'center', gap:8, flexWrap:'wrap', marginBottom:18 }}>
-                  <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:11, letterSpacing:'.08em', color:'#FF9A5C', background:'rgba(255,122,41,0.12)', border:'1px solid rgba(255,122,41,0.3)', borderRadius:20, padding:'5px 14px' }}>
-                    {roleInfo.icon} {roleLabel.toUpperCase()}
+                <div style={{ display:'flex', justifyContent:'center', gap:10, flexWrap:'wrap', marginBottom:24 }}>
+                  <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:13, letterSpacing:'.08em', color: qualified ? '#FF9A5C' : '#93C5FD', background: qualified ? 'rgba(255,122,41,0.12)' : 'rgba(59,130,246,0.12)', border:`1px solid ${qualified ? 'rgba(255,122,41,0.3)' : 'rgba(59,130,246,0.3)'}`, borderRadius:20, padding:'6px 16px', textTransform:'uppercase' }}>
+                    {roleLabel}
                   </span>
                   {r.trialCity && (
-                    <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:11, letterSpacing:'.08em', color:'rgba(255,255,255,0.65)', background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.14)', borderRadius:20, padding:'5px 14px' }}>
-                      📍 {r.trialCity.toUpperCase()}
+                    <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:13, letterSpacing:'.08em', color:'var(--ink-2)', background:'rgba(255,255,255,0.06)', border:'1px solid var(--line)', borderRadius:20, padding:'6px 16px', textTransform:'uppercase' }}>
+                      {r.trialCity}
                     </span>
                   )}
                 </div>
 
                 {/* status band */}
-                <div style={{ display:'inline-block', fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:12, letterSpacing:'.14em', color:statusColor, background: qualified ? 'rgba(34,197,94,0.1)' : 'rgba(127,180,232,0.1)', border:'1px solid ' + (qualified ? 'rgba(34,197,94,0.4)' : 'rgba(127,180,232,0.35)'), borderRadius:10, padding:'9px 18px', marginBottom:24 }}>
+                <div style={{ display:'inline-block', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:14, letterSpacing:'.14em', color:statusColor, background: qualified ? 'rgba(34,197,94,0.1)' : 'rgba(255,255,255,0.04)', border:'1px solid ' + (qualified ? 'rgba(34,197,94,0.4)' : 'var(--line)'), borderRadius:12, padding:'10px 20px', marginBottom:32, textTransform:'uppercase' }}>
                   {qualified
-                    ? '✓ ' + t('PHASE 1 QUALIFIED — SELECTED FOR PHASE 2', 'PHASE 1 QUALIFIED — PHASE 2 के लिए चुने गए')
-                    : t('PHASE 1 ASSESSMENT COMPLETE', 'PHASE 1 मूल्यांकन पूरा')}
+                    ? '✓ ' + t('PHASE 1 QUALIFIED — SELECTED FOR PHASE 2', 'PHASE 1 क्वालिफाइड — PHASE 2 के लिए चयनित')
+                    : '✓ ' + t('PHASE 1 ASSESSMENT COMPLETE', 'PHASE 1 मूल्यांकन पूरा')}
                 </div>
 
-                {/* score */}
-                <div style={{ marginBottom:20 }}>
-                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:11, letterSpacing:'.22em', color:'rgba(255,255,255,0.4)', marginBottom:2 }}>
-                    {t('BCPL SCORE', 'BCPL स्कोर')}
-                  </div>
-                  <div style={{ lineHeight:1 }}>
-                    <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(70px,17vw,104px)', background: qualified ? 'linear-gradient(90deg,#E8B23D,#FFE9A8,#E8B23D)' : 'linear-gradient(90deg,#DCE9F5,#ffffff,#DCE9F5)', backgroundSize:'200%', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text', animation:'shimGold 4s linear infinite' }}>
-                      {r.total}
-                    </span>
-                    <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(20px,5vw,28px)', color:'rgba(255,255,255,0.35)' }}> /100</span>
+                {/* Animated Score Circle */}
+                <div className="score-circle-wrap">
+                  <svg className="score-circle-svg" viewBox="0 0 100 100">
+                    {/* Background track */}
+                    <circle cx="50" cy="50" r="46" fill="none" stroke="var(--line)" strokeWidth="4" />
+                    {/* Animated progress */}
+                    <circle 
+                      cx="50" cy="50" r="46" fill="none" 
+                      stroke={qualified ? "url(#gold-grad)" : "var(--ink-3)"} 
+                      strokeWidth="6" 
+                      strokeLinecap="round"
+                      strokeDasharray={circ} 
+                      strokeDashoffset={barsOn ? dashoffset : circ} 
+                      style={{ transition: 'stroke-dashoffset 2s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s' }} 
+                    />
+                    <defs>
+                      <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="var(--gold)" />
+                        <stop offset="100%" stopColor="#FFE9A8" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                  
+                  {/* Score text inside circle */}
+                  <div style={{ position:'absolute', inset:0, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', paddingTop:12 }}>
+                    <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:12, letterSpacing:'.22em', color:'var(--ink-3)', marginBottom:2, textTransform:'uppercase' }}>
+                      {t('BCPL SCORE', 'BCPL स्कोर')}
+                    </div>
+                    <div style={{ lineHeight:0.9, position:'relative', left:4 }}>
+                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'clamp(56px,14vw,84px)', background: qualified ? 'linear-gradient(90deg,var(--gold),#FFE9A8,var(--gold))' : 'linear-gradient(90deg,#DCE9F5,#ffffff,#DCE9F5)', backgroundSize:'200%', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text', animation:'shimGold 4s linear infinite' }}>
+                        {r.total}
+                      </span>
+                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'clamp(20px,5vw,28px)', color:'var(--ink-3)', position:'absolute', bottom:10, right:-30 }}>/100</span>
+                    </div>
                   </div>
                 </div>
 
                 {/* rank chips */}
-                <div style={{ display:'flex', justifyContent:'center', gap:10, flexWrap:'wrap' }}>
-                  <div style={{ background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.12)', borderRadius:12, padding:'10px 18px', minWidth:120 }}>
-                    <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:22, color:'#fff' }}>#{r.cityRank}</div>
-                    <div style={{ fontSize:10, fontWeight:700, letterSpacing:'.1em', color:'rgba(255,255,255,0.45)', fontFamily:'Montserrat,sans-serif' }}>
-                      {(r.trialCity ?? '').toUpperCase()} {t('RANK', 'रैंक')}
+                <div style={{ display:'flex', justifyContent:'center', gap:12, flexWrap:'wrap', marginTop:16 }}>
+                  {r.cityRank && (
+                    <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid var(--line)', padding:'10px 18px', borderRadius:16, display:'flex', alignItems:'center', gap:10 }}>
+                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:12, letterSpacing:'.1em', color:'var(--ink-3)', textTransform:'uppercase' }}>{r.trialCity || 'CITY'} RANK</span>
+                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:18, color:'var(--ink)' }}>#{r.cityRank}</span>
+                      {showPct && <span style={{ background:'rgba(255,255,255,0.1)', color:'var(--ink)', fontSize:11, fontWeight:700, padding:'3px 8px', borderRadius:8 }}>TOP {pct}%</span>}
                     </div>
-                  </div>
-                  {showPct && (
-                    <div style={{ background:'rgba(232,178,61,0.08)', border:'1px solid rgba(232,178,61,0.35)', borderRadius:12, padding:'10px 18px', minWidth:120 }}>
-                      <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:22, color:'#E8B23D' }}>{t('TOP', 'टॉप')} {pct}%</div>
-                      <div style={{ fontSize:10, fontWeight:700, letterSpacing:'.1em', color:'rgba(255,255,255,0.45)', fontFamily:'Montserrat,sans-serif' }}>
-                        {t('IN', 'में')} {(r.trialCity ?? '').toUpperCase()}
-                      </div>
+                  )}
+                  {r.roleRank && showRole && (
+                    <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid var(--line)', padding:'10px 18px', borderRadius:16, display:'flex', alignItems:'center', gap:10 }}>
+                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:12, letterSpacing:'.1em', color:'var(--ink-3)', textTransform:'uppercase' }}>ROLE RANK</span>
+                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:18, color:'var(--ink)' }}>#{r.roleRank}</span>
                     </div>
                   )}
                 </div>
+
               </div>
             </div>
           </div>
 
-          {/* ═══ PERFORMANCE BREAKDOWN ═══ */}
-          <div className="rcard" style={{ animation:'fadeUp .55s .25s ease both' }}>
-            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:12, letterSpacing:'.16em', color:'#E8B23D', marginBottom:4 }}>
-              {t('YOUR PERFORMANCE', 'आपका प्रदर्शन')}
-            </div>
-            <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginBottom:22 }}>
-              {t('100-point assessment by BCCI-certified scouts', 'BCCI-certified scouts का 100-point मूल्यांकन')}
-            </div>
-            {(r.breakdown ?? []).map((b, i) => (
-              <div key={b.key} style={{ marginBottom: 16 }}>
-                <div style={{ display:'flex', justifyContent:'space-between', alignItems:'baseline', marginBottom:6 }}>
-                  <span style={{ fontSize:13, fontWeight:600, color:'rgba(255,255,255,0.78)' }}>{critLabel(b.key, role, t)}</span>
-                  <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, color:'#fff' }}>
-                    {b.score}<span style={{ color:'rgba(255,255,255,0.35)', fontWeight:700, fontSize:12 }}>/{b.max}</span>
-                  </span>
-                </div>
-                <div style={{ height:9, borderRadius:6, background:'rgba(255,255,255,0.06)', overflow:'hidden' }}>
-                  <div style={{ height:'100%', borderRadius:6, background:'linear-gradient(90deg,#FF7A29,#E8B23D)', width: barsOn ? Math.round((b.score / b.max) * 100) + '%' : '0%', transition:'width .9s cubic-bezier(.25,.9,.3,1) ' + (0.15 + i * 0.12) + 's' }} />
-                </div>
-              </div>
-            ))}
-            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', borderTop:'1px solid rgba(255,255,255,0.08)', paddingTop:16, marginTop:20 }}>
-              <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:13, letterSpacing:'.1em', color:'rgba(255,255,255,0.6)' }}>{t('TOTAL', 'कुल')}</span>
-              <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:22, color:'#E8B23D' }}>{r.total} / 100</span>
-            </div>
+          <div style={{ display:'flex', gap:12, marginBottom:32 }}>
+            <button className="btn-ghost" style={{ flex:1 }} onClick={() => downloadShareCard(r, roleLabel, qualified)}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight:6 }}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              {t('SAVE CARD', 'कार्ड सेव करें')}
+            </button>
+            <button className="btn-ghost" style={{ flex:1 }} onClick={() => {
+                const msg = encodeURIComponent(t(`🏏 I scored ${r.total}/100 in the BCPL Season 5 Phase 1 Trials! India's biggest corporate cricket league. Check it out at https://bcplt20.com`, `🏏 मैंने BCPL Season 5 Phase 1 Trials में ${r.total}/100 स्कोर किया! भारत की सबसे बड़ी कॉर्पोरेट क्रिकेट लीग। https://bcplt20.com पर देखें`));
+                window.open(`https://wa.me/?text=${msg}`, '_blank');
+              }}>
+              {t('SHARE', 'शेयर करें')}
+            </button>
           </div>
 
-          {/* ═══ STANDING ═══ */}
-          <div className="rcard" style={{ animation:'fadeUp .55s .35s ease both' }}>
-            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:12, letterSpacing:'.16em', color:'#E8B23D', marginBottom:18 }}>
-              {t('YOUR BCPL STANDING', 'आपकी BCPL रैंकिंग')}
-            </div>
-            <div className="grid2r">
-              <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:12, padding:'16px 18px' }}>
-                <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:28, color:'#fff', marginBottom:2 }}>#{r.cityRank} <span style={{ fontSize:14, color:'rgba(255,255,255,0.35)' }}>/ {r.cityCount}</span></div>
-                <div style={{ fontSize:11, color:'rgba(255,255,255,0.45)' }}>
-                  {t('Overall rank among evaluated players in ' + (r.trialCity ?? ''), (r.trialCity ?? '') + ' के सभी evaluated players में overall रैंक')}
-                </div>
-              </div>
-              {showRole ? (
-                <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:12, padding:'16px 18px' }}>
-                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:28, color:'#fff', marginBottom:2 }}>#{r.roleRank} <span style={{ fontSize:14, color:'rgba(255,255,255,0.35)' }}>/ {r.roleCount}</span></div>
-                  <div style={{ fontSize:11, color:'rgba(255,255,255,0.45)' }}>
-                    {t(roleLabel + ' rank in ' + (r.trialCity ?? ''), (r.trialCity ?? '') + ' में ' + roleLabel + ' रैंक')}
-                  </div>
-                </div>
-              ) : (
-                <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:12, padding:'16px 18px', display:'flex', alignItems:'center' }}>
-                  <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)', lineHeight:1.6 }}>
-                    {t('Role-wise rank will appear once enough players of your role are evaluated.', 'आपके रोल के पर्याप्त players evaluate होने पर role-wise रैंक दिखेगी।')}
-                  </div>
-                </div>
-              )}
-            </div>
-            <div style={{ marginTop:14, fontSize:12, color:'rgba(255,255,255,0.42)', lineHeight:1.7, background:'rgba(255,255,255,0.02)', border:'1px dashed rgba(255,255,255,0.1)', borderRadius:10, padding:'12px 14px' }}>
-              💡 {t('Selection is not decided by score alone — scouts also balance roles, city squads and Phase 2 capacity. There is no single cut-off mark.',
-                    'Selection सिर्फ़ score से तय नहीं होता — scouts role balance, शहर की squad और Phase 2 capacity भी देखते हैं। कोई एक cut-off नंबर नहीं होता।')}
-            </div>
-          </div>
-
-          {/* ═══ QUALIFIED → NEXT STEP ═══ */}
-          {qualified && (
-            <div className="rcard" style={{ animation:'fadeUp .55s .45s ease both', border:'1px solid rgba(255,122,41,0.3)', background:'linear-gradient(150deg,rgba(255,122,41,0.09),#0A1727 55%)' }}>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:12, letterSpacing:'.16em', color:'#FF7A29', marginBottom:6 }}>
-                {t('YOUR NEXT STEP', 'आपका अगला कदम')}
-              </div>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(19px,4vw,24px)', color:'#fff', marginBottom:10 }}>
-                {t('PHASE 2 — PHYSICAL TRIAL', 'PHASE 2 — फ़िज़िकल ट्रायल')}
-              </div>
-              <div style={{ fontSize:13, color:'rgba(255,255,255,0.55)', lineHeight:1.7, marginBottom:18 }}>
-                {t('Ground trial in ' + (r.trialCity ?? 'your city') + ' → franchise evaluation → live auction. Secure your spot now.',
-                   (r.trialCity ?? 'आपके शहर') + ' में ground trial → franchise evaluation → live auction। अभी अपनी जगह पक्की करें।')}
-              </div>
-              <div style={{ display:'flex', alignItems:'center', gap:14, flexWrap:'wrap' }}>
-                <button className="btn-orange" style={{ padding:'16px 30px', fontSize:14, flex:'1 1 240px' }}
-                  onClick={() => { window.location.href = BASE + 'register/phase2'; }}>
-                  {t('PROCEED TO PHASE 2 — ₹', 'PHASE 2 में जाएँ — ₹') + phase2Fee.toLocaleString('en-IN') + ' →'}
-                </button>
-                <div style={{ fontSize:11, color:'rgba(255,255,255,0.45)', flex:'1 1 160px' }}>
-                  {t('Fee incl. GST. Your Phase 2 spot is reserved for a limited time.', 'Fee GST सहित। आपकी Phase 2 सीट सीमित समय के लिए reserved है।')}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ═══ NOT SHORTLISTED → STRENGTHS + PATH FORWARD ═══ */}
+          {/* ═══ NON-SELECTED NEXT STEPS ═══ */}
           {!qualified && (
-            <>
-              <div className="grid2r" style={{ marginBottom:18, animation:'fadeUp .55s .45s ease both' }}>
-                {strongest && (
-                  <div style={{ background:'rgba(34,197,94,0.06)', border:'1px solid rgba(34,197,94,0.25)', borderRadius:16, padding:'20px 18px' }}>
-                    <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:11, letterSpacing:'.14em', color:'#22C55E', marginBottom:8 }}>
-                      💪 {t('YOUR STRONGEST AREA', 'आपकी सबसे मज़बूत स्किल')}
-                    </div>
-                    <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:17, color:'#fff', marginBottom:4 }}>
-                      {critLabel(strongest.key, role, t)}
-                    </div>
-                    <div style={{ fontSize:13, color:'rgba(255,255,255,0.55)' }}>
-                      {strongest.score}/{strongest.max} — {t('keep building on this. It is a real strength.', 'इसे और मज़बूत करते रहें। यह आपकी असली ताकत है।')}
-                    </div>
-                  </div>
-                )}
-                {weakest && (
-                  <div style={{ background:'rgba(255,122,41,0.05)', border:'1px solid rgba(255,122,41,0.25)', borderRadius:16, padding:'20px 18px' }}>
-                    <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:11, letterSpacing:'.14em', color:'#FF7A29', marginBottom:8 }}>
-                      🎯 {t('AREA TO WORK ON', 'किस पर काम करें')}
-                    </div>
-                    <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:17, color:'#fff', marginBottom:4 }}>
-                      {critLabel(weakest.key, role, t)}
-                    </div>
-                    <div style={{ fontSize:13, color:'rgba(255,255,255,0.55)', lineHeight:1.6 }}>
-                      {improveTip(weakest.key, role, t)}
-                    </div>
-                  </div>
-                )}
+            <div className="rcard" style={{ borderLeft:'4px solid var(--orange)' }}>
+              <h3 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:22, color:'var(--ink)', textTransform:'uppercase', marginBottom:12, letterSpacing:'.04em' }}>
+                {t('Your Journey Doesn\'t End Here', 'आपकी यात्रा यहीं समाप्त नहीं होती')}
+              </h3>
+              <p style={{ color:'var(--ink-2)', fontSize:14, lineHeight:1.7, marginBottom:16 }}>
+                {t('Thank you for participating in the BCPL Season 5 trials. While you haven\'t progressed to Phase 2 in this selection cycle, your dedication to the sport is commendable.',
+                   'BCPL Season 5 ट्रायल्स में भाग लेने के लिए धन्यवाद। यद्यपि आप इस चयन चक्र में Phase 2 के लिए आगे नहीं बढ़े हैं, खेल के प्रति आपका समर्पण सराहनीय है।')}
+              </p>
+              <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid var(--line)', borderRadius:12, padding:16 }}>
+                <p style={{ color:'var(--ink-3)', fontSize:13, lineHeight:1.6, marginBottom:0 }}>
+                  {t('We encourage you to use the feedback below to improve your game. Season 6 registrations will open soon.', 'हम आपको अपने खेल में सुधार करने के लिए नीचे दिए गए फीडबैक का उपयोग करने के लिए प्रोत्साहित करते हैं। Season 6 के रजिस्ट्रेशन जल्द ही खुलेंगे।')}
+                </p>
               </div>
-
-              {r.selectorNote && (
-                <div className="rcard" style={{ animation:'fadeUp .55s .5s ease both', borderLeft:'4px solid #E8B23D' }}>
-                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:11, letterSpacing:'.14em', color:'#E8B23D', marginBottom:10 }}>
-                    📝 {t("SELECTOR'S NOTE FOR YOU", 'SELECTOR का आपके लिए नोट')}
-                  </div>
-                  <div style={{ fontSize:14, color:'rgba(255,255,255,0.75)', lineHeight:1.8, fontStyle:'italic' }}>
-                    “{r.selectorNote}”
-                  </div>
-                </div>
-              )}
-
-              <div className="rcard" style={{ animation:'fadeUp .55s .55s ease both' }}>
-                <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:12, letterSpacing:'.16em', color:'rgba(255,255,255,0.55)', marginBottom:10 }}>
-                  {t('WHAT THIS MEANS', 'इसका मतलब क्या है')}
-                </div>
-                <div style={{ fontSize:13.5, color:'rgba(255,255,255,0.6)', lineHeight:1.8 }}>
-                  {t('You have not qualified for Phase 2 in this selection cycle. This is a checkpoint, not a verdict on your cricket. Your score and rank above show exactly where you stand — and exactly what to train next.',
-                     'इस selection cycle में आप Phase 2 के लिए qualify नहीं हुए। यह एक पड़ाव है — आपके cricket पर आख़िरी फ़ैसला नहीं। ऊपर का score और रैंक दिखाता है कि आप कहाँ खड़े हैं — और अब किस चीज़ पर मेहनत करनी है।')}
-                </div>
-                <div style={{ marginTop:14, background:'rgba(232,178,61,0.06)', border:'1px solid rgba(232,178,61,0.2)', borderRadius:12, padding:'14px 16px', fontSize:13, color:'rgba(255,255,255,0.65)', lineHeight:1.7 }}>
-                  🏆 {t('BCPL Season 6 trials open in approximately 6 months. Many players who missed one season came back stronger and got picked in the auction.',
-                        'BCPL Season 6 के trials लगभग 6 महीने में खुलेंगे। कई players एक season चूकने के बाद और मज़बूत होकर लौटे और auction में चुने गए।')}
-                </div>
-              </div>
-            </>
+            </div>
           )}
 
-          {/* ═══ SHARE ═══ */}
-          <div style={{ display:'flex', gap:12, flexWrap:'wrap', marginBottom:18, animation:'fadeUp .55s .6s ease both' }}>
-            <button className="btn-ghost" style={{ flex:'1 1 220px', padding:'15px 20px', fontSize:13 }}
-              onClick={() => { void downloadShareCard(r, roleLabel, qualified); }}>
-              📤 {t('DOWNLOAD SHARE CARD', 'SHARE CARD डाउनलोड करें')}
-            </button>
-            <button className="btn-ghost" style={{ flex:'1 1 220px', padding:'15px 20px', fontSize:13 }}
-              onClick={() => { window.location.href = BASE + 'profile'; }}>
-              👤 {t('GO TO MY PROFILE', 'मेरी PROFILE पर जाएँ')}
-            </button>
+          {/* ═══ FEEDBACK & NEXT STEPS ═══ */}
+          <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:15, letterSpacing:'.16em', color:'var(--ink-3)', marginBottom:16, textTransform:'uppercase' }}>
+            {t('BCPL Assessment Feedback', 'BCPL मूल्यांकन फीडबैक')}
           </div>
-          <div style={{ fontSize:11, color:'rgba(255,255,255,0.3)', textAlign:'center', lineHeight:1.7 }}>
-            {t('Your scorecard is personal — BCPL never publishes a public merit list. The share card contains only your name, role, score and rank.',
-               'आपका scorecard निजी है — BCPL कोई public merit list नहीं छापता। Share card में सिर्फ़ आपका नाम, रोल, score और रैंक होता है।')}
+
+          <div className="grid2r">
+            {/* Strengths & Weaknesses automatically derived */}
+            {strongest && (
+              <div className="rcard" style={{ marginBottom:0 }}>
+                <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:16 }}>
+                  <div style={{ width:32, height:32, borderRadius:'50%', background:'rgba(34,197,94,0.1)', display:'flex', alignItems:'center', justifyContent:'center', color:'var(--green)' }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                  <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:18, color:'var(--green)', textTransform:'uppercase', letterSpacing:'.04em' }}>{t('Key Strength', 'मुख्य ताकत')}</div>
+                </div>
+                <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:16, color:'var(--ink)', marginBottom:6, textTransform:'uppercase' }}>
+                  {critLabel(strongest.key, role, t)}
+                </div>
+                <div style={{ fontSize:14, color:'var(--ink-2)', lineHeight:1.6 }}>
+                  {t('Your strongest area during the video evaluation. Keep refining this competitive edge.', 'वीडियो मूल्यांकन के दौरान आपका सबसे मजबूत क्षेत्र। इस प्रतिस्पर्धात्मक बढ़त को सुधारते रहें।')}
+                </div>
+              </div>
+            )}
+
+            {weakest && (
+              <div className="rcard" style={{ marginBottom:0 }}>
+                <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:16 }}>
+                  <div style={{ width:32, height:32, borderRadius:'50%', background:'rgba(255,122,41,0.1)', display:'flex', alignItems:'center', justifyContent:'center', color:'var(--orange)' }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                  </div>
+                  <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:18, color:'var(--orange)', textTransform:'uppercase', letterSpacing:'.04em' }}>{t('Area to Improve', 'सुधार का क्षेत्र')}</div>
+                </div>
+                <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:16, color:'var(--ink)', marginBottom:6, textTransform:'uppercase' }}>
+                  {critLabel(weakest.key, role, t)}
+                </div>
+                <div style={{ fontSize:14, color:'var(--ink-2)', lineHeight:1.6 }}>
+                  {improveTip(weakest.key, role, t)}
+                </div>
+              </div>
+            )}
           </div>
+
+          {/* Selector Note */}
+          {r.selectorNote && (
+            <div className="rcard" style={{ marginTop:16 }}>
+              <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:12 }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:16, color:'var(--ink)', textTransform:'uppercase', letterSpacing:'.04em' }}>{t('Selector Note', 'चयनकर्ता का नोट')}</div>
+              </div>
+              <div style={{ fontSize:14, color:'var(--ink-2)', lineHeight:1.7, fontStyle:'italic' }}>
+                "{r.selectorNote}"
+              </div>
+            </div>
+          )}
+
+          {/* Detailed Breakdown */}
+          <div style={{ marginTop:40 }}>
+            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:15, letterSpacing:'.16em', color:'var(--ink-3)', marginBottom:16, textTransform:'uppercase' }}>
+              {t('100-Point Breakdown', '100-पॉइंट विवरण')}
+            </div>
+            <div className="rcard" style={{ padding:0, overflow:'hidden' }}>
+              {(r.breakdown ?? []).map((b, i, arr) => (
+                <div key={b.key} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'18px 24px', borderBottom: i < arr.length - 1 ? '1px solid var(--line)' : 'none' }}>
+                  <div style={{ fontFamily:"'Inter',sans-serif", fontSize:14, fontWeight:600, color:'var(--ink-2)' }}>{critLabel(b.key, role, t)}</div>
+                  <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+                    <div style={{ width:60, height:6, background:'rgba(255,255,255,0.08)', borderRadius:3, overflow:'hidden' }}>
+                      <div style={{ height:'100%', background: qualified ? 'var(--gold)' : 'var(--ink-3)', width: barsOn ? `${(b.score / b.max) * 100}%` : '0%', transition:'width 1s cubic-bezier(.34,1.56,.64,1) .8s' }} />
+                    </div>
+                    <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:16, color:'var(--ink)', width:40, textAlign:'right' }}>
+                      {b.score} <span style={{ color:'var(--ink-3)' }}>/{b.max}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Qualified Next Steps */}
+          {qualified && (
+            <div style={{ marginTop:48 }}>
+              <div style={{ background:'var(--panel)', border:'1px solid var(--gold)', borderRadius:'var(--r)', padding:32, textAlign:'center', position:'relative', overflow:'hidden' }}>
+                <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 50% 0%, rgba(232,178,61,0.15) 0%, transparent 60%)', pointerEvents:'none' }} />
+                <h3 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:26, color:'var(--gold)', textTransform:'uppercase', marginBottom:12, letterSpacing:'.04em' }}>
+                  {t('Prepare For The Physical Trial', 'फिजिकल ट्रायल की तैयारी करें')}
+                </h3>
+                <p style={{ color:'var(--ink-2)', fontSize:15, lineHeight:1.6, maxWidth:480, margin:'0 auto 24px' }}>
+                  {t(`Congratulations on passing Phase 1. Your next step is the Phase 2 physical ground trial in ${r.trialCity}. Complete your Phase 2 payment (₹${phase2Fee}) to secure your trial slot.`,
+                     `Phase 1 पास करने पर बधाई। आपका अगला कदम ${r.trialCity} में Phase 2 फिजिकल ग्राउंड ट्रायल है। अपना ट्रायल स्लॉट सुरक्षित करने के लिए अपना Phase 2 भुगतान (₹${phase2Fee}) पूरा करें।`)}
+                </p>
+                <Link href={BASE + 'register/phase2'} className="btn-orange" style={{ padding:'16px 36px', fontSize:16, width:'100%', maxWidth:320 }}>
+                  {t('PROCEED TO PHASE 2', 'PHASE 2 की ओर बढ़ें')} →
+                </Link>
+              </div>
+            </div>
+          )}
+
         </div>
       )}
 
