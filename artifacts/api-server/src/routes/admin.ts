@@ -25,7 +25,7 @@ import {
   aiEvaluationPassesTable,
   rankingSnapshotsTable,
 } from "@workspace/db/schema";
-import { eq, desc, count, and, inArray } from "drizzle-orm";
+import { eq, desc, count, and, inArray, lt, gte, isNotNull, sql } from "drizzle-orm";
 import { sendVideoReminders } from "./video";
 import { sendPaymentReminders, remindersEnabled } from "../lib/reminders";
 import { requireAdmin } from "../middlewares/adminAuth";
@@ -882,6 +882,124 @@ router.post("/jobs/run-reminders", async (req, res) => {
     res.json({ remindersEnabledInEnv: remindersEnabled(), videoReminders: videoCount, ...pay });
   } catch (err: any) {
     console.error("[admin/jobs/run-reminders]", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/* ─── GET /api/admin/ops ──────────────────────────────────────────
+   Operational dashboard payload: registration matrix (city × role ×
+   phase statuses) the client can slice under any filter combination,
+   AI pipeline stats and a server-computed Action-Required alert list.
+   Trial capacity / check-in numbers join in with the trials module. */
+router.get("/ops", async (_req, res) => {
+  try {
+    const nowMs = Date.now();
+    const H = 3600 * 1000;
+    const AI_WORKING = ["validating", "ai_validating", "scoring"];
+
+    const [matrix, evalRows, evalAvgRows, resultRows, kycRows, videoRows, stuckAi, stalePendingP1, failedP1Recent, notifFailedRecent] = await Promise.all([
+      db.select({
+        city: registrationsTable.trialCity,
+        role: registrationsTable.role,
+        p1: registrationsTable.phase1Status,
+        p2: registrationsTable.phase2Status,
+        n: count(),
+      }).from(registrationsTable)
+        .groupBy(registrationsTable.trialCity, registrationsTable.role, registrationsTable.phase1Status, registrationsTable.phase2Status),
+
+      db.select({ status: phase1EvaluationsTable.status, n: count() })
+        .from(phase1EvaluationsTable).groupBy(phase1EvaluationsTable.status),
+
+      /* single global aggregate — avg() ignores NULLs, so denominators are
+         the non-null metric counts (per-status avg × row-count recombination
+         would skew when a status mixes null and non-null metrics) */
+      db.select({
+        avgScore: sql<string | null>`avg(${phase1EvaluationsTable.finalScore})`,
+        avgConfidence: sql<string | null>`avg(${phase1EvaluationsTable.confidence})`,
+        avgProcessingMs: sql<string | null>`avg(${phase1EvaluationsTable.processingMs})`,
+      }).from(phase1EvaluationsTable),
+
+      db.select({ result: phase1EvaluationsTable.result, n: count() })
+        .from(phase1EvaluationsTable)
+        .where(isNotNull(phase1EvaluationsTable.result))
+        .groupBy(phase1EvaluationsTable.result),
+
+      db.select({ status: kycRecordsTable.status, n: count() })
+        .from(kycRecordsTable).groupBy(kycRecordsTable.status),
+
+      db.select({ status: phase1VideosTable.status, n: count() })
+        .from(phase1VideosTable).groupBy(phase1VideosTable.status),
+
+      db.select({ n: count() }).from(phase1EvaluationsTable)
+        .where(and(
+          inArray(phase1EvaluationsTable.status, AI_WORKING),
+          lt(phase1EvaluationsTable.updatedAt, new Date(nowMs - 0.5 * H)),
+        )),
+
+      db.select({ n: count() }).from(phase1PaymentsTable)
+        .where(and(
+          eq(phase1PaymentsTable.status, "pending"),
+          lt(phase1PaymentsTable.createdAt, new Date(nowMs - 24 * H)),
+        )),
+
+      db.select({ n: count() }).from(phase1PaymentsTable)
+        .where(and(
+          eq(phase1PaymentsTable.status, "failed"),
+          gte(phase1PaymentsTable.createdAt, new Date(nowMs - 24 * H)),
+        )),
+
+      db.select({ n: count() }).from(notificationLogsTable)
+        .where(and(
+          eq(notificationLogsTable.status, "failed"),
+          gte(notificationLogsTable.createdAt, new Date(nowMs - 48 * H)),
+        )),
+    ]);
+
+    const evalByStatus: Record<string, number> = {};
+    for (const e of evalRows) evalByStatus[e.status] = Number(e.n);
+    const avgRow = evalAvgRows[0];
+    const results: Record<string, number> = {};
+    for (const r of resultRows) if (r.result) results[r.result] = Number(r.n);
+    const kyc: Record<string, number> = {};
+    for (const k of kycRows) kyc[k.status] = Number(k.n);
+    const videos: Record<string, number> = {};
+    for (const v of videoRows) videos[v.status] = Number(v.n);
+
+    const nStuck = Number(stuckAi[0]?.n ?? 0);
+    const nStalePending = Number(stalePendingP1[0]?.n ?? 0);
+    const nFailedPay = Number(failedP1Recent[0]?.n ?? 0);
+    const nNotifFailed = Number(notifFailedRecent[0]?.n ?? 0);
+
+    type Sev = "critical" | "warn" | "info";
+    const alerts: { id: string; severity: Sev; label: string; count: number; tab: string }[] = [];
+    const push = (id: string, severity: Sev, label: string, cnt: number, tab: string) => {
+      if (cnt > 0) alerts.push({ id, severity, label, count: cnt, tab });
+    };
+    push("stale_pending_payments", "critical", "Phase 1 payments stuck in pending for over 24h — reconciliation needs a look", nStalePending, "finance");
+    push("ai_stuck", "critical", "AI evaluations stuck mid-pipeline for over 30 minutes", nStuck, "selection");
+    push("integrity_review", "warn", "Videos parked for integrity review — admin decision needed", evalByStatus["integrity_review"] ?? 0, "video_review");
+    push("kyc_failed", "warn", "KYC verifications failed — players may need help", kyc["failed"] ?? 0, "phase2_kyc");
+    push("notif_failed", "warn", "Notifications failed to deliver in the last 48h", nNotifFailed, "marketing");
+    push("ai_backlog", (evalByStatus["queued"] ?? 0) > 50 ? "warn" : "info", "Videos waiting in the AI queue", evalByStatus["queued"] ?? 0, "selection");
+    push("reupload_required", "info", "Players asked to re-upload their video", evalByStatus["reupload_required"] ?? 0, "video_review");
+    push("kyc_pending", "info", "KYC submissions awaiting review", kyc["pending"] ?? 0, "phase2_kyc");
+    push("failed_payments_24h", "info", "Payment attempts failed in the last 24h", nFailedPay, "finance");
+
+    res.json({
+      matrix: matrix.map(m => ({ city: m.city, role: m.role, p1: m.p1, p2: m.p2, n: Number(m.n) })),
+      evals: {
+        byStatus: evalByStatus,
+        avgScore: avgRow?.avgScore != null ? Number(avgRow.avgScore) : null,
+        avgConfidence: avgRow?.avgConfidence != null ? Number(avgRow.avgConfidence) : null,
+        avgProcessingMs: avgRow?.avgProcessingMs != null ? Number(avgRow.avgProcessingMs) : null,
+      },
+      results,
+      kyc,
+      videos,
+      alerts,
+    });
+  } catch (err: any) {
+    console.error("[admin/ops]", err);
     res.status(500).json({ error: err.message });
   }
 });

@@ -512,3 +512,16 @@ export interface Phase1ScoreSaved extends Phase1ScoreInput { total: number }
 export const adminSaveScore = (registrationId: string, data: Phase1ScoreInput) =>
   adminReq<{ success: boolean; score: Phase1ScoreSaved }>(
     "PUT", `/admin/registrations/${registrationId}/score`, data);
+
+
+// Operational dashboard (Live Operations + Action Required tabs)
+export interface OpsAlert { id: string; severity: "critical" | "warn" | "info"; label: string; count: number; tab: string }
+export interface OpsData {
+  matrix: { city: string | null; role: string; p1: string; p2: string | null; n: number }[];
+  evals: { byStatus: Record<string, number>; avgScore: number | null; avgConfidence: number | null; avgProcessingMs: number | null };
+  results: Record<string, number>;
+  kyc: Record<string, number>;
+  videos: Record<string, number>;
+  alerts: OpsAlert[];
+}
+export const adminGetOps = () => adminReq<OpsData>("GET", "/admin/ops");

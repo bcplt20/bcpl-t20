@@ -4,6 +4,7 @@ import {
   Tooltip, ResponsiveContainer, PieChart, Pie, Cell
 } from "recharts";
 import { adminGetStats, adminGetRegistrations } from "../../lib/api";
+import { OpsTab, AlertsTab } from "./DashboardOps";
 
 type Reg = {
   id: string;
@@ -69,6 +70,7 @@ type NavPayload = { quick?: string; filter?: string; focusId?: string };
 
 export default function DashboardView({ onNavigate, refreshTick = 0 }: { onNavigate?: (tab: string, payload?: NavPayload) => void; refreshTick?: number }) {
   const [range, setRange] = useState<"today"|"week"|"month">("week");
+  const [dtab, setDtab] = useState<"overview"|"ops"|"alerts">("overview");
   const [blast, setBlast] = useState(false);
   const [stats, setStats] = useState<Stats|null>(null);
   const [regs,  setRegs]  = useState<Reg[]>([]);
@@ -77,12 +79,13 @@ export default function DashboardView({ onNavigate, refreshTick = 0 }: { onNavig
   // Fetches on mount and again whenever refreshTick bumps (auto-refresh).
   // Data swaps in place — existing numbers stay on screen until new ones land.
   useEffect(() => {
+    if (dtab !== "overview") return; // ops/alerts tabs load their own single /admin/ops payload
     let cancelled = false;
     Promise.all([adminGetStats(), adminGetRegistrations()])
       .then(([s, r]) => { if (!cancelled) { setStats(s); setRegs(r.registrations); setErr(""); } })
       .catch(e => { if (!cancelled) setErr(e.message); });
     return () => { cancelled = true; };
-  }, [refreshTick]);
+  }, [refreshTick, dtab]);
 
   const card:React.CSSProperties = {
     background:"linear-gradient(135deg,#0D1526 0%,#0A1020 100%)",
@@ -219,6 +222,21 @@ export default function DashboardView({ onNavigate, refreshTick = 0 }: { onNavig
         </div>
       </div>
 
+      {/* ── Dashboard tabs: Overview | Live Operations | Action Required ── */}
+      <div style={{ display:"flex", gap:8 }}>
+        {([["overview","Overview"],["ops","Live Operations"],["alerts","Action Required"]] as const).map(([k,l])=>(
+          <button key={k} onClick={()=>setDtab(k)}
+            style={{ padding:"8px 18px", borderRadius:9, cursor:"pointer", fontSize:12, fontWeight:800,
+              border:"1px solid "+(dtab===k?"#FF6B00":"#1E293B"),
+              background:dtab===k?"#FF6B0022":"transparent",
+              color:dtab===k?"#FF6B00":"#64748B" }}>{l}</button>
+        ))}
+      </div>
+
+      {dtab === "ops" && <OpsTab onNavigate={onNavigate} refreshTick={refreshTick} />}
+      {dtab === "alerts" && <AlertsTab onNavigate={onNavigate} refreshTick={refreshTick} />}
+
+      {dtab === "overview" && (<>
       {/* ── Metric Cards ── */}
       <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:14 }}>
         {metricCards.map(m=>(
@@ -449,6 +467,8 @@ export default function DashboardView({ onNavigate, refreshTick = 0 }: { onNavig
           </div>
         </div>
       </div>
+
+      </>)}
 
       {/* WhatsApp Blast Modal */}
       {blast&&(
