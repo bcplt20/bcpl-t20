@@ -1,10 +1,20 @@
 /**
  * BCPL Player Journey — Phase 1 result (100-point scoring system).
  *
- * Player-facing:  GET /api/results/me → own score breakdown, city rank,
- *                 city role rank and evaluated counts. Only revealed once
- *                 BOTH the score exists AND the phase-1 decision
- *                 (selected / rejected) has been announced.
+ * Player-facing:  GET  /api/results/me       → own score breakdown, city rank,
+ *                                              role rank and evaluated counts.
+ *                 POST /api/results/feedback → §41 process-clarity rating.
+ *
+ * TWO result sources, newest wins:
+ *   1. AI video-trial pipeline (phase1_evaluations, status result_released) —
+ *      breakdown comes from the role rubric + categoryScores, ranks come from
+ *      the FROZEN ranking snapshot (§34) so an issued card never shifts.
+ *      No AI internals (passes, variance, models) ever leave this endpoint.
+ *   2. Legacy manual scoring (phase1_scores) — original selector flow,
+ *      live-computed competition ranks. Unchanged behaviour.
+ *
+ * Results are only revealed once the phase-1 decision (selected / rejected)
+ * has been announced — the AI release worker flips that status itself.
  *
  * Admin scoring lives in admin.ts (PUT /api/admin/registrations/:id/score)
  * so it inherits the panel's JWT guard.
@@ -15,13 +25,19 @@
  */
 import { Router } from "express";
 import { db } from "@workspace/db";
-import { registrationsTable, phase1ScoresTable, usersTable } from "@workspace/db/schema";
-import { eq, sql } from "drizzle-orm";
+import {
+  registrationsTable, phase1ScoresTable, usersTable,
+  phase1EvaluationsTable, rankingSnapshotsTable, phase1FeedbackTable,
+} from "@workspace/db/schema";
+import { eq, and, desc, sql } from "drizzle-orm";
 import { requireAuth, type AuthRequest } from "../middlewares/auth";
+import { getPhase1Rubrics } from "../lib/phase1Config";
+import { normalizeRole } from "../lib/phase1Roles";
+import { logger } from "../lib/logger";
 
 const router = Router();
 
-/** The 100-point framework. Retune maxima here — schema stays unchanged. */
+/** The legacy 100-point framework (manual selector scoring). */
 export const SCORE_CRITERIA = [
   { key: "roleSkill",     max: 35 },
   { key: "technique",     max: 25 },
@@ -49,6 +65,16 @@ export async function ensurePhase1Scores(): Promise<void> {
     )
   `);
   await db.execute(sql`CREATE INDEX IF NOT EXISTS phase1_scores_total_idx ON phase1_scores (total DESC)`);
+  await db.execute(sql`
+    CREATE TABLE IF NOT EXISTS phase1_feedback (
+      id              uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+      registration_id uuid NOT NULL UNIQUE REFERENCES registrations(id),
+      rating          text NOT NULL,
+      comment         text,
+      created_at      timestamptz NOT NULL DEFAULT now(),
+      updated_at      timestamptz NOT NULL DEFAULT now()
+    )
+  `);
 }
 
 function rowsOf(result: unknown): any[] {
@@ -62,10 +88,60 @@ router.get("/me", requireAuth, async (req: AuthRequest, res) => {
       .where(eq(registrationsTable.userId, req.user!.userId)).limit(1);
     if (!reg) return void res.json({ available: false, reason: "not_registered" });
 
+    const decided = reg.phase1Status === "selected" || reg.phase1Status === "rejected";
+
+    const [fb] = await db.select().from(phase1FeedbackTable)
+      .where(eq(phase1FeedbackTable.registrationId, reg.id)).limit(1);
+    const myFeedback = fb ? { rating: fb.rating, comment: fb.comment } : null;
+
+    // ── Source 1: AI video-trial pipeline (released results only) ──
+    const [released] = await db.select().from(phase1EvaluationsTable)
+      .where(and(
+        eq(phase1EvaluationsTable.registrationId, reg.id),
+        eq(phase1EvaluationsTable.status, "result_released"),
+      ))
+      .orderBy(desc(phase1EvaluationsTable.attemptNumber)).limit(1);
+
+    if (released && released.finalScore != null && decided) {
+      const roleKey = normalizeRole(reg.role);
+      const rubrics = await getPhase1Rubrics();
+      const rubric = rubrics[roleKey as keyof typeof rubrics] ?? rubrics.bat;
+      const cs = (released.categoryScores ?? {}) as Record<string, unknown>;
+      const breakdown = rubric.categories.map((c) => ({
+        key: c.key,
+        label: c.label,
+        score: Math.max(0, Math.min(c.max, Number(cs[c.key] ?? 0))),
+        max: c.max,
+      }));
+
+      const [snap] = await db.select().from(rankingSnapshotsTable)
+        .where(eq(rankingSnapshotsTable.registrationId, reg.id)).limit(1);
+      const [userRow] = await db.select({ name: usersTable.name })
+        .from(usersTable).where(eq(usersTable.id, reg.userId)).limit(1);
+
+      return void res.json({
+        available:    true,
+        decision:     released.result === "qualified" ? "qualified" : "not_shortlisted",
+        name:         userRow?.name ?? "",
+        regNumber:    reg.regNumber,
+        role:         reg.role,
+        trialCity:    reg.trialCity,
+        total:        released.finalScore,
+        breakdown,
+        selectorNote: null,
+        cityRank:     snap?.cityRank ?? 1,
+        cityCount:    snap?.cityTotal ?? 1,
+        roleRank:     snap?.roleRank ?? 1,
+        roleCount:    snap?.roleTotal ?? 1,
+        scoredAt:     released.resultReleasedAt ?? released.updatedAt,
+        myFeedback,
+      });
+    }
+
+    // ── Source 2: legacy manual scoring ──
     const [score] = await db.select().from(phase1ScoresTable)
       .where(eq(phase1ScoresTable.registrationId, reg.id)).limit(1);
 
-    const decided = reg.phase1Status === "selected" || reg.phase1Status === "rejected";
     if (!score || !decided) {
       return void res.json({
         available: false,
@@ -119,10 +195,44 @@ router.get("/me", requireAuth, async (req: AuthRequest, res) => {
       roleRank:     Number(rank.role_rank ?? 1),
       roleCount:    Number(rank.role_count ?? 1),
       scoredAt:     score.scoredAt,
+      myFeedback,
     });
-  } catch (err: any) {
-    console.error("[results/me]", err);
+  } catch (err) {
+    logger.error({ err }, "[results/me] failed");
     res.status(500).json({ error: "Could not load your result. Please try again." });
+  }
+});
+
+// POST /api/results/feedback — §41 process-clarity rating (both outcomes).
+// Only accepted after the decision is announced; upsert allows edits.
+const FEEDBACK_RATINGS = ["not_clear", "mostly_clear", "very_clear"];
+
+router.post("/feedback", requireAuth, async (req: AuthRequest, res) => {
+  try {
+    const rating = String(req.body?.rating ?? "");
+    const rawComment = typeof req.body?.comment === "string" ? req.body.comment.trim() : "";
+    const comment = rawComment ? rawComment.slice(0, 1000) : null;
+    if (!FEEDBACK_RATINGS.includes(rating)) {
+      return void res.status(400).json({ error: "rating must be one of: " + FEEDBACK_RATINGS.join(", ") });
+    }
+
+    const [reg] = await db.select().from(registrationsTable)
+      .where(eq(registrationsTable.userId, req.user!.userId)).limit(1);
+    if (!reg) return void res.status(404).json({ error: "Registration not found" });
+
+    const decided = reg.phase1Status === "selected" || reg.phase1Status === "rejected";
+    if (!decided) return void res.status(409).json({ error: "Feedback opens once your result is announced" });
+
+    await db.insert(phase1FeedbackTable)
+      .values({ registrationId: reg.id, rating, comment })
+      .onConflictDoUpdate({
+        target: phase1FeedbackTable.registrationId,
+        set: { rating, comment, updatedAt: new Date() },
+      });
+    res.json({ success: true });
+  } catch (err) {
+    logger.error({ err }, "[results/feedback] failed");
+    res.status(500).json({ error: "Could not save feedback. Please try again." });
   }
 });
 

@@ -472,7 +472,7 @@ export const adminSendInvoice = (registrationId: string, phase: 1 | 2, email?: s
 
 /* ─── Phase 1 Result — BCPL Player Journey (100-point scoring) ── */
 
-export interface ResultBreakdownItem { key: string; score: number; max: number }
+export interface ResultBreakdownItem { key: string; label?: string; score: number; max: number }
 export interface MyResult {
   available: boolean;
   reason?: 'not_registered' | 'payment_pending' | 'video_pending' | 'under_review' | 'score_pending';
@@ -490,9 +490,13 @@ export interface MyResult {
   roleRank?: number;
   roleCount?: number;
   scoredAt?: string;
+  myFeedback?: { rating: string; comment?: string | null } | null;
 }
 
 export const getMyResult = () => req<MyResult>("GET", "/results/me");
+
+export const sendResultFeedback = (rating: 'not_clear' | 'mostly_clear' | 'very_clear', comment?: string) =>
+  req<{ success: boolean }>("POST", "/results/feedback", { rating, comment });
 
 export interface Phase1ScoreInput {
   roleSkill: number;      // /35

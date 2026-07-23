@@ -15,7 +15,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
-import { getMyResult, isAuthenticated, type MyResult } from '../lib/api';
+import { getMyResult, sendResultFeedback, isAuthenticated, type MyResult } from '../lib/api';
 import { useLang } from '../lib/i18n';
 import { Link, useLocation } from 'wouter';
 
@@ -27,6 +27,32 @@ const ROLE_LABELS: Record<string, { en: string; hi: string }> = {
   ar:   { en: 'All-Rounder',   hi: 'ऑल-राउंडर' },
 };
 const PHASE2_FEES: Record<string, number> = { bat: 2000, bowl: 2000, wk: 2000, ar: 3000 };
+
+/** AI video-trial rubric categories (per-role, §§20–23) — bilingual labels + honest improvement tips. */
+const AI_CRIT: Record<string, { en: string; hi: string; tip: { en: string; hi: string } }> = {
+  balanceSetup:        { en: 'Balance & Setup',        hi: 'बैलेंस और सेटअप',        tip: { en: 'Groove a stable stance and still head at the crease — balance is the base of every shot.', hi: 'स्थिर स्टांस और स्थिर सिर की प्रैक्टिस करें — बैलेंस ही हर शॉट की नींव है।' } },
+  footwork:            { en: 'Footwork',                hi: 'फुटवर्क',                 tip: { en: 'Daily front-foot / back-foot drills will sharpen decisive movement to the pitch of the ball.', hi: 'रोज़ front-foot / back-foot drills करें — गेंद तक की मूवमेंट तेज़ होगी।' } },
+  shotExecution:       { en: 'Shot Execution',          hi: 'शॉट एग्ज़ीक्यूशन',        tip: { en: 'Repeat one shot till it lands clean 8 times out of 10 before adding the next.', hi: 'एक शॉट को तब तक दोहराएँ जब तक 10 में से 8 बार सही न लगे।' } },
+  timingControl:       { en: 'Timing & Control',        hi: 'टाइमिंग और कंट्रोल',      tip: { en: 'Slow the swing down — meet the ball under your eyes and let timing beat power.', hi: 'स्विंग धीमा करें — गेंद को आँखों के नीचे खेलें, ताकत से ज़्यादा टाइमिंग पर भरोसा करें।' } },
+  adaptability:        { en: 'Range / Adaptability',    hi: 'रेंज और अनुकूलन',         tip: { en: 'Show more range next time — attack, defend and rotate strike in the same session.', hi: 'अगली बार ज़्यादा रेंज दिखाएँ — अटैक, डिफेंस और स्ट्राइक रोटेशन एक ही सेशन में।' } },
+  gameReadiness:       { en: 'Game Readiness',          hi: 'गेम रेडीनेस',             tip: { en: 'Train match situations, not just nets — plan each ball like a real game.', hi: 'सिर्फ नेट्स नहीं, मैच सिचुएशन की प्रैक्टिस करें — हर गेंद को असली मैच की तरह खेलें।' } },
+  evidenceReliability: { en: 'Video Evidence Quality',  hi: 'वीडियो एविडेंस क्वालिटी', tip: { en: 'Next time record in good light with a steady camera and your full action clearly visible.', hi: 'अगली बार अच्छी रोशनी, स्थिर कैमरा और पूरा एक्शन साफ़ दिखाते हुए रिकॉर्ड करें।' } },
+  runUpRhythm:         { en: 'Run-up & Rhythm',         hi: 'रन-अप और रिदम',           tip: { en: 'Mark a consistent run-up and repeat it till the rhythm feels automatic.', hi: 'एक फिक्स रन-अप बनाएं और उसे तब तक दोहराएँ जब तक रिदम अपने-आप न आए।' } },
+  actionRelease:       { en: 'Action & Release',        hi: 'एक्शन और रिलीज़',         tip: { en: 'Film your action side-on and work on a repeatable, braced release position.', hi: 'अपना एक्शन side-on रिकॉर्ड करें और एक जैसी रिलीज़ पोज़िशन पर काम करें।' } },
+  controlEvidence:     { en: 'Line & Length Control',   hi: 'लाइन-लेंथ कंट्रोल',       tip: { en: 'Bowl at one marked spot — 30 balls a day. Consistency of line-length wins trials.', hi: 'एक निशान पर रोज़ 30 गेंदें डालें — लाइन-लेंथ की consistency ही ट्रायल जिताती है।' } },
+  paceSpinEvidence:    { en: 'Pace / Spin Threat',      hi: 'पेस / स्पिन का दम',       tip: { en: 'Build your stock-ball threat first — genuine pace or real turn — before variations.', hi: 'पहले अपनी main गेंद का दम बढ़ाएँ — असली पेस या असली टर्न — फिर वेरिएशन।' } },
+  variationEvidence:   { en: 'Variations',              hi: 'वेरिएशन',                 tip: { en: 'Master ONE reliable variation and show it clearly in your next video.', hi: 'एक भरोसेमंद वेरिएशन पक्का करें और अगली वीडियो में साफ़ दिखाएँ।' } },
+  repeatability:       { en: 'Repeatability',           hi: 'रिपीटेबिलिटी',            tip: { en: 'Bowl longer spells in practice — the skill is doing it again and again, not once.', hi: 'प्रैक्टिस में लंबे स्पेल डालें — हुनर एक बार नहीं, बार-बार करने में है।' } },
+  battingAbility:      { en: 'Batting Ability',         hi: 'बैटिंग क्षमता',           tip: { en: 'Sharpen shot selection and core batting fundamentals with daily focused drills.', hi: 'रोज़ाना focused drills से शॉट सिलेक्शन और बैटिंग के बेसिक्स मज़बूत करें।' } },
+  bowlingAbility:      { en: 'Bowling Ability',         hi: 'बॉलिंग क्षमता',           tip: { en: 'Give your bowling equal practice time — an all-rounder needs both skills match-ready.', hi: 'बॉलिंग को भी बराबर समय दें — ऑल-राउंडर के दोनों हुनर match-ready होने चाहिए।' } },
+  techniqueExecution:  { en: 'Technique & Execution',   hi: 'तकनीक और एग्ज़ीक्यूशन',   tip: { en: 'Daily drills on stance, grip and basics will lift this fast.', hi: 'स्टांस, ग्रिप और बेसिक्स की रोज़ाना drills से यह जल्दी सुधरेगा।' } },
+  athleticMovement:    { en: 'Athletic Movement',       hi: 'फिटनेस और मूवमेंट',       tip: { en: 'Add sprint, agility and fielding sessions to your weekly routine.', hi: 'हफ़्ते की routine में sprint, agility और fielding sessions जोड़ें।' } },
+  keepingTechnique:    { en: 'Keeping Technique',       hi: 'कीपिंग तकनीक',            tip: { en: 'Daily glove work — clean catching position, soft hands, head steady behind the ball.', hi: 'रोज़ glove work करें — सही कैचिंग पोज़िशन, soft hands, गेंद के पीछे स्थिर सिर।' } },
+  movementPositioning: { en: 'Movement & Positioning',  hi: 'मूवमेंट और पोज़िशनिंग',   tip: { en: 'Practise lateral movement drills — be set in position before the ball arrives.', hi: 'lateral movement drills करें — गेंद आने से पहले पोज़िशन में सेट रहें।' } },
+  receivingHands:      { en: 'Receiving / Hands',       hi: 'कैचिंग / हैंड्स',         tip: { en: 'Take 100 clean catches a day — soft hands close to the body.', hi: 'रोज़ 100 क्लीन कैच लें — शरीर के पास soft hands से।' } },
+  stumpingReaction:    { en: 'Stumping & Reactions',    hi: 'स्टंपिंग और रिएक्शन',     tip: { en: 'Speed up glove-to-stump work with reaction drills off a wall or partner.', hi: 'दीवार या पार्टनर के साथ reaction drills से glove-to-stump स्पीड बढ़ाएँ।' } },
+  battingEvidence:     { en: 'Batting Evidence',        hi: 'बैटिंग एविडेंस',          tip: { en: 'Show clear batting contribution too — a keeper who bats doubles his value.', hi: 'बैटिंग भी साफ़ दिखाएँ — जो कीपर बैटिंग करता है उसकी value दोगुनी होती है।' } },
+};
 
 /** Registrations store role in two historic formats ("bat" and "Batsman") — normalise to bat|bowl|wk|ar. */
 function normRole(role: string | undefined): string {
@@ -40,6 +66,8 @@ function normRole(role: string | undefined): string {
 
 /** Criterion labels — roleSkill adapts to the player's role. */
 function critLabel(key: string, role: string, t: (en: string, hi: string) => string): string {
+  const ai = AI_CRIT[key];
+  if (ai) return t(ai.en, ai.hi);
   switch (key) {
     case 'roleSkill':
       return role === 'bat'  ? t('Batting Skill', 'बैटिंग स्किल')
@@ -57,6 +85,8 @@ function critLabel(key: string, role: string, t: (en: string, hi: string) => str
 
 /** Honest, respectful improvement pointers per criterion. */
 function improveTip(key: string, role: string, t: (en: string, hi: string) => string): string {
+  const ai = AI_CRIT[key];
+  if (ai) return t(ai.tip.en, ai.tip.hi);
   switch (key) {
     case 'roleSkill':
       return role === 'bowl'
@@ -194,6 +224,10 @@ export function Phase1Result() {
   const [flash, setFlash]     = useState(false);
   const [barsOn, setBarsOn]   = useState(false);
   const [demo, setDemo]       = useState(false);
+  const [fbRating, setFbRating]   = useState('');
+  const [fbComment, setFbComment] = useState('');
+  const [fbSaved, setFbSaved]     = useState(false);
+  const [fbBusy, setFbBusy]       = useState(false);
   const timers = useRef<number[]>([]);
 
   useEffect(() => {
@@ -218,6 +252,11 @@ export function Phase1Result() {
           navigate('/register/upload-video'); return;
         }
         setResult(r);
+        if (r.myFeedback) {
+          setFbRating(r.myFeedback.rating);
+          setFbComment(r.myFeedback.comment ?? '');
+          setFbSaved(true);
+        }
       })
       .catch((e: any) => setError(e?.message ?? t('Failed to load result. Please refresh.', 'रिजल्ट लोड करने में विफल। कृपया रीफ्रेश करें।')))
       .finally(() => setLoading(false));
@@ -230,6 +269,18 @@ export function Phase1Result() {
     timers.current.push(window.setTimeout(() => setFlash(false), 950));
     timers.current.push(window.setTimeout(() => setBarsOn(true), 350));
     try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch { /* noop */ }
+  };
+
+  // §41 — process-clarity feedback (both outcomes; edits allowed, never suppressed)
+  const submitFeedback = async () => {
+    if (!fbRating || fbBusy) return;
+    if (demo) { setFbSaved(true); return; }
+    setFbBusy(true);
+    try {
+      await sendResultFeedback(fbRating as 'not_clear' | 'mostly_clear' | 'very_clear', fbComment.trim() || undefined);
+      setFbSaved(true);
+    } catch { /* keep the form editable so the player can retry */ }
+    setFbBusy(false);
   };
 
   const r = result;
@@ -645,6 +696,35 @@ export function Phase1Result() {
               </div>
             </div>
           )}
+
+          {/* ═══ §41 PROCESS-CLARITY FEEDBACK (both outcomes) ═══ */}
+          <div className="rcard" style={{ marginTop:48 }}>
+            <h3 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:22, color:'var(--ink)', textTransform:'uppercase', marginBottom:8, letterSpacing:'.04em' }}>
+              {t('Was the BCPL Phase 1 process clear?', 'क्या BCPL Phase 1 प्रक्रिया स्पष्ट थी?')}
+            </h3>
+            <p style={{ color:'var(--ink-3)', fontSize:13, lineHeight:1.6, marginBottom:18 }}>
+              {t('Your feedback helps us improve the trial experience for every player.', 'आपका फीडबैक हर खिलाड़ी के लिए ट्रायल अनुभव बेहतर बनाने में मदद करता है।')}
+            </p>
+            <div style={{ display:'flex', gap:10, flexWrap:'wrap', marginBottom:16 }}>
+              {([['not_clear', 'Not Clear', 'स्पष्ट नहीं'], ['mostly_clear', 'Mostly Clear', 'कुछ हद तक स्पष्ट'], ['very_clear', 'Very Clear', 'पूरी तरह स्पष्ट']] as const).map(([v, en, hi]) => (
+                <button key={v} onClick={() => { setFbRating(v); setFbSaved(false); }}
+                  style={{ padding:'10px 20px', borderRadius:20, cursor:'pointer', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:14, letterSpacing:'.06em', textTransform:'uppercase', transition:'all .2s',
+                    background: fbRating === v ? 'rgba(232,178,61,0.15)' : 'rgba(255,255,255,0.04)',
+                    border: '1px solid ' + (fbRating === v ? 'var(--gold)' : 'var(--line)'),
+                    color: fbRating === v ? 'var(--gold)' : 'var(--ink-2)' }}>
+                  {t(en, hi)}
+                </button>
+              ))}
+            </div>
+            <textarea value={fbComment} maxLength={1000} rows={3}
+              onChange={e => { setFbComment(e.target.value); setFbSaved(false); }}
+              placeholder={t('Anything else you want to tell us? (optional)', 'कुछ और बताना चाहते हैं? (वैकल्पिक)')}
+              style={{ width:'100%', background:'rgba(255,255,255,0.03)', border:'1px solid var(--line)', borderRadius:12, padding:'12px 14px', color:'var(--ink)', fontFamily:'Inter,sans-serif', fontSize:14, lineHeight:1.6, resize:'vertical', marginBottom:16, outline:'none' }} />
+            <button className="btn-gold" onClick={submitFeedback} disabled={!fbRating || fbBusy}
+              style={{ padding:'12px 28px', opacity: !fbRating || fbBusy ? 0.5 : 1, cursor: !fbRating || fbBusy ? 'default' : 'pointer' }}>
+              {fbSaved ? '✓ ' + t('SAVED — THANK YOU', 'सेव हो गया — धन्यवाद') : t('SUBMIT FEEDBACK', 'फीडबैक भेजें')}
+            </button>
+          </div>
 
         </div>
       )}
