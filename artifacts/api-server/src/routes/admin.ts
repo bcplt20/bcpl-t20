@@ -22,6 +22,8 @@ import {
   playerProfilesTable,
   notificationLogsTable,
   phase1EvaluationsTable,
+  aiEvaluationPassesTable,
+  rankingSnapshotsTable,
 } from "@workspace/db/schema";
 import { eq, desc, count, and } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
@@ -801,6 +803,185 @@ router.post("/invoice/send", requireAdmin, async (req, res) => {
   } catch (err: any) {
     console.error("[admin/invoice] failed", err);
     res.status(500).json({ error: err.message ?? "Failed to send invoice" });
+  }
+});
+
+
+/* ─── GET /api/admin/players/:key/journey ─────────────────────────
+   Master Player Journey aggregation — ONE call returns everything the
+   Master Player Profile page needs. :key = regNumber (BCPL-DEL-1) or
+   registration UUID. Read-only: the unified journey is DERIVED from the
+   existing per-domain statuses; no schema changes, no writes, and the
+   original AI scores are never editable from here (spec rule). */
+router.get("/players/:key/journey", async (req, res) => {
+  try {
+    const key = String(req.params.key).trim();
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(key);
+
+    const regRows = await db
+      .select({ reg: registrationsTable, user: usersTable })
+      .from(registrationsTable)
+      .leftJoin(usersTable, eq(registrationsTable.userId, usersTable.id))
+      .where(isUuid ? eq(registrationsTable.id, key) : eq(registrationsTable.regNumber, key.toUpperCase()))
+      .limit(1);
+    const row = regRows[0];
+    if (!row) { res.status(404).json({ error: "Player not found: " + key }); return; }
+    const reg = row.reg;
+
+    const [p1Pays, p2Pays, videos, evals, snaps, kycs, profiles, notifs] = await Promise.all([
+      db.select().from(phase1PaymentsTable).where(eq(phase1PaymentsTable.registrationId, reg.id)).orderBy(desc(phase1PaymentsTable.createdAt)),
+      db.select().from(phase2PaymentsTable).where(eq(phase2PaymentsTable.registrationId, reg.id)).orderBy(desc(phase2PaymentsTable.createdAt)),
+      db.select().from(phase1VideosTable).where(eq(phase1VideosTable.registrationId, reg.id)).orderBy(desc(phase1VideosTable.submittedAt)),
+      db.select().from(phase1EvaluationsTable).where(eq(phase1EvaluationsTable.registrationId, reg.id)).orderBy(desc(phase1EvaluationsTable.attemptNumber)),
+      db.select().from(rankingSnapshotsTable).where(eq(rankingSnapshotsTable.registrationId, reg.id)),
+      db.select().from(kycRecordsTable).where(eq(kycRecordsTable.registrationId, reg.id)).orderBy(desc(kycRecordsTable.createdAt)),
+      db.select().from(playerProfilesTable).where(eq(playerProfilesTable.registrationId, reg.id)),
+      db.select().from(notificationLogsTable).where(eq(notificationLogsTable.userId, reg.userId)).orderBy(desc(notificationLogsTable.createdAt)).limit(60),
+    ]);
+
+    const isPaid = (st: string) => st === "success" || st === "paid"; // legacy rows use "paid"
+    const paid1 = p1Pays.find(x => isPaid(x.status)) ?? null;
+    const paid2 = p2Pays.find(x => isPaid(x.status)) ?? null;
+    const latestP1 = paid1 ?? p1Pays[0] ?? null;
+    const latestP2 = paid2 ?? p2Pays[0] ?? null;
+    const video = videos[0] ?? null;
+    const ev = evals[0] ?? null;
+    const kyc = kycs[0] ?? null;
+    const profile = profiles[0] ?? null;
+    const snap = snaps[0] ?? null;
+
+    const passes = ev
+      ? await db.select().from(aiEvaluationPassesTable).where(eq(aiEvaluationPassesTable.evaluationId, ev.id)).orderBy(aiEvaluationPassesTable.passNumber)
+      : [];
+
+    /* ── Derive unified journey ── */
+    type StepState = "done" | "current" | "attention" | "locked";
+    type Step = { id: string; label: string; state: StepState; detail: string | null; at: Date | string | null };
+    const step = (id: string, label: string, state: StepState, detail?: string | null, at?: Date | string | null): Step =>
+      ({ id, label, state, detail: detail ?? null, at: at ?? null });
+
+    const qualified = reg.phase1Status === "selected" || !!reg.phase2Status;
+    const notShortlisted = reg.phase1Status === "rejected";
+    const kycDone = kyc?.status === "verified";
+    const essentialsDone = !!(profile && profile.emergencyPhone && profile.tshirtSize);
+    const p2Complete = reg.phase2Status === "kyc_done" || reg.phase2Status === "selected";
+
+    const steps: Step[] = [];
+    steps.push(step("registration", "Registration", "done", reg.regNumber ?? "Registered", reg.createdAt));
+
+    if (paid1) steps.push(step("phase1_payment", "Phase 1 Payment", "done", "Paid " + String(paid1.amount), paid1.paidAt));
+    else steps.push(step("phase1_payment", "Phase 1 Payment", "current", latestP1 ? "Last attempt: " + latestP1.status : "Payment pending"));
+
+    const reupload = ev?.status === "reupload_required";
+    if (video && !reupload) steps.push(step("video", "Trial Video", "done", (video.durationSeconds != null ? video.durationSeconds + " sec" : "Uploaded"), video.submittedAt));
+    else if (reupload) steps.push(step("video", "Trial Video", "attention", "Re-upload required" + (ev && ev.reasonCode ? " · " + ev.reasonCode : "")));
+    else if (paid1) steps.push(step("video", "Trial Video", "current", reg.videoDeadline ? "Deadline " + new Date(reg.videoDeadline).toISOString().slice(0, 10) : "Awaiting upload"));
+    else steps.push(step("video", "Trial Video", "locked"));
+
+    const EV_DONE = new Set(["final_scoring", "result_ready", "result_released"]);
+    const EV_RUNNING = new Set(["queued", "validating", "ai_pass_1", "ai_pass_2", "ai_pass_3"]);
+    if (ev && (EV_DONE.has(ev.status) || ev.finalScore != null))
+      steps.push(step("ai_evaluation", "AI Evaluation", "done", ev.finalScore != null ? "Score " + ev.finalScore + "/100" : "Scored", ev.updatedAt));
+    else if (ev && (ev.status === "failed_final" || ev.status === "integrity_review"))
+      steps.push(step("ai_evaluation", "AI Evaluation", "attention", ev.status === "integrity_review" ? "Integrity review" : "Failed — needs admin"));
+    else if (ev && EV_RUNNING.has(ev.status))
+      steps.push(step("ai_evaluation", "AI Evaluation", "current", "Stage: " + ev.status.replace(/_/g, " ")));
+    else if (reupload) steps.push(step("ai_evaluation", "AI Evaluation", "locked"));
+    else if (video) steps.push(step("ai_evaluation", "AI Evaluation", "current", "Queued"));
+    else steps.push(step("ai_evaluation", "AI Evaluation", "locked"));
+
+    if (ev && ev.resultReleasedAt)
+      steps.push(step("phase1_result", "Phase 1 Result", "done", qualified ? "Qualified" : (notShortlisted ? "Not shortlisted" : "Released"), ev.resultReleasedAt));
+    else if (qualified || notShortlisted)
+      steps.push(step("phase1_result", "Phase 1 Result", "done", qualified ? "Qualified" : "Not shortlisted"));
+    else if (ev && ev.resultReleaseAt)
+      steps.push(step("phase1_result", "Phase 1 Result", "current", "Release scheduled", ev.resultReleaseAt));
+    else steps.push(step("phase1_result", "Phase 1 Result", "locked"));
+
+    if (paid2) steps.push(step("phase2_payment", "Phase 2 Payment", "done", "Paid " + String(paid2.amount), paid2.paidAt));
+    else if (qualified) steps.push(step("phase2_payment", "Phase 2 Payment", "current", latestP2 ? "Last attempt: " + latestP2.status : "Payment pending"));
+    else steps.push(step("phase2_payment", "Phase 2 Payment", "locked"));
+
+    if (kycDone) steps.push(step("kyc", "Identity / KYC", "done", kyc && kyc.panVerified === false ? "Verified · PAN manual" : "Verified", kyc ? kyc.verifiedAt : null));
+    else if (kyc && kyc.panVerified === false) steps.push(step("kyc", "Identity / KYC", "attention", "PAN manual review"));
+    else if (kyc) steps.push(step("kyc", "Identity / KYC", "current", "Status: " + kyc.status));
+    else if (paid2) steps.push(step("kyc", "Identity / KYC", "current", "Not started"));
+    else steps.push(step("kyc", "Identity / KYC", "locked"));
+
+    if (essentialsDone) steps.push(step("essentials", "Player Essentials", "done", profile && profile.tshirtSize ? "T-shirt " + profile.tshirtSize : "Complete"));
+    else if (profile) steps.push(step("essentials", "Player Essentials", "current", "Incomplete"));
+    else if (paid2) steps.push(step("essentials", "Player Essentials", "current", "Not submitted"));
+    else steps.push(step("essentials", "Player Essentials", "locked"));
+
+    if (p2Complete) steps.push(step("physical_trial", "Physical Trial", "current", "Awaiting allocation"));
+    else steps.push(step("physical_trial", "Physical Trial", "locked"));
+
+    if (reg.phase2Status === "selected") {
+      steps.push(step("final_selection", "Final Selection", "done", "Selected"));
+      steps.push(step("auction", "Auction Pool", "current", "In pool"));
+    } else if (reg.phase2Status === "rejected") {
+      steps.push(step("final_selection", "Final Selection", "attention", "Not selected"));
+      steps.push(step("auction", "Auction Pool", "locked"));
+    } else {
+      steps.push(step("final_selection", "Final Selection", "locked"));
+      steps.push(step("auction", "Auction Pool", "locked"));
+    }
+    steps.push(step("team_contract", "Team & Contract", "locked"));
+
+    const firstAttention = steps.find(x => x.state === "attention");
+    const firstCurrent = steps.find(x => x.state === "current");
+    const masterStatus = firstAttention
+      ? firstAttention.label.toUpperCase() + " — " + (firstAttention.detail ?? "NEEDS ATTENTION")
+      : firstCurrent
+        ? firstCurrent.label.toUpperCase() + (firstCurrent.detail ? " — " + firstCurrent.detail : "")
+        : notShortlisted ? "PHASE 1 — NOT SHORTLISTED" : "ALL STEPS COMPLETE";
+
+    const roleLabel = (r: string): string => {
+      const v = (r || "").toLowerCase();
+      if (v === "bat" || v === "batsman") return "Batsman";
+      if (v === "bowl" || v === "bowler") return "Bowler";
+      if (v === "wk" || v === "wicketkeeper" || v === "wicket-keeper") return "Wicket-keeper";
+      if (v === "ar" || v === "all-rounder" || v === "allrounder") return "All-rounder";
+      return r;
+    };
+
+    res.json({
+      player: {
+        registrationId: reg.id,
+        regNumber: reg.regNumber,
+        name: row.user ? row.user.name : null,
+        phone: row.user ? row.user.phone : null,
+        email: row.user ? row.user.email : null,
+        role: reg.role,
+        roleLabel: roleLabel(reg.role),
+        trialCity: reg.trialCity,
+        phase1Status: reg.phase1Status,
+        phase2Status: reg.phase2Status,
+        videoDeadline: reg.videoDeadline,
+        registeredAt: reg.createdAt,
+      },
+      journey: { masterStatus, steps },
+      phase1Payment: latestP1 ? { amount: latestP1.amount, status: latestP1.status, orderId: latestP1.cashfreeOrderId, paymentId: latestP1.cashfreePaymentId, paidAt: latestP1.paidAt, attempts: p1Pays.length } : null,
+      phase2Payment: latestP2 ? { amount: latestP2.amount, status: latestP2.status, orderId: latestP2.cashfreeOrderId, paymentId: latestP2.cashfreePaymentId, paidAt: latestP2.paidAt, attempts: p2Pays.length } : null,
+      videos: videos.map(v => ({ id: v.id, status: v.status, durationSeconds: v.durationSeconds, mimeType: v.mimeType, sizeBytes: v.sizeBytes, declarationAccepted: v.declarationAccepted, uploadedAt: v.submittedAt })),
+      evaluation: ev ? {
+        attemptNumber: ev.attemptNumber, status: ev.status, reasonCode: ev.reasonCode,
+        pass1Score: ev.pass1Score, pass2Score: ev.pass2Score, pass3Score: ev.pass3Score,
+        finalScore: ev.finalScore, confidence: ev.confidence, scoreVariance: ev.scoreVariance,
+        passesUsed: ev.passesUsed, result: ev.result, categoryScores: ev.categoryScores,
+        strongestArea: ev.strongestArea, improvementArea: ev.improvementArea,
+        resultReleaseAt: ev.resultReleaseAt, resultReleasedAt: ev.resultReleasedAt,
+        modelVersion: ev.modelVersion, promptVersion: ev.promptVersion, rubricVersion: ev.rubricVersion, assessmentVersion: ev.assessmentVersion,
+      } : null,
+      passes: passes.map(x => ({ passNumber: x.passNumber, kind: x.kind, status: x.status, model: x.model, score: x.score, confidence: x.confidence, latencyMs: x.latencyMs, at: x.responseAt ?? x.requestAt })),
+      ranking: snap ? { cityRank: snap.cityRank, cityTotal: snap.cityTotal, roleRank: snap.roleRank, roleTotal: snap.roleTotal, percentile: snap.percentile, snapshotAt: snap.snapshotAt } : null,
+      kyc: kyc ? { status: kyc.status, aadhaarVerified: kyc.aadhaarVerified, panVerified: kyc.panVerified, profession: kyc.profession, verifiedAt: kyc.verifiedAt } : null,
+      profile: profile ? { company: profile.company, jobTitle: profile.jobTitle, experience: profile.experience, tshirtSize: profile.tshirtSize, bloodGroup: profile.bloodGroup, emergencyName: profile.emergencyName, emergencyRelation: profile.emergencyRelation, emergencyPhone: profile.emergencyPhone } : null,
+      notifications: notifs.map(n => ({ type: n.type, template: n.template, status: n.status, error: n.error, at: n.createdAt })),
+    });
+  } catch (err: any) {
+    console.error("[admin/players/journey]", err);
+    res.status(500).json({ error: err.message });
   }
 });
 

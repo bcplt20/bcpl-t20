@@ -37,54 +37,60 @@ type NavItem  = { id: string; label: string; icon: string; badge?: string; badge
 type NavGroup = { title: string; items: NavItem[] };
 
 const NAV: NavGroup[] = [
-  { title: "OVERVIEW", items: [
-    { id:"dashboard",    label:"Analytics",        icon:"▣", badge:"Live", badgeColor:"#10B981" },
-    { id:"users",        label:"Users",             icon:"⊞" },
-    { id:"finance",      label:"Finance & GST",     icon:"◈" },
-    { id:"forecast",     label:"Forecasting",       icon:"↗", badge:"New", badgeColor:"#6366F1" },
+  { title: "DASHBOARD", items: [
+    { id:"dashboard",    label:"Analytics",         icon:"▣", badge:"Live", badgeColor:"#10B981" },
+    { id:"forecast",     label:"Forecasting",       icon:"↗" },
   ]},
-  { title: "GROWTH", items: [
-    { id:"marketing",    label:"Marketing",         icon:"◎", badge:"New", badgeColor:"#FF6B00" },
+  { title: "REGISTRATIONS", items: [
+    { id:"phase1_regs",  label:"Phase 1 Registrations", icon:"①", badge:"Live", badgeColor:"#3B82F6" },
+    { id:"users",        label:"Users & Accounts",  icon:"⊞" },
+  ]},
+  { title: "PHASE 1 · VIDEO TRIAL", items: [
+    { id:"video_review", label:"Video Review",      icon:"▣", badgeColor:"#F59E0B" },
+    { id:"selection",    label:"Phase 1 Results",   icon:"✓", badge:"Phase 1", badgeColor:"#F59E0B" },
+    { id:"leaderboard",  label:"Rankings",          icon:"≡" },
+  ]},
+  { title: "PHASE 2", items: [
+    { id:"phase2_kyc",   label:"Phase 2 · KYC",     icon:"②", badgeColor:"#A855F7" },
+  ]},
+  { title: "PHYSICAL TRIALS", items: [
+    { id:"trial_cities", label:"Trial Cities",      icon:"◐" },
+  ]},
+  { title: "PLAYER MANAGEMENT", items: [
+    { id:"player_profiles",label:"Master Player Profile", icon:"⊞", badge:"New", badgeColor:"#FF6B00" },
+    { id:"fraud",        label:"Fraud Detection",   icon:"⌖" },
+    { id:"support",      label:"Support Tickets",   icon:"●" },
+  ]},
+  { title: "AUCTION & TEAMS", items: [
+    { id:"auction",      label:"Live Auction",      icon:"⊕" },
+    { id:"teams",        label:"Teams",             icon:"▨" },
+    { id:"contracts",    label:"Contracts",         icon:"◈" },
+  ]},
+  { title: "COMPETITION", items: [
+    { id:"matches",      label:"Matches",           icon:"◐" },
+    { id:"live_scoring", label:"Live Scoring",      icon:"●" },
+  ]},
+  { title: "FINANCE", items: [
+    { id:"finance",      label:"Finance & GST",     icon:"◈" },
+  ]},
+  { title: "GROWTH & MARKETING", items: [
+    { id:"marketing",    label:"Marketing",         icon:"◎" },
     { id:"seo",          label:"SEO Manager",       icon:"⌖" },
     { id:"affiliates",   label:"Agents & Affiliates",icon:"⊟" },
     { id:"content_cal",  label:"Content Calendar",  icon:"▤" },
   ]},
-  { title: "LEAGUE", items: [
-    { id:"matches",      label:"Matches",           icon:"◐" },
-    { id:"live_scoring", label:"Live Scoring",      icon:"●" },
-    { id:"teams",        label:"Teams",             icon:"▨" },
-    { id:"selection",    label:"Selection",         icon:"✓", badge:"Phase 1", badgeColor:"#F59E0B" },
-    { id:"auction",      label:"Live Auction",      icon:"⊕", badge:"New", badgeColor:"#FF6B00" },
-    { id:"leaderboard",  label:"Leaderboard",       icon:"≡" },
-    { id:"contracts",    label:"Contracts",         icon:"◈" },
-  ]},
-  { title: "REGISTRATIONS", items: [
-    { id:"phase1_regs",  label:"Phase 1 Registrations", icon:"①", badge:"Live", badgeColor:"#3B82F6" },
-    { id:"video_review", label:"Video Review",           icon:"▣", badgeColor:"#F59E0B" },
-    { id:"phase2_kyc",   label:"Phase 2 · KYC",         icon:"②", badgeColor:"#A855F7" },
-  ]},
-  { title: "PLAYERS", items: [
-    { id:"player_profiles",label:"Player Profiles", icon:"⊞" },
+  { title: "COMMUNICATION", items: [
     { id:"whatsapp_tpl", label:"WhatsApp Templates",icon:"◎" },
-    { id:"fraud",        label:"Fraud Detection",   icon:"⌖" },
-  ]},
-  { title: "TRIALS", items: [
-    { id:"trial_cities", label:"Trial Cities",      icon:"◐" },
-    { id:"support",      label:"Support Tickets",   icon:"●" },
   ]},
   { title: "CONTENT", items: [
     { id:"media",        label:"Photos & Videos",   icon:"▨" },
     { id:"banners",      label:"Banners",           icon:"▤" },
     { id:"cms",          label:"CMS / Pages",       icon:"≡" },
-  ]},
-  { title: "SPONSORS", items: [
     { id:"sponsors",     label:"Sponsors",          icon:"⊟" },
   ]},
-  { title: "TOOLS", items: [
+  { title: "SYSTEM", items: [
     { id:"data_export",     label:"Data Export",        icon:"⊕" },
     { id:"roles",           label:"Roles & Access",     icon:"◈" },
-  ]},
-  { title: "SETTINGS", items: [
     { id:"admin_settings",  label:"Admin Management",   icon:"⚙" },
   ]},
 ];
