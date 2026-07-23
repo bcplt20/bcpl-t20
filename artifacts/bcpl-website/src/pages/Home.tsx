@@ -11,10 +11,13 @@ const PHASE1_DEADLINE = "2027-02-28T23:59:59+05:30";
 const BASE = import.meta.env.BASE_URL;
 const L = BASE + "bcpl-assets/logos/";
 
-/* ── Video links (YouTube). Khali ("") = button /videos page par le jayega.
-     Jaise hi real video ready ho, yahan uska YouTube link daal dein — bas itna hi. ── */
+/* ── The 30-sec BCPL film shipped with the site (compressed, local). ── */
+const STORY_FILM = BASE + "bcpl-assets/bcpl-30sec.mp4";
+
+/* ── Video links (YouTube). Khali ("") = story ke liye local film chalegi,
+     ganguly ke liye /videos page. Jaise hi YouTube link ready ho, yahan daal dein. ── */
 const HOME_VIDEOS = {
-  story:   "",   // 45-60 sec "This is BCPL" film
+  story:   "",   // 45-60 sec "This is BCPL" film (YouTube) — khali = local 30-sec film
   ganguly: "",   // Sourav Ganguly ka message
 };
 
@@ -31,13 +34,26 @@ const TEAMS = [
   { name:"Bengaluru Rockets",      city:"Bengaluru",   color:"#EF4444", slug:"bengaluru_rockets"     },
 ];
 
-/* ── Credibility strip — league scale in one line ── */
-const GLANCE = [
-  { v:"Season 5",  en:"Registrations Open",  hi:"रजिस्ट्रेशन खुले हैं",  color:"#22C55E", live:true },
-  { v:"10",        en:"Teams",               hi:"टीमें",                 color:"#E8B23D" },
-  { v:"10",        en:"Cities",              hi:"शहर",                   color:"#3B82F6" },
-  { v:"₹6 Cr+",    en:"Prize Pool",          hi:"प्राइज़ पूल",           color:"#FF7A29" },
-  { v:"₹20L",      en:"Max Auction Value",   hi:"अधिकतम auction कीमत",   color:"#A78BFA" },
+/* ── LEAGUE STRIP — broadcast-style animated ticker below the hero ── */
+const TICKER = [
+  { en:"Season 5",                 hi:"सीज़न 5",                    live:true  },
+  { en:"10 Cities",                hi:"10 शहर"                                 },
+  { en:"10 Teams",                 hi:"10 टीमें"                               },
+  { en:"₹6 Cr Prize Pool",         hi:"₹6 करोड़ प्राइज़ पूल"                    },
+  { en:"International Stadiums",   hi:"International stadiums"                 },
+  { en:"Live Player Auction",      hi:"लाइव Player Auction"                    },
+  { en:"₹2L–₹20L Player Value",    hi:"₹2L–₹20L player value"                  },
+  { en:"Registrations Open",       hi:"रजिस्ट्रेशन खुले हैं",       live:true  },
+];
+
+/* ── REAL PROOF — photographs from BCPL's own Season 4 events ── */
+const PROOF = [
+  { img:"auction-hero.webp",       wide:true,  en:"Live Player Auction — Season 4",   hi:"लाइव Player Auction — Season 4" },
+  { img:"event-stage-trophy.webp", wide:false, en:"The BCPL Trophy",                  hi:"BCPL Trophy" },
+  { img:"event-teams-b.webp",      wide:false, en:"10 Franchises, One Stage",         hi:"10 franchises, एक मंच" },
+  { img:"jerseys.webp",            wide:true,  en:"Season 4 Team Jerseys",            hi:"Season 4 की team jerseys" },
+  { img:"event-panel.webp",        wide:false, en:"League Launch Panel",              hi:"League launch panel" },
+  { img:"event-teams-a.webp",      wide:false, en:"Franchise Owners & Captains",      hi:"Franchise owners और captains" },
 ];
 
 /* ── ROAD TO BCPL — the single journey ── */
@@ -119,15 +135,18 @@ export function Home() {
   const vMaskRef   = useRef<HTMLDivElement|null>(null);
   const vOpenerRef = useRef<HTMLElement|null>(null);
 
+  const rememberOpener = () => {
+    vOpenerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+  };
   const showVideo = (url:string) => {
-    if (toEmbed(url)) {
-      vOpenerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-      setVideo(url);
-    } else navigate("/videos");
+    if (toEmbed(url)) { rememberOpener(); setVideo(url); }
+    else navigate("/videos");
   };
   const openVideo = (key: keyof typeof HOME_VIDEOS) => {
     const url = HOME_VIDEOS[key];
-    if (url) showVideo(url); else navigate("/videos");
+    if (url) { showVideo(url); return; }
+    if (key === "story") { rememberOpener(); setVideo(STORY_FILM); return; }
+    navigate("/videos");
   };
 
   /* Live data from API */
@@ -150,7 +169,7 @@ export function Home() {
   useEffect(()=>{
     if(!video) return;
     const mask = vMaskRef.current;
-    const focusables = ()=> mask ? Array.from(mask.querySelectorAll<HTMLElement>("button, iframe")) : [];
+    const focusables = ()=> mask ? Array.from(mask.querySelectorAll<HTMLElement>("button, iframe, video")) : [];
     const els0 = focusables();
     (els0.find(el=>el.tagName==="BUTTON") ?? els0[0])?.focus();
     const onKey = (e:KeyboardEvent)=>{
@@ -198,13 +217,13 @@ export function Home() {
   return (
     <div ref={rootRef} className="home-root" style={{ background:"#06101E", color:"#F0EDE8", fontFamily:"'Inter',sans-serif", overflowX:"hidden" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap');
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
         html{scroll-behavior:smooth;}
         .W{max-width:1200px;margin:0 auto;padding:0 20px;}
         @media(min-width:768px){.W{padding:0 32px;}}
         @media(min-width:1280px){.W{padding:0 48px;}}
         .mont{font-family:'Montserrat',sans-serif;}
+        .bhead{font-family:'Barlow Condensed','Mukta','Montserrat',sans-serif;}
 
         @keyframes pulse6   {0%,100%{box-shadow:0 0 0 0 rgba(255,122,41,.4)}50%{box-shadow:0 0 0 10px rgba(255,122,41,0)}}
         @keyframes blip     {0%,100%{opacity:1}50%{opacity:.15}}
@@ -213,6 +232,7 @@ export function Home() {
         @keyframes kenburns {from{transform:scale(1.02) translate(0,0)}to{transform:scale(1.12) translate(-1.6%,1.2%)}}
         @keyframes floodPulse{0%,100%{opacity:.35}50%{opacity:.7}}
         @keyframes playRing {0%{box-shadow:0 0 0 0 rgba(255,122,41,.5)}100%{box-shadow:0 0 0 26px rgba(255,122,41,0)}}
+        @keyframes tickMove {from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
         .btn-cta{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:14px;color:#fff;font-family:'Montserrat',sans-serif;font-weight:900;font-size:14px;letter-spacing:.04em;cursor:pointer;padding:14px 28px;text-transform:uppercase;text-decoration:none;transition:opacity .2s,transform .15s;box-shadow:0 6px 24px rgba(255,122,41,.35);}
         .btn-cta:hover{opacity:.9;transform:translateY(-2px);}
@@ -231,24 +251,28 @@ export function Home() {
         @media(prefers-reduced-motion:reduce){
           .rv{opacity:1;transform:none;}
           .hero-bg,.play-btn{animation:none!important;}
+          .tick{animation:none!important;}
         }
 
         /* HERO */
         .hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%;opacity:.5;animation:kenburns 26s ease-in-out infinite alternate;will-change:transform;}
+        .hero-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.5;}
         .hero-flood{position:absolute;pointer-events:none;animation:floodPulse 7s ease-in-out infinite;}
         .hero-ganguly{position:absolute;right:0;bottom:0;height:96%;width:auto;object-fit:cover;object-position:center top;opacity:.9;pointer-events:none;user-select:none;filter:contrast(1.06) brightness(.98);mask-image:linear-gradient(to left,rgba(0,0,0,1) 30%,rgba(0,0,0,.6) 62%,transparent 88%);-webkit-mask-image:linear-gradient(to left,rgba(0,0,0,1) 30%,rgba(0,0,0,.6) 62%,transparent 88%);}
         @media(max-width:899px){.hero-ganguly{opacity:.22;height:100%;right:-10%;}}
         .hero-inner{position:relative;z-index:2;padding:clamp(60px,9vw,110px) 0 clamp(56px,9vw,100px);max-width:680px;}
         .hero-stats{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin-bottom:18px;}
-        .hero-stats .hs{font-family:'Montserrat',sans-serif;font-weight:900;font-size:clamp(14px,2.2vw,19px);color:#fff;letter-spacing:.02em;white-space:nowrap;}
+        .hero-stats .hs{font-family:'Montserrat',sans-serif;font-weight:900;font-size:clamp(13px,2vw,18px);color:#fff;letter-spacing:.02em;white-space:nowrap;}
         .hero-stats .hs b{color:#E8B23D;}
         .hero-stats .dot{width:5px;height:5px;border-radius:50%;background:rgba(232,178,61,.7);flex-shrink:0;}
 
-        /* Glance strip */
-        .glance{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;scroll-snap-type:x mandatory;}
-        .glance::-webkit-scrollbar{display:none;}
-        .glance>div{flex:1 0 auto;min-width:150px;scroll-snap-align:start;text-align:center;padding:18px 20px;border-right:1px solid rgba(232,178,61,.12);}
-        .glance>div:last-child{border-right:none;}
+        /* League strip ticker */
+        .tick-wrap{overflow:hidden;background:linear-gradient(90deg,#0A1727,#0D1E36 50%,#0A1727);border-top:1px solid rgba(232,178,61,.28);border-bottom:1px solid rgba(232,178,61,.28);position:relative;}
+        .tick{display:flex;width:max-content;animation:tickMove 30s linear infinite;}
+        .tick:hover{animation-play-state:paused;}
+        .tick-item{display:inline-flex;align-items:center;gap:16px;padding:13px 0 13px 16px;white-space:nowrap;}
+        .tick-item .tx{font-family:'Barlow Condensed','Mukta',sans-serif;font-weight:700;font-size:clamp(16px,2vw,20px);letter-spacing:.12em;color:#E8B23D;text-transform:uppercase;}
+        .tick-item .sep{width:6px;height:6px;border-radius:50%;background:rgba(255,122,41,.55);margin-left:16px;flex-shrink:0;}
 
         /* THIS IS BCPL — video section */
         .play-btn{width:clamp(72px,10vw,96px);height:clamp(72px,10vw,96px);border-radius:50%;border:none;cursor:pointer;background:linear-gradient(135deg,#FF7A29,#D95E10);color:#fff;font-size:clamp(24px,3.4vw,32px);display:inline-flex;align-items:center;justify-content:center;animation:playRing 2.2s ease-out infinite;transition:transform .2s;box-shadow:0 10px 40px rgba(255,122,41,.45);}
@@ -284,6 +308,16 @@ export function Home() {
         @media(min-width:768px){.num-grid{grid-template-columns:repeat(3,1fr);}}
         .num-cell{background:linear-gradient(165deg,#0C1C30,#07101E);border:1px solid rgba(232,178,61,.14);border-radius:16px;padding:clamp(20px,3vw,30px) clamp(16px,2.4vw,26px);text-align:center;}
 
+        /* Real proof gallery */
+        .proof-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+        @media(min-width:768px){.proof-grid{grid-template-columns:repeat(4,1fr);gap:12px;}}
+        .proof-tile{position:relative;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.08);aspect-ratio:4/3;background:#0A1727;}
+        .proof-tile.wide{grid-column:span 2;}
+        .proof-tile img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease;}
+        .proof-tile:hover img{transform:scale(1.05);}
+        .proof-cap{position:absolute;left:10px;bottom:10px;right:10px;display:inline-flex;align-items:center;gap:6px;}
+        .proof-cap span{background:rgba(5,10,20,.78);backdrop-filter:blur(6px);border:1px solid rgba(232,178,61,.3);border-radius:8px;padding:5px 10px;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:#F0EDE8;letter-spacing:.04em;}
+
         /* Teams */
         .team-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
         @media(min-width:560px){.team-grid{grid-template-columns:repeat(3,1fr);}}
@@ -302,7 +336,9 @@ export function Home() {
         /* Ambassador */
         .amb-wrap{display:grid;grid-template-columns:1fr;gap:28px;align-items:center;}
         @media(min-width:880px){.amb-wrap{grid-template-columns:1.05fr 1fr;gap:56px;}}
-
+        .amb-proof{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:26px;}
+        .amb-proof>div{display:inline-flex;align-items:center;gap:7px;background:rgba(232,178,61,.07);border:1px solid rgba(232,178,61,.25);border-radius:10px;padding:8px 13px;}
+        .amb-proof .mont{font-size:11px;font-weight:700;color:#E8B23D;}
 
         /* Video modal */
         .vmask{position:fixed;inset:0;z-index:400;background:rgba(2,6,14,.92);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:20px;}
@@ -317,18 +353,19 @@ export function Home() {
       {/* ══ SHARED HEADER ══ */}
       <SiteHeader active="Home" />
 
-      {/* ══ 1 · CINEMATIC HERO — league first ══ */}
+      {/* ══ 1 · CINEMATIC HERO — the dream first ══ */}
       <section style={{ position:"relative", overflow:"hidden", background:"#040A14" }}>
         <img src={BASE + "bcpl-assets/stadium-hero.jpg"} alt="" aria-hidden="true" className="hero-bg"
           onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
+        <HeroVideo/>
         {/* Floodlight glows */}
         <div className="hero-flood" style={{ top:"-20%", left:"5%", width:"40%", height:"60%", background:"radial-gradient(ellipse,rgba(232,178,61,.14) 0%,transparent 65%)" }}/>
         <div className="hero-flood" style={{ top:"-25%", right:"18%", width:"45%", height:"65%", background:"radial-gradient(ellipse,rgba(255,255,255,.08) 0%,transparent 65%)", animationDelay:"3.5s" }}/>
         {/* Readability overlays */}
         <div style={{ position:"absolute", inset:0, background:"linear-gradient(90deg,rgba(4,10,20,.94) 0%,rgba(4,10,20,.72) 45%,rgba(4,10,20,.30) 100%)" }}/>
         <div style={{ position:"absolute", inset:0, background:"linear-gradient(0deg,rgba(4,10,20,.92) 0%,transparent 32%)" }}/>
-        <img src={BASE + "bcpl-assets/ganguly_shoot.jpg"} alt="Sourav Ganguly — BCPL Brand Ambassador" className="hero-ganguly"
-          onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
+        <img src={BASE + "bcpl-assets/hero-athlete-a.webp"} alt="BCPL player in Season 5 kit" className="hero-ganguly"
+          onError={e=>{(e.currentTarget as HTMLImageElement).src = BASE + "bcpl-assets/ganguly_shoot.jpg";}}/>
 
         <div className="W">
           <div className="hero-inner">
@@ -344,15 +381,19 @@ export function Home() {
             </div>
 
             {/* Full league name */}
-            <div className="mont" style={{ fontWeight:800, fontSize:"clamp(11px,1.6vw,14px)", letterSpacing:".26em", color:"#E8B23D", textTransform:"uppercase", marginBottom:14, textShadow:"0 2px 16px rgba(0,0,0,.6)" }}>
+            <div className="mont" style={{ fontWeight:800, fontSize:"clamp(11px,1.6vw,14px)", letterSpacing:".26em", color:"#E8B23D", textTransform:"uppercase", marginBottom:10, textShadow:"0 2px 16px rgba(0,0,0,.6)" }}>
               Bhartiya Corporate Premier League
             </div>
 
-            {/* Headline */}
+            {/* Kicker */}
+            <div className="mont" style={{ fontWeight:800, fontSize:"clamp(12px,1.8vw,15px)", letterSpacing:".2em", color:"rgba(255,255,255,.6)", textTransform:"uppercase", marginBottom:14 }}>
+              {t("From Office to Stadium","ऑफिस से स्टेडियम तक")}
+            </div>
+
+            {/* Headline — the dream, not the fee */}
             <h1 className="mont" style={{ fontWeight:900, fontSize:"clamp(32px,5.8vw,68px)", lineHeight:1.04, textTransform:"uppercase", color:"#fff", letterSpacing:"-.02em", marginBottom:18, textShadow:"0 4px 30px rgba(0,0,0,.6)" }}>
-              {t("India's Biggest","भारत का सबसे बड़ा")}<br/>
-              <span className="shim-gold">{t("Corporate Cricket","कॉर्पोरेट क्रिकेट")}</span><br/>
-              {t("Stage.","मंच।")}
+              {t("Your Cricket","आपका क्रिकेट")}<br/>
+              <span className="shim-gold">{t("Dream","सपना")}</span> {t("Isn't Over.","अभी ज़िंदा है।")}
             </h1>
 
             {/* League scale */}
@@ -362,11 +403,13 @@ export function Home() {
               <span className="hs"><b>10</b> {t("Teams","टीमें")}</span>
               <span className="dot"/>
               <span className="hs"><b>₹6 Cr</b> {t("Prize Pool","प्राइज़ पूल")}</span>
+              <span className="dot"/>
+              <span className="hs"><b>₹20L</b> {t("Max Auction Value","अधिकतम Auction Value")}</span>
             </div>
 
-            <p style={{ fontSize:"clamp(14px,2vw,16px)", color:"rgba(255,255,255,.68)", lineHeight:1.7, marginBottom:12, maxWidth:480 }}>
-              {t("Real scouts, franchise auction, floodlit stadiums — and it starts from your office desk.",
-                 "असली scouts, franchise auction, floodlit stadiums — और शुरुआत आपकी office desk से।")}
+            <p style={{ fontSize:"clamp(14px,2vw,16px)", color:"rgba(255,255,255,.68)", lineHeight:1.7, marginBottom:12, maxWidth:500 }}>
+              {t("India's stage for working professionals to compete, get selected and play big — real scouts, franchise auction, floodlit stadiums.",
+                 "Working professionals के लिए भारत का मंच — compete कीजिए, select होइए, बड़ा खेलिए। असली scouts, franchise auction, floodlit stadiums।")}
             </p>
             <div className="mont" style={{ fontWeight:900, fontSize:"clamp(15px,2.4vw,19px)", marginBottom:28 }}>
               <span className="shim">#OfficeSeStadiumTak</span>
@@ -388,29 +431,25 @@ export function Home() {
         </div>
       </section>
 
-      {/* ══ 2 · CREDIBILITY STRIP ══ */}
-      <section style={{ background:"linear-gradient(90deg,#0A1727,#0D1E36 50%,#0A1727)", borderTop:"1px solid rgba(232,178,61,.25)", borderBottom:"1px solid rgba(232,178,61,.25)" }}>
-        <div className="W" style={{ padding:0 }}>
-          <div className="glance">
-            {GLANCE.map(g=>(
-              <div key={g.en}>
-                <div className="mont" style={{ fontWeight:900, fontSize:"clamp(20px,2.8vw,28px)", color:g.color, lineHeight:1, display:"flex", alignItems:"center", justifyContent:"center", gap:8 }}>
-                  {g.live && <span style={{ width:7, height:7, borderRadius:"50%", background:"#22C55E", boxShadow:"0 0 8px rgba(34,197,94,.7)", display:"inline-block", animation:"blip 2.4s ease infinite" }}/>}
-                  {g.v}
-                </div>
-                <div className="mont" style={{ fontWeight:700, fontSize:10, letterSpacing:".12em", color:"rgba(255,255,255,.45)", textTransform:"uppercase", marginTop:6 }}>{t(g.en,g.hi)}</div>
-              </div>
-            ))}
-          </div>
+      {/* ══ 2 · LEAGUE STRIP — broadcast ticker ══ */}
+      <section className="tick-wrap" aria-label={t("League highlights","League की खास बातें")}>
+        <div className="tick">
+          {[...TICKER, ...TICKER].map((x,i)=>(
+            <span key={i} className="tick-item" aria-hidden={i>=TICKER.length}>
+              {x.live && <span style={{ width:7, height:7, borderRadius:"50%", background:"#22C55E", boxShadow:"0 0 8px rgba(34,197,94,.7)", display:"inline-block", animation:"blip 2.4s ease infinite", flexShrink:0 }}/>}
+              <span className="tx">{t(x.en,x.hi)}</span>
+              <span className="sep" aria-hidden="true"/>
+            </span>
+          ))}
         </div>
       </section>
 
       {/* ══ 3 · THIS IS BCPL — the film ══ */}
       <section className="rv" style={{ position:"relative", overflow:"hidden", background:"#040A14" }}>
-        <img src={BASE + "bcpl-assets/stadium-hero.jpg"} alt="" aria-hidden="true"
-          style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", objectPosition:"center 45%", opacity:.28 }}
+        <img src={BASE + "bcpl-assets/event-stage-trophy.webp"} alt="" aria-hidden="true"
+          style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", objectPosition:"center 40%", opacity:.25 }}
           onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
-        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 75% 90% at 50% 50%,rgba(4,10,20,.5) 0%,rgba(4,10,20,.95) 100%)" }}/>
+        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 75% 90% at 50% 50%,rgba(4,10,20,.55) 0%,rgba(4,10,20,.96) 100%)" }}/>
         <div className="W" style={{ position:"relative", zIndex:1, textAlign:"center", padding:"clamp(64px,9vw,110px) 20px" }}>
           <div className="slbl" style={{ justifyContent:"center" }}>{t("This is BCPL","यही है BCPL")}</div>
           <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(26px,4.8vw,54px)", color:"#fff", textTransform:"uppercase", lineHeight:1.08, marginBottom:16, textShadow:"0 4px 30px rgba(0,0,0,.6)" }}>
@@ -423,7 +462,7 @@ export function Home() {
           </p>
           <button type="button" className="play-btn" aria-label={t("Play the BCPL story video","BCPL की कहानी का video चलाएँ")} onClick={()=>openVideo("story")}>▶</button>
           <div className="mont" style={{ marginTop:18, fontSize:11, fontWeight:800, letterSpacing:".16em", color:"rgba(255,255,255,.5)", textTransform:"uppercase" }}>
-            {t("Watch the BCPL story · 60 sec","BCPL की कहानी देखें · 60 sec")}
+            {t("Watch the BCPL story · 30 sec","BCPL की कहानी देखें · 30 sec")}
           </div>
         </div>
       </section>
@@ -435,10 +474,10 @@ export function Home() {
         <div className="W" style={{ position:"relative", zIndex:1 }}>
           <div className="amb-wrap">
             {/* Photo */}
-            <div style={{ position:"relative", borderRadius:24, overflow:"hidden", border:"1px solid rgba(232,178,61,.35)", boxShadow:"0 30px 80px rgba(0,0,0,.55)" }}>
-              <img src={BASE + "bcpl-assets/ganguly_2.jpg"} alt="Sourav Ganguly — BCPL Brand Ambassador"
+            <div style={{ position:"relative", borderRadius:24, overflow:"hidden", border:"1px solid rgba(232,178,61,.35)", boxShadow:"0 30px 80px rgba(0,0,0,.55)", background:"linear-gradient(180deg,#101c2e,#0A1727)" }}>
+              <img src={BASE + "bcpl-assets/ambassador-b.webp"} alt="Sourav Ganguly — BCPL Brand Ambassador"
                 style={{ width:"100%", height:"auto", display:"block", filter:"contrast(1.05)" }}
-                onError={e=>{(e.currentTarget as HTMLImageElement).src = BASE + "bcpl-assets/ganguly_shoot.jpg";}}/>
+                onError={e=>{(e.currentTarget as HTMLImageElement).src = BASE + "bcpl-assets/ganguly_2.jpg";}}/>
               <div style={{ position:"absolute", inset:0, background:"linear-gradient(0deg,rgba(4,10,20,.55) 0%,transparent 40%)" }}/>
               <div style={{ position:"absolute", left:16, bottom:14, display:"inline-flex", alignItems:"center", gap:8, background:"rgba(5,10,20,.75)", backdropFilter:"blur(8px)", border:"1px solid rgba(232,178,61,.4)", borderRadius:10, padding:"7px 14px" }}>
                 <span style={{ fontSize:12 }}>🏏</span>
@@ -458,10 +497,15 @@ export function Home() {
                   {t("A platform built to discover India's hidden cricketing talent.","भारत की छिपी हुई क्रिकेट प्रतिभा को खोजने के लिए बना platform।")}
                 </p>
               </div>
-              <div className="mont" style={{ fontWeight:800, fontSize:14, color:"#E8B23D", marginBottom:4 }}>— Sourav Ganguly</div>
-              <div style={{ fontSize:13, color:"rgba(255,255,255,.45)", marginBottom:26 }}>
-                {t("Former Captain, Indian Cricket Team · Former President, BCCI","भारतीय क्रिकेट टीम के पूर्व कप्तान · BCCI के पूर्व अध्यक्ष")}
+              <div className="mont" style={{ fontWeight:800, fontSize:14, color:"#E8B23D", marginBottom:16 }}>— Sourav Ganguly</div>
+
+              {/* Proof points */}
+              <div className="amb-proof">
+                <div><span style={{ fontSize:13 }}>🇮🇳</span><span className="mont">{t("Former Captain, Indian Cricket Team","भारतीय टीम के पूर्व कप्तान")}</span></div>
+                <div><span style={{ fontSize:13 }}>🏛</span><span className="mont">{t("Former President, BCCI","BCCI के पूर्व अध्यक्ष")}</span></div>
+                <div><span style={{ fontSize:13 }}>⭐</span><span className="mont">{t("Face of BCPL Season 5","BCPL Season 5 का चेहरा")}</span></div>
               </div>
+
               <button className="btn-ghost" style={{ fontSize:13, borderColor:"rgba(232,178,61,.5)", color:"#E8B23D" }} onClick={()=>openVideo("ganguly")}>
                 ▶ {t("Watch Sourav Ganguly's message","सौरव गांगुली का message देखें")} →
               </button>
@@ -517,8 +561,120 @@ export function Home() {
         </div>
       </section>
 
-      {/* ══ 6 · PRICING — you pay only if you progress ══ */}
-      <section id="fees" className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#060C18" }}>
+      {/* ══ 6 · SEASON 5 FRANCHISES ══ */}
+      <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#060C18" }}>
+        <div className="W">
+          <div className="slbl">{t("Franchises","फ्रैंचाइज़ी")}</div>
+          <div style={{ display:"flex", alignItems:"flex-end", justifyContent:"space-between", gap:16, flexWrap:"wrap", marginBottom:34 }}>
+            <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4vw,44px)", color:"#fff", textTransform:"uppercase" }}>{t("Season 5 Teams","सीज़न 5 की टीमें")}</h2>
+            <Link href="/teams" style={{ fontSize:13, color:"#FF7A29", textDecoration:"none", fontWeight:700 }}>{t("Meet the teams","सभी टीमें देखें")} →</Link>
+          </div>
+          <div className="team-grid">
+            {TEAMS.map(tm=>(
+              <div key={tm.name} className="fr-card" role="link" tabIndex={0} aria-label={"View "+tm.name+" squad"}
+                onClick={()=>navigate("/teams")} onKeyDown={e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); navigate("/teams"); } }}
+                style={{ background:`linear-gradient(170deg,${tm.color}26 0%,#0A1727 55%)`, borderColor:`${tm.color}30` }}
+                onMouseEnter={e=>{ e.currentTarget.style.boxShadow=`0 16px 40px ${tm.color}30`; e.currentTarget.style.borderColor=`${tm.color}70`; }}
+                onMouseLeave={e=>{ e.currentTarget.style.boxShadow=""; e.currentTarget.style.borderColor=`${tm.color}30`; }}>
+                <div style={{ position:"absolute", top:-24, right:-24, width:90, height:90, borderRadius:"50%", background:`${tm.color}12`, pointerEvents:"none" }}/>
+                <TeamLogo slug={tm.slug} name={tm.name} color={tm.color}/>
+                <div className="mont" style={{ fontWeight:800, fontSize:"clamp(12px,1.5vw,14px)", color:"#F1F5F9", lineHeight:1.25, marginTop:12 }}>{tm.name}</div>
+                <div className="mont" style={{ fontSize:10, fontWeight:700, letterSpacing:".1em", color:`${tm.color}CC`, textTransform:"uppercase", marginTop:4 }}>📍 {tm.city}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══ 7 · THE LEAGUE IN NUMBERS ══ */}
+      <section id="numbers" className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#06101E", position:"relative", overflow:"hidden" }}>
+        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 70% 60% at 50% 0%,rgba(232,178,61,.05) 0%,transparent 65%)", pointerEvents:"none" }}/>
+        <div className="W" style={{ position:"relative", zIndex:1 }}>
+          <div className="slbl" style={{ justifyContent:"center" }}>{t("BCPL so far","अब तक का BCPL")}</div>
+          <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4vw,44px)", color:"#fff", textTransform:"uppercase", textAlign:"center", marginBottom:8 }}>{t("The league in numbers","आँकड़ों में league")}</h2>
+          <p style={{ fontSize:14, color:"rgba(255,255,255,.4)", textAlign:"center", marginBottom:36 }}>{t("Four seasons of proof — not promises.","चार seasons का सबूत — सिर्फ वादे नहीं।")}</p>
+          <div className="num-grid">
+            {NUMBERS.map(n=>(
+              <div key={n.en} className="num-cell">
+                <div className="mont" style={{ fontWeight:900, fontSize:"clamp(26px,4vw,42px)", color:"#E8B23D", lineHeight:1, whiteSpace:"nowrap" }}>
+                  <CountUp end={n.end} prefix={n.prefix} suffix={n.suffix} inFmt={n.inFmt}/>
+                </div>
+                <div className="mont" style={{ fontWeight:700, fontSize:"clamp(10px,1.4vw,12px)", letterSpacing:".1em", color:"rgba(255,255,255,.5)", textTransform:"uppercase", marginTop:10 }}>{t(n.en,n.hi)}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══ 8 · REAL PLAYERS. REAL AUCTIONS. REAL STADIUMS. ══ */}
+      <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#060C18", position:"relative", overflow:"hidden" }}>
+        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 70% 60% at 50% 100%,rgba(232,178,61,.04) 0%,transparent 65%)", pointerEvents:"none" }}/>
+        <div className="W" style={{ position:"relative", zIndex:1 }}>
+          <div className="slbl">{t("Season 4 · On the ground","Season 4 · ज़मीन पर")}</div>
+          <div style={{ display:"flex", alignItems:"flex-end", justifyContent:"space-between", gap:16, flexWrap:"wrap", marginBottom:10 }}>
+            <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4.2vw,46px)", color:"#fff", textTransform:"uppercase", lineHeight:1.1 }}>
+              {t("Real players.","असली players।")} <span className="shim-gold">{t("Real auctions.","असली auctions।")}</span> {t("Real stadiums.","असली stadiums।")}
+            </h2>
+          </div>
+          <p style={{ fontSize:15, color:"rgba(255,255,255,.45)", marginBottom:30, maxWidth:560 }}>
+            {t("Not mockups — photographs from BCPL's own launches, auctions and match days.",
+               "Mockup नहीं — BCPL के अपने launch events, auction और match days की असली तस्वीरें।")}
+          </p>
+          <div className="proof-grid">
+            {PROOF.map(p=>(
+              <div key={p.img} className={"proof-tile" + (p.wide ? " wide" : "")}>
+                <img src={BASE + "bcpl-assets/" + p.img} alt={t(p.en,p.hi)} loading="lazy"
+                  onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
+                <div className="proof-cap"><span>{t(p.en,p.hi)}</span></div>
+              </div>
+            ))}
+          </div>
+          <div style={{ marginTop:22, display:"flex", justifyContent:"center" }}>
+            <Link href="/photos" className="btn-ghost" style={{ fontSize:13 }}>{t("See the full gallery","पूरी gallery देखें")} →</Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ 9 · REAL PLAYER STORIES — renders only with verified players ══ */}
+      {STORIES.length > 0 && (
+        <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#06101E" }}>
+          <div className="W">
+            <div className="slbl">{t("Real Stories","असली कहानियाँ")}</div>
+            <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4.2vw,46px)", color:"#fff", textTransform:"uppercase", lineHeight:1.1, marginBottom:8 }}>
+              {t("They were working professionals.","वे working professionals थे।")}<br/>
+              <span className="shim-gold">{t("Then BCPL called.","फिर BCPL की call आई।")}</span>
+            </h2>
+            <p style={{ fontSize:15, color:"rgba(255,255,255,.45)", marginBottom:34, maxWidth:560 }}>
+              {t("Real players from past seasons — proof that the fair-chance promise is real.","पिछले seasons के असली players — इस बात का सबूत कि fair chance का वादा सच है।")}
+            </p>
+            <div className="story-grid">
+              {STORIES.map(s=>(
+                <div key={s.name} className="card" style={{ overflow:"hidden" }}>
+                  <div style={{ position:"relative", aspectRatio:"4/3", background:"#0C1C30" }}>
+                    <img src={s.photo} alt={s.name} style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover" }}
+                      onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
+                    <div style={{ position:"absolute", inset:0, background:"linear-gradient(0deg,rgba(4,10,20,.75) 0%,transparent 50%)" }}/>
+                    <div style={{ position:"absolute", left:14, bottom:12 }}>
+                      <div className="mont" style={{ fontWeight:900, fontSize:17, color:"#fff" }}>{s.name}</div>
+                      <div className="mont" style={{ fontSize:11, fontWeight:700, color:"#E8B23D" }}>{s.profession} → {s.season} Player</div>
+                    </div>
+                  </div>
+                  <div style={{ padding:"14px 16px 16px" }}>
+                    <div className="mont" style={{ fontSize:11, fontWeight:800, letterSpacing:".08em", color:"rgba(255,255,255,.4)", textTransform:"uppercase", marginBottom:8 }}>📍 {s.city} → {s.team}</div>
+                    <p style={{ fontSize:13, color:"rgba(255,255,255,.6)", lineHeight:1.65, fontStyle:"italic" }}>"{t(s.quoteEn, s.quoteHi)}"</p>
+                    {s.videoUrl && (
+                      <button className="btn-ghost" style={{ fontSize:11, padding:"9px 16px", marginTop:12 }} onClick={()=>showVideo(s.videoUrl!)}>▶ {t("Watch the story","कहानी देखें")}</button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ══ 10 · PRICING — you pay only if you progress ══ */}
+      <section id="fees" className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#06101E" }}>
         <div className="W">
           <div className="slbl">{t("Pricing","फीस")}</div>
           <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4.2vw,46px)", color:"#fff", textTransform:"uppercase", lineHeight:1.1, marginBottom:6 }}>
@@ -624,90 +780,7 @@ export function Home() {
         </div>
       </section>
 
-      {/* ══ 7 · REAL PLAYER STORIES — renders only with verified players ══ */}
-      {STORIES.length > 0 && (
-        <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#06101E" }}>
-          <div className="W">
-            <div className="slbl">{t("Real Stories","असली कहानियाँ")}</div>
-            <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4.2vw,46px)", color:"#fff", textTransform:"uppercase", lineHeight:1.1, marginBottom:8 }}>
-              {t("They were working professionals.","वे working professionals थे।")}<br/>
-              <span className="shim-gold">{t("Then BCPL called.","फिर BCPL की call आई।")}</span>
-            </h2>
-            <p style={{ fontSize:15, color:"rgba(255,255,255,.45)", marginBottom:34, maxWidth:560 }}>
-              {t("Real players from past seasons — proof that the fair-chance promise is real.","पिछले seasons के असली players — इस बात का सबूत कि fair chance का वादा सच है।")}
-            </p>
-            <div className="story-grid">
-              {STORIES.map(s=>(
-                <div key={s.name} className="card" style={{ overflow:"hidden" }}>
-                  <div style={{ position:"relative", aspectRatio:"4/3", background:"#0C1C30" }}>
-                    <img src={s.photo} alt={s.name} style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover" }}
-                      onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
-                    <div style={{ position:"absolute", inset:0, background:"linear-gradient(0deg,rgba(4,10,20,.75) 0%,transparent 50%)" }}/>
-                    <div style={{ position:"absolute", left:14, bottom:12 }}>
-                      <div className="mont" style={{ fontWeight:900, fontSize:17, color:"#fff" }}>{s.name}</div>
-                      <div className="mont" style={{ fontSize:11, fontWeight:700, color:"#E8B23D" }}>{s.profession} → {s.season} Player</div>
-                    </div>
-                  </div>
-                  <div style={{ padding:"14px 16px 16px" }}>
-                    <div className="mont" style={{ fontSize:11, fontWeight:800, letterSpacing:".08em", color:"rgba(255,255,255,.4)", textTransform:"uppercase", marginBottom:8 }}>📍 {s.city} → {s.team}</div>
-                    <p style={{ fontSize:13, color:"rgba(255,255,255,.6)", lineHeight:1.65, fontStyle:"italic" }}>"{t(s.quoteEn, s.quoteHi)}"</p>
-                    {s.videoUrl && (
-                      <button className="btn-ghost" style={{ fontSize:11, padding:"9px 16px", marginTop:12 }} onClick={()=>showVideo(s.videoUrl!)}>▶ {t("Watch the story","कहानी देखें")}</button>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ══ 8 · THE LEAGUE IN NUMBERS ══ */}
-      <section id="numbers" className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#060C18", position:"relative", overflow:"hidden" }}>
-        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 70% 60% at 50% 0%,rgba(232,178,61,.05) 0%,transparent 65%)", pointerEvents:"none" }}/>
-        <div className="W" style={{ position:"relative", zIndex:1 }}>
-          <div className="slbl" style={{ justifyContent:"center" }}>{t("BCPL so far","अब तक का BCPL")}</div>
-          <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4vw,44px)", color:"#fff", textTransform:"uppercase", textAlign:"center", marginBottom:8 }}>{t("The league in numbers","आँकड़ों में league")}</h2>
-          <p style={{ fontSize:14, color:"rgba(255,255,255,.4)", textAlign:"center", marginBottom:36 }}>{t("Four seasons of proof — not promises.","चार seasons का सबूत — सिर्फ वादे नहीं।")}</p>
-          <div className="num-grid">
-            {NUMBERS.map(n=>(
-              <div key={n.en} className="num-cell">
-                <div className="mont" style={{ fontWeight:900, fontSize:"clamp(26px,4vw,42px)", color:"#E8B23D", lineHeight:1, whiteSpace:"nowrap" }}>
-                  <CountUp end={n.end} prefix={n.prefix} suffix={n.suffix} inFmt={n.inFmt}/>
-                </div>
-                <div className="mont" style={{ fontWeight:700, fontSize:"clamp(10px,1.4vw,12px)", letterSpacing:".1em", color:"rgba(255,255,255,.5)", textTransform:"uppercase", marginTop:10 }}>{t(n.en,n.hi)}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ══ 9 · SEASON 5 FRANCHISES ══ */}
-      <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#06101E" }}>
-        <div className="W">
-          <div className="slbl">{t("Franchises","फ्रैंचाइज़ी")}</div>
-          <div style={{ display:"flex", alignItems:"flex-end", justifyContent:"space-between", gap:16, flexWrap:"wrap", marginBottom:34 }}>
-            <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4vw,44px)", color:"#fff", textTransform:"uppercase" }}>{t("Season 5 Teams","सीज़न 5 की टीमें")}</h2>
-            <Link href="/teams" style={{ fontSize:13, color:"#FF7A29", textDecoration:"none", fontWeight:700 }}>{t("Meet the teams","सभी टीमें देखें")} →</Link>
-          </div>
-          <div className="team-grid">
-            {TEAMS.map(tm=>(
-              <div key={tm.name} className="fr-card" role="link" tabIndex={0} aria-label={"View "+tm.name+" squad"}
-                onClick={()=>navigate("/teams")} onKeyDown={e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); navigate("/teams"); } }}
-                style={{ background:`linear-gradient(170deg,${tm.color}26 0%,#0A1727 55%)`, borderColor:`${tm.color}30` }}
-                onMouseEnter={e=>{ e.currentTarget.style.boxShadow=`0 16px 40px ${tm.color}30`; e.currentTarget.style.borderColor=`${tm.color}70`; }}
-                onMouseLeave={e=>{ e.currentTarget.style.boxShadow=""; e.currentTarget.style.borderColor=`${tm.color}30`; }}>
-                <div style={{ position:"absolute", top:-24, right:-24, width:90, height:90, borderRadius:"50%", background:`${tm.color}12`, pointerEvents:"none" }}/>
-                <TeamLogo slug={tm.slug} name={tm.name} color={tm.color}/>
-                <div className="mont" style={{ fontWeight:800, fontSize:"clamp(12px,1.5vw,14px)", color:"#F1F5F9", lineHeight:1.25, marginTop:12 }}>{tm.name}</div>
-                <div className="mont" style={{ fontSize:10, fontWeight:700, letterSpacing:".1em", color:`${tm.color}CC`, textTransform:"uppercase", marginTop:4 }}>📍 {tm.city}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ══ 10 · MATCH CENTER & LEADERBOARD — always on ══ */}
+      {/* ══ 11 · MATCH CENTER & LEADERBOARD — always on ══ */}
       <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#060C18", position:"relative", overflow:"hidden" }}>
         <div style={{ position:"absolute", inset:0, backgroundImage:"linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px)", backgroundSize:"48px 48px", pointerEvents:"none" }}/>
         <div className="W" style={{ position:"relative", zIndex:1 }}>
@@ -831,7 +904,7 @@ export function Home() {
         </div>
       </section>
 
-      {/* ══ 11 · FAQ ══ */}
+      {/* ══ 12 · FAQ ══ */}
       <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#06101E" }}>
         <div className="W">
           <div className="slbl">FAQ</div>
@@ -862,7 +935,7 @@ export function Home() {
         </div>
       </section>
 
-      {/* ══ 12 · FINAL CTA ══ */}
+      {/* ══ 13 · FINAL CTA ══ */}
       <section style={{ position:"relative", overflow:"hidden", background:"#040A14" }}>
         <img src={BASE + "bcpl-assets/stadium-hero.jpg"} alt="" aria-hidden="true"
           style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", objectPosition:"center 60%", opacity:.3 }}
@@ -906,18 +979,41 @@ export function Home() {
         </div>
       )}
 
-      {/* ══ VIDEO MODAL ══ */}
+      {/* ══ VIDEO MODAL — YouTube embed ya local film ══ */}
       {video && (
         <div ref={vMaskRef} className="vmask" role="dialog" aria-modal="true" aria-label="BCPL video" onClick={()=>setVideo(null)}>
           <div className="vbox" onClick={e=>e.stopPropagation()}>
-            <iframe src={toEmbed(video) ?? undefined} title="BCPL video" allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen
-              style={{ position:"absolute", inset:0, width:"100%", height:"100%", border:"none" }}/>
+            {video === STORY_FILM ? (
+              <video src={video} controls autoPlay playsInline
+                style={{ position:"absolute", inset:0, width:"100%", height:"100%", background:"#000" }}/>
+            ) : (
+              <iframe src={toEmbed(video) ?? undefined} title="BCPL video" allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen
+                style={{ position:"absolute", inset:0, width:"100%", height:"100%", border:"none" }}/>
+            )}
           </div>
           <button type="button" aria-label={t("Close video","Video बंद करें")} onClick={()=>setVideo(null)}
             style={{ position:"fixed", top:18, right:18, width:42, height:42, borderRadius:"50%", background:"rgba(255,255,255,.1)", border:"1px solid rgba(255,255,255,.25)", color:"#fff", fontSize:18, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", backdropFilter:"blur(6px)" }}>✕</button>
         </div>
       )}
     </div>
+  );
+}
+
+/* ── Cinematic hero background video — desktop 16:9 / mobile 9:16.
+     Respects prefers-reduced-motion and data-saver; falls back to the still image. ── */
+function HeroVideo() {
+  const [src, setSrc] = useState<string|null>(null);
+  useEffect(()=>{
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const c:any = (navigator as any).connection;
+    if (c && (c.saveData || /2g/.test(c.effectiveType || ""))) return;
+    setSrc(BASE + (window.matchMedia("(max-width: 767px)").matches ? "bcpl-assets/hero-bg-mobile.mp4" : "bcpl-assets/hero-bg.mp4"));
+  },[]);
+  if (!src) return null;
+  return (
+    <video className="hero-vid" src={src} poster={BASE + "bcpl-assets/hero-poster.jpg"}
+      autoPlay muted loop playsInline aria-hidden="true"
+      onError={e=>{(e.currentTarget as HTMLVideoElement).style.display="none";}}/>
   );
 }
 
