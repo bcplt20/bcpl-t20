@@ -48,7 +48,7 @@ export function EligibilityCriteria() {
     @media(min-width:540px){.elig-2col{grid-template-columns:1fr 1fr;}}
     .footer-grid{grid-template-columns:1fr!important;}
     @media(min-width:640px){.footer-grid{grid-template-columns:1fr 1fr!important;}}
-    .float-reg-btn{position:fixed;bottom:28px;right:28px;z-index:9999;background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:12px;color:#fff;font-family:Montserrat,sans-serif;font-weight:900;font-size:13px;letter-spacing:.06em;cursor:pointer;padding:14px 22px;text-transform:uppercase;text-decoration:none;display:flex;align-items:center;gap:8px;box-shadow:0 8px 32px rgba(255,122,41,0.45);clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%);transition:opacity .2s,transform .15s;}
+    .float-reg-btn{position:fixed;bottom:28px;right:28px;z-index:900;background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:12px;color:#fff;font-family:Montserrat,sans-serif;font-weight:900;font-size:13px;letter-spacing:.06em;cursor:pointer;padding:14px 22px;text-transform:uppercase;text-decoration:none;display:flex;align-items:center;gap:8px;box-shadow:0 8px 32px rgba(255,122,41,0.45);clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%);transition:opacity .2s,transform .15s;}
     .float-reg-btn:hover{opacity:.9;transform:translateY(-2px);}
     .float-reg-pulse{animation:floatPulse 2.5s ease-in-out infinite;}
     @media(max-width:1023px){.float-reg-btn{display:none!important;}}
