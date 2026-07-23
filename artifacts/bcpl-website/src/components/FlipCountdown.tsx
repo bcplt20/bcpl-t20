@@ -19,6 +19,7 @@ function Digit({ value, em }: { value: number; em: number }) {
   const [anim, setAnim] = useState(true);
   const prev = useRef(value);
   const snapT = useRef<number | undefined>(undefined);
+  const rafs = useRef<number[]>([]);
 
   useEffect(() => {
     if (value === prev.current) return;
@@ -29,14 +30,22 @@ function Digit({ value, em }: { value: number; em: number }) {
       setAnim(true); setPos(10);
       snapT.current = window.setTimeout(() => {
         setAnim(false); setPos(0);
-        requestAnimationFrame(() => requestAnimationFrame(() => setAnim(true)));
+        const r1 = requestAnimationFrame(() => {
+          const r2 = requestAnimationFrame(() => setAnim(true));
+          rafs.current.push(r2);
+        });
+        rafs.current.push(r1);
       }, 620);
       return;
     }
     setAnim(true); setPos(value);
   }, [value]);
 
-  useEffect(() => () => { if (snapT.current) clearTimeout(snapT.current); }, []);
+  /* cancel any pending timeout + rAFs so we never setState after unmount */
+  useEffect(() => () => {
+    if (snapT.current) clearTimeout(snapT.current);
+    rafs.current.forEach(cancelAnimationFrame);
+  }, []);
 
   return (
     <span style={{ display: "inline-block", overflow: "hidden", height: em + "em", lineHeight: em + "em" }} aria-hidden="true">
