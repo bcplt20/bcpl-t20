@@ -175,3 +175,127 @@ export async function realValidityCheck(args: {
     await deleteGeminiFile(file.name);
   }
 }
+
+/* ───────────────────── scoring passes (§§25–29) ───────────────────── */
+
+type RubricShape = { categories: Array<{ key: string; label: string; max: number }> };
+
+/** Loose transport schema — business validation happens in validateScoreResult. */
+export const scoringResponseSchema = z.object({
+  candidateId:     z.string().optional(),
+  role:            z.string().optional(),
+  videoValid:      z.boolean(),
+  scores:          z.record(z.string(), z.number()),
+  totalScore:      z.number(),
+  confidence:      z.number(),
+  strongestArea:   z.string().optional(),
+  improvementArea: z.string().optional(),
+});
+export type ScoringResponse = z.infer<typeof scoringResponseSchema>;
+
+export type ScorePassResult = {
+  videoValid: boolean;
+  scores: Record<string, number>;
+  totalScore: number;
+  confidence: number;
+  strongestArea: string;
+  improvementArea: string;
+};
+
+const normKey = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, "");
+
+/** Backend MUST validate every AI score (§25): per-category bounds, exact
+ *  sum, total 0-100, confidence 0-1. Throws on any violation → caller retries. */
+export function validateScoreResult(rubric: RubricShape, r: ScoringResponse): ScorePassResult {
+  const entries = Object.entries(r.scores);
+  const scores: Record<string, number> = {};
+  let sum = 0;
+  for (const c of rubric.categories) {
+    const found = entries.find(([k]) => normKey(k) === normKey(c.key));
+    if (!found) throw new Error("AI response missing category score: " + c.key);
+    const v = Math.round(found[1]);
+    if (v < 0 || v > c.max) throw new Error("AI score out of range for " + c.key + ": " + v + " (max " + c.max + ")");
+    scores[c.key] = v;
+    sum += v;
+  }
+  const total = Math.round(r.totalScore);
+  if (sum !== total) throw new Error("AI category sum " + sum + " != totalScore " + total);
+  if (total < 0 || total > 100) throw new Error("AI totalScore out of range: " + total);
+  if (r.confidence < 0 || r.confidence > 1) throw new Error("AI confidence out of range: " + r.confidence);
+
+  const ratio = (key: string) => {
+    const max = rubric.categories.find((c) => c.key === key)!.max;
+    return max > 0 ? scores[key] / max : 0;
+  };
+  const keys = rubric.categories.map((c) => c.key);
+  const pick = (claim: string | undefined, fallback: string) => {
+    if (claim) { const m = keys.find((k) => normKey(k) === normKey(claim)); if (m) return m; }
+    return fallback;
+  };
+  const byBest  = [...keys].sort((a, b) => ratio(b) - ratio(a));
+  const byWorst = [...keys].sort((a, b) => ratio(a) - ratio(b));
+  return {
+    videoValid: r.videoValid,
+    scores,
+    totalScore: total,
+    confidence: r.confidence,
+    strongestArea:   pick(r.strongestArea, byBest[0]),
+    improvementArea: pick(r.improvementArea, byWorst[0]),
+  };
+}
+
+/** Deterministic mock scoring pass: distributes totalScore across the rubric
+ *  proportionally to category maxima, with a seed/pass-dependent 1-point
+ *  jitter so passes differ slightly but reproducibly. */
+export function mockScorePass(rubric: RubricShape, seed: string, passNumber: number, totalScore: number, confidence: number): ScorePassResult {
+  const cats = rubric.categories;
+  const scores: Record<string, number> = {};
+  let acc = 0;
+  for (const c of cats) {
+    scores[c.key] = Math.min(Math.floor((totalScore * c.max) / 100), c.max);
+    acc += scores[c.key];
+  }
+  let rem = totalScore - acc;
+  let i = seededInt(seed + ":rem" + passNumber, cats.length);
+  let guard = 0;
+  while (rem > 0 && guard < 500) {
+    const c = cats[i % cats.length];
+    if (scores[c.key] < c.max) { scores[c.key] += 1; rem -= 1; }
+    i += 1; guard += 1;
+  }
+  const from = cats[seededInt(seed + ":jf" + passNumber, cats.length)];
+  const to   = cats[seededInt(seed + ":jt" + passNumber, cats.length)];
+  if (from.key !== to.key && scores[from.key] > 0 && scores[to.key] < to.max) {
+    scores[from.key] -= 1;
+    scores[to.key] += 1;
+  }
+  return validateScoreResult(rubric, {
+    videoValid: true,
+    scores,
+    totalScore,
+    confidence,
+  });
+}
+
+/** Median with even-count support: round(mean of middle two). */
+export function medianScore(nums: number[]): number {
+  const s = [...nums].sort((a, b) => a - b);
+  const n = s.length;
+  if (n === 0) return 0;
+  return n % 2 === 1 ? s[(n - 1) / 2] : Math.round((s[n / 2 - 1] + s[n / 2]) / 2);
+}
+
+/** Real-mode scoring pass against an already-uploaded Gemini file.
+ *  Retries once on malformed/invalid JSON (§25). */
+export async function realScorePass(args: {
+  model: string; prompt: string; fileUri: string; mimeType: string; rubric: RubricShape;
+}): Promise<{ result: ScorePassResult; rawText: string }> {
+  let raw = await generateJson(args.model, args.prompt, args.fileUri, args.mimeType);
+  try {
+    return { result: validateScoreResult(args.rubric, parseStructured(scoringResponseSchema, raw)), rawText: raw };
+  } catch (firstErr) {
+    logger.warn({ err: firstErr }, "gemini scoring JSON invalid — retrying once");
+    raw = await generateJson(args.model, args.prompt + "\n\nYour previous answer was invalid: " + String(firstErr).slice(0, 200) + "\nReturn ONLY the corrected raw JSON object.", args.fileUri, args.mimeType);
+    return { result: validateScoreResult(args.rubric, parseStructured(scoringResponseSchema, raw)), rawText: raw };
+  }
+}

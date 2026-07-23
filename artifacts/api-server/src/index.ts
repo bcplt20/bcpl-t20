@@ -2,6 +2,7 @@ import app from "./app";
 import { logger } from "./lib/logger";
 import { runVideoValidations } from "./lib/videoValidation";
 import { runAiValidityChecks } from "./lib/aiPipeline";
+import { runAiScoringPasses } from "./lib/aiScoring";
 import { sendVideoReminders } from "./routes/video";
 import { ensureRegNumbers } from "./routes/register";
 import { ensurePhase1Scores } from "./routes/results";
@@ -89,6 +90,12 @@ async function phase1PipelineTick(label: string): Promise<void> {
     if (a.claimed > 0) logger.info(a, label + ": ai validity");
   } catch (e) {
     logger.error({ err: e }, label + ": ai validity failed");
+  }
+  try {
+    const s = await runAiScoringPasses(10);
+    if (s.claimed > 0) logger.info(s, label + ": ai scoring");
+  } catch (e) {
+    logger.error({ err: e }, label + ": ai scoring failed");
   }
 }
 setTimeout(() => { void phase1PipelineTick("startup sweep"); }, 20_000);

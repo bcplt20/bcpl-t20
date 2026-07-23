@@ -27,6 +27,7 @@ import { requireAdmin } from "../middlewares/adminAuth";
 import { getUploadPresignedUrl, getDownloadPresignedUrl, getS3Url, deleteObject } from "../lib/s3";
 import { runVideoValidations } from "../lib/videoValidation";
 import { runAiValidityChecks } from "../lib/aiPipeline";
+import { runAiScoringPasses } from "../lib/aiScoring";
 
 const router = Router();
 router.use(requireAdmin);
@@ -41,6 +42,12 @@ router.post("/phase1/run-validation", async (_req: Request, res: Response) => {
 // Manual AI validity sweep (pass zero — mock mode without GEMINI_API_KEY).
 router.post("/phase1/run-ai", async (_req: Request, res: Response) => {
   const result = await runAiValidityChecks(25);
+  res.json({ success: true, ...result });
+});
+
+// Manual AI scoring sweep (passes 1/2 + variance pass 3, §§24–30).
+router.post("/phase1/run-scoring", async (_req: Request, res: Response) => {
+  const result = await runAiScoringPasses(10);
   res.json({ success: true, ...result });
 });
 

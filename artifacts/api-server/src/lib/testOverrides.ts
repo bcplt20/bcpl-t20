@@ -22,6 +22,7 @@ export const PHASE1_TEST_OVERRIDES_KEY = "phase1_test_overrides";
 const overrideEntry = z.object({
   validity:   validitySchema.partial().optional(),
   score:      z.number().int().min(0).max(100).optional(),
+  confidence: z.number().min(0).max(1).optional(),
   forcePass3: z.boolean().optional(),
 }).passthrough();
 export type Phase1TestOverride = z.infer<typeof overrideEntry>;
