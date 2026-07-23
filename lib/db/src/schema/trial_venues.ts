@@ -9,6 +9,8 @@ export const trialVenuesTable = pgTable("trial_venues", {
   reportingTime:  varchar("reporting_time", { length: 50 }).notNull(),   // e.g. "7:30 AM"
   slots:          integer("slots").default(100).notNull(),
   notes:          text("notes"),
+  address:        text("address"),
+  mapsUrl:        text("maps_url"),
   status:         varchar("status", { length: 30 }).default("upcoming").notNull(), // upcoming | active | completed
   announcedAt:    timestamp("announced_at", { withTimezone: true }),
   createdAt:      timestamp("created_at",   { withTimezone: true }).defaultNow().notNull(),

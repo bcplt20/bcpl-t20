@@ -6,6 +6,7 @@ import {
   adminDeleteTrialVenue,
   adminAnnounceTrialVenue,
 } from "../../lib/api";
+import { SlotsTab, AllocationsTab, CheckinTab, AssessTab } from "./TrialsOps";
 
 type Venue = {
   id: string;
@@ -59,6 +60,7 @@ export default function TrialCitiesView() {
   const [saving, setSaving]       = useState(false);
   const [confirmDel, setConfirmDel] = useState<string | null>(null);
   const [announceResult, setAnnounceResult] = useState<{ id: string; sent: number; total: number } | null>(null);
+  const [ttab, setTtab] = useState<"cities" | "slots" | "alloc" | "checkin" | "assess">("cities");
 
   const load = useCallback(async () => {
     setLoading(true); setErr("");
@@ -149,6 +151,18 @@ export default function TrialCitiesView() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+
+      {/* Stage 4 — trial ops tabs */}
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", borderBottom: "1px solid #1E293B", paddingBottom: 12 }}>
+        {([["cities", "\ud83c\udfd9\ufe0f Cities & Venues"], ["slots", "\ud83d\uddd3\ufe0f Slots & Allocation"], ["alloc", "\ud83d\udc65 Allocations"], ["checkin", "\ud83c\udfab Check-In"], ["assess", "\ud83d\udccb Assessments"]] as const).map(([k, label]) => (
+          <button key={k} onClick={() => setTtab(k)} style={{ padding: "8px 16px", borderRadius: 9, border: "1px solid " + (ttab === k ? "#F59E0B" : "#1E293B"), background: ttab === k ? "rgba(245,158,11,0.12)" : "transparent", color: ttab === k ? "#FBBF24" : "#94A3B8", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>{label}</button>
+        ))}
+      </div>
+      {ttab === "slots" && <SlotsTab />}
+      {ttab === "alloc" && <AllocationsTab />}
+      {ttab === "checkin" && <CheckinTab />}
+      {ttab === "assess" && <AssessTab />}
+      {ttab === "cities" && (<>
 
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 10 }}>
@@ -325,6 +339,7 @@ export default function TrialCitiesView() {
           </div>
         </div>
       )}
+      </>)}
     </div>
   );
 }

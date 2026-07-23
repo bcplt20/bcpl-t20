@@ -24,6 +24,7 @@
     "pg-boss": "^12.26.2",
     "pino": "^9.14.0",
     "pino-http": "^10.5.0",
+    "qrcode": "^1.5.4",
     "zod": "catalog:"
   },
   "devDependencies": {
@@ -32,6 +33,7 @@
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "catalog:",
+    "@types/qrcode": "^1.5.6",
     "@types/supertest": "^7.2.1",
     "esbuild": "0.27.3",
     "esbuild-plugin-pino": "^2.3.3",

@@ -12,6 +12,7 @@ import scoringRouter  from "./scoring";
 import pointsRouter   from "./points";
 import settingsRouter from "./settings";
 import adminRouter    from "./admin";
+import { adminTrialsRouter, userTrialsRouter } from "./trials";
 import resultsRouter  from "./results";
 import marketingRouter from "./marketing";
 import seoRouter      from "./seo";
@@ -27,6 +28,7 @@ router.use("/payment",       paymentRouter);
 router.use("/video",         videoRouter);
 router.use("/kyc",           kycRouter);
 router.use("/user",          userRouter);
+router.use("/user",          userTrialsRouter); // trial pass (Stage 4)
 // Phase 1 result (100-point score, city/role rank) — BCPL Player Journey
 router.use("/results",       resultsRouter);
 // League
@@ -36,6 +38,7 @@ router.use("/points-table",  pointsRouter);
 router.use("/teams",         teamsRouter);
 router.use("/settings",      settingsRouter);
 // Admin panel
+router.use("/admin/trials",  adminTrialsRouter); // Stage 4 physical trials
 router.use("/admin",         adminRouter);
 // Marketing / referrals (public click+attribute, admin analytics & campaigns)
 router.use("/marketing",     marketingRouter);

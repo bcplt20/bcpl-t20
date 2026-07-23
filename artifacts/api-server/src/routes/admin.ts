@@ -24,6 +24,10 @@ import {
   phase1EvaluationsTable,
   aiEvaluationPassesTable,
   rankingSnapshotsTable,
+  trialSlotsTable,
+  trialAllocationsTable,
+  trialCheckinsTable,
+  physicalAssessmentsTable,
 } from "@workspace/db/schema";
 import { eq, desc, count, and, inArray, lt, gte, isNotNull, sql } from "drizzle-orm";
 import { sendVideoReminders } from "./video";
@@ -897,7 +901,7 @@ router.get("/ops", async (_req, res) => {
     const H = 3600 * 1000;
     const AI_WORKING = ["validating", "ai_validating", "scoring"];
 
-    const [matrix, evalRows, evalAvgRows, resultRows, kycRows, videoRows, stuckAi, stalePendingP1, failedP1Recent, notifFailedRecent] = await Promise.all([
+    const [matrix, evalRows, evalAvgRows, resultRows, kycRows, videoRows, stuckAi, stalePendingP1, failedP1Recent, notifFailedRecent, trialAllocN, trialCheckinN, trialAssessN] = await Promise.all([
       db.select({
         city: registrationsTable.trialCity,
         role: registrationsTable.role,
@@ -953,6 +957,13 @@ router.get("/ops", async (_req, res) => {
           eq(notificationLogsTable.status, "failed"),
           gte(notificationLogsTable.createdAt, new Date(nowMs - 48 * H)),
         )),
+
+      db.select({ n: count() }).from(trialAllocationsTable)
+        .where(eq(trialAllocationsTable.status, "allocated")),
+
+      db.select({ n: count() }).from(trialCheckinsTable),
+
+      db.select({ n: count() }).from(physicalAssessmentsTable),
     ]);
 
     const evalByStatus: Record<string, number> = {};
@@ -996,6 +1007,11 @@ router.get("/ops", async (_req, res) => {
       results,
       kyc,
       videos,
+      trials: {
+        allocated: Number(trialAllocN[0]?.n ?? 0),
+        checkedIn: Number(trialCheckinN[0]?.n ?? 0),
+        assessed: Number(trialAssessN[0]?.n ?? 0),
+      },
       alerts,
     });
   } catch (err: any) {
@@ -1110,7 +1126,23 @@ router.get("/players/:key/journey", async (req, res) => {
     else if (paid2) steps.push(step("essentials", "Player Essentials", "current", "Not submitted"));
     else steps.push(step("essentials", "Player Essentials", "locked"));
 
-    if (p2Complete) steps.push(step("physical_trial", "Physical Trial", "current", "Awaiting allocation"));
+    if (p2Complete) {
+      const [tAlloc] = await db.select().from(trialAllocationsTable)
+        .where(and(eq(trialAllocationsTable.registrationId, reg.id), eq(trialAllocationsTable.status, "allocated"))).limit(1);
+      const [tChk] = await db.select().from(trialCheckinsTable)
+        .where(eq(trialCheckinsTable.registrationId, reg.id)).limit(1);
+      const [tAssess] = await db.select().from(physicalAssessmentsTable)
+        .where(eq(physicalAssessmentsTable.registrationId, reg.id)).limit(1);
+      const [tSlot] = tAlloc ? await db.select().from(trialSlotsTable).where(eq(trialSlotsTable.id, tAlloc.slotId)).limit(1) : [undefined];
+      if (tAssess)
+        steps.push(step("physical_trial", "Physical Trial", "done", "Assessed " + String(tAssess.finalScore) + "/10 · " + String(tAssess.result).replace(/_/g, " ").toLowerCase(), tAssess.updatedAt));
+      else if (tChk)
+        steps.push(step("physical_trial", "Physical Trial", "current", "Checked in" + (tSlot ? " · " + tSlot.batchName : ""), tChk.checkedInAt));
+      else if (tAlloc)
+        steps.push(step("physical_trial", "Physical Trial", "current", "Scheduled · " + (tSlot ? tSlot.slotDate + " · " + tSlot.batchName : tAlloc.city)));
+      else
+        steps.push(step("physical_trial", "Physical Trial", "current", "Awaiting allocation"));
+    }
     else steps.push(step("physical_trial", "Physical Trial", "locked"));
 
     if (reg.phase2Status === "selected") {

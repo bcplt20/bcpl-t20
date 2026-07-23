@@ -109,6 +109,8 @@ export function OpsTab({ onNavigate, refreshTick = 0 }: TabProps) {
     { label: "P2 Payment Pending", value: p2Pending, color: "#F59E0B", tab: "finance" },
     { label: "Phase 2 Paid", value: p2Paid, color: "#10B981", tab: "finance" },
     { label: "KYC Complete", value: kycComplete, color: "#22C55E", tab: "phase2_kyc" },
+    { label: "Trial Scheduled", value: data.trials?.allocated ?? 0, color: "#E8B23D", tab: "trial_cities" },
+    { label: "Trial Checked-In", value: data.trials?.checkedIn ?? 0, color: "#A855F7", tab: "trial_cities" },
     { label: "Re-upload Required", value: reupload, color: "#F97316", tab: "video_review" },
     { label: "Integrity Review", value: integrity, color: "#EF4444", tab: "video_review" },
   ];
@@ -120,6 +122,8 @@ export function OpsTab({ onNavigate, refreshTick = 0 }: TabProps) {
     { name: "Phase 1 Qualified", value: qualified, color: "#10B981" },
     { name: "Phase 2 Paid", value: p2Paid, color: "#22C55E" },
     { name: "KYC Complete (Trial Ready)", value: kycComplete, color: "#14B8A6" },
+    { name: "Trial Scheduled", value: data.trials?.allocated ?? 0, color: "#E8B23D" },
+    { name: "Trial Checked-In", value: data.trials?.checkedIn ?? 0, color: "#A855F7" },
   ];
   const funnelMax = Math.max(1, ...funnel.map(f => f.value));
 
@@ -175,7 +179,7 @@ export function OpsTab({ onNavigate, refreshTick = 0 }: TabProps) {
         {/* funnel */}
         <div style={card}>
           <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Player Funnel</div>
-          <div style={{ fontSize: 11, color: "#475569", marginBottom: 14 }}>Trial allocation and check-in stages arrive with the trials module.</div>
+          <div style={{ fontSize: 11, color: "#475569", marginBottom: 14 }}>Registration → trial check-in, end to end.</div>
           {funnel.map((f, i) => (
             <div key={f.name} style={{ marginBottom: 12 }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>

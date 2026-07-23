@@ -37,6 +37,7 @@ import { AuctionSelected }     from '@/pages/AuctionSelected';
 import { AuctionLive }         from '@/pages/AuctionLive';
 import { TeamSelected }        from '@/pages/TeamSelected';
 import { PlayerProfile }       from '@/pages/PlayerProfile';
+import { TrialPass }            from '@/pages/TrialPass';
 import { Players }             from '@/pages/Players';
 import { Trust }               from '@/pages/Trust';
 import AdminPanel              from '@/admin/AdminPanel';
@@ -109,6 +110,7 @@ function Router() {
         <Route path="/auction/live"     component={AuctionLive} />
         <Route path="/team-selected"    component={TeamSelected} />
         <Route path="/profile"          component={PlayerProfile} />
+        <Route path="/trial-pass"       component={TrialPass} />
 
         {/* Admin panel */}
         <Route path="/admin" component={AdminPanel} />

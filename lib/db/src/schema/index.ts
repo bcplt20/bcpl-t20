@@ -15,6 +15,7 @@ export * from "./deliveries";
 export * from "./match_xi";
 export * from "./points_table";
 export * from "./trial_venues";
+export * from "./trials";
 export * from "./teams";
 export * from "./settings";
 // Admin content tools (media library, content calendar, WhatsApp templates)

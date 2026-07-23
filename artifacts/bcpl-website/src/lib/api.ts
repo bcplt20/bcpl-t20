@@ -523,5 +523,79 @@ export interface OpsData {
   kyc: Record<string, number>;
   videos: Record<string, number>;
   alerts: OpsAlert[];
+  trials?: { allocated: number; checkedIn: number; assessed: number };
 }
 export const adminGetOps = () => adminReq<OpsData>("GET", "/admin/ops");
+
+
+/* ─── Stage 4: Physical Trials ───────────────────────────────────── */
+
+export interface TrialSlotRec { id: string; venueId: string; city: string; slotDate: string; reportingTime: string; startTime: string; batchName: string; capacity: number; status: string; notes: string | null; createdAt: string; updatedAt: string; }
+export interface TrialSlotRow { slot: TrialSlotRec; venueName: string | null; venueStatus: string | null; assigned: number; checkedIn: number; }
+export interface TrialAllocRow {
+  alloc: { id: string; registrationId: string; slotId: string; venueId: string; city: string; status: string; source: string; passToken: string; createdAt: string };
+  fullName: string | null; regNumber: string | null; role: string; phone: string | null;
+  batchName: string | null; slotDate: string | null; reportingTime: string | null; venueName: string | null;
+  checkedInAt: string | null; assessedAt: string | null; assessResult: string | null;
+}
+export interface TrialCheckinRow {
+  checkin: { id: string; method: string; staff: string | null; device: string | null; checkedInAt: string };
+  fullName: string | null; regNumber: string | null; role: string; city: string; batchName: string | null;
+}
+export interface AssessmentRow {
+  assessment: { id: string; registrationId: string; allocationId: string | null; city: string | null; venue: string | null; batch: string | null; assessor: string; playerRole: string; scores: Record<string, number>; finalScore: string; comments: string | null; result: string; createdAt: string; updatedAt: string };
+  fullName: string | null; regNumber: string | null; role: string;
+}
+export interface TrialsOverviewCity { city: string; eligible: number; allocated: number; checkedIn: number; assessed: number; finalSelected: number; finalNotSelected: number; openCapacity: number; }
+export interface AllocationRunResult { dryRun: boolean; totalAllocated: number; totalUnallocated: number; perCity: { city: string; eligible: number; allocated: number; unallocated: number }[]; notificationsQueued: number; notificationsEnabled: boolean; }
+export interface AssessmentConfig { criteria: Record<string, string[]>; scale: { min: number; max: number }; weighting: string; results: string[]; }
+
+const trialQs = (p: Record<string, string | undefined>): string => {
+  const u = new URLSearchParams();
+  for (const [k, v] of Object.entries(p)) if (v !== undefined && v !== "") u.set(k, v);
+  const s = u.toString();
+  return s ? `?${s}` : "";
+};
+
+export const adminGetTrialSlots = (city?: string) =>
+  adminReq<{ slots: TrialSlotRow[] }>("GET", `/admin/trials/slots${trialQs({ city })}`);
+export const adminCreateTrialSlot = (body: { venueId: string; batchName: string; capacity?: number; slotDate?: string; reportingTime?: string; startTime?: string; notes?: string }) =>
+  adminReq<{ slot: TrialSlotRec }>("POST", "/admin/trials/slots", body);
+export const adminPatchTrialSlot = (id: string, body: Partial<{ batchName: string; capacity: number; slotDate: string; reportingTime: string; startTime: string; notes: string; status: string }>) =>
+  adminReq<{ slot: TrialSlotRec }>("PATCH", `/admin/trials/slots/${id}`, body);
+export const adminDeleteTrialSlot = (id: string) =>
+  adminReq<{ ok: boolean }>("DELETE", `/admin/trials/slots/${id}`);
+export const adminPatchTrialVenueExtras = (id: string, body: { address?: string | null; mapsUrl?: string | null }) =>
+  adminReq<{ venue: unknown }>("PATCH", `/admin/trials/venues/${id}`, body);
+export const adminRunTrialAllocation = (body: { city?: string; dryRun: boolean; by?: string }) =>
+  adminReq<AllocationRunResult>("POST", "/admin/trials/allocate", body);
+export const adminGetTrialAllocations = (p: { city?: string; slotId?: string; q?: string }) =>
+  adminReq<{ allocations: TrialAllocRow[] }>("GET", `/admin/trials/allocations${trialQs(p)}`);
+export const adminMoveTrialAllocation = (id: string, slotId: string) =>
+  adminReq<{ allocation: unknown }>("PATCH", `/admin/trials/allocations/${id}`, { slotId });
+export const adminCancelTrialAllocation = (id: string) =>
+  adminReq<{ allocation: unknown }>("POST", `/admin/trials/allocations/${id}/cancel`);
+export const adminTrialCheckin = (body: { token?: string; regNumber?: string; staff?: string; device?: string }) =>
+  adminReq<{ ok: boolean; checkedInAt: string; player: { name: string; regNumber: string | null; role: string; city: string }; slot: { batch: string; date: string; reportingTime: string } | null }>("POST", "/admin/trials/checkin", body);
+export const adminGetTrialCheckins = (p: { city?: string; slotId?: string }) =>
+  adminReq<{ checkins: TrialCheckinRow[] }>("GET", `/admin/trials/checkins${trialQs(p)}`);
+export const adminGetAssessmentConfig = () =>
+  adminReq<AssessmentConfig>("GET", "/admin/trials/assessment-config");
+export const adminSaveAssessment = (body: { registrationId: string; scores: Record<string, number>; comments?: string; assessor: string; result?: string }) =>
+  adminReq<{ assessment: AssessmentRow["assessment"] }>("POST", "/admin/trials/assessments", body);
+export const adminPatchAssessment = (id: string, body: { result?: string; comments?: string }) =>
+  adminReq<{ assessment: AssessmentRow["assessment"] }>("PATCH", `/admin/trials/assessments/${id}`);
+export const adminGetAssessments = (p: { city?: string; result?: string; q?: string }) =>
+  adminReq<{ assessments: AssessmentRow[] }>("GET", `/admin/trials/assessments${trialQs(p)}`);
+export const adminGetTrialsOverview = () =>
+  adminReq<{ cities: TrialsOverviewCity[] }>("GET", "/admin/trials/overview");
+
+/* player-facing digital trial pass */
+export interface TrialPassData {
+  player: { name: string; regNumber: string | null; role: string; city: string | null };
+  venue: { name: string; city: string; address: string | null; mapsUrl: string | null } | null;
+  slot: { batch: string; date: string; reportingTime: string; startTime: string } | null;
+  checkedInAt: string | null;
+  qrDataUrl: string;
+}
+export const getTrialPass = () => req<TrialPassData>("GET", "/user/trial-pass");

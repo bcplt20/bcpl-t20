@@ -3,6 +3,7 @@ import { Link, useLocation } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { getDashboard, getPlayerTrialVenue, getMyResult, type MyResult } from '../lib/api';
+import { getTrialPass } from '../lib/api';
 import { ReferralCard } from '../components/ReferralCard';
 import { clearSession, getSession } from '../lib/auth';
 import { useLang } from '../lib/i18n';
@@ -145,6 +146,7 @@ export function PlayerProfile() {
   const [data,     setData]     = useState<any>(null);
   const [venue,    setVenue]    = useState<any>(null);
   const [myResult, setMyResult] = useState<MyResult | null>(null);
+  const [hasTrialPass, setHasTrialPass] = useState(false);
   const [error,    setError]    = useState('');
   const [activeTab, setActiveTab] = useState<'home' | 'journey' | 'card' | 'profile' | 'support'>('home');
 
@@ -163,6 +165,8 @@ export function PlayerProfile() {
       })
       .catch(() => setError(t('Could not load your profile. Please refresh.', 'आपकी प्रोफाइल लोड नहीं हो सकी। कृपया रिफ्रेश करें।')))
       .finally(() => setLoading(false));
+
+    getTrialPass().then(() => setHasTrialPass(true)).catch(() => {});
   }, [setLocation, t]);
 
   const step   = data ? deriveStep(data, !!venue) : 'not_registered';
@@ -284,6 +288,11 @@ export function PlayerProfile() {
                     <button className="btn-ghost" style={{ color: 'var(--red)', borderColor: 'rgba(239,68,68,0.3)', background: 'transparent' }} onClick={() => { clearSession(); setLocation('/'); }}>
                       🚪 {t("Sign Out", "साइन आउट")}
                     </button>
+                    {hasTrialPass && (
+                      <Link href="/trial-pass" className="btn-ghost" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                        🎫 {t("Trial Pass", "ट्रायल पास")}
+                      </Link>
+                    )}
                     {reg && (
                       <button className="btn-ghost" onClick={() => {
                         const logoUrl = `${window.location.origin}${BASE}bcpl-assets/bcpl-logo-white.png`;

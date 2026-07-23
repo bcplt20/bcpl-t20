@@ -519,3 +519,28 @@ export function tplPhase2PaymentReminder(name: string) {
     `),
   };
 }
+
+
+// ── Template: Trial Pass Allocated (Stage 4) ───────────────────────────────
+export function tplTrialPass(name: string, venue: string, city: string, date: string, reportingTime: string, batch: string) {
+  return {
+    subject: `🎫 BCPL T20 — Your Trial Pass is Ready (${city})`,
+    htmlContent: wrap(`
+      <div style="text-align:center;margin-bottom:20px;">
+        <div style="display:inline-flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:50%;background:rgba(34,197,94,0.15);border:2px solid #22C55E;font-size:36px;margin-bottom:10px;">🎫</div>
+        <div style="font-size:22px;font-weight:900;color:#22C55E;font-family:Arial,sans-serif;">TRIAL PASS READY!</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:4px;">${city} — Physical Trials</div>
+      </div>
+      <div style="background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.2);border-radius:12px;padding:20px;margin-bottom:20px;">
+        <p style="color:rgba(255,255,255,0.7);margin:0 0 16px;font-size:14px;">Dear <strong>${name}</strong>, your physical trial slot is confirmed. Your digital Trial Pass (with QR code) is now available on the website.</p>
+        <table style="width:100%;border-collapse:collapse;">
+          <tr style="background:rgba(255,255,255,0.04);"><td style="padding:12px;font-size:12px;color:rgba(255,255,255,0.45);width:40%;">📍 Venue</td><td style="padding:12px;font-size:14px;color:#fff;font-weight:700;">${venue}</td></tr>
+          <tr><td style="padding:12px;font-size:12px;color:rgba(255,255,255,0.45);">📅 Date</td><td style="padding:12px;font-size:14px;color:#E8B23D;font-weight:700;">${date}</td></tr>
+          <tr style="background:rgba(255,255,255,0.04);"><td style="padding:12px;font-size:12px;color:rgba(255,255,255,0.45);">🕐 Reporting Time</td><td style="padding:12px;font-size:14px;color:#22C55E;font-weight:700;">${reportingTime}</td></tr>
+          <tr><td style="padding:12px;font-size:12px;color:rgba(255,255,255,0.45);">👥 Batch</td><td style="padding:12px;font-size:14px;color:#fff;font-weight:700;">${batch}</td></tr>
+        </table>
+      </div>
+      <p style="color:rgba(255,255,255,0.55);font-size:13px;margin:0 0 6px;">Show the QR code on your Trial Pass at the venue gate for check-in. Please carry your original Aadhaar card.</p>
+      <div style="text-align:center;">${btn("VIEW MY TRIAL PASS →", `${SITE_URL}/trial-pass`, "#22C55E")}</div>`),
+  };
+}

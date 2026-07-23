@@ -14,6 +14,7 @@ import { ensureReferralProgramTables } from "./routes/referralProgram";
 import { ensureAdminContentTables } from "./routes/adminTools";
 import { ensureNotificationErrorColumn } from "./lib/notify";
 import { ensurePhase1AiTables } from "./lib/phase1Migrations";
+import { ensureTrialsTables } from "./routes/trials";
 import { reconcileAbandonedPayments } from "./lib/reconcilePayments";
 import { sendPaymentReminders, remindersEnabled } from "./lib/reminders";
 
@@ -39,6 +40,7 @@ async function start() {
       await ensureAdminContentTables();
       await ensureNotificationErrorColumn();
       await ensurePhase1AiTables(); // Phase 1 AI evaluation pipeline
+      await ensureTrialsTables(); // Physical trials suite (Stage 4)
       logger.info("startup migrations ensured");
       break;
     } catch (e) {
