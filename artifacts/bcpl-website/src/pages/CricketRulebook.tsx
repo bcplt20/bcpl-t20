@@ -2,15 +2,7 @@ import React from 'react';
 import { Link } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
-
-function MobileCTA() {
-  return (
-    <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,padding:'10px 16px 18px',background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',gap:10}}>
-      <Link href="/register" className="btn-fire" style={{flex:2,height:52,fontSize:15,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register ₹299 →</Link>
-      <button className="btn-wa" style={{flex:1,height:52,fontSize:14,borderRadius:14}}>💬 WhatsApp</button>
-    </div>
-  );
-}
+import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
 
 const OrangeDot = () => (
   <span style={{display:'inline-block',width:6,height:6,borderRadius:'50%',background:'#FF7A29',marginRight:10,flexShrink:0,marginTop:7}}/>
@@ -25,13 +17,11 @@ export function CricketRulebook() {
     .wrap{max-width:1280px;margin:0 auto;padding:0 16px;}
     .desk-nav{display:none;align-items:center;gap:22px;}
     .ham-btn{display:flex;}
-    .bot-cta{display:flex;}
     @media(min-width:640px){.wrap{padding:0 24px}}
     @media(min-width:768px){.wrap{padding:0 32px}}
-    @media(min-width:1024px){.desk-nav{display:flex!important;}.ham-btn{display:none!important;}.bot-cta{display:none!important;}}
+    @media(min-width:1024px){.desk-nav{display:flex!important;}.ham-btn{display:none!important;}}
     .btn-fire{background:linear-gradient(135deg,#FF7A29 0%,#E8611A 60%,#C94E0E 100%);border:none;border-radius:14px;color:#fff;font-family:Montserrat,sans-serif;font-weight:800;cursor:pointer;box-shadow:0 8px 28px rgba(255,122,41,0.45),inset 0 1px 0 rgba(255,255,255,0.2);transition:transform 0.15s,box-shadow 0.2s;letter-spacing:0.02em;animation:pulseGlow 3s ease-in-out infinite;display:inline-flex;align-items:center;justify-content:center;min-height:44px;}
     .btn-fire:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(255,122,41,0.6);}
-    .btn-wa{background:linear-gradient(135deg,#25D366,#1BA851);border:none;border-radius:14px;color:#fff;font-weight:700;cursor:pointer;font-family:Montserrat,sans-serif;transition:transform 0.15s;display:inline-flex;align-items:center;justify-content:center;min-height:44px;}
     .glass-card{background:linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85));backdrop-filter:blur(32px);border:1px solid rgba(255,255,255,0.09);border-radius:20px;box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06);}
     .shimmer-gold{background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D,#F5C842,#E8B23D);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 3s linear infinite;}
     .tag-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,122,41,0.12);border:1px solid rgba(255,122,41,0.3);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:700;font-family:Montserrat,sans-serif;color:#FF7A29;letter-spacing:0.1em;}
@@ -175,8 +165,9 @@ export function CricketRulebook() {
               <span className="shimmer-gold" style={{display:'block'}}>RULEBOOK.</span>
             </h1>
             <p style={{color:'rgba(255,255,255,0.5)',fontSize:13,fontWeight:600,letterSpacing:'0.05em',marginTop:16,fontFamily:'Montserrat,sans-serif'}}>Official Rules — Season 5 · 2025</p>
+            <p style={{color:'rgba(255,255,255,0.35)',fontSize:12,marginTop:6,fontFamily:'Inter,sans-serif'}}>यह दस्तावेज़ English में मान्य है · This document is authoritative in English.</p>
             <p style={{color:'rgba(255,255,255,0.65)',fontSize:'clamp(14px,2vw,16px)',lineHeight:1.7,maxWidth:600,margin:'16px auto 0'}}>
-              The complete, official BCPL T20 cricket rulebook. All rules are binding on players, team managers, and officials across all 75 cities.
+              The complete, official BCPL T20 cricket rulebook. All rules are binding on players, team managers, and officials in every trial city.
             </p>
           </div>
         </section>
@@ -239,7 +230,7 @@ export function CricketRulebook() {
 
         <BCPLFooter />
       </div>
-      <MobileCTA/>
+      <StickyRegisterCTA />
       <Link className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>🏏 REGISTER NOW →</Link>
     </div>
   );

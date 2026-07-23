@@ -3,12 +3,14 @@ import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { verifyPhase1Payment, getMe, getRegistrationStatus } from '../lib/api';
 import { ReferralShareBanner } from '../components/ReferralCard';
+import { useLang } from '../lib/i18n';
 
 const ROLE_LABELS: Record<string, string> = {
   bat: '🏏 Batsman', bowl: '🎳 Bowler', wk: '🧤 Wicket-Keeper', ar: '⭐ All-Rounder',
 };
 
 export function Phase1PaymentReceipt() {
+  const { t } = useLang();
   /* ── Real receipt data ── */
   const [receiptLoading, setReceiptLoading] = useState(true);
   const [receiptError, setReceiptError] = useState('');
@@ -144,23 +146,23 @@ export function Phase1PaymentReceipt() {
           </div>
 
           <h1 className="fade-up fade-up-1" style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(30px,6vw,62px)', lineHeight:.95, letterSpacing:'-.02em', textTransform:'uppercase', marginBottom:10 }}>
-            <span style={{ color:'#fff', display:'block' }}>ENTRY</span>
-            <span style={{ color:'#22C55E', display:'block' }}>CONFIRMED.</span>
+            <span style={{ color:'#fff', display:'block' }}>{t("ENTRY","ENTRY")}</span>
+            <span style={{ color:'#22C55E', display:'block' }}>{t("CONFIRMED.","CONFIRMED.")}</span>
           </h1>
           <div className="fade-up fade-up-2" style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(14px,3vw,24px)', color:'#FF7A29', letterSpacing:'.08em', textTransform:'uppercase', marginBottom:20 }}>
-            YOU'RE IN THE TRIALS.
+            {t("YOU'RE IN THE TRIALS.","आप TRIALS में हैं।")}
           </div>
 
           {/* Loading / Error */}
-          {receiptLoading && <div style={{ color:'rgba(255,255,255,0.5)', fontSize:14, marginBottom:20 }}>⏳ Confirming payment...</div>}
+          {receiptLoading && <div style={{ color:'rgba(255,255,255,0.5)', fontSize:14, marginBottom:20 }}>{t("⏳ Confirming payment...","⏳ Payment confirm हो रही है...")}</div>}
           {receiptError && <div style={{ color:'#EF4444', fontSize:13, marginBottom:20, fontWeight:600 }}>⚠ {receiptError}</div>}
 
           {/* Player chips */}
           {!receiptLoading && !receiptError && (
           <div className="fade-up fade-up-3" style={{ display:'flex', gap:10, justifyContent:'center', flexWrap:'wrap', marginBottom:28 }}>
             {[
-              { label: playerRole || '🏏 Player', color:'#3B82F6' },
-              { label: playerCity ? `📍 ${playerCity}` : '📍 City', color:'#FF7A29' },
+              { label: playerRole || t('🏏 Player','🏏 Player'), color:'#3B82F6' },
+              { label: playerCity ? `📍 ${playerCity}` : t('📍 City','📍 City'), color:'#FF7A29' },
               { label:'BCPL Season 5', color:'#E8B23D' },
             ].map(c => (
               <span key={c.label} style={{ padding:'6px 16px', background:'rgba(255,255,255,0.05)', border:`1px solid ${c.color}44`, borderRadius:12, fontSize:12, fontWeight:700, fontFamily:'Montserrat,sans-serif', color:c.color, letterSpacing:'.06em' }}>
@@ -173,7 +175,7 @@ export function Phase1PaymentReceipt() {
           {/* Booking ref */}
           {!receiptLoading && (
           <div className="fade-up fade-up-4" style={{ display:'inline-block', background:'#060C18', border:'1px solid rgba(255,122,41,0.4)', padding:'12px 20px', borderRadius:12, marginBottom:0, maxWidth:'100%', overflow:'hidden' }}>
-            <div style={{ fontSize:9, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.18em', color:'rgba(255,255,255,0.35)', marginBottom:4 }}>REGISTRATION NUMBER</div>
+            <div style={{ fontSize:9, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.18em', color:'rgba(255,255,255,0.35)', marginBottom:4 }}>{t("REGISTRATION NUMBER","REGISTRATION NUMBER")}</div>
             <div style={{ fontFamily:'monospace', fontSize:'clamp(13px,4vw,18px)', fontWeight:700, color:'#FF7A29', letterSpacing:'.12em', wordBreak:'break-all' }}>
               {regNumber || (regId ? regId.slice(0,8).toUpperCase() : '—')}
             </div>
@@ -191,23 +193,23 @@ export function Phase1PaymentReceipt() {
           {/* Ticket header */}
           <div style={{ background:'linear-gradient(135deg,#C94E0E,#FF7A29,#E8611A)', padding:'16px 24px', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:12 }}>
             <div>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:13, letterSpacing:'.14em', color:'#fff', textTransform:'uppercase' }}>PHASE 1 TRIAL ENTRY</div>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:10, letterSpacing:'.12em', color:'rgba(255,255,255,0.75)', marginTop:2 }}>PAYMENT CONFIRMED</div>
+              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:13, letterSpacing:'.14em', color:'#fff', textTransform:'uppercase' }}>{t("PHASE 1 TRIAL ENTRY","PHASE 1 TRIAL ENTRY")}</div>
+              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:10, letterSpacing:'.12em', color:'rgba(255,255,255,0.75)', marginTop:2 }}>{t("PAYMENT CONFIRMED","PAYMENT CONFIRMED")}</div>
             </div>
             <div style={{ display:'flex', alignItems:'center', gap:6, background:'rgba(255,255,255,0.15)', padding:'6px 14px', borderRadius:12 }}>
               <span style={{ width:7, height:7, borderRadius:'50%', background:'#fff', display:'inline-block', animation:'liveBlip 1.2s ease-in-out infinite' }} />
-              <span style={{ fontSize:10, fontWeight:900, fontFamily:'Montserrat,sans-serif', color:'#fff', letterSpacing:'.1em' }}>CONFIRMED</span>
+              <span style={{ fontSize:10, fontWeight:900, fontFamily:'Montserrat,sans-serif', color:'#fff', letterSpacing:'.1em' }}>{t("CONFIRMED","CONFIRMED")}</span>
             </div>
           </div>
 
           {/* Ticket body */}
           <div style={{ padding:'0 20px' }}>
             {[
-              { label:'Player Name',      val: playerName || '—' },
-              { label:'Role',             val: playerRole || '—' },
-              { label:'Trial City',       val: playerCity ? `📍 ${playerCity}` : '—' },
-              { label:'Registration No.', val: regNumber || (regId ? regId.slice(0,8).toUpperCase() : '—') },
-              { label:'Payment Date',     val: paymentDate || '—' },
+              { label:t('Player Name','Player का नाम'),      val: playerName || '—' },
+              { label:t('Role','Role'),             val: playerRole || '—' },
+              { label:t('Trial City','Trial City'),       val: playerCity ? `📍 ${playerCity}` : '—' },
+              { label:t('Registration No.','Registration No.'), val: regNumber || (regId ? regId.slice(0,8).toUpperCase() : '—') },
+              { label:t('Payment Date','Payment Date'),     val: paymentDate || '—' },
             ].map(r => (
               <div key={r.label} className="receipt-row">
                 <span className="receipt-label">{r.label}</span>
@@ -222,7 +224,7 @@ export function Phase1PaymentReceipt() {
             const gst     = paidAmount ? +((paidAmount - taxable) / 2).toFixed(2) : 0;
             return (
             <div style={{ margin:'0', background:'rgba(255,122,41,0.04)', borderTop:'1px solid rgba(255,255,255,0.06)', padding:'16px 20px' }}>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:9, letterSpacing:'.14em', color:'rgba(255,255,255,0.3)', textTransform:'uppercase', marginBottom:10 }}>Payment Breakdown</div>
+              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:9, letterSpacing:'.14em', color:'rgba(255,255,255,0.3)', textTransform:'uppercase', marginBottom:10 }}>{t("Payment Breakdown","Payment Breakdown")}</div>
               {[
                 { label:'Taxable Amount', val: paidAmount ? `₹${taxable.toFixed(2)}` : '—', dim:false },
                 { label:'CGST @ 9%',     val: paidAmount ? `₹${gst.toFixed(2)}`     : '—', dim:true  },
@@ -234,7 +236,7 @@ export function Phase1PaymentReceipt() {
                 </div>
               ))}
               <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'10px 0 2px', marginTop:6, borderTop:'1px solid rgba(255,122,41,0.3)' }}>
-                <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:13, color:'#FF7A29', letterSpacing:'.04em' }}>TOTAL PAID</span>
+                <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:13, color:'#FF7A29', letterSpacing:'.04em' }}>{t("TOTAL PAID","TOTAL PAID")}</span>
                 <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:16, color:'#22C55E' }}>
                   {paidAmount ? `₹${paidAmount.toFixed(2)} ✅` : '—'}
                 </span>
@@ -249,10 +251,10 @@ export function Phase1PaymentReceipt() {
           {/* Phase 2 locked row */}
           <div style={{ padding:'14px 20px', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:8 }}>
             <div>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:11, letterSpacing:'.14em', color:'rgba(255,255,255,0.5)', textTransform:'uppercase' }}>PHASE 2 STATUS</div>
-              <div style={{ fontSize:13, color:'rgba(255,255,255,0.6)', marginTop:3 }}>🔒 Locked — You'll be notified when your result is released</div>
+              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:11, letterSpacing:'.14em', color:'rgba(255,255,255,0.5)', textTransform:'uppercase' }}>{t("PHASE 2 STATUS","PHASE 2 STATUS")}</div>
+              <div style={{ fontSize:13, color:'rgba(255,255,255,0.6)', marginTop:3 }}>{t("🔒 Locked — You'll be notified when your result is released","🔒 Locked — जब आपका result release होगा तब आपको notify किया जाएगा")}</div>
             </div>
-            <span style={{ background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', padding:'5px 12px', borderRadius:12, fontSize:10, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.12em', color:'rgba(255,255,255,0.4)' }}>PENDING</span>
+            <span style={{ background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', padding:'5px 12px', borderRadius:12, fontSize:10, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.12em', color:'rgba(255,255,255,0.4)' }}>{t("PENDING","PENDING")}</span>
           </div>
 
           {/* Decorative barcode */}
@@ -270,41 +272,41 @@ export function Phase1PaymentReceipt() {
 
       {/* ── NEXT STEPS ── */}
       <div className="wrap" style={{ marginTop:48 }}>
-        <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:11, letterSpacing:'.2em', color:'rgba(255,255,255,0.3)', marginBottom:20, textTransform:'uppercase' }}>Your Next Steps</div>
+        <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:11, letterSpacing:'.2em', color:'rgba(255,255,255,0.3)', marginBottom:20, textTransform:'uppercase' }}>{t("Your Next Steps","आपके अगले Steps")}</div>
         <div className="next-steps-grid">
           {/* Step 1 */}
           <div className="next-card">
             <div style={{ fontSize:28, marginBottom:12 }}>🎬</div>
-            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, color:'#FF7A29', letterSpacing:'.04em', marginBottom:6, textTransform:'uppercase' }}>Upload Your Trial Video</div>
+            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, color:'#FF7A29', letterSpacing:'.04em', marginBottom:6, textTransform:'uppercase' }}>{t("Upload Your Trial Video","अपनी Trial Video Upload करें")}</div>
             <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:12 }}>
               <span style={{ width:6, height:6, borderRadius:'50%', background:'#FF7A29', display:'inline-block', animation:'liveBlip 1s infinite' }} />
-              <span style={{ fontSize:11, fontWeight:700, color:'rgba(255,122,41,0.8)', fontFamily:'Montserrat,sans-serif', letterSpacing:'.08em' }}>SUBMIT AS SOON AS POSSIBLE</span>
+              <span style={{ fontSize:11, fontWeight:700, color:'rgba(255,122,41,0.8)', fontFamily:'Montserrat,sans-serif', letterSpacing:'.08em' }}>{t("SUBMIT AS SOON AS POSSIBLE","जल्द से जल्द SUBMIT करें")}</span>
             </div>
-            <p style={{ fontSize:12, color:'rgba(255,255,255,0.45)', lineHeight:1.6, marginBottom:16 }}>Record your 30–60 second cricket trial video. Follow the guidelines for best results.</p>
+            <p style={{ fontSize:12, color:'rgba(255,255,255,0.45)', lineHeight:1.6, marginBottom:16 }}>{t("Record your 30–60 second cricket trial video. Follow the guidelines for best results.","अपनी 30–60 second की cricket trial video record करें। बेहतर results के लिए guidelines follow करें।")}</p>
             <button className="btn-primary" style={{ width:'100%', padding:'12px', fontSize:12 }}
               onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/upload-video'; }}>
-              UPLOAD NOW →
+              {t("UPLOAD NOW →","अभी UPLOAD करें →")}
             </button>
           </div>
 
           {/* Step 2 */}
           <div className="next-card">
             <div style={{ fontSize:28, marginBottom:12 }}>⏱</div>
-            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, color:'#E8B23D', letterSpacing:'.04em', marginBottom:6, textTransform:'uppercase' }}>Phase 1 Evaluation</div>
+            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, color:'#E8B23D', letterSpacing:'.04em', marginBottom:6, textTransform:'uppercase' }}>{t("Phase 1 Evaluation","Phase 1 Evaluation")}</div>
             <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:12 }}>
-              <span style={{ fontSize:11, fontWeight:700, color:'rgba(232,178,61,0.7)', fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em' }}>CRITERIA-BASED ASSESSMENT</span>
+              <span style={{ fontSize:11, fontWeight:700, color:'rgba(232,178,61,0.7)', fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em' }}>{t("CRITERIA-BASED ASSESSMENT","CRITERIA-BASED ASSESSMENT")}</span>
             </div>
-            <p style={{ fontSize:12, color:'rgba(255,255,255,0.45)', lineHeight:1.6 }}>Every submission is evaluated against BCPL's Phase 1 assessment criteria. Results announced via your registered email & WhatsApp.</p>
+            <p style={{ fontSize:12, color:'rgba(255,255,255,0.45)', lineHeight:1.6 }}>{t("Every submission is evaluated against BCPL's Phase 1 assessment criteria. Results announced via your registered email & WhatsApp.","हर submission को BCPL के Phase 1 assessment criteria के against evaluate किया जाता है। Results आपके registered email और WhatsApp पर घोषित होते हैं।")}</p>
           </div>
 
           {/* Step 3 */}
           <div className="next-card" style={{ border:'1px solid rgba(255,255,255,0.06)' }}>
             <div style={{ fontSize:28, marginBottom:12 }}>🔒</div>
-            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, color:'rgba(255,255,255,0.5)', letterSpacing:'.04em', marginBottom:6, textTransform:'uppercase' }}>Phase 2 (If Selected)</div>
+            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, color:'rgba(255,255,255,0.5)', letterSpacing:'.04em', marginBottom:6, textTransform:'uppercase' }}>{t("Phase 2 (If Selected)","Phase 2 (अगर Selected हुए)")}</div>
             <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:12 }}>
-              <span style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.3)', fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em' }}>PHYSICAL TRIAL · LOCKED</span>
+              <span style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.3)', fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em' }}>{t("PHYSICAL TRIAL · LOCKED","PHYSICAL TRIAL · LOCKED")}</span>
             </div>
-            <p style={{ fontSize:12, color:'rgba(255,255,255,0.35)', lineHeight:1.6 }}>If you qualify through Phase 1, you'll be invited to the physical ground trial. The Phase 2 fee becomes payable only if you qualify through Phase 1 and choose to proceed.</p>
+            <p style={{ fontSize:12, color:'rgba(255,255,255,0.35)', lineHeight:1.6 }}>{t("If you qualify through Phase 1, you'll be invited to the physical ground trial. The Phase 2 fee becomes payable only if you qualify through Phase 1 and choose to proceed.","अगर आप Phase 1 से qualify करते हैं, तो आपको physical ground trial के लिए invite किया जाएगा। Phase 2 fee तभी देनी होती है जब आप Phase 1 से qualify करें और आगे बढ़ने का चुनाव करें।")}</p>
           </div>
         </div>
       </div>
@@ -317,19 +319,19 @@ export function Phase1PaymentReceipt() {
       {/* ── SHARE SECTION ── */}
       <div className="wrap" style={{ marginTop:32 }}>
         <div style={{ background:'#0A1727', border:'1px solid rgba(255,255,255,0.08)', borderRadius:12, padding:'28px 20px', textAlign:'center' }}>
-          <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:13, letterSpacing:'.16em', color:'rgba(255,255,255,0.4)', marginBottom:6, textTransform:'uppercase' }}>Share Your Achievement</div>
-          <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'#fff', marginBottom:24 }}>Tell the world you're in the trials! 🏏</div>
+          <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:13, letterSpacing:'.16em', color:'rgba(255,255,255,0.4)', marginBottom:6, textTransform:'uppercase' }}>{t("Share Your Achievement","अपनी Achievement Share करें")}</div>
+          <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'#fff', marginBottom:24 }}>{t("Tell the world you're in the trials! 🏏","दुनिया को बताएं कि आप trials में हैं! 🏏")}</div>
           <div className="share-btns">
             <button className="share-btn" style={{ background:'#25D366', color:'#fff' }}
               onClick={() => {
                 const msg = encodeURIComponent("🏏 I just registered for BCPL Season 5 trials! India's corporate cricket league. Register at https://bcplt20.com #OfficeSeStadiumTak");
                 window.open(`https://wa.me/?text=${msg}`, '_blank');
               }}>
-              💬 Share on WhatsApp
+              {t("💬 Share on WhatsApp","💬 WhatsApp पर Share करें")}
             </button>
             <button className="share-btn" style={{ background:'linear-gradient(135deg,#833AB4,#FD1D1D,#F56040)', color:'#fff' }}
               onClick={() => window.open('https://www.instagram.com/bcpl.t20', '_blank')}>
-              📸 Share on Instagram
+              {t("📸 Share on Instagram","📸 Instagram पर Share करें")}
             </button>
             <button className="share-btn" style={{ background:'linear-gradient(135deg,#1E3A5F,#0F2040)', border:'1px solid rgba(255,122,41,0.4)', color:'#FF7A29' }}
               onClick={() => {
@@ -580,7 +582,7 @@ export function Phase1PaymentReceipt() {
                 w.document.close();
                 setTimeout(() => w.print(), 600);
               }}>
-              ⬇ Download Receipt
+              {t("⬇ Download Receipt","⬇ Receipt Download करें")}
             </button>
           </div>
         </div>

@@ -4,6 +4,7 @@ import { SiteHeader } from '../components/SiteHeader';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { getMatches } from '../lib/api';
 import { useLang } from '../lib/i18n';
+import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap');
@@ -11,14 +12,12 @@ const CSS = `
 .wrap{max-width:1280px;margin:0 auto;padding:0 16px;}
 .desk-nav{display:none;align-items:center;gap:22px;}
 .ham-btn{display:flex;}
-.bot-cta{display:flex;}
 @media(min-width:640px){.wrap{padding:0 24px}}
 @media(min-width:768px){.wrap{padding:0 32px}}
-@media(min-width:1024px){.desk-nav{display:flex!important;}.ham-btn{display:none!important;}.bot-cta{display:none!important;}}
+@media(min-width:1024px){.desk-nav{display:flex!important;}.ham-btn{display:none!important;}}
 .btn-fire{background:linear-gradient(135deg,#FF7A29 0%,#E8611A 60%,#C94E0E 100%);border:none;border-radius:14px;color:#fff;font-family:Montserrat,sans-serif;font-weight:800;cursor:pointer;box-shadow:0 8px 28px rgba(255,122,41,0.45),inset 0 1px 0 rgba(255,255,255,0.2);transition:transform 0.15s,box-shadow 0.2s;letter-spacing:0.02em;animation:pulseGlow 3s ease-in-out infinite;}
 .btn-fire:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(255,122,41,0.6);}
 .btn-fire:active{transform:scale(0.97);}
-.btn-wa{background:linear-gradient(135deg,#25D366,#1BA851);border:none;border-radius:14px;color:#fff;font-weight:700;cursor:pointer;font-family:Montserrat,sans-serif;transition:transform 0.15s;}
 .glass-card{background:linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85));backdrop-filter:blur(32px);border:1px solid rgba(255,255,255,0.09);border-radius:20px;box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06);}
 .shimmer-gold{background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D,#F5C842,#E8B23D);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 3s linear infinite;}
 .tag-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,122,41,0.12);border:1px solid rgba(255,122,41,0.3);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:700;font-family:Montserrat,sans-serif;color:#FF7A29;letter-spacing:0.1em;}
@@ -41,10 +40,10 @@ const CSS = `
 .float-reg-btn:hover { opacity:.9; transform:translateY(-2px); }
 @keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4)} 50%{box-shadow:0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0)} }
 .float-reg-pulse { animation:floatPulse 2.5s ease-in-out infinite; }
+@media(max-width:1023px){ .float-reg-btn { display:none; } }
 
 /* ── MOBILE FIXES ── */
 @media(max-width:639px){
-  .float-reg-btn { bottom:80px; right:16px; padding:12px 16px; font-size:12px; }
   .match-row-inner { flex-wrap:wrap; gap:8px; }
   .match-date-box { width:56px!important; height:62px!important; }
   .match-date-day { font-size:22px!important; }
@@ -343,13 +342,7 @@ export function Schedule() {
         </div>
         <BCPLFooter />
 
-        {/* MOBILE STICKY CTA */}
-        <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',padding:'10px 16px 18px',gap:10}}>
-          <Link href="/register" className="btn-fire" style={{flex:2,height:52,fontSize:15,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>
-            {t("Register ₹299 →", "रजिस्टर करें ₹299 →")}
-          </Link>
-          <a href="https://wa.me/919151346555" target="_blank" rel="noopener noreferrer" className="btn-wa" style={{flex:1,height:52,fontSize:14,borderRadius:14,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>💬 WhatsApp</a>
-        </div>
+        <StickyRegisterCTA />
       </div>
       {/* ── FLOATING REGISTER BUTTON ── */}
       <Link href="/register" className="float-reg-btn float-reg-pulse" style={{textDecoration:"none"}}>

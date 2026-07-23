@@ -27,11 +27,41 @@ export function useAuthUser(): AuthUser | null {
 const PROFILE_HREF = `${import.meta.env.BASE_URL ?? '/'}profile`;
 
 export function NavUser({ variant = 'desktop', onNavigate }: {
-  variant?: 'desktop' | 'mobile';
+  variant?: 'desktop' | 'mobile' | 'icon';
   onNavigate?: () => void;
 }) {
   const user = useAuthUser();
   const mobile = variant === 'mobile';
+
+  /* Compact icon-only variant for the mobile top bar (44px hit area). */
+  if (variant === 'icon') {
+    if (!user) {
+      return (
+        <button
+          aria-label="Login"
+          onClick={() => { onNavigate?.(); openLoginModal(); }}
+          style={{ background:'none', border:'none', cursor:'pointer', width:40, height:44, display:'inline-flex', alignItems:'center', justifyContent:'center', padding:0, flexShrink:0 }}
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.75)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <circle cx="12" cy="8" r="4" />
+            <path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5" />
+          </svg>
+        </button>
+      );
+    }
+    const iconInitial = ((user.name ?? '').trim().charAt(0) || 'P').toUpperCase();
+    return (
+      <a href={PROFILE_HREF} onClick={onNavigate} title={user.name} aria-label="My profile"
+        style={{ width:40, height:44, display:'inline-flex', alignItems:'center', justifyContent:'center', textDecoration:'none', flexShrink:0 }}>
+        <span style={{
+          width:28, height:28, borderRadius:'50%',
+          background:'linear-gradient(135deg,#FF7A29,#E8B23D)',
+          display:'inline-flex', alignItems:'center', justifyContent:'center',
+          fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:13, color:'#fff',
+        }}>{iconInitial}</span>
+      </a>
+    );
+  }
 
   if (!user) {
     return (

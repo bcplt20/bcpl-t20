@@ -7,6 +7,7 @@ import {
   registerPhase1, createPhase1Payment, getRegistrationStatus, updateDob,
 } from '@/lib/api';
 import { fireReferralAttribution } from '@/lib/marketingApi';
+import { useLang } from '../lib/i18n';
 import {
 } from '../lib/api';
 
@@ -33,8 +34,9 @@ import {
 
 const ROLES = [
   {
-    id: 'bat',  emoji: '🏏', icon: 'batsman', label: 'Batsman',
+    id: 'bat',  emoji: '🏏', icon: 'batsman', label: 'Batsman', labelHi: 'Batsman',
     desc: 'Open the innings. Anchor the chase.',
+    descHi: 'Innings open करें। Chase को anchor करें।',
     phase1: 299, phase2: 2000,
     color: '#3B82F6', colorDark: '#1D4ED8',
     svgPath: `<svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -47,8 +49,9 @@ const ROLES = [
     </svg>`,
   },
   {
-    id: 'bowl', emoji: '🎳', icon: 'bowler', label: 'Bowler',
+    id: 'bowl', emoji: '🎳', icon: 'bowler', label: 'Bowler', labelHi: 'Bowler',
     desc: 'Take wickets. Change the game.',
+    descHi: 'Wickets लें। Game बदल दें।',
     phase1: 299, phase2: 2000,
     color: '#8B5CF6', colorDark: '#6D28D9',
     svgPath: `<svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -61,8 +64,9 @@ const ROLES = [
     </svg>`,
   },
   {
-    id: 'wk',   emoji: '🧤', icon: 'wicketkeeper', label: 'Wicket-Keeper',
+    id: 'wk',   emoji: '🧤', icon: 'wicketkeeper', label: 'Wicket-Keeper', labelHi: 'Wicket-Keeper',
     desc: 'Command the field. Lead from behind the stumps.',
+    descHi: 'Field को command करें। Stumps के पीछे से lead करें।',
     phase1: 299, phase2: 2000,
     color: '#06B6D4', colorDark: '#0E7490',
     svgPath: `<svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -77,8 +81,9 @@ const ROLES = [
     </svg>`,
   },
   {
-    id: 'ar',   emoji: '⭐', icon: 'allrounder', label: 'All-Rounder',
+    id: 'ar',   emoji: '⭐', icon: 'allrounder', label: 'All-Rounder', labelHi: 'All-Rounder',
     desc: 'Bat. Bowl. Win matches. The complete cricketer.',
+    descHi: 'Bat करें। Bowl करें। Matches जीतें। Complete cricketer।',
     phase1: 399, phase2: 3000,
     color: '#F59E0B', colorDark: '#B45309',
     svgPath: `<svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -95,15 +100,16 @@ const CITIES = [
 ];
 
 const JOURNEY = [
-  { phase:'P1', icon:'📝', label:'Register',   sub:'Fill form + pay entry fee',          done:false, active:true  },
-  { phase:'P1', icon:'🎬', label:'Upload Video',sub:'2-min trial clip',                  done:false, active:false },
-  { phase:'P1', icon:'⏱',  label:'48-Hour Result',sub:'Criteria-based evaluation',        done:false, active:false },
-  { phase:'P2', icon:'🏟', label:'Physical Trial',sub:'At your city (if selected)',      done:false, active:false },
-  { phase:'P2', icon:'🔨', label:'Auction',    sub:'Franchises bid on you',              done:false, active:false },
-  { phase:'P2', icon:'🏆', label:'Play BCPL',  sub:'Represent your franchise',           done:false, active:false },
+  { phase:'P1', icon:'📝', label:'Register',   labelHi:'Register',       sub:'Fill form + pay entry fee',   subHi:'Form भरें + entry fee pay करें',        done:false, active:true  },
+  { phase:'P1', icon:'🎬', label:'Upload Video',labelHi:'Video Upload',  sub:'2-min trial clip',            subHi:'2-min trial clip',                      done:false, active:false },
+  { phase:'P1', icon:'⏱',  label:'48-Hour Result',labelHi:'48-Hour Result',sub:'Criteria-based evaluation', subHi:'Criteria-based evaluation',             done:false, active:false },
+  { phase:'P2', icon:'🏟', label:'Physical Trial',labelHi:'Physical Trial',sub:'At your city (if selected)', subHi:'आपके शहर में (अगर select हुए)',           done:false, active:false },
+  { phase:'P2', icon:'🔨', label:'Auction',    labelHi:'Auction',        sub:'Franchises bid on you',       subHi:'Franchises आप पर bid करती हैं',          done:false, active:false },
+  { phase:'P2', icon:'🏆', label:'Play BCPL',  labelHi:'BCPL खेलें',      sub:'Represent your franchise',    subHi:'अपनी franchise को represent करें',       done:false, active:false },
 ];
 
 export function Registration() {
+  const { t }                   = useLang();
   const [, navigate]            = useLocation();
   const [step, setStep]         = useState(1); // 1:details 2:role 3:city 4:pay
 
@@ -132,7 +138,7 @@ export function Registration() {
   const minDob  = new Date(today.getFullYear()-45, today.getMonth(), today.getDate()).toISOString().split('T')[0];
   const dobValid = dob >= minDob && dob <= maxDob;
   const ageError = dob && !dobValid
-    ? (dob > maxDob ? 'You must be at least 18 years old to register.' : 'Maximum age limit is 45 years.')
+    ? (dob > maxDob ? t('You must be at least 18 years old to register.', 'Register करने के लिए आपकी उम्र कम से कम 18 साल होनी चाहिए।') : t('Maximum age limit is 45 years.', 'अधिकतम उम्र सीमा 45 साल है।'))
     : '';
 
   const canNext =
@@ -205,7 +211,7 @@ export function Registration() {
       const r = await sendOtp(loginPhone, 'login');
       if (r.devOtp) console.info('[DEV OTP]', r.devOtp);
       setLoginStep('otp');
-    } catch (e: any) { setLoginError(e.message ?? 'Failed to send OTP'); }
+    } catch (e: any) { setLoginError(e.message ?? t('Failed to send OTP', 'OTP भेजने में विफल')); }
     finally { setLoginLoading(false); }
   };
 
@@ -218,7 +224,7 @@ export function Registration() {
       const status = await getRegistrationStatus() as any;
       setRegStatus(status);
       setLoggedIn(true); setShowLogin(false);
-    } catch (e: any) { setLoginError(e.message ?? 'Invalid OTP. Please try again.'); }
+    } catch (e: any) { setLoginError(e.message ?? t('Invalid OTP. Please try again.', 'गलत OTP। कृपया दोबारा try करें।')); }
     finally { setLoginLoading(false); }
   };
 
@@ -261,7 +267,7 @@ export function Registration() {
       const cashfree = (window as any).Cashfree({ mode: 'production' });
       cashfree.checkout({ paymentSessionId: pay.paymentSessionId });
     } catch (e: any) {
-      setPayError(e.message ?? 'Payment failed. Please try again.');
+      setPayError(e.message ?? t('Payment failed. Please try again.', 'Payment विफल। कृपया दोबारा try करें।'));
       setPayLoading(false);
     }
   };
@@ -291,7 +297,7 @@ export function Registration() {
     } catch (e: any) {
       // Number already registered — no OTP was sent; guide the player to login
       if (e?.code === 'ALREADY_REGISTERED' || e?.status === 409) setPayOtpAlreadyReg(true);
-      setPayOtpError(e.message ?? 'Failed to send OTP');
+      setPayOtpError(e.message ?? t('Failed to send OTP', 'OTP भेजने में विफल'));
     }
     finally { setPayOtpLoading(false); }
   };
@@ -302,7 +308,7 @@ export function Registration() {
       const r = await sendOtp(phone, 'register');
       if (r.devOtp) console.info('[DEV OTP]', r.devOtp);
       startPayOtpTimer();
-    } catch (e: any) { setPayOtpError(e.message ?? 'Failed to resend OTP'); }
+    } catch (e: any) { setPayOtpError(e.message ?? t('Failed to resend OTP', 'OTP दोबारा भेजने में विफल')); }
     finally { setPayOtpLoading(false); }
   };
 
@@ -315,7 +321,7 @@ export function Registration() {
       setPayOtpLoading(false);
       doRegisterAndPay();
     } catch (e: any) {
-      setPayOtpError(e.message ?? 'Invalid OTP. Please try again.');
+      setPayOtpError(e.message ?? t('Invalid OTP. Please try again.', 'गलत OTP। कृपया दोबारा try करें।'));
       setPayOtpLoading(false);
     }
   };
@@ -532,24 +538,24 @@ export function Registration() {
           <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:16, flexWrap:'wrap' }}>
             <div style={{ display:'flex', alignItems:'center', gap:6, background:'rgba(255,122,41,0.12)', border:'1px solid rgba(255,122,41,0.35)', padding:'5px 14px', borderRadius:12 }}>
               <span style={{ width:7, height:7, borderRadius:'50%', background:'#FF7A29', display:'inline-block', animation:'liveBlip 1.2s ease-in-out infinite' }} />
-              <span style={{ fontSize:10, fontWeight:800, fontFamily:'Montserrat,sans-serif', color:'#FF7A29', letterSpacing:'.14em' }}>PHASE 1 OPEN NOW</span>
+              <span style={{ fontSize:10, fontWeight:800, fontFamily:'Montserrat,sans-serif', color:'#FF7A29', letterSpacing:'.14em' }}>{t('PHASE 1 OPEN NOW', 'PHASE 1 अब खुला है')}</span>
             </div>
-            <span style={{ fontSize:11, color:'rgba(255,255,255,0.35)', fontWeight:600 }}>Season 5 · Limited slots per city</span>
+            <span style={{ fontSize:11, color:'rgba(255,255,255,0.35)', fontWeight:600 }}>{t('Season 5 · Limited slots per city', 'Season 5 · हर शहर में limited slots')}</span>
           </div>
 
           {/* Headline */}
           <h1 style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(32px,6vw,64px)', lineHeight:.95, letterSpacing:'-.02em', marginBottom:12, textTransform:'uppercase' }}>
-            <span style={{ color:'#fff', display:'block' }}>YOUR SHOT</span>
-            <span style={{ color:'#fff', display:'block' }}>AT THE</span>
-            <span style={{ background:'linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)', backgroundSize:'200%', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text', animation:'shimGold 3s linear infinite', display:'block' }}>BIG LEAGUE.</span>
+            <span style={{ color:'#fff', display:'block' }}>{t('YOUR SHOT', 'आपका मौका')}</span>
+            <span style={{ color:'#fff', display:'block' }}>{t('AT THE', 'BIG')}</span>
+            <span style={{ background:'linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)', backgroundSize:'200%', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text', animation:'shimGold 3s linear infinite', display:'block' }}>{t('BIG LEAGUE.', 'LEAGUE में।')}</span>
           </h1>
           <p style={{ color:'rgba(255,255,255,0.45)', fontSize:14, maxWidth:480, lineHeight:1.6, marginBottom:32 }}>
-            India's corporate T20 cricket league for working professionals. 10 franchise teams. You send one video — compete for your place in cricket.
+            {t("India's corporate T20 cricket league for working professionals. 10 franchise teams. You send one video — compete for your place in cricket.", "Working professionals के लिए भारत की corporate T20 cricket league। 10 franchise teams। आप एक video भेजें — cricket में अपनी जगह के लिए compete करें।")}
           </p>
 
           {/* ─── JOURNEY RAIL ─── */}
           <div style={{ marginBottom:0, paddingBottom:32 }}>
-            <div style={{ fontSize:10, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.16em', color:'rgba(255,255,255,0.3)', marginBottom:16 }}>YOUR COMPLETE TRIAL JOURNEY</div>
+            <div style={{ fontSize:10, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.16em', color:'rgba(255,255,255,0.3)', marginBottom:16 }}>{t('YOUR COMPLETE TRIAL JOURNEY', 'आपकी पूरी TRIAL JOURNEY')}</div>
             <div className="journey-wrap">
               {JOURNEY.map((j, i) => (
                 <div key={i} className="journey-node" style={{ minWidth:56 }}>
@@ -563,8 +569,8 @@ export function Registration() {
                   </div>
                   {/* Label — hidden on very small screens via CSS */}
                   <div>
-                    <div className="j-label" style={{ color: i===0 ? '#FF7A29' : j.phase==='P1'?'rgba(255,255,255,0.7)':'rgba(232,178,61,0.6)' }}>{j.label}</div>
-                    <div className="j-sub">{j.sub}</div>
+                    <div className="j-label" style={{ color: i===0 ? '#FF7A29' : j.phase==='P1'?'rgba(255,255,255,0.7)':'rgba(232,178,61,0.6)' }}>{t(j.label, j.labelHi)}</div>
+                    <div className="j-sub">{t(j.sub, j.subHi)}</div>
                   </div>
                   {/* Connector line */}
                   {i < JOURNEY.length-1 && (
@@ -578,11 +584,11 @@ export function Registration() {
             <div style={{ display:'flex', gap:16, marginTop:12, flexWrap:'wrap' }}>
               <div style={{ display:'flex', alignItems:'center', gap:6, fontSize:11, color:'rgba(255,255,255,0.4)' }}>
                 <span style={{ width:12, height:12, borderRadius:'50%', background:'rgba(255,122,41,0.3)', border:'1px solid #FF7A29', display:'inline-block' }} />
-                Phase 1 — Video Trial: ₹299 / ₹399
+                {t('Phase 1 — Video Trial: ₹299 / ₹399', 'Phase 1 — Video Trial: ₹299 / ₹399')}
               </div>
               <div style={{ display:'flex', alignItems:'center', gap:6, fontSize:11, color:'rgba(255,255,255,0.4)' }}>
                 <span style={{ width:12, height:12, borderRadius:'50%', background:'rgba(232,178,61,0.15)', border:'1px solid rgba(232,178,61,0.5)', display:'inline-block' }} />
-                Phase 2 — Physical Trial (if selected): ₹2,000 / ₹3,000
+                {t('Phase 2 — Physical Trial (if selected): ₹2,000 / ₹3,000', 'Phase 2 — Physical Trial (अगर select हुए): ₹2,000 / ₹3,000')}
               </div>
             </div>
           </div>
@@ -611,7 +617,7 @@ export function Registration() {
                 </React.Fragment>
               ))}
               <div className="step-label">
-                Step {step} of 4
+                {t(`Step ${step} of 4`, `Step ${step} / 4`)}
               </div>
             </div>
             )}
@@ -621,24 +627,24 @@ export function Registration() {
               <div className="step-enter">
                 {!isRegistered && (<>
                 <div style={{ borderLeft:'3px solid #FF7A29', paddingLeft:14, marginBottom:28 }}>
-                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(18px,5vw,22px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em' }}>Your Details</div>
-                  <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginTop:4 }}>As per Aadhaar / PAN — used for franchise records</div>
-                  <Link href="/eligibility" style={{ fontSize:11, color:'#FF7A29', textDecoration:'none', fontWeight:700, display:'inline-block', marginTop:6 }}>Check eligibility criteria →</Link>
+                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(18px,5vw,22px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em' }}>{t('Your Details', 'आपकी Details')}</div>
+                  <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginTop:4 }}>{t('As per Aadhaar / PAN — used for franchise records', 'Aadhaar / PAN के अनुसार — franchise records के लिए')}</div>
+                  <Link href="/eligibility" style={{ fontSize:11, color:'#FF7A29', textDecoration:'none', fontWeight:700, display:'inline-block', marginTop:6 }}>{t('Check eligibility criteria →', 'Eligibility criteria देखें →')}</Link>
                 </div>
 
                 <div style={{ display:'grid', gridTemplateColumns:'1fr', gap:20 }}>
                   <div>
-                    <label className="field-lbl">Full Name *</label>
-                    <input className="field-inp" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Rahul Kumar Sharma" autoFocus />
-                    <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)', marginTop:5 }}>Name as per PAN card and Aadhaar card</div>
+                    <label className="field-lbl">{t('Full Name *', 'पूरा नाम *')}</label>
+                    <input className="field-inp" value={name} onChange={e => setName(e.target.value)} placeholder={t('e.g. Rahul Kumar Sharma', 'जैसे Rahul Kumar Sharma')} autoFocus />
+                    <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)', marginTop:5 }}>{t('Name as per PAN card and Aadhaar card', 'PAN card और Aadhaar card के अनुसार नाम')}</div>
                   </div>
                   <div className="field-grid-2">
                     <div>
-                      <label className="field-lbl">Email *</label>
+                      <label className="field-lbl">{t('Email *', 'Email *')}</label>
                       <input className="field-inp" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" />
                     </div>
                     <div>
-                      <label className="field-lbl">Phone *</label>
+                      <label className="field-lbl">{t('Phone *', 'Phone *')}</label>
                       <div style={{ display:'flex', alignItems:'center', gap:0 }}>
                         <span style={{ padding:'0 12px', height:46, display:'flex', alignItems:'center', background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,122,41,0.25)', borderRight:'none', fontSize:14, fontWeight:700, color:'rgba(255,255,255,0.6)', flexShrink:0, borderRadius:'8px 0 0 8px', letterSpacing:'.02em' }}>+91</span>
                         <input className="field-inp" type="tel" value={phone}
@@ -649,10 +655,10 @@ export function Registration() {
                     </div>
                   </div>
                   <div>
-                    <label className="field-lbl">Date of Birth (18–45 yrs) *</label>
+                    <label className="field-lbl">{t('Date of Birth (18–45 yrs) *', 'जन्म तिथि (18–45 साल) *')}</label>
                     <input className="field-inp" type="date" value={dob} onChange={e => setDob(e.target.value)} min={minDob} max={maxDob} style={{ colorScheme:'dark' }} />
                     {ageError && <div style={{fontSize:11,color:'#EF4444',marginTop:5,fontWeight:600}}>⚠ {ageError}</div>}
-                    {dob && dobValid && <div style={{fontSize:11,color:'#22C55E',marginTop:5,fontWeight:700,letterSpacing:'.04em'}}>✅ AGE ELIGIBILITY — CONFIRMED</div>}
+                    {dob && dobValid && <div style={{fontSize:11,color:'#22C55E',marginTop:5,fontWeight:700,letterSpacing:'.04em'}}>{t('✅ AGE ELIGIBILITY — CONFIRMED', '✅ AGE ELIGIBILITY — CONFIRMED')}</div>}
                   </div>
                 </div>
                 </>)}
@@ -666,8 +672,8 @@ export function Registration() {
                     <div style={{ padding:'12px 16px', background:'rgba(34,197,94,0.06)', border:'1px solid rgba(34,197,94,0.25)', borderRadius:10, display:'flex', alignItems:'center', gap:10, marginBottom:16 }}>
                       <span style={{ fontSize:18 }}>✅</span>
                       <div style={{ flex:1 }}>
-                        <div style={{ fontSize:13, fontWeight:700, color:'#22C55E', fontFamily:'Montserrat,sans-serif' }}>Logged in as +91 {loginPhone || regStatus?.phone || '—'}</div>
-                        {regStatus?.registered && <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)', marginTop:2 }}>Role: {regStatus.role?.toUpperCase()} · City: {regStatus.trialCity}</div>}
+                        <div style={{ fontSize:13, fontWeight:700, color:'#22C55E', fontFamily:'Montserrat,sans-serif' }}>{t('Logged in as', 'Logged in as')} +91 {loginPhone || regStatus?.phone || '—'}</div>
+                        {regStatus?.registered && <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)', marginTop:2 }}>{t('Role:', 'Role:')} {regStatus.role?.toUpperCase()} · {t('City:', 'City:')} {regStatus.trialCity}</div>}
                       </div>
                       <button onClick={()=>{ setLoggedIn(false); setRegStatus(null); }} style={{ background:'none', border:'none', color:'rgba(255,255,255,0.3)', cursor:'pointer', fontSize:16 }}>✕</button>
                     </div>
@@ -675,7 +681,7 @@ export function Registration() {
                     {/* ── Not registered yet ── */}
                     {regStatus && !regStatus.registered && (
                       <div style={{ padding:'16px', background:'rgba(255,122,41,0.07)', border:'1px solid rgba(255,122,41,0.25)', borderRadius:10, textAlign:'center' }}>
-                        <div style={{ fontSize:13, color:'rgba(255,255,255,0.6)', marginBottom:8 }}>You haven't registered yet. Fill the form above to register.</div>
+                        <div style={{ fontSize:13, color:'rgba(255,255,255,0.6)', marginBottom:8 }}>{t("You haven't registered yet. Fill the form above to register.", "आपने अभी register नहीं किया है। Register करने के लिए ऊपर form भरें।")}</div>
                       </div>
                     )}
 
@@ -683,15 +689,15 @@ export function Registration() {
                     {regStatus?.phase1Status === 'pending' && (
                       <div style={{ padding:'16px', background:'rgba(251,191,36,0.07)', border:'1px solid rgba(251,191,36,0.3)', borderRadius:10, textAlign:'center' }}>
                         <div style={{ fontSize:22, marginBottom:8 }}>⏳</div>
-                        <div style={{ fontSize:14, fontWeight:800, color:'#FBB724', fontFamily:'Montserrat,sans-serif' }}>Payment Pending</div>
-                        <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:6, marginBottom:14 }}>Complete your Phase 1 payment to activate your registration.</div>
+                        <div style={{ fontSize:14, fontWeight:800, color:'#FBB724', fontFamily:'Montserrat,sans-serif' }}>{t('Payment Pending', 'Payment Pending')}</div>
+                        <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:6, marginBottom:14 }}>{t('Complete your Phase 1 payment to activate your registration.', 'अपनी registration activate करने के लिए Phase 1 payment पूरा करें।')}</div>
                         {/* DOB backfill: players registered before the age gate existed */}
                         {!regStatus?.dob && (
                           <div style={{ maxWidth:280, margin:'0 auto 14px', textAlign:'left' }}>
-                            <label className="field-lbl">Date of Birth (18–45 yrs) *</label>
+                            <label className="field-lbl">{t('Date of Birth (18–45 yrs) *', 'जन्म तिथि (18–45 साल) *')}</label>
                             <input className="field-inp" type="date" value={dob} onChange={e => setDob(e.target.value)} min={minDob} max={maxDob} style={{ colorScheme:'dark' }} />
                             {ageError && <div style={{fontSize:11,color:'#EF4444',marginTop:5,fontWeight:600}}>⚠ {ageError}</div>}
-                            {dob && dobValid && <div style={{fontSize:11,color:'#22C55E',marginTop:5,fontWeight:700}}>✅ AGE ELIGIBILITY — CONFIRMED</div>}
+                            {dob && dobValid && <div style={{fontSize:11,color:'#22C55E',marginTop:5,fontWeight:700}}>{t('✅ AGE ELIGIBILITY — CONFIRMED', '✅ AGE ELIGIBILITY — CONFIRMED')}</div>}
                           </div>
                         )}
                         <button disabled={!regStatus?.dob && !(dob && dobValid)} onClick={async()=>{
@@ -705,7 +711,7 @@ export function Registration() {
                             cf.checkout({ paymentSessionId: pay.paymentSessionId });
                           } catch(e:any){ alert(e.message); } finally { setPayLoading(false); }
                         }} style={{ padding:'12px 28px', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', opacity:(!regStatus?.dob && !(dob && dobValid)) ? .5 : 1 }}>
-                          {payLoading ? '⏳ Processing...' : '💳 COMPLETE PAYMENT →'}
+                          {payLoading ? t('⏳ Processing...', '⏳ Processing...') : t('💳 COMPLETE PAYMENT →', '💳 PAYMENT पूरा करें →')}
                         </button>
                       </div>
                     )}
@@ -714,14 +720,14 @@ export function Registration() {
                     {regStatus?.phase1Status === 'payment_done' && (
                       <div style={{ padding:'20px', background:'rgba(59,130,246,0.07)', border:'1px solid rgba(59,130,246,0.3)', borderRadius:12, textAlign:'center' }}>
                         <div style={{ fontSize:32, marginBottom:10 }}>🎬</div>
-                        <div style={{ fontSize:15, fontWeight:800, color:'#60A5FA', fontFamily:'Montserrat,sans-serif' }}>Payment Confirmed — Upload Your Trial Video</div>
+                        <div style={{ fontSize:15, fontWeight:800, color:'#60A5FA', fontFamily:'Montserrat,sans-serif' }}>{t('Payment Confirmed — Upload Your Trial Video', 'Payment Confirmed — अपना Trial Video Upload करें')}</div>
                         <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:8, lineHeight:1.7 }}>
-                          {regStatus.videoDeadline && (<>Deadline: <strong style={{ color:'#FBB724' }}>{new Date(regStatus.videoDeadline).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' })}</strong><br/></>)}
-                          Filming instructions, live countdown and secure upload are on the video upload page.
+                          {regStatus.videoDeadline && (<>{t('Deadline:', 'Deadline:')} <strong style={{ color:'#FBB724' }}>{new Date(regStatus.videoDeadline).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' })}</strong><br/></>)}
+                          {t('Filming instructions, live countdown and secure upload are on the video upload page.', 'Filming instructions, live countdown और secure upload video upload page पर हैं।')}
                         </div>
                         <button onClick={()=>navigate('/register/upload-video')}
                           style={{ marginTop:14, padding:'14px 32px', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', letterSpacing:'.06em' }}>
-                          🎬 GO TO VIDEO UPLOAD →
+                          {t('🎬 GO TO VIDEO UPLOAD →', '🎬 VIDEO UPLOAD पर जाएं →')}
                         </button>
                       </div>
                     )}
@@ -730,10 +736,10 @@ export function Registration() {
                     {regStatus?.phase1Status === 'video_submitted' && (
                       <div style={{ padding:'20px', background:'rgba(168,85,247,0.07)', border:'1px solid rgba(168,85,247,0.3)', borderRadius:12, textAlign:'center' }}>
                         <div style={{ fontSize:32, marginBottom:10 }}>🎬</div>
-                        <div style={{ fontSize:15, fontWeight:800, color:'#A855F7', fontFamily:'Montserrat,sans-serif' }}>Video Under Review</div>
+                        <div style={{ fontSize:15, fontWeight:800, color:'#A855F7', fontFamily:'Montserrat,sans-serif' }}>{t('Video Under Review', 'Video Review में है')}</div>
                         <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:8, lineHeight:1.7 }}>
-                          Your Phase 1 submission is going through BCPL's evaluation process.<br/>
-                          Result will be shared via <strong style={{color:'rgba(255,255,255,0.7)'}}>SMS + Email</strong> within 48 hours.
+                          {t("Your Phase 1 submission is going through BCPL's evaluation process.", "आपकी Phase 1 submission BCPL के evaluation process से गुज़र रही है।")}<br/>
+                          {t('Result will be shared via', 'Result भेजा जाएगा')} <strong style={{color:'rgba(255,255,255,0.7)'}}>{t('SMS + Email', 'SMS + Email')}</strong> {t('within 48 hours.', '48 घंटे के अंदर।')}
                         </div>
                       </div>
                     )}
@@ -742,12 +748,12 @@ export function Registration() {
                     {regStatus?.phase1Status === 'selected' && (
                       <div style={{ padding:'20px', background:'rgba(34,197,94,0.08)', border:'1px solid rgba(34,197,94,0.35)', borderRadius:12, textAlign:'center' }}>
                         <div style={{ fontSize:32, marginBottom:10 }}>🏆</div>
-                        <div style={{ fontSize:15, fontWeight:800, color:'#22C55E', fontFamily:'Montserrat,sans-serif' }}>Congratulations! Selected for Phase 2</div>
+                        <div style={{ fontSize:15, fontWeight:800, color:'#22C55E', fontFamily:'Montserrat,sans-serif' }}>{t('Congratulations! Selected for Phase 2', 'बधाई हो! Phase 2 के लिए select हुए')}</div>
                         <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:8, marginBottom:16, lineHeight:1.7 }}>
-                          You've cleared Phase 1. Pay the Phase 2 fee to confirm your physical trial slot.
+                          {t("You've cleared Phase 1. Pay the Phase 2 fee to confirm your physical trial slot.", "आपने Phase 1 clear कर लिया है। अपना physical trial slot confirm करने के लिए Phase 2 fee pay करें।")}
                         </div>
                         <button onClick={()=>navigate('/register/phase2')} style={{ padding:'12px 28px', background:'linear-gradient(135deg,#22C55E,#16A34A)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer' }}>
-                          🏟 PAY PHASE 2 FEE →
+                          {t('🏟 PAY PHASE 2 FEE →', '🏟 PHASE 2 FEE pay करें →')}
                         </button>
                       </div>
                     )}
@@ -756,9 +762,9 @@ export function Registration() {
                     {regStatus?.phase1Status === 'rejected' && (
                       <div style={{ padding:'20px', background:'rgba(239,68,68,0.07)', border:'1px solid rgba(239,68,68,0.3)', borderRadius:12, textAlign:'center' }}>
                         <div style={{ fontSize:32, marginBottom:10 }}>😔</div>
-                        <div style={{ fontSize:15, fontWeight:800, color:'#EF4444', fontFamily:'Montserrat,sans-serif' }}>Not Selected This Season</div>
+                        <div style={{ fontSize:15, fontWeight:800, color:'#EF4444', fontFamily:'Montserrat,sans-serif' }}>{t('Not Selected This Season', 'इस Season Select नहीं हुए')}</div>
                         <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:8, lineHeight:1.7 }}>
-                          Thank you for participating. Better luck in BCPL Season 6!
+                          {t('Thank you for participating. Better luck in BCPL Season 6!', 'Participate करने के लिए धन्यवाद। BCPL Season 6 में शुभकामनाएं!')}
                         </div>
                       </div>
                     )}
@@ -770,30 +776,30 @@ export function Registration() {
                   <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.85)', zIndex:999, display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}>
                     <div style={{ background:'#0C1A2E', border:'1px solid rgba(255,122,41,0.3)', borderRadius:16, padding:28, width:'100%', maxWidth:380, position:'relative' }}>
                       <button onClick={() => setShowLogin(false)} style={{ position:'absolute', top:12, right:14, background:'none', border:'none', color:'rgba(255,255,255,0.4)', fontSize:18, cursor:'pointer' }}>✕</button>
-                      <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:18, color:'#fff', marginBottom:6 }}>Registered Player Login</div>
-                      <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginBottom:20 }}>Enter your registered mobile number to continue.</div>
+                      <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:18, color:'#fff', marginBottom:6 }}>{t('Registered Player Login', 'Registered Player Login')}</div>
+                      <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginBottom:20 }}>{t('Enter your registered mobile number to continue.', 'आगे बढ़ने के लिए अपना registered mobile number डालें।')}</div>
                       {loginStep === 'phone' ? (<>
-                        <label style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.5)', letterSpacing:'.08em', display:'block', marginBottom:6 }}>MOBILE NUMBER</label>
+                        <label style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.5)', letterSpacing:'.08em', display:'block', marginBottom:6 }}>{t('MOBILE NUMBER', 'MOBILE NUMBER')}</label>
                         <input className="field-inp" type="tel" inputMode="numeric" maxLength={10} value={loginPhone}
                           onChange={e => { const v=e.target.value.replace(/\D/g,''); if(v.length<=10) setLoginPhone(v); }}
-                          placeholder="10-digit number" style={{ marginBottom:16, width:'100%' }} />
+                          placeholder={t('10-digit number', '10-digit number')} style={{ marginBottom:16, width:'100%' }} />
                         {loginError && <div style={{ fontSize:12, color:'#EF4444', marginBottom:10, fontWeight:600 }}>⚠ {loginError}</div>}
                         <button disabled={loginPhone.length!==10 || loginLoading} onClick={handleSendLoginOtp}
                           style={{ width:'100%', padding:'13px 0', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', opacity:loginPhone.length!==10||loginLoading?0.5:1 }}>
-                          {loginLoading ? '⏳ Sending...' : 'Send OTP →'}
+                          {loginLoading ? t('⏳ Sending...', '⏳ भेज रहे हैं...') : t('Send OTP →', 'OTP भेजें →')}
                         </button>
                       </>) : (<>
-                        <div style={{ fontSize:12, color:'#22C55E', marginBottom:12 }}>✅ OTP sent to +91 {loginPhone}</div>
-                        <label style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.5)', letterSpacing:'.08em', display:'block', marginBottom:6 }}>ENTER OTP</label>
+                        <div style={{ fontSize:12, color:'#22C55E', marginBottom:12 }}>{t('✅ OTP sent to', '✅ OTP भेजा गया')} +91 {loginPhone}</div>
+                        <label style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.5)', letterSpacing:'.08em', display:'block', marginBottom:6 }}>{t('ENTER OTP', 'OTP डालें')}</label>
                         <input className="field-inp" type="tel" inputMode="numeric" maxLength={6} value={loginOtp}
                           onChange={e => { const v=e.target.value.replace(/\D/g,''); if(v.length<=6) setLoginOtp(v); }}
-                          placeholder="6-digit OTP" style={{ marginBottom:16, width:'100%', letterSpacing:'0.3em', fontSize:20, textAlign:'center' }} />
+                          placeholder={t('6-digit OTP', '6-digit OTP')} style={{ marginBottom:16, width:'100%', letterSpacing:'0.3em', fontSize:20, textAlign:'center' }} />
                         {loginError && <div style={{ fontSize:12, color:'#EF4444', marginBottom:10, fontWeight:600 }}>⚠ {loginError}</div>}
                         <button disabled={loginOtp.length!==6 || loginLoading} onClick={handleVerifyLoginOtp}
                           style={{ width:'100%', padding:'13px 0', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', opacity:loginOtp.length!==6||loginLoading?0.5:1 }}>
-                          {loginLoading ? '⏳ Verifying...' : 'Verify & Login →'}
+                          {loginLoading ? t('⏳ Verifying...', '⏳ Verify कर रहे हैं...') : t('Verify & Login →', 'Verify करें & Login →')}
                         </button>
-                        <button onClick={() => { setLoginStep('phone'); setLoginError(''); }} style={{ width:'100%', marginTop:8, padding:'10px', background:'none', border:'1px solid rgba(255,255,255,0.1)', borderRadius:10, color:'rgba(255,255,255,0.4)', fontSize:12, cursor:'pointer' }}>← Change Number</button>
+                        <button onClick={() => { setLoginStep('phone'); setLoginError(''); }} style={{ width:'100%', marginTop:8, padding:'10px', background:'none', border:'1px solid rgba(255,255,255,0.1)', borderRadius:10, color:'rgba(255,255,255,0.4)', fontSize:12, cursor:'pointer' }}>{t('← Change Number', '← Number बदलें')}</button>
                       </>)}
                     </div>
                   </div>
@@ -805,8 +811,8 @@ export function Registration() {
             {step === 2 && (
               <div className="step-enter">
                 <div style={{ borderLeft:'3px solid #FF7A29', paddingLeft:14, marginBottom:28 }}>
-                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(18px,5vw,22px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em' }}>Your Role</div>
-                  <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginTop:4 }}>Your video is assessed against role-specific criteria. Every role brings equal value to the game.</div>
+                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(18px,5vw,22px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em' }}>{t('Your Role', 'आपकी Role')}</div>
+                  <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginTop:4 }}>{t('Your video is assessed against role-specific criteria. Every role brings equal value to the game.', 'आपका video role-specific criteria पर assess होता है। हर role game में बराबर value लाती है।')}</div>
                 </div>
 
                 <div className="roles-grid">
@@ -832,22 +838,22 @@ export function Registration() {
                         </div>
 
                         {/* Name */}
-                        <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:15, color:'#fff', textTransform:'uppercase', letterSpacing:'.04em', marginBottom:4 }}>{r.label}</div>
-                        <div style={{ fontSize:13, color:'rgba(255,255,255,0.55)', marginBottom:14, lineHeight:1.5 }}>{r.desc}</div>
+                        <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:15, color:'#fff', textTransform:'uppercase', letterSpacing:'.04em', marginBottom:4 }}>{t(r.label, r.labelHi)}</div>
+                        <div style={{ fontSize:13, color:'rgba(255,255,255,0.55)', marginBottom:14, lineHeight:1.5 }}>{t(r.desc, r.descHi)}</div>
 
                         {/* Price rows */}
                         <div style={{ borderTop:'1px solid rgba(255,255,255,0.07)', paddingTop:12, display:'flex', flexDirection:'column', gap:8 }}>
                           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
                             <div>
                               <div style={{ fontSize:11, fontWeight:700, color:'#FF7A29', letterSpacing:'.1em', fontFamily:'Montserrat,sans-serif' }}>PHASE 1</div>
-                              <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)' }}>Video Trial Entry</div>
+                              <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)' }}>{t('Video Trial Entry', 'Video Trial Entry')}</div>
                             </div>
                             <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:24, color: role?.id===r.id ? r.color : '#fff' }}>₹{r.phase1}</div>
                           </div>
                           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', opacity:.55 }}>
                             <div>
                               <div style={{ fontSize:11, fontWeight:700, color:'#E8B23D', letterSpacing:'.1em', fontFamily:'Montserrat,sans-serif' }}>PHASE 2 🔒</div>
-                              <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)' }}>Physical Trial (if selected)</div>
+                              <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)' }}>{t('Physical Trial (if selected)', 'Physical Trial (अगर select हुए)')}</div>
                             </div>
                             <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:18, color:'rgba(232,178,61,0.7)' }}>₹{r.phase2.toLocaleString()}</div>
                           </div>
@@ -861,8 +867,8 @@ export function Registration() {
                   <div style={{ marginTop:16, padding:'12px 16px', background:`${role.color}10`, border:`1px solid ${role.color}30`, display:'flex', alignItems:'center', gap:10, flexWrap:'wrap' }}>
                     <span style={{ fontSize:18 }}>{role.emoji}</span>
                     <div style={{ flex:1, minWidth:0 }}>
-                      <div style={{ fontSize:12, fontWeight:700, color:'#fff', fontFamily:'Montserrat,sans-serif' }}>{role.label} selected</div>
-                      <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)' }}>Phase 1 fee: ₹{role.phase1} · Phase 2 (if selected): ₹{role.phase2.toLocaleString()}</div>
+                      <div style={{ fontSize:12, fontWeight:700, color:'#fff', fontFamily:'Montserrat,sans-serif' }}>{t(role.label + ' selected', role.labelHi + ' select हुआ')}</div>
+                      <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)' }}>{t('Phase 1 fee:', 'Phase 1 fee:')} ₹{role.phase1} · {t('Phase 2 (if selected):', 'Phase 2 (अगर select हुए):')} ₹{role.phase2.toLocaleString()}</div>
                     </div>
                     <div style={{ fontSize:18, color:'#22C55E' }}>✓</div>
                   </div>
@@ -874,15 +880,15 @@ export function Registration() {
             {step === 3 && (
               <div className="step-enter">
                 <div style={{ borderLeft:'3px solid #FF7A29', paddingLeft:14, marginBottom:24 }}>
-                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(18px,5vw,22px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em' }}>Trial City</div>
-                  <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginTop:4 }}>Cities across India. Choose the city nearest to your home or workplace.</div>
+                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(18px,5vw,22px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em' }}>{t('Trial City', 'Trial City')}</div>
+                  <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginTop:4 }}>{t('Cities across India. Choose the city nearest to your home or workplace.', 'पूरे भारत में cities। अपने घर या workplace के सबसे नज़दीक वाला शहर चुनें।')}</div>
                 </div>
 
                 {/* Search */}
                 <div style={{ position:'relative', marginBottom:20 }}>
                   <input
                     className="field-inp"
-                    placeholder="🔍  Search your city..."
+                    placeholder={t('🔍  Search your city...', '🔍  अपना शहर Search करें...')}
                     value={cityQ}
                     onChange={e => { setCityQ(e.target.value); setCity(''); setShowDrop(true); }}
                     onFocus={() => setShowDrop(true)}
@@ -913,7 +919,7 @@ export function Registration() {
                     <span style={{ fontSize:20 }}>📍</span>
                     <div>
                       <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:16, color:'#22C55E' }}>{city}</div>
-                      <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)', marginTop:2 }}>If selected in Phase 1, your physical trial will be held in this city</div>
+                      <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)', marginTop:2 }}>{t('If selected in Phase 1, your physical trial will be held in this city', 'अगर Phase 1 में select हुए, तो आपका physical trial इसी शहर में होगा')}</div>
                     </div>
                   </div>
                 )}
@@ -924,8 +930,8 @@ export function Registration() {
             {step === 4 && (
               <div className="step-enter">
                 <div style={{ borderLeft:'3px solid #FF7A29', paddingLeft:14, marginBottom:24 }}>
-                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(18px,5vw,22px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em' }}>Confirm & Pay</div>
-                  <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginTop:4 }}>Phase 1 entry fee. Phase 2 fee is payable only if you qualify and choose to proceed.</div>
+                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(18px,5vw,22px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em' }}>{t('Confirm & Pay', 'Confirm करें & Pay करें')}</div>
+                  <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginTop:4 }}>{t('Phase 1 entry fee. Phase 2 fee is payable only if you qualify and choose to proceed.', 'Phase 1 entry fee। Phase 2 fee तभी देनी है जब आप qualify करें और आगे बढ़ना चुनें।')}</div>
                 </div>
 
                 {/* ── MATCH TICKET ── */}
@@ -934,10 +940,10 @@ export function Registration() {
                   <div style={{ background:'linear-gradient(135deg,#FF7A29,#C94E0E)', padding:'16px 24px', display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:8 }}>
                     <div>
                       <div style={{ fontSize:8, fontWeight:900, fontFamily:'Montserrat,sans-serif', letterSpacing:'.2em', color:'rgba(255,255,255,0.7)', marginBottom:3 }}>BCPL · SEASON 5</div>
-                      <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:16, color:'#fff', letterSpacing:'.04em' }}>PHASE 1 TRIAL ENTRY</div>
+                      <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:16, color:'#fff', letterSpacing:'.04em' }}>{t('PHASE 1 TRIAL ENTRY', 'PHASE 1 TRIAL ENTRY')}</div>
                     </div>
                     <div style={{ textAlign:'right' }}>
-                      <div style={{ fontSize:8, fontWeight:700, color:'rgba(255,255,255,0.6)', letterSpacing:'.14em' }}>ENTRY FEE</div>
+                      <div style={{ fontSize:8, fontWeight:700, color:'rgba(255,255,255,0.6)', letterSpacing:'.14em' }}>{t('ENTRY FEE', 'ENTRY FEE')}</div>
                       <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:36, color:'#fff', lineHeight:1 }}>₹{price}</div>
                     </div>
                   </div>
@@ -947,11 +953,11 @@ export function Registration() {
                     {/* Player info rows */}
                     <div className="ticket-info-grid" style={{ paddingTop:18, paddingBottom:16 }}>
                       {[
-                        { l:'PLAYER NAME', v:name || '—' },
-                        { l:'ROLE', v:role ? `${role.emoji} ${role.label}` : '—' },
-                        { l:'TRIAL CITY', v:city || '—' },
-                        { l:'AGE ELIGIBILITY', v:dob && dobValid ? '✓ Eligible (18–45)' : '—' },
-                        { l:'SEASON', v:'5 · 2025–26' },
+                        { l:t('PLAYER NAME', 'PLAYER NAME'), v:name || '—' },
+                        { l:t('ROLE', 'ROLE'), v:role ? role.emoji + ' ' + t(role.label, role.labelHi) : '—' },
+                        { l:t('TRIAL CITY', 'TRIAL CITY'), v:city || '—' },
+                        { l:t('AGE ELIGIBILITY', 'AGE ELIGIBILITY'), v:dob && dobValid ? t('✓ Eligible (18–45)', '✓ Eligible (18–45)') : '—' },
+                        { l:t('SEASON', 'SEASON'), v:'5 · 2025–26' },
                       ].map(row => (
                         <div key={row.l} style={{ padding:'10px 0', borderBottom:'1px solid rgba(255,255,255,0.05)' }}>
                           <div style={{ fontSize:9, fontWeight:700, fontFamily:'Montserrat,sans-serif', letterSpacing:'.14em', color:'rgba(255,255,255,0.3)', marginBottom:4 }}>{row.l}</div>
@@ -964,15 +970,15 @@ export function Registration() {
 
                     {/* Inclusions */}
                     <div style={{ padding:'14px 0' }}>
-                      <div style={{ fontSize:9, fontWeight:700, fontFamily:'Montserrat,sans-serif', letterSpacing:'.14em', color:'rgba(255,255,255,0.3)', marginBottom:10 }}>WHAT YOU GET</div>
+                      <div style={{ fontSize:9, fontWeight:700, fontFamily:'Montserrat,sans-serif', letterSpacing:'.14em', color:'rgba(255,255,255,0.3)', marginBottom:10 }}>{t('WHAT YOU GET', 'आपको क्या मिलेगा')}</div>
                       <div className="what-you-get-grid">
                         {[
-                          '✅ Criteria-based video assessment',
-                          '✅ Selection results announced promptly',
-                          '✅ Zero auction / tournament fee',
-                          '✅ Transparent result process',
-                          '✅ Phase 2 invite if selected',
-                        ].map(t => <div key={t} style={{ fontSize:12, color:'rgba(255,255,255,0.65)', lineHeight:1.5 }}>{t}</div>)}
+                          t('✅ Criteria-based video assessment', '✅ Criteria-based video assessment'),
+                          t('✅ Selection results announced promptly', '✅ Selection results जल्दी घोषित'),
+                          t('✅ Zero auction / tournament fee', '✅ कोई auction / tournament fee नहीं'),
+                          t('✅ Transparent result process', '✅ पारदर्शी result process'),
+                          t('✅ Phase 2 invite if selected', '✅ Select होने पर Phase 2 invite'),
+                        ].map(item => <div key={item} style={{ fontSize:12, color:'rgba(255,255,255,0.65)', lineHeight:1.5 }}>{item}</div>)}
                       </div>
                     </div>
 
@@ -984,9 +990,9 @@ export function Registration() {
                         <div>
                           <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:3 }}>
                             <span style={{ fontSize:10 }}>🔒</span>
-                            <span style={{ fontSize:9, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.16em', color:'rgba(232,178,61,0.6)' }}>PHASE 2 (IF SELECTED)</span>
+                            <span style={{ fontSize:9, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.16em', color:'rgba(232,178,61,0.6)' }}>{t('PHASE 2 (IF SELECTED)', 'PHASE 2 (अगर SELECT हुए)')}</span>
                           </div>
-                          <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)' }}>Physical trial at {city||'your city'} — pay only if selected</div>
+                          <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)' }}>{t('Physical trial at', 'Physical trial')} {city||t('your city', 'आपके शहर')} {t('— pay only if selected', 'में — select होने पर ही pay करें')}</div>
                         </div>
                         <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'rgba(232,178,61,0.6)' }}>₹{phase2price.toLocaleString()}</div>
                       </div>
@@ -998,25 +1004,25 @@ export function Registration() {
                 <label style={{ display:'flex', alignItems:'flex-start', gap:10, cursor:'pointer', marginBottom:20, padding:'14px 16px', background:'rgba(255,255,255,0.02)', border:'1px solid rgba(255,255,255,0.07)' }}>
                   <input type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)} style={{ marginTop:2, accentColor:'#FF7A29', width:16, height:16, flexShrink:0 }} />
                   <span style={{ fontSize:12, color:'rgba(255,255,255,0.5)', lineHeight:1.6 }}>
-                    I confirm I am a working professional aged 18–45, not under a first-class cricket contract, and I agree to the{' '}
-                    <Link href="/terms" style={{ color:'#FF7A29', textDecoration:'none', fontWeight:600 }}>Terms & Conditions</Link>,{' '}
-                    <Link href="/refunds" style={{ color:'#FF7A29', textDecoration:'none', fontWeight:600 }}>Refund Policy</Link>, and{' '}
-                    <Link href="/eligibility" style={{ color:'#FF7A29', textDecoration:'none', fontWeight:600 }}>Eligibility Criteria</Link>.
+                    {t('I confirm I am a working professional aged 18–45, not under a first-class cricket contract, and I agree to the', 'मैं confirm करता हूँ कि मैं 18–45 उम्र का working professional हूँ, first-class cricket contract में नहीं हूँ, और मैं सहमत हूँ')}{' '}
+                    <Link href="/terms" style={{ color:'#FF7A29', textDecoration:'none', fontWeight:600 }}>{t('Terms & Conditions', 'Terms & Conditions')}</Link>,{' '}
+                    <Link href="/refunds" style={{ color:'#FF7A29', textDecoration:'none', fontWeight:600 }}>{t('Refund Policy', 'Refund Policy')}</Link>{t(', and', ', और')}{' '}
+                    <Link href="/eligibility" style={{ color:'#FF7A29', textDecoration:'none', fontWeight:600 }}>{t('Eligibility Criteria', 'Eligibility Criteria')}</Link>{t('.', ' से।')}
                   </span>
                 </label>
 
                 {/* GST Breakdown */}
                 <div style={{ background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:10, padding:'14px 16px', marginBottom:12 }}>
                   <div style={{ display:'flex', justifyContent:'space-between', marginBottom:8 }}>
-                    <span style={{ fontSize:13, color:'rgba(255,255,255,0.5)' }}>Registration Fee</span>
+                    <span style={{ fontSize:13, color:'rgba(255,255,255,0.5)' }}>{t('Registration Fee', 'Registration Fee')}</span>
                     <span style={{ fontSize:13, color:'rgba(255,255,255,0.7)', fontWeight:700 }}>₹{price}</span>
                   </div>
                   <div style={{ display:'flex', justifyContent:'space-between', marginBottom:10, paddingBottom:10, borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
-                    <span style={{ fontSize:12, color:'rgba(255,255,255,0.4)' }}>GST (18%)</span>
+                    <span style={{ fontSize:12, color:'rgba(255,255,255,0.4)' }}>{t('GST (18%)', 'GST (18%)')}</span>
                     <span style={{ fontSize:12, color:'rgba(255,255,255,0.5)' }}>₹{Math.round(price * 0.18)}</span>
                   </div>
                   <div style={{ display:'flex', justifyContent:'space-between' }}>
-                    <span style={{ fontSize:14, fontWeight:800, color:'#FF7A29', fontFamily:'Montserrat,sans-serif' }}>Total Payable</span>
+                    <span style={{ fontSize:14, fontWeight:800, color:'#FF7A29', fontFamily:'Montserrat,sans-serif' }}>{t('Total Payable', 'कुल Payable')}</span>
                     <span style={{ fontSize:16, fontWeight:900, color:'#FF7A29', fontFamily:'Montserrat,sans-serif' }}>₹{Math.round(price * 1.18)}</span>
                   </div>
                 </div>
@@ -1028,7 +1034,7 @@ export function Registration() {
                   style={{ width:'100%', padding:'20px 0', fontSize:17, clipPath:'none', borderRadius:12, letterSpacing:'.08em' }}
                   onClick={handlePay}
                 >
-                  {payLoading ? '⏳ Processing...' : `🏏  PAY ₹${Math.round(price * 1.18)} · ENTER PHASE 1`}
+                  {payLoading ? t('⏳ Processing...', '⏳ Processing...') : t('🏏  PAY ₹' + Math.round(price * 1.18) + ' · ENTER PHASE 1', '🏏  ₹' + Math.round(price * 1.18) + ' PAY करें · PHASE 1 में जाएं')}
                 </button>
                 {payError && (
                   <div style={{ marginTop:12, padding:'12px 16px', background:'rgba(239,68,68,0.1)', border:'1px solid rgba(239,68,68,0.3)', borderRadius:8, fontSize:13, color:'#EF4444', fontWeight:600 }}>
@@ -1036,8 +1042,8 @@ export function Registration() {
                   </div>
                 )}
                 <div style={{ display:'flex', justifyContent:'center', gap:16, marginTop:12, flexWrap:'wrap' }}>
-                  {['🔒 Cashfree Secured','256-bit SSL','BCPL'].map(t => (
-                    <span key={t} style={{ fontSize:10, color:'rgba(255,255,255,0.25)', fontWeight:600 }}>{t}</span>
+                  {[t('🔒 Cashfree Secured','🔒 Cashfree Secured'),t('256-bit SSL','256-bit SSL'),t('BCPL','BCPL')].map(badge => (
+                    <span key={badge} style={{ fontSize:10, color:'rgba(255,255,255,0.25)', fontWeight:600 }}>{badge}</span>
                   ))}
                 </div>
               </div>
@@ -1048,12 +1054,12 @@ export function Registration() {
             <div className="form-nav-btns" style={{ gap:12, marginTop:28 }}>
               {step > 1 && (
                 <button className="btn-back" style={{ flex:1, padding:'14px', fontSize:13, letterSpacing:'.06em' }} onClick={() => setStep(s => s - 1)}>
-                  ← BACK
+                  {t('← BACK', '← BACK')}
                 </button>
               )}
               {step < 4 && (
                 <button className="btn-primary" disabled={!canNext} onClick={() => canNext && setStep(s => s + 1)} style={{ flex:2, padding:'14px 0', fontSize:14, clipPath:'none', borderRadius:12, letterSpacing:'.06em' }}>
-                  CONTINUE →
+                  {t('CONTINUE →', 'CONTINUE →')}
                 </button>
               )}
             </div>
@@ -1071,16 +1077,16 @@ export function Registration() {
           <div style={{ position:'absolute', top:0, right:0, width:160, height:'100%', background:'linear-gradient(135deg, transparent 50%, rgba(232,178,61,0.05) 100%)', pointerEvents:'none' }} />
           <div style={{ display:'flex', alignItems:'flex-start', gap:16, flexWrap:'wrap' }}>
             <div style={{ flex:'0 0 auto' }}>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:11, letterSpacing:'.2em', color:'#E8B23D', marginBottom:6 }}>🔒 PHASE 2 — PHYSICAL TRIAL</div>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'rgba(255,255,255,0.8)' }}>Only for selected players.</div>
+              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:11, letterSpacing:'.2em', color:'#E8B23D', marginBottom:6 }}>{t('🔒 PHASE 2 — PHYSICAL TRIAL', '🔒 PHASE 2 — PHYSICAL TRIAL')}</div>
+              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'rgba(255,255,255,0.8)' }}>{t('Only for selected players.', 'सिर्फ select हुए players के लिए।')}</div>
             </div>
             <div style={{ flex:1, minWidth:240 }}>
               <div className="phase2-strip-grid">
                 {[
-                  { icon:'🏟', label:'Ground Trial', sub:'At your registered city' },
-                  { icon:'📋', label:'Skill Evaluation', sub:'By franchise coaching staff' },
-                  { icon:'🔨', label:'Live Auction', sub:'Franchises bid on you publicly' },
-                  { icon:'💰', label:'Phase 2 Fee', sub:'₹2,000 (Bat/Bowl/WK) · ₹3,000 (AR)' },
+                  { icon:'🏟', label:t('Ground Trial', 'Ground Trial'), sub:t('At your registered city', 'आपके registered शहर में') },
+                  { icon:'📋', label:t('Skill Evaluation', 'Skill Evaluation'), sub:t('By franchise coaching staff', 'Franchise coaching staff द्वारा') },
+                  { icon:'🔨', label:t('Live Auction', 'Live Auction'), sub:t('Franchises bid on you publicly', 'Franchises आप पर publicly bid करती हैं') },
+                  { icon:'💰', label:t('Phase 2 Fee', 'Phase 2 Fee'), sub:'₹2,000 (Bat/Bowl/WK) · ₹3,000 (AR)' },
                 ].map(item => (
                   <div key={item.label} style={{ display:'flex', gap:10, alignItems:'flex-start' }}>
                     <span style={{ fontSize:18 }}>{item.icon}</span>
@@ -1101,10 +1107,10 @@ export function Registration() {
         <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.88)', zIndex:1000, display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}>
           <div style={{ background:'#0C1A2E', border:'1px solid rgba(255,122,41,0.35)', borderRadius:16, padding:28, width:'100%', maxWidth:380, position:'relative' }}>
             <button onClick={() => setShowPayOtp(false)} style={{ position:'absolute', top:12, right:14, background:'none', border:'none', color:'rgba(255,255,255,0.4)', fontSize:18, cursor:'pointer' }}>✕</button>
-            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:18, color:'#fff', marginBottom:4 }}>Verify Your Number</div>
-            <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginBottom:20 }}>One-time OTP to confirm your identity before payment.</div>
+            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:18, color:'#fff', marginBottom:4 }}>{t('Verify Your Number', 'अपना Number Verify करें')}</div>
+            <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginBottom:20 }}>{t('One-time OTP to confirm your identity before payment.', 'Payment से पहले अपनी identity confirm करने के लिए one-time OTP।')}</div>
             {payOtpStep === 'phone' ? (<>
-              <label style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.5)', letterSpacing:'.08em', display:'block', marginBottom:6 }}>MOBILE NUMBER</label>
+              <label style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.5)', letterSpacing:'.08em', display:'block', marginBottom:6 }}>{t('MOBILE NUMBER', 'MOBILE NUMBER')}</label>
               <div style={{ display:'flex', alignItems:'center', gap:0, marginBottom:16 }}>
                 <span style={{ padding:'0 12px', height:46, display:'flex', alignItems:'center', background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,122,41,0.25)', borderRight:'none', fontSize:14, fontWeight:700, color:'rgba(255,255,255,0.6)', flexShrink:0 }}>+91</span>
                 <div className="field-inp" style={{ flex:1, display:'flex', alignItems:'center', borderLeft:'none', pointerEvents:'none', opacity:.7 }}>{phone}</div>
@@ -1113,29 +1119,29 @@ export function Registration() {
               {payOtpAlreadyReg && (
                 <button onClick={() => { setShowPayOtp(false); setPayOtpAlreadyReg(false); setPayOtpError(''); setShowLogin(true); setLoginStep('phone'); setLoginPhone(phone); setLoginOtp(''); }}
                   style={{ width:'100%', padding:'13px 0', marginBottom:10, background:'linear-gradient(135deg,#22C55E,#16A34A)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', letterSpacing:'.04em' }}>
-                  LOGIN & CONTINUE →
+                  {t('LOGIN & CONTINUE →', 'LOGIN करें & CONTINUE →')}
                 </button>
               )}
               <button disabled={payOtpLoading} onClick={handlePayOtpSend}
                 style={{ width:'100%', padding:'13px 0', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', opacity:payOtpLoading?0.5:1 }}>
-                {payOtpLoading ? '⏳ Sending...' : `Send OTP to +91 ${phone} →`}
+                {payOtpLoading ? t('⏳ Sending...', '⏳ भेज रहे हैं...') : t('Send OTP to +91 ' + phone + ' →', '+91 ' + phone + ' पर OTP भेजें →')}
               </button>
             </>) : (<>
-              <div style={{ fontSize:12, color:'#22C55E', marginBottom:12 }}>✅ OTP sent to +91 {phone}</div>
-              <label style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.5)', letterSpacing:'.08em', display:'block', marginBottom:6 }}>ENTER OTP</label>
+              <div style={{ fontSize:12, color:'#22C55E', marginBottom:12 }}>{t('✅ OTP sent to', '✅ OTP भेजा गया')} +91 {phone}</div>
+              <label style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.5)', letterSpacing:'.08em', display:'block', marginBottom:6 }}>{t('ENTER OTP', 'OTP डालें')}</label>
               <input className="field-inp" type="tel" inputMode="numeric" maxLength={6} value={payOtp}
                 onChange={e => { const v=e.target.value.replace(/\D/g,''); if(v.length<=6) setPayOtp(v); }}
-                placeholder="6-digit OTP" style={{ marginBottom:16, width:'100%', letterSpacing:'0.3em', fontSize:20, textAlign:'center' }} autoFocus />
+                placeholder={t('6-digit OTP', '6-digit OTP')} style={{ marginBottom:16, width:'100%', letterSpacing:'0.3em', fontSize:20, textAlign:'center' }} autoFocus />
               {payOtpError && <div style={{ fontSize:12, color:'#EF4444', marginBottom:10, fontWeight:600 }}>⚠ {payOtpError}</div>}
               <button disabled={payOtp.length!==6 || payOtpLoading} onClick={handlePayOtpVerify}
                 style={{ width:'100%', padding:'13px 0', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', opacity:payOtp.length!==6||payOtpLoading?0.5:1 }}>
-                {payOtpLoading ? '⏳ Verifying...' : 'Verify & Pay →'}
+                {payOtpLoading ? t('⏳ Verifying...', '⏳ Verify कर रहे हैं...') : t('Verify & Pay →', 'Verify करें & Pay करें →')}
               </button>
               <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginTop:8 }}>
-                <button onClick={() => { setPayOtpStep('phone'); setPayOtpError(''); }} style={{ background:'none', border:'none', color:'rgba(255,255,255,0.4)', fontSize:12, cursor:'pointer', padding:'8px 0' }}>← Back</button>
+                <button onClick={() => { setPayOtpStep('phone'); setPayOtpError(''); }} style={{ background:'none', border:'none', color:'rgba(255,255,255,0.4)', fontSize:12, cursor:'pointer', padding:'8px 0' }}>{t('← Back', '← वापस')}</button>
                 <button onClick={handlePayOtpResend} disabled={payOtpTimer > 0 || payOtpLoading}
                   style={{ background:'none', border:'none', fontSize:12, cursor: payOtpTimer > 0 ? 'default' : 'pointer', color: payOtpTimer > 0 ? 'rgba(255,255,255,0.25)' : '#FF7A29', textDecoration: payOtpTimer > 0 ? 'none' : 'underline', padding:'8px 0' }}>
-                  {payOtpTimer > 0 ? `Resend in ${payOtpTimer}s` : 'Resend OTP'}
+                  {payOtpTimer > 0 ? t('Resend in ' + payOtpTimer + 's', payOtpTimer + 's में Resend') : t('Resend OTP', 'OTP दोबारा भेजें')}
                 </button>
               </div>
             </>)}
@@ -1155,13 +1161,13 @@ export function Registration() {
             onClick={() => canNext && setStep(s => s + 1)}
             style={{ flex:2, padding:'15px 0', fontSize:14, clipPath:'none', borderRadius:12, letterSpacing:'.06em' }}
           >
-            CONTINUE →
+            {t('CONTINUE →', 'CONTINUE →')}
           </button>
           <button
             style={{ flex:1, padding:'15px 0', background:'linear-gradient(135deg,#25D366,#1BA851)', border:'none', borderRadius:12, color:'#fff', fontWeight:700, cursor:'pointer', fontSize:13, fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em' }}
             onClick={() => window.open('https://wa.me/919151346555?text=Hi+BCPL+team,+I+need+help+with+registration', '_blank')}
           >
-            💬 WHATSAPP
+            {t('💬 WHATSAPP', '💬 WHATSAPP')}
           </button>
         </div>
       )}

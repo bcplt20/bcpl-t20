@@ -2,8 +2,8 @@
 - [GitHub file size limit](github-limits.md) — PDF >100MB rejected by GitHub; always git rm --cached large files before push
 - [BCPL deploy pipeline](deploy-pipeline.md) — EC2 pulls from GitHub; commits/task-merges in Replit are invisible to prod until `git push origin main`
 - [Edit tool $ quirk](edit-tool-dollar-quirk.md) — replacements containing ` sequences (SQL regex anchors) can corrupt files; use WriteFile instead
-- [Site header](per-page-navbars.md) — all pages use shared SiteHeader (V3 glass, 60px sticky, mobile ☰|logo|REGISTER); page sticky elements offset top:60
-- [Z-index scale](z-index-scale.md) — header 200 < page CTAs ≤1000 < mobile menu 1500 < modal 2000; .float-reg-btn CSS duplicated across ~12 pages, sweep all + both zIndex/z-index spellings
+- [Site header](per-page-navbars.md) — shared SiteHeader V4: transparent→glass on scroll, height var(--sh-h) 64/68px, mobile logo|profile·REGISTER·☰; stickies offset var(--sh-h)
+- [Z-index scale](z-index-scale.md) — header 200 < CTAs ≤1000 < menu 1500 < modal 2000; mobile reg-bar = shared StickyRegisterCTA z900; .float-reg-btn desktop-only (hide rule on all ~19 pages)
 - [Nav links & login entry](nav-links-and-login.md) — internal links must be wouter Link (base-aware); login = global openLoginModal(), never /register#login; homepage i18n via t(en,hi)
 - [Admin API auth](admin-api-auth.md) — admin plumbing now lives ONLY in lib/adminHttp.ts (shared adminReq); never re-duplicate it or use req(...,true)/VITE_ADMIN_KEY; all admin fns (incl. matches/scoring/points/teams) now on adminReq
 - [Dev preview & API base](dev-preview-api.md) — preview now mirrors prod (vite /api proxy + BASE_URL fallback); if fetches hit a wrong host, check VITE_* env vars first; OTP readable from otp_sessions

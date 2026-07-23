@@ -4,6 +4,7 @@ import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { getTeamDetail, getPointsTable, getMatches, type ApiTeam, type ApiTeamPlayer } from '../lib/api';
 import { useLang } from '../lib/i18n';
+import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
 
 const asset = (url: string) =>
   !url ? "" : url.startsWith("data:") || url.startsWith("http") ? url : import.meta.env.BASE_URL + url.replace(/^\//, "");
@@ -98,10 +99,9 @@ export function TeamDetail() {
         .wrap{max-width:1280px;margin:0 auto;padding:0 16px;}
         .desk-nav{display:none;align-items:center;gap:22px;}
         .ham-btn{display:flex;}
-        .bot-cta{display:flex;}
         @media(min-width:640px){.wrap{padding:0 24px}}
         @media(min-width:768px){.wrap{padding:0 32px}}
-        @media(min-width:1024px){.desk-nav{display:flex!important;}.ham-btn{display:none!important;}.bot-cta{display:none!important;}.squad-grid{grid-template-columns:repeat(3,1fr)!important;}.about-grid{grid-template-columns:repeat(2,1fr)!important;}}
+        @media(min-width:1024px){.desk-nav{display:flex!important;}.ham-btn{display:none!important;}.squad-grid{grid-template-columns:repeat(3,1fr)!important;}.about-grid{grid-template-columns:repeat(2,1fr)!important;}}
         @media(min-width:640px){.squad-grid{grid-template-columns:repeat(2,1fr)!important;}}
         .btn-fire{background:linear-gradient(135deg,#FF7A29 0%,#E8611A 60%,#C94E0E 100%);border:none;border-radius:14px;color:#fff;font-family:Montserrat,sans-serif;font-weight:800;cursor:pointer;box-shadow:0 8px 28px rgba(255,122,41,0.45),inset 0 1px 0 rgba(255,255,255,0.2);transition:transform 0.15s,box-shadow 0.2s;letter-spacing:0.02em;animation:pulseGlow 3s ease-in-out infinite;}
         .btn-fire:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(255,122,41,0.6);}
@@ -120,6 +120,7 @@ export function TeamDetail() {
         .float-reg-btn:hover { opacity:.9; transform:translateY(-2px); }
         @keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4)} 50%{box-shadow:0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0)} }
         .float-reg-pulse { animation:floatPulse 2.5s ease-in-out infinite; }
+@media(max-width:1023px){ .float-reg-btn { display:none; } }
 
         /* ── HERO STATS RESPONSIVE ── */
         .hero-stats{display:flex;flex-wrap:wrap;gap:10;justify-content:center;}
@@ -219,7 +220,7 @@ export function TeamDetail() {
             )}
 
             {/* TAB BAR */}
-            <div style={{position:'sticky',top:60,zIndex:100,background:'rgba(6,14,28,0.97)',backdropFilter:'blur(20px)',borderBottom:'1px solid rgba(255,255,255,0.07)',marginBottom:40}}>
+            <div style={{position:'sticky',top:'var(--sh-h, 64px)',zIndex:100,background:'rgba(6,14,28,0.97)',backdropFilter:'blur(20px)',borderBottom:'1px solid rgba(255,255,255,0.07)',marginBottom:40}}>
               <div className="wrap">
                 <div style={{display:'flex',gap:0}}>
                   {tabs.map((t,i)=>(
@@ -357,10 +358,7 @@ export function TeamDetail() {
           </>
         )}
 
-        {/* Mobile Sticky CTA */}
-        <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',padding:'10px 16px 18px',gap:10}}>
-          <Link href="/register" className="btn-fire" style={{flex:1,height:52,fontSize:14,borderRadius:14,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register ₹299 →</Link>
-        </div>
+        <StickyRegisterCTA />
 
         <BCPLFooter />
       </div>

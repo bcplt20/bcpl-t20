@@ -3,6 +3,7 @@ import { Link } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { useLang } from '../lib/i18n';
+import { StickyRegisterCTA } from "../components/StickyRegisterCTA";
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
@@ -11,9 +12,8 @@ body { background:#060E1C; }
 .wrap { max-width:1280px; margin:0 auto; padding:0 20px; }
 .desk-nav { display:none; align-items:center; gap:22px; }
 .ham-btn { display:flex; }
-.bot-cta { display:flex; }
 @media(min-width:768px){ .wrap{padding:0 32px} }
-@media(min-width:1024px){ .desk-nav{display:flex!important;} .ham-btn{display:none!important;} .bot-cta{display:none!important;} }
+@media(min-width:1024px){ .desk-nav{display:flex!important;} .ham-btn{display:none!important;} }
 .btn-fire { background:linear-gradient(135deg,#FF7A29 0%,#E8611A 60%,#C94E0E 100%); border:none; border-radius:14px; color:#fff; font-family:Montserrat,sans-serif; font-weight:800; cursor:pointer; box-shadow:0 8px 28px rgba(255,122,41,0.45),inset 0 1px 0 rgba(255,255,255,0.2); transition:transform 0.15s,box-shadow 0.2s; letter-spacing:0.02em; animation:pulseGlow 3s ease-in-out infinite; }
 .btn-fire:hover { transform:translateY(-2px); box-shadow:0 14px 40px rgba(255,122,41,0.6); }
 .btn-fire:active { transform:scale(0.97); }
@@ -65,16 +65,6 @@ function AmbientBg() {
     </div>
   );
 }
-
-function MobileStickyCTA() {
-  return (
-    <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',padding:'10px 16px calc(16px + env(safe-area-inset-bottom))',gap:10}}>
-      <Link href="/register" className="btn-fire" style={{flex:2,height:52,fontSize:15,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register ₹299 →</Link>
-      <a href="https://wa.me/919151346555" target="_blank" rel="noopener noreferrer" className="btn-wa" style={{flex:1,height:52,fontSize:14,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>💬 WhatsApp</a>
-    </div>
-  );
-}
-
 
 const ROUTE_MAP: Record<string,string> = {
   'Home':'/', 'HOME':'/',
@@ -277,7 +267,7 @@ export function Contact() {
       </section>
 
       <BCPLFooter />
-      <MobileStickyCTA/>
+      <StickyRegisterCTA/>
       {/* ── FLOATING REGISTER BUTTON ── */}
       <Link className="float-reg-btn float-reg-pulse" href="/register" style={{textDecoration:"none"}}>🏏 {t("REGISTER NOW","अभी REGISTER करें")} →</Link>
     </div>
