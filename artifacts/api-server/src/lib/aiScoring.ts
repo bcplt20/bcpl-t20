@@ -29,7 +29,7 @@ import { eq, and, lt, asc, inArray } from "drizzle-orm";
 import { headS3Object } from "./s3";
 import { getPhase1Config, getPhase1Rubrics, type Phase1Config, type Phase1Rubric } from "./phase1Config";
 import {
-  geminiMode, seededInt, mockScorePass, medianScore, realScorePass,
+  aiGate, geminiMode, seededInt, mockScorePass, medianScore, realScorePass,
   uploadVideoToGemini, waitGeminiFileActive, deleteGeminiFile,
   type ScorePassResult,
 } from "./gemini";
@@ -37,9 +37,13 @@ import { buildScoringPrompt, scoringPromptId } from "./prompts";
 import { normalizeRole } from "./phase1Roles";
 import { getTestOverride, type Phase1TestOverride } from "./testOverrides";
 import { failVideoForReupload } from "./videoValidation";
+import { casEvalUpdate } from "./evalClaims";
+import { randomUUID } from "node:crypto";
 import { logger } from "./logger";
 
-const STALE_SCORING_MIN = 30;
+// Generous lease: real scoring = Gemini file upload + up to 4 passes. The
+// sweep recovers crashed workers only; CAS tokens make early reclaim safe.
+const STALE_SCORING_MIN = 120;
 const MAX_TOTAL_PASSES = 4; // 2 base + pass 3 (variance) or confidence retry, hard cap
 
 export type AiScoringRunResult = {
@@ -59,13 +63,20 @@ export async function runAiScoringPasses(limit = 10): Promise<AiScoringRunResult
   };
   const cfg = await getPhase1Config();
   const mode = geminiMode();
-  if (mode === "real" && !cfg.aiEnabled) {
+  // Master gate: aiEnabled switches BOTH modes; mock is additionally blocked
+  // in production (missing GEMINI_API_KEY must pause, not silently mock).
+  const gate = aiGate(cfg.aiEnabled);
+  if (gate.gated) {
+    if (gate.reason === "mock_blocked_in_production") {
+      logger.error("phase1 scoring paused: GEMINI_API_KEY missing in production — set the key (or PHASE1_ALLOW_MOCK=1 on staging)");
+    }
     result.gated = true;
     return result;
   }
 
+  const runToken = randomUUID();
   const fresh = await db.update(phase1EvaluationsTable)
-    .set({ status: "scoring", updatedAt: new Date() })
+    .set({ status: "scoring", claimToken: runToken, updatedAt: new Date() })
     .where(and(
       eq(phase1EvaluationsTable.status, "ai_valid"),
       inArray(
@@ -79,12 +90,12 @@ export async function runAiScoringPasses(limit = 10): Promise<AiScoringRunResult
     .returning();
   for (const row of fresh) {
     result.claimed += 1;
-    await processScoring(row, cfg, mode, result);
+    await processScoring(row, cfg, mode, result, runToken);
   }
 
   const staleCutoff = new Date(Date.now() - STALE_SCORING_MIN * 60 * 1000);
   const stale = await db.update(phase1EvaluationsTable)
-    .set({ updatedAt: new Date() })
+    .set({ claimToken: runToken, updatedAt: new Date() })
     .where(and(
       eq(phase1EvaluationsTable.status, "scoring"),
       lt(phase1EvaluationsTable.updatedAt, staleCutoff),
@@ -92,7 +103,7 @@ export async function runAiScoringPasses(limit = 10): Promise<AiScoringRunResult
     .returning();
   for (const row of stale.slice(0, limit)) {
     result.claimed += 1;
-    await processScoring(row, cfg, mode, result);
+    await processScoring(row, cfg, mode, result, runToken);
   }
 
   return result;
@@ -101,7 +112,7 @@ export async function runAiScoringPasses(limit = 10): Promise<AiScoringRunResult
 type EvalRow = typeof phase1EvaluationsTable.$inferSelect;
 type PassRecord = { passNumber: number; result: ScorePassResult; provider: string; startedAt: number; endedAt: number; rawText?: string };
 
-async function processScoring(evalRow: EvalRow, cfg: Phase1Config, mode: "real" | "mock", out: AiScoringRunResult): Promise<void> {
+async function processScoring(evalRow: EvalRow, cfg: Phase1Config, mode: "real" | "mock", out: AiScoringRunResult, runToken: string): Promise<void> {
   const startedAt = Date.now();
   try {
     const [video] = await db.select().from(phase1VideosTable)
@@ -110,26 +121,26 @@ async function processScoring(evalRow: EvalRow, cfg: Phase1Config, mode: "real" 
         eq(phase1VideosTable.attemptNumber, evalRow.attemptNumber),
       )).limit(1);
     if (!video || video.status !== "submitted" || !video.s3Key) {
-      await db.update(phase1EvaluationsTable)
-        .set({ status: "skipped", reasonCode: "SUPERSEDED", updatedAt: new Date() })
-        .where(eq(phase1EvaluationsTable.id, evalRow.id));
-      out.skipped += 1;
+      if (await casEvalUpdate(evalRow.id, runToken, { status: "skipped", reasonCode: "SUPERSEDED", updatedAt: new Date() })) {
+        out.skipped += 1;
+      }
       return;
     }
 
     // Consume-time integrity re-verification before any AI spend.
     const head = await headS3Object(video.s3Key);
     if (!head.exists) {
-      await failVideoForReupload(evalRow.id, video.id, "CORRUPTED_VIDEO",
-        { note: "object missing at scoring time" }, cfg, evalRow.registrationId, startedAt);
-      out.reuploadRequired += 1;
+      if (await failVideoForReupload(evalRow.id, video.id, "CORRUPTED_VIDEO",
+        { note: "object missing at scoring time" }, cfg, evalRow.registrationId, startedAt, runToken)) {
+        out.reuploadRequired += 1;
+      }
       return;
     }
     const expectedEtag = evalRow.videoEtag ?? video.etag;
     const expectedSize = evalRow.videoSizeBytes ?? video.sizeBytes;
     if ((expectedEtag && head.etag && expectedEtag !== head.etag) ||
         (expectedSize && head.sizeBytes && expectedSize !== head.sizeBytes)) {
-      await db.update(phase1EvaluationsTable).set({
+      const applied = await casEvalUpdate(evalRow.id, runToken, {
         status: "integrity_review",
         reasonCode: "ETAG_MISMATCH",
         validation: mergeValidation(evalRow, {
@@ -140,9 +151,11 @@ async function processScoring(evalRow: EvalRow, cfg: Phase1Config, mode: "real" 
           },
         }),
         updatedAt: new Date(),
-      }).where(eq(phase1EvaluationsTable.id, evalRow.id));
-      logger.warn({ evalId: evalRow.id }, "phase1 scoring consume-time etag mismatch — parked");
-      out.integrityReview += 1;
+      });
+      if (applied) {
+        logger.warn({ evalId: evalRow.id }, "phase1 scoring consume-time etag mismatch — parked");
+        out.integrityReview += 1;
+      }
       return;
     }
 
@@ -232,10 +245,11 @@ async function processScoring(evalRow: EvalRow, cfg: Phase1Config, mode: "real" 
       // Both passes independently say the footage can't support scoring →
       // clearer-video path (§17/§29 — never auto-reject on AI uncertainty).
       if (!p1.videoValid && !p2.videoValid) {
-        await failVideoForReupload(evalRow.id, video.id, "ASSESSMENT_NOT_RELIABLE",
+        if (await failVideoForReupload(evalRow.id, video.id, "ASSESSMENT_NOT_RELIABLE",
           mergeValidation(evalRow, { scoring: { bothPassesInvalid: true } }),
-          cfg, evalRow.registrationId, startedAt);
-        out.reuploadRequired += 1;
+          cfg, evalRow.registrationId, startedAt, runToken)) {
+          out.reuploadRequired += 1;
+        }
         return;
       }
 
@@ -265,7 +279,7 @@ async function processScoring(evalRow: EvalRow, cfg: Phase1Config, mode: "real" 
       const result = finalScore >= cfg.minScore ? "qualified" : "not_shortlisted";
       const provider = passes[0].provider;
 
-      await db.update(phase1EvaluationsTable).set({
+      const finalApplied = await casEvalUpdate(evalRow.id, runToken, {
         status: "scored",
         pass1Score: p1.totalScore,
         pass2Score: p2.totalScore,
@@ -293,18 +307,16 @@ async function processScoring(evalRow: EvalRow, cfg: Phase1Config, mode: "real" 
         error: null,
         processingMs: (evalRow.processingMs ?? 0) + (Date.now() - startedAt),
         updatedAt: new Date(),
-      }).where(eq(phase1EvaluationsTable.id, evalRow.id));
-      out.scored += 1;
+      });
+      if (finalApplied) out.scored += 1;
     } finally {
       if (geminiFile) await deleteGeminiFile((geminiFile as { name: string }).name);
     }
   } catch (e) {
     out.transientErrors += 1;
     logger.error({ err: e, evalId: evalRow.id }, "ai scoring failed for row — will retry");
-    await db.update(phase1EvaluationsTable)
-      .set({ error: String(e).slice(0, 500), updatedAt: new Date() })
-      .where(eq(phase1EvaluationsTable.id, evalRow.id))
-      .catch(() => {});
+    await casEvalUpdate(evalRow.id, runToken, { error: String(e).slice(0, 500), updatedAt: new Date() })
+      .catch(() => false);
   }
 }
 

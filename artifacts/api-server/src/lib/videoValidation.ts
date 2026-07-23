@@ -334,14 +334,24 @@ export async function failVideoForReupload(
   cfg: Cfg,
   registrationId: string,
   startedAt: number,
-): Promise<void> {
-  await db.update(phase1EvaluationsTable).set({
+  claimToken?: string,
+): Promise<boolean> {
+  // With a claim token the eval write is CAS-guarded: if another worker
+  // reclaimed the row, skip ALL side effects (video flip + notification).
+  const updated = await db.update(phase1EvaluationsTable).set({
     status: "reupload_required",
     reasonCode,
     validation,
     processingMs: Date.now() - startedAt,
     updatedAt: new Date(),
-  }).where(eq(phase1EvaluationsTable.id, evalId));
+  }).where(claimToken
+    ? and(eq(phase1EvaluationsTable.id, evalId), eq(phase1EvaluationsTable.claimToken, claimToken))
+    : eq(phase1EvaluationsTable.id, evalId))
+    .returning({ id: phase1EvaluationsTable.id });
+  if (updated.length === 0) {
+    logger.warn({ evalId, videoId }, "phase1 reupload-fail discarded — claim reclaimed by another worker");
+    return false;
+  }
   await db.update(phase1VideosTable).set({ status: "validation_failed" })
     .where(eq(phase1VideosTable.id, videoId));
 
@@ -352,12 +362,12 @@ export async function failVideoForReupload(
     .from(registrationsTable)
     .innerJoin(usersTable, eq(registrationsTable.userId, usersTable.id))
     .where(eq(registrationsTable.id, registrationId)).limit(1);
-  if (!row) return;
+  if (!row) return true;
   const reserved = await db.insert(notificationLogsTable)
     .values({ userId: row.user.id, type: "email", template: "video_reupload_required", dedupeKey: "p1_reupload_" + videoId })
     .onConflictDoNothing()
     .returning({ id: notificationLogsTable.id });
-  if (!reserved.length) return;
+  if (!reserved.length) return true;
 
   const reasonLine = (REASON_LINES[reasonCode] ?? REASON_LINES.CORRUPTED_VIDEO)(cfg.videoMinSeconds, cfg.videoMaxSeconds);
   const email = tplVideoReuploadRequired(row.user.name, reasonLine);
@@ -365,6 +375,7 @@ export async function failVideoForReupload(
     sendEmail({ to: row.user.email, toName: row.user.name, ...email }),
     sendSms(row.user.phone, "BCPL T20: We could not accept your trial video. " + reasonLine + " Upload again at bcplt20.com -BCPL T20"),
   ]);
+  return true;
 }
 
 async function finishIntegrity(evalId: string, reasonCode: string, validation: unknown, startedAt: number): Promise<void> {

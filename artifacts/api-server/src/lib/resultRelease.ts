@@ -16,6 +16,7 @@
  * ('selected' / 'rejected'). Notifications use reserve-first dedupe
  * (p1_result_<evalId>) so re-runs can never double-send.
  */
+import { randomUUID } from "node:crypto";
 import { db } from "@workspace/db";
 import {
   phase1EvaluationsTable, registrationsTable, usersTable,
@@ -23,6 +24,7 @@ import {
 } from "@workspace/db/schema";
 import { eq, and, lt, lte, asc, inArray, isNotNull } from "drizzle-orm";
 import { getPhase1Config, type Phase1Config } from "./phase1Config";
+import { casEvalUpdate } from "./evalClaims";
 import { sendEmail, tplPhase1Selected, tplPhase1Rejected } from "./email";
 import { sendSms } from "./sms";
 import { normalizeRole } from "./phase1Roles";
@@ -46,8 +48,9 @@ export async function runResultReleases(limit = 50): Promise<ReleaseRunResult> {
   }
 
   const now = new Date();
+  const runToken = randomUUID();
   const fresh = await db.update(phase1EvaluationsTable)
-    .set({ status: "releasing", updatedAt: now })
+    .set({ status: "releasing", claimToken: runToken, updatedAt: now })
     .where(and(
       eq(phase1EvaluationsTable.status, "scored"),
       inArray(
@@ -64,12 +67,12 @@ export async function runResultReleases(limit = 50): Promise<ReleaseRunResult> {
     .returning();
   for (const row of fresh) {
     result.claimed += 1;
-    await processRelease(row, cfg, result);
+    await processRelease(row, cfg, result, runToken);
   }
 
   const staleCutoff = new Date(Date.now() - STALE_RELEASING_MIN * 60 * 1000);
   const stale = await db.update(phase1EvaluationsTable)
-    .set({ updatedAt: new Date() })
+    .set({ claimToken: runToken, updatedAt: new Date() })
     .where(and(
       eq(phase1EvaluationsTable.status, "releasing"),
       lt(phase1EvaluationsTable.updatedAt, staleCutoff),
@@ -77,7 +80,7 @@ export async function runResultReleases(limit = 50): Promise<ReleaseRunResult> {
     .returning();
   for (const row of stale.slice(0, limit)) {
     result.claimed += 1;
-    await processRelease(row, cfg, result);
+    await processRelease(row, cfg, result, runToken);
   }
 
   return result;
@@ -127,13 +130,12 @@ export async function computeRanks(registrationId: string): Promise<{
   return { cityRank, cityTotal, roleRank, roleTotal, percentile };
 }
 
-async function processRelease(evalRow: EvalRow, cfg: Phase1Config, out: ReleaseRunResult): Promise<void> {
+async function processRelease(evalRow: EvalRow, cfg: Phase1Config, out: ReleaseRunResult, runToken: string): Promise<void> {
   try {
     if (!evalRow.result || evalRow.finalScore == null) {
       // Defensive: a releasing row without a result cannot be published.
-      await db.update(phase1EvaluationsTable)
-        .set({ status: "scored", error: "release skipped: missing result/finalScore", updatedAt: new Date() })
-        .where(eq(phase1EvaluationsTable.id, evalRow.id));
+      await casEvalUpdate(evalRow.id, runToken,
+        { status: "scored", error: "release skipped: missing result/finalScore", updatedAt: new Date() });
       return;
     }
 
@@ -159,17 +161,9 @@ async function processRelease(evalRow: EvalRow, cfg: Phase1Config, out: ReleaseR
       roleTotal: ranks.roleTotal,
       percentile: ranks.percentile,
       snapshotAt: new Date(),
-    }).onConflictDoUpdate({
-      target: rankingSnapshotsTable.registrationId,
-      set: {
-        cityRank: ranks.cityRank,
-        cityTotal: ranks.cityTotal,
-        roleRank: ranks.roleRank,
-        roleTotal: ranks.roleTotal,
-        percentile: ranks.percentile,
-        snapshotAt: new Date(),
-      },
-    });
+    }).onConflictDoNothing();
+    // §34: the FIRST snapshot wins forever. Retries and stale reclaims must
+    // never rewrite the ranks on an already-issued result card.
 
     const qualified = evalRow.result === "qualified";
 
@@ -197,20 +191,20 @@ async function processRelease(evalRow: EvalRow, cfg: Phase1Config, out: ReleaseR
       }
     }
 
-    await db.update(phase1EvaluationsTable).set({
+    const applied = await casEvalUpdate(evalRow.id, runToken, {
       status: "result_released",
       resultReleasedAt: new Date(),
       error: null,
       updatedAt: new Date(),
-    }).where(eq(phase1EvaluationsTable.id, evalRow.id));
-    out.released += 1;
-    logger.info({ evalId: evalRow.id, qualified, ranks }, "phase1 result released");
+    });
+    if (applied) {
+      out.released += 1;
+      logger.info({ evalId: evalRow.id, qualified, ranks }, "phase1 result released");
+    }
   } catch (e) {
     out.transientErrors += 1;
     logger.error({ err: e, evalId: evalRow.id }, "result release failed for row — will retry");
-    await db.update(phase1EvaluationsTable)
-      .set({ error: String(e).slice(0, 500), updatedAt: new Date() })
-      .where(eq(phase1EvaluationsTable.id, evalRow.id))
-      .catch(() => {});
+    await casEvalUpdate(evalRow.id, runToken, { error: String(e).slice(0, 500), updatedAt: new Date() })
+      .catch(() => false);
   }
 }

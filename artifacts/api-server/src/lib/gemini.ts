@@ -24,6 +24,22 @@ export function geminiMode(): GeminiMode {
   return process.env.GEMINI_API_KEY ? "real" : "mock";
 }
 
+/**
+ * Master pipeline gate (architect review, modules 10–12):
+ *  - cfg.aiEnabled is THE switch for BOTH modes (safety default OFF) — a
+ *    disabled pipeline never scores anything, mock or real.
+ *  - In production a missing GEMINI_API_KEY must PAUSE the pipeline loudly,
+ *    never silently publish mock verdicts. PHASE1_ALLOW_MOCK=1 lets a staging
+ *    server deliberately run mock with NODE_ENV=production.
+ */
+export function aiGate(aiEnabled: boolean): { gated: boolean; reason: "aiEnabled_off" | "mock_blocked_in_production" | null } {
+  if (!aiEnabled) return { gated: true, reason: "aiEnabled_off" };
+  if (geminiMode() === "mock" && process.env.NODE_ENV === "production" && process.env.PHASE1_ALLOW_MOCK !== "1") {
+    return { gated: true, reason: "mock_blocked_in_production" };
+  }
+  return { gated: false, reason: null };
+}
+
 /* ───────────────────────── validity (AI pass zero, §17) ───────────────────────── */
 
 export const validitySchema = z.object({

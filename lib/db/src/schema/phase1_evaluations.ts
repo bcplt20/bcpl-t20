@@ -41,6 +41,8 @@ export const phase1EvaluationsTable = pgTable("phase1_evaluations", {
   result:           varchar("result", { length: 20 }),
   resultReleaseAt:  timestamp("result_release_at", { withTimezone: true }),
   resultReleasedAt: timestamp("result_released_at", { withTimezone: true }),
+  /** Worker lease — every finalize write is CAS-guarded on this token. */
+  claimToken:       uuid("claim_token"),
 
   // Versioning for auditability of historical scores
   assessmentVersion: varchar("assessment_version", { length: 20 }),

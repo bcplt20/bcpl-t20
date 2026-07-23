@@ -17,6 +17,7 @@
  * Mock mode (no GEMINI_API_KEY) costs nothing and always runs so staging
  * exercises the full pipeline.
  */
+import { randomUUID } from "node:crypto";
 import { db } from "@workspace/db";
 import {
   phase1VideosTable, phase1EvaluationsTable, registrationsTable,
@@ -24,14 +25,18 @@ import {
 import { eq, and, lt, asc, inArray } from "drizzle-orm";
 import { headS3Object } from "./s3";
 import { getPhase1Config, type Phase1Config } from "./phase1Config";
-import { geminiMode, mockValidity, realValidityCheck, validitySchema, type ValidityResult } from "./gemini";
+import { aiGate, geminiMode, mockValidity, realValidityCheck, validitySchema, type ValidityResult } from "./gemini";
 import { buildValidityPrompt, validityPromptId, ALLOWED_VALIDITY_REASONS } from "./prompts";
 import { normalizeRole, ROLE_LABELS } from "./phase1Roles";
 import { getTestOverride } from "./testOverrides";
 import { failVideoForReupload } from "./videoValidation";
+import { casEvalUpdate } from "./evalClaims";
 import { logger } from "./logger";
 
-const STALE_AI_VALIDATING_MIN = 15;
+// Generous lease: a real Gemini validity run can take several minutes. The
+// sweep exists to recover crashed workers; CAS tokens make even an early
+// reclaim safe (the loser's writes are discarded).
+const STALE_AI_VALIDATING_MIN = 60;
 
 export type AiValidityRunResult = {
   claimed: number;
@@ -51,15 +56,23 @@ export async function runAiValidityChecks(limit = 25): Promise<AiValidityRunResu
   const cfg = await getPhase1Config();
   const mode = geminiMode();
 
-  // Safety gate: real AI spend only when the switch is explicitly on.
-  if (mode === "real" && !cfg.aiEnabled) {
+  // Master gate: aiEnabled switches BOTH modes; mock is additionally blocked
+  // in production so a missing GEMINI_API_KEY pauses the pipeline loudly
+  // instead of silently publishing mock verdicts.
+  const gate = aiGate(cfg.aiEnabled);
+  if (gate.gated) {
+    if (gate.reason === "mock_blocked_in_production") {
+      logger.error("phase1 AI paused: GEMINI_API_KEY missing in production — set the key (or PHASE1_ALLOW_MOCK=1 on staging)");
+    }
     result.gated = true;
     return result;
   }
 
   // Claim fresh rows (atomic via status recheck in the UPDATE where-clause).
+  // The per-run claim token makes every later write for these rows CAS-safe.
+  const runToken = randomUUID();
   const fresh = await db.update(phase1EvaluationsTable)
-    .set({ status: "ai_validating", updatedAt: new Date() })
+    .set({ status: "ai_validating", claimToken: runToken, updatedAt: new Date() })
     .where(and(
       eq(phase1EvaluationsTable.status, "validated"),
       inArray(
@@ -73,13 +86,13 @@ export async function runAiValidityChecks(limit = 25): Promise<AiValidityRunResu
     .returning();
   for (const row of fresh) {
     result.claimed += 1;
-    await processOne(row, cfg, mode, result);
+    await processOne(row, cfg, mode, result, runToken);
   }
 
   // Retry rows stuck in 'ai_validating' (crashed worker / transient errors).
   const staleCutoff = new Date(Date.now() - STALE_AI_VALIDATING_MIN * 60 * 1000);
   const stale = await db.update(phase1EvaluationsTable)
-    .set({ updatedAt: new Date() })
+    .set({ claimToken: runToken, updatedAt: new Date() })
     .where(and(
       eq(phase1EvaluationsTable.status, "ai_validating"),
       lt(phase1EvaluationsTable.updatedAt, staleCutoff),
@@ -87,7 +100,7 @@ export async function runAiValidityChecks(limit = 25): Promise<AiValidityRunResu
     .returning();
   for (const row of stale.slice(0, limit)) {
     result.claimed += 1;
-    await processOne(row, cfg, mode, result);
+    await processOne(row, cfg, mode, result, runToken);
   }
 
   return result;
@@ -95,7 +108,7 @@ export async function runAiValidityChecks(limit = 25): Promise<AiValidityRunResu
 
 type EvalRow = typeof phase1EvaluationsTable.$inferSelect;
 
-async function processOne(evalRow: EvalRow, cfg: Phase1Config, mode: "real" | "mock", result: AiValidityRunResult): Promise<void> {
+async function processOne(evalRow: EvalRow, cfg: Phase1Config, mode: "real" | "mock", result: AiValidityRunResult, runToken: string): Promise<void> {
   const startedAt = Date.now();
   try {
     const [video] = await db.select().from(phase1VideosTable)
@@ -105,19 +118,19 @@ async function processOne(evalRow: EvalRow, cfg: Phase1Config, mode: "real" | "m
       )).limit(1);
 
     if (!video || video.status !== "submitted" || !video.s3Key) {
-      await db.update(phase1EvaluationsTable)
-        .set({ status: "skipped", reasonCode: "SUPERSEDED", updatedAt: new Date() })
-        .where(eq(phase1EvaluationsTable.id, evalRow.id));
-      result.skipped += 1;
+      if (await casEvalUpdate(evalRow.id, runToken, { status: "skipped", reasonCode: "SUPERSEDED", updatedAt: new Date() })) {
+        result.skipped += 1;
+      }
       return;
     }
 
     // ── Consume-time integrity re-verification (architect contract) ──
     const head = await headS3Object(video.s3Key);
     if (!head.exists) {
-      await failVideoForReupload(evalRow.id, video.id, "CORRUPTED_VIDEO",
-        { note: "object missing at AI-validity time" }, cfg, evalRow.registrationId, startedAt);
-      result.reuploadRequired += 1;
+      if (await failVideoForReupload(evalRow.id, video.id, "CORRUPTED_VIDEO",
+        { note: "object missing at AI-validity time" }, cfg, evalRow.registrationId, startedAt, runToken)) {
+        result.reuploadRequired += 1;
+      }
       return;
     }
     const expectedEtag = evalRow.videoEtag ?? video.etag;
@@ -125,7 +138,7 @@ async function processOne(evalRow: EvalRow, cfg: Phase1Config, mode: "real" | "m
     const etagChanged = expectedEtag && head.etag && expectedEtag !== head.etag;
     const sizeChanged = expectedSize && head.sizeBytes && expectedSize !== head.sizeBytes;
     if (etagChanged || sizeChanged) {
-      await db.update(phase1EvaluationsTable).set({
+      const applied = await casEvalUpdate(evalRow.id, runToken, {
         status: "integrity_review",
         reasonCode: "ETAG_MISMATCH",
         validation: mergeValidation(evalRow, {
@@ -137,9 +150,11 @@ async function processOne(evalRow: EvalRow, cfg: Phase1Config, mode: "real" | "m
         }),
         processingMs: Date.now() - startedAt,
         updatedAt: new Date(),
-      }).where(eq(phase1EvaluationsTable.id, evalRow.id));
-      logger.warn({ evalId: evalRow.id }, "phase1 consume-time etag mismatch — parked for integrity review");
-      result.integrityReview += 1;
+      });
+      if (applied) {
+        logger.warn({ evalId: evalRow.id }, "phase1 consume-time etag mismatch — parked for integrity review");
+        result.integrityReview += 1;
+      }
       return;
     }
 
@@ -187,13 +202,14 @@ async function processOne(evalRow: EvalRow, cfg: Phase1Config, mode: "real" | "m
       const reason = validity.reasonCode && (ALLOWED_VALIDITY_REASONS as readonly string[]).includes(validity.reasonCode)
         ? validity.reasonCode
         : "ASSESSMENT_NOT_RELIABLE";
-      await failVideoForReupload(evalRow.id, video.id, reason,
-        mergeValidation(evalRow, { aiValidity }), cfg, evalRow.registrationId, startedAt);
-      result.reuploadRequired += 1;
+      if (await failVideoForReupload(evalRow.id, video.id, reason,
+        mergeValidation(evalRow, { aiValidity }), cfg, evalRow.registrationId, startedAt, runToken)) {
+        result.reuploadRequired += 1;
+      }
       return;
     }
 
-    await db.update(phase1EvaluationsTable).set({
+    const applied = await casEvalUpdate(evalRow.id, runToken, {
       status: "ai_valid",
       validation: mergeValidation(evalRow, { aiValidity }),
       promptVersion: cfg.promptVersion,
@@ -203,17 +219,15 @@ async function processOne(evalRow: EvalRow, cfg: Phase1Config, mode: "real" | "m
       error: null,
       processingMs: (evalRow.processingMs ?? 0) + (Date.now() - startedAt),
       updatedAt: new Date(),
-    }).where(eq(phase1EvaluationsTable.id, evalRow.id));
-    result.aiValid += 1;
+    });
+    if (applied) result.aiValid += 1;
   } catch (e) {
     // Transient (network/Gemini/S3) — keep 'ai_validating', record error,
     // stale sweep retries. Never let one row kill the tick.
     result.transientErrors += 1;
     logger.error({ err: e, evalId: evalRow.id }, "ai validity check failed for row — will retry");
-    await db.update(phase1EvaluationsTable)
-      .set({ error: String(e).slice(0, 500), updatedAt: new Date() })
-      .where(eq(phase1EvaluationsTable.id, evalRow.id))
-      .catch(() => {});
+    await casEvalUpdate(evalRow.id, runToken, { error: String(e).slice(0, 500), updatedAt: new Date() })
+      .catch(() => false);
   }
 }
 

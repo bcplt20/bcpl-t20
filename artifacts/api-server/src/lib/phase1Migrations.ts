@@ -68,6 +68,9 @@ export async function ensurePhase1AiTables() {
   await db.execute(sql`CREATE INDEX IF NOT EXISTS phase1_evaluations_status_idx ON phase1_evaluations (status)`);
   await db.execute(sql`CREATE INDEX IF NOT EXISTS phase1_evaluations_release_idx ON phase1_evaluations (result_release_at) WHERE result_released_at IS NULL`);
   await db.execute(sql`CREATE INDEX IF NOT EXISTS phase1_evaluations_reg_idx ON phase1_evaluations (registration_id)`);
+  // Worker lease token — finalize writes CAS on this so a stale-reclaimed row
+  // can never receive results from two workers (last-write-wins eliminated).
+  await db.execute(sql`ALTER TABLE phase1_evaluations ADD COLUMN IF NOT EXISTS claim_token uuid`);
   // One ACTIVE evaluation per registration+attempt (history rows keep older attempts)
   await db.execute(sql`
     CREATE UNIQUE INDEX IF NOT EXISTS phase1_evaluations_reg_attempt_uq
