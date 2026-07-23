@@ -3,6 +3,7 @@ import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import {
   getRegistrationStatus, getMe, getUploadUrl, confirmVideoUpload, getSiteSetting,
+  getVideoInstructions, getVideoStatus, type VideoConstraints,
   type SampleVideos, type SampleVideoEntry, type SampleVideoRole,
 } from '../lib/api';
 import { useLang } from '@/lib/i18n';
@@ -61,7 +62,6 @@ const ALLOWED_TYPES: Record<string, string> = {
   'video/x-msvideo': 'avi',
   'video/webm': 'webm',
 };
-const MAX_SIZE = 500 * 1024 * 1024; // 500 MB
 
 export function Phase1VideoUpload() {
   const { t } = useLang();
@@ -75,6 +75,12 @@ export function Phase1VideoUpload() {
   const [errMsg, setErrMsg]           = useState('');
   const [regId, setRegId]             = useState('');
   const [regNumber, setRegNumber]     = useState<string | null>(null);
+  const [constraints, setConstraints] = useState<VideoConstraints | null>(null);
+  const [instr, setInstr]             = useState<{ en: string[]; hi: string[] } | null>(null);
+  const [declAccepted, setDeclAccepted] = useState(false);
+  const [videoDuration, setVideoDuration] = useState<number | null>(null);
+  const [canReupload, setCanReupload] = useState(false);
+  const [reuploadsLeft, setReuploadsLeft] = useState(0);
   const [role, setRole]               = useState('bat');
   const [city, setCity]               = useState('');
   const [userName, setUserName]       = useState('');
@@ -103,12 +109,17 @@ export function Phase1VideoUpload() {
   useEffect(() => {
     (async () => {
       try {
-        const [regData, meData] = await Promise.allSettled([
+        const [regData, meData, vidData] = await Promise.allSettled([
           getRegistrationStatus(),
           getMe(),
+          getVideoStatus(),
         ]);
 
         if (meData.status === 'fulfilled') setUserName(meData.value.user.name);
+        if (vidData.status === 'fulfilled') {
+          setCanReupload(!!vidData.value.canReupload);
+          setReuploadsLeft(Math.max(0, (vidData.value.maxAttempts ?? 1) - (vidData.value.attemptsUsed ?? 0)));
+        }
 
         if (regData.status === 'rejected') {
           setUploadState('not_registered'); return;
@@ -155,19 +166,57 @@ export function Phase1VideoUpload() {
       .catch(() => { setSamples({}); setSamplesErr(true); });
   }, []);
 
+  // Role-specific filming instructions + upload constraints (admin-configurable)
+  useEffect(() => {
+    getVideoInstructions()
+      .then(r => { setConstraints(r.constraints); setInstr(r.instructions); })
+      .catch(() => {}); // fall back to built-in defaults
+  }, []);
+
   // ── File validation ────────────────────────────────────────────────────────
   const handleFile = useCallback((f: File | null) => {
     setFileErr('');
+    setVideoDuration(null);
+    setDeclAccepted(false);
     if (!f) return;
     if (!ALLOWED_TYPES[f.type]) {
       setFileErr(t('Invalid format. Please upload MP4, MOV, AVI, or WebM.', 'अमान्य प्रारूप। कृपया MP4, MOV, AVI, या WebM अपलोड करें।')); return;
     }
-    if (f.size > MAX_SIZE) {
-      setFileErr(t(`File too large (${formatFileSize(f.size)}). Max 500 MB.`, `फ़ाइल बहुत बड़ी है (${formatFileSize(f.size)})। अधिकतम 500 MB.`)); return;
+    const capMb = constraints?.maxVideoFileSizeMb ?? 200;
+    if (f.size > capMb * 1024 * 1024) {
+      setFileErr(t('File too large (' + formatFileSize(f.size) + '). Max ' + capMb + ' MB.', 'फ़ाइल बहुत बड़ी है (' + formatFileSize(f.size) + ')। अधिकतम ' + capMb + ' MB.')); return;
     }
-    setFile(f);
-    setUploadState('file_selected');
-  }, [t]);
+    // Measure duration from video metadata before accepting the file
+    const minS = constraints?.videoMinSeconds ?? 30;
+    const maxS = constraints?.videoMaxSeconds ?? 60;
+    const url = URL.createObjectURL(f);
+    const probe = document.createElement('video');
+    probe.preload = 'metadata';
+    probe.onloadedmetadata = () => {
+      URL.revokeObjectURL(url);
+      const dur = probe.duration;
+      if (Number.isFinite(dur)) {
+        const rounded = Math.round(dur);
+        setVideoDuration(rounded);
+        if (rounded < minS - 1 || rounded > maxS + 1) {
+          setFileErr(t(
+            'Video must be ' + minS + '-' + maxS + ' seconds. Yours is ' + rounded + 's — please trim or re-record.',
+            'वीडियो ' + minS + '-' + maxS + ' सेकंड का होना चाहिए। आपका ' + rounded + ' सेकंड का है — कृपया छोटा करें या दोबारा रिकॉर्ड करें।',
+          ));
+          return;
+        }
+      }
+      setFile(f);
+      setUploadState('file_selected');
+    };
+    probe.onerror = () => {
+      // Metadata unreadable in this browser — accept and let the server validate
+      URL.revokeObjectURL(url);
+      setFile(f);
+      setUploadState('file_selected');
+    };
+    probe.src = url;
+  }, [t, constraints]);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault(); setDragging(false);
@@ -184,7 +233,7 @@ export function Phase1VideoUpload() {
 
     try {
       // Step 1: Get presigned URL
-      const { presignedUrl, s3Key } = await getUploadUrl(regId, file.type);
+      const { presignedUrl, s3Key } = await getUploadUrl(regId, file.type, file.size);
 
       // Step 2: Upload directly to S3 via XHR (for progress)
       await new Promise<void>((resolve, reject) => {
@@ -205,19 +254,22 @@ export function Phase1VideoUpload() {
 
       // Step 3: Confirm with our API
       setUploadState('confirming');
-      await confirmVideoUpload(regId, s3Key);
+      await confirmVideoUpload(regId, s3Key, true, videoDuration ?? undefined);
       setProgress(100);
       setUploadState('success');
     } catch (e: any) {
       setErrMsg(e?.message ?? t('Upload failed. Please try again.', 'अपलोड विफल रहा। कृपया पुनः प्रयास करें।'));
       setUploadState('file_selected');
     }
-  }, [file, regId, t]);
+  }, [file, regId, t, videoDuration]);
 
   // ── Computed ───────────────────────────────────────────────────────────────
   const roleMeta    = ROLE_META[role] ?? ROLE_META.bat;
   const daysLeft    = getDaysLeft(deadline);
   const shortRegId  = regId ? regId.slice(0, 8).toUpperCase() : '—';
+  const minSec      = constraints?.videoMinSeconds ?? 30;
+  const maxSec      = constraints?.videoMaxSeconds ?? 60;
+  const maxMb       = constraints?.maxVideoFileSizeMb ?? 200;
 
   // ── Full-page states ───────────────────────────────────────────────────────
   if (uploadState === 'loading') {
@@ -279,9 +331,22 @@ export function Phase1VideoUpload() {
             {userName ? `${userName}, ` : ''}{t('your trial video is with our BCCI-certified scouts.', 'आपका ट्रायल वीडियो हमारे BCCI-certified scouts के पास है।')}
           </p>
           <p style={{ color:'var(--ink-3)', fontSize:13, marginBottom:28 }}>{t('Result will be sent via Email, SMS and WhatsApp within ', 'परिणाम ईमेल, SMS और WhatsApp के माध्यम से ')}<strong style={{ color:'var(--ink)' }}>{t('15 working days', '15 कार्य दिवसों')}</strong>{t('.', ' के भीतर भेजा जाएगा।')}</p>
-          <a href={import.meta.env.BASE_URL + 'register/result'} style={{ display:'inline-block', background:'var(--green)', color:'#fff', textDecoration:'none', padding:'14px 32px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:15, letterSpacing:'.06em', textTransform:'uppercase' }}>
-            {t('CHECK MY STATUS', 'मेरा स्टेटस देखें')} →
-          </a>
+          <div style={{ display:'flex', flexDirection:'column', gap:12, alignItems:'center' }}>
+            <a href={import.meta.env.BASE_URL + 'register/result'} style={{ display:'inline-block', background:'var(--green)', color:'#fff', textDecoration:'none', padding:'14px 32px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:15, letterSpacing:'.06em', textTransform:'uppercase' }}>
+              {t('CHECK MY STATUS', 'मेरा स्टेटस देखें')} →
+            </a>
+            {canReupload && reuploadsLeft > 0 && (
+              <>
+                <button onClick={() => { setFile(null); setDeclAccepted(false); setVideoDuration(null); setUploadState('idle'); }}
+                  style={{ background:'rgba(255,122,41,0.1)', border:'1px solid rgba(255,122,41,0.4)', color:'var(--orange)', padding:'12px 28px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:14, letterSpacing:'.06em', textTransform:'uppercase', cursor:'pointer' }}>
+                  {t('RE-UPLOAD A BETTER VIDEO', 'बेहतर वीडियो दोबारा अपलोड करें')} · {reuploadsLeft} {t('LEFT', 'बचे')}
+                </button>
+                <div style={{ fontSize:12, color:'var(--ink-3)', maxWidth:360, lineHeight:1.6 }}>
+                  {t('A new upload replaces your earlier video before review begins.', 'समीक्षा शुरू होने से पहले नया अपलोड आपके पुराने वीडियो की जगह लेगा।')}
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -490,8 +555,8 @@ export function Phase1VideoUpload() {
                   </div>
                   <div style={{ display:'flex', gap:10, flexWrap:'wrap', justifyContent:'center', marginBottom:28 }}>
                     <span style={{ fontSize:12, color:'var(--ink-3)', background:'rgba(255,255,255,0.04)', padding:'6px 12px', borderRadius:16, border:'1px solid var(--line)' }}>MP4 / MOV / AVI</span>
-                    <span style={{ fontSize:12, color:'var(--ink-3)', background:'rgba(255,255,255,0.04)', padding:'6px 12px', borderRadius:16, border:'1px solid var(--line)' }}>{t('Max 500MB', 'अधिकतम 500MB')}</span>
-                    <span style={{ fontSize:12, color:'var(--ink-3)', background:'rgba(255,255,255,0.04)', padding:'6px 12px', borderRadius:16, border:'1px solid var(--line)' }}>{t('Max 2 Minutes', 'अधिकतम 2 मिनट')}</span>
+                    <span style={{ fontSize:12, color:'var(--ink-3)', background:'rgba(255,255,255,0.04)', padding:'6px 12px', borderRadius:16, border:'1px solid var(--line)' }}>{t('Max ' + maxMb + 'MB', 'अधिकतम ' + maxMb + 'MB')}</span>
+                    <span style={{ fontSize:12, color:'var(--orange)', background:'rgba(255,122,41,0.08)', padding:'6px 12px', borderRadius:16, border:'1px solid rgba(255,122,41,0.35)', fontWeight:700 }}>{t(minSec + '–' + maxSec + ' seconds', minSec + '–' + maxSec + ' सेकंड')}</span>
                   </div>
                   <span style={{ display:'inline-block', background:'rgba(255,122,41,0.1)', border:'1px solid rgba(255,122,41,0.4)', color:'var(--orange)', padding:'12px 28px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:15, letterSpacing:'.08em', cursor:'pointer', textTransform:'uppercase' }}>
                     {t('+ BROWSE FILES', '+ फ़ाइलें ब्राउज़ करें')}
@@ -529,7 +594,19 @@ export function Phase1VideoUpload() {
                         {t('Remove', 'हटाएं')}
                       </button>
                     </div>
-                    <button className="btn-primary" style={{ width:'100%', justifyContent:'center' }} onClick={handleSubmit}>
+                    {videoDuration != null && (
+                      <div style={{ fontSize:12, color:'var(--ink-3)', fontWeight:600, marginBottom:12 }}>
+                        ⏱ {t('Detected length: ' + videoDuration + 's', 'वीडियो लंबाई: ' + videoDuration + ' सेकंड')}
+                      </div>
+                    )}
+                    <label style={{ display:'flex', alignItems:'flex-start', gap:10, background:'rgba(255,255,255,0.03)', border:'1px solid var(--line)', borderRadius:'var(--r)', padding:'12px 14px', marginBottom:14, cursor:'pointer' }}>
+                      <input type="checkbox" checked={declAccepted} onChange={e => setDeclAccepted(e.target.checked)} style={{ marginTop:3, width:16, height:16, accentColor:'var(--orange)', flexShrink:0, cursor:'pointer' }} />
+                      <span style={{ fontSize:12.5, color:'var(--ink-2)', lineHeight:1.6, fontWeight:500 }}>
+                        {t('I confirm this is my own recent gameplay video, unedited except basic trimming, and I understand fake or tampered videos lead to disqualification.',
+                           'मैं पुष्टि करता/करती हूं कि यह मेरा अपना हालिया गेमप्ले वीडियो है, बेसिक ट्रिमिंग के अलावा बिना एडिट किया हुआ, और मैं समझता/समझती हूं कि नकली या छेड़छाड़ किए गए वीडियो से अयोग्यता हो सकती है।')}
+                      </span>
+                    </label>
+                    <button className="btn-primary" style={{ width:'100%', justifyContent:'center' }} onClick={handleSubmit} disabled={!declAccepted}>
                       {t('UPLOAD TO BCPL SCOUTS', 'BCPL SCOUTS को अपलोड करें')} →
                     </button>
                   </div>
@@ -550,10 +627,13 @@ export function Phase1VideoUpload() {
                 {t(roleMeta.req, roleMeta.req)}
               </p>
               <div>
-                {roleMeta.tips.map((tip, i) => (
+                {(instr
+                  ? instr.en.map((en, i) => ({ en, hi: instr.hi[i] ?? en }))
+                  : roleMeta.tips.map(tip => ({ en: tip, hi: tip }))
+                ).map((item, i) => (
                   <div key={i} className="tip-check">
                     <div style={{ color:'var(--green)', flexShrink:0 }}>✓</div>
-                    <div>{t(tip, tip)}</div>
+                    <div>{t(item.en, item.hi)}</div>
                   </div>
                 ))}
               </div>

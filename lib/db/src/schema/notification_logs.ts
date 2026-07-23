@@ -8,6 +8,8 @@ export const notificationLogsTable = pgTable("notification_logs", {
   template:  varchar("template", { length: 50 }).notNull(),
   status:    varchar("status",   { length: 20 }).default("sent").notNull(), // sent | failed | skipped
   error:     varchar("error",    { length: 500 }), // provider error when status = failed/skipped
+  /** Idempotency key (partial unique index in SQL) — one send per logical event. */
+  dedupeKey: varchar("dedupe_key", { length: 160 }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 

@@ -8,7 +8,6 @@ import {
 } from '@/lib/api';
 import { fireReferralAttribution } from '@/lib/marketingApi';
 import {
-  getUploadUrl, confirmVideoUpload,
 } from '../lib/api';
 
 /*
@@ -147,13 +146,7 @@ export function Registration() {
   const [loginOtp, setLoginOtp]     = useState('');
   const [loginStep, setLoginStep]   = useState<'phone'|'otp'>('phone');
 
-  /* Video upload state (for already-registered players) */
   const [loggedIn, setLoggedIn]         = useState(false);
-  const [videoFile, setVideoFile]       = useState<File|null>(null);
-  const [videoUploading, setVideoUploading] = useState(false);
-  const [videoUploaded, setVideoUploaded]   = useState(false);
-  const [videoDragOver, setVideoDragOver]   = useState(false);
-  const videoInputRef = useRef<HTMLInputElement>(null);
 
   /* ── New registration + payment state ── */
   const [loginLoading, setLoginLoading] = useState(false);
@@ -170,7 +163,6 @@ export function Registration() {
 
   // Registration status for already-registered/logged-in players
   const [regStatus, setRegStatus]       = useState<any>(null);
-  const [uploadProgress, setUploadProgress] = useState(0);
 
   // Already-registered players don't need the blank form — show status card only
   const isRegistered = loggedIn && !!regStatus?.registered;
@@ -194,50 +186,6 @@ export function Registration() {
       }).catch(() => {});
     }
   }, []);
-
-  const handleVideoFile = (file: File) => {
-    if (!file.type.startsWith('video/')) { alert('Please select a video file (MP4, MOV, AVI, etc.)'); return; }
-    if (file.size > 500 * 1024 * 1024) { alert('File too large. Max size is 500 MB.'); return; }
-    setVideoFile(file);
-    setVideoUploaded(false);
-  };
-
-  const handleVideoUpload = async () => {
-    if (!videoFile || !regStatus?.registrationId) return;
-    setVideoUploading(true); setUploadProgress(0);
-    try {
-      // 1. Get S3 presigned URL from API
-      const ct = videoFile.type === 'video/quicktime' ? 'video/quicktime'
-        : videoFile.type === 'video/x-msvideo' ? 'video/x-msvideo'
-        : videoFile.type === 'video/webm' ? 'video/webm'
-        : 'video/mp4';
-      const { presignedUrl, s3Key } = await getUploadUrl(regStatus.registrationId, ct);
-
-      // 2. Upload directly to S3 (with progress)
-      await new Promise<void>((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        xhr.upload.onprogress = (e) => {
-          if (e.lengthComputable) setUploadProgress(Math.round((e.loaded / e.total) * 90));
-        };
-        xhr.onload = () => { if (xhr.status === 200) resolve(); else reject(new Error(`Upload failed (${xhr.status})`)); };
-        xhr.onerror = () => reject(new Error('Upload failed. Check your connection.'));
-        xhr.open('PUT', presignedUrl);
-        xhr.setRequestHeader('Content-Type', videoFile.type);
-        xhr.send(videoFile);
-      });
-
-      // 3. Confirm upload with API → sends email/SMS
-      setUploadProgress(95);
-      await confirmVideoUpload(regStatus.registrationId, s3Key);
-      setUploadProgress(100);
-      setVideoUploaded(true);
-      setRegStatus((prev: any) => ({ ...prev, phase1Status: 'video_submitted' }));
-    } catch (e: any) {
-      alert(e.message ?? 'Upload failed. Please try again.');
-    } finally {
-      setVideoUploading(false);
-    }
-  };
 
   /* ── Cashfree SDK loader ── */
   const loadCashfreeSDK = (): Promise<void> =>
@@ -721,7 +669,7 @@ export function Registration() {
                         <div style={{ fontSize:13, fontWeight:700, color:'#22C55E', fontFamily:'Montserrat,sans-serif' }}>Logged in as +91 {loginPhone || regStatus?.phone || '—'}</div>
                         {regStatus?.registered && <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)', marginTop:2 }}>Role: {regStatus.role?.toUpperCase()} · City: {regStatus.trialCity}</div>}
                       </div>
-                      <button onClick={()=>{ setLoggedIn(false); setRegStatus(null); setVideoFile(null); setVideoUploaded(false); }} style={{ background:'none', border:'none', color:'rgba(255,255,255,0.3)', cursor:'pointer', fontSize:16 }}>✕</button>
+                      <button onClick={()=>{ setLoggedIn(false); setRegStatus(null); }} style={{ background:'none', border:'none', color:'rgba(255,255,255,0.3)', cursor:'pointer', fontSize:16 }}>✕</button>
                     </div>
 
                     {/* ── Not registered yet ── */}
@@ -762,62 +710,19 @@ export function Registration() {
                       </div>
                     )}
 
-                    {/* ── Video Upload (payment done) ── */}
+                    {/* ── Video Upload (payment done) — dedicated page owns the full flow ── */}
                     {regStatus?.phase1Status === 'payment_done' && (
-                      <div>
-                        <div style={{ padding:'10px 14px', background:'rgba(59,130,246,0.08)', border:'1px solid rgba(59,130,246,0.25)', borderRadius:8, marginBottom:14, fontSize:12, color:'rgba(255,255,255,0.6)' }}>
-                          🎉 Payment confirmed! Upload your 2-minute trial video below.
-                          {regStatus.videoDeadline && <span style={{ color:'#FBB724', fontWeight:700 }}> Deadline: {new Date(regStatus.videoDeadline).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' })}</span>}
+                      <div style={{ padding:'20px', background:'rgba(59,130,246,0.07)', border:'1px solid rgba(59,130,246,0.3)', borderRadius:12, textAlign:'center' }}>
+                        <div style={{ fontSize:32, marginBottom:10 }}>🎬</div>
+                        <div style={{ fontSize:15, fontWeight:800, color:'#60A5FA', fontFamily:'Montserrat,sans-serif' }}>Payment Confirmed — Upload Your Trial Video</div>
+                        <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:8, lineHeight:1.7 }}>
+                          {regStatus.videoDeadline && (<>Deadline: <strong style={{ color:'#FBB724' }}>{new Date(regStatus.videoDeadline).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' })}</strong><br/></>)}
+                          Filming instructions, live countdown and secure upload are on the video upload page.
                         </div>
-                        <div
-                          onDragOver={e=>{ e.preventDefault(); setVideoDragOver(true); }}
-                          onDragLeave={()=>setVideoDragOver(false)}
-                          onDrop={e=>{ e.preventDefault(); setVideoDragOver(false); const f=e.dataTransfer.files[0]; if(f) handleVideoFile(f); }}
-                          onClick={()=>!videoUploading && videoInputRef.current?.click()}
-                          style={{ border:`2px dashed ${videoDragOver?'#FF7A29':'rgba(255,122,41,0.3)'}`, borderRadius:12, padding:'28px 20px', textAlign:'center', cursor: videoUploading?'default':'pointer', background:videoDragOver?'rgba(255,122,41,0.06)':'rgba(255,122,41,0.02)', transition:'all .2s', marginBottom:12 }}
-                        >
-                          <input ref={videoInputRef} type="file" accept="video/mp4,video/quicktime,video/x-msvideo,video/webm" style={{ display:'none' }} onChange={e=>{ const f=e.target.files?.[0]; if(f) handleVideoFile(f); }}/>
-                          {videoFile ? (
-                            <div>
-                              <div style={{ fontSize:28, marginBottom:8 }}>🎬</div>
-                              <div style={{ fontSize:13, fontWeight:700, color:'#fff', marginBottom:4, wordBreak:'break-all' }}>{videoFile.name}</div>
-                              <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)' }}>{(videoFile.size/1024/1024).toFixed(1)} MB{!videoUploading && ' · Tap to change'}</div>
-                            </div>
-                          ) : (
-                            <div>
-                              <div style={{ fontSize:36, marginBottom:10 }}>📹</div>
-                              <div style={{ fontSize:14, fontWeight:700, color:'rgba(255,255,255,0.7)', marginBottom:4 }}>Tap to select video or drag & drop</div>
-                              <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)' }}>MP4, MOV, AVI, WEBM · Max 2 minutes · Max 500 MB</div>
-                            </div>
-                          )}
-                        </div>
-                        <div style={{ marginBottom:14, display:'flex', flexDirection:'column', gap:5 }}>
-                          {['🏏 Show batting, bowling, or fielding based on your role','📍 Any outdoor/indoor ground — no studio needed','⏱ Keep it under 2 minutes for best results'].map(t=>(
-                            <div key={t} style={{ fontSize:11, color:'rgba(255,255,255,0.4)' }}>{t}</div>
-                          ))}
-                        </div>
-                        {videoUploading && (
-                          <div style={{ marginBottom:12 }}>
-                            <div style={{ display:'flex', justifyContent:'space-between', fontSize:11, color:'rgba(255,255,255,0.5)', marginBottom:6 }}>
-                              <span>Uploading...</span><span>{uploadProgress}%</span>
-                            </div>
-                            <div style={{ height:6, background:'rgba(255,255,255,0.08)', borderRadius:3 }}>
-                              <div style={{ height:'100%', background:'linear-gradient(90deg,#FF7A29,#E8B23D)', borderRadius:3, width:`${uploadProgress}%`, transition:'width .3s' }} />
-                            </div>
-                          </div>
-                        )}
-                        {videoUploaded ? (
-                          <div style={{ padding:'16px', background:'rgba(34,197,94,0.1)', border:'1px solid rgba(34,197,94,0.4)', borderRadius:10, textAlign:'center' }}>
-                            <div style={{ fontSize:24, marginBottom:6 }}>✅</div>
-                            <div style={{ fontSize:14, fontWeight:800, color:'#22C55E', fontFamily:'Montserrat,sans-serif' }}>Video Submitted!</div>
-                            <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:4 }}>BCPL scouts will review within 15 working days. Result via SMS + Email.</div>
-                          </div>
-                        ) : (
-                          <button disabled={!videoFile || videoUploading} onClick={handleVideoUpload}
-                            style={{ width:'100%', padding:'16px 0', background:videoFile&&!videoUploading?'linear-gradient(135deg,#FF7A29,#C94E0E)':'rgba(255,255,255,0.06)', border:'none', borderRadius:10, color:videoFile&&!videoUploading?'#fff':'rgba(255,255,255,0.3)', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:videoFile&&!videoUploading?'pointer':'not-allowed', letterSpacing:'.06em' }}>
-                            🎬 SUBMIT TRIAL VIDEO →
-                          </button>
-                        )}
+                        <button onClick={()=>navigate('/register/upload-video')}
+                          style={{ marginTop:14, padding:'14px 32px', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', letterSpacing:'.06em' }}>
+                          🎬 GO TO VIDEO UPLOAD →
+                        </button>
                       </div>
                     )}
 

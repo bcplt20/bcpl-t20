@@ -108,16 +108,36 @@ export const getVideoStatus = () =>
     deadlineExpired?: boolean;
     videoSubmitted?: boolean;
     submittedAt?:   string | null;
+    attemptsUsed?:  number;
+    maxAttempts?:   number;
+    canReupload?:   boolean;
   }>("GET", "/video/status");
 
-export const getUploadUrl = (registrationId: string, contentType: string) =>
-  req<{ success: boolean; presignedUrl: string; s3Key: string }>(
-    "POST", "/video/upload-url", { registrationId, contentType }
+export type VideoConstraints = {
+  videoMinSeconds:    number;
+  videoMaxSeconds:    number;
+  maxVideoFileSizeMb: number;
+  maxReuploads:       number;
+  maxAttempts:        number;
+  allowedFormats:     string[];
+};
+
+export const getVideoInstructions = () =>
+  req<{
+    role: string | null;
+    roleKey: 'bat' | 'bowl' | 'ar' | 'wk' | null;
+    instructions: { en: string[]; hi: string[] } | null;
+    constraints: VideoConstraints;
+  }>("GET", "/video/instructions");
+
+export const getUploadUrl = (registrationId: string, contentType: string, sizeBytes?: number) =>
+  req<{ success: boolean; presignedUrl: string; s3Key: string; maxSizeMb?: number }>(
+    "POST", "/video/upload-url", { registrationId, contentType, sizeBytes }
   );
 
-export const confirmVideoUpload = (registrationId: string, s3Key: string) =>
-  req<{ success: boolean; message: string }>(
-    "POST", "/video/confirm", { registrationId, s3Key }
+export const confirmVideoUpload = (registrationId: string, s3Key: string, declarationAccepted: boolean, durationSeconds?: number) =>
+  req<{ success: boolean; message: string; attemptsUsed?: number; maxAttempts?: number; reuploadsLeft?: number }>(
+    "POST", "/video/confirm", { registrationId, s3Key, declarationAccepted, durationSeconds }
   );
 
 /* ─── Matches ──────────────────────────────────────── */

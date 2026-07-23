@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand, HeadObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 const BUCKET = process.env.AWS_S3_BUCKET  || "bcpl-trial-videos";
@@ -35,6 +35,30 @@ export async function getUploadPresignedUrl(key: string, contentType: string): P
 
 export function getS3Url(key: string): string {
   return `https://${BUCKET}.s3.${REGION}.amazonaws.com/${key}`;
+}
+
+/** HEAD an object after a direct browser upload — verifies it exists and
+ *  captures size/type/etag so the server never trusts client-declared metadata. */
+export async function headS3Object(key: string): Promise<{ exists: boolean; sizeBytes: number; contentType: string | null; etag: string | null }> {
+  if (!process.env.AWS_ACCESS_KEY_ID) {
+    console.warn("[S3-STUB] head for", key);
+    return { exists: true, sizeBytes: 0, contentType: null, etag: null };
+  }
+  try {
+    const out = await getS3().send(new HeadObjectCommand({ Bucket: BUCKET, Key: key }));
+    return {
+      exists: true,
+      sizeBytes: out.ContentLength ?? 0,
+      contentType: out.ContentType ?? null,
+      etag: out.ETag ? out.ETag.replace(/"/g, "") : null,
+    };
+  } catch (e) {
+    const name = (e as Error)?.name ?? "";
+    if (name === "NotFound" || name === "NoSuchKey" || name === "404") {
+      return { exists: false, sizeBytes: 0, contentType: null, etag: null };
+    }
+    throw e;
+  }
 }
 
 export async function deleteObject(key: string): Promise<void> {
