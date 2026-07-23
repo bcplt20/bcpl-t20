@@ -1,5 +1,6 @@
 import app from "./app";
 import { logger } from "./lib/logger";
+import { runVideoValidations } from "./lib/videoValidation";
 import { sendVideoReminders } from "./routes/video";
 import { ensureRegNumbers } from "./routes/register";
 import { ensurePhase1Scores } from "./routes/results";
@@ -70,3 +71,21 @@ setInterval(async () => {
     logger.error({ err: e }, "Payment reconciliation failed");
   }
 }, SIX_HOURS);
+
+// ── Phase 1 video validation worker: every 2 minutes ────────────────────────
+// Technical ffprobe validation of new submissions (pipeline stage
+// VALIDATING_VIDEO). Cheap per video; the AI stages are gated separately.
+const TWO_MINUTES = 2 * 60 * 1000;
+setTimeout(() => {
+  runVideoValidations(25)
+    .then((r) => { if (r.claimed > 0) logger.info(r, "startup video validation sweep"); })
+    .catch((e) => logger.error({ err: e }, "startup video validation failed"));
+}, 20_000);
+setInterval(async () => {
+  try {
+    const r = await runVideoValidations(25);
+    if (r.claimed > 0) logger.info(r, "video validation tick");
+  } catch (e) {
+    logger.error({ err: e }, "video validation tick failed");
+  }
+}, TWO_MINUTES);

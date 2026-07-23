@@ -111,6 +111,8 @@ export const getVideoStatus = () =>
     attemptsUsed?:  number;
     maxAttempts?:   number;
     canReupload?:   boolean;
+    latestVideoStatus?: string | null;
+    reuploadReason?: string | null;
   }>("GET", "/video/status");
 
 export type VideoConstraints = {

@@ -210,6 +210,23 @@ export function tplVideoReminder(name: string, daysLeft: number) {
   };
 }
 
+// ── Template 3c: Video re-upload required (validation failed) ────────────────
+export function tplVideoReuploadRequired(name: string, reasonLine: string) {
+  return {
+    subject: "📹 BCPL T20 — We Need a New Video Upload",
+    htmlContent: wrap(`
+      <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.3);border-radius:12px;padding:24px;margin-bottom:20px;">
+        <h2 style="color:#F59E0B;margin:0 0 8px;font-size:20px;">📹 We Need a New Upload</h2>
+        <p style="color:rgba(255,255,255,0.7);margin:0 0 8px;font-size:14px;">Dear <strong>${name}</strong>, we could not accept your Phase 1 trial video.</p>
+        <p style="color:rgba(255,255,255,0.6);margin:0;font-size:13px;background:rgba(255,255,255,0.04);border-radius:8px;padding:10px 12px;">${reasonLine}</p>
+      </div>
+      <p style="color:rgba(255,255,255,0.5);font-size:13px;margin:0 0 16px;line-height:1.8;">Your upload window and remaining attempts are shown on the upload page. Please record and upload a new video as soon as possible — your deadline has not changed.</p>
+      <div style="text-align:center;">
+        ${btn("UPLOAD NEW VIDEO →", `${SITE_URL}/register/upload-video`, "#F59E0B")}
+      </div>`),
+  };
+}
+
 // ── Template 6: Phase 1 Selected for Phase 2 ──────────────────────────────────
 export function tplPhase1Selected(name: string) {
   return {

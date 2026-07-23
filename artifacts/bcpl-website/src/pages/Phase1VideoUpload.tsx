@@ -25,6 +25,14 @@ const SAMPLE_VIDEOS = [
 
 type UploadState = 'loading' | 'not_registered' | 'deadline_passed' | 'already_uploaded' | 'idle' | 'file_selected' | 'uploading' | 'confirming' | 'success' | 'error';
 
+// Friendly copy for server-side validation failure reasons (GET /video/status → reuploadReason)
+const REUPLOAD_COPY: Record<string, { en: string; hi: string }> = {
+  VIDEO_TOO_SHORT:   { en: 'Your video was too short. Please upload at least 30 seconds of cricket footage.', hi: 'आपका वीडियो बहुत छोटा था। कृपया कम से कम 30 सेकंड की क्रिकेट फुटेज अपलोड करें।' },
+  VIDEO_TOO_LONG:    { en: 'Your video was longer than the 60-second limit. Please upload a shorter video.', hi: 'आपका वीडियो 60 सेकंड की सीमा से लंबा था। कृपया छोटा वीडियो अपलोड करें।' },
+  CORRUPTED_VIDEO:   { en: 'We could not read your video file. Please record again in MP4 or MOV format.', hi: 'हम आपकी वीडियो फ़ाइल नहीं पढ़ सके। कृपया MP4 या MOV फॉर्मेट में दोबारा रिकॉर्ड करें।' },
+  REUPLOAD_REQUIRED: { en: 'We could not process your last upload. Please upload a new video.', hi: 'हम आपका पिछला अपलोड प्रोसेस नहीं कर सके। कृपया नया वीडियो अपलोड करें।' },
+};
+
 function formatFileSize(bytes: number) {
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
@@ -81,6 +89,7 @@ export function Phase1VideoUpload() {
   const [videoDuration, setVideoDuration] = useState<number | null>(null);
   const [canReupload, setCanReupload] = useState(false);
   const [reuploadsLeft, setReuploadsLeft] = useState(0);
+  const [reuploadReason, setReuploadReason] = useState<string | null>(null);
   const [role, setRole]               = useState('bat');
   const [city, setCity]               = useState('');
   const [userName, setUserName]       = useState('');
@@ -119,6 +128,7 @@ export function Phase1VideoUpload() {
         if (vidData.status === 'fulfilled') {
           setCanReupload(!!vidData.value.canReupload);
           setReuploadsLeft(Math.max(0, (vidData.value.maxAttempts ?? 1) - (vidData.value.attemptsUsed ?? 0)));
+          setReuploadReason(vidData.value.reuploadReason ?? null);
         }
 
         if (regData.status === 'rejected') {
@@ -320,17 +330,44 @@ export function Phase1VideoUpload() {
   }
 
   if (uploadState === 'already_uploaded') {
+    const failed = !!reuploadReason;
+    const reasonCopy = REUPLOAD_COPY[reuploadReason ?? ''] ?? REUPLOAD_COPY.REUPLOAD_REQUIRED;
     return (
       <div style={{ background:'var(--bg)', minHeight:'100dvh', display:'flex', alignItems:'center', justifyContent:'center', padding:24, fontFamily:'var(--font-body)' }}>
         <div style={{ maxWidth:440, textAlign:'center' }}>
-          <div style={{ width:80, height:80, borderRadius:'50%', background:'rgba(34,197,94,0.15)', border:'2px solid var(--green)', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 20px' }}>
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-          <h2 style={{ color:'var(--green)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:28, marginBottom:12, textTransform:'uppercase' }}>{t('Video Already Submitted!', 'वीडियो पहले ही सबमिट किया जा चुका है!')}</h2>
-          <p style={{ color:'var(--ink-2)', fontSize:14, marginBottom:8, lineHeight:1.7 }}>
-            {userName ? `${userName}, ` : ''}{t('your trial video is with our BCCI-certified scouts.', 'आपका ट्रायल वीडियो हमारे BCCI-certified scouts के पास है।')}
-          </p>
-          <p style={{ color:'var(--ink-3)', fontSize:13, marginBottom:28 }}>{t('Result will be sent via Email, SMS and WhatsApp within ', 'परिणाम ईमेल, SMS और WhatsApp के माध्यम से ')}<strong style={{ color:'var(--ink)' }}>{t('15 working days', '15 कार्य दिवसों')}</strong>{t('.', ' के भीतर भेजा जाएगा।')}</p>
+          {failed ? (
+            <div style={{ width:80, height:80, borderRadius:'50%', background:'rgba(245,158,11,0.12)', border:'2px solid #F59E0B', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 20px' }}>
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+          ) : (
+            <div style={{ width:80, height:80, borderRadius:'50%', background:'rgba(34,197,94,0.15)', border:'2px solid var(--green)', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 20px' }}>
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+          )}
+          {failed ? (
+            <>
+              <h2 style={{ color:'#F59E0B', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:28, marginBottom:12, textTransform:'uppercase' }}>{t('We Need a New Upload', 'हमें नया अपलोड चाहिए')}</h2>
+              <p style={{ color:'var(--ink-2)', fontSize:14, marginBottom:8, lineHeight:1.7 }}>
+                {userName ? userName + ', ' : ''}{t('we could not accept your trial video.', 'हम आपका ट्रायल वीडियो स्वीकार नहीं कर सके।')}
+              </p>
+              <p style={{ color:'#F59E0B', fontSize:13, marginBottom:28, lineHeight:1.7, background:'rgba(245,158,11,0.07)', border:'1px solid rgba(245,158,11,0.25)', borderRadius:'var(--r)', padding:'12px 16px' }}>
+                {t(reasonCopy.en, reasonCopy.hi)}
+              </p>
+              {!canReupload && (
+                <p style={{ color:'var(--ink-3)', fontSize:13, marginBottom:24, lineHeight:1.7 }}>
+                  {t('No upload attempts remaining. Please write to ', 'कोई अपलोड प्रयास शेष नहीं है। कृपया ')}<strong style={{ color:'var(--ink)' }}>support@bcplt20.com</strong>{t(' for help.', ' पर लिखें।')}
+                </p>
+              )}
+            </>
+          ) : (
+            <>
+              <h2 style={{ color:'var(--green)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:28, marginBottom:12, textTransform:'uppercase' }}>{t('Video Already Submitted!', 'वीडियो पहले ही सबमिट किया जा चुका है!')}</h2>
+              <p style={{ color:'var(--ink-2)', fontSize:14, marginBottom:8, lineHeight:1.7 }}>
+                {userName ? userName + ', ' : ''}{t('your trial video is with our BCCI-certified scouts.', 'आपका ट्रायल वीडियो हमारे BCCI-certified scouts के पास है।')}
+              </p>
+              <p style={{ color:'var(--ink-3)', fontSize:13, marginBottom:28 }}>{t('Result will be sent via Email, SMS and WhatsApp within ', 'परिणाम ईमेल, SMS और WhatsApp के माध्यम से ')}<strong style={{ color:'var(--ink)' }}>{t('15 working days', '15 कार्य दिवसों')}</strong>{t('.', ' के भीतर भेजा जाएगा।')}</p>
+            </>
+          )}
           <div style={{ display:'flex', flexDirection:'column', gap:12, alignItems:'center' }}>
             <a href={import.meta.env.BASE_URL + 'register/result'} style={{ display:'inline-block', background:'var(--green)', color:'#fff', textDecoration:'none', padding:'14px 32px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:15, letterSpacing:'.06em', textTransform:'uppercase' }}>
               {t('CHECK MY STATUS', 'मेरा स्टेटस देखें')} →

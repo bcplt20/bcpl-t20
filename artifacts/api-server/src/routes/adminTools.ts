@@ -25,9 +25,17 @@ import { eq, desc, asc, sql } from "drizzle-orm";
 import { z } from "zod";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { getUploadPresignedUrl, getDownloadPresignedUrl, getS3Url, deleteObject } from "../lib/s3";
+import { runVideoValidations } from "../lib/videoValidation";
 
 const router = Router();
 router.use(requireAdmin);
+
+// ── Phase 1 pipeline ops ─────────────────────────────────────────────────────
+// Manual validation sweep (the scheduler also runs this every 2 minutes).
+router.post("/phase1/run-validation", async (_req: Request, res: Response) => {
+  const result = await runVideoValidations(25);
+  res.json({ success: true, ...result });
+});
 
 /* Payment rows that count as money received (mirrors marketing.ts). */
 const PAID_STATUSES = ["success", "paid"];

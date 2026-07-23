@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
 import {
-  registrationsTable, phase1VideosTable,
+  registrationsTable, phase1VideosTable, phase1EvaluationsTable,
   usersTable, notificationLogsTable,
 } from "@workspace/db/schema";
 import { eq, and } from "drizzle-orm";
@@ -305,6 +305,19 @@ router.get("/status", requireAuth, async (req: AuthRequest, res) => {
   const latest = videos.sort((a, b) => (b.submittedAt?.getTime() ?? 0) - (a.submittedAt?.getTime() ?? 0))[0];
   const deadlineExpired = reg.videoDeadline ? reg.videoDeadline < new Date() : false;
 
+  // Surface a validation failure on the latest attempt so the upload page
+  // can prompt for a re-upload with the specific reason.
+  let reuploadReason: string | null = null;
+  if (latest && latest.status === "validation_failed") {
+    const [ev] = await db.select({ reasonCode: phase1EvaluationsTable.reasonCode })
+      .from(phase1EvaluationsTable)
+      .where(and(
+        eq(phase1EvaluationsTable.registrationId, reg.id),
+        eq(phase1EvaluationsTable.attemptNumber, latest.attemptNumber),
+      )).limit(1);
+    reuploadReason = ev?.reasonCode ?? "REUPLOAD_REQUIRED";
+  }
+
   res.json({
     registered:      true,
     phase1Status:    reg.phase1Status,
@@ -315,6 +328,8 @@ router.get("/status", requireAuth, async (req: AuthRequest, res) => {
     attemptsUsed,
     maxAttempts,
     canReupload:     reg.phase1Status === "video_submitted" && attemptsUsed > 0 && attemptsUsed < maxAttempts && !deadlineExpired,
+    latestVideoStatus: latest?.status ?? null,
+    reuploadReason,
   });
 });
 

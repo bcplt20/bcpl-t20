@@ -152,6 +152,9 @@ export async function ensurePhase1AiTables() {
   `);
   await db.execute(sql`CREATE UNIQUE INDEX IF NOT EXISTS phase1_videos_reg_attempt_uq ON phase1_videos (registration_id, attempt_number)`);
   await db.execute(sql`CREATE UNIQUE INDEX IF NOT EXISTS phase1_videos_one_submitted_uq ON phase1_videos (registration_id) WHERE status = 'submitted'`);
+  // One evaluation per video attempt — doubles as the validation worker's
+  // atomic claim mechanism (INSERT ... ON CONFLICT DO NOTHING).
+  await db.execute(sql`CREATE UNIQUE INDEX IF NOT EXISTS phase1_evaluations_reg_attempt_uq ON phase1_evaluations (registration_id, attempt_number)`);
 
   logger.info("phase1 AI pipeline tables ensured");
 }

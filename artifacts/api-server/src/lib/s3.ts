@@ -66,10 +66,11 @@ export async function deleteObject(key: string): Promise<void> {
   await getS3().send(new DeleteObjectCommand({ Bucket: BUCKET, Key: key }));
 }
 
-/** Pre-signed GET URL (1 h) — lets the admin panel preview objects even when
- *  the bucket/prefix is not public-read. Falls back to the plain URL without creds. */
-export async function getDownloadPresignedUrl(key: string): Promise<string> {
+/** Pre-signed GET URL — admin previews (default 1 h) and short-lived
+ *  processing URLs (pass a smaller expiresIn, e.g. 900 for ffprobe).
+ *  Falls back to the plain URL without creds. */
+export async function getDownloadPresignedUrl(key: string, expiresIn = 3600): Promise<string> {
   if (!process.env.AWS_ACCESS_KEY_ID) return getS3Url(key);
   const cmd = new GetObjectCommand({ Bucket: BUCKET, Key: key });
-  return getSignedUrl(getS3(), cmd, { expiresIn: 3600 });
+  return getSignedUrl(getS3(), cmd, { expiresIn });
 }
