@@ -24,3 +24,6 @@ Super-admin login in AdminShell AWAITS `POST /api/admin/session` (validated serv
 Admin JWT is 24h; `requireAdmin` re-issues a fresh token via the `x-bcpl-admin-token-renewed` response header past half-life. **Every** admin API client must read that header and persist it — there are FIVE clients (api.ts + four deliberately duplicated: marketingApi, seoApi, adminToolsApi, referralProgramApi). A code review caught the four copies missing the mirror once already.
 **Why:** duplication was chosen to avoid merge conflicts between queued tasks; the cost is that ANY admin-auth scheme change must be mirrored in all five or some panel sections silently lose the behavior.
 **How to apply:** when touching admin auth (headers, renewal, login), grep `x-bcpl-admin-token` under `src/lib/` and update every match. Login password is server-side only (`ADMIN_PANEL_PASSWORD`, rate-limited) — never reintroduce a frontend-hardcoded password.
+
+## AdminShell NAV ids = permission keys
+- Sidebar NAV item `id`s are the co-admin permission keys (stored in localStorage admin accounts). Regroup/relabel freely, but NEVER rename or drop an id, or co-admins lose access to that view.

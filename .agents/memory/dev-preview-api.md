@@ -20,3 +20,6 @@ The preview historically 404'd all `/api` calls. Two separate causes, both fixed
 
 ## Dev e2e user creation recipe
 send-otp inserts the OTP row BEFORE attempting MSG91 delivery, so full e2e flows work in dev: POST /api/auth/send-otp (99999999xx test number) → read otp_code from otp_sessions → verify-otp returns Bearer token → register/phase1 → simulate payment with raw INSERT INTO phase1_payments (status 'success'). Clean up test rows afterwards.
+
+## API server dev process is NOT watch-mode
+- Editing api-server routes does NOT hot-reload; the old process keeps serving and new endpoints 404. Always restart the "artifacts/api-server: API Server" workflow after backend edits, then smoke-test on localhost:8080 (default PORT).

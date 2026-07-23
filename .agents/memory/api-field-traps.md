@@ -17,3 +17,6 @@ description: Silent-failure field conventions between api-server responses and w
 Older rows store display strings ("Batsman", "All-Rounder"); newer rows store keys (bat/bowl/wk/ar).
 **Why:** an early registration form saved labels directly; later forms switched to keys. Both exist in prod data.
 **How to apply:** never compare `registrations.role` to a key literal on the client — normalise first (see `normRole()` in Phase1Result.tsx). Same-value SQL comparisons (role = role) are fine; key-literal WHERE clauses are not.
+
+## Payment "paid" contract
+- phase1_payments / phase2_payments `status` has a legacy value `"paid"` alongside `"success"`. EVERY paid-check must treat both as paid (see `PAID_ROW` / `PAID` sets in admin routes). A `=== "success"` check silently marks legacy payers as unpaid.
