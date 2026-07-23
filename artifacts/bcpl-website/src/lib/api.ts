@@ -225,9 +225,76 @@ export const adminLogin = (password: string) =>
     return r.json() as Promise<{ success: boolean; token: string }>;
   });
 
-// Lightweight token check used on panel load to restore the session
+/* Stage 5 RBAC — server-managed admin users, refunds, API health */
+export type AdminProfile = {
+  email: string; name: string; role: string; cities: string[]; permissions: string[];
+};
+
+// Lightweight token check used on panel load to restore the session.
+// Stage 5: also returns the admin identity so the panel can restore
+// role-based navigation without a fresh login.
 export const adminVerifySession = () =>
-  adminReq<{ success: boolean }>("GET", "/admin/session/verify");
+  adminReq<{ success: boolean; admin?: AdminProfile | null }>("GET", "/admin/session/verify");
+
+// Email + password login for server-managed admin users (admin_users table).
+export const adminEmailLogin = (email: string, password: string) =>
+  fetch(`${BASE}/api/admin/session`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  }).then(async r => {
+    if (!r.ok) { const e = await r.json().catch(() => ({})); throw new Error((e as any).error ?? "Login failed"); }
+    return r.json() as Promise<{ success: boolean; token: string; admin?: AdminProfile }>;
+  });
+
+export type AdminUserRow = {
+  id: string; email: string; name: string; role: string; cities: string[];
+  active: boolean; lastLoginAt: string | null; createdAt: string; permissions: string[];
+};
+export const adminListAdminUsers = () =>
+  adminReq<{ admins: AdminUserRow[]; roles: string[]; roleViews: Record<string, string[]> }>("GET", "/admin/admin-users");
+export const adminCreateAdminUser = (data: { email: string; name: string; role: string; password: string; cities?: string[] }) =>
+  adminReq<{ admin: AdminUserRow }>("POST", "/admin/admin-users", data);
+export const adminUpdateAdminUser = (id: string, data: Partial<{ name: string; role: string; cities: string[]; active: boolean; password: string }>) =>
+  adminReq<{ admin: AdminUserRow }>("PATCH", `/admin/admin-users/${id}`, data);
+export const adminDeleteAdminUser = (id: string) =>
+  adminReq<{ success: boolean }>("DELETE", `/admin/admin-users/${id}`);
+
+export type AdminRefund = {
+  id: string; registrationId: string; phase: number; paymentId: string | null; paymentRef: string | null;
+  amount: string; reason: string; reasonNote: string | null; eligibility: string; status: string;
+  requestedBy: string | null; decidedBy: string | null; decidedAt: string | null;
+  processedBy: string | null; processedAt: string | null; refundRef: string | null; createdAt: string;
+};
+export type RefundRow = { refund: AdminRefund; regNumber: string | null; playerName: string | null; phone: string | null };
+export type RefundCandidate = {
+  registrationId: string; phase: number; payments: number; total: string;
+  regNumber: string | null; playerName: string | null; phone: string | null; hasRefund: boolean;
+};
+export const adminGetRefunds = (params?: { status?: string; phase?: string }) => {
+  const qs = new URLSearchParams();
+  if (params?.status) qs.set("status", params.status);
+  if (params?.phase) qs.set("phase", params.phase);
+  const q = qs.toString();
+  return adminReq<{ refunds: RefundRow[]; reasons: string[]; eligibility: string[] }>("GET", `/admin/refunds${q ? "?" + q : ""}`);
+};
+export const adminGetRefundCandidates = () =>
+  adminReq<{ candidates: RefundCandidate[] }>("GET", "/admin/refunds/candidates");
+export const adminCreateRefund = (data: {
+  regNumber?: string; registrationId?: string; phase: number; reason: string;
+  amount?: number; reasonNote?: string; eligibility?: string;
+}) => adminReq<{ refund: AdminRefund }>("POST", "/admin/refunds", data);
+export const adminRefundAction = (id: string, data: { action: "approve" | "reject" | "process"; refundRef?: string; eligibility?: string; note?: string }) =>
+  adminReq<{ refund: AdminRefund }>("PATCH", `/admin/refunds/${id}`, data);
+
+export type HealthIntegration = {
+  id: string; name: string; configured: boolean; lastActivityAt: string | null;
+  probe: { ok: boolean; note: string } | null; note: string;
+};
+export type HealthJob = { id: string; intervalMs: number | null; lastRunAt: string | null; lastOkAt: string | null; lastError: string | null; runs: number; fails: number };
+export const adminGetApiHealth = (probe = false) =>
+  adminReq<{ checkedAt: string; probed: boolean; uptimeSec: number; integrations: HealthIntegration[]; jobs: HealthJob[]; queues: Record<string, number> }>(
+    "GET", `/admin/health${probe ? "?probe=1" : ""}`);
 
 // Stats
 export const adminGetStats = () =>

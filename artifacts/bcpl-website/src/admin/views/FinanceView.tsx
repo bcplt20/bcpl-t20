@@ -1,3 +1,4 @@
+import RefundsPanel from "./RefundsPanel";
 import { useState, useEffect } from "react";
 import { adminGetRegistrations, adminSendInvoice } from "../../lib/api";
 import { gstFromGross, inr } from "../../lib/gst";
@@ -779,61 +780,9 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
 
       {/* ══════════ REFUNDS ══════════ */}
       {tab==="refunds"&&(
-        <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:12 }}>
-            {[
-              { l:"Total Refund Requests", v:REFUNDS.length,                                      c:"#F59E0B" },
-              { l:"Processed",             v:REFUNDS.filter(r=>r.status==="processed").length,    c:"#10B981" },
-              { l:"Pending",               v:REFUNDS.filter(r=>r.status==="pending").length,      c:"#EF4444" },
-              { l:"Amount Refunded",       v:`₹${REFUNDS.filter(r=>r.status==="processed").reduce((a,r)=>a+r.amount,0)}`, c:"#6366F1" },
-            ].map(s=>(
-              <div key={s.l} style={{ ...card, borderTop:`3px solid ${s.c}` }}>
-                <div style={{ fontSize:22, fontWeight:800, color:s.c }}>{s.v}</div>
-                <div style={{ fontSize:11, color:"#64748B", marginTop:4 }}>{s.l}</div>
-              </div>
-            ))}
-          </div>
-          <div style={card}>
-            <div style={{ display:"flex", justifyContent:"space-between", marginBottom:14 }}>
-              <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9" }}>Refund Requests</div>
-            </div>
-            <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
-              {REFUNDS.length===0 && (
-                <div style={{ padding:"36px 16px", textAlign:"center", color:"#334155", fontSize:12, background:"#060B18", borderRadius:12, border:"1px dashed #1E293B" }}>
-                  No refund requests yet.
-                </div>
-              )}
-              {REFUNDS.map(r=>(
-                <div key={r.id} style={{ padding:"16px", background:"#060B18", borderRadius:12, border:`1px solid ${r.status==="pending"?"#EF444430":"#1E293B"}` }}>
-                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:8 }}>
-                    <div>
-                      <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:4 }}>
-                        <span style={{ fontSize:13, fontWeight:700, color:"#F1F5F9" }}>{r.name}</span>
-                        <span style={{ fontFamily:"monospace", fontSize:11, color:"#475569", marginLeft:8 }}>{r.txnId}</span>
-                      </div>
-                      <div style={{ fontSize:12, color:"#64748B" }}>Reason: {r.reason}</div>
-                      <div style={{ fontSize:11, color:"#475569", marginTop:3 }}>Requested: {r.date} · Via: {r.method}</div>
-                    </div>
-                    <div style={{ textAlign:"right" }}>
-                      <div style={{ fontSize:18, fontWeight:900, color:r.status==="processed"?"#10B981":"#F59E0B" }}>₹{r.amount}</div>
-                      <span style={{ fontSize:10, padding:"2px 9px", borderRadius:6, fontWeight:700, background:r.status==="processed"?"#10B98122":"#EF444422", color:r.status==="processed"?"#10B981":"#EF4444" }}>{r.status==="processed"?"✓ Processed":"⏳ Pending"}</span>
-                    </div>
-                  </div>
-                  {r.status==="pending"&&(
-                    <div style={{ display:"flex", gap:8, marginTop:8 }}>
-                      <button style={{ padding:"6px 16px", borderRadius:8, border:"none", background:"#10B98122", color:"#10B981", fontSize:12, fontWeight:700, cursor:"pointer" }}>✓ Approve & Process</button>
-                      <button style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #1E293B", background:"transparent", color:"#64748B", fontSize:12, cursor:"pointer" }}>Reject</button>
-                    </div>
-                  )}
-                  {r.status==="processed"&&<div style={{ fontSize:11, color:"#10B981", marginTop:4 }}>✓ Refunded in {r.days} days via {r.method}</div>}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+        <RefundsPanel refreshTick={refreshTick}/>
       )}
 
-      {/* ══════════ TDS ══════════ */}
       {tab==="tds"&&(
         <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
           <div style={{ ...card, borderLeft:"3px solid #F59E0B", background:"linear-gradient(135deg,#0D1526,#1A1208)" }}>

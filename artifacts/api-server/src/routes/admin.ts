@@ -32,7 +32,10 @@ import {
 import { eq, desc, count, and, inArray, lt, gte, isNotNull, sql } from "drizzle-orm";
 import { sendVideoReminders } from "./video";
 import { sendPaymentReminders, remindersEnabled } from "../lib/reminders";
-import { requireAdmin } from "../middlewares/adminAuth";
+import { requireAdmin, trialCityScope } from "../middlewares/adminAuth";
+import { adminUsersTable } from "@workspace/db/schema";
+import { verifyPassword, signAdminToken, publicAdmin, permissionsForRole } from "./adminUsers";
+import { writeAudit } from "../lib/audit";
 import { markKycVerified } from "./kyc";
 import { sendEmail, adminAlertRecipient, tplPhase1ResultReady, tplTrialVenueAnnounced, tplInvoice, tplAdminLoginLockdown } from "../lib/email";
 import { sendSms, adminAlertPhone } from "../lib/sms";
@@ -112,11 +115,34 @@ router.post("/session", async (req, res) => {
     return;
   }
 
+  /* Stage 5 RBAC: email + password → admin_users login (server-side
+     roles). Wrong credentials fall through to the legacy password check,
+     which shares the fail counters + circuit-breaker alerts. */
+  const rbacEmail = typeof (req.body as { email?: unknown })?.email === "string"
+    ? String((req.body as { email?: string }).email).trim().toLowerCase()
+    : "";
+  if (rbacEmail && password) {
+    try {
+      const [au] = await db.select().from(adminUsersTable)
+        .where(eq(adminUsersTable.email, rbacEmail)).limit(1);
+      if (au && au.active && verifyPassword(password, au.passwordHash)) {
+        loginFails.delete(ip);
+        void db.update(adminUsersTable).set({ lastLoginAt: new Date() })
+          .where(eq(adminUsersTable.id, au.id))
+          .catch((e) => console.error("[ADMIN] lastLoginAt update failed", e));
+        res.json({ success: true, token: signAdminToken(au), admin: publicAdmin(au) });
+        return;
+      }
+    } catch (e) {
+      console.error("[ADMIN] admin_users lookup failed", e);
+    }
+  }
+
   if (!panelPassword) {
     // Dev convenience only — production always requires the env var.
     if (process.env.NODE_ENV !== "production") {
       const token = jwt.sign({ admin: true }, sessionSecret, { expiresIn: ADMIN_TOKEN_TTL });
-      res.json({ success: true, token });
+      res.json({ success: true, token, admin: { email: "owner@bcpl", name: "BCPL Admin", role: "SUPER_ADMIN", cities: [], permissions: ["all"] } });
       return;
     }
     console.error("[ADMIN] ADMIN_PANEL_PASSWORD is not set — admin login is impossible in production");
@@ -182,7 +208,7 @@ router.post("/session", async (req, res) => {
 
   loginFails.delete(ip);
   const token = jwt.sign({ admin: true }, sessionSecret, { expiresIn: ADMIN_TOKEN_TTL });
-  res.json({ success: true, token });
+  res.json({ success: true, token, admin: { email: "owner@bcpl", name: "BCPL Admin", role: "SUPER_ADMIN", cities: [], permissions: ["all"] } });
 });
 
 /* ─── All routes below require admin auth ─────────────────────── */
@@ -192,8 +218,12 @@ router.use(requireAdmin);
    Lightweight "is my stored token still valid?" check used by the
    panel on page load to restore the session without re-login.
    (requireAdmin above does the actual verification.) ──────────── */
-router.get("/session/verify", (_req, res) => {
-  res.json({ success: true });
+router.get("/session/verify", (req, res) => {
+  const a = req.admin;
+  res.json({
+    success: true,
+    admin: a ? { email: a.email, name: a.name, role: a.role, cities: a.cities, permissions: permissionsForRole(a.role) } : null,
+  });
 });
 
 /* ─── GET /api/admin/stats ─────────────────────────────────────── */
@@ -550,10 +580,14 @@ router.put("/videos/:id/review", async (req, res) => {
 
 /* ─── Trial Venue CRUD ─────────────────────────────────────────── */
 
+const normVenueCity = (c: string | null | undefined): string => String(c ?? "").trim().toLowerCase();
+
 // GET /api/admin/trial-venues
-router.get("/trial-venues", async (_req, res) => {
+router.get("/trial-venues", async (req, res) => {
   try {
-    const venues = await db.select().from(trialVenuesTable).orderBy(trialVenuesTable.city);
+    let venues = await db.select().from(trialVenuesTable).orderBy(trialVenuesTable.city);
+    const scope = trialCityScope(req);
+    if (scope) venues = venues.filter(v => scope.includes(normVenueCity(v.city)));
     res.json({ venues });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
@@ -571,6 +605,11 @@ router.post("/trial-venues", async (req, res) => {
       res.status(400).json({ error: "city, venue, trialDate, trialTime, reportingTime are required" });
       return;
     }
+    const scopeCreate = trialCityScope(req);
+    if (scopeCreate && !scopeCreate.includes(normVenueCity(city))) {
+      res.status(403).json({ error: "Outside your assigned cities" });
+      return;
+    }
     const [created] = await db.insert(trialVenuesTable).values({
       city, venue, trialDate, trialTime, reportingTime,
       slots: slots ?? 100, notes: notes ?? null,
@@ -586,6 +625,16 @@ router.put("/trial-venues/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { city, venue, trialDate, trialTime, reportingTime, slots, notes, status } = req.body as Record<string, any>;
+    const scopeUpd = trialCityScope(req);
+    if (scopeUpd) {
+      const [cur] = await db.select({ city: trialVenuesTable.city }).from(trialVenuesTable)
+        .where(eq(trialVenuesTable.id, String(id))).limit(1);
+      if (!cur) { res.status(404).json({ error: "Venue not found" }); return; }
+      if (!scopeUpd.includes(normVenueCity(cur.city)) || (city !== undefined && !scopeUpd.includes(normVenueCity(city)))) {
+        res.status(403).json({ error: "Outside your assigned cities" });
+        return;
+      }
+    }
     const [updated] = await db
       .update(trialVenuesTable)
       .set({ city, venue, trialDate, trialTime, reportingTime, slots, notes, status, updatedAt: new Date() })
@@ -601,6 +650,16 @@ router.put("/trial-venues/:id", async (req, res) => {
 // DELETE /api/admin/trial-venues/:id
 router.delete("/trial-venues/:id", async (req, res) => {
   try {
+    const scopeDel = trialCityScope(req);
+    if (scopeDel) {
+      const [cur] = await db.select({ city: trialVenuesTable.city }).from(trialVenuesTable)
+        .where(eq(trialVenuesTable.id, String(req.params.id))).limit(1);
+      if (!cur) { res.status(404).json({ error: "Venue not found" }); return; }
+      if (!scopeDel.includes(normVenueCity(cur.city))) {
+        res.status(403).json({ error: "Outside your assigned cities" });
+        return;
+      }
+    }
     await db.delete(trialVenuesTable).where(eq(trialVenuesTable.id, req.params.id));
     res.json({ success: true });
   } catch (err: any) {
@@ -615,6 +674,11 @@ router.post("/trial-venues/:id/announce", async (req, res) => {
     const { id } = req.params;
     const [venueRow] = await db.select().from(trialVenuesTable).where(eq(trialVenuesTable.id, id)).limit(1);
     if (!venueRow) { res.status(404).json({ error: "Venue not found" }); return; }
+    const scopeAnn = trialCityScope(req);
+    if (scopeAnn && !scopeAnn.includes(normVenueCity(venueRow.city))) {
+      res.status(403).json({ error: "Outside your assigned cities" });
+      return;
+    }
 
     // Fetch selected players in this city with phase2 payment done or kyc done
     const players = await db
@@ -669,12 +733,25 @@ router.get("/kyc", async (req, res) => {
     let filtered = rows;
     if (status) filtered = filtered.filter(r => r.kyc.status === status);
 
+    /* Stage 5: mask Aadhaar/PAN refs by default. Only SUPER_ADMIN and
+       KYC_TEAM may request unmasked values (?reveal=1) — audited. */
+    const canReveal = req.admin?.role === "SUPER_ADMIN" || req.admin?.role === "KYC_TEAM";
+    const reveal = canReveal && String(req.query["reveal"] ?? "") === "1";
+    if (reveal) {
+      void writeAudit(req, { action: "kyc.reveal", entity: "kyc_records", entityKey: "list", newValue: { rows: filtered.length } });
+    }
+    const maskRef = (v: string | null): string | null => {
+      if (!v) return v;
+      const s = String(v);
+      return s.length <= 4 ? "\u2022\u2022\u2022\u2022" : "\u2022\u2022\u2022\u2022" + s.slice(-4);
+    };
+
     const kyc = filtered.map(r => ({
       id:             r.kyc.id,
       registrationId: r.kyc.registrationId,
       profession:     r.kyc.profession,
-      aadhaarRef:     r.kyc.aadhaarRef,
-      panRef:         r.kyc.panRef,
+      aadhaarRef:     reveal ? r.kyc.aadhaarRef : maskRef(r.kyc.aadhaarRef),
+      panRef:         reveal ? r.kyc.panRef : maskRef(r.kyc.panRef),
       cashfreeKycId:  r.kyc.cashfreeKycId,
       status:          r.kyc.status,
       panVerified:     r.kyc.panVerified,
@@ -699,7 +776,7 @@ router.get("/kyc", async (req, res) => {
       bloodGroup:        r.profile?.bloodGroup ?? null,
     }));
 
-    res.json({ kyc, total: kyc.length });
+    res.json({ kyc, total: kyc.length, masked: !reveal, canReveal });
   } catch (err: any) {
     console.error("[admin/kyc]", err);
     res.status(500).json({ error: err.message });

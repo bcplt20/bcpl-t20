@@ -31,7 +31,7 @@ import {
   physicalAssessmentsTable, notificationLogsTable,
 } from "@workspace/db/schema";
 import { and, eq, sql, desc, ilike, or } from "drizzle-orm";
-import { requireAdmin } from "../middlewares/adminAuth";
+import { requireAdmin, trialCityScope } from "../middlewares/adminAuth";
 import { requireAuth, type AuthRequest } from "../middlewares/auth";
 import { remindersEnabled } from "../lib/reminders";
 import { sendEmail, tplTrialPass } from "../lib/email";
@@ -214,7 +214,8 @@ adminTrialsRouter.get("/slots", async (req, res) => {
       .leftJoin(trialVenuesTable, eq(trialSlotsTable.venueId, trialVenuesTable.id))
       .where(city ? ilike(trialSlotsTable.city, city) : undefined)
       .orderBy(trialSlotsTable.city, trialSlotsTable.createdAt);
-    res.json({ slots: rows });
+    const scope = trialCityScope(req);
+    res.json({ slots: scope ? rows.filter((r) => scope.includes(normCity(r.slot.city))) : rows });
   } catch (e) {
     logger.error({ err: e }, "trials/slots list failed");
     res.status(500).json({ error: "Failed to load slots" });
@@ -230,6 +231,8 @@ adminTrialsRouter.post("/slots", async (req, res) => {
     if (!venueId || !batchName) { res.status(400).json({ error: "venueId and batchName required" }); return; }
     const [venue] = await db.select().from(trialVenuesTable).where(eq(trialVenuesTable.id, venueId)).limit(1);
     if (!venue) { res.status(404).json({ error: "Venue not found" }); return; }
+    const scopeCreate = trialCityScope(req);
+    if (scopeCreate && !scopeCreate.includes(normCity(venue.city))) { res.status(403).json({ error: "Outside your assigned cities" }); return; }
     const capacity = Math.max(1, Math.min(2000, Number(b["capacity"] ?? 100) || 100));
     const [row] = await db.insert(trialSlotsTable).values({
       venueId,
@@ -253,6 +256,12 @@ adminTrialsRouter.patch("/slots/:id", async (req, res) => {
   try {
     const id = String(req.params["id"]);
     const b = (req.body ?? {}) as Record<string, unknown>;
+    const scopePatch = trialCityScope(req);
+    if (scopePatch) {
+      const [cur] = await db.select({ city: trialSlotsTable.city }).from(trialSlotsTable).where(eq(trialSlotsTable.id, id)).limit(1);
+      if (!cur) { res.status(404).json({ error: "Slot not found" }); return; }
+      if (!scopePatch.includes(normCity(cur.city))) { res.status(403).json({ error: "Outside your assigned cities" }); return; }
+    }
     const upd: Record<string, unknown> = { updatedAt: new Date() };
     if (b["batchName"] !== undefined) upd["batchName"] = String(b["batchName"]).trim();
     if (b["capacity"] !== undefined) upd["capacity"] = Math.max(1, Math.min(2000, Number(b["capacity"]) || 1));
@@ -278,6 +287,12 @@ adminTrialsRouter.patch("/slots/:id", async (req, res) => {
 adminTrialsRouter.delete("/slots/:id", async (req, res) => {
   try {
     const id = String(req.params["id"]);
+    const scopeDel = trialCityScope(req);
+    if (scopeDel) {
+      const [cur] = await db.select({ city: trialSlotsTable.city }).from(trialSlotsTable).where(eq(trialSlotsTable.id, id)).limit(1);
+      if (!cur) { res.status(404).json({ error: "Slot not found" }); return; }
+      if (!scopeDel.includes(normCity(cur.city))) { res.status(403).json({ error: "Outside your assigned cities" }); return; }
+    }
     const [{ n } = { n: 0 }] = await db.select({ n: sql<number>`count(*)::int` })
       .from(trialAllocationsTable)
       .where(and(eq(trialAllocationsTable.slotId, id), eq(trialAllocationsTable.status, "allocated")));
@@ -295,6 +310,12 @@ adminTrialsRouter.patch("/venues/:id", async (req, res) => {
   try {
     const id = String(req.params["id"]);
     const b = (req.body ?? {}) as Record<string, unknown>;
+    const scopeVen = trialCityScope(req);
+    if (scopeVen) {
+      const [cur] = await db.select({ city: trialVenuesTable.city }).from(trialVenuesTable).where(eq(trialVenuesTable.id, id)).limit(1);
+      if (!cur) { res.status(404).json({ error: "Venue not found" }); return; }
+      if (!scopeVen.includes(normCity(cur.city))) { res.status(403).json({ error: "Outside your assigned cities" }); return; }
+    }
     const upd: Record<string, unknown> = { updatedAt: new Date() };
     if (b["address"] !== undefined) upd["address"] = b["address"] ? String(b["address"]) : null;
     if (b["mapsUrl"] !== undefined) upd["mapsUrl"] = b["mapsUrl"] ? String(b["mapsUrl"]) : null;
@@ -314,6 +335,11 @@ adminTrialsRouter.post("/allocate", async (req, res) => {
     const dryRun = b["dryRun"] !== false;
     const cityFilter = b["city"] ? normCity(String(b["city"])) : null;
     const allocatedBy = b["by"] ? String(b["by"]).slice(0, 80) : "system";
+    const scopeAlloc = trialCityScope(req);
+    if (scopeAlloc) {
+      if (!cityFilter) { res.status(400).json({ error: "City-scoped managers must specify a city" }); return; }
+      if (!scopeAlloc.includes(cityFilter)) { res.status(403).json({ error: "Outside your assigned cities" }); return; }
+    }
 
     /* Non-dry runs execute inside ONE transaction that takes FOR UPDATE row
        locks on every open slot, so concurrent allocation runs and manual
@@ -414,6 +440,8 @@ adminTrialsRouter.get("/allocations", async (req, res) => {
     const slotId = req.query["slotId"] ? String(req.query["slotId"]) : null;
     const q = req.query["q"] ? String(req.query["q"]).trim() : null;
     const conds = [] as ReturnType<typeof eq>[];
+    const scopeAllocList = trialCityScope(req);
+    if (scopeAllocList) conds.push(sql`lower(${trialAllocationsTable.city}) = ANY(${scopeAllocList}::text[])` as never);
     if (city) conds.push(ilike(trialAllocationsTable.city, city) as never);
     if (slotId) conds.push(eq(trialAllocationsTable.slotId, slotId) as never);
     if (q) conds.push(or(ilike(usersTable.name, `%${q}%`), ilike(registrationsTable.regNumber, `%${q}%`)) as never);
@@ -464,6 +492,8 @@ adminTrialsRouter.patch("/allocations/:id", async (req, res) => {
     const [assessed] = await db.select({ id: physicalAssessmentsTable.id }).from(physicalAssessmentsTable)
       .where(eq(physicalAssessmentsTable.registrationId, alloc.registrationId)).limit(1);
     if (assessed) { res.status(409).json({ error: "Player already assessed — allocation cannot be moved" }); return; }
+    const scopeMove = trialCityScope(req);
+    if (scopeMove && !scopeMove.includes(normCity(alloc.city))) { res.status(403).json({ error: "Outside your assigned cities" }); return; }
 
     /* capacity check + move inside one transaction with a FOR UPDATE lock on
        the target slot, so concurrent moves/runs cannot overfill it */
@@ -472,6 +502,7 @@ adminTrialsRouter.patch("/allocations/:id", async (req, res) => {
         .where(eq(trialSlotsTable.id, slotId)).limit(1).for("update");
       if (!slot) return { err: 404, msg: "Target slot not found" };
       if (slot.status !== "open") return { err: 409, msg: "Target slot is not open" };
+      if (scopeMove && !scopeMove.includes(normCity(slot.city))) return { err: 403, msg: "Outside your assigned cities" };
       const [{ n } = { n: 0 }] = await tx.select({ n: sql<number>`count(*)::int` })
         .from(trialAllocationsTable)
         .where(and(eq(trialAllocationsTable.slotId, slotId), eq(trialAllocationsTable.status, "allocated")));
@@ -498,6 +529,8 @@ adminTrialsRouter.post("/allocations/:id/cancel", async (req, res) => {
     const id = String(req.params["id"]);
     const [alloc] = await db.select().from(trialAllocationsTable).where(eq(trialAllocationsTable.id, id)).limit(1);
     if (!alloc || alloc.status !== "allocated") { res.status(404).json({ error: "Active allocation not found" }); return; }
+    const scopeCancel = trialCityScope(req);
+    if (scopeCancel && !scopeCancel.includes(normCity(alloc.city))) { res.status(403).json({ error: "Outside your assigned cities" }); return; }
     /* lifecycle guard — checked-in / assessed players cannot be cancelled */
     const [checkin] = await db.select({ id: trialCheckinsTable.id }).from(trialCheckinsTable)
       .where(eq(trialCheckinsTable.registrationId, alloc.registrationId)).limit(1);
@@ -538,6 +571,8 @@ adminTrialsRouter.post("/checkin", async (req, res) => {
     }
     if (!alloc) { res.status(404).json({ error: "No valid trial pass found" }); return; }
     if (alloc.status !== "allocated") { res.status(409).json({ error: "This pass was " + alloc.status }); return; }
+    const scopeChk = trialCityScope(req);
+    if (scopeChk && !scopeChk.includes(normCity(alloc.city))) { res.status(403).json({ error: "Outside your assigned cities" }); return; }
 
     const [reg] = await db.select().from(registrationsTable).where(eq(registrationsTable.id, alloc.registrationId)).limit(1);
     if (!reg) { res.status(404).json({ error: "Registration missing" }); return; }
@@ -588,6 +623,8 @@ adminTrialsRouter.get("/checkins", async (req, res) => {
     const city = req.query["city"] ? String(req.query["city"]) : null;
     const slotId = req.query["slotId"] ? String(req.query["slotId"]) : null;
     const conds = [] as never[];
+    const scopeCkList = trialCityScope(req);
+    if (scopeCkList) conds.push(sql`EXISTS (SELECT 1 FROM trial_allocations sca WHERE sca.id = ${trialCheckinsTable.allocationId} AND lower(sca.city) = ANY(${scopeCkList}::text[]))` as never);
     if (city) conds.push(ilike(trialAllocationsTable.city, city) as never);
     if (slotId) conds.push(eq(trialCheckinsTable.slotId, slotId) as never);
     const rows = await db.select({
@@ -646,6 +683,8 @@ adminTrialsRouter.post("/assessments", async (req, res) => {
     const [chk] = await db.select().from(trialCheckinsTable)
       .where(eq(trialCheckinsTable.registrationId, registrationId)).limit(1);
     if (!alloc && !chk) { res.status(409).json({ error: "Player has no trial allocation/check-in — allocate first" }); return; }
+    const scopeAsm = trialCityScope(req);
+    if (scopeAsm && !scopeAsm.includes(normCity(alloc?.city ?? reg.trialCity))) { res.status(403).json({ error: "Outside your assigned cities" }); return; }
     const slotId = chk?.slotId ?? alloc?.slotId ?? null;
     const [slot] = slotId ? await db.select().from(trialSlotsTable).where(eq(trialSlotsTable.id, slotId)).limit(1) : [undefined];
     const [venue] = alloc ? await db.select().from(trialVenuesTable).where(eq(trialVenuesTable.id, alloc.venueId)).limit(1) : [undefined];
@@ -697,6 +736,8 @@ adminTrialsRouter.get("/assessments", async (req, res) => {
     const result = req.query["result"] ? String(req.query["result"]) : null;
     const q = req.query["q"] ? String(req.query["q"]).trim() : null;
     const conds = [] as never[];
+    const scopeAsmList = trialCityScope(req);
+    if (scopeAsmList) conds.push(sql`lower(${physicalAssessmentsTable.city}) = ANY(${scopeAsmList}::text[])` as never);
     if (city) conds.push(ilike(physicalAssessmentsTable.city, city) as never);
     if (result) conds.push(eq(physicalAssessmentsTable.result, result) as never);
     if (q) conds.push(or(ilike(usersTable.name, `%${q}%`), ilike(registrationsTable.regNumber, `%${q}%`)) as never);
@@ -719,7 +760,7 @@ adminTrialsRouter.get("/assessments", async (req, res) => {
 });
 
 /* GET /overview — per-city trial funnel (also feeds dashboard ops) */
-adminTrialsRouter.get("/overview", async (_req, res) => {
+adminTrialsRouter.get("/overview", async (req, res) => {
   try {
     const eligible = await db.select({ city: registrationsTable.trialCity, n: sql<number>`count(*)::int` })
       .from(registrationsTable)
@@ -741,6 +782,13 @@ adminTrialsRouter.get("/overview", async (_req, res) => {
       .where(eq(trialSlotsTable.status, "open"))
       .groupBy(trialSlotsTable.city);
 
+    const scopeOv = trialCityScope(req);
+    if (scopeOv) {
+      const keep = (arr: { city: string | null }[]): void => {
+        for (let i = arr.length - 1; i >= 0; i--) { if (!scopeOv.includes(normCity(arr[i]!.city))) arr.splice(i, 1); }
+      };
+      keep(eligible); keep(allocated); keep(checkedIn); keep(assessed); keep(capacity);
+    }
     const cities = new Map<string, { city: string; eligible: number; allocated: number; checkedIn: number; assessed: number; finalSelected: number; finalNotSelected: number; openCapacity: number }>();
     const get = (c: string | null): { city: string; eligible: number; allocated: number; checkedIn: number; assessed: number; finalSelected: number; finalNotSelected: number; openCapacity: number } => {
       const key = normCity(c);

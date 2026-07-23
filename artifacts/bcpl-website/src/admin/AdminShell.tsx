@@ -31,7 +31,9 @@ import Phase1RegistrationsView from "./views/Phase1RegistrationsView";
 import Phase2KYCView           from "./views/Phase2KYCView";
 import FraudView            from "./views/FraudView";
 import ForecastView         from "./views/ForecastView";
-import { adminLogin, adminVerifySession, saveAdminToken, clearAdminToken, hasAdminToken } from "../lib/api";
+import ApiHealthView        from "./views/ApiHealthView";
+import { adminLogin, adminEmailLogin, adminVerifySession, saveAdminToken, clearAdminToken, hasAdminToken } from "../lib/api";
+import type { AdminProfile } from "../lib/api";
 
 type NavItem  = { id: string; label: string; icon: string; badge?: string; badgeColor?: string };
 type NavGroup = { title: string; items: NavItem[] };
@@ -90,6 +92,7 @@ const NAV: NavGroup[] = [
   ]},
   { title: "SYSTEM", items: [
     { id:"data_export",     label:"Data Export",        icon:"⊕" },
+    { id:"api_health",      label:"API Health",         icon:"◉" },
     { id:"roles",           label:"Roles & Access",     icon:"◈" },
     { id:"admin_settings",  label:"Admin Management",   icon:"⚙" },
   ]},
@@ -138,6 +141,7 @@ function renderView(id: string, navigate: (viewId: string, payload?: AdminNavPay
     case "cms":            return <CMSView />;
     case "sponsors":       return <SponsorsView />;
     case "data_export":    return <DataExportView />;
+    case "api_health":     return <ApiHealthView />;
     case "roles":          return <RolesView />;
     case "admin_settings": return <AdminSettingsView />;
     default:               return <DashboardView onNavigate={navigate} />;
@@ -151,6 +155,14 @@ const SUPER_ADMIN = {
   id:"SA-ROOT", name:"Saurabh Jha", email:"saurabhjha@bcplt20.com",
   role:"Super Admin", permissions:["all"] as string[],
 };
+
+/* "FINANCE_TEAM" → "Finance Team" for the sidebar footer */
+const prettyRole = (r: string) =>
+  r === "SUPER_ADMIN" ? "Super Admin"
+  : r.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+
+const profileToAdmin = (a: AdminProfile) =>
+  ({ id: a.email, name: a.name, email: a.email, role: prettyRole(a.role), permissions: a.permissions });
 
 export default function AdminShell() {
   const [active,        setActive]       = useState("dashboard");
@@ -189,8 +201,12 @@ export default function AdminShell() {
     let cancelled = false;
     (async () => {
       try {
-        await adminVerifySession();
-        if (!cancelled) { setLoggedInAdmin(SUPER_ADMIN); setLoggedIn(true); }
+        const v = await adminVerifySession();
+        if (!cancelled) {
+          const a = v.admin;
+          setLoggedInAdmin(a && a.email !== "owner@bcpl" ? profileToAdmin(a) : SUPER_ADMIN);
+          setLoggedIn(true);
+        }
       } catch {
         if (!cancelled) clearAdminToken(); // expired/invalid — back to login
       } finally {
@@ -273,7 +289,22 @@ export default function AdminShell() {
         }
         return;
       }
-      // Check co-admins from localStorage
+      // Server-managed admin accounts (Stage 5 RBAC) — email + password
+      setLoginBusy(true);
+      try {
+        const r = await adminEmailLogin(emailL, loginForm.password);
+        saveAdminToken(r.token);
+        setLoggedInAdmin(r.admin ? profileToAdmin(r.admin) : SUPER_ADMIN);
+        setLoggedIn(true);
+        return;
+      } catch {
+        // fall through to the legacy browser-stored co-admin check
+      } finally {
+        setLoginBusy(false);
+      }
+      // Legacy: co-admins stored in this browser (pre-RBAC). Still honoured
+      // so nobody is locked out mid-migration; Admin Management now creates
+      // server accounts instead.
       const coAdmins: CoAdmin[] = loadCoAdmins();
       const co = coAdmins.find(a => a.email.toLowerCase() === emailL && a.password === loginForm.password);
       if (co) {

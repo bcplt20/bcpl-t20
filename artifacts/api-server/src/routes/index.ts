@@ -13,6 +13,9 @@ import pointsRouter   from "./points";
 import settingsRouter from "./settings";
 import adminRouter    from "./admin";
 import { adminTrialsRouter, userTrialsRouter } from "./trials";
+import { adminRefundsRouter } from "./refunds";
+import { adminUsersRouter } from "./adminUsers";
+import { adminHealthRouter } from "./adminHealth";
 import resultsRouter  from "./results";
 import marketingRouter from "./marketing";
 import seoRouter      from "./seo";
@@ -39,6 +42,9 @@ router.use("/teams",         teamsRouter);
 router.use("/settings",      settingsRouter);
 // Admin panel
 router.use("/admin/trials",  adminTrialsRouter); // Stage 4 physical trials
+router.use("/admin/refunds", adminRefundsRouter); // Stage 5 finance refunds
+router.use("/admin/admin-users", adminUsersRouter); // Stage 5 RBAC
+router.use("/admin/health",  adminHealthRouter); // Stage 5 API health
 router.use("/admin",         adminRouter);
 // Marketing / referrals (public click+attribute, admin analytics & campaigns)
 router.use("/marketing",     marketingRouter);

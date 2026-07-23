@@ -15,6 +15,9 @@ import { ensureAdminContentTables } from "./routes/adminTools";
 import { ensureNotificationErrorColumn } from "./lib/notify";
 import { ensurePhase1AiTables } from "./lib/phase1Migrations";
 import { ensureTrialsTables } from "./routes/trials";
+import { ensureAdminUsersTable } from "./routes/adminUsers";
+import { ensureRefundsTables } from "./routes/refunds";
+import { recordJobRun } from "./lib/heartbeat";
 import { reconcileAbandonedPayments } from "./lib/reconcilePayments";
 import { sendPaymentReminders, remindersEnabled } from "./lib/reminders";
 
@@ -41,6 +44,8 @@ async function start() {
       await ensureNotificationErrorColumn();
       await ensurePhase1AiTables(); // Phase 1 AI evaluation pipeline
       await ensureTrialsTables(); // Physical trials suite (Stage 4)
+      await ensureAdminUsersTable(); // Stage 5 server-side RBAC
+      await ensureRefundsTables(); // Stage 5 finance refunds
       logger.info("startup migrations ensured");
       break;
     } catch (e) {
@@ -69,23 +74,29 @@ void start();
 const SIX_HOURS = 6 * 60 * 60 * 1000;
 async function reminderTick(): Promise<void> {
   const dryRun = !remindersEnabled();
+  let tickOk = true;
+  let tickErr: unknown = null;
   try {
     const n = await sendVideoReminders({ dryRun });
     if (n > 0) logger.info({ dryRun, count: n }, "video reminders processed");
   } catch (e) {
+    tickOk = false; tickErr = e;
     logger.error({ err: e }, "Reminder scheduler failed");
   }
   try {
     const r = await sendPaymentReminders({ dryRun });
     if (r.p1Candidates || r.p2Candidates) logger.info(r, "payment reminders processed");
   } catch (e) {
+    tickOk = false; tickErr = e;
     logger.error({ err: e }, "Payment reminder sweep failed");
   }
   try {
     await reconcileAbandonedPayments();
   } catch (e) {
+    tickOk = false; tickErr = e;
     logger.error({ err: e }, "Payment reconciliation failed");
   }
+  recordJobRun("reminder-sweep", tickOk, tickErr, SIX_HOURS);
 }
 setTimeout(() => { void reminderTick(); }, 90_000);
 setInterval(() => { void reminderTick(); }, SIX_HOURS);
@@ -95,30 +106,37 @@ setInterval(() => { void reminderTick(); }, SIX_HOURS);
 // VALIDATING_VIDEO). Cheap per video; the AI stages are gated separately.
 const TWO_MINUTES = 2 * 60 * 1000;
 async function phase1PipelineTick(label: string): Promise<void> {
+  let tickOk = true;
+  let tickErr: unknown = null;
   try {
     const r = await runVideoValidations(25);
     if (r.claimed > 0) logger.info(r, label + ": video validation");
   } catch (e) {
+    tickOk = false; tickErr = e;
     logger.error({ err: e }, label + ": video validation failed");
   }
   try {
     const a = await runAiValidityChecks(25);
     if (a.claimed > 0) logger.info(a, label + ": ai validity");
   } catch (e) {
+    tickOk = false; tickErr = e;
     logger.error({ err: e }, label + ": ai validity failed");
   }
   try {
     const s = await runAiScoringPasses(10);
     if (s.claimed > 0) logger.info(s, label + ": ai scoring");
   } catch (e) {
+    tickOk = false; tickErr = e;
     logger.error({ err: e }, label + ": ai scoring failed");
   }
   try {
     const rel = await runResultReleases(50);
     if (rel.claimed > 0) logger.info(rel, label + ": result release");
   } catch (e) {
+    tickOk = false; tickErr = e;
     logger.error({ err: e }, label + ": result release failed");
   }
+  recordJobRun("phase1-pipeline", tickOk, tickErr, TWO_MINUTES);
 }
 setTimeout(() => { void phase1PipelineTick("startup sweep"); }, 20_000);
 setInterval(() => { void phase1PipelineTick("pipeline tick"); }, TWO_MINUTES);

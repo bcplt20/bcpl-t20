@@ -32,3 +32,6 @@ export * from "./ai_evaluation_passes";
 export * from "./ranking_snapshots";
 export * from "./audit_logs";
 export * from "./phase1_feedback";
+// Stage 5 — finance refunds + server-side RBAC
+export * from "./refunds";
+export * from "./admin_users";
