@@ -19,3 +19,4 @@ Watch-outs:
 - Mobile bar: logo LEFT, right cluster = NavUser variant="icon" (SVG person / avatar initial) + REGISTER + hamburger. SEASON 5 badge hides <400px (.sh-s5).
 - Desktop: logo left / centered links (Teams Players Trials Matches Auction Media About — Trials→/trust, Auction→/auction/live, Media→/photos) / lang+login+CTA right.
 - Mobile menu (z1500): links incl. Standings→/points-table, then NavUser row, big "Register for Phase 1" CTA, LangToggle, Help(/faq)+WhatsApp support row.
+- Player logout entry points: mobile ☰ menu Sign Out row (NavUser mobile variant, hard redirect to BASE_URL) + profile hero card on default home tab + MY ACCOUNT fallback on profile tab when unregistered. Profile page is mobile-tabbed (.mob-tab-content gating) — any new section must be assigned to a tab or it is invisible on mobile; keep Sign Out reachable on the DEFAULT tab.

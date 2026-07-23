@@ -246,9 +246,9 @@ export function PlayerProfile() {
           <div className="main-layout">
             
             {/* LEFT COLUMN: Profile & Support (combined on mobile via tabs) */}
-            <div className={`mob-tab-content ${activeTab === 'card' || activeTab === 'profile' || activeTab === 'support' ? 'active' : ''}`}>
+            <div className={`mob-tab-content ${activeTab === 'home' || activeTab === 'card' || activeTab === 'profile' || activeTab === 'support' ? 'active' : ''}`}>
               
-              <div className={`mob-tab-content ${activeTab === 'card' ? 'active' : ''}`}>
+              <div className={`mob-tab-content ${activeTab === 'card' || activeTab === 'home' ? 'active' : ''}`}>
                 {/* ── HERO CARD ── */}
                 <div className="card" style={{ background: 'linear-gradient(135deg, #0A1727, #060D18)', borderTop: '4px solid var(--orange)', marginBottom: 24, animation: 'fadeUp .5s ease both' }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap' }}>
@@ -309,6 +309,34 @@ export function PlayerProfile() {
               </div>
 
               <div className={`mob-tab-content ${activeTab === 'profile' ? 'active' : ''}`}>
+                {!reg && (
+                  <div className="card" style={{ marginBottom: 24, animation: 'fadeUp .5s .1s ease both' }}>
+                    <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 13, color: 'rgba(255,255,255,0.4)', letterSpacing: '.12em', marginBottom: 20, textTransform: 'uppercase' }}>{t("MY ACCOUNT", "मेरा अकाउंट")}</div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 20 }}>
+                      {[
+                        { label: t('Name', 'नाम'), value: user?.name || '—' },
+                        { label: t('Phone', 'फोन'), value: user?.phone || '—' },
+                        { label: t('Email', 'ईमेल'), value: user?.email || '—' },
+                      ].map(row => (
+                        <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, background: 'rgba(255,255,255,0.02)', border: '1px solid var(--line)', borderRadius: 12, padding: '12px 16px' }}>
+                          <span style={{ fontSize: 11, fontWeight: 800, fontFamily: 'var(--font-head)', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '.06em', flexShrink: 0, alignSelf: 'center' }}>{row.label}</span>
+                          <span style={{ fontSize: 14, fontWeight: 700, color: '#fff', wordBreak: 'break-all', textAlign: 'right' }}>{row.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{ padding: '14px 16px', background: 'rgba(255,122,41,0.06)', border: '1px solid rgba(255,122,41,0.25)', borderRadius: 12, fontSize: 13.5, color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, marginBottom: 16 }}>
+                      {t("You haven't registered for Season 5 yet. Register now to start your BCPL journey.", "आपने अभी तक सीजन 5 के लिए रजिस्टर नहीं किया है। अपना BCPL सफर शुरू करने के लिए अभी रजिस्टर करें।")}
+                    </div>
+                    <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                      <button className="btn-orange" style={{ padding: '12px 24px', fontSize: 14 }} onClick={() => setLocation('/register')}>
+                        {t("REGISTER NOW →", "अभी रजिस्टर करें →")}
+                      </button>
+                      <button className="btn-ghost" style={{ color: 'var(--red)', borderColor: 'rgba(239,68,68,0.3)' }} onClick={() => { clearSession(); setLocation('/'); }}>
+                        🚪 {t("Sign Out", "साइन आउट")}
+                      </button>
+                    </div>
+                  </div>
+                )}
                 {/* ── REGISTRATION SUMMARY ── */}
                 {reg && (
                   <div className="card" style={{ marginBottom: 24, animation: 'fadeUp .5s .1s ease both' }}>

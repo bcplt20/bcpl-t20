@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getSession, openLoginModal, AUTH_CHANGED_EVENT, type AuthUser } from '../lib/auth';
+import { getSession, clearSession, openLoginModal, AUTH_CHANGED_EVENT, type AuthUser } from '../lib/auth';
 
 /**
  * Auth-aware navbar item, shared by every page's navbar.
@@ -88,6 +88,7 @@ export function NavUser({ variant = 'desktop', onNavigate }: {
   );
 
   return (
+    <>
     <a
       href={PROFILE_HREF}
       onClick={onNavigate}
@@ -102,5 +103,16 @@ export function NavUser({ variant = 'desktop', onNavigate }: {
         : { color:'#FF7A29', fontWeight:700, fontSize:13, fontFamily:'Inter,sans-serif', maxWidth:96, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}
       >{firstName}</span>
     </a>
+    {mobile && (
+      <span
+        onClick={() => {
+          clearSession();
+          onNavigate?.();
+          window.location.assign(import.meta.env.BASE_URL || '/');
+        }}
+        style={{ display:'block', color:'rgba(255,255,255,0.55)', fontWeight:700, fontSize:18, fontFamily:'Montserrat,sans-serif', padding:'14px 0', borderBottom:'1px solid rgba(255,255,255,0.07)', cursor:'pointer' }}
+      >🚪 Sign Out</span>
+    )}
+    </>
   );
 }
