@@ -1,0 +1,185 @@
+सबसे पहले Homepage का character बदलूँगा
+
+अभी opening बहुत registration-centric है:
+
+YOUR CRICKET DREAM ISN’T OVER
+₹299 Register
+Call
+WhatsApp
+
+Message अच्छा है, लेकिन BCPL अगर ₹6 Cr prize pool, ₹2L–₹20L player auction और Sourav Ganguly जैसी positioning दिखा रहा है, तो first screen को event spectacle महसूस होना चाहिए। 
+
+Hero ideally cinematic हो:
+
+BHARTIYA CORPORATE PREMIER LEAGUE
+
+INDIA’S BIGGEST CORPORATE CRICKET STAGE
+
+10 Cities • 10 Teams • ₹6 Cr Prize Pool
+
+SEASON 5 — REGISTRATIONS OPEN
+
+REGISTER FOR ₹299   WATCH THE BCPL STORY
+
+Background में generic graphic नहीं—stadium lights + real BCPL player/action footage + crowd + subtle motion.
+
+इससे user website खोलते ही समझे:
+
+“ये कोई local cricket trial website नहीं है.”
+
+⸻
+
+फिर homepage को मैं इस order में करूँगा
+
+1. Cinematic Hero
+
+↓
+
+2. BCPL credibility strip
+
+SEASON 5 • 10 TEAMS • 10 CITIES • ₹6 CR PRIZE POOL • ₹20L MAX AUCTION VALUE
+
+↓
+
+3. 45–60 sec “This is BCPL” video
+
+यह बहुत important है।
+
+एक high-production video:
+stadium → players → auction → Sourav Ganguly → dressing room → crowd → trophy → selected player.
+
+और headline:
+
+THIS IS NOT JUST CRICKET.
+
+THIS IS YOUR SECOND CHANCE.
+
+↓
+
+4. Sourav Ganguly section
+
+अभी ambassador section मौजूद है और trust के लिए useful है। 
+
+लेकिन इसे छोटी content card की जगह full-width cinematic section बनाइए।
+
+बड़ी original photograph + signature/quote + short video CTA:
+
+WATCH SOURAV GANGULY’S MESSAGE →
+
+यह BCPL का सबसे powerful credibility asset है—इसे website पर और aggressively use करना चाहिए।
+
+↓
+
+5. “From Registration to Stadium”
+
+अभी 7 steps हैं। Information सही है, लेकिन इसे visual journey बनाना चाहिए। 
+
+REGISTER → VIDEO TRIAL → PHYSICAL TRIAL → SELECTION → AUCTION → TEAM → STADIUM
+
+Mobile पर horizontal swipe timeline.
+
+हर stage पर real photo/video.
+
+यह user को process instantly समझा देगा।
+
+↓
+
+6. ₹299 वाला section
+
+यहाँ current transparency अच्छी है:
+
+Phase 1 ₹299/₹399 → shortlisted होने पर Phase 2 ₹2,000/₹3,000 → उसके बाद ₹0. 
+
+इसे जरूर रखिए।
+
+लेकिन इसे text-heavy section की जगह premium pricing journey card बनाइए।
+
+और सबसे ऊपर:
+
+YOU PAY ONLY IF YOU PROGRESS.
+
+फिर नीचे amounts.
+
+यह conversion improve कर सकता है।
+
+↓
+
+7. Real Player Stories — यह अभी बहुत जरूरी है
+
+Website में यह एक बड़ा missing trust layer है।
+
+THEY WERE WORKING PROFESSIONALS.
+
+THEN BCPL CALLED.
+
+3–6 actual past players.
+
+Photo + profession + city + season + auction/team + 15-sec story.
+
+उदाहरण:
+
+Rahul Sharma
+Software Engineer → BCPL Season 4 Player
+Delhi → Mumbai Franchise
+WATCH HIS STORY
+
+यह “fair chance” claim को proof में बदल देगा।
+
+↓
+
+8. Live BCPL numbers
+
+एक premium animated statistics section:
+
+50,000+ Applications
+XX Cities Covered
+XXX Players Selected
+₹XX Cr Auction Value
+XX Million Digital Reach
+4 Successful Seasons
+
+यहाँ केवल verified real numbers डालें।
+
+Numbers बड़े और animated हों।
+
+⸻
+
+सबसे बड़ा नया addition: BCPL Digital League Hub
+
+यह चीज website को registration website से sports platform बनाएगी।
+
+Top navigation में:
+
+HOME | SEASON 5 | TEAMS | PLAYERS | MATCHES | STANDINGS | AUCTION | MEDIA | ABOUT | REGISTER
+
+अभी teams हैं, लेकिन आगे ecosystem चाहिए। 
+
+Teams
+
+हर team का अपना page:
+
+Logo
+City
+Owner
+Captain
+Squad
+Fixtures
+Results
+Points
+Player statistics
+Photos
+Videos
+
+Players
+
+Searchable Player Directory:
+
+Photo
+Role
+City
+Team
+Matches
+Runs
+Wickets
+Strike Rate
+Auction Price

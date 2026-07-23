@@ -18,3 +18,6 @@ Login is NOT a page. `NavUser` (header) and any other login trigger must call `o
 # Homepage i18n
 
 Homepage + header/footer use `useLang()`/`t(en,hi)` from `lib/i18n` (LangProvider in App, localStorage key `bcpl_lang`, default EN). Other pages adopt progressively — new homepage-adjacent UI must go through `t()`.
+
+## Hash deep-links in SPA
+`/#fees`-style anchors only scroll because the page runs a mount effect (`getElementById(hash).scrollIntoView()` after ~200ms) — browsers can't jump to anchors that render after load. Home.tsx has it; add the same effect to any other page that gains `#section` anchors. Bonus: this makes the Screenshot tool able to capture lower page sections via `path: "/#id"`.
