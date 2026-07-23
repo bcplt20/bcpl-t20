@@ -68,7 +68,7 @@ function MobileStickyCTA() {
   return (
     <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',padding:'10px 16px calc(16px + env(safe-area-inset-bottom))',gap:10}}>
       <a href="/register" className="btn-fire" style={{flex:2,height:52,fontSize:15,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register ₹299 →</a>
-      <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" className="btn-wa" style={{flex:1,height:52,fontSize:14,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>💬 WhatsApp</a>
+      <a href="https://wa.me/919151346555" target="_blank" rel="noopener noreferrer" className="btn-wa" style={{flex:1,height:52,fontSize:14,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>💬 WhatsApp</a>
     </div>
   );
 }
@@ -130,7 +130,7 @@ export function Contact() {
               <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:20,color:'#fff',marginBottom:8}}>WhatsApp</div>
               <div style={{color:'rgba(255,255,255,0.55)',fontSize:14,lineHeight:1.6,marginBottom:8}}>Fastest response.</div>
               <div style={{color:'#25D366',fontSize:13,fontWeight:600,marginBottom:24}}>Reply within 2 hours</div>
-              <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" style={{textDecoration:'none'}}>
+              <a href="https://wa.me/919151346555" target="_blank" rel="noopener noreferrer" style={{textDecoration:'none'}}>
                 <button style={{width:'100%',height:48,borderRadius:14,background:'linear-gradient(135deg,#25D366,#1BA851)',border:'none',color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,cursor:'pointer',transition:'transform 0.15s'}}>
                   Chat Now →
                 </button>
@@ -141,9 +141,9 @@ export function Contact() {
             <div className="glass-card contact-method-card" style={{padding:'36px 28px',border:'1px solid rgba(6,182,212,0.25)',boxShadow:'0 0 40px rgba(6,182,212,0.06)',animation:'fadeSlide 0.6s ease 0.2s both'}}>
               <div style={{fontSize:44,marginBottom:16}}>📧</div>
               <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:20,color:'#fff',marginBottom:8}}>Email</div>
-              <div style={{color:'#06B6D4',fontSize:15,fontWeight:700,marginBottom:4}}>info@bcpl-t20.com</div>
+              <div style={{color:'#06B6D4',fontSize:15,fontWeight:700,marginBottom:4}}>support@bcplt20.com</div>
               <div style={{color:'rgba(255,255,255,0.45)',fontSize:13,lineHeight:1.6,marginBottom:24}}>Response within 24 hours</div>
-              <a href="mailto:info@bcpl-t20.com" style={{textDecoration:'none'}}>
+              <a href="mailto:support@bcplt20.com" style={{textDecoration:'none'}}>
                 <button style={{width:'100%',height:48,borderRadius:14,background:'linear-gradient(135deg,#06B6D4,#0891B2)',border:'none',color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,cursor:'pointer',transition:'transform 0.15s'}}>
                   Send Email →
                 </button>
@@ -154,9 +154,9 @@ export function Contact() {
             <div className="glass-card contact-method-card" style={{padding:'36px 28px',border:'1px solid rgba(139,92,246,0.25)',boxShadow:'0 0 40px rgba(139,92,246,0.06)',animation:'fadeSlide 0.6s ease 0.3s both'}}>
               <div style={{fontSize:44,marginBottom:16}}>📞</div>
               <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:20,color:'#fff',marginBottom:8}}>Call Us</div>
-              <div style={{color:'#8B5CF6',fontSize:15,fontWeight:700,marginBottom:4}}>+91 98765 43210</div>
+              <div style={{color:'#8B5CF6',fontSize:15,fontWeight:700,marginBottom:4}}>+91 91513 46555</div>
               <div style={{color:'rgba(255,255,255,0.45)',fontSize:13,lineHeight:1.6,marginBottom:24}}>Mon–Sat 10AM–7PM IST</div>
-              <a href="tel:+919876543210" style={{textDecoration:'none'}}>
+              <a href="tel:+919151346555" style={{textDecoration:'none'}}>
                 <button style={{width:'100%',height:48,borderRadius:14,background:'linear-gradient(135deg,#8B5CF6,#7C3AED)',border:'none',color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,cursor:'pointer',transition:'transform 0.15s'}}>
                   Call Now →
                 </button>
@@ -250,7 +250,7 @@ export function Contact() {
                 <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'rgba(255,255,255,0.7)',marginBottom:16}}>📍 Find Us</div>
                 <div style={{color:'rgba(255,255,255,0.5)',fontSize:13,lineHeight:1.8}}>
                   <div>BCPL T20 Pvt. Ltd.</div>
-                  <div style={{color:'#FF7A29',fontWeight:600}}>www.bcpl-t20.com</div>
+                  <div style={{color:'#FF7A29',fontWeight:600}}>www.bcplt20.com</div>
                   <div style={{marginTop:8,color:'rgba(255,255,255,0.35)',fontSize:12}}>CIN: U74999DL2020PTC123456</div>
                 </div>
               </div>

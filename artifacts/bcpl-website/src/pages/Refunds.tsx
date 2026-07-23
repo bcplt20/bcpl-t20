@@ -6,7 +6,7 @@ function MobileCTA() {
   return (
     <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,padding:'10px 16px 18px',background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',gap:10}}>
       <button className="btn-fire" style={{flex:2,height:52,fontSize:15}}>Register ₹299 →</button>
-      <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" className="btn-wa" style={{flex:1,height:52,fontSize:14,borderRadius:14,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>💬 WhatsApp</a>
+      <a href="https://wa.me/919151346555" target="_blank" rel="noopener noreferrer" className="btn-wa" style={{flex:1,height:52,fontSize:14,borderRadius:14,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>💬 WhatsApp</a>
     </div>
   );
 }
@@ -223,7 +223,7 @@ export function Refunds() {
               <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>How to Request a Refund</h2>
             </div>
             <p style={{color:'rgba(255,255,255,0.75)',fontSize:'clamp(14px,2vw,15px)',lineHeight:1.8,marginBottom:16}}>
-              Email <strong style={{color:'#E8B23D'}}>refunds@bcpl-t20.com</strong> with the following details in your email:
+              Email <strong style={{color:'#E8B23D'}}>support@bcplt20.com</strong> with the following details in your email:
             </p>
             <div style={{display:'grid',gap:10,marginBottom:16}}>
               {[
@@ -267,7 +267,7 @@ export function Refunds() {
               {[
                 'Refund credited to the original payment method (credit card, debit card, or UPI)',
                 'UPI refunds typically arrive faster (1-3 days) than card refunds (5-7 days)',
-                'If refund not received within 10 business days, email refunds@bcpl-t20.com',
+                'If refund not received within 10 business days, email support@bcplt20.com',
               ].map((item,i)=>(
                 <li key={i} style={{display:'flex',alignItems:'flex-start',color:'rgba(255,255,255,0.75)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
                   <OrangeDot/>{item}
@@ -302,7 +302,7 @@ export function Refunds() {
                   Submit Refund Request →
                 </button>
                 <p style={{textAlign:'center',marginTop:14,color:'rgba(255,255,255,0.4)',fontSize:13}}>
-                  Or email directly: <strong style={{color:'#E8B23D'}}>refunds@bcpl-t20.com</strong>
+                  Or email directly: <strong style={{color:'#E8B23D'}}>support@bcplt20.com</strong>
                 </p>
               </>
             )}
@@ -314,7 +314,7 @@ export function Refunds() {
               <div>
                 <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#FF7A29',marginBottom:6}}>Have Questions?</div>
                 <p style={{color:'rgba(255,255,255,0.85)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
-                  Contact our support team at <strong style={{color:'#E8B23D'}}>support@bcpl-t20.com</strong> or WhatsApp us. We're here 9 AM – 7 PM, Monday–Saturday.
+                  Contact our support team at <strong style={{color:'#E8B23D'}}>support@bcplt20.com</strong> or WhatsApp us. We're here 9 AM – 7 PM, Monday–Saturday.
                 </p>
               </div>
             </div>

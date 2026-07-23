@@ -528,7 +528,7 @@ export function PlayerProfile() {
                 ✉️ Email Support
               </button>
               <button className="btn-ghost"
-                onClick={() => { window.open('https://wa.me/918800000000?text='+encodeURIComponent('Hi, I need help with my BCPL Season 5 registration. Player ID: '+regId), '_blank'); }}>
+                onClick={() => { window.open('https://wa.me/919151346555?text='+encodeURIComponent('Hi, I need help with my BCPL Season 5 registration. Player ID: '+regId), '_blank'); }}>
                 📞 WhatsApp Help
               </button>
               <button className="btn-ghost" style={{ color:'#EF4444', borderColor:'rgba(239,68,68,0.25)' }}

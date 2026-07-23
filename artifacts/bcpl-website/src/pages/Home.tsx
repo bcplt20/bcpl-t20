@@ -4,6 +4,9 @@ import { getMatches, getPointsTable, isAuthenticated } from "../lib/api";
 import { BCPLFooter } from "../components/BCPLFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { useLang } from "../lib/i18n";
+import { FlipCountdown } from "../components/FlipCountdown";
+
+const PHASE1_DEADLINE = "2027-02-28T23:59:59+05:30";
 
 const BASE = import.meta.env.BASE_URL;
 const L = BASE + "bcpl-assets/logos/";
@@ -109,7 +112,6 @@ function toEmbed(url:string):string|null {
 export function Home() {
   const { t, lang } = useLang();
   const [faqOpen,   setFaqOpen]   = useState<number|null>(null);
-  const [countdown, setCountdown] = useState({ d:0, h:0, m:0, s:0 });
   const [video,     setVideo]     = useState<string|null>(null);
   const [, navigate] = useLocation();
   const authed = isAuthenticated();
@@ -142,19 +144,6 @@ export function Home() {
     fetchLiveData();
     pollRef.current = setInterval(fetchLiveData, 30000);
     return ()=>{ if(pollRef.current) clearInterval(pollRef.current); };
-  },[]);
-
-  /* Countdown — Phase 1 closes 28 Feb 2027 */
-  useEffect(()=>{
-    const target = new Date('2027-02-28T23:59:59+05:30');
-    const tick = ()=>{
-      const diff = target.getTime()-Date.now();
-      if(diff<=0){ setCountdown({d:0,h:0,m:0,s:0}); return; }
-      setCountdown({ d:Math.floor(diff/86400000), h:Math.floor((diff%86400000)/3600000), m:Math.floor((diff%3600000)/60000), s:Math.floor((diff%60000)/1000) });
-    };
-    tick();
-    const iv = setInterval(tick,1000);
-    return ()=>clearInterval(iv);
   },[]);
 
   /* Video modal: ESC close + Tab focus trap + focus restore to opener */
@@ -314,9 +303,6 @@ export function Home() {
         .amb-wrap{display:grid;grid-template-columns:1fr;gap:28px;align-items:center;}
         @media(min-width:880px){.amb-wrap{grid-template-columns:1.05fr 1fr;gap:56px;}}
 
-        /* Countdown boxes */
-        .cd-box{background:#060C18;border:1px solid rgba(255,122,41,.22);border-radius:12px;padding:12px 10px;text-align:center;min-width:58px;}
-        @media(min-width:480px){.cd-box{padding:14px 14px;min-width:68px;}}
 
         /* Video modal */
         .vmask{position:fixed;inset:0;z-index:400;background:rgba(2,6,14,.92);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:20px;}
@@ -392,12 +378,11 @@ export function Home() {
               <button className="btn-ghost" style={{ fontSize:14 }} onClick={()=>openVideo("story")}>▶ {t("Watch the BCPL Story","BCPL की कहानी देखें")}</button>
             </div>
 
-            {/* Closing pill — compact, full countdown lives in final CTA */}
-            <div style={{ display:"inline-flex", alignItems:"center", gap:8, background:"rgba(255,122,41,.1)", border:"1px solid rgba(255,122,41,.3)", borderRadius:20, padding:"7px 16px" }}>
-              <span style={{ fontSize:12 }}>⏱</span>
-              <span className="mont" style={{ fontSize:11, fontWeight:800, color:"#FFB347", letterSpacing:".06em" }}>
-                {t(`Phase 1 closes in ${countdown.d} days`, `Phase 1 बंद होने में ${countdown.d} दिन बाकी`)} · 28 Feb 2027
-              </span>
+            {/* Closing pill — live rolling mini-timer; the big scoreboard sits in the final CTA */}
+            <div style={{ display:"inline-flex", alignItems:"center", gap:10, background:"rgba(255,122,41,.1)", border:"1px solid rgba(255,122,41,.3)", borderRadius:20, padding:"8px 16px", flexWrap:"wrap", maxWidth:"100%" }}>
+              <span className="mont" style={{ fontSize:11, fontWeight:800, color:"#FFB347", letterSpacing:".06em", textTransform:"uppercase" }}>{t("Phase 1 closes in","Phase 1 बंद होने में")}</span>
+              <FlipCountdown target={PHASE1_DEADLINE} size="sm" />
+              <span className="mont" style={{ fontSize:11, fontWeight:800, color:"rgba(255,255,255,.55)", letterSpacing:".06em" }}>· 28 Feb 2027</span>
             </div>
           </div>
         </div>
@@ -895,14 +880,9 @@ export function Home() {
             {t("Join 2.5 lakh+ working professionals already on the road to BCPL Season 5.","2.5 लाख+ working professionals BCPL Season 5 के रास्ते पर निकल चुके हैं — अब आपकी बारी।")}
           </p>
 
-          {/* THE countdown — its single home on the page */}
-          <div style={{ display:"flex", gap:8, flexWrap:"wrap", justifyContent:"center", marginBottom:32 }}>
-            {[{v:countdown.d,l:t("Days","दिन")},{v:countdown.h,l:t("Hrs","घंटे")},{v:countdown.m,l:t("Min","मिनट")},{v:countdown.s,l:t("Sec","सेकंड")}].map(({v,l})=>(
-              <div key={l} className="cd-box" style={{ background:"rgba(6,12,24,.85)", backdropFilter:"blur(8px)" }}>
-                <div className="mont" style={{ fontWeight:900, fontSize:"clamp(22px,4vw,34px)", color:"#FF7A29", lineHeight:1 }}>{String(v).padStart(2,"0")}</div>
-                <div className="mont" style={{ fontWeight:700, fontSize:9, letterSpacing:".12em", color:"rgba(255,255,255,.4)", textTransform:"uppercase", marginTop:4 }}>{l}</div>
-              </div>
-            ))}
+          {/* The big odometer scoreboard — its single home on the page */}
+          <div style={{ marginBottom:32 }}>
+            <FlipCountdown target={PHASE1_DEADLINE} size="lg" />
           </div>
 
           <div style={{ display:"flex", gap:14, justifyContent:"center", flexWrap:"wrap" }}>

@@ -40,7 +40,7 @@ body { background:#060E1C; }
 
 const FAQS = [
   // Registration
-  {cat:'Registration',q:'How do I register?',a:'Visit www.bcpl-t20.com, fill the registration form, choose your playing role (Batsman, Bowler, Wicket-Keeper, or All-Rounder), select your nearest trial city, and pay ₹299 (₹399 for All-Rounder). The entire process takes just 5 minutes.'},
+  {cat:'Registration',q:'How do I register?',a:'Visit www.bcplt20.com, fill the registration form, choose your playing role (Batsman, Bowler, Wicket-Keeper, or All-Rounder), select your nearest trial city, and pay ₹299 (₹399 for All-Rounder). The entire process takes just 5 minutes.'},
   {cat:'Registration',q:'Can I register from any city?',a:'Yes! We have 75 trial cities across India. Simply select your nearest city during the registration process. We cover all major metros and many tier-2 cities.'},
   {cat:'Registration',q:'What happens after I register?',a:'You\'ll receive a confirmation email with your unique registration ID. You then need to upload a 2-minute cricket skills video within 15 days of registration. Our scouting team reviews every single video and delivers a result within 15 working days.'},
   {cat:'Registration',q:'Can I change my role after registering?',a:'No. Role selection (Batsman, Bowler, Wicket-Keeper, All-Rounder) is final at the time of registration. Choose carefully based on your primary skill and comfort.'},
@@ -58,7 +58,7 @@ const FAQS = [
   // Payment
   {cat:'Payment',q:'What payment methods are accepted?',a:'We accept all major UPI apps (GPay, PhonePe, Paytm, etc.), debit and credit cards (Visa, Mastercard, RuPay), net banking from 50+ banks, and popular wallets. All payments are processed securely via Cashfree.'},
   {cat:'Payment',q:'Is my payment information secure?',a:'Yes, absolutely. All transactions are secured with 256-bit SSL encryption via Cashfree, India\'s most trusted payment gateway. BCPL never stores your card details — all sensitive data is handled exclusively by Cashfree\'s PCI-DSS compliant infrastructure.'},
-  {cat:'Payment',q:'Can I get a GST invoice for my registration?',a:'Yes. Email invoice@bcpl-t20.com with your Registration ID and GSTIN (if applicable). GST invoices are issued within 3 business days. The registration fee attracts applicable GST as per government regulations.'},
+  {cat:'Payment',q:'Can I get a GST invoice for my registration?',a:'Yes. Email support@bcplt20.com with your Registration ID and GSTIN (if applicable). GST invoices are issued within 3 business days. The registration fee attracts applicable GST as per government regulations.'},
   {cat:'Payment',q:'When is payment deducted from my account?',a:'Payment is deducted immediately upon successful form submission. Cashfree processes the transaction in real-time. You receive a payment confirmation SMS and email instantly after deduction.'},
   // General
   {cat:'General',q:'When is BCPL Season 5?',a:'Video trials run from July–August 2025. Physical trials take place August–September 2025. The main BCPL T20 season (matches) runs September–November 2025. The finale is expected in late November 2025.'},
@@ -101,7 +101,7 @@ function MobileStickyCTA() {
   return (
     <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',padding:'10px 16px calc(16px + env(safe-area-inset-bottom))',gap:10}}>
       <a href="/register" className="btn-fire" style={{flex:2,height:52,fontSize:15,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register ₹299 →</a>
-      <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" className="btn-wa" style={{flex:1,height:52,fontSize:14,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>💬 WhatsApp</a>
+      <a href="https://wa.me/919151346555" target="_blank" rel="noopener noreferrer" className="btn-wa" style={{flex:1,height:52,fontSize:14,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>💬 WhatsApp</a>
     </div>
   );
 }
@@ -230,11 +230,11 @@ export function FAQ() {
             <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:28,color:'#fff',marginBottom:8}}>Still Have Questions?</h2>
             <p style={{color:'rgba(255,255,255,0.55)',fontSize:15,marginBottom:32,lineHeight:1.6}}>Our support team is here for you. We'll respond within 2 hours on WhatsApp.</p>
             <div style={{display:'flex',gap:14,justifyContent:'center',flexWrap:'wrap'}}>
-              <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" className="btn-wa" style={{padding:'14px 28px',fontSize:15,borderRadius:14,textDecoration:'none',display:'inline-flex',alignItems:'center',gap:8}}>💬 WhatsApp Us</a>
-              <a href="mailto:info@bcpl-t20.com" style={{textDecoration:'none'}}>
+              <a href="https://wa.me/919151346555" target="_blank" rel="noopener noreferrer" className="btn-wa" style={{padding:'14px 28px',fontSize:15,borderRadius:14,textDecoration:'none',display:'inline-flex',alignItems:'center',gap:8}}>💬 WhatsApp Us</a>
+              <a href="mailto:support@bcplt20.com" style={{textDecoration:'none'}}>
                 <button style={{padding:'14px 28px',fontSize:15,borderRadius:14,background:'rgba(6,182,212,0.15)',border:'1.5px solid rgba(6,182,212,0.4)',color:'#06B6D4',fontFamily:'Montserrat,sans-serif',fontWeight:700,cursor:'pointer'}}>📧 Email Us</button>
               </a>
-              <a href="tel:+919876543210" style={{textDecoration:'none'}}>
+              <a href="tel:+919151346555" style={{textDecoration:'none'}}>
                 <button style={{padding:'14px 28px',fontSize:15,borderRadius:14,background:'rgba(139,92,246,0.15)',border:'1.5px solid rgba(139,92,246,0.4)',color:'#8B5CF6',fontFamily:'Montserrat,sans-serif',fontWeight:700,cursor:'pointer'}}>📞 Call Us</button>
               </a>
             </div>

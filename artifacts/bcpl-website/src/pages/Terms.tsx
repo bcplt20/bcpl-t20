@@ -6,7 +6,7 @@ function MobileCTA() {
   return (
     <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,padding:'10px 16px 18px',background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',gap:10}}>
       <a href="/register" className="btn-fire" style={{flex:2,height:52,fontSize:15,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register ₹299 →</a>
-      <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" className="btn-wa" style={{flex:1,height:52,fontSize:14,borderRadius:14,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>💬 WhatsApp</a>
+      <a href="https://wa.me/919151346555" target="_blank" rel="noopener noreferrer" className="btn-wa" style={{flex:1,height:52,fontSize:14,borderRadius:14,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>💬 WhatsApp</a>
     </div>
   );
 }
@@ -62,7 +62,7 @@ export function Terms() {
 
   const sections = [
     {n:1,icon:'✅',title:'Acceptance of Terms',items:[
-      'By completing registration on www.bcpl-t20.com, you unconditionally accept these Terms & Conditions',
+      'By completing registration on www.bcplt20.com, you unconditionally accept these Terms & Conditions',
       'Acceptance is binding on you and any person or entity you represent',
       'If you do not agree with any part of these terms, do not proceed with registration',
       'BCPL reserves the right to update these terms at any time; updated terms govern immediately upon posting',
@@ -80,7 +80,7 @@ export function Terms() {
       'Payments processed securely via Cashfree; BCPL does not store card or UPI details',
       'Registration fees are non-refundable once a cricket video has been uploaded',
       'Within 15 days of registration (before video upload), a full refund may be requested',
-      'In case of payment failure with amount debited, contact support@bcpl-t20.com within 48 hours',
+      'In case of payment failure with amount debited, contact support@bcplt20.com within 48 hours',
     ]},
     {n:4,icon:'🏆',title:'Selection Process',items:[
       'Selection is entirely merit-based, assessed by BCPL-appointed scouts via submitted video',
@@ -113,7 +113,7 @@ export function Terms() {
     {n:8,icon:'⚖️',title:'Governing Law & Disputes',items:[
       'These Terms are governed by the laws of the Republic of India',
       'Courts of Delhi shall have exclusive jurisdiction over all disputes arising from these Terms',
-      'Disputes must first be submitted to BCPL\'s Grievance Redressal process — email legal@bcpl-t20.com',
+      'Disputes must first be submitted to BCPL\'s Grievance Redressal process — email support@bcplt20.com',
       'Unresolved disputes shall be referred to arbitration under the Arbitration and Conciliation Act, 1996',
       'Arbitration proceedings shall be conducted in English in New Delhi',
     ]},
@@ -190,7 +190,7 @@ export function Terms() {
               <div>
                 <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#FF7A29',marginBottom:6}}>Questions About These Terms?</div>
                 <p style={{color:'rgba(255,255,255,0.85)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
-                  Contact our legal team at <strong style={{color:'#E8B23D'}}>legal@bcpl-t20.com</strong> or write to: BCPL T20 Pvt. Ltd., New Delhi, India. We aim to respond within 5 business days.
+                  Contact our legal team at <strong style={{color:'#E8B23D'}}>support@bcplt20.com</strong> or write to: BCPL T20 Pvt. Ltd., New Delhi, India. We aim to respond within 5 business days.
                 </p>
               </div>
             </div>

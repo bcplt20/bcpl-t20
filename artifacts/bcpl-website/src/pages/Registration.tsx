@@ -1231,7 +1231,7 @@ export function Registration() {
           </button>
           <button
             style={{ flex:1, padding:'15px 0', background:'linear-gradient(135deg,#25D366,#1BA851)', border:'none', borderRadius:12, color:'#fff', fontWeight:700, cursor:'pointer', fontSize:13, fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em' }}
-            onClick={() => window.open('https://wa.me/918800000000?text=Hi+BCPL+team,+I+need+help+with+registration', '_blank')}
+            onClick={() => window.open('https://wa.me/919151346555?text=Hi+BCPL+team,+I+need+help+with+registration', '_blank')}
           >
             💬 WHATSAPP
           </button>

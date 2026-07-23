@@ -224,7 +224,7 @@ export function Phase2KYCApproved() {
         <div style={{ fontSize:10, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.16em', color:'rgba(255,255,255,0.25)', marginBottom:16 }}>IMPORTANT UPDATES</div>
         <div className="notices-grid">
           {[
-            { icon:'💬', title:'Stay Connected', body:'Join the BCPL Mumbai Players WhatsApp group for real-time trial updates, schedule announcements and coordination.', cta:'Join WhatsApp Group →', color:'#25D366', onClick: () => window.open('https://wa.me/919999999999?text=Hi%2C%20I%20want%20to%20join%20the%20BCPL%20Players%20WhatsApp%20group', '_blank') },
+            { icon:'💬', title:'Stay Connected', body:'Join the BCPL Mumbai Players WhatsApp group for real-time trial updates, schedule announcements and coordination.', cta:'Join WhatsApp Group →', color:'#25D366', onClick: () => window.open('https://wa.me/919151346555?text=Hi%2C%20I%20want%20to%20join%20the%20BCPL%20Players%20WhatsApp%20group', '_blank') },
             { icon:'🏋️', title:'Prepare Now', body:'Train consistently. Scouts value fitness and skill. Focus on your strengths — batting technique, bowling rhythm, or all-round conditioning.', cta:'View Training Tips →', color:'#FF7A29', onClick: () => { const el = document.getElementById('training-tips'); if(el) el.scrollIntoView({behavior:'smooth'}); } },
             { icon:'📧', title:'Check Your Email', body:'All trial updates, schedule and instructions will be sent to your registered email & WhatsApp number.', cta:'Manage Preferences →', color:'#3B82F6', onClick: () => {} },
           ].map(card => (

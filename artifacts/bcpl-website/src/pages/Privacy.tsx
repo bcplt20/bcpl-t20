@@ -6,7 +6,7 @@ function MobileCTA() {
   return (
     <div className="bot-cta" style={{position:'fixed',bottom:0,left:0,right:0,zIndex:500,padding:'10px 16px 18px',background:'rgba(4,12,24,0.97)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.07)',gap:10}}>
       <button className="btn-fire" style={{flex:2,height:52,fontSize:15}}>Register ₹299 →</button>
-      <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" className="btn-wa" style={{flex:1,height:52,fontSize:14,borderRadius:14,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>💬 WhatsApp</a>
+      <a href="https://wa.me/919151346555" target="_blank" rel="noopener noreferrer" className="btn-wa" style={{flex:1,height:52,fontSize:14,borderRadius:14,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>💬 WhatsApp</a>
     </div>
   );
 }
@@ -100,7 +100,7 @@ export function Privacy() {
       'Right to Delete: request account deletion — available before shortlisting stage only',
       'Right to Withdraw Consent: withdraw from marketing communications at any time',
       'Right to Portability: receive your data in a structured, machine-readable format',
-      'To exercise any right, email: privacy@bcpl-t20.com — we respond within 7 business days',
+      'To exercise any right, email: support@bcplt20.com — we respond within 7 business days',
     ]},
     {n:6,icon:'🍪',title:'Cookie Policy',items:[
       'We use only essential session cookies required for website functionality',
@@ -185,7 +185,7 @@ export function Privacy() {
               <div>
                 <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#FF7A29',marginBottom:6}}>Privacy Officer Contact</div>
                 <p style={{color:'rgba(255,255,255,0.85)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
-                  For all privacy-related queries, requests, or complaints, contact us at <strong style={{color:'#E8B23D'}}>privacy@bcpl-t20.com</strong>. We acknowledge all requests within 2 business days and resolve within 7.
+                  For all privacy-related queries, requests, or complaints, contact us at <strong style={{color:'#E8B23D'}}>support@bcplt20.com</strong>. We acknowledge all requests within 2 business days and resolve within 7.
                 </p>
               </div>
             </div>
