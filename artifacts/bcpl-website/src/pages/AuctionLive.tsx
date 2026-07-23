@@ -3,6 +3,7 @@ import { Link } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { useLang } from '../lib/i18n';
+import { AUCTION_PHOTOS } from '../data/auctionGallery';
 
 const BOOKING_REF = 'BCPL-S5-7432';
 
@@ -170,6 +171,33 @@ export function AuctionLive() {
             ))}
           </div>
         </div>
+
+        {/* AUCTION DAY GALLERY — real photos from the BCPL player auction */}
+        <div style={{ background: '#0A1727', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '24px 20px', marginBottom: 24 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
+            <div>
+              <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 'clamp(16px,2.5vw,20px)', color: '#fff', textTransform: 'uppercase' }}>
+                {t("Auction Day Gallery", "Auction Day की झलकियाँ")}
+              </div>
+              <div style={{ fontFamily: 'Inter,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.4)', marginTop: 2 }}>
+                {t("Real moments from the BCPL player auction floor", "BCPL player auction floor के असली पल")}
+              </div>
+            </div>
+            <Link href="/photos" style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: 12, color: '#FF7A29', textDecoration: 'none', letterSpacing: '.06em' }}>
+              {t("VIEW ALL", "सभी देखें")} {AUCTION_PHOTOS.length} →
+            </Link>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(140px,1fr))', gap: 10 }}>
+            {[0, 7, 14, 21, 28, 35, 42, 49, 56].map(i => AUCTION_PHOTOS[i] && (
+              <Link key={AUCTION_PHOTOS[i].f} href="/photos" style={{ display: 'block', borderRadius: 10, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)', lineHeight: 0 }}>
+                <img src={import.meta.env.BASE_URL + 'auction/thumb/' + AUCTION_PHOTOS[i].f} alt="BCPL player auction moment"
+                  loading="lazy" decoding="async"
+                  style={{ width: '100%', height: 110, objectFit: 'cover', display: 'block' }} />
+              </Link>
+            ))}
+          </div>
+        </div>
+
 
         {/* NOTICE */}
         <div style={{ background: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: 12, padding: '18px 20px', display: 'flex', gap: 14 }}>
