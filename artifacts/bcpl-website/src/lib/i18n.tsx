@@ -26,8 +26,16 @@ const LangCtx = createContext<LangCtxType>({
 
 export function LangProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLangState] = useState<Lang>(() => {
-    try { return localStorage.getItem("bcpl_lang") === "hi" ? "hi" : "en"; }
-    catch { return "en"; }
+    try {
+      // ?lang=hi / ?lang=en in the URL wins (shareable language links),
+      // then the saved preference, then English.
+      const fromUrl = new URLSearchParams(window.location.search).get("lang");
+      if (fromUrl === "hi" || fromUrl === "en") {
+        localStorage.setItem("bcpl_lang", fromUrl);
+        return fromUrl;
+      }
+      return localStorage.getItem("bcpl_lang") === "hi" ? "hi" : "en";
+    } catch { return "en"; }
   });
   const setLang = (l: Lang) => {
     setLangState(l);

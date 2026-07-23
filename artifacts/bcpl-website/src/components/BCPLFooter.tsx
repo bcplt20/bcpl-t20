@@ -61,7 +61,7 @@ export function BCPLFooter() {
 
           {COLS.map(col => (
             <div key={col.title}>
-              <div style={{ fontWeight:800, fontSize:10, letterSpacing:".1em", color:"rgba(255,255,255,.35)", textTransform:"uppercase", marginBottom:12 }}>{col.title}</div>
+              <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:13, letterSpacing:".14em", color:"rgba(255,255,255,.4)", textTransform:"uppercase", marginBottom:12 }}>{col.title}</div>
               <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
                 {col.links.map(([l,h])=>
                   h === "__login"

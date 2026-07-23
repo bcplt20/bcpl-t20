@@ -1,9 +1,78 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
+/* ═══════════════════════════════════════════════════════════════════
+   BCPL V3 DESIGN SYSTEM — single source of truth for the whole site.
+   Direction: IPL-level league site + Nike-style visuals + fintech UX.
+   Rules: one dark bg family, orange = CTA only, gold = achievement only,
+   ONE radius, condensed uppercase headlines, calm purposeful motion.
+   Fonts load from index.html (<link>): Barlow Condensed, Inter,
+   Montserrat (legacy pages, being phased out), Mukta (Devanagari).
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* surfaces */
+  --bg:      #06101E;                 /* page background          */
+  --bg-deep: #030710;                 /* footer / recessed areas  */
+  --panel:   #0A1830;                 /* raised cards             */
+  --line:    rgba(255,255,255,.08);   /* hairline borders         */
+
+  /* brand */
+  --orange:   #FF7A29;                /* primary — CTA & key info */
+  --orange-2: #D95E10;
+  --gold:     #E8B23D;                /* accent — honours, badges */
+  --green:    #22C55E;
+  --red:      #EF4444;
+
+  /* ink */
+  --ink:   #FFFFFF;
+  --ink-2: rgba(255,255,255,.72);
+  --ink-3: rgba(255,255,255,.45);
+
+  /* geometry */
+  --r: 14px;                          /* the ONE corner radius    */
+  --container: 1200px;
+
+  /* type */
+  --font-head:  'Barlow Condensed','Mukta','Montserrat',sans-serif;
+  --font-body:  'Inter','Mukta',sans-serif;
+}
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body, #root {
   min-height: 100%;
-  background: #06101E;
-  color: #fff;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+body {
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection { background: rgba(255,122,41,.4); color: #fff; }
+
+:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; border-radius: 4px; }
+
+/* ── shared layout helpers (new V3 sections use these) ───────────── */
+.v3-wrap { max-width: var(--container); margin: 0 auto; padding: 0 20px; }
+@media (min-width: 768px)  { .v3-wrap { padding: 0 32px; } }
+@media (min-width: 1280px) { .v3-wrap { padding: 0 48px; } }
+
+/* condensed sports headline — big, tight, uppercase */
+.v3-h {
+  font-family: var(--font-head);
+  font-weight: 800;
+  text-transform: uppercase;
+  line-height: .95;
+  letter-spacing: .015em;
+}
+
+/* accessibility: honour reduced motion everywhere */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
