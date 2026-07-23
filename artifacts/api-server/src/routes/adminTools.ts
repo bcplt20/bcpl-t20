@@ -26,6 +26,7 @@ import { z } from "zod";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { getUploadPresignedUrl, getDownloadPresignedUrl, getS3Url, deleteObject } from "../lib/s3";
 import { runVideoValidations } from "../lib/videoValidation";
+import { runAiValidityChecks } from "../lib/aiPipeline";
 
 const router = Router();
 router.use(requireAdmin);
@@ -34,6 +35,12 @@ router.use(requireAdmin);
 // Manual validation sweep (the scheduler also runs this every 2 minutes).
 router.post("/phase1/run-validation", async (_req: Request, res: Response) => {
   const result = await runVideoValidations(25);
+  res.json({ success: true, ...result });
+});
+
+// Manual AI validity sweep (pass zero — mock mode without GEMINI_API_KEY).
+router.post("/phase1/run-ai", async (_req: Request, res: Response) => {
+  const result = await runAiValidityChecks(25);
   res.json({ success: true, ...result });
 });
 

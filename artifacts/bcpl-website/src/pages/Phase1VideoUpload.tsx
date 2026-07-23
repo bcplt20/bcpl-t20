@@ -31,6 +31,14 @@ const REUPLOAD_COPY: Record<string, { en: string; hi: string }> = {
   VIDEO_TOO_LONG:    { en: 'Your video was longer than the 60-second limit. Please upload a shorter video.', hi: 'आपका वीडियो 60 सेकंड की सीमा से लंबा था। कृपया छोटा वीडियो अपलोड करें।' },
   CORRUPTED_VIDEO:   { en: 'We could not read your video file. Please record again in MP4 or MOV format.', hi: 'हम आपकी वीडियो फ़ाइल नहीं पढ़ सके। कृपया MP4 या MOV फॉर्मेट में दोबारा रिकॉर्ड करें।' },
   REUPLOAD_REQUIRED: { en: 'We could not process your last upload. Please upload a new video.', hi: 'हम आपका पिछला अपलोड प्रोसेस नहीं कर सके। कृपया नया वीडियो अपलोड करें।' },
+  // AI validity (pass zero) reasons — §17 approved copy
+  NOT_CRICKET_VIDEO:       { en: 'The footage does not clearly show cricket play. Please upload a genuine cricket video.', hi: 'फुटेज में क्रिकेट खेलते हुए साफ़ नहीं दिख रहा। कृपया असली क्रिकेट वीडियो अपलोड करें।' },
+  PLAYER_NOT_VISIBLE:      { en: 'You are not clearly visible in the video. Keep your full body in frame.', hi: 'वीडियो में आप साफ़ नहीं दिख रहे। पूरा शरीर फ्रेम में रखें।' },
+  INSUFFICIENT_ACTIONS:    { en: 'Not enough cricket actions to assess. Show more shots or deliveries.', hi: 'आकलन के लिए पर्याप्त क्रिकेट एक्शन नहीं। और शॉट या डिलीवरी दिखाएं।' },
+  VIDEO_TOO_DARK:          { en: 'The video is too dark to assess clearly. Please record in better light.', hi: 'वीडियो बहुत अंधेरा है। कृपया बेहतर रोशनी में रिकॉर्ड करें।' },
+  EXCESSIVE_EDITING:       { en: 'Too many edits or filters. Upload normal-speed, unedited footage.', hi: 'बहुत ज़्यादा एडिटिंग या फ़िल्टर। नॉर्मल स्पीड का बिना एडिट वीडियो अपलोड करें।' },
+  WRONG_ROLE_EVIDENCE:     { en: 'The footage does not match your registered playing role.', hi: 'फुटेज आपके रजिस्टर्ड रोल से मेल नहीं खाती।' },
+  ASSESSMENT_NOT_RELIABLE: { en: 'We could not reliably complete your assessment from this upload. Please record a clearer video.', hi: 'इस अपलोड से आपका आकलन विश्वसनीय रूप से पूरा नहीं हो सका। कृपया साफ़ वीडियो रिकॉर्ड करें।' },
 };
 
 function formatFileSize(bytes: number) {

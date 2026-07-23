@@ -12,22 +12,12 @@ import { sendEmail, tplVideoSubmitted, tplVideoReminder } from "../lib/email";
 import { sendSms } from "../lib/sms";
 import { sendWhatsApp, WA } from "../lib/whatsapp";
 import { logger } from "../lib/logger";
+import { normalizeRole } from "../lib/phase1Roles";
 import { z } from "zod";
 
 const router = Router();
 
 const ALLOWED_CONTENT_TYPES = ["video/mp4", "video/quicktime", "video/x-msvideo", "video/webm"] as const;
-
-type RoleKey = keyof Phase1Instructions;
-
-/** registrations.role has two historic formats ("bat" and "Batsman") — normalise on read. */
-function normalizeRole(role: string | null | undefined): RoleKey {
-  const r = (role ?? "").toLowerCase();
-  if (r === "bowl" || r.startsWith("bowler")) return "bowl";
-  if (r === "ar" || r.startsWith("all")) return "ar";
-  if (r === "wk" || r.startsWith("wicket") || r.startsWith("keep")) return "wk";
-  return "bat";
-}
 
 async function loadOwnedRegistration(userId: string, registrationId: string) {
   const [reg] = await db.select().from(registrationsTable).where(

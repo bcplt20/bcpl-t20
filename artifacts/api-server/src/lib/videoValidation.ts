@@ -98,10 +98,20 @@ function parseFps(avg?: string): number | null {
   return Math.round((Number(m[1]) / den) * 100) / 100;
 }
 
-const REASON_LINES: Record<string, (minS: number, maxS: number) => string> = {
+/** Friendly one-liners per reason code — shared by the technical validation
+ *  stage and the AI validity stage (email + SMS copy). */
+export const REASON_LINES: Record<string, (minS: number, maxS: number) => string> = {
   VIDEO_TOO_SHORT: (minS) => "Your video is too short. Please upload at least " + minS + " seconds of cricket footage.",
   VIDEO_TOO_LONG: (_m, maxS) => "Your video exceeds the " + maxS + "-second Phase 1 limit. Please upload a shorter video.",
   CORRUPTED_VIDEO: () => "We could not read your video file. Please record again in MP4 or MOV format and upload once more.",
+  // AI validity (§17) reason codes
+  NOT_CRICKET_VIDEO: () => "The footage does not clearly show cricket play. Please upload a genuine cricket video.",
+  PLAYER_NOT_VISIBLE: () => "You are not clearly visible in the footage. Keep your full body in frame.",
+  INSUFFICIENT_ACTIONS: () => "There were not enough cricket actions to assess. Show more shots or deliveries.",
+  VIDEO_TOO_DARK: () => "The video is too dark to assess clearly. Please record in better light.",
+  EXCESSIVE_EDITING: () => "The video has too many edits or filters. Upload normal-speed, unedited footage.",
+  WRONG_ROLE_EVIDENCE: () => "The footage does not match your registered playing role.",
+  ASSESSMENT_NOT_RELIABLE: () => "We could not reliably complete your Phase 1 assessment from this upload. Please record a clearer video.",
 };
 
 export type ValidationRunResult = {
@@ -196,7 +206,7 @@ async function validateOne(
     // ── Integrity: object must still be exactly what was confirmed ──
     const head = await headS3Object(video.s3Key);
     if (!head.exists) {
-      await finishReupload(evalId, video.id, "CORRUPTED_VIDEO", { note: "object missing at validation time" }, cfg, registrationId, startedAt);
+      await failVideoForReupload(evalId, video.id, "CORRUPTED_VIDEO", { note: "object missing at validation time" }, cfg, registrationId, startedAt);
       result.reuploadRequired += 1;
       return;
     }
@@ -240,7 +250,7 @@ async function validateOne(
         logger.warn({ evalId, err: probe.error }, "video validation transient failure — will retry");
         return;
       }
-      await finishReupload(evalId, video.id, "CORRUPTED_VIDEO", { probeError: probe.error }, cfg, registrationId, startedAt);
+      await failVideoForReupload(evalId, video.id, "CORRUPTED_VIDEO", { probeError: probe.error }, cfg, registrationId, startedAt);
       result.reuploadRequired += 1;
       return;
     }
@@ -263,19 +273,19 @@ async function validateOne(
 
     // Corrupted / not-a-video / static image disguised as video (§18)
     if (!vstream || durationSec < 1 || (nbFrames !== null && nbFrames <= 2)) {
-      await finishReupload(evalId, video.id, "CORRUPTED_VIDEO", summary, cfg, registrationId, startedAt);
+      await failVideoForReupload(evalId, video.id, "CORRUPTED_VIDEO", summary, cfg, registrationId, startedAt);
       result.reuploadRequired += 1;
       return;
     }
 
     // Duration window (authoritative — client fast-fail was only a hint)
     if (durationSec < cfg.videoMinSeconds - DURATION_SLACK_SEC) {
-      await finishReupload(evalId, video.id, "VIDEO_TOO_SHORT", summary, cfg, registrationId, startedAt);
+      await failVideoForReupload(evalId, video.id, "VIDEO_TOO_SHORT", summary, cfg, registrationId, startedAt);
       result.reuploadRequired += 1;
       return;
     }
     if (durationSec > cfg.videoMaxSeconds + DURATION_SLACK_SEC) {
-      await finishReupload(evalId, video.id, "VIDEO_TOO_LONG", summary, cfg, registrationId, startedAt);
+      await failVideoForReupload(evalId, video.id, "VIDEO_TOO_LONG", summary, cfg, registrationId, startedAt);
       result.reuploadRequired += 1;
       return;
     }
@@ -313,7 +323,10 @@ async function validateOne(
   }
 }
 
-async function finishReupload(
+/** Shared failure path: mark evaluation reupload_required, fail the video
+ *  row, and notify the player exactly once (reserve-first dedupe). Used by
+ *  both the technical validation stage and the AI validity stage. */
+export async function failVideoForReupload(
   evalId: string,
   videoId: string,
   reasonCode: string,

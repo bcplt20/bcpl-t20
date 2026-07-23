@@ -1,6 +1,7 @@
 import app from "./app";
 import { logger } from "./lib/logger";
 import { runVideoValidations } from "./lib/videoValidation";
+import { runAiValidityChecks } from "./lib/aiPipeline";
 import { sendVideoReminders } from "./routes/video";
 import { ensureRegNumbers } from "./routes/register";
 import { ensurePhase1Scores } from "./routes/results";
@@ -76,16 +77,19 @@ setInterval(async () => {
 // Technical ffprobe validation of new submissions (pipeline stage
 // VALIDATING_VIDEO). Cheap per video; the AI stages are gated separately.
 const TWO_MINUTES = 2 * 60 * 1000;
-setTimeout(() => {
-  runVideoValidations(25)
-    .then((r) => { if (r.claimed > 0) logger.info(r, "startup video validation sweep"); })
-    .catch((e) => logger.error({ err: e }, "startup video validation failed"));
-}, 20_000);
-setInterval(async () => {
+async function phase1PipelineTick(label: string): Promise<void> {
   try {
     const r = await runVideoValidations(25);
-    if (r.claimed > 0) logger.info(r, "video validation tick");
+    if (r.claimed > 0) logger.info(r, label + ": video validation");
   } catch (e) {
-    logger.error({ err: e }, "video validation tick failed");
+    logger.error({ err: e }, label + ": video validation failed");
   }
-}, TWO_MINUTES);
+  try {
+    const a = await runAiValidityChecks(25);
+    if (a.claimed > 0) logger.info(a, label + ": ai validity");
+  } catch (e) {
+    logger.error({ err: e }, label + ": ai validity failed");
+  }
+}
+setTimeout(() => { void phase1PipelineTick("startup sweep"); }, 20_000);
+setInterval(() => { void phase1PipelineTick("pipeline tick"); }, TWO_MINUTES);
