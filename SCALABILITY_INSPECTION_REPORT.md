@@ -111,5 +111,17 @@ AWS Console → RDS → Databases → click your DB → note these four things a
 
 And your decisions: ① GO/NO-GO for Phase 0 now? ② When to do Phase 1 together? ③ Phase 2 budget window ok?
 
+## 7. Progress — overnight work (24 Jul 2026, रात में पूरा हुआ)
+
+Workspace में तैयार + tested + committed। **EC2 पर live तब होगा जब अगला deploy (`deploy/go.sh`) चलेगा।**
+
+1. **Notification outbox (durable retry queue)** — अगर Brevo/MSG91 कभी fail/down हो तो अब हर failed email/SMS queue में save होता है और अपने आप retry होता है (5 → 10 → 20 मिनट… backoff; 5 कोशिशों के बाद "dead" mark + admin-visible log)। Duplicate कभी नहीं जाते (content-hash dedupe)। OTP जान-बूझकर queue नहीं होते (time-sensitive — player नया मांग लेता है)। असली retries सिर्फ production में चलती हैं; dev में dry-run। दोनों PM2 workers में double-send impossible (DB-level SKIP LOCKED claim)।
+2. **nginx hardening** — `/api/auth/` और `/api/payment/` पर per-IP rate limits (generous — carrier NAT वाले असली users कभी block नहीं होंगे), `/assets/` पर 1-साल immutable cache (CloudFront के लिए भी तैयार)। EC2 पर लगाने के लिए `deploy/fix-nginx.sh` — idempotent, config test fail होने पर auto-rollback।
+3. **DB connection pool tuning** — हर API process अब max 10 connections + सख्त timeouts (पहले unbounded defaults) — RDS connection exhaustion से बचाव।
+4. **k6 load-test suite** — `loadtest/` में master prompt के Scenario 1–5 के scripts + progressive profiles (smoke/ramp/spike/soak) + STAGING-ONLY README। कोई test चलाया नहीं गया — staging बनने के बाद ही।
+5. **AWS Phase 1 owner guide** — `deploy/AWS_PHASE1_GUIDE.md` — RDS की 4-जानकारियां, Budgets alerts, मेरे लिए read-only key, CloudFront + WAF — सब browser-only steps में।
+
+Tests: **144/144 pass** (11 नए outbox tests समेत)। इस रात में कोई असली SMS/email/payment trigger नहीं हुआ; AWS infrastructure में कोई बदलाव नहीं किया गया।
+
 ---
 *Prepared without changing any infrastructure, per the master prompt. No load traffic was generated; no real OTP/email/payment was triggered.*

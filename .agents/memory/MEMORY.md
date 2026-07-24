@@ -31,3 +31,5 @@
 - [Workspace recycle](workspace-recycle.md) — recycle can wipe uncommitted edits mid-session; commit locally as soon as tsc passes, verify markers before re-applying
 - [Security hardening lessons](security-hardening.md) — varchar(20) status trap; one amount-gate for ALL success paths; no victim-keyed lockouts; writeAudit races tests
 - [AWS access scope](aws-access-scope.md) — workspace keys = bcpl-s3-user S3-only (infra describes AccessDenied); probe via curl --aws-sigv4; prod topology truth in deploy/
+- [Notification outbox](notification-outbox.md) — failed sends auto-queue+retry (never OTPs); noOutbox guard stops loops; dry outside prod (OUTBOX_ENABLED); dynamic imports break the cycle
+- [ensureX DDL race](ensure-ddl-race.md) — CREATE TABLE IF NOT EXISTS races under PM2×2 boot / parallel vitest (pg_type 23505); wrap new ensures in tx + pg_advisory_xact_lock

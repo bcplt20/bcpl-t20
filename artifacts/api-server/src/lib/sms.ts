@@ -57,6 +57,8 @@ export async function sendOtp(phone: string, otp: string): Promise<boolean> {
         short_url: "0",
         recipients: [{ mobiles: `91${phone}`, var1: otp }], // template var is ##var1##
       }),
+      // Hard cap: a hung provider must never block the login response.
+      signal: AbortSignal.timeout(30_000),
     });
     const raw = await res.text();
     let data: Msg91Response = {};
@@ -93,6 +95,10 @@ export async function sendSms(phone: string, message: string, opts?: SendOpts): 
         country: "91",
         sms: [{ message, to: [phone] }],
       }),
+      // Hard cap (30s << 15-min outbox reclaim lease): a hung provider can
+      // never keep a claimed outbox row "in flight" long enough for another
+      // worker to reclaim it → no double-send window.
+      signal: AbortSignal.timeout(30_000),
     });
     const raw = await res.text();
     let data: Msg91Response = {};

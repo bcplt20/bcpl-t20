@@ -107,22 +107,40 @@ describe("runOutboxSweep", () => {
     expect(call![2]).toMatchObject({ noOutbox: true }); // no self-requeue loops
   });
 
-  it("reschedules a failed row with backoff", async () => {
+  it("reschedules a first failure with EXACTLY the 5-minute backoff (attempt #1)", async () => {
     smsMock.mockResolvedValue({ ok: false, error: "simulated provider down" });
     emailMock.mockResolvedValue({ ok: false, error: "simulated provider down" });
     const id = await insertRow({ payload: { message: `sweep-fail ${RUN}` } });
 
+    const before = Date.now();
     await runOutboxSweep(100, { dryRun: false });
 
     const row = await fetchRow(id);
     expect(row.status).toBe("pending");
     expect(row.attempts).toBe(1);
     expect(row.lastError).toContain("simulated provider down");
-    // next attempt ≥ ~5 minutes out
-    expect(row.nextAttemptAt.getTime()).toBeGreaterThan(Date.now() + 4 * 60_000);
+    // Regression pin (off-by-one bug): attempt #1 backoff is 5 min, NOT 10.
+    const delayMin = (row.nextAttemptAt.getTime() - before) / 60_000;
+    expect(delayMin).toBeGreaterThan(4.5);
+    expect(delayMin).toBeLessThan(6.5);
   });
 
-  it("dead-letters after max attempts", async () => {
+  it("4th failed attempt does NOT dead-letter (max is 5) and backs off 40 min", async () => {
+    smsMock.mockResolvedValue({ ok: false, error: "still down" });
+    const id = await insertRow({ attempts: 3, maxAttempts: 5, payload: { message: `sweep-4th ${RUN}` } });
+
+    const before = Date.now();
+    await runOutboxSweep(100, { dryRun: false });
+
+    const row = await fetchRow(id);
+    expect(row.status).toBe("pending"); // regression pin: must survive to attempt #5
+    expect(row.attempts).toBe(4);
+    const delayMin = (row.nextAttemptAt.getTime() - before) / 60_000;
+    expect(delayMin).toBeGreaterThan(35); // 5·2^3 = 40 min
+    expect(delayMin).toBeLessThan(45);
+  });
+
+  it("dead-letters exactly at the 5th attempt", async () => {
     smsMock.mockResolvedValue({ ok: false, error: "still down" });
     const id = await insertRow({ attempts: 4, maxAttempts: 5, payload: { message: `sweep-dead ${RUN}` } });
 

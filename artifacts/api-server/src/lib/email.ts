@@ -51,6 +51,9 @@ export async function sendEmail({ to, toName, subject, htmlContent }: SendEmailP
         subject,
         htmlContent,
       }),
+      // Hard cap (30s << 15-min outbox reclaim lease) — no hung request can
+      // block callers or open a reclaim double-send window.
+      signal: AbortSignal.timeout(30_000),
     });
     if (!res.ok) {
       const body = await res.text();

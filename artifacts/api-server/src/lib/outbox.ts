@@ -223,14 +223,16 @@ export async function runOutboxSweep(limit = 25, opts?: { dryRun?: boolean }): P
         .set({ status: "sent", sentAt: new Date(), lastError: null })
         .where(eq(notificationOutboxTable.id, row.id));
       result.sent++;
-      console.log(`[OUTBOX-SENT] ${row.channel} to=${row.recipient} template=${row.template} attempt=${row.attempts + 1}`);
+      console.log(`[OUTBOX-SENT] ${row.channel} to=${row.recipient} template=${row.template} attempt=${row.attempts}`);
       if (row.userId) {
         await logNotifications(row.userId, `${row.template}-retry`, { [row.channel]: { ok: true } });
       }
       continue;
     }
 
-    const attemptsNow = row.attempts + 1; // claim already incremented in DB
+    // The claim UPDATE already incremented attempts, and this row was
+    // re-selected AFTER the claim — row.attempts IS the current attempt number.
+    const attemptsNow = row.attempts;
     const err = (outcome.error ?? "unknown provider failure").slice(0, 500);
     if (attemptsNow >= row.maxAttempts) {
       await db.update(notificationOutboxTable)
