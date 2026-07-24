@@ -5,6 +5,9 @@ import {
   referralSignupsTable,
   marketingCampaignsTable,
   emailCampaignsTable,
+  smsCampaignsTable,
+  whatsappTemplatesTable,
+  notificationLogsTable,
   usersTable,
   registrationsTable,
   phase1PaymentsTable,
@@ -16,6 +19,8 @@ import { z } from "zod";
 import { requireAuth, type AuthRequest } from "../middlewares/auth";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { sendEmail } from "../lib/email";
+import { sendWhatsApp } from "../lib/whatsapp";
+import type { SendResult } from "../lib/notify";
 import { logger } from "../lib/logger";
 
 const router = Router();
@@ -93,6 +98,36 @@ export async function ensureMarketingTables(): Promise<void> {
   await db.execute(
     sql`UPDATE email_campaigns SET status = 'failed', completed_at = now() WHERE status = 'sending'`,
   );
+
+  // Bulk SMS / WhatsApp campaigns (SMS/WhatsApp twin of email_campaigns).
+  await db.execute(sql`CREATE TABLE IF NOT EXISTS sms_campaigns (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    channel varchar(20) NOT NULL,
+    name varchar(150) NOT NULL,
+    body text NOT NULL DEFAULT '',
+    flow_template_id varchar(120),
+    template_name varchar(120),
+    template_vars json NOT NULL DEFAULT '[]',
+    audience json NOT NULL DEFAULT '{}',
+    status varchar(20) NOT NULL DEFAULT 'sending',
+    total_recipients integer NOT NULL DEFAULT 0,
+    sent_count integer NOT NULL DEFAULT 0,
+    failed_count integer NOT NULL DEFAULT 0,
+    skipped_count integer NOT NULL DEFAULT 0,
+    dry_run integer NOT NULL DEFAULT 0,
+    created_at timestamptz NOT NULL DEFAULT now(),
+    completed_at timestamptz
+  )`);
+  await db.execute(
+    sql`UPDATE sms_campaigns SET status = 'failed', completed_at = now() WHERE status = 'sending'`,
+  );
+  // Reserve-first dedupe for bulk sends leans on the same partial unique index
+  // on notification_logs.dedupe_key that reminders / milestones use.
+  await db.execute(sql`ALTER TABLE notification_logs ADD COLUMN IF NOT EXISTS dedupe_key varchar(160)`);
+  await db.execute(sql`
+    CREATE UNIQUE INDEX IF NOT EXISTS notification_logs_dedupe_uq
+    ON notification_logs (dedupe_key) WHERE dedupe_key IS NOT NULL
+  `);
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
@@ -834,6 +869,415 @@ router.post("/email-campaigns/send", requireAdmin, async (req, res) => {
     res.json({ success: true, campaign: row });
   } catch (e) {
     logger.error({ err: e }, "email campaign start failed");
+    res.status(500).json({ error: "Failed to start campaign" });
+  }
+});
+
+/* ────────────────────────────────────────────────────────────────────────────
+ * Admin: bulk SMS / WhatsApp campaigns (real MSG91 Flow + Interakt sends)
+ *
+ * The SMS/WhatsApp twin of the email campaign tool above — same segment picker
+ * (stage + trial city), same preview-count → confirm flow.
+ *
+ * SAFETY (non-negotiable — real provider keys are LIVE in dev):
+ *  1. bulkMessagingEnabled() gate — real sends only in production (or with
+ *     BULK_MESSAGING_ENABLED=1). Everywhere else the send runs DRY: it records
+ *     what it WOULD send (dry_run=1, would-send count) without calling a
+ *     provider or writing per-recipient notification_logs rows. Same env-flag
+ *     family as OUTBOX_ENABLED / REMINDERS_ENABLED.
+ *  2. SMS bulk goes out ONLY via a DLT-approved MSG91 Flow template id supplied
+ *     per campaign — there is NO raw-text bulk send path.
+ *  3. WhatsApp bulk goes out via an Interakt template picked from
+ *     whatsapp_templates.
+ *  4. Reserve-first dedupe on notification_logs.dedupe_key keyed by
+ *     campaign+recipient — a re-run (or overlapping worker) can NEVER
+ *     double-send.
+ *  5. Recipients without a phone are skipped; sends are throttled in small
+ *     batches with a short delay; every per-recipient outcome is recorded via
+ *     logNotifications; the campaign row records sent/failed/skipped totals.
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+/** Real bulk sends only in production unless explicitly overridden via env.
+ *  Same gating pattern as outboxEnabled() / remindersEnabled(). */
+export function bulkMessagingEnabled(): boolean {
+  const env = (process.env["BULK_MESSAGING_ENABLED"] ?? "").trim().toLowerCase();
+  if (env === "1" || env === "true") return true;
+  if (env === "0" || env === "false") return false;
+  return process.env["NODE_ENV"] === "production";
+}
+
+/** Mirror the loud console logging that logNotifications does for each attempt
+ *  (the row itself is written by the reserve-first update). */
+function logBulkOutcome(
+  userId: string,
+  channel: string,
+  template: string,
+  status: string,
+  detail?: string,
+): void {
+  if (status !== "sent") {
+    console.error(`[NOTIFY-${status.toUpperCase()}] ${channel}/${template} user=${userId}: ${detail ?? "no detail"}`);
+  } else if (detail) {
+    console.warn(`[NOTIFY-SENT] ${channel}/${template} user=${userId}: ${detail}`);
+  }
+}
+
+type PhoneRecipient = { userId: string; name: string; phone: string };
+
+/** Resolve a player segment to de-duplicated { userId, name, phone } rows.
+ *  Recipients without a usable phone are skipped (not returned). Deduped by
+ *  the normalized 10-digit phone so one player is never messaged twice in a
+ *  single campaign even if they hold multiple registrations. */
+export async function resolvePhoneAudience(f: AudienceFilter): Promise<PhoneRecipient[]> {
+  const rows = await db
+    .select({
+      userId: usersTable.id,
+      name: usersTable.name,
+      phone: usersTable.phone,
+      regId: registrationsTable.id,
+      city: registrationsTable.trialCity,
+      phase1Status: registrationsTable.phase1Status,
+    })
+    .from(usersTable)
+    .leftJoin(registrationsTable, eq(registrationsTable.userId, usersTable.id));
+
+  let p1PaidRegs: Set<string> | null = null;
+  let videoRegs: Set<string> | null = null;
+  let p2PaidRegs: Set<string> | null = null;
+  if (f.stage === "p1_paid") {
+    p1PaidRegs = new Set(
+      (
+        await db
+          .selectDistinct({ r: phase1PaymentsTable.registrationId })
+          .from(phase1PaymentsTable)
+          .where(inArray(phase1PaymentsTable.status, PAID_STATUSES))
+      ).map((x) => x.r),
+    );
+  } else if (f.stage === "video") {
+    videoRegs = new Set(
+      (
+        await db
+          .selectDistinct({ r: phase1VideosTable.registrationId })
+          .from(phase1VideosTable)
+      ).map((x) => x.r),
+    );
+  } else if (f.stage === "p2_paid") {
+    p2PaidRegs = new Set(
+      (
+        await db
+          .selectDistinct({ r: phase2PaymentsTable.registrationId })
+          .from(phase2PaymentsTable)
+          .where(inArray(phase2PaymentsTable.status, PAID_STATUSES))
+      ).map((x) => x.r),
+    );
+  }
+
+  const seen = new Set<string>();
+  const out: PhoneRecipient[] = [];
+  for (const r of rows) {
+    const phone = normalizePhone(r.phone);
+    if (!phone) continue; // skip recipients without a usable phone
+    if (f.city && r.city !== f.city) continue;
+    if (f.stage === "registered" && !r.regId) continue;
+    if (f.stage === "p1_paid" && !(r.regId && p1PaidRegs!.has(r.regId))) continue;
+    if (f.stage === "video" && !(r.regId && videoRegs!.has(r.regId))) continue;
+    if (f.stage === "selected" && r.phase1Status !== "selected") continue;
+    if (f.stage === "p2_paid" && !(r.regId && p2PaidRegs!.has(r.regId))) continue;
+    if (seen.has(phone)) continue;
+    seen.add(phone);
+    out.push({ userId: r.userId, name: r.name, phone });
+  }
+  return out;
+}
+
+/** Normalize an Indian mobile down to the bare 10 digits (same shape sendSms /
+ *  sendWhatsApp take). Returns null when it isn't a plausible 10-digit number. */
+function normalizePhone(raw: string | null | undefined): string | null {
+  if (!raw) return null;
+  const digits = String(raw).replace(/[^0-9]/g, "");
+  if (digits.length === 12 && digits.startsWith("91")) return digits.slice(2);
+  if (digits.length === 11 && digits.startsWith("0")) return digits.slice(1);
+  return digits.length === 10 ? digits : null;
+}
+
+router.get("/sms-campaigns", requireAdmin, async (_req, res) => {
+  const rows = await db
+    .select()
+    .from(smsCampaignsTable)
+    .orderBy(desc(smsCampaignsTable.createdAt))
+    .limit(50);
+  res.json({ campaigns: rows, bulkEnabled: bulkMessagingEnabled() });
+});
+
+router.post("/sms-campaigns/preview", requireAdmin, async (req, res) => {
+  const parsed = audienceFilter.safeParse(req.body ?? {});
+  if (!parsed.success) {
+    res.status(400).json({ error: "Invalid audience filter" });
+    return;
+  }
+  try {
+    const audience = await resolvePhoneAudience(parsed.data);
+    res.json({
+      total: audience.length,
+      sample: audience.slice(0, 5).map((r) => ({ name: r.name, phone: r.phone })),
+      bulkEnabled: bulkMessagingEnabled(),
+    });
+  } catch (e) {
+    logger.error({ err: e }, "sms audience preview failed");
+    res.status(500).json({ error: "Failed to preview audience" });
+  }
+});
+
+const bulkSendBody = z.object({
+  channel: z.enum(["sms", "whatsapp"]),
+  name: z.string().trim().min(1).max(150),
+  body: z.string().trim().max(2000).default(""),
+  // SMS: DLT-approved MSG91 Flow template id (required for sms channel).
+  flowTemplateId: z.string().trim().max(120).optional(),
+  // WhatsApp: Interakt template name (required for whatsapp channel).
+  templateName: z.string().trim().max(120).optional(),
+  templateVars: z.array(z.string().max(200)).max(10).default([]),
+  audience: audienceFilter,
+});
+
+/** Small batches + a short delay between them — stay well under provider rate
+ *  limits, exactly like runEmailCampaign's per-message throttle. */
+const BULK_BATCH_SIZE = 20;
+const BULK_BATCH_DELAY_MS = 1000;
+const BULK_PER_MSG_DELAY_MS = 120;
+
+export async function runBulkCampaign(
+  campaignId: string,
+  channel: "sms" | "whatsapp",
+  opts: { flowTemplateId?: string; templateName?: string; templateVars: string[]; body: string },
+  recipients: PhoneRecipient[],
+): Promise<void> {
+  let sent = 0;
+  let failed = 0;
+  let skipped = 0;
+  const template = channel === "sms" ? "bulk_sms_campaign" : "bulk_wa_campaign";
+  try {
+    for (let i = 0; i < recipients.length; i++) {
+      const r = recipients[i]!;
+      const dedupeKey = `bulk_${channel}_${campaignId}_${r.userId}`;
+
+      // ── RESERVE-FIRST: claim this campaign+recipient send exactly once. The
+      // winner of the insert is the only actor that ever calls the provider, so
+      // a re-run / overlapping worker can NEVER double-send. ──
+      const reserved = await db
+        .insert(notificationLogsTable)
+        .values({ userId: r.userId, type: channel, template, dedupeKey })
+        .onConflictDoNothing()
+        .returning({ id: notificationLogsTable.id });
+      if (!reserved.length || !reserved[0]) {
+        // Already sent to this recipient for this campaign — skip silently.
+        skipped++;
+        continue;
+      }
+      const reservedRowId = reserved[0].id;
+
+      let result: SendResult;
+      try {
+        if (channel === "sms") {
+          // Bulk SMS is DLT-only: always via the campaign's approved MSG91 Flow
+          // template id — never the legacy raw-text path.
+          result = await sendSmsViaFlowBulk(r.phone, opts.flowTemplateId!, opts.templateVars);
+        } else {
+          result = await sendWhatsApp({
+            phone: r.phone,
+            templateName: opts.templateName!,
+            bodyValues: opts.templateVars,
+          });
+        }
+      } catch (e) {
+        result = { ok: false, error: String((e as Error)?.message ?? e).slice(0, 300) };
+      }
+
+      const status = result.skipped ? "skipped" : result.ok ? "sent" : "failed";
+      if (status === "sent") sent++;
+      else if (status === "skipped") skipped++;
+      else failed++;
+
+      // Fold the real per-recipient outcome onto the reserved dedupe row (keeps
+      // the dedupe key unique — never a second row for this campaign+recipient)
+      // and mirror the loud console logging logNotifications does.
+      logBulkOutcome(r.userId, channel, template, status, result.error ?? result.meta);
+      await db
+        .update(notificationLogsTable)
+        .set({ status, error: (result.error ?? result.meta ?? null)?.slice(0, 500) ?? null })
+        .where(eq(notificationLogsTable.id, reservedRowId))
+        .catch(() => {});
+
+      // Live progress every batch so the admin panel can poll counts.
+      if ((i + 1) % 10 === 0) {
+        await db
+          .update(smsCampaignsTable)
+          .set({ sentCount: sent, failedCount: failed, skippedCount: skipped })
+          .where(eq(smsCampaignsTable.id, campaignId))
+          .catch(() => {});
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, BULK_PER_MSG_DELAY_MS));
+      if ((i + 1) % BULK_BATCH_SIZE === 0) {
+        await new Promise((resolve) => setTimeout(resolve, BULK_BATCH_DELAY_MS));
+      }
+    }
+    await db
+      .update(smsCampaignsTable)
+      .set({
+        sentCount: sent,
+        failedCount: failed,
+        skippedCount: skipped,
+        status: sent > 0 ? "sent" : "failed",
+        completedAt: new Date(),
+      })
+      .where(eq(smsCampaignsTable.id, campaignId));
+    logger.info({ campaignId, channel, sent, failed, skipped }, "bulk campaign finished");
+  } catch (e) {
+    logger.error({ err: e, campaignId }, "bulk campaign crashed");
+    await db
+      .update(smsCampaignsTable)
+      .set({ sentCount: sent, failedCount: failed, skippedCount: skipped, status: "failed", completedAt: new Date() })
+      .where(eq(smsCampaignsTable.id, campaignId))
+      .catch(() => {});
+  }
+}
+
+/** Send one bulk SMS through a DLT-approved MSG91 Flow template. Mirrors the
+ *  Flow API call in lib/sms.ts — kept here so bulk sends always go through an
+ *  explicit per-campaign Flow id and never the legacy raw-text path. */
+async function sendSmsViaFlowBulk(
+  phone: string,
+  templateId: string,
+  vars: string[],
+): Promise<{ ok: boolean; error?: string; skipped?: boolean }> {
+  const AUTH_KEY = process.env.MSG91_AUTH_KEY;
+  if (!AUTH_KEY) {
+    return { ok: false, skipped: true, error: "MSG91_AUTH_KEY not configured on this server" };
+  }
+  const recipient: Record<string, string> = { mobiles: `91${phone}` };
+  vars.forEach((v, i) => { recipient[`var${i + 1}`] = v; });
+  try {
+    const resp = await fetch("https://control.msg91.com/api/v5/flow/", {
+      method: "POST",
+      headers: { authkey: AUTH_KEY, "content-type": "application/json" },
+      body: JSON.stringify({ template_id: templateId, short_url: "0", recipients: [recipient] }),
+      signal: AbortSignal.timeout(30_000),
+    });
+    const raw = await resp.text();
+    let data: { type?: string; message?: string } = {};
+    try { data = JSON.parse(raw); } catch { /* non-JSON error body */ }
+    if (resp.ok && data.type === "success") return { ok: true };
+    return { ok: false, error: `MSG91 Flow: ${(data.message || raw).slice(0, 280)}` };
+  } catch (e) {
+    return { ok: false, error: String((e as Error)?.message ?? e).slice(0, 300) };
+  }
+}
+
+router.post("/sms-campaigns/send", requireAdmin, async (req, res) => {
+  const parsed = bulkSendBody.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.issues[0]?.message ?? "Invalid payload" });
+    return;
+  }
+  const d = parsed.data;
+
+  // Channel-specific required fields.
+  if (d.channel === "sms" && !d.flowTemplateId) {
+    res.status(400).json({ error: "A MSG91 Flow Template ID is required for bulk SMS (DLT compliance)" });
+    return;
+  }
+  if (d.channel === "whatsapp" && !d.templateName) {
+    res.status(400).json({ error: "Pick a WhatsApp template for the campaign" });
+    return;
+  }
+
+  try {
+    // For WhatsApp, the template must exist in the registry.
+    if (d.channel === "whatsapp") {
+      const [tpl] = await db
+        .select({ id: whatsappTemplatesTable.id })
+        .from(whatsappTemplatesTable)
+        .where(eq(whatsappTemplatesTable.name, d.templateName!))
+        .limit(1);
+      if (!tpl) {
+        res.status(400).json({ error: `WhatsApp template "${d.templateName}" not found` });
+        return;
+      }
+    }
+
+    // One bulk campaign of this channel at a time — guard double-submits.
+    const [inFlight] = await db
+      .select({ id: smsCampaignsTable.id })
+      .from(smsCampaignsTable)
+      .where(and(eq(smsCampaignsTable.channel, d.channel), eq(smsCampaignsTable.status, "sending")))
+      .limit(1);
+    if (inFlight) {
+      res.status(409).json({ error: "Another campaign on this channel is still sending — wait for it to finish" });
+      return;
+    }
+
+    const recipients = await resolvePhoneAudience(d.audience);
+    if (recipients.length === 0) {
+      res.status(400).json({ error: "Audience is empty (or no recipients have a phone) — nothing to send" });
+      return;
+    }
+
+    // ── SAFETY GATE: outside production (and without BULK_MESSAGING_ENABLED=1)
+    // run DRY — record what we WOULD send, call no provider, write no
+    // per-recipient notification rows. ──
+    if (!bulkMessagingEnabled()) {
+      const [row] = await db
+        .insert(smsCampaignsTable)
+        .values({
+          channel: d.channel,
+          name: d.name,
+          body: d.body,
+          flowTemplateId: d.channel === "sms" ? d.flowTemplateId ?? null : null,
+          templateName: d.channel === "whatsapp" ? d.templateName ?? null : null,
+          templateVars: d.templateVars,
+          audience: d.audience,
+          status: "dry_run",
+          totalRecipients: recipients.length,
+          dryRun: 1,
+          completedAt: new Date(),
+        })
+        .returning();
+      logger.warn(
+        { campaignId: row!.id, channel: d.channel, wouldSend: recipients.length },
+        "bulk campaign DRY RUN — nothing sent (BULK_MESSAGING_ENABLED not set outside production)",
+      );
+      res.json({ success: true, dryRun: true, campaign: row });
+      return;
+    }
+
+    const [row] = await db
+      .insert(smsCampaignsTable)
+      .values({
+        channel: d.channel,
+        name: d.name,
+        body: d.body,
+        flowTemplateId: d.channel === "sms" ? d.flowTemplateId ?? null : null,
+        templateName: d.channel === "whatsapp" ? d.templateName ?? null : null,
+        templateVars: d.templateVars,
+        audience: d.audience,
+        status: "sending",
+        totalRecipients: recipients.length,
+      })
+      .returning();
+
+    // Fire-and-forget background loop — respond immediately so proxy/browser
+    // timeouts can't kill a long send.
+    void runBulkCampaign(
+      row!.id,
+      d.channel,
+      { flowTemplateId: d.flowTemplateId, templateName: d.templateName, templateVars: d.templateVars, body: d.body },
+      recipients,
+    );
+
+    res.json({ success: true, dryRun: false, campaign: row });
+  } catch (e) {
+    logger.error({ err: e }, "bulk campaign start failed");
     res.status(500).json({ error: "Failed to start campaign" });
   }
 });

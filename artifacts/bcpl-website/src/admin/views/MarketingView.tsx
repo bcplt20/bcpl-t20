@@ -3,9 +3,12 @@ import {
   getMarketingFunnel, listReferrals, createReferral, updateReferral, deleteReferral,
   listCampaigns, createCampaign, updateCampaign, deleteCampaign,
   listEmailCampaigns, previewAudience, sendTestEmail, sendEmailCampaign, referralLink,
+  listSmsCampaigns, previewPhoneAudience, sendBulkCampaign,
   type FunnelData, type ReferralStat, type Campaign, type EmailCampaign, type AudienceStage,
+  type SmsCampaign, type BulkChannel,
   adminGetAbandoned, type AbandonedRow,
 } from "@/lib/marketingApi";
+import { listWaTemplates, type WaTemplate } from "@/lib/adminToolsApi";
 
 /* ── Shared UI helpers ── */
 function Modal({ onClose, children }: { onClose: () => void; children: React.ReactNode }) {
@@ -65,6 +68,7 @@ function StatusChip({ status }: { status: string }) {
   const map: Record<string, [string, string]> = {
     sending: ["#78350F", "#FBBF24"], sent: ["#14532D", "#4ADE80"], failed: ["#7F1D1D", "#FCA5A5"],
     active: ["#14532D", "#4ADE80"], paused: ["#78350F", "#FBBF24"], completed: ["#1E293B", "#94A3B8"],
+    dry_run: ["#1E3A8A", "#93C5FD"],
   };
   const [bg, fg] = map[status] ?? ["#1E293B", "#94A3B8"];
   return <span style={{ background: bg, color: fg, borderRadius: 20, padding: "3px 10px", fontSize: 11, fontWeight: 800 }}>{status.toUpperCase()}</span>;
@@ -124,7 +128,7 @@ function AbandonedSection() {
 }
 
 export default function MarketingView() {
-  const [tab, setTab] = useState<"funnel" | "referrals" | "platforms" | "campaigns" | "email">("funnel");
+  const [tab, setTab] = useState<"funnel" | "referrals" | "platforms" | "campaigns" | "email" | "messaging">("funnel");
   const [funnel, setFunnel] = useState<FunnelData | null>(null);
   const [referrals, setReferrals] = useState<ReferralStat[]>([]);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
@@ -277,6 +281,85 @@ export default function MarketingView() {
     finally { setSendBusy(false); }
   };
 
+  /* ── Bulk SMS / WhatsApp composer state ── */
+  const [msgs, setMsgs] = useState<SmsCampaign[]>([]);
+  const [bulkEnabled, setBulkEnabled] = useState(true);
+  const [waTemplates, setWaTemplates] = useState<WaTemplate[]>([]);
+  const [smChannel, setSmChannel] = useState<BulkChannel>("sms");
+  const [smName, setSmName] = useState("");
+  const [smBody, setSmBody] = useState("");
+  const [smFlowId, setSmFlowId] = useState("");
+  const [smTemplate, setSmTemplate] = useState("");
+  const [smVars, setSmVars] = useState("");
+  const [smStage, setSmStage] = useState<AudienceStage>("all");
+  const [smCity, setSmCity] = useState("");
+  const [smPreview, setSmPreview] = useState<null | { total: number; sample: { name: string; phone: string }[] }>(null);
+  const [smPreviewBusy, setSmPreviewBusy] = useState(false);
+  const [smSendBusy, setSmSendBusy] = useState(false);
+  const [smMsg, setSmMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
+
+  const refreshMessaging = useCallback(() => {
+    listSmsCampaigns().then(d => { setMsgs(d.campaigns); setBulkEnabled(d.bulkEnabled); }).catch(() => {});
+  }, []);
+  useEffect(() => {
+    if (tab !== "messaging") return;
+    refreshMessaging();
+    listWaTemplates().then(d => setWaTemplates(d.templates)).catch(() => {});
+  }, [tab, refreshMessaging]);
+
+  // Poll while any bulk campaign is still sending
+  const anyMsgSending = msgs.some(m => m.status === "sending");
+  useEffect(() => {
+    if (tab !== "messaging" || !anyMsgSending) return;
+    const iv = setInterval(refreshMessaging, 3000);
+    return () => clearInterval(iv);
+  }, [tab, anyMsgSending, refreshMessaging]);
+
+  // Any audience change invalidates the previous preview count.
+  const smAudKey = `${smStage}|${smCity}`;
+  const smPrevKey = useRef(smAudKey);
+  useEffect(() => {
+    if (smPrevKey.current !== smAudKey) { smPrevKey.current = smAudKey; setSmPreview(null); }
+  }, [smAudKey]);
+
+  const smParsedVars = () => smVars.split("|").map(v => v.trim()).filter(Boolean);
+
+  const doSmPreview = async () => {
+    setSmPreviewBusy(true); setSmMsg(null);
+    try { setSmPreview(await previewPhoneAudience({ stage: smStage, city: smCity || undefined })); }
+    catch (e: any) { setSmMsg({ kind: "err", text: e.message ?? "Preview failed" }); }
+    finally { setSmPreviewBusy(false); }
+  };
+
+  const doSmSend = async () => {
+    if (!smName.trim()) { setSmMsg({ kind: "err", text: "Give the campaign a name" }); return; }
+    if (smChannel === "sms" && !smFlowId.trim()) { setSmMsg({ kind: "err", text: "A MSG91 Flow Template ID is required for bulk SMS (DLT)" }); return; }
+    if (smChannel === "whatsapp" && !smTemplate) { setSmMsg({ kind: "err", text: "Pick a WhatsApp template" }); return; }
+    let total = smPreview?.total;
+    if (total === undefined) {
+      try { total = (await previewPhoneAudience({ stage: smStage, city: smCity || undefined })).total; }
+      catch { total = undefined; }
+    }
+    const dryNote = bulkEnabled ? "" : "\n\n(Dry-run mode: nothing will actually be sent — server is not in send mode.)";
+    if (!confirm(`Send this ${smChannel === "sms" ? "SMS" : "WhatsApp message"} to ${total ?? "all matching"} recipient(s)? This cannot be undone.${dryNote}`)) return;
+    setSmSendBusy(true); setSmMsg(null);
+    try {
+      const r = await sendBulkCampaign({
+        channel: smChannel,
+        name: smName,
+        body: smBody,
+        flowTemplateId: smChannel === "sms" ? smFlowId : undefined,
+        templateName: smChannel === "whatsapp" ? smTemplate : undefined,
+        templateVars: smParsedVars(),
+        audience: { stage: smStage, city: smCity || undefined },
+      });
+      setSmName(""); setSmBody(""); setSmVars(""); setSmPreview(null);
+      setSmMsg({ kind: "ok", text: r.dryRun ? "Dry-run recorded — nothing sent (server not in send mode). See history below." : "Campaign started — live progress below." });
+      refreshMessaging();
+    } catch (e: any) { setSmMsg({ kind: "err", text: e.message ?? "Send failed" }); }
+    finally { setSmSendBusy(false); }
+  };
+
   /* ── Render ── */
   if (loading) return <div style={{ color: "#64748B", padding: 40, fontSize: 14 }}>Loading marketing data…</div>;
   if (error) return (
@@ -323,6 +406,7 @@ export default function MarketingView() {
         <TabBtn id="platforms" label="📱 Platforms" />
         <TabBtn id="campaigns" label="📣 Ad Campaigns" />
         <TabBtn id="email" label="✉️ Email" />
+        <TabBtn id="messaging" label="💬 SMS / WhatsApp" />
       </div>
 
       {/* ═══ FUNNEL ═══ */}
@@ -564,6 +648,123 @@ export default function MarketingView() {
                       {ec.status === "sending"
                         ? <>Sending… <b style={{ color: "#FBBF24" }}>{ec.sentCount + ec.failedCount}</b> / {ec.totalRecipients}</>
                         : <>Delivered <b style={{ color: "#4ADE80" }}>{ec.sentCount}</b>{ec.failedCount > 0 && <> · Failed <b style={{ color: "#FCA5A5" }}>{ec.failedCount}</b></>} / {ec.totalRecipients}</>}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══ SMS / WHATSAPP ═══ */}
+      {tab === "messaging" && (
+        <div style={{ display: "grid", gridTemplateColumns: "minmax(380px, 1.15fr) minmax(320px, 1fr)", gap: 16, alignItems: "start" }}>
+          {/* Composer */}
+          <div style={card}>
+            <div style={{ fontSize: 14, fontWeight: 800, color: "#F1F5F9", marginBottom: 14 }}>New SMS / WhatsApp Campaign</div>
+
+            {!bulkEnabled && (
+              <div style={{ background: "#1E3A8A22", border: "1px solid #3B82F655", borderRadius: 10, padding: "10px 12px", marginBottom: 14, fontSize: 12, color: "#93C5FD" }}>
+                🧪 <b>Dry-run mode</b> — this environment is not set to send. Sends are recorded with a would-send count but no SMS/WhatsApp is delivered. Set <code>BULK_MESSAGING_ENABLED=1</code> (or run in production) to send for real.
+              </div>
+            )}
+
+            <Field label="Channel">
+              <div style={{ display: "flex", gap: 8 }}>
+                {(["sms", "whatsapp"] as BulkChannel[]).map(ch => (
+                  <button key={ch} onClick={() => { setSmChannel(ch); setSmMsg(null); }}
+                    style={{ flex: 1, ...(smChannel === ch ? btnPrimary : btnGhost), padding: "9px 0" }}>
+                    {ch === "sms" ? "📱 SMS (MSG91 Flow)" : "💬 WhatsApp (Interakt)"}
+                  </button>
+                ))}
+              </div>
+            </Field>
+
+            <Field label="Campaign name (internal)"><input style={inp} value={smName} onChange={e => setSmName(e.target.value)} placeholder="e.g. Phase 2 dates — Delhi" /></Field>
+
+            {smChannel === "sms" ? (
+              <>
+                <Field label="MSG91 Flow Template ID * (DLT-approved marketing flow)">
+                  <input style={{ ...inp, fontFamily: "monospace" }} value={smFlowId} onChange={e => setSmFlowId(e.target.value)} placeholder="e.g. 66a1f0e2d6fc0512ab3c4567" />
+                </Field>
+                <div style={{ fontSize: 11.5, color: "#64748B", margin: "-6px 0 14px" }}>
+                  Bulk SMS is sent only through an approved MSG91 marketing Flow template — no raw-text sends. Template variables map to var1, var2… below.
+                </div>
+              </>
+            ) : (
+              <Field label="WhatsApp template *">
+                <select style={sel} value={smTemplate} onChange={e => setSmTemplate(e.target.value)}>
+                  <option value="">— pick a template —</option>
+                  {waTemplates.map(t => <option key={t.id} value={t.name}>{t.name}{t.status !== "approved" ? ` (${t.status})` : ""}</option>)}
+                </select>
+              </Field>
+            )}
+
+            <Field label="Template variables (optional — separate with |, maps to var1, var2…)">
+              <input style={inp} value={smVars} onChange={e => setSmVars(e.target.value)} placeholder="e.g. Delhi | 15 Aug" />
+            </Field>
+
+            <Field label="Message preview / reference (not sent — the approved template text is delivered)">
+              <textarea style={{ ...inp, minHeight: 90, resize: "vertical", fontFamily: "inherit" }} value={smBody} onChange={e => setSmBody(e.target.value)} placeholder="For your own reference — the DLT/Interakt-approved template body is what actually goes out." />
+            </Field>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <Field label="Audience">
+                <select style={sel} value={smStage} onChange={e => setSmStage(e.target.value as AudienceStage)}>
+                  {(Object.keys(STAGE_LABELS) as AudienceStage[]).map(s => <option key={s} value={s}>{STAGE_LABELS[s]}</option>)}
+                </select>
+              </Field>
+              <Field label="Trial City">
+                <select style={sel} value={smCity} onChange={e => setSmCity(e.target.value)}>
+                  <option value="">All cities</option>
+                  {(funnel?.cities ?? []).map(ct => <option key={ct} value={ct}>{ct}</option>)}
+                </select>
+              </Field>
+            </div>
+
+            <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 14 }}>
+              <button style={btnGhost} onClick={doSmPreview} disabled={smPreviewBusy}>{smPreviewBusy ? "Counting…" : "👥 Preview audience"}</button>
+              {smPreview && (
+                <div style={{ fontSize: 12, color: "#94A3B8" }}>
+                  <b style={{ color: "#F1F5F9" }}>{smPreview.total}</b> recipient(s) with a phone
+                  {smPreview.sample.length > 0 && <span style={{ color: "#475569" }}> — e.g. {smPreview.sample.map(s => s.name).slice(0, 3).join(", ")}</span>}
+                </div>
+              )}
+            </div>
+
+            <button
+              style={{ ...btnPrimary, width: "100%", padding: "13px", opacity: smName.trim() && !smSendBusy ? 1 : .45, cursor: smName.trim() ? "pointer" : "not-allowed" }}
+              disabled={!smName.trim() || smSendBusy}
+              onClick={doSmSend}>
+              {smSendBusy ? "Starting…" : bulkEnabled ? "🚀 Send to audience" : "🧪 Record dry-run"}
+            </button>
+            {smMsg && <div style={{ fontSize: 12, color: smMsg.kind === "ok" ? "#4ADE80" : "#FCA5A5", marginTop: 10 }}>{smMsg.kind === "ok" ? "✓ " : "⚠ "}{smMsg.text}</div>}
+          </div>
+
+          {/* History */}
+          <div style={card}>
+            <div style={{ fontSize: 14, fontWeight: 800, color: "#F1F5F9", marginBottom: 14 }}>Sent Campaigns</div>
+            {msgs.length === 0 && <div style={{ fontSize: 13, color: "#475569" }}>No SMS / WhatsApp campaigns yet.</div>}
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {msgs.map(mc => {
+                const aud = mc.audience ?? {};
+                const audLabel = `${STAGE_LABELS[(aud.stage as AudienceStage) ?? "all"] ?? aud.stage}${aud.city ? ` · ${aud.city}` : ""}`;
+                return (
+                  <div key={mc.id} style={{ background: "#060B18", border: "1px solid #1E293B", borderRadius: 12, padding: 14 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", gap: 10, alignItems: "flex-start" }}>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9" }}>
+                        {mc.channel === "sms" ? "📱" : "💬"} {mc.name}
+                      </div>
+                      <StatusChip status={mc.status} />
+                    </div>
+                    <div style={{ fontSize: 11, color: "#64748B", margin: "6px 0" }}>{audLabel} · {dt(mc.createdAt)}</div>
+                    <div style={{ fontSize: 12, color: "#94A3B8" }}>
+                      {mc.status === "dry_run"
+                        ? <>Dry-run — <b style={{ color: "#93C5FD" }}>{mc.totalRecipients}</b> would-send (nothing sent)</>
+                        : mc.status === "sending"
+                        ? <>Sending… <b style={{ color: "#FBBF24" }}>{mc.sentCount + mc.failedCount + mc.skippedCount}</b> / {mc.totalRecipients}</>
+                        : <>Delivered <b style={{ color: "#4ADE80" }}>{mc.sentCount}</b>{mc.failedCount > 0 && <> · Failed <b style={{ color: "#FCA5A5" }}>{mc.failedCount}</b></>}{mc.skippedCount > 0 && <> · Skipped <b style={{ color: "#94A3B8" }}>{mc.skippedCount}</b></>} / {mc.totalRecipients}</>}
                     </div>
                   </div>
                 );

@@ -26,6 +26,7 @@ export * from "./referral_signups";
 export * from "./referral_rewards";
 export * from "./marketing_campaigns";
 export * from "./email_campaigns";
+export * from "./sms_campaigns";
 // Phase 1 AI evaluation pipeline
 export * from "./phase1_evaluations";
 export * from "./ai_evaluation_passes";

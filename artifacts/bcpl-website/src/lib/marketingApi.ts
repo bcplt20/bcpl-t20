@@ -178,6 +178,47 @@ export const sendEmailCampaign = (data: {
   testedEmail: string;
 }) => adminReq<{ success: boolean; campaign: EmailCampaign }>("POST", "/marketing/email-campaigns/send", data);
 
+/* ─── Admin: bulk SMS / WhatsApp campaigns ── */
+
+export type BulkChannel = "sms" | "whatsapp";
+
+export type SmsCampaign = {
+  id: string;
+  channel: BulkChannel;
+  name: string;
+  body: string;
+  flowTemplateId: string | null;
+  templateName: string | null;
+  templateVars: string[];
+  audience: { stage?: AudienceStage; city?: string };
+  status: "sending" | "sent" | "failed" | "dry_run" | string;
+  totalRecipients: number;
+  sentCount: number;
+  failedCount: number;
+  skippedCount: number;
+  dryRun: number;
+  createdAt: string;
+  completedAt: string | null;
+};
+
+export const listSmsCampaigns = () =>
+  adminReq<{ campaigns: SmsCampaign[]; bulkEnabled: boolean }>("GET", "/marketing/sms-campaigns");
+
+export const previewPhoneAudience = (audience: { stage: AudienceStage; city?: string }) =>
+  adminReq<{ total: number; sample: { name: string; phone: string }[]; bulkEnabled: boolean }>(
+    "POST", "/marketing/sms-campaigns/preview", audience);
+
+export const sendBulkCampaign = (data: {
+  channel: BulkChannel;
+  name: string;
+  body?: string;
+  flowTemplateId?: string;
+  templateName?: string;
+  templateVars?: string[];
+  audience: { stage: AudienceStage; city?: string };
+}) => adminReq<{ success: boolean; dryRun: boolean; campaign: SmsCampaign }>(
+  "POST", "/marketing/sms-campaigns/send", data);
+
 
 /* ─── Abandoned registrations (registration recovery segment) ── */
 export interface AbandonedRow {
