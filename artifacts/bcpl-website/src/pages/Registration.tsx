@@ -11,7 +11,7 @@ import { getDraftKey, queueDraftSave, flushDraftSave, resumeDraft } from '@/lib/
 import { CONSENT_VERSIONS } from '../lib/legalMeta';
 import { useLang } from '../lib/i18n';
 import { useFees, withGst } from '../lib/fees';
-import { IcoBat, IcoBall, IcoShield, IcoStar, IcoPen, IcoVideo, IcoClock, IcoStadium, IcoScale, IcoTrophy, IcoCheck, IcoSearch, IcoPin, IcoLock, IcoRupee, IcoList, IcoHourglass, IcoInfo, IcoChat, IcoCard, IcoWarn } from '../lib/icons';
+import { IcoBat, IcoBall, IcoShield, IcoStar, IcoPen, IcoVideo, IcoClock, IcoStadium, IcoScale, IcoTrophy, IcoCheck, IcoSearch, IcoPin, IcoLock, IcoRupee, IcoList, IcoHourglass, IcoInfo, IcoChat, IcoWarn } from '../lib/icons';
 
 /*
   BCPL T20 — Bhartiya Corporate Premier League

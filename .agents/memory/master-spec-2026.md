@@ -39,3 +39,12 @@ Spec file: `attached_assets/Pasted-BCPLT20-COM-FINAL-PRODUCTION-FINISHING-UI-UX-
 - **Rank semantics (server `computeRanks`):** cityRank = within city ALL roles; roleRank = within city SAME role (NOT national). Any rank label must name the cohort explicitly ("Delhi Rank — All Roles", "Delhi Batsman Rank").
 - **assessmentSubmitted truth = `trial_evaluations` (status submitted), NOT `physical_assessments`** (that table is only the legacy admin bridge).
 - Evidence pattern for authed-page verification: see player-ui-auth-testing.md.
+
+
+## Third spec — finishing wave 2 (session of 24 Jul 2026)
+- §36 DONE: pictorial emoji fully swept from public UI (~34 files). Shared icon lib now at `bcpl-website/src/lib/icons.tsx` (~55 stroke-SVG exports) — ALL public pages import from it; NEVER define per-page icon components again. Only intentional emoji left: WhatsApp share-message strings (5 lines) — message content, keep.
+- Emoji-scan recipe UPGRADED: old ranges missed ⏱(U+2300-23FF) and ⬇(U+2B00-2BFF); scan must cover 1F000-1FAFF, 2300-23FF, 2600-26FF, 2700-27BF, 2B00-2BFF and whitelist glyphs ✓✔✕✗☰. Bare ⚠ renders as colored emoji on mobile — treat as pictorial (→IcoWarn).
+- Print-HTML receipt templates + share-card canvas: React icon components CANNOT go inside document.write/template-string HTML — plain text or ✓ glyph only.
+- §42 DONE (lazy loading="lazy" decoding="async" on below-fold img grids; skipped hero/LCP imgs). §5 DONE (tabular-nums on rank chips + trial-slot cells). §45 label align DONE (wicketkeeper_batsman → 'Wicketkeeper' web+server both).
+- /trial-pass response contract pinned by api-server/src/routes/trials.trialPass.test.ts (express ephemeral port + fetch pattern — first HTTP-style route test in the suite; copy it for future route contracts).
+- Still open: §30 full page redesigns (deferred), §42 LCP/CLS measurement, §46 full A–L matrix, §49 prod verification (blocked until owner deploys EC2).

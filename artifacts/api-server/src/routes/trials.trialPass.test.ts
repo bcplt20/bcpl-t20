@@ -24,8 +24,9 @@ import { signToken } from "../lib/auth";
 import { userTrialsRouter } from "./trials";
 
 const suffix = crypto.randomBytes(5).toString("hex");
-const PHONE_A = `0000${(Date.now() % 1_000_000_00)}1`.slice(0, 13); // impossible (leading 0000) — never routable
-const PHONE_B = `0000${(Date.now() % 1_000_000_00)}2`.slice(0, 13);
+const rand9 = String(crypto.randomInt(100_000_000, 999_999_999)); // crypto-derived — parallel-run safe
+const PHONE_A = `0000${rand9}1`; // impossible (leading 0000) — never routable
+const PHONE_B = `0000${rand9}2`;
 
 let server: Server;
 let base = "";

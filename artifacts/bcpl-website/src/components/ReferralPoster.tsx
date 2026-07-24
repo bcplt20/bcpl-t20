@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { IcoImage, IcoChat, IcoDownload } from '../lib/icons';
+import { IcoImage, IcoChat } from '../lib/icons';
 
 /**
  * Ready-made shareable referral poster (Task #56).
