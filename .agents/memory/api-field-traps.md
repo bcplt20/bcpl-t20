@@ -20,3 +20,8 @@ Older rows store display strings ("Batsman", "All-Rounder"); newer rows store ke
 
 ## Payment "paid" contract
 - phase1_payments / phase2_payments `status` has a legacy value `"paid"` alongside `"success"`. EVERY paid-check must treat both as paid (see `PAID_ROW` / `PAID` sets in admin routes). A `=== "success"` check silently marks legacy payers as unpaid.
+
+## Status vocabulary — never invent, always grep
+New status-dependent logic MUST use the canonical literals already in the codebase.
+**Why:** a next-action endpoint written with invented statuses (`video_uploaded`, `kyc_approved`) silently misrouted real users — the canonical values are `video_submitted` (phase1) and `kyc_done` (phase2); kyc_records.status is `pending|verified|failed` (NOT rejected). Cost a failed review round.
+**How to apply:** before writing any `status ===` branch, `grep -rh "<column>" src | grep -o "'[a-z_]*'"` to extract the real vocabulary; tests/nextAction.test.ts locks the journey matrix.

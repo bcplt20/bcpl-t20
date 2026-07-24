@@ -19,7 +19,7 @@
 - [SEO meta serving](seo-meta-serving.md) — prod HTML is static via nginx; crawler-visible meta/OG/GSC must go through the Express HTML injector, not React; public/ files shadow Express routes
 - [S3 media library](s3-media-library.md) — media/ prefix private: display only via presigned viewUrl (1h); dev-origin PUTs DO pass CORS; keep confirm-key/CSV-formula/delete-abort guards
 - [Live scoring flow](scoring-flow.md) — client engine mirrors server /ball exactly (LB/B legal); finalization gated on ball persistence; /xi = clean restart (wipes innings); /innings-end idempotent
-- [API field-name traps](api-field-traps.md) — drizzle camelCase responses; zod .datetime() needs toISOString; registrations.role has 2 historic formats (bat/Batsman) — normalise on read
+- [API field & status traps](api-field-traps.md) — drizzle camelCase; zod .datetime() needs toISOString; role has 2 historic formats; never invent status strings — grep canonical vocab first
 - [Cashfree verification](cashfree-verification.md) — CF_VERIFY_* creds separate from payment keys, prod-only (dev = stub mode); "service unavailable" 502 = payload bug until proven otherwise
 - [V3 design language](v3-design-language.md) — PARTLY SUPERSEDED by 2026 master spec (premium look, no childish graphics; emoji sweep pending); internal links = wouter Link only; audit-grep patterns
 - [Copy compliance rules](copy-compliance-rules.md) — no scout/BCCI/superlative/absolute-promise copy anywhere; 48h result, 30–60s video, 15-day window; grep gate for every new template/page
