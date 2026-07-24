@@ -158,7 +158,7 @@ export function Videos() {
               <div style={{fontSize:48,marginBottom:16}}>📹</div>
               <h3 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,color:'rgba(255,255,255,0.7)',marginBottom:10}}>{t("No videos yet","अभी कोई videos नहीं")}</h3>
               <p style={{color:'rgba(255,255,255,0.4)',fontSize:15,fontFamily:'Inter,sans-serif',maxWidth:400,margin:'0 auto 24px',lineHeight:1.6}}>{t("Match highlights and event videos will appear here once the season begins.","Match highlights और event videos season शुरू होने पर यहां दिखेंगे।")}</p>
-              <a href="https://www.youtube.com/@bcplt20" target="_blank" rel="noopener noreferrer" style={{display:'inline-flex',alignItems:'center',gap:8,padding:'14px 32px',borderRadius:14,background:'#FF0000',border:'none',color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,cursor:'pointer',textDecoration:'none',letterSpacing:'0.02em'}}>
+              <a href="https://www.youtube.com/@bcplt20league" target="_blank" rel="noopener noreferrer" style={{display:'inline-flex',alignItems:'center',gap:8,padding:'14px 32px',borderRadius:14,background:'#FF0000',border:'none',color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,cursor:'pointer',textDecoration:'none',letterSpacing:'0.02em'}}>
                 <span>▶</span> {t("Subscribe to BCPL TV","BCPL TV Subscribe करें")}
               </a>
             </div>
@@ -203,10 +203,10 @@ export function Videos() {
             <h3 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,color:'#fff',marginBottom:6}}>{t("Subscribe to BCPL TV","BCPL TV Subscribe करें")}</h3>
             <div style={{color:'rgba(255,255,255,0.4)',fontSize:14,marginBottom:24,fontFamily:'Inter,sans-serif'}}>{t("23K subscribers · New videos every match day","23K subscribers · हर match day नई videos")}</div>
             <div style={{display:'flex',gap:14,justifyContent:'center',flexWrap:'wrap'}}>
-              <a href="https://www.youtube.com/@bcplt20" target="_blank" rel="noopener noreferrer" style={{padding:'14px 36px',borderRadius:14,background:'#FF0000',border:'none',color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,cursor:'pointer',display:'flex',alignItems:'center',gap:8,letterSpacing:'0.02em',textDecoration:'none'}}>
+              <a href="https://www.youtube.com/@bcplt20league" target="_blank" rel="noopener noreferrer" style={{padding:'14px 36px',borderRadius:14,background:'#FF0000',border:'none',color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,cursor:'pointer',display:'flex',alignItems:'center',gap:8,letterSpacing:'0.02em',textDecoration:'none'}}>
                 <span>▶</span> {t("Subscribe","Subscribe")}
               </a>
-              <a href="https://www.youtube.com/@bcplt20?sub_confirmation=1" target="_blank" rel="noopener noreferrer" style={{padding:'14px 28px',borderRadius:14,background:'rgba(255,255,255,0.06)',border:'1.5px solid rgba(255,255,255,0.15)',color:'rgba(255,255,255,0.7)',fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:15,cursor:'pointer',textDecoration:'none',display:'inline-flex',alignItems:'center',gap:8}}>
+              <a href="https://www.youtube.com/@bcplt20league?sub_confirmation=1" target="_blank" rel="noopener noreferrer" style={{padding:'14px 28px',borderRadius:14,background:'rgba(255,255,255,0.06)',border:'1.5px solid rgba(255,255,255,0.15)',color:'rgba(255,255,255,0.7)',fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:15,cursor:'pointer',textDecoration:'none',display:'inline-flex',alignItems:'center',gap:8}}>
                 🔔 {t("Enable Alerts","Alerts चालू करें")}
               </a>
             </div>

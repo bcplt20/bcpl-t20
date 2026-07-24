@@ -159,9 +159,9 @@ export function Photos() {
             <p style={{color:'rgba(255,255,255,0.5)',fontSize:14,lineHeight:1.7,maxWidth:460,margin:'0 auto 22px',fontFamily:'Inter,sans-serif'}}>
               {t("Auction highlight videos are being edited. Match day and trial galleries will keep growing through the season.","Auction की highlight videos edit हो रही हैं। Match day और trial galleries season के साथ बढ़ती रहेंगी।")}
             </p>
-            <a href="https://www.instagram.com/bcplt20" target="_blank" rel="noopener noreferrer"
+            <a href="https://www.instagram.com/bcpl.t20" target="_blank" rel="noopener noreferrer"
               style={{display:'inline-flex',alignItems:'center',gap:10,padding:'12px 28px',borderRadius:14,background:'linear-gradient(135deg,#E1306C,#F77737,#FCAF45)',border:'none',color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:13,cursor:'pointer',letterSpacing:'0.02em',textDecoration:'none'}}>
-              {t("Follow @bcplt20 for Updates","@bcplt20 Follow करें")}
+              {t("Follow @bcpl.t20 for Updates","@bcpl.t20 Follow करें")}
             </a>
           </div>
         </div>
