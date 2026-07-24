@@ -5,6 +5,7 @@ import {
   adminGetSampleUploadUrl,
   type HomepageConfig,
 } from "../../lib/api";
+import { SEASON } from "../../lib/season";
 
 /**
  * Stage 6 — Homepage CMS.
@@ -282,12 +283,12 @@ export default function CMSView() {
           {numField("phase2FeeAllRounder", "Phase 2 — All-Rounder (₹)")}
           <div>
             <label style={lbl}>Prize Pool (text)</label>
-            <input value={cfg.prizePool ?? ""} placeholder="₹15 Cr+" style={inp}
+            <input value={cfg.prizePool ?? ""} placeholder={SEASON.prizePool} style={inp}
               onChange={e => setCfg(c => ({ ...c, prizePool: e.target.value }))} />
           </div>
           <div>
             <label style={lbl}>Auction Value (text)</label>
-            <input value={cfg.auctionValue ?? ""} placeholder="₹2L–₹20L" style={inp}
+            <input value={cfg.auctionValue ?? ""} placeholder={SEASON.playerValue} style={inp}
               onChange={e => setCfg(c => ({ ...c, auctionValue: e.target.value }))} />
           </div>
         </div>
@@ -316,7 +317,7 @@ export default function CMSView() {
       {/* Homepage stats */}
       <div style={card}>
         <div style={sectionTitle}>Homepage Stats</div>
-        <div style={sectionSub}>Up to 8 headline numbers (e.g. Cities → 50+).</div>
+        <div style={sectionSub}>{`Up to 8 headline numbers (e.g. Cities → ${SEASON.trialCities}).`}</div>
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {(cfg.stats ?? []).map((s, i) => (
             <div key={i} style={{ display: "flex", gap: 8 }}>

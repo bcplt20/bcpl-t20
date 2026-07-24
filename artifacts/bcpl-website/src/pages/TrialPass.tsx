@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'wouter';
 import { SiteHeader } from '../components/SiteHeader';
 import { BCPLFooter } from '../components/BCPLFooter';
+import { Skel, SkelRows } from '../components/Skel';
 import { useLang } from '../lib/i18n';
 import { openLoginModal } from '../lib/auth';
 import { getTrialPass, type TrialPassData } from '../lib/api';
@@ -106,8 +107,20 @@ export function TrialPass() {
         <div className="tp-wrap">
 
           {state === 'loading' && (
-            <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.5)', padding: '80px 0', font: '600 14px var(--font-body)' }}>
-              {t('Loading your trial pass…', 'आपका ट्रायल पास लोड हो रहा है…')}
+            <div role="status" aria-label={t('Loading…', 'लोड हो रहा है…')} className="tp-card" style={{ padding: 0, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.12)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '18px 20px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <Skel w={120} h={18} />
+                  <Skel w={80} h={12} />
+                </div>
+                <Skel w={80} h={30} r={8} />
+              </div>
+              <div style={{ padding: '26px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
+                <Skel w={200} h={200} r={12} />
+                <div style={{ width: '100%', maxWidth: 320 }}>
+                  <SkelRows n={3} />
+                </div>
+              </div>
             </div>
           )}
 

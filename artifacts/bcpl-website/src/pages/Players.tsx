@@ -3,6 +3,7 @@ import { Link } from 'wouter';
 import { SiteHeader } from '../components/SiteHeader';
 import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
 import { BCPLFooter } from '../components/BCPLFooter';
+import { Skel } from '../components/Skel';
 import { getTeams, getTeamDetail, type ApiTeam, type ApiTeamPlayer } from '../lib/api';
 import { useLang } from '../lib/i18n';
 import { IcoBat } from '../lib/icons';
@@ -170,8 +171,22 @@ export function Players() {
 
         {/* LOADING */}
         {loading && (
-          <div style={{ textAlign: "center", padding: "60px 0", color: "rgba(255,255,255,0.4)", fontFamily: "Inter,sans-serif", fontSize: 15 }}>
-            {t("Loading players…", "खिलाड़ी लोड हो रहे हैं…")}
+          <div role="status" aria-label={t("Loading…", "लोड हो रहा है…")} className="player-grid">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="player-card">
+                <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 14 }}>
+                  <Skel w={56} h={56} r={28} style={{ flexShrink: 0 }} />
+                  <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8 }}>
+                    <Skel w="70%" h={15} />
+                    <Skel w={60} h={16} r={6} />
+                  </div>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, paddingTop: 12, borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+                  <Skel w={20} h={20} r={10} style={{ flexShrink: 0 }} />
+                  <Skel w="50%" h={12} />
+                </div>
+              </div>
+            ))}
           </div>
         )}
 

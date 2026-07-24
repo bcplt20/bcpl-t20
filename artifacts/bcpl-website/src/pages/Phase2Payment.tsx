@@ -3,6 +3,7 @@ import { Link, useLocation } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { getRegistrationStatus, getMe, createPhase2Payment } from '../lib/api';
+import { FALLBACK_FEES } from '../lib/fees';
 import { useLang } from '../lib/i18n';
 import { IcoBat, IcoCheck, IcoLock, IcoShield, IcoUsers, IcoWarn } from '../lib/icons';
 
@@ -16,7 +17,7 @@ export function Phase2Payment() {
   const [role, setRole]             = useState('');
   const [city, setCity]             = useState('');
   const [regId, setRegId]           = useState('');
-  const [amount, setAmount]         = useState(2000);
+  const [amount, setAmount]         = useState(FALLBACK_FEES.phase2.bat);
   const [agreed, setAgreed]         = useState(false);
   const [payLoading, setPayLoading] = useState(false);
   const [payError, setPayError]     = useState('');
@@ -47,7 +48,7 @@ export function Phase2Payment() {
         setRole(status.role || '');
         setCity(status.trialCity || '');
         setRegId(status.registrationId || '');
-        setAmount(status.fees?.phase2 ?? 2000);
+        setAmount(status.fees?.phase2 ?? FALLBACK_FEES.phase2.bat);
         setLoadState('ok');
       } catch (e: any) {
         setPayError(e.message);

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useLocation } from "wouter";
 import { getMatches, getFees, type FeeConfig } from "@/lib/api";
 import { FALLBACK_FEES } from "@/lib/fees";
+import { SEASON } from "@/lib/season";
 
 /**
  * Route-level JSON-LD (schema.org structured data) injector for the SPA.
@@ -30,7 +31,7 @@ function organizationLd() {
     url: SITE_ORIGIN,
     logo: `${SITE_ORIGIN}/bcpl-assets/bcpl-logo-color.jpg`,
     description:
-      "India's corporate T20 cricket league for working professionals — 10 franchise teams competing across the season.",
+      `India's corporate T20 cricket league for working professionals — ${SEASON.teams} franchise teams competing across the season.`,
     sameAs: ["https://twitter.com/BCPLT20League"],
     contactPoint: [
       {
@@ -53,7 +54,7 @@ function faqPageLd(fees: FeeConfig) {
 
   const qa: Array<{ q: string; a: string }> = [
     { q: "How do I register?", a: `Visit www.bcplt20.com, fill the registration form, choose your playing role (Batsman, Bowler, Wicket-Keeper, or All-Rounder), select your nearest trial city, and pay ₹${p1Std} + GST (₹${p1Ar} + GST for All-Rounder). The entire process takes just 5 minutes.` },
-    { q: "Who can participate in BCPL?", a: "Any working professional aged 18 to 45 years (as on the date of registration) can participate — salaried employees, self-employed individuals, freelancers, or business owners. You must be currently employed or actively running a business." },
+    { q: "Who can participate in BCPL?", a: `Any working professional aged ${SEASON.ageMin} to ${SEASON.ageMax} years (as on the date of registration) can participate — salaried employees, self-employed individuals, freelancers, or business owners. You must be currently employed or actively running a business.` },
     { q: "Is the registration fee refundable?", a: "Yes, within 15 days of registration if you have not yet uploaded your evaluation video. Once your video has been uploaded and submitted for review, the fee becomes non-refundable. Please refer to our Refunds policy for full details." },
     { q: "What is Phase 1?", a: "Phase 1 is a video-based assessment stage. After registering, you upload a 30–60 second cricket skills video within 15 days. Your submission is assessed under BCPL's role-specific Phase 1 framework, and your result target is within 48 hours of video submission." },
     { q: "How much does Phase 1 cost by role?", a: `The applicable Phase 1 fee depends on your playing role: ₹${p1Std} + applicable GST for Batsman, Bowler and Wicketkeeper, and ₹${p1Ar} + applicable GST for All-Rounder. The exact GST-inclusive amount is displayed at the time of payment.` },

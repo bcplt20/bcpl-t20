@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
 import { getMatches, getPointsTable, isAuthenticated, type FeeConfig } from "../lib/api";
 import { useFees, inr } from "../lib/fees";
+import { SEASON } from "../lib/season";
 import { BCPLFooter } from "../components/BCPLFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { useLang } from "../lib/i18n";
@@ -39,12 +40,12 @@ const TEAMS = [
 /* ── LEAGUE STRIP — broadcast-style animated ticker below the hero ── */
 const TICKER = [
   { en:"Season 5",                 hi:"सीज़न 5",                    live:true  },
-  { en:"50+ Trial Cities",         hi:"50+ trial शहर"                          },
-  { en:"10 Teams",                 hi:"10 टीमें"                               },
-  { en:"₹15 Cr+ Prize Pool",       hi:"₹15 करोड़+ प्राइज़ पूल"                  },
+  { en:`${SEASON.trialCities} Trial Cities`,         hi:`${SEASON.trialCities} trial शहर`                          },
+  { en:`${SEASON.teams} Teams`,                 hi:`${SEASON.teams} टीमें`                               },
+  { en:`${SEASON.prizePool} Prize Pool`,       hi:"₹15 करोड़+ प्राइज़ पूल"                  },
   { en:"International Cricket Grounds", hi:"इंटरनेशनल क्रिकेट ग्राउंड्स"        },
   { en:"Live Player Auction",      hi:"लाइव Player Auction"                    },
-  { en:"₹2L–₹20L Player Value",    hi:"₹2L–₹20L player value"                  },
+  { en:`${SEASON.playerValue} Player Value`,    hi:`${SEASON.playerValue} player value`                  },
 ];
 
 /* ── REAL PROOF — photographs from BCPL's own Season 4 events ── */
@@ -419,10 +420,10 @@ export function Home() {
                 alone reads like you could sell for ₹5,000. */}
             <div className="hero-stats" aria-label={t("Season 5 key numbers","Season 5 के मुख्य आँकड़े")}>
               {[
-                { n:"50+",      en:"Trial Cities",         hi:"Trial शहर" },
-                { n:"10",       en:"Teams",                hi:"टीमें" },
-                { n:"₹15 Cr+",  en:"Prize Pool",           hi:"प्राइज़ पूल" },
-                { n:"₹2L–₹20L", en:"Player Auction Value", hi:"प्लेयर ऑक्शन वैल्यू" },
+                { n:SEASON.trialCities, en:"Trial Cities",         hi:"Trial शहर" },
+                { n:String(SEASON.teams), en:"Teams",              hi:"टीमें" },
+                { n:SEASON.prizePool,   en:"Prize Pool",           hi:"प्राइज़ पूल" },
+                { n:SEASON.playerValue, en:"Player Auction Value", hi:"प्लेयर ऑक्शन वैल्यू" },
               ].map((x,i)=>(
                 <div key={x.en} className="hs" style={{ animationDelay:(0.2 + i*0.12) + "s" }}>
                   <div className="hs-n">{x.n}</div>

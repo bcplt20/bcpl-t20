@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
+import { Skel, SkelRows } from '../components/Skel';
 import { getMatches, getPointsTable, getScorecard, getTeams } from '../lib/api';
 import { useLang } from '../lib/i18n';
 import { IcoBat, IcoTrophy, IcoPin, IcoStar } from '../lib/icons';
@@ -70,11 +71,12 @@ export function MatchCenter() {
   const [openId,  setOpenId]  = useState<string | null>(null);
   const [cards,   setCards]   = useState<Record<string, any>>({});
   const [loadingCard, setLoadingCard] = useState(false);
+  const [matchesLoaded, setMatchesLoaded] = useState(false);
 
   /* Matches + points table (refresh every 30 s so live results stay current) */
   useEffect(() => {
     const load = () => {
-      getMatches(5).then(d => setMatches(d.matches ?? [])).catch(() => {});
+      getMatches(5).then(d => setMatches(d.matches ?? [])).catch(() => {}).finally(() => setMatchesLoaded(true));
       getPointsTable(5).then(d => setPoints(d.table ?? [])).catch(() => {});
     };
     load();
@@ -125,9 +127,13 @@ export function MatchCenter() {
   /* ─── Scorecard panel for one match ─────────────────── */
   const renderScorecard = (matchId: string) => {
     const data = cards[matchId];
-    if (!data) return (
+    if (!data) return loadingCard ? (
+      <div role="status" aria-label={t("Loading…", "लोड हो रहा है…")} style={{ padding: "16px 0" }}>
+        <SkelRows n={4} />
+      </div>
+    ) : (
       <div style={{ padding: "20px 0", textAlign: "center", color: "rgba(255,255,255,0.4)", fontSize: 13 }}>
-        {loadingCard ? "Loading scorecard…" : "Scorecard not available yet."}
+        Scorecard not available yet.
       </div>
     );
     const scorecards: any[] = data.scorecards ?? [];
@@ -296,7 +302,22 @@ export function MatchCenter() {
             SEASON 5 MATCHES
           </h2>
 
-          {sorted.length === 0 && (
+          {!matchesLoaded && sorted.length === 0 && (
+            <div role="status" aria-label={t("Loading…", "लोड हो रहा है…")} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="match-card" style={{ padding: "16px 18px", display: "flex", alignItems: "center", gap: 16 }}>
+                  <Skel w={44} h={44} r={22} style={{ flexShrink: 0 }} />
+                  <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
+                    <Skel w="45%" h={14} />
+                    <Skel w="70%" h={12} />
+                  </div>
+                  <Skel w={70} h={22} r={8} style={{ flexShrink: 0 }} />
+                </div>
+              ))}
+            </div>
+          )}
+
+          {matchesLoaded && sorted.length === 0 && (
             <div style={{ textAlign: "center", padding: "48px 20px", background: "#0A1727", borderRadius: 16, border: "1px solid rgba(255,255,255,0.07)" }}>
               <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><IcoBat size={38} style={{ color: "rgba(255,255,255,0.4)" }} /></div>
               <div className="section-title" style={{ fontSize: 24, color: "#fff", marginBottom: 8, textTransform: "uppercase" }}>

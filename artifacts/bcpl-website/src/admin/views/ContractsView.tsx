@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { fetchFounderSignature, saveFounderSignature } from "../api/opsSettingsApi";
+import { SEASON } from "../../lib/season";
 
 /* ─── Company Details (from GST Registration Certificate) ──── */
 const COMPANY = {
@@ -137,7 +138,7 @@ Both parties collectively referred to as "the Parties".
 
 RECITALS
 
-WHEREAS BCPL operates the Bhartiya Corporate Premier League, India's premier corporate T20 cricket league, currently in its ${COMPANY.season} with presence across 50+ cities and 10,000+ registered players nationwide;
+WHEREAS BCPL operates the Bhartiya Corporate Premier League, India's premier corporate T20 cricket league, currently in its ${COMPANY.season} with presence across ${SEASON.trialCities} cities and 10,000+ registered players nationwide;
 
 WHEREAS BCPL desires to appoint the Ambassador as an official representative and brand face to enhance public awareness, goodwill, and commercial reach of the League during the Season;
 

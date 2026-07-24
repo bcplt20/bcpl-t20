@@ -3,6 +3,7 @@ import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { useAuthUser } from '../components/NavUser';
 import { useLang } from '../lib/i18n';
+import { SEASON } from '../lib/season';
 import { AUCTION_PHOTOS } from '../data/auctionGallery';
 
 /**
@@ -38,8 +39,8 @@ const STEPS = [
   {
     n: '04',
     en: 'The auction pool', hi: 'Auction pool',
-    dEn: 'Players who clear trials enter the Season 5 auction pool — 10 franchises bid live in August 2027.',
-    dHi: 'Trials clear करने वाले players Season 5 के auction pool में आते हैं — 10 franchises August 2027 में live bid लगाती हैं।',
+    dEn: `Players who clear trials enter the Season 5 auction pool — ${SEASON.teams} franchises bid live in August 2027.`,
+    dHi: `Trials clear करने वाले players Season 5 के auction pool में आते हैं — ${SEASON.teams} franchises August 2027 में live bid लगाती हैं।`,
     color: '#22C55E',
   },
 ];
@@ -87,14 +88,14 @@ export function AuctionLive() {
               <span className="shimmer-gold">{t('PLAYER AUCTION', 'PLAYER AUCTION')}</span>
             </h1>
             <p style={{ fontFamily: 'var(--font-body)', fontSize: 'clamp(14px,2vw,16px)', color: 'rgba(255,255,255,0.55)', lineHeight: 1.7, maxWidth: 520, margin: '0 auto 28px' }}>
-              {t('Players who clear the physical trials enter the auction pool, and the 10 franchises bid for them live. The Season 5 auction takes place in August 2027.',
-                 'जो players physical trials clear करते हैं वे auction pool में आते हैं, और 10 franchises उन पर live बोली लगाती हैं। Season 5 का auction अगस्त 2027 में होगा।')}
+              {t(`Players who clear the physical trials enter the auction pool, and the ${SEASON.teams} franchises bid for them live. The Season 5 auction takes place in August 2027.`,
+                 `जो players physical trials clear करते हैं वे auction pool में आते हैं, और ${SEASON.teams} franchises उन पर live बोली लगाती हैं। Season 5 का auction अगस्त 2027 में होगा।`)}
             </p>
 
             <div className="auc-stats">
               {[
-                { v: '10', lEn: 'Franchises', lHi: 'Franchises' },
-                { v: '₹2L–₹20L', lEn: 'Player value (Season 4)', lHi: 'Player value (Season 4)' },
+                { v: String(SEASON.teams), lEn: 'Franchises', lHi: 'Franchises' },
+                { v: SEASON.playerValue, lEn: 'Player value (Season 4)', lHi: 'Player value (Season 4)' },
                 { v: 'LIVE', lEn: 'Bidding format', lHi: 'Bidding format' },
               ].map((s, i) => (
                 <div key={i} style={{ background: '#0A1727', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '16px 10px' }}>

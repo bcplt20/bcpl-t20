@@ -16,12 +16,13 @@ import { useState, useEffect, useRef } from 'react';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { getMyResult, sendResultFeedback, isAuthenticated, type MyResult } from '../lib/api';
+import { FALLBACK_FEES } from '../lib/fees';
 import { useLang } from '../lib/i18n';
 import { Link, useLocation } from 'wouter';
 import { formatRole } from '../lib/format';
 
 
-const PHASE2_FEES: Record<string, number> = { bat: 2000, bowl: 2000, wk: 2000, ar: 3000 };
+const PHASE2_FEES: Record<string, number> = FALLBACK_FEES.phase2;
 
 /** AI video-trial rubric categories (per-role, §§20–23) — bilingual labels + honest improvement tips. */
 const AI_CRIT: Record<string, { en: string; hi: string; tip: { en: string; hi: string } }> = {
@@ -282,7 +283,7 @@ export function Phase1Result() {
   const qualified = r?.decision === 'qualified';
   const role      = normRole(r?.role);
   const roleLabel = role ? t(formatRole(role), formatRole(role, 'hi')) : (r?.role ?? '');
-  const phase2Fee = Math.round((PHASE2_FEES[role] ?? 2000) * 1.18);
+  const phase2Fee = Math.round((PHASE2_FEES[role] ?? FALLBACK_FEES.phase2.bat) * 1.18);
 
   // Strongest / weakest by score-to-max ratio (ties → bigger max first = more meaningful)
   const sorted = [...(r?.breakdown ?? [])].sort((a, b) =>

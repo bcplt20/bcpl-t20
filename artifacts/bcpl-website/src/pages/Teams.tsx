@@ -3,8 +3,10 @@ import { Link } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
+import { Skel } from '../components/Skel';
 import { getTeams, type ApiTeam } from '../lib/api';
 import { useLang } from '../lib/i18n';
+import { SEASON } from '../lib/season';
 
 /* Canonical display order (Group A = first 5, Group B = last 5) */
 const CANON_ORDER = [
@@ -143,7 +145,7 @@ export function Teams() {
             <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 13, color: "#FF7A29" }}>SEASON 5</span>
             <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 12 }}>·</span>
             <span style={{ fontFamily: "Inter,sans-serif", fontSize: 13, color: "rgba(255,255,255,0.6)" }}>
-              {t("10 franchise teams · Squads announced after auction in Aug 2026 · Tournament begins Sep 2026", "10 franchise teams · Auction (Aug 2026) के बाद squads announce होंगे · Tournament Sep 2026 में शुरू होगा")}
+              {t(`${SEASON.teams} franchise teams · Squads announced after auction in Aug 2026 · Tournament begins Sep 2026`, `${SEASON.teams} franchise teams · Auction (Aug 2026) के बाद squads announce होंगे · Tournament Sep 2026 में शुरू होगा`)}
             </span>
           </div>
         </div>
@@ -152,8 +154,18 @@ export function Teams() {
       {/* LOADING / ERROR */}
       {!teams && !loadErr && (
         <section style={{ padding: "0 0 56px" }}>
-          <div className="wrap" style={{ textAlign: "center", color: "rgba(255,255,255,0.4)", fontFamily: "Inter,sans-serif", fontSize: 14, padding: "40px 0" }}>
-            {t("Loading teams…", "Teams लोड हो रही हैं…")}
+          <div className="wrap">
+            <div role="status" aria-label={t("Loading…", "लोड हो रहा है…")} className="teams-grid">
+              {Array.from({ length: 10 }).map((_, i) => (
+                <div key={i} style={{ background: "#0A1830", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, padding: 20, display: "flex", alignItems: "center", gap: 16 }}>
+                  <Skel w={64} h={64} r={16} style={{ flexShrink: 0 }} />
+                  <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
+                    <Skel w="75%" h={16} />
+                    <Skel w="45%" h={12} />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
       )}
@@ -207,7 +219,7 @@ export function Teams() {
               {t("Want to play for one of these franchises?", "इनमें से किसी franchise के लिए खेलना चाहते हैं?")}
             </h2>
             <p style={{ fontFamily: "Inter,sans-serif", color: "rgba(255,255,255,0.45)", fontSize: 15, lineHeight: 1.7, maxWidth: 460, margin: "0 auto 28px" }}>
-              {t("Register today and get your shot at Season 5. 50+ cities, all roles open.", "आज ही register करें और Season 5 के लिए अपना मौका पाएं। 50+ शहर, सभी roles खुले हैं।")}
+              {t(`Register today and get your shot at Season 5. ${SEASON.trialCities} cities, all roles open.`, `आज ही register करें और Season 5 के लिए अपना मौका पाएं। ${SEASON.trialCities} शहर, सभी roles खुले हैं।`)}
             </p>
             <Link href="/register" style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "linear-gradient(135deg,#FF7A29,#D95E10)", border: "none", borderRadius: 12, color: "#fff", fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 14, letterSpacing: ".06em", padding: "14px 36px", textDecoration: "none", textTransform: "uppercase" }}>
               {t("REGISTER FOR PHASE 1 →", "PHASE 1 के लिए रजिस्टर करें →")}

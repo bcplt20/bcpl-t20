@@ -4,6 +4,7 @@ import { useFees, withGst } from '../lib/fees';
 import { Link, useLocation } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
+import { Skel } from '../components/Skel';
 import { getRegistrationStatus, getMe } from '../lib/api';
 import { useLang } from '../lib/i18n';
 import { IcoBat, IcoCheck } from '../lib/icons';
@@ -85,8 +86,15 @@ export function Phase2Registration() {
   };
 
   if (loadState === 'loading') return (
-    <div style={{ background:'var(--bg)', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', color:'#64748B', fontFamily:'var(--font-body)' }}>
-      {t("Loading your registration…", "आपका रजिस्ट्रेशन लोड हो रहा है…")}
+    <div style={{ background:'var(--bg)', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', padding:24, fontFamily:'var(--font-body)' }}>
+      <div role="status" aria-label={t('Loading…', 'लोड हो रहा है…')} style={{ width:'100%', maxWidth:480, display:'flex', flexDirection:'column', gap:20 }}>
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} style={{ display:'flex', flexDirection:'column', gap:10 }}>
+            <Skel w={140} h={12} />
+            <Skel h={46} r={12} />
+          </div>
+        ))}
+      </div>
     </div>
   );
 
@@ -121,7 +129,7 @@ export function Phase2Registration() {
         @media (min-width: 1024px) { .grid { grid-template-columns: 1.2fr 340px; } }
         
         .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
-        .btn-cta { background: linear-gradient(135deg, var(--orange), var(--orange-2)); border: none; border-radius: var(--r); color: #fff; font-family: var(--font-head); font-weight: 800; font-size: 16px; letter-spacing: 0.04em; padding: 18px 24px; cursor: pointer; text-transform: uppercase; transition: opacity 0.2s, transform 0.15s; box-shadow: 0 6px 24px rgba(255,122,41,0.35); width: 100%; display: flex; justify-content: center; align-items: center; }
+        .btn-cta { background: linear-gradient(135deg, var(--orange), var(--orange-2)); border: none; border-radius: var(--r); color: #fff; font-family: var(--font-head); font-weight: 800; font-size: 16px; letter-spacing: 0.04em; padding: 16px 32px; cursor: pointer; text-transform: uppercase; transition: opacity 0.2s, transform 0.15s; box-shadow: 0 6px 24px rgba(255,122,41,0.35); width: 100%; display: flex; justify-content: center; align-items: center; }
         .btn-cta:hover { opacity: 0.9; transform: translateY(-2px); }
         .btn-cta:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
         

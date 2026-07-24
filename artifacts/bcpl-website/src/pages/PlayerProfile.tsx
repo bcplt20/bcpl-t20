@@ -57,27 +57,44 @@ function deriveStep(data: any): Step {
   return 'under_review';
 }
 
-/* ── Journey nodes ─────────────────────────────────────────────────────────── */
-function journeyNodes(step: Step) {
-  const done    = (l: string) => ({ label: l, state: 'done'    as const });
-  const active  = (l: string) => ({ label: l, state: 'active'  as const });
-  const waiting = (l: string) => ({ label: l, state: 'waiting' as const });
+/* ── Journey nodes — compact 11-step MY BCPL JOURNEY (spec P17), data-driven ──
+   Same strongest-signal-first rule as deriveStep: a trial block (or kyc_done /
+   verified KYC) proves every earlier stage cleared — historic accounts may miss
+   early rows (video/payment) and must never show early steps as pending. */
+function journeyNodes(data: any) {
+  const reg   = data?.registration;
+  const p1    = reg?.phase1Status ?? '';
+  const p2    = reg?.phase2Status ?? null;
+  const kyc   = data?.kyc?.status ?? null;
+  const trial = data?.trial ?? null;
+  const trialStage = !!trial || p2 === 'kyc_done' || kyc === 'verified';
+  const p1After   = ['payment_done', 'video_submitted', 'selected', 'rejected'].includes(p1);
+  const p2After   = ['payment_done', 'kyc_done', 'kyc_approved', 'trial_cleared', 'auction_shortlisted', 'team_signed'].includes(p2 ?? '');
+  const resultOut = p1 === 'selected' || p1 === 'rejected';
 
-  type Node = ReturnType<typeof done> | ReturnType<typeof active> | ReturnType<typeof waiting>;
-  const map: Record<Step, Node[]> = {
-    not_registered:   [active('Register'),        waiting('Video'), waiting('P1 Review'),   waiting('P2+KYC'),    waiting('Trial')],
-    upload_video:     [done('Register'),           active('Video'),  waiting('P1 Review'),   waiting('P2+KYC'),    waiting('Trial')],
-    under_review:     [done('Register'),           done('Video'),    active('P1 Review'),    waiting('P2+KYC'),    waiting('Trial')],
-    rejected:         [done('Register'),           done('Video'),    active('Not Selected'),      waiting('P2+KYC'),    waiting('Trial')],
-    p2_register:      [done('Register'),           done('Video'),    done('P1 Selected'),  active('P2+KYC'),     waiting('Trial')],
-    p2_kyc:           [done('Register'),           done('Video'),    done('P1 Selected'),  active('P2+KYC'),     waiting('Trial')],
-    p2_kyc_pending:   [done('Register'),           done('Video'),    done('P1 Selected'),  active('P2+KYC'),     waiting('Trial')],
-    trial_wait:       [done('Register'),           done('Video'),    done('P1 Selected'),  done('P2+KYC'),     active('Trial')],
-    trial_scheduled:  [done('Register'),           done('Video'),    done('P1 Selected'),  done('P2+KYC'),     active('Trial')],
-    trial_checked_in: [done('Register'),           done('Video'),    done('P1 Selected'),  done('P2+KYC'),     active('Trial')],
-    trial_completed:  [done('Register'),           done('Video'),    done('P1 Selected'),  done('P2+KYC'),     done('Trial')],
-  };
-  return map[step];
+  const defs: { en: string; hi: string; done: boolean }[] = [
+    { en: 'Registration',       hi: 'रजिस्ट्रेशन',         done: !!data?.registered },
+    { en: 'Phase 1 Payment',    hi: 'फेज 1 पेमेंट',        done: trialStage || p1After },
+    { en: 'Video Upload',       hi: 'वीडियो अपलोड',       done: trialStage || !!data?.video?.submitted || ['video_submitted', 'selected', 'rejected'].includes(p1) },
+    { en: 'Phase 1 Review',     hi: 'फेज 1 रिव्यू',        done: trialStage || resultOut },
+    { en: 'Phase 1 Result',     hi: 'फेज 1 रिज़ल्ट',       done: trialStage || resultOut },
+    { en: 'Phase 2 Payment',    hi: 'फेज 2 पेमेंट',        done: trialStage || p2After },
+    { en: 'KYC Verification',   hi: 'KYC वेरिफिकेशन',     done: !!trial || p2 === 'kyc_done' || kyc === 'verified' },
+    { en: 'Trial Venue & Pass', hi: 'ट्रायल वेन्यू & पास', done: !!trial },
+    { en: 'Venue Check-In',     hi: 'वेन्यू चेक-इन',       done: !!trial?.checkedInAt },
+    { en: 'Physical Trial',     hi: 'फिजिकल ट्रायल',      done: !!trial?.assessmentSubmitted },
+    { en: 'Final Result',       hi: 'फाइनल रिज़ल्ट',       done: false },
+  ];
+
+  /* Journey pauses (no "current" pulse) once a Phase 1 result is out and the
+     player did not progress — remaining steps stay quietly upcoming (P22). */
+  const paused = p1 === 'rejected' && !trialStage;
+  let activeGiven = false;
+  return defs.map(d => {
+    if (d.done) return { en: d.en, hi: d.hi, state: 'done' as const };
+    if (!activeGiven && !paused) { activeGiven = true; return { en: d.en, hi: d.hi, state: 'active' as const }; }
+    return { en: d.en, hi: d.hi, state: 'waiting' as const };
+  });
 }
 
 /* ── Status banner config ──────────────────────────────────────────────────── */
@@ -298,7 +315,9 @@ export function PlayerProfile() {
   }, [setLocation, t]);
 
   const step   = data ? deriveStep(data) : 'not_registered';
-  const nodes  = journeyNodes(step);
+  const nodes  = journeyNodes(data);
+  const doneN  = nodes.filter(n => n.state === 'done').length;
+  const journeyPct = Math.round(((doneN + (nodes.some(n => n.state === 'active') ? 0.5 : 0)) / nodes.length) * 100);
   const ban    = data ? getBannerConfig(step, data, venue, t) : null;
 
   const reg    = data?.registration;
@@ -315,11 +334,14 @@ export function PlayerProfile() {
   const p2Paid = paidish(data?.phase2Payment?.status) || ['payment_done','kyc_done','kyc_approved','trial_cleared','auction_shortlisted','team_signed'].includes(reg?.phase2Status ?? '');
 
   if (loading) return (
-    <div style={{ background:'var(--bg)', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center' }}>
-      <div style={{ textAlign:'center' }}>
-        <div style={{ width:48, height:48, border:'4px solid rgba(255,122,41,0.2)', borderTopColor:'var(--orange)', borderRadius:'50%', animation:'spin 1s linear infinite', margin:'0 auto 20px' }} />
-        <div style={{ color:'rgba(255,255,255,0.5)', fontSize:15, fontFamily:'var(--font-body)' }}>{t("Loading your profile…", "आपकी प्रोफाइल लोड हो रही है…")}</div>
-        <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+    <div style={{ background:'var(--bg)', minHeight:'100vh', padding:'110px 16px 40px' }} role="status" aria-label={t('Loading your profile…', 'आपकी प्रोफाइल लोड हो रही है…')}>
+      <div style={{ maxWidth: 1080, margin: '0 auto', display: 'grid', gap: 18 }}>
+        <div className="skel" style={{ height: 92, borderRadius: 'var(--r)' }} />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 18 }}>
+          <div className="skel" style={{ height: 260, borderRadius: 'var(--r)' }} />
+          <div className="skel" style={{ height: 260, borderRadius: 'var(--r)' }} />
+        </div>
+        <div className="skel" style={{ height: 140, borderRadius: 'var(--r)' }} />
       </div>
     </div>
   );
@@ -345,7 +367,7 @@ export function PlayerProfile() {
         
         .btn-orange { background: linear-gradient(135deg, var(--orange), var(--orange-2)); border: none; border-radius: var(--r); color: #fff; font-family: var(--font-head); font-weight: 900; letter-spacing: .06em; cursor: pointer; padding: 16px 32px; font-size: 16px; transition: all .2s; text-transform: uppercase; text-decoration: none; display: inline-block; box-shadow: 0 6px 20px rgba(255,122,41,0.3); }
         .btn-orange:hover { filter: brightness(1.1); transform: translateY(-2px); }
-        .btn-ghost { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; color: rgba(255,255,255,0.7); font-family: var(--font-head); font-weight: 800; cursor: pointer; padding: 12px 20px; font-size: 13px; letter-spacing: .06em; transition: all .2s; text-transform: uppercase; }
+        .btn-ghost { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: var(--r); color: rgba(255,255,255,0.7); font-family: var(--font-head); font-weight: 800; cursor: pointer; padding: 12px 20px; font-size: 13px; letter-spacing: .06em; transition: all .2s; text-transform: uppercase; }
         .btn-ghost:hover { border-color: var(--orange); color: var(--orange); background: rgba(255,122,41,0.05); }
         
         .grid2 { display: grid; grid-template-columns: 1fr; gap: 16px; }
@@ -655,25 +677,25 @@ export function PlayerProfile() {
                   
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 24, position: 'relative' }}>
                     {/* Vertical line connecting nodes */}
-                    <div style={{ position: 'absolute', left: 19, top: 20, bottom: 20, width: 2, background: 'rgba(255,255,255,0.05)', borderRadius: 2, zIndex: 0 }}>
+                    <div style={{ position: 'absolute', left: 13, top: 14, bottom: 14, width: 2, background: 'rgba(255,255,255,0.05)', borderRadius: 2, zIndex: 0 }}>
                       <div style={{ position: 'absolute', left: 0, top: 0, width: '100%', borderRadius: 2, background: 'linear-gradient(180deg, var(--green), var(--orange))',
-                        height: `${(['not_registered','upload_video','under_review','rejected'].includes(step) ? 0 : step === 'p2_register' || step === 'p2_kyc' || step === 'p2_kyc_pending' ? 50 : step === 'trial_completed' ? 100 : 85)}%`,
+                        height: `${journeyPct}%`,
                         transition: 'height .6s ease',
                       }} />
                     </div>
 
                     {nodes.map((n, i) => (
-                      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 20, position: 'relative', zIndex: 1 }}>
-                        <div style={{ width: 40, height: 40, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, flexShrink: 0,
-                          background: n.state === 'done' ? 'var(--green)' : n.state === 'active' ? 'var(--bg)' : 'var(--bg)',
+                      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 14, position: 'relative', zIndex: 1 }}>
+                        <div style={{ width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, flexShrink: 0,
+                          background: n.state === 'done' ? 'var(--green)' : 'var(--bg)',
                           border: n.state === 'done' ? '2px solid var(--green)' : n.state === 'active' ? '3px solid var(--orange)' : '2px solid rgba(255,255,255,0.1)',
                           color: n.state === 'done' ? '#fff' : n.state === 'active' ? 'var(--orange)' : 'rgba(255,255,255,0.3)',
                           boxShadow: n.state === 'active' ? '0 0 0 4px rgba(255,122,41,0.15)' : 'none'
                         }}>
-                          {n.state === 'done' ? <IcoCheck size={16} /> : n.state === 'active' ? '●' : '○'}
+                          {n.state === 'done' ? <IcoCheck size={13} /> : n.state === 'active' ? '●' : '○'}
                         </div>
-                        <div style={{ fontSize: 15, fontWeight: n.state === 'active' ? 800 : 700, fontFamily: 'var(--font-head)', color: n.state === 'done' ? 'var(--green)' : n.state === 'active' ? '#fff' : 'rgba(255,255,255,0.4)', letterSpacing: '.04em', textTransform: 'uppercase' }}>
-                          {t(n.label, n.label)}
+                        <div style={{ fontSize: 13, fontWeight: n.state === 'active' ? 800 : 700, fontFamily: 'var(--font-head)', color: n.state === 'done' ? 'var(--green)' : n.state === 'active' ? '#fff' : 'rgba(255,255,255,0.4)', letterSpacing: '.04em', textTransform: 'uppercase' }}>
+                          {t(n.en, n.hi)}
                         </div>
                       </div>
                     ))}

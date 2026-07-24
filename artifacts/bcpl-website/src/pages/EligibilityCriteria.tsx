@@ -3,6 +3,7 @@ import { Link } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { useLang } from '../lib/i18n';
+import { SEASON } from '../lib/season';
 import { LegalDocHeader } from '../lib/legalMeta';
 import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
 import { IcoCheck, IcoZap, IcoX, IcoUser, IcoCalendar, IcoBat, IcoShield, IcoDoc, IcoIdCard, IcoCamera, IcoList, IcoChat, IcoVideo } from '../lib/icons';
@@ -218,7 +219,7 @@ export function EligibilityCriteria() {
             <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:10}}>
               {[
                 {en:'Minimum age: 18 years as of the registration date',hi:'Minimum age: registration date पर 18 साल'},
-                {en:'Maximum age: 45 years as of the registration date',hi:'Maximum age: registration date पर 45 साल'},
+                {en:`Maximum age: ${SEASON.ageMax} years as of the registration date`,hi:`Maximum age: registration date पर ${SEASON.ageMax} साल`},
                 {en:'Age verified via government-issued Aadhaar card or PAN card',hi:'Age government-issued Aadhaar card या PAN card से verify होती है'},
                 {en:'Date of birth must match across all submitted documents',hi:'Date of birth सभी submit किए गए documents में एक जैसी होनी चाहिए'},
               ].map((item,i)=>(

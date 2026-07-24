@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Link } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
+import { SkelRows } from '../components/Skel';
 import {
   getRegistrationStatus, getMe, getUploadUrl, confirmVideoUpload, getSiteSetting,
   getVideoInstructions, getVideoStatus, type VideoConstraints,
@@ -294,10 +295,10 @@ export function Phase1VideoUpload() {
   // ── Full-page states ───────────────────────────────────────────────────────
   if (uploadState === 'loading') {
     return (
-      <div style={{ background:'var(--bg)', minHeight:'100dvh', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:16, fontFamily:'var(--font-body)' }}>
-        <div style={{ width:40, height:40, border:'3px solid rgba(232,178,61,0.2)', borderTopColor:'var(--gold)', borderRadius:'50%', animation:'spin 1s linear infinite' }} />
-        <div style={{ color:'var(--ink-3)', fontSize:14 }}>{t('Loading your registration…', 'आपका रजिस्ट्रेशन लोड हो रहा है…')}</div>
-        <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+      <div style={{ background:'var(--bg)', minHeight:'100dvh', display:'flex', alignItems:'center', justifyContent:'center', padding:24, fontFamily:'var(--font-body)' }}>
+        <div role="status" aria-label={t('Loading…', 'लोड हो रहा है…')} style={{ width:'100%', maxWidth:480 }}>
+          <SkelRows n={3} />
+        </div>
       </div>
     );
   }

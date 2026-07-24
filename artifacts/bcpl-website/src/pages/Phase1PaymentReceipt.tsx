@@ -76,7 +76,7 @@ export function Phase1PaymentReceipt() {
 
         .btn-primary{
           background:linear-gradient(135deg,#FF7A29,#D95E10);
-          border:none;border-radius:12px;color:#fff;
+          border:none;border-radius:var(--r);color:#fff;
           font-family:var(--font-head);font-weight:900;
           letter-spacing:0.06em;cursor:pointer;
           transition:transform .15s,filter .2s;

@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
+import { Skel } from '../components/Skel';
 import { getTeamDetail, getPointsTable, getMatches, type ApiTeam, type ApiTeamPlayer } from '../lib/api';
 import { useLang } from '../lib/i18n';
 import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
@@ -160,8 +161,25 @@ export function TeamDetail() {
 
         {/* LOADING */}
         {loading && (
-          <div style={{minHeight:'50vh',display:'flex',alignItems:'center',justifyContent:'center',color:'rgba(255,255,255,0.4)',fontFamily:'Inter,sans-serif',fontSize:15}}>
-            Loading team…
+          <div role="status" aria-label={t('Loading…', 'लोड हो रहा है…')} className="wrap" style={{padding:'48px 20px'}}>
+            <div style={{display:'flex',alignItems:'center',gap:16,marginBottom:32}}>
+              <Skel w={84} h={84} r={22} style={{flexShrink:0}}/>
+              <div style={{flex:1,display:'flex',flexDirection:'column',gap:12}}>
+                <Skel w="55%" h={28}/>
+                <Skel w={140} h={14}/>
+              </div>
+            </div>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(240px,1fr))',gap:16}}>
+              {Array.from({length:6}).map((_,i)=>(
+                <div key={i} style={{background:'#0A1830',border:'1px solid rgba(255,255,255,0.08)',borderRadius:14,padding:16,display:'flex',alignItems:'center',gap:14}}>
+                  <Skel w={48} h={48} r={24} style={{flexShrink:0}}/>
+                  <div style={{flex:1,display:'flex',flexDirection:'column',gap:8}}>
+                    <Skel w="70%" h={14}/>
+                    <Skel w="40%" h={12}/>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 

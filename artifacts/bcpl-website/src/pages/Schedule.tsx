@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'wouter';
 import { SiteHeader } from '../components/SiteHeader';
 import { BCPLFooter } from '../components/BCPLFooter';
+import { Skel } from '../components/Skel';
 import { getMatches } from '../lib/api';
 import { useLang } from '../lib/i18n';
 import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
@@ -247,7 +248,18 @@ export function Schedule() {
 
           {/* LOADING */}
           {loading && (
-            <div style={{textAlign:'center',padding:'60px 0',color:'rgba(255,255,255,0.35)',fontFamily:'Inter,sans-serif',fontSize:15}}>Loading fixtures…</div>
+            <div role="status" aria-label={t('Loading…', 'लोड हो रहा है…')} style={{display:'flex',flexDirection:'column',gap:12}}>
+              {Array.from({length:3}).map((_,i)=>(
+                <div key={i} className="glass-card" style={{padding:'16px 16px',border:'1px solid rgba(255,255,255,0.09)',borderRadius:14,display:'flex',alignItems:'center',gap:16}}>
+                  <Skel w={44} h={44} r={22} style={{flexShrink:0}}/>
+                  <div style={{flex:1,display:'flex',flexDirection:'column',gap:10}}>
+                    <Skel w="45%" h={14}/>
+                    <Skel w="70%" h={12}/>
+                  </div>
+                  <Skel w={70} h={22} r={8} style={{flexShrink:0}}/>
+                </div>
+              ))}
+            </div>
           )}
 
           {/* ERROR */}
