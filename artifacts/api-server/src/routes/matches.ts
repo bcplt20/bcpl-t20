@@ -320,20 +320,30 @@ router.put("/admin/matches/:id/status", requireAdmin, async (req, res) => {
   res.json({ success: true, match });
 });
 
-/* ── Generic FK-descendant sweep for match deletion ──────────────────────
-   Deletes every row that (transitively) references the given parent rows,
-   walking real FK edges from pg_constraint (single-column FKs, keyed on
-   OIDs). Child rows are removed before their parent's rows (post-order), so
-   NO ACTION constraints on tables this build has never heard of — at any
-   depth, including children of match_xi and FKs that reference columns
-   other than id — cannot block the delete. Composite FKs are left to the
-   23503 handler below, which names the blocking table. */
+/* ── Generic recursive FK sweep for match deletion ────────────────────────
+   sweepFkDelete removes the rows of `table` matching (keyColumn IN keyValues)
+   plus EVERYTHING that transitively references them, walking real FK edges
+   from pg_constraint (single-column FKs, keyed on OIDs — constraint NAMES are
+   not unique across tables, so name-based information_schema joins can
+   cross-associate). Children are deleted before their parents (post-order),
+   so NO ACTION constraints on tables this build has never heard of — at any
+   depth, including children of match_xi and FKs referencing columns other
+   than id — cannot block the delete.
+
+   Self-referencing tables (thread/hierarchy style) are expanded to closure:
+   rows chained onto doomed rows via the self-FK are deleted with them.
+   Cycles ACROSS tables are not expanded (the edge back to an ancestor is
+   skipped) — if such a topology still blocks the delete it surfaces as a 409
+   naming the table, never a blank 500. Composite FKs likewise fall through
+   to the named 23503 handler. */
 type SweepTx = Parameters<Parameters<typeof db.transaction>[0]>[0];
 type SweepWarn = (obj: Record<string, unknown>, msg: string) => void;
 const SWEEP_MAX_DEPTH = 6;
-const OWN_SWEEP_TABLES = new Set(["innings", "deliveries", "match_xi"]);
+const SWEEP_OWN_TABLES = new Set(["matches", "innings", "deliveries", "match_xi"]);
 
-async function sweepFkDescendants(
+type FkEdge = { child_schema: string; child_table: string; child_column: string; parent_column: string };
+
+async function sweepFkDelete(
   tx: SweepTx,
   schema: string,
   table: string,
@@ -346,7 +356,8 @@ async function sweepFkDescendants(
   if (ancestors.length >= SWEEP_MAX_DEPTH) {
     throw new Error(`FK sweep exceeded depth ${SWEEP_MAX_DEPTH} at ${schema}.${table} — possible FK cycle`);
   }
-  const edges = await tx.execute(sql`
+  const here = `${schema}.${table}`;
+  const edgesRes = await tx.execute(sql`
     SELECT child_ns.nspname AS child_schema,
            child.relname    AS child_table,
            att.attname      AS child_column,
@@ -362,37 +373,91 @@ async function sweepFkDescendants(
                            JOIN pg_namespace n ON n.oid = c.relnamespace
                            WHERE n.nspname = ${schema} AND c.relname = ${table})
   `);
-  const here = `${schema}.${table}`;
-  for (const edge of edges.rows as Array<{ child_schema: string; child_table: string; child_column: string; parent_column: string }>) {
+  const edges = edgesRes.rows as unknown as FkEdge[];
+
+  /* Self-FK closure: keep absorbing rows that hang onto already-doomed rows
+     until nothing new appears, so deleting a chained hierarchy in one
+     statement cannot orphan a survivor. */
+  const selfEdges = edges.filter(e => `${e.child_schema}.${e.child_table}` === here);
+  let idColumn: string | null = null;
+  const closureIds: unknown[] = [];
+  if (selfEdges.length > 0) {
+    idColumn = selfEdges[0].parent_column;
+    const identityCols = new Set(selfEdges.map(e => e.parent_column));
+    if (identityCols.size > 1) {
+      // Multiple identity columns in self-FKs — vanishingly rare; the extra
+      // edge falls back to the named-409 path instead of silent mishandling.
+      warn({ table: here, columns: [...identityCols] },
+        "match delete: multiple self-FK identity columns, closure uses the first");
+    }
+    const seed = await tx.execute(sql`
+      SELECT DISTINCT ${sql.identifier(idColumn)} AS v
+      FROM ${sql.identifier(schema)}.${sql.identifier(table)}
+      WHERE ${sql.identifier(keyColumn)} IN (${sql.join(keyValues.map(v => sql`${v}`), sql`, `)})
+        AND ${sql.identifier(idColumn)} IS NOT NULL
+    `);
+    const seen = new Set<string>();
+    let frontier: unknown[] = [];
+    for (const row of seed.rows as Array<{ v: unknown }>) {
+      if (!seen.has(String(row.v))) { seen.add(String(row.v)); frontier.push(row.v); closureIds.push(row.v); }
+    }
+    for (let round = 0; frontier.length > 0; round++) {
+      if (round >= 32) throw new Error(`FK sweep: self-reference closure on ${here} did not converge`);
+      const next: unknown[] = [];
+      for (const se of selfEdges) {
+        if (se.parent_column !== idColumn) continue;
+        const r = await tx.execute(sql`
+          SELECT DISTINCT ${sql.identifier(idColumn)} AS v
+          FROM ${sql.identifier(schema)}.${sql.identifier(table)}
+          WHERE ${sql.identifier(se.child_column)} IN (${sql.join(frontier.map(v => sql`${v}`), sql`, `)})
+            AND ${sql.identifier(idColumn)} IS NOT NULL
+        `);
+        for (const row of r.rows as Array<{ v: unknown }>) {
+          if (!seen.has(String(row.v))) { seen.add(String(row.v)); next.push(row.v); closureIds.push(row.v); }
+        }
+      }
+      frontier = next;
+    }
+  }
+
+  // Delete-set predicate: the caller's key match, plus the self-closure.
+  const pred = () => {
+    const kv = sql`${sql.identifier(keyColumn)} IN (${sql.join(keyValues.map(v => sql`${v}`), sql`, `)})`;
+    if (!idColumn || closureIds.length === 0) return kv;
+    return sql`(${kv} OR ${sql.identifier(idColumn)} IN (${sql.join(closureIds.map(v => sql`${v}`), sql`, `)}))`;
+  };
+
+  for (const edge of edges) {
     const childKey = `${edge.child_schema}.${edge.child_table}`;
-    // Self-references and ancestor loops: those rows are already part of the
-    // current delete set; recursing would never terminate.
-    if (childKey === here || ancestors.includes(childKey)) continue;
+    if (childKey === here) continue;              // handled by the closure above
+    if (ancestors.includes(childKey)) continue;   // cross-table cycle → named 409 fallback
     // Values of the REFERENCED parent column for the rows being deleted
     // (usually id, but an FK may reference any unique column).
-    let refValues = keyValues;
-    if (edge.parent_column !== keyColumn) {
+    let refValues: unknown[];
+    if (edge.parent_column === keyColumn && closureIds.length === 0) {
+      refValues = keyValues;
+    } else {
       const r = await tx.execute(sql`
         SELECT DISTINCT ${sql.identifier(edge.parent_column)} AS v
         FROM ${sql.identifier(schema)}.${sql.identifier(table)}
-        WHERE ${sql.identifier(keyColumn)} IN (${sql.join(keyValues.map(v => sql`${v}`), sql`, `)})
+        WHERE ${pred()}
           AND ${sql.identifier(edge.parent_column)} IS NOT NULL
       `);
       refValues = (r.rows as Array<{ v: unknown }>).map(x => x.v);
     }
     if (refValues.length === 0) continue;
-    // Grandchildren first (child rows must still exist for discovery)…
-    await sweepFkDescendants(tx, edge.child_schema, edge.child_table, edge.child_column, refValues, [...ancestors, here], warn);
-    // …then the child rows themselves.
-    const deleted = await tx.execute(sql`
-      DELETE FROM ${sql.identifier(edge.child_schema)}.${sql.identifier(edge.child_table)}
-      WHERE ${sql.identifier(edge.child_column)} IN (${sql.join(refValues.map(v => sql`${v}`), sql`, `)})
-    `);
-    const n = Number((deleted as { rowCount?: number | null }).rowCount ?? 0);
-    if (n > 0 && !OWN_SWEEP_TABLES.has(edge.child_table)) {
-      warn({ legacyTable: childKey, column: edge.child_column, rows: n },
-        "match delete: cleared rows from table not in this build's schema");
-    }
+    // The child call deletes its own rows after clearing its descendants.
+    await sweepFkDelete(tx, edge.child_schema, edge.child_table, edge.child_column, refValues, [...ancestors, here], warn);
+  }
+
+  const deleted = await tx.execute(sql`
+    DELETE FROM ${sql.identifier(schema)}.${sql.identifier(table)}
+    WHERE ${pred()}
+  `);
+  const n = Number((deleted as { rowCount?: number | null }).rowCount ?? 0);
+  if (n > 0 && !SWEEP_OWN_TABLES.has(table)) {
+    warn({ legacyTable: here, rows: n },
+      "match delete: cleared rows from table not in this build's schema");
   }
 }
 
@@ -400,48 +465,48 @@ async function sweepFkDescendants(
 // Removes a match and all its scoring data (innings, deliveries, XI).
 // If the match already has scoring data (innings / deliveries), the caller
 // must pass ?force=1 to confirm; otherwise a 409 is returned describing what
-// will be lost. FK order on delete: legacy children → deliveries → innings →
-// match_xi → match.
+// will be lost. All deletes are child-first via the recursive FK sweep, and
+// EVERY failure path returns its real cause — never a blank 500.
 router.delete("/admin/matches/:id", requireAdmin, async (req, res) => {
   const matchId = String(req.params.id);
 
-  const [match] = await db.select().from(matchesTable).where(eq(matchesTable.id, matchId)).limit(1);
-  if (!match) return void res.status(404).json({ error: "Match not found" });
-
-  const force = req.query.force === "1" || req.query.force === "true";
-
-  // Confirm-prompt precheck (read-only): when not forcing, describe what a
-  // force delete would destroy. The authoritative snapshot is re-taken
-  // INSIDE the transaction below, so rows appearing between this read and
-  // the delete cannot slip through.
-  if (!force) {
-    const innings = await db.select({ id: inningsTable.id }).from(inningsTable)
-      .where(eq(inningsTable.matchId, matchId));
-    let deliveryCount = 0;
-    if (innings.length > 0) {
-      const deliveries = await db.select({ id: deliveriesTable.id }).from(deliveriesTable)
-        .where(inArray(deliveriesTable.inningsId, innings.map(i => i.id)));
-      deliveryCount = deliveries.length;
-    }
-    if (innings.length > 0 || deliveryCount > 0) {
-      const lost: string[] = [];
-      if (innings.length > 0) lost.push(`${innings.length} innings`);
-      if (deliveryCount > 0)  lost.push(`${deliveryCount} scored deliveries`);
-      return void res.status(409).json({
-        error: `This match has score data. Deleting it will permanently remove ${lost.join(" and ")}. Retry with force to confirm.`,
-        requiresForce: true,
-        willLose: { innings: innings.length, deliveries: deliveryCount },
-      });
-    }
-  }
-
-  /* The production database has outlived several schema versions (the deploy
-     schema push is best-effort), so tables UNKNOWN to this build may still
-     hold rows pointing at this match — a plain delete then dies with an FK
-     violation (500). A confirmed delete promises "the match and everything
-     attached goes", so: walk the whole FK graph hanging off this match and
-     clear rows child-first inside one transaction (see sweepFkDescendants). */
   try {
+    const [match] = await db.select().from(matchesTable).where(eq(matchesTable.id, matchId)).limit(1);
+    if (!match) return void res.status(404).json({ error: "Match not found" });
+
+    const force = req.query.force === "1" || req.query.force === "true";
+
+    // Confirm-prompt precheck (read-only): when not forcing, describe what a
+    // force delete would destroy. The authoritative snapshot is re-taken
+    // INSIDE the transaction below, so rows appearing between this read and
+    // the delete cannot slip through.
+    if (!force) {
+      const innings = await db.select({ id: inningsTable.id }).from(inningsTable)
+        .where(eq(inningsTable.matchId, matchId));
+      let deliveryCount = 0;
+      if (innings.length > 0) {
+        const deliveries = await db.select({ id: deliveriesTable.id }).from(deliveriesTable)
+          .where(inArray(deliveriesTable.inningsId, innings.map(i => i.id)));
+        deliveryCount = deliveries.length;
+      }
+      if (innings.length > 0 || deliveryCount > 0) {
+        const lost: string[] = [];
+        if (innings.length > 0) lost.push(`${innings.length} innings`);
+        if (deliveryCount > 0)  lost.push(`${deliveryCount} scored deliveries`);
+        return void res.status(409).json({
+          error: `This match has score data. Deleting it will permanently remove ${lost.join(" and ")}. Retry with force to confirm.`,
+          requiresForce: true,
+          willLose: { innings: innings.length, deliveries: deliveryCount },
+        });
+      }
+    }
+
+    /* The production database has outlived several schema versions (the
+       deploy schema push is best-effort), so tables UNKNOWN to this build
+       may still hold rows pointing at this match — a plain delete then dies
+       with an FK violation. A confirmed delete promises "the match and
+       everything attached goes": walk the whole FK graph hanging off this
+       match and delete child-first in one transaction (sweepFkDelete). */
     await db.transaction(async (tx) => {
       // Authoritative snapshot inside the transaction.
       const inn = await tx.select({ id: inningsTable.id }).from(inningsTable)
@@ -459,9 +524,8 @@ router.delete("/admin/matches/:id", requireAdmin, async (req, res) => {
         throw Object.assign(new Error("scoring data appeared mid-delete"), { scoringDataAppeared: true });
       }
 
-      await sweepFkDescendants(tx, "public", "matches", "id", [matchId], [],
+      await sweepFkDelete(tx, "public", "matches", "id", [matchId], [],
         (obj, msg) => req.log.warn(obj, msg));
-      await tx.delete(matchesTable).where(eq(matchesTable.id, matchId));
     });
   } catch (err) {
     if ((err as { scoringDataAppeared?: boolean } | null)?.scoringDataAppeared) {
@@ -472,8 +536,8 @@ router.delete("/admin/matches/:id", requireAdmin, async (req, res) => {
     }
     const pg = pgCauseOf(err);
     if (pg?.code === "23503") {
-      // Still blocked by a foreign key (e.g. a composite-FK child) — say
-      // WHICH table instead of a blank 500, and log the pg detail.
+      // Still blocked by a foreign key (composite-FK child, cross-table
+      // cycle) — say WHICH table instead of a blank 500, and log the detail.
       req.log.error({ pg, matchId }, "match delete blocked by foreign key");
       return void res.status(409).json({
         error: `Match cannot be deleted yet: rows in table "${pg.table ?? "unknown"}" still reference it (constraint ${pg.constraint ?? "?"}). Please share this message with support.`,

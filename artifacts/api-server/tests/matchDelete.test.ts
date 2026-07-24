@@ -296,3 +296,81 @@ describe("force delete clears deep legacy chains and match_xi children", () => {
     expect(gone).toBeUndefined();
   });
 });
+
+/* ── Self-referencing legacy hierarchy: rows chained via a self-FK must be
+   absorbed into the delete set (closure), not orphaned or FK-blocked. ── */
+describe("self-referencing legacy hierarchy is swept to closure", () => {
+  const tbl = `legacy_thread_${suffix}`;
+
+  beforeAll(async () => {
+    await db.execute(sql.raw(
+      `CREATE TABLE ${tbl} (
+         id SERIAL PRIMARY KEY,
+         match_id UUID REFERENCES matches(id),
+         parent_id INT REFERENCES ${tbl}(id)
+       )`));
+  });
+
+  afterAll(async () => {
+    await db.execute(sql.raw(`DROP TABLE IF EXISTS ${tbl}`));
+  });
+
+  it("deletes a 3-deep chain where only the root row carries match_id", async () => {
+    const { match } = await mkScoredMatch();
+    const root = (await db.execute(sql.raw(
+      `INSERT INTO ${tbl} (match_id) VALUES ('${match.id}') RETURNING id`))).rows as Array<{ id: number }>;
+    const child = (await db.execute(sql.raw(
+      `INSERT INTO ${tbl} (parent_id) VALUES (${root[0].id}) RETURNING id`))).rows as Array<{ id: number }>;
+    await db.execute(sql.raw(`INSERT INTO ${tbl} (parent_id) VALUES (${child[0].id})`));
+
+    const r = await request(app)
+      .delete(`/api/matches/admin/matches/${match.id}?force=1`)
+      .set(admin);
+    expect(r.status).toBe(200);
+    expect(r.body.success).toBe(true);
+
+    const left = await db.execute(sql.raw(`SELECT count(*)::int AS n FROM ${tbl}`));
+    expect(Number((left.rows[0] as { n: number }).n)).toBe(0);
+    const [gone] = await db.select().from(matchesTable).where(eq(matchesTable.id, match.id));
+    expect(gone).toBeUndefined();
+  });
+});
+
+/* ── Cross-table FK cycles are NOT silently expanded — but they must degrade
+   to a 409 that NAMES the blocking table, never a blank "Internal server
+   error". This locks the error-surfacing contract. ── */
+describe("cross-table FK cycle degrades to a named 409", () => {
+  const tA = `legacy_cyc_a_${suffix}`;
+  const tB = `legacy_cyc_b_${suffix}`;
+
+  beforeAll(async () => {
+    await db.execute(sql.raw(
+      `CREATE TABLE ${tA} (id SERIAL PRIMARY KEY, match_id UUID NOT NULL REFERENCES matches(id), b_id INT)`));
+    await db.execute(sql.raw(
+      `CREATE TABLE ${tB} (id SERIAL PRIMARY KEY, a_id INT NOT NULL REFERENCES ${tA}(id))`));
+    await db.execute(sql.raw(
+      `ALTER TABLE ${tA} ADD CONSTRAINT cyc_ab_${suffix} FOREIGN KEY (b_id) REFERENCES ${tB}(id)`));
+  });
+
+  afterAll(async () => {
+    await db.execute(sql.raw(`DROP TABLE IF EXISTS ${tA} CASCADE`));
+    await db.execute(sql.raw(`DROP TABLE IF EXISTS ${tB} CASCADE`));
+  });
+
+  it("never returns a blank Internal server error", async () => {
+    const match = await mkMatch();
+    const a = (await db.execute(sql.raw(
+      `INSERT INTO ${tA} (match_id) VALUES ('${match.id}') RETURNING id`))).rows as Array<{ id: number }>;
+    const b = (await db.execute(sql.raw(
+      `INSERT INTO ${tB} (a_id) VALUES (${a[0].id}) RETURNING id`))).rows as Array<{ id: number }>;
+    await db.execute(sql.raw(`UPDATE ${tA} SET b_id = ${b[0].id} WHERE id = ${a[0].id}`));
+
+    const r = await request(app)
+      .delete(`/api/matches/admin/matches/${match.id}?force=1`)
+      .set(admin);
+    // The cycle blocks deletion — contract: a NAMED 409, not a blank 500.
+    expect(r.status).toBe(409);
+    expect(r.body.error).toMatch(/cannot be deleted yet: rows in table/i);
+    expect(r.body.error).not.toMatch(/internal server error/i);
+  });
+});
