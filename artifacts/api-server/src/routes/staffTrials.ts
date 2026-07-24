@@ -803,9 +803,13 @@ staffRouter.get("/supervisor/today", requireRole(...SUPERVISE_ROLES), async (req
   try {
     const scope = fieldCityScope(req);
     if (scope !== null && scope.length === 0) { res.status(403).json({ error: "No city assigned to your staff account" }); return; }
-    const cityCond = scope === null ? sql`TRUE` : sql`lower(ta.city) = ANY(${scope}::text[])`;
+    // node-postgres binds a JS array as one plain-string param → "malformed
+    // array literal"; expand to IN ($1,$2,…) with one bound param per city.
+    const cityCond = scope === null
+      ? sql`TRUE`
+      : sql`lower(ta.city) IN (${sql.join(scope.map((c) => sql`${c}`), sql`, `)})`;
     const istToday = sql`(now() AT TIME ZONE 'Asia/Kolkata')::date`;
-    const [row] = await db.execute(sql`SELECT
+    const r = await db.execute(sql`SELECT
       (SELECT count(*)::int FROM trial_allocations ta WHERE ta.status = 'allocated' AND ${cityCond}) AS allocated,
       (SELECT count(*)::int FROM trial_checkins tc JOIN trial_allocations ta ON ta.id = tc.allocation_id
         WHERE ${cityCond} AND (tc.checked_in_at AT TIME ZONE 'Asia/Kolkata')::date = ${istToday}) AS checked_in_today,
@@ -816,7 +820,9 @@ staffRouter.get("/supervisor/today", requireRole(...SUPERVISE_ROLES), async (req
         WHERE tcr.status = 'pending' AND ${cityCond}) AS pending_corrections,
       (SELECT count(DISTINCT a.allocation_id)::int FROM trial_attempts a JOIN trial_allocations ta ON ta.id = a.allocation_id
         WHERE ${cityCond} AND NOT EXISTS (SELECT 1 FROM trial_evaluations te2 WHERE te2.allocation_id = a.allocation_id AND te2.status = 'submitted')) AS in_progress
-    `) as unknown as [Record<string, number>];
+    `);
+    // node-postgres driver: db.execute returns a QueryResult, rows live under .rows
+    const row = (r as unknown as { rows?: Record<string, number>[] }).rows?.[0];
     res.json({ counters: row ?? {} });
   } catch (e) {
     logger.error({ err: e }, "staff/supervisor/today failed");

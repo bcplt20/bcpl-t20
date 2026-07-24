@@ -433,6 +433,13 @@ adminTrialsRouter.post("/allocate", async (req, res) => {
   }
 });
 
+/** City-scope condition with one bound param per city. node-postgres binds a
+ *  JS array in raw sql as a single plain-string param ("malformed array
+ *  literal"), so never use `= ANY(${list}::text[])`. Empty list (= blocked
+ *  scope) matches nothing. */
+const cityScopeCond = (colSql: ReturnType<typeof sql>, list: string[]) =>
+  list.length ? sql`${colSql} IN (${sql.join(list.map((c) => sql`${c}`), sql`, `)})` : sql`FALSE`;
+
 /* GET /allocations?city=&slotId=&q= */
 adminTrialsRouter.get("/allocations", async (req, res) => {
   try {
@@ -441,7 +448,7 @@ adminTrialsRouter.get("/allocations", async (req, res) => {
     const q = req.query["q"] ? String(req.query["q"]).trim() : null;
     const conds = [] as ReturnType<typeof eq>[];
     const scopeAllocList = trialCityScope(req);
-    if (scopeAllocList) conds.push(sql`lower(${trialAllocationsTable.city}) = ANY(${scopeAllocList}::text[])` as never);
+    if (scopeAllocList) conds.push(cityScopeCond(sql`lower(${trialAllocationsTable.city})`, scopeAllocList) as never);
     if (city) conds.push(ilike(trialAllocationsTable.city, city) as never);
     if (slotId) conds.push(eq(trialAllocationsTable.slotId, slotId) as never);
     if (q) conds.push(or(ilike(usersTable.name, `%${q}%`), ilike(registrationsTable.regNumber, `%${q}%`)) as never);
@@ -624,7 +631,7 @@ adminTrialsRouter.get("/checkins", async (req, res) => {
     const slotId = req.query["slotId"] ? String(req.query["slotId"]) : null;
     const conds = [] as never[];
     const scopeCkList = trialCityScope(req);
-    if (scopeCkList) conds.push(sql`EXISTS (SELECT 1 FROM trial_allocations sca WHERE sca.id = ${trialCheckinsTable.allocationId} AND lower(sca.city) = ANY(${scopeCkList}::text[]))` as never);
+    if (scopeCkList) conds.push(sql`EXISTS (SELECT 1 FROM trial_allocations sca WHERE sca.id = ${trialCheckinsTable.allocationId} AND ${cityScopeCond(sql`lower(sca.city)`, scopeCkList)})` as never);
     if (city) conds.push(ilike(trialAllocationsTable.city, city) as never);
     if (slotId) conds.push(eq(trialCheckinsTable.slotId, slotId) as never);
     const rows = await db.select({
@@ -737,7 +744,7 @@ adminTrialsRouter.get("/assessments", async (req, res) => {
     const q = req.query["q"] ? String(req.query["q"]).trim() : null;
     const conds = [] as never[];
     const scopeAsmList = trialCityScope(req);
-    if (scopeAsmList) conds.push(sql`lower(${physicalAssessmentsTable.city}) = ANY(${scopeAsmList}::text[])` as never);
+    if (scopeAsmList) conds.push(cityScopeCond(sql`lower(${physicalAssessmentsTable.city})`, scopeAsmList) as never);
     if (city) conds.push(ilike(physicalAssessmentsTable.city, city) as never);
     if (result) conds.push(eq(physicalAssessmentsTable.result, result) as never);
     if (q) conds.push(or(ilike(usersTable.name, `%${q}%`), ilike(registrationsTable.regNumber, `%${q}%`)) as never);
