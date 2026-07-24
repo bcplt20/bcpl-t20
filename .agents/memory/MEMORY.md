@@ -30,3 +30,4 @@
 - [Reminder sweeps & send gating](reminders-system.md) — new send paths must gate (real keys live in dev); reserve-first dedupe; window mismatch 7 vs 15 flagged
 - [Workspace recycle](workspace-recycle.md) — recycle can wipe uncommitted edits mid-session; commit locally as soon as tsc passes, verify markers before re-applying
 - [Security hardening lessons](security-hardening.md) — varchar(20) status trap; one amount-gate for ALL success paths; no victim-keyed lockouts; writeAudit races tests
+- [AWS access scope](aws-access-scope.md) — workspace keys = bcpl-s3-user S3-only (infra describes AccessDenied); probe via curl --aws-sigv4; prod topology truth in deploy/
