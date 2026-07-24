@@ -20,8 +20,9 @@ import { db }           from "@workspace/db";
 import {
   matchesTable, inningsTable, deliveriesTable, matchXITable,
 } from "@workspace/db/schema";
-import { eq, and, desc, asc, inArray } from "drizzle-orm";
+import { eq, and, desc, asc, inArray, sql } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
+import { pgCauseOf }    from "../lib/pgErrors";
 import { z }            from "zod";
 
 const router = Router();
@@ -323,7 +324,8 @@ router.put("/admin/matches/:id/status", requireAdmin, async (req, res) => {
 // Removes a match and all its scoring data (innings, deliveries, XI).
 // If the match already has scoring data (innings / deliveries), the caller
 // must pass ?force=1 to confirm; otherwise a 409 is returned describing what
-// will be lost. FK order on delete: deliveries → innings → match_xi → match.
+// will be lost. FK order on delete: legacy children → deliveries → innings →
+// match_xi → match.
 router.delete("/admin/matches/:id", requireAdmin, async (req, res) => {
   const matchId = String(req.params.id);
 
@@ -335,35 +337,83 @@ router.delete("/admin/matches/:id", requireAdmin, async (req, res) => {
   const innings = await db.select().from(inningsTable).where(eq(inningsTable.matchId, matchId));
   const inningsIds = innings.map(i => i.id);
 
-  let deliveryCount = 0;
+  let deliveryIds: string[] = [];
   if (inningsIds.length > 0) {
     const deliveries = await db.select({ id: deliveriesTable.id }).from(deliveriesTable)
       .where(inArray(deliveriesTable.inningsId, inningsIds));
-    deliveryCount = deliveries.length;
+    deliveryIds = deliveries.map(d => d.id);
   }
 
   const force = req.query.force === "1" || req.query.force === "true";
-  const hasScoringData = innings.length > 0 || deliveryCount > 0;
+  const hasScoringData = innings.length > 0 || deliveryIds.length > 0;
 
   if (hasScoringData && !force) {
     const lost: string[] = [];
-    if (innings.length > 0) lost.push(`${innings.length} innings`);
-    if (deliveryCount > 0)  lost.push(`${deliveryCount} scored deliveries`);
+    if (innings.length > 0)    lost.push(`${innings.length} innings`);
+    if (deliveryIds.length > 0) lost.push(`${deliveryIds.length} scored deliveries`);
     return void res.status(409).json({
       error: `This match has score data. Deleting it will permanently remove ${lost.join(" and ")}. Retry with force to confirm.`,
       requiresForce: true,
-      willLose: { innings: innings.length, deliveries: deliveryCount },
+      willLose: { innings: innings.length, deliveries: deliveryIds.length },
     });
   }
 
-  await db.transaction(async (tx) => {
-    if (inningsIds.length > 0) {
-      await tx.delete(deliveriesTable).where(inArray(deliveriesTable.inningsId, inningsIds));
+  /* The production database has outlived several schema versions (the deploy
+     schema push is best-effort), so tables UNKNOWN to this build may still
+     hold rows pointing at this match — a plain delete then dies with an FK
+     violation (500). A confirmed delete promises "the match and everything
+     attached goes", so: discover every FK that references matches/innings/
+     deliveries and clear those legacy rows first, inside one transaction. */
+  const KNOWN_CHILDREN = new Set(["innings", "match_xi", "deliveries"]);
+  try {
+    await db.transaction(async (tx) => {
+      const fkRows = await tx.execute(sql`
+        SELECT kcu.table_name  AS child_table,
+               kcu.column_name AS child_column,
+               ccu.table_name  AS parent_table
+        FROM information_schema.table_constraints tc
+        JOIN information_schema.key_column_usage kcu
+          ON kcu.constraint_name = tc.constraint_name AND kcu.table_schema = tc.table_schema
+        JOIN information_schema.constraint_column_usage ccu
+          ON ccu.constraint_name = tc.constraint_name AND ccu.table_schema = tc.table_schema
+        WHERE tc.constraint_type = 'FOREIGN KEY'
+          AND tc.table_schema = 'public'
+          AND ccu.table_name IN ('matches', 'innings', 'deliveries')
+          AND ccu.column_name = 'id'
+      `);
+      for (const fk of fkRows.rows as Array<{ child_table: string; child_column: string; parent_table: string }>) {
+        if (KNOWN_CHILDREN.has(fk.child_table)) continue;
+        const parentIds =
+          fk.parent_table === "matches"  ? [matchId] :
+          fk.parent_table === "innings"  ? inningsIds :
+          deliveryIds;
+        if (parentIds.length === 0) continue;
+        req.log.warn({ legacyTable: fk.child_table, column: fk.child_column, matchId },
+          "match delete: clearing rows from legacy child table");
+        await tx.execute(sql`
+          DELETE FROM ${sql.identifier(fk.child_table)}
+          WHERE ${sql.identifier(fk.child_column)} IN (${sql.join(parentIds.map(id => sql`${id}`), sql`, `)})
+        `);
+      }
+      if (inningsIds.length > 0) {
+        await tx.delete(deliveriesTable).where(inArray(deliveriesTable.inningsId, inningsIds));
+      }
+      await tx.delete(inningsTable).where(eq(inningsTable.matchId, matchId));
+      await tx.delete(matchXITable).where(eq(matchXITable.matchId, matchId));
+      await tx.delete(matchesTable).where(eq(matchesTable.id, matchId));
+    });
+  } catch (err) {
+    const pg = pgCauseOf(err);
+    if (pg?.code === "23503") {
+      // Still blocked (e.g. a grandchild of a legacy table) — say WHICH table
+      // instead of a blank 500, and log the full pg detail for diagnosis.
+      req.log.error({ pg, matchId }, "match delete blocked by foreign key");
+      return void res.status(409).json({
+        error: `Match cannot be deleted yet: rows in table "${pg.table ?? "unknown"}" still reference it (constraint ${pg.constraint ?? "?"}). Please share this message with support.`,
+      });
     }
-    await tx.delete(inningsTable).where(eq(inningsTable.matchId, matchId));
-    await tx.delete(matchXITable).where(eq(matchXITable.matchId, matchId));
-    await tx.delete(matchesTable).where(eq(matchesTable.id, matchId));
-  });
+    throw err; // anything else → global error handler (logged with cause chain)
+  }
 
   res.json({ success: true });
 });

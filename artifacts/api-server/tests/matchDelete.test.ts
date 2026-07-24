@@ -13,7 +13,7 @@
  */
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import request from "supertest";
-import { eq, inArray } from "drizzle-orm";
+import { eq, inArray, sql } from "drizzle-orm";
 
 const TEST_ADMIN_SECRET = "test-admin-secret-for-vitest";
 const TEST_SESSION_SECRET = "test-session-secret-for-vitest";
@@ -145,5 +145,50 @@ describe("DELETE /api/matches/admin/matches/:id", () => {
 
     const remXI = await db.select().from(matchXITable).where(eq(matchXITable.matchId, match.id));
     expect(remXI.length).toBe(0);
+  });
+});
+
+/* ── Production schema drift: legacy tables may still reference matches ──
+   Prod has outlived several schema versions (the deploy schema push is
+   best-effort), so a table THIS build doesn't know about can FK-block the
+   delete — the exact opaque "Internal server error" the admin saw. A
+   confirmed force delete must sweep those rows instead of dying. */
+describe("force delete with a legacy child table (prod drift)", () => {
+  const legacyTable = `legacy_match_stats_${suffix}`;
+
+  beforeAll(async () => {
+    await db.execute(sql.raw(
+      `CREATE TABLE ${legacyTable} (
+         id SERIAL PRIMARY KEY,
+         match_id UUID NOT NULL REFERENCES matches(id),
+         note VARCHAR(50)
+       )`,
+    ));
+  });
+
+  afterAll(async () => {
+    await db.execute(sql.raw(`DROP TABLE IF EXISTS ${legacyTable}`));
+  });
+
+  it("clears legacy rows and deletes a COMPLETED match instead of 500", async () => {
+    const { match } = await mkScoredMatch();
+    await db.update(matchesTable)
+      .set({ status: "completed", winner: match.team1, resultDesc: `${match.team1} won` })
+      .where(eq(matchesTable.id, match.id));
+    await db.execute(sql.raw(
+      `INSERT INTO ${legacyTable} (match_id, note) VALUES ('${match.id}', 'legacy row')`,
+    ));
+
+    const r = await request(app)
+      .delete(`/api/matches/admin/matches/${match.id}?force=1`)
+      .set(admin);
+    expect(r.status).toBe(200);
+    expect(r.body.success).toBe(true);
+
+    // DB end-state: match gone AND the legacy rows swept with it
+    const [gone] = await db.select().from(matchesTable).where(eq(matchesTable.id, match.id));
+    expect(gone).toBeUndefined();
+    const left = await db.execute(sql.raw(`SELECT count(*)::int AS n FROM ${legacyTable}`));
+    expect(Number((left.rows[0] as { n: number }).n)).toBe(0);
   });
 });

@@ -4,6 +4,7 @@ import pinoHttp from "pino-http";
 import router from "./routes";
 import { sitemapHandler, robotsHandler, seoHtmlMiddleware } from "./routes/seo";
 import { logger } from "./lib/logger";
+import { pgCauseOf } from "./lib/pgErrors";
 
 const app: Express = express();
 
@@ -79,5 +80,19 @@ app.get("/robots.txt", robotsHandler); // fallback; the static file usually wins
 // Any other page request gets the SPA's index.html with per-page meta,
 // canonical URL and the Google verification tag injected server-side.
 app.use(seoHtmlMiddleware);
+
+// ── Last-resort error handler ─────────────────────────────────────────────────
+// Express 5 forwards async route rejections here. Without this, the default
+// handler answers an opaque HTML "Internal Server Error" and — crucially —
+// never logs the pg error hidden in Drizzle's .cause chain.
+app.use((err: unknown, req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  const pg = pgCauseOf(err);
+  logger.error(
+    { err, pgCode: pg?.code, pgTable: pg?.table, pgConstraint: pg?.constraint, pgDetail: pg?.detail, url: req.originalUrl, method: req.method },
+    "unhandled route error",
+  );
+  if (res.headersSent) return;
+  res.status(500).json({ error: "Internal server error" });
+});
 
 export default app;
