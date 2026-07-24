@@ -1,14 +1,27 @@
 ---
 name: Admin localStorage views
-description: Admin panel views must persist to the server, never localStorage; rescue + save patterns for converting the remaining offenders
+description: Which admin views persist where — all admin DATA is now server-backed via site_settings keys; patterns for adding more.
 ---
 
-**Rule:** Admin-panel views must persist through the API (site_settings key or a real table) — never localStorage. LS-only views look like they work but data never reaches the website or other devices; this caused an owner-visible bug (sponsors added in admin never showed on the site).
+# Admin data persistence — all server-backed now
 
-**Why:** The admin panel's whole point is that changes appear on the public website. localStorage silently breaks that contract per-browser.
+As of July 2026 every admin view that stores DATA uses the server (`site_settings` key-value store via `/settings/admin/:key`, adminReq plumbing). Converted in order: sponsors → AdminSettingsView (admin_users table, Stage 5) → ContractsView + TrialsOps.
 
-**How to apply:**
-- Sponsors is FIXED: settings key `sponsors` (CONTENT_TEAM, zod-validated, base64 logos rejected — http(s) URLs only), role-gated `GET /api/settings/admin/:key` for full reads, public `GET /api/sponsors` returns active-only sanitized rows (no amount/contract/status). Tests in api-server tests/sponsors.test.ts.
-- Still LS-only (known offenders, fix on request): ContractsView (signature image), TrialsOps (staff/assessor names), AdminSettingsView (misc keys).
-- **Rescue pattern** when converting a view: show a one-time import banner when server list is empty && legacy LS key non-empty; sanitize each row client-side to the exact server schema (drop extra keys, clamp lengths, empty non-http URLs / strip `data:` logos); clear the LS key only after a successful save.
-- **Single-flight coalescing save** for whole-list PUT views: one request in flight carrying the latest snapshot (pendingRef + inflightRef loop); on failure resync from server — prevents out-of-order PUTs reverting newer edits (architect-flagged race).
+Current keys & roles (KEY_ROLES in settings routes; SUPER_ADMIN always allowed):
+- `sponsors` — CONTENT_TEAM; public site reads sanitized GET /api/sponsors.
+- `founder_signature` — MATCH_OPERATIONS; `{image: dataUrl|""}`; client downscales via canvas (≤600x300 PNG, reject >380K chars; server zod cap 400K, express.json limit 1mb). NOT public. Audit rows redact the payload to `data-url(N chars)` — a test asserts no base64 ever lands in audit.
+- `trial_ops_defaults` — TRIAL_CITY_MANAGER; `{staff?, assessor?}` partial saves.
+
+**Atomic partial-merge pattern** (for keys written by concurrent tabs/devices): the PUT branch for `trial_ops_defaults` merges in SQL — `((value)::jsonb || $new::jsonb)::json` in onConflictDoUpdate (column is `json`, so both casts are required). No client GET→merge→PUT (that had a lost-update window).
+**Why:** check-in and assessment tabs save different fields at the same time during trial days.
+**How to apply:** any new multi-writer settings key should reuse this merge upsert; single-writer keys keep the plain replace upsert.
+
+Client conventions:
+- API helpers live in `src/admin/api/*Api.ts`, always via shared adminReq — never duplicate fetch plumbing.
+- Legacy-LS rescue: read old key only when server value is empty; offer one-time "save to server" (banner for images/lists, silent prefill for tiny strings); remove the LS key ONLY after a successful server save.
+- Fire-and-forget convenience saves (trial defaults) must never block the real action; console.warn on failure.
+- Guard the initial GET against clobbering a save the user made while it was in flight (dirty ref).
+
+Remaining localStorage (intentional, NOT data):
+- session/prefs keys (admin token, lang, referral).
+- legacy `bcpl_co_admins` read in login fallback + migration banner (AdminSettingsView) — auth redesign out of scope; owner informed.
