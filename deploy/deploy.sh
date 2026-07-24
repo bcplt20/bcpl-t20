@@ -188,13 +188,19 @@ cd $APP_DIR/lib/db
 # connection encrypted HI rehta hai, sirf cert-check skip hota hai
 # (AWS ke andar ka private link hai, ye safe hai).
 PUSH_URL="${DATABASE_URL%%\?*}?sslmode=no-verify"
-PUSH_OUT=$(DATABASE_URL="$PUSH_URL" pnpm run push-force 2>&1) || true
+# SURAKSHA: --force ab kabhi NAHI — wo "truncate table?" jaise sawaal par
+# khud KHATARNAK jawab chun sakta hai. Plain push sirf SAFE badlav lagata
+# hai; koi sawaal ho to bina kuch kiye ruk jata hai (neeche pakda jayega).
+PUSH_OUT=$(DATABASE_URL="$PUSH_URL" pnpm run push </dev/null 2>&1) || true
 echo "$PUSH_OUT" | tail -25
 if echo "$PUSH_OUT" | grep -qE "Changes applied|No changes"; then
   echo "✅ DB schema up to date"
 else
-  echo "❌ DB schema push adhura raha — DEPLOY ROKA GAYA (purani app hi chalti rahegi)."
-  echo "   Upar ka pura output Replit Agent ko bhej dijiye."
+  echo "❌ DB push ko kisi sawaal ki manzoori chahiye — DEPLOY ROKA GAYA (purani app chalti rahegi, kuch apply NAHI hua)."
+  echo "   Sawaal capture ho raha hai (30 sec ruko)..."
+  timeout 30 script -qec "env DATABASE_URL='$PUSH_URL' pnpm run push" /tmp/bcpl-push-q.txt >/dev/null 2>&1 || true
+  echo "──── SAWAAL — ye pura Replit Agent ko bhejo ────"
+  sed -r 's/\x1b\[[0-9;?]*[A-Za-z]//g' /tmp/bcpl-push-q.txt | tr -d '\r' | grep -v '^ *$' | tail -15
   exit 1
 fi
 
