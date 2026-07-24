@@ -18,3 +18,5 @@ description: Editorial rulebook from the July 2026 legal copy sweep — wording 
 
 **Why:** owner's 80-part master spec (Parts 12/13/19/74) + misrepresentation risk; full OLD→NEW log in reports/legal-copy-change-report-2026-07-23.md.
 **How to apply:** any new template or page copy (email/WhatsApp phases!) must pass the sweep grep: `bcci|scout|working days|most trusted|hidden charges|india's (biggest|largest)|full refund|2.minute`. Legal pages (Terms/Privacy/Refunds/CoC): factual corrections only, never change commitments/windows without owner+legal sign-off.
+
+**Fee amounts in copy:** user-facing copy must NEVER hardcode fee amounts (₹99/₹299/₹2,000 all slipped in at different times); fees are config-driven (/api/fees, useFees). When touching copy, grep `₹[0-9]` in the page/component. Why: stale amounts confuse the owner and can misquote real prices.
