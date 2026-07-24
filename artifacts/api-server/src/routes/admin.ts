@@ -348,6 +348,7 @@ router.get("/registrations", async (req, res) => {
 
     const registrations = filtered.map(r => ({
       id:           r.reg.id,
+      regNumber:    r.reg.regNumber ?? null,
       userId:       r.reg.userId,
       role:         r.reg.role,
       trialCity:    r.reg.trialCity,

@@ -6,9 +6,9 @@ import {
   registrationsTable, usersTable,
   phase1PaymentsTable, phase2PaymentsTable,
 } from "@workspace/db/schema";
-import { eq, and, or, isNull } from "drizzle-orm";
+import { eq, and, or, isNull, sql } from "drizzle-orm";
 import { requireAuth, type AuthRequest } from "../middlewares/auth";
-import { createOrder, getPaymentStatus } from "../lib/cashfree";
+import { createOrder, getPaymentStatus, extractPaymentMethod } from "../lib/cashfree";
 import { sendEmail, tplPhase1Receipt, tplPhase2Receipt } from "../lib/email";
 import { sendSms } from "../lib/sms";
 import { sendWhatsApp, WA } from "../lib/whatsapp";
@@ -20,6 +20,27 @@ import { getPhase1Config } from "../lib/phase1Config";
 import { z } from "zod";
 
 const router = Router();
+
+/**
+ * Startup migration (idempotent) — payment method split columns.
+ * Production applies schema via `drizzle-kit push --yes 2>/dev/null || true`
+ * in deploy.sh, whose failures are SILENT — so we cannot rely on it for these
+ * columns. Without them the success-persist writes below would crash prod
+ * payments. This boot-time ensure guarantees the columns exist regardless.
+ *
+ * The 2 PM2 cluster workers boot simultaneously (and vitest runs test files in
+ * parallel): serialize the DDL under an xact-scoped advisory lock so racing
+ * ADD COLUMN IF NOT EXISTS can never collide on pg_type (23505).
+ */
+export async function ensurePaymentMethodColumns(): Promise<void> {
+  await db.transaction(async (tx) => {
+    await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtext('bcpl:payment_method:ddl'))`);
+    await tx.execute(sql`ALTER TABLE phase1_payments ADD COLUMN IF NOT EXISTS payment_group varchar(40)`);
+    await tx.execute(sql`ALTER TABLE phase1_payments ADD COLUMN IF NOT EXISTS payment_method_detail varchar(120)`);
+    await tx.execute(sql`ALTER TABLE phase2_payments ADD COLUMN IF NOT EXISTS payment_group varchar(40)`);
+    await tx.execute(sql`ALTER TABLE phase2_payments ADD COLUMN IF NOT EXISTS payment_method_detail varchar(120)`);
+  });
+}
 
 const SITE_URL = process.env.SITE_URL || "https://elite-user-experience.replit.app/bcpl-website";
 const API_URL  = process.env.API_URL  || "https://elite-user-experience.replit.app";
@@ -170,6 +191,8 @@ router.post("/phase1/verify", requireAuth, async (req: AuthRequest, res) => {
   await db.update(phase1PaymentsTable).set({
     status: "success",
     cashfreePaymentId: status.paymentId,
+    paymentGroup: status.paymentGroup ?? null,
+    paymentMethodDetail: status.paymentMethodDetail ?? null,
     paidAt: new Date(),
   }).where(eq(phase1PaymentsTable.cashfreeOrderId, parsed.data.orderId));
 
@@ -277,6 +300,8 @@ router.post("/phase2/verify", requireAuth, async (req: AuthRequest, res) => {
   await db.update(phase2PaymentsTable).set({
     status: "success",
     cashfreePaymentId: status.paymentId,
+    paymentGroup: status.paymentGroup ?? null,
+    paymentMethodDetail: status.paymentMethodDetail ?? null,
     paidAt: new Date(),
   }).where(eq(phase2PaymentsTable.cashfreeOrderId, parsed.data.orderId));
 
@@ -330,11 +355,13 @@ router.post("/webhook", async (req, res) => {
     return void res.status(401).json({ error: "Invalid webhook signature" });
   }
   try {
-    const body = req.body as { data?: { order?: { order_id: string }; payment?: { payment_status: string; cf_payment_id: string; payment_amount?: number; payment_currency?: string } } };
+    const body = req.body as { data?: { order?: { order_id: string }; payment?: { payment_status: string; cf_payment_id: string; payment_amount?: number; payment_currency?: string; payment_group?: string; payment_method?: Record<string, unknown> } } };
     const orderId = body.data?.order?.order_id;
     const payStatus = body.data?.payment?.payment_status;
     const payId = body.data?.payment?.cf_payment_id;
     const gwPaid = { amount: body.data?.payment?.payment_amount, currency: body.data?.payment?.payment_currency };
+    // Coarse group + free-text detail from the webhook payment entity (defensive).
+    const method = extractPaymentMethod(body.data?.payment);
 
     if (orderId && payStatus === "SUCCESS") {
       if (orderId.startsWith("p1_")) {
@@ -347,7 +374,7 @@ router.post("/webhook", async (req, res) => {
           return void res.json({ received: true, reconciliation: true });
         }
         const updated = await db.update(phase1PaymentsTable)
-          .set({ status: "success", cashfreePaymentId: payId, paidAt: new Date() })
+          .set({ status: "success", cashfreePaymentId: payId, paymentGroup: method.paymentGroup, paymentMethodDetail: method.paymentMethodDetail, paidAt: new Date() })
           .where(eq(phase1PaymentsTable.cashfreeOrderId, orderId))
           .returning({ registrationId: phase1PaymentsTable.registrationId });
 
@@ -394,7 +421,7 @@ router.post("/webhook", async (req, res) => {
           return void res.json({ received: true, reconciliation: true });
         }
         const updated = await db.update(phase2PaymentsTable)
-          .set({ status: "success", cashfreePaymentId: payId, paidAt: new Date() })
+          .set({ status: "success", cashfreePaymentId: payId, paymentGroup: method.paymentGroup, paymentMethodDetail: method.paymentMethodDetail, paidAt: new Date() })
           .where(eq(phase2PaymentsTable.cashfreeOrderId, orderId))
           .returning({ registrationId: phase2PaymentsTable.registrationId });
 

@@ -12,6 +12,7 @@
  *   PUT  /api/admin/matches/:id/toss     – record toss result
  *   POST /api/admin/matches/:id/xi       – set playing XI for both teams
  *   PUT  /api/admin/matches/:id/status   – update match status
+ *   DELETE /api/admin/matches/:id        – delete match + its scoring data (?force=1)
  */
 
 import { Router }       from "express";
@@ -19,7 +20,7 @@ import { db }           from "@workspace/db";
 import {
   matchesTable, inningsTable, deliveriesTable, matchXITable,
 } from "@workspace/db/schema";
-import { eq, and, desc, asc } from "drizzle-orm";
+import { eq, and, desc, asc, inArray } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { z }            from "zod";
 
@@ -316,6 +317,55 @@ router.put("/admin/matches/:id/status", requireAdmin, async (req, res) => {
 
   if (!match) return void res.status(404).json({ error: "Match not found" });
   res.json({ success: true, match });
+});
+
+// DELETE /api/admin/matches/:id
+// Removes a match and all its scoring data (innings, deliveries, XI).
+// If the match already has scoring data (innings / deliveries), the caller
+// must pass ?force=1 to confirm; otherwise a 409 is returned describing what
+// will be lost. FK order on delete: deliveries → innings → match_xi → match.
+router.delete("/admin/matches/:id", requireAdmin, async (req, res) => {
+  const matchId = String(req.params.id);
+
+  const [match] = await db.select().from(matchesTable).where(eq(matchesTable.id, matchId)).limit(1);
+  if (!match) return void res.status(404).json({ error: "Match not found" });
+
+  // Gather scoring data so we can (a) decide if a force is required and
+  // (b) delete deliveries in the correct FK order.
+  const innings = await db.select().from(inningsTable).where(eq(inningsTable.matchId, matchId));
+  const inningsIds = innings.map(i => i.id);
+
+  let deliveryCount = 0;
+  if (inningsIds.length > 0) {
+    const deliveries = await db.select({ id: deliveriesTable.id }).from(deliveriesTable)
+      .where(inArray(deliveriesTable.inningsId, inningsIds));
+    deliveryCount = deliveries.length;
+  }
+
+  const force = req.query.force === "1" || req.query.force === "true";
+  const hasScoringData = innings.length > 0 || deliveryCount > 0;
+
+  if (hasScoringData && !force) {
+    const lost: string[] = [];
+    if (innings.length > 0) lost.push(`${innings.length} innings`);
+    if (deliveryCount > 0)  lost.push(`${deliveryCount} scored deliveries`);
+    return void res.status(409).json({
+      error: `This match has score data. Deleting it will permanently remove ${lost.join(" and ")}. Retry with force to confirm.`,
+      requiresForce: true,
+      willLose: { innings: innings.length, deliveries: deliveryCount },
+    });
+  }
+
+  await db.transaction(async (tx) => {
+    if (inningsIds.length > 0) {
+      await tx.delete(deliveriesTable).where(inArray(deliveriesTable.inningsId, inningsIds));
+    }
+    await tx.delete(inningsTable).where(eq(inningsTable.matchId, matchId));
+    await tx.delete(matchXITable).where(eq(matchXITable.matchId, matchId));
+    await tx.delete(matchesTable).where(eq(matchesTable.id, matchId));
+  });
+
+  res.json({ success: true });
 });
 
 export default router;

@@ -78,19 +78,106 @@ export async function getOrderStatus(orderId: string): Promise<{ orderStatus: st
   } catch (e) { console.error("[CF] getOrderStatus error", e); return null; }
 }
 
-export async function getPaymentStatus(orderId: string): Promise<{ status: string; paymentId?: string; amount?: number; currency?: string } | null> {
+/**
+ * A Cashfree "payment entity" (element of GET /orders/{id}/payments).
+ * We only type the fields we consume; the payment_method object is a tagged
+ * union keyed by the method group (upi/card/netbanking/app), so it is parsed
+ * defensively by extractPaymentMethod().
+ */
+export interface CashfreePaymentEntity {
+  payment_status: string;
+  cf_payment_id: string;
+  payment_amount?: number;
+  payment_currency?: string;
+  payment_group?: string;
+  payment_method?: Record<string, unknown>;
+}
+
+/** Extracted, DB-ready split: coarse group + free-text detail (either may be null). */
+export interface PaymentMethodSplit {
+  paymentGroup: string | null;
+  paymentMethodDetail: string | null;
+}
+
+/**
+ * Pull the coarse payment_group and a human-readable detail out of a Cashfree
+ * payment entity. Extremely defensive — the payload shape varies by method and
+ * any field can be absent; store null when we cannot determine a value.
+ *
+ * payment_method is shaped like { upi: { upi_id, channel } } /
+ * { card: { card_network, card_bank_name, ... } } /
+ * { netbanking: { netbanking_bank_name, ... } } / { app: { provider } } etc.
+ */
+export function extractPaymentMethod(p: {
+  payment_group?: unknown;
+  payment_method?: unknown;
+} | null | undefined): PaymentMethodSplit {
+  if (!p || typeof p !== "object") return { paymentGroup: null, paymentMethodDetail: null };
+
+  const group = typeof p.payment_group === "string" && p.payment_group.trim()
+    ? p.payment_group.trim().slice(0, 40)
+    : null;
+
+  let detail: string | null = null;
+  const pm = p.payment_method;
+  if (pm && typeof pm === "object") {
+    const obj = pm as Record<string, Record<string, unknown> | unknown>;
+    // Find the single tag key (upi/card/netbanking/app/wallet/...) and read a
+    // sensible display field from within it.
+    for (const [key, val] of Object.entries(obj)) {
+      if (!val || typeof val !== "object") continue;
+      const inner = val as Record<string, unknown>;
+      const pick = (...keys: string[]): string | null => {
+        for (const k of keys) {
+          const v = inner[k];
+          if (typeof v === "string" && v.trim()) return v.trim();
+        }
+        return null;
+      };
+      if (key === "upi")        detail = pick("upi_id", "channel");
+      else if (key === "card")  detail = pick("card_bank_name", "card_network", "card_type");
+      else if (key === "netbanking") detail = pick("netbanking_bank_name", "netbanking_bank_code", "channel");
+      else if (key === "app" || key === "wallet") detail = pick("provider", "channel");
+      else                      detail = pick("provider", "channel", "bank_name");
+      if (detail) break;
+    }
+  }
+  if (detail) detail = detail.slice(0, 120);
+  return { paymentGroup: group, paymentMethodDetail: detail };
+}
+
+export async function getPaymentStatus(orderId: string): Promise<{ status: string; paymentId?: string; amount?: number; currency?: string; paymentGroup?: string | null; paymentMethodDetail?: string | null } | null> {
   if (!APP_ID || !SECRET) {
-    return { status: "SUCCESS", paymentId: `mock_pay_${Date.now()}` };
+    return { status: "SUCCESS", paymentId: `mock_pay_${Date.now()}`, paymentGroup: null, paymentMethodDetail: null };
   }
   try {
     const res = await fetch(`${BASE_URL}/orders/${orderId}/payments`, { headers: cfHeaders() });
     if (!res.ok) return null;
-    const payments = (await res.json()) as Array<{ payment_status: string; cf_payment_id: string; payment_amount?: number; payment_currency?: string }>;
+    const payments = (await res.json()) as CashfreePaymentEntity[];
     const success = payments.find(p => p.payment_status === "SUCCESS");
-    if (success) return { status: "SUCCESS", paymentId: success.cf_payment_id, amount: success.payment_amount, currency: success.payment_currency };
+    if (success) {
+      const split = extractPaymentMethod(success);
+      return { status: "SUCCESS", paymentId: success.cf_payment_id, amount: success.payment_amount, currency: success.payment_currency, ...split };
+    }
     const latest = payments[0];
-    return latest ? { status: latest.payment_status, amount: latest.payment_amount, currency: latest.payment_currency } : { status: "PENDING" };
+    if (!latest) return { status: "PENDING" };
+    const split = extractPaymentMethod(latest);
+    return { status: latest.payment_status, amount: latest.payment_amount, currency: latest.payment_currency, ...split };
   } catch (e) { console.error("[CF] getPaymentStatus error", e); return null; }
+}
+
+/**
+ * Fetch the full list of Cashfree payment entities for an order (used by the
+ * admin backfill tool). Returns null when creds are missing (dev/stub) so the
+ * caller can skip real network calls.
+ */
+export async function listOrderPayments(orderId: string): Promise<CashfreePaymentEntity[] | null> {
+  if (!APP_ID || !SECRET) return null;
+  try {
+    const res = await fetch(`${BASE_URL}/orders/${orderId}/payments`, { headers: cfHeaders() });
+    if (!res.ok) { console.error("[CF] listOrderPayments failed:", orderId, res.status); return null; }
+    return (await res.json()) as CashfreePaymentEntity[];
+  } catch (e) { console.error("[CF] listOrderPayments error", e); return null; }
 }
 
 // ─── Cashfree Verification Suite (separate credentials) ───────────────────────

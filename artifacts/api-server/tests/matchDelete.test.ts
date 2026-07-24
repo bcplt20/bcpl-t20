@@ -1,0 +1,149 @@
+/**
+ * DELETE /api/matches/admin/matches/:id — match deletion with score-data guard.
+ *
+ * Covers:
+ *   - 404 when the match does not exist
+ *   - 409 (requiresForce) when the match has scoring data and ?force is absent
+ *   - successful cascade delete of a match with NO scoring data
+ *   - successful FORCED cascade delete of a match WITH scoring data,
+ *     asserting the DB end-state (match, innings, deliveries, XI all gone)
+ *
+ * All seeded rows use a unique per-run suffix and are cleaned up afterAll;
+ * assertions check DB end-state, never run counts (parallel agents share DB).
+ */
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import request from "supertest";
+import { eq, inArray } from "drizzle-orm";
+
+const TEST_ADMIN_SECRET = "test-admin-secret-for-vitest";
+const TEST_SESSION_SECRET = "test-session-secret-for-vitest";
+process.env.ADMIN_SECRET = TEST_ADMIN_SECRET;
+process.env.SESSION_SECRET = TEST_SESSION_SECRET;
+
+const { default: app } = await import("../src/app");
+const { db } = await import("@workspace/db");
+const { matchesTable, inningsTable, deliveriesTable, matchXITable } =
+  await import("@workspace/db/schema");
+
+const admin = { "x-bcpl-admin": TEST_ADMIN_SECRET };
+
+const suffix = String(Date.now()).slice(-7);
+const matchIds: string[] = [];
+let seq = 0;
+
+/** Create a bare scheduled match (no scoring data). */
+async function mkMatch() {
+  const n = ++seq;
+  const [match] = await db.insert(matchesTable).values({
+    matchNo: Number(`9${suffix}${n}`.slice(-8)),
+    season: 5,
+    team1: `Del Test A ${suffix}-${n}`,
+    team2: `Del Test B ${suffix}-${n}`,
+    venue: `Del Test Ground ${suffix}`,
+    status: "scheduled",
+  }).returning();
+  matchIds.push(match.id);
+  return match;
+}
+
+/** Create a match with 1 innings + 1 delivery + XI rows (scoring data). */
+async function mkScoredMatch() {
+  const match = await mkMatch();
+  const [innings] = await db.insert(inningsTable).values({
+    matchId: match.id,
+    inningsNumber: 1,
+    battingTeam: match.team1,
+    bowlingTeam: match.team2,
+    status: "live",
+  }).returning();
+  await db.insert(deliveriesTable).values({
+    inningsId: innings.id,
+    overNumber: 0,
+    ballInOver: 1,
+    deliveryInOver: 1,
+    batterName: "Test Batter",
+    bowlerName: "Test Bowler",
+    runsOffBat: 4,
+    extrasRuns: 0,
+    totalRuns: 4,
+  });
+  await db.insert(matchXITable).values({
+    matchId: match.id,
+    team: match.team1,
+    playerName: "Test Batter",
+    playerRole: "BAT",
+    battingOrder: 1,
+  });
+  return { match, innings };
+}
+
+afterAll(async () => {
+  if (matchIds.length) {
+    const innings = await db.select({ id: inningsTable.id }).from(inningsTable)
+      .where(inArray(inningsTable.matchId, matchIds));
+    const inningsIds = innings.map(i => i.id);
+    if (inningsIds.length) {
+      await db.delete(deliveriesTable).where(inArray(deliveriesTable.inningsId, inningsIds));
+    }
+    await db.delete(inningsTable).where(inArray(inningsTable.matchId, matchIds));
+    await db.delete(matchXITable).where(inArray(matchXITable.matchId, matchIds));
+    await db.delete(matchesTable).where(inArray(matchesTable.id, matchIds));
+  }
+});
+
+describe("DELETE /api/matches/admin/matches/:id", () => {
+  it("rejects without admin auth", async () => {
+    const r = await request(app).delete("/api/matches/admin/matches/00000000-0000-0000-0000-000000000000");
+    expect([401, 403]).toContain(r.status);
+  });
+
+  it("404 when the match does not exist", async () => {
+    const r = await request(app)
+      .delete("/api/matches/admin/matches/00000000-0000-0000-0000-000000000000")
+      .set(admin);
+    expect(r.status).toBe(404);
+  });
+
+  it("409 (requiresForce) when the match has scoring data and no ?force", async () => {
+    const { match } = await mkScoredMatch();
+    const r = await request(app).delete(`/api/matches/admin/matches/${match.id}`).set(admin);
+    expect(r.status).toBe(409);
+    expect(r.body.requiresForce).toBe(true);
+    expect(r.body.willLose.innings).toBeGreaterThan(0);
+    expect(r.body.willLose.deliveries).toBeGreaterThan(0);
+
+    // DB end-state: nothing was deleted
+    const [still] = await db.select().from(matchesTable).where(eq(matchesTable.id, match.id));
+    expect(still).toBeTruthy();
+  });
+
+  it("deletes a match with no scoring data (no force needed)", async () => {
+    const match = await mkMatch();
+    const r = await request(app).delete(`/api/matches/admin/matches/${match.id}`).set(admin);
+    expect(r.status).toBe(200);
+    expect(r.body.success).toBe(true);
+
+    const [gone] = await db.select().from(matchesTable).where(eq(matchesTable.id, match.id));
+    expect(gone).toBeUndefined();
+  });
+
+  it("force-deletes a match WITH scoring data and cascades all rows", async () => {
+    const { match, innings } = await mkScoredMatch();
+    const r = await request(app).delete(`/api/matches/admin/matches/${match.id}?force=1`).set(admin);
+    expect(r.status).toBe(200);
+    expect(r.body.success).toBe(true);
+
+    // DB end-state: match, innings, deliveries and XI all removed
+    const [goneMatch] = await db.select().from(matchesTable).where(eq(matchesTable.id, match.id));
+    expect(goneMatch).toBeUndefined();
+
+    const remInnings = await db.select().from(inningsTable).where(eq(inningsTable.matchId, match.id));
+    expect(remInnings.length).toBe(0);
+
+    const remDeliveries = await db.select().from(deliveriesTable).where(eq(deliveriesTable.inningsId, innings.id));
+    expect(remDeliveries.length).toBe(0);
+
+    const remXI = await db.select().from(matchXITable).where(eq(matchXITable.matchId, match.id));
+    expect(remXI.length).toBe(0);
+  });
+});

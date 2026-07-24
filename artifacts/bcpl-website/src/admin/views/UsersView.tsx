@@ -33,10 +33,10 @@ const ROLE_LABEL: Record<string,string> = {
 
 const PAID_STATUSES = ["payment_done","video_submitted","selected","rejected"];
 
-type UserRow = { id:string; num:number; name:string; phone:string; email:string; state:string; city:string; joined:string; phase1:boolean; phase2:boolean; active:boolean; kyc:string; kycId:string|null; video:boolean; videoUrl:string|null; registered:boolean; role:string };
+type UserRow = { id:string; regNumber:string|null; num:number; name:string; phone:string; email:string; state:string; city:string; joined:string; phase1:boolean; phase2:boolean; active:boolean; kyc:string; kycId:string|null; video:boolean; videoUrl:string|null; registered:boolean; role:string };
 
 type ApiReg = {
-  id:string; role:string; trialCity:string; phase1Status:string; phase2Status:string|null; createdAt:string;
+  id:string; regNumber?:string|null; role:string; trialCity:string; phase1Status:string; phase2Status:string|null; createdAt:string;
   user:{ id:string; name:string; phone:string; email:string }|null;
   payment:{ status:string; amount:string; paidAt:string|null }|null;
   video:{ status:string; submittedAt:string; s3Url?:string|null }|null;
@@ -48,6 +48,7 @@ const toRow = (r: ApiReg, i: number): UserRow => {
   const paid1 = r.payment?.status === "paid" || PAID_STATUSES.includes(r.phase1Status);
   return {
     id: r.id,
+    regNumber: r.regNumber ?? null,
     num: i + 1,
     name: r.user?.name ?? "Unknown",
     phone: r.user?.phone ?? "",
@@ -79,6 +80,21 @@ const kycColor = (k:string) => k==="verified"?"#10B981":k==="failed"?"#EF4444":k
 const roleColor = (r:string) => r==="Batsman"?"#3B82F6":r==="Bowler"?"#EF4444":r==="All-rounder"?"#FF6B00":"#10B981";
 
 type NavPayload = { quick?: string; filter?: string; focusId?: string };
+
+function RegIdBadge({ regNumber }: { regNumber: string | null }) {
+  if (regNumber) {
+    return (
+      <span style={{ display:"inline-block", padding:"3px 9px", borderRadius:6, fontSize:11, fontWeight:800, fontFamily:"monospace", background:"#FF6B0018", color:"#FF9A57", border:"1px solid #FF6B0040", whiteSpace:"nowrap" }}>
+        {regNumber}
+      </span>
+    );
+  }
+  return (
+    <span title="Registration ID is assigned after Phase 1 payment" style={{ display:"inline-block", padding:"3px 9px", borderRadius:6, fontSize:10, fontWeight:700, background:"#1E293B", color:"#64748B", border:"1px solid #23324A", whiteSpace:"nowrap" }}>
+      Payment pending
+    </span>
+  );
+}
 
 export default function UsersView({ onNavigate, initialQuick, refreshTick = 0 }: { onNavigate?: (tab: string, payload?: NavPayload) => void; initialQuick?: string; refreshTick?: number }) {
   const validQuick = (Object.keys(quickLabels) as QuickFilter[]).includes(initialQuick as QuickFilter) ? (initialQuick as QuickFilter) : "all";
@@ -207,8 +223,8 @@ export default function UsersView({ onNavigate, initialQuick, refreshTick = 0 }:
             )}
             {/* Export buttons */}
             <button onClick={()=>{
-              const headers = ["ID","Name","Phone","Email","State","City","Joined","Phase1","Phase2","KYC","Video","Role","Active"];
-              const rows = filtered.map(u=>[u.id,u.name,u.phone,u.email,u.state,u.city,u.joined,u.phase1?"Yes":"No",u.phase2?"Yes":"No",u.kyc,u.video?"Yes":"No",u.role,u.active?"Yes":"No"]);
+              const headers = ["Reg Number","Name","Phone","Email","State","City","Joined","Phase1","Phase2","KYC","Video","Role","Active"];
+              const rows = filtered.map(u=>[u.regNumber ?? "Payment pending",u.name,u.phone,u.email,u.state,u.city,u.joined,u.phase1?"Yes":"No",u.phase2?"Yes":"No",u.kyc,u.video?"Yes":"No",u.role,u.active?"Yes":"No"]);
               const csv = [headers,...rows].map(r=>r.join(",")).join("\n");
               const a=document.createElement("a");a.href="data:text/csv;charset=utf-8,"+encodeURIComponent(csv);a.download=`bcpl_users_${quick}_${new Date().toISOString().slice(0,10)}.csv`;a.click();
             }} style={{ padding:"7px 13px", borderRadius:8, border:"1px solid #10B98144", background:"#10B98112", color:"#10B981", fontSize:11, cursor:"pointer", fontWeight:700 }}>
@@ -262,7 +278,7 @@ export default function UsersView({ onNavigate, initialQuick, refreshTick = 0 }:
           <table style={{ width:"100%", borderCollapse:"collapse" }}>
             <thead>
               <tr style={{ borderBottom:"1px solid #1E293B", background:"#060E1C" }}>
-                {["Player","Role","Location","Joined","Phase 1","Phase 2","KYC","Video","Status"].map(h=>(
+                {["Reg ID","Player","Role","Location","Joined","Phase 1","Phase 2","KYC","Video","Status"].map(h=>(
                   <th key={h} style={{ padding:"11px 14px", textAlign:"left", fontSize:10, color:"#475569", fontWeight:700, textTransform:"uppercase", letterSpacing:.5, whiteSpace:"nowrap" }}>{h}</th>
                 ))}
               </tr>
@@ -274,6 +290,9 @@ export default function UsersView({ onNavigate, initialQuick, refreshTick = 0 }:
                   background:selected?.id===u.id?"#FF6B0010":"transparent",
                   transition:"background 0.15s",
                 }}>
+                  <td style={{ padding:"13px 14px" }}>
+                    <RegIdBadge regNumber={u.regNumber} />
+                  </td>
                   <td style={{ padding:"13px 14px" }}>
                     <div style={{ display:"flex", alignItems:"center", gap:10 }}>
                       <div style={{ width:34, height:34, borderRadius:10, background:`hsl(${u.num*37},55%,32%)`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, fontWeight:800, color:"#fff", flexShrink:0 }}>{u.name[0]}</div>
@@ -306,7 +325,7 @@ export default function UsersView({ onNavigate, initialQuick, refreshTick = 0 }:
                 </tr>
               ))}
               {filtered.length===0 && (
-                <tr><td colSpan={9} style={{ padding:"40px", textAlign:"center", color:"#334155", fontSize:13 }}>
+                <tr><td colSpan={10} style={{ padding:"40px", textAlign:"center", color:"#334155", fontSize:13 }}>
                   {loading ? "Loading users…" : allUsers.length===0 ? "No registrations yet." : "No users match these filters."}
                 </td></tr>
               )}
@@ -324,9 +343,15 @@ export default function UsersView({ onNavigate, initialQuick, refreshTick = 0 }:
             <div style={{ fontSize:16, fontWeight:700, color:"#F1F5F9" }}>{selected.name}</div>
             <div style={{ fontSize:11, color:"#64748B", marginTop:2 }}>{selected.email}</div>
             <div style={{ fontSize:11, color:"#64748B" }}>{selected.phone}</div>
+            <div style={{ marginTop:10 }}>
+              <div style={{ fontSize:9, fontWeight:800, color:"#475569", letterSpacing:1, marginBottom:4 }}>REGISTRATION ID</div>
+              {selected.regNumber
+                ? <span style={{ display:"inline-block", padding:"3px 10px", borderRadius:6, fontSize:12, fontWeight:800, fontFamily:"monospace", background:"#FF6B0018", color:"#FF9A57", border:"1px solid #FF6B0040" }}>{selected.regNumber}</span>
+                : <span style={{ display:"inline-block", padding:"3px 10px", borderRadius:6, fontSize:11, fontWeight:700, background:"#1E293B", color:"#64748B", border:"1px solid #23324A" }}>Payment pending</span>}
+            </div>
             <div onClick={()=>onNavigate?.("phase1_regs",{ focusId:selected.id })} title="Open the full registration record"
-              style={{ fontSize:10, color:"#6366F1", marginTop:8, cursor:"pointer", wordBreak:"break-all", textDecoration:"underline" }}>
-              Reg ID: {selected.id}
+              style={{ fontSize:9, color:"#475569", marginTop:6, cursor:"pointer", wordBreak:"break-all", textDecoration:"underline" }}>
+              Internal ID: {selected.id}
             </div>
             <span style={{ display:"inline-block", margin:"10px 0 4px", padding:"3px 10px", borderRadius:5, fontSize:11, fontWeight:700, background:roleColor(selected.role)+"22", color:roleColor(selected.role) }}>{selected.role}</span>
             <div style={{ display:"flex", gap:8, marginTop:12 }}>

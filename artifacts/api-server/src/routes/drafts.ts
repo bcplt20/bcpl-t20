@@ -24,7 +24,7 @@
 import { Router } from "express";
 import { z } from "zod";
 import { randomInt } from "crypto";
-import { and, desc, eq, lt, notInArray, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, lt, notInArray, sql } from "drizzle-orm";
 import { db } from "@workspace/db";
 import { registrationDraftsTable } from "@workspace/db/schema";
 import { requireAdmin } from "../middlewares/adminAuth";
@@ -325,6 +325,14 @@ const DRAFT_STATUSES = [
   "PROFILE_COMPLETE", "PAYMENT_PENDING", "PHASE1_ACTIVE", "ABANDONED",
 ] as const;
 
+/* Funnel groups for the "Incomplete Registrations" admin view.
+ *  - otp_not_taken: visitor entered contact/name but has not verified OTP.
+ *  - otp_done:      OTP verified but Phase-1 payment not yet completed. */
+export const DRAFT_GROUPS: Record<string, readonly string[]> = {
+  otp_not_taken: ["DRAFT_STARTED", "CONTACT_ENTERED", "OTP_PENDING"],
+  otp_done:      ["OTP_VERIFIED", "PROFILE_COMPLETE", "PAYMENT_PENDING"],
+};
+
 export const adminDraftsRouter: import("express").Router = Router();
 adminDraftsRouter.use(async (_req, _res, next) => {
   try { await ensureOnce(); } catch (e) { console.error("[drafts] ensure failed:", e); }
@@ -332,13 +340,21 @@ adminDraftsRouter.use(async (_req, _res, next) => {
 });
 adminDraftsRouter.use(requireAdmin);
 
-// GET /api/admin/drafts?status=&limit=&offset=
+// GET /api/admin/drafts?status=&group=&limit=&offset=
+// `group` (otp_not_taken | otp_done) filters by a funnel status-group for the
+// Incomplete Registrations view; otp_not_taken additionally requires at least a
+// phone or name so blank/bot drafts are not surfaced. `status` still works for
+// single-status filtering (takes precedence over group when both are supplied).
 adminDraftsRouter.get("/", async (req, res) => {
   const status = req.query.status ? String(req.query.status) : undefined;
+  const group = req.query.group ? String(req.query.group) : undefined;
   if (status && !DRAFT_STATUSES.includes(status as any)) {
     return void res.status(400).json({ error: "Invalid status filter" });
   }
-  const limit = Math.min(Math.max(parseInt(String(req.query.limit ?? "100"), 10) || 100, 1), 200);
+  if (group && !DRAFT_GROUPS[group]) {
+    return void res.status(400).json({ error: "Invalid group filter" });
+  }
+  const limit = Math.min(Math.max(parseInt(String(req.query.limit ?? "100"), 10) || 100, 1), 500);
   const offset = Math.max(parseInt(String(req.query.offset ?? "0"), 10) || 0, 0);
 
   const countRows = await db.select({
@@ -348,8 +364,18 @@ adminDraftsRouter.get("/", async (req, res) => {
   const counts: Record<string, number> = {};
   for (const r of countRows) counts[r.status] = r.n;
 
+  const conds = [];
+  if (status) {
+    conds.push(eq(registrationDraftsTable.status, status));
+  } else if (group) {
+    conds.push(inArray(registrationDraftsTable.status, [...DRAFT_GROUPS[group]]));
+    if (group === "otp_not_taken") {
+      conds.push(sql`(${registrationDraftsTable.phone} IS NOT NULL OR ${registrationDraftsTable.fullName} IS NOT NULL)`);
+    }
+  }
+
   const rows = await db.select().from(registrationDraftsTable)
-    .where(status ? eq(registrationDraftsTable.status, status) : undefined)
+    .where(conds.length ? and(...conds) : undefined)
     .orderBy(desc(registrationDraftsTable.lastActivityAt)).limit(limit).offset(offset);
 
   res.json({ counts, drafts: rows });

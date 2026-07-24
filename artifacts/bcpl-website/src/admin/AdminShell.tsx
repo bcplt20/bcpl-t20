@@ -28,6 +28,7 @@ import DataExportView       from "./views/DataExportView";
 import AffiliatesView       from "./views/AffiliatesView";
 import VideoReviewView         from "./views/VideoReviewView";
 import Phase1RegistrationsView from "./views/Phase1RegistrationsView";
+import IncompleteRegistrationsView from "./views/IncompleteRegistrationsView";
 import Phase2KYCView           from "./views/Phase2KYCView";
 import FraudView            from "./views/FraudView";
 import ForecastView         from "./views/ForecastView";
@@ -45,6 +46,7 @@ const NAV: NavGroup[] = [
   ]},
   { title: "REGISTRATIONS", items: [
     { id:"phase1_regs",  label:"Phase 1 Registrations", icon:"①", badge:"Live", badgeColor:"#3B82F6" },
+    { id:"incomplete_regs", label:"Incomplete Regs",  icon:"◔" },
     { id:"users",        label:"Users & Accounts",  icon:"⊞" },
   ]},
   { title: "PHASE 1 · VIDEO TRIAL", items: [
@@ -129,6 +131,7 @@ function renderView(id: string, navigate: (viewId: string, payload?: AdminNavPay
     case "leaderboard":    return <LeaderboardView />;
     case "contracts":      return <ContractsView />;
     case "phase1_regs":    return <Phase1RegistrationsView key={"p1"+pk} onNavigate={navigate} focusId={payload?.focusId} initialFilter={payload?.filter} refreshTick={autoTick} />;
+    case "incomplete_regs":return <IncompleteRegistrationsView />;
     case "video_review":   return <VideoReviewView refreshTick={autoTick} />;
     case "phase2_kyc":     return <Phase2KYCView refreshTick={autoTick} />;
     case "player_profiles":return <PlayerProfilesView />;

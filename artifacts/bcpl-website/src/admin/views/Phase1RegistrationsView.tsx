@@ -7,6 +7,7 @@ import {
 
 type Reg = {
   id: string;
+  regNumber?: string | null;
   role: string;
   trialCity: string;
   phase1Status: string;
@@ -48,6 +49,21 @@ function Badge({ status, map, colorMap }: { status: string; map: Record<string,s
       whiteSpace:"nowrap",
     }}>
       {map[status] ?? status}
+    </span>
+  );
+}
+
+function RegIdBadge({ regNumber }: { regNumber?: string | null }) {
+  if (regNumber) {
+    return (
+      <span style={{ display:"inline-block", padding:"3px 9px", borderRadius:6, fontSize:11, fontWeight:800, fontFamily:"monospace", background:"#FF6B0018", color:"#FF9A57", border:"1px solid #FF6B0040", whiteSpace:"nowrap" }}>
+        {regNumber}
+      </span>
+    );
+  }
+  return (
+    <span title="Registration ID is assigned after Phase 1 payment" style={{ display:"inline-block", padding:"3px 9px", borderRadius:6, fontSize:10, fontWeight:700, background:"#1E293B", color:"#64748B", border:"1px solid #23324A", whiteSpace:"nowrap" }}>
+      Payment pending
     </span>
   );
 }
@@ -231,7 +247,7 @@ export default function Phase1RegistrationsView({ onNavigate, focusId, initialFi
             <table style={{ width:"100%", borderCollapse:"collapse", fontSize:12 }}>
               <thead>
                 <tr style={{ background:"#080E1C", borderBottom:"1px solid #1E293B" }}>
-                  {["Player","Contact","City","Role","Reg Date","Payment","Video","Phase 1 Status","Actions"].map(h => (
+                  {["Reg ID","Player","Contact","City","Role","Reg Date","Payment","Video","Phase 1 Status","Actions"].map(h => (
                     <th key={h} style={{ padding:"10px 12px", textAlign:"left", fontSize:10, fontWeight:700, color:"#334155", letterSpacing:"0.06em", textTransform:"uppercase", whiteSpace:"nowrap" }}>{h}</th>
                   ))}
                 </tr>
@@ -240,10 +256,13 @@ export default function Phase1RegistrationsView({ onNavigate, focusId, initialFi
                 {displayed.map((r, i) => (
                   <tr key={r.id} onClick={() => setDetail(r)} title="Tap for full details"
                     style={{ borderBottom:"1px solid #0F172A", cursor:"pointer", background:detail?.id===r.id?"#FF6B0012":(i%2===0?"transparent":"#0A111C") }}>
+                    {/* Reg ID */}
+                    <td style={{ padding:"10px 12px" }}>
+                      <RegIdBadge regNumber={r.regNumber} />
+                    </td>
                     {/* Player */}
                     <td style={{ padding:"10px 12px" }}>
                       <div style={{ fontWeight:700, color:"#F1F5F9" }}>{r.user?.name ?? "—"}</div>
-                      <div style={{ fontSize:10, color:"#475569", marginTop:1 }}>{r.id.slice(0, 8)}…</div>
                     </td>
                     {/* Contact */}
                     <td style={{ padding:"10px 12px" }}>
@@ -347,8 +366,9 @@ export default function Phase1RegistrationsView({ onNavigate, focusId, initialFi
             <div style={{ fontSize:16, fontWeight:800, color:"#F1F5F9", paddingRight:24 }}>{detail.user?.name ?? "Unknown player"}</div>
             <div style={{ fontSize:11, color:"#64748B", marginTop:4 }}>{ROLE_LABEL[detail.role] ?? detail.role} · {detail.trialCity || "—"}</div>
             <div style={{ marginTop:10, padding:"8px 10px", background:"#080E1C", border:"1px solid #1E293B", borderRadius:8 }}>
-              <div style={{ fontSize:9, fontWeight:800, color:"#475569", letterSpacing:1, marginBottom:4 }}>REGISTRATION ID</div>
-              <div style={{ fontSize:11, color:"#94A3B8", fontFamily:"monospace", wordBreak:"break-all" }}>{detail.id}</div>
+              <div style={{ fontSize:9, fontWeight:800, color:"#475569", letterSpacing:1, marginBottom:6 }}>REGISTRATION ID</div>
+              <RegIdBadge regNumber={detail.regNumber} />
+              <div style={{ fontSize:9, color:"#334155", fontFamily:"monospace", wordBreak:"break-all", marginTop:6 }}>Internal: {detail.id}</div>
             </div>
             <div style={{ marginTop:10 }}>
               {row("Phone", detail.user?.phone ?? "—")}

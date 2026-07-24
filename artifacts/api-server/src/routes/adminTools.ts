@@ -21,10 +21,11 @@ import {
   phase1VideosTable,
   siteSettingsTable,
 } from "@workspace/db/schema";
-import { eq, desc, asc, sql } from "drizzle-orm";
+import { eq, desc, asc, sql, and, isNotNull, isNull } from "drizzle-orm";
 import { z } from "zod";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { getUploadPresignedUrl, getDownloadPresignedUrl, getS3Url, deleteObject } from "../lib/s3";
+import { hasCashfreeCredentials, listOrderPayments, extractPaymentMethod } from "../lib/cashfree";
 import { runVideoValidations } from "../lib/videoValidation";
 import { runAiValidityChecks } from "../lib/aiPipeline";
 import { runAiScoringPasses } from "../lib/aiScoring";
@@ -799,4 +800,171 @@ router.delete("/media/files/:id", safe("media-file-delete", async (req, res) => 
   res.json({ success: true });
 }));
 
+/* ────────────────────────────────────────────────────────────────────────────
+ * Finance — payment-method split + payments on hold + Cashfree backfill
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+/** Coarse group labels for the pie/legend; unknown/null buckets to "unknown". */
+const GROUP_ORDER = ["upi", "credit_card", "debit_card", "net_banking", "wallet", "other", "unknown"] as const;
+
+type SplitRow = { group: string; amount: number; count: number };
+
+/** Aggregate one phase's success payments by payment_group (null => "unknown"). */
+async function splitForPhase(table: typeof phase1PaymentsTable | typeof phase2PaymentsTable) {
+  const rows = await db
+    .select({
+      group: sql<string | null>`${table.paymentGroup}`,
+      amount: sql<number>`coalesce(sum(${table.amount}), 0)::float`,
+      count: sql<number>`count(*)::int`,
+    })
+    .from(table)
+    .where(sql`${table.status} IN ('success','paid')`)
+    .groupBy(table.paymentGroup);
+
+  let total = 0;
+  const byGroup = new Map<string, SplitRow>();
+  for (const r of rows) {
+    const key = r.group && String(r.group).trim() ? String(r.group).trim() : "unknown";
+    const amount = Number(r.amount) || 0;
+    const count = Number(r.count) || 0;
+    total += amount;
+    const cur = byGroup.get(key);
+    if (cur) { cur.amount += amount; cur.count += count; }
+    else byGroup.set(key, { group: key, amount, count });
+  }
+  const splitByGroup = [...byGroup.values()].sort((a, b) => {
+    const ia = GROUP_ORDER.indexOf(a.group as typeof GROUP_ORDER[number]);
+    const ib = GROUP_ORDER.indexOf(b.group as typeof GROUP_ORDER[number]);
+    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+  });
+  return { totalCollected: Math.round(total), splitByGroup };
+}
+
+/** Merge two split arrays into one combined view. */
+function mergeSplits(...splits: SplitRow[][]): SplitRow[] {
+  const byGroup = new Map<string, SplitRow>();
+  for (const arr of splits) {
+    for (const r of arr) {
+      const cur = byGroup.get(r.group);
+      if (cur) { cur.amount += r.amount; cur.count += r.count; }
+      else byGroup.set(r.group, { ...r });
+    }
+  }
+  return [...byGroup.values()].sort((a, b) => {
+    const ia = GROUP_ORDER.indexOf(a.group as typeof GROUP_ORDER[number]);
+    const ib = GROUP_ORDER.indexOf(b.group as typeof GROUP_ORDER[number]);
+    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+  });
+}
+
+/** Flagged (amount_mismatch) payments for one phase, joined to the player. */
+async function onHoldForPhase(
+  table: typeof phase1PaymentsTable | typeof phase2PaymentsTable,
+  phaseLabel: "Phase 1" | "Phase 2",
+) {
+  const rows = await db
+    .select({
+      name: usersTable.name,
+      regNumber: registrationsTable.regNumber,
+      amount: table.amount,
+      orderId: table.cashfreeOrderId,
+      flaggedAt: table.createdAt,
+    })
+    .from(table)
+    .leftJoin(registrationsTable, eq(table.registrationId, registrationsTable.id))
+    .leftJoin(usersTable, eq(registrationsTable.userId, usersTable.id))
+    .where(eq(table.status, "amount_mismatch"))
+    .orderBy(desc(table.createdAt));
+  return rows.map(r => ({
+    phase: phaseLabel,
+    name: r.name ?? null,
+    regNumber: r.regNumber ?? null,
+    amount: Math.round(Number(r.amount) || 0),
+    orderId: r.orderId,
+    flaggedAt: r.flaggedAt,
+  }));
+}
+
+/**
+ * GET /api/admin/finance/summary
+ * Per-phase and combined: totalCollected, splitByGroup, on-hold list + total.
+ */
+const financeSummaryHandler: H = safe("finance-summary", async (_req, res) => {
+  const [p1Split, p2Split, p1Hold, p2Hold] = await Promise.all([
+    splitForPhase(phase1PaymentsTable),
+    splitForPhase(phase2PaymentsTable),
+    onHoldForPhase(phase1PaymentsTable, "Phase 1"),
+    onHoldForPhase(phase2PaymentsTable, "Phase 2"),
+  ]);
+
+  const onHold = [...p1Hold, ...p2Hold].sort(
+    (a, b) => new Date(b.flaggedAt as unknown as string).getTime() - new Date(a.flaggedAt as unknown as string).getTime(),
+  );
+  const onHoldTotal = onHold.reduce((a, r) => a + r.amount, 0);
+
+  res.json({
+    phase1: p1Split,
+    phase2: p2Split,
+    combined: {
+      totalCollected: p1Split.totalCollected + p2Split.totalCollected,
+      splitByGroup: mergeSplits(p1Split.splitByGroup, p2Split.splitByGroup),
+    },
+    onHold,
+    onHoldTotal,
+  });
+});
+
+/**
+ * POST /api/admin-tools/payments/backfill-methods
+ * For success payments (both phases) with a null payment_group and a Cashfree
+ * order id, fetch the order's payments from Cashfree, take the successful
+ * entity and write its group/detail. Sequential (~150ms delay), cap 500 rows.
+ * In dev/stub mode (no real creds) returns { stubMode: true } without calling out.
+ */
+router.post("/payments/backfill-methods", safe("backfill-methods", async (_req, res) => {
+  if (!hasCashfreeCredentials()) {
+    return void res.json({ stubMode: true, scanned: 0, updated: 0, skipped: 0, errors: 0 });
+  }
+
+  const CAP = 500;
+  const candidates: Array<{ table: typeof phase1PaymentsTable | typeof phase2PaymentsTable; id: string; orderId: string }> = [];
+
+  for (const table of [phase1PaymentsTable, phase2PaymentsTable] as const) {
+    const rows = await db
+      .select({ id: table.id, orderId: table.cashfreeOrderId })
+      .from(table)
+      .where(and(
+        sql`${table.status} IN ('success','paid')`,
+        isNull(table.paymentGroup),
+        isNotNull(table.cashfreeOrderId),
+      ))
+      .limit(CAP);
+    for (const r of rows) candidates.push({ table, id: r.id, orderId: r.orderId });
+  }
+
+  const batch = candidates.slice(0, CAP);
+  let updated = 0, skipped = 0, errors = 0;
+
+  for (const c of batch) {
+    try {
+      const payments = await listOrderPayments(c.orderId);
+      if (!payments || payments.length === 0) { skipped++; continue; }
+      const success = payments.find(p => p.payment_status === "SUCCESS") ?? payments[0];
+      const split = extractPaymentMethod(success);
+      if (!split.paymentGroup) { skipped++; continue; }
+      await db.update(c.table)
+        .set({ paymentGroup: split.paymentGroup, paymentMethodDetail: split.paymentMethodDetail })
+        .where(eq(c.table.id, c.id));
+      updated++;
+    } catch (e) {
+      console.error("[admin-tools/backfill-methods] row error", c.orderId, e);
+      errors++;
+    }
+    await new Promise(r => setTimeout(r, 150));
+  }
+
+  res.json({ scanned: batch.length, updated, skipped, errors });
+}));
+
 export default router;
+export { financeSummaryHandler };

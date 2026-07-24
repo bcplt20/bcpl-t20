@@ -3,8 +3,36 @@ import { Link } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
-import { getPointsTable } from '../lib/api';
+import { getPointsTable, getTeams } from '../lib/api';
 import { useLang } from '../lib/i18n';
+
+/* Team logos may be base64 data URLs, absolute http(s) URLs, or repo-relative
+   paths (e.g. bcpl-assets/logos/…). Mirror TeamsPage's asset() helper. */
+const asset = (url: string) =>
+  !url ? "" : url.startsWith("data:") || url.startsWith("http") ? url : import.meta.env.BASE_URL + url.replace(/^\//, "");
+const normTeam = (name: string) => (name || "").trim().toLowerCase();
+const initials = (name: string) =>
+  (name || "").split(" ").map(w => w[0]).join("").slice(0, 3).toUpperCase();
+
+/* Circular team badge: logo when available (keeps the colored ring), initials
+   fallback when there is no logo or the image fails to load. */
+function TeamBadge({ name, color, logo }: { name: string; color: string; logo?: string }) {
+  const [broken, setBroken] = React.useState(false);
+  const showLogo = Boolean(logo) && !broken;
+  return (
+    <span style={{
+      width: 30, height: 30, borderRadius: "50%",
+      background: showLogo ? "rgba(255,255,255,0.96)" : `${color}22`,
+      border: `2px solid ${color}`, display: "inline-flex", alignItems: "center",
+      justifyContent: "center", overflow: "hidden", flexShrink: 0,
+      fontFamily: "Montserrat,sans-serif", fontWeight: 800, fontSize: 9, color,
+    }}>
+      {showLogo
+        ? <img src={logo} alt={name} onError={() => setBroken(true)} style={{ width: "82%", height: "82%", objectFit: "contain" }} />
+        : initials(name)}
+    </span>
+  );
+}
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap');
@@ -62,6 +90,25 @@ export function PointsTable() {
   const { t } = useLang();
   const [tableRows, setTableRows] = useState<TeamRow[]>([]);
   const [expanded, setExpanded] = useState<number | null>(null);
+  const [teamColors, setTeamColors] = useState<Record<string, string>>({});
+  const [teamLogos,  setTeamLogos]  = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    getTeams(5).then(d => {
+      const colorMap: Record<string, string> = {};
+      const logoMap:  Record<string, string> = {};
+      (d.teams ?? []).forEach((t: any) => {
+        const key = normTeam(t.name);
+        colorMap[key] = t.color;
+        if (t.logoUrl) logoMap[key] = asset(t.logoUrl);
+      });
+      setTeamColors(colorMap);
+      setTeamLogos(logoMap);
+    }).catch(() => {});
+  }, []);
+
+  const color  = (team: string) => teamColors[normTeam(team)] || "#FF7A29";
+  const logoOf = (team: string) => teamLogos[normTeam(team)] || "";
 
   useEffect(() => {
     getPointsTable(5).then(d => {
@@ -151,7 +198,10 @@ export function PointsTable() {
                           }}>{row.pos}</div>
                         </td>
                         <td>
-                          <div style={{ fontFamily: "Montserrat,sans-serif", fontWeight: 700, fontSize: 14, color: "#fff" }}>{row.name}</div>
+                          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                            <TeamBadge name={row.name} color={color(row.name)} logo={logoOf(row.name)} />
+                            <div style={{ fontFamily: "Montserrat,sans-serif", fontWeight: 700, fontSize: 14, color: "#fff" }}>{row.name}</div>
+                          </div>
                         </td>
                         <td style={{ textAlign: "center", color: "rgba(255,255,255,0.6)" }}>{row.p}</td>
                         <td style={{ textAlign: "center", color: "#22C55E", fontWeight: 600 }}>{row.w}</td>
@@ -182,6 +232,7 @@ export function PointsTable() {
                           color: row.pos <= 3 ? "#060E1C" : "rgba(255,255,255,0.4)",
                           flexShrink: 0
                         }}>{row.pos}</div>
+                        <TeamBadge name={row.name} color={color(row.name)} logo={logoOf(row.name)} />
                         <div style={{ fontFamily: "Montserrat,sans-serif", fontWeight: 800, fontSize: 15, color: "#fff", flex: 1 }}>{row.name}</div>
                       </div>
                       <div style={{ fontFamily: "Montserrat,sans-serif", fontWeight: 900, fontSize: 18, color: "#FF7A29", flexShrink: 0 }}>

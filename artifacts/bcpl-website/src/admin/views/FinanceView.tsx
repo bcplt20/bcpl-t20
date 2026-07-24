@@ -1,6 +1,10 @@
 import RefundsPanel from "./RefundsPanel";
 import { useState, useEffect } from "react";
 import { adminGetRegistrations, adminSendInvoice } from "../../lib/api";
+import {
+  adminGetFinanceSummary, adminBackfillPaymentMethods,
+  type FinanceSummary, type BackfillResult,
+} from "../api/financeApi";
 import { gstFromGross, inr } from "../../lib/gst";
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid,
@@ -15,12 +19,18 @@ const BCPL_GSTIN = "07AAHCK4053D1ZS";
 const BCPL_ADDR  = "Kriparti Playing11 Private Limited, 2nd Floor Back Side, RZ-108, Indra Park, Uttam Nagar, West Delhi, Delhi - 110059";
 
 /* ─── Data shapes ─────────────────────────────────────────────── */
-const paymentMethods = [
-  { name:"UPI",         value:0, color:"#6366F1" },
-  { name:"Net Banking", value:0, color:"#FF6B00" },
-  { name:"Card",        value:0, color:"#10B981" },
-  { name:"Wallet",      value:0, color:"#F59E0B" },
-];
+/* Coarse payment-group presentation — label + pie colour keyed by the group
+   code the API returns (payment_group). "unknown" is greyed out. */
+const GROUP_META: Record<string, { label:string; color:string }> = {
+  upi:         { label:"UPI",          color:"#6366F1" },
+  credit_card: { label:"Credit Card",  color:"#10B981" },
+  debit_card:  { label:"Debit Card",   color:"#14B8A6" },
+  net_banking: { label:"Net Banking",  color:"#FF6B00" },
+  wallet:      { label:"Wallet",       color:"#F59E0B" },
+  other:       { label:"Other",        color:"#8B5CF6" },
+  unknown:     { label:"Unknown",      color:"#475569" },
+};
+const groupMeta = (g:string) => GROUP_META[g] ?? { label:g, color:"#64748B" };
 const gstMonthly: { month:string; collected:number; remitted:number; due:string }[] = [];
 type Txn = { id:string; regId:string; name:string; email:string; phone:string; gstin:string; type:"Phase 1"|"Phase 2"; amount:number; method:string; time:string; ts:number; status:"success"|"pending"|"failed"|"refunded" };
 const REFUNDS: { id:string; txnId:string; name:string; amount:number; reason:string; status:string; date:string; method:string; days:number }[] = [];
@@ -374,6 +384,9 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
   const [search,    setSearch]    = useState("");
   const [TRANSACTIONS, setTransactions] = useState<Txn[]>([]);
   const [loadErr,   setLoadErr]   = useState("");
+  const [summary,   setSummary]   = useState<FinanceSummary|null>(null);
+  const [backfilling, setBackfilling] = useState(false);
+  const [backfillMsg, setBackfillMsg] = useState("");
 
   // Fetches on mount and again whenever refreshTick bumps (auto-refresh).
   // Data swaps in place — no remount, no flicker.
@@ -387,7 +400,26 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
         setLoadErr("");
       })
       .catch(e => setLoadErr(e.message));
+
+    adminGetFinanceSummary()
+      .then(setSummary)
+      .catch(() => { /* keep last-known summary; header error already surfaces reg failures */ });
   }, [refreshTick]);
+
+  // Fill missing payment methods from Cashfree, then refetch the summary.
+  const runBackfill = async () => {
+    setBackfilling(true); setBackfillMsg("");
+    try {
+      const r: BackfillResult = await adminBackfillPaymentMethods();
+      setBackfillMsg(r.stubMode
+        ? "Cashfree not configured on this server."
+        : `Updated ${r.updated}, skipped ${r.skipped}${r.errors ? `, ${r.errors} errors` : ""}.`);
+      const fresh = await adminGetFinanceSummary().catch(() => null);
+      if (fresh) setSummary(fresh);
+    } catch (e) {
+      setBackfillMsg(e instanceof Error ? e.message : "Backfill failed");
+    } finally { setBackfilling(false); }
+  };
 
   /* daily revenue (last 7 days) from successful transactions */
   const now = Date.now();
@@ -417,6 +449,19 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
   const totalGW       = Math.round(totalRevenue * CF_FEE);
   const netRevenue    = totalRevenue - totalGST - totalGW;
   const totalRefunds  = REFUNDS.reduce((a,r)=>a+(r.status==="processed"?r.amount:0),0);
+
+  /* Real payment split (combined phases) from the summary endpoint. */
+  const splitRows = (summary?.combined.splitByGroup ?? []).filter(r => r.amount > 0);
+  const pieData = splitRows.map(r => ({
+    key: r.group,
+    name: groupMeta(r.group).label,
+    value: r.amount,
+    count: r.count,
+    color: groupMeta(r.group).color,
+    isUnknown: r.group === "unknown",
+  }));
+  const onHoldRows = summary?.onHold ?? [];
+  const onHoldTotal = summary?.onHoldTotal ?? 0;
 
   const filtered = TRANSACTIONS.filter(t => {
     const statusOk = txnFilter === "all" || t.status === txnFilter;
@@ -523,29 +568,57 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
             <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
               <div style={card}>
                 <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9", marginBottom:12 }}>Payment Split</div>
-                <ResponsiveContainer width="100%" height={120}>
-                  <PieChart>
-                    <Pie data={paymentMethods} cx="50%" cy="50%" innerRadius={30} outerRadius={52} dataKey="value" strokeWidth={0}>
-                      {paymentMethods.map((m,i)=><Cell key={i} fill={m.color}/>)}
-                    </Pie>
-                    <Tooltip formatter={(v:any)=>[`${v}%`,""]} contentStyle={{ background:"#0D1526", border:"1px solid #1E293B", borderRadius:8 }}/>
-                  </PieChart>
-                </ResponsiveContainer>
-                {paymentMethods.map(m=>(
-                  <div key={m.name} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:6 }}>
-                    <div style={{ display:"flex", alignItems:"center", gap:6 }}><div style={{ width:8, height:8, borderRadius:2, background:m.color }}/><span style={{ fontSize:11, color:"#94A3B8" }}>{m.name}</span></div>
-                    <span style={{ fontSize:12, fontWeight:700, color:"#F1F5F9" }}>{m.value}%</span>
-                  </div>
-                ))}
+                {pieData.length === 0 ? (
+                  <div style={{ fontSize:12, color:"#475569", padding:"24px 0", textAlign:"center" }}>No successful payments yet</div>
+                ) : (
+                  <>
+                    <ResponsiveContainer width="100%" height={120}>
+                      <PieChart>
+                        <Pie data={pieData} cx="50%" cy="50%" innerRadius={30} outerRadius={52} dataKey="value" strokeWidth={0}>
+                          {pieData.map((m,i)=><Cell key={i} fill={m.color}/>)}
+                        </Pie>
+                        <Tooltip formatter={(v:any,_n:string,p:any)=>[`₹${Number(v).toLocaleString()} · ${p?.payload?.count ?? 0} txns`, p?.payload?.name]} contentStyle={{ background:"#0D1526", border:"1px solid #1E293B", borderRadius:8 }}/>
+                      </PieChart>
+                    </ResponsiveContainer>
+                    {pieData.map(m=>(
+                      <div key={m.key} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:6, opacity:m.isUnknown?0.6:1 }}>
+                        <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+                          <div style={{ width:8, height:8, borderRadius:2, background:m.color }}/>
+                          <span style={{ fontSize:11, color:"#94A3B8" }}>{m.name}</span>
+                          {m.isUnknown && (
+                            <button onClick={runBackfill} disabled={backfilling}
+                              style={{ marginLeft:4, padding:"2px 8px", borderRadius:6, border:"1px solid #334155", background:"transparent", color:"#94A3B8", fontSize:10, fontWeight:600, cursor:backfilling?"wait":"pointer" }}>
+                              {backfilling ? "Working…" : "Backfill from Cashfree"}
+                            </button>
+                          )}
+                        </div>
+                        <span style={{ fontSize:12, fontWeight:700, color:"#F1F5F9" }}>₹{m.value.toLocaleString()}</span>
+                      </div>
+                    ))}
+                    {backfillMsg && (
+                      <div style={{ marginTop:8, fontSize:10, color:"#64748B", lineHeight:1.5 }}>{backfillMsg}</div>
+                    )}
+                  </>
+                )}
               </div>
               <div style={{ ...card, padding:"14px 16px" }}>
-                <div style={{ fontSize:12, fontWeight:700, color:"#F1F5F9", marginBottom:10 }}>Settlement Status</div>
-                {[{l:"Settled Today",v:"₹0",c:"#10B981"},{l:"In Transit (T+2)",v:"₹0",c:"#F59E0B"},{l:"On Hold",v:"₹0",c:"#EF4444"}].map(s=>(
-                  <div key={s.l} style={{ display:"flex", justifyContent:"space-between", padding:"6px 0", borderBottom:"1px solid #1E293B" }}>
-                    <span style={{ fontSize:11, color:"#64748B" }}>{s.l}</span>
-                    <span style={{ fontSize:12, fontWeight:700, color:s.c }}>{s.v}</span>
-                  </div>
-                ))}
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 }}>
+                  <div style={{ fontSize:12, fontWeight:700, color:"#F1F5F9" }}>Payments on Hold</div>
+                  <span style={{ fontSize:12, fontWeight:800, color:onHoldTotal>0?"#EF4444":"#475569" }}>₹{onHoldTotal.toLocaleString()}</span>
+                </div>
+                {onHoldRows.length === 0 ? (
+                  <div style={{ fontSize:11, color:"#475569", padding:"10px 0" }}>No payments on hold</div>
+                ) : (
+                  onHoldRows.map(h=>(
+                    <div key={h.phase+h.orderId} style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:10, padding:"8px 0", borderBottom:"1px solid #1E293B" }}>
+                      <div style={{ minWidth:0 }}>
+                        <div style={{ fontSize:11, color:"#F1F5F9", fontWeight:600, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{h.name ?? h.regNumber ?? "Unknown"}</div>
+                        <div style={{ fontSize:10, color:"#475569", fontFamily:"monospace", wordBreak:"break-all" }}>{h.phase} · {h.orderId}</div>
+                      </div>
+                      <span style={{ fontSize:12, fontWeight:700, color:"#EF4444", flexShrink:0 }}>₹{h.amount.toLocaleString()}</span>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           </div>

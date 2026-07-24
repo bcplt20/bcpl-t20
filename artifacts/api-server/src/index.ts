@@ -15,6 +15,7 @@ import { ensureAdminContentTables } from "./routes/adminTools";
 import { ensureNotificationErrorColumn } from "./lib/notify";
 import { ensureOutboxTable, runOutboxSweep } from "./lib/outbox";
 import { ensurePhase1AiTables } from "./lib/phase1Migrations";
+import { ensurePaymentMethodColumns } from "./routes/payment";
 import { ensureTrialsTables } from "./routes/trials";
 import { ensureAdminUsersTable } from "./routes/adminUsers";
 import { ensureRefundsTables } from "./routes/refunds";
@@ -47,6 +48,7 @@ async function start() {
       await ensureNotificationErrorColumn();
       await ensureOutboxTable(); // durable notification retry queue
       await ensurePhase1AiTables(); // Phase 1 AI evaluation pipeline
+      await ensurePaymentMethodColumns(); // payment split (UPI/card/netbanking/wallet) columns
       await ensureTrialsTables(); // Physical trials suite (Stage 4)
       await ensureAdminUsersTable(); // Stage 5 server-side RBAC
       await ensureFraudTables(); // Stage 6 fraud flag extensions

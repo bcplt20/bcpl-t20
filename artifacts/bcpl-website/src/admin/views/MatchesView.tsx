@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { getMatches, createMatch, updateMatchStatus, recordMatchResult } from "../../lib/api";
+import { adminDeleteMatch } from "../api/matchesApi";
 
 const TEAMS = ["Rajasthan Scorchers","Punjab Warriors","Kolkata Tigers","Lucknow Nawabs","Mumbai Mavericks","Hyderabad Hawks","Delhi Suryas","Chennai Thalaivas","Ahmedabad Lions","Bengaluru Rockets"];
 const VENUES = ["Wankhede, Mumbai","SMS, Jaipur","PCA, Mohali","Ekana, Lucknow","Eden Gardens, Kolkata","Chinnaswamy, Bengaluru","Rajiv Gandhi, Hyderabad","MA Chidambaram, Chennai","Motera, Ahmedabad","Feroz Shah Kotla, Delhi"];
@@ -161,6 +162,34 @@ export default function MatchesView({ onOpenScoring }: { onOpenScoring?: () => v
     } finally { setBusyId(null); }
   };
 
+  /* ── Delete match (and all its score data) ── */
+  const deleteMatch = async (m: ApiMatch) => {
+    if (!window.confirm(`Delete Match #${m.matchNo} — ${m.team1} vs ${m.team2}?\n\nMatch and all its score data will be permanently deleted. This cannot be undone.`)) return;
+    setBusyId(m.id);
+    try {
+      await adminDeleteMatch(m.id, false);
+      await reload();
+      flash(`Match #${m.matchNo} deleted`);
+    } catch (e: any) {
+      const msg = e?.message || "Failed to delete match";
+      // Server signals (409) that this match has scoring data. Ask again with a
+      // clear warning, then retry with force.
+      if (/score data|force/i.test(msg)) {
+        if (window.confirm(`${msg}\n\nThis will also delete all recorded innings and deliveries for this match. Permanently delete anyway?`)) {
+          try {
+            await adminDeleteMatch(m.id, true);
+            await reload();
+            flash(`Match #${m.matchNo} and its score data deleted`);
+          } catch (e2: any) {
+            setLoadErr(e2?.message || "Failed to delete match");
+          }
+        }
+      } else {
+        setLoadErr(msg);
+      }
+    } finally { setBusyId(null); }
+  };
+
   /* ── Enter result ── */
   const openResult = (m: ApiMatch) => {
     setResultErr("");
@@ -307,6 +336,9 @@ export default function MatchesView({ onOpenScoring }: { onOpenScoring?: () => v
                     {busyId === m.id ? "Cancelling…" : "Cancel"}
                   </button>
                 )}
+                <button disabled={busyId === m.id} onClick={() => deleteMatch(m)} style={{ padding: "7px 14px", borderRadius: 7, border: "1px solid #7F1D1D", background: "transparent", color: "#EF4444", fontSize: 11, cursor: "pointer", opacity: busyId === m.id ? 0.5 : 1 }}>
+                  {busyId === m.id ? "Working…" : "Delete"}
+                </button>
               </div>
             </div>
             {(m.winner || m.resultDesc) && grp(m.status) === "completed" && (

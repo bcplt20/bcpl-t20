@@ -195,6 +195,39 @@ describe("drafts: abandonment sweep + admin", () => {
     expect([401, 403]).toContain(r.status);
   });
 
+  it("group=otp_not_taken lists pre-OTP drafts with name/phone and rejects bad groups", async () => {
+    // Fresh contact-only draft (CONTACT_ENTERED) → belongs to otp_not_taken.
+    const ph = "96" + String(Date.now()).slice(-8);
+    await request(app).post("/api/drafts/upsert")
+      .send({ clientKey: key("grp1"), fullName: "Group NotTaken", phone: ph });
+
+    const r = await request(app).get("/api/admin/drafts")
+      .query({ group: "otp_not_taken" }).set(admin);
+    expect(r.status).toBe(200);
+    const statuses = new Set<string>(r.body.drafts.map((d: any) => d.status));
+    for (const s of statuses) {
+      expect(["DRAFT_STARTED", "CONTACT_ENTERED", "OTP_PENDING"]).toContain(s);
+    }
+    expect(r.body.drafts.some((d: any) => d.clientKey === key("grp1"))).toBe(true);
+    // otp_not_taken must only include rows with a phone or name
+    expect(r.body.drafts.every((d: any) => d.phone || d.fullName)).toBe(true);
+
+    const bad = await request(app).get("/api/admin/drafts")
+      .query({ group: "nope" }).set(admin);
+    expect(bad.status).toBe(400);
+  });
+
+  it("group=otp_done lists only OTP-verified-or-later, payment-pending drafts", async () => {
+    const r = await request(app).get("/api/admin/drafts")
+      .query({ group: "otp_done" }).set(admin);
+    expect(r.status).toBe(200);
+    for (const d of r.body.drafts) {
+      expect(["OTP_VERIFIED", "PROFILE_COMPLETE", "PAYMENT_PENDING"]).toContain(d.status);
+    }
+    // pre-OTP draft from the other group must NOT appear here
+    expect(r.body.drafts.some((d: any) => d.clientKey === key("grp1"))).toBe(false);
+  });
+
   it("rate limiter caps autosave bursts per clientKey", async () => {
     let got429 = 0;
     for (let i = 0; i < 35; i++) {

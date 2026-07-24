@@ -29,6 +29,7 @@ export const ALL_SECTIONS = [
   { id:"finance",         label:"Finance & GST",         group:"Overview"  },
   { id:"forecast",        label:"Forecasting",           group:"Overview"  },
   { id:"phase1_regs",     label:"Phase 1 Registrations", group:"Overview"  },
+  { id:"incomplete_regs", label:"Incomplete Registrations", group:"Overview" },
   { id:"phase2_kyc",      label:"Phase 2 · KYC",         group:"Overview"  },
   { id:"marketing",       label:"Marketing",             group:"Growth"    },
   { id:"seo",             label:"SEO Manager",           group:"Growth"    },

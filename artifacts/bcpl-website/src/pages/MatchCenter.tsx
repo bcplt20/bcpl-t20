@@ -9,6 +9,15 @@ import { useLang } from '../lib/i18n';
 const initials = (name: string) =>
   (name || "").split(" ").map(w => w[0]).join("").slice(0, 3).toUpperCase();
 
+/* Team logos may be base64 data URLs, absolute http(s) URLs, or repo-relative
+   paths (e.g. bcpl-assets/logos/…). Mirror TeamsPage's asset() so relative
+   paths resolve under the app's base path. */
+const asset = (url: string) =>
+  !url ? "" : url.startsWith("data:") || url.startsWith("http") ? url : import.meta.env.BASE_URL + url.replace(/^\//, "");
+
+/* Normalize a team name for case-insensitive, trim-tolerant matching. */
+const normTeam = (name: string) => (name || "").trim().toLowerCase();
+
 const fmtDate = (iso?: string | null) =>
   iso ? new Date(iso).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "";
 
@@ -28,11 +37,35 @@ const STATUS_META: Record<UiStatus, { label: string; color: string }> = {
   abandoned: { label: "ABANDONED", color: "#9CA3AF" },
 };
 
+/* Circular team badge: shows the team logo when available, keeps the colored
+   ring, and falls back to initials when there is no logo or the image fails. */
+function TeamBadge({ name, color, logo, size, fontSize }: {
+  name: string; color: string; logo?: string; size: number; fontSize: number;
+}) {
+  const [broken, setBroken] = useState(false);
+  const showLogo = Boolean(logo) && !broken;
+  return (
+    <span style={{
+      width: size, height: size, borderRadius: "50%",
+      background: showLogo ? "rgba(255,255,255,0.96)" : `${color}22`,
+      border: `2px solid ${color}`, display: "inline-flex", alignItems: "center",
+      justifyContent: "center", overflow: "hidden", flexShrink: 0,
+      fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize, color,
+    }}>
+      {showLogo
+        ? <img src={logo} alt={name} onError={() => setBroken(true)}
+            style={{ width: "82%", height: "82%", objectFit: "contain" }} />
+        : initials(name)}
+    </span>
+  );
+}
+
 export function MatchCenter() {
   const { t } = useLang();
   const [matches, setMatches] = useState<any[]>([]);
   const [points,  setPoints]  = useState<any[]>([]);
   const [teamColors, setTeamColors] = useState<Record<string, string>>({});
+  const [teamLogos,  setTeamLogos]  = useState<Record<string, string>>({});
   const [openId,  setOpenId]  = useState<string | null>(null);
   const [cards,   setCards]   = useState<Record<string, any>>({});
   const [loadingCard, setLoadingCard] = useState(false);
@@ -48,12 +81,18 @@ export function MatchCenter() {
     return () => clearInterval(t);
   }, []);
 
-  /* Team colors for dots / rows */
+  /* Team colors + logos for badges / rows (keyed by normalized team name) */
   useEffect(() => {
     getTeams(5).then(d => {
-      const map: Record<string, string> = {};
-      (d.teams ?? []).forEach((t: any) => { map[t.name] = t.color; });
-      setTeamColors(map);
+      const colorMap: Record<string, string> = {};
+      const logoMap:  Record<string, string> = {};
+      (d.teams ?? []).forEach((t: any) => {
+        const key = normTeam(t.name);
+        colorMap[key] = t.color;
+        if (t.logoUrl) logoMap[key] = asset(t.logoUrl);
+      });
+      setTeamColors(colorMap);
+      setTeamLogos(logoMap);
     }).catch(() => {});
   }, []);
 
@@ -76,7 +115,8 @@ export function MatchCenter() {
     return () => { cancelled = true; clearInterval(t); };
   }, [openId, openStatus]);  // eslint-disable-line react-hooks/exhaustive-deps
 
-  const color = (team: string) => teamColors[team] || "#64748B";
+  const color  = (team: string) => teamColors[normTeam(team)] || "#64748B";
+  const logoOf = (team: string) => teamLogos[normTeam(team)] || "";
 
   const order = (s: string) => { const u = uiStatus(s); return u === "live" ? 0 : u === "upcoming" ? 1 : 2; };
   const sorted = [...matches].sort((a, b) => order(a.status) - order(b.status) || (a.matchNo ?? 0) - (b.matchNo ?? 0));
@@ -298,12 +338,12 @@ export function MatchCenter() {
                     {/* Teams */}
                     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                       <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 10 }}>
-                        <span style={{ width: 32, height: 32, borderRadius: "50%", background: `${color(m.team1)}22`, border: `2px solid ${color(m.team1)}`, display: "inline-flex", alignItems: "center", justifyContent: "center", fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 10, color: color(m.team1), flexShrink: 0 }}>{initials(m.team1)}</span>
+                        <TeamBadge name={m.team1} color={color(m.team1)} logo={logoOf(m.team1)} size={32} fontSize={10} />
                         <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: "clamp(12px,2vw,15px)", color: m.winner === m.team1 ? "#FF7A29" : "#fff" }}>{m.team1}</span>
                       </div>
                       <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 12, color: "rgba(255,255,255,0.25)", flexShrink: 0 }}>VS</div>
                       <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 10, flexDirection: "row-reverse" }}>
-                        <span style={{ width: 32, height: 32, borderRadius: "50%", background: `${color(m.team2)}22`, border: `2px solid ${color(m.team2)}`, display: "inline-flex", alignItems: "center", justifyContent: "center", fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 10, color: color(m.team2), flexShrink: 0 }}>{initials(m.team2)}</span>
+                        <TeamBadge name={m.team2} color={color(m.team2)} logo={logoOf(m.team2)} size={32} fontSize={10} />
                         <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: "clamp(12px,2vw,15px)", color: m.winner === m.team2 ? "#FF7A29" : "#fff", textAlign: "right" }}>{m.team2}</span>
                       </div>
                     </div>
@@ -365,7 +405,7 @@ export function MatchCenter() {
                   <div key={row.id ?? i} className="pts-row">
                     <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 13, color: i === 0 ? "#E8B23D" : i === 1 ? "#9CA3AF" : i === 2 ? "#B45309" : "rgba(255,255,255,0.4)", textAlign: "center" }}>{i + 1}</div>
                     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                      <span style={{ width: 26, height: 26, borderRadius: "50%", background: `${color(row.team)}22`, border: `2px solid ${color(row.team)}`, display: "inline-flex", alignItems: "center", justifyContent: "center", fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 8, color: color(row.team), flexShrink: 0 }}>{initials(row.team)}</span>
+                      <TeamBadge name={row.team} color={color(row.team)} logo={logoOf(row.team)} size={26} fontSize={8} />
                       <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 700, fontSize: 13, color: "#fff" }}>{row.team}</div>
                     </div>
                     <div style={{ textAlign: "center", fontSize: 13, color: "rgba(255,255,255,0.6)" }}>{row.played}</div>
