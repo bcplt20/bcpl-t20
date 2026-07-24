@@ -10,3 +10,6 @@ description: Why prod-only FK 500s happen (silenced deploy push) and how FK disc
 **Rule 3 (design decision):** Admin force-delete of a match sweeps rows from UNKNOWN child tables referencing matches/innings/deliveries inside the delete transaction (single-column FKs → id). Residual 23503 → 409 naming the blocking table. **Why:** confirmed force-delete promises "everything attached goes"; legacy prod tables would otherwise 500 forever and dev can never reproduce them.
 
 **How to apply:** new parent-entity delete endpoints should reuse this pattern (or extract it) rather than assuming dev schema = prod schema. Global JSON error middleware in app.ts logs the pg cause chain (code/table/constraint/detail) — check pm2 logs for "unhandled route error" entries when prod 500s appear.
+
+## Recursive FK sweep + self-diagnosing errors (July 2026)
+Match delete now uses sweepFkDelete (matches.ts): walks pg_constraint edges recursively (post-order, any depth, non-id ref cols, self-FK closure); cross-table cycles/composite FKs degrade to a 409 NAMING the table. Pattern for any "works in dev, blank 500 on prod, logs unreachable" bug: make the endpoint return its real DB error (code+table+message) to the ADMIN — the owner's next attempt becomes the diagnostic. adminReq surfaces the JSON `error` field verbatim, so whatever the API writes there lands on the owner's screen.
