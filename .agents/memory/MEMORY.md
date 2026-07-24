@@ -33,3 +33,4 @@
 - [AWS access scope](aws-access-scope.md) — workspace keys = bcpl-s3-user S3-only (infra describes AccessDenied); probe via curl --aws-sigv4; prod topology truth in deploy/
 - [Notification outbox](notification-outbox.md) — failed sends auto-queue+retry (never OTPs); noOutbox guard stops loops; dry outside prod (OUTBOX_ENABLED); dynamic imports break the cycle
 - [ensureX DDL race](ensure-ddl-race.md) — CREATE TABLE IF NOT EXISTS races under PM2×2 boot / parallel vitest (pg_type 23505); wrap new ensures in tx + pg_advisory_xact_lock
+- [PM2 env baked at start](pm2-env-baked.md) — "online"+high ↺+curl 000 = import crash-loop; bare pm2 start wiped secrets → JWT 502; ecosystem now self-loads .env.production
