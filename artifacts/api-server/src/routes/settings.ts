@@ -150,9 +150,12 @@ const founderSignatureSchema = z.object({
 /* Shared on-ground trial defaults — last-used staff / assessor names shown
    in TrialsOps check-in & assessment forms on every device. */
 const trialOpsDefaultsSchema = z.object({
-  staff: z.string().max(80).default(""),
-  assessor: z.string().max(80).default(""),
-}).strict();
+  staff: z.string().max(80).optional(),
+  assessor: z.string().max(80).optional(),
+}).strict().refine(
+  v => v.staff !== undefined || v.assessor !== undefined,
+  "provide staff and/or assessor",
+);
 
 /* ── GET /api/settings/admin/:key (full value, role-gated — for non-public keys like sponsors) ── */
 router.get("/admin/:key", requireAdmin, async (req, res) => {
@@ -222,9 +225,25 @@ router.put("/admin/:key", requireAdmin, async (req, res) => {
   }
 
   const now = new Date();
-  await db.insert(siteSettingsTable)
-    .values({ key, value, updatedAt: now })
-    .onConflictDoUpdate({ target: siteSettingsTable.key, set: { value, updatedAt: now } });
+  if (key === "trial_ops_defaults") {
+    /* Atomic partial merge — the check-in and assessment tabs save different
+       fields, possibly concurrently from different devices; a replace-PUT
+       would lose the other field's latest write. Merge happens in SQL so
+       there is no read-modify-write window. */
+    await db.insert(siteSettingsTable)
+      .values({ key, value, updatedAt: now })
+      .onConflictDoUpdate({
+        target: siteSettingsTable.key,
+        set: {
+          value: sql`((${siteSettingsTable.value})::jsonb || ${JSON.stringify(value)}::jsonb)::json`,
+          updatedAt: now,
+        },
+      });
+  } else {
+    await db.insert(siteSettingsTable)
+      .values({ key, value, updatedAt: now })
+      .onConflictDoUpdate({ target: siteSettingsTable.key, set: { value, updatedAt: now } });
+  }
 
   logger.info({ key }, "site setting updated by admin");
   /* Do not dump base64 image payloads into the audit log. */

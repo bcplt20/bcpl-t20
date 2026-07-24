@@ -14,7 +14,7 @@
  */
 import { describe, it, expect, afterAll } from "vitest";
 import request from "supertest";
-import { inArray } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 
 const TEST_ADMIN_SECRET = "test-admin-secret-for-vitest";
 const TEST_SESSION_SECRET = "test-session-secret-for-vitest";
@@ -23,7 +23,7 @@ process.env.SESSION_SECRET = TEST_SESSION_SECRET;
 
 const { default: app } = await import("../src/app");
 const { db } = await import("@workspace/db");
-const { siteSettingsTable } = await import("@workspace/db/schema");
+const { siteSettingsTable, auditLogsTable } = await import("@workspace/db/schema");
 const { signAdminToken } = await import("../src/routes/adminUsers");
 
 const suffix = String(Date.now()).slice(-7);
@@ -40,6 +40,8 @@ const TINY_PNG =
 afterAll(async () => {
   await db.delete(siteSettingsTable)
     .where(inArray(siteSettingsTable.key, ["founder_signature", "trial_ops_defaults"]));
+  await db.delete(auditLogsTable)
+    .where(inArray(auditLogsTable.entityKey, ["founder_signature", "trial_ops_defaults"]));
 });
 
 describe("founder_signature (role-gated, validated)", () => {
@@ -55,6 +57,24 @@ describe("founder_signature (role-gated, validated)", () => {
       .set("x-bcpl-admin-token", matchOpsToken);
     expect(get.status).toBe(200);
     expect(get.body.value?.image).toBe(TINY_PNG);
+  });
+
+  it("audit log never stores the raw data URL", async () => {
+    /* writeAudit is fire-and-forget — poll briefly for the row from the
+       roundtrip test above, then assert every audit row is redacted. */
+    let rows: Array<{ newValue: unknown }> = [];
+    for (let i = 0; i < 20; i++) {
+      rows = await db.select().from(auditLogsTable)
+        .where(eq(auditLogsTable.entityKey, "founder_signature"));
+      if (rows.length > 0) break;
+      await new Promise(r => setTimeout(r, 100));
+    }
+    expect(rows.length).toBeGreaterThan(0);
+    for (const row of rows) {
+      const dump = JSON.stringify(row.newValue ?? "");
+      expect(dump).not.toContain("data:image");
+      expect(dump).not.toContain("base64");
+    }
   });
 
   it("empty image is allowed (remove flow)", async () => {
@@ -130,6 +150,33 @@ describe("trial_ops_defaults (role-gated, validated)", () => {
       .set("x-bcpl-admin-token", trialMgrToken);
     expect(get.status).toBe(200);
     expect(get.body.value).toEqual({ staff: "Ramesh Kumar", assessor: "Coach Verma" });
+  });
+
+  it("partial saves merge instead of replacing (concurrent tabs)", async () => {
+    const p1 = await request(app)
+      .put("/api/settings/admin/trial_ops_defaults")
+      .set("x-bcpl-admin-token", trialMgrToken)
+      .send({ value: { staff: "Ground Staff A" } });
+    expect(p1.status).toBe(200);
+
+    const p2 = await request(app)
+      .put("/api/settings/admin/trial_ops_defaults")
+      .set("x-bcpl-admin-token", trialMgrToken)
+      .send({ value: { assessor: "Assessor B" } });
+    expect(p2.status).toBe(200);
+
+    const get = await request(app)
+      .get("/api/settings/admin/trial_ops_defaults")
+      .set("x-bcpl-admin-token", trialMgrToken);
+    expect(get.body.value).toEqual({ staff: "Ground Staff A", assessor: "Assessor B" });
+  });
+
+  it("rejects an empty object (nothing to save)", async () => {
+    const res = await request(app)
+      .put("/api/settings/admin/trial_ops_defaults")
+      .set("x-bcpl-admin-token", trialMgrToken)
+      .send({ value: {} });
+    expect(res.status).toBe(400);
   });
 
   it("CONTENT_TEAM cannot write trial defaults", async () => {

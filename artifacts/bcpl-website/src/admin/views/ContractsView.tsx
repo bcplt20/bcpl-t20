@@ -1032,6 +1032,7 @@ export default function ContractsView() {
   const [sigErr,   setSigErr]   = useState("");
   const [sigLegacy,setSigLegacy]= useState<string>("");
   const sigFileRef = useRef<HTMLInputElement>(null);
+  const sigDirtyRef = useRef(false); // set once the user saves/removes — stale initial fetch must not clobber it
 
   /* The signature lives on the SERVER (settings key founder_signature) so it
      works from every device. localStorage is legacy-only: offered as a
@@ -1040,7 +1041,7 @@ export default function ContractsView() {
     let alive = true;
     fetchFounderSignature()
       .then(r => {
-        if (!alive) return;
+        if (!alive || sigDirtyRef.current) return;
         const serverImg = r.value?.image || "";
         setSigImg(serverImg);
         const legacy = localStorage.getItem(SIG_KEY) || "";
@@ -1052,6 +1053,7 @@ export default function ContractsView() {
   }, []);
 
   async function processAndSaveSig(rawDataUrl: string) {
+    sigDirtyRef.current = true;
     setSigBusy(true); setSigErr("");
     try {
       const scaled = await downscaleSignature(rawDataUrl);
@@ -1065,6 +1067,7 @@ export default function ContractsView() {
   }
 
   async function removeSig() {
+    sigDirtyRef.current = true;
     setSigBusy(true); setSigErr("");
     try {
       await saveFounderSignature({ image: "" });

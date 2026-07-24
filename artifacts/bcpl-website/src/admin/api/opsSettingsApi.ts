@@ -22,30 +22,28 @@ export const saveFounderSignature = (value: FounderSignature) =>
   adminReq<{ success: boolean }>("PUT", "/settings/admin/founder_signature", { value });
 
 export const fetchTrialOpsDefaults = () =>
-  adminReq<SettingRes<TrialOpsDefaults>>("GET", "/settings/admin/trial_ops_defaults");
-
-export const saveTrialOpsDefaults = (value: TrialOpsDefaults) =>
-  adminReq<{ success: boolean }>("PUT", "/settings/admin/trial_ops_defaults", { value });
+  adminReq<SettingRes<Partial<TrialOpsDefaults>>>("GET", "/settings/admin/trial_ops_defaults");
 
 /** Legacy localStorage keys (pre server-backing) — cleared after a successful server save. */
 export const LEGACY_TRIAL_STAFF_KEY = "bcpl_trial_staff";
 export const LEGACY_TRIAL_ASSESSOR_KEY = "bcpl_trial_assessor";
 
 /**
- * Merge-save one or both trial default names. Called fire-and-forget from
- * action handlers (check-in / assessment save) — a failure must never block
- * the actual operation, so it only warns on the console.
+ * Save one or both trial default names. The server merges partial values
+ * atomically (SQL jsonb merge), so the check-in and assessment tabs can save
+ * concurrently from different devices without losing each other's field.
+ * Called fire-and-forget from action handlers — a failure must never block
+ * the actual check-in / assessment, so it only warns on the console.
  */
 export async function persistTrialOpsDefaults(partial: Partial<TrialOpsDefaults>): Promise<void> {
   try {
-    const cur = await fetchTrialOpsDefaults();
-    const merged: TrialOpsDefaults = {
-      staff: (partial.staff ?? cur.value?.staff ?? "").slice(0, 80),
-      assessor: (partial.assessor ?? cur.value?.assessor ?? "").slice(0, 80),
-    };
-    await saveTrialOpsDefaults(merged);
-    if (partial.staff !== undefined) localStorage.removeItem(LEGACY_TRIAL_STAFF_KEY);
-    if (partial.assessor !== undefined) localStorage.removeItem(LEGACY_TRIAL_ASSESSOR_KEY);
+    const clean: Partial<TrialOpsDefaults> = {};
+    if (partial.staff !== undefined) clean.staff = partial.staff.slice(0, 80);
+    if (partial.assessor !== undefined) clean.assessor = partial.assessor.slice(0, 80);
+    if (clean.staff === undefined && clean.assessor === undefined) return;
+    await adminReq<{ success: boolean }>("PUT", "/settings/admin/trial_ops_defaults", { value: clean });
+    if (clean.staff !== undefined) localStorage.removeItem(LEGACY_TRIAL_STAFF_KEY);
+    if (clean.assessor !== undefined) localStorage.removeItem(LEGACY_TRIAL_ASSESSOR_KEY);
   } catch (err) {
     console.warn("Could not save trial defaults to server:", err);
   }
