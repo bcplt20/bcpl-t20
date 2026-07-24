@@ -12,3 +12,6 @@ Wave status (owner's 53-section QR trial-ops spec in attached_assets/Pasted--BCP
 - W1 SHIPPED (July 2026): staff app at /staff — gate QR GREEN/RED, check-in, blind coach scoring (no PII), 6-attempt control + undo + feeder-error, locked 100-pt evaluations, correction workflow, rubric override settings key.
 - Pending: W2 exit-scan + full supervisor dashboard + wristband QR pool (owner procurement decision needed), W3 second-eval/anomaly/player states, W4 offline sync, W5 zones/freeze/allocation/pool publish, W6 simulation/load.
 - E2E: `api-server/e2e/staff-trial-ops.sh` (47 checks incl. post-lock concurrency storm; self-cleaning fixtures on BCPL-DEL-1).
+
+## Wristband QR design (owner, July 2026)
+Trial-day check-in: each player's QR is PRE-PRINTED on a wristband with their registration number (both known beforehand — QR encodes the reg ID, nothing dynamic). Wristband is handed out AT THE VENUE on trial day only. So gate check-in = scan QR → lookup by registration ID; no on-the-spot QR generation or player-side screen needed.
