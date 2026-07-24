@@ -1,0 +1,20 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "Dn3ovOez8ONOmlNleYWXG"
+uri = "file://screenshots/before-home-desktop.jpg"
+type = "image"
+title = "पहले — Homepage (desktop)"
+
+[[outputs]]
+id = "SLarnkJJEQuUF2lvxC6BE"
+uri = "file://screenshots/after-home-desktop.jpg"
+type = "image"
+title = "अब — Homepage (desktop)"
+
+[[outputs]]
+id = "x9sdBizYpMUyFCCqWdUgO"
+uri = "file://screenshots/after-home-mobile.jpg"
+type = "image"
+title = "अब — Homepage (mobile)"
