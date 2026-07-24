@@ -46,7 +46,7 @@ export interface PageMetaDefault {
 const DEFAULT_OG_IMAGE = `${SITE_ORIGIN}/bcpl-assets/bcpl-logo-color.jpg`;
 
 const PAGE_DEFAULTS: PageMetaDefault[] = [
-  { path: "/",              label: "Home",            title: "BCPL T20 — Bhartiya Corporate Premier League | Season 5", description: "India's corporate T20 cricket league for working professionals. 10 franchise teams, ₹6 crore prize pool. Register at ₹299. #OfficeSeStadiumTak" },
+  { path: "/",              label: "Home",            title: "BCPL T20 — Bhartiya Corporate Premier League | Season 5", description: "India's corporate T20 cricket league for working professionals. 10 franchise teams, ₹15 crore+ prize pool. Register at ₹299. #OfficeSeStadiumTak" },
   { path: "/register",      label: "Registration",    title: "Register for BCPL T20 Season 5 | Phase 1 at ₹299", description: "Sign up for BCPL T20 Season 5 in 3 easy steps: register, upload your cricket video and compete for selection. India's corporate cricket league." },
   { path: "/teams",         label: "Teams",           title: "BCPL T20 Teams — Franchise Squads | Season 5", description: "Explore all BCPL T20 franchise teams, squads, captains and season stats. Follow your city's team in India's corporate cricket league." },
   { path: "/players",       label: "Players",         title: "BCPL T20 Players — Season 5 Squad Database", description: "Browse every player in BCPL T20 Season 5 — search by name and filter by franchise team and role across all 10 city squads." },

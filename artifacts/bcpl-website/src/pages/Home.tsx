@@ -39,9 +39,9 @@ const TEAMS = [
 /* ── LEAGUE STRIP — broadcast-style animated ticker below the hero ── */
 const TICKER = [
   { en:"Season 5",                 hi:"सीज़न 5",                    live:true  },
-  { en:"10 Cities",                hi:"10 शहर"                                 },
+  { en:"15+ Trial Cities",         hi:"15+ trial शहर"                          },
   { en:"10 Teams",                 hi:"10 टीमें"                               },
-  { en:"₹6 Cr Prize Pool",         hi:"₹6 करोड़ प्राइज़ पूल"                    },
+  { en:"₹15 Cr+ Prize Pool",       hi:"₹15 करोड़+ प्राइज़ पूल"                  },
   { en:"International Stadiums",   hi:"International stadiums"                 },
   { en:"Live Player Auction",      hi:"लाइव Player Auction"                    },
   { en:"₹2L–₹20L Player Value",    hi:"₹2L–₹20L player value"                  },
@@ -389,13 +389,15 @@ export function Home() {
 
             {/* League scale */}
             <div className="hero-stats">
-              <span className="hs"><b>10</b> {t("Cities","शहर")}</span>
+              <span className="hs"><b>15+</b> {t("Trial Cities","Trial शहर")}</span>
               <span className="dot"/>
               <span className="hs"><b>10</b> {t("Teams","टीमें")}</span>
               <span className="dot"/>
-              <span className="hs"><b>₹6 Cr</b> {t("Prize Pool","प्राइज़ पूल")}</span>
+              <span className="hs"><b>₹15 Cr+</b> {t("Prize Pool","प्राइज़ पूल")}</span>
               <span className="dot"/>
-              <span className="hs"><b>₹20L</b> {t("Max Auction Value","अधिकतम Auction Value")}</span>
+              {/* Range (not "max") — the ₹2L floor is the reassurance; "₹20L max"
+                  alone reads like you could sell for ₹5,000. */}
+              <span className="hs"><b>₹2L–₹20L</b> {t("Auction Value","Auction Value")}</span>
             </div>
 
             <p style={{ fontSize:"clamp(14px,2vw,16px)", color:"rgba(255,255,255,.68)", lineHeight:1.7, marginBottom:12, maxWidth:500 }}>

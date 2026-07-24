@@ -282,12 +282,12 @@ export default function CMSView() {
           {numField("phase2FeeAllRounder", "Phase 2 — All-Rounder (₹)")}
           <div>
             <label style={lbl}>Prize Pool (text)</label>
-            <input value={cfg.prizePool ?? ""} placeholder="₹6 Cr" style={inp}
+            <input value={cfg.prizePool ?? ""} placeholder="₹15 Cr+" style={inp}
               onChange={e => setCfg(c => ({ ...c, prizePool: e.target.value }))} />
           </div>
           <div>
             <label style={lbl}>Auction Value (text)</label>
-            <input value={cfg.auctionValue ?? ""} placeholder="₹20 L" style={inp}
+            <input value={cfg.auctionValue ?? ""} placeholder="₹2L–₹20L" style={inp}
               onChange={e => setCfg(c => ({ ...c, auctionValue: e.target.value }))} />
           </div>
         </div>
