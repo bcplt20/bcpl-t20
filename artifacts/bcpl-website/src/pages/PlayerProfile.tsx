@@ -8,34 +8,10 @@ import { ReferralCard } from '../components/ReferralCard';
 import { clearSession, getSession } from '../lib/auth';
 import { useLang } from '../lib/i18n';
 import { formatRole, formatDateLong, formatDateShort, formatTime, formatBatch } from '../lib/format';
+import { IcoHome, IcoRoute, IcoCard, IcoUser, IcoHeadset, IcoOut, IcoTicket, IcoDoc, IcoCheck, IcoX, IcoSearch, IcoStar, IcoVideo, IcoIdCard, IcoClock, IcoPin, IcoFlag, IcoTrophy, IcoPen, IcoList } from '../lib/icons';
 
 const BASE = import.meta.env.BASE_URL;
 
-/* ── Inline SVG icons (2026 spec — no emoji glyphs) ────────────────────────── */
-const ico = (d: React.ReactNode, vb = '0 0 24 24') => (p: { size?: number; style?: React.CSSProperties }) => (
-  <svg width={p.size ?? 18} height={p.size ?? 18} viewBox={vb} fill="none" stroke="currentColor"
-    strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, ...p.style }} aria-hidden="true">{d}</svg>
-);
-const IcoHome    = ico(<><path d="M4 11 12 4l8 7" /><path d="M6 10v9h12v-9" /></>);
-const IcoRoute   = ico(<><circle cx="6" cy="19" r="2.4" /><circle cx="18" cy="5" r="2.4" /><path d="M8.2 19H15a3.5 3.5 0 0 0 0-7H9a3.5 3.5 0 0 1 0-7h6.6" /></>);
-const IcoCard    = ico(<><rect x="3" y="5" width="18" height="14" rx="2.5" /><path d="M3 10h18" /><path d="M7 15h4" /></>);
-const IcoUser    = ico(<><circle cx="12" cy="8" r="3.6" /><path d="M5 20c1.4-3.4 4-5 7-5s5.6 1.6 7 5" /></>);
-const IcoHeadset = ico(<><path d="M4 13a8 8 0 0 1 16 0" /><rect x="3" y="13" width="4" height="6" rx="1.6" /><rect x="17" y="13" width="4" height="6" rx="1.6" /></>);
-const IcoOut     = ico(<><path d="M14 4h-8v16h8" /><path d="M10 12h11" /><path d="m17 8 4 4-4 4" /></>);
-const IcoTicket  = ico(<><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4Z" /><path d="M13 6v2.5M13 11v2M13 15.5V18" strokeDasharray="0.1 3.4" /></>);
-const IcoDoc     = ico(<><path d="M7 3h7l4 4v14H7z" /><path d="M14 3v4h4" /><path d="M10 12h5M10 16h5" /></>);
-const IcoCheck   = ico(<path d="M4.5 12.5 10 18 19.5 7" />);
-const IcoX       = ico(<><path d="m6 6 12 12" /><path d="m18 6-12 12" /></>);
-const IcoSearch  = ico(<><circle cx="11" cy="11" r="6.5" /><path d="m16 16 5 5" /></>);
-const IcoStar    = ico(<path d="m12 3.5 2.5 5.4 5.9.7-4.4 4 1.2 5.8L12 16.5l-5.2 2.9 1.2-5.8-4.4-4 5.9-.7Z" />);
-const IcoVideo   = ico(<><rect x="3" y="6" width="13" height="12" rx="2.5" /><path d="m16 10 5-3v10l-5-3" /></>);
-const IcoIdCard  = ico(<><rect x="3" y="5" width="18" height="14" rx="2.5" /><circle cx="8.5" cy="11" r="2" /><path d="M6 16c.6-1.4 1.5-2 2.5-2s1.9.6 2.5 2" /><path d="M14 10h5M14 14h5" /></>);
-const IcoClock   = ico(<><circle cx="12" cy="12" r="8.5" /><path d="M12 7v5l3.5 2" /></>);
-const IcoPin     = ico(<><path d="M12 21s-7-5.3-7-11a7 7 0 0 1 14 0c0 5.7-7 11-7 11Z" /><circle cx="12" cy="10" r="2.6" /></>);
-const IcoFlag    = ico(<><path d="M5 21V4" /><path d="M5 4h12l-2.5 4L17 12H5" /></>);
-const IcoTrophy  = ico(<><path d="M7 4h10v5a5 5 0 0 1-10 0Z" /><path d="M7 6H4v1a4 4 0 0 0 3 3.9M17 6h3v1a4 4 0 0 1-3 3.9" /><path d="M12 14v3" /><path d="M8 21h8M9 21c0-2 1-3 3-3s3 1 3 3" /></>);
-const IcoPen     = ico(<><path d="m14.5 5.5 4 4L8 20H4v-4Z" /><path d="m12.5 7.5 4 4" /></>);
-const IcoList    = ico(<><rect x="4" y="3.5" width="16" height="17" rx="2.5" /><path d="M9 3.5h6v3H9z" /><path d="M8 11h8M8 15h5" /></>);
 
 /* ── Player journey — server truth only (§17-18) ──────────────────────────────
    The trial-stage steps come from dashboard.trial (allocation → check-in →
