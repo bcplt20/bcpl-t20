@@ -208,7 +208,7 @@ export function Videos() {
           <div className="glass-card" style={{padding:'clamp(20px,5vw,48px) clamp(16px,4vw,48px)',textAlign:'center',maxWidth:640,margin:'0 auto',border:'1px solid rgba(255,122,41,0.15)'}}>
             <div style={{fontSize:44,marginBottom:12}}>▶️</div>
             <h3 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,color:'#fff',marginBottom:6}}>{t("Subscribe to BCPL TV","BCPL TV Subscribe करें")}</h3>
-            <div style={{color:'rgba(255,255,255,0.4)',fontSize:14,marginBottom:24,fontFamily:'Inter,sans-serif'}}>{t("23K subscribers · New videos every match day","23K subscribers · हर match day नई videos")}</div>
+            <div style={{color:'rgba(255,255,255,0.4)',fontSize:14,marginBottom:24,fontFamily:'Inter,sans-serif'}}>{t("23K subscribers · Match highlights & league videos","23K subscribers · Match highlights और league videos")}</div>
             <div style={{display:'flex',gap:14,justifyContent:'center',flexWrap:'wrap'}}>
               <a href="https://www.youtube.com/@bcplt20league" target="_blank" rel="noopener noreferrer" style={{padding:'14px 36px',borderRadius:14,background:'#FF0000',border:'none',color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,cursor:'pointer',display:'flex',alignItems:'center',gap:8,letterSpacing:'0.02em',textDecoration:'none'}}>
                 <span>▶</span> {t("Subscribe","Subscribe")}
