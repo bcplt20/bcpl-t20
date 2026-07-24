@@ -20,3 +20,9 @@ Watch-outs:
 - Desktop: logo left / centered links (Teams Players Trials Matches Auction Media About — Trials→/trust, Auction→/auction/live, Media→/photos) / lang+login+CTA right.
 - Mobile menu (z1500): links incl. Standings→/points-table, then NavUser row, big "Register for Phase 1" CTA, LangToggle, Help(/faq)+WhatsApp support row.
 - Player logout entry points: mobile ☰ menu Sign Out row (NavUser mobile variant, hard redirect to BASE_URL) + profile hero card on default home tab + MY ACCOUNT fallback on profile tab when unregistered. Profile page is mobile-tabbed (.mob-tab-content gating) — any new section must be assigned to a tab or it is invisible on mobile; keep Sign Out reachable on the DEFAULT tab.
+
+## Register CTAs are auth-gated (July 2026)
+- SiteHeader gates its 3 register buttons (desktop, mobile top-bar, menu sheet) on `!useAuthUser()`.
+- SiteHeader also toggles `html.bcpl-authed` class + CSS `html.bcpl-authed .float-reg-btn{display:none!important}` — hides every per-page floating register button site-wide for logged-in users. No unmount cleanup ON PURPOSE (avoids flash during route transitions; every .float-reg-btn page mounts SiteHeader, logout only happens via NavUser inside SiteHeader).
+- **How to apply:** any NEW register CTA must either use class `float-reg-btn` or be wrapped in `{!user && ...}`. Never show register nudges to logged-in players (owner rule).
+- AuctionLive (/auction/live) is now an honest static info page — the old fake live-bid simulation is deleted; never reintroduce simulated bids/results (compliance).
