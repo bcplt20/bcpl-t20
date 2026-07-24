@@ -5,6 +5,7 @@ import { SiteHeader } from '../components/SiteHeader';
 import { useLang } from '../lib/i18n';
 import { StickyRegisterCTA } from "../components/StickyRegisterCTA";
 import { AUCTION_PHOTOS } from '../data/auctionGallery';
+import { PHOTOSHOOT_PHOTOS } from '../data/photoshootGallery';
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
@@ -62,31 +63,70 @@ function AmbientBg() {
 }
 
 const BASE = import.meta.env.BASE_URL;
-const thumbUrl = (f: string) => `${BASE}auction/thumb/${f}`;
-const fullUrl  = (f: string) => `${BASE}auction/full/${f}`;
+
+type SectionDef = {
+  key: string;
+  title: [string, string];
+  subtitle: [string, string];
+  overlay: string;
+  photos: { f: string; w: number; h: number }[];
+  thumbUrl: (f: string) => string;
+  fullUrl: (f: string) => string;
+};
+
+const SECTIONS: SectionDef[] = [
+  {
+    key: 'auction',
+    title: ["Season 4 Auction", "Season 4 Auction"],
+    subtitle: ["Official photos from the BCPL Season 4 player auction", "BCPL Season 4 player auction की official photos"],
+    overlay: 'SEASON 4 AUCTION',
+    photos: AUCTION_PHOTOS,
+    thumbUrl: (f) => `${BASE}auction/thumb/${f}`,
+    fullUrl: (f) => `${BASE}auction/full/${f}`,
+  },
+  {
+    key: 'photoshoot',
+    title: ["Commercial Photoshoot", "Commercial Photoshoot"],
+    subtitle: ["Official photos from the BCPL commercial shoot", "BCPL commercial shoot की official photos"],
+    overlay: 'COMMERCIAL SHOOT',
+    photos: PHOTOSHOOT_PHOTOS,
+    thumbUrl: (f) => `${BASE}gallery/photoshoot/thumb/${f}`,
+    fullUrl: (f) => `${BASE}gallery/photoshoot/full/${f}`,
+  },
+];
 
 const PAGE_SIZE = 18;
 
 export function Photos() {
   const { t } = useLang();
-  const [visible, setVisible] = React.useState(PAGE_SIZE);
-  const [lightbox, setLightbox] = React.useState<number | null>(null);
+  const [visible, setVisible] = React.useState<Record<string, number>>({ auction: PAGE_SIZE, photoshoot: PAGE_SIZE });
+  const [lightbox, setLightbox] = React.useState<{ sec: number; idx: number } | null>(null);
 
-  const shown = AUCTION_PHOTOS.slice(0, visible);
+  const sections = SECTIONS.filter(s => s.photos.length > 0);
+  const lbSection = lightbox ? sections[lightbox.sec] : null;
 
   /* lightbox keyboard controls + scroll lock */
   React.useEffect(() => {
     if (lightbox === null) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setLightbox(null);
-      if (e.key === 'ArrowRight') setLightbox(i => (i === null ? i : (i + 1) % AUCTION_PHOTOS.length));
-      if (e.key === 'ArrowLeft')  setLightbox(i => (i === null ? i : (i - 1 + AUCTION_PHOTOS.length) % AUCTION_PHOTOS.length));
+      if (e.key === 'ArrowRight') setLightbox(lb => {
+        if (!lb) return lb;
+        const n = sections[lb.sec].photos.length;
+        return { ...lb, idx: (lb.idx + 1) % n };
+      });
+      if (e.key === 'ArrowLeft') setLightbox(lb => {
+        if (!lb) return lb;
+        const n = sections[lb.sec].photos.length;
+        return { ...lb, idx: (lb.idx - 1 + n) % n };
+      });
     };
     window.addEventListener('keydown', onKey);
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = prevOverflow; };
-  }, [lightbox]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lightbox === null]);
 
   return (
     <div style={{minHeight:'100vh',background:'#060E1C',fontFamily:'Inter,sans-serif',position:'relative'}}>
@@ -104,84 +144,96 @@ export function Photos() {
           <h1 className="shimmer-gold" style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(40px,7vw,80px)',lineHeight:1.05,marginBottom:24,animation:'floatUp 0.7s ease 0.2s both'}}>
             {t("DEFINE US.","हमें परिभाषित करते हैं।")}
           </h1>
-          <p style={{color:'rgba(255,255,255,0.6)',fontSize:18,maxWidth:520,margin:'0 auto',lineHeight:1.7,animation:'floatUp 0.7s ease 0.3s both'}}>
-            {t("Straight from the BCPL player auction floor — the boards, the bids, the teams.","सीधे BCPL player auction floor से — boards, bids और teams।")}
+          <p style={{color:'rgba(255,255,255,0.6)',fontSize:18,maxWidth:560,margin:'0 auto',lineHeight:1.7,animation:'floatUp 0.7s ease 0.3s both'}}>
+            {t("From the Season 4 auction floor to the official commercial shoot — boards, bids, teams and jerseys.","Season 4 auction floor से official commercial shoot तक — boards, bids, teams और jerseys।")}
           </p>
         </div>
       </section>
 
-      {/* GALLERY */}
-      <section style={{position:'relative',zIndex:1,padding:'12px 0 80px'}}>
-        <div className="wrap">
-          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:10,marginBottom:22}}>
-            <div>
-              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(20px,3.5vw,30px)',color:'#fff',textTransform:'uppercase',letterSpacing:'.02em'}}>
-                {t("Player Auction","Player Auction")}
-              </h2>
-              <div style={{fontFamily:'Inter,sans-serif',fontSize:13,color:'rgba(255,255,255,0.45)',marginTop:4}}>
-                {t("Official photos from the BCPL player auction event","BCPL player auction event की official photos")}
-              </div>
-            </div>
-            <span className="tag-pill">{AUCTION_PHOTOS.length} {t("PHOTOS","PHOTOS")}</span>
-          </div>
-
-          <div className="photo-masonry">
-            {shown.map((p, i) => (
-              <div key={p.f} className="photo-card" onClick={() => setLightbox(i)}>
-                <img src={thumbUrl(p.f)} alt={t("BCPL player auction moment","BCPL player auction का पल")}
-                  width={p.w} height={p.h} loading={i < 6 ? 'eager' : 'lazy'} decoding="async" />
-                <div className="photo-overlay">
-                  <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:11,color:'#fff',letterSpacing:'.08em'}}>
-                    {t("PLAYER AUCTION","PLAYER AUCTION")} · {String(i + 1).padStart(2, '0')}
-                  </span>
+      {/* GALLERY SECTIONS */}
+      {sections.map((sec, si) => {
+        const vis = visible[sec.key] ?? PAGE_SIZE;
+        const shown = sec.photos.slice(0, vis);
+        return (
+          <section key={sec.key} style={{position:'relative',zIndex:1,padding: si === 0 ? '12px 0 60px' : '10px 0 60px'}}>
+            <div className="wrap">
+              <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:10,marginBottom:22}}>
+                <div>
+                  <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(20px,3.5vw,30px)',color:'#fff',textTransform:'uppercase',letterSpacing:'.02em'}}>
+                    {t(sec.title[0], sec.title[1])}
+                  </h2>
+                  <div style={{fontFamily:'Inter,sans-serif',fontSize:13,color:'rgba(255,255,255,0.45)',marginTop:4}}>
+                    {t(sec.subtitle[0], sec.subtitle[1])}
+                  </div>
                 </div>
+                <span className="tag-pill">{sec.photos.length} {t("PHOTOS","PHOTOS")}</span>
               </div>
-            ))}
-          </div>
 
-          {visible < AUCTION_PHOTOS.length && (
-            <div style={{textAlign:'center',marginTop:28}}>
-              <button className="load-more-btn" onClick={() => setVisible(v => v + PAGE_SIZE)}>
-                {t("LOAD MORE PHOTOS","और PHOTOS देखें")} ({AUCTION_PHOTOS.length - visible})
-              </button>
+              <div className="photo-masonry">
+                {shown.map((p, i) => (
+                  <div key={p.f} className="photo-card" onClick={() => setLightbox({ sec: si, idx: i })}>
+                    <img src={sec.thumbUrl(p.f)} alt={`${t("BCPL","BCPL")} ${t(sec.title[0], sec.title[1])} ${i + 1}`}
+                      width={p.w} height={p.h} loading={si === 0 && i < 6 ? 'eager' : 'lazy'} decoding="async" />
+                    <div className="photo-overlay">
+                      <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:11,color:'#fff',letterSpacing:'.08em'}}>
+                        {sec.overlay} · {String(i + 1).padStart(2, '0')}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {vis < sec.photos.length && (
+                <div style={{textAlign:'center',marginTop:28}}>
+                  <button className="load-more-btn" onClick={() => setVisible(v => ({ ...v, [sec.key]: (v[sec.key] ?? PAGE_SIZE) + PAGE_SIZE }))}>
+                    {t("LOAD MORE PHOTOS","और PHOTOS देखें")} ({sec.photos.length - vis})
+                  </button>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      </section>
+          </section>
+        );
+      })}
 
-      {/* VIDEOS COMING SOON + INSTAGRAM */}
-      <section style={{position:'relative',zIndex:1,padding:'0 0 110px'}}>
+      {/* AUCTION VIDEOS LIVE + INSTAGRAM */}
+      <section style={{position:'relative',zIndex:1,padding:'20px 0 110px'}}>
         <div className="wrap">
           <div className="glass-card" style={{padding:'clamp(28px,5vw,44px) clamp(20px,5vw,48px)',textAlign:'center',maxWidth:640,margin:'0 auto',border:'1px solid rgba(255,122,41,0.15)',animation:'fadeSlide 0.7s ease both'}}>
             <h3 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(18px,3vw,24px)',color:'#fff',marginBottom:10,lineHeight:1.25}}>
-              {t("Auction Videos","Auction Videos")} <span className="shimmer-gold">{t("Coming Soon","जल्द आ रहे हैं")}</span>
+              {t("Auction Videos","Auction Videos")} <span className="shimmer-gold">{t("Are Live","आ गई हैं")}</span>
             </h3>
             <p style={{color:'rgba(255,255,255,0.5)',fontSize:14,lineHeight:1.7,maxWidth:460,margin:'0 auto 22px',fontFamily:'Inter,sans-serif'}}>
-              {t("Auction highlight videos are being edited. Match day and trial galleries will keep growing through the season.","Auction की highlight videos edit हो रही हैं। Match day और trial galleries season के साथ बढ़ती रहेंगी।")}
+              {t("Watch the full Season 4 auction stream and official clips from the auction floor on the videos page.","Season 4 auction का पूरा stream और auction floor की official clips videos page पर देखिए।")}
             </p>
-            <a href="https://www.instagram.com/bcpl.t20" target="_blank" rel="noopener noreferrer"
-              style={{display:'inline-flex',alignItems:'center',gap:10,padding:'12px 28px',borderRadius:14,background:'linear-gradient(135deg,#E1306C,#F77737,#FCAF45)',border:'none',color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:13,cursor:'pointer',letterSpacing:'0.02em',textDecoration:'none'}}>
-              {t("Follow @bcpl.t20 for Updates","@bcpl.t20 Follow करें")}
-            </a>
+            <div style={{display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap'}}>
+              <Link href="/videos"
+                style={{display:'inline-flex',alignItems:'center',gap:10,padding:'12px 28px',borderRadius:14,background:'linear-gradient(135deg,#FF7A29,#D95E10)',border:'none',color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:13,cursor:'pointer',letterSpacing:'0.02em',textDecoration:'none'}}>
+                {t("WATCH AUCTION VIDEOS","Auction Videos देखें")} &rarr;
+              </Link>
+              <a href="https://www.instagram.com/bcpl.t20" target="_blank" rel="noopener noreferrer"
+                style={{display:'inline-flex',alignItems:'center',gap:10,padding:'12px 28px',borderRadius:14,background:'linear-gradient(135deg,#E1306C,#F77737,#FCAF45)',border:'none',color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:13,cursor:'pointer',letterSpacing:'0.02em',textDecoration:'none'}}>
+                {t("Follow @bcpl.t20","@bcpl.t20 Follow करें")}
+              </a>
+            </div>
           </div>
         </div>
       </section>
 
       {/* LIGHTBOX */}
-      {lightbox !== null && AUCTION_PHOTOS[lightbox] && (
+      {lightbox !== null && lbSection && lbSection.photos[lightbox.idx] && (
         <div onClick={() => setLightbox(null)}
           style={{position:'fixed',inset:0,zIndex:2000,background:'rgba(3,7,15,0.94)',display:'flex',alignItems:'center',justifyContent:'center',animation:'lbFade .2s ease both',padding:'clamp(8px,3vw,32px)'}}>
-          <img src={fullUrl(AUCTION_PHOTOS[lightbox].f)} alt={t("BCPL player auction moment","BCPL player auction का पल")}
+          <img src={lbSection.fullUrl(lbSection.photos[lightbox.idx].f)} alt={t(lbSection.title[0], lbSection.title[1])}
             onClick={e => e.stopPropagation()}
             style={{maxWidth:'100%',maxHeight:'92vh',borderRadius:10,boxShadow:'0 30px 90px rgba(0,0,0,0.8)',objectFit:'contain'}} />
           <button className="lb-btn" aria-label="Close" onClick={() => setLightbox(null)}
             style={{position:'absolute',top:16,right:16}}>✕</button>
-          <button className="lb-btn" aria-label="Previous" onClick={e => { e.stopPropagation(); setLightbox((lightbox - 1 + AUCTION_PHOTOS.length) % AUCTION_PHOTOS.length); }}
+          <button className="lb-btn" aria-label="Previous" onClick={e => { e.stopPropagation(); setLightbox(lb => lb ? { ...lb, idx: (lb.idx - 1 + lbSection.photos.length) % lbSection.photos.length } : lb); }}
             style={{position:'absolute',left:10,top:'50%',transform:'translateY(-50%)'}}>‹</button>
-          <button className="lb-btn" aria-label="Next" onClick={e => { e.stopPropagation(); setLightbox((lightbox + 1) % AUCTION_PHOTOS.length); }}
+          <button className="lb-btn" aria-label="Next" onClick={e => { e.stopPropagation(); setLightbox(lb => lb ? { ...lb, idx: (lb.idx + 1) % lbSection.photos.length } : lb); }}
             style={{position:'absolute',right:10,top:'50%',transform:'translateY(-50%)'}}>›</button>
           <div style={{position:'absolute',bottom:18,left:'50%',transform:'translateX(-50%)',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:12,color:'rgba(255,255,255,0.6)',letterSpacing:'.1em'}}>
-            {lightbox + 1} / {AUCTION_PHOTOS.length}
+            {t(lbSection.title[0], lbSection.title[1])} · {lightbox.idx + 1} / {lbSection.photos.length}
           </div>
         </div>
       )}
