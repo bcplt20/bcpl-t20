@@ -14,3 +14,8 @@ description: Patterns for bulk-downloading the owner's Drive media and shipping 
 
 ## Auction Drive (owner re-share, July 2026)
 Parent folder 1un0jIeE_t7284ElQtLV1I2Tw5PrHWyCp; structure: photos=1x0dTHcq3aQwKO4IJybOXSICP917zE7xf (2 entries); photos/cam 1=1kRTsZh80CNOv74SrEFJvXhfcFnSV-AMR (948 files); photos/cam 2=1LAtrFhWqDX_9JR1q8B8WcfJBNRQ363Rb (371 files); videos=1Cm6OZt7Be6ISIEHQfhKXBcsJelcqYjrF (173 entries). List via embeddedfolderview?id=<ID> (public). yt-dlp re-confirmed blocked (bot-check) — owner downloads own videos via YouTube Studio → uploads to this Drive → we pull from Drive.
+
+## Owner's photo sources (corrected July 2026) + SharePoint recipe
+- **Provenance:** Google Drive share (cam 1+cam 2, all_photos.tsv=845) = Season 4 AUCTION photos. Evolution Pictures SharePoint (tinyurl bcplmorfeus → BCPL/) = COMMERCIAL shoot (Photoshoot: Shot 1-3 + With Client & Agency = 96) plus TVC/Behind The Scenes/Social Media Bytes video folders (not yet used). The first shipped gallery had these swapped — owner caught it.
+- **SharePoint anonymous access:** redeem share link once with a cookie jar (`curl -sL -c jar <share-url>`) → FedAuth cookie; list via `_api/web/GetFolderByServerRelativePath(decodedurl='...')/Files?$select=Name,Length,ServerRelativeUrl` (Accept: application/json;odata=nometadata). **Direct file GET hangs forever** — download via `_layouts/15/download.aspx?SourceUrl=<url-encoded-rel>` + browser UA (~28MB/s).
+- **Filenames with spaces** ("BCPL0081 copy.jpg"): never `for n in $(ls ...)` — use `ls | while IFS= read -r n`.
