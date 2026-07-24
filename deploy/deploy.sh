@@ -148,17 +148,32 @@ echo "🔨 Building API server..."
 cd $APP_DIR/artifacts/api-server
 pnpm run build
 
-# ── 4. Build frontend ────────────────────────────────────────
+# ── 4. Run DB migrations (build se PEHLE: yahan ruke to purani app
+#      bilkul waise hi chalti rehti hai — aadha-naya deploy kabhi nahi) ──
+# Pehle ye step chupchaap fail hota tha (2>/dev/null || true) — isi se prod
+# par scoring tables kabhi bani hi nahi aur match delete 42P01 se girta tha.
+echo "🗄️  Running database migrations..."
+cd $APP_DIR/lib/db
+# NOTE: is drizzle-kit me `--yes` flag EXIST hi nahi karta — purani line
+# "push --yes" pehle din se usage-error se girti thi (aur 2>/dev/null usse
+# chhupa deta tha). `push-force` = drizzle-kit push --force (non-interactive,
+# destructive statements auto-accept — output neeche poora chhapta hai).
+PUSH_OUT=$(DATABASE_URL=$DATABASE_URL pnpm run push-force 2>&1) || true
+echo "$PUSH_OUT" | tail -25
+if echo "$PUSH_OUT" | grep -qE "Changes applied|No changes"; then
+  echo "✅ DB schema up to date"
+else
+  echo "❌ DB schema push adhura raha — DEPLOY ROKA GAYA (purani app hi chalti rahegi)."
+  echo "   Upar ka pura output Replit Agent ko bhej dijiye."
+  exit 1
+fi
+
+# ── 5. Build frontend ────────────────────────────────────────
 echo "🎨 Building frontend..."
 cd $APP_DIR/artifacts/bcpl-website
 # PROD par site root domain (bcplt20.com) par chalti hai — BASE_PATH=/ hi hona chahiye.
 # (/bcpl-website/ sirf Replit dev preview ka path hai — usse assets 404 ho jaate hain)
 BASE_PATH=/ VITE_API_URL="https://bcplt20.com" pnpm run build
-
-# ── 5. Run DB migrations ─────────────────────────────────────
-echo "🗄️  Running database migrations..."
-cd $APP_DIR/lib/db
-DATABASE_URL=$DATABASE_URL pnpm exec drizzle-kit push --yes 2>/dev/null || true
 
 # ── 6. Reload PM2 ────────────────────────────────────────────
 echo "🔄 Reloading PM2..."

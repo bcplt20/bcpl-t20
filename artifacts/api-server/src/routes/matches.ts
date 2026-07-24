@@ -467,6 +467,24 @@ async function sweepFkDelete(
 // must pass ?force=1 to confirm; otherwise a 409 is returned describing what
 // will be lost. All deletes are child-first via the recursive FK sweep, and
 // EVERY failure path returns its real cause — never a blank 500.
+/* Prod's schema can lag this build (the deploy push is best-effort and has
+   silently failed before): probe which scoring tables actually exist before
+   querying them, so match delete works even on a database that has never
+   scored a ball (otherwise: 42P01 `relation "deliveries" does not exist`).
+   The FK sweep below is already drift-safe — it walks pg_constraint, so it
+   only ever sees tables that really exist. */
+export async function existingTables(names: string[]): Promise<Set<string>> {
+  if (names.length === 0) return new Set();
+  const r = await db.execute(sql`
+    SELECT c.relname AS name
+      FROM pg_class c
+      JOIN pg_namespace n ON n.oid = c.relnamespace
+     WHERE n.nspname = 'public'
+       AND c.relkind IN ('r', 'p')
+       AND c.relname IN (${sql.join(names.map((n) => sql`${n}`), sql`, `)})`);
+  return new Set((r.rows as Array<{ name: string }>).map((x) => x.name));
+}
+
 router.delete("/admin/matches/:id", requireAdmin, async (req, res) => {
   const matchId = String(req.params.id);
 
@@ -475,16 +493,19 @@ router.delete("/admin/matches/:id", requireAdmin, async (req, res) => {
     if (!match) return void res.status(404).json({ error: "Match not found" });
 
     const force = req.query.force === "1" || req.query.force === "true";
+    const have = await existingTables(["innings", "deliveries"]);
 
     // Confirm-prompt precheck (read-only): when not forcing, describe what a
     // force delete would destroy. The authoritative snapshot is re-taken
     // INSIDE the transaction below, so rows appearing between this read and
     // the delete cannot slip through.
     if (!force) {
-      const innings = await db.select({ id: inningsTable.id }).from(inningsTable)
-        .where(eq(inningsTable.matchId, matchId));
+      const innings = have.has("innings")
+        ? await db.select({ id: inningsTable.id }).from(inningsTable)
+            .where(eq(inningsTable.matchId, matchId))
+        : [];
       let deliveryCount = 0;
-      if (innings.length > 0) {
+      if (have.has("deliveries") && innings.length > 0) {
         const deliveries = await db.select({ id: deliveriesTable.id }).from(deliveriesTable)
           .where(inArray(deliveriesTable.inningsId, innings.map(i => i.id)));
         deliveryCount = deliveries.length;
@@ -508,12 +529,15 @@ router.delete("/admin/matches/:id", requireAdmin, async (req, res) => {
        everything attached goes": walk the whole FK graph hanging off this
        match and delete child-first in one transaction (sweepFkDelete). */
     await db.transaction(async (tx) => {
-      // Authoritative snapshot inside the transaction.
-      const inn = await tx.select({ id: inningsTable.id }).from(inningsTable)
-        .where(eq(inningsTable.matchId, matchId));
+      // Authoritative snapshot inside the transaction (skip tables this
+      // database does not have — nothing to snapshot there).
+      const inn = have.has("innings")
+        ? await tx.select({ id: inningsTable.id }).from(inningsTable)
+            .where(eq(inningsTable.matchId, matchId))
+        : [];
       const inningsIds = inn.map(i => i.id);
       let deliveryIds: string[] = [];
-      if (inningsIds.length > 0) {
+      if (have.has("deliveries") && inningsIds.length > 0) {
         const del = await tx.select({ id: deliveriesTable.id }).from(deliveriesTable)
           .where(inArray(deliveriesTable.inningsId, inningsIds));
         deliveryIds = del.map(d => d.id);
