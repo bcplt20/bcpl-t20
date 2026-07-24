@@ -320,6 +320,82 @@ router.put("/admin/matches/:id/status", requireAdmin, async (req, res) => {
   res.json({ success: true, match });
 });
 
+/* ── Generic FK-descendant sweep for match deletion ──────────────────────
+   Deletes every row that (transitively) references the given parent rows,
+   walking real FK edges from pg_constraint (single-column FKs, keyed on
+   OIDs). Child rows are removed before their parent's rows (post-order), so
+   NO ACTION constraints on tables this build has never heard of — at any
+   depth, including children of match_xi and FKs that reference columns
+   other than id — cannot block the delete. Composite FKs are left to the
+   23503 handler below, which names the blocking table. */
+type SweepTx = Parameters<Parameters<typeof db.transaction>[0]>[0];
+type SweepWarn = (obj: Record<string, unknown>, msg: string) => void;
+const SWEEP_MAX_DEPTH = 6;
+const OWN_SWEEP_TABLES = new Set(["innings", "deliveries", "match_xi"]);
+
+async function sweepFkDescendants(
+  tx: SweepTx,
+  schema: string,
+  table: string,
+  keyColumn: string,
+  keyValues: unknown[],
+  ancestors: string[],
+  warn: SweepWarn,
+): Promise<void> {
+  if (keyValues.length === 0) return;
+  if (ancestors.length >= SWEEP_MAX_DEPTH) {
+    throw new Error(`FK sweep exceeded depth ${SWEEP_MAX_DEPTH} at ${schema}.${table} — possible FK cycle`);
+  }
+  const edges = await tx.execute(sql`
+    SELECT child_ns.nspname AS child_schema,
+           child.relname    AS child_table,
+           att.attname      AS child_column,
+           (SELECT a.attname FROM pg_attribute a
+            WHERE a.attrelid = con.confrelid AND a.attnum = con.confkey[1]) AS parent_column
+    FROM pg_constraint con
+    JOIN pg_class child        ON child.oid    = con.conrelid
+    JOIN pg_namespace child_ns ON child_ns.oid = child.relnamespace
+    JOIN pg_attribute att      ON att.attrelid = con.conrelid AND att.attnum = con.conkey[1]
+    WHERE con.contype = 'f'
+      AND cardinality(con.conkey) = 1
+      AND con.confrelid = (SELECT c.oid FROM pg_class c
+                           JOIN pg_namespace n ON n.oid = c.relnamespace
+                           WHERE n.nspname = ${schema} AND c.relname = ${table})
+  `);
+  const here = `${schema}.${table}`;
+  for (const edge of edges.rows as Array<{ child_schema: string; child_table: string; child_column: string; parent_column: string }>) {
+    const childKey = `${edge.child_schema}.${edge.child_table}`;
+    // Self-references and ancestor loops: those rows are already part of the
+    // current delete set; recursing would never terminate.
+    if (childKey === here || ancestors.includes(childKey)) continue;
+    // Values of the REFERENCED parent column for the rows being deleted
+    // (usually id, but an FK may reference any unique column).
+    let refValues = keyValues;
+    if (edge.parent_column !== keyColumn) {
+      const r = await tx.execute(sql`
+        SELECT DISTINCT ${sql.identifier(edge.parent_column)} AS v
+        FROM ${sql.identifier(schema)}.${sql.identifier(table)}
+        WHERE ${sql.identifier(keyColumn)} IN (${sql.join(keyValues.map(v => sql`${v}`), sql`, `)})
+          AND ${sql.identifier(edge.parent_column)} IS NOT NULL
+      `);
+      refValues = (r.rows as Array<{ v: unknown }>).map(x => x.v);
+    }
+    if (refValues.length === 0) continue;
+    // Grandchildren first (child rows must still exist for discovery)…
+    await sweepFkDescendants(tx, edge.child_schema, edge.child_table, edge.child_column, refValues, [...ancestors, here], warn);
+    // …then the child rows themselves.
+    const deleted = await tx.execute(sql`
+      DELETE FROM ${sql.identifier(edge.child_schema)}.${sql.identifier(edge.child_table)}
+      WHERE ${sql.identifier(edge.child_column)} IN (${sql.join(refValues.map(v => sql`${v}`), sql`, `)})
+    `);
+    const n = Number((deleted as { rowCount?: number | null }).rowCount ?? 0);
+    if (n > 0 && !OWN_SWEEP_TABLES.has(edge.child_table)) {
+      warn({ legacyTable: childKey, column: edge.child_column, rows: n },
+        "match delete: cleared rows from table not in this build's schema");
+    }
+  }
+}
+
 // DELETE /api/admin/matches/:id
 // Removes a match and all its scoring data (innings, deliveries, XI).
 // If the match already has scoring data (innings / deliveries), the caller
@@ -363,12 +439,8 @@ router.delete("/admin/matches/:id", requireAdmin, async (req, res) => {
      schema push is best-effort), so tables UNKNOWN to this build may still
      hold rows pointing at this match — a plain delete then dies with an FK
      violation (500). A confirmed delete promises "the match and everything
-     attached goes", so: discover every single-column FK referencing
-     matches(id)/innings(id)/deliveries(id) and clear those legacy rows first,
-     all inside one transaction. Discovery uses pg_constraint keyed by OIDs —
-     constraint NAMES are not unique across tables, so name-based
-     information_schema joins can cross-associate and target the wrong table. */
-  const KNOWN_CHILDREN = new Set(["innings", "match_xi", "deliveries"]);
+     attached goes", so: walk the whole FK graph hanging off this match and
+     clear rows child-first inside one transaction (see sweepFkDescendants). */
   try {
     await db.transaction(async (tx) => {
       // Authoritative snapshot inside the transaction.
@@ -387,44 +459,8 @@ router.delete("/admin/matches/:id", requireAdmin, async (req, res) => {
         throw Object.assign(new Error("scoring data appeared mid-delete"), { scoringDataAppeared: true });
       }
 
-      const fkRows = await tx.execute(sql`
-        SELECT child_ns.nspname AS child_schema,
-               child.relname    AS child_table,
-               att.attname      AS child_column,
-               parent.relname   AS parent_table
-        FROM pg_constraint con
-        JOIN pg_class child         ON child.oid     = con.conrelid
-        JOIN pg_namespace child_ns  ON child_ns.oid  = child.relnamespace
-        JOIN pg_class parent        ON parent.oid    = con.confrelid
-        JOIN pg_namespace parent_ns ON parent_ns.oid = parent.relnamespace
-        JOIN pg_attribute att       ON att.attrelid  = con.conrelid AND att.attnum = con.conkey[1]
-        WHERE con.contype = 'f'
-          AND cardinality(con.conkey) = 1
-          AND parent_ns.nspname = 'public'
-          AND child_ns.nspname  = 'public'
-          AND parent.relname IN ('matches', 'innings', 'deliveries')
-          AND (SELECT a.attname FROM pg_attribute a
-               WHERE a.attrelid = con.confrelid AND a.attnum = con.confkey[1]) = 'id'
-      `);
-      for (const fk of fkRows.rows as Array<{ child_schema: string; child_table: string; child_column: string; parent_table: string }>) {
-        if (KNOWN_CHILDREN.has(fk.child_table)) continue;
-        const parentIds =
-          fk.parent_table === "matches"  ? [matchId] :
-          fk.parent_table === "innings"  ? inningsIds :
-          deliveryIds;
-        if (parentIds.length === 0) continue;
-        req.log.warn({ legacyTable: fk.child_table, column: fk.child_column, matchId },
-          "match delete: clearing rows from legacy child table");
-        await tx.execute(sql`
-          DELETE FROM ${sql.identifier(fk.child_schema)}.${sql.identifier(fk.child_table)}
-          WHERE ${sql.identifier(fk.child_column)} IN (${sql.join(parentIds.map(id => sql`${id}`), sql`, `)})
-        `);
-      }
-      if (inningsIds.length > 0) {
-        await tx.delete(deliveriesTable).where(inArray(deliveriesTable.inningsId, inningsIds));
-      }
-      await tx.delete(inningsTable).where(eq(inningsTable.matchId, matchId));
-      await tx.delete(matchXITable).where(eq(matchXITable.matchId, matchId));
+      await sweepFkDescendants(tx, "public", "matches", "id", [matchId], [],
+        (obj, msg) => req.log.warn(obj, msg));
       await tx.delete(matchesTable).where(eq(matchesTable.id, matchId));
     });
   } catch (err) {
@@ -436,14 +472,26 @@ router.delete("/admin/matches/:id", requireAdmin, async (req, res) => {
     }
     const pg = pgCauseOf(err);
     if (pg?.code === "23503") {
-      // Still blocked (e.g. a grandchild of a legacy table) — say WHICH table
-      // instead of a blank 500, and log the full pg detail for diagnosis.
+      // Still blocked by a foreign key (e.g. a composite-FK child) — say
+      // WHICH table instead of a blank 500, and log the pg detail.
       req.log.error({ pg, matchId }, "match delete blocked by foreign key");
       return void res.status(409).json({
         error: `Match cannot be deleted yet: rows in table "${pg.table ?? "unknown"}" still reference it (constraint ${pg.constraint ?? "?"}). Please share this message with support.`,
       });
     }
-    throw err; // anything else → global error handler (logged with cause chain)
+    if (pg) {
+      // Any other database error (permission denied on a legacy table, a
+      // legacy trigger calling a dropped function, …) — surface the real
+      // cause to the admin instead of a blank "Internal server error".
+      req.log.error({ pg, matchId }, "match delete failed (database error)");
+      return void res.status(500).json({
+        error: `Match delete failed [DB ${pg.code}${pg.table ? ` on "${pg.table}"` : ""}]: ${pg.message ?? "database error"}. Please share this message with support.`,
+      });
+    }
+    req.log.error({ err: err instanceof Error ? err.message : String(err), matchId }, "match delete failed");
+    return void res.status(500).json({
+      error: `Match delete failed: ${err instanceof Error ? err.message : "unknown error"}. Please share this message with support.`,
+    });
   }
 
   res.json({ success: true });

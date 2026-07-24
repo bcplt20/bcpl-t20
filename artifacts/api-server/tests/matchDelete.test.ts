@@ -241,3 +241,58 @@ describe("legacy children with duplicate FK names across matches/innings/deliver
     expect(gone).toBeUndefined();
   });
 });
+
+/* ── Multi-level drift: legacy GRANDchildren and children of match_xi ─────
+   A one-level sweep dies (or 409s) when a legacy table has its own children,
+   or when a table hangs off match_xi. The recursive sweep must clear the
+   whole chain — including non-uuid (serial int) key hops. */
+describe("force delete clears deep legacy chains and match_xi children", () => {
+  const tblP  = `legacy_deep_p_${suffix}`;   // → matches(id)      (uuid)
+  const tblQ  = `legacy_deep_q_${suffix}`;   // → tblP(id)         (int)
+  const tblR  = `legacy_deep_r_${suffix}`;   // → tblQ(id)         (int)
+  const tblXi = `legacy_xi_child_${suffix}`; // → match_xi(id)     (uuid)
+
+  beforeAll(async () => {
+    await db.execute(sql.raw(
+      `CREATE TABLE ${tblP} (id SERIAL PRIMARY KEY, match_id UUID NOT NULL REFERENCES matches(id), note VARCHAR(30))`));
+    await db.execute(sql.raw(
+      `CREATE TABLE ${tblQ} (id SERIAL PRIMARY KEY, p_id INT NOT NULL REFERENCES ${tblP}(id))`));
+    await db.execute(sql.raw(
+      `CREATE TABLE ${tblR} (id SERIAL PRIMARY KEY, q_id INT NOT NULL REFERENCES ${tblQ}(id))`));
+    await db.execute(sql.raw(
+      `CREATE TABLE ${tblXi} (id SERIAL PRIMARY KEY, xi_id UUID NOT NULL REFERENCES match_xi(id))`));
+  });
+
+  afterAll(async () => {
+    for (const t of [tblR, tblQ, tblP, tblXi]) {
+      await db.execute(sql.raw(`DROP TABLE IF EXISTS ${t}`));
+    }
+  });
+
+  it("removes the match plus every transitive legacy row", async () => {
+    const { match } = await mkScoredMatch();
+    const [xiRow] = await db.select({ id: matchXITable.id }).from(matchXITable)
+      .where(eq(matchXITable.matchId, match.id));
+    expect(xiRow).toBeTruthy();
+
+    const pRows = (await db.execute(sql.raw(
+      `INSERT INTO ${tblP} (match_id, note) VALUES ('${match.id}', 'deep') RETURNING id`))).rows as Array<{ id: number }>;
+    const qRows = (await db.execute(sql.raw(
+      `INSERT INTO ${tblQ} (p_id) VALUES (${pRows[0].id}) RETURNING id`))).rows as Array<{ id: number }>;
+    await db.execute(sql.raw(`INSERT INTO ${tblR} (q_id) VALUES (${qRows[0].id})`));
+    await db.execute(sql.raw(`INSERT INTO ${tblXi} (xi_id) VALUES ('${xiRow.id}')`));
+
+    const r = await request(app)
+      .delete(`/api/matches/admin/matches/${match.id}?force=1`)
+      .set(admin);
+    expect(r.status).toBe(200);
+    expect(r.body.success).toBe(true);
+
+    for (const t of [tblP, tblQ, tblR, tblXi]) {
+      const left = await db.execute(sql.raw(`SELECT count(*)::int AS n FROM ${t}`));
+      expect(Number((left.rows[0] as { n: number }).n)).toBe(0);
+    }
+    const [gone] = await db.select().from(matchesTable).where(eq(matchesTable.id, match.id));
+    expect(gone).toBeUndefined();
+  });
+});
