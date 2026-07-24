@@ -3,12 +3,12 @@ name: drizzle push alignment
 description: Why drizzle-kit push gets stuck on interactive prompts and how to keep it non-interactive
 ---
 
-# drizzle-kit push stuck on prompts — root causes & fixes
+# drizzle-kit push must stay prompt-free
 
-**Rule:** `pnpm run push` (lib/db) must always run clean with `</dev/null`. Any interactive prompt = DB/schema misalignment to fix at the source, never answered by hand.
+**Rule:** `pnpm run push` (lib/db) must always run clean with `</dev/null`. Any interactive prompt = DB↔schema drift to fix at the source, never answered by hand.
 
-**Why:** July 2026 — push was permanently stuck on two classes of drift:
-1. **Constraint-name mismatch:** unique constraints created manually/by old SQL get postgres default names (`<table>_<col>_key`), but drizzle-kit expects `<table>_<col>_unique` and proposes re-adding (with a scary truncate question). Fix = RENAME, never re-create: `deploy/sql/2026-07-24-unique-constraint-renames.sql` (idempotent, renames all `*_key` uniques). Ran on dev 2026-07-24; prod needs it once via psql.
-2. **Runtime-created tables missing from schema:** tables made by app code at boot (`CREATE TABLE IF NOT EXISTS`, e.g. `app_flags` one-time-migration markers from register.ts) look like "delete me" to push. NEVER accept the delete — dropping app_flags would re-run guarded one-time wipes. Fix = declare the table in lib/db/src/schema with EXACTLY matching column shapes.
+**Why:** Two drift classes silently accumulate and wedge push:
+1. **Constraint-name mismatch** — unique constraints created manually or by old SQL carry postgres default names (`<table>_<col>_key`); drizzle expects `<table>_<col>_unique` and proposes destructive re-creation. Fix = `ALTER TABLE … RENAME CONSTRAINT`, never re-create. An idempotent rename script for all affected tables lives in `deploy/sql/` (dev already ran it; prod must run it once via psql before its first push).
+2. **Runtime-created tables missing from schema** — tables the app creates at boot (`CREATE TABLE IF NOT EXISTS`, e.g. one-time-migration markers like `app_flags`) look like "delete me" to push. NEVER accept the delete (dropping markers re-runs guarded one-time migrations). Fix = declare the table in lib/db schema with exactly matching columns.
 
-**How to apply:** Adding any runtime `ensureX`/`CREATE TABLE IF NOT EXISTS`? Mirror it in lib/db schema in the same change. Seeing a push prompt about `X_key`? Rename to `X_unique` via SQL. Exit code is 0 even when push dies on the TTY error — never trust `$?`, grep output for "Changes applied".
+**How to apply:** Adding any runtime `ensureX` table? Mirror it in lib/db schema in the same change. Push prompting about `X_key`? Rename it to `X_unique` via SQL. drizzle-kit exits 0 even when the TTY prompt kills it — never trust `$?`, grep output for "Changes applied".

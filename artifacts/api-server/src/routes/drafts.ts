@@ -132,11 +132,15 @@ router.use(async (_req, _res, next) => {
 });
 
 const CLIENT_KEY_RE = /^[A-Za-z0-9_-]{16,64}$/;
+// Historic client bug: storage-blocked browsers all shared this constant key,
+// mixing strangers' PII under one draft. Reject it on reads AND writes.
+const POISONED_CLIENT_KEYS = new Set(["dkfallback0000000000000000"]);
 
 // NOTE: z.object strips unknown keys — any client attempt to send `otp`,
 // `mobileVerified`, `status`, `registrationId` etc. is silently discarded.
 const upsertSchema = z.object({
-  clientKey:         z.string().regex(CLIENT_KEY_RE),
+  clientKey:         z.string().regex(CLIENT_KEY_RE)
+                       .refine((k) => !POISONED_CLIENT_KEYS.has(k), "Invalid clientKey"),
   fullName:          z.string().trim().min(1).max(100).optional(),
   email:             z.string().trim().email().max(255).optional(),
   phone:             z.string().regex(/^[6-9]\d{9}$/).optional(),
@@ -224,7 +228,9 @@ router.post("/upsert", async (req, res) => {
 // GET /api/drafts/resume?clientKey=…
 router.get("/resume", async (req, res) => {
   const clientKey = String(req.query.clientKey ?? "");
-  if (!CLIENT_KEY_RE.test(clientKey)) return void res.status(400).json({ error: "Invalid clientKey" });
+  if (!CLIENT_KEY_RE.test(clientKey) || POISONED_CLIENT_KEYS.has(clientKey)) {
+    return void res.status(400).json({ error: "Invalid clientKey" });
+  }
 
   const [d] = await db.select().from(registrationDraftsTable)
     .where(eq(registrationDraftsTable.clientKey, clientKey))
@@ -251,6 +257,7 @@ export default router;
 /** send-otp (purpose=register) accepted for a draft's number. */
 export async function draftOnOtpRequested(clientKey: string, phone: string): Promise<void> {
   try {
+    if (POISONED_CLIENT_KEYS.has(clientKey)) return;
     await ensureOnce();
     const [d] = await db.select().from(registrationDraftsTable)
       .where(eq(registrationDraftsTable.clientKey, clientKey))
@@ -268,8 +275,11 @@ export async function draftOnOtpRequested(clientKey: string, phone: string): Pro
 export async function draftOnOtpVerified(clientKey: string | null, phone: string, userId: string): Promise<void> {
   try {
     await ensureOnce();
-    const where = clientKey
-      ? eq(registrationDraftsTable.clientKey, clientKey)
+    // A poisoned shared key must never select a draft — fall back to the
+    // OTP-authenticated phone match instead.
+    const key = clientKey && !POISONED_CLIENT_KEYS.has(clientKey) ? clientKey : null;
+    const where = key
+      ? eq(registrationDraftsTable.clientKey, key)
       : eq(registrationDraftsTable.phone, phone);
     const [d] = await db.select().from(registrationDraftsTable)
       .where(where).orderBy(desc(registrationDraftsTable.startedAt)).limit(1);

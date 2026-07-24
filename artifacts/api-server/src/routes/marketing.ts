@@ -21,6 +21,7 @@ import { requireAdmin } from "../middlewares/adminAuth";
 import { sendEmail } from "../lib/email";
 import { sendWhatsApp } from "../lib/whatsapp";
 import type { SendResult } from "../lib/notify";
+import { pgCauseOf } from "../lib/pgErrors";
 import { logger } from "../lib/logger";
 
 const router = Router();
@@ -121,6 +122,17 @@ export async function ensureMarketingTables(): Promise<void> {
   await db.execute(
     sql`UPDATE sms_campaigns SET status = 'failed', completed_at = now() WHERE status = 'sending'`,
   );
+  // Atomic single-flight: at most ONE 'sending' campaign per channel (and one
+  // email campaign overall). The pre-insert SELECT is only a friendly fast
+  // path — these partial unique indexes are what actually stop parallel blasts.
+  await db.execute(sql`
+    CREATE UNIQUE INDEX IF NOT EXISTS sms_campaigns_one_sending
+    ON sms_campaigns (channel) WHERE status = 'sending'
+  `);
+  await db.execute(sql`
+    CREATE UNIQUE INDEX IF NOT EXISTS email_campaigns_one_sending
+    ON email_campaigns (status) WHERE status = 'sending'
+  `);
   // Reserve-first dedupe for bulk sends leans on the same partial unique index
   // on notification_logs.dedupe_key that reminders / milestones use.
   await db.execute(sql`ALTER TABLE notification_logs ADD COLUMN IF NOT EXISTS dedupe_key varchar(160)`);
@@ -850,17 +862,27 @@ router.post("/email-campaigns/send", requireAdmin, async (req, res) => {
       res.status(400).json({ error: "Audience is empty — nothing to send" });
       return;
     }
-    const [row] = await db
-      .insert(emailCampaignsTable)
-      .values({
-        subject: d.subject,
-        body: d.body,
-        audience: d.audience,
-        status: "sending",
-        totalRecipients: recipients.length,
-        testSentTo: d.testedEmail,
-      })
-      .returning();
+    let row;
+    try {
+      [row] = await db
+        .insert(emailCampaignsTable)
+        .values({
+          subject: d.subject,
+          body: d.body,
+          audience: d.audience,
+          status: "sending",
+          totalRecipients: recipients.length,
+          testSentTo: d.testedEmail,
+        })
+        .returning();
+    } catch (e) {
+      // Partial unique index email_campaigns_one_sending lost the race.
+      if (pgCauseOf(e)?.code === "23505") {
+        res.status(409).json({ error: "Another campaign is still sending — wait for it to finish" });
+        return;
+      }
+      throw e;
+    }
 
     // Fire-and-forget background loop — the HTTP response returns immediately
     // so nginx/browser timeouts can't kill a long send.
@@ -1251,20 +1273,30 @@ router.post("/sms-campaigns/send", requireAdmin, async (req, res) => {
       return;
     }
 
-    const [row] = await db
-      .insert(smsCampaignsTable)
-      .values({
-        channel: d.channel,
-        name: d.name,
-        body: d.body,
-        flowTemplateId: d.channel === "sms" ? d.flowTemplateId ?? null : null,
-        templateName: d.channel === "whatsapp" ? d.templateName ?? null : null,
-        templateVars: d.templateVars,
-        audience: d.audience,
-        status: "sending",
-        totalRecipients: recipients.length,
-      })
-      .returning();
+    let row;
+    try {
+      [row] = await db
+        .insert(smsCampaignsTable)
+        .values({
+          channel: d.channel,
+          name: d.name,
+          body: d.body,
+          flowTemplateId: d.channel === "sms" ? d.flowTemplateId ?? null : null,
+          templateName: d.channel === "whatsapp" ? d.templateName ?? null : null,
+          templateVars: d.templateVars,
+          audience: d.audience,
+          status: "sending",
+          totalRecipients: recipients.length,
+        })
+        .returning();
+    } catch (e) {
+      // Partial unique index sms_campaigns_one_sending lost the race.
+      if (pgCauseOf(e)?.code === "23505") {
+        res.status(409).json({ error: "Another campaign on this channel is still sending — wait for it to finish" });
+        return;
+      }
+      throw e;
+    }
 
     // Fire-and-forget background loop — respond immediately so proxy/browser
     // timeouts can't kill a long send.

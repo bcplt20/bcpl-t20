@@ -18,16 +18,40 @@ import { BASE } from './adminHttp';
 
 const KEY_STORAGE = 'bcpl_draft_key';
 
+/** Poisoned legacy value: every storage-blocked browser once shared it. */
+const LEGACY_SHARED_KEY = 'dkfallback0000000000000000';
+
+let memoryKey: string | null = null;
+
+function freshKey(): string {
+  try {
+    return 'dk' + crypto.randomUUID().replace(/-/g, '');
+  } catch {
+    let s = 'dk';
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    for (let i = 0; i < 30; i++) s += alphabet[Math.floor(Math.random() * alphabet.length)];
+    return s;
+  }
+}
+
 export function getDraftKey(): string {
   try {
     const existing = localStorage.getItem(KEY_STORAGE);
-    if (existing && /^[A-Za-z0-9_-]{16,64}$/.test(existing)) return existing;
-    const k = 'dk' + crypto.randomUUID().replace(/-/g, '');
+    if (
+      existing &&
+      existing !== LEGACY_SHARED_KEY && // self-heal clients that stored the shared constant
+      /^[A-Za-z0-9_-]{16,64}$/.test(existing)
+    ) {
+      return existing;
+    }
+    const k = freshKey();
     localStorage.setItem(KEY_STORAGE, k);
     return k;
   } catch {
-    // Storage blocked (private mode) — session-stable fallback, valid shape.
-    return 'dkfallback0000000000000000';
+    // Storage blocked (private mode) — random per-session key kept in memory.
+    // NEVER a shared constant: the server would mix strangers' drafts.
+    if (!memoryKey) memoryKey = freshKey();
+    return memoryKey;
   }
 }
 
