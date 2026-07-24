@@ -29,3 +29,4 @@
 - [Gemini models](gemini-models.md) — 2.5 family dead for new keys; defaults 3.5-flash + 3.1-flash-lite; stored phase1_ai_config pins models (PATCH/env to change); 503 spikes transient
 - [Reminder sweeps & send gating](reminders-system.md) — new send paths must gate (real keys live in dev); reserve-first dedupe; window mismatch 7 vs 15 flagged
 - [Workspace recycle](workspace-recycle.md) — recycle can wipe uncommitted edits mid-session; commit locally as soon as tsc passes, verify markers before re-applying
+- [Security hardening lessons](security-hardening.md) — varchar(20) status trap; one amount-gate for ALL success paths; no victim-keyed lockouts; writeAudit races tests
