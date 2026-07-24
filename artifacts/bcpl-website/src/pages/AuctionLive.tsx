@@ -7,9 +7,10 @@ import { AUCTION_PHOTOS } from '../data/auctionGallery';
 
 /**
  * Auction page — honest information about the BCPL player auction.
- * No simulated/live bidding is shown here: the Season 5 auction happens in
- * August 2027, after Phase 1 and physical trials. Until then this page
- * explains the format and shows real photos from the last auction floor.
+ * No simulated/live bidding is shown here. The Season 4 auction is done
+ * (its tournament is up next) — this page explains the format and shows
+ * real photos from that auction floor. New registrants head for the
+ * Season 5 pool after Phase 1 and physical trials.
  */
 
 const STEPS = [
@@ -78,7 +79,7 @@ export function AuctionLive() {
           <div style={{ textAlign: 'center', marginBottom: 44, animation: 'fadeUp 0.5s ease both' }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: 'rgba(232,178,61,0.08)', border: '1px solid rgba(232,178,61,0.35)', borderRadius: 12, padding: '8px 20px', marginBottom: 20 }}>
               <span style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 12, color: '#E8B23D', letterSpacing: '.14em' }}>
-                {t('SEASON 5 · AUGUST 2027', 'SEASON 5 · अगस्त 2027')}
+                {t('SEASON 4 AUCTION', 'SEASON 4 AUCTION')}
               </span>
             </div>
 
@@ -87,8 +88,8 @@ export function AuctionLive() {
               <span className="shimmer-gold">{t('PLAYER AUCTION', 'PLAYER AUCTION')}</span>
             </h1>
             <p style={{ fontFamily: 'Inter,sans-serif', fontSize: 'clamp(14px,2vw,16px)', color: 'rgba(255,255,255,0.55)', lineHeight: 1.7, maxWidth: 520, margin: '0 auto 28px' }}>
-              {t('Players who clear the physical trials enter the auction pool, and the 10 franchises bid for them live. The Season 5 auction takes place in August 2027.',
-                 'जो players physical trials clear करते हैं वे auction pool में आते हैं, और 10 franchises उन पर live बोली लगाती हैं। Season 5 का auction अगस्त 2027 में होगा।')}
+              {t('Players who clear the physical trials enter the auction pool, and the 10 franchises bid for them live. Below: real moments from the Season 4 auction floor — its tournament is up next.',
+                 'जो players physical trials clear करते हैं वे auction pool में आते हैं, और 10 franchises उन पर live बोली लगाती हैं। नीचे Season 4 auction floor के असली पल — इसका tournament अब होने वाला है।')}
             </p>
 
             <div className="auc-stats">
