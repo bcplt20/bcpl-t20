@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
-import { NavUser } from "./NavUser";
+import { NavUser, useAuthUser } from "./NavUser";
 import { useLang } from "../lib/i18n";
 
 /**
@@ -100,6 +100,9 @@ const CSS = `
 
   .sh-ham{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;background:none;border:none;cursor:pointer;width:44px;height:44px;padding:10px;flex-shrink:0;}
   .sh-ham span{width:22px;height:2px;background:#fff;display:block;border-radius:2px;}
+
+  /* Logged-in players never see register nudges — hides the per-page floating CTA too. */
+  html.bcpl-authed .float-reg-btn{display:none!important;}
 `;
 
 function LangToggle({ big }: { big?: boolean }) {
@@ -130,7 +133,13 @@ export function SiteHeader({ active }: { active?: string }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { t } = useLang();
+  const user = useAuthUser();
   const activeKey = ACTIVE_MAP[active ?? ""] ?? active ?? "";
+
+  /* Flag logged-in state on <html> so page-level register CTAs (.float-reg-btn) hide too */
+  useEffect(() => {
+    document.documentElement.classList.toggle("bcpl-authed", !!user);
+  }, [user]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -179,9 +188,11 @@ export function SiteHeader({ active }: { active?: string }) {
             <div style={{ flex: "1 1 0", display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 14, minWidth: 0 }}>
               <LangToggle />
               <NavUser variant="desktop" />
-              <button className="sh-cta" style={{ fontSize: 15, padding: "10px 20px" }} onClick={() => navigate("/register")}>
-                {t("Register Now", "रजिस्टर करें")} →
-              </button>
+              {!user && (
+                <button className="sh-cta" style={{ fontSize: 15, padding: "10px 20px" }} onClick={() => navigate("/register")}>
+                  {t("Register Now", "रजिस्टर करें")} →
+                </button>
+              )}
             </div>
           </div>
 
@@ -190,14 +201,16 @@ export function SiteHeader({ active }: { active?: string }) {
             <Logo />
             <div className="sh-mobright">
               <NavUser variant="icon" />
-              <button
-                className="sh-cta"
-                style={{ fontSize: 12.5, padding: "9px 12px", minHeight: 40 }}
-                onClick={() => navigate("/register")}
-                aria-label={t("Register", "रजिस्टर")}
-              >
-                {t("Register", "रजिस्टर")}
-              </button>
+              {!user && (
+                <button
+                  className="sh-cta"
+                  style={{ fontSize: 12.5, padding: "9px 12px", minHeight: 40 }}
+                  onClick={() => navigate("/register")}
+                  aria-label={t("Register", "रजिस्टर")}
+                >
+                  {t("Register", "रजिस्टर")}
+                </button>
+              )}
               <button className="sh-ham" onClick={() => setMenuOpen(true)} aria-label="Open menu">
                 <span /><span /><span />
               </button>
@@ -224,9 +237,11 @@ export function SiteHeader({ active }: { active?: string }) {
             <NavUser variant="mobile" onNavigate={() => setMenuOpen(false)} />
           </div>
 
-          <button className="sh-cta" style={{ marginTop: 22, width: "100%", fontSize: 18, padding: 15, minHeight: 52 }} onClick={() => go("/register")}>
-            {t("Register for Phase 1", "Phase 1 के लिए रजिस्टर करें")} →
-          </button>
+          {!user && (
+            <button className="sh-cta" style={{ marginTop: 22, width: "100%", fontSize: 18, padding: 15, minHeight: 52 }} onClick={() => go("/register")}>
+              {t("Register for Phase 1", "Phase 1 के लिए रजिस्टर करें")} →
+            </button>
+          )}
 
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 22 }}>
             <LangToggle big />

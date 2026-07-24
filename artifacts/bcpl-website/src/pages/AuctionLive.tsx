@@ -1,174 +1,143 @@
-import React, { useState, useEffect } from 'react';
 import { Link } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
+import { useAuthUser } from '../components/NavUser';
 import { useLang } from '../lib/i18n';
 import { AUCTION_PHOTOS } from '../data/auctionGallery';
 
-const BOOKING_REF = 'BCPL-S5-7432';
+/**
+ * Auction page — honest information about the BCPL player auction.
+ * No simulated/live bidding is shown here: the Season 5 auction happens in
+ * August 2027, after Phase 1 and physical trials. Until then this page
+ * explains the format and shows real photos from the last auction floor.
+ */
 
-const BIDS = [
-  { team: 'Mumbai Mavericks', color: '#3B82F6', abbr: 'MM', amount: '₹8,50,000', time: '2 min ago', current: true },
-  { team: 'Delhi Suryas', color: '#FF7A29', abbr: 'DS', amount: '₹7,00,000', time: '8 min ago', current: false },
-  { team: 'Kolkata Tigers', color: '#F97316', abbr: 'KT', amount: '₹5,50,000', time: '14 min ago', current: false },
-  { team: 'Chennai Thalaivas', color: '#10B981', abbr: 'CT', amount: '₹4,00,000', time: '21 min ago', current: false },
-  { team: 'Rajasthan Scorchers', color: '#EF4444', abbr: 'RS', amount: '₹2,50,000', time: '28 min ago', current: false },
-  { team: 'Base Price', color: 'rgba(255,255,255,0.2)', abbr: '—', amount: '₹1,00,000', time: 'Start', current: false },
-];
-
-const ROADMAP = [
-  { icon: '📝', label: 'Register', done: true },
-  { icon: '🎬', label: 'Video', done: true },
-  { icon: '🏟', label: 'Phase 2', done: true },
-  { icon: '🪪', label: 'KYC', done: true },
-  { icon: '🔨', label: 'Auction', active: true },
-  { icon: '🏆', label: 'Play BCPL', done: false },
+const STEPS = [
+  {
+    n: '01',
+    en: 'Register & upload your video', hi: 'Register करें और video upload करें',
+    dEn: 'Pick your role, register for Phase 1 and upload a 30–60 second cricket clip from any ground.',
+    dHi: 'अपना role चुनें, Phase 1 के लिए register करें और किसी भी मैदान से 30–60 second की cricket clip upload करें।',
+    color: '#FF7A29',
+  },
+  {
+    n: '02',
+    en: 'Phase 1 result', hi: 'Phase 1 का result',
+    dEn: 'Your video is evaluated against BCPL\u2019s Phase 1 assessment criteria. Result within 48 hours of review.',
+    dHi: 'आपका video BCPL के Phase 1 assessment criteria पर evaluate होता है। Review के 48 घंटे में result।',
+    color: '#E8B23D',
+  },
+  {
+    n: '03',
+    en: 'Physical trials', hi: 'Physical trials',
+    dEn: 'Selected players are invited to live trials in their city (Mar – Jun 2027), evaluated by experienced coaches.',
+    dHi: 'Select हुए players को अपने शहर में live trials का invitation मिलता है (Mar – Jun 2027)।',
+    color: '#3B82F6',
+  },
+  {
+    n: '04',
+    en: 'The auction pool', hi: 'Auction pool',
+    dEn: 'Players who clear trials enter the Season 5 auction pool — 10 franchises bid live in August 2027.',
+    dHi: 'Trials clear करने वाले players Season 5 के auction pool में आते हैं — 10 franchises August 2027 में live bid लगाती हैं।',
+    color: '#22C55E',
+  },
 ];
 
 export function AuctionLive() {
   const { t } = useLang();
-  const [bidCount] = useState(5);
-  const [elapsed, setElapsed] = useState(31);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setElapsed(e => e + 1);
-    }, 60000);
-    return () => clearInterval(timer);
-  }, []);
+  const user = useAuthUser();
 
   return (
-    <div style={{ background: '#06101E', minHeight: '100vh', fontFamily: "Inter,sans-serif", color: '#F0EDE8', overflowX: 'hidden', paddingBottom: 100 }}>
+    <div style={{ background: '#06101E', minHeight: '100vh', fontFamily: 'Inter,sans-serif', color: '#F0EDE8', overflowX: 'hidden' }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         .wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
         @media(min-width:640px) { .wrap { padding: 0 24px; } }
         @media(min-width:1024px) { .wrap { padding: 0 40px; } }
-        .shimmer-gold { background: linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimGold 2s linear infinite; }
+        .shimmer-gold { background: linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimGold 3s linear infinite; }
         @keyframes shimGold { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
-        @keyframes liveBlip { 0%,100% { opacity: 1; } 50% { opacity: 0.05; } }
-        @keyframes livePulse { 0%,100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.6); } 50% { box-shadow: 0 0 0 14px rgba(239,68,68,0); } }
-        @keyframes bidSlide { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
         @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes glowBlue { 0%,100% { box-shadow: 0 0 20px rgba(59,130,246,0.3); } 50% { box-shadow: 0 0 50px rgba(59,130,246,0.6); } }
-        @keyframes counterUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        /* Floating register button */
-        .float-reg-btn { position: fixed; bottom: 28px; right: 28px; z-index: 900; background: linear-gradient(135deg,#FF7A29,#D95E10); border: none; border-radius: 12px; color: #fff; font-family: Montserrat, sans-serif; font-weight: 900; font-size: 13px; letter-spacing: .06em; cursor: pointer; padding: 14px 22px; text-transform: uppercase; text-decoration: none; display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 32px rgba(255,122,41,0.45); clip-path: polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition: opacity .2s, transform .15s; }
+        .auc-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; max-width: 640px; margin: 0 auto 8px; }
+        @media(max-width:639px) { .auc-stats { gap: 8px; } }
+        .auc-steps { display: grid; grid-template-columns: 1fr; gap: 12px; }
+        @media(min-width:768px) { .auc-steps { grid-template-columns: repeat(2,1fr); } }
+        /* Floating register button (hidden for logged-in players via html.bcpl-authed) */
+        .float-reg-btn { position: fixed; bottom: 28px; right: 28px; z-index: 900; background: linear-gradient(135deg,#FF7A29,#D95E10); border: none; border-radius: 12px; color: #fff; font-family: Montserrat, sans-serif; font-weight: 900; font-size: 13px; letter-spacing: .06em; cursor: pointer; padding: 14px 22px; text-transform: uppercase; text-decoration: none; display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 32px rgba(255,122,41,0.45); transition: opacity .2s, transform .15s; }
         .float-reg-btn:hover { opacity: .9; transform: translateY(-2px); }
-@media(max-width:1023px){ .float-reg-btn { display:none; } }
-        @keyframes floatPulse { 0%,100% { box-shadow: 0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4); } 50% { box-shadow: 0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0); } }
-        .float-reg-pulse { animation: floatPulse 2.5s ease-in-out infinite; }
-        @media(max-width:639px) { .float-reg-btn { bottom: 16px; right: 16px; padding: 12px 16px; font-size: 12px; } }
+        @media(max-width:1023px){ .float-reg-btn { display:none; } }
       `}</style>
 
-      <SiteHeader />
+      <SiteHeader active="Auction" />
 
-      {/* HERO — AUCTION LIVE */}
-      <section style={{ padding: '48px 0 0', background: 'linear-gradient(180deg,#06101E 0%,#081218 100%)', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 80% 50% at 50% 0%,rgba(59,130,246,0.07) 0%,transparent 70%)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: 'linear-gradient(90deg,transparent,#EF4444,#FF7A29,#EF4444,transparent)', animation: 'shimGold 2s linear infinite' }} />
+      {/* HERO */}
+      <section style={{ padding: '56px 0 0', background: 'linear-gradient(180deg,#06101E 0%,#081218 100%)', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 80% 50% at 50% 0%,rgba(232,178,61,0.08) 0%,transparent 70%)', pointerEvents: 'none' }} />
 
         <div className="wrap" style={{ position: 'relative', zIndex: 1 }}>
-          <div style={{ textAlign: 'center', marginBottom: 40, animation: 'fadeUp 0.5s ease both' }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.4)', borderRadius: 12, padding: '8px 20px', marginBottom: 20, animation: 'livePulse 1.5s infinite' }}>
-              <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#EF4444', display: 'inline-block', animation: 'liveBlip 0.8s infinite' }} />
-              <span style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 12, color: '#EF4444', letterSpacing: '.14em' }}>
-                {t("🔴 AUCTION LIVE NOW", "🔴 AUCTION अभी LIVE है")}
+          <div style={{ textAlign: 'center', marginBottom: 44, animation: 'fadeUp 0.5s ease both' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: 'rgba(232,178,61,0.08)', border: '1px solid rgba(232,178,61,0.35)', borderRadius: 12, padding: '8px 20px', marginBottom: 20 }}>
+              <span style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 12, color: '#E8B23D', letterSpacing: '.14em' }}>
+                {t('SEASON 5 · AUGUST 2027', 'SEASON 5 · अगस्त 2027')}
               </span>
             </div>
 
-            <img src={import.meta.env.BASE_URL + 'bcpl-assets/auction-hero.webp'} alt="Auction"
-              style={{ height: 72, width: "auto", maxWidth: "90%", objectFit: 'contain', margin: '12px auto 16px', display: 'block', filter: 'drop-shadow(0 4px 20px rgba(239,68,68,0.5)) brightness(1.1)' }} />
-            <h1 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 'clamp(24px,5vw,56px)', lineHeight: 1.05, color: '#fff', textTransform: 'uppercase', marginBottom: 8, letterSpacing: '-0.01em' }}>
-              {t("YOUR NAME IS", "आपका नाम")}<br />
-              <span className="shimmer-gold">{t("LIVE IN THE AUCTION", "AUCTION में LIVE है")}</span>
+            <h1 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 'clamp(26px,5vw,56px)', lineHeight: 1.05, color: '#fff', textTransform: 'uppercase', marginBottom: 12, letterSpacing: '-0.01em' }}>
+              {t('THE BCPL', 'BCPL का')}<br />
+              <span className="shimmer-gold">{t('PLAYER AUCTION', 'PLAYER AUCTION')}</span>
             </h1>
-            <p style={{ fontFamily: 'Inter,sans-serif', fontSize: 'clamp(14px,2vw,16px)', color: 'rgba(255,255,255,0.55)', lineHeight: 1.6, maxWidth: 460, margin: '0 auto 8px' }}>
-              {t("Franchise coaches are bidding on you right now. The highest bid wins your contract for BCPL Season 5.", "Franchise coaches अभी आप पर bid लगा रहे हैं। सबसे बड़ी bid आपका BCPL Season 5 का contract जीतती है।")}
+            <p style={{ fontFamily: 'Inter,sans-serif', fontSize: 'clamp(14px,2vw,16px)', color: 'rgba(255,255,255,0.55)', lineHeight: 1.7, maxWidth: 520, margin: '0 auto 28px' }}>
+              {t('Players who clear the physical trials enter the auction pool, and the 10 franchises bid for them live. The Season 5 auction takes place in August 2027.',
+                 'जो players physical trials clear करते हैं वे auction pool में आते हैं, और 10 franchises उन पर live बोली लगाती हैं। Season 5 का auction अगस्त 2027 में होगा।')}
             </p>
-            <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: 11, color: 'rgba(255,255,255,0.25)', letterSpacing: '.12em' }}>
-              REF · {BOOKING_REF} · {elapsed} {t("MINS ELAPSED", "मिनट बीते")}
-            </div>
-          </div>
 
-          {/* CURRENT BID HERO */}
-          <div style={{ maxWidth: 480, margin: '0 auto 48px', background: 'linear-gradient(135deg,#0A1828,#06101E)', border: '2px solid #3B82F6', borderRadius: 12, padding: '28px 24px', textAlign: 'center', position: 'relative', overflow: 'hidden', animation: 'glowBlue 3s ease-in-out infinite' }}>
-            <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 80% 60% at 50% 0%,rgba(59,130,246,0.1) 0%,transparent 70%)', pointerEvents: 'none' }} />
-            <div style={{ position: 'relative', zIndex: 1 }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginBottom: 12 }}>
-                <div style={{ width: 36, height: 36, borderRadius: 12, background: 'rgba(59,130,246,0.2)', border: '1px solid rgba(59,130,246,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 12, color: '#3B82F6' }}>MM</div>
-                <div style={{ textAlign: 'left' }}>
-                  <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: 11, color: 'rgba(255,255,255,0.4)', letterSpacing: '.08em' }}>
-                    {t("CURRENT LEADER", "CURRENT LEADER")}
-                  </div>
-                  <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 15, color: '#fff' }}>Mumbai Mavericks</div>
+            <div className="auc-stats">
+              {[
+                { v: '10', lEn: 'Franchises', lHi: 'Franchises' },
+                { v: '₹2L–₹20L', lEn: 'Player value (Season 4)', lHi: 'Player value (Season 4)' },
+                { v: 'LIVE', lEn: 'Bidding format', lHi: 'Bidding format' },
+              ].map((s, i) => (
+                <div key={i} style={{ background: '#0A1727', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '16px 10px' }}>
+                  <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 'clamp(16px,3vw,24px)', color: '#E8B23D', marginBottom: 4 }}>{s.v}</div>
+                  <div style={{ fontFamily: 'Inter,sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.4)', letterSpacing: '.04em' }}>{t(s.lEn, s.lHi)}</div>
                 </div>
-              </div>
-              <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 'clamp(36px,8vw,72px)', color: '#3B82F6', lineHeight: 1, marginBottom: 4, animation: 'counterUp 0.5s ease both' }}>₹8,50,000</div>
-              <div style={{ fontFamily: 'Inter,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.4)' }}>
-                {t("Bid placed 2 minutes ago · 5 bids total", "2 मिनट पहले bid लगाई · कुल 5 bids")}
-              </div>
+              ))}
             </div>
           </div>
         </div>
-        <div style={{ height: 60, background: 'linear-gradient(180deg,transparent,#060C18)' }} />
+        <div style={{ height: 48, background: 'linear-gradient(180deg,transparent,#060C18)' }} />
       </section>
 
-      <div className="wrap">
-        {/* JOURNEY RAIL */}
-        <div style={{ background: '#0A1727', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '24px 20px', marginBottom: 24, overflowX: 'auto' }}>
-          <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: 11, letterSpacing: '.12em', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', marginBottom: 20 }}>
-            {t("JOURNEY PROGRESS", "आपकी Journey")}
+      <div className="wrap" style={{ paddingBottom: user ? 60 : 20 }}>
+        {/* HOW YOU REACH THE AUCTION */}
+        <div style={{ marginBottom: 24 }}>
+          <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 'clamp(18px,3vw,24px)', color: '#fff', textTransform: 'uppercase', marginBottom: 4 }}>
+            {t('How you reach the auction', 'Auction तक कैसे पहुँचते हैं')}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', minWidth: 440 }}>
-            {ROADMAP.map((step, i) => (
-              <React.Fragment key={i}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, flex: 1 }}>
-                  <div style={{
-                    width: 44, height: 44, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16,
-                    ...(step.done ? { background: 'linear-gradient(135deg,#E8B23D,#C49A1E)' } :
-                      step.active ? { background: 'rgba(239,68,68,0.1)', border: '2px solid #EF4444', animation: 'livePulse 1.5s infinite' } :
-                        { background: 'rgba(255,255,255,0.04)', border: '2px solid rgba(255,255,255,0.1)' })
-                  }}>{step.done ? '✓' : step.icon}</div>
-                  <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: step.active ? 800 : 700, fontSize: 10, color: step.done ? '#E8B23D' : step.active ? '#EF4444' : 'rgba(255,255,255,0.3)', textAlign: 'center', letterSpacing: '.04em', lineHeight: 1.3 }}>{step.label}</div>
+          <div style={{ fontFamily: 'Inter,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.4)', marginBottom: 18 }}>
+            {t('Four stages — every player follows the same path.', 'चार stages — हर player का रास्ता यही है।')}
+          </div>
+          <div className="auc-steps">
+            {STEPS.map(s => (
+              <div key={s.n} style={{ background: '#0A1727', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '20px 18px', display: 'flex', gap: 14 }}>
+                <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 22, color: s.color, flexShrink: 0, lineHeight: 1 }}>{s.n}</div>
+                <div>
+                  <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: 14, color: '#fff', marginBottom: 6 }}>{t(s.en, s.hi)}</div>
+                  <div style={{ fontFamily: 'Inter,sans-serif', fontSize: 12.5, color: 'rgba(255,255,255,0.45)', lineHeight: 1.6 }}>{t(s.dEn, s.dHi)}</div>
                 </div>
-                {i < ROADMAP.length - 1 && <div style={{ flex: 1, height: 2, background: step.done ? 'rgba(232,178,61,0.4)' : 'rgba(255,255,255,0.08)', margin: '0 4px', marginBottom: 24 }} />}
-              </React.Fragment>
+              </div>
             ))}
           </div>
         </div>
 
-        {/* BID HISTORY */}
+        {/* HOW BIDDING WORKS */}
         <div style={{ background: '#0A1727', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '24px 20px', marginBottom: 24 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 8 }}>
-            <div>
-              <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 'clamp(16px,2.5vw,20px)', color: '#fff', textTransform: 'uppercase' }}>
-                {t("Bid History", "Bid History")}
-              </div>
-              <div style={{ fontFamily: 'Inter,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.4)', marginTop: 2 }}>
-                {t("5 franchises have bid on your profile", "5 franchises ने आप पर bid लगाई है")}
-              </div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: 12, padding: '6px 14px' }}>
-              <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#EF4444', display: 'inline-block', animation: 'liveBlip 0.8s infinite' }} />
-              <span style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: 11, color: '#EF4444', letterSpacing: '.08em' }}>LIVE</span>
-            </div>
+          <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 'clamp(16px,2.5vw,20px)', color: '#fff', textTransform: 'uppercase', marginBottom: 12 }}>
+            {t('How the bidding works', 'बोली कैसे लगती है')}
           </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {BIDS.map((bid, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px', borderRadius: 12, background: bid.current ? 'rgba(59,130,246,0.08)' : i === 0 ? 'rgba(59,130,246,0.08)' : 'rgba(255,255,255,0.02)', border: `1px solid ${bid.current ? 'rgba(59,130,246,0.4)' : 'rgba(255,255,255,0.06)'}`, animation: i === 0 ? 'bidSlide 0.3s ease both' : 'none' }}>
-                <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 12, color: 'rgba(255,255,255,0.25)', width: 24, flexShrink: 0 }}>#{BIDS.length - i}</div>
-                <div style={{ width: 36, height: 36, borderRadius: 12, background: `${bid.color}22`, border: `1px solid ${bid.color}44`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 11, color: bid.color, flexShrink: 0 }}>{bid.abbr}</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: 13, color: bid.current ? '#fff' : 'rgba(255,255,255,0.65)' }}>{bid.team}</div>
-                  <div style={{ fontFamily: 'Inter,sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>{bid.time}</div>
-                </div>
-                <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 'clamp(14px,2vw,18px)', color: bid.current ? '#3B82F6' : 'rgba(255,255,255,0.5)' }}>{bid.amount}</div>
-                {bid.current && <div style={{ background: '#3B82F6', borderRadius: 12, padding: '3px 8px', fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: 9, color: '#fff', letterSpacing: '.08em', flexShrink: 0 }}>LEADING</div>}
-              </div>
-            ))}
+          <div style={{ fontFamily: 'Inter,sans-serif', fontSize: 13.5, color: 'rgba(255,255,255,0.55)', lineHeight: 1.8 }}>
+            {t('Every player in the pool enters at a base price. On auction day the franchises bid live, and the highest bid signs the player for the season. In Season 4, player contracts ranged from ₹2 lakh to ₹20 lakh. Players in the auction pool are informed of their schedule and result by SMS, WhatsApp and email.',
+               'Pool के हर player की एक base price होती है। Auction वाले दिन franchises live बोली लगाती हैं, और सबसे बड़ी बोली player को season के लिए sign करती है। Season 4 में player contracts ₹2 लाख से ₹20 लाख तक गए। Auction pool के players को उनका schedule और result SMS, WhatsApp और email से बताया जाता है।')}
           </div>
         </div>
 
@@ -177,14 +146,14 @@ export function AuctionLive() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
             <div>
               <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 'clamp(16px,2.5vw,20px)', color: '#fff', textTransform: 'uppercase' }}>
-                {t("Auction Day Gallery", "Auction Day की झलकियाँ")}
+                {t('Auction Day Gallery', 'Auction Day की झलकियाँ')}
               </div>
               <div style={{ fontFamily: 'Inter,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.4)', marginTop: 2 }}>
-                {t("Real moments from the BCPL player auction floor", "BCPL player auction floor के असली पल")}
+                {t('Real moments from the BCPL player auction floor', 'BCPL player auction floor के असली पल')}
               </div>
             </div>
             <Link href="/photos" style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: 12, color: '#FF7A29', textDecoration: 'none', letterSpacing: '.06em' }}>
-              {t("VIEW ALL", "सभी देखें")} {AUCTION_PHOTOS.length} →
+              {t('VIEW ALL', 'सभी देखें')} {AUCTION_PHOTOS.length} →
             </Link>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(140px,1fr))', gap: 10 }}>
@@ -198,26 +167,27 @@ export function AuctionLive() {
           </div>
         </div>
 
-
-        {/* NOTICE */}
-        <div style={{ background: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: 12, padding: '18px 20px', display: 'flex', gap: 14 }}>
-          <span style={{ fontSize: 20, flexShrink: 0 }}>⏳</span>
-          <div>
-            <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: 12, color: '#3B82F6', marginBottom: 4, letterSpacing: '.06em' }}>
-              {t("AUCTION CLOSING SOON", "AUCTION जल्द बंद होगा")}
+        {/* CTA — only for visitors who are not logged in */}
+        {!user && (
+          <div style={{ background: 'linear-gradient(135deg,rgba(255,122,41,0.09),rgba(232,178,61,0.05))', border: '1px solid rgba(255,122,41,0.25)', borderRadius: 12, padding: '28px 22px', textAlign: 'center', marginBottom: 60 }}>
+            <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 'clamp(17px,3vw,22px)', color: '#fff', textTransform: 'uppercase', marginBottom: 8 }}>
+              {t('The road to the auction starts with Phase 1', 'Auction का रास्ता Phase 1 से शुरू होता है')}
             </div>
-            <div style={{ fontFamily: 'Inter,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6 }}>
-              {t("Bidding closes when no new bid is placed for 3 consecutive minutes. You will be notified via SMS + WhatsApp the moment your auction concludes. Keep your phone on and close.", "जब 3 मिनट तक कोई नई bid नहीं आती तो bidding बंद हो जाती है। जैसे ही आपकी auction खत्म होगी, आपको SMS + WhatsApp से सूचित किया जाएगा।")}
+            <div style={{ fontFamily: 'Inter,sans-serif', fontSize: 13.5, color: 'rgba(255,255,255,0.5)', marginBottom: 18 }}>
+              {t('Register, upload your video and take the first step.', 'Register करें, अपना video upload करें और पहला कदम लें।')}
             </div>
+            <Link href="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'linear-gradient(135deg,#FF7A29,#D95E10)', borderRadius: 12, color: '#fff', fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 14, letterSpacing: '.06em', padding: '14px 28px', textTransform: 'uppercase', textDecoration: 'none', boxShadow: '0 8px 32px rgba(255,122,41,0.4)' }}>
+              {t('Register Now', 'अभी रजिस्टर करें')} →
+            </Link>
           </div>
-        </div>
+        )}
       </div>
 
       <BCPLFooter />
 
-      {/* Floating register button */}
-      <Link href="/register" className="float-reg-btn float-reg-pulse">
-        {t("🏏 REGISTER NOW →", "🏏 अभी रजिस्टर करें →")}
+      {/* Floating register button (auto-hidden for logged-in players) */}
+      <Link href="/register" className="float-reg-btn">
+        {t('REGISTER NOW →', 'अभी रजिस्टर करें →')}
       </Link>
     </div>
   );

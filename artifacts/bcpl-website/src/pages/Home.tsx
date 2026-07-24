@@ -43,7 +43,6 @@ const TICKER = [
   { en:"International Stadiums",   hi:"International stadiums"                 },
   { en:"Live Player Auction",      hi:"लाइव Player Auction"                    },
   { en:"₹2L–₹20L Player Value",    hi:"₹2L–₹20L player value"                  },
-  { en:"Registrations Open",       hi:"रजिस्ट्रेशन खुले हैं",       live:true  },
 ];
 
 /* ── REAL PROOF — photographs from BCPL's own Season 4 events ── */
@@ -373,11 +372,6 @@ export function Home() {
             <div style={{ display:"inline-flex", alignItems:"center", gap:12, background:"linear-gradient(135deg,rgba(10,23,39,.92),rgba(13,30,54,.78))", border:"1px solid rgba(232,178,61,.38)", borderRadius:12, padding:"9px 18px", boxShadow:"0 10px 30px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06)", backdropFilter:"blur(8px)", marginBottom:22 }}>
               <img src={BASE + "bcpl-assets/bcpl-ball-clean.png"} alt="" aria-hidden="true" style={{ width:22, height:22, objectFit:"contain" }}/>
               <div className="mont" style={{ fontWeight:900, fontSize:14, letterSpacing:".14em", background:"linear-gradient(100deg,#E8B23D 20%,#F7DE9A 40%,#E8B23D 60%)", backgroundSize:"200% auto", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text", animation:"s5sheen 5s linear infinite" }}>SEASON 5</div>
-              <div style={{ width:1, height:22, background:"rgba(255,255,255,.12)" }}/>
-              <div style={{ display:"flex", alignItems:"center", gap:6 }}>
-                <span style={{ width:6, height:6, borderRadius:"50%", background:"#22C55E", boxShadow:"0 0 8px rgba(34,197,94,.6)", display:"inline-block", animation:"blip 2.4s ease infinite" }}/>
-                <span className="mont" style={{ fontSize:10, fontWeight:800, color:"rgba(240,237,232,.85)", letterSpacing:".14em" }}>{t("REGISTRATIONS OPEN","रजिस्ट्रेशन खुले हैं")}</span>
-              </div>
             </div>
 
             {/* Full league name */}
