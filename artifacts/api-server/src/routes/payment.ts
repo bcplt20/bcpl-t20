@@ -13,6 +13,7 @@ import { sendEmail, tplPhase1Receipt, tplPhase2Receipt } from "../lib/email";
 import { sendSms } from "../lib/sms";
 import { sendWhatsApp, WA } from "../lib/whatsapp";
 import { logNotifications } from "../lib/notify";
+import { writeAudit } from "../lib/audit";
 import { FEES, assignRegNumber } from "./register";
 import { isAgeEligible, AGE_INELIGIBLE_MESSAGE } from "../lib/age";
 import { getPhase1Config } from "../lib/phase1Config";
@@ -114,6 +115,35 @@ router.post("/phase1/create", requireAuth, async (req: AuthRequest, res) => {
   res.json({ success: true, orderId, paymentSessionId: order.payment_session_id, amount });
 });
 
+// ── Payment integrity (spec F): amount / currency validation ────────────────────
+// The gateway-reported figure must equal the server-computed fee before any
+// activation. Stub/dev responses carry no amount — those are not blocked.
+export function paymentAmountMismatch(gw: { amount?: number; currency?: string }, expected: string): boolean {
+  if (gw.amount == null) return false; // gateway did not report an amount (stub mode)
+  const paid = Math.round(Number(gw.amount));
+  const want = Math.round(Number(expected));
+  const currencyBad = gw.currency != null && gw.currency !== "INR";
+  return !Number.isFinite(paid) || !Number.isFinite(want) || paid !== want || currencyBad;
+}
+
+async function flagP1AmountMismatch(orderId: string, gw: { amount?: number; currency?: string }, expected: string) {
+  await db.update(phase1PaymentsTable).set({ status: "amount_mismatch" })
+    .where(and(eq(phase1PaymentsTable.cashfreeOrderId, orderId), eq(phase1PaymentsTable.status, "pending")));
+  console.error("[PAYMENT] phase1 amount mismatch — flagged for reconciliation",
+    { orderId, gatewayAmount: gw.amount, gatewayCurrency: gw.currency, expected });
+  await writeAudit(null, { action: "payment.amount_mismatch", entity: "phase1_payments", entityKey: orderId,
+    newValue: { gatewayAmount: gw.amount ?? null, gatewayCurrency: gw.currency ?? null, expected } });
+}
+
+async function flagP2AmountMismatch(orderId: string, gw: { amount?: number; currency?: string }, expected: string) {
+  await db.update(phase2PaymentsTable).set({ status: "amount_mismatch" })
+    .where(and(eq(phase2PaymentsTable.cashfreeOrderId, orderId), eq(phase2PaymentsTable.status, "pending")));
+  console.error("[PAYMENT] phase2 amount mismatch — flagged for reconciliation",
+    { orderId, gatewayAmount: gw.amount, gatewayCurrency: gw.currency, expected });
+  await writeAudit(null, { action: "payment.amount_mismatch", entity: "phase2_payments", entityKey: orderId,
+    newValue: { gatewayAmount: gw.amount ?? null, gatewayCurrency: gw.currency ?? null, expected } });
+}
+
 // POST /api/payment/phase1/verify  — frontend calls after redirect
 router.post("/phase1/verify", requireAuth, async (req: AuthRequest, res) => {
   const schema = z.object({ orderId: z.string() });
@@ -123,6 +153,18 @@ router.post("/phase1/verify", requireAuth, async (req: AuthRequest, res) => {
   const status = await getPaymentStatus(parsed.data.orderId);
   if (!status || status.status !== "SUCCESS") {
     return void res.status(400).json({ success: false, status: status?.status || "UNKNOWN" });
+  }
+
+  // Amount integrity guard — must pass BEFORE the payment is recorded as success.
+  const [expectedP1] = await db.select({ amount: phase1PaymentsTable.amount })
+    .from(phase1PaymentsTable)
+    .where(eq(phase1PaymentsTable.cashfreeOrderId, parsed.data.orderId)).limit(1);
+  if (expectedP1 && paymentAmountMismatch(status, expectedP1.amount)) {
+    await flagP1AmountMismatch(parsed.data.orderId, status, expectedP1.amount);
+    return void res.status(409).json({
+      success: false, code: "RECONCILIATION_REQUIRED",
+      error: "Payment received but the amount could not be verified. Our team will review it shortly.",
+    });
   }
 
   await db.update(phase1PaymentsTable).set({
@@ -220,6 +262,18 @@ router.post("/phase2/verify", requireAuth, async (req: AuthRequest, res) => {
     return void res.status(400).json({ success: false, status: status?.status || "UNKNOWN" });
   }
 
+  // Amount integrity guard — must pass BEFORE the payment is recorded as success.
+  const [expectedP2] = await db.select({ amount: phase2PaymentsTable.amount })
+    .from(phase2PaymentsTable)
+    .where(eq(phase2PaymentsTable.cashfreeOrderId, parsed.data.orderId)).limit(1);
+  if (expectedP2 && paymentAmountMismatch(status, expectedP2.amount)) {
+    await flagP2AmountMismatch(parsed.data.orderId, status, expectedP2.amount);
+    return void res.status(409).json({
+      success: false, code: "RECONCILIATION_REQUIRED",
+      error: "Payment received but the amount could not be verified. Our team will review it shortly.",
+    });
+  }
+
   await db.update(phase2PaymentsTable).set({
     status: "success",
     cashfreePaymentId: status.paymentId,
@@ -276,13 +330,22 @@ router.post("/webhook", async (req, res) => {
     return void res.status(401).json({ error: "Invalid webhook signature" });
   }
   try {
-    const body = req.body as { data?: { order?: { order_id: string }; payment?: { payment_status: string; cf_payment_id: string } } };
+    const body = req.body as { data?: { order?: { order_id: string }; payment?: { payment_status: string; cf_payment_id: string; payment_amount?: number; payment_currency?: string } } };
     const orderId = body.data?.order?.order_id;
     const payStatus = body.data?.payment?.payment_status;
     const payId = body.data?.payment?.cf_payment_id;
+    const gwPaid = { amount: body.data?.payment?.payment_amount, currency: body.data?.payment?.payment_currency };
 
     if (orderId && payStatus === "SUCCESS") {
       if (orderId.startsWith("p1_")) {
+        // Amount integrity guard — ack the webhook but do NOT activate on mismatch.
+        const [expP1] = await db.select({ amount: phase1PaymentsTable.amount })
+          .from(phase1PaymentsTable)
+          .where(eq(phase1PaymentsTable.cashfreeOrderId, orderId)).limit(1);
+        if (expP1 && paymentAmountMismatch(gwPaid, expP1.amount)) {
+          await flagP1AmountMismatch(orderId, gwPaid, expP1.amount);
+          return void res.json({ received: true, reconciliation: true });
+        }
         const updated = await db.update(phase1PaymentsTable)
           .set({ status: "success", cashfreePaymentId: payId, paidAt: new Date() })
           .where(eq(phase1PaymentsTable.cashfreeOrderId, orderId))
@@ -322,6 +385,14 @@ router.post("/webhook", async (req, res) => {
           }
         }
       } else if (orderId.startsWith("p2_")) {
+        // Amount integrity guard — ack the webhook but do NOT activate on mismatch.
+        const [expP2] = await db.select({ amount: phase2PaymentsTable.amount })
+          .from(phase2PaymentsTable)
+          .where(eq(phase2PaymentsTable.cashfreeOrderId, orderId)).limit(1);
+        if (expP2 && paymentAmountMismatch(gwPaid, expP2.amount)) {
+          await flagP2AmountMismatch(orderId, gwPaid, expP2.amount);
+          return void res.json({ received: true, reconciliation: true });
+        }
         const updated = await db.update(phase2PaymentsTable)
           .set({ status: "success", cashfreePaymentId: payId, paidAt: new Date() })
           .where(eq(phase2PaymentsTable.cashfreeOrderId, orderId))

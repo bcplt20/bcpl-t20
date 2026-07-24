@@ -7,7 +7,7 @@ export const phase2PaymentsTable = pgTable("phase2_payments", {
   amount:             numeric("amount", { precision: 10, scale: 2 }).notNull(),
   cashfreeOrderId:    varchar("cashfree_order_id",   { length: 100 }).notNull().unique(),
   cashfreePaymentId:  varchar("cashfree_payment_id", { length: 100 }),
-  status:             varchar("status", { length: 20 }).default("pending").notNull(), // pending | success | failed
+  status:             varchar("status", { length: 20 }).default("pending").notNull(), // pending | success | failed | amount_mismatch (manual reconciliation)
   paidAt:             timestamp("paid_at",    { withTimezone: true }),
   createdAt:          timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });

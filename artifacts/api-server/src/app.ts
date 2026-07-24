@@ -1,5 +1,5 @@
 import express, { type Express } from "express";
-import cors from "cors";
+import cors, { type CorsOptions } from "cors";
 import pinoHttp from "pino-http";
 import router from "./routes";
 import { sitemapHandler, robotsHandler, seoHtmlMiddleware } from "./routes/seo";
@@ -26,14 +26,50 @@ app.use(
     },
   }),
 );
-app.use(cors());
+
+// ── CORS: reflect only trusted origins ────────────────────────────────────────
+// Prod serves the site same-origin (nginx proxies /api); dev uses the Vite proxy
+// — so browsers never legitimately call this API cross-origin. Server-to-server
+// callers (Cashfree webhook, curl, health checks) send no Origin header and are
+// always allowed. This replaces the previous wildcard (Access-Control-Allow-Origin: *).
+const ALLOWED_ORIGINS: RegExp[] = [
+  /^https?:\/\/localhost(:\d+)?$/,
+  /^https?:\/\/127\.0\.0\.1(:\d+)?$/,
+  /\.replit\.dev$/,
+  /\.replit\.app$/,
+  /\.repl\.co$/,
+];
+const SITE_ORIGIN = process.env.SITE_URL;
+const corsOptions: CorsOptions = {
+  origin(origin, cb) {
+    if (!origin) return cb(null, true); // non-browser / same-origin
+    if (SITE_ORIGIN && origin === SITE_ORIGIN) return cb(null, true);
+    if (ALLOWED_ORIGINS.some((re) => re.test(origin))) return cb(null, true);
+    return cb(null, false); // not an error — just no CORS headers emitted
+  },
+};
+app.use(cors(corsOptions));
+
+// ── Baseline security headers ─────────────────────────────────────────────────
+// Conservative set that will not interfere with the Cashfree checkout redirect
+// or server-side SEO HTML injection. A tuned Content-Security-Policy is a
+// recommended follow-up (needs testing against the payment SDK first).
+app.use((_req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "SAMEORIGIN");
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+  res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+  next();
+});
+
 app.use(express.json({
+  limit: "1mb",
   verify: (req, _res, buf) => {
     // Capture the raw body for webhook signature verification
     (req as express.Request & { rawBody?: Buffer }).rawBody = buf;
   },
 }));
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 
 app.use("/api", router);
 

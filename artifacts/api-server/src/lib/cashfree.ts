@@ -78,18 +78,18 @@ export async function getOrderStatus(orderId: string): Promise<{ orderStatus: st
   } catch (e) { console.error("[CF] getOrderStatus error", e); return null; }
 }
 
-export async function getPaymentStatus(orderId: string): Promise<{ status: string; paymentId?: string } | null> {
+export async function getPaymentStatus(orderId: string): Promise<{ status: string; paymentId?: string; amount?: number; currency?: string } | null> {
   if (!APP_ID || !SECRET) {
     return { status: "SUCCESS", paymentId: `mock_pay_${Date.now()}` };
   }
   try {
     const res = await fetch(`${BASE_URL}/orders/${orderId}/payments`, { headers: cfHeaders() });
     if (!res.ok) return null;
-    const payments = (await res.json()) as Array<{ payment_status: string; cf_payment_id: string }>;
+    const payments = (await res.json()) as Array<{ payment_status: string; cf_payment_id: string; payment_amount?: number; payment_currency?: string }>;
     const success = payments.find(p => p.payment_status === "SUCCESS");
-    if (success) return { status: "SUCCESS", paymentId: success.cf_payment_id };
+    if (success) return { status: "SUCCESS", paymentId: success.cf_payment_id, amount: success.payment_amount, currency: success.payment_currency };
     const latest = payments[0];
-    return latest ? { status: latest.payment_status } : { status: "PENDING" };
+    return latest ? { status: latest.payment_status, amount: latest.payment_amount, currency: latest.payment_currency } : { status: "PENDING" };
   } catch (e) { console.error("[CF] getPaymentStatus error", e); return null; }
 }
 

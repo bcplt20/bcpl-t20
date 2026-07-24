@@ -45,6 +45,12 @@ import { z } from "zod";
 
 const router = Router();
 
+// Never sign real admin sessions with the well-known dev fallback in production —
+// fail fast at boot instead (prod env template sets SESSION_SECRET explicitly).
+if (process.env.NODE_ENV === "production" && !process.env.SESSION_SECRET) {
+  throw new Error("SESSION_SECRET must be set in production");
+}
+
 /* ─── POST /api/admin/session ─────────────────────────────────────
    Validate admin panel password → issue a 24-hour JWT.
    Frontend stores token as x-bcpl-admin-token header on all requests.
