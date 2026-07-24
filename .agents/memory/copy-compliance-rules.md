@@ -20,3 +20,8 @@ description: Editorial rulebook from the July 2026 legal copy sweep — wording 
 **How to apply:** any new template or page copy (email/WhatsApp phases!) must pass the sweep grep: `bcci|scout|working days|most trusted|hidden charges|india's (biggest|largest)|full refund|2.minute`. Legal pages (Terms/Privacy/Refunds/CoC): factual corrections only, never change commitments/windows without owner+legal sign-off.
 
 **Fee amounts in copy:** user-facing copy must NEVER hardcode fee amounts (₹99/₹299/₹2,000 all slipped in at different times); fees are config-driven (/api/fees, useFees). When touching copy, grep `₹[0-9]` in the page/component. Why: stale amounts confuse the owner and can misquote real prices.
+
+## Refund-implication ban (owner rule, repeated many times)
+NEVER write copy implying "not selected = you pay nothing / your money is safe" — users read it as a refund promise for Phase 1 and demand refunds. Banned patterns: "pay nothing", "nothing more", "एक रुपया भी नहीं", "कुछ नहीं देना", "Ever.", money-back vibes (green + shield styling on fee cards counts).
+**Correct framing:** "Phase 2 fee is charged only on selection — a separate payment at that stage. All fees, once paid, are non-refundable." (mirrors Terms/Refund Policy).
+**Grep gate before shipping any pricing/fee copy:** `pay nothing|nothing more|एक रुपया|कुछ नहीं देना|money.back|पैसे वापस`

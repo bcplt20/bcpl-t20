@@ -48,7 +48,8 @@ export function BCPLFooter() {
         <div className="bcpl-foot-cols">
           {/* Brand */}
           <div className="bcpl-foot-brand">
-            <Link href="/" style={{ display:"flex", alignItems:"center", gap:10, textDecoration:"none", marginBottom:12, flexWrap:"nowrap" }}>
+            {/* Stacked lockup — SEASON 5 chip centered under the logo */}
+            <Link href="/" style={{ display:"inline-flex", flexDirection:"column", alignItems:"center", gap:6, textDecoration:"none", marginBottom:12 }}>
               <img src={BASE + "bcpl-assets/bcpl-logo-white.png"} alt="BCPL"
                 style={{ height:38, maxWidth:120, width:"auto", objectFit:"contain", display:"block", flexShrink:0 }}/>
               <div style={{ display:"inline-flex", alignItems:"center", gap:4, background:"rgba(232,178,61,0.1)", border:"1px solid rgba(232,178,61,0.4)", borderRadius:6, padding:"3px 9px", flexShrink:0, whiteSpace:"nowrap" }}>

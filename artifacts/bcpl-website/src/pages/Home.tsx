@@ -90,8 +90,8 @@ const FAQS = (f: FeeConfig) => [
     aEn: inr(f.phase1.bat) + " + GST for Batsman/Bowler/Wicket-keeper. " + inr(f.phase1.ar) + " + GST for All-rounders. Nothing else is payable in Phase 1.",
     aHi: "Batsman/Bowler/Wicket-keeper के लिए " + inr(f.phase1.bat) + " + GST। All-rounder के लिए " + inr(f.phase1.ar) + " + GST। Phase 1 में इसके अलावा कुछ नहीं।" },
   { qEn:"Do I pay extra for Phase 2?",           qHi:"क्या Phase 2 के लिए अलग से देना होगा?",
-    aEn:"Only if selected. Phase 2 fee is " + inr(f.phase2.bat) + " + GST (Bat/Bowl/WK) or " + inr(f.phase2.ar) + " + GST (All-rounder). Not selected = pay nothing more.",
-    aHi:"सिर्फ select होने पर। Phase 2 fee " + inr(f.phase2.bat) + " + GST (Bat/Bowl/WK) या " + inr(f.phase2.ar) + " + GST (All-rounder)। Select नहीं हुए = कुछ नहीं देना।" },
+    aEn:"Only if selected. Phase 2 fee is " + inr(f.phase2.bat) + " + GST (Bat/Bowl/WK) or " + inr(f.phase2.ar) + " + GST (All-rounder) — a separate payment made at selection time. All fees, once paid, are non-refundable.",
+    aHi:"सिर्फ select होने पर। Phase 2 fee " + inr(f.phase2.bat) + " + GST (Bat/Bowl/WK) या " + inr(f.phase2.ar) + " + GST (All-rounder) — selection के समय अलग से payment होती है। एक बार paid fee किसी भी स्थिति में refundable नहीं है।" },
   { qEn:"Are there hidden costs?",               qHi:"क्या कोई छिपे हुए charges हैं?",
     aEn:"The Phase 2 fee is payable only if you qualify and choose to proceed. Maximum total cost is " + inr(f.phase1.bat + f.phase2.bat) + "–" + inr(f.phase1.ar + f.phase2.ar) + " + GST for your entire BCPL journey — registration to franchise auction.",
     aHi:"Phase 2 fee सिर्फ तभी देनी होती है जब आप qualify करें और आगे बढ़ना चुनें। पूरे BCPL सफर की अधिकतम कुल लागत " + inr(f.phase1.bat + f.phase2.bat) + "–" + inr(f.phase1.ar + f.phase2.ar) + " + GST है — registration से लेकर auction तक।" },
@@ -231,7 +231,6 @@ export function Home() {
         @keyframes pulse6   {0%,100%{box-shadow:0 0 0 0 rgba(255,122,41,.4)}50%{box-shadow:0 0 0 10px rgba(255,122,41,0)}}
         @keyframes blip     {0%,100%{opacity:1}50%{opacity:.15}}
         @keyframes gradMove {0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-        @keyframes s5sheen  {0%{background-position:200% center}100%{background-position:-200% center}}
         @keyframes kenburns {from{transform:scale(1.02) translate(0,0)}to{transform:scale(1.12) translate(-1.6%,1.2%)}}
         @keyframes floodPulse{0%,100%{opacity:.35}50%{opacity:.7}}
         @keyframes playRing {0%{box-shadow:0 0 0 0 rgba(255,122,41,.5)}100%{box-shadow:0 0 0 26px rgba(255,122,41,0)}}
@@ -372,12 +371,6 @@ export function Home() {
 
         <div className="W">
           <div className="hero-inner">
-            {/* Season badge */}
-            <div style={{ display:"inline-flex", alignItems:"center", gap:12, background:"linear-gradient(135deg,rgba(10,23,39,.92),rgba(13,30,54,.78))", border:"1px solid rgba(232,178,61,.38)", borderRadius:12, padding:"9px 18px", boxShadow:"0 10px 30px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06)", backdropFilter:"blur(8px)", marginBottom:22 }}>
-              <img src={BASE + "bcpl-assets/bcpl-ball-clean.png"} alt="" aria-hidden="true" style={{ width:22, height:22, objectFit:"contain" }}/>
-              <div className="mont" style={{ fontWeight:900, fontSize:14, letterSpacing:".14em", background:"linear-gradient(100deg,#E8B23D 20%,#F7DE9A 40%,#E8B23D 60%)", backgroundSize:"200% auto", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text", animation:"s5sheen 5s linear infinite" }}>SEASON 5</div>
-            </div>
-
             {/* Full league name */}
             <div className="mont" style={{ fontWeight:800, fontSize:"clamp(11px,1.6vw,14px)", letterSpacing:".26em", color:"#E8B23D", textTransform:"uppercase", marginBottom:10, textShadow:"0 2px 16px rgba(0,0,0,.6)" }}>
               Bhartiya Corporate Premier League
@@ -597,9 +590,12 @@ export function Home() {
                 </div>
               ))}
               <p style={{ fontSize:12, color:"rgba(255,255,255,.35)", marginTop:14, lineHeight:1.6 }}>{t("Includes: Physical trial entry · Franchise auction eligibility · Season 5 participation","शामिल: Physical trial entry · Auction eligibility · Season 5 participation")}</p>
-              <div style={{ marginTop:20, padding:"14px 16px", background:"rgba(34,197,94,.06)", border:"1px solid rgba(34,197,94,.2)", borderRadius:12, display:"flex", gap:10, alignItems:"flex-start" }}>
-                <span style={{ fontSize:18, flexShrink:0 }}>🛡</span>
-                <p style={{ fontSize:12, color:"rgba(34,197,94,.9)", lineHeight:1.6 }}><strong>{t("Not selected?","Select नहीं हुए?")}</strong> {t("You pay nothing for Phase 2. Ever.","Phase 2 का एक रुपया भी नहीं देना।")}</p>
+              {/* Copy rule: never imply "not selected = no money / refund" — Phase 2
+                  fee is simply a separate, selection-time payment, and ALL paid fees
+                  are non-refundable (matches Terms & Refund Policy). */}
+              <div style={{ marginTop:20, padding:"14px 16px", background:"rgba(232,178,61,.06)", border:"1px solid rgba(232,178,61,.22)", borderRadius:12, display:"flex", gap:10, alignItems:"flex-start" }}>
+                <span style={{ fontSize:16, flexShrink:0 }}>ℹ️</span>
+                <p style={{ fontSize:12, color:"rgba(255,255,255,.6)", lineHeight:1.6 }}><strong style={{ color:"#E8B23D" }}>{t("Phase 2 fee is charged only on selection","Phase 2 fee सिर्फ select होने पर लगती है")}</strong> — {t("a separate payment made at that stage. All fees, once paid, are non-refundable.","उसी stage पर अलग से payment होती है। एक बार paid fee किसी भी स्थिति में refundable नहीं है।")}</p>
               </div>
             </div>
           </div>

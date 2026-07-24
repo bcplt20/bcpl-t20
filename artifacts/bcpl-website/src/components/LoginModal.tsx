@@ -131,7 +131,7 @@ export function LoginModal() {
         }}>✕</button>
 
         {/* Logo */}
-        <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:22 }}>
+        <div style={{ display:'inline-flex', flexDirection:'column', alignItems:'center', gap:5, marginBottom:22 }}>
           <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL"
             style={{ height:30, width:'auto', objectFit:'contain', filter:'brightness(1.3)' }}/>
           <div style={{ display:'inline-flex', alignItems:'center', gap:4, background:'rgba(232,178,61,0.12)', border:'1px solid rgba(232,178,61,0.5)', borderRadius:6, padding:'2px 8px' }}>

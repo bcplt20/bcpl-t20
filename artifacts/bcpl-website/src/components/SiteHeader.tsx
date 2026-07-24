@@ -7,8 +7,8 @@ import { useLang } from "../lib/i18n";
 /**
  * SiteHeader V4 — the one shared header on every page (spec Part 4).
  *
- * Desktop:  [BCPL · SEASON 5]   Teams Players Trials Matches Auction Media About   [EN|हिंदी · Login · REGISTER NOW]
- * Mobile:   [BCPL · S5]                                  [profile] [REGISTER] [☰]
+ * Desktop:  [BCPL logo, SEASON 5 centered under it]   Teams Players Trials Matches Auction Media About   [EN|हिंदी · Login · REGISTER NOW]
+ * Mobile:   [same stacked lockup]                       [profile] [REGISTER] [☰]
  *
  * Behaviour: fully transparent over the hero, premium dark glass + blur +
  * hairline border once scrolled. Height = var(--sh-h): 64px mobile, 68px
@@ -96,8 +96,10 @@ const CSS = `
   }
   @media(min-width:1280px){.sh-desk{gap:26px;}}
 
-  .sh-s5{display:inline-flex;align-items:center;background:rgba(232,178,61,.1);border:1px solid rgba(232,178,61,.45);border-radius:6px;padding:3px 9px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:11px;color:#E8B23D;letter-spacing:.14em;white-space:nowrap;}
-  @media(max-width:399px){.sh-s5{display:none;}}
+  /* SEASON 5 sits centered UNDER the logo (stacked lockup — fits every phone).
+     padding-left mirrors the letter-spacing so the text is optically centered
+     (tracking adds a trailing gap that would otherwise pull it left). */
+  .sh-s5{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:9px;color:#E8B23D;letter-spacing:.32em;padding-left:.32em;line-height:1;white-space:nowrap;text-shadow:0 1px 6px rgba(0,0,0,.55);}
 
   .sh-cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:var(--r,14px);color:#fff;font-family:'Barlow Condensed','Mukta',sans-serif;font-weight:800;letter-spacing:.07em;cursor:pointer;text-transform:uppercase;text-decoration:none;white-space:nowrap;transition:opacity .2s,transform .15s;box-shadow:0 4px 18px rgba(255,122,41,.3);}
   .sh-cta:hover{opacity:.92;transform:translateY(-1px);}
@@ -139,11 +141,11 @@ function LangToggle({ big }: { big?: boolean }) {
 
 function Logo() {
   return (
-    <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0, textDecoration: "none", minWidth: 0 }}>
+    <Link href="/" style={{ display: "inline-flex", flexDirection: "column", alignItems: "center", gap: 3, flexShrink: 0, textDecoration: "none" }}>
       <img
         src={import.meta.env.BASE_URL + "bcpl-assets/bcpl-logo-white.png"}
         alt="BCPL"
-        style={{ height: 40, width: "auto", objectFit: "contain", display: "block", filter: "brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,.7))" }}
+        style={{ height: 34, width: "auto", objectFit: "contain", display: "block", filter: "brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,.7))" }}
       />
       <span className="sh-s5">SEASON 5</span>
     </Link>
