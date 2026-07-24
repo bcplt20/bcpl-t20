@@ -697,7 +697,7 @@ export function PlayerProfile() {
                       ].map(row => (
                         <div key={row.label} style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '12px', padding: '16px', border: '1px solid rgba(255,255,255,0.05)' }}>
                           <div style={{ fontSize: 11, fontWeight: 800, fontFamily: 'var(--font-head)', color: 'rgba(255,255,255,0.4)', letterSpacing: '.08em', marginBottom: 6, textTransform: 'uppercase' }}>{row.label}</div>
-                          <div style={{ fontSize: 15, fontWeight: 700, color: '#fff' }}>{row.value}</div>
+                          <div style={{ fontSize: 15, fontWeight: 700, color: '#fff', fontVariantNumeric: 'tabular-nums' }}>{row.value}</div>
                         </div>
                       ))}
                     </div>
@@ -736,7 +736,7 @@ export function PlayerProfile() {
                       ].map(row => (
                         <div key={row.label} style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '12px', padding: '16px', border: '1px solid rgba(255,255,255,0.05)' }}>
                           <div style={{ fontSize: 11, fontWeight: 800, fontFamily: 'var(--font-head)', color: 'rgba(255,255,255,0.4)', letterSpacing: '.08em', marginBottom: 6, textTransform: 'uppercase' }}>{row.label}</div>
-                          <div style={{ fontSize: 15, fontWeight: 700, color: '#fff' }}>{row.value}</div>
+                          <div style={{ fontSize: 15, fontWeight: 700, color: '#fff', fontVariantNumeric: 'tabular-nums' }}>{row.value}</div>
                         </div>
                       ))}
                     </div>

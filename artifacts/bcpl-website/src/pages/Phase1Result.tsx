@@ -549,14 +549,14 @@ export function Phase1Result() {
                   {r.cityRank && (
                     <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid var(--line)', padding:'10px 18px', borderRadius:16, display:'flex', alignItems:'center', gap:10 }}>
                       <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:12, letterSpacing:'.1em', color:'var(--ink-3)', textTransform:'uppercase' }}>{(r.trialCity || t('CITY', 'शहर'))} {t('RANK — ALL ROLES', 'रैंक — सभी रोल')}</span>
-                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:18, color:'var(--ink)' }}>#{r.cityRank}{r.cityCount ? <span style={{ color:'var(--ink-3)', fontWeight:700, fontSize:13 }}> / {r.cityCount}</span> : null}</span>
+                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:18, color:'var(--ink)', fontVariantNumeric:'tabular-nums' }}>#{r.cityRank}{r.cityCount ? <span style={{ color:'var(--ink-3)', fontWeight:700, fontSize:13 }}> / {r.cityCount}</span> : null}</span>
                       {showPct && <span style={{ background:'rgba(255,255,255,0.1)', color:'var(--ink)', fontSize:11, fontWeight:700, padding:'3px 8px', borderRadius:8 }}>TOP {pct}%</span>}
                     </div>
                   )}
                   {r.roleRank && showRole && (
                     <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid var(--line)', padding:'10px 18px', borderRadius:16, display:'flex', alignItems:'center', gap:10 }}>
                       <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:12, letterSpacing:'.1em', color:'var(--ink-3)', textTransform:'uppercase' }}>{(r.trialCity ? r.trialCity + ' ' : '')}{roleLabel} {t('RANK', 'रैंक')}</span>
-                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:18, color:'var(--ink)' }}>#{r.roleRank}{r.roleCount ? <span style={{ color:'var(--ink-3)', fontWeight:700, fontSize:13 }}> / {r.roleCount}</span> : null}</span>
+                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:18, color:'var(--ink)', fontVariantNumeric:'tabular-nums' }}>#{r.roleRank}{r.roleCount ? <span style={{ color:'var(--ink-3)', fontWeight:700, fontSize:13 }}> / {r.roleCount}</span> : null}</span>
                     </div>
                   )}
                 </div>

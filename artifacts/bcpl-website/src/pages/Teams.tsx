@@ -26,13 +26,13 @@ function TeamCard({ t }: { t: CardTeam }) {
       <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
         style={{ background: "#0A1727", border: `1.5px solid ${hov ? t.color : "rgba(255,255,255,0.07)"}`, borderRadius: 12, borderTop: `3px solid ${t.color}`, padding: "20px 18px", transition: "all 0.25s", boxShadow: hov ? `0 12px 40px ${t.color}22,0 0 0 1px ${t.color}33` : "none", cursor: "pointer", position: "relative", overflow: "hidden" }}>
         {/* Watermark logo */}
-        {t.logo && <img src={t.logo} alt={t.name} style={{ position: "absolute", right: "-6%", bottom: "-6%", width: "72%", height: "72%", objectFit: "contain", opacity: 0.055, pointerEvents: "none", transition: "opacity 0.3s", filter: "grayscale(20%)" }} />}
+        {t.logo && <img loading="lazy" decoding="async" src={t.logo} alt={t.name} style={{ position: "absolute", right: "-6%", bottom: "-6%", width: "72%", height: "72%", objectFit: "contain", opacity: 0.055, pointerEvents: "none", transition: "opacity 0.3s", filter: "grayscale(20%)" }} />}
 
         {/* Top row: logo badge + name */}
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16, position: "relative", zIndex: 1 }}>
           <div style={{ width: 52, height: 52, background: "rgba(255,255,255,0.96)", borderRadius: 14, border: `2px solid ${t.color}55`, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: `0 6px 20px ${t.color}44` }}>
             {t.logo
-              ? <img src={t.logo} alt={t.name} style={{ width: "87%", height: "87%", objectFit: "contain" }} />
+              ? <img loading="lazy" decoding="async" src={t.logo} alt={t.name} style={{ width: "87%", height: "87%", objectFit: "contain" }} />
               : <span style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 16, color: t.color }}>{t.abbr}</span>}
           </div>
           <div>
@@ -126,7 +126,7 @@ export function Teams() {
               {teams.map(tm => (
                 <Link key={tm.slug} href={`/team/${tm.slug}`} style={{ width: 48, height: 48, background: "rgba(255,255,255,0.96)", borderRadius: 14, padding: 5, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: `0 4px 16px ${tm.color}44`, border: `2px solid ${tm.color}55`, textDecoration: "none" }}>
                   {tm.logo
-                    ? <img src={tm.logo} alt={tm.abbr} style={{ width: "88%", height: "88%", objectFit: "contain" }} />
+                    ? <img loading="lazy" decoding="async" src={tm.logo} alt={tm.abbr} style={{ width: "88%", height: "88%", objectFit: "contain" }} />
                     : <span style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 13, color: tm.color }}>{tm.abbr}</span>}
                 </Link>
               ))}

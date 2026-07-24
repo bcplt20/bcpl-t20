@@ -54,7 +54,7 @@ function TeamBadge({ name, color, logo, size, fontSize }: {
       fontFamily: "var(--font-head)", fontWeight: 800, fontSize, color,
     }}>
       {showLogo
-        ? <img src={logo} alt={name} onError={() => setBroken(true)}
+        ? <img loading="lazy" decoding="async" src={logo} alt={name} onError={() => setBroken(true)}
             style={{ width: "82%", height: "82%", objectFit: "contain" }} />
         : initials(name)}
     </span>

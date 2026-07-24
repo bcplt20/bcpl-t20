@@ -309,7 +309,7 @@ export function Photos() {
       {lightbox !== null && lbSection && lbSection.photos[lightbox.idx] && (
         <div onClick={() => setLightbox(null)}
           style={{position:'fixed',inset:0,zIndex:2000,background:'rgba(3,7,15,0.94)',display:'flex',alignItems:'center',justifyContent:'center',animation:'lbFade .2s ease both',padding:'clamp(8px,3vw,32px)'}}>
-          <img src={lbSection.fullUrl(lbSection.photos[lightbox.idx].f)} alt={t(lbSection.title[0], lbSection.title[1])}
+          <img loading="lazy" decoding="async" src={lbSection.fullUrl(lbSection.photos[lightbox.idx].f)} alt={t(lbSection.title[0], lbSection.title[1])}
             onClick={e => e.stopPropagation()}
             style={{maxWidth:'100%',maxHeight:'92vh',borderRadius:10,boxShadow:'0 30px 90px rgba(0,0,0,0.8)',objectFit:'contain'}} />
           <button className="lb-btn" aria-label="Close" onClick={() => setLightbox(null)}
@@ -332,7 +332,7 @@ export function Photos() {
           <div onClick={() => setLbAlbum(null)}
             style={{position:'fixed',inset:0,zIndex:2000,background:'rgba(3,7,15,0.94)',display:'flex',alignItems:'center',justifyContent:'center',animation:'lbFade .2s ease both',padding:'clamp(8px,3vw,32px)'}}>
             {item.kind === 'photo' ? (
-              <img src={item.viewUrl} alt={item.name} onClick={e => e.stopPropagation()}
+              <img loading="lazy" decoding="async" src={item.viewUrl} alt={item.name} onClick={e => e.stopPropagation()}
                 style={{maxWidth:'100%',maxHeight:'92vh',borderRadius:10,boxShadow:'0 30px 90px rgba(0,0,0,0.8)',objectFit:'contain'}} />
             ) : (
               <video src={item.viewUrl} controls autoPlay onClick={e => e.stopPropagation()}

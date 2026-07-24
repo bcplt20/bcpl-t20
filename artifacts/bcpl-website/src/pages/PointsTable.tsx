@@ -29,7 +29,7 @@ function TeamBadge({ name, color, logo }: { name: string; color: string; logo?: 
       fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 9, color,
     }}>
       {showLogo
-        ? <img src={logo} alt={name} onError={() => setBroken(true)} style={{ width: "82%", height: "82%", objectFit: "contain" }} />
+        ? <img loading="lazy" decoding="async" src={logo} alt={name} onError={() => setBroken(true)} style={{ width: "82%", height: "82%", objectFit: "contain" }} />
         : initials(name)}
     </span>
   );

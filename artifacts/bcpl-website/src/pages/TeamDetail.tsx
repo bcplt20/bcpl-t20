@@ -257,7 +257,7 @@ export function TeamDetail() {
                         return (
                           <div key={p.id} style={{background:'linear-gradient(135deg,rgba(15,34,71,0.92),rgba(10,22,46,0.88))',backdropFilter:'blur(24px)',border:`1px solid ${ACCENT}2E`,borderRadius:16,padding:'18px 16px',display:'flex',alignItems:'center',gap:14,animation:`fadeSlide 0.4s ease ${i*0.05}s both`,transition:'border-color 0.2s',boxShadow:'0 8px 32px rgba(0,0,0,0.3)'}}>
                             {p.photoUrl
-                              ? <img src={asset(p.photoUrl)} alt={p.name} style={{width:44,height:44,borderRadius:'50%',objectFit:'cover',border:`2px solid ${ACCENT}55`,flexShrink:0}}/>
+                              ? <img loading="lazy" decoding="async" src={asset(p.photoUrl)} alt={p.name} style={{width:44,height:44,borderRadius:'50%',objectFit:'cover',border:`2px solid ${ACCENT}55`,flexShrink:0}}/>
                               : <div style={{width:44,height:44,borderRadius:'50%',background:`linear-gradient(135deg,${ACCENT}33,${ACCENT}11)`,border:`2px solid ${ACCENT}55`,display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'var(--font-head)',fontWeight:900,fontSize:16,color:ACCENT,flexShrink:0}}>
                                   {p.jerseyNo || p.name[0]}
                                 </div>}

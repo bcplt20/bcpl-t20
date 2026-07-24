@@ -221,7 +221,7 @@ export function Players() {
                   <div key={p.id} className="player-card" style={{ animationDelay: `${(i % 9) * 0.05}s` }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 14 }}>
                       {p.photoUrl ? (
-                        <img src={asset(p.photoUrl)} alt={p.name} style={{ width: 56, height: 56, borderRadius: "50%", objectFit: "cover", border: `2px solid ${p.teamColor}`, flexShrink: 0 }} />
+                        <img loading="lazy" decoding="async" src={asset(p.photoUrl)} alt={p.name} style={{ width: 56, height: 56, borderRadius: "50%", objectFit: "cover", border: `2px solid ${p.teamColor}`, flexShrink: 0 }} />
                       ) : (
                         <div style={{ width: 56, height: 56, borderRadius: "50%", background: `linear-gradient(135deg,${p.teamColor}33,${p.teamColor}11)`, border: `2px solid ${p.teamColor}`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 18, color: p.teamColor, flexShrink: 0 }}>
                           {p.jerseyNo || p.name[0]}
