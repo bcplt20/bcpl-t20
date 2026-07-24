@@ -28,6 +28,7 @@ import { db } from "@workspace/db";
 import {
   registrationsTable, usersTable, trialVenuesTable,
   trialSlotsTable, trialAllocationsTable, trialCheckinsTable,
+  trialEvaluationsTable,
   physicalAssessmentsTable, notificationLogsTable,
 } from "@workspace/db/schema";
 import { and, eq, sql, desc, ilike, or } from "drizzle-orm";
@@ -838,12 +839,26 @@ userTrialsRouter.get("/trial-pass", requireAuth, async (req: AuthRequest, res) =
     const [venue] = await db.select().from(trialVenuesTable).where(eq(trialVenuesTable.id, alloc.venueId)).limit(1);
     const [chk] = await db.select().from(trialCheckinsTable)
       .where(eq(trialCheckinsTable.registrationId, reg.id)).limit(1);
+    /* Assessment state (§20) — drives the pass's journey indicator. The
+       evaluations table is created lazily by the staff stack, so degrade to
+       "not assessed" on a DB that has never seen an evaluation. */
+    let evalRow: { lockedAt: Date | null } | undefined;
+    try {
+      [evalRow] = await db.select({ lockedAt: trialEvaluationsTable.lockedAt })
+        .from(trialEvaluationsTable)
+        .where(and(eq(trialEvaluationsTable.registrationId, reg.id), eq(trialEvaluationsTable.status, "submitted"))).limit(1);
+    } catch (e) {
+      const code = (e as { cause?: { code?: string }; code?: string }).code ?? (e as { cause?: { code?: string } }).cause?.code;
+      if (code !== "42P01") throw e;
+    }
     const qrDataUrl = await QRCode.toDataURL("BCPL-TRIAL:" + alloc.passToken, { margin: 1, width: 320 });
     res.json({
       player: { name: pUser?.name ?? "Player", regNumber: reg.regNumber, role: reg.role, city: reg.trialCity },
       venue: venue ? { name: venue.venue, city: venue.city, address: venue.address ?? null, mapsUrl: venue.mapsUrl ?? null } : null,
       slot: slot ? { batch: slot.batchName, date: slot.slotDate, reportingTime: slot.reportingTime, startTime: slot.startTime } : null,
       checkedInAt: chk?.checkedInAt ?? null,
+      assessmentSubmitted: !!evalRow,
+      assessmentAt: evalRow?.lockedAt ?? null,
       qrDataUrl,
     });
   } catch (e) {

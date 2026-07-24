@@ -5,10 +5,13 @@ import {
   phase1PaymentsTable, phase1VideosTable,
   phase2PaymentsTable, kycRecordsTable,
   playerProfilesTable,
+  trialAllocationsTable, trialSlotsTable, trialVenuesTable,
+  trialCheckinsTable, trialEvaluationsTable,
 } from "@workspace/db/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { requireAuth, type AuthRequest } from "../middlewares/auth";
+import { pgCauseOf } from "../lib/pgErrors";
 
 const router = Router();
 
@@ -42,6 +45,60 @@ const profileBackfillSchema = z.object({
   bloodGroup:        z.enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]).optional(),
 });
 
+/* ── Trial layer (final-finishing spec §17/§20/§21) ──────────────────────────
+   The player's physical-trial state, read from the SAME tables the trial-ops
+   stack writes — the single source of truth for dashboard panels and header
+   CTAs (never derived or cached client-side). Trial tables are created
+   lazily by the trials module, so a DB where trials were never touched
+   (fresh prod) must degrade to "no allocation", never 500. */
+export interface PlayerTrialState {
+  venue: { name: string; city: string; address: string | null; mapsUrl: string | null } | null;
+  slot: { batch: string; date: string; reportingTime: string; startTime: string } | null;
+  checkedInAt: Date | null;
+  assessmentSubmitted: boolean;
+  assessmentAt: Date | null;
+}
+
+export async function playerTrialState(registrationId: string): Promise<PlayerTrialState | null> {
+  try {
+    const [alloc] = await db.select().from(trialAllocationsTable)
+      .where(and(
+        eq(trialAllocationsTable.registrationId, registrationId),
+        eq(trialAllocationsTable.status, "allocated"),
+      )).limit(1);
+    if (!alloc) return null;
+    const [slot] = await db.select().from(trialSlotsTable)
+      .where(eq(trialSlotsTable.id, alloc.slotId)).limit(1);
+    const [venue] = await db.select().from(trialVenuesTable)
+      .where(eq(trialVenuesTable.id, alloc.venueId)).limit(1);
+    const [chk] = await db.select().from(trialCheckinsTable)
+      .where(eq(trialCheckinsTable.registrationId, registrationId)).limit(1);
+    /* Evaluations table is ensured by the staff stack separately — guard it
+       on its own so "allocated but evaluations table missing" still works. */
+    let evalRow: { lockedAt: Date | null } | undefined;
+    try {
+      [evalRow] = await db.select({ lockedAt: trialEvaluationsTable.lockedAt })
+        .from(trialEvaluationsTable)
+        .where(and(
+          eq(trialEvaluationsTable.registrationId, registrationId),
+          eq(trialEvaluationsTable.status, "submitted"),
+        )).limit(1);
+    } catch (e) {
+      if (pgCauseOf(e)?.code !== "42P01") throw e;
+    }
+    return {
+      venue: venue ? { name: venue.venue, city: venue.city, address: venue.address ?? null, mapsUrl: venue.mapsUrl ?? null } : null,
+      slot: slot ? { batch: slot.batchName, date: slot.slotDate, reportingTime: slot.reportingTime, startTime: slot.startTime } : null,
+      checkedInAt: chk?.checkedInAt ?? null,
+      assessmentSubmitted: !!evalRow,
+      assessmentAt: evalRow?.lockedAt ?? null,
+    };
+  } catch (e) {
+    if (pgCauseOf(e)?.code === "42P01") return null; // trial tables not created yet
+    throw e;
+  }
+}
+
 // GET /api/user/dashboard  — full registration journey for logged-in user
 router.get("/dashboard", requireAuth, async (req: AuthRequest, res) => {
   const [user] = await db.select().from(usersTable)
@@ -68,6 +125,13 @@ router.get("/dashboard", requireAuth, async (req: AuthRequest, res) => {
   const [kyc] = await db.select().from(kycRecordsTable)
     .where(eq(kycRecordsTable.registrationId, reg.id)).limit(1);
 
+  /* Trial layer (§17): an allocation can only exist once KYC is done, so
+     skip the extra queries for everyone earlier in the journey. */
+  const p2Now = reg.phase2Status ?? "";
+  const trial = (p2Now === "kyc_done" || p2Now === "selected" || p2Now === "rejected")
+    ? await playerTrialState(reg.id)
+    : null;
+
   const now = new Date();
 
   res.json({
@@ -88,6 +152,14 @@ router.get("/dashboard", requireAuth, async (req: AuthRequest, res) => {
     video:         video ? { submitted: true, submittedAt: video.submittedAt, status: video.status } : null,
     phase2Payment: p2Pay ? { status: p2Pay.status, amount: p2Pay.amount, paidAt: p2Pay.paidAt } : null,
     kyc:           kyc  ? { status: kyc.status, profession: kyc.profession, verifiedAt: kyc.verifiedAt } : null,
+    trial:         trial ? {
+      allocated:           true,
+      venue:               trial.venue,
+      slot:                trial.slot,
+      checkedInAt:         trial.checkedInAt,
+      assessmentSubmitted: trial.assessmentSubmitted,
+      assessmentAt:        trial.assessmentAt,
+    } : null,
   });
 });
 
@@ -133,7 +205,13 @@ router.get("/next-action", requireAuth, async (req: AuthRequest, res) => {
          (awaiting phase2Status sync) = nothing actionable, show MY BCPL. */
       action = !kyc || kyc.status === "failed" ? "COMPLETE_KYC" : "MY_BCPL";
     } else if (p2 === "kyc_done") {
-      action = "VIEW_TRIAL";
+      /* Trial layer (§43): pass issued → VIEW_TRIAL_PASS; assessment
+         submitted → nothing actionable, the profile shows the completed
+         panel (MY_BCPL). No allocation yet → venue-pending details page. */
+      const trial = await playerTrialState(reg.id);
+      action = trial?.assessmentSubmitted ? "MY_BCPL"
+             : trial                      ? "VIEW_TRIAL_PASS"
+             :                              "VIEW_TRIAL";
     }
     /* phase2 selected / rejected → MY_BCPL (profile shows the outcome) */
   }

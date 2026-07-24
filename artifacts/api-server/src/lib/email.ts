@@ -347,6 +347,49 @@ export function tplTrialVenueAnnounced(name: string, city: string, venue: string
   };
 }
 
+// ── Template: Physical Trial Completed (final-finishing spec §22) ─────────────
+export function tplTrialCompleted(p: { firstName: string; roleLabel: string; trialCity: string; venueName: string; trialDate: string; trialId: string }) {
+  return {
+    subject: "BCPL Physical Trial Completed Successfully",
+    htmlContent: wrap(`
+      <div style="text-align:center;margin-bottom:20px;">
+        <div style="display:inline-flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:50%;background:rgba(34,197,94,0.12);border:2px solid #22C55E;font-size:34px;color:#22C55E;font-weight:900;margin-bottom:10px;">&#10003;</div>
+        <div style="font-size:22px;font-weight:900;color:#22C55E;font-family:Arial,sans-serif;">PHYSICAL TRIAL COMPLETED</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:4px;">Season 5 — Phase 2 Physical Trials</div>
+      </div>
+      <div style="background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.18);border-radius:12px;padding:20px;margin-bottom:20px;">
+        <p style="color:rgba(255,255,255,0.7);margin:0 0 8px;font-size:14px;">Dear <strong>${p.firstName}</strong>,</p>
+        <p style="color:rgba(255,255,255,0.7);margin:0;font-size:14px;">You have successfully completed your BCPL physical trial. Your on-ground assessment has been recorded by the evaluation team.</p>
+      </div>
+      <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
+        <tr style="background:rgba(255,255,255,0.04);">
+          <td style="padding:12px;font-size:12px;color:rgba(255,255,255,0.45);width:40%;">Player Trial ID</td>
+          <td style="padding:12px;font-size:14px;color:#E8B23D;font-weight:700;">${p.trialId}</td>
+        </tr>
+        <tr>
+          <td style="padding:12px;font-size:12px;color:rgba(255,255,255,0.45);">Playing Role</td>
+          <td style="padding:12px;font-size:14px;color:#fff;font-weight:700;">${p.roleLabel}</td>
+        </tr>
+        <tr style="background:rgba(255,255,255,0.04);">
+          <td style="padding:12px;font-size:12px;color:rgba(255,255,255,0.45);">Trial City</td>
+          <td style="padding:12px;font-size:14px;color:#fff;font-weight:700;">${p.trialCity}</td>
+        </tr>
+        <tr>
+          <td style="padding:12px;font-size:12px;color:rgba(255,255,255,0.45);">Venue</td>
+          <td style="padding:12px;font-size:14px;color:#fff;font-weight:700;">${p.venueName}</td>
+        </tr>
+        <tr style="background:rgba(255,255,255,0.04);">
+          <td style="padding:12px;font-size:12px;color:rgba(255,255,255,0.45);">Trial Date</td>
+          <td style="padding:12px;font-size:14px;color:#fff;font-weight:700;">${p.trialDate}</td>
+        </tr>
+      </table>
+      <div style="background:rgba(255,255,255,0.03);border-radius:8px;padding:16px;margin-bottom:16px;">
+        <div style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.8;">Results will be announced after trials are completed across all cities. No further action is needed from you right now — you can track your status anytime from your BCPL dashboard.</div>
+      </div>
+      <div style="text-align:center;">${btn("VIEW MY TRIAL PASS →", `${SITE_URL}/trial-pass`, "#22C55E")}</div>`),
+  };
+}
+
 // ── Template 10: KYC Complete ──────────────────────────────────────────────────
 export function tplKycComplete(name: string, city: string) {
   return {

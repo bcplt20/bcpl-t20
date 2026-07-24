@@ -70,6 +70,7 @@ const NEXT_CTA: Record<string, { en: string; hi: string; href: string }> = {
   CONTINUE_PHASE2:  { en: "Continue to Phase 2",   hi: "Phase 2 जारी रखें",       href: "/register/phase2" },
   COMPLETE_KYC:     { en: "Complete KYC",          hi: "KYC पूरा करें",           href: "/register/phase2/kyc" },
   VIEW_TRIAL:       { en: "Trial Details",         hi: "Trial Details",           href: "/register/phase2/kyc-approved" },
+  VIEW_TRIAL_PASS:  { en: "View Trial Pass",       hi: "Trial Pass देखें",         href: "/trial-pass" },
 };
 
 const CSS = `

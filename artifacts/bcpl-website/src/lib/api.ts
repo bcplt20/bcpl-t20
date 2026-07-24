@@ -82,6 +82,17 @@ export const getDashboard = () =>
     video?:         { submitted: boolean; submittedAt: string; status: string } | null;
     phase2Payment?: { status: string; amount: number; paidAt: string } | null;
     kyc?:           { status: string; profession: string; verifiedAt: string | null } | null;
+    /* Player-level trial state (allocation → check-in → assessment). null until
+       a slot is actually allocated to THIS player — city-level venue announcements
+       do NOT populate this. Single source of truth for trial-stage UI. */
+    trial?: {
+      allocated: boolean;
+      venue: { name: string; city: string; address: string | null; mapsUrl: string | null } | null;
+      slot: { batch: string; date: string; reportingTime: string; startTime: string } | null;
+      checkedInAt: string | null;
+      assessmentSubmitted: boolean;
+      assessmentAt: string | null;
+    } | null;
   }>("GET", "/user/dashboard");
 
 /* ─── Task #32: KYC-done profile backfill (T-shirt / emergency contact) ─── */
@@ -751,6 +762,9 @@ export interface TrialPassData {
   venue: { name: string; city: string; address: string | null; mapsUrl: string | null } | null;
   slot: { batch: string; date: string; reportingTime: string; startTime: string } | null;
   checkedInAt: string | null;
+  /* §19-20 — pass reflects the full journey: set once staff submit the assessment */
+  assessmentSubmitted: boolean;
+  assessmentAt: string | null;
   qrDataUrl: string;
 }
 export const getTrialPass = () => req<TrialPassData>("GET", "/user/trial-pass");

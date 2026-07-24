@@ -18,14 +18,9 @@ import { SiteHeader } from '../components/SiteHeader';
 import { getMyResult, sendResultFeedback, isAuthenticated, type MyResult } from '../lib/api';
 import { useLang } from '../lib/i18n';
 import { Link, useLocation } from 'wouter';
+import { formatRole } from '../lib/format';
 
 
-const ROLE_LABELS: Record<string, { en: string; hi: string }> = {
-  bat:  { en: 'Batsman',       hi: 'बल्लेबाज़' },
-  bowl: { en: 'Bowler',        hi: 'गेंदबाज़' },
-  wk:   { en: 'Wicket-Keeper', hi: 'विकेट-कीपर' },
-  ar:   { en: 'All-Rounder',   hi: 'ऑल-राउंडर' },
-};
 const PHASE2_FEES: Record<string, number> = { bat: 2000, bowl: 2000, wk: 2000, ar: 3000 };
 
 /** AI video-trial rubric categories (per-role, §§20–23) — bilingual labels + honest improvement tips. */
@@ -159,9 +154,9 @@ async function downloadShareCard(r: MyResult, roleLabel: string, qualified: bool
   ctx.fillText('/ 100  BCPL SCORE', W / 2, 865);
 
   ctx.fillStyle = '#FFFFFF'; ctx.font = '800 46px "Barlow Condensed", sans-serif';
-  ctx.fillText((r.trialCity || '').toUpperCase() + ' RANK  #' + (r.cityRank ?? '—'), W / 2, 985);
+  ctx.fillText((r.trialCity || '').toUpperCase() + ' RANK (ALL ROLES)  #' + (r.cityRank ?? '—'), W / 2, 985);
   ctx.fillStyle = 'rgba(255,255,255,0.45)'; ctx.font = '700 30px Inter, sans-serif';
-  ctx.fillText('among ' + (r.cityCount ?? 0) + ' evaluated players', W / 2, 1035);
+  ctx.fillText('among ' + (r.cityCount ?? 0) + ' evaluated ' + (r.trialCity ? r.trialCity + ' ' : '') + 'players', W / 2, 1035);
 
   if (qualified) {
     ctx.fillStyle = 'rgba(34,197,94,0.15)'; rr(ctx, W / 2 - 330, 1085, 660, 92, 46); ctx.fill();
@@ -258,7 +253,7 @@ export function Phase1Result() {
           setFbSaved(true);
         }
       })
-      .catch((e: any) => setError(e?.message ?? t('Failed to load result. Please refresh.', 'रिजल्ट लोड करने में विफल। कृपया रीफ्रेश करें।')))
+      .catch(() => setError(t('Failed to load result. Please refresh.', 'रिजल्ट लोड करने में विफल। कृपया रीफ्रेश करें।')))
       .finally(() => setLoading(false));
     return () => { timers.current.forEach(id => window.clearTimeout(id)); };
   }, [navigate, t]);
@@ -286,8 +281,7 @@ export function Phase1Result() {
   const r = result;
   const qualified = r?.decision === 'qualified';
   const role      = normRole(r?.role);
-  const roleInfo  = ROLE_LABELS[role] ?? { en: r?.role ?? '', hi: r?.role ?? '' };
-  const roleLabel = t(roleInfo.en, roleInfo.hi);
+  const roleLabel = role ? t(formatRole(role), formatRole(role, 'hi')) : (r?.role ?? '');
   const phase2Fee = Math.round((PHASE2_FEES[role] ?? 2000) * 1.18);
 
   // Strongest / weakest by score-to-max ratio (ties → bigger max first = more meaningful)
@@ -554,15 +548,15 @@ export function Phase1Result() {
                 <div style={{ display:'flex', justifyContent:'center', gap:12, flexWrap:'wrap', marginTop:16 }}>
                   {r.cityRank && (
                     <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid var(--line)', padding:'10px 18px', borderRadius:16, display:'flex', alignItems:'center', gap:10 }}>
-                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:12, letterSpacing:'.1em', color:'var(--ink-3)', textTransform:'uppercase' }}>{r.trialCity || 'CITY'} RANK</span>
-                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:18, color:'var(--ink)' }}>#{r.cityRank}</span>
+                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:12, letterSpacing:'.1em', color:'var(--ink-3)', textTransform:'uppercase' }}>{(r.trialCity || t('CITY', 'शहर'))} {t('RANK — ALL ROLES', 'रैंक — सभी रोल')}</span>
+                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:18, color:'var(--ink)' }}>#{r.cityRank}{r.cityCount ? <span style={{ color:'var(--ink-3)', fontWeight:700, fontSize:13 }}> / {r.cityCount}</span> : null}</span>
                       {showPct && <span style={{ background:'rgba(255,255,255,0.1)', color:'var(--ink)', fontSize:11, fontWeight:700, padding:'3px 8px', borderRadius:8 }}>TOP {pct}%</span>}
                     </div>
                   )}
                   {r.roleRank && showRole && (
                     <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid var(--line)', padding:'10px 18px', borderRadius:16, display:'flex', alignItems:'center', gap:10 }}>
-                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:12, letterSpacing:'.1em', color:'var(--ink-3)', textTransform:'uppercase' }}>ROLE RANK</span>
-                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:18, color:'var(--ink)' }}>#{r.roleRank}</span>
+                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:12, letterSpacing:'.1em', color:'var(--ink-3)', textTransform:'uppercase' }}>{(r.trialCity ? r.trialCity + ' ' : '')}{roleLabel} {t('RANK', 'रैंक')}</span>
+                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:18, color:'var(--ink)' }}>#{r.roleRank}{r.roleCount ? <span style={{ color:'var(--ink-3)', fontWeight:700, fontSize:13 }}> / {r.roleCount}</span> : null}</span>
                     </div>
                   )}
                 </div>

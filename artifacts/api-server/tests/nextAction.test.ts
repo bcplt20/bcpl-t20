@@ -8,9 +8,14 @@
  * logged-in players see the wrong (or no) call-to-action in the header.
  * Also pins /api/fees values so fee copy on the website can never drift
  * from what the server charges.
+ *
+ * Final-finishing spec §17/§43/§44/§46: the trial layer (allocation →
+ * check-in → locked assessment) extends the matrix, and the contradiction
+ * guards assert that impossible state combinations can never surface.
  */
 import { describe, it, expect, afterAll } from "vitest";
 import request from "supertest";
+import crypto from "node:crypto";
 import { inArray } from "drizzle-orm";
 
 const TEST_ADMIN_SECRET = "test-admin-secret-for-vitest";
@@ -20,8 +25,10 @@ process.env.SESSION_SECRET = TEST_SESSION_SECRET;
 
 const { default: app } = await import("../src/app");
 const { db } = await import("@workspace/db");
-const { usersTable, registrationsTable, phase1VideosTable, kycRecordsTable } =
-  await import("@workspace/db/schema");
+const {
+  usersTable, registrationsTable, phase1VideosTable, kycRecordsTable,
+  trialAllocationsTable, trialCheckinsTable, trialEvaluationsTable,
+} = await import("@workspace/db/schema");
 const { signToken } = await import("../src/lib/auth");
 
 const suffix = String(Date.now()).slice(-7); // unique per run
@@ -54,6 +61,44 @@ async function mkReg(phase1Status: string, phase2Status?: string) {
   return { user, reg, token: signToken({ userId: user.id, phone: user.phone }) };
 }
 
+/** kyc_done player + an active trial allocation (venue/slot ids are opaque —
+ *  no FK constraints on the runtime-ensured trial tables). */
+async function mkAllocated(opts?: { allocStatus?: string }) {
+  const made = await mkReg("selected", "kyc_done");
+  const [alloc] = await db.insert(trialAllocationsTable).values({
+    registrationId: made.reg.id,
+    slotId: crypto.randomUUID(),
+    venueId: crypto.randomUUID(),
+    city: "NextActionCity" + suffix,
+    passToken: crypto.randomBytes(24).toString("hex"),
+    ...(opts?.allocStatus ? { status: opts.allocStatus } : {}),
+  }).returning();
+  return { ...made, alloc };
+}
+
+async function checkIn(alloc: { id: string; registrationId: string; slotId: string; venueId: string }) {
+  await db.insert(trialCheckinsTable).values({
+    allocationId: alloc.id,
+    registrationId: alloc.registrationId,
+    slotId: alloc.slotId,
+    venueId: alloc.venueId,
+  });
+}
+
+async function submitEval(regId: string, allocId: string, status = "submitted") {
+  await db.insert(trialEvaluationsTable).values({
+    registrationId: regId,
+    allocationId: allocId,
+    evaluatorEmail: "coach@test.bcpl",
+    evaluatorName: "Test Coach",
+    playerRole: "bat",
+    rubricVersion: "test-v1",
+    sections: { objective: {}, technical: {}, total: 72.5 },
+    totalScore: "72.50",
+    status,
+  });
+}
+
 async function actionFor(token: string) {
   const res = await request(app)
     .get("/api/user/next-action")
@@ -62,8 +107,19 @@ async function actionFor(token: string) {
   return res.body.action as string;
 }
 
+async function dashboardFor(token: string) {
+  const res = await request(app)
+    .get("/api/user/dashboard")
+    .set("Authorization", `Bearer ${token}`);
+  expect(res.status).toBe(200);
+  return res.body as { trial: null | { allocated: boolean; checkedInAt: string | null; assessmentSubmitted: boolean; venue: unknown; slot: unknown } };
+}
+
 afterAll(async () => {
   if (createdRegIds.length) {
+    await db.delete(trialEvaluationsTable).where(inArray(trialEvaluationsTable.registrationId, createdRegIds));
+    await db.delete(trialCheckinsTable).where(inArray(trialCheckinsTable.registrationId, createdRegIds));
+    await db.delete(trialAllocationsTable).where(inArray(trialAllocationsTable.registrationId, createdRegIds));
     await db.delete(kycRecordsTable).where(inArray(kycRecordsTable.registrationId, createdRegIds));
     await db.delete(phase1VideosTable).where(inArray(phase1VideosTable.registrationId, createdRegIds));
     await db.delete(registrationsTable).where(inArray(registrationsTable.id, createdRegIds));
@@ -150,7 +206,7 @@ describe("GET /api/user/next-action — journey matrix", () => {
     expect(await actionFor(token)).toBe("MY_BCPL");
   });
 
-  it("phase2=kyc_done (canonical KYC-approved status) → VIEW_TRIAL", async () => {
+  it("phase2=kyc_done, no allocation → VIEW_TRIAL (venue-pending details)", async () => {
     const { token } = await mkReg("selected", "kyc_done");
     expect(await actionFor(token)).toBe("VIEW_TRIAL");
   });
@@ -158,5 +214,81 @@ describe("GET /api/user/next-action — journey matrix", () => {
   it("phase2=selected (journey complete) → MY_BCPL", async () => {
     const { token } = await mkReg("selected", "selected");
     expect(await actionFor(token)).toBe("MY_BCPL");
+  });
+});
+
+describe("GET /api/user/next-action — trial layer (§17/§43)", () => {
+  it("kyc_done + active allocation → VIEW_TRIAL_PASS (never venue-pending)", async () => {
+    const { token } = await mkAllocated();
+    expect(await actionFor(token)).toBe("VIEW_TRIAL_PASS");
+  });
+
+  it("kyc_done + CANCELLED allocation → VIEW_TRIAL (only active passes count)", async () => {
+    const { token } = await mkAllocated({ allocStatus: "cancelled" });
+    expect(await actionFor(token)).toBe("VIEW_TRIAL");
+  });
+
+  it("checked-in but not yet assessed → still VIEW_TRIAL_PASS", async () => {
+    const { alloc, token } = await mkAllocated();
+    await checkIn(alloc);
+    expect(await actionFor(token)).toBe("VIEW_TRIAL_PASS");
+  });
+
+  it("assessment submitted → MY_BCPL (profile shows the completed panel)", async () => {
+    const { reg, alloc, token } = await mkAllocated();
+    await checkIn(alloc);
+    await submitEval(reg.id, alloc.id);
+    expect(await actionFor(token)).toBe("MY_BCPL");
+  });
+
+  it("SUPERSEDED evaluation alone (§46 contradiction) → still VIEW_TRIAL_PASS", async () => {
+    const { reg, alloc, token } = await mkAllocated();
+    await submitEval(reg.id, alloc.id, "superseded");
+    expect(await actionFor(token)).toBe("VIEW_TRIAL_PASS");
+  });
+});
+
+describe("GET /api/user/dashboard — trial block single source of truth (§17/§44)", () => {
+  it("kyc_done, no allocation → trial: null (dashboard shows venue-pending)", async () => {
+    const { token } = await mkReg("selected", "kyc_done");
+    const body = await dashboardFor(token);
+    expect(body.trial).toBeNull();
+  });
+
+  it("pre-KYC journey (§46 contradiction guard) → trial: null even if stray rows exist", async () => {
+    const { reg, token } = await mkReg("payment_done");
+    // Contradictory combo: an allocation somehow exists while phase2 never reached kyc_done.
+    await db.insert(trialAllocationsTable).values({
+      registrationId: reg.id, slotId: crypto.randomUUID(), venueId: crypto.randomUUID(),
+      city: "NextActionCity" + suffix, passToken: crypto.randomBytes(24).toString("hex"),
+    });
+    const body = await dashboardFor(token);
+    expect(body.trial).toBeNull(); // journey stage wins — impossible combo never surfaces
+  });
+
+  it("allocated → trial.allocated=true, not checked in, not assessed", async () => {
+    const { token } = await mkAllocated();
+    const body = await dashboardFor(token);
+    expect(body.trial).toMatchObject({ allocated: true, checkedInAt: null, assessmentSubmitted: false });
+  });
+
+  it("checked-in + assessment locked → checkedInAt set AND assessmentSubmitted true", async () => {
+    const { reg, alloc, token } = await mkAllocated();
+    await checkIn(alloc);
+    await submitEval(reg.id, alloc.id);
+    const body = await dashboardFor(token);
+    expect(body.trial?.allocated).toBe(true);
+    expect(body.trial?.checkedInAt).toBeTruthy();
+    expect(body.trial?.assessmentSubmitted).toBe(true);
+  });
+
+  it("assessment WITHOUT check-in (§46 contradiction) → both facts reported as-is, never invented", async () => {
+    const { reg, alloc, token } = await mkAllocated();
+    await submitEval(reg.id, alloc.id);
+    const body = await dashboardFor(token);
+    // The dashboard reports REAL rows: assessed yes, checked-in null — the
+    // client must render assessment state, not fabricate a check-in.
+    expect(body.trial?.assessmentSubmitted).toBe(true);
+    expect(body.trial?.checkedInAt).toBeNull();
   });
 });

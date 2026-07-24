@@ -30,6 +30,7 @@ import {
 import { and, eq, sql, desc } from "drizzle-orm";
 import { requireAdmin, requireRole, fieldCityScope, type AdminRoleName } from "../middlewares/adminAuth";
 import { writeAudit } from "../lib/audit";
+import { sendTrialCompletionNotice } from "../lib/trialCompletion";
 import { normalizeRole } from "./trials";
 import { logger } from "../lib/logger";
 
@@ -744,6 +745,10 @@ staffRouter.post("/eval/submit", requireRole(...SUBMIT_ROLES), async (req, res) 
     const done = finalized as unknown as { row: typeof trialEvaluationsTable.$inferSelect; comp: EvalComputation };
 
     await writeAudit(req, { action: "trial.evaluation_submit", entity: "trial_evaluations", entityKey: done.row.id, newValue: { total: done.comp.total, role, rubricVersion: version } });
+    /* §22: player-facing completion email — exactly once per registration
+       (reserve-first dedupe inside; corrections/re-submits never re-send).
+       Fire-and-forget: a slow provider must never delay the evaluator UI. */
+    void sendTrialCompletionNotice(reg.id);
     res.json({ evaluation: { id: done.row.id, totalScore: done.comp.total, sections: done.comp.sections, rubricVersion: version, lockedAt: done.row.lockedAt } });
   } catch (e) {
     logger.error({ err: e }, "staff/eval/submit failed");

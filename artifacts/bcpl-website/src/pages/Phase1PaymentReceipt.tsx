@@ -4,10 +4,7 @@ import { SiteHeader } from '../components/SiteHeader';
 import { verifyPhase1Payment, getMe, getRegistrationStatus } from '../lib/api';
 import { ReferralShareBanner } from '../components/ReferralCard';
 import { useLang } from '../lib/i18n';
-
-const ROLE_LABELS: Record<string, string> = {
-  bat: '🏏 Batsman', bowl: '🎳 Bowler', wk: '🧤 Wicket-Keeper', ar: '⭐ All-Rounder',
-};
+import { formatRole } from '../lib/format';
 
 export function Phase1PaymentReceipt() {
   const { t } = useLang();
@@ -39,7 +36,7 @@ export function Phase1PaymentReceipt() {
         const role = (statusRes as any).role ?? '';
         const city = (statusRes as any).trialCity ?? '';
         const fees = (statusRes as any).fees ?? {};
-        setPlayerRole(ROLE_LABELS[role] ?? role);
+        setPlayerRole(role ? formatRole(role) : '');
         setPlayerCity(city);
         setRegId((statusRes as any).registrationId ?? verifyRes.registrationId ?? '');
         setRegNumber(verifyRes.regNumber ?? (statusRes as any).regNumber ?? '');
@@ -48,7 +45,7 @@ export function Phase1PaymentReceipt() {
         setPaidAmount(Math.round(baseFee * 1.18));
         setPaymentDate(new Date().toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }));
       } catch (e: any) {
-        setReceiptError(e.message ?? 'Could not load receipt');
+        setReceiptError('Could not load receipt. Please check your connection and try again.');
       } finally { setReceiptLoading(false); }
     })();
   }, []);
@@ -155,7 +152,12 @@ export function Phase1PaymentReceipt() {
 
           {/* Loading / Error */}
           {receiptLoading && <div style={{ color:'rgba(255,255,255,0.5)', fontSize:14, marginBottom:20 }}>{t("⏳ Confirming payment...","⏳ Payment confirm हो रही है...")}</div>}
-          {receiptError && <div style={{ color:'#EF4444', fontSize:13, marginBottom:20, fontWeight:600 }}>⚠ {receiptError}</div>}
+          {receiptError && (
+            <div style={{ marginBottom:20 }}>
+              <div style={{ color:'#EF4444', fontSize:13, fontWeight:600, marginBottom:10 }}>{receiptError}</div>
+              <button onClick={() => window.location.reload()} style={{ background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.18)', color:'#fff', borderRadius:10, padding:'8px 18px', fontSize:13, fontWeight:700, cursor:'pointer' }}>{t('Try Again', 'फिर कोशिश करें')}</button>
+            </div>
+          )}
 
           {/* Player chips */}
           {!receiptLoading && !receiptError && (
