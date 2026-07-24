@@ -192,3 +192,52 @@ describe("force delete with a legacy child table (prod drift)", () => {
     expect(Number((left.rows[0] as { n: number }).n)).toBe(0);
   });
 });
+
+/* Constraint NAMES are not unique across tables in Postgres — FK discovery
+   must key on OIDs (pg_constraint). A name-based information_schema join
+   cross-associates the tuples below and sweeps the wrong table/column. */
+describe("legacy children with duplicate FK names across matches/innings/deliveries", () => {
+  const tblA = `legacy_dupfk_a_${suffix}`; // → matches(id)
+  const tblB = `legacy_dupfk_b_${suffix}`; // → innings(id), SAME constraint name as A
+  const tblC = `legacy_dupfk_c_${suffix}`; // → deliveries(id)
+
+  beforeAll(async () => {
+    await db.execute(sql.raw(
+      `CREATE TABLE ${tblA} (id SERIAL PRIMARY KEY, m_ref UUID NOT NULL,
+         CONSTRAINT dup_fk_${suffix} FOREIGN KEY (m_ref) REFERENCES matches(id))`));
+    await db.execute(sql.raw(
+      `CREATE TABLE ${tblB} (id SERIAL PRIMARY KEY, i_ref UUID NOT NULL,
+         CONSTRAINT dup_fk_${suffix} FOREIGN KEY (i_ref) REFERENCES innings(id))`));
+    await db.execute(sql.raw(
+      `CREATE TABLE ${tblC} (id SERIAL PRIMARY KEY, d_ref UUID NOT NULL,
+         CONSTRAINT other_fk_${suffix} FOREIGN KEY (d_ref) REFERENCES deliveries(id))`));
+  });
+
+  afterAll(async () => {
+    await db.execute(sql.raw(`DROP TABLE IF EXISTS ${tblA}`));
+    await db.execute(sql.raw(`DROP TABLE IF EXISTS ${tblB}`));
+    await db.execute(sql.raw(`DROP TABLE IF EXISTS ${tblC}`));
+  });
+
+  it("sweeps every legacy child exactly once and deletes the match", async () => {
+    const { match, innings } = await mkScoredMatch();
+    const dRows = (await db.execute(sql.raw(
+      `SELECT id FROM deliveries WHERE innings_id = '${innings.id}' LIMIT 1`))).rows as Array<{ id: string }>;
+    await db.execute(sql.raw(`INSERT INTO ${tblA} (m_ref) VALUES ('${match.id}')`));
+    await db.execute(sql.raw(`INSERT INTO ${tblB} (i_ref) VALUES ('${innings.id}')`));
+    await db.execute(sql.raw(`INSERT INTO ${tblC} (d_ref) VALUES ('${dRows[0].id}')`));
+
+    const r = await request(app)
+      .delete(`/api/matches/admin/matches/${match.id}?force=1`)
+      .set(admin);
+    expect(r.status).toBe(200);
+    expect(r.body.success).toBe(true);
+
+    for (const t of [tblA, tblB, tblC]) {
+      const left = await db.execute(sql.raw(`SELECT count(*)::int AS n FROM ${t}`));
+      expect(Number((left.rows[0] as { n: number }).n)).toBe(0);
+    }
+    const [gone] = await db.select().from(matchesTable).where(eq(matchesTable.id, match.id));
+    expect(gone).toBeUndefined();
+  });
+});

@@ -332,56 +332,81 @@ router.delete("/admin/matches/:id", requireAdmin, async (req, res) => {
   const [match] = await db.select().from(matchesTable).where(eq(matchesTable.id, matchId)).limit(1);
   if (!match) return void res.status(404).json({ error: "Match not found" });
 
-  // Gather scoring data so we can (a) decide if a force is required and
-  // (b) delete deliveries in the correct FK order.
-  const innings = await db.select().from(inningsTable).where(eq(inningsTable.matchId, matchId));
-  const inningsIds = innings.map(i => i.id);
-
-  let deliveryIds: string[] = [];
-  if (inningsIds.length > 0) {
-    const deliveries = await db.select({ id: deliveriesTable.id }).from(deliveriesTable)
-      .where(inArray(deliveriesTable.inningsId, inningsIds));
-    deliveryIds = deliveries.map(d => d.id);
-  }
-
   const force = req.query.force === "1" || req.query.force === "true";
-  const hasScoringData = innings.length > 0 || deliveryIds.length > 0;
 
-  if (hasScoringData && !force) {
-    const lost: string[] = [];
-    if (innings.length > 0)    lost.push(`${innings.length} innings`);
-    if (deliveryIds.length > 0) lost.push(`${deliveryIds.length} scored deliveries`);
-    return void res.status(409).json({
-      error: `This match has score data. Deleting it will permanently remove ${lost.join(" and ")}. Retry with force to confirm.`,
-      requiresForce: true,
-      willLose: { innings: innings.length, deliveries: deliveryIds.length },
-    });
+  // Confirm-prompt precheck (read-only): when not forcing, describe what a
+  // force delete would destroy. The authoritative snapshot is re-taken
+  // INSIDE the transaction below, so rows appearing between this read and
+  // the delete cannot slip through.
+  if (!force) {
+    const innings = await db.select({ id: inningsTable.id }).from(inningsTable)
+      .where(eq(inningsTable.matchId, matchId));
+    let deliveryCount = 0;
+    if (innings.length > 0) {
+      const deliveries = await db.select({ id: deliveriesTable.id }).from(deliveriesTable)
+        .where(inArray(deliveriesTable.inningsId, innings.map(i => i.id)));
+      deliveryCount = deliveries.length;
+    }
+    if (innings.length > 0 || deliveryCount > 0) {
+      const lost: string[] = [];
+      if (innings.length > 0) lost.push(`${innings.length} innings`);
+      if (deliveryCount > 0)  lost.push(`${deliveryCount} scored deliveries`);
+      return void res.status(409).json({
+        error: `This match has score data. Deleting it will permanently remove ${lost.join(" and ")}. Retry with force to confirm.`,
+        requiresForce: true,
+        willLose: { innings: innings.length, deliveries: deliveryCount },
+      });
+    }
   }
 
   /* The production database has outlived several schema versions (the deploy
      schema push is best-effort), so tables UNKNOWN to this build may still
      hold rows pointing at this match — a plain delete then dies with an FK
      violation (500). A confirmed delete promises "the match and everything
-     attached goes", so: discover every FK that references matches/innings/
-     deliveries and clear those legacy rows first, inside one transaction. */
+     attached goes", so: discover every single-column FK referencing
+     matches(id)/innings(id)/deliveries(id) and clear those legacy rows first,
+     all inside one transaction. Discovery uses pg_constraint keyed by OIDs —
+     constraint NAMES are not unique across tables, so name-based
+     information_schema joins can cross-associate and target the wrong table. */
   const KNOWN_CHILDREN = new Set(["innings", "match_xi", "deliveries"]);
   try {
     await db.transaction(async (tx) => {
+      // Authoritative snapshot inside the transaction.
+      const inn = await tx.select({ id: inningsTable.id }).from(inningsTable)
+        .where(eq(inningsTable.matchId, matchId));
+      const inningsIds = inn.map(i => i.id);
+      let deliveryIds: string[] = [];
+      if (inningsIds.length > 0) {
+        const del = await tx.select({ id: deliveriesTable.id }).from(deliveriesTable)
+          .where(inArray(deliveriesTable.inningsId, inningsIds));
+        deliveryIds = del.map(d => d.id);
+      }
+      // Scoring rows appeared between the precheck and this transaction —
+      // the admin's earlier confirmation does not cover them.
+      if (!force && (inningsIds.length > 0 || deliveryIds.length > 0)) {
+        throw Object.assign(new Error("scoring data appeared mid-delete"), { scoringDataAppeared: true });
+      }
+
       const fkRows = await tx.execute(sql`
-        SELECT kcu.table_name  AS child_table,
-               kcu.column_name AS child_column,
-               ccu.table_name  AS parent_table
-        FROM information_schema.table_constraints tc
-        JOIN information_schema.key_column_usage kcu
-          ON kcu.constraint_name = tc.constraint_name AND kcu.table_schema = tc.table_schema
-        JOIN information_schema.constraint_column_usage ccu
-          ON ccu.constraint_name = tc.constraint_name AND ccu.table_schema = tc.table_schema
-        WHERE tc.constraint_type = 'FOREIGN KEY'
-          AND tc.table_schema = 'public'
-          AND ccu.table_name IN ('matches', 'innings', 'deliveries')
-          AND ccu.column_name = 'id'
+        SELECT child_ns.nspname AS child_schema,
+               child.relname    AS child_table,
+               att.attname      AS child_column,
+               parent.relname   AS parent_table
+        FROM pg_constraint con
+        JOIN pg_class child         ON child.oid     = con.conrelid
+        JOIN pg_namespace child_ns  ON child_ns.oid  = child.relnamespace
+        JOIN pg_class parent        ON parent.oid    = con.confrelid
+        JOIN pg_namespace parent_ns ON parent_ns.oid = parent.relnamespace
+        JOIN pg_attribute att       ON att.attrelid  = con.conrelid AND att.attnum = con.conkey[1]
+        WHERE con.contype = 'f'
+          AND cardinality(con.conkey) = 1
+          AND parent_ns.nspname = 'public'
+          AND child_ns.nspname  = 'public'
+          AND parent.relname IN ('matches', 'innings', 'deliveries')
+          AND (SELECT a.attname FROM pg_attribute a
+               WHERE a.attrelid = con.confrelid AND a.attnum = con.confkey[1]) = 'id'
       `);
-      for (const fk of fkRows.rows as Array<{ child_table: string; child_column: string; parent_table: string }>) {
+      for (const fk of fkRows.rows as Array<{ child_schema: string; child_table: string; child_column: string; parent_table: string }>) {
         if (KNOWN_CHILDREN.has(fk.child_table)) continue;
         const parentIds =
           fk.parent_table === "matches"  ? [matchId] :
@@ -391,7 +416,7 @@ router.delete("/admin/matches/:id", requireAdmin, async (req, res) => {
         req.log.warn({ legacyTable: fk.child_table, column: fk.child_column, matchId },
           "match delete: clearing rows from legacy child table");
         await tx.execute(sql`
-          DELETE FROM ${sql.identifier(fk.child_table)}
+          DELETE FROM ${sql.identifier(fk.child_schema)}.${sql.identifier(fk.child_table)}
           WHERE ${sql.identifier(fk.child_column)} IN (${sql.join(parentIds.map(id => sql`${id}`), sql`, `)})
         `);
       }
@@ -403,6 +428,12 @@ router.delete("/admin/matches/:id", requireAdmin, async (req, res) => {
       await tx.delete(matchesTable).where(eq(matchesTable.id, matchId));
     });
   } catch (err) {
+    if ((err as { scoringDataAppeared?: boolean } | null)?.scoringDataAppeared) {
+      return void res.status(409).json({
+        error: "Score data was just recorded for this match. Refresh and retry with force to confirm deleting it too.",
+        requiresForce: true,
+      });
+    }
     const pg = pgCauseOf(err);
     if (pg?.code === "23503") {
       // Still blocked (e.g. a grandchild of a legacy table) — say WHICH table

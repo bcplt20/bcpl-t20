@@ -85,13 +85,15 @@ app.use(seoHtmlMiddleware);
 // Express 5 forwards async route rejections here. Without this, the default
 // handler answers an opaque HTML "Internal Server Error" and — crucially —
 // never logs the pg error hidden in Drizzle's .cause chain.
-app.use((err: unknown, req: express.Request, res: express.Response, _next: express.NextFunction) => {
+app.use((err: unknown, req: express.Request, res: express.Response, next: express.NextFunction) => {
   const pg = pgCauseOf(err);
   logger.error(
     { err, pgCode: pg?.code, pgTable: pg?.table, pgConstraint: pg?.constraint, pgDetail: pg?.detail, url: req.originalUrl, method: req.method },
     "unhandled route error",
   );
-  if (res.headersSent) return;
+  // Mid-stream failure: headers already went out — let Express's default
+  // finalizer close the connection correctly instead of writing again.
+  if (res.headersSent) return void next(err);
   res.status(500).json({ error: "Internal server error" });
 });
 
