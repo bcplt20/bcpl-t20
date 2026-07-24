@@ -39,6 +39,7 @@ export interface MediaFolder {
   id: string;
   name: string;
   kind: "photo" | "video" | "mixed";
+  isPublic: boolean;
   createdAt: string;
   fileCount: number;
   totalBytes: number;
@@ -152,6 +153,9 @@ export const createMediaFolder = (name: string, kind: MediaFolder["kind"]) =>
 
 export const deleteMediaFolder = (id: string) =>
   adminReq<{ success: boolean; deletedFiles: number }>("DELETE", `/admin-tools/media/folders/${id}`);
+
+export const setMediaFolderPublic = (id: string, isPublic: boolean) =>
+  adminReq<{ success: boolean; folder: MediaFolder }>("PATCH", `/admin-tools/media/folders/${id}`, { isPublic });
 
 export const listMediaFiles = (folderId: string) =>
   adminReq<{ files: MediaFile[] }>("GET", `/admin-tools/media/folders/${folderId}/files`);

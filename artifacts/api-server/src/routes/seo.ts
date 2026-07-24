@@ -24,11 +24,13 @@ import type { Request, Response, NextFunction } from "express";
 import fs from "node:fs";
 import path from "node:path";
 import { db } from "@workspace/db";
-import { siteSettingsTable, teamsTable } from "@workspace/db/schema";
-import { eq } from "drizzle-orm";
+import { siteSettingsTable, teamsTable, matchesTable } from "@workspace/db/schema";
+import type { Match } from "@workspace/db/schema";
+import { eq, and, asc, ne } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { logger } from "../lib/logger";
 import { z } from "zod";
+import { organizationLd, faqPageLd, sportsEventLd, renderJsonLd } from "../lib/jsonLd";
 
 const router = Router();
 
@@ -304,7 +306,12 @@ function escAttr(s: string): string {
 }
 
 /** Replace or leave alone — all replacements use functions so "$" in values is safe. */
-function injectMeta(html: string, meta: { title: string; description: string; ogImage: string; url: string } | null, gscCode: string | null): string {
+function injectMeta(
+  html: string,
+  meta: { title: string; description: string; ogImage: string; url: string } | null,
+  gscCode: string | null,
+  jsonLd: string = "",
+): string {
   let out = html;
   if (meta) {
     const title = escAttr(meta.title);
@@ -325,7 +332,41 @@ function injectMeta(html: string, meta: { title: string; description: string; og
   if (gscCode) {
     out = out.replace(/<\/head>/i, () => `  <meta name="google-site-verification" content="${escAttr(gscCode)}" />\n  </head>`);
   }
+  if (jsonLd) {
+    // Inject before </head>. renderJsonLd already HTML-escapes "<" so the
+    // blob cannot terminate its own <script> element.
+    out = out.replace(/<\/head>/i, () => `  ${jsonLd}\n  </head>`);
+  }
   return out;
+}
+
+/* ─── Structured data (JSON-LD) per path ────────────────────────────────────
+   Organization is site-wide; FAQPage only on /faq; SportsEvent on the match
+   listing pages, built from real upcoming/recent rows in the matches table. */
+async function buildJsonLd(reqPath: string): Promise<string> {
+  const objects: Array<Record<string, unknown>> = [organizationLd(SITE_ORIGIN)];
+
+  if (reqPath === "/faq") {
+    objects.push(faqPageLd(SITE_ORIGIN));
+  }
+
+  if (reqPath === "/match-center" || reqPath === "/schedule") {
+    try {
+      const matches: Match[] = await db
+        .select()
+        .from(matchesTable)
+        .where(and(eq(matchesTable.season, 5), ne(matchesTable.status, "abandoned")))
+        .orderBy(asc(matchesTable.matchNo))
+        .limit(20);
+      for (const m of matches) {
+        objects.push(sportsEventLd(m, SITE_ORIGIN));
+      }
+    } catch (e) {
+      logger.warn({ err: e }, "seo: could not load matches for SportsEvent JSON-LD");
+    }
+  }
+
+  return renderJsonLd(objects);
 }
 
 export async function seoHtmlMiddleware(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -346,9 +387,12 @@ export async function seoHtmlMiddleware(req: Request, res: Response, next: NextF
           return { title: m.title, description: m.description, ogImage: m.ogImage, url: `${SITE_ORIGIN}${def.path === "/" ? "" : def.path}` || SITE_ORIGIN };
         })()
       : null; // unknown paths (SPA 404, /r/CODE, player flow) keep the built-in defaults
+    // Organization JSON-LD is site-wide; FAQPage/SportsEvent are added per
+    // path. Unknown paths still get Organization so the knowledge panel works.
+    const jsonLd = await buildJsonLd(reqPath);
     res.set("Content-Type", "text/html; charset=utf-8");
     res.set("Cache-Control", "no-cache"); // meta edits must show up quickly
-    res.send(injectMeta(html, meta, data.gscCode));
+    res.send(injectMeta(html, meta, data.gscCode, jsonLd));
   } catch (e) {
     logger.error({ err: e }, "seo html injection failed — serving untouched template");
     res.set("Content-Type", "text/html; charset=utf-8");

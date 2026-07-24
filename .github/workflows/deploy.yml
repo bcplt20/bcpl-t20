@@ -1,0 +1,42 @@
+name: Deploy to bcplt20.com
+
+# Jab bhi `main` branch par naya code push/merge hota hai, ye workflow
+# EC2 server me SSH karke site ko apne aap update kar deta hai.
+# Owner ko SSH karne ki zaroorat nahi — bas GitHub par merge karo.
+on:
+  push:
+    branches:
+      - main
+  # Manually bhi chala sakte ho (Actions tab → Run workflow) —
+  # rollback ya dobara deploy ke liye kaam aata hai.
+  workflow_dispatch:
+
+# Ek waqt me sirf ek hi deploy chale — agar do push jaldi-jaldi aaye
+# to purana deploy cancel karke naya chalega (overlap nahi hoga).
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: SSH into EC2 and deploy
+    runs-on: ubuntu-latest
+    # Poore deploy ke liye zyada se zyada 20 minute — is se zyada
+    # lage to fail kar do (kabhi build ya pm2 atak jaye to).
+    timeout-minutes: 20
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          # SSH command timeout (safety) — 18 min.
+          command_timeout: 18m
+          script: |
+            set -e
+            cd /home/ubuntu/app
+            echo "⬇️  Naya code laa rahe hain (GitHub se)..."
+            git pull --ff-only
+            echo "🚀  Deploy chala rahe hain (CI mode)..."
+            bash deploy/deploy.sh --ci

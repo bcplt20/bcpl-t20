@@ -61,4 +61,5 @@ export const WA = {
   PHASE1_REJECTED:   "bcpl_phase1_rejected",     // {{1}}=name
   PHASE2_RECEIPT:    "bcpl_phase2_receipt",      // {{1}}=name {{2}}=amount
   KYC_COMPLETE:      "bcpl_kyc_complete",        // {{1}}=name {{2}}=city
+  KYC_REJECTED:      "bcpl_kyc_rejected",         // {{1}}=name
 };

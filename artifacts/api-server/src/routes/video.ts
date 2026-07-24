@@ -11,6 +11,7 @@ import { getPhase1Config, getPhase1Instructions, type Phase1Instructions } from 
 import { sendEmail, tplVideoSubmitted, tplVideoReminder } from "../lib/email";
 import { sendSms } from "../lib/sms";
 import { sendWhatsApp, WA } from "../lib/whatsapp";
+import { logNotifications } from "../lib/notify";
 import { logger } from "../lib/logger";
 import { normalizeRole, ROLE_LABELS } from "../lib/phase1Roles";
 import { z } from "zod";
@@ -234,16 +235,16 @@ router.post("/confirm", requireAuth, async (req: AuthRequest, res) => {
     const [user] = await db.select().from(usersTable).where(eq(usersTable.id, req.user!.userId)).limit(1);
     if (user) {
       const email = tplVideoSubmitted(user.name);
-      Promise.allSettled([
-        sendEmail({ to: user.email, toName: user.name, ...email }),
-        sendSms(user.phone, "BCPL T20: Your trial video has been received! It will now go through BCPL's Phase 1 evaluation. We'll notify you when your result is ready. -BCPL T20"),
-        sendWhatsApp({ phone: user.phone, templateName: WA.VIDEO_SUBMITTED, bodyValues: [user.name] }),
-        db.insert(notificationLogsTable).values([
-          { userId: user.id, type: "email",    template: "video_submitted", dedupeKey: "p1_video_submitted_email_" + registrationId },
-          { userId: user.id, type: "sms",      template: "video_submitted", dedupeKey: "p1_video_submitted_sms_" + registrationId },
-          { userId: user.id, type: "whatsapp", template: "video_submitted", dedupeKey: "p1_video_submitted_wa_" + registrationId },
-        ]).onConflictDoNothing(),
-      ]);
+      // Record the REAL outcome of every channel (sent | failed | skipped +
+      // provider error) — never a blind "sent" default row.
+      void (async () => {
+        const [em, sm, wa] = await Promise.all([
+          sendEmail({ to: user.email, toName: user.name, ...email }),
+          sendSms(user.phone, "BCPL T20: Your trial video has been received! It will now go through BCPL's Phase 1 evaluation. We'll notify you when your result is ready. -BCPL T20", { smsType: "video_submitted", smsFlowVars: [user.name] }),
+          sendWhatsApp({ phone: user.phone, templateName: WA.VIDEO_SUBMITTED, bodyValues: [user.name] }),
+        ]);
+        await logNotifications(user.id, "video_submitted", { email: em, sms: sm, whatsapp: wa });
+      })().catch((e) => console.error("[VIDEO] video_submitted notify error", e));
     }
   }
 
@@ -377,11 +378,15 @@ export async function sendVideoReminders(opts?: { dryRun?: boolean }): Promise<n
     const smsText = isMid
       ? "BCPL T20: Only " + daysLeft + " days left to upload your trial video! Login at bcplt20.com to upload. -BCPL T20"
       : "BCPL T20 URGENT: Only 1 day left! Upload your trial video NOW before your window closes. bcplt20.com -BCPL T20";
-    await Promise.allSettled([
+    // The reserve-first row above (email/video_reminder_dN) is the dedupe
+    // authority; here we record the REAL per-channel outcome so a failed
+    // reminder is never mislabelled as sent in the logs.
+    const [em, sm, wa] = await Promise.all([
       sendEmail({ to: user.email, toName: user.name, ...email }),
-      sendSms(user.phone, smsText),
+      sendSms(user.phone, smsText, { smsType: "video_reminder", smsFlowVars: [user.name, daysLeft.toString()] }),
       sendWhatsApp({ phone: user.phone, templateName: WA.VIDEO_REMINDER, bodyValues: [user.name, daysLeft.toString()] }),
     ]);
+    await logNotifications(user.id, "video_reminder_d" + daysLeft, { email: em, sms: sm, whatsapp: wa });
     logger.info({ registrationId: reg.id, daysLeft }, "phase1 video reminder sent");
     sent++;
   }

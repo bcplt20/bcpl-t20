@@ -180,6 +180,112 @@ export async function listOrderPayments(orderId: string): Promise<CashfreePaymen
   } catch (e) { console.error("[CF] listOrderPayments error", e); return null; }
 }
 
+/**
+ * A Cashfree settlement record (element of POST /pg/settlements).
+ * Only the fields we surface are typed; the API returns many more.
+ */
+export interface CashfreeSettlement {
+  settlement_id?: number | string;
+  cf_settlement_id?: number | string;
+  amount_settled?: number;   // net paid into the bank account (₹)
+  payment_amount?: number;   // gross captured for this settlement (₹)
+  settled?: number;          // some API versions use `settled`
+  service_charge?: number;   // Cashfree gateway fee (₹, pre-GST)
+  service_tax?: number;      // GST on the gateway fee (₹)
+  adjustment?: number;
+  status?: string;
+  event_time?: string;
+  settlement_date?: string;
+  utr?: string;
+}
+
+/** Aggregated settlement/fee view returned to the admin finance screen. */
+export interface SettlementSummary {
+  configured: boolean;         // false ⇒ dev/stub, no real creds
+  count: number;               // settlements considered
+  grossSettled: number;        // sum of gross captured (₹)
+  netSettled: number;          // sum of amount_settled (₹)
+  serviceCharge: number;       // sum of Cashfree gateway fee (₹)
+  serviceTax: number;          // sum of GST on the gateway fee (₹)
+  effectiveFeeRate: number;    // (serviceCharge + serviceTax) / grossSettled
+  from: string | null;
+  to: string | null;
+  fetchedAt: string;
+}
+
+const num = (v: unknown): number => {
+  const n = typeof v === "number" ? v : Number(v);
+  return Number.isFinite(n) ? n : 0;
+};
+
+/**
+ * Fetch settlement records from the Cashfree Recon / Settlements API and
+ * aggregate the real gateway fees.
+ *
+ * Returns { configured:false } when creds are missing (dev/stub) so the caller
+ * can fall back to the labelled 2% estimate without ever hitting the network.
+ * The Settlements API is only reachable from whitelisted PROD IPs, so on any
+ * network/auth failure we return null (caller keeps its last cached value).
+ */
+export async function fetchSettlementSummary(opts?: { from?: string; to?: string }): Promise<SettlementSummary | null> {
+  const fetchedAt = new Date().toISOString();
+  if (!APP_ID || !SECRET) {
+    return {
+      configured: false, count: 0, grossSettled: 0, netSettled: 0,
+      serviceCharge: 0, serviceTax: 0, effectiveFeeRate: 0,
+      from: opts?.from ?? null, to: opts?.to ?? null, fetchedAt,
+    };
+  }
+  try {
+    // Recon endpoint: POST /pg/settlements with an optional date filter.
+    const filters: Record<string, unknown> = {};
+    if (opts?.from && opts?.to) {
+      filters.start_date = opts.from;
+      filters.end_date = opts.to;
+    }
+    const res = await fetch(`${BASE_URL}/settlements`, {
+      method: "POST",
+      headers: cfHeaders(),
+      body: JSON.stringify({
+        filters,
+        pagination: { limit: 1000 },
+      }),
+    });
+    if (!res.ok) {
+      console.error("[CF] fetchSettlementSummary failed:", res.status, await res.text().catch(() => ""));
+      return null;
+    }
+    const body = (await res.json()) as { data?: CashfreeSettlement[] } | CashfreeSettlement[];
+    const rows: CashfreeSettlement[] = Array.isArray(body) ? body : (body.data ?? []);
+
+    let grossSettled = 0, netSettled = 0, serviceCharge = 0, serviceTax = 0;
+    for (const r of rows) {
+      grossSettled  += num(r.payment_amount);
+      netSettled    += num(r.amount_settled ?? r.settled);
+      serviceCharge += num(r.service_charge);
+      serviceTax    += num(r.service_tax);
+    }
+    const totalFee = serviceCharge + serviceTax;
+    const effectiveFeeRate = grossSettled > 0 ? totalFee / grossSettled : 0;
+
+    return {
+      configured: true,
+      count: rows.length,
+      grossSettled: Math.round(grossSettled * 100) / 100,
+      netSettled: Math.round(netSettled * 100) / 100,
+      serviceCharge: Math.round(serviceCharge * 100) / 100,
+      serviceTax: Math.round(serviceTax * 100) / 100,
+      effectiveFeeRate: Math.round(effectiveFeeRate * 1e6) / 1e6,
+      from: opts?.from ?? null,
+      to: opts?.to ?? null,
+      fetchedAt,
+    };
+  } catch (e) {
+    console.error("[CF] fetchSettlementSummary error", e);
+    return null;
+  }
+}
+
 // ─── Cashfree Verification Suite (separate credentials) ───────────────────────
 const VERIFY_APP_ID = process.env.CF_VERIFY_APP_ID;
 const VERIFY_SECRET = process.env.CF_VERIFY_SECRET;
@@ -279,13 +385,15 @@ export async function initiateAadhaarOtp(aadhaarNumber: string): Promise<{
     });
     const data = await res.json() as any;
     if (!res.ok) {
-      console.error("[CF] initiateAadhaarOtp failed:", { http: res.status, code: data?.code, type: data?.type, message: data?.message, status: data?.status });
+      // Redacted: scalar status/error fields only — never the raw response,
+      // which carries Aadhaar PII (name, DOB, address, photo, digits).
+      console.error("[CF] initiateAadhaarOtp failed:", { http: res.status, status: data?.status, code: data?.code, sub_code: data?.sub_code, type: data?.type, message: data?.message });
       return null;
     }
     // Docs: 200 → { status: "SUCCESS", message: "OTP sent successfully", ref_id: 21637861 }
     const refId = data.ref_id ?? data.reference_id;
     if (refId === undefined || refId === null) {
-      console.error("[CF] initiateAadhaarOtp: no ref_id in response", { status: data?.status, message: data?.message });
+      console.error("[CF] initiateAadhaarOtp: no ref_id in response", { status: data?.status, code: data?.code, sub_code: data?.sub_code, message: data?.message });
       return null;
     }
     return { referenceId: String(refId) };
@@ -312,8 +420,9 @@ export async function verifyAadhaarOtp(referenceId: string, otp: string): Promis
     });
     const data = await res.json() as any;
     if (!res.ok) {
-      // Redacted: scalar error fields only — never name/dob/address/photo
-      console.error("[CF] verifyAadhaarOtp failed:", { http: res.status, code: data?.code, type: data?.type, message: data?.message });
+      // Redacted: scalar status/error fields only — never name/dob/address/photo
+      // or any echo of the Aadhaar number.
+      console.error("[CF] verifyAadhaarOtp failed:", { http: res.status, status: data?.status, code: data?.code, sub_code: data?.sub_code, type: data?.type, message: data?.message });
       // A wrong/expired OTP comes back as an error response — that is the
       // player's problem to retry, not a vendor outage.
       const errText = `${data?.message ?? ""} ${data?.code ?? ""}`.toLowerCase();

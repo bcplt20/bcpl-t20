@@ -2,6 +2,7 @@ import { useEffect, lazy, Suspense } from 'react';
 import { Route, Switch, Router as WouterRouter, useLocation } from 'wouter';
 import { LoginModal } from './components/LoginModal';
 import { SiteMeta } from './components/SiteMeta';
+import { SiteJsonLd } from './components/SiteJsonLd';
 import { LangProvider } from './lib/i18n';
 
 // All BCPL pages
@@ -75,6 +76,7 @@ function Router() {
     <>
       <ScrollToTop />
       <SiteMeta />
+      <SiteJsonLd />
       <Switch>
         {/* Main pages */}
         <Route path="/"            component={Home} />

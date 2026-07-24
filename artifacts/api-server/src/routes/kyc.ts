@@ -3,15 +3,16 @@ import crypto from "node:crypto";
 import { db } from "@workspace/db";
 import {
   registrationsTable, kycRecordsTable,
-  usersTable, notificationLogsTable,
+  usersTable,
   playerProfilesTable,
 } from "@workspace/db/schema";
 import { eq, and, desc, sql } from "drizzle-orm";
 import { requireAuth, type AuthRequest } from "../middlewares/auth";
 import { verifyPan, initiateAadhaarOtp, verifyAadhaarOtp } from "../lib/cashfree";
-import { sendEmail, tplKycComplete, adminAlertRecipient, tplKycManualReview } from "../lib/email";
+import { sendEmail, tplKycComplete, tplKycRejected, adminAlertRecipient, tplKycManualReview } from "../lib/email";
 import { sendSms } from "../lib/sms";
 import { sendWhatsApp, WA } from "../lib/whatsapp";
+import { logNotifications } from "../lib/notify";
 import { z } from "zod";
 
 const router = Router();
@@ -83,17 +84,40 @@ export async function markKycVerified(kycId: string, registrationId: string, use
   const [reg]  = await db.select().from(registrationsTable).where(eq(registrationsTable.id, registrationId)).limit(1);
   if (user && reg) {
     const email = tplKycComplete(user.name, reg.trialCity ?? "TBD");
-    Promise.allSettled([
-      sendEmail({ to: user.email, toName: user.name, ...email }),
-      sendSms(user.phone, `BCPL T20: KYC verified! Trial city: ${reg.trialCity ?? "TBD"}. We will notify you when trial venue is announced. -BCPL T20`),
-      sendWhatsApp({ phone: user.phone, templateName: WA.KYC_COMPLETE, bodyValues: [user.name, reg.trialCity ?? "TBD"] }),
-      db.insert(notificationLogsTable).values([
-        { userId: user.id, type: "email",    template: "kyc_complete" },
-        { userId: user.id, type: "sms",      template: "kyc_complete" },
-        { userId: user.id, type: "whatsapp", template: "kyc_complete" },
-      ]),
-    ]);
+    // Record the REAL outcome of every channel (sent | failed | skipped +
+    // provider error) in notification_logs — never a blind "sent" default.
+    void (async () => {
+      const [em, sm, wa] = await Promise.all([
+        sendEmail({ to: user.email, toName: user.name, ...email }),
+        sendSms(user.phone, `BCPL T20: KYC verified! Trial city: ${reg.trialCity ?? "TBD"}. We will notify you when trial venue is announced. -BCPL T20`, { smsType: "kyc_complete", smsFlowVars: [reg.trialCity ?? "TBD"] }),
+        sendWhatsApp({ phone: user.phone, templateName: WA.KYC_COMPLETE, bodyValues: [user.name, reg.trialCity ?? "TBD"] }),
+      ]);
+      await logNotifications(user.id, "kyc_complete", { email: em, sms: sm, whatsapp: wa });
+    })().catch((e) => console.error("[KYC] kyc_complete notify error", e));
   }
+}
+
+// ─── Notify player: KYC rejected / needs re-submission ───────────────────────
+// Single notifying code path for BOTH admin entry points (Users view action and
+// Phase 2 · KYC view) — both call PUT /api/admin/kyc/:id/status which invokes
+// this. Records the REAL outcome of every channel in notification_logs, gated
+// exactly-once per rejection via the outbox dedupe key, and reuses the shared
+// send helpers (so failed sends auto-queue for durable retry).
+export async function notifyKycRejected(registrationId: string, userId: string, reason?: string) {
+  const [user] = await db.select().from(usersTable).where(eq(usersTable.id, userId)).limit(1);
+  if (!user) {
+    console.error("[KYC] rejection notify skipped — user not found", { registrationId, userId });
+    return;
+  }
+  const email = tplKycRejected(user.name, reason);
+  const dedupe = "kyc_rejected_" + registrationId;
+  const smsMsg = "BCPL T20: Your KYC could not be verified and needs re-submission. Please login at bcplt20.com and re-submit your KYC details. -BCPL T20";
+  const [em, sm, wa] = await Promise.all([
+    sendEmail({ to: user.email, toName: user.name, ...email }, { outboxMeta: { userId, template: "kyc_rejected", dedupeKey: dedupe + "_email" } }),
+    sendSms(user.phone, smsMsg, { smsType: "kyc_rejected", smsFlowVars: [user.name], outboxMeta: { userId, template: "kyc_rejected", dedupeKey: dedupe + "_sms" } }),
+    sendWhatsApp({ phone: user.phone, templateName: WA.KYC_REJECTED, bodyValues: [user.name] }),
+  ]);
+  await logNotifications(userId, "kyc_rejected", { email: em, sms: sm, whatsapp: wa });
 }
 
 // ─── Admin alert: KYC parked for manual review ───────────────────────────────
@@ -144,25 +168,38 @@ async function alertAdminKycManualReview(p: {
 // Verifies PAN instantly + initiates Aadhaar OTP.
 // Also stores employment + emergency-contact details (moved here from the
 // pre-payment form so players pay first, then fill the rest).
-router.post("/initiate", requireAuth, async (req: AuthRequest, res) => {
-  const schema = z.object({
+// Exported for unit tests (Task #33): the required-field carve-out lives in the
+// schema shape, so it can be validated without spinning up the full route.
+export const kycInitiateSchema = z.object({
     registrationId: z.string().uuid(),
     profession:     z.enum(PROFESSIONS),
     aadhaarNumber:  z.string().regex(/^\d{12}$/, "Aadhaar must be 12 digits"),
     panNumber:      z.string().regex(/^[A-Z]{5}\d{4}[A-Z]$/, "Invalid PAN format"),
-    // Employment + emergency contact — optional so older clients that don't
-    // send them keep working; the new KYC form always sends them.
+    // Employment fields remain optional (not every player has all of them).
     company:           z.string().trim().max(150).optional(),
     jobTitle:          z.string().trim().max(150).optional(),
     experience:        z.string().trim().max(20).optional(),
     linkedin:          z.string().trim().max(200).optional(),
-    tshirtSize:        z.enum(["S", "M", "L", "XL", "XXL"]).optional(),
-    emergencyName:     z.string().trim().max(100).optional(),
+    // Task #33: T-shirt size + emergency contact are now REQUIRED — the current
+    // KYC form always sends them. A player still on an OLD cached KYC page
+    // (loaded before this deploy) submits without them and gets a clear 400
+    // telling them to refresh; their earlier progress is never lost because the
+    // KYC page resumes from saved state. Backfilling players who completed KYC
+    // BEFORE this change is handled separately (Task #32), not here.
+    tshirtSize:        z.enum(["S", "M", "L", "XL", "XXL"], {
+      errorMap: () => ({ message: "Please select your T-shirt size. If this field is missing, refresh the KYC page and try again." }),
+    }),
+    emergencyName:     z.string({ required_error: "Emergency contact name is required. If this field is missing, refresh the KYC page and try again." })
+                        .trim().min(1, "Emergency contact name is required. If this field is missing, refresh the KYC page and try again.").max(100),
     emergencyRelation: z.string().trim().max(30).optional(),
-    emergencyPhone:    z.string().trim().regex(/^\d{10}$/, "Emergency contact number must be 10 digits").optional(),
+    emergencyPhone:    z.string({ required_error: "A valid 10-digit emergency contact number is required. If this field is missing, refresh the KYC page and try again." })
+                        .trim().regex(/^\d{10}$/, "A valid 10-digit emergency contact number is required. If this field is missing, refresh the KYC page and try again."),
+    // Blood group STAYS optional.
     bloodGroup:        z.enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]).optional(),
-  });
-  const parsed = schema.safeParse(req.body);
+});
+
+router.post("/initiate", requireAuth, async (req: AuthRequest, res) => {
+  const parsed = kycInitiateSchema.safeParse(req.body);
   if (!parsed.success) {
     return void res.status(400).json({ error: parsed.error.issues[0].message });
   }

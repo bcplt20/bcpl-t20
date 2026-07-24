@@ -282,7 +282,7 @@ export function tplPhase1Selected(name: string) {
 }
 
 // ── Template 8: Phase 2 Payment Confirmed ─────────────────────────────────────
-export function tplPhase2Receipt(name: string, amount: number) {
+export function tplPhase2Receipt(name: string, amount: number, regNo?: string) {
   return {
     subject: "🏟️ BCPL T20 — Phase 2 Payment Confirmed!",
     htmlContent: wrap(`
@@ -291,6 +291,9 @@ export function tplPhase2Receipt(name: string, amount: number) {
         <p style="color:rgba(255,255,255,0.7);margin:0 0 8px;font-size:14px;">Dear <strong>${name}</strong>, your Phase 2 payment of <strong style="color:#22C55E;">₹${amount}</strong> has been received.</p>
         <p style="color:rgba(255,255,255,0.5);margin:0;font-size:13px;">Please complete your KYC to confirm your trial slot. Trial venue and date will be announced soon.</p>
       </div>
+      ${regNo ? `<table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
+        <tr><td style="padding:11px;border-bottom:1px solid rgba(255,255,255,0.07);color:rgba(255,255,255,0.5);font-size:13px;">Player ID</td><td style="padding:11px;border-bottom:1px solid rgba(255,255,255,0.07);color:#fff;font-weight:bold;font-family:monospace;font-size:13px;">${regNo}</td></tr>
+      </table>` : ""}
       <div style="background:rgba(232,178,61,0.05);border:1px solid rgba(232,178,61,0.15);border-radius:12px;padding:18px;margin-bottom:16px;">
         <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:12px;letter-spacing:1px;text-transform:uppercase;">Next Steps</div>
         <div style="font-size:13px;color:rgba(255,255,255,0.6);line-height:2;">1️⃣ Complete KYC — Aadhaar + PAN verification<br/>2️⃣ Trial venue &amp; date announcement का इंतजार करें<br/>3️⃣ Physical trial में attend करें<br/>4️⃣ Franchise auction में draft होने का मौका</div>
@@ -367,6 +370,28 @@ export function tplKycComplete(name: string, city: string) {
         </div>
       </div>
       ${btn("CHECK MY STATUS →", `${SITE_URL}/register/result`)}`),
+  };
+}
+
+// ── Template 10b: KYC Rejected — resubmission guidance ───────────────────────
+export function tplKycRejected(name: string, reason?: string) {
+  const reasonBlock = reason
+    ? `<p style="color:rgba(255,255,255,0.7);margin:0;font-size:13px;background:rgba(255,255,255,0.04);border-radius:8px;padding:10px 12px;">Reason: ${reason}</p>`
+    : "";
+  return {
+    subject: "⚠️ BCPL T20 — Action Needed: Your KYC Could Not Be Verified",
+    htmlContent: wrap(`
+      <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);border-radius:12px;padding:24px;margin-bottom:20px;">
+        <h2 style="color:#EF4444;margin:0 0 8px;font-size:20px;">⚠️ KYC Not Verified</h2>
+        <p style="color:rgba(255,255,255,0.7);margin:0 0 8px;font-size:14px;">Dear <strong>${name}</strong>, we were unable to verify your KYC and it has been marked for re-submission.</p>
+        ${reasonBlock}
+      </div>
+      <div style="background:rgba(255,255,255,0.03);border-radius:12px;padding:18px;margin-bottom:16px;">
+        <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:12px;letter-spacing:1px;text-transform:uppercase;">How to Fix This</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.6);line-height:2;">1️⃣ Login at bcplt20.com with your registered phone number<br/>2️⃣ Open the KYC section and re-submit your details<br/>3️⃣ Enter the exact PAN + Aadhaar as printed on your documents<br/>4️⃣ Make sure your emergency contact &amp; T-shirt size are filled</div>
+      </div>
+      <p style="color:rgba(255,255,255,0.5);font-size:13px;margin:0 0 16px;line-height:1.8;">Your Phase 2 payment is safe — you only need to complete KYC again. If you need help, reply to this email or contact our support team.</p>
+      <div style="text-align:center;">${btn("RE-SUBMIT KYC →", `${SITE_URL}/register/phase2`, "#EF4444")}</div>`),
   };
 }
 

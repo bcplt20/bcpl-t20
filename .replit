@@ -24,6 +24,10 @@ args = "typecheck"
 task = "workflow.run"
 args = "api-tests"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "web-typecheck"
+
 [[workflows.workflow]]
 name = "typecheck"
 author = "agent"
@@ -42,6 +46,17 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd artifacts/api-server && pnpm exec vitest run"
+
+[workflows.workflow.metadata]
+isValidation = true
+
+[[workflows.workflow]]
+name = "web-typecheck"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd artifacts/bcpl-website && pnpm exec tsc --noEmit"
 
 [workflows.workflow.metadata]
 isValidation = true

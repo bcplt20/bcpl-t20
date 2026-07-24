@@ -13,6 +13,7 @@ import scoringRouter  from "./scoring";
 import pointsRouter   from "./points";
 import settingsRouter from "./settings";
 import sponsorsRouter from "./sponsors";
+import galleryRouter  from "./gallery";
 import feesRouter     from "./fees";
 import adminRouter    from "./admin";
 import { adminTrialsRouter, userTrialsRouter } from "./trials";
@@ -47,6 +48,7 @@ router.use("/scoring",       scoringRouter);
 router.use("/points-table",  pointsRouter);
 router.use("/teams",         teamsRouter);
 router.use("/sponsors",      sponsorsRouter); // public sanitized sponsor list
+router.use("/gallery",       galleryRouter);  // public match photos/videos (admin-opted folders)
 router.use("/fees",          feesRouter);     // public fee configuration
 router.use("/settings",      settingsRouter);
 // Admin panel

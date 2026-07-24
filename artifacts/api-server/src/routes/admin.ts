@@ -36,7 +36,7 @@ import { requireAdmin, requireRole, trialCityScope } from "../middlewares/adminA
 import { adminUsersTable } from "@workspace/db/schema";
 import { verifyPassword, signAdminToken, publicAdmin, permissionsForRole } from "./adminUsers";
 import { writeAudit } from "../lib/audit";
-import { markKycVerified } from "./kyc";
+import { markKycVerified, notifyKycRejected } from "./kyc";
 import { sendEmail, adminAlertRecipient, tplPhase1ResultReady, tplTrialVenueAnnounced, tplInvoice, tplAdminLoginLockdown } from "../lib/email";
 import { sendSms, adminAlertPhone } from "../lib/sms";
 import { logNotifications } from "../lib/notify";
@@ -400,12 +400,20 @@ router.put("/registrations/:id/phase1-status", async (req, res) => {
         return;
       }
     }
+    const [before] = await db.select({ phase1Status: registrationsTable.phase1Status })
+      .from(registrationsTable).where(eq(registrationsTable.id, String(id))).limit(1);
     const [updated] = await db
       .update(registrationsTable)
       .set({ phase1Status: status, updatedAt: new Date() })
       .where(eq(registrationsTable.id, id))
       .returning();
     if (!updated) { res.status(404).json({ error: "Registration not found" }); return; }
+
+    void writeAudit(req, {
+      action: "registration.phase1_status", entity: "registrations", entityKey: String(id),
+      oldValue: { phase1Status: before?.phase1Status ?? null },
+      newValue: { phase1Status: status },
+    });
 
     // Fire-and-forget: send email + SMS on select / reject
     if (status === "selected" || status === "rejected") {
@@ -430,7 +438,7 @@ router.put("/registrations/:id/phase1-status", async (req, res) => {
           // Don't await — fire and forget
           sendEmail({ to: email, toName: name, subject: tpl.subject, htmlContent: tpl.htmlContent })
             .catch(e => console.error("[admin] email failed", e));
-          sendSms(phone, smsMsg)
+          sendSms(phone, smsMsg, { smsType: "phase1_result", smsFlowVars: [name] })
             .catch(e => console.error("[admin] sms failed", e));
         }
       }
@@ -503,12 +511,19 @@ router.put("/registrations/:id/phase2-status", async (req, res) => {
       res.status(400).json({ error: `status must be one of: ${valid.join(", ")}` });
       return;
     }
+    const [before] = await db.select({ phase2Status: registrationsTable.phase2Status })
+      .from(registrationsTable).where(eq(registrationsTable.id, String(id))).limit(1);
     const [updated] = await db
       .update(registrationsTable)
       .set({ phase2Status: status, updatedAt: new Date() })
       .where(eq(registrationsTable.id, id))
       .returning();
     if (!updated) { res.status(404).json({ error: "Registration not found" }); return; }
+    void writeAudit(req, {
+      action: "registration.phase2_status", entity: "registrations", entityKey: String(id),
+      oldValue: { phase2Status: before?.phase2Status ?? null },
+      newValue: { phase2Status: status },
+    });
     res.json({ success: true, registration: updated });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
@@ -573,12 +588,19 @@ router.put("/videos/:id/review", async (req, res) => {
       res.status(400).json({ error: "status must be submitted or reviewed" });
       return;
     }
+    const [beforeVid] = await db.select({ status: phase1VideosTable.status })
+      .from(phase1VideosTable).where(eq(phase1VideosTable.id, String(id))).limit(1);
     const [updated] = await db
       .update(phase1VideosTable)
       .set({ status: status ?? "reviewed" })
       .where(eq(phase1VideosTable.id, id))
       .returning();
     if (!updated) { res.status(404).json({ error: "Video not found" }); return; }
+    void writeAudit(req, {
+      action: "video.review", entity: "phase1_videos", entityKey: String(id),
+      oldValue: { status: beforeVid?.status ?? null },
+      newValue: { status: updated.status },
+    });
     res.json({ success: true, video: updated });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
@@ -873,6 +895,11 @@ router.put("/kyc/:id/status", async (req, res) => {
       await db.update(kycRecordsTable).set({ panVerified: true, aadhaarVerified: true }).where(eq(kycRecordsTable.id, id));
       await markKycVerified(kyc.id, kyc.registrationId, reg?.userId ?? "admin");
       const [updated] = await db.select().from(kycRecordsTable).where(eq(kycRecordsTable.id, id)).limit(1);
+      void writeAudit(req, {
+        action: "kyc.status", entity: "kyc_records", entityKey: String(id),
+        oldValue: { status: kyc.status },
+        newValue: { status: "verified" },
+      });
       res.json({ success: true, kyc: updated });
       return;
     }
@@ -883,6 +910,28 @@ router.put("/kyc/:id/status", async (req, res) => {
       .where(eq(kycRecordsTable.id, id))
       .returning();
     if (!updated) { res.status(404).json({ error: "KYC record not found" }); return; }
+
+    // On rejection, tell the player (email + SMS + WhatsApp) with re-submission
+    // guidance. Reserve-first log row = exactly-once per rejection, so a repeat
+    // admin "reject" tap never re-notifies. Both admin entry points (Users view
+    // + Phase 2 · KYC view) reach this same code path.
+    if (status === "failed") {
+      const [reg] = await db.select({ userId: registrationsTable.userId })
+        .from(registrationsTable)
+        .where(eq(registrationsTable.id, updated.registrationId))
+        .limit(1);
+      if (reg?.userId) {
+        const reserved = await db.insert(notificationLogsTable)
+          .values({ userId: reg.userId, type: "email", template: "kyc_rejected_gate", dedupeKey: "kyc_rejected_gate_" + updated.registrationId })
+          .onConflictDoNothing()
+          .returning({ id: notificationLogsTable.id });
+        if (reserved.length > 0) {
+          void notifyKycRejected(updated.registrationId, reg.userId)
+            .catch(e => console.error("[admin] kyc rejection notify failed", e));
+        }
+      }
+    }
+
     res.json({ success: true, kyc: updated });
   } catch (err: any) {
     res.status(500).json({ error: err.message });

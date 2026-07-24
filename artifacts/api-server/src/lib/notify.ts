@@ -21,6 +21,12 @@ export type SendResult = {
   skipped?: boolean;
   /** provider error / reason, present when ok === false */
   error?: string;
+  /**
+   * Non-error advisory note to record alongside a (possibly successful) send —
+   * e.g. "legacy_raw (DLT risk)" when a transactional SMS went out via the
+   * legacy raw-text path instead of a DLT-approved MSG91 Flow template.
+   */
+  meta?: string;
 };
 
 /** Options accepted by sendSms/sendEmail (outbox integration). */
@@ -29,6 +35,15 @@ export interface SendOpts {
   noOutbox?: boolean;
   /** Attribution for the queued retry row (user / template / dedupe key). */
   outboxMeta?: { userId?: string | null; template?: string; dedupeKey?: string | null };
+  /**
+   * Message type used to look up the DLT-approved MSG91 Flow template id
+   * (see SMS_FLOW_ENV in lib/sms). When configured the SMS goes out via the
+   * Flow API; otherwise it falls back to the legacy raw send with a
+   * "legacy_raw (DLT risk)" note.
+   */
+  smsType?: string;
+  /** Ordered Flow template variables (var1, var2 …) for the Flow API path. */
+  smsFlowVars?: string[];
 }
 
 /**
@@ -72,12 +87,18 @@ export async function logNotifications(
       type,
       template,
       status: statusOf(r),
-      error: r.error ? r.error.slice(0, 500) : null,
+      // Store the provider error when the send failed, otherwise any advisory
+      // note (e.g. the "legacy_raw (DLT risk)" warning) so the detail is
+      // always visible in the log row.
+      error: (r.error ?? r.meta ?? null)?.slice(0, 500) ?? null,
     }));
 
   for (const row of rows) {
     if (row.status !== "sent") {
       console.error(`[NOTIFY-${row.status.toUpperCase()}] ${row.type}/${template} user=${userId}: ${row.error ?? "no detail"}`);
+    } else if (row.error) {
+      // Successful send that still carries an advisory note (DLT risk etc.).
+      console.warn(`[NOTIFY-SENT] ${row.type}/${template} user=${userId}: ${row.error}`);
     }
   }
 

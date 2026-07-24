@@ -59,7 +59,7 @@ async function notifyPhase1Success(
   // REAL outcome of each attempt in notification_logs.
   const [em, sm, wa] = await Promise.all([
     sendEmail({ to: user.email, toName: user.name, ...email }),
-    sendSms(user.phone, smsMsg),
+    sendSms(user.phone, smsMsg, { smsType: "phase1_receipt", smsFlowVars: [reg.role.toUpperCase(), regNo, String(windowDays)] }),
     sendWhatsApp({ phone: user.phone, templateName: WA.PHASE1_RECEIPT, bodyValues: [user.name, reg.role.toUpperCase(), reg.trialCity ?? "TBD", `₹${amount}`] }),
   ]);
   await logNotifications(user.id, "phase1_receipt", { email: em, sms: sm, whatsapp: wa });
@@ -68,11 +68,18 @@ async function notifyPhase1Success(
 async function notifyPhase2Success(
   user: { id: string; name: string; email: string; phone: string },
   amount: number,
+  regNumber?: string | null,
 ) {
-  const email = tplPhase2Receipt(user.name, amount);
+  // Show the real sequential player ID (BCPL-DEL-1 style) when we have it —
+  // mirrors the phase-1 receipt. WhatsApp bodyValues stay at [name, amount]
+  // because the approved Interakt template (bcpl_phase2_receipt) has exactly
+  // two placeholders; adding a third would break the template send.
+  const regNo = regNumber ?? undefined;
+  const email = tplPhase2Receipt(user.name, amount, regNo);
+  const idLine = regNo ? ` Player ID: ${regNo}.` : "";
   const [em, sm, wa] = await Promise.all([
     sendEmail({ to: user.email, toName: user.name, ...email }),
-    sendSms(user.phone, `BCPL T20: Phase 2 payment of ₹${amount} confirmed! Please complete your KYC. -BCPL T20`),
+    sendSms(user.phone, `BCPL T20: Phase 2 payment of ₹${amount} confirmed!${idLine} Please complete your KYC. -BCPL T20`, { smsType: "phase2_receipt", smsFlowVars: [`₹${amount}`, regNo ?? ""] }),
     sendWhatsApp({ phone: user.phone, templateName: WA.PHASE2_RECEIPT, bodyValues: [user.name, `₹${amount}`] }),
   ]);
   await logNotifications(user.id, "phase2_receipt", { email: em, sms: sm, whatsapp: wa });
@@ -379,7 +386,7 @@ router.post("/phase2/verify", requireAuth, async (req: AuthRequest, res) => {
     ))
     .returning({ id: registrationsTable.id });
 
-  if (flipped[0]) notifyPhase2Success(user, parseInt(pay.amount));
+  if (flipped[0]) notifyPhase2Success(user, parseInt(pay.amount), reg.regNumber);
 
   res.json({ success: true, registrationId: reg.id });
 });
@@ -493,13 +500,13 @@ router.post("/webhook", async (req, res) => {
             .returning({ id: registrationsTable.id });
 
           if (flipped[0]) {
-            const rows = await db.select({ pay: phase2PaymentsTable, user: usersTable })
+            const rows = await db.select({ pay: phase2PaymentsTable, reg: registrationsTable, user: usersTable })
               .from(phase2PaymentsTable)
               .innerJoin(registrationsTable, eq(phase2PaymentsTable.registrationId, registrationsTable.id))
               .innerJoin(usersTable, eq(registrationsTable.userId, usersTable.id))
               .where(eq(phase2PaymentsTable.cashfreeOrderId, orderId)).limit(1);
             if (rows[0]) {
-              notifyPhase2Success(rows[0].user, parseInt(rows[0].pay.amount))
+              notifyPhase2Success(rows[0].user, parseInt(rows[0].pay.amount), rows[0].reg.regNumber)
                 .catch((e) => console.error("[WEBHOOK] phase2 notify error", e));
             }
           }

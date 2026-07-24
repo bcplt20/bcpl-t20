@@ -2,8 +2,8 @@ import RefundsPanel from "./RefundsPanel";
 import { useState, useEffect } from "react";
 import { adminGetRegistrations, adminSendInvoice } from "../../lib/api";
 import {
-  adminGetFinanceSummary, adminBackfillPaymentMethods,
-  type FinanceSummary, type BackfillResult,
+  adminGetFinanceSummary, adminBackfillPaymentMethods, adminGetSettlements,
+  type FinanceSummary, type BackfillResult, type SettlementsResponse,
 } from "../api/financeApi";
 import { gstFromGross, inr } from "../../lib/gst";
 import {
@@ -13,7 +13,7 @@ import {
 
 /* ─── Constants ─────────────────────────────────────────────── */
 /* Stored payment amounts are GST-INCLUSIVE — GST is extracted via lib/gst */
-const CF_FEE     = 0.02;   // Cashfree 2% gateway fee
+const CF_FEE_ESTIMATE = 0.02;   // fallback estimate when real settlements are unavailable
 const TDS_RATE   = 0.10;   // TDS on prizes
 const BCPL_GSTIN = "07AAHCK4053D1ZS";
 const BCPL_ADDR  = "Kriparti Playing11 Private Limited, 2nd Floor Back Side, RZ-108, Indra Park, Uttam Nagar, West Delhi, Delhi - 110059";
@@ -321,9 +321,9 @@ function InvoiceModal({ txn, onClose }: { txn: Txn; onClose: () => void }) {
 }
 
 /* ─── Transaction Detail Modal ──────────────────────────────── */
-function TxnDetailModal({ txn, onOpenInvoice, onOpenReg, onClose }: { txn: Txn; onOpenInvoice: () => void; onOpenReg: () => void; onClose: () => void }) {
+function TxnDetailModal({ txn, feeRate, feeIsReal, onOpenInvoice, onOpenReg, onClose }: { txn: Txn; feeRate: number; feeIsReal: boolean; onOpenInvoice: () => void; onOpenReg: () => void; onClose: () => void }) {
   const { base, cgst, sgst, gst } = gstFromGross(txn.amount);
-  const gw  = Math.round(txn.amount * CF_FEE);
+  const gw  = Math.round(txn.amount * feeRate);
   const net = Math.round(txn.amount - gw - gst);
   const sc  = SC[txn.status];
   const row = (l: string, v: React.ReactNode) => (
@@ -355,7 +355,7 @@ function TxnDetailModal({ txn, onOpenInvoice, onOpenReg, onClose }: { txn: Txn; 
           {row("Base (before GST)", `₹${inr(base)}`)}
           {row("CGST @ 9%", `₹${cgst.toFixed(2)}`)}
           {row("SGST @ 9%", `₹${sgst.toFixed(2)}`)}
-          {row("Gateway fee (2% est.)", <span style={{ color:"#EF4444" }}>-₹{gw}</span>)}
+          {row(feeIsReal ? `Gateway fee (real ${(feeRate*100).toFixed(2)}%)` : "Gateway fee (2% est.)", <span style={{ color:"#EF4444" }}>-₹{gw}</span>)}
           {row("Net to BCPL", <span style={{ color:"#10B981", fontWeight:800 }}>₹{net}</span>)}
           <div onClick={onOpenReg} title="Open this player's registration"
             style={{ marginTop:14, padding:"10px 12px", background:"#080E1C", border:"1px solid #1E293B", borderRadius:10, cursor:"pointer" }}>
@@ -385,6 +385,7 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
   const [TRANSACTIONS, setTransactions] = useState<Txn[]>([]);
   const [loadErr,   setLoadErr]   = useState("");
   const [summary,   setSummary]   = useState<FinanceSummary|null>(null);
+  const [settle,    setSettle]    = useState<SettlementsResponse|null>(null);
   const [backfilling, setBackfilling] = useState(false);
   const [backfillMsg, setBackfillMsg] = useState("");
 
@@ -404,6 +405,12 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
     adminGetFinanceSummary()
       .then(setSummary)
       .catch(() => { /* keep last-known summary; header error already surfaces reg failures */ });
+
+    // Real Cashfree gateway fees / settlements (server-cached). On failure we
+    // keep the last value and the UI falls back to the labelled 2% estimate.
+    adminGetSettlements()
+      .then(setSettle)
+      .catch(() => { /* keep last-known; estimate fallback applies */ });
   }, [refreshTick]);
 
   // Fill missing payment methods from Cashfree, then refetch the summary.
@@ -420,6 +427,20 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
       setBackfillMsg(e instanceof Error ? e.message : "Backfill failed");
     } finally { setBackfilling(false); }
   };
+
+  /* Real Cashfree gateway-fee rate when settlements are available; else the
+     clearly-labelled 2% estimate. `feeIsReal` drives the UI labels/copy. */
+  const settlement = settle?.settlements ?? null;
+  const feeIsReal  = Boolean(
+    settle?.configured && settlement?.configured &&
+    settlement.grossSettled > 0 && settlement.effectiveFeeRate > 0,
+  );
+  const feeRate    = feeIsReal ? settlement!.effectiveFeeRate : CF_FEE_ESTIMATE;
+  const feePct     = (feeRate * 100).toFixed(2);
+  const feeSub     = feeIsReal ? `Cashfree real ${feePct}%` : "Cashfree ~2% (est.)";
+  const feeLabel   = feeIsReal
+    ? `Real Cashfree fees from settlements${settlement?.cachedAt ? ` · as of ${new Date(settlement.cachedAt).toLocaleString("en-IN",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"})}` : ""}`
+    : "Estimated at 2% — real Cashfree settlement fees not available on this server yet";
 
   /* daily revenue (last 7 days) from successful transactions */
   const now = Date.now();
@@ -439,14 +460,14 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
       monthMap.set(month, (monthMap.get(month) ?? 0) + t.amount);
     }
     for (const [month, revenue] of monthMap) {
-      const gstPaid = Math.round(gstFromGross(revenue).gst), gatewayCost = Math.round(revenue*CF_FEE);
+      const gstPaid = Math.round(gstFromGross(revenue).gst), gatewayCost = Math.round(revenue*feeRate);
       monthlyPL.push({ month, revenue, gstPaid, gatewayCost, net: revenue-gstPaid-gatewayCost });
     }
   }
 
   const totalRevenue  = TRANSACTIONS.filter(t=>t.status==="success").reduce((a,t)=>a+t.amount,0);
   const totalGST      = Math.round(gstFromGross(totalRevenue).gst);   // GST included in collections
-  const totalGW       = Math.round(totalRevenue * CF_FEE);
+  const totalGW       = Math.round(totalRevenue * feeRate);
   const netRevenue    = totalRevenue - totalGST - totalGW;
   const totalRefunds  = REFUNDS.reduce((a,r)=>a+(r.status==="processed"?r.amount:0),0);
 
@@ -524,9 +545,9 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
           { label:"Total Revenue",    value:totalRevenue>0?`₹${(totalRevenue/100000).toFixed(2)}L`:"₹0", sub:`${TRANSACTIONS.filter(t=>t.status==="success").length} paid txns`, color:"#FF6B00", delta:"Season 5" },
           { label:"Net Revenue",      value:netRevenue>0?`₹${(netRevenue/1000).toFixed(1)}k`:"₹0", sub:"After GST & gateway fee",color:"#10B981",delta:"After deductions"},
           { label:"GST Collected",    value:totalGST>0?`₹${(totalGST/1000).toFixed(1)}k`:"₹0",    sub:"18% included in price",    color:"#6366F1", delta:"FY 26-27" },
-          { label:"Gateway Fees",     value:totalGW>0?`₹${(totalGW/1000).toFixed(1)}k`:"₹0",      sub:"Cashfree 2% fee",        color:"#F59E0B", delta:"CF charges" },
+          { label:"Gateway Fees",     value:totalGW>0?`₹${(totalGW/1000).toFixed(1)}k`:"₹0",      sub:feeSub,        color:"#F59E0B", delta:feeIsReal?"CF real":"CF est." },
           { label:"Total Refunds",    value:`₹${totalRefunds}`,                  sub:`${REFUNDS.length} refund requests`,color:"#EF4444",delta:REFUNDS.length>0?`-₹${totalRefunds}`:"No refunds"},
-          { label:"Pending Clearance",value:"₹0",                                sub:"Cashfree settlement",    color:"#3B82F6", delta:"T+2 days"  },
+          { label:"Settled to Bank",  value:feeIsReal&&settlement?`₹${(settlement.netSettled/100000).toFixed(2)}L`:"₹0", sub:feeIsReal?`${settlement!.count} settlements`:"Cashfree settlement", color:"#3B82F6", delta:feeIsReal?"Real":"T+2 days" },
         ].map(s=>(
           <div key={s.label} style={{ ...card, padding:"14px 16px", borderTop:`3px solid ${s.color}` }}>
             <div style={{ fontSize:20, fontWeight:800, color:s.color }}>{s.value}</div>
@@ -644,7 +665,7 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
               <tbody>
                 {filtered.map(t=>{
                   const g   = gstFromGross(t.amount);
-                  const gw  = Math.round(t.amount * CF_FEE);
+                  const gw  = Math.round(t.amount * feeRate);
                   const net = Math.round(t.amount - gw - g.gst);
                   return (
                     <tr key={t.id} onClick={()=>setTxnDetail(t)} title="Tap for full details" style={{ borderBottom:"1px solid #0F1B2D", cursor:"pointer" }}>
@@ -684,7 +705,7 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
             {[
               { l:"Gross Revenue",  v:totalRevenue>0?`₹${(totalRevenue/100000).toFixed(2)}L`:"₹0", c:"#FF6B00", sub:"FY 2026-27" },
               { l:"GST Payable",    v:totalGST>0?`-₹${totalGST.toLocaleString()}`:"₹0",            c:"#6366F1", sub:"18% collected" },
-              { l:"Gateway Fees",   v:totalGW>0?`-₹${totalGW.toLocaleString()}`:"₹0",              c:"#EF4444", sub:"Cashfree 2%" },
+              { l:"Gateway Fees",   v:totalGW>0?`-₹${totalGW.toLocaleString()}`:"₹0",              c:"#EF4444", sub:feeSub },
               { l:"Net Revenue",    v:netRevenue>0?`₹${(netRevenue/100000).toFixed(2)}L`:"₹0",     c:"#10B981", sub:"After deductions" },
             ].map(s=>(
               <div key={s.l} style={{ ...card, borderTop:`3px solid ${s.c}` }}>
@@ -693,6 +714,12 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
                 <div style={{ fontSize:10, color:"#475569", marginTop:4 }}>{s.sub}</div>
               </div>
             ))}
+          </div>
+          <div style={{ padding:"10px 14px", borderRadius:10, fontSize:12, display:"flex", alignItems:"center", gap:8,
+            background:feeIsReal?"#10B98111":"#F59E0B11", border:`1px solid ${feeIsReal?"#10B98144":"#F59E0B44"}`,
+            color:feeIsReal?"#10B981":"#F59E0B" }}>
+            <span>{feeIsReal?"✓":"ⓘ"}</span>
+            <span>{feeLabel}</span>
           </div>
           <div style={{ display:"grid", gridTemplateColumns:"2fr 1fr", gap:14 }}>
             <div style={card}>
@@ -822,7 +849,7 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
               <tbody>
                 {TRANSACTIONS.filter(t=>t.status==="success").map(t=>{
                   const g  = gstFromGross(t.amount);
-                  const gw = Math.round(t.amount * CF_FEE);
+                  const gw = Math.round(t.amount * feeRate);
                   return (
                     <tr key={t.id} onClick={()=>setTxnDetail(t)} title="Tap for full details" style={{ borderBottom:"1px solid #0F1B2D", cursor:"pointer" }}>
                       <td style={{ padding:"10px 10px", fontFamily:"monospace", fontSize:11, color:"#6366F1" }}>BCPL/25-26/{t.id}</td>
@@ -915,6 +942,8 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
       {txnDetail && (
         <TxnDetailModal
           txn={txnDetail}
+          feeRate={feeRate}
+          feeIsReal={feeIsReal}
           onClose={()=>setTxnDetail(null)}
           onOpenInvoice={()=>{ setInvoice(txnDetail); setTxnDetail(null); }}
           onOpenReg={()=>onNavigate?.("phase1_regs",{ focusId:txnDetail.regId })}

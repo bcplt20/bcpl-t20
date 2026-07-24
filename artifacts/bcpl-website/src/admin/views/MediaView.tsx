@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   listMediaFolders, createMediaFolder, deleteMediaFolder, listMediaFiles,
   getMediaUploadUrl, confirmMediaUpload, deleteMediaFile, uploadToS3, formatBytes,
+  setMediaFolderPublic,
   type MediaFolder, type MediaFile,
 } from "../../lib/adminToolsApi";
 
@@ -73,6 +74,40 @@ export default function MediaView() {
     }
   }
 
+  /* Presigned viewUrls expire after 1 h (bucket is private). If the panel
+   * stays open, silently re-fetch fresh links before they die so thumbnails
+   * and the preview modal never break. */
+  async function refreshFileUrls(folderId: string) {
+    try {
+      const { files: fresh } = await listMediaFiles(folderId);
+      setFiles(fresh);
+      const map = new Map(fresh.map(f => [f.id, f]));
+      setPreview(p => (p ? map.get(p.id) ?? p : p));
+    } catch {
+      /* transient — the 50-min timer or an onError retry will try again */
+    }
+  }
+
+  // Proactive refresh at ~50 min (well inside the 1-h expiry) while a folder is open.
+  useEffect(() => {
+    if (!openFolder) return;
+    const id = openFolder.id;
+    const timer = window.setInterval(() => { void refreshFileUrls(id); }, 50 * 60 * 1000);
+    return () => window.clearInterval(timer);
+  }, [openFolder?.id]);
+
+  // Reactive fallback: if a thumbnail/preview fails to load (e.g. link already
+  // expired), refetch once. Guard against loops with a per-file retry flag.
+  const retriedRef = useRef<Set<string>>(new Set());
+  function handleMediaError(f: MediaFile) {
+    if (!openFolder || retriedRef.current.has(f.id)) return;
+    retriedRef.current.add(f.id);
+    void refreshFileUrls(openFolder.id).finally(() => {
+      // Allow a future retry after URLs have been refreshed once.
+      setTimeout(() => retriedRef.current.delete(f.id), 5000);
+    });
+  }
+
   async function createFolder() {
     const name = newFolderName.trim();
     if (!name || creating) return;
@@ -95,6 +130,16 @@ export default function MediaView() {
       await deleteMediaFolder(f.id);
       if (openFolder?.id === f.id) setOpenFolder(null);
       await refreshFolders();
+    } catch (e) {
+      setError((e as Error).message);
+    }
+  }
+
+  async function togglePublic(f: MediaFolder) {
+    try {
+      await setMediaFolderPublic(f.id, !f.isPublic);
+      setFolders(fs => fs.map(x => (x.id === f.id ? { ...x, isPublic: !x.isPublic } : x)));
+      setOpenFolder(cur => (cur && cur.id === f.id ? { ...cur, isPublic: !cur.isPublic } : cur));
     } catch (e) {
       setError((e as Error).message);
     }
@@ -209,9 +254,14 @@ export default function MediaView() {
                   style={{ position: "absolute", top: 10, right: 10, background: "none", border: "none", color: "#475569", cursor: "pointer", fontSize: 14 }}>🗑</button>
                 <div style={{ fontSize: 30, marginBottom: 10 }}>{KIND_META[f.kind]?.icon ?? "📁"}</div>
                 <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 4, paddingRight: 20 }}>{f.name}</div>
-                <div style={{ fontSize: 12, color: "#64748B" }}>
+                <div style={{ fontSize: 12, color: "#64748B", marginBottom: 10 }}>
                   {f.fileCount} file{f.fileCount === 1 ? "" : "s"} · {formatBytes(f.totalBytes)}
                 </div>
+                <button onClick={e => { e.stopPropagation(); void togglePublic(f); }}
+                  title={f.isPublic ? "Hide from public website Gallery" : "Show on public website Gallery"}
+                  style={{ padding: "5px 12px", borderRadius: 100, border: `1px solid ${f.isPublic ? "#22C55E" : "#1E293B"}`, background: f.isPublic ? "#22C55E22" : "transparent", color: f.isPublic ? "#4ADE80" : "#64748B", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
+                  {f.isPublic ? "🌐 Public" : "🔒 Private"}
+                </button>
               </div>
             ))}
           </div>
@@ -254,7 +304,7 @@ export default function MediaView() {
                   <div key={f.id} style={{ borderRadius: 12, overflow: "hidden", border: "1px solid #1E293B", background: "#060B18", cursor: "pointer", position: "relative" }}
                     onClick={() => setPreview(f)}>
                     {f.kind === "photo" ? (
-                      <img src={f.viewUrl} alt={f.name} loading="lazy" style={{ width: "100%", height: 110, objectFit: "cover", display: "block", background: "#0A1020" }} />
+                      <img src={f.viewUrl} alt={f.name} loading="lazy" onError={() => handleMediaError(f)} style={{ width: "100%", height: 110, objectFit: "cover", display: "block", background: "#0A1020" }} />
                     ) : (
                       <div style={{ width: "100%", height: 110, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 34, background: "#0A1020" }}>🎬</div>
                     )}
@@ -310,9 +360,9 @@ export default function MediaView() {
             </div>
             <div style={{ overflow: "auto", display: "flex", justifyContent: "center" }}>
               {preview.kind === "photo" ? (
-                <img src={preview.viewUrl} alt={preview.name} style={{ maxWidth: "100%", maxHeight: "68vh", borderRadius: 12 }} />
+                <img src={preview.viewUrl} alt={preview.name} onError={() => handleMediaError(preview)} style={{ maxWidth: "100%", maxHeight: "68vh", borderRadius: 12 }} />
               ) : (
-                <video src={preview.viewUrl} controls autoPlay style={{ maxWidth: "100%", maxHeight: "68vh", borderRadius: 12 }} />
+                <video src={preview.viewUrl} controls autoPlay onError={() => handleMediaError(preview)} style={{ maxWidth: "100%", maxHeight: "68vh", borderRadius: 12 }} />
               )}
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, flexWrap: "wrap" }}>

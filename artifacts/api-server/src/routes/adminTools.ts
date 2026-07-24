@@ -226,6 +226,9 @@ export async function ensureAdminContentTables(): Promise<void> {
     kind varchar(10) NOT NULL DEFAULT 'photo',
     created_at timestamptz NOT NULL DEFAULT now()
   )`);
+  // Public-gallery opt-in flag — added after the table shipped, so ALTER for
+  // existing deployments (idempotent).
+  await db.execute(sql`ALTER TABLE media_folders ADD COLUMN IF NOT EXISTS is_public boolean NOT NULL DEFAULT false`);
   await db.execute(sql`CREATE TABLE IF NOT EXISTS media_files (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     folder_id uuid NOT NULL REFERENCES media_folders(id),
@@ -685,6 +688,21 @@ router.post("/media/folders", safe("media-folder-create", async (req, res) => {
   if (!parsed.success) return void res.status(400).json({ error: parsed.error.issues[0].message });
   const [folder] = await db.insert(mediaFoldersTable).values(parsed.data).returning();
   res.json({ success: true, folder: { ...folder, fileCount: 0, totalBytes: 0 } });
+}));
+
+// Toggle whether a folder appears on the public website Gallery. Files remain
+// in the private S3 prefix — only presigned GET links are ever exposed.
+router.patch("/media/folders/:id", safe("media-folder-update", async (req, res) => {
+  const id = String(req.params.id);
+  const schema = z.object({ isPublic: z.boolean() });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) return void res.status(400).json({ error: parsed.error.issues[0].message });
+  const [updated] = await db.update(mediaFoldersTable)
+    .set({ isPublic: parsed.data.isPublic })
+    .where(eq(mediaFoldersTable.id, id))
+    .returning();
+  if (!updated) return void res.status(404).json({ error: "Folder not found" });
+  res.json({ success: true, folder: updated });
 }));
 
 router.delete("/media/folders/:id", safe("media-folder-delete", async (req, res) => {

@@ -6,6 +6,7 @@ import { useLang } from '../lib/i18n';
 import { StickyRegisterCTA } from "../components/StickyRegisterCTA";
 import { AUCTION_PHOTOS } from '../data/auctionGallery';
 import { PHOTOSHOOT_PHOTOS } from '../data/photoshootGallery';
+import { BASE as API_BASE } from '../lib/adminHttp';
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
@@ -100,10 +101,31 @@ const SECTIONS: SectionDef[] = [
 
 const PAGE_SIZE = 18;
 
+/* Public match-photo albums served by the API (admin-opted media folders).
+ * Files live in a private S3 bucket; the API returns short-lived presigned
+ * viewUrls only. */
+type GalleryItem = { id: string; name: string; kind: 'photo' | 'video'; sizeBytes: number; viewUrl: string };
+type GalleryAlbum = { id: string; name: string; kind: string; items: GalleryItem[] };
+
 export function Photos() {
   const { t } = useLang();
   const [visible, setVisible] = React.useState<Record<string, number>>({ auction: PAGE_SIZE, photoshoot: PAGE_SIZE });
   const [lightbox, setLightbox] = React.useState<{ sec: number; idx: number } | null>(null);
+  const [albums, setAlbums] = React.useState<GalleryAlbum[]>([]);
+  const [lbAlbum, setLbAlbum] = React.useState<{ album: number; idx: number } | null>(null);
+
+  React.useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`${API_BASE}/api/gallery`);
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!cancelled && Array.isArray(data.albums)) setAlbums(data.albums as GalleryAlbum[]);
+      } catch { /* gallery is best-effort — hardcoded albums still render */ }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   const sections = SECTIONS.filter(s => s.photos.length > 0);
   const lbSection = lightbox ? sections[lightbox.sec] : null;
@@ -130,6 +152,30 @@ export function Photos() {
     return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = prevOverflow; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lightbox === null]);
+
+  /* lightbox controls for the dynamic public albums */
+  const lbAlbumData = lbAlbum ? albums[lbAlbum.album] : null;
+  React.useEffect(() => {
+    if (lbAlbum === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setLbAlbum(null);
+      if (e.key === 'ArrowRight') setLbAlbum(lb => {
+        if (!lb) return lb;
+        const n = albums[lb.album]?.items.length ?? 0;
+        return n ? { ...lb, idx: (lb.idx + 1) % n } : lb;
+      });
+      if (e.key === 'ArrowLeft') setLbAlbum(lb => {
+        if (!lb) return lb;
+        const n = albums[lb.album]?.items.length ?? 0;
+        return n ? { ...lb, idx: (lb.idx - 1 + n) % n } : lb;
+      });
+    };
+    window.addEventListener('keydown', onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = prevOverflow; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lbAlbum === null]);
 
   return (
     <div style={{minHeight:'100vh',background:'#060E1C',fontFamily:'Inter,sans-serif',position:'relative'}}>
@@ -196,6 +242,45 @@ export function Photos() {
         );
       })}
 
+      {/* PUBLIC MATCH ALBUMS (admin-uploaded, presigned) */}
+      {albums.map((album, ai) => (
+        <section key={album.id} style={{position:'relative',zIndex:1,padding:'10px 0 60px'}}>
+          <div className="wrap">
+            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:10,marginBottom:22}}>
+              <div>
+                <h2 className="v3-h" style={{fontSize:'clamp(22px,3.5vw,32px)',color:'#fff'}}>{album.name}</h2>
+                <div style={{fontFamily:'Inter,sans-serif',fontSize:13,color:'rgba(255,255,255,0.45)',marginTop:4}}>
+                  {t("Match photos & videos from the BCPL team","BCPL team की match photos और videos")}
+                </div>
+              </div>
+              <span className="tag-pill">{album.items.length} {t("ITEMS","ITEMS")}</span>
+            </div>
+
+            <div className="photo-masonry">
+              {album.items.map((it, i) => (
+                <div key={it.id} className="photo-card" onClick={() => setLbAlbum({ album: ai, idx: i })}>
+                  {it.kind === 'photo' ? (
+                    <img src={it.viewUrl} alt={it.name} loading="lazy" decoding="async" />
+                  ) : (
+                    <div style={{position:'relative'}}>
+                      <video src={it.viewUrl} preload="metadata" style={{width:'100%',height:'auto',display:'block'}} />
+                      <div style={{position:'absolute',inset:0,display:'flex',alignItems:'center',justifyContent:'center',pointerEvents:'none'}}>
+                        <span style={{fontSize:38,color:'#fff',textShadow:'0 2px 12px rgba(0,0,0,0.6)'}}>▶</span>
+                      </div>
+                    </div>
+                  )}
+                  <div className="photo-overlay">
+                    <span style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:11,color:'#fff',letterSpacing:'.08em'}}>
+                      {album.name.toUpperCase()} · {String(i + 1).padStart(2, '0')}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      ))}
+
       {/* AUCTION VIDEOS LIVE + INSTAGRAM */}
       <section style={{position:'relative',zIndex:1,padding:'20px 0 110px'}}>
         <div className="wrap">
@@ -238,6 +323,33 @@ export function Photos() {
           </div>
         </div>
       )}
+
+      {/* PUBLIC ALBUM LIGHTBOX */}
+      {lbAlbum !== null && lbAlbumData && lbAlbumData.items[lbAlbum.idx] && (() => {
+        const item = lbAlbumData.items[lbAlbum.idx];
+        const n = lbAlbumData.items.length;
+        return (
+          <div onClick={() => setLbAlbum(null)}
+            style={{position:'fixed',inset:0,zIndex:2000,background:'rgba(3,7,15,0.94)',display:'flex',alignItems:'center',justifyContent:'center',animation:'lbFade .2s ease both',padding:'clamp(8px,3vw,32px)'}}>
+            {item.kind === 'photo' ? (
+              <img src={item.viewUrl} alt={item.name} onClick={e => e.stopPropagation()}
+                style={{maxWidth:'100%',maxHeight:'92vh',borderRadius:10,boxShadow:'0 30px 90px rgba(0,0,0,0.8)',objectFit:'contain'}} />
+            ) : (
+              <video src={item.viewUrl} controls autoPlay onClick={e => e.stopPropagation()}
+                style={{maxWidth:'100%',maxHeight:'92vh',borderRadius:10,boxShadow:'0 30px 90px rgba(0,0,0,0.8)'}} />
+            )}
+            <button className="lb-btn" aria-label="Close" onClick={() => setLbAlbum(null)}
+              style={{position:'absolute',top:16,right:16}}>✕</button>
+            <button className="lb-btn" aria-label="Previous" onClick={e => { e.stopPropagation(); setLbAlbum(lb => lb ? { ...lb, idx: (lb.idx - 1 + n) % n } : lb); }}
+              style={{position:'absolute',left:10,top:'50%',transform:'translateY(-50%)'}}>‹</button>
+            <button className="lb-btn" aria-label="Next" onClick={e => { e.stopPropagation(); setLbAlbum(lb => lb ? { ...lb, idx: (lb.idx + 1) % n } : lb); }}
+              style={{position:'absolute',right:10,top:'50%',transform:'translateY(-50%)'}}>›</button>
+            <div style={{position:'absolute',bottom:18,left:'50%',transform:'translateX(-50%)',fontFamily:'var(--font-head)',fontWeight:800,fontSize:12,color:'rgba(255,255,255,0.6)',letterSpacing:'.1em'}}>
+              {lbAlbumData.name} · {lbAlbum.idx + 1} / {n}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* ── FLOATING REGISTER BUTTON ── */}
       <Link className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>🏏 {t("REGISTER NOW","अभी REGISTER करें")} &rarr;</Link>

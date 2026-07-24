@@ -36,9 +36,35 @@ export type BackfillResult = {
   errors: number;
 };
 
+/** Aggregated real Cashfree gateway fees / settlement totals (Task #38). */
+export type SettlementSummary = {
+  configured: boolean;
+  count: number;
+  grossSettled: number;
+  netSettled: number;
+  serviceCharge: number;    // Cashfree gateway fee (pre-GST), ₹
+  serviceTax: number;       // GST on the gateway fee, ₹
+  effectiveFeeRate: number; // (serviceCharge + serviceTax) / grossSettled
+  from: string | null;
+  to: string | null;
+  fetchedAt: string;
+  cachedAt?: string;
+};
+
+export type SettlementsResponse = {
+  configured: boolean;      // false ⇒ dev/stub, use labelled 2% estimate
+  fromCache: boolean;
+  settlements: SettlementSummary | null;
+  message?: string;
+};
+
 /** Per-phase + combined payment split and the on-hold (amount_mismatch) list. */
 export const adminGetFinanceSummary = () =>
   adminReq<FinanceSummary>("GET", "/admin/finance/summary");
+
+/** Real Cashfree settlements / gateway fees (cached server-side). */
+export const adminGetSettlements = () =>
+  adminReq<SettlementsResponse>("GET", "/admin/finance/settlements");
 
 /** Fill in missing payment methods from Cashfree for old success payments. */
 export const adminBackfillPaymentMethods = () =>

@@ -8,6 +8,10 @@ export const mediaFoldersTable = pgTable("media_folders", {
   id:        uuid("id").primaryKey().defaultRandom(),
   name:      varchar("name", { length: 150 }).notNull(),
   kind:      varchar("kind", { length: 10 }).default("photo").notNull(), // photo | video | mixed
+  // true → the folder is surfaced on the public website Gallery page.
+  // Admins opt each folder in; files stay in the private S3 prefix and are
+  // only ever served via short-lived presigned GET links (no public ACLs).
+  isPublic:  boolean("is_public").default(false).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 export type MediaFolder = typeof mediaFoldersTable.$inferSelect;

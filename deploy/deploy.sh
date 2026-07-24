@@ -9,6 +9,24 @@ set -e
 APP_DIR="/home/ubuntu/app"
 LOG_DIR="/home/ubuntu/logs"
 
+# ── CI / non-interactive mode ────────────────────────────────
+# --ci flag (GitHub Actions se), ya koi TTY nahi (SSH-action, cron)
+# => saare interactive prompts SKIP. Manual chalane par (TTY hai,
+# --ci nahi) sab pehle jaisa hi kaam karta hai.
+CI_MODE=0
+for arg in "$@"; do
+  case "$arg" in
+    --ci) CI_MODE=1 ;;
+  esac
+done
+# stdin TTY nahi hai (e.g. ssh-action pipe) => automatically CI mode
+if [ ! -t 0 ]; then
+  CI_MODE=1
+fi
+if [ "$CI_MODE" = "1" ]; then
+  echo "🤖 CI/non-interactive mode: sabhi prompts skip honge (koi input nahi maanga jayega)."
+fi
+
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "  BCPL T20 — Deployment Started"
 echo "  $(date '+%Y-%m-%d %H:%M:%S')"
@@ -32,7 +50,12 @@ fi
 # password) ek encrypted file me daal di hain. Sirf unlock code
 # chahiye — wo Replit chat me diya gaya hai.
 SEED="$APP_DIR/deploy/env.seed.enc"
-if [ -f "$SEED" ] && ! grep -q '^SEED_APPLIED_V4=1' "$APP_DIR/.env.production"; then
+if [ "$CI_MODE" = "1" ]; then
+  # CI me koi unlock code nahi maang sakte — seed block chhod do.
+  # (Ye one-time setup hai; owner ne pehli baar manual deploy me
+  #  ye already apply kar diya hoga — SEED_APPLIED_V4=1 set hai.)
+  echo "⏭️  Seed setup skip (CI mode)."
+elif [ -f "$SEED" ] && ! grep -q '^SEED_APPLIED_V4=1' "$APP_DIR/.env.production"; then
   echo ""
   echo "🔐 Ek-baar ka setup: sari nayi keys ek locked file me taiyar hain."
   read -r -p "👉 Unlock code daalo (Replit chat me mila hai), phir Enter: " SEED_CODE
@@ -78,6 +101,15 @@ for KEY in $REQUIRED_KEYS; do
     esac
     echo ""
     echo "⚠️  $KEY .env.production me nahi mila."
+    if [ "$CI_MODE" = "1" ]; then
+      # CI me value maang nahi sakte. Deploy YAHIN rok do — purani
+      # app chalti rahegi. Owner ek baar manual deploy chala kar
+      # (SSH se) ye key set kare, uske baad auto-deploy chalega.
+      echo "❌ CI mode: $KEY missing hai aur prompt nahi kar sakte."
+      echo "   Ek baar EC2 par manual chalao aur $KEY set karo:"
+      echo "   cd $APP_DIR && bash deploy/deploy.sh"
+      exit 1
+    fi
     read -r -p "👉 $KEY — $HINT, phir Enter: " VAL
     if [ -z "$VAL" ]; then
       echo "❌ Khali value — dobara 'bash deploy/deploy.sh' chalao."
