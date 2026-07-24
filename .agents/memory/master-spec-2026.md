@@ -57,3 +57,4 @@ Spec file: `attached_assets/Pasted-BCPLT20-COM-FINAL-PRODUCTION-FINISHING-UI-UX-
 - Registration `.btn-primary` 4px radius + clip-path = INTENTIONAL angular wizard design — do not "fix" to var(--r).
 - Dev preview root `/favicon.ico` 404 = base-path artifact only (prod serves at root) — ignore, don't chase.
 - Still open (deliberate): P41/42 static-page typography depth, P50/51 srcset/WebP + LCP/CLS, P53 full a11y audit, P72 Lighthouse. Bundle note: main chunk 2.37MB (574KB gzip) — code-split candidate.
+- Architect round caught (fixed cdd5cd2): journey/banner vocab drift — journeyNodes knew legacy p2 statuses deriveStep didn't ⇒ contradictory UI possible. Fix = shared P2_TRIAL_STAGE/P2_POST_TRIAL consts consumed by BOTH functions; postTrial ⇒ trial_completed even without trial block; banner venue copy hardened (trialPlace). RULE: any new phase2Status must be added to those two lists only — never inline status strings in either function.
