@@ -148,6 +148,31 @@ echo "🔨 Building API server..."
 cd $APP_DIR/artifacts/api-server
 pnpm run build
 
+# ── 3b. DB catch-up SQL (idempotent — har deploy par chalana safe) ──
+# deploy/sql/ ki files prod DB ko schema-push ke laayak align karti hain
+# (purane constraint-naam, missing tables). Har file IF NOT EXISTS /
+# DO-block style me hai — do baar chalne par kuch nahi bigadta.
+# NAYI file add karo to WAHI idempotent style rakhna (warna dusra
+# deploy usi par fail hoga).
+echo "🩹 DB catch-up SQL..."
+cd $APP_DIR
+if ! command -v psql >/dev/null 2>&1; then
+  echo "❌ psql installed nahi hai. Pehle ye chalao, phir dobara deploy:"
+  echo "   sudo apt-get install -y postgresql-client"
+  exit 1
+fi
+for SQLF in deploy/sql/*.sql; do
+  [ -f "$SQLF" ] || continue
+  if psql "$DATABASE_URL" -q -v ON_ERROR_STOP=1 -f "$SQLF" >/dev/null 2>&1; then
+    echo "   ✅ $(basename "$SQLF")"
+  else
+    echo "❌ $(basename "$SQLF") fail hua — DEPLOY ROKA GAYA (purani app chalti rahegi)."
+    echo "   Ye output Replit Agent ko bhej dijiye:"
+    psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f "$SQLF" 2>&1 | tail -15
+    exit 1
+  fi
+done
+
 # ── 4. Run DB migrations (build se PEHLE: yahan ruke to purani app
 #      bilkul waise hi chalti rehti hai — aadha-naya deploy kabhi nahi) ──
 # Pehle ye step chupchaap fail hota tha (2>/dev/null || true) — isi se prod
