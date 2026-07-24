@@ -139,12 +139,17 @@ fi
 # App healthy hone par HI save karo — warna kharab env dump me
 # save ho jata hai (24 July: isi se purani JWT chaabi ud gayi thi)
 sleep 6
-HTTP=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:4000/api/healthz || echo 000)
-if [ "$HTTP" = "200" ]; then
+OK=0
+for i in 1 2 3; do
+  HTTP=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:4000/api/healthz || echo 000)
+  [ "$HTTP" = "200" ] && OK=$((OK+1))
+  sleep 2
+done
+if [ "$OK" = "3" ]; then
   pm2 save
-  echo "✅ App healthy (200) — pm2 save ho gaya"
+  echo "✅ App healthy (healthz 3/3) — pm2 save ho gaya"
 else
-  echo "❌ App healthz $HTTP de raha hai — pm2 save NAHI kiya (purana dump surakshit)."
+  echo "❌ App healthz sirf $OK/3 baar 200 de raha hai — pm2 save NAHI kiya (purana dump surakshit)."
   echo "   Ye chalao aur output Replit chat me bhejo:"
   echo "   pm2 logs bcpl-api --err --lines 40 --nostream"
   exit 1

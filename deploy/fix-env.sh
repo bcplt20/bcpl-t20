@@ -92,17 +92,22 @@ fi
 pm2 reload deploy/ecosystem.config.js --update-env
 sleep 6
 pm2 status
-HTTP=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:4000/api/healthz || echo 000)
+OK=0
+for i in 1 2 3; do
+  HTTP=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:4000/api/healthz || echo 000)
+  [ "$HTTP" = "200" ] && OK=$((OK+1))
+  sleep 2
+done
 SITE=$(curl -s -o /dev/null -w "%{http_code}" https://bcplt20.com/ || echo 000)
-echo "LOCAL API: $HTTP"
+echo "LOCAL API: $OK/3 healthz OK"
 echo "SITE: $SITE"
-if [ "$HTTP" = "200" ]; then
+if [ "$OK" = "3" ]; then
   pm2 save
   echo ""
   echo "✅ Ho gaya! App healthy hai, pm2 save bhi ho gaya (reboot-proof)."
 else
   echo ""
-  echo "❌ App abhi bhi $HTTP de raha hai — pm2 save NAHI kiya."
+  echo "❌ App healthz sirf $OK/3 baar 200 de raha hai — pm2 save NAHI kiya."
   echo "   Ye chalao aur output Replit chat me bhejo:"
   echo "   pm2 logs bcpl-api --err --lines 40 --nostream"
   exit 1
