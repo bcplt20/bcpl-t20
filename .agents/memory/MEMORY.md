@@ -27,7 +27,7 @@
 - [Phase1 worker CAS claims](phase1-worker-cas.md) — workers stamp claim_token, write via casEvalUpdate only; snapshots frozen; tests assert DB end-state, never run counts
 - [Phase1 AI gate](phase1-ai-gate.md) — aiEnabled gates mock AND real; mock blocked in prod without PHASE1_ALLOW_MOCK=1; E2E must PATCH aiEnabled + sleep 31, reset in traps
 - [E2E shell traps](e2e-shell-traps.md) — psql needs -q (tags corrupt RETURNING captures), UID is readonly in bash, /tmp wiped on recycle → suites live in api-server/e2e/
-- [Gemini models](gemini-models.md) — 2.5 family dead for new keys; defaults 3.5-flash + 3.1-flash-lite; stored phase1_ai_config pins models (PATCH/env to change); 503 spikes transient
+- [Gemini models](gemini-models.md) — 1.x/2.x dead for new keys; stored pins SELF-HEAL to 3.5-flash/3.1-flash-lite at read+save; PATCH rejects retired models; 503 spikes transient
 - [Reminder sweeps & send gating](reminders-system.md) — new send paths must gate (real keys live in dev); reserve-first dedupe; window mismatch 7 vs 15 flagged
 - [Workspace recycle](workspace-recycle.md) — recycle can wipe uncommitted edits mid-session; commit locally as soon as tsc passes, verify markers before re-applying
 - [Security hardening lessons](security-hardening.md) — varchar(20) status trap; one amount-gate for ALL success paths; no victim-keyed lockouts; writeAudit races tests

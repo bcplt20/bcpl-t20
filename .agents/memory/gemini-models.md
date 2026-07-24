@@ -25,3 +25,8 @@ description: Which Gemini models work for the Phase 1 pipeline, how model config
 - GEMINI_API_KEY now exists in dev Replit secrets; EC2 prod still needs it set
   at deploy time. Real validity/scoring on genuine cricket footage remains the
   only unexercised case (impossible with synthetic clips).
+
+## Stored-pin self-heal (July 2026 prod incident)
+Rule: config saves persist the FULL merged object, so any stored model pin outlives a code-default change — never fix a model retirement by only changing defaults.
+**Why:** prod kept failing after the 3.5 defaults deploy because the DB row still pinned gemini-2.5-*; owner saw "AI failed" on live.
+**How it works now:** getPhase1Config heals ^gemini-[12]\. pins to current defaults (before env overrides), every updatePhase1Config save migrates the row, PATCH with a retired model 400s. Health probe hits the CONFIGURED primary model (note carries the model name) instead of the bare key/model-list check.
