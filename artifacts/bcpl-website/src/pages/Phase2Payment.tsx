@@ -184,9 +184,14 @@ export function Phase2Payment() {
               {agreed && <span style={{ color: '#000', fontSize: 14, fontWeight: 900 }}>✓</span>}
             </div>
             <span style={{ fontSize: 14, color: agreed ? '#fff' : 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>
-              {t("I understand this is a Phase 2 physical trial entry fee. Payment confirms my trial slot and is non-refundable. If selected, I pay only then — no charge unless selected.", "मैं समझता हूं कि यह फेज 2 फिजिकल ट्रायल एंट्री फीस है। पेमेंट मेरी ट्रायल जगह पक्की करता है और यह रिफंडेबल नहीं है।")}
+              {t("I understand this is the Phase 2 physical trial entry fee for players selected in Phase 1. Payment confirms my trial slot and is non-refundable except in the situations listed in the Refund Policy.", "मैं समझता हूं कि यह Phase 2 physical trial entry fee है (Phase 1 में select हुए players के लिए)। Payment मेरी trial जगह पक्की करता है और Refund Policy में बताई गई स्थितियों के अलावा refundable नहीं है।")}
             </span>
           </div>
+
+          {/* PART E — payment ≠ selection disclaimer at the point of payment */}
+          <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', lineHeight: 1.6, margin: '0 0 20px' }}>
+            {t("Paying the Phase 2 fee books your trial slot — it does not guarantee Auction Pool entry, purchase by a team, player contract or tournament participation.", "Phase 2 fee का भुगतान आपकी trial जगह पक्की करता है — यह Auction Pool में जगह, team द्वारा purchase, player contract या tournament participation की guarantee नहीं है।")}
+          </p>
 
           {payError && (
             <div style={{ padding: '16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.4)', borderRadius: 'var(--r)', color: 'var(--red)', fontSize: 14, marginBottom: 24, fontWeight: 600 }}>⚠ {payError}</div>

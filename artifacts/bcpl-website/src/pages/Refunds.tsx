@@ -92,7 +92,7 @@ export function Refunds() {
             <p style={{color:'rgba(255,255,255,0.5)',fontSize:13,fontWeight:600,letterSpacing:'0.05em',marginTop:16,fontFamily:'Montserrat,sans-serif'}}>Last updated: January 15, 2025</p>
             <p style={{color:'rgba(255,255,255,0.35)',fontSize:12,marginTop:6,fontFamily:'Inter,sans-serif'}}>यह दस्तावेज़ English में मान्य है · This document is authoritative in English.</p>
             <p style={{color:'rgba(255,255,255,0.65)',fontSize:'clamp(14px,2vw,16px)',lineHeight:1.7,maxWidth:600,margin:'16px auto 0'}}>
-              We believe in complete transparency around money. Here's exactly when refunds apply and when they don't — no fine print tricks.
+              We believe in complete transparency around money. Here's exactly when refunds apply and when they don't — in plain language.
             </p>
           </div>
         </section>
@@ -167,7 +167,7 @@ export function Refunds() {
             <div style={{display:'grid',gap:12}}>
               {[
                 {n:1, icon:'💳', title:'Duplicate Payment', desc:'If your payment was charged more than once for the same registration — double or triple charge due to a payment gateway error — the extra amount(s) will be refunded in full within 5–7 working days.'},
-                {n:2, icon:'🏟', title:'Trial Not Conducted by BCPL', desc:'If BCPL is unable to conduct the physical trial in your city for any reason within the committed schedule, your Phase 2 fee (if paid) will be refunded in full. Phase 1 fee is non-refundable in this case as the scout review service has been rendered.'},
+                {n:2, icon:'🏟', title:'Trial Not Conducted by BCPL', desc:'If BCPL is unable to conduct the physical trial in your city for any reason within the committed schedule, your Phase 2 fee (if paid) will be refunded in full. Phase 1 fee is non-refundable in this case as the Phase 1 evaluation service has been rendered.'},
                 {n:3, icon:'⏱', title:'Phase 1 Result Not Delivered in 15 Days', desc:'We guarantee that every Phase 1 video submitted will receive a result (pass or fail) within 15 working days of upload. If we fail to deliver your result within this window, you are entitled to a full refund of your Phase 1 registration fee — no questions asked.'},
               ].map((item)=>(
                 <div key={item.n} style={{display:'flex',gap:14,alignItems:'flex-start',background:'rgba(34,197,94,0.05)',border:'1px solid rgba(34,197,94,0.2)',borderRadius:12,padding:'16px'}}>

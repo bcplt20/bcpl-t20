@@ -556,7 +556,7 @@ export function Registration() {
             <span style={{ background:'linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)', backgroundSize:'200%', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text', animation:'shimGold 3s linear infinite', display:'block' }}>{t('BIG LEAGUE.', 'LEAGUE में।')}</span>
           </h1>
           <p style={{ color:'rgba(255,255,255,0.45)', fontSize:14, maxWidth:480, lineHeight:1.6, marginBottom:32 }}>
-            {t("India's corporate T20 cricket league for working professionals. 10 franchise teams. You send one video — compete for your place in cricket.", "Working professionals के लिए भारत की corporate T20 cricket league। 10 franchise teams। आप एक video भेजें — cricket में अपनी जगह के लिए compete करें।")}
+            {t("India's corporate T20 cricket league for working professionals. 10 franchise teams. Register, submit your cricket video and take your shot at the BCPL stage.", "Working professionals के लिए भारत की corporate T20 cricket league। 10 franchise teams। Register करें, अपना cricket video submit करें और BCPL stage के लिए अपना दावा पेश करें।")}
           </p>
 
           {/* ─── JOURNEY RAIL ─── */}
@@ -1039,6 +1039,11 @@ export function Registration() {
                     <span style={{ fontSize:16, fontWeight:900, color:'#FF7A29', fontFamily:'Montserrat,sans-serif' }}>₹{withGst(price, fees.gstRate)}</span>
                   </div>
                 </div>
+
+                {/* PART E — payment ≠ selection disclaimer at the point of payment */}
+                <p style={{ fontSize:11, color:'rgba(255,255,255,0.35)', lineHeight:1.5, margin:'0 0 12px' }}>
+                  {t('Payment of the Phase 1 fee gives you evaluation access — it does not guarantee selection, Auction Pool entry or tournament participation.', 'Phase 1 fee का भुगतान evaluation access देता है — यह selection, Auction Pool में जगह या tournament participation की guarantee नहीं है।')}
+                </p>
 
                 {/* Pay CTA */}
                 <button

@@ -19,6 +19,7 @@ import { Schedule }            from '@/pages/Schedule';
 import { PointsTable }         from '@/pages/PointsTable';
 import { CodeOfConduct }       from '@/pages/CodeOfConduct';
 import { CricketRulebook }     from '@/pages/CricketRulebook';
+import { TrialRules }          from '@/pages/TrialRules';
 import { EligibilityCriteria } from '@/pages/EligibilityCriteria';
 import { Privacy }             from '@/pages/Privacy';
 import { Refunds }             from '@/pages/Refunds';
@@ -85,6 +86,7 @@ function Router() {
         {/* Legal & policy pages */}
         <Route path="/code-of-conduct"  component={CodeOfConduct} />
         <Route path="/cricket-rulebook" component={CricketRulebook} />
+        <Route path="/trial-rules"      component={TrialRules} />
         <Route path="/eligibility"      component={EligibilityCriteria} />
         <Route path="/privacy"          component={Privacy} />
         <Route path="/trust"            component={Trust} />

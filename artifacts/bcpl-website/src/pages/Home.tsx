@@ -502,8 +502,9 @@ export function Home() {
           </div>
           <div className="road-hint">← {t("Swipe to see all 4 steps","चारों कदम देखने के लिए swipe करें")} →</div>
 
-          <div style={{ marginTop:26, display:"flex", justifyContent:"center" }}>
+          <div style={{ marginTop:26, display:"flex", justifyContent:"center", alignItems:"center", gap:12, flexWrap:"wrap" }}>
             <button className="btn-cta" style={{ fontSize:14 }} onClick={()=>navigate("/register")}>{t("Start Step 1 — Register","पहला कदम — रजिस्टर करें")} →</button>
+            <button className="btn-ghost" style={{ fontSize:13 }} onClick={()=>navigate("/trust")}>{t("See the complete selection journey","पूरा selection journey देखें")}</button>
           </div>
         </div>
       </section>
@@ -515,7 +516,7 @@ export function Home() {
           <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4.2vw,46px)", color:"#fff", textTransform:"uppercase", lineHeight:1.1, marginBottom:6 }}>
             {t("You pay only","पैसे सिर्फ तब,")}<br/><span className="shim">{t("if you progress.","जब आप आगे बढ़ें।")}</span>
           </h2>
-          <p style={{ fontSize:15, color:"rgba(255,255,255,.45)", marginBottom:26, maxWidth:520 }}>{t("No fine print. No surprises. Here's exactly what you pay — and when. GST (" + gstPct + "%) applies at checkout.","कोई छिपी शर्त नहीं। यहाँ साफ लिखा है — कितना, और कब। Checkout पर GST (" + gstPct + "%) जुड़ता है।")}</p>
+          <p style={{ fontSize:15, color:"rgba(255,255,255,.45)", marginBottom:26, maxWidth:520 }}>{t("Here's exactly what you pay — and when. Every fee is shown with GST (" + gstPct + "%) before you pay.","यहाँ साफ लिखा है — कितना, और कब। हर fee GST (" + gstPct + "%) के साथ payment से पहले दिखाई जाती है।")}</p>
 
           {/* The money journey at a glance */}
           <div className="jour">
@@ -532,11 +533,17 @@ export function Home() {
             </div>
             <div className="ja">→</div>
             <div className="jc" style={{ borderTop:"3px solid #22C55E" }}>
-              <div className="mont" style={{ fontSize:10, fontWeight:800, letterSpacing:".1em", color:"rgba(255,255,255,.4)", textTransform:"uppercase", marginBottom:6 }}>{t("After that — forever","उसके बाद — हमेशा")}</div>
-              <div className="mont" style={{ fontWeight:900, fontSize:22, color:"#22C55E" }}>₹0</div>
-              <div style={{ fontSize:12, color:"rgba(255,255,255,.5)", marginTop:4 }}>{t("Auction, jersey, stadium — on the league","Auction, jersey, stadium — league के खर्चे पर")}</div>
+              <div className="mont" style={{ fontSize:10, fontWeight:800, letterSpacing:".1em", color:"rgba(255,255,255,.4)", textTransform:"uppercase", marginBottom:6 }}>{t("Step 3 · Season 5","कदम 3 · Season 5")}</div>
+              <div className="mont" style={{ fontWeight:900, fontSize:22, color:"#22C55E" }}>₹0*</div>
+              <div style={{ fontSize:12, color:"rgba(255,255,255,.5)", marginTop:4 }}>{t("No additional BCPL tournament participation fee*","कोई अतिरिक्त BCPL tournament participation fee नहीं*")}</div>
             </div>
           </div>
+
+          {/* PART D footnote + PART E payment/selection disclaimer — visible, not buried */}
+          <p style={{ fontSize:11, color:"rgba(255,255,255,.35)", lineHeight:1.6, margin:"12px 0 26px", maxWidth:720 }}>
+            {t("*Subject to the applicable BCPL Season 5 rules and any expressly disclosed exceptions. Payment of Phase 1 or Phase 2 fees does not guarantee qualification, selection, Auction Pool entry, purchase by a team, player contract, remuneration or tournament participation.",
+               "*BCPL Season 5 के लागू नियमों और स्पष्ट रूप से बताए गए अपवादों के अधीन। Phase 1 या Phase 2 fee का भुगतान qualification, selection, Auction Pool में जगह, team द्वारा purchase, player contract, remuneration या tournament participation की guarantee नहीं है।")}
+          </p>
 
           {/* Guarantees — single home for trust chips */}
           <div style={{ display:"flex", flexWrap:"wrap", gap:10, marginBottom:26 }}>
