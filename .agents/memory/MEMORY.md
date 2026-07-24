@@ -1,6 +1,6 @@
 - [BCPL Logo Extraction](bcpl-logo.md) — brand book PDF (107MB) → PyMuPDF via `uv run --with pymupdf` to render pages as PNG; ball icon at public/bcpl-assets/bcpl-ball-clean.png
 - [GitHub file size limit](github-limits.md) — PDF >100MB rejected by GitHub; always git rm --cached large files before push
-- [BCPL deploy pipeline](deploy-pipeline.md) — EC2 pulls from GitHub; commits/task-merges in Replit are invisible to prod until `git push origin main`
+- [BCPL deploy pipeline](deploy-pipeline.md) — EC2 pulls GitHub (push first!); prod push = plain (NO --force) + sslmode=no-verify; deploy/sql auto-catchup; abort captures pending question
 - [Edit tool $ quirk](edit-tool-dollar-quirk.md) — replacements containing ` sequences (SQL regex anchors) can corrupt files; use WriteFile instead
 - [Site header](per-page-navbars.md) — SiteHeader V4: glass on scroll, var(--sh-h) 64/68px; register CTAs hidden when logged in (html.bcpl-authed hides .float-reg-btn site-wide); stickies offset var(--sh-h)
 - [Z-index scale](z-index-scale.md) — header 200 < CTAs ≤1000 < menu 1500 < modal 2000; mobile reg-bar = shared StickyRegisterCTA z900; .float-reg-btn desktop-only (hide rule on all ~19 pages)
@@ -40,6 +40,6 @@
 - [Master spec 2026 progress](master-spec-2026.md) — owner's serial upgrade specs (42→36→51-part July '26): ~half pre-existed each time — audit first; wave trackers + copy rules inside
 - [Player-UI auth testing](player-ui-auth-testing.md) — never OTP-login for tests (real SMS risk); mint player JWT + bcpl_auth_v1 injection; trial fixture recipe; assessmentSubmitted = trial_evaluations
 - [node-postgres array binding](node-postgres-array-binding.md) — raw sql `${arr}::text[]` binds as ONE string param ("malformed array literal"); use IN + sql.join per-element
-- [drizzle push alignment](db-push-alignment.md) — push prompts = drift: rename `*_key` uniques to `*_unique`, declare runtime-created tables (app_flags!) in schema; exit code lies, grep "Changes applied"
+- [drizzle push alignment](db-push-alignment.md) — push prompts = drift: `*_key`→`*_unique` renames, declare runtime tables, pre-add new uniques via catch-up SQL (truncate prompt!); grep "Changes applied"
 - [Trial-ops locking & waves](trial-ops-locking.md) — all attempt/eval writes take allocation row FOR UPDATE first (dbc param); W1 shipped, W2-W6 map inside
 - [Legal consent capture](legal-consent-capture.md) — consents jsonb only via atomic recordConsentKey merge (never JS-merge); EVERY pay entry point (incl. resume) needs consent UI+payload; LEGAL_APPROVAL_PENDING flag gates go-live

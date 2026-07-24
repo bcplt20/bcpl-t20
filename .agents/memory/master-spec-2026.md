@@ -48,3 +48,5 @@ Spec file: `attached_assets/Pasted-BCPLT20-COM-FINAL-PRODUCTION-FINISHING-UI-UX-
 - §42 DONE (lazy loading="lazy" decoding="async" on below-fold img grids; skipped hero/LCP imgs). §5 DONE (tabular-nums on rank chips + trial-slot cells). §45 label align DONE (wicketkeeper_batsman → 'Wicketkeeper' web+server both).
 - /trial-pass response contract pinned by api-server/src/routes/trials.trialPass.test.ts (express ephemeral port + fetch pattern — first HTTP-style route test in the suite; copy it for future route contracts).
 - Still open: §30 full page redesigns (deferred), §42 LCP/CLS measurement, §46 full A–L matrix, §49 prod verification (blocked until owner deploys EC2).
+
+- §49 UPDATE (24 Jul 2026 shaam): owner ne EC2 deploy chala diya — prod par healthz 6/6, OG meta, naya icon-look LIVE verified. Deploy saga (SSL + truncate-prompt) ke sabak deploy-pipeline.md me.

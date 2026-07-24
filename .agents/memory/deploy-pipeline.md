@@ -18,3 +18,10 @@ API startup runs idempotent ensures/migrations against RDS automatically — no 
 Verify from workspace: `curl https://bcplt20.com/api/healthz`; admin check via `x-bcpl-admin` header → 200 valid / 403 invalid; repeat ~6× to hit both cluster workers. `/api/admin/users` does NOT exist — authenticated-but-404 = route missing, not auth failure.
 
 **EC2 prerequisites:** the video-validation worker needs ffmpeg/ffprobe (`sudo apt-get install -y ffmpeg`); without it validation ticks retry forever (`spawn ffprobe ENOENT`).
+
+
+## Deploy hardening (24 Jul 2026)
+- drizzle push vs RDS: node `pg` needs `?sslmode=no-verify` — psql connects fine but drizzle-kit dies SILENTLY (exit 1, zero output) during "Pulling schema" because the spinner swallows the TLS/no-encryption error. deploy.sh builds PUSH_URL itself; probe recipe: tiny node Client connect with/without `ssl:{rejectUnauthorized:false}`.
+- `push --force` is FORBIDDEN against prod: on "add unique constraint to table with N rows" drizzle offers TRUNCATE and --force can pick destructive answers. deploy.sh runs plain `push </dev/null`, gates on "Changes applied|No changes", and on failure re-runs under `script` pseudo-TTY + timeout so the abort output CONTAINS the pending question (owner forwards it — self-diagnosing).
+- deploy/sql/*.sql = idempotent catch-up files auto-applied (ON_ERROR_STOP) before every push. Any new interactive push question → ship another catch-up file; never answer prompts by hand, never let the owner answer them.
+- Owner-terminal traps: psql pager (less) eats the rest of a multi-line paste — always `export PAGER=cat` / `-P pager=off` in owner blocks. Capture interactive tools via `timeout N script -qec "cmd" /tmp/f` then sed-strip ANSI.
