@@ -185,6 +185,16 @@ export default function SponsorsView() {
     void persist(sponsors.filter(s => s.id !== id));
   }
 
+  /** Reorder — the list order IS the website display order (top = first).
+      The footer strip and /sponsors wall follow this exact order. */
+  function move(idx: number, dir: -1 | 1) {
+    const j = idx + dir;
+    if (j < 0 || j >= sponsors.length) return;
+    const next = [...sponsors];
+    [next[idx], next[j]] = [next[j], next[idx]];
+    void persist(next);
+  }
+
   const total = sponsors.filter(s => s.status === "active").reduce((acc, s) => {
     const n = parseFloat(s.amount.replace(/[₹L,]/g, "")) || 0;
     return acc + n;
@@ -266,7 +276,7 @@ export default function SponsorsView() {
       {/* Toolbar */}
       <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 12, marginBottom: 14 }}>
         {saving && <span style={{ color: "#F59E0B", fontSize: 12, fontWeight: 700 }}>Saving…</span>}
-        {!saving && loaded && !loadErr && <span style={{ color: "#334155", fontSize: 11 }}>✓ Synced with server — active sponsors show on the website</span>}
+        {!saving && loaded && !loadErr && <span style={{ color: "#334155", fontSize: 11 }}>✓ Synced — list order = website order (▲▼ to rearrange, #1 shows first)</span>}
         <button onClick={() => { resetForm(); setShowAdd(s => !s); }}
           style={{ padding: "9px 20px", borderRadius: 10, border: "none", background: "linear-gradient(135deg, #FF6B00, #FF8C40)", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
           {showAdd && !editId ? "✕ Cancel" : "+ Add Sponsor"}
@@ -385,9 +395,17 @@ export default function SponsorsView() {
             No sponsors yet. Click "+ Add Sponsor" to add your first sponsor.
           </div>
         )}
-        {sponsors.map(s => (
+        {sponsors.map((s, i) => (
           <div key={s.id} style={{ ...card, borderLeft: `3px solid ${statusColor(s.status)}` }}>
             <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+              {/* Rank + reorder (top of the list shows first on the website) */}
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, flexShrink: 0 }}>
+                <button onClick={() => move(i, -1)} disabled={i === 0} title="Move up — shows earlier on the website"
+                  style={{ background: "none", border: "1px solid #1E293B", borderRadius: 6, color: i === 0 ? "#1E293B" : "#94A3B8", fontSize: 10, cursor: i === 0 ? "default" : "pointer", padding: "3px 8px", lineHeight: 1 }}>▲</button>
+                <span style={{ fontSize: 10, fontWeight: 800, color: "#FF6B00" }}>#{i + 1}</span>
+                <button onClick={() => move(i, 1)} disabled={i === sponsors.length - 1} title="Move down"
+                  style={{ background: "none", border: "1px solid #1E293B", borderRadius: 6, color: i === sponsors.length - 1 ? "#1E293B" : "#94A3B8", fontSize: 10, cursor: i === sponsors.length - 1 ? "default" : "pointer", padding: "3px 8px", lineHeight: 1 }}>▼</button>
+              </div>
               {/* Logo */}
               <div style={{ width: 52, height: 52, borderRadius: 12, background: "#060B18", border: "1.5px solid #1E293B", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", flexShrink: 0 }}>
                 {s.logo

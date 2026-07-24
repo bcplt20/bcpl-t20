@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, useLocation } from "wouter";
 import { openLoginModal, getSession } from "../lib/auth";
+import { FooterSponsorStrip } from "./FooterSponsorStrip";
 
 const BASE = import.meta.env.BASE_URL;
 
@@ -24,6 +25,9 @@ const lnk: React.CSSProperties = { fontSize:13, color:"rgba(255,255,255,.38)", t
 export function BCPLFooter() {
   const [, navigate] = useLocation();
   return (
+    <>
+    {/* Partners strip — every page, IPL/FIFA style (admin-ranked order) */}
+    <FooterSponsorStrip />
     <footer style={{ background:"#030710", borderTop:"1px solid rgba(255,255,255,.05)", padding:"clamp(36px,5vw,56px) 0 20px", fontFamily:"Montserrat,Inter,sans-serif" }}>
       <style>{`
         .bcpl-foot-wrap { max-width:1200px; margin:0 auto; padding:0 clamp(16px,4vw,40px); }
@@ -102,5 +106,6 @@ export function BCPLFooter() {
         </div>
       </div>
     </footer>
+    </>
   );
 }
