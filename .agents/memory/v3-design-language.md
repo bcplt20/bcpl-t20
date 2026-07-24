@@ -12,3 +12,6 @@ description: Deliberate V3 conventions — emoji icons allowed, internal link ru
 
 ## UPDATE July 2026 — partly superseded
 The 80-part "Complete Production Upgrade" master spec mandates a premium sports-league look and explicitly bans childish graphics. The old "emoji icons are deliberate" rule no longer holds — an emoji→premium-icon sweep is planned in the homepage/design phase. Wouter-Link and audit-grep guidance still applies.
+
+## UPDATE 24 Jul 2026 — hero/type unification DONE
+All public + player-flow pages now use the ONE v3 pattern: centered hero (gold kicker, Barlow Condensed clamp() head, Inter subcopy), var(--container) 1200 w/ 20/32/48 padding, section rhythm clamp(56px,9vw,110px). Canonical reference = Players.tsx hero. Montserrat remains ONLY in: Registration.tsx (deliberately unchurned), Home.tsx small `.mont` labels, and the frozen print-receipt HTML string in Phase1PaymentReceipt. New pages MUST copy the v3 hero — never Montserrat, never left-aligned hero bands. Sponsors render ONLY in footer strip + /sponsors page (owner call; SponsorWall removed from Home). Kicker badges carry no emojis.

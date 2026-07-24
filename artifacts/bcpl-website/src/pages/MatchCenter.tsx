@@ -50,7 +50,7 @@ function TeamBadge({ name, color, logo, size, fontSize }: {
       background: showLogo ? "rgba(255,255,255,0.96)" : `${color}22`,
       border: `2px solid ${color}`, display: "inline-flex", alignItems: "center",
       justifyContent: "center", overflow: "hidden", flexShrink: 0,
-      fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize, color,
+      fontFamily: "var(--font-head)", fontWeight: 800, fontSize, color,
     }}>
       {showLogo
         ? <img src={logo} alt={name} onError={() => setBroken(true)}
@@ -148,14 +148,14 @@ export function MatchCenter() {
               <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <span style={{ width: 10, height: 10, borderRadius: "50%", background: color(inn.battingTeam), display: "inline-block" }} />
-                  <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 13, color: "#fff" }}>
+                  <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 13, color: "#fff" }}>
                     {inn.inningsNumber === 1 ? "1st Innings" : "2nd Innings"} — {inn.battingTeam}
                   </span>
                   {inn.status === "live" && (
-                    <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 9, letterSpacing: ".1em", color: "#EF4444" }}>● LIVE</span>
+                    <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 9, letterSpacing: ".1em", color: "#EF4444" }}>● LIVE</span>
                   )}
                 </div>
-                <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 18, color: "#FF7A29" }}>
+                <div style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 18, color: "#FF7A29" }}>
                   {inn.totalRuns}/{inn.totalWickets}
                   <span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", fontWeight: 700 }}> ({fmtOv(inn.overs, inn.balls)} ov)</span>
                   {inn.target ? <span style={{ fontSize: 11, color: "#E8B23D", fontWeight: 700, marginLeft: 8 }}>Target {inn.target}</span> : null}
@@ -169,7 +169,7 @@ export function MatchCenter() {
                     <thead>
                       <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
                         {["Batter", "Dismissal", "R", "B", "4s", "6s"].map(h => (
-                          <th key={h} style={{ padding: "6px 8px", textAlign: h === "Batter" || h === "Dismissal" ? "left" : "right", color: "rgba(255,255,255,0.35)", fontWeight: 700, fontSize: 10, fontFamily: "Montserrat, sans-serif", letterSpacing: ".06em" }}>{h}</th>
+                          <th key={h} style={{ padding: "6px 8px", textAlign: h === "Batter" || h === "Dismissal" ? "left" : "right", color: "rgba(255,255,255,0.35)", fontWeight: 700, fontSize: 10, fontFamily: "var(--font-head)", letterSpacing: ".06em" }}>{h}</th>
                         ))}
                       </tr>
                     </thead>
@@ -209,7 +209,7 @@ export function MatchCenter() {
                     <thead>
                       <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
                         {["Bowler", "O", "R", "W", "Wd", "NB"].map(h => (
-                          <th key={h} style={{ padding: "6px 8px", textAlign: h === "Bowler" ? "left" : "right", color: "rgba(255,255,255,0.35)", fontWeight: 700, fontSize: 10, fontFamily: "Montserrat, sans-serif", letterSpacing: ".06em" }}>{h}</th>
+                          <th key={h} style={{ padding: "6px 8px", textAlign: h === "Bowler" ? "left" : "right", color: "rgba(255,255,255,0.35)", fontWeight: 700, fontSize: 10, fontFamily: "var(--font-head)", letterSpacing: ".06em" }}>{h}</th>
                         ))}
                       </tr>
                     </thead>
@@ -245,14 +245,15 @@ export function MatchCenter() {
         @keyframes liveBlip { 0%,100% { opacity:1; } 50% { opacity:0.15; } }
         @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
 
-        .wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
-        @media(min-width:640px){ .wrap { padding: 0 24px; } }
-        @media(min-width:768px){ .wrap { padding: 0 40px; } }
+        .wrap { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        @media(min-width:768px){ .wrap { padding: 0 32px; } }
+        @media(min-width:1280px){ .wrap { padding: 0 48px; } }
 
-        .section-label { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 11px; letter-spacing: 0.15em; color: #FF7A29; text-transform: uppercase; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+        .section-label { font-family: 'Inter', sans-serif; font-weight: 800; font-size: 11px; letter-spacing: 0.15em; color: #FF7A29; text-transform: uppercase; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
         .section-label::before { content: ''; display: inline-block; width: 24px; height: 2px; background: #FF7A29; }
 
-        .section-title { font-family: Montserrat, sans-serif; font-weight: 900; line-height: 1.05; }
+        .section-title { font-family: 'Barlow Condensed','Mukta','Montserrat',sans-serif; font-weight: 800; line-height: .95; letter-spacing: .015em; }
+        .v3-kicker { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: .22em; color: #E8B23D; text-transform: uppercase; }
 
         .match-card { background: #0A1727; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; transition: border-color 0.2s; }
         .match-card.expandable:hover { border-color: rgba(255,122,41,0.35); }
@@ -270,27 +271,24 @@ export function MatchCenter() {
 
       <SiteHeader active="Match Center" />
 
-      {/* HERO — slim */}
-      <section style={{ background: "#06101E", padding: "clamp(36px,5vw,52px) 0 clamp(24px,3vw,36px)", position: "relative", overflow: "hidden" }}>
-        <div style={{ position: "absolute", top: 0, left: 0, width: "40%", height: "100%", background: "linear-gradient(135deg, rgba(255,122,41,0.04) 0%, transparent 70%)", pointerEvents: "none" }} />
-        <div style={{ position: "absolute", top: 0, left: 0, width: "3px", height: "100%", background: "linear-gradient(180deg,transparent,#FF7A29 30%,#FF7A29 70%,transparent)", opacity: 0.35 }} />
-        <div className="wrap">
-          <div style={{ animation: "fadeUp 0.7s ease both" }}>
-            <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 11, letterSpacing: "0.1em", color: "#E8B23D" }}>
-              {t("SEASON 5 · 2025–26", "सीज़न 5 · 2025–26")}
-            </span>
-            <h1 style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: "clamp(24px, 5vw, 52px)", color: "#fff", textTransform: "uppercase", letterSpacing: "-0.01em", lineHeight: 1.05, margin: "10px 0 12px" }}>
-              {t("MATCH", "MATCH")} <span style={{ color: "#FF7A29" }}>{t("CENTER", "CENTER")}</span>
-            </h1>
-            <p style={{ fontFamily: "Inter, sans-serif", fontSize: "clamp(14px, 1.8vw, 16px)", color: "rgba(255,255,255,0.5)", lineHeight: 1.6, maxWidth: 520 }}>
-              {t("Live scores, full match scorecards and the Season 5 points table.", "Live scores, पूरे match scorecards और Season 5 points table।")}
-            </p>
+      {/* HERO */}
+      <section style={{ background: "#06101E", padding: "clamp(80px,12vh,130px) 0 clamp(40px,6vw,64px)", position: "relative", overflow: "hidden", textAlign: "center" }}>
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 50% at 50% 0%,rgba(255,122,41,0.06) 0%,transparent 70%)", pointerEvents: "none", zIndex: 0 }} />
+        <div className="wrap" style={{ position: "relative", zIndex: 1, animation: "fadeUp 0.7s ease both" }}>
+          <div className="v3-kicker" style={{ marginBottom: 16 }}>
+            {t("SEASON 5 · 2025–26", "सीज़न 5 · 2025–26")}
           </div>
+          <h1 className="section-title" style={{ fontSize: "clamp(40px, 9vw, 88px)", color: "#fff", textTransform: "uppercase", marginBottom: 16 }}>
+            {t("MATCH", "MATCH")} <span style={{ color: "#FF7A29" }}>{t("CENTER", "CENTER")}</span>
+          </h1>
+          <p style={{ fontFamily: "Inter, sans-serif", fontSize: "clamp(14px, 1.8vw, 16px)", color: "rgba(255,255,255,0.72)", lineHeight: 1.7, maxWidth: 640, margin: "0 auto" }}>
+            {t("Live scores, full match scorecards and the Season 5 points table.", "Live scores, पूरे match scorecards और Season 5 points table।")}
+          </p>
         </div>
       </section>
 
       {/* MATCHES */}
-      <section style={{ padding: "clamp(32px,5vw,52px) 0", background: "#060C18" }}>
+      <section style={{ padding: "clamp(56px,9vw,110px) 0", background: "#060C18" }}>
         <div className="wrap">
           <div className="section-label">Matches</div>
           <h2 className="section-title" style={{ fontSize: "clamp(20px, 4vw, 34px)", color: "#fff", marginBottom: 24, textTransform: "uppercase" }}>
@@ -300,7 +298,7 @@ export function MatchCenter() {
           {sorted.length === 0 && (
             <div style={{ textAlign: "center", padding: "48px 20px", background: "#0A1727", borderRadius: 16, border: "1px solid rgba(255,255,255,0.07)" }}>
               <div style={{ fontSize: 48, marginBottom: 16 }}>🏏</div>
-              <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 20, color: "#fff", marginBottom: 8 }}>
+              <div className="section-title" style={{ fontSize: 24, color: "#fff", marginBottom: 8, textTransform: "uppercase" }}>
                 {t("No Matches Scheduled Yet", "अभी कोई matches scheduled नहीं हैं")}
               </div>
               <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 14, fontFamily: "Inter, sans-serif", maxWidth: 360, margin: "0 auto" }}>
@@ -326,7 +324,7 @@ export function MatchCenter() {
                       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                         <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: `${meta.color}18`, border: `1px solid ${meta.color}40`, borderRadius: 20, padding: "3px 10px" }}>
                           {st === "live" && <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#EF4444", display: "inline-block", animation: "liveBlip 1.2s infinite" }} />}
-                          <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 9, letterSpacing: ".1em", color: meta.color }}>{meta.label}</span>
+                          <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 9, letterSpacing: ".1em", color: meta.color }}>{meta.label}</span>
                         </span>
                         <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>Match {m.matchNo} · Season 5</span>
                       </div>
@@ -339,12 +337,12 @@ export function MatchCenter() {
                     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                       <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 10 }}>
                         <TeamBadge name={m.team1} color={color(m.team1)} logo={logoOf(m.team1)} size={32} fontSize={10} />
-                        <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: "clamp(12px,2vw,15px)", color: m.winner === m.team1 ? "#FF7A29" : "#fff" }}>{m.team1}</span>
+                        <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: "clamp(12px,2vw,15px)", color: m.winner === m.team1 ? "#FF7A29" : "#fff" }}>{m.team1}</span>
                       </div>
-                      <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 12, color: "rgba(255,255,255,0.25)", flexShrink: 0 }}>VS</div>
+                      <div style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 12, color: "rgba(255,255,255,0.25)", flexShrink: 0 }}>VS</div>
                       <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 10, flexDirection: "row-reverse" }}>
                         <TeamBadge name={m.team2} color={color(m.team2)} logo={logoOf(m.team2)} size={32} fontSize={10} />
-                        <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: "clamp(12px,2vw,15px)", color: m.winner === m.team2 ? "#FF7A29" : "#fff", textAlign: "right" }}>{m.team2}</span>
+                        <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: "clamp(12px,2vw,15px)", color: m.winner === m.team2 ? "#FF7A29" : "#fff", textAlign: "right" }}>{m.team2}</span>
                       </div>
                     </div>
 
@@ -356,7 +354,7 @@ export function MatchCenter() {
                           {m.playerOfMatch && <span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", marginLeft: 10 }}>⭐ {m.playerOfMatch}</span>}
                         </div>
                         {expandable && (
-                          <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 10, letterSpacing: ".08em", color: "#FF7A29" }}>
+                          <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 10, letterSpacing: ".08em", color: "#FF7A29" }}>
                             {open ? "HIDE SCORECARD ▲" : "VIEW SCORECARD ▼"}
                           </span>
                         )}
@@ -374,7 +372,7 @@ export function MatchCenter() {
       </section>
 
       {/* POINTS TABLE */}
-      <section style={{ padding: "clamp(32px,5vw,52px) 0", background: "#06101E" }}>
+      <section style={{ padding: "clamp(56px,9vw,110px) 0", background: "#06101E" }}>
         <div className="wrap">
           <div className="section-label">Standings</div>
           <h2 className="section-title" style={{ fontSize: "clamp(20px, 4vw, 34px)", color: "#fff", marginBottom: 24, textTransform: "uppercase" }}>
@@ -384,7 +382,7 @@ export function MatchCenter() {
           {points.length === 0 && (
             <div style={{ textAlign: "center", padding: "48px 20px", background: "#0A1727", borderRadius: 16, border: "1px solid rgba(255,255,255,0.07)" }}>
               <div style={{ fontSize: 48, marginBottom: 16 }}>🏆</div>
-              <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 20, color: "#fff", marginBottom: 8 }}>
+              <div className="section-title" style={{ fontSize: 24, color: "#fff", marginBottom: 8, textTransform: "uppercase" }}>
                 {t("Standings Coming Soon", "Standings जल्द आएंगे")}
               </div>
               <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 14, fontFamily: "Inter, sans-serif", maxWidth: 360, margin: "0 auto" }}>
@@ -398,21 +396,21 @@ export function MatchCenter() {
               <div className="pts-table-inner">
                 <div className="pts-header">
                   {["#", "Team", "P", "W", "L", "NR", "Pts"].map(h => (
-                    <div key={h} style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 700, fontSize: 10, color: "rgba(255,255,255,0.35)", letterSpacing: ".1em", textAlign: h === "Team" ? "left" : "center" }}>{h}</div>
+                    <div key={h} style={{ fontFamily: "var(--font-head)", fontWeight: 700, fontSize: 10, color: "rgba(255,255,255,0.35)", letterSpacing: ".1em", textAlign: h === "Team" ? "left" : "center" }}>{h}</div>
                   ))}
                 </div>
                 {points.map((row: any, i: number) => (
                   <div key={row.id ?? i} className="pts-row">
-                    <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 13, color: i === 0 ? "#E8B23D" : i === 1 ? "#9CA3AF" : i === 2 ? "#B45309" : "rgba(255,255,255,0.4)", textAlign: "center" }}>{i + 1}</div>
+                    <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 13, color: i === 0 ? "#E8B23D" : i === 1 ? "#9CA3AF" : i === 2 ? "#B45309" : "rgba(255,255,255,0.4)", textAlign: "center" }}>{i + 1}</div>
                     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                       <TeamBadge name={row.team} color={color(row.team)} logo={logoOf(row.team)} size={26} fontSize={8} />
-                      <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 700, fontSize: 13, color: "#fff" }}>{row.team}</div>
+                      <div style={{ fontFamily: "var(--font-head)", fontWeight: 700, fontSize: 13, color: "#fff" }}>{row.team}</div>
                     </div>
                     <div style={{ textAlign: "center", fontSize: 13, color: "rgba(255,255,255,0.6)" }}>{row.played}</div>
                     <div style={{ textAlign: "center", fontSize: 13, color: "#22C55E", fontWeight: 600 }}>{row.won}</div>
                     <div style={{ textAlign: "center", fontSize: 13, color: "#E8493F" }}>{row.lost}</div>
                     <div style={{ textAlign: "center", fontSize: 13, color: "rgba(255,255,255,0.4)" }}>{row.noResult}</div>
-                    <div style={{ textAlign: "center", fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 16, color: "#FF7A29" }}>{row.points}</div>
+                    <div style={{ textAlign: "center", fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 16, color: "#FF7A29" }}>{row.points}</div>
                   </div>
                 ))}
               </div>
@@ -424,7 +422,7 @@ export function MatchCenter() {
       <BCPLFooter />
 
       {/* Floating register button */}
-      <Link href="/register" style={{ position: "fixed", bottom: 28, right: 28, zIndex: 900, background: "linear-gradient(135deg,#FF7A29,#D95E10)", border: "none", borderRadius: 12, color: "#fff", fontFamily: "Montserrat, sans-serif", fontWeight: 900, fontSize: 13, letterSpacing: ".06em", padding: "14px 22px", textTransform: "uppercase", textDecoration: "none", display: "flex", alignItems: "center", gap: 8, boxShadow: "0 8px 32px rgba(255,122,41,0.45)", clipPath: "polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%)", transition: "opacity .2s, transform .15s" }} onMouseEnter={e => { e.currentTarget.style.opacity = ".9"; e.currentTarget.style.transform = "translateY(-2px)"; }} onMouseLeave={e => { e.currentTarget.style.opacity = "1"; e.currentTarget.style.transform = "translateY(0)"; }}>
+      <Link href="/register" style={{ position: "fixed", bottom: 28, right: 28, zIndex: 900, background: "linear-gradient(135deg,#FF7A29,#D95E10)", border: "none", borderRadius: 12, color: "#fff", fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 13, letterSpacing: ".06em", padding: "14px 22px", textTransform: "uppercase", textDecoration: "none", display: "flex", alignItems: "center", gap: 8, boxShadow: "0 8px 32px rgba(255,122,41,0.45)", clipPath: "polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%)", transition: "opacity .2s, transform .15s" }} onMouseEnter={e => { e.currentTarget.style.opacity = ".9"; e.currentTarget.style.transform = "translateY(-2px)"; }} onMouseLeave={e => { e.currentTarget.style.opacity = "1"; e.currentTarget.style.transform = "translateY(0)"; }}>
         {t("🏏 REGISTER NOW →", "🏏 अभी रजिस्टर करें →")}
       </Link>
     </div>

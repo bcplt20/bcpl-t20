@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
 import { getMatches, getPointsTable, isAuthenticated, type FeeConfig } from "../lib/api";
 import { useFees, inr } from "../lib/fees";
-import { SponsorWall } from "../components/SponsorWall";
 import { BCPLFooter } from "../components/BCPLFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { useLang } from "../lib/i18n";
@@ -225,7 +224,7 @@ export function Home() {
         .W{max-width:1200px;margin:0 auto;padding:0 20px;}
         @media(min-width:768px){.W{padding:0 32px;}}
         @media(min-width:1280px){.W{padding:0 48px;}}
-        .mont{font-family:'Montserrat',sans-serif;}
+        .mont{font-family:var(--font-head);}
         .bhead{font-family:'Barlow Condensed','Mukta','Montserrat',sans-serif;}
 
         @keyframes pulse6   {0%,100%{box-shadow:0 0 0 0 rgba(255,122,41,.4)}50%{box-shadow:0 0 0 10px rgba(255,122,41,0)}}
@@ -236,12 +235,12 @@ export function Home() {
         @keyframes playRing {0%{box-shadow:0 0 0 0 rgba(255,122,41,.5)}100%{box-shadow:0 0 0 26px rgba(255,122,41,0)}}
         @keyframes tickMove {from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
-        .btn-cta{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:14px;color:#fff;font-family:'Montserrat',sans-serif;font-weight:900;font-size:14px;letter-spacing:.04em;cursor:pointer;padding:14px 28px;text-transform:uppercase;text-decoration:none;transition:opacity .2s,transform .15s;box-shadow:0 6px 24px rgba(255,122,41,.35);}
+        .btn-cta{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:14px;color:#fff;font-family:var(--font-head);font-weight:900;font-size:14px;letter-spacing:.04em;cursor:pointer;padding:14px 28px;text-transform:uppercase;text-decoration:none;transition:opacity .2s,transform .15s;box-shadow:0 6px 24px rgba(255,122,41,.35);}
         .btn-cta:hover{opacity:.9;transform:translateY(-2px);}
-        .btn-ghost{display:inline-flex;align-items:center;gap:8px;background:rgba(6,12,24,.4);border:1.5px solid rgba(255,255,255,.28);border-radius:14px;color:rgba(255,255,255,.9);font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;cursor:pointer;padding:13px 26px;text-transform:uppercase;transition:border-color .2s,color .2s;text-decoration:none;backdrop-filter:blur(6px);}
+        .btn-ghost{display:inline-flex;align-items:center;gap:8px;background:rgba(6,12,24,.4);border:1.5px solid rgba(255,255,255,.28);border-radius:14px;color:rgba(255,255,255,.9);font-family:var(--font-head);font-weight:700;font-size:14px;cursor:pointer;padding:13px 26px;text-transform:uppercase;transition:border-color .2s,color .2s;text-decoration:none;backdrop-filter:blur(6px);}
         .btn-ghost:hover{border-color:#E8B23D;color:#E8B23D;}
 
-        .slbl{font-family:'Montserrat',sans-serif;font-weight:800;font-size:11px;letter-spacing:.15em;color:#FF7A29;text-transform:uppercase;display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+        .slbl{font-family:var(--font-head);font-weight:800;font-size:11px;letter-spacing:.15em;color:#FF7A29;text-transform:uppercase;display:flex;align-items:center;gap:10px;margin-bottom:14px;}
         .slbl::before{content:'';display:inline-block;width:20px;height:2px;background:#FF7A29;}
         .card{background:#0A1727;border:1px solid rgba(255,255,255,.07);border-radius:16px;}
         .shim{background:linear-gradient(90deg,#FF7A29,#FFB347,#FF7A29);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradMove 3s ease infinite;}
@@ -264,7 +263,7 @@ export function Home() {
         @media(max-width:899px){.hero-ganguly{opacity:.22;height:100%;right:-10%;}}
         .hero-inner{position:relative;z-index:2;padding:clamp(60px,9vw,110px) 0 clamp(56px,9vw,100px);max-width:680px;}
         .hero-stats{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin-bottom:18px;}
-        .hero-stats .hs{font-family:'Montserrat',sans-serif;font-weight:900;font-size:clamp(13px,2vw,18px);color:#fff;letter-spacing:.02em;white-space:nowrap;}
+        .hero-stats .hs{font-family:var(--font-head);font-weight:900;font-size:clamp(13px,2vw,18px);color:#fff;letter-spacing:.02em;white-space:nowrap;}
         .hero-stats .hs b{color:#E8B23D;}
         .hero-stats .dot{width:5px;height:5px;border-radius:50%;background:rgba(232,178,61,.7);flex-shrink:0;}
 
@@ -318,7 +317,7 @@ export function Home() {
         .proof-tile img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease;}
         .proof-tile:hover img{transform:scale(1.05);}
         .proof-cap{position:absolute;left:10px;bottom:10px;right:10px;display:inline-flex;align-items:center;gap:6px;}
-        .proof-cap span{background:rgba(5,10,20,.78);backdrop-filter:blur(6px);border:1px solid rgba(232,178,61,.3);border-radius:8px;padding:5px 10px;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:#F0EDE8;letter-spacing:.04em;}
+        .proof-cap span{background:rgba(5,10,20,.78);backdrop-filter:blur(6px);border:1px solid rgba(232,178,61,.3);border-radius:8px;padding:5px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;color:#F0EDE8;letter-spacing:.04em;}
 
         /* Teams */
         .team-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
@@ -764,8 +763,7 @@ export function Home() {
         </div>
       </section>
 
-      {/* ══ SPONSORS & PARTNERS — server-managed wall (renders when sponsors are added) ══ */}
-      <SponsorWall />
+      {/* Sponsors show ONLY in the footer strip (owner call, Jul 2026) — full wall lives at /sponsors. */}
 
       {/* ══ 10 · THIS IS BCPL — the film ══ */}
       <section className="rv" style={{ position:"relative", overflow:"hidden", background:"#040A14" }}>

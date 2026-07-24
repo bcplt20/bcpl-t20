@@ -312,11 +312,12 @@ export function Phase1Result() {
   return (
     <div style={{ background:'var(--bg)', minHeight:'100dvh', fontFamily:"var(--font-body)", color:'var(--ink)', overflowX:'hidden' }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap');
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-        .W{max-width:1200px;margin:0 auto;padding:0 20px}
+        .W{max-width:var(--container);margin:0 auto;padding:0 20px}
         @media(min-width:768px){.W{padding:0 32px}}
+        @media(min-width:1280px){.W{padding:0 48px}}
         .rwrap{max-width:680px;margin:0 auto;padding:0 20px}
+        @media(min-width:768px){.rwrap{padding:0 32px}}
         
         .btn-gold{background:linear-gradient(135deg,var(--gold),#C4901E);border:none;border-radius:var(--r);color:#081020;font-family:'Barlow Condensed',sans-serif;font-weight:900;fontSize:16px;letter-spacing:.08em;cursor:pointer;transition:transform .15s,filter .2s;text-transform:uppercase;display:inline-flex;align-items:center;justify-content:center;}
         .btn-gold:hover{filter:brightness(1.1);transform:translateY(-2px)}

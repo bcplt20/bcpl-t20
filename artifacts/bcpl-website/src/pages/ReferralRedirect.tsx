@@ -19,7 +19,7 @@ export function ReferralRedirect({ params }: { params?: { code?: string } }) {
   }, []);
 
   return (
-    <div style={{ background: "#06101E", color: "#fff", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Montserrat,sans-serif" }}>
+    <div style={{ background: "#06101E", color: "#fff", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-head)" }}>
       <div style={{ textAlign: "center" }}>
         <div style={{ fontSize: 28, fontWeight: 900, color: "#FF7A29", marginBottom: 8 }}>BCPL T20</div>
         <div style={{ fontSize: 14, color: "#94A3B8" }}>Taking you to registration…</div>

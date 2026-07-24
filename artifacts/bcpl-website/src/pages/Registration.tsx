@@ -357,8 +357,9 @@ export function Registration() {
         @keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 
         /* ── UTILITY ── */
-        .wrap{max-width:1200px;margin:0 auto;padding:0 16px}
+        .wrap{max-width:var(--container);margin:0 auto;padding:0 20px}
         @media(min-width:768px){.wrap{padding:0 32px}}
+        @media(min-width:1280px){.wrap{padding:0 48px}}
 
         /* ── NAV RESPONSIVE ── */
         .desk-nav{display:none}

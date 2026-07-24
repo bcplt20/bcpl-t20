@@ -9,18 +9,21 @@ const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
 body { background:#060E1C; }
-.wrap { max-width:1280px; margin:0 auto; padding:0 20px; }
+.wrap { max-width:1200px; margin:0 auto; padding:0 20px; }
 .desk-nav { display:none; align-items:center; gap:22px; }
 .ham-btn { display:flex; }
 @media(min-width:768px){ .wrap{padding:0 32px} }
+@media(min-width:1280px){ .wrap{padding:0 48px} }
 @media(min-width:1024px){ .desk-nav{display:flex!important;} .ham-btn{display:none!important;} }
-.btn-fire { background:linear-gradient(135deg,#FF7A29 0%,#E8611A 60%,#C94E0E 100%); border:none; border-radius:14px; color:#fff; font-family:Montserrat,sans-serif; font-weight:800; cursor:pointer; box-shadow:0 8px 28px rgba(255,122,41,0.45),inset 0 1px 0 rgba(255,255,255,0.2); transition:transform 0.15s,box-shadow 0.2s; letter-spacing:0.02em; animation:pulseGlow 3s ease-in-out infinite; }
+.v3-kicker { font-family:Inter,sans-serif; font-weight:700; font-size:12px; letter-spacing:.22em; color:#E8B23D; text-transform:uppercase; }
+.v3-h { font-family:'Barlow Condensed','Mukta','Montserrat',sans-serif; font-weight:800; text-transform:uppercase; line-height:.95; letter-spacing:.015em; }
+.btn-fire { background:linear-gradient(135deg,#FF7A29 0%,#E8611A 60%,#C94E0E 100%); border:none; border-radius:14px; color:#fff; font-family:var(--font-head); font-weight:800; cursor:pointer; box-shadow:0 8px 28px rgba(255,122,41,0.45),inset 0 1px 0 rgba(255,255,255,0.2); transition:transform 0.15s,box-shadow 0.2s; letter-spacing:0.02em; animation:pulseGlow 3s ease-in-out infinite; }
 .btn-fire:hover { transform:translateY(-2px); box-shadow:0 14px 40px rgba(255,122,41,0.6); }
 .btn-fire:active { transform:scale(0.97); }
-.btn-wa { background:linear-gradient(135deg,#25D366,#1BA851); border:none; border-radius:14px; color:#fff; font-weight:700; cursor:pointer; font-family:Montserrat,sans-serif; transition:transform 0.15s; }
+.btn-wa { background:linear-gradient(135deg,#25D366,#1BA851); border:none; border-radius:14px; color:#fff; font-weight:700; cursor:pointer; font-family:var(--font-head); transition:transform 0.15s; }
 .glass-card { background:linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85)); backdrop-filter:blur(32px); border:1px solid rgba(255,255,255,0.09); border-radius:20px; box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06); }
 .shimmer-gold { background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D,#F5C842,#E8B23D); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation:shimmer 3s linear infinite; }
-.tag-pill { display:inline-flex; align-items:center; gap:6px; background:rgba(255,122,41,0.12); border:1px solid rgba(255,122,41,0.3); border-radius:100px; padding:5px 14px; font-size:11px; font-weight:700; font-family:Montserrat,sans-serif; color:#FF7A29; letter-spacing:0.1em; }
+.tag-pill { display:inline-flex; align-items:center; gap:6px; background:rgba(255,122,41,0.12); border:1px solid rgba(255,122,41,0.3); border-radius:100px; padding:5px 14px; font-size:11px; font-weight:700; font-family:var(--font-head); color:#FF7A29; letter-spacing:0.1em; }
 .inp { width:100%; background:rgba(255,255,255,0.04); border:1.5px solid rgba(255,255,255,0.1); border-radius:14px; color:#F8F4EE; padding:15px 18px; font-family:Inter,sans-serif; font-size:15px; outline:none; transition:all 0.25s; appearance:none; }
 .inp:focus { border-color:#FF7A29; background:rgba(255,122,41,0.06); box-shadow:0 0 0 4px rgba(255,122,41,0.12); }
 .inp::placeholder { color:rgba(255,255,255,0.28); }
@@ -98,16 +101,14 @@ export function Contact() {
       <SiteHeader active="Contact" />
 
       {/* HERO */}
-      <section style={{position:'relative',zIndex:1,padding:'100px 0 80px',textAlign:'center'}}>
+      <section style={{position:'relative',zIndex:1,padding:'clamp(80px,12vh,130px) 0 clamp(48px,7vw,80px)',textAlign:'center'}}>
         <div className="wrap">
-          <div className="tag-pill" style={{marginBottom:24,animation:'floatUp 0.6s ease both'}}>{t("GET IN TOUCH","संपर्क करें")}</div>
-          <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(40px,7vw,80px)',lineHeight:1.05,color:'#fff',marginBottom:12,animation:'floatUp 0.7s ease 0.1s both'}}>
-            {t("WE'RE HERE","हम यहां हैं")}
+          <div className="v3-kicker" style={{marginBottom:16,animation:'floatUp 0.6s ease both'}}>{t("GET IN TOUCH","संपर्क करें")}</div>
+          <h1 className="v3-h" style={{fontSize:'clamp(40px,9vw,88px)',marginBottom:20,animation:'floatUp 0.7s ease 0.1s both'}}>
+            <span style={{color:'#fff',display:'block'}}>{t("WE'RE HERE","हम यहां हैं")}</span>
+            <span className="shimmer-gold" style={{display:'block'}}>{t("FOR YOU.","आपके लिए।")}</span>
           </h1>
-          <h1 className="shimmer-gold" style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(40px,7vw,80px)',lineHeight:1.05,marginBottom:28,animation:'floatUp 0.7s ease 0.2s both'}}>
-            {t("FOR YOU.","आपके लिए।")}
-          </h1>
-          <p style={{color:'rgba(255,255,255,0.6)',fontSize:18,maxWidth:520,margin:'0 auto',lineHeight:1.7,animation:'floatUp 0.7s ease 0.3s both'}}>
+          <p style={{color:'rgba(255,255,255,0.72)',fontSize:'clamp(14px,2vw,17px)',maxWidth:640,margin:'0 auto',lineHeight:1.7,animation:'floatUp 0.7s ease 0.3s both'}}>
             {t("Questions about registration, results, or anything else? We're here to help, fast.","Registration, results, या कुछ और के बारे में सवाल? हम यहां हैं मदद के लिए, तेज़ी से।")}
           </p>
         </div>
@@ -120,11 +121,11 @@ export function Contact() {
             {/* WhatsApp */}
             <div className="glass-card contact-method-card" style={{padding:'36px 28px',border:'1px solid rgba(37,211,102,0.25)',boxShadow:'0 0 40px rgba(37,211,102,0.06)',animation:'fadeSlide 0.6s ease 0.1s both'}}>
               <div style={{fontSize:44,marginBottom:16}}>📱</div>
-              <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:20,color:'#fff',marginBottom:8}}>WhatsApp</div>
+              <div style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:20,color:'#fff',marginBottom:8}}>WhatsApp</div>
               <div style={{color:'rgba(255,255,255,0.55)',fontSize:14,lineHeight:1.6,marginBottom:8}}>{t("Fastest response.","सबसे तेज़ जवाब।")}</div>
               <div style={{color:'#25D366',fontSize:13,fontWeight:600,marginBottom:24}}>{t("Reply within 2 hours","2 घंटे में जवाब")}</div>
               <a href="https://wa.me/919151346555" target="_blank" rel="noopener noreferrer" style={{textDecoration:'none'}}>
-                <button style={{width:'100%',height:48,borderRadius:14,background:'linear-gradient(135deg,#25D366,#1BA851)',border:'none',color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,cursor:'pointer',transition:'transform 0.15s'}}>
+                <button style={{width:'100%',height:48,borderRadius:14,background:'linear-gradient(135deg,#25D366,#1BA851)',border:'none',color:'#fff',fontFamily:'var(--font-head)',fontWeight:800,fontSize:15,cursor:'pointer',transition:'transform 0.15s'}}>
                   {t("Chat Now →","अभी Chat करें →")}
                 </button>
               </a>
@@ -133,11 +134,11 @@ export function Contact() {
             {/* Email */}
             <div className="glass-card contact-method-card" style={{padding:'36px 28px',border:'1px solid rgba(6,182,212,0.25)',boxShadow:'0 0 40px rgba(6,182,212,0.06)',animation:'fadeSlide 0.6s ease 0.2s both'}}>
               <div style={{fontSize:44,marginBottom:16}}>📧</div>
-              <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:20,color:'#fff',marginBottom:8}}>Email</div>
+              <div style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:20,color:'#fff',marginBottom:8}}>Email</div>
               <div style={{color:'#06B6D4',fontSize:15,fontWeight:700,marginBottom:4}}>support@bcplt20.com</div>
               <div style={{color:'rgba(255,255,255,0.45)',fontSize:13,lineHeight:1.6,marginBottom:24}}>{t("Response within 24 hours","24 घंटे में जवाब")}</div>
               <a href="mailto:support@bcplt20.com" style={{textDecoration:'none'}}>
-                <button style={{width:'100%',height:48,borderRadius:14,background:'linear-gradient(135deg,#06B6D4,#0891B2)',border:'none',color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,cursor:'pointer',transition:'transform 0.15s'}}>
+                <button style={{width:'100%',height:48,borderRadius:14,background:'linear-gradient(135deg,#06B6D4,#0891B2)',border:'none',color:'#fff',fontFamily:'var(--font-head)',fontWeight:800,fontSize:15,cursor:'pointer',transition:'transform 0.15s'}}>
                   {t("Send Email →","Email भेजें →")}
                 </button>
               </a>
@@ -146,11 +147,11 @@ export function Contact() {
             {/* Call */}
             <div className="glass-card contact-method-card" style={{padding:'36px 28px',border:'1px solid rgba(139,92,246,0.25)',boxShadow:'0 0 40px rgba(139,92,246,0.06)',animation:'fadeSlide 0.6s ease 0.3s both'}}>
               <div style={{fontSize:44,marginBottom:16}}>📞</div>
-              <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:20,color:'#fff',marginBottom:8}}>{t("Call Us","Call करें")}</div>
+              <div style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:20,color:'#fff',marginBottom:8}}>{t("Call Us","Call करें")}</div>
               <div style={{color:'#8B5CF6',fontSize:15,fontWeight:700,marginBottom:4}}>+91 91513 46555</div>
               <div style={{color:'rgba(255,255,255,0.45)',fontSize:13,lineHeight:1.6,marginBottom:24}}>{t("Mon–Sat 10AM–7PM IST","सोम–शनि 10AM–7PM IST")}</div>
               <a href="tel:+919151346555" style={{textDecoration:'none'}}>
-                <button style={{width:'100%',height:48,borderRadius:14,background:'linear-gradient(135deg,#8B5CF6,#7C3AED)',border:'none',color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,cursor:'pointer',transition:'transform 0.15s'}}>
+                <button style={{width:'100%',height:48,borderRadius:14,background:'linear-gradient(135deg,#8B5CF6,#7C3AED)',border:'none',color:'#fff',fontFamily:'var(--font-head)',fontWeight:800,fontSize:15,cursor:'pointer',transition:'transform 0.15s'}}>
                   {t("Call Now →","अभी Call करें →")}
                 </button>
               </a>
@@ -165,7 +166,7 @@ export function Contact() {
           <div style={{display:'grid',gridTemplateColumns:'1fr min(480px,100%)',gap:32,alignItems:'start'}} className="contact-grid">
             <style>{`.contact-grid { grid-template-columns: 1fr; } @media(min-width:900px){ .contact-grid { grid-template-columns: 1fr min(480px,100%); } }
         /* ── FLOATING REGISTER BUTTON ── */
-        .float-reg-btn { position:fixed; bottom:28px; right:28px; z-index:900; background:linear-gradient(135deg,#FF7A29,#D95E10); border:none; border-radius:12px; color:#fff; font-family:'Montserrat',sans-serif; font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:14px 22px; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(255,122,41,0.45); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition:opacity .2s,transform .15s; }
+        .float-reg-btn { position:fixed; bottom:28px; right:28px; z-index:900; background:linear-gradient(135deg,#FF7A29,#D95E10); border:none; border-radius:12px; color:#fff; font-family:var(--font-head); font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:14px 22px; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(255,122,41,0.45); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition:opacity .2s,transform .15s; }
         .float-reg-btn:hover { opacity:.9; transform:translateY(-2px); }
         @keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4)} 50%{box-shadow:0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0)} }
         .float-reg-pulse { animation:floatPulse 2.5s ease-in-out infinite; }
@@ -176,13 +177,13 @@ export function Contact() {
 
             <div className="glass-card" style={{padding:'clamp(20px,5vw,40px)',animation:'fadeSlide 0.7s ease 0.2s both'}}>
               <div className="tag-pill" style={{marginBottom:20}}>{t("SEND A MESSAGE","संदेश भेजें")}</div>
-              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:28,color:'#fff',marginBottom:8}}>{t("Drop Us a Line","हमें लिखें")}</h2>
+              <h2 className="v3-h" style={{fontSize:30,color:'#fff',marginBottom:8}}>{t("Drop Us a Line","हमें लिखें")}</h2>
               <p style={{color:'rgba(255,255,255,0.5)',fontSize:14,marginBottom:32,lineHeight:1.6}}>{t("Fill out the form and our team will get back to you within 24 hours.","Form भरें और हमारी team 24 घंटे में आपसे संपर्क करेगी।")}</p>
 
               {sent ? (
                 <div style={{textAlign:'center',padding:'40px 20px'}}>
                   <div style={{fontSize:48,marginBottom:16}}>✅</div>
-                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:20,color:'#22C55E',marginBottom:8}}>{t("Message Sent!","संदेश भेज दिया!")}</div>
+                  <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:20,color:'#22C55E',marginBottom:8}}>{t("Message Sent!","संदेश भेज दिया!")}</div>
                   <div style={{color:'rgba(255,255,255,0.6)',fontSize:14}}>{t("We'll get back to you within 24 hours.","हम 24 घंटे में आपसे संपर्क करेंगे।")}</div>
                 </div>
               ) : (
@@ -227,11 +228,11 @@ export function Contact() {
             <div style={{display:'flex',flexDirection:'column',gap:20}}>
               <div className="glass-card" style={{padding:'32px',animation:'fadeSlide 0.7s ease 0.35s both'}}>
                 <div style={{fontSize:32,marginBottom:12}}>❓</div>
-                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:18,color:'#fff',marginBottom:8}}>{t("Common Questions?","आम सवाल?")}</div>
+                <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:18,color:'#fff',marginBottom:8}}>{t("Common Questions?","आम सवाल?")}</div>
                 <p style={{color:'rgba(255,255,255,0.55)',fontSize:14,marginBottom:20,lineHeight:1.6}}>{t("Quick answers to the most frequent queries:","सबसे frequent queries के quick answers:")}</p>
                 <div style={{display:'flex',flexWrap:'wrap',gap:8,marginBottom:20}}>
                   {[t("Refund policy","Refund policy"),t("Eligibility","पात्रता"),t("Video format","Video format"),t("Results timeline","Result timeline")].map((chip,idx)=>(
-                    <span key={idx} style={{background:'rgba(255,122,41,0.1)',border:'1px solid rgba(255,122,41,0.25)',borderRadius:100,padding:'6px 14px',fontSize:12,color:'#FF7A29',fontFamily:'Montserrat,sans-serif',fontWeight:700,cursor:'pointer'}}>
+                    <span key={idx} style={{background:'rgba(255,122,41,0.1)',border:'1px solid rgba(255,122,41,0.25)',borderRadius:100,padding:'6px 14px',fontSize:12,color:'#FF7A29',fontFamily:'var(--font-head)',fontWeight:700,cursor:'pointer'}}>
                       {chip}
                     </span>
                   ))}
@@ -242,7 +243,7 @@ export function Contact() {
               </div>
 
               <div className="glass-card" style={{padding:'28px',animation:'fadeSlide 0.7s ease 0.45s both'}}>
-                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'rgba(255,255,255,0.7)',marginBottom:16}}>📍 Find Us</div>
+                <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:15,color:'rgba(255,255,255,0.7)',marginBottom:16}}>📍 Find Us</div>
                 <div style={{color:'rgba(255,255,255,0.5)',fontSize:13,lineHeight:1.8}}>
                   <div>BCPL T20 Pvt. Ltd.</div>
                   <div style={{color:'#FF7A29',fontWeight:600}}>www.bcplt20.com</div>
@@ -251,11 +252,11 @@ export function Contact() {
               </div>
 
               <div className="glass-card" style={{padding:'28px',animation:'fadeSlide 0.7s ease 0.55s both'}}>
-                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'rgba(255,255,255,0.7)',marginBottom:16}}>⏰ Support Hours</div>
+                <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:15,color:'rgba(255,255,255,0.7)',marginBottom:16}}>⏰ Support Hours</div>
                 <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
                   {[['Mon–Fri','10AM–7PM'],['Saturday','10AM–5PM'],['Sunday','Closed'],['WhatsApp','24×7']].map(([d,t])=>(
                     <div key={d}>
-                      <div style={{color:'rgba(255,255,255,0.4)',fontSize:11,fontFamily:'Montserrat,sans-serif',fontWeight:700}}>{d}</div>
+                      <div style={{color:'rgba(255,255,255,0.4)',fontSize:11,fontFamily:'var(--font-head)',fontWeight:700}}>{d}</div>
                       <div style={{color:t==='24×7'?'#22C55E':'rgba(255,255,255,0.75)',fontSize:13,fontWeight:600}}>{t}</div>
                     </div>
                   ))}

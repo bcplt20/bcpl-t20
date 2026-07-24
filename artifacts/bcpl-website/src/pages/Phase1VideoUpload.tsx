@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { Link } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import {
@@ -309,9 +310,9 @@ export function Phase1VideoUpload() {
           </div>
           <h2 style={{ color:'var(--ink)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:28, marginBottom:12, textTransform:'uppercase' }}>{t('Registration Required', 'रजिस्ट्रेशन आवश्यक है')}</h2>
           <p style={{ color:'var(--ink-3)', fontSize:14, marginBottom:24, lineHeight:1.7 }}>{t('Please complete Phase 1 registration and payment before uploading your trial video.', 'अपना ट्रायल वीडियो अपलोड करने से पहले कृपया Phase 1 रजिस्ट्रेशन और भुगतान पूरा करें।')}</p>
-          <a href={import.meta.env.BASE_URL + 'register'} style={{ display:'inline-flex', alignItems:'center', gap:8, background:'linear-gradient(135deg,var(--orange),var(--orange-2))', color:'#fff', textDecoration:'none', padding:'14px 32px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:15, letterSpacing:'.08em', textTransform:'uppercase' }}>
+          <Link href="/register" style={{ display:'inline-flex', alignItems:'center', gap:8, background:'linear-gradient(135deg,var(--orange),var(--orange-2))', color:'#fff', textDecoration:'none', padding:'14px 32px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:15, letterSpacing:'.08em', textTransform:'uppercase' }}>
             {t('REGISTER NOW', 'अभी रजिस्टर करें')} →
-          </a>
+          </Link>
         </div>
       </div>
     );
@@ -377,9 +378,9 @@ export function Phase1VideoUpload() {
             </>
           )}
           <div style={{ display:'flex', flexDirection:'column', gap:12, alignItems:'center' }}>
-            <a href={import.meta.env.BASE_URL + 'register/result'} style={{ display:'inline-block', background:'var(--green)', color:'#fff', textDecoration:'none', padding:'14px 32px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:15, letterSpacing:'.06em', textTransform:'uppercase' }}>
+            <Link href="/register/result" style={{ display:'inline-block', background:'var(--green)', color:'#fff', textDecoration:'none', padding:'14px 32px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:15, letterSpacing:'.06em', textTransform:'uppercase' }}>
               {t('CHECK MY STATUS', 'मेरा स्टेटस देखें')} →
-            </a>
+            </Link>
             {canReupload && reuploadsLeft > 0 && (
               <>
                 <button onClick={() => { setFile(null); setDeclAccepted(false); setVideoDuration(null); setUploadState('idle'); }}
@@ -426,12 +427,12 @@ export function Phase1VideoUpload() {
             </div>
           </div>
           <div style={{ display:'flex', gap:12, flexWrap:'wrap', justifyContent:'center' }}>
-            <a href={import.meta.env.BASE_URL + 'register/result'} style={{ flex:1, minWidth:160, display:'block', background:'var(--green)', color:'#fff', textDecoration:'none', padding:'14px 24px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:15, letterSpacing:'.06em', textTransform:'uppercase' }}>
+            <Link href="/register/result" style={{ flex:1, minWidth:160, display:'block', background:'var(--green)', color:'#fff', textDecoration:'none', padding:'14px 24px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:15, letterSpacing:'.06em', textTransform:'uppercase' }}>
               {t('CHECK MY STATUS', 'मेरा स्टेटस देखें')} →
-            </a>
-            <a href={import.meta.env.BASE_URL} style={{ flex:1, minWidth:160, display:'block', background:'rgba(255,255,255,0.06)', border:'1px solid var(--line)', color:'var(--ink-2)', textDecoration:'none', padding:'14px 24px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:15, letterSpacing:'.06em', textTransform:'uppercase' }}>
+            </Link>
+            <Link href="/" style={{ flex:1, minWidth:160, display:'block', background:'rgba(255,255,255,0.06)', border:'1px solid var(--line)', color:'var(--ink-2)', textDecoration:'none', padding:'14px 24px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:15, letterSpacing:'.06em', textTransform:'uppercase' }}>
               {t('GO HOME', 'होम पर जाएं')}
-            </a>
+            </Link>
           </div>
         </div>
       </div>
@@ -452,8 +453,9 @@ export function Phase1VideoUpload() {
         @keyframes uploadBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
         @keyframes progressPulse{0%,100%{opacity:1}50%{opacity:0.7}}
         
-        .W{max-width:1140px;margin:0 auto;padding:0 20px}
+        .W{max-width:var(--container);margin:0 auto;padding:0 20px}
         @media(min-width:768px){.W{padding:0 32px}}
+        @media(min-width:1280px){.W{padding:0 48px}}
         
         .btn-primary{background:linear-gradient(135deg,var(--orange),var(--orange-2));border:none;border-radius:var(--r);color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:900;fontSize:15px;letter-spacing:0.06em;cursor:pointer;transition:transform .15s,filter .2s;text-transform:uppercase;padding:16px 32px;}
         .btn-primary:hover:not(:disabled){filter:brightness(1.15);transform:translateY(-2px)}

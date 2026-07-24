@@ -41,22 +41,25 @@ export function Sponsors() {
     <div style={{background:'#060E1C',color:'#fff',minHeight:'100vh',overflowX:'hidden',fontFamily:'Inter,sans-serif'}}>
       <style>{`
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-        .wrap{max-width:1280px;margin:0 auto;padding:0 20px;}
+        .wrap{max-width:1200px;margin:0 auto;padding:0 20px;}
         .desk-nav{display:none;align-items:center;gap:22px;}
         .ham-btn{display:flex;}
         @media(min-width:768px){.wrap{padding:0 32px}}
+        @media(min-width:1280px){.wrap{padding:0 48px}}
+        .v3-kicker{font-family:Inter,sans-serif;font-weight:700;font-size:12px;letter-spacing:.22em;color:#E8B23D;text-transform:uppercase;}
+        .v3-h{font-family:'Barlow Condensed','Mukta','Montserrat',sans-serif;font-weight:800;text-transform:uppercase;line-height:.95;letter-spacing:.015em;}
         @media(min-width:1024px){.desk-nav{display:flex!important;}.ham-btn{display:none!important;}.tier2-grid{grid-template-columns:repeat(4,1fr)!important;}.tier3-grid{grid-template-columns:repeat(3,1fr)!important;}.tier1-grid{grid-template-columns:repeat(2,1fr)!important;}.stats-row{grid-template-columns:repeat(4,1fr)!important;}.form-row{grid-template-columns:1fr 1fr!important;}}
         @media(min-width:640px){.tier2-grid{grid-template-columns:repeat(2,1fr)!important;}.tier3-grid{grid-template-columns:repeat(3,1fr)!important;}.form-row{grid-template-columns:1fr 1fr!important;}}
-        .btn-fire{background:linear-gradient(135deg,#FF7A29 0%,#E8611A 60%,#C94E0E 100%);border:none;border-radius:14px;color:#fff;font-family:Montserrat,sans-serif;font-weight:800;cursor:pointer;box-shadow:0 8px 28px rgba(255,122,41,0.45),inset 0 1px 0 rgba(255,255,255,0.2);transition:transform 0.15s,box-shadow 0.2s;letter-spacing:0.02em;animation:pulseGlow 3s ease-in-out infinite;}
+        .btn-fire{background:linear-gradient(135deg,#FF7A29 0%,#E8611A 60%,#C94E0E 100%);border:none;border-radius:14px;color:#fff;font-family:var(--font-head);font-weight:800;cursor:pointer;box-shadow:0 8px 28px rgba(255,122,41,0.45),inset 0 1px 0 rgba(255,255,255,0.2);transition:transform 0.15s,box-shadow 0.2s;letter-spacing:0.02em;animation:pulseGlow 3s ease-in-out infinite;}
         .btn-fire:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(255,122,41,0.6);}
         .btn-fire:active{transform:scale(0.97);}
-        .btn-wa{background:linear-gradient(135deg,#25D366,#1BA851);border:none;border-radius:14px;color:#fff;font-weight:700;cursor:pointer;font-family:Montserrat,sans-serif;transition:transform 0.15s;}
+        .btn-wa{background:linear-gradient(135deg,#25D366,#1BA851);border:none;border-radius:14px;color:#fff;font-weight:700;cursor:pointer;font-family:var(--font-head);transition:transform 0.15s;}
         .shimmer-gold{background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D,#F5C842,#E8B23D);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 3s linear infinite;}
-        .tag-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,122,41,0.12);border:1px solid rgba(255,122,41,0.3);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:700;font-family:Montserrat,sans-serif;color:#FF7A29;letter-spacing:0.1em;}
+        .tag-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,122,41,0.12);border:1px solid rgba(255,122,41,0.3);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:700;font-family:var(--font-head);color:#FF7A29;letter-spacing:0.1em;}
         .inp{width:100%;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.1);border-radius:14px;color:#F8F4EE;padding:15px 18px;font-family:Inter,sans-serif;font-size:15px;outline:none;transition:all 0.25s;appearance:none;}
         .inp:focus{border-color:#FF7A29;background:rgba(255,122,41,0.06);box-shadow:0 0 0 4px rgba(255,122,41,0.12);}
         .inp::placeholder{color:rgba(255,255,255,0.28);}
-        .lbl{font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:8px;display:block;font-family:Montserrat,sans-serif;}
+        .lbl{font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:8px;display:block;font-family:var(--font-head);}
         @keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
         @keyframes pulseGlow{0%,100%{box-shadow:0 0 16px rgba(255,122,41,0.4)}50%{box-shadow:0 0 36px rgba(255,122,41,0.8),0 0 60px rgba(255,122,41,0.3)}}
         @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
@@ -68,7 +71,7 @@ export function Sponsors() {
         @keyframes orangeGlow{0%,100%{border-color:rgba(255,122,41,0.2)}50%{border-color:rgba(255,122,41,0.6)}}
       
         /* ── FLOATING REGISTER BUTTON ── */
-        .float-reg-btn { position:fixed; bottom:28px; right:28px; z-index:900; background:linear-gradient(135deg,#FF7A29,#D95E10); border:none; border-radius:12px; color:#fff; font-family:'Montserrat',sans-serif; font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:14px 22px; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(255,122,41,0.45); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition:opacity .2s,transform .15s; }
+        .float-reg-btn { position:fixed; bottom:28px; right:28px; z-index:900; background:linear-gradient(135deg,#FF7A29,#D95E10); border:none; border-radius:12px; color:#fff; font-family:var(--font-head); font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:14px 22px; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(255,122,41,0.45); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition:opacity .2s,transform .15s; }
         .float-reg-btn:hover { opacity:.9; transform:translateY(-2px); }
         @keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4)} 50%{box-shadow:0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0)} }
         .float-reg-pulse { animation:floatPulse 2.5s ease-in-out infinite; }
@@ -96,14 +99,14 @@ export function Sponsors() {
         <SiteHeader active="Sponsors" />
 
         {/* HERO */}
-        <section style={{padding:'80px 0 60px',textAlign:'center'}}>
+        <section style={{padding:'clamp(80px,12vh,130px) 0 clamp(40px,6vw,64px)',textAlign:'center'}}>
           <div className="wrap">
-            <div className="tag-pill" style={{marginBottom:20}}>{t("🤝 OUR PARTNERS","🤝 हमारे PARTNERS")}</div>
-            <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(40px,7vw,80px)',lineHeight:1.05,marginBottom:12}}>
+            <div className="v3-kicker" style={{marginBottom:16}}>{t("OUR PARTNERS","हमारे PARTNERS")}</div>
+            <h1 className="v3-h" style={{fontSize:'clamp(40px,9vw,88px)',marginBottom:20}}>
               <span style={{color:'#fff',display:'block'}}>{t("THE BRANDS","THE BRANDS")}</span>
               <span className="shimmer-gold" style={{display:'block'}}>{t("BEHIND THE DREAM.","BEHIND THE DREAM.")}</span>
             </h1>
-            <p style={{color:'rgba(255,255,255,0.55)',fontSize:17,lineHeight:1.7,maxWidth:520,margin:'0 auto',fontFamily:'Inter,sans-serif'}}>
+            <p style={{color:'rgba(255,255,255,0.72)',fontSize:'clamp(14px,2vw,17px)',lineHeight:1.7,maxWidth:640,margin:'0 auto',fontFamily:'Inter,sans-serif'}}>
               {t("Our partners share our passion for cricket and corporate excellence. Together, we're building India's corporate cricket movement.","हमारे partners cricket और corporate excellence के लिए हमारा जुनून साझा करते हैं। साथ मिलकर हम भारत का corporate cricket movement बना रहे हैं।")}
             </p>
           </div>
@@ -116,7 +119,7 @@ export function Sponsors() {
         <section style={{padding:'0 0 64px'}}>
           <div className="wrap">
             <div style={{textAlign:'center',marginBottom:40}}>
-              <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:16,color:'#fff',marginBottom:8}}>{t("Sponsorship Opportunities — Season 5","Sponsorship Opportunities — Season 5")}</div>
+              <div style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:16,color:'#fff',marginBottom:8}}>{t("Sponsorship Opportunities — Season 5","Sponsorship Opportunities — Season 5")}</div>
               <p style={{color:'rgba(255,255,255,0.45)',fontSize:14,fontFamily:'Inter,sans-serif',maxWidth:480,margin:'0 auto'}}>
                 {t("We are actively seeking brand partners for BCPL Season 5. Reach working-professional cricketers across India.","हम BCPL Season 5 के लिए brand partners की तलाश कर रहे हैं। पूरे भारत के working-professional cricketers तक पहुंचें।")}
               </p>
@@ -127,8 +130,8 @@ export function Sponsors() {
                   <div style={{width:60,height:60,borderRadius:'50%',background:`${tier.color}15`,border:`2px dashed ${tier.color}44`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:26,flexShrink:0}}>🤝</div>
                   <div style={{flex:1,minWidth:200}}>
                     <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:8,flexWrap:'wrap'}}>
-                      <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:14,color:tier.color,letterSpacing:'0.1em'}}>{t(tier.labelEn,tier.labelHi)}</span>
-                      <span style={{background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.1)',color:'rgba(255,255,255,0.35)',fontSize:9,fontWeight:700,padding:'2px 8px',borderRadius:100,fontFamily:'Montserrat,sans-serif'}}>{t("SLOT AVAILABLE","SLOT AVAILABLE")}</span>
+                      <span style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:14,color:tier.color,letterSpacing:'0.1em'}}>{t(tier.labelEn,tier.labelHi)}</span>
+                      <span style={{background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.1)',color:'rgba(255,255,255,0.35)',fontSize:9,fontWeight:700,padding:'2px 8px',borderRadius:100,fontFamily:'var(--font-head)'}}>{t("SLOT AVAILABLE","SLOT AVAILABLE")}</span>
                     </div>
                     <p style={{color:'rgba(255,255,255,0.5)',fontSize:13,lineHeight:1.6,fontFamily:'Inter,sans-serif',margin:0}}>{t(tier.descEn,tier.descHi)}</p>
                   </div>
@@ -143,8 +146,8 @@ export function Sponsors() {
           <div className="wrap">
             <div style={{background:'linear-gradient(135deg,rgba(15,34,71,0.96),rgba(10,22,46,0.92))',backdropFilter:'blur(32px)',border:'1px solid rgba(255,122,41,0.2)',borderRadius:24,padding:'48px 32px',animation:'borderGlow 3s ease-in-out infinite'}}>
               <div style={{textAlign:'center',marginBottom:40}}>
-                <div className="tag-pill" style={{marginBottom:16}}>{t("🤝 PARTNER WITH US","🤝 हमारे साथ PARTNER करें")}</div>
-                <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,4vw,40px)',color:'#fff',marginBottom:12}}>{t("Become a Sponsor","Sponsor बनें")}</h2>
+                <div className="v3-kicker" style={{marginBottom:16}}>{t("PARTNER WITH US","हमारे साथ PARTNER करें")}</div>
+                <h2 className="v3-h" style={{fontSize:'clamp(26px,4vw,44px)',color:'#fff',marginBottom:12}}>{t("Become a Sponsor","Sponsor बनें")}</h2>
                 <p style={{color:'rgba(255,255,255,0.5)',fontSize:15,lineHeight:1.7,maxWidth:480,margin:'0 auto',fontFamily:'Inter,sans-serif'}}>
                   {t("Reach an engaged national audience of working-professional cricketers. Be part of India's corporate cricket movement.","Working-professional cricketers की एक engaged national audience तक पहुंचें। भारत के corporate cricket movement का हिस्सा बनें।")}
                 </p>
@@ -159,7 +162,7 @@ export function Sponsors() {
                   {valEn:'Season 5',valHi:'Season 5',labelEn:'Since 2020',labelHi:'2020 से'},
                 ].map((s,i)=>(
                   <div key={i} style={{background:'rgba(255,122,41,0.06)',border:'1px solid rgba(255,122,41,0.15)',borderRadius:14,padding:'20px 16px',textAlign:'center'}}>
-                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,color:'#FF7A29',marginBottom:4}}>{t(s.valEn,s.valHi)}</div>
+                    <div style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:24,color:'#FF7A29',marginBottom:4}}>{t(s.valEn,s.valHi)}</div>
                     <div style={{color:'rgba(255,255,255,0.45)',fontSize:12,fontFamily:'Inter,sans-serif',letterSpacing:'0.04em'}}>{t(s.labelEn,s.labelHi)}</div>
                   </div>
                 ))}
@@ -169,7 +172,7 @@ export function Sponsors() {
               {sent?(
                 <div style={{textAlign:'center',padding:'40px 20px'}}>
                   <div style={{fontSize:48,marginBottom:16}}>✅</div>
-                  <h3 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,color:'#22C55E',marginBottom:8}}>{t("Enquiry Sent!","Enquiry भेज दी गई!")}</h3>
+                  <h3 style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:22,color:'#22C55E',marginBottom:8}}>{t("Enquiry Sent!","Enquiry भेज दी गई!")}</h3>
                   <p style={{color:'rgba(255,255,255,0.55)',fontFamily:'Inter,sans-serif'}}>{t("Our partnerships team will reach out to you within 48 hours.","हमारी partnerships team 48 hours के अंदर आपसे contact करेगी।")}</p>
                 </div>
               ):(

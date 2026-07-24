@@ -89,17 +89,25 @@ const CSS = `
   .sh-deskbar{display:none;}
   .sh-mobbar{display:flex;align-items:center;justify-content:space-between;gap:8px;height:var(--sh-h);}
   .sh-mobright{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+  /* Wings are content-sized (flex:0 0 auto in JSX) so the centre nav gets ALL
+     leftover space — the old symmetric flex:1 wings starved the links and
+     "About" slid under the language toggle at 1024–1366px. Link size steps
+     down at 1024 so every label fits without overlap. */
   @media(min-width:1024px){
-    .sh-deskbar{display:flex;align-items:center;height:var(--sh-h);gap:16px;}
-    .sh-desk{display:flex;gap:20px;align-items:center;justify-content:center;flex:1 1 auto;min-width:0;}
+    .sh-deskbar{display:flex;align-items:center;height:var(--sh-h);gap:14px;}
+    .sh-desk{display:flex;gap:10px;align-items:center;justify-content:center;flex:1 1 0;min-width:0;}
+    .sh-link{font-size:14px;letter-spacing:.075em;}
     .sh-mobbar{display:none;}
   }
-  @media(min-width:1280px){.sh-desk{gap:26px;}}
+  @media(min-width:1280px){.sh-deskbar{gap:16px;}.sh-desk{gap:20px;}.sh-link{font-size:15.5px;letter-spacing:.09em;}}
+  @media(min-width:1440px){.sh-desk{gap:26px;}}
 
   /* SEASON 5 sits centered UNDER the logo (stacked lockup — fits every phone).
      padding-left mirrors the letter-spacing so the text is optically centered
      (tracking adds a trailing gap that would otherwise pull it left). */
-  .sh-s5{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:9px;color:#E8B23D;letter-spacing:.32em;padding-left:.32em;line-height:1;white-space:nowrap;text-shadow:0 1px 6px rgba(0,0,0,.55);}
+  /* Refined lockup: Inter at tiny size + wide tracking reads premium (Barlow
+     Condensed 800 at 9px rendered chunky/cheap — owner feedback Jul 2026). */
+  .sh-s5{font-family:'Inter','Mukta',sans-serif;font-weight:700;font-size:8px;color:#E8B23D;letter-spacing:.46em;padding-left:.46em;line-height:1;white-space:nowrap;text-transform:uppercase;opacity:.95;text-shadow:0 1px 6px rgba(0,0,0,.55);}
 
   .sh-cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:var(--r,14px);color:#fff;font-family:'Barlow Condensed','Mukta',sans-serif;font-weight:800;letter-spacing:.07em;cursor:pointer;text-transform:uppercase;text-decoration:none;white-space:nowrap;transition:opacity .2s,transform .15s;box-shadow:0 4px 18px rgba(255,122,41,.3);}
   .sh-cta:hover{opacity:.92;transform:translateY(-1px);}
@@ -210,7 +218,7 @@ export function SiteHeader({ active }: { active?: string }) {
 
           {/* ── DESKTOP: logo | centered links | lang · login · CTA ── */}
           <div className="sh-deskbar">
-            <div style={{ flex: "1 1 0", display: "flex", justifyContent: "flex-start", minWidth: 0 }}>
+            <div style={{ flex: "0 0 auto", display: "flex", justifyContent: "flex-start" }}>
               <Logo />
             </div>
             <div className="sh-desk">
@@ -220,7 +228,7 @@ export function SiteHeader({ active }: { active?: string }) {
                 </Link>
               ))}
             </div>
-            <div style={{ flex: "1 1 0", display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 14, minWidth: 0 }}>
+            <div style={{ flex: "0 0 auto", display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 14 }}>
               <LangToggle />
               <NavUser variant="desktop" />
               {user ? (

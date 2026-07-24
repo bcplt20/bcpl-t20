@@ -87,7 +87,7 @@ export function Players() {
         .wrap { max-width: 1280px; margin: 0 auto; padding: 0 16px; }
         @media(min-width:640px) { .wrap { padding: 0 24px; } }
         @media(min-width:1024px) { .wrap { padding: 0 40px; } }
-        .slbl { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 11px; letter-spacing: .15em; color: #FF7A29; text-transform: uppercase; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+        .slbl { font-family: var(--font-head); font-weight: 800; font-size: 11px; letter-spacing: .15em; color: #FF7A29; text-transform: uppercase; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
         .slbl::before { content: ''; display: inline-block; width: 20px; height: 2px; background: #FF7A29; }
         .shimmer-gold { background: linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 3s linear infinite; }
         @keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
@@ -102,7 +102,7 @@ export function Players() {
         @media(min-width:640px) { .player-grid { grid-template-columns: repeat(2,1fr); } }
         @media(min-width:1024px) { .player-grid { grid-template-columns: repeat(3,1fr); } }
         /* Floating register button */
-        .float-reg-btn { position: fixed; bottom: 28px; right: 28px; z-index: 900; background: linear-gradient(135deg,#FF7A29,#D95E10); border: none; border-radius: 12px; color: #fff; font-family: Montserrat, sans-serif; font-weight: 900; font-size: 13px; letter-spacing: .06em; cursor: pointer; padding: 14px 22px; text-transform: uppercase; text-decoration: none; display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 32px rgba(255,122,41,0.45); clip-path: polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition: opacity .2s, transform .15s; }
+        .float-reg-btn { position: fixed; bottom: 28px; right: 28px; z-index: 900; background: linear-gradient(135deg,#FF7A29,#D95E10); border: none; border-radius: 12px; color: #fff; font-family: var(--font-head); font-weight: 900; font-size: 13px; letter-spacing: .06em; cursor: pointer; padding: 14px 22px; text-transform: uppercase; text-decoration: none; display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 32px rgba(255,122,41,0.45); clip-path: polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition: opacity .2s, transform .15s; }
         .float-reg-btn:hover { opacity: .9; transform: translateY(-2px); }
 @media(max-width:1023px){ .float-reg-btn { display:none; } }
         @keyframes floatPulse { 0%,100% { box-shadow: 0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4); } 50% { box-shadow: 0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0); } }
@@ -119,7 +119,7 @@ export function Players() {
           <div className="slbl" style={{ justifyContent: "center" }}>
             {t("The Players", "खिलाड़ी")}
           </div>
-          <h1 style={{ fontFamily: "Montserrat,sans-serif", fontWeight: 900, fontSize: "clamp(32px,6vw,64px)", lineHeight: 1.05, color: "#fff", textTransform: "uppercase", marginBottom: 12 }}>
+          <h1 style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: "clamp(32px,6vw,64px)", lineHeight: 1.05, color: "#fff", textTransform: "uppercase", marginBottom: 12 }}>
             {t("SEASON 5", "सीज़न 5")}<br />
             <span className="shimmer-gold">{t("PLAYERS", "खिलाड़ी")}</span>
           </h1>
@@ -185,7 +185,7 @@ export function Players() {
         {squadEmpty && (
           <div style={{ textAlign: "center", padding: "clamp(60px,10vw,100px) 20px" }}>
             <div style={{ fontSize: 64, marginBottom: 20 }}>🏏</div>
-            <h2 style={{ fontFamily: "Montserrat,sans-serif", fontWeight: 900, fontSize: "clamp(22px,4vw,36px)", color: "#fff", marginBottom: 12 }}>
+            <h2 style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: "clamp(22px,4vw,36px)", color: "#fff", marginBottom: 12 }}>
               {t("Squads Announced After Auction", "Auction के बाद squad announce होंगे")}
             </h2>
             <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 15, maxWidth: 440, margin: "0 auto 28px", lineHeight: 1.7 }}>
@@ -208,7 +208,7 @@ export function Players() {
         {filtered.length > 0 && (
           <>
             <div style={{ marginBottom: 20, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
-              <span style={{ fontFamily: "Montserrat,sans-serif", fontWeight: 800, fontSize: 13, color: "rgba(255,255,255,0.6)" }}>
+              <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 13, color: "rgba(255,255,255,0.6)" }}>
                 {filtered.length} {t(filtered.length === 1 ? "PLAYER" : "PLAYERS", filtered.length === 1 ? "खिलाड़ी" : "खिलाड़ी")}
               </span>
             </div>
@@ -222,25 +222,25 @@ export function Players() {
                       {p.photoUrl ? (
                         <img src={asset(p.photoUrl)} alt={p.name} style={{ width: 56, height: 56, borderRadius: "50%", objectFit: "cover", border: `2px solid ${p.teamColor}`, flexShrink: 0 }} />
                       ) : (
-                        <div style={{ width: 56, height: 56, borderRadius: "50%", background: `linear-gradient(135deg,${p.teamColor}33,${p.teamColor}11)`, border: `2px solid ${p.teamColor}`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Montserrat,sans-serif", fontWeight: 900, fontSize: 18, color: p.teamColor, flexShrink: 0 }}>
+                        <div style={{ width: 56, height: 56, borderRadius: "50%", background: `linear-gradient(135deg,${p.teamColor}33,${p.teamColor}11)`, border: `2px solid ${p.teamColor}`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 18, color: p.teamColor, flexShrink: 0 }}>
                           {p.jerseyNo || p.name[0]}
                         </div>
                       )}
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontFamily: "Montserrat,sans-serif", fontWeight: 800, fontSize: 15, color: "#F8F4EE", marginBottom: 4, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.name}</div>
+                        <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 15, color: "#F8F4EE", marginBottom: 4, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.name}</div>
                         <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-                          <span style={{ background: `${roleColor}22`, border: `1px solid ${roleColor}55`, color: roleColor, fontSize: 10, fontWeight: 800, padding: "2px 8px", borderRadius: 6, fontFamily: "Montserrat,sans-serif", letterSpacing: ".06em" }}>{roleNorm.toUpperCase()}</span>
-                          {p.isCaptain && <span style={{ background: "rgba(232,178,61,0.2)", border: "1px solid rgba(232,178,61,0.5)", color: "#E8B23D", fontSize: 9, fontWeight: 800, padding: "2px 7px", borderRadius: 100, fontFamily: "Montserrat,sans-serif", letterSpacing: ".06em" }}>C</span>}
-                          {p.isViceCaptain && <span style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.25)", color: "rgba(255,255,255,0.75)", fontSize: 9, fontWeight: 800, padding: "2px 7px", borderRadius: 100, fontFamily: "Montserrat,sans-serif", letterSpacing: ".06em" }}>VC</span>}
+                          <span style={{ background: `${roleColor}22`, border: `1px solid ${roleColor}55`, color: roleColor, fontSize: 10, fontWeight: 800, padding: "2px 8px", borderRadius: 6, fontFamily: "var(--font-head)", letterSpacing: ".06em" }}>{roleNorm.toUpperCase()}</span>
+                          {p.isCaptain && <span style={{ background: "rgba(232,178,61,0.2)", border: "1px solid rgba(232,178,61,0.5)", color: "#E8B23D", fontSize: 9, fontWeight: 800, padding: "2px 7px", borderRadius: 100, fontFamily: "var(--font-head)", letterSpacing: ".06em" }}>C</span>}
+                          {p.isViceCaptain && <span style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.25)", color: "rgba(255,255,255,0.75)", fontSize: 9, fontWeight: 800, padding: "2px 7px", borderRadius: 100, fontFamily: "var(--font-head)", letterSpacing: ".06em" }}>VC</span>}
                         </div>
                       </div>
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, paddingTop: 12, borderTop: "1px solid rgba(255,255,255,0.06)" }}>
                       <div style={{ width: 20, height: 20, borderRadius: "50%", background: `${p.teamColor}22`, border: `2px solid ${p.teamColor}`, flexShrink: 0 }} />
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontFamily: "Montserrat,sans-serif", fontWeight: 700, fontSize: 12, color: p.teamColor, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.teamName}</div>
+                        <div style={{ fontFamily: "var(--font-head)", fontWeight: 700, fontSize: 12, color: p.teamColor, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.teamName}</div>
                       </div>
-                      {p.jerseyNo && <span style={{ fontFamily: "Montserrat,sans-serif", fontWeight: 900, fontSize: 18, color: "rgba(255,255,255,0.25)" }}>#{p.jerseyNo}</span>}
+                      {p.jerseyNo && <span style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 18, color: "rgba(255,255,255,0.25)" }}>#{p.jerseyNo}</span>}
                     </div>
                   </div>
                 );

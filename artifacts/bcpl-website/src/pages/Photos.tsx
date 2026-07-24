@@ -11,10 +11,13 @@ const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
 body { background:#060E1C; }
-.wrap { max-width:1280px; margin:0 auto; padding:0 20px; }
+.wrap { max-width:1200px; margin:0 auto; padding:0 20px; }
 @media(min-width:768px){ .wrap{padding:0 32px} }
+@media(min-width:1280px){ .wrap{padding:0 48px} }
+.v3-kicker { font-family:Inter,sans-serif; font-weight:700; font-size:12px; letter-spacing:.22em; color:#E8B23D; text-transform:uppercase; }
+.v3-h { font-family:'Barlow Condensed','Mukta','Montserrat',sans-serif; font-weight:800; text-transform:uppercase; line-height:.95; letter-spacing:.015em; }
 .shimmer-gold { background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D,#F5C842,#E8B23D); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation:shimmer 3s linear infinite; }
-.tag-pill { display:inline-flex; align-items:center; gap:6px; background:rgba(255,122,41,0.12); border:1px solid rgba(255,122,41,0.3); border-radius:100px; padding:5px 14px; font-size:11px; font-weight:700; font-family:Montserrat,sans-serif; color:#FF7A29; letter-spacing:0.1em; }
+.tag-pill { display:inline-flex; align-items:center; gap:6px; background:rgba(255,122,41,0.12); border:1px solid rgba(255,122,41,0.3); border-radius:100px; padding:5px 14px; font-size:11px; font-weight:700; font-family:var(--font-head); color:#FF7A29; letter-spacing:0.1em; }
 .glass-card { background:linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85)); backdrop-filter:blur(32px); border:1px solid rgba(255,255,255,0.09); border-radius:20px; box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06); }
 @keyframes pulseGlow { 0%,100%{box-shadow:0 0 16px rgba(255,122,41,0.4)} 50%{box-shadow:0 0 36px rgba(255,122,41,0.8),0 0 60px rgba(255,122,41,0.3)} }
 @keyframes shimmer { 0%{background-position:-200% center} 100%{background-position:200% center} }
@@ -33,10 +36,10 @@ body { background:#060E1C; }
 .photo-card:hover .photo-overlay { opacity:1; }
 .lb-btn { background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); border-radius:12px; color:#fff; cursor:pointer; font-size:20px; line-height:1; padding:12px 16px; transition:background .2s; }
 .lb-btn:hover { background:rgba(255,255,255,0.18); }
-.load-more-btn { background:rgba(255,122,41,0.1); border:1.5px solid rgba(255,122,41,0.45); border-radius:14px; color:#FF7A29; font-family:Montserrat,sans-serif; font-weight:800; font-size:14px; letter-spacing:.05em; padding:14px 40px; cursor:pointer; transition:all .2s; }
+.load-more-btn { background:rgba(255,122,41,0.1); border:1.5px solid rgba(255,122,41,0.45); border-radius:14px; color:#FF7A29; font-family:var(--font-head); font-weight:800; font-size:14px; letter-spacing:.05em; padding:14px 40px; cursor:pointer; transition:all .2s; }
 .load-more-btn:hover { background:rgba(255,122,41,0.2); transform:translateY(-2px); }
 /* float-reg-btn */
-.float-reg-btn { position:fixed; bottom:28px; right:28px; z-index:900; background:linear-gradient(135deg,#FF7A29,#D95E10); border:none; border-radius:12px; color:#fff; font-family:Montserrat,sans-serif; font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:14px 22px; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(255,122,41,0.45); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition:opacity .2s,transform .15s; }
+.float-reg-btn { position:fixed; bottom:28px; right:28px; z-index:900; background:linear-gradient(135deg,#FF7A29,#D95E10); border:none; border-radius:12px; color:#fff; font-family:var(--font-head); font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:14px 22px; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(255,122,41,0.45); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition:opacity .2s,transform .15s; }
 .float-reg-btn:hover { opacity:.9; transform:translateY(-2px); }
 @keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4)} 50%{box-shadow:0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0)} }
 .float-reg-pulse { animation:floatPulse 2.5s ease-in-out infinite; }
@@ -135,16 +138,14 @@ export function Photos() {
       <SiteHeader active="Photos" />
 
       {/* HERO */}
-      <section style={{position:'relative',zIndex:1,padding:'100px 0 48px',textAlign:'center'}}>
+      <section style={{position:'relative',zIndex:1,padding:'clamp(80px,12vh,130px) 0 clamp(40px,6vw,64px)',textAlign:'center'}}>
         <div className="wrap">
-          <div className="tag-pill" style={{marginBottom:24,animation:'floatUp 0.6s ease both'}}>{t("BCPL GALLERY","BCPL GALLERY")}</div>
-          <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(40px,7vw,80px)',lineHeight:1.05,color:'#fff',marginBottom:12,animation:'floatUp 0.7s ease 0.1s both'}}>
-            {t("MOMENTS THAT","वो पल जो")}
+          <div className="v3-kicker" style={{marginBottom:16,animation:'floatUp 0.6s ease both'}}>{t("BCPL GALLERY","BCPL GALLERY")}</div>
+          <h1 className="v3-h" style={{fontSize:'clamp(40px,9vw,88px)',marginBottom:20,animation:'floatUp 0.7s ease 0.1s both'}}>
+            <span style={{color:'#fff',display:'block'}}>{t("MOMENTS THAT","वो पल जो")}</span>
+            <span className="shimmer-gold" style={{display:'block'}}>{t("DEFINE US.","हमें परिभाषित करते हैं।")}</span>
           </h1>
-          <h1 className="shimmer-gold" style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(40px,7vw,80px)',lineHeight:1.05,marginBottom:24,animation:'floatUp 0.7s ease 0.2s both'}}>
-            {t("DEFINE US.","हमें परिभाषित करते हैं।")}
-          </h1>
-          <p style={{color:'rgba(255,255,255,0.6)',fontSize:18,maxWidth:560,margin:'0 auto',lineHeight:1.7,animation:'floatUp 0.7s ease 0.3s both'}}>
+          <p style={{color:'rgba(255,255,255,0.72)',fontSize:'clamp(14px,2vw,17px)',maxWidth:640,margin:'0 auto',lineHeight:1.7,animation:'floatUp 0.7s ease 0.3s both'}}>
             {t("From the Season 4 auction floor to the official commercial shoot — boards, bids, teams and jerseys.","Season 4 auction floor से official commercial shoot तक — boards, bids, teams और jerseys।")}
           </p>
         </div>
@@ -159,7 +160,7 @@ export function Photos() {
             <div className="wrap">
               <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:10,marginBottom:22}}>
                 <div>
-                  <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(20px,3.5vw,30px)',color:'#fff',textTransform:'uppercase',letterSpacing:'.02em'}}>
+                  <h2 className="v3-h" style={{fontSize:'clamp(22px,3.5vw,32px)',color:'#fff'}}>
                     {t(sec.title[0], sec.title[1])}
                   </h2>
                   <div style={{fontFamily:'Inter,sans-serif',fontSize:13,color:'rgba(255,255,255,0.45)',marginTop:4}}>
@@ -175,7 +176,7 @@ export function Photos() {
                     <img src={sec.thumbUrl(p.f)} alt={`${t("BCPL","BCPL")} ${t(sec.title[0], sec.title[1])} ${i + 1}`}
                       width={p.w} height={p.h} loading={si === 0 && i < 6 ? 'eager' : 'lazy'} decoding="async" />
                     <div className="photo-overlay">
-                      <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:11,color:'#fff',letterSpacing:'.08em'}}>
+                      <span style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:11,color:'#fff',letterSpacing:'.08em'}}>
                         {sec.overlay} · {String(i + 1).padStart(2, '0')}
                       </span>
                     </div>
@@ -199,7 +200,7 @@ export function Photos() {
       <section style={{position:'relative',zIndex:1,padding:'20px 0 110px'}}>
         <div className="wrap">
           <div className="glass-card" style={{padding:'clamp(28px,5vw,44px) clamp(20px,5vw,48px)',textAlign:'center',maxWidth:640,margin:'0 auto',border:'1px solid rgba(255,122,41,0.15)',animation:'fadeSlide 0.7s ease both'}}>
-            <h3 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(18px,3vw,24px)',color:'#fff',marginBottom:10,lineHeight:1.25}}>
+            <h3 className="v3-h" style={{fontSize:'clamp(20px,3vw,28px)',color:'#fff',marginBottom:10}}>
               {t("Auction Videos","Auction Videos")} <span className="shimmer-gold">{t("Are Live","आ गई हैं")}</span>
             </h3>
             <p style={{color:'rgba(255,255,255,0.5)',fontSize:14,lineHeight:1.7,maxWidth:460,margin:'0 auto 22px',fontFamily:'Inter,sans-serif'}}>
@@ -207,11 +208,11 @@ export function Photos() {
             </p>
             <div style={{display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap'}}>
               <Link href="/videos"
-                style={{display:'inline-flex',alignItems:'center',gap:10,padding:'12px 28px',borderRadius:14,background:'linear-gradient(135deg,#FF7A29,#D95E10)',border:'none',color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:13,cursor:'pointer',letterSpacing:'0.02em',textDecoration:'none'}}>
+                style={{display:'inline-flex',alignItems:'center',gap:10,padding:'12px 28px',borderRadius:14,background:'linear-gradient(135deg,#FF7A29,#D95E10)',border:'none',color:'#fff',fontFamily:'var(--font-head)',fontWeight:800,fontSize:13,cursor:'pointer',letterSpacing:'0.02em',textDecoration:'none'}}>
                 {t("WATCH AUCTION VIDEOS","Auction Videos देखें")} &rarr;
               </Link>
               <a href="https://www.instagram.com/bcpl.t20" target="_blank" rel="noopener noreferrer"
-                style={{display:'inline-flex',alignItems:'center',gap:10,padding:'12px 28px',borderRadius:14,background:'linear-gradient(135deg,#E1306C,#F77737,#FCAF45)',border:'none',color:'#fff',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:13,cursor:'pointer',letterSpacing:'0.02em',textDecoration:'none'}}>
+                style={{display:'inline-flex',alignItems:'center',gap:10,padding:'12px 28px',borderRadius:14,background:'linear-gradient(135deg,#E1306C,#F77737,#FCAF45)',border:'none',color:'#fff',fontFamily:'var(--font-head)',fontWeight:800,fontSize:13,cursor:'pointer',letterSpacing:'0.02em',textDecoration:'none'}}>
                 {t("Follow @bcpl.t20","@bcpl.t20 Follow करें")}
               </a>
             </div>
@@ -232,7 +233,7 @@ export function Photos() {
             style={{position:'absolute',left:10,top:'50%',transform:'translateY(-50%)'}}>‹</button>
           <button className="lb-btn" aria-label="Next" onClick={e => { e.stopPropagation(); setLightbox(lb => lb ? { ...lb, idx: (lb.idx + 1) % lbSection.photos.length } : lb); }}
             style={{position:'absolute',right:10,top:'50%',transform:'translateY(-50%)'}}>›</button>
-          <div style={{position:'absolute',bottom:18,left:'50%',transform:'translateX(-50%)',fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:12,color:'rgba(255,255,255,0.6)',letterSpacing:'.1em'}}>
+          <div style={{position:'absolute',bottom:18,left:'50%',transform:'translateX(-50%)',fontFamily:'var(--font-head)',fontWeight:800,fontSize:12,color:'rgba(255,255,255,0.6)',letterSpacing:'.1em'}}>
             {t(lbSection.title[0], lbSection.title[1])} · {lightbox.idx + 1} / {lbSection.photos.length}
           </div>
         </div>

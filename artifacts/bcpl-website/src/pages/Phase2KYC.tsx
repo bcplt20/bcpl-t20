@@ -324,6 +324,7 @@ export function Phase2KYC() {
         .page-root { background: var(--bg); min-height: 100vh; font-family: var(--font-body); color: var(--ink); overflow-x: hidden; padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
         .W { max-width: 800px; margin: 0 auto; padding: 0 20px; }
         @media (min-width: 768px) { .W { padding: 0 32px; } }
+        @media (min-width: 1280px) { .W { padding: 0 48px; } }
         
         .btn-primary { background: linear-gradient(135deg, var(--orange), var(--orange-2)); border: none; border-radius: var(--r); color: #fff; font-family: var(--font-head); font-weight: 900; letter-spacing: .06em; cursor: pointer; transition: all .2s; text-transform: uppercase; }
         .btn-primary:hover { filter: brightness(1.1); transform: translateY(-2px); }

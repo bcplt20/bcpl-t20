@@ -38,8 +38,9 @@ export function TeamSelected() {
     <div className="page-root">
       <style>{`
         .page-root { background: var(--bg); min-height: 100vh; font-family: var(--font-body); color: var(--ink); overflow-x: hidden; padding-bottom: 100px; }
-        .W { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+        .W { max-width: var(--container); margin: 0 auto; padding: 0 20px; }
         @media(min-width: 768px){ .W { padding: 0 32px; } }
+        @media(min-width: 1280px){ .W { padding: 0 48px; } }
         
         .btn-white { background: #fff; border: none; border-radius: var(--r); color: #000; font-family: var(--font-head); font-weight: 900; letter-spacing: .06em; cursor: pointer; transition: all .2s; text-transform: uppercase; padding: 16px 32px; font-size: 15px; box-shadow: 0 8px 24px rgba(255,255,255,0.2); }
         .btn-white:hover { filter: brightness(0.9); transform: translateY(-2px); }
@@ -61,7 +62,8 @@ export function TeamSelected() {
         .next-card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 24px; transition: transform 0.2s; }
         .next-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.3); }
         
-        .roadmap-rail { display: flex; align-items: center; justify-content: space-between; overflow-x: auto; padding: 10px 0; min-width: 600px; }
+        .roadmap-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .roadmap-rail { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; min-width: 560px; }
       `}</style>
 
       <SiteHeader />
@@ -154,6 +156,7 @@ export function TeamSelected() {
         {/* JOURNEY RAIL — all complete */}
         <div style={{ background: 'var(--panel)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 'var(--r)', padding: '32px 24px', marginBottom: 40 }}>
           <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 13, letterSpacing: '.14em', color: 'var(--green)', textTransform: 'uppercase', marginBottom: 24 }}>🏆 {t("JOURNEY COMPLETE · ALL 6 STAGES CLEARED", "सफर पूरा · सभी 6 स्टेज क्लियर")}</div>
+          <div className="roadmap-scroll">
           <div className="roadmap-rail">
             {ROADMAP.map((step, i) => (
               <React.Fragment key={i}>
@@ -166,6 +169,7 @@ export function TeamSelected() {
                 {i < ROADMAP.length - 1 && <div style={{ flex: 1.5, height: 2, background: 'rgba(34,197,94,0.4)', margin: '0 8px', marginBottom: 28 }} />}
               </React.Fragment>
             ))}
+          </div>
           </div>
         </div>
 
