@@ -4,6 +4,7 @@ import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { useLang } from '../lib/i18n';
 import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
+import { SponsorWall } from '../components/SponsorWall';
 
 
 // Sponsor data will be added once partnerships are confirmed
@@ -107,6 +108,9 @@ export function Sponsors() {
             </p>
           </div>
         </section>
+
+        {/* OUR SPONSORS — live list managed from the admin panel */}
+        <SponsorWall />
 
         {/* SPONSORSHIP TIERS */}
         <section style={{padding:'0 0 64px'}}>

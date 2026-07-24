@@ -25,11 +25,14 @@ const router = Router();
 /** Keys readable without auth (shown on public pages). */
 const PUBLIC_KEYS = new Set(["sample_videos", "homepage_config"]);
 /** Keys the admin may write. */
-const WRITABLE_KEYS = new Set(["sample_videos", "homepage_config"]);
+const WRITABLE_KEYS = new Set(["sample_videos", "homepage_config", "sponsors"]);
 /** Per-key role restriction (SUPER_ADMIN always allowed). */
 const KEY_ROLES: Record<string, string[]> = {
   sample_videos: ["VIDEO_AI_OPERATIONS", "CONTENT_TEAM"],
   homepage_config: ["CONTENT_TEAM"],
+  /* sponsors: full records (amounts, contract dates) are admin-only; the
+     public site reads a sanitized list via GET /api/sponsors instead. */
+  sponsors: ["CONTENT_TEAM"],
 };
 
 /* ── ensure table exists (idempotent, runs at boot) ── */
@@ -105,6 +108,38 @@ const homepageConfigSchema = z.object({
   supportPhone: z.string().max(20).optional(),
 }).strict();
 
+/* Sponsors list managed from the admin panel. Logos/websites must be http(s)
+   URLs (S3 cms/ uploads) — base64 data URLs are rejected to keep rows small. */
+const httpUrlOrEmpty = z.string().max(600)
+  .refine(v => v === "" || /^https?:\/\//i.test(v), "must be an http(s) URL");
+const sponsorEntry = z.object({
+  id: z.string().min(1).max(60),
+  name: z.string().min(1).max(120),
+  category: z.string().max(80).default(""),
+  logo: httpUrlOrEmpty.default(""),
+  amount: z.string().max(40).default(""),
+  website: httpUrlOrEmpty.default(""),
+  contract: z.string().max(40).default(""),
+  status: z.enum(["active", "negotiating", "expired"]).default("active"),
+  visibility: z.string().max(60).default("All Platforms"),
+}).strict();
+const sponsorsSchema = z.array(sponsorEntry).max(100);
+
+/* ── GET /api/settings/admin/:key (full value, role-gated — for non-public keys like sponsors) ── */
+router.get("/admin/:key", requireAdmin, async (req, res) => {
+  const key = String(req.params.key);
+  if (!WRITABLE_KEYS.has(key)) {
+    return void res.status(400).json({ error: "Unknown setting key" });
+  }
+  const role = req.admin?.role;
+  const allowedRoles = KEY_ROLES[key] ?? [];
+  if (role !== "SUPER_ADMIN" && !(role && allowedRoles.includes(role))) {
+    return void res.status(403).json({ error: "Forbidden — your admin role does not allow this action" });
+  }
+  const rows = await db.select().from(siteSettingsTable).where(eq(siteSettingsTable.key, key)).limit(1);
+  return res.json({ key, value: rows[0]?.value ?? null, updatedAt: rows[0]?.updatedAt ?? null });
+});
+
 router.put("/admin/:key", requireAdmin, async (req, res) => {
   const key = String(req.params.key);
   if (!WRITABLE_KEYS.has(key)) {
@@ -132,6 +167,14 @@ router.put("/admin/:key", requireAdmin, async (req, res) => {
       return void res.status(400).json({ error: "Invalid homepage_config value — " + first });
     }
     value = parsed.data as Record<string, unknown>;
+  } else if (key === "sponsors") {
+    const parsed = sponsorsSchema.safeParse(req.body?.value);
+    if (!parsed.success) {
+      const first = parsed.error.issues.slice(0, 3).map(i => (i.path.join(".") || "value") + ": " + i.message).join("; ");
+      return void res.status(400).json({ error: "Invalid sponsors value — " + first });
+    }
+    /* jsonb column is typed Record<string,unknown>; an array is valid jsonb. */
+    value = parsed.data as unknown as Record<string, unknown>;
   } else {
     return void res.status(400).json({ error: "Unknown setting key" });
   }

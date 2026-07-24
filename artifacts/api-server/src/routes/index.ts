@@ -12,6 +12,7 @@ import teamsRouter    from "./teams";
 import scoringRouter  from "./scoring";
 import pointsRouter   from "./points";
 import settingsRouter from "./settings";
+import sponsorsRouter from "./sponsors";
 import adminRouter    from "./admin";
 import { adminTrialsRouter, userTrialsRouter } from "./trials";
 import { adminRefundsRouter } from "./refunds";
@@ -43,6 +44,7 @@ router.use("/matches",       matchesRouter);
 router.use("/scoring",       scoringRouter);
 router.use("/points-table",  pointsRouter);
 router.use("/teams",         teamsRouter);
+router.use("/sponsors",      sponsorsRouter); // public sanitized sponsor list
 router.use("/settings",      settingsRouter);
 // Admin panel
 router.use("/admin/trials",  adminTrialsRouter); // Stage 4 physical trials

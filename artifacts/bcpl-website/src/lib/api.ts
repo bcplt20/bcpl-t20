@@ -46,6 +46,11 @@ async function req<T = unknown>(
 
 /* ─── Auth ─────────────────────────────────────────── */
 
+/* ─── Public sponsors (website sponsor wall) ───────── */
+export type PublicSponsor = { name: string; category: string; logo: string; website: string };
+export const getPublicSponsors = () =>
+  req<{ sponsors: PublicSponsor[] }>("GET", "/sponsors");
+
 export const sendOtp = (phone: string, purpose: "login" | "register" = "login") =>
   req<{ success: boolean; message: string; devOtp?: string }>(
     "POST", "/auth/send-otp", { phone, purpose }
