@@ -153,6 +153,14 @@ function renderView(id: string, navigate: (viewId: string, payload?: AdminNavPay
 
 const ALL_ITEMS = NAV.flatMap(g => g.items);
 
+/* View id ↔ URL hash (/admin#sponsors): keeps the open section across
+   browser refreshes and makes sections deep-linkable. Unknown or empty
+   hashes fall back to the dashboard. */
+const readHashView = () => {
+  const h = window.location.hash.replace(/^#\/?/, "");
+  return ALL_ITEMS.some(i => i.id === h) ? h : "dashboard";
+};
+
 /* ── Super Admin (hardcoded, always available) ── */
 const SUPER_ADMIN = {
   id:"SA-ROOT", name:"Saurabh Jha", email:"saurabhjha@bcplt20.com",
@@ -168,7 +176,7 @@ const profileToAdmin = (a: AdminProfile) =>
   ({ id: a.email, name: a.name, email: a.email, role: prettyRole(a.role), permissions: a.permissions });
 
 export default function AdminShell() {
-  const [active,        setActive]       = useState("dashboard");
+  const [active,        setActive]       = useState<string>(readHashView);
   const [navPayload,    setNavPayload]   = useState<AdminNavPayload | null>(null);
   const [loggedIn,      setLoggedIn]     = useState(false);
   const [loggedInAdmin, setLoggedInAdmin]= useState<typeof SUPER_ADMIN & { password?:string } | null>(null);
@@ -205,6 +213,11 @@ export default function AdminShell() {
     setNavPayload(payload ?? null);
     setActive(viewId);
     setLastUpdated(new Date()); // switching sections mounts fresh data
+    /* Persist the open section in the URL so a refresh reopens it. replaceState
+       (not location.hash=) avoids stacking a history entry per sidebar click. */
+    if (window.location.hash.slice(1) !== viewId) {
+      window.history.replaceState(null, "", "#" + viewId);
+    }
   };
 
   /* ── Restore session on load: stored token + server check → skip login ── */
@@ -227,6 +240,24 @@ export default function AdminShell() {
     })();
     return () => { cancelled = true; };
   }, []);
+
+  /* ── Keep the view in sync if the hash changes (manual URL edit / back-forward) ── */
+  useEffect(() => {
+    const onHash = () => { setNavPayload(null); setActive(readHashView()); };
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
+
+  /* ── A restored deep-link must not open a section this admin cannot see —
+     snap to dashboard once permissions are known. (The server enforces role
+     checks on every API anyway; this only avoids a broken-looking view.) ── */
+  useEffect(() => {
+    if (!loggedIn || !loggedInAdmin || active === "dashboard") return;
+    const superAdmin = loggedInAdmin.permissions?.includes("all") ?? false;
+    const ok = superAdmin || (active !== "admin_settings" && (loggedInAdmin.permissions?.includes(active) ?? false));
+    if (!ok) navigate("dashboard");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loggedIn, loggedInAdmin, active]);
 
   /* ── Auto-refresh: while one of the long-lived admin views is open, re-fetch
      its data every 90s — but only when the browser tab is visible (saves

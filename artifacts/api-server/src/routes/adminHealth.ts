@@ -16,6 +16,7 @@ import { db } from "@workspace/db";
 import { sql } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { getJobHeartbeats } from "../lib/heartbeat";
+import { getPhase1Config } from "../lib/phase1Config";
 import { logger } from "../lib/logger";
 
 export const adminHealthRouter = Router();
@@ -53,10 +54,14 @@ async function probeBrevo(): Promise<ProbeResult> {
 async function probeGemini(): Promise<ProbeResult> {
   try {
     const key = process.env.GEMINI_API_KEY ?? "";
-    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?pageSize=1&key=${encodeURIComponent(key)}`, {
+    /* Probe the exact model evaluations use — a valid key with a retired/
+       pinned model must show as FAILED here (with the model name), not as
+       a healthy "model list reachable". */
+    const model = (await getPhase1Config()).geminiPrimaryModel;
+    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}?key=${encodeURIComponent(key)}`, {
       signal: AbortSignal.timeout(3500),
     });
-    return { ok: r.ok, note: r.ok ? "model list reachable" : `HTTP ${r.status}` };
+    return { ok: r.ok, note: r.ok ? `model ${model} reachable` : `HTTP ${r.status} for model ${model}` };
   } catch (e) {
     return { ok: false, note: e instanceof Error ? e.message.slice(0, 120) : "unreachable" };
   }

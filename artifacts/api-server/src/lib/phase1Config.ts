@@ -20,6 +20,17 @@ import { logger } from "./logger";
 
 export const PHASE1_CONFIG_KEY = "phase1_ai_config";
 
+/* The 1.x/2.x Gemini families (incl. 2.5) 404 for API keys created after
+   mid-2026 ("no longer available to new users"). A stored config saved in
+   that era pins those models EXPLICITLY (updatePhase1Config persists the
+   full merged object), so new code defaults never apply — prod AI evals
+   then fail forever even after a deploy. Heal such pins at read time and
+   refuse to write new ones. */
+const DEAD_GEMINI_MODEL_RE = /^gemini-[12]\./i;
+export const GEMINI_PRIMARY_DEFAULT = "gemini-3.5-flash";
+export const GEMINI_VALIDATION_DEFAULT = "gemini-3.1-flash-lite";
+export const isDeadGeminiModel = (m: string) => DEAD_GEMINI_MODEL_RE.test(m.trim());
+
 /** Base object schema (kept un-refined so .partial() works for patches). */
 export const phase1ConfigBase = z.object({
   // Staging switches — all OFF by default
@@ -48,8 +59,8 @@ export const phase1ConfigBase = z.object({
   // Pinned stable models (July 2026). The 2.5 family 404s for API keys created
   // after mid-2026 ("no longer available to new users"), so keep these current.
   // GEMINI_PRIMARY_MODEL / GEMINI_VALIDATION_MODEL env vars override without a deploy.
-  geminiPrimaryModel:    z.string().min(1).default("gemini-3.5-flash"),
-  geminiValidationModel: z.string().min(1).default("gemini-3.1-flash-lite"),
+  geminiPrimaryModel:    z.string().min(1).default(GEMINI_PRIMARY_DEFAULT),
+  geminiValidationModel: z.string().min(1).default(GEMINI_VALIDATION_DEFAULT),
   promptVersion:     z.string().min(1).default("V1"),
   rubricVersion:     z.string().min(1).default("V1"),
   assessmentVersion: z.string().min(1).default("V1"),
@@ -60,6 +71,22 @@ export const phase1ConfigSchema = phase1ConfigBase.refine(
   { message: "videoMinSeconds must be less than videoMaxSeconds" },
 );
 export type Phase1Config = z.infer<typeof phase1ConfigSchema>;
+
+/** Self-heal: swap retired model pins for the current defaults (loud log). */
+function healDeadGeminiModels(cfg: Phase1Config): Phase1Config {
+  const out = { ...cfg };
+  if (isDeadGeminiModel(out.geminiPrimaryModel)) {
+    logger.warn({ stored: out.geminiPrimaryModel, using: GEMINI_PRIMARY_DEFAULT },
+      "phase1Config: stored primary model retired for new API keys; substituting default");
+    out.geminiPrimaryModel = GEMINI_PRIMARY_DEFAULT;
+  }
+  if (isDeadGeminiModel(out.geminiValidationModel)) {
+    logger.warn({ stored: out.geminiValidationModel, using: GEMINI_VALIDATION_DEFAULT },
+      "phase1Config: stored validation model retired for new API keys; substituting default");
+    out.geminiValidationModel = GEMINI_VALIDATION_DEFAULT;
+  }
+  return out;
+}
 
 function envBool(name: string): boolean | undefined {
   const v = process.env[name];
@@ -111,7 +138,8 @@ export async function getPhase1Config(): Promise<Phase1Config> {
     logger.warn({ issues: parsed.error.issues }, "phase1Config: stored config invalid; using defaults");
     cfg = phase1ConfigSchema.parse({});
   }
-  cfg = applyEnvOverrides(cfg);
+  cfg = healDeadGeminiModels(cfg);
+  cfg = applyEnvOverrides(cfg); // env still wins — explicit ops override
   cache = { value: cfg, at: Date.now() };
   return cfg;
 }
@@ -123,13 +151,21 @@ export async function updatePhase1Config(
   actorIp?: string,
 ): Promise<Phase1Config> {
   const patchParsed = phase1ConfigBase.partial().strict().parse(patch);
+  for (const f of ["geminiPrimaryModel", "geminiValidationModel"] as const) {
+    const v = patchParsed[f];
+    if (v !== undefined && isDeadGeminiModel(v)) {
+      const suggestion = f === "geminiPrimaryModel" ? GEMINI_PRIMARY_DEFAULT : GEMINI_VALIDATION_DEFAULT;
+      throw new Error(`${f}: "${v}" is retired for new Gemini API keys — use a current model (e.g. ${suggestion})`);
+    }
+  }
   const rows = await db
     .select()
     .from(siteSettingsTable)
     .where(eq(siteSettingsTable.key, PHASE1_CONFIG_KEY))
     .limit(1);
   const oldStored = (rows[0]?.value as Record<string, unknown> | undefined) ?? {};
-  const merged = phase1ConfigSchema.parse({ ...phase1ConfigSchema.parse(oldStored ?? {}), ...patchParsed });
+  /* Heal the stored base too, so ANY config save migrates a dead pin away. */
+  const merged = phase1ConfigSchema.parse({ ...healDeadGeminiModels(phase1ConfigSchema.parse(oldStored ?? {})), ...patchParsed });
 
   await db
     .insert(siteSettingsTable)
