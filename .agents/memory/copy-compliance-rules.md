@@ -25,3 +25,7 @@ description: Editorial rulebook from the July 2026 legal copy sweep — wording 
 NEVER write copy implying "not selected = you pay nothing / your money is safe" — users read it as a refund promise for Phase 1 and demand refunds. Banned patterns: "pay nothing", "nothing more", "एक रुपया भी नहीं", "कुछ नहीं देना", "Ever.", money-back vibes (green + shield styling on fee cards counts).
 **Correct framing:** "Phase 2 fee is charged only on selection — a separate payment at that stage. All fees, once paid, are non-refundable." (mirrors Terms/Refund Policy).
 **Grep gate before shipping any pricing/fee copy:** `pay nothing|nothing more|एक रुपया|कुछ नहीं देना|money.back|पैसे वापस`
+
+## League numbers (July 2026, owner-set) + legacy grep gate
+Current claims: **15+ trial cities · 10 teams (10 franchise cities OK on Teams page) · ₹15 Cr+ prize pool · ₹2L–₹20L auction value (always the RANGE, never "max ₹20L" — the ₹2L floor is the point)**.
+Legacy phrases are BANNED sitewide (en+hi, incl. index.html static meta + seo.ts injector): grep gate `₹6 [Cc]r|6 करोड़|10 [Cc]ities(?! squads)|10 शहर|Max Auction|अधिकतम Auction|₹20L [Mm]ax`. index.html metas are easy to miss — check them on every numbers change.
