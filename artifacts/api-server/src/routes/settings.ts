@@ -18,6 +18,7 @@ import { requireAdmin } from "../middlewares/adminAuth";
 import { getUploadPresignedUrl, getS3Url } from "../lib/s3";
 import { logger } from "../lib/logger";
 import { writeAudit } from "../lib/audit";
+import { validateRubricsOverrideValue } from "./staffTrials";
 import { z } from "zod";
 
 const router = Router();
@@ -31,6 +32,7 @@ const WRITABLE_KEYS = new Set([
   "sponsors",
   "founder_signature",
   "trial_ops_defaults",
+  "trial_rubrics_v1",
 ]);
 /** Per-key role restriction (SUPER_ADMIN always allowed). */
 const KEY_ROLES: Record<string, string[]> = {
@@ -223,6 +225,15 @@ router.put("/admin/:key", requireAdmin, async (req, res) => {
       return void res.status(400).json({ error: "Invalid trial_ops_defaults value — " + first });
     }
     value = parsed.data as Record<string, unknown>;
+  } else if (key === "trial_rubrics_v1") {
+    /* HEAD_ASSESSOR rubric overrides (KEY_ROLES-gated above) — validated
+       with the same rules activeRubrics() applies on read, so a saved
+       override can never be silently ignored later. */
+    const err = validateRubricsOverrideValue(req.body?.value);
+    if (err) {
+      return void res.status(400).json({ error: "Invalid trial_rubrics_v1 value — " + err });
+    }
+    value = req.body?.value as Record<string, unknown>;
   } else {
     return void res.status(400).json({ error: "Unknown setting key" });
   }

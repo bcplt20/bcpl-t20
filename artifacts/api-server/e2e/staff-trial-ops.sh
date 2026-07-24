@@ -27,6 +27,7 @@ if [ -z "$REG_ID" ]; then echo "ABORT: BCPL-DEL-1 not found"; exit 1; fi
 ORIG_P2=$(PQ "SELECT coalesce(phase2_status,'') FROM registrations WHERE id='$REG_ID'")
 ORIG_ROLE=$(PQ "SELECT coalesce(role,'') FROM registrations WHERE id='$REG_ID'")
 ORIG_CITY=$(PQ "SELECT coalesce(trial_city,'') FROM registrations WHERE id='$REG_ID'")
+ORIG_RUBRICS=$(PQ "SELECT value::text FROM site_settings WHERE key='trial_rubrics_v1'")
 
 VENUE_ID=""; SLOT_ID=""; ALLOC_ID=""
 cleanup() {
@@ -40,6 +41,12 @@ cleanup() {
   }
   [ -n "$SLOT_ID" ] && PQ "DELETE FROM trial_slots WHERE id='$SLOT_ID'" >/dev/null
   [ -n "$VENUE_ID" ] && PQ "DELETE FROM trial_venues WHERE id='$VENUE_ID'" >/dev/null
+  # rubric override created by this suite must never leak into real scoring
+  if [ -n "$ORIG_RUBRICS" ]; then
+    PQ "UPDATE site_settings SET value='$ORIG_RUBRICS'::jsonb WHERE key='trial_rubrics_v1'" >/dev/null
+  else
+    PQ "DELETE FROM site_settings WHERE key='trial_rubrics_v1'" >/dev/null
+  fi
   PQ "UPDATE registrations SET phase2_status=NULLIF('$ORIG_P2',''), role=NULLIF('$ORIG_ROLE',''), trial_city=NULLIF('$ORIG_CITY','') WHERE id='$REG_ID'" >/dev/null
 }
 trap cleanup EXIT
@@ -156,6 +163,29 @@ TECH2='{"balance":7,"footwork":7,"timing":8,"shot_execution":7,"shot_selection":
 R=$(post /staff/eval/submit "$EVAL_T" "{\"allocationId\":\"$ALLOC_ID\",\"technical\":$TECH2}")
 ckeq "re-score after approval = 67.54" "$(echo "$R" | J .evaluation.totalScore)" "67.54"
 ckeq "both evaluations kept in history" "$(PQ "SELECT count(*) FROM trial_evaluations WHERE registration_id='$REG_ID'")" "2"
+
+echo "== concurrency probes (post-lock storm) =="
+for i in 1 2 3 4 5; do
+  post /staff/eval/attempt "$EVAL_T" "{\"allocationId\":\"$ALLOC_ID\",\"discipline\":\"batting\",\"outcome\":\"MISS\"}" >"/tmp/race_a$i.json" &
+done
+wait
+RACE_409=0; for i in 1 2 3 4 5; do grep -q 'locked' "/tmp/race_a$i.json" && RACE_409=$((RACE_409+1)); done
+ckeq "parallel post-lock attempts all refused" "$RACE_409" "5"
+ckeq "valid attempt count frozen at 6" "$(PQ "SELECT count(*) FROM trial_attempts WHERE allocation_id='$ALLOC_ID' AND discipline='batting' AND is_valid=true")" "6"
+ckeq "still exactly one submitted evaluation" "$(PQ "SELECT count(*) FROM trial_evaluations WHERE registration_id='$REG_ID' AND status='submitted'")" "1"
+
+echo "== rubric override settings (HEAD_ASSESSOR only) =="
+HEAD_T=$(mk_token head@e2e HEAD_ASSESSOR '["delhi"]')
+GOOD_RUB='{"value":{"roles":{"batsman":{"objective":[{"discipline":"batting","weight":50}],"technical":[{"key":"balance","weight":50}]}}}}'
+BAD_RUB='{"value":{"roles":{"batsman":{"objective":[{"discipline":"batting","weight":55}],"technical":[{"key":"balance","weight":50}]}}}}'
+CODE=$(curl -s -o /tmp/rub1.json -w '%{http_code}' -X PUT "$API/settings/admin/trial_rubrics_v1" -H "Content-Type: application/json" -H "x-bcpl-admin-token: $HEAD_T" -d "$GOOD_RUB")
+ckeq "HEAD_ASSESSOR saves rubric override (200)" "$CODE" "200"
+CODE=$(curl -s -o /tmp/rub2.json -w '%{http_code}' -X PUT "$API/settings/admin/trial_rubrics_v1" -H "Content-Type: application/json" -H "x-bcpl-admin-token: $HEAD_T" -d "$BAD_RUB")
+ckeq "weights not summing 100 rejected (400)" "$CODE" "400"
+CODE=$(curl -s -o /dev/null -w '%{http_code}' -X PUT "$API/settings/admin/trial_rubrics_v1" -H "Content-Type: application/json" -H "x-bcpl-admin-token: $EVAL_T" -d "$GOOD_RUB")
+ckeq "TRIAL_EVALUATOR cannot edit rubrics (403)" "$CODE" "403"
+CODE=$(curl -s -o /dev/null -w '%{http_code}' "$API/settings/admin/trial_rubrics_v1" -H "x-bcpl-admin-token: $HEAD_T")
+ckeq "HEAD_ASSESSOR reads rubric override (200)" "$CODE" "200"
 
 echo "== supervisor counters & audit =="
 R=$(get /staff/supervisor/today "$SUP_T")

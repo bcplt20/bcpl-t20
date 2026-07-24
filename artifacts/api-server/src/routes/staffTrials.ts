@@ -207,6 +207,26 @@ export async function activeRubrics(): Promise<{ version: string; roles: Record<
   return { version, roles };
 }
 
+/** Validate a trial_rubrics_v1 settings value BEFORE it is saved (used by the
+ *  settings PUT route). null = ok; string = human-readable rejection. Applies
+ *  the same rules activeRubrics() enforces on read: known roles only, valid
+ *  objective/technical arrays, weights summing to exactly 100. */
+export function validateRubricsOverrideValue(value: unknown): string | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return "value must be an object { version?, roles? }";
+  const v = value as { version?: unknown; roles?: unknown };
+  if (v.version !== undefined && (typeof v.version !== "string" || !v.version.trim() || v.version.length > 40)) {
+    return "version must be a non-empty string (max 40 chars)";
+  }
+  if (v.roles !== undefined) {
+    if (!v.roles || typeof v.roles !== "object" || Array.isArray(v.roles)) return "roles must be an object keyed by player role";
+    for (const [role, rub] of Object.entries(v.roles as Record<string, unknown>)) {
+      if (!(role in DEFAULT_RUBRICS)) return `unknown role "${role}" — expected one of: ${Object.keys(DEFAULT_RUBRICS).join(", ")}`;
+      if (!isValidRubric(rub)) return `rubric for "${role}" is invalid — objective/technical arrays with non-negative weights summing to exactly 100 required`;
+    }
+  }
+  return null;
+}
+
 /* ─── scoring computation (pure, exported for unit tests) ───────────── */
 
 export function requiredDisciplines(role: string): ("batting" | "bowling")[] {
@@ -332,11 +352,14 @@ async function findAllocation(b: Record<string, unknown>): Promise<{ alloc?: All
   return { alloc, reg };
 }
 
-async function attemptState(allocationId: string): Promise<{
+/** db or a transaction handle — lock-sensitive callers must pass their tx. */
+type DbOrTx = typeof db | Parameters<Parameters<typeof db.transaction>[0]>[0];
+
+async function attemptState(allocationId: string, dbc: DbOrTx = db): Promise<{
   batting: { valid: { seq: number; outcome: string }[]; feederErrors: number };
   bowling: { valid: { seq: number; outcome: string }[]; feederErrors: number };
 }> {
-  const rows = await db.select().from(trialAttemptsTable)
+  const rows = await dbc.select().from(trialAttemptsTable)
     .where(eq(trialAttemptsTable.allocationId, allocationId))
     .orderBy(trialAttemptsTable.seq, trialAttemptsTable.createdAt);
   const state = {
@@ -351,8 +374,8 @@ async function attemptState(allocationId: string): Promise<{
   return state;
 }
 
-async function activeEvaluation(registrationId: string): Promise<typeof trialEvaluationsTable.$inferSelect | undefined> {
-  const [row] = await db.select().from(trialEvaluationsTable)
+async function activeEvaluation(registrationId: string, dbc: DbOrTx = db): Promise<typeof trialEvaluationsTable.$inferSelect | undefined> {
+  const [row] = await dbc.select().from(trialEvaluationsTable)
     .where(and(eq(trialEvaluationsTable.registrationId, registrationId), eq(trialEvaluationsTable.status, "submitted")))
     .orderBy(desc(trialEvaluationsTable.createdAt)).limit(1);
   return row;
@@ -562,17 +585,27 @@ staffRouter.post("/eval/attempt", requireRole(...ATTEMPT_ROLES), async (req, res
       res.status(400).json({ error: `Invalid outcome for ${discipline}` }); return;
     }
 
+    /* Serialized with /eval/submit on the allocation row (FOR UPDATE):
+       without it a submit could commit between the lock check and this
+       insert, letting post-lock attempts desync the frozen attempt_summary. */
+    let denied: { status: number; error: string } | null = null;
     for (let attempt = 0; attempt < 2; attempt++) {
-      const [{ n } = { n: 0 }] = await db.select({ n: sql<number>`count(*)::int` }).from(trialAttemptsTable)
-        .where(and(eq(trialAttemptsTable.allocationId, allocationId), eq(trialAttemptsTable.discipline, discipline), eq(trialAttemptsTable.isValid, true)));
-      if (!feederError && n >= 6) { res.status(409).json({ error: "All 6 valid attempts already recorded — no extra deliveries (spec §12)" }); return; }
+      denied = null;
       try {
-        await db.insert(trialAttemptsTable).values({
-          allocationId, registrationId: reg.id, discipline,
-          seq: feederError ? 0 : n + 1,
-          outcome, isValid: !feederError,
-          recordedBy: req.admin!.email.slice(0, 160),
-          station: b["station"] ? String(b["station"]).slice(0, 40) : null,
+        await db.transaction(async (tx) => {
+          await tx.select({ id: trialAllocationsTable.id }).from(trialAllocationsTable)
+            .where(eq(trialAllocationsTable.id, allocationId)).for("update");
+          if (await activeEvaluation(reg.id, tx)) { denied = { status: 409, error: "Assessment already submitted and locked" }; return; }
+          const [{ n } = { n: 0 }] = await tx.select({ n: sql<number>`count(*)::int` }).from(trialAttemptsTable)
+            .where(and(eq(trialAttemptsTable.allocationId, allocationId), eq(trialAttemptsTable.discipline, discipline), eq(trialAttemptsTable.isValid, true)));
+          if (!feederError && n >= 6) { denied = { status: 409, error: "All 6 valid attempts already recorded — no extra deliveries (spec §12)" }; return; }
+          await tx.insert(trialAttemptsTable).values({
+            allocationId, registrationId: reg.id, discipline,
+            seq: feederError ? 0 : n + 1,
+            outcome, isValid: !feederError,
+            recordedBy: req.admin!.email.slice(0, 160),
+            station: b["station"] ? String(b["station"]).slice(0, 40) : null,
+          });
         });
         break;
       } catch (e) {
@@ -581,6 +614,7 @@ staffRouter.post("/eval/attempt", requireRole(...ATTEMPT_ROLES), async (req, res
         throw e;
       }
     }
+    if (denied) { const d = denied as { status: number; error: string }; res.status(d.status).json({ error: d.error }); return; }
     await writeAudit(req, { action: "trial.attempt", entity: "trial_attempts", entityKey: allocationId, newValue: { discipline, outcome, feederError } });
     res.json({ ok: true, attempts: await attemptState(allocationId) });
   } catch (e) {
@@ -600,13 +634,21 @@ staffRouter.post("/eval/attempt/undo", requireRole(...ATTEMPT_ROLES), async (req
     if (!alloc) { res.status(404).json({ error: "Allocation not found" }); return; }
     const block = scopeBlock(req, alloc.city);
     if (block) { res.status(403).json({ error: block }); return; }
-    if (await activeEvaluation(alloc.registrationId)) { res.status(409).json({ error: "Assessment already submitted and locked" }); return; }
-    const [last] = await db.select().from(trialAttemptsTable)
-      .where(and(eq(trialAttemptsTable.allocationId, allocationId), eq(trialAttemptsTable.discipline, discipline)))
-      .orderBy(desc(trialAttemptsTable.createdAt)).limit(1);
-    if (!last) { res.status(404).json({ error: "No attempts to undo" }); return; }
-    await db.delete(trialAttemptsTable).where(eq(trialAttemptsTable.id, last.id));
-    await writeAudit(req, { action: "trial.attempt_undo", entity: "trial_attempts", entityKey: last.id, oldValue: { discipline: last.discipline, outcome: last.outcome, seq: last.seq } });
+    /* Same allocation-row serialization as /eval/attempt and /eval/submit. */
+    let undoDenied: { status: number; error: string } | null = null;
+    let last: typeof trialAttemptsTable.$inferSelect | undefined;
+    await db.transaction(async (tx) => {
+      await tx.select({ id: trialAllocationsTable.id }).from(trialAllocationsTable)
+        .where(eq(trialAllocationsTable.id, allocationId)).for("update");
+      if (await activeEvaluation(alloc.registrationId, tx)) { undoDenied = { status: 409, error: "Assessment already submitted and locked" }; return; }
+      [last] = await tx.select().from(trialAttemptsTable)
+        .where(and(eq(trialAttemptsTable.allocationId, allocationId), eq(trialAttemptsTable.discipline, discipline)))
+        .orderBy(desc(trialAttemptsTable.createdAt)).limit(1);
+      if (!last) { undoDenied = { status: 404, error: "No attempts to undo" }; return; }
+      await tx.delete(trialAttemptsTable).where(eq(trialAttemptsTable.id, last.id));
+    });
+    if (undoDenied) { const d = undoDenied as { status: number; error: string }; res.status(d.status).json({ error: d.error }); return; }
+    await writeAudit(req, { action: "trial.attempt_undo", entity: "trial_attempts", entityKey: last!.id, oldValue: { discipline: last!.discipline, outcome: last!.outcome, seq: last!.seq } });
     res.json({ ok: true, attempts: await attemptState(allocationId) });
   } catch (e) {
     logger.error({ err: e }, "staff/eval/attempt/undo failed");
@@ -638,27 +680,36 @@ staffRouter.post("/eval/submit", requireRole(...SUBMIT_ROLES), async (req, res) 
     const rubric = roles[role];
     if (!rubric) { res.status(400).json({ error: `No rubric for role ${role}` }); return; }
 
-    const state = await attemptState(allocationId);
-    const attempts = {
-      batting: state.batting.valid.map((v) => v.outcome),
-      bowling: state.bowling.valid.map((v) => v.outcome),
-    };
-    const missing = requiredDisciplines(role).filter((d) => attempts[d].length !== 6)
-      .map((d) => ({ discipline: d, have: attempts[d].length, need: 6 }));
-    if (missing.length > 0) { res.status(409).json({ error: "Required attempts incomplete — coach cannot finalise an incomplete assessment (spec §13)", missing }); return; }
-
     const technical: Record<string, number> = {};
     for (const [k, v] of Object.entries(technicalRaw as Record<string, unknown>)) technical[k] = Number(v);
-
-    let comp: EvalComputation;
-    try {
-      comp = computeEvalTotal(role, attempts, technical, rubric, version);
-    } catch (err) {
-      res.status(400).json({ error: (err as Error).message }); return;
-    }
-
     const notes = b["notes"] ? String(b["notes"]).slice(0, 1000) : null;
-    const inserted = await db.transaction(async (tx) => {
+
+    /* All authoritative reads + the locking insert happen under the
+       allocation row lock (FOR UPDATE), so concurrent attempt/undo/submit
+       cannot slip between check and write; attempt_summary freezes exactly
+       the snapshot that was scored. */
+    let deny: { status: number; body: Record<string, unknown> } | null = null;
+    let finalized: { row: typeof trialEvaluationsTable.$inferSelect; comp: EvalComputation } | null = null;
+    await db.transaction(async (tx) => {
+      await tx.select({ id: trialAllocationsTable.id }).from(trialAllocationsTable)
+        .where(eq(trialAllocationsTable.id, allocationId)).for("update");
+      if (await activeEvaluation(reg.id, tx)) {
+        deny = { status: 409, body: { error: "Assessment already submitted and locked — use Request Correction" } }; return;
+      }
+      const state = await attemptState(allocationId, tx);
+      const attempts = {
+        batting: state.batting.valid.map((v) => v.outcome),
+        bowling: state.bowling.valid.map((v) => v.outcome),
+      };
+      const missing = requiredDisciplines(role).filter((d) => attempts[d].length !== 6)
+        .map((d) => ({ discipline: d, have: attempts[d].length, need: 6 }));
+      if (missing.length > 0) { deny = { status: 409, body: { error: "Required attempts incomplete — coach cannot finalise an incomplete assessment (spec §13)", missing } }; return; }
+      let comp: EvalComputation;
+      try {
+        comp = computeEvalTotal(role, attempts, technical, rubric, version);
+      } catch (err) {
+        deny = { status: 400, body: { error: (err as Error).message } }; return;
+      }
       const [row] = await tx.insert(trialEvaluationsTable).values({
         registrationId: reg.id, allocationId: alloc.id, evalRound: 1,
         evaluatorEmail: req.admin!.email.slice(0, 160), evaluatorName: req.admin!.name.slice(0, 120),
@@ -683,16 +734,17 @@ staffRouter.post("/eval/submit", requireRole(...SUBMIT_ROLES), async (req, res) 
           playerRole: role, comments: notes, updatedAt: new Date(),
         },
       });
-      return row;
+      finalized = { row: row!, comp };
     }).catch((e) => {
       const code = (e as { cause?: { code?: string }; code?: string }).code ?? (e as { cause?: { code?: string } }).cause?.code;
-      if (code === "23505") return "raced" as const;
+      if (code === "23505") { deny = { status: 409, body: { error: "Assessment already submitted by another evaluator" } }; return; }
       throw e;
     });
-    if (inserted === "raced") { res.status(409).json({ error: "Assessment already submitted by another evaluator" }); return; }
+    if (deny) { const d = deny as { status: number; body: Record<string, unknown> }; res.status(d.status).json(d.body); return; }
+    const done = finalized as unknown as { row: typeof trialEvaluationsTable.$inferSelect; comp: EvalComputation };
 
-    await writeAudit(req, { action: "trial.evaluation_submit", entity: "trial_evaluations", entityKey: inserted!.id, newValue: { total: comp.total, role, rubricVersion: version } });
-    res.json({ evaluation: { id: inserted!.id, totalScore: comp.total, sections: comp.sections, rubricVersion: version, lockedAt: inserted!.lockedAt } });
+    await writeAudit(req, { action: "trial.evaluation_submit", entity: "trial_evaluations", entityKey: done.row.id, newValue: { total: done.comp.total, role, rubricVersion: version } });
+    res.json({ evaluation: { id: done.row.id, totalScore: done.comp.total, sections: done.comp.sections, rubricVersion: version, lockedAt: done.row.lockedAt } });
   } catch (e) {
     logger.error({ err: e }, "staff/eval/submit failed");
     res.status(500).json({ error: "Failed to submit assessment" });
@@ -734,9 +786,12 @@ staffRouter.get("/supervisor/corrections", requireRole(...SUPERVISE_ROLES), asyn
       request: trialCorrectionRequestsTable,
       evaluation: trialEvaluationsTable,
       trialNo: registrationsTable.regNumber,
-      city: registrationsTable.trialCity,
+      /* scope by the VENUE (allocation) city — registrations.trialCity may
+         lag behind a cross-city reallocation and would misroute requests */
+      city: trialAllocationsTable.city,
     }).from(trialCorrectionRequestsTable)
       .innerJoin(trialEvaluationsTable, eq(trialCorrectionRequestsTable.evaluationId, trialEvaluationsTable.id))
+      .innerJoin(trialAllocationsTable, eq(trialEvaluationsTable.allocationId, trialAllocationsTable.id))
       .innerJoin(registrationsTable, eq(trialCorrectionRequestsTable.registrationId, registrationsTable.id))
       .where(eq(trialCorrectionRequestsTable.status, "pending"))
       .orderBy(desc(trialCorrectionRequestsTable.createdAt))
@@ -767,11 +822,15 @@ staffRouter.post("/supervisor/corrections/:id", requireRole(...SUPERVISE_ROLES),
     const note = b["note"] ? String(b["note"]).slice(0, 500) : null;
     const [reqRow] = await db.select().from(trialCorrectionRequestsTable).where(eq(trialCorrectionRequestsTable.id, id)).limit(1);
     if (!reqRow || reqRow.status !== "pending") { res.status(404).json({ error: "Pending correction request not found" }); return; }
-    const [reg] = await db.select().from(registrationsTable).where(eq(registrationsTable.id, reqRow.registrationId)).limit(1);
-    const block = scopeBlock(req, reg?.trialCity);
-    if (block) { res.status(403).json({ error: block }); return; }
     const [evalRow] = await db.select().from(trialEvaluationsTable).where(eq(trialEvaluationsTable.id, reqRow.evaluationId)).limit(1);
     if (!evalRow) { res.status(404).json({ error: "Evaluation missing" }); return; }
+    /* authz on the VENUE (allocation) city — registrations.trialCity may lag
+       behind a cross-city reallocation */
+    const [evalAlloc] = evalRow.allocationId
+      ? await db.select({ city: trialAllocationsTable.city }).from(trialAllocationsTable).where(eq(trialAllocationsTable.id, evalRow.allocationId)).limit(1)
+      : [];
+    const block = scopeBlock(req, evalAlloc?.city);
+    if (block) { res.status(403).json({ error: block }); return; }
 
     await db.transaction(async (tx) => {
       await tx.update(trialCorrectionRequestsTable).set({

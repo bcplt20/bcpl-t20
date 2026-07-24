@@ -38,3 +38,5 @@
 - [Prod schema drift & FK sweep](prod-schema-drift.md) — silenced deploy push leaves legacy tables on prod; FK discovery must use pg_constraint OIDs, never info_schema name joins
 - [Bulk media pipeline](media-pipeline.md) — Drive bulk downloads (curl / uvx gdown), foreground ≤240s resume-safe batches, magick/ffmpeg recipes, partial-file trap, yt-dlp blocked
 - [Master spec 2026 progress](master-spec-2026.md) — owner's 42-part upgrade doc: ~60% pre-existed (audit before building!); wave tracker + new copy rules live here
+- [node-postgres array binding](node-postgres-array-binding.md) — raw sql `${arr}::text[]` binds as ONE string param ("malformed array literal"); use IN + sql.join per-element
+- [Trial-ops locking & waves](trial-ops-locking.md) — all attempt/eval writes take allocation row FOR UPDATE first (dbc param); W1 shipped, W2-W6 map inside
