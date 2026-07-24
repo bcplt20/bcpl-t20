@@ -1,3 +1,4 @@
+import draftsRouter, { adminDraftsRouter } from "./drafts";
 import { Router, type IRouter } from "express";
 import healthRouter   from "./health";
 import authRouter     from "./auth";
@@ -29,6 +30,7 @@ router.use(healthRouter);
 router.use("/auth",          authRouter);
 router.use("/register",      registerRouter);
 router.use("/payment",       paymentRouter);
+router.use("/drafts",        draftsRouter); // registration autosave drafts
 router.use("/video",         videoRouter);
 router.use("/kyc",           kycRouter);
 router.use("/user",          userRouter);
@@ -47,6 +49,7 @@ router.use("/admin/refunds", adminRefundsRouter); // Stage 5 finance refunds
 router.use("/admin/admin-users", adminUsersRouter); // Stage 5 RBAC
 router.use("/admin/health",  adminHealthRouter); // Stage 5 API health
 router.use("/admin/fraud",   adminFraudRouter); // Stage 6 fraud extensions
+router.use("/admin/drafts",  adminDraftsRouter); // incomplete-registration drafts
 router.use("/admin",         adminRouter);
 // Marketing / referrals (public click+attribute, admin analytics & campaigns)
 router.use("/marketing",     marketingRouter);

@@ -1,3 +1,4 @@
+import { draftOnOtpRequested, draftOnOtpVerified } from "./drafts";
 import { Router } from "express";
 import { db } from "@workspace/db";
 import { usersTable, otpSessionsTable, registrationsTable } from "@workspace/db/schema";
@@ -18,11 +19,12 @@ router.post("/send-otp", async (req, res) => {
   const schema = z.object({
     phone:   z.string().regex(/^[6-9]\d{9}$/, "Invalid Indian mobile number"),
     purpose: z.enum(["register", "login"]),
+    draftKey: z.string().regex(/^[A-Za-z0-9_-]{16,64}$/).optional(),
   });
   const parsed = schema.safeParse(req.body);
   if (!parsed.success) return void res.status(400).json({ error: parsed.error.issues[0].message });
 
-  const { phone, purpose } = parsed.data;
+  const { phone, purpose, draftKey } = parsed.data;
 
   // Gate BEFORE sending any SMS — don't waste an OTP on a doomed flow.
   const [existingUser] = await db.select().from(usersTable).where(eq(usersTable.phone, phone)).limit(1);
@@ -52,6 +54,9 @@ router.post("/send-otp", async (req, res) => {
   const sent = await sendOtp(phone, otp);
   if (!sent) return void res.status(500).json({ error: "Failed to send OTP. Please try again." });
 
+  // Draft autosave journey hook — must never block the OTP flow.
+  if (purpose === "register" && draftKey) await draftOnOtpRequested(draftKey, phone);
+
   // In dev mode (no real SMS delivery configured), return OTP so the UI can show it
   const devOtp = !otpConfigured ? (globalThis as any).__lastDevOtp : undefined;
   res.json({ success: true, message: "OTP sent to " + phone, ...(devOtp ? { devOtp } : {}) });
@@ -65,11 +70,12 @@ router.post("/verify-otp", async (req, res) => {
     purpose: z.enum(["register", "login"]),
     name:    z.string().min(2).max(100).optional(),
     email:   z.string().email().optional(),
+    draftKey: z.string().regex(/^[A-Za-z0-9_-]{16,64}$/).optional(),
   });
   const parsed = schema.safeParse(req.body);
   if (!parsed.success) return void res.status(400).json({ error: parsed.error.issues[0].message });
 
-  const { phone, otp, purpose, name, email } = parsed.data;
+  const { phone, otp, purpose, name, email, draftKey } = parsed.data;
 
   // Validate OTP
   const [session] = await db.select().from(otpSessionsTable).where(
@@ -101,6 +107,9 @@ router.post("/verify-otp", async (req, res) => {
   } else {
     await db.update(usersTable).set({ isVerified: true, updatedAt: new Date() }).where(eq(usersTable.id, user.id));
   }
+
+  // Draft autosave journey hook — the ONLY path that marks a draft's mobile verified.
+  if (purpose === "register") await draftOnOtpVerified(draftKey ?? null, phone, user.id);
 
   const token = signToken({ userId: user.id, phone: user.phone });
   res.json({ success: true, token, user: { id: user.id, name: user.name, phone: user.phone, email: user.email } });

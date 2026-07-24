@@ -133,4 +133,33 @@ CREATE TABLE IF NOT EXISTS notification_logs (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Registration drafts — server-side autosave for incomplete registrations.
+-- A draft is NOT a registered player; OTP values are never stored here.
+CREATE TABLE IF NOT EXISTS registration_drafts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  draft_number VARCHAR(20) UNIQUE NOT NULL,
+  client_key VARCHAR(64) NOT NULL,
+  full_name VARCHAR(100),
+  email VARCHAR(255),
+  phone VARCHAR(15),
+  dob DATE,
+  calculated_age INTEGER,
+  role VARCHAR(20),
+  trial_city VARCHAR(50),
+  mobile_verified BOOLEAN NOT NULL DEFAULT FALSE,
+  otp_requested_at TIMESTAMPTZ,
+  last_completed_step VARCHAR(20),
+  status VARCHAR(20) NOT NULL DEFAULT 'DRAFT_STARTED',
+  phase1_payment_status VARCHAR(20) NOT NULL DEFAULT 'NOT_STARTED',
+  user_id UUID REFERENCES users(id),
+  registration_id UUID REFERENCES registrations(id),
+  source JSONB,
+  started_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  last_activity_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  abandoned_at TIMESTAMPTZ
+);
+CREATE INDEX IF NOT EXISTS idx_drafts_client_key ON registration_drafts(client_key);
+CREATE INDEX IF NOT EXISTS idx_drafts_status ON registration_drafts(status);
+CREATE INDEX IF NOT EXISTS idx_drafts_phone ON registration_drafts(phone);
+
 \echo 'All tables created successfully!'

@@ -1,3 +1,4 @@
+import { draftOnRegistered } from "./drafts";
 import { Router } from "express";
 import { db } from "@workspace/db";
 import { registrationsTable, usersTable } from "@workspace/db/schema";
@@ -173,6 +174,9 @@ router.post("/phase1", requireAuth, async (req: AuthRequest, res) => {
     phase1Status: "pending",
     videoDeadline,
   }).returning();
+
+  // Draft autosave journey hook — non-blocking for the player flow.
+  await draftOnRegistered(req.user!.userId, reg.id);
 
   res.json({
     success:        true,

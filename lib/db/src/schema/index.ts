@@ -37,3 +37,5 @@ export * from "./refunds";
 export * from "./admin_users";
 // Stage 6 — fraud detection extensions
 export * from "./fraud_flags";
+// Registration drafts — autosave for incomplete registrations
+export * from "./registration_drafts";

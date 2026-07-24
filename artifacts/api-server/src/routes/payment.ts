@@ -1,3 +1,4 @@
+import { draftOnPaymentEvent } from "./drafts";
 import { Router, type Request } from "express";
 import crypto from "node:crypto";
 import { db } from "@workspace/db";
@@ -108,6 +109,8 @@ router.post("/phase1/create", requireAuth, async (req: AuthRequest, res) => {
     status:          "pending",
   });
 
+  await draftOnPaymentEvent(reg.id, "INITIATED"); // draft journey
+
   res.json({ success: true, orderId, paymentSessionId: order.payment_session_id, amount });
 });
 
@@ -133,6 +136,8 @@ router.post("/phase1/verify", requireAuth, async (req: AuthRequest, res) => {
     .innerJoin(registrationsTable, eq(phase1PaymentsTable.registrationId, registrationsTable.id))
     .innerJoin(usersTable, eq(registrationsTable.userId, usersTable.id))
     .where(eq(phase1PaymentsTable.cashfreeOrderId, parsed.data.orderId)).limit(1);
+
+  if (rows[0]) await draftOnPaymentEvent(rows[0].pay.registrationId, "SUCCESS"); // draft journey
 
   if (!rows[0]) return void res.status(404).json({ error: "Record not found" });
   const { pay, reg, user } = rows[0];
@@ -282,6 +287,8 @@ router.post("/webhook", async (req, res) => {
           .set({ status: "success", cashfreePaymentId: payId, paidAt: new Date() })
           .where(eq(phase1PaymentsTable.cashfreeOrderId, orderId))
           .returning({ registrationId: phase1PaymentsTable.registrationId });
+
+        if (updated[0]) await draftOnPaymentEvent(updated[0].registrationId, "SUCCESS"); // draft journey
 
         // Keep registration in sync even if the user never returns to the site
         if (updated[0]) {
