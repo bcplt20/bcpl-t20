@@ -5,6 +5,7 @@ import {
   registrationsTable, kycRecordsTable,
   usersTable,
   playerProfilesTable,
+  notificationLogsTable,
 } from "@workspace/db/schema";
 import { eq, and, desc, sql } from "drizzle-orm";
 import { requireAuth, type AuthRequest } from "../middlewares/auth";
@@ -141,6 +142,7 @@ async function alertAdminKycManualReview(p: {
       return;
     }
     const [row] = await db.select({
+      userId: usersTable.id,
       name:  usersTable.name,
       phone: usersTable.phone,
       city:  registrationsTable.trialCity,
@@ -158,7 +160,31 @@ async function alertAdminKycManualReview(p: {
       reason:          p.reason,
       flaggedAt:       new Date(),
     });
-    await sendEmail({ to: alertTo, toName: "BCPL Admin", subject: tpl.subject, htmlContent: tpl.htmlContent });
+    // Reserve-first, exactly-once record of the admin alert in
+    // notification_logs (Task #76). The atomic transition guards at the call
+    // sites already ensure only one racing request reaches here, but this
+    // reserve is the DB-observable proof of exactly-once AND a durable
+    // second-layer guard: if two callers ever raced past the transition guard
+    // (they cannot on Postgres row locks, but belt-and-suspenders), the unique
+    // dedupe index still lets only ONE alert email go out. userId is optional
+    // here (admin alert, not a player notification), so we record it against
+    // the KYC-record owner when known.
+    const dedupeKey = "kyc_manual_review_alert_" + p.registrationId;
+    const reserved = await db.insert(notificationLogsTable)
+      .values({ userId: row?.userId ?? p.registrationId, type: "email", template: "kyc_manual_review", dedupeKey })
+      .onConflictDoNothing()
+      .returning({ id: notificationLogsTable.id });
+    if (!reserved.length || !reserved[0]) {
+      // Another racing caller already reserved + sent this alert — do not double-send.
+      console.warn("[KYC][ALERT] manual-review alert already sent (dedupe) — skipping", { registrationId: p.registrationId });
+      return;
+    }
+    const res = await sendEmail({ to: alertTo, toName: "BCPL Admin", subject: tpl.subject, htmlContent: tpl.htmlContent });
+    if (!res.ok) {
+      await db.update(notificationLogsTable)
+        .set({ status: "failed", error: String(res.error ?? "send failed").slice(0, 500) })
+        .where(eq(notificationLogsTable.id, reserved[0].id));
+    }
   } catch (e) {
     console.error("[KYC][ALERT] manual-review alert email failed", e);
   }

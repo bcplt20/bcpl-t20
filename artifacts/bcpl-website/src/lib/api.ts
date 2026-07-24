@@ -84,6 +84,23 @@ export const getDashboard = () =>
     kyc?:           { status: string; profession: string; verifiedAt: string | null } | null;
   }>("GET", "/user/dashboard");
 
+/* ─── Task #32: KYC-done profile backfill (T-shirt / emergency contact) ─── */
+export const getProfileCompletion = () =>
+  req<{
+    kycDone: boolean;
+    profileComplete: boolean;
+    needsBackfill: boolean;
+    have: { tshirtSize: string | null; emergencyName: string | null; emergencyPhone: string | null; bloodGroup: string | null };
+  }>("GET", "/user/profile-completion");
+
+export const submitProfileBackfill = (body: {
+  tshirtSize: string;
+  emergencyName: string;
+  emergencyRelation?: string;
+  emergencyPhone: string;
+  bloodGroup?: string;
+}) => req<{ success: boolean; message: string }>("POST", "/user/profile-backfill", body);
+
 export const getPlayerTrialVenue = () =>
   req<{
     found: boolean;
@@ -345,6 +362,11 @@ export const adminReviewVideo = (id: string, status = "reviewed") =>
   adminReq<{ success: boolean; video: any }>(
     "PUT", `/admin/videos/${id}/review`, { status }
   );
+
+// Trial videos are stored in a private bucket and served via short-lived
+// presigned URLs. Fetch a fresh one right before playback / on player error.
+export const adminGetVideoUrl = (id: string) =>
+  adminReq<{ url: string }>("GET", `/admin/videos/${id}/url`);
 
 // Trial Venues
 export const adminGetTrialVenues = () =>

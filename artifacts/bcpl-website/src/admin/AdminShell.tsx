@@ -33,6 +33,7 @@ import Phase2KYCView           from "./views/Phase2KYCView";
 import FraudView            from "./views/FraudView";
 import ForecastView         from "./views/ForecastView";
 import ApiHealthView        from "./views/ApiHealthView";
+import AuditTrailView       from "./views/AuditTrailView";
 import { adminLogin, adminEmailLogin, adminVerifySession, saveAdminToken, clearAdminToken, hasAdminToken } from "../lib/api";
 import type { AdminProfile } from "../lib/api";
 
@@ -95,6 +96,7 @@ const NAV: NavGroup[] = [
   { title: "SYSTEM", items: [
     { id:"data_export",     label:"Data Export",        icon:"⊕" },
     { id:"api_health",      label:"API Health",         icon:"◉" },
+    { id:"audit_trail",     label:"Audit Trail",        icon:"◷" },
     { id:"roles",           label:"Roles & Access",     icon:"◈" },
     { id:"admin_settings",  label:"Admin Management",   icon:"⚙" },
   ]},
@@ -145,6 +147,7 @@ function renderView(id: string, navigate: (viewId: string, payload?: AdminNavPay
     case "sponsors":       return <SponsorsView />;
     case "data_export":    return <DataExportView />;
     case "api_health":     return <ApiHealthView />;
+    case "audit_trail":    return <AuditTrailView />;
     case "roles":          return <RolesView />;
     case "admin_settings": return <AdminSettingsView />;
     default:               return <DashboardView onNavigate={navigate} />;
@@ -254,7 +257,7 @@ export default function AdminShell() {
   useEffect(() => {
     if (!loggedIn || !loggedInAdmin || active === "dashboard") return;
     const superAdmin = loggedInAdmin.permissions?.includes("all") ?? false;
-    const ok = superAdmin || (active !== "admin_settings" && (loggedInAdmin.permissions?.includes(active) ?? false));
+    const ok = superAdmin || (active !== "admin_settings" && active !== "audit_trail" && (loggedInAdmin.permissions?.includes(active) ?? false));
     if (!ok) navigate("dashboard");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loggedIn, loggedInAdmin, active]);
@@ -279,7 +282,7 @@ export default function AdminShell() {
   const visibleNAV = NAV.map(group => ({
     ...group,
     items: group.items.filter(item => {
-      if (item.id === "admin_settings") return isSuperAdmin;
+      if (item.id === "admin_settings" || item.id === "audit_trail") return isSuperAdmin;
       if (isSuperAdmin) return true;
       return loggedInAdmin?.permissions?.includes(item.id);
     }),

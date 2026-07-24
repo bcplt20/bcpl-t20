@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import {
-  fetchSeoMeta, saveSeoPage, resetSeoPage, saveGscCode,
-  type SeoMeta, type SeoPage,
+  fetchSeoMeta, saveSeoPage, resetSeoPage, saveGscCode, fetchGscAnalytics,
+  type SeoMeta, type SeoPage, type GscAnalytics,
 } from "../../lib/seoApi";
 
 /**
@@ -71,6 +71,22 @@ export default function SEOView() {
   const [gscBusy, setGscBusy] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
 
+  const [gsc, setGsc] = useState<GscAnalytics | null>(null);
+  const [gscLoading, setGscLoading] = useState(false);
+  const [gscError, setGscError] = useState<string | null>(null);
+
+  const loadGsc = useCallback(async (refresh = false) => {
+    setGscLoading(true);
+    setGscError(null);
+    try {
+      setGsc(await fetchGscAnalytics(refresh));
+    } catch (e) {
+      setGscError(e instanceof Error ? e.message : "Failed to load Search Console data");
+    } finally {
+      setGscLoading(false);
+    }
+  }, []);
+
   const syncForm = useCallback((page: SeoPage, meta: SeoMeta) => {
     setForm({
       title: page.title,
@@ -96,6 +112,12 @@ export default function SEOView() {
   }, [selPath, syncForm]);
 
   useEffect(() => { void load("/"); /* eslint-disable-line react-hooks/exhaustive-deps */ }, []);
+
+  // Lazy-load Search Console numbers the first time the Google tab is opened.
+  useEffect(() => {
+    if (tab === "google" && gsc === null && !gscLoading) void loadGsc(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab]);
 
   const sel = data?.pages.find((p) => p.path === selPath) ?? null;
   const customized = data?.pages.filter((p) => !p.isDefault).length ?? 0;
@@ -365,7 +387,11 @@ export default function SEOView() {
 
       {/* ── GOOGLE VERIFICATION TAB ── */}
       {tab === "google" && data && (
-        <div style={{ display: "flex", flexDirection: "column", gap: 14, maxWidth: 760 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 14, maxWidth: 900 }}>
+
+          {/* ── Real Search Console traffic ── */}
+          <GscPanel gsc={gsc} loading={gscLoading} error={gscError} onRefresh={() => void loadGsc(true)} />
+
           <div style={{ ...card, borderLeft: `3px solid ${data.gscCode ? "#10B981" : "#F59E0B"}` }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 8 }}>
               {data.gscCode ? "✅ Verification tag is being served" : "⏳ No verification code set yet"}
@@ -418,6 +444,140 @@ export default function SEOView() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+/* ─── Google Search Console traffic panel ────────────────────────────────────
+   Shows real clicks / impressions / CTR / average position (last 28 days,
+   with the change vs the previous 28 days), plus the top search queries and
+   top pages. When the service account isn't configured yet, it shows simple
+   Hindi setup steps instead of an error. */
+
+const num = (n: number) => n.toLocaleString("en-IN");
+const pct = (n: number) => (n * 100).toFixed(1) + "%";
+const pos = (n: number) => (n ? n.toFixed(1) : "—");
+const signed = (n: number, fmt: (x: number) => string) => (n > 0 ? "+" : n < 0 ? "−" : "") + fmt(Math.abs(n));
+
+function StatCard({ label, value, delta, deltaGood, hint }: {
+  label: string; value: string; delta?: string; deltaGood?: boolean; hint?: string;
+}) {
+  const dc = deltaGood === undefined ? "#94A3B8" : deltaGood ? "#10B981" : "#F87171";
+  return (
+    <div style={{ background: "#060B18", border: "1px solid #1E293B", borderRadius: 12, padding: "14px 16px", flex: "1 1 150px", minWidth: 140 }}>
+      <div style={{ fontSize: 10.5, fontWeight: 700, color: "#64748B", letterSpacing: .5, textTransform: "uppercase" }}>{label}</div>
+      <div style={{ fontSize: 24, fontWeight: 800, color: "#F1F5F9", marginTop: 6, lineHeight: 1 }}>{value}</div>
+      {delta !== undefined && (
+        <div style={{ fontSize: 11.5, color: dc, marginTop: 6 }}>{delta} <span style={{ color: "#475569" }}>{hint ?? "vs prev 28d"}</span></div>
+      )}
+    </div>
+  );
+}
+
+function MiniTable({ title, colLabel, rows }: {
+  title: string; colLabel: string;
+  rows: Array<{ label: string; clicks: number; impressions: number; ctr: number; position: number }>;
+}) {
+  return (
+    <div style={{ background: "#060B18", border: "1px solid #1E293B", borderRadius: 12, padding: 14, flex: "1 1 360px", minWidth: 300 }}>
+      <div style={{ fontSize: 12.5, fontWeight: 700, color: "#F1F5F9", marginBottom: 10 }}>{title}</div>
+      {rows.length === 0 ? (
+        <div style={{ fontSize: 12, color: "#64748B", padding: "8px 0" }}>No data yet for this period.</div>
+      ) : (
+        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11.5 }}>
+          <thead>
+            <tr style={{ textAlign: "left", color: "#475569", fontSize: 10, letterSpacing: .3 }}>
+              <th style={{ padding: "5px 6px", fontWeight: 700 }}>{colLabel}</th>
+              <th style={{ padding: "5px 6px", fontWeight: 700, textAlign: "right" }}>Clicks</th>
+              <th style={{ padding: "5px 6px", fontWeight: 700, textAlign: "right" }}>Impr.</th>
+              <th style={{ padding: "5px 6px", fontWeight: 700, textAlign: "right" }}>CTR</th>
+              <th style={{ padding: "5px 6px", fontWeight: 700, textAlign: "right" }}>Pos.</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r, i) => (
+              <tr key={i} style={{ borderTop: "1px solid #1E293B", color: "#CBD5E1" }}>
+                <td style={{ padding: "6px 6px", maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={r.label}>{r.label || "—"}</td>
+                <td style={{ padding: "6px 6px", textAlign: "right", color: "#F1F5F9", fontWeight: 600 }}>{num(r.clicks)}</td>
+                <td style={{ padding: "6px 6px", textAlign: "right" }}>{num(r.impressions)}</td>
+                <td style={{ padding: "6px 6px", textAlign: "right" }}>{pct(r.ctr)}</td>
+                <td style={{ padding: "6px 6px", textAlign: "right" }}>{pos(r.position)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
+}
+
+function GscSetupPanel({ message }: { message: string }) {
+  return (
+    <div style={{ ...card, borderLeft: "3px solid #F59E0B" }}>
+      <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 6 }}>📊 Search Console data abhi set nahi hui</div>
+      <div style={{ fontSize: 11.5, color: "#64748B", marginBottom: 10 }}>{message}</div>
+      <div style={{ fontSize: 12.5, color: "#CBD5E1", fontWeight: 600, marginBottom: 6 }}>Setup (ek baar) — 3 steps:</div>
+      <ol style={{ margin: 0, paddingLeft: 18, fontSize: 12.5, color: "#94A3B8", lineHeight: 1.9 }}>
+        <li>Google Cloud Console me ek <b>Service Account</b> banao aur uski <b>JSON key</b> download karo.</li>
+        <li>Wo poori JSON server ke <code style={{ color: "#FF8C40" }}>GSC_SERVICE_ACCOUNT_JSON</code> env variable me daalo (aur zaroorat ho to <code style={{ color: "#FF8C40" }}>GSC_SITE_URL</code> = <code style={{ color: "#FF8C40" }}>sc-domain:bcplt20.com</code>).</li>
+        <li>Search Console → Settings → <b>Users and permissions</b> me service-account ki email ko <b>user</b> ke roop me add karo (Full ya Restricted).</li>
+      </ol>
+      <div style={{ fontSize: 11, color: "#475569", marginTop: 10 }}>Ye ho jaane ke baad yahan clicks, impressions aur queries apne-aap dikhne lagenge.</div>
+    </div>
+  );
+}
+
+function GscPanel({ gsc, loading, error, onRefresh }: {
+  gsc: GscAnalytics | null; loading: boolean; error: string | null; onRefresh: () => void;
+}) {
+  if (loading && !gsc) {
+    return <div style={{ ...card }}><div style={{ fontSize: 12.5, color: "#64748B" }}>Loading Search Console data…</div></div>;
+  }
+  if (error) {
+    return <div style={{ ...card, borderLeft: "3px solid #F87171" }}><div style={{ fontSize: 12.5, color: "#F87171" }}>⚠ {error}</div></div>;
+  }
+  if (!gsc) return null;
+
+  if (gsc.configured === false) return <GscSetupPanel message={gsc.message} />;
+  if (!("current" in gsc)) {
+    // configured but errored (403 / permission or transient) — show setup
+    // guidance (esp. the "add service-account as user" step).
+    return <GscSetupPanel message={gsc.message} />;
+  }
+
+  const g = gsc; // narrowed to the summary shape
+  return (
+    <div style={{ ...card }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12, marginBottom: 12, flexWrap: "wrap" }}>
+        <div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9" }}>Google Search traffic</div>
+          <div style={{ fontSize: 11, color: "#64748B", marginTop: 3 }}>
+            {g.range.startDate} → {g.range.endDate} · {g.siteUrl}
+            {g.cached ? " · cached" : ""}
+          </div>
+        </div>
+        <button onClick={onRefresh} disabled={loading} style={{ ...ghostBtn, opacity: loading ? 0.6 : 1 }}>
+          {loading ? "Refreshing…" : "↻ Refresh"}
+        </button>
+      </div>
+
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 16 }}>
+        <StatCard label="Total clicks" value={num(g.current.clicks)}
+          delta={signed(g.delta.clicks, num)} deltaGood={g.delta.clicks >= 0} />
+        <StatCard label="Impressions" value={num(g.current.impressions)}
+          delta={signed(g.delta.impressions, num)} deltaGood={g.delta.impressions >= 0} />
+        <StatCard label="Average CTR" value={pct(g.current.ctr)}
+          delta={signed(g.delta.ctr, pct)} deltaGood={g.delta.ctr >= 0} />
+        <StatCard label="Avg. position" value={pos(g.current.position)}
+          delta={signed(g.delta.position, pos)} deltaGood={g.delta.position >= 0} hint="vs prev 28d (lower is better)" />
+      </div>
+
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+        <MiniTable title="Top search queries" colLabel="Query"
+          rows={g.topQueries.map((q) => ({ label: q.query, clicks: q.clicks, impressions: q.impressions, ctr: q.ctr, position: q.position }))} />
+        <MiniTable title="Top pages" colLabel="Page"
+          rows={g.topPages.map((p) => ({ label: p.page, clicks: p.clicks, impressions: p.impressions, ctr: p.ctr, position: p.position }))} />
+      </div>
     </div>
   );
 }

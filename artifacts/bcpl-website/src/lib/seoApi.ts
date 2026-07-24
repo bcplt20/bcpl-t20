@@ -54,3 +54,38 @@ export function resetSeoPage(path: string) {
 export function saveGscCode(code: string) {
   return adminReq<{ success: boolean; code: string | null }>("PUT", "/seo/admin/gsc", { code });
 }
+
+/* ─── Search Console analytics (real Google traffic numbers) ───────────────── */
+
+export interface GscTotals {
+  clicks: number;
+  impressions: number;
+  ctr: number;      // 0..1
+  position: number; // average
+}
+export interface GscTableRow {
+  clicks: number;
+  impressions: number;
+  ctr: number;
+  position: number;
+}
+export type GscAnalytics =
+  | {
+      configured: true;
+      siteUrl: string;
+      range: { startDate: string; endDate: string };
+      current: GscTotals;
+      previous: GscTotals;
+      delta: GscTotals;
+      topQueries: Array<GscTableRow & { query: string }>;
+      topPages: Array<GscTableRow & { page: string }>;
+      fetchedAt: string;
+      cached?: boolean;
+      cachedAt?: string;
+    }
+  | { configured: false; reason: string; message: string }
+  | { configured: true; error: true; reason: string; message: string };
+
+export function fetchGscAnalytics(refresh = false) {
+  return adminReq<GscAnalytics>("GET", `/seo/admin/search-analytics${refresh ? "?refresh=1" : ""}`);
+}

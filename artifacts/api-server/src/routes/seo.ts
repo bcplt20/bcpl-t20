@@ -31,6 +31,7 @@ import { requireAdmin } from "../middlewares/adminAuth";
 import { logger } from "../lib/logger";
 import { z } from "zod";
 import { organizationLd, faqPageLd, sportsEventLd, renderJsonLd } from "../lib/jsonLd";
+import { fetchGscSummary, type GscSummaryResult } from "../lib/gsc";
 
 const router = Router();
 
@@ -214,6 +215,42 @@ router.put("/admin/gsc", requireAdmin, async (req, res) => {
   } catch (e) {
     logger.error({ err: e }, "gsc code save failed");
     res.status(500).json({ error: "Failed to save verification code" });
+  }
+});
+
+/* ─── GET /api/seo/admin/search-analytics ─────────────────────────────────
+   Real Google Search Console numbers (clicks / impressions / CTR / avg
+   position, last 28d + prev-28d delta) plus top queries & top pages.
+   Cached server-side ~1h in the site_settings kv store so a busy admin
+   panel doesn't hammer Google's quota. `?refresh=1` forces a re-pull.
+   Not-configured / 403 are returned as friendly typed results (HTTP 200)
+   so the frontend can show the "setup needed" panel instead of an error. */
+const GSC_CACHE_KEY = "seo_gsc_analytics";
+const GSC_CACHE_TTL_MS = 60 * 60 * 1000; // ~1h
+
+interface GscCacheEnvelope { data: GscSummaryResult; cachedAt: string }
+
+router.get("/admin/search-analytics", requireAdmin, async (req, res) => {
+  try {
+    const force = req.query.refresh === "1" || req.query.refresh === "true";
+    if (!force) {
+      const cached = await readSetting<GscCacheEnvelope>(GSC_CACHE_KEY);
+      if (cached?.cachedAt && Date.now() - new Date(cached.cachedAt).getTime() < GSC_CACHE_TTL_MS) {
+        res.json({ ...cached.data, cached: true, cachedAt: cached.cachedAt });
+        return;
+      }
+    }
+    const data = await fetchGscSummary(new Date());
+    // Only cache successful pulls — never cache a transient fetch error so a
+    // blip doesn't get stuck for an hour. (Not-configured is stable, cache it.)
+    const isTransientError = "error" in data && data.error === true && data.reason === "fetch_failed";
+    if (!isTransientError) {
+      await writeSetting(GSC_CACHE_KEY, { data, cachedAt: new Date().toISOString() } as unknown as Record<string, unknown>);
+    }
+    res.json({ ...data, cached: false, cachedAt: new Date().toISOString() });
+  } catch (e) {
+    logger.error({ err: e }, "gsc search-analytics endpoint failed");
+    res.status(500).json({ error: "Failed to load Search Console data" });
   }
 });
 

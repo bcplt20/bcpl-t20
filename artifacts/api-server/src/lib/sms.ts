@@ -34,15 +34,17 @@ const SENDER_ID = process.env.MSG91_SENDER_ID; // 6-char DLT-approved sender ID
  *   MSG91_FLOW_PHASE1_RESULT    — Phase 1 result ready
  *   MSG91_FLOW_KYC_COMPLETE     — KYC verified
  *   MSG91_FLOW_KYC_REJECTED     — KYC rejected / resubmission
+ *   MSG91_FLOW_REFERRAL_MILESTONE — player hit a referral reward milestone
  */
 export const SMS_FLOW_ENV = {
-  phase1_receipt:  "MSG91_FLOW_PHASE1_RECEIPT",
-  phase2_receipt:  "MSG91_FLOW_PHASE2_RECEIPT",
-  video_submitted: "MSG91_FLOW_VIDEO_SUBMITTED",
-  video_reminder:  "MSG91_FLOW_VIDEO_REMINDER",
-  phase1_result:   "MSG91_FLOW_PHASE1_RESULT",
-  kyc_complete:    "MSG91_FLOW_KYC_COMPLETE",
-  kyc_rejected:    "MSG91_FLOW_KYC_REJECTED",
+  phase1_receipt:      "MSG91_FLOW_PHASE1_RECEIPT",
+  phase2_receipt:      "MSG91_FLOW_PHASE2_RECEIPT",
+  video_submitted:     "MSG91_FLOW_VIDEO_SUBMITTED",
+  video_reminder:      "MSG91_FLOW_VIDEO_REMINDER",
+  phase1_result:       "MSG91_FLOW_PHASE1_RESULT",
+  kyc_complete:        "MSG91_FLOW_KYC_COMPLETE",
+  kyc_rejected:        "MSG91_FLOW_KYC_REJECTED",
+  referral_milestone:  "MSG91_FLOW_REFERRAL_MILESTONE",
 } as const;
 
 export type SmsFlowType = keyof typeof SMS_FLOW_ENV;

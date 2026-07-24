@@ -434,15 +434,21 @@ router.get("/export/:dataset", safe("export", async (req, res) => {
     const regMap = new Map(regs.map(r => [r.reg.id, r]));
     let out = videos.filter(v => inRange(v.submittedAt, from, to));
     if (q.status) out = out.filter(v => v.status === q.status);
+    // Trial videos live in a private bucket — the CSV must NOT carry a
+    // permanent public s3Url. Emit a fresh short-lived presigned GET (2 h,
+    // long enough for the admin to open the export and click through) so a
+    // leaked spreadsheet can't grant permanent access to players' videos.
+    const rows = await Promise.all(out.map(async v => {
+      const r = regMap.get(v.registrationId);
+      const url = v.s3Key ? await getDownloadPresignedUrl(v.s3Key, 7200) : "";
+      return [
+        r?.user?.name ?? "", r?.user?.phone ?? "", r?.reg.regNumber ?? "", r?.reg.trialCity ?? "",
+        v.status, istDateTime(v.submittedAt), url,
+      ];
+    }));
     sendCsv(res, `bcpl-videos-${today}.csv`,
       ["Player", "Phone", "Reg Number", "Trial City", "Status", "Submitted On", "Video URL"],
-      out.map(v => {
-        const r = regMap.get(v.registrationId);
-        return [
-          r?.user?.name ?? "", r?.user?.phone ?? "", r?.reg.regNumber ?? "", r?.reg.trialCity ?? "",
-          v.status, istDateTime(v.submittedAt), v.s3Url,
-        ];
-      }));
+      rows);
     return;
   }
 

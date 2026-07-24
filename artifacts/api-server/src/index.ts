@@ -24,6 +24,7 @@ import { ensureFraudTables } from "./routes/fraud";
 import { recordJobRun } from "./lib/heartbeat";
 import { reconcileAbandonedPayments } from "./lib/reconcilePayments";
 import { sendPaymentReminders, remindersEnabled } from "./lib/reminders";
+import { sendKycManualReviewReminders } from "./lib/kycReminders";
 
 const port = Number(process.env["PORT"] ?? "8080");
 
@@ -104,6 +105,13 @@ async function reminderTick(): Promise<void> {
   } catch (e) {
     tickOk = false; tickErr = e;
     logger.error({ err: e }, "Payment reconciliation failed");
+  }
+  try {
+    const k = await sendKycManualReviewReminders({ dryRun });
+    if (k.candidates > 0) logger.info(k, "KYC manual-review reminders processed");
+  } catch (e) {
+    tickOk = false; tickErr = e;
+    logger.error({ err: e }, "KYC manual-review reminder sweep failed");
   }
   recordJobRun("reminder-sweep", tickOk, tickErr, SIX_HOURS);
 }

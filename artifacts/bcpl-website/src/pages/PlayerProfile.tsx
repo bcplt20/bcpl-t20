@@ -3,7 +3,7 @@ import { Link, useLocation } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { getDashboard, getPlayerTrialVenue, getMyResult, type MyResult } from '../lib/api';
-import { getTrialPass } from '../lib/api';
+import { getTrialPass, getProfileCompletion, submitProfileBackfill } from '../lib/api';
 import { ReferralCard } from '../components/ReferralCard';
 import { clearSession, getSession } from '../lib/auth';
 import { useLang } from '../lib/i18n';
@@ -141,6 +141,101 @@ function fmtAmt(n: number) {
   return '₹' + Number(n).toLocaleString('en-IN');
 }
 
+// ── Task #32 — small modal to collect ONLY the missing profile fields ─────────
+// Same required fields + validation as the KYC page (T-shirt + emergency
+// contact required, blood group optional). Submits to /api/user/profile-backfill.
+const TSHIRT_SIZES = ['S', 'M', 'L', 'XL', 'XXL'] as const;
+const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] as const;
+
+function ProfileBackfillModal({ t, onClose, onDone }: {
+  t: (en: string, hi: string) => string;
+  onClose: () => void;
+  onDone: () => void;
+}) {
+  const [tshirtSize, setTshirtSize] = useState('');
+  const [emergencyName, setEmergencyName] = useState('');
+  const [emergencyRelation, setEmergencyRelation] = useState('');
+  const [emergencyPhone, setEmergencyPhone] = useState('');
+  const [bloodGroup, setBloodGroup] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState('');
+
+  const submit = async () => {
+    setErr('');
+    if (!tshirtSize) return setErr(t('Please select your T-shirt size.', 'कृपया टी-शर्ट साइज़ चुनें।'));
+    if (!emergencyName.trim()) return setErr(t('Emergency contact name is required.', 'इमरजेंसी कॉन्टैक्ट का नाम ज़रूरी है।'));
+    if (!/^\d{10}$/.test(emergencyPhone.trim())) return setErr(t('Please enter a valid 10-digit emergency number.', 'कृपया सही 10-अंकों का इमरजेंसी नंबर डालें।'));
+    setBusy(true);
+    try {
+      await submitProfileBackfill({
+        tshirtSize,
+        emergencyName: emergencyName.trim(),
+        emergencyRelation: emergencyRelation.trim() || undefined,
+        emergencyPhone: emergencyPhone.trim(),
+        bloodGroup: bloodGroup || undefined,
+      });
+      onDone();
+    } catch (e: any) {
+      setErr(e?.message ?? t('Something went wrong. Please try again.', 'कुछ गलत हो गया। दोबारा कोशिश करें।'));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const chip = (val: string, active: boolean, onClick: () => void) => (
+    <button key={val} type="button" onClick={onClick}
+      style={{ padding: '8px 14px', borderRadius: 10, cursor: 'pointer', fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 13,
+        border: `1px solid ${active ? 'var(--orange)' : 'rgba(255,255,255,0.15)'}`,
+        background: active ? 'rgba(255,122,41,0.15)' : 'rgba(255,255,255,0.04)',
+        color: active ? 'var(--orange)' : 'rgba(255,255,255,0.7)' }}>
+      {val}
+    </button>
+  );
+  const inputStyle: React.CSSProperties = { width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.04)', color: 'var(--ink)', fontSize: 14, fontFamily: 'var(--font-body)', boxSizing: 'border-box' };
+  const label = (s: string) => <div style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.5)', margin: '14px 0 6px', textTransform: 'uppercase', letterSpacing: '.06em' }}>{s}</div>;
+
+  return (
+    <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+      <div onClick={e => e.stopPropagation()} style={{ background: 'var(--panel, #0A1727)', border: '1px solid var(--line, rgba(255,255,255,0.1))', borderRadius: 'var(--r, 16px)', padding: 24, maxWidth: 440, width: '100%', maxHeight: '90vh', overflowY: 'auto' }}>
+        <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 18, color: 'var(--gold)', marginBottom: 4 }}>
+          📋 {t('Complete your details', 'बाकी जानकारी भरें')}
+        </div>
+        <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', marginBottom: 8, lineHeight: 1.5 }}>
+          {t('Only the fields below are still needed.', 'सिर्फ़ नीचे दी गई जानकारी बाकी है।')}
+        </div>
+
+        {label(t('T-shirt size *', 'टी-शर्ट साइज़ *'))}
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {TSHIRT_SIZES.map(s => chip(s, tshirtSize === s, () => setTshirtSize(tshirtSize === s ? '' : s)))}
+        </div>
+
+        {label(t('Emergency contact name *', 'इमरजेंसी कॉन्टैक्ट का नाम *'))}
+        <input style={inputStyle} value={emergencyName} onChange={e => setEmergencyName(e.target.value)} maxLength={100} />
+
+        {label(t('Relationship (optional)', 'रिश्ता (वैकल्पिक)'))}
+        <input style={inputStyle} value={emergencyRelation} onChange={e => setEmergencyRelation(e.target.value)} maxLength={30} />
+
+        {label(t('Emergency number (10 digits) *', 'इमरजेंसी नंबर (10 अंक) *'))}
+        <input style={inputStyle} value={emergencyPhone} inputMode="numeric" onChange={e => setEmergencyPhone(e.target.value.replace(/\D/g, '').slice(0, 10))} />
+
+        {label(t('Blood group (optional)', 'ब्लड ग्रुप (वैकल्पिक)'))}
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {BLOOD_GROUPS.map(b => chip(b, bloodGroup === b, () => setBloodGroup(bloodGroup === b ? '' : b)))}
+        </div>
+
+        {err && <div style={{ color: 'var(--red, #EF4444)', fontSize: 13, marginTop: 14 }}>{err}</div>}
+
+        <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
+          <button className="btn-ghost" onClick={onClose} disabled={busy} style={{ flex: 1 }}>{t('Later', 'बाद में')}</button>
+          <button className="btn-orange" onClick={submit} disabled={busy} style={{ flex: 2, padding: '12px 20px', fontSize: 14 }}>
+            {busy ? t('Saving…', 'सेव हो रहा है…') : t('Save', 'सेव करें')}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function PlayerProfile() {
   const [loading,  setLoading]  = useState(true);
   const [data,     setData]     = useState<any>(null);
@@ -148,6 +243,10 @@ export function PlayerProfile() {
   const [myResult, setMyResult] = useState<MyResult | null>(null);
   const [hasTrialPass, setHasTrialPass] = useState(false);
   const [error,    setError]    = useState('');
+  // Task #32 — nudge KYC-done players whose T-shirt/emergency details predate
+  // the KYC-page collection. needsBackfill drives the banner; showBackfill the modal.
+  const [needsBackfill, setNeedsBackfill] = useState(false);
+  const [showBackfill,  setShowBackfill]  = useState(false);
   const [activeTab, setActiveTab] = useState<'home' | 'journey' | 'card' | 'profile' | 'support'>('home');
 
   const [, setLocation] = useLocation();
@@ -167,6 +266,7 @@ export function PlayerProfile() {
       .finally(() => setLoading(false));
 
     getTrialPass().then(() => setHasTrialPass(true)).catch(() => {});
+    getProfileCompletion().then(pc => setNeedsBackfill(!!pc.needsBackfill)).catch(() => {});
   }, [setLocation, t]);
 
   const step   = data ? deriveStep(data, !!venue) : 'not_registered';
@@ -250,6 +350,34 @@ export function PlayerProfile() {
 
       <main style={{ paddingTop: 32 }}>
         <div className="W">
+          {/* Task #32 — prominent Hindi-first nudge for KYC-done players whose
+              T-shirt size / emergency contact was never collected. */}
+          {needsBackfill && (
+            <div style={{ background: 'linear-gradient(135deg, rgba(232,178,61,0.14), rgba(255,122,41,0.10))', border: '1px solid rgba(232,178,61,0.45)', borderRadius: 'var(--r)', padding: '18px 20px', marginBottom: 24, display: 'flex', gap: 14, alignItems: 'center', flexWrap: 'wrap', animation: 'fadeUp .5s ease both' }}>
+              <div style={{ fontSize: 30, lineHeight: 1 }}>📋</div>
+              <div style={{ flex: '1 1 260px', minWidth: 0 }}>
+                <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 15, color: 'var(--gold)', marginBottom: 4 }}>
+                  {t('A few details are still pending', 'कुछ ज़रूरी जानकारी बाकी है')}
+                </div>
+                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', lineHeight: 1.5 }}>
+                  {t(
+                    'Please add your T-shirt size and emergency contact — these are needed for the trial.',
+                    'कृपया अपनी टी-शर्ट साइज़ और इमरजेंसी कॉन्टैक्ट जानकारी भरें — ट्रायल के लिए यह ज़रूरी है।',
+                  )}
+                </div>
+              </div>
+              <button className="btn-orange" style={{ padding: '12px 22px', fontSize: 13 }} onClick={() => setShowBackfill(true)}>
+                {t('Add now →', 'अभी भरें →')}
+              </button>
+            </div>
+          )}
+          {showBackfill && (
+            <ProfileBackfillModal
+              t={t}
+              onClose={() => setShowBackfill(false)}
+              onDone={() => { setShowBackfill(false); setNeedsBackfill(false); }}
+            />
+          )}
           <div className="main-layout">
             
             {/* LEFT COLUMN: Profile & Support (combined on mobile via tabs) */}

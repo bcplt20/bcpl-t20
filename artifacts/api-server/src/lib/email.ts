@@ -553,6 +553,26 @@ export function tplPhase2PaymentReminder(name: string) {
 }
 
 
+// ── Template: Referral Reward Milestone reached ────────────────────────────
+export function tplReferralMilestone(name: string, paidCount: number, reward: string) {
+  return {
+    subject: "You've unlocked a BCPL referral reward!",
+    htmlContent: wrap(`
+      <div style="text-align:center;margin-bottom:24px;">
+        <div style="display:inline-flex;align-items:center;justify-content:center;width:80px;height:80px;border-radius:50%;background:rgba(255,122,41,0.12);border:2px solid #FF7A29;font-size:38px;margin-bottom:12px;">🏆</div>
+        <div style="font-size:28px;font-weight:900;color:#FF7A29;letter-spacing:-0.5px;font-family:Arial,sans-serif;">REWARD UNLOCKED!</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-top:4px;">BCPL Season 5 — Player Referral Program</div>
+      </div>
+      <div style="background:rgba(255,122,41,0.06);border:1px solid rgba(255,122,41,0.2);border-radius:12px;padding:24px;margin-bottom:20px;">
+        <p style="color:rgba(255,255,255,0.75);margin:0 0 8px;font-size:14px;">Hi <strong>${name}</strong>,</p>
+        <p style="color:rgba(255,255,255,0.6);margin:0 0 12px;font-size:14px;">Congratulations! <strong style="color:#fff;">${paidCount}</strong> of the players you referred have completed their Phase 1 payment — and that just unlocked your next referral reward:</p>
+        <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:16px;font-size:15px;color:#E8B23D;font-weight:700;text-align:center;">${reward}</div>
+      </div>
+      <p style="color:rgba(255,255,255,0.55);font-size:13px;margin:0 0 6px;">Our team will reach out to hand over your reward. Keep sharing your referral link to climb the leaderboard and unlock even more!</p>
+      <div style="text-align:center;">${btn("VIEW MY REFERRALS →", `${SITE_URL}/referrals`)}</div>`),
+  };
+}
+
 // ── Template: Trial Pass Allocated (Stage 4) ───────────────────────────────
 export function tplTrialPass(name: string, venue: string, city: string, date: string, reportingTime: string, batch: string) {
   return {

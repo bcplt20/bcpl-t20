@@ -39,5 +39,6 @@
 - [Bulk media pipeline](media-pipeline.md) — Drive bulk downloads (curl / uvx gdown), foreground ≤240s resume-safe batches, magick/ffmpeg recipes, partial-file trap, yt-dlp blocked
 - [Master spec 2026 progress](master-spec-2026.md) — owner's 42-part upgrade doc: ~60% pre-existed (audit before building!); wave tracker + new copy rules live here
 - [node-postgres array binding](node-postgres-array-binding.md) — raw sql `${arr}::text[]` binds as ONE string param ("malformed array literal"); use IN + sql.join per-element
+- [drizzle push alignment](db-push-alignment.md) — push prompts = drift: rename `*_key` uniques to `*_unique`, declare runtime-created tables (app_flags!) in schema; exit code lies, grep "Changes applied"
 - [Trial-ops locking & waves](trial-ops-locking.md) — all attempt/eval writes take allocation row FOR UPDATE first (dbc param); W1 shipped, W2-W6 map inside
 - [Legal consent capture](legal-consent-capture.md) — consents jsonb only via atomic recordConsentKey merge (never JS-merge); EVERY pay entry point (incl. resume) needs consent UI+payload; LEGAL_APPROVAL_PENDING flag gates go-live

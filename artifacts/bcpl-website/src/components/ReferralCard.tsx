@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getMyReferral, whatsAppShareUrl, type MyReferral } from '../lib/referralProgramApi';
+import { getSession } from '../lib/auth';
+import { ReferralPosterButton } from './ReferralPoster';
 
 /**
  * Player referral program UI:
@@ -104,12 +106,19 @@ export function ReferralCard() {
       </p>
 
       {/* Link + actions */}
-      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'stretch', marginBottom: 18 }}>
+      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'stretch', marginBottom: 8 }}>
         <div style={linkBox}>{data.link}</div>
         <CopyBtn text={data.link} />
         <button style={waBtn} onClick={() => window.open(whatsAppShareUrl(data.link), '_blank')}>
           💬 Share on WhatsApp
         </button>
+      </div>
+      <div style={{ marginBottom: 18 }}>
+        <ReferralPosterButton
+          name={getSession()?.user?.name ?? ''}
+          code={data.code}
+          link={data.link}
+        />
       </div>
 
       {/* Stats */}
@@ -231,6 +240,13 @@ export function ReferralShareBanner() {
         <button style={waBtn} onClick={() => window.open(whatsAppShareUrl(data.link), '_blank')}>
           💬 Share on WhatsApp
         </button>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 14 }}>
+        <ReferralPosterButton
+          name={getSession()?.user?.name ?? ''}
+          code={data.code}
+          link={data.link}
+        />
       </div>
       <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>
         Track joins, payments &amp; your leaderboard rank anytime on your <a href={import.meta.env.BASE_URL + 'profile'} style={{ color: '#FF9A57', fontWeight: 700 }}>player dashboard</a>.

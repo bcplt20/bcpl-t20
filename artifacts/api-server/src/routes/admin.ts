@@ -29,11 +29,12 @@ import {
   trialCheckinsTable,
   physicalAssessmentsTable,
 } from "@workspace/db/schema";
-import { eq, desc, count, and, inArray, lt, gte, isNotNull, sql } from "drizzle-orm";
+import { eq, desc, count, and, inArray, lt, lte, gte, isNotNull, ilike, sql } from "drizzle-orm";
 import { sendVideoReminders } from "./video";
 import { sendPaymentReminders, remindersEnabled } from "../lib/reminders";
 import { requireAdmin, requireRole, trialCityScope } from "../middlewares/adminAuth";
-import { adminUsersTable } from "@workspace/db/schema";
+import { getDownloadPresignedUrl } from "../lib/s3";
+import { adminUsersTable, auditLogsTable } from "@workspace/db/schema";
 import { verifyPassword, signAdminToken, publicAdmin, permissionsForRole } from "./adminUsers";
 import { writeAudit } from "../lib/audit";
 import { markKycVerified, notifyKycRejected } from "./kyc";
@@ -346,24 +347,37 @@ router.get("/registrations", async (req, res) => {
       }
     }
 
-    const registrations = filtered.map(r => ({
-      id:           r.reg.id,
-      regNumber:    r.reg.regNumber ?? null,
-      userId:       r.reg.userId,
-      role:         r.reg.role,
-      trialCity:    r.reg.trialCity,
-      phase1Status: r.reg.phase1Status,
-      phase2Status: r.reg.phase2Status,
-      videoDeadline:r.reg.videoDeadline,
-      createdAt:    r.reg.createdAt,
-      user: r.user ? { id: r.user.id, name: r.user.name, phone: r.user.phone, email: r.user.email } : null,
-      payment:       payMap.get(r.reg.id) ?? null,
-      phase2Payment: p2PayMap.get(r.reg.id) ?? null,
-      video:         vidMap.get(r.reg.id) ?? null,
-      kyc: (() => {
-        const k = kycMap.get(r.reg.id);
-        return k ? { id: k.id, status: k.status, panVerified: k.panVerified, verifiedAt: k.verifiedAt } : null;
-      })(),
+    const registrations = await Promise.all(filtered.map(async r => {
+      // Trial videos live behind a private bucket now — hand out a fresh,
+      // short-lived presigned GET instead of the row's permanent s3Url so the
+      // link can't be shared/leaked. s3Url is deliberately NOT exposed.
+      const vid = vidMap.get(r.reg.id) ?? null;
+      const video = vid
+        ? {
+            status:      vid.status,
+            submittedAt: vid.submittedAt,
+            s3Url:       vid.s3Key ? await getDownloadPresignedUrl(vid.s3Key, 900) : null,
+          }
+        : null;
+      return {
+        id:           r.reg.id,
+        regNumber:    r.reg.regNumber ?? null,
+        userId:       r.reg.userId,
+        role:         r.reg.role,
+        trialCity:    r.reg.trialCity,
+        phase1Status: r.reg.phase1Status,
+        phase2Status: r.reg.phase2Status,
+        videoDeadline:r.reg.videoDeadline,
+        createdAt:    r.reg.createdAt,
+        user: r.user ? { id: r.user.id, name: r.user.name, phone: r.user.phone, email: r.user.email } : null,
+        payment:       payMap.get(r.reg.id) ?? null,
+        phase2Payment: p2PayMap.get(r.reg.id) ?? null,
+        video,
+        kyc: (() => {
+          const k = kycMap.get(r.reg.id);
+          return k ? { id: k.id, status: k.status, panVerified: k.panVerified, verifiedAt: k.verifiedAt } : null;
+        })(),
+      };
     }));
 
     res.json({ registrations, total: registrations.length });
@@ -546,11 +560,13 @@ router.get("/videos", async (req, res) => {
     let filtered = rows;
     if (status) filtered = filtered.filter(r => r.video.status === status);
 
-    const videos = filtered.map(r => ({
+    const videos = await Promise.all(filtered.map(async r => ({
       id:              r.video.id,
       registrationId:  r.video.registrationId,
       s3Key:           r.video.s3Key,
-      s3Url:           r.video.s3Url,
+      // Short-lived presigned GET (15 min) — the permanent public s3Url is
+      // never handed to the client. VideoReviewView refetches on expiry/error.
+      s3Url:           r.video.s3Key ? await getDownloadPresignedUrl(r.video.s3Key, 900) : null,
       durationSeconds: r.video.durationSeconds,
       submittedAt:     r.video.submittedAt,
       status:          r.video.status,
@@ -569,11 +585,29 @@ router.get("/videos", async (req, res) => {
         total:         r.score.total,
         selectorNote:  r.score.selectorNote,
       } : null,
-    }));
+    })));
 
     res.json({ videos, total: videos.length });
   } catch (err: any) {
     console.error("[admin/videos]", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/* ─── GET /api/admin/videos/:id/url ─────────────────────────────────
+ * Mint a fresh short-lived presigned GET for one trial video. The admin UI
+ * calls this right before playback (and again on a <video> error) so an
+ * expired link is transparently refreshed — no permanent URL is ever stored. */
+router.get("/videos/:id/url", async (req, res) => {
+  try {
+    const id = String(req.params.id);
+    const [video] = await db.select({ s3Key: phase1VideosTable.s3Key })
+      .from(phase1VideosTable).where(eq(phase1VideosTable.id, id)).limit(1);
+    if (!video || !video.s3Key) { res.status(404).json({ error: "Video not found" }); return; }
+    const url = await getDownloadPresignedUrl(video.s3Key, 900);
+    res.json({ url });
+  } catch (err: any) {
+    console.error("[admin/videos/:id/url]", err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -810,9 +844,17 @@ router.get("/kyc", async (req, res) => {
       emergencyRelation: r.profile?.emergencyRelation ?? null,
       emergencyPhone:    r.profile?.emergencyPhone ?? null,
       bloodGroup:        r.profile?.bloodGroup ?? null,
+      // Task #32 — cheap "Profile missing" indicator: T-shirt size OR emergency
+      // contact not yet collected (players who did KYC before these fields
+      // moved to the KYC page). The profile is already joined, so this is free.
+      profileMissing:    !r.profile?.tshirtSize || !r.profile?.emergencyName || !r.profile?.emergencyPhone,
     }));
 
-    res.json({ kyc, total: kyc.length, masked: !reveal, canReveal });
+    // Optional filter: only rows whose profile is still incomplete (?profileMissing=1).
+    const profileMissingOnly = String(req.query["profileMissing"] ?? "") === "1";
+    const kycOut = profileMissingOnly ? kyc.filter(r => r.profileMissing) : kyc;
+
+    res.json({ kyc: kycOut, total: kycOut.length, masked: !reveal, canReveal });
   } catch (err: any) {
     console.error("[admin/kyc]", err);
     res.status(500).json({ error: err.message });
@@ -904,12 +946,20 @@ router.put("/kyc/:id/status", async (req, res) => {
       return;
     }
 
+    const [beforeKyc] = await db.select({ status: kycRecordsTable.status })
+      .from(kycRecordsTable).where(eq(kycRecordsTable.id, String(id))).limit(1);
     const [updated] = await db
       .update(kycRecordsTable)
       .set({ status, verifiedAt: null })
       .where(eq(kycRecordsTable.id, id))
       .returning();
     if (!updated) { res.status(404).json({ error: "KYC record not found" }); return; }
+
+    void writeAudit(req, {
+      action: "kyc.status", entity: "kyc_records", entityKey: String(id),
+      oldValue: { status: beforeKyc?.status ?? null },
+      newValue: { status },
+    });
 
     // On rejection, tell the player (email + SMS + WhatsApp) with re-submission
     // guidance. Reserve-first log row = exactly-once per rejection, so a repeat
@@ -1405,6 +1455,67 @@ router.get("/players/:key/journey", async (req, res) => {
     });
   } catch (err: any) {
     console.error("[admin/players/journey]", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/* ─── GET /api/admin/audit-logs ───────────────────────────────────────────
+   SUPER_ADMIN-only audit trail: who changed what and when. Paginated,
+   with optional filters on action, actor and a created_at date range. */
+router.get("/audit-logs", requireRole(), async (req, res) => {
+  try {
+    const q = req.query as Record<string, string | undefined>;
+    const page = Math.max(1, parseInt(String(q.page ?? "1"), 10) || 1);
+    const pageSize = Math.min(100, Math.max(1, parseInt(String(q.pageSize ?? "50"), 10) || 50));
+    const offset = (page - 1) * pageSize;
+
+    const filters = [];
+    if (q.action && q.action.trim()) filters.push(eq(auditLogsTable.action, q.action.trim()));
+    if (q.actor && q.actor.trim()) filters.push(ilike(auditLogsTable.actor, `%${q.actor.trim()}%`));
+    if (q.entity && q.entity.trim()) filters.push(eq(auditLogsTable.entity, q.entity.trim()));
+    if (q.from && q.from.trim()) {
+      const d = new Date(q.from.trim());
+      if (!isNaN(d.getTime())) filters.push(gte(auditLogsTable.createdAt, d));
+    }
+    if (q.to && q.to.trim()) {
+      const d = new Date(q.to.trim());
+      if (!isNaN(d.getTime())) filters.push(lte(auditLogsTable.createdAt, d));
+    }
+    const where = filters.length ? and(...filters) : undefined;
+
+    const [rows, [{ c: total }]] = await Promise.all([
+      db.select().from(auditLogsTable).where(where)
+        .orderBy(desc(auditLogsTable.createdAt)).limit(pageSize).offset(offset),
+      db.select({ c: count() }).from(auditLogsTable).where(where),
+    ]);
+
+    // Distinct action + entity vocab so the frontend can build filter dropdowns.
+    const [actions, entities] = await Promise.all([
+      db.selectDistinct({ v: auditLogsTable.action }).from(auditLogsTable).orderBy(auditLogsTable.action),
+      db.selectDistinct({ v: auditLogsTable.entity }).from(auditLogsTable).orderBy(auditLogsTable.entity),
+    ]);
+
+    res.json({
+      logs: rows.map((r) => ({
+        id: r.id,
+        actor: r.actor,
+        actorIp: r.actorIp,
+        action: r.action,
+        entity: r.entity,
+        entityKey: r.entityKey,
+        oldValue: r.oldValue,
+        newValue: r.newValue,
+        createdAt: r.createdAt,
+      })),
+      total: Number(total),
+      page,
+      pageSize,
+      pages: Math.max(1, Math.ceil(Number(total) / pageSize)),
+      actions: actions.map((a) => a.v).filter(Boolean),
+      entities: entities.map((e) => e.v).filter(Boolean),
+    });
+  } catch (err: any) {
+    console.error("[admin/audit-logs]", err);
     res.status(500).json({ error: err.message });
   }
 });

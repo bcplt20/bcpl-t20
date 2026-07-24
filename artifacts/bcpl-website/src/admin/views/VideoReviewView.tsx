@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { adminGetVideos, adminReviewVideo, adminUpdatePhase1Status, adminSaveScore } from "../../lib/api";
+import { adminGetVideos, adminReviewVideo, adminUpdatePhase1Status, adminSaveScore, adminGetVideoUrl } from "../../lib/api";
 import { SampleVideosCard } from "./SampleVideosCard";
 
 type Score = {
@@ -61,6 +61,26 @@ export default function VideoReviewView({ refreshTick = 0 }: { refreshTick?: num
   const [err, setErr]           = useState("");
   const [sel, setSel]           = useState<Video | null>(null);
   const [acting, setActing]     = useState<string | null>(null);
+  // Presigned playback URLs expire (~15 min). Hold a freshly-minted URL for the
+  // open video and refetch it on demand (open) and on a <video> load error.
+  const [playUrl, setPlayUrl]   = useState<string | null>(null);
+  const refreshedRef            = useRef<string | null>(null);
+
+  const refreshPlayUrl = useCallback(async (id: string) => {
+    try {
+      const { url } = await adminGetVideoUrl(id);
+      setPlayUrl(url);
+    } catch { /* keep the last URL; the error card will still show */ }
+  }, []);
+
+  // Whenever the selected video changes, mint a fresh URL right before playback.
+  useEffect(() => {
+    if (!sel) { setPlayUrl(null); refreshedRef.current = null; return; }
+    if (refreshedRef.current === sel.id) return;
+    refreshedRef.current = sel.id;
+    setPlayUrl(sel.s3Url ?? null);
+    refreshPlayUrl(sel.id);
+  }, [sel, refreshPlayUrl]);
 
   const load = useCallback(async (silent = false) => {
     if (!silent) setLoading(true);
@@ -265,11 +285,13 @@ export default function VideoReviewView({ refreshTick = 0 }: { refreshTick?: num
                   <button onClick={() => setSel(null)} style={{ background:"none", border:"none", color:"#334155", cursor:"pointer", fontSize:18, padding:4 }}>×</button>
                 </div>
 
-                {/* Video player */}
-                {sel.s3Url ? (
+                {/* Video player — presigned URL, refetched on expiry/error */}
+                {(playUrl ?? sel.s3Url) ? (
                   <video
-                    src={sel.s3Url}
+                    key={playUrl ?? sel.s3Url ?? ""}
+                    src={playUrl ?? sel.s3Url ?? ""}
                     controls
+                    onError={() => refreshPlayUrl(sel.id)}
                     style={{ width:"100%", borderRadius:10, background:"#0F172A", marginBottom:16, maxHeight:200 }}
                   />
                 ) : (
@@ -299,8 +321,8 @@ export default function VideoReviewView({ refreshTick = 0 }: { refreshTick?: num
 
                 {/* Open + Mark Reviewed */}
                 <div style={{ display:"flex", gap:8, marginBottom:8 }}>
-                  {sel.s3Url && (
-                    <a href={sel.s3Url} target="_blank" rel="noreferrer"
+                  {(playUrl ?? sel.s3Url) && (
+                    <a href={(playUrl ?? sel.s3Url)!} target="_blank" rel="noreferrer"
                       style={{ flex:1, padding:10, borderRadius:10, border:"1px solid #6366F140", background:"#6366F120", color:"#6366F1", fontWeight:800, fontSize:12, cursor:"pointer", textAlign:"center", textDecoration:"none" }}>
                       ↗ Open Video
                     </a>

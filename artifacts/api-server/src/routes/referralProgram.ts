@@ -15,6 +15,7 @@ import { requireAuth, type AuthRequest } from "../middlewares/auth";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { PAID_STATUSES, isUniqueViolation } from "./marketing";
 import { logger } from "../lib/logger";
+import { notifyReferralMilestone } from "../lib/referralMilestone";
 
 /**
  * Player referral program (builds on the marketing referral plumbing):
@@ -416,15 +417,32 @@ router.post("/admin/grants", requireAdmin, async (req, res) => {
     .limit(1);
   if (!tier) return void res.status(404).json({ error: "No reward tier at that threshold" });
 
+  let created = false;
   try {
-    await db.insert(referralRewardGrantsTable).values({ code, threshold, reward: tier.reward });
+    // Only a NEW grant row should trigger congrats. ON CONFLICT DO NOTHING lets
+    // us distinguish a fresh insert (returning row) from an idempotent re-mark /
+    // historical backfill (no row) — the latter must NEVER re-notify.
+    const inserted = await db
+      .insert(referralRewardGrantsTable)
+      .values({ code, threshold, reward: tier.reward })
+      .onConflictDoNothing()
+      .returning({ id: referralRewardGrantsTable.id });
+    created = inserted.length > 0;
   } catch (e) {
     if (!isUniqueViolation(e)) {
       logger.error({ err: e }, "grant create failed");
       return void res.status(500).json({ error: "Failed to record reward" });
     }
-    // Already marked given — idempotent success.
+    // Already marked given — idempotent success (no congrats).
   }
+
+  // Congratulate the player only on a genuinely new milestone grant. The helper
+  // is itself reserve-first deduped, so this can never double-send even under
+  // concurrent grant calls; failures are logged and never break this response.
+  if (created) {
+    await notifyReferralMilestone({ code, threshold, reward: tier.reward });
+  }
+
   res.json({ success: true });
 });
 
