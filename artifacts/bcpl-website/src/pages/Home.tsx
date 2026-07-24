@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
-import { getMatches, getPointsTable, isAuthenticated } from "../lib/api";
+import { getMatches, getPointsTable, isAuthenticated, type FeeConfig } from "../lib/api";
+import { useFees, inr } from "../lib/fees";
+import { SponsorWall } from "../components/SponsorWall";
 import { BCPLFooter } from "../components/BCPLFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { useLang } from "../lib/i18n";
@@ -55,15 +57,13 @@ const PROOF = [
   { img:"event-teams-a.webp",      wide:false, en:"Franchise Owners & Captains",      hi:"Franchise owners और captains" },
 ];
 
-/* ── ROAD TO BCPL — the single journey ── */
-const ROAD = [
-  { icon:"📋", en:"Register",        hi:"रजिस्टर",        date:"Oct '26 – Feb '27", fee:"₹299 / ₹399",     descEn:"Pick your role, pay online — done in 5 minutes.",                    descHi:"Role चुनें, online payment करें — 5 मिनट में हो गया।",              color:"#FF7A29", live:true },
-  { icon:"🎬", en:"Video Trial",     hi:"वीडियो ट्रायल",  date:"Within 15 days",    fee:null,               descEn:"Upload a 30–60 second cricket clip from any ground in India.",       descHi:"किसी भी मैदान से 30–60 second की cricket clip upload करें।",             color:"#FF9350" },
-  { icon:"🔍", en:"Phase 1 Result",  hi:"फेज़ 1 रिज़ल्ट", date:"Within 48 hours",   fee:null,               descEn:"Your video is evaluated against BCPL's Phase 1 assessment criteria.", descHi:"आपका video BCPL के Phase 1 assessment criteria पर evaluate होता है।", color:"#E8B23D" },
-  { icon:"🏟", en:"Physical Trial",  hi:"फिजिकल ट्रायल",  date:"Mar – Jun '27",     fee:"₹2,000 / ₹3,000",  descEn:"Only if selected — live trials across cities in India.",             descHi:"सिर्फ select होने पर — भारत के शहरों में live trial।",              color:"#F0C860" },
-  { icon:"🔨", en:"Live Auction",    hi:"लाइव ऑक्शन",     date:"Aug '27",           fee:null,               descEn:"10 franchises bid for you. Top bid so far: ₹20 Lakh.",                descHi:"10 franchises आपके लिए बोली लगाती हैं। Top bid: ₹20 लाख।",          color:"#3B82F6" },
-  { icon:"👕", en:"Your Team",       hi:"आपकी टीम",       date:"Sep '27",           fee:null,               descEn:"Wear your franchise jersey — you're a drafted player now.",          descHi:"Franchise की jersey पहनिए — अब आप drafted player हैं।",             color:"#22C55E" },
-  { icon:"🏆", en:"The Stadium",     hi:"स्टेडियम",       date:"Sep – Oct '27",     fee:null,               descEn:"Season 5 under the floodlights. ₹6 Crore prize pool.",               descHi:"Floodlights के नीचे Season 5 । ₹6 करोड़ prize pool।",               color:"#A78BFA" },
+/* ── HOW BCPL WORKS — 4 concise steps (spec #14; fees from shared config).
+     The deeper journey detail lives on the registration + journey pages. ── */
+const ROAD = (f: FeeConfig) => [
+  { icon:"📋", en:"Register",         hi:"रजिस्टर",        date:"Oct '26 – Feb '27", fee: inr(f.phase1.bat) + " / " + inr(f.phase1.ar) + " + GST", descEn:"Pick your role, pay online — done in 5 minutes.",                                                       descHi:"Role चुनें, online payment करें — 5 मिनट में हो गया।",                                        color:"#FF7A29", live:true },
+  { icon:"🎬", en:"Video Trial",      hi:"वीडियो ट्रायल",  date:"Within 15 days",    fee:null,                                                      descEn:"Upload a 30–60 second cricket clip from any ground in India.",                                          descHi:"किसी भी मैदान से 30–60 second की cricket clip upload करें।",                                       color:"#FF9350" },
+  { icon:"🔍", en:"Phase 1 Result",   hi:"फेज़ 1 रिज़ल्ट", date:"Within 48 hours",   fee:null,                                                      descEn:"Your video is evaluated against BCPL's Phase 1 assessment criteria.",                                   descHi:"आपका video BCPL के Phase 1 assessment criteria पर evaluate होता है।",                          color:"#E8B23D" },
+  { icon:"🏟", en:"Phase 2 & Beyond", hi:"फेज़ 2 और आगे",  date:"Mar – Oct '27",     fee: inr(f.phase2.bat) + " / " + inr(f.phase2.ar) + " + GST", descEn:"Only if selected — physical trial in your city, the live franchise auction, then Season 5 under the floodlights.", descHi:"सिर्फ select होने पर — आपके शहर में physical trial, live franchise auction, फिर floodlights के नीचे Season 5।", color:"#F0C860" },
 ];
 
 /* ── REAL PLAYER STORIES — sirf VERIFIED asli players.
@@ -85,16 +85,16 @@ const NUMBERS = [
   { end:10,     inFmt:false, prefix:"",  suffix:"",      en:"Franchises",                   hi:"फ्रैंचाइज़ी" },
 ];
 
-const FAQS = [
+const FAQS = (f: FeeConfig) => [
   { qEn:"How much do I pay in Phase 1?",         qHi:"Phase 1 में कितना देना होगा?",
-    aEn:"₹299 for Batsman/Bowler/Wicket-keeper. ₹399 for All-rounders. That's it for Phase 1.",
-    aHi:"Batsman/Bowler/Wicket-keeper के लिए ₹299। All-rounder के लिए ₹399। Phase 1 में बस इतना।" },
+    aEn: inr(f.phase1.bat) + " + GST for Batsman/Bowler/Wicket-keeper. " + inr(f.phase1.ar) + " + GST for All-rounders. Nothing else is payable in Phase 1.",
+    aHi: "Batsman/Bowler/Wicket-keeper के लिए " + inr(f.phase1.bat) + " + GST। All-rounder के लिए " + inr(f.phase1.ar) + " + GST। Phase 1 में इसके अलावा कुछ नहीं।" },
   { qEn:"Do I pay extra for Phase 2?",           qHi:"क्या Phase 2 के लिए अलग से देना होगा?",
-    aEn:"Only if selected. Phase 2 fee is ₹2,000 (Bat/Bowl/WK) or ₹3,000 (All-rounder). Not selected = pay nothing more.",
-    aHi:"सिर्फ select होने पर। Phase 2 fee ₹2,000 (Bat/Bowl/WK) या ₹3,000 (All-rounder)। Select नहीं हुए = कुछ नहीं देना।" },
+    aEn:"Only if selected. Phase 2 fee is " + inr(f.phase2.bat) + " + GST (Bat/Bowl/WK) or " + inr(f.phase2.ar) + " + GST (All-rounder). Not selected = pay nothing more.",
+    aHi:"सिर्फ select होने पर। Phase 2 fee " + inr(f.phase2.bat) + " + GST (Bat/Bowl/WK) या " + inr(f.phase2.ar) + " + GST (All-rounder)। Select नहीं हुए = कुछ नहीं देना।" },
   { qEn:"Are there hidden costs?",               qHi:"क्या कोई छिपे हुए charges हैं?",
-    aEn:"The Phase 2 fee is payable only if you qualify and choose to proceed. Maximum total cost is ₹2,299–₹3,399 for your entire BCPL journey — registration to franchise auction.",
-    aHi:"Phase 2 fee सिर्फ तभी देनी होती है जब आप qualify करें और आगे बढ़ना चुनें। पूरे BCPL सफर की अधिकतम कुल लागत ₹2,299–₹3,399 है — registration से लेकर auction तक।" },
+    aEn:"The Phase 2 fee is payable only if you qualify and choose to proceed. Maximum total cost is " + inr(f.phase1.bat + f.phase2.bat) + "–" + inr(f.phase1.ar + f.phase2.ar) + " + GST for your entire BCPL journey — registration to franchise auction.",
+    aHi:"Phase 2 fee सिर्फ तभी देनी होती है जब आप qualify करें और आगे बढ़ना चुनें। पूरे BCPL सफर की अधिकतम कुल लागत " + inr(f.phase1.bat + f.phase2.bat) + "–" + inr(f.phase1.ar + f.phase2.ar) + " + GST है — registration से लेकर auction तक।" },
   { qEn:"Who reviews my Phase 1 video?",         qHi:"मेरा Phase 1 video कौन देखता है?",
     aEn:"Your video is evaluated against BCPL's Phase 1 assessment criteria. Results are released within 48 hours of submission.",
     aHi:"आपका video BCPL के Phase 1 assessment criteria पर evaluate होता है। Result submission के 48 घंटे के भीतर SMS/email से मिलता है।" },
@@ -130,6 +130,10 @@ export function Home() {
   const [video,     setVideo]     = useState<string|null>(null);
   const [, navigate] = useLocation();
   const authed = isAuthenticated();
+  const fees   = useFees();
+  const gstPct = Math.round(fees.gstRate * 100);
+  const ROAD_STEPS = ROAD(fees);
+  const FAQ_ITEMS  = FAQS(fees);
 
   const vMaskRef   = useRef<HTMLDivElement|null>(null);
   const vOpenerRef = useRef<HTMLElement|null>(null);
@@ -409,10 +413,14 @@ export function Home() {
               <span className="shim">#OfficeSeStadiumTak</span>
             </div>
 
-            {/* CTAs */}
+            {/* CTAs — primary register (journey CTA when logged in) + How BCPL Works (spec #12) */}
             <div style={{ display:"flex", flexWrap:"wrap", gap:12, marginBottom:26 }}>
-              <button className="btn-cta" style={{ fontSize:15, padding:"16px 32px", animation:"pulse6 2.6s infinite" }} onClick={()=>navigate("/register")}>{t("Register for ₹299","₹299 में रजिस्टर करें")} →</button>
-              <button className="btn-ghost" style={{ fontSize:14 }} onClick={()=>openVideo("story")}>▶ {t("Watch the BCPL Story","BCPL की कहानी देखें")}</button>
+              {authed ? (
+                <button className="btn-cta" style={{ fontSize:15, padding:"16px 32px" }} onClick={()=>navigate("/profile")}>{t("Continue Your Journey","अपना सफर जारी रखें")} →</button>
+              ) : (
+                <button className="btn-cta" style={{ fontSize:15, padding:"16px 32px", animation:"pulse6 2.6s infinite" }} onClick={()=>navigate("/register")}>{t("Register for Phase 1","Phase 1 के लिए रजिस्टर करें")} →</button>
+              )}
+              <a className="btn-ghost" style={{ fontSize:14 }} href="#road">{t("How BCPL Works","BCPL कैसे काम करता है")}</a>
             </div>
 
             {/* Closing pill — live rolling mini-timer; the big scoreboard sits in the final CTA */}
@@ -438,30 +446,248 @@ export function Home() {
         </div>
       </section>
 
-      {/* ══ 3 · THIS IS BCPL — the film ══ */}
-      <section className="rv" style={{ position:"relative", overflow:"hidden", background:"#040A14" }}>
-        <img src={BASE + "bcpl-assets/event-stage-trophy.webp"} alt="" aria-hidden="true"
-          style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", objectPosition:"center 40%", opacity:.25 }}
-          onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
-        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 75% 90% at 50% 50%,rgba(4,10,20,.55) 0%,rgba(4,10,20,.96) 100%)" }}/>
-        <div className="W" style={{ position:"relative", zIndex:1, textAlign:"center", padding:"clamp(64px,9vw,110px) 20px" }}>
-          <div className="slbl" style={{ justifyContent:"center" }}>{t("This is BCPL","यही है BCPL")}</div>
-          <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(26px,4.8vw,54px)", color:"#fff", textTransform:"uppercase", lineHeight:1.08, marginBottom:16, textShadow:"0 4px 30px rgba(0,0,0,.6)" }}>
-            {t("This is not just cricket.","यह सिर्फ क्रिकेट नहीं है।")}<br/>
-            <span className="shim-gold">{t("This is your second chance.","यह आपका दूसरा मौका है।")}</span>
-          </h2>
-          <p style={{ fontSize:"clamp(13px,1.9vw,16px)", color:"rgba(255,255,255,.55)", lineHeight:1.75, maxWidth:620, margin:"0 auto 34px" }}>
-            {t("Office → kit bag → trial → selection → auction hammer → jersey → stadium. A real pathway from working professional to professional-style cricket.",
-               "ऑफिस → किट बैग → ट्रायल → सिलेक्शन → ऑक्शन का हथौड़ा → जर्सी → स्टेडियम। Working professional से professional-style cricket तक का असली रास्ता।")}
-          </p>
-          <button type="button" className="play-btn" aria-label={t("Play the BCPL story video","BCPL की कहानी का video चलाएँ")} onClick={()=>openVideo("story")}>▶</button>
-          <div className="mont" style={{ marginTop:18, fontSize:11, fontWeight:800, letterSpacing:".16em", color:"rgba(255,255,255,.5)", textTransform:"uppercase" }}>
-            {t("Watch the BCPL story · 30 sec","BCPL की कहानी देखें · 30 sec")}
+      {/* ══ 3 · THE LEAGUE IN NUMBERS ══ */}
+      <section id="numbers" className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#06101E", position:"relative", overflow:"hidden" }}>
+        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 70% 60% at 50% 0%,rgba(232,178,61,.05) 0%,transparent 65%)", pointerEvents:"none" }}/>
+        <div className="W" style={{ position:"relative", zIndex:1 }}>
+          <div className="slbl" style={{ justifyContent:"center" }}>{t("BCPL so far","अब तक का BCPL")}</div>
+          <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4vw,44px)", color:"#fff", textTransform:"uppercase", textAlign:"center", marginBottom:8 }}>{t("The league in numbers","आँकड़ों में league")}</h2>
+          <p style={{ fontSize:14, color:"rgba(255,255,255,.4)", textAlign:"center", marginBottom:36 }}>{t("Four seasons of proof — not promises.","चार seasons का सबूत — सिर्फ वादे नहीं।")}</p>
+          <div className="num-grid">
+            {NUMBERS.map(n=>(
+              <div key={n.en} className="num-cell">
+                <div className="mont" style={{ fontWeight:900, fontSize:"clamp(26px,4vw,42px)", color:"#E8B23D", lineHeight:1, whiteSpace:"nowrap" }}>
+                  <CountUp end={n.end} prefix={n.prefix} suffix={n.suffix} inFmt={n.inFmt}/>
+                </div>
+                <div className="mont" style={{ fontWeight:700, fontSize:"clamp(10px,1.4vw,12px)", letterSpacing:".1em", color:"rgba(255,255,255,.5)", textTransform:"uppercase", marginTop:10 }}>{t(n.en,n.hi)}</div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ══ 4 · SOURAV GANGULY × BCPL — full-width cinematic ══ */}
+      {/* ══ 4 · ROAD TO BCPL ══ */}
+      <section id="road" className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#06101E", position:"relative", overflow:"hidden" }}>
+        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 80% 60% at 50% 100%,rgba(255,122,41,.04) 0%,transparent 70%)", pointerEvents:"none" }}/>
+        <div className="W" style={{ position:"relative", zIndex:1 }}>
+          <div className="slbl">{t("Your Journey","आपका सफर")}</div>
+          <div style={{ display:"flex", alignItems:"flex-end", justifyContent:"space-between", gap:16, flexWrap:"wrap", marginBottom:34 }}>
+            <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4vw,44px)", color:"#fff", textTransform:"uppercase" }}>{t("From Registration to Stadium","रजिस्ट्रेशन से स्टेडियम तक")}</h2>
+            <span className="mont" style={{ fontSize:11, fontWeight:700, color:"rgba(255,255,255,.35)", letterSpacing:".08em" }}>{t("4 STEPS · ONE DREAM","4 कदम · एक सपना")}</span>
+          </div>
+
+          <div className="road">
+            {ROAD_STEPS.map((s,i)=>(
+              <div key={i} className="road-card" style={{ borderTop:`3px solid ${s.color}`, zIndex:1 }}>
+                <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:12 }}>
+                  <div style={{ width:44, height:44, borderRadius:"50%", background:`${s.color}1A`, border:`1.5px solid ${s.color}55`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:20 }}>{s.icon}</div>
+                  <span className="mont" style={{ fontWeight:900, fontSize:26, color:`${s.color}30` }}>{String(i+1).padStart(2,"0")}</span>
+                </div>
+                <div style={{ display:"inline-block", alignSelf:"flex-start", background:`${s.color}14`, border:`1px solid ${s.color}35`, borderRadius:20, padding:"2px 10px", marginBottom:8 }}>
+                  <span className="mont" style={{ fontSize:9, fontWeight:800, color:s.color, letterSpacing:".06em" }}>{s.date}</span>
+                </div>
+                <div className="mont" style={{ fontWeight:900, fontSize:15, color:"#fff", marginBottom:6 }}>{t(s.en,s.hi)}</div>
+                <p style={{ fontSize:12, color:"rgba(255,255,255,.5)", lineHeight:1.6, flex:1 }}>{t(s.descEn,s.descHi)}</p>
+                <div style={{ display:"flex", gap:6, flexWrap:"wrap", marginTop:10, minHeight:24 }}>
+                  {s.fee && (
+                    <span style={{ background:`${s.color}18`, border:`1px solid ${s.color}44`, borderRadius:8, padding:"3px 9px" }}>
+                      <span className="mont" style={{ fontSize:11, fontWeight:800, color:s.color }}>{s.fee}</span>
+                    </span>
+                  )}
+                  {s.live && (
+                    <span style={{ background:"rgba(34,197,94,.1)", border:"1px solid rgba(34,197,94,.3)", borderRadius:8, padding:"3px 9px", display:"inline-flex", alignItems:"center", gap:5 }}>
+                      <span style={{ width:5, height:5, borderRadius:"50%", background:"#22C55E", display:"inline-block", animation:"blip 1s infinite" }}/>
+                      <span className="mont" style={{ fontSize:10, fontWeight:800, color:"#22C55E" }}>{t("OPEN NOW","अभी खुला")}</span>
+                    </span>
+                  )}
+                  {i===3 && <span style={{ fontSize:10, color:"rgba(255,255,255,.35)", alignSelf:"center" }}>{t("only if selected","सिर्फ select होने पर")}</span>}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="road-hint">← {t("Swipe to see all 4 steps","चारों कदम देखने के लिए swipe करें")} →</div>
+
+          <div style={{ marginTop:26, display:"flex", justifyContent:"center" }}>
+            <button className="btn-cta" style={{ fontSize:14 }} onClick={()=>navigate("/register")}>{t("Start Step 1 — Register","पहला कदम — रजिस्टर करें")} →</button>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ 5 · PRICING — you pay only if you progress ══ */}
+      <section id="fees" className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#06101E" }}>
+        <div className="W">
+          <div className="slbl">{t("Pricing","फीस")}</div>
+          <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4.2vw,46px)", color:"#fff", textTransform:"uppercase", lineHeight:1.1, marginBottom:6 }}>
+            {t("You pay only","पैसे सिर्फ तब,")}<br/><span className="shim">{t("if you progress.","जब आप आगे बढ़ें।")}</span>
+          </h2>
+          <p style={{ fontSize:15, color:"rgba(255,255,255,.45)", marginBottom:26, maxWidth:520 }}>{t("No fine print. No surprises. Here's exactly what you pay — and when. GST (" + gstPct + "%) applies at checkout.","कोई छिपी शर्त नहीं। यहाँ साफ लिखा है — कितना, और कब। Checkout पर GST (" + gstPct + "%) जुड़ता है।")}</p>
+
+          {/* The money journey at a glance */}
+          <div className="jour">
+            <div className="jc" style={{ borderTop:"3px solid #FF7A29" }}>
+              <div className="mont" style={{ fontSize:10, fontWeight:800, letterSpacing:".1em", color:"rgba(255,255,255,.4)", textTransform:"uppercase", marginBottom:6 }}>{t("Step 1 · Now","कदम 1 · अभी")}</div>
+              <div className="mont" style={{ fontWeight:900, fontSize:22, color:"#FF7A29" }}>{inr(fees.phase1.bat)}<span style={{ fontSize:13, color:"rgba(255,255,255,.4)" }}> / {inr(fees.phase1.ar)} + GST</span></div>
+              <div style={{ fontSize:12, color:"rgba(255,255,255,.5)", marginTop:4 }}>{t("Register + video trial","Register + video trial")}</div>
+            </div>
+            <div className="ja">→</div>
+            <div className="jc" style={{ borderTop:"3px solid #E8B23D" }}>
+              <div className="mont" style={{ fontSize:10, fontWeight:800, letterSpacing:".1em", color:"rgba(255,255,255,.4)", textTransform:"uppercase", marginBottom:6 }}>{t("Step 2 · Only if selected","कदम 2 · सिर्फ select होने पर")}</div>
+              <div className="mont" style={{ fontWeight:900, fontSize:22, color:"#E8B23D" }}>{inr(fees.phase2.bat)}<span style={{ fontSize:13, color:"rgba(255,255,255,.4)" }}> / {inr(fees.phase2.ar)} + GST</span></div>
+              <div style={{ fontSize:12, color:"rgba(255,255,255,.5)", marginTop:4 }}>{t("Physical trial entry","Physical trial entry")}</div>
+            </div>
+            <div className="ja">→</div>
+            <div className="jc" style={{ borderTop:"3px solid #22C55E" }}>
+              <div className="mont" style={{ fontSize:10, fontWeight:800, letterSpacing:".1em", color:"rgba(255,255,255,.4)", textTransform:"uppercase", marginBottom:6 }}>{t("After that — forever","उसके बाद — हमेशा")}</div>
+              <div className="mont" style={{ fontWeight:900, fontSize:22, color:"#22C55E" }}>₹0</div>
+              <div style={{ fontSize:12, color:"rgba(255,255,255,.5)", marginTop:4 }}>{t("Auction, jersey, stadium — on the league","Auction, jersey, stadium — league के खर्चे पर")}</div>
+            </div>
+          </div>
+
+          {/* Guarantees — single home for trust chips */}
+          <div style={{ display:"flex", flexWrap:"wrap", gap:10, marginBottom:26 }}>
+            {[
+              { icon:"✅", en:"Transparent Fee Structure",           hi:"पारदर्शी Fee Structure" },
+              { icon:"🛡", en:"Phase 2 only if selected",           hi:"Phase 2 सिर्फ select होने पर" },
+              { icon:"⏱", en:"Result within 48 hours",             hi:"48 घंटे में result" },
+              { icon:"🔒", en:"Secure payment via Cashfree",        hi:"Cashfree से सुरक्षित payment" },
+            ].map(g=>(
+              <div key={g.en} style={{ display:"flex", alignItems:"center", gap:7, background:"rgba(34,197,94,.07)", border:"1px solid rgba(34,197,94,.22)", borderRadius:10, padding:"7px 13px" }}>
+                <span style={{ fontSize:13 }}>{g.icon}</span>
+                <span className="mont" style={{ fontWeight:700, fontSize:11, color:"#4ADE80" }}>{t(g.en,g.hi)}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="price-grid">
+            <div className="card" style={{ padding:24, borderTop:"3px solid #FF7A29" }}>
+              <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:20 }}>
+                <div style={{ width:40, height:40, borderRadius:10, background:"rgba(255,122,41,.12)", border:"1px solid rgba(255,122,41,.3)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:20 }}>📋</div>
+                <div>
+                  <div className="mont" style={{ fontWeight:900, fontSize:16, color:"#FF7A29" }}>Phase 1</div>
+                  <div style={{ fontSize:12, color:"rgba(255,255,255,.4)" }}>{t("Online — pay now to register","Online — रजिस्टर के लिए अभी payment")}</div>
+                </div>
+                <div style={{ marginLeft:"auto", background:"rgba(34,197,94,.1)", border:"1px solid rgba(34,197,94,.3)", borderRadius:8, padding:"3px 10px" }}>
+                  <span className="mont" style={{ fontSize:10, fontWeight:800, color:"#22C55E" }}>{t("OPEN","खुला")}</span>
+                </div>
+              </div>
+              {[{role:t("🏏 Batsman","🏏 बल्लेबाज़"),price:inr(fees.phase1.bat)},{role:t("🎳 Bowler","🎳 गेंदबाज़"),price:inr(fees.phase1.bowl)},{role:t("🧤 Wicket-keeper","🧤 विकेट-कीपर"),price:inr(fees.phase1.wk)},{role:t("⭐ All-Rounder","⭐ ऑल-राउंडर"),price:inr(fees.phase1.ar)}].map(r=>(
+                <div key={r.role} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 0", borderBottom:"1px solid rgba(255,255,255,.06)" }}>
+                  <span style={{ fontSize:14, color:"rgba(255,255,255,.7)" }}>{r.role}</span>
+                  <span className="mont" style={{ fontWeight:900, fontSize:18, color:"#FF7A29" }}>{r.price}</span>
+                </div>
+              ))}
+              <p style={{ fontSize:12, color:"rgba(255,255,255,.35)", marginTop:14, lineHeight:1.6 }}>{t("Includes: Phase 1 assessment · Video submission · Registration confirmation","शामिल: Phase 1 assessment · Video submission · Registration confirmation")}</p>
+              <button className="btn-cta" style={{ width:"100%", justifyContent:"center", marginTop:20, fontSize:14, padding:14 }} onClick={()=>navigate("/register")}>{t("Register Now","अभी रजिस्टर करें")} →</button>
+            </div>
+            <div className="card" style={{ padding:24, borderTop:"3px solid #E8B23D" }}>
+              <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:20 }}>
+                <div style={{ width:40, height:40, borderRadius:10, background:"rgba(232,178,61,.12)", border:"1px solid rgba(232,178,61,.3)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:20 }}>🏆</div>
+                <div>
+                  <div className="mont" style={{ fontWeight:900, fontSize:16, color:"#E8B23D" }}>Phase 2</div>
+                  <div style={{ fontSize:12, color:"rgba(255,255,255,.4)" }}>{t("Physical trial — only if selected","Physical trial — सिर्फ select होने पर")}</div>
+                </div>
+                <div style={{ marginLeft:"auto", background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.1)", borderRadius:8, padding:"3px 10px" }}>
+                  <span className="mont" style={{ fontSize:10, fontWeight:800, color:"rgba(255,255,255,.35)" }}>{t("IF SELECTED","SELECT होने पर")}</span>
+                </div>
+              </div>
+              {[{role:t("🏏 Batsman","🏏 बल्लेबाज़"),price:inr(fees.phase2.bat)},{role:t("🎳 Bowler","🎳 गेंदबाज़"),price:inr(fees.phase2.bowl)},{role:t("🧤 Wicket-keeper","🧤 विकेट-कीपर"),price:inr(fees.phase2.wk)},{role:t("⭐ All-Rounder","⭐ ऑल-राउंडर"),price:inr(fees.phase2.ar)}].map(r=>(
+                <div key={r.role} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 0", borderBottom:"1px solid rgba(255,255,255,.06)" }}>
+                  <span style={{ fontSize:14, color:"rgba(255,255,255,.7)" }}>{r.role}</span>
+                  <span className="mont" style={{ fontWeight:900, fontSize:18, color:"#E8B23D" }}>{r.price}</span>
+                </div>
+              ))}
+              <p style={{ fontSize:12, color:"rgba(255,255,255,.35)", marginTop:14, lineHeight:1.6 }}>{t("Includes: Physical trial entry · Franchise auction eligibility · Season 5 participation","शामिल: Physical trial entry · Auction eligibility · Season 5 participation")}</p>
+              <div style={{ marginTop:20, padding:"14px 16px", background:"rgba(34,197,94,.06)", border:"1px solid rgba(34,197,94,.2)", borderRadius:12, display:"flex", gap:10, alignItems:"flex-start" }}>
+                <span style={{ fontSize:18, flexShrink:0 }}>🛡</span>
+                <p style={{ fontSize:12, color:"rgba(34,197,94,.9)", lineHeight:1.6 }}><strong>{t("Not selected?","Select नहीं हुए?")}</strong> {t("You pay nothing for Phase 2. Ever.","Phase 2 का एक रुपया भी नहीं देना।")}</p>
+              </div>
+            </div>
+          </div>
+          <div style={{ marginTop:20, padding:"20px 24px", background:"rgba(255,122,41,.05)", border:"1px solid rgba(255,122,41,.2)", borderRadius:16, display:"flex", flexWrap:"wrap", gap:20, alignItems:"center", justifyContent:"space-between" }}>
+            <div>
+              <div className="mont" style={{ fontWeight:900, fontSize:14, color:"#FF7A29" }}>{t("Maximum Total Cost (Full Journey)","अधिकतम कुल लागत (पूरा सफर)")}</div>
+              <div style={{ fontSize:13, color:"rgba(255,255,255,.45)", marginTop:4 }}>{t("Phase 1 + Phase 2 combined, if fully selected","Phase 1 + Phase 2 मिलाकर, पूरी तरह select होने पर")}</div>
+            </div>
+            <div style={{ display:"flex", gap:16, flexWrap:"wrap" }}>
+              {[{label:"Bat/Bowl/WK",total:inr(fees.phase1.bat + fees.phase2.bat) + " + GST"},{label:t("All-Rounder","ऑल-राउंडर"),total:inr(fees.phase1.ar + fees.phase2.ar) + " + GST"}].map(x=>(
+                <div key={x.total} style={{ textAlign:"center" }}>
+                  <div className="mont" style={{ fontWeight:900, fontSize:24, color:"#fff" }}>{x.total}</div>
+                  <div style={{ fontSize:11, color:"rgba(255,255,255,.35)" }}>{x.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ 6 · REAL PLAYERS. REAL AUCTIONS. REAL STADIUMS. ══ */}
+      <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#060C18", position:"relative", overflow:"hidden" }}>
+        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 70% 60% at 50% 100%,rgba(232,178,61,.04) 0%,transparent 65%)", pointerEvents:"none" }}/>
+        <div className="W" style={{ position:"relative", zIndex:1 }}>
+          <div className="slbl">{t("Season 4 · On the ground","Season 4 · ज़मीन पर")}</div>
+          <div style={{ display:"flex", alignItems:"flex-end", justifyContent:"space-between", gap:16, flexWrap:"wrap", marginBottom:10 }}>
+            <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4.2vw,46px)", color:"#fff", textTransform:"uppercase", lineHeight:1.1 }}>
+              {t("Real players.","असली players।")} <span className="shim-gold">{t("Real auctions.","असली auctions।")}</span> {t("Real stadiums.","असली stadiums।")}
+            </h2>
+          </div>
+          <p style={{ fontSize:15, color:"rgba(255,255,255,.45)", marginBottom:30, maxWidth:560 }}>
+            {t("Not mockups — photographs from BCPL's own launches, auctions and match days.",
+               "Mockup नहीं — BCPL के अपने launch events, auction और match days की असली तस्वीरें।")}
+          </p>
+          <div className="proof-grid">
+            {PROOF.map(p=>(
+              <div key={p.img} className={"proof-tile" + (p.wide ? " wide" : "")}>
+                <img src={BASE + "bcpl-assets/" + p.img} alt={t(p.en,p.hi)} loading="lazy"
+                  onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
+                <div className="proof-cap"><span>{t(p.en,p.hi)}</span></div>
+              </div>
+            ))}
+          </div>
+          <div style={{ marginTop:22, display:"flex", justifyContent:"center" }}>
+            <Link href="/photos" className="btn-ghost" style={{ fontSize:13 }}>{t("See the full gallery","पूरी gallery देखें")} →</Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ 7 · REAL PLAYER STORIES — renders only with verified players ══ */}
+      {STORIES.length > 0 && (
+        <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#06101E" }}>
+          <div className="W">
+            <div className="slbl">{t("Real Stories","असली कहानियाँ")}</div>
+            <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4.2vw,46px)", color:"#fff", textTransform:"uppercase", lineHeight:1.1, marginBottom:8 }}>
+              {t("They were working professionals.","वे working professionals थे।")}<br/>
+              <span className="shim-gold">{t("Then BCPL called.","फिर BCPL की call आई।")}</span>
+            </h2>
+            <p style={{ fontSize:15, color:"rgba(255,255,255,.45)", marginBottom:34, maxWidth:560 }}>
+              {t("Real players from past seasons — proof that the fair-chance promise is real.","पिछले seasons के असली players — इस बात का सबूत कि fair chance का वादा सच है।")}
+            </p>
+            <div className="story-grid">
+              {STORIES.map(s=>(
+                <div key={s.name} className="card" style={{ overflow:"hidden" }}>
+                  <div style={{ position:"relative", aspectRatio:"4/3", background:"#0C1C30" }}>
+                    <img src={s.photo} alt={s.name} style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover" }}
+                      onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
+                    <div style={{ position:"absolute", inset:0, background:"linear-gradient(0deg,rgba(4,10,20,.75) 0%,transparent 50%)" }}/>
+                    <div style={{ position:"absolute", left:14, bottom:12 }}>
+                      <div className="mont" style={{ fontWeight:900, fontSize:17, color:"#fff" }}>{s.name}</div>
+                      <div className="mont" style={{ fontSize:11, fontWeight:700, color:"#E8B23D" }}>{s.profession} → {s.season} Player</div>
+                    </div>
+                  </div>
+                  <div style={{ padding:"14px 16px 16px" }}>
+                    <div className="mont" style={{ fontSize:11, fontWeight:800, letterSpacing:".08em", color:"rgba(255,255,255,.4)", textTransform:"uppercase", marginBottom:8 }}>📍 {s.city} → {s.team}</div>
+                    <p style={{ fontSize:13, color:"rgba(255,255,255,.6)", lineHeight:1.65, fontStyle:"italic" }}>"{t(s.quoteEn, s.quoteHi)}"</p>
+                    {s.videoUrl && (
+                      <button className="btn-ghost" style={{ fontSize:11, padding:"9px 16px", marginTop:12 }} onClick={()=>showVideo(s.videoUrl!)}>▶ {t("Watch the story","कहानी देखें")}</button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ══ 8 · SOURAV GANGULY × BCPL — full-width cinematic ══ */}
       <section className="rv" style={{ padding:"clamp(54px,7vw,96px) 0", background:"linear-gradient(180deg,#081222,#06101E)", position:"relative", overflow:"hidden" }}>
         <div style={{ position:"absolute", top:"-30%", right:"-15%", width:"55%", height:"160%", background:"radial-gradient(ellipse,rgba(232,178,61,.09) 0%,transparent 65%)", pointerEvents:"none" }}/>
         <div style={{ position:"absolute", bottom:"-40%", left:"-10%", width:"45%", height:"120%", background:"radial-gradient(ellipse,rgba(255,122,41,.05) 0%,transparent 65%)", pointerEvents:"none" }}/>
@@ -508,54 +734,7 @@ export function Home() {
         </div>
       </section>
 
-      {/* ══ 5 · ROAD TO BCPL ══ */}
-      <section id="road" className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#06101E", position:"relative", overflow:"hidden" }}>
-        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 80% 60% at 50% 100%,rgba(255,122,41,.04) 0%,transparent 70%)", pointerEvents:"none" }}/>
-        <div className="W" style={{ position:"relative", zIndex:1 }}>
-          <div className="slbl">{t("Your Journey","आपका सफर")}</div>
-          <div style={{ display:"flex", alignItems:"flex-end", justifyContent:"space-between", gap:16, flexWrap:"wrap", marginBottom:34 }}>
-            <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4vw,44px)", color:"#fff", textTransform:"uppercase" }}>{t("From Registration to Stadium","रजिस्ट्रेशन से स्टेडियम तक")}</h2>
-            <span className="mont" style={{ fontSize:11, fontWeight:700, color:"rgba(255,255,255,.35)", letterSpacing:".08em" }}>{t("7 STEPS · ONE DREAM","7 कदम · एक सपना")}</span>
-          </div>
-
-          <div className="road">
-            {ROAD.map((s,i)=>(
-              <div key={i} className="road-card" style={{ borderTop:`3px solid ${s.color}`, zIndex:1 }}>
-                <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:12 }}>
-                  <div style={{ width:44, height:44, borderRadius:"50%", background:`${s.color}1A`, border:`1.5px solid ${s.color}55`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:20 }}>{s.icon}</div>
-                  <span className="mont" style={{ fontWeight:900, fontSize:26, color:`${s.color}30` }}>{String(i+1).padStart(2,"0")}</span>
-                </div>
-                <div style={{ display:"inline-block", alignSelf:"flex-start", background:`${s.color}14`, border:`1px solid ${s.color}35`, borderRadius:20, padding:"2px 10px", marginBottom:8 }}>
-                  <span className="mont" style={{ fontSize:9, fontWeight:800, color:s.color, letterSpacing:".06em" }}>{s.date}</span>
-                </div>
-                <div className="mont" style={{ fontWeight:900, fontSize:15, color:"#fff", marginBottom:6 }}>{t(s.en,s.hi)}</div>
-                <p style={{ fontSize:12, color:"rgba(255,255,255,.5)", lineHeight:1.6, flex:1 }}>{t(s.descEn,s.descHi)}</p>
-                <div style={{ display:"flex", gap:6, flexWrap:"wrap", marginTop:10, minHeight:24 }}>
-                  {s.fee && (
-                    <span style={{ background:`${s.color}18`, border:`1px solid ${s.color}44`, borderRadius:8, padding:"3px 9px" }}>
-                      <span className="mont" style={{ fontSize:11, fontWeight:800, color:s.color }}>{s.fee}</span>
-                    </span>
-                  )}
-                  {s.live && (
-                    <span style={{ background:"rgba(34,197,94,.1)", border:"1px solid rgba(34,197,94,.3)", borderRadius:8, padding:"3px 9px", display:"inline-flex", alignItems:"center", gap:5 }}>
-                      <span style={{ width:5, height:5, borderRadius:"50%", background:"#22C55E", display:"inline-block", animation:"blip 1s infinite" }}/>
-                      <span className="mont" style={{ fontSize:10, fontWeight:800, color:"#22C55E" }}>{t("OPEN NOW","अभी खुला")}</span>
-                    </span>
-                  )}
-                  {i===3 && <span style={{ fontSize:10, color:"rgba(255,255,255,.35)", alignSelf:"center" }}>{t("only if selected","सिर्फ select होने पर")}</span>}
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="road-hint">← {t("Swipe to see all 7 steps","सातों कदम देखने के लिए swipe करें")} →</div>
-
-          <div style={{ marginTop:26, display:"flex", justifyContent:"center" }}>
-            <button className="btn-cta" style={{ fontSize:14 }} onClick={()=>navigate("/register")}>{t("Start Step 1 — Register","पहला कदम — रजिस्टर करें")} →</button>
-          </div>
-        </div>
-      </section>
-
-      {/* ══ 6 · SEASON 5 FRANCHISES ══ */}
+      {/* ══ 9 · SEASON 5 FRANCHISES ══ */}
       <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#060C18" }}>
         <div className="W">
           <div className="slbl">{t("Franchises","फ्रैंचाइज़ी")}</div>
@@ -580,196 +759,28 @@ export function Home() {
         </div>
       </section>
 
-      {/* ══ 7 · THE LEAGUE IN NUMBERS ══ */}
-      <section id="numbers" className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#06101E", position:"relative", overflow:"hidden" }}>
-        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 70% 60% at 50% 0%,rgba(232,178,61,.05) 0%,transparent 65%)", pointerEvents:"none" }}/>
-        <div className="W" style={{ position:"relative", zIndex:1 }}>
-          <div className="slbl" style={{ justifyContent:"center" }}>{t("BCPL so far","अब तक का BCPL")}</div>
-          <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4vw,44px)", color:"#fff", textTransform:"uppercase", textAlign:"center", marginBottom:8 }}>{t("The league in numbers","आँकड़ों में league")}</h2>
-          <p style={{ fontSize:14, color:"rgba(255,255,255,.4)", textAlign:"center", marginBottom:36 }}>{t("Four seasons of proof — not promises.","चार seasons का सबूत — सिर्फ वादे नहीं।")}</p>
-          <div className="num-grid">
-            {NUMBERS.map(n=>(
-              <div key={n.en} className="num-cell">
-                <div className="mont" style={{ fontWeight:900, fontSize:"clamp(26px,4vw,42px)", color:"#E8B23D", lineHeight:1, whiteSpace:"nowrap" }}>
-                  <CountUp end={n.end} prefix={n.prefix} suffix={n.suffix} inFmt={n.inFmt}/>
-                </div>
-                <div className="mont" style={{ fontWeight:700, fontSize:"clamp(10px,1.4vw,12px)", letterSpacing:".1em", color:"rgba(255,255,255,.5)", textTransform:"uppercase", marginTop:10 }}>{t(n.en,n.hi)}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* ══ SPONSORS & PARTNERS — server-managed wall (renders when sponsors are added) ══ */}
+      <SponsorWall />
 
-      {/* ══ 8 · REAL PLAYERS. REAL AUCTIONS. REAL STADIUMS. ══ */}
-      <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#060C18", position:"relative", overflow:"hidden" }}>
-        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 70% 60% at 50% 100%,rgba(232,178,61,.04) 0%,transparent 65%)", pointerEvents:"none" }}/>
-        <div className="W" style={{ position:"relative", zIndex:1 }}>
-          <div className="slbl">{t("Season 4 · On the ground","Season 4 · ज़मीन पर")}</div>
-          <div style={{ display:"flex", alignItems:"flex-end", justifyContent:"space-between", gap:16, flexWrap:"wrap", marginBottom:10 }}>
-            <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4.2vw,46px)", color:"#fff", textTransform:"uppercase", lineHeight:1.1 }}>
-              {t("Real players.","असली players।")} <span className="shim-gold">{t("Real auctions.","असली auctions।")}</span> {t("Real stadiums.","असली stadiums।")}
-            </h2>
-          </div>
-          <p style={{ fontSize:15, color:"rgba(255,255,255,.45)", marginBottom:30, maxWidth:560 }}>
-            {t("Not mockups — photographs from BCPL's own launches, auctions and match days.",
-               "Mockup नहीं — BCPL के अपने launch events, auction और match days की असली तस्वीरें।")}
-          </p>
-          <div className="proof-grid">
-            {PROOF.map(p=>(
-              <div key={p.img} className={"proof-tile" + (p.wide ? " wide" : "")}>
-                <img src={BASE + "bcpl-assets/" + p.img} alt={t(p.en,p.hi)} loading="lazy"
-                  onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
-                <div className="proof-cap"><span>{t(p.en,p.hi)}</span></div>
-              </div>
-            ))}
-          </div>
-          <div style={{ marginTop:22, display:"flex", justifyContent:"center" }}>
-            <Link href="/photos" className="btn-ghost" style={{ fontSize:13 }}>{t("See the full gallery","पूरी gallery देखें")} →</Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ══ 9 · REAL PLAYER STORIES — renders only with verified players ══ */}
-      {STORIES.length > 0 && (
-        <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#06101E" }}>
-          <div className="W">
-            <div className="slbl">{t("Real Stories","असली कहानियाँ")}</div>
-            <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4.2vw,46px)", color:"#fff", textTransform:"uppercase", lineHeight:1.1, marginBottom:8 }}>
-              {t("They were working professionals.","वे working professionals थे।")}<br/>
-              <span className="shim-gold">{t("Then BCPL called.","फिर BCPL की call आई।")}</span>
-            </h2>
-            <p style={{ fontSize:15, color:"rgba(255,255,255,.45)", marginBottom:34, maxWidth:560 }}>
-              {t("Real players from past seasons — proof that the fair-chance promise is real.","पिछले seasons के असली players — इस बात का सबूत कि fair chance का वादा सच है।")}
-            </p>
-            <div className="story-grid">
-              {STORIES.map(s=>(
-                <div key={s.name} className="card" style={{ overflow:"hidden" }}>
-                  <div style={{ position:"relative", aspectRatio:"4/3", background:"#0C1C30" }}>
-                    <img src={s.photo} alt={s.name} style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover" }}
-                      onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
-                    <div style={{ position:"absolute", inset:0, background:"linear-gradient(0deg,rgba(4,10,20,.75) 0%,transparent 50%)" }}/>
-                    <div style={{ position:"absolute", left:14, bottom:12 }}>
-                      <div className="mont" style={{ fontWeight:900, fontSize:17, color:"#fff" }}>{s.name}</div>
-                      <div className="mont" style={{ fontSize:11, fontWeight:700, color:"#E8B23D" }}>{s.profession} → {s.season} Player</div>
-                    </div>
-                  </div>
-                  <div style={{ padding:"14px 16px 16px" }}>
-                    <div className="mont" style={{ fontSize:11, fontWeight:800, letterSpacing:".08em", color:"rgba(255,255,255,.4)", textTransform:"uppercase", marginBottom:8 }}>📍 {s.city} → {s.team}</div>
-                    <p style={{ fontSize:13, color:"rgba(255,255,255,.6)", lineHeight:1.65, fontStyle:"italic" }}>"{t(s.quoteEn, s.quoteHi)}"</p>
-                    {s.videoUrl && (
-                      <button className="btn-ghost" style={{ fontSize:11, padding:"9px 16px", marginTop:12 }} onClick={()=>showVideo(s.videoUrl!)}>▶ {t("Watch the story","कहानी देखें")}</button>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ══ 10 · PRICING — you pay only if you progress ══ */}
-      <section id="fees" className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#06101E" }}>
-        <div className="W">
-          <div className="slbl">{t("Pricing","फीस")}</div>
-          <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4.2vw,46px)", color:"#fff", textTransform:"uppercase", lineHeight:1.1, marginBottom:6 }}>
-            {t("You pay only","पैसे सिर्फ तब,")}<br/><span className="shim">{t("if you progress.","जब आप आगे बढ़ें।")}</span>
+      {/* ══ 10 · THIS IS BCPL — the film ══ */}
+      <section className="rv" style={{ position:"relative", overflow:"hidden", background:"#040A14" }}>
+        <img src={BASE + "bcpl-assets/event-stage-trophy.webp"} alt="" aria-hidden="true"
+          style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", objectPosition:"center 40%", opacity:.25 }}
+          onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
+        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 75% 90% at 50% 50%,rgba(4,10,20,.55) 0%,rgba(4,10,20,.96) 100%)" }}/>
+        <div className="W" style={{ position:"relative", zIndex:1, textAlign:"center", padding:"clamp(64px,9vw,110px) 20px" }}>
+          <div className="slbl" style={{ justifyContent:"center" }}>{t("This is BCPL","यही है BCPL")}</div>
+          <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(26px,4.8vw,54px)", color:"#fff", textTransform:"uppercase", lineHeight:1.08, marginBottom:16, textShadow:"0 4px 30px rgba(0,0,0,.6)" }}>
+            {t("This is not just cricket.","यह सिर्फ क्रिकेट नहीं है।")}<br/>
+            <span className="shim-gold">{t("This is your second chance.","यह आपका दूसरा मौका है।")}</span>
           </h2>
-          <p style={{ fontSize:15, color:"rgba(255,255,255,.45)", marginBottom:26, maxWidth:520 }}>{t("No fine print. No surprises. Here's exactly what you pay — and when.","कोई छिपी शर्त नहीं। यहाँ साफ लिखा है — कितना, और कब।")}</p>
-
-          {/* The money journey at a glance */}
-          <div className="jour">
-            <div className="jc" style={{ borderTop:"3px solid #FF7A29" }}>
-              <div className="mont" style={{ fontSize:10, fontWeight:800, letterSpacing:".1em", color:"rgba(255,255,255,.4)", textTransform:"uppercase", marginBottom:6 }}>{t("Step 1 · Now","कदम 1 · अभी")}</div>
-              <div className="mont" style={{ fontWeight:900, fontSize:22, color:"#FF7A29" }}>₹299<span style={{ fontSize:13, color:"rgba(255,255,255,.4)" }}> / ₹399</span></div>
-              <div style={{ fontSize:12, color:"rgba(255,255,255,.5)", marginTop:4 }}>{t("Register + video trial","Register + video trial")}</div>
-            </div>
-            <div className="ja">→</div>
-            <div className="jc" style={{ borderTop:"3px solid #E8B23D" }}>
-              <div className="mont" style={{ fontSize:10, fontWeight:800, letterSpacing:".1em", color:"rgba(255,255,255,.4)", textTransform:"uppercase", marginBottom:6 }}>{t("Step 2 · Only if selected","कदम 2 · सिर्फ select होने पर")}</div>
-              <div className="mont" style={{ fontWeight:900, fontSize:22, color:"#E8B23D" }}>₹2,000<span style={{ fontSize:13, color:"rgba(255,255,255,.4)" }}> / ₹3,000</span></div>
-              <div style={{ fontSize:12, color:"rgba(255,255,255,.5)", marginTop:4 }}>{t("Physical trial entry","Physical trial entry")}</div>
-            </div>
-            <div className="ja">→</div>
-            <div className="jc" style={{ borderTop:"3px solid #22C55E" }}>
-              <div className="mont" style={{ fontSize:10, fontWeight:800, letterSpacing:".1em", color:"rgba(255,255,255,.4)", textTransform:"uppercase", marginBottom:6 }}>{t("After that — forever","उसके बाद — हमेशा")}</div>
-              <div className="mont" style={{ fontWeight:900, fontSize:22, color:"#22C55E" }}>₹0</div>
-              <div style={{ fontSize:12, color:"rgba(255,255,255,.5)", marginTop:4 }}>{t("Auction, jersey, stadium — on the league","Auction, jersey, stadium — league के खर्चे पर")}</div>
-            </div>
-          </div>
-
-          {/* Guarantees — single home for trust chips */}
-          <div style={{ display:"flex", flexWrap:"wrap", gap:10, marginBottom:26 }}>
-            {[
-              { icon:"✅", en:"Transparent Fee Structure",           hi:"पारदर्शी Fee Structure" },
-              { icon:"🛡", en:"Phase 2 only if selected",           hi:"Phase 2 सिर्फ select होने पर" },
-              { icon:"⏱", en:"Result within 48 hours",             hi:"48 घंटे में result" },
-              { icon:"🔒", en:"Secure payment via Cashfree",        hi:"Cashfree से सुरक्षित payment" },
-            ].map(g=>(
-              <div key={g.en} style={{ display:"flex", alignItems:"center", gap:7, background:"rgba(34,197,94,.07)", border:"1px solid rgba(34,197,94,.22)", borderRadius:10, padding:"7px 13px" }}>
-                <span style={{ fontSize:13 }}>{g.icon}</span>
-                <span className="mont" style={{ fontWeight:700, fontSize:11, color:"#4ADE80" }}>{t(g.en,g.hi)}</span>
-              </div>
-            ))}
-          </div>
-
-          <div className="price-grid">
-            <div className="card" style={{ padding:24, borderTop:"3px solid #FF7A29" }}>
-              <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:20 }}>
-                <div style={{ width:40, height:40, borderRadius:10, background:"rgba(255,122,41,.12)", border:"1px solid rgba(255,122,41,.3)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:20 }}>📋</div>
-                <div>
-                  <div className="mont" style={{ fontWeight:900, fontSize:16, color:"#FF7A29" }}>Phase 1</div>
-                  <div style={{ fontSize:12, color:"rgba(255,255,255,.4)" }}>{t("Online — pay now to register","Online — रजिस्टर के लिए अभी payment")}</div>
-                </div>
-                <div style={{ marginLeft:"auto", background:"rgba(34,197,94,.1)", border:"1px solid rgba(34,197,94,.3)", borderRadius:8, padding:"3px 10px" }}>
-                  <span className="mont" style={{ fontSize:10, fontWeight:800, color:"#22C55E" }}>{t("OPEN","खुला")}</span>
-                </div>
-              </div>
-              {[{role:t("🏏 Batsman","🏏 बल्लेबाज़"),price:"₹299"},{role:t("🎳 Bowler","🎳 गेंदबाज़"),price:"₹299"},{role:t("🧤 Wicket-keeper","🧤 विकेट-कीपर"),price:"₹299"},{role:t("⭐ All-Rounder","⭐ ऑल-राउंडर"),price:"₹399"}].map(r=>(
-                <div key={r.role} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 0", borderBottom:"1px solid rgba(255,255,255,.06)" }}>
-                  <span style={{ fontSize:14, color:"rgba(255,255,255,.7)" }}>{r.role}</span>
-                  <span className="mont" style={{ fontWeight:900, fontSize:18, color:"#FF7A29" }}>{r.price}</span>
-                </div>
-              ))}
-              <p style={{ fontSize:12, color:"rgba(255,255,255,.35)", marginTop:14, lineHeight:1.6 }}>{t("Includes: Phase 1 assessment · Video submission · Registration confirmation","शामिल: Phase 1 assessment · Video submission · Registration confirmation")}</p>
-              <button className="btn-cta" style={{ width:"100%", justifyContent:"center", marginTop:20, fontSize:14, padding:14 }} onClick={()=>navigate("/register")}>{t("Register Now","अभी रजिस्टर करें")} →</button>
-            </div>
-            <div className="card" style={{ padding:24, borderTop:"3px solid #E8B23D" }}>
-              <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:20 }}>
-                <div style={{ width:40, height:40, borderRadius:10, background:"rgba(232,178,61,.12)", border:"1px solid rgba(232,178,61,.3)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:20 }}>🏆</div>
-                <div>
-                  <div className="mont" style={{ fontWeight:900, fontSize:16, color:"#E8B23D" }}>Phase 2</div>
-                  <div style={{ fontSize:12, color:"rgba(255,255,255,.4)" }}>{t("Physical trial — only if selected","Physical trial — सिर्फ select होने पर")}</div>
-                </div>
-                <div style={{ marginLeft:"auto", background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.1)", borderRadius:8, padding:"3px 10px" }}>
-                  <span className="mont" style={{ fontSize:10, fontWeight:800, color:"rgba(255,255,255,.35)" }}>{t("IF SELECTED","SELECT होने पर")}</span>
-                </div>
-              </div>
-              {[{role:t("🏏 Batsman","🏏 बल्लेबाज़"),price:"₹2,000"},{role:t("🎳 Bowler","🎳 गेंदबाज़"),price:"₹2,000"},{role:t("🧤 Wicket-keeper","🧤 विकेट-कीपर"),price:"₹2,000"},{role:t("⭐ All-Rounder","⭐ ऑल-राउंडर"),price:"₹3,000"}].map(r=>(
-                <div key={r.role} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 0", borderBottom:"1px solid rgba(255,255,255,.06)" }}>
-                  <span style={{ fontSize:14, color:"rgba(255,255,255,.7)" }}>{r.role}</span>
-                  <span className="mont" style={{ fontWeight:900, fontSize:18, color:"#E8B23D" }}>{r.price}</span>
-                </div>
-              ))}
-              <p style={{ fontSize:12, color:"rgba(255,255,255,.35)", marginTop:14, lineHeight:1.6 }}>{t("Includes: Physical trial entry · Franchise auction eligibility · Season 5 participation","शामिल: Physical trial entry · Auction eligibility · Season 5 participation")}</p>
-              <div style={{ marginTop:20, padding:"14px 16px", background:"rgba(34,197,94,.06)", border:"1px solid rgba(34,197,94,.2)", borderRadius:12, display:"flex", gap:10, alignItems:"flex-start" }}>
-                <span style={{ fontSize:18, flexShrink:0 }}>🛡</span>
-                <p style={{ fontSize:12, color:"rgba(34,197,94,.9)", lineHeight:1.6 }}><strong>{t("Not selected?","Select नहीं हुए?")}</strong> {t("You pay nothing for Phase 2. Ever.","Phase 2 का एक रुपया भी नहीं देना।")}</p>
-              </div>
-            </div>
-          </div>
-          <div style={{ marginTop:20, padding:"20px 24px", background:"rgba(255,122,41,.05)", border:"1px solid rgba(255,122,41,.2)", borderRadius:16, display:"flex", flexWrap:"wrap", gap:20, alignItems:"center", justifyContent:"space-between" }}>
-            <div>
-              <div className="mont" style={{ fontWeight:900, fontSize:14, color:"#FF7A29" }}>{t("Maximum Total Cost (Full Journey)","अधिकतम कुल लागत (पूरा सफर)")}</div>
-              <div style={{ fontSize:13, color:"rgba(255,255,255,.45)", marginTop:4 }}>{t("Phase 1 + Phase 2 combined, if fully selected","Phase 1 + Phase 2 मिलाकर, पूरी तरह select होने पर")}</div>
-            </div>
-            <div style={{ display:"flex", gap:16, flexWrap:"wrap" }}>
-              {[{label:"Bat/Bowl/WK",total:"₹2,299"},{label:t("All-Rounder","ऑल-राउंडर"),total:"₹3,399"}].map(x=>(
-                <div key={x.total} style={{ textAlign:"center" }}>
-                  <div className="mont" style={{ fontWeight:900, fontSize:24, color:"#fff" }}>{x.total}</div>
-                  <div style={{ fontSize:11, color:"rgba(255,255,255,.35)" }}>{x.label}</div>
-                </div>
-              ))}
-            </div>
+          <p style={{ fontSize:"clamp(13px,1.9vw,16px)", color:"rgba(255,255,255,.55)", lineHeight:1.75, maxWidth:620, margin:"0 auto 34px" }}>
+            {t("Office → kit bag → trial → selection → auction hammer → jersey → stadium. A real pathway from working professional to professional-style cricket.",
+               "ऑफिस → किट बैग → ट्रायल → सिलेक्शन → ऑक्शन का हथौड़ा → जर्सी → स्टेडियम। Working professional से professional-style cricket तक का असली रास्ता।")}
+          </p>
+          <button type="button" className="play-btn" aria-label={t("Play the BCPL story video","BCPL की कहानी का video चलाएँ")} onClick={()=>openVideo("story")}>▶</button>
+          <div className="mont" style={{ marginTop:18, fontSize:11, fontWeight:800, letterSpacing:".16em", color:"rgba(255,255,255,.5)", textTransform:"uppercase" }}>
+            {t("Watch the BCPL story · 30 sec","BCPL की कहानी देखें · 30 sec")}
           </div>
         </div>
       </section>
@@ -905,7 +916,7 @@ export function Home() {
           <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(22px,4vw,40px)", color:"#fff", textTransform:"uppercase", marginBottom:8 }}>{t("Frequently Asked Questions","अक्सर पूछे जाने वाले सवाल")}</h2>
           <p style={{ fontSize:15, color:"rgba(255,255,255,.4)", marginBottom:36 }}>{t("Everything you need to know before registering.","रजिस्टर करने से पहले जो भी जानना ज़रूरी है।")}</p>
           <div style={{ display:"flex", flexDirection:"column", gap:10, maxWidth:760 }}>
-            {FAQS.map((f,i)=>(
+            {FAQ_ITEMS.map((f,i)=>(
               <div key={i} className="card" style={{ overflow:"hidden", transition:"border-color .2s", borderColor:faqOpen===i?"rgba(255,122,41,.4)":"rgba(255,255,255,.07)" }}>
                 <button type="button" onClick={()=>setFaqOpen(faqOpen===i?null:i)}
                   aria-expanded={faqOpen===i} aria-controls={"faq-a-"+i}
@@ -953,8 +964,12 @@ export function Home() {
           </div>
 
           <div style={{ display:"flex", gap:14, justifyContent:"center", flexWrap:"wrap" }}>
-            <button className="btn-cta" style={{ fontSize:16, padding:"17px 38px" }} onClick={()=>navigate("/register")}>🏏 {t("Register Now — ₹299","अभी रजिस्टर करें — ₹299")} →</button>
-            <a className="btn-ghost" href="#road" style={{ fontSize:14 }}>{t("See the 7 steps","7 कदम देखें")}</a>
+            {authed ? (
+              <button className="btn-cta" style={{ fontSize:16, padding:"17px 38px" }} onClick={()=>navigate("/profile")}>🏏 {t("Continue Your Journey","अपना सफर जारी रखें")} →</button>
+            ) : (
+              <button className="btn-cta" style={{ fontSize:16, padding:"17px 38px" }} onClick={()=>navigate("/register")}>🏏 {t("Register for Phase 1","Phase 1 के लिए रजिस्टर करें")} →</button>
+            )}
+            <a className="btn-ghost" href="#road" style={{ fontSize:14 }}>{t("How BCPL works","BCPL कैसे काम करता है")}</a>
           </div>
         </div>
       </section>
@@ -966,7 +981,7 @@ export function Home() {
       {!authed && (
         <div className="stick-cta">
           <div style={{ minWidth:0 }}>
-            <div className="mont" style={{ fontWeight:900, fontSize:13, color:"#fff", lineHeight:1.2 }}>₹299 {t("Registration","रजिस्ट्रेशन")}</div>
+            <div className="mont" style={{ fontWeight:900, fontSize:13, color:"#fff", lineHeight:1.2 }}>{t("Phase 1 Registration","Phase 1 रजिस्ट्रेशन")}</div>
             <div style={{ fontSize:10, color:"rgba(255,255,255,.5)", whiteSpace:"nowrap" }}>{t("Phase 1 closes 28 Feb 2027","Phase 1 — 28 Feb 2027 तक")}</div>
           </div>
           <button className="btn-cta" style={{ fontSize:13, padding:"12px 20px", flexShrink:0 }} onClick={()=>navigate("/register")}>{t("Register Now","रजिस्टर करें")} →</button>

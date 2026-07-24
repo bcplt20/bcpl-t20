@@ -129,7 +129,7 @@ export function Refunds() {
                 <div style={{display:'flex',flexDirection:'column',gap:8,flexShrink:0}}>
                   <div style={{background:'rgba(34,197,94,0.15)',border:'2px solid rgba(34,197,94,0.5)',borderRadius:12,padding:'10px 16px',minWidth:160}}>
                     <div style={{fontSize:16,marginBottom:2}}>✅</div>
-                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:11,color:'#22C55E',lineHeight:1.3}}>Eligible — within 15 days<br/><span style={{color:'rgba(34,197,94,0.7)',fontWeight:600}}>Full ₹299 refunded</span></div>
+                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:11,color:'#22C55E',lineHeight:1.3}}>Eligible — within 15 days<br/><span style={{color:'rgba(34,197,94,0.7)',fontWeight:600}}>Full registration fee refunded</span></div>
                   </div>
                   <div style={{background:'rgba(232,73,63,0.15)',border:'2px solid rgba(232,73,63,0.5)',borderRadius:12,padding:'10px 16px',minWidth:160}}>
                     <div style={{fontSize:16,marginBottom:2}}>❌</div>
@@ -143,7 +143,7 @@ export function Refunds() {
           <div style={{background:'rgba(34,197,94,0.1)',border:'2px solid rgba(34,197,94,0.4)',borderLeft:'4px solid #22C55E',borderRadius:16,padding:'16px clamp(16px,4vw,24px)',marginBottom:16,animation:'fadeSlide 0.5s ease 0.15s both'}}>
             <div style={{display:'flex',gap:10,alignItems:'center'}}>
               <span style={{fontSize:22,flexShrink:0}}>✅</span>
-              <p style={{color:'rgba(255,255,255,0.9)',fontSize:'clamp(13px,2vw,15px)',fontWeight:700,fontFamily:'Montserrat,sans-serif'}}>₹299 refunded in full when eligible. <span style={{color:'#22C55E'}}>Zero deductions.</span></p>
+              <p style={{color:'rgba(255,255,255,0.9)',fontSize:'clamp(13px,2vw,15px)',fontWeight:700,fontFamily:'Montserrat,sans-serif'}}>Registration fee refunded in full when eligible. <span style={{color:'#22C55E'}}>Zero deductions.</span></p>
             </div>
           </div>
 
@@ -315,7 +315,7 @@ export function Refunds() {
           <div className="glass-card" style={{padding:'clamp(20px,4vw,32px)',textAlign:'center'}}>
             <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(18px,3vw,22px)',marginBottom:8}}>Still Deciding?</div>
             <p style={{color:'rgba(255,255,255,0.6)',fontSize:14,marginBottom:20}}>Register now — you have 15 days to request a full refund if you change your mind (before video upload).</p>
-            <button className="btn-fire" style={{padding:'14px 36px',fontSize:16,width:'100%',maxWidth:300}}>Register for ₹299 →</button>
+            <button className="btn-fire" style={{padding:'14px 36px',fontSize:16,width:'100%',maxWidth:300}}>Register for Phase 1 →</button>
           </div>
         </div>
 

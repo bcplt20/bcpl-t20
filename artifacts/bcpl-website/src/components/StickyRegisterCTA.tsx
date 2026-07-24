@@ -49,7 +49,7 @@ export function StickyRegisterCTA() {
       <style>{CSS}</style>
       <div className="srg-bar">
         <button className="srg-btn" onClick={() => navigate("/register")}>
-          {t("Register for Phase 1 — ₹299", "Phase 1 रजिस्टर करें — ₹299")} →
+          {t("Register for Phase 1", "Phase 1 के लिए रजिस्टर करें")} →
         </button>
         <a className="srg-wa" href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp support">
           <WhatsAppIcon />

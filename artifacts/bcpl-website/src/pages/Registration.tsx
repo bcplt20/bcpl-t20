@@ -8,8 +8,7 @@ import {
 } from '@/lib/api';
 import { fireReferralAttribution } from '@/lib/marketingApi';
 import { useLang } from '../lib/i18n';
-import {
-} from '../lib/api';
+import { useFees, withGst } from '../lib/fees';
 
 /*
   BCPL T20 — Bhartiya Corporate Premier League
@@ -32,9 +31,13 @@ import {
   └─────────────────────────────────────────────────────────────────┘
 */
 
+/* Role-card visuals — PLACEHOLDER AI imagery (cinematic, brand-toned).
+   Swap with BCPL-approved real photography in public/bcpl-assets/roles/. */
+const ROLE_IMG = import.meta.env.BASE_URL + 'bcpl-assets/roles/';
+
 const ROLES = [
   {
-    id: 'bat',  emoji: '🏏', icon: 'batsman', label: 'Batsman', labelHi: 'Batsman',
+    id: 'bat',  emoji: '🏏', icon: 'batsman', img: 'card-batsman.jpg', label: 'Batsman', labelHi: 'Batsman',
     desc: 'Open the innings. Anchor the chase.',
     descHi: 'Innings open करें। Chase को anchor करें।',
     phase1: 299, phase2: 2000,
@@ -49,7 +52,7 @@ const ROLES = [
     </svg>`,
   },
   {
-    id: 'bowl', emoji: '🎳', icon: 'bowler', label: 'Bowler', labelHi: 'Bowler',
+    id: 'bowl', emoji: '🎳', icon: 'bowler', img: 'card-bowler.jpg', label: 'Bowler', labelHi: 'Bowler',
     desc: 'Take wickets. Change the game.',
     descHi: 'Wickets लें। Game बदल दें।',
     phase1: 299, phase2: 2000,
@@ -64,7 +67,7 @@ const ROLES = [
     </svg>`,
   },
   {
-    id: 'wk',   emoji: '🧤', icon: 'wicketkeeper', label: 'Wicket-Keeper', labelHi: 'Wicket-Keeper',
+    id: 'wk',   emoji: '🧤', icon: 'wicketkeeper', img: 'card-wicketkeeper.jpg', label: 'Wicket-Keeper', labelHi: 'Wicket-Keeper',
     desc: 'Command the field. Lead from behind the stumps.',
     descHi: 'Field को command करें। Stumps के पीछे से lead करें।',
     phase1: 299, phase2: 2000,
@@ -81,7 +84,7 @@ const ROLES = [
     </svg>`,
   },
   {
-    id: 'ar',   emoji: '⭐', icon: 'allrounder', label: 'All-Rounder', labelHi: 'All-Rounder',
+    id: 'ar',   emoji: '⭐', icon: 'allrounder', img: 'card-allrounder.jpg', label: 'All-Rounder', labelHi: 'All-Rounder',
     desc: 'Bat. Bowl. Win matches. The complete cricketer.',
     descHi: 'Bat करें। Bowl करें। Matches जीतें। Complete cricketer।',
     phase1: 399, phase2: 3000,
@@ -110,6 +113,7 @@ const JOURNEY = [
 
 export function Registration() {
   const { t }                   = useLang();
+  const fees                    = useFees();
   const [, navigate]            = useLocation();
   const [step, setStep]         = useState(1); // 1:details 2:role 3:city 4:pay
 
@@ -129,8 +133,10 @@ export function Registration() {
   const [agreed, setAgreed]     = useState(false);
 
   const filtered    = CITIES.filter(c => c.toLowerCase().includes(cityQ.toLowerCase()));
-  const price       = role?.phase1 ?? 299;
-  const phase2price = role?.phase2 ?? 2000;
+  /* Displayed prices come from the shared fee config (GET /api/fees) — the
+     same map the server charges from. ROLES only carries static fallbacks. */
+  const price       = role ? (fees.phase1[role.id] ?? role.phase1) : 299;
+  const phase2price = role ? (fees.phase2[role.id] ?? role.phase2) : 2000;
 
   /* DOB age validation — 18 to 45 years */
   const today   = new Date();
@@ -584,11 +590,11 @@ export function Registration() {
             <div style={{ display:'flex', gap:16, marginTop:12, flexWrap:'wrap' }}>
               <div style={{ display:'flex', alignItems:'center', gap:6, fontSize:11, color:'rgba(255,255,255,0.4)' }}>
                 <span style={{ width:12, height:12, borderRadius:'50%', background:'rgba(255,122,41,0.3)', border:'1px solid #FF7A29', display:'inline-block' }} />
-                {t('Phase 1 — Video Trial: ₹299 / ₹399', 'Phase 1 — Video Trial: ₹299 / ₹399')}
+                {t('Phase 1 — Video Trial: ₹' + fees.phase1.bat + ' / ₹' + fees.phase1.ar + ' + GST', 'Phase 1 — Video Trial: ₹' + fees.phase1.bat + ' / ₹' + fees.phase1.ar + ' + GST')}
               </div>
               <div style={{ display:'flex', alignItems:'center', gap:6, fontSize:11, color:'rgba(255,255,255,0.4)' }}>
                 <span style={{ width:12, height:12, borderRadius:'50%', background:'rgba(232,178,61,0.15)', border:'1px solid rgba(232,178,61,0.5)', display:'inline-block' }} />
-                {t('Phase 2 — Physical Trial (if selected): ₹2,000 / ₹3,000', 'Phase 2 — Physical Trial (अगर select हुए): ₹2,000 / ₹3,000')}
+                {t('Phase 2 — Physical Trial (if selected): ₹' + fees.phase2.bat.toLocaleString() + ' / ₹' + fees.phase2.ar.toLocaleString() + ' + GST', 'Phase 2 — Physical Trial (अगर select हुए): ₹' + fees.phase2.bat.toLocaleString() + ' / ₹' + fees.phase2.ar.toLocaleString() + ' + GST')}
               </div>
             </div>
           </div>
@@ -819,43 +825,48 @@ export function Registration() {
                   {ROLES.map(r => (
                     <div
                       key={r.id}
-                      className={`role-card${role?.id===r.id?' selected':''}`}
-                      style={{ '--rc': r.color } as any}
+                      className={'role-card' + (role?.id===r.id ? ' selected' : '')}
+                      style={{ '--rc': r.color, overflow:'hidden' } as any}
                       onClick={() => setRole(r)}
                       tabIndex={0}
                       onKeyDown={e => e.key==='Enter'&&setRole(r)}
                     >
-                      <div className="corner-cut" />
-                      <div style={{ padding:'18px 16px 16px' }}>
-                        {/* Top row */}
-                        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:12 }}>
-                          {/* Role icon */}
-                          <img src={import.meta.env.BASE_URL + 'bcpl-assets/role-icons/' + r.icon + '.png'} alt={r.label}
-                            style={{ width:64, height:64, objectFit:'contain', flexShrink:0 }} />
-                          {role?.id === r.id && (
-                            <div style={{ width:20, height:20, borderRadius:'50%', background:r.color, display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:900, color:'#fff' }}>✓</div>
-                          )}
-                        </div>
-
-                        {/* Name */}
-                        <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:15, color:'#fff', textTransform:'uppercase', letterSpacing:'.04em', marginBottom:4 }}>{t(r.label, r.labelHi)}</div>
+                      {/* Cinematic role visual — PLACEHOLDER AI imagery, replace with
+                          BCPL-approved real photography (same filenames) when ready. */}
+                      <div style={{ position:'relative', height:150, overflow:'hidden' }}>
+                        <img
+                          src={ROLE_IMG + r.img}
+                          alt={t(r.label, r.labelHi) + ' — BCPL Season 5 role'}
+                          loading="lazy" width={1024} height={1024}
+                          style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', objectPosition:'center 18%', transform: role?.id===r.id ? 'scale(1.05)' : 'scale(1)', transition:'transform .35s ease' }}
+                        />
+                        <div style={{ position:'absolute', inset:0, background:'linear-gradient(180deg,' + r.color + '14 0%, rgba(7,14,26,.30) 45%, rgba(7,14,26,.97) 100%)' }} />
+                        {role?.id === r.id && (
+                          <div style={{ position:'absolute', top:10, right:10, width:22, height:22, borderRadius:'50%', background:r.color, display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:900, color:'#fff', boxShadow:'0 2px 10px rgba(0,0,0,.5)' }}>✓</div>
+                        )}
+                        <div style={{ position:'absolute', left:14, bottom:8, fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:16, color:'#fff', textTransform:'uppercase', letterSpacing:'.05em', textShadow:'0 2px 12px rgba(0,0,0,.8)' }}>{t(r.label, r.labelHi)}</div>
+                      </div>
+                      <div style={{ padding:'12px 16px 16px' }}>
                         <div style={{ fontSize:13, color:'rgba(255,255,255,0.55)', marginBottom:14, lineHeight:1.5 }}>{t(r.desc, r.descHi)}</div>
 
-                        {/* Price rows */}
+                        {/* Price rows — from the shared fee config */}
                         <div style={{ borderTop:'1px solid rgba(255,255,255,0.07)', paddingTop:12, display:'flex', flexDirection:'column', gap:8 }}>
                           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
                             <div>
                               <div style={{ fontSize:11, fontWeight:700, color:'#FF7A29', letterSpacing:'.1em', fontFamily:'Montserrat,sans-serif' }}>PHASE 1</div>
                               <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)' }}>{t('Video Trial Entry', 'Video Trial Entry')}</div>
                             </div>
-                            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:24, color: role?.id===r.id ? r.color : '#fff' }}>₹{r.phase1}</div>
+                            <div style={{ textAlign:'right' }}>
+                              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:24, lineHeight:1, color: role?.id===r.id ? r.color : '#fff' }}>₹{fees.phase1[r.id] ?? r.phase1}</div>
+                              <div style={{ fontSize:9.5, color:'rgba(255,255,255,0.35)', marginTop:3 }}>{t('+ GST', '+ GST')}</div>
+                            </div>
                           </div>
                           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', opacity:.55 }}>
                             <div>
                               <div style={{ fontSize:11, fontWeight:700, color:'#E8B23D', letterSpacing:'.1em', fontFamily:'Montserrat,sans-serif' }}>PHASE 2 🔒</div>
                               <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)' }}>{t('Physical Trial (if selected)', 'Physical Trial (अगर select हुए)')}</div>
                             </div>
-                            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:18, color:'rgba(232,178,61,0.7)' }}>₹{r.phase2.toLocaleString()}</div>
+                            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:18, color:'rgba(232,178,61,0.7)' }}>₹{(fees.phase2[r.id] ?? r.phase2).toLocaleString()}<span style={{ fontSize:10, fontWeight:600 }}> + GST</span></div>
                           </div>
                         </div>
                       </div>
@@ -864,11 +875,13 @@ export function Registration() {
                 </div>
 
                 {role && (
-                  <div style={{ marginTop:16, padding:'12px 16px', background:`${role.color}10`, border:`1px solid ${role.color}30`, display:'flex', alignItems:'center', gap:10, flexWrap:'wrap' }}>
+                  <div style={{ marginTop:16, padding:'14px 16px', background: role.color + '10', border: '1px solid ' + role.color + '30', display:'flex', alignItems:'center', gap:12, flexWrap:'wrap' }}>
                     <span style={{ fontSize:18 }}>{role.emoji}</span>
                     <div style={{ flex:1, minWidth:0 }}>
-                      <div style={{ fontSize:12, fontWeight:700, color:'#fff', fontFamily:'Montserrat,sans-serif' }}>{t(role.label + ' selected', role.labelHi + ' select हुआ')}</div>
-                      <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)' }}>{t('Phase 1 fee:', 'Phase 1 fee:')} ₹{role.phase1} · {t('Phase 2 (if selected):', 'Phase 2 (अगर select हुए):')} ₹{role.phase2.toLocaleString()}</div>
+                      <div style={{ fontSize:13, fontWeight:800, color:'#fff', fontFamily:'Montserrat,sans-serif', letterSpacing:'.04em' }}>{t('YOU SELECTED: ', 'आपने चुना: ')}{t(role.label, role.labelHi).toUpperCase()}</div>
+                      <div style={{ fontSize:12, color:'rgba(255,255,255,0.55)', marginTop:2 }}>
+                        {t('Phase 1 fee: ', 'Phase 1 fee: ')}<b style={{ color:'#fff' }}>₹{price}</b> {t('+ applicable GST', '+ GST')} · {t('Phase 2 (only if selected): ', 'Phase 2 (सिर्फ select होने पर): ')}₹{phase2price.toLocaleString()} + GST
+                      </div>
                     </div>
                     <div style={{ fontSize:18, color:'#22C55E' }}>✓</div>
                   </div>
@@ -1018,12 +1031,12 @@ export function Registration() {
                     <span style={{ fontSize:13, color:'rgba(255,255,255,0.7)', fontWeight:700 }}>₹{price}</span>
                   </div>
                   <div style={{ display:'flex', justifyContent:'space-between', marginBottom:10, paddingBottom:10, borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
-                    <span style={{ fontSize:12, color:'rgba(255,255,255,0.4)' }}>{t('GST (18%)', 'GST (18%)')}</span>
-                    <span style={{ fontSize:12, color:'rgba(255,255,255,0.5)' }}>₹{Math.round(price * 0.18)}</span>
+                    <span style={{ fontSize:12, color:'rgba(255,255,255,0.4)' }}>GST ({Math.round(fees.gstRate * 100)}%)</span>
+                    <span style={{ fontSize:12, color:'rgba(255,255,255,0.5)' }}>₹{withGst(price, fees.gstRate) - price}</span>
                   </div>
                   <div style={{ display:'flex', justifyContent:'space-between' }}>
                     <span style={{ fontSize:14, fontWeight:800, color:'#FF7A29', fontFamily:'Montserrat,sans-serif' }}>{t('Total Payable', 'कुल Payable')}</span>
-                    <span style={{ fontSize:16, fontWeight:900, color:'#FF7A29', fontFamily:'Montserrat,sans-serif' }}>₹{Math.round(price * 1.18)}</span>
+                    <span style={{ fontSize:16, fontWeight:900, color:'#FF7A29', fontFamily:'Montserrat,sans-serif' }}>₹{withGst(price, fees.gstRate)}</span>
                   </div>
                 </div>
 
@@ -1034,7 +1047,7 @@ export function Registration() {
                   style={{ width:'100%', padding:'20px 0', fontSize:17, clipPath:'none', borderRadius:12, letterSpacing:'.08em' }}
                   onClick={handlePay}
                 >
-                  {payLoading ? t('⏳ Processing...', '⏳ Processing...') : t('🏏  PAY ₹' + Math.round(price * 1.18) + ' · ENTER PHASE 1', '🏏  ₹' + Math.round(price * 1.18) + ' PAY करें · PHASE 1 में जाएं')}
+                  {payLoading ? t('⏳ Processing...', '⏳ Processing...') : t('🏏  PAY ₹' + withGst(price, fees.gstRate) + ' SECURELY · ENTER PHASE 1', '🏏  ₹' + withGst(price, fees.gstRate) + ' PAY करें · PHASE 1 में जाएं')}
                 </button>
                 {payError && (
                   <div style={{ marginTop:12, padding:'12px 16px', background:'rgba(239,68,68,0.1)', border:'1px solid rgba(239,68,68,0.3)', borderRadius:8, fontSize:13, color:'#EF4444', fontWeight:600 }}>
@@ -1086,7 +1099,7 @@ export function Registration() {
                   { icon:'🏟', label:t('Ground Trial', 'Ground Trial'), sub:t('At your registered city', 'आपके registered शहर में') },
                   { icon:'📋', label:t('Skill Evaluation', 'Skill Evaluation'), sub:t('By franchise coaching staff', 'Franchise coaching staff द्वारा') },
                   { icon:'🔨', label:t('Live Auction', 'Live Auction'), sub:t('Franchises bid on you publicly', 'Franchises आप पर publicly bid करती हैं') },
-                  { icon:'💰', label:t('Phase 2 Fee', 'Phase 2 Fee'), sub:'₹2,000 (Bat/Bowl/WK) · ₹3,000 (AR)' },
+                  { icon:'💰', label:t('Phase 2 Fee', 'Phase 2 Fee'), sub:'₹' + fees.phase2.bat.toLocaleString() + ' (Bat/Bowl/WK) · ₹' + fees.phase2.ar.toLocaleString() + ' (AR) + GST' },
                 ].map(item => (
                   <div key={item.label} style={{ display:'flex', gap:10, alignItems:'flex-start' }}>
                     <span style={{ fontSize:18 }}>{item.icon}</span>

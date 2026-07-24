@@ -245,7 +245,7 @@ export function TeamDetail() {
                       <p style={{color:'rgba(255,255,255,0.5)',fontSize:14,lineHeight:1.7,maxWidth:440,margin:'0 auto 24px',fontFamily:'Inter,sans-serif'}}>
                         The {team.name} squad will be finalised at the BCPL Season 5 players' auction in August 2026. Register now for your chance to be picked.
                       </p>
-                      <Link href="/register" className="btn-fire" style={{padding:'13px 28px',fontSize:14,borderRadius:12,textDecoration:'none',display:'inline-block'}}>🏏 Register for ₹299 →</Link>
+                      <Link href="/register" className="btn-fire" style={{padding:'13px 28px',fontSize:14,borderRadius:12,textDecoration:'none',display:'inline-block'}}>🏏 Register for Phase 1 →</Link>
                     </div>
                   )
                   : (
@@ -349,7 +349,7 @@ export function TeamDetail() {
                     Register today and get your shot at representing {team.city || 'your city'} on the BCPL stage. All roles open — Bat, Bowl, WK, All-Rounder.
                   </p>
                   <div className="cta-buttons" style={{display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap'}}>
-                    <Link href="/register" className="btn-fire" style={{padding:'16px 32px',fontSize:15,borderRadius:14,textDecoration:'none',display:'inline-flex',alignItems:'center',gap:8}}>🏏 Register for ₹299 →</Link>
+                    <Link href="/register" className="btn-fire" style={{padding:'16px 32px',fontSize:15,borderRadius:14,textDecoration:'none',display:'inline-flex',alignItems:'center',gap:8}}>🏏 Register for Phase 1 →</Link>
                     <Link href="/teams" style={{padding:'16px 24px',fontSize:15,borderRadius:14,background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.15)',color:'rgba(255,255,255,0.8)',fontFamily:'Montserrat,sans-serif',fontWeight:700,textDecoration:'none',display:'inline-flex',alignItems:'center'}}>← All Teams</Link>
                   </div>
                 </div>

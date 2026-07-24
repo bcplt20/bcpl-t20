@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { NavUser, useAuthUser } from "./NavUser";
+import { getNextAction } from "../lib/api";
 import { useLang } from "../lib/i18n";
 
 /**
@@ -57,6 +58,20 @@ const ACTIVE_MAP: Record<string, string> = {
 
 const WHATSAPP_URL = "https://wa.me/919151346555";
 
+/* getPlayerNextAction() → header CTA. The server computes the action from
+   REAL registration state; we only map it to a label + path here. MY_BCPL or
+   unknown → no extra CTA (the MY BCPL button is always there when logged in). */
+const NEXT_CTA: Record<string, { en: string; hi: string; href: string }> = {
+  REGISTER:         { en: "Register for Phase 1",  hi: "Phase 1 रजिस्टर करें",    href: "/register" },
+  COMPLETE_PAYMENT: { en: "Complete Registration", hi: "Registration पूरा करें",  href: "/register" },
+  UPLOAD_VIDEO:     { en: "Upload Video",          hi: "Video Upload करें",       href: "/register/upload-video" },
+  WAIT_FOR_RESULT:  { en: "Track Result",          hi: "Result Track करें",       href: "/register/result" },
+  VIEW_RESULT:      { en: "View Result",           hi: "Result देखें",            href: "/register/result" },
+  CONTINUE_PHASE2:  { en: "Continue to Phase 2",   hi: "Phase 2 जारी रखें",       href: "/register/phase2" },
+  COMPLETE_KYC:     { en: "Complete KYC",          hi: "KYC पूरा करें",           href: "/register/phase2/kyc" },
+  VIEW_TRIAL:       { en: "Trial Details",         hi: "Trial Details",           href: "/register/phase2/kyc-approved" },
+};
+
 const CSS = `
   :root{--sh-h:64px;}
   @media(min-width:1024px){:root{--sh-h:68px;}}
@@ -86,6 +101,13 @@ const CSS = `
 
   .sh-cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:var(--r,14px);color:#fff;font-family:'Barlow Condensed','Mukta',sans-serif;font-weight:800;letter-spacing:.07em;cursor:pointer;text-transform:uppercase;text-decoration:none;white-space:nowrap;transition:opacity .2s,transform .15s;box-shadow:0 4px 18px rgba(255,122,41,.3);}
   .sh-cta:hover{opacity:.92;transform:translateY(-1px);}
+
+  .sh-ghost{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.18);border-radius:var(--r,14px);color:#fff;font-family:'Barlow Condensed','Mukta',sans-serif;font-weight:800;letter-spacing:.07em;cursor:pointer;text-transform:uppercase;text-decoration:none;white-space:nowrap;transition:border-color .2s,background .2s;}
+  .sh-ghost:hover{border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.09);}
+  /* When a contextual CTA is present, MY BCPL only fits from 1280px up
+     (the avatar still links to the profile below that width). */
+  .sh-mybcpl{display:none;}
+  @media(min-width:1280px){.sh-mybcpl{display:inline-flex;}}
 
   .sh-lang{display:inline-flex;align-items:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:2px;gap:2px;flex-shrink:0;}
   .sh-lang button{border:none;background:transparent;color:rgba(255,255,255,.5);font-family:'Inter','Mukta',sans-serif;font-weight:700;font-size:11px;letter-spacing:.04em;padding:6px 10px;border-radius:7px;cursor:pointer;transition:background .2s,color .2s;line-height:1;}
@@ -135,6 +157,17 @@ export function SiteHeader({ active }: { active?: string }) {
   const { t } = useLang();
   const user = useAuthUser();
   const activeKey = ACTIVE_MAP[active ?? ""] ?? active ?? "";
+
+  /* Status-aware CTA (spec #17) — server-computed getPlayerNextAction(). */
+  const [nextCta, setNextCta] = useState<{ en: string; hi: string; href: string } | null>(null);
+  useEffect(() => {
+    if (!user) { setNextCta(null); return; }
+    let on = true;
+    getNextAction()
+      .then(r => { if (on) setNextCta(NEXT_CTA[r.action] ?? null); })
+      .catch(() => { if (on) setNextCta(null); });
+    return () => { on = false; };
+  }, [user?.id]);
 
   /* Flag logged-in state on <html> so page-level register CTAs (.float-reg-btn) hide too */
   useEffect(() => {
@@ -188,7 +221,18 @@ export function SiteHeader({ active }: { active?: string }) {
             <div style={{ flex: "1 1 0", display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 14, minWidth: 0 }}>
               <LangToggle />
               <NavUser variant="desktop" />
-              {!user && (
+              {user ? (
+                <>
+                  <button className={"sh-ghost" + (nextCta ? " sh-mybcpl" : "")} style={{ fontSize: 14.5, padding: "9px 16px" }} onClick={() => navigate("/profile")}>
+                    MY BCPL
+                  </button>
+                  {nextCta && (
+                    <button className="sh-cta" style={{ fontSize: 15, padding: "10px 18px" }} onClick={() => navigate(nextCta.href)}>
+                      {t(nextCta.en, nextCta.hi)} →
+                    </button>
+                  )}
+                </>
+              ) : (
                 <button className="sh-cta" style={{ fontSize: 15, padding: "10px 20px" }} onClick={() => navigate("/register")}>
                   {t("Register Now", "रजिस्टर करें")} →
                 </button>
@@ -201,7 +245,16 @@ export function SiteHeader({ active }: { active?: string }) {
             <Logo />
             <div className="sh-mobright">
               <NavUser variant="icon" />
-              {!user && (
+              {user ? (
+                <button
+                  className="sh-cta"
+                  style={{ fontSize: 12.5, padding: "9px 12px", minHeight: 40, maxWidth: "44vw", overflow: "hidden", textOverflow: "ellipsis" }}
+                  onClick={() => navigate(nextCta ? nextCta.href : "/profile")}
+                  aria-label={nextCta ? t(nextCta.en, nextCta.hi) : "MY BCPL"}
+                >
+                  {nextCta ? t(nextCta.en, nextCta.hi) : "MY BCPL"}
+                </button>
+              ) : (
                 <button
                   className="sh-cta"
                   style={{ fontSize: 12.5, padding: "9px 12px", minHeight: 40 }}
@@ -237,7 +290,18 @@ export function SiteHeader({ active }: { active?: string }) {
             <NavUser variant="mobile" onNavigate={() => setMenuOpen(false)} />
           </div>
 
-          {!user && (
+          {user ? (
+            <>
+              {nextCta && (
+                <button className="sh-cta" style={{ marginTop: 22, width: "100%", fontSize: 18, padding: 15, minHeight: 52 }} onClick={() => go(nextCta.href)}>
+                  {t(nextCta.en, nextCta.hi)} →
+                </button>
+              )}
+              <button className="sh-ghost" style={{ marginTop: nextCta ? 10 : 22, width: "100%", fontSize: 17, padding: 14, minHeight: 50 }} onClick={() => go("/profile")}>
+                MY BCPL
+              </button>
+            </>
+          ) : (
             <button className="sh-cta" style={{ marginTop: 22, width: "100%", fontSize: 18, padding: 15, minHeight: 52 }} onClick={() => go("/register")}>
               {t("Register for Phase 1", "Phase 1 के लिए रजिस्टर करें")} →
             </button>

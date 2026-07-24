@@ -210,7 +210,7 @@ export function Teams() {
               {t("Register today and get your shot at Season 5. 50+ cities, all roles open.", "आज ही register करें और Season 5 के लिए अपना मौका पाएं। 50+ शहर, सभी roles खुले हैं।")}
             </p>
             <Link href="/register" style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "linear-gradient(135deg,#FF7A29,#D95E10)", border: "none", borderRadius: 12, color: "#fff", fontFamily: "Montserrat,sans-serif", fontWeight: 900, fontSize: 14, letterSpacing: ".06em", padding: "14px 36px", textDecoration: "none", textTransform: "uppercase" }}>
-              {t("REGISTER NOW — ₹299 →", "अभी रजिस्टर करें — ₹299 →")}
+              {t("REGISTER FOR PHASE 1 →", "PHASE 1 के लिए रजिस्टर करें →")}
             </Link>
           </div>
         </div>

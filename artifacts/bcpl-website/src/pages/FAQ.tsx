@@ -3,6 +3,8 @@ import { Link } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { useLang } from '../lib/i18n';
+import { useFees } from '../lib/fees';
+import type { FeeConfig } from '../lib/api';
 import { StickyRegisterCTA } from "../components/StickyRegisterCTA";
 
 const CSS = `
@@ -40,9 +42,11 @@ body { background:#060E1C; }
         @media(max-width:1023px){ .float-reg-btn { display:none; } }
 `;
 
-const FAQS = [
+/* Fee mentions come from the shared fee config (GET /api/fees) so copy can
+   never drift from what the server actually charges. */
+const FAQS = (F: FeeConfig) => [
   // Registration
-  {cat:'Registration',qEn:'How do I register?',qHi:'मैं कैसे register करूं?',aEn:'Visit www.bcplt20.com, fill the registration form, choose your playing role (Batsman, Bowler, Wicket-Keeper, or All-Rounder), select your nearest trial city, and pay ₹299 (₹399 for All-Rounder). The entire process takes just 5 minutes.',aHi:'www.bcplt20.com पर जाएं, registration form भरें, अपनी playing role चुनें (Batsman, Bowler, Wicket-Keeper, या All-Rounder), अपना nearest trial city select करें, और ₹299 (All-Rounder के लिए ₹399) pay करें। पूरी process सिर्फ 5 मिनट में।'},
+  {cat:'Registration',qEn:'How do I register?',qHi:'मैं कैसे register करूं?',aEn:'Visit www.bcplt20.com, fill the registration form, choose your playing role (Batsman, Bowler, Wicket-Keeper, or All-Rounder), select your nearest trial city, and pay ₹' + F.phase1.bat + ' + GST (₹' + F.phase1.ar + ' + GST for All-Rounder). The entire process takes just 5 minutes.',aHi:'www.bcplt20.com पर जाएं, registration form भरें, अपनी playing role चुनें (Batsman, Bowler, Wicket-Keeper, या All-Rounder), अपना nearest trial city select करें, और ₹' + F.phase1.bat + ' + GST (All-Rounder के लिए ₹' + F.phase1.ar + ' + GST) pay करें। पूरी process सिर्फ 5 मिनट में।'},
   {cat:'Registration',qEn:'Can I register from any city?',qHi:'क्या मैं किसी भी शहर से register कर सकता हूं?',aEn:'Yes! We have trial cities across India. Simply select your nearest city during the registration process. We cover all major metros and many tier-2 cities.',aHi:'हां! हमारे पास पूरे भारत में trial cities हैं। Registration process के दौरान अपना nearest city select करें। हम सभी major metros और कई tier-2 cities cover करते हैं।'},
   {cat:'Registration',qEn:'What happens after I register?',qHi:'Register करने के बाद क्या होता है?',aEn:'You\'ll receive a confirmation email with your unique registration ID. You then need to upload a 30–60 second cricket skills video within 15 days of registration. Your submission goes through BCPL\'s Phase 1 evaluation process and you receive a result within 48 hours.',aHi:'आपको registration ID के साथ confirmation email मिलेगा। फिर आपको 15 दिनों के अंदर 30–60 second cricket skills video upload करना होगा। आपकी submission BCPL के Phase 1 evaluation process से गुज़रती है और result 48 घंटे में मिलता है।'},
   {cat:'Registration',qEn:'Can I change my role after registering?',qHi:'क्या मैं register करने के बाद अपनी role बदल सकता हूँ?',aEn:'No. Role selection (Batsman, Bowler, Wicket-Keeper, All-Rounder) is final at the time of registration. Choose carefully based on your primary skill and comfort.',aHi:'नहीं। Registration के समय role (Batsman, Bowler, Wicket-Keeper, All-Rounder) selection final है। अपनी skill और comfort के हिसाब से ध्यान से चुनें।'},
@@ -65,7 +69,7 @@ const FAQS = [
   // General
   {cat:'General',qEn:'When is BCPL Season 5?',qHi:'BCPL Season 5 कब है?',aEn:'Video trials run from July–August 2025. Physical trials take place August–September 2025. The main BCPL T20 season (matches) runs September–November 2025. The finale is expected in late November 2025.',aHi:'Video trials July–August 2025 में होंगे। Physical trials August–September 2025 में। Main BCPL T20 season September–November 2025 में खेला जाएगा।'},
   {cat:'General',qEn:'Where are the matches held?',qHi:'Matches कहाँ होते हैं?',aEn:'BCPL Season 5 matches are held at professional cricket grounds in franchise cities, including iconic venues like DY Patil Stadium (Mumbai), Feroz Shah Kotla (Delhi), and other professional grounds across our 10 franchise cities.',aHi:'BCPL Season 5 के matches 10 franchise cities के professional cricket grounds पर होते हैं, जैसे DY Patil Stadium (Mumbai), Feroz Shah Kotla (Delhi)।'},
-  {cat:'General',qEn:'How is BCPL different from other corporate leagues?',qHi:'BCPL दूसरी corporate leagues से कैसे अलग है?',aEn:'Three key differences: (1) Franchise system — real teams, real auctions, just like IPL. (2) Professional grounds and experienced coaches — not local maidan cricket. (3) Transparent fee structure — ₹299 entry, and if selected in auction, you play for FREE.',aHi:'तीन बड़े फर्क: (1) Franchise system — real teams, real auctions (IPL की तरह)। (2) Professional grounds और experienced coaches। (3) पारदर्शी fee structure — ₹299 entry, और auction में select होने पर free में खेलें।'},
+  {cat:'General',qEn:'How is BCPL different from other corporate leagues?',qHi:'BCPL दूसरी corporate leagues से कैसे अलग है?',aEn:'Three key differences: (1) Franchise system — real teams, real auctions, just like IPL. (2) Professional grounds and experienced coaches — not local maidan cricket. (3) Transparent fee structure — ₹' + F.phase1.bat + ' + GST entry, and if selected in auction, you play for FREE.',aHi:'तीन बड़े फर्क: (1) Franchise system — real teams, real auctions (IPL की तरह)। (2) Professional grounds और experienced coaches। (3) पारदर्शी fee structure — ₹' + F.phase1.bat + ' + GST entry, और auction में select होने पर free में खेलें।'},
 ];
 
 const CATS = ['All','Registration','Eligibility','Selection','Payment','General'];
@@ -137,8 +141,10 @@ export function FAQ() {
   const [search, setSearch] = React.useState('');
   const [cat, setCat] = React.useState('All');
   const [openIdx, setOpenIdx] = React.useState<number|null>(0);
+  const fees = useFees();
+  const faqItems = FAQS(fees);
 
-  const filtered = FAQS.filter(f => {
+  const filtered = faqItems.filter(f => {
     const matchCat = cat==='All' || f.cat===cat;
     const q = lang==='hi' ? f.qHi : f.qEn;
     const a = lang==='hi' ? f.aHi : f.aEn;
@@ -194,7 +200,7 @@ export function FAQ() {
               <button key={c} onClick={()=>{ setCat(c); setOpenIdx(null); }} style={{padding:'10px 22px',borderRadius:100,border:`1.5px solid ${cat===c?'#FF7A29':'rgba(255,255,255,0.12)'}`,background:cat===c?'rgba(255,122,41,0.15)':'rgba(255,255,255,0.04)',color:cat===c?'#FF7A29':'rgba(255,255,255,0.6)',fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:13,cursor:'pointer',transition:'all 0.2s',letterSpacing:'0.04em'}}>
                 {c}
                 <span style={{marginLeft:8,background:'rgba(255,255,255,0.1)',borderRadius:100,padding:'2px 8px',fontSize:11,color:'rgba(255,255,255,0.45)'}}>
-                  {c==='All'?FAQS.length:FAQS.filter(f=>f.cat===c).length}
+                  {c==='All'?faqItems.length:faqItems.filter(f=>f.cat===c).length}
                 </span>
               </button>
             ))}

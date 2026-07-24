@@ -51,6 +51,14 @@ export type PublicSponsor = { name: string; category: string; logo: string; webs
 export const getPublicSponsors = () =>
   req<{ sponsors: PublicSponsor[] }>("GET", "/sponsors");
 
+/* ─── Public fee config (single source of truth for displayed prices) ─── */
+export type FeeConfig = { phase1: Record<string, number>; phase2: Record<string, number>; gstRate: number };
+export const getFees = () => req<FeeConfig>("GET", "/fees");
+
+/* ─── getPlayerNextAction — status-aware CTA for header/nudges ─── */
+export const getNextAction = () =>
+  req<{ action: string; phase1Status?: string; phase2Status?: string | null }>("GET", "/user/next-action");
+
 export const sendOtp = (phone: string, purpose: "login" | "register" = "login") =>
   req<{ success: boolean; message: string; devOtp?: string }>(
     "POST", "/auth/send-otp", { phone, purpose }

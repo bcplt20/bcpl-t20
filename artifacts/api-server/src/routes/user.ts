@@ -59,6 +59,56 @@ router.get("/dashboard", requireAuth, async (req: AuthRequest, res) => {
   });
 });
 
+/**
+ * GET /api/user/next-action — getPlayerNextAction(): the single source of
+ * truth for status-aware CTAs (header, dashboard, nudges). Returns one enum
+ * action computed from REAL backend state; the client only maps it to a
+ * label + path. CTAs must never be derived from frontend-cached state.
+ */
+router.get("/next-action", requireAuth, async (req: AuthRequest, res) => {
+  const [reg] = await db.select().from(registrationsTable)
+    .where(eq(registrationsTable.userId, req.user!.userId)).limit(1);
+
+  if (!reg) return void res.json({ action: "REGISTER" });
+
+  const p1 = reg.phase1Status ?? "pending";
+  const p2 = reg.phase2Status ?? "";
+
+  /* Canonical statuses (see video.ts / kyc.ts / trials.ts):
+     phase1: pending → payment_done → video_submitted → selected | rejected
+     phase2: (null|pending) → payment_done → kyc_done → selected | rejected
+     kyc_records.status: pending | verified | failed                       */
+  let action = "MY_BCPL";
+  if (p1 === "pending") {
+    action = "COMPLETE_PAYMENT";
+  } else if (p1 === "payment_done") {
+    /* Status flips to video_submitted only after upload persists — but check
+       the video row too so a mid-transition state never hides the CTA. */
+    const [video] = await db.select().from(phase1VideosTable)
+      .where(eq(phase1VideosTable.registrationId, reg.id)).limit(1);
+    action = video ? "WAIT_FOR_RESULT" : "UPLOAD_VIDEO";
+  } else if (p1 === "video_submitted") {
+    action = "WAIT_FOR_RESULT";
+  } else if (p1 === "rejected") {
+    action = "VIEW_RESULT";
+  } else if (p1 === "selected") {
+    if (!p2 || p2 === "pending") {
+      action = "CONTINUE_PHASE2";
+    } else if (p2 === "payment_done") {
+      const [kyc] = await db.select().from(kycRecordsTable)
+        .where(eq(kycRecordsTable.registrationId, reg.id)).limit(1);
+      /* No KYC yet (or failed → resubmit) = complete it; pending/verified
+         (awaiting phase2Status sync) = nothing actionable, show MY BCPL. */
+      action = !kyc || kyc.status === "failed" ? "COMPLETE_KYC" : "MY_BCPL";
+    } else if (p2 === "kyc_done") {
+      action = "VIEW_TRIAL";
+    }
+    /* phase2 selected / rejected → MY_BCPL (profile shows the outcome) */
+  }
+
+  res.json({ action, phase1Status: p1, phase2Status: p2 || null });
+});
+
 // GET /api/user/trial-venue — announced venue for player's trial city
 router.get("/trial-venue", requireAuth, async (req: AuthRequest, res) => {
   const { trialVenuesTable } = await import("@workspace/db/schema");

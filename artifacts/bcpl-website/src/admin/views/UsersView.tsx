@@ -367,7 +367,7 @@ export default function UsersView({ onNavigate, initialQuick, refreshTick = 0 }:
           </div>
           <div style={{ ...card, padding:16 }}>
             <div style={{ fontSize:11, fontWeight:700, color:"#475569", marginBottom:12, textTransform:"uppercase", letterSpacing:.5 }}>Payment Status</div>
-            {[{label:"Phase 1 (₹299)",done:selected.phase1},{label:"Phase 2 (₹2,000)",done:selected.phase2}].map(p=>(
+            {[{label:"Phase 1 Fee",done:selected.phase1},{label:"Phase 2 Fee",done:selected.phase2}].map(p=>(
               <div key={p.label} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"9px 0", borderBottom:"1px solid #0F1B2D" }}>
                 <span style={{ fontSize:12, color:"#94A3B8" }}>{p.label}</span>
                 <span style={{ padding:"3px 9px", borderRadius:5, fontSize:10, fontWeight:700, background:p.done?"#10B98122":"#EF444422", color:p.done?"#10B981":"#EF4444" }}>{p.done?"Paid ✓":"Pending"}</span>
