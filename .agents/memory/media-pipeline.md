@@ -11,3 +11,6 @@ description: Patterns for bulk-downloading the owner's Drive media and shipping 
 - yt-dlp is bot-blocked from this workspace IP (all player clients) — for YouTube content, ask the owner to upload files to Drive instead.
 **Why:** two recycles + several dead background jobs burned hours; these patterns finished 845 photos + 12 clips reliably.
 **How to apply:** any future bulk media task (team launch videos, match galleries) — reuse media-staging scripts (batch.sh/optimize.sh/compress.sh/gen_gallery.sh patterns).
+
+## Auction Drive (owner re-share, July 2026)
+Parent folder 1un0jIeE_t7284ElQtLV1I2Tw5PrHWyCp; structure: photos=1x0dTHcq3aQwKO4IJybOXSICP917zE7xf (2 entries); photos/cam 1=1kRTsZh80CNOv74SrEFJvXhfcFnSV-AMR (948 files); photos/cam 2=1LAtrFhWqDX_9JR1q8B8WcfJBNRQ363Rb (371 files); videos=1Cm6OZt7Be6ISIEHQfhKXBcsJelcqYjrF (173 entries). List via embeddedfolderview?id=<ID> (public). yt-dlp re-confirmed blocked (bot-check) — owner downloads own videos via YouTube Studio → uploads to this Drive → we pull from Drive.

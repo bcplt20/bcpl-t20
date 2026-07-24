@@ -29,3 +29,6 @@ NEVER write copy implying "not selected = you pay nothing / your money is safe" 
 ## League numbers (July 2026, owner-set) + legacy grep gate
 Current claims: **15+ trial cities · 10 teams (10 franchise cities OK on Teams page) · ₹15 Cr+ prize pool · ₹2L–₹20L auction value (always the RANGE, never "max ₹20L" — the ₹2L floor is the point)**.
 Legacy phrases are BANNED sitewide (en+hi, incl. index.html static meta + seo.ts injector): grep gate `₹6 [Cc]r|6 करोड़|10 [Cc]ities(?! squads)|10 शहर|Max Auction|अधिकतम Auction|₹20L [Mm]ax`. index.html metas are easy to miss — check them on every numbers change.
+
+## Season branding rule (owner, July 2026 — took 2 rounds, do not regress)
+ALL forward-looking copy = Season 5 (players register for S5; S5 auction Aug 2027). 'Season 4' ONLY for the completed auction (photo gallery label, historic contract values) and the upcoming S4 tournament. Never brand the auction section's hero/badge as Season 4.
