@@ -30,6 +30,11 @@ type Step =
   | 'trial_checked_in'
   | 'trial_completed';
 
+/* Phase-2 status vocab shared by deriveStep + journeyNodes — ONE place, so the
+   status banner and the journey timeline can never contradict each other. */
+const P2_TRIAL_STAGE = ['kyc_done', 'kyc_approved'];                             // KYC cleared, trial pending
+const P2_POST_TRIAL  = ['trial_cleared', 'auction_shortlisted', 'team_signed'];  // trial already cleared
+
 function deriveStep(data: any): Step {
   if (!data?.registered) return 'not_registered';
   const reg   = data.registration;
@@ -37,13 +42,14 @@ function deriveStep(data: any): Step {
   const p2    = reg?.phase2Status  ?? null;
   const kyc   = data?.kyc?.status  ?? null;
   const trial = data?.trial ?? null;
+  const postTrial = P2_POST_TRIAL.includes(p2 ?? '');
 
   /* Strongest server truth first: the dashboard only sends a trial block
      (or reaches kyc_done / verified KYC) when every earlier stage is already
      cleared — historic accounts can miss old video/payment rows, and those
      gaps must never drag a trial-stage player back to "upload video". */
-  if (trial || p2 === 'kyc_done' || kyc === 'verified') {
-    if (trial?.assessmentSubmitted)                                 return 'trial_completed';
+  if (trial || postTrial || P2_TRIAL_STAGE.includes(p2 ?? '') || kyc === 'verified') {
+    if (trial?.assessmentSubmitted || postTrial)                    return 'trial_completed';
     if (trial?.checkedInAt)                                         return 'trial_checked_in';
     if (trial)                                                      return 'trial_scheduled';
     return 'trial_wait';
@@ -67,9 +73,10 @@ function journeyNodes(data: any) {
   const p2    = reg?.phase2Status ?? null;
   const kyc   = data?.kyc?.status ?? null;
   const trial = data?.trial ?? null;
-  const trialStage = !!trial || p2 === 'kyc_done' || kyc === 'verified';
+  const postTrial  = P2_POST_TRIAL.includes(p2 ?? '');
+  const trialStage = !!trial || postTrial || P2_TRIAL_STAGE.includes(p2 ?? '') || kyc === 'verified';
   const p1After   = ['payment_done', 'video_submitted', 'selected', 'rejected'].includes(p1);
-  const p2After   = ['payment_done', 'kyc_done', 'kyc_approved', 'trial_cleared', 'auction_shortlisted', 'team_signed'].includes(p2 ?? '');
+  const p2After   = ['payment_done', ...P2_TRIAL_STAGE, ...P2_POST_TRIAL].includes(p2 ?? '');
   const resultOut = p1 === 'selected' || p1 === 'rejected';
 
   const defs: { en: string; hi: string; done: boolean }[] = [
@@ -79,10 +86,10 @@ function journeyNodes(data: any) {
     { en: 'Phase 1 Review',     hi: 'फेज 1 रिव्यू',        done: trialStage || resultOut },
     { en: 'Phase 1 Result',     hi: 'फेज 1 रिज़ल्ट',       done: trialStage || resultOut },
     { en: 'Phase 2 Payment',    hi: 'फेज 2 पेमेंट',        done: trialStage || p2After },
-    { en: 'KYC Verification',   hi: 'KYC वेरिफिकेशन',     done: !!trial || p2 === 'kyc_done' || kyc === 'verified' },
-    { en: 'Trial Venue & Pass', hi: 'ट्रायल वेन्यू & पास', done: !!trial },
-    { en: 'Venue Check-In',     hi: 'वेन्यू चेक-इन',       done: !!trial?.checkedInAt },
-    { en: 'Physical Trial',     hi: 'फिजिकल ट्रायल',      done: !!trial?.assessmentSubmitted },
+    { en: 'KYC Verification',   hi: 'KYC वेरिफिकेशन',     done: trialStage },
+    { en: 'Trial Venue & Pass', hi: 'ट्रायल वेन्यू & पास', done: !!trial || postTrial },
+    { en: 'Venue Check-In',     hi: 'वेन्यू चेक-इन',       done: !!trial?.checkedInAt || postTrial },
+    { en: 'Physical Trial',     hi: 'फिजिकल ट्रायल',      done: !!trial?.assessmentSubmitted || postTrial },
     { en: 'Final Result',       hi: 'फाइनल रिज़ल्ट',       done: false },
   ];
 
@@ -108,6 +115,7 @@ function getBannerConfig(step: Step, data: any, venue: any, t: any) {
   const trialCity      = trial?.venue?.city ?? city;
   const trialDateLong  = formatDateLong(trial?.slot?.date);
   const trialReporting = formatTime(trial?.slot?.reportingTime);
+  const trialPlace     = trialVenueName ? `${trialVenueName}, ${trialCity}` : trialCity;
 
   const cfgs: Record<Step,{color:string;bg:string;icon:React.ReactNode;title:string;body:string;cta?:string;ctaPath?:string}> = {
     not_registered: {
@@ -167,15 +175,15 @@ function getBannerConfig(step: Step, data: any, venue: any, t: any) {
     trial_checked_in: {
       color:'var(--green)', bg:'rgba(34,197,94,0.08)', icon:<IcoCheck size={40} />,
       title: t('Checked In — Best of Luck!', 'चेक-इन पूरा — शुभकामनाएँ!'),
-      body: t(`You are checked in at ${trialVenueName}, ${trialCity}. Follow the ground staff's instructions — your assessment will be recorded by the BCPL trial team.`, `आप ${trialVenueName}, ${trialCity} पर चेक-इन कर चुके हैं। Ground staff के निर्देशों का पालन करें — आपका असेसमेंट BCPL trial team रिकॉर्ड करेगी।`),
+      body: t(`You are checked in at ${trialPlace}. Follow the ground staff's instructions — your assessment will be recorded by the BCPL trial team.`, `आप ${trialPlace} पर चेक-इन कर चुके हैं। Ground staff के निर्देशों का पालन करें — आपका असेसमेंट BCPL trial team रिकॉर्ड करेगी।`),
       cta: t('VIEW TRIAL PASS →', 'TRIAL PASS देखें →'), ctaPath:'/trial-pass',
     },
     trial_completed: {
       color:'var(--green)', bg:'rgba(34,197,94,0.08)', icon:<IcoTrophy size={40} />,
       title: t('Physical Trial Completed', 'फिजिकल ट्रायल पूरा हुआ'),
       body: t(
-        `Well played, ${name}! Your physical trial at ${trialVenueName}, ${trialCity}${trial?.slot?.date ? ` on ${trialDateLong}` : ''} is complete and your assessment has been recorded. Results will be announced after trials conclude across all cities — you will be notified by SMS + Email. No further action is needed from you.`,
-        `बहुत बढ़िया, ${name}! ${trialVenueName}, ${trialCity} पर आपका फिजिकल ट्रायल${trial?.slot?.date ? ` (${trialDateLong})` : ''} पूरा हो गया है और आपका असेसमेंट रिकॉर्ड कर लिया गया है। सभी शहरों के ट्रायल पूरे होने के बाद रिज़ल्ट की घोषणा होगी — आपको SMS + ईमेल से सूचना मिलेगी। अभी आपको कुछ और करने की ज़रूरत नहीं है।`
+        `Well played, ${name}! Your physical trial at ${trialPlace}${trial?.slot?.date ? ` on ${trialDateLong}` : ''} is complete and your assessment has been recorded. Results will be announced after trials conclude across all cities — you will be notified by SMS + Email. No further action is needed from you.`,
+        `बहुत बढ़िया, ${name}! ${trialPlace} पर आपका फिजिकल ट्रायल${trial?.slot?.date ? ` (${trialDateLong})` : ''} पूरा हो गया है और आपका असेसमेंट रिकॉर्ड कर लिया गया है। सभी शहरों के ट्रायल पूरे होने के बाद रिज़ल्ट की घोषणा होगी — आपको SMS + ईमेल से सूचना मिलेगी। अभी आपको कुछ और करने की ज़रूरत नहीं है।`
       ),
     },
   };

@@ -50,3 +50,10 @@ Spec file: `attached_assets/Pasted-BCPLT20-COM-FINAL-PRODUCTION-FINISHING-UI-UX-
 - Still open: §30 full page redesigns (deferred), §42 LCP/CLS measurement, §46 full A–L matrix, §49 prod verification (blocked until owner deploys EC2).
 
 - §49 UPDATE (24 Jul 2026 shaam): owner ne EC2 deploy chala diya — prod par healthz 6/6, OG meta, naya icon-look LIVE verified. Deploy saga (SSL + truncate-prompt) ke sabak deploy-pipeline.md me.
+
+## July 2026 — fourth spec (78-part "FINAL 10/10 PRODUCTION POLISH") — main wave DONE
+- Spec file: `attached_assets/Pasted-BCPLT20-COM-FINAL-10-10-PRODUCTION-POLISH-QUALITY-ASSUR_1784912681353.txt` (owner: audit combined with 51-part). Audit-first confirmed AGAIN: ~70% pre-existed (drafts lifecycle, finance view, notification logs+journey tab, QR security, payment UX, trial-pass polish).
+- Shipped (commit 4457b79): PlayerProfile 11-step data-driven journeyNodes (deriveStep trap honored — trialStage forces early nodes done; rejected ⇒ paused, no active pulse; journeyPct computed, no hardcoded %); global `.skel` shimmer + `components/Skel.tsx` — 9 pages off plain "Loading…" (MatchCenter/Photos were BLANK); `lib/season.ts` = single source for marketing facts (Home/Teams/AuctionLive/FAQ/JsonLd/Eligibility/Contracts/CMS); Phase-2 fee fallbacks now import FALLBACK_FEES; buttons: radius→var(--r), .btn-fire min-height 44, Phase2Registration 18×24→16×32.
+- Registration `.btn-primary` 4px radius + clip-path = INTENTIONAL angular wizard design — do not "fix" to var(--r).
+- Dev preview root `/favicon.ico` 404 = base-path artifact only (prod serves at root) — ignore, don't chase.
+- Still open (deliberate): P41/42 static-page typography depth, P50/51 srcset/WebP + LCP/CLS, P53 full a11y audit, P72 Lighthouse. Bundle note: main chunk 2.37MB (574KB gzip) — code-split candidate.
