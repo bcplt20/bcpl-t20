@@ -2,7 +2,7 @@
 // Switched back from 2Factor (task: owner's approved DLT templates + balance are
 // in MSG91; MSG91 blocks API calls from non-whitelisted IPs — the EC2 server IP
 // must be whitelisted in MSG91 dashboard → Settings → IP Security).
-import type { SendResult } from "./notify";
+import { queueSendFailure, type SendOpts, type SendResult } from "./notify";
 
 const AUTH_KEY = process.env.MSG91_AUTH_KEY;
 // New explicit name first; falls back to the legacy env name from the earlier
@@ -77,7 +77,7 @@ export async function sendOtp(phone: string, otp: string): Promise<boolean> {
 
 /** Send transactional SMS via MSG91 (route 4). Message text must match one of
  *  the owner's DLT-approved templates — MSG91/operators match it automatically. */
-export async function sendSms(phone: string, message: string): Promise<SendResult> {
+export async function sendSms(phone: string, message: string, opts?: SendOpts): Promise<SendResult> {
   if (!AUTH_KEY || !SENDER_ID) {
     console.warn(`[SMS-SKIPPED] MSG91_AUTH_KEY / MSG91_SENDER_ID not set — SMS NOT sent | to=${phone}`);
     return { ok: false, skipped: true, error: "MSG91_AUTH_KEY / MSG91_SENDER_ID not configured on this server" };
@@ -103,9 +103,13 @@ export async function sendSms(phone: string, message: string): Promise<SendResul
       return { ok: true };
     }
     console.error(`[SMS-FAILED] MSG91 rejected | to=${phone} | HTTP ${res.status} | ${raw.slice(0, 300)}`);
-    return { ok: false, error: `MSG91: ${(data.message || raw).slice(0, 300)}` };
+    const fail: SendResult = { ok: false, error: `MSG91: ${(data.message || raw).slice(0, 300)}` };
+    await queueSendFailure("sms", phone, null, { message }, fail.error, opts);
+    return fail;
   } catch (e) {
     console.error(`[SMS-FAILED] exception | to=${phone}`, e);
-    return { ok: false, error: String((e as Error)?.message ?? e).slice(0, 300) };
+    const fail: SendResult = { ok: false, error: String((e as Error)?.message ?? e).slice(0, 300) };
+    await queueSendFailure("sms", phone, null, { message }, fail.error, opts);
+    return fail;
   }
 }

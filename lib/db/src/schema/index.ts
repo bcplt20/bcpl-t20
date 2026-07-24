@@ -39,3 +39,5 @@ export * from "./admin_users";
 export * from "./fraud_flags";
 // Registration drafts — autosave for incomplete registrations
 export * from "./registration_drafts";
+// Scalability hardening — durable notification retry queue
+export * from "./notification_outbox";

@@ -1,5 +1,5 @@
 // Brevo (Sendinblue) email service — https://brevo.com
-import type { SendResult } from "./notify";
+import { queueSendFailure, type SendOpts, type SendResult } from "./notify";
 import { inr, type GstBreakup } from "./gst";
 
 const API_KEY    = process.env.BREVO_API_KEY;
@@ -36,7 +36,7 @@ interface SendEmailParams {
   htmlContent: string;
 }
 
-export async function sendEmail({ to, toName, subject, htmlContent }: SendEmailParams): Promise<SendResult> {
+export async function sendEmail({ to, toName, subject, htmlContent }: SendEmailParams, opts?: SendOpts): Promise<SendResult> {
   if (!API_KEY) {
     console.warn(`[EMAIL-SKIPPED] BREVO_API_KEY not set — email NOT sent | to=${to} | subject="${subject}"`);
     return { ok: false, skipped: true, error: "BREVO_API_KEY not configured on this server" };
@@ -55,14 +55,18 @@ export async function sendEmail({ to, toName, subject, htmlContent }: SendEmailP
     if (!res.ok) {
       const body = await res.text();
       console.error(`[EMAIL-FAILED] Brevo HTTP ${res.status} | to=${to} | subject="${subject}" | ${body}`);
-      return { ok: false, error: `Brevo HTTP ${res.status}: ${body.slice(0, 300)}` };
+      const fail: SendResult = { ok: false, error: `Brevo HTTP ${res.status}: ${body.slice(0, 300)}` };
+      await queueSendFailure("email", to, toName, { subject, htmlContent }, fail.error, opts);
+      return fail;
     }
     const data = (await res.json().catch(() => ({}))) as { messageId?: string };
     console.log(`[EMAIL-SENT] to=${to} | messageId=${data.messageId ?? "?"} | subject="${subject}"`);
     return { ok: true };
   } catch (e) {
     console.error(`[EMAIL-FAILED] exception | to=${to}`, e);
-    return { ok: false, error: String((e as Error)?.message ?? e).slice(0, 300) };
+    const fail: SendResult = { ok: false, error: String((e as Error)?.message ?? e).slice(0, 300) };
+    await queueSendFailure("email", to, toName, { subject, htmlContent }, fail.error, opts);
+    return fail;
   }
 }
 

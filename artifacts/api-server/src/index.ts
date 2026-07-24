@@ -13,6 +13,7 @@ import { ensureMarketingTables } from "./routes/marketing";
 import { ensureReferralProgramTables } from "./routes/referralProgram";
 import { ensureAdminContentTables } from "./routes/adminTools";
 import { ensureNotificationErrorColumn } from "./lib/notify";
+import { ensureOutboxTable, runOutboxSweep } from "./lib/outbox";
 import { ensurePhase1AiTables } from "./lib/phase1Migrations";
 import { ensureTrialsTables } from "./routes/trials";
 import { ensureAdminUsersTable } from "./routes/adminUsers";
@@ -44,6 +45,7 @@ async function start() {
       await ensureReferralProgramTables(); // needs referral_codes from ensureMarketingTables
       await ensureAdminContentTables();
       await ensureNotificationErrorColumn();
+      await ensureOutboxTable(); // durable notification retry queue
       await ensurePhase1AiTables(); // Phase 1 AI evaluation pipeline
       await ensureTrialsTables(); // Physical trials suite (Stage 4)
       await ensureAdminUsersTable(); // Stage 5 server-side RBAC
@@ -143,3 +145,21 @@ async function phase1PipelineTick(label: string): Promise<void> {
 }
 setTimeout(() => { void phase1PipelineTick("startup sweep"); }, 20_000);
 setInterval(() => { void phase1PipelineTick("pipeline tick"); }, TWO_MINUTES);
+
+// ── Notification outbox sweep: every 5 minutes ──────────────────────────────
+// Retries email/SMS sends that failed at the provider (queued by
+// queueSendFailure). Real retries only when outboxEnabled() — production or
+// OUTBOX_ENABLED=1 — otherwise a logged dry run (real keys live in dev!).
+const FIVE_MINUTES = 5 * 60 * 1000;
+async function outboxTick(): Promise<void> {
+  try {
+    const r = await runOutboxSweep(25);
+    if (r.due > 0 || r.claimed > 0) logger.info(r, "outbox sweep");
+    recordJobRun("outbox-sweep", true, undefined, FIVE_MINUTES);
+  } catch (e) {
+    logger.error({ err: e }, "outbox sweep failed");
+    recordJobRun("outbox-sweep", false, e, FIVE_MINUTES);
+  }
+}
+setTimeout(() => { void outboxTick(); }, 60_000);
+setInterval(() => { void outboxTick(); }, FIVE_MINUTES);

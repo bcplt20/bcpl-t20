@@ -23,6 +23,36 @@ export type SendResult = {
   error?: string;
 };
 
+/** Options accepted by sendSms/sendEmail (outbox integration). */
+export interface SendOpts {
+  /** Set by the outbox sweep so its own retries are never re-queued. */
+  noOutbox?: boolean;
+  /** Attribution for the queued retry row (user / template / dedupe key). */
+  outboxMeta?: { userId?: string | null; template?: string; dedupeKey?: string | null };
+}
+
+/**
+ * Queue a FAILED provider send for durable retry (never called for OTPs or
+ * skipped/no-key sends). Deferred import keeps sms/email/outbox acyclic.
+ * Never throws.
+ */
+export async function queueSendFailure(
+  channel: "email" | "sms",
+  recipient: string,
+  recipientName: string | null,
+  payload: Record<string, unknown>,
+  error: string | undefined,
+  opts?: SendOpts,
+): Promise<void> {
+  if (opts?.noOutbox) return;
+  try {
+    const { enqueueOutbox } = await import("./outbox");
+    await enqueueOutbox({ channel, recipient, recipientName, payload, error, meta: opts?.outboxMeta });
+  } catch (e) {
+    console.error("[OUTBOX] queueSendFailure crashed (message not queued)", e);
+  }
+}
+
 const statusOf = (r: SendResult) => (r.skipped ? "skipped" : r.ok ? "sent" : "failed");
 
 /**
