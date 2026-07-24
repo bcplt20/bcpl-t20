@@ -74,12 +74,17 @@ export async function assignRegNumber(registrationId: string): Promise<string | 
  *     ordered by when its Phase 1 payment actually succeeded.
  */
 export async function ensureRegNumbers(): Promise<void> {
-  await db.execute(sql`ALTER TABLE registrations ADD COLUMN IF NOT EXISTS reg_number varchar(30)`);
-  await db.execute(sql`ALTER TABLE registrations ADD COLUMN IF NOT EXISTS consents jsonb`);
-  await db.execute(sql`CREATE UNIQUE INDEX IF NOT EXISTS registrations_reg_number_uniq ON registrations (reg_number)`);
-  await db.execute(sql`CREATE TABLE IF NOT EXISTS app_flags (key varchar(60) PRIMARY KEY, done_at timestamptz NOT NULL DEFAULT now())`);
+  // Advisory lock serialises concurrent boots (PM2 cluster ×2, parallel vitest):
+  // plain DDL + the renumber backfill below otherwise race (duplicate-column /
+  // double-assignment aborting under the unique index).
+  await db.transaction(async (tx) => {
+  await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtext('bcpl_ensure_reg_numbers'))`);
+  await tx.execute(sql`ALTER TABLE registrations ADD COLUMN IF NOT EXISTS reg_number varchar(30)`);
+  await tx.execute(sql`ALTER TABLE registrations ADD COLUMN IF NOT EXISTS consents jsonb`);
+  await tx.execute(sql`CREATE UNIQUE INDEX IF NOT EXISTS registrations_reg_number_uniq ON registrations (reg_number)`);
+  await tx.execute(sql`CREATE TABLE IF NOT EXISTS app_flags (key varchar(60) PRIMARY KEY, done_at timestamptz NOT NULL DEFAULT now())`);
 
-  const inserted: any = await db.execute(sql`
+  const inserted: any = await tx.execute(sql`
     INSERT INTO app_flags (key) VALUES ('reg_number_paid_only_v1')
     ON CONFLICT (key) DO NOTHING
     RETURNING key
@@ -88,14 +93,14 @@ export async function ensureRegNumbers(): Promise<void> {
   if (firstRun) {
     // Old scheme numbered everyone at sign-up. Reset once; the backfill below
     // immediately renumbers all PAID players in payment order.
-    await db.execute(sql`UPDATE registrations SET reg_number = NULL`);
+    await tx.execute(sql`UPDATE registrations SET reg_number = NULL`);
     console.log("[MIGRATE] reg numbers reset — renumbering paid players in payment order");
   }
 
   // Unpaid registrations never carry a number (payment assigns it).
-  await db.execute(sql`UPDATE registrations SET reg_number = NULL WHERE phase1_status = 'pending' AND reg_number IS NOT NULL`);
+  await tx.execute(sql`UPDATE registrations SET reg_number = NULL WHERE phase1_status = 'pending' AND reg_number IS NOT NULL`);
 
-  await db.execute(sql`
+  await tx.execute(sql`
     WITH paid AS (
       SELECT r.id,
              COALESCE(NULLIF(UPPER(LEFT(REGEXP_REPLACE(COALESCE(r.trial_city,''), '[^A-Za-z]', '', 'g'), 3)), ''), 'GEN') AS code,
@@ -124,6 +129,7 @@ export async function ensureRegNumbers(): Promise<void> {
     FROM numbered n
     WHERE r.id = n.id
   `);
+  });
 }
 
 // POST /api/register/phase1

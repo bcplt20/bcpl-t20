@@ -40,8 +40,15 @@ All player-facing legal/policy pages were rewritten to the mandated legal implem
 - DB: `registrations.consents jsonb` added via idempotent startup DDL (no drizzle push required).
 
 ## Verification performed
-- API typecheck ✅ · Website typecheck ✅ · API test suite 231/231 ✅
+- API typecheck ✅ · Website typecheck ✅ · API test suite 235/235 ✅ (includes new consent-persistence tests)
 - Visual check of legal pages (desktop + mobile) with pending banner, version header, print button ✅
+
+## Independent code review — findings resolved
+An automated architect review flagged four gaps; all fixed the same day:
+1. **Resume-payment path** (logged-in "Complete Payment" button) skipped consent — it now shows the same required consent checkbox + optional marketing checkbox and records consent server-side like the fresh-registration path.
+2. **Startup migration race** — the registrations DDL/backfill now runs inside a transaction holding an advisory lock (safe under multi-worker production boot).
+3. **Copy contradictions** — "no upper age limit" (FAQ ×2) reconciled to 18–45; "2–5 minutes" video (Eligibility) reconciled to 30–60 seconds / 15-day window; unverifiable "10,000+ professionals" claim (Privacy CTA) neutralised.
+4. **Consent persistence tests** added — consent writes are now an atomic JSONB merge, so Phase 1 and Phase 2 consent records can never overwrite each other, proven by automated tests.
 
 ## Go-live procedure (after owner/legal approval)
 1. Flip `LEGAL_APPROVAL_PENDING = false` in `legalMeta.tsx` (set the real effective date).

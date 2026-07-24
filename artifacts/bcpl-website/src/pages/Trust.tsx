@@ -382,12 +382,12 @@ export function Trust() {
                     <p style={{color:'rgba(255,255,255,0.5)',fontSize:13}}>{t("Video Evaluation","Video Evaluation")}</p>
                   </div>
                   <div style={{textAlign:'right'}}>
-                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:32,color:'#fff',lineHeight:1}}>₹299</div>
+                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:32,color:'#fff',lineHeight:1}}>₹299 <span style={{fontSize:13,fontWeight:700,color:'rgba(255,255,255,0.55)'}}>+ GST</span></div>
                     <p style={{color:'rgba(255,255,255,0.45)',fontSize:12,marginTop:4}}>{t("Batsman / Bowler / WK","Batsman / Bowler / WK")}</p>
                   </div>
                 </div>
                 <div style={{textAlign:'right',marginTop:8}}>
-                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:32,color:'#fff',lineHeight:1}}>₹399</div>
+                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:32,color:'#fff',lineHeight:1}}>₹399 <span style={{fontSize:13,fontWeight:700,color:'rgba(255,255,255,0.55)'}}>+ GST</span></div>
                   <p style={{color:'rgba(255,255,255,0.45)',fontSize:12,marginTop:4}}>{t("All-Rounder","All-Rounder")}</p>
                 </div>
               </div>
@@ -398,12 +398,12 @@ export function Trust() {
                     <p style={{color:'rgba(255,255,255,0.5)',fontSize:13}}>{t("Physical Trial (if selected)","Physical Trial (select होने पर)")}</p>
                   </div>
                   <div style={{textAlign:'right'}}>
-                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:28,color:'#fff',lineHeight:1}}>₹2,000</div>
+                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:28,color:'#fff',lineHeight:1}}>₹2,000 <span style={{fontSize:13,fontWeight:700,color:'rgba(255,255,255,0.55)'}}>+ GST</span></div>
                     <p style={{color:'rgba(255,255,255,0.45)',fontSize:12,marginTop:4}}>{t("Batsman / Bowler / WK","Batsman / Bowler / WK")}</p>
                   </div>
                 </div>
                 <div style={{textAlign:'right',marginTop:12}}>
-                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:28,color:'#fff',lineHeight:1}}>₹3,000</div>
+                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:28,color:'#fff',lineHeight:1}}>₹3,000 <span style={{fontSize:13,fontWeight:700,color:'rgba(255,255,255,0.55)'}}>+ GST</span></div>
                   <p style={{color:'rgba(255,255,255,0.45)',fontSize:12,marginTop:4}}>{t("All-Rounder","All-Rounder")}</p>
                 </div>
               </div>

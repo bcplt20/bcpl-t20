@@ -714,17 +714,32 @@ export function Registration() {
                             {dob && dobValid && <div style={{fontSize:11,color:'#22C55E',marginTop:5,fontWeight:700}}>{t('✅ AGE ELIGIBILITY — CONFIRMED', '✅ AGE ELIGIBILITY — CONFIRMED')}</div>}
                           </div>
                         )}
-                        <button disabled={!regStatus?.dob && !(dob && dobValid)} onClick={async()=>{
+                        {/* Consent — required on the resume-payment path too (audit-recorded server-side) */}
+                        <div style={{ maxWidth:320, margin:'0 auto 12px', textAlign:'left' }}>
+                          <label style={{ display:'flex', gap:8, alignItems:'flex-start', cursor:'pointer', fontSize:11.5, color:'rgba(255,255,255,0.65)', lineHeight:1.6 }}>
+                            <input type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)} style={{ marginTop:2, accentColor:'#FF7A29', width:15, height:15, flexShrink:0 }} />
+                            <span>{t('I agree to the BCPL Terms & Conditions, Privacy Notice, Refund & Cancellation Policy and Eligibility Criteria. The accepted document versions and acceptance time are recorded with my registration. *', 'मैं BCPL Terms & Conditions, Privacy Notice, Refund & Cancellation Policy और Eligibility Criteria से सहमत हूँ। Accepted document versions और acceptance time मेरी registration के साथ record होते हैं। *')}</span>
+                          </label>
+                          <label style={{ display:'flex', gap:8, alignItems:'flex-start', cursor:'pointer', fontSize:11.5, color:'rgba(255,255,255,0.5)', lineHeight:1.6, marginTop:8 }}>
+                            <input type="checkbox" checked={marketingOptIn} onChange={e => setMarketingOptIn(e.target.checked)} style={{ marginTop:2, accentColor:'#FF7A29', width:15, height:15, flexShrink:0 }} />
+                            <span>{t('Optional: send me BCPL updates and offers by SMS/WhatsApp/email. I can opt out anytime.', 'Optional: मुझे SMS/WhatsApp/email से BCPL updates और offers भेजें। मैं कभी भी opt out कर सकता/सकती हूँ।')}</span>
+                          </label>
+                        </div>
+                        <button disabled={(!regStatus?.dob && !(dob && dobValid)) || !agreed} onClick={async()=>{
                           try {
                             setPayLoading(true);
                             if (!regStatus?.dob && dob && dobValid) await updateDob(dob);
-                            const pay = await createPhase1Payment(regStatus.registrationId);
+                            const pay = await createPhase1Payment(regStatus.registrationId, {
+                              termsVersion:   CONSENT_VERSIONS.terms,
+                              privacyVersion: CONSENT_VERSIONS.privacy,
+                              marketingOptIn,
+                            });
                             sessionStorage.setItem('bcpl_p1_pending', JSON.stringify({ amount: pay.amount, orderId: pay.orderId }));
                             await loadCashfreeSDK();
                             const cf = (window as any).Cashfree({ mode:'production' });
                             cf.checkout({ paymentSessionId: pay.paymentSessionId });
                           } catch(e:any){ alert(e.message); } finally { setPayLoading(false); }
-                        }} style={{ padding:'12px 28px', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', opacity:(!regStatus?.dob && !(dob && dobValid)) ? .5 : 1 }}>
+                        }} style={{ padding:'12px 28px', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', opacity:((!regStatus?.dob && !(dob && dobValid)) || !agreed) ? .5 : 1 }}>
                           {payLoading ? t('⏳ Processing...', '⏳ Processing...') : t('💳 COMPLETE PAYMENT →', '💳 PAYMENT पूरा करें →')}
                         </button>
                       </div>

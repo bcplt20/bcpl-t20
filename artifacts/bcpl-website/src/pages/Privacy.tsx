@@ -292,8 +292,8 @@ export function Privacy() {
                 <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(19px,3vw,23px)',marginBottom:10,lineHeight:1.2}}>{t("Your Data Is Safe With Us","आपका डेटा हमारे पास सुरक्षित है")}</div>
                 <p style={{color:'rgba(255,255,255,0.62)',fontSize:14,marginBottom:22,lineHeight:1.6}}>
                   {t(
-                    "Register with confidence — join 10,000+ professionals who trust BCPL T20 Season 5.",
-                    "विश्वास के साथ रजिस्टर करें — 10,000+ professionals BCPL T20 Season 5 पर भरोसा करते हैं।"
+                    "Register with confidence — your information is handled as described in this Privacy Notice.",
+                    "विश्वास के साथ रजिस्टर करें — आपकी जानकारी इसी Privacy Notice के अनुसार handle की जाती है।"
                   )}
                 </p>
                 <Link href="/register" className="btn-fire" style={{padding:'15px 38px',fontSize:16,width:'100%',maxWidth:320,textDecoration:'none',display:'inline-flex',alignItems:'center',justifyContent:'center'}}>

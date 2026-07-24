@@ -80,6 +80,24 @@ async function notifyPhase2Success(
 
 // ── PHASE 1 ──────────────────────────────────────────────────────────────────
 
+/**
+ * Consent audit write — ATOMIC jsonb merge at the SQL level, so concurrent
+ * phase1/phase2 consent writes (or a request holding a stale row read) can
+ * never clobber the other phase's key.
+ */
+export async function recordConsentKey(
+  registrationId: string,
+  key: "phase1" | "phase2",
+  value: Record<string, unknown>,
+): Promise<void> {
+  await db.execute(sql`
+    UPDATE registrations
+    SET consents = COALESCE(consents, '{}'::jsonb) || jsonb_build_object(${key}::text, ${JSON.stringify(value)}::jsonb),
+        updated_at = NOW()
+    WHERE id = ${registrationId}
+  `);
+}
+
 // POST /api/payment/phase1/create  — create Cashfree order
 router.post("/phase1/create", requireAuth, async (req: AuthRequest, res) => {
   const schema = z.object({
@@ -119,22 +137,16 @@ router.post("/phase1/create", requireAuth, async (req: AuthRequest, res) => {
   }
 
   // Record consent at payment initiation (acceptance stands even if the
-  // gateway order later fails). JS merge keeps other consent keys intact.
+  // gateway order later fails). Atomic jsonb merge keeps other consent keys intact.
   if (parsed.data.consent) {
     const c = parsed.data.consent;
-    const prior = (reg.consents ?? {}) as Record<string, unknown>;
-    await db.update(registrationsTable).set({
-      consents: {
-        ...prior,
-        phase1: {
-          documentVersion: `terms-v${c.termsVersion}+privacy-v${c.privacyVersion}`,
-          termsVersion:    c.termsVersion,
-          privacyVersion:  c.privacyVersion,
-          marketingOptIn:  c.marketingOptIn,
-          acceptedAt:      new Date().toISOString(),
-        },
-      },
-    }).where(eq(registrationsTable.id, reg.id));
+    await recordConsentKey(reg.id, "phase1", {
+      documentVersion: `terms-v${c.termsVersion}+privacy-v${c.privacyVersion}`,
+      termsVersion:    c.termsVersion,
+      privacyVersion:  c.privacyVersion,
+      marketingOptIn:  c.marketingOptIn,
+      acceptedAt:      new Date().toISOString(),
+    });
   }
 
   const amount  = Math.round(FEES[reg.role].phase1 * 1.18); // base + 18% GST
@@ -288,17 +300,11 @@ router.post("/phase2/create", requireAuth, async (req: AuthRequest, res) => {
   // Record accepted declarations at payment initiation (consent audit).
   if (parsed.data.declarations) {
     const d = parsed.data.declarations;
-    const prior = (reg.consents ?? {}) as Record<string, unknown>;
-    await db.update(registrationsTable).set({
-      consents: {
-        ...prior,
-        phase2: {
-          documentVersion: `phase2-declarations-v${d.version}`,
-          items:           d.items,
-          acceptedAt:      new Date().toISOString(),
-        },
-      },
-    }).where(eq(registrationsTable.id, reg.id));
+    await recordConsentKey(reg.id, "phase2", {
+      documentVersion: `phase2-declarations-v${d.version}`,
+      items:           d.items,
+      acceptedAt:      new Date().toISOString(),
+    });
   }
 
   const amount  = Math.round(FEES[reg.role].phase2 * 1.18); // base + 18% GST
