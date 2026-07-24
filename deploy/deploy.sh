@@ -183,7 +183,12 @@ cd $APP_DIR/lib/db
 # "push --yes" pehle din se usage-error se girti thi (aur 2>/dev/null usse
 # chhupa deta tha). `push-force` = drizzle-kit push --force (non-interactive,
 # destructive statements auto-accept — output neeche poora chhapta hai).
-PUSH_OUT=$(DATABASE_URL=$DATABASE_URL pnpm run push-force 2>&1) || true
+# RDS SSL: node ka 'pg' driver certificate-verify par chupchaap girta hai
+# (psql nahi girta — wahi silent exit-1 wala bug). sslmode=no-verify se
+# connection encrypted HI rehta hai, sirf cert-check skip hota hai
+# (AWS ke andar ka private link hai, ye safe hai).
+PUSH_URL="${DATABASE_URL%%\?*}?sslmode=no-verify"
+PUSH_OUT=$(DATABASE_URL="$PUSH_URL" pnpm run push-force 2>&1) || true
 echo "$PUSH_OUT" | tail -25
 if echo "$PUSH_OUT" | grep -qE "Changes applied|No changes"; then
   echo "✅ DB schema up to date"
