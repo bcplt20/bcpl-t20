@@ -25,7 +25,13 @@ const router = Router();
 /** Keys readable without auth (shown on public pages). */
 const PUBLIC_KEYS = new Set(["sample_videos", "homepage_config"]);
 /** Keys the admin may write. */
-const WRITABLE_KEYS = new Set(["sample_videos", "homepage_config", "sponsors"]);
+const WRITABLE_KEYS = new Set([
+  "sample_videos",
+  "homepage_config",
+  "sponsors",
+  "founder_signature",
+  "trial_ops_defaults",
+]);
 /** Per-key role restriction (SUPER_ADMIN always allowed). */
 const KEY_ROLES: Record<string, string[]> = {
   sample_videos: ["VIDEO_AI_OPERATIONS", "CONTENT_TEAM"],
@@ -33,6 +39,11 @@ const KEY_ROLES: Record<string, string[]> = {
   /* sponsors: full records (amounts, contract dates) are admin-only; the
      public site reads a sanitized list via GET /api/sponsors instead. */
   sponsors: ["CONTENT_TEAM"],
+  /* founder_signature is stamped on generated contracts; the contracts
+     section belongs to MATCH_OPERATIONS (+ SUPER_ADMIN). Never public. */
+  founder_signature: ["MATCH_OPERATIONS"],
+  /* shared last-used staff / assessor names for on-ground trial ops. */
+  trial_ops_defaults: ["TRIAL_CITY_MANAGER"],
 };
 
 /* ── ensure table exists (idempotent, runs at boot) ── */
@@ -125,6 +136,24 @@ const sponsorEntry = z.object({
 }).strict();
 const sponsorsSchema = z.array(sponsorEntry).max(100);
 
+/* Founder signature for generated contracts (ContractsView). Stored as a
+   small data-URL image so the client PDF/print flow can embed it without a
+   cross-origin fetch. Client downscales before upload; cap well under the
+   1mb express.json limit. Admin-only — never expose publicly. */
+const founderSignatureSchema = z.object({
+  image: z.string().max(400_000).refine(
+    v => v === "" || /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(v),
+    "must be a data:image/(png|jpeg|webp);base64 URL or empty",
+  ),
+}).strict();
+
+/* Shared on-ground trial defaults — last-used staff / assessor names shown
+   in TrialsOps check-in & assessment forms on every device. */
+const trialOpsDefaultsSchema = z.object({
+  staff: z.string().max(80).default(""),
+  assessor: z.string().max(80).default(""),
+}).strict();
+
 /* ── GET /api/settings/admin/:key (full value, role-gated — for non-public keys like sponsors) ── */
 router.get("/admin/:key", requireAdmin, async (req, res) => {
   const key = String(req.params.key);
@@ -175,6 +204,19 @@ router.put("/admin/:key", requireAdmin, async (req, res) => {
     }
     /* jsonb column is typed Record<string,unknown>; an array is valid jsonb. */
     value = parsed.data as unknown as Record<string, unknown>;
+  } else if (key === "founder_signature") {
+    const parsed = founderSignatureSchema.safeParse(req.body?.value);
+    if (!parsed.success) {
+      return void res.status(400).json({ error: "Invalid founder_signature value — image must be a data:image/(png|jpeg|webp);base64 URL (small, downscaled) or empty" });
+    }
+    value = parsed.data as Record<string, unknown>;
+  } else if (key === "trial_ops_defaults") {
+    const parsed = trialOpsDefaultsSchema.safeParse(req.body?.value);
+    if (!parsed.success) {
+      const first = parsed.error.issues.slice(0, 3).map(i => (i.path.join(".") || "value") + ": " + i.message).join("; ");
+      return void res.status(400).json({ error: "Invalid trial_ops_defaults value — " + first });
+    }
+    value = parsed.data as Record<string, unknown>;
   } else {
     return void res.status(400).json({ error: "Unknown setting key" });
   }
@@ -185,7 +227,11 @@ router.put("/admin/:key", requireAdmin, async (req, res) => {
     .onConflictDoUpdate({ target: siteSettingsTable.key, set: { value, updatedAt: now } });
 
   logger.info({ key }, "site setting updated by admin");
-  void writeAudit(req, { action: "settings.update", entity: "site_settings", entityKey: key, newValue: value });
+  /* Do not dump base64 image payloads into the audit log. */
+  const auditValue = key === "founder_signature"
+    ? { image: (value as { image?: string }).image ? `data-url(${String((value as { image?: string }).image).length} chars)` : "" }
+    : value;
+  void writeAudit(req, { action: "settings.update", entity: "site_settings", entityKey: key, newValue: auditValue });
   return res.json({ success: true, key, value });
 });
 

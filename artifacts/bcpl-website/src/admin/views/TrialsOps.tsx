@@ -17,6 +17,7 @@ import {
   type TrialSlotRow, type TrialAllocRow, type TrialCheckinRow, type AssessmentRow,
   type TrialsOverviewCity, type AllocationRunResult, type AssessmentConfig,
 } from "../../lib/api";
+import { fetchTrialOpsDefaults, persistTrialOpsDefaults, LEGACY_TRIAL_STAFF_KEY, LEGACY_TRIAL_ASSESSOR_KEY } from "../api/opsSettingsApi";
 
 /* ── shared styles (match admin design) ─────────────────────────── */
 const card: React.CSSProperties = {
@@ -383,7 +384,16 @@ export function AllocationsTab() {
 
 export function CheckinTab() {
   const [input, setInput] = useState("");
-  const [staff, setStaff] = useState(() => localStorage.getItem("bcpl_trial_staff") ?? "");
+  const [staff, setStaff] = useState("");
+
+  /* Staff default is server-backed (settings key trial_ops_defaults) so every
+     device shares it; legacy localStorage value is the fallback until the
+     next successful server save. */
+  useEffect(() => {
+    fetchTrialOpsDefaults()
+      .then(r => setStaff(s => s || r.value?.staff || localStorage.getItem(LEGACY_TRIAL_STAFF_KEY) || ""))
+      .catch(() => setStaff(s => s || localStorage.getItem(LEGACY_TRIAL_STAFF_KEY) || ""));
+  }, []);
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
   const [recent, setRecent] = useState<TrialCheckinRow[]>([]);
@@ -397,7 +407,7 @@ export function CheckinTab() {
     const raw = input.trim();
     if (!raw) return;
     setBusy(true); setResult(null);
-    localStorage.setItem("bcpl_trial_staff", staff);
+    void persistTrialOpsDefaults({ staff: staff.trim() });
     const isToken = /^bcpl-trial:/i.test(raw) || /^[0-9a-f]{32}$/i.test(raw);
     try {
       const r = await adminTrialCheckin(isToken ? { token: raw, staff: staff || undefined } : { regNumber: raw, staff: staff || undefined });
@@ -462,7 +472,15 @@ export function AssessTab() {
   const [picked, setPicked] = useState<TrialAllocRow | null>(null);
   const [scores, setScores] = useState<Record<string, string>>({});
   const [comments, setComments] = useState("");
-  const [assessor, setAssessor] = useState(() => localStorage.getItem("bcpl_trial_assessor") ?? "");
+  const [assessor, setAssessor] = useState("");
+
+  /* Assessor default is server-backed (shared across devices); legacy
+     localStorage value is the fallback until the next server save. */
+  useEffect(() => {
+    fetchTrialOpsDefaults()
+      .then(r => setAssessor(a => a || r.value?.assessor || localStorage.getItem(LEGACY_TRIAL_ASSESSOR_KEY) || ""))
+      .catch(() => setAssessor(a => a || localStorage.getItem(LEGACY_TRIAL_ASSESSOR_KEY) || ""));
+  }, []);
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState("");
   const [msg, setMsg] = useState("");
@@ -501,7 +519,7 @@ export function AssessTab() {
     }
     if (Object.keys(payload).length === 0) { setErr("कम से कम एक score भरें"); return; }
     setSaving(true); setErr(""); setMsg("");
-    localStorage.setItem("bcpl_trial_assessor", assessor);
+    void persistTrialOpsDefaults({ assessor: assessor.trim() });
     try {
       const r = await adminSaveAssessment({ registrationId: picked.alloc.registrationId, scores: payload, comments: comments.trim() || undefined, assessor: assessor.trim() });
       setMsg(`Saved — final physical score ${r.assessment.finalScore}/10`);

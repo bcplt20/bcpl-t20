@@ -1,4 +1,5 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { fetchFounderSignature, saveFounderSignature } from "../api/opsSettingsApi";
 
 /* ─── Company Details (from GST Registration Certificate) ──── */
 const COMPANY = {
@@ -804,9 +805,32 @@ function numberToWords(n: number): string {
 }
 
 /* ─── Contract Preview Modal ─────────────────────────────── */
-const SIG_KEY = "bcpl_founder_signature";
+const SIG_KEY = "bcpl_founder_signature"; // legacy localStorage key (pre server-backing)
 
-function ContractModal({ c, onClose }: { c: Contract; onClose: ()=>void }) {
+/* Downscale an uploaded signature image to a small PNG data URL — the server
+   caps founder_signature at ~300KB and express.json at 1mb. */
+function downscaleSignature(dataUrl: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const maxW = 600, maxH = 300;
+      const scale = Math.min(1, maxW / img.width, maxH / img.height);
+      const canvas = document.createElement("canvas");
+      canvas.width  = Math.max(1, Math.round(img.width * scale));
+      canvas.height = Math.max(1, Math.round(img.height * scale));
+      const ctx = canvas.getContext("2d");
+      if (!ctx) { reject(new Error("Canvas not supported in this browser")); return; }
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      const out = canvas.toDataURL("image/png");
+      if (out.length > 380_000) { reject(new Error("Image too complex — use a smaller / simpler signature image")); return; }
+      resolve(out);
+    };
+    img.onerror = () => reject(new Error("Could not read the image file"));
+    img.src = dataUrl;
+  });
+}
+
+function ContractModal({ c, sigImg, onClose }: { c: Contract; sigImg?: string; onClose: ()=>void }) {
   const contractText = buildContractText(c);
   const cType = c.contractType || "Player";
 
@@ -814,7 +838,7 @@ function ContractModal({ c, onClose }: { c: Contract; onClose: ()=>void }) {
     const base = `${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/`;
     const logoUrl  = base + "bcpl-logo-white.png";
     const ballUrl  = base + "bcpl-ball-transparent.png";
-    const sigUrl   = localStorage.getItem(SIG_KEY) || (base + "bcpl-signature.png");
+    const sigUrl   = sigImg || (base + "bcpl-signature.png");
     const stampUrl = base + "bcpl-stamp.png";
     const w = window.open("", "_blank");
     if (!w) return;
@@ -1003,18 +1027,59 @@ export default function ContractsView() {
   const [preview,  setPreview]  = useState<Contract|null>(null);
   const [genOpen,  setGenOpen]  = useState(false);
   const [contracts,setContracts]= useState<Contract[]>([]);
-  const [sigImg,   setSigImg]   = useState<string>(() => localStorage.getItem(SIG_KEY) || "");
+  const [sigImg,   setSigImg]   = useState<string>("");
+  const [sigBusy,  setSigBusy]  = useState(false);
+  const [sigErr,   setSigErr]   = useState("");
+  const [sigLegacy,setSigLegacy]= useState<string>("");
   const sigFileRef = useRef<HTMLInputElement>(null);
+
+  /* The signature lives on the SERVER (settings key founder_signature) so it
+     works from every device. localStorage is legacy-only: offered as a
+     one-time import when the server has no signature yet. */
+  useEffect(() => {
+    let alive = true;
+    fetchFounderSignature()
+      .then(r => {
+        if (!alive) return;
+        const serverImg = r.value?.image || "";
+        setSigImg(serverImg);
+        const legacy = localStorage.getItem(SIG_KEY) || "";
+        if (serverImg) { localStorage.removeItem(SIG_KEY); }
+        else if (legacy) { setSigLegacy(legacy); }
+      })
+      .catch(e => { if (alive) setSigErr(e instanceof Error ? e.message : "Could not load signature from server"); });
+    return () => { alive = false; };
+  }, []);
+
+  async function processAndSaveSig(rawDataUrl: string) {
+    setSigBusy(true); setSigErr("");
+    try {
+      const scaled = await downscaleSignature(rawDataUrl);
+      await saveFounderSignature({ image: scaled });
+      setSigImg(scaled);
+      localStorage.removeItem(SIG_KEY);
+      setSigLegacy("");
+    } catch (err) {
+      setSigErr(err instanceof Error ? err.message : "Could not save signature");
+    } finally { setSigBusy(false); }
+  }
+
+  async function removeSig() {
+    setSigBusy(true); setSigErr("");
+    try {
+      await saveFounderSignature({ image: "" });
+      setSigImg("");
+    } catch (err) {
+      setSigErr(err instanceof Error ? err.message : "Could not remove signature");
+    } finally { setSigBusy(false); }
+  }
 
   function handleSigUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
+    e.target.value = "";
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = () => {
-      const b64 = reader.result as string;
-      localStorage.setItem(SIG_KEY, b64);
-      setSigImg(b64);
-    };
+    reader.onload = () => { void processAndSaveSig(reader.result as string); };
     reader.readAsDataURL(file);
   }
   const [genForm,  setGenForm]  = useState({ player:"", phone:"", email:"", team:TEAMS_LIST[0], role:"Batsman", amount:"", date:"", expiry:"", contractType:"Player" });
@@ -1083,7 +1148,18 @@ export default function ContractsView() {
       <div style={{...card,padding:"18px 22px",borderLeft:"4px solid #6366F1",background:"linear-gradient(135deg,#6366F110,#0D1526)",display:"flex",alignItems:"center",gap:20,flexWrap:"wrap"}}>
         <div style={{flex:1,minWidth:200}}>
           <div style={{fontSize:12,fontWeight:800,color:"#6366F1",marginBottom:3}}>🖊 Founder Signature</div>
-          <div style={{fontSize:11,color:"#475569"}}>Upload the authorised signatory's signature — it will appear on all generated contracts.</div>
+          <div style={{fontSize:11,color:"#475569"}}>Saved on the server — appears on generated contracts from every device.</div>
+          {sigErr && <div style={{fontSize:11,color:"#EF4444",marginTop:6}}>{sigErr}</div>}
+          {sigLegacy && !sigImg && (
+            <div style={{display:"flex",alignItems:"center",gap:10,marginTop:8,flexWrap:"wrap"}}>
+              <span style={{fontSize:11,color:"#F59E0B"}}>A signature saved in this browser was found — move it to the server?</span>
+              <button disabled={sigBusy} onClick={()=>void processAndSaveSig(sigLegacy)}
+                style={{padding:"4px 10px",borderRadius:6,border:"1px solid #F59E0B60",background:"#F59E0B18",color:"#F59E0B",fontSize:11,fontWeight:700,cursor:"pointer"}}>
+                {sigBusy ? "Saving…" : "Save to server"}
+              </button>
+              <button onClick={()=>setSigLegacy("")} style={{background:"none",border:"none",color:"#475569",fontSize:11,cursor:"pointer"}}>Dismiss</button>
+            </div>
+          )}
         </div>
         <div style={{display:"flex",alignItems:"center",gap:16,flexShrink:0}}>
           {sigImg
@@ -1092,11 +1168,11 @@ export default function ContractsView() {
           }
           <input ref={sigFileRef} type="file" accept="image/*" style={{display:"none"}} onChange={handleSigUpload}/>
           <div style={{display:"flex",flexDirection:"column",gap:6}}>
-            <button onClick={()=>sigFileRef.current?.click()}
-              style={{padding:"8px 16px",borderRadius:8,border:"none",background:"linear-gradient(135deg,#6366F1,#8B5CF6)",color:"#fff",fontSize:12,cursor:"pointer",fontWeight:700}}>
-              📁 Upload Signature
+            <button disabled={sigBusy} onClick={()=>sigFileRef.current?.click()}
+              style={{padding:"8px 16px",borderRadius:8,border:"none",background:"linear-gradient(135deg,#6366F1,#8B5CF6)",color:"#fff",fontSize:12,cursor:sigBusy?"wait":"pointer",fontWeight:700,opacity:sigBusy?0.7:1}}>
+              {sigBusy ? "Saving…" : "📁 Upload Signature"}
             </button>
-            {sigImg && <button onClick={()=>{ localStorage.removeItem(SIG_KEY); setSigImg(""); }}
+            {sigImg && <button disabled={sigBusy} onClick={()=>void removeSig()}
               style={{background:"none",border:"none",color:"#EF4444",fontSize:11,cursor:"pointer",textAlign:"center"}}>
               Remove
             </button>}
@@ -1231,7 +1307,7 @@ export default function ContractsView() {
       )}
 
       {/* Contract Preview Modal */}
-      {preview && <ContractModal c={preview} onClose={()=>setPreview(null)}/>}
+      {preview && <ContractModal c={preview} sigImg={sigImg} onClose={()=>setPreview(null)}/>}
     </div>
   );
 }
