@@ -63,6 +63,7 @@ const PAGE_DEFAULTS: PageMetaDefault[] = [
   { path: "/eligibility",   label: "Eligibility",     title: "BCPL T20 Eligibility Criteria | Who Can Play", description: "Check who can register for BCPL T20 Season 5 — age, employment and documentation requirements for India's corporate cricket league." },
   { path: "/code-of-conduct", label: "Code of Conduct", title: "BCPL T20 Code of Conduct", description: "Player and team conduct rules for BCPL T20 — fair play, discipline and on-ground behaviour standards." },
   { path: "/cricket-rulebook", label: "Rulebook",     title: "BCPL T20 Cricket Rulebook | Playing Conditions", description: "Official BCPL T20 playing conditions — match format, overs, powerplay, tie-breakers and umpiring rules." },
+  { path: "/trial-rules",   label: "Physical Trial Rules", title: "Phase 2 Physical Trial Rules | BCPL T20", description: "How the BCPL physical trial works — the six-attempt rule, standardised assessment, 100-point scoring, blind evaluation, results and Auction Pool meaning." },
   { path: "/privacy",       label: "Privacy Policy",  title: "Privacy Policy | BCPL T20", description: "How BCPL T20 collects, uses and protects your personal information." },
   { path: "/refunds",       label: "Refund Policy",   title: "Refund Policy | BCPL T20", description: "BCPL T20 registration fee refund rules for Phase 1 and Phase 2." },
   { path: "/terms",         label: "Terms & Conditions", title: "Terms & Conditions | BCPL T20", description: "Terms and conditions for participating in BCPL T20 Season 5." },
