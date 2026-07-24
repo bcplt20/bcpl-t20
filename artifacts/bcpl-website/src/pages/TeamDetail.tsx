@@ -5,6 +5,7 @@ import { SiteHeader } from '../components/SiteHeader';
 import { getTeamDetail, getPointsTable, getMatches, type ApiTeam, type ApiTeamPlayer } from '../lib/api';
 import { useLang } from '../lib/i18n';
 import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
+import { IcoBat, IcoWarn, IcoUsers, IcoList } from '../lib/icons';
 
 const asset = (url: string) =>
   !url ? "" : url.startsWith("data:") || url.startsWith("http") ? url : import.meta.env.BASE_URL + url.replace(/^\//, "");
@@ -168,7 +169,7 @@ export function TeamDetail() {
         {!loading && (notFound || (!team && loadErr)) && (
           <div style={{minHeight:'50vh',display:'flex',alignItems:'center',justifyContent:'center',padding:'0 20px'}}>
             <div style={{textAlign:'center',maxWidth:420}}>
-              <div style={{fontSize:48,marginBottom:16}}>🏏</div>
+              <div style={{display:'flex',justifyContent:'center',marginBottom:16}}><IcoBat size={40} style={{color:'rgba(255,255,255,0.5)'}}/></div>
               <h1 style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:24,color:'#fff',marginBottom:10}}>
                 {notFound ? 'Team not found' : 'Could not load team'}
               </h1>
@@ -191,7 +192,7 @@ export function TeamDetail() {
                     ? <div style={{width:84,height:84,background:'rgba(255,255,255,0.96)',borderRadius:22,padding:8,display:'flex',alignItems:'center',justifyContent:'center',boxShadow:`0 12px 44px ${ACCENT}55`,border:`2px solid ${ACCENT}66`}}>
                         <img src={asset(team.logoUrl)} alt={team.name} style={{width:'92%',height:'92%',objectFit:'contain'}}/>
                       </div>
-                    : <span style={{fontSize:52}}>🏏</span>}
+                    : <IcoBat size={40} style={{color:ACCENT}}/>}
                 </div>
                 <div className="tag-pill" style={{marginBottom:16,borderColor:`${ACCENT}55`,color:ACCENT,background:`${ACCENT}18`}}>
                   SEASON 5{team.city ? ` · ${team.city.toUpperCase()}` : ''}
@@ -213,8 +214,8 @@ export function TeamDetail() {
             {/* PARTIAL DATA WARNING */}
             {sideErr && (
               <div className="wrap" style={{marginBottom:24}}>
-                <div style={{background:'rgba(245,158,11,0.09)',border:'1px solid rgba(245,158,11,0.35)',borderRadius:12,padding:'13px 18px',color:'#F59E0B',fontFamily:'Inter,sans-serif',fontSize:13,textAlign:'center'}}>
-                  ⚠️ {sideErr}
+                <div style={{background:'rgba(245,158,11,0.09)',border:'1px solid rgba(245,158,11,0.35)',borderRadius:12,padding:'13px 18px',color:'#F59E0B',fontFamily:'Inter,sans-serif',fontSize:13,textAlign:'center',display:'inline-flex',alignItems:'center',gap:8,justifyContent:'center',width:'100%'}}>
+                  <IcoWarn size={16} style={{color:'#F59E0B'}}/> {sideErr}
                 </div>
               </div>
             )}
@@ -240,12 +241,12 @@ export function TeamDetail() {
                 players.length === 0
                   ? (
                     <div style={{background:'linear-gradient(135deg,rgba(15,34,71,0.92),rgba(10,22,46,0.88))',backdropFilter:'blur(24px)',border:`1px solid ${ACCENT}30`,borderRadius:20,padding:'clamp(36px,6vw,64px) 24px',textAlign:'center'}}>
-                      <div style={{fontSize:46,marginBottom:16}}>👥</div>
+                      <div style={{display:'flex',justifyContent:'center',marginBottom:16}}><IcoUsers size={38} style={{color:ACCENT}}/></div>
                       <h2 style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:'clamp(18px,3vw,26px)',color:'#fff',marginBottom:10}}>SQUAD ANNOUNCED AFTER THE AUCTION</h2>
                       <p style={{color:'rgba(255,255,255,0.5)',fontSize:14,lineHeight:1.7,maxWidth:440,margin:'0 auto 24px',fontFamily:'Inter,sans-serif'}}>
                         The {team.name} squad will be finalised at the BCPL Season 5 players' auction in August 2026. Register now for your chance to be picked.
                       </p>
-                      <Link href="/register" className="btn-fire" style={{padding:'13px 28px',fontSize:14,borderRadius:12,textDecoration:'none',display:'inline-block'}}>🏏 Register for Phase 1 →</Link>
+                      <Link href="/register" className="btn-fire" style={{padding:'13px 28px',fontSize:14,borderRadius:12,textDecoration:'none',display:'inline-flex',alignItems:'center',gap:8}}><IcoBat size={15} style={{color:'currentColor'}}/> Register for Phase 1 →</Link>
                     </div>
                   )
                   : (
@@ -284,7 +285,7 @@ export function TeamDetail() {
                 results.length === 0
                   ? (
                     <div style={{background:'linear-gradient(135deg,rgba(15,34,71,0.92),rgba(10,22,46,0.88))',backdropFilter:'blur(24px)',border:`1px solid ${ACCENT}30`,borderRadius:20,padding:'clamp(36px,6vw,64px) 24px',textAlign:'center'}}>
-                      <div style={{fontSize:46,marginBottom:16}}>📋</div>
+                      <div style={{display:'flex',justifyContent:'center',marginBottom:16}}><IcoList size={38} style={{color:ACCENT}}/></div>
                       <h2 style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:'clamp(18px,3vw,26px)',color:'#fff',marginBottom:10}}>NO MATCHES PLAYED YET</h2>
                       <p style={{color:'rgba(255,255,255,0.5)',fontSize:14,lineHeight:1.7,maxWidth:440,margin:'0 auto',fontFamily:'Inter,sans-serif'}}>
                         The Season 5 tournament begins in September 2026. Match results will appear here once the league is underway.
@@ -341,7 +342,7 @@ export function TeamDetail() {
             <section style={{padding:'0 0 80px'}}>
               <div className="wrap">
                 <div style={{background:`linear-gradient(135deg,${ACCENT}14,rgba(255,122,41,0.06),rgba(15,34,71,0.92))`,backdropFilter:'blur(32px)',border:`1px solid ${ACCENT}30`,borderRadius:24,padding:'clamp(28px,4vw,48px) clamp(20px,3vw,32px)',textAlign:'center'}}>
-                  <div className="tag-pill" style={{marginBottom:16,borderColor:`${ACCENT}55`,color:ACCENT,background:`${ACCENT}18`}}>🏏 SEASON 5 TRIALS OPEN</div>
+                  <div className="tag-pill" style={{marginBottom:16,borderColor:`${ACCENT}55`,color:ACCENT,background:`${ACCENT}18`,display:'inline-flex',alignItems:'center',gap:6}}><IcoBat size={14} style={{color:ACCENT}}/> SEASON 5 TRIALS OPEN</div>
                   <h2 style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:'clamp(18px,4vw,34px)',color:'#fff',marginBottom:12}}>
                     WANT TO PLAY FOR {team.name.toUpperCase()}?
                   </h2>
@@ -349,7 +350,7 @@ export function TeamDetail() {
                     Register today and get your shot at representing {team.city || 'your city'} on the BCPL stage. All roles open — Bat, Bowl, WK, All-Rounder.
                   </p>
                   <div className="cta-buttons" style={{display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap'}}>
-                    <Link href="/register" className="btn-fire" style={{padding:'16px 32px',fontSize:15,borderRadius:14,textDecoration:'none',display:'inline-flex',alignItems:'center',gap:8}}>🏏 Register for Phase 1 →</Link>
+                    <Link href="/register" className="btn-fire" style={{padding:'16px 32px',fontSize:15,borderRadius:14,textDecoration:'none',display:'inline-flex',alignItems:'center',gap:8}}><IcoBat size={16} style={{color:'currentColor'}}/> Register for Phase 1 →</Link>
                     <Link href="/teams" style={{padding:'16px 24px',fontSize:15,borderRadius:14,background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.15)',color:'rgba(255,255,255,0.8)',fontFamily:'var(--font-head)',fontWeight:700,textDecoration:'none',display:'inline-flex',alignItems:'center'}}>← All Teams</Link>
                   </div>
                 </div>
@@ -364,7 +365,7 @@ export function TeamDetail() {
       </div>
       {/* ── FLOATING REGISTER BUTTON ── */}
       <Link href="/register" className="float-reg-btn float-reg-pulse" style={{textDecoration:"none"}}>
-        {t("🏏 REGISTER NOW →", "🏏 अभी रजिस्टर करें →")}
+        {t("REGISTER NOW →", "अभी रजिस्टर करें →")}
       </Link>
     </div>
   );

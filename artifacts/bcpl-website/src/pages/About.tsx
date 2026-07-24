@@ -4,6 +4,9 @@ import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { useLang } from '../lib/i18n';
 import { StickyRegisterCTA } from "../components/StickyRegisterCTA";
+import { IcoBulb, IcoBat, IcoStadium, IcoRupee, IcoCheck } from '../lib/icons';
+
+type IcoComp = (p: { size?: number; style?: React.CSSProperties }) => React.ReactElement;
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
@@ -85,10 +88,10 @@ const timeline = [
   {year:'2026–27',textEn:'Season 5 — Registrations open now. 50+ trial cities across India. 10 franchise teams. ₹15 Crore+ prize pool. India\'s corporate cricket league for working professionals awaits you.',textHi:'Season 5 — Registrations अब खुले हैं। पूरे भारत में 50+ trial cities। 10 franchise teams। ₹15 करोड़+ prize pool। Working professionals के लिए भारत की corporate cricket league आपका इंतज़ार कर रही है।'},
 ];
 
-const diffs = [
-  {icon:'🏏',titleEn:'vs Local Cricket',titleHi:'vs Local Cricket',bodyEn:'No politics. No favoritism. Pure merit through criteria-based video assessment. Every applicant gets a fair, anonymous evaluation.',bodyHi:'कोई पक्षपात नहीं। Pure merit through criteria-based video assessment। हर applicant को fair, anonymous evaluation मिलती है।'},
-  {icon:'🏟️',titleEn:'vs Amateur Leagues',titleHi:'vs Amateur Leagues',bodyEn:'Professional grounds. Franchise system. Real auctions. This is as close to IPL as corporate cricket gets.',bodyHi:'Professional grounds। Franchise system। Real auctions। Corporate cricket में IPL के सबसे करीब।'},
-  {icon:'💰',titleEn:'vs Doing Nothing',titleHi:'vs कुछ न करना',bodyEn:'₹299 gets you in. No other league offers this entry point for a shot at professional-grade cricket.',bodyHi:'₹299 में entry। कोई दूसरी league इतने कम में professional-grade cricket का मौका नहीं देती।'},
+const diffs: {icon:IcoComp;titleEn:string;titleHi:string;bodyEn:string;bodyHi:string}[] = [
+  {icon:IcoBat,titleEn:'vs Local Cricket',titleHi:'vs Local Cricket',bodyEn:'No politics. No favoritism. Pure merit through criteria-based video assessment. Every applicant gets a fair, anonymous evaluation.',bodyHi:'कोई पक्षपात नहीं। Pure merit through criteria-based video assessment। हर applicant को fair, anonymous evaluation मिलती है।'},
+  {icon:IcoStadium,titleEn:'vs Amateur Leagues',titleHi:'vs Amateur Leagues',bodyEn:'Professional grounds. Franchise system. Real auctions. This is as close to IPL as corporate cricket gets.',bodyHi:'Professional grounds। Franchise system। Real auctions। Corporate cricket में IPL के सबसे करीब।'},
+  {icon:IcoRupee,titleEn:'vs Doing Nothing',titleHi:'vs कुछ न करना',bodyEn:'₹299 gets you in. No other league offers this entry point for a shot at professional-grade cricket.',bodyHi:'₹299 में entry। कोई दूसरी league इतने कम में professional-grade cricket का मौका नहीं देती।'},
 ];
 
 
@@ -133,7 +136,7 @@ export function About() {
       <section style={{position:'relative',zIndex:1,padding:'0 0 80px'}}>
         <div className="wrap">
           <div className="glass-card" style={{padding:'clamp(20px,5vw,40px) clamp(16px,4vw,48px)',borderLeft:'3px solid #E8B23D',maxWidth:860,margin:'0 auto',animation:'fadeSlide 0.8s ease 0.4s both'}}>
-            <div style={{fontSize:32,marginBottom:16}}>💡</div>
+            <div style={{marginBottom:16,color:'#E8B23D',display:'flex'}}><IcoBulb size={32}/></div>
             <p style={{color:'rgba(255,255,255,0.88)',fontSize:'clamp(17px,2.2vw,21px)',lineHeight:1.75,fontStyle:'italic'}}>
               {t("Every working professional who watched IPL and thought 'I could have played' deserves a real shot. Millions stopped competitive cricket when work took over. BCPL exists to give them the stage they never got.","हर working professional जो IPL देखते हुए सोचता है 'मैं भी खेल सकता था' — उसे एक असली मौका मिलना चाहिए। लाखों लोगों ने काम की वजह से competitive cricket छोड़ दी। BCPL उन्हें वो stage देने के लिए है जो उन्हें कभी नहीं मिला।")}
             </p>
@@ -190,7 +193,7 @@ export function About() {
           <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(260px,1fr))',gap:24}}>
             {diffs.map((d,i)=>(
               <div key={i} className="glass-card" style={{padding:'36px 28px',borderTop:'3px solid #FF7A29',transition:'transform 0.2s',animation:`fadeSlide 0.7s ease ${i*0.15}s both`}}>
-                <div style={{fontSize:36,marginBottom:16}}>{d.icon}</div>
+                <div style={{marginBottom:16,color:'#FF7A29',display:'flex'}}><d.icon size={36}/></div>
                 <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:17,color:'#FF7A29',marginBottom:12}}>{t(d.titleEn,d.titleHi)}</div>
                 <p style={{color:'rgba(255,255,255,0.7)',fontSize:14,lineHeight:1.7}}>{t(d.bodyEn,d.bodyHi)}</p>
               </div>
@@ -281,8 +284,8 @@ export function About() {
               </div>
             </div>
             <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))',gap:16,marginBottom:24}}>
-              {['✅ Structured Assessment Process','✅ Professional Grounds','✅ Transparent Fee Structure','✅ Transparent Selection Process'].map((f,i)=>(
-                <div key={i} style={{color:'rgba(255,255,255,0.75)',fontSize:14,fontFamily:'Inter,sans-serif'}}>{f}</div>
+              {['Structured Assessment Process','Professional Grounds','Transparent Fee Structure','Transparent Selection Process'].map((f,i)=>(
+                <div key={i} style={{color:'rgba(255,255,255,0.75)',fontSize:14,fontFamily:'Inter,sans-serif',display:'flex',alignItems:'center',gap:8}}><span style={{color:'#22C55E',display:'inline-flex',flexShrink:0}}><IcoCheck size={16}/></span>{f}</div>
               ))}
             </div>
             <p style={{color:'rgba(255,255,255,0.55)',fontSize:14,fontFamily:'Inter,sans-serif',fontStyle:'italic'}}>Transparent process. Every player treated fairly.</p>
@@ -302,7 +305,7 @@ export function About() {
       </section>
 
       {/* ── FLOATING REGISTER BUTTON ── */}
-      <Link className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>🏏 {t("REGISTER NOW","अभी REGISTER करें")} &rarr;</Link>
+      <Link className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>{t("REGISTER NOW","अभी REGISTER करें")} &rarr;</Link>
       <BCPLFooter />
       <StickyRegisterCTA/>
     </div>

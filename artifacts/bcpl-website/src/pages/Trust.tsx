@@ -5,6 +5,7 @@ import { SiteHeader } from '../components/SiteHeader';
 import { useLang } from '../lib/i18n';
 import { LegalDocHeader } from '../lib/legalMeta';
 import { StickyRegisterCTA } from "../components/StickyRegisterCTA";
+import { IcoChat, IcoMail, IcoPhone } from '../lib/icons';
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
@@ -432,25 +433,25 @@ export function Trust() {
       <section className="trust-section" style={{position:'relative',zIndex:1}}>
         <div className="wrap" style={{maxWidth:900}}>
           <div className="glass-card" style={{padding:'clamp(28px,5vw,48px)',border:'1px solid rgba(6,182,212,0.15)',animation:'fadeSlide 0.7s ease 0.7s both',textAlign:'center'}}>
-            <div style={{fontSize:44,marginBottom:16}}>💬</div>
+            <div style={{marginBottom:16,color:'#06B6D4',display:'flex',justifyContent:'center'}}><IcoChat size={40}/></div>
             <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:12}}>{t("Questions or Concerns?","सवाल या चिंता?")}</h2>
             <p style={{color:'rgba(255,255,255,0.6)',fontSize:15,lineHeight:1.7,maxWidth:560,margin:'0 auto 28px'}}>
               {t("If you have questions about your evaluation, score, rank, or the selection process — our support team is here to help. We respond within 24 hours.","अगर आपके पास अपने evaluation, score, rank, या selection process के बारे में सवाल हैं — हमारी support team मदद के लिए यहां है। हम 24 घंटे के भीतर जवाब देते हैं।")}
             </p>
             <div style={{display:'flex',flexWrap:'wrap',gap:14,justifyContent:'center',marginBottom:24}}>
               <a href="https://wa.me/919151346555" target="_blank" rel="noopener noreferrer" style={{textDecoration:'none'}}>
-                <button className="btn-wa" style={{padding:'14px 28px',fontSize:15}}>
-                  💬 {t("WhatsApp Support","WhatsApp Support")}
+                <button className="btn-wa" style={{padding:'14px 28px',fontSize:15,display:'inline-flex',alignItems:'center',gap:8}}>
+                  <IcoChat size={16}/> {t("WhatsApp Support","WhatsApp Support")}
                 </button>
               </a>
               <a href="mailto:support@bcplt20.com" style={{textDecoration:'none'}}>
-                <button style={{padding:'14px 28px',fontSize:15,borderRadius:14,background:'rgba(6,182,212,0.15)',border:'1.5px solid rgba(6,182,212,0.4)',color:'#06B6D4',fontFamily:'Montserrat,sans-serif',fontWeight:700,cursor:'pointer'}}>
-                  📧 {t("Email Support","Email Support")}
+                <button style={{padding:'14px 28px',fontSize:15,borderRadius:14,background:'rgba(6,182,212,0.15)',border:'1.5px solid rgba(6,182,212,0.4)',color:'#06B6D4',fontFamily:'Montserrat,sans-serif',fontWeight:700,cursor:'pointer',display:'inline-flex',alignItems:'center',gap:8}}>
+                  <IcoMail size={16}/> {t("Email Support","Email Support")}
                 </button>
               </a>
               <a href="tel:+919151346555" style={{textDecoration:'none'}}>
-                <button style={{padding:'14px 28px',fontSize:15,borderRadius:14,background:'rgba(139,92,246,0.15)',border:'1.5px solid rgba(139,92,246,0.4)',color:'#8B5CF6',fontFamily:'Montserrat,sans-serif',fontWeight:700,cursor:'pointer'}}>
-                  📞 {t("Call Us","Call करें")}
+                <button style={{padding:'14px 28px',fontSize:15,borderRadius:14,background:'rgba(139,92,246,0.15)',border:'1.5px solid rgba(139,92,246,0.4)',color:'#8B5CF6',fontFamily:'Montserrat,sans-serif',fontWeight:700,cursor:'pointer',display:'inline-flex',alignItems:'center',gap:8}}>
+                  <IcoPhone size={16}/> {t("Call Us","Call करें")}
                 </button>
               </a>
             </div>
@@ -472,7 +473,7 @@ export function Trust() {
         </div>
       </section>
 
-      <Link className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>🏏 {t("REGISTER NOW","अभी REGISTER करें")} &rarr;</Link>
+      <Link className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>{t("REGISTER NOW","अभी REGISTER करें")} &rarr;</Link>
       <BCPLFooter />
       <StickyRegisterCTA/>
     </div>

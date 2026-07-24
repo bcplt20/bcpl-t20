@@ -8,6 +8,7 @@ import {
   type SampleVideos, type SampleVideoEntry, type SampleVideoRole,
 } from '../lib/api';
 import { useLang } from '@/lib/i18n';
+import { IcoClock, IcoWarn } from '../lib/icons';
 
 // ── Role metadata ────────────────────────────────────────────────────────────
 const ROLE_META: Record<string, { label: string; color: string; req: string; tips: string[] }> = {
@@ -613,14 +614,14 @@ export function Phase1VideoUpload() {
                 {/* File error */}
                 {fileErr && (
                   <div style={{ marginTop:16, background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.3)', borderRadius:'var(--r)', padding:'14px 18px', fontSize:14, color:'var(--red)', fontWeight:600 }}>
-                    ⚠ {fileErr}
+                    <IcoWarn size={12} style={{ verticalAlign: '-2px', marginRight: 4 }} /> {fileErr}
                   </div>
                 )}
 
                 {/* Upload error */}
                 {errMsg && (
                   <div style={{ marginTop:16, background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.3)', borderRadius:'var(--r)', padding:'14px 18px', fontSize:14, color:'var(--red)', fontWeight:600 }}>
-                    ⚠ {errMsg}
+                    <IcoWarn size={12} style={{ verticalAlign: '-2px', marginRight: 4 }} /> {errMsg}
                   </div>
                 )}
 
@@ -642,8 +643,8 @@ export function Phase1VideoUpload() {
                       </button>
                     </div>
                     {videoDuration != null && (
-                      <div style={{ fontSize:12, color:'var(--ink-3)', fontWeight:600, marginBottom:12 }}>
-                        ⏱ {t('Detected length: ' + videoDuration + 's', 'वीडियो लंबाई: ' + videoDuration + ' सेकंड')}
+                      <div style={{ fontSize:12, color:'var(--ink-3)', fontWeight:600, marginBottom:12, display:'inline-flex', alignItems:'center', gap:6 }}>
+                        <IcoClock size={14} /> {t('Detected length: ' + videoDuration + 's', 'वीडियो लंबाई: ' + videoDuration + ' सेकंड')}
                       </div>
                     )}
                     <label style={{ display:'flex', alignItems:'flex-start', gap:10, background:'rgba(255,255,255,0.03)', border:'1px solid var(--line)', borderRadius:'var(--r)', padding:'12px 14px', marginBottom:14, cursor:'pointer' }}>

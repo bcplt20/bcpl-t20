@@ -5,6 +5,7 @@ import { SiteHeader } from '../components/SiteHeader';
 import { useLang } from '../lib/i18n';
 import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
 import { SponsorWall } from '../components/SponsorWall';
+import { IcoUsers, IcoCheck } from '../lib/icons';
 
 
 // Sponsor data will be added once partnerships are confirmed
@@ -127,7 +128,7 @@ export function Sponsors() {
             <div style={{display:'grid',gridTemplateColumns:'1fr',gap:20}}>
               {SPONSOR_TIERS.map((tier,i)=>(
                 <div key={tier.labelEn} style={{background:'linear-gradient(135deg,rgba(15,34,71,0.92),rgba(10,22,46,0.88))',backdropFilter:'blur(24px)',border:`1.5px dashed ${tier.color}55`,borderRadius:20,padding:'28px 24px',display:'flex',alignItems:'center',gap:20,flexWrap:'wrap'}}>
-                  <div style={{width:60,height:60,borderRadius:'50%',background:`${tier.color}15`,border:`2px dashed ${tier.color}44`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:26,flexShrink:0}}>🤝</div>
+                  <div style={{width:60,height:60,borderRadius:'50%',background:`${tier.color}15`,border:`2px dashed ${tier.color}44`,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}><IcoUsers size={26} style={{color:tier.color}}/></div>
                   <div style={{flex:1,minWidth:200}}>
                     <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:8,flexWrap:'wrap'}}>
                       <span style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:14,color:tier.color,letterSpacing:'0.1em'}}>{t(tier.labelEn,tier.labelHi)}</span>
@@ -171,7 +172,7 @@ export function Sponsors() {
               {/* CONTACT FORM */}
               {sent?(
                 <div style={{textAlign:'center',padding:'40px 20px'}}>
-                  <div style={{fontSize:48,marginBottom:16}}>✅</div>
+                  <div style={{display:'flex',justifyContent:'center',marginBottom:16}}><IcoCheck size={40} style={{color:'#22C55E'}}/></div>
                   <h3 style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:22,color:'#22C55E',marginBottom:8}}>{t("Enquiry Sent!","Enquiry भेज दी गई!")}</h3>
                   <p style={{color:'rgba(255,255,255,0.55)',fontFamily:'Inter,sans-serif'}}>{t("Our partnerships team will reach out to you within 48 hours.","हमारी partnerships team 48 hours के अंदर आपसे contact करेगी।")}</p>
                 </div>
@@ -196,8 +197,8 @@ export function Sponsors() {
                     <textarea className="inp" placeholder={t("Tell us about your sponsorship interest, budget, and preferred tier...","हमें अपनी sponsorship interest, budget और preferred tier के बारे में बताएं...")} value={message} onChange={e=>setMessage(e.target.value)} style={{minHeight:110,resize:'vertical',lineHeight:1.6}}/>
                   </div>
                   <div style={{textAlign:'center'}}>
-                    <button className="btn-fire" onClick={()=>{if(name&&email)setSent(true);}} style={{padding:'16px 48px',fontSize:15,borderRadius:14}}>
-                      {t("🤝 Send Enquiry →","🤝 Enquiry भेजें →")}
+                    <button className="btn-fire" onClick={()=>{if(name&&email)setSent(true);}} style={{padding:'16px 48px',fontSize:15,borderRadius:14,display:'inline-flex',alignItems:'center',gap:8}}>
+                      <IcoUsers size={16} style={{color:'currentColor'}}/> {t("Send Enquiry →","Enquiry भेजें →")}
                     </button>
                   </div>
                 </div>
@@ -211,7 +212,7 @@ export function Sponsors() {
         <BCPLFooter />
       </div>
       {/* ── FLOATING REGISTER BUTTON ── */}
-      <Link className="float-reg-btn float-reg-pulse" href="/register" style={{textDecoration:"none"}}>{t("🏏 REGISTER NOW →","🏏 अभी REGISTER करें →")}</Link>
+      <Link className="float-reg-btn float-reg-pulse" href="/register" style={{textDecoration:"none"}}>{t("REGISTER NOW →","अभी REGISTER करें →")}</Link>
     </div>
   );
 }

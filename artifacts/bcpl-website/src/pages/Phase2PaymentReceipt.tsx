@@ -4,6 +4,7 @@ import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { verifyPhase2Payment, getRegistrationStatus, getMe } from '../lib/api';
 import { useLang } from '../lib/i18n';
+import { IcoWarn, IcoCheck, IcoList, IcoIdCard, IcoCalendar, IcoChat } from '../lib/icons';
 
 export function Phase2PaymentReceipt() {
   const [state, setState] = useState<'verifying' | 'success' | 'error'>('verifying');
@@ -51,7 +52,7 @@ export function Phase2PaymentReceipt() {
 
   if (state === 'error') return (
     <div style={{ background:'var(--bg)', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:16, padding:24, fontFamily:'var(--font-body)', textAlign:'center' }}>
-      <div style={{ fontSize:56 }}>⚠️</div>
+      <div style={{ color:'var(--red)' }}><IcoWarn size={40} /></div>
       <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:32, color:'var(--red)', textTransform:'uppercase' }}>{t("Verification Issue", "वेरिफिकेशन समस्या")}</div>
       <div style={{ fontSize:15, color:'#64748B', maxWidth:400, lineHeight:1.6 }}>{errMsg || t('Could not verify payment. If you paid, your slot is still confirmed. Please contact support.', 'पेमेंट वेरिफाई नहीं हो सका। यदि आपने पेमेंट कर दिया है, तो आपकी जगह पक्की है।')}</div>
       <Link href="/register/phase2/kyc" className="btn-cta" style={{ marginTop:16 }}>{t("Try KYC Anyway →", "फिर भी KYC का प्रयास करें →")}</Link>
@@ -118,8 +119,8 @@ export function Phase2PaymentReceipt() {
           <div style={{ padding: '32px 32px 24px', background: 'var(--panel)' }}>
             {[
               [t('Player', 'प्लेयर'), playerName],
-              [t('Role', 'रोल'), '🏏 ' + role],
-              [t('Trial City', 'ट्रायल शहर'), '📍 ' + city],
+              [t('Role', 'रोल'), role],
+              [t('Trial City', 'ट्रायल शहर'), city],
               [t('Registration No.', 'रजिस्ट्रेशन नं.'), regId.slice(0,8).toUpperCase()],
               [t('Payment Date', 'पेमेंट की तारीख'), paidAt],
             ].map(([k,v]) => (
@@ -144,14 +145,14 @@ export function Phase2PaymentReceipt() {
             ))}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0 0', marginTop: 12, borderTop: '1px solid rgba(232,178,61,0.3)' }}>
               <span style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 16, color: 'var(--gold)', letterSpacing: '.06em', textTransform: 'uppercase' }}>{t("TOTAL PAID", "कुल भुगतान")}</span>
-              <span style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 24, color: 'var(--green)' }}>₹{amount.toLocaleString('en-IN')} ✅</span>
+              <span style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 24, color: 'var(--green)', display: 'inline-flex', alignItems: 'center', gap: 6 }}>₹{amount.toLocaleString('en-IN')} <IcoCheck size={20} /></span>
             </div>
           </div>
 
           <div className="ticket-dash" />
 
           <div style={{ background: 'var(--panel)', padding: '24px 32px', display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap' }}>
-            <span style={{ fontSize: 32 }}>📋</span>
+            <span style={{ color: 'var(--gold)' }}><IcoList size={32} /></span>
             <div style={{ flex: 1, minWidth: 200 }}>
               <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 14, color: 'var(--gold)', letterSpacing: '.1em', textTransform: 'uppercase' }}>{t("NEXT STEP", "अगला कदम")}</div>
               <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)', marginTop: 4 }}>{t("Complete KYC verification — Aadhaar + PAN required", "KYC पूरा करें — आधार और पैन जरूरी")}</div>
@@ -165,12 +166,12 @@ export function Phase2PaymentReceipt() {
           <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 13, letterSpacing: '.18em', color: 'rgba(255,255,255,0.4)', marginBottom: 20, textTransform: 'uppercase' }}>{t("Next Steps", "अगले कदम")}</div>
           <div className="next-grid">
             {[
-              { icon:'🪪', title: t('Complete KYC', 'KYC पूरा करें'), desc: t('Aadhaar + PAN required for compliance and franchise records.', 'Compliance और फ्रैंचाइज़ी रिकॉर्ड के लिए आधार + पैन आवश्यक।'), cta: t('COMPLETE KYC →', 'KYC पूरा करें →'), ctaColor: 'var(--orange)', topColor: 'var(--orange)', href: '/register/phase2/kyc' },
-              { icon:'📅', title: t('Trial Date Announcement', 'ट्रायल की तारीख'), desc: t('SMS + Email notification 30 days before your trial date. Check your phone.', 'ट्रायल से 30 दिन पहले SMS + ईमेल से सूचना।'), cta: null, ctaColor: '', topColor: 'var(--gold)', href: null },
-              { icon:'💬', title: t('Stay Updated', 'अपडेट रहें'), desc: t('Keep your email and phone number active. All updates go there directly.', 'अपना ईमेल और फोन चालू रखें। सभी अपडेट वहीं मिलेंगे।'), cta: null, ctaColor: '', topColor: 'var(--green)', href: null },
-            ].map(({ icon, title, desc, cta, ctaColor, topColor, href }) => (
+              { icon: IcoIdCard, title: t('Complete KYC', 'KYC पूरा करें'), desc: t('Aadhaar + PAN required for compliance and franchise records.', 'Compliance और फ्रैंचाइज़ी रिकॉर्ड के लिए आधार + पैन आवश्यक।'), cta: t('COMPLETE KYC →', 'KYC पूरा करें →'), ctaColor: 'var(--orange)', topColor: 'var(--orange)', href: '/register/phase2/kyc' },
+              { icon: IcoCalendar, title: t('Trial Date Announcement', 'ट्रायल की तारीख'), desc: t('SMS + Email notification 30 days before your trial date. Check your phone.', 'ट्रायल से 30 दिन पहले SMS + ईमेल से सूचना।'), cta: null, ctaColor: '', topColor: 'var(--gold)', href: null },
+              { icon: IcoChat, title: t('Stay Updated', 'अपडेट रहें'), desc: t('Keep your email and phone number active. All updates go there directly.', 'अपना ईमेल और फोन चालू रखें। सभी अपडेट वहीं मिलेंगे।'), cta: null, ctaColor: '', topColor: 'var(--green)', href: null },
+            ].map(({ icon: Icon, title, desc, cta, ctaColor, topColor, href }) => (
               <div key={title} className="next-card" style={{ borderTopColor: topColor }}>
-                <div style={{ fontSize: 32, marginBottom: 16 }}>{icon}</div>
+                <div style={{ color: topColor, marginBottom: 16 }}><Icon size={32} /></div>
                 <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 20, color: '#fff', marginBottom: 8, textTransform: 'uppercase' }}>{title}</div>
                 <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6, marginBottom: cta ? 20 : 0 }}>{desc}</div>
                 {cta && href && (

@@ -5,6 +5,7 @@ import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { getTeams, getTeamDetail, type ApiTeam, type ApiTeamPlayer } from '../lib/api';
 import { useLang } from '../lib/i18n';
+import { IcoBat } from '../lib/icons';
 
 const asset = (url: string) =>
   !url ? "" : url.startsWith("data:") || url.startsWith("http") ? url : import.meta.env.BASE_URL + url.replace(/^\//, "");
@@ -184,7 +185,7 @@ export function Players() {
         {/* EMPTY STATE — squads not announced yet */}
         {squadEmpty && (
           <div style={{ textAlign: "center", padding: "clamp(60px,10vw,100px) 20px" }}>
-            <div style={{ fontSize: 64, marginBottom: 20 }}>🏏</div>
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}><IcoBat size={40} style={{ color: "rgba(255,255,255,0.5)" }} /></div>
             <h2 style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: "clamp(22px,4vw,36px)", color: "#fff", marginBottom: 12 }}>
               {t("Squads Announced After Auction", "Auction के बाद squad announce होंगे")}
             </h2>
@@ -192,7 +193,7 @@ export function Players() {
               {t("Season 5 squad rosters will be announced after the players' auction in August 2026. All registered players will appear here once teams are finalised.", "Season 5 की squad lists players' auction के बाद (Aug 2026) announce होंगी। सभी registered players यहाँ दिखेंगे जब teams finalize होंगी।")}
             </p>
             <Link href="/register" className="float-reg-btn" style={{ position: "static", animation: "none", display: "inline-flex", boxShadow: "0 6px 24px rgba(255,122,41,0.35)" }}>
-              {t("🏏 Register for Season 5 →", "🏏 Season 5 के लिए रजिस्टर करें →")}
+              {t("Register for Season 5 →", "Season 5 के लिए रजिस्टर करें →")}
             </Link>
           </div>
         )}
@@ -256,7 +257,7 @@ export function Players() {
 
       {/* Floating register button */}
       <Link href="/register" className="float-reg-btn float-reg-pulse">
-        {t("🏏 REGISTER NOW →", "🏏 अभी रजिस्टर करें →")}
+        {t("REGISTER NOW →", "अभी रजिस्टर करें →")}
       </Link>
     </div>
   );

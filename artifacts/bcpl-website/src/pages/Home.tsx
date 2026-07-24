@@ -6,6 +6,7 @@ import { BCPLFooter } from "../components/BCPLFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { useLang } from "../lib/i18n";
 import { FlipCountdown } from "../components/FlipCountdown";
+import { IcoCheck, IcoShield, IcoClock, IcoLock, IcoList, IcoTrophy, IcoPin, IcoBat, IcoBall, IcoStar, IcoFlag, IcoStadium } from "../lib/icons";
 
 const PHASE1_DEADLINE = "2027-02-28T23:59:59+05:30";
 
@@ -589,13 +590,13 @@ export function Home() {
           {/* Guarantees — single home for trust chips */}
           <div style={{ display:"flex", flexWrap:"wrap", gap:10, marginBottom:26 }}>
             {[
-              { icon:"✅", en:"Transparent Fee Structure",           hi:"पारदर्शी Fee Structure" },
-              { icon:"🛡", en:"Phase 2 only if selected",           hi:"Phase 2 सिर्फ select होने पर" },
-              { icon:"⏱", en:"Result within 48 hours",             hi:"48 घंटे में result" },
-              { icon:"🔒", en:"Secure payment via Cashfree",        hi:"Cashfree से सुरक्षित payment" },
+              { icon:IcoCheck,  en:"Transparent Fee Structure",           hi:"पारदर्शी Fee Structure" },
+              { icon:IcoShield, en:"Phase 2 only if selected",           hi:"Phase 2 सिर्फ select होने पर" },
+              { icon:IcoClock,  en:"Result within 48 hours",             hi:"48 घंटे में result" },
+              { icon:IcoLock,   en:"Secure payment via Cashfree",        hi:"Cashfree से सुरक्षित payment" },
             ].map(g=>(
               <div key={g.en} style={{ display:"flex", alignItems:"center", gap:7, background:"rgba(34,197,94,.07)", border:"1px solid rgba(34,197,94,.22)", borderRadius:10, padding:"7px 13px" }}>
-                <span style={{ fontSize:13 }}>{g.icon}</span>
+                <g.icon size={15} style={{ color:"#4ADE80" }} />
                 <span className="mont" style={{ fontWeight:700, fontSize:11, color:"#4ADE80" }}>{t(g.en,g.hi)}</span>
               </div>
             ))}
@@ -604,7 +605,7 @@ export function Home() {
           <div className="price-grid">
             <div className="card" style={{ padding:24, borderTop:"3px solid #FF7A29" }}>
               <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:20 }}>
-                <div style={{ width:40, height:40, borderRadius:10, background:"rgba(255,122,41,.12)", border:"1px solid rgba(255,122,41,.3)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:20 }}>📋</div>
+                <div style={{ width:40, height:40, borderRadius:10, background:"rgba(255,122,41,.12)", border:"1px solid rgba(255,122,41,.3)", display:"flex", alignItems:"center", justifyContent:"center" }}><IcoList size={20} style={{ color:"#FF7A29" }} /></div>
                 <div>
                   <div className="mont" style={{ fontWeight:900, fontSize:16, color:"#FF7A29" }}>Phase 1</div>
                   <div style={{ fontSize:12, color:"rgba(255,255,255,.4)" }}>{t("Online — pay now to register","Online — रजिस्टर के लिए अभी payment")}</div>
@@ -613,9 +614,9 @@ export function Home() {
                   <span className="mont" style={{ fontSize:10, fontWeight:800, color:"#22C55E" }}>{t("OPEN","खुला")}</span>
                 </div>
               </div>
-              {[{role:t("🏏 Batsman","🏏 बल्लेबाज़"),price:inr(fees.phase1.bat)},{role:t("🎳 Bowler","🎳 गेंदबाज़"),price:inr(fees.phase1.bowl)},{role:t("🧤 Wicket-keeper","🧤 विकेट-कीपर"),price:inr(fees.phase1.wk)},{role:t("⭐ All-Rounder","⭐ ऑल-राउंडर"),price:inr(fees.phase1.ar)}].map(r=>(
+              {[{icon:IcoBat,role:t("Batsman","बल्लेबाज़"),price:inr(fees.phase1.bat)},{icon:IcoBall,role:t("Bowler","गेंदबाज़"),price:inr(fees.phase1.bowl)},{icon:IcoShield,role:t("Wicket-keeper","विकेट-कीपर"),price:inr(fees.phase1.wk)},{icon:IcoStar,role:t("All-Rounder","ऑल-राउंडर"),price:inr(fees.phase1.ar)}].map(r=>(
                 <div key={r.role} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 0", borderBottom:"1px solid rgba(255,255,255,.06)" }}>
-                  <span style={{ fontSize:14, color:"rgba(255,255,255,.7)" }}>{r.role}</span>
+                  <span style={{ display:"inline-flex", alignItems:"center", gap:8, fontSize:14, color:"rgba(255,255,255,.7)" }}><r.icon size={16} style={{ color:"rgba(255,255,255,.5)" }} />{r.role}</span>
                   <span className="mont" style={{ fontWeight:900, fontSize:18, color:"#FF7A29" }}>{r.price}</span>
                 </div>
               ))}
@@ -624,7 +625,7 @@ export function Home() {
             </div>
             <div className="card" style={{ padding:24, borderTop:"3px solid #E8B23D" }}>
               <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:20 }}>
-                <div style={{ width:40, height:40, borderRadius:10, background:"rgba(232,178,61,.12)", border:"1px solid rgba(232,178,61,.3)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:20 }}>🏆</div>
+                <div style={{ width:40, height:40, borderRadius:10, background:"rgba(232,178,61,.12)", border:"1px solid rgba(232,178,61,.3)", display:"flex", alignItems:"center", justifyContent:"center" }}><IcoTrophy size={20} style={{ color:"#E8B23D" }} /></div>
                 <div>
                   <div className="mont" style={{ fontWeight:900, fontSize:16, color:"#E8B23D" }}>Phase 2</div>
                   <div style={{ fontSize:12, color:"rgba(255,255,255,.4)" }}>{t("Physical trial — only if selected","Physical trial — सिर्फ select होने पर")}</div>
@@ -633,9 +634,9 @@ export function Home() {
                   <span className="mont" style={{ fontSize:10, fontWeight:800, color:"rgba(255,255,255,.35)" }}>{t("IF SELECTED","SELECT होने पर")}</span>
                 </div>
               </div>
-              {[{role:t("🏏 Batsman","🏏 बल्लेबाज़"),price:inr(fees.phase2.bat)},{role:t("🎳 Bowler","🎳 गेंदबाज़"),price:inr(fees.phase2.bowl)},{role:t("🧤 Wicket-keeper","🧤 विकेट-कीपर"),price:inr(fees.phase2.wk)},{role:t("⭐ All-Rounder","⭐ ऑल-राउंडर"),price:inr(fees.phase2.ar)}].map(r=>(
+              {[{icon:IcoBat,role:t("Batsman","बल्लेबाज़"),price:inr(fees.phase2.bat)},{icon:IcoBall,role:t("Bowler","गेंदबाज़"),price:inr(fees.phase2.bowl)},{icon:IcoShield,role:t("Wicket-keeper","विकेट-कीपर"),price:inr(fees.phase2.wk)},{icon:IcoStar,role:t("All-Rounder","ऑल-राउंडर"),price:inr(fees.phase2.ar)}].map(r=>(
                 <div key={r.role} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 0", borderBottom:"1px solid rgba(255,255,255,.06)" }}>
-                  <span style={{ fontSize:14, color:"rgba(255,255,255,.7)" }}>{r.role}</span>
+                  <span style={{ display:"inline-flex", alignItems:"center", gap:8, fontSize:14, color:"rgba(255,255,255,.7)" }}><r.icon size={16} style={{ color:"rgba(255,255,255,.5)" }} />{r.role}</span>
                   <span className="mont" style={{ fontWeight:900, fontSize:18, color:"#E8B23D" }}>{r.price}</span>
                 </div>
               ))}
@@ -726,7 +727,7 @@ export function Home() {
                     </div>
                   </div>
                   <div style={{ padding:"14px 16px 16px" }}>
-                    <div className="mont" style={{ fontSize:11, fontWeight:800, letterSpacing:".08em", color:"rgba(255,255,255,.4)", textTransform:"uppercase", marginBottom:8 }}>📍 {s.city} → {s.team}</div>
+                    <div className="mont" style={{ display:"inline-flex", alignItems:"center", gap:6, fontSize:11, fontWeight:800, letterSpacing:".08em", color:"rgba(255,255,255,.4)", textTransform:"uppercase", marginBottom:8 }}><IcoPin size={14} style={{ color:"rgba(255,255,255,.4)" }} />{s.city} → {s.team}</div>
                     <p style={{ fontSize:13, color:"rgba(255,255,255,.6)", lineHeight:1.65, fontStyle:"italic" }}>"{t(s.quoteEn, s.quoteHi)}"</p>
                     {s.videoUrl && (
                       <button className="btn-ghost" style={{ fontSize:11, padding:"9px 16px", marginTop:12 }} onClick={()=>showVideo(s.videoUrl!)}>▶ {t("Watch the story","कहानी देखें")}</button>
@@ -752,7 +753,7 @@ export function Home() {
                 onError={e=>{(e.currentTarget as HTMLImageElement).src = BASE + "bcpl-assets/ganguly_2.jpg";}}/>
               <div style={{ position:"absolute", inset:0, background:"linear-gradient(0deg,rgba(4,10,20,.55) 0%,transparent 40%)" }}/>
               <div style={{ position:"absolute", left:16, bottom:14, display:"inline-flex", alignItems:"center", gap:8, background:"rgba(5,10,20,.75)", backdropFilter:"blur(8px)", border:"1px solid rgba(232,178,61,.4)", borderRadius:10, padding:"7px 14px" }}>
-                <span style={{ fontSize:12 }}>🏏</span>
+                <IcoBat size={13} style={{ color:"#E8B23D" }} />
                 <span className="mont" style={{ fontSize:10, fontWeight:900, color:"#E8B23D", letterSpacing:".14em", textTransform:"uppercase" }}>{t("Official Brand Ambassador","आधिकारिक ब्रांड एंबेसडर")}</span>
               </div>
             </div>
@@ -773,9 +774,9 @@ export function Home() {
 
               {/* Proof points */}
               <div className="amb-proof">
-                <div><span style={{ fontSize:13 }}>🇮🇳</span><span className="mont">{t("Former Captain, Indian Cricket Team","भारतीय टीम के पूर्व कप्तान")}</span></div>
-                <div><span style={{ fontSize:13 }}>🏛</span><span className="mont">{t("Former President, BCCI","BCCI के पूर्व अध्यक्ष")}</span></div>
-                <div><span style={{ fontSize:13 }}>⭐</span><span className="mont">{t("Face of BCPL Season 5","BCPL Season 5 का चेहरा")}</span></div>
+                <div><IcoFlag size={14} style={{ color:"#E8B23D" }} /><span className="mont">{t("Former Captain, Indian Cricket Team","भारतीय टीम के पूर्व कप्तान")}</span></div>
+                <div><IcoShield size={14} style={{ color:"#E8B23D" }} /><span className="mont">{t("Former President, BCCI","BCCI के पूर्व अध्यक्ष")}</span></div>
+                <div><IcoStar size={14} style={{ color:"#E8B23D" }} /><span className="mont">{t("Face of BCPL Season 5","BCPL Season 5 का चेहरा")}</span></div>
               </div>
 
               <button className="btn-ghost" style={{ fontSize:13, borderColor:"rgba(232,178,61,.5)", color:"#E8B23D" }} onClick={()=>openVideo("ganguly")}>
@@ -852,7 +853,7 @@ export function Home() {
               </div>
               {liveMatches.length === 0 ? (
                 <div className="card" style={{ padding:"34px 24px", textAlign:"center", borderStyle:"dashed", borderColor:"rgba(255,255,255,.12)" }}>
-                  <div style={{ fontSize:34, marginBottom:10 }}>🏟</div>
+                  <div style={{ display:"flex", justifyContent:"center", marginBottom:10 }}><IcoStadium size={34} style={{ color:"rgba(255,255,255,.4)" }} /></div>
                   <div className="mont" style={{ fontWeight:800, fontSize:15, color:"#fff", marginBottom:6 }}>{t("Fixtures drop before the season opener","Season से पहले fixtures आएँगे")}</div>
                   <p style={{ fontSize:13, color:"rgba(255,255,255,.45)", lineHeight:1.6, marginBottom:16 }}>{t("Season 5 matches: Sep – Oct 2027. Register now — you might be playing in one.","Season 5 के मैच: Sep – Oct 2027 । अभी register करें — हो सकता है इनमें आप खेलें।")}</p>
                   <Link href="/schedule" style={{ fontSize:12, color:"#FF7A29", textDecoration:"none", fontWeight:700 }}>{t("See full schedule","पूरा schedule देखें")} →</Link>
@@ -914,7 +915,7 @@ export function Home() {
               </div>
               {liveTable.length === 0 ? (
                 <div className="card" style={{ padding:"34px 24px", textAlign:"center", borderStyle:"dashed", borderColor:"rgba(255,255,255,.12)" }}>
-                  <div style={{ fontSize:34, marginBottom:10 }}>📊</div>
+                  <div style={{ display:"flex", justifyContent:"center", marginBottom:10 }}><IcoList size={34} style={{ color:"rgba(255,255,255,.4)" }} /></div>
                   <div className="mont" style={{ fontWeight:800, fontSize:15, color:"#fff", marginBottom:6 }}>{t("The leaderboard goes live with the first ball","पहली गेंद के साथ leaderboard live होगा")}</div>
                   <p style={{ fontSize:13, color:"rgba(255,255,255,.45)", lineHeight:1.6, marginBottom:18 }}>{t("10 franchises. One trophy. Standings update ball-by-ball during Season 5.","10 franchises । एक trophy । Season 5 में हर गेंद पर standings update होंगी।")}</p>
                   <div style={{ display:"flex", justifyContent:"center", flexWrap:"wrap", gap:8 }}>
@@ -936,7 +937,7 @@ export function Home() {
                     return (
                       <div key={r.team} style={{ display:"grid", gridTemplateColumns:"28px 1fr 30px 30px 30px 44px 50px", padding:"9px 14px", borderBottom: i<arr.length-1?"1px solid rgba(255,255,255,.04)":"none", background: i<4?"rgba(255,122,41,.025)":"transparent", position:"relative" }}>
                         {i<4 && <div style={{ position:"absolute", left:0, top:0, bottom:0, width:2, background:`${tm?.color||"#64748B"}60` }}/>}
-                        <div className="mont" style={{ fontSize:11, fontWeight:900, color:"rgba(255,255,255,.4)", textAlign:"center" }}>{i===0?"🥇":i===1?"🥈":i===2?"🥉":i+1}</div>
+                        <div className="mont" style={{ fontSize:11, fontWeight:900, color: i<3?"#E8B23D":"rgba(255,255,255,.4)", textAlign:"center" }}>{i+1}</div>
                         <div style={{ display:"flex", alignItems:"center", gap:6, minWidth:0 }}>
                           <img src={`${L}${tm?.slug||""}.png`} alt={r.team} style={{ width:18, height:18, objectFit:"contain", flexShrink:0 }} onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
                           <span className="mont" style={{ fontSize:11, fontWeight:700, color: i<4?"#E2E8F0":"#94A3B8", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{r.team}</span>
@@ -1130,7 +1131,7 @@ function TeamLogo({ slug, name, color }: { slug:string; name:string; color:strin
   }
   return (
     <div style={{ width:60, height:60, borderRadius:14, background:color+"22", border:`1px solid ${color}44`, display:"flex", alignItems:"center", justifyContent:"center", margin:"0 auto" }}>
-      <span style={{ fontSize:24 }}>🏏</span>
+      <IcoBat size={24} style={{ color }} />
     </div>
   );
 }

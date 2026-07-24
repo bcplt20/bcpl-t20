@@ -5,6 +5,7 @@ import { SiteHeader } from '../components/SiteHeader';
 import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
 import { getPointsTable, getTeams } from '../lib/api';
 import { useLang } from '../lib/i18n';
+import { IcoTrophy } from '../lib/icons';
 
 /* Team logos may be base64 data URLs, absolute http(s) URLs, or repo-relative
    paths (e.g. bcpl-assets/logos/…). Mirror TeamsPage's asset() helper. */
@@ -153,7 +154,7 @@ export function PointsTable() {
         {/* EMPTY STATE */}
         {tableRows.length === 0 && (
           <div style={{ textAlign: "center", padding: "clamp(60px,10vw,100px) 20px" }}>
-            <div style={{ fontSize: 64, marginBottom: 20 }}>🏆</div>
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}><IcoTrophy size={40} style={{ color: "var(--gold, #E8B23D)" }} /></div>
             <h2 style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: "clamp(22px,4vw,36px)", color: "#fff", marginBottom: 12 }}>
               {t("Standings Coming Soon", "Standings जल्द आएंगे")}
             </h2>
@@ -161,7 +162,7 @@ export function PointsTable() {
               {t("Season 5 tournament begins Sep 2026. The points table will update here in real time once the first match is played.", "Season 5 टूर्नामेंट Sep 2026 में शुरू होगा। पहले match के बाद points table यहाँ real time में update होगी।")}
             </p>
             <Link href="/register" className="float-reg-btn" style={{ position: "static", animation: "none", display: "inline-flex", boxShadow: "0 6px 24px rgba(255,122,41,0.35)" }}>
-              {t("🏏 Register for Season 5 →", "🏏 Season 5 के लिए रजिस्टर करें →")}
+              {t("Register for Season 5 →", "Season 5 के लिए रजिस्टर करें →")}
             </Link>
           </div>
         )}
@@ -273,7 +274,7 @@ export function PointsTable() {
 
       {/* Floating register button */}
       <Link href="/register" className="float-reg-btn float-reg-pulse">
-        {t("🏏 REGISTER NOW →", "🏏 अभी रजिस्टर करें →")}
+        {t("REGISTER NOW →", "अभी रजिस्टर करें →")}
       </Link>
     </div>
   );

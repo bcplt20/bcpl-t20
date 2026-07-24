@@ -1,5 +1,6 @@
 import React from 'react';
 import { useLang } from './i18n';
+import { IcoWarn, IcoPrinter } from './icons';
 
 /* ═══════════════════════════════════════════════════════════════════
  *  BCPL LEGAL DOCUMENT VERSIONING — single source of truth
@@ -71,7 +72,7 @@ export function LegalDocHeader({ doc }: { doc: LegalDocKey }) {
           borderLeft: '4px solid #E8B23D', borderRadius: 12, padding: '12px 16px',
           marginBottom: 14, display: 'flex', alignItems: 'flex-start', gap: 10,
         }}>
-          <span style={{ fontSize: 18, lineHeight: 1, flexShrink: 0 }}>⚠️</span>
+          <span style={{ lineHeight: 1, flexShrink: 0, color: '#E8B23D' }}><IcoWarn size={18} /></span>
           <div>
             <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: 12, letterSpacing: '.08em', color: '#E8B23D', textTransform: 'uppercase' }}>
               {t('Legal approval pending', 'Legal approval pending')}
@@ -109,9 +110,10 @@ export function LegalDocHeader({ doc }: { doc: LegalDocKey }) {
             color: '#FF7A29', fontFamily: 'Montserrat,sans-serif', fontWeight: 800,
             fontSize: 11, letterSpacing: '.06em', padding: '8px 14px',
             cursor: 'pointer', minHeight: 36,
+            display: 'inline-flex', alignItems: 'center', gap: 6,
           }}
         >
-          🖨 {t('PRINT / DOWNLOAD PDF', 'PRINT / PDF DOWNLOAD')}
+          <IcoPrinter size={14} /> {t('PRINT / DOWNLOAD PDF', 'PRINT / PDF DOWNLOAD')}
         </button>
       </div>
     </div>

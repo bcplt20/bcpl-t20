@@ -5,6 +5,7 @@ import { SiteHeader } from '../components/SiteHeader';
 import { useLang } from '../lib/i18n';
 import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
 import { LegalDocHeader } from '../lib/legalMeta';
+import { IcoCheck, IcoPen, IcoCard, IcoVideo, IcoStadium, IcoTrophy, IcoUsers, IcoLock, IcoWarn, IcoScale, IcoMail } from '../lib/icons';
 
 const OrangeDot = () => (
   <span style={{display:'inline-block',width:6,height:6,borderRadius:'50%',background:'#FF7A29',marginRight:10,flexShrink:0,marginTop:7}}/>
@@ -86,15 +87,15 @@ export function Terms() {
     {top:'60%',left:'72%',color:'#E8B23D',delay:'0.9s',size:4},
   ];
 
-  const sections = [
-    {n:1,icon:'✅',titleEn:'Acceptance & Versioning',titleHi:'स्वीकृति और वर्जन',items:[
+  const sections: {n:number;icon:React.ReactNode;titleEn:string;titleHi:string;items:string[]}[] = [
+    {n:1,icon:<IcoCheck size={24}/>,titleEn:'Acceptance & Versioning',titleHi:'स्वीकृति और वर्जन',items:[
       'By registering on www.bcplt20.com you accept these Terms & Conditions, the Privacy Notice, the Refund & Cancellation Policy and the Eligibility Criteria',
       'These Terms are versioned; the document version you accept and the acceptance time are recorded with your registration',
       'BCPL may update these Terms; updates are published on this page with a new version number and effective date',
       'Continued use of the platform after an update takes effect constitutes acceptance of the updated Terms',
       'If you do not agree with any part of these Terms, do not register and do not make any payment',
     ]},
-    {n:2,icon:'📝',titleEn:'Registration & Eligibility',titleHi:'रजिस्ट्रेशन और योग्यता',items:[
+    {n:2,icon:<IcoPen size={24}/>,titleEn:'Registration & Eligibility',titleHi:'रजिस्ट्रेशन और योग्यता',items:[
       'Registration is open to working professionals aged 18 to 45 years as on the date of registration',
       'Detailed eligibility rules, including cricket-history requirements, are published in the Eligibility Criteria and form part of these Terms',
       'Only one registration per person is permitted per season — duplicate or multiple-identity registrations are treated as fraud and cancelled without refund',
@@ -102,7 +103,7 @@ export function Terms() {
       'BCPL may verify identity, professional status and eligibility at any stage, including through KYC documents during Phase 2',
       'Registration is personal and non-transferable; you may not register on behalf of another person',
     ]},
-    {n:3,icon:'💳',titleEn:'Fees & Payments',titleHi:'फीस और भुगतान',items:[
+    {n:3,icon:<IcoCard size={24}/>,titleEn:'Fees & Payments',titleHi:'फीस और भुगतान',items:[
       'Phase 1 fee: ₹299 plus applicable GST (Batsman/Bowler/Wicketkeeper) or ₹399 plus applicable GST (All-Rounder); the exact payable amount including GST is shown before payment',
       'Phase 2 fee — payable only if you qualify Phase 1 and choose to proceed: the applicable role-based fee plus applicable GST as displayed at the time of payment',
       'Payment of Phase 1 or Phase 2 fees does not guarantee qualification, final selection, Auction Pool entry, auction purchase, team allocation, player contract, remuneration or tournament participation',
@@ -110,28 +111,28 @@ export function Terms() {
       'GST invoices/receipts are issued for successful payments',
       'All refunds — including duplicate-payment and technical-error cases — are governed exclusively by the Refund & Cancellation Policy',
     ]},
-    {n:4,icon:'🎥',titleEn:'Phase 1 — Video Assessment',titleHi:'फेज 1 — वीडियो असेसमेंट',items:[
+    {n:4,icon:<IcoVideo size={24}/>,titleEn:'Phase 1 — Video Assessment',titleHi:'फेज 1 — वीडियो असेसमेंट',items:[
       'Phase 1 is a video-based cricket assessment; the fee provides evaluation access for your selected playing role',
       'You must upload a 30–60 second cricket video showing your own, current performance within the deadline shown in your dashboard',
       'BCPL may use automated, digital and technology-assisted assessment systems and third-party technology service providers for video validation, scoring, ranking, fraud/integrity checks and administration',
       'Invalid, unclear or non-compliant footage may require re-upload under BCPL rules; manipulated or impersonated videos lead to disqualification',
       'Phase 1 results are targeted within 48 hours of video submission; qualification to Phase 2 does not guarantee final selection',
     ]},
-    {n:5,icon:'🏟️',titleEn:'Phase 2 — Physical Trial',titleHi:'फेज 2 — फिजिकल ट्रायल',items:[
+    {n:5,icon:<IcoStadium size={24}/>,titleEn:'Phase 2 — Physical Trial',titleHi:'फेज 2 — फिजिकल ट्रायल',items:[
       'Phase 2 is available only to players who qualify Phase 1 and complete the applicable payment, declarations and verification',
       'Phase 2 is a standardised physical cricket trial conducted under the published Physical Trial Rules',
       'BCPL seeks to use the same published role-specific assessment framework, scoring structure and applicable attempt rules across authorised Phase 2 venues',
       'Trial scores are recorded digitally; submitted assessments are locked, and corrections happen only through an audited process',
       'After completing your physical trial, your assessment is recorded. Advancement results may be finalised after completion of the applicable BCPL trial window so eligible candidates can be ranked under the applicable season rules',
     ]},
-    {n:6,icon:'🏆',titleEn:'Selection, Ranking & Auction Pool',titleHi:'चयन, रैंकिंग और ऑक्शन पूल',items:[
+    {n:6,icon:<IcoTrophy size={24}/>,titleEn:'Selection, Ranking & Auction Pool',titleHi:'चयन, रैंकिंग और ऑक्शन पूल',items:[
       'Selection is merit-based under the published BCPL assessment framework; no fixed score guarantees advancement unless formally published by BCPL',
       'BCPL may apply published playing-role allocations, regional representation requirements, minimum assessment standards, national merit ranking and applicable tie-break rules when determining advancement to the Auction Pool for the relevant season',
       'Qualification for the BCPL Auction Pool means eligibility to participate in the applicable player-auction process. Auction Pool qualification does not guarantee purchase by a team, a player contract, remuneration, squad selection or tournament participation',
       'Trial evaluators do not decide final Auction Pool selection; advancement is determined centrally under the applicable season rules',
       'Selection decisions are final subject to the published grievance process; players are notified on their registered phone/email',
     ]},
-    {n:7,icon:'🤝',titleEn:'Player Obligations & Conduct',titleHi:'खिलाड़ी के दायित्व',items:[
+    {n:7,icon:<IcoUsers size={24}/>,titleEn:'Player Obligations & Conduct',titleHi:'खिलाड़ी के दायित्व',items:[
       'Attend scheduled trials on time at the designated venue with a valid ID and the required kit',
       'Comply with the BCPL Code of Conduct at all stages — registration, trials, auction and tournament',
       'Bribery, influence attempts, impersonation, document or video manipulation, betting or corrupt practices lead to disciplinary action, including disqualification',
@@ -139,27 +140,27 @@ export function Terms() {
       'Maintain your own medical fitness; personal health and accident insurance is strongly recommended',
       'Notify BCPL promptly of any change that affects your eligibility',
     ]},
-    {n:8,icon:'🔐',titleEn:'Data Protection & Communications',titleHi:'डेटा सुरक्षा और संचार',items:[
+    {n:8,icon:<IcoLock size={24}/>,titleEn:'Data Protection & Communications',titleHi:'डेटा सुरक्षा और संचार',items:[
       'Your personal data is processed in accordance with the BCPL Privacy Notice',
       'Consent records — the accepted document versions and acceptance time — are stored with your registration',
       'Service communications (OTP, payment confirmations, results, trial notifications) are part of the service and are sent to your registered contact details',
       'Optional promotional communications are sent only with your separate marketing consent, which you may withdraw at any time',
     ]},
-    {n:9,icon:'©',titleEn:'Intellectual Property',titleHi:'बौद्धिक संपदा',items:[
+    {n:9,icon:<span style={{fontSize:24,lineHeight:1}}>©</span>,titleEn:'Intellectual Property',titleHi:'बौद्धिक संपदा',items:[
       'BCPL owns all match footage, broadcast content, highlight reels, and official photographs',
       'Players may share their own personal performance clips on social media for personal promotion',
       'BCPL name, logo, team names, and all associated marks are registered trademarks of BCPL T20 Pvt. Ltd.',
       'Unauthorised commercial use of BCPL brand assets is prohibited and actionable',
       'Players may not license or sell BCPL content without explicit written consent',
     ]},
-    {n:10,icon:'⚠️',titleEn:'Limitation of Liability',titleHi:'दायित्व की सीमा',items:[
+    {n:10,icon:<IcoWarn size={24}/>,titleEn:'Limitation of Liability',titleHi:'दायित्व की सीमा',items:[
       'Players participate in BCPL matches and trials entirely at their own risk',
       'BCPL is not liable for any injury, illness, or accident occurring during matches, trials, or travel',
       'BCPL is not liable for any indirect, consequential, or special losses arising from participation or non-selection',
       'BCPL\'s total liability in any circumstances shall not exceed the fees paid by you to BCPL',
       'Players are advised to maintain personal accident and health insurance for the duration of the tournament',
     ]},
-    {n:11,icon:'⚖️',titleEn:'Governing Law & Disputes',titleHi:'कानून और विवाद',items:[
+    {n:11,icon:<IcoScale size={24}/>,titleEn:'Governing Law & Disputes',titleHi:'कानून और विवाद',items:[
       'These Terms are governed by the laws of the Republic of India',
       'Courts of Delhi shall have exclusive jurisdiction over all disputes arising from these Terms',
       'Disputes must first be submitted to BCPL\'s Grievance Redressal process — email support@bcplt20.com',
@@ -194,7 +195,7 @@ export function Terms() {
 
         <section style={{padding:'clamp(48px,8vw,80px) 0 clamp(40px,6vw,56px)',textAlign:'center',animation:'fadeSlide 0.6s ease both'}}>
           <div className="wrap">
-            <div className="tag-pill" style={{marginBottom:20}}>⚖️ {t("LEGAL","कानूनी")}</div>
+            <div className="tag-pill" style={{marginBottom:20}}><IcoScale size={14}/> {t("LEGAL","कानूनी")}</div>
             <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(36px,7vw,72px)',lineHeight:1,marginBottom:12,letterSpacing:'.01em'}}>
               <span style={{color:'#fff',display:'block'}}>{t("TERMS &","नियम और")}</span>
               <span className="shimmer-gold" style={{display:'block'}}>{t("CONDITIONS","शर्तें")}</span>
@@ -259,7 +260,7 @@ export function Terms() {
                 <div key={s.n} id={`section-${s.n}`} className="glass-card" style={{padding:'clamp(22px,4vw,34px) clamp(18px,4vw,38px)',marginBottom:20,animation:`fadeSlide 0.5s ease ${0.08+idx*0.05}s both`,scrollMarginTop:'100px'}}>
                   <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:20,flexWrap:'wrap'}}>
                     <div style={{width:36,height:36,borderRadius:'50%',background:'linear-gradient(135deg,rgba(255,122,41,0.25),rgba(232,178,61,0.18))',border:'1px solid rgba(255,122,41,0.4)',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:14,color:'#FF7A29',flexShrink:0}}>{s.n}</div>
-                    <span style={{fontSize:24,lineHeight:1}}>{s.icon}</span>
+                    <span style={{lineHeight:1,color:'#FF7A29',display:'inline-flex',alignItems:'center'}}>{s.icon}</span>
                     <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(17px,3vw,21px)',color:'#fff',lineHeight:1.2}}>{t(s.titleEn,s.titleHi)}</h2>
                   </div>
                   <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:12}}>
@@ -274,7 +275,7 @@ export function Terms() {
 
               <div style={{background:'rgba(255,122,41,0.08)',border:'1px solid rgba(255,122,41,0.38)',borderLeft:'3px solid #FF7A29',borderRadius:14,padding:'20px clamp(18px,4vw,26px)',marginBottom:24,animation:'borderGlow 3s ease-in-out infinite'}}>
                 <div style={{display:'flex',gap:14,alignItems:'flex-start'}}>
-                  <span style={{fontSize:26,flexShrink:0,lineHeight:1}}>📬</span>
+                  <span style={{flexShrink:0,lineHeight:1,color:'#FF7A29',display:'inline-flex'}}><IcoMail size={26}/></span>
                   <div>
                     <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#FF7A29',marginBottom:7,letterSpacing:'.01em'}}>{t("Questions About These Terms?","इन शर्तों के बारे में सवाल?")}</div>
                     <p style={{color:'rgba(255,255,255,0.85)',fontSize:'clamp(13px,2vw,15px)',lineHeight:1.7}}>
@@ -310,7 +311,7 @@ export function Terms() {
       </div>
       <StickyRegisterCTA />
       <Link className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>
-        {t("🏏 REGISTER NOW →","🏏 अभी रजिस्टर करें →")}
+        {t("REGISTER NOW →","अभी रजिस्टर करें →")}
       </Link>
     </div>
   );

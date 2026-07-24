@@ -221,7 +221,7 @@ export function Teams() {
 
       {/* Floating register button */}
       <Link href="/register" className="float-reg-btn float-reg-pulse">
-        {t("🏏 REGISTER NOW →", "🏏 अभी रजिस्टर करें →")}
+        {t("REGISTER NOW →", "अभी रजिस्टर करें →")}
       </Link>
     </div>
   );

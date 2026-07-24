@@ -5,6 +5,7 @@ import { SiteHeader } from '../components/SiteHeader';
 import { useLang } from '../lib/i18n';
 import { StickyRegisterCTA } from "../components/StickyRegisterCTA";
 import { AUCTION_CLIPS, AUCTION_STREAM, type AuctionClip } from '../data/auctionClips';
+import { IcoBell } from '../lib/icons';
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
@@ -207,7 +208,7 @@ export function Videos() {
       <section style={{position:'relative',zIndex:1,padding:'0 0 120px'}}>
         <div className="wrap">
           <div className="glass-card" style={{padding:'clamp(20px,5vw,48px) clamp(16px,4vw,48px)',textAlign:'center',maxWidth:640,margin:'0 auto',border:'1px solid rgba(255,122,41,0.15)'}}>
-            <div style={{fontSize:44,marginBottom:12}}>▶️</div>
+            <div style={{fontSize:44,marginBottom:12,color:'#FF0000',lineHeight:1}}>▶</div>
             <h3 className="v3-h" style={{fontSize:28,color:'#fff',marginBottom:6}}>{t("Subscribe to BCPL TV","BCPL TV Subscribe करें")}</h3>
             <div style={{color:'rgba(255,255,255,0.4)',fontSize:14,marginBottom:24,fontFamily:'Inter,sans-serif'}}>{t("23K subscribers · Match highlights & league videos","23K subscribers · Match highlights और league videos")}</div>
             <div style={{display:'flex',gap:14,justifyContent:'center',flexWrap:'wrap'}}>
@@ -215,7 +216,7 @@ export function Videos() {
                 <span>▶</span> {t("Subscribe","Subscribe")}
               </a>
               <a href="https://www.youtube.com/@bcplt20league?sub_confirmation=1" target="_blank" rel="noopener noreferrer" style={{padding:'14px 28px',borderRadius:14,background:'rgba(255,255,255,0.06)',border:'1.5px solid rgba(255,255,255,0.15)',color:'rgba(255,255,255,0.7)',fontFamily:'var(--font-head)',fontWeight:700,fontSize:15,cursor:'pointer',textDecoration:'none',display:'inline-flex',alignItems:'center',gap:8}}>
-                🔔 {t("Enable Alerts","Alerts चालू करें")}
+                <IcoBell size={16} style={{color:'currentColor'}}/> {t("Enable Alerts","Alerts चालू करें")}
               </a>
             </div>
           </div>
@@ -243,7 +244,7 @@ export function Videos() {
       )}
 
       {/* ── FLOATING REGISTER BUTTON ── */}
-      <Link className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>🏏 {t("REGISTER NOW","अभी REGISTER करें")} &rarr;</Link>
+      <Link className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>{t("REGISTER NOW","अभी REGISTER करें")} &rarr;</Link>
       <BCPLFooter />
       <StickyRegisterCTA/>
     </div>

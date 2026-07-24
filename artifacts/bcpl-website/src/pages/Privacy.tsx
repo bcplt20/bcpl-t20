@@ -5,6 +5,7 @@ import { SiteHeader } from '../components/SiteHeader';
 import { useLang } from '../lib/i18n';
 import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
 import { LegalDocHeader } from '../lib/legalMeta';
+import { IcoDoc, IcoCard, IcoVideo, IcoIdCard, IcoGauge, IcoList, IcoCheck, IcoShield, IcoLock, IcoMail } from '../lib/icons';
 
 const OrangeDot = () => (
   <span style={{display:'inline-block',width:6,height:6,borderRadius:'50%',background:'#FF7A29',marginRight:10,flexShrink:0,marginTop:7}}/>
@@ -85,8 +86,8 @@ export function Privacy() {
     {top:'60%',left:'72%',color:'#E8B23D',delay:'0.9s',size:4},
   ];
 
-  const sections = [
-    {n:1,icon:'📦',titleEn:'Identity & Registration Data',titleHi:'पहचान और रजिस्ट्रेशन डेटा',items:[
+  const sections: {n:number;icon:React.ReactNode;titleEn:string;titleHi:string;items:string[]}[] = [
+    {n:1,icon:<IcoDoc size={24}/>,titleEn:'Identity & Registration Data',titleHi:'पहचान और रजिस्ट्रेशन डेटा',items:[
       'Full name — to identify you, generate your registration record and address you in communications',
       'Mobile number — for OTP-based login, account security and service notifications',
       'Email address — for registration confirmations, receipts, results and service updates',
@@ -98,12 +99,12 @@ export function Privacy() {
       'Emergency contact details — for safety and contact during physical trials, where collected',
       'T-shirt size — for trial kit allocation, where collected',
     ]},
-    {n:2,icon:'💳',titleEn:'Payment Data',titleHi:'पेमेंट डेटा',items:[
+    {n:2,icon:<IcoCard size={24}/>,titleEn:'Payment Data',titleHi:'पेमेंट डेटा',items:[
       'Payment metadata: transaction ID, order reference, amount, applicable GST and date — to confirm fees, issue receipts and reconcile payments',
       'BCPL does NOT store your card number, CVV, UPI PIN or bank credentials — these are handled directly by the payment gateway in a PCI-DSS compliant environment',
       'Duplicate-payment and technical-error records — to identify and process refunds where the policy provides for them',
     ]},
-    {n:3,icon:'🎥',titleEn:'Assessment Data (Phase 1 & Phase 2)',titleHi:'असेसमेंट डेटा (फेज 1 और फेज 2)',items:[
+    {n:3,icon:<IcoVideo size={24}/>,titleEn:'Assessment Data (Phase 1 & Phase 2)',titleHi:'असेसमेंट डेटा (फेज 1 और फेज 2)',items:[
       'Phase 1 cricket videos (30–60 seconds) — to assess your cricket performance for the video-based Phase 1 stage',
       'Video validation data (integrity, authenticity and technical checks) — to confirm the video represents the registered player and meets upload rules',
       'Phase 1 scoring and ranking — to determine qualification to Phase 2 under the applicable framework',
@@ -112,18 +113,18 @@ export function Privacy() {
       'Trial QR / check-in information — to verify attendance and identity at the physical trial venue',
       'Coach / evaluator records — to document assessment observations against the approved protocol',
     ]},
-    {n:4,icon:'🪪',titleEn:'Verification & Integrity Data',titleHi:'सत्यापन और इंटीग्रिटी डेटा',items:[
+    {n:4,icon:<IcoIdCard size={24}/>,titleEn:'Verification & Integrity Data',titleHi:'सत्यापन और इंटीग्रिटी डेटा',items:[
       'Aadhaar / PAN verification data — for identity and KYC verification as required for participation',
       'Fraud / integrity signals — to detect duplicate registrations, impersonation, manipulated videos and other integrity risks',
       'Device and security logs — to protect accounts, maintain platform security and investigate misuse',
       'Communication records (email / SMS / WhatsApp) — to keep an auditable record of service notifications we send you',
     ]},
-    {n:5,icon:'🤖',titleEn:'AI / Automated Assessment Privacy',titleHi:'AI / ऑटोमेटेड असेसमेंट प्राइवेसी',items:[
+    {n:5,icon:<IcoGauge size={24}/>,titleEn:'AI / Automated Assessment Privacy',titleHi:'AI / ऑटोमेटेड असेसमेंट प्राइवेसी',items:[
       'Your submitted Phase 1 video may be processed using automated, digital or technology-assisted assessment systems, and by third-party technology providers, for video validation, scoring, ranking, fraud/integrity checks and administration',
       'We do NOT share your Aadhaar / PAN, phone number, email, employment documents or emergency contacts with the Phase 1 video-assessment technology provider',
       'Automated and technology-assisted processing supports assessment and administration; final advancement to the Auction Pool is determined centrally under the applicable BCPL ranking and allocation rules',
     ]},
-    {n:6,icon:'🔗',titleEn:'Third-Party Processors We Use',titleHi:'तीसरे पक्ष के प्रोसेसर',items:[
+    {n:6,icon:<IcoList size={24}/>,titleEn:'Third-Party Processors We Use',titleHi:'तीसरे पक्ष के प्रोसेसर',items:[
       'Payment gateway (Cashfree) — to process fees and issue receipts',
       'Cloud / storage provider — to securely host the platform, records and uploaded videos',
       'OTP provider — to deliver one-time passwords for login and verification',
@@ -134,21 +135,21 @@ export function Privacy() {
       'Security / analytics provider — to maintain platform security and understand aggregated usage',
       'Providers process data only for the purposes above under applicable agreements; we do not sell, rent or trade your personal data',
     ]},
-    {n:7,icon:'✅',titleEn:'Consent — Service vs Marketing',titleHi:'सहमति — सेवा बनाम मार्केटिंग',items:[
+    {n:7,icon:<IcoCheck size={24}/>,titleEn:'Consent — Service vs Marketing',titleHi:'सहमति — सेवा बनाम मार्केटिंग',items:[
       'Required service acceptance: "I have read and agree to the applicable Terms & Conditions and Privacy Notice." This is necessary to provide the registration and assessment service',
       'Optional promotional marketing: "I would like to receive promotional BCPL updates and offers." This is optional and can be withdrawn at any time',
       'OTP, payment, result and trial notifications are service / transactional communications, not optional promotional marketing, and are sent as part of providing the service',
       'The accepted document version and the acceptance time are recorded with your registration',
       'You can withdraw promotional marketing consent at any time by emailing support@bcplt20.com',
     ]},
-    {n:8,icon:'✊',titleEn:'Your Rights',titleHi:'आपके अधिकार',items:[
+    {n:8,icon:<IcoShield size={24}/>,titleEn:'Your Rights',titleHi:'आपके अधिकार',items:[
       'Right to Access: request a copy of the personal data BCPL holds about you',
       'Right to Correct: request correction of inaccurate or incomplete personal data',
       'Right to Delete: request deletion of your data, subject to limits where we must retain records for verification, integrity, tax, legal or assessment-audit reasons',
       'Right to Withdraw Consent: withdraw optional promotional marketing consent at any time (service/transactional notifications continue while your registration is active)',
       'To exercise any right, email support@bcplt20.com — we acknowledge within 2 business days and aim to resolve within 7',
     ]},
-    {n:9,icon:'🔐',titleEn:'Data Security',titleHi:'डेटा सुरक्षा',items:[
+    {n:9,icon:<IcoLock size={24}/>,titleEn:'Data Security',titleHi:'डेटा सुरक्षा',items:[
       'Encryption for data in transit (HTTPS/TLS) between your device and our servers',
       'Access controls — only authorised BCPL personnel and processors access data for the purposes described',
       'Payment card data is handled by the payment gateway in a PCI-DSS compliant environment — BCPL never sees card data',
@@ -183,7 +184,7 @@ export function Privacy() {
 
         <section style={{padding:'clamp(48px,8vw,80px) 0 clamp(40px,6vw,56px)',textAlign:'center',animation:'fadeSlide 0.6s ease both'}}>
           <div className="wrap">
-            <div className="tag-pill" style={{marginBottom:20}}>🔒 {t("YOUR DATA","आपका डेटा")}</div>
+            <div className="tag-pill" style={{marginBottom:20}}><IcoLock size={14}/> {t("YOUR DATA","आपका डेटा")}</div>
             <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(36px,7vw,72px)',lineHeight:1,marginBottom:12,letterSpacing:'.01em'}}>
               <span style={{color:'#fff',display:'block'}}>{t("PRIVACY","गोपनीयता")}</span>
               <span className="shimmer-gold" style={{display:'block'}}>{t("POLICY","नीति")}</span>
@@ -243,7 +244,7 @@ export function Privacy() {
 
               <div style={{background:'rgba(34,197,94,0.1)',border:'2px solid rgba(34,197,94,0.4)',borderLeft:'4px solid #22C55E',borderRadius:14,padding:'20px clamp(18px,4vw,26px)',marginBottom:24,animation:'fadeSlide 0.5s ease 0.1s both'}}>
                 <div style={{display:'flex',gap:12,alignItems:'center',flexWrap:'wrap'}}>
-                  <span style={{fontSize:28,flexShrink:0}}>🛡️</span>
+                  <span style={{flexShrink:0,color:'#FF7A29',display:'inline-flex'}}><IcoShield size={28}/></span>
                   <div>
                     <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:16,color:'#22C55E',marginBottom:4}}>{t("Our Privacy Commitment","हमारी प्रतिबद्धता")}</div>
                     <p style={{color:'rgba(255,255,255,0.85)',fontSize:'clamp(13px,2vw,15px)',fontWeight:600}}>
@@ -260,7 +261,7 @@ export function Privacy() {
                 <div key={s.n} id={`section-${s.n}`} className="glass-card" style={{padding:'clamp(22px,4vw,34px) clamp(18px,4vw,38px)',marginBottom:20,animation:`fadeSlide 0.5s ease ${0.12+idx*0.05}s both`,scrollMarginTop:'100px'}}>
                   <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:20,flexWrap:'wrap'}}>
                     <div style={{width:36,height:36,borderRadius:'50%',background:'linear-gradient(135deg,rgba(255,122,41,0.25),rgba(232,178,61,0.18))',border:'1px solid rgba(255,122,41,0.4)',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:14,color:'#FF7A29',flexShrink:0}}>{s.n}</div>
-                    <span style={{fontSize:24,lineHeight:1}}>{s.icon}</span>
+                    <span style={{lineHeight:1,color:'#FF7A29',display:'inline-flex',alignItems:'center'}}>{s.icon}</span>
                     <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(17px,3vw,21px)',color:'#fff',lineHeight:1.2}}>{t(s.titleEn,s.titleHi)}</h2>
                   </div>
                   <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:12}}>
@@ -275,7 +276,7 @@ export function Privacy() {
 
               <div style={{background:'rgba(255,122,41,0.08)',border:'1px solid rgba(255,122,41,0.38)',borderLeft:'3px solid #FF7A29',borderRadius:14,padding:'20px clamp(18px,4vw,26px)',marginBottom:24,animation:'borderGlow 3s ease-in-out infinite'}}>
                 <div style={{display:'flex',gap:14,alignItems:'flex-start'}}>
-                  <span style={{fontSize:26,flexShrink:0,lineHeight:1}}>📧</span>
+                  <span style={{flexShrink:0,lineHeight:1,color:'#FF7A29',display:'inline-flex'}}><IcoMail size={26}/></span>
                   <div>
                     <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#FF7A29',marginBottom:7,letterSpacing:'.01em'}}>{t("Privacy Officer Contact","Privacy Officer से संपर्क करें")}</div>
                     <p style={{color:'rgba(255,255,255,0.85)',fontSize:'clamp(13px,2vw,15px)',lineHeight:1.7}}>
@@ -308,7 +309,7 @@ export function Privacy() {
       </div>
       <StickyRegisterCTA />
       <Link className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>
-        {t("🏏 REGISTER NOW →","🏏 अभी रजिस्टर करें →")}
+        {t("REGISTER NOW →","अभी रजिस्टर करें →")}
       </Link>
     </div>
   );

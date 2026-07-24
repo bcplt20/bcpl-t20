@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getSession, clearSession, openLoginModal, AUTH_CHANGED_EVENT, type AuthUser } from '../lib/auth';
+import { IcoKey, IcoOut } from '../lib/icons';
 
 /**
  * Auth-aware navbar item, shared by every page's navbar.
@@ -68,9 +69,9 @@ export function NavUser({ variant = 'desktop', onNavigate }: {
       <span
         onClick={() => { onNavigate?.(); openLoginModal(); }}
         style={mobile
-          ? { color:'#FF7A29', fontWeight:700, fontSize:18, fontFamily:'Montserrat,sans-serif', padding:'14px 0', borderBottom:'1px solid rgba(255,255,255,0.07)', display:'block', cursor:'pointer' }
+          ? { color:'#FF7A29', fontWeight:700, fontSize:18, fontFamily:'Montserrat,sans-serif', padding:'14px 0', borderBottom:'1px solid rgba(255,255,255,0.07)', display:'flex', alignItems:'center', gap:8, cursor:'pointer' }
           : { color:'#FF7A29', fontWeight:700, fontSize:13, fontFamily:'Inter,sans-serif', cursor:'pointer' }}
-      >{mobile ? '🔑 Login' : 'Login'}</span>
+      >{mobile ? <><IcoKey size={14} style={{ color:'#FF7A29' }} /> Login</> : 'Login'}</span>
     );
   }
 
@@ -110,8 +111,8 @@ export function NavUser({ variant = 'desktop', onNavigate }: {
           onNavigate?.();
           window.location.assign(import.meta.env.BASE_URL || '/');
         }}
-        style={{ display:'block', color:'rgba(255,255,255,0.55)', fontWeight:700, fontSize:18, fontFamily:'Montserrat,sans-serif', padding:'14px 0', borderBottom:'1px solid rgba(255,255,255,0.07)', cursor:'pointer' }}
-      >🚪 Sign Out</span>
+        style={{ display:'flex', alignItems:'center', gap:8, color:'rgba(255,255,255,0.55)', fontWeight:700, fontSize:18, fontFamily:'Montserrat,sans-serif', padding:'14px 0', borderBottom:'1px solid rgba(255,255,255,0.07)', cursor:'pointer' }}
+      ><IcoOut size={14} style={{ color:'rgba(255,255,255,0.55)' }} /> Sign Out</span>
     )}
     </>
   );

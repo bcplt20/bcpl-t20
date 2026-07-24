@@ -11,6 +11,7 @@ import { getDraftKey, queueDraftSave, flushDraftSave, resumeDraft } from '@/lib/
 import { CONSENT_VERSIONS } from '../lib/legalMeta';
 import { useLang } from '../lib/i18n';
 import { useFees, withGst } from '../lib/fees';
+import { IcoBat, IcoBall, IcoShield, IcoStar, IcoPen, IcoVideo, IcoClock, IcoStadium, IcoScale, IcoTrophy, IcoCheck, IcoSearch, IcoPin, IcoLock, IcoRupee, IcoList, IcoHourglass, IcoInfo, IcoChat, IcoCard, IcoWarn } from '../lib/icons';
 
 /*
   BCPL T20 — Bhartiya Corporate Premier League
@@ -39,7 +40,7 @@ const ROLE_IMG = import.meta.env.BASE_URL + 'bcpl-assets/roles/';
 
 const ROLES = [
   {
-    id: 'bat',  emoji: '🏏', icon: 'batsman', img: 'card-batsman.jpg', label: 'Batsman', labelHi: 'Batsman',
+    id: 'bat',  emojiIcon: IcoBat, icon: 'batsman', img: 'card-batsman.jpg', label: 'Batsman', labelHi: 'Batsman',
     desc: 'Open the innings. Anchor the chase.',
     descHi: 'Innings open करें। Chase को anchor करें।',
     phase1: 299, phase2: 2000,
@@ -54,7 +55,7 @@ const ROLES = [
     </svg>`,
   },
   {
-    id: 'bowl', emoji: '🎳', icon: 'bowler', img: 'card-bowler.jpg', label: 'Bowler', labelHi: 'Bowler',
+    id: 'bowl', emojiIcon: IcoBall, icon: 'bowler', img: 'card-bowler.jpg', label: 'Bowler', labelHi: 'Bowler',
     desc: 'Take wickets. Change the game.',
     descHi: 'Wickets लें। Game बदल दें।',
     phase1: 299, phase2: 2000,
@@ -69,7 +70,7 @@ const ROLES = [
     </svg>`,
   },
   {
-    id: 'wk',   emoji: '🧤', icon: 'wicketkeeper', img: 'card-wicketkeeper.jpg', label: 'Wicket-Keeper', labelHi: 'Wicket-Keeper',
+    id: 'wk',   emojiIcon: IcoShield, icon: 'wicketkeeper', img: 'card-wicketkeeper.jpg', label: 'Wicket-Keeper', labelHi: 'Wicket-Keeper',
     desc: 'Command the field. Lead from behind the stumps.',
     descHi: 'Field को command करें। Stumps के पीछे से lead करें।',
     phase1: 299, phase2: 2000,
@@ -86,7 +87,7 @@ const ROLES = [
     </svg>`,
   },
   {
-    id: 'ar',   emoji: '⭐', icon: 'allrounder', img: 'card-allrounder.jpg', label: 'All-Rounder', labelHi: 'All-Rounder',
+    id: 'ar',   emojiIcon: IcoStar, icon: 'allrounder', img: 'card-allrounder.jpg', label: 'All-Rounder', labelHi: 'All-Rounder',
     desc: 'Bat. Bowl. Win matches. The complete cricketer.',
     descHi: 'Bat करें। Bowl करें। Matches जीतें। Complete cricketer।',
     phase1: 399, phase2: 3000,
@@ -105,12 +106,12 @@ const CITIES = [
 ];
 
 const JOURNEY = [
-  { phase:'P1', icon:'📝', label:'Register',   labelHi:'Register',       sub:'Fill form + pay entry fee',   subHi:'Form भरें + entry fee pay करें',        done:false, active:true  },
-  { phase:'P1', icon:'🎬', label:'Upload Video',labelHi:'Video Upload',  sub:'2-min trial clip',            subHi:'2-min trial clip',                      done:false, active:false },
-  { phase:'P1', icon:'⏱',  label:'48-Hour Result',labelHi:'48-Hour Result',sub:'Criteria-based evaluation', subHi:'Criteria-based evaluation',             done:false, active:false },
-  { phase:'P2', icon:'🏟', label:'Physical Trial',labelHi:'Physical Trial',sub:'At your city (if selected)', subHi:'आपके शहर में (अगर select हुए)',           done:false, active:false },
-  { phase:'P2', icon:'🔨', label:'Auction',    labelHi:'Auction',        sub:'Franchises bid on you',       subHi:'Franchises आप पर bid करती हैं',          done:false, active:false },
-  { phase:'P2', icon:'🏆', label:'Play BCPL',  labelHi:'BCPL खेलें',      sub:'Represent your franchise',    subHi:'अपनी franchise को represent करें',       done:false, active:false },
+  { phase:'P1', icon:IcoPen, label:'Register',   labelHi:'Register',       sub:'Fill form + pay entry fee',   subHi:'Form भरें + entry fee pay करें',        done:false, active:true  },
+  { phase:'P1', icon:IcoVideo, label:'Upload Video',labelHi:'Video Upload',  sub:'2-min trial clip',            subHi:'2-min trial clip',                      done:false, active:false },
+  { phase:'P1', icon:IcoClock,  label:'48-Hour Result',labelHi:'48-Hour Result',sub:'Criteria-based evaluation', subHi:'Criteria-based evaluation',             done:false, active:false },
+  { phase:'P2', icon:IcoStadium, label:'Physical Trial',labelHi:'Physical Trial',sub:'At your city (if selected)', subHi:'आपके शहर में (अगर select हुए)',           done:false, active:false },
+  { phase:'P2', icon:IcoScale, label:'Auction',    labelHi:'Auction',        sub:'Franchises bid on you',       subHi:'Franchises आप पर bid करती हैं',          done:false, active:false },
+  { phase:'P2', icon:IcoTrophy, label:'Play BCPL',  labelHi:'BCPL खेलें',      sub:'Represent your franchise',    subHi:'अपनी franchise को represent करें',       done:false, active:false },
 ];
 
 export function Registration() {
@@ -619,8 +620,8 @@ export function Registration() {
                     {j.phase}
                   </div>
                   {/* Icon circle */}
-                  <div className={`j-icon ${j.phase==='p1'?'p1':'p2'}${j.active?' active-j':''}`} style={{ border:`2px solid ${j.phase==='P1'?'rgba(255,122,41,0.4)':'rgba(232,178,61,0.3)'}`, background: i===0 ? '#FF7A29' : j.phase==='P1'?'rgba(255,122,41,0.08)':'rgba(232,178,61,0.06)' }}>
-                    <span style={{ fontSize:14 }}>{j.icon}</span>
+                  <div className={`j-icon ${j.phase==='p1'?'p1':'p2'}${j.active?' active-j':''}`} style={{ border:`2px solid ${j.phase==='P1'?'rgba(255,122,41,0.4)':'rgba(232,178,61,0.3)'}`, background: i===0 ? '#FF7A29' : j.phase==='P1'?'rgba(255,122,41,0.08)':'rgba(232,178,61,0.06)', color: i===0 ? '#fff' : j.phase==='P1'?'#FF7A29':'#E8B23D' }}>
+                    <j.icon size={16} />
                   </div>
                   {/* Label — hidden on very small screens via CSS */}
                   <div>
@@ -712,8 +713,8 @@ export function Registration() {
                   <div>
                     <label className="field-lbl">{t('Date of Birth (18–45 yrs) *', 'जन्म तिथि (18–45 साल) *')}</label>
                     <input className="field-inp" type="date" value={dob} onChange={e => setDob(e.target.value)} min={minDob} max={maxDob} style={{ colorScheme:'dark' }} />
-                    {ageError && <div style={{fontSize:11,color:'#EF4444',marginTop:5,fontWeight:600}}>⚠ {ageError}</div>}
-                    {dob && dobValid && <div style={{fontSize:11,color:'#22C55E',marginTop:5,fontWeight:700,letterSpacing:'.04em'}}>{t('✅ AGE ELIGIBILITY — CONFIRMED', '✅ AGE ELIGIBILITY — CONFIRMED')}</div>}
+                    {ageError && <div style={{fontSize:11,color:'#EF4444',marginTop:5,fontWeight:600}}><IcoWarn size={12} style={{ verticalAlign: '-2px', marginRight: 4 }} /> {ageError}</div>}
+                    {dob && dobValid && <div style={{fontSize:11,color:'#22C55E',marginTop:5,fontWeight:700,letterSpacing:'.04em',display:'inline-flex',alignItems:'center',gap:5}}><IcoCheck size={12} /> {t('AGE ELIGIBILITY — CONFIRMED', 'AGE ELIGIBILITY — CONFIRMED')}</div>}
                   </div>
                 </div>
                 </>)}
@@ -725,7 +726,7 @@ export function Registration() {
                   <div style={{ marginTop:20 }}>
                     {/* Logged-in banner */}
                     <div style={{ padding:'12px 16px', background:'rgba(34,197,94,0.06)', border:'1px solid rgba(34,197,94,0.25)', borderRadius:10, display:'flex', alignItems:'center', gap:10, marginBottom:16 }}>
-                      <span style={{ fontSize:18 }}>✅</span>
+                      <span style={{ color:'#22C55E', display:'inline-flex' }}><IcoCheck size={18} /></span>
                       <div style={{ flex:1 }}>
                         <div style={{ fontSize:13, fontWeight:700, color:'#22C55E', fontFamily:'Montserrat,sans-serif' }}>{t('Logged in as', 'Logged in as')} +91 {loginPhone || regStatus?.phone || '—'}</div>
                         {regStatus?.registered && <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)', marginTop:2 }}>{t('Role:', 'Role:')} {regStatus.role?.toUpperCase()} · {t('City:', 'City:')} {regStatus.trialCity}</div>}
@@ -743,7 +744,7 @@ export function Registration() {
                     {/* ── Payment Pending ── */}
                     {regStatus?.phase1Status === 'pending' && (
                       <div style={{ padding:'16px', background:'rgba(251,191,36,0.07)', border:'1px solid rgba(251,191,36,0.3)', borderRadius:10, textAlign:'center' }}>
-                        <div style={{ fontSize:22, marginBottom:8 }}>⏳</div>
+                        <div style={{ color:'#FBB724', marginBottom:8, display:'flex', justifyContent:'center' }}><IcoHourglass size={22} /></div>
                         <div style={{ fontSize:14, fontWeight:800, color:'#FBB724', fontFamily:'Montserrat,sans-serif' }}>{t('Payment Pending', 'Payment Pending')}</div>
                         <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:6, marginBottom:14 }}>{t('Complete your Phase 1 payment to activate your registration.', 'अपनी registration activate करने के लिए Phase 1 payment पूरा करें।')}</div>
                         {/* DOB backfill: players registered before the age gate existed */}
@@ -751,8 +752,8 @@ export function Registration() {
                           <div style={{ maxWidth:280, margin:'0 auto 14px', textAlign:'left' }}>
                             <label className="field-lbl">{t('Date of Birth (18–45 yrs) *', 'जन्म तिथि (18–45 साल) *')}</label>
                             <input className="field-inp" type="date" value={dob} onChange={e => setDob(e.target.value)} min={minDob} max={maxDob} style={{ colorScheme:'dark' }} />
-                            {ageError && <div style={{fontSize:11,color:'#EF4444',marginTop:5,fontWeight:600}}>⚠ {ageError}</div>}
-                            {dob && dobValid && <div style={{fontSize:11,color:'#22C55E',marginTop:5,fontWeight:700}}>{t('✅ AGE ELIGIBILITY — CONFIRMED', '✅ AGE ELIGIBILITY — CONFIRMED')}</div>}
+                            {ageError && <div style={{fontSize:11,color:'#EF4444',marginTop:5,fontWeight:600}}><IcoWarn size={12} style={{ verticalAlign: '-2px', marginRight: 4 }} /> {ageError}</div>}
+                            {dob && dobValid && <div style={{fontSize:11,color:'#22C55E',marginTop:5,fontWeight:700,display:'inline-flex',alignItems:'center',gap:5}}><IcoCheck size={12} /> {t('AGE ELIGIBILITY — CONFIRMED', 'AGE ELIGIBILITY — CONFIRMED')}</div>}
                           </div>
                         )}
                         {/* Consent — required on the resume-payment path too (audit-recorded server-side) */}
@@ -781,7 +782,7 @@ export function Registration() {
                             cf.checkout({ paymentSessionId: pay.paymentSessionId });
                           } catch(e:any){ alert(e.message); } finally { setPayLoading(false); }
                         }} style={{ padding:'12px 28px', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', opacity:((!regStatus?.dob && !(dob && dobValid)) || !agreed) ? .5 : 1 }}>
-                          {payLoading ? t('⏳ Processing...', '⏳ Processing...') : t('💳 COMPLETE PAYMENT →', '💳 PAYMENT पूरा करें →')}
+                          {payLoading ? t('Processing…', 'Processing…') : t('COMPLETE PAYMENT →', 'PAYMENT पूरा करें →')}
                         </button>
                       </div>
                     )}
@@ -789,7 +790,7 @@ export function Registration() {
                     {/* ── Video Upload (payment done) — dedicated page owns the full flow ── */}
                     {regStatus?.phase1Status === 'payment_done' && (
                       <div style={{ padding:'20px', background:'rgba(59,130,246,0.07)', border:'1px solid rgba(59,130,246,0.3)', borderRadius:12, textAlign:'center' }}>
-                        <div style={{ fontSize:32, marginBottom:10 }}>🎬</div>
+                        <div style={{ color:'#60A5FA', marginBottom:10, display:'flex', justifyContent:'center' }}><IcoVideo size={32} /></div>
                         <div style={{ fontSize:15, fontWeight:800, color:'#60A5FA', fontFamily:'Montserrat,sans-serif' }}>{t('Payment Confirmed — Upload Your Trial Video', 'Payment Confirmed — अपना Trial Video Upload करें')}</div>
                         <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:8, lineHeight:1.7 }}>
                           {regStatus.videoDeadline && (<>{t('Deadline:', 'Deadline:')} <strong style={{ color:'#FBB724' }}>{new Date(regStatus.videoDeadline).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' })}</strong><br/></>)}
@@ -797,7 +798,7 @@ export function Registration() {
                         </div>
                         <button onClick={()=>navigate('/register/upload-video')}
                           style={{ marginTop:14, padding:'14px 32px', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', letterSpacing:'.06em' }}>
-                          {t('🎬 GO TO VIDEO UPLOAD →', '🎬 VIDEO UPLOAD पर जाएं →')}
+                          {t('GO TO VIDEO UPLOAD →', 'VIDEO UPLOAD पर जाएं →')}
                         </button>
                       </div>
                     )}
@@ -805,7 +806,7 @@ export function Registration() {
                     {/* ── Video Submitted — Awaiting Review ── */}
                     {regStatus?.phase1Status === 'video_submitted' && (
                       <div style={{ padding:'20px', background:'rgba(168,85,247,0.07)', border:'1px solid rgba(168,85,247,0.3)', borderRadius:12, textAlign:'center' }}>
-                        <div style={{ fontSize:32, marginBottom:10 }}>🎬</div>
+                        <div style={{ color:'#A855F7', marginBottom:10, display:'flex', justifyContent:'center' }}><IcoVideo size={32} /></div>
                         <div style={{ fontSize:15, fontWeight:800, color:'#A855F7', fontFamily:'Montserrat,sans-serif' }}>{t('Video Under Review', 'Video Review में है')}</div>
                         <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:8, lineHeight:1.7 }}>
                           {t("Your Phase 1 submission is going through BCPL's evaluation process.", "आपकी Phase 1 submission BCPL के evaluation process से गुज़र रही है।")}<br/>
@@ -817,13 +818,13 @@ export function Registration() {
                     {/* ── Selected for Phase 2 ── */}
                     {regStatus?.phase1Status === 'selected' && (
                       <div style={{ padding:'20px', background:'rgba(34,197,94,0.08)', border:'1px solid rgba(34,197,94,0.35)', borderRadius:12, textAlign:'center' }}>
-                        <div style={{ fontSize:32, marginBottom:10 }}>🏆</div>
+                        <div style={{ color:'#22C55E', marginBottom:10, display:'flex', justifyContent:'center' }}><IcoTrophy size={32} /></div>
                         <div style={{ fontSize:15, fontWeight:800, color:'#22C55E', fontFamily:'Montserrat,sans-serif' }}>{t('Congratulations! Selected for Phase 2', 'बधाई हो! Phase 2 के लिए select हुए')}</div>
                         <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:8, marginBottom:16, lineHeight:1.7 }}>
                           {t("You've cleared Phase 1. Pay the Phase 2 fee to confirm your physical trial slot.", "आपने Phase 1 clear कर लिया है। अपना physical trial slot confirm करने के लिए Phase 2 fee pay करें।")}
                         </div>
                         <button onClick={()=>navigate('/register/phase2')} style={{ padding:'12px 28px', background:'linear-gradient(135deg,#22C55E,#16A34A)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer' }}>
-                          {t('🏟 PAY PHASE 2 FEE →', '🏟 PHASE 2 FEE pay करें →')}
+                          {t('PAY PHASE 2 FEE →', 'PHASE 2 FEE pay करें →')}
                         </button>
                       </div>
                     )}
@@ -831,7 +832,7 @@ export function Registration() {
                     {/* ── Rejected ── */}
                     {regStatus?.phase1Status === 'rejected' && (
                       <div style={{ padding:'20px', background:'rgba(239,68,68,0.07)', border:'1px solid rgba(239,68,68,0.3)', borderRadius:12, textAlign:'center' }}>
-                        <div style={{ fontSize:32, marginBottom:10 }}>😔</div>
+                        <div style={{ color:'#EF4444', marginBottom:10, display:'flex', justifyContent:'center' }}><IcoInfo size={32} /></div>
                         <div style={{ fontSize:15, fontWeight:800, color:'#EF4444', fontFamily:'Montserrat,sans-serif' }}>{t('Not Selected This Season', 'इस Season Select नहीं हुए')}</div>
                         <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:8, lineHeight:1.7 }}>
                           {t('Thank you for participating. Better luck in BCPL Season 6!', 'Participate करने के लिए धन्यवाद। BCPL Season 6 में शुभकामनाएं!')}
@@ -853,21 +854,21 @@ export function Registration() {
                         <input className="field-inp" type="tel" inputMode="numeric" maxLength={10} value={loginPhone}
                           onChange={e => { const v=e.target.value.replace(/\D/g,''); if(v.length<=10) setLoginPhone(v); }}
                           placeholder={t('10-digit number', '10-digit number')} style={{ marginBottom:16, width:'100%' }} />
-                        {loginError && <div style={{ fontSize:12, color:'#EF4444', marginBottom:10, fontWeight:600 }}>⚠ {loginError}</div>}
+                        {loginError && <div style={{ fontSize:12, color:'#EF4444', marginBottom:10, fontWeight:600 }}><IcoWarn size={12} style={{ verticalAlign: '-2px', marginRight: 4 }} /> {loginError}</div>}
                         <button disabled={loginPhone.length!==10 || loginLoading} onClick={handleSendLoginOtp}
                           style={{ width:'100%', padding:'13px 0', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', opacity:loginPhone.length!==10||loginLoading?0.5:1 }}>
-                          {loginLoading ? t('⏳ Sending...', '⏳ भेज रहे हैं...') : t('Send OTP →', 'OTP भेजें →')}
+                          {loginLoading ? t('Sending…', 'भेज रहे हैं…') : t('Send OTP →', 'OTP भेजें →')}
                         </button>
                       </>) : (<>
-                        <div style={{ fontSize:12, color:'#22C55E', marginBottom:12 }}>{t('✅ OTP sent to', '✅ OTP भेजा गया')} +91 {loginPhone}</div>
+                        <div style={{ fontSize:12, color:'#22C55E', marginBottom:12, display:'inline-flex', alignItems:'center', gap:5 }}><IcoCheck size={13} /> {t('OTP sent to', 'OTP भेजा गया')} +91 {loginPhone}</div>
                         <label style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.5)', letterSpacing:'.08em', display:'block', marginBottom:6 }}>{t('ENTER OTP', 'OTP डालें')}</label>
                         <input className="field-inp" type="tel" inputMode="numeric" maxLength={6} value={loginOtp}
                           onChange={e => { const v=e.target.value.replace(/\D/g,''); if(v.length<=6) setLoginOtp(v); }}
                           placeholder={t('6-digit OTP', '6-digit OTP')} style={{ marginBottom:16, width:'100%', letterSpacing:'0.3em', fontSize:20, textAlign:'center' }} />
-                        {loginError && <div style={{ fontSize:12, color:'#EF4444', marginBottom:10, fontWeight:600 }}>⚠ {loginError}</div>}
+                        {loginError && <div style={{ fontSize:12, color:'#EF4444', marginBottom:10, fontWeight:600 }}><IcoWarn size={12} style={{ verticalAlign: '-2px', marginRight: 4 }} /> {loginError}</div>}
                         <button disabled={loginOtp.length!==6 || loginLoading} onClick={handleVerifyLoginOtp}
                           style={{ width:'100%', padding:'13px 0', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', opacity:loginOtp.length!==6||loginLoading?0.5:1 }}>
-                          {loginLoading ? t('⏳ Verifying...', '⏳ Verify कर रहे हैं...') : t('Verify & Login →', 'Verify करें & Login →')}
+                          {loginLoading ? t('Verifying…', 'Verify कर रहे हैं…') : t('Verify & Login →', 'Verify करें & Login →')}
                         </button>
                         <button onClick={() => { setLoginStep('phone'); setLoginError(''); }} style={{ width:'100%', marginTop:8, padding:'10px', background:'none', border:'1px solid rgba(255,255,255,0.1)', borderRadius:10, color:'rgba(255,255,255,0.4)', fontSize:12, cursor:'pointer' }}>{t('← Change Number', '← Number बदलें')}</button>
                       </>)}
@@ -927,7 +928,7 @@ export function Registration() {
                           </div>
                           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', opacity:.55 }}>
                             <div>
-                              <div style={{ fontSize:11, fontWeight:700, color:'#E8B23D', letterSpacing:'.1em', fontFamily:'Montserrat,sans-serif' }}>PHASE 2 🔒</div>
+                              <div style={{ fontSize:11, fontWeight:700, color:'#E8B23D', letterSpacing:'.1em', fontFamily:'Montserrat,sans-serif', display:'inline-flex', alignItems:'center', gap:4 }}>PHASE 2 <IcoLock size={11} /></div>
                               <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)' }}>{t('Physical Trial (if selected)', 'Physical Trial (अगर select हुए)')}</div>
                             </div>
                             <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:18, color:'rgba(232,178,61,0.7)' }}>₹{(fees.phase2[r.id] ?? r.phase2).toLocaleString()}<span style={{ fontSize:10, fontWeight:600 }}> + GST</span></div>
@@ -940,7 +941,7 @@ export function Registration() {
 
                 {role && (
                   <div style={{ marginTop:16, padding:'14px 16px', background: role.color + '10', border: '1px solid ' + role.color + '30', display:'flex', alignItems:'center', gap:12, flexWrap:'wrap' }}>
-                    <span style={{ fontSize:18 }}>{role.emoji}</span>
+                    <span style={{ color: role.color, display:'inline-flex' }}><role.emojiIcon size={20} /></span>
                     <div style={{ flex:1, minWidth:0 }}>
                       <div style={{ fontSize:13, fontWeight:800, color:'#fff', fontFamily:'Montserrat,sans-serif', letterSpacing:'.04em' }}>{t('YOU SELECTED: ', 'आपने चुना: ')}{t(role.label, role.labelHi).toUpperCase()}</div>
                       <div style={{ fontSize:12, color:'rgba(255,255,255,0.55)', marginTop:2 }}>
@@ -963,9 +964,11 @@ export function Registration() {
 
                 {/* Search */}
                 <div style={{ position:'relative', marginBottom:20 }}>
+                  <span style={{ position:'absolute', left:14, top:'50%', transform:'translateY(-50%)', color:'rgba(255,255,255,0.35)', pointerEvents:'none', display:'inline-flex' }}><IcoSearch size={16} /></span>
                   <input
                     className="field-inp"
-                    placeholder={t('🔍  Search your city...', '🔍  अपना शहर Search करें...')}
+                    style={{ paddingLeft:40 }}
+                    placeholder={t('Search your city…', 'अपना शहर Search करें…')}
                     value={cityQ}
                     onChange={e => { setCityQ(e.target.value); setCity(''); setShowDrop(true); }}
                     onFocus={() => setShowDrop(true)}
@@ -974,8 +977,8 @@ export function Registration() {
                   {showDrop && cityQ && (
                     <div style={{ position:'absolute', top:'calc(100% + 4px)', left:0, right:0, background:'#0C1A2E', border:'1px solid rgba(255,122,41,0.3)', zIndex:99, maxHeight:200, overflowY:'auto' }}>
                       {filtered.slice(0,8).map(c => (
-                        <div key={c} onMouseDown={() => { setCity(c); setCityQ(c); setShowDrop(false); }} style={{ padding:'12px 16px', cursor:'pointer', fontSize:14, color:'rgba(255,255,255,0.8)', borderBottom:'1px solid rgba(255,255,255,0.05)', transition:'background .12s' }} onMouseEnter={e => (e.currentTarget.style.background='rgba(255,122,41,0.1)')} onMouseLeave={e => (e.currentTarget.style.background='')}>
-                          📍 {c}
+                        <div key={c} onMouseDown={() => { setCity(c); setCityQ(c); setShowDrop(false); }} style={{ padding:'12px 16px', cursor:'pointer', fontSize:14, color:'rgba(255,255,255,0.8)', borderBottom:'1px solid rgba(255,255,255,0.05)', transition:'background .12s', display:'flex', alignItems:'center', gap:8 }} onMouseEnter={e => (e.currentTarget.style.background='rgba(255,122,41,0.1)')} onMouseLeave={e => (e.currentTarget.style.background='')}>
+                          <IcoPin size={14} style={{ color:'#FF7A29', flexShrink:0 }} /> {c}
                         </div>
                       ))}
                     </div>
@@ -993,7 +996,7 @@ export function Registration() {
 
                 {city && (
                   <div style={{ marginTop:20, padding:'14px 18px', background:'rgba(34,197,94,0.08)', border:'1px solid rgba(34,197,94,0.3)', display:'flex', alignItems:'center', gap:12 }}>
-                    <span style={{ fontSize:20 }}>📍</span>
+                    <span style={{ color:'#22C55E', display:'inline-flex' }}><IcoPin size={20} /></span>
                     <div>
                       <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:16, color:'#22C55E' }}>{city}</div>
                       <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)', marginTop:2 }}>{t('If selected in Phase 1, your physical trial will be held in this city', 'अगर Phase 1 में select हुए, तो आपका physical trial इसी शहर में होगा')}</div>
@@ -1031,7 +1034,7 @@ export function Registration() {
                     <div className="ticket-info-grid" style={{ paddingTop:18, paddingBottom:16 }}>
                       {[
                         { l:t('PLAYER NAME', 'PLAYER NAME'), v:name || '—' },
-                        { l:t('ROLE', 'ROLE'), v:role ? role.emoji + ' ' + t(role.label, role.labelHi) : '—' },
+                        { l:t('ROLE', 'ROLE'), v:role ? t(role.label, role.labelHi) : '—' },
                         { l:t('TRIAL CITY', 'TRIAL CITY'), v:city || '—' },
                         { l:t('AGE ELIGIBILITY', 'AGE ELIGIBILITY'), v:dob && dobValid ? t('✓ Eligible (18–45)', '✓ Eligible (18–45)') : '—' },
                         { l:t('SEASON', 'SEASON'), v:'5 · 2025–26' },
@@ -1050,12 +1053,12 @@ export function Registration() {
                       <div style={{ fontSize:9, fontWeight:700, fontFamily:'Montserrat,sans-serif', letterSpacing:'.14em', color:'rgba(255,255,255,0.3)', marginBottom:10 }}>{t('WHAT YOU GET', 'आपको क्या मिलेगा')}</div>
                       <div className="what-you-get-grid">
                         {[
-                          t('✅ Criteria-based video assessment', '✅ Criteria-based video assessment'),
-                          t('✅ Selection results announced promptly', '✅ Selection results जल्दी घोषित'),
-                          t('✅ Zero auction / tournament fee', '✅ कोई auction / tournament fee नहीं'),
-                          t('✅ Transparent result process', '✅ पारदर्शी result process'),
-                          t('✅ Phase 2 invite if selected', '✅ Select होने पर Phase 2 invite'),
-                        ].map(item => <div key={item} style={{ fontSize:12, color:'rgba(255,255,255,0.65)', lineHeight:1.5 }}>{item}</div>)}
+                          t('Criteria-based video assessment', 'Criteria-based video assessment'),
+                          t('Selection results announced promptly', 'Selection results जल्दी घोषित'),
+                          t('Zero auction / tournament fee', 'कोई auction / tournament fee नहीं'),
+                          t('Transparent result process', 'पारदर्शी result process'),
+                          t('Phase 2 invite if selected', 'Select होने पर Phase 2 invite'),
+                        ].map(item => <div key={item} style={{ fontSize:12, color:'rgba(255,255,255,0.65)', lineHeight:1.5, display:'flex', alignItems:'flex-start', gap:6 }}><span style={{ color:'#22C55E', flexShrink:0, marginTop:1 }}><IcoCheck size={13} /></span>{item}</div>)}
                       </div>
                     </div>
 
@@ -1066,7 +1069,7 @@ export function Registration() {
                       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:8 }}>
                         <div>
                           <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:3 }}>
-                            <span style={{ fontSize:10 }}>🔒</span>
+                            <span style={{ color:'rgba(232,178,61,0.6)', display:'inline-flex' }}><IcoLock size={11} /></span>
                             <span style={{ fontSize:9, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.16em', color:'rgba(232,178,61,0.6)' }}>{t('PHASE 2 (IF SELECTED)', 'PHASE 2 (अगर SELECT हुए)')}</span>
                           </div>
                           <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)' }}>{t('Physical trial at', 'Physical trial')} {city||t('your city', 'आपके शहर')} {t('— pay only if selected', 'में — select होने पर ही pay करें')}</div>
@@ -1126,16 +1129,16 @@ export function Registration() {
                   style={{ width:'100%', padding:'20px 0', fontSize:17, clipPath:'none', borderRadius:12, letterSpacing:'.08em' }}
                   onClick={handlePay}
                 >
-                  {payLoading ? t('⏳ Processing...', '⏳ Processing...') : t('🏏  PAY ₹' + withGst(price, fees.gstRate) + ' SECURELY · ENTER PHASE 1', '🏏  ₹' + withGst(price, fees.gstRate) + ' PAY करें · PHASE 1 में जाएं')}
+                  {payLoading ? t('Processing…', 'Processing…') : t('PAY ₹' + withGst(price, fees.gstRate) + ' SECURELY · ENTER PHASE 1', '₹' + withGst(price, fees.gstRate) + ' PAY करें · PHASE 1 में जाएं')}
                 </button>
                 {payError && (
                   <div style={{ marginTop:12, padding:'12px 16px', background:'rgba(239,68,68,0.1)', border:'1px solid rgba(239,68,68,0.3)', borderRadius:8, fontSize:13, color:'#EF4444', fontWeight:600 }}>
-                    ⚠ {payError}
+                    <IcoWarn size={12} style={{ verticalAlign: '-2px', marginRight: 4 }} /> {payError}
                   </div>
                 )}
                 <div style={{ display:'flex', justifyContent:'center', gap:16, marginTop:12, flexWrap:'wrap' }}>
-                  {[t('🔒 Cashfree Secured','🔒 Cashfree Secured'),t('256-bit SSL','256-bit SSL'),t('BCPL','BCPL')].map(badge => (
-                    <span key={badge} style={{ fontSize:10, color:'rgba(255,255,255,0.25)', fontWeight:600 }}>{badge}</span>
+                  {[t('Cashfree Secured','Cashfree Secured'),t('256-bit SSL','256-bit SSL'),t('BCPL','BCPL')].map((badge, bi) => (
+                    <span key={badge} style={{ fontSize:10, color:'rgba(255,255,255,0.25)', fontWeight:600, display:'inline-flex', alignItems:'center', gap:4 }}>{bi===0 && <IcoLock size={10} />}{badge}</span>
                   ))}
                 </div>
               </div>
@@ -1169,19 +1172,19 @@ export function Registration() {
           <div style={{ position:'absolute', top:0, right:0, width:160, height:'100%', background:'linear-gradient(135deg, transparent 50%, rgba(232,178,61,0.05) 100%)', pointerEvents:'none' }} />
           <div style={{ display:'flex', alignItems:'flex-start', gap:16, flexWrap:'wrap' }}>
             <div style={{ flex:'0 0 auto' }}>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:11, letterSpacing:'.2em', color:'#E8B23D', marginBottom:6 }}>{t('🔒 PHASE 2 — PHYSICAL TRIAL', '🔒 PHASE 2 — PHYSICAL TRIAL')}</div>
+              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:11, letterSpacing:'.2em', color:'#E8B23D', marginBottom:6, display:'inline-flex', alignItems:'center', gap:6 }}><IcoLock size={12} /> {t('PHASE 2 — PHYSICAL TRIAL', 'PHASE 2 — PHYSICAL TRIAL')}</div>
               <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'rgba(255,255,255,0.8)' }}>{t('Only for selected players.', 'सिर्फ select हुए players के लिए।')}</div>
             </div>
             <div style={{ flex:1, minWidth:240 }}>
               <div className="phase2-strip-grid">
                 {[
-                  { icon:'🏟', label:t('Ground Trial', 'Ground Trial'), sub:t('At your registered city', 'आपके registered शहर में') },
-                  { icon:'📋', label:t('Skill Evaluation', 'Skill Evaluation'), sub:t('By franchise coaching staff', 'Franchise coaching staff द्वारा') },
-                  { icon:'🔨', label:t('Live Auction', 'Live Auction'), sub:t('Franchises bid on you publicly', 'Franchises आप पर publicly bid करती हैं') },
-                  { icon:'💰', label:t('Phase 2 Fee', 'Phase 2 Fee'), sub:'₹' + fees.phase2.bat.toLocaleString() + ' (Bat/Bowl/WK) · ₹' + fees.phase2.ar.toLocaleString() + ' (AR) + GST' },
+                  { icon:IcoStadium, label:t('Ground Trial', 'Ground Trial'), sub:t('At your registered city', 'आपके registered शहर में') },
+                  { icon:IcoList, label:t('Skill Evaluation', 'Skill Evaluation'), sub:t('By franchise coaching staff', 'Franchise coaching staff द्वारा') },
+                  { icon:IcoScale, label:t('Live Auction', 'Live Auction'), sub:t('Franchises bid on you publicly', 'Franchises आप पर publicly bid करती हैं') },
+                  { icon:IcoRupee, label:t('Phase 2 Fee', 'Phase 2 Fee'), sub:'₹' + fees.phase2.bat.toLocaleString() + ' (Bat/Bowl/WK) · ₹' + fees.phase2.ar.toLocaleString() + ' (AR) + GST' },
                 ].map(item => (
                   <div key={item.label} style={{ display:'flex', gap:10, alignItems:'flex-start' }}>
-                    <span style={{ fontSize:18 }}>{item.icon}</span>
+                    <span style={{ color:'#E8B23D', display:'inline-flex', flexShrink:0 }}><item.icon size={18} /></span>
                     <div>
                       <div style={{ fontSize:12, fontWeight:700, color:'rgba(255,255,255,0.7)', fontFamily:'Montserrat,sans-serif' }}>{item.label}</div>
                       <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)', marginTop:1 }}>{item.sub}</div>
@@ -1207,7 +1210,7 @@ export function Registration() {
                 <span style={{ padding:'0 12px', height:46, display:'flex', alignItems:'center', background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,122,41,0.25)', borderRight:'none', fontSize:14, fontWeight:700, color:'rgba(255,255,255,0.6)', flexShrink:0 }}>+91</span>
                 <div className="field-inp" style={{ flex:1, display:'flex', alignItems:'center', borderLeft:'none', pointerEvents:'none', opacity:.7 }}>{phone}</div>
               </div>
-              {payOtpError && <div style={{ fontSize:12, color: payOtpAlreadyReg ? '#FBB724' : '#EF4444', marginBottom:10, fontWeight:600 }}>⚠ {payOtpError}</div>}
+              {payOtpError && <div style={{ fontSize:12, color: payOtpAlreadyReg ? '#FBB724' : '#EF4444', marginBottom:10, fontWeight:600 }}><IcoWarn size={12} style={{ verticalAlign: '-2px', marginRight: 4 }} /> {payOtpError}</div>}
               {payOtpAlreadyReg && (
                 <button onClick={() => { setShowPayOtp(false); setPayOtpAlreadyReg(false); setPayOtpError(''); setShowLogin(true); setLoginStep('phone'); setLoginPhone(phone); setLoginOtp(''); }}
                   style={{ width:'100%', padding:'13px 0', marginBottom:10, background:'linear-gradient(135deg,#22C55E,#16A34A)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', letterSpacing:'.04em' }}>
@@ -1216,18 +1219,18 @@ export function Registration() {
               )}
               <button disabled={payOtpLoading} onClick={handlePayOtpSend}
                 style={{ width:'100%', padding:'13px 0', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', opacity:payOtpLoading?0.5:1 }}>
-                {payOtpLoading ? t('⏳ Sending...', '⏳ भेज रहे हैं...') : t('Send OTP to +91 ' + phone + ' →', '+91 ' + phone + ' पर OTP भेजें →')}
+                {payOtpLoading ? t('Sending…', 'भेज रहे हैं…') : t('Send OTP to +91 ' + phone + ' →', '+91 ' + phone + ' पर OTP भेजें →')}
               </button>
             </>) : (<>
-              <div style={{ fontSize:12, color:'#22C55E', marginBottom:12 }}>{t('✅ OTP sent to', '✅ OTP भेजा गया')} +91 {phone}</div>
+              <div style={{ fontSize:12, color:'#22C55E', marginBottom:12, display:'inline-flex', alignItems:'center', gap:5 }}><IcoCheck size={13} /> {t('OTP sent to', 'OTP भेजा गया')} +91 {phone}</div>
               <label style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.5)', letterSpacing:'.08em', display:'block', marginBottom:6 }}>{t('ENTER OTP', 'OTP डालें')}</label>
               <input className="field-inp" type="tel" inputMode="numeric" maxLength={6} value={payOtp}
                 onChange={e => { const v=e.target.value.replace(/\D/g,''); if(v.length<=6) setPayOtp(v); }}
                 placeholder={t('6-digit OTP', '6-digit OTP')} style={{ marginBottom:16, width:'100%', letterSpacing:'0.3em', fontSize:20, textAlign:'center' }} autoFocus />
-              {payOtpError && <div style={{ fontSize:12, color:'#EF4444', marginBottom:10, fontWeight:600 }}>⚠ {payOtpError}</div>}
+              {payOtpError && <div style={{ fontSize:12, color:'#EF4444', marginBottom:10, fontWeight:600 }}><IcoWarn size={12} style={{ verticalAlign: '-2px', marginRight: 4 }} /> {payOtpError}</div>}
               <button disabled={payOtp.length!==6 || payOtpLoading} onClick={handlePayOtpVerify}
                 style={{ width:'100%', padding:'13px 0', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', opacity:payOtp.length!==6||payOtpLoading?0.5:1 }}>
-                {payOtpLoading ? t('⏳ Verifying...', '⏳ Verify कर रहे हैं...') : t('Verify & Pay →', 'Verify करें & Pay करें →')}
+                {payOtpLoading ? t('Verifying…', 'Verify कर रहे हैं…') : t('Verify & Pay →', 'Verify करें & Pay करें →')}
               </button>
               <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginTop:8 }}>
                 <button onClick={() => { setPayOtpStep('phone'); setPayOtpError(''); }} style={{ background:'none', border:'none', color:'rgba(255,255,255,0.4)', fontSize:12, cursor:'pointer', padding:'8px 0' }}>{t('← Back', '← वापस')}</button>
@@ -1256,10 +1259,10 @@ export function Registration() {
             {t('CONTINUE →', 'CONTINUE →')}
           </button>
           <button
-            style={{ flex:1, padding:'15px 0', background:'linear-gradient(135deg,#25D366,#1BA851)', border:'none', borderRadius:12, color:'#fff', fontWeight:700, cursor:'pointer', fontSize:13, fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em' }}
+            style={{ flex:1, padding:'15px 0', background:'linear-gradient(135deg,#25D366,#1BA851)', border:'none', borderRadius:12, color:'#fff', fontWeight:700, cursor:'pointer', fontSize:13, fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em', display:'inline-flex', alignItems:'center', justifyContent:'center', gap:6 }}
             onClick={() => window.open('https://wa.me/919151346555?text=Hi+BCPL+team,+I+need+help+with+registration', '_blank')}
           >
-            {t('💬 WHATSAPP', '💬 WHATSAPP')}
+            <IcoChat size={15} /> {t('WHATSAPP', 'WHATSAPP')}
           </button>
         </div>
       )}

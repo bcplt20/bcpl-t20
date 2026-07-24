@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { getMyReferral, whatsAppShareUrl, type MyReferral } from '../lib/referralProgramApi';
 import { getSession } from '../lib/auth';
 import { ReferralPosterButton } from './ReferralPoster';
+import { IcoChat, IcoDoc, IcoGift, IcoTrophy } from '../lib/icons';
 
 /**
  * Player referral program UI:
@@ -68,8 +69,9 @@ function CopyBtn({ text }: { text: string }) {
         color: copied ? '#4ADE80' : 'rgba(255,255,255,0.75)',
         borderRadius: 10, padding: '11px 16px', fontFamily: 'Montserrat,sans-serif',
         fontWeight: 800, fontSize: 12, letterSpacing: '.04em', cursor: 'pointer',
+        display: 'inline-flex', alignItems: 'center', gap: 6,
       }}>
-      {copied ? '✓ Copied' : '📋 Copy'}
+      {copied ? '✓ Copied' : <><IcoDoc size={14} style={{ color: 'currentColor' }} /> Copy</>}
     </button>
   );
 }
@@ -98,8 +100,8 @@ export function ReferralCard() {
           {data.rank ? `RANK #${data.rank} OF ${data.totalReferrers}` : 'UNRANKED — SHARE TO START'}
         </div>
       </div>
-      <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 'clamp(17px,2.6vw,21px)', color: '#fff', marginBottom: 4 }}>
-        Bring your friends, win BCPL rewards 🎁
+      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 'clamp(17px,2.6vw,21px)', color: '#fff', marginBottom: 4 }}>
+        Bring your friends, win BCPL rewards <IcoGift size={20} style={{ color: '#FF9A57' }} />
       </div>
       <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6, marginBottom: 16 }}>
         Share your personal link. When a friend completes their Phase 1 registration, you move up the reward ladder.
@@ -109,8 +111,8 @@ export function ReferralCard() {
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'stretch', marginBottom: 8 }}>
         <div style={linkBox}>{data.link}</div>
         <CopyBtn text={data.link} />
-        <button style={waBtn} onClick={() => window.open(whatsAppShareUrl(data.link), '_blank')}>
-          💬 Share on WhatsApp
+        <button style={{ ...waBtn, display: 'inline-flex', alignItems: 'center', gap: 7 }} onClick={() => window.open(whatsAppShareUrl(data.link), '_blank')}>
+          <IcoChat size={15} style={{ color: 'currentColor' }} /> Share on WhatsApp
         </button>
       </div>
       <div style={{ marginBottom: 18 }}>
@@ -173,8 +175,8 @@ export function ReferralCard() {
               {t.reward}
             </div>
             {t.rewardGiven && (
-              <span style={{ fontSize: 10, fontWeight: 800, fontFamily: 'Montserrat,sans-serif', letterSpacing: '.05em', color: '#4ADE80', background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.35)', borderRadius: 20, padding: '3px 9px', whiteSpace: 'nowrap' }}>
-                🎁 RECEIVED
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 10, fontWeight: 800, fontFamily: 'Montserrat,sans-serif', letterSpacing: '.05em', color: '#4ADE80', background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.35)', borderRadius: 20, padding: '3px 9px', whiteSpace: 'nowrap' }}>
+                <IcoGift size={12} style={{ color: '#4ADE80' }} /> RECEIVED
               </span>
             )}
           </div>
@@ -185,7 +187,7 @@ export function ReferralCard() {
       <div style={{ ...secLabel, fontSize: 11, marginBottom: 10 }}>TOP REFERRERS — SEASON 5</div>
       {data.leaderboard.length === 0 ? (
         <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', padding: '14px 12px', background: 'rgba(255,255,255,0.03)', borderRadius: 9 }}>
-          Nobody on the board yet — your first paid referral makes you #1. 🏆
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>Nobody on the board yet — your first paid referral makes you #1. <IcoTrophy size={15} style={{ color: '#E8B23D' }} /></span>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -195,8 +197,8 @@ export function ReferralCard() {
               background: r.isMe ? 'rgba(255,122,41,0.1)' : 'transparent',
               border: r.isMe ? '1px solid rgba(255,122,41,0.35)' : '1px solid transparent',
             }}>
-              <div style={{ minWidth: 30, fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 13, color: r.rank <= 3 ? '#E8B23D' : 'rgba(255,255,255,0.4)' }}>
-                {r.rank === 1 ? '🥇' : r.rank === 2 ? '🥈' : r.rank === 3 ? '🥉' : `#${r.rank}`}
+              <div style={{ minWidth: 30, fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 13, color: r.rank === 1 ? '#E8B23D' : r.rank === 2 ? '#B8C0CC' : r.rank === 3 ? '#C08A5A' : 'rgba(255,255,255,0.4)' }}>
+                {`#${r.rank}`}
               </div>
               <div style={{ flex: 1, fontSize: 13, fontWeight: r.isMe ? 800 : 500, color: r.isMe ? '#FF9A57' : '#F0EDE8' }}>
                 {r.name}{r.isMe ? ' (You)' : ''}
@@ -225,8 +227,8 @@ export function ReferralShareBanner() {
       background: 'linear-gradient(135deg,#1A0F04,#0A1727)', border: '1px solid rgba(255,122,41,0.4)',
       borderRadius: 12, padding: '28px 20px', textAlign: 'center',
     }}>
-      <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 13, letterSpacing: '.16em', color: '#FF9A57', marginBottom: 6, textTransform: 'uppercase' }}>
-        🎁 Refer &amp; Earn
+      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 13, letterSpacing: '.16em', color: '#FF9A57', marginBottom: 6, textTransform: 'uppercase' }}>
+        <IcoGift size={16} style={{ color: '#FF9A57' }} /> Refer &amp; Earn
       </div>
       <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 20, color: '#fff', marginBottom: 8 }}>
         Apni team banao — rewards jeeto!
@@ -237,8 +239,8 @@ export function ReferralShareBanner() {
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center', alignItems: 'stretch', maxWidth: 640, margin: '0 auto 14px' }}>
         <div style={{ ...linkBox, textAlign: 'left' }}>{data.link}</div>
         <CopyBtn text={data.link} />
-        <button style={waBtn} onClick={() => window.open(whatsAppShareUrl(data.link), '_blank')}>
-          💬 Share on WhatsApp
+        <button style={{ ...waBtn, display: 'inline-flex', alignItems: 'center', gap: 7 }} onClick={() => window.open(whatsAppShareUrl(data.link), '_blank')}>
+          <IcoChat size={15} style={{ color: 'currentColor' }} /> Share on WhatsApp
         </button>
       </div>
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 14 }}>

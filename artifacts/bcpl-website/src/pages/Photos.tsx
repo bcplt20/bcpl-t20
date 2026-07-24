@@ -352,7 +352,7 @@ export function Photos() {
       })()}
 
       {/* ── FLOATING REGISTER BUTTON ── */}
-      <Link className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>🏏 {t("REGISTER NOW","अभी REGISTER करें")} &rarr;</Link>
+      <Link className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>{t("REGISTER NOW","अभी REGISTER करें")} &rarr;</Link>
       <BCPLFooter />
       <StickyRegisterCTA/>
     </div>

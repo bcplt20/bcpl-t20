@@ -3,6 +3,7 @@ import { Link } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { useLang } from '../lib/i18n';
+import { IcoTrophy, IcoPen, IcoVideo, IcoStadium, IcoIdCard, IcoPhone, IcoShirt, IcoCalendar, IcoStar, IcoChat, IcoCamera } from '../lib/icons';
 
 const BOOKING_REF = 'BCPL-S5-7432';
 const L = import.meta.env.BASE_URL + 'bcpl-assets/logos/';
@@ -21,12 +22,12 @@ const TEAMS = [
 ];
 
 const ROADMAP = [
-  { icon:'📝', label:'Register',     done:true },
-  { icon:'🎬', label:'Video',        done:true },
-  { icon:'🏟', label:'Phase 2',      done:true },
-  { icon:'🪪', label:'KYC',          done:true },
-  { icon:'🔨', label:'Auction',      done:true },
-  { icon:'🏆', label:'Play BCPL',    done:true, final:true },
+  { icon:IcoPen,     label:'Register',     done:true },
+  { icon:IcoVideo,   label:'Video',        done:true },
+  { icon:IcoStadium, label:'Phase 2',      done:true },
+  { icon:IcoIdCard,  label:'KYC',          done:true },
+  { icon:IcoTrophy,  label:'Auction',      done:true },
+  { icon:IcoTrophy,  label:'Play BCPL',    done:true, final:true },
 ];
 
 export function TeamSelected() {
@@ -92,7 +93,7 @@ export function TeamSelected() {
         <div className="W" style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ textAlign: 'center', marginBottom: 48, animation: 'fadeUp 0.6s ease both' }}>
             {/* Trophy */}
-            <div style={{ fontSize: 'clamp(64px, 12vw, 120px)', animation: 'trophyBounce 2.5s ease-in-out infinite', marginBottom: 24, display: 'inline-block' }}>🏆</div>
+            <div style={{ animation: 'trophyBounce 2.5s ease-in-out infinite', marginBottom: 24, display: 'inline-flex', color: 'var(--gold)' }}><IcoTrophy size={100} style={{ color: 'var(--gold)' }} /></div>
 
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: 12, background: `${team.color}15`, border: `1px solid ${team.color}50`, borderRadius: '12px', padding: '8px 24px', marginBottom: 24, transition: 'all 0.5s' }}>
               <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--green)', display: 'inline-block', animation: 'liveBlip 1.2s infinite' }} />
@@ -155,14 +156,14 @@ export function TeamSelected() {
       <div className="W">
         {/* JOURNEY RAIL — all complete */}
         <div style={{ background: 'var(--panel)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 'var(--r)', padding: '32px 24px', marginBottom: 40 }}>
-          <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 13, letterSpacing: '.14em', color: 'var(--green)', textTransform: 'uppercase', marginBottom: 24 }}>🏆 {t("JOURNEY COMPLETE · ALL 6 STAGES CLEARED", "सफर पूरा · सभी 6 स्टेज क्लियर")}</div>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 13, letterSpacing: '.14em', color: 'var(--green)', textTransform: 'uppercase', marginBottom: 24 }}><IcoTrophy size={16} style={{ color: 'var(--gold)' }} /> {t("JOURNEY COMPLETE · ALL 6 STAGES CLEARED", "सफर पूरा · सभी 6 स्टेज क्लियर")}</div>
           <div className="roadmap-scroll">
           <div className="roadmap-rail">
             {ROADMAP.map((step, i) => (
               <React.Fragment key={i}>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, flex: 1 }}>
-                  <div style={{ width: 48, height: 48, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: step.final ? 24 : 18, background: step.final ? 'linear-gradient(135deg, var(--gold), #F59E0B)' : 'linear-gradient(135deg, var(--green), #16A34A)', border: 'none', animation: step.final ? 'trophyBounce 2.5s ease-in-out infinite' : 'none', color: '#fff', fontWeight: 900, boxShadow: step.final ? '0 0 20px rgba(232,178,61,0.5)' : 'none' }}>
-                    {step.final ? '🏆' : '✓'}
+                  <div style={{ width: 48, height: 48, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, background: step.final ? 'linear-gradient(135deg, var(--gold), #F59E0B)' : 'linear-gradient(135deg, var(--green), #16A34A)', border: 'none', animation: step.final ? 'trophyBounce 2.5s ease-in-out infinite' : 'none', color: '#fff', fontWeight: 900, boxShadow: step.final ? '0 0 20px rgba(232,178,61,0.5)' : 'none' }}>
+                    {step.final ? <IcoTrophy size={24} style={{ color: '#fff' }} /> : '✓'}
                   </div>
                   <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 11, color: step.final ? 'var(--gold)' : 'var(--green)', textAlign: 'center', letterSpacing: '.06em', textTransform: 'uppercase' }}>{t(step.label, step.label)}</div>
                 </div>
@@ -179,13 +180,13 @@ export function TeamSelected() {
           <div style={{ fontFamily: 'var(--font-body)', fontSize: 15, color: 'rgba(255,255,255,0.5)', marginBottom: 24 }}>{t("Your franchise will contact you within 24 hours.", "आपकी फ्रैंचाइज़ी 24 घंटे के भीतर आपसे संपर्क करेगी।")}</div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(260px,1fr))', gap: 16 }}>
             {[
-              { icon:'📱', title: t('Franchise WhatsApp', 'फ्रैंचाइज़ी WhatsApp'), body: t(`You'll be added to the official ${team.name} team WhatsApp group within 24 hours of the auction close.`, `ऑक्शन समाप्त होने के 24 घंटे के भीतर आपको आधिकारिक ${team.name} टीम WhatsApp ग्रुप में जोड़ दिया जाएगा।`) },
-              { icon:'🧢', title: t('Team Kit & Jersey', 'टीम किट और जर्सी'), body: t('Your custom jersey, training gear, and Season 5 player ID will be dispatched to your address by courier.', 'आपकी कस्टम जर्सी, ट्रेनिंग गियर और सीजन 5 प्लेयर ID कूरियर द्वारा आपके पते पर भेज दी जाएगी।') },
-              { icon:'📅', title: t('Training Schedule', 'ट्रेनिंग शेड्यूल'), body: t('Your franchise captain will share the training calendar, match venue, and pre-season camp details.', 'आपकी फ्रैंचाइज़ी का कप्तान ट्रेनिंग कैलेंडर, मैच का स्थान और प्री-सीजन कैंप की जानकारी साझा करेगा।') },
-              { icon:'🏟', title: t('Season 5 Begins', 'सीजन 5 शुरू'), body: t('BCPL Season 5 tournament matches begin Sep–Oct 2026. You\'ll receive your fixture schedule via email + WhatsApp.', 'BCPL सीजन 5 टूर्नामेंट के मैच सितंबर-अक्टूबर 2026 में शुरू होंगे। आपको अपना फिक्सचर शेड्यूल ईमेल + WhatsApp के माध्यम से मिलेगा।') },
+              { icon:IcoPhone, title: t('Franchise WhatsApp', 'फ्रैंचाइज़ी WhatsApp'), body: t(`You'll be added to the official ${team.name} team WhatsApp group within 24 hours of the auction close.`, `ऑक्शन समाप्त होने के 24 घंटे के भीतर आपको आधिकारिक ${team.name} टीम WhatsApp ग्रुप में जोड़ दिया जाएगा।`) },
+              { icon:IcoShirt, title: t('Team Kit & Jersey', 'टीम किट और जर्सी'), body: t('Your custom jersey, training gear, and Season 5 player ID will be dispatched to your address by courier.', 'आपकी कस्टम जर्सी, ट्रेनिंग गियर और सीजन 5 प्लेयर ID कूरियर द्वारा आपके पते पर भेज दी जाएगी।') },
+              { icon:IcoCalendar, title: t('Training Schedule', 'ट्रेनिंग शेड्यूल'), body: t('Your franchise captain will share the training calendar, match venue, and pre-season camp details.', 'आपकी फ्रैंचाइज़ी का कप्तान ट्रेनिंग कैलेंडर, मैच का स्थान और प्री-सीजन कैंप की जानकारी साझा करेगा।') },
+              { icon:IcoStadium, title: t('Season 5 Begins', 'सीजन 5 शुरू'), body: t('BCPL Season 5 tournament matches begin Sep–Oct 2026. You\'ll receive your fixture schedule via email + WhatsApp.', 'BCPL सीजन 5 टूर्नामेंट के मैच सितंबर-अक्टूबर 2026 में शुरू होंगे। आपको अपना फिक्सचर शेड्यूल ईमेल + WhatsApp के माध्यम से मिलेगा।') },
             ].map(card => (
               <div key={card.title} className="next-card">
-                <div style={{ fontSize: 36, marginBottom: 16 }}>{card.icon}</div>
+                <div style={{ marginBottom: 16, color: team.color }}><card.icon size={34} style={{ color: team.color }} /></div>
                 <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 18, color: '#fff', marginBottom: 10, textTransform: 'uppercase' }}>{card.title}</div>
                 <div style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>{card.body}</div>
               </div>
@@ -197,12 +198,12 @@ export function TeamSelected() {
         <div style={{ background: `linear-gradient(135deg, ${team.bg}, var(--bg))`, border: `2px solid ${team.color}40`, borderRadius: 'var(--r)', padding: '40px 24px', textAlign: 'center', transition: 'all 0.5s', position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse 80% 60% at 50% 0%, ${team.color}10 0%, transparent 70%)`, pointerEvents: 'none', transition: 'background 0.5s' }} />
           <div style={{ position: 'relative', zIndex: 1 }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>🎉</div>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}><IcoStar size={40} style={{ color: team.color }} /></div>
             <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(20px, 3vw, 28px)', color: '#fff', marginBottom: 8, textTransform: 'uppercase' }}>{t("Share Your Milestone", "अपनी उपलब्धि साझा करें")}</div>
             <div style={{ fontFamily: 'var(--font-body)', fontSize: 15, color: 'rgba(255,255,255,0.6)', marginBottom: 32 }}>{t("You made it from office to stadium. Let the world know.", "आपने ऑफिस से स्टेडियम तक का सफर तय किया है। दुनिया को बताएं।")}</div>
             <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
-              {['📲 WhatsApp', '🐦 Twitter/X', '📸 Instagram'].map(btn => (
-                <button key={btn} className="btn-outline" style={{ padding: '14px 24px', fontSize: 14, letterSpacing: '.06em' }}>{btn}</button>
+              {[{ icon: IcoChat, label: 'WhatsApp' }, { icon: null, label: 'Twitter/X' }, { icon: IcoCamera, label: 'Instagram' }].map(btn => (
+                <button key={btn.label} className="btn-outline" style={{ padding: '14px 24px', fontSize: 14, letterSpacing: '.06em', display: 'inline-flex', alignItems: 'center', gap: 8 }}>{btn.icon && <btn.icon size={16} style={{ color: 'currentColor' }} />}{btn.label}</button>
               ))}
             </div>
             <div style={{ marginTop: 24, fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 13, color: 'rgba(255,255,255,0.3)', letterSpacing: '.14em', textTransform: 'uppercase' }}>#OfficeSeStadiumtak · #BCPLT20 · #{team.name.replace(/\s/g,'')}</div>

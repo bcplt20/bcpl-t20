@@ -5,6 +5,7 @@ import { BCPLFooter } from '../components/BCPLFooter';
 import { getMatches } from '../lib/api';
 import { useLang } from '../lib/i18n';
 import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
+import { IcoBat, IcoPin } from '../lib/icons';
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap');
@@ -259,7 +260,7 @@ export function Schedule() {
           {/* UPCOMING NOTICE */}
           {!loading && !loadErr && allMatches.length === 0 && (
             <div style={{textAlign:'center',padding:'clamp(60px,10vw,100px) 20px'}}>
-              <div style={{fontSize:64,marginBottom:20}}>🏏</div>
+              <div style={{display:'flex',justifyContent:'center',marginBottom:20}}><IcoBat size={40} style={{color:'rgba(255,255,255,0.5)'}}/></div>
               <div className="v3-h" style={{fontSize:'clamp(26px,5vw,40px)',color:'#fff',marginBottom:12}}>
                 {t("Fixtures Coming Soon", "Fixtures जल्द आएंगे")}
               </div>
@@ -324,7 +325,7 @@ export function Schedule() {
                         </div>
                         <div style={{display:'flex',flexWrap:'wrap',gap:8,alignItems:'center'}}>
                           <span style={{fontSize:12,color:'rgba(255,122,41,0.7)',fontFamily:'var(--font-head)',fontWeight:700}}>Match {m.matchNo}</span>
-                          <span style={{fontSize:12,color:'rgba(255,255,255,0.35)',fontFamily:'Inter,sans-serif'}}>📍 {m.venue}</span>
+                          <span style={{display:'inline-flex',alignItems:'center',gap:5,fontSize:12,color:'rgba(255,255,255,0.35)',fontFamily:'Inter,sans-serif'}}><IcoPin size={13} style={{color:'rgba(255,255,255,0.35)'}}/> {m.venue}</span>
                           <span style={{fontSize:12,color:'rgba(255,255,255,0.25)',fontFamily:'Inter,sans-serif'}}>· {m.time}</span>
                         </div>
                         {m.result && (
@@ -352,7 +353,7 @@ export function Schedule() {
       </div>
       {/* ── FLOATING REGISTER BUTTON ── */}
       <Link href="/register" className="float-reg-btn float-reg-pulse" style={{textDecoration:"none"}}>
-        {t("🏏 REGISTER NOW →", "🏏 अभी रजिस्टर करें →")}
+        {t("REGISTER NOW →", "अभी रजिस्टर करें →")}
       </Link>
     </div>
   );

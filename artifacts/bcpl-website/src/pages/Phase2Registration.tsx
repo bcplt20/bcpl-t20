@@ -6,6 +6,7 @@ import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { getRegistrationStatus, getMe } from '../lib/api';
 import { useLang } from '../lib/i18n';
+import { IcoBat, IcoCheck } from '../lib/icons';
 
 type LoadState = 'loading' | 'ok' | 'not_selected' | 'error';
 
@@ -97,7 +98,7 @@ export function Phase2Registration() {
 
   if (loadState === 'not_selected') return (
     <div style={{ background:'var(--bg)', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:16, padding:24, fontFamily:'var(--font-body)', textAlign:'center' }}>
-      <div style={{ fontSize:48 }}>🏏</div>
+      <div style={{ color:'var(--orange)' }}><IcoBat size={40} /></div>
       <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:32, color:'#fff', textTransform:'uppercase' }}>{t("Phase 2 Not Accessible Yet", "फेज 2 अभी उपलब्ध नहीं है")}</div>
       <div style={{ fontSize:15, color:'#64748B', maxWidth:400, lineHeight:1.6 }}>{t("Phase 2 is only available after you have qualified through BCPL's Phase 1 evaluation.", "फेज 2 केवल तभी उपलब्ध है जब आप फेज 1 evaluation में qualify कर चुके हों।")}</div>
       <Link href="/register/upload-video" className="btn-cta" style={{ marginTop:16 }}>{t("Go to Video Upload →", "वीडियो अपलोड पर जाएं →")}</Link>
@@ -145,10 +146,10 @@ export function Phase2Registration() {
       <div className="W" style={{ paddingTop: 40 }}>
         {/* Banner */}
         <div style={{ background: 'linear-gradient(90deg, rgba(34,197,94,0.1), rgba(34,197,94,0.02))', border: '1px solid rgba(34,197,94,0.3)', borderLeft: '4px solid var(--green)', padding: '16px 20px', marginBottom: 32, display: 'flex', alignItems: 'center', gap: 14, borderRadius: 'var(--r)' }}>
-          <span style={{ fontSize: 24 }}>✅</span>
+          <span style={{ color: 'var(--green)' }}><IcoCheck size={24} /></span>
           <div style={{ flex: 1 }}>
             <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 16, color: 'var(--green)', letterSpacing: '.06em', textTransform: 'uppercase' }}>{t("PHASE 1 CLEARED", "फेज 1 क्लियर")}</div>
-            <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', marginTop: 2 }}>{t(`Phase 1 Qualified · 🏏 ${role} · ${city}`, `फेज 1 क्वालिफाइड · 🏏 ${role} · ${city}`)}</div>
+            <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', marginTop: 2 }}>{t(`Phase 1 Qualified · ${role} · ${city}`, `फेज 1 क्वालिफाइड · ${role} · ${city}`)}</div>
           </div>
         </div>
 
@@ -185,7 +186,7 @@ export function Phase2Registration() {
 
               {canProceed && (
                 <div style={{ marginTop: 16, background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 'var(--r)', padding: '16px', display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <span style={{ fontSize: 20 }}>✅</span>
+                  <span style={{ color: 'var(--green)' }}><IcoCheck size={20} /></span>
                   <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--green)' }}>{t("All declarations confirmed. You may proceed.", "सभी घोषणाओं की पुष्टि हो गई है। आप आगे बढ़ सकते हैं।")}</span>
                 </div>
               )}
@@ -218,7 +219,7 @@ export function Phase2Registration() {
               <div style={{ padding: '20px 24px', background: 'var(--panel)' }}>
                 {[
                   [t('Player', 'प्लेयर'), playerName || '—'],
-                  [t('Role', 'रोल'), '🏏 ' + (role || '—')],
+                  [t('Role', 'रोल'), (role || '—')],
                   [t('Trial City', 'ट्रायल शहर'), city || '—'],
                   [t('Reg. ID', 'रजि. आईडी'), regId ? regId.slice(0,8).toUpperCase() : '—'],
                 ].map(([k,v]) => (

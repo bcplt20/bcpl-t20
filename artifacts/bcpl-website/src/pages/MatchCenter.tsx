@@ -4,6 +4,7 @@ import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { getMatches, getPointsTable, getScorecard, getTeams } from '../lib/api';
 import { useLang } from '../lib/i18n';
+import { IcoBat, IcoTrophy, IcoPin, IcoStar } from '../lib/icons';
 
 /* ─── Helpers ─────────────────────────────────────────── */
 const initials = (name: string) =>
@@ -297,7 +298,7 @@ export function MatchCenter() {
 
           {sorted.length === 0 && (
             <div style={{ textAlign: "center", padding: "48px 20px", background: "#0A1727", borderRadius: 16, border: "1px solid rgba(255,255,255,0.07)" }}>
-              <div style={{ fontSize: 48, marginBottom: 16 }}>🏏</div>
+              <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><IcoBat size={38} style={{ color: "rgba(255,255,255,0.4)" }} /></div>
               <div className="section-title" style={{ fontSize: 24, color: "#fff", marginBottom: 8, textTransform: "uppercase" }}>
                 {t("No Matches Scheduled Yet", "अभी कोई matches scheduled नहीं हैं")}
               </div>
@@ -328,8 +329,8 @@ export function MatchCenter() {
                         </span>
                         <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>Match {m.matchNo} · Season 5</span>
                       </div>
-                      <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>
-                        📍 {m.venue}{m.scheduledAt ? ` · ${fmtDate(m.scheduledAt)}` : ""}
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 11, color: "rgba(255,255,255,0.35)" }}>
+                        <IcoPin size={12} style={{ color: "rgba(255,255,255,0.35)" }} /> {m.venue}{m.scheduledAt ? ` · ${fmtDate(m.scheduledAt)}` : ""}
                       </span>
                     </div>
 
@@ -351,7 +352,7 @@ export function MatchCenter() {
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8, marginTop: 12 }}>
                         <div>
                           {m.resultDesc && <span style={{ fontSize: 12, color: "#22C55E", fontFamily: "Inter, sans-serif", fontWeight: 600 }}>{m.resultDesc}</span>}
-                          {m.playerOfMatch && <span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", marginLeft: 10 }}>⭐ {m.playerOfMatch}</span>}
+                          {m.playerOfMatch && <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 11, color: "rgba(255,255,255,0.4)", marginLeft: 10 }}><IcoStar size={12} style={{ color: "#E8B23D" }} /> {m.playerOfMatch}</span>}
                         </div>
                         {expandable && (
                           <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 10, letterSpacing: ".08em", color: "#FF7A29" }}>
@@ -381,7 +382,7 @@ export function MatchCenter() {
 
           {points.length === 0 && (
             <div style={{ textAlign: "center", padding: "48px 20px", background: "#0A1727", borderRadius: 16, border: "1px solid rgba(255,255,255,0.07)" }}>
-              <div style={{ fontSize: 48, marginBottom: 16 }}>🏆</div>
+              <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><IcoTrophy size={38} style={{ color: "var(--gold, #E8B23D)" }} /></div>
               <div className="section-title" style={{ fontSize: 24, color: "#fff", marginBottom: 8, textTransform: "uppercase" }}>
                 {t("Standings Coming Soon", "Standings जल्द आएंगे")}
               </div>
@@ -423,7 +424,7 @@ export function MatchCenter() {
 
       {/* Floating register button */}
       <Link href="/register" style={{ position: "fixed", bottom: 28, right: 28, zIndex: 900, background: "linear-gradient(135deg,#FF7A29,#D95E10)", border: "none", borderRadius: 12, color: "#fff", fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 13, letterSpacing: ".06em", padding: "14px 22px", textTransform: "uppercase", textDecoration: "none", display: "flex", alignItems: "center", gap: 8, boxShadow: "0 8px 32px rgba(255,122,41,0.45)", clipPath: "polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%)", transition: "opacity .2s, transform .15s" }} onMouseEnter={e => { e.currentTarget.style.opacity = ".9"; e.currentTarget.style.transform = "translateY(-2px)"; }} onMouseLeave={e => { e.currentTarget.style.opacity = "1"; e.currentTarget.style.transform = "translateY(0)"; }}>
-        {t("🏏 REGISTER NOW →", "🏏 अभी रजिस्टर करें →")}
+        {t("REGISTER NOW →", "अभी रजिस्टर करें →")}
       </Link>
     </div>
   );

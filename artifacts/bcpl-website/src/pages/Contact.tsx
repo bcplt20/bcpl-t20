@@ -4,6 +4,7 @@ import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { useLang } from '../lib/i18n';
 import { StickyRegisterCTA } from "../components/StickyRegisterCTA";
+import { IcoChat, IcoMail, IcoPhone, IcoCheck, IcoInfo, IcoPin, IcoClock } from '../lib/icons';
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
@@ -120,7 +121,7 @@ export function Contact() {
           <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))',gap:24}}>
             {/* WhatsApp */}
             <div className="glass-card contact-method-card" style={{padding:'36px 28px',border:'1px solid rgba(37,211,102,0.25)',boxShadow:'0 0 40px rgba(37,211,102,0.06)',animation:'fadeSlide 0.6s ease 0.1s both'}}>
-              <div style={{fontSize:44,marginBottom:16}}>📱</div>
+              <div style={{marginBottom:16,color:'#25D366',display:'flex'}}><IcoChat size={40}/></div>
               <div style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:20,color:'#fff',marginBottom:8}}>WhatsApp</div>
               <div style={{color:'rgba(255,255,255,0.55)',fontSize:14,lineHeight:1.6,marginBottom:8}}>{t("Fastest response.","सबसे तेज़ जवाब।")}</div>
               <div style={{color:'#25D366',fontSize:13,fontWeight:600,marginBottom:24}}>{t("Reply within 2 hours","2 घंटे में जवाब")}</div>
@@ -133,7 +134,7 @@ export function Contact() {
 
             {/* Email */}
             <div className="glass-card contact-method-card" style={{padding:'36px 28px',border:'1px solid rgba(6,182,212,0.25)',boxShadow:'0 0 40px rgba(6,182,212,0.06)',animation:'fadeSlide 0.6s ease 0.2s both'}}>
-              <div style={{fontSize:44,marginBottom:16}}>📧</div>
+              <div style={{marginBottom:16,color:'#06B6D4',display:'flex'}}><IcoMail size={40}/></div>
               <div style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:20,color:'#fff',marginBottom:8}}>Email</div>
               <div style={{color:'#06B6D4',fontSize:15,fontWeight:700,marginBottom:4}}>support@bcplt20.com</div>
               <div style={{color:'rgba(255,255,255,0.45)',fontSize:13,lineHeight:1.6,marginBottom:24}}>{t("Response within 24 hours","24 घंटे में जवाब")}</div>
@@ -146,7 +147,7 @@ export function Contact() {
 
             {/* Call */}
             <div className="glass-card contact-method-card" style={{padding:'36px 28px',border:'1px solid rgba(139,92,246,0.25)',boxShadow:'0 0 40px rgba(139,92,246,0.06)',animation:'fadeSlide 0.6s ease 0.3s both'}}>
-              <div style={{fontSize:44,marginBottom:16}}>📞</div>
+              <div style={{marginBottom:16,color:'#8B5CF6',display:'flex'}}><IcoPhone size={40}/></div>
               <div style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:20,color:'#fff',marginBottom:8}}>{t("Call Us","Call करें")}</div>
               <div style={{color:'#8B5CF6',fontSize:15,fontWeight:700,marginBottom:4}}>+91 91513 46555</div>
               <div style={{color:'rgba(255,255,255,0.45)',fontSize:13,lineHeight:1.6,marginBottom:24}}>{t("Mon–Sat 10AM–7PM IST","सोम–शनि 10AM–7PM IST")}</div>
@@ -182,7 +183,7 @@ export function Contact() {
 
               {sent ? (
                 <div style={{textAlign:'center',padding:'40px 20px'}}>
-                  <div style={{fontSize:48,marginBottom:16}}>✅</div>
+                  <div style={{marginBottom:16,color:'#22C55E',display:'flex',justifyContent:'center'}}><IcoCheck size={44}/></div>
                   <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:20,color:'#22C55E',marginBottom:8}}>{t("Message Sent!","संदेश भेज दिया!")}</div>
                   <div style={{color:'rgba(255,255,255,0.6)',fontSize:14}}>{t("We'll get back to you within 24 hours.","हम 24 घंटे में आपसे संपर्क करेंगे।")}</div>
                 </div>
@@ -227,7 +228,7 @@ export function Contact() {
             {/* FAQ Teaser */}
             <div style={{display:'flex',flexDirection:'column',gap:20}}>
               <div className="glass-card" style={{padding:'32px',animation:'fadeSlide 0.7s ease 0.35s both'}}>
-                <div style={{fontSize:32,marginBottom:12}}>❓</div>
+                <div style={{marginBottom:12,color:'#FF7A29',display:'flex'}}><IcoInfo size={32}/></div>
                 <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:18,color:'#fff',marginBottom:8}}>{t("Common Questions?","आम सवाल?")}</div>
                 <p style={{color:'rgba(255,255,255,0.55)',fontSize:14,marginBottom:20,lineHeight:1.6}}>{t("Quick answers to the most frequent queries:","सबसे frequent queries के quick answers:")}</p>
                 <div style={{display:'flex',flexWrap:'wrap',gap:8,marginBottom:20}}>
@@ -243,7 +244,7 @@ export function Contact() {
               </div>
 
               <div className="glass-card" style={{padding:'28px',animation:'fadeSlide 0.7s ease 0.45s both'}}>
-                <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:15,color:'rgba(255,255,255,0.7)',marginBottom:16}}>📍 Find Us</div>
+                <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:15,color:'rgba(255,255,255,0.7)',marginBottom:16,display:'flex',alignItems:'center',gap:8}}><IcoPin size={16}/> Find Us</div>
                 <div style={{color:'rgba(255,255,255,0.5)',fontSize:13,lineHeight:1.8}}>
                   <div>BCPL T20 Pvt. Ltd.</div>
                   <div style={{color:'#FF7A29',fontWeight:600}}>www.bcplt20.com</div>
@@ -252,7 +253,7 @@ export function Contact() {
               </div>
 
               <div className="glass-card" style={{padding:'28px',animation:'fadeSlide 0.7s ease 0.55s both'}}>
-                <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:15,color:'rgba(255,255,255,0.7)',marginBottom:16}}>⏰ Support Hours</div>
+                <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:15,color:'rgba(255,255,255,0.7)',marginBottom:16,display:'flex',alignItems:'center',gap:8}}><IcoClock size={16}/> Support Hours</div>
                 <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
                   {[['Mon–Fri','10AM–7PM'],['Saturday','10AM–5PM'],['Sunday','Closed'],['WhatsApp','24×7']].map(([d,t])=>(
                     <div key={d}>
@@ -270,7 +271,7 @@ export function Contact() {
       <BCPLFooter />
       <StickyRegisterCTA/>
       {/* ── FLOATING REGISTER BUTTON ── */}
-      <Link className="float-reg-btn float-reg-pulse" href="/register" style={{textDecoration:"none"}}>🏏 {t("REGISTER NOW","अभी REGISTER करें")} →</Link>
+      <Link className="float-reg-btn float-reg-pulse" href="/register" style={{textDecoration:"none"}}>{t("REGISTER NOW","अभी REGISTER करें")} →</Link>
     </div>
   );
 }

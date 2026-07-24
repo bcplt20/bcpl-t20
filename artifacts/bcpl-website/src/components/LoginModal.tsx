@@ -135,7 +135,6 @@ export function LoginModal() {
           <img src={import.meta.env.BASE_URL + 'bcpl-assets/bcpl-logo-white.png'} alt="BCPL"
             style={{ height:30, width:'auto', objectFit:'contain', filter:'brightness(1.3)' }}/>
           <div style={{ display:'inline-flex', alignItems:'center', gap:4, background:'rgba(232,178,61,0.12)', border:'1px solid rgba(232,178,61,0.5)', borderRadius:6, padding:'2px 8px' }}>
-            <span style={{ fontSize:8 }}>🏆</span>
             <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:8, color:'#E8B23D', letterSpacing:'.12em' }}>SEASON 5</span>
           </div>
         </div>
@@ -182,7 +181,7 @@ export function LoginModal() {
           <>
             {devOtp && (
               <div style={{ background:'rgba(34,197,94,0.08)', border:'1px solid rgba(34,197,94,0.25)', borderRadius:10, padding:'10px 14px', marginBottom:14, fontFamily:'Inter,sans-serif', fontSize:12, color:'#86EFAC' }}>
-                📱 <strong>Dev mode OTP:</strong> <span style={{ fontFamily:'monospace', fontSize:16, color:'#22C55E', letterSpacing:'.2em' }}>{devOtp}</span>
+                <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:9, letterSpacing:'.1em', color:'#22C55E', background:'rgba(34,197,94,0.15)', border:'1px solid rgba(34,197,94,0.4)', borderRadius:4, padding:'1px 6px', marginRight:6 }}>DEV</span><strong>Dev mode OTP:</strong> <span style={{ fontFamily:'monospace', fontSize:16, color:'#22C55E', letterSpacing:'.2em' }}>{devOtp}</span>
               </div>
             )}
             <label style={{ fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:10, color:'rgba(255,255,255,0.4)', letterSpacing:'.1em', textTransform:'uppercase', display:'block', marginBottom:8 }}>Enter OTP</label>

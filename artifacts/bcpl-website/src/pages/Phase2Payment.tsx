@@ -4,6 +4,7 @@ import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { getRegistrationStatus, getMe, createPhase2Payment } from '../lib/api';
 import { useLang } from '../lib/i18n';
+import { IcoBat, IcoCheck, IcoLock, IcoShield, IcoUsers, IcoWarn } from '../lib/icons';
 
 const BASE = import.meta.env.BASE_URL;
 
@@ -91,7 +92,7 @@ export function Phase2Payment() {
 
   if (loadState === 'not_selected') return (
     <div style={{ background:'var(--bg)', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:16, padding:24, fontFamily:'var(--font-body)', textAlign:'center' }}>
-      <div style={{ fontSize:48 }}>🏏</div>
+      <div style={{ color:'var(--orange)' }}><IcoBat size={40} /></div>
       <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:28, color:'#fff', textTransform:'uppercase' }}>{t("Not Eligible for Phase 2", "फेज 2 के लिए पात्र नहीं")}</div>
       <div style={{ fontSize:14, color:'#64748B', maxWidth:360 }}>{t("Phase 2 payment is only available after qualifying in Phase 1.", "फेज 2 पेमेंट केवल फेज 1 qualify करने के बाद उपलब्ध है।")}</div>
       <Link href="/register/upload-video" className="btn-cta" style={{ marginTop:8 }}>{t("Go to Video Upload →", "वीडियो अपलोड पर जाएं →")}</Link>
@@ -101,7 +102,7 @@ export function Phase2Payment() {
 
   if (loadState === 'already_paid') return (
     <div style={{ background:'var(--bg)', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:16, padding:24, fontFamily:'var(--font-body)', textAlign:'center' }}>
-      <div style={{ fontSize:48 }}>✅</div>
+      <div style={{ color:'var(--green)' }}><IcoCheck size={40} /></div>
       <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:28, color:'var(--green)', textTransform:'uppercase' }}>{t("Payment Already Done", "पेमेंट पहले ही हो चुका है")}</div>
       <div style={{ fontSize:14, color:'#64748B', maxWidth:360 }}>{t("Your Phase 2 payment is confirmed. Proceed to KYC verification.", "आपका फेज 2 पेमेंट पक्का हो गया है। KYC पूरा करें।")}</div>
       <Link href="/register/phase2/kyc" className="btn-cta" style={{ marginTop:8 }}>{t("Complete KYC →", "KYC पूरा करें →")}</Link>
@@ -170,8 +171,8 @@ export function Phase2Payment() {
           <div style={{ padding: '24px 32px', background: 'var(--panel)' }}>
             {[
               [t('Player Name', 'प्लेयर का नाम'), playerName],
-              [t('Role', 'रोल'), '🏏 ' + role],
-              [t('Trial City', 'ट्रायल शहर'), '📍 ' + city],
+              [t('Role', 'रोल'), role],
+              [t('Trial City', 'ट्रायल शहर'), city],
               [t('Registration Ref', 'रजिस्ट्रेशन नं.'), regId.slice(0,8).toUpperCase()],
               [t('Taxable Amount', 'कर योग्य राशि'), `₹${taxBase.toLocaleString('en-IN')}`],
               [t('GST (18%)', 'GST (18%)'), `₹${gst.toLocaleString('en-IN')}`],
@@ -205,7 +206,7 @@ export function Phase2Payment() {
           </p>
 
           {payError && (
-            <div style={{ padding: '16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.4)', borderRadius: 'var(--r)', color: 'var(--red)', fontSize: 14, marginBottom: 24, fontWeight: 600 }}>⚠ {payError}</div>
+            <div style={{ padding: '16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.4)', borderRadius: 'var(--r)', color: 'var(--red)', fontSize: 14, marginBottom: 24, fontWeight: 600 }}><IcoWarn size={12} style={{ verticalAlign: '-2px', marginRight: 4 }} /> {payError}</div>
           )}
 
           <div className="desk-only-btn">
@@ -216,9 +217,9 @@ export function Phase2Payment() {
           </div>
           
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 24, flexWrap: 'wrap', padding: '24px', background: 'var(--panel)', border: '1px solid var(--line)', borderRadius: 'var(--r)', marginTop: 24 }}>
-            {[{ icon:'🔒', label:'Cashfree Secured' }, { icon:'🛡', label:'256-bit SSL' }, { icon:'🏢', label:'BCPL' }].map(({ icon, label }) => (
+            {[{ icon: IcoLock, label:'Cashfree Secured' }, { icon: IcoShield, label:'256-bit SSL' }, { icon: IcoUsers, label:'BCPL' }].map(({ icon: Icon, label }) => (
               <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontSize: 18 }}>{icon}</span>
+                <span style={{ color: 'rgba(255,255,255,0.4)' }}><Icon size={18} /></span>
                 <span style={{ fontFamily: 'var(--font-head)', fontWeight: 700, fontSize: 12, color: 'rgba(255,255,255,0.4)', letterSpacing: '.06em', textTransform: 'uppercase' }}>{label}</span>
               </div>
             ))}

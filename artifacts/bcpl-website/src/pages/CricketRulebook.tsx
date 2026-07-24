@@ -4,6 +4,9 @@ import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
 import { LegalDocHeader } from '../lib/legalMeta';
+import { IcoCalendar, IcoUsers, IcoBat, IcoZap, IcoBall, IcoShield, IcoScale, IcoList, IcoStadium, IcoPages } from '../lib/icons';
+
+type IcoComp = (p: { size?: number; style?: React.CSSProperties }) => React.ReactElement;
 
 const OrangeDot = () => (
   <span style={{display:'inline-block',width:6,height:6,borderRadius:'50%',background:'#FF7A29',marginRight:10,flexShrink:0,marginTop:7}}/>
@@ -55,19 +58,19 @@ export function CricketRulebook() {
     {top:'60%',left:'72%',color:'#E8B23D',delay:'0.9s',size:4},
   ];
 
-  const toc=[
-    {n:1,label:'Match Format',icon:'📅'},
-    {n:2,label:'Team Composition',icon:'👥'},
-    {n:3,label:'Equipment',icon:'🏏'},
-    {n:4,label:'Powerplay',icon:'⚡'},
-    {n:5,label:'Bowling',icon:'🎳'},
-    {n:6,label:'Batting',icon:'🏌️'},
-    {n:7,label:'Fielding',icon:'🧤'},
-    {n:8,label:'Umpiring',icon:'👨‍⚖️'},
+  const toc:{n:number;label:string;icon:IcoComp}[]=[
+    {n:1,label:'Match Format',icon:IcoCalendar},
+    {n:2,label:'Team Composition',icon:IcoUsers},
+    {n:3,label:'Equipment',icon:IcoBat},
+    {n:4,label:'Powerplay',icon:IcoZap},
+    {n:5,label:'Bowling',icon:IcoBall},
+    {n:6,label:'Batting',icon:IcoBat},
+    {n:7,label:'Fielding',icon:IcoShield},
+    {n:8,label:'Umpiring',icon:IcoScale},
   ];
 
-  const rules=[
-    {n:1,icon:'📅',title:'Match Format',items:[
+  const rules:{n:number;icon:IcoComp;title:string;items:string[]}[]=[
+    {n:1,icon:IcoCalendar,title:'Match Format',items:[
       'T20 format: 20 overs per side in all group and knockout matches',
       'DLS (Duckworth-Lewis-Stern) method applied for all weather interruptions',
       'Minimum 10 overs per side required for a valid result to be declared',
@@ -75,7 +78,7 @@ export function CricketRulebook() {
       'Coin toss determines batting/fielding choice; toss result is final',
       'Matches start at scheduled time; 5-minute grace period for late arrivals, thereafter match forfeited',
     ]},
-    {n:2,icon:'👥',title:'Team Composition',items:[
+    {n:2,icon:IcoUsers,title:'Team Composition',items:[
       '12-player squad registered per team; playing XI declared 30 minutes before match',
       'At least 4 corporate professionals (non-ringers) must be in the playing XI at all times',
       'One substitute fielder allowed — may only field, not bat or bowl',
@@ -83,7 +86,7 @@ export function CricketRulebook() {
       'Team captain must be registered and be a corporate professional',
       'Ringers policy: maximum 7 non-corporate players per squad',
     ]},
-    {n:3,icon:'🏏',title:'Equipment Standards',items:[
+    {n:3,icon:IcoBat,title:'Equipment Standards',items:[
       'BCPL-approved bats only: maximum edge thickness 40mm, maximum width 108mm',
       'Helmets are mandatory for all batsmen and close-in fielders (under 15 yards)',
       'Shin guards (batting pads) are mandatory for batsmen',
@@ -92,14 +95,14 @@ export function CricketRulebook() {
       'White kit mandatory for league stage; team-coloured kits for knockout rounds',
       'BCPL logo must be visible on jersey; no competing league logos permitted',
     ]},
-    {n:4,icon:'⚡',title:'Powerplay Rules',items:[
+    {n:4,icon:IcoZap,title:'Powerplay Rules',items:[
       'Mandatory powerplay: overs 1 to 6 — maximum 2 fielders outside the 30-yard circle',
       'Bowling powerplay (optional): 2 additional overs taken by batting team anytime overs 7–16',
       'Death overs: 17–20 — standard fielding restrictions apply (max 5 outside circle)',
       'Fielding circle (30 yards) must be marked; umpires may call No-Ball for fielding violations',
       'Fielding captain must notify umpire before optional powerplay is taken',
     ]},
-    {n:5,icon:'🎳',title:'Bowling Regulations',items:[
+    {n:5,icon:IcoBall,title:'Bowling Regulations',items:[
       'Maximum 4 overs per bowler per innings — no exceptions',
       'No-beamer rule: first offence = official warning; second = bowler removed from attack',
       'Front foot no-ball results in a free hit for the batsman on the next delivery',
@@ -107,7 +110,7 @@ export function CricketRulebook() {
       'No-ball: includes overstepping, waist-height full-toss, and fielding violations',
       'A bowler may bowl from either end but cannot bowl consecutive overs',
     ]},
-    {n:6,icon:'🏌️',title:'Batting Rules',items:[
+    {n:6,icon:IcoBat,title:'Batting Rules',items:[
       'Free hit on all no-balls (including wide no-balls): batsman can only be dismissed run out',
       'LBW law applies in full per standard MCC Laws of Cricket',
       'Mankad run-out (non-striker backing up): bowler must warn batsman before effecting dismissal',
@@ -116,7 +119,7 @@ export function CricketRulebook() {
       'Two bouncer rule per over — third beamer results in no-ball warning',
       'Retired hurt batsman may return; retired out batsman may not',
     ]},
-    {n:7,icon:'🧤',title:'Fielding Restrictions',items:[
+    {n:7,icon:IcoShield,title:'Fielding Restrictions',items:[
       'The 30-yard fielding circle must be maintained throughout the innings',
       'Powerplay: minimum 2 fielders inside the circle (excluding wicketkeeper and bowler)',
       'Non-powerplay: maximum 5 fielders outside the circle at point of delivery',
@@ -124,7 +127,7 @@ export function CricketRulebook() {
       'Fielders must not encroach on the pitch — umpire may call Dead Ball',
       'Substitute fielder: must not bat, bowl, or keep wicket; may field anywhere',
     ]},
-    {n:8,icon:'👨‍⚖️',title:'Umpiring & DRS',items:[
+    {n:8,icon:IcoScale,title:'Umpiring & DRS',items:[
       '2 on-field umpires appointed by BCPL for all group and knockout matches',
       'Third umpire available for all knockout rounds and finals only',
       'No DRS (Decision Review System) available in group stage matches',
@@ -160,7 +163,7 @@ export function CricketRulebook() {
 
         <section style={{padding:'clamp(40px,8vw,72px) 0 40px',textAlign:'center',animation:'fadeSlide 0.6s ease both'}}>
           <div className="wrap">
-            <div className="tag-pill" style={{marginBottom:20}}>📋 OFFICIAL RULES</div>
+            <div className="tag-pill" style={{marginBottom:20}}><IcoList size={14}/> OFFICIAL RULES</div>
             <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(32px,7vw,72px)',lineHeight:1.05,marginBottom:8}}>
               <span style={{color:'#fff',display:'block'}}>BCPL CRICKET</span>
               <span className="shimmer-gold" style={{display:'block'}}>RULEBOOK.</span>
@@ -179,7 +182,7 @@ export function CricketRulebook() {
 
           {/* Cross-link: trial rules live on a separate page */}
           <div style={{background:'rgba(232,178,61,0.07)',border:'1px solid rgba(232,178,61,0.35)',borderLeft:'3px solid #E8B23D',borderRadius:16,padding:'16px clamp(16px,4vw,24px)',marginBottom:24,display:'flex',gap:12,alignItems:'flex-start'}}>
-            <span style={{fontSize:22,flexShrink:0}}>🏟</span>
+            <span style={{flexShrink:0,color:'#E8B23D',display:'inline-flex'}}><IcoStadium size={22}/></span>
             <p style={{color:'rgba(255,255,255,0.85)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
               This page covers tournament / competition cricket only. Looking for Phase 2 trial assessment rules? See <Link href="/trial-rules" style={{color:'#E8B23D',fontWeight:600}}>Physical Trial Rules</Link>.
             </p>
@@ -189,14 +192,14 @@ export function CricketRulebook() {
           {/* Table of Contents */}
           <div className="glass-card" style={{padding:'clamp(20px,4vw,28px) clamp(16px,4vw,32px)',marginBottom:24,animation:'fadeSlide 0.5s ease 0.1s both'}}>
             <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:16}}>
-              <span style={{fontSize:22}}>📑</span>
+              <span style={{color:'#E8B23D',display:'inline-flex',alignItems:'center'}}><IcoPages size={20}/></span>
               <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:18,color:'#E8B23D'}}>Table of Contents</h2>
             </div>
             <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(160px,1fr))',gap:4}}>
               {toc.map(item=>(
                 <button key={item.n} className="toc-link" onClick={()=>setActiveSection(item.n===activeSection?null:item.n)}>
                   <span style={{width:22,height:22,borderRadius:'50%',background:'rgba(255,122,41,0.2)',border:'1px solid rgba(255,122,41,0.4)',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:'#FF7A29',flexShrink:0,fontFamily:'Montserrat,sans-serif'}}>{item.n}</span>
-                  <span>{item.icon} {item.label}</span>
+                  <span style={{display:'inline-flex',alignItems:'center',gap:8}}><span style={{color:'#FF7A29',display:'inline-flex'}}><item.icon size={16}/></span>{item.label}</span>
                 </button>
               ))}
             </div>
@@ -207,7 +210,7 @@ export function CricketRulebook() {
             <div key={rule.n} className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:20,animation:`fadeSlide 0.5s ease ${0.1+idx*0.07}s both`,border:activeSection===rule.n?'1px solid rgba(255,122,41,0.5)':'1px solid rgba(255,255,255,0.09)',transition:'border-color 0.3s'}}>
               <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18,flexWrap:'wrap'}}>
                 <div style={{width:36,height:36,borderRadius:'50%',background:'linear-gradient(135deg,rgba(255,122,41,0.3),rgba(232,178,61,0.2))',border:'1px solid rgba(255,122,41,0.4)',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:14,color:'#FF7A29',flexShrink:0}}>{rule.n}</div>
-                <span style={{fontSize:24}}>{rule.icon}</span>
+                <span style={{color:'#FF7A29',display:'inline-flex',alignItems:'center'}}><rule.icon size={24}/></span>
                 <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>{rule.title}</h2>
               </div>
               <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:10}}>
@@ -223,7 +226,7 @@ export function CricketRulebook() {
           {/* Callout */}
           <div style={{background:'rgba(255,122,41,0.08)',border:'1px solid rgba(255,122,41,0.4)',borderLeft:'3px solid #FF7A29',borderRadius:16,padding:'20px clamp(16px,4vw,24px)',marginBottom:20,animation:'borderGlow 3s ease-in-out infinite'}}>
             <div style={{display:'flex',gap:12,alignItems:'flex-start'}}>
-              <span style={{fontSize:24,flexShrink:0}}>⚖️</span>
+              <span style={{flexShrink:0,color:'#FF7A29',display:'inline-flex'}}><IcoScale size={24}/></span>
               <div>
                 <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#FF7A29',marginBottom:6}}>MCC Laws Apply</div>
                 <p style={{color:'rgba(255,255,255,0.85)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
@@ -243,7 +246,7 @@ export function CricketRulebook() {
         <BCPLFooter />
       </div>
       <StickyRegisterCTA />
-      <Link className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>🏏 REGISTER NOW →</Link>
+      <Link className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>REGISTER NOW →</Link>
     </div>
   );
 }

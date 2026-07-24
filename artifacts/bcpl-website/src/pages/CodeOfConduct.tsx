@@ -4,6 +4,9 @@ import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
 import { LegalDocHeader } from '../lib/legalMeta';
+import { IcoScale, IcoBat, IcoTarget, IcoPhone, IcoBan, IcoFlask, IcoCheck, IcoChat, IcoShirt, IcoUsers } from '../lib/icons';
+
+type IcoComp = (p: { size?: number; style?: React.CSSProperties }) => React.ReactElement;
 
 const OrangeDot = () => (
   <span style={{display:'inline-block',width:6,height:6,borderRadius:'50%',background:'#FF7A29',marginRight:10,flexShrink:0,marginTop:7}}/>
@@ -85,7 +88,7 @@ export function CodeOfConduct() {
         {/* Hero */}
         <section style={{padding:'clamp(40px,8vw,72px) 0 40px',textAlign:'center',animation:'fadeSlide 0.6s ease both'}}>
           <div className="wrap">
-            <div className="tag-pill" style={{marginBottom:20}}>⚖️ PLAYER STANDARDS</div>
+            <div className="tag-pill" style={{marginBottom:20}}><IcoScale size={14}/> PLAYER STANDARDS</div>
             <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(36px,7vw,72px)',lineHeight:1.05,marginBottom:8}}>
               <span style={{color:'#fff',display:'block'}}>CODE OF</span>
               <span className="shimmer-gold" style={{display:'block'}}>CONDUCT.</span>
@@ -106,7 +109,7 @@ export function CodeOfConduct() {
           {/* Section 1 */}
           <div className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:20,animation:'fadeSlide 0.5s ease 0.1s both'}}>
             <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18}}>
-              <span style={{fontSize:28}}>🏏</span>
+              <span style={{color:'#E8B23D',display:'inline-flex',alignItems:'center'}}><IcoBat size={28}/></span>
               <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>1. Spirit of the Game</h2>
             </div>
             <p style={{color:'rgba(255,255,255,0.75)',fontSize:'clamp(14px,2vw,15px)',lineHeight:1.8,marginBottom:14}}>
@@ -130,7 +133,7 @@ export function CodeOfConduct() {
           {/* Section 2 */}
           <div className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:20,animation:'fadeSlide 0.5s ease 0.2s both'}}>
             <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18}}>
-              <span style={{fontSize:28}}>🎯</span>
+              <span style={{color:'#E8B23D',display:'inline-flex',alignItems:'center'}}><IcoTarget size={28}/></span>
               <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>2. On-Field Conduct</h2>
             </div>
             <p style={{color:'rgba(255,255,255,0.75)',fontSize:'clamp(14px,2vw,15px)',lineHeight:1.8,marginBottom:14}}>
@@ -150,27 +153,27 @@ export function CodeOfConduct() {
               ))}
             </ul>
             <div style={{background:'rgba(34,197,94,0.08)',border:'1px solid rgba(34,197,94,0.25)',borderRadius:12,padding:'12px 16px'}}>
-              <p style={{color:'rgba(34,197,94,0.9)',fontSize:13,fontWeight:600}}>✅ Positive play, encouraging teammates, and constructive communication are always welcome.</p>
+              <p style={{color:'rgba(34,197,94,0.9)',fontSize:13,fontWeight:600,display:'flex',alignItems:'center',gap:8}}><span style={{color:'#22C55E',display:'inline-flex',flexShrink:0}}><IcoCheck size={16}/></span>Positive play, encouraging teammates, and constructive communication are always welcome.</p>
             </div>
           </div>
 
           {/* Section 3 */}
           <div className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:20,animation:'fadeSlide 0.5s ease 0.3s both'}}>
             <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18}}>
-              <span style={{fontSize:28}}>📱</span>
+              <span style={{color:'#E8B23D',display:'inline-flex',alignItems:'center'}}><IcoPhone size={28}/></span>
               <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>3. Off-Field Conduct</h2>
             </div>
             <p style={{color:'rgba(255,255,255,0.75)',fontSize:'clamp(14px,2vw,15px)',lineHeight:1.8,marginBottom:14}}>
               Players represent BCPL T20 and the corporate cricket community beyond the boundary ropes. Professional conduct is expected in all public and digital spaces.
             </p>
             <div style={{display:'grid',gap:12}}>
-              {[
-                {icon:'💬',title:'Social Media',desc:'Do not post disparaging, defamatory, or inflammatory content about BCPL, fellow players, teams, or officials. Celebrate cricket; build the community.'},
-                {icon:'👕',title:'Dress Code',desc:'Wear designated BCPL kit during all official events. No logos of competing leagues. White kit for league stage; coloured for knockouts.'},
-                {icon:'🤝',title:'Media Interactions',desc:'Be respectful in all media interactions. You have implicitly consented to media coverage by registering for Season 5.'},
-              ].map((item,i)=>(
+              {([
+                {icon:IcoChat,title:'Social Media',desc:'Do not post disparaging, defamatory, or inflammatory content about BCPL, fellow players, teams, or officials. Celebrate cricket; build the community.'},
+                {icon:IcoShirt,title:'Dress Code',desc:'Wear designated BCPL kit during all official events. No logos of competing leagues. White kit for league stage; coloured for knockouts.'},
+                {icon:IcoUsers,title:'Media Interactions',desc:'Be respectful in all media interactions. You have implicitly consented to media coverage by registering for Season 5.'},
+              ] as {icon:IcoComp;title:string;desc:string}[]).map((item,i)=>(
                 <div key={i} style={{background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:12,padding:'14px 16px',display:'flex',gap:12}}>
-                  <span style={{fontSize:20,flexShrink:0}}>{item.icon}</span>
+                  <span style={{flexShrink:0,color:'#E8B23D',display:'inline-flex'}}><item.icon size={20}/></span>
                   <div>
                     <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:13,color:'#E8B23D',marginBottom:4}}>{item.title}</div>
                     <div style={{color:'rgba(255,255,255,0.7)',fontSize:13,lineHeight:1.6}}>{item.desc}</div>
@@ -183,7 +186,7 @@ export function CodeOfConduct() {
           {/* Section 3b — Prohibited Conduct catalogue */}
           <div className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:20,animation:'fadeSlide 0.5s ease 0.32s both'}}>
             <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18}}>
-              <span style={{fontSize:28}}>🚫</span>
+              <span style={{color:'#E8B23D',display:'inline-flex',alignItems:'center'}}><IcoBan size={28}/></span>
               <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>4. Prohibited Conduct</h2>
             </div>
             <p style={{color:'rgba(255,255,255,0.75)',fontSize:'clamp(14px,2vw,15px)',lineHeight:1.8,marginBottom:14}}>
@@ -213,7 +216,7 @@ export function CodeOfConduct() {
           {/* Section 4 */}
           <div className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:20,animation:'fadeSlide 0.5s ease 0.35s both'}}>
             <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18}}>
-              <span style={{fontSize:28}}>🧪</span>
+              <span style={{color:'#E8B23D',display:'inline-flex',alignItems:'center'}}><IcoFlask size={28}/></span>
               <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>5. Anti-Doping Policy</h2>
             </div>
             <p style={{color:'rgba(255,255,255,0.75)',fontSize:'clamp(14px,2vw,15px)',lineHeight:1.8,marginBottom:14}}>
@@ -237,7 +240,7 @@ export function CodeOfConduct() {
           {/* Section 6 — fair disciplinary escalation */}
           <div className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:20,animation:'fadeSlide 0.5s ease 0.4s both'}}>
             <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18}}>
-              <span style={{fontSize:28}}>⚖️</span>
+              <span style={{color:'#E8B23D',display:'inline-flex',alignItems:'center'}}><IcoScale size={28}/></span>
               <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>6. Fair Disciplinary Process</h2>
             </div>
             <p style={{color:'rgba(255,255,255,0.75)',fontSize:'clamp(14px,2vw,15px)',lineHeight:1.8,marginBottom:16}}>
@@ -279,7 +282,7 @@ export function CodeOfConduct() {
           {/* Orange Callout */}
           <div style={{background:'rgba(255,122,41,0.08)',border:'1px solid rgba(255,122,41,0.4)',borderLeft:'3px solid #FF7A29',borderRadius:16,padding:'20px clamp(16px,4vw,24px)',marginBottom:20,animation:'borderGlow 3s ease-in-out infinite'}}>
             <div style={{display:'flex',gap:12,alignItems:'flex-start'}}>
-              <span style={{fontSize:24,flexShrink:0}}>🚫</span>
+              <span style={{flexShrink:0,color:'#E8493F',display:'inline-flex'}}><IcoBan size={24}/></span>
               <div>
                 <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#FF7A29',marginBottom:6}}>Serious Violations</div>
                 <p style={{color:'rgba(255,255,255,0.85)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
@@ -302,7 +305,7 @@ export function CodeOfConduct() {
         <BCPLFooter />
       </div>
       <StickyRegisterCTA />
-      <Link className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>🏏 REGISTER NOW →</Link>
+      <Link className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>REGISTER NOW →</Link>
     </div>
   );
 }

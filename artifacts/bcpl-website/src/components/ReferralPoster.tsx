@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { IcoImage, IcoChat, IcoDownload } from '../lib/icons';
 
 /**
  * Ready-made shareable referral poster (Task #56).
@@ -206,6 +207,9 @@ const posterBtn: React.CSSProperties = {
   fontSize: 13,
   letterSpacing: '.04em',
   cursor: 'pointer',
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: 7,
 };
 
 interface Props {
@@ -279,7 +283,7 @@ export function ReferralPosterButton({ name, code, link }: Props) {
     <div style={{ marginTop: 12 }}>
       {!preview ? (
         <button style={posterBtn} onClick={generate} disabled={busy}>
-          {busy ? 'Poster ban raha hai…' : '🖼️ Ready-made poster banao'}
+          {busy ? 'Poster ban raha hai…' : <><IcoImage size={15} style={{ color: 'currentColor' }} /> Ready-made poster banao</>}
         </button>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -295,7 +299,7 @@ export function ReferralPosterButton({ name, code, link }: Props) {
             }}
           />
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-            <button style={posterBtn} onClick={share}>💬 WhatsApp par share karo</button>
+            <button style={posterBtn} onClick={share}><IcoChat size={15} style={{ color: 'currentColor' }} /> WhatsApp par share karo</button>
             <button
               style={{
                 background: 'rgba(255,255,255,0.06)',
@@ -310,7 +314,7 @@ export function ReferralPosterButton({ name, code, link }: Props) {
               }}
               onClick={download}
             >
-              ⬇ Download PNG
+              Download PNG
             </button>
           </div>
         </div>
