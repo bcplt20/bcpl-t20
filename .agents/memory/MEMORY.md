@@ -37,7 +37,8 @@
 - [PM2 env baked at start](pm2-env-baked.md) — "online"+high ↺+curl 000 = import crash-loop; bare pm2 start wiped secrets → JWT 502; ecosystem now self-loads .env.production
 - [Prod schema drift & FK sweep](prod-schema-drift.md) — silenced deploy push leaves legacy tables on prod; FK discovery must use pg_constraint OIDs, never info_schema name joins
 - [Bulk media pipeline](media-pipeline.md) — Drive bulk downloads (curl / uvx gdown), foreground ≤240s resume-safe batches, magick/ffmpeg recipes, partial-file trap, yt-dlp blocked
-- [Master spec 2026 progress](master-spec-2026.md) — owner's serial upgrade specs (42-part, then 36-part July '26): ~half pre-existed each time — audit first; wave trackers + copy rules inside
+- [Master spec 2026 progress](master-spec-2026.md) — owner's serial upgrade specs (42→36→51-part July '26): ~half pre-existed each time — audit first; wave trackers + copy rules inside
+- [Player-UI auth testing](player-ui-auth-testing.md) — never OTP-login for tests (real SMS risk); mint player JWT + bcpl_auth_v1 injection; trial fixture recipe; assessmentSubmitted = trial_evaluations
 - [node-postgres array binding](node-postgres-array-binding.md) — raw sql `${arr}::text[]` binds as ONE string param ("malformed array literal"); use IN + sql.join per-element
 - [drizzle push alignment](db-push-alignment.md) — push prompts = drift: rename `*_key` uniques to `*_unique`, declare runtime-created tables (app_flags!) in schema; exit code lies, grep "Changes applied"
 - [Trial-ops locking & waves](trial-ops-locking.md) — all attempt/eval writes take allocation row FOR UPDATE first (dbc param); W1 shipped, W2-W6 map inside

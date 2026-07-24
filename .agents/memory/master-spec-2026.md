@@ -1,11 +1,11 @@
 ---
 name: Master spec 2026 progress
-description: Owner's 42-part website upgrade doc (parts A–AP) — what pre-existed, wave tracker, new copy rules. Check before building any spec part.
+description: Owner's serial upgrade docs (42-part, 36-section, 51-section July '26) — what pre-existed, wave trackers, copy rules. Check before building any spec part.
 ---
 
-Spec file: `attached_assets/Pasted--BCPLT20-COM-COMPLETE-WEBSITE-UI-UX-CONTENT-LEGAL-CONVE_1784879016037.txt` (PART markers listed at lines 59–1302).
+Spec file (1st, 42-part): `attached_assets/Pasted--BCPLT20-COM-COMPLETE-WEBSITE-UI-UX-CONTENT-LEGAL-CONVE_1784879016037.txt` (PART markers listed at lines 59–1302).
 
-**Lesson: the spec was written against an OUTDATED view of the site — ~60% already existed. Always audit code + live JS bundle (curl bcplt20.com assets, grep phrases) before building a spec part.**
+**Lesson: every spec so far was written against an OUTDATED view of the site — ~half already existed. Always audit code + live JS bundle (curl bcplt20.com assets, grep phrases) before building a spec part.**
 
 ## Already satisfied BEFORE spec (do not rebuild)
 - B/C: role-based fees ₹299/₹399 (P1), ₹2000/₹3000 (P2) + 18% GST — single source `api-server/src/routes/register.ts` FEES + client `lib/fees.ts`; checkout shows Fee/GST/Total + "PAY ₹X SECURELY" (Registration.tsx ~1028); receipts have GST breakup.
@@ -31,3 +31,11 @@ Spec file: `attached_assets/Pasted--BCPLT20-COM-COMPLETE-WEBSITE-UI-UX-CONTENT-L
 - Copy rule reinforced (architect caught a leftover in Home FAQ): ANY "non-refundable" mention must carry "except where expressly provided in the Refund & Cancellation Policy" — EN and HI both; grep "refundable" on every copy change.
 - New-string i18n trap: don't ship English as the Hindi variant for NEW labels (Devanagari transliteration is fine house style).
 - Emoji→SVG sweep done on Home (StepIcon inline-stroke pattern) + fees ℹ️; other pages may still carry emojis — sweep remains open elsewhere.
+
+## July 2026 — third spec (51-section "final production finishing") — main wave DONE
+Spec file: `attached_assets/Pasted-BCPLT20-COM-FINAL-PRODUCTION-FINISHING-UI-UX-CONSISTENC_1784895091571.txt`. Pre-existed (audited, not rebuilt): §7–16, §26–28, §43, §48.
+- Shipped: shared `bcpl-website/src/lib/format.ts` (canonical role/date/time/batch formatters — local ROLE_LABELS maps in pages are now banned, import formatRole); dashboard `trial` block + VIEW_TRIAL_PASS next-action; trial-completion email (reserve-first dedupe); TrialPass boarding-pass rewrite (status strip / journey strip / completed-dims-QR); PlayerProfile trial states + §24 encouraging rejected copy; cohort-explicit rank labels; §34 raw-error render fixes; footer emoji sweep.
+- **deriveStep trap (durable):** profile journey derivation must trust the STRONGEST server signal first (dashboard trial block / kyc_done) — old accounts and e2e fixtures legally miss early rows (video/payment), and early-row checks placed first drag trial-stage players back to "upload video".
+- **Rank semantics (server `computeRanks`):** cityRank = within city ALL roles; roleRank = within city SAME role (NOT national). Any rank label must name the cohort explicitly ("Delhi Rank — All Roles", "Delhi Batsman Rank").
+- **assessmentSubmitted truth = `trial_evaluations` (status submitted), NOT `physical_assessments`** (that table is only the legacy admin bridge).
+- Evidence pattern for authed-page verification: see player-ui-auth-testing.md.
