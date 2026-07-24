@@ -107,7 +107,9 @@ const CSS = `
      (tracking adds a trailing gap that would otherwise pull it left). */
   /* Refined lockup: Inter at tiny size + wide tracking reads premium (Barlow
      Condensed 800 at 9px rendered chunky/cheap — owner feedback Jul 2026). */
-  .sh-s5{font-family:'Inter','Mukta',sans-serif;font-weight:700;font-size:8px;color:#E8B23D;letter-spacing:.46em;padding-left:.46em;line-height:1;white-space:nowrap;text-transform:uppercase;opacity:.95;text-shadow:0 1px 6px rgba(0,0,0,.55);}
+  .sh-s5{font-family:'Inter','Mukta',sans-serif;font-weight:700;font-size:8px;color:#E8B23D;letter-spacing:.46em;padding-left:.46em;line-height:1;white-space:nowrap;text-transform:uppercase;text-shadow:0 1px 6px rgba(0,0,0,.55);padding-bottom:3px;background:linear-gradient(90deg,transparent 8%,rgba(232,178,61,.55) 50%,transparent 92%) bottom/100% 1px no-repeat;animation:s5in .9s ease .15s both;}
+  @keyframes s5in{from{opacity:0;letter-spacing:.6em}to{opacity:.95;letter-spacing:.46em}}
+  @media(prefers-reduced-motion:reduce){.sh-s5{animation:none;opacity:.95;}}
 
   .sh-cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:var(--r,14px);color:#fff;font-family:'Barlow Condensed','Mukta',sans-serif;font-weight:800;letter-spacing:.07em;cursor:pointer;text-transform:uppercase;text-decoration:none;white-space:nowrap;transition:opacity .2s,transform .15s;box-shadow:0 4px 18px rgba(255,122,41,.3);}
   .sh-cta:hover{opacity:.92;transform:translateY(-1px);}

@@ -201,7 +201,7 @@ export function Phase2Payment() {
 
           {/* PART E — payment ≠ selection disclaimer at the point of payment */}
           <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', lineHeight: 1.6, margin: '0 0 20px' }}>
-            {t("Paying the Phase 2 fee books your trial slot — it does not guarantee Auction Pool entry, purchase by a team, player contract or tournament participation.", "Phase 2 fee का भुगतान आपकी trial जगह पक्की करता है — यह Auction Pool में जगह, team द्वारा purchase, player contract या tournament participation की guarantee नहीं है।")}
+            {t("Paying the Phase 2 fee books your trial slot — this fee is charged solely for participation in the Phase 2 physical trial process, and it does not guarantee Auction Pool entry, purchase by a team, player contract or tournament participation.", "Phase 2 fee का भुगतान आपकी trial जगह पक्की करता है — यह fee सिर्फ Phase 2 physical trial process में participation के लिए है, और यह Auction Pool में जगह, team द्वारा purchase, player contract या tournament participation की guarantee नहीं है।")}
           </p>
 
           {payError && (

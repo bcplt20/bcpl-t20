@@ -38,10 +38,10 @@ const TEAMS = [
 /* ── LEAGUE STRIP — broadcast-style animated ticker below the hero ── */
 const TICKER = [
   { en:"Season 5",                 hi:"सीज़न 5",                    live:true  },
-  { en:"15+ Trial Cities",         hi:"15+ trial शहर"                          },
+  { en:"50+ Trial Cities",         hi:"50+ trial शहर"                          },
   { en:"10 Teams",                 hi:"10 टीमें"                               },
   { en:"₹15 Cr+ Prize Pool",       hi:"₹15 करोड़+ प्राइज़ पूल"                  },
-  { en:"International Stadiums",   hi:"International stadiums"                 },
+  { en:"International Cricket Grounds", hi:"International cricket grounds"     },
   { en:"Live Player Auction",      hi:"लाइव Player Auction"                    },
   { en:"₹2L–₹20L Player Value",    hi:"₹2L–₹20L player value"                  },
 ];
@@ -59,10 +59,19 @@ const PROOF = [
 /* ── HOW BCPL WORKS — 4 concise steps (spec #14; fees from shared config).
      The deeper journey detail lives on the registration + journey pages. ── */
 const ROAD = (f: FeeConfig) => [
-  { icon:"📋", en:"Register",         hi:"रजिस्टर",        date:"Oct '26 – Feb '27", fee: inr(f.phase1.bat) + " / " + inr(f.phase1.ar) + " + GST", descEn:"Pick your role, pay online — done in 5 minutes.",                                                       descHi:"Role चुनें, online payment करें — 5 मिनट में हो गया।",                                        color:"#FF7A29", live:true },
-  { icon:"🎬", en:"Video Trial",      hi:"वीडियो ट्रायल",  date:"Within 15 days",    fee:null,                                                      descEn:"Upload a 30–60 second cricket clip from any ground in India.",                                          descHi:"किसी भी मैदान से 30–60 second की cricket clip upload करें।",                                       color:"#FF9350" },
-  { icon:"🔍", en:"Phase 1 Result",   hi:"फेज़ 1 रिज़ल्ट", date:"Within 48 hours",   fee:null,                                                      descEn:"Your video is evaluated against BCPL's Phase 1 assessment criteria.",                                   descHi:"आपका video BCPL के Phase 1 assessment criteria पर evaluate होता है।",                          color:"#E8B23D" },
-  { icon:"🏟", en:"Phase 2 & Beyond", hi:"फेज़ 2 और आगे",  date:"Mar – Oct '27",     fee: inr(f.phase2.bat) + " / " + inr(f.phase2.ar) + " + GST", descEn:"Only if selected — physical trial in your city, the live franchise auction, then Season 5 under the floodlights.", descHi:"सिर्फ select होने पर — आपके शहर में physical trial, live franchise auction, फिर floodlights के नीचे Season 5।", color:"#F0C860" },
+  { icon:"reg", en:"Register",         hi:"रजिस्टर",        date:"Oct '26 – Feb '27", fee: inr(f.phase1.bat) + " / " + inr(f.phase1.ar) + " + GST", descEn:"Pick your role, pay online — done in 5 minutes.",                                                       descHi:"Role चुनें, online payment करें — 5 मिनट में हो गया।",                                        color:"#FF7A29", live:true },
+  { icon:"video", en:"Video Trial",      hi:"वीडियो ट्रायल",  date:"Within 15 days",    fee:null,                                                      descEn:"Upload a 30–60 second cricket clip from any ground in India.",                                          descHi:"किसी भी मैदान से 30–60 second की cricket clip upload करें।",                                       color:"#FF9350" },
+  { icon:"result", en:"Phase 1 Result",   hi:"फेज़ 1 रिज़ल्ट", date:"Within 48 hours",   fee:null,                                                      descEn:"Your video is evaluated against BCPL's Phase 1 assessment criteria.",                                   descHi:"आपका video BCPL के Phase 1 assessment criteria पर evaluate होता है।",                          color:"#E8B23D" },
+  { icon:"trophy", en:"Phase 2 & Beyond", hi:"फेज़ 2 और आगे",  date:"Mar – Oct '27",     fee: inr(f.phase2.bat) + " / " + inr(f.phase2.ar) + " + GST", descEn:"Only if selected — physical trial in your city, the live franchise auction, then Season 5 under the floodlights.", descHi:"सिर्फ select होने पर — आपके शहर में physical trial, live franchise auction, फिर floodlights के नीचे Season 5।", color:"#F0C860" },
+];
+
+/* ── SEASON 5 ROADMAP — the whole year, readable in five seconds (spec §15) ── */
+const S5_ROADMAP = [
+  { moEn:"Oct – Feb", moHi:"अक्टू – फ़रवरी", en:"Registration",    hi:"रजिस्ट्रेशन",      color:"#FF7A29" },
+  { moEn:"Mar – Jun", moHi:"मार्च – जून",    en:"Physical Trials", hi:"फिज़िकल ट्रायल्स", color:"#FF9350" },
+  { moEn:"Jul – Aug", moHi:"जुलाई – अगस्त",  en:"Results",         hi:"रिज़ल्ट्स",        color:"#E8B23D" },
+  { moEn:"Aug",       moHi:"अगस्त",          en:"Player Auction",  hi:"प्लेयर ऑक्शन",     color:"#F0C860" },
+  { moEn:"Sep – Oct", moHi:"सितं – अक्टू",   en:"Tournament",      hi:"टूर्नामेंट",        color:"#22C55E" },
 ];
 
 /* ── REAL PLAYER STORIES — sirf VERIFIED asli players.
@@ -253,6 +262,7 @@ export function Home() {
           .rv{opacity:1;transform:none;}
           .hero-bg,.play-btn{animation:none!important;}
           .tick{animation:none!important;}
+          .hero-stats .hs{animation:none!important;}
         }
 
         /* HERO */
@@ -262,14 +272,21 @@ export function Home() {
         .hero-ganguly{position:absolute;right:0;bottom:0;height:96%;width:auto;object-fit:cover;object-position:center top;opacity:.9;pointer-events:none;user-select:none;filter:contrast(1.06) brightness(.98);mask-image:linear-gradient(to left,rgba(0,0,0,1) 30%,rgba(0,0,0,.6) 62%,transparent 88%);-webkit-mask-image:linear-gradient(to left,rgba(0,0,0,1) 30%,rgba(0,0,0,.6) 62%,transparent 88%);}
         @media(max-width:899px){.hero-ganguly{opacity:.22;height:100%;right:-10%;}}
         .hero-inner{position:relative;z-index:2;padding:clamp(60px,9vw,110px) 0 clamp(56px,9vw,100px);max-width:680px;}
-        .hero-stats{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin-bottom:18px;}
-        .hero-stats .hs{font-family:var(--font-head);font-weight:900;font-size:clamp(13px,2vw,18px);color:#fff;letter-spacing:.02em;white-space:nowrap;}
-        .hero-stats .hs b{color:#E8B23D;}
-        .hero-stats .dot{width:5px;height:5px;border-radius:50%;background:rgba(232,178,61,.7);flex-shrink:0;}
+        .hero-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 20px;margin-bottom:20px;max-width:540px;}
+        .hero-stats .hs{position:relative;animation:statIn .7s cubic-bezier(.22,1,.36,1) both;}
+        .hero-stats .hs-n{font-family:var(--font-head);font-weight:900;font-size:clamp(24px,3.2vw,34px);line-height:1;color:#fff;letter-spacing:.01em;font-variant-numeric:tabular-nums;text-shadow:0 2px 18px rgba(0,0,0,.5);white-space:nowrap;}
+        .hero-stats .hs-l{font-family:var(--font-head);font-weight:700;font-size:clamp(9.5px,1.1vw,11px);letter-spacing:.16em;color:#E8B23D;text-transform:uppercase;margin-top:6px;white-space:nowrap;}
+        @media(min-width:900px){
+          .hero-stats{display:flex;align-items:stretch;gap:0;max-width:none;}
+          .hero-stats .hs{padding:2px 18px;}
+          .hero-stats .hs:first-child{padding-left:0;}
+          .hero-stats .hs+.hs::before{content:'';position:absolute;left:0;top:10%;bottom:10%;width:1px;background:linear-gradient(180deg,transparent,rgba(232,178,61,.5),transparent);}
+        }
+        @keyframes statIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
         /* League strip ticker */
-        .tick-wrap{overflow:hidden;background:linear-gradient(90deg,#0A1727,#0D1E36 50%,#0A1727);border-top:1px solid rgba(232,178,61,.28);border-bottom:1px solid rgba(232,178,61,.28);position:relative;}
-        .tick{display:flex;width:max-content;animation:tickMove 30s linear infinite;}
+        .tick-wrap{overflow:hidden;background:linear-gradient(90deg,#0A1727,#0D1E36 50%,#0A1727);border-top:1px solid rgba(232,178,61,.28);border-bottom:1px solid rgba(232,178,61,.28);position:relative;mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);}
+        .tick{display:flex;width:max-content;animation:tickMove 46s linear infinite;}
         .tick:hover{animation-play-state:paused;}
         .tick-item{display:inline-flex;align-items:center;gap:16px;padding:13px 0 13px 16px;white-space:nowrap;}
         .tick-item .tx{font-family:'Barlow Condensed','Mukta',sans-serif;font-weight:700;font-size:clamp(16px,2vw,20px);letter-spacing:.12em;color:#E8B23D;text-transform:uppercase;}
@@ -280,17 +297,27 @@ export function Home() {
         .play-btn:hover{transform:scale(1.07);}
 
         /* Road */
-        .road{display:flex;gap:12px;overflow-x:auto;padding:8px 4px 18px;scroll-snap-type:x mandatory;scrollbar-width:thin;position:relative;}
-        .road::-webkit-scrollbar{height:5px;}
-        .road::-webkit-scrollbar-thumb{background:rgba(255,122,41,.3);border-radius:3px;}
-        .road-card{flex:0 0 236px;scroll-snap-align:start;position:relative;border-radius:16px;padding:18px 16px 16px;background:linear-gradient(165deg,#0C1C30,#07101E);border:1px solid rgba(255,255,255,.08);transition:transform .25s,border-color .25s,box-shadow .25s;display:flex;flex-direction:column;}
+        .road{display:grid;grid-template-columns:1fr;gap:12px;position:relative;padding:4px 0 8px;}
+        @media(min-width:640px){.road{grid-template-columns:repeat(2,1fr);gap:14px;}}
+        .road-card{position:relative;border-radius:16px;padding:18px 16px 16px;background:linear-gradient(165deg,#0C1C30,#07101E);border:1px solid rgba(255,255,255,.08);transition:transform .25s,border-color .25s,box-shadow .25s;display:flex;flex-direction:column;}
         .road-card:hover{transform:translateY(-4px);box-shadow:0 14px 36px rgba(0,0,0,.45);}
-        .road-hint{text-align:center;font-size:11px;color:rgba(255,255,255,.35);margin-top:2px;letter-spacing:.06em;}
         @media(min-width:1150px){
-          .road{display:grid;grid-template-columns:repeat(7,1fr);overflow:visible;padding-bottom:8px;}
-          .road-card{flex:none;}
-          .road::before{content:'';position:absolute;top:44px;left:3%;right:3%;height:2px;background:linear-gradient(90deg,#FF7A29,#E8B23D,#3B82F6,#22C55E,#A78BFA);opacity:.28;z-index:0;}
-          .road-hint{display:none;}
+          .road{grid-template-columns:repeat(4,1fr);gap:16px;}
+          .road::before{content:'';position:absolute;top:44px;left:3%;right:3%;height:2px;background:linear-gradient(90deg,#FF7A29,#FF9350,#E8B23D,#F0C860);opacity:.3;z-index:0;}
+        }
+
+        /* Season 5 roadmap — minimal timeline strip */
+        .s5map{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:26px;}
+        .s5map::before{content:'';position:absolute;top:5px;left:6%;right:6%;height:2px;background:linear-gradient(90deg,#FF7A29,#E8B23D 55%,#22C55E);opacity:.35;}
+        .s5m{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:7px;}
+        .s5m-dot{width:12px;height:12px;border-radius:50%;border:2px solid #060C18;position:relative;z-index:1;flex-shrink:0;}
+        .s5m-mo{font-weight:800;font-size:clamp(10px,1.3vw,12px);letter-spacing:.14em;color:rgba(255,255,255,.45);text-transform:uppercase;font-variant-numeric:tabular-nums;}
+        .s5m-lb{font-weight:900;font-size:clamp(12px,1.6vw,16px);letter-spacing:.05em;color:#fff;text-transform:uppercase;}
+        @media(max-width:639px){
+          .s5map{grid-template-columns:1fr;gap:0;margin-top:18px;}
+          .s5map::before{top:6px;bottom:6px;left:5px;right:auto;width:2px;height:auto;background:linear-gradient(180deg,#FF7A29,#E8B23D 55%,#22C55E);}
+          .s5m{flex-direction:row;text-align:left;gap:12px;padding:9px 0;}
+          .s5m-mo{width:92px;flex-shrink:0;}
         }
 
         /* Pricing journey chips */
@@ -386,23 +413,23 @@ export function Home() {
               <span className="shim-gold">{t("Dream","सपना")}</span> {t("Isn't Over.","अभी ज़िंदा है।")}
             </h1>
 
-            {/* League scale */}
-            <div className="hero-stats">
-              <span className="hs"><b>15+</b> {t("Trial Cities","Trial शहर")}</span>
-              <span className="dot"/>
-              <span className="hs"><b>10</b> {t("Teams","टीमें")}</span>
-              <span className="dot"/>
-              <span className="hs"><b>₹15 Cr+</b> {t("Prize Pool","प्राइज़ पूल")}</span>
-              <span className="dot"/>
-              {/* Range (not "max") — the ₹2L floor is the reassurance; "₹20L max"
-                  alone reads like you could sell for ₹5,000. */}
-              <span className="hs"><b>₹2L–₹20L</b> {t("Auction Value","Auction Value")}</span>
+            {/* League scale — broadcast-style stat lockup (Season 5 verified numbers).
+                Range (not "max") — the ₹2L floor is the reassurance; "₹20L max"
+                alone reads like you could sell for ₹5,000. */}
+            <div className="hero-stats" aria-label={t("Season 5 key numbers","Season 5 के मुख्य आँकड़े")}>
+              {[
+                { n:"50+",      en:"Trial Cities",         hi:"Trial शहर" },
+                { n:"10",       en:"Teams",                hi:"टीमें" },
+                { n:"₹15 Cr+",  en:"Prize Pool",           hi:"प्राइज़ पूल" },
+                { n:"₹2L–₹20L", en:"Player Auction Value", hi:"Player Auction Value" },
+              ].map((x,i)=>(
+                <div key={x.en} className="hs" style={{ animationDelay:(0.2 + i*0.12) + "s" }}>
+                  <div className="hs-n">{x.n}</div>
+                  <div className="hs-l">{t(x.en,x.hi)}</div>
+                </div>
+              ))}
             </div>
 
-            <p style={{ fontSize:"clamp(14px,2vw,16px)", color:"rgba(255,255,255,.68)", lineHeight:1.7, marginBottom:12, maxWidth:500 }}>
-              {t("India's stage for working professionals to compete, get selected and play big — a structured selection process, franchise auction, floodlit stadiums.",
-                 "Working professionals के लिए भारत का मंच — compete कीजिए, select होइए, बड़ा खेलिए। एक structured selection process, franchise auction, floodlit stadiums।")}
-            </p>
             <div className="mont" style={{ fontWeight:900, fontSize:"clamp(15px,2.4vw,19px)", marginBottom:28 }}>
               <span className="shim">#OfficeSeStadiumTak</span>
             </div>
@@ -474,7 +501,7 @@ export function Home() {
             {ROAD_STEPS.map((s,i)=>(
               <div key={i} className="road-card" style={{ borderTop:`3px solid ${s.color}`, zIndex:1 }}>
                 <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:12 }}>
-                  <div style={{ width:44, height:44, borderRadius:"50%", background:`${s.color}1A`, border:`1.5px solid ${s.color}55`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:20 }}>{s.icon}</div>
+                  <div style={{ width:44, height:44, borderRadius:"50%", background:`${s.color}1A`, border:`1.5px solid ${s.color}55`, display:"flex", alignItems:"center", justifyContent:"center",  }}><StepIcon kind={s.icon} color={s.color}/></div>
                   <span className="mont" style={{ fontWeight:900, fontSize:26, color:`${s.color}30` }}>{String(i+1).padStart(2,"0")}</span>
                 </div>
                 <div style={{ display:"inline-block", alignSelf:"flex-start", background:`${s.color}14`, border:`1px solid ${s.color}35`, borderRadius:20, padding:"2px 10px", marginBottom:8 }}>
@@ -499,11 +526,26 @@ export function Home() {
               </div>
             ))}
           </div>
-          <div className="road-hint">← {t("Swipe to see all 4 steps","चारों कदम देखने के लिए swipe करें")} →</div>
 
           <div style={{ marginTop:26, display:"flex", justifyContent:"center", alignItems:"center", gap:12, flexWrap:"wrap" }}>
             <button className="btn-cta" style={{ fontSize:14 }} onClick={()=>navigate("/register")}>{t("Start Step 1 — Register","पहला कदम — रजिस्टर करें")} →</button>
             <button className="btn-ghost" style={{ fontSize:13 }} onClick={()=>navigate("/trust")}>{t("See the complete selection journey","पूरा selection journey देखें")}</button>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ 4b · SEASON 5 ROADMAP — the year at a glance (spec §15) ══ */}
+      <section className="rv" aria-label={t("Season 5 roadmap","Season 5 roadmap")} style={{ padding:"clamp(40px,5vw,64px) 0", background:"#060C18", borderTop:"1px solid rgba(255,255,255,.04)" }}>
+        <div className="W">
+          <div className="slbl" style={{ justifyContent:"center" }}>{t("Season 5 Roadmap","Season 5 का roadmap")}</div>
+          <div className="s5map">
+            {S5_ROADMAP.map(m=>(
+              <div key={m.en} className="s5m">
+                <span className="s5m-dot" style={{ background:m.color, boxShadow:"0 0 10px " + m.color + "66" }}/>
+                <span className="s5m-mo mont">{t(m.moEn,m.moHi)}</span>
+                <span className="s5m-lb mont">{t(m.en,m.hi)}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -598,12 +640,18 @@ export function Home() {
                 </div>
               ))}
               <p style={{ fontSize:12, color:"rgba(255,255,255,.35)", marginTop:14, lineHeight:1.6 }}>{t("Includes: Physical trial entry · Franchise auction eligibility · Season 5 participation","शामिल: Physical trial entry · Auction eligibility · Season 5 participation")}</p>
-              {/* Copy rule: never imply "not selected = no money / refund" — Phase 2
-                  fee is simply a separate, selection-time payment, and ALL paid fees
-                  are non-refundable (matches Terms & Refund Policy). */}
+              {/* §16 wording: Phase 2 fee = participation fee for qualified players only.
+                  Never "selection fee", never a flat "non-refundable" (the Refund Policy
+                  has express exceptions), never payment→selection. */}
               <div style={{ marginTop:20, padding:"14px 16px", background:"rgba(232,178,61,.06)", border:"1px solid rgba(232,178,61,.22)", borderRadius:12, display:"flex", gap:10, alignItems:"flex-start" }}>
-                <span style={{ fontSize:16, flexShrink:0 }}>ℹ️</span>
-                <p style={{ fontSize:12, color:"rgba(255,255,255,.6)", lineHeight:1.6 }}><strong style={{ color:"#E8B23D" }}>{t("Phase 2 fee is charged only on selection","Phase 2 fee सिर्फ select होने पर लगती है")}</strong> — {t("a separate payment made at that stage. All fees, once paid, are non-refundable.","उसी stage पर अलग से payment होती है। एक बार paid fee किसी भी स्थिति में refundable नहीं है।")}</p>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E8B23D" strokeWidth="1.8" strokeLinecap="round" style={{ flexShrink:0, marginTop:2 }} aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M12 11.5V16"/></svg>
+                <p style={{ fontSize:12, color:"rgba(255,255,255,.6)", lineHeight:1.6 }}>
+                  <strong style={{ color:"#E8B23D" }}>{t("The Phase 2 fee is payable only if you qualify through Phase 1 and are invited to the physical trial","Phase 2 fee सिर्फ तब देनी होती है जब आप Phase 1 से qualify करके physical trial के लिए invite होते हैं")}</strong>
+                  {" — "}
+                  {t("it is charged solely for participation in the Phase 2 physical trial and does not guarantee Auction Pool entry, purchase by a team, a player contract or tournament participation. Fees once paid are non-refundable except where expressly provided in the ","यह fee सिर्फ Phase 2 physical trial में participation के लिए है — यह Auction Pool में जगह, team द्वारा purchase, player contract या tournament participation की guarantee नहीं है। एक बार paid fee refundable नहीं है, सिवाय उन स्थितियों के जो ")}
+                  <Link href="/refunds" style={{ color:"#E8B23D", textDecoration:"underline" }}>{t("Refund & Cancellation Policy","Refund & Cancellation Policy")}</Link>
+                  {t(".", " में साफ़ लिखी हैं।")}
+                </p>
               </div>
             </div>
           </div>
@@ -756,7 +804,7 @@ export function Home() {
                 <div style={{ position:"absolute", top:-24, right:-24, width:90, height:90, borderRadius:"50%", background:`${tm.color}12`, pointerEvents:"none" }}/>
                 <TeamLogo slug={tm.slug} name={tm.name} color={tm.color}/>
                 <div className="mont" style={{ fontWeight:800, fontSize:"clamp(12px,1.5vw,14px)", color:"#F1F5F9", lineHeight:1.25, marginTop:12 }}>{tm.name}</div>
-                <div className="mont" style={{ fontSize:10, fontWeight:700, letterSpacing:".1em", color:`${tm.color}CC`, textTransform:"uppercase", marginTop:4 }}>📍 {tm.city}</div>
+                <div className="mont" style={{ fontSize:10, fontWeight:700, letterSpacing:".1em", color:`${tm.color}CC`, textTransform:"uppercase", marginTop:4 }}>{tm.city}</div>
               </div>
             ))}
           </div>
@@ -968,9 +1016,9 @@ export function Home() {
 
           <div style={{ display:"flex", gap:14, justifyContent:"center", flexWrap:"wrap" }}>
             {authed ? (
-              <button className="btn-cta" style={{ fontSize:16, padding:"17px 38px" }} onClick={()=>navigate("/profile")}>🏏 {t("Continue Your Journey","अपना सफर जारी रखें")} →</button>
+              <button className="btn-cta" style={{ fontSize:16, padding:"17px 38px" }} onClick={()=>navigate("/profile")}>{t("Continue Your Journey","अपना सफर जारी रखें")} →</button>
             ) : (
-              <button className="btn-cta" style={{ fontSize:16, padding:"17px 38px" }} onClick={()=>navigate("/register")}>🏏 {t("Register for Phase 1","Phase 1 के लिए रजिस्टर करें")} →</button>
+              <button className="btn-cta" style={{ fontSize:16, padding:"17px 38px" }} onClick={()=>navigate("/register")}>{t("Register for Phase 1","Phase 1 के लिए रजिस्टर करें")} →</button>
             )}
             <a className="btn-ghost" href="#road" style={{ fontSize:14 }}>{t("How BCPL works","BCPL कैसे काम करता है")}</a>
           </div>
@@ -1063,6 +1111,15 @@ function CountUp({ end, prefix="", suffix="", inFmt=false, dur=1600 }:{ end:numb
 }
 
 /* ── Team Logo with image fallback ── */
+/* Consistent-stroke inline icons for the journey steps (spec: one icon style, no emoji) */
+function StepIcon({ kind, color }: { kind: string; color: string }) {
+  const p = { width: 22, height: 22, viewBox: "0 0 24 24", fill: "none", stroke: color, strokeWidth: 1.8, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
+  if (kind === "reg")    return <svg {...p}><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7.5h8M8 11.5h8M8 15.5h5"/></svg>;
+  if (kind === "video")  return <svg {...p}><rect x="2" y="6" width="13" height="12" rx="2"/><path d="M15 10.5 22 7v10l-7-3.5"/></svg>;
+  if (kind === "result") return <svg {...p}><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/><path d="m8.2 11.2 2 2 3.6-3.9"/></svg>;
+  return <svg {...p}><path d="M7 3h10v5a5 5 0 0 1-10 0V3Z"/><path d="M7 5H4.5a2.5 2.5 0 0 0 2.6 3.4M17 5h2.5a2.5 2.5 0 0 1-2.6 3.4"/><path d="M12 13v3.2M8.5 20h7M12 16.2c-1.6 0-2.6 1.2-2.8 3.8h5.6c-.2-2.6-1.2-3.8-2.8-3.8Z"/></svg>;
+}
+
 function TeamLogo({ slug, name, color }: { slug:string; name:string; color:string }) {
   const [err, setErr] = useState(false);
   if (!err) {
