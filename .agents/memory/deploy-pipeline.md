@@ -19,3 +19,5 @@ pm2 restart all --update-env
 API startup runs idempotent DB migrations (e.g. reg_number backfill) against RDS automatically — no manual SQL needed on EC2.
 
 **Secret rotation on EC2:** run `bash deploy/update-key.sh KEY_NAME` (prompts for value, updates `.env.production`, pm2 reload --update-env). Guide the user through the **browser**: AWS Console → EC2 → Instances → tick bcpl-server → Connect → EC2 Instance Connect — no .pem/SSH talk; give 2-3 copy-paste lines in simple Hinglish. Verify from workspace with curl against `https://bcplt20.com/api/admin/stats` (`x-bcpl-admin` header): valid secret → 200, anything else → 403. Repeat curls ~6x to cover both PM2 cluster workers. Note: `/api/admin/users` does NOT exist — authenticated-but-404 means route missing, not an auth failure.
+
+- EC2 box has NO ffmpeg/ffprobe installed — prod video-validation ticks retry forever (`spawn ffprobe ENOENT`); fix = `sudo apt-get install -y ffmpeg` on EC2.

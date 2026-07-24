@@ -86,6 +86,22 @@ for KEY in $REQUIRED_KEYS; do
   export "$KEY"="$(grep "^${KEY}=" "$APP_DIR/.env.production" | tail -n1 | cut -d= -f2-)"
 done
 
+# ── 1c. CRITICAL keys check — in ke bina app boot HI nahi hoti ──
+# (JWT_SECRET missing tha to app crash-loop me chali gayi thi aur
+#  poori site 502 ho gayi thi. Ab deploy YAHIN ruk jayega — purani
+#  app chalti rahegi, koi downtime nahi.)
+for KEY in DATABASE_URL JWT_SECRET SESSION_SECRET ADMIN_SECRET; do
+  if [ -z "${!KEY:-}" ]; then
+    echo ""
+    echo "❌ CRITICAL: $KEY .env.production me missing ya khali hai!"
+    echo "   Deploy ROK diya gaya — purani app ko haath nahi lagaya."
+    echo "   Pehle .env.production me $KEY set karo, phir dobara:"
+    echo "   bash deploy/deploy.sh"
+    exit 1
+  fi
+done
+echo "✅ Critical keys OK (DATABASE_URL, JWT_SECRET, SESSION_SECRET, ADMIN_SECRET)"
+
 # ── 2. Install dependencies ──────────────────────────────────
 echo "📦 Installing dependencies..."
 cd $APP_DIR
