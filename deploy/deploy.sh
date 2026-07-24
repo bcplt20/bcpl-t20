@@ -42,6 +42,10 @@ if [ -f "$SEED" ] && ! grep -q '^SEED_APPLIED_V3=1' "$APP_DIR/.env.production"; 
     while IFS= read -r line; do
       K="${line%%=*}"
       [ -z "$K" ] && continue
+      V="${line#*=}"
+      # KHALI value kabhi apply mat karo — 22 July ko isi se JWT_SECRET
+      # ud gaya tha aur poori site 502 ho gayi thi.
+      [ -z "$V" ] && continue
       grep -v "^${K}=" "$APP_DIR/.env.production" > "$APP_DIR/.env.production.tmp" || true
       mv "$APP_DIR/.env.production.tmp" "$APP_DIR/.env.production"
       printf '%s\n' "$line" >> "$APP_DIR/.env.production"
