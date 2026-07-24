@@ -6,6 +6,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { adminGetApiHealth } from "../../lib/api";
 import type { HealthIntegration, HealthJob } from "../../lib/api";
+import { adminGetPhase1AiConfig, adminPatchPhase1AiConfig } from "../api/aiConfig";
+import type { Phase1AiConfig } from "../api/aiConfig";
 
 type Health = {
   checkedAt: string; probed: boolean; uptimeSec: number;
@@ -49,6 +51,108 @@ function normQueues(q: unknown): { label: string; count: number }[] {
     return Object.entries(q as Record<string, unknown>).map(([k, v]) => ({ label: k, count: Number(v ?? 0) }));
   }
   return [];
+}
+
+/* ── AI Evaluation Controls (phase1 pipeline switches) ── */
+
+const AI_SWITCHES: Array<{
+  key: "aiEnabled" | "testMode" | "resultReleaseEnabled" | "realNotificationsEnabled";
+  label: string; desc: string; confirmOn?: string; confirmOff?: string;
+}> = [
+  { key: "aiEnabled", label: "AI Evaluation (master switch)",
+    desc: "ON = submitted videos are picked up and scored automatically every 2 minutes.",
+    confirmOn: "Turn ON AI evaluation? Submitted videos will start being processed automatically." },
+  { key: "testMode", label: "Test Mode (mock scoring)",
+    desc: "ON = practice scores only, no real Gemini calls. Turn OFF for real scoring.",
+    confirmOff: "Turn OFF test mode? Real Gemini API calls will be made for every video (API cost applies)." },
+  { key: "resultReleaseEnabled", label: "Result Release",
+    desc: "ON = results are released to players automatically after the waiting window.",
+    confirmOn: "Turn ON result release? Players will start seeing their results once the waiting window passes." },
+  { key: "realNotificationsEnabled", label: "Player Notifications",
+    desc: "ON = players receive real SMS / WhatsApp / email updates about their results.",
+    confirmOn: "Turn ON real notifications? Players will receive actual messages." },
+];
+
+function AiControlsCard() {
+  const [cfg, setCfg] = useState<Phase1AiConfig | null>(null);
+  const [cfgErr, setCfgErr] = useState("");
+  const [savingKey, setSavingKey] = useState<string | null>(null);
+
+  useEffect(() => {
+    adminGetPhase1AiConfig()
+      .then((c) => { setCfg(c); setCfgErr(""); })
+      .catch((e) => setCfgErr(e instanceof Error ? e.message : "Could not load AI config"));
+  }, []);
+
+  const flip = async (key: (typeof AI_SWITCHES)[number]["key"]) => {
+    if (!cfg || savingKey) return;
+    const next = !cfg[key];
+    const sw = AI_SWITCHES.find((s) => s.key === key);
+    const confirmMsg = next ? sw?.confirmOn : sw?.confirmOff;
+    if (confirmMsg && !window.confirm(confirmMsg)) return;
+    setSavingKey(key);
+    try {
+      setCfg(await adminPatchPhase1AiConfig({ [key]: next }));
+      setCfgErr("");
+    } catch (e) {
+      setCfgErr(e instanceof Error ? e.message : "Could not save the switch");
+    } finally {
+      setSavingKey(null);
+    }
+  };
+
+  const live = cfg ? (cfg.aiEnabled && !cfg.testMode) : false;
+  const statusLabel = !cfg ? "" : !cfg.aiEnabled
+    ? "OFF — videos wait in the queue, nothing is scored"
+    : cfg.testMode ? "TEST MODE — pipeline runs with mock scores (no Gemini cost)" : "LIVE — real AI scoring is active";
+  const statusColor = !cfg ? "#64748B" : !cfg.aiEnabled ? "#EF4444" : cfg.testMode ? "#F59E0B" : "#10B981";
+
+  return (
+    <div style={{ ...card, borderTop: `3px solid ${statusColor}` }}>
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", gap:10, flexWrap:"wrap", marginBottom:4 }}>
+        <div style={{ fontSize:14, fontWeight:800, color:"#F1F5F9" }}>AI Evaluation Controls</div>
+        {cfg && (
+          <span style={{ fontSize:10, fontWeight:800, padding:"4px 10px", borderRadius:6, background:`${statusColor}20`, color:statusColor }}>
+            {statusLabel}
+          </span>
+        )}
+      </div>
+      {cfgErr && (
+        <div style={{ padding:"8px 12px", borderRadius:8, background:"#EF444418", border:"1px solid #EF444440", color:"#EF4444", fontSize:11, marginBottom:8 }}>
+          {cfgErr}
+        </div>
+      )}
+      {!cfg && !cfgErr && <div style={{ fontSize:12, color:"#475569", padding:"14px 0" }}>Loading AI config…</div>}
+      {cfg && (
+        <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+          {AI_SWITCHES.map((s) => {
+            const on = Boolean(cfg[s.key]);
+            const onColor = s.key === "testMode" ? "#F59E0B" : "#10B981";
+            return (
+              <div key={s.key} style={{ display:"flex", alignItems:"center", gap:14, padding:"10px 14px", background:"#060B18", borderRadius:10, border:"1px solid #1E293B" }}>
+                <div style={{ flex:1, minWidth:200 }}>
+                  <div style={{ fontSize:12, fontWeight:700, color:"#E2E8F0" }}>{s.label}</div>
+                  <div style={{ fontSize:11, color:"#64748B", marginTop:2 }}>{s.desc}</div>
+                </div>
+                <button onClick={() => flip(s.key)} disabled={savingKey !== null} aria-label={`${s.label}: ${on ? "on" : "off"}`}
+                  style={{ width:52, height:28, borderRadius:999, border:`1px solid ${on ? `${onColor}60` : "#334155"}`,
+                    background: on ? `${onColor}30` : "#1E293B", position:"relative",
+                    cursor: savingKey ? "wait" : "pointer", flexShrink:0, opacity: savingKey === s.key ? 0.6 : 1, transition:"all .15s" }}>
+                  <span style={{ position:"absolute", top:3, left: on ? 27 : 3, width:20, height:20, borderRadius:"50%",
+                    background: on ? onColor : "#64748B", transition:"left .15s" }}/>
+                </button>
+              </div>
+            );
+          })}
+          <div style={{ fontSize:10, color:"#334155", marginTop:2 }}>
+            Models: {cfg.geminiPrimaryModel} (scoring) · {cfg.geminiValidationModel} (validity check) · Result window: {cfg.resultReleaseHours} hr
+            {live ? " · Gemini API key must be configured on the server (see integrations below)." : ""}
+            {" "}If a server kill-switch environment variable is set, a switch snaps back to the forced value.
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function ApiHealthView() {
@@ -106,6 +210,9 @@ export default function ApiHealthView() {
           {err}
         </div>
       )}
+
+      <AiControlsCard />
+
       {loading && !data && (
         <div style={{ ...card, textAlign:"center", color:"#475569", fontSize:12, padding:40 }}>Loading health data…</div>
       )}
