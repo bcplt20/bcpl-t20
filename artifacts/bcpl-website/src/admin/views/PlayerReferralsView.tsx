@@ -122,7 +122,7 @@ export function PlayerReferralsPanel() {
   return (
     <div>
       <div style={{ fontSize: 12, color: "#64748B", marginBottom: 16 }}>
-        Every player who completes the ₹99 Phase 1 payment automatically gets a personal link (<span style={{ color: "#93C5FD", fontFamily: "monospace" }}>bcplt20.com/r/CODE</span>) on their dashboard &amp; payment receipt. Only <b style={{ color: "#94A3B8" }}>paid</b> friend registrations count toward milestones — free signups can't be farmed.
+        Every player who completes Phase 1 registration automatically gets a personal link (<span style={{ color: "#93C5FD", fontFamily: "monospace" }}>bcplt20.com/r/CODE</span>) on their dashboard &amp; payment receipt. Only <b style={{ color: "#94A3B8" }}>paid</b> friend registrations count toward milestones — free signups can't be farmed.
       </div>
 
       {/* Stat cards */}
@@ -130,7 +130,7 @@ export function PlayerReferralsPanel() {
         {[
           { label: "Player Referrers", value: String(t.referrers), sub: `${t.activeReferrers} with ≥1 paid referral` },
           { label: "Friends Joined", value: String(t.joined), sub: "registrations via player links" },
-          { label: "Paid Referrals", value: String(t.paid), sub: "completed ₹99 payment" },
+          { label: "Paid Referrals", value: String(t.paid), sub: "completed Phase 1 registration" },
           { label: "Rewards Given", value: String(t.rewardsGiven), sub: `${t.rewardsDue} due — hand out & mark below` },
         ].map(k => (
           <div key={k.label} style={card}>

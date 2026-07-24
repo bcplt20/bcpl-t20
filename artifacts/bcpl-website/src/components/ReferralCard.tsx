@@ -100,7 +100,7 @@ export function ReferralCard() {
         Bring your friends, win BCPL rewards 🎁
       </div>
       <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6, marginBottom: 16 }}>
-        Share your personal link. When a friend registers and completes the ₹99 Phase 1 payment, you move up the reward ladder.
+        Share your personal link. When a friend completes their Phase 1 registration, you move up the reward ladder.
       </p>
 
       {/* Link + actions */}
@@ -116,7 +116,7 @@ export function ReferralCard() {
       <div className="grid3" style={{ marginBottom: 18 }}>
         {[
           { label: 'Friends Joined', value: data.joined, sub: 'clicked & registered' },
-          { label: 'Paid Referrals', value: data.paid, sub: 'completed ₹99 payment' },
+          { label: 'Paid Referrals', value: data.paid, sub: 'completed Phase 1 registration' },
           { label: 'Your Rank', value: data.rank ? `#${data.rank}` : '—', sub: data.rank ? 'on the referrer leaderboard' : 'first paid referral unlocks rank' },
         ].map(s => (
           <div key={s.label} style={{ background: '#071121', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 10, padding: '14px 16px' }}>
@@ -199,7 +199,7 @@ export function ReferralCard() {
       )}
 
       <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', lineHeight: 1.6, marginTop: 14 }}>
-        Only friends who complete the ₹99 Phase 1 payment count towards rewards. Rewards are handed out by the BCPL team as each milestone is verified.
+        Only friends who complete the Phase 1 registration count towards rewards. Rewards are handed out by the BCPL team as each milestone is verified.
       </p>
     </div>
   );
@@ -223,7 +223,7 @@ export function ReferralShareBanner() {
         Apni team banao — rewards jeeto!
       </div>
       <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.55)', lineHeight: 1.6, maxWidth: 520, margin: '0 auto 18px' }}>
-        Your personal referral link is ready. Every friend who registers &amp; pays ₹99 takes you up the reward ladder{tease.length > 0 ? ` — ${tease.map(t => `${t.threshold} = ${t.reward.replace(/^[^\w₹']*/, '').split(' — ')[0]}`).join(' · ')} …` : '.'}
+        Your personal referral link is ready. Every friend who completes Phase 1 registration takes you up the reward ladder{tease.length > 0 ? ` — ${tease.map(t => `${t.threshold} = ${t.reward.replace(/^[^\w₹']*/, '').split(' — ')[0]}`).join(' · ')} …` : '.'}
       </p>
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center', alignItems: 'stretch', maxWidth: 640, margin: '0 auto 14px' }}>
         <div style={{ ...linkBox, textAlign: 'left' }}>{data.link}</div>
