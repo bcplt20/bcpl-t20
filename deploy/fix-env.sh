@@ -92,10 +92,18 @@ fi
 pm2 reload deploy/ecosystem.config.js --update-env
 sleep 6
 pm2 status
-curl -s -o /dev/null -w "LOCAL API: %{http_code}\n" http://127.0.0.1:4000/api/healthz
-curl -s -o /dev/null -w "SITE: %{http_code}\n" https://bcplt20.com/
-pm2 save
-
-echo ""
-echo "✅ Ho gaya! Upar 'LOCAL API: 200' aur 'SITE: 200' dikhna chahiye."
-echo "   (pm2 save bhi ho gaya — ab reboot ke baad bhi sahi keys ke saath uthega)"
+HTTP=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:4000/api/healthz || echo 000)
+SITE=$(curl -s -o /dev/null -w "%{http_code}" https://bcplt20.com/ || echo 000)
+echo "LOCAL API: $HTTP"
+echo "SITE: $SITE"
+if [ "$HTTP" = "200" ]; then
+  pm2 save
+  echo ""
+  echo "✅ Ho gaya! App healthy hai, pm2 save bhi ho gaya (reboot-proof)."
+else
+  echo ""
+  echo "❌ App abhi bhi $HTTP de raha hai — pm2 save NAHI kiya."
+  echo "   Ye chalao aur output Replit chat me bhejo:"
+  echo "   pm2 logs bcpl-api --err --lines 40 --nostream"
+  exit 1
+fi
