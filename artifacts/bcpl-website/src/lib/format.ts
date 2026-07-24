@@ -15,14 +15,14 @@ const ROLE_EN: Record<string, string> = {
   bowl: 'Bowler', bowler: 'Bowler',
   ar: 'All-Rounder', allrounder: 'All-Rounder', all_rounder: 'All-Rounder', 'all-rounder': 'All-Rounder',
   wk: 'Wicketkeeper', wicketkeeper: 'Wicketkeeper', wicket_keeper: 'Wicketkeeper',
-  wicketkeeper_batsman: 'Wicketkeeper-Batsman',
+  wicketkeeper_batsman: 'Wicketkeeper',
 };
 const ROLE_HI: Record<string, string> = {
   bat: 'बल्लेबाज़', batsman: 'बल्लेबाज़',
   bowl: 'गेंदबाज़', bowler: 'गेंदबाज़',
   ar: 'ऑल-राउंडर', allrounder: 'ऑल-राउंडर', all_rounder: 'ऑल-राउंडर', 'all-rounder': 'ऑल-राउंडर',
   wk: 'विकेटकीपर', wicketkeeper: 'विकेटकीपर', wicket_keeper: 'विकेटकीपर',
-  wicketkeeper_batsman: 'विकेटकीपर-बल्लेबाज़',
+  wicketkeeper_batsman: 'विकेटकीपर',
 };
 
 export function formatRole(role: string | null | undefined, lang: 'en' | 'hi' = 'en'): string {
