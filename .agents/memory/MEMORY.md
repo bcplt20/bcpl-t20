@@ -7,6 +7,7 @@
 - [Nav links & login entry](nav-links-and-login.md) — internal links must be wouter Link (base-aware); login = global openLoginModal(), never /register#login; homepage i18n via t(en,hi)
 - [Admin API auth](admin-api-auth.md) — admin plumbing now lives ONLY in lib/adminHttp.ts (shared adminReq); never re-duplicate it or use req(...,true)/VITE_ADMIN_KEY; all admin fns (incl. matches/scoring/points/teams) now on adminReq
 - [Settings key RBAC & role tokens](settings-key-rbac.md) — KEY_ROLES map gates settings writes per key (new keys need an entry); signAdminToken mints payload-only role JWTs for parallel-safe tests
+- [Admin localStorage views](admin-localstorage-views.md) — sponsors now server-backed (import-banner rescue, single-flight saves); ContractsView/TrialsOps/AdminSettings still LS-only
 - [Fraud dup-scan design](fraud-scan-design.md) — etag=video hash (multipart caveat); aadhaar/pan matched on provider refs not doc numbers; scan manual-only; flags never auto-punish
 - [Dev preview & API base](dev-preview-api.md) — preview now mirrors prod (vite /api proxy + BASE_URL fallback); if fetches hit a wrong host, check VITE_* env vars first; OTP readable from otp_sessions
 - [Stale lib/db dist declarations](db-schema-dist-declarations.md) — after schema changes run `tsc --build lib/db --force` or typecheck shows phantom "no exported member" errors; runtime uses src, not dist
