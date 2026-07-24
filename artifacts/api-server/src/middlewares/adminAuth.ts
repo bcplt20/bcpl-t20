@@ -35,7 +35,14 @@ export type AdminRoleName =
   | "CONTENT_TEAM"
   | "MATCH_OPERATIONS"
   | "SUPPORT_TEAM"
-  | "FINANCE_TEAM";
+  | "FINANCE_TEAM"
+  /* trial-day field staff (QR trial ops suite — staff mobile app) */
+  | "GATE_SECURITY"
+  | "CHECKIN_STAFF"
+  | "STATION_OPERATOR"
+  | "TRIAL_EVALUATOR"
+  | "VENUE_SUPERVISOR"
+  | "HEAD_ASSESSOR";
 
 export interface AdminIdentity {
   email: string;
@@ -69,6 +76,8 @@ const ROLE_NAMES: readonly AdminRoleName[] = [
   "SUPER_ADMIN", "REGISTRATION_TEAM", "PAYMENT_TEAM", "VIDEO_AI_OPERATIONS",
   "KYC_TEAM", "TRIAL_CITY_MANAGER", "CONTENT_TEAM", "MATCH_OPERATIONS",
   "SUPPORT_TEAM", "FINANCE_TEAM",
+  "GATE_SECURITY", "CHECKIN_STAFF", "STATION_OPERATOR",
+  "TRIAL_EVALUATOR", "VENUE_SUPERVISOR", "HEAD_ASSESSOR",
 ];
 
 function toRole(v: unknown): AdminRoleName {
@@ -168,5 +177,23 @@ export function requireRole(...roles: AdminRoleName[]) {
 export function trialCityScope(req: Request): string[] | null {
   const a = req.admin;
   if (!a || a.role !== "TRIAL_CITY_MANAGER") return null;
+  return (a.cities ?? []).map((c) => c.trim().toLowerCase()).filter(Boolean);
+}
+
+/**
+ * City scope for trial-day FIELD staff (staff mobile app). Same contract
+ * as trialCityScope: null = unrestricted (central roles / SUPER_ADMIN);
+ * [] = city-scoped role with no cities assigned — callers must BLOCK,
+ * never treat as full access.
+ */
+const FIELD_STAFF_ROLES: readonly AdminRoleName[] = [
+  "GATE_SECURITY", "CHECKIN_STAFF", "STATION_OPERATOR",
+  "TRIAL_EVALUATOR", "VENUE_SUPERVISOR", "HEAD_ASSESSOR",
+  "TRIAL_CITY_MANAGER",
+];
+
+export function fieldCityScope(req: Request): string[] | null {
+  const a = req.admin;
+  if (!a || !FIELD_STAFF_ROLES.includes(a.role)) return null;
   return (a.cities ?? []).map((c) => c.trim().toLowerCase()).filter(Boolean);
 }

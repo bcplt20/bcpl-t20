@@ -41,3 +41,5 @@ export * from "./fraud_flags";
 export * from "./registration_drafts";
 // Scalability hardening — durable notification retry queue
 export * from "./notification_outbox";
+// QR trial ops suite — attempts, locked evaluations, corrections
+export * from "./trial_ops";

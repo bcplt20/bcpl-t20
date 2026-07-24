@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import { Route, Switch, Router as WouterRouter, useLocation } from 'wouter';
 import { LoginModal } from './components/LoginModal';
 import { SiteMeta } from './components/SiteMeta';
@@ -42,6 +42,16 @@ import { TrialPass }            from '@/pages/TrialPass';
 import { Players }             from '@/pages/Players';
 import { Trust }               from '@/pages/Trust';
 import AdminPanel              from '@/admin/AdminPanel';
+
+// Staff trial-ops app — lazy: field staff only, keeps jsqr etc out of the main bundle
+const StaffApp = lazy(() => import('@/staff/StaffApp'));
+function StaffRoute() {
+  return (
+    <Suspense fallback={<div style={{ minHeight: '100vh', background: '#06101E' }} />}>
+      <StaffApp />
+    </Suspense>
+  );
+}
 
 // Scroll to top on every route change
 function ScrollToTop() {
@@ -116,6 +126,10 @@ function Router() {
 
         {/* Admin panel */}
         <Route path="/admin" component={AdminPanel} />
+
+        {/* Staff trial-ops app (mobile) */}
+        <Route path="/staff" component={StaffRoute} />
+        <Route path="/staff/:rest*" component={StaffRoute} />
 
         {/* 404 fallback */}
         <Route component={NotFound} />

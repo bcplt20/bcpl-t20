@@ -44,6 +44,9 @@ const KEY_ROLES: Record<string, string[]> = {
   founder_signature: ["MATCH_OPERATIONS"],
   /* shared last-used staff / assessor names for on-ground trial ops. */
   trial_ops_defaults: ["TRIAL_CITY_MANAGER"],
+  /* versioned 100-point trial scoring rubric (staff app reads it via
+     GET /api/staff/eval/rubrics; only HEAD_ASSESSOR + SUPER_ADMIN write). */
+  trial_rubrics_v1: ["HEAD_ASSESSOR"],
 };
 
 /* ── ensure table exists (idempotent, runs at boot) ── */

@@ -16,6 +16,7 @@ import sponsorsRouter from "./sponsors";
 import feesRouter     from "./fees";
 import adminRouter    from "./admin";
 import { adminTrialsRouter, userTrialsRouter } from "./trials";
+import { staffRouter } from "./staffTrials";
 import { adminRefundsRouter } from "./refunds";
 import { adminUsersRouter } from "./adminUsers";
 import { adminHealthRouter } from "./adminHealth";
@@ -50,6 +51,7 @@ router.use("/fees",          feesRouter);     // public fee configuration
 router.use("/settings",      settingsRouter);
 // Admin panel
 router.use("/admin/trials",  adminTrialsRouter); // Stage 4 physical trials
+router.use("/staff",         staffRouter);       // QR trial ops — staff mobile app
 router.use("/admin/refunds", adminRefundsRouter); // Stage 5 finance refunds
 router.use("/admin/admin-users", adminUsersRouter); // Stage 5 RBAC
 router.use("/admin/health",  adminHealthRouter); // Stage 5 API health

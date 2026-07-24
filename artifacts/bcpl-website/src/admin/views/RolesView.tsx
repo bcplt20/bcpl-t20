@@ -60,7 +60,7 @@ export default function RolesView() {
       <div>
         <div style={{ fontSize:20, fontWeight:800, color:"#F1F5F9" }}>Roles & Access</div>
         <div style={{ fontSize:12, color:"#64748B", marginTop:3 }}>
-          Ten fixed roles, enforced by the server on every request — the panel only shows what a role can already do.
+          Fixed roles, enforced by the server on every request — the panel only shows what a role can already do. Trial-day field roles (gate, check-in, evaluator…) use the mobile staff app at /staff instead of this panel.
           Give people roles in Admin Management.
         </div>
       </div>

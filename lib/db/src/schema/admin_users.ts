@@ -12,6 +12,14 @@ export const ADMIN_ROLES = [
   "MATCH_OPERATIONS",
   "SUPPORT_TEAM",
   "FINANCE_TEAM",
+  /* Trial-day field staff (QR trial ops suite) — mobile staff app only.
+     City-scoped via the same `cities` column as TRIAL_CITY_MANAGER. */
+  "GATE_SECURITY",
+  "CHECKIN_STAFF",
+  "STATION_OPERATOR",
+  "TRIAL_EVALUATOR",
+  "VENUE_SUPERVISOR",
+  "HEAD_ASSESSOR",
 ] as const;
 export type AdminRole = (typeof ADMIN_ROLES)[number];
 

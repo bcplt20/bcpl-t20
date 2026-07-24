@@ -70,6 +70,15 @@ export const ROLE_VIEWS: Record<AdminRoleName, string[]> = {
   MATCH_OPERATIONS:   ["dashboard", "matches", "live_scoring", "teams", "auction", "contracts", "leaderboard"],
   SUPPORT_TEAM:       ["dashboard", "support", "users", "player_profiles"],
   FINANCE_TEAM:       ["dashboard", "finance", "forecast", "data_export"],
+  /* Trial-day field staff — they work in the mobile staff app (/staff),
+     NOT the admin panel. "staff_app" is not an admin panel view, so the
+     panel shows them nothing; the /api/staff endpoints gate by role. */
+  GATE_SECURITY:      ["staff_app"],
+  CHECKIN_STAFF:      ["staff_app"],
+  STATION_OPERATOR:   ["staff_app"],
+  TRIAL_EVALUATOR:    ["staff_app"],
+  VENUE_SUPERVISOR:   ["staff_app"],
+  HEAD_ASSESSOR:      ["staff_app"],
 };
 
 export function permissionsForRole(role: string): string[] {
