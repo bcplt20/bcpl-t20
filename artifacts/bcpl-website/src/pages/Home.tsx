@@ -41,7 +41,7 @@ const TICKER = [
   { en:"50+ Trial Cities",         hi:"50+ trial शहर"                          },
   { en:"10 Teams",                 hi:"10 टीमें"                               },
   { en:"₹15 Cr+ Prize Pool",       hi:"₹15 करोड़+ प्राइज़ पूल"                  },
-  { en:"International Cricket Grounds", hi:"International cricket grounds"     },
+  { en:"International Cricket Grounds", hi:"इंटरनेशनल क्रिकेट ग्राउंड्स"        },
   { en:"Live Player Auction",      hi:"लाइव Player Auction"                    },
   { en:"₹2L–₹20L Player Value",    hi:"₹2L–₹20L player value"                  },
 ];
@@ -98,8 +98,8 @@ const FAQS = (f: FeeConfig) => [
     aEn: inr(f.phase1.bat) + " + GST for Batsman/Bowler/Wicket-keeper. " + inr(f.phase1.ar) + " + GST for All-rounders. Nothing else is payable in Phase 1.",
     aHi: "Batsman/Bowler/Wicket-keeper के लिए " + inr(f.phase1.bat) + " + GST। All-rounder के लिए " + inr(f.phase1.ar) + " + GST। Phase 1 में इसके अलावा कुछ नहीं।" },
   { qEn:"Do I pay extra for Phase 2?",           qHi:"क्या Phase 2 के लिए अलग से देना होगा?",
-    aEn:"Only if selected. Phase 2 fee is " + inr(f.phase2.bat) + " + GST (Bat/Bowl/WK) or " + inr(f.phase2.ar) + " + GST (All-rounder) — a separate payment made at selection time. All fees, once paid, are non-refundable.",
-    aHi:"सिर्फ select होने पर। Phase 2 fee " + inr(f.phase2.bat) + " + GST (Bat/Bowl/WK) या " + inr(f.phase2.ar) + " + GST (All-rounder) — selection के समय अलग से payment होती है। एक बार paid fee किसी भी स्थिति में refundable नहीं है।" },
+    aEn:"Only if selected. Phase 2 fee is " + inr(f.phase2.bat) + " + GST (Bat/Bowl/WK) or " + inr(f.phase2.ar) + " + GST (All-rounder) — a separate payment charged solely for participation in the Phase 2 physical trial. Fees once paid are non-refundable except where expressly provided in the Refund & Cancellation Policy.",
+    aHi:"सिर्फ select होने पर। Phase 2 fee " + inr(f.phase2.bat) + " + GST (Bat/Bowl/WK) या " + inr(f.phase2.ar) + " + GST (All-rounder) — यह अलग payment सिर्फ Phase 2 physical trial में participation के लिए है। एक बार paid fee refundable नहीं है, सिवाय उन स्थितियों के जो Refund & Cancellation Policy में साफ़ लिखी हैं।" },
   { qEn:"Are there hidden costs?",               qHi:"क्या कोई छिपे हुए charges हैं?",
     aEn:"The Phase 2 fee is payable only if you qualify and choose to proceed. Maximum total cost is " + inr(f.phase1.bat + f.phase2.bat) + "–" + inr(f.phase1.ar + f.phase2.ar) + " + GST for your entire BCPL journey — registration to franchise auction.",
     aHi:"Phase 2 fee सिर्फ तभी देनी होती है जब आप qualify करें और आगे बढ़ना चुनें। पूरे BCPL सफर की अधिकतम कुल लागत " + inr(f.phase1.bat + f.phase2.bat) + "–" + inr(f.phase1.ar + f.phase2.ar) + " + GST है — registration से लेकर auction तक।" },
@@ -421,7 +421,7 @@ export function Home() {
                 { n:"50+",      en:"Trial Cities",         hi:"Trial शहर" },
                 { n:"10",       en:"Teams",                hi:"टीमें" },
                 { n:"₹15 Cr+",  en:"Prize Pool",           hi:"प्राइज़ पूल" },
-                { n:"₹2L–₹20L", en:"Player Auction Value", hi:"Player Auction Value" },
+                { n:"₹2L–₹20L", en:"Player Auction Value", hi:"प्लेयर ऑक्शन वैल्यू" },
               ].map((x,i)=>(
                 <div key={x.en} className="hs" style={{ animationDelay:(0.2 + i*0.12) + "s" }}>
                   <div className="hs-n">{x.n}</div>
@@ -535,7 +535,7 @@ export function Home() {
       </section>
 
       {/* ══ 4b · SEASON 5 ROADMAP — the year at a glance (spec §15) ══ */}
-      <section className="rv" aria-label={t("Season 5 roadmap","Season 5 roadmap")} style={{ padding:"clamp(40px,5vw,64px) 0", background:"#060C18", borderTop:"1px solid rgba(255,255,255,.04)" }}>
+      <section className="rv" aria-label={t("Season 5 roadmap","Season 5 का roadmap")} style={{ padding:"clamp(40px,5vw,64px) 0", background:"#060C18", borderTop:"1px solid rgba(255,255,255,.04)" }}>
         <div className="W">
           <div className="slbl" style={{ justifyContent:"center" }}>{t("Season 5 Roadmap","Season 5 का roadmap")}</div>
           <div className="s5map">
@@ -649,7 +649,7 @@ export function Home() {
                   <strong style={{ color:"#E8B23D" }}>{t("The Phase 2 fee is payable only if you qualify through Phase 1 and are invited to the physical trial","Phase 2 fee सिर्फ तब देनी होती है जब आप Phase 1 से qualify करके physical trial के लिए invite होते हैं")}</strong>
                   {" — "}
                   {t("it is charged solely for participation in the Phase 2 physical trial and does not guarantee Auction Pool entry, purchase by a team, a player contract or tournament participation. Fees once paid are non-refundable except where expressly provided in the ","यह fee सिर्फ Phase 2 physical trial में participation के लिए है — यह Auction Pool में जगह, team द्वारा purchase, player contract या tournament participation की guarantee नहीं है। एक बार paid fee refundable नहीं है, सिवाय उन स्थितियों के जो ")}
-                  <Link href="/refunds" style={{ color:"#E8B23D", textDecoration:"underline" }}>{t("Refund & Cancellation Policy","Refund & Cancellation Policy")}</Link>
+                  <Link href="/refunds" style={{ color:"#E8B23D", textDecoration:"underline" }}>{t("Refund & Cancellation Policy","रिफ़ंड और कैंसिलेशन पॉलिसी")}</Link>
                   {t(".", " में साफ़ लिखी हैं।")}
                 </p>
               </div>

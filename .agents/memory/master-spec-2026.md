@@ -22,3 +22,12 @@ Spec file: `attached_assets/Pasted--BCPLT20-COM-COMPLETE-WEBSITE-UI-UX-CONTENT-L
 - Payment≠selection disclaimer required at every payment decision point.
 - Phase 1 review: "evaluation process against assessment criteria" — never panel/scout/manual-review claims; never display Gemini brand player-facing.
 - Trial rules wording: no absolute claims (identical deliveries, immutable scores, fixed cutoffs); Auction Pool = eligibility only; rubric weights "initial/versioned, finalised by Cricket Operations"; "final published rulebook prevails" caveat everywhere.
+
+## July 2026 — second premium spec (36 sections)
+- Pattern repeated: ~half the asks already existed (odometer countdown, ticker, auth-aware CTAs, 18–45 age copy, clean API templates). ALWAYS audit before building.
+- Journey desktop "empty space" complaint root cause: 4 cards in a `repeat(7,1fr)` grid — a stale column count, not a design gap. Check grid math before redesigning.
+- Official team logos: replacing files under the SAME filenames in public/bcpl-assets/logos/ upgraded every call site with zero code churn — keep this pattern for future asset swaps.
+- 15+→50+ trial cities lived in exactly 3 files (Home ticker, About timeline, Registration comment); hero stats now data-driven (single array).
+- Copy rule reinforced (architect caught a leftover in Home FAQ): ANY "non-refundable" mention must carry "except where expressly provided in the Refund & Cancellation Policy" — EN and HI both; grep "refundable" on every copy change.
+- New-string i18n trap: don't ship English as the Hindi variant for NEW labels (Devanagari transliteration is fine house style).
+- Emoji→SVG sweep done on Home (StepIcon inline-stroke pattern) + fees ℹ️; other pages may still carry emojis — sweep remains open elsewhere.
