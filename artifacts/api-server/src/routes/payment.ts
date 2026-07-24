@@ -82,7 +82,16 @@ async function notifyPhase2Success(
 
 // POST /api/payment/phase1/create  — create Cashfree order
 router.post("/phase1/create", requireAuth, async (req: AuthRequest, res) => {
-  const schema = z.object({ registrationId: z.string().uuid() });
+  const schema = z.object({
+    registrationId: z.string().uuid(),
+    // Legal consent audit (optional for backward compatibility): client sends
+    // accepted document versions + marketing choice; server stamps acceptedAt.
+    consent: z.object({
+      termsVersion:   z.string().min(1).max(20),
+      privacyVersion: z.string().min(1).max(20),
+      marketingOptIn: z.boolean(),
+    }).optional(),
+  });
   const parsed = schema.safeParse(req.body);
   if (!parsed.success) return void res.status(400).json({ error: "Invalid registrationId" });
 
@@ -107,6 +116,25 @@ router.post("/phase1/create", requireAuth, async (req: AuthRequest, res) => {
   }
   if (!isAgeEligible(user.dob)) {
     return void res.status(403).json({ error: AGE_INELIGIBLE_MESSAGE, code: "AGE_INELIGIBLE" });
+  }
+
+  // Record consent at payment initiation (acceptance stands even if the
+  // gateway order later fails). JS merge keeps other consent keys intact.
+  if (parsed.data.consent) {
+    const c = parsed.data.consent;
+    const prior = (reg.consents ?? {}) as Record<string, unknown>;
+    await db.update(registrationsTable).set({
+      consents: {
+        ...prior,
+        phase1: {
+          documentVersion: `terms-v${c.termsVersion}+privacy-v${c.privacyVersion}`,
+          termsVersion:    c.termsVersion,
+          privacyVersion:  c.privacyVersion,
+          marketingOptIn:  c.marketingOptIn,
+          acceptedAt:      new Date().toISOString(),
+        },
+      },
+    }).where(eq(registrationsTable.id, reg.id));
   }
 
   const amount  = Math.round(FEES[reg.role].phase1 * 1.18); // base + 18% GST
@@ -233,7 +261,15 @@ router.post("/phase1/verify", requireAuth, async (req: AuthRequest, res) => {
 
 // POST /api/payment/phase2/create
 router.post("/phase2/create", requireAuth, async (req: AuthRequest, res) => {
-  const schema = z.object({ registrationId: z.string().uuid() });
+  const schema = z.object({
+    registrationId: z.string().uuid(),
+    // Phase 2 declarations audit (optional for backward compatibility):
+    // the exact declaration texts ticked by the player; server stamps acceptedAt.
+    declarations: z.object({
+      version: z.string().min(1).max(20),
+      items:   z.array(z.string().min(1).max(300)).min(1).max(8),
+    }).optional(),
+  });
   const parsed = schema.safeParse(req.body);
   if (!parsed.success) return void res.status(400).json({ error: "Invalid registrationId" });
 
@@ -248,6 +284,22 @@ router.post("/phase2/create", requireAuth, async (req: AuthRequest, res) => {
   if (!rows[0]) return void res.status(404).json({ error: "Registration not found" });
   const { reg, user } = rows[0];
   if (reg.phase1Status !== "selected") return void res.status(400).json({ error: "Not selected for Phase 2" });
+
+  // Record accepted declarations at payment initiation (consent audit).
+  if (parsed.data.declarations) {
+    const d = parsed.data.declarations;
+    const prior = (reg.consents ?? {}) as Record<string, unknown>;
+    await db.update(registrationsTable).set({
+      consents: {
+        ...prior,
+        phase2: {
+          documentVersion: `phase2-declarations-v${d.version}`,
+          items:           d.items,
+          acceptedAt:      new Date().toISOString(),
+        },
+      },
+    }).where(eq(registrationsTable.id, reg.id));
+  }
 
   const amount  = Math.round(FEES[reg.role].phase2 * 1.18); // base + 18% GST
   const orderId = `p2_${reg.id.slice(0, 8)}_${Date.now()}`;

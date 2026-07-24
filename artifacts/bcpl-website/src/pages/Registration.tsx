@@ -7,6 +7,7 @@ import {
   registerPhase1, createPhase1Payment, getRegistrationStatus, updateDob,
 } from '@/lib/api';
 import { fireReferralAttribution } from '@/lib/marketingApi';
+import { CONSENT_VERSIONS } from '../lib/legalMeta';
 import { useLang } from '../lib/i18n';
 import { useFees, withGst } from '../lib/fees';
 
@@ -131,6 +132,7 @@ export function Registration() {
   const [cityQ, setCityQ]       = useState('');
   const [showDrop, setShowDrop] = useState(false);
   const [agreed, setAgreed]     = useState(false);
+  const [marketingOptIn, setMarketingOptIn] = useState(false); // optional — never gates payment
 
   const filtered    = CITIES.filter(c => c.toLowerCase().includes(cityQ.toLowerCase()));
   /* Displayed prices come from the shared fee config (GET /api/fees) — the
@@ -237,6 +239,12 @@ export function Registration() {
   /* ── New registration payment flow ── */
   const doRegisterAndPay = async () => {
     setPayLoading(true); setPayError('');
+    // Consent audit payload — versions from legalMeta; server stamps acceptedAt.
+    const consentPayload = {
+      termsVersion:   CONSENT_VERSIONS.terms,
+      privacyVersion: CONSENT_VERSIONS.privacy,
+      marketingOptIn,
+    };
     try {
       let regId: string;
       try {
@@ -258,12 +266,12 @@ export function Registration() {
       }
       let pay;
       try {
-        pay = await createPhase1Payment(regId);
+        pay = await createPhase1Payment(regId, consentPayload);
       } catch (e: any) {
         // Player registered before the age gate existed — backfill DOB and retry once
         if (e?.code === 'DOB_REQUIRED' && dob && dobValid) {
           await updateDob(dob);
-          pay = await createPhase1Payment(regId);
+          pay = await createPhase1Payment(regId, consentPayload);
         } else throw e;
       }
       // Store data for receipt page
@@ -1019,8 +1027,18 @@ export function Registration() {
                   <span style={{ fontSize:12, color:'rgba(255,255,255,0.5)', lineHeight:1.6 }}>
                     {t('I confirm I am a working professional aged 18–45, not under a first-class cricket contract, and I agree to the', 'मैं confirm करता हूँ कि मैं 18–45 उम्र का working professional हूँ, first-class cricket contract में नहीं हूँ, और मैं सहमत हूँ')}{' '}
                     <Link href="/terms" style={{ color:'#FF7A29', textDecoration:'none', fontWeight:600 }}>{t('Terms & Conditions', 'Terms & Conditions')}</Link>,{' '}
-                    <Link href="/refunds" style={{ color:'#FF7A29', textDecoration:'none', fontWeight:600 }}>{t('Refund Policy', 'Refund Policy')}</Link>{t(', and', ', और')}{' '}
-                    <Link href="/eligibility" style={{ color:'#FF7A29', textDecoration:'none', fontWeight:600 }}>{t('Eligibility Criteria', 'Eligibility Criteria')}</Link>{t('.', ' से।')}
+                    <Link href="/refunds" style={{ color:'#FF7A29', textDecoration:'none', fontWeight:600 }}>{t('Refund Policy', 'Refund Policy')}</Link>,{' '}
+                    <Link href="/eligibility" style={{ color:'#FF7A29', textDecoration:'none', fontWeight:600 }}>{t('Eligibility Criteria', 'Eligibility Criteria')}</Link>{t(', and the', ', और')}{' '}
+                    <Link href="/privacy" style={{ color:'#FF7A29', textDecoration:'none', fontWeight:600 }}>{t('Privacy Notice', 'Privacy Notice')}</Link>{t('.', ' से।')}{' '}
+                    {t('The document versions I accept and the acceptance time are recorded with my registration. Service messages (OTP, payment, results, trial updates) are part of the service.', 'मैं जो document versions accept करता हूँ, वे acceptance time के साथ मेरे registration में record होंगी। Service messages (OTP, payment, results, trial updates) service का हिस्सा हैं।')}
+                  </span>
+                </label>
+
+                {/* Optional marketing consent — separate from required acceptance, never gates payment */}
+                <label style={{ display:'flex', alignItems:'flex-start', gap:10, cursor:'pointer', marginTop:-10, marginBottom:20, padding:'12px 16px', background:'rgba(255,255,255,0.02)', border:'1px dashed rgba(255,255,255,0.09)' }}>
+                  <input type="checkbox" checked={marketingOptIn} onChange={e => setMarketingOptIn(e.target.checked)} style={{ marginTop:2, accentColor:'#FF7A29', width:16, height:16, flexShrink:0 }} />
+                  <span style={{ fontSize:11.5, color:'rgba(255,255,255,0.42)', lineHeight:1.6 }}>
+                    {t('Optional: send me BCPL news, offers and future-season updates by SMS/WhatsApp/email. I can withdraw this consent anytime.', 'Optional: मुझे BCPL news, offers और अगले season के updates SMS/WhatsApp/email से भेजें। मैं यह consent कभी भी वापस ले सकता हूँ।')}
                   </span>
                 </label>
 

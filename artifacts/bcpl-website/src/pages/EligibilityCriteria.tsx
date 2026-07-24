@@ -3,6 +3,7 @@ import { Link } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { useLang } from '../lib/i18n';
+import { LegalDocHeader } from '../lib/legalMeta';
 import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
 
 const OrangeDot = () => (
@@ -106,10 +107,12 @@ export function EligibilityCriteria() {
               <span style={{color:'#fff',display:'block'}}>{t("ELIGIBILITY","ELIGIBILITY")}</span>
               <span className="shimmer-gold" style={{display:'block'}}>{t("CRITERIA.","CRITERIA.")}</span>
             </h1>
-            <p style={{color:'rgba(255,255,255,0.5)',fontSize:13,fontWeight:600,letterSpacing:'0.05em',marginTop:16,fontFamily:'Montserrat,sans-serif'}}>{t("Last updated: January 15, 2025","Last updated: January 15, 2025")}</p>
             <p style={{color:'rgba(255,255,255,0.65)',fontSize:'clamp(14px,2vw,16px)',lineHeight:1.7,maxWidth:600,margin:'16px auto 0'}}>
               {t("BCPL T20 Season 5 is open to working professionals across India. Check your eligibility in seconds.","BCPL T20 Season 5 पूरे भारत के working professionals के लिए खुला है। कुछ ही seconds में अपनी eligibility check करें।")}
             </p>
+            <div style={{marginTop:28}}>
+              <LegalDocHeader doc="eligibility" />
+            </div>
           </div>
         </section>
 
@@ -237,7 +240,8 @@ export function EligibilityCriteria() {
                 {en:'Basic cricket experience is required — colony or gully cricket counts!',hi:'Basic cricket experience ज़रूरी है — colony या gully cricket भी count होती है!'},
                 {en:'Players who have represented at state, district, or professional level must have a minimum 10-year gap from their last competitive match',hi:'जिन players ने state, district या professional level पर खेला है, उनके last competitive match से कम से कम 10 साल का gap होना चाहिए'},
                 {en:'No formal coaching certificates or club membership needed',hi:'किसी formal coaching certificate या club membership की ज़रूरत नहीं'},
-                {en:'Skills assessed via self-uploaded video post-registration',hi:'Skills registration के बाद खुद upload की गई video से assess होती हैं'},
+                {en:'Skills assessed via a 30–60 second video uploaded within 15 days of registration',hi:'Skills registration के 15 दिनों के अंदर upload की गई 30–60 second video से assess होती हैं'},
+                {en:'The video must show the registered player\'s own, current cricket performance',hi:'Video में registered player का अपना, current cricket performance दिखना चाहिए'},
                 {en:'Video must demonstrate batting, bowling, or keeping depending on your role',hi:'Video में आपकी role के हिसाब से batting, bowling या keeping दिखनी चाहिए'},
                 {en:'All-rounders should show at least two skills in the video',hi:'All-rounders को video में कम से कम दो skills दिखानी चाहिए'},
               ].map((item,i)=>(
@@ -320,6 +324,38 @@ export function EligibilityCriteria() {
                   ))}
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Section 6 — Verification, Declarations & Conduct */}
+          <div className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:20,animation:'fadeSlide 0.5s ease 0.45s both'}}>
+            <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18}}>
+              <span style={{fontSize:28}}>🛡️</span>
+              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>{t("6. Verification, Declarations & Conduct","6. Verification, Declarations और Conduct")}</h2>
+            </div>
+            <p style={{color:'rgba(255,255,255,0.75)',fontSize:'clamp(14px,2vw,15px)',lineHeight:1.8,marginBottom:16}}>
+              {t("One registration is permitted per person per season. Participation is subject to accurate declarations, identity and professional verification, and the applicable BCPL rules.","एक व्यक्ति एक season में एक ही registration कर सकता है। भागीदारी सही declarations, identity और professional verification, तथा applicable BCPL rules के अधीन है।")}
+            </p>
+            <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:10}}>
+              {[
+                {en:'One registration per person per season — multiple registrations or identity fraud are prohibited',hi:'एक व्यक्ति एक season में एक registration — multiple registrations या identity fraud प्रतिबंधित है'},
+                {en:'Identity verification via Aadhaar and PAN is completed during Phase 2 KYC',hi:'Aadhaar और PAN के ज़रिए identity verification Phase 2 KYC के दौरान पूरा होता है'},
+                {en:'Professional / employment status may be verified using the documents you provide',hi:'Professional / employment status आपके द्वारा दिए गए documents से verify किया जा सकता है'},
+                {en:'The submitted video must show your own, current cricket performance — borrowed, edited or misrepresented footage is not permitted',hi:'Submit की गई video में आपका अपना, current cricket performance दिखना चाहिए — किसी और की, edited या misrepresented footage की अनुमति नहीं है'},
+                {en:'False or misleading declarations can lead to disqualification at any stage, without refund',hi:'झूठी या misleading declarations किसी भी stage पर disqualification का कारण बन सकती हैं, बिना refund के'},
+                {en:'Qualified players must attend the physical trial in person at their chosen city to be assessed',hi:'Qualified players को assess होने के लिए अपने chosen city में physical trial में खुद उपस्थित होना ज़रूरी है'},
+              ].map((item,i)=>(
+                <li key={i} style={{display:'flex',alignItems:'flex-start',color:'rgba(255,255,255,0.75)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
+                  <OrangeDot/>{t(item.en,item.hi)}
+                </li>
+              ))}
+            </ul>
+            <div style={{background:'rgba(255,122,41,0.06)',border:'1px solid rgba(255,122,41,0.2)',borderRadius:12,padding:'14px 18px',marginTop:16}}>
+              <p style={{color:'rgba(255,255,255,0.7)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
+                {t("All participants must follow the applicable conduct rules throughout registration, assessment and trials.","सभी participants को registration, assessment और trials के दौरान applicable conduct rules का पालन करना ज़रूरी है।")}
+                {' '}
+                <Link href="/code-of-conduct" style={{color:'#FF7A29',fontWeight:700,textDecoration:'underline'}}>{t("Read the Code of Conduct →","Code of Conduct पढ़ें →")}</Link>
+              </p>
             </div>
           </div>
 

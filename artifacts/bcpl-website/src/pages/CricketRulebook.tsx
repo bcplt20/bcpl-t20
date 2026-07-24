@@ -3,6 +3,7 @@ import { Link } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
+import { LegalDocHeader } from '../lib/legalMeta';
 
 const OrangeDot = () => (
   <span style={{display:'inline-block',width:6,height:6,borderRadius:'50%',background:'#FF7A29',marginRight:10,flexShrink:0,marginTop:7}}/>
@@ -164,15 +165,26 @@ export function CricketRulebook() {
               <span style={{color:'#fff',display:'block'}}>BCPL CRICKET</span>
               <span className="shimmer-gold" style={{display:'block'}}>RULEBOOK.</span>
             </h1>
-            <p style={{color:'rgba(255,255,255,0.5)',fontSize:13,fontWeight:600,letterSpacing:'0.05em',marginTop:16,fontFamily:'Montserrat,sans-serif'}}>Official Rules — Season 5 · 2025</p>
+            <p style={{color:'rgba(255,255,255,0.5)',fontSize:13,fontWeight:600,letterSpacing:'0.05em',marginTop:16,fontFamily:'Montserrat,sans-serif'}}>Tournament Cricket Rules — Season 5</p>
             <p style={{color:'rgba(255,255,255,0.35)',fontSize:12,marginTop:6,fontFamily:'Inter,sans-serif'}}>यह दस्तावेज़ English में मान्य है · This document is authoritative in English.</p>
             <p style={{color:'rgba(255,255,255,0.65)',fontSize:'clamp(14px,2vw,16px)',lineHeight:1.7,maxWidth:600,margin:'16px auto 0'}}>
-              The complete, official BCPL T20 cricket rulebook. All rules are binding on players, team managers, and officials in every trial city.
+              The BCPL T20 tournament cricket rulebook. These rules govern competition matches and apply to players, team managers and officials at all match venues.
             </p>
           </div>
         </section>
 
         <div className="wrap" style={{maxWidth:900,margin:'0 auto',paddingBottom:40}}>
+
+          <LegalDocHeader doc="rulebook" />
+
+          {/* Cross-link: trial rules live on a separate page */}
+          <div style={{background:'rgba(232,178,61,0.07)',border:'1px solid rgba(232,178,61,0.35)',borderLeft:'3px solid #E8B23D',borderRadius:16,padding:'16px clamp(16px,4vw,24px)',marginBottom:24,display:'flex',gap:12,alignItems:'flex-start'}}>
+            <span style={{fontSize:22,flexShrink:0}}>🏟</span>
+            <p style={{color:'rgba(255,255,255,0.85)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
+              This page covers tournament / competition cricket only. Looking for Phase 2 trial assessment rules? See <Link href="/trial-rules" style={{color:'#E8B23D',fontWeight:600}}>Physical Trial Rules</Link>.
+            </p>
+          </div>
+
 
           {/* Table of Contents */}
           <div className="glass-card" style={{padding:'clamp(20px,4vw,28px) clamp(16px,4vw,32px)',marginBottom:24,animation:'fadeSlide 0.5s ease 0.1s both'}}>

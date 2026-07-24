@@ -698,9 +698,25 @@ export function Phase1VideoUpload() {
                   <span style={{ position:'absolute', left:0, color:'var(--orange)' }}>•</span>
                   {t('Ensure good lighting and stable camera.', 'सुनिश्चित करें कि अच्छी रोशनी हो और कैमरा स्थिर हो।')}
                 </li>
-                <li style={{ fontSize:13, color:'var(--ink-2)', paddingLeft:20, position:'relative', lineHeight:1.6 }}>
+                <li style={{ fontSize:13, color:'var(--ink-2)', marginBottom:10, paddingLeft:20, position:'relative', lineHeight:1.6 }}>
                   <span style={{ position:'absolute', left:0, color:'var(--orange)' }}>•</span>
                   {t('No editing or background music. Raw footage only.', 'कोई एडिटिंग या बैकग्राउंड म्यूजिक नहीं। केवल मूल फुटेज।')}
+                </li>
+                <li style={{ fontSize:13, color:'var(--ink-2)', marginBottom:10, paddingLeft:20, position:'relative', lineHeight:1.6 }}>
+                  <span style={{ position:'absolute', left:0, color:'var(--orange)' }}>•</span>
+                  {t('The video must show your OWN current cricket performance, ' + minSec + '–' + maxSec + ' seconds, uploaded within the deadline shown above.', 'वीडियो में आपका अपना मौजूदा क्रिकेट प्रदर्शन ' + minSec + '–' + maxSec + ' सेकंड का हो, और ऊपर दी गई समय-सीमा के भीतर अपलोड किया जाए।')}
+                </li>
+                <li style={{ fontSize:13, color:'var(--ink-2)', marginBottom:10, paddingLeft:20, position:'relative', lineHeight:1.6 }}>
+                  <span style={{ position:'absolute', left:0, color:'var(--orange)' }}>•</span>
+                  {t('Invalid or unclear footage may require re-upload according to BCPL rules.', 'अमान्य या अस्पष्ट फुटेज के लिए BCPL नियमों के अनुसार दोबारा अपलोड की ज़रूरत हो सकती है।')}
+                </li>
+                <li style={{ fontSize:13, color:'var(--ink-2)', marginBottom:10, paddingLeft:20, position:'relative', lineHeight:1.6 }}>
+                  <span style={{ position:'absolute', left:0, color:'var(--orange)' }}>•</span>
+                  {t('BCPL may use automated, digital and technology-assisted assessment systems and third-party technology providers to validate and assess your video.', 'BCPL आपके वीडियो को जाँचने और आंकने के लिए automated, digital और technology-assisted assessment systems तथा third-party technology providers का उपयोग कर सकता है।')}
+                </li>
+                <li style={{ fontSize:13, color:'var(--ink-2)', paddingLeft:20, position:'relative', lineHeight:1.6 }}>
+                  <span style={{ position:'absolute', left:0, color:'var(--orange)' }}>•</span>
+                  {t('Manipulation or impersonation leads to disqualification.', 'वीडियो में छेड़छाड़ या किसी और की जगह वीडियो देने पर अयोग्यता होगी।')}
                 </li>
               </ul>
             </div>

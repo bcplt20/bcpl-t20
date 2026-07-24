@@ -3,6 +3,7 @@ import { Link } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
+import { LegalDocHeader } from '../lib/legalMeta';
 
 const OrangeDot = () => (
   <span style={{display:'inline-block',width:6,height:6,borderRadius:'50%',background:'#FF7A29',marginRight:10,flexShrink:0,marginTop:7}}/>
@@ -84,16 +85,18 @@ export function Refunds() {
 
         <section style={{padding:'clamp(40px,8vw,72px) 0 40px',textAlign:'center',animation:'fadeSlide 0.6s ease both'}}>
           <div className="wrap">
-            <div className="tag-pill" style={{marginBottom:20}}>💰 REFUND POLICY</div>
+            <div className="tag-pill" style={{marginBottom:20}}>💰 REFUND & CANCELLATION POLICY</div>
             <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(32px,7vw,72px)',lineHeight:1.05,marginBottom:8}}>
-              <span style={{color:'#fff',display:'block'}}>FAIR &</span>
-              <span className="shimmer-gold" style={{display:'block'}}>TRANSPARENT.</span>
+              <span style={{color:'#fff',display:'block'}}>REFUND &</span>
+              <span className="shimmer-gold" style={{display:'block'}}>CANCELLATION.</span>
             </h1>
-            <p style={{color:'rgba(255,255,255,0.5)',fontSize:13,fontWeight:600,letterSpacing:'0.05em',marginTop:16,fontFamily:'Montserrat,sans-serif'}}>Last updated: January 15, 2025</p>
-            <p style={{color:'rgba(255,255,255,0.35)',fontSize:12,marginTop:6,fontFamily:'Inter,sans-serif'}}>यह दस्तावेज़ English में मान्य है · This document is authoritative in English.</p>
+            <p style={{color:'rgba(255,255,255,0.35)',fontSize:12,marginTop:16,fontFamily:'Inter,sans-serif'}}>यह दस्तावेज़ English में मान्य है · This document is authoritative in English.</p>
             <p style={{color:'rgba(255,255,255,0.65)',fontSize:'clamp(14px,2vw,16px)',lineHeight:1.7,maxWidth:600,margin:'16px auto 0'}}>
-              We believe in complete transparency around money. Here's exactly when refunds apply and when they don't — in plain language.
+              This policy sets out, by scenario, when a refund applies under the BCPL two-phase process and when it does not.
             </p>
+            <div style={{marginTop:28}}>
+              <LegalDocHeader doc="refunds" />
+            </div>
           </div>
         </section>
 
@@ -103,20 +106,20 @@ export function Refunds() {
           <div className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:24,animation:'fadeSlide 0.5s ease 0.1s both'}}>
             <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:20}}>
               <span style={{fontSize:22}}>🗺️</span>
-              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:18,color:'#E8B23D'}}>Refund Eligibility Flowchart</h2>
+              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:18,color:'#E8B23D'}}>Phase 1 Refund Flow (Before Video Upload)</h2>
             </div>
             <div style={{overflowX:'auto',WebkitOverflowScrolling:'touch'}}>
               <div style={{display:'flex',alignItems:'center',gap:0,minWidth:520,flexWrap:'nowrap'}}>
                 <div style={{background:'linear-gradient(135deg,rgba(255,122,41,0.2),rgba(232,178,61,0.1))',border:'2px solid rgba(255,122,41,0.5)',borderRadius:14,padding:'14px 18px',textAlign:'center',minWidth:120,flexShrink:0}}>
                   <div style={{fontSize:20,marginBottom:4}}>💳</div>
-                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:12,color:'#FF7A29',lineHeight:1.3}}>Registered<br/>₹299</div>
+                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:12,color:'#FF7A29',lineHeight:1.3}}>Phase 1<br/>fee paid</div>
                 </div>
                 <div style={{display:'flex',flexDirection:'column',alignItems:'center',padding:'0 6px',flexShrink:0}}>
                   <div style={{color:'rgba(255,255,255,0.4)',fontSize:20,lineHeight:1}}>→</div>
                 </div>
                 <div style={{background:'rgba(30,64,175,0.2)',border:'2px solid rgba(59,130,246,0.4)',borderRadius:14,padding:'14px 18px',textAlign:'center',minWidth:130,flexShrink:0}}>
                   <div style={{fontSize:20,marginBottom:4}}>🎥</div>
-                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:12,color:'#60A5FA',lineHeight:1.3}}>Video<br/>Uploaded?</div>
+                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:12,color:'#60A5FA',lineHeight:1.3}}>Video<br/>uploaded?</div>
                 </div>
                 <div style={{display:'flex',flexDirection:'column',gap:6,padding:'0 8px',flexShrink:0}}>
                   <div style={{display:'flex',alignItems:'center',gap:4}}>
@@ -129,75 +132,110 @@ export function Refunds() {
                 <div style={{display:'flex',flexDirection:'column',gap:8,flexShrink:0}}>
                   <div style={{background:'rgba(34,197,94,0.15)',border:'2px solid rgba(34,197,94,0.5)',borderRadius:12,padding:'10px 16px',minWidth:160}}>
                     <div style={{fontSize:16,marginBottom:2}}>✅</div>
-                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:11,color:'#22C55E',lineHeight:1.3}}>Eligible — within 15 days<br/><span style={{color:'rgba(34,197,94,0.7)',fontWeight:600}}>Full registration fee refunded</span></div>
+                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:11,color:'#22C55E',lineHeight:1.3}}>Within 15 days &amp; no upload<br/><span style={{color:'rgba(34,197,94,0.7)',fontWeight:600}}>Full Phase 1 fee refund under this policy</span></div>
                   </div>
                   <div style={{background:'rgba(232,73,63,0.15)',border:'2px solid rgba(232,73,63,0.5)',borderRadius:12,padding:'10px 16px',minWidth:160}}>
                     <div style={{fontSize:16,marginBottom:2}}>❌</div>
-                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:11,color:'#E8493F',lineHeight:1.3}}>Non-Refundable<br/><span style={{color:'rgba(232,73,63,0.7)',fontWeight:600}}>No exceptions</span></div>
+                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:11,color:'#E8493F',lineHeight:1.3}}>Assessment begun<br/><span style={{color:'rgba(232,73,63,0.7)',fontWeight:600}}>Fee not refundable except as this policy provides</span></div>
                   </div>
                 </div>
               </div>
             </div>
+            <p style={{color:'rgba(255,255,255,0.45)',fontSize:11,marginTop:14,lineHeight:1.6}}>Separate published backstop: if your Phase 1 result is not delivered within 15 working days of video upload, you are entitled to a full refund of your Phase 1 fee under this policy (Scenario A).</p>
           </div>
 
           <div style={{background:'rgba(34,197,94,0.1)',border:'2px solid rgba(34,197,94,0.4)',borderLeft:'4px solid #22C55E',borderRadius:16,padding:'16px clamp(16px,4vw,24px)',marginBottom:16,animation:'fadeSlide 0.5s ease 0.15s both'}}>
             <div style={{display:'flex',gap:10,alignItems:'center'}}>
               <span style={{fontSize:22,flexShrink:0}}>✅</span>
-              <p style={{color:'rgba(255,255,255,0.9)',fontSize:'clamp(13px,2vw,15px)',fontWeight:700,fontFamily:'Montserrat,sans-serif'}}>Registration fee refunded in full when eligible. <span style={{color:'#22C55E'}}>Zero deductions.</span></p>
+              <p style={{color:'rgba(255,255,255,0.9)',fontSize:'clamp(13px,2vw,15px)',fontWeight:700,fontFamily:'Montserrat,sans-serif'}}>Where this policy provides for a refund, you are entitled to a full refund of the applicable fee. <span style={{color:'#22C55E'}}>No deductions.</span></p>
             </div>
           </div>
 
           <div style={{background:'rgba(232,73,63,0.1)',border:'2px solid rgba(232,73,63,0.4)',borderLeft:'4px solid #E8493F',borderRadius:16,padding:'16px clamp(16px,4vw,24px)',marginBottom:24,animation:'fadeSlide 0.5s ease 0.2s both'}}>
             <div style={{display:'flex',gap:10,alignItems:'center'}}>
-              <span style={{fontSize:22,flexShrink:0}}>❌</span>
-              <p style={{color:'rgba(255,255,255,0.9)',fontSize:'clamp(13px,2vw,15px)',fontWeight:700,fontFamily:'Montserrat,sans-serif'}}>After video upload: <span style={{color:'#E8493F'}}>non-refundable under any circumstances.</span></p>
+              <span style={{fontSize:22,flexShrink:0}}>ℹ️</span>
+              <p style={{color:'rgba(255,255,255,0.9)',fontSize:'clamp(13px,2vw,15px)',fontWeight:700,fontFamily:'Montserrat,sans-serif'}}>Non-selection at any stage <span style={{color:'#E8493F'}}>does not by itself entitle you to a refund</span> — refunds apply only where this policy expressly provides.</p>
             </div>
           </div>
 
-          {/* Section 1 */}
-          <div className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:20,animation:'fadeSlide 0.5s ease 0.25s both',border:'1px solid rgba(34,197,94,0.2)'}}>
+          {/* Payment Disclaimer — prominent */}
+          <div style={{background:'rgba(232,178,61,0.10)',border:'2px solid rgba(232,178,61,0.45)',borderLeft:'4px solid #E8B23D',borderRadius:16,padding:'18px clamp(16px,4vw,24px)',marginBottom:24,animation:'fadeSlide 0.5s ease 0.22s both'}}>
+            <div style={{display:'flex',gap:12,alignItems:'flex-start'}}>
+              <span style={{fontSize:24,flexShrink:0,lineHeight:1}}>⚠️</span>
+              <div>
+                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:15,color:'#E8B23D',marginBottom:6}}>Payment Disclaimer</div>
+                <p style={{color:'rgba(255,255,255,0.9)',fontSize:'clamp(13px,2vw,15px)',lineHeight:1.75,fontWeight:600}}>
+                  Payment of Phase 1 or Phase 2 fees does not guarantee qualification, final selection, Auction Pool entry, auction purchase, team allocation, player contract, remuneration or tournament participation.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Fee context note */}
+          <div style={{background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:14,padding:'14px clamp(16px,4vw,22px)',marginBottom:24}}>
+            <p style={{color:'rgba(255,255,255,0.7)',fontSize:13,lineHeight:1.75}}>
+              Phase 1 fee is role-based (₹299 + applicable GST for Batsman/Bowler/Wicketkeeper; ₹399 + applicable GST for All-Rounder). The Phase 2 fee is the applicable role-based Phase 2 fee plus applicable GST as displayed at the time of payment. GST is charged as applicable. The amount shown to you at checkout is the amount payable.
+            </p>
+          </div>
+
+          {/* Section 1 — Refund Scenarios A–H */}
+          <div className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:20,animation:'fadeSlide 0.5s ease 0.25s both'}}>
             <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18,flexWrap:'wrap'}}>
-              <div style={{width:32,height:32,borderRadius:'50%',background:'rgba(34,197,94,0.2)',border:'1px solid rgba(34,197,94,0.5)',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:13,color:'#22C55E',flexShrink:0}}>1</div>
-              <span style={{fontSize:22}}>✅</span>
-              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>When You're Eligible for a Refund</h2>
+              <div style={{width:32,height:32,borderRadius:'50%',background:'linear-gradient(135deg,rgba(255,122,41,0.3),rgba(232,178,61,0.2))',border:'1px solid rgba(255,122,41,0.4)',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:13,color:'#FF7A29',flexShrink:0}}>1</div>
+              <span style={{fontSize:22}}>📋</span>
+              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>Refund Scenarios (A–H)</h2>
             </div>
             <div style={{background:'rgba(34,197,94,0.06)',border:'1px solid rgba(34,197,94,0.15)',borderRadius:12,padding:'14px 18px',marginBottom:16}}>
-              <p style={{color:'rgba(34,197,94,0.9)',fontSize:14,fontWeight:700,fontFamily:'Montserrat,sans-serif'}}>✅ Full amount refunded — zero deductions, in these 3 specific cases only</p>
+              <p style={{color:'rgba(255,255,255,0.85)',fontSize:13,fontWeight:600,fontFamily:'Inter,sans-serif',lineHeight:1.7}}>Where a refund applies under this policy, you are entitled to a full refund of the applicable fee with no deductions by BCPL. Two published player-friendly protections apply to Phase 1 and are set out in Scenario A.</p>
             </div>
             <div style={{display:'grid',gap:12}}>
               {[
-                {n:1, icon:'💳', title:'Duplicate Payment', desc:'If your payment was charged more than once for the same registration — double or triple charge due to a payment gateway error — the extra amount(s) will be refunded in full within 5–7 working days.'},
-                {n:2, icon:'🏟', title:'Trial Not Conducted by BCPL', desc:'If BCPL is unable to conduct the physical trial in your city for any reason within the committed schedule, your Phase 2 fee (if paid) will be refunded in full. Phase 1 fee is non-refundable in this case as the Phase 1 evaluation service has been rendered.'},
-                {n:3, icon:'⏱', title:'Phase 1 Result Not Delivered in 15 Days', desc:'We guarantee that every Phase 1 video submitted will receive a result (pass or fail) within 15 working days of upload. If we fail to deliver your result within this window, you are entitled to a full refund of your Phase 1 registration fee — no questions asked.'},
-              ].map((item)=>(
-                <div key={item.n} style={{display:'flex',gap:14,alignItems:'flex-start',background:'rgba(34,197,94,0.05)',border:'1px solid rgba(34,197,94,0.2)',borderRadius:12,padding:'16px'}}>
-                  <div style={{width:32,height:32,borderRadius:'50%',background:'rgba(34,197,94,0.2)',border:'1px solid rgba(34,197,94,0.4)',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:13,color:'#22C55E',flexShrink:0}}>{item.n}</div>
+                {tag:'A', tone:'green', icon:'🎥', title:'Phase 1 player protections', desc:'You are entitled to a full refund of your Phase 1 fee under this policy in two situations: (i) if you cancel before uploading your Phase 1 video, within the 15-day upload window (once the video is uploaded and the assessment has begun, the fee is no longer refundable except as this policy provides); and (ii) if your Phase 1 result is not delivered within 15 working days of your video upload (the published backstop, even though results are targeted within 48 hours of submission).'},
+                {tag:'A.', tone:'blue', icon:'⛔', title:'A — Player does not qualify Phase 1', desc:'If you do not qualify at Phase 1, no Phase 2 fee becomes payable. The Phase 2 fee simply never arises, so there is no Phase 2 amount to refund.'},
+                {tag:'B', tone:'blue', icon:'⏸', title:'B — Qualifies Phase 1 but does not pay Phase 2', desc:'If you qualify at Phase 1 but do not pay the Phase 2 fee, Phase 2 is not activated and no further amount is due from you.'},
+                {tag:'C', tone:'blue', icon:'💳', title:'C — Qualifies and pays Phase 2', desc:'Once you qualify and pay the applicable role-based Phase 2 fee plus applicable GST as displayed at the time of payment, any later cancellation or refund is governed by the express provisions of this policy.'},
+                {tag:'D', tone:'red', icon:'ℹ️', title:'D — Not selected after the physical trial', desc:'Non-selection after your physical trial does NOT automatically entitle you to a refund of the Phase 2 fee. Refunds apply only where this policy expressly provides for them.'},
+                {tag:'E', tone:'green', icon:'🔁', title:'E — Duplicate payment', desc:'Verified duplicate charges for the same fee are refunded to the original payment method. To request this, write to support@bcplt20.com with your payment reference; verified duplicate amounts are processed within 5–7 working days (plus gateway processing time).'},
+                {tag:'F', tone:'green', icon:'🛠', title:'F — Technical payment error', desc:'If an amount is debited but the order is not created or confirmed, the payment gateway auto-reverses the amount where applicable. If it is not reversed, contact support@bcplt20.com within 48 hours with your transaction details so we can investigate and resolve it.'},
+                {tag:'G', tone:'green', icon:'🏟', title:'G — BCPL cancels or reschedules a trial', desc:'If BCPL cancels or reschedules a trial, BCPL will offer the published remedy for that situation — such as a rescheduled slot or venue, or a refund of the applicable fee where BCPL cancels a trial entirely and no alternative is provided.'},
+                {tag:'H', tone:'red', icon:'⏰', title:'H — Player misses their trial slot', desc:'Missed trial slots are not automatically refundable. Any rescheduling or further consideration is only as provided under the published season rules.'},
+              ].map((item)=>{
+                const tones:Record<string,{bg:string;bd:string;fg:string}> = {
+                  green:{bg:'rgba(34,197,94,0.05)',bd:'rgba(34,197,94,0.2)',fg:'#22C55E'},
+                  red:{bg:'rgba(232,73,63,0.05)',bd:'rgba(232,73,63,0.2)',fg:'#E8493F'},
+                  blue:{bg:'rgba(59,130,246,0.05)',bd:'rgba(59,130,246,0.2)',fg:'#60A5FA'},
+                };
+                const c = tones[item.tone];
+                return (
+                <div key={item.title} style={{display:'flex',gap:14,alignItems:'flex-start',background:c.bg,border:`1px solid ${c.bd}`,borderRadius:12,padding:'16px'}}>
+                  <div style={{width:32,height:32,borderRadius:'50%',background:c.bg,border:`1px solid ${c.bd}`,display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:13,color:c.fg,flexShrink:0}}>{item.tag}</div>
                   <div>
                     <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#fff',marginBottom:4}}>{item.icon} {item.title}</div>
                     <div style={{color:'rgba(255,255,255,0.7)',fontSize:13,lineHeight:1.7}}>{item.desc}</div>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
-          {/* Section 2 */}
+          {/* Section 2 — What is not refundable */}
           <div className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:20,animation:'fadeSlide 0.5s ease 0.3s both',border:'1px solid rgba(232,73,63,0.2)'}}>
             <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18,flexWrap:'wrap'}}>
               <div style={{width:32,height:32,borderRadius:'50%',background:'rgba(232,73,63,0.2)',border:'1px solid rgba(232,73,63,0.5)',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:13,color:'#E8493F',flexShrink:0}}>2</div>
-              <span style={{fontSize:22}}>❌</span>
-              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>All Other Cases — No Refund</h2>
+              <span style={{fontSize:22}}>ℹ️</span>
+              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>Situations Where a Refund Does Not Apply</h2>
             </div>
-            <p style={{color:'rgba(255,255,255,0.65)',fontSize:14,lineHeight:1.7,marginBottom:16}}>Except for the 3 specific cases above, <strong style={{color:'#E8493F'}}>all fees are strictly non-refundable</strong>. This includes but is not limited to:</p>
+            <p style={{color:'rgba(255,255,255,0.65)',fontSize:14,lineHeight:1.7,marginBottom:16}}>Outside the situations for which this policy expressly provides a refund, fees are <strong style={{color:'#E8493F'}}>not refundable</strong>. This includes, for example:</p>
             <div style={{display:'grid',gap:10}}>
               {[
-                {icon:'🎥',text:'After your trial video has been uploaded and Phase 1 evaluation has begun'},
-                {icon:'📅',text:'Change of mind after registration'},
-                {icon:'🏆',text:'After receiving shortlisting notification or selection result'},
-                {icon:'🔍',text:'If found ineligible due to misrepresentation of age, professional status, or cricket experience'},
-                {icon:'🚫',text:'Disqualification for Code of Conduct violations at any stage'},
-                {icon:'💸',text:'Inability to attend trials due to scheduling conflicts, personal reasons, or travel issues'},
-                {icon:'📵',text:'Technical issues on your own device, internet, or video upload from your end'},
+                {icon:'🎥',text:'After your Phase 1 video has been uploaded and the assessment has begun'},
+                {icon:'📅',text:'Change of mind after the applicable Phase 1 upload window has passed'},
+                {icon:'🏆',text:'Non-selection at any stage, including after the physical trial (see Scenario D)'},
+                {icon:'🔍',text:'Ineligibility caused by false or inaccurate declarations of age, professional status or identity'},
+                {icon:'🚫',text:'Disqualification for Code of Conduct or integrity violations at any stage'},
+                {icon:'💸',text:'Inability to attend a trial due to personal, scheduling or travel reasons (see Scenario H)'},
+                {icon:'📵',text:'Technical issues on your own device, internet or upload from your end'},
               ].map((item,i)=>(
                 <div key={i} style={{display:'flex',gap:12,alignItems:'flex-start',background:'rgba(232,73,63,0.06)',border:'1px solid rgba(232,73,63,0.15)',borderRadius:10,padding:'10px 14px'}}>
                   <span style={{fontSize:16,flexShrink:0}}>{item.icon}</span>
@@ -314,8 +352,8 @@ export function Refunds() {
 
           <div className="glass-card" style={{padding:'clamp(20px,4vw,32px)',textAlign:'center'}}>
             <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(18px,3vw,22px)',marginBottom:8}}>Still Deciding?</div>
-            <p style={{color:'rgba(255,255,255,0.6)',fontSize:14,marginBottom:20}}>Register now — you have 15 days to request a full refund if you change your mind (before video upload).</p>
-            <button className="btn-fire" style={{padding:'14px 36px',fontSize:16,width:'100%',maxWidth:300}}>Register for Phase 1 →</button>
+            <p style={{color:'rgba(255,255,255,0.6)',fontSize:14,marginBottom:20}}>You are entitled to a full refund of your Phase 1 fee under this policy if you cancel before uploading your video, within the 15-day upload window.</p>
+            <Link href="/register" className="btn-fire" style={{padding:'14px 36px',fontSize:16,width:'100%',maxWidth:300,textDecoration:'none',display:'inline-flex',alignItems:'center',justifyContent:'center'}}>Register for Phase 1 →</Link>
           </div>
         </div>
 

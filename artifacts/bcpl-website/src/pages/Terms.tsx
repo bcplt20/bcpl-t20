@@ -4,6 +4,7 @@ import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { useLang } from '../lib/i18n';
 import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
+import { LegalDocHeader } from '../lib/legalMeta';
 
 const OrangeDot = () => (
   <span style={{display:'inline-block',width:6,height:6,borderRadius:'50%',background:'#FF7A29',marginRight:10,flexShrink:0,marginTop:7}}/>
@@ -86,56 +87,79 @@ export function Terms() {
   ];
 
   const sections = [
-    {n:1,icon:'✅',titleEn:'Acceptance of Terms',titleHi:'नियम स्वीकृति',items:[
-      'By completing registration on www.bcplt20.com, you unconditionally accept these Terms & Conditions',
-      'Acceptance is binding on you and any person or entity you represent',
-      'If you do not agree with any part of these terms, do not proceed with registration',
-      'BCPL reserves the right to update these terms at any time; updated terms govern immediately upon posting',
-      'Continued participation after an update constitutes acceptance of revised terms',
+    {n:1,icon:'✅',titleEn:'Acceptance & Versioning',titleHi:'स्वीकृति और वर्जन',items:[
+      'By registering on www.bcplt20.com you accept these Terms & Conditions, the Privacy Notice, the Refund & Cancellation Policy and the Eligibility Criteria',
+      'These Terms are versioned; the document version you accept and the acceptance time are recorded with your registration',
+      'BCPL may update these Terms; updates are published on this page with a new version number and effective date',
+      'Continued use of the platform after an update takes effect constitutes acceptance of the updated Terms',
+      'If you do not agree with any part of these Terms, do not register and do not make any payment',
     ]},
     {n:2,icon:'📝',titleEn:'Registration & Eligibility',titleHi:'रजिस्ट्रेशन और योग्यता',items:[
-      'Registrations are open exclusively to working professionals aged 18 years and above',
-      'Only one registration per person is permitted per season — duplicate registrations will be cancelled without refund',
-      'Providing false information (profession, age, identity) constitutes fraud and results in immediate disqualification',
-      'BCPL reserves the right to verify eligibility at any stage, including post-selection',
+      'Registration is open to working professionals aged 18 to 45 years as on the date of registration',
+      'Detailed eligibility rules, including cricket-history requirements, are published in the Eligibility Criteria and form part of these Terms',
+      'Only one registration per person is permitted per season — duplicate or multiple-identity registrations are treated as fraud and cancelled without refund',
+      'Providing false information (age, profession, identity or cricket history) results in disqualification at any stage, including after selection, without refund',
+      'BCPL may verify identity, professional status and eligibility at any stage, including through KYC documents during Phase 2',
       'Registration is personal and non-transferable; you may not register on behalf of another person',
     ]},
-    {n:3,icon:'💳',titleEn:'Payment Terms',titleHi:'भुगतान शर्तें',items:[
-      'Registration fee: ₹299 (Batsman/Bowler/Wicketkeeper) or ₹399 (All-Rounder) — GST inclusive',
-      'Payments processed securely via Cashfree; BCPL does not store card or UPI details',
-      'Registration fees are non-refundable once a cricket video has been uploaded',
-      'Within 15 days of registration (before video upload), a full refund may be requested',
-      'In case of payment failure with amount debited, contact support@bcplt20.com within 48 hours',
+    {n:3,icon:'💳',titleEn:'Fees & Payments',titleHi:'फीस और भुगतान',items:[
+      'Phase 1 fee: ₹299 plus applicable GST (Batsman/Bowler/Wicketkeeper) or ₹399 plus applicable GST (All-Rounder); the exact payable amount including GST is shown before payment',
+      'Phase 2 fee — payable only if you qualify Phase 1 and choose to proceed: the applicable role-based fee plus applicable GST as displayed at the time of payment',
+      'Payment of Phase 1 or Phase 2 fees does not guarantee qualification, final selection, Auction Pool entry, auction purchase, team allocation, player contract, remuneration or tournament participation',
+      'Payments are processed by a secure third-party payment gateway (Cashfree); BCPL does not store your card or UPI details',
+      'GST invoices/receipts are issued for successful payments',
+      'All refunds — including duplicate-payment and technical-error cases — are governed exclusively by the Refund & Cancellation Policy',
     ]},
-    {n:4,icon:'🏆',titleEn:'Selection Process',titleHi:'चयन प्रक्रिया',items:[
-      'Selection is entirely merit-based, assessed through the BCPL Phase 1 evaluation process via submitted video',
-      'BCPL\'s selection decision is final, conclusive, and binding — no appeal process exists',
-      'Shortlisted players will be notified via registered email and phone number',
-      'BCPL makes no guarantee of selection, trial invitation, or match participation',
-      'Role-specific skills are evaluated against BCPL assessment criteria; the registration fee is for Phase 1 evaluation access, not guaranteed selection',
+    {n:4,icon:'🎥',titleEn:'Phase 1 — Video Assessment',titleHi:'फेज 1 — वीडियो असेसमेंट',items:[
+      'Phase 1 is a video-based cricket assessment; the fee provides evaluation access for your selected playing role',
+      'You must upload a 30–60 second cricket video showing your own, current performance within the deadline shown in your dashboard',
+      'BCPL may use automated, digital and technology-assisted assessment systems and third-party technology service providers for video validation, scoring, ranking, fraud/integrity checks and administration',
+      'Invalid, unclear or non-compliant footage may require re-upload under BCPL rules; manipulated or impersonated videos lead to disqualification',
+      'Phase 1 results are targeted within 48 hours of video submission; qualification to Phase 2 does not guarantee final selection',
     ]},
-    {n:5,icon:'🤝',titleEn:'Player Obligations',titleHi:'खिलाड़ी के दायित्व',items:[
-      'Shortlisted players must attend scheduled trials at the designated city venue on time',
-      'Players must maintain conduct standards as outlined in the BCPL Code of Conduct at all times',
-      'By registering, players grant BCPL irrevocable media consent for photos, videos, and broadcast coverage',
-      'Players must maintain their own medical fitness and carry personal health insurance',
-      'Players must notify BCPL immediately of any change in eligibility status after registration',
+    {n:5,icon:'🏟️',titleEn:'Phase 2 — Physical Trial',titleHi:'फेज 2 — फिजिकल ट्रायल',items:[
+      'Phase 2 is available only to players who qualify Phase 1 and complete the applicable payment, declarations and verification',
+      'Phase 2 is a standardised physical cricket trial conducted under the published Physical Trial Rules',
+      'BCPL seeks to use the same published role-specific assessment framework, scoring structure and applicable attempt rules across authorised Phase 2 venues',
+      'Trial scores are recorded digitally; submitted assessments are locked, and corrections happen only through an audited process',
+      'After completing your physical trial, your assessment is recorded. Advancement results may be finalised after completion of the applicable BCPL trial window so eligible candidates can be ranked under the applicable season rules',
     ]},
-    {n:6,icon:'©',titleEn:'Intellectual Property',titleHi:'बौद्धिक संपदा',items:[
+    {n:6,icon:'🏆',titleEn:'Selection, Ranking & Auction Pool',titleHi:'चयन, रैंकिंग और ऑक्शन पूल',items:[
+      'Selection is merit-based under the published BCPL assessment framework; no fixed score guarantees advancement unless formally published by BCPL',
+      'BCPL may apply published playing-role allocations, regional representation requirements, minimum assessment standards, national merit ranking and applicable tie-break rules when determining advancement to the Auction Pool for the relevant season',
+      'Qualification for the BCPL Auction Pool means eligibility to participate in the applicable player-auction process. Auction Pool qualification does not guarantee purchase by a team, a player contract, remuneration, squad selection or tournament participation',
+      'Trial evaluators do not decide final Auction Pool selection; advancement is determined centrally under the applicable season rules',
+      'Selection decisions are final subject to the published grievance process; players are notified on their registered phone/email',
+    ]},
+    {n:7,icon:'🤝',titleEn:'Player Obligations & Conduct',titleHi:'खिलाड़ी के दायित्व',items:[
+      'Attend scheduled trials on time at the designated venue with a valid ID and the required kit',
+      'Comply with the BCPL Code of Conduct at all stages — registration, trials, auction and tournament',
+      'Bribery, influence attempts, impersonation, document or video manipulation, betting or corrupt practices lead to disciplinary action, including disqualification',
+      'By registering, you grant BCPL media consent for photographs, videos and broadcast coverage of BCPL events',
+      'Maintain your own medical fitness; personal health and accident insurance is strongly recommended',
+      'Notify BCPL promptly of any change that affects your eligibility',
+    ]},
+    {n:8,icon:'🔐',titleEn:'Data Protection & Communications',titleHi:'डेटा सुरक्षा और संचार',items:[
+      'Your personal data is processed in accordance with the BCPL Privacy Notice',
+      'Consent records — the accepted document versions and acceptance time — are stored with your registration',
+      'Service communications (OTP, payment confirmations, results, trial notifications) are part of the service and are sent to your registered contact details',
+      'Optional promotional communications are sent only with your separate marketing consent, which you may withdraw at any time',
+    ]},
+    {n:9,icon:'©',titleEn:'Intellectual Property',titleHi:'बौद्धिक संपदा',items:[
       'BCPL owns all match footage, broadcast content, highlight reels, and official photographs',
       'Players may share their own personal performance clips on social media for personal promotion',
       'BCPL name, logo, team names, and all associated marks are registered trademarks of BCPL T20 Pvt. Ltd.',
       'Unauthorised commercial use of BCPL brand assets is prohibited and actionable',
       'Players may not license or sell BCPL content without explicit written consent',
     ]},
-    {n:7,icon:'⚠️',titleEn:'Limitation of Liability',titleHi:'दायित्व की सीमा',items:[
+    {n:10,icon:'⚠️',titleEn:'Limitation of Liability',titleHi:'दायित्व की सीमा',items:[
       'Players participate in BCPL matches and trials entirely at their own risk',
       'BCPL is not liable for any injury, illness, or accident occurring during matches, trials, or travel',
       'BCPL is not liable for any indirect, consequential, or special losses arising from participation or non-selection',
-      'BCPL\'s total liability in any circumstances shall not exceed the registration fee paid',
+      'BCPL\'s total liability in any circumstances shall not exceed the fees paid by you to BCPL',
       'Players are advised to maintain personal accident and health insurance for the duration of the tournament',
     ]},
-    {n:8,icon:'⚖️',titleEn:'Governing Law & Disputes',titleHi:'कानून और विवाद',items:[
+    {n:11,icon:'⚖️',titleEn:'Governing Law & Disputes',titleHi:'कानून और विवाद',items:[
       'These Terms are governed by the laws of the Republic of India',
       'Courts of Delhi shall have exclusive jurisdiction over all disputes arising from these Terms',
       'Disputes must first be submitted to BCPL\'s Grievance Redressal process — email support@bcplt20.com',
@@ -175,7 +199,9 @@ export function Terms() {
               <span style={{color:'#fff',display:'block'}}>{t("TERMS &","नियम और")}</span>
               <span className="shimmer-gold" style={{display:'block'}}>{t("CONDITIONS","शर्तें")}</span>
             </h1>
-            <p style={{color:'rgba(255,255,255,0.48)',fontSize:12,fontWeight:700,letterSpacing:'0.06em',marginTop:18,fontFamily:'Montserrat,sans-serif',textTransform:'uppercase'}}>{t("Last updated: January 15, 2025","अपडेट: 15 जनवरी 2025")}</p>
+            <div style={{marginTop:22,textAlign:'left'}}>
+              <LegalDocHeader doc="terms" />
+            </div>
             <p style={{color:'rgba(255,255,255,0.68)',fontSize:'clamp(14px,2vw,16px)',lineHeight:1.7,maxWidth:640,margin:'20px auto 0'}}>
               {t(
                 "Please read these Terms & Conditions carefully before registering for BCPL T20 Season 5. These terms govern your participation in the league.",
@@ -273,7 +299,7 @@ export function Terms() {
                   )}
                 </p>
                 <Link href="/register" className="btn-fire" style={{padding:'15px 38px',fontSize:16,width:'100%',maxWidth:320,textDecoration:'none',display:'inline-flex',alignItems:'center',justifyContent:'center'}}>
-                  {t("Register for ₹299 →","₹299 में रजिस्टर करें →")}
+                  {t("Register — ₹299 + GST →","₹299 + GST में रजिस्टर करें →")}
                 </Link>
               </div>
             </div>

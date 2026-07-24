@@ -3,6 +3,7 @@ import { Link } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { useLang } from '../lib/i18n';
+import { LegalDocHeader } from '../lib/legalMeta';
 import { StickyRegisterCTA } from "../components/StickyRegisterCTA";
 
 const CSS = `
@@ -87,8 +88,11 @@ export function Trust() {
             {t("SELECTION WORKS.","चयन प्रक्रिया।")}
           </h1>
           <p style={{color:'rgba(255,255,255,0.6)',fontSize:18,maxWidth:600,margin:'0 auto',lineHeight:1.7,animation:'floatUp 0.7s ease 0.3s both'}}>
-            {t("Every evaluation. Every score. Every ranking. Completely transparent.","हर मूल्यांकन। हर स्कोर। हर रैंकिंग। पूरी तरह पारदर्शी।")}
+            {t("A clear, two-phase, role-specific assessment process — from Phase 1 video assessment to the BCPL Auction Pool.","एक स्पष्ट, दो-चरणीय, role-specific assessment process — Phase 1 video assessment से लेकर BCPL Auction Pool तक।")}
           </p>
+          <div style={{marginTop:32}}>
+            <LegalDocHeader doc="selection" />
+          </div>
         </div>
       </section>
 
@@ -99,13 +103,21 @@ export function Trust() {
             <div style={{display:'flex',alignItems:'flex-start',gap:20,marginBottom:24}}>
               <span className="step-num">1</span>
               <div style={{flex:1}}>
-                <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:8}}>{t("Video Evaluation Methodology","Video Evaluation की प्रक्रिया")}</h2>
+                <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:8}}>{t("Phase 1 — Video Assessment","Phase 1 — Video Assessment")}</h2>
                 <p style={{color:'rgba(255,255,255,0.45)',fontSize:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>{t("PHASE 1","PHASE 1")}</p>
               </div>
             </div>
-            <p style={{color:'rgba(255,255,255,0.72)',fontSize:15,lineHeight:1.8,marginBottom:24}}>
-              {t("Your video is evaluated against BCPL's Phase 1 assessment criteria. The assessment is role-specific and criteria-based — your name, city and personal details play no part in your score. Only your cricket skills are assessed.","आपका video BCPL के Phase 1 assessment criteria पर evaluate किया जाता है। यह assessment role-specific और criteria-based है — आपके score में आपका नाम, शहर या व्यक्तिगत जानकारी की कोई भूमिका नहीं होती। सिर्फ आपकी cricket skills assess होती हैं।")}
+            <p style={{color:'rgba(255,255,255,0.72)',fontSize:15,lineHeight:1.8,marginBottom:16}}>
+              {t("Phase 1 is a video-based assessment stage. The applicable Phase 1 fee depends on your playing role — Batsman, Bowler and Wicketkeeper pay ₹299 + applicable GST, while All-Rounder pays ₹399 + applicable GST. You must upload the required video within the applicable deadline, and the submitted video must represent the registered player's own cricket performance.","Phase 1 एक video-based assessment stage है। लागू Phase 1 fee आपकी playing role पर निर्भर करती है — Batsman, Bowler और Wicketkeeper ₹299 + applicable GST देते हैं, जबकि All-Rounder ₹399 + applicable GST देता है। आपको required video लागू deadline के अंदर upload करना होगा, और submitted video registered player के अपने cricket performance को दर्शाना चाहिए।")}
             </p>
+            <p style={{color:'rgba(255,255,255,0.72)',fontSize:15,lineHeight:1.8,marginBottom:16}}>
+              {t("BCPL may use automated, digital and technology-assisted assessment systems and third-party technology service providers for video validation, scoring, ranking, fraud/integrity checks and administration. The assessment is role-specific and criteria-based. Invalid or unclear footage may require re-upload according to BCPL rules. Your Phase 1 result may include a score and/or ranking where applicable.","BCPL video validation, scoring, ranking, fraud/integrity checks और administration के लिए automated, digital और technology-assisted assessment systems तथा third-party technology service providers का उपयोग कर सकता है। यह assessment role-specific और criteria-based है। Invalid या unclear footage को BCPL rules के अनुसार re-upload करना पड़ सकता है। आपके Phase 1 result में जहां लागू हो score और/या ranking शामिल हो सकती है।")}
+            </p>
+            <div style={{background:'rgba(255,122,41,0.05)',border:'1px solid rgba(255,122,41,0.2)',borderRadius:12,padding:'14px 18px',marginBottom:24}}>
+              <p style={{color:'rgba(255,255,255,0.62)',fontSize:13.5,lineHeight:1.7}}>
+                {t("Payment of Phase 1 or Phase 2 fees does not guarantee qualification, final selection, Auction Pool entry, auction purchase, team allocation, player contract, remuneration or tournament participation. Your Phase 1 result target is within 48 hours of video submission; if a result is not delivered within 15 working days, a full refund applies as published. Qualification to Phase 2 does not guarantee final selection.","Phase 1 या Phase 2 fees का भुगतान qualification, final selection, Auction Pool entry, auction purchase, team allocation, player contract, remuneration या tournament participation की गारंटी नहीं देता। आपके Phase 1 result का target video submission के 48 घंटे के भीतर है; यदि 15 working days के भीतर result नहीं दिया जाता, तो published नीति के अनुसार full refund लागू होता है। Phase 2 के लिए qualification final selection की गारंटी नहीं देता।")}
+              </p>
+            </div>
             <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:16}}>
               {[
                 {titleEn:'Technical Skill',titleHi:'Technical Skill',bodyEn:'Shot selection, footwork, bowling action, fielding technique — role-specific fundamentals.',bodyHi:'Shot selection, footwork, bowling action, fielding technique — role के हिसाब से fundamentals।'},
@@ -130,28 +142,20 @@ export function Trust() {
             <div style={{display:'flex',alignItems:'flex-start',gap:20,marginBottom:24}}>
               <span className="step-num" style={{background:'linear-gradient(135deg,#E8B23D,#F0C860)'}}>2</span>
               <div style={{flex:1}}>
-                <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:8}}>{t("Your BCPL Score (out of 100)","आपका BCPL Score (100 में से)")}</h2>
-                <p style={{color:'rgba(255,255,255,0.45)',fontSize:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>{t("TRANSPARENT SCORING","पारदर्शी स्कोरिंग")}</p>
+                <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:8}}>{t("Role-Specific 100-Point Framework","Role-Specific 100-Point Framework")}</h2>
+                <p style={{color:'rgba(255,255,255,0.45)',fontSize:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>{t("SCORING FRAMEWORK","SCORING FRAMEWORK")}</p>
               </div>
             </div>
             <p style={{color:'rgba(255,255,255,0.72)',fontSize:15,lineHeight:1.8,marginBottom:24}}>
-              {t("After evaluation, you receive a detailed score breakdown out of 100. This is not a pass/fail — it's a comprehensive assessment of your cricket capabilities at the time of submission.","Evaluation के बाद, आपको 100 में से एक detailed score breakdown मिलता है। यह pass/fail नहीं है — यह submission के समय आपकी cricket capabilities का comprehensive assessment है।")}
+              {t("Each playing role is assessed against a role-specific 100-point assessment framework covering role skill, technique, execution, game awareness, movement/fitness and video-evidence quality. The detailed category weights are published once BCPL finalises the season rubric. Your result reflects an assessment of your cricket capabilities at the time of submission and is not a simple pass/fail.","हर playing role का मूल्यांकन एक role-specific 100-point assessment framework पर होता है जिसमें role skill, technique, execution, game awareness, movement/fitness और video-evidence quality शामिल हैं। Detailed category weights तब publish किए जाते हैं जब BCPL season rubric को finalise कर देता है। आपका result submission के समय आपकी cricket capabilities के मूल्यांकन को दर्शाता है और यह एक साधारण pass/fail नहीं है।")}
             </p>
-            <div style={{display:'grid',gridTemplateColumns:'1fr',gap:12,background:'rgba(232,178,61,0.06)',border:'1px solid rgba(232,178,61,0.2)',borderRadius:12,padding:'20px 24px'}}>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(150px,1fr))',gap:12,background:'rgba(232,178,61,0.06)',border:'1px solid rgba(232,178,61,0.2)',borderRadius:12,padding:'20px 24px'}}>
               {[
-                {cat:'Role Skill',max:35,exEn:'Batting/Bowling/WK/All-rounder fundamentals',exHi:'Batting/Bowling/WK/All-rounder fundamentals'},
-                {cat:'Technique',max:25,exEn:'Form, mechanics, execution quality',exHi:'Form, mechanics, execution quality'},
-                {cat:'Execution',max:15,exEn:'Performance under pressure visible in video',exHi:'Video में दिखने वाले pressure के तहत performance'},
-                {cat:'Game Awareness',max:10,exEn:'Cricket IQ, decision-making',exHi:'Cricket IQ, decision-making'},
-                {cat:'Movement & Fitness',max:10,exEn:'Agility, speed, stamina indicators',exHi:'Agility, speed, stamina indicators'},
-                {cat:'Video Evidence Quality',max:5,exEn:'Clarity, angles, match authenticity',exHi:'Clarity, angles, match authenticity'},
+                {role:'Batsman'},{role:'Bowler'},{role:'All-Rounder'},{role:'Wicketkeeper'},
               ].map((r,i)=>(
-                <div key={i} style={{display:'flex',alignItems:'center',gap:14,flexWrap:'wrap'}}>
-                  <div style={{flex:'1 1 180px'}}>
-                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:14,color:'#fff',marginBottom:2}}>{r.cat}</div>
-                    <p style={{color:'rgba(255,255,255,0.45)',fontSize:12}}>{t(r.exEn,r.exHi)}</p>
-                  </div>
-                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:18,color:'#E8B23D',flexShrink:0}}>/{r.max}</div>
+                <div key={i} style={{textAlign:'center'}}>
+                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:14,color:'#fff',marginBottom:4}}>{r.role}</div>
+                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:22,color:'#E8B23D'}}>/100</div>
                 </div>
               ))}
             </div>
@@ -166,30 +170,22 @@ export function Trust() {
             <div style={{display:'flex',alignItems:'flex-start',gap:20,marginBottom:24}}>
               <span className="step-num" style={{background:'linear-gradient(135deg,#3B82F6,#2563EB)'}}>3</span>
               <div style={{flex:1}}>
-                <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:8}}>{t("City Rank + Role Rank","City Rank + Role Rank")}</h2>
-                <p style={{color:'rgba(255,255,255,0.45)',fontSize:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>{t("MERIT-BASED RANKING","Merit-based रैंकिंग")}</p>
+                <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:8}}>{t("Ranking & the Auction Pool","रैंकिंग और Auction Pool")}</h2>
+                <p style={{color:'rgba(255,255,255,0.45)',fontSize:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>{t("CENTRAL RANKING","CENTRAL RANKING")}</p>
               </div>
             </div>
-            <p style={{color:'rgba(255,255,255,0.72)',fontSize:15,lineHeight:1.8,marginBottom:24}}>
-              {t("Your score determines two rankings that matter for Phase 2 selection: your rank in your city, and your rank among all players in your role (Batsman, Bowler, WK, All-rounder) across India.","आपका score दो rankings तय करता है जो Phase 2 selection के लिए महत्वपूर्ण हैं: आपके शहर में आपकी rank, और पूरे भारत में आपकी role (Batsman, Bowler, WK, All-rounder) की सभी players की rank।")}
+            <p style={{color:'rgba(255,255,255,0.72)',fontSize:15,lineHeight:1.8,marginBottom:20}}>
+              {t("BCPL may apply published playing-role allocations, regional representation requirements, minimum assessment standards, national merit ranking and applicable tie-break rules when determining advancement to the Auction Pool for the relevant season.","BCPL relevant season के लिए Auction Pool में advancement तय करते समय published playing-role allocations, regional representation requirements, minimum assessment standards, national merit ranking और applicable tie-break rules लागू कर सकता है।")}
             </p>
-            <div style={{display:'grid',gridTemplateColumns:'1fr',gap:16,marginBottom:24}}>
-              <div style={{background:'rgba(59,130,246,0.08)',border:'1px solid rgba(59,130,246,0.25)',borderRadius:12,padding:'18px 20px'}}>
-                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#3B82F6',marginBottom:10}}>{t("City Rank Example","City Rank उदाहरण")}</div>
-                <p style={{color:'rgba(255,255,255,0.7)',fontSize:14,lineHeight:1.7}}>
-                  {t("\"Delhi Rank #247 of 18,420 evaluated players\" means you scored higher than 18,173 players who submitted videos from Delhi trials.","\"Delhi Rank #247 of 18,420 evaluated players\" का मतलब है कि आपने Delhi trials से videos submit करने वाले 18,173 players से ज्यादा score किया।")}
-                </p>
-              </div>
-              <div style={{background:'rgba(59,130,246,0.08)',border:'1px solid rgba(59,130,246,0.25)',borderRadius:12,padding:'18px 20px'}}>
-                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#3B82F6',marginBottom:10}}>{t("Role Rank Example","Role Rank उदाहरण")}</div>
-                <p style={{color:'rgba(255,255,255,0.7)',fontSize:14,lineHeight:1.7}}>
-                  {t("\"All-Rounder Rank #38 of 3,140 (Top 1.2%)\" means among all All-rounders nationwide, you're in the top 1.2%.","\"All-Rounder Rank #38 of 3,140 (Top 1.2%)\" का मतलब है कि देश भर के सभी All-rounders में, आप top 1.2% में हैं।")}
-                </p>
-              </div>
+            <p style={{color:'rgba(255,255,255,0.72)',fontSize:15,lineHeight:1.8,marginBottom:20}}>
+              {t("Advancement is not tied to any fixed score. It depends on your score, your role ranking, published role allocation, minimum quality standards, regional and national rules and applicable tie-break criteria for the relevant season. Exact numerical quotas are published only once officially approved for the season.","Advancement किसी fixed score से जुड़ी नहीं है। यह आपके score, आपकी role ranking, published role allocation, minimum quality standards, regional और national rules तथा relevant season के applicable tie-break criteria पर निर्भर करती है। Exact numerical quotas केवल तब publish किए जाते हैं जब वे season के लिए officially approved हो जाते हैं।")}
+            </p>
+            <div style={{background:'rgba(59,130,246,0.08)',border:'1px solid rgba(59,130,246,0.25)',borderRadius:12,padding:'18px 20px'}}>
+              <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#3B82F6',marginBottom:10}}>{t("What the Auction Pool means","Auction Pool का मतलब")}</div>
+              <p style={{color:'rgba(255,255,255,0.7)',fontSize:14,lineHeight:1.7}}>
+                {t("Qualification for the BCPL Auction Pool means eligibility to participate in the applicable player-auction process. Auction Pool qualification does not guarantee purchase by a team, a player contract, remuneration, squad selection or tournament participation.","BCPL Auction Pool के लिए qualification का मतलब है applicable player-auction process में भाग लेने की eligibility। Auction Pool qualification किसी team द्वारा purchase, player contract, remuneration, squad selection या tournament participation की गारंटी नहीं देती।")}
+              </p>
             </div>
-            <p style={{color:'rgba(255,255,255,0.55)',fontSize:14,lineHeight:1.7,fontStyle:'italic'}}>
-              {t("Rankings update daily as new evaluations complete. Your rank may improve or change as more players are evaluated in your city/role.","जैसे-जैसे नए evaluations पूरे होते हैं, रैंकिंग daily update होती है। आपकी rank बेहतर हो सकती है या बदल सकती है जैसे आपके शहर/role में और players evaluate होते हैं।")}
-            </p>
           </div>
         </div>
       </section>
@@ -201,29 +197,125 @@ export function Trust() {
             <div style={{display:'flex',alignItems:'flex-start',gap:20,marginBottom:24}}>
               <span className="step-num" style={{background:'linear-gradient(135deg,#22C55E,#16A34A)'}}>4</span>
               <div style={{flex:1}}>
-                <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:8}}>{t("Physical Trials","Physical Trials")}</h2>
-                <p style={{color:'rgba(255,255,255,0.45)',fontSize:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>{t("PHASE 2 — ONLY IF SELECTED","PHASE 2 — सिर्फ select होने पर")}</p>
+                <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:8}}>{t("Phase 2 — Physical Trial","Phase 2 — Physical Trial")}</h2>
+                <p style={{color:'rgba(255,255,255,0.45)',fontSize:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>{t("PHASE 2 — ONLY IF QUALIFIED","PHASE 2 — सिर्फ qualify होने पर")}</p>
               </div>
             </div>
-            <p style={{color:'rgba(255,255,255,0.72)',fontSize:15,lineHeight:1.8,marginBottom:24}}>
-              {t("Top-ranked players from Phase 1 receive an invitation to physical trials in their city. Trials are conducted at professional cricket grounds. Experienced coaches evaluate players live on standardized drills: batting nets, bowling spells, fielding circuits, match simulations.","Phase 1 से top-ranked players को अपने शहर में physical trials का invitation मिलता है। Trials professional cricket grounds पर conduct किए जाते हैं। Experienced coaches live standardized drills पर players को evaluate करते हैं: batting nets, bowling spells, fielding circuits, match simulations।")}
+            <p style={{color:'rgba(255,255,255,0.72)',fontSize:15,lineHeight:1.8,marginBottom:16}}>
+              {t("Only eligible Phase 1 qualified players may proceed to Phase 2. Phase 2 requires the applicable role-based Phase 2 fee plus applicable GST as displayed at the time of payment, together with the required declarations and verification. Phase 2 is a physical, standardised cricket trial conducted at authorised venues.","केवल eligible Phase 1 qualified players ही Phase 2 में आगे बढ़ सकते हैं। Phase 2 के लिए applicable role-based Phase 2 fee plus applicable GST (जैसा payment के समय दिखाया गया हो) के साथ आवश्यक declarations और verification चाहिए। Phase 2 authorised venues पर आयोजित एक physical, standardised cricket trial है।")}
+            </p>
+            <p style={{color:'rgba(255,255,255,0.72)',fontSize:15,lineHeight:1.8,marginBottom:16}}>
+              {t("BCPL seeks to use the same published role-specific assessment framework, scoring structure and applicable attempt rules across authorised Phase 2 venues. This is a standardised assessment framework — it does not promise that every pitch, weather, environmental condition or feeder delivery will be physically identical.","BCPL authorised Phase 2 venues पर same published role-specific assessment framework, scoring structure और applicable attempt rules उपयोग करने का प्रयास करता है। यह एक standardised assessment framework है — यह वादा नहीं करता कि हर pitch, weather, environmental condition या feeder delivery physically identical होगी।")}
+            </p>
+            <p style={{color:'rgba(255,255,255,0.72)',fontSize:15,lineHeight:1.8,marginBottom:16}}>
+              {t("Each role is assessed against a role-specific 100-point framework. The detailed category weights are published once BCPL finalises the season rubric. Full attempt rules are set out in the Phase 2 Physical Trial Rules.","हर role का मूल्यांकन एक role-specific 100-point framework पर होता है। Detailed category weights तब publish किए जाते हैं जब BCPL season rubric finalise कर देता है। पूरे attempt rules Phase 2 Physical Trial Rules में दिए गए हैं।")}
+              {' '}
+              <Link href="/trial-rules" style={{color:'#22C55E',fontWeight:700,textDecoration:'underline'}}>{t("View Phase 2 Physical Trial Rules →","Phase 2 Physical Trial Rules देखें →")}</Link>
             </p>
             <div style={{background:'rgba(34,197,94,0.06)',border:'1px solid rgba(34,197,94,0.2)',borderRadius:12,padding:'20px 24px'}}>
               <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:14,color:'#22C55E',marginBottom:12}}>{t("Phase 2 Fee Structure","Phase 2 Fee Structure")}</div>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
                 <div>
                   <p style={{color:'rgba(255,255,255,0.45)',fontSize:12,marginBottom:4}}>{t("Batsman / Bowler / WK","Batsman / Bowler / WK")}</p>
-                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,color:'#fff'}}>₹2,000</div>
+                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,color:'#fff'}}>{t("₹2,000 + GST","₹2,000 + GST")}</div>
                 </div>
                 <div>
                   <p style={{color:'rgba(255,255,255,0.45)',fontSize:12,marginBottom:4}}>{t("All-Rounder","All-Rounder")}</p>
-                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,color:'#fff'}}>₹3,000</div>
+                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,color:'#fff'}}>{t("₹3,000 + GST","₹3,000 + GST")}</div>
                 </div>
               </div>
               <p style={{color:'rgba(255,255,255,0.55)',fontSize:13,marginTop:16,lineHeight:1.6}}>
-                {t("Phase 2 fee covers: professional ground booking, professional coaching evaluation, match simulation setup, video documentation of your trial, and detailed performance report.","Phase 2 fee में शामिल है: professional ground booking, professional coaching evaluation, match simulation setup, आपके trial का video documentation, और detailed performance report।")}
+                {t("Payment of Phase 1 or Phase 2 fees does not guarantee qualification, final selection, Auction Pool entry, auction purchase, team allocation, player contract, remuneration or tournament participation.","Phase 1 या Phase 2 fees का भुगतान qualification, final selection, Auction Pool entry, auction purchase, team allocation, player contract, remuneration या tournament participation की गारंटी नहीं देता।")}
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* PHYSICAL TRIAL ATTEMPTS */}
+      <section className="trust-section" style={{position:'relative',zIndex:1}}>
+        <div className="wrap" style={{maxWidth:900}}>
+          <div className="glass-card" style={{padding:'clamp(28px,5vw,48px)',border:'1px solid rgba(34,197,94,0.15)',animation:'fadeSlide 0.7s ease 0.45s both'}}>
+            <div style={{display:'flex',alignItems:'flex-start',gap:20,marginBottom:24}}>
+              <span className="step-num" style={{background:'linear-gradient(135deg,#22C55E,#16A34A)'}}>5</span>
+              <div style={{flex:1}}>
+                <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:8}}>{t("Trial Attempts by Role","Role के अनुसार Trial Attempts")}</h2>
+                <p style={{color:'rgba(255,255,255,0.45)',fontSize:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>{t("STANDARDISED FRAMEWORK","STANDARDISED FRAMEWORK")}</p>
+              </div>
+            </div>
+            <div style={{display:'grid',gridTemplateColumns:'1fr',gap:12,marginBottom:20}}>
+              {[
+                {role:'Batsman',en:'6 valid assessment deliveries. The intended standard framework may include 3 pace-style and 3 spin-style deliveries.',hi:'6 valid assessment deliveries। Intended standard framework में 3 pace-style और 3 spin-style deliveries शामिल हो सकती हैं।'},
+                {role:'Bowler',en:'6 bowling attempts. Wides, poor execution or inaccurate attempts may count as attempts according to the approved BCPL trial protocol.',hi:'6 bowling attempts। Wides, poor execution या inaccurate attempts approved BCPL trial protocol के अनुसार attempts के रूप में count हो सकते हैं।'},
+                {role:'All-Rounder',en:'6 valid batting deliveries plus 6 bowling attempts.',hi:'6 valid batting deliveries और 6 bowling attempts।'},
+                {role:'Wicketkeeper',en:'Standardised wicketkeeping assessment plus 6 valid batting deliveries.',hi:'Standardised wicketkeeping assessment और 6 valid batting deliveries।'},
+              ].map((r,i)=>(
+                <div key={i} style={{background:'rgba(34,197,94,0.06)',border:'1px solid rgba(34,197,94,0.2)',borderRadius:12,padding:'14px 18px'}}>
+                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:14,color:'#22C55E',marginBottom:6}}>{r.role}</div>
+                  <p style={{color:'rgba(255,255,255,0.62)',fontSize:13.5,lineHeight:1.7}}>{t(r.en,r.hi)}</p>
+                </div>
+              ))}
+            </div>
+            <p style={{color:'rgba(255,255,255,0.62)',fontSize:14,lineHeight:1.8}}>
+              {t("If an authorised feeder delivery is clearly unusable, it may be marked \"FEEDER ERROR / RE-BOWL\" and will not count as one of the six valid deliveries. Evaluators cannot grant extra valid balls at their discretion.","यदि कोई authorised feeder delivery स्पष्ट रूप से unusable है, तो उसे \"FEEDER ERROR / RE-BOWL\" mark किया जा सकता है और वह छह valid deliveries में से एक के रूप में count नहीं होगी। Evaluators अपनी discretion पर extra valid balls नहीं दे सकते।")}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* DIGITAL SCORING */}
+      <section className="trust-section" style={{position:'relative',zIndex:1}}>
+        <div className="wrap" style={{maxWidth:900}}>
+          <div className="glass-card" style={{padding:'clamp(28px,5vw,48px)',border:'1px solid rgba(232,178,61,0.15)',animation:'fadeSlide 0.7s ease 0.5s both'}}>
+            <div style={{display:'flex',alignItems:'flex-start',gap:20,marginBottom:24}}>
+              <span className="step-num" style={{background:'linear-gradient(135deg,#E8B23D,#F0C860)'}}>6</span>
+              <div style={{flex:1}}>
+                <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:8}}>{t("Digital Scoring & Corrections","Digital Scoring और Corrections")}</h2>
+                <p style={{color:'rgba(255,255,255,0.45)',fontSize:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>{t("LOCKED & AUDITED","LOCKED & AUDITED")}</p>
+              </div>
+            </div>
+            <p style={{color:'rgba(255,255,255,0.72)',fontSize:15,lineHeight:1.8,marginBottom:16}}>
+              {t("Physical-trial scores are recorded digitally. Evaluators assess players against the applicable role-specific rubric. Once submitted, assessments lock — normal evaluators cannot freely edit a submitted final assessment. Any authorised correction must follow an audited process.","Physical-trial scores digitally record किए जाते हैं। Evaluators players का मूल्यांकन applicable role-specific rubric पर करते हैं। Submit होने के बाद, assessments lock हो जाते हैं — normal evaluators किसी submitted final assessment को स्वतंत्र रूप से edit नहीं कर सकते। कोई भी authorised correction एक audited process का पालन करना चाहिए।")}
+            </p>
+            <p style={{color:'rgba(255,255,255,0.72)',fontSize:15,lineHeight:1.8}}>
+              {t("Evaluators do not decide whether a player is finally selected for the Auction Pool. Auction Pool qualification is determined centrally according to applicable BCPL ranking and allocation rules.","Evaluators यह तय नहीं करते कि किसी player का Auction Pool के लिए अंतिम चयन होगा या नहीं। Auction Pool qualification केंद्रीय रूप से applicable BCPL ranking और allocation rules के अनुसार तय होती है।")}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* BLIND EVALUATOR PROCESS */}
+      <section className="trust-section" style={{position:'relative',zIndex:1}}>
+        <div className="wrap" style={{maxWidth:900}}>
+          <div className="glass-card" style={{padding:'clamp(28px,5vw,48px)',border:'1px solid rgba(6,182,212,0.15)',animation:'fadeSlide 0.7s ease 0.55s both'}}>
+            <div style={{display:'flex',alignItems:'flex-start',gap:20,marginBottom:24}}>
+              <span className="step-num" style={{background:'linear-gradient(135deg,#06B6D4,#0891B2)'}}>7</span>
+              <div style={{flex:1}}>
+                <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:8}}>{t("Evaluator Assessment Process","Evaluator Assessment Process")}</h2>
+                <p style={{color:'rgba(255,255,255,0.45)',fontSize:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>{t("FOCUS ON PERFORMANCE","PERFORMANCE पर फोकस")}</p>
+              </div>
+            </div>
+            <p style={{color:'rgba(255,255,255,0.72)',fontSize:15,lineHeight:1.8}}>
+              {t("Physical-trial evaluators are not required to see unnecessary personal information or the player's previous Phase 1 scores while assessing the player's cricket performance. Evaluators focus on assessing cricket performance against the role-specific rubric.","Physical-trial evaluators को player की cricket performance का मूल्यांकन करते समय अनावश्यक व्यक्तिगत जानकारी या player के पिछले Phase 1 scores देखना आवश्यक नहीं होता। Evaluators role-specific rubric के आधार पर cricket performance का मूल्यांकन करने पर focus करते हैं।")}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* RESULTS TIMING */}
+      <section className="trust-section" style={{position:'relative',zIndex:1}}>
+        <div className="wrap" style={{maxWidth:900}}>
+          <div className="glass-card" style={{padding:'clamp(28px,5vw,48px)',border:'1px solid rgba(59,130,246,0.15)',animation:'fadeSlide 0.7s ease 0.6s both'}}>
+            <div style={{display:'flex',alignItems:'flex-start',gap:20,marginBottom:24}}>
+              <span className="step-num" style={{background:'linear-gradient(135deg,#3B82F6,#2563EB)'}}>8</span>
+              <div style={{flex:1}}>
+                <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:8}}>{t("Phase 2 Results Timing","Phase 2 Results Timing")}</h2>
+                <p style={{color:'rgba(255,255,255,0.45)',fontSize:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>{t("NOT IMMEDIATE","तुरंत नहीं")}</p>
+              </div>
+            </div>
+            <p style={{color:'rgba(255,255,255,0.72)',fontSize:15,lineHeight:1.8}}>
+              {t("After completing your physical trial, your assessment is recorded. Advancement results may be finalised after completion of the applicable BCPL trial window so eligible candidates can be ranked under the applicable season rules. Completing your trial does not mean you have been selected.","अपना physical trial पूरा करने के बाद, आपका assessment record किया जाता है। Advancement results applicable BCPL trial window पूरी होने के बाद finalise किए जा सकते हैं ताकि eligible candidates को applicable season rules के अंतर्गत rank किया जा सके। Trial पूरा करने का मतलब यह नहीं है कि आपका चयन हो गया है।")}
+            </p>
           </div>
         </div>
       </section>
@@ -231,9 +323,9 @@ export function Trust() {
       {/* ELIGIBILITY */}
       <section className="trust-section" style={{position:'relative',zIndex:1}}>
         <div className="wrap" style={{maxWidth:900}}>
-          <div className="glass-card" style={{padding:'clamp(28px,5vw,48px)',border:'1px solid rgba(139,92,246,0.15)',animation:'fadeSlide 0.7s ease 0.5s both'}}>
+          <div className="glass-card" style={{padding:'clamp(28px,5vw,48px)',border:'1px solid rgba(139,92,246,0.15)',animation:'fadeSlide 0.7s ease 0.65s both'}}>
             <div style={{display:'flex',alignItems:'flex-start',gap:20,marginBottom:24}}>
-              <span className="step-num" style={{background:'linear-gradient(135deg,#8B5CF6,#7C3AED)'}}>5</span>
+              <span className="step-num" style={{background:'linear-gradient(135deg,#8B5CF6,#7C3AED)'}}>9</span>
               <div style={{flex:1}}>
                 <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:8}}>{t("Eligibility & Disqualification","पात्रता और अयोग्यता")}</h2>
                 <p style={{color:'rgba(255,255,255,0.45)',fontSize:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>{t("CLEAR RULES","स्पष्ट नियम")}</p>
@@ -317,7 +409,7 @@ export function Trust() {
               </div>
             </div>
             <div style={{background:'rgba(59,130,246,0.08)',border:'1px solid rgba(59,130,246,0.25)',borderRadius:12,padding:'20px 24px',textAlign:'center'}}>
-              <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:18,color:'#3B82F6',marginBottom:10}}>{t("Maximum Total Cost","अधिकतम कुल लागत")}</div>
+              <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:18,color:'#3B82F6',marginBottom:10}}>{t("Combined Phase 1 + Phase 2 Fees (plus applicable GST)","Phase 1 + Phase 2 fees का जोड़ (साथ में applicable GST)")}</div>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
                 <div>
                   <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:36,color:'#fff'}}>₹2,299</div>
@@ -329,7 +421,7 @@ export function Trust() {
                 </div>
               </div>
               <p style={{color:'rgba(255,255,255,0.55)',fontSize:13,marginTop:20,lineHeight:1.7,fontStyle:'italic'}}>
-                {t("This is the complete cost from registration to franchise auction. If you're not selected for Phase 2, you only pay Phase 1 fee (₹299/₹399). After auction selection, everything is free — jersey, training, matches, prize money.","यह registration से franchise auction तक की पूरी लागत है। अगर आप Phase 2 के लिए select नहीं होते, तो आप सिर्फ Phase 1 fee (₹299/₹399) देते हैं। Auction selection के बाद, सब कुछ free है — jersey, training, matches, prize money।")}
+                {t("These are the applicable Phase 1 and Phase 2 fees. If you do not qualify Phase 1, no Phase 2 fee becomes payable. Payment of Phase 1 or Phase 2 fees does not guarantee qualification, final selection, Auction Pool entry, auction purchase, team allocation, player contract, remuneration or tournament participation. All fees attract applicable GST as displayed at the time of payment.","ये applicable Phase 1 और Phase 2 fees हैं। यदि आप Phase 1 qualify नहीं करते, तो कोई Phase 2 fee देय नहीं होती। Phase 1 या Phase 2 fees का भुगतान qualification, final selection, Auction Pool entry, auction purchase, team allocation, player contract, remuneration या tournament participation की गारंटी नहीं देता। सभी fees पर payment के समय दिखाई गई applicable GST लागू होती है।")}
               </p>
             </div>
           </div>

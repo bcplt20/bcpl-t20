@@ -3,6 +3,7 @@ import { Link } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
+import { LegalDocHeader } from '../lib/legalMeta';
 
 /**
  * PHASE 2 — PHYSICAL TRIAL RULES (Season 5)
@@ -77,45 +78,49 @@ export function TrialRules() {
       'Follow check-in staff and ground staff instructions at all times, including in warm-up areas.',
     ]},
     {n:3,icon:'🏏',title:'The Six-Attempt Rule',items:[
-      'BATSMAN — 6 valid assessment deliveries.',
+      'BATSMAN — 6 valid batting assessment deliveries. The intended standard framework may include 3 pace-style deliveries + 3 spin-style deliveries.',
       'BOWLER — 6 bowling attempts.',
       'ALL-ROUNDER — 6 valid batting deliveries + 6 bowling attempts.',
-      'WICKETKEEPER — standardised keeping drill + 6 valid batting deliveries.',
-      'Feeder-error rule (batting): if a delivery is clearly unusable due to a feeder error, authorised officials may mark it FEEDER ERROR / RE-BOWL. That delivery does not count as one of your six valid deliveries. Coaches cannot casually grant extra balls outside this rule.',
-      'Bowling attempts: a wide, no-ball or poor delivery normally still counts as one of your six attempts — it reflects your own execution — subject to the final published trial rulebook.',
+      'WICKETKEEPER — standardised wicketkeeping assessment + 6 valid batting deliveries.',
+      'Feeder-error rule (batting): if an authorised feeder delivery is clearly unusable, authorised officials may mark it FEEDER ERROR / RE-BOWL. Such a delivery does not count toward the six valid batting deliveries. Coaches/evaluators cannot simply grant extra valid balls at their discretion.',
+      'Bowlers: the six bowling attempts form part of the assessment. Poor execution, wides or inaccurate attempts may count as assessment attempts according to the approved BCPL trial protocol. Marked line/length target areas are used where applicable.',
     ]},
     {n:4,icon:'⚖️',title:'Standardised Assessment Framework',items:[
-      'Your batting assessment should not depend on the quality of another trial candidate bowling to you. Batting deliveries come through a standardised delivery framework operated by trained feeders (which may include sidearm and spin feeders).',
-      'Initial assessment concept for batting: 3 pace-style deliveries + 3 spin-style deliveries. The exact delivery protocol is published by BCPL before trials.',
-      'Delivery conditions are standardised as far as practical across venues; BCPL does not claim mathematically identical speed or trajectory for every delivery at every venue.',
-      'Bowlers bowl at marked line/length target zones — not at a trial batsman — so a batsman\u2019s skill never affects a bowler\u2019s score.',
+      'BCPL seeks to use the same published role-specific assessment framework, scoring structure and applicable attempt rules across authorised Phase 2 venues.',
+      'For batsmen, BCPL may use trained pace/sidearm and spin feeders to provide a more standardised batting assessment, so your batting assessment does not depend on the quality of another trial candidate bowling to you.',
+      'The intended standard framework for batting may include 3 pace-style deliveries + 3 spin-style deliveries. The exact delivery protocol is published by BCPL before trials.',
+      'BCPL does not promise that every environmental condition, pitch, weather or feeder delivery will be physically identical across venues. This is a standardised assessment framework, not identical physical conditions.',
+      'Bowlers bowl at marked line/length target areas where applicable — not at a trial batsman — so a batsman\u2019s skill never affects a bowler\u2019s score.',
       'Bowling attempt outcomes are recorded per the approved scoring rubric (for example TARGET HIT / NEAR TARGET / MISS).',
       'Bowling speed figures are used only where validated speed-measurement equipment is actually in operation at the venue.',
     ]},
-    {n:5,icon:'💯',title:'100-Point Scoring Rubrics (Initial Structure)',items:[
-      'Every role is scored out of 100 points under a versioned rubric maintained in BCPL\u2019s scoring system. The initial structures are below; exact weights are finalised by BCPL Cricket Operations and the final published trial rulebook carries the definitive version.',
+    {n:5,icon:'💯',title:'100-Point Scoring Rubrics (Framework)',items:[
+      'Each role is scored under a role-specific 100-point assessment framework maintained in BCPL\u2019s scoring system: BATSMAN — 100 points, BOWLER — 100 points, ALL-ROUNDER — 100 points, WICKETKEEPER — 100 points.',
+      'The scoring uses approved, configurable role-specific categories. Detailed category weights are published once finalised by BCPL Cricket Operations; the final published trial rulebook carries the definitive version.',
     ]},
     {n:6,icon:'🕶️',title:'Blind Assessment',items:[
-      'Where operationally implemented, trial evaluators receive only the information necessary to assess cricket performance: your Trial Number / Registration Number and your role.',
-      'Evaluators do not see: your full name, phone, email, employer, Phase 1 score, Phase 1 rank, projected cutoffs, or any auction/selection status.',
-      'This is a deliberate integrity feature: scores are for cricket on the day, nothing else.',
+      'Where operationally implemented, physical-trial evaluators are not required to see unnecessary personal information or previous Phase 1 scoring while assessing the player\u2019s cricket performance.',
+      'For assessment, evaluators receive only the information necessary to score cricket performance — for example your Trial Number / Registration Number and your role — and are not shown unnecessary personal details, Phase 1 scores or auction/selection status.',
+      'This is a deliberate integrity feature: scores reflect cricket on the day, nothing else.',
     ]},
     {n:7,icon:'🔒',title:'Digital, Locked Scoring',items:[
-      'Physical-trial scores are recorded digitally at the venue.',
-      'Once an evaluator submits an assessment, normal evaluator editing is locked.',
-      'Genuine technical corrections (for example a data-entry error) are only possible through an authorised, audited correction process — never by informal edits.',
+      'Physical-trial scores are recorded digitally at the venue, and evaluators assess players against the applicable role-specific rubric.',
+      'Once an assessment is submitted, normal evaluators cannot freely edit submitted final assessments.',
+      'Any authorised correction (for example a genuine data-entry error) must follow an audited process — never informal edits.',
+      'Evaluators do not decide whether a player is finally selected for the Auction Pool. Auction Pool qualification is determined centrally according to applicable BCPL ranking/allocation rules.',
     ]},
     {n:8,icon:'⏳',title:'Results, National Ranking & Tie-breaks',items:[
-      'Results are not announced at the venue on trial day. After your slot, your dashboard shows PHYSICAL TRIAL COMPLETED ✓ — your assessment has been securely recorded.',
+      'After completing your physical trial, your assessment is recorded. Advancement results may be finalised after completion of the applicable BCPL trial window so eligible candidates can be ranked under the applicable season rules.',
+      'Results are not announced at the venue on trial day, and completing your trial does not by itself mean you have been selected. After your slot, your dashboard shows PHYSICAL TRIAL COMPLETED ✓ — your assessment has been securely recorded.',
       'Your status then shows NATIONAL RANKING PENDING until the applicable BCPL physical-trial window and ranking process are complete.',
-      'BCPL may apply published playing-role allocations, regional representation requirements, minimum assessment standards and national merit ranking when creating the Auction Pool for the applicable season.',
-      'There is no fixed public score cutoff (for example \u201c95+ automatically qualifies\u201d). The final cutoff is determined after the applicable trial dataset is complete, based on validated scores, role ranking, published allocations and minimum quality thresholds.',
-      'Tie-breaking follows a deterministic published policy before final result release — for example: higher role-core score, then higher objective-attempt score, then higher applicable consistency score, then further published criteria. Ties are never resolved by random or manual preference.',
+      'BCPL may apply published playing-role allocations, regional representation requirements, minimum assessment standards, national merit ranking and applicable tie-break rules when determining advancement to the Auction Pool for the relevant season.',
+      'There is no fixed public score cutoff. Final advancement depends on validated scores, role ranking, published allocations, minimum quality thresholds, regional/national rules and applicable tie-break criteria — determined after the applicable trial dataset is complete.',
+      'Tie-breaking follows a deterministic published policy before final result release. Ties are never resolved by random or manual preference.',
     ]},
     {n:9,icon:'🏆',title:'What Auction Pool Qualification Means',items:[
-      'Auction Pool qualification means eligibility to enter the applicable BCPL auction process. That is all it means.',
-      'It does NOT guarantee: purchase by a team, a player contract, salary or remuneration, a final squad place, or any tournament appearance.',
-      'Franchise bidding decisions belong to the franchises. BCPL runs the process; it does not promise outcomes.',
+      'Qualification for the BCPL Auction Pool means eligibility to participate in the applicable player-auction process. Auction Pool qualification does not guarantee purchase by a team, a player contract, remuneration, squad selection or tournament participation.',
+      'Payment of Phase 1 or Phase 2 fees does not guarantee qualification, final selection, Auction Pool entry, auction purchase, team allocation, player contract, remuneration or tournament participation.',
+      'Franchise bidding decisions belong to the franchises and are made only at the auction. BCPL runs the process; it does not promise outcomes.',
     ]},
     {n:10,icon:'📋',title:'Conduct, Safety, Absence & Technical Re-trials',items:[
       <>Player conduct at trials is governed by the <Link href="/code-of-conduct" style={{color:'#E8B23D',fontWeight:600}}>Code of Conduct</Link>. Misconduct, abuse of officials or unfair means can lead to disqualification under the published process.</>,
@@ -126,10 +131,10 @@ export function TrialRules() {
   ];
 
   const rubrics=[
-    {role:'BATSMAN',icon:'🏏',rows:[['Objective attempt performance',40],['Coach technical assessment',55],['Fielding',5]],note:'Technical areas may include balance, footwork, timing, shot execution, shot selection.'},
-    {role:'BOWLER',icon:'🎳',rows:[['Accuracy / attempt performance',45],['Coach technical assessment',50],['Fielding',5]],note:'Technical areas may include action & rhythm, line/length quality, control, variation.'},
-    {role:'ALL-ROUNDER',icon:'⚡',rows:[['Batting',40],['Bowling',40],['Fielding',10],['Consistency / readiness',10]],note:'Configurable minimum batting and bowling component requirements may apply.'},
-    {role:'WICKETKEEPER',icon:'🧤',rows:[['Collection',20],['Footwork',15],['Catching',15],['Stumping',15],['Throwing',10],['Positioning',10],['Batting',10],['Athleticism',5]],note:'Keeping drill is standardised for all wicketkeeper candidates.'},
+    {role:'BATSMAN',icon:'🏏',total:'100 points',cats:['Objective attempt performance','Technical assessment','Fielding'],note:'Assessment areas may include balance, footwork, timing, shot execution and shot selection. Detailed category weights are published once finalised.'},
+    {role:'BOWLER',icon:'🎳',total:'100 points',cats:['Accuracy / attempt performance','Technical assessment','Fielding'],note:'Assessment areas may include action & rhythm, line/length quality, control and variation. Detailed category weights are published once finalised.'},
+    {role:'ALL-ROUNDER',icon:'⚡',total:'100 points',cats:['Batting','Bowling','Fielding','Consistency / readiness'],note:'Configurable minimum batting and bowling component requirements may apply. Detailed category weights are published once finalised.'},
+    {role:'WICKETKEEPER',icon:'🧤',total:'100 points',cats:['Wicketkeeping assessment (collection, footwork, catching, stumping, positioning)','Throwing / athleticism','Batting'],note:'The wicketkeeping assessment is standardised for all wicketkeeper candidates. Detailed category weights are published once finalised.'},
   ];
 
   return (
@@ -158,6 +163,9 @@ export function TrialRules() {
         </section>
 
         <div className="wrap" style={{maxWidth:900,margin:'0 auto',paddingBottom:40}}>
+
+          <LegalDocHeader doc="trialRules" />
+
 
           {/* Table of Contents */}
           <div className="glass-card" style={{padding:'clamp(20px,4vw,28px) clamp(16px,4vw,32px)',marginBottom:24,animation:'fadeSlide 0.5s ease 0.1s both'}}>
@@ -201,10 +209,10 @@ export function TrialRules() {
                         <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:14,color:'#E8B23D',letterSpacing:'.04em'}}>{r.role}</span>
                         <span style={{marginLeft:'auto',fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:12,color:'rgba(255,255,255,0.4)'}}>/ 100</span>
                       </div>
-                      {r.rows.map(([k,v])=>(
-                        <div key={String(k)} className="rubric-row">
+                      {r.cats.map(k=>(
+                        <div key={k} className="rubric-row">
                           <span style={{color:'rgba(255,255,255,0.65)'}}>{k}</span>
-                          <span style={{color:'#fff',fontWeight:700,flexShrink:0}}>{v}</span>
+                          <span style={{color:'rgba(255,255,255,0.4)',fontWeight:700,flexShrink:0,fontSize:11}}>weight TBP</span>
                         </div>
                       ))}
                       <p style={{fontSize:11,color:'rgba(255,255,255,0.4)',lineHeight:1.6,marginTop:10}}>{r.note}</p>

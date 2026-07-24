@@ -4,6 +4,7 @@ import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { useLang } from '../lib/i18n';
 import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
+import { LegalDocHeader } from '../lib/legalMeta';
 
 const OrangeDot = () => (
   <span style={{display:'inline-block',width:6,height:6,borderRadius:'50%',background:'#FF7A29',marginRight:10,flexShrink:0,marginTop:7}}/>
@@ -85,54 +86,74 @@ export function Privacy() {
   ];
 
   const sections = [
-    {n:1,icon:'📦',titleEn:'Data We Collect',titleHi:'हम क्या डेटा लेते हैं',items:[
-      'Full name, email address, and mobile number (provided during registration)',
-      'Date of birth and city of residence for eligibility verification',
-      'Current employer/company name and employment type (professional verification)',
-      'Cricket role preference: Batsman, Bowler, Wicketkeeper, or All-Rounder',
-      'Cricket performance video (uploaded post-registration via secure BCPL portal)',
-      'Payment metadata: transaction ID, amount, date — NOT card details or UPI PINs',
-      'Device and browser data via Google Analytics (anonymised, aggregated only)',
+    {n:1,icon:'📦',titleEn:'Identity & Registration Data',titleHi:'पहचान और रजिस्ट्रेशन डेटा',items:[
+      'Full name — to identify you, generate your registration record and address you in communications',
+      'Mobile number — for OTP-based login, account security and service notifications',
+      'Email address — for registration confirmations, receipts, results and service updates',
+      'Date of birth — to verify the 18–45 age eligibility requirement',
+      'Playing role (Batsman / Bowler / Wicketkeeper / All-Rounder) — to apply the correct Phase 1 fee and role-specific assessment framework',
+      'Trial city — to allocate an applicable Phase 2 venue and trial slot',
+      'Registration information (registration ID, season, timestamps, one-registration-per-person checks) — to manage your entry and enforce one registration per person per season',
+      'Employment / professional information — to verify working-professional eligibility criteria',
+      'Emergency contact details — for safety and contact during physical trials, where collected',
+      'T-shirt size — for trial kit allocation, where collected',
     ]},
-    {n:2,icon:'🔧',titleEn:'How We Use Your Data',titleHi:'हम डेटा का उपयोग कैसे करते हैं',items:[
-      'Processing your registration and generating your unique BCPL Registration ID',
-      'Processing your trial video and cricket profile through the BCPL Phase 1 evaluation system',
-      'Communicating shortlisting results, trial schedules, and selection updates',
-      'Match scheduling, team assignment, and tournament logistics coordination',
-      'Sending important league updates, season announcements, and newsletters (opt-out available)',
-      'Improving our platform and user experience via anonymised analytics data',
+    {n:2,icon:'💳',titleEn:'Payment Data',titleHi:'पेमेंट डेटा',items:[
+      'Payment metadata: transaction ID, order reference, amount, applicable GST and date — to confirm fees, issue receipts and reconcile payments',
+      'BCPL does NOT store your card number, CVV, UPI PIN or bank credentials — these are handled directly by the payment gateway in a PCI-DSS compliant environment',
+      'Duplicate-payment and technical-error records — to identify and process refunds where the policy provides for them',
     ]},
-    {n:3,icon:'🤝',titleEn:'Data Sharing',titleHi:'डेटा साझाकरण',items:[
-      'Shortlisted player profiles (name, video, cricket role) are shared with franchise team management',
-      'Payment transaction data is processed by Cashfree under their separate Privacy Policy',
-      'Aggregated, anonymised statistics may be shared with sponsors for league reporting',
-      'We NEVER sell, rent, or trade your personal data to any third party — ever',
-      'We do not share your data with advertisers, data brokers, or marketing platforms',
-      'Data may be disclosed if required by law or court order — we will notify you when legally permitted',
+    {n:3,icon:'🎥',titleEn:'Assessment Data (Phase 1 & Phase 2)',titleHi:'असेसमेंट डेटा (फेज 1 और फेज 2)',items:[
+      'Phase 1 cricket videos (30–60 seconds) — to assess your cricket performance for the video-based Phase 1 stage',
+      'Video validation data (integrity, authenticity and technical checks) — to confirm the video represents the registered player and meets upload rules',
+      'Phase 1 scoring and ranking — to determine qualification to Phase 2 under the applicable framework',
+      'Phase 2 physical-trial scoring — recorded digitally against the applicable role-specific rubric during your venue trial',
+      'National / regional rankings — to rank eligible candidates under the applicable season rules for advancement to the Auction Pool',
+      'Trial QR / check-in information — to verify attendance and identity at the physical trial venue',
+      'Coach / evaluator records — to document assessment observations against the approved protocol',
     ]},
-    {n:4,icon:'🔐',titleEn:'Data Security',titleHi:'डेटा सुरक्षा',items:[
-      '256-bit AES encryption for all data stored at rest on our servers',
-      'SSL/TLS (HTTPS) encryption for all data in transit between your device and our servers',
-      'Role-based access controls — only authorised BCPL staff access player data',
-      'Regular third-party security audits and penetration testing (quarterly)',
-      'Cashfree processes payments in a PCI-DSS compliant environment — BCPL never sees card data',
-      'In the event of a data breach, affected users will be notified within 72 hours',
+    {n:4,icon:'🪪',titleEn:'Verification & Integrity Data',titleHi:'सत्यापन और इंटीग्रिटी डेटा',items:[
+      'Aadhaar / PAN verification data — for identity and KYC verification as required for participation',
+      'Fraud / integrity signals — to detect duplicate registrations, impersonation, manipulated videos and other integrity risks',
+      'Device and security logs — to protect accounts, maintain platform security and investigate misuse',
+      'Communication records (email / SMS / WhatsApp) — to keep an auditable record of service notifications we send you',
     ]},
-    {n:5,icon:'✊',titleEn:'Your Rights',titleHi:'आपके अधिकार',items:[
-      'Right to Access: request a copy of all personal data BCPL holds about you',
+    {n:5,icon:'🤖',titleEn:'AI / Automated Assessment Privacy',titleHi:'AI / ऑटोमेटेड असेसमेंट प्राइवेसी',items:[
+      'Your submitted Phase 1 video may be processed using automated, digital or technology-assisted assessment systems, and by third-party technology providers, for video validation, scoring, ranking, fraud/integrity checks and administration',
+      'We do NOT share your Aadhaar / PAN, phone number, email, employment documents or emergency contacts with the Phase 1 video-assessment technology provider',
+      'Automated and technology-assisted processing supports assessment and administration; final advancement to the Auction Pool is determined centrally under the applicable BCPL ranking and allocation rules',
+    ]},
+    {n:6,icon:'🔗',titleEn:'Third-Party Processors We Use',titleHi:'तीसरे पक्ष के प्रोसेसर',items:[
+      'Payment gateway (Cashfree) — to process fees and issue receipts',
+      'Cloud / storage provider — to securely host the platform, records and uploaded videos',
+      'OTP provider — to deliver one-time passwords for login and verification',
+      'Email provider — to send registration, payment, result and service emails',
+      'SMS / WhatsApp provider — to send transactional service notifications',
+      'Identity / KYC verification provider — to verify Aadhaar / PAN and identity',
+      'Automated / video assessment technology provider — to support Phase 1 video validation, scoring and integrity checks',
+      'Security / analytics provider — to maintain platform security and understand aggregated usage',
+      'Providers process data only for the purposes above under applicable agreements; we do not sell, rent or trade your personal data',
+    ]},
+    {n:7,icon:'✅',titleEn:'Consent — Service vs Marketing',titleHi:'सहमति — सेवा बनाम मार्केटिंग',items:[
+      'Required service acceptance: "I have read and agree to the applicable Terms & Conditions and Privacy Notice." This is necessary to provide the registration and assessment service',
+      'Optional promotional marketing: "I would like to receive promotional BCPL updates and offers." This is optional and can be withdrawn at any time',
+      'OTP, payment, result and trial notifications are service / transactional communications, not optional promotional marketing, and are sent as part of providing the service',
+      'The accepted document version and the acceptance time are recorded with your registration',
+      'You can withdraw promotional marketing consent at any time by emailing support@bcplt20.com',
+    ]},
+    {n:8,icon:'✊',titleEn:'Your Rights',titleHi:'आपके अधिकार',items:[
+      'Right to Access: request a copy of the personal data BCPL holds about you',
       'Right to Correct: request correction of inaccurate or incomplete personal data',
-      'Right to Delete: request account deletion — available before shortlisting stage only',
-      'Right to Withdraw Consent: withdraw from marketing communications at any time',
-      'Right to Portability: receive your data in a structured, machine-readable format',
-      'To exercise any right, email: support@bcplt20.com — we respond within 7 business days',
+      'Right to Delete: request deletion of your data, subject to limits where we must retain records for verification, integrity, tax, legal or assessment-audit reasons',
+      'Right to Withdraw Consent: withdraw optional promotional marketing consent at any time (service/transactional notifications continue while your registration is active)',
+      'To exercise any right, email support@bcplt20.com — we acknowledge within 2 business days and aim to resolve within 7',
     ]},
-    {n:6,icon:'🍪',titleEn:'Cookie Policy',titleHi:'Cookie नीति',items:[
-      'We use only essential session cookies required for website functionality',
-      'Google Analytics cookies collect anonymised page-view data to improve our site',
-      'We do NOT use advertising cookies, tracking pixels, or retargeting technologies',
-      'We do NOT use third-party social media cookies or cross-site tracking',
-      'You can opt out of Google Analytics via browser settings or browser extension',
-      'Blocking essential cookies may affect website functionality but will not affect your registration',
+    {n:9,icon:'🔐',titleEn:'Data Security',titleHi:'डेटा सुरक्षा',items:[
+      'Encryption for data in transit (HTTPS/TLS) between your device and our servers',
+      'Access controls — only authorised BCPL personnel and processors access data for the purposes described',
+      'Payment card data is handled by the payment gateway in a PCI-DSS compliant environment — BCPL never sees card data',
+      'Security logging and integrity monitoring to detect and investigate misuse',
+      'In the event of a data breach affecting you, we will notify affected users as required by applicable law',
     ]},
   ];
 
@@ -167,13 +188,15 @@ export function Privacy() {
               <span style={{color:'#fff',display:'block'}}>{t("PRIVACY","गोपनीयता")}</span>
               <span className="shimmer-gold" style={{display:'block'}}>{t("POLICY","नीति")}</span>
             </h1>
-            <p style={{color:'rgba(255,255,255,0.48)',fontSize:12,fontWeight:700,letterSpacing:'0.06em',marginTop:18,fontFamily:'Montserrat,sans-serif',textTransform:'uppercase'}}>{t("Last updated: January 15, 2025","अपडेट: 15 जनवरी 2025")}</p>
             <p style={{color:'rgba(255,255,255,0.68)',fontSize:'clamp(14px,2vw,16px)',lineHeight:1.7,maxWidth:640,margin:'20px auto 0'}}>
               {t(
-                "Your privacy matters to us. We are transparent about what data we collect, why we collect it, and who can see it.",
-                "आपकी गोपनीयता हमारे लिए महत्वपूर्ण है। हम स्पष्ट हैं कि हम क्या डेटा लेते हैं, क्यों लेते हैं और कौन इसे देख सकता है।"
+                "Your privacy matters to us. This notice explains what data we collect, why we collect it, and who processes it.",
+                "आपकी गोपनीयता हमारे लिए महत्वपूर्ण है। यह notice बताता है कि हम क्या डेटा लेते हैं, क्यों लेते हैं और कौन इसे process करता है।"
               )}
             </p>
+            <div style={{marginTop:28}}>
+              <LegalDocHeader doc="privacy" />
+            </div>
           </div>
         </section>
 
@@ -222,12 +245,12 @@ export function Privacy() {
                 <div style={{display:'flex',gap:12,alignItems:'center',flexWrap:'wrap'}}>
                   <span style={{fontSize:28,flexShrink:0}}>🛡️</span>
                   <div>
-                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:16,color:'#22C55E',marginBottom:4}}>{t("Our Privacy Promise","हमारा वादा")}</div>
+                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:16,color:'#22C55E',marginBottom:4}}>{t("Our Privacy Commitment","हमारी प्रतिबद्धता")}</div>
                     <p style={{color:'rgba(255,255,255,0.85)',fontSize:'clamp(13px,2vw,15px)',fontWeight:600}}>
                       {t(
-                        "We NEVER sell your data to third parties. Ever.",
-                        "हम कभी भी आपका डेटा तीसरे पक्ष को नहीं बेचते। कभी नहीं।"
-                      )} <strong style={{color:'#22C55E'}}>{t("Your information is used solely to run BCPL T20 Season 5.","आपकी जानकारी सिर्फ BCPL T20 Season 5 चलाने के लिए है।")}</strong>
+                        "We do not sell, rent or trade your personal data to third parties.",
+                        "हम आपका personal data तीसरे पक्ष को बेचते, किराए पर देते या trade नहीं करते।"
+                      )} <strong style={{color:'#22C55E'}}>{t("Your information is processed to run the BCPL registration and assessment process and to meet legal requirements.","आपकी जानकारी BCPL registration व assessment process चलाने और कानूनी आवश्यकताएं पूरी करने के लिए process की जाती है।")}</strong>
                     </p>
                   </div>
                 </div>

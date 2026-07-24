@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { CONSENT_VERSIONS } from '../lib/legalMeta';
+import { useFees, withGst } from '../lib/fees';
 import { Link, useLocation } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
@@ -14,6 +16,10 @@ export function Phase2Registration() {
   const [city, setCity]             = useState('');
   const [regId, setRegId]           = useState('');
   const [phase2Status, setPhase2Status] = useState<string|null>(null);
+  const [p2Base, setP2Base] = useState<number | null>(null); // role-based Phase 2 base fee from API
+  const fees = useFees();
+  // Role-based base fee: API value first, config fallback by role id, then Bat/Bowl/WK default.
+  const p2b = p2Base ?? (fees.phase2 as Record<string, number>)[role] ?? fees.phase2.bat;
   
   const [, setLocation] = useLocation();
   const { t } = useLang();
@@ -22,6 +28,7 @@ export function Phase2Registration() {
   const [check1, setCheck1]     = useState(false);
   const [check2, setCheck2]     = useState(false);
   const [check3, setCheck3]     = useState(false);
+  const [check4, setCheck4]     = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -35,6 +42,7 @@ export function Phase2Registration() {
         setCity(status.trialCity || '');
         setRegId(status.registrationId || '');
         setPhase2Status(status.phase2Status ?? null);
+        setP2Base(typeof (status as any).fees?.phase2 === 'number' ? (status as any).fees.phase2 : null);
         setLoadState('ok');
       } catch { setLoadState('error'); }
     })();
@@ -47,9 +55,31 @@ export function Phase2Registration() {
     }
   }, [loadState, phase2Status, setLocation]);
 
-  const canProceed = check1 && check2 && check3;
+  // Canonical declaration texts — English versions are stored server-side
+  // with the Phase 2 payment as the consent/acceptance audit record.
+  const P2_DECL_EN = [
+    'I confirm that I have not played first-class cricket, IPL, or international cricket professionally.',
+    'I understand the trial terms, the franchise auction process, and the two-phase selection system.',
+    'I agree to abide by the BCPL Code of Conduct throughout Season 5.',
+    'I understand that payment of the Phase 2 fee does not guarantee Auction Pool entry, auction purchase, team allocation, a player contract, remuneration or tournament participation.',
+  ];
+  const P2_DECL_HI = [
+    'मैं पुष्टि करता हूं कि मैंने प्रथम श्रेणी क्रिकेट, आईपीएल या अंतरराष्ट्रीय क्रिकेट पेशेवर रूप से नहीं खेला है।',
+    'मैं ट्रायल की शर्तों, फ्रैंचाइज़ी नीलामी प्रक्रिया और दो-चरणीय चयन प्रणाली को समझता हूं।',
+    'मैं सीजन 5 के दौरान BCPL आचार संहिता का पालन करने के लिए सहमत हूं।',
+    'मैं समझता हूं कि फेज 2 फीस का भुगतान Auction Pool में प्रवेश, auction में खरीद, टीम आवंटन, player contract, remuneration या tournament में भागीदारी की गारंटी नहीं देता।',
+  ];
+
+  const canProceed = check1 && check2 && check3 && check4;
 
   const handleProceed = () => {
+    // Persist accepted declarations for the payment call (consent audit).
+    try {
+      sessionStorage.setItem('bcpl_p2_declarations', JSON.stringify({
+        version: CONSENT_VERSIONS.phase2Declarations,
+        items: P2_DECL_EN,
+      }));
+    } catch { /* storage unavailable — payment proceeds; audit is best-effort */ }
     setLocation('/register/phase2/payment');
   };
 
@@ -141,9 +171,10 @@ export function Phase2Registration() {
               
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 {[
-                  { val: check1, set: setCheck1, text: t('I confirm that I have not played first-class cricket, IPL, or international cricket professionally.', 'मैं पुष्टि करता हूं कि मैंने प्रथम श्रेणी क्रिकेट, आईपीएल या अंतरराष्ट्रीय क्रिकेट पेशेवर रूप से नहीं खेला है।') },
-                  { val: check2, set: setCheck2, text: t('I understand the trial terms, the franchise auction process, and the two-phase selection system.', 'मैं ट्रायल की शर्तों, फ्रैंचाइज़ी नीलामी प्रक्रिया और दो-चरणीय चयन प्रणाली को समझता हूं।') },
-                  { val: check3, set: setCheck3, text: t('I agree to abide by the BCPL Code of Conduct throughout Season 5.', 'मैं सीजन 5 के दौरान BCPL आचार संहिता का पालन करने के लिए सहमत हूं।') },
+                  { val: check1, set: setCheck1, text: t(P2_DECL_EN[0], P2_DECL_HI[0]) },
+                  { val: check2, set: setCheck2, text: t(P2_DECL_EN[1], P2_DECL_HI[1]) },
+                  { val: check3, set: setCheck3, text: t(P2_DECL_EN[2], P2_DECL_HI[2]) },
+                  { val: check4, set: setCheck4, text: t(P2_DECL_EN[3], P2_DECL_HI[3]) },
                 ].map(({ val, set, text }, idx) => (
                   <div key={idx} className={`check-row ${val ? 'checked' : ''}`} onClick={() => set(!val)}>
                     <div className={`cbox ${val ? 'checked' : ''}`}>{val && <span style={{ color: '#fff', fontSize: 14, fontWeight: 900 }}>✓</span>}</div>
@@ -177,7 +208,11 @@ export function Phase2Registration() {
               </div>
               <div style={{ padding: '32px 24px', textAlign: 'center', background: 'var(--panel)' }}>
                 <div style={{ fontFamily: 'var(--font-head)', fontWeight: 700, fontSize: 12, letterSpacing: '.1em', color: 'rgba(255,255,255,0.4)', marginBottom: 8, textTransform: 'uppercase' }}>{t("Entry Fee", "एंट्री फीस")}</div>
-                <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 56, color: 'var(--orange)', lineHeight: 1 }}>₹2,000</div>
+                <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 56, color: 'var(--orange)', lineHeight: 1 }}>₹{p2b.toLocaleString('en-IN')}</div>
+                <div style={{ marginTop: 10, fontSize: 12.5, color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>
+                  {t(`+ ${Math.round(fees.gstRate * 100)}% GST — total payable ₹${withGst(p2b, fees.gstRate).toLocaleString('en-IN')}`,
+                     `+ ${Math.round(fees.gstRate * 100)}% GST — कुल payable ₹${withGst(p2b, fees.gstRate).toLocaleString('en-IN')}`)}
+                </div>
               </div>
               <div className="ticket-dash" />
               <div style={{ padding: '20px 24px', background: 'var(--panel)' }}>

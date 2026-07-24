@@ -75,6 +75,7 @@ export async function assignRegNumber(registrationId: string): Promise<string | 
  */
 export async function ensureRegNumbers(): Promise<void> {
   await db.execute(sql`ALTER TABLE registrations ADD COLUMN IF NOT EXISTS reg_number varchar(30)`);
+  await db.execute(sql`ALTER TABLE registrations ADD COLUMN IF NOT EXISTS consents jsonb`);
   await db.execute(sql`CREATE UNIQUE INDEX IF NOT EXISTS registrations_reg_number_uniq ON registrations (reg_number)`);
   await db.execute(sql`CREATE TABLE IF NOT EXISTS app_flags (key varchar(60) PRIMARY KEY, done_at timestamptz NOT NULL DEFAULT now())`);
 

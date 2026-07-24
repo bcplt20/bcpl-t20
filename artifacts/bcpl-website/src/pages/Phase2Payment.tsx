@@ -59,7 +59,18 @@ export function Phase2Payment() {
     if (!agreed) return;
     setPayLoading(true); setPayError('');
     try {
-      const pay = await createPhase2Payment(regId);
+      // Include the declarations accepted on the previous screen (consent audit).
+      let decl: { version: string; items: string[] } | undefined;
+      try {
+        const raw = sessionStorage.getItem('bcpl_p2_declarations');
+        if (raw) {
+          const p = JSON.parse(raw);
+          if (p?.version && Array.isArray(p.items) && p.items.length) {
+            decl = { version: String(p.version), items: p.items.map(String) };
+          }
+        }
+      } catch { /* declarations are an audit payload — never block payment */ }
+      const pay = await createPhase2Payment(regId, decl);
       sessionStorage.setItem('bcpl_p2_pending', JSON.stringify({ orderId: pay.orderId, amount: pay.amount }));
       const cashfree = (window as any).Cashfree({ mode: 'production' });
       cashfree.checkout({

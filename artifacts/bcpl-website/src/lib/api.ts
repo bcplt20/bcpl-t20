@@ -411,9 +411,12 @@ export const updateDob = (dob: string) =>
 
 /* ─── Payments ─────────────────────────────────────────── */
 
-export const createPhase1Payment = (registrationId: string) =>
+export const createPhase1Payment = (
+  registrationId: string,
+  consent?: { termsVersion: string; privacyVersion: string; marketingOptIn: boolean },
+) =>
   req<{ success: boolean; orderId: string; paymentSessionId: string; amount: number }>(
-    "POST", "/payment/phase1/create", { registrationId }
+    "POST", "/payment/phase1/create", consent ? { registrationId, consent } : { registrationId }
   );
 
 export const verifyPhase1Payment = (orderId: string) =>
@@ -421,9 +424,12 @@ export const verifyPhase1Payment = (orderId: string) =>
     "POST", "/payment/phase1/verify", { orderId }
   );
 
-export const createPhase2Payment = (registrationId: string) =>
+export const createPhase2Payment = (
+  registrationId: string,
+  declarations?: { version: string; items: string[] },
+) =>
   req<{ success: boolean; orderId: string; paymentSessionId: string; amount: number }>(
-    "POST", "/payment/phase2/create", { registrationId }
+    "POST", "/payment/phase2/create", declarations ? { registrationId, declarations } : { registrationId }
   );
 
 export const verifyPhase2Payment = (orderId: string) =>

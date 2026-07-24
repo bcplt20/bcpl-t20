@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, timestamp, jsonb } from "drizzle-orm/pg-core";
 import { usersTable } from "./users";
 
 export const registrationsTable = pgTable("registrations", {
@@ -13,6 +13,11 @@ export const registrationsTable = pgTable("registrations", {
   // null | pending | payment_done | kyc_done | selected | rejected
   phase2Status: varchar("phase2_status", { length: 30 }),
   videoDeadline: timestamp("video_deadline", { withTimezone: true }),
+  /* Consent/acceptance audit: { phase1: { termsVersion, privacyVersion,
+   * marketingOptIn, acceptedAt }, phase2: { version, items, acceptedAt } }.
+   * Written by payment create endpoints; versions come from the website's
+   * legalMeta CONSENT_VERSIONS. */
+  consents:     jsonb("consents").$type<Record<string, unknown>>(),
   createdAt:    timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt:    timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });

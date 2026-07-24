@@ -3,6 +3,7 @@ import { Link } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
+import { LegalDocHeader } from '../lib/legalMeta';
 
 const OrangeDot = () => (
   <span style={{display:'inline-block',width:6,height:6,borderRadius:'50%',background:'#FF7A29',marginRight:10,flexShrink:0,marginTop:7}}/>
@@ -89,16 +90,18 @@ export function CodeOfConduct() {
               <span style={{color:'#fff',display:'block'}}>CODE OF</span>
               <span className="shimmer-gold" style={{display:'block'}}>CONDUCT.</span>
             </h1>
-            <p style={{color:'rgba(255,255,255,0.5)',fontSize:13,fontWeight:600,letterSpacing:'0.05em',marginTop:16,fontFamily:'Montserrat,sans-serif'}}>Last updated: January 15, 2025</p>
-            <p style={{color:'rgba(255,255,255,0.35)',fontSize:12,marginTop:6,fontFamily:'Inter,sans-serif'}}>यह दस्तावेज़ English में मान्य है · This document is authoritative in English.</p>
+            <p style={{color:'rgba(255,255,255,0.35)',fontSize:12,marginTop:16,fontFamily:'Inter,sans-serif'}}>यह दस्तावेज़ English में मान्य है · This document is authoritative in English.</p>
             <p style={{color:'rgba(255,255,255,0.65)',fontSize:'clamp(14px,2vw,16px)',lineHeight:1.7,maxWidth:600,margin:'16px auto 0'}}>
-              BCPL T20 holds all players to the highest standards of sportsmanship, professionalism, and integrity. These guidelines apply to every registered participant, in every trial city.
+              BCPL T20 expects high standards of sportsmanship, professionalism and integrity from all participants. These standards apply during registration, trials, the auction and the tournament, in every trial city.
             </p>
           </div>
         </section>
 
         {/* Content */}
         <div className="wrap" style={{maxWidth:860,margin:'0 auto',paddingBottom:40}}>
+
+          <LegalDocHeader doc="conduct" />
+
 
           {/* Section 1 */}
           <div className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:20,animation:'fadeSlide 0.5s ease 0.1s both'}}>
@@ -177,22 +180,28 @@ export function CodeOfConduct() {
             </div>
           </div>
 
-          {/* Section 4 */}
-          <div className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:20,animation:'fadeSlide 0.5s ease 0.35s both'}}>
+          {/* Section 3b — Prohibited Conduct catalogue */}
+          <div className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:20,animation:'fadeSlide 0.5s ease 0.32s both'}}>
             <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18}}>
-              <span style={{fontSize:28}}>🧪</span>
-              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>4. Anti-Doping Policy</h2>
+              <span style={{fontSize:28}}>🚫</span>
+              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>4. Prohibited Conduct</h2>
             </div>
             <p style={{color:'rgba(255,255,255,0.75)',fontSize:'clamp(14px,2vw,15px)',lineHeight:1.8,marginBottom:14}}>
-              BCPL T20 follows recognised anti-doping principles aligned with WADA guidelines, in both letter and spirit. A clean sport is a fair sport.
+              The following are treated as violations of this Code at any stage — <strong style={{color:'#E8B23D'}}>registration, physical trials, the auction and the tournament</strong>:
             </p>
             <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:10}}>
               {[
-                'Random doping tests may be conducted at any match stage, including trials',
-                'Players must declare all medications and supplements on the medical disclosure form',
-                'Use of any WADA-prohibited substance results in immediate investigation',
-                'Confirmed violations lead to Level 4 status — permanent ban from all BCPL editions',
-                'Players may appeal via the BCPL Disciplinary Panel within 14 days of notification',
+                'Abuse, threats, violence or intimidation toward any player, official, coach, evaluator, staff member or spectator',
+                'Harassment or discrimination of any kind, including on the basis of religion, caste, gender, region, language or disability',
+                'Bribery, inducement or any attempt to influence, pressure or intimidate coaches, evaluators or officials over assessment or selection',
+                'Submitting false documents, false declarations, forged identity or professional/employment records',
+                'Impersonation, or duplicate / multiple identity registration or fraud',
+                'Video manipulation, tampering, or submitting footage that is not the registered player\u2019s own genuine performance',
+                'Unauthorised re-trial attempts, or attempting to take a trial in another person\u2019s name or slot',
+                'Betting, match-fixing, spot-fixing, corruption or approaches related to any of these',
+                'Venue misconduct, including damaging property, ignoring safety directions or disruptive behaviour',
+                'Interfering with scoring, trial equipment, records or the assessment/ranking process',
+                'Violating applicable safety rules, or participating without required protective equipment when instructed',
               ].map((item,i)=>(
                 <li key={i} style={{display:'flex',alignItems:'flex-start',color:'rgba(255,255,255,0.75)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
                   <OrangeDot/>{item}
@@ -201,21 +210,60 @@ export function CodeOfConduct() {
             </ul>
           </div>
 
-          {/* Section 5 */}
+          {/* Section 4 */}
+          <div className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:20,animation:'fadeSlide 0.5s ease 0.35s both'}}>
+            <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18}}>
+              <span style={{fontSize:28}}>🧪</span>
+              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>5. Anti-Doping Policy</h2>
+            </div>
+            <p style={{color:'rgba(255,255,255,0.75)',fontSize:'clamp(14px,2vw,15px)',lineHeight:1.8,marginBottom:14}}>
+              BCPL T20 follows recognised anti-doping principles aligned with WADA guidelines, in both letter and spirit. A clean sport is a fair sport.
+            </p>
+            <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:10}}>
+              {[
+                'Random doping tests may be conducted at any match stage, including trials',
+                'Players must declare all medications and supplements on the medical disclosure form',
+                'Use of any WADA-prohibited substance results in investigation under the fair disciplinary process',
+                'A confirmed violation is treated as a Level 4 matter and may lead to a season ban and ineligibility for future editions',
+                'Participants may raise concerns through the published BCPL grievance process',
+              ].map((item,i)=>(
+                <li key={i} style={{display:'flex',alignItems:'flex-start',color:'rgba(255,255,255,0.75)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
+                  <OrangeDot/>{item}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Section 6 — fair disciplinary escalation */}
           <div className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:20,animation:'fadeSlide 0.5s ease 0.4s both'}}>
             <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18}}>
-              <span style={{fontSize:28}}>⚠️</span>
-              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>5. Consequences & Penalties</h2>
+              <span style={{fontSize:28}}>⚖️</span>
+              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>6. Fair Disciplinary Process</h2>
             </div>
+            <p style={{color:'rgba(255,255,255,0.75)',fontSize:'clamp(14px,2vw,15px)',lineHeight:1.8,marginBottom:16}}>
+              Where a violation is alleged, BCPL follows a fair, proportionate disciplinary process:
+            </p>
+            <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:10,marginBottom:20}}>
+              {[
+                'Notice: the participant is informed of the alleged violation and the applicable conduct rule.',
+                'Opportunity to respond: the participant is given a reasonable opportunity to respond or explain before a decision is made.',
+                'Proportionate sanction: a sanction appropriate to the severity, intent and context is applied — see the escalation levels below.',
+                'Decision: the BCPL decision is final, subject to the published grievance process.',
+              ].map((item,i)=>(
+                <li key={i} style={{display:'flex',alignItems:'flex-start',color:'rgba(255,255,255,0.75)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
+                  <OrangeDot/>{item}
+                </li>
+              ))}
+            </ul>
             <p style={{color:'rgba(255,255,255,0.75)',fontSize:'clamp(14px,2vw,15px)',lineHeight:1.8,marginBottom:20}}>
-              BCPL operates a four-level disciplinary system. The level assigned depends on severity, intent, and context of the violation.
+              Sanctions escalate with severity through the following levels. The level applied depends on the severity, intent and context of the violation.
             </p>
             <div style={{display:'grid',gap:12}}>
               {[
-                {level:'Level 1',color:'#E8B23D',bg:'rgba(232,178,61,0.1)',border:'rgba(232,178,61,0.3)',badge:'Warning',desc:'Minor on-field dissent, dress code violation, or first-time social media infraction. Formal written warning issued.'},
-                {level:'Level 2',color:'#FF7A29',bg:'rgba(255,122,41,0.1)',border:'rgba(255,122,41,0.3)',badge:'1-Match Ban',desc:'Repeated Level 1 offence, aggressive appealing, sustained verbal hostility. Player suspended for next scheduled match.'},
-                {level:'Level 3',color:'#E8493F',bg:'rgba(232,73,63,0.1)',border:'rgba(232,73,63,0.3)',badge:'Season Ban',desc:'Serious misconduct, physical altercation (non-assault), deliberate pitch tampering. Full season suspension.'},
-                {level:'Level 4',color:'#ff4444',bg:'rgba(255,68,68,0.12)',border:'rgba(255,68,68,0.4)',badge:'Permanent Ban',desc:'Assault, anti-doping violation, fraud, or repeated Level 3 offences. Permanent ineligibility from all BCPL editions.'},
+                {level:'Level 1',color:'#E8B23D',bg:'rgba(232,178,61,0.1)',border:'rgba(232,178,61,0.3)',badge:'Warning',desc:'Minor conduct issues, such as dress-code lapses or a first-time social-media infraction. A formal warning is issued.'},
+                {level:'Level 2',color:'#FF7A29',bg:'rgba(255,122,41,0.1)',border:'rgba(255,122,41,0.3)',badge:'Score Invalidation',desc:'Repeated Level 1 conduct, or conduct that compromises the fairness of an assessment. May include invalidation of the affected trial/assessment score.'},
+                {level:'Level 3',color:'#E8493F',bg:'rgba(232,73,63,0.1)',border:'rgba(232,73,63,0.3)',badge:'Disqualification',desc:'Serious misconduct — for example fraud, video manipulation, pressuring officials or venue misconduct. May lead to disqualification from the current process.'},
+                {level:'Level 4',color:'#ff4444',bg:'rgba(255,68,68,0.12)',border:'rgba(255,68,68,0.4)',badge:'Season Ban',desc:'Most serious violations — for example violence, betting/corruption, anti-doping violations or repeated Level 3 conduct. May lead to a season ban and ineligibility for future editions.'},
               ].map((item,i)=>(
                 <div key={i} style={{background:item.bg,border:`1px solid ${item.border}`,borderRadius:12,padding:'14px 18px',display:'flex',gap:14,alignItems:'flex-start',flexWrap:'wrap'}}>
                   <div style={{flexShrink:0,textAlign:'center',minWidth:80}}>
@@ -233,9 +281,9 @@ export function CodeOfConduct() {
             <div style={{display:'flex',gap:12,alignItems:'flex-start'}}>
               <span style={{fontSize:24,flexShrink:0}}>🚫</span>
               <div>
-                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#FF7A29',marginBottom:6}}>Critical Notice</div>
+                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#FF7A29',marginBottom:6}}>Serious Violations</div>
                 <p style={{color:'rgba(255,255,255,0.85)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
-                  Any <strong style={{color:'#FF7A29'}}>Level 3 or Level 4</strong> violation results in <strong style={{color:'#E8493F'}}>immediate disqualification and forfeiture of the registration fee.</strong> No appeal halts the initial suspension — appeals only affect future eligibility.
+                  A confirmed <strong style={{color:'#FF7A29'}}>Level 3 or Level 4</strong> violation may result in <strong style={{color:'#E8493F'}}>disqualification or a season ban</strong> following the fair disciplinary process. Fee treatment in such cases follows the applicable <Link href="/refunds" style={{color:'#E8B23D',fontWeight:600}}>Refund &amp; Cancellation Policy</Link>. Participants may raise concerns through the published BCPL grievance process.
                 </p>
               </div>
             </div>
@@ -246,7 +294,7 @@ export function CodeOfConduct() {
             <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(18px,3vw,22px)',marginBottom:8}}>
               Ready to Play by the Rules?
             </div>
-            <p style={{color:'rgba(255,255,255,0.6)',fontSize:14,marginBottom:20}}>Register for BCPL T20 Season 5 and be part of the world's greatest corporate cricket league.</p>
+            <p style={{color:'rgba(255,255,255,0.6)',fontSize:14,marginBottom:20}}>Register for BCPL T20 Season 5 and be part of the corporate cricket community.</p>
             <Link href="/register" className="btn-fire" style={{padding:'14px 36px',fontSize:16,width:'100%',maxWidth:300,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register for Phase 1 →</Link>
           </div>
         </div>
