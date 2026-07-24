@@ -62,31 +62,59 @@ export default function SponsorsView() {
   }
   useEffect(() => { void load(); }, []);
 
-  /** Optimistic update + server save; reloads from server on failure. */
+  /* Single-flight coalescing save: only ONE PUT is in flight at a time and
+     it always carries the LATEST list, so rapid edit/delete clicks can never
+     land out of order and overwrite newer data with stale data. On failure
+     we resync from the server instead of guessing a rollback state. */
+  const pendingRef  = useRef<Sponsor[] | null>(null);
+  const inflightRef = useRef(false);
+
   async function persist(next: Sponsor[]) {
-    const prev = sponsors;
-    setSponsors(next);
+    setSponsors(next);           // optimistic UI
+    pendingRef.current = next;   // latest snapshot wins
+    if (inflightRef.current) return;
+    inflightRef.current = true;
     setSaving(true);
     try {
-      await saveSponsorsAdmin(next);
+      while (pendingRef.current !== null) {
+        const batch = pendingRef.current;
+        pendingRef.current = null;
+        await saveSponsorsAdmin(batch);
+      }
     } catch (e) {
-      setSponsors(prev);
+      pendingRef.current = null;
       alert("Could not save to server: " + (e instanceof Error ? e.message : "unknown error"));
+      await load();              // resync UI with server truth
     } finally {
+      inflightRef.current = false;
       setSaving(false);
     }
   }
 
   /** One-time rescue of sponsors entered before server storage existed.
-      Base64 logos from the old version are dropped (server accepts URL logos
-      only) — re-upload logos after import. */
+      Every row is fully sanitized to the exact server schema (extra keys
+      dropped, lengths clamped, non-http logos/websites emptied) so one bad
+      legacy row can't fail the whole import. Base64 logos are dropped —
+      re-upload logos after import. */
   async function importLegacy() {
     if (!legacy) return;
-    const cleaned = legacy.map(s => ({
-      ...s,
-      logo: /^https?:\/\//i.test(s.logo || "") ? s.logo : "",
-      status: (["active", "negotiating", "expired"] as const).includes(s.status) ? s.status : "active",
-    }));
+    const httpOk = (v: unknown) => (typeof v === "string" && /^https?:\/\//i.test(v) ? v.slice(0, 600) : "");
+    const str = (v: unknown, max: number, fallback = "") =>
+      (typeof v === "string" && v ? v.slice(0, max) : fallback);
+    const cleaned: Sponsor[] = legacy
+      .filter(s => s && typeof s.name === "string" && s.name.trim() !== "")
+      .map((s, i) => ({
+        id: str(s.id, 60, `SP-IMP-${Date.now()}-${i}`),
+        name: str(s.name, 120).trim(),
+        category: str(s.category, 80),
+        logo: httpOk(s.logo),
+        amount: str(s.amount, 40),
+        website: httpOk(s.website),
+        contract: str(s.contract, 40),
+        status: ["active", "negotiating", "expired"].includes(String(s.status))
+          ? (s.status as Sponsor["status"]) : "active",
+        visibility: str(s.visibility, 60, "All Platforms"),
+      }));
     setSaving(true);
     try {
       await saveSponsorsAdmin(cleaned);
