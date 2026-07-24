@@ -59,14 +59,14 @@ export const getFees = () => req<FeeConfig>("GET", "/fees");
 export const getNextAction = () =>
   req<{ action: string; phase1Status?: string; phase2Status?: string | null }>("GET", "/user/next-action");
 
-export const sendOtp = (phone: string, purpose: "login" | "register" = "login") =>
+export const sendOtp = (phone: string, purpose: "login" | "register" = "login", draftKey?: string) =>
   req<{ success: boolean; message: string; devOtp?: string }>(
-    "POST", "/auth/send-otp", { phone, purpose }
+    "POST", "/auth/send-otp", { phone, purpose, ...(draftKey ? { draftKey } : {}) }
   );
 
-export const verifyOtp = (phone: string, otp: string, purpose: "login" | "register" = "login", name?: string, email?: string) =>
+export const verifyOtp = (phone: string, otp: string, purpose: "login" | "register" = "login", name?: string, email?: string, draftKey?: string) =>
   req<{ success: boolean; token: string; user: { id: string; name: string; phone: string; email: string } }>(
-    "POST", "/auth/verify-otp", { phone, otp, purpose, name, email }
+    "POST", "/auth/verify-otp", { phone, otp, purpose, name, email, ...(draftKey ? { draftKey } : {}) }
   );
 
 export const getDashboard = () =>

@@ -7,6 +7,7 @@ import {
   registerPhase1, createPhase1Payment, getRegistrationStatus, updateDob,
 } from '@/lib/api';
 import { fireReferralAttribution } from '@/lib/marketingApi';
+import { getDraftKey, queueDraftSave, flushDraftSave, resumeDraft } from '@/lib/draftAutosave';
 import { CONSENT_VERSIONS } from '../lib/legalMeta';
 import { useLang } from '../lib/i18n';
 import { useFees, withGst } from '../lib/fees';
@@ -148,6 +149,44 @@ export function Registration() {
   const ageError = dob && !dobValid
     ? (dob > maxDob ? t('You must be at least 18 years old to register.', 'Register करने के लिए आपकी उम्र कम से कम 18 साल होनी चाहिए।') : t('Maximum age limit is 45 years.', 'अधिकतम उम्र सीमा 45 साल है।'))
     : '';
+
+  /* ── Incomplete-registration autosave (admin funnel visibility) ──
+     Only client-valid values are sent — one bad field would reject the
+     whole upsert server-side. Fire-and-forget; never blocks the form. */
+  useEffect(() => {
+    const f: Record<string, unknown> = {};
+    const nm = name.trim();
+    if (nm.length >= 1) f.fullName = nm.slice(0, 100);
+    const em = email.trim();
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)) f.email = em;
+    if (/^[6-9]\d{9}$/.test(phone)) f.phone = phone;
+    if (dob && dobValid) f.dob = dob;
+    if (Object.keys(f).length) queueDraftSave(f);
+  }, [name, email, phone, dob, dobValid]);
+  useEffect(() => { if (role) queueDraftSave({ role: role.id as 'bat' | 'bowl' | 'wk' | 'ar' }); }, [role]);
+  useEffect(() => { if (city) queueDraftSave({ trialCity: city }); }, [city]);
+  useEffect(() => {
+    const done = ({ 2: 'contact', 3: 'cricket', 4: 'review' } as const)[step as 2 | 3 | 4];
+    if (done) flushDraftSave({ lastCompletedStep: done });
+  }, [step]);
+
+  /* Resume a previous incomplete draft (same browser) — silent prefill. */
+  useEffect(() => {
+    if (isAuthenticated()) return;
+    resumeDraft().then(d => {
+      if (!d) return;
+      if (d.fullName) setName(v => v || d.fullName!);
+      if (d.email)    setEmail(v => v || d.email!);
+      if (d.phone)    setPhone(v => v || d.phone!);
+      if (d.dob)      setDob(v => v || String(d.dob).slice(0, 10));
+      if (d.role)     setRole(r => r ?? (ROLES.find(x => x.id === d.role) ?? null));
+      if (d.trialCity) {
+        setCity(c => c || d.trialCity!);
+        setCityQ(q => q || d.trialCity!);
+      }
+    }).catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const canNext =
     step === 1 ? !!(name && email && phone.length === 10 && dob && dobValid) :
@@ -304,7 +343,8 @@ export function Registration() {
   const handlePayOtpSend = async () => {
     setPayOtpLoading(true); setPayOtpError(''); setPayOtpAlreadyReg(false);
     try {
-      const r = await sendOtp(phone, 'register');
+      await flushDraftSave(); // draft row must exist before the server-side OTP hook fires
+      const r = await sendOtp(phone, 'register', getDraftKey());
       if (r.devOtp) console.info('[DEV OTP]', r.devOtp);
       setPayOtpStep('otp');
       startPayOtpTimer();
@@ -319,7 +359,7 @@ export function Registration() {
   const handlePayOtpResend = async () => {
     setPayOtpLoading(true); setPayOtpError('');
     try {
-      const r = await sendOtp(phone, 'register');
+      const r = await sendOtp(phone, 'register', getDraftKey());
       if (r.devOtp) console.info('[DEV OTP]', r.devOtp);
       startPayOtpTimer();
     } catch (e: any) { setPayOtpError(e.message ?? t('Failed to resend OTP', 'OTP दोबारा भेजने में विफल')); }
@@ -329,7 +369,7 @@ export function Registration() {
   const handlePayOtpVerify = async () => {
     setPayOtpLoading(true); setPayOtpError('');
     try {
-      const r = await verifyOtp(phone, payOtp, 'register', name, email);
+      const r = await verifyOtp(phone, payOtp, 'register', name, email, getDraftKey());
       saveAuthToken(r.token, r.user);
       setShowPayOtp(false);
       setPayOtpLoading(false);
