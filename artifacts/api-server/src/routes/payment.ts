@@ -126,7 +126,7 @@ export function paymentAmountMismatch(gw: { amount?: number; currency?: string }
   return !Number.isFinite(paid) || !Number.isFinite(want) || paid !== want || currencyBad;
 }
 
-async function flagP1AmountMismatch(orderId: string, gw: { amount?: number; currency?: string }, expected: string) {
+export async function flagP1AmountMismatch(orderId: string, gw: { amount?: number; currency?: string }, expected: string) {
   await db.update(phase1PaymentsTable).set({ status: "amount_mismatch" })
     .where(and(eq(phase1PaymentsTable.cashfreeOrderId, orderId), eq(phase1PaymentsTable.status, "pending")));
   console.error("[PAYMENT] phase1 amount mismatch — flagged for reconciliation",
@@ -135,7 +135,7 @@ async function flagP1AmountMismatch(orderId: string, gw: { amount?: number; curr
     newValue: { gatewayAmount: gw.amount ?? null, gatewayCurrency: gw.currency ?? null, expected } });
 }
 
-async function flagP2AmountMismatch(orderId: string, gw: { amount?: number; currency?: string }, expected: string) {
+export async function flagP2AmountMismatch(orderId: string, gw: { amount?: number; currency?: string }, expected: string) {
   await db.update(phase2PaymentsTable).set({ status: "amount_mismatch" })
     .where(and(eq(phase2PaymentsTable.cashfreeOrderId, orderId), eq(phase2PaymentsTable.status, "pending")));
   console.error("[PAYMENT] phase2 amount mismatch — flagged for reconciliation",

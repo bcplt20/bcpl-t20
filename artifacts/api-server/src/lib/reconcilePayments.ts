@@ -1,6 +1,12 @@
 // Periodic sweep: reconcile stale 'pending' payment rows against Cashfree.
 // Abandoned checkouts become 'failed'; missed webhook successes become 'success'
 // with paidAt set and registration status synced (mirrors the webhook handler).
+//
+// Integrity: this path enforces the SAME amount/currency gate as verify/webhook
+// before promoting anything — otherwise reconcile would be a bypass around the
+// tamper check. Mismatches are flagged 'amount_mismatch' (manual review, never
+// swept, never activated). A PAID order whose payment details can't be fetched
+// is deferred to the next sweep rather than activated unverified.
 import { db } from "@workspace/db";
 import {
   registrationsTable,
@@ -9,6 +15,7 @@ import {
 } from "@workspace/db/schema";
 import { eq, and, or, isNull, lt } from "drizzle-orm";
 import { getOrderStatus, getPaymentStatus, hasCashfreeCredentials } from "./cashfree";
+import { paymentAmountMismatch, flagP1AmountMismatch, flagP2AmountMismatch } from "../routes/payment";
 import { assignRegNumber } from "../routes/register";
 import { logger } from "./logger";
 
@@ -55,14 +62,34 @@ async function markFailed(phase: Phase, orderId: string) {
   logger.info({ phase, orderId }, "Marked abandoned payment as failed");
 }
 
-async function reconcileOne(phase: Phase, orderId: string) {
+async function flagMismatch(
+  phase: Phase, orderId: string,
+  gw: { amount?: number; currency?: string }, expected: string,
+) {
+  if (phase === 1) await flagP1AmountMismatch(orderId, gw, expected);
+  else await flagP2AmountMismatch(orderId, gw, expected);
+}
+
+// Exported for regression tests (tests/reconcileIntegrity.test.ts) — tests call
+// it with ONE seeded order so a suite never sweeps unrelated dev-DB rows.
+export async function reconcileOne(phase: Phase, orderId: string, expectedAmount: string) {
   const order = await getOrderStatus(orderId);
   if (!order) return; // Cashfree unreachable or unknown — leave untouched, retry next sweep
 
   if (order.orderStatus === "PAID") {
-    // Missed webhook — fetch the payment id, then confirm
+    // Missed webhook — fetch payment details and confirm THROUGH the amount gate.
     const pay = await getPaymentStatus(orderId);
-    await markSuccess(phase, orderId, pay?.status === "SUCCESS" ? pay.paymentId : undefined);
+    if (!pay) {
+      // Order says PAID but the payment record is unavailable: never activate
+      // on an unverified amount — leave pending and retry next sweep.
+      logger.warn({ phase, orderId }, "Reconcile: order PAID but payment details unavailable; deferring");
+      return;
+    }
+    if (paymentAmountMismatch(pay, expectedAmount)) {
+      await flagMismatch(phase, orderId, pay, expectedAmount);
+      return;
+    }
+    await markSuccess(phase, orderId, pay.status === "SUCCESS" ? pay.paymentId : undefined);
     return;
   }
 
@@ -74,6 +101,10 @@ async function reconcileOne(phase: Phase, orderId: string) {
   // ACTIVE but older than the cutoff: only fail once Cashfree confirms no successful payment
   const pay = await getPaymentStatus(orderId);
   if (pay?.status === "SUCCESS") {
+    if (paymentAmountMismatch(pay, expectedAmount)) {
+      await flagMismatch(phase, orderId, pay, expectedAmount);
+      return;
+    }
     await markSuccess(phase, orderId, pay.paymentId);
   } else if (pay) {
     await markFailed(phase, orderId);
@@ -89,11 +120,11 @@ export async function reconcileAbandonedPayments() {
   const cutoff = new Date(Date.now() - ONE_DAY_MS);
 
   const [p1, p2] = await Promise.all([
-    db.select({ orderId: phase1PaymentsTable.cashfreeOrderId })
+    db.select({ orderId: phase1PaymentsTable.cashfreeOrderId, amount: phase1PaymentsTable.amount })
       .from(phase1PaymentsTable)
       .where(and(eq(phase1PaymentsTable.status, "pending"), lt(phase1PaymentsTable.createdAt, cutoff)))
       .limit(200),
-    db.select({ orderId: phase2PaymentsTable.cashfreeOrderId })
+    db.select({ orderId: phase2PaymentsTable.cashfreeOrderId, amount: phase2PaymentsTable.amount })
       .from(phase2PaymentsTable)
       .where(and(eq(phase2PaymentsTable.status, "pending"), lt(phase2PaymentsTable.createdAt, cutoff)))
       .limit(200),
@@ -102,12 +133,12 @@ export async function reconcileAbandonedPayments() {
   if (p1.length === 0 && p2.length === 0) return;
   logger.info({ phase1: p1.length, phase2: p2.length }, "Reconciling stale pending payments");
 
-  for (const { orderId } of p1) {
-    try { await reconcileOne(1, orderId); }
+  for (const { orderId, amount } of p1) {
+    try { await reconcileOne(1, orderId, String(amount)); }
     catch (e) { logger.error({ err: e, orderId }, "Phase 1 reconcile failed"); }
   }
-  for (const { orderId } of p2) {
-    try { await reconcileOne(2, orderId); }
+  for (const { orderId, amount } of p2) {
+    try { await reconcileOne(2, orderId, String(amount)); }
     catch (e) { logger.error({ err: e, orderId }, "Phase 2 reconcile failed"); }
   }
 }

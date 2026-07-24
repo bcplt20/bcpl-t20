@@ -1,7 +1,8 @@
 /**
  * OTP abuse protection (security audit — rate limiting / brute-force):
  *  - send-otp: per-IP burst cap + per-phone hourly cap + resend cooldown
- *  - verify-otp: wrong-attempt lockout (6-digit brute-force guard)
+ *  - verify-otp: per-IP throttle + session burn after repeated wrong guesses
+ *    (deliberately NO per-phone lockout — that was a lockout-DoS vector)
  *
  * NO real SMS can fire from this suite (MSG91 keys are live in dev):
  *  - unit tests hit the guard module directly (no HTTP)
@@ -23,11 +24,14 @@ const { otpSessionsTable } = await import("@workspace/db/schema");
 // unique per-run phones (valid Indian format, never real recipients — no SMS is sent)
 const lockPhone = "96" + String(Date.now()).slice(-8);
 const capPhone  = "97" + String(Date.now() + 1).slice(-8);
+const burnPhone = "95" + String(Date.now() + 2).slice(-8);
 
 beforeEach(() => guard.__resetOtpGuards());
 
 afterAll(async () => {
-  await db.delete(otpSessionsTable).where(eq(otpSessionsTable.phone, capPhone));
+  for (const p of [capPhone, lockPhone, burnPhone]) {
+    await db.delete(otpSessionsTable).where(eq(otpSessionsTable.phone, p));
+  }
   guard.__resetOtpGuards();
 });
 
@@ -44,29 +48,71 @@ describe("otpGuard (unit)", () => {
     expect(guard.checkOtpSendIp(ip).ok).toBe(true);
   });
 
-  it("locks a phone after too many wrong OTP attempts, clears on success", () => {
+  it("caps verify attempts per IP, then unblocks after reset", () => {
+    const ip = "203.0.113.9";
+    let lastOk = true;
+    for (let i = 0; i < guard.OTP_LIMITS.VERIFY_IP_MAX; i++) lastOk = guard.checkOtpVerifyIp(ip).ok;
+    expect(lastOk).toBe(true); // exactly at the cap is still allowed
+    expect(guard.checkOtpVerifyIp(ip).ok).toBe(false);
+    guard.__resetOtpGuards();
+    expect(guard.checkOtpVerifyIp(ip).ok).toBe(true);
+  });
+
+  it("counts wrong-OTP attempts per phone and clears on success", () => {
     const p = "9800000001";
-    expect(guard.isOtpVerifyLocked(p)).toBe(false);
-    for (let i = 0; i < guard.OTP_LIMITS.VERIFY_MAX_FAILS; i++) guard.registerOtpVerifyFail(p);
-    expect(guard.isOtpVerifyLocked(p)).toBe(true);
-    guard.clearOtpVerifyFails(p); // successful verify clears the counter
-    expect(guard.isOtpVerifyLocked(p)).toBe(false);
+    let n = 0;
+    for (let i = 0; i < guard.OTP_LIMITS.VERIFY_MAX_FAILS; i++) n = guard.registerOtpVerifyFail(p);
+    expect(n).toBe(guard.OTP_LIMITS.VERIFY_MAX_FAILS);
+    guard.clearOtpVerifyFails(p); // successful verify (or session burn) resets
+    expect(guard.registerOtpVerifyFail(p)).toBe(1);
   });
 });
 
-describe("verify-otp brute-force lockout (HTTP, no SMS)", () => {
-  it("returns 429 after repeated wrong OTPs for the same phone", async () => {
-    for (let i = 0; i < guard.OTP_LIMITS.VERIFY_MAX_FAILS; i++) {
+describe("verify-otp abuse hardening (HTTP, no SMS)", () => {
+  it("never locks a phone that has NO active OTP session (lockout-DoS guard)", async () => {
+    // An attacker hammering arbitrary numbers must not be able to block them.
+    for (let i = 0; i < guard.OTP_LIMITS.VERIFY_MAX_FAILS + 4; i++) {
       const r = await request(app)
         .post("/api/auth/verify-otp")
         .send({ phone: lockPhone, otp: "000000", purpose: "login" });
-      expect(r.status).toBe(400); // invalid OTP, counted as a failed attempt
+      expect(r.status).toBe(400); // generic invalid — never 429, nothing counted
     }
-    const locked = await request(app)
+    // The rightful owner can still verify immediately: seed a live session and
+    // use the correct code — it must get PAST the OTP check (404 = no account
+    // for this phone, proving the code was accepted, phone never locked).
+    await db.insert(otpSessionsTable).values({
+      phone: lockPhone, otpCode: "222333", purpose: "login",
+      expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+    });
+    const ok = await request(app)
       .post("/api/auth/verify-otp")
-      .send({ phone: lockPhone, otp: "000000", purpose: "login" });
-    expect(locked.status).toBe(429);
-    expect(String(locked.body.error)).toMatch(/too many/i);
+      .send({ phone: lockPhone, otp: "222333", purpose: "login" });
+    expect(ok.status).toBe(404);
+    expect(String(ok.body.error)).toMatch(/no account/i);
+  });
+
+  it("burns the pending OTP after too many wrong guesses (brute-force guard)", async () => {
+    await db.insert(otpSessionsTable).values({
+      phone: burnPhone, otpCode: "654321", purpose: "login",
+      expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+    });
+    for (let i = 0; i < guard.OTP_LIMITS.VERIFY_MAX_FAILS; i++) {
+      const r = await request(app)
+        .post("/api/auth/verify-otp")
+        .send({ phone: burnPhone, otp: "000000", purpose: "login" });
+      expect(r.status).toBe(400); // counted — a live session exists
+    }
+    // Even the CORRECT code now fails: the session was invalidated, capping
+    // the 6-digit space at VERIFY_MAX_FAILS guesses per issued OTP.
+    const after = await request(app)
+      .post("/api/auth/verify-otp")
+      .send({ phone: burnPhone, otp: "654321", purpose: "login" });
+    expect(after.status).toBe(400);
+
+    const rows = await db.select().from(otpSessionsTable)
+      .where(eq(otpSessionsTable.phone, burnPhone));
+    expect(rows.length).toBeGreaterThan(0);
+    expect(rows.every((r) => r.usedAt !== null)).toBe(true); // burned, not locked
   });
 });
 

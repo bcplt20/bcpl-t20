@@ -6,7 +6,7 @@ import { eq, and, gt, gte, isNull } from "drizzle-orm";
 import { sendOtp, otpConfigured } from "../lib/sms";
 import { signToken } from "../lib/auth";
 import { requireAuth, type AuthRequest } from "../middlewares/auth";
-import { checkOtpSendIp, isOtpVerifyLocked, registerOtpVerifyFail, clearOtpVerifyFails } from "../lib/otpGuard";
+import { checkOtpSendIp, checkOtpVerifyIp, registerOtpVerifyFail, clearOtpVerifyFails, OTP_LIMITS } from "../lib/otpGuard";
 import { z } from "zod";
 
 const router = Router();
@@ -116,24 +116,42 @@ router.post("/verify-otp", async (req, res) => {
 
   const { phone, otp, purpose, name, email, draftKey } = parsed.data;
 
-  // ── Abuse guard: brute-force lockout on the 6-digit code ──
-  if (isOtpVerifyLocked(phone)) {
-    return void res.status(429).json({ error: "Too many incorrect attempts. Please wait 15 minutes and try again." });
+  // ── Abuse guard: per-IP verify throttle (bulk brute-force / harassment) ──
+  const vip = checkOtpVerifyIp(clientIp(req));
+  if (!vip.ok) {
+    return void res.status(429).json({
+      error: "Too many attempts from your network. Please try again later.",
+      retryAfter: vip.retryAfter,
+    });
   }
 
-  // Validate OTP
-  const [session] = await db.select().from(otpSessionsTable).where(
+  // Fetch the phone's LIVE sessions (unexpired, unused) WITHOUT filtering on
+  // the code, so wrong guesses are only ever counted against a real pending
+  // OTP. Counting when no session exists would let an attacker lock arbitrary
+  // phone numbers out of login (lockout-DoS).
+  const active = await db.select().from(otpSessionsTable).where(
     and(
       eq(otpSessionsTable.phone, phone),
-      eq(otpSessionsTable.otpCode, otp),
       eq(otpSessionsTable.purpose, purpose),
       gt(otpSessionsTable.expiresAt, new Date()),
       isNull(otpSessionsTable.usedAt),
     ),
-  ).limit(1);
+  );
+  const session = active.find((s) => s.otpCode === otp);
 
   if (!session) {
-    registerOtpVerifyFail(phone);
+    if (active.length > 0) {
+      const fails = registerOtpVerifyFail(phone);
+      if (fails >= OTP_LIMITS.VERIFY_MAX_FAILS) {
+        // Too many wrong guesses: burn the pending OTP(s) instead of locking
+        // the phone. The owner just requests a fresh OTP (send caps apply);
+        // the 6-digit space stays capped at VERIFY_MAX_FAILS guesses per OTP.
+        await db.update(otpSessionsTable).set({ usedAt: new Date() }).where(
+          and(eq(otpSessionsTable.phone, phone), isNull(otpSessionsTable.usedAt)),
+        );
+        clearOtpVerifyFails(phone);
+      }
+    }
     return void res.status(400).json({ error: "Invalid or expired OTP" });
   }
 

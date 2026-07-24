@@ -114,8 +114,14 @@ describe("Stage 5 — admin users RBAC", () => {
     expect(r.body.admin.permissions).toContain("finance");
     expect("passwordHash" in r.body.admin).toBe(false);
     finId = r.body.admin.id;
-    const [audit] = await db.select().from(auditLogsTable)
-      .where(and(eq(auditLogsTable.action, "admin_user.create"), eq(auditLogsTable.entityKey, finEmail))).limit(1);
+    // The route's writeAudit is intentionally fire-and-forget (response is not
+    // blocked on the audit insert) — poll briefly instead of racing it.
+    let audit: unknown;
+    for (let i = 0; i < 20 && !audit; i++) {
+      [audit] = await db.select().from(auditLogsTable)
+        .where(and(eq(auditLogsTable.action, "admin_user.create"), eq(auditLogsTable.entityKey, finEmail))).limit(1);
+      if (!audit) await new Promise((r) => setTimeout(r, 100));
+    }
     expect(audit).toBeTruthy();
   });
 
