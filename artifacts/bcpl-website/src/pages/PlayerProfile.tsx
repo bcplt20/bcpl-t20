@@ -62,18 +62,22 @@ function deriveStep(data: any): Step {
   const kyc   = data?.kyc?.status  ?? null;
   const trial = data?.trial ?? null;
 
+  /* Strongest server truth first: the dashboard only sends a trial block
+     (or reaches kyc_done / verified KYC) when every earlier stage is already
+     cleared — historic accounts can miss old video/payment rows, and those
+     gaps must never drag a trial-stage player back to "upload video". */
+  if (trial || p2 === 'kyc_done' || kyc === 'verified') {
+    if (trial?.assessmentSubmitted)                                 return 'trial_completed';
+    if (trial?.checkedInAt)                                         return 'trial_checked_in';
+    if (trial)                                                      return 'trial_scheduled';
+    return 'trial_wait';
+  }
   if (p1 === 'rejected')                                            return 'rejected';
   if (!data.video?.submitted)                                       return 'upload_video';
   if (p1 !== 'selected')                                            return 'under_review';
   if (!p2)                                                          return 'p2_register';
   if (p2 === 'payment_done' && (!kyc || kyc === 'failed'))          return 'p2_kyc';
   if (p2 === 'payment_done' && kyc === 'pending')                   return 'p2_kyc_pending';
-  if (p2 === 'kyc_done' || kyc === 'verified') {
-    if (trial?.assessmentSubmitted)                                 return 'trial_completed';
-    if (trial?.checkedInAt)                                         return 'trial_checked_in';
-    if (trial)                                                      return 'trial_scheduled';
-    return 'trial_wait';
-  }
   return 'under_review';
 }
 

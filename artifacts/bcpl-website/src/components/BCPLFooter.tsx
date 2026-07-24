@@ -53,7 +53,7 @@ export function BCPLFooter() {
               <img src={BASE + "bcpl-assets/bcpl-logo-white.png"} alt="BCPL"
                 style={{ height:38, maxWidth:120, width:"auto", objectFit:"contain", display:"block", flexShrink:0 }}/>
               <div style={{ display:"inline-flex", alignItems:"center", gap:4, background:"rgba(232,178,61,0.1)", border:"1px solid rgba(232,178,61,0.4)", borderRadius:6, padding:"3px 9px", flexShrink:0, whiteSpace:"nowrap" }}>
-                <span className="s5-trophy" style={{ fontSize:9 }}>🏆</span>
+                
                 <span className="s5-badge-text" style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:9, color:"#E8B23D", letterSpacing:".12em" }}>SEASON 5</span>
               </div>
             </Link>
@@ -101,7 +101,7 @@ export function BCPLFooter() {
               <span style={{ color:"rgba(255,255,255,.1)", fontSize:10 }}>|</span>
               <Link href="/refunds"  style={{ fontSize:11, color:"rgba(255,255,255,.2)", textDecoration:"none" }} className="bcpl-foot-link">Refund Policy</Link>
               <span style={{ color:"rgba(255,255,255,.1)", fontSize:10 }}>|</span>
-              <span style={{ fontSize:11, color:"rgba(255,255,255,.15)" }}>Made with 🏏 in India</span>
+              <span style={{ fontSize:11, color:"rgba(255,255,255,.15)" }}>Made in India</span>
             </div>
           </div>
         </div>
