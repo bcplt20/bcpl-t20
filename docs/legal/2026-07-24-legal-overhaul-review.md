@@ -1,5 +1,5 @@
 # BCPL T20 — Legal Content Overhaul (Staging) — Review Pack
-**Date:** 24 July 2026 · **Status:** LEGAL APPROVAL PENDING — implemented on staging only, NOT deployed to production.
+**Date:** 24 July 2026 · **Status:** APPROVED by owner (24 July 2026) — `LEGAL_APPROVAL_PENDING` flipped to false; effective date July 24, 2026. Goes live with the next GitHub push + owner-run server deploy.
 
 ## What was done
 All player-facing legal/policy pages were rewritten to the mandated legal implementation spec, and consent capture was added to the registration/payment flows. Every legal page now carries a version header (version · effective date · last updated), an amber **LEGAL APPROVAL PENDING** banner, and a Print/Download-PDF button. The banner and "draft" markers are controlled by a single flag (`LEGAL_APPROVAL_PENDING` in `artifacts/bcpl-website/src/lib/legalMeta.tsx`) — flipped off in one line upon approval.

@@ -7,7 +7,7 @@ import { useLang } from './i18n';
  *  approves the legal wording for production publication.
  * ═══════════════════════════════════════════════════════════════════ */
 
-export const LEGAL_APPROVAL_PENDING = true;
+export const LEGAL_APPROVAL_PENDING = false; // owner approved the legal wording on 24 July 2026
 
 export const LEGAL_LAST_UPDATED = 'July 24, 2026';
 export const LEGAL_LAST_UPDATED_HI = '24 जुलाई 2026';
