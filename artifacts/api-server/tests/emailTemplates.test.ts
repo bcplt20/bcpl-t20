@@ -29,6 +29,9 @@ import {
   emailLogoUrl,
   isEmailVisible,
   EmailShell,
+  SocialBar,
+  EMAIL_ICON_BASE,
+  SOCIAL,
 } from "../src/lib/emailTheme";
 
 /** Build one representative render of every exported template. */
@@ -163,6 +166,8 @@ describe("sponsor strip slot + dynamic rendering", () => {
  *  CSS like width:100% never trips the marketing-claim grep. */
 function visibleText(html: string): string {
   return html
+    .replace(/<style[\s\S]*?<\/style>/gi, " ") // drop CSS (media queries etc.)
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
     .replace(/<[^>]*>/g, " ") // remove tags (and their style attributes)
     .replace(/&[a-z]+;|&#\d+;/gi, " ") // decode-ish: drop entities
     .replace(/\s+/g, " ")
@@ -193,5 +198,69 @@ describe("shell structure integrity", () => {
     expect(html).toContain(SPONSOR_TOKEN);
     expect(html).toContain("Follow BCPL");
     expect(html).toContain("Kriparthi Playing 11 Pvt. Ltd.");
+  });
+
+  it("footer is responsive (stack hook + media query)", () => {
+    const html = EmailShell("<p>body</p>");
+    expect(html).toContain("bcpl-stack");
+    expect(html).toContain("@media only screen and (max-width:480px)");
+  });
+});
+
+describe("social bar uses hosted PNG icons (no blank-square data-URI SVG)", () => {
+  const bar = SocialBar();
+
+  it("references absolute hosted PNG URLs, not data-URI SVG", () => {
+    expect(bar).not.toContain("data:image/svg");
+    expect(EMAIL_ICON_BASE).toBe("https://bcplt20.com/email-icons");
+  });
+
+  it("renders one PNG per platform that has a configured URL", () => {
+    for (const kind of ["instagram", "facebook", "x", "youtube", "website"] as const) {
+      expect(bar).toContain(`${EMAIL_ICON_BASE}/${kind}.png`);
+    }
+    // every icon has width/height + alt + a clickable link
+    expect(bar).toMatch(/width="24" height="24"/);
+    expect(bar).toContain('alt="Instagram"');
+    expect(bar).toContain('alt="Website"');
+    expect(bar).toContain(SOCIAL.website as string);
+  });
+
+  it("omits LinkedIn because no URL is configured (never guessed)", () => {
+    expect(SOCIAL.linkedin).toBeUndefined();
+    expect(bar).not.toContain("linkedin.png");
+  });
+});
+
+describe("hero/status icons are hosted PNGs (Gmail/Outlook safe)", () => {
+  it("every template's hero medallion references a hosted PNG, not data-URI SVG", () => {
+    for (const r of rendered) {
+      expect(r.html).not.toContain("data:image/svg");
+      expect(r.html).toMatch(new RegExp(`${EMAIL_ICON_BASE.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\\\$&")}/hero-[a-z]+-[a-z]+\\.png`));
+    }
+  });
+});
+
+describe("premium upgrades", () => {
+  it("registration email uses the premium success banner", () => {
+    const r = rendered.find((x) => x.key === "phase1_receipt")!;
+    expect(r.html).toContain("Confirmed");
+    expect(r.html).toContain("secured");
+  });
+
+  it("video received email uses a stylized timeline (received -> review -> 48h)", () => {
+    const r = rendered.find((x) => x.key === "video_submitted")!;
+    expect(r.html).toContain("Submission Received");
+    expect(r.html).toContain("Assessment In Progress");
+    expect(r.html).toContain("Result Within 48 Hours");
+  });
+
+  it("result ready email uses a premium score-card panel and stays outcome-neutral", () => {
+    const r = rendered.find((x) => x.key === "phase1_result_ready")!;
+    expect(r.html).toContain("Phase 1 Score Card");
+    expect(r.html).toContain("Ready to View");
+    // outcome-neutral: no numeric score, no pass/fail verdict, no foul copy
+    expect(visibleText(r.html)).not.toMatch(/\b\d{1,3}\s*\/\s*100\b/);
+    expect(r.html).not.toMatch(/passed|failed|rejected|not selected/i);
   });
 });

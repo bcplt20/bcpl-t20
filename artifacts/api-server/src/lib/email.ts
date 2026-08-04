@@ -9,6 +9,9 @@ import {
   InfoCard,
   KeyValueTable,
   NextSteps,
+  Timeline,
+  SuccessBanner,
+  ScoreCardPanel,
   StatusCard,
   PrimaryCTA,
   NoteBox,
@@ -101,7 +104,8 @@ export function tplPhase1Receipt(name: string, role: string, amount: number, reg
     subject: "BCPL T20 Season 5 — Registration Confirmed",
     htmlContent: EmailShell(`
       ${HeroStatus({ iconUrl: ICONS.check(COLORS.green), ring: COLORS.green, titleColor: COLORS.green, title: "REGISTRATION CONFIRMED", subtitle: "BCPL Season 5 · Phase 1 Trials" })}
-      ${Greeting(name, ["You are registered for BCPL Season 5 Phase 1 trials. Your payment has been received successfully."])}
+      ${SuccessBanner("You are registered for Phase 1 Trials", "Your payment has been received and your place in BCPL Season 5 Phase 1 is secured.")}
+      ${Greeting(name, ["Welcome to BCPL Season 5. Here are your registration details."])}
       ${KeyValueTable([
         ["Registration No.", `<span style="font-family:monospace;">${esc(regNo)}</span>`],
         ["Role", `<span style="color:${COLORS.orange};">${esc(role.toUpperCase())}</span>`],
@@ -131,10 +135,10 @@ export function tplVideoSubmitted(name: string) {
         "We have successfully received your BCPL Season 5 Phase 1 trial video.",
         "Your submission will now proceed through BCPL's Phase 1 assessment process.",
       ])}
-      ${NextSteps([
-        { title: "Submission Received", body: "Your trial video has been securely received." },
-        { title: "Assessment", body: "Your submission is evaluated against the applicable BCPL Phase 1 assessment criteria." },
-        { title: "Result Notification", body: "Once your result is ready, we will notify you on the channels registered with your BCPL account — Email, SMS and WhatsApp." },
+      ${Timeline([
+        { title: "Submission Received", body: "Your trial video has been securely received.", state: "done" },
+        { title: "Assessment In Progress", body: "Your submission is evaluated against the applicable BCPL Phase 1 assessment criteria.", state: "active" },
+        { title: "Result Within 48 Hours", body: "Once your result is ready, we will notify you on the channels registered with your BCPL account — Email, SMS and WhatsApp.", state: "todo" },
       ])}
       ${StatusCard([
         { label: "Current Status", value: "Under Review", color: COLORS.blue },
@@ -210,6 +214,15 @@ export function tplPhase1ResultReady(name: string) {
         "Your BCPL Season 5 Phase 1 assessment has been completed.",
         "Your result is now available securely in your BCPL Player Dashboard.",
       ])}
+      ${ScoreCardPanel({
+        title: "Phase 1 Score Card",
+        caption: "Available securely in your Player Dashboard.",
+        rows: [
+          ["Assessment", "Completed"],
+          ["Score Card", "Ready to View"],
+          ["Where", "Player Dashboard"],
+        ].map(([label, value]) => ({ label, value, color: label === "Assessment" ? COLORS.green : COLORS.gold })),
+      })}
       ${PrimaryCTA("VIEW MY RESULT", `${SITE_URL}/register/result`, COLORS.gold)}
       ${NoteBox("Sign in using your registered BCPL account to view your result and next steps.")}
     `),

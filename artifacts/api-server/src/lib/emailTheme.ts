@@ -57,12 +57,30 @@ export const LOGO_URL = `${SITE_URL}/bcpl-assets/bcpl-logo-white.png`;
 
 // Official social URLs. SINGLE source of truth — never guess a missing one.
 // (These are the verified URLs already present in the historical email.ts.)
-export const SOCIAL = {
+// SOCIAL URL MISSING — flag: LinkedIn has no configured URL, so it is
+// intentionally omitted below. Add `linkedin: "<official-url>"` here (and the
+// matching PNG under bcpl-website/public/email-icons/linkedin.png) once a
+// verified LinkedIn URL exists — never guess one.
+export const SOCIAL: {
+  instagram?: string;
+  facebook?: string;
+  x?: string;
+  youtube?: string;
+  linkedin?: string;
+  website?: string;
+} = {
   instagram: "https://www.instagram.com/bcpl.t20",
   facebook: "https://www.facebook.com/bhartiyacorporatepremierleague",
   x: "https://x.com/BCPLT20League",
   youtube: "https://www.youtube.com/@bcplt20league",
+  website: "https://bcplt20.com",
 };
+
+// Absolute base for hosted email icon PNGs. Gmail/Outlook block inline
+// data-URI SVGs (they render as blank squares), so social icons MUST be
+// hosted raster images referenced by absolute https URLs. These deploy from
+// artifacts/bcpl-website/public/email-icons → https://bcplt20.com/email-icons.
+export const EMAIL_ICON_BASE = `${PUBLIC_API_BASE}/email-icons`;
 
 export const FROM_EMAIL = process.env.BREVO_FROM_EMAIL || "info@bcplt20.com";
 export const WEBSITE = "bcplt20.com";
@@ -86,38 +104,46 @@ export function esc(v: unknown): string {
     .replace(/'/g, "&#39;");
 }
 
-/* ── Icon system (inline SVG data-URIs — email-safe, no emoji) ─────────────── */
-// Simple monochrome glyphs rendered via inline SVG so they render identically
-// across clients. Colour is passed in; size fixed by the caller's <img>.
-function svg(path: string, color: string): string {
-  const raw =
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" ` +
-    `stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`;
-  return "data:image/svg+xml;utf8," + encodeURIComponent(raw);
+/* ── Icon system (hosted PNGs — Gmail/Outlook safe, no data-URI SVG) ───────── */
+// Gmail and Outlook block inline data-URI SVG images (they render as blank
+// squares), so hero/status icons are hosted @2x PNGs referenced by absolute
+// https URLs. Each icon is pre-rendered per accent colour under
+// public/email-icons/hero-<icon>-<color>.png. The color name is resolved from
+// the hex the templates already pass in.
+const COLOR_NAME: Record<string, string> = {
+  [COLORS.gold]: "gold",
+  [COLORS.green]: "green",
+  [COLORS.blue]: "blue",
+  [COLORS.amber]: "amber",
+  [COLORS.red]: "red",
+  [COLORS.orange]: "orange",
+};
+function heroIcon(name: string, hex: string): string {
+  const col = COLOR_NAME[hex] ?? "gold";
+  return `${EMAIL_ICON_BASE}/hero-${name}-${col}.png`;
 }
 export const ICONS = {
-  check: (c = COLORS.green) => svg(`<polyline points="20 6 9 17 4 12"/>`, c),
-  clock: (c = COLORS.gold) => svg(`<circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/>`, c),
-  alert: (c = COLORS.red) => svg(`<path d="M12 2 1 21h22L12 2z"/><line x1="12" y1="9" x2="12" y2="14"/><line x1="12" y1="17" x2="12" y2="17"/>`, c),
-  video: (c = COLORS.blue) => svg(`<rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l6-3v10l-6-3"/>`, c),
-  doc: (c = COLORS.gold) => svg(`<path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6"/>`, c),
-  pin: (c = COLORS.gold) => svg(`<path d="M12 22s7-6 7-12a7 7 0 0 0-14 0c0 6 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/>`, c),
-  calendar: (c = COLORS.gold) => svg(`<rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/>`, c),
-  trophy: (c = COLORS.gold) => svg(`<path d="M8 3h8v5a4 4 0 0 1-8 0z"/><path d="M8 5H5a2 2 0 0 0 0 4h3M16 5h3a2 2 0 0 1 0 4h-3M10 15h4v4h-4z"/><line x1="8" y1="21" x2="16" y2="21"/>`, c),
-  ticket: (c = COLORS.green) => svg(`<path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2 2 2 0 0 0 0 4 2 2 0 0 1-2 2H5a2 2 0 0 1-2-2 2 2 0 0 0 0-4z"/>`, c),
-  chart: (c = COLORS.gold) => svg(`<line x1="4" y1="20" x2="20" y2="20"/><rect x="6" y="12" width="3" height="6"/><rect x="11" y="8" width="3" height="10"/><rect x="16" y="4" width="3" height="14"/>`, c),
-  shield: (c = COLORS.gold) => svg(`<path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/>`, c),
+  check: (c = COLORS.green) => heroIcon("check", c),
+  clock: (c = COLORS.gold) => heroIcon("clock", c),
+  alert: (c = COLORS.red) => heroIcon("alert", c),
+  video: (c = COLORS.blue) => heroIcon("video", c),
+  doc: (c = COLORS.gold) => heroIcon("doc", c),
+  pin: (c = COLORS.gold) => heroIcon("pin", c),
+  trophy: (c = COLORS.gold) => heroIcon("trophy", c),
+  ticket: (c = COLORS.green) => heroIcon("ticket", c),
+  chart: (c = COLORS.gold) => heroIcon("chart", c),
+  shield: (c = COLORS.gold) => heroIcon("shield", c),
 };
 
-/** A round medallion holding an icon — the premium hero glyph. */
+/** A round medallion holding an icon — the premium hero glyph. Table-based so
+ *  it stays vertically centered in Outlook (no line-height/flex reliance). */
 export function medallion(iconUrl: string, ring = COLORS.gold): string {
-  return `<img src="${iconUrl}" width="34" height="34" alt="" style="display:block;" />`
-    .replace(
-      /^/,
-      `<div style="display:inline-block;width:72px;height:72px;line-height:72px;border-radius:50%;` +
-        `background:rgba(232,178,61,0.10);border:2px solid ${ring};text-align:center;">` +
-        `<span style="display:inline-block;vertical-align:middle;line-height:1;">`,
-    ) + `</span></div>`;
+  return `
+    <table role="presentation" cellpadding="0" cellspacing="0" align="center" style="margin:0 auto;">
+      <tr><td width="72" height="72" align="center" valign="middle" style="width:72px;height:72px;border-radius:50%;background:rgba(232,178,61,0.10);border:2px solid ${ring};">
+        <img src="${iconUrl}" width="36" height="36" alt="" style="display:block;width:36px;height:36px;border:0;" />
+      </td></tr>
+    </table>`;
 }
 
 /* ── Header ───────────────────────────────────────────────────────────────── */
@@ -142,7 +168,7 @@ export function HeroStatus(opts: {
   return `
     <div style="text-align:center;margin-bottom:24px;">
       ${medallion(opts.iconUrl, ring)}
-      <div style="font-family:${FONT};font-size:24px;line-height:1.2;font-weight:800;color:${titleColor};letter-spacing:-0.3px;margin-top:14px;">${opts.title}</div>
+      <div class="bcpl-title" style="font-family:${FONT};font-size:24px;line-height:1.2;font-weight:800;color:${titleColor};letter-spacing:-0.3px;margin-top:14px;">${opts.title}</div>
       ${opts.subtitle ? `<div style="font-family:${FONT};font-size:13px;color:${COLORS.inkFaint};margin-top:6px;">${opts.subtitle}</div>` : ""}
     </div>`;
 }
@@ -225,6 +251,97 @@ export function StatusCard(rows: Array<{ label: string; value: string; color?: s
   return `
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate;background:${COLORS.surface};border:1px solid ${COLORS.line};border-radius:12px;margin-bottom:18px;">
       <tr>${cells}</tr>
+    </table>`;
+}
+
+/* ── Vertical timeline (stylized steps with connecting spine) ─────────────── */
+// Table-based: a left rail cell holds a coloured node; a faux "spine" is drawn
+// with a right border on the rail cell so consecutive nodes look connected.
+// No CSS animation / pseudo-elements (Outlook-safe) — the premium feel comes
+// from the node dots + spine + generous spacing.
+export function Timeline(
+  steps: Array<{ title: string; body: string; state?: "done" | "active" | "todo" }>,
+  heading = "What Happens Next",
+): string {
+  const rows = steps
+    .map((s, i) => {
+      const last = i === steps.length - 1;
+      const state = s.state ?? (i === 0 ? "done" : "todo");
+      const dot =
+        state === "done" ? COLORS.green : state === "active" ? COLORS.gold : COLORS.inkFaint;
+      const fill =
+        state === "todo"
+          ? `background:${COLORS.card};border:2px solid ${dot};`
+          : `background:${dot};border:2px solid ${dot};`;
+      const num = String(i + 1).padStart(2, "0");
+      return `
+      <tr>
+        <td width="34" valign="top" style="padding:0;">
+          <table role="presentation" cellpadding="0" cellspacing="0"><tr>
+            <td width="34" height="34" align="center" valign="middle" style="width:34px;height:34px;">
+              <div style="width:26px;height:26px;line-height:26px;border-radius:50%;${fill}text-align:center;">
+                <span style="font-family:${FONT};font-size:11px;font-weight:800;color:${state === "todo" ? dot : "#04121F"};">${num}</span>
+              </div>
+            </td>
+          </tr></table>
+          ${last ? "" : `<div style="width:2px;height:26px;background:${COLORS.line};margin:0 auto;"></div>`}
+        </td>
+        <td valign="top" style="padding:2px 0 ${last ? "0" : "16px"} 14px;">
+          <div style="font-family:${FONT};font-size:14px;color:${COLORS.ink};font-weight:700;margin-bottom:3px;">${s.title}</div>
+          <div style="font-family:${FONT};font-size:13px;color:${COLORS.inkSoft};line-height:1.55;">${s.body}</div>
+        </td>
+      </tr>`;
+    })
+    .join("");
+  return `
+    <div style="background:${COLORS.surface};border:1px solid ${COLORS.line};border-radius:12px;padding:20px 22px;margin-bottom:18px;">
+      <div style="font-family:${FONT};font-size:10px;color:${COLORS.inkFaint};letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px;">${heading}</div>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${rows}</table>
+    </div>`;
+}
+
+/* ── Success banner (premium confirmation ribbon) ─────────────────────────── */
+export function SuccessBanner(title: string, subtitle: string, accent = COLORS.green): string {
+  return `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate;background:linear-gradient(0deg,${COLORS.surface},${COLORS.surface});border:1px solid ${accent};border-radius:12px;margin-bottom:18px;">
+      <tr>
+        <td width="6" style="background:${accent};border-radius:12px 0 0 12px;">&nbsp;</td>
+        <td style="padding:16px 20px;">
+          <div style="font-family:${FONT};font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:${accent};font-weight:800;margin-bottom:4px;">Confirmed</div>
+          <div style="font-family:${FONT};font-size:16px;color:${COLORS.ink};font-weight:800;line-height:1.3;">${title}</div>
+          <div style="font-family:${FONT};font-size:13px;color:${COLORS.inkSoft};line-height:1.5;margin-top:4px;">${subtitle}</div>
+        </td>
+      </tr>
+    </table>`;
+}
+
+/* ── Score-card panel (premium result panel — outcome-neutral, no scores) ─── */
+// A framed "score card" surface with a gold header rule and a masked result
+// row. It intentionally shows NO number/verdict — the value stays behind the
+// dashboard sign-in. Purely a premium visual container.
+export function ScoreCardPanel(opts: {
+  title: string;
+  caption: string;
+  rows: Array<{ label: string; value: string; color?: string }>;
+}): string {
+  const trs = opts.rows
+    .map(
+      (r, i) => `
+      <tr>
+        <td style="padding:12px 0;${i ? `border-top:1px solid ${COLORS.line};` : ""}font-family:${FONT};font-size:13px;color:${COLORS.inkSoft};">${r.label}</td>
+        <td align="right" style="padding:12px 0;${i ? `border-top:1px solid ${COLORS.line};` : ""}font-family:${FONT};font-size:14px;font-weight:800;color:${r.color ?? COLORS.ink};">${r.value}</td>
+      </tr>`,
+    )
+    .join("");
+  return `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate;background:${COLORS.surface};border:1px solid rgba(232,178,61,0.30);border-radius:14px;margin-bottom:18px;">
+      <tr><td style="padding:18px 22px 0;border-bottom:2px solid rgba(232,178,61,0.30);">
+        <div style="font-family:${FONT};font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:${COLORS.gold};font-weight:800;">${opts.title}</div>
+        <div style="font-family:${FONT};font-size:12px;color:${COLORS.inkFaint};margin:4px 0 14px;">${opts.caption}</div>
+      </td></tr>
+      <tr><td style="padding:6px 22px 16px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">${trs}</table>
+      </td></tr>
     </table>`;
 }
 
@@ -342,38 +459,34 @@ export async function hydrateSponsors(html: string): Promise<string> {
   return html.split(SPONSOR_TOKEN).join(strip);
 }
 
-/* ── Social bar (icons only, no wrapping handles) ─────────────────────────── */
-function socialIcon(kind: "instagram" | "facebook" | "x" | "youtube"): string {
-  const c = COLORS.inkSoft;
-  const paths: Record<string, string> = {
-    instagram: `<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><line x1="17.5" y1="6.5" x2="17.5" y2="6.5"/>`,
-    facebook: `<path d="M14 8h2V5h-2a3 3 0 0 0-3 3v2H9v3h2v6h3v-6h2l1-3h-3V8a1 1 0 0 1 1-1z"/>`,
-    x: `<path d="M4 4l16 16M20 4L4 20"/>`,
-    youtube: `<rect x="3" y="6" width="18" height="12" rx="3"/><polygon points="11 9 16 12 11 15" fill="${c}" stroke="none"/>`,
-  };
-  return svg(paths[kind], c);
-}
-
+/* ── Social bar (hosted PNG icons — Gmail/Outlook safe, no data-URI SVG) ──── */
+// Icons are 72x72 PNGs rendered @2x for a crisp 36px display. Gmail and
+// Outlook block inline data-URI SVG images (they showed blank squares), so
+// every social icon is a hosted absolute-URL raster asset with width/height
+// attrs + alt text and a clickable link.
 export function SocialBar(): string {
-  const items: Array<{ url: string | undefined; kind: "instagram" | "facebook" | "x" | "youtube"; label: string }> = [
+  type Kind = "instagram" | "facebook" | "x" | "youtube" | "linkedin" | "website";
+  const items: Array<{ url: string | undefined; kind: Kind; label: string }> = [
     { url: SOCIAL.instagram, kind: "instagram", label: "Instagram" },
     { url: SOCIAL.facebook, kind: "facebook", label: "Facebook" },
     { url: SOCIAL.x, kind: "x", label: "X" },
     { url: SOCIAL.youtube, kind: "youtube", label: "YouTube" },
+    // SOCIAL URL MISSING — flag: LinkedIn has no configured URL; the cell is
+    // omitted below rather than guessing a URL. Populate SOCIAL.linkedin to
+    // enable it (linkedin.png must exist under public/email-icons/).
+    { url: SOCIAL.linkedin, kind: "linkedin", label: "LinkedIn" },
+    { url: SOCIAL.website, kind: "website", label: "Website" },
   ];
   const cells = items
-    .map((it) => {
-      if (!it.url) {
-        // SOCIAL URL MISSING — flag: omit platform, never guess a URL.
-        return "";
-      }
-      return `
-        <td style="padding:0 8px;">
-          <a href="${it.url}" target="_blank" rel="noopener" style="display:inline-block;width:38px;height:38px;line-height:38px;text-align:center;background:rgba(255,255,255,0.06);border:1px solid ${COLORS.line};border-radius:50%;text-decoration:none;">
-            <img src="${socialIcon(it.kind)}" width="18" height="18" alt="${it.label}" style="display:inline-block;vertical-align:middle;" />
+    .filter((it) => Boolean(it.url)) // omit any platform without a verified URL
+    .map(
+      (it) => `
+        <td style="padding:0 7px;">
+          <a href="${it.url}" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none;">
+            <img src="${EMAIL_ICON_BASE}/${it.kind}.png" width="24" height="24" alt="${it.label}" style="display:block;width:24px;height:24px;border:0;outline:none;" />
           </a>
-        </td>`;
-    })
+        </td>`,
+    )
     .join("");
   return `
     <tr><td style="padding:18px 32px 6px;background:${COLORS.outer};text-align:center;">
@@ -383,17 +496,23 @@ export function SocialBar(): string {
 }
 
 /* ── Legal footer ─────────────────────────────────────────────────────────── */
+// Responsive: the contact row is two inline-block cells that stack cleanly on
+// narrow clients (the .bcpl-stack media rule below forces full-width stacking;
+// inline-block already wraps gracefully where media queries are unsupported).
 export const LegalFooter = `
-  <tr><td style="padding:18px 32px 26px;background:${COLORS.outer};border-top:1px solid ${COLORS.line};text-align:center;">
-    <div style="font-family:${FONT};font-size:13px;color:${COLORS.ink};font-weight:800;letter-spacing:.5px;">BCPL T20</div>
-    <div style="font-family:${FONT};font-size:11px;color:${COLORS.inkSoft};margin-top:3px;">Bhartiya Corporate Premier League</div>
-    <div style="font-family:${FONT};font-size:11px;color:${COLORS.inkFaint};margin-top:8px;line-height:1.7;">
-      An initiative of ${LEGAL_ENTITY}<br/>
-      <a href="mailto:${FROM_EMAIL}" style="color:${COLORS.inkFaint};text-decoration:none;">${FROM_EMAIL}</a>
-      &nbsp;&middot;&nbsp;
-      <a href="https://${WEBSITE}" style="color:${COLORS.inkFaint};text-decoration:none;">${WEBSITE}</a>
+  <tr><td style="padding:20px 32px 28px;background:${COLORS.outer};border-top:1px solid ${COLORS.line};text-align:center;">
+    <div style="font-family:${FONT};font-size:14px;color:${COLORS.ink};font-weight:800;letter-spacing:.5px;">BCPL T20</div>
+    <div style="font-family:${FONT};font-size:12px;color:${COLORS.inkSoft};margin-top:4px;">Bhartiya Corporate Premier League</div>
+    <div style="font-family:${FONT};font-size:11px;color:${COLORS.inkFaint};margin-top:8px;line-height:1.7;">An initiative of ${LEGAL_ENTITY}</div>
+    <div style="margin-top:10px;line-height:1;">
+      <span class="bcpl-stack" style="display:inline-block;padding:2px 10px;">
+        <a href="mailto:${FROM_EMAIL}" style="font-family:${FONT};font-size:12px;color:${COLORS.inkSoft};text-decoration:none;">${FROM_EMAIL}</a>
+      </span>
+      <span class="bcpl-stack" style="display:inline-block;padding:2px 10px;">
+        <a href="https://${WEBSITE}" style="font-family:${FONT};font-size:12px;color:${COLORS.inkSoft};text-decoration:none;">${WEBSITE}</a>
+      </span>
     </div>
-    <div style="font-family:${FONT};font-size:10px;color:${COLORS.inkFaint};margin-top:10px;line-height:1.6;">
+    <div style="font-family:${FONT};font-size:11px;color:${COLORS.inkFaint};margin-top:14px;line-height:1.6;">
       This is a transactional message related to your BCPL Season 5 registration.
     </div>
   </td></tr>`;
@@ -406,6 +525,13 @@ export function EmailShell(body: string): string {
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <meta name="color-scheme" content="dark light"/>
 <meta name="supported-color-schemes" content="dark light"/>
+<style>
+  @media only screen and (max-width:480px){
+    .bcpl-pad{padding-left:20px !important;padding-right:20px !important;}
+    .bcpl-stack{display:block !important;width:100% !important;padding:4px 0 !important;}
+    .bcpl-title{font-size:21px !important;}
+  }
+</style>
 </head>
 <body style="margin:0;padding:0;background:${COLORS.outer};">
   <div style="display:none;max-height:0;overflow:hidden;opacity:0;">BCPL T20 Season 5 — ${HASHTAG}</div>
@@ -413,7 +539,7 @@ export function EmailShell(body: string): string {
     <tr><td align="center" style="padding:24px 12px;">
       <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px;background:${COLORS.card};border-radius:14px;overflow:hidden;border:1px solid ${COLORS.line};">
         ${Header}
-        <tr><td style="padding:28px 32px;background:${COLORS.card};">
+        <tr><td class="bcpl-pad" style="padding:28px 32px;background:${COLORS.card};">
           ${body}
         </td></tr>
         ${SPONSOR_TOKEN}

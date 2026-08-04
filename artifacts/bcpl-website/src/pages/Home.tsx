@@ -67,13 +67,15 @@ const ROAD = (f: FeeConfig) => [
   { icon:"trophy", en:"Phase 2 & Beyond", hi:"फेज़ 2 और आगे",  date:"Mar – Oct '27",     fee: inr(f.phase2.bat) + " / " + inr(f.phase2.ar) + " + GST", descEn:"Only if selected — physical trial in your city, the live franchise auction, then Season 5 under the floodlights.", descHi:"सिर्फ select होने पर — आपके शहर में physical trial, live franchise auction, फिर floodlights के नीचे Season 5।", color:"#F0C860" },
 ];
 
-/* ── SEASON 5 ROADMAP — the whole year, readable in five seconds (spec §15) ── */
+/* ── SEASON 5 ROADMAP — premium animated timeline (spec §6):
+     Registration → Video Trial → Physical Trial → Auction → Tournament.
+     `live:true` = the step currently open (highlighted + pulsing). ── */
 const S5_ROADMAP = [
-  { moEn:"Oct – Feb", moHi:"अक्टू – फ़रवरी", en:"Registration",    hi:"रजिस्ट्रेशन",      color:"#FF7A29" },
-  { moEn:"Mar – Jun", moHi:"मार्च – जून",    en:"Physical Trials", hi:"फिज़िकल ट्रायल्स", color:"#FF9350" },
-  { moEn:"Jul – Aug", moHi:"जुलाई – अगस्त",  en:"Results",         hi:"रिज़ल्ट्स",        color:"#E8B23D" },
-  { moEn:"Aug",       moHi:"अगस्त",          en:"Player Auction",  hi:"प्लेयर ऑक्शन",     color:"#F0C860" },
-  { moEn:"Sep – Oct", moHi:"सितं – अक्टू",   en:"Tournament",      hi:"टूर्नामेंट",        color:"#22C55E" },
+  { icon:"reg",    moEn:"Oct – Feb", moHi:"अक्टू – फ़रवरी", en:"Registration",   hi:"रजिस्ट्रेशन",      color:"#FF7A29", live:true },
+  { icon:"video",  moEn:"Within 15 days", moHi:"15 दिन में", en:"Video Trial",   hi:"वीडियो ट्रायल",    color:"#FF9350" },
+  { icon:"trial",  moEn:"Mar – Jun", moHi:"मार्च – जून",    en:"Physical Trial", hi:"फिज़िकल ट्रायल",   color:"#E8B23D" },
+  { icon:"auction",moEn:"Aug",       moHi:"अगस्त",          en:"Auction",        hi:"ऑक्शन",           color:"#F0C860" },
+  { icon:"trophy", moEn:"Sep – Oct", moHi:"सितं – अक्टू",   en:"Tournament",     hi:"टूर्नामेंट",        color:"#22C55E" },
 ];
 
 /* ── REAL PLAYER STORIES — sirf VERIFIED asli players.
@@ -223,7 +225,7 @@ export function Home() {
       entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("rv-in"); obs.unobserve(e.target); } }),
       { threshold: 0.08 }
     );
-    root.querySelectorAll(".rv").forEach(el => obs.observe(el));
+    root.querySelectorAll(".rv, .rv-stagger, .rv-up, .rv-left, .rv-scale").forEach(el => obs.observe(el));
     return ()=>obs.disconnect();
   },[lang]);
 
@@ -246,14 +248,15 @@ export function Home() {
         @keyframes playRing {0%{box-shadow:0 0 0 0 rgba(255,122,41,.5)}100%{box-shadow:0 0 0 26px rgba(255,122,41,0)}}
         @keyframes tickMove {from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
-        .btn-cta{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:14px;color:#fff;font-family:var(--font-head);font-weight:900;font-size:14px;letter-spacing:.04em;cursor:pointer;padding:14px 28px;text-transform:uppercase;text-decoration:none;transition:opacity .2s,transform .15s;box-shadow:0 6px 24px rgba(255,122,41,.35);}
-        .btn-cta:hover{opacity:.9;transform:translateY(-2px);}
+        .btn-cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#FF8A3D 0%,#FF7A29 45%,#D95E10 100%);border:none;border-radius:14px;color:#fff;font-family:var(--font-head);font-weight:900;font-size:14px;letter-spacing:.04em;cursor:pointer;padding:14px 28px;min-height:48px;text-transform:uppercase;text-decoration:none;transition:filter .2s,transform .14s,box-shadow .2s;box-shadow:0 8px 26px rgba(255,122,41,.4),inset 0 1px 0 rgba(255,255,255,.22);}
+        .btn-cta:hover{filter:brightness(1.08);transform:translateY(-2px);box-shadow:0 12px 34px rgba(255,122,41,.52),inset 0 1px 0 rgba(255,255,255,.28);}
+        .btn-cta:active{transform:scale(.98);}
         .btn-ghost{display:inline-flex;align-items:center;gap:8px;background:rgba(6,12,24,.4);border:1.5px solid rgba(255,255,255,.28);border-radius:14px;color:rgba(255,255,255,.9);font-family:var(--font-head);font-weight:700;font-size:14px;cursor:pointer;padding:13px 26px;text-transform:uppercase;transition:border-color .2s,color .2s;text-decoration:none;backdrop-filter:blur(6px);}
         .btn-ghost:hover{border-color:#E8B23D;color:#E8B23D;}
 
         .slbl{font-family:var(--font-head);font-weight:800;font-size:11px;letter-spacing:.15em;color:#FF7A29;text-transform:uppercase;display:flex;align-items:center;gap:10px;margin-bottom:14px;}
         .slbl::before{content:'';display:inline-block;width:20px;height:2px;background:#FF7A29;}
-        .card{background:#121F2F;border:1px solid rgba(255,255,255,.07);border-radius:16px;}
+        .card{background:linear-gradient(165deg,#16315A 0%,#12294A 60%,#0F2545 100%);border:1px solid rgba(255,255,255,.12);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.05);}
         .shim{background:linear-gradient(90deg,#FF7A29,#FFB347,#FF7A29);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradMove 3s ease infinite;}
         .shim-gold{background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradMove 3s ease infinite;}
 
@@ -301,30 +304,42 @@ export function Home() {
         /* Road */
         .road{display:grid;grid-template-columns:1fr;gap:12px;position:relative;padding:4px 0 8px;}
         @media(min-width:640px){.road{grid-template-columns:repeat(2,1fr);gap:14px;}}
-        .road-card{position:relative;border-radius:16px;padding:18px 16px 16px;background:linear-gradient(165deg,#142438,#0F1826);border:1px solid rgba(255,255,255,.08);transition:transform .25s,border-color .25s,box-shadow .25s;display:flex;flex-direction:column;}
-        .road-card:hover{transform:translateY(-4px);box-shadow:0 14px 36px rgba(0,0,0,.45);}
+        .road-card{position:relative;border-radius:16px;padding:22px 20px 20px;background:linear-gradient(165deg,#183259 0%,#12294A 60%,#0F2242 100%);border:1px solid rgba(255,255,255,.12);box-shadow:0 10px 28px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.05);transition:transform .28s cubic-bezier(.22,1,.36,1),border-color .28s,box-shadow .28s;display:flex;flex-direction:column;}
+        .road-card:hover{transform:translateY(-3px);box-shadow:0 20px 46px rgba(0,0,0,.5);border-color:rgba(255,255,255,.18);}
         @media(min-width:1150px){
           .road{grid-template-columns:repeat(4,1fr);gap:16px;}
           .road::before{content:'';position:absolute;top:44px;left:3%;right:3%;height:2px;background:linear-gradient(90deg,#FF7A29,#FF9350,#E8B23D,#F0C860);opacity:.3;z-index:0;}
         }
 
-        /* Season 5 roadmap — minimal timeline strip */
-        .s5map{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:26px;}
-        .s5map::before{content:'';position:absolute;top:5px;left:6%;right:6%;height:2px;background:linear-gradient(90deg,#FF7A29,#E8B23D 55%,#22C55E);opacity:.35;}
-        .s5m{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:7px;}
-        .s5m-dot{width:12px;height:12px;border-radius:50%;border:2px solid #0E1420;position:relative;z-index:1;flex-shrink:0;}
-        .s5m-mo{font-weight:800;font-size:clamp(10px,1.3vw,12px);letter-spacing:.14em;color:var(--ink-3);text-transform:uppercase;font-variant-numeric:tabular-nums;}
-        .s5m-lb{font-weight:900;font-size:clamp(12px,1.6vw,16px);letter-spacing:.05em;color:#fff;text-transform:uppercase;}
+        /* Season 5 roadmap — premium animated timeline (spec §6) */
+        .s5map{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:36px;}
+        /* connector rail (base) + drawing line that animates on reveal */
+        .s5map::before{content:'';position:absolute;top:33px;left:9%;right:9%;height:3px;border-radius:3px;background:rgba(255,255,255,.10);}
+        .s5map::after{content:'';position:absolute;top:33px;left:9%;right:9%;height:3px;border-radius:3px;background:linear-gradient(90deg,#FF7A29,#E8B23D 55%,#22C55E);transform:scaleX(0);transform-origin:left;transition:transform 1.5s cubic-bezier(.22,1,.36,1) .15s;box-shadow:0 0 14px rgba(232,178,61,.4);}
+        .s5map.rv-in::after{transform:scaleX(1);}
+        .s5m{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;z-index:1;}
+        .s5m-node{width:66px;height:66px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;z-index:2;flex-shrink:0;background:linear-gradient(165deg,#183259,#0F2242);border:2px solid rgba(255,255,255,.14);box-shadow:0 10px 26px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.06);transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s,border-color .3s;}
+        .s5m:hover .s5m-node{transform:translateY(-4px) scale(1.04);}
+        .s5m-node.live{border-color:var(--nc,#FF7A29);box-shadow:0 0 0 4px color-mix(in srgb,var(--nc,#FF7A29) 18%,transparent),0 12px 30px rgba(0,0,0,.45);animation:s5pulse 2.4s ease-in-out infinite;}
+        @keyframes s5pulse{0%,100%{box-shadow:0 0 0 4px color-mix(in srgb,var(--nc,#FF7A29) 18%,transparent),0 12px 30px rgba(0,0,0,.45);}50%{box-shadow:0 0 0 10px color-mix(in srgb,var(--nc,#FF7A29) 0%,transparent),0 12px 30px rgba(0,0,0,.45);}}
+        .s5m-live-tag{position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:#22C55E;color:#062012;font-family:var(--font-head);font-weight:900;font-size:8px;letter-spacing:.1em;padding:2px 7px;border-radius:20px;white-space:nowrap;box-shadow:0 4px 12px rgba(34,197,94,.4);}
+        .s5m-txt{display:flex;flex-direction:column;gap:4px;align-items:center;}
+        .s5m-mo{font-family:var(--font-head);font-weight:800;font-size:clamp(10px,1.3vw,12px);letter-spacing:.12em;color:var(--ink-3);text-transform:uppercase;}
+        .s5m-lb{font-family:var(--font-head);font-weight:900;font-size:clamp(13px,1.7vw,17px);letter-spacing:.04em;color:#fff;text-transform:uppercase;line-height:1.05;}
         @media(max-width:639px){
-          .s5map{grid-template-columns:1fr;gap:0;margin-top:18px;}
-          .s5map::before{top:6px;bottom:6px;left:5px;right:auto;width:2px;height:auto;background:linear-gradient(180deg,#FF7A29,#E8B23D 55%,#22C55E);}
-          .s5m{flex-direction:row;text-align:left;gap:12px;padding:9px 0;}
-          .s5m-mo{width:92px;flex-shrink:0;}
+          .s5map{grid-template-columns:1fr;gap:0;margin-top:22px;padding-left:6px;}
+          .s5map::before{top:20px;bottom:20px;left:38px;right:auto;width:3px;height:auto;background:rgba(255,255,255,.10);}
+          .s5map::after{top:20px;bottom:20px;left:38px;right:auto;width:3px;height:auto;background:linear-gradient(180deg,#FF7A29,#E8B23D 55%,#22C55E);transform-origin:top;transform:scaleY(0);}
+          .s5map.rv-in::after{transform:scaleY(1);}
+          .s5m{flex-direction:row;text-align:left;gap:16px;padding:12px 0;align-items:center;}
+          .s5m-node{width:56px;height:56px;}
+          .s5m-txt{display:flex;flex-direction:column;gap:3px;}
         }
 
         /* Pricing journey chips */
         .jour{display:flex;align-items:stretch;gap:10px;flex-wrap:wrap;margin-bottom:28px;}
-        .jour .jc{flex:1 1 180px;background:linear-gradient(165deg,#142438,#0F1826);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:14px 16px;position:relative;}
+        .jour .jc{flex:1 1 180px;background:linear-gradient(165deg,#183259 0%,#12294A 60%,#0F2242 100%);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:16px 18px;position:relative;box-shadow:0 8px 24px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.05);transition:transform .28s cubic-bezier(.22,1,.36,1),box-shadow .28s;}
+        .jour .jc:hover{transform:translateY(-3px);box-shadow:0 16px 38px rgba(0,0,0,.42);}
         .jour .ja{align-self:center;color:rgba(232,178,61,.65);font-size:18px;flex:0 0 auto;}
         @media(max-width:639px){.jour .ja{display:none;}}
 
@@ -336,7 +351,8 @@ export function Home() {
         /* Numbers */
         .num-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
         @media(min-width:768px){.num-grid{grid-template-columns:repeat(3,1fr);}}
-        .num-cell{background:linear-gradient(165deg,#142438,#0F1826);border:1px solid rgba(232,178,61,.14);border-radius:16px;padding:clamp(20px,3vw,30px) clamp(16px,2.4vw,26px);text-align:center;}
+        .num-cell{background:linear-gradient(165deg,#183259 0%,#12294A 60%,#0F2242 100%);border:1px solid rgba(232,178,61,.18);border-radius:16px;padding:clamp(24px,3vw,34px) clamp(18px,2.4vw,28px);text-align:center;box-shadow:0 10px 28px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.05);transition:transform .28s cubic-bezier(.22,1,.36,1),box-shadow .28s,border-color .28s;}
+        .num-cell:hover{transform:translateY(-3px);box-shadow:0 18px 42px rgba(0,0,0,.44);border-color:rgba(232,178,61,.32);}
 
         /* Real proof gallery */
         .proof-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
@@ -476,7 +492,7 @@ export function Home() {
           <div className="slbl" style={{ justifyContent:"center" }}>{t("BCPL so far","अब तक का BCPL")}</div>
           <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4vw,44px)", color:"#fff", textTransform:"uppercase", textAlign:"center", marginBottom:8 }}>{t("The league in numbers","आँकड़ों में league")}</h2>
           <p style={{ fontSize:14, color:"var(--ink-3)", textAlign:"center", marginBottom:36 }}>{t("Four seasons of proof — not promises.","चार seasons का सबूत — सिर्फ वादे नहीं।")}</p>
-          <div className="num-grid">
+          <div className="num-grid rv-stagger">
             {NUMBERS.map(n=>(
               <div key={n.en} className="num-cell">
                 <div className="mont" style={{ fontWeight:900, fontSize:"clamp(26px,4vw,42px)", color:"#E8B23D", lineHeight:1, whiteSpace:"nowrap" }}>
@@ -499,7 +515,7 @@ export function Home() {
             <span className="mont" style={{ fontSize:11, fontWeight:700, color:"var(--ink-3)", letterSpacing:".08em" }}>{t("4 STEPS · ONE DREAM","4 कदम · एक सपना")}</span>
           </div>
 
-          <div className="road">
+          <div className="road rv-stagger">
             {ROAD_STEPS.map((s,i)=>(
               <div key={i} className="road-card" style={{ borderTop:`3px solid ${s.color}`, zIndex:1 }}>
                 <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:12 }}>
@@ -509,8 +525,8 @@ export function Home() {
                 <div style={{ display:"inline-block", alignSelf:"flex-start", background:`${s.color}14`, border:`1px solid ${s.color}35`, borderRadius:20, padding:"2px 10px", marginBottom:8 }}>
                   <span className="mont" style={{ fontSize:9, fontWeight:800, color:s.color, letterSpacing:".06em" }}>{s.date}</span>
                 </div>
-                <div className="mont" style={{ fontWeight:900, fontSize:15, color:"#fff", marginBottom:6 }}>{t(s.en,s.hi)}</div>
-                <p style={{ fontSize:12, color:"rgba(255,255,255,.5)", lineHeight:1.6, flex:1 }}>{t(s.descEn,s.descHi)}</p>
+                <div className="mont" style={{ fontWeight:900, fontSize:17, color:"#fff", marginBottom:7 }}>{t(s.en,s.hi)}</div>
+                <p style={{ fontSize:13, color:"rgba(255,255,255,.62)", lineHeight:1.65, flex:1 }}>{t(s.descEn,s.descHi)}</p>
                 <div style={{ display:"flex", gap:6, flexWrap:"wrap", marginTop:10, minHeight:24 }}>
                   {s.fee && (
                     <span style={{ background:`${s.color}18`, border:`1px solid ${s.color}44`, borderRadius:8, padding:"3px 9px" }}>
@@ -536,16 +552,24 @@ export function Home() {
         </div>
       </section>
 
-      {/* ══ 4b · SEASON 5 ROADMAP — the year at a glance (spec §15) ══ */}
-      <section className="rv" aria-label={t("Season 5 roadmap","Season 5 का roadmap")} style={{ padding:"clamp(40px,5vw,64px) 0", background:"#0E1420", borderTop:"1px solid rgba(255,255,255,.04)" }}>
-        <div className="W">
+      {/* ══ 4b · SEASON 5 ROADMAP — premium animated timeline (spec §6) ══ */}
+      <section aria-label={t("Season 5 roadmap","Season 5 का roadmap")} style={{ padding:"clamp(48px,6vw,80px) 0", background:"linear-gradient(180deg,#0E2140 0%,#0B1B33 100%)", borderTop:"1px solid rgba(255,255,255,.06)", position:"relative", overflow:"hidden" }}>
+        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 70% 60% at 50% 0%,rgba(232,178,61,.06) 0%,transparent 65%)", pointerEvents:"none" }}/>
+        <div className="W rv" style={{ position:"relative", zIndex:1 }}>
           <div className="slbl" style={{ justifyContent:"center" }}>{t("Season 5 Roadmap","Season 5 का roadmap")}</div>
-          <div className="s5map">
+          <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4vw,44px)", color:"#fff", textTransform:"uppercase", textAlign:"center", marginBottom:8 }}>{t("The year at a glance","पूरा साल एक नज़र में")}</h2>
+          <p style={{ fontSize:15, color:"var(--ink-3)", textAlign:"center", marginBottom:6 }}>{t("Registration to the floodlights — five moves.","रजिस्ट्रेशन से floodlights तक — पाँच पड़ाव।")}</p>
+          <div className="s5map rv-stagger">
             {S5_ROADMAP.map(m=>(
-              <div key={m.en} className="s5m">
-                <span className="s5m-dot" style={{ background:m.color, boxShadow:"0 0 10px " + m.color + "66" }}/>
-                <span className="s5m-mo mont">{t(m.moEn,m.moHi)}</span>
-                <span className="s5m-lb mont">{t(m.en,m.hi)}</span>
+              <div key={m.en} className="s5m" style={{ ["--nc" as any]: m.color }}>
+                <span className={"s5m-node" + (m.live ? " live" : "")}>
+                  {m.live && <span className="s5m-live-tag">{t("LIVE","लाइव")}</span>}
+                  <StepIcon kind={m.icon} color={m.color}/>
+                </span>
+                <span className="s5m-txt">
+                  <span className="s5m-mo">{t(m.moEn,m.moHi)}</span>
+                  <span className="s5m-lb">{t(m.en,m.hi)}</span>
+                </span>
               </div>
             ))}
           </div>
@@ -562,7 +586,7 @@ export function Home() {
           <p style={{ fontSize:15, color:"var(--ink-3)", marginBottom:26, maxWidth:520 }}>{t("Here's exactly what you pay — and when. Every fee is shown with GST (" + gstPct + "%) before you pay.","यहाँ साफ लिखा है — कितना, और कब। हर fee GST (" + gstPct + "%) के साथ payment से पहले दिखाई जाती है।")}</p>
 
           {/* The money journey at a glance */}
-          <div className="jour">
+          <div className="jour rv-stagger">
             <div className="jc" style={{ borderTop:"3px solid #FF7A29" }}>
               <div className="mont" style={{ fontSize:10, fontWeight:800, letterSpacing:".1em", color:"var(--ink-3)", textTransform:"uppercase", marginBottom:6 }}>{t("Step 1 · Now","कदम 1 · अभी")}</div>
               <div className="mont" style={{ fontWeight:900, fontSize:22, color:"#FF7A29" }}>{inr(fees.phase1.bat)}<span style={{ fontSize:13, color:"var(--ink-3)" }}> / {inr(fees.phase1.ar)} + GST</span></div>
@@ -1116,9 +1140,11 @@ function CountUp({ end, prefix="", suffix="", inFmt=false, dur=1600 }:{ end:numb
 /* Consistent-stroke inline icons for the journey steps (spec: one icon style, no emoji) */
 function StepIcon({ kind, color }: { kind: string; color: string }) {
   const p = { width: 22, height: 22, viewBox: "0 0 24 24", fill: "none", stroke: color, strokeWidth: 1.8, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
-  if (kind === "reg")    return <svg {...p}><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7.5h8M8 11.5h8M8 15.5h5"/></svg>;
-  if (kind === "video")  return <svg {...p}><rect x="2" y="6" width="13" height="12" rx="2"/><path d="M15 10.5 22 7v10l-7-3.5"/></svg>;
-  if (kind === "result") return <svg {...p}><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/><path d="m8.2 11.2 2 2 3.6-3.9"/></svg>;
+  if (kind === "reg")     return <svg {...p}><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7.5h8M8 11.5h8M8 15.5h5"/></svg>;
+  if (kind === "video")   return <svg {...p}><rect x="2" y="6" width="13" height="12" rx="2"/><path d="M15 10.5 22 7v10l-7-3.5"/></svg>;
+  if (kind === "result")  return <svg {...p}><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/><path d="m8.2 11.2 2 2 3.6-3.9"/></svg>;
+  if (kind === "trial")   return <svg {...p}><path d="M4 20v-2a4 4 0 0 1 4-4h3"/><circle cx="9" cy="7" r="3"/><path d="M15 16.5 17 18l3.5-4"/></svg>;
+  if (kind === "auction") return <svg {...p}><path d="m14 3 5 5-3 3-5-5 3-3Z"/><path d="m11.5 5.5-7 7 3 3 7-7"/><path d="M4 21h9"/></svg>;
   return <svg {...p}><path d="M7 3h10v5a5 5 0 0 1-10 0V3Z"/><path d="M7 5H4.5a2.5 2.5 0 0 0 2.6 3.4M17 5h2.5a2.5 2.5 0 0 1-2.6 3.4"/><path d="M12 13v3.2M8.5 20h7M12 16.2c-1.6 0-2.6 1.2-2.8 3.8h5.6c-.2-2.6-1.2-3.8-2.8-3.8Z"/></svg>;
 }
 

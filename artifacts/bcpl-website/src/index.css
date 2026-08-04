@@ -8,11 +8,17 @@
    ═══════════════════════════════════════════════════════════════════ */
 
 :root {
-  /* surfaces */
-  --bg:      #081527;                 /* page background          */
-  --bg-deep: #050B18;                 /* footer / recessed areas  */
-  --panel:   #0D1D38;                 /* raised cards             */
-  --line:    rgba(255,255,255,.10);   /* hairline borders         */
+  /* surfaces — lifted ~15% from the old near-black navy for premium depth */
+  --bg:      #0C1D33;                 /* page background          */
+  --bg-deep: #071023;                 /* footer / recessed areas  */
+  --panel:   #12294A;                 /* raised cards             */
+  --panel-2: #16315A;                 /* lighter card top-light   */
+  --line:    rgba(255,255,255,.12);   /* hairline borders         */
+
+  /* premium gradients — reused across sections & cards */
+  --grad-page: radial-gradient(ellipse 120% 90% at 50% -10%, #143059 0%, var(--bg) 55%, var(--bg-deep) 100%);
+  --grad-card: linear-gradient(165deg, var(--panel-2) 0%, var(--panel) 60%, #0F2545 100%);
+  --grad-cta:  linear-gradient(135deg, #FF8A3D 0%, #FF7A29 45%, #D95E10 100%);
 
   /* brand */
   --orange:   #FF7A29;                /* primary — CTA & key info */
@@ -40,6 +46,8 @@
 html, body, #root {
   min-height: 100%;
   background: var(--bg);
+  background-image: var(--grad-page);
+  background-attachment: fixed;
   color: var(--ink);
 }
 
@@ -75,6 +83,80 @@ body {
     transition-duration: .01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* ── SHARED PREMIUM CARD ─────────────────────────────────────────
+   Broadly reusable: soft shadow, faint glass top-light, thin premium
+   border, smooth hover lift. Applied across public + player pages. */
+.v3-card {
+  position: relative;
+  background: var(--grad-card);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: var(--r);
+  box-shadow: 0 10px 30px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.05);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: transform .28s cubic-bezier(.22,1,.36,1), box-shadow .28s ease, border-color .28s ease;
+}
+.v3-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255,255,255,.06) 0%, transparent 28%);
+  pointer-events: none;
+}
+.v3-card--hover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 48px rgba(0,0,0,.46), inset 0 1px 0 rgba(255,255,255,.07);
+  border-color: rgba(255,255,255,.18);
+}
+
+/* ── SHARED PREMIUM BUTTON (primary orange CTA) ──────────────────
+   Gradient, soft glow, hover brighten, active micro-press. Use on
+   public/player CTAs; does not touch header/sticky-CTA z-index. */
+.v3-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: var(--font-head); font-weight: 900;
+  text-transform: uppercase; letter-spacing: .04em;
+  cursor: pointer; text-decoration: none; border: none;
+  border-radius: var(--r);
+  padding: 14px 28px; min-height: 48px;
+  transition: transform .14s ease, filter .2s ease, box-shadow .2s ease;
+}
+.v3-btn--primary {
+  background: var(--grad-cta); color: #fff;
+  box-shadow: 0 8px 26px rgba(255,122,41,.38), inset 0 1px 0 rgba(255,255,255,.22);
+}
+.v3-btn--primary:hover { filter: brightness(1.08); box-shadow: 0 12px 34px rgba(255,122,41,.5), inset 0 1px 0 rgba(255,255,255,.28); transform: translateY(-2px); }
+.v3-btn--primary:active { transform: scale(.98) translateY(0); }
+.v3-btn--ghost {
+  background: rgba(255,255,255,.04); color: var(--ink-2);
+  border: 1.5px solid rgba(255,255,255,.20);
+  backdrop-filter: blur(6px);
+}
+.v3-btn--ghost:hover { border-color: var(--gold); color: var(--gold); }
+.v3-btn--ghost:active { transform: scale(.98); }
+
+/* ── REVEAL SYSTEM (extends the existing .rv used site-wide) ─────
+   Directional variants + staggered children. Observer adds .rv-in. */
+.rv-up   { opacity:0; transform: translateY(22px); transition: opacity .6s ease, transform .7s cubic-bezier(.22,1,.36,1); }
+.rv-left { opacity:0; transform: translateX(-24px); transition: opacity .6s ease, transform .7s cubic-bezier(.22,1,.36,1); }
+.rv-scale{ opacity:0; transform: scale(.94); transition: opacity .6s ease, transform .7s cubic-bezier(.22,1,.36,1); }
+.rv-up.rv-in, .rv-left.rv-in, .rv-scale.rv-in { opacity:1; transform: none; }
+
+/* Stagger: parent gets .rv-stagger; children fade+rise in sequence. */
+.rv-stagger > * { opacity:0; transform: translateY(16px); transition: opacity .55s ease, transform .6s cubic-bezier(.22,1,.36,1); }
+.rv-stagger.rv-in > * { opacity:1; transform: none; }
+.rv-stagger.rv-in > *:nth-child(1){ transition-delay:.05s; }
+.rv-stagger.rv-in > *:nth-child(2){ transition-delay:.12s; }
+.rv-stagger.rv-in > *:nth-child(3){ transition-delay:.19s; }
+.rv-stagger.rv-in > *:nth-child(4){ transition-delay:.26s; }
+.rv-stagger.rv-in > *:nth-child(5){ transition-delay:.33s; }
+.rv-stagger.rv-in > *:nth-child(6){ transition-delay:.40s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rv-up, .rv-left, .rv-scale, .rv-stagger > * { opacity:1 !important; transform:none !important; }
+  .v3-card--hover:hover { transform:none; }
 }
 
 /* ── skeleton loaders (premium shimmer) ──────────────────────────── */

@@ -415,15 +415,17 @@ export function Registration() {
 
         /* ── BUTTONS ── */
         .btn-primary{
-          background:linear-gradient(135deg,#FF7A29,#D95E10);
+          background:linear-gradient(135deg,#FF8A3D 0%,#FF7A29 45%,#D95E10 100%);
           border:none;border-radius:4px;color:#fff;
           font-family:Montserrat,sans-serif;font-weight:900;
           letter-spacing:0.06em;cursor:pointer;
-          transition:transform .15s,filter .2s;
+          transition:transform .15s,filter .2s,box-shadow .2s;
+          box-shadow:0 8px 24px rgba(255,122,41,.4),inset 0 1px 0 rgba(255,255,255,.22);
           clip-path:polygon(0 0,calc(100% - 12px) 0,100% 100%,0 100%);
         }
-        .btn-primary:hover{filter:brightness(1.15);transform:translateY(-2px)}
-        .btn-primary:disabled{opacity:.35;cursor:not-allowed;filter:none;transform:none}
+        .btn-primary:hover{filter:brightness(1.1);transform:translateY(-2px);box-shadow:0 12px 32px rgba(255,122,41,.52),inset 0 1px 0 rgba(255,255,255,.28)}
+        .btn-primary:active{transform:scale(.98)}
+        .btn-primary:disabled{opacity:.35;cursor:not-allowed;filter:none;transform:none;box-shadow:none}
 
         .btn-back{
           background:rgba(255,255,255,0.05);
@@ -451,31 +453,39 @@ export function Registration() {
           color:var(--ink-3);margin-bottom:6px;
         }
 
-        /* ── ROLE CARD ── */
+        /* ── ROLE CARD — cinematic full-bleed artwork (spec §5) ── */
         .role-card{
           position:relative;overflow:hidden;cursor:pointer;
-          border:1px solid rgba(255,255,255,0.08);
-          background:#142236;
-          transition:all .22s;
-          clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,0 100%);
+          border:1.5px solid rgba(255,255,255,0.12);
+          border-radius:18px;
+          background:#0F2242;
+          box-shadow:0 12px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.05);
+          transition:transform .3s cubic-bezier(.22,1,.36,1),border-color .3s,box-shadow .3s;
         }
-        .role-card:hover{border-color:rgba(255,255,255,0.22);transform:translateY(-3px)}
-        .role-card.selected{border-color:var(--rc,#FF7A29)}
-        .role-card::before{
-          content:'';position:absolute;top:0;left:0;right:0;height:3px;
-          background:var(--rc,#FF7A29);transform:scaleX(0);transform-origin:left;
-          transition:transform .3s;
+        .role-card:hover{border-color:rgba(255,255,255,0.24);transform:translateY(-4px);box-shadow:0 22px 50px rgba(0,0,0,0.55)}
+        .role-card:active{transform:scale(.99)}
+        .role-card.selected{
+          border-color:var(--rc,#FF7A29);
+          box-shadow:0 0 0 2px var(--rc,#FF7A29),0 0 34px -6px var(--rc,#FF7A29),0 22px 50px rgba(0,0,0,0.55);
         }
-        .role-card.selected::before{transform:scaleX(1)}
-        .role-card .corner-cut{
-          position:absolute;top:0;right:0;width:16px;height:16px;
-          background:var(--bg);clip-path:polygon(0 0,100% 0,100% 100%);
-        }
-        .role-card.selected .corner-cut{background:var(--rc,#FF7A29)}
+        .role-card .rc-media{position:relative;width:100%;aspect-ratio:3/4;overflow:hidden;}
+        .role-card .rc-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 22%;transition:transform .55s cubic-bezier(.22,1,.36,1);}
+        .role-card:hover .rc-img,.role-card.selected .rc-img{transform:scale(1.06)}
+        .role-card .rc-scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,14,26,0) 32%,rgba(7,14,26,.55) 60%,rgba(7,14,26,.97) 100%);}
+        .role-card .rc-tone{position:absolute;inset:0;mix-blend-mode:soft-light;opacity:.55;background:linear-gradient(150deg,var(--rc,#FF7A29) 0%,transparent 45%,#1E40AF 100%);}
+        .role-card .rc-overlay{position:absolute;left:0;right:0;bottom:0;padding:16px 18px 18px;z-index:2;}
+        .role-card .rc-check{position:absolute;top:12px;right:12px;z-index:3;width:26px;height:26px;border-radius:50%;background:var(--rc,#FF7A29);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:14px;box-shadow:0 4px 14px rgba(0,0,0,.5);}
 
         /* ── ROLES GRID ── */
-        .roles-grid{display:grid;grid-template-columns:1fr;gap:12px}
-        @media(min-width:480px){.roles-grid{grid-template-columns:repeat(2,1fr);gap:14px}}
+        .roles-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+        @media(min-width:600px){.roles-grid{grid-template-columns:repeat(4,1fr);gap:14px}}
+        @keyframes roleIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+        .roles-grid .role-card{animation:roleIn .5s cubic-bezier(.22,1,.36,1) both}
+        .roles-grid .role-card:nth-child(1){animation-delay:.05s}
+        .roles-grid .role-card:nth-child(2){animation-delay:.12s}
+        .roles-grid .role-card:nth-child(3){animation-delay:.19s}
+        .roles-grid .role-card:nth-child(4){animation-delay:.26s}
+        @media(prefers-reduced-motion:reduce){.roles-grid .role-card{animation:none}}
 
         /* ── CITY CHIP ── */
         .city-chip{
@@ -891,47 +901,34 @@ export function Registration() {
                     <div
                       key={r.id}
                       className={'role-card' + (role?.id===r.id ? ' selected' : '')}
-                      style={{ '--rc': r.color, overflow:'hidden' } as any}
+                      style={{ '--rc': r.color } as any}
                       onClick={() => setRole(r)}
+                      role="button"
+                      aria-pressed={role?.id===r.id}
                       tabIndex={0}
-                      onKeyDown={e => e.key==='Enter'&&setRole(r)}
+                      onKeyDown={e => (e.key==='Enter' || e.key===' ') && (e.preventDefault(), setRole(r))}
                     >
-                      {/* Cinematic role visual — PLACEHOLDER AI imagery, replace with
-                          BCPL-approved real photography (same filenames) when ready. */}
-                      <div style={{ position:'relative', height:150, overflow:'hidden' }}>
+                      {/* Cinematic full-bleed role artwork (900x1200 portrait) with
+                          dark scrim + orange/blue grade + typographic overlay. */}
+                      <div className="rc-media">
                         <img
+                          className="rc-img"
                           src={ROLE_IMG + r.img}
                           alt={t(r.label, r.labelHi) + ' — BCPL Season 5 role'}
-                          loading="lazy" width={1024} height={1024}
-                          style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', objectPosition:'center 18%', transform: role?.id===r.id ? 'scale(1.05)' : 'scale(1)', transition:'transform .35s ease' }}
+                          loading="lazy" width={900} height={1200}
                         />
-                        <div style={{ position:'absolute', inset:0, background:'linear-gradient(180deg,' + r.color + '14 0%, rgba(7,14,26,.30) 45%, rgba(7,14,26,.97) 100%)' }} />
-                        {role?.id === r.id && (
-                          <div style={{ position:'absolute', top:10, right:10, width:22, height:22, borderRadius:'50%', background:r.color, display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:900, color:'#fff', boxShadow:'0 2px 10px rgba(0,0,0,.5)' }}>✓</div>
-                        )}
-                        <div style={{ position:'absolute', left:14, bottom:8, fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:16, color:'#fff', textTransform:'uppercase', letterSpacing:'.05em', textShadow:'0 2px 12px rgba(0,0,0,.8)' }}>{t(r.label, r.labelHi)}</div>
-                      </div>
-                      <div style={{ padding:'12px 16px 16px' }}>
-                        <div style={{ fontSize:13, color:'rgba(255,255,255,0.55)', marginBottom:14, lineHeight:1.5 }}>{t(r.desc, r.descHi)}</div>
-
-                        {/* Price rows — from the shared fee config */}
-                        <div style={{ borderTop:'1px solid rgba(255,255,255,0.07)', paddingTop:12, display:'flex', flexDirection:'column', gap:8 }}>
-                          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-                            <div>
-                              <div style={{ fontSize:11, fontWeight:700, color:'#FF7A29', letterSpacing:'.1em', fontFamily:'Montserrat,sans-serif' }}>PHASE 1</div>
-                              <div style={{ fontSize:11, color:'var(--ink-3)' }}>{t('Video Trial Entry', 'Video Trial Entry')}</div>
-                            </div>
-                            <div style={{ textAlign:'right' }}>
-                              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:24, lineHeight:1, color: role?.id===r.id ? r.color : '#fff' }}>₹{fees.phase1[r.id] ?? r.phase1}</div>
-                              <div style={{ fontSize:9.5, color:'var(--ink-3)', marginTop:3 }}>{t('+ GST', '+ GST')}</div>
-                            </div>
+                        <div className="rc-tone" />
+                        <div className="rc-scrim" />
+                        {role?.id === r.id && <div className="rc-check">✓</div>}
+                        <div className="rc-overlay">
+                          <div style={{ fontFamily:'"Barlow Condensed",Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(17px,2.4vw,21px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em', lineHeight:1, marginBottom:5, textShadow:'0 2px 14px rgba(0,0,0,.85)' }}>{t(r.label, r.labelHi)}</div>
+                          <div style={{ fontSize:11.5, color:'rgba(255,255,255,0.82)', lineHeight:1.4, marginBottom:10, minHeight:32, textShadow:'0 1px 8px rgba(0,0,0,.8)' }}>{t(r.desc, r.descHi)}</div>
+                          <div style={{ display:'flex', alignItems:'baseline', gap:6 }}>
+                            <span style={{ fontFamily:'"Barlow Condensed",Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(20px,3vw,26px)', lineHeight:1, color: role?.id===r.id ? r.color : '#fff', textShadow:'0 2px 12px rgba(0,0,0,.8)' }}>₹{fees.phase1[r.id] ?? r.phase1}</span>
+                            <span style={{ fontSize:10, fontWeight:700, color:'rgba(255,255,255,0.6)', letterSpacing:'.06em' }}>{t('+ GST · PHASE 1', '+ GST · PHASE 1')}</span>
                           </div>
-                          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', opacity:.55 }}>
-                            <div>
-                              <div style={{ fontSize:11, fontWeight:700, color:'#E8B23D', letterSpacing:'.1em', fontFamily:'Montserrat,sans-serif', display:'inline-flex', alignItems:'center', gap:4 }}>PHASE 2 <IcoLock size={11} /></div>
-                              <div style={{ fontSize:11, color:'var(--ink-3)' }}>{t('Physical Trial (if selected)', 'Physical Trial (अगर select हुए)')}</div>
-                            </div>
-                            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:18, color:'rgba(232,178,61,0.7)' }}>₹{(fees.phase2[r.id] ?? r.phase2).toLocaleString()}<span style={{ fontSize:12, fontWeight:600 }}> + GST</span></div>
+                          <div style={{ fontSize:10, color:'rgba(255,255,255,0.5)', marginTop:4, display:'inline-flex', alignItems:'center', gap:4 }}>
+                            <IcoLock size={9} /> {t('Phase 2 (if selected): ₹', 'Phase 2 (अगर select): ₹')}{(fees.phase2[r.id] ?? r.phase2).toLocaleString()} {t('+ GST', '+ GST')}
                           </div>
                         </div>
                       </div>
