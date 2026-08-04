@@ -89,7 +89,7 @@ export function faqPageLd(siteOrigin: string): Record<string, unknown> {
     },
     {
       q: "Is the registration fee refundable?",
-      a: "Yes, within 15 days of registration if you have not yet uploaded your evaluation video. Once your video has been uploaded and submitted for review, the fee becomes non-refundable. Please refer to our Refunds policy for full details.",
+      a: "No. Once a Phase 1 payment is successfully completed, the fee is non-refundable — including if you do not upload a video, upload late, upload an invalid video, withdraw, or do not qualify. Limited exceptions such as duplicate payments and BCPL not declaring a result for a valid submission within the published period are set out in the Refund & Cancellation Policy.",
     },
     {
       q: "What is Phase 1?",

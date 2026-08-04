@@ -310,8 +310,8 @@ export function Terms() {
                         "Contact our legal team at",
                         "हमारी legal team से संपर्क करें"
                       )} <strong style={{color:'#E8B23D'}}>support@bcplt20.com</strong>{t(
-                        " or write to: Kriparthi Playing 11 Pvt. Ltd., New Delhi, India. We aim to respond within 5 business days.",
-                        " या लिखें: Kriparthi Playing 11 Pvt. Ltd., New Delhi, India. हम 5 business days में जवाब देते हैं।"
+                        " or write to: Kriparthi Playing 11 Pvt. Ltd., New Delhi, India.",
+                        " या लिखें: Kriparthi Playing 11 Pvt. Ltd., New Delhi, India."
                       )}
                     </p>
                   </div>
