@@ -407,7 +407,7 @@ export function MatchCenter() {
       <SiteHeader active="Match Center" />
 
       {/* HERO — DARK ANCHOR (white text over stadium-navy) */}
-      <section className="on-dark" style={{ background: "linear-gradient(160deg,#0C1D33 0%,#0A1830 55%,#081327 100%)", padding: "clamp(88px,12vh,132px) 0 clamp(40px,6vw,64px)", position: "relative", overflow: "hidden", textAlign: "center" }}>
+      <section data-hero-dark className="on-dark" style={{ background: "linear-gradient(160deg,#0C1D33 0%,#0A1830 55%,#081327 100%)", padding: "clamp(88px,12vh,132px) 0 clamp(40px,6vw,64px)", position: "relative", overflow: "hidden", textAlign: "center" }}>
         <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 50% at 50% 0%,rgba(255,122,41,0.14) 0%,transparent 70%)", pointerEvents: "none", zIndex: 0 }} />
         <div className="wrap" style={{ position: "relative", zIndex: 1, animation: "fadeUp 0.7s ease both" }}>
           <div className="v3-kicker" style={{ marginBottom: 16 }}>

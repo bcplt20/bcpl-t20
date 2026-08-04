@@ -507,7 +507,7 @@ export function Home() {
       <SiteHeader active="Home" />
 
       {/* ══ 1 · CINEMATIC HERO — the dream first ══ */}
-      <section style={{ position:"relative", overflow:"hidden", background:"#0C121C" }}>
+      <section data-hero-dark style={{ position:"relative", overflow:"hidden", background:"#0C121C" }}>
         <img src={BASE + "bcpl-assets/stadium-hero.jpg"} alt="" aria-hidden="true" className="hero-bg"
           onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
         <HeroVideo/>
