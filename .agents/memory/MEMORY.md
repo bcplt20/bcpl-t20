@@ -42,4 +42,6 @@
 - [node-postgres array binding](node-postgres-array-binding.md) — raw sql `${arr}::text[]` binds as ONE string param ("malformed array literal"); use IN + sql.join per-element
 - [drizzle push alignment](db-push-alignment.md) — push prompts = drift: `*_key`→`*_unique` renames, declare runtime tables, pre-add new uniques via catch-up SQL (truncate prompt!); grep "Changes applied"
 - [Trial-ops locking & waves](trial-ops-locking.md) — all attempt/eval writes take allocation row FOR UPDATE first (dbc param); W1 shipped, W2-W6 map inside
+- [Final 600 selection](final600-selection.md) — rank-based zone/role engine; every mutating step claim-guarded; config superRefine rejects quota mismatch; publish flips status only
+- [Email design system](email-design-system.md) — emailTheme.ts components, no emoji, sponsor strip hydrated at send-time, whole S3 bucket blocks public reads (incl. cms/) → presign/redirect route
 - [Legal consent capture](legal-consent-capture.md) — consents jsonb only via atomic recordConsentKey merge (never JS-merge); EVERY pay entry point (incl. resume) needs consent UI+payload; LEGAL_APPROVAL_PENDING flag gates go-live
