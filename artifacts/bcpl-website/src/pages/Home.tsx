@@ -221,6 +221,8 @@ export function Home() {
   useEffect(()=>{
     const root = rootRef.current;
     if (!root) return;
+    if (!("IntersectionObserver" in window)) return; // fallback: content stays visible (html.rv-js never set)
+    document.documentElement.classList.add("rv-js");
     const obs = new IntersectionObserver(
       entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("rv-in"); obs.unobserve(e.target); } }),
       { threshold: 0.08 }
