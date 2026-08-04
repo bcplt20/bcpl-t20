@@ -64,9 +64,9 @@ function ScrollToTop() {
 function NotFound() {
   return (
     <div style={{ background:'var(--bg)', color:'#fff', minHeight:'100vh', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', fontFamily:'Montserrat,sans-serif', gap:16 }}>
-      <div style={{ fontSize:80, fontWeight:900, color:'#FF7A29' }}>404</div>
+      <div style={{ fontSize:80, fontWeight:900, color:'#D4AF37' }}>404</div>
       <div style={{ fontSize:22, fontWeight:700 }}>Page not found</div>
-      <a href="/" style={{ marginTop:12, background:'#FF7A29', color:'#fff', padding:'12px 28px', borderRadius:10, fontWeight:900, fontSize:14, letterSpacing:'.06em', textDecoration:'none' }}>← Back to Home</a>
+      <a href="/" style={{ marginTop:12, background:'#D4AF37', color:'#fff', padding:'12px 28px', borderRadius:10, fontWeight:900, fontSize:14, letterSpacing:'.06em', textDecoration:'none' }}>← Back to Home</a>
     </div>
   );
 }

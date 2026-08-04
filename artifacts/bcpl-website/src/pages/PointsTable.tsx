@@ -41,18 +41,18 @@ const CSS = `
 .wrap { max-width: 1280px; margin: 0 auto; padding: 0 16px; }
 @media(min-width:640px) { .wrap { padding: 0 24px; } }
 @media(min-width:768px) { .wrap { padding: 0 32px; } }
-.slbl { font-family: var(--font-head); font-weight: 800; font-size: 11px; letter-spacing: .15em; color: #FF7A29; text-transform: uppercase; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
-.slbl::before { content: ''; display: inline-block; width: 20px; height: 2px; background: #FF7A29; }
+.slbl { font-family: var(--font-head); font-weight: 800; font-size: 11px; letter-spacing: .15em; color: #D4AF37; text-transform: uppercase; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.slbl::before { content: ''; display: inline-block; width: 20px; height: 2px; background: #D4AF37; }
 .shimmer-gold { background: linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 3s linear infinite; }
 @keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
 
 /* Desktop: full table */
 .pts-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
 .pts-table { width: 100%; border-collapse: collapse; min-width: 640px; }
-.pts-header { background: rgba(255,122,41,0.06); }
+.pts-header { background: rgba(212,175,55,0.06); }
 .pts-header th { padding: 12px 14px; text-align: left; font-family: var(--font-head); font-weight: 700; font-size: 10px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .1em; white-space: nowrap; }
 .pts-row { border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.15s; }
-.pts-row:hover { background: rgba(255,122,41,0.04); }
+.pts-row:hover { background: rgba(212,175,55,0.04); }
 .pts-row td { padding: 14px; font-family: Inter, sans-serif; font-size: 13px; color: rgba(255,255,255,0.6); }
 
 /* Mobile: collapsed rows (user's explicit direction) */
@@ -63,15 +63,15 @@ const CSS = `
 @media(min-width:768px) {
   .pts-mobile { display: none; }
 }
-.pts-mobile-row { background: linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85)); backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 16px; margin-bottom: 10px; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s; }
-.pts-mobile-row:hover { border-color: rgba(255,122,41,0.35); }
-.pts-mobile-row.expanded { border-color: rgba(255,122,41,0.5); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+.pts-mobile-row { background: linear-gradient(135deg,rgba(10,59,46,0.9),rgba(6,35,28,0.85)); backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 16px; margin-bottom: 10px; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s; }
+.pts-mobile-row:hover { border-color: rgba(212,175,55,0.35); }
+.pts-mobile-row.expanded { border-color: rgba(212,175,55,0.5); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
 
 /* Floating register button */
-.float-reg-btn { position: fixed; bottom: 28px; right: 28px; z-index: 900; background: linear-gradient(135deg,#FF7A29,#D95E10); border: none; border-radius: 12px; color: #fff; font-family: var(--font-head); font-weight: 900; font-size: 13px; letter-spacing: .06em; cursor: pointer; padding: 14px 22px; text-transform: uppercase; text-decoration: none; display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 32px rgba(255,122,41,0.45); clip-path: polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition: opacity .2s, transform .15s; }
+.float-reg-btn { position: fixed; bottom: 28px; right: 28px; z-index: 900; background: linear-gradient(135deg,#D4AF37,#A8842A); border: none; border-radius: 12px; color: #fff; font-family: var(--font-head); font-weight: 900; font-size: 13px; letter-spacing: .06em; cursor: pointer; padding: 14px 22px; text-transform: uppercase; text-decoration: none; display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 32px rgba(212,175,55,0.45); clip-path: polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition: opacity .2s, transform .15s; }
 .float-reg-btn:hover { opacity: .9; transform: translateY(-2px); }
 @media(max-width:1023px){ .float-reg-btn { display:none; } }
-@keyframes floatPulse { 0%,100% { box-shadow: 0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4); } 50% { box-shadow: 0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0); } }
+@keyframes floatPulse { 0%,100% { box-shadow: 0 8px 32px rgba(212,175,55,0.45),0 0 0 0 rgba(212,175,55,0.4); } 50% { box-shadow: 0 8px 40px rgba(212,175,55,0.6),0 0 0 8px rgba(212,175,55,0); } }
 .float-reg-pulse { animation: floatPulse 2.5s ease-in-out infinite; }
 @media(max-width:639px) { .float-reg-btn { bottom: 16px; right: 16px; padding: 12px 16px; font-size: 12px; } }
 `;
@@ -108,7 +108,7 @@ export function PointsTable() {
     }).catch(() => {});
   }, []);
 
-  const color  = (team: string) => teamColors[normTeam(team)] || "#FF7A29";
+  const color  = (team: string) => teamColors[normTeam(team)] || "#D4AF37";
   const logoOf = (team: string) => teamLogos[normTeam(team)] || "";
 
   useEffect(() => {
@@ -134,7 +134,7 @@ export function PointsTable() {
 
       {/* HERO */}
       <section style={{ padding: "clamp(48px,6vw,72px) 0 clamp(32px,4vw,48px)", position: "relative", overflow: "hidden" }}>
-        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 50% at 50% 0%,rgba(255,122,41,0.06) 0%,transparent 70%)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 50% at 50% 0%,rgba(212,175,55,0.06) 0%,transparent 70%)", pointerEvents: "none" }} />
         <div className="wrap" style={{ position: "relative", zIndex: 1, textAlign: "center" }}>
           <div className="slbl" style={{ justifyContent: "center" }}>
             {t("Season 5 Standings", "सीज़न 5 स्टैंडिंग")}
@@ -161,7 +161,7 @@ export function PointsTable() {
             <p style={{ color: "var(--ink-3)", fontSize: 15, maxWidth: 440, margin: "0 auto 28px", lineHeight: 1.7 }}>
               {t("Season 5 tournament begins Sep 2026. The points table will update here in real time once the first match is played.", "Season 5 टूर्नामेंट Sep 2026 में शुरू होगा। पहले match के बाद points table यहाँ real time में update होगी।")}
             </p>
-            <Link href="/register" className="float-reg-btn" style={{ position: "static", animation: "none", display: "inline-flex", boxShadow: "0 6px 24px rgba(255,122,41,0.35)" }}>
+            <Link href="/register" className="float-reg-btn" style={{ position: "static", animation: "none", display: "inline-flex", boxShadow: "0 6px 24px rgba(212,175,55,0.35)" }}>
               {t("Register for Season 5 →", "Season 5 के लिए रजिस्टर करें →")}
             </Link>
           </div>
@@ -170,7 +170,7 @@ export function PointsTable() {
         {/* TABLE — DESKTOP */}
         {tableRows.length > 0 && (
           <>
-            <div style={{ background: "linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85))", backdropFilter: "blur(24px)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, overflow: "hidden", marginBottom: 32 }}>
+            <div style={{ background: "linear-gradient(135deg,rgba(10,59,46,0.9),rgba(6,35,28,0.85))", backdropFilter: "blur(24px)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, overflow: "hidden", marginBottom: 32 }}>
               <div className="pts-table-wrap">
                 <table className="pts-table">
                   <thead className="pts-header">
@@ -194,7 +194,7 @@ export function PointsTable() {
                             background: row.pos === 1 ? "linear-gradient(135deg,#E8B23D,#FFD700)" : row.pos === 2 ? "linear-gradient(135deg,#9CA3AF,#D1D5DB)" : row.pos === 3 ? "linear-gradient(135deg,#B45309,#D97706)" : "rgba(255,255,255,0.06)",
                             display: "flex", alignItems: "center", justifyContent: "center",
                             fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 12,
-                            color: row.pos <= 3 ? "#0E1624" : "rgba(255,255,255,0.4)",
+                            color: row.pos <= 3 ? "#071B15" : "rgba(255,255,255,0.4)",
                             margin: "0 auto"
                           }}>{row.pos}</div>
                         </td>
@@ -209,7 +209,7 @@ export function PointsTable() {
                         <td style={{ textAlign: "center", color: "#E8493F" }}>{row.l}</td>
                         <td style={{ textAlign: "center", color: "var(--ink-3)" }}>{row.nr}</td>
                         <td style={{ textAlign: "center", fontFamily: "var(--font-head)", fontWeight: 700, color: row.nrr.startsWith("+") ? "#22C55E" : "#E8493F" }}>{row.nrr}</td>
-                        <td style={{ textAlign: "center", fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 16, color: "#FF7A29" }}>{row.pts}</td>
+                        <td style={{ textAlign: "center", fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 16, color: "#D4AF37" }}>{row.pts}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -230,13 +230,13 @@ export function PointsTable() {
                           background: row.pos === 1 ? "linear-gradient(135deg,#E8B23D,#FFD700)" : row.pos === 2 ? "linear-gradient(135deg,#9CA3AF,#D1D5DB)" : row.pos === 3 ? "linear-gradient(135deg,#B45309,#D97706)" : "rgba(255,255,255,0.06)",
                           display: "flex", alignItems: "center", justifyContent: "center",
                           fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 13,
-                          color: row.pos <= 3 ? "#0E1624" : "rgba(255,255,255,0.4)",
+                          color: row.pos <= 3 ? "#071B15" : "rgba(255,255,255,0.4)",
                           flexShrink: 0
                         }}>{row.pos}</div>
                         <TeamBadge name={row.name} color={color(row.name)} logo={logoOf(row.name)} />
                         <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 15, color: "#fff", flex: 1 }}>{row.name}</div>
                       </div>
-                      <div style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 18, color: "#FF7A29", flexShrink: 0 }}>
+                      <div style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 18, color: "#D4AF37", flexShrink: 0 }}>
                         {row.pts} {t("pts", "pts")}
                       </div>
                     </div>

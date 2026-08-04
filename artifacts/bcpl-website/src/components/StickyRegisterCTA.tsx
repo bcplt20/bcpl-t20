@@ -21,9 +21,9 @@ import { useLang } from "../lib/i18n";
 const WHATSAPP_URL = "https://wa.me/919151346555";
 
 const CSS = `
-  .srg-bar{position:fixed;left:0;right:0;bottom:0;z-index:900;display:flex;gap:10px;align-items:stretch;background:rgba(4,12,24,.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid rgba(255,255,255,.07);padding:10px 16px calc(12px + env(safe-area-inset-bottom,0px));}
+  .srg-bar{position:fixed;left:0;right:0;bottom:0;z-index:900;display:flex;gap:10px;align-items:stretch;background:rgba(3,19,15,.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid rgba(255,255,255,.07);padding:10px 16px calc(12px + env(safe-area-inset-bottom,0px));}
   @media(min-width:1024px){.srg-bar{display:none;}}
-  .srg-btn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:12px 16px;background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:var(--r,14px);color:#fff;font-family:'Barlow Condensed','Mukta',sans-serif;font-weight:800;font-size:17px;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;cursor:pointer;box-shadow:0 6px 22px rgba(255,122,41,.4);transition:opacity .2s,transform .15s;}
+  .srg-btn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:12px 16px;background:linear-gradient(135deg,#D4AF37,#A8842A);border:none;border-radius:var(--r,14px);color:#fff;font-family:'Barlow Condensed','Mukta',sans-serif;font-weight:800;font-size:17px;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;cursor:pointer;box-shadow:0 6px 22px rgba(212,175,55,.4);transition:opacity .2s,transform .15s;}
   .srg-btn:active{transform:scale(.985);}
   .srg-wa{flex:0 0 52px;display:inline-flex;align-items:center;justify-content:center;min-height:52px;border:1px solid rgba(37,211,102,.4);border-radius:var(--r,14px);background:rgba(37,211,102,.1);text-decoration:none;}
 `;

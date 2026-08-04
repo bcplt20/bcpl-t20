@@ -59,7 +59,7 @@ export function SupervisorPanel() {
             <span className="stf-chip">{it.evaluation.playerRole.replaceAll("_", " ")}</span>
           </div>
           <div className="stf-sub">
-            Locked score <b style={{ color: "#FF7A29" }}>{it.evaluation.totalScore}</b> by {it.evaluation.evaluatorEmail}
+            Locked score <b style={{ color: "#D4AF37" }}>{it.evaluation.totalScore}</b> by {it.evaluation.evaluatorEmail}
           </div>
           <div style={{ fontSize: 14, fontWeight: 600, lineHeight: 1.5 }}>“{it.reason}”</div>
           <div className="stf-sub">Requested by {it.requestedBy} · {new Date(it.createdAt).toLocaleString()}</div>

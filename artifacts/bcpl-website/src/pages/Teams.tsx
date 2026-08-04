@@ -26,7 +26,7 @@ function TeamCard({ t }: { t: CardTeam }) {
   return (
     <Link href={`/team/${t.slug}`} style={{ textDecoration: "none", color: "inherit", display: "block" }}>
       <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
-        style={{ background: "#121F2F", border: `1.5px solid ${hov ? t.color : "rgba(255,255,255,0.07)"}`, borderRadius: 12, borderTop: `3px solid ${t.color}`, padding: "20px 18px", transition: "all 0.25s", boxShadow: hov ? `0 12px 40px ${t.color}22,0 0 0 1px ${t.color}33` : "none", cursor: "pointer", position: "relative", overflow: "hidden" }}>
+        style={{ background: "#0C271F", border: `1.5px solid ${hov ? t.color : "rgba(255,255,255,0.07)"}`, borderRadius: 12, borderTop: `3px solid ${t.color}`, padding: "20px 18px", transition: "all 0.25s", boxShadow: hov ? `0 12px 40px ${t.color}22,0 0 0 1px ${t.color}33` : "none", cursor: "pointer", position: "relative", overflow: "hidden" }}>
         {/* Watermark logo */}
         {t.logo && <img loading="lazy" decoding="async" src={t.logo} alt={t.name} style={{ position: "absolute", right: "-6%", bottom: "-6%", width: "72%", height: "72%", objectFit: "contain", opacity: 0.055, pointerEvents: "none", transition: "opacity 0.3s", filter: "grayscale(20%)" }} />}
 
@@ -51,7 +51,7 @@ function TeamCard({ t }: { t: CardTeam }) {
         </div>
 
         {/* View squad link */}
-        <div style={{ display: "flex", alignItems: "center", gap: 6, color: "#FF7A29", fontFamily: "var(--font-head)", fontWeight: 700, fontSize: 12, position: "relative", zIndex: 1 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 6, color: "#D4AF37", fontFamily: "var(--font-head)", fontWeight: 700, fontSize: 12, position: "relative", zIndex: 1 }}>
           <span>View Squad</span>
           <span style={{ transition: "transform 0.2s", transform: hov ? "translateX(4px)" : "none" }}>→</span>
         </div>
@@ -75,7 +75,7 @@ export function Teams() {
         });
         setTeams(ordered.map((tm: ApiTeam) => ({
           slug: tm.slug, name: tm.name, abbr: abbrOf(tm.name), city: tm.city,
-          color: tm.color || "#FF7A29", logo: asset(tm.logoUrl), playerCount: tm.playerCount || 0,
+          color: tm.color || "#D4AF37", logo: asset(tm.logoUrl), playerCount: tm.playerCount || 0,
         })));
       })
       .catch(e => setLoadErr(e?.message || "Could not load teams"));
@@ -97,10 +97,10 @@ export function Teams() {
         .shimmer-gold { background: linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimGold 3s linear infinite; }
         @keyframes shimGold { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
         /* Floating register button */
-        .float-reg-btn { position: fixed; bottom: 28px; right: 28px; z-index: 900; background: linear-gradient(135deg,#FF7A29,#D95E10); border: none; border-radius: 12px; color: #fff; font-family: var(--font-head); font-weight: 900; font-size: 13px; letter-spacing: .06em; cursor: pointer; padding: 14px 22px; text-transform: uppercase; text-decoration: none; display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 32px rgba(255,122,41,0.45); clip-path: polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition: opacity .2s, transform .15s; }
+        .float-reg-btn { position: fixed; bottom: 28px; right: 28px; z-index: 900; background: linear-gradient(135deg,#D4AF37,#A8842A); border: none; border-radius: 12px; color: #fff; font-family: var(--font-head); font-weight: 900; font-size: 13px; letter-spacing: .06em; cursor: pointer; padding: 14px 22px; text-transform: uppercase; text-decoration: none; display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 32px rgba(212,175,55,0.45); clip-path: polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition: opacity .2s, transform .15s; }
         .float-reg-btn:hover { opacity: .9; transform: translateY(-2px); }
 @media(max-width:1023px){ .float-reg-btn { display:none; } }
-        @keyframes floatPulse { 0%,100% { box-shadow: 0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4); } 50% { box-shadow: 0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0); } }
+        @keyframes floatPulse { 0%,100% { box-shadow: 0 8px 32px rgba(212,175,55,0.45),0 0 0 0 rgba(212,175,55,0.4); } 50% { box-shadow: 0 8px 40px rgba(212,175,55,0.6),0 0 0 8px rgba(212,175,55,0); } }
         .float-reg-pulse { animation: floatPulse 2.5s ease-in-out infinite; }
         @media(max-width:639px) { .float-reg-btn { bottom: 16px; right: 16px; padding: 12px 16px; font-size: 12px; } }
       `}</style>
@@ -109,10 +109,10 @@ export function Teams() {
 
       {/* HERO */}
       <section style={{ padding: "clamp(60px,8vw,80px) 0 48px", textAlign: "center", position: "relative", overflow: "hidden" }}>
-        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 60% at 50% 0%,rgba(255,122,41,0.06) 0%,transparent 70%)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 60% at 50% 0%,rgba(212,175,55,0.06) 0%,transparent 70%)", pointerEvents: "none" }} />
         <div className="wrap" style={{ position: "relative", zIndex: 1 }}>
-          <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 11, letterSpacing: ".16em", color: "#FF7A29", textTransform: "uppercase", display: "inline-flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-            <span style={{ width: 24, height: 2, background: "#FF7A29", display: "inline-block" }} />{t("The Franchises", "फ्रैंचाइज़ी")}<span style={{ width: 24, height: 2, background: "#FF7A29", display: "inline-block" }} />
+          <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 11, letterSpacing: ".16em", color: "#D4AF37", textTransform: "uppercase", display: "inline-flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+            <span style={{ width: 24, height: 2, background: "#D4AF37", display: "inline-block" }} />{t("The Franchises", "फ्रैंचाइज़ी")}<span style={{ width: 24, height: 2, background: "#D4AF37", display: "inline-block" }} />
           </div>
           <h1 style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: "clamp(38px,7vw,80px)", lineHeight: 1.04, marginBottom: 14 }}>
             <span style={{ display: "block", color: "#fff" }}>{t("TEN CITIES.", "10 शहर।")}</span>
@@ -140,9 +140,9 @@ export function Teams() {
       {/* SEASON INFO STRIP */}
       <section style={{ padding: "0 0 48px" }}>
         <div className="wrap">
-          <div style={{ background: "rgba(255,122,41,0.06)", border: "1px solid rgba(255,122,41,0.15)", borderRadius: 12, padding: "14px 20px", display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-            <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#FF7A29", flexShrink: 0 }} />
-            <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 13, color: "#FF7A29" }}>SEASON 5</span>
+          <div style={{ background: "rgba(212,175,55,0.06)", border: "1px solid rgba(212,175,55,0.15)", borderRadius: 12, padding: "14px 20px", display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+            <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#D4AF37", flexShrink: 0 }} />
+            <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 13, color: "#D4AF37" }}>SEASON 5</span>
             <span style={{ color: "var(--ink-3)", fontSize: 12 }}>·</span>
             <span style={{ fontFamily: "Inter,sans-serif", fontSize: 13, color: "rgba(255,255,255,0.6)" }}>
               {t(`${SEASON.teams} franchise teams · Squads announced after auction in Aug 2026 · Tournament begins Sep 2026`, `${SEASON.teams} franchise teams · Auction (Aug 2026) के बाद squads announce होंगे · Tournament Sep 2026 में शुरू होगा`)}
@@ -184,9 +184,9 @@ export function Teams() {
         <section style={{ padding: "0 0 56px" }}>
           <div className="wrap">
             <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 28 }}>
-              <div style={{ flex: 1, height: 1, background: "linear-gradient(90deg,rgba(255,122,41,0.7),transparent)" }} />
-              <span style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 12, color: "#FF7A29", letterSpacing: ".15em" }}>GROUP A</span>
-              <div style={{ flex: 1, height: 1, background: "linear-gradient(270deg,rgba(255,122,41,0.7),transparent)" }} />
+              <div style={{ flex: 1, height: 1, background: "linear-gradient(90deg,rgba(212,175,55,0.7),transparent)" }} />
+              <span style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 12, color: "#D4AF37", letterSpacing: ".15em" }}>GROUP A</span>
+              <div style={{ flex: 1, height: 1, background: "linear-gradient(270deg,rgba(212,175,55,0.7),transparent)" }} />
             </div>
             <div className="teams-grid">
               {groupA.map(tm => <TeamCard key={tm.slug} t={tm} />)}
@@ -200,9 +200,9 @@ export function Teams() {
         <section style={{ padding: "0 0 56px" }}>
           <div className="wrap">
             <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 28 }}>
-              <div style={{ flex: 1, height: 1, background: "linear-gradient(90deg,rgba(255,122,41,0.7),transparent)" }} />
-              <span style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 12, color: "#FF7A29", letterSpacing: ".15em" }}>GROUP B</span>
-              <div style={{ flex: 1, height: 1, background: "linear-gradient(270deg,rgba(255,122,41,0.7),transparent)" }} />
+              <div style={{ flex: 1, height: 1, background: "linear-gradient(90deg,rgba(212,175,55,0.7),transparent)" }} />
+              <span style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 12, color: "#D4AF37", letterSpacing: ".15em" }}>GROUP B</span>
+              <div style={{ flex: 1, height: 1, background: "linear-gradient(270deg,rgba(212,175,55,0.7),transparent)" }} />
             </div>
             <div className="teams-grid">
               {groupB.map(tm => <TeamCard key={tm.slug} t={tm} />)}
@@ -214,14 +214,14 @@ export function Teams() {
       {/* CTA */}
       <section style={{ padding: "0 0 80px" }}>
         <div className="wrap">
-          <div style={{ background: "#121F2F", border: "1px solid rgba(255,122,41,0.2)", borderRadius: 12, borderTop: "3px solid #FF7A29", padding: "clamp(32px,5vw,52px)", textAlign: "center" }}>
+          <div style={{ background: "#0C271F", border: "1px solid rgba(212,175,55,0.2)", borderRadius: 12, borderTop: "3px solid #D4AF37", padding: "clamp(32px,5vw,52px)", textAlign: "center" }}>
             <h2 style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: "clamp(20px,3.5vw,36px)", color: "#fff", marginBottom: 10, textTransform: "uppercase" }}>
               {t("Want to play for one of these franchises?", "इनमें से किसी franchise के लिए खेलना चाहते हैं?")}
             </h2>
             <p style={{ fontFamily: "Inter,sans-serif", color: "var(--ink-3)", fontSize: 15, lineHeight: 1.7, maxWidth: 460, margin: "0 auto 28px" }}>
               {t(`Register today and get your shot at Season 5. ${SEASON.trialCities} cities, all roles open.`, `आज ही register करें और Season 5 के लिए अपना मौका पाएं। ${SEASON.trialCities} शहर, सभी roles खुले हैं।`)}
             </p>
-            <Link href="/register" style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "linear-gradient(135deg,#FF7A29,#D95E10)", border: "none", borderRadius: 12, color: "#fff", fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 14, letterSpacing: ".06em", padding: "14px 36px", textDecoration: "none", textTransform: "uppercase" }}>
+            <Link href="/register" style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "linear-gradient(135deg,#D4AF37,#A8842A)", border: "none", borderRadius: 12, color: "#fff", fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 14, letterSpacing: ".06em", padding: "14px 36px", textDecoration: "none", textTransform: "uppercase" }}>
               {t("REGISTER FOR PHASE 1 →", "PHASE 1 के लिए रजिस्टर करें →")}
             </Link>
           </div>

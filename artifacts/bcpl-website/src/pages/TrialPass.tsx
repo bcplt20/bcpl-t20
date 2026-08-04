@@ -21,9 +21,9 @@ const IcoCheck  = ico(<path d="M4.5 12.5 10 18 19.5 7" />);
 
 const CSS = `
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-body { background:#0E1624; }
+body { background:#071B15; }
 .tp-wrap { width:100%; max-width:720px; margin:0 auto; padding:0 20px; }
-.tp-card { width:100%; max-width:100%; background:linear-gradient(135deg,rgba(15,34,71,0.95),rgba(10,22,46,0.9)); border:1px solid rgba(232,178,61,0.35); border-radius:24px; overflow:hidden; box-shadow:0 24px 64px rgba(0,0,0,0.5); }
+.tp-card { width:100%; max-width:100%; background:linear-gradient(135deg,rgba(10,59,46,0.95),rgba(6,35,28,0.9)); border:1px solid rgba(232,178,61,0.35); border-radius:24px; overflow:hidden; box-shadow:0 24px 64px rgba(0,0,0,0.5); }
 .tp-head { background:linear-gradient(135deg,#E8B23D,#F5C842); padding:18px 24px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
 .tp-status { display:flex; align-items:center; justify-content:center; gap:8px; padding:12px 16px; font-family:var(--font-head); font-weight:800; font-size:14px; letter-spacing:0.08em; text-transform:uppercase; }
 .tp-status.await { background:rgba(232,178,61,0.14); color:#F1C765; border-bottom:1px solid rgba(232,178,61,0.3); }
@@ -34,18 +34,18 @@ body { background:#0E1624; }
 .tp-row { display:flex; justify-content:space-between; gap:14px; padding:12px 0; border-bottom:1px dashed rgba(255,255,255,0.12); }
 .tp-lbl { font-family:var(--font-body); font-weight:700; font-size:13px; color:rgba(255,255,255,0.72); letter-spacing:0.06em; text-transform:uppercase; }
 .tp-val { font-family:var(--font-body); font-weight:700; font-size:15px; color:#fff; text-align:right; }
-.tp-print-btn { display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg,#FF6B00,#FF8C40); color:#fff; border:none; border-radius:12px; padding:14px 28px; font-family:var(--font-head); font-weight:800; font-size:16px; letter-spacing:0.06em; cursor:pointer; box-shadow:0 8px 24px rgba(255,122,41,0.3); transition:transform .14s ease, filter .2s ease; }
+.tp-print-btn { display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg,#C9A227,#E0BC4F); color:#07211A; border:none; border-radius:12px; padding:14px 28px; font-family:var(--font-head); font-weight:800; font-size:16px; letter-spacing:0.06em; cursor:pointer; box-shadow:0 8px 24px rgba(212,175,55,0.3); transition:transform .14s ease, filter .2s ease; }
 .tp-print-btn:hover { filter:brightness(1.08); transform:translateY(-2px); }
 .tp-maps { display:inline-flex; align-items:center; gap:6px; color:#9AD5FF; font-family:var(--font-body); font-weight:600; font-size:14px; text-decoration:none; }
 /* perforated ticket divider */
 .tp-perf { position:relative; height:0; border-top:2px dashed rgba(255,255,255,0.14); margin:0 24px; }
-.tp-perf::before, .tp-perf::after { content:''; position:absolute; top:-12px; width:24px; height:24px; border-radius:50%; background:#0E1624; border:1px solid rgba(232,178,61,0.25); }
+.tp-perf::before, .tp-perf::after { content:''; position:absolute; top:-12px; width:24px; height:24px; border-radius:50%; background:#071B15; border:1px solid rgba(232,178,61,0.25); }
 .tp-perf::before { left:-36px; }
 .tp-perf::after  { right:-36px; }
 /* journey indicator */
 .tp-journey { display:flex; align-items:flex-start; padding:18px 20px 20px; gap:0; }
 .tp-jstep { flex:1; display:flex; flex-direction:column; align-items:center; gap:7px; position:relative; min-width:0; }
-.tp-jdot { width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:#121F2F; border:2px solid rgba(255,255,255,0.14); color:var(--ink-3); position:relative; z-index:1; }
+.tp-jdot { width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:#0C271F; border:2px solid rgba(255,255,255,0.14); color:var(--ink-3); position:relative; z-index:1; }
 .tp-jdot.done   { background:#22C55E; border-color:#22C55E; color:#fff; }
 .tp-jdot.active { border-color:#E8B23D; color:#E8B23D; box-shadow:0 0 0 4px rgba(232,178,61,0.15); }
 .tp-jlbl { font-family:var(--font-body); font-weight:700; font-size:9.5px; letter-spacing:0.01em; text-transform:uppercase; color:rgba(255,255,255,0.7); text-align:center; line-height:1.3; max-width:100%; overflow-wrap:anywhere; word-break:break-word; padding:0 2px; }
@@ -60,7 +60,7 @@ body { background:#0E1624; }
   .no-print { display:none !important; }
   .tp-page { padding:0 !important; }
   .tp-wrap { max-width:100% !important; padding:0 !important; }
-  .tp-card { box-shadow:none !important; border-radius:12px !important; background:linear-gradient(135deg,#0F2247,#0A162E) !important; border:2px solid #E8B23D !important; page-break-inside:avoid; }
+  .tp-card { box-shadow:none !important; border-radius:12px !important; background:linear-gradient(135deg,#0C352A,#07231B) !important; border:2px solid #E8B23D !important; page-break-inside:avoid; }
   .tp-perf::before, .tp-perf::after { background:#fff !important; }
   .tp-jdot.done { background:#22C55E !important; border-color:#22C55E !important; color:#fff !important; }
   .tp-jdot.active { border-color:#E8B23D !important; color:#E8B23D !important; }
@@ -96,7 +96,7 @@ export function TrialPass() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0E1624', fontFamily: 'var(--font-body)' }}>
+    <div style={{ minHeight: '100vh', background: '#071B15', fontFamily: 'var(--font-body)' }}>
       <style>{CSS}</style>
       <div className="no-print"><SiteHeader /></div>
 

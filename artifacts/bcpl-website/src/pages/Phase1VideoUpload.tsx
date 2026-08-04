@@ -307,7 +307,7 @@ export function Phase1VideoUpload() {
     return (
       <div style={{ background:'var(--bg)', minHeight:'100dvh', display:'flex', alignItems:'center', justifyContent:'center', padding:24, fontFamily:'var(--font-body)' }}>
         <div style={{ maxWidth:420, textAlign:'center' }}>
-          <div style={{ width:80, height:80, margin:'0 auto 20px', background:'rgba(255,122,41,0.1)', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center' }}>
+          <div style={{ width:80, height:80, margin:'0 auto 20px', background:'rgba(212,175,55,0.1)', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center' }}>
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           </div>
           <h2 style={{ color:'var(--ink)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:28, marginBottom:12, textTransform:'uppercase' }}>{t('Registration Required', 'रजिस्ट्रेशन आवश्यक है')}</h2>
@@ -332,7 +332,7 @@ export function Phase1VideoUpload() {
           <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid var(--line)', borderRadius:'var(--r)', padding:16, marginBottom:24 }}>
             <p style={{ color:'var(--ink-3)', fontSize:13 }}>{t('Season 6 registrations will open soon. Follow us on ', 'Season 6 के रजिस्ट्रेशन जल्द ही खुलेंगे। अपडेट के लिए ')}<strong style={{ color:'var(--orange)' }}>@bcpl.t20</strong>{t(' for updates.', ' को फॉलो करें।')}</p>
           </div>
-          <a href="https://www.instagram.com/bcpl.t20" target="_blank" rel="noreferrer" style={{ display:'inline-block', background:'rgba(255,122,41,0.12)', border:'1px solid rgba(255,122,41,0.4)', color:'var(--orange)', textDecoration:'none', padding:'12px 28px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:14, letterSpacing:'.06em', textTransform:'uppercase' }}>
+          <a href="https://www.instagram.com/bcpl.t20" target="_blank" rel="noreferrer" style={{ display:'inline-block', background:'rgba(212,175,55,0.12)', border:'1px solid rgba(212,175,55,0.4)', color:'var(--orange)', textDecoration:'none', padding:'12px 28px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:14, letterSpacing:'.06em', textTransform:'uppercase' }}>
             {t('FOLLOW @bcpl.t20', '@bcpl.t20 को फॉलो करें')}
           </a>
         </div>
@@ -386,7 +386,7 @@ export function Phase1VideoUpload() {
             {canReupload && reuploadsLeft > 0 && (
               <>
                 <button onClick={() => { setFile(null); setDeclAccepted(false); setVideoDuration(null); setUploadState('idle'); }}
-                  style={{ background:'rgba(255,122,41,0.1)', border:'1px solid rgba(255,122,41,0.4)', color:'var(--orange)', padding:'12px 28px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:14, letterSpacing:'.06em', textTransform:'uppercase', cursor:'pointer' }}>
+                  style={{ background:'rgba(212,175,55,0.1)', border:'1px solid rgba(212,175,55,0.4)', color:'var(--orange)', padding:'12px 28px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:14, letterSpacing:'.06em', textTransform:'uppercase', cursor:'pointer' }}>
                   {t('RE-UPLOAD A BETTER VIDEO', 'बेहतर वीडियो दोबारा अपलोड करें')} · {reuploadsLeft} {t('LEFT', 'बचे')}
                 </button>
                 <div style={{ fontSize:14, color:'var(--ink-2)', maxWidth:360, lineHeight:1.6 }}>
@@ -463,8 +463,8 @@ export function Phase1VideoUpload() {
         .btn-primary:hover:not(:disabled){filter:brightness(1.15);transform:translateY(-2px)}
         .btn-primary:disabled{opacity:0.5;cursor:not-allowed}
         
-        .upload-zone{border:2px dashed rgba(255,122,41,0.35);background:var(--panel);border-radius:var(--r);padding:48px 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;transition:all .2s;min-height:260px;width:100%;}
-        .upload-zone:hover,.upload-zone.drag{border-color:var(--orange);background:rgba(255,122,41,0.06)}
+        .upload-zone{border:2px dashed rgba(212,175,55,0.35);background:var(--panel);border-radius:var(--r);padding:48px 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;transition:all .2s;min-height:260px;width:100%;}
+        .upload-zone:hover,.upload-zone.drag{border-color:var(--orange);background:rgba(212,175,55,0.06)}
         
         .guideline-card{background:var(--panel);border-left:3px solid var(--orange);padding:18px 20px;border-radius:0 var(--r) var(--r) 0;margin-bottom:12px;border-top:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line);}
         .guideline-card:last-child{margin-bottom:0}
@@ -497,7 +497,7 @@ export function Phase1VideoUpload() {
             </div>
             {/* Live deadline countdown (DD:HH:MM:SS) */}
             {cd && !cd.expired && (
-              <div style={{ flexShrink:0, background: cd.urgent ? 'rgba(239,68,68,0.08)' : 'rgba(255,122,41,0.07)', border: '1px solid ' + (cd.urgent ? 'rgba(239,68,68,0.4)' : 'rgba(255,122,41,0.35)'), borderRadius:'var(--r)', padding:'12px 16px', animation: cd.urgent ? 'pulseDanger 2s ease-in-out infinite' : 'none' }}>
+              <div style={{ flexShrink:0, background: cd.urgent ? 'rgba(239,68,68,0.08)' : 'rgba(212,175,55,0.07)', border: '1px solid ' + (cd.urgent ? 'rgba(239,68,68,0.4)' : 'rgba(212,175,55,0.35)'), borderRadius:'var(--r)', padding:'12px 16px', animation: cd.urgent ? 'pulseDanger 2s ease-in-out infinite' : 'none' }}>
                 <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:11, letterSpacing:'.16em', color: cd.urgent ? 'var(--red)' : 'var(--orange)', textTransform:'uppercase', textAlign:'center', marginBottom:8 }}>
                   {t('UPLOAD WINDOW CLOSES IN', 'अपलोड विंडो बंद होने में')}
                 </div>
@@ -561,8 +561,8 @@ export function Phase1VideoUpload() {
 
             {/* Uploading progress */}
             {isUploading && (
-              <div style={{ background:'var(--panel)', border:'1px solid rgba(255,122,41,0.4)', borderRadius:'var(--r)', padding:32, marginBottom:16, textAlign:'center' }}>
-                <div style={{ margin:'0 auto 16px', animation:'uploadBounce 1.5s ease-in-out infinite', width:48, height:48, background:'rgba(255,122,41,0.1)', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center' }}>
+              <div style={{ background:'var(--panel)', border:'1px solid rgba(212,175,55,0.4)', borderRadius:'var(--r)', padding:32, marginBottom:16, textAlign:'center' }}>
+                <div style={{ margin:'0 auto 16px', animation:'uploadBounce 1.5s ease-in-out infinite', width:48, height:48, background:'rgba(212,175,55,0.1)', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center' }}>
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/><polyline points="16 16 12 12 8 16"/></svg>
                 </div>
                 <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:20, color:'var(--orange)', marginBottom:8, textTransform:'uppercase', letterSpacing:'.04em' }}>
@@ -595,7 +595,7 @@ export function Phase1VideoUpload() {
                     style={{ display:'none' }}
                     onChange={e => handleFile(e.target.files?.[0] ?? null)}
                   />
-                  <div style={{ width:64, height:64, borderRadius:'50%', background:'linear-gradient(135deg,var(--orange),var(--orange-2))', display:'flex', alignItems:'center', justifyContent:'center', marginBottom:20, boxShadow:'0 8px 24px rgba(255,122,41,0.3)', color:'#fff' }}>
+                  <div style={{ width:64, height:64, borderRadius:'50%', background:'linear-gradient(135deg,var(--orange),var(--orange-2))', display:'flex', alignItems:'center', justifyContent:'center', marginBottom:20, boxShadow:'0 8px 24px rgba(212,175,55,0.3)', color:'#fff' }}>
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
                   </div>
                   <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:24, color:'var(--ink)', letterSpacing:'.04em', marginBottom:12, textTransform:'uppercase' }}>{t('Select Trial Video', 'ट्रायल वीडियो चुनें')}</div>
@@ -605,9 +605,9 @@ export function Phase1VideoUpload() {
                   <div style={{ display:'flex', gap:10, flexWrap:'wrap', justifyContent:'center', marginBottom:28 }}>
                     <span style={{ fontSize:12, color:'var(--ink-3)', background:'rgba(255,255,255,0.04)', padding:'6px 12px', borderRadius:16, border:'1px solid var(--line)' }}>MP4 / MOV / AVI</span>
                     <span style={{ fontSize:12, color:'var(--ink-3)', background:'rgba(255,255,255,0.04)', padding:'6px 12px', borderRadius:16, border:'1px solid var(--line)' }}>{t('Max ' + maxMb + 'MB', 'अधिकतम ' + maxMb + 'MB')}</span>
-                    <span style={{ fontSize:12, color:'var(--orange)', background:'rgba(255,122,41,0.08)', padding:'6px 12px', borderRadius:16, border:'1px solid rgba(255,122,41,0.35)', fontWeight:700 }}>{t(minSec + '–' + maxSec + ' seconds', minSec + '–' + maxSec + ' सेकंड')}</span>
+                    <span style={{ fontSize:12, color:'var(--orange)', background:'rgba(212,175,55,0.08)', padding:'6px 12px', borderRadius:16, border:'1px solid rgba(212,175,55,0.35)', fontWeight:700 }}>{t(minSec + '–' + maxSec + ' seconds', minSec + '–' + maxSec + ' सेकंड')}</span>
                   </div>
-                  <span style={{ display:'inline-block', background:'rgba(255,122,41,0.1)', border:'1px solid rgba(255,122,41,0.4)', color:'var(--orange)', padding:'12px 28px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:15, letterSpacing:'.08em', cursor:'pointer', textTransform:'uppercase' }}>
+                  <span style={{ display:'inline-block', background:'rgba(212,175,55,0.1)', border:'1px solid rgba(212,175,55,0.4)', color:'var(--orange)', padding:'12px 28px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:15, letterSpacing:'.08em', cursor:'pointer', textTransform:'uppercase' }}>
                     {t('+ BROWSE FILES', '+ फ़ाइलें ब्राउज़ करें')}
                   </span>
                 </div>

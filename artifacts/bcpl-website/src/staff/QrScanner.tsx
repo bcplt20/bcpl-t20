@@ -83,7 +83,7 @@ export function QrScanner({ onScan, paused }: Props) {
         <>
           <video ref={videoRef} muted style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
           <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
-            <div style={{ width: "62%", aspectRatio: "1", border: "3px solid rgba(255,122,41,.85)", borderRadius: 18, boxShadow: "0 0 0 2000px rgba(0,0,0,.25)" }} />
+            <div style={{ width: "62%", aspectRatio: "1", border: "3px solid rgba(212,175,55,.85)", borderRadius: 18, boxShadow: "0 0 0 2000px rgba(0,0,0,.25)" }} />
           </div>
           {paused && (
             <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,.6)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 800, letterSpacing: ".08em", fontSize: 13 }}>

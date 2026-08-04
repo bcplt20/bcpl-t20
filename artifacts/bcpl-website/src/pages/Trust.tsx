@@ -10,42 +10,42 @@ import { IcoChat, IcoMail, IcoPhone } from '../lib/icons';
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-body { background:#0E1624; }
+body { background:#071B15; }
 .wrap { max-width:1280px; margin:0 auto; padding:0 20px; }
 .desk-nav { display:none; align-items:center; gap:22px; }
 .ham-btn { display:flex; }
 @media(min-width:768px){ .wrap{padding:0 32px} }
 @media(min-width:1024px){ .desk-nav{display:flex!important;} .ham-btn{display:none!important;} }
-.btn-fire { background:linear-gradient(135deg,#FF7A29 0%,#E8611A 60%,#C94E0E 100%); border:none; border-radius:14px; color:#fff; font-family:Montserrat,sans-serif; font-weight:800; cursor:pointer; box-shadow:0 8px 28px rgba(255,122,41,0.45),inset 0 1px 0 rgba(255,255,255,0.2); transition:transform 0.15s,box-shadow 0.2s; letter-spacing:0.02em; animation:pulseGlow 3s ease-in-out infinite; }
-.btn-fire:hover { transform:translateY(-2px); box-shadow:0 14px 40px rgba(255,122,41,0.6); }
+.btn-fire { background:linear-gradient(135deg,#D4AF37 0%,#B8922E 60%,#97761F 100%); border:none; border-radius:14px; color:#fff; font-family:Montserrat,sans-serif; font-weight:800; cursor:pointer; box-shadow:0 8px 28px rgba(212,175,55,0.45),inset 0 1px 0 rgba(255,255,255,0.2); transition:transform 0.15s,box-shadow 0.2s; letter-spacing:0.02em; animation:pulseGlow 3s ease-in-out infinite; }
+.btn-fire:hover { transform:translateY(-2px); box-shadow:0 14px 40px rgba(212,175,55,0.6); }
 .btn-fire:active { transform:scale(0.97); }
 .btn-wa { background:linear-gradient(135deg,#25D366,#1BA851); border:none; border-radius:14px; color:#fff; font-weight:700; cursor:pointer; font-family:Montserrat,sans-serif; transition:transform 0.15s; }
-.glass-card { background:linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85)); backdrop-filter:blur(32px); border:1px solid rgba(255,255,255,0.09); border-radius:20px; box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06); }
+.glass-card { background:linear-gradient(135deg,rgba(10,59,46,0.9),rgba(6,35,28,0.85)); backdrop-filter:blur(32px); border:1px solid rgba(255,255,255,0.09); border-radius:20px; box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06); }
 .shimmer-gold { background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D,#F5C842,#E8B23D); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation:shimmer 3s linear infinite; }
-.tag-pill { display:inline-flex; align-items:center; gap:6px; background:rgba(255,122,41,0.12); border:1px solid rgba(255,122,41,0.3); border-radius:100px; padding:5px 14px; font-size:11px; font-weight:700; font-family:Montserrat,sans-serif; color:#FF7A29; letter-spacing:0.1em; }
+.tag-pill { display:inline-flex; align-items:center; gap:6px; background:rgba(212,175,55,0.12); border:1px solid rgba(212,175,55,0.3); border-radius:100px; padding:5px 14px; font-size:11px; font-weight:700; font-family:Montserrat,sans-serif; color:#D4AF37; letter-spacing:0.1em; }
 @keyframes gradShift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
-@keyframes pulseGlow { 0%,100%{box-shadow:0 0 16px rgba(255,122,41,0.4)} 50%{box-shadow:0 0 36px rgba(255,122,41,0.8),0 0 60px rgba(255,122,41,0.3)} }
+@keyframes pulseGlow { 0%,100%{box-shadow:0 0 16px rgba(212,175,55,0.4)} 50%{box-shadow:0 0 36px rgba(212,175,55,0.8),0 0 60px rgba(212,175,55,0.3)} }
 @keyframes shimmer { 0%{background-position:-200% center} 100%{background-position:200% center} }
 @keyframes scanPulse { 0%,100%{opacity:0.03} 50%{opacity:0.08} }
 @keyframes floatParticle { 0%{transform:translateY(0) rotate(0deg);opacity:0.4} 50%{opacity:0.8} 100%{transform:translateY(-80px) rotate(180deg);opacity:0} }
 @keyframes fadeSlide { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
 @keyframes floatUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
         /* float-reg-btn */
-        .float-reg-btn { position:fixed; bottom:28px; right:28px; z-index:900; background:linear-gradient(135deg,#FF7A29,#D95E10); border:none; border-radius:12px; color:#fff; font-family:Montserrat,sans-serif; font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:14px 22px; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(255,122,41,0.45); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition:opacity .2s,transform .15s; }
+        .float-reg-btn { position:fixed; bottom:28px; right:28px; z-index:900; background:linear-gradient(135deg,#D4AF37,#A8842A); border:none; border-radius:12px; color:#fff; font-family:Montserrat,sans-serif; font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:14px 22px; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(212,175,55,0.45); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition:opacity .2s,transform .15s; }
         .float-reg-btn:hover { opacity:.9; transform:translateY(-2px); }
-        @keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4)} 50%{box-shadow:0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0)} }
+        @keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(212,175,55,0.45),0 0 0 0 rgba(212,175,55,0.4)} 50%{box-shadow:0 8px 40px rgba(212,175,55,0.6),0 0 0 8px rgba(212,175,55,0)} }
         .float-reg-pulse { animation:floatPulse 2.5s ease-in-out infinite; }
         @media(max-width:1023px){ .float-reg-btn { display:none; } }
         .trust-section { margin-bottom:clamp(40px,7vw,80px); }
-        .step-num { display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#FF7A29,#C94E0E); font-family:Montserrat,sans-serif; font-weight:900; font-size:16px; color:#fff; flex-shrink:0; box-shadow:0 4px 16px rgba(255,122,41,0.35); }
+        .step-num { display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#D4AF37,#97761F); font-family:Montserrat,sans-serif; font-weight:900; font-size:16px; color:#fff; flex-shrink:0; box-shadow:0 4px 16px rgba(212,175,55,0.35); }
 `;
 
 function AmbientBg() {
   return (
     <div style={{position:'fixed',inset:0,zIndex:0,pointerEvents:'none',overflow:'hidden'}}>
-      <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 80% 60% at 20% 40%, rgba(255,122,41,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 20%, rgba(30,64,175,0.12) 0%, transparent 60%)'}}/>
+      <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 80% 60% at 20% 40%, rgba(212,175,55,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 20%, rgba(20,86,63,0.12) 0%, transparent 60%)'}}/>
       <svg style={{position:'absolute',inset:0,width:'100%',height:'100%',opacity:0.07}} viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid slice">
-        <path d="M0,400 Q320,320 640,380 Q960,440 1280,360 L1280,720 L0,720 Z" fill="#1a2a4a"/>
+        <path d="M0,400 Q320,320 640,380 Q960,440 1280,360 L1280,720 L0,720 Z" fill="#123829"/>
         <rect x="80" y="100" width="8" height="300" fill="#334"/>
         <rect x="76" y="80" width="16" height="12" fill="#445" rx="2"/>
         <rect x="1192" y="100" width="8" height="300" fill="#334"/>
@@ -53,13 +53,13 @@ function AmbientBg() {
         <rect x="440" y="420" width="400" height="160" fill="none" stroke="#334" strokeWidth="2"/>
       </svg>
       {[
-        {top:'15%',left:'8%',color:'#FF7A29',delay:'0s',size:3},
+        {top:'15%',left:'8%',color:'#D4AF37',delay:'0s',size:3},
         {top:'35%',left:'92%',color:'#E8B23D',delay:'1.2s',size:3},
         {top:'60%',left:'5%',color:'#fff',delay:'2.1s',size:2},
-        {top:'75%',left:'88%',color:'#FF7A29',delay:'0.7s',size:3},
+        {top:'75%',left:'88%',color:'#D4AF37',delay:'0.7s',size:3},
         {top:'25%',left:'50%',color:'#E8B23D',delay:'1.8s',size:2},
         {top:'85%',left:'30%',color:'#fff',delay:'0.4s',size:3},
-        {top:'45%',left:'70%',color:'#FF7A29',delay:'2.5s',size:2},
+        {top:'45%',left:'70%',color:'#D4AF37',delay:'2.5s',size:2},
         {top:'10%',left:'65%',color:'#E8B23D',delay:'1.0s',size:3},
       ].map((p,i)=>(
         <div key={i} style={{position:'absolute',top:p.top,left:p.left,width:p.size,height:p.size,borderRadius:'50%',background:p.color,animation:`floatParticle 6s ease-in-out ${p.delay} infinite`}}/>
@@ -73,7 +73,7 @@ export function Trust() {
   const { t } = useLang();
 
   return (
-    <div style={{minHeight:'100vh',background:'#0E1624',fontFamily:'Inter,sans-serif',position:'relative'}}>
+    <div style={{minHeight:'100vh',background:'#071B15',fontFamily:'Inter,sans-serif',position:'relative'}}>
       <style>{CSS}</style>
       <AmbientBg/>
       <SiteHeader active="About" />
@@ -104,7 +104,7 @@ export function Trust() {
       {/* THE 18 STAGES */}
       <section className="trust-section" style={{position:'relative',zIndex:1,padding:'0 0 0'}}>
         <div className="wrap" style={{maxWidth:900}}>
-          <div className="glass-card" style={{padding:'clamp(28px,5vw,48px)',border:'1px solid rgba(255,122,41,0.15)',animation:'fadeSlide 0.7s ease 0.05s both'}}>
+          <div className="glass-card" style={{padding:'clamp(28px,5vw,48px)',border:'1px solid rgba(212,175,55,0.15)',animation:'fadeSlide 0.7s ease 0.05s both'}}>
             <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:8}}>{t("The Full Selection Journey — 18 Stages","पूरी चयन यात्रा — 18 चरण")}</h2>
             <p style={{color:'rgba(255,255,255,0.65)',fontSize:14,lineHeight:1.7,marginBottom:24}}>
               {t("Each stage is distinct. Reaching one stage does not automatically move you to the next — advancement depends on the applicable rules for that stage.","हर चरण अलग है। किसी एक चरण तक पहुंचना अपने आप आपको अगले चरण में नहीं ले जाता — advancement उस चरण के applicable rules पर निर्भर करता है।")}
@@ -131,7 +131,7 @@ export function Trust() {
                 {en:'Tournament Participation',hi:'Tournament Participation'},
               ].map((s,i)=>(
                 <div key={i} style={{display:'flex',alignItems:'center',gap:14,background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:10,padding:'12px 16px'}}>
-                  <span style={{flexShrink:0,width:30,height:30,borderRadius:'50%',background:'linear-gradient(135deg,#FF7A29,#C94E0E)',display:'inline-flex',alignItems:'center',justifyContent:'center',fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:13,color:'#fff'}}>{i+1}</span>
+                  <span style={{flexShrink:0,width:30,height:30,borderRadius:'50%',background:'linear-gradient(135deg,#D4AF37,#97761F)',display:'inline-flex',alignItems:'center',justifyContent:'center',fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:13,color:'#fff'}}>{i+1}</span>
                   <span style={{color:'rgba(255,255,255,0.82)',fontSize:'clamp(13px,2vw,15px)',lineHeight:1.5}}>{t(s.en,s.hi)}</span>
                 </div>
               ))}
@@ -159,7 +159,7 @@ export function Trust() {
       {/* VIDEO EVALUATION METHODOLOGY */}
       <section className="trust-section" style={{position:'relative',zIndex:1,padding:'0 0 0'}}>
         <div className="wrap" style={{maxWidth:900}}>
-          <div className="glass-card" style={{padding:'clamp(28px,5vw,48px)',border:'1px solid rgba(255,122,41,0.15)',animation:'fadeSlide 0.7s ease 0.1s both'}}>
+          <div className="glass-card" style={{padding:'clamp(28px,5vw,48px)',border:'1px solid rgba(212,175,55,0.15)',animation:'fadeSlide 0.7s ease 0.1s both'}}>
             <div style={{display:'flex',alignItems:'flex-start',gap:20,marginBottom:24}}>
               <span className="step-num">1</span>
               <div style={{flex:1}}>
@@ -173,7 +173,7 @@ export function Trust() {
             <p style={{color:'rgba(255,255,255,0.72)',fontSize:15,lineHeight:1.8,marginBottom:16}}>
               {t("BCPL may use automated, digital and technology-assisted assessment systems and third-party technology service providers for video validation, scoring, ranking, fraud/integrity checks and administration. The assessment is role-specific and criteria-based. Invalid or unclear footage may require re-upload according to BCPL rules. Your Phase 1 result may include a score and/or ranking where applicable.","BCPL video validation, scoring, ranking, fraud/integrity checks और administration के लिए automated, digital और technology-assisted assessment systems तथा third-party technology service providers का उपयोग कर सकता है। यह assessment role-specific और criteria-based है। Invalid या unclear footage को BCPL rules के अनुसार re-upload करना पड़ सकता है। आपके Phase 1 result में जहां लागू हो score और/या ranking शामिल हो सकती है।")}
             </p>
-            <div style={{background:'rgba(255,122,41,0.05)',border:'1px solid rgba(255,122,41,0.2)',borderRadius:12,padding:'14px 18px',marginBottom:24}}>
+            <div style={{background:'rgba(212,175,55,0.05)',border:'1px solid rgba(212,175,55,0.2)',borderRadius:12,padding:'14px 18px',marginBottom:24}}>
               <p style={{color:'rgba(255,255,255,0.62)',fontSize:13.5,lineHeight:1.7}}>
                 {t("Payment of Phase 1 or Phase 2 fees does not guarantee qualification, final selection, Auction Pool entry, auction purchase, team allocation, player contract, remuneration or tournament participation. Your Phase 1 result target is within 48 hours of video submission; if a result is not delivered within 15 working days, a full refund applies as published. Qualification to Phase 2 does not guarantee final selection.","Phase 1 या Phase 2 fees का भुगतान qualification, final selection, Auction Pool entry, auction purchase, team allocation, player contract, remuneration या tournament participation की गारंटी नहीं देता। आपके Phase 1 result का target video submission के 48 घंटे के भीतर है; यदि 15 working days के भीतर result नहीं दिया जाता, तो published नीति के अनुसार full refund लागू होता है। Phase 2 के लिए qualification final selection की गारंटी नहीं देता।")}
               </p>
@@ -185,8 +185,8 @@ export function Trust() {
                 {titleEn:'Game Awareness',titleHi:'Game Awareness',bodyEn:'Decision-making, situational understanding, cricket intelligence visible in your play.',bodyHi:'Decision-making, situational understanding, आपके खेल में दिखने वाली cricket intelligence।'},
                 {titleEn:'Physical Fitness',titleHi:'Physical Fitness',bodyEn:'Movement quality, agility, stamina indicators from your video evidence.',bodyHi:'आपके video evidence से movement quality, agility, stamina indicators।'},
               ].map((c,i)=>(
-                <div key={i} style={{background:'rgba(255,122,41,0.05)',border:'1px solid rgba(255,122,41,0.15)',borderRadius:12,padding:'16px 18px'}}>
-                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:14,color:'#FF7A29',marginBottom:6}}>{t(c.titleEn,c.titleHi)}</div>
+                <div key={i} style={{background:'rgba(212,175,55,0.05)',border:'1px solid rgba(212,175,55,0.15)',borderRadius:12,padding:'16px 18px'}}>
+                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:14,color:'#D4AF37',marginBottom:6}}>{t(c.titleEn,c.titleHi)}</div>
                   <p style={{color:'rgba(255,255,255,0.55)',fontSize:13,lineHeight:1.6}}>{t(c.bodyEn,c.bodyHi)}</p>
                 </div>
               ))}
@@ -474,10 +474,10 @@ export function Trust() {
           <div className="glass-card" style={{padding:'clamp(28px,5vw,48px)',border:'1px solid rgba(232,178,61,0.15)',animation:'fadeSlide 0.7s ease 0.6s both'}}>
             <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:20,textAlign:'center'}}>{t("Complete Fee Breakdown","पूरी Fee Breakdown")}</h2>
             <div style={{display:'grid',gridTemplateColumns:'1fr',gap:16,marginBottom:24}}>
-              <div style={{background:'linear-gradient(135deg,rgba(255,122,41,0.1),rgba(255,122,41,0.05))',border:'1px solid rgba(255,122,41,0.3)',borderRadius:14,padding:'20px 24px'}}>
+              <div style={{background:'linear-gradient(135deg,rgba(212,175,55,0.1),rgba(212,175,55,0.05))',border:'1px solid rgba(212,175,55,0.3)',borderRadius:14,padding:'20px 24px'}}>
                 <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:12,marginBottom:12}}>
                   <div>
-                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:14,color:'#FF7A29',letterSpacing:'.08em',textTransform:'uppercase',marginBottom:4}}>{t("PHASE 1 FEE","PHASE 1 FEE")}</div>
+                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:14,color:'#D4AF37',letterSpacing:'.08em',textTransform:'uppercase',marginBottom:4}}>{t("PHASE 1 FEE","PHASE 1 FEE")}</div>
                     <p style={{color:'rgba(255,255,255,0.5)',fontSize:13}}>{t("Video Evaluation","Video Evaluation")}</p>
                   </div>
                   <div style={{textAlign:'right'}}>

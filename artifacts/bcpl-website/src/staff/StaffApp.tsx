@@ -129,10 +129,10 @@ function StaffLogin({ onDone }: { onDone: (me: StaffMe) => void }) {
 }
 
 const STAFF_CSS = `
-.stf-root{min-height:100vh;background:#06101E;color:#EAF2FF;font-family:Montserrat,system-ui,sans-serif;-webkit-tap-highlight-color:transparent;padding-bottom:env(safe-area-inset-bottom)}
+.stf-root{min-height:100vh;background:#041511;color:#EAF2FF;font-family:Montserrat,system-ui,sans-serif;-webkit-tap-highlight-color:transparent;padding-bottom:env(safe-area-inset-bottom)}
 .stf-root *{box-sizing:border-box}
 .stf-center{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-.stf-spin{width:42px;height:42px;border:4px solid rgba(255,255,255,.15);border-top-color:#FF7A29;border-radius:50%;animation:stfspin .8s linear infinite}
+.stf-spin{width:42px;height:42px;border:4px solid rgba(255,255,255,.15);border-top-color:#D4AF37;border-radius:50%;animation:stfspin .8s linear infinite}
 @keyframes stfspin{to{transform:rotate(360deg)}}
 .stf-head{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(6,16,30,.94);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.08)}
 .stf-head-back{width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:#fff;font-size:22px;font-weight:900;display:flex;align-items:center;justify-content:center;cursor:pointer}
@@ -153,17 +153,17 @@ const STAFF_CSS = `
 .stf-note{padding:14px;border-radius:12px;background:rgba(250,204,21,.08);border:1px solid rgba(250,204,21,.25);color:#FACC15;font-size:13px;font-weight:700;margin-bottom:14px}
 .stf-login{width:100%;max-width:380px;background:linear-gradient(160deg,rgba(17,32,55,.95),rgba(10,20,40,.95));border:1px solid rgba(255,255,255,.09);border-radius:20px;padding:28px 22px;display:flex;flex-direction:column;gap:14px}
 .stf-login-logo{font-size:26px;font-weight:900;letter-spacing:.04em}
-.stf-login-logo span{color:#FF7A29}
+.stf-login-logo span{color:#D4AF37}
 .stf-login-title{font-size:17px;font-weight:900}
 .stf-login-sub{font-size:12px;color:#8FA3BF;font-weight:600;line-height:1.5;margin-top:-8px}
 .stf-field{display:flex;flex-direction:column;gap:6px}
 .stf-field span{font-size:11px;font-weight:800;letter-spacing:.06em;color:#8FA3BF;text-transform:uppercase}
 .stf-field input,.stf-input{height:52px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(6,16,30,.7);color:#fff;padding:0 14px;font-size:16px;font-weight:600;outline:none;width:100%}
-.stf-field input:focus,.stf-input:focus{border-color:#FF7A29}
+.stf-field input:focus,.stf-input:focus{border-color:#D4AF37}
 .stf-err{padding:10px 12px;border-radius:10px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.4);color:#FCA5A5;font-size:13px;font-weight:700}
 .stf-btn{height:56px;border-radius:14px;border:none;font-size:15px;font-weight:900;letter-spacing:.06em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:100%}
 .stf-btn:disabled{opacity:.55}
-.stf-btn-primary{background:#FF7A29;color:#fff}
+.stf-btn-primary{background:#D4AF37;color:#fff}
 .stf-btn-ghost{background:transparent;border:1px solid rgba(255,255,255,.16);color:#EAF2FF}
 .stf-screen{padding:16px 16px 48px;max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
 .stf-card{background:linear-gradient(160deg,rgba(17,32,55,.95),rgba(10,20,40,.95));border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:16px}
@@ -180,7 +180,7 @@ const STAFF_CSS = `
 .stf-result-trial{margin-top:8px;font-size:34px;font-weight:900;letter-spacing:.04em}
 .stf-result-meta{font-size:14px;font-weight:800;opacity:.9}
 .stf-result .stf-btn{max-width:340px;margin-top:18px}
-.stf-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:rgba(255,122,41,.15);border:1px solid rgba(255,122,41,.4);color:#FFB380;font-size:12px;font-weight:900;letter-spacing:.05em;text-transform:uppercase}
+.stf-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:rgba(212,175,55,.15);border:1px solid rgba(212,175,55,.4);color:#FFB380;font-size:12px;font-weight:900;letter-spacing:.05em;text-transform:uppercase}
 .stf-kv{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed rgba(255,255,255,.09);font-size:14px}
 .stf-kv:last-child{border-bottom:none}
 .stf-kv b{font-weight:900}
@@ -213,7 +213,7 @@ const STAFF_CSS = `
 .stf-step-anchor{font-size:10.5px;color:#8FA3BF;font-weight:700;line-height:1.3;margin-top:2px}
 .stf-total{position:sticky;bottom:0;background:rgba(6,16,30,.96);backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,.1);padding:12px 0 4px;display:flex;flex-direction:column;gap:10px}
 .stf-total-row{display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:800}
-.stf-total-big{font-size:26px;font-weight:900;color:#FF7A29}
+.stf-total-big{font-size:26px;font-weight:900;color:#D4AF37}
 .stf-modal{position:fixed;inset:0;z-index:90;background:rgba(2,8,18,.88);display:flex;align-items:center;justify-content:center;padding:22px}
 .stf-modal-card{width:100%;max-width:380px;background:linear-gradient(160deg,#122037,#0A1428);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:24px 20px;display:flex;flex-direction:column;gap:14px}
 .stf-modal-title{font-size:17px;font-weight:900}
@@ -221,9 +221,9 @@ const STAFF_CSS = `
 .stf-list-item{display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09)}
 .stf-counters{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 .stf-counter{padding:14px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);display:flex;flex-direction:column;gap:4px}
-.stf-counter b{font-size:24px;font-weight:900;color:#FF7A29}
+.stf-counter b{font-size:24px;font-weight:900;color:#D4AF37}
 .stf-counter span{font-size:11px;color:#8FA3BF;font-weight:700;letter-spacing:.03em}
 .stf-textarea{width:100%;min-height:96px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(6,16,30,.7);color:#fff;padding:12px 14px;font-size:15px;font-weight:600;outline:none;font-family:inherit;resize:vertical}
-.stf-textarea:focus{border-color:#FF7A29}
+.stf-textarea:focus{border-color:#D4AF37}
 @media (min-width:560px){.stf-outcomes{grid-template-columns:repeat(4,1fr)}.stf-outcome.feeder{grid-column:1/-1}}
 `;

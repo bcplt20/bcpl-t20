@@ -150,7 +150,7 @@ export function MatchCenter() {
           const bowl: any[] = sc.scorecard?.bowling ?? [];
           const fow: any[] = sc.scorecard?.fallOfWickets ?? [];
           return (
-            <div key={idx} style={{ background: "#0E1420", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: "16px 16px 12px" }}>
+            <div key={idx} style={{ background: "#081E18", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: "16px 16px 12px" }}>
               {/* Innings header */}
               <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -162,7 +162,7 @@ export function MatchCenter() {
                     <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 11, letterSpacing: ".1em", color: "#EF4444" }}>● LIVE</span>
                   )}
                 </div>
-                <div style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 18, color: "#FF7A29" }}>
+                <div style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 18, color: "#D4AF37" }}>
                   {inn.totalRuns}/{inn.totalWickets}
                   <span style={{ fontSize: 13, color: "var(--ink-3)", fontWeight: 700 }}> ({fmtOv(inn.overs, inn.balls)} ov)</span>
                   {inn.target ? <span style={{ fontSize: 13, color: "#E8B23D", fontWeight: 700, marginLeft: 8 }}>Target {inn.target}</span> : null}
@@ -256,37 +256,37 @@ export function MatchCenter() {
         @media(min-width:768px){ .wrap { padding: 0 32px; } }
         @media(min-width:1280px){ .wrap { padding: 0 48px; } }
 
-        .section-label { font-family: 'Inter', sans-serif; font-weight: 800; font-size: 11px; letter-spacing: 0.15em; color: #FF7A29; text-transform: uppercase; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
-        .section-label::before { content: ''; display: inline-block; width: 24px; height: 2px; background: #FF7A29; }
+        .section-label { font-family: 'Inter', sans-serif; font-weight: 800; font-size: 11px; letter-spacing: 0.15em; color: #D4AF37; text-transform: uppercase; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+        .section-label::before { content: ''; display: inline-block; width: 24px; height: 2px; background: #D4AF37; }
 
         .section-title { font-family: 'Barlow Condensed','Mukta','Montserrat',sans-serif; font-weight: 800; line-height: .95; letter-spacing: .015em; }
         .v3-kicker { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: .22em; color: #E8B23D; text-transform: uppercase; }
 
-        .match-card { background: #121F2F; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; transition: border-color 0.2s; }
-        .match-card.expandable:hover { border-color: rgba(255,122,41,0.35); }
+        .match-card { background: #0C271F; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; transition: border-color 0.2s; }
+        .match-card.expandable:hover { border-color: rgba(212,175,55,0.35); }
 
         /* Points table: scrollable on mobile */
         .pts-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
         .pts-table-inner { min-width: 520px; }
 
         .pts-row { display: grid; grid-template-columns: 28px 1fr 48px 28px 28px 48px 68px; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.15s; }
-        .pts-row:hover { background: rgba(255,122,41,0.04); }
+        .pts-row:hover { background: rgba(212,175,55,0.04); }
         .pts-row:last-child { border-bottom: none; }
 
-        .pts-header { display: grid; grid-template-columns: 28px 1fr 48px 28px 28px 48px 68px; align-items: center; gap: 8px; padding: 10px 16px; background: #0E1420; }
+        .pts-header { display: grid; grid-template-columns: 28px 1fr 48px 28px 28px 48px 68px; align-items: center; gap: 8px; padding: 10px 16px; background: #081E18; }
       `}</style>
 
       <SiteHeader active="Match Center" />
 
       {/* HERO */}
       <section style={{ background: "var(--bg)", padding: "clamp(80px,12vh,130px) 0 clamp(40px,6vw,64px)", position: "relative", overflow: "hidden", textAlign: "center" }}>
-        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 50% at 50% 0%,rgba(255,122,41,0.06) 0%,transparent 70%)", pointerEvents: "none", zIndex: 0 }} />
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 50% at 50% 0%,rgba(212,175,55,0.06) 0%,transparent 70%)", pointerEvents: "none", zIndex: 0 }} />
         <div className="wrap" style={{ position: "relative", zIndex: 1, animation: "fadeUp 0.7s ease both" }}>
           <div className="v3-kicker" style={{ marginBottom: 16 }}>
             {t("SEASON 5 · 2025–26", "सीज़न 5 · 2025–26")}
           </div>
           <h1 className="section-title" style={{ fontSize: "clamp(40px, 9vw, 88px)", color: "#fff", textTransform: "uppercase", marginBottom: 16 }}>
-            {t("MATCH", "MATCH")} <span style={{ color: "#FF7A29" }}>{t("CENTER", "CENTER")}</span>
+            {t("MATCH", "MATCH")} <span style={{ color: "#D4AF37" }}>{t("CENTER", "CENTER")}</span>
           </h1>
           <p style={{ fontFamily: "Inter, sans-serif", fontSize: "clamp(14px, 1.8vw, 16px)", color: "rgba(255,255,255,0.72)", lineHeight: 1.7, maxWidth: 640, margin: "0 auto" }}>
             {t("Live scores, full match scorecards and the Season 5 points table.", "Live scores, पूरे match scorecards और Season 5 points table।")}
@@ -295,7 +295,7 @@ export function MatchCenter() {
       </section>
 
       {/* MATCHES */}
-      <section style={{ padding: "clamp(56px,9vw,110px) 0", background: "#0E1420" }}>
+      <section style={{ padding: "clamp(56px,9vw,110px) 0", background: "#081E18" }}>
         <div className="wrap">
           <div className="section-label">Matches</div>
           <h2 className="section-title" style={{ fontSize: "clamp(20px, 4vw, 34px)", color: "#fff", marginBottom: 24, textTransform: "uppercase" }}>
@@ -318,7 +318,7 @@ export function MatchCenter() {
           )}
 
           {matchesLoaded && sorted.length === 0 && (
-            <div style={{ textAlign: "center", padding: "48px 20px", background: "#121F2F", borderRadius: 16, border: "1px solid rgba(255,255,255,0.07)" }}>
+            <div style={{ textAlign: "center", padding: "48px 20px", background: "#0C271F", borderRadius: 16, border: "1px solid rgba(255,255,255,0.07)" }}>
               <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><IcoBat size={38} style={{ color: "var(--ink-3)" }} /></div>
               <div className="section-title" style={{ fontSize: 24, color: "#fff", marginBottom: 8, textTransform: "uppercase" }}>
                 {t("No Matches Scheduled Yet", "अभी कोई matches scheduled नहीं हैं")}
@@ -359,12 +359,12 @@ export function MatchCenter() {
                     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                       <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 10 }}>
                         <TeamBadge name={m.team1} color={color(m.team1)} logo={logoOf(m.team1)} size={32} fontSize={10} />
-                        <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: "clamp(12px,2vw,15px)", color: m.winner === m.team1 ? "#FF7A29" : "#fff" }}>{m.team1}</span>
+                        <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: "clamp(12px,2vw,15px)", color: m.winner === m.team1 ? "#D4AF37" : "#fff" }}>{m.team1}</span>
                       </div>
                       <div style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 12, color: "rgba(255,255,255,0.25)", flexShrink: 0 }}>VS</div>
                       <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 10, flexDirection: "row-reverse" }}>
                         <TeamBadge name={m.team2} color={color(m.team2)} logo={logoOf(m.team2)} size={32} fontSize={10} />
-                        <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: "clamp(12px,2vw,15px)", color: m.winner === m.team2 ? "#FF7A29" : "#fff", textAlign: "right" }}>{m.team2}</span>
+                        <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: "clamp(12px,2vw,15px)", color: m.winner === m.team2 ? "#D4AF37" : "#fff", textAlign: "right" }}>{m.team2}</span>
                       </div>
                     </div>
 
@@ -376,7 +376,7 @@ export function MatchCenter() {
                           {m.playerOfMatch && <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 11, color: "var(--ink-3)", marginLeft: 10 }}><IcoStar size={12} style={{ color: "#E8B23D" }} /> {m.playerOfMatch}</span>}
                         </div>
                         {expandable && (
-                          <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 10, letterSpacing: ".08em", color: "#FF7A29" }}>
+                          <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 10, letterSpacing: ".08em", color: "#D4AF37" }}>
                             {open ? "HIDE SCORECARD ▲" : "VIEW SCORECARD ▼"}
                           </span>
                         )}
@@ -402,7 +402,7 @@ export function MatchCenter() {
           </h2>
 
           {points.length === 0 && (
-            <div style={{ textAlign: "center", padding: "48px 20px", background: "#121F2F", borderRadius: 16, border: "1px solid rgba(255,255,255,0.07)" }}>
+            <div style={{ textAlign: "center", padding: "48px 20px", background: "#0C271F", borderRadius: 16, border: "1px solid rgba(255,255,255,0.07)" }}>
               <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><IcoTrophy size={38} style={{ color: "var(--gold, #E8B23D)" }} /></div>
               <div className="section-title" style={{ fontSize: 24, color: "#fff", marginBottom: 8, textTransform: "uppercase" }}>
                 {t("Standings Coming Soon", "Standings जल्द आएंगे")}
@@ -414,7 +414,7 @@ export function MatchCenter() {
           )}
 
           {points.length > 0 && (
-            <div className="pts-table-wrap" style={{ background: "#121F2F", borderRadius: 16, border: "1px solid rgba(255,255,255,0.07)", overflow: "hidden" }}>
+            <div className="pts-table-wrap" style={{ background: "#0C271F", borderRadius: 16, border: "1px solid rgba(255,255,255,0.07)", overflow: "hidden" }}>
               <div className="pts-table-inner">
                 <div className="pts-header">
                   {["#", "Team", "P", "W", "L", "NR", "Pts"].map(h => (
@@ -432,7 +432,7 @@ export function MatchCenter() {
                     <div style={{ textAlign: "center", fontSize: 13, color: "#22C55E", fontWeight: 600 }}>{row.won}</div>
                     <div style={{ textAlign: "center", fontSize: 13, color: "#E8493F" }}>{row.lost}</div>
                     <div style={{ textAlign: "center", fontSize: 13, color: "var(--ink-3)" }}>{row.noResult}</div>
-                    <div style={{ textAlign: "center", fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 16, color: "#FF7A29" }}>{row.points}</div>
+                    <div style={{ textAlign: "center", fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 16, color: "#D4AF37" }}>{row.points}</div>
                   </div>
                 ))}
               </div>
@@ -444,7 +444,7 @@ export function MatchCenter() {
       <BCPLFooter />
 
       {/* Floating register button */}
-      <Link href="/register" style={{ position: "fixed", bottom: 28, right: 28, zIndex: 900, background: "linear-gradient(135deg,#FF7A29,#D95E10)", border: "none", borderRadius: 12, color: "#fff", fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 13, letterSpacing: ".06em", padding: "14px 22px", textTransform: "uppercase", textDecoration: "none", display: "flex", alignItems: "center", gap: 8, boxShadow: "0 8px 32px rgba(255,122,41,0.45)", clipPath: "polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%)", transition: "opacity .2s, transform .15s" }} onMouseEnter={e => { e.currentTarget.style.opacity = ".9"; e.currentTarget.style.transform = "translateY(-2px)"; }} onMouseLeave={e => { e.currentTarget.style.opacity = "1"; e.currentTarget.style.transform = "translateY(0)"; }}>
+      <Link href="/register" style={{ position: "fixed", bottom: 28, right: 28, zIndex: 900, background: "linear-gradient(135deg,#D4AF37,#A8842A)", border: "none", borderRadius: 12, color: "#fff", fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 13, letterSpacing: ".06em", padding: "14px 22px", textTransform: "uppercase", textDecoration: "none", display: "flex", alignItems: "center", gap: 8, boxShadow: "0 8px 32px rgba(212,175,55,0.45)", clipPath: "polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%)", transition: "opacity .2s, transform .15s" }} onMouseEnter={e => { e.currentTarget.style.opacity = ".9"; e.currentTarget.style.transform = "translateY(-2px)"; }} onMouseLeave={e => { e.currentTarget.style.opacity = "1"; e.currentTarget.style.transform = "translateY(0)"; }}>
         {t("REGISTER NOW →", "अभी रजिस्टर करें →")}
       </Link>
     </div>

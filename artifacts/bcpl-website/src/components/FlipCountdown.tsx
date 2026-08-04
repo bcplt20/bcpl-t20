@@ -98,7 +98,7 @@ export function FlipCountdown({ target, size = "lg" }: { target: string; size?: 
 
   if (size === "sm") {
     return (
-      <span role="timer" aria-label={srText} style={{ display: "inline-flex", alignItems: "center", gap: 5, fontFamily: "'Barlow Condensed','Mukta',sans-serif", fontWeight: 800, fontSize: 15, color: "#FFB347", letterSpacing: ".04em" }}>
+      <span role="timer" aria-label={srText} style={{ display: "inline-flex", alignItems: "center", gap: 5, fontFamily: "'Barlow Condensed','Mukta',sans-serif", fontWeight: 800, fontSize: 15, color: "#EED688", letterSpacing: ".04em" }}>
         {groups.map((g, gi) => (
           <span key={gi} style={{ display: "inline-flex", alignItems: "baseline", gap: 2 }}>
             <span style={{ display: "inline-flex" }}>
@@ -117,7 +117,7 @@ export function FlipCountdown({ target, size = "lg" }: { target: string; size?: 
         <div key={gi} style={{ display: "flex", alignItems: "center", gap: "clamp(8px,1.6vw,14px)" }}>
           <div style={{
             background: "rgba(5,11,22,.82)", border: "1px solid rgba(255,255,255,.09)",
-            borderTop: "2px solid rgba(255,122,41,.55)",
+            borderTop: "2px solid rgba(212,175,55,.55)",
             borderRadius: "var(--r,14px)", padding: "clamp(10px,1.8vw,16px) clamp(12px,2.2vw,22px)",
             backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)",
             boxShadow: "0 12px 40px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06)",
@@ -126,8 +126,8 @@ export function FlipCountdown({ target, size = "lg" }: { target: string; size?: 
             <div style={{
               display: "flex", justifyContent: "center",
               fontFamily: "'Barlow Condensed','Mukta',sans-serif", fontWeight: 800,
-              fontSize: "clamp(30px,5.2vw,52px)", color: "#FF7A29",
-              textShadow: "0 0 22px rgba(255,122,41,.4)", fontVariantNumeric: "tabular-nums",
+              fontSize: "clamp(30px,5.2vw,52px)", color: "#D4AF37",
+              textShadow: "0 0 22px rgba(212,175,55,.4)", fontVariantNumeric: "tabular-nums",
             }}>
               {g.ds.map((dg, di) => <Digit key={g.ds.length - di} value={dg} em={1.05} />)}
             </div>

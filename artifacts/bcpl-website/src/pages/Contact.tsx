@@ -9,7 +9,7 @@ import { IcoChat, IcoMail, IcoPhone, IcoCheck, IcoInfo, IcoPin, IcoClock } from 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-body { background:#0E1624; }
+body { background:#071B15; }
 .wrap { max-width:1200px; margin:0 auto; padding:0 20px; }
 .desk-nav { display:none; align-items:center; gap:22px; }
 .ham-btn { display:flex; }
@@ -18,25 +18,25 @@ body { background:#0E1624; }
 @media(min-width:1024px){ .desk-nav{display:flex!important;} .ham-btn{display:none!important;} }
 .v3-kicker { font-family:Inter,sans-serif; font-weight:700; font-size:12px; letter-spacing:.22em; color:#E8B23D; text-transform:uppercase; }
 .v3-h { font-family:'Barlow Condensed','Mukta','Montserrat',sans-serif; font-weight:800; text-transform:uppercase; line-height:.95; letter-spacing:.015em; }
-.btn-fire { background:linear-gradient(135deg,#FF7A29 0%,#E8611A 60%,#C94E0E 100%); border:none; border-radius:14px; color:#fff; font-family:var(--font-head); font-weight:800; cursor:pointer; box-shadow:0 8px 28px rgba(255,122,41,0.45),inset 0 1px 0 rgba(255,255,255,0.2); transition:transform 0.15s,box-shadow 0.2s; letter-spacing:0.02em; animation:pulseGlow 3s ease-in-out infinite;min-height:44px;}
-.btn-fire:hover { transform:translateY(-2px); box-shadow:0 14px 40px rgba(255,122,41,0.6); }
+.btn-fire { background:linear-gradient(135deg,#D4AF37 0%,#B8922E 60%,#97761F 100%); border:none; border-radius:14px; color:#fff; font-family:var(--font-head); font-weight:800; cursor:pointer; box-shadow:0 8px 28px rgba(212,175,55,0.45),inset 0 1px 0 rgba(255,255,255,0.2); transition:transform 0.15s,box-shadow 0.2s; letter-spacing:0.02em; animation:pulseGlow 3s ease-in-out infinite;min-height:44px;}
+.btn-fire:hover { transform:translateY(-2px); box-shadow:0 14px 40px rgba(212,175,55,0.6); }
 .btn-fire:active { transform:scale(0.97); }
 .btn-wa { background:linear-gradient(135deg,#25D366,#1BA851); border:none; border-radius:14px; color:#fff; font-weight:700; cursor:pointer; font-family:var(--font-head); transition:transform 0.15s; }
-.glass-card { background:linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85)); backdrop-filter:blur(32px); border:1px solid rgba(255,255,255,0.09); border-radius:20px; box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06); }
+.glass-card { background:linear-gradient(135deg,rgba(10,59,46,0.9),rgba(6,35,28,0.85)); backdrop-filter:blur(32px); border:1px solid rgba(255,255,255,0.09); border-radius:20px; box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06); }
 .shimmer-gold { background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D,#F5C842,#E8B23D); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation:shimmer 3s linear infinite; }
-.tag-pill { display:inline-flex; align-items:center; gap:6px; background:rgba(255,122,41,0.12); border:1px solid rgba(255,122,41,0.3); border-radius:100px; padding:5px 14px; font-size:11px; font-weight:700; font-family:var(--font-head); color:#FF7A29; letter-spacing:0.1em; }
+.tag-pill { display:inline-flex; align-items:center; gap:6px; background:rgba(212,175,55,0.12); border:1px solid rgba(212,175,55,0.3); border-radius:100px; padding:5px 14px; font-size:11px; font-weight:700; font-family:var(--font-head); color:#D4AF37; letter-spacing:0.1em; }
 .inp { width:100%; background:rgba(255,255,255,0.04); border:1.5px solid rgba(255,255,255,0.1); border-radius:14px; color:#F8F4EE; padding:15px 18px; font-family:Inter,sans-serif; font-size:16px; outline:none; transition:all 0.25s; appearance:none; }
-.inp:focus { border-color:#FF7A29; background:rgba(255,122,41,0.06); box-shadow:0 0 0 4px rgba(255,122,41,0.12); }
+.inp:focus { border-color:#D4AF37; background:rgba(212,175,55,0.06); box-shadow:0 0 0 4px rgba(212,175,55,0.12); }
 .inp::placeholder { color:rgba(255,255,255,0.28); }
 .lbl { font-size:12px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-3); margin-bottom:8px; display:block; }
 @keyframes gradShift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
-@keyframes pulseGlow { 0%,100%{box-shadow:0 0 16px rgba(255,122,41,0.4)} 50%{box-shadow:0 0 36px rgba(255,122,41,0.8),0 0 60px rgba(255,122,41,0.3)} }
+@keyframes pulseGlow { 0%,100%{box-shadow:0 0 16px rgba(212,175,55,0.4)} 50%{box-shadow:0 0 36px rgba(212,175,55,0.8),0 0 60px rgba(212,175,55,0.3)} }
 @keyframes shimmer { 0%{background-position:-200% center} 100%{background-position:200% center} }
 @keyframes scanPulse { 0%,100%{opacity:0.03} 50%{opacity:0.08} }
 @keyframes floatParticle { 0%{transform:translateY(0) rotate(0deg);opacity:0.4} 50%{opacity:0.8} 100%{transform:translateY(-80px) rotate(180deg);opacity:0} }
 @keyframes fadeSlide { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
 @keyframes floatUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
-@keyframes borderGlow { 0%,100%{border-color:rgba(255,122,41,0.3)} 50%{border-color:rgba(255,122,41,0.8)} }
+@keyframes borderGlow { 0%,100%{border-color:rgba(212,175,55,0.3)} 50%{border-color:rgba(212,175,55,0.8)} }
 .contact-method-card { transition:transform 0.2s,box-shadow 0.2s; cursor:default; }
 .contact-method-card:hover { transform:translateY(-6px); }
 `;
@@ -44,9 +44,9 @@ body { background:#0E1624; }
 function AmbientBg() {
   return (
     <div style={{position:'fixed',inset:0,zIndex:0,pointerEvents:'none',overflow:'hidden'}}>
-      <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 80% 60% at 20% 40%, rgba(255,122,41,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 20%, rgba(30,64,175,0.12) 0%, transparent 60%)'}}/>
+      <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 80% 60% at 20% 40%, rgba(212,175,55,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 20%, rgba(20,86,63,0.12) 0%, transparent 60%)'}}/>
       <svg style={{position:'absolute',inset:0,width:'100%',height:'100%',opacity:0.07}} viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid slice">
-        <path d="M0,400 Q320,320 640,380 Q960,440 1280,360 L1280,720 L0,720 Z" fill="#1a2a4a"/>
+        <path d="M0,400 Q320,320 640,380 Q960,440 1280,360 L1280,720 L0,720 Z" fill="#123829"/>
         <rect x="80" y="100" width="8" height="300" fill="#334"/>
         <rect x="76" y="80" width="16" height="12" fill="#445" rx="2"/>
         <rect x="1192" y="100" width="8" height="300" fill="#334"/>
@@ -54,13 +54,13 @@ function AmbientBg() {
         <rect x="440" y="420" width="400" height="160" fill="none" stroke="#334" strokeWidth="2"/>
       </svg>
       {[
-        {top:'15%',left:'8%',color:'#FF7A29',delay:'0s',size:3},
+        {top:'15%',left:'8%',color:'#D4AF37',delay:'0s',size:3},
         {top:'35%',left:'92%',color:'#E8B23D',delay:'1.2s',size:3},
         {top:'60%',left:'5%',color:'#fff',delay:'2.1s',size:2},
-        {top:'75%',left:'88%',color:'#FF7A29',delay:'0.7s',size:3},
+        {top:'75%',left:'88%',color:'#D4AF37',delay:'0.7s',size:3},
         {top:'25%',left:'50%',color:'#E8B23D',delay:'1.8s',size:2},
         {top:'85%',left:'30%',color:'#fff',delay:'0.4s',size:3},
-        {top:'45%',left:'70%',color:'#FF7A29',delay:'2.5s',size:2},
+        {top:'45%',left:'70%',color:'#D4AF37',delay:'2.5s',size:2},
         {top:'10%',left:'65%',color:'#E8B23D',delay:'1.0s',size:3},
       ].map((p,i)=>(
         <div key={i} style={{position:'absolute',top:p.top,left:p.left,width:p.size,height:p.size,borderRadius:'50%',background:p.color,animation:`floatParticle 6s ease-in-out ${p.delay} infinite`}}/>
@@ -112,7 +112,7 @@ export function Contact() {
   }
 
   return (
-    <div style={{minHeight:'100vh',background:'#0E1624',fontFamily:'Inter,sans-serif',position:'relative'}}>
+    <div style={{minHeight:'100vh',background:'#071B15',fontFamily:'Inter,sans-serif',position:'relative'}}>
       <style>{CSS}</style>
       <AmbientBg/>
       <SiteHeader active="Contact" />
@@ -183,9 +183,9 @@ export function Contact() {
           <div style={{display:'grid',gridTemplateColumns:'1fr min(480px,100%)',gap:32,alignItems:'start'}} className="contact-grid">
             <style>{`.contact-grid { grid-template-columns: 1fr; } @media(min-width:900px){ .contact-grid { grid-template-columns: 1fr min(480px,100%); } }
         /* ── FLOATING REGISTER BUTTON ── */
-        .float-reg-btn { position:fixed; bottom:28px; right:28px; z-index:900; background:linear-gradient(135deg,#FF7A29,#D95E10); border:none; border-radius:12px; color:#fff; font-family:var(--font-head); font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:14px 22px; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(255,122,41,0.45); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition:opacity .2s,transform .15s; }
+        .float-reg-btn { position:fixed; bottom:28px; right:28px; z-index:900; background:linear-gradient(135deg,#D4AF37,#A8842A); border:none; border-radius:12px; color:#fff; font-family:var(--font-head); font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:14px 22px; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(212,175,55,0.45); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition:opacity .2s,transform .15s; }
         .float-reg-btn:hover { opacity:.9; transform:translateY(-2px); }
-        @keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4)} 50%{box-shadow:0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0)} }
+        @keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(212,175,55,0.45),0 0 0 0 rgba(212,175,55,0.4)} 50%{box-shadow:0 8px 40px rgba(212,175,55,0.6),0 0 0 8px rgba(212,175,55,0)} }
         .float-reg-pulse { animation:floatPulse 2.5s ease-in-out infinite; }
         @media(max-width:1023px){ .float-reg-btn { display:none; } }
         .form-name-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
@@ -260,12 +260,12 @@ export function Contact() {
             {/* FAQ Teaser */}
             <div style={{display:'flex',flexDirection:'column',gap:20}}>
               <div className="glass-card" style={{padding:'32px',animation:'fadeSlide 0.7s ease 0.35s both'}}>
-                <div style={{marginBottom:12,color:'#FF7A29',display:'flex'}}><IcoInfo size={32}/></div>
+                <div style={{marginBottom:12,color:'#D4AF37',display:'flex'}}><IcoInfo size={32}/></div>
                 <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:18,color:'#fff',marginBottom:8}}>{t("Common Questions?","आम सवाल?")}</div>
                 <p style={{color:'rgba(255,255,255,0.55)',fontSize:14,marginBottom:20,lineHeight:1.6}}>{t("Quick answers to the most frequent queries:","सबसे frequent queries के quick answers:")}</p>
                 <div style={{display:'flex',flexWrap:'wrap',gap:8,marginBottom:20}}>
                   {[t("Refund policy","Refund policy"),t("Eligibility","पात्रता"),t("Video format","Video format"),t("Results timeline","Result timeline")].map((chip,idx)=>(
-                    <span key={idx} style={{background:'rgba(255,122,41,0.1)',border:'1px solid rgba(255,122,41,0.25)',borderRadius:100,padding:'6px 14px',fontSize:12,color:'#FF7A29',fontFamily:'var(--font-head)',fontWeight:700,cursor:'pointer'}}>
+                    <span key={idx} style={{background:'rgba(212,175,55,0.1)',border:'1px solid rgba(212,175,55,0.25)',borderRadius:100,padding:'6px 14px',fontSize:12,color:'#D4AF37',fontFamily:'var(--font-head)',fontWeight:700,cursor:'pointer'}}>
                       {chip}
                     </span>
                   ))}
@@ -280,7 +280,7 @@ export function Contact() {
                 <div style={{color:'rgba(255,255,255,0.5)',fontSize:13,lineHeight:1.8}}>
                   <div>Kriparthi Playing 11 Pvt. Ltd.</div>
                   <div style={{color:'rgba(255,255,255,0.55)'}}>{t("Operating BCPL — Bhartiya Corporate Premier League","BCPL — Bhartiya Corporate Premier League का संचालन")}</div>
-                  <div style={{color:'#FF7A29',fontWeight:600}}>www.bcplt20.com</div>
+                  <div style={{color:'#D4AF37',fontWeight:600}}>www.bcplt20.com</div>
                   <div style={{color:'#06B6D4',fontWeight:600,marginTop:6}}>support@bcplt20.com</div>
                   {/* OWNER / COUNSEL DECISION REQUIRED: registered office address & CIN are not verifiable in the codebase.
                       A fabricated-looking CIN was removed. Publish the real registered-office address / CIN only once confirmed. */}

@@ -26,31 +26,31 @@ const CSS = `
 @media(min-width:640px){.filter-tabs .filter-tab{width:auto;}}
 .filter-bar{display:flex;flex-direction:column;gap:16px;}
 @media(min-width:768px){.filter-bar{flex-direction:row;align-items:center;justify-content:space-between;}.filter-bar .filter-tabs{margin-bottom:0;}}
-.btn-fire{background:linear-gradient(135deg,#FF7A29 0%,#E8611A 60%,#C94E0E 100%);border:none;border-radius:14px;color:#fff;font-family:var(--font-head);font-weight:800;cursor:pointer;box-shadow:0 8px 28px rgba(255,122,41,0.45),inset 0 1px 0 rgba(255,255,255,0.2);transition:transform 0.15s,box-shadow 0.2s;letter-spacing:0.02em;animation:pulseGlow 3s ease-in-out infinite;}
-.btn-fire:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(255,122,41,0.6);}
+.btn-fire{background:linear-gradient(135deg,#D4AF37 0%,#B8922E 60%,#97761F 100%);border:none;border-radius:14px;color:#fff;font-family:var(--font-head);font-weight:800;cursor:pointer;box-shadow:0 8px 28px rgba(212,175,55,0.45),inset 0 1px 0 rgba(255,255,255,0.2);transition:transform 0.15s,box-shadow 0.2s;letter-spacing:0.02em;animation:pulseGlow 3s ease-in-out infinite;}
+.btn-fire:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(212,175,55,0.6);}
 .btn-fire:active{transform:scale(0.97);}
-.glass-card{background:linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85));backdrop-filter:blur(32px);border:1px solid rgba(255,255,255,0.09);border-radius:20px;box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06);}
+.glass-card{background:linear-gradient(135deg,rgba(10,59,46,0.9),rgba(6,35,28,0.85));backdrop-filter:blur(32px);border:1px solid rgba(255,255,255,0.09);border-radius:20px;box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06);}
 .shimmer-gold{background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D,#F5C842,#E8B23D);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 3s linear infinite;}
-.tag-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,122,41,0.12);border:1px solid rgba(255,122,41,0.3);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:700;font-family:var(--font-head);color:#FF7A29;letter-spacing:0.1em;}
+.tag-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(212,175,55,0.12);border:1px solid rgba(212,175,55,0.3);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:700;font-family:var(--font-head);color:#D4AF37;letter-spacing:0.1em;}
 .match-card{transition:transform 0.2s,box-shadow 0.2s;}
 .match-card:hover{transform:translateY(-3px);box-shadow:0 32px 80px rgba(0,0,0,0.6)!important;}
 .filter-tab{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;color:rgba(255,255,255,0.5);font-family:var(--font-head);font-weight:700;font-size:12px;padding:8px 18px;cursor:pointer;transition:all 0.2s;letter-spacing:0.06em;}
-.filter-tab.active{background:rgba(255,122,41,0.15);border-color:rgba(255,122,41,0.5);color:#FF7A29;}
+.filter-tab.active{background:rgba(212,175,55,0.15);border-color:rgba(212,175,55,0.5);color:#D4AF37;}
 .filter-tab:hover:not(.active){background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.8);}
 .team-select{background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.1);border-radius:12px;color:#F8F4EE;padding:10px 16px;font-family:Inter,sans-serif;font-size:14px;outline:none;cursor:pointer;appearance:none;-webkit-appearance:none;width:100%;transition:all 0.25s;}
 @media(min-width:768px){.team-select{width:auto;flex:1;max-width:260px;}}
 @keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-@keyframes pulseGlow{0%,100%{box-shadow:0 0 16px rgba(255,122,41,0.4)}50%{box-shadow:0 0 36px rgba(255,122,41,0.8),0 0 60px rgba(255,122,41,0.3)}}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 16px rgba(212,175,55,0.4)}50%{box-shadow:0 0 36px rgba(212,175,55,0.8),0 0 60px rgba(212,175,55,0.3)}}
 @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
 @keyframes scanPulse{0%,100%{opacity:0.03}50%{opacity:0.08}}
 @keyframes liveBlip{0%,100%{opacity:1}50%{opacity:0.2}}
 @keyframes floatParticle{0%{transform:translateY(0) rotate(0deg);opacity:0.4}50%{opacity:0.8}100%{transform:translateY(-80px) rotate(180deg);opacity:0}}
 @keyframes fadeSlide{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-@keyframes borderGlow{0%,100%{border-color:rgba(255,122,41,0.3)}50%{border-color:rgba(255,122,41,0.8)}}
+@keyframes borderGlow{0%,100%{border-color:rgba(212,175,55,0.3)}50%{border-color:rgba(212,175,55,0.8)}}
 /* float-reg-btn */
-.float-reg-btn { position:fixed; bottom:28px; right:28px; z-index:900; background:linear-gradient(135deg,#FF7A29,#D95E10); border:none; border-radius:12px; color:#fff; font-family:var(--font-head); font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:14px 22px; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(255,122,41,0.45); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition:opacity .2s,transform .15s; }
+.float-reg-btn { position:fixed; bottom:28px; right:28px; z-index:900; background:linear-gradient(135deg,#D4AF37,#A8842A); border:none; border-radius:12px; color:#fff; font-family:var(--font-head); font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:14px 22px; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(212,175,55,0.45); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition:opacity .2s,transform .15s; }
 .float-reg-btn:hover { opacity:.9; transform:translateY(-2px); }
-@keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4)} 50%{box-shadow:0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0)} }
+@keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(212,175,55,0.45),0 0 0 0 rgba(212,175,55,0.4)} 50%{box-shadow:0 8px 40px rgba(212,175,55,0.6),0 0 0 8px rgba(212,175,55,0)} }
 .float-reg-pulse { animation:floatPulse 2.5s ease-in-out infinite; }
 @media(max-width:1023px){ .float-reg-btn { display:none; } }
 
@@ -63,22 +63,22 @@ const CSS = `
 `;
 
 const particles = [
-  {left:'8%',top:'15%',color:'#FF7A29',delay:'0s',dur:'6s'},
+  {left:'8%',top:'15%',color:'#D4AF37',delay:'0s',dur:'6s'},
   {left:'22%',top:'65%',color:'#E8B23D',delay:'1.2s',dur:'8s'},
   {left:'48%',top:'30%',color:'#fff',delay:'2.1s',dur:'7s'},
-  {left:'65%',top:'75%',color:'#FF7A29',delay:'0.7s',dur:'9s'},
+  {left:'65%',top:'75%',color:'#D4AF37',delay:'0.7s',dur:'9s'},
   {left:'78%',top:'12%',color:'#E8B23D',delay:'3.3s',dur:'6.5s'},
   {left:'88%',top:'50%',color:'#fff',delay:'1.8s',dur:'7.5s'},
-  {left:'33%',top:'55%',color:'#FF7A29',delay:'4.2s',dur:'8s'},
+  {left:'33%',top:'55%',color:'#D4AF37',delay:'4.2s',dur:'8s'},
   {left:'92%',top:'35%',color:'#E8B23D',delay:'2.8s',dur:'6s'},
 ];
 
 function AmbientBg() {
   return (
     <div style={{position:'fixed',inset:0,zIndex:0,pointerEvents:'none',overflow:'hidden'}}>
-      <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 80% 60% at 20% 40%, rgba(255,122,41,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 20%, rgba(30,64,175,0.12) 0%, transparent 60%)'}}/>
+      <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 80% 60% at 20% 40%, rgba(212,175,55,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 20%, rgba(20,86,63,0.12) 0%, transparent 60%)'}}/>
       <svg style={{position:'absolute',inset:0,width:'100%',height:'100%',opacity:0.07}} viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid slice">
-        <path d="M0,600 Q320,480 640,500 Q960,520 1280,480 L1280,720 L0,720 Z" fill="#1a2a4a"/>
+        <path d="M0,600 Q320,480 640,500 Q960,520 1280,480 L1280,720 L0,720 Z" fill="#123829"/>
         <rect x="80" y="60" width="8" height="200" fill="#334"/>
         <rect x="60" y="58" width="48" height="6" fill="#334"/>
         <rect x="1192" y="60" width="8" height="200" fill="#334"/>
@@ -204,7 +204,7 @@ export function Schedule() {
   }, {});
 
   return (
-    <div style={{background:'#0E1624',color:'#fff',minHeight:'100vh',overflowX:'hidden',fontFamily:'Inter,sans-serif'}}>
+    <div style={{background:'#071B15',color:'#fff',minHeight:'100vh',overflowX:'hidden',fontFamily:'Inter,sans-serif'}}>
       <style>{CSS}</style>
       <AmbientBg/>
       <div style={{position:'relative',zIndex:10}}>
@@ -279,9 +279,9 @@ export function Schedule() {
               <p style={{color:'var(--ink-3)',fontSize:15,maxWidth:440,margin:'0 auto 28px',lineHeight:1.7}}>
                 {t("The complete Season 5 fixture list will be published here after the players' auction in August 2026. The tournament begins in September 2026.", "पूरी Season 5 fixture list players' auction (Aug 2026) के बाद यहाँ publish होगी। Tournament Sep 2026 में शुरू होगा।")}
               </p>
-              <div style={{display:'inline-flex',alignItems:'center',gap:8,background:'rgba(255,122,41,0.1)',border:'1px solid rgba(255,122,41,0.3)',borderRadius:20,padding:'8px 20px'}}>
-                <span style={{width:8,height:8,borderRadius:'50%',background:'#FF7A29',display:'inline-block',animation:'liveBlip 1.2s infinite'}}/>
-                <span style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:12,color:'#FF7A29',letterSpacing:'.08em'}}>
+              <div style={{display:'inline-flex',alignItems:'center',gap:8,background:'rgba(212,175,55,0.1)',border:'1px solid rgba(212,175,55,0.3)',borderRadius:20,padding:'8px 20px'}}>
+                <span style={{width:8,height:8,borderRadius:'50%',background:'#D4AF37',display:'inline-block',animation:'liveBlip 1.2s infinite'}}/>
+                <span style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:12,color:'#D4AF37',letterSpacing:'.08em'}}>
                   {t("REGISTRATIONS OPEN — SEASON 5", "रजिस्ट्रेशन खुले हैं — सीज़न 5")}
                 </span>
               </div>
@@ -318,13 +318,13 @@ export function Schedule() {
                         className="match-date-box"
                         style={{
                           width:64,height:70,borderRadius:12,flexShrink:0,
-                          background:'linear-gradient(135deg,rgba(255,122,41,0.25),rgba(232,97,26,0.15))',
-                          border:'1px solid rgba(255,122,41,0.2)',
+                          background:'linear-gradient(135deg,rgba(212,175,55,0.25),rgba(232,97,26,0.15))',
+                          border:'1px solid rgba(212,175,55,0.2)',
                           display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:1
                         }}
                       >
-                        <div className="match-date-day" style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:26,color:'#FF7A29',lineHeight:1}}>{m.day}</div>
-                        <div style={{fontSize:11,fontFamily:'var(--font-head)',fontWeight:700,color:'rgba(255,122,41,0.7)',letterSpacing:'0.06em'}}>{m.month}</div>
+                        <div className="match-date-day" style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:26,color:'#D4AF37',lineHeight:1}}>{m.day}</div>
+                        <div style={{fontSize:11,fontFamily:'var(--font-head)',fontWeight:700,color:'rgba(212,175,55,0.7)',letterSpacing:'0.06em'}}>{m.month}</div>
                         <div style={{fontSize:12,fontFamily:'Inter,sans-serif',color:'var(--ink-2)'}}>{m.weekday}</div>
                       </div>
 
@@ -336,7 +336,7 @@ export function Schedule() {
                           <span style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:16,color:'#fff'}}>{m.teamB}</span>
                         </div>
                         <div style={{display:'flex',flexWrap:'wrap',gap:8,alignItems:'center'}}>
-                          <span style={{fontSize:12,color:'rgba(255,122,41,0.7)',fontFamily:'var(--font-head)',fontWeight:700}}>Match {m.matchNo}</span>
+                          <span style={{fontSize:12,color:'rgba(212,175,55,0.7)',fontFamily:'var(--font-head)',fontWeight:700}}>Match {m.matchNo}</span>
                           <span style={{display:'inline-flex',alignItems:'center',gap:5,fontSize:14,color:'var(--ink-2)',fontFamily:'Inter,sans-serif'}}><IcoPin size={13} style={{color:'var(--ink-3)'}}/> {m.venue}</span>
                           <span style={{fontSize:14,color:'var(--ink-2)',fontFamily:'Inter,sans-serif'}}>· {m.time}</span>
                         </div>

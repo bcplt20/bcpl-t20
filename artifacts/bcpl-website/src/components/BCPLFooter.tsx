@@ -34,8 +34,8 @@ export function BCPLFooter() {
         .bcpl-foot-cols { display:grid; grid-template-columns:240px repeat(4,1fr); gap:36px; margin-bottom:36px; }
         @media(max-width:1000px){ .bcpl-foot-cols{grid-template-columns:1fr 1fr 1fr 1fr;} .bcpl-foot-brand{grid-column:1/-1;} }
         @media(max-width:640px){ .bcpl-foot-cols{grid-template-columns:1fr 1fr;} .bcpl-foot-brand{grid-column:1/-1;} }
-        .bcpl-foot-link:hover{ color:#FF7A29!important; }
-        .bcpl-soc:hover{ border-color:#FF7A29!important; background:rgba(255,122,41,.12)!important; }
+        .bcpl-foot-link:hover{ color:#D4AF37!important; }
+        .bcpl-soc:hover{ border-color:#D4AF37!important; background:rgba(212,175,55,.12)!important; }
         .bcpl-foot-bottom{ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; }
         .bcpl-foot-legal{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
         @keyframes s5glow{0%,100%{opacity:1;text-shadow:0 0 6px rgba(232,178,61,0.6)}50%{opacity:.78;text-shadow:0 0 14px rgba(232,178,61,1),0 0 4px #fff}}
@@ -61,7 +61,7 @@ export function BCPLFooter() {
               India's Corporate Cricket League. From office to stadium — Season 5, 2026–27.
             </p>
             <div style={{ fontSize:11, color:"rgba(232,178,61,.55)", fontWeight:700, marginBottom:6 }}>Brand Ambassador — Sourav Ganguly</div>
-            <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:13, background:"linear-gradient(90deg,#FF7A29,#FFB347)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>#OfficeSeStadiumTak</div>
+            <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:13, background:"linear-gradient(90deg,#D4AF37,#EED688)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>#OfficeSeStadiumTak</div>
           </div>
 
           {COLS.map(col => (
