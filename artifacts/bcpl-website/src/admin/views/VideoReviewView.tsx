@@ -347,7 +347,7 @@ export default function VideoReviewView({ refreshTick = 0 }: { refreshTick?: num
 
                 {/* Select / Reject — triggers email + SMS */}
                 <div style={{ background:"rgba(255,255,255,0.03)", border:"1px solid rgba(255,255,255,0.07)", borderRadius:10, padding:12 }}>
-                  <div style={{ fontSize:10, fontWeight:700, color:"#475569", letterSpacing:".08em", textTransform:"uppercase", marginBottom:8 }}>Scout Decision — sends Email + SMS</div>
+                  <div style={{ fontSize:10, fontWeight:700, color:"#475569", letterSpacing:".08em", textTransform:"uppercase", marginBottom:8 }}>Reviewer Decision — sends Email + SMS</div>
                   <div style={{ display:"flex", gap:8 }}>
                     <button
                       disabled={!!acting}
@@ -382,7 +382,7 @@ export default function VideoReviewView({ refreshTick = 0 }: { refreshTick?: num
 }
 
 /* ── 100-point score editor (per selected video) ─────────────────────
-   Player sees this breakdown on their result page AFTER the scout
+   Player sees this breakdown on their result page AFTER the reviewer
    decision (SELECT / REJECT) is announced. Save score first, then decide. */
 function ScoreEditor({ video, onSaved }: { video: Video; onSaved: (v: Video, s: Score) => void }) {
   type Draft = Record<CritKey, number | "">;

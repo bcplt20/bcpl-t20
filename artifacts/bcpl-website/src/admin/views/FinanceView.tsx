@@ -160,7 +160,7 @@ function InvoiceModal({ txn, onClose }: { txn: Txn; onClose: () => void }) {
                 <table>
                   <thead><tr><th>Description</th><th>HSN</th><th>Rate</th><th>Qty</th><th>Taxable Amount</th></tr></thead>
                   <tbody>
-                    <tr><td>BCPL T20 Season 5 — ${txn.type} Registration<br/><span style="font-size:9px;color:#888">${txn.type==="Phase 1"?"Online Scout Review &amp; Video Submission":"Physical Trial Entry &amp; Franchise Auction Eligibility"}</span></td>
+                    <tr><td>BCPL T20 Season 5 — ${txn.type} Registration<br/><span style="font-size:9px;color:#888">${txn.type==="Phase 1"?"Phase 1 Video Assessment &amp; Registration":"Physical Trial Entry &amp; Franchise Auction Eligibility"}</span></td>
                     <td>999299</td><td>₹${base.toLocaleString()}</td><td>1</td><td>₹${base.toLocaleString()}</td></tr>
                   </tbody>
                 </table>
@@ -245,7 +245,7 @@ function InvoiceModal({ txn, onClose }: { txn: Txn; onClose: () => void }) {
               <tr style={{ borderBottom:"1px solid #1E293B" }}>
                 <td style={{ padding:"13px 12px", fontSize:12, color:"#F1F5F9", lineHeight:1.5 }}>
                   BCPL T20 Season 5 — {txn.type} Registration<br/>
-                  <span style={{ fontSize:11, color:"#475569" }}>{txn.type==="Phase 1" ? "Online Scout Review & Video Submission" : "Physical Trial Entry & Franchise Auction Eligibility"}</span>
+                  <span style={{ fontSize:11, color:"#475569" }}>{txn.type==="Phase 1" ? "Phase 1 Video Assessment & Registration" : "Physical Trial Entry & Franchise Auction Eligibility"}</span>
                 </td>
                 <td style={{ padding:"13px 12px", fontSize:11, color:"#64748B", fontFamily:"monospace" }}>999299</td>
                 <td style={{ padding:"13px 12px", fontSize:12, color:"#94A3B8" }}>₹{base.toLocaleString()}</td>

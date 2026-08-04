@@ -10,20 +10,20 @@ import { IcoWarn, IcoPrinter } from './icons';
 
 export const LEGAL_APPROVAL_PENDING = false; // owner approved the legal wording on 24 July 2026
 
-export const LEGAL_LAST_UPDATED = 'July 24, 2026';
-export const LEGAL_LAST_UPDATED_HI = '24 जुलाई 2026';
+export const LEGAL_LAST_UPDATED = 'August 4, 2026';
+export const LEGAL_LAST_UPDATED_HI = '4 अगस्त 2026';
 
 export const LEGAL_DOCS = {
-  terms:       { version: '2.0', titleEn: 'Terms & Conditions',            titleHi: 'नियम और शर्तें' },
-  privacy:     { version: '2.0', titleEn: 'Privacy Policy',                titleHi: 'प्राइवेसी पॉलिसी' },
-  refunds:     { version: '2.0', titleEn: 'Refund & Cancellation Policy',  titleHi: 'रिफंड और कैंसिलेशन पॉलिसी' },
-  eligibility: { version: '2.0', titleEn: 'Eligibility Criteria',          titleHi: 'योग्यता मानदंड' },
-  selection:   { version: '2.0', titleEn: 'How Selection Works',           titleHi: 'चयन प्रक्रिया' },
-  trialRules:  { version: '1.1', titleEn: 'Phase 2 Physical Trial Rules',  titleHi: 'फेज 2 फिजिकल ट्रायल नियम' },
+  terms:       { version: '2.1', titleEn: 'Terms & Conditions',            titleHi: 'नियम और शर्तें' },
+  privacy:     { version: '2.1', titleEn: 'Privacy Policy',                titleHi: 'प्राइवेसी पॉलिसी' },
+  refunds:     { version: '2.1', titleEn: 'Refund & Cancellation Policy',  titleHi: 'रिफंड और कैंसिलेशन पॉलिसी' },
+  eligibility: { version: '2.1', titleEn: 'Eligibility Criteria',          titleHi: 'योग्यता मानदंड' },
+  selection:   { version: '2.1', titleEn: 'How Selection Works',           titleHi: 'चयन प्रक्रिया' },
+  trialRules:  { version: '1.2', titleEn: 'Phase 2 Physical Trial Rules',  titleHi: 'फेज 2 फिजिकल ट्रायल नियम' },
   videoRules:  { version: '1.1', titleEn: 'Phase 1 Video Rules',           titleHi: 'फेज 1 वीडियो नियम' },
-  conduct:     { version: '2.0', titleEn: 'Code of Conduct',               titleHi: 'आचार संहिता' },
-  rulebook:    { version: '1.1', titleEn: 'BCPL Cricket Rulebook',         titleHi: 'BCPL क्रिकेट रूलबुक' },
-  faq:         { version: '2.0', titleEn: 'Frequently Asked Questions',    titleHi: 'अक्सर पूछे जाने वाले सवाल' },
+  conduct:     { version: '2.1', titleEn: 'Code of Conduct',               titleHi: 'आचार संहिता' },
+  rulebook:    { version: '1.2', titleEn: 'BCPL Cricket Rulebook',         titleHi: 'BCPL क्रिकेट रूलबुक' },
+  faq:         { version: '2.1', titleEn: 'Frequently Asked Questions',    titleHi: 'अक्सर पूछे जाने वाले सवाल' },
 } as const;
 
 export type LegalDocKey = keyof typeof LEGAL_DOCS;
@@ -33,7 +33,7 @@ export type LegalDocKey = keyof typeof LEGAL_DOCS;
 export const CONSENT_VERSIONS = {
   terms: LEGAL_DOCS.terms.version,
   privacy: LEGAL_DOCS.privacy.version,
-  phase2Declarations: '2.0',
+  phase2Declarations: '2.1',
 } as const;
 
 /* ─── Print stylesheet: prints exactly what is displayed (incl. draft

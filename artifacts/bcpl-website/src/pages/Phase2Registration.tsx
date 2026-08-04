@@ -60,16 +60,16 @@ export function Phase2Registration() {
   // Canonical declaration texts — English versions are stored server-side
   // with the Phase 2 payment as the consent/acceptance audit record.
   const P2_DECL_EN = [
-    'I confirm that I have not played first-class cricket, IPL, or international cricket professionally.',
-    'I understand the trial terms, the franchise auction process, and the two-phase selection system.',
+    'I confirm I meet the working-professional eligibility requirement, and that I have not played first-class cricket, IPL, or international cricket professionally (I meet the applicable cricket participation/gap requirement).',
+    'I understand the Phase 2 fee is charged for participation in the Phase 2 physical trial, and I understand the physical-trial terms, the Player Auction process and the two-phase selection system.',
     'I agree to abide by the BCPL Code of Conduct throughout Season 5.',
-    'I understand that payment of the Phase 2 fee does not guarantee Auction Pool entry, auction purchase, team allocation, a player contract, remuneration or tournament participation.',
+    'I understand that payment of the Phase 2 fee does not guarantee Final Selection, Auction Pool entry, Player Auction purchase, Team Purchase, a player contract, remuneration or Tournament Participation, and I accept the Phase 2 fee policy in the Refund & Cancellation Policy.',
   ];
   const P2_DECL_HI = [
-    'मैं पुष्टि करता हूं कि मैंने प्रथम श्रेणी क्रिकेट, आईपीएल या अंतरराष्ट्रीय क्रिकेट पेशेवर रूप से नहीं खेला है।',
-    'मैं ट्रायल की शर्तों, फ्रैंचाइज़ी नीलामी प्रक्रिया और दो-चरणीय चयन प्रणाली को समझता हूं।',
+    'मैं पुष्टि करता हूं कि मैं working-professional eligibility की शर्त पूरी करता हूं, और मैंने प्रथम श्रेणी क्रिकेट, आईपीएल या अंतरराष्ट्रीय क्रिकेट पेशेवर रूप से नहीं खेला है (मैं लागू cricket participation/gap शर्त पूरी करता हूं)।',
+    'मैं समझता हूं कि Phase 2 fee, Phase 2 physical trial में participation के लिए ली जाती है, और मैं physical-trial की शर्तों, Player Auction प्रक्रिया और दो-चरणीय चयन प्रणाली को समझता हूं।',
     'मैं सीजन 5 के दौरान BCPL आचार संहिता का पालन करने के लिए सहमत हूं।',
-    'मैं समझता हूं कि फेज 2 फीस का भुगतान Auction Pool में प्रवेश, auction में खरीद, टीम आवंटन, player contract, remuneration या tournament में भागीदारी की गारंटी नहीं देता।',
+    'मैं समझता हूं कि Phase 2 fee का भुगतान Final Selection, Auction Pool में प्रवेश, Player Auction में purchase, Team Purchase, player contract, remuneration या Tournament Participation की गारंटी नहीं देता, और मैं Refund & Cancellation Policy में दी गई Phase 2 fee policy स्वीकार करता हूं।',
   ];
 
   const canProceed = check1 && check2 && check3 && check4;

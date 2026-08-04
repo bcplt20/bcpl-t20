@@ -184,21 +184,31 @@ const CODE_TEMPLATES: Array<{
   {
     name: "bcpl_video_submitted",
     category: "Utility",
-    body: "Hi {{1}}, your BCPL T20 trial video has been received! Our scouts will review it within 15 working days. - BCPL T20",
+    // COPY COMPLIANCE: replaced "Our scouts will review" (forbidden "scouts" term).
+    // OWNER / COUNSEL DECISION REQUIRED: this is a provider-registered WhatsApp
+    // template body — the wording change must be re-approved with the WhatsApp
+    // provider before it takes effect on live sends.
+    body: "Hi {{1}}, your BCPL T20 trial video has been received! Your Phase 1 assessment will be completed within 15 working days. - BCPL T20",
     varNames: ["name"],
     sampleValues: ["Rahul Sharma"],
   },
   {
     name: "bcpl_phase1_selected",
     category: "Utility",
-    body: "Congratulations {{1}}! You have been SELECTED in the BCPL T20 Phase-1 trials. Login at bcplt20.com to complete your Phase-2 registration. - BCPL T20",
+    // COPY COMPLIANCE: replaced ambiguous "SELECTED" with the precise stage name
+    // "Phase 1 Qualified". OWNER / COUNSEL DECISION REQUIRED: provider-registered
+    // WhatsApp template body — re-approve wording with the provider before live use.
+    body: "Congratulations {{1}}! You are Phase 1 Qualified in the BCPL T20 trials. Login at bcplt20.com to complete your Phase-2 registration. - BCPL T20",
     varNames: ["name"],
     sampleValues: ["Rahul Sharma"],
   },
   {
     name: "bcpl_phase1_rejected",
     category: "Utility",
-    body: "Hi {{1}}, thank you for participating in the BCPL T20 Phase-1 trials. Unfortunately you were not selected this time. Keep practicing! - BCPL T20",
+    // COPY COMPLIANCE: replaced ambiguous "not selected" with the precise stage
+    // outcome "did not qualify for Phase 1". OWNER / COUNSEL DECISION REQUIRED:
+    // provider-registered WhatsApp template body — re-approve with the provider.
+    body: "Hi {{1}}, thank you for participating in the BCPL T20 Phase-1 trials. You did not qualify for Phase 1 this time. Keep practicing! - BCPL T20",
     varNames: ["name"],
     sampleValues: ["Rahul Sharma"],
   },

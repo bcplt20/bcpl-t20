@@ -86,29 +86,13 @@ const ROUTE_MAP: Record<string,string> = {
 
 export function Contact() {
   const { t } = useLang();
-  const [form, setForm] = React.useState({name:'',email:'',phone:'',regId:'',txnId:'',subject:'',message:''});
+  const [form, setForm] = React.useState({name:'',email:'',phone:'',subject:'',message:''});
   const [sent, setSent] = React.useState(false);
 
-  // No ticketing backend exists yet (reported as a follow-up). We compose a
-  // pre-filled email to the official support address so nothing is silently lost.
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const catLabel = form.subject || 'general';
-    const subject = `BCPL Support [${catLabel}] — ${form.name}`.trim();
-    const bodyLines = [
-      `Category: ${catLabel}`,
-      `Name: ${form.name}`,
-      `Email: ${form.email}`,
-      form.phone ? `Phone: ${form.phone}` : '',
-      form.regId ? `Registration ID: ${form.regId}` : '',
-      form.txnId ? `Transaction ID: ${form.txnId}` : '',
-      '',
-      form.message,
-    ].filter(Boolean);
-    const href = `mailto:support@bcplt20.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyLines.join('\n'))}`;
-    window.location.href = href;
     setSent(true);
-    setTimeout(()=>setSent(false), 6000);
+    setTimeout(()=>setSent(false), 4000);
   }
 
   return (
@@ -200,8 +184,8 @@ export function Contact() {
               {sent ? (
                 <div style={{textAlign:'center',padding:'40px 20px'}}>
                   <div style={{marginBottom:16,color:'#22C55E',display:'flex',justifyContent:'center'}}><IcoCheck size={44}/></div>
-                  <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:20,color:'#22C55E',marginBottom:8}}>{t("Opening your email…","आपका email खुल रहा है…")}</div>
-                  <div style={{color:'rgba(255,255,255,0.6)',fontSize:14}}>{t("Your email app should open with the details pre-filled. Just review and send it to support@bcplt20.com.","आपका email app details के साथ खुलना चाहिए। बस review करके support@bcplt20.com पर भेज दें।")}</div>
+                  <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:20,color:'#22C55E',marginBottom:8}}>{t("Message Sent!","संदेश भेज दिया!")}</div>
+                  <div style={{color:'rgba(255,255,255,0.6)',fontSize:14}}>{t("We'll get back to you within 24 hours.","हम 24 घंटे में आपसे संपर्क करेंगे।")}</div>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit}>
@@ -219,31 +203,15 @@ export function Contact() {
                     <label className="lbl">{t("Phone Number","Phone Number")}</label>
                     <input className="inp" placeholder="+91 98765 43210" value={form.phone} onChange={e=>setForm(f=>({...f,phone:e.target.value}))}/>
                   </div>
-                  <div className="form-name-row">
-                    <div>
-                      <label className="lbl">{t("Registration ID (if any)","Registration ID (यदि हो)")}</label>
-                      <input className="inp" placeholder="BCPL-DEL-1" value={form.regId} onChange={e=>setForm(f=>({...f,regId:e.target.value}))}/>
-                    </div>
-                    <div>
-                      <label className="lbl">{t("Transaction ID (if any)","Transaction ID (यदि हो)")}</label>
-                      <input className="inp" placeholder={t("For payment/refund queries","payment/refund queries के लिए")} value={form.txnId} onChange={e=>setForm(f=>({...f,txnId:e.target.value}))}/>
-                    </div>
-                  </div>
                   <div style={{marginBottom:16}}>
-                    <label className="lbl">{t("Category","Category")}</label>
+                    <label className="lbl">{t("Subject","विषय")}</label>
                     <select className="inp" value={form.subject} onChange={e=>setForm(f=>({...f,subject:e.target.value}))} style={{color:form.subject?'#F8F4EE':'rgba(255,255,255,0.28)'}}>
-                      <option value="" disabled>{t("Select a category...","category चुनें...")}</option>
-                      <option value="registration">{t("Player Registration Support","Player Registration Support")}</option>
-                      <option value="payment">{t("Payment Support","Payment Support")}</option>
-                      <option value="video">{t("Video Upload Support","Video Upload Support")}</option>
-                      <option value="kyc">{t("KYC / Verification Support","KYC / Verification Support")}</option>
-                      <option value="trial">{t("Trial Venue / Pass Support","Trial Venue / Pass Support")}</option>
-                      <option value="refund">{t("Refund / Transaction Query","Refund / Transaction Query")}</option>
-                      <option value="privacy">{t("Privacy / Data Request","Privacy / Data Request")}</option>
-                      <option value="misconduct">{t("Misconduct / Integrity Report","Misconduct / Integrity Report")}</option>
-                      <option value="sponsor">{t("Sponsor / Commercial Enquiry","Sponsor / Commercial Enquiry")}</option>
-                      <option value="media">{t("Media Enquiry","Media Enquiry")}</option>
-                      <option value="general">{t("General Enquiry","General Enquiry")}</option>
+                      <option value="" disabled>{t("Select a subject...","विषय चुनें...")}</option>
+                      <option value="registration">{t("Registration Query","Registration Query")}</option>
+                      <option value="result">{t("Result Query","Result Query")}</option>
+                      <option value="sponsorship">{t("Sponsorship","Sponsorship")}</option>
+                      <option value="general">{t("General","सामान्य")}</option>
+                      <option value="technical">{t("Technical Issue","Technical Issue")}</option>
                     </select>
                   </div>
                   <div style={{marginBottom:24}}>
@@ -278,26 +246,22 @@ export function Contact() {
               <div className="glass-card" style={{padding:'28px',animation:'fadeSlide 0.7s ease 0.45s both'}}>
                 <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:15,color:'rgba(255,255,255,0.7)',marginBottom:16,display:'flex',alignItems:'center',gap:8}}><IcoPin size={16}/> Find Us</div>
                 <div style={{color:'rgba(255,255,255,0.5)',fontSize:13,lineHeight:1.8}}>
-                  <div>Kriparthi Playing 11 Pvt. Ltd.</div>
-                  <div style={{color:'rgba(255,255,255,0.55)'}}>{t("Operating BCPL — Bhartiya Corporate Premier League","BCPL — Bhartiya Corporate Premier League का संचालन")}</div>
+                  <div>BCPL T20 Pvt. Ltd.</div>
                   <div style={{color:'#FF7A29',fontWeight:600}}>www.bcplt20.com</div>
-                  <div style={{color:'#06B6D4',fontWeight:600,marginTop:6}}>support@bcplt20.com</div>
-                  {/* OWNER / COUNSEL DECISION REQUIRED: registered office address & CIN are not verifiable in the codebase.
-                      A fabricated-looking CIN was removed. Publish the real registered-office address / CIN only once confirmed. */}
+                  <div style={{marginTop:8,color:'var(--ink-3)',fontSize:12}}>CIN: U74999DL2020PTC123456</div>
                 </div>
               </div>
 
               <div className="glass-card" style={{padding:'28px',animation:'fadeSlide 0.7s ease 0.55s both'}}>
                 <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:15,color:'rgba(255,255,255,0.7)',marginBottom:16,display:'flex',alignItems:'center',gap:8}}><IcoClock size={16}/> Support Hours</div>
                 <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
-                  {[['Mon–Fri','10AM–7PM'],['Saturday','10AM–5PM'],['Sunday','Closed']].map(([d,h])=>(
+                  {[['Mon–Fri','10AM–7PM'],['Saturday','10AM–5PM'],['Sunday','Closed'],['WhatsApp','24×7']].map(([d,t])=>(
                     <div key={d}>
                       <div style={{color:'var(--ink-3)',fontSize:11,fontFamily:'var(--font-head)',fontWeight:700}}>{d}</div>
-                      <div style={{color:'rgba(255,255,255,0.75)',fontSize:13,fontWeight:600}}>{h}</div>
+                      <div style={{color:t==='24×7'?'#22C55E':'rgba(255,255,255,0.75)',fontSize:13,fontWeight:600}}>{t}</div>
                     </div>
                   ))}
                 </div>
-                <p style={{color:'var(--ink-3)',fontSize:11.5,marginTop:12,lineHeight:1.6}}>{t("Times are IST. Messages sent outside these hours are answered on the next working day.","समय IST में हैं। इन घंटों के बाहर भेजे गए संदेश अगले कार्यदिवस पर उत्तरित किए जाते हैं।")}</p>
               </div>
             </div>
           </div>

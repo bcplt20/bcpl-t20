@@ -105,30 +105,6 @@ export function CodeOfConduct() {
 
           <LegalDocHeader doc="conduct" />
 
-          <p style={{color:'rgba(255,255,255,0.6)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7,margin:'0 0 20px',fontStyle:'italic'}}>
-            This document applies to BCPL Season 5 unless expressly stated otherwise.
-          </p>
-
-          {/* KEY POINTS summary */}
-          <div className="glass-card" style={{padding:'clamp(20px,4vw,28px) clamp(16px,4vw,32px)',marginBottom:20}}>
-            <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:14}}>
-              <span style={{color:'#E8B23D',display:'inline-flex',alignItems:'center'}}><IcoScale size={20}/></span>
-              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:16,color:'#E8B23D'}}>Key Points</h2>
-            </div>
-            <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:8}}>
-              {[
-                'Play and behave fairly and respectfully — toward opponents, officials, staff and the game — at every stage.',
-                'Prohibited: abuse, threats, violence, discrimination, harassment, cheating, false documents, bribery, betting/corruption and manipulation of the process.',
-                'BCPL applies its own internal offence levels (Levels 1\u20134) and does not claim ICC disciplinary jurisdiction.',
-                'A fair process applies: report, evidence, notice, a chance to respond, decision, proportionate sanction, written decision and an appeal window. BCPL does not impose arbitrary fines.',
-              ].map((item,i)=>(
-                <li key={i} style={{display:'flex',alignItems:'flex-start',color:'rgba(255,255,255,0.78)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.65}}>
-                  <OrangeDot/><span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
 
           {/* Section 1 */}
           <div className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:20,animation:'fadeSlide 0.5s ease 0.1s both'}}>
@@ -261,77 +237,36 @@ export function CodeOfConduct() {
             </ul>
           </div>
 
-          {/* Section 5b — Wider conduct obligations */}
-          <div className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:20,animation:'fadeSlide 0.5s ease 0.37s both'}}>
-            <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18}}>
-              <span style={{color:'#E8B23D',display:'inline-flex',alignItems:'center'}}><IcoUsers size={28}/></span>
-              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>6. Safeguarding, Integrity & Wider Obligations</h2>
-            </div>
-            <p style={{color:'rgba(255,255,255,0.75)',fontSize:'clamp(14px,2vw,15px)',lineHeight:1.8,marginBottom:14}}>
-              Beyond match play, all participants owe the following standards throughout registration, trials, the auction and the tournament:
-            </p>
-            <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:10}}>
-              {[
-                'Sexual harassment & safeguarding: any sexual harassment, or any conduct that endangers the safety or dignity of another person, is strictly prohibited and treated as a serious violation.',
-                'Discrimination & harassment: harassment or discrimination on the basis of religion, caste, gender, region, language, disability or similar is prohibited.',
-                'Betting, corruption & inside information: betting, match/spot-fixing, corrupt approaches and misuse of non-public inside information are strictly prohibited.',
-                'Alcohol & substance rules: where applicable, published alcohol and substance rules must be followed at BCPL venues and events.',
-                'Confidentiality & data/privacy: respect confidential BCPL information and the privacy of other participants; do not misuse or disclose others\u2019 personal data.',
-                'Media & public statements: make only responsible public and media statements; do not make disparaging, defamatory or misleading statements about BCPL, participants, teams or officials.',
-                'Sponsor & brand obligations: honour reasonable sponsor and BCPL brand obligations and do not display competing-league branding at official events.',
-                'Medical & safety compliance: follow all medical, safety and first-response directions given by BCPL staff and officials.',
-                'Reporting & non-retaliation: participants are encouraged to report suspected misconduct in good faith; retaliation against a good-faith reporter or a witness is itself a violation.',
-              ].map((item,i)=>(
-                <li key={i} style={{display:'flex',alignItems:'flex-start',color:'rgba(255,255,255,0.75)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
-                  <OrangeDot/>{item}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Section 7 — fair disciplinary process */}
+          {/* Section 6 — fair disciplinary escalation */}
           <div className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:20,animation:'fadeSlide 0.5s ease 0.4s both'}}>
             <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18}}>
               <span style={{color:'#E8B23D',display:'inline-flex',alignItems:'center'}}><IcoScale size={28}/></span>
-              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>7. Fair Disciplinary Process</h2>
+              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>6. Fair Disciplinary Process</h2>
             </div>
             <p style={{color:'rgba(255,255,255,0.75)',fontSize:'clamp(14px,2vw,15px)',lineHeight:1.8,marginBottom:16}}>
-              These are BCPL&rsquo;s own internal conduct levels and process. BCPL does not claim ICC disciplinary jurisdiction; its levels are inspired by recognised cricket conduct frameworks. Where a violation is alleged, BCPL follows a fair, proportionate process:
+              Where a violation is alleged, BCPL follows a fair, proportionate disciplinary process:
             </p>
             <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:10,marginBottom:20}}>
               {[
-                'Incident report: an alleged violation is reported to BCPL (by an official, staff member or participant) and recorded.',
-                'Evidence: relevant evidence — for example match/venue reports, recordings, documents or witness accounts — is gathered.',
-                'Notice: the participant is informed in writing of the alleged violation and the applicable conduct rule and level.',
+                'Notice: the participant is informed of the alleged violation and the applicable conduct rule.',
                 'Opportunity to respond: the participant is given a reasonable opportunity to respond or explain before a decision is made.',
-                'Interim action: where safety or the integrity of the process requires it, BCPL may take interim action (for example interim suspension or removal from a venue) pending the outcome.',
-                'Decision authority: the matter is decided by the authorised BCPL disciplinary decision-maker for the season.',
-                'Sanction: a proportionate sanction appropriate to the severity, intent and context is applied — see the sanctions and escalation levels below.',
-                'Written decision: the outcome and any sanction are communicated to the participant in writing with reasons.',
-                'Appeal: the participant may appeal within the stated appeal window through the published process. (OWNER / COUNSEL DECISION REQUIRED: confirm the exact appeal window / number of days.)',
-                'Final internal decision: the decision on appeal is BCPL\u2019s final internal decision, subject to applicable law.',
-                'Records: BCPL keeps records of the report, evidence, decision and sanction for audit and integrity purposes.',
+                'Proportionate sanction: a sanction appropriate to the severity, intent and context is applied — see the escalation levels below.',
+                'Decision: the BCPL decision is final, subject to the published grievance process.',
               ].map((item,i)=>(
                 <li key={i} style={{display:'flex',alignItems:'flex-start',color:'rgba(255,255,255,0.75)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
                   <OrangeDot/>{item}
                 </li>
               ))}
             </ul>
-            <div style={{background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:12,padding:'14px 16px',marginBottom:20}}>
-              <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:13,color:'#E8B23D',marginBottom:8}}>Possible sanctions</div>
-              <p style={{color:'rgba(255,255,255,0.72)',fontSize:13,lineHeight:1.7}}>
-                Depending on severity, sanctions may include: a warning; invalidation of an affected score or attempt; removal from a venue; cancellation of a trial; disqualification from the current process; suspension; a ban from current and/or future BCPL participation; forfeiture where applicable; and reporting to the appropriate authorities where required by law. BCPL does not impose arbitrary monetary fines.
-              </p>
-            </div>
             <p style={{color:'rgba(255,255,255,0.75)',fontSize:'clamp(14px,2vw,15px)',lineHeight:1.8,marginBottom:20}}>
-              Sanctions escalate with severity through the following BCPL internal levels. The level applied depends on the severity, intent and context of the violation.
+              Sanctions escalate with severity through the following levels. The level applied depends on the severity, intent and context of the violation.
             </p>
             <div style={{display:'grid',gap:12}}>
               {[
                 {level:'Level 1',color:'#E8B23D',bg:'rgba(232,178,61,0.1)',border:'rgba(232,178,61,0.3)',badge:'Warning',desc:'Minor conduct issues, such as dress-code lapses or a first-time social-media infraction. A formal warning is issued.'},
-                {level:'Level 2',color:'#FF7A29',bg:'rgba(255,122,41,0.1)',border:'rgba(255,122,41,0.3)',badge:'Score Invalidation',desc:'Repeated Level 1 conduct, or conduct that compromises the fairness of an assessment. May include invalidation of the affected trial/assessment score or attempt.'},
-                {level:'Level 3',color:'#E8493F',bg:'rgba(232,73,63,0.1)',border:'rgba(232,73,63,0.3)',badge:'Disqualification',desc:'Serious misconduct — for example fraud, false documents, video manipulation, pressuring officials or venue misconduct. May lead to disqualification from the current process.'},
-                {level:'Level 4',color:'#ff4444',bg:'rgba(255,68,68,0.12)',border:'rgba(255,68,68,0.4)',badge:'Ban',desc:'Most serious violations — for example violence, sexual harassment, betting/corruption, anti-doping violations or repeated Level 3 conduct. May lead to suspension or a ban from current and future BCPL participation, and reporting to authorities where required.'},
+                {level:'Level 2',color:'#FF7A29',bg:'rgba(255,122,41,0.1)',border:'rgba(255,122,41,0.3)',badge:'Score Invalidation',desc:'Repeated Level 1 conduct, or conduct that compromises the fairness of an assessment. May include invalidation of the affected trial/assessment score.'},
+                {level:'Level 3',color:'#E8493F',bg:'rgba(232,73,63,0.1)',border:'rgba(232,73,63,0.3)',badge:'Disqualification',desc:'Serious misconduct — for example fraud, video manipulation, pressuring officials or venue misconduct. May lead to disqualification from the current process.'},
+                {level:'Level 4',color:'#ff4444',bg:'rgba(255,68,68,0.12)',border:'rgba(255,68,68,0.4)',badge:'Season Ban',desc:'Most serious violations — for example violence, betting/corruption, anti-doping violations or repeated Level 3 conduct. May lead to a season ban and ineligibility for future editions.'},
               ].map((item,i)=>(
                 <div key={i} style={{background:item.bg,border:`1px solid ${item.border}`,borderRadius:12,padding:'14px 18px',display:'flex',gap:14,alignItems:'flex-start',flexWrap:'wrap'}}>
                   <div style={{flexShrink:0,textAlign:'center',minWidth:80}}>

@@ -42,9 +42,6 @@ body { background:#0E1624; }
         @keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4)} 50%{box-shadow:0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0)} }
         .float-reg-pulse { animation:floatPulse 2.5s ease-in-out infinite; }
         @media(max-width:1023px){ .float-reg-btn { display:none; } }
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation: none !important; transition: none !important; }
-}
 `;
 
 function AmbientBg() {
@@ -205,94 +202,63 @@ export function About() {
         </div>
       </section>
 
-      {/* ── THE MODEL: FROM OFFICE TO STADIUM ── */}
+      {/* ── MEET THE TEAM ── */}
       <section style={{position:'relative',zIndex:1,padding:'0 0 80px'}}>
         <div className="wrap">
-          <div style={{textAlign:'center',marginBottom:48}}>
-            <div className="tag-pill" style={{marginBottom:16}}>{t("THE MODEL","मॉडल")}</div>
-            <h2 className="v3-h" style={{fontSize:'clamp(30px,4vw,48px)',color:'#fff'}}>{t("From Office to ","ऑफिस से ")} <span className="shimmer-gold">{t("Stadium","स्टेडियम तक")}</span></h2>
-            <p style={{color:'rgba(255,255,255,0.6)',fontSize:'clamp(14px,2vw,16px)',lineHeight:1.7,maxWidth:640,margin:'16px auto 0'}}>
-              {t("BCPL runs on a clear two-phase model, so working professionals can be assessed fairly before ever stepping onto a franchise stage.","BCPL एक साफ़ दो-phase model पर चलती है, ताकि working professionals का franchise stage पर पहुँचने से पहले निष्पक्ष मूल्यांकन हो सके।")}
-            </p>
-          </div>
-          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))',gap:20,maxWidth:900,margin:'0 auto'}}>
-            <div className="glass-card" style={{padding:'28px 24px',borderTop:'3px solid #E8B23D',animation:'fadeSlide 0.6s ease 0.05s both'}}>
-              <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:18,color:'#E8B23D',marginBottom:10}}>{t("Phase 1 — Video Assessment","Phase 1 — वीडियो मूल्यांकन")}</div>
-              <p style={{color:'rgba(255,255,255,0.7)',fontSize:14,lineHeight:1.7}}>{t("Register and submit your prescribed cricket video within the permitted window. Your submission is assessed against published role-specific criteria.","Register करें और तय window में अपना cricket video submit करें। आपकी submission published role-specific criteria पर परखी जाती है।")}</p>
-            </div>
-            <div className="glass-card" style={{padding:'28px 24px',borderTop:'3px solid #FF7A29',animation:'fadeSlide 0.6s ease 0.15s both'}}>
-              <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:18,color:'#FF7A29',marginBottom:10}}>{t("Phase 2 — Physical Trial","Phase 2 — फिजिकल ट्रायल")}</div>
-              <p style={{color:'rgba(255,255,255,0.7)',fontSize:14,lineHeight:1.7}}>{t("Qualified players attend a standardised on-ground trial in their allotted city, scored on role-specific criteria out of 100 — leading toward the Auction Pool.","Qualified players अपने allotted शहर में एक standardised on-ground trial देते हैं, जो role-specific criteria पर 100 में से scored होता है — Auction Pool की ओर।")}</p>
-            </div>
-          </div>
-          <p style={{color:'rgba(255,255,255,0.5)',fontSize:13,lineHeight:1.7,maxWidth:720,margin:'24px auto 0',textAlign:'center'}}>
-            {t("Phase 1 qualification, Phase 2 completion and Auction Pool entry are distinct stages. None of them guarantees Team Purchase, a player contract or Tournament Participation.","Phase 1 qualification, Phase 2 completion और Auction Pool entry अलग-अलग stages हैं। इनमें से कोई भी Team Purchase, player contract या Tournament Participation की गारंटी नहीं देता।")}
-          </p>
-        </div>
-      </section>
-
-      {/* ── OPERATING PRINCIPLES ── */}
-      <section style={{position:'relative',zIndex:1,padding:'0 0 80px'}}>
-        <div className="wrap">
-          <div style={{textAlign:'center',marginBottom:48}}>
-            <div className="tag-pill" style={{marginBottom:16}}>{t("HOW WE OPERATE","हम कैसे काम करते हैं")}</div>
-            <h2 className="v3-h" style={{fontSize:'clamp(30px,4vw,48px)',color:'#fff'}}>{t("Our Operating ","हमारे संचालन ")} <span className="shimmer-gold">{t("Principles","सिद्धांत")}</span></h2>
-          </div>
-          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))',gap:20,maxWidth:1100,margin:'0 auto'}}>
-            {[
-              {titleEn:'Fairness',titleHi:'निष्पक्षता',bodyEn:'Assessment is based on cricket skill, not contacts or reputation. Every applicant is evaluated against the same published criteria.',bodyHi:'मूल्यांकन cricket skill पर आधारित — contacts या reputation पर नहीं। हर applicant को समान published criteria पर परखा जाता है।'},
-              {titleEn:'Standardisation',titleHi:'मानकीकरण',bodyEn:'A single, role-specific assessment framework runs across authorised venues so players are measured consistently.',bodyHi:'एक ही role-specific assessment framework सभी authorised venues पर — ताकि players को एक जैसा मापा जाए।'},
-              {titleEn:'Opportunity',titleHi:'अवसर',bodyEn:'A two-phase model — a video-based Phase 1 and an on-ground Phase 2 — opens a real route for working professionals across India.',bodyHi:'दो-phase model — video-based Phase 1 और on-ground Phase 2 — पूरे भारत के working professionals के लिए एक असली रास्ता।'},
-              {titleEn:'Integrity',titleHi:'ईमानदारी',bodyEn:'Blind assessment, locked digital scoring and audited corrections protect the process from manipulation.',bodyHi:'Blind assessment, locked digital scoring और audited corrections process को manipulation से बचाते हैं।'},
-              {titleEn:'Technology',titleHi:'तकनीक',bodyEn:'BCPL may use authorised personnel, coaches, software and assessment tools to support validation, scoring and operations.',bodyHi:'BCPL authorised personnel, coaches, software और assessment tools का उपयोग validation, scoring और operations के लिए कर सकती है।'},
-              {titleEn:'Player Experience',titleHi:'खिलाड़ी अनुभव',bodyEn:'A clear journey — from registration to trial pass to result — with transparent stage names at every step.',bodyHi:'एक साफ़ journey — registration से trial pass से result तक — हर step पर transparent stage names के साथ।'},
-            ].map((p,i)=>(
-              <div key={i} className="glass-card" style={{padding:'28px 24px',borderTop:'2px solid rgba(255,122,41,0.3)',animation:`fadeSlide 0.6s ease ${0.05+i*0.08}s both`}}>
-                <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:17,color:'#FF7A29',marginBottom:10}}>{t(p.titleEn,p.titleHi)}</div>
-                <p style={{color:'rgba(255,255,255,0.7)',fontSize:14,lineHeight:1.7}}>{t(p.bodyEn,p.bodyHi)}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── OUR LEADERSHIP (text-led, no photos) ── */}
-      <section style={{position:'relative',zIndex:1,padding:'0 0 80px'}}>
-        <div className="wrap">
-          <div style={{textAlign:'center',marginBottom:48}}>
-            <div className="tag-pill" style={{marginBottom:16}}>{t("THE TEAM BEHIND THE LEAGUE","लीग के पीछे की टीम")}</div>
+          <div style={{textAlign:'center',marginBottom:56}}>
+            <div className="tag-pill" style={{marginBottom:16}}>{t("THE PEOPLE BEHIND BCPL","BCPL की टीम")}</div>
             <h2 className="v3-h" style={{fontSize:'clamp(30px,4vw,48px)',color:'#fff'}}>
-              {t("Our ","हमारा ")} <span className="shimmer-gold">{t("Leadership","नेतृत्व")}</span>
+              {t("Meet Our ","हमारी ")} <span className="shimmer-gold">{t("Team","टीम")}</span>
             </h2>
           </div>
 
-          {/* Founder — text-led featured card, no photo */}
-          <div className="glass-card" style={{maxWidth:860,margin:'0 auto 32px',borderTop:'3px solid #E8B23D',padding:'clamp(24px,4vw,40px)',animation:'fadeSlide 0.7s ease both'}}>
-            <div style={{display:'inline-flex',alignItems:'center',gap:8,background:'rgba(232,178,61,0.12)',border:'1px solid rgba(232,178,61,0.35)',borderRadius:100,padding:'5px 14px',marginBottom:18}}>
-              <span style={{width:8,height:8,borderRadius:'50%',background:'#E8B23D',display:'inline-block'}}/>
-              <span style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:11,color:'#E8B23D',letterSpacing:'.12em'}}>{t("FOUNDER","संस्थापक")}</span>
+          {/* Founder — Full-width featured card */}
+          <div className="glass-card" style={{display:'flex',flexWrap:'wrap',gap:0,maxWidth:860,margin:'0 auto 48px',borderTop:'3px solid #E8B23D',overflow:'hidden',animation:'fadeSlide 0.7s ease both'}}>
+            <div style={{flexShrink:0,width:'clamp(160px,35%,280px)',background:'linear-gradient(180deg,rgba(232,178,61,0.08) 0%,rgba(6,14,28,0) 100%)'}}>
+              <img
+                src={import.meta.env.BASE_URL + 'bcpl-assets/people/saurabh.png'}
+                alt="Saurabh Jha"
+                style={{width:'100%',height:'100%',minHeight:220,objectFit:'cover',objectPosition:'top',display:'block'}}
+                onError={(e)=>{ (e.target as HTMLImageElement).src='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="280" height="280" viewBox="0 0 280 280"><rect fill="%23132040" width="280" height="280"/><text fill="%23FF7A29" font-size="72" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle" x="140" y="140">SJ</text></svg>'; }}
+              />
             </div>
-            <div className="v3-h" style={{fontSize:'clamp(24px,3.5vw,34px)',color:'#fff',marginBottom:6,textTransform:'none'}}>Saurabh Jha</div>
-            <div style={{fontFamily:'var(--font-head)',fontWeight:700,fontSize:14,color:'#FF7A29',letterSpacing:'.06em',marginBottom:20}}>{t("Founder & Chairman","संस्थापक और अध्यक्ष")}</div>
-            <p style={{color:'rgba(255,255,255,0.7)',fontSize:15,lineHeight:1.8,maxWidth:620}}>
-              {t("Founder of the Bhartiya Corporate Premier League, operated by Kriparthi Playing 11 Pvt. Ltd. Saurabh built BCPL to give every working professional a real, fair shot at professional-grade cricket.","Bhartiya Corporate Premier League के संस्थापक, जो Kriparthi Playing 11 Pvt. Ltd. द्वारा संचालित है। Saurabh ने BCPL को इसलिए बनाया ताकि हर working professional को professional-grade cricket का एक असली, निष्पक्ष मौका मिले।")}
-            </p>
+            <div style={{flex:1,minWidth:220,padding:'clamp(24px,4vw,40px)'}}>
+              <div style={{display:'inline-flex',alignItems:'center',gap:8,background:'rgba(232,178,61,0.12)',border:'1px solid rgba(232,178,61,0.35)',borderRadius:100,padding:'5px 14px',marginBottom:18}}>
+                <span style={{width:8,height:8,borderRadius:'50%',background:'#E8B23D',display:'inline-block'}}/>
+                <span style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:11,color:'#E8B23D',letterSpacing:'.12em'}}>{t("FOUNDER","संस्थापक")}</span>
+              </div>
+              <div className="v3-h" style={{fontSize:'clamp(24px,3.5vw,34px)',color:'#fff',marginBottom:6,textTransform:'none'}}>Saurabh Jha</div>
+              <div style={{fontFamily:'var(--font-head)',fontWeight:700,fontSize:14,color:'#FF7A29',letterSpacing:'.06em',marginBottom:20}}>{t("Founder & Chairman","संस्थापक और अध्यक्ष")}</div>
+              <p style={{color:'rgba(255,255,255,0.65)',fontSize:14,lineHeight:1.8,maxWidth:420}}>
+                {t("Visionary behind Bharatiya Corporate Premier League. Conceptualized under Kriparti Playing 11 Private Limited, Saurabh built BCPL from the ground up to give every working professional a real shot at professional cricket.","Bharatiya Corporate Premier League के visionary। Kriparti Playing 11 Private Limited के तहत conceptualize किया, Saurabh ने BCPL को ground से build किया ताकि हर working professional को professional cricket का असली मौका मिल सके।")}
+              </p>
+            </div>
           </div>
 
-          {/* Leadership — text-led grid, names + roles + short bio, no photos */}
-          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(260px,1fr))',gap:20,maxWidth:1100,margin:'0 auto'}}>
+          {/* Rest of team — 5-column grid */}
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))',gap:20,maxWidth:1100,margin:'0 auto'}}>
             {[
-              {name:'Muhammad Muzammil', role:'COO & CMO',         bioEn:'Leads day-to-day operations and marketing across the league.',bioHi:'लीग के day-to-day operations और marketing का नेतृत्व।'},
-              {name:'Mohammed Imran',    role:'Head of Production', bioEn:'Oversees content and broadcast production for BCPL.',bioHi:'BCPL के content और broadcast production की देखरेख।'},
-              {name:'Gaurav Anthoney',   role:'Head of Operations',bioEn:'Runs on-ground trial and event operations nationwide.',bioHi:'देशभर में on-ground trial और event operations संभालते हैं।'},
-              {name:'Gautam Singh',      role:'Legal Head',        sub:'Partner, D K Singh & Co.', bioEn:'Advises on legal, compliance and governance matters.',bioHi:'legal, compliance और governance मामलों पर सलाह।'},
-              {name:'Mohit Kumar',       role:'Finance & Accounts',bioEn:'Manages finance, accounts and payments oversight.',bioHi:'finance, accounts और payments की देखरेख।'},
+              {name:'Muhammad Muzammil', role:'COO & CMO',           photo:'muzammil', initials:'MM'},
+              {name:'Mohammed Imran',    role:'Head of Production',   photo:'imran',    initials:'MI'},
+              {name:'Gaurav Anthoney',   role:'Head of Operations',   photo:'gaurav',   initials:'GA'},
+              {name:'Gautam Singh',      role:'Legal Head',           sub:'Partner, D K Singh & Co.', photo:'gautam', initials:'GS'},
+              {name:'Mohit Kumar',       role:'Finance & Accounts',   photo:'mohit',    initials:'MK'},
             ].map((m,i)=>(
-              <div key={i} className="glass-card" style={{padding:'22px 22px 24px',borderTop:'2px solid rgba(255,122,41,0.3)',animation:`fadeSlide 0.6s ease ${0.1+i*0.1}s both`}}>
-                <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:16,color:'#fff',marginBottom:4,lineHeight:1.25}}>{m.name}</div>
-                <div style={{fontFamily:'var(--font-head)',fontWeight:700,fontSize:12,color:'#FF7A29',letterSpacing:'.05em',marginBottom:m.sub?2:10}}>{m.role}</div>
-                {m.sub && <div style={{fontFamily:'Inter,sans-serif',fontSize:11,color:'var(--ink-3)',marginBottom:10}}>{m.sub}</div>}
-                <p style={{color:'rgba(255,255,255,0.65)',fontSize:13,lineHeight:1.65}}>{t(m.bioEn,m.bioHi)}</p>
+              <div key={i} className="glass-card" style={{overflow:'hidden',display:'flex',flexDirection:'column',animation:`fadeSlide 0.6s ease ${0.1+i*0.1}s both`,transition:'transform 0.2s',borderTop:'2px solid rgba(255,122,41,0.3)'}}>
+                <div style={{position:'relative',paddingTop:'100%',background:'linear-gradient(180deg,rgba(255,122,41,0.06) 0%,rgba(6,14,28,0) 100%)'}}>
+                  <img
+                    src={import.meta.env.BASE_URL + `bcpl-assets/people/${m.photo}.png`}
+                    alt={m.name}
+                    style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:'top'}}
+                    onError={(e)=>{ (e.target as HTMLImageElement).style.display='none'; }}
+                  />
+                  <div style={{position:'absolute',bottom:0,left:0,right:0,height:'40%',background:'linear-gradient(0deg,rgba(6,14,28,0.95) 0%,transparent 100%)'}}/>
+                </div>
+                <div style={{padding:'16px 18px 20px'}}>
+                  <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:15,color:'#fff',marginBottom:4,lineHeight:1.25}}>{m.name}</div>
+                  <div style={{fontFamily:'var(--font-head)',fontWeight:700,fontSize:12,color:'#FF7A29',letterSpacing:'.05em',marginBottom:m.sub?2:0}}>{m.role}</div>
+                  {m.sub && <div style={{fontFamily:'Inter,sans-serif',fontSize:11,color:'var(--ink-3)',marginTop:2}}>{m.sub}</div>}
+                </div>
               </div>
             ))}
           </div>
@@ -305,8 +271,8 @@ export function About() {
           <div className="glass-card" style={{padding:'clamp(20px,5vw,48px) clamp(16px,4vw,48px)',maxWidth:860,margin:'0 auto',border:'1px solid rgba(232,178,61,0.25)',animation:'borderGlow 3s ease infinite'}}>
             <div style={{display:'flex',flexWrap:'wrap',gap:32,alignItems:'center',marginBottom:32}}>
               <div style={{flex:1,minWidth:200}}>
-                <div style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:22,color:'#fff',marginBottom:8}}>Kriparthi Playing 11 Pvt. Ltd.</div>
-                <div style={{color:'var(--ink-3)',fontSize:13,fontFamily:'Inter,sans-serif'}}>Operating the Bhartiya Corporate Premier League · India</div>
+                <div style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:22,color:'#fff',marginBottom:8}}>BCPL T20 Pvt. Ltd.</div>
+                <div style={{color:'var(--ink-3)',fontSize:13,fontFamily:'Inter,sans-serif'}}>Registered Company · India</div>
               </div>
               <div style={{display:'flex',gap:20,flexWrap:'wrap'}}>
                 {[{label:'Registered',val:'Company'},{ label:'Track Record',val:'4 Seasons'},{label:'Players Served',val:'2.5 Lakh+'}].map((b,i)=>(

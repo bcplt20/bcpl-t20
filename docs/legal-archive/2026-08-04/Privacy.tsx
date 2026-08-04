@@ -142,39 +142,19 @@ export function Privacy() {
       'The accepted document version and the acceptance time are recorded with your registration',
       'You can withdraw promotional marketing consent at any time by emailing support@bcplt20.com',
     ]},
-    {n:8,icon:<IcoList size={24}/>,titleEn:'Sponsor Data & Marketing',titleHi:'स्पॉन्सर डेटा और मार्केटिंग',items:[
-      'Sponsor logos appearing on the website, emails or trial materials do NOT mean your personal data is given to those sponsors',
-      'We may use aggregated or anonymised audience insights (which do not identify you individually) for commercial and reporting purposes',
-      'We do not provide your personally identifiable information to sponsors for their own independent marketing without an appropriate consent or legal basis',
-      'Transactional / service communications (registration, payment, result, trial) are part of providing the service and may be necessary for your player journey',
-      'Promotional communications follow the applicable preference / consent framework, and your marketing preferences are respected',
-    ]},
-    {n:9,icon:<IcoDoc size={24}/>,titleEn:'Data Retention',titleHi:'डेटा रिटेंशन',items:[
-      'We retain personal data only for as long as necessary for the purposes described, and to meet legal, tax, accounting, fraud-prevention, integrity and dispute-resolution obligations',
-      'Registration, payment and tax/accounting records are retained for the period required under applicable tax and company-law obligations',
-      'KYC / identity-verification records, assessment records (scores, rankings), trial attendance and coach/evaluator records are retained for audit, integrity and dispute-resolution purposes',
-      'Uploaded videos, OTP logs, communication (email / SMS / WhatsApp) logs and security/fraud logs are retained for the operational and integrity periods applicable to each record type',
-      'Incomplete or abandoned registrations may be retained for a limited period and then deleted or anonymised',
-      'Where data is no longer required and no legal retention obligation applies, it is deleted or anonymised',
-      /* OWNER / COUNSEL DECISION REQUIRED: exact numeric retention periods for each record category are not yet configured in the codebase. Publish specific durations only once owner/counsel approves them. */
-      'Exact retention durations for each category are being finalised and will be published once formally approved',
-    ]},
-    {n:10,icon:<IcoShield size={24}/>,titleEn:'Your Rights',titleHi:'आपके अधिकार',items:[
+    {n:8,icon:<IcoShield size={24}/>,titleEn:'Your Rights',titleHi:'आपके अधिकार',items:[
       'Right to Access: request a copy of the personal data BCPL holds about you',
       'Right to Correct: request correction of inaccurate or incomplete personal data',
       'Right to Delete: request deletion of your data, subject to limits where we must retain records for verification, integrity, tax, legal or assessment-audit reasons',
       'Right to Withdraw Consent: withdraw optional promotional marketing consent at any time (service/transactional notifications continue while your registration is active)',
       'To exercise any right, email support@bcplt20.com — we acknowledge within 2 business days and aim to resolve within 7',
     ]},
-    {n:11,icon:<IcoLock size={24}/>,titleEn:'Data Security',titleHi:'डेटा सुरक्षा',items:[
-      'BCPL applies reasonable administrative, technical and organisational safeguards to protect your data',
+    {n:9,icon:<IcoLock size={24}/>,titleEn:'Data Security',titleHi:'डेटा सुरक्षा',items:[
       'Encryption for data in transit (HTTPS/TLS) between your device and our servers',
       'Access controls — only authorised BCPL personnel and processors access data for the purposes described',
       'Payment card data is handled by the payment gateway in a PCI-DSS compliant environment — BCPL never sees card data',
       'Security logging and integrity monitoring to detect and investigate misuse',
-      'No internet or electronic-storage system can be guaranteed to be completely secure, so we cannot claim absolute security; we work to protect your data and respond to incidents',
       'In the event of a data breach affecting you, we will notify affected users as required by applicable law',
-      'To report a suspected security or privacy issue, email support@bcplt20.com',
     ]},
   ];
 
@@ -217,10 +197,6 @@ export function Privacy() {
             </p>
             <div style={{marginTop:28}}>
               <LegalDocHeader doc="privacy" />
-              {/* Season-5 applicability line — see report: recommend LegalDocHeader carry this centrally */}
-              <p style={{maxWidth:880,margin:'-14px auto 0',fontSize:12.5,color:'rgba(255,255,255,0.5)',fontStyle:'italic',lineHeight:1.6}}>
-                {t("This document applies to BCPL Season 5 unless expressly stated otherwise.","यह document, जब तक स्पष्ट रूप से अन्यथा न कहा जाए, BCPL Season 5 पर लागू होता है।")}
-              </p>
             </div>
           </div>
         </section>
@@ -264,24 +240,6 @@ export function Privacy() {
                     <option key={s.n} value={s.n}>{s.n}. {t(s.titleEn,s.titleHi)}</option>
                   ))}
                 </select>
-              </div>
-
-              <div style={{background:'rgba(255,122,41,0.06)',border:'1px solid rgba(255,122,41,0.25)',borderRadius:14,padding:'20px clamp(18px,4vw,26px)',marginBottom:20,animation:'fadeSlide 0.5s ease 0.05s both'}}>
-                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:13,letterSpacing:'.1em',color:'#FF7A29',marginBottom:12,textTransform:'uppercase'}}>{t("Key Points","मुख्य बातें")}</div>
-                <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:9}}>
-                  {[
-                    {en:'We collect only the data needed to register you, assess you and run BCPL Season 5.',hi:'हम केवल वही डेटा लेते हैं जो आपको register करने, assess करने और BCPL Season 5 चलाने के लिए ज़रूरी है।'},
-                    {en:'We do not sell, rent or trade your personal data. Third-party processors handle data only for defined purposes.',hi:'हम आपका personal data बेचते, किराए पर देते या trade नहीं करते। Third-party processors केवल तय purposes के लिए data handle करते हैं।'},
-                    {en:'Sponsor logos on the site do not mean your personal data is shared with sponsors.',hi:'Site पर sponsor logos का मतलब यह नहीं कि आपका personal data sponsors के साथ share होता है।'},
-                    {en:'Your Phase 1 video may be processed by automated / technology-assisted and third-party tools for validation, scoring and integrity checks.',hi:'आपकी Phase 1 video validation, scoring और integrity checks के लिए automated / technology-assisted और third-party tools से process हो सकती है।'},
-                    {en:'You can request access, correction, deletion (subject to legal retention) and withdraw marketing consent at support@bcplt20.com.',hi:'आप access, correction, deletion (कानूनी retention के अधीन) का अनुरोध कर सकते हैं और support@bcplt20.com पर marketing consent वापस ले सकते हैं।'},
-                    {en:'We apply reasonable safeguards; no system can be guaranteed 100% secure.',hi:'हम reasonable safeguards लगाते हैं; कोई भी system 100% secure होने की गारंटी नहीं दे सकता।'},
-                  ].map((k,i)=>(
-                    <li key={i} style={{display:'flex',alignItems:'flex-start',gap:12,color:'rgba(255,255,255,0.8)',fontSize:'clamp(13px,2vw,14.5px)',lineHeight:1.7}}>
-                      <OrangeDot/><span>{t(k.en,k.hi)}</span>
-                    </li>
-                  ))}
-                </ul>
               </div>
 
               <div style={{background:'rgba(34,197,94,0.1)',border:'2px solid rgba(34,197,94,0.4)',borderLeft:'4px solid #22C55E',borderRadius:14,padding:'20px clamp(18px,4vw,26px)',marginBottom:24,animation:'fadeSlide 0.5s ease 0.1s both'}}>

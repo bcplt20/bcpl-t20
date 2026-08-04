@@ -93,65 +93,6 @@ export function Trust() {
           </p>
           <div style={{marginTop:32}}>
             <LegalDocHeader doc="selection" />
-            {/* Season-5 applicability line — see report: recommend LegalDocHeader carry this centrally */}
-            <p style={{maxWidth:880,margin:'-14px auto 0',fontSize:12.5,color:'rgba(255,255,255,0.5)',fontStyle:'italic',lineHeight:1.6}}>
-              {t("This document applies to BCPL Season 5 unless expressly stated otherwise.","यह document, जब तक स्पष्ट रूप से अन्यथा न कहा जाए, BCPL Season 5 पर लागू होता है।")}
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* THE 18 STAGES */}
-      <section className="trust-section" style={{position:'relative',zIndex:1,padding:'0 0 0'}}>
-        <div className="wrap" style={{maxWidth:900}}>
-          <div className="glass-card" style={{padding:'clamp(28px,5vw,48px)',border:'1px solid rgba(255,122,41,0.15)',animation:'fadeSlide 0.7s ease 0.05s both'}}>
-            <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:8}}>{t("The Full Selection Journey — 18 Stages","पूरी चयन यात्रा — 18 चरण")}</h2>
-            <p style={{color:'rgba(255,255,255,0.65)',fontSize:14,lineHeight:1.7,marginBottom:24}}>
-              {t("Each stage is distinct. Reaching one stage does not automatically move you to the next — advancement depends on the applicable rules for that stage.","हर चरण अलग है। किसी एक चरण तक पहुंचना अपने आप आपको अगले चरण में नहीं ले जाता — advancement उस चरण के applicable rules पर निर्भर करता है।")}
-            </p>
-            <div style={{display:'grid',gridTemplateColumns:'1fr',gap:10,marginBottom:24}}>
-              {[
-                {en:'Registration initiated',hi:'रजिस्ट्रेशन शुरू'},
-                {en:'Phase 1 payment completed',hi:'Phase 1 payment पूरा'},
-                {en:'Trial video submitted',hi:'Trial video submit'},
-                {en:'Phase 1 assessment',hi:'Phase 1 assessment'},
-                {en:'Phase 1 score / ranking (where applicable)',hi:'Phase 1 score / ranking (जहां लागू हो)'},
-                {en:'Phase 1 Qualified (eligible for Phase 2)',hi:'Phase 1 Qualified (Phase 2 के लिए eligible)'},
-                {en:'Phase 2 physical-trial payment',hi:'Phase 2 physical-trial payment'},
-                {en:'Profile / KYC / employment verification',hi:'Profile / KYC / employment verification'},
-                {en:'Venue assignment',hi:'Venue assignment'},
-                {en:'Physical trial',hi:'Physical trial'},
-                {en:'Coach / evaluator score',hi:'Coach / evaluator score'},
-                {en:'National evaluation / ranking',hi:'National evaluation / ranking'},
-                {en:'Zone / role allocation',hi:'Zone / role allocation'},
-                {en:'Auction Pool qualification (Final Selection Pending → Auction Pool)',hi:'Auction Pool qualification (Final Selection Pending → Auction Pool)'},
-                {en:'Player Auction',hi:'Player Auction'},
-                {en:'Team Purchase (if any)',hi:'Team Purchase (यदि कोई हो)'},
-                {en:'Final contract / squad requirements',hi:'Final contract / squad requirements'},
-                {en:'Tournament Participation',hi:'Tournament Participation'},
-              ].map((s,i)=>(
-                <div key={i} style={{display:'flex',alignItems:'center',gap:14,background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:10,padding:'12px 16px'}}>
-                  <span style={{flexShrink:0,width:30,height:30,borderRadius:'50%',background:'linear-gradient(135deg,#FF7A29,#C94E0E)',display:'inline-flex',alignItems:'center',justifyContent:'center',fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:13,color:'#fff'}}>{i+1}</span>
-                  <span style={{color:'rgba(255,255,255,0.82)',fontSize:'clamp(13px,2vw,15px)',lineHeight:1.5}}>{t(s.en,s.hi)}</span>
-                </div>
-              ))}
-            </div>
-            <div style={{background:'rgba(239,68,68,0.07)',border:'1px solid rgba(239,68,68,0.25)',borderLeft:'3px solid #EF4444',borderRadius:12,padding:'18px 20px'}}>
-              <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:14,color:'#EF4444',marginBottom:12,letterSpacing:'.04em',textTransform:'uppercase'}}>{t("No Guarantees Between Stages","चरणों के बीच कोई गारंटी नहीं")}</div>
-              <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:10}}>
-                {[
-                  {en:'Phase 1 qualification does NOT equal auction qualification.',hi:'Phase 1 qualification का मतलब auction qualification नहीं है।'},
-                  {en:'Phase 2 payment does NOT guarantee selection.',hi:'Phase 2 payment selection की गारंटी नहीं देता।'},
-                  {en:'Physical-trial completion does NOT guarantee entry to the Final 600.',hi:'Physical-trial पूरा करना Final 600 में entry की गारंटी नहीं देता।'},
-                  {en:'Final 600 / Auction Pool entry does NOT guarantee team purchase.',hi:'Final 600 / Auction Pool entry team purchase की गारंटी नहीं देती।'},
-                  {en:'Auction participation does NOT guarantee a contract unless a team purchases you and all requirements are completed.',hi:'Auction में भाग लेना contract की गारंटी नहीं देता, जब तक कोई team आपको purchase न करे और सभी requirements पूरी न हों।'},
-                ].map((r,i)=>(
-                  <li key={i} style={{display:'flex',alignItems:'flex-start',gap:10,color:'rgba(255,255,255,0.78)',fontSize:'clamp(13px,2vw,14.5px)',lineHeight:1.7}}>
-                    <span style={{color:'#EF4444',flexShrink:0,marginTop:2}}>✕</span><span>{t(r.en,r.hi)}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
           </div>
         </div>
       </section>
@@ -244,45 +185,6 @@ export function Trust() {
               <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#3B82F6',marginBottom:10}}>{t("What the Auction Pool means","Auction Pool का मतलब")}</div>
               <p style={{color:'rgba(255,255,255,0.7)',fontSize:14,lineHeight:1.7}}>
                 {t("Qualification for the BCPL Auction Pool means eligibility to participate in the applicable player-auction process. Auction Pool qualification does not guarantee purchase by a team, a player contract, remuneration, squad selection or tournament participation.","BCPL Auction Pool के लिए qualification का मतलब है applicable player-auction process में भाग लेने की eligibility। Auction Pool qualification किसी team द्वारा purchase, player contract, remuneration, squad selection या tournament participation की गारंटी नहीं देती।")}
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FINAL 600 EXPLANATION */}
-      <section className="trust-section" style={{position:'relative',zIndex:1}}>
-        <div className="wrap" style={{maxWidth:900}}>
-          <div className="glass-card" style={{padding:'clamp(28px,5vw,48px)',border:'1px solid rgba(232,178,61,0.15)',animation:'fadeSlide 0.7s ease 0.35s both'}}>
-            <div style={{display:'flex',alignItems:'flex-start',gap:20,marginBottom:24}}>
-              <span className="step-num" style={{background:'linear-gradient(135deg,#E8B23D,#F0C860)'}}>★</span>
-              <div style={{flex:1}}>
-                <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:8}}>{t("How the Final 600 Is Formed","Final 600 कैसे बनता है")}</h2>
-                <p style={{color:'var(--ink-3)',fontSize:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>{t("SEASON 5","SEASON 5")}</p>
-              </div>
-            </div>
-            <p style={{color:'rgba(255,255,255,0.72)',fontSize:15,lineHeight:1.8,marginBottom:20}}>
-              {t("For BCPL Season 5, the final national pool (the \"Final 600\") that advances toward the Auction Pool may be formed using a combination of the following published factors. BCPL does not publish confidential normalisation formulas, internal flags or any other participant's data.","BCPL Season 5 के लिए, Auction Pool की ओर आगे बढ़ने वाला final national pool (\"Final 600\") नीचे दिए गए published factors के संयोजन से बन सकता है। BCPL confidential normalisation formulas, internal flags या किसी अन्य participant का data publish नहीं करता।")}
-            </p>
-            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))',gap:14,marginBottom:22}}>
-              {[
-                {en:'Merit ranking based on role-specific assessment scores',hi:'Role-specific assessment scores पर आधारित merit ranking'},
-                {en:'Role-specific requirements (Batsman, Bowler, All-Rounder, Wicketkeeper)',hi:'Role-specific requirements (Batsman, Bowler, All-Rounder, Wicketkeeper)'},
-                {en:'Geographic / zone representation across BCPL\'s five zones',hi:'BCPL के पांच zones में geographic / zone representation'},
-                {en:'National wildcard allocation',hi:'National wildcard allocation'},
-                {en:'Published tie-break criteria',hi:'Published tie-break criteria'},
-                {en:'Eligibility and integrity checks',hi:'Eligibility और integrity checks'},
-              ].map((c,i)=>(
-                <div key={i} style={{background:'rgba(232,178,61,0.06)',border:'1px solid rgba(232,178,61,0.2)',borderRadius:12,padding:'14px 18px',display:'flex',alignItems:'flex-start',gap:10}}>
-                  <span style={{color:'#E8B23D',flexShrink:0,marginTop:2}}>◆</span>
-                  <span style={{color:'rgba(255,255,255,0.75)',fontSize:13.5,lineHeight:1.6}}>{t(c.en,c.hi)}</span>
-                </div>
-              ))}
-            </div>
-            <div style={{background:'rgba(59,130,246,0.08)',border:'1px solid rgba(59,130,246,0.25)',borderRadius:12,padding:'18px 20px'}}>
-              <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:14,color:'#3B82F6',marginBottom:8}}>{t("The five zones","पांच zones")}</div>
-              <p style={{color:'rgba(255,255,255,0.7)',fontSize:14,lineHeight:1.7}}>
-                {t("BCPL uses a five-zone model for national representation in Season 5. Exact numerical quotas per zone or role are published only once officially approved for the season, and the configuration may change for future seasons. A high score, such as 95 out of 100, does not by itself guarantee inclusion in the Final 600 — final cut-offs emerge only after the applicable national trial population is complete.","BCPL Season 5 में national representation के लिए five-zone model उपयोग करता है। प्रति zone या role exact numerical quotas केवल तब publish किए जाते हैं जब वे season के लिए officially approved हों, और यह configuration भविष्य के seasons के लिए बदल सकती है। कोई high score, जैसे 100 में से 95, अपने आप Final 600 में शामिल होने की गारंटी नहीं देता — final cut-offs applicable national trial population पूरी होने के बाद ही सामने आते हैं।")}
               </p>
             </div>
           </div>
@@ -434,8 +336,8 @@ export function Trust() {
               <h3 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:16,color:'#8B5CF6',marginBottom:14}}>{t("Who Can Participate","कौन भाग ले सकता है")}</h3>
               <ul style={{listStyle:'none',padding:0,margin:0}}>
                 {[
-                  {en:'Aged 18 to 45 years as on the date of registration',hi:'Registration की तारीख़ पर 18 से 45 वर्ष की आयु'},
-                  {en:'Working professional: salaried employee, self-employed, freelancer, business owner, government/PSU staff or other approved occupation',hi:'Working professional: salaried employee, self-employed, freelancer, business owner, government/PSU staff या अन्य approved occupation'},
+                  {en:'Age 18 or above (no upper limit)',hi:'18 वर्ष या उससे अधिक (कोई ऊपरी सीमा नहीं)'},
+                  {en:'Working professional: salaried employee, self-employed, freelancer, or business owner',hi:'Working professional: salaried employee, self-employed, freelancer, या business owner'},
                   {en:'Currently employed or actively running a business',hi:'वर्तमान में employed या सक्रिय रूप से business चला रहे हैं'},
                   {en:'Valid Indian ID proof for KYC (Aadhaar + PAN)',hi:'KYC के लिए valid Indian ID proof (Aadhaar + PAN)'},
                   {en:'No active contracts with state or national cricket associations',hi:'State या national cricket associations के साथ कोई active contract नहीं'},

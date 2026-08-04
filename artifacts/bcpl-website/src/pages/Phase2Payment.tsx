@@ -197,7 +197,7 @@ export function Phase2Payment() {
               {agreed && <span style={{ color: '#000', fontSize: 14, fontWeight: 900 }}>✓</span>}
             </div>
             <span style={{ fontSize: 14, color: agreed ? '#fff' : 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>
-              {t("I understand this is the Phase 2 physical trial entry fee for players selected in Phase 1. Payment confirms my trial slot and is non-refundable except in the situations listed in the Refund Policy.", "मैं समझता हूं कि यह Phase 2 physical trial entry fee है (Phase 1 में select हुए players के लिए)। Payment मेरी trial जगह पक्की करता है और Refund Policy में बताई गई स्थितियों के अलावा refundable नहीं है।")}
+              {t("I understand this is the Phase 2 physical-trial fee, payable by Phase 1 Qualified players, charged for participation in the Phase 2 physical trial. Payment confirms my trial slot, does not guarantee Auction Pool entry, Player Auction purchase, Team Purchase, a player contract, remuneration or Tournament Participation, and is non-refundable except in the situations listed in the Refund & Cancellation Policy.", "मैं समझता हूं कि यह Phase 2 physical-trial fee है, जो Phase 1 Qualified players देते हैं और Phase 2 physical trial में participation के लिए ली जाती है। Payment मेरी trial जगह पक्की करता है, यह Auction Pool में जगह, Player Auction में purchase, Team Purchase, player contract, remuneration या Tournament Participation की guarantee नहीं देता, और Refund & Cancellation Policy में बताई गई स्थितियों के अलावा refundable नहीं है।")}
             </span>
           </div>
 

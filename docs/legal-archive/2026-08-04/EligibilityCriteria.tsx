@@ -116,33 +116,11 @@ export function EligibilityCriteria() {
             </p>
             <div style={{marginTop:28}}>
               <LegalDocHeader doc="eligibility" />
-              {/* Season-5 applicability line — see report: recommend LegalDocHeader carry this centrally */}
-              <p style={{maxWidth:880,margin:'-14px auto 0',fontSize:12.5,color:'rgba(255,255,255,0.5)',fontStyle:'italic',lineHeight:1.6}}>
-                {t("This document applies to BCPL Season 5 unless expressly stated otherwise.","यह document, जब तक स्पष्ट रूप से अन्यथा न कहा जाए, BCPL Season 5 पर लागू होता है।")}
-              </p>
             </div>
           </div>
         </section>
 
         <div className="wrap" style={{maxWidth:860,margin:'0 auto',paddingBottom:40}}>
-
-          {/* KEY POINTS */}
-          <div style={{background:'rgba(255,122,41,0.06)',border:'1px solid rgba(255,122,41,0.25)',borderRadius:16,padding:'20px clamp(16px,4vw,26px)',marginBottom:24,animation:'fadeSlide 0.5s ease 0.05s both'}}>
-            <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:13,letterSpacing:'.1em',color:'#FF7A29',marginBottom:12,textTransform:'uppercase'}}>{t("Key Points","मुख्य बातें")}</div>
-            <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:9}}>
-              {[
-                {en:'You must be aged 18–45 (as on the registration date) and a working professional.',hi:'आपकी उम्र 18–45 (registration की तारीख़ पर) होनी चाहिए और आप working professional होने चाहिए।'},
-                {en:'Salaried, self-employed, freelancers, business owners, gig/delivery workers, farmers and government/PSU staff are all welcome.',hi:'Salaried, self-employed, freelancers, business owners, gig/delivery workers, farmers और government/PSU staff सभी का स्वागत है।'},
-                {en:'You must not currently be under a first-class / professional cricket contract.',hi:'आप वर्तमान में first-class / professional cricket contract में नहीं होने चाहिए।'},
-                {en:'Identity is verified via Aadhaar + PAN during Phase 2 KYC; DOB must match your documents.',hi:'पहचान Phase 2 KYC में Aadhaar + PAN से verify होती है; DOB आपके documents से match होनी चाहिए।'},
-                {en:'One registration per person per season. False or misleading information can lead to disqualification without refund.',hi:'एक व्यक्ति एक season में एक registration। झूठी या misleading जानकारी बिना refund के disqualification का कारण बन सकती है।'},
-              ].map((k,i)=>(
-                <li key={i} style={{display:'flex',alignItems:'flex-start',color:'rgba(255,255,255,0.8)',fontSize:'clamp(13px,2vw,14.5px)',lineHeight:1.7}}>
-                  <OrangeDot/>{t(k.en,k.hi)}
-                </li>
-              ))}
-            </ul>
-          </div>
 
           {/* Quick Checker */}
           <div className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:24,animation:'fadeSlide 0.5s ease 0.1s both'}}>
@@ -194,12 +172,11 @@ export function EligibilityCriteria() {
               <div style={{background:'rgba(34,197,94,0.08)',border:'1px solid rgba(34,197,94,0.2)',borderRadius:12,padding:'14px 16px'}}>
                 <div style={{color:'#22C55E',fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:12,letterSpacing:'0.08em',marginBottom:8,display:'flex',alignItems:'center',gap:6}}><IcoCheck size={14}/> {t("ELIGIBLE","ELIGIBLE")}</div>
                 {[
-                  {en:'Salaried employees (any sector)',hi:'Salaried employees (किसी भी sector में)'},
-                  {en:'Self-employed professionals & freelancers',hi:'Self-employed professionals और freelancers'},
+                  {en:'Full-time employees (any sector)',hi:'Full-time employees (किसी भी sector में)'},
+                  {en:'Self-employed professionals',hi:'Self-employed professionals'},
                   {en:'Business owners & entrepreneurs',hi:'Business owners और entrepreneurs'},
-                  {en:'Gig / delivery / logistics workers',hi:'Gig / delivery / logistics workers'},
-                  {en:'Farmers & agriculture professionals',hi:'Farmers और agriculture professionals'},
-                  {en:'Government & PSU staff',hi:'Government और PSU staff'},
+                  {en:'Freelancers & consultants',hi:'Freelancers और consultants'},
+                  {en:'Government employees & PSU staff',hi:'Government employees और PSU staff'},
                 ].map((item,i)=>(
                   <div key={i} style={{display:'flex',alignItems:'flex-start',gap:6,color:'rgba(255,255,255,0.75)',fontSize:13,lineHeight:1.6,marginBottom:4}}>
                     <span style={{color:'#22C55E',flexShrink:0}}>✓</span>{t(item.en,item.hi)}
@@ -210,9 +187,9 @@ export function EligibilityCriteria() {
                 <div style={{color:'#E8493F',fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:12,letterSpacing:'0.08em',marginBottom:8,display:'flex',alignItems:'center',gap:6}}><IcoX size={14}/> {t("NOT ELIGIBLE","NOT ELIGIBLE")}</div>
                 {[
                   {en:'Full-time students (college/school)',hi:'Full-time students (college/school)'},
-                  {en:'Anyone under 18 or over 45 on the registration date',hi:'Registration की तारीख़ पर 18 से कम या 45 से अधिक उम्र का कोई भी व्यक्ति'},
+                  {en:'Retired persons (Season 5)',hi:'Retired persons (Season 5)'},
                   {en:'Unemployed / actively job-seeking',hi:'Unemployed / actively job ढूंढ रहे लोग'},
-                  {en:'Players currently under a first-class / professional cricket contract',hi:'वर्तमान में first-class / professional cricket contract वाले players'},
+                  {en:'Professional cricketers (Ranji+)',hi:'Professional cricketers (Ranji+)'},
                   {en:'BCPL staff and officials',hi:'BCPL staff और officials'},
                 ].map((item,i)=>(
                   <div key={i} style={{display:'flex',alignItems:'flex-start',gap:6,color:'rgba(255,255,255,0.6)',fontSize:13,lineHeight:1.6,marginBottom:4}}>
@@ -265,12 +242,7 @@ export function EligibilityCriteria() {
             <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:10}}>
               {[
                 {en:'Basic cricket experience is required — colony or gully cricket counts!',hi:'Basic cricket experience ज़रूरी है — colony या gully cricket भी count होती है!'},
-                /* OWNER / COUNSEL DECISION REQUIRED: the old page stated a "minimum 10-year gap from last competitive match".
-                   That number is NOT verifiable in the codebase/config, and the registration declaration only asks that the
-                   participant is "not under a first-class cricket contract". Reworded below to the verifiable rule.
-                   Publish an exact gap period only once owner/counsel approves it. */
-                {en:'You must NOT currently be under a first-class / professional cricket contract, and must have no active contract with a state or national cricket association',hi:'आप वर्तमान में किसी first-class / professional cricket contract में नहीं होने चाहिए, और किसी state या national cricket association के साथ कोई active contract नहीं होना चाहिए'},
-                {en:'Any past professional or representative cricket must be disclosed honestly at registration',hi:'कोई भी पिछला professional या representative cricket registration के समय ईमानदारी से बताना ज़रूरी है'},
+                {en:'Players who have represented at state, district, or professional level must have a minimum 10-year gap from their last competitive match',hi:'जिन players ने state, district या professional level पर खेला है, उनके last competitive match से कम से कम 10 साल का gap होना चाहिए'},
                 {en:'No formal coaching certificates or club membership needed',hi:'किसी formal coaching certificate या club membership की ज़रूरत नहीं'},
                 {en:'Skills assessed via a 30–60 second video uploaded within 15 days of registration',hi:'Skills registration के 15 दिनों के अंदर upload की गई 30–60 second video से assess होती हैं'},
                 {en:'The video must show the registered player\'s own, current cricket performance',hi:'Video में registered player का अपना, current cricket performance दिखना चाहिए'},
@@ -382,24 +354,6 @@ export function EligibilityCriteria() {
                 </li>
               ))}
             </ul>
-            <div style={{background:'rgba(239,68,68,0.06)',border:'1px solid rgba(239,68,68,0.22)',borderRadius:12,padding:'16px 18px',marginTop:16}}>
-              <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:14,color:'#E8493F',marginBottom:10}}>{t("Disqualification Grounds & Verification","अयोग्यता के कारण और सत्यापन")}</div>
-              <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:8}}>
-                {[
-                  {en:'False, incomplete or misleading information at any stage',hi:'किसी भी stage पर झूठी, अधूरी या misleading जानकारी'},
-                  {en:'Submitting someone else\'s, edited or misrepresented video',hi:'किसी और का, edited या misrepresented video submit करना'},
-                  {en:'Multiple registrations or identity fraud',hi:'Multiple registrations या identity fraud'},
-                  {en:'Undisclosed first-class / professional cricket contract',hi:'Undisclosed first-class / professional cricket contract'},
-                  {en:'Attempting to manipulate scores, rankings or the selection process',hi:'Scores, rankings या selection process को manipulate करने की कोशिश'},
-                  {en:'Breach of the BCPL Code of Conduct',hi:'BCPL Code of Conduct का उल्लंघन'},
-                  {en:'BCPL may request additional evidence at any time; failed verification can lead to removal from the process without refund',hi:'BCPL किसी भी समय अतिरिक्त evidence मांग सकता है; verification fail होने पर बिना refund के process से हटाया जा सकता है'},
-                ].map((r,i)=>(
-                  <li key={i} style={{display:'flex',alignItems:'flex-start',gap:8,color:'rgba(255,255,255,0.72)',fontSize:'clamp(12.5px,2vw,13.5px)',lineHeight:1.7}}>
-                    <span style={{color:'#E8493F',flexShrink:0}}>✕</span>{t(r.en,r.hi)}
-                  </li>
-                ))}
-              </ul>
-            </div>
             <div style={{background:'rgba(255,122,41,0.06)',border:'1px solid rgba(255,122,41,0.2)',borderRadius:12,padding:'14px 18px',marginTop:16}}>
               <p style={{color:'rgba(255,255,255,0.7)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
                 {t("All participants must follow the applicable conduct rules throughout registration, assessment and trials.","सभी participants को registration, assessment और trials के दौरान applicable conduct rules का पालन करना ज़रूरी है।")}
