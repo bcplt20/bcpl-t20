@@ -32,3 +32,8 @@ Legacy phrases are BANNED sitewide (en+hi, incl. index.html static meta + seo.ts
 
 ## Season branding rule (owner, July 2026 — took 2 rounds, do not regress)
 ALL forward-looking copy = Season 5 (players register for S5; S5 auction Aug 2027). 'Season 4' ONLY for the completed auction (photo gallery label, historic contract values) and the upcoming S4 tournament. Never brand the auction section's hero/badge as Season 4.
+
+## Hidden copy sources (Aug 2026 legal overhaul lesson)
+- api-server/src/lib/jsonLd.ts (SEO FAQ structured data) and bcpl-website/public/*.html email mockups carry player-facing copy — include them in EVERY wording sweep; they were the last places holding the old "refundable if no upload" rule.
+- Refund rule of record: Phase 1 non-refundable once paid, incl. no-upload; only exceptions = duplicate payment, debited-but-unrecorded, BCPL cancels Phase 2 without reschedule, valid submission + no result in 15 working days + support request.
+- Legal doc versions/effective dates live ONLY in lib/legalMeta.tsx (LEGAL_DOCS + CONSENT_VERSIONS); archives of replaced pages go to docs/legal-archive/<date>/.
