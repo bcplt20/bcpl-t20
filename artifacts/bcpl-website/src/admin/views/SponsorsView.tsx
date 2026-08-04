@@ -1,6 +1,15 @@
 import { useState, useRef, useEffect } from "react";
 import { fetchSponsorsAdmin, saveSponsorsAdmin, type Sponsor } from "../api/sponsorsApi";
 import { adminGetSampleUploadUrl } from "../../lib/api";
+import { BASE } from "../../lib/adminHttp";
+
+/* The S3 bucket blocks public reads, so raw bucket URLs 403 in the browser
+   (blank logos). Render through the API's presign-redirect route instead;
+   the stored value stays the plain bucket URL (the API converts it too). */
+function logoDisplay(url: string): string {
+  const m = /^https?:\/\/[a-z0-9.-]+\.s3[.-][a-z0-9-]+\.amazonaws\.com\/(cms\/[A-Za-z0-9._-]+)$/i.exec(url.trim());
+  return m ? `${BASE}/sponsors/logo?key=${encodeURIComponent(m[1])}` : url;
+}
 
 const KNOWN_SPONSORS = [
   "Tata Group","Reliance Industries","HDFC Bank","ICICI Bank","Infosys","Wipro",
@@ -358,7 +367,7 @@ export default function SponsorsView() {
             <label style={{ fontSize: 10, fontWeight: 700, color: "#475569", letterSpacing: 0.5, display: "block", marginBottom: 6 }}>SPONSOR LOGO</label>
             <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
               {form.logo ? (
-                <img src={form.logo} alt="logo preview"
+                <img src={logoDisplay(form.logo)} alt="logo preview"
                   style={{ width: 64, height: 64, objectFit: "contain", borderRadius: 10, border: "1px solid #1E293B", background: "#fff", padding: 4 }} />
               ) : (
                 <div style={{ width: 64, height: 64, borderRadius: 10, border: "1px dashed #334155", background: "#080E1C", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, color: "#334155" }}>🖼</div>
@@ -409,7 +418,7 @@ export default function SponsorsView() {
               {/* Logo */}
               <div style={{ width: 52, height: 52, borderRadius: 12, background: "#060B18", border: "1.5px solid #1E293B", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", flexShrink: 0 }}>
                 {s.logo
-                  ? <img src={s.logo} alt={s.name} style={{ width: "100%", height: "100%", objectFit: "contain", padding: 4 }} />
+                  ? <img src={logoDisplay(s.logo)} alt={s.name} style={{ width: "100%", height: "100%", objectFit: "contain", padding: 4 }} />
                   : <span style={{ fontSize: 22 }}>🤝</span>}
               </div>
 

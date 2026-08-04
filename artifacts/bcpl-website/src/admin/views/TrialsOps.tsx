@@ -522,7 +522,7 @@ export function AssessTab() {
     void persistTrialOpsDefaults({ assessor: assessor.trim() });
     try {
       const r = await adminSaveAssessment({ registrationId: picked.alloc.registrationId, scores: payload, comments: comments.trim() || undefined, assessor: assessor.trim() });
-      setMsg(`Saved — final physical score ${r.assessment.finalScore}/10`);
+      setMsg(`Saved — final physical score ${r.assessment.finalScore}/100`);
       setPicked(null); setCandidates([]); setQ("");
       await loadList();
     } catch (e) { setErr(e instanceof Error ? e.message : String(e)); }
@@ -607,7 +607,7 @@ export function AssessTab() {
               <td style={{ ...td, fontWeight: 700, color: "#E2E8F0" }}>{r.fullName ?? "—"}<div style={{ fontSize: 10.5, color: "#64748B", fontWeight: 400 }}>{r.regNumber}</div></td>
               <td style={td}><span style={roleChip(r.role)}>{roleLabel(r.role)}</span></td>
               <td style={td}>{r.assessment.city ?? "—"}<div style={{ fontSize: 10.5, color: "#64748B" }}>{r.assessment.batch ?? ""}</div></td>
-              <td style={{ ...td, fontWeight: 800, color: "#FBBF24", fontSize: 14 }}>{r.assessment.finalScore}<span style={{ fontSize: 10.5, color: "#475569" }}>/10</span></td>
+              <td style={{ ...td, fontWeight: 800, color: "#FBBF24", fontSize: 14 }}>{r.assessment.finalScore}<span style={{ fontSize: 10.5, color: "#475569" }}>/100</span></td>
               <td style={td}>{r.assessment.assessor}</td>
               <td style={td}>
                 <select style={{ ...inp, padding: "5px 8px", fontSize: 11.5 }} value={r.assessment.result} onChange={e => setResult(r.assessment.id, e.target.value)}>
