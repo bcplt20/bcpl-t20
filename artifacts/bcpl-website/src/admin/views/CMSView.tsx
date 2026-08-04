@@ -27,9 +27,9 @@ const HERO_SLOTS: { field: HeroField; label: string; accept: string; hint: strin
 ];
 
 const REG_STATUS: { value: NonNullable<HomepageConfig["registrationStatus"]>; label: string; color: string }[] = [
-  { value: "open",        label: "Open",        color: "#10B981" },
-  { value: "coming_soon", label: "Coming Soon", color: "#F59E0B" },
-  { value: "closed",      label: "Closed",      color: "#EF4444" },
+  { value: "open",        label: "Open",        color: "#047857" },
+  { value: "coming_soon", label: "Coming Soon", color: "#B45309" },
+  { value: "closed",      label: "Closed",      color: "#DC2626" },
 ];
 
 export default function CMSView() {
@@ -141,22 +141,22 @@ export default function CMSView() {
 
   /* ── styles ── */
   const card: React.CSSProperties = {
-    background: "linear-gradient(135deg,#0D1526,#0A1020)",
-    border: "1px solid #1E293B", borderRadius: 16, padding: 20,
+    background: "linear-gradient(135deg,#FFFFFF,#FFFFFF)",
+    border: "1px solid #E2E8F0", borderRadius: 16, padding: 20,
   };
   const inp: React.CSSProperties = {
-    padding: "9px 12px", borderRadius: 8, border: "1px solid #1E293B",
-    background: "#080E1C", color: "#E2E8F0", fontSize: 12, outline: "none", width: "100%",
+    padding: "9px 12px", borderRadius: 8, border: "1px solid #E2E8F0",
+    background: "#FFFFFF", color: "#1E293B", fontSize: 12, outline: "none", width: "100%",
   };
   const lbl: React.CSSProperties = {
     fontSize: 10, fontWeight: 700, color: "#64748B", textTransform: "uppercase",
     letterSpacing: "0.06em", marginBottom: 5, display: "block",
   };
-  const sectionTitle: React.CSSProperties = { fontSize: 14, fontWeight: 800, color: "#F1F5F9", marginBottom: 4 };
+  const sectionTitle: React.CSSProperties = { fontSize: 14, fontWeight: 800, color: "#1E293B", marginBottom: 4 };
   const sectionSub: React.CSSProperties = { fontSize: 11, color: "#64748B", marginBottom: 14 };
   const smallBtn: React.CSSProperties = {
-    padding: "7px 12px", borderRadius: 8, border: "1px solid #1E293B", background: "transparent",
-    color: "#94A3B8", fontSize: 11, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap",
+    padding: "7px 12px", borderRadius: 8, border: "1px solid #E2E8F0", background: "transparent",
+    color: "#64748B", fontSize: 11, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap",
   };
 
   const numField = (key: "phase1FeeStandard" | "phase1FeeAllRounder" | "phase2FeeStandard" | "phase2FeeAllRounder", label: string) => (
@@ -173,7 +173,7 @@ export default function CMSView() {
   );
 
   if (loading) {
-    return <div style={{ padding: 60, textAlign: "center", color: "#334155", fontSize: 14 }}>Loading homepage configuration…</div>;
+    return <div style={{ padding: 60, textAlign: "center", color: "#64748B", fontSize: 14 }}>Loading homepage configuration…</div>;
   }
 
   return (
@@ -183,7 +183,7 @@ export default function CMSView() {
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 10 }}>
         <div>
-          <div style={{ fontSize: 20, fontWeight: 800, color: "#F1F5F9" }}>Content Management · Homepage</div>
+          <div style={{ fontSize: 20, fontWeight: 800, color: "#1E293B" }}>Content Management · Homepage</div>
           <div style={{ fontSize: 12, color: "#64748B", marginTop: 2 }}>
             Server-backed homepage configuration — editable by Content team
           </div>
@@ -199,13 +199,13 @@ export default function CMSView() {
           padding: 12, borderRadius: 10, fontSize: 12,
           background: msg.startsWith("Error") ? "#EF444415" : "#10B98115",
           border: msg.startsWith("Error") ? "1px solid #EF444440" : "1px solid #10B98140",
-          color: msg.startsWith("Error") ? "#EF4444" : "#10B981",
+          color: msg.startsWith("Error") ? "#DC2626" : "#10B981",
         }}>
           {msg}
         </div>
       )}
 
-      <div style={{ padding: 12, borderRadius: 10, background: "#F59E0B10", border: "1px solid #F59E0B30", color: "#F59E0B", fontSize: 11, lineHeight: 1.5 }}>
+      <div style={{ padding: 12, borderRadius: 10, background: "#F59E0B10", border: "1px solid #F59E0B30", color: "#B45309", fontSize: 11, lineHeight: 1.5 }}>
         Display values only — the amounts actually charged at checkout are configured in the payment system and do not change from this page.
         Saved values go live on the public homepage with the upcoming Phase C wiring.
       </div>
@@ -222,11 +222,11 @@ export default function CMSView() {
                 <input value={cfg[s.field] ?? ""} placeholder="https://…" style={{ ...inp, minWidth: 0 }}
                   onChange={e => setCfg(c => ({ ...c, [s.field]: e.target.value }))} />
                 <button onClick={() => pickFile(s.field, s.accept)} disabled={uploading !== null}
-                  style={{ ...smallBtn, borderColor: "#FF6B0040", color: "#FF6B00", opacity: uploading && uploading !== s.field ? 0.5 : 1 }}>
+                  style={{ ...smallBtn, borderColor: "#FF6B0040", color: "#C2410C", opacity: uploading && uploading !== s.field ? 0.5 : 1 }}>
                   {uploading === s.field ? "Uploading…" : "Upload"}
                 </button>
               </div>
-              <div style={{ fontSize: 10, color: "#334155", marginTop: 4 }}>
+              <div style={{ fontSize: 10, color: "#64748B", marginTop: 4 }}>
                 {s.hint}
                 {cfg[s.field] ? (
                   <>
@@ -305,7 +305,7 @@ export default function CMSView() {
                 onChange={e => setDate(i, "label", e.target.value)} />
               <input value={d.date} placeholder="Date (e.g. 28 Feb 2027)" style={{ ...inp, flex: 1, minWidth: 0 }}
                 onChange={e => setDate(i, "date", e.target.value)} />
-              <button onClick={() => rmDate(i)} style={{ ...smallBtn, color: "#EF4444", borderColor: "#EF444430" }}>×</button>
+              <button onClick={() => rmDate(i)} style={{ ...smallBtn, color: "#DC2626", borderColor: "#EF444430" }}>×</button>
             </div>
           ))}
           {(cfg.importantDates ?? []).length < 12 && (
@@ -325,7 +325,7 @@ export default function CMSView() {
                 onChange={e => setStat(i, "label", e.target.value)} />
               <input value={s.value} placeholder="Value (e.g. 50+)" style={{ ...inp, flex: 1, minWidth: 0 }}
                 onChange={e => setStat(i, "value", e.target.value)} />
-              <button onClick={() => rmStat(i)} style={{ ...smallBtn, color: "#EF4444", borderColor: "#EF444430" }}>×</button>
+              <button onClick={() => rmStat(i)} style={{ ...smallBtn, color: "#DC2626", borderColor: "#EF444430" }}>×</button>
             </div>
           ))}
           {(cfg.stats ?? []).length < 8 && (

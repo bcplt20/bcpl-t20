@@ -47,7 +47,7 @@ export function Phase2PaymentReceipt() {
     <div style={{ background:'var(--bg)', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:20, color:'#64748B', fontFamily:'var(--font-body)' }}>
       <div style={{ width:48, height:48, border:'4px solid rgba(232,178,61,0.2)', borderTopColor:'var(--gold)', borderRadius:'50%', animation:'spin 1s linear infinite' }} />
       <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
-      <div style={{ fontFamily:'var(--font-head)', fontSize:18, fontWeight:700, letterSpacing:'.06em', color:'#fff', textTransform:'uppercase' }}>{t("Verifying your payment…", "आपका पेमेंट वेरिफाई हो रहा है…")}</div>
+      <div style={{ fontFamily:'var(--font-head)', fontSize:18, fontWeight:700, letterSpacing:'.06em', color:'var(--ink)', textTransform:'uppercase' }}>{t("Verifying your payment…", "आपका पेमेंट वेरिफाई हो रहा है…")}</div>
     </div>
   );
 
@@ -76,7 +76,7 @@ export function Phase2PaymentReceipt() {
         @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes shimmerAnim { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
         
-        .ticket { background: var(--panel); border: 1px solid rgba(232,178,61,0.4); border-radius: var(--r); position: relative; overflow: hidden; margin-bottom: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); animation: fadeUp 0.6s 0.2s ease both; }
+        .ticket { background: var(--panel); border: 1px solid rgba(232,178,61,0.4); border-radius: var(--r); position: relative; overflow: hidden; margin-bottom: 40px; box-shadow: 0 18px 44px rgba(12,29,51,0.12); animation: fadeUp 0.6s 0.2s ease both; }
         .ticket-dash { border-top: 2px dashed rgba(232,178,61,0.25); margin: 0 24px; position: relative; }
         .ticket-dash::before, .ticket-dash::after { content:''; position:absolute; width:24px; height:24px; background:var(--bg); border-radius:50%; top:-12px; }
         .ticket-dash::before { left:-36px; border-right: 1px solid rgba(232,178,61,0.4); }
@@ -99,11 +99,11 @@ export function Phase2PaymentReceipt() {
           <div style={{ width: 96, height: 96, borderRadius: '50%', background: 'linear-gradient(135deg, var(--gold), #B8860B)', margin: '0 auto 24px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 0 12px rgba(232,178,61,0.1), 0 0 0 24px rgba(232,178,61,0.05)', animation: 'scaleIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both' }}>
             <span style={{ fontSize: 48, color: '#000', lineHeight: 1 }}>✓</span>
           </div>
-          <h1 style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(32px, 6vw, 64px)', color: '#fff', lineHeight: 1.05, textTransform: 'uppercase', animation: 'fadeUp 0.5s 0.2s ease both' }}>
+          <h1 style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(32px, 6vw, 64px)', color: 'var(--ink)', lineHeight: 1.05, textTransform: 'uppercase', animation: 'fadeUp 0.5s 0.2s ease both' }}>
             {t("PHYSICAL TRIAL SLOT", "फिजिकल ट्रायल जगह")}<br/>
             <span style={{ background: 'linear-gradient(90deg, var(--gold), #FFD700, var(--gold))', backgroundSize: '200% auto', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', animation: 'shimmerAnim 2.5s linear infinite', display: 'inline-block' }}>{t("SECURED.", "पक्की हो गई।")}</span>
           </h1>
-          <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 'clamp(14px, 3vw, 20px)', color: 'rgba(255,255,255,0.5)', marginTop: 16, letterSpacing: '.1em', textTransform: 'uppercase', animation: 'fadeUp 0.5s 0.3s ease both' }}>
+          <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 'clamp(14px, 3vw, 20px)', color: 'rgba(12,29,51,0.62)', marginTop: 16, letterSpacing: '.1em', textTransform: 'uppercase', animation: 'fadeUp 0.5s 0.3s ease both' }}>
             {t("SEE YOU ON THE GROUND.", "मैदान पर मिलते हैं।")}
           </div>
         </div>
@@ -125,9 +125,9 @@ export function Phase2PaymentReceipt() {
               [t('Registration No.', 'रजिस्ट्रेशन नं.'), regId.slice(0,8).toUpperCase()],
               [t('Payment Date', 'पेमेंट की तारीख'), paidAt],
             ].map(([k,v]) => (
-              <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid rgba(255,255,255,0.06)', fontSize: 14 }}>
-                <span style={{ color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>{k}</span>
-                <span style={{ color: '#fff', fontWeight: 700 }}>{v}</span>
+              <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid rgba(12,29,51,0.08)', fontSize: 14 }}>
+                <span style={{ color: 'rgba(12,29,51,0.62)', fontWeight: 600 }}>{k}</span>
+                <span style={{ color: 'var(--ink)', fontWeight: 700 }}>{v}</span>
               </div>
             ))}
           </div>
@@ -140,8 +140,8 @@ export function Phase2PaymentReceipt() {
               { label: 'SGST @ 9%', val: `₹${halfGst.toLocaleString('en-IN')}`, dim: true },
             ].map(r => (
               <div key={r.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0' }}>
-                <span style={{ fontSize: 13, color: r.dim ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.6)', fontWeight: 600 }}>{r.label}</span>
-                <span style={{ fontSize: 13, color: r.dim ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.8)', fontWeight: 700 }}>{r.val}</span>
+                <span style={{ fontSize: 13, color: r.dim ? 'rgba(12,29,51,0.55)' : 'rgba(12,29,51,0.66)', fontWeight: 600 }}>{r.label}</span>
+                <span style={{ fontSize: 13, color: r.dim ? 'rgba(12,29,51,0.55)' : 'rgba(12,29,51,0.80)', fontWeight: 700 }}>{r.val}</span>
               </div>
             ))}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0 0', marginTop: 12, borderTop: '1px solid rgba(232,178,61,0.3)' }}>
@@ -156,7 +156,7 @@ export function Phase2PaymentReceipt() {
             <span style={{ color: 'var(--gold)' }}><IcoList size={32} /></span>
             <div style={{ flex: 1, minWidth: 200 }}>
               <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 14, color: 'var(--gold)', letterSpacing: '.1em', textTransform: 'uppercase' }}>{t("NEXT STEP", "अगला कदम")}</div>
-              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)', marginTop: 4 }}>{t("Complete KYC verification — Aadhaar + PAN required", "KYC पूरा करें — आधार और पैन जरूरी")}</div>
+              <div style={{ fontSize: 14, color: 'rgba(12,29,51,0.66)', marginTop: 4 }}>{t("Complete KYC verification — Aadhaar + PAN required", "KYC पूरा करें — आधार और पैन जरूरी")}</div>
             </div>
             <Link href="/register/phase2/kyc" className="btn-kyc">{t("COMPLETE KYC →", "KYC पूरा करें →")}</Link>
           </div>
@@ -173,8 +173,8 @@ export function Phase2PaymentReceipt() {
             ].map(({ icon: Icon, title, desc, cta, ctaColor, topColor, href }) => (
               <div key={title} className="next-card" style={{ borderTopColor: topColor }}>
                 <div style={{ color: topColor, marginBottom: 16 }}><Icon size={32} /></div>
-                <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 20, color: '#fff', marginBottom: 8, textTransform: 'uppercase' }}>{title}</div>
-                <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6, marginBottom: cta ? 20 : 0 }}>{desc}</div>
+                <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 20, color: 'var(--ink)', marginBottom: 8, textTransform: 'uppercase' }}>{title}</div>
+                <div style={{ fontSize: 14, color: 'rgba(12,29,51,0.62)', lineHeight: 1.6, marginBottom: cta ? 20 : 0 }}>{desc}</div>
                 {cta && href && (
                   <Link href={href} style={{ background: 'transparent', border: `1px solid ${ctaColor}60`, borderRadius: 'var(--r)', color: ctaColor, fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 13, letterSpacing: '.08em', cursor: 'pointer', padding: '10px 20px', textDecoration: 'none', display: 'inline-block', textTransform: 'uppercase' }}>
                     {cta}

@@ -329,7 +329,7 @@ export function Phase1VideoUpload() {
           </div>
           <h2 style={{ color:'var(--red)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:28, marginBottom:12, textTransform:'uppercase' }}>{t('Upload Deadline Passed', 'अपलोड की समय सीमा समाप्त')}</h2>
           <p style={{ color:'var(--ink-3)', fontSize:14, marginBottom:24, lineHeight:1.7 }}>{t('Your video upload window has expired. Unfortunately, late submissions cannot be accepted for Phase 1 review.', 'आपकी वीडियो अपलोड विंडो समाप्त हो गई है। दुर्भाग्य से, Phase 1 समीक्षा के लिए देर से सबमिशन स्वीकार नहीं किए जा सकते।')}</p>
-          <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid var(--line)', borderRadius:'var(--r)', padding:16, marginBottom:24 }}>
+          <div style={{ background:'rgba(12,29,51,0.03)', border:'1px solid var(--line)', borderRadius:'var(--r)', padding:16, marginBottom:24 }}>
             <p style={{ color:'var(--ink-3)', fontSize:13 }}>{t('Season 6 registrations will open soon. Follow us on ', 'Season 6 के रजिस्ट्रेशन जल्द ही खुलेंगे। अपडेट के लिए ')}<strong style={{ color:'var(--orange)' }}>@bcpl.t20</strong>{t(' for updates.', ' को फॉलो करें।')}</p>
           </div>
           <a href="https://www.instagram.com/bcpl.t20" target="_blank" rel="noreferrer" style={{ display:'inline-block', background:'rgba(255,122,41,0.12)', border:'1px solid rgba(255,122,41,0.4)', color:'var(--orange)', textDecoration:'none', padding:'12px 28px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:14, letterSpacing:'.06em', textTransform:'uppercase' }}>
@@ -419,7 +419,7 @@ export function Phase1VideoUpload() {
             {t('Result will arrive on ', 'परिणाम ')}<strong style={{ color:'var(--orange)' }}>{t('Email + SMS + WhatsApp', 'ईमेल + SMS + WhatsApp')}</strong>{t('.', ' पर आएगा।')}
           </p>
           <div style={{ background:'rgba(34,197,94,0.06)', border:'1px solid rgba(34,197,94,0.2)', borderRadius:'var(--r)', padding:16, marginBottom:24 }}>
-            <div style={{ display:'flex', justifyContent:'space-between', padding:'8px 0', borderBottom:'1px solid rgba(255,255,255,0.05)' }}>
+            <div style={{ display:'flex', justifyContent:'space-between', padding:'8px 0', borderBottom:'1px solid rgba(12,29,51,0.08)' }}>
               <span style={{ color:'var(--ink-3)', fontSize:13, fontWeight:600 }}>{t('Status', 'स्थिति')}</span>
               <span style={{ color:'var(--green)', fontWeight:800, fontSize:13 }}>✓ {t('Under Review', 'समीक्षा के अधीन')}</span>
             </div>
@@ -432,7 +432,7 @@ export function Phase1VideoUpload() {
             <Link href="/register/result" style={{ flex:1, minWidth:160, display:'block', background:'var(--green)', color:'#fff', textDecoration:'none', padding:'14px 24px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:15, letterSpacing:'.06em', textTransform:'uppercase' }}>
               {t('CHECK MY STATUS', 'मेरा स्टेटस देखें')} →
             </Link>
-            <Link href="/" style={{ flex:1, minWidth:160, display:'block', background:'rgba(255,255,255,0.06)', border:'1px solid var(--line)', color:'var(--ink-2)', textDecoration:'none', padding:'14px 24px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:15, letterSpacing:'.06em', textTransform:'uppercase' }}>
+            <Link href="/" style={{ flex:1, minWidth:160, display:'block', background:'rgba(12,29,51,0.08)', border:'1px solid var(--line)', color:'var(--ink-2)', textDecoration:'none', padding:'14px 24px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:15, letterSpacing:'.06em', textTransform:'uppercase' }}>
               {t('GO HOME', 'होम पर जाएं')}
             </Link>
           </div>
@@ -468,7 +468,7 @@ export function Phase1VideoUpload() {
         
         .guideline-card{background:var(--panel);border-left:3px solid var(--orange);padding:18px 20px;border-radius:0 var(--r) var(--r) 0;margin-bottom:12px;border-top:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line);}
         .guideline-card:last-child{margin-bottom:0}
-        .tip-check{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:14px;color:var(--ink-2);line-height:1.5;font-weight:500;}
+        .tip-check{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid rgba(12,29,51,0.08);font-size:14px;color:var(--ink-2);line-height:1.5;font-weight:500;}
         .tip-check:last-child{border-bottom:none}
         
         .info-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px;letter-spacing:.08em;text-transform:uppercase;}
@@ -478,14 +478,14 @@ export function Phase1VideoUpload() {
         .col-left{flex:1;min-width:0}
         .col-right{flex:1;min-width:0}
         
-        .progress-bar{height:8px;background:rgba(255,255,255,0.08);border-radius:4px;overflow:hidden;margin-top:12px;}
+        .progress-bar{height:8px;background:rgba(12,29,51,0.10);border-radius:4px;overflow:hidden;margin-top:12px;}
         .progress-fill{height:100%;background:linear-gradient(90deg,var(--orange),var(--gold));border-radius:4px;transition:width .3s ease;animation:progressPulse 1.5s ease infinite;}
       `}</style>
 
       <SiteHeader />
 
       {/* ── PAGE HEADER ── */}
-      <div style={{ background:'linear-gradient(180deg,#0B121E 0%,var(--bg) 100%)', borderBottom:'1px solid rgba(255,255,255,0.06)', paddingTop:40, paddingBottom:36 }}>
+      <div style={{ background:'linear-gradient(180deg,#0B121E 0%,var(--bg) 100%)', borderBottom:'1px solid rgba(12,29,51,0.08)', paddingTop:40, paddingBottom:36 }}>
         <div className="W">
           <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', flexWrap:'wrap', gap:16 }}>
             <div style={{ flex:1, minWidth:0 }}>
@@ -504,7 +504,7 @@ export function Phase1VideoUpload() {
                 <div style={{ display:'flex', gap:6, justifyContent:'center' }}>
                   {([[cd.d, t('DAYS','दिन')], [cd.h, t('HRS','घंटे')], [cd.m, t('MIN','मिनट')], [cd.s, t('SEC','सेकंड')]] as [number, string][]).map(([v, lbl], i) => (
                     <div key={i} style={{ textAlign:'center', minWidth:46 }}>
-                      <div style={{ background:'rgba(0,0,0,0.35)', border:'1px solid ' + (cd.urgent ? 'rgba(239,68,68,0.35)' : 'rgba(255,255,255,0.1)'), borderRadius:8, padding:'8px 6px', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:22, lineHeight:1, color: cd.urgent ? 'var(--red)' : 'var(--ink)', fontVariantNumeric:'tabular-nums' }}>
+                      <div style={{ background:'#FFFFFF', border:'1px solid ' + (cd.urgent ? 'rgba(239,68,68,0.35)' : 'rgba(12,29,51,0.12)'), borderRadius:8, padding:'8px 6px', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:22, lineHeight:1, color: cd.urgent ? 'var(--red)' : 'var(--ink)', fontVariantNumeric:'tabular-nums' }}>
                         {String(v).padStart(2, '0')}
                       </div>
                       <div style={{ fontSize:9, fontWeight:800, letterSpacing:'.12em', color:'var(--ink-3)', marginTop:4, textTransform:'uppercase' }}>{lbl}</div>
@@ -516,7 +516,7 @@ export function Phase1VideoUpload() {
           </div>
 
           {/* ── DIGITAL PLAYER CARD ── */}
-          <div style={{ marginTop:28, maxWidth:520, background:'linear-gradient(145deg,rgba(255,255,255,0.05),rgba(255,255,255,0.015))', border:'1px solid var(--line)', borderRadius:'var(--r)', overflow:'hidden' }}>
+          <div style={{ marginTop:28, maxWidth:520, background:'#FFFFFF', border:'1px solid var(--line)', borderRadius:'var(--r)', overflow:'hidden', boxShadow:'0 10px 26px rgba(12,29,51,0.08)' }}>
             <div style={{ background:'linear-gradient(135deg,var(--orange),var(--orange-2))', padding:'10px 18px', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
               <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:11, letterSpacing:'.2em', color:'rgba(255,255,255,0.85)' }}>BCPL · {t('SEASON 5', 'सीज़न 5')}</span>
               <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:11, letterSpacing:'.14em', color:'#fff', background:'rgba(0,0,0,0.25)', padding:'3px 10px', borderRadius:12 }}>{t('OFFICIAL PLAYER CARD', 'आधिकारिक प्लेयर कार्ड')}</span>
@@ -532,7 +532,7 @@ export function Phase1VideoUpload() {
                   <div style={{ fontFamily:'monospace', fontWeight:700, fontSize:16, color:'var(--gold)', letterSpacing:'.04em' }}>{regNumber ?? shortRegId}</div>
                 </div>
               </div>
-              <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:10, borderTop:'1px solid rgba(255,255,255,0.06)', paddingTop:12 }}>
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:10, borderTop:'1px solid rgba(12,29,51,0.08)', paddingTop:12 }}>
                 <div>
                   <div style={{ fontSize:9, fontWeight:800, letterSpacing:'.14em', color:'var(--ink-3)', marginBottom:3 }}>{t('ROLE', 'भूमिका')}</div>
                   <div style={{ fontSize:13, fontWeight:700, color:'#60A5FA' }}>{roleMeta.label}</div>
@@ -603,8 +603,8 @@ export function Phase1VideoUpload() {
                     {t('Tap to choose from ', 'चुनने के लिए टैप करें ')}<strong style={{ color:'var(--ink)' }}>{t('Camera, Gallery, or Files', 'कैमरा, गैलरी, या फ़ाइलें')}</strong>
                   </div>
                   <div style={{ display:'flex', gap:10, flexWrap:'wrap', justifyContent:'center', marginBottom:28 }}>
-                    <span style={{ fontSize:12, color:'var(--ink-3)', background:'rgba(255,255,255,0.04)', padding:'6px 12px', borderRadius:16, border:'1px solid var(--line)' }}>MP4 / MOV / AVI</span>
-                    <span style={{ fontSize:12, color:'var(--ink-3)', background:'rgba(255,255,255,0.04)', padding:'6px 12px', borderRadius:16, border:'1px solid var(--line)' }}>{t('Max ' + maxMb + 'MB', 'अधिकतम ' + maxMb + 'MB')}</span>
+                    <span style={{ fontSize:12, color:'var(--ink-3)', background:'rgba(12,29,51,0.03)', padding:'6px 12px', borderRadius:16, border:'1px solid var(--line)' }}>MP4 / MOV / AVI</span>
+                    <span style={{ fontSize:12, color:'var(--ink-3)', background:'rgba(12,29,51,0.03)', padding:'6px 12px', borderRadius:16, border:'1px solid var(--line)' }}>{t('Max ' + maxMb + 'MB', 'अधिकतम ' + maxMb + 'MB')}</span>
                     <span style={{ fontSize:12, color:'var(--orange)', background:'rgba(255,122,41,0.08)', padding:'6px 12px', borderRadius:16, border:'1px solid rgba(255,122,41,0.35)', fontWeight:700 }}>{t(minSec + '–' + maxSec + ' seconds', minSec + '–' + maxSec + ' सेकंड')}</span>
                   </div>
                   <span style={{ display:'inline-block', background:'rgba(255,122,41,0.1)', border:'1px solid rgba(255,122,41,0.4)', color:'var(--orange)', padding:'12px 28px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:15, letterSpacing:'.08em', cursor:'pointer', textTransform:'uppercase' }}>
@@ -648,7 +648,7 @@ export function Phase1VideoUpload() {
                         <IcoClock size={14} /> {t('Detected length: ' + videoDuration + 's', 'वीडियो लंबाई: ' + videoDuration + ' सेकंड')}
                       </div>
                     )}
-                    <label style={{ display:'flex', alignItems:'flex-start', gap:10, background:'rgba(255,255,255,0.03)', border:'1px solid var(--line)', borderRadius:'var(--r)', padding:'12px 14px', marginBottom:14, cursor:'pointer' }}>
+                    <label style={{ display:'flex', alignItems:'flex-start', gap:10, background:'rgba(12,29,51,0.03)', border:'1px solid var(--line)', borderRadius:'var(--r)', padding:'12px 14px', marginBottom:14, cursor:'pointer' }}>
                       <input type="checkbox" checked={declAccepted} onChange={e => setDeclAccepted(e.target.checked)} style={{ marginTop:3, width:16, height:16, accentColor:'var(--orange)', flexShrink:0, cursor:'pointer' }} />
                       <span style={{ fontSize:12.5, color:'var(--ink-2)', lineHeight:1.6, fontWeight:500 }}>
                         {t('I confirm this is my own recent gameplay video, unedited except basic trimming, and I understand fake or tampered videos lead to disqualification.',

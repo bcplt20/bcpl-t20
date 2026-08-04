@@ -584,7 +584,7 @@ export default function AdminShell() {
         </header>
 
         {/* Content — key bump on ↺ remounts the active view, re-fetching its data */}
-        <main key={refreshKey} style={{ flex:1, overflowY:"auto", overflowX:"auto", background:"#060B18", padding:isMobile?12:24 }}>
+        <main key={refreshKey} style={{ flex:1, overflowY:"auto", overflowX:"auto", background:"#F5F6F8", padding:isMobile?12:24 }}>
           {renderView(active, navigate, navPayload, autoTick)}
         </main>
       </div>

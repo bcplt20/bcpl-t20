@@ -28,7 +28,7 @@ export function BCPLFooter() {
     <>
     {/* Partners strip — every page, IPL/FIFA style (admin-ranked order) */}
     <FooterSponsorStrip />
-    <footer style={{ background:"var(--bg-deep)", borderTop:"1px solid rgba(255,255,255,.05)", padding:"clamp(36px,5vw,56px) 0 20px", fontFamily:"Montserrat,Inter,sans-serif" }}>
+    <footer className="on-dark" style={{ background:"var(--navy-deep)", borderTop:"1px solid rgba(255,255,255,.05)", padding:"clamp(36px,5vw,56px) 0 20px", fontFamily:"Montserrat,Inter,sans-serif" }}>
       <style>{`
         .bcpl-foot-wrap { max-width:1200px; margin:0 auto; padding:0 clamp(16px,4vw,40px); }
         .bcpl-foot-cols { display:grid; grid-template-columns:240px repeat(4,1fr); gap:36px; margin-bottom:36px; }

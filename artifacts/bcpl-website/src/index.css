@@ -8,16 +8,23 @@
    ═══════════════════════════════════════════════════════════════════ */
 
 :root {
-  /* surfaces — lifted ~15% from the old near-black navy for premium depth */
-  --bg:      #0C1D33;                 /* page background          */
-  --bg-deep: #071023;                 /* footer / recessed areas  */
-  --panel:   #12294A;                 /* raised cards             */
-  --panel-2: #16315A;                 /* lighter card top-light   */
-  --line:    rgba(255,255,255,.12);   /* hairline borders         */
+  /* ── LIGHT PREMIUM THEME ────────────────────────────────────────
+     Page flips to a warm ivory. Cards on light are pure white with a
+     navy hairline + soft navy shadow. Dark anchor sections (hero,
+     photography bands, footer) opt back into navy explicitly. */
+  --bg:      #F6F3EC;                 /* page background (warm ivory) */
+  --bg-deep: #EDE8DC;                 /* recessed strips              */
+  --panel:   #FFFFFF;                 /* raised cards                 */
+  --panel-2: #FFFFFF;                 /* card top-light               */
+  --line:    rgba(12,29,51,.10);      /* hairline borders on light    */
+
+  /* dark navy family — kept for anchor sections that stay dark */
+  --navy:      #0C1D33;
+  --navy-deep: #071023;
 
   /* premium gradients — reused across sections & cards */
-  --grad-page: radial-gradient(ellipse 120% 90% at 50% -10%, #143059 0%, var(--bg) 55%, var(--bg-deep) 100%);
-  --grad-card: linear-gradient(165deg, var(--panel-2) 0%, var(--panel) 60%, #0F2545 100%);
+  --grad-page: linear-gradient(180deg, #F8F5EF 0%, var(--bg) 45%, var(--bg-deep) 100%);
+  --grad-card: linear-gradient(165deg, #FFFFFF 0%, #FFFFFF 60%, #FCFAF5 100%);
   --grad-cta:  linear-gradient(135deg, #FF8A3D 0%, #FF7A29 45%, #D95E10 100%);
 
   /* brand */
@@ -27,10 +34,19 @@
   --green:    #22C55E;
   --red:      #EF4444;
 
-  /* ink (on dark surfaces) */
-  --ink:   #FFFFFF;
-  --ink-2: rgba(255,255,255,.86);   /* raised from .80 for readable secondary text */
-  --ink-3: rgba(255,255,255,.72);   /* raised from .58 — important secondary info floor */
+  /* ink — DEFAULT is now navy-on-light (the page is light). Dark anchor
+     sections re-map --ink/--ink-2/--ink-3 back to white via .on-dark. */
+  --ink:   #0C1D33;                 /* primary text on light          */
+  --ink-2: rgba(12,29,51,.78);      /* secondary, readable            */
+  --ink-3: rgba(12,29,51,.60);      /* genuinely muted only           */
+
+  /* white ink tokens for dark surfaces (explicit) */
+  --ink-on-dark:   #FFFFFF;
+  --ink-on-dark-2: rgba(255,255,255,.86);
+  --ink-on-dark-3: rgba(255,255,255,.72);
+
+  /* gold reads on light only when darkened (WCAG) */
+  --gold-ink: #B8892B;              /* deep gold for labels/small text on light */
 
   /* ── LIGHT / MID SURFACE SYSTEM (spec §4 C/D) ─────────────────────
      Strategic lighter panels that reset the eye without brightening the
@@ -65,13 +81,25 @@ html, body, #root {
   color: var(--ink);
 }
 
+/* ── DARK ANCHOR helper ──────────────────────────────────────────
+   Any section that stays dark navy (hero, photography bands, footer)
+   opts in with .on-dark, which re-maps the ink tokens to white so
+   descendant components using var(--ink-*) stay readable. */
+.on-dark {
+  --ink:   var(--ink-on-dark);
+  --ink-2: var(--ink-on-dark-2);
+  --ink-3: var(--ink-on-dark-3);
+  --line:  rgba(255,255,255,.12);
+  color: var(--ink);
+}
+
 body {
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-::selection { background: rgba(255,122,41,.4); color: #fff; }
+::selection { background: rgba(255,122,41,.28); color: #0C1D33; }
 
 :focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; border-radius: 4px; }
 
@@ -104,25 +132,23 @@ body {
    border, smooth hover lift. Applied across public + player pages. */
 .v3-card {
   position: relative;
-  background: var(--grad-card);
-  border: 1px solid rgba(255,255,255,.12);
+  background: #FFFFFF;
+  border: 1px solid rgba(12,29,51,.10);
   border-radius: var(--r);
-  box-shadow: 0 10px 30px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.05);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 10px 30px rgba(12,29,51,.08);
   transition: transform .28s cubic-bezier(.22,1,.36,1), box-shadow .28s ease, border-color .28s ease;
 }
 .v3-card::before {
   content: '';
   position: absolute; inset: 0;
   border-radius: inherit;
-  background: linear-gradient(180deg, rgba(255,255,255,.06) 0%, transparent 28%);
+  background: linear-gradient(180deg, rgba(12,29,51,.02) 0%, transparent 28%);
   pointer-events: none;
 }
 .v3-card--hover:hover {
   transform: translateY(-3px);
-  box-shadow: 0 20px 48px rgba(0,0,0,.46), inset 0 1px 0 rgba(255,255,255,.07);
-  border-color: rgba(255,255,255,.18);
+  box-shadow: 0 20px 48px rgba(12,29,51,.14);
+  border-color: rgba(12,29,51,.16);
 }
 
 /* ── SHARED PREMIUM BUTTON (primary orange CTA) ──────────────────
@@ -144,12 +170,17 @@ body {
 .v3-btn--primary:hover { filter: brightness(1.08); box-shadow: 0 12px 34px rgba(255,122,41,.5), inset 0 1px 0 rgba(255,255,255,.28); transform: translateY(-2px); }
 .v3-btn--primary:active { transform: scale(.98) translateY(0); }
 .v3-btn--ghost {
-  background: rgba(255,255,255,.04); color: var(--ink-2);
-  border: 1.5px solid rgba(255,255,255,.20);
-  backdrop-filter: blur(6px);
+  background: rgba(12,29,51,.03); color: var(--ink-2);
+  border: 1.5px solid rgba(12,29,51,.22);
 }
-.v3-btn--ghost:hover { border-color: var(--gold); color: var(--gold); }
+.v3-btn--ghost:hover { border-color: var(--orange); color: var(--orange); }
 .v3-btn--ghost:active { transform: scale(.98); }
+/* Ghost button on dark anchor sections flips to the white-on-dark look. */
+.on-dark .v3-btn--ghost {
+  background: rgba(255,255,255,.04); color: rgba(255,255,255,.86);
+  border-color: rgba(255,255,255,.20);
+}
+.on-dark .v3-btn--ghost:hover { border-color: var(--gold); color: var(--gold); }
 
 /* ── REVEAL SYSTEM (extends the existing .rv used site-wide) ─────
    Directional variants + staggered children. Observer adds .rv-in. */
@@ -188,45 +219,57 @@ html.rv-js .rv-stagger > * { opacity:0; transform: translateY(16px); transition:
   background: linear-gradient(180deg, var(--surface-light) 0%, var(--surface-light-2) 100%);
   color: var(--ink-dark);
 }
+/* On a LIGHT page, .sec-mid is a soft navy-TINTED band (not a dark slab):
+   gently recessed with navy ink so it still separates from the ivory page. */
 .sec-mid {
-  background: linear-gradient(180deg, var(--surface-mid-2) 0%, var(--surface-mid) 100%);
-  color: var(--ink);
+  background: linear-gradient(180deg, #EDF0F6 0%, #E7EBF2 100%);
+  color: var(--ink-dark);
+  --ink:   var(--ink-dark);
+  --ink-2: var(--ink-dark-2);
+  --ink-3: var(--ink-dark-3);
 }
 
 /* On light surfaces, headings / body default to deep navy. */
 .sec-light h1, .sec-light h2, .sec-light h3, .sec-light h4, .sec-light p,
-.sec-light span, .sec-light div, .sec-light li, .sec-light a { color: inherit; }
+.sec-light span, .sec-light div, .sec-light li, .sec-light a,
+.sec-mid h1, .sec-mid h2, .sec-mid h3, .sec-mid h4, .sec-mid p,
+.sec-mid span, .sec-mid div, .sec-mid li, .sec-mid a { color: inherit; }
 
 /* ── CARD HIERARCHY (spec §23) — three deliberate weights, not glass
    on everything. .v3-card stays the STANDARD card. ──────────────── */
-/* FEATURE: richer depth, warmer top-light, stronger hover lift. */
+/* FEATURE: richer depth, warm gold hairline, stronger hover lift (light). */
 .v3-card--feature {
-  background: var(--grad-card);
-  border: 1px solid rgba(232,178,61,.24);
-  box-shadow: 0 18px 44px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.08);
+  background: #FFFFFF;
+  border: 1px solid rgba(184,137,43,.30);
+  box-shadow: 0 18px 44px rgba(12,29,51,.12);
 }
 .v3-card--feature::before {
-  background: linear-gradient(180deg, rgba(232,178,61,.10) 0%, transparent 30%);
+  background: linear-gradient(180deg, rgba(184,137,43,.06) 0%, transparent 30%);
 }
-/* INFO: minimal — flat surface, thin border, no glass blur, no shadow. */
+/* INFO: minimal — flat warm surface, thin border, no shadow (light). */
 .v3-card--info {
-  background: rgba(255,255,255,.03);
-  border: 1px solid rgba(255,255,255,.10);
+  background: #FBF9F4;
+  border: 1px solid rgba(12,29,51,.10);
   box-shadow: none;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
 }
 .v3-card--info::before { display: none; }
 
-/* Card variants living on a LIGHT surface flip to light tokens. */
-.sec-light .v3-card,
-.sec-light .v3-card--feature { background: #FFFFFF; border-color: var(--line-dark); box-shadow: 0 12px 30px rgba(12,29,51,.12); backdrop-filter: none; -webkit-backdrop-filter: none; }
-.sec-light .v3-card::before,
-.sec-light .v3-card--feature::before { background: linear-gradient(180deg, rgba(12,29,51,.03) 0%, transparent 30%); }
-.sec-light .v3-card--info { background: #FBF9F4; border-color: var(--line-dark); box-shadow: none; }
+/* Card variants living on a DARK anchor surface flip to the dark glass look. */
+.on-dark .v3-card,
+.on-dark .v3-card--feature {
+  background: linear-gradient(165deg, #16315A 0%, #12294A 60%, #0F2545 100%);
+  border-color: rgba(255,255,255,.12);
+  box-shadow: 0 10px 30px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.05);
+}
+.on-dark .v3-card--feature { border-color: rgba(232,178,61,.24); box-shadow: 0 18px 44px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.08); }
+.on-dark .v3-card::before { background: linear-gradient(180deg, rgba(255,255,255,.06) 0%, transparent 28%); }
+.on-dark .v3-card--feature::before { background: linear-gradient(180deg, rgba(232,178,61,.10) 0%, transparent 30%); }
+.on-dark .v3-card--info { background: rgba(255,255,255,.03); border-color: rgba(255,255,255,.10); }
 
 /* ── skeleton loaders (premium shimmer) ──────────────────────────── */
-.skel { position:relative; overflow:hidden; background:rgba(255,255,255,0.06); border-radius:10px; }
-.skel::after { content:""; position:absolute; inset:0; transform:translateX(-100%); background:linear-gradient(90deg,transparent,rgba(255,255,255,0.09),transparent); animation:skel-sweep 1.4s infinite; }
+.skel { position:relative; overflow:hidden; background:rgba(12,29,51,0.06); border-radius:10px; }
+.skel::after { content:""; position:absolute; inset:0; transform:translateX(-100%); background:linear-gradient(90deg,transparent,rgba(12,29,51,0.09),transparent); animation:skel-sweep 1.4s infinite; }
+.on-dark .skel { background:rgba(255,255,255,0.06); }
+.on-dark .skel::after { background:linear-gradient(90deg,transparent,rgba(255,255,255,0.09),transparent); }
 @keyframes skel-sweep { 100% { transform:translateX(100%); } }
 @media (prefers-reduced-motion: reduce) { .skel::after { animation:none; } }

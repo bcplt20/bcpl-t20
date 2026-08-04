@@ -83,10 +83,10 @@ const DIS_TYPE_MAP: Record<string,string> = {
 };
 
 /* ─── Styles ─────────────────────────────────────────── */
-const CARD: React.CSSProperties = { background:"linear-gradient(135deg,#0D1526,#0A1020)", border:"1px solid #1E293B", borderRadius:16, padding:20 };
+const CARD: React.CSSProperties = { background:"linear-gradient(135deg,#FFFFFF,#FFFFFF)", border:"1px solid #E2E8F0", borderRadius:16, padding:20 };
 const TAB  = (a:boolean): React.CSSProperties => ({ padding:"7px 16px", borderRadius:8, border:"none", cursor:"pointer", fontWeight:700, fontSize:12, background:a?"linear-gradient(135deg,#FF6B00,#FF8C40)":"transparent", color:a?"#fff":"#64748B" });
 const PILL = (c:string): React.CSSProperties => ({ display:"inline-flex", alignItems:"center", gap:5, padding:"2px 10px", borderRadius:20, background:`${c}20`, border:`1px solid ${c}40`, fontSize:10, fontWeight:700, color:c });
-const SELECT: React.CSSProperties = { width:"100%", padding:"9px 12px", background:"#060B18", border:"1px solid #1E293B", borderRadius:8, color:"#F1F5F9", fontSize:13, outline:"none" };
+const SELECT: React.CSSProperties = { width:"100%", padding:"9px 12px", background:"#F5F6F8", border:"1px solid #E2E8F0", borderRadius:8, color:"#1E293B", fontSize:13, outline:"none" };
 
 /* ══════════════════════════════════════════════════════ */
 export default function LiveScoringView() {
@@ -121,7 +121,7 @@ export default function LiveScoringView() {
     }).catch(()=>{});
   };
 
-  const teamColor = (name:string) => teams.find(t=>t.name===name)?.color || "#FF6B00";
+  const teamColor = (name:string) => teams.find(t=>t.name===name)?.color || "#C2410C";
 
   const loadSquads = async (names:string[]) => {
     setSquadsLoading(true);
@@ -484,8 +484,8 @@ export default function LiveScoringView() {
   /* ── Error banner (all phases) ── */
   const errBanner = apiErr && (
     <div style={{ padding:"10px 14px", background:"#EF444412", border:"1px solid #EF444440", borderRadius:10, display:"flex", alignItems:"center", gap:10 }}>
-      <span style={{ fontSize:12, color:"#EF4444", fontWeight:600, flex:1 }}>⚠️ {apiErr}</span>
-      <button onClick={()=>setApiErr(null)} style={{ background:"none", border:"none", color:"#EF4444", cursor:"pointer", fontSize:14 }}>✕</button>
+      <span style={{ fontSize:12, color:"#DC2626", fontWeight:600, flex:1 }}>⚠️ {apiErr}</span>
+      <button onClick={()=>setApiErr(null)} style={{ background:"none", border:"none", color:"#DC2626", cursor:"pointer", fontSize:14 }}>✕</button>
     </div>
   );
 
@@ -496,7 +496,7 @@ export default function LiveScoringView() {
     <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
         <div>
-          <div style={{ fontSize:20, fontWeight:800, color:"#F1F5F9" }}>Live Scoring</div>
+          <div style={{ fontSize:20, fontWeight:800, color:"#1E293B" }}>Live Scoring</div>
           <div style={{ fontSize:12, color:"#64748B", marginTop:2 }}>Select a match to start or manage scoring</div>
         </div>
         <button onClick={()=>{ setAddForm({ team1:teams[0]?.name||"", team2:teams[1]?.name||"", venue:"", date:"" }); setShowAdd(true); }}
@@ -509,11 +509,11 @@ export default function LiveScoringView() {
       {showAdd&&(
         <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,.7)", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center", padding:16 }}>
           <div style={{ ...CARD, width:420, maxWidth:"100%", padding:28 }}>
-            <div style={{ fontSize:16, fontWeight:800, color:"#F1F5F9", marginBottom:20 }}>Schedule New Match</div>
+            <div style={{ fontSize:16, fontWeight:800, color:"#1E293B", marginBottom:20 }}>Schedule New Match</div>
             {teams.length<2 ? (
               <div style={{ padding:"14px 16px", background:"#F59E0B12", border:"1px solid #F59E0B40", borderRadius:10, marginBottom:20 }}>
-                <div style={{ fontSize:13, color:"#F59E0B", fontWeight:700, marginBottom:4 }}>Pehle teams banao</div>
-                <div style={{ fontSize:12, color:"#94A3B8", lineHeight:1.5 }}>Match schedule karne ke liye kam se kam 2 teams chahiye. Admin panel ke <b>Teams</b> tab me teams add karo.</div>
+                <div style={{ fontSize:13, color:"#B45309", fontWeight:700, marginBottom:4 }}>Pehle teams banao</div>
+                <div style={{ fontSize:12, color:"#64748B", lineHeight:1.5 }}>Match schedule karne ke liye kam se kam 2 teams chahiye. Admin panel ke <b>Teams</b> tab me teams add karo.</div>
               </div>
             ):(
               <>
@@ -539,7 +539,7 @@ export default function LiveScoringView() {
               </>
             )}
             <div style={{ display:"flex", gap:10 }}>
-              <button onClick={()=>setShowAdd(false)} style={{ flex:1, padding:11, borderRadius:8, border:"1px solid #1E293B", background:"transparent", color:"#64748B", cursor:"pointer" }}>Cancel</button>
+              <button onClick={()=>setShowAdd(false)} style={{ flex:1, padding:11, borderRadius:8, border:"1px solid #E2E8F0", background:"transparent", color:"#64748B", cursor:"pointer" }}>Cancel</button>
               {teams.length>=2&&(
                 <button disabled={saving} onClick={async ()=>{
                   if(saving) return;
@@ -575,7 +575,7 @@ export default function LiveScoringView() {
       {matches.length===0&&(
         <div style={{ ...CARD, textAlign:"center", padding:48 }}>
           <div style={{ fontSize:32, marginBottom:12 }}>🏏</div>
-          <div style={{ fontSize:16, fontWeight:800, color:"#F1F5F9", marginBottom:6 }}>Koi match nahi hai</div>
+          <div style={{ fontSize:16, fontWeight:800, color:"#1E293B", marginBottom:6 }}>Koi match nahi hai</div>
           <div style={{ fontSize:13, color:"#64748B" }}>"+ Add Match" se naya match schedule karo. Scoring shuru karne se pehle <b>Teams</b> tab me har team ke kam se kam 11 players hone chahiye.</div>
         </div>
       )}
@@ -583,17 +583,17 @@ export default function LiveScoringView() {
       {/* Match cards */}
       <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
         {[
-          { label:"🔴 Live", items:matches.filter(m=>m.status==="live"), color:"#EF4444" },
-          { label:"📅 Upcoming", items:matches.filter(m=>m.status==="scheduled"), color:"#3B82F6" },
-          { label:"✅ Completed", items:matches.filter(m=>m.status==="completed"), color:"#10B981" },
+          { label:"🔴 Live", items:matches.filter(m=>m.status==="live"), color:"#DC2626" },
+          { label:"📅 Upcoming", items:matches.filter(m=>m.status==="scheduled"), color:"#1D4ED8" },
+          { label:"✅ Completed", items:matches.filter(m=>m.status==="completed"), color:"#047857" },
         ].map(group=>group.items.length>0&&(
           <div key={group.label}>
             <div style={{ fontSize:11, fontWeight:800, color:group.color, letterSpacing:.5, textTransform:"uppercase", marginBottom:8 }}>{group.label}</div>
             {group.items.map(m=>(
-              <div key={m.id} style={{ ...CARD, marginBottom:8, cursor:m.status!=="completed"?"pointer":"default", borderColor:m.status==="live"?"rgba(239,68,68,.3)":"#1E293B", transition:"transform .15s,border-color .15s", position:"relative", overflow:"hidden" }}
+              <div key={m.id} style={{ ...CARD, marginBottom:8, cursor:m.status!=="completed"?"pointer":"default", borderColor:m.status==="live"?"rgba(239,68,68,.3)":"#E2E8F0", transition:"transform .15s,border-color .15s", position:"relative", overflow:"hidden" }}
                 onClick={()=>openMatch(m)}
                 onMouseEnter={e=>{ if(m.status!=="completed"){ (e.currentTarget as HTMLElement).style.transform="translateY(-2px)"; (e.currentTarget as HTMLElement).style.borderColor=group.color+"66"; }}}
-                onMouseLeave={e=>{ (e.currentTarget as HTMLElement).style.transform=""; (e.currentTarget as HTMLElement).style.borderColor=m.status==="live"?"rgba(239,68,68,.3)":"#1E293B"; }}>
+                onMouseLeave={e=>{ (e.currentTarget as HTMLElement).style.transform=""; (e.currentTarget as HTMLElement).style.borderColor=m.status==="live"?"rgba(239,68,68,.3)":"#E2E8F0"; }}>
                 {m.status==="live"&&<div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 60% 60% at 50% 0%,rgba(239,68,68,.05),transparent)", pointerEvents:"none" }}/>}
                 <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:12, flexWrap:"wrap", gap:8 }}>
                   <div style={{ display:"flex", alignItems:"center", gap:8 }}>
@@ -606,14 +606,14 @@ export default function LiveScoringView() {
                   <div style={{ flex:1 }}>
                     <div style={{ fontSize:15, fontWeight:800, color:teamColor(m.team1) }}>{m.team1}</div>
                   </div>
-                  <div style={{ padding:"6px 14px", background:"#060B18", borderRadius:8, fontWeight:900, fontSize:13, color:"rgba(255,255,255,.3)" }}>VS</div>
+                  <div style={{ padding:"6px 14px", background:"#F1F5F9", border:"1px solid #E2E8F0", borderRadius:8, fontWeight:900, fontSize:13, color:"#64748B" }}>VS</div>
                   <div style={{ flex:1, textAlign:"right" }}>
                     <div style={{ fontSize:15, fontWeight:800, color:teamColor(m.team2) }}>{m.team2}</div>
                   </div>
                 </div>
                 {m.status!=="completed"&&(
                   <div style={{ marginTop:12, textAlign:"center" }}>
-                    <span style={{ fontSize:11, color:"#FF6B00", fontWeight:700 }}>
+                    <span style={{ fontSize:11, color:"#C2410C", fontWeight:700 }}>
                       {m.status==="live"?"Click to continue scoring →":"Click to set up scoring →"}
                     </span>
                   </div>
@@ -630,19 +630,19 @@ export default function LiveScoringView() {
   if(live.phase==="toss") return (
     <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
       <div style={{ display:"flex", alignItems:"center", gap:12 }}>
-        <button onClick={()=>setLive(null)} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #1E293B", background:"transparent", color:"#64748B", fontSize:12, cursor:"pointer" }}>← Back</button>
-        <div style={{ fontSize:16, fontWeight:800, color:"#F1F5F9" }}>Match {live.def.matchNo} · Toss Setup</div>
+        <button onClick={()=>setLive(null)} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #E2E8F0", background:"transparent", color:"#64748B", fontSize:12, cursor:"pointer" }}>← Back</button>
+        <div style={{ fontSize:16, fontWeight:800, color:"#1E293B" }}>Match {live.def.matchNo} · Toss Setup</div>
       </div>
       {errBanner}
       <div style={{ ...CARD, maxWidth:520 }}>
-        <div style={{ fontSize:20, fontWeight:900, color:"#FF6B00", textAlign:"center", marginBottom:6 }}>🪙 Toss</div>
+        <div style={{ fontSize:20, fontWeight:900, color:"#C2410C", textAlign:"center", marginBottom:6 }}>🪙 Toss</div>
         <div style={{ fontSize:13, color:"#64748B", textAlign:"center", marginBottom:24 }}>{live.def.team1} <span style={{ color:"#475569" }}>vs</span> {live.def.team2} · {live.def.venue}</div>
         <div style={{ marginBottom:16 }}>
           <div style={{ fontSize:11, color:"#64748B", marginBottom:8, fontWeight:600 }}>TOSS WON BY</div>
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
             {[live.def.team1, live.def.team2].map(t=>(
               <button key={t} onClick={()=>setLive(l=>l?{...l,tossWinner:t}:l)}
-                style={{ padding:"14px 12px", borderRadius:10, border:`2px solid ${live.tossWinner===t?teamColor(t):"#1E293B"}`, background:live.tossWinner===t?`${teamColor(t)}18`:"#060B18", color:live.tossWinner===t?teamColor(t):"#64748B", fontWeight:700, fontSize:13, cursor:"pointer", transition:"all .2s" }}>
+                style={{ padding:"14px 12px", borderRadius:10, border:`2px solid ${live.tossWinner===t?teamColor(t):"#E2E8F0"}`, background:live.tossWinner===t?`${teamColor(t)}18`:"#F5F6F8", color:live.tossWinner===t?teamColor(t):"#64748B", fontWeight:700, fontSize:13, cursor:"pointer", transition:"all .2s" }}>
                 {t}
               </button>
             ))}
@@ -653,14 +653,14 @@ export default function LiveScoringView() {
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
             {(["bat","field"] as const).map(d=>(
               <button key={d} onClick={()=>setLive(l=>l?{...l,tossDec:d}:l)}
-                style={{ padding:"14px 12px", borderRadius:10, border:`2px solid ${live.tossDec===d?"#FF6B00":"#1E293B"}`, background:live.tossDec===d?"#FF6B0018":"#060B18", color:live.tossDec===d?"#FF6B00":"#64748B", fontWeight:700, fontSize:14, cursor:"pointer" }}>
+                style={{ padding:"14px 12px", borderRadius:10, border:`2px solid ${live.tossDec===d?"#FF6B00":"#E2E8F0"}`, background:live.tossDec===d?"#FF6B0018":"#F5F6F8", color:live.tossDec===d?"#C2410C":"#64748B", fontWeight:700, fontSize:14, cursor:"pointer" }}>
                 {d==="bat"?"🏏 Bat First":"🎳 Field First"}
               </button>
             ))}
           </div>
         </div>
         <div style={{ padding:"12px 16px", background:"#FF6B0008", border:"1px solid #FF6B0020", borderRadius:10, marginBottom:20, textAlign:"center" }}>
-          <span style={{ fontSize:13, color:"#FF7A29", fontWeight:700 }}>
+          <span style={{ fontSize:13, color:"#C2410C", fontWeight:700 }}>
             {live.tossWinner} won the toss and elected to {live.tossDec} first
           </span>
         </div>
@@ -680,17 +680,17 @@ export default function LiveScoringView() {
         <div style={CARD}>
           <div style={{ display:"flex", justifyContent:"space-between", marginBottom:14 }}>
             <div style={{ fontSize:14, fontWeight:800, color:teamColor(team) }}>{team}</div>
-            <span style={{ fontSize:12, color:sel.length===11?"#10B981":"#F59E0B", fontWeight:700 }}>{sel.length}/11 selected</span>
+            <span style={{ fontSize:12, color:sel.length===11?"#047857":"#F59E0B", fontWeight:700 }}>{sel.length}/11 selected</span>
           </div>
           {squadsLoading&&squad.length===0&&(
             <div style={{ fontSize:12, color:"#64748B", padding:"12px 0" }}>Players load ho rahe hain…</div>
           )}
           {!squadsLoading&&squad.length<11&&(
             <div style={{ padding:"12px 14px", background:"#F59E0B12", border:"1px solid #F59E0B40", borderRadius:10, marginBottom:10 }}>
-              <div style={{ fontSize:12, color:"#F59E0B", fontWeight:700, marginBottom:4 }}>
+              <div style={{ fontSize:12, color:"#B45309", fontWeight:700, marginBottom:4 }}>
                 {squad.length===0?"Is team me abhi koi player nahi hai":`Sirf ${squad.length} player${squad.length===1?"":"s"} hai${squad.length===1?"":"n"} — 11 chahiye`}
               </div>
-              <div style={{ fontSize:11, color:"#94A3B8", lineHeight:1.5 }}>
+              <div style={{ fontSize:11, color:"#64748B", lineHeight:1.5 }}>
                 Admin panel ke <b>Teams</b> tab me jaake "{team}" me players add karo (kam se kam 11). Uske baad yahan wapas aake XI select karna.
               </div>
             </div>
@@ -702,10 +702,10 @@ export default function LiveScoringView() {
               <div key={idx} onClick={()=>{ setSel(s=>picked?s.filter(n=>n!==p.name):s.length<11?[...s,p.name]:s); }}
                 style={{ display:"flex", alignItems:"center", gap:10, padding:"9px 10px", borderRadius:8, cursor:"pointer", marginBottom:4,
                   background:picked?"#FF6B0012":"transparent", border:picked?"1px solid #FF6B0030":"1px solid transparent", transition:"all .15s" }}>
-                <div style={{ width:22, height:22, borderRadius:"50%", background:picked?"#FF6B00":"#1E293B", display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, flexShrink:0 }}>
+                <div style={{ width:22, height:22, borderRadius:"50%", background:picked?"#FF6B00":"#E2E8F0", display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, flexShrink:0 }}>
                   {picked&&<span style={{ color:"#fff", fontWeight:900 }}>✓</span>}
                 </div>
-                <span style={{ flex:1, fontSize:12, color:picked?"#E2E8F0":"#94A3B8", fontWeight:picked?700:400 }}>{p.name}</span>
+                <span style={{ flex:1, fontSize:12, color:picked?"#1E293B":"#94A3B8", fontWeight:picked?700:400 }}>{p.name}</span>
                 <span style={{ fontSize:10, padding:"2px 7px", borderRadius:4, background:`${roleCol}20`, color:roleCol, fontWeight:700 }}>{p.role}</span>
               </div>
             );
@@ -716,11 +716,11 @@ export default function LiveScoringView() {
     return (
       <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
         <div style={{ display:"flex", alignItems:"center", gap:12, flexWrap:"wrap" }}>
-          <button onClick={()=>setLive(l=>l?{...l,phase:"toss"}:l)} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #1E293B", background:"transparent", color:"#64748B", fontSize:12, cursor:"pointer" }}>← Back</button>
-          <div style={{ fontSize:16, fontWeight:800, color:"#F1F5F9" }}>Select Playing XI</div>
+          <button onClick={()=>setLive(l=>l?{...l,phase:"toss"}:l)} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #E2E8F0", background:"transparent", color:"#64748B", fontSize:12, cursor:"pointer" }}>← Back</button>
+          <div style={{ fontSize:16, fontWeight:800, color:"#1E293B" }}>Select Playing XI</div>
           <span style={{ fontSize:11, color:"#64748B" }}>· {live.tossWinner} won toss · {bat} bat first</span>
           <button onClick={()=>loadSquads([live.def.team1, live.def.team2])} disabled={squadsLoading}
-            style={{ marginLeft:"auto", padding:"6px 14px", borderRadius:8, border:"1px solid #1E293B", background:"transparent", color:"#FF6B00", fontSize:11, fontWeight:700, cursor:squadsLoading?"wait":"pointer" }}>
+            style={{ marginLeft:"auto", padding:"6px 14px", borderRadius:8, border:"1px solid #E2E8F0", background:"transparent", color:"#C2410C", fontSize:11, fontWeight:700, cursor:squadsLoading?"wait":"pointer" }}>
             {squadsLoading?"Loading…":"↻ Refresh players"}
           </button>
         </div>
@@ -730,7 +730,7 @@ export default function LiveScoringView() {
           {renderXI(live.def.team2, xi2sel, setXi2sel)}
         </div>
         <button onClick={confirmXI} disabled={xi1sel.length!==11||xi2sel.length!==11||saving}
-          style={{ padding:14, borderRadius:10, border:"none", background:xi1sel.length===11&&xi2sel.length===11?"linear-gradient(135deg,#FF6B00,#FF8C40)":"#1E293B", color:xi1sel.length===11&&xi2sel.length===11?"#fff":"#475569", fontSize:14, fontWeight:800, cursor:xi1sel.length===11&&xi2sel.length===11&&!saving?"pointer":"not-allowed", opacity:saving?0.7:1 }}>
+          style={{ padding:14, borderRadius:10, border:"none", background:xi1sel.length===11&&xi2sel.length===11?"linear-gradient(135deg,#FF6B00,#FF8C40)":"#E2E8F0", color:xi1sel.length===11&&xi2sel.length===11?"#fff":"#475569", fontSize:14, fontWeight:800, cursor:xi1sel.length===11&&xi2sel.length===11&&!saving?"pointer":"not-allowed", opacity:saving?0.7:1 }}>
           {saving?"Saving…":xi1sel.length===11&&xi2sel.length===11?"Confirm XI → Select Openers":"Select 11 players from each team first"}
         </button>
       </div>
@@ -746,14 +746,14 @@ export default function LiveScoringView() {
       <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
         <div style={{ display:"flex", alignItems:"center", gap:12, flexWrap:"wrap" }}>
           {live.currentInnings===1
-            ? <button onClick={()=>setLive(l=>l?{...l,phase:"xi"}:l)} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #1E293B", background:"transparent", color:"#64748B", fontSize:12, cursor:"pointer" }}>← Back</button>
-            : <button onClick={()=>setLive(null)} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #1E293B", background:"transparent", color:"#64748B", fontSize:12, cursor:"pointer" }}>← All Matches</button>}
-          <div style={{ fontSize:16, fontWeight:800, color:"#F1F5F9" }}>Innings {live.currentInnings} · Openers</div>
+            ? <button onClick={()=>setLive(l=>l?{...l,phase:"xi"}:l)} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #E2E8F0", background:"transparent", color:"#64748B", fontSize:12, cursor:"pointer" }}>← Back</button>
+            : <button onClick={()=>setLive(null)} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #E2E8F0", background:"transparent", color:"#64748B", fontSize:12, cursor:"pointer" }}>← All Matches</button>}
+          <div style={{ fontSize:16, fontWeight:800, color:"#1E293B" }}>Innings {live.currentInnings} · Openers</div>
         </div>
         {errBanner}
         {live.currentInnings===2&&(
           <div style={{ padding:"14px 18px", background:"#F59E0B10", border:"1px solid #F59E0B30", borderRadius:12 }}>
-            <span style={{ fontSize:13, color:"#F59E0B", fontWeight:800 }}>
+            <span style={{ fontSize:13, color:"#B45309", fontWeight:800 }}>
               🔚 Innings break — {live.inn1.battingTeam} {live.inn1.totalRuns}/{live.inn1.totalWickets} ({fmtO(live.inn1.overs,live.inn1.balls)} ov). Target: {oinn.target}
             </span>
           </div>
@@ -773,7 +773,7 @@ export default function LiveScoringView() {
             <select value={opSel.nonStriker} onChange={e=>setOpSel(s=>({...s, nonStriker:Number(e.target.value)}))} style={SELECT}>
               {oinn.batScores.map((b,i)=><option key={i} value={i}>{b.name}</option>)}
             </select>
-            {!valid&&<div style={{ fontSize:11, color:"#EF4444", marginTop:5 }}>Striker aur non-striker alag hone chahiye.</div>}
+            {!valid&&<div style={{ fontSize:11, color:"#DC2626", marginTop:5 }}>Striker aur non-striker alag hone chahiye.</div>}
           </div>
           <div style={{ marginBottom:22 }}>
             <div style={{ fontSize:11, color:"#64748B", marginBottom:5, fontWeight:600 }}>OPENING BOWLER ({oinn.bowlingTeam})</div>
@@ -782,7 +782,7 @@ export default function LiveScoringView() {
             </select>
           </div>
           <button onClick={startInnings} disabled={!valid}
-            style={{ width:"100%", padding:13, borderRadius:10, border:"none", background:valid?"linear-gradient(135deg,#FF6B00,#FF8C40)":"#1E293B", color:valid?"#fff":"#475569", fontSize:14, fontWeight:800, cursor:valid?"pointer":"not-allowed" }}>
+            style={{ width:"100%", padding:13, borderRadius:10, border:"none", background:valid?"linear-gradient(135deg,#FF6B00,#FF8C40)":"#E2E8F0", color:valid?"#fff":"#475569", fontSize:14, fontWeight:800, cursor:valid?"pointer":"not-allowed" }}>
             🏏 Start Innings {live.currentInnings} →
           </button>
         </div>
@@ -801,7 +801,7 @@ export default function LiveScoringView() {
     return (
       <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,.8)", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center", padding:16 }}>
         <div style={{ ...CARD, width:"min(540px, 100%)", maxHeight:"90vh", overflowY:"auto" }}>
-          <div style={{ fontSize:16, fontWeight:900, color:"#EF4444", marginBottom:4 }}>💥 Wicket!</div>
+          <div style={{ fontSize:16, fontWeight:900, color:"#DC2626", marginBottom:4 }}>💥 Wicket!</div>
           <div style={{ fontSize:12, color:"#64748B", marginBottom:20 }}>
             {dm.nonStrikerOut?inn.batScores[inn.nonStrikerIdx]?.name:inn.batScores[inn.strikerIdx]?.name} — select dismissal details
           </div>
@@ -812,7 +812,7 @@ export default function LiveScoringView() {
             <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
               {TYPES.map(([t,l])=>(
                 <button key={t} onClick={()=>setDm(d=>d?{...d,type:t as any}:d)}
-                  style={{ padding:"7px 14px", borderRadius:8, border:`1px solid ${dm.type===t?"#EF4444":"#1E293B"}`, background:dm.type===t?"#EF444420":"transparent", color:dm.type===t?"#EF4444":"#64748B", fontSize:12, fontWeight:700, cursor:"pointer" }}>
+                  style={{ padding:"7px 14px", borderRadius:8, border:`1px solid ${dm.type===t?"#EF4444":"#E2E8F0"}`, background:dm.type===t?"#EF444420":"transparent", color:dm.type===t?"#DC2626":"#64748B", fontSize:12, fontWeight:700, cursor:"pointer" }}>
                   {l}
                 </button>
               ))}
@@ -821,9 +821,9 @@ export default function LiveScoringView() {
 
           {/* Bowler (auto-shown for most types) */}
           {["b","c","lbw","st","hw","cb"].includes(dm.type)&&(
-            <div style={{ marginBottom:14, padding:"10px 14px", background:"#1E293B20", borderRadius:8 }}>
+            <div style={{ marginBottom:14, padding:"10px 14px", background:"#FFFFFF20", borderRadius:8 }}>
               <span style={{ fontSize:11, color:"#64748B" }}>Bowler: </span>
-              <span style={{ fontSize:13, fontWeight:700, color:"#E2E8F0" }}>{bowler}</span>
+              <span style={{ fontSize:13, fontWeight:700, color:"#1E293B" }}>{bowler}</span>
             </div>
           )}
 
@@ -851,7 +851,7 @@ export default function LiveScoringView() {
                 <div style={{ display:"flex", gap:8 }}>
                   {([false,true] as const).map(ns=>(
                     <button key={String(ns)} onClick={()=>setDm(d=>d?{...d,nonStrikerOut:ns}:d)}
-                      style={{ flex:1, padding:"8px 12px", borderRadius:8, border:`1px solid ${dm.nonStrikerOut===ns?"#F59E0B":"#1E293B"}`, background:dm.nonStrikerOut===ns?"#F59E0B20":"transparent", color:dm.nonStrikerOut===ns?"#F59E0B":"#64748B", fontWeight:700, fontSize:12, cursor:"pointer" }}>
+                      style={{ flex:1, padding:"8px 12px", borderRadius:8, border:`1px solid ${dm.nonStrikerOut===ns?"#F59E0B":"#E2E8F0"}`, background:dm.nonStrikerOut===ns?"#F59E0B20":"transparent", color:dm.nonStrikerOut===ns?"#B45309":"#64748B", fontWeight:700, fontSize:12, cursor:"pointer" }}>
                       {ns?`Non-striker (${inn.batScores[inn.nonStrikerIdx]?.name})`:`Striker (${inn.batScores[inn.strikerIdx]?.name})`}
                     </button>
                   ))}
@@ -860,9 +860,9 @@ export default function LiveScoringView() {
             </>
           )}
           {dm.type==="st"&&(
-            <div style={{ marginBottom:14, padding:"10px 14px", background:"#1E293B20", borderRadius:8 }}>
+            <div style={{ marginBottom:14, padding:"10px 14px", background:"#FFFFFF20", borderRadius:8 }}>
               <span style={{ fontSize:11, color:"#64748B" }}>Stumped by: </span>
-              <span style={{ fontSize:13, fontWeight:700, color:"#E2E8F0" }}>{keeper} (WK)</span>
+              <span style={{ fontSize:13, fontWeight:700, color:"#1E293B" }}>{keeper} (WK)</span>
             </div>
           )}
 
@@ -881,13 +881,13 @@ export default function LiveScoringView() {
 
           {/* Preview */}
           <div style={{ padding:"10px 14px", background:"#EF444408", border:"1px solid #EF444420", borderRadius:8, marginBottom:16 }}>
-            <span style={{ fontSize:12, color:"#EF4444" }}>
+            <span style={{ fontSize:12, color:"#DC2626" }}>
               {(dm.nonStrikerOut?inn.batScores[inn.nonStrikerIdx]?.name:inn.batScores[inn.strikerIdx]?.name)} — {getDisStr(dm.type, dm.fielder||keeper, bowler, dm.nonStrikerOut)}
             </span>
           </div>
 
           <div style={{ display:"flex", gap:10 }}>
-            <button onClick={()=>setDm(null)} style={{ flex:1, padding:11, borderRadius:9, border:"1px solid #1E293B", background:"transparent", color:"#64748B", cursor:"pointer" }}>Cancel</button>
+            <button onClick={()=>setDm(null)} style={{ flex:1, padding:11, borderRadius:9, border:"1px solid #E2E8F0", background:"transparent", color:"#64748B", cursor:"pointer" }}>Cancel</button>
             <button onClick={confirmDismissal}
               disabled={(dm.type==="c"&&!dm.fielder)||(dm.type==="ro"&&!dm.fielder)||(dm.newBatsmanIdx===-1&&dm.type!=="rh"&&remaining.length>0)}
               style={{ flex:2, padding:11, borderRadius:9, border:"none", background:"linear-gradient(135deg,#EF4444,#DC2626)", color:"#fff", fontWeight:800, fontSize:13, cursor:"pointer" }}>
@@ -905,11 +905,11 @@ export default function LiveScoringView() {
     return (
       <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
         <div style={{ display:"flex", alignItems:"center", gap:12 }}>
-          <button onClick={()=>setLive(null)} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #1E293B", background:"transparent", color:"#64748B", fontSize:12, cursor:"pointer" }}>← All Matches</button>
+          <button onClick={()=>setLive(null)} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #E2E8F0", background:"transparent", color:"#64748B", fontSize:12, cursor:"pointer" }}>← All Matches</button>
         </div>
         <div style={{ ...CARD, textAlign:"center", padding:48 }}>
           <div style={{ fontSize:32, marginBottom:12 }}>🏏</div>
-          <div style={{ fontSize:16, fontWeight:800, color:"#F1F5F9", marginBottom:6 }}>Match setup incomplete</div>
+          <div style={{ fontSize:16, fontWeight:800, color:"#1E293B", marginBottom:6 }}>Match setup incomplete</div>
           <div style={{ fontSize:13, color:"#64748B", marginBottom:20 }}>Complete the toss and XI selection first to begin live scoring.</div>
           <button onClick={()=>setLive(l=>l?{...l,phase:"toss"}:null)} style={{ padding:"10px 24px", borderRadius:10, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontWeight:700, cursor:"pointer" }}>
             ← Back to Toss Setup
@@ -951,23 +951,23 @@ export default function LiveScoringView() {
         <div style={{ display:"flex", justifyContent:"space-between", marginBottom:14 }}>
           <div>
             <div style={{ fontSize:14, fontWeight:800, color:teamColor(d.battingTeam) }}>{d.battingTeam}</div>
-            <div style={{ fontSize:22, fontWeight:900, color:"#FF6B00" }}>{d.totalRuns}/{d.totalWickets} <span style={{ fontSize:12, color:"#64748B" }}>({fmtO(d.overs,d.balls)} ov)</span></div>
+            <div style={{ fontSize:22, fontWeight:900, color:"#C2410C" }}>{d.totalRuns}/{d.totalWickets} <span style={{ fontSize:12, color:"#64748B" }}>({fmtO(d.overs,d.balls)} ov)</span></div>
           </div>
-          <div style={{ fontSize:12, color:"#64748B" }}>Extras: {d.extras}{d.target?<div style={{ color:"#F59E0B" }}>Target: {d.target}</div>:null}</div>
+          <div style={{ fontSize:12, color:"#64748B" }}>Extras: {d.extras}{d.target?<div style={{ color:"#B45309" }}>Target: {d.target}</div>:null}</div>
         </div>
         <table style={{ width:"100%", borderCollapse:"collapse", fontSize:12 }}>
-          <thead><tr style={{ borderBottom:"1px solid #1E293B" }}>
+          <thead><tr style={{ borderBottom:"1px solid #E2E8F0" }}>
             {["Batsman","Dismissal","R","B","4s","6s","SR"].map(h=><th key={h} style={{ padding:"6px 8px", textAlign:h==="Batsman"||h==="Dismissal"?"left":"right", color:"#475569", fontWeight:700, fontSize:10 }}>{h}</th>)}
           </tr></thead>
           <tbody>
             {d.batScores.filter(b=>b.balls>0||b.dismissal).map((b,i)=>(
-              <tr key={i} style={{ borderBottom:"1px solid #0F172A" }}>
-                <td style={{ padding:"8px", color:b.dismissal?"#64748B":"#E2E8F0", fontWeight:b.dismissal?400:700 }}>{b.name}{b.batting&&!b.dismissal?<span style={{ color:"#FF6B00" }}>*</span>:null}</td>
+              <tr key={i} style={{ borderBottom:"1px solid #E2E8F0" }}>
+                <td style={{ padding:"8px", color:b.dismissal?"#64748B":"#E2E8F0", fontWeight:b.dismissal?400:700 }}>{b.name}{b.batting&&!b.dismissal?<span style={{ color:"#C2410C" }}>*</span>:null}</td>
                 <td style={{ padding:"8px", color:"#475569", fontSize:10 }}>{b.dismissal||"not out"}</td>
-                <td style={{ padding:"8px", textAlign:"right", color:b.runs>=50?"#F59E0B":"#E2E8F0", fontWeight:800 }}>{b.runs}</td>
+                <td style={{ padding:"8px", textAlign:"right", color:b.runs>=50?"#B45309":"#E2E8F0", fontWeight:800 }}>{b.runs}</td>
                 <td style={{ padding:"8px", textAlign:"right", color:"#64748B" }}>{b.balls}</td>
-                <td style={{ padding:"8px", textAlign:"right", color:"#3B82F6" }}>{b.fours}</td>
-                <td style={{ padding:"8px", textAlign:"right", color:"#10B981" }}>{b.sixes}</td>
+                <td style={{ padding:"8px", textAlign:"right", color:"#1D4ED8" }}>{b.fours}</td>
+                <td style={{ padding:"8px", textAlign:"right", color:"#047857" }}>{b.sixes}</td>
                 <td style={{ padding:"8px", textAlign:"right", color:"#64748B" }}>{b.balls?((b.runs/b.balls)*100).toFixed(1):"—"}</td>
               </tr>
             ))}
@@ -976,7 +976,7 @@ export default function LiveScoringView() {
         {d.fowList.length>0&&<div style={{ marginTop:12 }}>
           <div style={{ fontSize:10, color:"#475569", fontWeight:700, marginBottom:6 }}>FALL OF WICKETS</div>
           <div style={{ display:"flex", flexWrap:"wrap", gap:5 }}>
-            {d.fowList.map((f,i)=><div key={i} style={{ padding:"3px 10px", background:"#EF444410", border:"1px solid #EF444430", borderRadius:20, fontSize:10, color:"#EF4444" }}>{f.wicket}-{f.runs} ({f.batsman.split(" ")[0]}, {f.overStr})</div>)}
+            {d.fowList.map((f,i)=><div key={i} style={{ padding:"3px 10px", background:"#EF444410", border:"1px solid #EF444430", borderRadius:20, fontSize:10, color:"#DC2626" }}>{f.wicket}-{f.runs} ({f.batsman.split(" ")[0]}, {f.overStr})</div>)}
           </div>
         </div>}
       </div>
@@ -985,17 +985,17 @@ export default function LiveScoringView() {
       <div>
         <div style={{ fontSize:14, fontWeight:800, color:teamColor(d.bowlingTeam), marginBottom:14 }}>Bowling — {d.bowlingTeam}</div>
         <table style={{ width:"100%", borderCollapse:"collapse", fontSize:12 }}>
-          <thead><tr style={{ borderBottom:"1px solid #1E293B" }}>
+          <thead><tr style={{ borderBottom:"1px solid #E2E8F0" }}>
             {["Bowler","O","R","W","Econ","Wd","NB"].map(h=><th key={h} style={{ padding:"6px 8px", textAlign:h==="Bowler"?"left":"right", color:"#475569", fontWeight:700, fontSize:10 }}>{h}</th>)}
           </tr></thead>
           <tbody>
             {d.bowlScores.filter(b=>b.overs>0||b.balls>0).map((b,i)=>(
-              <tr key={i} style={{ borderBottom:"1px solid #0F172A" }}>
-                <td style={{ padding:"8px", color:"#E2E8F0", fontWeight:600 }}>{b.name}</td>
-                <td style={{ padding:"8px", textAlign:"right", color:"#94A3B8" }}>{fmtO(b.overs,b.balls)}</td>
-                <td style={{ padding:"8px", textAlign:"right", color:"#E2E8F0" }}>{b.runs}</td>
-                <td style={{ padding:"8px", textAlign:"right", color:b.wickets>0?"#EF4444":"#64748B", fontWeight:b.wickets>0?800:400 }}>{b.wickets}</td>
-                <td style={{ padding:"8px", textAlign:"right", color:"#F59E0B" }}>{b.overs||b.balls?((b.runs/(b.overs+b.balls/6))||0).toFixed(2):"—"}</td>
+              <tr key={i} style={{ borderBottom:"1px solid #E2E8F0" }}>
+                <td style={{ padding:"8px", color:"#1E293B", fontWeight:600 }}>{b.name}</td>
+                <td style={{ padding:"8px", textAlign:"right", color:"#64748B" }}>{fmtO(b.overs,b.balls)}</td>
+                <td style={{ padding:"8px", textAlign:"right", color:"#1E293B" }}>{b.runs}</td>
+                <td style={{ padding:"8px", textAlign:"right", color:b.wickets>0?"#DC2626":"#64748B", fontWeight:b.wickets>0?800:400 }}>{b.wickets}</td>
+                <td style={{ padding:"8px", textAlign:"right", color:"#B45309" }}>{b.overs||b.balls?((b.runs/(b.overs+b.balls/6))||0).toFixed(2):"—"}</td>
                 <td style={{ padding:"8px", textAlign:"right", color:"#64748B" }}>{b.wides}</td>
                 <td style={{ padding:"8px", textAlign:"right", color:"#64748B" }}>{b.noBalls}</td>
               </tr>
@@ -1026,7 +1026,7 @@ export default function LiveScoringView() {
 
       {/* Top bar */}
       <div style={{ display:"flex", gap:6, alignItems:"center", flexWrap:"wrap" }}>
-        <button onClick={()=>{ setLive(null); refreshMatches(); }} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #1E293B", background:"transparent", color:"#64748B", fontSize:11, cursor:"pointer" }}>← All Matches</button>
+        <button onClick={()=>{ setLive(null); refreshMatches(); }} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #E2E8F0", background:"transparent", color:"#64748B", fontSize:11, cursor:"pointer" }}>← All Matches</button>
         {[["live","🔴 Live"],["scorecard","📋 Scorecard"]] .map(([t,l])=><button key={t} onClick={()=>setMainTab(t as any)} style={TAB(mainTab===t)}>{l}</button>)}
         <div style={{ marginLeft:"auto", display:"flex", gap:8, alignItems:"center" }}>
           <span style={{ fontSize:11, color:"#475569" }}>Match {live.def.matchNo} · Innings {live.currentInnings}</span>
@@ -1045,19 +1045,19 @@ export default function LiveScoringView() {
           {isDone&&(
             <div style={{ ...CARD, borderColor:"#10B98150", textAlign:"center", padding:32 }}>
               <div style={{ fontSize:34, marginBottom:10 }}>🏆</div>
-              <div style={{ fontSize:20, fontWeight:900, color:"#10B981", marginBottom:6 }}>{live.resultDesc||"Match completed"}</div>
+              <div style={{ fontSize:20, fontWeight:900, color:"#047857", marginBottom:6 }}>{live.resultDesc||"Match completed"}</div>
               <div style={{ fontSize:12, color:"#64748B", marginBottom:18 }}>
                 {live.inn1.battingTeam} {live.inn1.totalRuns}/{live.inn1.totalWickets} ({fmtO(live.inn1.overs,live.inn1.balls)}) · {live.inn2?`${live.inn2.battingTeam} ${live.inn2.totalRuns}/${live.inn2.totalWickets} (${fmtO(live.inn2.overs,live.inn2.balls)})`:""}
               </div>
               <div style={{ display:"flex", gap:10, justifyContent:"center", flexWrap:"wrap" }}>
-                <button onClick={()=>setMainTab("scorecard")} style={{ padding:"10px 22px", borderRadius:9, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontWeight:700, fontSize:12, cursor:"pointer" }}>📋 Full Scorecard</button>
+                <button onClick={()=>setMainTab("scorecard")} style={{ padding:"10px 22px", borderRadius:9, border:"1px solid #E2E8F0", background:"transparent", color:"#64748B", fontWeight:700, fontSize:12, cursor:"pointer" }}>📋 Full Scorecard</button>
                 <button onClick={()=>{ setLive(null); refreshMatches(); }} style={{ padding:"10px 22px", borderRadius:9, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontWeight:800, fontSize:12, cursor:"pointer" }}>← All Matches</button>
               </div>
             </div>
           )}
 
           {/* Match header */}
-          <div style={{ ...CARD, borderColor:isDone?"#1E293B":"rgba(239,68,68,.3)" }}>
+          <div style={{ ...CARD, borderColor:isDone?"#E2E8F0":"rgba(239,68,68,.3)" }}>
             <div style={{ display:"flex", alignItems:"center", gap:12, flexWrap:"wrap", marginBottom:14 }}>
               <span style={{ fontSize:11, color:"#64748B" }}>📍 {live.def.venue} · {live.def.date}</span>
               <span style={{ marginLeft:"auto", fontSize:11, color:"#475569" }}>
@@ -1069,10 +1069,10 @@ export default function LiveScoringView() {
                 { d:live.inn1,  label:"1st Innings", suffix:"" },
                 { d:live.inn2!, label:"2nd Innings", suffix:live.inn2?.target?` / ${live.inn2.target}`:"" },
               ] as const).map(({d,label,suffix},i)=>d&&(
-                <div key={i} style={{ background:"#060B1880", borderRadius:10, padding:"10px 14px", border:"1px solid #1E293B" }}>
+                <div key={i} style={{ background:"#F5F6F880", borderRadius:10, padding:"10px 14px", border:"1px solid #E2E8F0" }}>
                   <div style={{ fontSize:10, color:"#475569", fontWeight:700, marginBottom:4 }}>{label} · {d.battingTeam}</div>
-                  <div style={{ fontSize:24, fontWeight:900, color:"#FF6B00" }}>{d.totalRuns}/{d.totalWickets}<span style={{ fontSize:11, color:"#64748B" }}>{suffix}</span></div>
-                  <div style={{ fontSize:11, color:"#94A3B8" }}>{fmtO(d.overs,d.balls)} overs</div>
+                  <div style={{ fontSize:24, fontWeight:900, color:"#C2410C" }}>{d.totalRuns}/{d.totalWickets}<span style={{ fontSize:11, color:"#64748B" }}>{suffix}</span></div>
+                  <div style={{ fontSize:11, color:"#64748B" }}>{fmtO(d.overs,d.balls)} overs</div>
                 </div>
               ))}
             </div>
@@ -1084,7 +1084,7 @@ export default function LiveScoringView() {
                 { l:"Need", v:target?`${runsNeeded} off ${ballsLeft}b`:"—", c:"#FF6B00" },
                 { l:"This Over", v:curInn.currentOverDeliveries.reduce((s,d)=>s+(d==="W"?0:d==="4"?4:d==="6"?6:d==="LB"||d==="B"?1:parseInt(d)||0),0).toString(), c:"#F59E0B" },
               ].map(s=>(
-                <div key={s.l} style={{ textAlign:"center", background:"#060B18", borderRadius:8, padding:"8px 4px", border:"1px solid #1E293B" }}>
+                <div key={s.l} style={{ textAlign:"center", background:"#F5F6F8", borderRadius:8, padding:"8px 4px", border:"1px solid #E2E8F0" }}>
                   <div style={{ fontSize:15, fontWeight:900, color:s.c }}>{s.v}</div>
                   <div style={{ fontSize:9, color:"#475569", marginTop:2 }}>{s.l}</div>
                 </div>
@@ -1095,11 +1095,11 @@ export default function LiveScoringView() {
               <span style={{ fontSize:10, color:"#475569" }}>Over {curInn.overs+1}:</span>
               {curInn.currentOverDeliveries.map((b,i)=>(
                 <div key={i} style={{ width:26, height:26, borderRadius:"50%", display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:800,
-                  background:b==="6"?"#10B98130":b==="4"?"#3B82F630":b==="W"?"#EF444430":"#1E293B",
-                  color:b==="6"?"#10B981":b==="4"?"#3B82F6":b==="W"?"#EF4444":"#94A3B8", border:"1px solid rgba(255,255,255,.04)" }}>{b}</div>
+                  background:b==="6"?"#10B98130":b==="4"?"#3B82F630":b==="W"?"#EF444430":"#E2E8F0",
+                  color:b==="6"?"#047857":b==="4"?"#3B82F6":b==="W"?"#EF4444":"#94A3B8", border:"1px solid rgba(255,255,255,.04)" }}>{b}</div>
               ))}
               {Array.from({length:Math.max(0,6-curInn.currentOverDeliveries.length)}).map((_,i)=>(
-                <div key={`e${i}`} style={{ width:26, height:26, borderRadius:"50%", border:"1px dashed #1E293B" }}/>
+                <div key={`e${i}`} style={{ width:26, height:26, borderRadius:"50%", border:"1px dashed #E2E8F0" }}/>
               ))}
             </div>
           </div>
@@ -1109,24 +1109,24 @@ export default function LiveScoringView() {
             <div style={CARD}>
               <div style={{ fontSize:10, color:"#64748B", fontWeight:700, textTransform:"uppercase", letterSpacing:.5, marginBottom:12 }}>At The Crease</div>
               {striker&&(
-                <div style={{ display:"flex", alignItems:"center", padding:"8px 0", borderBottom:"1px solid #0F172A", marginBottom:8 }}>
+                <div style={{ display:"flex", alignItems:"center", padding:"8px 0", borderBottom:"1px solid #E2E8F0", marginBottom:8 }}>
                   <span style={{ width:8, height:8, borderRadius:"50%", background:"#FF6B00", marginRight:8, flexShrink:0 }}/>
-                  <span style={{ flex:1, fontSize:13, color:"#E2E8F0", fontWeight:700 }}>{striker.name}</span>
-                  <span style={{ fontSize:18, fontWeight:900, color:"#FF6B00" }}>{striker.runs}</span>
+                  <span style={{ flex:1, fontSize:13, color:"#1E293B", fontWeight:700 }}>{striker.name}</span>
+                  <span style={{ fontSize:18, fontWeight:900, color:"#C2410C" }}>{striker.runs}</span>
                   <span style={{ fontSize:11, color:"#475569", marginLeft:4 }}>({striker.balls})</span>
-                  <span style={{ fontSize:10, color:"#3B82F6", marginLeft:8 }}>4s:{striker.fours}</span>
-                  <span style={{ fontSize:10, color:"#10B981", marginLeft:6 }}>6s:{striker.sixes}</span>
+                  <span style={{ fontSize:10, color:"#1D4ED8", marginLeft:8 }}>4s:{striker.fours}</span>
+                  <span style={{ fontSize:10, color:"#047857", marginLeft:6 }}>6s:{striker.sixes}</span>
                 </div>
               )}
               {nonStr&&(
                 <div style={{ display:"flex", alignItems:"center", padding:"4px 0" }}>
-                  <span style={{ width:8, height:8, borderRadius:"50%", background:"#1E293B", border:"1px solid #475569", marginRight:8, flexShrink:0 }}/>
-                  <span style={{ flex:1, fontSize:12, color:"#94A3B8" }}>{nonStr.name}</span>
-                  <span style={{ fontSize:15, fontWeight:700, color:"#94A3B8" }}>{nonStr.runs}</span>
+                  <span style={{ width:8, height:8, borderRadius:"50%", background:"#FFFFFF", border:"1px solid #475569", marginRight:8, flexShrink:0 }}/>
+                  <span style={{ flex:1, fontSize:12, color:"#64748B" }}>{nonStr.name}</span>
+                  <span style={{ fontSize:15, fontWeight:700, color:"#64748B" }}>{nonStr.runs}</span>
                   <span style={{ fontSize:10, color:"#475569", marginLeft:4 }}>({nonStr.balls})</span>
                 </div>
               )}
-              {lastPart&&<div style={{ marginTop:10, padding:"7px 10px", background:"#FF6B0008", border:"1px solid #FF6B0018", borderRadius:8, fontSize:11, color:"#FF7A29" }}>
+              {lastPart&&<div style={{ marginTop:10, padding:"7px 10px", background:"#FF6B0008", border:"1px solid #FF6B0018", borderRadius:8, fontSize:11, color:"#C2410C" }}>
                 Partnership: <strong>{lastPart.runs}</strong> runs off {lastPart.balls} balls
               </div>}
               {/* Batsman selectors — only players who are not out are selectable */}
@@ -1135,7 +1135,7 @@ export default function LiveScoringView() {
                   <div key={key}>
                     <div style={{ fontSize:9, color:"#475569", marginBottom:3, fontWeight:700 }}>{lbl.toUpperCase()}</div>
                     <select value={curInn[key]} onChange={e=>setBatIdx(key, Number(e.target.value))}
-                      style={{ width:"100%", padding:"6px 8px", background:"#060B18", border:"1px solid #1E293B", borderRadius:7, color:"#F1F5F9", fontSize:11, outline:"none" }}>
+                      style={{ width:"100%", padding:"6px 8px", background:"#F5F6F8", border:"1px solid #E2E8F0", borderRadius:7, color:"#1E293B", fontSize:11, outline:"none" }}>
                       {curInn.batScores.map((b,i)=>b.dismissal?null:(
                         <option key={i} value={i}>{b.name}</option>
                       ))}
@@ -1149,10 +1149,10 @@ export default function LiveScoringView() {
               <div style={{ fontSize:10, color:"#64748B", fontWeight:700, textTransform:"uppercase", letterSpacing:.5, marginBottom:12 }}>Current Bowler</div>
               {bowler&&(
                 <>
-                  <div style={{ fontSize:14, fontWeight:700, color:"#E2E8F0", marginBottom:10 }}>{bowler.name}</div>
+                  <div style={{ fontSize:14, fontWeight:700, color:"#1E293B", marginBottom:10 }}>{bowler.name}</div>
                   <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:6, marginBottom:12 }}>
                     {[{v:fmtO(bowler.overs,bowler.balls),l:"Overs",c:"#F59E0B"},{v:bowler.runs,l:"Runs",c:"#E2E8F0"},{v:bowler.wickets,l:"Wkts",c:"#EF4444"},{v:bowler.overs||bowler.balls?((bowler.runs/(bowler.overs+bowler.balls/6))||0).toFixed(1):"—",l:"Econ",c:"#64748B"}].map(s=>(
-                      <div key={s.l} style={{ textAlign:"center", background:"#060B18", borderRadius:7, padding:"7px 3px" }}>
+                      <div key={s.l} style={{ textAlign:"center", background:"#F5F6F8", borderRadius:7, padding:"7px 3px" }}>
                         <div style={{ fontSize:14, fontWeight:900, color:s.c }}>{s.v}</div>
                         <div style={{ fontSize:8, color:"#475569", marginTop:2 }}>{s.l}</div>
                       </div>
@@ -1165,7 +1165,7 @@ export default function LiveScoringView() {
                 if(!l) return l;
                 const upd = {...(l.currentInnings===1?l.inn1:l.inn2!), bowlerIdx:Number(e.target.value)};
                 return l.currentInnings===1?{...l,inn1:upd}:{...l,inn2:upd};
-              })} style={{ width:"100%", padding:"7px 10px", background:"#060B18", border:"1px solid #1E293B", borderRadius:8, color:"#F1F5F9", fontSize:12, outline:"none" }}>
+              })} style={{ width:"100%", padding:"7px 10px", background:"#F5F6F8", border:"1px solid #E2E8F0", borderRadius:8, color:"#1E293B", fontSize:12, outline:"none" }}>
                 {curInn.bowlScores.map((b,i)=><option key={i} value={i}>{b.name} ({fmtO(b.overs,b.balls)} ov, {b.wickets}W)</option>)}
               </select>
             </div>
@@ -1176,7 +1176,7 @@ export default function LiveScoringView() {
             {!isDone&&<div style={CARD}>
               <div style={{ fontSize:10, color:"#64748B", fontWeight:700, textTransform:"uppercase", letterSpacing:.5, marginBottom:14 }}>Scoring Pad</div>
               <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:7 }}>
-                {([["0","#1E293B","#94A3B8"],["1","#1E3A5F40","#3B82F6"],["2","#1E3A5F40","#3B82F6"],["3","#1E3A5F40","#3B82F6"],["4","#3B82F620","#3B82F6"],["6","#10B98120","#10B981"],["W","#EF444420","#EF4444"],["•","#1E293B","#64748B"],["WD","#F59E0B20","#F59E0B"],["NB","#F59E0B20","#F59E0B"],["LB","#8B5CF620","#8B5CF6"],["B","#8B5CF620","#8B5CF6"]] as [string,string,string][]).map(([lbl,bg,tc])=>(
+                {([["0","#E2E8F0","#94A3B8"],["1","#1E3A5F40","#3B82F6"],["2","#1E3A5F40","#3B82F6"],["3","#1E3A5F40","#3B82F6"],["4","#3B82F620","#3B82F6"],["6","#10B98120","#10B981"],["W","#EF444420","#EF4444"],["•","#E2E8F0","#64748B"],["WD","#F59E0B20","#F59E0B"],["NB","#F59E0B20","#F59E0B"],["LB","#8B5CF620","#8B5CF6"],["B","#8B5CF620","#8B5CF6"]] as [string,string,string][]).map(([lbl,bg,tc])=>(
                   <button key={lbl} onClick={()=>addBall(lbl==="•"?".":lbl)}
                     style={{ padding:"15px 4px", borderRadius:9, border:`1px solid ${tc}30`, background:bg, color:tc, fontSize:16, fontWeight:900, cursor:"pointer" }}
                     onMouseDown={e=>(e.currentTarget.style.transform="scale(0.9)")}
@@ -1192,13 +1192,13 @@ export default function LiveScoringView() {
                 <input value={customNote} onChange={e=>setCustomNote(e.target.value)}
                   onKeyDown={e=>{ if(e.key==="Enter"&&customNote.trim()){ setCommentary(c=>[`${curInn.overs}.${curInn.balls} — ${customNote.trim()}`,...c].slice(0,30)); setCustomNote(""); }}}
                   placeholder="Type commentary… (Enter)"
-                  style={{ flex:1, padding:"8px 10px", background:"#060B18", border:"1px solid #1E293B", borderRadius:8, color:"#F1F5F9", fontSize:12, outline:"none" }}/>
+                  style={{ flex:1, padding:"8px 10px", background:"#F5F6F8", border:"1px solid #E2E8F0", borderRadius:8, color:"#1E293B", fontSize:12, outline:"none" }}/>
                 <button onClick={()=>{ if(customNote.trim()){ setCommentary(c=>[`${curInn.overs}.${curInn.balls} — ${customNote.trim()}`,...c].slice(0,30)); setCustomNote(""); }}}
                   style={{ padding:"0 14px", borderRadius:8, border:"none", background:"#FF6B00", color:"#fff", cursor:"pointer", fontWeight:700 }}>→</button>
               </div>
               <div style={{ display:"flex", flexDirection:"column", gap:5, maxHeight:260, overflowY:"auto" }}>
                 {commentary.map((c,i)=>(
-                  <div key={i} style={{ padding:"6px 10px", background:i===0?"#FF6B0008":"#080E1C", border:`1px solid ${i===0?"#FF6B0030":"#0F172A"}`, borderRadius:7, fontSize:11, color:i===0?"#E2E8F0":"#64748B" }}>{c}</div>
+                  <div key={i} style={{ padding:"6px 10px", background:i===0?"#FF6B0008":"#FFFFFF", border:`1px solid ${i===0?"#FF6B0030":"#E2E8F0"}`, borderRadius:7, fontSize:11, color:i===0?"#1E293B":"#64748B" }}>{c}</div>
                 ))}
               </div>
             </div>

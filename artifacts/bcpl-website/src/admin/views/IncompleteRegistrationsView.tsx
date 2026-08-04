@@ -4,17 +4,17 @@ import { adminGetAbandoned, type AbandonedRow } from "../../lib/marketingApi";
 
 /* ── shared styling (consistent with other admin views) ── */
 const card: React.CSSProperties = {
-  background: "linear-gradient(135deg,#0D1526 0%,#0A1020 100%)",
-  border: "1px solid #1E293B", borderRadius: 16, padding: 20,
+  background: "linear-gradient(135deg,#FFFFFF 0%,#FFFFFF 100%)",
+  border: "1px solid #E2E8F0", borderRadius: 16, padding: 20,
 };
 const th: React.CSSProperties = {
   textAlign: "left", padding: "10px 12px", fontSize: 10, fontWeight: 800,
   color: "#475569", letterSpacing: 1, textTransform: "uppercase",
-  borderBottom: "1px solid #1E293B", whiteSpace: "nowrap",
+  borderBottom: "1px solid #E2E8F0", whiteSpace: "nowrap",
 };
 const td: React.CSSProperties = {
-  padding: "11px 12px", fontSize: 12.5, color: "#E2E8F0",
-  borderBottom: "1px solid #14203A", verticalAlign: "middle",
+  padding: "11px 12px", fontSize: 12.5, color: "#1E293B",
+  borderBottom: "1px solid #E2E8F0", verticalAlign: "middle",
 };
 
 const ROLE_LABEL: Record<string, string> = {
@@ -96,30 +96,30 @@ function FunnelTable({ rows, includeRegistered, loading, emptyText }: {
       <div style={{ overflowX: "auto" }}>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
-            <tr style={{ background: "#080E1C" }}>{cols.map(c => <th key={c} style={th}>{c}</th>)}</tr>
+            <tr style={{ background: "#FFFFFF" }}>{cols.map(c => <th key={c} style={th}>{c}</th>)}</tr>
           </thead>
           <tbody>
             {rows.map(r => (
               <tr key={r.key} style={{ background: "transparent" }}>
-                <td style={{ ...td, fontWeight: 700, color: "#F1F5F9" }}>{r.name}</td>
-                <td style={{ ...td, fontFamily: "monospace", color: "#94A3B8" }}>{r.phone || "—"}</td>
-                <td style={{ ...td, color: "#94A3B8" }}>{r.email || "—"}</td>
+                <td style={{ ...td, fontWeight: 700, color: "#1E293B" }}>{r.name}</td>
+                <td style={{ ...td, fontFamily: "monospace", color: "#64748B" }}>{r.phone || "—"}</td>
+                <td style={{ ...td, color: "#64748B" }}>{r.email || "—"}</td>
                 <td style={td}>{r.city}</td>
                 <td style={td}>
-                  <span style={{ padding: "3px 9px", borderRadius: 6, fontSize: 10.5, fontWeight: 700, background: "#1E293B", color: "#94A3B8", whiteSpace: "nowrap" }}>{r.stage}</span>
+                  <span style={{ padding: "3px 9px", borderRadius: 6, fontSize: 10.5, fontWeight: 700, background: "#FFFFFF", color: "#64748B", whiteSpace: "nowrap" }}>{r.stage}</span>
                 </td>
                 <td style={{ ...td, color: "#64748B", whiteSpace: "nowrap" }}>{fmtDT(r.lastActivity)}</td>
                 {includeRegistered && (
                   <td style={td}>
                     {r.registered
-                      ? <span style={{ padding: "3px 9px", borderRadius: 6, fontSize: 10.5, fontWeight: 800, background: "#10B98122", color: "#10B981", border: "1px solid #10B98144" }}>Registered</span>
-                      : <span style={{ color: "#334155", fontSize: 11 }}>—</span>}
+                      ? <span style={{ padding: "3px 9px", borderRadius: 6, fontSize: 10.5, fontWeight: 800, background: "#10B98122", color: "#047857", border: "1px solid #10B98144" }}>Registered</span>
+                      : <span style={{ color: "#64748B", fontSize: 11 }}>—</span>}
                   </td>
                 )}
               </tr>
             ))}
             {rows.length === 0 && (
-              <tr><td colSpan={cols.length} style={{ padding: 44, textAlign: "center", color: "#334155", fontSize: 13 }}>
+              <tr><td colSpan={cols.length} style={{ padding: 44, textAlign: "center", color: "#64748B", fontSize: 13 }}>
                 {loading ? "Loading…" : emptyText}
               </td></tr>
             )}
@@ -178,11 +178,11 @@ export default function IncompleteRegistrationsView() {
   const TabBtn = ({ id, label, count }: { id: typeof tab; label: string; count: number }) => (
     <button onClick={() => setTab(id)} style={{
       background: tab === id ? "#FF6B00" : "transparent", color: tab === id ? "#fff" : "#94A3B8",
-      border: tab === id ? "none" : "1px solid #1E293B", borderRadius: 9, padding: "9px 16px",
+      border: tab === id ? "none" : "1px solid #E2E8F0", borderRadius: 9, padding: "9px 16px",
       fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 8,
     }}>
       {label}
-      <span style={{ fontSize: 11, fontWeight: 800, background: tab === id ? "#ffffff33" : "#1E293B", color: tab === id ? "#fff" : "#64748B", padding: "1px 8px", borderRadius: 999 }}>{count}</span>
+      <span style={{ fontSize: 11, fontWeight: 800, background: tab === id ? "#ffffff33" : "#E2E8F0", color: tab === id ? "#fff" : "#64748B", padding: "1px 8px", borderRadius: 999 }}>{count}</span>
     </button>
   );
 
@@ -192,15 +192,15 @@ export default function IncompleteRegistrationsView() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       <div>
-        <div style={{ fontSize: 20, fontWeight: 800, color: "#F1F5F9" }}>Incomplete Registrations</div>
+        <div style={{ fontSize: 20, fontWeight: 800, color: "#1E293B" }}>Incomplete Registrations</div>
         <div style={{ fontSize: 12, color: "#64748B", marginTop: 2 }}>
           Registration funnel — visitors who started but did not complete Phase 1. A draft is not a registered player until Phase 1 payment succeeds.
         </div>
       </div>
 
       {err && (
-        <div style={{ padding: "12px 16px", background: "#EF444415", border: "1px solid #EF444444", borderRadius: 12, color: "#EF4444", fontSize: 13 }}>
-          {err} — <button onClick={load} style={{ background: "none", border: "none", color: "#EF4444", cursor: "pointer", fontWeight: 700, fontSize: 13 }}>Retry</button>
+        <div style={{ padding: "12px 16px", background: "#EF444415", border: "1px solid #EF444444", borderRadius: 12, color: "#DC2626", fontSize: 13 }}>
+          {err} — <button onClick={load} style={{ background: "none", border: "none", color: "#DC2626", cursor: "pointer", fontWeight: 700, fontSize: 13 }}>Retry</button>
         </div>
       )}
 
@@ -214,15 +214,15 @@ export default function IncompleteRegistrationsView() {
             activeRows, includeRegistered,
           )}
           disabled={activeRows.length === 0}
-          style={{ padding: "9px 14px", borderRadius: 9, border: "1px solid #10B98144", background: "#10B98112", color: "#10B981", fontSize: 12, fontWeight: 700, cursor: activeRows.length === 0 ? "not-allowed" : "pointer", opacity: activeRows.length === 0 ? 0.5 : 1 }}>
+          style={{ padding: "9px 14px", borderRadius: 9, border: "1px solid #10B98144", background: "#10B98112", color: "#047857", fontSize: 12, fontWeight: 700, cursor: activeRows.length === 0 ? "not-allowed" : "pointer", opacity: activeRows.length === 0 ? 0.5 : 1 }}>
           Download CSV
         </button>
       </div>
 
-      <div style={{ fontSize: 12, color: "#94A3B8" }}>
+      <div style={{ fontSize: 12, color: "#64748B" }}>
         {tab === "otp_not_taken"
-          ? <>Showing <b style={{ color: "#F1F5F9" }}>{notTaken.length}</b> visitor(s) who entered contact details but have not verified their mobile OTP.</>
-          : <>Showing <b style={{ color: "#F1F5F9" }}>{done.length}</b> visitor(s) who verified OTP but have not completed Phase 1 payment.</>}
+          ? <>Showing <b style={{ color: "#1E293B" }}>{notTaken.length}</b> visitor(s) who entered contact details but have not verified their mobile OTP.</>
+          : <>Showing <b style={{ color: "#1E293B" }}>{done.length}</b> visitor(s) who verified OTP but have not completed Phase 1 payment.</>}
       </div>
 
       <FunnelTable

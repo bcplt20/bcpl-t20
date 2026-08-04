@@ -26,7 +26,7 @@ function TeamCard({ t }: { t: CardTeam }) {
   return (
     <Link href={`/team/${t.slug}`} style={{ textDecoration: "none", color: "inherit", display: "block" }}>
       <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
-        style={{ background: "#121F2F", border: `1.5px solid ${hov ? t.color : "rgba(255,255,255,0.07)"}`, borderRadius: 12, borderTop: `3px solid ${t.color}`, padding: "20px 18px", transition: "all 0.25s", boxShadow: hov ? `0 12px 40px ${t.color}22,0 0 0 1px ${t.color}33` : "none", cursor: "pointer", position: "relative", overflow: "hidden" }}>
+        style={{ background: "#FFFFFF", border: `1.5px solid ${hov ? t.color : "rgba(12,29,51,0.10)"}`, borderRadius: 12, borderTop: `3px solid ${t.color}`, padding: "20px 18px", transition: "all 0.25s", boxShadow: hov ? `0 12px 40px ${t.color}22,0 0 0 1px ${t.color}33` : "0 10px 30px rgba(12,29,51,0.08)", cursor: "pointer", position: "relative", overflow: "hidden" }}>
         {/* Watermark logo */}
         {t.logo && <img loading="lazy" decoding="async" src={t.logo} alt={t.name} style={{ position: "absolute", right: "-6%", bottom: "-6%", width: "72%", height: "72%", objectFit: "contain", opacity: 0.055, pointerEvents: "none", transition: "opacity 0.3s", filter: "grayscale(20%)" }} />}
 
@@ -38,7 +38,7 @@ function TeamCard({ t }: { t: CardTeam }) {
               : <span style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 16, color: t.color }}>{t.abbr}</span>}
           </div>
           <div>
-            <div style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 16, color: "#fff", lineHeight: 1.2, marginBottom: 4 }}>{t.name}</div>
+            <div style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 16, color:"#0C1D33", lineHeight: 1.2, marginBottom: 4 }}>{t.name}</div>
             <div style={{ fontFamily: "var(--font-head)", fontWeight: 700, fontSize: 11, color: t.color, letterSpacing: ".08em", textTransform: "uppercase" }}>{t.city}</div>
           </div>
         </div>
@@ -85,7 +85,7 @@ export function Teams() {
   const groupB = teams ? teams.slice(5) : [];
 
   return (
-    <div style={{ background: "var(--bg)", color: "#fff", minHeight: "100vh", overflowX: "hidden", fontFamily: "Inter,sans-serif" }}>
+    <div style={{ background:"#F6F3EC", color:"#0C1D33", minHeight: "100vh", overflowX: "hidden", fontFamily: "Inter,sans-serif" }}>
       <style>{`
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         .wrap { max-width: 1280px; margin: 0 auto; padding: 0 16px; }
@@ -94,7 +94,7 @@ export function Teams() {
         .teams-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
         @media(min-width:640px) { .teams-grid { grid-template-columns: repeat(2,1fr); } }
         @media(min-width:1100px) { .teams-grid { grid-template-columns: repeat(3,1fr); } }
-        .shimmer-gold { background: linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimGold 3s linear infinite; }
+        .shimmer-gold { background: linear-gradient(90deg,#B8892B,#E8B23D,#B8892B); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimGold 3s linear infinite; }
         @keyframes shimGold { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
         /* Floating register button */
         .float-reg-btn { position: fixed; bottom: 28px; right: 28px; z-index: 900; background: linear-gradient(135deg,#FF7A29,#D95E10); border: none; border-radius: 12px; color: #fff; font-family: var(--font-head); font-weight: 900; font-size: 13px; letter-spacing: .06em; cursor: pointer; padding: 14px 22px; text-transform: uppercase; text-decoration: none; display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 32px rgba(255,122,41,0.45); clip-path: polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition: opacity .2s, transform .15s; }
@@ -115,10 +115,10 @@ export function Teams() {
             <span style={{ width: 24, height: 2, background: "#FF7A29", display: "inline-block" }} />{t("The Franchises", "फ्रैंचाइज़ी")}<span style={{ width: 24, height: 2, background: "#FF7A29", display: "inline-block" }} />
           </div>
           <h1 style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: "clamp(38px,7vw,80px)", lineHeight: 1.04, marginBottom: 14 }}>
-            <span style={{ display: "block", color: "#fff" }}>{t("TEN CITIES.", "10 शहर।")}</span>
+            <span style={{ display: "block", color:"#0C1D33" }}>{t("TEN CITIES.", "10 शहर।")}</span>
             <span className="shimmer-gold" style={{ display: "block" }}>{t("ONE DREAM.", "एक सपना।")}</span>
           </h1>
-          <p style={{ fontFamily: "Inter,sans-serif", color: "var(--ink-3)", fontSize: 16, lineHeight: 1.7, maxWidth: 480, margin: "0 auto 36px" }}>
+          <p style={{ fontFamily: "Inter,sans-serif", color: "rgba(12,29,51,.60)", fontSize: 16, lineHeight: 1.7, maxWidth: 480, margin: "0 auto 36px" }}>
             {t("Get picked and represent your city in BCPL Season 5.", "Pick होइए और अपने शहर के लिए BCPL Season 5 में खेलिए।")}
           </p>
 
@@ -143,8 +143,8 @@ export function Teams() {
           <div style={{ background: "rgba(255,122,41,0.06)", border: "1px solid rgba(255,122,41,0.15)", borderRadius: 12, padding: "14px 20px", display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
             <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#FF7A29", flexShrink: 0 }} />
             <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 13, color: "#FF7A29" }}>SEASON 5</span>
-            <span style={{ color: "var(--ink-3)", fontSize: 12 }}>·</span>
-            <span style={{ fontFamily: "Inter,sans-serif", fontSize: 13, color: "rgba(255,255,255,0.6)" }}>
+            <span style={{ color: "rgba(12,29,51,.60)", fontSize: 12 }}>·</span>
+            <span style={{ fontFamily: "Inter,sans-serif", fontSize: 13, color:"rgba(12,29,51,.78)" }}>
               {t(`${SEASON.teams} franchise teams · Squads announced after auction in Aug 2026 · Tournament begins Sep 2026`, `${SEASON.teams} franchise teams · Auction (Aug 2026) के बाद squads announce होंगे · Tournament Sep 2026 में शुरू होगा`)}
             </span>
           </div>
@@ -157,7 +157,7 @@ export function Teams() {
           <div className="wrap">
             <div role="status" aria-label={t("Loading…", "लोड हो रहा है…")} className="teams-grid">
               {Array.from({ length: 10 }).map((_, i) => (
-                <div key={i} style={{ background: "var(--panel)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, padding: 20, display: "flex", alignItems: "center", gap: 16 }}>
+                <div key={i} style={{ background: "#FFFFFF", border: "1px solid rgba(12,29,51,0.12)", borderRadius: 14, padding: 20, display: "flex", alignItems: "center", gap: 16 }}>
                   <Skel w={64} h={64} r={16} style={{ flexShrink: 0 }} />
                   <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
                     <Skel w="75%" h={16} />
@@ -214,14 +214,14 @@ export function Teams() {
       {/* CTA */}
       <section style={{ padding: "0 0 80px" }}>
         <div className="wrap">
-          <div style={{ background: "#121F2F", border: "1px solid rgba(255,122,41,0.2)", borderRadius: 12, borderTop: "3px solid #FF7A29", padding: "clamp(32px,5vw,52px)", textAlign: "center" }}>
-            <h2 style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: "clamp(20px,3.5vw,36px)", color: "#fff", marginBottom: 10, textTransform: "uppercase" }}>
+          <div style={{ background: "#FFFFFF", border: "1px solid rgba(255,122,41,0.2)", borderRadius: 12, borderTop: "3px solid #FF7A29", padding: "clamp(32px,5vw,52px)", textAlign: "center" }}>
+            <h2 style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: "clamp(20px,3.5vw,36px)", color:"#0C1D33", marginBottom: 10, textTransform: "uppercase" }}>
               {t("Want to play for one of these franchises?", "इनमें से किसी franchise के लिए खेलना चाहते हैं?")}
             </h2>
-            <p style={{ fontFamily: "Inter,sans-serif", color: "var(--ink-3)", fontSize: 15, lineHeight: 1.7, maxWidth: 460, margin: "0 auto 28px" }}>
+            <p style={{ fontFamily: "Inter,sans-serif", color: "rgba(12,29,51,.60)", fontSize: 15, lineHeight: 1.7, maxWidth: 460, margin: "0 auto 28px" }}>
               {t(`Register today and get your shot at Season 5. ${SEASON.trialCities} cities, all roles open.`, `आज ही register करें और Season 5 के लिए अपना मौका पाएं। ${SEASON.trialCities} शहर, सभी roles खुले हैं।`)}
             </p>
-            <Link href="/register" style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "linear-gradient(135deg,#FF7A29,#D95E10)", border: "none", borderRadius: 12, color: "#fff", fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 14, letterSpacing: ".06em", padding: "14px 36px", textDecoration: "none", textTransform: "uppercase" }}>
+            <Link href="/register" style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "linear-gradient(135deg,#FF7A29,#D95E10)", border: "none", borderRadius: 12, color:"#fff", fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 14, letterSpacing: ".06em", padding: "14px 36px", textDecoration: "none", textTransform: "uppercase" }}>
               {t("REGISTER FOR PHASE 1 →", "PHASE 1 के लिए रजिस्टर करें →")}
             </Link>
           </div>

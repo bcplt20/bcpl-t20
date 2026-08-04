@@ -55,10 +55,10 @@ const STEP_COLORS: Record<Step["state"], { bg: string; border: string; text: str
   done:      { bg: "rgba(16,185,129,0.10)", border: "#10B98155", text: "#10B981", icon: "✓" },
   current:   { bg: "rgba(245,158,11,0.12)", border: "#F59E0B66", text: "#F59E0B", icon: "●" },
   attention: { bg: "rgba(239,68,68,0.12)",  border: "#EF444466", text: "#EF4444", icon: "!" },
-  locked:    { bg: "rgba(51,65,85,0.25)",   border: "#33415555", text: "#64748B", icon: "○" },
+  locked:    { bg: "rgba(51,65,85,0.25)",   border: "#E2E8F055", text: "#64748B", icon: "○" },
 };
 
-const card: React.CSSProperties = { background: "linear-gradient(135deg,#0D1526,#0A1020)", border: "1px solid #1E293B", borderRadius: 16, padding: 20 };
+const card: React.CSSProperties = { background: "linear-gradient(135deg,#FFFFFF,#FFFFFF)", border: "1px solid #E2E8F0", borderRadius: 16, padding: 20 };
 const label: React.CSSProperties = { fontSize: 11, letterSpacing: ".08em", color: "#64748B", textTransform: "uppercase", fontWeight: 700 };
 const mono: React.CSSProperties = { fontFamily: "ui-monospace,monospace" };
 
@@ -79,9 +79,9 @@ function fmtBytes(n: number | null): string {
 
 function Field({ k, v, monospace }: { k: string; v: React.ReactNode; monospace?: boolean }) {
   return (
-    <div style={{ display: "flex", justifyContent: "space-between", gap: 12, padding: "7px 0", borderBottom: "1px solid #131C2E" }}>
+    <div style={{ display: "flex", justifyContent: "space-between", gap: 12, padding: "7px 0", borderBottom: "1px solid #E2E8F0" }}>
       <span style={{ fontSize: 12.5, color: "#64748B", flexShrink: 0 }}>{k}</span>
-      <span style={{ fontSize: 13, color: "#E2E8F0", textAlign: "right", ...(monospace ? mono : {}), wordBreak: "break-all" }}>{v ?? "—"}</span>
+      <span style={{ fontSize: 13, color: "#1E293B", textAlign: "right", ...(monospace ? mono : {}), wordBreak: "break-all" }}>{v ?? "—"}</span>
     </div>
   );
 }
@@ -135,7 +135,7 @@ function MasterProfile({ regKey, onBack }: { regKey: string; onBack: () => void 
   if (loading && !data) return <div style={{ color: "#64748B", padding: 40, textAlign: "center" }}>Loading player journey…</div>;
   if (err) return (
     <div style={{ ...card, borderColor: "#EF444455" }}>
-      <div style={{ color: "#EF4444", fontWeight: 700, marginBottom: 8 }}>{err}</div>
+      <div style={{ color: "#DC2626", fontWeight: 700, marginBottom: 8 }}>{err}</div>
       <button onClick={onBack} style={btnGhost}>← Back to players</button>
     </div>
   );
@@ -144,7 +144,7 @@ function MasterProfile({ regKey, onBack }: { regKey: string; onBack: () => void 
   const p = data.player;
   const ev = data.evaluation;
   const initials = (p.name || "?").split(/\s+/).map(w => w[0]).slice(0, 2).join("").toUpperCase();
-  const masterColor = data.journey.steps.some(s => s.state === "attention") ? "#EF4444"
+  const masterColor = data.journey.steps.some(s => s.state === "attention") ? "#DC2626"
     : data.journey.masterStatus.includes("NOT SHORTLISTED") ? "#EF4444"
     : data.journey.masterStatus === "ALL STEPS COMPLETE" ? "#10B981" : "#F59E0B";
 
@@ -157,11 +157,11 @@ function MasterProfile({ regKey, onBack }: { regKey: string; onBack: () => void 
           {initials}
         </div>
         <div style={{ flex: 1, minWidth: 200 }}>
-          <div style={{ fontSize: 19, fontWeight: 900, color: "#F1F5F9", letterSpacing: ".01em" }}>{p.name || "Unknown"}</div>
+          <div style={{ fontSize: 19, fontWeight: 900, color: "#1E293B", letterSpacing: ".01em" }}>{p.name || "Unknown"}</div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 6, alignItems: "center" }}>
-            <span style={{ ...mono, fontSize: 12.5, color: "#FF7A29", fontWeight: 700 }}>{p.regNumber || "No ID yet"}</span>
-            <StatusChip text={p.roleLabel} color="#6366F1" />
-            {p.trialCity ? <StatusChip text={p.trialCity} color="#3B82F6" /> : null}
+            <span style={{ ...mono, fontSize: 12.5, color: "#C2410C", fontWeight: 700 }}>{p.regNumber || "No ID yet"}</span>
+            <StatusChip text={p.roleLabel} color="#4F46E5" />
+            {p.trialCity ? <StatusChip text={p.trialCity} color="#1D4ED8" /> : null}
           </div>
         </div>
         <div style={{ textAlign: "right" }}>
@@ -193,7 +193,7 @@ function MasterProfile({ regKey, onBack }: { regKey: string; onBack: () => void 
           <div style={{ ...label, marginBottom: 8 }}>Phase 1 payment</div>
           {data.phase1Payment ? (<>
             <Field k="Amount" v={"₹" + data.phase1Payment.amount} />
-            <Field k="Status" v={<StatusChip text={data.phase1Payment.status.toUpperCase()} color={["success","paid"].includes(data.phase1Payment.status) ? "#10B981" : data.phase1Payment.status === "failed" ? "#EF4444" : "#F59E0B"} />} />
+            <Field k="Status" v={<StatusChip text={data.phase1Payment.status.toUpperCase()} color={["success","paid"].includes(data.phase1Payment.status) ? "#047857" : data.phase1Payment.status === "failed" ? "#EF4444" : "#F59E0B"} />} />
             <Field k="Order ID" v={data.phase1Payment.orderId} monospace />
             <Field k="Payment ID" v={data.phase1Payment.paymentId} monospace />
             <Field k="Paid at" v={fmtDate(data.phase1Payment.paidAt, true)} />
@@ -204,8 +204,8 @@ function MasterProfile({ regKey, onBack }: { regKey: string; onBack: () => void 
         <div style={card}>
           <div style={{ ...label, marginBottom: 8 }}>Trial video</div>
           {data.videos.length ? data.videos.map((v, i) => (
-            <div key={v.id} style={{ marginBottom: i < data.videos.length - 1 ? 10 : 0, paddingBottom: i < data.videos.length - 1 ? 10 : 0, borderBottom: i < data.videos.length - 1 ? "1px dashed #1E293B" : "none" }}>
-              <Field k={"Attempt " + (data.videos.length - i)} v={<StatusChip text={v.status.toUpperCase()} color={v.status === "submitted" ? "#10B981" : "#64748B"} />} />
+            <div key={v.id} style={{ marginBottom: i < data.videos.length - 1 ? 10 : 0, paddingBottom: i < data.videos.length - 1 ? 10 : 0, borderBottom: i < data.videos.length - 1 ? "1px dashed #E2E8F0" : "none" }}>
+              <Field k={"Attempt " + (data.videos.length - i)} v={<StatusChip text={v.status.toUpperCase()} color={v.status === "submitted" ? "#047857" : "#64748B"} />} />
               <Field k="Duration" v={v.durationSeconds != null ? v.durationSeconds + " sec" : "—"} />
               <Field k="Format / size" v={(v.mimeType || "—") + " · " + fmtBytes(v.sizeBytes)} />
               <Field k="Uploaded" v={fmtDate(v.uploadedAt, true)} />
@@ -218,7 +218,7 @@ function MasterProfile({ regKey, onBack }: { regKey: string; onBack: () => void 
           {ev ? (<>
             {ev.finalScore != null && (
               <div style={{ textAlign: "center", margin: "6px 0 12px" }}>
-                <span style={{ fontSize: 34, fontWeight: 900, color: "#F1F5F9" }}>{ev.finalScore}</span>
+                <span style={{ fontSize: 34, fontWeight: 900, color: "#1E293B" }}>{ev.finalScore}</span>
                 <span style={{ fontSize: 15, color: "#64748B", fontWeight: 700 }}> / 100</span>
               </div>
             )}
@@ -239,7 +239,7 @@ function MasterProfile({ regKey, onBack }: { regKey: string; onBack: () => void 
           {ev && (ev.resultReleaseAt || ev.resultReleasedAt) ? (<>
             <Field k="Release scheduled" v={fmtDate(ev.resultReleaseAt, true)} />
             <Field k="Released" v={ev.resultReleasedAt ? fmtDate(ev.resultReleasedAt, true) : "Not yet"} />
-            <Field k="Result" v={ev.result ? <StatusChip text={ev.result.toUpperCase()} color={ev.result === "selected" ? "#10B981" : "#EF4444"} /> : "—"} />
+            <Field k="Result" v={ev.result ? <StatusChip text={ev.result.toUpperCase()} color={ev.result === "selected" ? "#047857" : "#EF4444"} /> : "—"} />
           </>) : <div style={{ color: "#64748B", fontSize: 13, marginBottom: 6 }}>No result scheduled yet.</div>}
           {data.ranking ? (<>
             <Field k="City rank" v={"#" + data.ranking.cityRank + " / " + data.ranking.cityTotal} />
@@ -252,7 +252,7 @@ function MasterProfile({ regKey, onBack }: { regKey: string; onBack: () => void 
           <div style={{ ...label, marginBottom: 8 }}>Phase 2 payment</div>
           {data.phase2Payment ? (<>
             <Field k="Amount" v={"₹" + data.phase2Payment.amount} />
-            <Field k="Status" v={<StatusChip text={data.phase2Payment.status.toUpperCase()} color={["success","paid"].includes(data.phase2Payment.status) ? "#10B981" : data.phase2Payment.status === "failed" ? "#EF4444" : "#F59E0B"} />} />
+            <Field k="Status" v={<StatusChip text={data.phase2Payment.status.toUpperCase()} color={["success","paid"].includes(data.phase2Payment.status) ? "#047857" : data.phase2Payment.status === "failed" ? "#EF4444" : "#F59E0B"} />} />
             <Field k="Order ID" v={data.phase2Payment.orderId} monospace />
             <Field k="Paid at" v={fmtDate(data.phase2Payment.paidAt, true)} />
           </>) : <div style={{ color: "#64748B", fontSize: 13 }}>No Phase 2 payment yet.</div>}
@@ -261,7 +261,7 @@ function MasterProfile({ regKey, onBack }: { regKey: string; onBack: () => void 
         <div style={card}>
           <div style={{ ...label, marginBottom: 8 }}>Identity / KYC</div>
           {data.kyc ? (<>
-            <Field k="Status" v={<StatusChip text={data.kyc.status.toUpperCase()} color={data.kyc.status === "verified" ? "#10B981" : data.kyc.status === "failed" ? "#EF4444" : "#F59E0B"} />} />
+            <Field k="Status" v={<StatusChip text={data.kyc.status.toUpperCase()} color={data.kyc.status === "verified" ? "#047857" : data.kyc.status === "failed" ? "#EF4444" : "#F59E0B"} />} />
             <Field k="Aadhaar" v={data.kyc.aadhaarVerified ? "Verified ✓" : "Not verified"} />
             <Field k="PAN" v={data.kyc.panVerified ? "Verified ✓" : "Manual review required"} />
             <Field k="Profession" v={data.kyc.profession} />
@@ -288,12 +288,12 @@ function MasterProfile({ regKey, onBack }: { regKey: string; onBack: () => void 
         {data.notifications.length ? (
           <div style={{ maxHeight: 320, overflowY: "auto", display: "grid", gap: 6 }}>
             {data.notifications.map((n, i) => (
-              <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "7px 10px", background: "rgba(15,23,42,0.5)", border: "1px solid #131C2E", borderRadius: 10, flexWrap: "wrap" }}>
-                <StatusChip text={n.type.toUpperCase()} color={n.type === "email" ? "#3B82F6" : n.type === "sms" ? "#A855F7" : "#10B981"} />
-                <span style={{ ...mono, fontSize: 12.5, color: "#CBD5E1", flex: 1 }}>{n.template}</span>
-                <StatusChip text={n.status.toUpperCase()} color={n.status === "sent" ? "#10B981" : n.status === "failed" ? "#EF4444" : "#64748B"} />
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "7px 10px", background: "rgba(15,23,42,0.5)", border: "1px solid #E2E8F0", borderRadius: 10, flexWrap: "wrap" }}>
+                <StatusChip text={n.type.toUpperCase()} color={n.type === "email" ? "#1D4ED8" : n.type === "sms" ? "#A855F7" : "#10B981"} />
+                <span style={{ ...mono, fontSize: 12.5, color: "#1E293B", flex: 1 }}>{n.template}</span>
+                <StatusChip text={n.status.toUpperCase()} color={n.status === "sent" ? "#047857" : n.status === "failed" ? "#EF4444" : "#64748B"} />
                 <span style={{ fontSize: 11.5, color: "#475569" }}>{fmtDate(n.at, true)}</span>
-                {n.error ? <span style={{ fontSize: 11.5, color: "#EF4444", width: "100%" }}>{n.error}</span> : null}
+                {n.error ? <span style={{ fontSize: 11.5, color: "#DC2626", width: "100%" }}>{n.error}</span> : null}
               </div>
             ))}
           </div>
@@ -303,7 +303,7 @@ function MasterProfile({ regKey, onBack }: { regKey: string; onBack: () => void 
   );
 }
 
-const btnGhost: React.CSSProperties = { background: "rgba(30,41,59,0.5)", border: "1px solid #1E293B", color: "#94A3B8", borderRadius: 10, padding: "8px 14px", cursor: "pointer", fontSize: 14, fontWeight: 700 };
+const btnGhost: React.CSSProperties = { background: "rgba(30,41,59,0.5)", border: "1px solid #E2E8F0", color: "#64748B", borderRadius: 10, padding: "8px 14px", cursor: "pointer", fontSize: 14, fontWeight: 700 };
 
 /* ── Main view: list + search → master profile ── */
 export default function PlayerProfilesView() {
@@ -356,11 +356,11 @@ export default function PlayerProfilesView() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search name, phone, BCPL ID or city…"
-            style={{ flex: 1, minWidth: 220, background: "rgba(15,23,42,0.6)", border: "1px solid #1E293B", borderRadius: 10, padding: "9px 13px", color: "#E2E8F0", fontSize: 13.5, outline: "none" }}
+            style={{ flex: 1, minWidth: 220, background: "rgba(15,23,42,0.6)", border: "1px solid #E2E8F0", borderRadius: 10, padding: "9px 13px", color: "#1E293B", fontSize: 13.5, outline: "none" }}
           />
         </div>
 
-        {loadErr && <div style={{ color: "#EF4444", fontSize: 13, marginBottom: 10 }}>{loadErr}</div>}
+        {loadErr && <div style={{ color: "#DC2626", fontSize: 13, marginBottom: 10 }}>{loadErr}</div>}
         {!regs && !loadErr && <div style={{ color: "#64748B", fontSize: 13 }}>Loading players…</div>}
         {regs && !filtered.length && <div style={{ color: "#64748B", fontSize: 13 }}>No players match.</div>}
 
@@ -375,13 +375,13 @@ export default function PlayerProfilesView() {
                 {(r.user?.name || "?").split(/\s+/).map(w => w[0]).slice(0, 2).join("").toUpperCase()}
               </span>
               <span style={{ flex: 1, minWidth: 140 }}>
-                <span style={{ display: "block", fontSize: 14, fontWeight: 800, color: "#E2E8F0" }}>{r.user?.name || "Unknown"}</span>
+                <span style={{ display: "block", fontSize: 14, fontWeight: 800, color: "#1E293B" }}>{r.user?.name || "Unknown"}</span>
                 <span style={{ display: "block", fontSize: 12, color: "#64748B", marginTop: 2 }}>
                   {(ROLE_LABEL[r.role] || r.role) + (r.trialCity ? " · " + r.trialCity : "")}
                 </span>
               </span>
-              <span style={{ ...mono, fontSize: 12, color: "#FF7A29", fontWeight: 700 }}>{r.regNumber || "—"}</span>
-              <span style={{ fontSize: 12, color: "#94A3B8" }}>→</span>
+              <span style={{ ...mono, fontSize: 12, color: "#C2410C", fontWeight: 700 }}>{r.regNumber || "—"}</span>
+              <span style={{ fontSize: 12, color: "#64748B" }}>→</span>
             </button>
           ))}
         </div>

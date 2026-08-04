@@ -14,16 +14,16 @@ const PLATFORM_ICON: Record<string, string> = {
 const POST_TYPES = ["Post", "Reel", "Story", "Video", "Poster", "Announcement"];
 
 const STATUS_META: Record<PlannedPost["status"], { label: string; color: string }> = {
-  draft: { label: "Draft", color: "#94A3B8" },
-  planned: { label: "Planned", color: "#3B82F6" },
-  posted: { label: "Posted", color: "#22C55E" },
+  draft: { label: "Draft", color: "#64748B" },
+  planned: { label: "Planned", color: "#1D4ED8" },
+  posted: { label: "Posted", color: "#15803D" },
 };
 
-const card: React.CSSProperties = { background: "linear-gradient(135deg,#0D1526,#0A1020)", border: "1px solid #1E293B", borderRadius: 16, padding: 20 };
-const inputStyle: React.CSSProperties = { width: "100%", padding: "9px 12px", background: "#060B18", border: "1px solid #1E293B", borderRadius: 10, color: "#F1F5F9", fontSize: 13, outline: "none" };
+const card: React.CSSProperties = { background: "linear-gradient(135deg,#FFFFFF,#FFFFFF)", border: "1px solid #E2E8F0", borderRadius: 16, padding: 20 };
+const inputStyle: React.CSSProperties = { width: "100%", padding: "9px 12px", background: "#F5F6F8", border: "1px solid #E2E8F0", borderRadius: 10, color: "#1E293B", fontSize: 13, outline: "none" };
 const labelStyle: React.CSSProperties = { fontSize: 11, fontWeight: 700, color: "#64748B", display: "block", marginBottom: 6 };
 const btnPrimary: React.CSSProperties = { padding: "10px 18px", borderRadius: 10, border: "none", background: "linear-gradient(135deg,#FF6B00,#FF8C40)", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer" };
-const btnGhost: React.CSSProperties = { padding: "10px 18px", borderRadius: 10, border: "1px solid #1E293B", background: "transparent", color: "#64748B", fontSize: 13, cursor: "pointer" };
+const btnGhost: React.CSSProperties = { padding: "10px 18px", borderRadius: 10, border: "1px solid #E2E8F0", background: "transparent", color: "#64748B", fontSize: 13, cursor: "pointer" };
 
 function ymOf(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
@@ -156,7 +156,7 @@ export default function ContentCalendarView() {
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
         <div>
-          <div style={{ fontSize: 20, fontWeight: 800, color: "#F1F5F9" }}>Content Calendar</div>
+          <div style={{ fontSize: 20, fontWeight: 800, color: "#1E293B" }}>Content Calendar</div>
           <div style={{ fontSize: 12, color: "#64748B", marginTop: 2 }}>
             Plan social posts for the team — saved in the database. Nothing publishes automatically.
           </div>
@@ -165,9 +165,9 @@ export default function ContentCalendarView() {
       </div>
 
       {error && (
-        <div style={{ background: "#EF444422", border: "1px solid #EF4444", borderRadius: 10, padding: "10px 14px", color: "#FCA5A5", fontSize: 13, display: "flex", justifyContent: "space-between", gap: 10 }}>
+        <div style={{ background: "#EF444422", border: "1px solid #EF4444", borderRadius: 10, padding: "10px 14px", color: "#DC2626", fontSize: 13, display: "flex", justifyContent: "space-between", gap: 10 }}>
           <span>{error}</span>
-          <button onClick={() => setError(null)} style={{ background: "none", border: "none", color: "#FCA5A5", cursor: "pointer" }}>✕</button>
+          <button onClick={() => setError(null)} style={{ background: "none", border: "none", color: "#DC2626", cursor: "pointer" }}>✕</button>
         </div>
       )}
 
@@ -176,7 +176,7 @@ export default function ContentCalendarView() {
         <div style={card}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
             <button onClick={() => setMonth(m => shiftMonth(m, -1))} style={{ ...btnGhost, padding: "6px 12px" }}>‹</button>
-            <div style={{ fontSize: 15, fontWeight: 800, color: "#F1F5F9" }}>{monthTitle(month)}</div>
+            <div style={{ fontSize: 15, fontWeight: 800, color: "#1E293B" }}>{monthTitle(month)}</div>
             <button onClick={() => setMonth(m => shiftMonth(m, 1))} style={{ ...btnGhost, padding: "6px 12px" }}>›</button>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: 6 }}>
@@ -187,10 +187,10 @@ export default function ContentCalendarView() {
               <div key={c.date} onClick={() => setForm(emptyForm(c.date))}
                 style={{
                   minHeight: 74, borderRadius: 10, padding: 6, cursor: "pointer",
-                  border: `1px solid ${c.date === today ? "#FF6B00" : "#1E293B"}`,
-                  background: c.date === today ? "#FF6B0010" : "#060B18",
+                  border: `1px solid ${c.date === today ? "#FF6B00" : "#E2E8F0"}`,
+                  background: c.date === today ? "#FF6B0010" : "#F5F6F8",
                 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: c.date === today ? "#FF6B00" : "#64748B", marginBottom: 4 }}>{c.day}</div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: c.date === today ? "#C2410C" : "#64748B", marginBottom: 4 }}>{c.day}</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
                   {(byDate.get(c.date) ?? []).slice(0, 3).map(p => (
                     <div key={p.id} onClick={e => { e.stopPropagation(); openEdit(p); }} title={p.caption}
@@ -210,15 +210,15 @@ export default function ContentCalendarView() {
 
         {/* Upcoming */}
         <div style={card}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 12 }}>Upcoming (not posted yet)</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#1E293B", marginBottom: 12 }}>Upcoming (not posted yet)</div>
           {upcoming.length === 0 ? (
             <div style={{ fontSize: 12, color: "#475569" }}>Nothing planned ahead. Click a date on the calendar to plan a post.</div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {upcoming.map(p => (
-                <div key={p.id} style={{ border: "1px solid #1E293B", borderRadius: 10, padding: 10, cursor: "pointer" }} onClick={() => openEdit(p)}>
+                <div key={p.id} style={{ border: "1px solid #E2E8F0", borderRadius: 10, padding: 10, cursor: "pointer" }} onClick={() => openEdit(p)}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4, gap: 8 }}>
-                    <span style={{ fontSize: 11, fontWeight: 700, color: "#94A3B8" }}>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: "#64748B" }}>
                       {PLATFORM_ICON[p.platform] ?? "📣"} {p.platform} · {p.postType}
                     </span>
                     <span style={{ fontSize: 10, fontWeight: 700, color: STATUS_META[p.status].color }}>{STATUS_META[p.status].label}</span>
@@ -229,7 +229,7 @@ export default function ContentCalendarView() {
                       {new Date(p.postDate + "T00:00:00").toLocaleDateString("en-IN", { day: "2-digit", month: "short" })}{p.postTime ? ` · ${p.postTime}` : ""}
                     </span>
                     <button onClick={e => { e.stopPropagation(); void markPosted(p); }}
-                      style={{ fontSize: 10, fontWeight: 700, color: "#22C55E", background: "#22C55E1A", border: "1px solid #22C55E44", borderRadius: 6, padding: "3px 8px", cursor: "pointer" }}>
+                      style={{ fontSize: 10, fontWeight: 700, color: "#15803D", background: "#22C55E1A", border: "1px solid #22C55E44", borderRadius: 6, padding: "3px 8px", cursor: "pointer" }}>
                       ✓ Mark Posted
                     </button>
                   </div>
@@ -243,8 +243,8 @@ export default function ContentCalendarView() {
       {/* Editor modal */}
       {form && (
         <div style={{ position: "fixed", inset: 0, background: "#00000088", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999, padding: 16 }}>
-          <div style={{ background: "#0D1526", border: "1px solid #1E293B", borderRadius: 20, padding: 28, width: 520, maxWidth: "94vw", maxHeight: "92vh", overflow: "auto" }}>
-            <div style={{ fontSize: 18, fontWeight: 800, color: "#F1F5F9", marginBottom: 18 }}>
+          <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: 20, padding: 28, width: 520, maxWidth: "94vw", maxHeight: "92vh", overflow: "auto" }}>
+            <div style={{ fontSize: 18, fontWeight: 800, color: "#1E293B", marginBottom: 18 }}>
               {form.id ? "Edit Planned Post" : "Plan a Post"}
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 12 }}>
@@ -284,7 +284,7 @@ export default function ContentCalendarView() {
             </div>
             <div style={{ display: "flex", gap: 10 }}>
               {form.id && (
-                <button onClick={() => void remove()} style={{ ...btnGhost, color: "#FCA5A5", borderColor: "#EF444455" }}>Delete</button>
+                <button onClick={() => void remove()} style={{ ...btnGhost, color: "#DC2626", borderColor: "#EF444455" }}>Delete</button>
               )}
               <div style={{ flex: 1 }} />
               <button onClick={() => setForm(null)} style={btnGhost}>Cancel</button>

@@ -384,7 +384,7 @@ export function Registration() {
 
 
   return (
-    <div style={{ background:'var(--bg)', minHeight:'100vh', color:'#F0EDE8', fontFamily:"'Inter',sans-serif", overflowX:'hidden', paddingBottom:'calc(100px + env(safe-area-inset-bottom))' }}>
+    <div style={{ background:'var(--bg)', minHeight:'100vh', color:'var(--ink)', fontFamily:"'Inter',sans-serif", overflowX:'hidden', paddingBottom:'calc(100px + env(safe-area-inset-bottom))' }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap');
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -429,25 +429,25 @@ export function Registration() {
         .btn-primary:disabled{opacity:.35;cursor:not-allowed;filter:none;transform:none;box-shadow:none}
 
         .btn-back{
-          background:rgba(255,255,255,0.05);
-          border:1px solid rgba(255,255,255,0.12);
-          border-radius:4px;color:rgba(255,255,255,0.6);
+          background:rgba(12,29,51,0.04);
+          border:1px solid rgba(12,29,51,0.14);
+          border-radius:4px;color:rgba(12,29,51,0.66);
           font-family:Montserrat,sans-serif;font-weight:700;
           cursor:pointer;transition:all .2s;
         }
-        .btn-back:hover{background:rgba(255,255,255,0.09);color:#fff}
+        .btn-back:hover{background:rgba(12,29,51,0.08);color:#0C1D33}
 
         /* ── INPUTS ── */
         .field-inp{
-          width:100%;background:#142236;
-          border:1.5px solid rgba(255,255,255,0.1);
-          border-bottom:2px solid rgba(255,122,41,0.4);
-          color:#F0EDE8;padding:13px 16px;
+          width:100%;background:#FFFFFF;
+          border:1.5px solid rgba(12,29,51,0.14);
+          border-bottom:2px solid rgba(255,122,41,0.55);
+          color:#0C1D33;padding:13px 16px;
           font-family:Inter,sans-serif;font-size:16px;
           outline:none;transition:all .2s;border-radius:0;
         }
-        .field-inp:focus{border-bottom-color:#FF7A29;background:#16273D}
-        .field-inp::placeholder{color:rgba(255,255,255,0.22)}
+        .field-inp:focus{border-bottom-color:#FF7A29;background:#FFFFFF;border-color:rgba(255,122,41,0.5)}
+        .field-inp::placeholder{color:rgba(12,29,51,0.35)}
         .field-lbl{
           display:block;font-size:10px;font-weight:700;
           letter-spacing:.14em;text-transform:uppercase;
@@ -457,17 +457,17 @@ export function Registration() {
         /* ── ROLE CARD — cinematic full-bleed artwork (spec §5) ── */
         .role-card{
           position:relative;overflow:hidden;cursor:pointer;
-          border:1.5px solid rgba(255,255,255,0.12);
+          border:1.5px solid rgba(12,29,51,0.12);
           border-radius:18px;
-          background:#0F2242;
-          box-shadow:0 12px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.05);
+          background:#FFFFFF;
+          box-shadow:0 12px 30px rgba(12,29,51,0.10);
           transition:transform .3s cubic-bezier(.22,1,.36,1),border-color .3s,box-shadow .3s;
         }
-        .role-card:hover{border-color:rgba(255,255,255,0.24);transform:translateY(-4px);box-shadow:0 22px 50px rgba(0,0,0,0.55)}
+        .role-card:hover{border-color:rgba(12,29,51,0.22);transform:translateY(-4px);box-shadow:0 22px 48px rgba(12,29,51,0.16)}
         .role-card:active{transform:scale(.99)}
         .role-card.selected{
           border-color:var(--rc,#FF7A29);
-          box-shadow:0 0 0 2px var(--rc,#FF7A29),0 0 34px -6px var(--rc,#FF7A29),0 22px 50px rgba(0,0,0,0.55);
+          box-shadow:0 0 0 2px var(--rc,#FF7A29),0 0 34px -6px var(--rc,#FF7A29),0 22px 48px rgba(12,29,51,0.18);
         }
         /* Tighter image crop reduces overall card height ~25% vs 3/4 (spec §12). */
         .role-card .rc-media{position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;}
@@ -478,8 +478,8 @@ export function Registration() {
         /* Role name + one-line description sit over the image bottom. */
         .role-card .rc-overlay{position:absolute;left:0;right:0;bottom:0;padding:12px 14px 12px;z-index:2;}
         /* Compact fee block below the image — clear hierarchy, no scrim needed. */
-        .role-card .rc-fees{padding:11px 14px 13px;background:#0C1D33;border-top:1px solid rgba(255,255,255,0.07);}
-        .role-card.selected .rc-fees{background:#101f3a;}
+        .role-card .rc-fees{padding:11px 14px 13px;background:#FBF9F4;border-top:1px solid rgba(12,29,51,0.08);}
+        .role-card.selected .rc-fees{background:#FFF6EE;}
         .role-card .rc-check{position:absolute;top:10px;right:10px;z-index:3;width:26px;height:26px;border-radius:50%;background:var(--rc,#FF7A29);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:14px;box-shadow:0 4px 14px rgba(0,0,0,.5);}
 
         /* ── ROLES GRID ── */
@@ -495,12 +495,12 @@ export function Registration() {
 
         /* ── CITY CHIP ── */
         .city-chip{
-          border:1px solid rgba(255,255,255,0.1);border-radius:12px;
+          border:1px solid rgba(12,29,51,0.14);border-radius:12px;
           padding:8px 14px;font-size:13px;font-weight:600;
-          cursor:pointer;transition:all .15s;background:transparent;color:rgba(255,255,255,0.65);
+          cursor:pointer;transition:all .15s;background:#FFFFFF;color:rgba(12,29,51,0.70);
         }
-        .city-chip:hover{border-color:#FF7A29;color:#FF7A29}
-        .city-chip.sel{border-color:#FF7A29;background:rgba(255,122,41,0.12);color:#FF7A29;font-weight:700}
+        .city-chip:hover{border-color:#FF7A29;color:#D95E10}
+        .city-chip.sel{border-color:#FF7A29;background:rgba(255,122,41,0.12);color:#D95E10;font-weight:700}
 
         /* ── STEP INDICATOR ── */
         .step-row{display:flex;align-items:center;overflow:hidden}
@@ -508,14 +508,14 @@ export function Registration() {
           width:30px;height:30px;border-radius:50%;
           display:flex;align-items:center;justify-content:center;
           font-family:Montserrat,sans-serif;font-weight:900;font-size:12px;
-          border:2px solid rgba(255,255,255,0.15);
+          border:2px solid rgba(12,29,51,0.18);
           color:var(--ink-3);background:transparent;
           transition:all .3s;flex-shrink:0;
         }
         @media(min-width:400px){.step-node{width:32px;height:32px;font-size:13px}}
         .step-node.done{background:#22C55E;border-color:#22C55E;color:#fff}
         .step-node.active{background:#FF7A29;border-color:#FF7A29;color:#fff;animation:pulseOrange 2s infinite}
-        .step-track{height:2px;flex:1;background:rgba(255,255,255,0.08);margin:0 4px;transition:background .4s;min-width:8px}
+        .step-track{height:2px;flex:1;background:rgba(12,29,51,0.10);margin:0 4px;transition:background .4s;min-width:8px}
         .step-track.done{background:#22C55E}
         .step-track.active{background:linear-gradient(90deg,#22C55E,#FF7A29)}
         .step-label{font-size:10px;color:var(--ink-3);font-weight:700;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;margin-left:8px;flex-shrink:0}
@@ -523,8 +523,9 @@ export function Registration() {
 
         /* ── TICKET ── */
         .ticket{
-          background:#121F2F;
+          background:#FFFFFF;
           border:1px solid rgba(255,122,41,0.35);
+          box-shadow:0 12px 30px rgba(12,29,51,0.10);
           position:relative;
           overflow:visible;
         }
@@ -571,20 +572,20 @@ export function Registration() {
         .journey-node::after{
           content:'';position:absolute;top:18px;left:calc(50% + 20px);
           right:calc(-50% + 20px);height:2px;
-          background:rgba(255,255,255,0.1);
+          background:rgba(12,29,51,0.12);
         }
         .journey-node:last-child::after{display:none}
         .j-icon{
           width:36px;height:36px;border-radius:50%;
           display:flex;align-items:center;justify-content:center;
-          font-size:16px;border:2px solid rgba(255,255,255,0.12);
-          background:#142236;flex-shrink:0;
+          font-size:16px;border:2px solid rgba(12,29,51,0.14);
+          background:#FFFFFF;flex-shrink:0;
         }
         .j-icon.p1{border-color:#FF7A29;background:rgba(255,122,41,0.12)}
         .j-icon.p1.active-j{background:#FF7A29}
-        .j-icon.p2{border-color:rgba(232,178,61,0.5);background:rgba(232,178,61,0.06)}
+        .j-icon.p2{border-color:rgba(184,137,43,0.55);background:rgba(184,137,43,0.08)}
         .j-label{font-size:9px;font-weight:700;font-family:Montserrat,sans-serif;letter-spacing:.04em;text-align:center;white-space:nowrap}
-        .j-sub{font-size:8px;color:rgba(255,255,255,0.28);line-height:1.3;margin-top:2px;text-align:center}
+        .j-sub{font-size:8px;color:rgba(12,29,51,0.50);line-height:1.3;margin-top:2px;text-align:center}
         @media(max-width:479px){.j-label{display:none}.j-sub{display:none}}
 
         /* ── FORM FIELD GRIDS ── */
@@ -617,8 +618,8 @@ export function Registration() {
 
           {/* Headline */}
           <h1 style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(32px,6vw,64px)', lineHeight:.95, letterSpacing:'-.02em', marginBottom:12, textTransform:'uppercase' }}>
-            <span style={{ color:'#fff', display:'block' }}>{t('YOUR SHOT', 'आपका मौका')}</span>
-            <span style={{ color:'#fff', display:'block' }}>{t('AT THE', 'BIG')}</span>
+            <span style={{ color:'#0C1D33', display:'block' }}>{t('YOUR SHOT', 'आपका मौका')}</span>
+            <span style={{ color:'#0C1D33', display:'block' }}>{t('AT THE', 'BIG')}</span>
             <span style={{ background:'linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)', backgroundSize:'200%', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text', animation:'shimGold 3s linear infinite', display:'block' }}>{t('BIG LEAGUE.', 'LEAGUE में।')}</span>
           </h1>
           <p style={{ color:'var(--ink-3)', fontSize:14, maxWidth:480, lineHeight:1.6, marginBottom:32 }}>
@@ -632,7 +633,7 @@ export function Registration() {
               {JOURNEY.map((j, i) => (
                 <div key={i} className="journey-node" style={{ minWidth:56 }}>
                   {/* Phase badge */}
-                  <div style={{ fontSize:8, fontWeight:900, fontFamily:'Montserrat,sans-serif', letterSpacing:'.14em', color: j.phase==='P1' ? '#FF7A29' : '#E8B23D', marginBottom:2 }}>
+                  <div style={{ fontSize:8, fontWeight:900, fontFamily:'Montserrat,sans-serif', letterSpacing:'.14em', color: j.phase==='P1' ? '#FF7A29' : '#B8892B', marginBottom:2 }}>
                     {j.phase}
                   </div>
                   {/* Icon circle */}
@@ -641,12 +642,12 @@ export function Registration() {
                   </div>
                   {/* Label — hidden on very small screens via CSS */}
                   <div>
-                    <div className="j-label" style={{ color: i===0 ? '#FF7A29' : j.phase==='P1'?'rgba(255,255,255,0.7)':'rgba(232,178,61,0.6)' }}>{t(j.label, j.labelHi)}</div>
+                    <div className="j-label" style={{ color: i===0 ? '#FF7A29' : j.phase==='P1'?'rgba(12,29,51,0.72)':'#B8892B' }}>{t(j.label, j.labelHi)}</div>
                     <div className="j-sub">{t(j.sub, j.subHi)}</div>
                   </div>
                   {/* Connector line */}
                   {i < JOURNEY.length-1 && (
-                    <div style={{ position:'absolute', top:24, left:'calc(50% + 20px)', right:'calc(-50% + 20px)', height:2, background: i===0?'rgba(255,122,41,0.4)':'rgba(255,255,255,0.08)', zIndex:0 }} />
+                    <div style={{ position:'absolute', top:24, left:'calc(50% + 20px)', right:'calc(-50% + 20px)', height:2, background: i===0?'rgba(255,122,41,0.4)':'rgba(12,29,51,0.10)', zIndex:0 }} />
                   )}
                 </div>
               ))}
@@ -699,7 +700,7 @@ export function Registration() {
               <div className="step-enter">
                 {!isRegistered && (<>
                 <div style={{ borderLeft:'3px solid #FF7A29', paddingLeft:14, marginBottom:28 }}>
-                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(18px,5vw,22px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em' }}>{t('Your Details', 'आपकी Details')}</div>
+                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(18px,5vw,22px)', color:'#0C1D33', textTransform:'uppercase', letterSpacing:'.02em' }}>{t('Your Details', 'आपकी Details')}</div>
                   <div style={{ fontSize:12, color:'var(--ink-3)', marginTop:4 }}>{t('As per Aadhaar / PAN — used for franchise records', 'Aadhaar / PAN के अनुसार — franchise records के लिए')}</div>
                   <Link href="/eligibility" style={{ fontSize:11, color:'#FF7A29', textDecoration:'none', fontWeight:700, display:'inline-block', marginTop:6 }}>{t('Check eligibility criteria →', 'Eligibility criteria देखें →')}</Link>
                 </div>
@@ -718,7 +719,7 @@ export function Registration() {
                     <div>
                       <label className="field-lbl">{t('Phone *', 'Phone *')}</label>
                       <div style={{ display:'flex', alignItems:'center', gap:0 }}>
-                        <span style={{ padding:'0 12px', height:46, display:'flex', alignItems:'center', background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,122,41,0.25)', borderRight:'none', fontSize:14, fontWeight:700, color:'rgba(255,255,255,0.6)', flexShrink:0, borderRadius:'8px 0 0 8px', letterSpacing:'.02em' }}>+91</span>
+                        <span style={{ padding:'0 12px', height:46, display:'flex', alignItems:'center', background:'rgba(12,29,51,0.04)', border:'1px solid rgba(255,122,41,0.25)', borderRight:'none', fontSize:14, fontWeight:700, color:'rgba(12,29,51,0.66)', flexShrink:0, borderRadius:'8px 0 0 8px', letterSpacing:'.02em' }}>+91</span>
                         <input className="field-inp" type="tel" value={phone}
                           onChange={e => { const v = e.target.value.replace(/\D/g,''); if(v.length<=10) setPhone(v); }}
                           placeholder="9876543210" maxLength={10} inputMode="numeric"
@@ -728,7 +729,7 @@ export function Registration() {
                   </div>
                   <div>
                     <label className="field-lbl">{t('Date of Birth (18–45 yrs) *', 'जन्म तिथि (18–45 साल) *')}</label>
-                    <input className="field-inp" type="date" value={dob} onChange={e => setDob(e.target.value)} min={minDob} max={maxDob} style={{ colorScheme:'dark' }} />
+                    <input className="field-inp" type="date" value={dob} onChange={e => setDob(e.target.value)} min={minDob} max={maxDob} style={{ colorScheme:'light' }} />
                     {ageError && <div style={{fontSize:14,color:'#EF4444',marginTop:5,fontWeight:600}}><IcoWarn size={12} style={{ verticalAlign: '-2px', marginRight: 4 }} /> {ageError}</div>}
                     {dob && dobValid && <div style={{fontSize:11,color:'#22C55E',marginTop:5,fontWeight:700,letterSpacing:'.04em',display:'inline-flex',alignItems:'center',gap:5}}><IcoCheck size={12} /> {t('AGE ELIGIBILITY — CONFIRMED', 'AGE ELIGIBILITY — CONFIRMED')}</div>}
                   </div>
@@ -745,7 +746,7 @@ export function Registration() {
                       <span style={{ color:'#22C55E', display:'inline-flex' }}><IcoCheck size={18} /></span>
                       <div style={{ flex:1 }}>
                         <div style={{ fontSize:13, fontWeight:700, color:'#22C55E', fontFamily:'Montserrat,sans-serif' }}>{t('Logged in as', 'Logged in as')} +91 {loginPhone || regStatus?.phone || '—'}</div>
-                        {regStatus?.registered && <div style={{ fontSize:13, color:'rgba(255,255,255,0.72)', marginTop:2 }}>{t('Role:', 'Role:')} {formatRole(regStatus.role, lang)} · {t('City:', 'City:')} {regStatus.trialCity}</div>}
+                        {regStatus?.registered && <div style={{ fontSize:13, color:'rgba(12,29,51,0.74)', marginTop:2 }}>{t('Role:', 'Role:')} {formatRole(regStatus.role, lang)} · {t('City:', 'City:')} {regStatus.trialCity}</div>}
                       </div>
                       <button onClick={()=>{ setLoggedIn(false); setRegStatus(null); }} style={{ background:'none', border:'none', color:'var(--ink-3)', cursor:'pointer', fontSize:16 }}>✕</button>
                     </div>
@@ -753,7 +754,7 @@ export function Registration() {
                     {/* ── Not registered yet ── */}
                     {regStatus && !regStatus.registered && (
                       <div style={{ padding:'16px', background:'rgba(255,122,41,0.07)', border:'1px solid rgba(255,122,41,0.25)', borderRadius:10, textAlign:'center' }}>
-                        <div style={{ fontSize:13, color:'rgba(255,255,255,0.6)', marginBottom:8 }}>{t("You haven't registered yet. Fill the form above to register.", "आपने अभी register नहीं किया है। Register करने के लिए ऊपर form भरें।")}</div>
+                        <div style={{ fontSize:13, color:'rgba(12,29,51,0.66)', marginBottom:8 }}>{t("You haven't registered yet. Fill the form above to register.", "आपने अभी register नहीं किया है। Register करने के लिए ऊपर form भरें।")}</div>
                       </div>
                     )}
 
@@ -767,18 +768,18 @@ export function Registration() {
                         {!regStatus?.dob && (
                           <div style={{ maxWidth:280, margin:'0 auto 14px', textAlign:'left' }}>
                             <label className="field-lbl">{t('Date of Birth (18–45 yrs) *', 'जन्म तिथि (18–45 साल) *')}</label>
-                            <input className="field-inp" type="date" value={dob} onChange={e => setDob(e.target.value)} min={minDob} max={maxDob} style={{ colorScheme:'dark' }} />
+                            <input className="field-inp" type="date" value={dob} onChange={e => setDob(e.target.value)} min={minDob} max={maxDob} style={{ colorScheme:'light' }} />
                             {ageError && <div style={{fontSize:14,color:'#EF4444',marginTop:5,fontWeight:600}}><IcoWarn size={12} style={{ verticalAlign: '-2px', marginRight: 4 }} /> {ageError}</div>}
                             {dob && dobValid && <div style={{fontSize:11,color:'#22C55E',marginTop:5,fontWeight:700,display:'inline-flex',alignItems:'center',gap:5}}><IcoCheck size={12} /> {t('AGE ELIGIBILITY — CONFIRMED', 'AGE ELIGIBILITY — CONFIRMED')}</div>}
                           </div>
                         )}
                         {/* Consent — required on the resume-payment path too (audit-recorded server-side) */}
                         <div style={{ maxWidth:320, margin:'0 auto 12px', textAlign:'left' }}>
-                          <label style={{ display:'flex', gap:8, alignItems:'flex-start', cursor:'pointer', fontSize:11.5, color:'rgba(255,255,255,0.65)', lineHeight:1.6 }}>
+                          <label style={{ display:'flex', gap:8, alignItems:'flex-start', cursor:'pointer', fontSize:11.5, color:'rgba(12,29,51,0.70)', lineHeight:1.6 }}>
                             <input type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)} style={{ marginTop:2, accentColor:'#FF7A29', width:15, height:15, flexShrink:0 }} />
                             <span>{t('I agree to the BCPL Terms & Conditions, Privacy Notice, Refund & Cancellation Policy and Eligibility Criteria. I understand the Phase 1 fee does not guarantee qualification or selection and is non-refundable after successful payment, including if I do not upload my video. The accepted document versions and acceptance time are recorded with my registration. *', 'मैं BCPL Terms & Conditions, Privacy Notice, Refund & Cancellation Policy और Eligibility Criteria से सहमत हूँ। मैं समझता हूँ कि Phase 1 fee qualification या selection की guarantee नहीं देता और सफल भुगतान के बाद यह non-refundable है — भले ही मैं अपना video upload न करूँ। Accepted document versions और acceptance time मेरी registration के साथ record होते हैं। *')}</span>
                           </label>
-                          <label style={{ display:'flex', gap:8, alignItems:'flex-start', cursor:'pointer', fontSize:11.5, color:'rgba(255,255,255,0.5)', lineHeight:1.6, marginTop:8 }}>
+                          <label style={{ display:'flex', gap:8, alignItems:'flex-start', cursor:'pointer', fontSize:11.5, color:'rgba(12,29,51,0.62)', lineHeight:1.6, marginTop:8 }}>
                             <input type="checkbox" checked={marketingOptIn} onChange={e => setMarketingOptIn(e.target.checked)} style={{ marginTop:2, accentColor:'#FF7A29', width:15, height:15, flexShrink:0 }} />
                             <span>{t('Optional: send me BCPL updates and offers by SMS/WhatsApp/email. I can opt out anytime.', 'Optional: मुझे SMS/WhatsApp/email से BCPL updates और offers भेजें। मैं कभी भी opt out कर सकता/सकती हूँ।')}</span>
                           </label>
@@ -808,7 +809,7 @@ export function Registration() {
                       <div style={{ padding:'20px', background:'rgba(59,130,246,0.07)', border:'1px solid rgba(59,130,246,0.3)', borderRadius:12, textAlign:'center' }}>
                         <div style={{ color:'#60A5FA', marginBottom:10, display:'flex', justifyContent:'center' }}><IcoVideo size={32} /></div>
                         <div style={{ fontSize:15, fontWeight:800, color:'#60A5FA', fontFamily:'Montserrat,sans-serif' }}>{t('Payment Confirmed — Upload Your Trial Video', 'Payment Confirmed — अपना Trial Video Upload करें')}</div>
-                        <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:8, lineHeight:1.7 }}>
+                        <div style={{ fontSize:12, color:'rgba(12,29,51,0.62)', marginTop:8, lineHeight:1.7 }}>
                           {regStatus.videoDeadline && (<>{t('Deadline:', 'Deadline:')} <strong style={{ color:'#FBB724' }}>{new Date(regStatus.videoDeadline).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' })}</strong><br/></>)}
                           {t('Filming instructions, live countdown and secure upload are on the video upload page.', 'Filming instructions, live countdown और secure upload video upload page पर हैं।')}
                         </div>
@@ -824,9 +825,9 @@ export function Registration() {
                       <div style={{ padding:'20px', background:'rgba(168,85,247,0.07)', border:'1px solid rgba(168,85,247,0.3)', borderRadius:12, textAlign:'center' }}>
                         <div style={{ color:'#A855F7', marginBottom:10, display:'flex', justifyContent:'center' }}><IcoVideo size={32} /></div>
                         <div style={{ fontSize:15, fontWeight:800, color:'#A855F7', fontFamily:'Montserrat,sans-serif' }}>{t('Video Under Review', 'Video Review में है')}</div>
-                        <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:8, lineHeight:1.7 }}>
+                        <div style={{ fontSize:12, color:'rgba(12,29,51,0.62)', marginTop:8, lineHeight:1.7 }}>
                           {t("Your Phase 1 submission is going through BCPL's evaluation process.", "आपकी Phase 1 submission BCPL के evaluation process से गुज़र रही है।")}<br/>
-                          {t('Result will be shared via', 'Result भेजा जाएगा')} <strong style={{color:'rgba(255,255,255,0.7)'}}>{t('SMS + Email', 'SMS + Email')}</strong> {t('within 48 hours.', '48 घंटे के अंदर।')}
+                          {t('Result will be shared via', 'Result भेजा जाएगा')} <strong style={{color:'rgba(12,29,51,0.72)'}}>{t('SMS + Email', 'SMS + Email')}</strong> {t('within 48 hours.', '48 घंटे के अंदर।')}
                         </div>
                       </div>
                     )}
@@ -836,7 +837,7 @@ export function Registration() {
                       <div style={{ padding:'20px', background:'rgba(34,197,94,0.08)', border:'1px solid rgba(34,197,94,0.35)', borderRadius:12, textAlign:'center' }}>
                         <div style={{ color:'#22C55E', marginBottom:10, display:'flex', justifyContent:'center' }}><IcoTrophy size={32} /></div>
                         <div style={{ fontSize:15, fontWeight:800, color:'#22C55E', fontFamily:'Montserrat,sans-serif' }}>{t('Congratulations! Selected for Phase 2', 'बधाई हो! Phase 2 के लिए select हुए')}</div>
-                        <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:8, marginBottom:16, lineHeight:1.7 }}>
+                        <div style={{ fontSize:12, color:'rgba(12,29,51,0.62)', marginTop:8, marginBottom:16, lineHeight:1.7 }}>
                           {t("You've cleared Phase 1. Pay the Phase 2 fee to confirm your physical trial slot.", "आपने Phase 1 clear कर लिया है। अपना physical trial slot confirm करने के लिए Phase 2 fee pay करें।")}
                         </div>
                         <button onClick={()=>navigate('/register/phase2')} style={{ padding:'12px 28px', background:'linear-gradient(135deg,#22C55E,#16A34A)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer' }}>
@@ -850,7 +851,7 @@ export function Registration() {
                       <div style={{ padding:'20px', background:'rgba(239,68,68,0.07)', border:'1px solid rgba(239,68,68,0.3)', borderRadius:12, textAlign:'center' }}>
                         <div style={{ color:'#EF4444', marginBottom:10, display:'flex', justifyContent:'center' }}><IcoInfo size={32} /></div>
                         <div style={{ fontSize:15, fontWeight:800, color:'#EF4444', fontFamily:'Montserrat,sans-serif' }}>{t('Not Selected This Season', 'इस Season Select नहीं हुए')}</div>
-                        <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:8, lineHeight:1.7 }}>
+                        <div style={{ fontSize:12, color:'rgba(12,29,51,0.62)', marginTop:8, lineHeight:1.7 }}>
                           {t('Thank you for participating. Better luck in BCPL Season 6!', 'Participate करने के लिए धन्यवाद। BCPL Season 6 में शुभकामनाएं!')}
                         </div>
                       </div>
@@ -861,9 +862,9 @@ export function Registration() {
                 {/* Login Modal */}
                 {showLogin && (
                   <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.85)', zIndex:999, display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}>
-                    <div style={{ background:'#142236', border:'1px solid rgba(255,122,41,0.3)', borderRadius:16, padding:28, width:'100%', maxWidth:380, position:'relative' }}>
+                    <div style={{ background:'#FFFFFF', border:'1px solid rgba(255,122,41,0.3)', borderRadius:16, padding:28, width:'100%', maxWidth:380, position:'relative' }}>
                       <button onClick={() => setShowLogin(false)} style={{ position:'absolute', top:12, right:14, background:'none', border:'none', color:'var(--ink-3)', fontSize:18, cursor:'pointer' }}>✕</button>
-                      <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:18, color:'#fff', marginBottom:6 }}>{t('Registered Player Login', 'Registered Player Login')}</div>
+                      <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:18, color:'#0C1D33', marginBottom:6 }}>{t('Registered Player Login', 'Registered Player Login')}</div>
                       <div style={{ fontSize:12, color:'var(--ink-3)', marginBottom:20 }}>{t('Enter your registered mobile number to continue.', 'आगे बढ़ने के लिए अपना registered mobile number डालें।')}</div>
                       {loginStep === 'phone' ? (<>
                         <label style={{ fontSize:14, fontWeight:700, color:'var(--ink-2)', letterSpacing:'.08em', display:'block', marginBottom:6 }}>{t('MOBILE NUMBER', 'MOBILE NUMBER')}</label>
@@ -886,7 +887,7 @@ export function Registration() {
                           style={{ width:'100%', padding:'13px 0', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', opacity:loginOtp.length!==6||loginLoading?0.5:1 }}>
                           {loginLoading ? t('Verifying…', 'Verify कर रहे हैं…') : t('Verify & Login →', 'Verify करें & Login →')}
                         </button>
-                        <button onClick={() => { setLoginStep('phone'); setLoginError(''); }} style={{ width:'100%', marginTop:8, padding:'10px', background:'none', border:'1px solid rgba(255,255,255,0.1)', borderRadius:10, color:'var(--ink-3)', fontSize:12, cursor:'pointer' }}>{t('← Change Number', '← Number बदलें')}</button>
+                        <button onClick={() => { setLoginStep('phone'); setLoginError(''); }} style={{ width:'100%', marginTop:8, padding:'10px', background:'none', border:'1px solid rgba(12,29,51,0.14)', borderRadius:10, color:'var(--ink-3)', fontSize:12, cursor:'pointer' }}>{t('← Change Number', '← Number बदलें')}</button>
                       </>)}
                     </div>
                   </div>
@@ -898,7 +899,7 @@ export function Registration() {
             {step === 2 && (
               <div className="step-enter">
                 <div style={{ borderLeft:'3px solid #FF7A29', paddingLeft:14, marginBottom:28 }}>
-                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(18px,5vw,22px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em' }}>{t('Your Role', 'आपकी Role')}</div>
+                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(18px,5vw,22px)', color:'#0C1D33', textTransform:'uppercase', letterSpacing:'.02em' }}>{t('Your Role', 'आपकी Role')}</div>
                   <div style={{ fontSize:12, color:'var(--ink-3)', marginTop:4 }}>{t('Your video is assessed against role-specific criteria. Every role brings equal value to the game.', 'आपका video role-specific criteria पर assess होता है। हर role game में बराबर value लाती है।')}</div>
                 </div>
 
@@ -929,16 +930,16 @@ export function Registration() {
                         {/* IMAGE → ROLE NAME → one-line description (spec §12) */}
                         <div className="rc-overlay">
                           <div style={{ fontFamily:'"Barlow Condensed",Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(18px,2.4vw,21px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em', lineHeight:1, marginBottom:5, textShadow:'0 2px 14px rgba(0,0,0,.85)' }}>{t(r.label, r.labelHi)}</div>
-                          <div style={{ fontSize:13, color:'rgba(255,255,255,0.82)', lineHeight:1.35, textShadow:'0 1px 8px rgba(0,0,0,.8)' }}>{t(r.desc, r.descHi)}</div>
+                          <div style={{ fontSize:13, color:'rgba(255,255,255,0.9)', lineHeight:1.35, textShadow:'0 1px 8px rgba(0,0,0,.8)' }}>{t(r.desc, r.descHi)}</div>
                         </div>
                       </div>
                       {/* Compact fee block — Phase 1 prominent, Phase 2 secondary but readable. */}
                       <div className="rc-fees">
                         <div style={{ display:'flex', alignItems:'baseline', gap:6 }}>
-                          <span style={{ fontFamily:'"Barlow Condensed",Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(22px,3.4vw,24px)', lineHeight:1, color: role?.id===r.id ? r.color : '#fff' }}>₹{fees.phase1[r.id] ?? r.phase1}</span>
-                          <span style={{ fontSize:11, fontWeight:800, color:'rgba(255,255,255,0.72)', letterSpacing:'.06em' }}>{t('+ GST · PHASE 1', '+ GST · PHASE 1')}</span>
+                          <span style={{ fontFamily:'"Barlow Condensed",Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(22px,3.4vw,24px)', lineHeight:1, color: role?.id===r.id ? r.color : '#0C1D33' }}>₹{fees.phase1[r.id] ?? r.phase1}</span>
+                          <span style={{ fontSize:11, fontWeight:800, color:'rgba(12,29,51,0.74)', letterSpacing:'.06em' }}>{t('+ GST · PHASE 1', '+ GST · PHASE 1')}</span>
                         </div>
-                        <div style={{ fontSize:12, color:'rgba(255,255,255,0.72)', marginTop:5, lineHeight:1.3 }}>
+                        <div style={{ fontSize:12, color:'rgba(12,29,51,0.74)', marginTop:5, lineHeight:1.3 }}>
                           {t('Phase 2 Trial Fee ₹', 'Phase 2 Trial Fee ₹')}{(fees.phase2[r.id] ?? r.phase2).toLocaleString()}{t(' + GST — after Phase 1 qualification.', ' + GST — Phase 1 qualification के बाद।')}
                         </div>
                       </div>
@@ -950,26 +951,26 @@ export function Registration() {
                   <div style={{ marginTop:16, padding:'16px 18px', borderRadius:14, background: role.color + '10', border: '1.5px solid ' + role.color + '3a' }}>
                     <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:12 }}>
                       <span style={{ color: role.color, display:'inline-flex' }}><role.emojiIcon size={22} /></span>
-                      <div style={{ fontSize:15, fontWeight:900, color:'#fff', fontFamily:'Montserrat,sans-serif', letterSpacing:'.03em', flex:1, minWidth:0 }}>
+                      <div style={{ fontSize:15, fontWeight:900, color:'#0C1D33', fontFamily:'Montserrat,sans-serif', letterSpacing:'.03em', flex:1, minWidth:0 }}>
                         {t('YOU SELECTED: ', 'आपने चुना: ')}<span style={{ color: role.color }}>{formatRole(role.id, lang)}</span>
                       </div>
                       <span style={{ width:24, height:24, borderRadius:'50%', background:'#22C55E', display:'inline-flex', alignItems:'center', justifyContent:'center', color:'#fff', fontWeight:900, fontSize:14, flexShrink:0 }} aria-hidden="true">✓</span>
                     </div>
                     <div style={{ display:'flex', flexWrap:'wrap', gap:'6px 20px', marginBottom:10 }}>
                       <div>
-                        <div style={{ fontSize:12, fontWeight:800, color:'rgba(255,255,255,0.72)', letterSpacing:'.08em', textTransform:'uppercase' }}>{t('Phase 1 Fee', 'Phase 1 Fee')}</div>
-                        <div style={{ fontFamily:'"Barlow Condensed",Montserrat,sans-serif', fontWeight:900, fontSize:22, color:'#fff', lineHeight:1.1 }}>₹{price} <span style={{ fontSize:13, fontWeight:700, color:'rgba(255,255,255,0.72)' }}>{t('+ applicable GST', '+ applicable GST')}</span></div>
+                        <div style={{ fontSize:12, fontWeight:800, color:'rgba(12,29,51,0.74)', letterSpacing:'.08em', textTransform:'uppercase' }}>{t('Phase 1 Fee', 'Phase 1 Fee')}</div>
+                        <div style={{ fontFamily:'"Barlow Condensed",Montserrat,sans-serif', fontWeight:900, fontSize:22, color:'#0C1D33', lineHeight:1.1 }}>₹{price} <span style={{ fontSize:13, fontWeight:700, color:'rgba(12,29,51,0.74)' }}>{t('+ applicable GST', '+ applicable GST')}</span></div>
                       </div>
                       <div>
-                        <div style={{ fontSize:12, fontWeight:800, color:'rgba(255,255,255,0.72)', letterSpacing:'.08em', textTransform:'uppercase' }}>{t('Potential Phase 2 Trial Fee', 'संभावित Phase 2 Trial Fee')}</div>
-                        <div style={{ fontFamily:'"Barlow Condensed",Montserrat,sans-serif', fontWeight:900, fontSize:22, color:'rgba(255,255,255,0.9)', lineHeight:1.1 }}>₹{phase2price.toLocaleString()} <span style={{ fontSize:13, fontWeight:700, color:'rgba(255,255,255,0.72)' }}>{t('+ applicable GST', '+ applicable GST')}</span></div>
+                        <div style={{ fontSize:12, fontWeight:800, color:'rgba(12,29,51,0.74)', letterSpacing:'.08em', textTransform:'uppercase' }}>{t('Potential Phase 2 Trial Fee', 'संभावित Phase 2 Trial Fee')}</div>
+                        <div style={{ fontFamily:'"Barlow Condensed",Montserrat,sans-serif', fontWeight:900, fontSize:22, color:'rgba(12,29,51,0.88)', lineHeight:1.1 }}>₹{phase2price.toLocaleString()} <span style={{ fontSize:13, fontWeight:700, color:'rgba(12,29,51,0.74)' }}>{t('+ applicable GST', '+ applicable GST')}</span></div>
                       </div>
                     </div>
-                    <div style={{ fontSize:13, color:'rgba(255,255,255,0.72)', lineHeight:1.5, display:'flex', alignItems:'flex-start', gap:6 }}>
+                    <div style={{ fontSize:13, color:'rgba(12,29,51,0.74)', lineHeight:1.5, display:'flex', alignItems:'flex-start', gap:6 }}>
                       <IcoLock size={12} style={{ flexShrink:0, marginTop:3 }} />
                       <span>
                         {t('Phase 2 Physical Trial Fee — payable only after Phase 1 qualification. ', 'Phase 2 Physical Trial Fee — केवल Phase 1 qualification के बाद देय। ')}
-                        <b style={{ color:'#fff', fontWeight:700 }}>{t('Phase 2 payment does not guarantee final selection.', 'Phase 2 payment अंतिम चयन की गारंटी नहीं देता।')}</b>
+                        <b style={{ color:'#0C1D33', fontWeight:700 }}>{t('Phase 2 payment does not guarantee final selection.', 'Phase 2 payment अंतिम चयन की गारंटी नहीं देता।')}</b>
                       </span>
                     </div>
                   </div>
@@ -981,7 +982,7 @@ export function Registration() {
             {step === 3 && (
               <div className="step-enter">
                 <div style={{ borderLeft:'3px solid #FF7A29', paddingLeft:14, marginBottom:24 }}>
-                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(18px,5vw,22px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em' }}>{t('Trial City', 'Trial City')}</div>
+                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(18px,5vw,22px)', color:'#0C1D33', textTransform:'uppercase', letterSpacing:'.02em' }}>{t('Trial City', 'Trial City')}</div>
                   <div style={{ fontSize:12, color:'var(--ink-3)', marginTop:4 }}>{t('Cities across India. Choose the city nearest to your home or workplace.', 'पूरे भारत में cities। अपने घर या workplace के सबसे नज़दीक वाला शहर चुनें।')}</div>
                 </div>
 
@@ -998,9 +999,9 @@ export function Registration() {
                     onBlur={() => setTimeout(() => setShowDrop(false), 150)}
                   />
                   {showDrop && cityQ && (
-                    <div style={{ position:'absolute', top:'calc(100% + 4px)', left:0, right:0, background:'#142236', border:'1px solid rgba(255,122,41,0.3)', zIndex:99, maxHeight:200, overflowY:'auto' }}>
+                    <div style={{ position:'absolute', top:'calc(100% + 4px)', left:0, right:0, background:'#FFFFFF', border:'1px solid rgba(255,122,41,0.3)', zIndex:99, maxHeight:200, overflowY:'auto' }}>
                       {filtered.slice(0,8).map(c => (
-                        <div key={c} onMouseDown={() => { setCity(c); setCityQ(c); setShowDrop(false); }} style={{ padding:'12px 16px', cursor:'pointer', fontSize:14, color:'rgba(255,255,255,0.8)', borderBottom:'1px solid rgba(255,255,255,0.05)', transition:'background .12s', display:'flex', alignItems:'center', gap:8 }} onMouseEnter={e => (e.currentTarget.style.background='rgba(255,122,41,0.1)')} onMouseLeave={e => (e.currentTarget.style.background='')}>
+                        <div key={c} onMouseDown={() => { setCity(c); setCityQ(c); setShowDrop(false); }} style={{ padding:'12px 16px', cursor:'pointer', fontSize:14, color:'rgba(12,29,51,0.80)', borderBottom:'1px solid rgba(12,29,51,0.06)', transition:'background .12s', display:'flex', alignItems:'center', gap:8 }} onMouseEnter={e => (e.currentTarget.style.background='rgba(255,122,41,0.1)')} onMouseLeave={e => (e.currentTarget.style.background='')}>
                           <IcoPin size={14} style={{ color:'#FF7A29', flexShrink:0 }} /> {c}
                         </div>
                       ))}
@@ -1033,7 +1034,7 @@ export function Registration() {
             {step === 4 && (
               <div className="step-enter">
                 <div style={{ borderLeft:'3px solid #FF7A29', paddingLeft:14, marginBottom:24 }}>
-                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(18px,5vw,22px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em' }}>{t('Confirm & Pay', 'Confirm करें & Pay करें')}</div>
+                  <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(18px,5vw,22px)', color:'#0C1D33', textTransform:'uppercase', letterSpacing:'.02em' }}>{t('Confirm & Pay', 'Confirm करें & Pay करें')}</div>
                   <div style={{ fontSize:14, color:'var(--ink-2)', marginTop:4 }}>{t('Phase 1 entry fee. Phase 2 fee is payable only if you qualify and choose to proceed.', 'Phase 1 entry fee। Phase 2 fee तभी देनी है जब आप qualify करें और आगे बढ़ना चुनें।')}</div>
                 </div>
 
@@ -1042,11 +1043,11 @@ export function Registration() {
                   {/* Ticket header */}
                   <div style={{ background:'linear-gradient(135deg,#FF7A29,#C94E0E)', padding:'16px 24px', display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:8 }}>
                     <div>
-                      <div style={{ fontSize:8, fontWeight:900, fontFamily:'Montserrat,sans-serif', letterSpacing:'.2em', color:'rgba(255,255,255,0.7)', marginBottom:3 }}>BCPL · SEASON 5</div>
+                      <div style={{ fontSize:8, fontWeight:900, fontFamily:'Montserrat,sans-serif', letterSpacing:'.2em', color:'rgba(255,255,255,0.82)', marginBottom:3 }}>BCPL · SEASON 5</div>
                       <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:16, color:'#fff', letterSpacing:'.04em' }}>{t('PHASE 1 TRIAL ENTRY', 'PHASE 1 TRIAL ENTRY')}</div>
                     </div>
                     <div style={{ textAlign:'right' }}>
-                      <div style={{ fontSize:8, fontWeight:700, color:'rgba(255,255,255,0.6)', letterSpacing:'.14em' }}>{t('ENTRY FEE', 'ENTRY FEE')}</div>
+                      <div style={{ fontSize:8, fontWeight:700, color:'rgba(255,255,255,0.78)', letterSpacing:'.14em' }}>{t('ENTRY FEE', 'ENTRY FEE')}</div>
                       <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:36, color:'#fff', lineHeight:1 }}>₹{price}</div>
                     </div>
                   </div>
@@ -1062,9 +1063,9 @@ export function Registration() {
                         { l:t('AGE ELIGIBILITY', 'AGE ELIGIBILITY'), v:dob && dobValid ? t('✓ Eligible (18–45)', '✓ Eligible (18–45)') : '—' },
                         { l:t('SEASON', 'SEASON'), v:'5 · 2025–26' },
                       ].map(row => (
-                        <div key={row.l} style={{ padding:'10px 0', borderBottom:'1px solid rgba(255,255,255,0.05)' }}>
+                        <div key={row.l} style={{ padding:'10px 0', borderBottom:'1px solid rgba(12,29,51,0.08)' }}>
                           <div style={{ fontSize:9, fontWeight:700, fontFamily:'Montserrat,sans-serif', letterSpacing:'.14em', color:'var(--ink-3)', marginBottom:4 }}>{row.l}</div>
-                          <div style={{ fontSize:13, fontWeight:600, color:'#F0EDE8' }}>{row.v}</div>
+                          <div style={{ fontSize:13, fontWeight:600, color:'#0C1D33' }}>{row.v}</div>
                         </div>
                       ))}
                     </div>
@@ -1081,7 +1082,7 @@ export function Registration() {
                           t('Zero auction / tournament fee', 'कोई auction / tournament fee नहीं'),
                           t('Transparent result process', 'पारदर्शी result process'),
                           t('Phase 2 invite after Phase 1 qualification', 'Phase 1 qualify करने पर Phase 2 invite'),
-                        ].map(item => <div key={item} style={{ fontSize:12, color:'rgba(255,255,255,0.65)', lineHeight:1.5, display:'flex', alignItems:'flex-start', gap:6 }}><span style={{ color:'#22C55E', flexShrink:0, marginTop:1 }}><IcoCheck size={13} /></span>{item}</div>)}
+                        ].map(item => <div key={item} style={{ fontSize:12, color:'rgba(12,29,51,0.70)', lineHeight:1.5, display:'flex', alignItems:'flex-start', gap:6 }}><span style={{ color:'#22C55E', flexShrink:0, marginTop:1 }}><IcoCheck size={13} /></span>{item}</div>)}
                       </div>
                     </div>
 
@@ -1092,21 +1093,21 @@ export function Registration() {
                       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:8 }}>
                         <div>
                           <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:3 }}>
-                            <span style={{ color:'rgba(232,178,61,0.6)', display:'inline-flex' }}><IcoLock size={11} /></span>
-                            <span style={{ fontSize:9, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.16em', color:'rgba(232,178,61,0.6)' }}>{t('PHASE 2 — AFTER PHASE 1 QUALIFICATION', 'PHASE 2 — PHASE 1 QUALIFY के बाद')}</span>
+                            <span style={{ color:'#B8892B', display:'inline-flex' }}><IcoLock size={11} /></span>
+                            <span style={{ fontSize:9, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.16em', color:'#B8892B' }}>{t('PHASE 2 — AFTER PHASE 1 QUALIFICATION', 'PHASE 2 — PHASE 1 QUALIFY के बाद')}</span>
                           </div>
                           <div style={{ fontSize:11, color:'var(--ink-3)' }}>{t('Physical trial at', 'Physical trial')} {city||t('your city', 'आपके शहर')} {t('— payable only after Phase 1 qualification', 'में — Phase 1 qualify करने के बाद ही payable')}</div>
                         </div>
-                        <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'rgba(232,178,61,0.6)' }}>₹{phase2price.toLocaleString()}</div>
+                        <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'#B8892B' }}>₹{phase2price.toLocaleString()}</div>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Terms checkbox */}
-                <label style={{ display:'flex', alignItems:'flex-start', gap:10, cursor:'pointer', marginBottom:20, padding:'14px 16px', background:'rgba(255,255,255,0.02)', border:'1px solid rgba(255,255,255,0.07)' }}>
+                <label style={{ display:'flex', alignItems:'flex-start', gap:10, cursor:'pointer', marginBottom:20, padding:'14px 16px', background:'rgba(12,29,51,0.03)', border:'1px solid rgba(12,29,51,0.10)' }}>
                   <input type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)} style={{ marginTop:2, accentColor:'#FF7A29', width:16, height:16, flexShrink:0 }} />
-                  <span style={{ fontSize:12, color:'rgba(255,255,255,0.5)', lineHeight:1.6 }}>
+                  <span style={{ fontSize:12, color:'rgba(12,29,51,0.62)', lineHeight:1.6 }}>
                     {t('I confirm my eligibility information is accurate and that I am a working professional aged 18–45, not under a first-class cricket contract. I understand the Phase 1 fee is for participation in the Phase 1 process, that payment does not guarantee qualification or selection, and that the fee is non-refundable after successful payment, including if I do not upload my video. I agree to the', 'मैं confirm करता हूँ कि मेरी eligibility जानकारी सही है और मैं 18–45 उम्र का working professional हूँ, first-class cricket contract में नहीं हूँ। मैं समझता हूँ कि Phase 1 fee Phase 1 process में participation के लिए है, payment qualification या selection की guarantee नहीं देता, और सफल भुगतान के बाद यह fee non-refundable है — भले ही मैं अपना video upload न करूँ। मैं सहमत हूँ')}{' '}
                     <Link href="/terms" style={{ color:'#FF7A29', textDecoration:'none', fontWeight:600 }}>{t('Terms & Conditions', 'Terms & Conditions')}</Link>,{' '}
                     <Link href="/refunds" style={{ color:'#FF7A29', textDecoration:'none', fontWeight:600 }}>{t('Refund Policy', 'Refund Policy')}</Link>,{' '}
@@ -1117,7 +1118,7 @@ export function Registration() {
                 </label>
 
                 {/* Optional marketing consent — separate from required acceptance, never gates payment */}
-                <label style={{ display:'flex', alignItems:'flex-start', gap:10, cursor:'pointer', marginTop:-10, marginBottom:20, padding:'12px 16px', background:'rgba(255,255,255,0.02)', border:'1px dashed rgba(255,255,255,0.09)' }}>
+                <label style={{ display:'flex', alignItems:'flex-start', gap:10, cursor:'pointer', marginTop:-10, marginBottom:20, padding:'12px 16px', background:'rgba(12,29,51,0.03)', border:'1px dashed rgba(12,29,51,0.14)' }}>
                   <input type="checkbox" checked={marketingOptIn} onChange={e => setMarketingOptIn(e.target.checked)} style={{ marginTop:2, accentColor:'#FF7A29', width:16, height:16, flexShrink:0 }} />
                   <span style={{ fontSize:11.5, color:'var(--ink-3)', lineHeight:1.6 }}>
                     {t('Optional: send me BCPL news, offers and future-season updates by SMS/WhatsApp/email. I can withdraw this consent anytime.', 'Optional: मुझे BCPL news, offers और अगले season के updates SMS/WhatsApp/email से भेजें। मैं यह consent कभी भी वापस ले सकता हूँ।')}
@@ -1125,12 +1126,12 @@ export function Registration() {
                 </label>
 
                 {/* GST Breakdown */}
-                <div style={{ background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:10, padding:'14px 16px', marginBottom:12 }}>
+                <div style={{ background:'rgba(12,29,51,0.03)', border:'1px solid rgba(12,29,51,0.10)', borderRadius:10, padding:'14px 16px', marginBottom:12 }}>
                   <div style={{ display:'flex', justifyContent:'space-between', marginBottom:8 }}>
                     <span style={{ fontSize:15, color:'var(--ink-2)' }}>{t('Registration Fee', 'Registration Fee')}</span>
                     <span style={{ fontSize:15, color:'var(--ink)', fontWeight:700 }}>₹{price}</span>
                   </div>
-                  <div style={{ display:'flex', justifyContent:'space-between', marginBottom:10, paddingBottom:10, borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
+                  <div style={{ display:'flex', justifyContent:'space-between', marginBottom:10, paddingBottom:10, borderBottom:'1px solid rgba(12,29,51,0.08)' }}>
                     <span style={{ fontSize:14, color:'var(--ink-2)' }}>GST ({Math.round(fees.gstRate * 100)}%)</span>
                     <span style={{ fontSize:14, color:'var(--ink-2)' }}>₹{withGst(price, fees.gstRate) - price}</span>
                   </div>
@@ -1161,7 +1162,7 @@ export function Registration() {
                 )}
                 <div style={{ display:'flex', justifyContent:'center', gap:16, marginTop:12, flexWrap:'wrap' }}>
                   {[t('Cashfree Secured','Cashfree Secured'),t('256-bit SSL','256-bit SSL'),t('BCPL','BCPL')].map((badge, bi) => (
-                    <span key={badge} style={{ fontSize:10, color:'rgba(255,255,255,0.25)', fontWeight:600, display:'inline-flex', alignItems:'center', gap:4 }}>{bi===0 && <IcoLock size={10} />}{badge}</span>
+                    <span key={badge} style={{ fontSize:10, color:'rgba(12,29,51,0.45)', fontWeight:600, display:'inline-flex', alignItems:'center', gap:4 }}>{bi===0 && <IcoLock size={10} />}{badge}</span>
                   ))}
                 </div>
               </div>
@@ -1196,7 +1197,7 @@ export function Registration() {
           <div style={{ display:'flex', alignItems:'flex-start', gap:16, flexWrap:'wrap' }}>
             <div style={{ flex:'0 0 auto' }}>
               <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:11, letterSpacing:'.2em', color:'#E8B23D', marginBottom:6, display:'inline-flex', alignItems:'center', gap:6 }}><IcoLock size={12} /> {t('PHASE 2 — PHYSICAL TRIAL', 'PHASE 2 — PHYSICAL TRIAL')}</div>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'rgba(255,255,255,0.8)' }}>{t('Only after Phase 1 qualification.', 'सिर्फ Phase 1 qualify करने के बाद।')}</div>
+              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'rgba(255,255,255,0.92)' }}>{t('Only after Phase 1 qualification.', 'सिर्फ Phase 1 qualify करने के बाद।')}</div>
             </div>
             <div style={{ flex:1, minWidth:240 }}>
               <div className="phase2-strip-grid">
@@ -1209,8 +1210,8 @@ export function Registration() {
                   <div key={item.label} style={{ display:'flex', gap:10, alignItems:'flex-start' }}>
                     <span style={{ color:'#E8B23D', display:'inline-flex', flexShrink:0 }}><item.icon size={18} /></span>
                     <div>
-                      <div style={{ fontSize:12, fontWeight:700, color:'rgba(255,255,255,0.7)', fontFamily:'Montserrat,sans-serif' }}>{item.label}</div>
-                      <div style={{ fontSize:11, color:'var(--ink-3)', marginTop:1 }}>{item.sub}</div>
+                      <div style={{ fontSize:12, fontWeight:700, color:'rgba(255,255,255,0.82)', fontFamily:'Montserrat,sans-serif' }}>{item.label}</div>
+                      <div style={{ fontSize:11, color:'rgba(255,255,255,0.55)', marginTop:1 }}>{item.sub}</div>
                     </div>
                   </div>
                 ))}
@@ -1223,14 +1224,14 @@ export function Registration() {
       {/* ═══════════════ PAY OTP MODAL (new registration) ═══════════════ */}
       {showPayOtp && (
         <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.88)', zIndex:1000, display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}>
-          <div style={{ background:'#142236', border:'1px solid rgba(255,122,41,0.35)', borderRadius:16, padding:28, width:'100%', maxWidth:380, position:'relative' }}>
+          <div style={{ background:'#FFFFFF', border:'1px solid rgba(255,122,41,0.35)', borderRadius:16, padding:28, width:'100%', maxWidth:380, position:'relative' }}>
             <button onClick={() => setShowPayOtp(false)} style={{ position:'absolute', top:12, right:14, background:'none', border:'none', color:'var(--ink-3)', fontSize:18, cursor:'pointer' }}>✕</button>
-            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:18, color:'#fff', marginBottom:4 }}>{t('Verify Your Number', 'अपना Number Verify करें')}</div>
+            <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:18, color:'#0C1D33', marginBottom:4 }}>{t('Verify Your Number', 'अपना Number Verify करें')}</div>
             <div style={{ fontSize:14, color:'var(--ink-2)', marginBottom:20 }}>{t('One-time OTP to confirm your identity before payment.', 'Payment से पहले अपनी identity confirm करने के लिए one-time OTP।')}</div>
             {payOtpStep === 'phone' ? (<>
               <label style={{ fontSize:14, fontWeight:700, color:'var(--ink-2)', letterSpacing:'.08em', display:'block', marginBottom:6 }}>{t('MOBILE NUMBER', 'MOBILE NUMBER')}</label>
               <div style={{ display:'flex', alignItems:'center', gap:0, marginBottom:16 }}>
-                <span style={{ padding:'0 12px', height:46, display:'flex', alignItems:'center', background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,122,41,0.25)', borderRight:'none', fontSize:14, fontWeight:700, color:'rgba(255,255,255,0.6)', flexShrink:0 }}>+91</span>
+                <span style={{ padding:'0 12px', height:46, display:'flex', alignItems:'center', background:'rgba(12,29,51,0.04)', border:'1px solid rgba(255,122,41,0.25)', borderRight:'none', fontSize:14, fontWeight:700, color:'rgba(12,29,51,0.66)', flexShrink:0 }}>+91</span>
                 <div className="field-inp" style={{ flex:1, display:'flex', alignItems:'center', borderLeft:'none', pointerEvents:'none', opacity:.7 }}>{phone}</div>
               </div>
               {payOtpError && <div style={{ fontSize:14, color: payOtpAlreadyReg ? '#FBB724' : '#EF4444', marginBottom:10, fontWeight:600 }}><IcoWarn size={12} style={{ verticalAlign: '-2px', marginRight: 4 }} /> {payOtpError}</div>}
@@ -1258,7 +1259,7 @@ export function Registration() {
               <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginTop:8 }}>
                 <button onClick={() => { setPayOtpStep('phone'); setPayOtpError(''); }} style={{ background:'none', border:'none', color:'var(--ink-3)', fontSize:12, cursor:'pointer', padding:'8px 0' }}>{t('← Back', '← वापस')}</button>
                 <button onClick={handlePayOtpResend} disabled={payOtpTimer > 0 || payOtpLoading}
-                  style={{ background:'none', border:'none', fontSize:12, cursor: payOtpTimer > 0 ? 'default' : 'pointer', color: payOtpTimer > 0 ? 'rgba(255,255,255,0.25)' : '#FF7A29', textDecoration: payOtpTimer > 0 ? 'none' : 'underline', padding:'8px 0' }}>
+                  style={{ background:'none', border:'none', fontSize:12, cursor: payOtpTimer > 0 ? 'default' : 'pointer', color: payOtpTimer > 0 ? 'rgba(12,29,51,0.35)' : '#FF7A29', textDecoration: payOtpTimer > 0 ? 'none' : 'underline', padding:'8px 0' }}>
                   {payOtpTimer > 0 ? t('Resend in ' + payOtpTimer + 's', payOtpTimer + 's में Resend') : t('Resend OTP', 'OTP दोबारा भेजें')}
                 </button>
               </div>
@@ -1272,7 +1273,7 @@ export function Registration() {
 
       {/* ═══════════════ MOBILE STICKY CTA — hidden on step 4 & for registered players ═══════════════ */}
       {step < 4 && !isRegistered && (
-        <div className="bot-cta" style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:500, padding:'9px 14px calc(10px + env(safe-area-inset-bottom))', background:'rgba(9,20,36,0.98)', backdropFilter:'blur(20px)', borderTop:'1px solid rgba(255,122,41,0.55)', boxShadow:'0 -8px 28px rgba(0,0,0,0.5)', gap:10, alignItems:'center' }}>
+        <div className="bot-cta" style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:500, padding:'9px 14px calc(10px + env(safe-area-inset-bottom))', background:'rgba(246,243,236,0.98)', backdropFilter:'blur(20px)', borderTop:'1px solid rgba(255,122,41,0.55)', boxShadow:'0 -8px 28px rgba(12,29,51,0.14)', gap:10, alignItems:'center' }}>
           <button
             className="btn-primary"
             disabled={!canNext}

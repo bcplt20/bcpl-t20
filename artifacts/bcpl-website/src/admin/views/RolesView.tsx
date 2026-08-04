@@ -9,19 +9,19 @@ import { adminListAdminUsers } from "../../lib/api";
 import type { AdminUserRow } from "../../lib/api";
 import { ALL_SECTIONS } from "./AdminSettingsView";
 
-const card: React.CSSProperties = { background:"linear-gradient(135deg,#0D1526 0%,#0A1020 100%)", border:"1px solid #1E293B", borderRadius:16, padding:"20px 22px" };
+const card: React.CSSProperties = { background:"linear-gradient(135deg,#FFFFFF 0%,#FFFFFF 100%)", border:"1px solid #E2E8F0", borderRadius:16, padding:"20px 22px" };
 
 const ROLE_META: Record<string, { label: string; color: string; hint: string }> = {
-  SUPER_ADMIN:         { label:"Super Admin",           color:"#FF6B00", hint:"Full control — every section, admin management, reveal KYC documents" },
-  REGISTRATION_TEAM:   { label:"Registration Team",     color:"#3B82F6", hint:"Player registrations, user accounts, support" },
-  PAYMENT_TEAM:        { label:"Payment Team",          color:"#10B981", hint:"Payments, finance and refund handling" },
-  VIDEO_AI_OPERATIONS: { label:"Video / AI Operations", color:"#F59E0B", hint:"Video review, Phase 1 results, rankings" },
-  KYC_TEAM:            { label:"KYC Team",              color:"#A855F7", hint:"Phase 2 KYC review — may reveal masked documents" },
-  TRIAL_CITY_MANAGER:  { label:"Trial City Manager",    color:"#06B6D4", hint:"Physical trials, locked to assigned cities only" },
-  CONTENT_TEAM:        { label:"Content Team",          color:"#8B5CF6", hint:"CMS, media, banners, sponsors, SEO" },
-  MATCH_OPERATIONS:    { label:"Match Operations",      color:"#EF4444", hint:"Matches, live scoring, teams, auction" },
+  SUPER_ADMIN:         { label:"Super Admin",           color:"#C2410C", hint:"Full control — every section, admin management, reveal KYC documents" },
+  REGISTRATION_TEAM:   { label:"Registration Team",     color:"#1D4ED8", hint:"Player registrations, user accounts, support" },
+  PAYMENT_TEAM:        { label:"Payment Team",          color:"#047857", hint:"Payments, finance and refund handling" },
+  VIDEO_AI_OPERATIONS: { label:"Video / AI Operations", color:"#B45309", hint:"Video review, Phase 1 results, rankings" },
+  KYC_TEAM:            { label:"KYC Team",              color:"#7C3AED", hint:"Phase 2 KYC review — may reveal masked documents" },
+  TRIAL_CITY_MANAGER:  { label:"Trial City Manager",    color:"#0E7490", hint:"Physical trials, locked to assigned cities only" },
+  CONTENT_TEAM:        { label:"Content Team",          color:"#7C3AED", hint:"CMS, media, banners, sponsors, SEO" },
+  MATCH_OPERATIONS:    { label:"Match Operations",      color:"#DC2626", hint:"Matches, live scoring, teams, auction" },
   SUPPORT_TEAM:        { label:"Support Team",          color:"#64748B", hint:"Support tickets and player lookups" },
-  FINANCE_TEAM:        { label:"Finance Team",          color:"#22C55E", hint:"Finance, GST, refunds, data export" },
+  FINANCE_TEAM:        { label:"Finance Team",          color:"#15803D", hint:"Finance, GST, refunds, data export" },
 };
 
 const sectionLabel = (id: string) =>
@@ -58,7 +58,7 @@ export default function RolesView() {
   return (
     <div style={{ display:"flex", flexDirection:"column", gap:18 }}>
       <div>
-        <div style={{ fontSize:20, fontWeight:800, color:"#F1F5F9" }}>Roles & Access</div>
+        <div style={{ fontSize:20, fontWeight:800, color:"#1E293B" }}>Roles & Access</div>
         <div style={{ fontSize:12, color:"#64748B", marginTop:3 }}>
           Fixed roles, enforced by the server on every request — the panel only shows what a role can already do. Trial-day field roles (gate, check-in, evaluator…) use the mobile staff app at /staff instead of this panel.
           Give people roles in Admin Management.
@@ -66,7 +66,7 @@ export default function RolesView() {
       </div>
 
       {err && (
-        <div style={{ padding:"12px 16px", borderRadius:10, background:"#EF444418", border:"1px solid #EF444440", color:"#EF4444", fontSize:12 }}>
+        <div style={{ padding:"12px 16px", borderRadius:10, background:"#EF444418", border:"1px solid #EF444440", color:"#DC2626", fontSize:12 }}>
           {err} — this page is available to the Super Admin.
         </div>
       )}
@@ -86,9 +86,9 @@ export default function RolesView() {
                 <button key={r} onClick={()=>setSelected(r)}
                   style={{ textAlign:"left", padding:"12px 14px", borderRadius:12, cursor:"pointer",
                     border:`1px solid ${on ? m.color : "#1E293B"}`,
-                    background: on ? `${m.color}14` : "#0D1526" }}>
+                    background: on ? `${m.color}14` : "#FFFFFF" }}>
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-                    <span style={{ fontSize:13, fontWeight:800, color: on ? m.color : "#E2E8F0" }}>{m.label}</span>
+                    <span style={{ fontSize:13, fontWeight:800, color: on ? m.color : "#1E293B" }}>{m.label}</span>
                     <span style={{ fontSize:10, fontWeight:700, color:"#64748B" }}>{count} account{count!==1?"s":""}</span>
                   </div>
                 </button>
@@ -100,9 +100,9 @@ export default function RolesView() {
           <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
             <div style={{ ...card, borderTop:`3px solid ${meta.color}` }}>
               <div style={{ fontSize:16, fontWeight:900, color:meta.color, marginBottom:6 }}>{meta.label}</div>
-              <div style={{ fontSize:12, color:"#94A3B8", lineHeight:1.6 }}>{meta.hint}</div>
+              <div style={{ fontSize:12, color:"#64748B", lineHeight:1.6 }}>{meta.hint}</div>
               <div style={{ marginTop:14 }}>
-                <div style={{ fontSize:10, fontWeight:800, color:"#334155", textTransform:"uppercase", letterSpacing:1, marginBottom:8 }}>
+                <div style={{ fontSize:10, fontWeight:800, color:"#64748B", textTransform:"uppercase", letterSpacing:1, marginBottom:8 }}>
                   Sections this role opens
                 </div>
                 <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
@@ -117,7 +117,7 @@ export default function RolesView() {
             </div>
 
             <div style={card}>
-              <div style={{ fontSize:13, fontWeight:800, color:"#F1F5F9", marginBottom:10 }}>
+              <div style={{ fontSize:13, fontWeight:800, color:"#1E293B", marginBottom:10 }}>
                 Accounts with this role ({holders.length})
               </div>
               {holders.length === 0 ? (
@@ -125,18 +125,18 @@ export default function RolesView() {
               ) : (
                 <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
                   {holders.map(h => (
-                    <div key={h.id} style={{ display:"flex", alignItems:"center", gap:12, padding:"10px 14px", background:"#060B18", borderRadius:10, border:"1px solid #1E293B" }}>
+                    <div key={h.id} style={{ display:"flex", alignItems:"center", gap:12, padding:"10px 14px", background:"#F5F6F8", borderRadius:10, border:"1px solid #E2E8F0" }}>
                       <div style={{ width:30, height:30, borderRadius:9, background:`${meta.color}20`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, fontWeight:900, color:meta.color, flexShrink:0 }}>
                         {h.name.charAt(0).toUpperCase()}
                       </div>
                       <div style={{ flex:1, minWidth:0 }}>
-                        <div style={{ fontSize:12, fontWeight:700, color:"#E2E8F0" }}>{h.name}</div>
+                        <div style={{ fontSize:12, fontWeight:700, color:"#1E293B" }}>{h.name}</div>
                         <div style={{ fontSize:10, color:"#64748B" }}>{h.email}</div>
                       </div>
                       {h.role === "TRIAL_CITY_MANAGER" && h.cities.length > 0 && (
-                        <span style={{ fontSize:10, color:"#06B6D4", textTransform:"capitalize" }}>{h.cities.join(", ")}</span>
+                        <span style={{ fontSize:10, color:"#0E7490", textTransform:"capitalize" }}>{h.cities.join(", ")}</span>
                       )}
-                      <span style={{ fontSize:10, fontWeight:700, color: h.active ? "#10B981" : "#EF4444" }}>
+                      <span style={{ fontSize:10, fontWeight:700, color: h.active ? "#047857" : "#EF4444" }}>
                         {h.active ? "Active" : "Deactivated"}
                       </span>
                     </div>

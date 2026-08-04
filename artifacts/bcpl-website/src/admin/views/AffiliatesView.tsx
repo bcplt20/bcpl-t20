@@ -9,7 +9,7 @@ import { PlayerReferralsPanel } from "./PlayerReferralsView";
 function Modal({ onClose, children }: { onClose: () => void; children: React.ReactNode }) {
   return (
     <div style={{ position: "fixed", inset: 0, background: "#00000088", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999 }} onClick={onClose}>
-      <div style={{ background: "#0D1526", border: "1px solid #1E293B", borderRadius: 20, padding: 28, width: 520, maxHeight: "90vh", overflowY: "auto" }} onClick={e => e.stopPropagation()}>
+      <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: 20, padding: 28, width: 520, maxHeight: "90vh", overflowY: "auto" }} onClick={e => e.stopPropagation()}>
         {children}
       </div>
     </div>
@@ -23,12 +23,12 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     </div>
   );
 }
-const inp: React.CSSProperties = { width: "100%", padding: "10px 12px", background: "#060B18", border: "1px solid #1E293B", borderRadius: 9, color: "#F1F5F9", fontSize: 13, outline: "none", boxSizing: "border-box" };
-const card: React.CSSProperties = { background: "#0D1526", border: "1px solid #1E293B", borderRadius: 16, padding: 20 };
+const inp: React.CSSProperties = { width: "100%", padding: "10px 12px", background: "#F5F6F8", border: "1px solid #E2E8F0", borderRadius: 9, color: "#1E293B", fontSize: 13, outline: "none", boxSizing: "border-box" };
+const card: React.CSSProperties = { background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: 16, padding: 20 };
 const btnPrimary: React.CSSProperties = { background: "#FF6B00", color: "#fff", border: "none", borderRadius: 9, padding: "10px 18px", fontSize: 13, fontWeight: 800, cursor: "pointer" };
-const btnGhost: React.CSSProperties = { background: "#1E293B", color: "#CBD5E1", border: "none", borderRadius: 9, padding: "10px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer" };
-const th: React.CSSProperties = { textAlign: "left", padding: "10px 12px", fontSize: 10, fontWeight: 800, color: "#475569", letterSpacing: 1, textTransform: "uppercase", borderBottom: "1px solid #1E293B", whiteSpace: "nowrap" };
-const td: React.CSSProperties = { padding: "12px", fontSize: 13, color: "#E2E8F0", borderBottom: "1px solid #14203A", verticalAlign: "middle" };
+const btnGhost: React.CSSProperties = { background: "#FFFFFF", color: "#1E293B", border: "none", borderRadius: 9, padding: "10px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer" };
+const th: React.CSSProperties = { textAlign: "left", padding: "10px 12px", fontSize: 10, fontWeight: 800, color: "#475569", letterSpacing: 1, textTransform: "uppercase", borderBottom: "1px solid #E2E8F0", whiteSpace: "nowrap" };
+const td: React.CSSProperties = { padding: "12px", fontSize: 13, color: "#1E293B", borderBottom: "1px solid #E2E8F0", verticalAlign: "middle" };
 const inr = (n: number) => `₹${Math.round(n).toLocaleString("en-IN")}`;
 
 const blankAgent = { name: "", code: "", city: "", phone: "", email: "", commissionRate: "10", paidOut: "0" };
@@ -42,7 +42,7 @@ function CopyLink({ code }: { code: string }) {
         setCopied(true); setTimeout(() => setCopied(false), 1500);
       }}
       title={referralLink(code)}
-      style={{ background: copied ? "#14532D" : "#1E293B", color: copied ? "#4ADE80" : "#93C5FD", border: "none", borderRadius: 7, padding: "5px 10px", fontSize: 11, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
+      style={{ background: copied ? "#14532D" : "#E2E8F0", color: copied ? "#15803D" : "#93C5FD", border: "none", borderRadius: 7, padding: "5px 10px", fontSize: 11, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
       {copied ? "✓ Copied" : "🔗 Copy"}
     </button>
   );
@@ -61,9 +61,9 @@ export default function AffiliatesView() {
         {([["agents", "🤝 Ground Agents"], ["players", "🏏 Player Referrals"]] as const).map(([k, label]) => (
           <button key={k} onClick={() => setTab(k)}
             style={{
-              background: tab === k ? "#FF6B00" : "#0D1526",
+              background: tab === k ? "#FF6B00" : "#FFFFFF",
               color: tab === k ? "#fff" : "#94A3B8",
-              border: tab === k ? "1px solid #FF6B00" : "1px solid #1E293B",
+              border: tab === k ? "1px solid #FF6B00" : "1px solid #E2E8F0",
               borderRadius: 9, padding: "9px 18px", fontSize: 13, fontWeight: 800, cursor: "pointer",
             }}>
             {label}
@@ -129,7 +129,7 @@ function AgentsPanel() {
   if (loading) return <div style={{ color: "#64748B", padding: 40, fontSize: 14 }}>Loading agents…</div>;
   if (error) return (
     <div style={{ padding: 40 }}>
-      <div style={{ color: "#FCA5A5", fontSize: 14, marginBottom: 14 }}>⚠ {error}</div>
+      <div style={{ color: "#DC2626", fontSize: 14, marginBottom: 14 }}>⚠ {error}</div>
       <button style={btnGhost} onClick={load}>Retry</button>
     </div>
   );
@@ -150,7 +150,7 @@ function AgentsPanel() {
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
         <div style={{ fontSize: 12, color: "#64748B" }}>
-          Ground agents get a personal link <span style={{ color: "#93C5FD", fontFamily: "monospace" }}>bcplt20.com/r/CODE</span>. Signups, payments and commission are tracked from real registrations.
+          Ground agents get a personal link <span style={{ color: "#1D4ED8", fontFamily: "monospace" }}>bcplt20.com/r/CODE</span>. Signups, payments and commission are tracked from real registrations.
         </div>
         <button style={btnPrimary} onClick={() => { setErr(""); setModal({ form: { ...blankAgent } }); }}>+ New Agent</button>
       </div>
@@ -165,7 +165,7 @@ function AgentsPanel() {
         ].map(k => (
           <div key={k.label} style={card}>
             <div style={{ fontSize: 10, fontWeight: 800, color: "#475569", letterSpacing: 1, textTransform: "uppercase", marginBottom: 8 }}>{k.label}</div>
-            <div style={{ fontSize: 22, fontWeight: 900, color: "#F1F5F9" }}>{k.value}</div>
+            <div style={{ fontSize: 22, fontWeight: 900, color: "#1E293B" }}>{k.value}</div>
             <div style={{ fontSize: 11, color: "#64748B", marginTop: 4 }}>{k.sub}</div>
           </div>
         ))}
@@ -193,20 +193,20 @@ function AgentsPanel() {
                     {a.name}
                     <div style={{ fontSize: 11, color: "#64748B", fontWeight: 400, marginTop: 2 }}>{[a.phone, a.email].filter(Boolean).join(" · ") || "—"}</div>
                   </td>
-                  <td style={{ ...td, fontFamily: "monospace", fontWeight: 800, color: "#FF9A57" }}>{a.code}</td>
+                  <td style={{ ...td, fontFamily: "monospace", fontWeight: 800, color: "#C2410C" }}>{a.code}</td>
                   <td style={td}><CopyLink code={a.code} /></td>
                   <td style={td}>{a.city || "—"}</td>
                   <td style={td}>{a.commissionRate}%</td>
                   <td style={td}>{a.clicks}</td>
                   <td style={{ ...td, fontWeight: 800 }}>{a.signups}</td>
-                  <td style={{ ...td, color: "#4ADE80", fontWeight: 800 }}>{a.paid}</td>
+                  <td style={{ ...td, color: "#15803D", fontWeight: 800 }}>{a.paid}</td>
                   <td style={td}>{inr(a.revenue)}</td>
                   <td style={{ ...td, fontWeight: 700 }}>{inr(a.commission)}</td>
                   <td style={td}>{inr(a.paidOut)}</td>
-                  <td style={{ ...td, color: due > 0 ? "#FBBF24" : "#475569", fontWeight: 800 }}>{inr(due)}</td>
+                  <td style={{ ...td, color: due > 0 ? "#B45309" : "#475569", fontWeight: 800 }}>{inr(due)}</td>
                   <td style={td}>
                     <button onClick={() => updateReferral(a.id, { active: !a.active }).then(load).catch(() => {})}
-                      style={{ background: a.active ? "#14532D" : "#1E293B", color: a.active ? "#4ADE80" : "#64748B", border: "none", borderRadius: 20, padding: "4px 12px", fontSize: 11, fontWeight: 800, cursor: "pointer" }}>
+                      style={{ background: a.active ? "#14532D" : "#E2E8F0", color: a.active ? "#15803D" : "#64748B", border: "none", borderRadius: 20, padding: "4px 12px", fontSize: 11, fontWeight: 800, cursor: "pointer" }}>
                       {a.active ? "ACTIVE" : "PAUSED"}
                     </button>
                   </td>
@@ -223,7 +223,7 @@ function AgentsPanel() {
 
       {modal && (
         <Modal onClose={() => setModal(null)}>
-          <div style={{ fontSize: 16, fontWeight: 800, color: "#F1F5F9", marginBottom: 18 }}>{modal.id ? "Edit Agent" : "New Agent"}</div>
+          <div style={{ fontSize: 16, fontWeight: 800, color: "#1E293B", marginBottom: 18 }}>{modal.id ? "Edit Agent" : "New Agent"}</div>
           <Field label="Name *"><input style={inp} value={modal.form.name} onChange={e => setModal({ ...modal, form: { ...modal.form, name: e.target.value } })} placeholder="e.g. Suresh Kumar" /></Field>
           {!modal.id ? (
             <Field label="Code (optional — auto-generated from name)">
@@ -245,9 +245,9 @@ function AgentsPanel() {
               <input style={inp} type="number" min={0} value={modal.form.paidOut} onChange={e => setModal({ ...modal, form: { ...modal.form, paidOut: e.target.value } })} />
             </Field>
           )}
-          {err && <div style={{ fontSize: 12, color: "#FCA5A5", marginBottom: 10 }}>⚠ {err}</div>}
+          {err && <div style={{ fontSize: 12, color: "#DC2626", marginBottom: 10 }}>⚠ {err}</div>}
           <div style={{ display: "flex", gap: 10, justifyContent: "space-between", marginTop: 6 }}>
-            <div>{modal.id && <button style={{ ...btnGhost, color: "#FCA5A5" }} onClick={() => remove(modal.id!)}>Delete</button>}</div>
+            <div>{modal.id && <button style={{ ...btnGhost, color: "#DC2626" }} onClick={() => remove(modal.id!)}>Delete</button>}</div>
             <div style={{ display: "flex", gap: 10 }}>
               <button style={btnGhost} onClick={() => setModal(null)}>Cancel</button>
               <button style={btnPrimary} onClick={save} disabled={busy}>{busy ? "Saving…" : "Save"}</button>

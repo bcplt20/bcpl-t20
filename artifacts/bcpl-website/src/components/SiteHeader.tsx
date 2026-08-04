@@ -81,10 +81,15 @@ const CSS = `
   @media(min-width:768px){.sh-W{padding:0 32px;}}
   @media(min-width:1280px){.sh-W{padding:0 48px;}}
 
-  .sh-link{font-family:'Barlow Condensed','Mukta',sans-serif;font-weight:700;font-size:15.5px;letter-spacing:.09em;color:rgba(255,255,255,.62);text-decoration:none;text-transform:uppercase;transition:color .2s;white-space:nowrap;padding:6px 2px;}
+  /* Header links are WHITE while transparent over the dark hero, then flip to
+     navy once the header becomes ivory glass on scroll (.sh-scrolled). */
+  .sh-link{font-family:'Barlow Condensed','Mukta',sans-serif;font-weight:700;font-size:15.5px;letter-spacing:.09em;color:rgba(255,255,255,.72);text-decoration:none;text-transform:uppercase;transition:color .2s;white-space:nowrap;padding:6px 2px;}
   .sh-link:hover{color:#fff;}
+  .sh-scrolled .sh-link{color:rgba(12,29,51,.66);}
+  .sh-scrolled .sh-link:hover{color:#0C1D33;}
   .sh-link-active{color:#FF7A29;}
   .sh-link-active:hover{color:#FF7A29;}
+  .sh-scrolled .sh-link-active,.sh-scrolled .sh-link-active:hover{color:#FF7A29;}
 
   .sh-desk{display:none;}
   .sh-deskbar{display:none;}
@@ -108,23 +113,29 @@ const CSS = `
      (tracking adds a trailing gap that would otherwise pull it left). */
   /* Refined lockup: Inter at tiny size + wide tracking reads premium (Barlow
      Condensed 800 at 9px rendered chunky/cheap — owner feedback Jul 2026). */
-  .sh-s5{font-family:'Inter','Mukta',sans-serif;font-weight:700;font-size:8px;color:#E8B23D;letter-spacing:.46em;padding-left:.46em;line-height:1;white-space:nowrap;text-transform:uppercase;text-shadow:0 1px 6px rgba(0,0,0,.55);padding-bottom:3px;background:linear-gradient(90deg,transparent 8%,rgba(232,178,61,.55) 50%,transparent 92%) bottom/100% 1px no-repeat;animation:s5in .9s ease .15s both;}
+  .sh-s5{font-family:'Inter','Mukta',sans-serif;font-weight:700;font-size:8px;color:#E8B23D;letter-spacing:.46em;padding-left:.46em;line-height:1;white-space:nowrap;text-transform:uppercase;text-shadow:0 1px 6px rgba(0,0,0,.55);padding-bottom:3px;background:linear-gradient(90deg,transparent 8%,rgba(232,178,61,.55) 50%,transparent 92%) bottom/100% 1px no-repeat;animation:s5in .9s ease .15s both;transition:color .3s,text-shadow .3s;}
+  .sh-scrolled .sh-s5{color:#B8892B;text-shadow:none;background:linear-gradient(90deg,transparent 8%,rgba(184,137,43,.5) 50%,transparent 92%) bottom/100% 1px no-repeat;}
   @keyframes s5in{from{opacity:0;letter-spacing:.6em}to{opacity:.95;letter-spacing:.46em}}
   @media(prefers-reduced-motion:reduce){.sh-s5{animation:none;opacity:.95;}}
 
   .sh-cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:var(--r,14px);color:#fff;font-family:'Barlow Condensed','Mukta',sans-serif;font-weight:800;letter-spacing:.07em;cursor:pointer;text-transform:uppercase;text-decoration:none;white-space:nowrap;transition:opacity .2s,transform .15s;box-shadow:0 4px 18px rgba(255,122,41,.3);}
   .sh-cta:hover{opacity:.92;transform:translateY(-1px);}
 
-  .sh-ghost{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.18);border-radius:var(--r,14px);color:#fff;font-family:'Barlow Condensed','Mukta',sans-serif;font-weight:800;letter-spacing:.07em;cursor:pointer;text-transform:uppercase;text-decoration:none;white-space:nowrap;transition:border-color .2s,background .2s;}
+  .sh-ghost{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.18);border-radius:var(--r,14px);color:#fff;font-family:'Barlow Condensed','Mukta',sans-serif;font-weight:800;letter-spacing:.07em;cursor:pointer;text-transform:uppercase;text-decoration:none;white-space:nowrap;transition:border-color .2s,background .2s,color .2s;}
   .sh-ghost:hover{border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.09);}
+  .sh-scrolled .sh-ghost{background:rgba(12,29,51,.04);border-color:rgba(12,29,51,.18);color:#0C1D33;}
+  .sh-scrolled .sh-ghost:hover{border-color:rgba(12,29,51,.34);background:rgba(12,29,51,.07);}
   /* When a contextual CTA is present, MY BCPL only fits from 1280px up
      (the avatar still links to the profile below that width). */
   .sh-mybcpl{display:none;}
   @media(min-width:1280px){.sh-mybcpl{display:inline-flex;}}
 
-  .sh-lang{display:inline-flex;align-items:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:2px;gap:2px;flex-shrink:0;}
-  .sh-lang button{border:none;background:transparent;color:rgba(255,255,255,.5);font-family:'Inter','Mukta',sans-serif;font-weight:700;font-size:11px;letter-spacing:.04em;padding:6px 10px;border-radius:7px;cursor:pointer;transition:background .2s,color .2s;line-height:1;}
+  .sh-lang{display:inline-flex;align-items:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:2px;gap:2px;flex-shrink:0;transition:background .2s,border-color .2s;}
+  .sh-lang button{border:none;background:transparent;color:rgba(255,255,255,.6);font-family:'Inter','Mukta',sans-serif;font-weight:700;font-size:11px;letter-spacing:.04em;padding:6px 10px;border-radius:7px;cursor:pointer;transition:background .2s,color .2s;line-height:1;}
   .sh-lang button.on{background:rgba(255,122,41,.16);color:#FF7A29;}
+  .sh-scrolled .sh-lang{background:rgba(12,29,51,.04);border-color:rgba(12,29,51,.12);}
+  .sh-scrolled .sh-lang button{color:rgba(12,29,51,.55);}
+  .sh-scrolled .sh-lang button.on{background:rgba(255,122,41,.14);color:#D95E10;}
 
   .sh-mob{position:fixed;inset:0;background:rgba(4,10,20,.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);z-index:1500;display:flex;flex-direction:column;padding:16px 28px calc(28px + env(safe-area-inset-bottom,0px));overflow-y:auto;animation:shMobIn .22s ease;}
   @keyframes shMobIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
@@ -134,7 +145,8 @@ const CSS = `
   .sh-mobsupport a{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px;border:1px solid rgba(255,255,255,.14);border-radius:12px;color:rgba(255,255,255,.75);font-family:'Inter','Mukta',sans-serif;font-weight:600;font-size:14px;text-decoration:none;background:rgba(255,255,255,.03);}
 
   .sh-ham{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;background:none;border:none;cursor:pointer;width:44px;height:44px;padding:10px;flex-shrink:0;}
-  .sh-ham span{width:22px;height:2px;background:#fff;display:block;border-radius:2px;}
+  .sh-ham span{width:22px;height:2px;background:#fff;display:block;border-radius:2px;transition:background .3s;}
+  .sh-scrolled .sh-ham span{background:#0C1D33;}
 
   /* Logged-in players never see register nudges — hides the per-page floating CTA too. */
   html.bcpl-authed .float-reg-btn{display:none!important;}
@@ -150,13 +162,15 @@ function LangToggle({ big }: { big?: boolean }) {
   );
 }
 
-function Logo() {
+function Logo({ scrolled }: { scrolled?: boolean }) {
+  /* White logo floats over the dark hero; navy (transparent) logo reads on the
+     ivory glass once scrolled. */
   return (
     <Link href="/" style={{ display: "inline-flex", flexDirection: "column", alignItems: "center", gap: 3, flexShrink: 0, textDecoration: "none" }}>
       <img
-        src={import.meta.env.BASE_URL + "bcpl-assets/bcpl-logo-white.png"}
+        src={import.meta.env.BASE_URL + (scrolled ? "bcpl-assets/bcpl-logo-transparent.png" : "bcpl-assets/bcpl-logo-white.png")}
         alt="BCPL"
-        style={{ height: 34, width: "auto", objectFit: "contain", display: "block", filter: "brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,.7))" }}
+        style={{ height: 34, width: "auto", objectFit: "contain", display: "block", filter: scrolled ? "none" : "brightness(1.3) drop-shadow(0 2px 8px rgba(0,0,0,.7))" }}
       />
       <span className="sh-s5">SEASON 5</span>
     </Link>
@@ -208,13 +222,13 @@ export function SiteHeader({ active }: { active?: string }) {
     <>
       <style>{CSS}</style>
 
-      <nav style={{
+      <nav className={scrolled ? "sh-scrolled" : ""} style={{
         position: "sticky", top: 0, zIndex: 200,
-        background: scrolled ? "rgba(4,11,22,.88)" : "transparent",
-        backdropFilter: scrolled ? "blur(18px) saturate(1.5)" : "none",
-        WebkitBackdropFilter: scrolled ? "blur(18px) saturate(1.5)" : "none",
-        borderBottom: scrolled ? "1px solid rgba(255,255,255,.08)" : "1px solid transparent",
-        boxShadow: scrolled ? "0 8px 32px rgba(0,0,0,.35)" : "none",
+        background: scrolled ? "rgba(246,243,236,.86)" : "transparent",
+        backdropFilter: scrolled ? "blur(18px) saturate(1.4)" : "none",
+        WebkitBackdropFilter: scrolled ? "blur(18px) saturate(1.4)" : "none",
+        borderBottom: scrolled ? "1px solid rgba(12,29,51,.10)" : "1px solid transparent",
+        boxShadow: scrolled ? "0 8px 28px rgba(12,29,51,.10)" : "none",
         transition: "background .3s, border-color .3s, box-shadow .3s",
       }}>
         <div className="sh-W">
@@ -222,7 +236,7 @@ export function SiteHeader({ active }: { active?: string }) {
           {/* ── DESKTOP: logo | centered links | lang · login · CTA ── */}
           <div className="sh-deskbar">
             <div style={{ flex: "0 0 auto", display: "flex", justifyContent: "flex-start" }}>
-              <Logo />
+              <Logo scrolled={scrolled} />
             </div>
             <div className="sh-desk">
               {LINKS.map(l => (
@@ -255,7 +269,7 @@ export function SiteHeader({ active }: { active?: string }) {
 
           {/* ── MOBILE: logo | profile · register · ☰ ── */}
           <div className="sh-mobbar">
-            <Logo />
+            <Logo scrolled={scrolled} />
             <div className="sh-mobright">
               <NavUser variant="icon" />
               {user ? (

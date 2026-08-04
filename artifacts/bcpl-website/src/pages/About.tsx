@@ -11,20 +11,20 @@ type IcoComp = (p: { size?: number; style?: React.CSSProperties }) => React.Reac
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-body { background:#0E1624; }
+body { background:#F6F3EC; }
 .wrap { max-width:1200px; margin:0 auto; padding:0 20px; }
 .desk-nav { display:none; align-items:center; gap:22px; }
 .ham-btn { display:flex; }
 @media(min-width:768px){ .wrap{padding:0 32px} }
 @media(min-width:1280px){ .wrap{padding:0 48px} }
 @media(min-width:1024px){ .desk-nav{display:flex!important;} .ham-btn{display:none!important;} }
-.v3-kicker { font-family:Inter,sans-serif; font-weight:700; font-size:12px; letter-spacing:.22em; color:#E8B23D; text-transform:uppercase; }
+.v3-kicker { font-family:Inter,sans-serif; font-weight:700; font-size:12px; letter-spacing:.22em; color:#B8892B; text-transform:uppercase; }
 .v3-h { font-family:'Barlow Condensed','Mukta','Montserrat',sans-serif; font-weight:800; text-transform:uppercase; line-height:.95; letter-spacing:.015em; }
 .btn-fire { background:linear-gradient(135deg,#FF7A29 0%,#E8611A 60%,#C94E0E 100%); border:none; border-radius:14px; color:#fff; font-family:var(--font-head); font-weight:800; cursor:pointer; box-shadow:0 8px 28px rgba(255,122,41,0.45),inset 0 1px 0 rgba(255,255,255,0.2); transition:transform 0.15s,box-shadow 0.2s; letter-spacing:0.02em; animation:pulseGlow 3s ease-in-out infinite; }
 .btn-fire:hover { transform:translateY(-2px); box-shadow:0 14px 40px rgba(255,122,41,0.6); }
 .btn-fire:active { transform:scale(0.97); }
-.glass-card { background:linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85)); backdrop-filter:blur(32px); border:1px solid rgba(255,255,255,0.09); border-radius:20px; box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06); }
-.shimmer-gold { background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D,#F5C842,#E8B23D); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation:shimmer 3s linear infinite; }
+.glass-card { background:#FFFFFF; border:1px solid rgba(12,29,51,0.10); border-radius:20px; box-shadow:0 10px 30px rgba(12,29,51,0.08); }
+.shimmer-gold { background:linear-gradient(90deg,#B8892B,#E8B23D,#B8892B,#C79A2E,#B8892B); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation:shimmer 3s linear infinite; }
 .tag-pill { display:inline-flex; align-items:center; gap:6px; background:rgba(255,122,41,0.12); border:1px solid rgba(255,122,41,0.3); border-radius:100px; padding:5px 14px; font-size:11px; font-weight:700; font-family:var(--font-head); color:#FF7A29; letter-spacing:0.1em; }
 @keyframes gradShift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
 @keyframes floatUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
@@ -52,22 +52,22 @@ function AmbientBg() {
     <div style={{position:'fixed',inset:0,zIndex:0,pointerEvents:'none',overflow:'hidden'}}>
       <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 80% 60% at 20% 40%, rgba(255,122,41,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 20%, rgba(30,64,175,0.12) 0%, transparent 60%)'}}/>
       <svg style={{position:'absolute',inset:0,width:'100%',height:'100%',opacity:0.07}} viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid slice">
-        <path d="M0,400 Q320,320 640,380 Q960,440 1280,360 L1280,720 L0,720 Z" fill="#1a2a4a"/>
-        <rect x="80" y="100" width="8" height="300" fill="#334"/>
-        <rect x="76" y="80" width="16" height="12" fill="#445" rx="2"/>
-        <rect x="1192" y="100" width="8" height="300" fill="#334"/>
-        <rect x="1188" y="80" width="16" height="12" fill="#445" rx="2"/>
+        <path d="M0,400 Q320,320 640,380 Q960,440 1280,360 L1280,720 L0,720 Z" fill="rgba(12,29,51,0.05)"/>
+        <rect x="80" y="100" width="8" height="300" fill="rgba(12,29,51,0.10)"/>
+        <rect x="76" y="80" width="16" height="12" fill="rgba(12,29,51,0.14)" rx="2"/>
+        <rect x="1192" y="100" width="8" height="300" fill="rgba(12,29,51,0.10)"/>
+        <rect x="1188" y="80" width="16" height="12" fill="rgba(12,29,51,0.14)" rx="2"/>
         <rect x="440" y="420" width="400" height="160" fill="none" stroke="#334" strokeWidth="2"/>
       </svg>
       {[
         {top:'15%',left:'8%',color:'#FF7A29',delay:'0s',size:3},
-        {top:'35%',left:'92%',color:'#E8B23D',delay:'1.2s',size:3},
-        {top:'60%',left:'5%',color:'#fff',delay:'2.1s',size:2},
+        {top:'35%',left:'92%',color:'#B8892B',delay:'1.2s',size:3},
+        {top:'60%',left:'5%',color:'#0C1D33',delay:'2.1s',size:2},
         {top:'75%',left:'88%',color:'#FF7A29',delay:'0.7s',size:3},
-        {top:'25%',left:'50%',color:'#E8B23D',delay:'1.8s',size:2},
-        {top:'85%',left:'30%',color:'#fff',delay:'0.4s',size:3},
+        {top:'25%',left:'50%',color:'#B8892B',delay:'1.8s',size:2},
+        {top:'85%',left:'30%',color:'#0C1D33',delay:'0.4s',size:3},
         {top:'45%',left:'70%',color:'#FF7A29',delay:'2.5s',size:2},
-        {top:'10%',left:'65%',color:'#E8B23D',delay:'1.0s',size:3},
+        {top:'10%',left:'65%',color:'#B8892B',delay:'1.0s',size:3},
       ].map((p,i)=>(
         <div key={i} style={{position:'absolute',top:p.top,left:p.left,width:p.size,height:p.size,borderRadius:'50%',background:p.color,animation:`floatParticle 6s ease-in-out ${p.delay} infinite`}}/>
       ))}
@@ -116,7 +116,7 @@ export function About() {
   const { t } = useLang();
 
   return (
-    <div style={{minHeight:'100vh',background:'#0E1624',fontFamily:'Inter,sans-serif',position:'relative'}}>
+    <div style={{minHeight:'100vh',background:'#F6F3EC',fontFamily:'Inter,sans-serif',position:'relative'}}>
       <style>{CSS}</style>
       <AmbientBg/>
       <SiteHeader active="About" />
@@ -126,10 +126,10 @@ export function About() {
         <div className="wrap">
           <div className="v3-kicker" style={{marginBottom:16,animation:'floatUp 0.6s ease both'}}>{t("OUR STORY","हमारी कहानी")}</div>
           <h1 className="v3-h" style={{fontSize:'clamp(40px,9vw,88px)',marginBottom:20,animation:'floatUp 0.7s ease 0.1s both'}}>
-            <span style={{color:'#fff',display:'block'}}>{t("WHERE OFFICES","जहां ऑफिसें")}</span>
+            <span style={{color:'#0C1D33',display:'block'}}>{t("WHERE OFFICES","जहां ऑफिसें")}</span>
             <span className="shimmer-gold" style={{display:'block'}}>{t("MEET STADIUMS.","स्टेडियम बनती हैं।")}</span>
           </h1>
-          <p style={{color:'rgba(255,255,255,0.72)',fontSize:'clamp(14px,2vw,17px)',maxWidth:640,margin:'0 auto',lineHeight:1.7,animation:'floatUp 0.7s ease 0.3s both'}}>
+          <p style={{color:'rgba(12,29,51,.78)',fontSize:'clamp(14px,2vw,17px)',maxWidth:640,margin:'0 auto',lineHeight:1.7,animation:'floatUp 0.7s ease 0.3s both'}}>
             {t("India's corporate cricket league. Turning working professionals into franchise cricketers since 2023.","भारत की कॉर्पोरेट क्रिकेट लीग। 2023 से working professionals को franchise cricketers बना रहे हैं।")}
           </p>
         </div>
@@ -139,11 +139,11 @@ export function About() {
       <section style={{position:'relative',zIndex:1,padding:'0 0 80px'}}>
         <div className="wrap">
           <div className="glass-card" style={{padding:'clamp(20px,5vw,40px) clamp(16px,4vw,48px)',borderLeft:'3px solid #E8B23D',maxWidth:860,margin:'0 auto',animation:'fadeSlide 0.8s ease 0.4s both'}}>
-            <div style={{marginBottom:16,color:'#E8B23D',display:'flex'}}><IcoBulb size={32}/></div>
-            <p style={{color:'rgba(255,255,255,0.88)',fontSize:'clamp(17px,2.2vw,21px)',lineHeight:1.75,fontStyle:'italic'}}>
+            <div style={{marginBottom:16,color:'#B8892B',display:'flex'}}><IcoBulb size={32}/></div>
+            <p style={{color:'#0C1D33',fontSize:'clamp(17px,2.2vw,21px)',lineHeight:1.75,fontStyle:'italic'}}>
               {t("Every working professional who watched IPL and thought 'I could have played' deserves a real shot. Millions stopped competitive cricket when work took over. BCPL exists to give them the stage they never got.","हर working professional जो IPL देखते हुए सोचता है 'मैं भी खेल सकता था' — उसे एक असली मौका मिलना चाहिए। लाखों लोगों ने काम की वजह से competitive cricket छोड़ दी। BCPL उन्हें वो stage देने के लिए है जो उन्हें कभी नहीं मिला।")}
             </p>
-            <div style={{marginTop:20,color:'var(--ink-3)',fontSize:13,fontFamily:'var(--font-head)',fontWeight:700,letterSpacing:'0.08em'}}>— {t("BCPL FOUNDING MISSION","BCPL की स्थापना मिशन")}</div>
+            <div style={{marginTop:20,color:'rgba(12,29,51,.60)',fontSize:13,fontFamily:'var(--font-head)',fontWeight:700,letterSpacing:'0.08em'}}>— {t("BCPL FOUNDING MISSION","BCPL की स्थापना मिशन")}</div>
           </div>
         </div>
       </section>
@@ -155,8 +155,8 @@ export function About() {
             {stats.map((s,i)=>(
               <div key={i} className="glass-card" style={{padding:'36px 24px',textAlign:'center',animation:`countUp 3s ease ${i*0.4}s infinite`}}>
                 <div style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:52,color:'#FF7A29',lineHeight:1,marginBottom:8}}>{s.num}</div>
-                <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:16,color:'#fff',marginBottom:6}}>{t(s.labelEn,s.labelHi)}</div>
-                <div style={{color:'var(--ink-3)',fontSize:12,fontFamily:'Inter,sans-serif'}}>{t(s.subEn,s.subHi)}</div>
+                <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:16,color:'#0C1D33',marginBottom:6}}>{t(s.labelEn,s.labelHi)}</div>
+                <div style={{color:'rgba(12,29,51,.60)',fontSize:12,fontFamily:'Inter,sans-serif'}}>{t(s.subEn,s.subHi)}</div>
               </div>
             ))}
           </div>
@@ -168,7 +168,7 @@ export function About() {
         <div className="wrap">
           <div style={{textAlign:'center',marginBottom:48}}>
             <div className="tag-pill" style={{marginBottom:16}}>{t("OUR JOURNEY","हमारा सफर")}</div>
-            <h2 className="v3-h" style={{fontSize:'clamp(30px,4vw,48px)',color:'#fff'}}>{t("Five Seasons of ","पाँच Seasons की ")} <span className="shimmer-gold">{t("Legacy","विरासत")}</span></h2>
+            <h2 className="v3-h" style={{fontSize:'clamp(30px,4vw,48px)',color:'#0C1D33'}}>{t("Five Seasons of ","पाँच Seasons की ")} <span className="shimmer-gold">{t("Legacy","विरासत")}</span></h2>
           </div>
           <div style={{position:'relative',maxWidth:700,margin:'0 auto'}}>
             <div style={{position:'absolute',left:28,top:0,bottom:0,width:2,background:'linear-gradient(180deg,#E8B23D,rgba(232,178,61,0.2))'}}/>
@@ -178,7 +178,7 @@ export function About() {
                   {tm.year}
                 </div>
                 <div className="glass-card" style={{flex:1,padding:'20px 24px'}}>
-                  <p style={{color:'rgba(255,255,255,0.82)',fontSize:15,lineHeight:1.6}}>{t(tm.textEn,tm.textHi)}</p>
+                  <p style={{color:'#0C1D33',fontSize:15,lineHeight:1.6}}>{t(tm.textEn,tm.textHi)}</p>
                 </div>
               </div>
             ))}
@@ -191,14 +191,14 @@ export function About() {
         <div className="wrap">
           <div style={{textAlign:'center',marginBottom:48}}>
             <div className="tag-pill" style={{marginBottom:16}}>{t("WHY BCPL","क्यों BCPL")}</div>
-            <h2 className="v3-h" style={{fontSize:'clamp(30px,4vw,48px)',color:'#fff'}}>{t("How We're ","हम कैसे ")} <span className="shimmer-gold">{t("Different","अलग हैं")}</span></h2>
+            <h2 className="v3-h" style={{fontSize:'clamp(30px,4vw,48px)',color:'#0C1D33'}}>{t("How We're ","हम कैसे ")} <span className="shimmer-gold">{t("Different","अलग हैं")}</span></h2>
           </div>
           <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(260px,1fr))',gap:24}}>
             {diffs.map((d,i)=>(
               <div key={i} className="glass-card" style={{padding:'36px 28px',borderTop:'3px solid #FF7A29',transition:'transform 0.2s',animation:`fadeSlide 0.7s ease ${i*0.15}s both`}}>
                 <div style={{marginBottom:16,color:'#FF7A29',display:'flex'}}><d.icon size={36}/></div>
                 <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:17,color:'#FF7A29',marginBottom:12}}>{t(d.titleEn,d.titleHi)}</div>
-                <p style={{color:'rgba(255,255,255,0.7)',fontSize:14,lineHeight:1.7}}>{t(d.bodyEn,d.bodyHi)}</p>
+                <p style={{color:'rgba(12,29,51,.78)',fontSize:14,lineHeight:1.7}}>{t(d.bodyEn,d.bodyHi)}</p>
               </div>
             ))}
           </div>
@@ -210,22 +210,22 @@ export function About() {
         <div className="wrap">
           <div style={{textAlign:'center',marginBottom:48}}>
             <div className="tag-pill" style={{marginBottom:16}}>{t("THE MODEL","मॉडल")}</div>
-            <h2 className="v3-h" style={{fontSize:'clamp(30px,4vw,48px)',color:'#fff'}}>{t("From Office to ","ऑफिस से ")} <span className="shimmer-gold">{t("Stadium","स्टेडियम तक")}</span></h2>
-            <p style={{color:'rgba(255,255,255,0.6)',fontSize:'clamp(14px,2vw,16px)',lineHeight:1.7,maxWidth:640,margin:'16px auto 0'}}>
+            <h2 className="v3-h" style={{fontSize:'clamp(30px,4vw,48px)',color:'#0C1D33'}}>{t("From Office to ","ऑफिस से ")} <span className="shimmer-gold">{t("Stadium","स्टेडियम तक")}</span></h2>
+            <p style={{color:'rgba(12,29,51,.78)',fontSize:'clamp(14px,2vw,16px)',lineHeight:1.7,maxWidth:640,margin:'16px auto 0'}}>
               {t("BCPL runs on a clear two-phase model, so working professionals can be assessed fairly before ever stepping onto a franchise stage.","BCPL एक साफ़ दो-phase model पर चलती है, ताकि working professionals का franchise stage पर पहुँचने से पहले निष्पक्ष मूल्यांकन हो सके।")}
             </p>
           </div>
           <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))',gap:20,maxWidth:900,margin:'0 auto'}}>
             <div className="glass-card" style={{padding:'28px 24px',borderTop:'3px solid #E8B23D',animation:'fadeSlide 0.6s ease 0.05s both'}}>
-              <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:18,color:'#E8B23D',marginBottom:10}}>{t("Phase 1 — Video Assessment","Phase 1 — वीडियो मूल्यांकन")}</div>
-              <p style={{color:'rgba(255,255,255,0.7)',fontSize:14,lineHeight:1.7}}>{t("Register and submit your prescribed cricket video within the permitted window. Your submission is assessed against published role-specific criteria.","Register करें और तय window में अपना cricket video submit करें। आपकी submission published role-specific criteria पर परखी जाती है।")}</p>
+              <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:18,color:'#B8892B',marginBottom:10}}>{t("Phase 1 — Video Assessment","Phase 1 — वीडियो मूल्यांकन")}</div>
+              <p style={{color:'rgba(12,29,51,.78)',fontSize:14,lineHeight:1.7}}>{t("Register and submit your prescribed cricket video within the permitted window. Your submission is assessed against published role-specific criteria.","Register करें और तय window में अपना cricket video submit करें। आपकी submission published role-specific criteria पर परखी जाती है।")}</p>
             </div>
             <div className="glass-card" style={{padding:'28px 24px',borderTop:'3px solid #FF7A29',animation:'fadeSlide 0.6s ease 0.15s both'}}>
               <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:18,color:'#FF7A29',marginBottom:10}}>{t("Phase 2 — Physical Trial","Phase 2 — फिजिकल ट्रायल")}</div>
-              <p style={{color:'rgba(255,255,255,0.7)',fontSize:14,lineHeight:1.7}}>{t("Qualified players attend a standardised on-ground trial in their allotted city, scored on role-specific criteria out of 100 — leading toward the Auction Pool.","Qualified players अपने allotted शहर में एक standardised on-ground trial देते हैं, जो role-specific criteria पर 100 में से scored होता है — Auction Pool की ओर।")}</p>
+              <p style={{color:'rgba(12,29,51,.78)',fontSize:14,lineHeight:1.7}}>{t("Qualified players attend a standardised on-ground trial in their allotted city, scored on role-specific criteria out of 100 — leading toward the Auction Pool.","Qualified players अपने allotted शहर में एक standardised on-ground trial देते हैं, जो role-specific criteria पर 100 में से scored होता है — Auction Pool की ओर।")}</p>
             </div>
           </div>
-          <p style={{color:'rgba(255,255,255,0.5)',fontSize:13,lineHeight:1.7,maxWidth:720,margin:'24px auto 0',textAlign:'center'}}>
+          <p style={{color:'rgba(12,29,51,.60)',fontSize:13,lineHeight:1.7,maxWidth:720,margin:'24px auto 0',textAlign:'center'}}>
             {t("Phase 1 qualification, Phase 2 completion and Auction Pool entry are distinct stages. None of them guarantees Team Purchase, a player contract or Tournament Participation.","Phase 1 qualification, Phase 2 completion और Auction Pool entry अलग-अलग stages हैं। इनमें से कोई भी Team Purchase, player contract या Tournament Participation की गारंटी नहीं देता।")}
           </p>
         </div>
@@ -236,7 +236,7 @@ export function About() {
         <div className="wrap">
           <div style={{textAlign:'center',marginBottom:48}}>
             <div className="tag-pill" style={{marginBottom:16}}>{t("HOW WE OPERATE","हम कैसे काम करते हैं")}</div>
-            <h2 className="v3-h" style={{fontSize:'clamp(30px,4vw,48px)',color:'#fff'}}>{t("Our Operating ","हमारे संचालन ")} <span className="shimmer-gold">{t("Principles","सिद्धांत")}</span></h2>
+            <h2 className="v3-h" style={{fontSize:'clamp(30px,4vw,48px)',color:'#0C1D33'}}>{t("Our Operating ","हमारे संचालन ")} <span className="shimmer-gold">{t("Principles","सिद्धांत")}</span></h2>
           </div>
           <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))',gap:20,maxWidth:1100,margin:'0 auto'}}>
             {[
@@ -249,7 +249,7 @@ export function About() {
             ].map((p,i)=>(
               <div key={i} className="glass-card" style={{padding:'28px 24px',borderTop:'2px solid rgba(255,122,41,0.3)',animation:`fadeSlide 0.6s ease ${0.05+i*0.08}s both`}}>
                 <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:17,color:'#FF7A29',marginBottom:10}}>{t(p.titleEn,p.titleHi)}</div>
-                <p style={{color:'rgba(255,255,255,0.7)',fontSize:14,lineHeight:1.7}}>{t(p.bodyEn,p.bodyHi)}</p>
+                <p style={{color:'rgba(12,29,51,.78)',fontSize:14,lineHeight:1.7}}>{t(p.bodyEn,p.bodyHi)}</p>
               </div>
             ))}
           </div>
@@ -261,7 +261,7 @@ export function About() {
         <div className="wrap">
           <div style={{textAlign:'center',marginBottom:48}}>
             <div className="tag-pill" style={{marginBottom:16}}>{t("THE TEAM BEHIND THE LEAGUE","लीग के पीछे की टीम")}</div>
-            <h2 className="v3-h" style={{fontSize:'clamp(30px,4vw,48px)',color:'#fff'}}>
+            <h2 className="v3-h" style={{fontSize:'clamp(30px,4vw,48px)',color:'#0C1D33'}}>
               {t("Our ","हमारा ")} <span className="shimmer-gold">{t("Leadership","नेतृत्व")}</span>
             </h2>
           </div>
@@ -270,11 +270,11 @@ export function About() {
           <div className="glass-card" style={{maxWidth:860,margin:'0 auto 32px',borderTop:'3px solid #E8B23D',padding:'clamp(24px,4vw,40px)',animation:'fadeSlide 0.7s ease both'}}>
             <div style={{display:'inline-flex',alignItems:'center',gap:8,background:'rgba(232,178,61,0.12)',border:'1px solid rgba(232,178,61,0.35)',borderRadius:100,padding:'5px 14px',marginBottom:18}}>
               <span style={{width:8,height:8,borderRadius:'50%',background:'#E8B23D',display:'inline-block'}}/>
-              <span style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:11,color:'#E8B23D',letterSpacing:'.12em'}}>{t("FOUNDER","संस्थापक")}</span>
+              <span style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:11,color:'#B8892B',letterSpacing:'.12em'}}>{t("FOUNDER","संस्थापक")}</span>
             </div>
-            <div className="v3-h" style={{fontSize:'clamp(24px,3.5vw,34px)',color:'#fff',marginBottom:6,textTransform:'none'}}>Saurabh Jha</div>
+            <div className="v3-h" style={{fontSize:'clamp(24px,3.5vw,34px)',color:'#0C1D33',marginBottom:6,textTransform:'none'}}>Saurabh Jha</div>
             <div style={{fontFamily:'var(--font-head)',fontWeight:700,fontSize:14,color:'#FF7A29',letterSpacing:'.06em',marginBottom:20}}>{t("Founder & Chairman","संस्थापक और अध्यक्ष")}</div>
-            <p style={{color:'rgba(255,255,255,0.7)',fontSize:15,lineHeight:1.8,maxWidth:620}}>
+            <p style={{color:'rgba(12,29,51,.78)',fontSize:15,lineHeight:1.8,maxWidth:620}}>
               {t("Founder of the Bhartiya Corporate Premier League, operated by Kriparthi Playing 11 Pvt. Ltd. Saurabh built BCPL to give every working professional a real, fair shot at professional-grade cricket.","Bhartiya Corporate Premier League के संस्थापक, जो Kriparthi Playing 11 Pvt. Ltd. द्वारा संचालित है। Saurabh ने BCPL को इसलिए बनाया ताकि हर working professional को professional-grade cricket का एक असली, निष्पक्ष मौका मिले।")}
             </p>
           </div>
@@ -289,10 +289,10 @@ export function About() {
               {name:'Mohit Kumar',       role:'Finance & Accounts',bioEn:'Manages finance, accounts and payments oversight.',bioHi:'finance, accounts और payments की देखरेख।'},
             ].map((m,i)=>(
               <div key={i} className="glass-card" style={{padding:'22px 22px 24px',borderTop:'2px solid rgba(255,122,41,0.3)',animation:`fadeSlide 0.6s ease ${0.1+i*0.1}s both`}}>
-                <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:16,color:'#fff',marginBottom:4,lineHeight:1.25}}>{m.name}</div>
+                <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:16,color:'#0C1D33',marginBottom:4,lineHeight:1.25}}>{m.name}</div>
                 <div style={{fontFamily:'var(--font-head)',fontWeight:700,fontSize:12,color:'#FF7A29',letterSpacing:'.05em',marginBottom:m.sub?2:10}}>{m.role}</div>
-                {m.sub && <div style={{fontFamily:'Inter,sans-serif',fontSize:11,color:'var(--ink-3)',marginBottom:10}}>{m.sub}</div>}
-                <p style={{color:'rgba(255,255,255,0.65)',fontSize:13,lineHeight:1.65}}>{t(m.bioEn,m.bioHi)}</p>
+                {m.sub && <div style={{fontFamily:'Inter,sans-serif',fontSize:11,color:'rgba(12,29,51,.60)',marginBottom:10}}>{m.sub}</div>}
+                <p style={{color:'rgba(12,29,51,.78)',fontSize:13,lineHeight:1.65}}>{t(m.bioEn,m.bioHi)}</p>
               </div>
             ))}
           </div>
@@ -305,24 +305,24 @@ export function About() {
           <div className="glass-card" style={{padding:'clamp(20px,5vw,48px) clamp(16px,4vw,48px)',maxWidth:860,margin:'0 auto',border:'1px solid rgba(232,178,61,0.25)',animation:'borderGlow 3s ease infinite'}}>
             <div style={{display:'flex',flexWrap:'wrap',gap:32,alignItems:'center',marginBottom:32}}>
               <div style={{flex:1,minWidth:200}}>
-                <div style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:22,color:'#fff',marginBottom:8}}>Kriparthi Playing 11 Pvt. Ltd.</div>
-                <div style={{color:'var(--ink-3)',fontSize:13,fontFamily:'Inter,sans-serif'}}>Operating the Bhartiya Corporate Premier League · India</div>
+                <div style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:22,color:'#0C1D33',marginBottom:8}}>Kriparthi Playing 11 Pvt. Ltd.</div>
+                <div style={{color:'rgba(12,29,51,.60)',fontSize:13,fontFamily:'Inter,sans-serif'}}>Operating the Bhartiya Corporate Premier League · India</div>
               </div>
               <div style={{display:'flex',gap:20,flexWrap:'wrap'}}>
                 {[{label:'Registered',val:'Company'},{ label:'Track Record',val:'4 Seasons'},{label:'Players Served',val:'2.5 Lakh+'}].map((b,i)=>(
                   <div key={i} style={{textAlign:'center'}}>
-                    <div style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:20,color:'#E8B23D'}}>{b.val}</div>
-                    <div style={{color:'var(--ink-3)',fontSize:11,fontFamily:'Inter,sans-serif'}}>{b.label}</div>
+                    <div style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:20,color:'#B8892B'}}>{b.val}</div>
+                    <div style={{color:'rgba(12,29,51,.60)',fontSize:11,fontFamily:'Inter,sans-serif'}}>{b.label}</div>
                   </div>
                 ))}
               </div>
             </div>
             <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))',gap:16,marginBottom:24}}>
               {['Structured Assessment Process','Professional Grounds','Transparent Fee Structure','Transparent Selection Process'].map((f,i)=>(
-                <div key={i} style={{color:'rgba(255,255,255,0.75)',fontSize:14,fontFamily:'Inter,sans-serif',display:'flex',alignItems:'center',gap:8}}><span style={{color:'#22C55E',display:'inline-flex',flexShrink:0}}><IcoCheck size={16}/></span>{f}</div>
+                <div key={i} style={{color:'rgba(12,29,51,.78)',fontSize:14,fontFamily:'Inter,sans-serif',display:'flex',alignItems:'center',gap:8}}><span style={{color:'#22C55E',display:'inline-flex',flexShrink:0}}><IcoCheck size={16}/></span>{f}</div>
               ))}
             </div>
-            <p style={{color:'rgba(255,255,255,0.55)',fontSize:14,fontFamily:'Inter,sans-serif',fontStyle:'italic'}}>Transparent process. Every player treated fairly.</p>
+            <p style={{color:'rgba(12,29,51,.60)',fontSize:14,fontFamily:'Inter,sans-serif',fontStyle:'italic'}}>Transparent process. Every player treated fairly.</p>
           </div>
         </div>
       </section>
@@ -330,10 +330,10 @@ export function About() {
       {/* BOTTOM CTA */}
       <section style={{position:'relative',zIndex:1,padding:'0 0 120px',textAlign:'center'}}>
         <div className="wrap">
-          <h2 className="v3-h" style={{fontSize:'clamp(26px,3.5vw,44px)',color:'#fff',marginBottom:12}}>
+          <h2 className="v3-h" style={{fontSize:'clamp(26px,3.5vw,44px)',color:'#0C1D33',marginBottom:12}}>
             {t("Join ","शामिल हों ")} <span style={{color:'#FF7A29'}}>2.5 {t("Lakh+","लाख+")}</span> {t(" players who took their shot"," खिलाड़ियों के साथ जिन्होंने अपना मौका लिया")}
           </h2>
-          <p style={{color:'rgba(255,255,255,0.5)',fontSize:15,marginBottom:32}}>{t("Registration open now. ₹299 only.","Registration अब खुले हैं। सिर्फ ₹299।")}</p>
+          <p style={{color:'rgba(12,29,51,.60)',fontSize:15,marginBottom:32}}>{t("Registration open now. ₹299 only.","Registration अब खुले हैं। सिर्फ ₹299।")}</p>
           <Link href="/register" className="btn-fire" style={{padding:'18px 48px',fontSize:17,textDecoration:'none',display:'inline-block'}}>{t("Register for ₹299 →","₹299 में Register करें →")}</Link>
         </div>
       </section>

@@ -14,7 +14,7 @@ import { listWaTemplates, type WaTemplate } from "@/lib/adminToolsApi";
 function Modal({ onClose, children }: { onClose: () => void; children: React.ReactNode }) {
   return (
     <div style={{ position: "fixed", inset: 0, background: "#00000088", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999 }} onClick={onClose}>
-      <div style={{ background: "#0D1526", border: "1px solid #1E293B", borderRadius: 20, padding: 28, width: 520, maxHeight: "90vh", overflowY: "auto" }} onClick={e => e.stopPropagation()}>
+      <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: 20, padding: 28, width: 520, maxHeight: "90vh", overflowY: "auto" }} onClick={e => e.stopPropagation()}>
         {children}
       </div>
     </div>
@@ -28,13 +28,13 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     </div>
   );
 }
-const inp: React.CSSProperties = { width: "100%", padding: "10px 12px", background: "#060B18", border: "1px solid #1E293B", borderRadius: 9, color: "#F1F5F9", fontSize: 13, outline: "none", boxSizing: "border-box" };
+const inp: React.CSSProperties = { width: "100%", padding: "10px 12px", background: "#F5F6F8", border: "1px solid #E2E8F0", borderRadius: 9, color: "#1E293B", fontSize: 13, outline: "none", boxSizing: "border-box" };
 const sel: React.CSSProperties = { ...inp, cursor: "pointer" };
-const card: React.CSSProperties = { background: "#0D1526", border: "1px solid #1E293B", borderRadius: 16, padding: 20 };
+const card: React.CSSProperties = { background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: 16, padding: 20 };
 const btnPrimary: React.CSSProperties = { background: "#FF6B00", color: "#fff", border: "none", borderRadius: 9, padding: "10px 18px", fontSize: 13, fontWeight: 800, cursor: "pointer" };
-const btnGhost: React.CSSProperties = { background: "#1E293B", color: "#CBD5E1", border: "none", borderRadius: 9, padding: "10px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer" };
-const th: React.CSSProperties = { textAlign: "left", padding: "10px 12px", fontSize: 10, fontWeight: 800, color: "#475569", letterSpacing: 1, textTransform: "uppercase", borderBottom: "1px solid #1E293B", whiteSpace: "nowrap" };
-const td: React.CSSProperties = { padding: "12px", fontSize: 13, color: "#E2E8F0", borderBottom: "1px solid #14203A", verticalAlign: "middle" };
+const btnGhost: React.CSSProperties = { background: "#FFFFFF", color: "#1E293B", border: "none", borderRadius: 9, padding: "10px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer" };
+const th: React.CSSProperties = { textAlign: "left", padding: "10px 12px", fontSize: 10, fontWeight: 800, color: "#475569", letterSpacing: 1, textTransform: "uppercase", borderBottom: "1px solid #E2E8F0", whiteSpace: "nowrap" };
+const td: React.CSSProperties = { padding: "12px", fontSize: 13, color: "#1E293B", borderBottom: "1px solid #E2E8F0", verticalAlign: "middle" };
 const inr = (n: number) => `₹${Math.round(n).toLocaleString("en-IN")}`;
 const dt = (s: string | null) => (s ? new Date(s).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "—");
 
@@ -58,7 +58,7 @@ function CopyLink({ code }: { code: string }) {
         setCopied(true); setTimeout(() => setCopied(false), 1500);
       }}
       title={referralLink(code)}
-      style={{ background: copied ? "#14532D" : "#1E293B", color: copied ? "#4ADE80" : "#93C5FD", border: "none", borderRadius: 7, padding: "5px 10px", fontSize: 11, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
+      style={{ background: copied ? "#14532D" : "#E2E8F0", color: copied ? "#15803D" : "#93C5FD", border: "none", borderRadius: 7, padding: "5px 10px", fontSize: 11, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
       {copied ? "✓ Copied" : "🔗 Copy link"}
     </button>
   );
@@ -67,10 +67,10 @@ function CopyLink({ code }: { code: string }) {
 function StatusChip({ status }: { status: string }) {
   const map: Record<string, [string, string]> = {
     sending: ["#78350F", "#FBBF24"], sent: ["#14532D", "#4ADE80"], failed: ["#7F1D1D", "#FCA5A5"],
-    active: ["#14532D", "#4ADE80"], paused: ["#78350F", "#FBBF24"], completed: ["#1E293B", "#94A3B8"],
+    active: ["#14532D", "#4ADE80"], paused: ["#78350F", "#FBBF24"], completed: ["#E2E8F0", "#94A3B8"],
     dry_run: ["#1E3A8A", "#93C5FD"],
   };
-  const [bg, fg] = map[status] ?? ["#1E293B", "#94A3B8"];
+  const [bg, fg] = map[status] ?? ["#E2E8F0", "#94A3B8"];
   return <span style={{ background: bg, color: fg, borderRadius: 20, padding: "3px 10px", fontSize: 11, fontWeight: 800 }}>{status.toUpperCase()}</span>;
 }
 
@@ -86,36 +86,36 @@ function AbandonedSection() {
     adminGetAbandoned().then(d => setRows(d.abandoned)).catch(e => setErr(e?.message || "Failed to load abandoned registrations"));
   }, []);
   const fmtAge = (h: number) => (h < 24 ? h + "h" : Math.floor(h / 24) + "d " + (h % 24) + "h");
-  const td: React.CSSProperties = { padding: "8px 10px", borderBottom: "1px solid #131C2E", color: "#94A3B8" };
+  const td: React.CSSProperties = { padding: "8px 10px", borderBottom: "1px solid #E2E8F0", color: "#64748B" };
   return (
     <div style={{ ...card, marginTop: 16 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-        <h3 style={{ margin: 0, fontSize: 15, fontWeight: 800, color: "#F1F5F9" }}>Abandoned Registrations</h3>
-        <span style={{ fontSize: 11, fontWeight: 800, color: "#F59E0B", background: "#F59E0B1A", border: "1px solid #F59E0B44", padding: "2px 9px", borderRadius: 999 }}>{rows ? rows.length : "…"}</span>
+        <h3 style={{ margin: 0, fontSize: 15, fontWeight: 800, color: "#1E293B" }}>Abandoned Registrations</h3>
+        <span style={{ fontSize: 11, fontWeight: 800, color: "#B45309", background: "#F59E0B1A", border: "1px solid #F59E0B44", padding: "2px 9px", borderRadius: 999 }}>{rows ? rows.length : "…"}</span>
       </div>
       <div style={{ fontSize: 12, color: "#64748B", marginBottom: 12 }}>
         Registered but Phase 1 payment pending. Auto-reminders go out at 24h and 72h — once each per player, never duplicated.
       </div>
-      {err && <div style={{ color: "#FCA5A5", fontSize: 12.5 }}>{err}</div>}
+      {err && <div style={{ color: "#DC2626", fontSize: 12.5 }}>{err}</div>}
       {rows && rows.length === 0 && <div style={{ color: "#64748B", fontSize: 13 }}>No abandoned registrations right now.</div>}
       {rows && rows.length > 0 && (
         <div style={{ overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12.5 }}>
             <thead><tr>
               {["Player", "Phone", "City", "Waiting", "Attempts", "Last attempt", "Reminders"].map(h => (
-                <th key={h} style={{ textAlign: "left", padding: "8px 10px", color: "#64748B", fontSize: 10.5, letterSpacing: ".07em", textTransform: "uppercase", borderBottom: "1px solid #1E293B" }}>{h}</th>
+                <th key={h} style={{ textAlign: "left", padding: "8px 10px", color: "#64748B", fontSize: 10.5, letterSpacing: ".07em", textTransform: "uppercase", borderBottom: "1px solid #E2E8F0" }}>{h}</th>
               ))}
             </tr></thead>
             <tbody>
               {rows.slice(0, 100).map(r => (
                 <tr key={r.registrationId}>
-                  <td style={{ ...td, color: "#E2E8F0", fontWeight: 700 }}>{r.name}</td>
+                  <td style={{ ...td, color: "#1E293B", fontWeight: 700 }}>{r.name}</td>
                   <td style={{ ...td, fontFamily: "monospace" }}>{r.phone}</td>
                   <td style={td}>{r.city || "—"}</td>
-                  <td style={{ ...td, color: "#F59E0B", fontWeight: 700 }}>{fmtAge(r.ageHours)}</td>
+                  <td style={{ ...td, color: "#B45309", fontWeight: 700 }}>{fmtAge(r.ageHours)}</td>
                   <td style={td}>{r.paymentAttempts}</td>
-                  <td style={{ ...td, color: r.lastAttemptStatus === "failed" ? "#FCA5A5" : "#94A3B8" }}>{r.lastAttemptStatus || "none"}</td>
-                  <td style={{ ...td, color: r.remindersSent ? "#10B981" : "#64748B" }}>{r.remindersSent}</td>
+                  <td style={{ ...td, color: r.lastAttemptStatus === "failed" ? "#DC2626" : "#94A3B8" }}>{r.lastAttemptStatus || "none"}</td>
+                  <td style={{ ...td, color: r.remindersSent ? "#047857" : "#64748B" }}>{r.remindersSent}</td>
                 </tr>
               ))}
             </tbody>
@@ -364,7 +364,7 @@ export default function MarketingView() {
   if (loading) return <div style={{ color: "#64748B", padding: 40, fontSize: 14 }}>Loading marketing data…</div>;
   if (error) return (
     <div style={{ padding: 40 }}>
-      <div style={{ color: "#FCA5A5", fontSize: 14, marginBottom: 14 }}>⚠ {error}</div>
+      <div style={{ color: "#DC2626", fontSize: 14, marginBottom: 14 }}>⚠ {error}</div>
       <button style={btnGhost} onClick={loadAll}>Retry</button>
     </div>
   );
@@ -372,12 +372,12 @@ export default function MarketingView() {
   const influencers = referrals.filter(r => r.kind !== "agent");
   const c = funnel?.counts;
   const stages = c ? [
-    { label: "Accounts Created", value: c.users, color: "#6366F1" },
-    { label: "Registrations", value: c.registrations, color: "#3B82F6" },
-    { label: "Phase 1 Paid", value: c.phase1Paid, color: "#F59E0B" },
-    { label: "Video Uploaded", value: c.videoUploaded, color: "#FF6B00" },
-    { label: "Phase 1 Selected", value: c.phase1Selected, color: "#22C55E" },
-    { label: "Phase 2 Paid", value: c.phase2Paid, color: "#10B981" },
+    { label: "Accounts Created", value: c.users, color: "#4F46E5" },
+    { label: "Registrations", value: c.registrations, color: "#1D4ED8" },
+    { label: "Phase 1 Paid", value: c.phase1Paid, color: "#B45309" },
+    { label: "Video Uploaded", value: c.videoUploaded, color: "#C2410C" },
+    { label: "Phase 1 Selected", value: c.phase1Selected, color: "#15803D" },
+    { label: "Phase 2 Paid", value: c.phase2Paid, color: "#047857" },
   ] : [];
   const maxStage = Math.max(1, ...stages.map(s => s.value));
 
@@ -393,7 +393,7 @@ export default function MarketingView() {
   const TabBtn = ({ id, label }: { id: typeof tab; label: string }) => (
     <button onClick={() => setTab(id)} style={{
       background: tab === id ? "#FF6B00" : "transparent", color: tab === id ? "#fff" : "#94A3B8",
-      border: tab === id ? "none" : "1px solid #1E293B", borderRadius: 9, padding: "9px 16px",
+      border: tab === id ? "none" : "1px solid #E2E8F0", borderRadius: 9, padding: "9px 16px",
       fontSize: 13, fontWeight: 700, cursor: "pointer",
     }}>{label}</button>
   );
@@ -421,26 +421,26 @@ export default function MarketingView() {
             ].map(k => (
               <div key={k.label} style={card}>
                 <div style={{ fontSize: 10, fontWeight: 800, color: "#475569", letterSpacing: 1, textTransform: "uppercase", marginBottom: 8 }}>{k.label}</div>
-                <div style={{ fontSize: 26, fontWeight: 900, color: "#F1F5F9" }}>{k.value}</div>
+                <div style={{ fontSize: 26, fontWeight: 900, color: "#1E293B" }}>{k.value}</div>
                 <div style={{ fontSize: 11, color: "#64748B", marginTop: 4 }}>{k.sub}</div>
               </div>
             ))}
           </div>
 
           <div style={card}>
-            <div style={{ fontSize: 14, fontWeight: 800, color: "#F1F5F9", marginBottom: 4 }}>Registration Funnel</div>
+            <div style={{ fontSize: 14, fontWeight: 800, color: "#1E293B", marginBottom: 4 }}>Registration Funnel</div>
             <div style={{ fontSize: 11, color: "#64748B", marginBottom: 18 }}>Live counts from the database — no estimates.</div>
             {stages.map((s, i) => {
               const prev = i > 0 ? stages[i - 1].value : 0;
               const conv = i > 0 && prev > 0 ? Math.round(s.value / prev * 100) : null;
               return (
                 <div key={s.label} style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 10 }}>
-                  <div style={{ width: 150, fontSize: 12, color: "#94A3B8", fontWeight: 600, textAlign: "right", flexShrink: 0 }}>{s.label}</div>
-                  <div style={{ flex: 1, background: "#060B18", borderRadius: 8, height: 34, position: "relative", overflow: "hidden" }}>
+                  <div style={{ width: 150, fontSize: 12, color: "#64748B", fontWeight: 600, textAlign: "right", flexShrink: 0 }}>{s.label}</div>
+                  <div style={{ flex: 1, background: "#F5F6F8", borderRadius: 8, height: 34, position: "relative", overflow: "hidden" }}>
                     <div style={{ width: `${Math.max(2, s.value / maxStage * 100)}%`, background: s.color, height: "100%", borderRadius: 8, opacity: .85 }} />
                     <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", padding: "0 12px", fontSize: 13, fontWeight: 800, color: "#fff" }}>{s.value}</div>
                   </div>
-                  <div style={{ width: 80, fontSize: 11, color: conv === null ? "#334155" : conv >= 50 ? "#4ADE80" : "#FBBF24", fontWeight: 700, flexShrink: 0 }}>
+                  <div style={{ width: 80, fontSize: 11, color: conv === null ? "#64748B" : conv >= 50 ? "#4ADE80" : "#FBBF24", fontWeight: 700, flexShrink: 0 }}>
                     {conv === null ? "" : `${conv}% ⤷`}
                   </div>
                 </div>
@@ -455,7 +455,7 @@ export default function MarketingView() {
         <div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
             <div style={{ fontSize: 12, color: "#64748B" }}>
-              Share <span style={{ color: "#93C5FD", fontFamily: "monospace" }}>bcplt20.com/r/CODE</span> — clicks, signups and payments are tracked automatically. Agent codes live in the <b>Affiliates</b> section.
+              Share <span style={{ color: "#1D4ED8", fontFamily: "monospace" }}>bcplt20.com/r/CODE</span> — clicks, signups and payments are tracked automatically. Agent codes live in the <b>Affiliates</b> section.
             </div>
             <button style={btnPrimary} onClick={() => { setRefErr(""); setRefModal({ form: { ...blankReferral } }); }}>+ New Referral Link</button>
           </div>
@@ -475,17 +475,17 @@ export default function MarketingView() {
                 )}
                 {influencers.map(r => (
                   <tr key={r.id}>
-                    <td style={{ ...td, fontFamily: "monospace", fontWeight: 800, color: "#FF9A57" }}>{r.code}</td>
+                    <td style={{ ...td, fontFamily: "monospace", fontWeight: 800, color: "#C2410C" }}>{r.code}</td>
                     <td style={td}>{r.name}</td>
                     <td style={td}>{r.platform}</td>
                     <td style={td}><CopyLink code={r.code} /></td>
                     <td style={td}>{r.clicks}</td>
                     <td style={{ ...td, fontWeight: 800 }}>{r.signups}</td>
-                    <td style={{ ...td, color: "#4ADE80", fontWeight: 800 }}>{r.paid}</td>
+                    <td style={{ ...td, color: "#15803D", fontWeight: 800 }}>{r.paid}</td>
                     <td style={td}>{inr(r.revenue)}</td>
                     <td style={td}>
                       <button onClick={() => updateReferral(r.id, { active: !r.active }).then(refreshReferrals).catch(() => {})}
-                        style={{ background: r.active ? "#14532D" : "#1E293B", color: r.active ? "#4ADE80" : "#64748B", border: "none", borderRadius: 20, padding: "4px 12px", fontSize: 11, fontWeight: 800, cursor: "pointer" }}>
+                        style={{ background: r.active ? "#14532D" : "#E2E8F0", color: r.active ? "#15803D" : "#64748B", border: "none", borderRadius: 20, padding: "4px 12px", fontSize: 11, fontWeight: 800, cursor: "pointer" }}>
                         {r.active ? "ACTIVE" : "PAUSED"}
                       </button>
                     </td>
@@ -521,7 +521,7 @@ export default function MarketingView() {
                   <td style={td}>{p.links}</td>
                   <td style={td}>{p.clicks}</td>
                   <td style={{ ...td, fontWeight: 800 }}>{p.signups}</td>
-                  <td style={{ ...td, color: "#4ADE80", fontWeight: 800 }}>{p.paid}</td>
+                  <td style={{ ...td, color: "#15803D", fontWeight: 800 }}>{p.paid}</td>
                   <td style={td}>{inr(p.revenue)}</td>
                 </tr>
               ))}
@@ -559,9 +559,9 @@ export default function MarketingView() {
                     <td style={{ ...td, fontWeight: 700 }}>{cp.name}{cp.notes ? <div style={{ fontSize: 11, color: "#64748B", fontWeight: 400, marginTop: 2 }}>{cp.notes}</div> : null}</td>
                     <td style={td}>{cp.channel}</td>
                     <td style={td}>{inr(cp.budget)}</td>
-                    <td style={{ ...td, color: cp.spent > cp.budget ? "#FCA5A5" : "#E2E8F0" }}>{inr(cp.spent)}</td>
-                    <td style={{ ...td, fontSize: 12, color: "#94A3B8" }}>{cp.startDate || "—"} → {cp.endDate || "—"}</td>
-                    <td style={{ ...td, fontSize: 12, color: "#94A3B8" }}>{cp.goal || "—"}</td>
+                    <td style={{ ...td, color: cp.spent > cp.budget ? "#DC2626" : "#E2E8F0" }}>{inr(cp.spent)}</td>
+                    <td style={{ ...td, fontSize: 12, color: "#64748B" }}>{cp.startDate || "—"} → {cp.endDate || "—"}</td>
+                    <td style={{ ...td, fontSize: 12, color: "#64748B" }}>{cp.goal || "—"}</td>
                     <td style={td}><StatusChip status={cp.status} /></td>
                     <td style={{ ...td, whiteSpace: "nowrap" }}>
                       <button onClick={() => { setCampErr(""); setCampModal({ id: cp.id, form: { name: cp.name, channel: cp.channel, budget: String(cp.budget || ""), spent: String(cp.spent || ""), startDate: cp.startDate ?? "", endDate: cp.endDate ?? "", goal: cp.goal ?? "", status: cp.status, notes: cp.notes ?? "" } }); }}
@@ -582,7 +582,7 @@ export default function MarketingView() {
         <div style={{ display: "grid", gridTemplateColumns: "minmax(380px, 1.15fr) minmax(320px, 1fr)", gap: 16, alignItems: "start" }}>
           {/* Composer */}
           <div style={card}>
-            <div style={{ fontSize: 14, fontWeight: 800, color: "#F1F5F9", marginBottom: 14 }}>New Email Campaign</div>
+            <div style={{ fontSize: 14, fontWeight: 800, color: "#1E293B", marginBottom: 14 }}>New Email Campaign</div>
             <Field label="Subject"><input style={inp} value={emSubject} onChange={e => setEmSubject(e.target.value)} placeholder="e.g. Phase 2 trial dates announced!" /></Field>
             <Field label="Message (plain text — blank line = new paragraph)">
               <textarea style={{ ...inp, minHeight: 150, resize: "vertical", fontFamily: "inherit" }} value={emBody} onChange={e => setEmBody(e.target.value)} placeholder={"Dear player,\n\nGood news…"} />
@@ -604,20 +604,20 @@ export default function MarketingView() {
             <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 14 }}>
               <button style={btnGhost} onClick={doPreview} disabled={emPreviewBusy}>{emPreviewBusy ? "Counting…" : "👥 Preview audience"}</button>
               {emPreview && (
-                <div style={{ fontSize: 12, color: "#94A3B8" }}>
-                  <b style={{ color: "#F1F5F9" }}>{emPreview.total}</b> recipient(s)
+                <div style={{ fontSize: 12, color: "#64748B" }}>
+                  <b style={{ color: "#1E293B" }}>{emPreview.total}</b> recipient(s)
                   {emPreview.sample.length > 0 && <span style={{ color: "#475569" }}> — e.g. {emPreview.sample.map(s => s.email).slice(0, 3).join(", ")}</span>}
                 </div>
               )}
             </div>
 
-            <div style={{ background: "#060B18", border: "1px solid #1E293B", borderRadius: 12, padding: 14, marginBottom: 14 }}>
-              <div style={{ fontSize: 11, fontWeight: 800, color: "#FBBF24", letterSpacing: .5, marginBottom: 8 }}>STEP 1 — SEND A TEST FIRST (REQUIRED)</div>
+            <div style={{ background: "#F5F6F8", border: "1px solid #E2E8F0", borderRadius: 12, padding: 14, marginBottom: 14 }}>
+              <div style={{ fontSize: 11, fontWeight: 800, color: "#B45309", letterSpacing: .5, marginBottom: 8 }}>STEP 1 — SEND A TEST FIRST (REQUIRED)</div>
               <div style={{ display: "flex", gap: 8 }}>
                 <input style={{ ...inp, flex: 1 }} value={testEmail} onChange={e => setTestEmail(e.target.value)} placeholder="your@email.com" />
                 <button style={{ ...btnGhost, whiteSpace: "nowrap" }} onClick={doTest} disabled={testBusy}>{testBusy ? "Sending…" : "Send test"}</button>
               </div>
-              {testedEmail && <div style={{ fontSize: 12, color: "#4ADE80", marginTop: 8 }}>✓ Test delivered to {testedEmail}</div>}
+              {testedEmail && <div style={{ fontSize: 12, color: "#15803D", marginTop: 8 }}>✓ Test delivered to {testedEmail}</div>}
             </div>
 
             <button
@@ -626,28 +626,28 @@ export default function MarketingView() {
               onClick={doSend}>
               {sendBusy ? "Starting…" : "🚀 STEP 2 — Send to audience"}
             </button>
-            {emMsg && <div style={{ fontSize: 12, color: emMsg.kind === "ok" ? "#4ADE80" : "#FCA5A5", marginTop: 10 }}>{emMsg.kind === "ok" ? "✓ " : "⚠ "}{emMsg.text}</div>}
+            {emMsg && <div style={{ fontSize: 12, color: emMsg.kind === "ok" ? "#15803D" : "#FCA5A5", marginTop: 10 }}>{emMsg.kind === "ok" ? "✓ " : "⚠ "}{emMsg.text}</div>}
           </div>
 
           {/* History */}
           <div style={card}>
-            <div style={{ fontSize: 14, fontWeight: 800, color: "#F1F5F9", marginBottom: 14 }}>Sent Campaigns</div>
+            <div style={{ fontSize: 14, fontWeight: 800, color: "#1E293B", marginBottom: 14 }}>Sent Campaigns</div>
             {emails.length === 0 && <div style={{ fontSize: 13, color: "#475569" }}>No email campaigns yet.</div>}
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {emails.map(ec => {
                 const aud = ec.audience ?? {};
                 const audLabel = `${STAGE_LABELS[(aud.stage as AudienceStage) ?? "all"] ?? aud.stage}${aud.city ? ` · ${aud.city}` : ""}`;
                 return (
-                  <div key={ec.id} style={{ background: "#060B18", border: "1px solid #1E293B", borderRadius: 12, padding: 14 }}>
+                  <div key={ec.id} style={{ background: "#F5F6F8", border: "1px solid #E2E8F0", borderRadius: 12, padding: 14 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", gap: 10, alignItems: "flex-start" }}>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9" }}>{ec.subject}</div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: "#1E293B" }}>{ec.subject}</div>
                       <StatusChip status={ec.status} />
                     </div>
                     <div style={{ fontSize: 11, color: "#64748B", margin: "6px 0" }}>{audLabel} · {dt(ec.createdAt)}</div>
-                    <div style={{ fontSize: 12, color: "#94A3B8" }}>
+                    <div style={{ fontSize: 12, color: "#64748B" }}>
                       {ec.status === "sending"
-                        ? <>Sending… <b style={{ color: "#FBBF24" }}>{ec.sentCount + ec.failedCount}</b> / {ec.totalRecipients}</>
-                        : <>Delivered <b style={{ color: "#4ADE80" }}>{ec.sentCount}</b>{ec.failedCount > 0 && <> · Failed <b style={{ color: "#FCA5A5" }}>{ec.failedCount}</b></>} / {ec.totalRecipients}</>}
+                        ? <>Sending… <b style={{ color: "#B45309" }}>{ec.sentCount + ec.failedCount}</b> / {ec.totalRecipients}</>
+                        : <>Delivered <b style={{ color: "#15803D" }}>{ec.sentCount}</b>{ec.failedCount > 0 && <> · Failed <b style={{ color: "#DC2626" }}>{ec.failedCount}</b></>} / {ec.totalRecipients}</>}
                     </div>
                   </div>
                 );
@@ -662,10 +662,10 @@ export default function MarketingView() {
         <div style={{ display: "grid", gridTemplateColumns: "minmax(380px, 1.15fr) minmax(320px, 1fr)", gap: 16, alignItems: "start" }}>
           {/* Composer */}
           <div style={card}>
-            <div style={{ fontSize: 14, fontWeight: 800, color: "#F1F5F9", marginBottom: 14 }}>New SMS / WhatsApp Campaign</div>
+            <div style={{ fontSize: 14, fontWeight: 800, color: "#1E293B", marginBottom: 14 }}>New SMS / WhatsApp Campaign</div>
 
             {!bulkEnabled && (
-              <div style={{ background: "#1E3A8A22", border: "1px solid #3B82F655", borderRadius: 10, padding: "10px 12px", marginBottom: 14, fontSize: 12, color: "#93C5FD" }}>
+              <div style={{ background: "#1E3A8A22", border: "1px solid #3B82F655", borderRadius: 10, padding: "10px 12px", marginBottom: 14, fontSize: 12, color: "#1D4ED8" }}>
                 🧪 <b>Dry-run mode</b> — this environment is not set to send. Sends are recorded with a would-send count but no SMS/WhatsApp is delivered. Set <code>BULK_MESSAGING_ENABLED=1</code> (or run in production) to send for real.
               </div>
             )}
@@ -726,8 +726,8 @@ export default function MarketingView() {
             <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 14 }}>
               <button style={btnGhost} onClick={doSmPreview} disabled={smPreviewBusy}>{smPreviewBusy ? "Counting…" : "👥 Preview audience"}</button>
               {smPreview && (
-                <div style={{ fontSize: 12, color: "#94A3B8" }}>
-                  <b style={{ color: "#F1F5F9" }}>{smPreview.total}</b> recipient(s) with a phone
+                <div style={{ fontSize: 12, color: "#64748B" }}>
+                  <b style={{ color: "#1E293B" }}>{smPreview.total}</b> recipient(s) with a phone
                   {smPreview.sample.length > 0 && <span style={{ color: "#475569" }}> — e.g. {smPreview.sample.map(s => s.name).slice(0, 3).join(", ")}</span>}
                 </div>
               )}
@@ -739,32 +739,32 @@ export default function MarketingView() {
               onClick={doSmSend}>
               {smSendBusy ? "Starting…" : bulkEnabled ? "🚀 Send to audience" : "🧪 Record dry-run"}
             </button>
-            {smMsg && <div style={{ fontSize: 12, color: smMsg.kind === "ok" ? "#4ADE80" : "#FCA5A5", marginTop: 10 }}>{smMsg.kind === "ok" ? "✓ " : "⚠ "}{smMsg.text}</div>}
+            {smMsg && <div style={{ fontSize: 12, color: smMsg.kind === "ok" ? "#15803D" : "#FCA5A5", marginTop: 10 }}>{smMsg.kind === "ok" ? "✓ " : "⚠ "}{smMsg.text}</div>}
           </div>
 
           {/* History */}
           <div style={card}>
-            <div style={{ fontSize: 14, fontWeight: 800, color: "#F1F5F9", marginBottom: 14 }}>Sent Campaigns</div>
+            <div style={{ fontSize: 14, fontWeight: 800, color: "#1E293B", marginBottom: 14 }}>Sent Campaigns</div>
             {msgs.length === 0 && <div style={{ fontSize: 13, color: "#475569" }}>No SMS / WhatsApp campaigns yet.</div>}
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {msgs.map(mc => {
                 const aud = mc.audience ?? {};
                 const audLabel = `${STAGE_LABELS[(aud.stage as AudienceStage) ?? "all"] ?? aud.stage}${aud.city ? ` · ${aud.city}` : ""}`;
                 return (
-                  <div key={mc.id} style={{ background: "#060B18", border: "1px solid #1E293B", borderRadius: 12, padding: 14 }}>
+                  <div key={mc.id} style={{ background: "#F5F6F8", border: "1px solid #E2E8F0", borderRadius: 12, padding: 14 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", gap: 10, alignItems: "flex-start" }}>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9" }}>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: "#1E293B" }}>
                         {mc.channel === "sms" ? "📱" : "💬"} {mc.name}
                       </div>
                       <StatusChip status={mc.status} />
                     </div>
                     <div style={{ fontSize: 11, color: "#64748B", margin: "6px 0" }}>{audLabel} · {dt(mc.createdAt)}</div>
-                    <div style={{ fontSize: 12, color: "#94A3B8" }}>
+                    <div style={{ fontSize: 12, color: "#64748B" }}>
                       {mc.status === "dry_run"
-                        ? <>Dry-run — <b style={{ color: "#93C5FD" }}>{mc.totalRecipients}</b> would-send (nothing sent)</>
+                        ? <>Dry-run — <b style={{ color: "#1D4ED8" }}>{mc.totalRecipients}</b> would-send (nothing sent)</>
                         : mc.status === "sending"
-                        ? <>Sending… <b style={{ color: "#FBBF24" }}>{mc.sentCount + mc.failedCount + mc.skippedCount}</b> / {mc.totalRecipients}</>
-                        : <>Delivered <b style={{ color: "#4ADE80" }}>{mc.sentCount}</b>{mc.failedCount > 0 && <> · Failed <b style={{ color: "#FCA5A5" }}>{mc.failedCount}</b></>}{mc.skippedCount > 0 && <> · Skipped <b style={{ color: "#94A3B8" }}>{mc.skippedCount}</b></>} / {mc.totalRecipients}</>}
+                        ? <>Sending… <b style={{ color: "#B45309" }}>{mc.sentCount + mc.failedCount + mc.skippedCount}</b> / {mc.totalRecipients}</>
+                        : <>Delivered <b style={{ color: "#15803D" }}>{mc.sentCount}</b>{mc.failedCount > 0 && <> · Failed <b style={{ color: "#DC2626" }}>{mc.failedCount}</b></>}{mc.skippedCount > 0 && <> · Skipped <b style={{ color: "#64748B" }}>{mc.skippedCount}</b></>} / {mc.totalRecipients}</>}
                     </div>
                   </div>
                 );
@@ -777,7 +777,7 @@ export default function MarketingView() {
       {/* ═══ Referral modal ═══ */}
       {refModal && (
         <Modal onClose={() => setRefModal(null)}>
-          <div style={{ fontSize: 16, fontWeight: 800, color: "#F1F5F9", marginBottom: 18 }}>{refModal.id ? "Edit Referral Link" : "New Referral Link"}</div>
+          <div style={{ fontSize: 16, fontWeight: 800, color: "#1E293B", marginBottom: 18 }}>{refModal.id ? "Edit Referral Link" : "New Referral Link"}</div>
           <Field label="Name *"><input style={inp} value={refModal.form.name} onChange={e => setRefModal({ ...refModal, form: { ...refModal.form, name: e.target.value } })} placeholder="e.g. Rohit Cricket Vlogs" /></Field>
           {!refModal.id ? (
             <Field label="Code (optional — auto-generated from name)">
@@ -799,9 +799,9 @@ export default function MarketingView() {
             <Field label="Email"><input style={inp} value={refModal.form.email} onChange={e => setRefModal({ ...refModal, form: { ...refModal.form, email: e.target.value } })} /></Field>
           </div>
           <Field label="Commission % (of attributed revenue)"><input style={inp} type="number" min={0} max={100} value={refModal.form.commissionRate} onChange={e => setRefModal({ ...refModal, form: { ...refModal.form, commissionRate: e.target.value } })} /></Field>
-          {refErr && <div style={{ fontSize: 12, color: "#FCA5A5", marginBottom: 10 }}>⚠ {refErr}</div>}
+          {refErr && <div style={{ fontSize: 12, color: "#DC2626", marginBottom: 10 }}>⚠ {refErr}</div>}
           <div style={{ display: "flex", gap: 10, justifyContent: "space-between", marginTop: 6 }}>
-            <div>{refModal.id && <button style={{ ...btnGhost, color: "#FCA5A5" }} onClick={() => removeReferral(refModal.id!)}>Delete</button>}</div>
+            <div>{refModal.id && <button style={{ ...btnGhost, color: "#DC2626" }} onClick={() => removeReferral(refModal.id!)}>Delete</button>}</div>
             <div style={{ display: "flex", gap: 10 }}>
               <button style={btnGhost} onClick={() => setRefModal(null)}>Cancel</button>
               <button style={btnPrimary} onClick={saveReferral} disabled={refBusy}>{refBusy ? "Saving…" : "Save"}</button>
@@ -813,7 +813,7 @@ export default function MarketingView() {
       {/* ═══ Campaign modal ═══ */}
       {campModal && (
         <Modal onClose={() => setCampModal(null)}>
-          <div style={{ fontSize: 16, fontWeight: 800, color: "#F1F5F9", marginBottom: 18 }}>{campModal.id ? "Edit Campaign" : "New Campaign"}</div>
+          <div style={{ fontSize: 16, fontWeight: 800, color: "#1E293B", marginBottom: 18 }}>{campModal.id ? "Edit Campaign" : "New Campaign"}</div>
           <Field label="Name *"><input style={inp} value={campModal.form.name} onChange={e => setCampModal({ ...campModal, form: { ...campModal.form, name: e.target.value } })} placeholder="e.g. Delhi trials — Instagram ads" /></Field>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
             <Field label="Channel">
@@ -833,7 +833,7 @@ export default function MarketingView() {
           </div>
           <Field label="Goal"><input style={inp} value={campModal.form.goal} onChange={e => setCampModal({ ...campModal, form: { ...campModal.form, goal: e.target.value } })} placeholder="e.g. 200 registrations" /></Field>
           <Field label="Notes"><textarea style={{ ...inp, minHeight: 60, resize: "vertical", fontFamily: "inherit" }} value={campModal.form.notes} onChange={e => setCampModal({ ...campModal, form: { ...campModal.form, notes: e.target.value } })} /></Field>
-          {campErr && <div style={{ fontSize: 12, color: "#FCA5A5", marginBottom: 10 }}>⚠ {campErr}</div>}
+          {campErr && <div style={{ fontSize: 12, color: "#DC2626", marginBottom: 10 }}>⚠ {campErr}</div>}
           <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", marginTop: 6 }}>
             <button style={btnGhost} onClick={() => setCampModal(null)}>Cancel</button>
             <button style={btnPrimary} onClick={saveCampaign} disabled={campBusy}>{campBusy ? "Saving…" : "Save"}</button>

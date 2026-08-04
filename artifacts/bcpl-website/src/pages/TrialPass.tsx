@@ -21,7 +21,7 @@ const IcoCheck  = ico(<path d="M4.5 12.5 10 18 19.5 7" />);
 
 const CSS = `
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-body { background:#0E1624; }
+body { background:#F6F3EC; }
 .tp-wrap { width:100%; max-width:720px; margin:0 auto; padding:0 20px; }
 .tp-card { width:100%; max-width:100%; background:linear-gradient(135deg,rgba(15,34,71,0.95),rgba(10,22,46,0.9)); border:1px solid rgba(232,178,61,0.35); border-radius:24px; overflow:hidden; box-shadow:0 24px 64px rgba(0,0,0,0.5); }
 .tp-head { background:linear-gradient(135deg,#E8B23D,#F5C842); padding:18px 24px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
@@ -39,7 +39,7 @@ body { background:#0E1624; }
 .tp-maps { display:inline-flex; align-items:center; gap:6px; color:#9AD5FF; font-family:var(--font-body); font-weight:600; font-size:14px; text-decoration:none; }
 /* perforated ticket divider */
 .tp-perf { position:relative; height:0; border-top:2px dashed rgba(255,255,255,0.14); margin:0 24px; }
-.tp-perf::before, .tp-perf::after { content:''; position:absolute; top:-12px; width:24px; height:24px; border-radius:50%; background:#0E1624; border:1px solid rgba(232,178,61,0.25); }
+.tp-perf::before, .tp-perf::after { content:''; position:absolute; top:-12px; width:24px; height:24px; border-radius:50%; background:#F6F3EC; border:1px solid rgba(232,178,61,0.25); }
 .tp-perf::before { left:-36px; }
 .tp-perf::after  { right:-36px; }
 /* journey indicator */
@@ -96,7 +96,7 @@ export function TrialPass() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0E1624', fontFamily: 'var(--font-body)' }}>
+    <div style={{ minHeight: '100vh', background: '#F6F3EC', fontFamily: 'var(--font-body)' }}>
       <style>{CSS}</style>
       <div className="no-print"><SiteHeader /></div>
 
@@ -161,7 +161,7 @@ export function TrialPass() {
           {state === 'ready' && data && (
             <>
               <div style={{ textAlign: 'center', marginBottom: 26 }} className="no-print">
-                <span className="tag-pill" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(232,178,61,0.14)', border: '1px solid rgba(232,178,61,0.4)', borderRadius: 100, padding: '6px 16px', font: '800 13px var(--font-head)', color: '#F1C765', letterSpacing: '0.1em' }}>
+                <span className="tag-pill" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(232,178,61,0.14)', border: '1px solid rgba(232,178,61,0.4)', borderRadius: 100, padding: '6px 16px', font: '800 13px var(--font-head)', color: '#B8892B', letterSpacing: '0.1em' }}>
                   OFFICIAL TRIAL PASS
                 </span>
               </div>

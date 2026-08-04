@@ -125,7 +125,7 @@ async function downloadShareCard(r: MyResult, roleLabel: string, qualified: bool
   } catch { /* fallback fonts are fine */ }
 
   const g = ctx.createLinearGradient(0, 0, W, H);
-  g.addColorStop(0, '#13233A'); g.addColorStop(1, 'var(--bg)');
+  g.addColorStop(0, '#13233A'); g.addColorStop(1, '#0C1D33');
   ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
 
   const rg = ctx.createRadialGradient(W / 2, 640, 80, W / 2, 640, 620);
@@ -298,14 +298,14 @@ export function Phase1Result() {
   const initials = (r?.name ?? '')
     .split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]?.toUpperCase() ?? '').join('') || '';
 
-  const statusColor = qualified ? 'var(--green)' : 'var(--ink-2)';
+  const statusColor = qualified ? 'var(--green)' : 'rgba(12,29,51,.78)';
   const scoreValue = r?.total ?? 0;
   // Circle circumference is 2 * PI * r = 2 * 3.14159 * 46 = 289.026
   const circ = 289.026;
   const dashoffset = circ - (circ * scoreValue / 100);
 
   return (
-    <div style={{ background:'var(--bg)', minHeight:'100dvh', fontFamily:"var(--font-body)", color:'var(--ink)', overflowX:'hidden' }}>
+    <div style={{ background:'#F6F3EC', minHeight:'100dvh', fontFamily:"var(--font-body)", color:'#0C1D33', overflowX:'hidden' }}>
       <style>{`
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
         .W{max-width:var(--container);margin:0 auto;padding:0 20px}
@@ -316,12 +316,12 @@ export function Phase1Result() {
         
         .btn-gold{background:linear-gradient(135deg,var(--gold),#C4901E);border:none;border-radius:var(--r);color:#101828;font-family:'Barlow Condensed',sans-serif;font-weight:900;fontSize:16px;letter-spacing:.08em;cursor:pointer;transition:transform .15s,filter .2s;text-transform:uppercase;display:inline-flex;align-items:center;justify-content:center;}
         .btn-gold:hover{filter:brightness(1.1);transform:translateY(-2px)}
-        .btn-orange{background:linear-gradient(135deg,var(--orange),var(--orange-2));border:none;border-radius:var(--r);color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:900;fontSize:16px;letter-spacing:.08em;cursor:pointer;transition:transform .15s,filter .2s;text-transform:uppercase;display:inline-flex;align-items:center;justify-content:center;}
+        .btn-orange{background:linear-gradient(135deg,var(--orange),var(--orange-2));border:none;border-radius:var(--r);color:#0C1D33;font-family:'Barlow Condensed',sans-serif;font-weight:900;fontSize:16px;letter-spacing:.08em;cursor:pointer;transition:transform .15s,filter .2s;text-transform:uppercase;display:inline-flex;align-items:center;justify-content:center;}
         .btn-orange:hover{filter:brightness(1.12);transform:translateY(-2px)}
-        .btn-ghost{background:rgba(255,255,255,0.05);border:1px solid var(--line);border-radius:var(--r);color:var(--ink-2);font-family:'Barlow Condensed',sans-serif;font-weight:800;fontSize:15px;letter-spacing:.06em;cursor:pointer;transition:all .2s;text-transform:uppercase;display:inline-flex;align-items:center;justify-content:center;}
-        .btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+        .btn-ghost{background:rgba(12,29,51,0.04);border:1px solid rgba(12,29,51,0.12);border-radius:var(--r);color:rgba(12,29,51,.78);font-family:'Barlow Condensed',sans-serif;font-weight:800;fontSize:15px;letter-spacing:.06em;cursor:pointer;transition:all .2s;text-transform:uppercase;display:inline-flex;align-items:center;justify-content:center;}
+        .btn-ghost:hover{border-color:#B8892B;color:#B8892B}
         
-        .rcard{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:24px 20px;margin-bottom:16px}
+        .rcard{background:#FFFFFF;border:1px solid rgba(12,29,51,0.12);border-radius:var(--r);padding:24px 20px;margin-bottom:16px}
         @media(min-width:640px){.rcard{padding:32px}}
         .grid2r{display:grid;grid-template-columns:1fr;gap:16px}
         @media(min-width:600px){.grid2r{grid-template-columns:1fr 1fr}}
@@ -351,8 +351,8 @@ export function Phase1Result() {
       {/* ── LOADING ── */}
       {loading && (
         <div style={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', minHeight:'60dvh', gap:16 }}>
-          <div style={{ width:48, height:48, border:'4px solid rgba(232,178,61,0.15)', borderTopColor:'var(--gold)', borderRadius:'50%', animation:'spin 1s linear infinite' }} />
-          <div style={{ fontSize:15, color:'var(--ink-3)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, letterSpacing:'.06em', textTransform:'uppercase' }}>
+          <div style={{ width:48, height:48, border:'4px solid rgba(232,178,61,0.15)', borderTopColor:'#B8892B', borderRadius:'50%', animation:'spin 1s linear infinite' }} />
+          <div style={{ fontSize:15, color:'rgba(12,29,51,.60)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, letterSpacing:'.06em', textTransform:'uppercase' }}>
             {t('Loading your result…', 'आपका रिजल्ट लोड हो रहा है…')}
           </div>
         </div>
@@ -376,13 +376,13 @@ export function Phase1Result() {
         <div className="rwrap" style={{ paddingTop:80, textAlign:'center', paddingBottom:100 }}>
           {r.phase1Status === 'selected' || r.phase1Status === 'rejected' ? (
             <>
-              <div style={{ width:80, height:80, margin:'0 auto 20px', background:'rgba(232,178,61,0.1)', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', color:'var(--gold)' }}>
+              <div style={{ width:80, height:80, margin:'0 auto 20px', background:'rgba(232,178,61,0.1)', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', color:'#B8892B' }}>
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
               </div>
-              <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:32, color:'var(--gold)', marginBottom:16, textTransform:'uppercase' }}>
+              <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:32, color:'#B8892B', marginBottom:16, textTransform:'uppercase' }}>
                 {t('Your scorecard is being finalised', 'आपका स्कोरकार्ड तैयार किया जा रहा है')}
               </div>
-              <div style={{ fontSize:15, color:'var(--ink-2)', maxWidth:480, margin:'0 auto', lineHeight:1.7 }}>
+              <div style={{ fontSize:15, color:'rgba(12,29,51,.78)', maxWidth:480, margin:'0 auto', lineHeight:1.7 }}>
                 {t('Your Phase 1 decision has been announced by SMS & email. Your detailed 100-point scorecard will appear here shortly.',
                    'आपका Phase 1 निर्णय SMS और ईमेल के माध्यम से घोषित कर दिया गया है। आपका विस्तृत 100-पॉइंट स्कोरकार्ड जल्द ही यहाँ दिखाई देगा।')}
               </div>
@@ -400,7 +400,7 @@ export function Phase1Result() {
               <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:32, color:'#A855F7', marginBottom:16, textTransform:'uppercase' }}>
                 {t('Your Video is Under Review', 'आपका वीडियो समीक्षा के अधीन है')}
               </div>
-              <div style={{ fontSize:15, color:'var(--ink-2)', maxWidth:480, margin:'0 auto', lineHeight:1.7 }}>
+              <div style={{ fontSize:15, color:'rgba(12,29,51,.78)', maxWidth:480, margin:'0 auto', lineHeight:1.7 }}>
                 {t('Your trial video is going through a full 100-point evaluation against BCPL\'s Phase 1 assessment criteria. You will get SMS + email the moment your result is ready.',
                    'आपका ट्रायल वीडियो BCPL के Phase 1 मूल्यांकन criteria के अनुसार पूरा 100-पॉइंट evaluation से गुज़र रहा है। आपका परिणाम तैयार होते ही आपको SMS + ईमेल मिल जाएगा।')}
               </div>
@@ -415,19 +415,19 @@ export function Phase1Result() {
           <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 50% 30%, rgba(232,178,61,0.1) 0%, transparent 60%)', pointerEvents:'none' }} />
           <div style={{ position:'absolute', inset:0, backgroundImage:'repeating-linear-gradient(45deg, rgba(255,255,255,0.01) 0 1px, transparent 1px 32px)', pointerEvents:'none' }} />
           <div className="rwrap" style={{ textAlign:'center', position:'relative', zIndex:1, padding:'64px 20px' }}>
-            <div style={{ width:100, height:100, margin:'0 auto 24px', background:'rgba(232,178,61,0.1)', border:'1px solid rgba(232,178,61,0.3)', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', color:'var(--gold)', animation:'iconFloat 3s ease-in-out infinite, glowPulse 2.4s ease infinite' }}>
+            <div style={{ width:100, height:100, margin:'0 auto 24px', background:'rgba(232,178,61,0.1)', border:'1px solid rgba(232,178,61,0.3)', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', color:'#B8892B', animation:'iconFloat 3s ease-in-out infinite, glowPulse 2.4s ease infinite' }}>
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
             </div>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:14, letterSpacing:'.24em', color:'var(--gold)', marginBottom:16, textTransform:'uppercase' }}>
+            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:14, letterSpacing:'.24em', color:'#B8892B', marginBottom:16, textTransform:'uppercase' }}>
               BCPL SEASON 5 — {t('PHASE 1 ASSESSMENT', 'PHASE 1 मूल्यांकन')}
             </div>
             <h1 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'clamp(42px,8vw,72px)', lineHeight:.95, textTransform:'uppercase', marginBottom:20, animation:'fadeUp .5s ease both' }}>
-              <span style={{ color:'var(--ink)', display:'block' }}>{t('YOUR RESULT', 'आपका परिणाम')}</span>
-              <span style={{ background:'linear-gradient(90deg,var(--gold),#FFE9A8,var(--gold))', backgroundSize:'200%', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text', animation:'shimGold 3s linear infinite', display:'block' }}>
+              <span style={{ color:'#0C1D33', display:'block' }}>{t('YOUR RESULT', 'आपका परिणाम')}</span>
+              <span style={{ background:'linear-gradient(90deg,#B8892B,#E8B23D,#B8892B)', backgroundSize:'200%', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text', animation:'shimGold 3s linear infinite', display:'block' }}>
                 {t('IS READY', 'तैयार है')}
               </span>
             </h1>
-            <p style={{ color:'var(--ink-2)', fontSize:16, maxWidth:480, margin:'0 auto 36px', lineHeight:1.7, animation:'fadeUp .5s .1s ease both' }}>
+            <p style={{ color:'rgba(12,29,51,.78)', fontSize:16, maxWidth:480, margin:'0 auto 36px', lineHeight:1.7, animation:'fadeUp .5s .1s ease both' }}>
               {t('Your trial video has completed a full 100-point evaluation against BCPL\'s Phase 1 assessment criteria.',
                  'आपके ट्रायल वीडियो का BCPL के Phase 1 criteria के अनुसार पूरा 100-पॉइंट evaluation हो चुका है।')}
             </p>
@@ -435,7 +435,7 @@ export function Phase1Result() {
               style={{ padding:'18px 48px', animation:'fadeUp .5s .18s ease both, glowPulse 2.4s ease infinite' }}>
               {t('VIEW MY RESULT', 'मेरा परिणाम देखें')} →
             </button>
-            <div style={{ marginTop:24, fontSize:13, color:'var(--ink-3)', fontWeight:500, animation:'fadeUp .5s .25s ease both' }}>
+            <div style={{ marginTop:24, fontSize:13, color:'rgba(12,29,51,.60)', fontWeight:500, animation:'fadeUp .5s .25s ease both' }}>
               {t('Every submitted video gets a complete evaluation.', 'सबमिट किए गए प्रत्येक वीडियो का पूरा मूल्यांकन किया जाता है।')}
             </div>
           </div>
@@ -468,15 +468,15 @@ export function Phase1Result() {
               : 'linear-gradient(135deg,rgba(127,180,232,0.6),rgba(46,80,115,0.5) 45%,rgba(127,180,232,0.4))',
             animation:'cardIn .7s cubic-bezier(.34,1.4,.64,1) both', marginBottom:24,
             boxShadow: qualified ? '0 24px 70px rgba(232,178,61,0.16)' : '0 24px 70px rgba(90,140,190,0.08)' }}>
-            <div style={{ borderRadius:22, background:'var(--panel)', padding:'32px 24px', position:'relative', overflow:'hidden' }}>
+            <div style={{ borderRadius:22, background:'#FFFFFF', padding:'32px 24px', position:'relative', overflow:'hidden' }}>
               <div style={{ position:'absolute', inset:0, backgroundImage:'repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0 1px, transparent 1px 26px)', pointerEvents:'none' }} />
               <div style={{ position:'absolute', top:-120, right:-80, width:300, height:300, borderRadius:'50%', background: qualified ? 'radial-gradient(circle, rgba(232,178,61,0.15), transparent 65%)' : 'radial-gradient(circle, rgba(127,180,232,0.1), transparent 65%)', pointerEvents:'none' }} />
 
               {/* top strip */}
               <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:28, position:'relative' }}>
-                <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:15, letterSpacing:'.2em', color: qualified ? 'var(--gold)' : 'var(--ink-2)' }}>BCPL <span style={{ color:'var(--line)' }}>•</span> S5</div>
+                <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:15, letterSpacing:'.2em', color: qualified ? 'var(--gold)' : 'rgba(12,29,51,.78)' }}>BCPL <span style={{ color:'rgba(12,29,51,0.12)' }}>•</span> S5</div>
                 {r.regNumber && (
-                  <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:12, letterSpacing:'.1em', color:'var(--ink-3)', border:'1px solid var(--line)', borderRadius:12, padding:'6px 12px' }}>
+                  <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:12, letterSpacing:'.1em', color:'rgba(12,29,51,.60)', border:'1px solid rgba(12,29,51,0.12)', borderRadius:12, padding:'6px 12px' }}>
                     {r.regNumber}
                   </div>
                 )}
@@ -484,25 +484,25 @@ export function Phase1Result() {
 
               {/* identity */}
               <div style={{ textAlign:'center', position:'relative' }}>
-                <div style={{ width:100, height:100, borderRadius:'50%', margin:'0 auto 16px', background: qualified ? 'linear-gradient(135deg,var(--orange),var(--gold))' : 'linear-gradient(135deg,#3B82F6,#1E40AF)', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:36, color:'#fff', border:'4px solid rgba(255,255,255,0.1)', boxShadow: qualified ? '0 12px 40px rgba(255,122,41,0.35)' : 'none' }}>
+                <div style={{ width:100, height:100, borderRadius:'50%', margin:'0 auto 16px', background: qualified ? 'linear-gradient(135deg,var(--orange),var(--gold))' : 'linear-gradient(135deg,#3B82F6,#1E40AF)', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:36, color:'#0C1D33', border:'4px solid rgba(12,29,51,0.12)', boxShadow: qualified ? '0 12px 40px rgba(255,122,41,0.35)' : 'none' }}>
                   {initials}
                 </div>
-                <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'clamp(28px,6vw,36px)', color:'var(--ink)', textTransform:'uppercase', letterSpacing:'.02em', marginBottom:10 }}>
+                <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'clamp(28px,6vw,36px)', color:'#0C1D33', textTransform:'uppercase', letterSpacing:'.02em', marginBottom:10 }}>
                   {r.name}
                 </div>
                 <div style={{ display:'flex', justifyContent:'center', gap:10, flexWrap:'wrap', marginBottom:24 }}>
-                  <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:13, letterSpacing:'.08em', color: qualified ? '#FF9A5C' : '#93C5FD', background: qualified ? 'rgba(255,122,41,0.12)' : 'rgba(59,130,246,0.12)', border:`1px solid ${qualified ? 'rgba(255,122,41,0.3)' : 'rgba(59,130,246,0.3)'}`, borderRadius:20, padding:'6px 16px', textTransform:'uppercase' }}>
+                  <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:13, letterSpacing:'.08em', color: qualified ? '#D95E10' : '#2563EB', background: qualified ? 'rgba(255,122,41,0.12)' : 'rgba(59,130,246,0.12)', border:`1px solid ${qualified ? 'rgba(255,122,41,0.3)' : 'rgba(59,130,246,0.3)'}`, borderRadius:20, padding:'6px 16px', textTransform:'uppercase' }}>
                     {roleLabel}
                   </span>
                   {r.trialCity && (
-                    <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:13, letterSpacing:'.08em', color:'var(--ink-2)', background:'rgba(255,255,255,0.06)', border:'1px solid var(--line)', borderRadius:20, padding:'6px 16px', textTransform:'uppercase' }}>
+                    <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:13, letterSpacing:'.08em', color:'rgba(12,29,51,.78)', background:'rgba(12,29,51,0.04)', border:'1px solid rgba(12,29,51,0.12)', borderRadius:20, padding:'6px 16px', textTransform:'uppercase' }}>
                       {r.trialCity}
                     </span>
                   )}
                 </div>
 
                 {/* status band */}
-                <div style={{ display:'inline-block', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:14, letterSpacing:'.14em', color:statusColor, background: qualified ? 'rgba(34,197,94,0.1)' : 'rgba(255,255,255,0.04)', border:'1px solid ' + (qualified ? 'rgba(34,197,94,0.4)' : 'var(--line)'), borderRadius:12, padding:'10px 20px', marginBottom:32, textTransform:'uppercase' }}>
+                <div style={{ display:'inline-block', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:14, letterSpacing:'.14em', color:statusColor, background: qualified ? 'rgba(34,197,94,0.1)' : 'rgba(255,255,255,0.04)', border:'1px solid ' + (qualified ? 'rgba(34,197,94,0.4)' : 'rgba(12,29,51,0.12)'), borderRadius:12, padding:'10px 20px', marginBottom:32, textTransform:'uppercase' }}>
                   {qualified
                     ? '✓ ' + t('PHASE 1 QUALIFIED — SELECTED FOR PHASE 2', 'PHASE 1 क्वालिफाइड — PHASE 2 के लिए चयनित')
                     : '✓ ' + t('PHASE 1 ASSESSMENT COMPLETE', 'PHASE 1 मूल्यांकन पूरा')}
@@ -512,11 +512,11 @@ export function Phase1Result() {
                 <div className="score-circle-wrap">
                   <svg className="score-circle-svg" viewBox="0 0 100 100">
                     {/* Background track */}
-                    <circle cx="50" cy="50" r="46" fill="none" stroke="var(--line)" strokeWidth="4" />
+                    <circle cx="50" cy="50" r="46" fill="none" stroke="rgba(12,29,51,0.12)" strokeWidth="4" />
                     {/* Animated progress */}
                     <circle 
                       cx="50" cy="50" r="46" fill="none" 
-                      stroke={qualified ? "url(#gold-grad)" : "var(--ink-3)"} 
+                      stroke={qualified ? "url(#gold-grad)" : "rgba(12,29,51,.60)"} 
                       strokeWidth="6" 
                       strokeLinecap="round"
                       strokeDasharray={circ} 
@@ -533,14 +533,14 @@ export function Phase1Result() {
                   
                   {/* Score text inside circle */}
                   <div style={{ position:'absolute', inset:0, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', paddingTop:12 }}>
-                    <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:12, letterSpacing:'.22em', color:'var(--ink-3)', marginBottom:2, textTransform:'uppercase' }}>
+                    <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:12, letterSpacing:'.22em', color:'rgba(12,29,51,.60)', marginBottom:2, textTransform:'uppercase' }}>
                       {t('BCPL SCORE', 'BCPL स्कोर')}
                     </div>
                     <div style={{ lineHeight:0.9, position:'relative', left:4 }}>
-                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'clamp(56px,14vw,84px)', background: qualified ? 'linear-gradient(90deg,var(--gold),#FFE9A8,var(--gold))' : 'linear-gradient(90deg,#DCE9F5,#ffffff,#DCE9F5)', backgroundSize:'200%', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text', animation:'shimGold 4s linear infinite' }}>
+                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'clamp(56px,14vw,84px)', background: qualified ? 'linear-gradient(90deg,#B8892B,#E8B23D,#B8892B)' : 'linear-gradient(90deg,#2563EB,#3B82F6,#2563EB)', backgroundSize:'200%', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text', animation:'shimGold 4s linear infinite' }}>
                         {r.total}
                       </span>
-                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'clamp(20px,5vw,28px)', color:'var(--ink-3)', position:'absolute', bottom:10, right:-30 }}>/100</span>
+                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'clamp(20px,5vw,28px)', color:'rgba(12,29,51,.60)', position:'absolute', bottom:10, right:-30 }}>/100</span>
                     </div>
                   </div>
                 </div>
@@ -548,16 +548,16 @@ export function Phase1Result() {
                 {/* rank chips */}
                 <div style={{ display:'flex', justifyContent:'center', gap:12, flexWrap:'wrap', marginTop:16 }}>
                   {r.cityRank && (
-                    <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid var(--line)', padding:'10px 18px', borderRadius:16, display:'flex', alignItems:'center', gap:10 }}>
-                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:12, letterSpacing:'.1em', color:'var(--ink-3)', textTransform:'uppercase' }}>{(r.trialCity || t('CITY', 'शहर'))} {t('RANK — ALL ROLES', 'रैंक — सभी रोल')}</span>
-                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:18, color:'var(--ink)', fontVariantNumeric:'tabular-nums' }}>#{r.cityRank}{r.cityCount ? <span style={{ color:'var(--ink-3)', fontWeight:700, fontSize:13 }}> / {r.cityCount}</span> : null}</span>
-                      {showPct && <span style={{ background:'rgba(255,255,255,0.1)', color:'var(--ink)', fontSize:11, fontWeight:700, padding:'3px 8px', borderRadius:8 }}>TOP {pct}%</span>}
+                    <div style={{ background:'rgba(12,29,51,0.04)', border:'1px solid rgba(12,29,51,0.12)', padding:'10px 18px', borderRadius:16, display:'flex', alignItems:'center', gap:10 }}>
+                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:12, letterSpacing:'.1em', color:'rgba(12,29,51,.60)', textTransform:'uppercase' }}>{(r.trialCity || t('CITY', 'शहर'))} {t('RANK — ALL ROLES', 'रैंक — सभी रोल')}</span>
+                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:18, color:'#0C1D33', fontVariantNumeric:'tabular-nums' }}>#{r.cityRank}{r.cityCount ? <span style={{ color:'rgba(12,29,51,.60)', fontWeight:700, fontSize:13 }}> / {r.cityCount}</span> : null}</span>
+                      {showPct && <span style={{ background:'rgba(12,29,51,0.04)', color:'#0C1D33', fontSize:11, fontWeight:700, padding:'3px 8px', borderRadius:8 }}>TOP {pct}%</span>}
                     </div>
                   )}
                   {r.roleRank && showRole && (
-                    <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid var(--line)', padding:'10px 18px', borderRadius:16, display:'flex', alignItems:'center', gap:10 }}>
-                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:12, letterSpacing:'.1em', color:'var(--ink-3)', textTransform:'uppercase' }}>{(r.trialCity ? r.trialCity + ' ' : '')}{roleLabel} {t('RANK', 'रैंक')}</span>
-                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:18, color:'var(--ink)', fontVariantNumeric:'tabular-nums' }}>#{r.roleRank}{r.roleCount ? <span style={{ color:'var(--ink-3)', fontWeight:700, fontSize:13 }}> / {r.roleCount}</span> : null}</span>
+                    <div style={{ background:'rgba(12,29,51,0.04)', border:'1px solid rgba(12,29,51,0.12)', padding:'10px 18px', borderRadius:16, display:'flex', alignItems:'center', gap:10 }}>
+                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:12, letterSpacing:'.1em', color:'rgba(12,29,51,.60)', textTransform:'uppercase' }}>{(r.trialCity ? r.trialCity + ' ' : '')}{roleLabel} {t('RANK', 'रैंक')}</span>
+                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:18, color:'#0C1D33', fontVariantNumeric:'tabular-nums' }}>#{r.roleRank}{r.roleCount ? <span style={{ color:'rgba(12,29,51,.60)', fontWeight:700, fontSize:13 }}> / {r.roleCount}</span> : null}</span>
                     </div>
                   )}
                 </div>
@@ -582,15 +582,15 @@ export function Phase1Result() {
           {/* ═══ NON-SELECTED NEXT STEPS ═══ */}
           {!qualified && (
             <div className="rcard" style={{ borderLeft:'4px solid var(--orange)' }}>
-              <h3 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:22, color:'var(--ink)', textTransform:'uppercase', marginBottom:12, letterSpacing:'.04em' }}>
+              <h3 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:22, color:'#0C1D33', textTransform:'uppercase', marginBottom:12, letterSpacing:'.04em' }}>
                 {t('Your Journey Doesn\'t End Here', 'आपकी यात्रा यहीं समाप्त नहीं होती')}
               </h3>
-              <p style={{ color:'var(--ink-2)', fontSize:14, lineHeight:1.7, marginBottom:16 }}>
+              <p style={{ color:'rgba(12,29,51,.78)', fontSize:14, lineHeight:1.7, marginBottom:16 }}>
                 {t('Thank you for participating in the BCPL Season 5 trials. While you haven\'t progressed to Phase 2 in this selection cycle, your dedication to the sport is commendable.',
                    'BCPL Season 5 ट्रायल्स में भाग लेने के लिए धन्यवाद। यद्यपि आप इस चयन चक्र में Phase 2 के लिए आगे नहीं बढ़े हैं, खेल के प्रति आपका समर्पण सराहनीय है।')}
               </p>
-              <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid var(--line)', borderRadius:12, padding:16 }}>
-                <p style={{ color:'var(--ink-2)', fontSize:14, lineHeight:1.6, marginBottom:0 }}>
+              <div style={{ background:'rgba(12,29,51,0.04)', border:'1px solid rgba(12,29,51,0.12)', borderRadius:12, padding:16 }}>
+                <p style={{ color:'rgba(12,29,51,.78)', fontSize:14, lineHeight:1.6, marginBottom:0 }}>
                   {t('We encourage you to use the feedback below to improve your game. Season 6 registrations will open soon.', 'हम आपको अपने खेल में सुधार करने के लिए नीचे दिए गए फीडबैक का उपयोग करने के लिए प्रोत्साहित करते हैं। Season 6 के रजिस्ट्रेशन जल्द ही खुलेंगे।')}
                 </p>
               </div>
@@ -598,7 +598,7 @@ export function Phase1Result() {
           )}
 
           {/* ═══ FEEDBACK & NEXT STEPS ═══ */}
-          <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:15, letterSpacing:'.16em', color:'var(--ink-3)', marginBottom:16, textTransform:'uppercase' }}>
+          <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:15, letterSpacing:'.16em', color:'rgba(12,29,51,.60)', marginBottom:16, textTransform:'uppercase' }}>
             {t('BCPL Assessment Feedback', 'BCPL मूल्यांकन फीडबैक')}
           </div>
 
@@ -612,10 +612,10 @@ export function Phase1Result() {
                   </div>
                   <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:18, color:'var(--green)', textTransform:'uppercase', letterSpacing:'.04em' }}>{t('Key Strength', 'मुख्य ताकत')}</div>
                 </div>
-                <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:16, color:'var(--ink)', marginBottom:6, textTransform:'uppercase' }}>
+                <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:16, color:'#0C1D33', marginBottom:6, textTransform:'uppercase' }}>
                   {critLabel(strongest.key, role, t)}
                 </div>
-                <div style={{ fontSize:14, color:'var(--ink-2)', lineHeight:1.6 }}>
+                <div style={{ fontSize:14, color:'rgba(12,29,51,.78)', lineHeight:1.6 }}>
                   {t('Your strongest area during the video evaluation. Keep refining this competitive edge.', 'वीडियो मूल्यांकन के दौरान आपका सबसे मजबूत क्षेत्र। इस प्रतिस्पर्धात्मक बढ़त को सुधारते रहें।')}
                 </div>
               </div>
@@ -629,10 +629,10 @@ export function Phase1Result() {
                   </div>
                   <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:18, color:'var(--orange)', textTransform:'uppercase', letterSpacing:'.04em' }}>{t('Area to Improve', 'सुधार का क्षेत्र')}</div>
                 </div>
-                <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:16, color:'var(--ink)', marginBottom:6, textTransform:'uppercase' }}>
+                <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:16, color:'#0C1D33', marginBottom:6, textTransform:'uppercase' }}>
                   {critLabel(weakest.key, role, t)}
                 </div>
-                <div style={{ fontSize:14, color:'var(--ink-2)', lineHeight:1.6 }}>
+                <div style={{ fontSize:14, color:'rgba(12,29,51,.78)', lineHeight:1.6 }}>
                   {improveTip(weakest.key, role, t)}
                 </div>
               </div>
@@ -644,9 +644,9 @@ export function Phase1Result() {
             <div className="rcard" style={{ marginTop:16 }}>
               <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:12 }}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:16, color:'var(--ink)', textTransform:'uppercase', letterSpacing:'.04em' }}>{t('Selector Note', 'चयनकर्ता का नोट')}</div>
+                <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:16, color:'#0C1D33', textTransform:'uppercase', letterSpacing:'.04em' }}>{t('Selector Note', 'चयनकर्ता का नोट')}</div>
               </div>
-              <div style={{ fontSize:14, color:'var(--ink-2)', lineHeight:1.7, fontStyle:'italic' }}>
+              <div style={{ fontSize:14, color:'rgba(12,29,51,.78)', lineHeight:1.7, fontStyle:'italic' }}>
                 "{r.selectorNote}"
               </div>
             </div>
@@ -654,19 +654,19 @@ export function Phase1Result() {
 
           {/* Detailed Breakdown */}
           <div style={{ marginTop:40 }}>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:15, letterSpacing:'.16em', color:'var(--ink-3)', marginBottom:16, textTransform:'uppercase' }}>
+            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:15, letterSpacing:'.16em', color:'rgba(12,29,51,.60)', marginBottom:16, textTransform:'uppercase' }}>
               {t('100-Point Breakdown', '100-पॉइंट विवरण')}
             </div>
             <div className="rcard" style={{ padding:0, overflow:'hidden' }}>
               {(r.breakdown ?? []).map((b, i, arr) => (
-                <div key={b.key} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'18px 24px', borderBottom: i < arr.length - 1 ? '1px solid var(--line)' : 'none' }}>
-                  <div style={{ fontFamily:"'Inter',sans-serif", fontSize:14, fontWeight:600, color:'var(--ink-2)' }}>{critLabel(b.key, role, t)}</div>
+                <div key={b.key} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'18px 24px', borderBottom: i < arr.length - 1 ? '1px solid rgba(12,29,51,0.12)' : 'none' }}>
+                  <div style={{ fontFamily:"'Inter',sans-serif", fontSize:14, fontWeight:600, color:'rgba(12,29,51,.78)' }}>{critLabel(b.key, role, t)}</div>
                   <div style={{ display:'flex', alignItems:'center', gap:12 }}>
-                    <div style={{ width:60, height:6, background:'rgba(255,255,255,0.08)', borderRadius:3, overflow:'hidden' }}>
-                      <div style={{ height:'100%', background: qualified ? 'var(--gold)' : 'var(--ink-3)', width: barsOn ? `${(b.score / b.max) * 100}%` : '0%', transition:'width 1s cubic-bezier(.34,1.56,.64,1) .8s' }} />
+                    <div style={{ width:60, height:6, background:'rgba(12,29,51,0.04)', borderRadius:3, overflow:'hidden' }}>
+                      <div style={{ height:'100%', background: qualified ? 'var(--gold)' : 'rgba(12,29,51,.60)', width: barsOn ? `${(b.score / b.max) * 100}%` : '0%', transition:'width 1s cubic-bezier(.34,1.56,.64,1) .8s' }} />
                     </div>
-                    <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:16, color:'var(--ink)', width:40, textAlign:'right' }}>
-                      {b.score} <span style={{ color:'var(--ink-3)' }}>/{b.max}</span>
+                    <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:16, color:'#0C1D33', width:40, textAlign:'right' }}>
+                      {b.score} <span style={{ color:'rgba(12,29,51,.60)' }}>/{b.max}</span>
                     </div>
                   </div>
                 </div>
@@ -677,18 +677,18 @@ export function Phase1Result() {
           {/* Qualified Next Steps */}
           {qualified && (
             <div style={{ marginTop:48 }}>
-              <div style={{ background:'var(--panel)', border:'1px solid var(--gold)', borderRadius:'var(--r)', padding:32, textAlign:'center', position:'relative', overflow:'hidden' }}>
+              <div style={{ background:'#FFFFFF', border:'1px solid var(--gold)', borderRadius:'var(--r)', padding:32, textAlign:'center', position:'relative', overflow:'hidden' }}>
                 <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 50% 0%, rgba(232,178,61,0.15) 0%, transparent 60%)', pointerEvents:'none' }} />
-                <div style={{ position:'relative', fontSize:11, fontWeight:800, letterSpacing:'.24em', color:'var(--ink-3)', textTransform:'uppercase', marginBottom:6 }}>
+                <div style={{ position:'relative', fontSize:11, fontWeight:800, letterSpacing:'.24em', color:'rgba(12,29,51,.60)', textTransform:'uppercase', marginBottom:6 }}>
                   {t('NEXT MILESTONE', 'अगला पड़ाव')}
                 </div>
-                <div style={{ position:'relative', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:44, lineHeight:1, color:'#fff', letterSpacing:'.05em', marginBottom:10 }}>
+                <div style={{ position:'relative', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:44, lineHeight:1, color:'#0C1D33', letterSpacing:'.05em', marginBottom:10 }}>
                   PHASE 2
                 </div>
-                <h3 style={{ position:'relative', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:22, color:'var(--gold)', textTransform:'uppercase', marginBottom:12, letterSpacing:'.04em' }}>
+                <h3 style={{ position:'relative', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:22, color:'#B8892B', textTransform:'uppercase', marginBottom:12, letterSpacing:'.04em' }}>
                   {t('Prepare For The Physical Trial', 'फिजिकल ट्रायल की तैयारी करें')}
                 </h3>
-                <p style={{ color:'var(--ink-2)', fontSize:15, lineHeight:1.6, maxWidth:480, margin:'0 auto 24px' }}>
+                <p style={{ color:'rgba(12,29,51,.78)', fontSize:15, lineHeight:1.6, maxWidth:480, margin:'0 auto 24px' }}>
                   {t(`Congratulations on passing Phase 1. Your next step is the Phase 2 physical ground trial in ${r.trialCity}. Complete your Phase 2 payment (₹${phase2Fee}) to secure your trial slot.`,
                      `Phase 1 पास करने पर बधाई। आपका अगला कदम ${r.trialCity} में Phase 2 फिजिकल ग्राउंड ट्रायल है। अपना ट्रायल स्लॉट सुरक्षित करने के लिए अपना Phase 2 भुगतान (₹${phase2Fee}) पूरा करें।`)}
                 </p>
@@ -701,10 +701,10 @@ export function Phase1Result() {
 
           {/* ═══ §41 PROCESS-CLARITY FEEDBACK (both outcomes) ═══ */}
           <div className="rcard" style={{ marginTop:48 }}>
-            <h3 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:22, color:'var(--ink)', textTransform:'uppercase', marginBottom:8, letterSpacing:'.04em' }}>
+            <h3 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:22, color:'#0C1D33', textTransform:'uppercase', marginBottom:8, letterSpacing:'.04em' }}>
               {t('Was the BCPL Phase 1 process clear?', 'क्या BCPL Phase 1 प्रक्रिया स्पष्ट थी?')}
             </h3>
-            <p style={{ color:'var(--ink-2)', fontSize:14, lineHeight:1.6, marginBottom:18 }}>
+            <p style={{ color:'rgba(12,29,51,.78)', fontSize:14, lineHeight:1.6, marginBottom:18 }}>
               {t('Your feedback helps us improve the trial experience for every player.', 'आपका फीडबैक हर खिलाड़ी के लिए ट्रायल अनुभव बेहतर बनाने में मदद करता है।')}
             </p>
             <div style={{ display:'flex', gap:10, flexWrap:'wrap', marginBottom:16 }}>
@@ -712,8 +712,8 @@ export function Phase1Result() {
                 <button key={v} onClick={() => { setFbRating(v); setFbSaved(false); }}
                   style={{ padding:'10px 20px', borderRadius:20, cursor:'pointer', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:14, letterSpacing:'.06em', textTransform:'uppercase', transition:'all .2s',
                     background: fbRating === v ? 'rgba(232,178,61,0.15)' : 'rgba(255,255,255,0.04)',
-                    border: '1px solid ' + (fbRating === v ? 'var(--gold)' : 'var(--line)'),
-                    color: fbRating === v ? 'var(--gold)' : 'var(--ink-2)' }}>
+                    border: '1px solid ' + (fbRating === v ? 'var(--gold)' : 'rgba(12,29,51,0.12)'),
+                    color: fbRating === v ? 'var(--gold)' : 'rgba(12,29,51,.78)' }}>
                   {t(en, hi)}
                 </button>
               ))}
@@ -721,7 +721,7 @@ export function Phase1Result() {
             <textarea value={fbComment} maxLength={1000} rows={3}
               onChange={e => { setFbComment(e.target.value); setFbSaved(false); }}
               placeholder={t('Anything else you want to tell us? (optional)', 'कुछ और बताना चाहते हैं? (वैकल्पिक)')}
-              style={{ width:'100%', background:'rgba(255,255,255,0.03)', border:'1px solid var(--line)', borderRadius:12, padding:'12px 14px', color:'var(--ink)', fontFamily:'Inter,sans-serif', fontSize:14, lineHeight:1.6, resize:'vertical', marginBottom:16, outline:'none' }} />
+              style={{ width:'100%', background:'rgba(12,29,51,0.04)', border:'1px solid rgba(12,29,51,0.12)', borderRadius:12, padding:'12px 14px', color:'#0C1D33', fontFamily:'Inter,sans-serif', fontSize:14, lineHeight:1.6, resize:'vertical', marginBottom:16, outline:'none' }} />
             <button className="btn-gold" onClick={submitFeedback} disabled={!fbRating || fbBusy}
               style={{ padding:'12px 28px', opacity: !fbRating || fbBusy ? 0.5 : 1, cursor: !fbRating || fbBusy ? 'default' : 'pointer' }}>
               {fbSaved ? '✓ ' + t('SAVED — THANK YOU', 'सेव हो गया — धन्यवाद') : t('SUBMIT FEEDBACK', 'फीडबैक भेजें')}

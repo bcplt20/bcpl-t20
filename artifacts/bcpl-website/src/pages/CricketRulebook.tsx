@@ -26,10 +26,10 @@ export function CricketRulebook() {
     @media(min-width:1024px){.desk-nav{display:flex!important;}.ham-btn{display:none!important;}}
     .btn-fire{background:linear-gradient(135deg,#FF7A29 0%,#E8611A 60%,#C94E0E 100%);border:none;border-radius:14px;color:#fff;font-family:Montserrat,sans-serif;font-weight:800;cursor:pointer;box-shadow:0 8px 28px rgba(255,122,41,0.45),inset 0 1px 0 rgba(255,255,255,0.2);transition:transform 0.15s,box-shadow 0.2s;letter-spacing:0.02em;animation:pulseGlow 3s ease-in-out infinite;display:inline-flex;align-items:center;justify-content:center;min-height:44px;}
     .btn-fire:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(255,122,41,0.6);}
-    .glass-card{background:linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85));backdrop-filter:blur(32px);border:1px solid rgba(255,255,255,0.09);border-radius:20px;box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06);}
-    .shimmer-gold{background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D,#F5C842,#E8B23D);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 3s linear infinite;}
+    .glass-card { background:#FFFFFF; border:1px solid rgba(12,29,51,0.10); border-radius:20px; box-shadow:0 10px 30px rgba(12,29,51,0.08); }
+    .shimmer-gold{background:linear-gradient(90deg,#B8892B,#E8B23D,#B8892B,#C79A2E,#B8892B);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 3s linear infinite;}
     .tag-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,122,41,0.12);border:1px solid rgba(255,122,41,0.3);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:700;font-family:Montserrat,sans-serif;color:#FF7A29;letter-spacing:0.1em;}
-    .toc-link{color:rgba(255,255,255,0.7);text-decoration:none;font-size:13px;font-family:Inter,sans-serif;padding:8px 12px;border-radius:8px;display:flex;align-items:center;gap:8px;transition:all 0.2s;cursor:pointer;background:none;border:none;text-align:left;width:100%;min-height:44px;}
+    .toc-link{color:rgba(12,29,51,.78);text-decoration:none;font-size:13px;font-family:Inter,sans-serif;padding:8px 12px;border-radius:8px;display:flex;align-items:center;gap:8px;transition:all 0.2s;cursor:pointer;background:none;border:none;text-align:left;width:100%;min-height:44px;}
     .toc-link:hover{background:rgba(255,122,41,0.1);color:#FF7A29;}
     .footer-grid{grid-template-columns:1fr!important;}
     @media(min-width:640px){.footer-grid{grid-template-columns:1fr 1fr!important;}}
@@ -49,13 +49,13 @@ export function CricketRulebook() {
 
   const particles=[
     {top:'15%',left:'8%',color:'#FF7A29',delay:'0s',size:3},
-    {top:'25%',left:'92%',color:'#E8B23D',delay:'1.2s',size:4},
-    {top:'55%',left:'5%',color:'#fff',delay:'0.7s',size:3},
+    {top:'25%',left:'92%',color:'#B8892B',delay:'1.2s',size:4},
+    {top:'55%',left:'5%',color:'#0C1D33',delay:'0.7s',size:3},
     {top:'70%',left:'88%',color:'#FF7A29',delay:'2s',size:3},
-    {top:'40%',left:'50%',color:'#E8B23D',delay:'1.5s',size:4},
-    {top:'80%',left:'30%',color:'#fff',delay:'0.3s',size:3},
+    {top:'40%',left:'50%',color:'#B8892B',delay:'1.5s',size:4},
+    {top:'80%',left:'30%',color:'#0C1D33',delay:'0.3s',size:3},
     {top:'10%',left:'65%',color:'#FF7A29',delay:'2.5s',size:3},
-    {top:'60%',left:'72%',color:'#E8B23D',delay:'0.9s',size:4},
+    {top:'60%',left:'72%',color:'#B8892B',delay:'0.9s',size:4},
   ];
 
   const toc:{n:number;label:string;icon:IcoComp}[]=[
@@ -90,7 +90,7 @@ export function CricketRulebook() {
     {n:2,icon:IcoBat,title:'Spirit of Cricket',items:[
       'The Spirit of Cricket underpins the game: play hard, play fair, and respect opponents, team-mates, officials and the game itself.',
       'Captains are responsible, at all times, for ensuring their team plays within the Spirit of Cricket as well as within the Laws and Playing Conditions.',
-      <>Player and team conduct is additionally governed by the BCPL <Link href="/code-of-conduct" style={{color:'#E8B23D',fontWeight:600}}>Code of Conduct</Link> and its disciplinary process.</>,
+      <>Player and team conduct is additionally governed by the BCPL <Link href="/code-of-conduct" style={{color:'#B8892B',fontWeight:600}}>Code of Conduct</Link> and its disciplinary process.</>,
     ]},
     {n:3,icon:IcoUsers,title:'Teams, Playing XI, Substitutes & Officials',items:[
       'Each match is contested by two teams; each team fields a playing XI. (BCPL Playing Condition) Squad size, playing-XI declaration timing and player nomination follow the published BCPL Playing Conditions for the season.',
@@ -157,7 +157,7 @@ export function CricketRulebook() {
     {n:12,icon:IcoBan,title:'Unfair Play, Player Conduct, Appeals, Discipline & Anti-Corruption',items:[
       'Unfair play: matters such as ball tampering, deliberate time-wasting and other unfair practices are dealt with under the Laws and Playing Conditions.',
       '(BCPL Playing Condition) Slow over-rate and time-wasting sanctions follow the published BCPL Playing Conditions.',
-      <>Player conduct is governed by the BCPL <Link href="/code-of-conduct" style={{color:'#E8B23D',fontWeight:600}}>Code of Conduct</Link>, which applies its own internal offence levels and disciplinary process. BCPL does not claim ICC disciplinary jurisdiction.</>,
+      <>Player conduct is governed by the BCPL <Link href="/code-of-conduct" style={{color:'#B8892B',fontWeight:600}}>Code of Conduct</Link>, which applies its own internal offence levels and disciplinary process. BCPL does not claim ICC disciplinary jurisdiction.</>,
       'Protests & appeals: on-field appeals are decided by the umpires; any off-field protest or complaint follows the published BCPL process and timeline.',
       'Disciplinary process: alleged breaches are handled through the BCPL disciplinary process — report, evidence, notice, opportunity to respond, decision, sanction and appeal.',
       'Anti-corruption / anti-bribery: betting, match-fixing, spot-fixing, misuse of inside information and related corruption are strictly prohibited and dealt with under the applicable BCPL integrity rules.',
@@ -171,13 +171,13 @@ export function CricketRulebook() {
   ];
 
   return (
-    <div style={{background:'#0E1624',minHeight:'100vh',fontFamily:'Inter,sans-serif',color:'#F8F4EE',paddingBottom:80,overflowX:'hidden'}}>
+    <div style={{background:'#F6F3EC',minHeight:'100vh',fontFamily:'Inter,sans-serif',color:'#0C1D33',paddingBottom:80,overflowX:'hidden'}}>
       <style>{css}</style>
       <div style={{position:'fixed',inset:0,zIndex:0,pointerEvents:'none',overflow:'hidden'}}>
         <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 80% 60% at 20% 40%, rgba(255,122,41,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 20%, rgba(30,64,175,0.12) 0%, transparent 60%)'}}/>
         <svg style={{position:'absolute',bottom:0,left:0,right:0,width:'100%',opacity:0.07}} viewBox="0 0 1440 400" preserveAspectRatio="none">
-          <path d="M0,400 L0,200 Q360,80 720,80 Q1080,80 1440,200 L1440,400 Z" fill="#1a2a4a"/>
-          <rect x="680" y="200" width="80" height="200" fill="#15223B"/>
+          <path d="M0,400 L0,200 Q360,80 720,80 Q1080,80 1440,200 L1440,400 Z" fill="rgba(12,29,51,0.05)"/>
+          <rect x="680" y="200" width="80" height="200" fill="#FFFFFF"/>
           <line x1="200" y1="0" x2="260" y2="200" stroke="#E8B23D" strokeWidth="3"/>
           <line x1="200" y1="0" x2="140" y2="200" stroke="#E8B23D" strokeWidth="3"/>
           <circle cx="200" cy="0" r="8" fill="#E8B23D"/>
@@ -198,12 +198,12 @@ export function CricketRulebook() {
           <div className="wrap">
             <div className="tag-pill" style={{marginBottom:20}}><IcoList size={14}/> OFFICIAL RULES</div>
             <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(32px,7vw,72px)',lineHeight:1.05,marginBottom:8}}>
-              <span style={{color:'#fff',display:'block'}}>BCPL CRICKET</span>
+              <span style={{color:'#0C1D33',display:'block'}}>BCPL CRICKET</span>
               <span className="shimmer-gold" style={{display:'block'}}>RULEBOOK.</span>
             </h1>
-            <p style={{color:'rgba(255,255,255,0.5)',fontSize:13,fontWeight:600,letterSpacing:'0.05em',marginTop:16,fontFamily:'Montserrat,sans-serif'}}>Tournament Cricket Rules — Season 5</p>
-            <p style={{color:'var(--ink-3)',fontSize:12,marginTop:6,fontFamily:'Inter,sans-serif'}}>यह दस्तावेज़ English में मान्य है · This document is authoritative in English.</p>
-            <p style={{color:'rgba(255,255,255,0.65)',fontSize:'clamp(14px,2vw,16px)',lineHeight:1.7,maxWidth:600,margin:'16px auto 0'}}>
+            <p style={{color:'rgba(12,29,51,.60)',fontSize:13,fontWeight:600,letterSpacing:'0.05em',marginTop:16,fontFamily:'Montserrat,sans-serif'}}>Tournament Cricket Rules — Season 5</p>
+            <p style={{color:'rgba(12,29,51,.60)',fontSize:12,marginTop:6,fontFamily:'Inter,sans-serif'}}>यह दस्तावेज़ English में मान्य है · This document is authoritative in English.</p>
+            <p style={{color:'rgba(12,29,51,.78)',fontSize:'clamp(14px,2vw,16px)',lineHeight:1.7,maxWidth:600,margin:'16px auto 0'}}>
               The BCPL T20 tournament cricket rulebook. These rules govern competition matches and apply to players, team managers and officials at all match venues.
             </p>
           </div>
@@ -213,15 +213,15 @@ export function CricketRulebook() {
 
           <LegalDocHeader doc="rulebook" />
 
-          <p style={{color:'rgba(255,255,255,0.6)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7,margin:'0 0 20px',fontStyle:'italic'}}>
+          <p style={{color:'rgba(12,29,51,.78)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7,margin:'0 0 20px',fontStyle:'italic'}}>
             This document applies to BCPL Season 5 unless expressly stated otherwise.
           </p>
 
           {/* KEY POINTS summary */}
           <div className="glass-card" style={{padding:'clamp(20px,4vw,28px) clamp(16px,4vw,32px)',marginBottom:24}}>
             <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:14}}>
-              <span style={{color:'#E8B23D',display:'inline-flex',alignItems:'center'}}><IcoList size={20}/></span>
-              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:16,color:'#E8B23D'}}>Key Points</h2>
+              <span style={{color:'#B8892B',display:'inline-flex',alignItems:'center'}}><IcoList size={20}/></span>
+              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:16,color:'#B8892B'}}>Key Points</h2>
             </div>
             <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:8}}>
               {[
@@ -230,7 +230,7 @@ export function CricketRulebook() {
                 'This page is a concise summary. The final published BCPL Playing Conditions and the pre-match briefing prevail.',
                 'Items marked "(BCPL Playing Condition)" are BCPL-specific variations; concrete numbers are set in the published Playing Conditions.',
               ].map((item,i)=>(
-                <li key={i} style={{display:'flex',alignItems:'flex-start',color:'rgba(255,255,255,0.78)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.65}}>
+                <li key={i} style={{display:'flex',alignItems:'flex-start',color:'rgba(12,29,51,.78)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.65}}>
                   <OrangeDot/><span>{item}</span>
                 </li>
               ))}
@@ -239,9 +239,9 @@ export function CricketRulebook() {
 
           {/* Cross-link: trial rules live on a separate page */}
           <div style={{background:'rgba(232,178,61,0.07)',border:'1px solid rgba(232,178,61,0.35)',borderLeft:'3px solid #E8B23D',borderRadius:16,padding:'16px clamp(16px,4vw,24px)',marginBottom:24,display:'flex',gap:12,alignItems:'flex-start'}}>
-            <span style={{flexShrink:0,color:'#E8B23D',display:'inline-flex'}}><IcoStadium size={22}/></span>
-            <p style={{color:'rgba(255,255,255,0.85)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
-              This page covers tournament / competition cricket only. Looking for Phase 2 trial assessment rules? See <Link href="/trial-rules" style={{color:'#E8B23D',fontWeight:600}}>Physical Trial Rules</Link>.
+            <span style={{flexShrink:0,color:'#B8892B',display:'inline-flex'}}><IcoStadium size={22}/></span>
+            <p style={{color:'#0C1D33',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
+              This page covers tournament / competition cricket only. Looking for Phase 2 trial assessment rules? See <Link href="/trial-rules" style={{color:'#B8892B',fontWeight:600}}>Physical Trial Rules</Link>.
             </p>
           </div>
 
@@ -249,8 +249,8 @@ export function CricketRulebook() {
           {/* Table of Contents */}
           <div className="glass-card" style={{padding:'clamp(20px,4vw,28px) clamp(16px,4vw,32px)',marginBottom:24,animation:'fadeSlide 0.5s ease 0.1s both'}}>
             <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:16}}>
-              <span style={{color:'#E8B23D',display:'inline-flex',alignItems:'center'}}><IcoPages size={20}/></span>
-              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:18,color:'#E8B23D'}}>Table of Contents</h2>
+              <span style={{color:'#B8892B',display:'inline-flex',alignItems:'center'}}><IcoPages size={20}/></span>
+              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:18,color:'#B8892B'}}>Table of Contents</h2>
             </div>
             <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(160px,1fr))',gap:4}}>
               {toc.map(item=>(
@@ -268,11 +268,11 @@ export function CricketRulebook() {
               <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18,flexWrap:'wrap'}}>
                 <div style={{width:36,height:36,borderRadius:'50%',background:'linear-gradient(135deg,rgba(255,122,41,0.3),rgba(232,178,61,0.2))',border:'1px solid rgba(255,122,41,0.4)',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:14,color:'#FF7A29',flexShrink:0}}>{rule.n}</div>
                 <span style={{color:'#FF7A29',display:'inline-flex',alignItems:'center'}}><rule.icon size={24}/></span>
-                <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>{rule.title}</h2>
+                <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#0C1D33'}}>{rule.title}</h2>
               </div>
               <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:10}}>
                 {rule.items.map((item,i)=>(
-                  <li key={i} style={{display:'flex',alignItems:'flex-start',color:'rgba(255,255,255,0.75)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
+                  <li key={i} style={{display:'flex',alignItems:'flex-start',color:'rgba(12,29,51,.78)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
                     <OrangeDot/><span>{item}</span>
                   </li>
                 ))}
@@ -286,8 +286,8 @@ export function CricketRulebook() {
               <span style={{flexShrink:0,color:'#FF7A29',display:'inline-flex'}}><IcoScale size={24}/></span>
               <div>
                 <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#FF7A29',marginBottom:6}}>Governing Foundation & Hierarchy</div>
-                <p style={{color:'rgba(255,255,255,0.85)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
-                  BCPL matches are governed by the <strong style={{color:'#E8B23D'}}>MCC Laws of Cricket</strong>, as modified by the <strong style={{color:'#E8B23D'}}>BCPL Playing Conditions</strong>. Where expressly adopted, relevant <strong style={{color:'#E8B23D'}}>ICC Men&rsquo;s T20 playing-condition principles</strong> may be used as a reference framework. BCPL-specific conditions prevail for the BCPL competition where permitted. BCPL is an independent competition and is not an ICC or International tournament. In any situation not addressed here, the MCC Laws apply as the foundational Laws.
+                <p style={{color:'#0C1D33',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
+                  BCPL matches are governed by the <strong style={{color:'#B8892B'}}>MCC Laws of Cricket</strong>, as modified by the <strong style={{color:'#B8892B'}}>BCPL Playing Conditions</strong>. Where expressly adopted, relevant <strong style={{color:'#B8892B'}}>ICC Men&rsquo;s T20 playing-condition principles</strong> may be used as a reference framework. BCPL-specific conditions prevail for the BCPL competition where permitted. BCPL is an independent competition and is not an ICC or International tournament. In any situation not addressed here, the MCC Laws apply as the foundational Laws.
                 </p>
               </div>
             </div>
@@ -296,11 +296,11 @@ export function CricketRulebook() {
           {/* Version-control note (§25) */}
           <div style={{background:'rgba(232,178,61,0.07)',border:'1px solid rgba(232,178,61,0.35)',borderLeft:'3px solid #E8B23D',borderRadius:16,padding:'20px clamp(16px,4vw,24px)',marginBottom:20}}>
             <div style={{display:'flex',gap:12,alignItems:'flex-start'}}>
-              <span style={{flexShrink:0,color:'#E8B23D',display:'inline-flex'}}><IcoPages size={24}/></span>
+              <span style={{flexShrink:0,color:'#B8892B',display:'inline-flex'}}><IcoPages size={24}/></span>
               <div>
-                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#E8B23D',marginBottom:6}}>Reference Editions & Version Control</div>
-                <p style={{color:'rgba(255,255,255,0.85)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
-                  MCC Laws of Cricket: <strong style={{color:'#E8B23D'}}>applicable edition adopted by BCPL</strong>. ICC Men&rsquo;s T20 playing-condition reference: <strong style={{color:'#E8B23D'}}>applicable reference edition adopted by BCPL</strong>.
+                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#B8892B',marginBottom:6}}>Reference Editions & Version Control</div>
+                <p style={{color:'#0C1D33',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
+                  MCC Laws of Cricket: <strong style={{color:'#B8892B'}}>applicable edition adopted by BCPL</strong>. ICC Men&rsquo;s T20 playing-condition reference: <strong style={{color:'#B8892B'}}>applicable reference edition adopted by BCPL</strong>.
                   {/* OWNER / COUNSEL DECISION REQUIRED: pin the exact MCC Laws edition (e.g. 3rd edition, 2017 Code as amended) and the exact ICC Men's T20 playing-conditions reference edition/date that BCPL Season 5 adopts. Do not auto-adopt external updates mid-season. */}
                   {' '}External rule updates do not automatically alter live BCPL rules; changes follow BCPL&rsquo;s versioned approval workflow before publication. Ruling on any matter not covered here is made by the BCPL tournament / technical committee and is final and binding under the published regulations.
                 </p>
@@ -310,7 +310,7 @@ export function CricketRulebook() {
 
           <div className="glass-card" style={{padding:'clamp(20px,4vw,32px)',textAlign:'center'}}>
             <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(18px,3vw,22px)',marginBottom:8}}>Ready to Play?</div>
-            <p style={{color:'rgba(255,255,255,0.6)',fontSize:14,marginBottom:20}}>Register for BCPL T20 Season 5 — where corporate professionals become cricket legends.</p>
+            <p style={{color:'rgba(12,29,51,.78)',fontSize:14,marginBottom:20}}>Register for BCPL T20 Season 5 — where corporate professionals become cricket legends.</p>
             <Link href="/register" className="btn-fire" style={{padding:'14px 36px',fontSize:16,width:'100%',maxWidth:300,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register for Phase 1 →</Link>
           </div>
         </div>
