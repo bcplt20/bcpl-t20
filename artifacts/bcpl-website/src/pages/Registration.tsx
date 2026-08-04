@@ -1093,7 +1093,7 @@ export function Registration() {
                         <div>
                           <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:3 }}>
                             <span style={{ color:'rgba(232,178,61,0.6)', display:'inline-flex' }}><IcoLock size={11} /></span>
-                            <span style={{ fontSize:9, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.16em', color:'rgba(232,178,61,0.6)' }}>{t('PHASE 2 (IF SELECTED)', 'PHASE 2 (अगर SELECT हुए)')}</span>
+                            <span style={{ fontSize:9, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.16em', color:'rgba(232,178,61,0.6)' }}>{t('PHASE 2 — AFTER PHASE 1 QUALIFICATION', 'PHASE 2 — PHASE 1 QUALIFY के बाद')}</span>
                           </div>
                           <div style={{ fontSize:11, color:'var(--ink-3)' }}>{t('Physical trial at', 'Physical trial')} {city||t('your city', 'आपके शहर')} {t('— payable only after Phase 1 qualification', 'में — Phase 1 qualify करने के बाद ही payable')}</div>
                         </div>
@@ -1204,7 +1204,7 @@ export function Registration() {
                   { icon:IcoStadium, label:t('Ground Trial', 'Ground Trial'), sub:t('At your registered city', 'आपके registered शहर में') },
                   { icon:IcoList, label:t('Skill Evaluation', 'Skill Evaluation'), sub:t('By franchise coaching staff', 'Franchise coaching staff द्वारा') },
                   { icon:IcoScale, label:t('Live Auction', 'Live Auction'), sub:t('Franchises bid on you publicly', 'Franchises आप पर publicly bid करती हैं') },
-                  { icon:IcoRupee, label:t('Phase 2 Fee', 'Phase 2 Fee'), sub:'₹' + fees.phase2.bat.toLocaleString() + ' (Bat/Bowl/WK) · ₹' + fees.phase2.ar.toLocaleString() + ' (AR) + GST' },
+                  { icon:IcoRupee, label:t('Phase 2 Fee', 'Phase 2 Fee'), sub:'₹' + fees.phase2.bat.toLocaleString() + ' (Batsman/Bowler/Wicketkeeper) · ₹' + fees.phase2.ar.toLocaleString() + ' (All-Rounder) + GST' },
                 ].map(item => (
                   <div key={item.label} style={{ display:'flex', gap:10, alignItems:'flex-start' }}>
                     <span style={{ color:'#E8B23D', display:'inline-flex', flexShrink:0 }}><item.icon size={18} /></span>
