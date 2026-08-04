@@ -52,7 +52,7 @@ const NAV: NavGroup[] = [
   ]},
   { title: "PHASE 1 · VIDEO TRIAL", items: [
     { id:"video_review", label:"Video Review",      icon:"▣", badgeColor:"#F59E0B" },
-    { id:"selection",    label:"Phase 1 Results",   icon:"✓", badge:"Phase 1", badgeColor:"#F59E0B" },
+    { id:"selection",    label:"Final 600 Selection", icon:"✓", badge:"Phase 2", badgeColor:"#A855F7" },
     { id:"leaderboard",  label:"Rankings",          icon:"≡" },
   ]},
   { title: "PHASE 2", items: [

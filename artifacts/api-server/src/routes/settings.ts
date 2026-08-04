@@ -19,6 +19,7 @@ import { getUploadPresignedUrl, getS3Url } from "../lib/s3";
 import { logger } from "../lib/logger";
 import { writeAudit } from "../lib/audit";
 import { validateRubricsOverrideValue } from "./staffTrials";
+import { selectionConfigSchema } from "../lib/selectionConfig";
 import { z } from "zod";
 
 const router = Router();
@@ -33,6 +34,7 @@ const WRITABLE_KEYS = new Set([
   "founder_signature",
   "trial_ops_defaults",
   "trial_rubrics_v1",
+  "selection_config",
 ]);
 /** Per-key role restriction (SUPER_ADMIN always allowed). */
 const KEY_ROLES: Record<string, string[]> = {
@@ -49,6 +51,10 @@ const KEY_ROLES: Record<string, string[]> = {
   /* versioned 100-point trial scoring rubric (staff app reads it via
      GET /api/staff/eval/rubrics; only HEAD_ASSESSOR + SUPER_ADMIN write). */
   trial_rubrics_v1: ["HEAD_ASSESSOR"],
+  /* Final 600 selection engine config (total pool, per-zone + wildcard role
+     quotas, tie-breaker order, zone mapping). Top-role only — SUPER_ADMIN is
+     always allowed by the gate below; no other role may change selection math. */
+  selection_config: [],
 };
 
 /* ── ensure table exists (idempotent, runs at boot) ── */
@@ -234,6 +240,13 @@ router.put("/admin/:key", requireAdmin, async (req, res) => {
       return void res.status(400).json({ error: "Invalid trial_rubrics_v1 value — " + err });
     }
     value = req.body?.value as Record<string, unknown>;
+  } else if (key === "selection_config") {
+    const parsed = selectionConfigSchema.safeParse(req.body?.value);
+    if (!parsed.success) {
+      const first = parsed.error.issues.slice(0, 3).map(i => (i.path.join(".") || "value") + ": " + i.message).join("; ");
+      return void res.status(400).json({ error: "Invalid selection_config value — " + first });
+    }
+    value = parsed.data as unknown as Record<string, unknown>;
   } else {
     return void res.status(400).json({ error: "Unknown setting key" });
   }

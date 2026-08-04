@@ -46,3 +46,5 @@ export * from "./registration_drafts";
 export * from "./notification_outbox";
 // QR trial ops suite — attempts, locked evaluations, corrections
 export * from "./trial_ops";
+// Final 600 selection engine — auditable selection batches + members
+export * from "./selection";

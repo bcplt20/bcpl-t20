@@ -990,5 +990,61 @@ router.post("/payments/backfill-methods", safe("backfill-methods", async (_req, 
   res.json({ scanned: batch.length, updated, skipped, errors });
 }));
 
+/* ────────────────────────────────────────────────────────────────────────────
+ * Email template preview (admin-gated, renders HTML with sample data)
+ *
+ * GET /api/admin-tools/email-preview           → JSON list of template keys
+ * GET /api/admin-tools/email-preview/:template → rendered HTML (with live
+ *   sponsor strip + subject banner). NEVER sends — pure render only, so it
+ *   can never trigger a real provider send or a player lifecycle change.
+ * ──────────────────────────────────────────────────────────────────────────── */
+import * as EmailTpl from "../lib/email";
+import { hydrateSponsors, esc as escHtml } from "../lib/emailTheme";
+
+/** Sample data for each template — realistic, never a real player. */
+const EMAIL_PREVIEW_SAMPLES: Record<string, () => { subject: string; htmlContent: string }> = {
+  phase1_receipt: () => EmailTpl.tplPhase1Receipt("Saurabh Kumar", "bat", 599, "BCPL-DEL-1", "Delhi"),
+  video_submitted: () => EmailTpl.tplVideoSubmitted("Saurabh Kumar"),
+  video_reminder_mid: () => EmailTpl.tplVideoReminder("Saurabh Kumar", 5),
+  video_reminder_final: () => EmailTpl.tplVideoReminder("Saurabh Kumar", 1),
+  video_reupload: () => EmailTpl.tplVideoReuploadRequired("Saurabh Kumar", "Your video was shorter than 30 seconds."),
+  phase1_result_ready: () => EmailTpl.tplPhase1ResultReady("Saurabh Kumar"),
+  phase1_selected: () => EmailTpl.tplPhase1Selected("Saurabh Kumar"),
+  phase2_receipt: () => EmailTpl.tplPhase2Receipt("Saurabh Kumar", 2999, "BCPL-DEL-1"),
+  trial_venue: () => EmailTpl.tplTrialVenueAnnounced("Saurabh Kumar", "Delhi", "Feroz Shah Kotla Ground", "12 Aug 2027", "9:00 AM", "8:30 AM"),
+  trial_completed: () => EmailTpl.tplTrialCompleted({ firstName: "Saurabh", roleLabel: "Batsman", trialCity: "Delhi", venueName: "Feroz Shah Kotla Ground", trialDate: "12 Aug 2027", trialId: "BCPL-DEL-1" }),
+  kyc_complete: () => EmailTpl.tplKycComplete("Saurabh Kumar", "Delhi"),
+  kyc_rejected: () => EmailTpl.tplKycRejected("Saurabh Kumar", "PAN name did not match Aadhaar."),
+  admin_login_lockdown: () => EmailTpl.tplAdminLoginLockdown({ failCount: 42, trippedAt: new Date(0), lockedUntil: new Date(3_600_000) }),
+  kyc_manual_review: () => EmailTpl.tplKycManualReview({ playerName: "Saurabh Kumar", playerPhone: "98XXXXXX10", regIdShort: "BCPL-DEL-1", trialCity: "Delhi", panVerified: true, aadhaarVerified: false, reason: "Aadhaar OTP not completed", flaggedAt: new Date(0) }),
+  invoice: () => EmailTpl.tplInvoice({ name: "Saurabh Kumar", invoiceNo: "BCPL-INV-0001", phase: 1, txnId: "cf_txn_sample", paidAt: new Date(0), breakup: { base: 507.63, gst: 91.37, cgst: 45.69, sgst: 45.68, total: 599 } }),
+  phase1_payment_reminder: () => EmailTpl.tplPhase1PaymentReminder("Saurabh Kumar", "Delhi", false),
+  phase2_payment_reminder: () => EmailTpl.tplPhase2PaymentReminder("Saurabh Kumar"),
+  referral_milestone: () => EmailTpl.tplReferralMilestone("Saurabh Kumar", 3, "Official BCPL Jersey"),
+  trial_pass: () => EmailTpl.tplTrialPass("Saurabh Kumar", "Feroz Shah Kotla Ground", "Delhi", "12 Aug 2027", "8:30 AM", "Batch A"),
+};
+
+router.get("/email-preview", safe("email-preview-list", async (_req, res) => {
+  res.json({ templates: Object.keys(EMAIL_PREVIEW_SAMPLES) });
+}));
+
+router.get("/email-preview/:template", safe("email-preview", async (req, res) => {
+  const key = String(req.params.template);
+  const build = EMAIL_PREVIEW_SAMPLES[key];
+  if (!build) {
+    res.status(404).json({ error: "Unknown template", templates: Object.keys(EMAIL_PREVIEW_SAMPLES) });
+    return;
+  }
+  const { subject, htmlContent } = build();
+  // Render the live sponsor strip so the admin sees exactly what ships.
+  const html = await hydrateSponsors(htmlContent);
+  const banner =
+    `<div style="font-family:-apple-system,Segoe UI,Arial,sans-serif;background:#111;color:#fff;padding:10px 16px;font-size:13px;">` +
+    `<strong>PREVIEW</strong> — ${escHtml(key)} &nbsp;·&nbsp; Subject: ${escHtml(subject)}</div>`;
+  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  res.setHeader("Cache-Control", "no-store");
+  res.send(banner + html);
+}));
+
 export default router;
 export { financeSummaryHandler };

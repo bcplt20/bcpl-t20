@@ -28,6 +28,7 @@ import seoRouter      from "./seo";
 import adminToolsRouter from "./adminTools";
 import adminFinanceRouter from "./adminFinance";
 import referralProgramRouter from "./referralProgram";
+import { adminSelectionRouter } from "./selection";
 
 const router: IRouter = Router();
 
@@ -60,6 +61,7 @@ router.use("/admin/health",  adminHealthRouter); // Stage 5 API health
 router.use("/admin/fraud",   adminFraudRouter); // Stage 6 fraud extensions
 router.use("/admin/drafts",  adminDraftsRouter); // incomplete-registration drafts
 router.use("/admin/finance", adminFinanceRouter); // finance read-model (payment split + on-hold)
+router.use("/admin/selection", adminSelectionRouter); // Final 600 selection engine
 router.use("/admin",         adminRouter);
 // Marketing / referrals (public click+attribute, admin analytics & campaigns)
 router.use("/marketing",     marketingRouter);

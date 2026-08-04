@@ -768,3 +768,82 @@ export interface TrialPassData {
   qrDataUrl: string;
 }
 export const getTrialPass = () => req<TrialPassData>("GET", "/user/trial-pass");
+
+/* ─── Final 600 Selection Engine (admin) ──────────────────────────── */
+export type SelectionRoleQuota = { bat: number; bowl: number; ar: number; wk: number };
+export interface SelectionConfigDTO {
+  seasonKey: string;
+  totalPool: number;
+  perZoneRoleQuota: SelectionRoleQuota;
+  wildcardRoleQuota: SelectionRoleQuota;
+  tieBreakers: string[];
+  zoneMappingVersion: string;
+  cityZoneMap: Record<string, string>;
+  metricsVersion: string;
+}
+export interface SelectionClosure {
+  seasonKey: string;
+  status: "open" | "closed";
+  snapshotAt: string | null;
+  closedBy: string | null; closedAt: string | null;
+  reopenedBy: string | null; reopenedAt: string | null;
+}
+export interface SelectionAggregates {
+  seasonKey: string;
+  closure: SelectionClosure;
+  totals: { completed: number; eligible: number; notSelected: number; incomplete: number; finalPoolSize: number };
+  byRole: { role: string; n: number }[];
+  byZone: { zone: string; n: number }[];
+  byCity: { city: string; n: number }[];
+  scoreBuckets: { bucket: number; label: string; n: number }[];
+}
+export interface SelectionBatchDTO {
+  id: string; seasonKey: string; version: number; status: string;
+  jobPhase: string | null; jobProgressPct: number;
+  algorithmVersion: string;
+  counts: Record<string, unknown> | null;
+  exceptionReport: Array<Record<string, unknown>>;
+  error: string | null;
+  createdBy: string | null; approvedBy: string | null; publishedBy: string | null;
+  generatedAt: string | null; approvedAt: string | null; publishedAt: string | null; invalidatedAt: string | null;
+  createdAt: string; updatedAt: string;
+}
+export interface SelectionMemberDTO {
+  id: string; registrationId: string; role: string; zone: string; city: string | null;
+  selectionPool: string; rawPhysicalScore: string;
+  zoneRoleRank: number | null; nationalRoleRank: number | null; overallRank: number | null;
+  derivedMetrics: Record<string, unknown> | null; metricsVersion: string | null;
+}
+
+export const adminGetSelectionConfig = () =>
+  adminReq<{ config: SelectionConfigDTO; computedTargetTotal: number; algorithmVersion: string }>("GET", "/admin/selection/config");
+export const adminGetSelectionAggregates = (seasonKey?: string) =>
+  adminReq<SelectionAggregates>("GET", `/admin/selection/aggregates${seasonKey ? `?seasonKey=${encodeURIComponent(seasonKey)}` : ""}`);
+export const adminGetSelectionTrialStatus = (seasonKey?: string) =>
+  adminReq<{ closure: SelectionClosure }>("GET", `/admin/selection/trial-status${seasonKey ? `?seasonKey=${encodeURIComponent(seasonKey)}` : ""}`);
+export const adminCloseSelectionTrials = (seasonKey?: string) =>
+  adminReq<{ ok: boolean; closure: SelectionClosure }>("POST", "/admin/selection/trials/close", { seasonKey });
+export const adminReopenSelectionTrials = (seasonKey?: string) =>
+  adminReq<{ ok: boolean; closure: SelectionClosure; invalidatedBatches: number }>("POST", "/admin/selection/trials/reopen", { seasonKey });
+export const adminListSelectionBatches = (seasonKey?: string) =>
+  adminReq<{ batches: SelectionBatchDTO[] }>("GET", `/admin/selection/batches${seasonKey ? `?seasonKey=${encodeURIComponent(seasonKey)}` : ""}`);
+export const adminGetSelectionBatch = (id: string) =>
+  adminReq<{ batch: SelectionBatchDTO; progressStates: string[] }>("GET", `/admin/selection/batches/${id}`);
+export const adminGetSelectionMembers = (id: string, p: { cursor?: number; limit?: number; zone?: string; role?: string; pool?: string }) => {
+  const qs = new URLSearchParams();
+  if (p.cursor) qs.set("cursor", String(p.cursor));
+  if (p.limit) qs.set("limit", String(p.limit));
+  if (p.zone) qs.set("zone", p.zone);
+  if (p.role) qs.set("role", p.role);
+  if (p.pool) qs.set("pool", p.pool);
+  const q = qs.toString();
+  return adminReq<{ members: SelectionMemberDTO[]; nextCursor: number | null; hasMore: boolean }>("GET", `/admin/selection/batches/${id}/members${q ? `?${q}` : ""}`);
+};
+export const adminGenerateSelection = (seasonKey?: string) =>
+  adminReq<{ ok: boolean; batchId: string; version: number; status: string }>("POST", "/admin/selection/generate", { seasonKey });
+export const adminRetrySelection = (id: string) =>
+  adminReq<{ ok: boolean; batchId: string; status: string }>("POST", `/admin/selection/batches/${id}/retry`);
+export const adminApproveSelection = (id: string) =>
+  adminReq<{ ok: boolean; batchId: string; status: string }>("POST", `/admin/selection/batches/${id}/approve`);
+export const adminPublishSelection = (id: string) =>
+  adminReq<{ ok: boolean; batchId: string; status: string; note: string }>("POST", `/admin/selection/batches/${id}/publish`);

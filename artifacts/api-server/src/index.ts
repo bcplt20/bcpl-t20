@@ -18,6 +18,7 @@ import { ensurePhase1AiTables } from "./lib/phase1Migrations";
 import { ensurePaymentMethodColumns } from "./routes/payment";
 import { ensureTrialsTables } from "./routes/trials";
 import { ensureTrialOpsTables } from "./routes/staffTrials";
+import { ensureSelectionTables } from "./lib/selectionMigrations";
 import { ensureAdminUsersTable } from "./routes/adminUsers";
 import { ensureRefundsTables } from "./routes/refunds";
 import { ensureFraudTables } from "./routes/fraud";
@@ -53,6 +54,7 @@ async function start() {
       await ensurePaymentMethodColumns(); // payment split (UPI/card/netbanking/wallet) columns
       await ensureTrialsTables(); // Physical trials suite (Stage 4)
       await ensureTrialOpsTables(); // QR trial ops — attempts, locked evaluations, corrections
+      await ensureSelectionTables(); // Final 600 selection engine — batches + members + ranking indexes
       await ensureAdminUsersTable(); // Stage 5 server-side RBAC
       await ensureFraudTables(); // Stage 6 fraud flag extensions
       await ensureRefundsTables(); // Stage 5 finance refunds
