@@ -32,7 +32,7 @@ const STEPS = [
   {
     n: '03',
     en: 'Physical trials', hi: 'Physical trials',
-    dEn: 'Selected players are invited to live trials in their city (Mar – Jun 2027), evaluated by experienced coaches.',
+    dEn: 'Phase 1 qualified players are invited to live trials in their city (Mar – Jun 2027), evaluated by experienced coaches.',
     dHi: 'Select हुए players को अपने शहर में live trials का invitation मिलता है (Mar – Jun 2027)।',
     color: '#3B82F6',
   },

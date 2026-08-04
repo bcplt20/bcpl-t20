@@ -1196,7 +1196,7 @@ export function Registration() {
           <div style={{ display:'flex', alignItems:'flex-start', gap:16, flexWrap:'wrap' }}>
             <div style={{ flex:'0 0 auto' }}>
               <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:11, letterSpacing:'.2em', color:'#E8B23D', marginBottom:6, display:'inline-flex', alignItems:'center', gap:6 }}><IcoLock size={12} /> {t('PHASE 2 — PHYSICAL TRIAL', 'PHASE 2 — PHYSICAL TRIAL')}</div>
-              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'rgba(255,255,255,0.8)' }}>{t('Only for selected players.', 'सिर्फ select हुए players के लिए।')}</div>
+              <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'rgba(255,255,255,0.8)' }}>{t('Only after Phase 1 qualification.', 'सिर्फ Phase 1 qualify करने के बाद।')}</div>
             </div>
             <div style={{ flex:1, minWidth:240 }}>
               <div className="phase2-strip-grid">
