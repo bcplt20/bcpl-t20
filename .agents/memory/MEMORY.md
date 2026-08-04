@@ -21,7 +21,7 @@
 - [Live scoring flow](scoring-flow.md) — client engine mirrors server /ball exactly (LB/B legal); finalization gated on ball persistence; /xi = clean restart (wipes innings); /innings-end idempotent
 - [API field & status traps](api-field-traps.md) — drizzle camelCase; zod .datetime() needs toISOString; role has 2 historic formats; never invent status strings — grep canonical vocab first
 - [Cashfree verification](cashfree-verification.md) — CF_VERIFY_* creds separate from payment keys, prod-only (dev = stub mode); "service unavailable" 502 = payload bug until proven otherwise
-- [V3 design language](v3-design-language.md) — PARTLY SUPERSEDED by 2026 master spec (premium look, no childish graphics; emoji sweep pending); internal links = wouter Link only; audit-grep patterns
+- [V3 design language](v3-design-language.md) — SUPERSEDED Aug'26 by LIGHT theme: ivory #F6F3EC bg + navy ink + orange CTA; dark heros only via data-hero-dark (header reads it); admin = light #F5F6F8 dashboard
 - [Copy compliance rules](copy-compliance-rules.md) — no scout/BCCI/superlative/absolute-promise copy anywhere; 48h result, 30–60s video, 15-day window; grep gate for every new template/page
 - [Subagent briefs](subagent-briefs.md) — end multi-page briefs with "complete ALL, do not stop to ask"; verify via git status, not the report
 - [Phase1 worker CAS claims](phase1-worker-cas.md) — workers stamp claim_token, write via casEvalUpdate only; snapshots frozen; tests assert DB end-state, never run counts

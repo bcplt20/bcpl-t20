@@ -15,3 +15,6 @@ The 80-part "Complete Production Upgrade" master spec mandates a premium sports-
 
 ## UPDATE 24 Jul 2026 — hero/type unification DONE
 All public + player-flow pages now use the ONE v3 pattern: centered hero (gold kicker, Barlow Condensed clamp() head, Inter subcopy), var(--container) 1200 w/ 20/32/48 padding, section rhythm clamp(56px,9vw,110px). Canonical reference = Players.tsx hero. Montserrat remains ONLY in: Registration.tsx (deliberately unchurned), Home.tsx small `.mont` labels, and the frozen print-receipt HTML string in Phase1PaymentReceipt. New pages MUST copy the v3 hero — never Montserrat, never left-aligned hero bands. Sponsors render ONLY in footer strip + /sponsors page (owner call; SponsorWall removed from Home). Kicker badges carry no emojis.
+
+## Aug 2026 — LIGHT theme (current)
+Owner rejected Midnight Emerald (reverted). Current theme: ivory #F6F3EC / #EDE8DC bg, white cards (border rgba(12,29,51,.10)), navy ink #0C1D33, orange #FF7A29 CTAs (white text), gold small-text on light = #B8892B. Dark navy anchors: footer + heros marked `data-hero-dark` (Home, MatchCenter, PointsTable only). SiteHeader is context-aware: light-ink at top unless [data-hero-dark] present on the page. Admin panel = light #F5F6F8 dashboard, dark slate sidebar. New dark-hero pages MUST add data-hero-dark or header goes white-on-ivory.
