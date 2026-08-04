@@ -26,3 +26,5 @@ Watch-outs:
 - SiteHeader also toggles `html.bcpl-authed` class + CSS `html.bcpl-authed .float-reg-btn{display:none!important}` — hides every per-page floating register button site-wide for logged-in users. No unmount cleanup ON PURPOSE (avoids flash during route transitions; every .float-reg-btn page mounts SiteHeader, logout only happens via NavUser inside SiteHeader).
 - **How to apply:** any NEW register CTA must either use class `float-reg-btn` or be wrapped in `{!user && ...}`. Never show register nudges to logged-in players (owner rule).
 - AuctionLive (/auction/live) is now an honest static info page — the old fake live-bid simulation is deleted; never reintroduce simulated bids/results (compliance).
+
+- Home reveal system: ALL hide-until-reveal CSS (.rv/.rv-up/.rv-stagger, incl. Home's inline <style> .rv) must be gated on html.rv-js; above-fold elements get .rv-now.rv-in synchronously (instant, no transition) or snapshots/slow browsers show blank sections.
