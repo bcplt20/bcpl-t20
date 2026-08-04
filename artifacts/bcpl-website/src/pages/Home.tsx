@@ -295,7 +295,8 @@ export function Home() {
         .shim-gold{background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradMove 3s ease infinite;}
 
         /* Scroll reveal */
-        html.rv-js .rv{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+        @keyframes rvAutoShow{to{opacity:1;transform:none;}}
+        html.rv-js .rv{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;animation:rvAutoShow .6s ease 2s forwards;}
         .rv-in{opacity:1;transform:translateY(0);}
         @media(prefers-reduced-motion:reduce){
           .rv{opacity:1;transform:none;}
