@@ -1127,11 +1127,11 @@ export function Home() {
       {/* ══ STICKY MOBILE CTA ══ */}
       {!authed && (
         <div className="stick-cta">
-          <div style={{ minWidth:0 }}>
-            <div className="mont" style={{ fontWeight:900, fontSize:14, color:"#fff", lineHeight:1.2 }}>{t("Phase 1 Registration","Phase 1 रजिस्ट्रेशन")}</div>
-            <div style={{ fontSize:12, color:"rgba(255,255,255,.72)", whiteSpace:"nowrap" }}>{t("Phase 1 closes 28 Feb 2027","Phase 1 — 28 Feb 2027 तक")}</div>
+          <div style={{ minWidth:0, flex:"1 1 auto", overflow:"hidden" }}>
+            <div className="mont" style={{ fontWeight:900, fontSize:13.5, color:"#fff", lineHeight:1.2, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{t("Phase 1 Registration","Phase 1 रजिस्ट्रेशन")}</div>
+            <div style={{ fontSize:11.5, color:"rgba(255,255,255,.72)", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{t("Closes 28 Feb 2027","28 Feb 2027 तक")}</div>
           </div>
-          <button className="btn-cta" style={{ fontSize:15, padding:"14px 24px", flexShrink:0, minWidth:"64%" }} onClick={()=>navigate("/register")}>{t("Register Now","रजिस्टर करें")} →</button>
+          <button className="btn-cta" style={{ fontSize:15, padding:"14px 22px", flex:"0 0 auto", maxWidth:"58%" }} onClick={()=>navigate("/register")}>{t("Register Now","रजिस्टर करें")} →</button>
         </div>
       )}
 
