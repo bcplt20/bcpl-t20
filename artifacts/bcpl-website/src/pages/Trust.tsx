@@ -494,7 +494,7 @@ export function Trust() {
                 <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:12}}>
                   <div>
                     <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:14,color:'#22C55E',letterSpacing:'.08em',textTransform:'uppercase',marginBottom:4}}>{t("PHASE 2 FEE","PHASE 2 FEE")}</div>
-                    <p style={{color:'rgba(255,255,255,0.5)',fontSize:13}}>{t("Physical Trial (if selected)","Physical Trial (select होने पर)")}</p>
+                    <p style={{color:'rgba(255,255,255,0.5)',fontSize:13}}>{t("Physical Trial — after Phase 1 qualification","Physical Trial — Phase 1 qualify करने के बाद")}</p>
                   </div>
                   <div style={{textAlign:'right'}}>
                     <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:28,color:'#fff',lineHeight:1}}>₹2,000 <span style={{fontSize:13,fontWeight:700,color:'rgba(255,255,255,0.55)'}}>+ GST</span></div>

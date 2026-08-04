@@ -110,7 +110,7 @@ const JOURNEY = [
   { phase:'P1', icon:IcoPen, label:'Register',   labelHi:'Register',       sub:'Fill form + pay entry fee',   subHi:'Form भरें + entry fee pay करें',        done:false, active:true  },
   { phase:'P1', icon:IcoVideo, label:'Upload Video',labelHi:'Video Upload',  sub:'2-min trial clip',            subHi:'2-min trial clip',                      done:false, active:false },
   { phase:'P1', icon:IcoClock,  label:'48-Hour Result',labelHi:'48-Hour Result',sub:'Criteria-based evaluation', subHi:'Criteria-based evaluation',             done:false, active:false },
-  { phase:'P2', icon:IcoStadium, label:'Physical Trial',labelHi:'Physical Trial',sub:'At your city (if selected)', subHi:'आपके शहर में (अगर select हुए)',           done:false, active:false },
+  { phase:'P2', icon:IcoStadium, label:'Physical Trial',labelHi:'Physical Trial',sub:'At your city — after Phase 1 qualification', subHi:'आपके शहर में — Phase 1 qualify करने के बाद',           done:false, active:false },
   { phase:'P2', icon:IcoScale, label:'Auction',    labelHi:'Auction',        sub:'Franchises bid on you',       subHi:'Franchises आप पर bid करती हैं',          done:false, active:false },
   { phase:'P2', icon:IcoTrophy, label:'Play BCPL',  labelHi:'BCPL खेलें',      sub:'Represent your franchise',    subHi:'अपनी franchise को represent करें',       done:false, active:false },
 ];
@@ -660,7 +660,7 @@ export function Registration() {
               </div>
               <div style={{ display:'flex', alignItems:'center', gap:6, fontSize:11, color:'var(--ink-3)' }}>
                 <span style={{ width:12, height:12, borderRadius:'50%', background:'rgba(232,178,61,0.15)', border:'1px solid rgba(232,178,61,0.5)', display:'inline-block' }} />
-                {t('Phase 2 — Physical Trial (if selected): ₹' + fees.phase2.bat.toLocaleString() + ' / ₹' + fees.phase2.ar.toLocaleString() + ' + GST', 'Phase 2 — Physical Trial (अगर select हुए): ₹' + fees.phase2.bat.toLocaleString() + ' / ₹' + fees.phase2.ar.toLocaleString() + ' + GST')}
+                {t('Phase 2 — Physical Trial (after Phase 1 qualification): ₹' + fees.phase2.bat.toLocaleString() + ' / ₹' + fees.phase2.ar.toLocaleString() + ' + GST', 'Phase 2 — Physical Trial (Phase 1 qualify करने के बाद): ₹' + fees.phase2.bat.toLocaleString() + ' / ₹' + fees.phase2.ar.toLocaleString() + ' + GST')}
               </div>
             </div>
           </div>
@@ -1080,7 +1080,7 @@ export function Registration() {
                           t('Selection results announced promptly', 'Selection results जल्दी घोषित'),
                           t('Zero auction / tournament fee', 'कोई auction / tournament fee नहीं'),
                           t('Transparent result process', 'पारदर्शी result process'),
-                          t('Phase 2 invite if selected', 'Select होने पर Phase 2 invite'),
+                          t('Phase 2 invite after Phase 1 qualification', 'Phase 1 qualify करने पर Phase 2 invite'),
                         ].map(item => <div key={item} style={{ fontSize:12, color:'rgba(255,255,255,0.65)', lineHeight:1.5, display:'flex', alignItems:'flex-start', gap:6 }}><span style={{ color:'#22C55E', flexShrink:0, marginTop:1 }}><IcoCheck size={13} /></span>{item}</div>)}
                       </div>
                     </div>
@@ -1095,7 +1095,7 @@ export function Registration() {
                             <span style={{ color:'rgba(232,178,61,0.6)', display:'inline-flex' }}><IcoLock size={11} /></span>
                             <span style={{ fontSize:9, fontWeight:800, fontFamily:'Montserrat,sans-serif', letterSpacing:'.16em', color:'rgba(232,178,61,0.6)' }}>{t('PHASE 2 (IF SELECTED)', 'PHASE 2 (अगर SELECT हुए)')}</span>
                           </div>
-                          <div style={{ fontSize:11, color:'var(--ink-3)' }}>{t('Physical trial at', 'Physical trial')} {city||t('your city', 'आपके शहर')} {t('— pay only if selected', 'में — select होने पर ही pay करें')}</div>
+                          <div style={{ fontSize:11, color:'var(--ink-3)' }}>{t('Physical trial at', 'Physical trial')} {city||t('your city', 'आपके शहर')} {t('— payable only after Phase 1 qualification', 'में — Phase 1 qualify करने के बाद ही payable')}</div>
                         </div>
                         <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'rgba(232,178,61,0.6)' }}>₹{phase2price.toLocaleString()}</div>
                       </div>

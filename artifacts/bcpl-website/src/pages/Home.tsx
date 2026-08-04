@@ -64,7 +64,7 @@ const ROAD = (f: FeeConfig) => [
   { icon:"reg", en:"Register",         hi:"रजिस्टर",        date:"Oct '26 – Feb '27", fee: inr(f.phase1.bat) + " / " + inr(f.phase1.ar) + " + GST", descEn:"Pick your role, pay online — done in 5 minutes.",                                                       descHi:"Role चुनें, online payment करें — 5 मिनट में हो गया।",                                        color:"#FF7A29", live:true },
   { icon:"video", en:"Video Trial",      hi:"वीडियो ट्रायल",  date:"Within 15 days",    fee:null,                                                      descEn:"Upload a 30–60 second cricket clip from any ground in India.",                                          descHi:"किसी भी मैदान से 30–60 second की cricket clip upload करें।",                                       color:"#FF9350" },
   { icon:"result", en:"Phase 1 Result",   hi:"फेज़ 1 रिज़ल्ट", date:"Within 48 hours",   fee:null,                                                      descEn:"Your video is evaluated against BCPL's Phase 1 assessment criteria.",                                   descHi:"आपका video BCPL के Phase 1 assessment criteria पर evaluate होता है।",                          color:"#E8B23D" },
-  { icon:"trophy", en:"Phase 2 & Beyond", hi:"फेज़ 2 और आगे",  date:"Mar – Oct '27",     fee: inr(f.phase2.bat) + " / " + inr(f.phase2.ar) + " + GST", descEn:"Only if selected — physical trial in your city, the live franchise auction, then Season 5 under the floodlights.", descHi:"सिर्फ select होने पर — आपके शहर में physical trial, live franchise auction, फिर floodlights के नीचे Season 5।", color:"#F0C860" },
+  { icon:"trophy", en:"Phase 2 & Beyond", hi:"फेज़ 2 और आगे",  date:"Mar – Oct '27",     fee: inr(f.phase2.bat) + " / " + inr(f.phase2.ar) + " + GST", descEn:"After Phase 1 qualification — physical trial in your city, the live franchise auction, then Season 5 under the floodlights.", descHi:"Phase 1 qualify करने के बाद — आपके शहर में physical trial, live franchise auction, फिर floodlights के नीचे Season 5।", color:"#F0C860" },
 ];
 
 /* ── SEASON 5 ROADMAP — premium animated timeline (spec §6):
@@ -102,8 +102,8 @@ const FAQS = (f: FeeConfig) => [
     aEn: inr(f.phase1.bat) + " + GST for Batsman/Bowler/Wicket-keeper. " + inr(f.phase1.ar) + " + GST for All-rounders. Nothing else is payable in Phase 1.",
     aHi: "Batsman/Bowler/Wicket-keeper के लिए " + inr(f.phase1.bat) + " + GST। All-rounder के लिए " + inr(f.phase1.ar) + " + GST। Phase 1 में इसके अलावा कुछ नहीं।" },
   { qEn:"Do I pay extra for Phase 2?",           qHi:"क्या Phase 2 के लिए अलग से देना होगा?",
-    aEn:"Only if selected. Phase 2 fee is " + inr(f.phase2.bat) + " + GST (Bat/Bowl/WK) or " + inr(f.phase2.ar) + " + GST (All-rounder) — a separate payment charged solely for participation in the Phase 2 physical trial. Fees once paid are non-refundable except where expressly provided in the Refund & Cancellation Policy.",
-    aHi:"सिर्फ select होने पर। Phase 2 fee " + inr(f.phase2.bat) + " + GST (Bat/Bowl/WK) या " + inr(f.phase2.ar) + " + GST (All-rounder) — यह अलग payment सिर्फ Phase 2 physical trial में participation के लिए है। एक बार paid fee refundable नहीं है, सिवाय उन स्थितियों के जो Refund & Cancellation Policy में साफ़ लिखी हैं।" },
+    aEn:"Only after Phase 1 qualification. Phase 2 fee is " + inr(f.phase2.bat) + " + GST (Bat/Bowl/WK) or " + inr(f.phase2.ar) + " + GST (All-rounder) — a separate payment charged solely for participation in the Phase 2 physical trial. Fees once paid are non-refundable except where expressly provided in the Refund & Cancellation Policy.",
+    aHi:"सिर्फ Phase 1 qualify करने के बाद। Phase 2 fee " + inr(f.phase2.bat) + " + GST (Bat/Bowl/WK) या " + inr(f.phase2.ar) + " + GST (All-rounder) — यह अलग payment सिर्फ Phase 2 physical trial में participation के लिए है। एक बार paid fee refundable नहीं है, सिवाय उन स्थितियों के जो Refund & Cancellation Policy में साफ़ लिखी हैं।" },
   { qEn:"Are there hidden costs?",               qHi:"क्या कोई छिपे हुए charges हैं?",
     aEn:"The Phase 2 fee is payable only if you qualify and choose to proceed. Maximum total cost is " + inr(f.phase1.bat + f.phase2.bat) + "–" + inr(f.phase1.ar + f.phase2.ar) + " + GST for your entire BCPL journey — registration to franchise auction.",
     aHi:"Phase 2 fee सिर्फ तभी देनी होती है जब आप qualify करें और आगे बढ़ना चुनें। पूरे BCPL सफर की अधिकतम कुल लागत " + inr(f.phase1.bat + f.phase2.bat) + "–" + inr(f.phase1.ar + f.phase2.ar) + " + GST है — registration से लेकर auction तक।" },
@@ -577,7 +577,7 @@ export function Home() {
                       <span className="mont" style={{ fontSize:13, fontWeight:800, color:"#4ADE80" }}>{t("OPEN NOW","अभी खुला")}</span>
                     </span>
                   )}
-                  {i===3 && <span style={{ fontSize:13, color:"rgba(255,255,255,.72)", alignSelf:"center" }}>{t("only if selected","सिर्फ select होने पर")}</span>}
+                  {i===3 && <span style={{ fontSize:13, color:"rgba(255,255,255,.72)", alignSelf:"center" }}>{t("only after Phase 1 qualification","सिर्फ Phase 1 qualify करने के बाद")}</span>}
                 </div>
               </div>
             ))}
@@ -632,7 +632,7 @@ export function Home() {
             </div>
             <div className="ja">→</div>
             <div className="jc" style={{ borderTop:"3px solid #E8B23D" }}>
-              <div className="mont" style={{ fontSize:10, fontWeight:800, letterSpacing:".1em", color:"var(--ink-3)", textTransform:"uppercase", marginBottom:6 }}>{t("Step 2 · Only if selected","कदम 2 · सिर्फ select होने पर")}</div>
+              <div className="mont" style={{ fontSize:10, fontWeight:800, letterSpacing:".1em", color:"var(--ink-3)", textTransform:"uppercase", marginBottom:6 }}>{t("Step 2 · After Phase 1 qualification","कदम 2 · Phase 1 qualify करने के बाद")}</div>
               <div className="mont" style={{ fontWeight:900, fontSize:24, color:"#F0C860" }}>{inr(fees.phase2.bat)}<span style={{ fontSize:14, color:"var(--ink-2)" }}> / {inr(fees.phase2.ar)} + GST</span></div>
               <div style={{ fontSize:13, color:"var(--ink-3)", marginTop:4 }}>{t("Physical trial entry","Physical trial entry")}</div>
             </div>
@@ -654,7 +654,7 @@ export function Home() {
           <div style={{ display:"flex", flexWrap:"wrap", gap:10, marginBottom:26 }}>
             {[
               { icon:IcoCheck,  en:"Transparent Fee Structure",           hi:"पारदर्शी Fee Structure" },
-              { icon:IcoShield, en:"Phase 2 only if selected",           hi:"Phase 2 सिर्फ select होने पर" },
+              { icon:IcoShield, en:"Phase 2 only after Phase 1 qualification", hi:"Phase 2 सिर्फ Phase 1 qualify करने के बाद" },
               { icon:IcoClock,  en:"Result within 48 hours",             hi:"48 घंटे में result" },
               { icon:IcoLock,   en:"Secure payment via Cashfree",        hi:"Cashfree से सुरक्षित payment" },
             ].map(g=>(
@@ -691,7 +691,7 @@ export function Home() {
                 <div style={{ width:40, height:40, borderRadius:10, background:"rgba(232,178,61,.12)", border:"1px solid rgba(232,178,61,.3)", display:"flex", alignItems:"center", justifyContent:"center" }}><IcoTrophy size={20} style={{ color:"#E8B23D" }} /></div>
                 <div>
                   <div className="mont" style={{ fontWeight:900, fontSize:16, color:"#E8B23D" }}>Phase 2</div>
-                  <div style={{ fontSize:12, color:"var(--ink-3)" }}>{t("Physical trial — only if selected","Physical trial — सिर्फ select होने पर")}</div>
+                  <div style={{ fontSize:12, color:"var(--ink-3)" }}>{t("Physical trial — after Phase 1 qualification","Physical trial — Phase 1 qualify करने के बाद")}</div>
                 </div>
                 <div style={{ marginLeft:"auto", background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.1)", borderRadius:8, padding:"3px 10px" }}>
                   <span className="mont" style={{ fontSize:10, fontWeight:800, color:"var(--ink-3)" }}>{t("IF SELECTED","SELECT होने पर")}</span>
@@ -722,7 +722,7 @@ export function Home() {
           <div style={{ marginTop:20, padding:"20px 24px", background:"rgba(255,122,41,.05)", border:"1px solid rgba(255,122,41,.2)", borderRadius:16, display:"flex", flexWrap:"wrap", gap:20, alignItems:"center", justifyContent:"space-between" }}>
             <div>
               <div className="mont" style={{ fontWeight:900, fontSize:14, color:"#FF7A29" }}>{t("Maximum Total Cost (Full Journey)","अधिकतम कुल लागत (पूरा सफर)")}</div>
-              <div style={{ fontSize:13, color:"var(--ink-3)", marginTop:4 }}>{t("Phase 1 + Phase 2 combined, if fully selected","Phase 1 + Phase 2 मिलाकर, पूरी तरह select होने पर")}</div>
+              <div style={{ fontSize:13, color:"var(--ink-3)", marginTop:4 }}>{t("Phase 1 + Phase 2 combined, after Phase 1 qualification","Phase 1 + Phase 2 मिलाकर, Phase 1 qualify करने के बाद")}</div>
             </div>
             <div style={{ display:"flex", gap:16, flexWrap:"wrap" }}>
               {[{label:"Bat/Bowl/WK",total:inr(fees.phase1.bat + fees.phase2.bat) + " + GST"},{label:t("All-Rounder","ऑल-राउंडर"),total:inr(fees.phase1.ar + fees.phase2.ar) + " + GST"}].map(x=>(
