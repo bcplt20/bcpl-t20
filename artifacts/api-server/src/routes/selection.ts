@@ -333,12 +333,21 @@ adminSelectionRouter.post("/batches/:id/approve", async (req, res) => {
     return void res.status(409).json({ error: `Season ${batch.seasonKey} already has an approved batch (V${existing[0]?.version ?? "?"}). Reopen/invalidate it first.` });
   }
   const now = new Date();
+  let approved: { id: string }[];
   try {
-    await db.update(selectionBatchesTable)
+    // Race-safe conditional transition: only flips a still-preview_ready batch.
+    // If status changed underneath us (concurrent approve/reopen/invalidate),
+    // the guarded update affects 0 rows → 409.
+    approved = await db.update(selectionBatchesTable)
       .set({ status: "approved", approvedBy: req.admin?.email ?? "system", approvedAt: now, updatedAt: now })
-      .where(and(eq(selectionBatchesTable.id, id), eq(selectionBatchesTable.status, "preview_ready")));
+      .where(and(eq(selectionBatchesTable.id, id), eq(selectionBatchesTable.status, "preview_ready")))
+      .returning({ id: selectionBatchesTable.id });
   } catch (e) {
+    // partial-unique-index violation ⇒ another approved batch was created in the race.
     return void res.status(409).json({ error: "Approve failed — another approved batch exists for this season.", detail: String(e).slice(0, 200) });
+  }
+  if (approved.length === 0) {
+    return void res.status(409).json({ error: "Approve conflict — batch is no longer preview_ready (status changed concurrently)." });
   }
   void writeAudit(req, { action: "selection.approve", entity: "selection_batch", entityKey: id });
   res.json({ ok: true, batchId: id, status: "approved" });
@@ -353,9 +362,14 @@ adminSelectionRouter.post("/batches/:id/publish", async (req, res) => {
     return void res.status(409).json({ error: `Batch must be approved to publish (current: ${batch.status}).` });
   }
   const now = new Date();
-  await db.update(selectionBatchesTable)
+  // Race-safe conditional transition — 0 rows ⇒ status changed underneath ⇒ 409.
+  const published = await db.update(selectionBatchesTable)
     .set({ status: "published", publishedBy: req.admin?.email ?? "system", publishedAt: now, updatedAt: now })
-    .where(and(eq(selectionBatchesTable.id, id), eq(selectionBatchesTable.status, "approved")));
+    .where(and(eq(selectionBatchesTable.id, id), eq(selectionBatchesTable.status, "approved")))
+    .returning({ id: selectionBatchesTable.id });
+  if (published.length === 0) {
+    return void res.status(409).json({ error: "Publish conflict — batch is no longer approved (status changed concurrently)." });
+  }
   // Intentionally NO player notifications (spec §5): publish only flips status.
   void writeAudit(req, { action: "selection.publish", entity: "selection_batch", entityKey: id });
   res.json({ ok: true, batchId: id, status: "published", note: "Status published — player notifications are not wired yet." });

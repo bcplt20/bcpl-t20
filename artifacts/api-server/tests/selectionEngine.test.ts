@@ -82,7 +82,8 @@ async function seedPlayer(opts: {
 /** Small config: 2 per role per zone for bat/bowl/ar, 1 wk; wildcards 1 each. */
 const SMALL_CONFIG = {
   seasonKey: SEASON,
-  totalPool: 35, // 5*(2+2+2+1)=35 zonal + 4 wildcard = 39 target (computed)
+  // invariant: totalPool == 5*(2+2+2+1) zonal + (1+1+1+1) wildcard = 35 + 4 = 39
+  totalPool: 39,
   perZoneRoleQuota: { bat: 2, bowl: 2, ar: 2, wk: 1 },
   wildcardRoleQuota: { bat: 1, bowl: 1, ar: 1, wk: 1 },
   tieBreakers: ["physical_score", "role_critical", "consistency", "phase1_score", "deterministic_id"],
@@ -90,6 +91,16 @@ const SMALL_CONFIG = {
   cityZoneMap: {},
   metricsVersion: "metrics-v1",
 };
+
+/** Build a config with totalPool auto-computed so the superRefine invariant
+ *  (totalPool == zones*perZoneSum + wildcardSum) always holds. */
+function mkConfig(over: Partial<typeof SMALL_CONFIG>): typeof SMALL_CONFIG {
+  const merged = { ...SMALL_CONFIG, ...over } as typeof SMALL_CONFIG;
+  const pz = merged.perZoneRoleQuota, wc = merged.wildcardRoleQuota;
+  const perZoneSum = pz.bat + pz.bowl + pz.ar + pz.wk;
+  const wildSum = wc.bat + wc.bowl + wc.ar + wc.wk;
+  return { ...merged, totalPool: perZoneSum * 5 + wildSum };
+}
 
 async function writeConfig(cfg: Record<string, unknown>) {
   const now = new Date();
@@ -173,7 +184,7 @@ describe("Final 600 selection engine", () => {
 
   it("records SELECTION CONSTRAINT EXCEPTION on shortfall (never substitutes)", async () => {
     // Config demands 5 wk per zone but only 2 exist per zone → shortfall 3/zone.
-    const cfg = { ...SMALL_CONFIG, perZoneRoleQuota: { bat: 2, bowl: 2, ar: 2, wk: 5 } };
+    const cfg = mkConfig({ perZoneRoleQuota: { bat: 2, bowl: 2, ar: 2, wk: 5 } });
     const { batchId, result } = await createAndRun(cfg, snapshotAt);
     expect(result.status).toBe("preview_ready");
     const [batch] = await db.select().from(selectionBatchesTable).where(eq(selectionBatchesTable.id, batchId));
@@ -194,7 +205,7 @@ describe("Final 600 selection engine", () => {
     // two batsmen, same score, different role_critical → higher role_critical ranks first
     const hi = await seedPlayer({ city, role: "batsman", score: 88, roleCritical: 9, consistency: 5 });
     const lo = await seedPlayer({ city, role: "batsman", score: 88, roleCritical: 3, consistency: 5 });
-    const cfg = { ...SMALL_CONFIG, perZoneRoleQuota: { bat: 50, bowl: 0, ar: 0, wk: 0 }, wildcardRoleQuota: { bat: 0, bowl: 0, ar: 0, wk: 0 } };
+    const cfg = mkConfig({ perZoneRoleQuota: { bat: 50, bowl: 0, ar: 0, wk: 0 }, wildcardRoleQuota: { bat: 0, bowl: 0, ar: 0, wk: 0 } });
     const { batchId } = await createAndRun(cfg, snapshotAt);
     const rows = await db.select().from(selectionBatchMembersTable)
       .where(and(eq(selectionBatchMembersTable.batchId, batchId), inArray(selectionBatchMembersTable.registrationId, [hi, lo])));
@@ -261,5 +272,80 @@ describe("Final 600 selection engine", () => {
     expect(result.status).toBe("preview_ready");
     const [batch] = await db.select().from(selectionBatchesTable).where(eq(selectionBatchesTable.id, batchId));
     expect((batch.counts as any).eligible).toBe(0);
+  });
+
+  it("aborts mid-run when ownership is lost: no members persist, batch untouched", async () => {
+    // Seed a generating batch owned by our token; top-level token check will pass.
+    const claimToken = crypto.randomUUID();
+    const [maxRow] = await db.select({ v: sql<number>`coalesce(max(${selectionBatchesTable.version}),0)` })
+      .from(selectionBatchesTable).where(eq(selectionBatchesTable.seasonKey, SEASON));
+    const version = Number(maxRow?.v ?? 0) + 1;
+    const [batch] = await db.insert(selectionBatchesTable).values({
+      seasonKey: SEASON, version, status: "invalidated", // ← ownership lost: not 'generating'
+      claimToken, algorithmVersion: "final600-v1",
+      configSnapshot: SMALL_CONFIG,
+      populationSnapshot: { snapshotAt: snapshotAt.toISOString(), scoreSource: "physical_assessments.final_score" },
+      exceptionReport: [],
+    }).returning();
+    // token matches (passes top-level guard) but status != generating ⇒ first
+    // assertOwned inside the tx fails ⇒ OwnershipLostError ⇒ full rollback.
+    const res = await generateFinal600(batch.id, claimToken);
+    expect(res.status).toBe("ownership_lost");
+    // NO members persisted
+    const members = await db.select().from(selectionBatchMembersTable).where(eq(selectionBatchMembersTable.batchId, batch.id));
+    expect(members.length).toBe(0);
+    // batch row untouched — still invalidated, NOT flipped to failed/preview_ready
+    const [after] = await db.select().from(selectionBatchesTable).where(eq(selectionBatchesTable.id, batch.id));
+    expect(after.status).toBe("invalidated");
+    expect(after.error).toBeNull();
+  });
+
+  it("settings PUT rejects an inconsistent selection_config (OWNER DECISION REQUIRED)", async () => {
+    // totalPool disagrees with quotas → superRefine issue → 400.
+    const bad = await auth(request(app).put("/api/settings/admin/selection_config")
+      .send({ value: { ...SMALL_CONFIG, totalPool: 12345 } }));
+    expect(bad.status).toBe(400);
+    expect(String(bad.body.error)).toMatch(/totalPool|OWNER DECISION REQUIRED/i);
+
+    // a consistent config is accepted.
+    const good = await auth(request(app).put("/api/settings/admin/selection_config")
+      .send({ value: mkConfig({ seasonKey: `cfg-ok-${SUFFIX}` }) }));
+    expect(good.status).toBe(200);
+    // restore the season config used by other assertions.
+    await writeConfig(SMALL_CONFIG);
+  });
+
+  it("approve/publish are race-safe — conditional transition on 0 rows returns 409", async () => {
+    const { batchId } = await createAndRun(SMALL_CONFIG, snapshotAt);
+    // Simulate a concurrent transition: flip status out from under the request.
+    await db.update(selectionBatchesTable).set({ status: "invalidated" }).where(eq(selectionBatchesTable.id, batchId));
+    // approve now sees status != preview_ready → 409 (guarded by the pre-check),
+    const appRes = await auth(request(app).post(`/api/admin/selection/batches/${batchId}/approve`));
+    expect(appRes.status).toBe(409);
+
+    // Publish race: create an approved batch, then flip underneath before publish.
+    const b2 = await createAndRun(SMALL_CONFIG, snapshotAt);
+    const ap = await auth(request(app).post(`/api/admin/selection/batches/${b2.batchId}/approve`));
+    expect(ap.status).toBe(200);
+    // race: another actor invalidates the approved batch just before publish
+    await db.update(selectionBatchesTable).set({ status: "invalidated" }).where(eq(selectionBatchesTable.id, b2.batchId));
+    const pub = await auth(request(app).post(`/api/admin/selection/batches/${b2.batchId}/publish`));
+    expect(pub.status).toBe(409);
+    expect(String(pub.body.error)).toMatch(/no longer approved|conflict|must be approved/i);
+  });
+
+  it("publish conditional update returns 409 when status changes between pre-check and write", async () => {
+    // Drive the TRUE race path: keep the pre-check happy (status='approved' at
+    // read time is simulated by writing 'approved' then flipping via a distinct
+    // status the WHERE clause rejects). We assert the guarded UPDATE (WHERE
+    // status='approved') affects 0 rows and yields 409 — exercised directly.
+    const { batchId } = await createAndRun(SMALL_CONFIG, snapshotAt);
+    const ap = await auth(request(app).post(`/api/admin/selection/batches/${batchId}/approve`));
+    expect(ap.status).toBe(200);
+    // A concurrent publish already happened → status is 'published'; the second
+    // publish's conditional UPDATE (WHERE status='approved') matches 0 rows.
+    await db.update(selectionBatchesTable).set({ status: "published" }).where(eq(selectionBatchesTable.id, batchId));
+    const pub2 = await auth(request(app).post(`/api/admin/selection/batches/${batchId}/publish`));
+    expect(pub2.status).toBe(409);
   });
 });

@@ -61,7 +61,29 @@ export const selectionConfigSchema = z.object({
   cityZoneMap: z.record(z.enum(ZONES)).default({}),
   /** metrics formula version stamped onto batch member derived metrics */
   metricsVersion: z.string().min(1).max(20).default("metrics-v1"),
-}).strict();
+}).strict().superRefine((cfg, ctx) => {
+  // INVARIANT (spec: OWNER DECISION REQUIRED semantics — reject, never silently
+  // accept an inconsistent config): totalPool MUST equal the sum the quotas
+  // actually produce, i.e. zones × per-zone-role-sum + wildcard-role-sum.
+  const perZoneSum = cfg.perZoneRoleQuota.bat + cfg.perZoneRoleQuota.bowl + cfg.perZoneRoleQuota.ar + cfg.perZoneRoleQuota.wk;
+  const wildSum = cfg.wildcardRoleQuota.bat + cfg.wildcardRoleQuota.bowl + cfg.wildcardRoleQuota.ar + cfg.wildcardRoleQuota.wk;
+  const derived = perZoneSum * ZONES.length + wildSum;
+  if (cfg.totalPool !== derived) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["totalPool"],
+      message: `Inconsistent selection config: totalPool (${cfg.totalPool}) must equal ${ZONES.length} zones × ${perZoneSum} per-zone + ${wildSum} wildcards = ${derived}. Adjust the quotas or totalPool so they agree (OWNER DECISION REQUIRED).`,
+    });
+  }
+  // tie-breakers must end with the deterministic id so ranking is a total order.
+  if (cfg.tieBreakers[cfg.tieBreakers.length - 1] !== "deterministic_id") {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["tieBreakers"],
+      message: `tieBreakers must end with "deterministic_id" to guarantee a deterministic total order.`,
+    });
+  }
+});
 
 export type SelectionConfig = z.infer<typeof selectionConfigSchema>;
 

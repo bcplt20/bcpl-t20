@@ -26,6 +26,18 @@
  * FAILURE: on any error the batch flips to `failed` with diagnostics and ALL
  * members inserted so far are deleted — NO partial results. Retry is idempotent:
  * it re-claims via CAS and re-runs from a clean slate.
+ *
+ * CAS OWNERSHIP (enforced end-to-end): every mutating step requires the batch to
+ * still be owned by this worker — i.e. `claim_token = $token AND status =
+ * 'generating'`. Before the destructive delete and before each INSERT phase we
+ * run a claim-guarded "touch" (assertOwned); if it affects 0 rows the claim was
+ * cleared underneath us (trials reopened / batch invalidated / superseded by a
+ * retry). We then abort IMMEDIATELY via OwnershipLostError: the whole transaction
+ * rolls back (so NO members persist), we do NOT flip the batch to failed (that
+ * state now belongs to whoever holds the claim), and we do NOT report success.
+ * The final status write is likewise claim-guarded and its affected-row count is
+ * checked — a 0-row result means ownership was lost and we abort rather than
+ * returning preview_ready while the batch row is untouched.
  */
 import { db } from "@workspace/db";
 import { selectionBatchesTable, selectionBatchMembersTable } from "@workspace/db/schema";
@@ -108,25 +120,91 @@ function zoneCaseSql(cityZoneMap: Record<string, Zone>) {
 const ELIGIBLE_RESULTS = ["FINAL_SELECTION_PENDING", "FINAL_SELECTED"];
 
 export interface GenerateResult {
-  status: "preview_ready" | "failed";
+  status: "preview_ready" | "failed" | "ownership_lost";
   batchId: string;
   counts?: Record<string, unknown>;
   exceptionReport?: Array<Record<string, unknown>>;
   error?: string;
 }
 
-async function setPhase(batchId: string, claimToken: string, phase: ProgressState): Promise<void> {
-  await db.update(selectionBatchesTable)
-    .set({ jobPhase: phase, jobProgressPct: PROGRESS_PCT[phase], updatedAt: new Date() })
-    .where(and(eq(selectionBatchesTable.id, batchId), eq(selectionBatchesTable.claimToken, sql`${claimToken}::uuid`)));
+/**
+ * Thrown when a claim-guarded write affects 0 rows mid-run: the batch is no
+ * longer owned by this worker (claim cleared / status no longer 'generating').
+ * The catch handler treats this specially — it does NOT mark the batch failed
+ * (that batch now belongs to someone else) and does NOT report success.
+ */
+class OwnershipLostError extends Error {
+  constructor() { super("selection batch ownership lost (claim token cleared or status changed)"); this.name = "OwnershipLostError"; }
 }
 
+/** Minimal executor shape shared by `db` and a transaction handle. */
+type Executor = Pick<typeof db, "update">;
+
+/**
+ * Claim-guarded no-op touch: bumps updatedAt only when this worker still owns
+ * the batch (claim_token = $token AND status = 'generating'). Returns the number
+ * of affected rows; 0 ⇒ ownership lost.
+ */
+async function ownedTouch(exec: Executor, batchId: string, claimToken: string): Promise<number> {
+  const rows = await exec.update(selectionBatchesTable)
+    .set({ updatedAt: new Date() })
+    .where(and(
+      eq(selectionBatchesTable.id, batchId),
+      eq(selectionBatchesTable.claimToken, sql`${claimToken}::uuid`),
+      eq(selectionBatchesTable.status, "generating"),
+    ))
+    .returning({ id: selectionBatchesTable.id });
+  return rows.length;
+}
+
+/** Assert ownership before a destructive step; abort the whole job if lost. */
+async function assertOwned(exec: Executor, batchId: string, claimToken: string): Promise<void> {
+  if ((await ownedTouch(exec, batchId, claimToken)) === 0) throw new OwnershipLostError();
+}
+
+/**
+ * Claim-guarded phase/progress write. Only advances phase while this worker
+ * owns the batch; a 0-row result means ownership was lost → abort.
+ */
+async function setPhase(exec: Executor, batchId: string, claimToken: string, phase: ProgressState): Promise<void> {
+  const rows = await exec.update(selectionBatchesTable)
+    .set({ jobPhase: phase, jobProgressPct: PROGRESS_PCT[phase], updatedAt: new Date() })
+    .where(and(
+      eq(selectionBatchesTable.id, batchId),
+      eq(selectionBatchesTable.claimToken, sql`${claimToken}::uuid`),
+      eq(selectionBatchesTable.status, "generating"),
+    ))
+    .returning({ id: selectionBatchesTable.id });
+  if (rows.length === 0) throw new OwnershipLostError();
+}
+
+/**
+ * Mark the batch failed — CAS-guarded so a STALE worker can never fail a batch
+ * that has been reclaimed by a newer run. Only flips to failed when this worker
+ * still owns the claim AND status is still 'generating'. Best-effort (never
+ * throws); if the guarded update affects 0 rows the batch is no longer ours and
+ * we leave it alone.
+ */
 async function failBatch(batchId: string, claimToken: string, e: unknown): Promise<void> {
-  await db.delete(selectionBatchMembersTable).where(eq(selectionBatchMembersTable.batchId, batchId)).catch(() => {});
-  await db.update(selectionBatchesTable)
-    .set({ status: "failed", jobPhase: null, error: String(e).slice(0, 2000), claimToken: null, updatedAt: new Date() })
-    .where(eq(selectionBatchesTable.id, batchId))
-    .catch(() => {});
+  try {
+    const flipped = await db.update(selectionBatchesTable)
+      .set({ status: "failed", jobPhase: null, error: String(e).slice(0, 2000), claimToken: null, updatedAt: new Date() })
+      .where(and(
+        eq(selectionBatchesTable.id, batchId),
+        eq(selectionBatchesTable.claimToken, sql`${claimToken}::uuid`),
+        eq(selectionBatchesTable.status, "generating"),
+      ))
+      .returning({ id: selectionBatchesTable.id });
+    if (flipped.length === 0) {
+      // Not ours anymore — do not touch members either.
+      logger.warn({ batchId }, "Final 600 job failed but batch was already reclaimed/changed — leaving untouched");
+      return;
+    }
+    // We own it: wipe any members from this run (NO partial results).
+    await db.delete(selectionBatchMembersTable).where(eq(selectionBatchMembersTable.batchId, batchId)).catch(() => {});
+  } catch (inner) {
+    logger.error({ err: inner, batchId }, "failBatch cleanup error");
+  }
   logger.error({ err: e, batchId }, "Final 600 selection job failed");
 }
 
@@ -149,12 +227,12 @@ export async function generateFinal600(batchId: string, claimToken: string): Pro
   const cutoff = snapAt ? new Date(snapAt) : new Date();
 
   try {
-    await db.delete(selectionBatchMembersTable).where(eq(selectionBatchMembersTable.batchId, batchId));
-    await setPhase(batchId, claimToken, "preparing_population");
-
+    // Everything mutating happens inside ONE transaction so a rollback (on error
+    // OR ownership loss) leaves zero members behind — NO partial results.
     const zoneCase = zoneCaseSql(cityZoneMap);
     const rankOrder = sql`score DESC, role_critical DESC, consistency DESC, phase1_score DESC, registration_id ASC`;
 
+    let countsSnapshot: Record<string, unknown> | null = null;
     const exceptions: Array<Record<string, unknown>> = [];
     let selectedTotal = 0;
     const byRole: Record<RoleKey, number> = { bat: 0, bowl: 0, ar: 0, wk: 0 };
@@ -164,6 +242,14 @@ export async function generateFinal600(batchId: string, claimToken: string): Pro
     let unmappedCityCount = 0;
 
     await db.transaction(async (tx) => {
+      // Ownership gate #1: we must still own the batch before ANY destructive
+      // write. If not, roll back with zero side effects.
+      await assertOwned(tx, batchId, claimToken);
+      await setPhase(tx, batchId, claimToken, "preparing_population");
+      // Clean slate inside the tx (retry idempotency + no leftover members).
+      await tx.delete(selectionBatchMembersTable).where(eq(selectionBatchMembersTable.batchId, batchId));
+      await setPhase(tx, batchId, claimToken, "ranking");
+
       // ── ranking: build a session TEMP table holding the ranked eligible pool ──
       await tx.execute(sql`
         CREATE TEMP TABLE sel_rank ON COMMIT DROP AS
@@ -209,12 +295,15 @@ export async function generateFinal600(batchId: string, claimToken: string): Pro
       const metricsVersion = cfg.metricsVersion;
 
       // ── zonal_allocation: pick top perZoneRoleQuota[role] per zone+role by zone_role_rank ──
-      await setPhase(batchId, claimToken, "zonal_allocation");
+      await assertOwned(tx, batchId, claimToken);
+      await setPhase(tx, batchId, claimToken, "zonal_allocation");
       for (const zone of ZONES) {
         byZone[zone] = 0;
         for (const role of SELECTION_ROLES) {
           const quota = cfg.perZoneRoleQuota[role];
           if (quota <= 0) continue;
+          // Ownership re-checked before every member INSERT.
+          await assertOwned(tx, batchId, claimToken);
           const ins = await tx.execute(sql`
             INSERT INTO selection_batch_members
               (batch_id, registration_id, role, zone, city, selection_pool,
@@ -252,10 +341,13 @@ export async function generateFinal600(batchId: string, claimToken: string): Pro
       }
 
       // ── wildcards: from REMAINING eligible (not already selected), top wildcardRoleQuota[role] nationally ──
-      await setPhase(batchId, claimToken, "wildcards");
+      await assertOwned(tx, batchId, claimToken);
+      await setPhase(tx, batchId, claimToken, "wildcards");
       for (const role of SELECTION_ROLES) {
         const quota = cfg.wildcardRoleQuota[role];
         if (quota <= 0) continue;
+        // Ownership re-checked before every member INSERT.
+        await assertOwned(tx, batchId, claimToken);
         const ins = await tx.execute(sql`
           WITH remaining AS (
             SELECT r.*,
@@ -301,7 +393,8 @@ export async function generateFinal600(batchId: string, claimToken: string): Pro
       }
 
       // ── validating: uniqueness is DB-enforced (batch+reg unique idx); assert totals ──
-      await setPhase(batchId, claimToken, "validating");
+      await assertOwned(tx, batchId, claimToken);
+      await setPhase(tx, batchId, claimToken, "validating");
       if (unmappedCityCount > 0) {
         exceptions.push({
           type: "UNMAPPED_CITY_EXCEPTION",
@@ -311,26 +404,44 @@ export async function generateFinal600(batchId: string, claimToken: string): Pro
           message: `${unmappedCityCount} completed physical-trial player(s) have a city not present in the configured zone mapping (version ${cfg.zoneMappingVersion}) and were excluded — map these cities or review.`,
         });
       }
+
+      const counts = {
+        populationTotal, eligible: eligibleTotal, selected: selectedTotal,
+        targetTotal: cfg.totalPool, computedTargetTotal: computedTotal(cfg),
+        byRole, byZone, unmappedCity: unmappedCityCount,
+      };
+      countsSnapshot = counts;
+
+      // ── preview_ready ── FINAL status write is claim-guarded AND part of this
+      // same transaction, so it commits atomically with the member INSERTs. A
+      // 0-row result ⇒ ownership lost ⇒ throw ⇒ the whole tx rolls back (no
+      // members persist, batch state untouched). We never return preview_ready
+      // while the batch row is not actually updated.
+      const finalized = await tx.update(selectionBatchesTable)
+        .set({
+          status: "preview_ready", jobPhase: "preview_ready", jobProgressPct: 100,
+          counts, exceptionReport: exceptions, error: null,
+          generatedAt: new Date(), claimToken: null, updatedAt: new Date(),
+        })
+        .where(and(
+          eq(selectionBatchesTable.id, batchId),
+          eq(selectionBatchesTable.claimToken, sql`${claimToken}::uuid`),
+          eq(selectionBatchesTable.status, "generating"),
+        ))
+        .returning({ id: selectionBatchesTable.id });
+      if (finalized.length === 0) throw new OwnershipLostError();
     });
 
-    const counts = {
-      populationTotal, eligible: eligibleTotal, selected: selectedTotal,
-      targetTotal: cfg.totalPool, computedTargetTotal: computedTotal(cfg),
-      byRole, byZone, unmappedCity: unmappedCityCount,
-    };
-
-    // ── preview_ready ──
-    await db.update(selectionBatchesTable)
-      .set({
-        status: "preview_ready", jobPhase: "preview_ready", jobProgressPct: 100,
-        counts, exceptionReport: exceptions, error: null,
-        generatedAt: new Date(), claimToken: null, updatedAt: new Date(),
-      })
-      .where(and(eq(selectionBatchesTable.id, batchId), eq(selectionBatchesTable.claimToken, sql`${claimToken}::uuid`)));
-
+    const counts = countsSnapshot ?? {};
     logger.info({ batchId, counts, exceptions: exceptions.length }, "Final 600 preview ready");
     return { status: "preview_ready", batchId, counts, exceptionReport: exceptions };
   } catch (e) {
+    if (e instanceof OwnershipLostError) {
+      // Ownership was lost mid-run: the transaction has rolled back (no members,
+      // batch row untouched). Do NOT mark failed, do NOT report success.
+      logger.warn({ batchId }, "Final 600 job aborted — claim ownership lost mid-run (no side effects, batch untouched)");
+      return { status: "ownership_lost", batchId, error: "ownership lost — batch was reclaimed or invalidated mid-run" };
+    }
     await failBatch(batchId, claimToken, e);
     return { status: "failed", batchId, error: String(e) };
   }
