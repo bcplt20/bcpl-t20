@@ -216,33 +216,51 @@ export function Home() {
     return ()=>clearTimeout(tm);
   },[]);
 
-  /* Scroll-reveal for .rv elements */
+  /* Scroll-reveal for .rv elements.
+     SAFETY-FIRST: content must NEVER stay hidden. IntersectionObserver only
+     adds the fade-in nicety; a scroll/resize/interval sweep guarantees that
+     anything near the viewport (including late-rendered elements) is revealed
+     even if the observer never fires (some iOS in-app browsers). */
   const rootRef = useRef<HTMLDivElement|null>(null);
   useEffect(()=>{
     const root = rootRef.current;
     if (!root) return;
-    if (!("IntersectionObserver" in window)) return; // fallback: content stays visible (html.rv-js never set)
+    if (!("IntersectionObserver" in window)) return; // no JS gating class -> CSS keeps everything visible
     document.documentElement.classList.add("rv-js");
+    const SEL = ".rv, .rv-stagger, .rv-up, .rv-left, .rv-scale";
     const obs = new IntersectionObserver(
       entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("rv-in"); obs.unobserve(e.target); } }),
-      { threshold: 0.08 }
+      { threshold: 0.05, rootMargin: "0px 0px 80px 0px" }
     );
-    root.querySelectorAll(".rv, .rv-stagger, .rv-up, .rv-left, .rv-scale").forEach(el => {
-      /* Elements already in the first viewport reveal instantly (no fade) —
-         animation is reserved for content the user scrolls to. */
-      const r = el.getBoundingClientRect();
-      if (r.top < window.innerHeight && r.bottom > 0) { el.classList.add("rv-now","rv-in"); return; }
-      obs.observe(el);
-    });
-    /* Failsafe: if the observer callback is delayed/skipped (some in-app
-       browsers / snapshot engines), force-reveal anything already in view. */
-    const failsafe = window.setTimeout(()=>{
-      root.querySelectorAll(".rv-stagger:not(.rv-in), .rv-up:not(.rv-in), .rv-left:not(.rv-in), .rv-scale:not(.rv-in)").forEach(el=>{
+    const seen = new WeakSet<Element>();
+    const scan = (instantFirstView: boolean) => {
+      root.querySelectorAll(SEL).forEach(el => {
+        if (el.classList.contains("rv-in")) return;
         const r = el.getBoundingClientRect();
-        if (r.top < window.innerHeight && r.bottom > 0) el.classList.add("rv-in");
+        const near = r.top < window.innerHeight + 120 && r.bottom > -120;
+        if (near) {
+          if (instantFirstView) el.classList.add("rv-now","rv-in");
+          else el.classList.add("rv-in");
+          return;
+        }
+        if (!seen.has(el)) { seen.add(el); obs.observe(el); }
       });
-    }, 1000);
-    return ()=>{ obs.disconnect(); clearTimeout(failsafe); };
+    };
+    scan(true); // first viewport reveals instantly, rest handed to the observer
+    let raf = 0;
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(()=>{ raf = 0; scan(false); }); };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    /* Sweep a few times after mount to catch late-rendered content (API data). */
+    const iv = window.setInterval(()=>scan(false), 800);
+    const ivStop = window.setTimeout(()=>clearInterval(iv), 8000);
+    return ()=>{
+      obs.disconnect();
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+      clearInterval(iv); clearTimeout(ivStop);
+    };
   },[lang]);
 
   return (
