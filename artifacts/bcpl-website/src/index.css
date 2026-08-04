@@ -160,6 +160,9 @@ html.rv-js .rv-left { opacity:0; transform: translateX(-24px); transition: opaci
 html.rv-js .rv-scale{ opacity:0; transform: scale(.94); transition: opacity .6s ease, transform .7s cubic-bezier(.22,1,.36,1); }
 .rv-up.rv-in, .rv-left.rv-in, .rv-scale.rv-in { opacity:1; transform: none; }
 
+/* Instant reveal for content already in the first viewport (no fade-in). */
+.rv-now, .rv-now > * { transition: none !important; transition-delay: 0s !important; opacity: 1 !important; transform: none !important; }
+
 /* Stagger: parent gets .rv-stagger; children fade+rise in sequence. */
 html.rv-js .rv-stagger > * { opacity:0; transform: translateY(16px); transition: opacity .55s ease, transform .6s cubic-bezier(.22,1,.36,1); }
 .rv-stagger.rv-in > * { opacity:1; transform: none; }

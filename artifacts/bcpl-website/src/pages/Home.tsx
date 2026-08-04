@@ -227,8 +227,22 @@ export function Home() {
       entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("rv-in"); obs.unobserve(e.target); } }),
       { threshold: 0.08 }
     );
-    root.querySelectorAll(".rv, .rv-stagger, .rv-up, .rv-left, .rv-scale").forEach(el => obs.observe(el));
-    return ()=>obs.disconnect();
+    root.querySelectorAll(".rv, .rv-stagger, .rv-up, .rv-left, .rv-scale").forEach(el => {
+      /* Elements already in the first viewport reveal instantly (no fade) —
+         animation is reserved for content the user scrolls to. */
+      const r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight && r.bottom > 0) { el.classList.add("rv-now","rv-in"); return; }
+      obs.observe(el);
+    });
+    /* Failsafe: if the observer callback is delayed/skipped (some in-app
+       browsers / snapshot engines), force-reveal anything already in view. */
+    const failsafe = window.setTimeout(()=>{
+      root.querySelectorAll(".rv-stagger:not(.rv-in), .rv-up:not(.rv-in), .rv-left:not(.rv-in), .rv-scale:not(.rv-in)").forEach(el=>{
+        const r = el.getBoundingClientRect();
+        if (r.top < window.innerHeight && r.bottom > 0) el.classList.add("rv-in");
+      });
+    }, 1000);
+    return ()=>{ obs.disconnect(); clearTimeout(failsafe); };
   },[lang]);
 
   return (
