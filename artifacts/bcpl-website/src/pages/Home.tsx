@@ -339,7 +339,7 @@ export function Home() {
         /* Road */
         .road{display:grid;grid-template-columns:1fr;gap:12px;position:relative;padding:4px 0 8px;}
         @media(min-width:640px){.road{grid-template-columns:repeat(2,1fr);gap:14px;}}
-        .road-card{position:relative;border-radius:16px;padding:22px 20px 20px;background:linear-gradient(165deg,#183259 0%,#0C3A2D 60%,#0F2242 100%);border:1px solid rgba(255,255,255,.12);box-shadow:0 10px 28px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.05);transition:transform .28s cubic-bezier(.22,1,.36,1),border-color .28s,box-shadow .28s;display:flex;flex-direction:column;}
+        .road-card{position:relative;border-radius:16px;padding:22px 20px 20px;background:linear-gradient(165deg,#124A38 0%,#0C3A2D 60%,#0B3226 100%);border:1px solid rgba(255,255,255,.12);box-shadow:0 10px 28px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.05);transition:transform .28s cubic-bezier(.22,1,.36,1),border-color .28s,box-shadow .28s;display:flex;flex-direction:column;}
         .road-card:hover{transform:translateY(-3px);box-shadow:0 20px 46px rgba(0,0,0,.5);border-color:rgba(255,255,255,.18);}
         @media(min-width:1150px){
           .road{grid-template-columns:repeat(4,1fr);gap:16px;}
@@ -353,7 +353,7 @@ export function Home() {
         .s5map::after{content:'';position:absolute;top:33px;left:9%;right:9%;height:3px;border-radius:3px;background:linear-gradient(90deg,#D4AF37,#E8B23D 55%,#22C55E);transform:scaleX(0);transform-origin:left;transition:transform 1.5s cubic-bezier(.22,1,.36,1) .15s;box-shadow:0 0 14px rgba(232,178,61,.4);}
         .s5map.rv-in::after{transform:scaleX(1);}
         .s5m{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;z-index:1;}
-        .s5m-node{width:66px;height:66px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;z-index:2;flex-shrink:0;background:linear-gradient(165deg,#183259,#0F2242);border:2px solid rgba(255,255,255,.14);box-shadow:0 10px 26px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.06);transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s,border-color .3s;}
+        .s5m-node{width:66px;height:66px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;z-index:2;flex-shrink:0;background:linear-gradient(165deg,#124A38,#0B3226);border:2px solid rgba(255,255,255,.14);box-shadow:0 10px 26px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.06);transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s,border-color .3s;}
         .s5m:hover .s5m-node{transform:translateY(-4px) scale(1.04);}
         .s5m-node.live{border-color:var(--nc,#D4AF37);box-shadow:0 0 0 4px color-mix(in srgb,var(--nc,#D4AF37) 18%,transparent),0 12px 30px rgba(0,0,0,.45);animation:s5pulse 2.4s ease-in-out infinite;}
         @keyframes s5pulse{0%,100%{box-shadow:0 0 0 4px color-mix(in srgb,var(--nc,#D4AF37) 18%,transparent),0 12px 30px rgba(0,0,0,.45);}50%{box-shadow:0 0 0 10px color-mix(in srgb,var(--nc,#D4AF37) 0%,transparent),0 12px 30px rgba(0,0,0,.45);}}
@@ -373,7 +373,7 @@ export function Home() {
 
         /* Pricing journey chips */
         .jour{display:flex;align-items:stretch;gap:10px;flex-wrap:wrap;margin-bottom:28px;}
-        .jour .jc{flex:1 1 180px;background:linear-gradient(165deg,#183259 0%,#0C3A2D 60%,#0F2242 100%);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:16px 18px;position:relative;box-shadow:0 8px 24px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.05);transition:transform .28s cubic-bezier(.22,1,.36,1),box-shadow .28s;}
+        .jour .jc{flex:1 1 180px;background:linear-gradient(165deg,#124A38 0%,#0C3A2D 60%,#0B3226 100%);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:16px 18px;position:relative;box-shadow:0 8px 24px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.05);transition:transform .28s cubic-bezier(.22,1,.36,1),box-shadow .28s;}
         .jour .jc:hover{transform:translateY(-3px);box-shadow:0 16px 38px rgba(0,0,0,.42);}
         .jour .ja{align-self:center;color:rgba(232,178,61,.65);font-size:18px;flex:0 0 auto;}
         @media(max-width:639px){.jour .ja{display:none;}}
@@ -386,7 +386,7 @@ export function Home() {
         /* Numbers */
         .num-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
         @media(min-width:768px){.num-grid{grid-template-columns:repeat(3,1fr);}}
-        .num-cell{background:linear-gradient(165deg,#183259 0%,#0C3A2D 60%,#0F2242 100%);border:1px solid rgba(232,178,61,.18);border-radius:16px;padding:clamp(24px,3vw,34px) clamp(18px,2.4vw,28px);text-align:center;box-shadow:0 10px 28px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.05);transition:transform .28s cubic-bezier(.22,1,.36,1),box-shadow .28s,border-color .28s;}
+        .num-cell{background:linear-gradient(165deg,#124A38 0%,#0C3A2D 60%,#0B3226 100%);border:1px solid rgba(232,178,61,.18);border-radius:16px;padding:clamp(24px,3vw,34px) clamp(18px,2.4vw,28px);text-align:center;box-shadow:0 10px 28px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.05);transition:transform .28s cubic-bezier(.22,1,.36,1),box-shadow .28s,border-color .28s;}
         .num-cell:hover{transform:translateY(-3px);box-shadow:0 18px 42px rgba(0,0,0,.44);border-color:rgba(232,178,61,.32);}
 
         /* Real proof gallery */
@@ -471,7 +471,7 @@ export function Home() {
       <SiteHeader active="Home" />
 
       {/* ══ 1 · CINEMATIC HERO — the dream first ══ */}
-      <section style={{ position:"relative", overflow:"hidden", background:"#0C121C" }}>
+      <section style={{ position:"relative", overflow:"hidden", background:"#071A14" }}>
         <img src={BASE + "bcpl-assets/stadium-hero.jpg"} alt="" aria-hidden="true" className="hero-bg"
           onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
         <HeroVideo/>
@@ -813,7 +813,7 @@ export function Home() {
             <div className="story-grid">
               {STORIES.map(s=>(
                 <div key={s.name} className="card" style={{ overflow:"hidden" }}>
-                  <div style={{ position:"relative", aspectRatio:"4/3", background:"#142438" }}>
+                  <div style={{ position:"relative", aspectRatio:"4/3", background:"#0D2E24" }}>
                     <img src={s.photo} alt={s.name} style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover" }}
                       onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
                     <div style={{ position:"absolute", inset:0, background:"linear-gradient(0deg,rgba(3,18,14,.75) 0%,transparent 50%)" }}/>
@@ -911,7 +911,7 @@ export function Home() {
       {/* Sponsors show ONLY in the footer strip (owner call, Jul 2026) — full wall lives at /sponsors. */}
 
       {/* ══ 10 · THIS IS BCPL — the film ══ */}
-      <section className="rv" style={{ position:"relative", overflow:"hidden", background:"#0C121C" }}>
+      <section className="rv" style={{ position:"relative", overflow:"hidden", background:"#071A14" }}>
         <img src={BASE + "bcpl-assets/event-stage-trophy.webp"} alt="" aria-hidden="true"
           style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", objectPosition:"center 40%", opacity:.25 }}
           onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
@@ -1089,7 +1089,7 @@ export function Home() {
       </section>
 
       {/* ══ 13 · FINAL CTA ══ */}
-      <section style={{ position:"relative", overflow:"hidden", background:"#0C121C" }}>
+      <section style={{ position:"relative", overflow:"hidden", background:"#071A14" }}>
         <img src={BASE + "bcpl-assets/stadium-hero.jpg"} alt="" aria-hidden="true"
           style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", objectPosition:"center 60%", opacity:.3 }}
           onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>

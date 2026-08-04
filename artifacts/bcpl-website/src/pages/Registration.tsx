@@ -459,7 +459,7 @@ export function Registration() {
           position:relative;overflow:hidden;cursor:pointer;
           border:1.5px solid rgba(255,255,255,0.12);
           border-radius:18px;
-          background:#0F2242;
+          background:#0B3226;
           box-shadow:0 12px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.05);
           transition:transform .3s cubic-bezier(.22,1,.36,1),border-color .3s,box-shadow .3s;
         }

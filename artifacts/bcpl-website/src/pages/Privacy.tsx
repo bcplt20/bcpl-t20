@@ -229,7 +229,7 @@ export function Privacy() {
           <div className="legal-layout">
             
             <aside className="toc-sticky">
-              <div style={{background:'linear-gradient(165deg,#142438,#0F1826)',border:'1px solid rgba(255,255,255,.09)',borderRadius:14,padding:'18px 14px',marginBottom:16}}>
+              <div style={{background:'linear-gradient(165deg,#0D2E24,#08221B)',border:'1px solid rgba(255,255,255,.09)',borderRadius:14,padding:'18px 14px',marginBottom:16}}>
                 <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:13,letterSpacing:'.08em',color:'#E8B23D',marginBottom:14,textTransform:'uppercase'}}>{t("Contents","विषय-सूची")}</div>
                 {sections.map(s=>(
                   <a
