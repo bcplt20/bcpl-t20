@@ -162,7 +162,7 @@ export function Phase2Payment() {
           </div>
 
           <div style={{ padding: '36px 32px', textAlign: 'center', background: 'var(--panel)' }}>
-            <div style={{ fontFamily: 'var(--font-head)', fontWeight: 700, fontSize: 13, letterSpacing: '.16em', color: 'rgba(255,255,255,0.4)', marginBottom: 12, textTransform: 'uppercase' }}>{t("Total Amount Due", "कुल देय राशि")}</div>
+            <div style={{ fontFamily: 'var(--font-head)', fontWeight: 700, fontSize: 13, letterSpacing: '.16em', color: 'var(--ink-3)', marginBottom: 12, textTransform: 'uppercase' }}>{t("Total Amount Due", "कुल देय राशि")}</div>
             <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(56px, 8vw, 72px)', color: '#fff', lineHeight: 1 }}>₹{amount.toLocaleString('en-IN')}</div>
             <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', marginTop: 12 }}>{t(`Phase 2 Entry Fee · ${role} · ${city} Trial`, `फेज 2 एंट्री फीस · ${role} · ${city} ट्रायल`)}</div>
           </div>
@@ -202,7 +202,7 @@ export function Phase2Payment() {
           </div>
 
           {/* PART E — payment ≠ selection disclaimer at the point of payment */}
-          <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', lineHeight: 1.6, margin: '0 0 20px' }}>
+          <p style={{ fontSize: 12, color: 'var(--ink-3)', lineHeight: 1.6, margin: '0 0 20px' }}>
             {t("Paying the Phase 2 fee books your trial slot — this fee is charged solely for participation in the Phase 2 physical trial process, and it does not guarantee Auction Pool entry, purchase by a team, player contract or tournament participation.", "Phase 2 fee का भुगतान आपकी trial जगह पक्की करता है — यह fee सिर्फ Phase 2 physical trial process में participation के लिए है, और यह Auction Pool में जगह, team द्वारा purchase, player contract या tournament participation की guarantee नहीं है।")}
           </p>
 
@@ -220,8 +220,8 @@ export function Phase2Payment() {
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 24, flexWrap: 'wrap', padding: '24px', background: 'var(--panel)', border: '1px solid var(--line)', borderRadius: 'var(--r)', marginTop: 24 }}>
             {[{ icon: IcoLock, label:'Cashfree Secured' }, { icon: IcoShield, label:'256-bit SSL' }, { icon: IcoUsers, label:'BCPL' }].map(({ icon: Icon, label }) => (
               <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ color: 'rgba(255,255,255,0.4)' }}><Icon size={18} /></span>
-                <span style={{ fontFamily: 'var(--font-head)', fontWeight: 700, fontSize: 12, color: 'rgba(255,255,255,0.4)', letterSpacing: '.06em', textTransform: 'uppercase' }}>{label}</span>
+                <span style={{ color: 'var(--ink-3)' }}><Icon size={18} /></span>
+                <span style={{ fontFamily: 'var(--font-head)', fontWeight: 700, fontSize: 12, color: 'var(--ink-3)', letterSpacing: '.06em', textTransform: 'uppercase' }}>{label}</span>
               </div>
             ))}
           </div>

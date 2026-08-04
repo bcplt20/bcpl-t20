@@ -12,7 +12,7 @@ import { StickyRegisterCTA } from "../components/StickyRegisterCTA";
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-body { background:#060E1C; }
+body { background:#0E1624; }
 .wrap { max-width:1200px; margin:0 auto; padding:0 20px; }
 @media(min-width:1280px){ .wrap{padding:0 48px} }
 .v3-kicker { font-family:Inter,sans-serif; font-weight:700; font-size:12px; letter-spacing:.22em; color:#E8B23D; text-transform:uppercase; }
@@ -28,7 +28,7 @@ body { background:#060E1C; }
 .glass-card { background:linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85)); backdrop-filter:blur(32px); border:1px solid rgba(255,255,255,0.09); border-radius:20px; box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06); }
 .shimmer-gold { background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D,#F5C842,#E8B23D); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation:shimmer 3s linear infinite; }
 .tag-pill { display:inline-flex; align-items:center; gap:6px; background:rgba(255,122,41,0.12); border:1px solid rgba(255,122,41,0.3); border-radius:100px; padding:5px 14px; font-size:11px; font-weight:700; font-family:var(--font-head); color:#FF7A29; letter-spacing:0.1em; }
-.inp { width:100%; background:rgba(255,255,255,0.04); border:1.5px solid rgba(255,255,255,0.1); border-radius:14px; color:#F8F4EE; padding:15px 18px; font-family:Inter,sans-serif; font-size:15px; outline:none; transition:all 0.25s; appearance:none; }
+.inp { width:100%; background:rgba(255,255,255,0.04); border:1.5px solid rgba(255,255,255,0.1); border-radius:14px; color:#F8F4EE; padding:15px 18px; font-family:Inter,sans-serif; font-size:16px; outline:none; transition:all 0.25s; appearance:none; }
 .inp:focus { border-color:#FF7A29; background:rgba(255,122,41,0.06); box-shadow:0 0 0 4px rgba(255,122,41,0.12); }
 .inp::placeholder { color:rgba(255,255,255,0.28); }
 @keyframes gradShift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
@@ -181,7 +181,7 @@ export function FAQ() {
   });
 
   return (
-    <div style={{minHeight:'100vh',background:'#060E1C',fontFamily:'Inter,sans-serif',position:'relative'}}>
+    <div style={{minHeight:'100vh',background:'#0E1624',fontFamily:'Inter,sans-serif',position:'relative'}}>
       <style>{CSS}</style>
       <AmbientBg/>
       <SiteHeader active="FAQ" />
@@ -207,7 +207,7 @@ export function FAQ() {
       <section style={{position:'relative',zIndex:1,padding:'0 0 32px'}}>
         <div className="wrap" style={{maxWidth:700,margin:'0 auto'}}>
           <div style={{position:'relative'}}>
-            <span style={{position:'absolute',left:18,top:'50%',transform:'translateY(-50%)',color:'rgba(255,255,255,0.3)',display:'flex',alignItems:'center'}}>
+            <span style={{position:'absolute',left:18,top:'50%',transform:'translateY(-50%)',color:'var(--ink-3)',display:'flex',alignItems:'center'}}>
               <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg>
             </span>
             <input
@@ -228,7 +228,7 @@ export function FAQ() {
             {CATS.map(c=>(
               <button key={c} onClick={()=>{ setCat(c); setOpenIdx(null); }} style={{padding:'10px 22px',borderRadius:100,border:`1.5px solid ${cat===c?'#FF7A29':'rgba(255,255,255,0.12)'}`,background:cat===c?'rgba(255,122,41,0.15)':'rgba(255,255,255,0.04)',color:cat===c?'#FF7A29':'rgba(255,255,255,0.6)',fontFamily:'var(--font-head)',fontWeight:700,fontSize:13,cursor:'pointer',transition:'all 0.2s',letterSpacing:'0.04em'}}>
                 {c}
-                <span style={{marginLeft:8,background:'rgba(255,255,255,0.1)',borderRadius:100,padding:'2px 8px',fontSize:11,color:'rgba(255,255,255,0.45)'}}>
+                <span style={{marginLeft:8,background:'rgba(255,255,255,0.1)',borderRadius:100,padding:'2px 8px',fontSize:11,color:'var(--ink-3)'}}>
                   {c==='All'?faqItems.length:faqItems.filter(f=>f.cat===c).length}
                 </span>
               </button>

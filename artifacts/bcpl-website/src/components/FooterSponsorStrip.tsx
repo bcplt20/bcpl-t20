@@ -73,7 +73,7 @@ export function FooterSponsorStrip() {
                   {g.items.map((s, i) => {
                     const inner = s.logo
                       ? <img src={s.logo} alt={s.name + " logo"} loading="lazy" style={{ height:h, maxWidth:big?170:120, objectFit:"contain", display:"block" }}/>
-                      : <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:big?17:13, color:"#0A162E", whiteSpace:"nowrap", maxWidth:big?220:160, overflow:"hidden", textOverflow:"ellipsis" }}>{s.name}</span>;
+                      : <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:big?17:13, color:"#121E36", whiteSpace:"nowrap", maxWidth:big?220:160, overflow:"hidden", textOverflow:"ellipsis" }}>{s.name}</span>;
                     return s.website
                       ? <a key={i} className="bcpl-spst-chip" href={s.website} target="_blank" rel="noopener noreferrer" title={s.name} style={{ minHeight:big?66:50 }}>{inner}</a>
                       : <div key={i} className="bcpl-spst-chip" title={s.name} style={{ minHeight:big?66:50 }}>{inner}</div>;
@@ -85,7 +85,7 @@ export function FooterSponsorStrip() {
         </div>
         <div style={{ textAlign:"center", marginTop:22 }}>
           <Link href="/sponsors" className="bcpl-spst-all"
-            style={{ fontSize:11, fontWeight:700, letterSpacing:".1em", color:"rgba(255,255,255,.35)", textDecoration:"none", textTransform:"uppercase", transition:"color .2s" }}>
+            style={{ fontSize:11, fontWeight:700, letterSpacing:".1em", color:"var(--ink-3)", textDecoration:"none", textTransform:"uppercase", transition:"color .2s" }}>
             All Partners →
           </Link>
         </div>

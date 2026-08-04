@@ -204,7 +204,7 @@ export function Schedule() {
   }, {});
 
   return (
-    <div style={{background:'#060E1C',color:'#fff',minHeight:'100vh',overflowX:'hidden',fontFamily:'Inter,sans-serif'}}>
+    <div style={{background:'#0E1624',color:'#fff',minHeight:'100vh',overflowX:'hidden',fontFamily:'Inter,sans-serif'}}>
       <style>{CSS}</style>
       <AmbientBg/>
       <div style={{position:'relative',zIndex:10}}>
@@ -241,7 +241,7 @@ export function Schedule() {
                 onChange={e=>setTeamFilter(e.target.value)}
                 className="team-select"
               >
-                {teamOptions.map(t=><option key={t} value={t} style={{background:'#0A1628'}}>{t}</option>)}
+                {teamOptions.map(t=><option key={t} value={t} style={{background:'#121E30'}}>{t}</option>)}
               </select>
             </div>
           </div>
@@ -276,7 +276,7 @@ export function Schedule() {
               <div className="v3-h" style={{fontSize:'clamp(26px,5vw,40px)',color:'#fff',marginBottom:12}}>
                 {t("Fixtures Coming Soon", "Fixtures जल्द आएंगे")}
               </div>
-              <p style={{color:'rgba(255,255,255,0.45)',fontSize:15,maxWidth:440,margin:'0 auto 28px',lineHeight:1.7}}>
+              <p style={{color:'var(--ink-3)',fontSize:15,maxWidth:440,margin:'0 auto 28px',lineHeight:1.7}}>
                 {t("The complete Season 5 fixture list will be published here after the players' auction in August 2026. The tournament begins in September 2026.", "पूरी Season 5 fixture list players' auction (Aug 2026) के बाद यहाँ publish होगी। Tournament Sep 2026 में शुरू होगा।")}
               </p>
               <div style={{display:'inline-flex',alignItems:'center',gap:8,background:'rgba(255,122,41,0.1)',border:'1px solid rgba(255,122,41,0.3)',borderRadius:20,padding:'8px 20px'}}>
@@ -290,7 +290,7 @@ export function Schedule() {
 
           {/* MATCH GROUPS */}
           {!loading && Object.entries(groups).length === 0 && allMatches.length > 0 && (
-            <div style={{textAlign:'center',padding:'60px 0',color:'rgba(255,255,255,0.3)',fontFamily:'Inter,sans-serif',fontSize:15}}>No matches found for this filter.</div>
+            <div style={{textAlign:'center',padding:'60px 0',color:'var(--ink-3)',fontFamily:'Inter,sans-serif',fontSize:15}}>No matches found for this filter.</div>
           )}
 
           {Object.entries(groups).map(([month, matches]) => (
@@ -325,24 +325,24 @@ export function Schedule() {
                       >
                         <div className="match-date-day" style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:26,color:'#FF7A29',lineHeight:1}}>{m.day}</div>
                         <div style={{fontSize:11,fontFamily:'var(--font-head)',fontWeight:700,color:'rgba(255,122,41,0.7)',letterSpacing:'0.06em'}}>{m.month}</div>
-                        <div style={{fontSize:10,fontFamily:'Inter,sans-serif',color:'rgba(255,255,255,0.3)'}}>{m.weekday}</div>
+                        <div style={{fontSize:12,fontFamily:'Inter,sans-serif',color:'var(--ink-2)'}}>{m.weekday}</div>
                       </div>
 
                       {/* Teams */}
                       <div style={{flex:1,minWidth:120}}>
                         <div style={{display:'flex',alignItems:'center',gap:8,flexWrap:'wrap',marginBottom:6}}>
                           <span style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:16,color:'#fff'}}>{m.teamA}</span>
-                          <span style={{color:'rgba(255,255,255,0.3)',fontSize:13,fontFamily:'Inter,sans-serif'}}>vs</span>
+                          <span style={{color:'var(--ink-3)',fontSize:13,fontFamily:'Inter,sans-serif'}}>vs</span>
                           <span style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:16,color:'#fff'}}>{m.teamB}</span>
                         </div>
                         <div style={{display:'flex',flexWrap:'wrap',gap:8,alignItems:'center'}}>
                           <span style={{fontSize:12,color:'rgba(255,122,41,0.7)',fontFamily:'var(--font-head)',fontWeight:700}}>Match {m.matchNo}</span>
-                          <span style={{display:'inline-flex',alignItems:'center',gap:5,fontSize:12,color:'rgba(255,255,255,0.35)',fontFamily:'Inter,sans-serif'}}><IcoPin size={13} style={{color:'rgba(255,255,255,0.35)'}}/> {m.venue}</span>
-                          <span style={{fontSize:12,color:'rgba(255,255,255,0.25)',fontFamily:'Inter,sans-serif'}}>· {m.time}</span>
+                          <span style={{display:'inline-flex',alignItems:'center',gap:5,fontSize:14,color:'var(--ink-2)',fontFamily:'Inter,sans-serif'}}><IcoPin size={13} style={{color:'var(--ink-3)'}}/> {m.venue}</span>
+                          <span style={{fontSize:14,color:'var(--ink-2)',fontFamily:'Inter,sans-serif'}}>· {m.time}</span>
                         </div>
                         {m.result && (
                           <div style={{marginTop:6}}>
-                            <span style={{fontSize:12,color:'#22C55E',fontFamily:'Inter,sans-serif',fontWeight:600}}>✓ {m.result}</span>
+                            <span style={{fontSize:14,color:'#22C55E',fontFamily:'Inter,sans-serif',fontWeight:600}}>✓ {m.result}</span>
                           </div>
                         )}
                       </div>

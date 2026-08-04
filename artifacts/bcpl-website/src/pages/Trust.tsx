@@ -10,7 +10,7 @@ import { IcoChat, IcoMail, IcoPhone } from '../lib/icons';
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-body { background:#060E1C; }
+body { background:#0E1624; }
 .wrap { max-width:1280px; margin:0 auto; padding:0 20px; }
 .desk-nav { display:none; align-items:center; gap:22px; }
 .ham-btn { display:flex; }
@@ -73,7 +73,7 @@ export function Trust() {
   const { t } = useLang();
 
   return (
-    <div style={{minHeight:'100vh',background:'#060E1C',fontFamily:'Inter,sans-serif',position:'relative'}}>
+    <div style={{minHeight:'100vh',background:'#0E1624',fontFamily:'Inter,sans-serif',position:'relative'}}>
       <style>{CSS}</style>
       <AmbientBg/>
       <SiteHeader active="About" />
@@ -105,7 +105,7 @@ export function Trust() {
               <span className="step-num">1</span>
               <div style={{flex:1}}>
                 <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:8}}>{t("Phase 1 — Video Assessment","Phase 1 — Video Assessment")}</h2>
-                <p style={{color:'rgba(255,255,255,0.45)',fontSize:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>{t("PHASE 1","PHASE 1")}</p>
+                <p style={{color:'var(--ink-3)',fontSize:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>{t("PHASE 1","PHASE 1")}</p>
               </div>
             </div>
             <p style={{color:'rgba(255,255,255,0.72)',fontSize:15,lineHeight:1.8,marginBottom:16}}>
@@ -144,7 +144,7 @@ export function Trust() {
               <span className="step-num" style={{background:'linear-gradient(135deg,#E8B23D,#F0C860)'}}>2</span>
               <div style={{flex:1}}>
                 <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:8}}>{t("Role-Specific 100-Point Framework","Role-Specific 100-Point Framework")}</h2>
-                <p style={{color:'rgba(255,255,255,0.45)',fontSize:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>{t("SCORING FRAMEWORK","SCORING FRAMEWORK")}</p>
+                <p style={{color:'var(--ink-3)',fontSize:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>{t("SCORING FRAMEWORK","SCORING FRAMEWORK")}</p>
               </div>
             </div>
             <p style={{color:'rgba(255,255,255,0.72)',fontSize:15,lineHeight:1.8,marginBottom:24}}>
@@ -172,7 +172,7 @@ export function Trust() {
               <span className="step-num" style={{background:'linear-gradient(135deg,#3B82F6,#2563EB)'}}>3</span>
               <div style={{flex:1}}>
                 <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:8}}>{t("Ranking & the Auction Pool","रैंकिंग और Auction Pool")}</h2>
-                <p style={{color:'rgba(255,255,255,0.45)',fontSize:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>{t("CENTRAL RANKING","CENTRAL RANKING")}</p>
+                <p style={{color:'var(--ink-3)',fontSize:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>{t("CENTRAL RANKING","CENTRAL RANKING")}</p>
               </div>
             </div>
             <p style={{color:'rgba(255,255,255,0.72)',fontSize:15,lineHeight:1.8,marginBottom:20}}>
@@ -199,7 +199,7 @@ export function Trust() {
               <span className="step-num" style={{background:'linear-gradient(135deg,#22C55E,#16A34A)'}}>4</span>
               <div style={{flex:1}}>
                 <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:8}}>{t("Phase 2 — Physical Trial","Phase 2 — Physical Trial")}</h2>
-                <p style={{color:'rgba(255,255,255,0.45)',fontSize:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>{t("PHASE 2 — ONLY IF QUALIFIED","PHASE 2 — सिर्फ qualify होने पर")}</p>
+                <p style={{color:'var(--ink-3)',fontSize:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>{t("PHASE 2 — ONLY IF QUALIFIED","PHASE 2 — सिर्फ qualify होने पर")}</p>
               </div>
             </div>
             <p style={{color:'rgba(255,255,255,0.72)',fontSize:15,lineHeight:1.8,marginBottom:16}}>
@@ -217,11 +217,11 @@ export function Trust() {
               <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:14,color:'#22C55E',marginBottom:12}}>{t("Phase 2 Fee Structure","Phase 2 Fee Structure")}</div>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
                 <div>
-                  <p style={{color:'rgba(255,255,255,0.45)',fontSize:12,marginBottom:4}}>{t("Batsman / Bowler / WK","Batsman / Bowler / WK")}</p>
+                  <p style={{color:'var(--ink-3)',fontSize:12,marginBottom:4}}>{t("Batsman / Bowler / WK","Batsman / Bowler / WK")}</p>
                   <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,color:'#fff'}}>{t("₹2,000 + GST","₹2,000 + GST")}</div>
                 </div>
                 <div>
-                  <p style={{color:'rgba(255,255,255,0.45)',fontSize:12,marginBottom:4}}>{t("All-Rounder","All-Rounder")}</p>
+                  <p style={{color:'var(--ink-3)',fontSize:12,marginBottom:4}}>{t("All-Rounder","All-Rounder")}</p>
                   <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,color:'#fff'}}>{t("₹3,000 + GST","₹3,000 + GST")}</div>
                 </div>
               </div>
@@ -241,7 +241,7 @@ export function Trust() {
               <span className="step-num" style={{background:'linear-gradient(135deg,#22C55E,#16A34A)'}}>5</span>
               <div style={{flex:1}}>
                 <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:8}}>{t("Trial Attempts by Role","Role के अनुसार Trial Attempts")}</h2>
-                <p style={{color:'rgba(255,255,255,0.45)',fontSize:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>{t("STANDARDISED FRAMEWORK","STANDARDISED FRAMEWORK")}</p>
+                <p style={{color:'var(--ink-3)',fontSize:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>{t("STANDARDISED FRAMEWORK","STANDARDISED FRAMEWORK")}</p>
               </div>
             </div>
             <div style={{display:'grid',gridTemplateColumns:'1fr',gap:12,marginBottom:20}}>
@@ -272,7 +272,7 @@ export function Trust() {
               <span className="step-num" style={{background:'linear-gradient(135deg,#E8B23D,#F0C860)'}}>6</span>
               <div style={{flex:1}}>
                 <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:8}}>{t("Digital Scoring & Corrections","Digital Scoring और Corrections")}</h2>
-                <p style={{color:'rgba(255,255,255,0.45)',fontSize:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>{t("LOCKED & AUDITED","LOCKED & AUDITED")}</p>
+                <p style={{color:'var(--ink-3)',fontSize:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>{t("LOCKED & AUDITED","LOCKED & AUDITED")}</p>
               </div>
             </div>
             <p style={{color:'rgba(255,255,255,0.72)',fontSize:15,lineHeight:1.8,marginBottom:16}}>
@@ -293,7 +293,7 @@ export function Trust() {
               <span className="step-num" style={{background:'linear-gradient(135deg,#06B6D4,#0891B2)'}}>7</span>
               <div style={{flex:1}}>
                 <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:8}}>{t("Evaluator Assessment Process","Evaluator Assessment Process")}</h2>
-                <p style={{color:'rgba(255,255,255,0.45)',fontSize:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>{t("FOCUS ON PERFORMANCE","PERFORMANCE पर फोकस")}</p>
+                <p style={{color:'var(--ink-3)',fontSize:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>{t("FOCUS ON PERFORMANCE","PERFORMANCE पर फोकस")}</p>
               </div>
             </div>
             <p style={{color:'rgba(255,255,255,0.72)',fontSize:15,lineHeight:1.8}}>
@@ -311,7 +311,7 @@ export function Trust() {
               <span className="step-num" style={{background:'linear-gradient(135deg,#3B82F6,#2563EB)'}}>8</span>
               <div style={{flex:1}}>
                 <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:8}}>{t("Phase 2 Results Timing","Phase 2 Results Timing")}</h2>
-                <p style={{color:'rgba(255,255,255,0.45)',fontSize:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>{t("NOT IMMEDIATE","तुरंत नहीं")}</p>
+                <p style={{color:'var(--ink-3)',fontSize:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>{t("NOT IMMEDIATE","तुरंत नहीं")}</p>
               </div>
             </div>
             <p style={{color:'rgba(255,255,255,0.72)',fontSize:15,lineHeight:1.8}}>
@@ -329,7 +329,7 @@ export function Trust() {
               <span className="step-num" style={{background:'linear-gradient(135deg,#8B5CF6,#7C3AED)'}}>9</span>
               <div style={{flex:1}}>
                 <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:8}}>{t("Eligibility & Disqualification","पात्रता और अयोग्यता")}</h2>
-                <p style={{color:'rgba(255,255,255,0.45)',fontSize:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>{t("CLEAR RULES","स्पष्ट नियम")}</p>
+                <p style={{color:'var(--ink-3)',fontSize:14,fontFamily:'Montserrat,sans-serif',fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase'}}>{t("CLEAR RULES","स्पष्ट नियम")}</p>
               </div>
             </div>
             <div style={{marginBottom:24}}>
@@ -384,12 +384,12 @@ export function Trust() {
                   </div>
                   <div style={{textAlign:'right'}}>
                     <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:32,color:'#fff',lineHeight:1}}>₹299 <span style={{fontSize:13,fontWeight:700,color:'rgba(255,255,255,0.55)'}}>+ GST</span></div>
-                    <p style={{color:'rgba(255,255,255,0.45)',fontSize:12,marginTop:4}}>{t("Batsman / Bowler / WK","Batsman / Bowler / WK")}</p>
+                    <p style={{color:'var(--ink-3)',fontSize:12,marginTop:4}}>{t("Batsman / Bowler / WK","Batsman / Bowler / WK")}</p>
                   </div>
                 </div>
                 <div style={{textAlign:'right',marginTop:8}}>
                   <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:32,color:'#fff',lineHeight:1}}>₹399 <span style={{fontSize:13,fontWeight:700,color:'rgba(255,255,255,0.55)'}}>+ GST</span></div>
-                  <p style={{color:'rgba(255,255,255,0.45)',fontSize:12,marginTop:4}}>{t("All-Rounder","All-Rounder")}</p>
+                  <p style={{color:'var(--ink-3)',fontSize:12,marginTop:4}}>{t("All-Rounder","All-Rounder")}</p>
                 </div>
               </div>
               <div style={{background:'linear-gradient(135deg,rgba(34,197,94,0.1),rgba(34,197,94,0.05))',border:'1px solid rgba(34,197,94,0.3)',borderRadius:14,padding:'20px 24px'}}>
@@ -400,12 +400,12 @@ export function Trust() {
                   </div>
                   <div style={{textAlign:'right'}}>
                     <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:28,color:'#fff',lineHeight:1}}>₹2,000 <span style={{fontSize:13,fontWeight:700,color:'rgba(255,255,255,0.55)'}}>+ GST</span></div>
-                    <p style={{color:'rgba(255,255,255,0.45)',fontSize:12,marginTop:4}}>{t("Batsman / Bowler / WK","Batsman / Bowler / WK")}</p>
+                    <p style={{color:'var(--ink-3)',fontSize:12,marginTop:4}}>{t("Batsman / Bowler / WK","Batsman / Bowler / WK")}</p>
                   </div>
                 </div>
                 <div style={{textAlign:'right',marginTop:12}}>
                   <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:28,color:'#fff',lineHeight:1}}>₹3,000 <span style={{fontSize:13,fontWeight:700,color:'rgba(255,255,255,0.55)'}}>+ GST</span></div>
-                  <p style={{color:'rgba(255,255,255,0.45)',fontSize:12,marginTop:4}}>{t("All-Rounder","All-Rounder")}</p>
+                  <p style={{color:'var(--ink-3)',fontSize:12,marginTop:4}}>{t("All-Rounder","All-Rounder")}</p>
                 </div>
               </div>
             </div>
@@ -455,7 +455,7 @@ export function Trust() {
                 </button>
               </a>
             </div>
-            <p style={{color:'rgba(255,255,255,0.45)',fontSize:13,lineHeight:1.7}}>
+            <p style={{color:'var(--ink-3)',fontSize:13,lineHeight:1.7}}>
               {t("support@bcplt20.com  •  +91 91513 46555  •  wa.me/919151346555","support@bcplt20.com  •  +91 91513 46555  •  wa.me/919151346555")}
             </p>
           </div>

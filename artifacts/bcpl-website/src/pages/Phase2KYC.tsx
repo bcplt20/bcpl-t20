@@ -315,7 +315,7 @@ export function Phase2KYC() {
     padding: '16px', fontSize: 16, outline: 'none', fontFamily: 'var(--font-body)', transition: 'border-color 0.2s', boxSizing: 'border-box'
   };
   const lbl: React.CSSProperties = {
-    display: 'block', fontSize: 11, fontWeight: 800, letterSpacing: '.12em', color: 'rgba(255,255,255,0.4)',
+    display: 'block', fontSize: 13, fontWeight: 800, letterSpacing: '.12em', color: 'var(--ink-2)',
     fontFamily: 'var(--font-head)', marginBottom: 10, textTransform: 'uppercase'
   };
 
@@ -396,7 +396,7 @@ export function Phase2KYC() {
                 <div key={c.label} style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.4)', padding: '10px 24px', fontSize: 14, fontWeight: 800, color: 'var(--green)', fontFamily: 'var(--font-head)', borderRadius: 10, textTransform: 'uppercase', display: 'inline-flex', alignItems: 'center', gap: 8 }}><c.icon size={16} /> {c.label} ✓</div>
               ))}
             </div>
-            <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>{t("Redirecting to your dashboard…", "आपके डैशबोर्ड पर ले जा रहे हैं…")}</div>
+            <div style={{ fontSize: 14, color: 'var(--ink-3)', fontWeight: 600 }}>{t("Redirecting to your dashboard…", "आपके डैशबोर्ड पर ले जा रहे हैं…")}</div>
           </div>
         ) : kycStatus === 'pending' ? (
           /* KYC Submitted — Pending */
@@ -441,7 +441,7 @@ export function Phase2KYC() {
                 {otpLoading ? t('VERIFYING…', 'वेरीफाई हो रहा है…') : t('VERIFY & COMPLETE KYC →', 'वेरीफाई और KYC पूरा करें →')}
               </button>
 
-              <div style={{ marginTop: 20, textAlign: 'center', fontSize: 14, color: 'rgba(255,255,255,0.4)' }}>
+              <div style={{ marginTop: 20, textAlign: 'center', fontSize: 14, color: 'var(--ink-3)' }}>
                 {t("OTP expires in 10 minutes. Didn't receive?", "OTP 10 मिनट में एक्सपायर हो जाएगा। नहीं मिला?")}{' '}
                 <button onClick={handleOtpResend} disabled={submitting} style={{ background: 'none', border: 'none', color: submitting ? 'rgba(255,255,255,0.3)' : 'var(--orange)', cursor: submitting ? 'wait' : 'pointer', fontSize: 14, fontWeight: 700, padding: 0 }}>{submitting ? t('Resending…', 'दोबारा भेज रहे हैं…') : t('Resend', 'दोबारा भेजें')}</button>
               </div>
@@ -480,7 +480,7 @@ export function Phase2KYC() {
               </button>
               
               <button onClick={() => setResumeMode('none')}
-                style={{ marginTop: 16, width: '100%', background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', fontSize: 13, fontWeight: 600, cursor: 'pointer', padding: 8 }}>
+                style={{ marginTop: 16, width: '100%', background: 'none', border: 'none', color: 'var(--ink-3)', fontSize: 13, fontWeight: 600, cursor: 'pointer', padding: 8 }}>
                 {t("← Fill the full form again instead", "← इसके बजाय पूरा फॉर्म दोबारा भरें")}
               </button>
             </div>
@@ -515,7 +515,7 @@ export function Phase2KYC() {
               </button>
               
               <button onClick={() => setResumeMode('none')}
-                style={{ marginTop: 16, width: '100%', background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', fontSize: 13, fontWeight: 600, cursor: 'pointer', padding: 8 }}>
+                style={{ marginTop: 16, width: '100%', background: 'none', border: 'none', color: 'var(--ink-3)', fontSize: 13, fontWeight: 600, cursor: 'pointer', padding: 8 }}>
                 {t("← Fill the full form again instead", "← इसके बजाय पूरा फॉर्म दोबारा भरें")}
               </button>
             </div>
@@ -592,7 +592,7 @@ export function Phase2KYC() {
                     onBlur={handleAadhaarBlur}
                   />
                   {aadhaarErr && <div style={{ fontSize: 12, color: 'var(--red)', marginTop: 8, fontWeight: 600 }}><IcoWarn size={12} style={{ verticalAlign: '-2px', marginRight: 4 }} /> {aadhaarErr}</div>}
-                  <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', marginTop: 12, lineHeight: 1.5 }}>{t("An OTP will be sent to the mobile number linked with this Aadhaar.", "इस आधार से जुड़े मोबाइल नंबर पर एक OTP भेजा जाएगा।")}</div>
+                  <div style={{ fontSize: 12, color: 'var(--ink-3)', marginTop: 12, lineHeight: 1.5 }}>{t("An OTP will be sent to the mobile number linked with this Aadhaar.", "इस आधार से जुड़े मोबाइल नंबर पर एक OTP भेजा जाएगा।")}</div>
                 </div>
 
                 <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--line)', padding: '24px', borderRadius: 'var(--r)' }}>
@@ -605,7 +605,7 @@ export function Phase2KYC() {
                     onBlur={handlePanBlur}
                   />
                   {panErr && <div style={{ fontSize: 12, color: 'var(--red)', marginTop: 8, fontWeight: 600 }}><IcoWarn size={12} style={{ verticalAlign: '-2px', marginRight: 4 }} /> {panErr}</div>}
-                  <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', marginTop: 12, lineHeight: 1.5 }}>{t("Required for franchise contract and prize money tax compliance.", "फ्रैंचाइज़ी कॉन्ट्रैक्ट और इनामी राशि के टैक्स नियमों के लिए आवश्यक।")}</div>
+                  <div style={{ fontSize: 12, color: 'var(--ink-3)', marginTop: 12, lineHeight: 1.5 }}>{t("Required for franchise contract and prize money tax compliance.", "फ्रैंचाइज़ी कॉन्ट्रैक्ट और इनामी राशि के टैक्स नियमों के लिए आवश्यक।")}</div>
                 </div>
               </div>
 

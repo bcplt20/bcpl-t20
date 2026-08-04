@@ -95,7 +95,7 @@ export function TeamDetail() {
   ] : [];
 
   return (
-    <div style={{background:'#060E1C',color:'#fff',minHeight:'100vh',overflowX:'hidden',fontFamily:'Inter,sans-serif'}}>
+    <div style={{background:'#0E1624',color:'#fff',minHeight:'100vh',overflowX:'hidden',fontFamily:'Inter,sans-serif'}}>
       <style>{`
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
         .wrap{max-width:1280px;margin:0 auto;padding:0 16px;}
@@ -171,7 +171,7 @@ export function TeamDetail() {
             </div>
             <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(240px,1fr))',gap:16}}>
               {Array.from({length:6}).map((_,i)=>(
-                <div key={i} style={{background:'#0A1830',border:'1px solid rgba(255,255,255,0.08)',borderRadius:14,padding:16,display:'flex',alignItems:'center',gap:14}}>
+                <div key={i} style={{background:'var(--panel)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:14,padding:16,display:'flex',alignItems:'center',gap:14}}>
                   <Skel w={48} h={48} r={24} style={{flexShrink:0}}/>
                   <div style={{flex:1,display:'flex',flexDirection:'column',gap:8}}>
                     <Skel w="70%" h={14}/>
@@ -222,7 +222,7 @@ export function TeamDetail() {
                   {heroStats.map(s=>(
                     <div key={s.label} style={{background:`${ACCENT}14`,border:`1px solid ${ACCENT}33`,borderRadius:14,padding:'14px 20px',textAlign:'center',minWidth:80,flex:'1 1 80px',maxWidth:140}}>
                       <div style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:22,color:ACCENT}}>{s.val}</div>
-                      <div style={{color:'rgba(255,255,255,0.45)',fontSize:11,fontFamily:'Inter,sans-serif',marginTop:2,textTransform:'uppercase',letterSpacing:'0.06em'}}>{s.label}</div>
+                      <div style={{color:'var(--ink-3)',fontSize:11,fontFamily:'Inter,sans-serif',marginTop:2,textTransform:'uppercase',letterSpacing:'0.06em'}}>{s.label}</div>
                     </div>
                   ))}
                 </div>
@@ -287,8 +287,8 @@ export function TeamDetail() {
                               </div>
                               <div style={{display:'flex',gap:6,marginTop:6,alignItems:'center',flexWrap:'wrap'}}>
                                 <span style={{background:`${rc}22`,border:`1px solid ${rc}55`,color:rc,fontSize:10,fontWeight:800,padding:'2px 8px',borderRadius:6,fontFamily:'var(--font-head)',letterSpacing:'0.06em'}}>{roleAb}</span>
-                                {p.jerseyNo && <span style={{color:'rgba(255,255,255,0.35)',fontSize:11,fontFamily:'Inter,sans-serif'}}>#{p.jerseyNo}</span>}
-                                {p.state && <span style={{color:'rgba(255,255,255,0.35)',fontSize:11,fontFamily:'Inter,sans-serif'}}>{p.state}</span>}
+                                {p.jerseyNo && <span style={{color:'var(--ink-3)',fontSize:11,fontFamily:'Inter,sans-serif'}}>#{p.jerseyNo}</span>}
+                                {p.state && <span style={{color:'var(--ink-3)',fontSize:11,fontFamily:'Inter,sans-serif'}}>{p.state}</span>}
                               </div>
                             </div>
                           </div>
@@ -316,13 +316,13 @@ export function TeamDetail() {
                         <div key={i} style={{background:'linear-gradient(135deg,rgba(15,34,71,0.92),rgba(10,22,46,0.88))',backdropFilter:'blur(24px)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:16,padding:'18px 16px',borderLeft:`4px solid ${r.nr?'#94A3B8':r.won?'#22C55E':'#E8493F'}`,animation:`fadeSlide 0.4s ease ${i*0.06}s both`,display:'flex',flexWrap:'wrap',gap:12,alignItems:'center'}}>
                           <div style={{minWidth:70}}>
                             <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:12,color:'rgba(255,255,255,0.5)',marginBottom:2}}>{r.date}</div>
-                            <div style={{fontFamily:'Inter,sans-serif',fontSize:11,color:'rgba(255,255,255,0.35)'}}>{r.venue}</div>
+                            <div style={{fontFamily:'Inter,sans-serif',fontSize:11,color:'var(--ink-3)'}}>{r.venue}</div>
                             <div style={{fontFamily:'var(--font-head)',fontSize:10,color:'rgba(255,122,41,0.7)',fontWeight:700,marginTop:2}}>Match {r.matchNo}</div>
                           </div>
                           <div style={{flex:1,display:'flex',alignItems:'center',gap:10,justifyContent:'center',flexWrap:'wrap',minWidth:160}}>
                             <div style={{textAlign:'center'}}>
                               <div style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:15,color:'rgba(255,255,255,0.85)'}}>vs {r.opponent}</div>
-                              {r.desc && <div style={{fontFamily:'Inter,sans-serif',fontSize:11,color:'rgba(255,255,255,0.4)',marginTop:3}}>{r.desc}</div>}
+                              {r.desc && <div style={{fontFamily:'Inter,sans-serif',fontSize:11,color:'var(--ink-3)',marginTop:3}}>{r.desc}</div>}
                             </div>
                             <div style={{padding:'6px 12px',borderRadius:8,background:r.nr?'rgba(148,163,184,0.15)':r.won?'rgba(34,197,94,0.15)':'rgba(232,73,63,0.15)',border:`1px solid ${r.nr?'rgba(148,163,184,0.4)':r.won?'rgba(34,197,94,0.4)':'rgba(232,73,63,0.4)'}`,fontFamily:'var(--font-head)',fontWeight:900,fontSize:11,color:r.nr?'#94A3B8':r.won?'#22C55E':'#E8493F',letterSpacing:'0.08em'}}>
                               {r.nr?'NO RESULT':r.won?'WON':'LOST'}
@@ -340,7 +340,7 @@ export function TeamDetail() {
                   <div className="about-grid" style={{display:'grid',gridTemplateColumns:'1fr',gap:14,marginBottom:28}}>
                     {aboutInfo.map((a,i)=>(
                       <div key={i} style={{background:'linear-gradient(135deg,rgba(15,34,71,0.92),rgba(10,22,46,0.88))',backdropFilter:'blur(24px)',border:`1px solid ${ACCENT}26`,borderRadius:16,padding:'20px 22px',animation:`fadeSlide 0.4s ease ${i*0.07}s both`}}>
-                        <div style={{color:'rgba(255,255,255,0.35)',fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',fontFamily:'var(--font-head)',marginBottom:8}}>{a.label}</div>
+                        <div style={{color:'var(--ink-3)',fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',fontFamily:'var(--font-head)',marginBottom:8}}>{a.label}</div>
                         <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:15,color:'#F8F4EE'}}>{a.value}</div>
                       </div>
                     ))}

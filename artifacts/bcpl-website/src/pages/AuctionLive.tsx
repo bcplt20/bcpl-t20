@@ -50,7 +50,7 @@ export function AuctionLive() {
   const user = useAuthUser();
 
   return (
-    <div style={{ background: '#06101E', minHeight: '100vh', fontFamily: 'var(--font-body)', color: '#F0EDE8', overflowX: 'hidden' }}>
+    <div style={{ background: 'var(--bg)', minHeight: '100vh', fontFamily: 'var(--font-body)', color: '#F0EDE8', overflowX: 'hidden' }}>
       <style>{`
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         .wrap { max-width: var(--container); margin: 0 auto; padding: 0 20px; }
@@ -72,7 +72,7 @@ export function AuctionLive() {
       <SiteHeader active="Auction" />
 
       {/* HERO */}
-      <section style={{ padding: '56px 0 0', background: 'linear-gradient(180deg,#06101E 0%,#081218 100%)', position: 'relative', overflow: 'hidden' }}>
+      <section style={{ padding: '56px 0 0', background: 'linear-gradient(180deg,var(--bg) 0%,#101A20 100%)', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 80% 50% at 50% 0%,rgba(232,178,61,0.08) 0%,transparent 70%)', pointerEvents: 'none' }} />
 
         <div className="wrap" style={{ position: 'relative', zIndex: 1 }}>
@@ -98,15 +98,15 @@ export function AuctionLive() {
                 { v: SEASON.playerValue, lEn: 'Player value (Season 4)', lHi: 'Player value (Season 4)' },
                 { v: 'LIVE', lEn: 'Bidding format', lHi: 'Bidding format' },
               ].map((s, i) => (
-                <div key={i} style={{ background: '#0A1727', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '16px 10px' }}>
+                <div key={i} style={{ background: '#121F2F', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '16px 10px' }}>
                   <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(16px,3vw,24px)', color: '#E8B23D', marginBottom: 4 }}>{s.v}</div>
-                  <div style={{ fontFamily: 'var(--font-body)', fontSize: 11, color: 'rgba(255,255,255,0.4)', letterSpacing: '.04em' }}>{t(s.lEn, s.lHi)}</div>
+                  <div style={{ fontFamily: 'var(--font-body)', fontSize: 11, color: 'var(--ink-3)', letterSpacing: '.04em' }}>{t(s.lEn, s.lHi)}</div>
                 </div>
               ))}
             </div>
           </div>
         </div>
-        <div style={{ height: 48, background: 'linear-gradient(180deg,transparent,#060C18)' }} />
+        <div style={{ height: 48, background: 'linear-gradient(180deg,transparent,#0E1420)' }} />
       </section>
 
       <div className="wrap" style={{ paddingBottom: user ? 60 : 20 }}>
@@ -115,16 +115,16 @@ export function AuctionLive() {
           <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(18px,3vw,24px)', color: '#fff', textTransform: 'uppercase', marginBottom: 4 }}>
             {t('How you reach the auction', 'Auction तक कैसे पहुँचते हैं')}
           </div>
-          <div style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'rgba(255,255,255,0.4)', marginBottom: 18 }}>
+          <div style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--ink-3)', marginBottom: 18 }}>
             {t('Four stages — every player follows the same path.', 'चार stages — हर player का रास्ता यही है।')}
           </div>
           <div className="auc-steps">
             {STEPS.map(s => (
-              <div key={s.n} style={{ background: '#0A1727', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '20px 18px', display: 'flex', gap: 14 }}>
+              <div key={s.n} style={{ background: '#121F2F', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '20px 18px', display: 'flex', gap: 14 }}>
                 <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 22, color: s.color, flexShrink: 0, lineHeight: 1 }}>{s.n}</div>
                 <div>
                   <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 14, color: '#fff', marginBottom: 6 }}>{t(s.en, s.hi)}</div>
-                  <div style={{ fontFamily: 'var(--font-body)', fontSize: 12.5, color: 'rgba(255,255,255,0.45)', lineHeight: 1.6 }}>{t(s.dEn, s.dHi)}</div>
+                  <div style={{ fontFamily: 'var(--font-body)', fontSize: 12.5, color: 'var(--ink-3)', lineHeight: 1.6 }}>{t(s.dEn, s.dHi)}</div>
                 </div>
               </div>
             ))}
@@ -132,7 +132,7 @@ export function AuctionLive() {
         </div>
 
         {/* HOW BIDDING WORKS */}
-        <div style={{ background: '#0A1727', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '24px 20px', marginBottom: 24 }}>
+        <div style={{ background: '#121F2F', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '24px 20px', marginBottom: 24 }}>
           <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(16px,2.5vw,20px)', color: '#fff', textTransform: 'uppercase', marginBottom: 12 }}>
             {t('How the bidding works', 'बोली कैसे लगती है')}
           </div>
@@ -143,13 +143,13 @@ export function AuctionLive() {
         </div>
 
         {/* AUCTION DAY GALLERY — real photos from the BCPL player auction */}
-        <div style={{ background: '#0A1727', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '24px 20px', marginBottom: 24 }}>
+        <div style={{ background: '#121F2F', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '24px 20px', marginBottom: 24 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
             <div>
               <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(16px,2.5vw,20px)', color: '#fff', textTransform: 'uppercase' }}>
                 {t('Season 4 Auction Gallery', 'Season 4 Auction की झलकियाँ')}
               </div>
-              <div style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'rgba(255,255,255,0.4)', marginTop: 2 }}>
+              <div style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--ink-3)', marginTop: 2 }}>
                 {t('Real moments from the BCPL Season 4 auction floor', 'BCPL Season 4 auction floor के असली पल')}
               </div>
             </div>

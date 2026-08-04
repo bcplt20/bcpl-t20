@@ -11,7 +11,7 @@ import { BASE as API_BASE } from '../lib/adminHttp';
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-body { background:#060E1C; }
+body { background:#0E1624; }
 .wrap { max-width:1200px; margin:0 auto; padding:0 20px; }
 @media(min-width:768px){ .wrap{padding:0 32px} }
 @media(min-width:1280px){ .wrap{padding:0 48px} }
@@ -30,7 +30,7 @@ body { background:#060E1C; }
 .photo-masonry { columns:2 160px; column-gap:12px; }
 @media(min-width:640px){ .photo-masonry { columns:3 220px; column-gap:14px; } }
 @media(min-width:1024px){ .photo-masonry { columns:4 260px; column-gap:16px; } }
-.photo-card { position:relative; border-radius:14px; overflow:hidden; cursor:zoom-in; break-inside:avoid; margin-bottom:14px; border:1px solid rgba(255,255,255,0.07); background:#0A1727; }
+.photo-card { position:relative; border-radius:14px; overflow:hidden; cursor:zoom-in; break-inside:avoid; margin-bottom:14px; border:1px solid rgba(255,255,255,0.07); background:#121F2F; }
 .photo-card img { width:100%; height:auto; display:block; transition:transform .3s ease; }
 .photo-card:hover img { transform:scale(1.04); }
 .photo-card .photo-overlay { position:absolute; inset:0; background:linear-gradient(0deg,rgba(0,0,0,0.6) 0%,transparent 45%); opacity:0; transition:opacity .25s; display:flex; align-items:flex-end; padding:12px; }
@@ -178,7 +178,7 @@ export function Photos() {
   }, [lbAlbum === null]);
 
   return (
-    <div style={{minHeight:'100vh',background:'#060E1C',fontFamily:'Inter,sans-serif',position:'relative'}}>
+    <div style={{minHeight:'100vh',background:'#0E1624',fontFamily:'Inter,sans-serif',position:'relative'}}>
       <style>{CSS}</style>
       <AmbientBg/>
       <SiteHeader active="Photos" />
@@ -209,7 +209,7 @@ export function Photos() {
                   <h2 className="v3-h" style={{fontSize:'clamp(22px,3.5vw,32px)',color:'#fff'}}>
                     {t(sec.title[0], sec.title[1])}
                   </h2>
-                  <div style={{fontFamily:'Inter,sans-serif',fontSize:13,color:'rgba(255,255,255,0.45)',marginTop:4}}>
+                  <div style={{fontFamily:'Inter,sans-serif',fontSize:13,color:'var(--ink-3)',marginTop:4}}>
                     {t(sec.subtitle[0], sec.subtitle[1])}
                   </div>
                 </div>
@@ -249,7 +249,7 @@ export function Photos() {
             <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:10,marginBottom:22}}>
               <div>
                 <h2 className="v3-h" style={{fontSize:'clamp(22px,3.5vw,32px)',color:'#fff'}}>{album.name}</h2>
-                <div style={{fontFamily:'Inter,sans-serif',fontSize:13,color:'rgba(255,255,255,0.45)',marginTop:4}}>
+                <div style={{fontFamily:'Inter,sans-serif',fontSize:13,color:'var(--ink-3)',marginTop:4}}>
                   {t("Match photos & videos from the BCPL team","BCPL team की match photos और videos")}
                 </div>
               </div>

@@ -9,7 +9,7 @@ import { IcoChat, IcoMail, IcoPhone, IcoCheck, IcoInfo, IcoPin, IcoClock } from 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-body { background:#060E1C; }
+body { background:#0E1624; }
 .wrap { max-width:1200px; margin:0 auto; padding:0 20px; }
 .desk-nav { display:none; align-items:center; gap:22px; }
 .ham-btn { display:flex; }
@@ -25,10 +25,10 @@ body { background:#060E1C; }
 .glass-card { background:linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85)); backdrop-filter:blur(32px); border:1px solid rgba(255,255,255,0.09); border-radius:20px; box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06); }
 .shimmer-gold { background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D,#F5C842,#E8B23D); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation:shimmer 3s linear infinite; }
 .tag-pill { display:inline-flex; align-items:center; gap:6px; background:rgba(255,122,41,0.12); border:1px solid rgba(255,122,41,0.3); border-radius:100px; padding:5px 14px; font-size:11px; font-weight:700; font-family:var(--font-head); color:#FF7A29; letter-spacing:0.1em; }
-.inp { width:100%; background:rgba(255,255,255,0.04); border:1.5px solid rgba(255,255,255,0.1); border-radius:14px; color:#F8F4EE; padding:15px 18px; font-family:Inter,sans-serif; font-size:15px; outline:none; transition:all 0.25s; appearance:none; }
+.inp { width:100%; background:rgba(255,255,255,0.04); border:1.5px solid rgba(255,255,255,0.1); border-radius:14px; color:#F8F4EE; padding:15px 18px; font-family:Inter,sans-serif; font-size:16px; outline:none; transition:all 0.25s; appearance:none; }
 .inp:focus { border-color:#FF7A29; background:rgba(255,122,41,0.06); box-shadow:0 0 0 4px rgba(255,122,41,0.12); }
 .inp::placeholder { color:rgba(255,255,255,0.28); }
-.lbl { font-size:12px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:rgba(255,255,255,0.45); margin-bottom:8px; display:block; }
+.lbl { font-size:12px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-3); margin-bottom:8px; display:block; }
 @keyframes gradShift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
 @keyframes pulseGlow { 0%,100%{box-shadow:0 0 16px rgba(255,122,41,0.4)} 50%{box-shadow:0 0 36px rgba(255,122,41,0.8),0 0 60px rgba(255,122,41,0.3)} }
 @keyframes shimmer { 0%{background-position:-200% center} 100%{background-position:200% center} }
@@ -96,7 +96,7 @@ export function Contact() {
   }
 
   return (
-    <div style={{minHeight:'100vh',background:'#060E1C',fontFamily:'Inter,sans-serif',position:'relative'}}>
+    <div style={{minHeight:'100vh',background:'#0E1624',fontFamily:'Inter,sans-serif',position:'relative'}}>
       <style>{CSS}</style>
       <AmbientBg/>
       <SiteHeader active="Contact" />
@@ -137,7 +137,7 @@ export function Contact() {
               <div style={{marginBottom:16,color:'#06B6D4',display:'flex'}}><IcoMail size={40}/></div>
               <div style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:20,color:'#fff',marginBottom:8}}>Email</div>
               <div style={{color:'#06B6D4',fontSize:15,fontWeight:700,marginBottom:4}}>support@bcplt20.com</div>
-              <div style={{color:'rgba(255,255,255,0.45)',fontSize:13,lineHeight:1.6,marginBottom:24}}>{t("Response within 24 hours","24 घंटे में जवाब")}</div>
+              <div style={{color:'var(--ink-3)',fontSize:13,lineHeight:1.6,marginBottom:24}}>{t("Response within 24 hours","24 घंटे में जवाब")}</div>
               <a href="mailto:support@bcplt20.com" style={{textDecoration:'none'}}>
                 <button style={{width:'100%',height:48,borderRadius:14,background:'linear-gradient(135deg,#06B6D4,#0891B2)',border:'none',color:'#fff',fontFamily:'var(--font-head)',fontWeight:800,fontSize:15,cursor:'pointer',transition:'transform 0.15s'}}>
                   {t("Send Email →","Email भेजें →")}
@@ -150,7 +150,7 @@ export function Contact() {
               <div style={{marginBottom:16,color:'#8B5CF6',display:'flex'}}><IcoPhone size={40}/></div>
               <div style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:20,color:'#fff',marginBottom:8}}>{t("Call Us","Call करें")}</div>
               <div style={{color:'#8B5CF6',fontSize:15,fontWeight:700,marginBottom:4}}>+91 91513 46555</div>
-              <div style={{color:'rgba(255,255,255,0.45)',fontSize:13,lineHeight:1.6,marginBottom:24}}>{t("Mon–Sat 10AM–7PM IST","सोम–शनि 10AM–7PM IST")}</div>
+              <div style={{color:'var(--ink-3)',fontSize:13,lineHeight:1.6,marginBottom:24}}>{t("Mon–Sat 10AM–7PM IST","सोम–शनि 10AM–7PM IST")}</div>
               <a href="tel:+919151346555" style={{textDecoration:'none'}}>
                 <button style={{width:'100%',height:48,borderRadius:14,background:'linear-gradient(135deg,#8B5CF6,#7C3AED)',border:'none',color:'#fff',fontFamily:'var(--font-head)',fontWeight:800,fontSize:15,cursor:'pointer',transition:'transform 0.15s'}}>
                   {t("Call Now →","अभी Call करें →")}
@@ -248,7 +248,7 @@ export function Contact() {
                 <div style={{color:'rgba(255,255,255,0.5)',fontSize:13,lineHeight:1.8}}>
                   <div>BCPL T20 Pvt. Ltd.</div>
                   <div style={{color:'#FF7A29',fontWeight:600}}>www.bcplt20.com</div>
-                  <div style={{marginTop:8,color:'rgba(255,255,255,0.35)',fontSize:12}}>CIN: U74999DL2020PTC123456</div>
+                  <div style={{marginTop:8,color:'var(--ink-3)',fontSize:12}}>CIN: U74999DL2020PTC123456</div>
                 </div>
               </div>
 
@@ -257,7 +257,7 @@ export function Contact() {
                 <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
                   {[['Mon–Fri','10AM–7PM'],['Saturday','10AM–5PM'],['Sunday','Closed'],['WhatsApp','24×7']].map(([d,t])=>(
                     <div key={d}>
-                      <div style={{color:'rgba(255,255,255,0.4)',fontSize:11,fontFamily:'var(--font-head)',fontWeight:700}}>{d}</div>
+                      <div style={{color:'var(--ink-3)',fontSize:11,fontFamily:'var(--font-head)',fontWeight:700}}>{d}</div>
                       <div style={{color:t==='24×7'?'#22C55E':'rgba(255,255,255,0.75)',fontSize:13,fontWeight:600}}>{t}</div>
                     </div>
                   ))}

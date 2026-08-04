@@ -26,7 +26,7 @@ function TeamCard({ t }: { t: CardTeam }) {
   return (
     <Link href={`/team/${t.slug}`} style={{ textDecoration: "none", color: "inherit", display: "block" }}>
       <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
-        style={{ background: "#0A1727", border: `1.5px solid ${hov ? t.color : "rgba(255,255,255,0.07)"}`, borderRadius: 12, borderTop: `3px solid ${t.color}`, padding: "20px 18px", transition: "all 0.25s", boxShadow: hov ? `0 12px 40px ${t.color}22,0 0 0 1px ${t.color}33` : "none", cursor: "pointer", position: "relative", overflow: "hidden" }}>
+        style={{ background: "#121F2F", border: `1.5px solid ${hov ? t.color : "rgba(255,255,255,0.07)"}`, borderRadius: 12, borderTop: `3px solid ${t.color}`, padding: "20px 18px", transition: "all 0.25s", boxShadow: hov ? `0 12px 40px ${t.color}22,0 0 0 1px ${t.color}33` : "none", cursor: "pointer", position: "relative", overflow: "hidden" }}>
         {/* Watermark logo */}
         {t.logo && <img loading="lazy" decoding="async" src={t.logo} alt={t.name} style={{ position: "absolute", right: "-6%", bottom: "-6%", width: "72%", height: "72%", objectFit: "contain", opacity: 0.055, pointerEvents: "none", transition: "opacity 0.3s", filter: "grayscale(20%)" }} />}
 
@@ -85,7 +85,7 @@ export function Teams() {
   const groupB = teams ? teams.slice(5) : [];
 
   return (
-    <div style={{ background: "#06101E", color: "#fff", minHeight: "100vh", overflowX: "hidden", fontFamily: "Inter,sans-serif" }}>
+    <div style={{ background: "var(--bg)", color: "#fff", minHeight: "100vh", overflowX: "hidden", fontFamily: "Inter,sans-serif" }}>
       <style>{`
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         .wrap { max-width: 1280px; margin: 0 auto; padding: 0 16px; }
@@ -118,7 +118,7 @@ export function Teams() {
             <span style={{ display: "block", color: "#fff" }}>{t("TEN CITIES.", "10 शहर।")}</span>
             <span className="shimmer-gold" style={{ display: "block" }}>{t("ONE DREAM.", "एक सपना।")}</span>
           </h1>
-          <p style={{ fontFamily: "Inter,sans-serif", color: "rgba(255,255,255,0.45)", fontSize: 16, lineHeight: 1.7, maxWidth: 480, margin: "0 auto 36px" }}>
+          <p style={{ fontFamily: "Inter,sans-serif", color: "var(--ink-3)", fontSize: 16, lineHeight: 1.7, maxWidth: 480, margin: "0 auto 36px" }}>
             {t("Get picked and represent your city in BCPL Season 5.", "Pick होइए और अपने शहर के लिए BCPL Season 5 में खेलिए।")}
           </p>
 
@@ -143,7 +143,7 @@ export function Teams() {
           <div style={{ background: "rgba(255,122,41,0.06)", border: "1px solid rgba(255,122,41,0.15)", borderRadius: 12, padding: "14px 20px", display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
             <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#FF7A29", flexShrink: 0 }} />
             <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 13, color: "#FF7A29" }}>SEASON 5</span>
-            <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 12 }}>·</span>
+            <span style={{ color: "var(--ink-3)", fontSize: 12 }}>·</span>
             <span style={{ fontFamily: "Inter,sans-serif", fontSize: 13, color: "rgba(255,255,255,0.6)" }}>
               {t(`${SEASON.teams} franchise teams · Squads announced after auction in Aug 2026 · Tournament begins Sep 2026`, `${SEASON.teams} franchise teams · Auction (Aug 2026) के बाद squads announce होंगे · Tournament Sep 2026 में शुरू होगा`)}
             </span>
@@ -157,7 +157,7 @@ export function Teams() {
           <div className="wrap">
             <div role="status" aria-label={t("Loading…", "लोड हो रहा है…")} className="teams-grid">
               {Array.from({ length: 10 }).map((_, i) => (
-                <div key={i} style={{ background: "#0A1830", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, padding: 20, display: "flex", alignItems: "center", gap: 16 }}>
+                <div key={i} style={{ background: "var(--panel)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, padding: 20, display: "flex", alignItems: "center", gap: 16 }}>
                   <Skel w={64} h={64} r={16} style={{ flexShrink: 0 }} />
                   <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
                     <Skel w="75%" h={16} />
@@ -214,11 +214,11 @@ export function Teams() {
       {/* CTA */}
       <section style={{ padding: "0 0 80px" }}>
         <div className="wrap">
-          <div style={{ background: "#0A1727", border: "1px solid rgba(255,122,41,0.2)", borderRadius: 12, borderTop: "3px solid #FF7A29", padding: "clamp(32px,5vw,52px)", textAlign: "center" }}>
+          <div style={{ background: "#121F2F", border: "1px solid rgba(255,122,41,0.2)", borderRadius: 12, borderTop: "3px solid #FF7A29", padding: "clamp(32px,5vw,52px)", textAlign: "center" }}>
             <h2 style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: "clamp(20px,3.5vw,36px)", color: "#fff", marginBottom: 10, textTransform: "uppercase" }}>
               {t("Want to play for one of these franchises?", "इनमें से किसी franchise के लिए खेलना चाहते हैं?")}
             </h2>
-            <p style={{ fontFamily: "Inter,sans-serif", color: "rgba(255,255,255,0.45)", fontSize: 15, lineHeight: 1.7, maxWidth: 460, margin: "0 auto 28px" }}>
+            <p style={{ fontFamily: "Inter,sans-serif", color: "var(--ink-3)", fontSize: 15, lineHeight: 1.7, maxWidth: 460, margin: "0 auto 28px" }}>
               {t(`Register today and get your shot at Season 5. ${SEASON.trialCities} cities, all roles open.`, `आज ही register करें और Season 5 के लिए अपना मौका पाएं। ${SEASON.trialCities} शहर, सभी roles खुले हैं।`)}
             </p>
             <Link href="/register" style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "linear-gradient(135deg,#FF7A29,#D95E10)", border: "none", borderRadius: 12, color: "#fff", fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 14, letterSpacing: ".06em", padding: "14px 36px", textDecoration: "none", textTransform: "uppercase" }}>

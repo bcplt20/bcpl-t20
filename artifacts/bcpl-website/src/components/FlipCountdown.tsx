@@ -131,7 +131,7 @@ export function FlipCountdown({ target, size = "lg" }: { target: string; size?: 
             }}>
               {g.ds.map((dg, di) => <Digit key={g.ds.length - di} value={dg} em={1.05} />)}
             </div>
-            <div style={{ fontFamily: "'Inter','Mukta',sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: ".16em", color: "rgba(255,255,255,.45)", textTransform: "uppercase", textAlign: "center", marginTop: 6 }}>
+            <div style={{ fontFamily: "'Inter','Mukta',sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: ".16em", color: "var(--ink-3)", textTransform: "uppercase", textAlign: "center", marginTop: 6 }}>
               {g.label}
             </div>
           </div>

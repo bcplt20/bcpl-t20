@@ -228,7 +228,7 @@ export function Home() {
   },[lang]);
 
   return (
-    <div ref={rootRef} className="home-root" style={{ background:"#06101E", color:"#F0EDE8", fontFamily:"'Inter',sans-serif", overflowX:"hidden" }}>
+    <div ref={rootRef} className="home-root" style={{ background:"var(--bg)", color:"#F0EDE8", fontFamily:"'Inter',sans-serif", overflowX:"hidden" }}>
       <style>{`
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
         html{scroll-behavior:smooth;}
@@ -253,7 +253,7 @@ export function Home() {
 
         .slbl{font-family:var(--font-head);font-weight:800;font-size:11px;letter-spacing:.15em;color:#FF7A29;text-transform:uppercase;display:flex;align-items:center;gap:10px;margin-bottom:14px;}
         .slbl::before{content:'';display:inline-block;width:20px;height:2px;background:#FF7A29;}
-        .card{background:#0A1727;border:1px solid rgba(255,255,255,.07);border-radius:16px;}
+        .card{background:#121F2F;border:1px solid rgba(255,255,255,.07);border-radius:16px;}
         .shim{background:linear-gradient(90deg,#FF7A29,#FFB347,#FF7A29);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradMove 3s ease infinite;}
         .shim-gold{background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradMove 3s ease infinite;}
 
@@ -287,7 +287,7 @@ export function Home() {
         @keyframes statIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
         /* League strip ticker */
-        .tick-wrap{overflow:hidden;background:linear-gradient(90deg,#0A1727,#0D1E36 50%,#0A1727);border-top:1px solid rgba(232,178,61,.28);border-bottom:1px solid rgba(232,178,61,.28);position:relative;mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);}
+        .tick-wrap{overflow:hidden;background:linear-gradient(90deg,#121F2F,#15263E 50%,#121F2F);border-top:1px solid rgba(232,178,61,.28);border-bottom:1px solid rgba(232,178,61,.28);position:relative;mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);}
         .tick{display:flex;width:max-content;animation:tickMove 46s linear infinite;}
         .tick:hover{animation-play-state:paused;}
         .tick-item{display:inline-flex;align-items:center;gap:16px;padding:13px 0 13px 16px;white-space:nowrap;}
@@ -301,7 +301,7 @@ export function Home() {
         /* Road */
         .road{display:grid;grid-template-columns:1fr;gap:12px;position:relative;padding:4px 0 8px;}
         @media(min-width:640px){.road{grid-template-columns:repeat(2,1fr);gap:14px;}}
-        .road-card{position:relative;border-radius:16px;padding:18px 16px 16px;background:linear-gradient(165deg,#0C1C30,#07101E);border:1px solid rgba(255,255,255,.08);transition:transform .25s,border-color .25s,box-shadow .25s;display:flex;flex-direction:column;}
+        .road-card{position:relative;border-radius:16px;padding:18px 16px 16px;background:linear-gradient(165deg,#142438,#0F1826);border:1px solid rgba(255,255,255,.08);transition:transform .25s,border-color .25s,box-shadow .25s;display:flex;flex-direction:column;}
         .road-card:hover{transform:translateY(-4px);box-shadow:0 14px 36px rgba(0,0,0,.45);}
         @media(min-width:1150px){
           .road{grid-template-columns:repeat(4,1fr);gap:16px;}
@@ -312,8 +312,8 @@ export function Home() {
         .s5map{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:26px;}
         .s5map::before{content:'';position:absolute;top:5px;left:6%;right:6%;height:2px;background:linear-gradient(90deg,#FF7A29,#E8B23D 55%,#22C55E);opacity:.35;}
         .s5m{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:7px;}
-        .s5m-dot{width:12px;height:12px;border-radius:50%;border:2px solid #060C18;position:relative;z-index:1;flex-shrink:0;}
-        .s5m-mo{font-weight:800;font-size:clamp(10px,1.3vw,12px);letter-spacing:.14em;color:rgba(255,255,255,.45);text-transform:uppercase;font-variant-numeric:tabular-nums;}
+        .s5m-dot{width:12px;height:12px;border-radius:50%;border:2px solid #0E1420;position:relative;z-index:1;flex-shrink:0;}
+        .s5m-mo{font-weight:800;font-size:clamp(10px,1.3vw,12px);letter-spacing:.14em;color:var(--ink-3);text-transform:uppercase;font-variant-numeric:tabular-nums;}
         .s5m-lb{font-weight:900;font-size:clamp(12px,1.6vw,16px);letter-spacing:.05em;color:#fff;text-transform:uppercase;}
         @media(max-width:639px){
           .s5map{grid-template-columns:1fr;gap:0;margin-top:18px;}
@@ -324,7 +324,7 @@ export function Home() {
 
         /* Pricing journey chips */
         .jour{display:flex;align-items:stretch;gap:10px;flex-wrap:wrap;margin-bottom:28px;}
-        .jour .jc{flex:1 1 180px;background:linear-gradient(165deg,#0C1C30,#07101E);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:14px 16px;position:relative;}
+        .jour .jc{flex:1 1 180px;background:linear-gradient(165deg,#142438,#0F1826);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:14px 16px;position:relative;}
         .jour .ja{align-self:center;color:rgba(232,178,61,.65);font-size:18px;flex:0 0 auto;}
         @media(max-width:639px){.jour .ja{display:none;}}
 
@@ -336,12 +336,12 @@ export function Home() {
         /* Numbers */
         .num-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
         @media(min-width:768px){.num-grid{grid-template-columns:repeat(3,1fr);}}
-        .num-cell{background:linear-gradient(165deg,#0C1C30,#07101E);border:1px solid rgba(232,178,61,.14);border-radius:16px;padding:clamp(20px,3vw,30px) clamp(16px,2.4vw,26px);text-align:center;}
+        .num-cell{background:linear-gradient(165deg,#142438,#0F1826);border:1px solid rgba(232,178,61,.14);border-radius:16px;padding:clamp(20px,3vw,30px) clamp(16px,2.4vw,26px);text-align:center;}
 
         /* Real proof gallery */
         .proof-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
         @media(min-width:768px){.proof-grid{grid-template-columns:repeat(4,1fr);gap:12px;}}
-        .proof-tile{position:relative;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.08);aspect-ratio:4/3;background:#0A1727;}
+        .proof-tile{position:relative;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.08);aspect-ratio:4/3;background:#121F2F;}
         .proof-tile.wide{grid-column:span 2;}
         .proof-tile img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease;}
         .proof-tile:hover img{transform:scale(1.05);}
@@ -384,7 +384,7 @@ export function Home() {
       <SiteHeader active="Home" />
 
       {/* ══ 1 · CINEMATIC HERO — the dream first ══ */}
-      <section style={{ position:"relative", overflow:"hidden", background:"#040A14" }}>
+      <section style={{ position:"relative", overflow:"hidden", background:"#0C121C" }}>
         <img src={BASE + "bcpl-assets/stadium-hero.jpg"} alt="" aria-hidden="true" className="hero-bg"
           onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
         <HeroVideo/>
@@ -470,12 +470,12 @@ export function Home() {
       </section>
 
       {/* ══ 3 · THE LEAGUE IN NUMBERS ══ */}
-      <section id="numbers" className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#06101E", position:"relative", overflow:"hidden" }}>
+      <section id="numbers" className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"var(--bg)", position:"relative", overflow:"hidden" }}>
         <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 70% 60% at 50% 0%,rgba(232,178,61,.05) 0%,transparent 65%)", pointerEvents:"none" }}/>
         <div className="W" style={{ position:"relative", zIndex:1 }}>
           <div className="slbl" style={{ justifyContent:"center" }}>{t("BCPL so far","अब तक का BCPL")}</div>
           <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4vw,44px)", color:"#fff", textTransform:"uppercase", textAlign:"center", marginBottom:8 }}>{t("The league in numbers","आँकड़ों में league")}</h2>
-          <p style={{ fontSize:14, color:"rgba(255,255,255,.4)", textAlign:"center", marginBottom:36 }}>{t("Four seasons of proof — not promises.","चार seasons का सबूत — सिर्फ वादे नहीं।")}</p>
+          <p style={{ fontSize:14, color:"var(--ink-3)", textAlign:"center", marginBottom:36 }}>{t("Four seasons of proof — not promises.","चार seasons का सबूत — सिर्फ वादे नहीं।")}</p>
           <div className="num-grid">
             {NUMBERS.map(n=>(
               <div key={n.en} className="num-cell">
@@ -490,13 +490,13 @@ export function Home() {
       </section>
 
       {/* ══ 4 · ROAD TO BCPL ══ */}
-      <section id="road" className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#06101E", position:"relative", overflow:"hidden" }}>
+      <section id="road" className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"var(--bg)", position:"relative", overflow:"hidden" }}>
         <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 80% 60% at 50% 100%,rgba(255,122,41,.04) 0%,transparent 70%)", pointerEvents:"none" }}/>
         <div className="W" style={{ position:"relative", zIndex:1 }}>
           <div className="slbl">{t("Your Journey","आपका सफर")}</div>
           <div style={{ display:"flex", alignItems:"flex-end", justifyContent:"space-between", gap:16, flexWrap:"wrap", marginBottom:34 }}>
             <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4vw,44px)", color:"#fff", textTransform:"uppercase" }}>{t("From Registration to Stadium","रजिस्ट्रेशन से स्टेडियम तक")}</h2>
-            <span className="mont" style={{ fontSize:11, fontWeight:700, color:"rgba(255,255,255,.35)", letterSpacing:".08em" }}>{t("4 STEPS · ONE DREAM","4 कदम · एक सपना")}</span>
+            <span className="mont" style={{ fontSize:11, fontWeight:700, color:"var(--ink-3)", letterSpacing:".08em" }}>{t("4 STEPS · ONE DREAM","4 कदम · एक सपना")}</span>
           </div>
 
           <div className="road">
@@ -523,7 +523,7 @@ export function Home() {
                       <span className="mont" style={{ fontSize:10, fontWeight:800, color:"#22C55E" }}>{t("OPEN NOW","अभी खुला")}</span>
                     </span>
                   )}
-                  {i===3 && <span style={{ fontSize:10, color:"rgba(255,255,255,.35)", alignSelf:"center" }}>{t("only if selected","सिर्फ select होने पर")}</span>}
+                  {i===3 && <span style={{ fontSize:10, color:"var(--ink-3)", alignSelf:"center" }}>{t("only if selected","सिर्फ select होने पर")}</span>}
                 </div>
               </div>
             ))}
@@ -537,7 +537,7 @@ export function Home() {
       </section>
 
       {/* ══ 4b · SEASON 5 ROADMAP — the year at a glance (spec §15) ══ */}
-      <section className="rv" aria-label={t("Season 5 roadmap","Season 5 का roadmap")} style={{ padding:"clamp(40px,5vw,64px) 0", background:"#060C18", borderTop:"1px solid rgba(255,255,255,.04)" }}>
+      <section className="rv" aria-label={t("Season 5 roadmap","Season 5 का roadmap")} style={{ padding:"clamp(40px,5vw,64px) 0", background:"#0E1420", borderTop:"1px solid rgba(255,255,255,.04)" }}>
         <div className="W">
           <div className="slbl" style={{ justifyContent:"center" }}>{t("Season 5 Roadmap","Season 5 का roadmap")}</div>
           <div className="s5map">
@@ -553,37 +553,37 @@ export function Home() {
       </section>
 
       {/* ══ 5 · PRICING — you pay only if you progress ══ */}
-      <section id="fees" className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#06101E" }}>
+      <section id="fees" className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"var(--bg)" }}>
         <div className="W">
           <div className="slbl">{t("Pricing","फीस")}</div>
           <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4.2vw,46px)", color:"#fff", textTransform:"uppercase", lineHeight:1.1, marginBottom:6 }}>
             {t("You pay only","पैसे सिर्फ तब,")}<br/><span className="shim">{t("if you progress.","जब आप आगे बढ़ें।")}</span>
           </h2>
-          <p style={{ fontSize:15, color:"rgba(255,255,255,.45)", marginBottom:26, maxWidth:520 }}>{t("Here's exactly what you pay — and when. Every fee is shown with GST (" + gstPct + "%) before you pay.","यहाँ साफ लिखा है — कितना, और कब। हर fee GST (" + gstPct + "%) के साथ payment से पहले दिखाई जाती है।")}</p>
+          <p style={{ fontSize:15, color:"var(--ink-3)", marginBottom:26, maxWidth:520 }}>{t("Here's exactly what you pay — and when. Every fee is shown with GST (" + gstPct + "%) before you pay.","यहाँ साफ लिखा है — कितना, और कब। हर fee GST (" + gstPct + "%) के साथ payment से पहले दिखाई जाती है।")}</p>
 
           {/* The money journey at a glance */}
           <div className="jour">
             <div className="jc" style={{ borderTop:"3px solid #FF7A29" }}>
-              <div className="mont" style={{ fontSize:10, fontWeight:800, letterSpacing:".1em", color:"rgba(255,255,255,.4)", textTransform:"uppercase", marginBottom:6 }}>{t("Step 1 · Now","कदम 1 · अभी")}</div>
-              <div className="mont" style={{ fontWeight:900, fontSize:22, color:"#FF7A29" }}>{inr(fees.phase1.bat)}<span style={{ fontSize:13, color:"rgba(255,255,255,.4)" }}> / {inr(fees.phase1.ar)} + GST</span></div>
+              <div className="mont" style={{ fontSize:10, fontWeight:800, letterSpacing:".1em", color:"var(--ink-3)", textTransform:"uppercase", marginBottom:6 }}>{t("Step 1 · Now","कदम 1 · अभी")}</div>
+              <div className="mont" style={{ fontWeight:900, fontSize:22, color:"#FF7A29" }}>{inr(fees.phase1.bat)}<span style={{ fontSize:13, color:"var(--ink-3)" }}> / {inr(fees.phase1.ar)} + GST</span></div>
               <div style={{ fontSize:12, color:"rgba(255,255,255,.5)", marginTop:4 }}>{t("Register + video trial","Register + video trial")}</div>
             </div>
             <div className="ja">→</div>
             <div className="jc" style={{ borderTop:"3px solid #E8B23D" }}>
-              <div className="mont" style={{ fontSize:10, fontWeight:800, letterSpacing:".1em", color:"rgba(255,255,255,.4)", textTransform:"uppercase", marginBottom:6 }}>{t("Step 2 · Only if selected","कदम 2 · सिर्फ select होने पर")}</div>
-              <div className="mont" style={{ fontWeight:900, fontSize:22, color:"#E8B23D" }}>{inr(fees.phase2.bat)}<span style={{ fontSize:13, color:"rgba(255,255,255,.4)" }}> / {inr(fees.phase2.ar)} + GST</span></div>
+              <div className="mont" style={{ fontSize:10, fontWeight:800, letterSpacing:".1em", color:"var(--ink-3)", textTransform:"uppercase", marginBottom:6 }}>{t("Step 2 · Only if selected","कदम 2 · सिर्फ select होने पर")}</div>
+              <div className="mont" style={{ fontWeight:900, fontSize:22, color:"#E8B23D" }}>{inr(fees.phase2.bat)}<span style={{ fontSize:13, color:"var(--ink-3)" }}> / {inr(fees.phase2.ar)} + GST</span></div>
               <div style={{ fontSize:12, color:"rgba(255,255,255,.5)", marginTop:4 }}>{t("Physical trial entry","Physical trial entry")}</div>
             </div>
             <div className="ja">→</div>
             <div className="jc" style={{ borderTop:"3px solid #22C55E" }}>
-              <div className="mont" style={{ fontSize:10, fontWeight:800, letterSpacing:".1em", color:"rgba(255,255,255,.4)", textTransform:"uppercase", marginBottom:6 }}>{t("Step 3 · Season 5","कदम 3 · Season 5")}</div>
+              <div className="mont" style={{ fontSize:10, fontWeight:800, letterSpacing:".1em", color:"var(--ink-3)", textTransform:"uppercase", marginBottom:6 }}>{t("Step 3 · Season 5","कदम 3 · Season 5")}</div>
               <div className="mont" style={{ fontWeight:900, fontSize:22, color:"#22C55E" }}>₹0*</div>
               <div style={{ fontSize:12, color:"rgba(255,255,255,.5)", marginTop:4 }}>{t("No additional BCPL tournament participation fee*","कोई अतिरिक्त BCPL tournament participation fee नहीं*")}</div>
             </div>
           </div>
 
           {/* PART D footnote + PART E payment/selection disclaimer — visible, not buried */}
-          <p style={{ fontSize:11, color:"rgba(255,255,255,.35)", lineHeight:1.6, margin:"12px 0 26px", maxWidth:720 }}>
+          <p style={{ fontSize:11, color:"var(--ink-3)", lineHeight:1.6, margin:"12px 0 26px", maxWidth:720 }}>
             {t("*Subject to the applicable BCPL Season 5 rules and any expressly disclosed exceptions. Payment of Phase 1 or Phase 2 fees does not guarantee qualification, selection, Auction Pool entry, purchase by a team, player contract, remuneration or tournament participation.",
                "*BCPL Season 5 के लागू नियमों और स्पष्ट रूप से बताए गए अपवादों के अधीन। Phase 1 या Phase 2 fee का भुगतान qualification, selection, Auction Pool में जगह, team द्वारा purchase, player contract, remuneration या tournament participation की guarantee नहीं है।")}
           </p>
@@ -609,7 +609,7 @@ export function Home() {
                 <div style={{ width:40, height:40, borderRadius:10, background:"rgba(255,122,41,.12)", border:"1px solid rgba(255,122,41,.3)", display:"flex", alignItems:"center", justifyContent:"center" }}><IcoList size={20} style={{ color:"#FF7A29" }} /></div>
                 <div>
                   <div className="mont" style={{ fontWeight:900, fontSize:16, color:"#FF7A29" }}>Phase 1</div>
-                  <div style={{ fontSize:12, color:"rgba(255,255,255,.4)" }}>{t("Online — pay now to register","Online — रजिस्टर के लिए अभी payment")}</div>
+                  <div style={{ fontSize:12, color:"var(--ink-3)" }}>{t("Online — pay now to register","Online — रजिस्टर के लिए अभी payment")}</div>
                 </div>
                 <div style={{ marginLeft:"auto", background:"rgba(34,197,94,.1)", border:"1px solid rgba(34,197,94,.3)", borderRadius:8, padding:"3px 10px" }}>
                   <span className="mont" style={{ fontSize:10, fontWeight:800, color:"#22C55E" }}>{t("OPEN","खुला")}</span>
@@ -621,7 +621,7 @@ export function Home() {
                   <span className="mont" style={{ fontWeight:900, fontSize:18, color:"#FF7A29" }}>{r.price}</span>
                 </div>
               ))}
-              <p style={{ fontSize:12, color:"rgba(255,255,255,.35)", marginTop:14, lineHeight:1.6 }}>{t("Includes: Phase 1 assessment · Video submission · Registration confirmation","शामिल: Phase 1 assessment · Video submission · Registration confirmation")}</p>
+              <p style={{ fontSize:12, color:"var(--ink-3)", marginTop:14, lineHeight:1.6 }}>{t("Includes: Phase 1 assessment · Video submission · Registration confirmation","शामिल: Phase 1 assessment · Video submission · Registration confirmation")}</p>
               <button className="btn-cta" style={{ width:"100%", justifyContent:"center", marginTop:20, fontSize:14, padding:14 }} onClick={()=>navigate("/register")}>{t("Register Now","अभी रजिस्टर करें")} →</button>
             </div>
             <div className="card" style={{ padding:24, borderTop:"3px solid #E8B23D" }}>
@@ -629,10 +629,10 @@ export function Home() {
                 <div style={{ width:40, height:40, borderRadius:10, background:"rgba(232,178,61,.12)", border:"1px solid rgba(232,178,61,.3)", display:"flex", alignItems:"center", justifyContent:"center" }}><IcoTrophy size={20} style={{ color:"#E8B23D" }} /></div>
                 <div>
                   <div className="mont" style={{ fontWeight:900, fontSize:16, color:"#E8B23D" }}>Phase 2</div>
-                  <div style={{ fontSize:12, color:"rgba(255,255,255,.4)" }}>{t("Physical trial — only if selected","Physical trial — सिर्फ select होने पर")}</div>
+                  <div style={{ fontSize:12, color:"var(--ink-3)" }}>{t("Physical trial — only if selected","Physical trial — सिर्फ select होने पर")}</div>
                 </div>
                 <div style={{ marginLeft:"auto", background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.1)", borderRadius:8, padding:"3px 10px" }}>
-                  <span className="mont" style={{ fontSize:10, fontWeight:800, color:"rgba(255,255,255,.35)" }}>{t("IF SELECTED","SELECT होने पर")}</span>
+                  <span className="mont" style={{ fontSize:10, fontWeight:800, color:"var(--ink-3)" }}>{t("IF SELECTED","SELECT होने पर")}</span>
                 </div>
               </div>
               {[{icon:IcoBat,role:t("Batsman","बल्लेबाज़"),price:inr(fees.phase2.bat)},{icon:IcoBall,role:t("Bowler","गेंदबाज़"),price:inr(fees.phase2.bowl)},{icon:IcoShield,role:t("Wicket-keeper","विकेट-कीपर"),price:inr(fees.phase2.wk)},{icon:IcoStar,role:t("All-Rounder","ऑल-राउंडर"),price:inr(fees.phase2.ar)}].map(r=>(
@@ -641,7 +641,7 @@ export function Home() {
                   <span className="mont" style={{ fontWeight:900, fontSize:18, color:"#E8B23D" }}>{r.price}</span>
                 </div>
               ))}
-              <p style={{ fontSize:12, color:"rgba(255,255,255,.35)", marginTop:14, lineHeight:1.6 }}>{t("Includes: Physical trial entry · Franchise auction eligibility · Season 5 participation","शामिल: Physical trial entry · Auction eligibility · Season 5 participation")}</p>
+              <p style={{ fontSize:12, color:"var(--ink-3)", marginTop:14, lineHeight:1.6 }}>{t("Includes: Physical trial entry · Franchise auction eligibility · Season 5 participation","शामिल: Physical trial entry · Auction eligibility · Season 5 participation")}</p>
               {/* §16 wording: Phase 2 fee = participation fee for qualified players only.
                   Never "selection fee", never a flat "non-refundable" (the Refund Policy
                   has express exceptions), never payment→selection. */}
@@ -660,13 +660,13 @@ export function Home() {
           <div style={{ marginTop:20, padding:"20px 24px", background:"rgba(255,122,41,.05)", border:"1px solid rgba(255,122,41,.2)", borderRadius:16, display:"flex", flexWrap:"wrap", gap:20, alignItems:"center", justifyContent:"space-between" }}>
             <div>
               <div className="mont" style={{ fontWeight:900, fontSize:14, color:"#FF7A29" }}>{t("Maximum Total Cost (Full Journey)","अधिकतम कुल लागत (पूरा सफर)")}</div>
-              <div style={{ fontSize:13, color:"rgba(255,255,255,.45)", marginTop:4 }}>{t("Phase 1 + Phase 2 combined, if fully selected","Phase 1 + Phase 2 मिलाकर, पूरी तरह select होने पर")}</div>
+              <div style={{ fontSize:13, color:"var(--ink-3)", marginTop:4 }}>{t("Phase 1 + Phase 2 combined, if fully selected","Phase 1 + Phase 2 मिलाकर, पूरी तरह select होने पर")}</div>
             </div>
             <div style={{ display:"flex", gap:16, flexWrap:"wrap" }}>
               {[{label:"Bat/Bowl/WK",total:inr(fees.phase1.bat + fees.phase2.bat) + " + GST"},{label:t("All-Rounder","ऑल-राउंडर"),total:inr(fees.phase1.ar + fees.phase2.ar) + " + GST"}].map(x=>(
                 <div key={x.total} style={{ textAlign:"center" }}>
                   <div className="mont" style={{ fontWeight:900, fontSize:24, color:"#fff" }}>{x.total}</div>
-                  <div style={{ fontSize:11, color:"rgba(255,255,255,.35)" }}>{x.label}</div>
+                  <div style={{ fontSize:11, color:"var(--ink-3)" }}>{x.label}</div>
                 </div>
               ))}
             </div>
@@ -675,7 +675,7 @@ export function Home() {
       </section>
 
       {/* ══ 6 · REAL PLAYERS. REAL AUCTIONS. REAL STADIUMS. ══ */}
-      <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#060C18", position:"relative", overflow:"hidden" }}>
+      <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#0E1420", position:"relative", overflow:"hidden" }}>
         <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 70% 60% at 50% 100%,rgba(232,178,61,.04) 0%,transparent 65%)", pointerEvents:"none" }}/>
         <div className="W" style={{ position:"relative", zIndex:1 }}>
           <div className="slbl">{t("Season 4 · On the ground","Season 4 · ज़मीन पर")}</div>
@@ -684,7 +684,7 @@ export function Home() {
               {t("Real players.","असली players।")} <span className="shim-gold">{t("Real auctions.","असली auctions।")}</span> {t("Real stadiums.","असली stadiums।")}
             </h2>
           </div>
-          <p style={{ fontSize:15, color:"rgba(255,255,255,.45)", marginBottom:30, maxWidth:560 }}>
+          <p style={{ fontSize:15, color:"var(--ink-3)", marginBottom:30, maxWidth:560 }}>
             {t("Not mockups — photographs from BCPL's own launches, auctions and match days.",
                "Mockup नहीं — BCPL के अपने launch events, auction और match days की असली तस्वीरें।")}
           </p>
@@ -705,20 +705,20 @@ export function Home() {
 
       {/* ══ 7 · REAL PLAYER STORIES — renders only with verified players ══ */}
       {STORIES.length > 0 && (
-        <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#06101E" }}>
+        <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"var(--bg)" }}>
           <div className="W">
             <div className="slbl">{t("Real Stories","असली कहानियाँ")}</div>
             <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4.2vw,46px)", color:"#fff", textTransform:"uppercase", lineHeight:1.1, marginBottom:8 }}>
               {t("They were working professionals.","वे working professionals थे।")}<br/>
               <span className="shim-gold">{t("Then BCPL called.","फिर BCPL की call आई।")}</span>
             </h2>
-            <p style={{ fontSize:15, color:"rgba(255,255,255,.45)", marginBottom:34, maxWidth:560 }}>
+            <p style={{ fontSize:15, color:"var(--ink-3)", marginBottom:34, maxWidth:560 }}>
               {t("Real players from past seasons — proof that the fair-chance promise is real.","पिछले seasons के असली players — इस बात का सबूत कि fair chance का वादा सच है।")}
             </p>
             <div className="story-grid">
               {STORIES.map(s=>(
                 <div key={s.name} className="card" style={{ overflow:"hidden" }}>
-                  <div style={{ position:"relative", aspectRatio:"4/3", background:"#0C1C30" }}>
+                  <div style={{ position:"relative", aspectRatio:"4/3", background:"#142438" }}>
                     <img src={s.photo} alt={s.name} style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover" }}
                       onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
                     <div style={{ position:"absolute", inset:0, background:"linear-gradient(0deg,rgba(4,10,20,.75) 0%,transparent 50%)" }}/>
@@ -728,7 +728,7 @@ export function Home() {
                     </div>
                   </div>
                   <div style={{ padding:"14px 16px 16px" }}>
-                    <div className="mont" style={{ display:"inline-flex", alignItems:"center", gap:6, fontSize:11, fontWeight:800, letterSpacing:".08em", color:"rgba(255,255,255,.4)", textTransform:"uppercase", marginBottom:8 }}><IcoPin size={14} style={{ color:"rgba(255,255,255,.4)" }} />{s.city} → {s.team}</div>
+                    <div className="mont" style={{ display:"inline-flex", alignItems:"center", gap:6, fontSize:11, fontWeight:800, letterSpacing:".08em", color:"var(--ink-3)", textTransform:"uppercase", marginBottom:8 }}><IcoPin size={14} style={{ color:"var(--ink-3)" }} />{s.city} → {s.team}</div>
                     <p style={{ fontSize:13, color:"rgba(255,255,255,.6)", lineHeight:1.65, fontStyle:"italic" }}>"{t(s.quoteEn, s.quoteHi)}"</p>
                     {s.videoUrl && (
                       <button className="btn-ghost" style={{ fontSize:11, padding:"9px 16px", marginTop:12 }} onClick={()=>showVideo(s.videoUrl!)}>▶ {t("Watch the story","कहानी देखें")}</button>
@@ -742,13 +742,13 @@ export function Home() {
       )}
 
       {/* ══ 8 · SOURAV GANGULY × BCPL — full-width cinematic ══ */}
-      <section className="rv" style={{ padding:"clamp(54px,7vw,96px) 0", background:"linear-gradient(180deg,#081222,#06101E)", position:"relative", overflow:"hidden" }}>
+      <section className="rv" style={{ padding:"clamp(54px,7vw,96px) 0", background:"linear-gradient(180deg,#101A2A,var(--bg))", position:"relative", overflow:"hidden" }}>
         <div style={{ position:"absolute", top:"-30%", right:"-15%", width:"55%", height:"160%", background:"radial-gradient(ellipse,rgba(232,178,61,.09) 0%,transparent 65%)", pointerEvents:"none" }}/>
         <div style={{ position:"absolute", bottom:"-40%", left:"-10%", width:"45%", height:"120%", background:"radial-gradient(ellipse,rgba(255,122,41,.05) 0%,transparent 65%)", pointerEvents:"none" }}/>
         <div className="W" style={{ position:"relative", zIndex:1 }}>
           <div className="amb-wrap">
             {/* Photo */}
-            <div style={{ position:"relative", borderRadius:24, overflow:"hidden", border:"1px solid rgba(232,178,61,.35)", boxShadow:"0 30px 80px rgba(0,0,0,.55)", background:"linear-gradient(180deg,#101c2e,#0A1727)" }}>
+            <div style={{ position:"relative", borderRadius:24, overflow:"hidden", border:"1px solid rgba(232,178,61,.35)", boxShadow:"0 30px 80px rgba(0,0,0,.55)", background:"linear-gradient(180deg,#101c2e,#121F2F)" }}>
               <img src={BASE + "bcpl-assets/ambassador-b.webp"} alt="Sourav Ganguly — BCPL Brand Ambassador"
                 style={{ width:"100%", height:"auto", display:"block", filter:"contrast(1.05)" }}
                 onError={e=>{(e.currentTarget as HTMLImageElement).src = BASE + "bcpl-assets/ganguly_2.jpg";}}/>
@@ -789,7 +789,7 @@ export function Home() {
       </section>
 
       {/* ══ 9 · SEASON 5 FRANCHISES ══ */}
-      <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#060C18" }}>
+      <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#0E1420" }}>
         <div className="W">
           <div className="slbl">{t("Franchises","फ्रैंचाइज़ी")}</div>
           <div style={{ display:"flex", alignItems:"flex-end", justifyContent:"space-between", gap:16, flexWrap:"wrap", marginBottom:34 }}>
@@ -800,7 +800,7 @@ export function Home() {
             {TEAMS.map(tm=>(
               <div key={tm.name} className="fr-card" role="link" tabIndex={0} aria-label={"View "+tm.name+" squad"}
                 onClick={()=>navigate("/teams")} onKeyDown={e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); navigate("/teams"); } }}
-                style={{ background:`linear-gradient(170deg,${tm.color}26 0%,#0A1727 55%)`, borderColor:`${tm.color}30` }}
+                style={{ background:`linear-gradient(170deg,${tm.color}26 0%,#121F2F 55%)`, borderColor:`${tm.color}30` }}
                 onMouseEnter={e=>{ e.currentTarget.style.boxShadow=`0 16px 40px ${tm.color}30`; e.currentTarget.style.borderColor=`${tm.color}70`; }}
                 onMouseLeave={e=>{ e.currentTarget.style.boxShadow=""; e.currentTarget.style.borderColor=`${tm.color}30`; }}>
                 <div style={{ position:"absolute", top:-24, right:-24, width:90, height:90, borderRadius:"50%", background:`${tm.color}12`, pointerEvents:"none" }}/>
@@ -816,7 +816,7 @@ export function Home() {
       {/* Sponsors show ONLY in the footer strip (owner call, Jul 2026) — full wall lives at /sponsors. */}
 
       {/* ══ 10 · THIS IS BCPL — the film ══ */}
-      <section className="rv" style={{ position:"relative", overflow:"hidden", background:"#040A14" }}>
+      <section className="rv" style={{ position:"relative", overflow:"hidden", background:"#0C121C" }}>
         <img src={BASE + "bcpl-assets/event-stage-trophy.webp"} alt="" aria-hidden="true"
           style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", objectPosition:"center 40%", opacity:.25 }}
           onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
@@ -839,7 +839,7 @@ export function Home() {
       </section>
 
       {/* ══ 11 · MATCH CENTER & LEADERBOARD — always on ══ */}
-      <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#060C18", position:"relative", overflow:"hidden" }}>
+      <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#0E1420", position:"relative", overflow:"hidden" }}>
         <div style={{ position:"absolute", inset:0, backgroundImage:"linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px)", backgroundSize:"48px 48px", pointerEvents:"none" }}/>
         <div className="W" style={{ position:"relative", zIndex:1 }}>
           <div className="slbl">{t("Live Season","लाइव सीज़न")}</div>
@@ -849,14 +849,14 @@ export function Home() {
             {/* ── Matches column ── */}
             <div>
               <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16 }}>
-                <div className="mont" style={{ fontSize:11, fontWeight:800, letterSpacing:".12em", color:"rgba(255,255,255,.4)", textTransform:"uppercase" }}>{t("Recent & Upcoming","हाल के और आगामी मैच")}</div>
+                <div className="mont" style={{ fontSize:11, fontWeight:800, letterSpacing:".12em", color:"var(--ink-3)", textTransform:"uppercase" }}>{t("Recent & Upcoming","हाल के और आगामी मैच")}</div>
                 <Link href="/match-center" style={{ fontSize:12, color:"#FF7A29", textDecoration:"none", fontWeight:700 }}>{t("View all","सभी देखें")} →</Link>
               </div>
               {liveMatches.length === 0 ? (
                 <div className="card" style={{ padding:"34px 24px", textAlign:"center", borderStyle:"dashed", borderColor:"rgba(255,255,255,.12)" }}>
-                  <div style={{ display:"flex", justifyContent:"center", marginBottom:10 }}><IcoStadium size={34} style={{ color:"rgba(255,255,255,.4)" }} /></div>
+                  <div style={{ display:"flex", justifyContent:"center", marginBottom:10 }}><IcoStadium size={34} style={{ color:"var(--ink-3)" }} /></div>
                   <div className="mont" style={{ fontWeight:800, fontSize:15, color:"#fff", marginBottom:6 }}>{t("Fixtures drop before the season opener","Season से पहले fixtures आएँगे")}</div>
-                  <p style={{ fontSize:13, color:"rgba(255,255,255,.45)", lineHeight:1.6, marginBottom:16 }}>{t("Season 5 matches: Sep – Oct 2027. Register now — you might be playing in one.","Season 5 के मैच: Sep – Oct 2027 । अभी register करें — हो सकता है इनमें आप खेलें।")}</p>
+                  <p style={{ fontSize:13, color:"var(--ink-3)", lineHeight:1.6, marginBottom:16 }}>{t("Season 5 matches: Sep – Oct 2027. Register now — you might be playing in one.","Season 5 के मैच: Sep – Oct 2027 । अभी register करें — हो सकता है इनमें आप खेलें।")}</p>
                   <Link href="/schedule" style={{ fontSize:12, color:"#FF7A29", textDecoration:"none", fontWeight:700 }}>{t("See full schedule","पूरा schedule देखें")} →</Link>
                 </div>
               ) : (
@@ -867,7 +867,7 @@ export function Home() {
                     const isLive = status==="LIVE";
                     return (
                       <div key={m.id||m.matchNo} role="link" tabIndex={0} aria-label="Open Match Center"
-                        onClick={()=>navigate("/match-center")} onKeyDown={e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); navigate("/match-center"); } }} style={{ background:"linear-gradient(135deg,#0A1727,#060C18)", border:`1px solid ${isLive?"rgba(239,68,68,.35)":"rgba(255,255,255,.07)"}`, borderRadius:14, padding:"14px 16px", cursor:"pointer", transition:"transform .2s,border-color .2s" }}
+                        onClick={()=>navigate("/match-center")} onKeyDown={e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); navigate("/match-center"); } }} style={{ background:"linear-gradient(135deg,#121F2F,#0E1420)", border:`1px solid ${isLive?"rgba(239,68,68,.35)":"rgba(255,255,255,.07)"}`, borderRadius:14, padding:"14px 16px", cursor:"pointer", transition:"transform .2s,border-color .2s" }}
                         onMouseEnter={e=>{ (e.currentTarget as HTMLElement).style.transform="translateY(-2px)"; }}
                         onMouseLeave={e=>{ (e.currentTarget as HTMLElement).style.transform=""; }}>
                         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:12 }}>
@@ -885,7 +885,7 @@ export function Home() {
                               <span className="mont" style={{ fontSize:9, fontWeight:800, color:"#22C55E", letterSpacing:".1em" }}>RESULT</span>
                             </div>
                           )}
-                          <span style={{ fontSize:10, color:"rgba(255,255,255,.3)" }}>Match {m.matchNo} · {m.venue}</span>
+                          <span style={{ fontSize:10, color:"var(--ink-3)" }}>Match {m.matchNo} · {m.venue}</span>
                         </div>
                         <div style={{ display:"flex", alignItems:"center", gap:8 }}>
                           <div style={{ flex:1, display:"flex", alignItems:"center", gap:8 }}>
@@ -911,14 +911,14 @@ export function Home() {
             {/* ── Leaderboard column ── */}
             <div>
               <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16 }}>
-                <div className="mont" style={{ fontSize:11, fontWeight:800, letterSpacing:".12em", color:"rgba(255,255,255,.4)", textTransform:"uppercase" }}>{t("Points Table — Season 5","पॉइंट्स टेबल — सीज़न 5")}</div>
+                <div className="mont" style={{ fontSize:11, fontWeight:800, letterSpacing:".12em", color:"var(--ink-3)", textTransform:"uppercase" }}>{t("Points Table — Season 5","पॉइंट्स टेबल — सीज़न 5")}</div>
                 <Link href="/points-table" style={{ fontSize:12, color:"#FF7A29", textDecoration:"none", fontWeight:700 }}>{t("Full table","पूरी टेबल")} →</Link>
               </div>
               {liveTable.length === 0 ? (
                 <div className="card" style={{ padding:"34px 24px", textAlign:"center", borderStyle:"dashed", borderColor:"rgba(255,255,255,.12)" }}>
-                  <div style={{ display:"flex", justifyContent:"center", marginBottom:10 }}><IcoList size={34} style={{ color:"rgba(255,255,255,.4)" }} /></div>
+                  <div style={{ display:"flex", justifyContent:"center", marginBottom:10 }}><IcoList size={34} style={{ color:"var(--ink-3)" }} /></div>
                   <div className="mont" style={{ fontWeight:800, fontSize:15, color:"#fff", marginBottom:6 }}>{t("The leaderboard goes live with the first ball","पहली गेंद के साथ leaderboard live होगा")}</div>
-                  <p style={{ fontSize:13, color:"rgba(255,255,255,.45)", lineHeight:1.6, marginBottom:18 }}>{t("10 franchises. One trophy. Standings update ball-by-ball during Season 5.","10 franchises । एक trophy । Season 5 में हर गेंद पर standings update होंगी।")}</p>
+                  <p style={{ fontSize:13, color:"var(--ink-3)", lineHeight:1.6, marginBottom:18 }}>{t("10 franchises. One trophy. Standings update ball-by-ball during Season 5.","10 franchises । एक trophy । Season 5 में हर गेंद पर standings update होंगी।")}</p>
                   <div style={{ display:"flex", justifyContent:"center", flexWrap:"wrap", gap:8 }}>
                     {TEAMS.map(tm=>(
                       <img key={tm.slug} src={`${L}${tm.slug}.png`} alt={tm.name} title={tm.name} style={{ width:30, height:30, objectFit:"contain", opacity:.75 }} onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
@@ -926,10 +926,10 @@ export function Home() {
                   </div>
                 </div>
               ) : (
-                <div style={{ background:"linear-gradient(135deg,#0A1727,#060C18)", border:"1px solid rgba(255,255,255,.07)", borderRadius:14, overflow:"hidden" }}>
+                <div style={{ background:"linear-gradient(135deg,#121F2F,#0E1420)", border:"1px solid rgba(255,255,255,.07)", borderRadius:14, overflow:"hidden" }}>
                   <div style={{ display:"grid", gridTemplateColumns:"28px 1fr 30px 30px 30px 44px 50px", padding:"10px 14px", borderBottom:"1px solid rgba(255,255,255,.07)" }}>
                     {["#","Team","P","W","L","Pts","NRR"].map(h=>(
-                      <div key={h} className="mont" style={{ fontSize:9, fontWeight:800, color:"rgba(255,255,255,.3)", letterSpacing:".1em", textAlign: h==="Team"?"left":"center" }}>{h}</div>
+                      <div key={h} className="mont" style={{ fontSize:9, fontWeight:800, color:"var(--ink-3)", letterSpacing:".1em", textAlign: h==="Team"?"left":"center" }}>{h}</div>
                     ))}
                   </div>
                   {liveTable.map((r:any, i:number, arr:any[])=>{
@@ -953,7 +953,7 @@ export function Home() {
                   })}
                   <div style={{ padding:"9px 14px", background:"rgba(255,122,41,.04)", borderTop:"1px solid rgba(255,122,41,.1)", display:"flex", alignItems:"center", gap:6 }}>
                     <div style={{ width:10, height:10, background:"rgba(255,122,41,.4)", borderRadius:2, flexShrink:0 }}/>
-                    <span style={{ fontSize:10, color:"rgba(255,255,255,.3)" }}>{t("Top 4 qualify for playoffs","Top 4 playoffs में जाएँगी")}</span>
+                    <span style={{ fontSize:10, color:"var(--ink-3)" }}>{t("Top 4 qualify for playoffs","Top 4 playoffs में जाएँगी")}</span>
                   </div>
                 </div>
               )}
@@ -963,11 +963,11 @@ export function Home() {
       </section>
 
       {/* ══ 12 · FAQ ══ */}
-      <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#06101E" }}>
+      <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"var(--bg)" }}>
         <div className="W">
           <div className="slbl">FAQ</div>
           <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(22px,4vw,40px)", color:"#fff", textTransform:"uppercase", marginBottom:8 }}>{t("Frequently Asked Questions","अक्सर पूछे जाने वाले सवाल")}</h2>
-          <p style={{ fontSize:15, color:"rgba(255,255,255,.4)", marginBottom:36 }}>{t("Everything you need to know before registering.","रजिस्टर करने से पहले जो भी जानना ज़रूरी है।")}</p>
+          <p style={{ fontSize:15, color:"var(--ink-3)", marginBottom:36 }}>{t("Everything you need to know before registering.","रजिस्टर करने से पहले जो भी जानना ज़रूरी है।")}</p>
           <div style={{ display:"flex", flexDirection:"column", gap:10, maxWidth:760 }}>
             {FAQ_ITEMS.map((f,i)=>(
               <div key={i} className="card" style={{ overflow:"hidden", transition:"border-color .2s", borderColor:faqOpen===i?"rgba(255,122,41,.4)":"rgba(255,255,255,.07)" }}>
@@ -994,7 +994,7 @@ export function Home() {
       </section>
 
       {/* ══ 13 · FINAL CTA ══ */}
-      <section style={{ position:"relative", overflow:"hidden", background:"#040A14" }}>
+      <section style={{ position:"relative", overflow:"hidden", background:"#0C121C" }}>
         <img src={BASE + "bcpl-assets/stadium-hero.jpg"} alt="" aria-hidden="true"
           style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", objectPosition:"center 60%", opacity:.3 }}
           onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>

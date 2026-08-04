@@ -20,7 +20,7 @@ const COLS: { title: string; links: [string, string][] }[] = [
   { title: "Legal",   links: [["Privacy Policy","/privacy"],["Terms & Conditions","/terms"],["Refund Policy","/refunds"]] },
 ];
 
-const lnk: React.CSSProperties = { fontSize:13, color:"rgba(255,255,255,.38)", textDecoration:"none", display:"block" };
+const lnk: React.CSSProperties = { fontSize:13, color:"var(--ink-3)", textDecoration:"none", display:"block" };
 
 export function BCPLFooter() {
   const [, navigate] = useLocation();
@@ -28,7 +28,7 @@ export function BCPLFooter() {
     <>
     {/* Partners strip — every page, IPL/FIFA style (admin-ranked order) */}
     <FooterSponsorStrip />
-    <footer style={{ background:"#030710", borderTop:"1px solid rgba(255,255,255,.05)", padding:"clamp(36px,5vw,56px) 0 20px", fontFamily:"Montserrat,Inter,sans-serif" }}>
+    <footer style={{ background:"var(--bg-deep)", borderTop:"1px solid rgba(255,255,255,.05)", padding:"clamp(36px,5vw,56px) 0 20px", fontFamily:"Montserrat,Inter,sans-serif" }}>
       <style>{`
         .bcpl-foot-wrap { max-width:1200px; margin:0 auto; padding:0 clamp(16px,4vw,40px); }
         .bcpl-foot-cols { display:grid; grid-template-columns:240px repeat(4,1fr); gap:36px; margin-bottom:36px; }
@@ -57,7 +57,7 @@ export function BCPLFooter() {
                 <span className="s5-badge-text" style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:9, color:"#E8B23D", letterSpacing:".12em" }}>SEASON 5</span>
               </div>
             </Link>
-            <p style={{ fontSize:12, color:"rgba(255,255,255,.3)", lineHeight:1.7, maxWidth:230, marginTop:0, marginBottom:10 }}>
+            <p style={{ fontSize:12, color:"var(--ink-3)", lineHeight:1.7, maxWidth:230, marginTop:0, marginBottom:10 }}>
               India's Corporate Cricket League. From office to stadium — Season 5, 2026–27.
             </p>
             <div style={{ fontSize:11, color:"rgba(232,178,61,.55)", fontWeight:700, marginBottom:6 }}>Brand Ambassador — Sourav Ganguly</div>
@@ -66,7 +66,7 @@ export function BCPLFooter() {
 
           {COLS.map(col => (
             <div key={col.title}>
-              <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:13, letterSpacing:".14em", color:"rgba(255,255,255,.4)", textTransform:"uppercase", marginBottom:12 }}>{col.title}</div>
+              <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:13, letterSpacing:".14em", color:"var(--ink-3)", textTransform:"uppercase", marginBottom:12 }}>{col.title}</div>
               <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
                 {col.links.map(([l,h])=>
                   h === "__login"

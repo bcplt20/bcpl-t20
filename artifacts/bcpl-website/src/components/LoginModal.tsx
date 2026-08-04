@@ -117,7 +117,7 @@ export function LoginModal() {
       display:'flex', alignItems:'center', justifyContent:'center', padding:16,
     }}>
       <div style={{
-        background:'#0A1727', border:'1px solid rgba(255,255,255,0.1)',
+        background:'#121F2F', border:'1px solid rgba(255,255,255,0.1)',
         borderRadius:20, padding:'32px 28px', width:'100%', maxWidth:380,
         boxShadow:'0 24px 80px rgba(0,0,0,0.65)', position:'relative',
         animation:'fadeUp .25s ease both',
@@ -127,7 +127,7 @@ export function LoginModal() {
         {/* Close */}
         <button onClick={close} style={{
           position:'absolute', top:16, right:16, background:'none', border:'none',
-          color:'rgba(255,255,255,0.4)', fontSize:22, cursor:'pointer', lineHeight:1,
+          color:'var(--ink-3)', fontSize:22, cursor:'pointer', lineHeight:1,
         }}>✕</button>
 
         {/* Logo */}
@@ -142,7 +142,7 @@ export function LoginModal() {
         <div style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:20, color:'#fff', marginBottom:6 }}>
           Player Login
         </div>
-        <div style={{ fontFamily:'Inter,sans-serif', fontSize:13, color:'rgba(255,255,255,0.45)', marginBottom:24, lineHeight:1.5 }}>
+        <div style={{ fontFamily:'Inter,sans-serif', fontSize:13, color:'var(--ink-3)', marginBottom:24, lineHeight:1.5 }}>
           {step === 'phone'
             ? 'Enter your registered mobile number'
             : `OTP sent to +91 ${phone}`}
@@ -150,7 +150,7 @@ export function LoginModal() {
 
         {step === 'phone' && (
           <>
-            <label style={{ fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:10, color:'rgba(255,255,255,0.4)', letterSpacing:'.1em', textTransform:'uppercase', display:'block', marginBottom:8 }}>Mobile Number</label>
+            <label style={{ fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:10, color:'var(--ink-3)', letterSpacing:'.1em', textTransform:'uppercase', display:'block', marginBottom:8 }}>Mobile Number</label>
             <div style={{ display:'flex', gap:10, marginBottom:18 }}>
               <div style={{ background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.12)', borderRadius:10, padding:'12px 14px', fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:14, color:'rgba(255,255,255,0.5)', flexShrink:0 }}>+91</div>
               <input
@@ -170,7 +170,7 @@ export function LoginModal() {
             >
               {sending ? 'Sending…' : 'Send OTP →'}
             </button>
-            <div style={{ marginTop:16, textAlign:'center', fontFamily:'Inter,sans-serif', fontSize:12, color:'rgba(255,255,255,0.3)' }}>
+            <div style={{ marginTop:16, textAlign:'center', fontFamily:'Inter,sans-serif', fontSize:12, color:'var(--ink-3)' }}>
               New player?{' '}
               <a href={import.meta.env.BASE_URL + 'register'} style={{ color:'#FF7A29', textDecoration:'none', fontWeight:600 }}>Register here →</a>
             </div>
@@ -184,7 +184,7 @@ export function LoginModal() {
                 <span style={{ fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:9, letterSpacing:'.1em', color:'#22C55E', background:'rgba(34,197,94,0.15)', border:'1px solid rgba(34,197,94,0.4)', borderRadius:4, padding:'1px 6px', marginRight:6 }}>DEV</span><strong>Dev mode OTP:</strong> <span style={{ fontFamily:'monospace', fontSize:16, color:'#22C55E', letterSpacing:'.2em' }}>{devOtp}</span>
               </div>
             )}
-            <label style={{ fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:10, color:'rgba(255,255,255,0.4)', letterSpacing:'.1em', textTransform:'uppercase', display:'block', marginBottom:8 }}>Enter OTP</label>
+            <label style={{ fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:10, color:'var(--ink-3)', letterSpacing:'.1em', textTransform:'uppercase', display:'block', marginBottom:8 }}>Enter OTP</label>
             <input
               type="tel" maxLength={6} value={otp}
               onChange={e => setOtp(e.target.value.replace(/\D/g, ''))}
@@ -203,7 +203,7 @@ export function LoginModal() {
             </button>
             <div style={{ textAlign:'center', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
               <button onClick={() => { setStep('phone'); setOtp(''); setErrMsg(''); }}
-                style={{ background:'none', border:'none', color:'rgba(255,255,255,0.35)', fontFamily:'Inter,sans-serif', fontSize:12, cursor:'pointer', textDecoration:'underline' }}>
+                style={{ background:'none', border:'none', color:'var(--ink-3)', fontFamily:'Inter,sans-serif', fontSize:12, cursor:'pointer', textDecoration:'underline' }}>
                 ← Change number
               </button>
               <button

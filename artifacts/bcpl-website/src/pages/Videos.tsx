@@ -10,7 +10,7 @@ import { IcoBell } from '../lib/icons';
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-body { background:#060E1C; }
+body { background:#0E1624; }
 .wrap { max-width:1200px; margin:0 auto; padding:0 20px; }
 .desk-nav { display:none; align-items:center; gap:22px; }
 .ham-btn { display:flex; }
@@ -104,7 +104,7 @@ export function Videos() {
   const openClip = (c: AuctionClip) => setModal({ kind: 'file', src: clipUrl(c.file), loop: c.loop });
 
   return (
-    <div style={{minHeight:'100vh',background:'#060E1C',fontFamily:'Inter,sans-serif',position:'relative'}}>
+    <div style={{minHeight:'100vh',background:'#0E1624',fontFamily:'Inter,sans-serif',position:'relative'}}>
       <style>{CSS}</style>
       <AmbientBg/>
       <SiteHeader active="Videos" />
@@ -131,7 +131,7 @@ export function Videos() {
               <h2 className="v3-h" style={{fontSize:'clamp(22px,3.5vw,32px)',color:'#fff'}}>
                 {t("Season 4 Auction","Season 4 Auction")}
               </h2>
-              <div style={{fontFamily:'Inter,sans-serif',fontSize:13,color:'rgba(255,255,255,0.45)',marginTop:4}}>
+              <div style={{fontFamily:'Inter,sans-serif',fontSize:13,color:'var(--ink-3)',marginTop:4}}>
                 {t("The full live stream and official clips from the BCPL Season 4 player auction","BCPL Season 4 player auction का पूरा live stream और official clips")}
               </div>
             </div>
@@ -140,7 +140,7 @@ export function Videos() {
 
           {/* Featured: full auction stream (YouTube) */}
           <div className="feat-card" onClick={() => setModal({ kind: 'yt', id: AUCTION_STREAM.ytId })}
-            style={{aspectRatio:'16/9',maxHeight:520,width:'100%',background:'#0A1727',marginBottom:14}}>
+            style={{aspectRatio:'16/9',maxHeight:520,width:'100%',background:'#121F2F',marginBottom:14}}>
             <img src={clipUrl('auc-clip-01.jpg')} alt={t("BCPL Season 4 auction full stream","BCPL Season 4 auction का पूरा stream")}
               style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',opacity:0.85}} loading="eager" decoding="async"/>
             <div style={{position:'absolute',inset:0,background:'linear-gradient(0deg,rgba(3,7,15,0.85) 0%,transparent 55%)'}}/>
@@ -175,14 +175,14 @@ export function Videos() {
             <h3 className="v3-h" style={{fontSize:'clamp(18px,2.6vw,24px)',color:'#fff'}}>
               {t("Auction Floor Clips","Auction Floor की Clips")}
             </h3>
-            <div style={{fontFamily:'Inter,sans-serif',fontSize:13,color:'rgba(255,255,255,0.45)',marginTop:4}}>
+            <div style={{fontFamily:'Inter,sans-serif',fontSize:13,color:'var(--ink-3)',marginTop:4}}>
               {t("Short official clips shot at the Season 4 auction","Season 4 auction पर shoot हुई short official clips")}
             </div>
           </div>
           <div className="video-grid">
             {AUCTION_CLIPS.map((c,i)=>(
               <div key={c.file} className="video-card" style={{animation:`fadeSlide 0.5s ease ${(i%3)*0.1}s both`}} onClick={()=>openClip(c)}>
-                <div className="video-thumb" style={{aspectRatio:'16/9',background:'#0A1727',marginBottom:12}}>
+                <div className="video-thumb" style={{aspectRatio:'16/9',background:'#121F2F',marginBottom:12}}>
                   <img src={clipUrl(c.poster)} alt={t(c.title, c.titleHi)} loading={i < 3 ? 'eager' : 'lazy'} decoding="async"
                     style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover'}}/>
                   <PlayButton size={44}/>
@@ -195,7 +195,7 @@ export function Videos() {
                   <h3 style={{fontFamily:'var(--font-head)',fontWeight:700,fontSize:15,color:'#fff',marginBottom:6,lineHeight:1.4}}>{t(c.title, c.titleHi)}</h3>
                   <div style={{display:'flex',alignItems:'center',gap:6}}>
                     <div style={{width:20,height:20,borderRadius:'50%',background:'linear-gradient(135deg,#FF7A29,#C94E0E)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:10,flexShrink:0}}>▶</div>
-                    <span style={{color:'rgba(255,255,255,0.45)',fontSize:12,fontFamily:'Inter,sans-serif'}}>BCPL TV</span>
+                    <span style={{color:'var(--ink-3)',fontSize:12,fontFamily:'Inter,sans-serif'}}>BCPL TV</span>
                   </div>
                 </div>
               </div>
@@ -210,7 +210,7 @@ export function Videos() {
           <div className="glass-card" style={{padding:'clamp(20px,5vw,48px) clamp(16px,4vw,48px)',textAlign:'center',maxWidth:640,margin:'0 auto',border:'1px solid rgba(255,122,41,0.15)'}}>
             <div style={{fontSize:44,marginBottom:12,color:'#FF0000',lineHeight:1}}>▶</div>
             <h3 className="v3-h" style={{fontSize:28,color:'#fff',marginBottom:6}}>{t("Subscribe to BCPL TV","BCPL TV Subscribe करें")}</h3>
-            <div style={{color:'rgba(255,255,255,0.4)',fontSize:14,marginBottom:24,fontFamily:'Inter,sans-serif'}}>{t("23K subscribers · Match highlights & league videos","23K subscribers · Match highlights और league videos")}</div>
+            <div style={{color:'var(--ink-3)',fontSize:14,marginBottom:24,fontFamily:'Inter,sans-serif'}}>{t("23K subscribers · Match highlights & league videos","23K subscribers · Match highlights और league videos")}</div>
             <div style={{display:'flex',gap:14,justifyContent:'center',flexWrap:'wrap'}}>
               <a href="https://www.youtube.com/@bcplt20league" target="_blank" rel="noopener noreferrer" style={{padding:'14px 36px',borderRadius:14,background:'#FF0000',border:'none',color:'#fff',fontFamily:'var(--font-head)',fontWeight:800,fontSize:15,cursor:'pointer',display:'flex',alignItems:'center',gap:8,letterSpacing:'0.02em',textDecoration:'none'}}>
                 <span>▶</span> {t("Subscribe","Subscribe")}

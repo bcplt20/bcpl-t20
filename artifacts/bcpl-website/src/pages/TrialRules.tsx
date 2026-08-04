@@ -141,7 +141,7 @@ export function TrialRules() {
   ];
 
   return (
-    <div style={{background:'#060E1C',minHeight:'100vh',fontFamily:'Inter,sans-serif',color:'#F8F4EE',paddingBottom:80,overflowX:'hidden'}}>
+    <div style={{background:'#0E1624',minHeight:'100vh',fontFamily:'Inter,sans-serif',color:'#F8F4EE',paddingBottom:80,overflowX:'hidden'}}>
       <style>{css}</style>
       <div style={{position:'fixed',inset:0,zIndex:0,pointerEvents:'none',overflow:'hidden'}}>
         <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 80% 60% at 20% 40%, rgba(255,122,41,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 20%, rgba(30,64,175,0.12) 0%, transparent 60%)'}}/>
@@ -158,7 +158,7 @@ export function TrialRules() {
               <span className="shimmer-gold" style={{display:'block'}}>TRIAL RULES.</span>
             </h1>
             <p style={{color:'rgba(255,255,255,0.5)',fontSize:13,fontWeight:600,letterSpacing:'0.05em',marginTop:16,fontFamily:'Montserrat,sans-serif'}}>Season 5 · Summary of the standardised trial process</p>
-            <p style={{color:'rgba(255,255,255,0.35)',fontSize:12,marginTop:6,fontFamily:'Inter,sans-serif'}}>यह दस्तावेज़ English में मान्य है · This document is authoritative in English.</p>
+            <p style={{color:'var(--ink-3)',fontSize:12,marginTop:6,fontFamily:'Inter,sans-serif'}}>यह दस्तावेज़ English में मान्य है · This document is authoritative in English.</p>
             <p style={{color:'rgba(255,255,255,0.65)',fontSize:'clamp(14px,2vw,16px)',lineHeight:1.7,maxWidth:640,margin:'16px auto 0'}}>
               How the BCPL physical trial works: your attempts, how scoring happens, what evaluators see, when results come, and exactly what Auction Pool qualification does — and does not — mean.
             </p>
@@ -210,15 +210,15 @@ export function TrialRules() {
                       <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:10}}>
                         <span style={{color:'#E8B23D',display:'inline-flex',alignItems:'center'}}><r.icon size={20}/></span>
                         <span style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:14,color:'#E8B23D',letterSpacing:'.04em'}}>{r.role}</span>
-                        <span style={{marginLeft:'auto',fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:12,color:'rgba(255,255,255,0.4)'}}>/ 100</span>
+                        <span style={{marginLeft:'auto',fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:12,color:'var(--ink-3)'}}>/ 100</span>
                       </div>
                       {r.cats.map(k=>(
                         <div key={k} className="rubric-row">
                           <span style={{color:'rgba(255,255,255,0.65)'}}>{k}</span>
-                          <span style={{color:'rgba(255,255,255,0.4)',fontWeight:700,flexShrink:0,fontSize:11}}>weight TBP</span>
+                          <span style={{color:'var(--ink-3)',fontWeight:700,flexShrink:0,fontSize:11}}>weight TBP</span>
                         </div>
                       ))}
-                      <p style={{fontSize:11,color:'rgba(255,255,255,0.4)',lineHeight:1.6,marginTop:10}}>{r.note}</p>
+                      <p style={{fontSize:11,color:'var(--ink-3)',lineHeight:1.6,marginTop:10}}>{r.note}</p>
                     </div>
                   ))}
                 </div>

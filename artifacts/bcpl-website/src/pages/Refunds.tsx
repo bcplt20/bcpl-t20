@@ -31,10 +31,10 @@ export function Refunds() {
     .glass-card{background:linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85));backdrop-filter:blur(32px);border:1px solid rgba(255,255,255,0.09);border-radius:20px;box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06);}
     .shimmer-gold{background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D,#F5C842,#E8B23D);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 3s linear infinite;}
     .tag-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,122,41,0.12);border:1px solid rgba(255,122,41,0.3);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:700;font-family:Montserrat,sans-serif;color:#FF7A29;letter-spacing:0.1em;}
-    .inp{width:100%;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.1);border-radius:14px;color:#F8F4EE;padding:15px 18px;font-family:Inter,sans-serif;font-size:15px;outline:none;transition:all 0.25s;appearance:none;}
+    .inp{width:100%;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.1);border-radius:14px;color:#F8F4EE;padding:15px 18px;font-family:Inter,sans-serif;font-size:16px;outline:none;transition:all 0.25s;appearance:none;}
     .inp:focus{border-color:#FF7A29;background:rgba(255,122,41,0.06);box-shadow:0 0 0 4px rgba(255,122,41,0.12);}
     .inp::placeholder{color:rgba(255,255,255,0.28);}
-    .lbl{font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:8px;display:block;}
+    .lbl{font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-3);margin-bottom:8px;display:block;}
     .footer-grid{grid-template-columns:1fr!important;}
     @media(min-width:640px){.footer-grid{grid-template-columns:1fr 1fr!important;}}
     .float-reg-btn{position:fixed;bottom:28px;right:28px;z-index:900;background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:12px;color:#fff;font-family:Montserrat,sans-serif;font-weight:900;font-size:13px;letter-spacing:.06em;cursor:pointer;padding:14px 22px;text-transform:uppercase;text-decoration:none;display:flex;align-items:center;gap:8px;box-shadow:0 8px 32px rgba(255,122,41,0.45);clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%);transition:opacity .2s,transform .15s;}
@@ -63,13 +63,13 @@ export function Refunds() {
   ];
 
   return (
-    <div style={{background:'#060E1C',minHeight:'100vh',fontFamily:'Inter,sans-serif',color:'#F8F4EE',paddingBottom:80,overflowX:'hidden'}}>
+    <div style={{background:'#0E1624',minHeight:'100vh',fontFamily:'Inter,sans-serif',color:'#F8F4EE',paddingBottom:80,overflowX:'hidden'}}>
       <style>{css}</style>
       <div style={{position:'fixed',inset:0,zIndex:0,pointerEvents:'none',overflow:'hidden'}}>
         <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 80% 60% at 20% 40%, rgba(255,122,41,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 20%, rgba(30,64,175,0.12) 0%, transparent 60%)'}}/>
         <svg style={{position:'absolute',bottom:0,left:0,right:0,width:'100%',opacity:0.07}} viewBox="0 0 1440 400" preserveAspectRatio="none">
           <path d="M0,400 L0,200 Q360,80 720,80 Q1080,80 1440,200 L1440,400 Z" fill="#1a2a4a"/>
-          <rect x="680" y="200" width="80" height="200" fill="#0d1a33"/>
+          <rect x="680" y="200" width="80" height="200" fill="#15223B"/>
           <line x1="200" y1="0" x2="260" y2="200" stroke="#E8B23D" strokeWidth="3"/>
           <line x1="200" y1="0" x2="140" y2="200" stroke="#E8B23D" strokeWidth="3"/>
           <circle cx="200" cy="0" r="8" fill="#E8B23D"/>
@@ -93,7 +93,7 @@ export function Refunds() {
               <span style={{color:'#fff',display:'block'}}>REFUND &</span>
               <span className="shimmer-gold" style={{display:'block'}}>CANCELLATION.</span>
             </h1>
-            <p style={{color:'rgba(255,255,255,0.35)',fontSize:12,marginTop:16,fontFamily:'Inter,sans-serif'}}>यह दस्तावेज़ English में मान्य है · This document is authoritative in English.</p>
+            <p style={{color:'var(--ink-3)',fontSize:12,marginTop:16,fontFamily:'Inter,sans-serif'}}>यह दस्तावेज़ English में मान्य है · This document is authoritative in English.</p>
             <p style={{color:'rgba(255,255,255,0.65)',fontSize:'clamp(14px,2vw,16px)',lineHeight:1.7,maxWidth:600,margin:'16px auto 0'}}>
               This policy sets out, by scenario, when a refund applies under the BCPL two-phase process and when it does not.
             </p>
@@ -118,7 +118,7 @@ export function Refunds() {
                   <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:12,color:'#FF7A29',lineHeight:1.3}}>Phase 1<br/>fee paid</div>
                 </div>
                 <div style={{display:'flex',flexDirection:'column',alignItems:'center',padding:'0 6px',flexShrink:0}}>
-                  <div style={{color:'rgba(255,255,255,0.4)',fontSize:20,lineHeight:1}}>→</div>
+                  <div style={{color:'var(--ink-3)',fontSize:20,lineHeight:1}}>→</div>
                 </div>
                 <div style={{background:'rgba(30,64,175,0.2)',border:'2px solid rgba(59,130,246,0.4)',borderRadius:14,padding:'14px 18px',textAlign:'center',minWidth:130,flexShrink:0}}>
                   <div style={{marginBottom:4,color:'#60A5FA',display:'flex',justifyContent:'center'}}><IcoVideo size={22}/></div>
@@ -144,7 +144,7 @@ export function Refunds() {
                 </div>
               </div>
             </div>
-            <p style={{color:'rgba(255,255,255,0.45)',fontSize:11,marginTop:14,lineHeight:1.6}}>Separate published backstop: if your Phase 1 result is not delivered within 15 working days of video upload, you are entitled to a full refund of your Phase 1 fee under this policy (Scenario A).</p>
+            <p style={{color:'var(--ink-3)',fontSize:11,marginTop:14,lineHeight:1.6}}>Separate published backstop: if your Phase 1 result is not delivered within 15 working days of video upload, you are entitled to a full refund of your Phase 1 fee under this policy (Scenario A).</p>
           </div>
 
           <div style={{background:'rgba(34,197,94,0.1)',border:'2px solid rgba(34,197,94,0.4)',borderLeft:'4px solid #22C55E',borderRadius:16,padding:'16px clamp(16px,4vw,24px)',marginBottom:16,animation:'fadeSlide 0.5s ease 0.15s both'}}>
@@ -334,7 +334,7 @@ export function Refunds() {
                 <button className="btn-fire" style={{width:'100%',height:52,fontSize:16}} onClick={()=>{if(regId.trim()&&reason.trim())setSubmitted(true);}}>
                   Submit Refund Request →
                 </button>
-                <p style={{textAlign:'center',marginTop:14,color:'rgba(255,255,255,0.4)',fontSize:13}}>
+                <p style={{textAlign:'center',marginTop:14,color:'var(--ink-3)',fontSize:13}}>
                   Or email directly: <strong style={{color:'#E8B23D'}}>support@bcplt20.com</strong>
                 </p>
               </>

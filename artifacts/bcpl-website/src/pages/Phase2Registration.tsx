@@ -176,7 +176,7 @@ export function Phase2Registration() {
           <div>
             <div className="card">
               <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 20, color: '#fff', textTransform: 'uppercase', marginBottom: 6 }}>{t("Terms & Declaration", "शर्तें और घोषणा")}</div>
-              <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 13, marginBottom: 24 }}>{t("Please read and confirm each statement carefully", "कृपया ध्यान से पढ़ें और प्रत्येक कथन की पुष्टि करें")}</div>
+              <div style={{ color: 'var(--ink-3)', fontSize: 13, marginBottom: 24 }}>{t("Please read and confirm each statement carefully", "कृपया ध्यान से पढ़ें और प्रत्येक कथन की पुष्टि करें")}</div>
               
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 {[
@@ -209,14 +209,14 @@ export function Phase2Registration() {
           </div>
 
           <div>
-            <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 13, letterSpacing: '.12em', color: 'rgba(255,255,255,0.4)', marginBottom: 12, textTransform: 'uppercase' }}>{t("Phase 2 Entry Fee", "फेज 2 एंट्री फीस")}</div>
+            <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 13, letterSpacing: '.12em', color: 'var(--ink-3)', marginBottom: 12, textTransform: 'uppercase' }}>{t("Phase 2 Entry Fee", "फेज 2 एंट्री फीस")}</div>
             <div className="ticket">
               <div style={{ background: 'linear-gradient(135deg, var(--orange), var(--orange-2))', padding: '24px' }}>
                 <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 11, letterSpacing: '.18em', color: 'rgba(255,255,255,0.8)', marginBottom: 6, textTransform: 'uppercase' }}>BCPL Season 5</div>
                 <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 22, color: '#fff', lineHeight: 1.2, textTransform: 'uppercase' }}>{t("PHASE 2 PHYSICAL TRIAL", "फेज 2 फिजिकल ट्रायल")}</div>
               </div>
               <div style={{ padding: '32px 24px', textAlign: 'center', background: 'var(--panel)' }}>
-                <div style={{ fontFamily: 'var(--font-head)', fontWeight: 700, fontSize: 12, letterSpacing: '.1em', color: 'rgba(255,255,255,0.4)', marginBottom: 8, textTransform: 'uppercase' }}>{t("Entry Fee", "एंट्री फीस")}</div>
+                <div style={{ fontFamily: 'var(--font-head)', fontWeight: 700, fontSize: 12, letterSpacing: '.1em', color: 'var(--ink-3)', marginBottom: 8, textTransform: 'uppercase' }}>{t("Entry Fee", "एंट्री फीस")}</div>
                 <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 56, color: 'var(--orange)', lineHeight: 1 }}>₹{p2b.toLocaleString('en-IN')}</div>
                 <div style={{ marginTop: 10, fontSize: 12.5, color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>
                   {t(`+ ${Math.round(fees.gstRate * 100)}% GST — total payable ₹${withGst(p2b, fees.gstRate).toLocaleString('en-IN')}`,
@@ -232,7 +232,7 @@ export function Phase2Registration() {
                   [t('Reg. ID', 'रजि. आईडी'), regId ? regId.slice(0,8).toUpperCase() : '—'],
                 ].map(([k,v]) => (
                   <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: 13 }}>
-                    <span style={{ color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>{k}</span>
+                    <span style={{ color: 'var(--ink-3)', fontWeight: 600 }}>{k}</span>
                     <span style={{ color: '#fff', fontWeight: 700, textAlign: 'right' }}>{v}</span>
                   </div>
                 ))}

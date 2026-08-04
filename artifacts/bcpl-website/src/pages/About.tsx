@@ -11,7 +11,7 @@ type IcoComp = (p: { size?: number; style?: React.CSSProperties }) => React.Reac
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-body { background:#060E1C; }
+body { background:#0E1624; }
 .wrap { max-width:1200px; margin:0 auto; padding:0 20px; }
 .desk-nav { display:none; align-items:center; gap:22px; }
 .ham-btn { display:flex; }
@@ -113,7 +113,7 @@ export function About() {
   const { t } = useLang();
 
   return (
-    <div style={{minHeight:'100vh',background:'#060E1C',fontFamily:'Inter,sans-serif',position:'relative'}}>
+    <div style={{minHeight:'100vh',background:'#0E1624',fontFamily:'Inter,sans-serif',position:'relative'}}>
       <style>{CSS}</style>
       <AmbientBg/>
       <SiteHeader active="About" />
@@ -140,7 +140,7 @@ export function About() {
             <p style={{color:'rgba(255,255,255,0.88)',fontSize:'clamp(17px,2.2vw,21px)',lineHeight:1.75,fontStyle:'italic'}}>
               {t("Every working professional who watched IPL and thought 'I could have played' deserves a real shot. Millions stopped competitive cricket when work took over. BCPL exists to give them the stage they never got.","हर working professional जो IPL देखते हुए सोचता है 'मैं भी खेल सकता था' — उसे एक असली मौका मिलना चाहिए। लाखों लोगों ने काम की वजह से competitive cricket छोड़ दी। BCPL उन्हें वो stage देने के लिए है जो उन्हें कभी नहीं मिला।")}
             </p>
-            <div style={{marginTop:20,color:'rgba(255,255,255,0.35)',fontSize:13,fontFamily:'var(--font-head)',fontWeight:700,letterSpacing:'0.08em'}}>— {t("BCPL FOUNDING MISSION","BCPL की स्थापना मिशन")}</div>
+            <div style={{marginTop:20,color:'var(--ink-3)',fontSize:13,fontFamily:'var(--font-head)',fontWeight:700,letterSpacing:'0.08em'}}>— {t("BCPL FOUNDING MISSION","BCPL की स्थापना मिशन")}</div>
           </div>
         </div>
       </section>
@@ -153,7 +153,7 @@ export function About() {
               <div key={i} className="glass-card" style={{padding:'36px 24px',textAlign:'center',animation:`countUp 3s ease ${i*0.4}s infinite`}}>
                 <div style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:52,color:'#FF7A29',lineHeight:1,marginBottom:8}}>{s.num}</div>
                 <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:16,color:'#fff',marginBottom:6}}>{t(s.labelEn,s.labelHi)}</div>
-                <div style={{color:'rgba(255,255,255,0.4)',fontSize:12,fontFamily:'Inter,sans-serif'}}>{t(s.subEn,s.subHi)}</div>
+                <div style={{color:'var(--ink-3)',fontSize:12,fontFamily:'Inter,sans-serif'}}>{t(s.subEn,s.subHi)}</div>
               </div>
             ))}
           </div>
@@ -257,7 +257,7 @@ export function About() {
                 <div style={{padding:'16px 18px 20px'}}>
                   <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:15,color:'#fff',marginBottom:4,lineHeight:1.25}}>{m.name}</div>
                   <div style={{fontFamily:'var(--font-head)',fontWeight:700,fontSize:12,color:'#FF7A29',letterSpacing:'.05em',marginBottom:m.sub?2:0}}>{m.role}</div>
-                  {m.sub && <div style={{fontFamily:'Inter,sans-serif',fontSize:11,color:'rgba(255,255,255,0.35)',marginTop:2}}>{m.sub}</div>}
+                  {m.sub && <div style={{fontFamily:'Inter,sans-serif',fontSize:11,color:'var(--ink-3)',marginTop:2}}>{m.sub}</div>}
                 </div>
               </div>
             ))}
@@ -272,13 +272,13 @@ export function About() {
             <div style={{display:'flex',flexWrap:'wrap',gap:32,alignItems:'center',marginBottom:32}}>
               <div style={{flex:1,minWidth:200}}>
                 <div style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:22,color:'#fff',marginBottom:8}}>BCPL T20 Pvt. Ltd.</div>
-                <div style={{color:'rgba(255,255,255,0.4)',fontSize:13,fontFamily:'Inter,sans-serif'}}>Registered Company · India</div>
+                <div style={{color:'var(--ink-3)',fontSize:13,fontFamily:'Inter,sans-serif'}}>Registered Company · India</div>
               </div>
               <div style={{display:'flex',gap:20,flexWrap:'wrap'}}>
                 {[{label:'Registered',val:'Company'},{ label:'Track Record',val:'4 Seasons'},{label:'Players Served',val:'2.5 Lakh+'}].map((b,i)=>(
                   <div key={i} style={{textAlign:'center'}}>
                     <div style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:20,color:'#E8B23D'}}>{b.val}</div>
-                    <div style={{color:'rgba(255,255,255,0.4)',fontSize:11,fontFamily:'Inter,sans-serif'}}>{b.label}</div>
+                    <div style={{color:'var(--ink-3)',fontSize:11,fontFamily:'Inter,sans-serif'}}>{b.label}</div>
                   </div>
                 ))}
               </div>

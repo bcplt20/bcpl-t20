@@ -12,7 +12,7 @@ import { IcoUsers, IcoCheck } from '../lib/icons';
 const SPONSOR_TIERS = [
   { labelEn:'TITLE SPONSOR', labelHi:'TITLE SPONSOR', color:'#E8B23D', descEn:'Exclusive brand visibility across all Season 5 matches, jerseys, and digital platforms.', descHi:'Season 5 के सभी matches, jerseys और digital platforms पर exclusive brand visibility।' },
   { labelEn:'PRESENTING SPONSOR', labelHi:'PRESENTING SPONSOR', color:'#FF7A29', descEn:'Premium partner status with prominent placement at all trial cities and match venues.', descHi:'सभी trial cities और match venues पर prominent placement के साथ premium partner status।' },
-  { labelEn:'ASSOCIATE SPONSOR', labelHi:'ASSOCIATE SPONSOR', color:'rgba(255,255,255,0.4)', descEn:'Targeted brand exposure across BCPL digital channels and city-level events.', descHi:'BCPL digital channels और city-level events पर targeted brand exposure।' },
+  { labelEn:'ASSOCIATE SPONSOR', labelHi:'ASSOCIATE SPONSOR', color:'var(--ink-3)', descEn:'Targeted brand exposure across BCPL digital channels and city-level events.', descHi:'BCPL digital channels और city-level events पर targeted brand exposure।' },
 ];
 
 
@@ -39,7 +39,7 @@ export function Sponsors() {
   const [sent,setSent]=React.useState(false);
 
   return (
-    <div style={{background:'#060E1C',color:'#fff',minHeight:'100vh',overflowX:'hidden',fontFamily:'Inter,sans-serif'}}>
+    <div style={{background:'#0E1624',color:'#fff',minHeight:'100vh',overflowX:'hidden',fontFamily:'Inter,sans-serif'}}>
       <style>{`
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
         .wrap{max-width:1200px;margin:0 auto;padding:0 20px;}
@@ -57,10 +57,10 @@ export function Sponsors() {
         .btn-wa{background:linear-gradient(135deg,#25D366,#1BA851);border:none;border-radius:14px;color:#fff;font-weight:700;cursor:pointer;font-family:var(--font-head);transition:transform 0.15s;}
         .shimmer-gold{background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D,#F5C842,#E8B23D);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 3s linear infinite;}
         .tag-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,122,41,0.12);border:1px solid rgba(255,122,41,0.3);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:700;font-family:var(--font-head);color:#FF7A29;letter-spacing:0.1em;}
-        .inp{width:100%;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.1);border-radius:14px;color:#F8F4EE;padding:15px 18px;font-family:Inter,sans-serif;font-size:15px;outline:none;transition:all 0.25s;appearance:none;}
+        .inp{width:100%;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.1);border-radius:14px;color:#F8F4EE;padding:15px 18px;font-family:Inter,sans-serif;font-size:16px;outline:none;transition:all 0.25s;appearance:none;}
         .inp:focus{border-color:#FF7A29;background:rgba(255,122,41,0.06);box-shadow:0 0 0 4px rgba(255,122,41,0.12);}
         .inp::placeholder{color:rgba(255,255,255,0.28);}
-        .lbl{font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:8px;display:block;font-family:var(--font-head);}
+        .lbl{font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-3);margin-bottom:8px;display:block;font-family:var(--font-head);}
         @keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
         @keyframes pulseGlow{0%,100%{box-shadow:0 0 16px rgba(255,122,41,0.4)}50%{box-shadow:0 0 36px rgba(255,122,41,0.8),0 0 60px rgba(255,122,41,0.3)}}
         @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
@@ -121,7 +121,7 @@ export function Sponsors() {
           <div className="wrap">
             <div style={{textAlign:'center',marginBottom:40}}>
               <div style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:16,color:'#fff',marginBottom:8}}>{t("Sponsorship Opportunities — Season 5","Sponsorship Opportunities — Season 5")}</div>
-              <p style={{color:'rgba(255,255,255,0.45)',fontSize:14,fontFamily:'Inter,sans-serif',maxWidth:480,margin:'0 auto'}}>
+              <p style={{color:'var(--ink-3)',fontSize:14,fontFamily:'Inter,sans-serif',maxWidth:480,margin:'0 auto'}}>
                 {t("We are actively seeking brand partners for BCPL Season 5. Reach working-professional cricketers across India.","हम BCPL Season 5 के लिए brand partners की तलाश कर रहे हैं। पूरे भारत के working-professional cricketers तक पहुंचें।")}
               </p>
             </div>
@@ -132,7 +132,7 @@ export function Sponsors() {
                   <div style={{flex:1,minWidth:200}}>
                     <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:8,flexWrap:'wrap'}}>
                       <span style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:14,color:tier.color,letterSpacing:'0.1em'}}>{t(tier.labelEn,tier.labelHi)}</span>
-                      <span style={{background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.1)',color:'rgba(255,255,255,0.35)',fontSize:9,fontWeight:700,padding:'2px 8px',borderRadius:100,fontFamily:'var(--font-head)'}}>{t("SLOT AVAILABLE","SLOT AVAILABLE")}</span>
+                      <span style={{background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.1)',color:'var(--ink-3)',fontSize:9,fontWeight:700,padding:'2px 8px',borderRadius:100,fontFamily:'var(--font-head)'}}>{t("SLOT AVAILABLE","SLOT AVAILABLE")}</span>
                     </div>
                     <p style={{color:'rgba(255,255,255,0.5)',fontSize:13,lineHeight:1.6,fontFamily:'Inter,sans-serif',margin:0}}>{t(tier.descEn,tier.descHi)}</p>
                   </div>
@@ -164,7 +164,7 @@ export function Sponsors() {
                 ].map((s,i)=>(
                   <div key={i} style={{background:'rgba(255,122,41,0.06)',border:'1px solid rgba(255,122,41,0.15)',borderRadius:14,padding:'20px 16px',textAlign:'center'}}>
                     <div style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:24,color:'#FF7A29',marginBottom:4}}>{t(s.valEn,s.valHi)}</div>
-                    <div style={{color:'rgba(255,255,255,0.45)',fontSize:12,fontFamily:'Inter,sans-serif',letterSpacing:'0.04em'}}>{t(s.labelEn,s.labelHi)}</div>
+                    <div style={{color:'var(--ink-3)',fontSize:12,fontFamily:'Inter,sans-serif',letterSpacing:'0.04em'}}>{t(s.labelEn,s.labelHi)}</div>
                   </div>
                 ))}
               </div>

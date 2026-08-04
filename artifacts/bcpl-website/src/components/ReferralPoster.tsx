@@ -18,8 +18,8 @@ const W = 1080;
 const H = 1920;
 
 // BCPL palette (matches the site + email templates).
-const NAVY = '#06101E';
-const NAVY_2 = '#0A1727';
+const NAVY = 'var(--bg)';
+const NAVY_2 = '#121F2F';
 const ORANGE = '#FF7A29';
 const ORANGE_HI = '#FF9A57';
 const GOLD = '#E8B23D';
@@ -80,9 +80,9 @@ async function buildPoster(name: string, code: string, link: string): Promise<HT
 
   // ── Background: deep navy with a soft orange glow top + subtle vignette ──
   const bg = ctx.createLinearGradient(0, 0, 0, H);
-  bg.addColorStop(0, '#0B1A2E');
+  bg.addColorStop(0, '#132236');
   bg.addColorStop(0.55, NAVY);
-  bg.addColorStop(1, '#04080F');
+  bg.addColorStop(1, '#0C1017');
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, W, H);
 
@@ -141,7 +141,7 @@ async function buildPoster(name: string, code: string, link: string): Promise<HT
   await QRCode.toCanvas(qrCanvas, link, {
     width: qrSize,
     margin: 1,
-    color: { dark: '#06101E', light: '#ffffff' },
+    color: { dark: 'var(--bg)', light: '#ffffff' },
     errorCorrectionLevel: 'M',
   });
   const qrX = (W - qrSize) / 2;

@@ -28,7 +28,7 @@ export function SponsorWall() {
           <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 'clamp(20px,3.5vw,32px)', color: '#fff', textTransform: 'uppercase', marginBottom: 8 }}>
             {t('Our Sponsors & Partners', 'हमारे Sponsors & Partners')}
           </div>
-          <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: 14, fontFamily: 'Inter,sans-serif', margin: 0 }}>
+          <p style={{ color: 'var(--ink-3)', fontSize: 14, fontFamily: 'Inter,sans-serif', margin: 0 }}>
             {t('The brands powering BCPL Season 5', 'BCPL Season 5 को support करने वाले brands')}
           </p>
         </div>
@@ -41,7 +41,7 @@ export function SponsorWall() {
                   {s.logo
                     ? <img src={s.logo} alt={s.name + ' logo'} loading="lazy"
                         style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', display: 'block' }} />
-                    : <span style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 30, color: '#0A162E' }}>
+                    : <span style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 30, color: '#121E36' }}>
                         {s.name.charAt(0).toUpperCase()}
                       </span>}
                 </div>

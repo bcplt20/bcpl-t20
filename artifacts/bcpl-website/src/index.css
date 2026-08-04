@@ -9,10 +9,10 @@
 
 :root {
   /* surfaces */
-  --bg:      #06101E;                 /* page background          */
-  --bg-deep: #030710;                 /* footer / recessed areas  */
-  --panel:   #0A1830;                 /* raised cards             */
-  --line:    rgba(255,255,255,.08);   /* hairline borders         */
+  --bg:      #081527;                 /* page background          */
+  --bg-deep: #050B18;                 /* footer / recessed areas  */
+  --panel:   #0D1D38;                 /* raised cards             */
+  --line:    rgba(255,255,255,.10);   /* hairline borders         */
 
   /* brand */
   --orange:   #FF7A29;                /* primary — CTA & key info */
@@ -23,8 +23,8 @@
 
   /* ink */
   --ink:   #FFFFFF;
-  --ink-2: rgba(255,255,255,.72);
-  --ink-3: rgba(255,255,255,.45);
+  --ink-2: rgba(255,255,255,.80);
+  --ink-3: rgba(255,255,255,.58);
 
   /* geometry */
   --r: 14px;                          /* the ONE corner radius    */

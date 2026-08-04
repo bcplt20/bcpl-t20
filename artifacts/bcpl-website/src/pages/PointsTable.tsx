@@ -50,7 +50,7 @@ const CSS = `
 .pts-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
 .pts-table { width: 100%; border-collapse: collapse; min-width: 640px; }
 .pts-header { background: rgba(255,122,41,0.06); }
-.pts-header th { padding: 12px 14px; text-align: left; font-family: var(--font-head); font-weight: 700; font-size: 10px; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: .1em; white-space: nowrap; }
+.pts-header th { padding: 12px 14px; text-align: left; font-family: var(--font-head); font-weight: 700; font-size: 10px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .1em; white-space: nowrap; }
 .pts-row { border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.15s; }
 .pts-row:hover { background: rgba(255,122,41,0.04); }
 .pts-row td { padding: 14px; font-family: Inter, sans-serif; font-size: 13px; color: rgba(255,255,255,0.6); }
@@ -128,7 +128,7 @@ export function PointsTable() {
   }, []);
 
   return (
-    <div style={{ background: "#06101E", color: "#F0EDE8", minHeight: "100vh", fontFamily: "Inter,sans-serif", overflowX: "hidden" }}>
+    <div style={{ background: "var(--bg)", color: "#F0EDE8", minHeight: "100vh", fontFamily: "Inter,sans-serif", overflowX: "hidden" }}>
       <style>{CSS}</style>
       <SiteHeader active="Points Table" />
 
@@ -158,7 +158,7 @@ export function PointsTable() {
             <h2 style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: "clamp(22px,4vw,36px)", color: "#fff", marginBottom: 12 }}>
               {t("Standings Coming Soon", "Standings जल्द आएंगे")}
             </h2>
-            <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 15, maxWidth: 440, margin: "0 auto 28px", lineHeight: 1.7 }}>
+            <p style={{ color: "var(--ink-3)", fontSize: 15, maxWidth: 440, margin: "0 auto 28px", lineHeight: 1.7 }}>
               {t("Season 5 tournament begins Sep 2026. The points table will update here in real time once the first match is played.", "Season 5 टूर्नामेंट Sep 2026 में शुरू होगा। पहले match के बाद points table यहाँ real time में update होगी।")}
             </p>
             <Link href="/register" className="float-reg-btn" style={{ position: "static", animation: "none", display: "inline-flex", boxShadow: "0 6px 24px rgba(255,122,41,0.35)" }}>
@@ -194,7 +194,7 @@ export function PointsTable() {
                             background: row.pos === 1 ? "linear-gradient(135deg,#E8B23D,#FFD700)" : row.pos === 2 ? "linear-gradient(135deg,#9CA3AF,#D1D5DB)" : row.pos === 3 ? "linear-gradient(135deg,#B45309,#D97706)" : "rgba(255,255,255,0.06)",
                             display: "flex", alignItems: "center", justifyContent: "center",
                             fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 12,
-                            color: row.pos <= 3 ? "#060E1C" : "rgba(255,255,255,0.4)",
+                            color: row.pos <= 3 ? "#0E1624" : "rgba(255,255,255,0.4)",
                             margin: "0 auto"
                           }}>{row.pos}</div>
                         </td>
@@ -207,7 +207,7 @@ export function PointsTable() {
                         <td style={{ textAlign: "center", color: "rgba(255,255,255,0.6)" }}>{row.p}</td>
                         <td style={{ textAlign: "center", color: "#22C55E", fontWeight: 600 }}>{row.w}</td>
                         <td style={{ textAlign: "center", color: "#E8493F" }}>{row.l}</td>
-                        <td style={{ textAlign: "center", color: "rgba(255,255,255,0.4)" }}>{row.nr}</td>
+                        <td style={{ textAlign: "center", color: "var(--ink-3)" }}>{row.nr}</td>
                         <td style={{ textAlign: "center", fontFamily: "var(--font-head)", fontWeight: 700, color: row.nrr.startsWith("+") ? "#22C55E" : "#E8493F" }}>{row.nrr}</td>
                         <td style={{ textAlign: "center", fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 16, color: "#FF7A29" }}>{row.pts}</td>
                       </tr>
@@ -230,7 +230,7 @@ export function PointsTable() {
                           background: row.pos === 1 ? "linear-gradient(135deg,#E8B23D,#FFD700)" : row.pos === 2 ? "linear-gradient(135deg,#9CA3AF,#D1D5DB)" : row.pos === 3 ? "linear-gradient(135deg,#B45309,#D97706)" : "rgba(255,255,255,0.06)",
                           display: "flex", alignItems: "center", justifyContent: "center",
                           fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 13,
-                          color: row.pos <= 3 ? "#060E1C" : "rgba(255,255,255,0.4)",
+                          color: row.pos <= 3 ? "#0E1624" : "rgba(255,255,255,0.4)",
                           flexShrink: 0
                         }}>{row.pos}</div>
                         <TeamBadge name={row.name} color={color(row.name)} logo={logoOf(row.name)} />
@@ -243,19 +243,19 @@ export function PointsTable() {
                     {isExpanded && (
                       <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 10, marginTop: 14, paddingTop: 14, borderTop: "1px solid rgba(255,255,255,0.08)" }}>
                         <div style={{ textAlign: "center" }}>
-                          <div style={{ fontFamily: "var(--font-head)", fontWeight: 700, fontSize: 10, color: "rgba(255,255,255,0.35)", letterSpacing: ".1em", marginBottom: 4 }}>{t("P", "P")}</div>
+                          <div style={{ fontFamily: "var(--font-head)", fontWeight: 700, fontSize: 10, color: "var(--ink-3)", letterSpacing: ".1em", marginBottom: 4 }}>{t("P", "P")}</div>
                           <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 16, color: "rgba(255,255,255,0.6)" }}>{row.p}</div>
                         </div>
                         <div style={{ textAlign: "center" }}>
-                          <div style={{ fontFamily: "var(--font-head)", fontWeight: 700, fontSize: 10, color: "rgba(255,255,255,0.35)", letterSpacing: ".1em", marginBottom: 4 }}>{t("W", "W")}</div>
+                          <div style={{ fontFamily: "var(--font-head)", fontWeight: 700, fontSize: 10, color: "var(--ink-3)", letterSpacing: ".1em", marginBottom: 4 }}>{t("W", "W")}</div>
                           <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 16, color: "#22C55E" }}>{row.w}</div>
                         </div>
                         <div style={{ textAlign: "center" }}>
-                          <div style={{ fontFamily: "var(--font-head)", fontWeight: 700, fontSize: 10, color: "rgba(255,255,255,0.35)", letterSpacing: ".1em", marginBottom: 4 }}>{t("L", "L")}</div>
+                          <div style={{ fontFamily: "var(--font-head)", fontWeight: 700, fontSize: 10, color: "var(--ink-3)", letterSpacing: ".1em", marginBottom: 4 }}>{t("L", "L")}</div>
                           <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 16, color: "#E8493F" }}>{row.l}</div>
                         </div>
                         <div style={{ textAlign: "center" }}>
-                          <div style={{ fontFamily: "var(--font-head)", fontWeight: 700, fontSize: 10, color: "rgba(255,255,255,0.35)", letterSpacing: ".1em", marginBottom: 4 }}>{t("NRR", "NRR")}</div>
+                          <div style={{ fontFamily: "var(--font-head)", fontWeight: 700, fontSize: 10, color: "var(--ink-3)", letterSpacing: ".1em", marginBottom: 4 }}>{t("NRR", "NRR")}</div>
                           <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 14, color: row.nrr.startsWith("+") ? "#22C55E" : "#E8493F" }}>{row.nrr}</div>
                         </div>
                       </div>

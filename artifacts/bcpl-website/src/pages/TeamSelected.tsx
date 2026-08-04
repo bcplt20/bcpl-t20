@@ -13,10 +13,10 @@ const TEAMS = [
   { name:'Punjab Warriors',     city:'Chandigarh', color:'#DC2626', bg:'#1A0606', logo:`${L}punjab_warriors.png`,     abbr:'PW', bid:'₹4,50,000' },
   { name:'Kolkata Tigers',      city:'Kolkata',    color:'#F97316', bg:'#1A0A04', logo:`${L}kolkata_tigers.png`,      abbr:'KT', bid:'₹6,25,000' },
   { name:'Lucknow Nawabs',      city:'Lucknow',    color:'#F59E0B', bg:'#1A1204', logo:`${L}lucknow_nawabs.png`,      abbr:'LN', bid:'₹7,00,000' },
-  { name:'Mumbai Mavericks',    city:'Mumbai',     color:'#3B82F6', bg:'#040E1A', logo:`${L}mumbai_mavericks.png`,    abbr:'MM', bid:'₹8,50,000' },
+  { name:'Mumbai Mavericks',    city:'Mumbai',     color:'#3B82F6', bg:'#0C1622', logo:`${L}mumbai_mavericks.png`,    abbr:'MM', bid:'₹8,50,000' },
   { name:'Hyderabad Hawks',     city:'Hyderabad',  color:'#10B981', bg:'#041A10', logo:`${L}hyderabad_hawks.png`,     abbr:'HH', bid:'₹5,25,000' },
-  { name:'Delhi Suryas',        city:'Delhi',      color:'#6366F1', bg:'#080A1A', logo:`${L}delhi_suryas.png`,        abbr:'DS', bid:'₹9,00,000' },
-  { name:'Chennai Thalaivas',   city:'Chennai',    color:'#2563EB', bg:'#040B1A', logo:`${L}chennai_thalaivas.png`,   abbr:'CT', bid:'₹6,75,000' },
+  { name:'Delhi Suryas',        city:'Delhi',      color:'#6366F1', bg:'#101222', logo:`${L}delhi_suryas.png`,        abbr:'DS', bid:'₹9,00,000' },
+  { name:'Chennai Thalaivas',   city:'Chennai',    color:'#2563EB', bg:'#0C1322', logo:`${L}chennai_thalaivas.png`,   abbr:'CT', bid:'₹6,75,000' },
   { name:'Ahmedabad Lions',     city:'Ahmedabad',  color:'#B91C1C', bg:'#1A0404', logo:`${L}ahmedabad_lions.png`,     abbr:'AL', bid:'₹7,50,000' },
   { name:'Bengaluru Rockets',   city:'Bengaluru',  color:'#EF4444', bg:'#1A0606', logo:`${L}bengaluru_rockets.png`,   abbr:'BR', bid:'₹8,00,000' },
 ];
@@ -72,7 +72,7 @@ export function TeamSelected() {
       {/* TEAM PICKER (demo toggle) */}
       <div style={{ background: 'rgba(255,255,255,0.02)', borderBottom: '1px solid var(--line)', padding: '12px 0', overflowX: 'auto' }}>
         <div className="W" style={{ display: 'flex', gap: 12, flexWrap: 'nowrap', alignItems: 'center' }}>
-          <span style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 11, color: 'rgba(255,255,255,0.4)', letterSpacing: '.12em', flexShrink: 0, textTransform: 'uppercase' }}>{t("DEMO · PICK TEAM →", "डेमो · टीम चुनें →")}</span>
+          <span style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 11, color: 'var(--ink-3)', letterSpacing: '.12em', flexShrink: 0, textTransform: 'uppercase' }}>{t("DEMO · PICK TEAM →", "डेमो · टीम चुनें →")}</span>
           {TEAMS.map((tInfo, i) => (
             <button key={tInfo.abbr} className={`team-pill ${i === teamIdx ? 'active' : ''}`} onClick={() => setTeamIdx(i)} style={ i === teamIdx ? { background: tInfo.color, borderColor: tInfo.color, color: '#fff' } : {} }>{tInfo.abbr}</button>
           ))}
@@ -108,7 +108,7 @@ export function TeamSelected() {
             <p style={{ fontFamily: 'var(--font-body)', fontSize: 'clamp(15px, 2.5vw, 18px)', color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, maxWidth: 600, margin: '0 auto 16px', animation: 'fadeUp 0.5s 0.2s ease both' }}>
               {t("Congratulations!", "बधाई हो!")} <strong style={{ color: '#fff' }}>{t(team.name, team.name)}</strong> {t("has selected you in the BCPL Season 5 Franchise Auction.", "ने आपको BCPL सीजन 5 फ्रैंचाइज़ी ऑक्शन में चुना है।")}
             </p>
-            <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 13, color: 'rgba(255,255,255,0.4)', letterSpacing: '.14em', marginBottom: 40, textTransform: 'uppercase', animation: 'fadeUp 0.5s 0.3s ease both' }}>
+            <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 13, color: 'var(--ink-3)', letterSpacing: '.14em', marginBottom: 40, textTransform: 'uppercase', animation: 'fadeUp 0.5s 0.3s ease both' }}>
               {t("PLAYER REF", "प्लेयर रेफ")} · <span style={{ color: team.color, transition: 'color 0.5s' }}>{BOOKING_REF}</span>
             </div>
           </div>
@@ -130,7 +130,7 @@ export function TeamSelected() {
                 <div style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'rgba(255,255,255,0.6)' }}>{t(team.city, team.city)} · {t("Corporate T20 Franchise", "कॉर्पोरेट टी20 फ्रैंचाइज़ी")}</div>
               </div>
               <div style={{ textAlign: 'right' }}>
-                <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 11, color: 'rgba(255,255,255,0.4)', letterSpacing: '.12em', marginBottom: 4, textTransform: 'uppercase' }}>{t("CONTRACT VALUE", "कॉन्ट्रैक्ट की कीमत")}</div>
+                <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 11, color: 'var(--ink-3)', letterSpacing: '.12em', marginBottom: 4, textTransform: 'uppercase' }}>{t("CONTRACT VALUE", "कॉन्ट्रैक्ट की कीमत")}</div>
                 <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(28px, 5vw, 40px)', color: team.color, transition: 'color 0.5s' }}>{team.bid}</div>
               </div>
             </div>
@@ -142,7 +142,7 @@ export function TeamSelected() {
                 { label: t('Ref', 'रेफ'), val: BOOKING_REF },
               ].map(f => (
                 <div key={f.label}>
-                  <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 11, color: 'rgba(255,255,255,0.4)', letterSpacing: '.12em', textTransform: 'uppercase', marginBottom: 4 }}>{f.label}</div>
+                  <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 11, color: 'var(--ink-3)', letterSpacing: '.12em', textTransform: 'uppercase', marginBottom: 4 }}>{f.label}</div>
                   <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 14, color: 'rgba(255,255,255,0.9)', textTransform: 'uppercase' }}>{f.val}</div>
                 </div>
               ))}
@@ -206,7 +206,7 @@ export function TeamSelected() {
                 <button key={btn.label} className="btn-outline" style={{ padding: '14px 24px', fontSize: 14, letterSpacing: '.06em', display: 'inline-flex', alignItems: 'center', gap: 8 }}>{btn.icon && <btn.icon size={16} style={{ color: 'currentColor' }} />}{btn.label}</button>
               ))}
             </div>
-            <div style={{ marginTop: 24, fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 13, color: 'rgba(255,255,255,0.3)', letterSpacing: '.14em', textTransform: 'uppercase' }}>#OfficeSeStadiumtak · #BCPLT20 · #{team.name.replace(/\s/g,'')}</div>
+            <div style={{ marginTop: 24, fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 13, color: 'var(--ink-3)', letterSpacing: '.14em', textTransform: 'uppercase' }}>#OfficeSeStadiumtak · #BCPLT20 · #{team.name.replace(/\s/g,'')}</div>
           </div>
         </div>
       </div>

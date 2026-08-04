@@ -82,7 +82,7 @@ export function Players() {
   const squadEmpty = !loading && !loadErr && allPlayers.length === 0;
 
   return (
-    <div style={{ background: "#06101E", color: "#F0EDE8", minHeight: "100vh", fontFamily: "Inter,sans-serif", overflowX: "hidden" }}>
+    <div style={{ background: "var(--bg)", color: "#F0EDE8", minHeight: "100vh", fontFamily: "Inter,sans-serif", overflowX: "hidden" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -150,9 +150,9 @@ export function Players() {
                   value={filterTeam}
                   onChange={e => setFilterTeam(e.target.value)}
                 >
-                  <option value="All Teams" style={{ background: "#0A1727" }}>{t("All Teams", "सभी टीम")}</option>
+                  <option value="All Teams" style={{ background: "#121F2F" }}>{t("All Teams", "सभी टीम")}</option>
                   {teams.map(t => (
-                    <option key={t.id} value={t.name} style={{ background: "#0A1727" }}>{t.name}</option>
+                    <option key={t.id} value={t.name} style={{ background: "#121F2F" }}>{t.name}</option>
                   ))}
                 </select>
                 <select
@@ -161,7 +161,7 @@ export function Players() {
                   onChange={e => setFilterRole(e.target.value)}
                 >
                   {uniqueRoles.map(r => (
-                    <option key={r} value={r} style={{ background: "#0A1727" }}>{r}</option>
+                    <option key={r} value={r} style={{ background: "#121F2F" }}>{r}</option>
                   ))}
                 </select>
               </div>
@@ -204,7 +204,7 @@ export function Players() {
             <h2 style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: "clamp(22px,4vw,36px)", color: "#fff", marginBottom: 12 }}>
               {t("Squads Announced After Auction", "Auction के बाद squad announce होंगे")}
             </h2>
-            <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 15, maxWidth: 440, margin: "0 auto 28px", lineHeight: 1.7 }}>
+            <p style={{ color: "var(--ink-3)", fontSize: 15, maxWidth: 440, margin: "0 auto 28px", lineHeight: 1.7 }}>
               {t("Season 5 squad rosters will be announced after the players' auction in August 2026. All registered players will appear here once teams are finalised.", "Season 5 की squad lists players' auction के बाद (Aug 2026) announce होंगी। सभी registered players यहाँ दिखेंगे जब teams finalize होंगी।")}
             </p>
             <Link href="/register" className="float-reg-btn" style={{ position: "static", animation: "none", display: "inline-flex", boxShadow: "0 6px 24px rgba(255,122,41,0.35)" }}>
@@ -215,7 +215,7 @@ export function Players() {
 
         {/* NO RESULTS after filter */}
         {!loading && !loadErr && allPlayers.length > 0 && filtered.length === 0 && (
-          <div style={{ textAlign: "center", padding: "60px 0", color: "rgba(255,255,255,0.35)", fontFamily: "Inter,sans-serif", fontSize: 15 }}>
+          <div style={{ textAlign: "center", padding: "60px 0", color: "var(--ink-3)", fontFamily: "Inter,sans-serif", fontSize: 15 }}>
             {t("No players match your filters.", "कोई खिलाड़ी आपके filter से match नहीं करता।")}
           </div>
         )}

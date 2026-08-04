@@ -37,15 +37,15 @@ function useMyReferral(retryIfIneligible = false): Extract<MyReferral, { eligibl
 }
 
 const cardStyle: React.CSSProperties = {
-  background: '#0A1727', border: '1px solid rgba(255,255,255,0.08)',
+  background: '#121F2F', border: '1px solid rgba(255,255,255,0.08)',
   borderRadius: 14, padding: '22px 20px', marginBottom: 18,
 };
 const secLabel: React.CSSProperties = {
   fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 12,
-  color: 'rgba(255,255,255,0.35)', letterSpacing: '.1em',
+  color: 'var(--ink-3)', letterSpacing: '.1em',
 };
 const linkBox: React.CSSProperties = {
-  flex: 1, minWidth: 200, background: '#071121', border: '1px dashed rgba(255,122,41,0.45)',
+  flex: 1, minWidth: 200, background: '#0F1929', border: '1px dashed rgba(255,122,41,0.45)',
   borderRadius: 10, padding: '11px 14px', fontFamily: 'monospace', fontSize: 13,
   color: '#FF9A57', fontWeight: 700, overflowWrap: 'anywhere',
 };
@@ -130,10 +130,10 @@ export function ReferralCard() {
           { label: 'Paid Referrals', value: data.paid, sub: 'completed Phase 1 registration' },
           { label: 'Your Rank', value: data.rank ? `#${data.rank}` : '—', sub: data.rank ? 'on the referrer leaderboard' : 'first paid referral unlocks rank' },
         ].map(s => (
-          <div key={s.label} style={{ background: '#071121', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 10, padding: '14px 16px' }}>
-            <div style={{ fontSize: 10, fontWeight: 700, fontFamily: 'Montserrat,sans-serif', color: 'rgba(255,255,255,0.35)', letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 6 }}>{s.label}</div>
+          <div key={s.label} style={{ background: '#0F1929', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 10, padding: '14px 16px' }}>
+            <div style={{ fontSize: 10, fontWeight: 700, fontFamily: 'Montserrat,sans-serif', color: 'var(--ink-3)', letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 6 }}>{s.label}</div>
             <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 24, color: '#fff' }}>{s.value}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginTop: 3 }}>{s.sub}</div>
+            <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 3 }}>{s.sub}</div>
           </div>
         ))}
       </div>
@@ -171,7 +171,7 @@ export function ReferralCard() {
               {t.reached ? '✓' : t.threshold}
             </div>
             <div style={{ flex: 1, fontSize: 13, color: t.reached ? '#D1FAE5' : 'rgba(255,255,255,0.6)', fontWeight: t.reached ? 600 : 400 }}>
-              <span style={{ color: 'rgba(255,255,255,0.4)', fontWeight: 700, fontSize: 11, marginRight: 8 }}>{t.threshold} PAID →</span>
+              <span style={{ color: 'var(--ink-3)', fontWeight: 700, fontSize: 11, marginRight: 8 }}>{t.threshold} PAID →</span>
               {t.reward}
             </div>
             {t.rewardGiven && (
@@ -186,7 +186,7 @@ export function ReferralCard() {
       {/* Leaderboard */}
       <div style={{ ...secLabel, fontSize: 11, marginBottom: 10 }}>TOP REFERRERS — SEASON 5</div>
       {data.leaderboard.length === 0 ? (
-        <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', padding: '14px 12px', background: 'rgba(255,255,255,0.03)', borderRadius: 9 }}>
+        <div style={{ fontSize: 13, color: 'var(--ink-3)', padding: '14px 12px', background: 'rgba(255,255,255,0.03)', borderRadius: 9 }}>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>Nobody on the board yet — your first paid referral makes you #1. <IcoTrophy size={15} style={{ color: '#E8B23D' }} /></span>
         </div>
       ) : (
@@ -209,7 +209,7 @@ export function ReferralCard() {
         </div>
       )}
 
-      <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', lineHeight: 1.6, marginTop: 14 }}>
+      <p style={{ fontSize: 11, color: 'var(--ink-3)', lineHeight: 1.6, marginTop: 14 }}>
         Only friends who complete the Phase 1 registration count towards rewards. Rewards are handed out by the BCPL team as each milestone is verified.
       </p>
     </div>
@@ -224,7 +224,7 @@ export function ReferralShareBanner() {
   const tease = data.tiers.slice(0, 3);
   return (
     <div style={{
-      background: 'linear-gradient(135deg,#1A0F04,#0A1727)', border: '1px solid rgba(255,122,41,0.4)',
+      background: 'linear-gradient(135deg,#1A0F04,#121F2F)', border: '1px solid rgba(255,122,41,0.4)',
       borderRadius: 12, padding: '28px 20px', textAlign: 'center',
     }}>
       <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 13, letterSpacing: '.16em', color: '#FF9A57', marginBottom: 6, textTransform: 'uppercase' }}>
@@ -250,7 +250,7 @@ export function ReferralShareBanner() {
           link={data.link}
         />
       </div>
-      <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>
+      <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>
         Track joins, payments &amp; your leaderboard rank anytime on your <a href={import.meta.env.BASE_URL + 'profile'} style={{ color: '#FF9A57', fontWeight: 700 }}>player dashboard</a>.
       </div>
     </div>

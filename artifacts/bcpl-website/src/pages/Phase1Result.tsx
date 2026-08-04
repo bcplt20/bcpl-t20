@@ -125,7 +125,7 @@ async function downloadShareCard(r: MyResult, roleLabel: string, qualified: bool
   } catch { /* fallback fonts are fine */ }
 
   const g = ctx.createLinearGradient(0, 0, W, H);
-  g.addColorStop(0, '#0B1B32'); g.addColorStop(1, '#06101E');
+  g.addColorStop(0, '#13233A'); g.addColorStop(1, 'var(--bg)');
   ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
 
   const rg = ctx.createRadialGradient(W / 2, 640, 80, W / 2, 640, 620);
@@ -314,7 +314,7 @@ export function Phase1Result() {
         .rwrap{max-width:680px;margin:0 auto;padding:0 20px}
         @media(min-width:768px){.rwrap{padding:0 32px}}
         
-        .btn-gold{background:linear-gradient(135deg,var(--gold),#C4901E);border:none;border-radius:var(--r);color:#081020;font-family:'Barlow Condensed',sans-serif;font-weight:900;fontSize:16px;letter-spacing:.08em;cursor:pointer;transition:transform .15s,filter .2s;text-transform:uppercase;display:inline-flex;align-items:center;justify-content:center;}
+        .btn-gold{background:linear-gradient(135deg,var(--gold),#C4901E);border:none;border-radius:var(--r);color:#101828;font-family:'Barlow Condensed',sans-serif;font-weight:900;fontSize:16px;letter-spacing:.08em;cursor:pointer;transition:transform .15s,filter .2s;text-transform:uppercase;display:inline-flex;align-items:center;justify-content:center;}
         .btn-gold:hover{filter:brightness(1.1);transform:translateY(-2px)}
         .btn-orange{background:linear-gradient(135deg,var(--orange),var(--orange-2));border:none;border-radius:var(--r);color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:900;fontSize:16px;letter-spacing:.08em;cursor:pointer;transition:transform .15s,filter .2s;text-transform:uppercase;display:inline-flex;align-items:center;justify-content:center;}
         .btn-orange:hover{filter:brightness(1.12);transform:translateY(-2px)}
@@ -679,7 +679,7 @@ export function Phase1Result() {
             <div style={{ marginTop:48 }}>
               <div style={{ background:'var(--panel)', border:'1px solid var(--gold)', borderRadius:'var(--r)', padding:32, textAlign:'center', position:'relative', overflow:'hidden' }}>
                 <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 50% 0%, rgba(232,178,61,0.15) 0%, transparent 60%)', pointerEvents:'none' }} />
-                <div style={{ position:'relative', fontSize:11, fontWeight:800, letterSpacing:'.24em', color:'rgba(255,255,255,0.45)', textTransform:'uppercase', marginBottom:6 }}>
+                <div style={{ position:'relative', fontSize:11, fontWeight:800, letterSpacing:'.24em', color:'var(--ink-3)', textTransform:'uppercase', marginBottom:6 }}>
                   {t('NEXT MILESTONE', 'अगला पड़ाव')}
                 </div>
                 <div style={{ position:'relative', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:44, lineHeight:1, color:'#fff', letterSpacing:'.05em', marginBottom:10 }}>

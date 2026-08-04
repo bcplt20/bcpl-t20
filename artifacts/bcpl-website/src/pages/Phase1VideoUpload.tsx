@@ -20,7 +20,7 @@ const ROLE_META: Record<string, { label: string; color: string; req: string; tip
 };
 
 const SAMPLE_VIDEOS = [
-  { role:'Batsman',       color:'#3B82F6', gradient:'linear-gradient(135deg,#0a1f44 0%,#1a3a6e 50%,#0d2a52 100%)', duration:'1:52', description:'Cover drive · Pull shot · Sweep shot · Footwork', what:'Watch how to demonstrate 3+ strokes clearly on camera — stance, backlift, and follow-through all visible.', ytSearch:'cricket batting trial video technique showcase', badge:'Most Selected', badgeColor:'#3B82F6' },
+  { role:'Batsman',       color:'#3B82F6', gradient:'linear-gradient(135deg,#12274C 0%,#1a3a6e 50%,#0d2a52 100%)', duration:'1:52', description:'Cover drive · Pull shot · Sweep shot · Footwork', what:'Watch how to demonstrate 3+ strokes clearly on camera — stance, backlift, and follow-through all visible.', ytSearch:'cricket batting trial video technique showcase', badge:'Most Selected', badgeColor:'#3B82F6' },
   { role:'Bowler',        color:'#8B5CF6', gradient:'linear-gradient(135deg,#1a0a44 0%,#3a1a6e 50%,#2a0d52 100%)', duration:'1:48', description:'Outswinger · Yorker · Change of pace · Run-up', what:'Full run-up visible, delivery stride, ball release — your action, seam position, and variation are assessed against the criteria.', ytSearch:'cricket bowling trial video technique fast medium spin', badge:'High Demand', badgeColor:'#8B5CF6' },
   { role:'Wicket-Keeper', color:'#06B6D4', gradient:'linear-gradient(135deg,#041f2e 0%,#0a3d4f 50%,#062a3a 100%)', duration:'1:55', description:'Standing up · Stumpings · Catches · Wide takes', what:'Film at chest height from mid-off angle — glove positioning, quick release, and agility are key scoring factors.', ytSearch:'cricket wicket keeper trial video stumping catch technique', badge:'Rare Role', badgeColor:'#06B6D4' },
   { role:'All-Rounder',   color:'#E8B23D', gradient:'linear-gradient(135deg,#2e1f04 0%,#4f3a0a 50%,#3a2a06 100%)', duration:'2:00', description:'1 min batting · 1 min bowling · Clear transitions', what:'Split exactly 50-50. Use a visible title card between segments. The criteria look for equal competence in both skills.', ytSearch:'cricket all rounder trial video batting bowling showcase', badge:'Top Auction', badgeColor:'#E8B23D' },
@@ -361,7 +361,7 @@ export function Phase1VideoUpload() {
               <p style={{ color:'var(--ink-2)', fontSize:14, marginBottom:8, lineHeight:1.7 }}>
                 {userName ? userName + ', ' : ''}{t('we could not accept your trial video.', 'हम आपका ट्रायल वीडियो स्वीकार नहीं कर सके।')}
               </p>
-              <p style={{ color:'#F59E0B', fontSize:13, marginBottom:28, lineHeight:1.7, background:'rgba(245,158,11,0.07)', border:'1px solid rgba(245,158,11,0.25)', borderRadius:'var(--r)', padding:'12px 16px' }}>
+              <p style={{ color:'#F59E0B', fontSize:14, marginBottom:28, lineHeight:1.7, background:'rgba(245,158,11,0.07)', border:'1px solid rgba(245,158,11,0.25)', borderRadius:'var(--r)', padding:'12px 16px' }}>
                 {t(reasonCopy.en, reasonCopy.hi)}
               </p>
               {!canReupload && (
@@ -389,7 +389,7 @@ export function Phase1VideoUpload() {
                   style={{ background:'rgba(255,122,41,0.1)', border:'1px solid rgba(255,122,41,0.4)', color:'var(--orange)', padding:'12px 28px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:14, letterSpacing:'.06em', textTransform:'uppercase', cursor:'pointer' }}>
                   {t('RE-UPLOAD A BETTER VIDEO', 'बेहतर वीडियो दोबारा अपलोड करें')} · {reuploadsLeft} {t('LEFT', 'बचे')}
                 </button>
-                <div style={{ fontSize:12, color:'var(--ink-3)', maxWidth:360, lineHeight:1.6 }}>
+                <div style={{ fontSize:14, color:'var(--ink-2)', maxWidth:360, lineHeight:1.6 }}>
                   {t('A new upload replaces your earlier video before review begins.', 'समीक्षा शुरू होने से पहले नया अपलोड आपके पुराने वीडियो की जगह लेगा।')}
                 </div>
               </>
@@ -485,7 +485,7 @@ export function Phase1VideoUpload() {
       <SiteHeader />
 
       {/* ── PAGE HEADER ── */}
-      <div style={{ background:'linear-gradient(180deg,#030A16 0%,var(--bg) 100%)', borderBottom:'1px solid rgba(255,255,255,0.06)', paddingTop:40, paddingBottom:36 }}>
+      <div style={{ background:'linear-gradient(180deg,#0B121E 0%,var(--bg) 100%)', borderBottom:'1px solid rgba(255,255,255,0.06)', paddingTop:40, paddingBottom:36 }}>
         <div className="W">
           <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', flexWrap:'wrap', gap:16 }}>
             <div style={{ flex:1, minWidth:0 }}>
@@ -574,7 +574,7 @@ export function Phase1VideoUpload() {
                 <div className="progress-bar">
                   <div className="progress-fill" style={{ width:`${progress}%` }} />
                 </div>
-                <div style={{ fontSize:12, color:'var(--ink-3)', marginTop:12, fontWeight:600 }}>{t('Please do not close this page', 'कृपया इस पेज को बंद न करें')}</div>
+                <div style={{ fontSize:14, color:'var(--ink-2)', marginTop:12, fontWeight:600 }}>{t('Please do not close this page', 'कृपया इस पेज को बंद न करें')}</div>
               </div>
             )}
 

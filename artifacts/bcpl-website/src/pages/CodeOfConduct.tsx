@@ -17,7 +17,7 @@ export function CodeOfConduct() {
   const css = `
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap');
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    body{background:#060E1C;}
+    body{background:#0E1624;}
     .wrap{max-width:1280px;margin:0 auto;padding:0 16px;}
     .desk-nav{display:none;align-items:center;gap:22px;}
     .ham-btn{display:flex;}
@@ -60,7 +60,7 @@ export function CodeOfConduct() {
   ];
 
   return (
-    <div style={{background:'#060E1C',minHeight:'100vh',fontFamily:'Inter,sans-serif',color:'#F8F4EE',paddingBottom:80,overflowX:'hidden'}}>
+    <div style={{background:'#0E1624',minHeight:'100vh',fontFamily:'Inter,sans-serif',color:'#F8F4EE',paddingBottom:80,overflowX:'hidden'}}>
       <style>{css}</style>
 
       {/* Ambient Background */}
@@ -68,7 +68,7 @@ export function CodeOfConduct() {
         <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 80% 60% at 20% 40%, rgba(255,122,41,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 20%, rgba(30,64,175,0.12) 0%, transparent 60%)'}}/>
         <svg style={{position:'absolute',bottom:0,left:0,right:0,width:'100%',opacity:0.07}} viewBox="0 0 1440 400" preserveAspectRatio="none">
           <path d="M0,400 L0,200 Q360,80 720,80 Q1080,80 1440,200 L1440,400 Z" fill="#1a2a4a"/>
-          <rect x="680" y="200" width="80" height="200" fill="#0d1a33"/>
+          <rect x="680" y="200" width="80" height="200" fill="#15223B"/>
           <line x1="200" y1="0" x2="260" y2="200" stroke="#E8B23D" strokeWidth="3"/>
           <line x1="200" y1="0" x2="140" y2="200" stroke="#E8B23D" strokeWidth="3"/>
           <circle cx="200" cy="0" r="8" fill="#E8B23D"/>
@@ -93,7 +93,7 @@ export function CodeOfConduct() {
               <span style={{color:'#fff',display:'block'}}>CODE OF</span>
               <span className="shimmer-gold" style={{display:'block'}}>CONDUCT.</span>
             </h1>
-            <p style={{color:'rgba(255,255,255,0.35)',fontSize:12,marginTop:16,fontFamily:'Inter,sans-serif'}}>यह दस्तावेज़ English में मान्य है · This document is authoritative in English.</p>
+            <p style={{color:'var(--ink-3)',fontSize:12,marginTop:16,fontFamily:'Inter,sans-serif'}}>यह दस्तावेज़ English में मान्य है · This document is authoritative in English.</p>
             <p style={{color:'rgba(255,255,255,0.65)',fontSize:'clamp(14px,2vw,16px)',lineHeight:1.7,maxWidth:600,margin:'16px auto 0'}}>
               BCPL T20 expects high standards of sportsmanship, professionalism and integrity from all participants. These standards apply during registration, trials, the auction and the tournament, in every trial city.
             </p>

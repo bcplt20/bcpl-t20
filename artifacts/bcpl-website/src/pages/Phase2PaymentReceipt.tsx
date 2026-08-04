@@ -133,7 +133,7 @@ export function Phase2PaymentReceipt() {
           </div>
 
           <div style={{ background: 'rgba(232,178,61,0.04)', borderTop: '1px solid rgba(232,178,61,0.2)', padding: '20px 32px' }}>
-            <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 11, letterSpacing: '.14em', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginBottom: 12 }}>{t("Payment Breakdown", "पेमेंट विवरण")}</div>
+            <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 11, letterSpacing: '.14em', color: 'var(--ink-3)', textTransform: 'uppercase', marginBottom: 12 }}>{t("Payment Breakdown", "पेमेंट विवरण")}</div>
             {[
               { label: t('Taxable Amount', 'कर योग्य राशि'), val: `₹${taxBase.toLocaleString('en-IN')}`, dim: false },
               { label: 'CGST @ 9%', val: `₹${halfGst.toLocaleString('en-IN')}`, dim: true },
@@ -164,7 +164,7 @@ export function Phase2PaymentReceipt() {
 
         {/* Next steps */}
         <div style={{ animation: 'fadeUp 0.6s 0.4s ease both' }}>
-          <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 13, letterSpacing: '.18em', color: 'rgba(255,255,255,0.4)', marginBottom: 20, textTransform: 'uppercase' }}>{t("Next Steps", "अगले कदम")}</div>
+          <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 13, letterSpacing: '.18em', color: 'var(--ink-3)', marginBottom: 20, textTransform: 'uppercase' }}>{t("Next Steps", "अगले कदम")}</div>
           <div className="next-grid">
             {[
               { icon: IcoIdCard, title: t('Complete KYC', 'KYC पूरा करें'), desc: t('Aadhaar + PAN required for compliance and franchise records.', 'Compliance और फ्रैंचाइज़ी रिकॉर्ड के लिए आधार + पैन आवश्यक।'), cta: t('COMPLETE KYC →', 'KYC पूरा करें →'), ctaColor: 'var(--orange)', topColor: 'var(--orange)', href: '/register/phase2/kyc' },
