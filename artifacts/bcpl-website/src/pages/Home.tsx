@@ -396,6 +396,42 @@ export function Home() {
         .stick-cta{position:fixed;left:0;right:0;bottom:0;z-index:300;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;padding-bottom:calc(10px + env(safe-area-inset-bottom));background:rgba(5,10,20,.97);backdrop-filter:blur(16px);border-top:1px solid rgba(255,122,41,.35);}
         @media(min-width:768px){.stick-cta{display:none;}}
         @media(max-width:767px){.home-root{padding-bottom:76px;}}
+
+        /* ══ LIGHT-SURFACE SECTION ("BCPL so far" numbers) — spec §4D ══
+           Warm off-white panel that resets the eye. Every child colour is
+           remapped to deep-navy so nothing reads dark-on-light. */
+        .sec-numbers{background:linear-gradient(180deg,#F4F1EA 0%,#EAE5DA 100%);color:#0C1D33;border-top:1px solid rgba(12,29,51,.08);border-bottom:1px solid rgba(12,29,51,.08);}
+        .sec-numbers .slbl{color:#C24E12;}
+        .sec-numbers .slbl::before{background:#C24E12;}
+        .sec-numbers h2{color:#0C1D33 !important;}
+        .sec-numbers .sec-sub{color:rgba(12,29,51,.66) !important;}
+        .sec-numbers .num-cell{background:#FFFFFF;border:1px solid rgba(12,29,51,.10);box-shadow:0 10px 26px rgba(12,29,51,.10),inset 0 1px 0 rgba(255,255,255,.6);}
+        .sec-numbers .num-cell:hover{box-shadow:0 16px 36px rgba(12,29,51,.16);border-color:rgba(200,131,45,.4);}
+        .sec-numbers .num-n{color:#B4791F !important;}     /* deep gold — reads on white */
+        .sec-numbers .num-l{color:rgba(12,29,51,.66) !important;}
+
+        /* ══ JOURNEY — bigger, more major (spec §16-18) ══ */
+        .road-card .rc-num{font-family:var(--font-head);font-weight:900;font-size:34px;line-height:1;}
+        .road-card .rc-title{font-family:var(--font-head);font-weight:900;font-size:clamp(19px,2.4vw,22px);color:#fff;margin-bottom:8px;letter-spacing:.01em;line-height:1.05;}
+        .road-card .rc-date{font-family:var(--font-head);font-size:12px;font-weight:800;letter-spacing:.05em;}
+        .road-card .rc-desc{font-size:14px;color:rgba(255,255,255,.78);line-height:1.6;flex:1;}
+        .road-card .rc-node{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+
+        /* ══ SEASON 5 ROADMAP on MID-TONE surface — clearly separated ══ */
+        .sec-roadmap{background:linear-gradient(180deg,#2C4A6B 0%,#24405F 100%) !important;border-top:1px solid rgba(255,255,255,.10);border-bottom:1px solid rgba(255,255,255,.10);}
+        .sec-roadmap .slbl{color:#FFD98A;}
+        .sec-roadmap .slbl::before{background:#FFD98A;}
+        .sec-roadmap .rm-sub{color:rgba(255,255,255,.82) !important;}
+        /* thicker connector on mid surface */
+        .sec-roadmap .s5map::before{background:rgba(255,255,255,.16);height:4px;top:32px;}
+        .sec-roadmap .s5map::after{height:4px;top:32px;}
+        .sec-roadmap .s5m-node{background:linear-gradient(165deg,#31527A,#213C59);border-color:rgba(255,255,255,.22);}
+        .sec-roadmap .s5m-mo{color:#FFD98A !important;font-size:clamp(11px,1.4vw,13px);}
+        .sec-roadmap .s5m-lb{font-size:clamp(15px,1.9vw,19px);}
+        @media(max-width:639px){
+          .sec-roadmap .s5map::before{left:38px;top:20px;bottom:20px;width:4px;height:auto;}
+          .sec-roadmap .s5map::after{left:38px;top:20px;bottom:20px;width:4px;height:auto;}
+        }
       `}</style>
 
       {/* ══ SHARED HEADER ══ */}
@@ -488,19 +524,19 @@ export function Home() {
       </section>
 
       {/* ══ 3 · THE LEAGUE IN NUMBERS ══ */}
-      <section id="numbers" className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"var(--bg)", position:"relative", overflow:"hidden" }}>
-        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 70% 60% at 50% 0%,rgba(232,178,61,.05) 0%,transparent 65%)", pointerEvents:"none" }}/>
+      <section id="numbers" className="rv sec-numbers" style={{ padding:"clamp(54px,7vw,88px) 0", position:"relative", overflow:"hidden" }}>
+        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 70% 60% at 50% 0%,rgba(180,121,31,.06) 0%,transparent 65%)", pointerEvents:"none" }}/>
         <div className="W" style={{ position:"relative", zIndex:1 }}>
           <div className="slbl" style={{ justifyContent:"center" }}>{t("BCPL so far","अब तक का BCPL")}</div>
-          <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4vw,44px)", color:"#fff", textTransform:"uppercase", textAlign:"center", marginBottom:8 }}>{t("The league in numbers","आँकड़ों में league")}</h2>
-          <p style={{ fontSize:14, color:"var(--ink-3)", textAlign:"center", marginBottom:36 }}>{t("Four seasons of proof — not promises.","चार seasons का सबूत — सिर्फ वादे नहीं।")}</p>
+          <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4vw,44px)", textTransform:"uppercase", textAlign:"center", marginBottom:8 }}>{t("The league in numbers","आँकड़ों में league")}</h2>
+          <p className="sec-sub" style={{ fontSize:15, textAlign:"center", marginBottom:36 }}>{t("Four seasons of proof — not promises.","चार seasons का सबूत — सिर्फ वादे नहीं।")}</p>
           <div className="num-grid rv-stagger">
             {NUMBERS.map(n=>(
               <div key={n.en} className="num-cell">
-                <div className="mont" style={{ fontWeight:900, fontSize:"clamp(26px,4vw,42px)", color:"#E8B23D", lineHeight:1, whiteSpace:"nowrap" }}>
+                <div className="mont num-n" style={{ fontWeight:900, fontSize:"clamp(28px,4.2vw,44px)", lineHeight:1, whiteSpace:"nowrap" }}>
                   <CountUp end={n.end} prefix={n.prefix} suffix={n.suffix} inFmt={n.inFmt}/>
                 </div>
-                <div className="mont" style={{ fontWeight:700, fontSize:"clamp(10px,1.4vw,12px)", letterSpacing:".1em", color:"rgba(255,255,255,.5)", textTransform:"uppercase", marginTop:10 }}>{t(n.en,n.hi)}</div>
+                <div className="mont num-l" style={{ fontWeight:800, fontSize:"clamp(12px,1.5vw,13px)", letterSpacing:".08em", textTransform:"uppercase", marginTop:10 }}>{t(n.en,n.hi)}</div>
               </div>
             ))}
           </div>
@@ -513,35 +549,35 @@ export function Home() {
         <div className="W" style={{ position:"relative", zIndex:1 }}>
           <div className="slbl">{t("Your Journey","आपका सफर")}</div>
           <div style={{ display:"flex", alignItems:"flex-end", justifyContent:"space-between", gap:16, flexWrap:"wrap", marginBottom:34 }}>
-            <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4vw,44px)", color:"#fff", textTransform:"uppercase" }}>{t("From Registration to Stadium","रजिस्ट्रेशन से स्टेडियम तक")}</h2>
-            <span className="mont" style={{ fontSize:11, fontWeight:700, color:"var(--ink-3)", letterSpacing:".08em" }}>{t("4 STEPS · ONE DREAM","4 कदम · एक सपना")}</span>
+            <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(26px,4.4vw,48px)", color:"#fff", textTransform:"uppercase" }}>{t("From Registration to Stadium","रजिस्ट्रेशन से स्टेडियम तक")}</h2>
+            <span className="mont" style={{ fontSize:13, fontWeight:800, color:"var(--gold)", letterSpacing:".1em" }}>{t("4 STEPS · ONE DREAM","4 कदम · एक सपना")}</span>
           </div>
 
           <div className="road rv-stagger">
             {ROAD_STEPS.map((s,i)=>(
               <div key={i} className="road-card" style={{ borderTop:`3px solid ${s.color}`, zIndex:1 }}>
-                <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:12 }}>
-                  <div style={{ width:44, height:44, borderRadius:"50%", background:`${s.color}1A`, border:`1.5px solid ${s.color}55`, display:"flex", alignItems:"center", justifyContent:"center",  }}><StepIcon kind={s.icon} color={s.color}/></div>
-                  <span className="mont" style={{ fontWeight:900, fontSize:26, color:`${s.color}30` }}>{String(i+1).padStart(2,"0")}</span>
+                <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:14 }}>
+                  <div className="rc-node" style={{ background:`${s.color}1A`, border:`1.5px solid ${s.color}66` }}><StepIcon kind={s.icon} color={s.color}/></div>
+                  <span className="mont rc-num" style={{ color:`${s.color}38` }}>{String(i+1).padStart(2,"0")}</span>
                 </div>
-                <div style={{ display:"inline-block", alignSelf:"flex-start", background:`${s.color}14`, border:`1px solid ${s.color}35`, borderRadius:20, padding:"2px 10px", marginBottom:8 }}>
-                  <span className="mont" style={{ fontSize:9, fontWeight:800, color:s.color, letterSpacing:".06em" }}>{s.date}</span>
+                <div style={{ display:"inline-block", alignSelf:"flex-start", background:`${s.color}18`, border:`1px solid ${s.color}44`, borderRadius:20, padding:"3px 12px", marginBottom:10 }}>
+                  <span className="mont rc-date" style={{ color:s.color }}>{s.date}</span>
                 </div>
-                <div className="mont" style={{ fontWeight:900, fontSize:17, color:"#fff", marginBottom:7 }}>{t(s.en,s.hi)}</div>
-                <p style={{ fontSize:13, color:"rgba(255,255,255,.62)", lineHeight:1.65, flex:1 }}>{t(s.descEn,s.descHi)}</p>
-                <div style={{ display:"flex", gap:6, flexWrap:"wrap", marginTop:10, minHeight:24 }}>
+                <div className="mont rc-title">{t(s.en,s.hi)}</div>
+                <p className="rc-desc">{t(s.descEn,s.descHi)}</p>
+                <div style={{ display:"flex", gap:7, flexWrap:"wrap", marginTop:12, minHeight:26 }}>
                   {s.fee && (
-                    <span style={{ background:`${s.color}18`, border:`1px solid ${s.color}44`, borderRadius:8, padding:"3px 9px" }}>
-                      <span className="mont" style={{ fontSize:11, fontWeight:800, color:s.color }}>{s.fee}</span>
+                    <span style={{ background:`${s.color}20`, border:`1px solid ${s.color}55`, borderRadius:8, padding:"4px 11px" }}>
+                      <span className="mont" style={{ fontSize:13, fontWeight:800, color:s.color }}>{s.fee}</span>
                     </span>
                   )}
                   {s.live && (
-                    <span style={{ background:"rgba(34,197,94,.1)", border:"1px solid rgba(34,197,94,.3)", borderRadius:8, padding:"3px 9px", display:"inline-flex", alignItems:"center", gap:5 }}>
-                      <span style={{ width:5, height:5, borderRadius:"50%", background:"#22C55E", display:"inline-block", animation:"blip 1s infinite" }}/>
-                      <span className="mont" style={{ fontSize:10, fontWeight:800, color:"#22C55E" }}>{t("OPEN NOW","अभी खुला")}</span>
+                    <span style={{ background:"rgba(34,197,94,.14)", border:"1px solid rgba(34,197,94,.4)", borderRadius:8, padding:"4px 11px", display:"inline-flex", alignItems:"center", gap:6 }}>
+                      <span style={{ width:6, height:6, borderRadius:"50%", background:"#22C55E", display:"inline-block", animation:"blip 1s infinite" }}/>
+                      <span className="mont" style={{ fontSize:13, fontWeight:800, color:"#4ADE80" }}>{t("OPEN NOW","अभी खुला")}</span>
                     </span>
                   )}
-                  {i===3 && <span style={{ fontSize:10, color:"var(--ink-3)", alignSelf:"center" }}>{t("only if selected","सिर्फ select होने पर")}</span>}
+                  {i===3 && <span style={{ fontSize:13, color:"rgba(255,255,255,.72)", alignSelf:"center" }}>{t("only if selected","सिर्फ select होने पर")}</span>}
                 </div>
               </div>
             ))}
@@ -555,12 +591,12 @@ export function Home() {
       </section>
 
       {/* ══ 4b · SEASON 5 ROADMAP — premium animated timeline (spec §6) ══ */}
-      <section aria-label={t("Season 5 roadmap","Season 5 का roadmap")} style={{ padding:"clamp(48px,6vw,80px) 0", background:"linear-gradient(180deg,#0E2140 0%,#0B1B33 100%)", borderTop:"1px solid rgba(255,255,255,.06)", position:"relative", overflow:"hidden" }}>
-        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 70% 60% at 50% 0%,rgba(232,178,61,.06) 0%,transparent 65%)", pointerEvents:"none" }}/>
+      <section className="sec-roadmap" aria-label={t("Season 5 roadmap","Season 5 का roadmap")} style={{ padding:"clamp(56px,7vw,92px) 0", position:"relative", overflow:"hidden" }}>
+        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 70% 60% at 50% 0%,rgba(255,217,138,.08) 0%,transparent 65%)", pointerEvents:"none" }}/>
         <div className="W rv" style={{ position:"relative", zIndex:1 }}>
           <div className="slbl" style={{ justifyContent:"center" }}>{t("Season 5 Roadmap","Season 5 का roadmap")}</div>
-          <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4vw,44px)", color:"#fff", textTransform:"uppercase", textAlign:"center", marginBottom:8 }}>{t("The year at a glance","पूरा साल एक नज़र में")}</h2>
-          <p style={{ fontSize:15, color:"var(--ink-3)", textAlign:"center", marginBottom:6 }}>{t("Registration to the floodlights — five moves.","रजिस्ट्रेशन से floodlights तक — पाँच पड़ाव।")}</p>
+          <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(26px,4.4vw,48px)", color:"#fff", textTransform:"uppercase", textAlign:"center", marginBottom:8 }}>{t("The year at a glance","पूरा साल एक नज़र में")}</h2>
+          <p className="rm-sub" style={{ fontSize:16, textAlign:"center", marginBottom:6 }}>{t("Registration to the floodlights — five moves.","रजिस्ट्रेशन से floodlights तक — पाँच पड़ाव।")}</p>
           <div className="s5map rv-stagger">
             {S5_ROADMAP.map(m=>(
               <div key={m.en} className="s5m" style={{ ["--nc" as any]: m.color }}>
@@ -591,25 +627,25 @@ export function Home() {
           <div className="jour rv-stagger">
             <div className="jc" style={{ borderTop:"3px solid #FF7A29" }}>
               <div className="mont" style={{ fontSize:10, fontWeight:800, letterSpacing:".1em", color:"var(--ink-3)", textTransform:"uppercase", marginBottom:6 }}>{t("Step 1 · Now","कदम 1 · अभी")}</div>
-              <div className="mont" style={{ fontWeight:900, fontSize:22, color:"#FF7A29" }}>{inr(fees.phase1.bat)}<span style={{ fontSize:13, color:"var(--ink-3)" }}> / {inr(fees.phase1.ar)} + GST</span></div>
-              <div style={{ fontSize:12, color:"rgba(255,255,255,.5)", marginTop:4 }}>{t("Register + video trial","Register + video trial")}</div>
+              <div className="mont" style={{ fontWeight:900, fontSize:24, color:"#FF9350" }}>{inr(fees.phase1.bat)}<span style={{ fontSize:14, color:"var(--ink-2)" }}> / {inr(fees.phase1.ar)} + GST</span></div>
+              <div style={{ fontSize:13, color:"var(--ink-3)", marginTop:4 }}>{t("Register + video trial","Register + video trial")}</div>
             </div>
             <div className="ja">→</div>
             <div className="jc" style={{ borderTop:"3px solid #E8B23D" }}>
               <div className="mont" style={{ fontSize:10, fontWeight:800, letterSpacing:".1em", color:"var(--ink-3)", textTransform:"uppercase", marginBottom:6 }}>{t("Step 2 · Only if selected","कदम 2 · सिर्फ select होने पर")}</div>
-              <div className="mont" style={{ fontWeight:900, fontSize:22, color:"#E8B23D" }}>{inr(fees.phase2.bat)}<span style={{ fontSize:13, color:"var(--ink-3)" }}> / {inr(fees.phase2.ar)} + GST</span></div>
-              <div style={{ fontSize:12, color:"rgba(255,255,255,.5)", marginTop:4 }}>{t("Physical trial entry","Physical trial entry")}</div>
+              <div className="mont" style={{ fontWeight:900, fontSize:24, color:"#F0C860" }}>{inr(fees.phase2.bat)}<span style={{ fontSize:14, color:"var(--ink-2)" }}> / {inr(fees.phase2.ar)} + GST</span></div>
+              <div style={{ fontSize:13, color:"var(--ink-3)", marginTop:4 }}>{t("Physical trial entry","Physical trial entry")}</div>
             </div>
             <div className="ja">→</div>
             <div className="jc" style={{ borderTop:"3px solid #22C55E" }}>
               <div className="mont" style={{ fontSize:10, fontWeight:800, letterSpacing:".1em", color:"var(--ink-3)", textTransform:"uppercase", marginBottom:6 }}>{t("Step 3 · Season 5","कदम 3 · Season 5")}</div>
-              <div className="mont" style={{ fontWeight:900, fontSize:22, color:"#22C55E" }}>₹0*</div>
-              <div style={{ fontSize:12, color:"rgba(255,255,255,.5)", marginTop:4 }}>{t("No additional BCPL tournament participation fee*","कोई अतिरिक्त BCPL tournament participation fee नहीं*")}</div>
+              <div className="mont" style={{ fontWeight:900, fontSize:24, color:"#22C55E" }}>₹0*</div>
+              <div style={{ fontSize:13, color:"var(--ink-3)", marginTop:4 }}>{t("No additional BCPL tournament participation fee*","कोई अतिरिक्त BCPL tournament participation fee नहीं*")}</div>
             </div>
           </div>
 
           {/* PART D footnote + PART E payment/selection disclaimer — visible, not buried */}
-          <p style={{ fontSize:11, color:"var(--ink-3)", lineHeight:1.6, margin:"12px 0 26px", maxWidth:720 }}>
+          <p style={{ fontSize:13, color:"var(--ink-2)", lineHeight:1.65, margin:"12px 0 26px", maxWidth:720 }}>
             {t("*Subject to the applicable BCPL Season 5 rules and any expressly disclosed exceptions. Payment of Phase 1 or Phase 2 fees does not guarantee qualification, selection, Auction Pool entry, purchase by a team, player contract, remuneration or tournament participation.",
                "*BCPL Season 5 के लागू नियमों और स्पष्ट रूप से बताए गए अपवादों के अधीन। Phase 1 या Phase 2 fee का भुगतान qualification, selection, Auction Pool में जगह, team द्वारा purchase, player contract, remuneration या tournament participation की guarantee नहीं है।")}
           </p>
@@ -643,7 +679,7 @@ export function Home() {
               </div>
               {[{icon:IcoBat,role:t("Batsman","बल्लेबाज़"),price:inr(fees.phase1.bat)},{icon:IcoBall,role:t("Bowler","गेंदबाज़"),price:inr(fees.phase1.bowl)},{icon:IcoShield,role:t("Wicket-keeper","विकेट-कीपर"),price:inr(fees.phase1.wk)},{icon:IcoStar,role:t("All-Rounder","ऑल-राउंडर"),price:inr(fees.phase1.ar)}].map(r=>(
                 <div key={r.role} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 0", borderBottom:"1px solid rgba(255,255,255,.06)" }}>
-                  <span style={{ display:"inline-flex", alignItems:"center", gap:8, fontSize:14, color:"rgba(255,255,255,.7)" }}><r.icon size={16} style={{ color:"rgba(255,255,255,.5)" }} />{r.role}</span>
+                  <span style={{ display:"inline-flex", alignItems:"center", gap:8, fontSize:15, color:"var(--ink-2)" }}><r.icon size={16} style={{ color:"rgba(255,255,255,.6)" }} />{r.role}</span>
                   <span className="mont" style={{ fontWeight:900, fontSize:18, color:"#FF7A29" }}>{r.price}</span>
                 </div>
               ))}
@@ -663,7 +699,7 @@ export function Home() {
               </div>
               {[{icon:IcoBat,role:t("Batsman","बल्लेबाज़"),price:inr(fees.phase2.bat)},{icon:IcoBall,role:t("Bowler","गेंदबाज़"),price:inr(fees.phase2.bowl)},{icon:IcoShield,role:t("Wicket-keeper","विकेट-कीपर"),price:inr(fees.phase2.wk)},{icon:IcoStar,role:t("All-Rounder","ऑल-राउंडर"),price:inr(fees.phase2.ar)}].map(r=>(
                 <div key={r.role} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 0", borderBottom:"1px solid rgba(255,255,255,.06)" }}>
-                  <span style={{ display:"inline-flex", alignItems:"center", gap:8, fontSize:14, color:"rgba(255,255,255,.7)" }}><r.icon size={16} style={{ color:"rgba(255,255,255,.5)" }} />{r.role}</span>
+                  <span style={{ display:"inline-flex", alignItems:"center", gap:8, fontSize:15, color:"var(--ink-2)" }}><r.icon size={16} style={{ color:"rgba(255,255,255,.6)" }} />{r.role}</span>
                   <span className="mont" style={{ fontWeight:900, fontSize:18, color:"#E8B23D" }}>{r.price}</span>
                 </div>
               ))}
@@ -673,8 +709,8 @@ export function Home() {
                   has express exceptions), never payment→selection. */}
               <div style={{ marginTop:20, padding:"14px 16px", background:"rgba(232,178,61,.06)", border:"1px solid rgba(232,178,61,.22)", borderRadius:12, display:"flex", gap:10, alignItems:"flex-start" }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E8B23D" strokeWidth="1.8" strokeLinecap="round" style={{ flexShrink:0, marginTop:2 }} aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M12 11.5V16"/></svg>
-                <p style={{ fontSize:12, color:"rgba(255,255,255,.6)", lineHeight:1.6 }}>
-                  <strong style={{ color:"#E8B23D" }}>{t("The Phase 2 fee is payable only if you qualify through Phase 1 and are invited to the physical trial","Phase 2 fee सिर्फ तब देनी होती है जब आप Phase 1 से qualify करके physical trial के लिए invite होते हैं")}</strong>
+                <p style={{ fontSize:13, color:"var(--ink-2)", lineHeight:1.65 }}>
+                  <strong style={{ color:"#F0C860" }}>{t("The Phase 2 fee is payable only if you qualify through Phase 1 and are invited to the physical trial","Phase 2 fee सिर्फ तब देनी होती है जब आप Phase 1 से qualify करके physical trial के लिए invite होते हैं")}</strong>
                   {" — "}
                   {t("it is charged solely for participation in the Phase 2 physical trial and does not guarantee Auction Pool entry, purchase by a team, a player contract or tournament participation. Fees once paid are non-refundable except where expressly provided in the ","यह fee सिर्फ Phase 2 physical trial में participation के लिए है — यह Auction Pool में जगह, team द्वारा purchase, player contract या tournament participation की guarantee नहीं है। एक बार paid fee refundable नहीं है, सिवाय उन स्थितियों के जो ")}
                   <Link href="/refunds" style={{ color:"#E8B23D", textDecoration:"underline" }}>{t("Refund & Cancellation Policy","रिफ़ंड और कैंसिलेशन पॉलिसी")}</Link>
@@ -853,7 +889,7 @@ export function Home() {
             {t("This is not just cricket.","यह सिर्फ क्रिकेट नहीं है।")}<br/>
             <span className="shim-gold">{t("This is your second chance.","यह आपका दूसरा मौका है।")}</span>
           </h2>
-          <p style={{ fontSize:"clamp(13px,1.9vw,16px)", color:"rgba(255,255,255,.55)", lineHeight:1.75, maxWidth:620, margin:"0 auto 34px" }}>
+          <p style={{ fontSize:"clamp(15px,1.9vw,16px)", color:"rgba(255,255,255,.78)", lineHeight:1.75, maxWidth:620, margin:"0 auto 34px" }}>
             {t("Office → kit bag → trial → selection → auction hammer → jersey → stadium. A real pathway from working professional to professional-style cricket.",
                "ऑफिस → किट बैग → ट्रायल → सिलेक्शन → ऑक्शन का हथौड़ा → जर्सी → स्टेडियम। Working professional से professional-style cricket तक का असली रास्ता।")}
           </p>
@@ -1004,13 +1040,13 @@ export function Home() {
                     <span style={{ width:24, height:24, borderRadius:"50%", background:"rgba(255,122,41,.1)", border:"1px solid rgba(255,122,41,.25)", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
                       <span className="mont" style={{ fontSize:10, fontWeight:800, color:"#FF7A29" }}>{i+1}</span>
                     </span>
-                    <span className="mont" style={{ fontWeight:700, fontSize:"clamp(13px,2vw,15px)", color:faqOpen===i?"#FF7A29":"#F1F5F9" }}>{t(f.qEn,f.qHi)}</span>
+                    <span className="mont" style={{ fontWeight:700, fontSize:"clamp(15px,2vw,16px)", color:faqOpen===i?"#FF9350":"#F1F5F9" }}>{t(f.qEn,f.qHi)}</span>
                   </span>
                   <span aria-hidden="true" style={{ fontSize:18, color:faqOpen===i?"#FF7A29":"rgba(255,255,255,.3)", flexShrink:0, display:"inline-block", transform:faqOpen===i?"rotate(45deg)":"rotate(0)", transition:"transform .25s" }}>+</span>
                 </button>
                 {faqOpen===i&&(
                   <div id={"faq-a-"+i} style={{ padding:"0 20px 18px 56px" }}>
-                    <p style={{ fontSize:"clamp(13px,1.8vw,14px)", color:"rgba(255,255,255,.55)", lineHeight:1.75 }}>{t(f.aEn,f.aHi)}</p>
+                    <p style={{ fontSize:"clamp(14px,1.9vw,15px)", color:"var(--ink-2)", lineHeight:1.75 }}>{t(f.aEn,f.aHi)}</p>
                   </div>
                 )}
               </div>
@@ -1060,10 +1096,10 @@ export function Home() {
       {!authed && (
         <div className="stick-cta">
           <div style={{ minWidth:0 }}>
-            <div className="mont" style={{ fontWeight:900, fontSize:13, color:"#fff", lineHeight:1.2 }}>{t("Phase 1 Registration","Phase 1 रजिस्ट्रेशन")}</div>
-            <div style={{ fontSize:10, color:"rgba(255,255,255,.5)", whiteSpace:"nowrap" }}>{t("Phase 1 closes 28 Feb 2027","Phase 1 — 28 Feb 2027 तक")}</div>
+            <div className="mont" style={{ fontWeight:900, fontSize:14, color:"#fff", lineHeight:1.2 }}>{t("Phase 1 Registration","Phase 1 रजिस्ट्रेशन")}</div>
+            <div style={{ fontSize:12, color:"rgba(255,255,255,.72)", whiteSpace:"nowrap" }}>{t("Phase 1 closes 28 Feb 2027","Phase 1 — 28 Feb 2027 तक")}</div>
           </div>
-          <button className="btn-cta" style={{ fontSize:13, padding:"12px 20px", flexShrink:0 }} onClick={()=>navigate("/register")}>{t("Register Now","रजिस्टर करें")} →</button>
+          <button className="btn-cta" style={{ fontSize:15, padding:"14px 24px", flexShrink:0, minWidth:"64%" }} onClick={()=>navigate("/register")}>{t("Register Now","रजिस्टर करें")} →</button>
         </div>
       )}
 

@@ -25,17 +25,18 @@ body { background:#0E1624; }
 .tp-wrap { width:100%; max-width:720px; margin:0 auto; padding:0 20px; }
 .tp-card { width:100%; max-width:100%; background:linear-gradient(135deg,rgba(15,34,71,0.95),rgba(10,22,46,0.9)); border:1px solid rgba(232,178,61,0.35); border-radius:24px; overflow:hidden; box-shadow:0 24px 64px rgba(0,0,0,0.5); }
 .tp-head { background:linear-gradient(135deg,#E8B23D,#F5C842); padding:18px 24px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
-.tp-status { display:flex; align-items:center; justify-content:center; gap:8px; padding:11px 16px; font-family:var(--font-head); font-weight:800; font-size:14px; letter-spacing:0.08em; text-transform:uppercase; }
-.tp-status.await { background:rgba(232,178,61,0.10); color:#E8B23D; border-bottom:1px solid rgba(232,178,61,0.25); }
-.tp-status.in    { background:rgba(34,197,94,0.12);  color:#4ADE80; border-bottom:1px solid rgba(34,197,94,0.3); }
-.tp-status.done  { background:rgba(34,197,94,0.16);  color:#4ADE80; border-bottom:1px solid rgba(34,197,94,0.35); }
-.tp-qrbox { background:#fff; border-radius:16px; padding:14px; display:inline-block; max-width:100%; }
-.tp-qrbox img { width:clamp(140px,42vw,180px); height:clamp(140px,42vw,180px); max-width:100%; display:block; }
-.tp-row { display:flex; justify-content:space-between; gap:14px; padding:11px 0; border-bottom:1px dashed rgba(255,255,255,0.1); }
-.tp-lbl { font-family:var(--font-body); font-weight:600; font-size:11px; color:var(--ink-3); letter-spacing:0.08em; text-transform:uppercase; }
-.tp-val { font-family:var(--font-body); font-weight:700; font-size:14px; color:#fff; text-align:right; }
-.tp-print-btn { display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg,#FF6B00,#FF8C40); color:#fff; border:none; border-radius:12px; padding:13px 26px; font-family:var(--font-head); font-weight:800; font-size:15px; letter-spacing:0.06em; cursor:pointer; }
-.tp-maps { display:inline-flex; align-items:center; gap:6px; color:#7EC8FF; font-family:var(--font-body); font-weight:600; font-size:14px; text-decoration:none; }
+.tp-status { display:flex; align-items:center; justify-content:center; gap:8px; padding:12px 16px; font-family:var(--font-head); font-weight:800; font-size:14px; letter-spacing:0.08em; text-transform:uppercase; }
+.tp-status.await { background:rgba(232,178,61,0.14); color:#F1C765; border-bottom:1px solid rgba(232,178,61,0.3); }
+.tp-status.in    { background:rgba(34,197,94,0.14);  color:#5EE38B; border-bottom:1px solid rgba(34,197,94,0.32); }
+.tp-status.done  { background:rgba(34,197,94,0.18);  color:#5EE38B; border-bottom:1px solid rgba(34,197,94,0.38); }
+.tp-qrbox { background:#fff; border-radius:16px; padding:16px; display:inline-block; max-width:100%; box-shadow:0 8px 26px rgba(0,0,0,0.35); }
+.tp-qrbox img { width:clamp(150px,44vw,184px); height:clamp(150px,44vw,184px); max-width:100%; display:block; }
+.tp-row { display:flex; justify-content:space-between; gap:14px; padding:12px 0; border-bottom:1px dashed rgba(255,255,255,0.12); }
+.tp-lbl { font-family:var(--font-body); font-weight:700; font-size:13px; color:rgba(255,255,255,0.72); letter-spacing:0.06em; text-transform:uppercase; }
+.tp-val { font-family:var(--font-body); font-weight:700; font-size:15px; color:#fff; text-align:right; }
+.tp-print-btn { display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg,#FF6B00,#FF8C40); color:#fff; border:none; border-radius:12px; padding:14px 28px; font-family:var(--font-head); font-weight:800; font-size:16px; letter-spacing:0.06em; cursor:pointer; box-shadow:0 8px 24px rgba(255,122,41,0.3); transition:transform .14s ease, filter .2s ease; }
+.tp-print-btn:hover { filter:brightness(1.08); transform:translateY(-2px); }
+.tp-maps { display:inline-flex; align-items:center; gap:6px; color:#9AD5FF; font-family:var(--font-body); font-weight:600; font-size:14px; text-decoration:none; }
 /* perforated ticket divider */
 .tp-perf { position:relative; height:0; border-top:2px dashed rgba(255,255,255,0.14); margin:0 24px; }
 .tp-perf::before, .tp-perf::after { content:''; position:absolute; top:-12px; width:24px; height:24px; border-radius:50%; background:#0E1624; border:1px solid rgba(232,178,61,0.25); }
@@ -47,8 +48,9 @@ body { background:#0E1624; }
 .tp-jdot { width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:#121F2F; border:2px solid rgba(255,255,255,0.14); color:var(--ink-3); position:relative; z-index:1; }
 .tp-jdot.done   { background:#22C55E; border-color:#22C55E; color:#fff; }
 .tp-jdot.active { border-color:#E8B23D; color:#E8B23D; box-shadow:0 0 0 4px rgba(232,178,61,0.15); }
-.tp-jlbl { font-family:var(--font-body); font-weight:700; font-size:9.5px; letter-spacing:0.04em; text-transform:uppercase; color:var(--ink-3); text-align:center; line-height:1.3; }
-.tp-jlbl.done { color:#4ADE80; } .tp-jlbl.active { color:#E8B23D; }
+.tp-jlbl { font-family:var(--font-body); font-weight:700; font-size:10.5px; letter-spacing:0.02em; text-transform:uppercase; color:rgba(255,255,255,0.7); text-align:center; line-height:1.3; }
+@media(min-width:420px){ .tp-jlbl { font-size:11.5px; } }
+.tp-jlbl.done { color:#5EE38B; } .tp-jlbl.active { color:#F1C765; }
 .tp-jline { position:absolute; top:12px; left:calc(50% + 15px); right:calc(-50% + 15px); height:2px; background:rgba(255,255,255,0.1); }
 .tp-jline.done { background:rgba(34,197,94,0.55); }
 @media print {
@@ -132,7 +134,7 @@ export function TrialPass() {
               <div style={{ font: '800 20px var(--font-head)', color: '#fff', marginBottom: 8 }}>
                 {t('Login required', 'लॉगिन ज़रूरी है')}
               </div>
-              <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: 14, marginBottom: 22 }}>
+              <p style={{ color: 'rgba(255,255,255,0.78)', fontSize: 15, lineHeight: 1.6, marginBottom: 22 }}>
                 {t('Please log in to view your Trial Pass.', 'अपना ट्रायल पास देखने के लिए लॉगिन करें।')}
               </p>
               <button className="tp-print-btn" onClick={() => openLoginModal()}>
@@ -149,7 +151,7 @@ export function TrialPass() {
               <div style={{ font: '800 20px var(--font-head)', color: '#fff', marginBottom: 8 }}>
                 {t('Trial pass not ready yet', 'ट्रायल पास अभी तैयार नहीं है')}
               </div>
-              <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: 14, lineHeight: 1.7, marginBottom: 22 }}>
+              <p style={{ color: 'rgba(255,255,255,0.78)', fontSize: 15, lineHeight: 1.65, marginBottom: 22 }}>
                 {t(
                   'Your trial slot has not been allocated yet. Complete Phase 2 (payment + KYC) if pending — slot details will appear here once allocated, and we will notify you.',
                   'आपका ट्रायल स्लॉट अभी allocate नहीं हुआ है। अगर Phase 2 (payment + KYC) बाकी है तो पहले पूरा करें — slot मिलते ही यहाँ details दिखेंगी और आपको सूचना भी भेजी जाएगी।'
@@ -164,7 +166,7 @@ export function TrialPass() {
           {state === 'ready' && data && (
             <>
               <div style={{ textAlign: 'center', marginBottom: 26 }} className="no-print">
-                <span className="tag-pill" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(232,178,61,0.12)', border: '1px solid rgba(232,178,61,0.35)', borderRadius: 100, padding: '5px 14px', font: '700 11px var(--font-head)', color: '#E8B23D', letterSpacing: '0.1em' }}>
+                <span className="tag-pill" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(232,178,61,0.14)', border: '1px solid rgba(232,178,61,0.4)', borderRadius: 100, padding: '6px 16px', font: '800 13px var(--font-head)', color: '#F1C765', letterSpacing: '0.1em' }}>
                   OFFICIAL TRIAL PASS
                 </span>
               </div>
@@ -172,10 +174,10 @@ export function TrialPass() {
               <div className="tp-card">
                 <div className="tp-head">
                   <div>
-                    <div style={{ font: '900 16px var(--font-head)', color: '#121828', letterSpacing: '0.04em' }}>BCPL T20</div>
-                    <div style={{ font: '700 10.5px var(--font-body)', color: 'rgba(10,16,32,0.65)', letterSpacing: '0.12em' }}>PHYSICAL TRIAL PASS</div>
+                    <div style={{ font: '900 17px var(--font-head)', color: '#121828', letterSpacing: '0.04em' }}>BCPL T20</div>
+                    <div style={{ font: '700 13px var(--font-body)', color: 'rgba(10,16,32,0.75)', letterSpacing: '0.1em' }}>PHYSICAL TRIAL PASS</div>
                   </div>
-                  <div style={{ font: '800 13px var(--font-head)', color: '#121828', background: 'rgba(255,255,255,0.4)', borderRadius: 8, padding: '6px 12px' }}>
+                  <div style={{ font: '800 14px var(--font-head)', color: '#121828', background: 'rgba(255,255,255,0.5)', borderRadius: 8, padding: '7px 13px', letterSpacing: '0.02em' }}>
                     {data.player.regNumber ?? '—'}
                   </div>
                 </div>
@@ -196,13 +198,13 @@ export function TrialPass() {
                       <div className="tp-qrbox" style={data.assessmentSubmitted ? { opacity: 0.55 } : undefined}>
                         <img src={data.qrDataUrl} alt="Trial pass QR" />
                       </div>
-                      <div style={{ font: '600 10.5px var(--font-body)', color: 'var(--ink-3)', marginTop: 8 }} className="tp-note">
+                      <div style={{ font: '600 13px var(--font-body)', color: 'rgba(255,255,255,0.75)', marginTop: 10, maxWidth: 200, lineHeight: 1.4 }} className="tp-note">
                         {data.assessmentSubmitted
                           ? t('Check-in complete — QR no longer needed', 'चेक-इन पूरा — अब QR की ज़रूरत नहीं')
                           : t('Show this QR at the venue gate', 'गेट पर यह QR दिखाएँ')}
                       </div>
                       {data.checkedInAt && !data.assessmentSubmitted && (
-                        <div style={{ marginTop: 8, display: 'inline-flex', alignItems: 'center', gap: 5, background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.4)', color: '#4ADE80', borderRadius: 100, padding: '4px 12px', font: '700 11px var(--font-body)' }}>
+                        <div style={{ marginTop: 10, display: 'inline-flex', alignItems: 'center', gap: 5, background: 'rgba(34,197,94,0.16)', border: '1px solid rgba(34,197,94,0.42)', color: '#5EE38B', borderRadius: 100, padding: '5px 13px', font: '700 13px var(--font-body)' }}>
                           <IcoCheck size={12} /> {t('Checked in', 'चेक-इन हो गया')}
                         </div>
                       )}
@@ -210,8 +212,8 @@ export function TrialPass() {
 
                     {/* details */}
                     <div style={{ flex: 1, minWidth: 240 }}>
-                      <div className="tp-name" style={{ font: '900 24px var(--font-head)', color: '#fff', marginBottom: 2 }}>{data.player.name}</div>
-                      <div style={{ font: '600 12px var(--font-body)', color: '#E8B23D', marginBottom: 14 }}>
+                      <div className="tp-name" style={{ font: '900 26px var(--font-head)', color: '#fff', marginBottom: 4, lineHeight: 1.05 }}>{data.player.name}</div>
+                      <div style={{ font: '700 14px var(--font-body)', color: '#F1C765', marginBottom: 14, letterSpacing: '0.02em' }}>
                         {formatRoleCity(data.player.role, data.player.city)}
                       </div>
 
@@ -219,8 +221,8 @@ export function TrialPass() {
                       {data.venue?.address && (
                         <div className="tp-row"><span className="tp-lbl">{t('Address', 'पता')}</span><span className="tp-val" style={{ fontWeight: 500, fontSize: 14 }}>{data.venue.address}</span></div>
                       )}
-                      <div className="tp-row"><span className="tp-lbl">{t('Date', 'तारीख़')}</span><span className="tp-val" style={{ color: '#E8B23D' }}>{formatDateLong(data.slot?.date)}</span></div>
-                      <div className="tp-row"><span className="tp-lbl">{t('Reporting time', 'रिपोर्टिंग समय')}</span><span className="tp-val" style={{ color: '#4ADE80' }}>{formatTime(data.slot?.reportingTime)}</span></div>
+                      <div className="tp-row"><span className="tp-lbl">{t('Date', 'तारीख़')}</span><span className="tp-val" style={{ color: '#F1C765' }}>{formatDateLong(data.slot?.date)}</span></div>
+                      <div className="tp-row"><span className="tp-lbl">{t('Reporting time', 'रिपोर्टिंग समय')}</span><span className="tp-val" style={{ color: '#5EE38B' }}>{formatTime(data.slot?.reportingTime)}</span></div>
                       <div className="tp-row"><span className="tp-lbl">{t('Trial time', 'ट्रायल समय')}</span><span className="tp-val">{formatTime(data.slot?.startTime)}</span></div>
                       <div className="tp-row" style={{ borderBottom: 'none' }}><span className="tp-lbl">{t('Batch', 'बैच')}</span><span className="tp-val">{formatBatch(data.slot?.batch)}</span></div>
 
@@ -248,14 +250,14 @@ export function TrialPass() {
                 </div>
 
                 {data.assessmentSubmitted ? (
-                  <div className="tp-note" style={{ margin: '0 24px 24px', background: 'rgba(34,197,94,0.07)', border: '1px solid rgba(34,197,94,0.25)', borderRadius: 12, padding: '12px 16px', font: '500 12px var(--font-body)', color: 'rgba(255,255,255,0.65)', lineHeight: 1.7 }}>
+                  <div className="tp-note" style={{ margin: '0 24px 24px', background: 'rgba(34,197,94,0.09)', border: '1px solid rgba(34,197,94,0.28)', borderRadius: 12, padding: '13px 16px', font: '500 13.5px var(--font-body)', color: 'rgba(255,255,255,0.78)', lineHeight: 1.65 }}>
                     {t(
                       'Your physical trial assessment has been recorded. Results will be announced after trials conclude across all cities — you will be notified by SMS + email. No further action is needed.',
                       'आपका फिजिकल ट्रायल असेसमेंट रिकॉर्ड हो गया है। सभी शहरों के ट्रायल पूरे होने के बाद रिज़ल्ट की घोषणा होगी — आपको SMS + ईमेल से सूचना मिलेगी। अभी आपको कुछ और करने की ज़रूरत नहीं है।'
                     )}
                   </div>
                 ) : (
-                  <div className="tp-note" style={{ margin: '0 24px 24px', background: 'rgba(255,255,255,0.04)', borderRadius: 12, padding: '12px 16px', font: '500 12px var(--font-body)', color: 'rgba(255,255,255,0.55)', lineHeight: 1.7 }}>
+                  <div className="tp-note" style={{ margin: '0 24px 24px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: '13px 16px', font: '500 13.5px var(--font-body)', color: 'rgba(255,255,255,0.78)', lineHeight: 1.65 }}>
                     {t(
                       'Carry your original Aadhaar card. Reach 30 minutes before your reporting time. Cricket kit optional — kit is available at the venue.',
                       'अपना original आधार कार्ड साथ लाएँ। Reporting time से 30 मिनट पहले पहुँचें। क्रिकेट किट optional है — venue पर किट उपलब्ध है।'

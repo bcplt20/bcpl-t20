@@ -1,4 +1,5 @@
 import { draftOnPaymentEvent } from "./drafts";
+import { formatRole } from "../lib/emailTheme";
 import { Router, type Request } from "express";
 import crypto from "node:crypto";
 import { db } from "@workspace/db";
@@ -53,14 +54,14 @@ async function notifyPhase1Success(
 ) {
   const regNo = reg.regNumber ?? reg.id.slice(0, 8).toUpperCase();
   const email = tplPhase1Receipt(user.name, reg.role, amount, regNo, reg.trialCity ?? "TBD");
-  const smsMsg = "Welcome to BCPL T20 Season 5! Registered as " + reg.role.toUpperCase() + ". Reg No: " + regNo + ". Upload trial video within " + windowDays + " days. #OfficeSeStadiumtak";
+  const smsMsg = "Welcome to BCPL T20 Season 5! Registered as " + formatRole(reg.role) + ". Reg No: " + regNo + ". Upload trial video within " + windowDays + " days. #OfficeSeStadiumtak";
 
   // Send on all channels in parallel (helpers never throw), then record the
   // REAL outcome of each attempt in notification_logs.
   const [em, sm, wa] = await Promise.all([
     sendEmail({ to: user.email, toName: user.name, ...email }),
-    sendSms(user.phone, smsMsg, { smsType: "phase1_receipt", smsFlowVars: [reg.role.toUpperCase(), regNo, String(windowDays)] }),
-    sendWhatsApp({ phone: user.phone, templateName: WA.PHASE1_RECEIPT, bodyValues: [user.name, reg.role.toUpperCase(), reg.trialCity ?? "TBD", `₹${amount}`] }),
+    sendSms(user.phone, smsMsg, { smsType: "phase1_receipt", smsFlowVars: [formatRole(reg.role), regNo, String(windowDays)] }),
+    sendWhatsApp({ phone: user.phone, templateName: WA.PHASE1_RECEIPT, bodyValues: [user.name, formatRole(reg.role), reg.trialCity ?? "TBD", `₹${amount}`] }),
   ]);
   await logNotifications(user.id, "phase1_receipt", { email: em, sms: sm, whatsapp: wa });
 }

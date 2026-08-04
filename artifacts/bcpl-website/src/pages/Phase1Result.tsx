@@ -590,7 +590,7 @@ export function Phase1Result() {
                    'BCPL Season 5 ट्रायल्स में भाग लेने के लिए धन्यवाद। यद्यपि आप इस चयन चक्र में Phase 2 के लिए आगे नहीं बढ़े हैं, खेल के प्रति आपका समर्पण सराहनीय है।')}
               </p>
               <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid var(--line)', borderRadius:12, padding:16 }}>
-                <p style={{ color:'var(--ink-3)', fontSize:13, lineHeight:1.6, marginBottom:0 }}>
+                <p style={{ color:'var(--ink-2)', fontSize:14, lineHeight:1.6, marginBottom:0 }}>
                   {t('We encourage you to use the feedback below to improve your game. Season 6 registrations will open soon.', 'हम आपको अपने खेल में सुधार करने के लिए नीचे दिए गए फीडबैक का उपयोग करने के लिए प्रोत्साहित करते हैं। Season 6 के रजिस्ट्रेशन जल्द ही खुलेंगे।')}
                 </p>
               </div>
@@ -704,7 +704,7 @@ export function Phase1Result() {
             <h3 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:22, color:'var(--ink)', textTransform:'uppercase', marginBottom:8, letterSpacing:'.04em' }}>
               {t('Was the BCPL Phase 1 process clear?', 'क्या BCPL Phase 1 प्रक्रिया स्पष्ट थी?')}
             </h3>
-            <p style={{ color:'var(--ink-3)', fontSize:13, lineHeight:1.6, marginBottom:18 }}>
+            <p style={{ color:'var(--ink-2)', fontSize:14, lineHeight:1.6, marginBottom:18 }}>
               {t('Your feedback helps us improve the trial experience for every player.', 'आपका फीडबैक हर खिलाड़ी के लिए ट्रायल अनुभव बेहतर बनाने में मदद करता है।')}
             </p>
             <div style={{ display:'flex', gap:10, flexWrap:'wrap', marginBottom:16 }}>

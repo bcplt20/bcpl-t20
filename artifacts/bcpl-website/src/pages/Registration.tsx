@@ -10,6 +10,7 @@ import { fireReferralAttribution } from '@/lib/marketingApi';
 import { getDraftKey, queueDraftSave, flushDraftSave, resumeDraft } from '@/lib/draftAutosave';
 import { CONSENT_VERSIONS } from '../lib/legalMeta';
 import { useLang } from '../lib/i18n';
+import { formatRole } from '../lib/format';
 import { useFees, withGst } from '../lib/fees';
 import { IcoBat, IcoBall, IcoShield, IcoStar, IcoPen, IcoVideo, IcoClock, IcoStadium, IcoScale, IcoTrophy, IcoCheck, IcoSearch, IcoPin, IcoLock, IcoRupee, IcoList, IcoHourglass, IcoInfo, IcoChat, IcoWarn } from '../lib/icons';
 
@@ -115,7 +116,7 @@ const JOURNEY = [
 ];
 
 export function Registration() {
-  const { t }                   = useLang();
+  const { t, lang }             = useLang();
   const fees                    = useFees();
   const [, navigate]            = useLocation();
   const [step, setStep]         = useState(1); // 1:details 2:role 3:city 4:pay
@@ -468,13 +469,18 @@ export function Registration() {
           border-color:var(--rc,#FF7A29);
           box-shadow:0 0 0 2px var(--rc,#FF7A29),0 0 34px -6px var(--rc,#FF7A29),0 22px 50px rgba(0,0,0,0.55);
         }
-        .role-card .rc-media{position:relative;width:100%;aspect-ratio:3/4;overflow:hidden;}
-        .role-card .rc-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 22%;transition:transform .55s cubic-bezier(.22,1,.36,1);}
+        /* Tighter image crop reduces overall card height ~25% vs 3/4 (spec §12). */
+        .role-card .rc-media{position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;}
+        .role-card .rc-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 20%;transition:transform .55s cubic-bezier(.22,1,.36,1);}
         .role-card:hover .rc-img,.role-card.selected .rc-img{transform:scale(1.06)}
-        .role-card .rc-scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,14,26,0) 32%,rgba(7,14,26,.55) 60%,rgba(7,14,26,.97) 100%);}
-        .role-card .rc-tone{position:absolute;inset:0;mix-blend-mode:soft-light;opacity:.55;background:linear-gradient(150deg,var(--rc,#FF7A29) 0%,transparent 45%,#1E40AF 100%);}
-        .role-card .rc-overlay{position:absolute;left:0;right:0;bottom:0;padding:16px 18px 18px;z-index:2;}
-        .role-card .rc-check{position:absolute;top:12px;right:12px;z-index:3;width:26px;height:26px;border-radius:50%;background:var(--rc,#FF7A29);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:14px;box-shadow:0 4px 14px rgba(0,0,0,.5);}
+        .role-card .rc-scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,14,26,0) 40%,rgba(7,14,26,.5) 68%,rgba(7,14,26,.96) 100%);}
+        .role-card .rc-tone{position:absolute;inset:0;mix-blend-mode:soft-light;opacity:.5;background:linear-gradient(150deg,var(--rc,#FF7A29) 0%,transparent 45%,#1E40AF 100%);}
+        /* Role name + one-line description sit over the image bottom. */
+        .role-card .rc-overlay{position:absolute;left:0;right:0;bottom:0;padding:12px 14px 12px;z-index:2;}
+        /* Compact fee block below the image — clear hierarchy, no scrim needed. */
+        .role-card .rc-fees{padding:11px 14px 13px;background:#0C1D33;border-top:1px solid rgba(255,255,255,0.07);}
+        .role-card.selected .rc-fees{background:#101f3a;}
+        .role-card .rc-check{position:absolute;top:10px;right:10px;z-index:3;width:26px;height:26px;border-radius:50%;background:var(--rc,#FF7A29);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:14px;box-shadow:0 4px 14px rgba(0,0,0,.5);}
 
         /* ── ROLES GRID ── */
         .roles-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
@@ -739,7 +745,7 @@ export function Registration() {
                       <span style={{ color:'#22C55E', display:'inline-flex' }}><IcoCheck size={18} /></span>
                       <div style={{ flex:1 }}>
                         <div style={{ fontSize:13, fontWeight:700, color:'#22C55E', fontFamily:'Montserrat,sans-serif' }}>{t('Logged in as', 'Logged in as')} +91 {loginPhone || regStatus?.phone || '—'}</div>
-                        {regStatus?.registered && <div style={{ fontSize:11, color:'var(--ink-3)', marginTop:2 }}>{t('Role:', 'Role:')} {regStatus.role?.toUpperCase()} · {t('City:', 'City:')} {regStatus.trialCity}</div>}
+                        {regStatus?.registered && <div style={{ fontSize:13, color:'rgba(255,255,255,0.72)', marginTop:2 }}>{t('Role:', 'Role:')} {formatRole(regStatus.role, lang)} · {t('City:', 'City:')} {regStatus.trialCity}</div>}
                       </div>
                       <button onClick={()=>{ setLoggedIn(false); setRegStatus(null); }} style={{ background:'none', border:'none', color:'var(--ink-3)', cursor:'pointer', fontSize:16 }}>✕</button>
                     </div>
@@ -919,17 +925,21 @@ export function Registration() {
                         />
                         <div className="rc-tone" />
                         <div className="rc-scrim" />
-                        {role?.id === r.id && <div className="rc-check">✓</div>}
+                        {role?.id === r.id && <div className="rc-check" aria-hidden="true">✓</div>}
+                        {/* IMAGE → ROLE NAME → one-line description (spec §12) */}
                         <div className="rc-overlay">
-                          <div style={{ fontFamily:'"Barlow Condensed",Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(17px,2.4vw,21px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em', lineHeight:1, marginBottom:5, textShadow:'0 2px 14px rgba(0,0,0,.85)' }}>{t(r.label, r.labelHi)}</div>
-                          <div style={{ fontSize:11.5, color:'rgba(255,255,255,0.82)', lineHeight:1.4, marginBottom:10, minHeight:32, textShadow:'0 1px 8px rgba(0,0,0,.8)' }}>{t(r.desc, r.descHi)}</div>
-                          <div style={{ display:'flex', alignItems:'baseline', gap:6 }}>
-                            <span style={{ fontFamily:'"Barlow Condensed",Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(20px,3vw,26px)', lineHeight:1, color: role?.id===r.id ? r.color : '#fff', textShadow:'0 2px 12px rgba(0,0,0,.8)' }}>₹{fees.phase1[r.id] ?? r.phase1}</span>
-                            <span style={{ fontSize:10, fontWeight:700, color:'rgba(255,255,255,0.6)', letterSpacing:'.06em' }}>{t('+ GST · PHASE 1', '+ GST · PHASE 1')}</span>
-                          </div>
-                          <div style={{ fontSize:10, color:'rgba(255,255,255,0.5)', marginTop:4, display:'inline-flex', alignItems:'center', gap:4 }}>
-                            <IcoLock size={9} /> {t('Phase 2 (if selected): ₹', 'Phase 2 (अगर select): ₹')}{(fees.phase2[r.id] ?? r.phase2).toLocaleString()} {t('+ GST', '+ GST')}
-                          </div>
+                          <div style={{ fontFamily:'"Barlow Condensed",Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(18px,2.4vw,21px)', color:'#fff', textTransform:'uppercase', letterSpacing:'.02em', lineHeight:1, marginBottom:5, textShadow:'0 2px 14px rgba(0,0,0,.85)' }}>{t(r.label, r.labelHi)}</div>
+                          <div style={{ fontSize:13, color:'rgba(255,255,255,0.82)', lineHeight:1.35, textShadow:'0 1px 8px rgba(0,0,0,.8)' }}>{t(r.desc, r.descHi)}</div>
+                        </div>
+                      </div>
+                      {/* Compact fee block — Phase 1 prominent, Phase 2 secondary but readable. */}
+                      <div className="rc-fees">
+                        <div style={{ display:'flex', alignItems:'baseline', gap:6 }}>
+                          <span style={{ fontFamily:'"Barlow Condensed",Montserrat,sans-serif', fontWeight:900, fontSize:'clamp(22px,3.4vw,24px)', lineHeight:1, color: role?.id===r.id ? r.color : '#fff' }}>₹{fees.phase1[r.id] ?? r.phase1}</span>
+                          <span style={{ fontSize:11, fontWeight:800, color:'rgba(255,255,255,0.72)', letterSpacing:'.06em' }}>{t('+ GST · PHASE 1', '+ GST · PHASE 1')}</span>
+                        </div>
+                        <div style={{ fontSize:12, color:'rgba(255,255,255,0.72)', marginTop:5, lineHeight:1.3 }}>
+                          {t('Phase 2 Trial Fee ₹', 'Phase 2 Trial Fee ₹')}{(fees.phase2[r.id] ?? r.phase2).toLocaleString()}{t(' + GST — after Phase 1 qualification.', ' + GST — Phase 1 qualification के बाद।')}
                         </div>
                       </div>
                     </div>
@@ -937,15 +947,31 @@ export function Registration() {
                 </div>
 
                 {role && (
-                  <div style={{ marginTop:16, padding:'14px 16px', background: role.color + '10', border: '1px solid ' + role.color + '30', display:'flex', alignItems:'center', gap:12, flexWrap:'wrap' }}>
-                    <span style={{ color: role.color, display:'inline-flex' }}><role.emojiIcon size={20} /></span>
-                    <div style={{ flex:1, minWidth:0 }}>
-                      <div style={{ fontSize:13, fontWeight:800, color:'#fff', fontFamily:'Montserrat,sans-serif', letterSpacing:'.04em' }}>{t('YOU SELECTED: ', 'आपने चुना: ')}{t(role.label, role.labelHi).toUpperCase()}</div>
-                      <div style={{ fontSize:12, color:'rgba(255,255,255,0.55)', marginTop:2 }}>
-                        {t('Phase 1 fee: ', 'Phase 1 fee: ')}<b style={{ color:'#fff' }}>₹{price}</b> {t('+ applicable GST', '+ GST')} · {t('Phase 2 (only if selected): ', 'Phase 2 (सिर्फ select होने पर): ')}₹{phase2price.toLocaleString()} + GST
+                  <div style={{ marginTop:16, padding:'16px 18px', borderRadius:14, background: role.color + '10', border: '1.5px solid ' + role.color + '3a' }}>
+                    <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:12 }}>
+                      <span style={{ color: role.color, display:'inline-flex' }}><role.emojiIcon size={22} /></span>
+                      <div style={{ fontSize:15, fontWeight:900, color:'#fff', fontFamily:'Montserrat,sans-serif', letterSpacing:'.03em', flex:1, minWidth:0 }}>
+                        {t('YOU SELECTED: ', 'आपने चुना: ')}<span style={{ color: role.color }}>{formatRole(role.id, lang)}</span>
+                      </div>
+                      <span style={{ width:24, height:24, borderRadius:'50%', background:'#22C55E', display:'inline-flex', alignItems:'center', justifyContent:'center', color:'#fff', fontWeight:900, fontSize:14, flexShrink:0 }} aria-hidden="true">✓</span>
+                    </div>
+                    <div style={{ display:'flex', flexWrap:'wrap', gap:'6px 20px', marginBottom:10 }}>
+                      <div>
+                        <div style={{ fontSize:12, fontWeight:800, color:'rgba(255,255,255,0.72)', letterSpacing:'.08em', textTransform:'uppercase' }}>{t('Phase 1 Fee', 'Phase 1 Fee')}</div>
+                        <div style={{ fontFamily:'"Barlow Condensed",Montserrat,sans-serif', fontWeight:900, fontSize:22, color:'#fff', lineHeight:1.1 }}>₹{price} <span style={{ fontSize:13, fontWeight:700, color:'rgba(255,255,255,0.72)' }}>{t('+ applicable GST', '+ applicable GST')}</span></div>
+                      </div>
+                      <div>
+                        <div style={{ fontSize:12, fontWeight:800, color:'rgba(255,255,255,0.72)', letterSpacing:'.08em', textTransform:'uppercase' }}>{t('Potential Phase 2 Trial Fee', 'संभावित Phase 2 Trial Fee')}</div>
+                        <div style={{ fontFamily:'"Barlow Condensed",Montserrat,sans-serif', fontWeight:900, fontSize:22, color:'rgba(255,255,255,0.9)', lineHeight:1.1 }}>₹{phase2price.toLocaleString()} <span style={{ fontSize:13, fontWeight:700, color:'rgba(255,255,255,0.72)' }}>{t('+ applicable GST', '+ applicable GST')}</span></div>
                       </div>
                     </div>
-                    <div style={{ fontSize:18, color:'#22C55E' }}>✓</div>
+                    <div style={{ fontSize:13, color:'rgba(255,255,255,0.72)', lineHeight:1.5, display:'flex', alignItems:'flex-start', gap:6 }}>
+                      <IcoLock size={12} style={{ flexShrink:0, marginTop:3 }} />
+                      <span>
+                        {t('Phase 2 Physical Trial Fee — payable only after Phase 1 qualification. ', 'Phase 2 Physical Trial Fee — केवल Phase 1 qualification के बाद देय। ')}
+                        <b style={{ color:'#fff', fontWeight:700 }}>{t('Phase 2 payment does not guarantee final selection.', 'Phase 2 payment अंतिम चयन की गारंटी नहीं देता।')}</b>
+                      </span>
+                    </div>
                   </div>
                 )}
               </div>
@@ -1246,20 +1272,21 @@ export function Registration() {
 
       {/* ═══════════════ MOBILE STICKY CTA — hidden on step 4 & for registered players ═══════════════ */}
       {step < 4 && !isRegistered && (
-        <div className="bot-cta" style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:500, padding:'10px 16px calc(20px + env(safe-area-inset-bottom))', background:'rgba(4,10,20,0.98)', backdropFilter:'blur(20px)', borderTop:'2px solid #FF7A29', gap:10 }}>
+        <div className="bot-cta" style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:500, padding:'9px 14px calc(10px + env(safe-area-inset-bottom))', background:'rgba(9,20,36,0.98)', backdropFilter:'blur(20px)', borderTop:'1px solid rgba(255,122,41,0.55)', boxShadow:'0 -8px 28px rgba(0,0,0,0.5)', gap:10, alignItems:'center' }}>
           <button
             className="btn-primary"
             disabled={!canNext}
             onClick={() => canNext && setStep(s => s + 1)}
-            style={{ flex:2, padding:'15px 0', fontSize:14, clipPath:'none', borderRadius:12, letterSpacing:'.06em' }}
+            style={{ flex:'1 1 72%', padding:'13px 0', fontSize:16, clipPath:'none', borderRadius:12, letterSpacing:'.06em' }}
           >
             {t('CONTINUE →', 'CONTINUE →')}
           </button>
           <button
-            style={{ flex:1, padding:'15px 0', background:'linear-gradient(135deg,#25D366,#1BA851)', border:'none', borderRadius:12, color:'#fff', fontWeight:700, cursor:'pointer', fontSize:13, fontFamily:'Montserrat,sans-serif', letterSpacing:'.06em', display:'inline-flex', alignItems:'center', justifyContent:'center', gap:6 }}
+            aria-label={t('Get help on WhatsApp', 'WhatsApp पर सहायता लें')}
+            style={{ flex:'0 0 auto', width:52, height:48, background:'linear-gradient(135deg,#25D366,#1BA851)', border:'none', borderRadius:12, color:'#fff', cursor:'pointer', display:'inline-flex', alignItems:'center', justifyContent:'center', boxShadow:'0 6px 18px rgba(37,211,102,0.35)' }}
             onClick={() => window.open('https://wa.me/919151346555?text=Hi+BCPL+team,+I+need+help+with+registration', '_blank')}
           >
-            <IcoChat size={15} /> {t('WHATSAPP', 'WHATSAPP')}
+            <IcoChat size={22} />
           </button>
         </div>
       )}

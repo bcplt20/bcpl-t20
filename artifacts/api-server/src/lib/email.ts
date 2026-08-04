@@ -17,6 +17,7 @@ import {
   NoteBox,
   hydrateSponsors,
   esc,
+  formatRole,
   ICONS,
   COLORS,
   SITE_URL,
@@ -103,12 +104,12 @@ export function tplPhase1Receipt(name: string, role: string, amount: number, reg
   return {
     subject: "BCPL T20 Season 5 — Registration Confirmed",
     htmlContent: EmailShell(`
-      ${HeroStatus({ iconUrl: ICONS.check(COLORS.green), ring: COLORS.green, titleColor: COLORS.green, title: "REGISTRATION CONFIRMED", subtitle: "BCPL Season 5 · Phase 1 Trials" })}
+      ${HeroStatus({ iconUrl: ICONS.check(COLORS.green), ring: COLORS.green, titleColor: COLORS.green, title: "REGISTRATION CONFIRMED", subtitle: "BCPL Season 5 · Phase 1 Trials", iconAlt: "Registration confirmed" })}
       ${SuccessBanner("You are registered for Phase 1 Trials", "Your payment has been received and your place in BCPL Season 5 Phase 1 is secured.")}
       ${Greeting(name, ["Welcome to BCPL Season 5. Here are your registration details."])}
       ${KeyValueTable([
         ["Registration No.", `<span style="font-family:monospace;">${esc(regNo)}</span>`],
-        ["Role", `<span style="color:${COLORS.orange};">${esc(role.toUpperCase())}</span>`],
+        ["Role", `<span style="color:${COLORS.orange};">${esc(formatRole(role))}</span>`],
         ["Trial City", esc(city)],
         ["Amount Paid", `<span style="color:${COLORS.green};font-size:18px;">&#8377;${esc(amount)}</span>`],
       ])}
@@ -306,7 +307,7 @@ export function tplTrialCompleted(p: { firstName: string; roleLabel: string; tri
       ${Greeting(p.firstName, ["You have successfully completed your BCPL physical trial. Your on-ground assessment has been recorded by the evaluation team."])}
       ${KeyValueTable([
         ["Player Trial ID", `<span style="color:${COLORS.gold};">${esc(p.trialId)}</span>`],
-        ["Playing Role", esc(p.roleLabel)],
+        ["Playing Role", esc(formatRole(p.roleLabel))],
         ["Trial City", esc(p.trialCity)],
         ["Venue", esc(p.venueName)],
         ["Trial Date", esc(p.trialDate)],

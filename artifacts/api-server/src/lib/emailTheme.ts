@@ -28,6 +28,11 @@ export const COLORS = {
   ink: "#F4F1EC",         // high-contrast body text
   inkSoft: "#C4CDDA",     // secondary but still readable (never ultra-low opacity)
   inkFaint: "#8A97A8",    // metadata — kept above WCAG-ish contrast on dark
+  // Footer text floor (spec §35): footer copy must stay clearly readable on the
+  // dark outer surface — kept at / above the #A8B3C5 contrast target so it never
+  // visually disappears the way the old near-#8A97A8 footer did.
+  footer: "#B4BECC",      // readable footer body / metadata (>= #A8B3C5 target)
+  footerLink: "#DDE4EE",  // footer links — brighter so they read + tap clearly
   gold: "#E8B23D",        // premium emphasis
   orange: "#FF7A29",      // primary accent / CTA
   green: "#22C55E",
@@ -93,6 +98,35 @@ export const WEBSITE = "bcplt20.com";
 export const LEGAL_ENTITY = "Kriparthi Playing 11 Pvt. Ltd.";
 export const HASHTAG = "#OfficeSeStadiumTak";
 
+/* ── Role formatting (SINGLE source of truth) ─────────────────────────────── */
+// One shared player-facing role formatter used by email templates (and safe to
+// reuse from any SMS/WhatsApp sender). Maps every historic role value — codes
+// (bat/bowl/ar/wk, any case) and long forms ("Batsman", "wicketkeeper_batsman")
+// — to the approved player-facing label. Never lets a raw internal code such as
+// AR / WK / BAT / BOWL reach a player. Unknown values fall back to a title-cased
+// version of the input (so it is at least readable), and empty/nullish input
+// yields a neutral "Player".
+const ROLE_DISPLAY: Record<string, string> = {
+  bat: "Batsman", batsman: "Batsman",
+  bowl: "Bowler", bowler: "Bowler",
+  ar: "All-Rounder", allrounder: "All-Rounder", all_rounder: "All-Rounder", "all-rounder": "All-Rounder",
+  wk: "Wicketkeeper", wicketkeeper: "Wicketkeeper", wicket_keeper: "Wicketkeeper", wicketkeeper_batsman: "Wicketkeeper",
+};
+function titleCase(s: string): string {
+  return s
+    .replace(/[_-]+/g, " ")
+    .trim()
+    .split(/\s+/)
+    .map((w) => (w ? w[0]!.toUpperCase() + w.slice(1).toLowerCase() : w))
+    .join(" ");
+}
+export function formatRole(role: unknown): string {
+  const raw = String(role ?? "").trim();
+  if (!raw) return "Player";
+  const key = raw.toLowerCase();
+  return ROLE_DISPLAY[key] ?? titleCase(raw);
+}
+
 /* ── Small helpers ────────────────────────────────────────────────────────── */
 /** Escape untrusted dynamic values before interpolation into email HTML. */
 export function esc(v: unknown): string {
@@ -136,12 +170,16 @@ export const ICONS = {
 };
 
 /** A round medallion holding an icon — the premium hero glyph. Table-based so
- *  it stays vertically centered in Outlook (no line-height/flex reliance). */
-export function medallion(iconUrl: string, ring = COLORS.gold): string {
+ *  it stays vertically centered in Outlook (no line-height/flex reliance).
+ *  The icon is displayed at an explicit 40px inside a 76px ring (spec §31:
+ *  a reliable, clearly-sized hero graphic — never an empty circle). Source
+ *  PNGs are 88px @2x so the glyph stays crisp on Retina. `alt` gives the hero
+ *  graphic meaningful alternative text so the meaning survives image blocking. */
+export function medallion(iconUrl: string, ring = COLORS.gold, alt = ""): string {
   return `
     <table role="presentation" cellpadding="0" cellspacing="0" align="center" style="margin:0 auto;">
-      <tr><td width="72" height="72" align="center" valign="middle" style="width:72px;height:72px;border-radius:50%;background:rgba(232,178,61,0.10);border:2px solid ${ring};">
-        <img src="${iconUrl}" width="36" height="36" alt="" style="display:block;width:36px;height:36px;border:0;" />
+      <tr><td width="76" height="76" align="center" valign="middle" style="width:76px;height:76px;border-radius:50%;background:rgba(232,178,61,0.10);border:2px solid ${ring};">
+        <img src="${iconUrl}" width="40" height="40" alt="${esc(alt)}" style="display:block;width:40px;height:40px;border:0;" />
       </td></tr>
     </table>`;
 }
@@ -162,12 +200,16 @@ export function HeroStatus(opts: {
   title: string;
   subtitle?: string;
   titleColor?: string;
+  /** Meaningful alt text for the hero graphic (spec §31). Falls back to the
+   *  visible title so the meaning survives image blocking. */
+  iconAlt?: string;
 }): string {
   const ring = opts.ring ?? COLORS.gold;
   const titleColor = opts.titleColor ?? COLORS.gold;
+  const iconAlt = opts.iconAlt ?? opts.title;
   return `
     <div style="text-align:center;margin-bottom:24px;">
-      ${medallion(opts.iconUrl, ring)}
+      ${medallion(opts.iconUrl, ring, iconAlt)}
       <div class="bcpl-title" style="font-family:${FONT};font-size:24px;line-height:1.2;font-weight:800;color:${titleColor};letter-spacing:-0.3px;margin-top:14px;">${opts.title}</div>
       ${opts.subtitle ? `<div style="font-family:${FONT};font-size:13px;color:${COLORS.inkFaint};margin-top:6px;">${opts.subtitle}</div>` : ""}
     </div>`;
@@ -417,13 +459,16 @@ export function renderSponsorStrip(list: SponsorRecord[]): string {
       const cell = s.website
         ? `<a href="${s.website}" target="_blank" rel="noopener" style="text-decoration:none;">${tile}</a>`
         : tile;
-      return `<td width="150" valign="middle" style="padding:6px 8px;">${cell}</td>`;
+      // inline-block cells reflow to multiple rows on narrow clients (and the
+      // .bcpl-sponsor media rule forces clean stacking where media queries run)
+      // so a long partner list never overflows horizontally (spec §33/§36).
+      return `<td class="bcpl-sponsor" width="150" valign="middle" style="padding:6px 8px;display:inline-block;">${cell}</td>`;
     })
     .join("");
 
   return `
     <tr><td style="padding:22px 32px 4px;background:${COLORS.outer};text-align:center;">
-      <div style="font-family:${FONT};font-size:10px;color:${COLORS.inkFaint};letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;">Official Partners</div>
+      <div style="font-family:${FONT};font-size:11px;color:${COLORS.footer};letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;">Official Partners</div>
       <table role="presentation" cellpadding="0" cellspacing="0" align="center" style="margin:0 auto;">
         <tr>${tiles}</tr>
       </table>
@@ -481,16 +526,16 @@ export function SocialBar(): string {
     .filter((it) => Boolean(it.url)) // omit any platform without a verified URL
     .map(
       (it) => `
-        <td style="padding:0 7px;">
+        <td style="padding:0 9px;">
           <a href="${it.url}" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none;">
-            <img src="${EMAIL_ICON_BASE}/${it.kind}.png" width="24" height="24" alt="${it.label}" style="display:block;width:24px;height:24px;border:0;outline:none;" />
+            <img src="${EMAIL_ICON_BASE}/${it.kind}.png" width="30" height="30" alt="${it.label}" style="display:block;width:30px;height:30px;border:0;outline:none;" />
           </a>
         </td>`,
     )
     .join("");
   return `
     <tr><td style="padding:18px 32px 6px;background:${COLORS.outer};text-align:center;">
-      <div style="font-family:${FONT};font-size:10px;color:${COLORS.inkFaint};letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;">Follow BCPL</div>
+      <div style="font-family:${FONT};font-size:11px;color:${COLORS.footer};letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;">Follow BCPL</div>
       <table role="presentation" cellpadding="0" cellspacing="0" align="center" style="margin:0 auto;"><tr>${cells}</tr></table>
     </td></tr>`;
 }
@@ -502,17 +547,17 @@ export function SocialBar(): string {
 export const LegalFooter = `
   <tr><td style="padding:20px 32px 28px;background:${COLORS.outer};border-top:1px solid ${COLORS.line};text-align:center;">
     <div style="font-family:${FONT};font-size:14px;color:${COLORS.ink};font-weight:800;letter-spacing:.5px;">BCPL T20</div>
-    <div style="font-family:${FONT};font-size:12px;color:${COLORS.inkSoft};margin-top:4px;">Bhartiya Corporate Premier League</div>
-    <div style="font-family:${FONT};font-size:11px;color:${COLORS.inkFaint};margin-top:8px;line-height:1.7;">An initiative of ${LEGAL_ENTITY}</div>
-    <div style="margin-top:10px;line-height:1;">
-      <span class="bcpl-stack" style="display:inline-block;padding:2px 10px;">
-        <a href="mailto:${FROM_EMAIL}" style="font-family:${FONT};font-size:12px;color:${COLORS.inkSoft};text-decoration:none;">${FROM_EMAIL}</a>
+    <div style="font-family:${FONT};font-size:13px;color:${COLORS.footer};margin-top:4px;">Bhartiya Corporate Premier League</div>
+    <div style="font-family:${FONT};font-size:13px;color:${COLORS.footer};margin-top:8px;line-height:1.7;">An initiative of ${LEGAL_ENTITY}</div>
+    <div style="margin-top:12px;line-height:1;">
+      <span class="bcpl-stack" style="display:inline-block;padding:4px 12px;">
+        <a href="mailto:${FROM_EMAIL}" style="font-family:${FONT};font-size:14px;color:${COLORS.footerLink};text-decoration:underline;">${FROM_EMAIL}</a>
       </span>
-      <span class="bcpl-stack" style="display:inline-block;padding:2px 10px;">
-        <a href="https://${WEBSITE}" style="font-family:${FONT};font-size:12px;color:${COLORS.inkSoft};text-decoration:none;">${WEBSITE}</a>
+      <span class="bcpl-stack" style="display:inline-block;padding:4px 12px;">
+        <a href="https://${WEBSITE}" style="font-family:${FONT};font-size:14px;color:${COLORS.footerLink};text-decoration:underline;">${WEBSITE}</a>
       </span>
     </div>
-    <div style="font-family:${FONT};font-size:11px;color:${COLORS.inkFaint};margin-top:14px;line-height:1.6;">
+    <div style="font-family:${FONT};font-size:13px;color:${COLORS.footer};margin-top:14px;line-height:1.6;">
       This is a transactional message related to your BCPL Season 5 registration.
     </div>
   </td></tr>`;
@@ -529,6 +574,7 @@ export function EmailShell(body: string): string {
   @media only screen and (max-width:480px){
     .bcpl-pad{padding-left:20px !important;padding-right:20px !important;}
     .bcpl-stack{display:block !important;width:100% !important;padding:4px 0 !important;}
+    .bcpl-sponsor{display:inline-block !important;width:46% !important;}
     .bcpl-title{font-size:21px !important;}
   }
 </style>

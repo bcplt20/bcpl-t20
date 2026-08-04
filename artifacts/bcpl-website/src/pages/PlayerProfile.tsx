@@ -375,7 +375,7 @@ export function PlayerProfile() {
         
         .btn-orange { background: linear-gradient(135deg, var(--orange), var(--orange-2)); border: none; border-radius: var(--r); color: #fff; font-family: var(--font-head); font-weight: 900; letter-spacing: .06em; cursor: pointer; padding: 16px 32px; font-size: 16px; transition: all .2s; text-transform: uppercase; text-decoration: none; display: inline-block; box-shadow: 0 6px 20px rgba(255,122,41,0.3); }
         .btn-orange:hover { filter: brightness(1.1); transform: translateY(-2px); }
-        .btn-ghost { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: var(--r); color: rgba(255,255,255,0.7); font-family: var(--font-head); font-weight: 800; cursor: pointer; padding: 12px 20px; font-size: 13px; letter-spacing: .06em; transition: all .2s; text-transform: uppercase; }
+        .btn-ghost { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.18); border-radius: var(--r); color: rgba(255,255,255,0.82); font-family: var(--font-head); font-weight: 800; cursor: pointer; padding: 12px 20px; font-size: 14px; letter-spacing: .05em; transition: all .2s; text-transform: uppercase; }
         .btn-ghost:hover { border-color: var(--orange); color: var(--orange); background: rgba(255,122,41,0.05); }
         
         .grid2 { display: grid; grid-template-columns: 1fr; gap: 16px; }
@@ -383,8 +383,9 @@ export function PlayerProfile() {
         .main-layout { display: grid; grid-template-columns: 1fr; gap: 24px; }
         @media(min-width: 900px){ .main-layout { grid-template-columns: 1.1fr 1.6fr; align-items: start; } }
         
-        .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
-        .tag { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 800; font-family: var(--font-head); letter-spacing: .08em; text-transform: uppercase; }
+        .card { background: var(--grad-card, var(--panel)); border: 1px solid var(--line); border-radius: var(--r); padding: 24px; box-shadow: 0 12px 32px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.05); }
+        .feature-card { position: relative; }
+        .tag { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 800; font-family: var(--font-head); letter-spacing: .06em; text-transform: uppercase; }
         
         @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes pulseGreen { 0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); } 50% { box-shadow: 0 0 0 12px rgba(34,197,94,0); } }
@@ -394,7 +395,7 @@ export function PlayerProfile() {
         @media (min-width: 768px) { .mob-bottom-nav { display: none; } }
         .mob-tab-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 12px 0; background: transparent; border: none; color: var(--ink-3); font-family: var(--font-body); cursor: pointer; transition: color 0.2s; }
         .mob-tab-btn.active { color: var(--orange); }
-        .mob-tab-btn .lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+        .mob-tab-btn .lbl { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; }
         
         @media (max-width: 767px) {
           .mob-tab-content { display: none; }
@@ -471,7 +472,7 @@ export function PlayerProfile() {
                         </div>
                       )}
 
-                      <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', fontSize: 14, color: 'rgba(255,255,255,0.6)', fontWeight: 600, alignItems: 'center' }}>
+                      <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', fontSize: 14.5, color: 'rgba(255,255,255,0.78)', fontWeight: 600, alignItems: 'center' }}>
                         {reg && <>
                           <span>{formatRole(reg.role)}</span>
                           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}><IcoPin size={14} /> {reg.trialCity}</span>
@@ -515,12 +516,12 @@ export function PlayerProfile() {
                         { label: t('Email', 'ईमेल'), value: user?.email || '—' },
                       ].map(row => (
                         <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, background: 'rgba(255,255,255,0.02)', border: '1px solid var(--line)', borderRadius: 12, padding: '12px 16px' }}>
-                          <span style={{ fontSize: 11, fontWeight: 800, fontFamily: 'var(--font-head)', color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '.06em', flexShrink: 0, alignSelf: 'center' }}>{row.label}</span>
+                          <span style={{ fontSize: 12.5, fontWeight: 800, fontFamily: 'var(--font-head)', color: 'rgba(255,255,255,0.72)', textTransform: 'uppercase', letterSpacing: '.06em', flexShrink: 0, alignSelf: 'center' }}>{row.label}</span>
                           <span style={{ fontSize: 14, fontWeight: 700, color: '#fff', wordBreak: 'break-all', textAlign: 'right' }}>{row.value}</span>
                         </div>
                       ))}
                     </div>
-                    <div style={{ padding: '14px 16px', background: 'rgba(255,122,41,0.06)', border: '1px solid rgba(255,122,41,0.25)', borderRadius: 12, fontSize: 13.5, color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, marginBottom: 16 }}>
+                    <div style={{ padding: '14px 16px', background: 'rgba(255,122,41,0.08)', border: '1px solid rgba(255,122,41,0.28)', borderRadius: 12, fontSize: 15, color: 'rgba(255,255,255,0.82)', lineHeight: 1.6, marginBottom: 16 }}>
                       {t("You haven't registered for Season 5 yet. Register now to start your BCPL journey.", "आपने अभी तक सीजन 5 के लिए रजिस्टर नहीं किया है। अपना BCPL सफर शुरू करने के लिए अभी रजिस्टर करें।")}
                     </div>
                     <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
@@ -542,29 +543,29 @@ export function PlayerProfile() {
                       {/* Phase 1 Payment */}
                       <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '12px', padding: '16px', border: '1px solid var(--line)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                          <div style={{ fontSize: 11, fontWeight: 800, fontFamily: 'var(--font-head)', color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t("Phase 1 Payment", "फेज 1 पेमेंट")}</div>
-                          <div className="tag" style={{ background: p1Paid ? 'rgba(34,197,94,0.1)' : 'rgba(232,178,61,0.1)', borderColor: p1Paid ? 'rgba(34,197,94,0.3)' : 'rgba(232,178,61,0.3)', color: p1Paid ? 'var(--green)' : 'var(--gold)', padding: '4px 10px', fontSize: 12 }}>
+                          <div style={{ fontSize: 12.5, fontWeight: 800, fontFamily: 'var(--font-head)', color: 'rgba(255,255,255,0.72)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t("Phase 1 Payment", "फेज 1 पेमेंट")}</div>
+                          <div className="tag" style={{ background: p1Paid ? 'rgba(34,197,94,0.1)' : 'rgba(232,178,61,0.1)', borderColor: p1Paid ? 'rgba(34,197,94,0.3)' : 'rgba(232,178,61,0.3)', color: p1Paid ? 'var(--green)' : 'var(--gold)', padding: '5px 11px', fontSize: 13 }}>
                             {p1Paid ? t('✓ Paid', '✓ पेड') : t('Pending', 'पेंडिंग')}
                           </div>
                         </div>
-                        {data.phase1Payment && <div style={{ fontSize: 20, fontWeight: 700, color: '#fff', fontFamily: 'var(--font-head)' }}>{fmtAmt(data.phase1Payment.amount)}</div>}
-                        {data.phase1Payment?.paidAt && <div style={{ fontSize: 12, color: 'var(--ink-3)', marginTop: 4 }}>{formatDateShort(data.phase1Payment.paidAt)}</div>}
+                        {data.phase1Payment && <div style={{ fontSize: 26, fontWeight: 800, color: '#fff', fontFamily: 'var(--font-head)', lineHeight: 1.1 }}>{fmtAmt(data.phase1Payment.amount)}</div>}
+                        {data.phase1Payment?.paidAt && <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.68)', marginTop: 5 }}>{formatDateShort(data.phase1Payment.paidAt)}</div>}
                       </div>
 
                       {/* Trial Video */}
                       <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '12px', padding: '16px', border: '1px solid var(--line)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                          <div style={{ fontSize: 11, fontWeight: 800, fontFamily: 'var(--font-head)', color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t("Trial Video", "ट्रायल वीडियो")}</div>
-                          <div className="tag" style={{ background: data.video?.submitted ? (reg.phase1Status === 'selected' ? 'rgba(34,197,94,0.1)' : 'rgba(232,178,61,0.1)') : 'rgba(255,122,41,0.1)', borderColor: data.video?.submitted ? (reg.phase1Status === 'selected' ? 'rgba(34,197,94,0.3)' : 'rgba(232,178,61,0.3)') : 'rgba(255,122,41,0.3)', color: data.video?.submitted ? (reg.phase1Status === 'selected' ? 'var(--green)' : 'var(--gold)') : 'var(--orange)', padding: '4px 10px', fontSize: 12 }}>
+                          <div style={{ fontSize: 12.5, fontWeight: 800, fontFamily: 'var(--font-head)', color: 'rgba(255,255,255,0.72)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t("Trial Video", "ट्रायल वीडियो")}</div>
+                          <div className="tag" style={{ background: data.video?.submitted ? (reg.phase1Status === 'selected' ? 'rgba(34,197,94,0.1)' : 'rgba(232,178,61,0.1)') : 'rgba(255,122,41,0.1)', borderColor: data.video?.submitted ? (reg.phase1Status === 'selected' ? 'rgba(34,197,94,0.3)' : 'rgba(232,178,61,0.3)') : 'rgba(255,122,41,0.3)', color: data.video?.submitted ? (reg.phase1Status === 'selected' ? 'var(--green)' : 'var(--gold)') : 'var(--orange)', padding: '5px 11px', fontSize: 13 }}>
                             {data.video?.submitted
                               ? (reg.phase1Status === 'selected' ? t('✓ Selected', '✓ चयनित') : reg.phase1Status === 'rejected' ? t('Assessment Complete', 'असेसमेंट पूरा') : t('Under Review', 'रिव्यू में'))
                               : t('Not Uploaded', 'अपलोड नहीं हुआ')}
                           </div>
                         </div>
-                        {data.video?.submittedAt && <div style={{ fontSize: 12, color: 'var(--ink-3)', marginTop: 4 }}>{t("Submitted", "सबमिट किया")} {formatDateShort(data.video.submittedAt)}</div>}
+                        {data.video?.submittedAt && <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.68)', marginTop: 5 }}>{t("Submitted", "सबमिट किया")} {formatDateShort(data.video.submittedAt)}</div>}
                         {!data.video?.submitted && (
                           <button onClick={() => { setLocation('/register/upload-video'); }}
-                            style={{ marginTop: 8, padding: '8px 16px', fontSize: 11, fontWeight: 800, fontFamily: 'var(--font-head)', background: 'rgba(255,122,41,0.1)', border: '1px solid rgba(255,122,41,0.4)', color: 'var(--orange)', borderRadius: '8px', cursor: 'pointer', textTransform: 'uppercase' }}>
+                            style={{ marginTop: 10, padding: '9px 16px', fontSize: 13, fontWeight: 800, fontFamily: 'var(--font-head)', letterSpacing: '.04em', background: 'rgba(255,122,41,0.12)', border: '1px solid rgba(255,122,41,0.45)', color: 'var(--orange)', borderRadius: '9px', cursor: 'pointer', textTransform: 'uppercase' }}>
                             {t("UPLOAD NOW →", "अभी अपलोड करें →")}
                           </button>
                         )}
@@ -574,16 +575,16 @@ export function PlayerProfile() {
                       {(reg.phase1Status === 'selected' || data.phase2Payment || p2Paid) && (
                         <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '12px', padding: '16px', border: '1px solid var(--line)' }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                            <div style={{ fontSize: 11, fontWeight: 800, fontFamily: 'var(--font-head)', color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t("Phase 2 Payment", "फेज 2 पेमेंट")}</div>
-                            <div className="tag" style={{ background: p2Paid ? 'rgba(34,197,94,0.1)' : 'rgba(255,122,41,0.1)', borderColor: p2Paid ? 'rgba(34,197,94,0.3)' : 'rgba(255,122,41,0.3)', color: p2Paid ? 'var(--green)' : 'var(--orange)', padding: '4px 10px', fontSize: 12 }}>
+                            <div style={{ fontSize: 12.5, fontWeight: 800, fontFamily: 'var(--font-head)', color: 'rgba(255,255,255,0.72)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t("Phase 2 Payment", "फेज 2 पेमेंट")}</div>
+                            <div className="tag" style={{ background: p2Paid ? 'rgba(34,197,94,0.1)' : 'rgba(255,122,41,0.1)', borderColor: p2Paid ? 'rgba(34,197,94,0.3)' : 'rgba(255,122,41,0.3)', color: p2Paid ? 'var(--green)' : 'var(--orange)', padding: '5px 11px', fontSize: 13 }}>
                               {p2Paid ? t('✓ Paid', '✓ पेड') : t('Pending', 'पेंडिंग')}
                             </div>
                           </div>
-                          {data.phase2Payment && <div style={{ fontSize: 20, fontWeight: 700, color: '#fff', fontFamily: 'var(--font-head)' }}>{fmtAmt(data.phase2Payment.amount)}</div>}
-                          {data.phase2Payment?.paidAt && <div style={{ fontSize: 12, color: 'var(--ink-3)', marginTop: 4 }}>{formatDateShort(data.phase2Payment.paidAt)}</div>}
+                          {data.phase2Payment && <div style={{ fontSize: 26, fontWeight: 800, color: '#fff', fontFamily: 'var(--font-head)', lineHeight: 1.1 }}>{fmtAmt(data.phase2Payment.amount)}</div>}
+                          {data.phase2Payment?.paidAt && <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.68)', marginTop: 5 }}>{formatDateShort(data.phase2Payment.paidAt)}</div>}
                           {!data.phase2Payment && !p2Paid && (
                             <button onClick={() => { setLocation('/register/phase2'); }}
-                              style={{ marginTop: 8, padding: '8px 16px', fontSize: 11, fontWeight: 800, fontFamily: 'var(--font-head)', background: 'rgba(255,122,41,0.1)', border: '1px solid rgba(255,122,41,0.4)', color: 'var(--orange)', borderRadius: '8px', cursor: 'pointer', textTransform: 'uppercase' }}>
+                              style={{ marginTop: 10, padding: '9px 16px', fontSize: 13, fontWeight: 800, fontFamily: 'var(--font-head)', letterSpacing: '.04em', background: 'rgba(255,122,41,0.12)', border: '1px solid rgba(255,122,41,0.45)', color: 'var(--orange)', borderRadius: '9px', cursor: 'pointer', textTransform: 'uppercase' }}>
                               {t("PAY NOW →", "अभी पेमेंट करें →")}
                             </button>
                           )}
@@ -594,15 +595,15 @@ export function PlayerProfile() {
                       {(reg.phase2Status || data.kyc) && (
                         <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '12px', padding: '16px', border: '1px solid var(--line)' }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                            <div style={{ fontSize: 11, fontWeight: 800, fontFamily: 'var(--font-head)', color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t("KYC Verification", "KYC वेरिफिकेशन")}</div>
-                            <div className="tag" style={{ background: data.kyc?.status === 'verified' ? 'rgba(34,197,94,0.1)' : data.kyc?.status === 'pending' ? 'rgba(232,178,61,0.1)' : 'rgba(255,122,41,0.1)', borderColor: data.kyc?.status === 'verified' ? 'rgba(34,197,94,0.3)' : data.kyc?.status === 'pending' ? 'rgba(232,178,61,0.3)' : 'rgba(255,122,41,0.3)', color: data.kyc?.status === 'verified' ? 'var(--green)' : data.kyc?.status === 'pending' ? 'var(--gold)' : 'var(--orange)', padding: '4px 10px', fontSize: 12 }}>
+                            <div style={{ fontSize: 12.5, fontWeight: 800, fontFamily: 'var(--font-head)', color: 'rgba(255,255,255,0.72)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t("KYC Verification", "KYC वेरिफिकेशन")}</div>
+                            <div className="tag" style={{ background: data.kyc?.status === 'verified' ? 'rgba(34,197,94,0.1)' : data.kyc?.status === 'pending' ? 'rgba(232,178,61,0.1)' : 'rgba(255,122,41,0.1)', borderColor: data.kyc?.status === 'verified' ? 'rgba(34,197,94,0.3)' : data.kyc?.status === 'pending' ? 'rgba(232,178,61,0.3)' : 'rgba(255,122,41,0.3)', color: data.kyc?.status === 'verified' ? 'var(--green)' : data.kyc?.status === 'pending' ? 'var(--gold)' : 'var(--orange)', padding: '5px 11px', fontSize: 13 }}>
                               {data.kyc?.status === 'verified' ? t('✓ Verified', '✓ वेरीफाइड') : data.kyc?.status === 'pending' ? t('In Review', 'रिव्यू में') : t('Pending', 'पेंडिंग')}
                             </div>
                           </div>
-                          {data.kyc?.submittedAt && <div style={{ fontSize: 12, color: 'var(--ink-3)', marginTop: 4 }}>{t("Submitted", "सबमिट किया")} {formatDateShort(data.kyc.submittedAt)}</div>}
+                          {data.kyc?.submittedAt && <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.68)', marginTop: 5 }}>{t("Submitted", "सबमिट किया")} {formatDateShort(data.kyc.submittedAt)}</div>}
                           {(!data.kyc || data.kyc.status === 'failed') && (
                             <button onClick={() => { setLocation('/register/phase2/kyc'); }}
-                              style={{ marginTop: 8, padding: '8px 16px', fontSize: 11, fontWeight: 800, fontFamily: 'var(--font-head)', background: 'rgba(255,122,41,0.1)', border: '1px solid rgba(255,122,41,0.4)', color: 'var(--orange)', borderRadius: '8px', cursor: 'pointer', textTransform: 'uppercase' }}>
+                              style={{ marginTop: 10, padding: '9px 16px', fontSize: 13, fontWeight: 800, fontFamily: 'var(--font-head)', letterSpacing: '.04em', background: 'rgba(255,122,41,0.12)', border: '1px solid rgba(255,122,41,0.45)', color: 'var(--orange)', borderRadius: '9px', cursor: 'pointer', textTransform: 'uppercase' }}>
                               {t("COMPLETE KYC →", "KYC पूरा करें →")}
                             </button>
                           )}
@@ -624,12 +625,12 @@ export function PlayerProfile() {
               <div className={`mob-tab-content ${activeTab === 'home' ? 'active' : ''}`}>
                 {/* ── STATUS BANNER ── */}
                 {ban && (
-                  <div className="card" style={{ background: ban.bg, border: `1px solid ${ban.color}40`, animation: 'fadeUp .5s .15s ease both', marginBottom: 24, padding: '32px 24px' }}>
+                  <div className="card feature-card" style={{ background: `linear-gradient(160deg, ${ban.bg}, rgba(18,41,74,0.9) 90%)`, border: `1px solid ${ban.color}55`, borderTop: `4px solid ${ban.color}`, boxShadow: `0 18px 44px rgba(0,0,0,0.32), 0 0 0 1px ${ban.color}12`, animation: 'fadeUp .5s .15s ease both', marginBottom: 24, padding: '32px 24px' }}>
                     <div style={{ display: 'flex', gap: 20, alignItems: 'flex-start', flexWrap: 'wrap' }}>
-                      <div style={{ color: ban.color, opacity: 0.9 }}>{ban.icon}</div>
+                      <div style={{ color: ban.color, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 60, height: 60, borderRadius: 14, background: `${ban.color}1A`, border: `1px solid ${ban.color}40`, flexShrink: 0 }}>{ban.icon}</div>
                       <div style={{ flex: 1, minWidth: 200 }}>
-                        <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(20px, 3vw, 28px)', color: ban.color, marginBottom: 12, textTransform: 'uppercase', lineHeight: 1.1 }}>{ban.title}</div>
-                        <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, marginBottom: ban.cta ? 24 : 0 }}>{ban.body}</div>
+                        <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(22px, 3.2vw, 30px)', color: ban.color, marginBottom: 12, textTransform: 'uppercase', lineHeight: 1.1 }}>{ban.title}</div>
+                        <div style={{ fontSize: 16, color: 'rgba(255,255,255,0.82)', lineHeight: 1.6, marginBottom: ban.cta ? 24 : 0 }}>{ban.body}</div>
                         {ban.cta && ban.ctaPath && (
                           <button className="btn-orange" onClick={() => { setLocation(ban.ctaPath!); }}>
                             {ban.cta}
@@ -646,9 +647,9 @@ export function PlayerProfile() {
                           { label: t('Trial Date', 'ट्रायल तारीख़'), value: trial.slot?.date ? formatDateShort(trial.slot.date) : '—' },
                           { label: t('Assessment', 'असेसमेंट'), value: t('Recorded', 'रिकॉर्ड हो गया') + (trial.assessmentAt ? ` · ${formatDateShort(trial.assessmentAt)}` : ''), green: true },
                         ].map((row: any) => (
-                          <div key={row.label} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 10, padding: '10px 14px' }}>
-                            <div style={{ fontSize: 10, fontWeight: 800, fontFamily: 'var(--font-head)', color: 'var(--ink-3)', letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 4 }}>{row.label}</div>
-                            <div style={{ fontSize: 13.5, fontWeight: 700, color: row.green ? 'var(--green)' : '#fff', fontFamily: row.mono ? 'monospace' : 'inherit', display: 'flex', alignItems: 'center', gap: 5 }}>
+                          <div key={row.label} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 10, padding: '11px 14px' }}>
+                            <div style={{ fontSize: 12, fontWeight: 800, fontFamily: 'var(--font-head)', color: 'rgba(255,255,255,0.72)', letterSpacing: '.06em', textTransform: 'uppercase', marginBottom: 5 }}>{row.label}</div>
+                            <div style={{ fontSize: 15, fontWeight: 700, color: row.green ? 'var(--green)' : '#fff', fontFamily: row.mono ? 'monospace' : 'inherit', display: 'flex', alignItems: 'center', gap: 5 }}>
                               {row.green && <IcoCheck size={13} />}{row.value}
                             </div>
                           </div>
@@ -660,13 +661,13 @@ export function PlayerProfile() {
                 
                 {/* ── PHASE 1 RESULT READY ── */}
                 {myResult?.available && (
-                  <div className="card" style={{ background: 'linear-gradient(120deg, rgba(232,178,61,0.1), rgba(255,122,41,0.05))', border: '1px solid rgba(232,178,61,0.4)', marginBottom: 24, animation: 'fadeUp .5s .2s ease both', display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap', padding: '24px 32px' }}>
-                    <div style={{ color: 'var(--gold)' }}><IcoTrophy size={36} /></div>
+                  <div className="card" style={{ background: 'linear-gradient(120deg, rgba(232,178,61,0.14), rgba(255,122,41,0.06))', border: '1px solid rgba(232,178,61,0.45)', boxShadow: '0 16px 40px rgba(0,0,0,0.3)', marginBottom: 24, animation: 'fadeUp .5s .2s ease both', display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap', padding: '24px 32px' }}>
+                    <div style={{ color: 'var(--gold)', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 56, height: 56, borderRadius: 14, background: 'rgba(232,178,61,0.14)', border: '1px solid rgba(232,178,61,0.35)', flexShrink: 0 }}><IcoTrophy size={32} /></div>
                     <div style={{ flex: 1, minWidth: 220 }}>
-                      <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 20, color: 'var(--gold)', marginBottom: 6, letterSpacing: '.04em', textTransform: 'uppercase' }}>
+                      <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 22, color: 'var(--gold)', marginBottom: 6, letterSpacing: '.04em', textTransform: 'uppercase' }}>
                         {t("YOUR PHASE 1 RESULT IS READY", "आपका फेज 1 परिणाम तैयार है")}
                       </div>
-                      <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.7)', lineHeight: 1.5 }}>
+                      <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.82)', lineHeight: 1.55 }}>
                         {t("Your full 100-point scorecard from BCPL's Phase 1 evaluation is waiting.", "BCPL के Phase 1 evaluation से आपका पूरा 100-पॉइंट स्कोरकार्ड तैयार है।")}
                       </div>
                     </div>
@@ -726,7 +727,7 @@ export function PlayerProfile() {
                         { label: t('Batch', 'बैच'), value: formatBatch(trial.slot?.batch) },
                       ].map(row => (
                         <div key={row.label} style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '12px', padding: '16px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                          <div style={{ fontSize: 11, fontWeight: 800, fontFamily: 'var(--font-head)', color: 'var(--ink-3)', letterSpacing: '.08em', marginBottom: 6, textTransform: 'uppercase' }}>{row.label}</div>
+                          <div style={{ fontSize: 12.5, fontWeight: 800, fontFamily: 'var(--font-head)', color: 'rgba(255,255,255,0.72)', letterSpacing: '.06em', marginBottom: 6, textTransform: 'uppercase' }}>{row.label}</div>
                           <div style={{ fontSize: 15, fontWeight: 700, color: '#fff', fontVariantNumeric: 'tabular-nums' }}>{row.value}</div>
                         </div>
                       ))}
@@ -765,13 +766,13 @@ export function PlayerProfile() {
                         { label: t('Available Slots', 'उपलब्ध स्लॉट'), value: String(venue.slots) },
                       ].map(row => (
                         <div key={row.label} style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '12px', padding: '16px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                          <div style={{ fontSize: 11, fontWeight: 800, fontFamily: 'var(--font-head)', color: 'var(--ink-3)', letterSpacing: '.08em', marginBottom: 6, textTransform: 'uppercase' }}>{row.label}</div>
+                          <div style={{ fontSize: 12.5, fontWeight: 800, fontFamily: 'var(--font-head)', color: 'rgba(255,255,255,0.72)', letterSpacing: '.06em', marginBottom: 6, textTransform: 'uppercase' }}>{row.label}</div>
                           <div style={{ fontSize: 15, fontWeight: 700, color: '#fff', fontVariantNumeric: 'tabular-nums' }}>{row.value}</div>
                         </div>
                       ))}
                     </div>
                     {venue.notes && (
-                      <div style={{ marginTop: 20, padding: '16px', background: 'rgba(232,178,61,0.08)', border: '1px solid rgba(232,178,61,0.2)', borderRadius: '12px', fontSize: 14, color: 'rgba(255,255,255,0.7)', lineHeight: 1.6 }}>
+                      <div style={{ marginTop: 20, padding: '16px', background: 'rgba(232,178,61,0.1)', border: '1px solid rgba(232,178,61,0.25)', borderRadius: '12px', fontSize: 15, color: 'rgba(255,255,255,0.82)', lineHeight: 1.6 }}>
                         {venue.notes}
                       </div>
                     )}

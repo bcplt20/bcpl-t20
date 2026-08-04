@@ -32,6 +32,7 @@ import {
   SocialBar,
   EMAIL_ICON_BASE,
   SOCIAL,
+  formatRole,
 } from "../src/lib/emailTheme";
 
 /** Build one representative render of every exported template. */
@@ -219,8 +220,8 @@ describe("social bar uses hosted PNG icons (no blank-square data-URI SVG)", () =
     for (const kind of ["instagram", "facebook", "x", "youtube", "website"] as const) {
       expect(bar).toContain(`${EMAIL_ICON_BASE}/${kind}.png`);
     }
-    // every icon has width/height + alt + a clickable link
-    expect(bar).toMatch(/width="24" height="24"/);
+    // every icon has width/height (spec §32: 28-36px display) + alt + a link
+    expect(bar).toMatch(/width="30" height="30"/);
     expect(bar).toContain('alt="Instagram"');
     expect(bar).toContain('alt="Website"');
     expect(bar).toContain(SOCIAL.website as string);
@@ -238,6 +239,40 @@ describe("hero/status icons are hosted PNGs (Gmail/Outlook safe)", () => {
       expect(r.html).not.toContain("data:image/svg");
       expect(r.html).toMatch(new RegExp(`${EMAIL_ICON_BASE.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\\\$&")}/hero-[a-z]+-[a-z]+\\.png`));
     }
+  });
+});
+
+describe("role formatter (single source of truth — no raw codes reach players)", () => {
+  it("maps every code (any case) to the approved player-facing label", () => {
+    expect(formatRole("bat")).toBe("Batsman");
+    expect(formatRole("BAT")).toBe("Batsman");
+    expect(formatRole("bowl")).toBe("Bowler");
+    expect(formatRole("BOWL")).toBe("Bowler");
+    expect(formatRole("ar")).toBe("All-Rounder");
+    expect(formatRole("AR")).toBe("All-Rounder");
+    expect(formatRole("wk")).toBe("Wicketkeeper");
+    expect(formatRole("WK")).toBe("Wicketkeeper");
+  });
+  it("maps historic long forms too", () => {
+    expect(formatRole("Batsman")).toBe("Batsman");
+    expect(formatRole("all-rounder")).toBe("All-Rounder");
+    expect(formatRole("wicketkeeper_batsman")).toBe("Wicketkeeper");
+  });
+  it("falls back to title-cased input; empty yields Player", () => {
+    expect(formatRole("keeper")).toBe("Keeper");
+    expect(formatRole("")).toBe("Player");
+    expect(formatRole(null)).toBe("Player");
+  });
+  it("registration receipt never renders a raw role code", () => {
+    const r = rendered.find((x) => x.key === "phase1_receipt")!;
+    // seeded with role "bat" — must render the label, never the code
+    expect(r.html).toContain("Batsman");
+    expect(r.html).toMatch(/Role<\/td>\s*<td[^>]*><span[^>]*>Batsman<\/span>/);
+    expect(r.html).not.toMatch(/>BAT</);
+  });
+  it("registration hero graphic has meaningful alt text (spec §31)", () => {
+    const r = rendered.find((x) => x.key === "phase1_receipt")!;
+    expect(r.html).toContain('alt="Registration confirmed"');
   });
 });
 
