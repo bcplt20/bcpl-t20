@@ -36,7 +36,7 @@ export function SponsorWall() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(200px,1fr))', gap: 16 }}>
           {sponsors.map((s, i) => {
             const card = (
-              <div style={{ background: 'linear-gradient(135deg,rgba(10,59,46,0.92),rgba(6,35,28,0.88))', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 16, padding: '22px 18px', textAlign: 'center', height: '100%', transition: 'border-color .2s' }}>
+              <div style={{ background: 'linear-gradient(135deg,rgba(15,34,71,0.92),rgba(10,22,46,0.88))', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 16, padding: '22px 18px', textAlign: 'center', height: '100%', transition: 'border-color .2s' }}>
                 <div style={{ width: 88, height: 88, borderRadius: 14, background: '#fff', margin: '0 auto 14px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', padding: 8 }}>
                   {s.logo
                     ? <img src={s.logo} alt={s.name + ' logo'} loading="lazy"

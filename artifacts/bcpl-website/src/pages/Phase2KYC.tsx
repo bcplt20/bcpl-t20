@@ -39,7 +39,7 @@ function ChipRow({ options, value, onChange, minWidth }: { options: string[]; va
     <div style={{ display:'flex', flexWrap:'wrap', gap:10, marginTop:8 }}>
       {options.map(o => (
         <button key={o} onClick={() => onChange(value === o ? '' : o)}
-          style={{ padding:'12px 18px', minWidth, borderRadius:'var(--r)', border: value===o ? '2px solid var(--orange)' : '1px solid var(--line)', background: value===o ? 'rgba(212,175,55,0.1)' : 'rgba(255,255,255,0.03)', color: value===o ? 'var(--orange)' : 'rgba(255,255,255,0.6)', fontFamily:'var(--font-body)', fontWeight:600, fontSize:14, cursor:'pointer', textAlign:'center', transition:'all .2s' }}>
+          style={{ padding:'12px 18px', minWidth, borderRadius:'var(--r)', border: value===o ? '2px solid var(--orange)' : '1px solid var(--line)', background: value===o ? 'rgba(255,122,41,0.1)' : 'rgba(255,255,255,0.03)', color: value===o ? 'var(--orange)' : 'rgba(255,255,255,0.6)', fontFamily:'var(--font-body)', fontWeight:600, fontSize:14, cursor:'pointer', textAlign:'center', transition:'all .2s' }}>
           {o}
         </button>
       ))}
@@ -341,7 +341,7 @@ export function Phase2KYC() {
         
         input:focus { border-color: var(--orange) !important; }
         
-        .stick-cta { position: fixed; bottom: 0; left: 0; right: 0; padding: 16px 20px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); background: rgba(2,13,10,0.95); backdrop-filter: blur(12px); border-top: 1px solid rgba(212,175,55,0.3); z-index: 1000; }
+        .stick-cta { position: fixed; bottom: 0; left: 0; right: 0; padding: 16px 20px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); background: rgba(3,7,16,0.95); backdrop-filter: blur(12px); border-top: 1px solid rgba(255,122,41,0.3); z-index: 1000; }
         @media (min-width: 768px) { .stick-cta { display: none; } }
       `}</style>
 
@@ -371,8 +371,8 @@ export function Phase2KYC() {
             {t("Emergency contact and identity verification — required for compliance and franchise contract records.", "आपातकालीन संपर्क और पहचान वेरिफिकेशन — compliance और फ्रैंचाइज़ी कॉन्ट्रैक्ट के लिए आवश्यक।")}
           </div>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', fontSize: 11, fontWeight: 900, fontFamily: 'var(--font-head)', letterSpacing: '.14em', textTransform: 'uppercase',
-            background: kycStatus === 'verified' ? 'rgba(34,197,94,0.1)' : 'rgba(212,175,55,0.1)',
-            border: kycStatus === 'verified' ? '1px solid rgba(34,197,94,0.4)' : '1px solid rgba(212,175,55,0.4)',
+            background: kycStatus === 'verified' ? 'rgba(34,197,94,0.1)' : 'rgba(255,122,41,0.1)',
+            border: kycStatus === 'verified' ? '1px solid rgba(34,197,94,0.4)' : '1px solid rgba(255,122,41,0.4)',
             color: kycStatus === 'verified' ? 'var(--green)' : 'var(--orange)',
             borderRadius: 8,
             animation: kycStatus === 'verified' ? 'verifiedPulse 2s ease infinite' : 'none',
@@ -400,7 +400,7 @@ export function Phase2KYC() {
           </div>
         ) : kycStatus === 'pending' ? (
           /* KYC Submitted — Pending */
-          <div style={{ background: 'rgba(212,175,55,0.06)', border: '1px solid rgba(212,175,55,0.3)', padding: '48px 24px', textAlign: 'center', borderRadius: 'var(--r)', marginBottom: 40 }}>
+          <div style={{ background: 'rgba(255,122,41,0.06)', border: '1px solid rgba(255,122,41,0.3)', padding: '48px 24px', textAlign: 'center', borderRadius: 'var(--r)', marginBottom: 40 }}>
             <div style={{ color: 'var(--orange)', marginBottom: 20 }}><IcoHourglass size={48} /></div>
             <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(24px, 5vw, 32px)', color: 'var(--orange)', marginBottom: 12, textTransform: 'uppercase' }}>{t("KYC Submitted for Review", "KYC रिव्यू के लिए सबमिट हो गया")}</div>
             <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.6)', maxWidth: 500, margin: '0 auto', lineHeight: 1.6 }}>{kycMsg || t('Your documents are under review. You will receive an SMS + Email when verified (usually within 24 hours).', 'आपके दस्तावेज़ों की जाँच हो रही है। वेरीफाई होने पर आपको SMS + ईमेल मिलेगा (आमतौर पर 24 घंटे में)।')}</div>
@@ -569,7 +569,7 @@ export function Phase2KYC() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 12, marginTop: 12 }}>
                 {PROFESSIONS.map(p => (
                   <button key={p.id} onClick={() => setProfession(p.id)}
-                    style={{ padding: '16px', borderRadius: '12px', border: profession === p.id ? '2px solid var(--orange)' : '1px solid var(--line)', background: profession === p.id ? 'rgba(212,175,55,0.08)' : 'rgba(255,255,255,0.02)', color: profession === p.id ? 'var(--orange)' : 'rgba(255,255,255,0.7)', fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 14, cursor: 'pointer', textAlign: 'left', transition: 'all .2s', display: 'flex', alignItems: 'center', gap: 12 }}>
+                    style={{ padding: '16px', borderRadius: '12px', border: profession === p.id ? '2px solid var(--orange)' : '1px solid var(--line)', background: profession === p.id ? 'rgba(255,122,41,0.08)' : 'rgba(255,255,255,0.02)', color: profession === p.id ? 'var(--orange)' : 'rgba(255,255,255,0.7)', fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 14, cursor: 'pointer', textAlign: 'left', transition: 'all .2s', display: 'flex', alignItems: 'center', gap: 12 }}>
                     <span style={{ display: 'inline-flex' }}><p.icon size={20} /></span>
                     <span style={{ lineHeight: 1.3 }}>{p.label}</span>
                   </button>

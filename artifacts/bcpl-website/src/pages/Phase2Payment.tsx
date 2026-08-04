@@ -134,7 +134,7 @@ export function Phase2Payment() {
         
         .card-box { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 24px; margin-bottom: 32px; }
         
-        .stick-cta { position: fixed; bottom: 0; left: 0; right: 0; padding: 16px 20px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); background: rgba(2,13,10,0.95); backdrop-filter: blur(12px); border-top: 1px solid rgba(232,178,61,0.3); z-index: 1000; }
+        .stick-cta { position: fixed; bottom: 0; left: 0; right: 0; padding: 16px 20px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); background: rgba(3,7,16,0.95); backdrop-filter: blur(12px); border-top: 1px solid rgba(232,178,61,0.3); z-index: 1000; }
         @media (min-width: 768px) { .stick-cta { display: none; } }
       `}</style>
 

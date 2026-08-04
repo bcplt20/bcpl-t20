@@ -9,20 +9,20 @@
 
 :root {
   /* surfaces — lifted ~15% from the old near-black navy for premium depth */
-  --bg:      #07211A;                 /* page background          */
-  --bg-deep: #04130F;                 /* footer / recessed areas  */
-  --panel:   #0C3A2D;                 /* raised cards             */
-  --panel-2: #11463A;                 /* lighter card top-light   */
+  --bg:      #0C1D33;                 /* page background          */
+  --bg-deep: #071023;                 /* footer / recessed areas  */
+  --panel:   #12294A;                 /* raised cards             */
+  --panel-2: #16315A;                 /* lighter card top-light   */
   --line:    rgba(255,255,255,.12);   /* hairline borders         */
 
   /* premium gradients — reused across sections & cards */
-  --grad-page: radial-gradient(ellipse 120% 90% at 50% -10%, #0F4736 0%, var(--bg) 55%, var(--bg-deep) 100%);
-  --grad-card: linear-gradient(165deg, var(--panel-2) 0%, var(--panel) 60%, #0B3527 100%);
-  --grad-cta:  linear-gradient(135deg, #E0BC4F 0%, #D4AF37 45%, #A8842A 100%);
+  --grad-page: radial-gradient(ellipse 120% 90% at 50% -10%, #143059 0%, var(--bg) 55%, var(--bg-deep) 100%);
+  --grad-card: linear-gradient(165deg, var(--panel-2) 0%, var(--panel) 60%, #0F2545 100%);
+  --grad-cta:  linear-gradient(135deg, #FF8A3D 0%, #FF7A29 45%, #D95E10 100%);
 
   /* brand */
-  --orange:   #D4AF37;                /* primary — CTA & key info */
-  --orange-2: #A8842A;
+  --orange:   #FF7A29;                /* primary — CTA & key info */
+  --orange-2: #D95E10;
   --gold:     #E8B23D;                /* accent — honours, badges */
   --green:    #22C55E;
   --red:      #EF4444;
@@ -37,14 +37,14 @@
      whole site. Use via .sec-light / .sec-mid section wrappers. */
   --surface-light:   #F4F1EA;              /* warm off-white               */
   --surface-light-2: #EAE5DA;              /* faint warm shade / dividers  */
-  --surface-mid:     #155040;              /* desaturated steel-blue       */
-  --surface-mid-2:   #1B5B4A;              /* mid-tone top-light           */
+  --surface-mid:     #24405F;              /* desaturated steel-blue       */
+  --surface-mid-2:   #2C4A6B;              /* mid-tone top-light           */
 
   /* ink on LIGHT surfaces */
-  --ink-dark:   #07211A;                   /* deep navy — primary          */
-  --ink-dark-2: rgba(7,33,26,.78);        /* secondary, readable          */
-  --ink-dark-3: rgba(7,33,26,.60);        /* genuinely muted only         */
-  --line-dark:  rgba(7,33,26,.14);        /* hairline on light            */
+  --ink-dark:   #0C1D33;                   /* deep navy — primary          */
+  --ink-dark-2: rgba(12,29,51,.78);        /* secondary, readable          */
+  --ink-dark-3: rgba(12,29,51,.60);        /* genuinely muted only         */
+  --line-dark:  rgba(12,29,51,.14);        /* hairline on light            */
 
   /* geometry */
   --r: 14px;                          /* the ONE corner radius    */
@@ -71,7 +71,7 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-::selection { background: rgba(212,175,55,.4); color: #fff; }
+::selection { background: rgba(255,122,41,.4); color: #fff; }
 
 :focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; border-radius: 4px; }
 
@@ -138,10 +138,10 @@ body {
   transition: transform .14s ease, filter .2s ease, box-shadow .2s ease;
 }
 .v3-btn--primary {
-  background: var(--grad-cta); color: #07211A;
-  box-shadow: 0 8px 26px rgba(212,175,55,.38), inset 0 1px 0 rgba(255,255,255,.22);
+  background: var(--grad-cta); color: #fff;
+  box-shadow: 0 8px 26px rgba(255,122,41,.38), inset 0 1px 0 rgba(255,255,255,.22);
 }
-.v3-btn--primary:hover { filter: brightness(1.08); box-shadow: 0 12px 34px rgba(212,175,55,.5), inset 0 1px 0 rgba(255,255,255,.28); transform: translateY(-2px); }
+.v3-btn--primary:hover { filter: brightness(1.08); box-shadow: 0 12px 34px rgba(255,122,41,.5), inset 0 1px 0 rgba(255,255,255,.28); transform: translateY(-2px); }
 .v3-btn--primary:active { transform: scale(.98) translateY(0); }
 .v3-btn--ghost {
   background: rgba(255,255,255,.04); color: var(--ink-2);
@@ -220,9 +220,9 @@ html.rv-js .rv-stagger > * { opacity:0; transform: translateY(16px); transition:
 
 /* Card variants living on a LIGHT surface flip to light tokens. */
 .sec-light .v3-card,
-.sec-light .v3-card--feature { background: #FFFFFF; border-color: var(--line-dark); box-shadow: 0 12px 30px rgba(7,33,26,.12); backdrop-filter: none; -webkit-backdrop-filter: none; }
+.sec-light .v3-card--feature { background: #FFFFFF; border-color: var(--line-dark); box-shadow: 0 12px 30px rgba(12,29,51,.12); backdrop-filter: none; -webkit-backdrop-filter: none; }
 .sec-light .v3-card::before,
-.sec-light .v3-card--feature::before { background: linear-gradient(180deg, rgba(7,33,26,.03) 0%, transparent 30%); }
+.sec-light .v3-card--feature::before { background: linear-gradient(180deg, rgba(12,29,51,.03) 0%, transparent 30%); }
 .sec-light .v3-card--info { background: #FBF9F4; border-color: var(--line-dark); box-shadow: none; }
 
 /* ── skeleton loaders (premium shimmer) ──────────────────────────── */

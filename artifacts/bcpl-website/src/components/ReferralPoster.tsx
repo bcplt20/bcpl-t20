@@ -19,9 +19,9 @@ const H = 1920;
 
 // BCPL palette (matches the site + email templates).
 const NAVY = 'var(--bg)';
-const NAVY_2 = '#0C271F';
-const ORANGE = '#D4AF37';
-const ORANGE_HI = '#E6CB74';
+const NAVY_2 = '#121F2F';
+const ORANGE = '#FF7A29';
+const ORANGE_HI = '#FF9A57';
 const GOLD = '#E8B23D';
 const WHITE = '#F0EDE8';
 
@@ -87,13 +87,13 @@ async function buildPoster(name: string, code: string, link: string): Promise<HT
   ctx.fillRect(0, 0, W, H);
 
   const glow = ctx.createRadialGradient(W / 2, 120, 40, W / 2, 120, 720);
-  glow.addColorStop(0, 'rgba(212,175,55,0.20)');
-  glow.addColorStop(1, 'rgba(212,175,55,0)');
+  glow.addColorStop(0, 'rgba(255,122,41,0.20)');
+  glow.addColorStop(1, 'rgba(255,122,41,0)');
   ctx.fillStyle = glow;
   ctx.fillRect(0, 0, W, 900);
 
   // Outer orange frame.
-  ctx.strokeStyle = 'rgba(212,175,55,0.55)';
+  ctx.strokeStyle = 'rgba(255,122,41,0.55)';
   ctx.lineWidth = 6;
   ctx.strokeRect(36, 36, W - 72, H - 72);
 
@@ -176,7 +176,7 @@ async function buildPoster(name: string, code: string, link: string): Promise<HT
   const bandY = H - 210;
   ctx.fillStyle = NAVY_2;
   ctx.fillRect(60, bandY, W - 120, 120);
-  ctx.strokeStyle = 'rgba(212,175,55,0.4)';
+  ctx.strokeStyle = 'rgba(255,122,41,0.4)';
   ctx.lineWidth = 2;
   ctx.strokeRect(60, bandY, W - 120, 120);
   ctx.fillStyle = WHITE;
@@ -197,7 +197,7 @@ function canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {
 }
 
 const posterBtn: React.CSSProperties = {
-  background: 'linear-gradient(135deg,#D4AF37,#A8842A)',
+  background: 'linear-gradient(135deg,#FF7A29,#D95E10)',
   color: '#fff',
   border: 'none',
   borderRadius: 10,
@@ -294,7 +294,7 @@ export function ReferralPosterButton({ name, code, link }: Props) {
               width: '100%',
               maxWidth: 260,
               borderRadius: 12,
-              border: '1px solid rgba(212,175,55,0.35)',
+              border: '1px solid rgba(255,122,41,0.35)',
               alignSelf: 'flex-start',
             }}
           />

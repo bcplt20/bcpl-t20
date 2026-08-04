@@ -89,25 +89,25 @@ export function Players() {
         .wrap { max-width: 1280px; margin: 0 auto; padding: 0 16px; }
         @media(min-width:640px) { .wrap { padding: 0 24px; } }
         @media(min-width:1024px) { .wrap { padding: 0 40px; } }
-        .slbl { font-family: var(--font-head); font-weight: 800; font-size: 11px; letter-spacing: .15em; color: #D4AF37; text-transform: uppercase; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
-        .slbl::before { content: ''; display: inline-block; width: 20px; height: 2px; background: #D4AF37; }
+        .slbl { font-family: var(--font-head); font-weight: 800; font-size: 11px; letter-spacing: .15em; color: #FF7A29; text-transform: uppercase; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+        .slbl::before { content: ''; display: inline-block; width: 20px; height: 2px; background: #FF7A29; }
         .shimmer-gold { background: linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 3s linear infinite; }
         @keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
         @keyframes fadeSlide { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
-        .player-card { background: linear-gradient(135deg,rgba(10,59,46,0.9),rgba(6,35,28,0.85)); backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 18px 16px; transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s; animation: fadeSlide 0.4s ease both; }
-        .player-card:hover { transform: translateY(-4px); border-color: rgba(212,175,55,0.35); box-shadow: 0 14px 40px rgba(0,0,0,0.5); }
+        .player-card { background: linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85)); backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 18px 16px; transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s; animation: fadeSlide 0.4s ease both; }
+        .player-card:hover { transform: translateY(-4px); border-color: rgba(255,122,41,0.35); box-shadow: 0 14px 40px rgba(0,0,0,0.5); }
         .filter-input { background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.1); border-radius: 12px; color: #F8F4EE; padding: 10px 16px; font-family: Inter, sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; width: 100%; }
-        .filter-input:focus { border-color: #D4AF37; }
+        .filter-input:focus { border-color: #FF7A29; }
         .filter-select { background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.1); border-radius: 12px; color: #F8F4EE; padding: 10px 16px; font-family: Inter, sans-serif; font-size: 14px; outline: none; cursor: pointer; appearance: none; -webkit-appearance: none; transition: border-color 0.2s; }
-        .filter-select:hover { border-color: rgba(212,175,55,0.5); }
+        .filter-select:hover { border-color: rgba(255,122,41,0.5); }
         .player-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
         @media(min-width:640px) { .player-grid { grid-template-columns: repeat(2,1fr); } }
         @media(min-width:1024px) { .player-grid { grid-template-columns: repeat(3,1fr); } }
         /* Floating register button */
-        .float-reg-btn { position: fixed; bottom: 28px; right: 28px; z-index: 900; background: linear-gradient(135deg,#D4AF37,#A8842A); border: none; border-radius: 12px; color: #fff; font-family: var(--font-head); font-weight: 900; font-size: 13px; letter-spacing: .06em; cursor: pointer; padding: 14px 22px; text-transform: uppercase; text-decoration: none; display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 32px rgba(212,175,55,0.45); clip-path: polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition: opacity .2s, transform .15s; }
+        .float-reg-btn { position: fixed; bottom: 28px; right: 28px; z-index: 900; background: linear-gradient(135deg,#FF7A29,#D95E10); border: none; border-radius: 12px; color: #fff; font-family: var(--font-head); font-weight: 900; font-size: 13px; letter-spacing: .06em; cursor: pointer; padding: 14px 22px; text-transform: uppercase; text-decoration: none; display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 32px rgba(255,122,41,0.45); clip-path: polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition: opacity .2s, transform .15s; }
         .float-reg-btn:hover { opacity: .9; transform: translateY(-2px); }
 @media(max-width:1023px){ .float-reg-btn { display:none; } }
-        @keyframes floatPulse { 0%,100% { box-shadow: 0 8px 32px rgba(212,175,55,0.45),0 0 0 0 rgba(212,175,55,0.4); } 50% { box-shadow: 0 8px 40px rgba(212,175,55,0.6),0 0 0 8px rgba(212,175,55,0); } }
+        @keyframes floatPulse { 0%,100% { box-shadow: 0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4); } 50% { box-shadow: 0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0); } }
         .float-reg-pulse { animation: floatPulse 2.5s ease-in-out infinite; }
         @media(max-width:639px) { .float-reg-btn { bottom: 16px; right: 16px; padding: 12px 16px; font-size: 12px; } }
       `}</style>
@@ -116,7 +116,7 @@ export function Players() {
 
       {/* HERO */}
       <section style={{ padding: "clamp(48px,6vw,72px) 0 clamp(32px,4vw,48px)", position: "relative", overflow: "hidden" }}>
-        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 50% at 50% 0%,rgba(212,175,55,0.06) 0%,transparent 70%)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 50% at 50% 0%,rgba(255,122,41,0.06) 0%,transparent 70%)", pointerEvents: "none" }} />
         <div className="wrap" style={{ position: "relative", zIndex: 1, textAlign: "center" }}>
           <div className="slbl" style={{ justifyContent: "center" }}>
             {t("The Players", "खिलाड़ी")}
@@ -135,7 +135,7 @@ export function Players() {
 
         {/* FILTERS */}
         {!squadEmpty && (
-          <div style={{ background: "linear-gradient(135deg,rgba(10,59,46,0.9),rgba(6,35,28,0.85))", backdropFilter: "blur(24px)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "24px 20px", marginBottom: 32 }}>
+          <div style={{ background: "linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85))", backdropFilter: "blur(24px)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "24px 20px", marginBottom: 32 }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 14 }}>
               <input
                 type="text"
@@ -150,9 +150,9 @@ export function Players() {
                   value={filterTeam}
                   onChange={e => setFilterTeam(e.target.value)}
                 >
-                  <option value="All Teams" style={{ background: "#0C271F" }}>{t("All Teams", "सभी टीम")}</option>
+                  <option value="All Teams" style={{ background: "#121F2F" }}>{t("All Teams", "सभी टीम")}</option>
                   {teams.map(t => (
-                    <option key={t.id} value={t.name} style={{ background: "#0C271F" }}>{t.name}</option>
+                    <option key={t.id} value={t.name} style={{ background: "#121F2F" }}>{t.name}</option>
                   ))}
                 </select>
                 <select
@@ -161,7 +161,7 @@ export function Players() {
                   onChange={e => setFilterRole(e.target.value)}
                 >
                   {uniqueRoles.map(r => (
-                    <option key={r} value={r} style={{ background: "#0C271F" }}>{r}</option>
+                    <option key={r} value={r} style={{ background: "#121F2F" }}>{r}</option>
                   ))}
                 </select>
               </div>
@@ -207,7 +207,7 @@ export function Players() {
             <p style={{ color: "var(--ink-3)", fontSize: 15, maxWidth: 440, margin: "0 auto 28px", lineHeight: 1.7 }}>
               {t("Season 5 squad rosters will be announced after the players' auction in August 2026. All registered players will appear here once teams are finalised.", "Season 5 की squad lists players' auction के बाद (Aug 2026) announce होंगी। सभी registered players यहाँ दिखेंगे जब teams finalize होंगी।")}
             </p>
-            <Link href="/register" className="float-reg-btn" style={{ position: "static", animation: "none", display: "inline-flex", boxShadow: "0 6px 24px rgba(212,175,55,0.35)" }}>
+            <Link href="/register" className="float-reg-btn" style={{ position: "static", animation: "none", display: "inline-flex", boxShadow: "0 6px 24px rgba(255,122,41,0.35)" }}>
               {t("Register for Season 5 →", "Season 5 के लिए रजिस्टर करें →")}
             </Link>
           </div>

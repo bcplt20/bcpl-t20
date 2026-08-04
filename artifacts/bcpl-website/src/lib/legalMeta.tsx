@@ -85,7 +85,7 @@ export function LegalDocHeader({ doc }: { doc: LegalDocKey }) {
         </div>
       )}
       <div className="legal-doc-header" style={{
-        background: 'linear-gradient(165deg,rgba(10,59,46,0.75),rgba(6,35,28,0.7))',
+        background: 'linear-gradient(165deg,rgba(15,34,71,0.75),rgba(10,22,46,0.7))',
         border: '1px solid rgba(255,255,255,0.10)', borderRadius: 12,
         padding: '12px 16px', display: 'flex', flexWrap: 'wrap',
         alignItems: 'center', gap: '8px 18px',
@@ -105,9 +105,9 @@ export function LegalDocHeader({ doc }: { doc: LegalDocKey }) {
           className="no-print"
           onClick={() => window.print()}
           style={{
-            marginLeft: 'auto', background: 'rgba(212,175,55,0.10)',
-            border: '1px solid rgba(212,175,55,0.35)', borderRadius: 9,
-            color: '#D4AF37', fontFamily: 'Montserrat,sans-serif', fontWeight: 800,
+            marginLeft: 'auto', background: 'rgba(255,122,41,0.10)',
+            border: '1px solid rgba(255,122,41,0.35)', borderRadius: 9,
+            color: '#FF7A29', fontFamily: 'Montserrat,sans-serif', fontWeight: 800,
             fontSize: 11, letterSpacing: '.06em', padding: '8px 14px',
             cursor: 'pointer', minHeight: 36,
             display: 'inline-flex', alignItems: 'center', gap: 6,

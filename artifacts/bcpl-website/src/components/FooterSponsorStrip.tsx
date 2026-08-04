@@ -57,7 +57,7 @@ export function FooterSponsorStrip() {
         .bcpl-spst-groups { display:flex; flex-wrap:wrap; justify-content:center; align-items:flex-start; gap:clamp(26px,4vw,52px) clamp(30px,5vw,64px); }
         .bcpl-spst-chip { background:#fff; border-radius:12px; display:flex; align-items:center; justify-content:center; padding:10px 18px; text-decoration:none; transition:transform .15s; }
         a.bcpl-spst-chip:hover { transform:translateY(-2px); }
-        .bcpl-spst-all:hover { color:#D4AF37!important; }
+        .bcpl-spst-all:hover { color:#FF7A29!important; }
       `}</style>
       <div className="bcpl-spst-wrap">
         <div className="bcpl-spst-groups">

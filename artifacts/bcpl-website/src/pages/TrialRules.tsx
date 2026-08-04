@@ -24,7 +24,7 @@ type IcoComp = (p: { size?: number; style?: React.CSSProperties }) => React.Reac
  */
 
 const OrangeDot = () => (
-  <span style={{display:'inline-block',width:6,height:6,borderRadius:'50%',background:'#D4AF37',marginRight:10,flexShrink:0,marginTop:7}}/>
+  <span style={{display:'inline-block',width:6,height:6,borderRadius:'50%',background:'#FF7A29',marginRight:10,flexShrink:0,marginTop:7}}/>
 );
 
 export function TrialRules() {
@@ -36,22 +36,22 @@ export function TrialRules() {
     .wrap{max-width:1280px;margin:0 auto;padding:0 16px;}
     @media(min-width:640px){.wrap{padding:0 24px}}
     @media(min-width:768px){.wrap{padding:0 32px}}
-    .btn-fire{background:linear-gradient(135deg,#D4AF37 0%,#B8922E 60%,#97761F 100%);border:none;border-radius:14px;color:#fff;font-family:Montserrat,sans-serif;font-weight:800;cursor:pointer;box-shadow:0 8px 28px rgba(212,175,55,0.45),inset 0 1px 0 rgba(255,255,255,0.2);transition:transform 0.15s,box-shadow 0.2s;letter-spacing:0.02em;display:inline-flex;align-items:center;justify-content:center;min-height:44px;}
-    .btn-fire:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(212,175,55,0.6);}
-    .glass-card{background:linear-gradient(135deg,rgba(10,59,46,0.9),rgba(6,35,28,0.85));backdrop-filter:blur(32px);border:1px solid rgba(255,255,255,0.09);border-radius:20px;box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06);}
+    .btn-fire{background:linear-gradient(135deg,#FF7A29 0%,#E8611A 60%,#C94E0E 100%);border:none;border-radius:14px;color:#fff;font-family:Montserrat,sans-serif;font-weight:800;cursor:pointer;box-shadow:0 8px 28px rgba(255,122,41,0.45),inset 0 1px 0 rgba(255,255,255,0.2);transition:transform 0.15s,box-shadow 0.2s;letter-spacing:0.02em;display:inline-flex;align-items:center;justify-content:center;min-height:44px;}
+    .btn-fire:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(255,122,41,0.6);}
+    .glass-card{background:linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85));backdrop-filter:blur(32px);border:1px solid rgba(255,255,255,0.09);border-radius:20px;box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06);}
     .shimmer-gold{background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D,#F5C842,#E8B23D);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 3s linear infinite;}
-    .tag-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(212,175,55,0.12);border:1px solid rgba(212,175,55,0.3);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:700;font-family:Montserrat,sans-serif;color:#D4AF37;letter-spacing:0.1em;}
+    .tag-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,122,41,0.12);border:1px solid rgba(255,122,41,0.3);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:700;font-family:Montserrat,sans-serif;color:#FF7A29;letter-spacing:0.1em;}
     .toc-link{color:rgba(255,255,255,0.7);text-decoration:none;font-size:13px;font-family:Inter,sans-serif;padding:8px 12px;border-radius:8px;display:flex;align-items:center;gap:8px;transition:all 0.2s;cursor:pointer;background:none;border:none;text-align:left;width:100%;min-height:44px;}
-    .toc-link:hover{background:rgba(212,175,55,0.1);color:#D4AF37;}
+    .toc-link:hover{background:rgba(255,122,41,0.1);color:#FF7A29;}
     .rubric-grid{display:grid;grid-template-columns:1fr;gap:14px;}
     @media(min-width:768px){.rubric-grid{grid-template-columns:1fr 1fr;}}
     .rubric-row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:13px;}
-    .float-reg-btn{position:fixed;bottom:28px;right:28px;z-index:900;background:linear-gradient(135deg,#D4AF37,#A8842A);border:none;border-radius:12px;color:#fff;font-family:Montserrat,sans-serif;font-weight:900;font-size:13px;letter-spacing:.06em;cursor:pointer;padding:14px 22px;text-transform:uppercase;text-decoration:none;display:flex;align-items:center;gap:8px;box-shadow:0 8px 32px rgba(212,175,55,0.45);clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%);transition:opacity .2s,transform .15s;}
+    .float-reg-btn{position:fixed;bottom:28px;right:28px;z-index:900;background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:12px;color:#fff;font-family:Montserrat,sans-serif;font-weight:900;font-size:13px;letter-spacing:.06em;cursor:pointer;padding:14px 22px;text-transform:uppercase;text-decoration:none;display:flex;align-items:center;gap:8px;box-shadow:0 8px 32px rgba(255,122,41,0.45);clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%);transition:opacity .2s,transform .15s;}
     .float-reg-btn:hover{opacity:.9;transform:translateY(-2px);}
     @media(max-width:1023px){.float-reg-btn{display:none!important;}}
     @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
     @keyframes fadeSlide{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-    @keyframes borderGlow{0%,100%{border-color:rgba(212,175,55,0.3)}50%{border-color:rgba(212,175,55,0.8)}}
+    @keyframes borderGlow{0%,100%{border-color:rgba(255,122,41,0.3)}50%{border-color:rgba(255,122,41,0.8)}}
   `;
 
   const toc:{n:number;label:string;icon:IcoComp}[]=[
@@ -184,10 +184,10 @@ export function TrialRules() {
   ];
 
   return (
-    <div style={{background:'#071B15',minHeight:'100vh',fontFamily:'Inter,sans-serif',color:'#F8F4EE',paddingBottom:80,overflowX:'hidden'}}>
+    <div style={{background:'#0E1624',minHeight:'100vh',fontFamily:'Inter,sans-serif',color:'#F8F4EE',paddingBottom:80,overflowX:'hidden'}}>
       <style>{css}</style>
       <div style={{position:'fixed',inset:0,zIndex:0,pointerEvents:'none',overflow:'hidden'}}>
-        <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 80% 60% at 20% 40%, rgba(212,175,55,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 20%, rgba(20,86,63,0.12) 0%, transparent 60%)'}}/>
+        <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 80% 60% at 20% 40%, rgba(255,122,41,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 20%, rgba(30,64,175,0.12) 0%, transparent 60%)'}}/>
       </div>
 
       <div style={{position:'relative',zIndex:1}}>
@@ -247,8 +247,8 @@ export function TrialRules() {
             <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(180px,1fr))',gap:4}}>
               {toc.map(item=>(
                 <button key={item.n} className="toc-link" onClick={()=>setActiveSection(item.n===activeSection?null:item.n)}>
-                  <span style={{width:22,height:22,borderRadius:'50%',background:'rgba(212,175,55,0.2)',border:'1px solid rgba(212,175,55,0.4)',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:'#D4AF37',flexShrink:0,fontFamily:'Montserrat,sans-serif'}}>{item.n}</span>
-                  <span style={{display:'inline-flex',alignItems:'center',gap:8}}><span style={{color:'#D4AF37',display:'inline-flex'}}><item.icon size={16}/></span>{item.label}</span>
+                  <span style={{width:22,height:22,borderRadius:'50%',background:'rgba(255,122,41,0.2)',border:'1px solid rgba(255,122,41,0.4)',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:'#FF7A29',flexShrink:0,fontFamily:'Montserrat,sans-serif'}}>{item.n}</span>
+                  <span style={{display:'inline-flex',alignItems:'center',gap:8}}><span style={{color:'#FF7A29',display:'inline-flex'}}><item.icon size={16}/></span>{item.label}</span>
                 </button>
               ))}
             </div>
@@ -256,10 +256,10 @@ export function TrialRules() {
 
           {/* Sections */}
           {sections.map((sec,idx)=>(
-            <div key={sec.n} className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:20,animation:`fadeSlide 0.5s ease ${0.1+idx*0.06}s both`,border:activeSection===sec.n?'1px solid rgba(212,175,55,0.5)':'1px solid rgba(255,255,255,0.09)',transition:'border-color 0.3s'}}>
+            <div key={sec.n} className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:20,animation:`fadeSlide 0.5s ease ${0.1+idx*0.06}s both`,border:activeSection===sec.n?'1px solid rgba(255,122,41,0.5)':'1px solid rgba(255,255,255,0.09)',transition:'border-color 0.3s'}}>
               <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18,flexWrap:'wrap'}}>
-                <div style={{width:36,height:36,borderRadius:'50%',background:'linear-gradient(135deg,rgba(212,175,55,0.3),rgba(232,178,61,0.2))',border:'1px solid rgba(212,175,55,0.4)',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:14,color:'#D4AF37',flexShrink:0}}>{sec.n}</div>
-                <span style={{color:'#D4AF37',display:'inline-flex',alignItems:'center'}}><sec.icon size={24}/></span>
+                <div style={{width:36,height:36,borderRadius:'50%',background:'linear-gradient(135deg,rgba(255,122,41,0.3),rgba(232,178,61,0.2))',border:'1px solid rgba(255,122,41,0.4)',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:14,color:'#FF7A29',flexShrink:0}}>{sec.n}</div>
+                <span style={{color:'#FF7A29',display:'inline-flex',alignItems:'center'}}><sec.icon size={24}/></span>
                 <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>{sec.title}</h2>
               </div>
               <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:10}}>
@@ -295,11 +295,11 @@ export function TrialRules() {
           ))}
 
           {/* Authority callout */}
-          <div style={{background:'rgba(212,175,55,0.08)',border:'1px solid rgba(212,175,55,0.4)',borderLeft:'3px solid #D4AF37',borderRadius:16,padding:'20px clamp(16px,4vw,24px)',marginBottom:20,animation:'borderGlow 3s ease-in-out infinite'}}>
+          <div style={{background:'rgba(255,122,41,0.08)',border:'1px solid rgba(255,122,41,0.4)',borderLeft:'3px solid #FF7A29',borderRadius:16,padding:'20px clamp(16px,4vw,24px)',marginBottom:20,animation:'borderGlow 3s ease-in-out infinite'}}>
             <div style={{display:'flex',gap:12,alignItems:'flex-start'}}>
-              <span style={{flexShrink:0,color:'#D4AF37',display:'inline-flex'}}><IcoScale size={24}/></span>
+              <span style={{flexShrink:0,color:'#FF7A29',display:'inline-flex'}}><IcoScale size={24}/></span>
               <div>
-                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#D4AF37',marginBottom:6}}>The Final Published Rulebook Prevails</div>
+                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#FF7A29',marginBottom:6}}>The Final Published Rulebook Prevails</div>
                 <p style={{color:'rgba(255,255,255,0.85)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
                   This page is a plain-language summary of the BCPL physical-trial process. The <strong style={{color:'#E8B23D'}}>final published BCPL trial rulebook</strong>, official trial-day briefing and published season rules prevail over this summary wherever they differ. Rubric weights, delivery protocols, allocations and tie-break criteria are versioned and finalised by BCPL Cricket Operations before trials.
                 </p>

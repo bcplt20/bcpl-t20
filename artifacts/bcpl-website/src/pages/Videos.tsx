@@ -10,7 +10,7 @@ import { IcoBell } from '../lib/icons';
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-body { background:#071B15; }
+body { background:#0E1624; }
 .wrap { max-width:1200px; margin:0 auto; padding:0 20px; }
 .desk-nav { display:none; align-items:center; gap:22px; }
 .ham-btn { display:flex; }
@@ -19,10 +19,10 @@ body { background:#071B15; }
 @media(min-width:1024px){ .desk-nav{display:flex!important;} .ham-btn{display:none!important;} }
 .v3-kicker { font-family:Inter,sans-serif; font-weight:700; font-size:12px; letter-spacing:.22em; color:#E8B23D; text-transform:uppercase; }
 .v3-h { font-family:'Barlow Condensed','Mukta','Montserrat',sans-serif; font-weight:800; text-transform:uppercase; line-height:.95; letter-spacing:.015em; }
-.glass-card { background:linear-gradient(135deg,rgba(10,59,46,0.9),rgba(6,35,28,0.85)); backdrop-filter:blur(32px); border:1px solid rgba(255,255,255,0.09); border-radius:20px; box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06); }
+.glass-card { background:linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85)); backdrop-filter:blur(32px); border:1px solid rgba(255,255,255,0.09); border-radius:20px; box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06); }
 .shimmer-gold { background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D,#F5C842,#E8B23D); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation:shimmer 3s linear infinite; }
-.tag-pill { display:inline-flex; align-items:center; gap:6px; background:rgba(212,175,55,0.12); border:1px solid rgba(212,175,55,0.3); border-radius:100px; padding:5px 14px; font-size:11px; font-weight:700; font-family:var(--font-head); color:#D4AF37; letter-spacing:0.1em; }
-@keyframes pulseGlow { 0%,100%{box-shadow:0 0 16px rgba(212,175,55,0.4)} 50%{box-shadow:0 0 36px rgba(212,175,55,0.8),0 0 60px rgba(212,175,55,0.3)} }
+.tag-pill { display:inline-flex; align-items:center; gap:6px; background:rgba(255,122,41,0.12); border:1px solid rgba(255,122,41,0.3); border-radius:100px; padding:5px 14px; font-size:11px; font-weight:700; font-family:var(--font-head); color:#FF7A29; letter-spacing:0.1em; }
+@keyframes pulseGlow { 0%,100%{box-shadow:0 0 16px rgba(255,122,41,0.4)} 50%{box-shadow:0 0 36px rgba(255,122,41,0.8),0 0 60px rgba(255,122,41,0.3)} }
 @keyframes shimmer { 0%{background-position:-200% center} 100%{background-position:200% center} }
 @keyframes scanPulse { 0%,100%{opacity:0.03} 50%{opacity:0.08} }
 @keyframes floatParticle { 0%{transform:translateY(0) rotate(0deg);opacity:0.4} 50%{opacity:0.8} 100%{transform:translateY(-80px) rotate(180deg);opacity:0} }
@@ -31,35 +31,35 @@ body { background:#071B15; }
 @keyframes lbFade { from{opacity:0} to{opacity:1} }
 .video-thumb { position:relative; border-radius:14px; overflow:hidden; cursor:pointer; transition:transform 0.25s,box-shadow 0.25s; }
 .video-thumb:hover { transform:scale(1.02); box-shadow:0 16px 48px rgba(0,0,0,0.6); }
-.video-thumb:hover .play-btn { transform:translate(-50%,-50%) scale(1.1); background:rgba(212,175,55,0.85); }
+.video-thumb:hover .play-btn { transform:translate(-50%,-50%) scale(1.1); background:rgba(255,122,41,0.85); }
 .play-btn { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:44px; height:44px; border-radius:50%; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; transition:all 0.2s; backdrop-filter:blur(4px); border:1.5px solid rgba(255,255,255,0.2); }
 .video-card { cursor:pointer; transition:transform 0.2s; }
 .video-card:hover { transform:translateY(-4px); }
 .lb-btn { background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); border-radius:12px; color:#fff; cursor:pointer; font-size:20px; line-height:1; padding:12px 16px; transition:background .2s; }
 .lb-btn:hover { background:rgba(255,255,255,0.18); }
 /* float-reg-btn */
-.float-reg-btn { position:fixed; bottom:28px; right:28px; z-index:900; background:linear-gradient(135deg,#D4AF37,#A8842A); border:none; border-radius:12px; color:#fff; font-family:var(--font-head); font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:14px 22px; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(212,175,55,0.45); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition:opacity .2s,transform .15s; }
+.float-reg-btn { position:fixed; bottom:28px; right:28px; z-index:900; background:linear-gradient(135deg,#FF7A29,#D95E10); border:none; border-radius:12px; color:#fff; font-family:var(--font-head); font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:14px 22px; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(255,122,41,0.45); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition:opacity .2s,transform .15s; }
 .float-reg-btn:hover { opacity:.9; transform:translateY(-2px); }
-@keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(212,175,55,0.45),0 0 0 0 rgba(212,175,55,0.4)} 50%{box-shadow:0 8px 40px rgba(212,175,55,0.6),0 0 0 8px rgba(212,175,55,0)} }
+@keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4)} 50%{box-shadow:0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0)} }
 .float-reg-pulse { animation:floatPulse 2.5s ease-in-out infinite; }
 @media(max-width:1023px){ .float-reg-btn { display:none; } }
 .video-grid { display:grid; grid-template-columns:1fr; gap:24px; }
 @media(min-width:480px){ .video-grid { grid-template-columns:repeat(2,1fr); } }
 @media(min-width:900px){ .video-grid { grid-template-columns:repeat(3,1fr); } }
-.feat-card { position:relative; border-radius:20px; overflow:hidden; cursor:pointer; border:1px solid rgba(212,175,55,0.25); box-shadow:0 24px 64px rgba(0,0,0,0.5); transition:transform .25s, box-shadow .25s; }
+.feat-card { position:relative; border-radius:20px; overflow:hidden; cursor:pointer; border:1px solid rgba(255,122,41,0.25); box-shadow:0 24px 64px rgba(0,0,0,0.5); transition:transform .25s, box-shadow .25s; }
 .feat-card:hover { transform:translateY(-3px); box-shadow:0 32px 80px rgba(0,0,0,0.65); }
-.feat-card:hover .play-btn { transform:translate(-50%,-50%) scale(1.1); background:rgba(212,175,55,0.85); }
+.feat-card:hover .play-btn { transform:translate(-50%,-50%) scale(1.1); background:rgba(255,122,41,0.85); }
 `;
 
 function AmbientBg() {
   return (
     <div style={{position:'fixed',inset:0,zIndex:0,pointerEvents:'none',overflow:'hidden'}}>
-      <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 80% 60% at 20% 40%, rgba(212,175,55,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 20%, rgba(20,86,63,0.12) 0%, transparent 60%)'}}/>
+      <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 80% 60% at 20% 40%, rgba(255,122,41,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 20%, rgba(30,64,175,0.12) 0%, transparent 60%)'}}/>
       {[
-        {top:'15%',left:'8%',color:'#D4AF37',delay:'0s',size:3},
+        {top:'15%',left:'8%',color:'#FF7A29',delay:'0s',size:3},
         {top:'35%',left:'92%',color:'#E8B23D',delay:'1.2s',size:3},
         {top:'60%',left:'5%',color:'#fff',delay:'2.1s',size:2},
-        {top:'75%',left:'88%',color:'#D4AF37',delay:'0.7s',size:3},
+        {top:'75%',left:'88%',color:'#FF7A29',delay:'0.7s',size:3},
         {top:'25%',left:'50%',color:'#E8B23D',delay:'1.8s',size:2},
         {top:'85%',left:'30%',color:'#fff',delay:'0.4s',size:3},
       ].map((p,i)=>(
@@ -104,7 +104,7 @@ export function Videos() {
   const openClip = (c: AuctionClip) => setModal({ kind: 'file', src: clipUrl(c.file), loop: c.loop });
 
   return (
-    <div style={{minHeight:'100vh',background:'#071B15',fontFamily:'Inter,sans-serif',position:'relative'}}>
+    <div style={{minHeight:'100vh',background:'#0E1624',fontFamily:'Inter,sans-serif',position:'relative'}}>
       <style>{CSS}</style>
       <AmbientBg/>
       <SiteHeader active="Videos" />
@@ -140,10 +140,10 @@ export function Videos() {
 
           {/* Featured: full auction stream (YouTube) */}
           <div className="feat-card" onClick={() => setModal({ kind: 'yt', id: AUCTION_STREAM.ytId })}
-            style={{aspectRatio:'16/9',maxHeight:520,width:'100%',background:'#0C271F',marginBottom:14}}>
+            style={{aspectRatio:'16/9',maxHeight:520,width:'100%',background:'#121F2F',marginBottom:14}}>
             <img src={clipUrl('auc-clip-01.jpg')} alt={t("BCPL Season 4 auction full stream","BCPL Season 4 auction का पूरा stream")}
               style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',opacity:0.85}} loading="eager" decoding="async"/>
-            <div style={{position:'absolute',inset:0,background:'linear-gradient(0deg,rgba(2,13,10,0.85) 0%,transparent 55%)'}}/>
+            <div style={{position:'absolute',inset:0,background:'linear-gradient(0deg,rgba(3,7,15,0.85) 0%,transparent 55%)'}}/>
             <PlayButton size={64}/>
             <div style={{position:'absolute',top:14,left:14,display:'flex',gap:8,flexWrap:'wrap'}}>
               <span style={{background:'#8B5CF6cc',backdropFilter:'blur(4px)',borderRadius:100,padding:'4px 12px',fontSize:10,fontFamily:'var(--font-head)',fontWeight:700,color:'#fff',letterSpacing:'0.06em'}}>{t("SEASON 4 AUCTION","SEASON 4 AUCTION")}</span>
@@ -182,7 +182,7 @@ export function Videos() {
           <div className="video-grid">
             {AUCTION_CLIPS.map((c,i)=>(
               <div key={c.file} className="video-card" style={{animation:`fadeSlide 0.5s ease ${(i%3)*0.1}s both`}} onClick={()=>openClip(c)}>
-                <div className="video-thumb" style={{aspectRatio:'16/9',background:'#0C271F',marginBottom:12}}>
+                <div className="video-thumb" style={{aspectRatio:'16/9',background:'#121F2F',marginBottom:12}}>
                   <img src={clipUrl(c.poster)} alt={t(c.title, c.titleHi)} loading={i < 3 ? 'eager' : 'lazy'} decoding="async"
                     style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover'}}/>
                   <PlayButton size={44}/>
@@ -194,7 +194,7 @@ export function Videos() {
                 <div>
                   <h3 style={{fontFamily:'var(--font-head)',fontWeight:700,fontSize:15,color:'#fff',marginBottom:6,lineHeight:1.4}}>{t(c.title, c.titleHi)}</h3>
                   <div style={{display:'flex',alignItems:'center',gap:6}}>
-                    <div style={{width:20,height:20,borderRadius:'50%',background:'linear-gradient(135deg,#D4AF37,#97761F)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:10,flexShrink:0}}>▶</div>
+                    <div style={{width:20,height:20,borderRadius:'50%',background:'linear-gradient(135deg,#FF7A29,#C94E0E)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:10,flexShrink:0}}>▶</div>
                     <span style={{color:'var(--ink-3)',fontSize:12,fontFamily:'Inter,sans-serif'}}>BCPL TV</span>
                   </div>
                 </div>
@@ -207,7 +207,7 @@ export function Videos() {
       {/* YOUTUBE CTA */}
       <section style={{position:'relative',zIndex:1,padding:'0 0 120px'}}>
         <div className="wrap">
-          <div className="glass-card" style={{padding:'clamp(20px,5vw,48px) clamp(16px,4vw,48px)',textAlign:'center',maxWidth:640,margin:'0 auto',border:'1px solid rgba(212,175,55,0.15)'}}>
+          <div className="glass-card" style={{padding:'clamp(20px,5vw,48px) clamp(16px,4vw,48px)',textAlign:'center',maxWidth:640,margin:'0 auto',border:'1px solid rgba(255,122,41,0.15)'}}>
             <div style={{fontSize:44,marginBottom:12,color:'#FF0000',lineHeight:1}}>▶</div>
             <h3 className="v3-h" style={{fontSize:28,color:'#fff',marginBottom:6}}>{t("Subscribe to BCPL TV","BCPL TV Subscribe करें")}</h3>
             <div style={{color:'var(--ink-3)',fontSize:14,marginBottom:24,fontFamily:'Inter,sans-serif'}}>{t("23K subscribers · Match highlights & league videos","23K subscribers · Match highlights और league videos")}</div>
@@ -226,7 +226,7 @@ export function Videos() {
       {/* VIDEO MODAL */}
       {modal && (
         <div onClick={() => setModal(null)}
-          style={{position:'fixed',inset:0,zIndex:2000,background:'rgba(2,13,10,0.94)',display:'flex',alignItems:'center',justifyContent:'center',animation:'lbFade .2s ease both',padding:'clamp(8px,3vw,32px)'}}>
+          style={{position:'fixed',inset:0,zIndex:2000,background:'rgba(3,7,15,0.94)',display:'flex',alignItems:'center',justifyContent:'center',animation:'lbFade .2s ease both',padding:'clamp(8px,3vw,32px)'}}>
           <div onClick={e => e.stopPropagation()}
             style={{width:'min(1100px,96vw)',aspectRatio:'16/9',background:'#000',borderRadius:12,overflow:'hidden',boxShadow:'0 30px 90px rgba(0,0,0,0.8)'}}>
             {modal.kind === 'yt' ? (

@@ -56,7 +56,7 @@ export function NavUser({ variant = 'desktop', onNavigate }: {
         style={{ width:40, height:44, display:'inline-flex', alignItems:'center', justifyContent:'center', textDecoration:'none', flexShrink:0 }}>
         <span style={{
           width:28, height:28, borderRadius:'50%',
-          background:'linear-gradient(135deg,#D4AF37,#E8B23D)',
+          background:'linear-gradient(135deg,#FF7A29,#E8B23D)',
           display:'inline-flex', alignItems:'center', justifyContent:'center',
           fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:13, color:'#fff',
         }}>{iconInitial}</span>
@@ -69,9 +69,9 @@ export function NavUser({ variant = 'desktop', onNavigate }: {
       <span
         onClick={() => { onNavigate?.(); openLoginModal(); }}
         style={mobile
-          ? { color:'#D4AF37', fontWeight:700, fontSize:18, fontFamily:'Montserrat,sans-serif', padding:'14px 0', borderBottom:'1px solid rgba(255,255,255,0.07)', display:'flex', alignItems:'center', gap:8, cursor:'pointer' }
-          : { color:'#D4AF37', fontWeight:700, fontSize:13, fontFamily:'Inter,sans-serif', cursor:'pointer' }}
-      >{mobile ? <><IcoKey size={14} style={{ color:'#D4AF37' }} /> Login</> : 'Login'}</span>
+          ? { color:'#FF7A29', fontWeight:700, fontSize:18, fontFamily:'Montserrat,sans-serif', padding:'14px 0', borderBottom:'1px solid rgba(255,255,255,0.07)', display:'flex', alignItems:'center', gap:8, cursor:'pointer' }
+          : { color:'#FF7A29', fontWeight:700, fontSize:13, fontFamily:'Inter,sans-serif', cursor:'pointer' }}
+      >{mobile ? <><IcoKey size={14} style={{ color:'#FF7A29' }} /> Login</> : 'Login'}</span>
     );
   }
 
@@ -81,7 +81,7 @@ export function NavUser({ variant = 'desktop', onNavigate }: {
   const avatar = (
     <span style={{
       width: mobile ? 28 : 24, height: mobile ? 28 : 24, borderRadius:'50%',
-      background:'linear-gradient(135deg,#D4AF37,#E8B23D)',
+      background:'linear-gradient(135deg,#FF7A29,#E8B23D)',
       display:'inline-flex', alignItems:'center', justifyContent:'center',
       fontFamily:'Montserrat,sans-serif', fontWeight:900,
       fontSize: mobile ? 13 : 11, color:'#fff', flexShrink:0,
@@ -95,13 +95,13 @@ export function NavUser({ variant = 'desktop', onNavigate }: {
       onClick={onNavigate}
       title={user.name}
       style={mobile
-        ? { display:'flex', alignItems:'center', gap:10, color:'#D4AF37', fontWeight:700, fontSize:18, fontFamily:'Montserrat,sans-serif', padding:'14px 0', borderBottom:'1px solid rgba(255,255,255,0.07)', textDecoration:'none' }
+        ? { display:'flex', alignItems:'center', gap:10, color:'#FF7A29', fontWeight:700, fontSize:18, fontFamily:'Montserrat,sans-serif', padding:'14px 0', borderBottom:'1px solid rgba(255,255,255,0.07)', textDecoration:'none' }
         : { display:'inline-flex', alignItems:'center', gap:7, textDecoration:'none' }}
     >
       {avatar}
       <span style={mobile
         ? {}
-        : { color:'#D4AF37', fontWeight:700, fontSize:13, fontFamily:'Inter,sans-serif', maxWidth:96, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}
+        : { color:'#FF7A29', fontWeight:700, fontSize:13, fontFamily:'Inter,sans-serif', maxWidth:96, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}
       >{firstName}</span>
     </a>
     {mobile && (

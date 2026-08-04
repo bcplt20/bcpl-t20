@@ -110,7 +110,7 @@ export function Phase2Registration() {
       <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:32, color:'#fff', textTransform:'uppercase' }}>{t("Phase 2 Not Accessible Yet", "फेज 2 अभी उपलब्ध नहीं है")}</div>
       <div style={{ fontSize:15, color:'#64748B', maxWidth:400, lineHeight:1.6 }}>{t("Phase 2 is only available after you have qualified through BCPL's Phase 1 evaluation.", "फेज 2 केवल तभी उपलब्ध है जब आप फेज 1 evaluation में qualify कर चुके हों।")}</div>
       <Link href="/register/upload-video" className="btn-cta" style={{ marginTop:16 }}>{t("Go to Video Upload →", "वीडियो अपलोड पर जाएं →")}</Link>
-      <style>{`.btn-cta{display:inline-flex;align-items:center;background:linear-gradient(135deg,var(--orange),var(--orange-2));border:none;border-radius:14px;color:#fff;font-family:var(--font-head);font-weight:900;letter-spacing:0.04em;padding:16px 32px;font-size:16px;text-decoration:none;text-transform:uppercase;transition:opacity 0.2s,transform 0.15s;box-shadow:0 6px 24px rgba(212,175,55,0.35);}`}</style>
+      <style>{`.btn-cta{display:inline-flex;align-items:center;background:linear-gradient(135deg,var(--orange),var(--orange-2));border:none;border-radius:14px;color:#fff;font-family:var(--font-head);font-weight:900;letter-spacing:0.04em;padding:16px 32px;font-size:16px;text-decoration:none;text-transform:uppercase;transition:opacity 0.2s,transform 0.15s;box-shadow:0 6px 24px rgba(255,122,41,0.35);}`}</style>
     </div>
   );
 
@@ -129,12 +129,12 @@ export function Phase2Registration() {
         @media (min-width: 1024px) { .grid { grid-template-columns: 1.2fr 340px; } }
         
         .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
-        .btn-cta { background: linear-gradient(135deg, var(--orange), var(--orange-2)); border: none; border-radius: var(--r); color: #fff; font-family: var(--font-head); font-weight: 800; font-size: 16px; letter-spacing: 0.04em; padding: 16px 32px; cursor: pointer; text-transform: uppercase; transition: opacity 0.2s, transform 0.15s; box-shadow: 0 6px 24px rgba(212,175,55,0.35); width: 100%; display: flex; justify-content: center; align-items: center; }
+        .btn-cta { background: linear-gradient(135deg, var(--orange), var(--orange-2)); border: none; border-radius: var(--r); color: #fff; font-family: var(--font-head); font-weight: 800; font-size: 16px; letter-spacing: 0.04em; padding: 16px 32px; cursor: pointer; text-transform: uppercase; transition: opacity 0.2s, transform 0.15s; box-shadow: 0 6px 24px rgba(255,122,41,0.35); width: 100%; display: flex; justify-content: center; align-items: center; }
         .btn-cta:hover { opacity: 0.9; transform: translateY(-2px); }
         .btn-cta:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
         
         .check-row { display: flex; align-items: flex-start; gap: 16px; cursor: pointer; padding: 20px; border: 1px solid var(--line); background: rgba(255,255,255,0.02); transition: all 0.2s; border-radius: var(--r); margin-bottom: 12px; }
-        .check-row:hover { border-color: rgba(212,175,55,0.4); background: rgba(212,175,55,0.02); }
+        .check-row:hover { border-color: rgba(255,122,41,0.4); background: rgba(255,122,41,0.02); }
         .check-row.checked { border-color: rgba(34,197,94,0.4); background: rgba(34,197,94,0.06); }
         .cbox { width: 24px; height: 24px; border: 2px solid rgba(255,255,255,0.2); border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.2s; margin-top: 2px; }
         .cbox.checked { background: var(--green); border-color: var(--green); }
@@ -145,7 +145,7 @@ export function Phase2Registration() {
         .ticket-dash::before { left:-36px; border-right: 1px solid rgba(232,178,61,0.3); }
         .ticket-dash::after { right:-36px; border-left: 1px solid rgba(232,178,61,0.3); }
         
-        .stick-cta { position: fixed; bottom: 0; left: 0; right: 0; padding: 16px 20px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); background: rgba(2,13,10,0.95); backdrop-filter: blur(12px); border-top: 1px solid rgba(212,175,55,0.3); z-index: 1000; }
+        .stick-cta { position: fixed; bottom: 0; left: 0; right: 0; padding: 16px 20px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); background: rgba(3,7,16,0.95); backdrop-filter: blur(12px); border-top: 1px solid rgba(255,122,41,0.3); z-index: 1000; }
         @media (min-width: 768px) { .stick-cta { display: none; } }
       `}</style>
 

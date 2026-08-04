@@ -119,13 +119,13 @@ function getBannerConfig(step: Step, data: any, venue: any, t: any) {
 
   const cfgs: Record<Step,{color:string;bg:string;icon:React.ReactNode;title:string;body:string;cta?:string;ctaPath?:string}> = {
     not_registered: {
-      color:'var(--orange)', bg:'rgba(212,175,55,0.08)', icon:<IcoPen size={40} />,
+      color:'var(--orange)', bg:'rgba(255,122,41,0.08)', icon:<IcoPen size={40} />,
       title: t('Register for BCPL Season 5', 'BCPL सीजन 5 के लिए रजिस्टर करें'),
       body: t('Start your BCPL journey — register as a player and pay the Phase 1 fee to get started.', 'अपना BCPL सफर शुरू करें — एक खिलाड़ी के रूप में रजिस्टर करें और फेज 1 की फीस देकर शुरुआत करें।'),
       cta: t('REGISTER NOW →', 'अभी रजिस्टर करें →'), ctaPath:'/register',
     },
     upload_video: {
-      color:'var(--orange)', bg:'rgba(212,175,55,0.08)', icon:<IcoVideo size={40} />,
+      color:'var(--orange)', bg:'rgba(255,122,41,0.08)', icon:<IcoVideo size={40} />,
       title: t('Upload Your Trial Video', 'अपना ट्रायल वीडियो अपलोड करें'),
       body: t(`Hi ${name}! Your Phase 1 registration is done. Upload your 30–60 second trial video before ${dl} for Phase 1 evaluation.`, `नमस्ते ${name}! आपका फेज 1 रजिस्ट्रेशन हो गया है। Phase 1 evaluation के लिए ${dl} से पहले अपना 30–60 सेकंड का ट्रायल वीडियो अपलोड करें।`),
       cta: t('UPLOAD VIDEO →', 'वीडियो अपलोड करें →'), ctaPath:'/register/upload-video',
@@ -147,7 +147,7 @@ function getBannerConfig(step: Step, data: any, venue: any, t: any) {
       cta: t('COMPLETE PHASE 2 →', 'फेज 2 पूरा करें →'), ctaPath:'/register/phase2',
     },
     p2_kyc: {
-      color:'var(--orange)', bg:'rgba(212,175,55,0.08)', icon:<IcoIdCard size={40} />,
+      color:'var(--orange)', bg:'rgba(255,122,41,0.08)', icon:<IcoIdCard size={40} />,
       title: t('Complete Your KYC', 'अपना KYC पूरा करें'),
       body: t(`Phase 2 payment done ✓. One last step — complete your KYC (Aadhaar + PAN verification) to confirm your trial slot in ${city}.`, `फेज 2 पेमेंट हो गया ✓। एक आखिरी कदम — ${city} में अपने ट्रायल स्लॉट की पुष्टि के लिए अपना KYC (आधार + PAN वेरिफिकेशन) पूरा करें।`),
       cta: t('COMPLETE KYC →', 'KYC पूरा करें →'), ctaPath:'/register/phase2/kyc',
@@ -239,7 +239,7 @@ function ProfileBackfillModal({ t, onClose, onDone }: {
     <button key={val} type="button" onClick={onClick}
       style={{ padding: '8px 14px', borderRadius: 10, cursor: 'pointer', fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 13,
         border: `1px solid ${active ? 'var(--orange)' : 'rgba(255,255,255,0.15)'}`,
-        background: active ? 'rgba(212,175,55,0.15)' : 'rgba(255,255,255,0.04)',
+        background: active ? 'rgba(255,122,41,0.15)' : 'rgba(255,255,255,0.04)',
         color: active ? 'var(--orange)' : 'rgba(255,255,255,0.7)' }}>
       {val}
     </button>
@@ -249,7 +249,7 @@ function ProfileBackfillModal({ t, onClose, onDone }: {
 
   return (
     <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-      <div onClick={e => e.stopPropagation()} style={{ background: 'var(--panel, #062019)', border: '1px solid var(--line, rgba(255,255,255,0.1))', borderRadius: 'var(--r, 16px)', padding: 24, maxWidth: 440, width: '100%', maxHeight: '90vh', overflowY: 'auto' }}>
+      <div onClick={e => e.stopPropagation()} style={{ background: 'var(--panel, #0A1727)', border: '1px solid var(--line, rgba(255,255,255,0.1))', borderRadius: 'var(--r, 16px)', padding: 24, maxWidth: 440, width: '100%', maxHeight: '90vh', overflowY: 'auto' }}>
         <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 18, color: 'var(--gold)', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
           <IcoList size={18} /> {t('Complete your details', 'बाकी जानकारी भरें')}
         </div>
@@ -373,10 +373,10 @@ export function PlayerProfile() {
         .W { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
         @media(min-width: 768px){ .W { padding: 0 32px; } }
         
-        .btn-orange { background: linear-gradient(135deg, var(--orange), var(--orange-2)); border: none; border-radius: var(--r); color: #fff; font-family: var(--font-head); font-weight: 900; letter-spacing: .06em; cursor: pointer; padding: 16px 32px; font-size: 16px; transition: all .2s; text-transform: uppercase; text-decoration: none; display: inline-block; box-shadow: 0 6px 20px rgba(212,175,55,0.3); }
+        .btn-orange { background: linear-gradient(135deg, var(--orange), var(--orange-2)); border: none; border-radius: var(--r); color: #fff; font-family: var(--font-head); font-weight: 900; letter-spacing: .06em; cursor: pointer; padding: 16px 32px; font-size: 16px; transition: all .2s; text-transform: uppercase; text-decoration: none; display: inline-block; box-shadow: 0 6px 20px rgba(255,122,41,0.3); }
         .btn-orange:hover { filter: brightness(1.1); transform: translateY(-2px); }
         .btn-ghost { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.18); border-radius: var(--r); color: rgba(255,255,255,0.82); font-family: var(--font-head); font-weight: 800; cursor: pointer; padding: 12px 20px; font-size: 14px; letter-spacing: .05em; transition: all .2s; text-transform: uppercase; }
-        .btn-ghost:hover { border-color: var(--orange); color: var(--orange); background: rgba(212,175,55,0.05); }
+        .btn-ghost:hover { border-color: var(--orange); color: var(--orange); background: rgba(255,122,41,0.05); }
         
         .grid2 { display: grid; grid-template-columns: 1fr; gap: 16px; }
         @media(min-width: 640px){ .grid2 { grid-template-columns: 1fr 1fr; } }
@@ -389,9 +389,9 @@ export function PlayerProfile() {
         
         @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes pulseGreen { 0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); } 50% { box-shadow: 0 0 0 12px rgba(34,197,94,0); } }
-        @keyframes pulseOrange { 0%,100% { box-shadow: 0 0 0 0 rgba(212,175,55,0.4); } 50% { box-shadow: 0 0 0 12px rgba(212,175,55,0); } }
+        @keyframes pulseOrange { 0%,100% { box-shadow: 0 0 0 0 rgba(255,122,41,0.4); } 50% { box-shadow: 0 0 0 12px rgba(255,122,41,0); } }
         
-        .mob-bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000; display: flex; background: rgba(2,13,10,0.95); backdrop-filter: blur(12px); border-top: 1px solid rgba(255,255,255,0.08); padding-bottom: env(safe-area-inset-bottom); }
+        .mob-bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000; display: flex; background: rgba(3,7,16,0.95); backdrop-filter: blur(12px); border-top: 1px solid rgba(255,255,255,0.08); padding-bottom: env(safe-area-inset-bottom); }
         @media (min-width: 768px) { .mob-bottom-nav { display: none; } }
         .mob-tab-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 12px 0; background: transparent; border: none; color: var(--ink-3); font-family: var(--font-body); cursor: pointer; transition: color 0.2s; }
         .mob-tab-btn.active { color: var(--orange); }
@@ -413,7 +413,7 @@ export function PlayerProfile() {
           {/* Task #32 — prominent Hindi-first nudge for KYC-done players whose
               T-shirt size / emergency contact was never collected. */}
           {needsBackfill && (
-            <div style={{ background: 'linear-gradient(135deg, rgba(232,178,61,0.14), rgba(212,175,55,0.10))', border: '1px solid rgba(232,178,61,0.45)', borderRadius: 'var(--r)', padding: '18px 20px', marginBottom: 24, display: 'flex', gap: 14, alignItems: 'center', flexWrap: 'wrap', animation: 'fadeUp .5s ease both' }}>
+            <div style={{ background: 'linear-gradient(135deg, rgba(232,178,61,0.14), rgba(255,122,41,0.10))', border: '1px solid rgba(232,178,61,0.45)', borderRadius: 'var(--r)', padding: '18px 20px', marginBottom: 24, display: 'flex', gap: 14, alignItems: 'center', flexWrap: 'wrap', animation: 'fadeUp .5s ease both' }}>
               <div style={{ color: 'var(--gold)' }}><IcoList size={28} /></div>
               <div style={{ flex: '1 1 260px', minWidth: 0 }}>
                 <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 15, color: 'var(--gold)', marginBottom: 4 }}>
@@ -445,7 +445,7 @@ export function PlayerProfile() {
               
               <div className={`mob-tab-content ${activeTab === 'card' || activeTab === 'home' ? 'active' : ''}`}>
                 {/* ── HERO CARD ── */}
-                <div className="card" style={{ background: 'linear-gradient(135deg, #0C271F, #0E1520)', borderTop: '4px solid var(--orange)', marginBottom: 24, animation: 'fadeUp .5s ease both' }}>
+                <div className="card" style={{ background: 'linear-gradient(135deg, #121F2F, #0E1520)', borderTop: '4px solid var(--orange)', marginBottom: 24, animation: 'fadeUp .5s ease both' }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap' }}>
                     <div style={{ width: 72, height: 72, borderRadius: '50%', background: 'linear-gradient(135deg, var(--orange), var(--gold))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 32, color: '#fff', flexShrink: 0, animation: step === 'trial_wait' || step === 'trial_scheduled' ? 'pulseGreen 2s ease infinite' : step === 'p2_register' ? 'pulseOrange 2s ease infinite' : 'none' }}>
                       {user?.name?.charAt(0).toUpperCase() ?? '?'}
@@ -458,7 +458,7 @@ export function PlayerProfile() {
                       </div>
                       
                       {reg && (
-                        <div className="tag" style={{ background: step === 'rejected' ? 'rgba(232,178,61,0.1)' : atTrialStage ? 'rgba(34,197,94,0.1)' : 'rgba(212,175,55,0.1)', borderColor: step === 'rejected' ? 'rgba(232,178,61,0.4)' : atTrialStage ? 'rgba(34,197,94,0.4)' : 'rgba(212,175,55,0.4)', color: step === 'rejected' ? 'var(--gold)' : atTrialStage ? 'var(--green)' : 'var(--orange)', marginBottom: 16 }}>
+                        <div className="tag" style={{ background: step === 'rejected' ? 'rgba(232,178,61,0.1)' : atTrialStage ? 'rgba(34,197,94,0.1)' : 'rgba(255,122,41,0.1)', borderColor: step === 'rejected' ? 'rgba(232,178,61,0.4)' : atTrialStage ? 'rgba(34,197,94,0.4)' : 'rgba(255,122,41,0.4)', color: step === 'rejected' ? 'var(--gold)' : atTrialStage ? 'var(--green)' : 'var(--orange)', marginBottom: 16 }}>
                           {step === 'rejected' ? t('Assessment Complete', 'असेसमेंट पूरा')
                             : step === 'trial_completed' ? t('Trial Completed', 'ट्रायल पूरा')
                             : step === 'trial_checked_in' ? t('Checked In', 'चेक-इन')
@@ -494,7 +494,7 @@ export function PlayerProfile() {
                     {reg && (
                       <button className="btn-ghost" style={{ display: 'inline-flex', alignItems: 'center', gap: 7 }} onClick={() => {
                         const initials = user?.name?.charAt(0).toUpperCase() ?? '?';
-                        const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>BCPL Player ID — ${user?.name}</title><style>body{margin:0;background:#0B1624;display:flex;justify-content:center;padding:32px;font-family:'Segoe UI',sans-serif}.card{width:340px;background:linear-gradient(145deg,#152744,var(--bg));border:1.5px solid rgba(212,175,55,0.45);border-radius:18px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.6)}.stripe{height:4px;background:linear-gradient(90deg,#D4AF37,#E8B23D,#D4AF37)}.head{background:linear-gradient(135deg,#D4AF37,#97761F);padding:14px 20px}.head-title{font-size:10px;font-weight:800;color:rgba(255,255,255,0.9);letter-spacing:.18em}.head-sub{font-size:8px;color:rgba(255,255,255,0.65);margin-top:3px;letter-spacing:.1em}.body{padding:20px 22px 16px}.avatar{width:60px;height:60px;background:linear-gradient(135deg,#D4AF37,#97761F);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;margin-bottom:12px;box-shadow:0 4px 20px rgba(212,175,55,0.4)}.name{font-size:20px;font-weight:900;color:#fff;margin-bottom:3px}.role{font-size:11px;font-weight:800;color:#D4AF37;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px}hr{border:none;border-top:1px solid rgba(255,255,255,0.08);margin:12px 0}.row{display:flex;justify-content:space-between;margin-bottom:9px}.label{font-size:9px;font-weight:700;color:var(--ink-3);text-transform:uppercase;letter-spacing:.08em}.val{font-size:11px;font-weight:700;color:rgba(255,255,255,0.8);text-align:right}.ref{font-family:monospace;color:#D4AF37;font-size:11px;font-weight:700}.foot{background:rgba(212,175,55,0.07);border-top:1px solid rgba(212,175,55,0.18);padding:12px 22px;display:flex;justify-content:space-between;align-items:center}.kyc{background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.4);border-radius:6px;padding:4px 11px;font-size:9px;font-weight:800;color:#22C55E;letter-spacing:.08em}.site{font-size:9px;color:rgba(255,255,255,0.25);font-weight:600}@media print{body{padding:0;background:#fff}.card{box-shadow:none}}</style></head><body><div class="card"><div class="stripe"></div><div class="head"><div class="head-title">BHARTIYA CORPORATE PREMIER LEAGUE</div><div class="head-sub">OFFICIAL PLAYER ID CARD · SEASON 5</div></div><div class="body"><div class="avatar">${initials}</div><div class="name">${user?.name}</div><div class="role">${formatRole(reg.role)} · ${reg.trialCity}</div><hr/><div class="row"><span class="label">Email</span><span class="val">${user?.email || '—'}</span></div><div class="row"><span class="label">Phone</span><span class="val">${user?.phone || '—'}</span></div><hr/><div class="row"><span class="label">Registration No.</span><span class="ref">${regId}</span></div><div class="row"><span class="label">KYC Status</span><span class="val" style="color:#22C55E">VERIFIED</span></div></div><div class="foot"><span class="site">bcplt20.com · BCPL Season 5</span><span class="kyc">ID CARD</span></div></div><script>window.onload=function(){window.print();}<\/script></body></html>`;
+                        const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>BCPL Player ID — ${user?.name}</title><style>body{margin:0;background:#0B1624;display:flex;justify-content:center;padding:32px;font-family:'Segoe UI',sans-serif}.card{width:340px;background:linear-gradient(145deg,#152744,var(--bg));border:1.5px solid rgba(255,122,41,0.45);border-radius:18px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.6)}.stripe{height:4px;background:linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)}.head{background:linear-gradient(135deg,#FF7A29,#C94E0E);padding:14px 20px}.head-title{font-size:10px;font-weight:800;color:rgba(255,255,255,0.9);letter-spacing:.18em}.head-sub{font-size:8px;color:rgba(255,255,255,0.65);margin-top:3px;letter-spacing:.1em}.body{padding:20px 22px 16px}.avatar{width:60px;height:60px;background:linear-gradient(135deg,#FF7A29,#C94E0E);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;margin-bottom:12px;box-shadow:0 4px 20px rgba(255,122,41,0.4)}.name{font-size:20px;font-weight:900;color:#fff;margin-bottom:3px}.role{font-size:11px;font-weight:800;color:#FF7A29;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px}hr{border:none;border-top:1px solid rgba(255,255,255,0.08);margin:12px 0}.row{display:flex;justify-content:space-between;margin-bottom:9px}.label{font-size:9px;font-weight:700;color:var(--ink-3);text-transform:uppercase;letter-spacing:.08em}.val{font-size:11px;font-weight:700;color:rgba(255,255,255,0.8);text-align:right}.ref{font-family:monospace;color:#FF7A29;font-size:11px;font-weight:700}.foot{background:rgba(255,122,41,0.07);border-top:1px solid rgba(255,122,41,0.18);padding:12px 22px;display:flex;justify-content:space-between;align-items:center}.kyc{background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.4);border-radius:6px;padding:4px 11px;font-size:9px;font-weight:800;color:#22C55E;letter-spacing:.08em}.site{font-size:9px;color:rgba(255,255,255,0.25);font-weight:600}@media print{body{padding:0;background:#fff}.card{box-shadow:none}}</style></head><body><div class="card"><div class="stripe"></div><div class="head"><div class="head-title">BHARTIYA CORPORATE PREMIER LEAGUE</div><div class="head-sub">OFFICIAL PLAYER ID CARD · SEASON 5</div></div><div class="body"><div class="avatar">${initials}</div><div class="name">${user?.name}</div><div class="role">${formatRole(reg.role)} · ${reg.trialCity}</div><hr/><div class="row"><span class="label">Email</span><span class="val">${user?.email || '—'}</span></div><div class="row"><span class="label">Phone</span><span class="val">${user?.phone || '—'}</span></div><hr/><div class="row"><span class="label">Registration No.</span><span class="ref">${regId}</span></div><div class="row"><span class="label">KYC Status</span><span class="val" style="color:#22C55E">VERIFIED</span></div></div><div class="foot"><span class="site">bcplt20.com · BCPL Season 5</span><span class="kyc">ID CARD</span></div></div><script>window.onload=function(){window.print();}<\/script></body></html>`;
                         const win = window.open('', '_blank');
                         if(win){ win.document.write(html); win.document.close(); }
                       }}>
@@ -521,7 +521,7 @@ export function PlayerProfile() {
                         </div>
                       ))}
                     </div>
-                    <div style={{ padding: '14px 16px', background: 'rgba(212,175,55,0.08)', border: '1px solid rgba(212,175,55,0.28)', borderRadius: 12, fontSize: 15, color: 'rgba(255,255,255,0.82)', lineHeight: 1.6, marginBottom: 16 }}>
+                    <div style={{ padding: '14px 16px', background: 'rgba(255,122,41,0.08)', border: '1px solid rgba(255,122,41,0.28)', borderRadius: 12, fontSize: 15, color: 'rgba(255,255,255,0.82)', lineHeight: 1.6, marginBottom: 16 }}>
                       {t("You haven't registered for Season 5 yet. Register now to start your BCPL journey.", "आपने अभी तक सीजन 5 के लिए रजिस्टर नहीं किया है। अपना BCPL सफर शुरू करने के लिए अभी रजिस्टर करें।")}
                     </div>
                     <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
@@ -556,7 +556,7 @@ export function PlayerProfile() {
                       <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '12px', padding: '16px', border: '1px solid var(--line)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                           <div style={{ fontSize: 12.5, fontWeight: 800, fontFamily: 'var(--font-head)', color: 'rgba(255,255,255,0.72)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t("Trial Video", "ट्रायल वीडियो")}</div>
-                          <div className="tag" style={{ background: data.video?.submitted ? (reg.phase1Status === 'selected' ? 'rgba(34,197,94,0.1)' : 'rgba(232,178,61,0.1)') : 'rgba(212,175,55,0.1)', borderColor: data.video?.submitted ? (reg.phase1Status === 'selected' ? 'rgba(34,197,94,0.3)' : 'rgba(232,178,61,0.3)') : 'rgba(212,175,55,0.3)', color: data.video?.submitted ? (reg.phase1Status === 'selected' ? 'var(--green)' : 'var(--gold)') : 'var(--orange)', padding: '5px 11px', fontSize: 13 }}>
+                          <div className="tag" style={{ background: data.video?.submitted ? (reg.phase1Status === 'selected' ? 'rgba(34,197,94,0.1)' : 'rgba(232,178,61,0.1)') : 'rgba(255,122,41,0.1)', borderColor: data.video?.submitted ? (reg.phase1Status === 'selected' ? 'rgba(34,197,94,0.3)' : 'rgba(232,178,61,0.3)') : 'rgba(255,122,41,0.3)', color: data.video?.submitted ? (reg.phase1Status === 'selected' ? 'var(--green)' : 'var(--gold)') : 'var(--orange)', padding: '5px 11px', fontSize: 13 }}>
                             {data.video?.submitted
                               ? (reg.phase1Status === 'selected' ? t('✓ Selected', '✓ चयनित') : reg.phase1Status === 'rejected' ? t('Assessment Complete', 'असेसमेंट पूरा') : t('Under Review', 'रिव्यू में'))
                               : t('Not Uploaded', 'अपलोड नहीं हुआ')}
@@ -565,7 +565,7 @@ export function PlayerProfile() {
                         {data.video?.submittedAt && <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.68)', marginTop: 5 }}>{t("Submitted", "सबमिट किया")} {formatDateShort(data.video.submittedAt)}</div>}
                         {!data.video?.submitted && (
                           <button onClick={() => { setLocation('/register/upload-video'); }}
-                            style={{ marginTop: 10, padding: '9px 16px', fontSize: 13, fontWeight: 800, fontFamily: 'var(--font-head)', letterSpacing: '.04em', background: 'rgba(212,175,55,0.12)', border: '1px solid rgba(212,175,55,0.45)', color: 'var(--orange)', borderRadius: '9px', cursor: 'pointer', textTransform: 'uppercase' }}>
+                            style={{ marginTop: 10, padding: '9px 16px', fontSize: 13, fontWeight: 800, fontFamily: 'var(--font-head)', letterSpacing: '.04em', background: 'rgba(255,122,41,0.12)', border: '1px solid rgba(255,122,41,0.45)', color: 'var(--orange)', borderRadius: '9px', cursor: 'pointer', textTransform: 'uppercase' }}>
                             {t("UPLOAD NOW →", "अभी अपलोड करें →")}
                           </button>
                         )}
@@ -576,7 +576,7 @@ export function PlayerProfile() {
                         <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '12px', padding: '16px', border: '1px solid var(--line)' }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                             <div style={{ fontSize: 12.5, fontWeight: 800, fontFamily: 'var(--font-head)', color: 'rgba(255,255,255,0.72)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t("Phase 2 Payment", "फेज 2 पेमेंट")}</div>
-                            <div className="tag" style={{ background: p2Paid ? 'rgba(34,197,94,0.1)' : 'rgba(212,175,55,0.1)', borderColor: p2Paid ? 'rgba(34,197,94,0.3)' : 'rgba(212,175,55,0.3)', color: p2Paid ? 'var(--green)' : 'var(--orange)', padding: '5px 11px', fontSize: 13 }}>
+                            <div className="tag" style={{ background: p2Paid ? 'rgba(34,197,94,0.1)' : 'rgba(255,122,41,0.1)', borderColor: p2Paid ? 'rgba(34,197,94,0.3)' : 'rgba(255,122,41,0.3)', color: p2Paid ? 'var(--green)' : 'var(--orange)', padding: '5px 11px', fontSize: 13 }}>
                               {p2Paid ? t('✓ Paid', '✓ पेड') : t('Pending', 'पेंडिंग')}
                             </div>
                           </div>
@@ -584,7 +584,7 @@ export function PlayerProfile() {
                           {data.phase2Payment?.paidAt && <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.68)', marginTop: 5 }}>{formatDateShort(data.phase2Payment.paidAt)}</div>}
                           {!data.phase2Payment && !p2Paid && (
                             <button onClick={() => { setLocation('/register/phase2'); }}
-                              style={{ marginTop: 10, padding: '9px 16px', fontSize: 13, fontWeight: 800, fontFamily: 'var(--font-head)', letterSpacing: '.04em', background: 'rgba(212,175,55,0.12)', border: '1px solid rgba(212,175,55,0.45)', color: 'var(--orange)', borderRadius: '9px', cursor: 'pointer', textTransform: 'uppercase' }}>
+                              style={{ marginTop: 10, padding: '9px 16px', fontSize: 13, fontWeight: 800, fontFamily: 'var(--font-head)', letterSpacing: '.04em', background: 'rgba(255,122,41,0.12)', border: '1px solid rgba(255,122,41,0.45)', color: 'var(--orange)', borderRadius: '9px', cursor: 'pointer', textTransform: 'uppercase' }}>
                               {t("PAY NOW →", "अभी पेमेंट करें →")}
                             </button>
                           )}
@@ -596,14 +596,14 @@ export function PlayerProfile() {
                         <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '12px', padding: '16px', border: '1px solid var(--line)' }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                             <div style={{ fontSize: 12.5, fontWeight: 800, fontFamily: 'var(--font-head)', color: 'rgba(255,255,255,0.72)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t("KYC Verification", "KYC वेरिफिकेशन")}</div>
-                            <div className="tag" style={{ background: data.kyc?.status === 'verified' ? 'rgba(34,197,94,0.1)' : data.kyc?.status === 'pending' ? 'rgba(232,178,61,0.1)' : 'rgba(212,175,55,0.1)', borderColor: data.kyc?.status === 'verified' ? 'rgba(34,197,94,0.3)' : data.kyc?.status === 'pending' ? 'rgba(232,178,61,0.3)' : 'rgba(212,175,55,0.3)', color: data.kyc?.status === 'verified' ? 'var(--green)' : data.kyc?.status === 'pending' ? 'var(--gold)' : 'var(--orange)', padding: '5px 11px', fontSize: 13 }}>
+                            <div className="tag" style={{ background: data.kyc?.status === 'verified' ? 'rgba(34,197,94,0.1)' : data.kyc?.status === 'pending' ? 'rgba(232,178,61,0.1)' : 'rgba(255,122,41,0.1)', borderColor: data.kyc?.status === 'verified' ? 'rgba(34,197,94,0.3)' : data.kyc?.status === 'pending' ? 'rgba(232,178,61,0.3)' : 'rgba(255,122,41,0.3)', color: data.kyc?.status === 'verified' ? 'var(--green)' : data.kyc?.status === 'pending' ? 'var(--gold)' : 'var(--orange)', padding: '5px 11px', fontSize: 13 }}>
                               {data.kyc?.status === 'verified' ? t('✓ Verified', '✓ वेरीफाइड') : data.kyc?.status === 'pending' ? t('In Review', 'रिव्यू में') : t('Pending', 'पेंडिंग')}
                             </div>
                           </div>
                           {data.kyc?.submittedAt && <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.68)', marginTop: 5 }}>{t("Submitted", "सबमिट किया")} {formatDateShort(data.kyc.submittedAt)}</div>}
                           {(!data.kyc || data.kyc.status === 'failed') && (
                             <button onClick={() => { setLocation('/register/phase2/kyc'); }}
-                              style={{ marginTop: 10, padding: '9px 16px', fontSize: 13, fontWeight: 800, fontFamily: 'var(--font-head)', letterSpacing: '.04em', background: 'rgba(212,175,55,0.12)', border: '1px solid rgba(212,175,55,0.45)', color: 'var(--orange)', borderRadius: '9px', cursor: 'pointer', textTransform: 'uppercase' }}>
+                              style={{ marginTop: 10, padding: '9px 16px', fontSize: 13, fontWeight: 800, fontFamily: 'var(--font-head)', letterSpacing: '.04em', background: 'rgba(255,122,41,0.12)', border: '1px solid rgba(255,122,41,0.45)', color: 'var(--orange)', borderRadius: '9px', cursor: 'pointer', textTransform: 'uppercase' }}>
                               {t("COMPLETE KYC →", "KYC पूरा करें →")}
                             </button>
                           )}
@@ -661,7 +661,7 @@ export function PlayerProfile() {
                 
                 {/* ── PHASE 1 RESULT READY ── */}
                 {myResult?.available && (
-                  <div className="card" style={{ background: 'linear-gradient(120deg, rgba(232,178,61,0.14), rgba(212,175,55,0.06))', border: '1px solid rgba(232,178,61,0.45)', boxShadow: '0 16px 40px rgba(0,0,0,0.3)', marginBottom: 24, animation: 'fadeUp .5s .2s ease both', display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap', padding: '24px 32px' }}>
+                  <div className="card" style={{ background: 'linear-gradient(120deg, rgba(232,178,61,0.14), rgba(255,122,41,0.06))', border: '1px solid rgba(232,178,61,0.45)', boxShadow: '0 16px 40px rgba(0,0,0,0.3)', marginBottom: 24, animation: 'fadeUp .5s .2s ease both', display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap', padding: '24px 32px' }}>
                     <div style={{ color: 'var(--gold)', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 56, height: 56, borderRadius: 14, background: 'rgba(232,178,61,0.14)', border: '1px solid rgba(232,178,61,0.35)', flexShrink: 0 }}><IcoTrophy size={32} /></div>
                     <div style={{ flex: 1, minWidth: 220 }}>
                       <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 22, color: 'var(--gold)', marginBottom: 6, letterSpacing: '.04em', textTransform: 'uppercase' }}>
@@ -699,7 +699,7 @@ export function PlayerProfile() {
                           background: n.state === 'done' ? 'var(--green)' : 'var(--bg)',
                           border: n.state === 'done' ? '2px solid var(--green)' : n.state === 'active' ? '3px solid var(--orange)' : '2px solid rgba(255,255,255,0.1)',
                           color: n.state === 'done' ? '#fff' : n.state === 'active' ? 'var(--orange)' : 'rgba(255,255,255,0.3)',
-                          boxShadow: n.state === 'active' ? '0 0 0 4px rgba(212,175,55,0.15)' : 'none'
+                          boxShadow: n.state === 'active' ? '0 0 0 4px rgba(255,122,41,0.15)' : 'none'
                         }}>
                           {n.state === 'done' ? <IcoCheck size={13} /> : n.state === 'active' ? '●' : '○'}
                         </div>

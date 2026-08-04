@@ -117,7 +117,7 @@ export function LoginModal() {
       display:'flex', alignItems:'center', justifyContent:'center', padding:16,
     }}>
       <div style={{
-        background:'#0C271F', border:'1px solid rgba(255,255,255,0.1)',
+        background:'#121F2F', border:'1px solid rgba(255,255,255,0.1)',
         borderRadius:20, padding:'32px 28px', width:'100%', maxWidth:380,
         boxShadow:'0 24px 80px rgba(0,0,0,0.65)', position:'relative',
         animation:'fadeUp .25s ease both',
@@ -166,13 +166,13 @@ export function LoginModal() {
             <button
               disabled={phone.length !== 10 || sending}
               onClick={handleSendOtp}
-              style={{ width:'100%', background: phone.length === 10 ? 'linear-gradient(135deg,#D4AF37,#A8842A)' : 'rgba(255,255,255,0.08)', border:'none', borderRadius:12, color: phone.length === 10 ? '#fff' : 'rgba(255,255,255,0.3)', fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, letterSpacing:'.06em', padding:'14px', cursor: phone.length === 10 ? 'pointer' : 'not-allowed', textTransform:'uppercase', transition:'all .2s' }}
+              style={{ width:'100%', background: phone.length === 10 ? 'linear-gradient(135deg,#FF7A29,#D95E10)' : 'rgba(255,255,255,0.08)', border:'none', borderRadius:12, color: phone.length === 10 ? '#fff' : 'rgba(255,255,255,0.3)', fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, letterSpacing:'.06em', padding:'14px', cursor: phone.length === 10 ? 'pointer' : 'not-allowed', textTransform:'uppercase', transition:'all .2s' }}
             >
               {sending ? 'Sending…' : 'Send OTP →'}
             </button>
             <div style={{ marginTop:16, textAlign:'center', fontFamily:'Inter,sans-serif', fontSize:12, color:'var(--ink-3)' }}>
               New player?{' '}
-              <a href={import.meta.env.BASE_URL + 'register'} style={{ color:'#D4AF37', textDecoration:'none', fontWeight:600 }}>Register here →</a>
+              <a href={import.meta.env.BASE_URL + 'register'} style={{ color:'#FF7A29', textDecoration:'none', fontWeight:600 }}>Register here →</a>
             </div>
           </>
         )}
@@ -191,7 +191,7 @@ export function LoginModal() {
               onKeyDown={e => e.key === 'Enter' && otp.length === 6 && handleVerifyOtp()}
               placeholder="6-digit OTP"
               autoFocus
-              style={{ width:'100%', background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.12)', borderRadius:10, padding:'14px', fontFamily:'Montserrat,sans-serif', fontSize:24, color:'#D4AF37', outline:'none', letterSpacing:'.3em', textAlign:'center', marginBottom:16, boxSizing:'border-box' }}
+              style={{ width:'100%', background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.12)', borderRadius:10, padding:'14px', fontFamily:'Montserrat,sans-serif', fontSize:24, color:'#FF7A29', outline:'none', letterSpacing:'.3em', textAlign:'center', marginBottom:16, boxSizing:'border-box' }}
             />
             {errMsg && <div style={{ color:'#F87171', fontFamily:'Inter,sans-serif', fontSize:12, marginBottom:12 }}>{errMsg}</div>}
             <button
@@ -209,7 +209,7 @@ export function LoginModal() {
               <button
                 onClick={handleResendOtp}
                 disabled={resendTimer > 0 || sending}
-                style={{ background:'none', border:'none', fontFamily:'Inter,sans-serif', fontSize:12, cursor: resendTimer > 0 ? 'default' : 'pointer', color: resendTimer > 0 ? 'rgba(255,255,255,0.25)' : '#D4AF37', textDecoration: resendTimer > 0 ? 'none' : 'underline' }}>
+                style={{ background:'none', border:'none', fontFamily:'Inter,sans-serif', fontSize:12, cursor: resendTimer > 0 ? 'default' : 'pointer', color: resendTimer > 0 ? 'rgba(255,255,255,0.25)' : '#FF7A29', textDecoration: resendTimer > 0 ? 'none' : 'underline' }}>
                 {resendTimer > 0 ? `Resend in ${resendTimer}s` : 'Resend OTP'}
               </button>
             </div>

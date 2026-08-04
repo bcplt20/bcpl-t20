@@ -83,8 +83,8 @@ const CSS = `
 
   .sh-link{font-family:'Barlow Condensed','Mukta',sans-serif;font-weight:700;font-size:15.5px;letter-spacing:.09em;color:rgba(255,255,255,.62);text-decoration:none;text-transform:uppercase;transition:color .2s;white-space:nowrap;padding:6px 2px;}
   .sh-link:hover{color:#fff;}
-  .sh-link-active{color:#D4AF37;}
-  .sh-link-active:hover{color:#D4AF37;}
+  .sh-link-active{color:#FF7A29;}
+  .sh-link-active:hover{color:#FF7A29;}
 
   .sh-desk{display:none;}
   .sh-deskbar{display:none;}
@@ -112,7 +112,7 @@ const CSS = `
   @keyframes s5in{from{opacity:0;letter-spacing:.6em}to{opacity:.95;letter-spacing:.46em}}
   @media(prefers-reduced-motion:reduce){.sh-s5{animation:none;opacity:.95;}}
 
-  .sh-cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#D4AF37,#A8842A);border:none;border-radius:var(--r,14px);color:#fff;font-family:'Barlow Condensed','Mukta',sans-serif;font-weight:800;letter-spacing:.07em;cursor:pointer;text-transform:uppercase;text-decoration:none;white-space:nowrap;transition:opacity .2s,transform .15s;box-shadow:0 4px 18px rgba(212,175,55,.3);}
+  .sh-cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#FF7A29,#D95E10);border:none;border-radius:var(--r,14px);color:#fff;font-family:'Barlow Condensed','Mukta',sans-serif;font-weight:800;letter-spacing:.07em;cursor:pointer;text-transform:uppercase;text-decoration:none;white-space:nowrap;transition:opacity .2s,transform .15s;box-shadow:0 4px 18px rgba(255,122,41,.3);}
   .sh-cta:hover{opacity:.92;transform:translateY(-1px);}
 
   .sh-ghost{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.18);border-radius:var(--r,14px);color:#fff;font-family:'Barlow Condensed','Mukta',sans-serif;font-weight:800;letter-spacing:.07em;cursor:pointer;text-transform:uppercase;text-decoration:none;white-space:nowrap;transition:border-color .2s,background .2s;}
@@ -124,12 +124,12 @@ const CSS = `
 
   .sh-lang{display:inline-flex;align-items:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:2px;gap:2px;flex-shrink:0;}
   .sh-lang button{border:none;background:transparent;color:rgba(255,255,255,.5);font-family:'Inter','Mukta',sans-serif;font-weight:700;font-size:11px;letter-spacing:.04em;padding:6px 10px;border-radius:7px;cursor:pointer;transition:background .2s,color .2s;line-height:1;}
-  .sh-lang button.on{background:rgba(212,175,55,.16);color:#D4AF37;}
+  .sh-lang button.on{background:rgba(255,122,41,.16);color:#FF7A29;}
 
-  .sh-mob{position:fixed;inset:0;background:rgba(3,18,14,.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);z-index:1500;display:flex;flex-direction:column;padding:16px 28px calc(28px + env(safe-area-inset-bottom,0px));overflow-y:auto;animation:shMobIn .22s ease;}
+  .sh-mob{position:fixed;inset:0;background:rgba(4,10,20,.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);z-index:1500;display:flex;flex-direction:column;padding:16px 28px calc(28px + env(safe-area-inset-bottom,0px));overflow-y:auto;animation:shMobIn .22s ease;}
   @keyframes shMobIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
   .sh-moblink{padding:13px 0;border-bottom:1px solid rgba(255,255,255,.06);font-family:'Barlow Condensed','Mukta',sans-serif;font-weight:800;font-size:24px;letter-spacing:.05em;color:rgba(255,255,255,.85);text-transform:uppercase;cursor:pointer;text-decoration:none;display:block;}
-  .sh-moblink:active,.sh-moblink:hover{color:#D4AF37;}
+  .sh-moblink:active,.sh-moblink:hover{color:#FF7A29;}
   .sh-mobsupport{display:flex;gap:12px;margin-top:18px;}
   .sh-mobsupport a{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px;border:1px solid rgba(255,255,255,.14);border-radius:12px;color:rgba(255,255,255,.75);font-family:'Inter','Mukta',sans-serif;font-weight:600;font-size:14px;text-decoration:none;background:rgba(255,255,255,.03);}
 
@@ -294,7 +294,7 @@ export function SiteHeader({ active }: { active?: string }) {
           </div>
 
           {MOB_LINKS.map(l => (
-            <Link key={l.key} href={l.href} className="sh-moblink" onClick={() => setMenuOpen(false)} style={{ color: activeKey === l.key ? "#D4AF37" : undefined }}>
+            <Link key={l.key} href={l.href} className="sh-moblink" onClick={() => setMenuOpen(false)} style={{ color: activeKey === l.key ? "#FF7A29" : undefined }}>
               {t(l.en, l.hi)}
             </Link>
           ))}

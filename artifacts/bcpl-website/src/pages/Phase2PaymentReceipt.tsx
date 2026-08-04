@@ -83,7 +83,7 @@ export function Phase2PaymentReceipt() {
         .ticket-dash::after { right:-36px; border-left: 1px solid rgba(232,178,61,0.4); }
         
         .next-card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 24px; border-top: 3px solid var(--orange); transition: transform 0.2s; }
-        .next-card:hover { transform: translateY(-4px); border-color: rgba(212,175,55,0.3); }
+        .next-card:hover { transform: translateY(-4px); border-color: rgba(255,122,41,0.3); }
         .next-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
         @media (min-width: 640px) { .next-grid { grid-template-columns: repeat(3, 1fr); } }
         
