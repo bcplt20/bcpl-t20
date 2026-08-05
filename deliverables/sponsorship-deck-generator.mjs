@@ -11,7 +11,9 @@ import { writeFileSync } from "fs";
    superlatives / absolute promises / restricted words. English only (PDF
    renderer has no Devanagari). */
 
-const A = "file:///home/runner/workspace/artifacts/bcpl-website/public/bcpl-assets";
+const A = process.env.DECK_ASSETS
+  ? `file://${process.env.DECK_ASSETS}`
+  : "file:///home/runner/workspace/artifacts/bcpl-website/public/bcpl-assets";
 const D = "file:///home/runner/workspace/attached_assets/deck";
 const LOGO = `${A}/bcpl-logo-white.png`;
 const LOGO_DARKTXT = `${A}/bcpl-logo-transparent.png`;
