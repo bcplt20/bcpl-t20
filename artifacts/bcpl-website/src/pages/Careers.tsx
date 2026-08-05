@@ -18,20 +18,29 @@ body { background:#1C2B47; }
 .job-dept { display:inline-flex; align-items:center; border-radius:100px; padding:4px 13px; font-size:10.5px; font-weight:900; font-family:'Montserrat',Inter,sans-serif; letter-spacing:.12em; text-transform:uppercase; }
 .job-title { font-family:'Montserrat',Inter,sans-serif; font-weight:800; font-size:clamp(17px,2.4vw,21px); color:#fff; margin:12px 0 4px; }
 .job-meta { font-size:12.5px; color:rgba(255,255,255,0.6); font-family:Inter,sans-serif; font-weight:600; }
+.job-sub { font-family:'Montserrat',Inter,sans-serif; font-weight:900; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:rgba(255,255,255,0.55); margin:16px 0 8px; }
 .job-li { font-size:14px; line-height:1.7; color:rgba(255,255,255,0.82); font-family:Inter,sans-serif; padding-left:18px; position:relative; margin-bottom:6px; }
 .job-li::before { content:''; position:absolute; left:2px; top:9px; width:6px; height:6px; border-radius:50%; background:#FF7A29; }
+.job-li.do::before { background:#31C56B; }
 .apply-btn { display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg,#FF7A29,#D95E10); border-radius:10px; padding:11px 22px; font-family:'Montserrat',Inter,sans-serif; font-weight:900; font-size:12px; letter-spacing:.08em; color:#fff; text-transform:uppercase; text-decoration:none; box-shadow:0 8px 26px rgba(255,122,41,0.35); transition:transform .15s, opacity .2s; }
 .apply-btn:hover { transform:translateY(-2px); opacity:.92; }
 .dept-head { font-family:'Barlow Condensed','Montserrat',sans-serif; font-weight:800; font-size:clamp(22px,3.4vw,30px); color:#fff; text-transform:uppercase; letter-spacing:.03em; margin:0 0 4px; }
 .careers-grid { display:grid; grid-template-columns:1fr; gap:18px; }
 @media(min-width:820px){ .careers-grid{grid-template-columns:1fr 1fr;} }
+.perk-grid { display:grid; grid-template-columns:1fr; gap:16px; }
+@media(min-width:760px){ .perk-grid{grid-template-columns:1fr 1fr 1fr;} }
+.perk { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.16); border-radius:14px; padding:18px 20px; }
+.perk .ic { font-size:22px; }
+.perk h4 { font-family:'Montserrat',Inter,sans-serif; font-weight:800; font-size:14.5px; color:#fff; margin:8px 0 6px; }
+.perk p { font-size:13px; line-height:1.65; color:rgba(255,255,255,0.72); font-family:Inter,sans-serif; margin:0; }
 `;
 
 type Job = {
   title: string; titleHi: string;
   dept: 'TECH' | 'MARKETING' | 'SOCIAL MEDIA';
   type: string; typeHi: string;
-  quals: [string, string][]; // [en, hi]
+  doing: [string, string][];  // what you'll do [en, hi]
+  quals: [string, string][];  // what we look for [en, hi]
 };
 
 const DEPT_COLOR: Record<Job['dept'], { bg: string; border: string; color: string }> = {
@@ -44,6 +53,11 @@ const JOBS: Job[] = [
   {
     title: 'Full-Stack Developer', titleHi: 'Full-Stack Developer',
     dept: 'TECH', type: 'Full-time · Delhi NCR / Hybrid', typeHi: 'Full-time · Delhi NCR / Hybrid',
+    doing: [
+      ['Own bcplt20.com end-to-end — registrations, payments, live scoring and the admin panel', 'bcplt20.com की पूरी ज़िम्मेदारी — registrations, payments, live scoring और admin panel'],
+      ['Ship features fast during the season and keep the platform stable on match days', 'Season के दौरान तेज़ी से features ship करें और match days पर platform stable रखें'],
+      ['Work directly with the founder — your decisions shape the product', 'सीधे founder के साथ काम — आपके decisions product को आकार देंगे'],
+    ],
     quals: [
       ['3–5 years experience with React, Node.js and TypeScript', 'React, Node.js और TypeScript में 3–5 साल का अनुभव'],
       ['Strong PostgreSQL and REST API design skills', 'PostgreSQL और REST API design की मज़बूत पकड़'],
@@ -54,6 +68,10 @@ const JOBS: Job[] = [
   {
     title: 'UI/UX Designer', titleHi: 'UI/UX Designer',
     dept: 'TECH', type: 'Full-time / Contract · Remote friendly', typeHi: 'Full-time / Contract · Remote friendly',
+    doing: [
+      ['Design the fan-facing website, player flows and match-day screens', 'Fan-facing website, player flows और match-day screens design करें'],
+      ['Build a consistent BCPL design language across web, social and print', 'Web, social और print पर एक consistent BCPL design language बनाएं'],
+    ],
     quals: [
       ['2+ years designing responsive web and mobile interfaces', 'Responsive web/mobile interfaces design का 2+ साल अनुभव'],
       ['Portfolio with real shipped products (Figma proficiency)', 'असली launched products का portfolio (Figma में दक्ष)'],
@@ -63,6 +81,11 @@ const JOBS: Job[] = [
   {
     title: 'Marketing Manager', titleHi: 'Marketing Manager',
     dept: 'MARKETING', type: 'Full-time · Delhi NCR', typeHi: 'Full-time · Delhi NCR',
+    doing: [
+      ['Own the season\u2019s registration targets and the campaigns that hit them', 'Season के registration targets और उन्हें पूरा करने वाले campaigns की ज़िम्मेदारी'],
+      ['Run corporate outreach — HR heads, office cricket teams, company sports days', 'Corporate outreach चलाएं — HR heads, office cricket teams, company sports days'],
+      ['Coordinate sponsors, agencies and on-ground activations', 'Sponsors, agencies और on-ground activations coordinate करें'],
+    ],
     quals: [
       ['4+ years in brand or event marketing (sports a plus)', 'Brand/event marketing में 4+ साल (sports का अनुभव plus)'],
       ['Plans and runs registration-drive campaigns end-to-end', 'Registration-drive campaigns की पूरी planning और execution'],
@@ -72,6 +95,10 @@ const JOBS: Job[] = [
   {
     title: 'Performance Marketing Executive', titleHi: 'Performance Marketing Executive',
     dept: 'MARKETING', type: 'Full-time · Delhi NCR / Hybrid', typeHi: 'Full-time · Delhi NCR / Hybrid',
+    doing: [
+      ['Run Meta & Google campaigns that bring player registrations at the lowest cost', 'Meta व Google campaigns चलाएं जो सबसे कम cost पर player registrations लाएं'],
+      ['Own tracking — pixels, UTMs, GA4 — and report what\u2019s working weekly', 'Tracking की ज़िम्मेदारी — pixels, UTMs, GA4 — और हर हफ़्ते report करें क्या काम कर रहा है'],
+    ],
     quals: [
       ['2+ years running Meta & Google ad campaigns', 'Meta और Google ads campaigns चलाने का 2+ साल अनुभव'],
       ['Tracks cost-per-registration and optimises daily', 'Cost-per-registration track कर के रोज़ optimise करने वाले'],
@@ -81,6 +108,11 @@ const JOBS: Job[] = [
   {
     title: 'Social Media Manager', titleHi: 'Social Media Manager',
     dept: 'SOCIAL MEDIA', type: 'Full-time · Delhi NCR / Hybrid', typeHi: 'Full-time · Delhi NCR / Hybrid',
+    doing: [
+      ['Run BCPL\u2019s Instagram, YouTube and X — calendar, posting, community', 'BCPL के Instagram, YouTube और X चलाएं — calendar, posting, community'],
+      ['Cover match days live — scores, moments, player stories', 'Match days को live cover करें — scores, moments, player stories'],
+      ['Grow follower count and engagement season on season', 'हर season followers और engagement बढ़ाएं'],
+    ],
     quals: [
       ['2+ years managing Instagram, YouTube and X for a brand', 'किसी brand के Instagram, YouTube, X संभालने का 2+ साल अनुभव'],
       ['Plans content calendars and engages the community daily', 'Content calendar planning और daily community engagement'],
@@ -90,6 +122,10 @@ const JOBS: Job[] = [
   {
     title: 'Video Editor & Graphic Designer', titleHi: 'Video Editor & Graphic Designer',
     dept: 'SOCIAL MEDIA', type: 'Full-time · Delhi NCR', typeHi: 'Full-time · Delhi NCR',
+    doing: [
+      ['Cut match highlights, reels and player features within hours of play', 'खेल के कुछ ही घंटों में match highlights, reels और player features तैयार करें'],
+      ['Design posters, creatives and sponsor deliverables for every fixture', 'हर fixture के posters, creatives और sponsor deliverables design करें'],
+    ],
     quals: [
       ['2+ years editing short-form video (reels, highlights)', 'Short-form video editing (reels, highlights) का 2+ साल अनुभव'],
       ['Strong graphic design for posts, posters and creatives', 'Posts, posters, creatives के लिए मज़बूत graphic design'],
@@ -128,8 +164,27 @@ export default function Careers() {
         </div>
       </section>
 
+      {/* Why BCPL */}
+      <section style={{ padding: '10px 0 clamp(30px,4vw,44px)' }}>
+        <div className="wrap">
+          <div className="perk-grid">
+            {[
+              ['🏏', 'Work in sport, for real', 'खेल में असली काम', 'Match days, players, live scores — your work shows up on the ground and on screen the same week.', 'Match days, players, live scores — आपका काम उसी हफ़्ते मैदान और screen पर दिखता है।'],
+              ['🚀', 'Day-one ownership', 'पहले दिन से ownership', 'You are the first hires. No layers, no hand-offs — you own your area and build it your way.', 'आप पहली hires हैं। कोई layers नहीं — अपना area खुद own कीजिए, अपने तरीके से बनाइए।'],
+              ['📈', 'Grow with the league', 'League के साथ आगे बढ़िए', 'As BCPL grows across seasons and cities, the people who built it lead the teams that follow.', 'जैसे BCPL seasons और शहरों में बढ़ेगी, जिन्होंने इसे बनाया वही आगे teams lead करेंगे।'],
+            ].map(([ic, en, hi, pEn, pHi]) => (
+              <div key={en} className="perk">
+                <span className="ic">{ic}</span>
+                <h4>{t(en, hi)}</h4>
+                <p>{t(pEn, pHi)}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Departments */}
-      <section style={{ padding: '14px 0 clamp(60px,8vw,100px)' }}>
+      <section style={{ padding: '0 0 clamp(60px,8vw,100px)' }}>
         <div className="wrap" style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(36px,5vw,54px)' }}>
           {depts.map(d => (
             <div key={d.key}>
@@ -143,7 +198,12 @@ export default function Careers() {
                       <span className="job-dept" style={{ background: c.bg, border: `1px solid ${c.border}`, color: c.color }}>{j.dept}</span>
                       <h3 className="job-title">{t(j.title, j.titleHi)}</h3>
                       <div className="job-meta">{t(j.type, j.typeHi)}</div>
-                      <div style={{ margin: '14px 0 18px' }}>
+                      <div className="job-sub">{t('What you\u2019ll do', 'आप क्या करेंगे')}</div>
+                      <div>
+                        {j.doing.map(([en, hi]) => <div key={en} className="job-li do">{t(en, hi)}</div>)}
+                      </div>
+                      <div className="job-sub">{t('What we look for', 'हम क्या देखते हैं')}</div>
+                      <div style={{ marginBottom: 18 }}>
                         {j.quals.map(([en, hi]) => <div key={en} className="job-li">{t(en, hi)}</div>)}
                       </div>
                       <a className="apply-btn" href={`mailto:${APPLY_EMAIL}?subject=Application: ${encodeURIComponent(j.title)}`}>
