@@ -17,8 +17,9 @@ import { useColors } from '@/hooks/useColors';
 import { useLang } from '@/context/LanguageContext';
 import { getGallery, type GalleryItem } from '@/lib/api';
 import { Card, ErrorView, LoadingView } from '@/components/ui';
+import { LinearGradient } from 'expo-linear-gradient';
 
-const GAP = 6;
+const GAP = 8;
 const COLS = 3;
 
 export default function MediaScreen() {
@@ -49,32 +50,45 @@ export default function MediaScreen() {
         <ErrorView onRetry={() => q.refetch()} />
       ) : (q.data?.albums?.length ?? 0) === 0 ? (
         <Card style={{ alignItems: 'center', paddingVertical: 36, marginTop: 16 }}>
-          <Feather name="image" size={30} color={c.mutedForeground} />
-          <Text style={{ color: c.mutedForeground, marginTop: 10, fontSize: 13, textAlign: 'center' }}>
+          <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: 'rgba(255,255,255,0.03)', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
+            <Feather name="camera" size={24} color={c.mutedForeground} />
+          </View>
+          <Text style={{ color: c.mutedForeground, fontSize: 14, textAlign: 'center', fontFamily: 'Inter_500Medium' }}>
             {t('Season 5 photos & videos will appear here soon', 'सीज़न 5 की फ़ोटो और वीडियो जल्द यहाँ दिखेंगी')}
           </Text>
         </Card>
       ) : (
         q.data!.albums.map((album) => (
-          <View key={album.id} style={{ marginTop: 20 }}>
-            <Text style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 16, marginBottom: 10 }}>
-              {album.name}
-            </Text>
+          <View key={album.id} style={{ marginTop: 24 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+              <Text style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 18, letterSpacing: -0.3 }}>
+                {album.name}
+              </Text>
+              <Text style={{ color: c.mutedForeground, fontSize: 12, fontFamily: 'Inter_600SemiBold' }}>
+                {album.items.length} {t('Items', 'आइटम')}
+              </Text>
+            </View>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: GAP }}>
               {album.items.map((item) => (
                 <Pressable
                   key={item.id}
                   onPress={() => (item.kind === 'video' ? Linking.openURL(item.viewUrl) : setViewer(item))}
-                  style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}
+                  style={({ pressed }) => ({ opacity: pressed ? 0.85 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] })}
                   testID={`media-${item.id}`}
                 >
-                  <View style={{ width: cell, height: cell, borderRadius: 10, overflow: 'hidden', backgroundColor: 'rgba(255,255,255,0.06)' }}>
+                  <View style={{ width: cell, height: cell, borderRadius: 12, overflow: 'hidden', backgroundColor: 'rgba(255,255,255,0.04)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' }}>
                     {item.kind === 'photo' ? (
-                      <Image source={{ uri: item.viewUrl }} style={{ width: '100%', height: '100%' }} contentFit="cover" transition={150} />
+                      <Image source={{ uri: item.viewUrl }} style={{ width: '100%', height: '100%' }} contentFit="cover" transition={200} />
                     ) : (
-                      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                        <View style={styles.playCircle}>
-                          <Feather name="play" size={20} color="#fff" />
+                      <View style={{ flex: 1 }}>
+                        <LinearGradient
+                          colors={['rgba(27,46,82,0.6)', 'rgba(36,57,107,0.3)']}
+                          style={StyleSheet.absoluteFill}
+                        />
+                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                          <View style={styles.playCircle}>
+                            <Feather name="play" size={18} color="#fff" style={{ marginLeft: 2 }} />
+                          </View>
                         </View>
                       </View>
                     )}

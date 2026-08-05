@@ -75,8 +75,8 @@ export default function HomeScreen() {
         />
 
         {/* Register hero banner */}
-        <View style={{ paddingHorizontal: 16, paddingTop: 10 }}>
-          <Pressable onPress={() => router.push('/register')} testID="hero-register">
+        <View style={{ paddingHorizontal: 16, paddingTop: 12 }}>
+          <Pressable onPress={() => router.push('/register')} testID="hero-register" style={({ pressed }) => ({ opacity: pressed ? 0.95 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] })}>
             <View style={styles.hero}>
               <Image
                 source={{ uri: `${SITE_ASSETS}/bcpl-assets/stadium-hero.jpg` }}
@@ -84,28 +84,53 @@ export default function HomeScreen() {
                 contentFit="cover"
                 transition={200}
               />
-              {/* smooth navy → transparent shade so text stays crisp */}
               <LinearGradient
-                colors={['rgba(9,19,44,0.92)', 'rgba(9,19,44,0.72)', 'rgba(9,19,44,0.25)']}
-                start={{ x: 0, y: 0.5 }}
-                end={{ x: 1, y: 0.5 }}
+                colors={['#0F192E', 'rgba(15,25,46,0.85)', 'rgba(15,25,46,0.3)']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
                 style={StyleSheet.absoluteFill}
               />
-              {/* gold hairline frame for a premium feel */}
-              <View pointerEvents="none" style={styles.heroFrame} />
+              <LinearGradient
+                colors={['rgba(232,178,61,0)', 'rgba(232,178,61,0.2)', 'rgba(232,178,61,0)']}
+                start={{ x: 0.3, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
               <Image
                 source={require('../../assets/images/ganguly-cutout.png')}
                 style={styles.heroGanguly}
                 contentFit="contain"
                 contentPosition="bottom right"
               />
-              <View style={{ padding: 18, paddingRight: 140, minHeight: 168, justifyContent: 'center' }}>
-                <Text style={styles.heroKick}>SEASON 5 · {t('REGISTRATIONS OPEN', 'रजिस्ट्रेशन शुरू')}</Text>
+              <LinearGradient
+                colors={['transparent', 'rgba(15,25,46,0.9)']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={[StyleSheet.absoluteFill, { top: '65%' }]}
+              />
+              <View pointerEvents="none" style={styles.heroFrame} />
+              
+              <View style={{ padding: 22, paddingRight: 155, minHeight: 224, justifyContent: 'center' }}>
+                <View style={styles.heroKickBadge}>
+                  <Text style={styles.heroKick}>SEASON 5 · {t('REGISTRATIONS OPEN', 'रजिस्ट्रेशन शुरू')}</Text>
+                </View>
                 <Text style={styles.heroFee}>₹299<Text style={styles.heroFeeGst}> +GST</Text></Text>
                 <Text style={styles.heroFeeSub}>{t('Batsman · Bowler · Wicketkeeper', 'बल्लेबाज़ · गेंदबाज़ · विकेटकीपर')}</Text>
+                
+                <View style={styles.heroFeeDivider} />
+                
                 <Text style={styles.heroFeeSub}>₹399 +GST · {t('All-Rounder', 'ऑलराउंडर')}</Text>
-                <View style={styles.heroCta}>
-                  <Text style={styles.heroCtaTxt}>{t('Register Now', 'अभी रजिस्टर करें')}</Text>
+                
+                <View style={{ marginTop: 18 }}>
+                  <LinearGradient
+                    colors={['#FF8A00', '#E55900']}
+                    style={styles.heroCta}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                  >
+                    <Text style={styles.heroCtaTxt}>{t('Register Now', 'अभी रजिस्टर करें')}</Text>
+                    <Feather name="arrow-right" size={16} color="#fff" style={{ marginLeft: 6 }} />
+                  </LinearGradient>
                 </View>
               </View>
             </View>
@@ -113,45 +138,63 @@ export default function HomeScreen() {
         </View>
 
         {/* Photos & Videos quick link */}
-        <View style={{ paddingHorizontal: 16, marginTop: 18 }}>
+        <View style={{ paddingHorizontal: 16, marginTop: 24 }}>
           <Pressable
             onPress={() => router.push('/media')}
-            style={({ pressed }) => ({ opacity: pressed ? 0.85 : 1 })}
+            style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] })}
             testID="home-media"
           >
-            <Card style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-              <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,107,0,0.14)', alignItems: 'center', justifyContent: 'center' }}>
-                <Feather name="image" size={19} color="#FF6B00" />
+            <View style={[styles.mediaLinkCard, { borderColor: c.border }]}>
+              <Image 
+                source={{ uri: `${SITE_ASSETS}/bcpl-assets/stadium-hero.jpg` }}
+                style={[StyleSheet.absoluteFill, { opacity: 0.15 }]} 
+                contentFit="cover" 
+              />
+              <LinearGradient
+                colors={['rgba(27,46,82,0.95)', 'rgba(36,57,107,0.7)']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={StyleSheet.absoluteFill}
+              />
+              <View style={styles.mediaIconWrapper}>
+                <LinearGradient
+                  colors={['#FF6B00', '#D95A00']}
+                  style={StyleSheet.absoluteFill}
+                />
+                <Feather name="play-circle" size={20} color="#fff" />
               </View>
-              <View style={{ flex: 1 }}>
-                <Text style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 15 }}>{t('Photos & Videos', 'फ़ोटो और वीडियो')}</Text>
-                <Text style={{ color: c.mutedForeground, fontSize: 12, marginTop: 1 }}>{t('Auction, shoots & matchday gallery', 'ऑक्शन, शूट और मैच की गैलरी')}</Text>
+              <View style={{ flex: 1, paddingRight: 10 }}>
+                <Text style={{ color: '#fff', fontFamily: 'Inter_700Bold', fontSize: 16 }}>{t('Photos & Videos', 'फ़ोटो और वीडियो')}</Text>
+                <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 12, marginTop: 2, fontFamily: 'Inter_500Medium' }}>{t('Auction, shoots & matchday gallery', 'ऑक्शन, शूट और मैच की गैलरी')}</Text>
               </View>
-              <Feather name="chevron-right" size={18} color={c.mutedForeground} />
-            </Card>
+              <Feather name="chevron-right" size={20} color="rgba(255,255,255,0.5)" />
+            </View>
           </Pressable>
         </View>
 
         {/* BCPL so far — league in numbers */}
-        <View style={{ paddingHorizontal: 16, marginTop: 18 }}>
+        <View style={{ paddingHorizontal: 16, marginTop: 32 }}>
           <Text style={{ color: '#E8B23D', fontFamily: 'Inter_700Bold', fontSize: 10.5, letterSpacing: 2 }}>
             {t('BCPL SO FAR', 'अब तक BCPL')}
           </Text>
-          <Text style={[styles.sectionTitle, { color: c.foreground, marginTop: 3 }]}>
+          <Text style={[styles.sectionTitle, { color: c.foreground, marginTop: 4, marginBottom: 12 }]}>
             {t('The league in numbers', 'आँकड़ों में लीग')}
           </Text>
           <View style={styles.statsGrid}>
             {[
-              { v: '2,50,000+', l: t('Working professionals joined', 'वर्किंग प्रोफ़ेशनल्स जुड़े') },
-              { v: '400+', l: t('Players auctioned', 'खिलाड़ी ऑक्शन हुए') },
-              { v: '₹14 Cr+', l: t('Prize money distributed', 'प्राइज़ मनी बाँटी गई') },
-              { v: '4', l: t('Seasons completed', 'सीज़न पूरे हुए') },
-              { v: '50+', l: t('Trial cities', 'ट्रायल शहर') },
-              { v: '10', l: t('Franchises', 'फ्रैंचाइज़ी') },
+              { v: '2,50,000+', l: t('Working professionals joined', 'वर्किंग प्रोफ़ेशनल्स जुड़े'), icon: 'users' },
+              { v: '400+', l: t('Players auctioned', 'खिलाड़ी ऑक्शन हुए'), icon: 'award' },
+              { v: '₹14 Cr+', l: t('Prize money distributed', 'प्राइज़ मनी बाँटी गई'), icon: 'dollar-sign' },
+              { v: '4', l: t('Seasons completed', 'सीज़न पूरे हुए'), icon: 'calendar' },
+              { v: '50+', l: t('Trial cities', 'ट्रायल शहर'), icon: 'map-pin' },
+              { v: '10', l: t('Franchises', 'फ्रैंचाइज़ी'), icon: 'shield' },
             ].map((s) => (
-              <View key={s.v + s.l} style={[styles.statBox, { borderColor: c.border }]}>
-                <Text style={{ color: '#FF6B00', fontFamily: 'Inter_700Bold', fontSize: 19 }}>{s.v}</Text>
-                <Text style={{ color: c.mutedForeground, fontSize: 11, marginTop: 3, lineHeight: 15 }}>{s.l}</Text>
+              <View key={s.v + s.l} style={[styles.statBox, { borderColor: c.border, backgroundColor: c.card }]}>
+                <View style={styles.statIconBox}>
+                  <Feather name={s.icon as any} size={14} color="#FF6B00" />
+                </View>
+                <Text style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 18, marginTop: 10 }}>{s.v}</Text>
+                <Text style={{ color: c.mutedForeground, fontFamily: 'Inter_500Medium', fontSize: 11, marginTop: 4, lineHeight: 16 }}>{s.l}</Text>
               </View>
             ))}
           </View>
@@ -274,15 +317,44 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 12 },
+  statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
   statBox: {
-    flexBasis: '30%',
+    flexBasis: '46%',
     flexGrow: 1,
     borderWidth: 1,
-    borderRadius: 14,
-    paddingVertical: 12,
-    paddingHorizontal: 10,
-    backgroundColor: 'rgba(255,255,255,0.04)',
+    borderRadius: 16,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+  statIconBox: {
+    width: 28,
+    height: 28,
+    borderRadius: 8,
+    backgroundColor: 'rgba(255,107,0,0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  mediaLinkCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    borderRadius: 16,
+    padding: 16,
+    overflow: 'hidden',
+    backgroundColor: '#1B2E52',
+    borderWidth: 1,
+  },
+  mediaIconWrapper: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
   },
   sectionRow: {
     flexDirection: 'row',
@@ -301,50 +373,65 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   hero: {
-    borderRadius: 16,
+    borderRadius: 18,
     overflow: 'hidden',
-    minHeight: 132,
-    justifyContent: 'flex-end',
+    backgroundColor: '#0F192E',
+    elevation: 8,
+    shadowColor: '#FF6B00',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
   },
   heroShade: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(9,19,44,0.55)',
   },
+  heroKickBadge: {
+    backgroundColor: 'rgba(232,178,61,0.15)',
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: 6,
+    alignSelf: 'flex-start',
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(232,178,61,0.3)',
+  },
   heroKick: {
     color: '#E8B23D',
     fontFamily: 'Inter_700Bold',
-    fontSize: 10.5,
+    fontSize: 9.5,
     letterSpacing: 2,
   },
   heroTitle: { color: '#FFFFFF', fontFamily: 'Inter_700Bold', fontSize: 21, marginTop: 3 },
   heroSub: { color: 'rgba(255,255,255,0.85)', fontSize: 12.5, marginTop: 3, fontFamily: 'Inter_400Regular' },
   heroFrame: {
     ...StyleSheet.absoluteFillObject,
-    borderRadius: 16,
+    borderRadius: 18,
     borderWidth: 1,
-    borderColor: 'rgba(232,178,61,0.45)',
+    borderColor: 'rgba(232,178,61,0.3)',
   },
   heroGanguly: {
     position: 'absolute',
-    right: -6,
+    right: -15,
     bottom: 0,
-    width: 150,
-    height: '96%',
+    width: 200,
+    height: '105%',
   },
-  heroFee: { color: '#FFFFFF', fontFamily: 'Inter_700Bold', fontSize: 34, marginTop: 6, lineHeight: 38 },
-  heroFeeGst: { color: '#E8B23D', fontSize: 16, fontFamily: 'Inter_700Bold' },
-  heroFeeSub: { color: 'rgba(255,255,255,0.85)', fontSize: 12, marginTop: 2, fontFamily: 'Inter_500Medium' },
+  heroFee: { color: '#FFFFFF', fontFamily: 'Inter_700Bold', fontSize: 36, lineHeight: 40 },
+  heroFeeGst: { color: '#E8B23D', fontSize: 18, fontFamily: 'Inter_700Bold' },
+  heroFeeSub: { color: 'rgba(255,255,255,0.85)', fontSize: 12, marginTop: 4, fontFamily: 'Inter_500Medium' },
+  heroFeeDivider: { height: 1, backgroundColor: 'rgba(255,255,255,0.15)', width: 40, marginVertical: 8 },
   heroCta: {
+    flexDirection: 'row',
+    alignItems: 'center',
     alignSelf: 'flex-start',
-    backgroundColor: '#FF6B00',
-    borderRadius: 22,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    marginTop: 12,
+    borderRadius: 24,
+    paddingHorizontal: 22,
+    paddingVertical: 12,
     shadowColor: '#FF6B00',
-    shadowOpacity: 0.5,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
     elevation: 6,
   },
   heroCtaTxt: { color: '#fff', fontFamily: 'Inter_700Bold', fontSize: 14, letterSpacing: 0.3 },

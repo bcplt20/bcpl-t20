@@ -357,16 +357,16 @@ export default function RegisterScreen() {
             { n: '5', en: 'Auction', hi: 'ऑक्शन', den: 'Franchises bid on you', dhi: 'फ्रैंचाइज़ी आप पर बोली लगाती हैं' },
             { n: '6', en: 'Play BCPL', hi: 'BCPL खेलें', den: 'Represent your franchise under floodlights', dhi: 'फ्लडलाइट्स में अपनी फ्रैंचाइज़ी के लिए खेलें' },
           ].map((s, i, arr) => (
-            <View key={s.n} style={{ flexDirection: 'row', gap: 12 }}>
+            <View key={s.n} style={{ flexDirection: 'row', gap: 16, marginTop: i === 0 ? 8 : 0 }}>
               <View style={{ alignItems: 'center' }}>
-                <View style={styles.stepDot}>
-                  <Text style={{ color: '#fff', fontFamily: 'Inter_700Bold', fontSize: 12 }}>{s.n}</Text>
+                <View style={[styles.stepDot, i === 0 ? { backgroundColor: '#FF6B00', borderColor: 'rgba(255,107,0,0.3)' } : { backgroundColor: 'rgba(255,107,0,0.1)', borderColor: 'rgba(255,107,0,0.15)' }]}>
+                  <Text style={{ color: i === 0 ? '#fff' : '#FF6B00', fontFamily: 'Inter_700Bold', fontSize: 13 }}>{s.n}</Text>
                 </View>
                 {i < arr.length - 1 ? <View style={styles.stepLine} /> : null}
               </View>
-              <View style={{ flex: 1, paddingBottom: i < arr.length - 1 ? 14 : 0 }}>
-                <Text style={{ color: c.foreground, fontFamily: 'Inter_600SemiBold', fontSize: 13.5 }}>{t(s.en, s.hi)}</Text>
-                <Text style={{ color: c.mutedForeground, fontSize: 12, lineHeight: 17, marginTop: 1 }}>{t(s.den, s.dhi)}</Text>
+              <View style={{ flex: 1, paddingBottom: i < arr.length - 1 ? 22 : 0 }}>
+                <Text style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 14.5 }}>{t(s.en, s.hi)}</Text>
+                <Text style={{ color: c.mutedForeground, fontSize: 12.5, lineHeight: 18, marginTop: 2, fontFamily: 'Inter_500Medium' }}>{t(s.den, s.dhi)}</Text>
               </View>
             </View>
           ))}
@@ -418,15 +418,29 @@ export default function RegisterScreen() {
                     key={r.id}
                     onPress={() => setRole(r.id)}
                     style={[styles.chip, {
-                      borderColor: isActive ? c.primary : 'rgba(255,255,255,0.1)',
-                      backgroundColor: isActive ? 'rgba(255,107,0,0.12)' : 'rgba(255,255,255,0.03)',
+                      borderColor: isActive ? c.primary : 'rgba(255,255,255,0.08)',
+                      backgroundColor: isActive ? 'rgba(255,107,0,0.1)' : 'rgba(255,255,255,0.02)',
                     }]}
                     testID={`role-${r.id}`}
                   >
-                    <Text style={{ color: isActive ? c.primary : c.foreground, fontFamily: isActive ? 'Inter_700Bold' : 'Inter_600SemiBold', fontSize: 14 }}>
+                    {isActive ? (
+                      <LinearGradient
+                        colors={['rgba(255,107,0,0.15)', 'rgba(255,107,0,0)']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 0, y: 1 }}
+                        style={StyleSheet.absoluteFill}
+                      />
+                    ) : null}
+                    <Text style={{ color: isActive ? c.primary : c.foreground, fontFamily: isActive ? 'Inter_700Bold' : 'Inter_600SemiBold', fontSize: 15 }}>
                       {t(r.en, r.hi)}
                     </Text>
-                    <Text style={{ color: c.mutedForeground, fontSize: 12, marginTop: 4 }}>₹{r.fee} + GST</Text>
+                    <Text style={{ color: isActive ? c.foreground : c.mutedForeground, fontSize: 12.5, marginTop: 6, fontFamily: 'Inter_500Medium' }}>₹{r.fee} <Text style={{ fontSize: 10.5 }}>+ GST</Text></Text>
+                    
+                    {isActive && (
+                      <View style={{ position: 'absolute', top: -8, right: -8, width: 24, height: 24, borderRadius: 12, backgroundColor: c.primary, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: c.card }}>
+                        <Feather name="check" size={14} color="#fff" />
+                      </View>
+                    )}
                   </Pressable>
                 );
               })}
@@ -541,14 +555,16 @@ export default function RegisterScreen() {
 
 const styles = StyleSheet.create({
   stepDot: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     backgroundColor: '#FF6B00',
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: 'rgba(255,107,0,0.2)',
   },
-  stepLine: { width: 2, flex: 1, backgroundColor: 'rgba(232,178,61,0.35)', marginVertical: 2 },
+  stepLine: { width: 2, flex: 1, backgroundColor: 'rgba(255,107,0,0.2)', marginVertical: 4 },
   inputWrap: {
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.1)',
@@ -579,15 +595,16 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   label: { fontFamily: 'Inter_700Bold', fontSize: 15, marginBottom: 14 },
-  chipWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  chipWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
   chip: {
     borderWidth: 1,
-    borderRadius: 14,
+    borderRadius: 16,
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 16,
     alignItems: 'center',
-    minWidth: '47%',
+    minWidth: '46%',
     flexGrow: 1,
+    overflow: 'visible',
   },
   cityChip: {
     borderWidth: 1,
