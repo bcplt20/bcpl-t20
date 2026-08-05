@@ -11,6 +11,7 @@ import { Teams }               from '@/pages/Teams';
 import { MatchCenter }         from '@/pages/MatchCenter';
 import { Sponsors }            from '@/pages/Sponsors';
 import { Photos }              from '@/pages/Photos';
+import News                    from '@/pages/News';
 import { Videos }              from '@/pages/Videos';
 import { About }               from '@/pages/About';
 import { FAQ }                 from '@/pages/FAQ';
@@ -88,6 +89,7 @@ function Router() {
         <Route path="/teams"       component={Teams} />
         <Route path="/match-center" component={MatchCenter} />
         <Route path="/sponsors"    component={Sponsors} />
+        <Route path="/news"        component={News} />
         <Route path="/photos"      component={Photos} />
         <Route path="/videos"      component={Videos} />
         <Route path="/about"       component={About} />

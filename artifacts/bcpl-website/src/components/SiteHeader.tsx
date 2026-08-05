@@ -41,6 +41,7 @@ const MOB_LINKS: NavItem[] = [
   { key: "Matches",   en: "Match Centre", hi: "मैच सेंटर",      href: "/match-center" },
   { key: "Standings", en: "Standings",    hi: "अंक तालिका",     href: "/points-table" },
   { key: "Auction",   en: "Auction",      hi: "ऑक्शन",          href: "/auction/live" },
+  { key: "News",      en: "News",         hi: "न्यूज़",          href: "/news" },
   { key: "Photos",    en: "Photos",       hi: "फ़ोटो",          href: "/photos" },
   { key: "Videos",    en: "Videos",       hi: "वीडियो",         href: "/videos" },
   { key: "About",     en: "About BCPL",   hi: "BCPL परिचय",     href: "/about" },
@@ -51,7 +52,7 @@ const MOB_LINKS: NavItem[] = [
 const ACTIVE_MAP: Record<string, string> = {
   "Home": "Home", "Teams": "Teams", "Players": "Players",
   "Match Center": "Matches", "Schedule": "Matches", "Points Table": "Standings",
-  "Photos": "Media", "Videos": "Media", "Media": "Media",
+  "Photos": "Media", "Videos": "Media", "Media": "Media", "News": "Media",
   "Trust": "Trials", "Trials": "Trials",
   "About": "About", "Contact": "Contact", "Auction": "Auction",
 };
