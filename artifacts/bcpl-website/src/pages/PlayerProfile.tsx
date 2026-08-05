@@ -677,14 +677,14 @@ export function PlayerProfile() {
                       <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '12px', padding: '16px', border: '1px solid var(--line)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                           <div style={{ fontSize: 12.5, fontWeight: 800, fontFamily: 'var(--font-head)', color: 'rgba(255,255,255,0.72)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t("Trial Video", "ट्रायल वीडियो")}</div>
-                          <div className="tag" style={{ background: data.video?.submitted ? (reg.phase1Status === 'selected' ? 'rgba(34,197,94,0.1)' : 'rgba(232,178,61,0.1)') : 'rgba(255,122,41,0.1)', borderColor: data.video?.submitted ? (reg.phase1Status === 'selected' ? 'rgba(34,197,94,0.3)' : 'rgba(232,178,61,0.3)') : 'rgba(255,122,41,0.3)', color: data.video?.submitted ? (reg.phase1Status === 'selected' ? 'var(--green)' : 'var(--gold)') : 'var(--orange)', padding: '5px 11px', fontSize: 13 }}>
-                            {data.video?.submitted
+                          <div className="tag" style={{ background: (data.video?.submitted || reg.phase1Status === 'selected') ? (reg.phase1Status === 'selected' ? 'rgba(34,197,94,0.1)' : 'rgba(232,178,61,0.1)') : 'rgba(255,122,41,0.1)', borderColor: (data.video?.submitted || reg.phase1Status === 'selected') ? (reg.phase1Status === 'selected' ? 'rgba(34,197,94,0.3)' : 'rgba(232,178,61,0.3)') : 'rgba(255,122,41,0.3)', color: (data.video?.submitted || reg.phase1Status === 'selected') ? (reg.phase1Status === 'selected' ? 'var(--green)' : 'var(--gold)') : 'var(--orange)', padding: '5px 11px', fontSize: 13 }}>
+                            {(data.video?.submitted || reg.phase1Status === 'selected')
                               ? (reg.phase1Status === 'selected' ? t('✓ Selected', '✓ चयनित') : reg.phase1Status === 'rejected' ? t('Assessment Complete', 'असेसमेंट पूरा') : t('Under Review', 'रिव्यू में'))
                               : t('Not Uploaded', 'अपलोड नहीं हुआ')}
                           </div>
                         </div>
                         {data.video?.submittedAt && <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.88)', marginTop: 5 }}>{t("Submitted", "सबमिट किया")} {formatDateShort(data.video.submittedAt)}</div>}
-                        {!data.video?.submitted && (
+                        {!data.video?.submitted && reg.phase1Status !== 'selected' && (
                           <button onClick={() => { setLocation('/register/upload-video'); }}
                             style={{ marginTop: 10, padding: '9px 16px', fontSize: 13, fontWeight: 800, fontFamily: 'var(--font-head)', letterSpacing: '.04em', background: 'rgba(255,122,41,0.12)', border: '1px solid rgba(255,122,41,0.45)', color: 'var(--orange)', borderRadius: '9px', cursor: 'pointer', textTransform: 'uppercase' }}>
                             {t("UPLOAD NOW →", "अभी अपलोड करें →")}

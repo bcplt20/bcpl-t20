@@ -37,7 +37,10 @@ export function Phase2KYCApproved() {
       if (d.user?.email)  setPlayerEmail(d.user.email);
       if (d.user?.phone)  setPlayerPhone(d.user.phone);
       if (d.registration?.trialCity) setPlayerCity(d.registration.trialCity);
-      if (d.registration?.id)        setRegIdShort('BCPL-' + d.registration.id.slice(0,8).toUpperCase());
+      // Real reg number (BCPL-DEL-2 style); UUID-derived fallback only if a
+      // number was somehow never assigned.
+      if (d.registration?.regNumber)     setRegIdShort(d.registration.regNumber);
+      else if (d.registration?.id)       setRegIdShort('BCPL-' + d.registration.id.slice(0,8).toUpperCase());
       if (d.registration?.role)      setPlayerRole(d.registration.role);
     }).catch(() => {});
   }, [setLocation]);

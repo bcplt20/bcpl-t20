@@ -76,7 +76,7 @@ export const getDashboard = () =>
     registration?: {
       id: string; role: string; trialCity: string;
       phase1Status: string; phase2Status: string | null;
-      videoDeadline: string | null; deadlineExpired: boolean; createdAt: string;
+      videoDeadline: string | null; deadlineExpired: boolean; createdAt: string; regNumber?: string | null;
     };
     phase1Payment?: { status: string; amount: number; paidAt: string } | null;
     video?:         { submitted: boolean; submittedAt: string; status: string } | null;
