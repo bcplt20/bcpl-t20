@@ -104,6 +104,52 @@ function journeyNodes(data: any) {
   });
 }
 
+/* ── Live video-deadline countdown (15-day window) ─────────────────────────
+   Shown inside the upload_video status banner on every login, so the player
+   always sees exactly how much time is left to upload the trial video. */
+function VideoDeadlineTimer({ deadline, t }: { deadline: string; t: any }) {
+  const [now, setNow] = React.useState(() => Date.now());
+  React.useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const end = new Date(deadline).getTime();
+  if (!Number.isFinite(end)) return null;
+  const ms = Math.max(0, end - now);
+  const days  = Math.floor(ms / 86_400_000);
+  const hours = Math.floor((ms % 86_400_000) / 3_600_000);
+  const mins  = Math.floor((ms % 3_600_000) / 60_000);
+  const secs  = Math.floor((ms % 60_000) / 1000);
+  const expired = ms <= 0;
+  const urgent = days < 3;
+  const color = expired ? 'var(--red)' : urgent ? '#F87171' : 'var(--gold)';
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return (
+    <div style={{ marginTop: 18, background: 'rgba(0,0,0,0.25)', border: `1px solid ${color}55`, borderRadius: 12, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, color }}>
+        <IcoClock size={20} />
+        <span style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(20px,3vw,26px)', lineHeight: 1 }}>
+          {expired
+            ? t('Deadline passed', 'समय समाप्त')
+            : days > 0
+              ? t(`${days} day${days === 1 ? '' : 's'} left`, `${days} दिन बचे हैं`)
+              : t(`${hours} hr ${mins} min left`, `${hours} घंटे ${mins} मिनट बचे`)}
+        </span>
+      </div>
+      {!expired && (
+        <div style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: 15, color: 'rgba(255,255,255,0.72)', letterSpacing: '.08em' }}>
+          {pad(days)}d : {pad(hours)}h : {pad(mins)}m : {pad(secs)}s
+        </div>
+      )}
+      <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.6)', fontWeight: 600, flexBasis: '100%', marginTop: 2 }}>
+        {expired
+          ? t('The video upload window has closed. Please contact support if you need help.', 'वीडियो अपलोड की समय-सीमा खत्म हो गई है। मदद के लिए support से संपर्क करें।')
+          : t('Upload your trial video before the timer runs out.', 'Timer खत्म होने से पहले अपना ट्रायल वीडियो अपलोड कर दें।')}
+      </div>
+    </div>
+  );
+}
+
 /* ── Status banner config ──────────────────────────────────────────────────── */
 function getBannerConfig(step: Step, data: any, venue: any, t: any) {
   const name  = data?.user?.name ?? '';
@@ -686,6 +732,10 @@ export function PlayerProfile() {
                             {ban.cta}
                           </button>
                         )}
+                        {step === 'upload_video' && data?.registration?.videoDeadline && (
+                          <VideoDeadlineTimer deadline={data.registration.videoDeadline} t={t} />
+                        )}
+
                       </div>
                     </div>
                     {/* §21 — completed trial: verifiable summary the player can screenshot */}
