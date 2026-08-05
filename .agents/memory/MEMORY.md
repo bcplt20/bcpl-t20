@@ -46,4 +46,5 @@
 - [Final 600 selection](final600-selection.md) — rank-based zone/role engine; every mutating step claim-guarded; config superRefine rejects quota mismatch; publish flips status only
 - [Email design system](email-design-system.md) — emailTheme.ts components, no emoji, sponsor strip hydrated at send-time, whole S3 bucket blocks public reads (incl. cms/) → presign/redirect route
 - [Legal consent capture](legal-consent-capture.md) — consents jsonb only via atomic recordConsentKey merge (never JS-merge); EVERY pay entry point (incl. resume) needs consent UI+payload; LEGAL_APPROVAL_PENDING flag gates go-live
+- [Match cards & reveal ban](match-cards-ui.md) — one shared colorful MatchCard (logos, stage badges, countdown, useTeamMeta cache); reveal/scroll-fade animations banned site-wide; visible branding = Season 4
 - [Sponsor tiers & logos](sponsor-tiers.md) — sponsors array order = tier hierarchy (contiguous runs); logo uploads auto-processed to white PNG via admin-tools endpoint with sharp DoS guards

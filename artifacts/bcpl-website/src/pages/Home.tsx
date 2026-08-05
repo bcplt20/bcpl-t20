@@ -327,8 +327,9 @@ export function Home() {
         .shim{background:linear-gradient(90deg,#FF7A29,#FFB347,#FF7A29);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradMove 3s ease infinite;}
         .shim-gold{background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradMove 3s ease infinite;}
 
-        .mc-slider{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-bottom:10px;scrollbar-width:thin;}
-        .mc-slider>*{flex:0 0 min(88%,360px);scroll-snap-align:start;}
+        .mc-slider{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:2px 2px 10px;scrollbar-width:none;max-width:100%;min-width:0;scroll-padding:2px;}
+        .mc-slider::-webkit-scrollbar{display:none;}
+        .mc-slider>*{flex:0 0 min(92%,360px);scroll-snap-align:center;scroll-snap-stop:always;min-width:0;}
         @media(min-width:900px){.mc-slider{flex-direction:column;overflow-x:visible;}.mc-slider>*{flex:none;}}
 
         /* Scroll reveal */
@@ -457,6 +458,7 @@ export function Home() {
 
         /* Match center */
         .mc-grid{display:grid;grid-template-columns:1fr;gap:24px;}
+        .mc-grid>*{min-width:0;}
         @media(min-width:900px){.mc-grid{grid-template-columns:1fr 1fr;}}
 
         /* Fees */
