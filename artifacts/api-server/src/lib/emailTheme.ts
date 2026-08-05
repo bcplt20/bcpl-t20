@@ -20,28 +20,39 @@ import { db } from "@workspace/db";
 import { siteSettingsTable } from "@workspace/db/schema";
 import { eq } from "drizzle-orm";
 
-/* ── Brand palette (lightened dark-navy — matches the new website theme) ───── */
+/* ── Brand palette (LIGHT premium restyle — round 2) ────────────────────────
+ * Owner feedback: emails read too dark / words hard to read. Dark navy is now
+ * ONLY the bookends (header band + footer). The BODY is light and airy:
+ *   - outer page background #EEF1F7 (soft blue-grey)
+ *   - main card pure white #FFFFFF with a soft #E3E8F2 border + rounded corners
+ *   - text navy ink #16223C (secondary #5A6B8C), hairlines #E3E8F2
+ * Orange #FF7A29 stays the primary CTA (white text); gold #E8B23D for accents.
+ * Success strips use a soft green tint (#EAF9F0 / #16A34A); urgency bands use
+ * soft amber/red tints. The look targets Apple / Amazon / IPL receipt polish. */
 export const COLORS = {
-  outer: "#101B30",       // lightened navy outer background (was near-black)
-  header: "#16223C",      // deep navy header band (spec: BCPL ball on #16223C)
-  surface: "#16264A",     // content surface panels
-  card: "#1B2E52",        // primary body card surface (spec navy #1B2E52)
-  ink: "#F4F6FA",         // high-contrast body text (~white .96)
-  inkSoft: "#D3DAE8",     // secondary body text (white ~.92, readable)
-  inkFaint: "#9AA6BD",    // metadata — kept above WCAG-ish contrast on navy
-  // Footer text floor (spec §35): footer copy must stay clearly readable on the
-  // navy outer surface — kept at / above the #A8B3C5 contrast target so it never
-  // visually disappears the way the old near-#8A97A8 footer did.
-  footer: "#B7C1D2",      // readable footer body / metadata (>= #A8B3C5 target)
-  footerLink: "#E2E8F2",  // footer links — brighter so they read + tap clearly
-  gold: "#E8B23D",        // premium emphasis / secondary links
-  orange: "#FF7A29",      // primary accent / CTA
-  green: "#22C55E",
-  blue: "#3B82F6",
-  amber: "#F59E0B",
-  red: "#EF4444",
-  // Hairline border per spec: rgba(255,255,255,.16)
-  line: "rgba(255,255,255,0.16)",
+  outer: "#EEF1F7",       // soft page background behind the card
+  header: "#16223C",      // deep navy header band (bookend)
+  footerBand: "#16223C",  // deep navy footer band (bookend)
+  surface: "#F5F7FB",     // light inner panel surface (info/status/steps)
+  card: "#FFFFFF",         // primary body card surface — pure white
+  ink: "#16223C",         // primary navy ink (high contrast on white)
+  inkSoft: "#5A6B8C",      // secondary body text (readable navy-grey)
+  inkFaint: "#8592AC",     // metadata / eyebrows
+  // Footer sits on the navy band, so it keeps light text.
+  footer: "#B7C1D2",       // readable footer body / metadata on navy
+  footerLink: "#E2E8F2",   // footer links — brighter on navy
+  gold: "#B8860B",         // premium gold that stays readable on white
+  goldSoft: "#E8B23D",     // brighter gold for use ON the dark header band
+  orange: "#FF7A29",       // primary accent / CTA
+  green: "#16A34A",        // success text (readable on white)
+  greenTint: "#EAF9F0",    // success strip background tint
+  blue: "#2563EB",
+  amber: "#B45309",        // amber text readable on white
+  amberTint: "#FEF6E7",    // amber urgency tint
+  red: "#DC2626",          // red text readable on white
+  redTint: "#FDECEC",      // red urgency tint
+  // Hairline border on the light theme.
+  line: "#E3E8F2",
 };
 
 const FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif";
@@ -62,10 +73,14 @@ export const PUBLIC_API_BASE =
 
 export const LOGO_URL = `${SITE_URL}/bcpl-assets/bcpl-logo-white.png`;
 
-// Header ball logo — the site serves this exact path from
-// artifacts/bcpl-website/public/bcpl-assets/bcpl-ball-clean.png, reachable at
-// SITE_URL + "/bcpl-assets/bcpl-ball-clean.png" (same pattern as LOGO_URL).
-export const BALL_LOGO_URL = `${PUBLIC_API_BASE}/bcpl-assets/bcpl-ball-transparent.png`;
+// Full website header logo — the SAME asset SiteHeader renders on the dark
+// navy band (artifacts/bcpl-website/public/bcpl-assets/bcpl-logo-white.png, a
+// transparent-background white wordmark). Owner explicitly asked for the full
+// website logo in emails and to drop the "BCPL T20" font-text wordmark. The
+// asset is served from PUBLIC_API_BASE + "/bcpl-assets/..." (same pattern the
+// dynamic ball logo already used). Its native ratio is 1600x469, so at a 48px
+// display height the width is ~164px.
+export const SITE_LOGO_URL = `${PUBLIC_API_BASE}/bcpl-assets/bcpl-logo.png`;
 
 // Official social URLs. SINGLE source of truth — never guess a missing one.
 // (These are the verified URLs already present in the historical email.ts.)
@@ -192,17 +207,17 @@ export function medallion(iconUrl: string, ring = COLORS.gold, alt = ""): string
 }
 
 /* ── Header ───────────────────────────────────────────────────────────────── */
-// Deep navy band (#16223C) with the BCPL ball logo centered, a "BCPL T20 ·
-// SEASON 5" wordmark beneath it, and a thin gold rule under the whole band.
-// Table-based (Outlook-safe) so the logo/wordmark stay centered and the gold
-// hairline renders as a real border, not a dropped CSS gradient.
+// Deep navy band (#16223C — the ONLY dark band at the top now) carrying the
+// FULL website logo image (the same white wordmark SiteHeader shows on navy)
+// and, below it, the identical "SEASON 5" gold pill the site uses. The old
+// "BCPL T20" font-text wordmark is removed per owner feedback. A thin gold rule
+// closes the band. Table-based (Outlook-safe) so everything stays centered.
 export const Header = `
-  <tr><td style="padding:30px 32px 22px;background:${COLORS.header};border-bottom:2px solid ${COLORS.gold};text-align:center;">
-    <img src="${BALL_LOGO_URL}" alt="BCPL T20" width="64" height="64" style="width:64px;height:64px;display:block;margin:0 auto 12px;border:0;" />
-    <div style="font-family:${FONT};font-weight:900;font-size:19px;color:${COLORS.ink};letter-spacing:2px;line-height:1;">BCPL&nbsp;T20</div>
-    <div style="margin-top:8px;">
+  <tr><td style="padding:28px 32px 22px;background:${COLORS.header};border-bottom:2px solid ${COLORS.goldSoft};text-align:center;">
+    <img src="${SITE_LOGO_URL}" alt="BCPL — Bhartiya Corporate Premier League" width="164" height="48" style="width:auto;height:48px;max-height:48px;display:block;margin:0 auto 10px;border:0;" />
+    <div style="margin-top:6px;">
       <span style="display:inline-block;background:rgba(232,178,61,0.14);border:1px solid rgba(232,178,61,0.45);border-radius:20px;padding:5px 16px;">
-        <span style="font-family:${FONT};font-weight:800;font-size:10px;color:${COLORS.gold};letter-spacing:2px;">SEASON 5 &nbsp;&middot;&nbsp; ${HASHTAG}</span>
+        <span style="font-family:${FONT};font-weight:800;font-size:10px;color:${COLORS.goldSoft};letter-spacing:2.5px;">SEASON 5 &nbsp;&middot;&nbsp; ${HASHTAG}</span>
       </span>
     </div>
   </td></tr>`;
@@ -324,7 +339,7 @@ export function Timeline(
       const last = i === steps.length - 1;
       const state = s.state ?? (i === 0 ? "done" : "todo");
       const dot =
-        state === "done" ? COLORS.green : state === "active" ? COLORS.gold : COLORS.inkFaint;
+        state === "done" ? COLORS.green : state === "active" ? COLORS.goldSoft : COLORS.inkFaint;
       const fill =
         state === "todo"
           ? `background:${COLORS.card};border:2px solid ${dot};`
@@ -336,7 +351,7 @@ export function Timeline(
           <table role="presentation" cellpadding="0" cellspacing="0"><tr>
             <td width="34" height="34" align="center" valign="middle" style="width:34px;height:34px;">
               <div style="width:26px;height:26px;line-height:26px;border-radius:50%;${fill}text-align:center;">
-                <span style="font-family:${FONT};font-size:11px;font-weight:800;color:${state === "todo" ? dot : "#101B30"};">${num}</span>
+                <span style="font-family:${FONT};font-size:11px;font-weight:800;color:${state === "todo" ? dot : "#FFFFFF"};">${num}</span>
               </div>
             </td>
           </tr></table>
@@ -361,13 +376,20 @@ export function Timeline(
 // uppercase "Confirmed" eyebrow, the title, and a supporting subtitle. Used as
 // the single status strip spec calls for at the top of receipt-style emails.
 export function SuccessBanner(title: string, subtitle: string, accent = COLORS.green): string {
+  // Soft tint background matched to the accent (green success by default; gold
+  // for milestone confirmations) so the strip reads as an airy, premium
+  // "confirmed" badge on the white card rather than a dark block.
+  const tint =
+    accent === COLORS.gold || accent === COLORS.goldSoft
+      ? "rgba(232,178,61,0.12)"
+      : COLORS.greenTint;
   return `
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate;background:${COLORS.surface};border:1px solid ${accent};border-radius:12px;margin-bottom:18px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate;background:${tint};border:1px solid ${accent};border-radius:12px;margin-bottom:18px;">
       <tr>
         <td width="6" style="background:${accent};border-radius:12px 0 0 12px;">&nbsp;</td>
         <td width="52" valign="middle" align="center" style="padding:16px 0 16px 16px;">
           <div style="width:34px;height:34px;line-height:34px;border-radius:50%;background:${accent};text-align:center;">
-            <span style="font-family:${FONT};font-size:17px;font-weight:900;color:#101B30;">&#10003;</span>
+            <span style="font-family:${FONT};font-size:17px;font-weight:900;color:#FFFFFF;">&#10003;</span>
           </div>
         </td>
         <td style="padding:16px 20px 16px 12px;">
@@ -432,7 +454,7 @@ export function PrimaryCTA(text: string, href: string, color = COLORS.orange): s
 /* ── Note box (soft advisory, one accent) ─────────────────────────────────── */
 export function NoteBox(text: string, accent = COLORS.line): string {
   return `
-    <div style="background:rgba(255,255,255,0.03);border:1px solid ${accent};border-radius:10px;padding:14px 16px;margin-bottom:18px;">
+    <div style="background:${COLORS.surface};border:1px solid ${accent};border-radius:10px;padding:14px 16px;margin-bottom:18px;">
       <p style="font-family:${FONT};font-size:13px;color:${COLORS.inkSoft};margin:0;line-height:1.6;">${text}</p>
     </div>`;
 }
@@ -448,17 +470,17 @@ export function StepProgress(current: number): string {
   const cells = STEP_LABELS.map((label, i) => {
     const state = i < current ? "done" : i === current ? "active" : "todo";
     const nodeBg =
-      state === "active" ? COLORS.orange : state === "done" ? COLORS.gold : "transparent";
+      state === "active" ? COLORS.orange : state === "done" ? COLORS.goldSoft : "#FFFFFF";
     const nodeBorder =
-      state === "active" ? COLORS.orange : state === "done" ? COLORS.gold : COLORS.inkFaint;
-    const numColor = state === "todo" ? COLORS.inkFaint : "#101B30";
+      state === "active" ? COLORS.orange : state === "done" ? COLORS.goldSoft : COLORS.inkFaint;
+    const numColor = state === "todo" ? COLORS.inkFaint : "#FFFFFF";
     const labelColor =
       state === "active" ? COLORS.orange : state === "done" ? COLORS.gold : COLORS.inkFaint;
     const num = String(i + 1);
     const connector =
       i < STEP_LABELS.length - 1
         ? `<td width="18" valign="middle" style="padding:0 1px 18px;"><div style="height:2px;background:${
-            i < current ? COLORS.gold : COLORS.line
+            i < current ? COLORS.goldSoft : COLORS.line
           };line-height:2px;font-size:0;">&nbsp;</div></td>`
         : "";
     return `
@@ -488,7 +510,8 @@ export function TicketBlock(opts: {
   rows?: Array<[string, string]>;
   accent?: string;
 }): string {
-  const accent = opts.accent ?? COLORS.green;
+  // Amount reads in navy ink for maximum readability (spec: "big navy amount");
+  // the accent tints only the gold header label + total emphasis.
   const rows = (opts.rows ?? [])
     .map(
       ([k, v], i) => `
@@ -499,17 +522,17 @@ export function TicketBlock(opts: {
     )
     .join("");
   return `
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate;background:${COLORS.surface};border:1px solid ${COLORS.line};border-radius:14px;margin-bottom:18px;overflow:hidden;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate;background:#FFFFFF;border:1px solid ${COLORS.line};border-radius:14px;margin-bottom:18px;overflow:hidden;">
       <tr><td style="padding:0;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-          <td style="padding:14px 22px;background:rgba(232,178,61,0.12);border-bottom:2px dashed ${COLORS.line};">
+          <td style="padding:14px 22px;background:rgba(232,178,61,0.10);border-bottom:2px dashed ${COLORS.line};">
             <div style="font-family:${FONT};font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:${COLORS.gold};font-weight:800;">${opts.title}</div>
           </td>
         </tr></table>
       </td></tr>
       <tr><td style="padding:18px 22px 6px;text-align:center;">
         <div style="font-family:${FONT};font-size:11px;letter-spacing:1px;text-transform:uppercase;color:${COLORS.inkFaint};margin-bottom:4px;">Amount Paid</div>
-        <div style="font-family:${FONT};font-size:32px;line-height:1.1;font-weight:900;color:${accent};letter-spacing:-.5px;">${opts.amount}</div>
+        <div style="font-family:${FONT};font-size:32px;line-height:1.1;font-weight:900;color:${COLORS.ink};letter-spacing:-.5px;">${opts.amount}</div>
       </td></tr>
       ${rows ? `<tr><td style="padding:8px 22px 18px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">${rows}</table></td></tr>` : ""}
     </table>`;
@@ -522,8 +545,11 @@ export function CountdownBand(opts: {
   accent?: string;
 }): string {
   const accent = opts.accent ?? COLORS.amber;
+  // Soft urgency tint keyed to the accent (red = danger, amber = warning) so
+  // the band reads warm and premium on white, never a heavy solid block.
+  const tint = accent === COLORS.red ? COLORS.redTint : COLORS.amberTint;
   return `
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate;background:${COLORS.surface};border:1px solid ${accent};border-radius:12px;margin-bottom:18px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate;background:${tint};border:1px solid ${accent};border-radius:12px;margin-bottom:18px;">
       <tr>
         <td width="6" style="background:${accent};">&nbsp;</td>
         <td style="padding:16px 20px;text-align:center;">
@@ -618,7 +644,7 @@ export function renderSponsorStrip(list: SponsorRecord[]): string {
     .join("");
 
   return `
-    <tr><td style="padding:22px 32px 4px;background:${COLORS.outer};text-align:center;">
+    <tr><td style="padding:22px 32px 4px;background:${COLORS.footerBand};text-align:center;">
       <div style="font-family:${FONT};font-size:11px;color:${COLORS.footer};letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;">Official Partners</div>
       <table role="presentation" cellpadding="0" cellspacing="0" align="center" style="margin:0 auto;">
         <tr>${tiles}</tr>
@@ -685,7 +711,7 @@ export function SocialBar(): string {
     )
     .join("");
   return `
-    <tr><td style="padding:18px 32px 6px;background:${COLORS.outer};text-align:center;">
+    <tr><td style="padding:18px 32px 6px;background:${COLORS.footerBand};text-align:center;">
       <div style="font-family:${FONT};font-size:11px;color:${COLORS.footer};letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;">Follow BCPL</div>
       <table role="presentation" cellpadding="0" cellspacing="0" align="center" style="margin:0 auto;"><tr>${cells}</tr></table>
     </td></tr>`;
@@ -696,8 +722,8 @@ export function SocialBar(): string {
 // narrow clients (the .bcpl-stack media rule below forces full-width stacking;
 // inline-block already wraps gracefully where media queries are unsupported).
 export const LegalFooter = `
-  <tr><td style="padding:20px 32px 28px;background:${COLORS.outer};border-top:1px solid ${COLORS.line};text-align:center;">
-    <div style="font-family:${FONT};font-size:14px;color:${COLORS.ink};font-weight:800;letter-spacing:.5px;">BCPL T20</div>
+  <tr><td style="padding:20px 32px 28px;background:${COLORS.footerBand};border-top:1px solid rgba(255,255,255,0.12);text-align:center;">
+    <div style="font-family:${FONT};font-size:14px;color:${COLORS.footerLink};font-weight:800;letter-spacing:.5px;">BCPL T20</div>
     <div style="font-family:${FONT};font-size:13px;color:${COLORS.footer};margin-top:4px;">Bhartiya Corporate Premier League</div>
     <div style="font-family:${FONT};font-size:13px;color:${COLORS.footer};margin-top:8px;line-height:1.7;">An initiative of ${LEGAL_ENTITY}</div>
     <div style="margin-top:12px;line-height:1;">
@@ -724,8 +750,8 @@ export function EmailShell(body: string): string {
 <html lang="en"><head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<meta name="color-scheme" content="dark light"/>
-<meta name="supported-color-schemes" content="dark light"/>
+<meta name="color-scheme" content="light"/>
+<meta name="supported-color-schemes" content="light"/>
 <style>
   @media only screen and (max-width:480px){
     .bcpl-pad{padding-left:20px !important;padding-right:20px !important;}

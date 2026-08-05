@@ -1,6 +1,7 @@
 // Brevo (Sendinblue) email service — https://brevo.com
 import { queueSendFailure, type SendOpts, type SendResult } from "./notify";
-import { inr, type GstBreakup } from "./gst";
+import { inr, gstFromGross, type GstBreakup } from "./gst";
+import { BCPL_GSTIN, BCPL_ADDR } from "./companyInfo";
 import {
   EmailShell,
   HeroStatus,
@@ -48,14 +49,28 @@ export function adminAlertRecipient(): string | null {
  *  "Expected Result BySoon" bug by always rendering a real window. */
 const RESULT_WINDOW = "Within 48 Hours";
 
+/** One PDF/document attachment for Brevo — content is base64-encoded bytes. */
+export interface EmailAttachment {
+  name: string;
+  contentBase64: string;
+}
+
 interface SendEmailParams {
   to: string;
   toName: string;
   subject: string;
   htmlContent: string;
+  /**
+   * Optional file attachments (e.g. a GST invoice PDF). Mapped to Brevo's
+   * `attachment: [{ name, content }]` payload. Kept OUT of the outbox retry
+   * payload so a queued retry never drags a large base64 blob through jsonb
+   * (and never crashes the queue) — a retried receipt simply goes out without
+   * the attachment; the attachment is best-effort on the first send only.
+   */
+  attachments?: EmailAttachment[];
 }
 
-export async function sendEmail({ to, toName, subject, htmlContent }: SendEmailParams, opts?: SendOpts): Promise<SendResult> {
+export async function sendEmail({ to, toName, subject, htmlContent, attachments }: SendEmailParams, opts?: SendOpts): Promise<SendResult> {
   if (!API_KEY) {
     console.warn(`[EMAIL-SKIPPED] BREVO_API_KEY not set — email NOT sent | to=${to} | subject="${subject}"`);
     return { ok: false, skipped: true, error: "BREVO_API_KEY not configured on this server" };
@@ -64,6 +79,11 @@ export async function sendEmail({ to, toName, subject, htmlContent }: SendEmailP
   // sponsor-fetch failure simply omits the strip. This keeps every template
   // function synchronous (unchanged signatures) while the strip stays live.
   const finalHtml = await hydrateSponsors(htmlContent);
+  // Only attach a well-formed, non-empty attachment array; anything else is
+  // silently dropped so a bad attachment can never break a receipt send.
+  const validAttachments = Array.isArray(attachments)
+    ? attachments.filter((a) => a && typeof a.name === "string" && typeof a.contentBase64 === "string" && a.contentBase64.length > 0)
+    : [];
   try {
     const res = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
@@ -73,6 +93,9 @@ export async function sendEmail({ to, toName, subject, htmlContent }: SendEmailP
         to: [{ email: to, name: toName }],
         subject,
         htmlContent: finalHtml,
+        ...(validAttachments.length
+          ? { attachment: validAttachments.map((a) => ({ name: a.name, content: a.contentBase64 })) }
+          : {}),
       }),
       // Hard cap (30s << 15-min outbox reclaim lease) — no hung request can
       // block callers or open a reclaim double-send window.
@@ -105,6 +128,9 @@ export async function sendEmail({ to, toName, subject, htmlContent }: SendEmailP
 
 // ── Template 1: Phase 1 Registration Confirmed ────────────────────────────────
 export function tplPhase1Receipt(name: string, role: string, amount: number, regNo: string, city: string) {
+  // Real GST breakup extracted from the gross amount paid (prices are
+  // GST-inclusive) — never hardcoded tax numbers.
+  const g = gstFromGross(amount);
   return {
     subject: "BCPL T20 Season 5 — Registration Confirmed",
     htmlContent: EmailShell(`
@@ -120,6 +146,10 @@ export function tplPhase1Receipt(name: string, role: string, amount: number, reg
           ["Registration No.", `<span style="font-family:monospace;">${esc(regNo)}</span>`],
           ["Role", `<span style="color:${COLORS.orange};">${esc(formatRole(role))}</span>`],
           ["Trial City", esc(city)],
+          ["Taxable Value", `&#8377;${inr(g.base)}`],
+          ["CGST @ 9%", `&#8377;${inr(g.cgst)}`],
+          ["SGST @ 9%", `&#8377;${inr(g.sgst)}`],
+          ["Total Paid (incl. GST)", `&#8377;${inr(g.total)}`],
         ],
       })}
       ${InfoCard({
@@ -269,6 +299,9 @@ export function tplPhase1Selected(name: string) {
 
 // ── Template 8: Phase 2 Payment Confirmed ─────────────────────────────────────
 export function tplPhase2Receipt(name: string, amount: number, regNo?: string) {
+  // Real GST breakup extracted from the gross amount paid (prices are
+  // GST-inclusive) — never hardcoded tax numbers.
+  const g = gstFromGross(amount);
   return {
     subject: "BCPL T20 — Phase 2 Payment Confirmed",
     htmlContent: EmailShell(`
@@ -282,12 +315,16 @@ export function tplPhase2Receipt(name: string, amount: number, regNo?: string) {
         title: "Phase 2 Payment Receipt",
         amount: `&#8377;${esc(amount)}`,
         accent: COLORS.gold,
-        rows: regNo
-          ? [
-              ["Player ID", `<span style="font-family:monospace;">${esc(regNo)}</span>`],
-              ["Stage", "Phase 2 — Physical Trials"],
-            ]
-          : [["Stage", "Phase 2 — Physical Trials"]],
+        rows: [
+          ...(regNo
+            ? [["Player ID", `<span style="font-family:monospace;">${esc(regNo)}</span>`] as [string, string]]
+            : []),
+          ["Stage", "Phase 2 — Physical Trials"],
+          ["Taxable Value", `&#8377;${inr(g.base)}`],
+          ["CGST @ 9%", `&#8377;${inr(g.cgst)}`],
+          ["SGST @ 9%", `&#8377;${inr(g.sgst)}`],
+          ["Total Paid (incl. GST)", `&#8377;${inr(g.total)}`],
+        ],
       })}
       ${InfoCard({
         accent: COLORS.orange,
@@ -328,7 +365,7 @@ export function tplTrialVenueAnnounced(name: string, city: string, venue: string
           <div style="font-size:10px;color:${COLORS.inkFaint};letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">What to Bring</div>
           <div style="font-size:13px;color:${COLORS.inkSoft};line-height:1.9;">Aadhaar Card (original)<br/>PAN Card (original)<br/>Your cricket kit (optional — kit available on site)<br/>Water bottle and light refreshments<br/>BCPL T20 jersey (if received)</div>`,
       })}
-      ${NoteBox("Late arrivals may not be accommodated. Please reach 30 minutes before the trial time.", "rgba(239,68,68,0.25)")}
+      ${NoteBox("Late arrivals may not be accommodated. Please reach 30 minutes before the trial time.", COLORS.red)}
       ${PrimaryCTA("VIEW VENUE DETAILS", `${SITE_URL}/register/result`, COLORS.gold)}
     `),
   };
@@ -380,7 +417,7 @@ export function tplKycRejected(name: string, reason?: string) {
     htmlContent: EmailShell(`
       ${HeroStatus({ iconUrl: ICONS.alert(COLORS.red), ring: COLORS.red, titleColor: COLORS.red, title: "KYC NOT VERIFIED", subtitle: "Your KYC has been marked for re-submission." })}
       ${Greeting(name, ["We were unable to verify your KYC and it has been marked for re-submission."])}
-      ${reason ? NoteBox(`Reason: ${esc(reason)}`, "rgba(239,68,68,0.25)") : ""}
+      ${reason ? NoteBox(`Reason: ${esc(reason)}`, COLORS.red) : ""}
       ${NextSteps([
         { title: "Sign In", body: "Log in at bcplt20.com with your registered phone number." },
         { title: "Open KYC", body: "Open the KYC section and re-submit your details." },
@@ -457,13 +494,8 @@ export function tplKycManualReview(p: {
 }
 
 // ── Template 11: GST Tax Invoice ──────────────────────────────────────────────
-const BCPL_GSTIN = "07AAHCK4053D1ZS";
-// LEGAL ENTITY COPY REVIEW REQUIRED: statutory supplier name below is retained
-// exactly as printed on the registered GSTIN record ("Kriparti Playing11
-// Private Limited"), which differs from the marketing footer entity
-// ("Kriparthi Playing 11 Pvt. Ltd."). Do not "correct" a GST invoice name.
-const BCPL_ADDR  = "Kriparti Playing11 Private Limited, 2nd Floor Back Side, RZ-108, Indra Park, Uttam Nagar, West Delhi, Delhi - 110059";
-
+// Statutory supplier identity lives in ONE shared place (lib/companyInfo) so
+// the HTML invoice below and the attached PDF (lib/invoicePdf) can never drift.
 export function tplInvoice(p: {
   name: string;
   invoiceNo: string;
@@ -501,7 +533,7 @@ export function tplInvoice(p: {
           <div style="font-size:13px;color:${COLORS.ink};font-weight:700;">${esc(p.name)}</div>
           <div style="font-size:11px;color:${COLORS.inkSoft};margin-top:3px;">TXN ID: <span style="font-family:monospace;">${esc(p.txnId)}</span> · Method: Cashfree</div>`,
       })}
-      <div style="background:rgba(255,122,41,0.06);border:1px solid rgba(255,122,41,0.20);border-radius:12px;padding:16px 18px;margin-bottom:16px;">
+      <div style="background:${COLORS.surface};border:1px solid ${COLORS.line};border-radius:12px;padding:16px 18px;margin-bottom:16px;">
         <div style="font-family:inherit;font-size:12px;color:${COLORS.ink};font-weight:700;margin-bottom:2px;">BCPL T20 Season 5 — Phase ${p.phase} Registration</div>
         <div style="font-family:inherit;font-size:11px;color:${COLORS.inkFaint};margin-bottom:12px;">${desc}</div>
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">

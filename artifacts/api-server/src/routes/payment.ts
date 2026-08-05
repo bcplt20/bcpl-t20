@@ -11,6 +11,7 @@ import { eq, and, or, isNull, sql } from "drizzle-orm";
 import { requireAuth, type AuthRequest } from "../middlewares/auth";
 import { createOrder, getPaymentStatus, extractPaymentMethod } from "../lib/cashfree";
 import { sendEmail, tplPhase1Receipt, tplPhase2Receipt } from "../lib/email";
+import { buildInvoicePdf } from "../lib/invoicePdf";
 import { sendSms } from "../lib/sms";
 import { sendWhatsApp, WA } from "../lib/whatsapp";
 import { logNotifications } from "../lib/notify";
@@ -46,20 +47,67 @@ export async function ensurePaymentMethodColumns(): Promise<void> {
 const SITE_URL = process.env.SITE_URL || "https://elite-user-experience.replit.app/bcpl-website";
 const API_URL  = process.env.API_URL  || "https://elite-user-experience.replit.app";
 
+/**
+ * Build the GST invoice PDF as an email attachment from the REAL gross amount
+ * paid. Uses the SAME invoice-number scheme as the admin invoice route
+ * (`BCPL/25-26/<txnId>`) so the PDF matches the emailed HTML invoice exactly.
+ * Never throws — on any error it logs a warning and returns undefined so the
+ * receipt email still goes out (just without the attachment).
+ */
+async function buildInvoiceAttachment(p: {
+  name: string;
+  phone?: string | null;
+  email?: string | null;
+  role?: string | null;
+  phase: 1 | 2;
+  amount: number;
+  invoiceRef?: { txnId: string; paidAt: Date | string };
+  regNo?: string;
+}): Promise<Array<{ name: string; contentBase64: string }> | undefined> {
+  if (!p.invoiceRef) return undefined;
+  try {
+    const invoiceNo = `BCPL/25-26/${p.invoiceRef.txnId}`;
+    const pdf = await buildInvoicePdf({
+      name: p.name,
+      phone: p.phone ?? null,
+      email: p.email ?? null,
+      role: p.role ?? null,
+      invoiceNo,
+      phase: p.phase,
+      txnId: p.invoiceRef.txnId,
+      paidAt: p.invoiceRef.paidAt,
+      grossAmount: p.amount,
+    });
+    const fileName = `BCPL-Invoice-${p.regNo ?? p.invoiceRef.txnId}.pdf`;
+    return [{ name: fileName, contentBase64: pdf.toString("base64") }];
+  } catch (e) {
+    console.warn("[PAYMENT] invoice PDF generation failed — sending receipt without attachment", e);
+    return undefined;
+  }
+}
+
 async function notifyPhase1Success(
   user: { id: string; name: string; email: string; phone: string },
   reg:  { id: string; role: string; trialCity: string | null; regNumber?: string | null },
   amount: number,
   windowDays = 15,
+  invoice?: { txnId: string; paidAt: Date | string },
 ) {
   const regNo = reg.regNumber ?? reg.id.slice(0, 8).toUpperCase();
   const email = tplPhase1Receipt(user.name, reg.role, amount, regNo, reg.trialCity ?? "TBD");
   const smsMsg = "Welcome to BCPL T20 Season 5! Registered as " + formatRole(reg.role) + ". Reg No: " + regNo + ". Upload trial video within " + windowDays + " days. #OfficeSeStadiumtak";
 
+  // Best-effort GST invoice PDF attachment from the REAL gross amount paid.
+  // A PDF failure must NEVER block the receipt — on error we send without it.
+  const attachments = await buildInvoiceAttachment({
+    name: user.name, phone: user.phone, email: user.email, role: reg.role,
+    phase: 1, amount, invoiceRef: invoice, regNo,
+  });
+
   // Send on all channels in parallel (helpers never throw), then record the
   // REAL outcome of each attempt in notification_logs.
   const [em, sm, wa] = await Promise.all([
-    sendEmail({ to: user.email, toName: user.name, ...email }),
+    sendEmail({ to: user.email, toName: user.name, ...email, ...(attachments ? { attachments } : {}) }),
     sendSms(user.phone, smsMsg, { smsType: "phase1_receipt", smsFlowVars: [formatRole(reg.role), regNo, String(windowDays)] }),
     sendWhatsApp({ phone: user.phone, templateName: WA.PHASE1_RECEIPT, bodyValues: [user.name, formatRole(reg.role), reg.trialCity ?? "TBD", `₹${amount}`] }),
   ]);
@@ -70,6 +118,7 @@ async function notifyPhase2Success(
   user: { id: string; name: string; email: string; phone: string },
   amount: number,
   regNumber?: string | null,
+  invoice?: { txnId: string; paidAt: Date | string; role?: string | null },
 ) {
   // Show the real sequential player ID (BCPL-DEL-1 style) when we have it —
   // mirrors the phase-1 receipt. WhatsApp bodyValues stay at [name, amount]
@@ -78,8 +127,15 @@ async function notifyPhase2Success(
   const regNo = regNumber ?? undefined;
   const email = tplPhase2Receipt(user.name, amount, regNo);
   const idLine = regNo ? ` Player ID: ${regNo}.` : "";
+
+  // Best-effort GST invoice PDF attachment — never blocks the receipt.
+  const attachments = await buildInvoiceAttachment({
+    name: user.name, phone: user.phone, email: user.email, role: invoice?.role ?? null,
+    phase: 2, amount, invoiceRef: invoice, regNo,
+  });
+
   const [em, sm, wa] = await Promise.all([
-    sendEmail({ to: user.email, toName: user.name, ...email }),
+    sendEmail({ to: user.email, toName: user.name, ...email, ...(attachments ? { attachments } : {}) }),
     sendSms(user.phone, `BCPL T20: Phase 2 payment of ₹${amount} confirmed!${idLine} Please complete your KYC. -BCPL T20`, { smsType: "phase2_receipt", smsFlowVars: [`₹${amount}`, regNo ?? ""] }),
     sendWhatsApp({ phone: user.phone, templateName: WA.PHASE2_RECEIPT, bodyValues: [user.name, `₹${amount}`] }),
   ]);
@@ -271,7 +327,7 @@ router.post("/phase1/verify", requireAuth, async (req: AuthRequest, res) => {
     const videoDeadline = new Date(Date.now() + cfg.uploadWindowDays * 24 * 60 * 60 * 1000);
     await db.update(registrationsTable).set({ videoDeadline, updatedAt: new Date() })
       .where(eq(registrationsTable.id, reg.id));
-    notifyPhase1Success(user, { id: reg.id, role: reg.role, trialCity: reg.trialCity, regNumber }, parseInt(pay.amount), cfg.uploadWindowDays);
+    notifyPhase1Success(user, { id: reg.id, role: reg.role, trialCity: reg.trialCity, regNumber }, parseInt(pay.amount), cfg.uploadWindowDays, { txnId: pay.cashfreeOrderId || pay.id, paidAt: pay.paidAt ?? new Date() });
   }
 
   res.json({ success: true, registrationId: reg.id, regNumber });
@@ -387,7 +443,7 @@ router.post("/phase2/verify", requireAuth, async (req: AuthRequest, res) => {
     ))
     .returning({ id: registrationsTable.id });
 
-  if (flipped[0]) notifyPhase2Success(user, parseInt(pay.amount), reg.regNumber);
+  if (flipped[0]) notifyPhase2Success(user, parseInt(pay.amount), reg.regNumber, { txnId: pay.cashfreeOrderId || pay.id, paidAt: pay.paidAt ?? new Date(), role: reg.role });
 
   res.json({ success: true, registrationId: reg.id });
 });
@@ -472,7 +528,7 @@ router.post("/webhook", async (req, res) => {
               .where(eq(phase1PaymentsTable.cashfreeOrderId, orderId)).limit(1);
             if (rows[0]) {
               const { pay, reg, user } = rows[0];
-              notifyPhase1Success(user, { id: reg.id, role: reg.role, trialCity: reg.trialCity, regNumber }, parseInt(pay.amount), cfg.uploadWindowDays)
+              notifyPhase1Success(user, { id: reg.id, role: reg.role, trialCity: reg.trialCity, regNumber }, parseInt(pay.amount), cfg.uploadWindowDays, { txnId: pay.cashfreeOrderId || pay.id, paidAt: pay.paidAt ?? new Date() })
                 .catch((e) => console.error("[WEBHOOK] phase1 notify error", e));
             }
           }
@@ -507,7 +563,7 @@ router.post("/webhook", async (req, res) => {
               .innerJoin(usersTable, eq(registrationsTable.userId, usersTable.id))
               .where(eq(phase2PaymentsTable.cashfreeOrderId, orderId)).limit(1);
             if (rows[0]) {
-              notifyPhase2Success(rows[0].user, parseInt(rows[0].pay.amount), rows[0].reg.regNumber)
+              notifyPhase2Success(rows[0].user, parseInt(rows[0].pay.amount), rows[0].reg.regNumber, { txnId: rows[0].pay.cashfreeOrderId || rows[0].pay.id, paidAt: rows[0].pay.paidAt ?? new Date(), role: rows[0].reg.role })
                 .catch((e) => console.error("[WEBHOOK] phase2 notify error", e));
             }
           }
