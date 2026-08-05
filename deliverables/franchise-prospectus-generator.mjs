@@ -1,8 +1,14 @@
 import { writeFileSync } from "fs";
 
-/* Revenue pools (published on bcplt20.com/franchise): 25% registration+phase2,
-   50% sponsorship, 25% media → ÷ 10 franchises. Net of 18% GST.
-   Costs: franchise fee ₹3 Cr EVERY season +10%/yr (same for all), purse ₹1 Cr, ops ≈₹1 Cr. */
+/* v4 — owner changes Aug'26:
+   - sponsorship pool 40% (was 50%)
+   - jersey/T-shirt sponsorship = 100% team's own; per-scenario Y1-Y5 values
+   - registration 25% pool = net of league operational costs on actuals (disclaimer)
+   - prize money: winner 3 Cr (1.5 owner / 1.5 players), runner-up 2 Cr (1/1) — upside, not in P&L
+   - franchise fee FLAT ₹3 Cr every season, NO 10% increment; 5-yr total ₹15 Cr
+   - 5-year lock-in (no sale); co-owner up to 50% allowed after 3 years with consent
+   - MoM prizes/trophies (group stages) borne by owner ≈ ₹5–10 L/yr (not fixed)
+   - "# projection only, no guarantee" markers everywhere */
 const GST = 1.18, TEAMS = 10;
 const avgP1 = (299 * 0.5 + 399 * 0.5) / GST;
 const avgP2 = (2000 * 0.5 + 3000 * 0.5) / GST;
@@ -10,31 +16,30 @@ const cr = (x) => x / 1e7;
 const f2 = (x) => x.toLocaleString("en-IN", { maximumFractionDigits: 2, minimumFractionDigits: 2 });
 const f1 = (x) => x.toLocaleString("en-IN", { maximumFractionDigits: 1 });
 const L = (n) => (n / 100000) + " lakh";
-const PURSE = 1, OPS = 1;
-const fee = (y) => 3 * Math.pow(1.10, y);
+const PURSE = 1, OPS = 1, FEE = 3;
 const CONVS = [0.30, 0.50, 0.60];
 
-function buildScenario(regs, spons, media) {
+function buildScenario(regs, spons, media, jersey) {
   const cums = [0, 0, 0];
   return regs.map((r, i) => {
     const p1 = cr(r * avgP1);
-    const cost = fee(i) + PURSE + OPS;
+    const cost = FEE + PURSE + OPS;
     const by = CONVS.map((c, k) => {
       const p2 = cr(r * c * avgP2);
-      const perTeam = (0.25 * (p1 + p2) + 0.5 * spons[i] + 0.25 * media[i]) / TEAMS;
+      const perTeam = (0.25 * (p1 + p2) + 0.40 * spons[i] + 0.25 * media[i]) / TEAMS + jersey[i];
       const net = perTeam - cost; cums[k] += net;
       return { conv: c, p2, perTeam, net, cum: cums[k] };
     });
-    return { season: "Season " + (6 + i), year: "Year " + (i + 1), regs: r, p1, spons: spons[i], media: media[i], fee: fee(i), cost, by };
+    return { season: "Season " + (6 + i), year: "Year " + (i + 1), regs: r, p1, spons: spons[i], media: media[i], jersey: jersey[i], fee: FEE, cost, by };
   });
 }
-const A = buildScenario([200000, 300000, 500000, 800000, 1000000], [3, 5, 6, 7, 8], [0, 0, 0, 1, 2]);
-const B = buildScenario([500000, 1000000, 1500000, 2000000, 2500000], [5, 8, 12, 16, 20], [0, 0, 1, 2, 3]);
-const C = buildScenario([1000000, 2000000, 3000000, 4000000, 5000000], [8, 12, 16, 20, 25], [0, 1, 2, 3, 4]);
+const A = buildScenario([200000, 300000, 500000, 800000, 1000000], [3, 5, 6, 7, 8], [0, 0, 0, 1, 2], [0.20, 0.40, 0.80, 1.00, 1.50]);
+const B = buildScenario([500000, 1000000, 1500000, 2000000, 2500000], [5, 8, 12, 16, 20], [0, 0, 1, 2, 3], [0.50, 0.75, 1.00, 1.50, 2.00]);
+const C = buildScenario([1000000, 2000000, 3000000, 4000000, 5000000], [8, 12, 16, 20, 25], [0, 1, 2, 3, 4], [1.00, 1.50, 2.00, 2.50, 3.00]);
 
 const conv2L = [10, 20, 30, 40, 50, 60, 70].map((c) => {
   const p1 = cr(200000 * avgP1), p2 = cr(200000 * (c / 100) * avgP2);
-  return { c, p2, perTeam: (0.25 * (p1 + p2) + 0.5 * 3) / TEAMS };
+  return { c, p2, perTeam: (0.25 * (p1 + p2) + 0.40 * 3) / TEAMS + 0.20 };
 });
 
 const BARCOLORS = ["#FF6B00", "#E8B23D", "#31C56B", "#3B82F6", "#A855F7"];
@@ -50,9 +55,9 @@ function manhattan(data, title, convIdx) {
     <text x="${x + 41}" y="${255}" text-anchor="middle" font-size="11.5" fill="#888">${p.year} · ${L(p.regs)}</text>`;
   }).join("");
   const defs = data.map((_, i) => `<linearGradient id="bg${i}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${BARCOLORS[i]}"/><stop offset="1" stop-color="${BARCOLORS[i]}99"/></linearGradient>`).join("");
-  return `<svg width="580" height="235" viewBox="0 0 740 268" style="display:block;margin:0 auto">
+  return `<svg width="440" height="165" viewBox="0 0 740 268" style="display:block;margin:0 auto">
   <defs>${defs}</defs><line x1="35" y1="217" x2="720" y2="217" stroke="#D8CDBB" stroke-width="1.5"/>
-  ${bars}<text x="35" y="18" font-size="14" font-weight="800" fill="#0D1E44">${title}</text></svg>`;
+  ${bars}<text x="35" y="18" font-size="14" font-weight="800" fill="#0D1E44">${title} <tspan fill="#B3261E">#</tspan></text></svg>`;
 }
 function pie(slices, size = 240) {
   const tot = slices.reduce((s, x) => s + x.v, 0);
@@ -71,68 +76,71 @@ function pie(slices, size = 240) {
   return `<div style="display:flex;align-items:center;gap:26px;justify-content:center;margin:6px 0 4px"><svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">${paths}</svg><div>${legend}</div></div>`;
 }
 
+const HASHNOTE = `<p style="font-size:9.8px;color:#B3261E;margin:1px 0 4px;line-height:1.45"><b>#</b> Projection / illustration only — <b>not a guarantee, promise or assurance of any income or return</b>. These are the League's own assumptions about the future; actual results may be higher or lower, and may not happen at all.</p>`;
+
 const netCell = (n) => `<td style="color:${n >= 0 ? "#0B7A3B" : "#B3261E"};font-weight:700">${n >= 0 ? "+" : "−"}₹${f2(Math.abs(n))} Cr</td>`;
 const revTable = (D) => `<table>
-  <tr><th>Season</th><th>Registrations</th><th>Phase-1 (net)</th><th>Sponsorship</th><th>Media</th><th>Fee + Purse + Ops</th></tr>
-  ${D.map((p) => `<tr><td><b>${p.season}</b> <span class="dim">(${p.year})</span></td><td>${L(p.regs)}</td><td>₹${f2(p.p1)} Cr</td><td>₹${f1(p.spons)} Cr</td><td>${p.media ? "₹" + f1(p.media) + " Cr" : "—"}</td><td>₹${f2(p.cost)} Cr</td></tr>`).join("")}
+  <tr><th>Season</th><th>Registrations</th><th>Phase-1 (net)</th><th>League spons.</th><th>Jersey spons. (100% yours)</th><th>Media</th><th>Fee + Purse + Ops</th></tr>
+  ${D.map((p) => `<tr><td><b>${p.season}</b> <span class="dim">(${p.year})</span></td><td>${L(p.regs)}</td><td>₹${f2(p.p1)} Cr</td><td>₹${f1(p.spons)} Cr</td><td>₹${f2(p.jersey)} Cr</td><td>${p.media ? "₹" + f1(p.media) + " Cr" : "—"}</td><td>₹${f2(p.cost)} Cr</td></tr>`).join("")}
 </table>`;
 const plTable = (D) => `<table>
   <tr><th rowspan="2" style="vertical-align:middle">Season</th><th colspan="2" style="text-align:center;border-right:2px solid #E8B23D">Phase-2 conversion 30%</th><th colspan="2" style="text-align:center;border-right:2px solid #E8B23D">Conversion 50%</th><th colspan="2" style="text-align:center">Conversion 60%</th></tr>
-  <tr><th>Team share</th><th style="border-right:2px solid #E8B23D">Season net</th><th>Team share</th><th style="border-right:2px solid #E8B23D">Season net</th><th>Team share</th><th>Season net</th></tr>
+  <tr><th>Team revenue</th><th style="border-right:2px solid #E8B23D">Season net</th><th>Team revenue</th><th style="border-right:2px solid #E8B23D">Season net</th><th>Team revenue</th><th>Season net</th></tr>
   ${D.map((p) => `<tr><td><b>${p.season}</b> <span class="dim">(${p.year})</span></td>${p.by.map((b) => `<td>₹${f2(b.perTeam)} Cr</td>${netCell(b.net)}`).join("")}</tr>`).join("")}
   <tr style="background:#F2EFE8"><td><b>5-season cumulative</b></td>${D[4].by.map((b) => `<td></td><td style="color:${b.cum >= 0 ? "#0B7A3B" : "#B3261E"};font-weight:800">${b.cum >= 0 ? "+" : "−"}₹${f2(Math.abs(b.cum))} Cr</td>`).join("")}</tr>
 </table>`;
 
 const WM = `<div class="wm">BCPL · CONFIDENTIAL</div>`;
-const foot = (n) => `<div class="foot"><span>BCPL Franchise Prospectus</span><span>BCPL Sports Private Limited · Strictly Confidential — do not share</span><span>Page ${n}</span></div>`;
+const foot = (n) => `<div class="foot"><span>BCPL Franchise Prospectus</span><span>BCPL Sports Private Limited · Strictly Confidential — do not share · # figures are projections, not guarantees</span><span>Page ${n}</span></div>`;
 
 const css = `
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',Arial,sans-serif;color:#1a1f2e;font-size:13.5px;line-height:1.7}
+body{font-family:'Segoe UI',Arial,sans-serif;color:#1a1f2e;font-size:13px;line-height:1.6}
 .page{page-break-after:always;position:relative;overflow:hidden}
 .page:last-child{page-break-after:auto}
 .wm{position:absolute;top:46%;left:50%;transform:translate(-50%,-50%) rotate(-28deg);font-size:74px;font-weight:900;letter-spacing:.12em;color:rgba(13,30,68,0.05);white-space:nowrap;pointer-events:none;z-index:0}
 .cover .wm{color:rgba(255,255,255,0.045)}
 .inner{padding:36px 46px;position:relative;z-index:1}
 h1{font-size:33px;line-height:1.25}
-h2{font-size:20px;color:#0D1E44;margin-bottom:8px}
-h3{font-size:13px;color:#C94E0E;margin:8px 0 4px;text-transform:uppercase;letter-spacing:.07em}
-p{margin-bottom:9px}
+h2{font-size:19px;color:#0D1E44;margin-bottom:6px}
+h3{font-size:12px;color:#C94E0E;margin:5px 0 3px;text-transform:uppercase;letter-spacing:.07em}
+p{margin-bottom:7px}
 .cover{background:linear-gradient(150deg,#060F25,#0D1E44 55%,#15346B);color:#fff;height:270mm;padding:52px 52px;display:flex;flex-direction:column;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .gold{color:#E8B23D}
 .band{height:6px;background:linear-gradient(90deg,#9A3408,#FF6B00,#E8B23D,#FF6B00,#9A3408);-webkit-print-color-adjust:exact;print-color-adjust:exact}
-table{width:100%;border-collapse:collapse;margin:8px 0 12px;font-size:11.5px;position:relative;z-index:1}
-th{background:#0D1E44;color:#fff;padding:7px 9px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-td{padding:7px 9px;border-bottom:1px solid #E7E2D8;vertical-align:top}
+table{width:100%;border-collapse:collapse;margin:5px 0 7px;font-size:10.4px;position:relative;z-index:1}
+th{background:#0D1E44;color:#fff;padding:4px 7px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+td{padding:4px 7px;border-bottom:1px solid #E7E2D8;vertical-align:top}
 tr:nth-child(even) td{background:#FAF7F2}
 tr.hl td{background:#FFF3E4;border-top:1.5px solid #FF6B00;border-bottom:1.5px solid #FF6B00}
 .tag{background:#FF6B00;color:#fff;font-size:9.5px;font-weight:800;border-radius:4px;padding:1.5px 7px;margin-left:5px;letter-spacing:.05em}
 .dim{color:#8a8f9c;font-size:11px}
-.card{border:1.4px solid #E3D9C8;border-radius:12px;padding:15px 18px;margin-bottom:11px;background:#FDFBF7}
-.card b.t{color:#0D1E44;display:block;margin-bottom:4px;font-size:14.5px}
+.card{border:1.4px solid #E3D9C8;border-radius:12px;padding:8px 13px;margin-bottom:7px;background:#FDFBF7;font-size:11.6px;line-height:1.5}
+.card b.t{color:#0D1E44;display:block;margin-bottom:4px;font-size:14px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
-.note{background:#FFF7EC;border-left:5px solid #FF6B00;padding:9px 13px;border-radius:0 10px 10px 0;margin:8px 0;font-size:12px;line-height:1.6}
+.note{background:#FFF7EC;border-left:5px solid #FF6B00;padding:7px 12px;border-radius:0 10px 10px 0;margin:6px 0;font-size:11.3px;line-height:1.5}
 .danger{background:#FDECEA;border-left:5px solid #B3261E}
 .statrow{display:flex;gap:12px;margin:20px 0}
 .stat{flex:1;background:rgba(255,255,255,0.07);border:1px solid rgba(232,178,61,0.4);border-radius:12px;padding:16px 14px;text-align:center}
 .stat .n{font-size:24px;font-weight:900;color:#E8B23D}
 .stat .l{font-size:11px;color:rgba(255,255,255,0.7);margin-top:3px;letter-spacing:.05em;text-transform:uppercase}
-.legal p,.legal li{font-size:10.8px;line-height:1.62;color:#333a4c}
+.legal p,.legal li{font-size:10.1px;line-height:1.5;color:#333a4c}
 .legal ol{margin:4px 0 12px 20px}
-.legal li{margin-bottom:4px}
-.foot{margin-top:12px;border-top:2.5px solid #FF6B00;padding-top:9px;font-size:10px;color:#777;display:flex;justify-content:space-between;position:relative;z-index:1}
+.legal li{margin-bottom:3px}
+.foot{margin-top:8px;border-top:2.5px solid #FF6B00;padding-top:9px;font-size:10px;color:#777;display:flex;justify-content:space-between;position:relative;z-index:1}
 @media print{@page{size:A4;margin:0} .inner{padding:12mm 13mm 10mm} .card,.note,tr{page-break-inside:avoid} h2,h3{page-break-after:avoid}}
 `;
 
 const scenarioPage = (num, letter, name, sub, D, chartTitle, noteHtml) => `
 <div class="page">${WM}<div class="band"></div><div class="inner">
-  <h2>${num} · Outlook ${letter} — ${name} <span class="dim" style="font-size:13px">(${sub})</span></h2>
+  <h2>${num} · Outlook ${letter} — ${name} <span class="dim" style="font-size:13px">(${sub})</span> <span style="color:#B3261E">#</span></h2>
   ${manhattan(D, chartTitle + " — at 30% Phase-2 conversion", 0)}
   ${revTable(D)}
-  <h3>Franchise P&amp;L — season net at 30% / 50% / 60% Phase-2 conversion</h3>
+  <h3>Franchise P&amp;L <span style="color:#B3261E">#</span> — season net at 30% / 50% / 60% Phase-2 conversion (incl. jersey sponsorship)</h3>
   ${plTable(D)}
+  ${HASHNOTE}
   ${noteHtml}
-  ${foot(num + 3)}
+  ${foot(num)}
 </div></div>`;
 
 const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>BCPL Franchise Prospectus</title><style>${css}</style></head><body>
@@ -147,15 +155,15 @@ const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>BCPL Franc
   <div class="statrow" style="position:relative;z-index:1">
     <div class="stat"><div class="n">10</div><div class="l">Franchise Teams</div></div>
     <div class="stat"><div class="n">25%</div><div class="l">Registration Revenue Pool</div></div>
-    <div class="stat"><div class="n">50%</div><div class="l">Sponsorship Revenue Pool</div></div>
-    <div class="stat"><div class="n">Pan-India</div><div class="l">Digital-First League</div></div>
+    <div class="stat"><div class="n">40%</div><div class="l">Sponsorship Revenue Pool</div></div>
+    <div class="stat"><div class="n">100%</div><div class="l">Jersey Sponsorship — Yours</div></div>
   </div>
   <div style="position:relative;z-index:1;margin-top:20px">
     <div style="background:rgba(232,178,61,0.1);border:1px solid rgba(232,178,61,0.45);border-radius:14px;padding:18px 22px">
       <div style="font-size:12px;letter-spacing:.18em;color:#E8B23D;font-weight:800;margin-bottom:8px">WHAT'S INSIDE</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 22px;font-size:13px;color:rgba(255,255,255,.85)">
-        <div>① The privilege of team ownership</div><div>② Investment structure &amp; annual fees</div>
-        <div>③ Three revenue streams, explained</div><div>④ Conversion scenarios — Season 6</div>
+        <div>① The privilege of team ownership</div><div>② Investment — ₹15 Cr over 5 seasons</div>
+        <div>③ Five revenue streams, explained</div><div>④ Conversion scenarios — Season 6</div>
         <div>⑤ 5-year outlook — three growth paths</div><div>⑥ Complete legal terms &amp; confidentiality</div>
       </div>
     </div>
@@ -164,7 +172,7 @@ const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>BCPL Franc
     <div style="display:flex;gap:26px;font-size:12.5px;color:rgba(255,255,255,.72)">
       <span><b style="color:#E8B23D">EMAIL</b> franchisee@bcplt20.com</span><span><b style="color:#E8B23D">WEB</b> www.bcplt20.com</span><span><b style="color:#E8B23D">PHONE</b> +91 83684 44754 (Founder's Office)</span>
     </div>
-    <div style="margin-top:13px;font-size:10px;color:rgba(255,255,255,.5);max-width:660px">Private &amp; strictly confidential — issued to the named recipient only; any sharing, copying or circulation is prohibited (see Confidentiality, last page). This is an invitation to explore franchise participation only — not an offer of securities, a deposit scheme or an investment product; no return is promised or assured. All projections are illustrative assumptions.</div>
+    <div style="margin-top:13px;font-size:10px;color:rgba(255,255,255,.5);max-width:660px">Private &amp; strictly confidential — issued to the named recipient only; any sharing, copying or circulation is prohibited (see Confidentiality, last page). This is an invitation to explore franchise participation only — not an offer of securities, a deposit scheme or an investment product; no return is promised or assured. All projections marked # are illustrative assumptions only — not guarantees.</div>
   </div>
 </div>
 
@@ -186,69 +194,76 @@ const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>BCPL Franc
 
 <!-- 3 · INVESTMENT -->
 <div class="page">${WM}<div class="band"></div><div class="inner">
-  <h2>2 · Investment Structure — What a Season Costs</h2>
-  <p>A BCPL franchise is an <b>annual commitment of approximately ₹5 Cr per season</b>, made up of three parts:</p>
+  <h2>2 · Investment Structure — ₹15 Cr Over Five Seasons</h2>
+  <p>A BCPL franchise is a <b>five-season commitment</b>. The league franchise fee is <b>₹3 Cr per season, flat — with no increase of any kind for five seasons</b>. That means the franchise fee for your team is <b>₹15 Cr in total across Seasons 1–5</b>, paid as ₹3 Cr each season.</p>
   <table>
     <tr><th>Item</th><th>Amount / season</th><th>Notes</th></tr>
-    <tr><td><b>League franchise fee</b></td><td><b>₹3 Cr every season</b></td><td>Same for every franchise. Payable every season, <b>not one-time</b>. The fee increases by <b>10% each season</b> (₹3 Cr → ₹3.30 Cr → ₹3.63 Cr …).</td></tr>
+    <tr><td><b>League franchise fee</b></td><td><b>₹3 Cr every season (flat)</b></td><td>Same for every franchise. Payable every season, <b>not one-time</b>. <b>No increment — the fee stays ₹3 Cr for all five seasons (₹15 Cr total).</b></td></tr>
     <tr><td><b>Auction purse</b></td><td><b>₹1 Cr (fixed)</b></td><td>Every team's player-auction purse. Held fixed for the next 2–3 seasons; reviewed by the league thereafter.</td></tr>
     <tr><td><b>Team operations</b></td><td><b>≈ ₹1 Cr (indicative)</b></td><td>5-star player accommodation, Indian-team-grade jerseys &amp; kit, team management, travel and match-day operations. Varies with the owner's choices, but the league's minimum standards must be met.</td></tr>
+    <tr><td><b>Man-of-the-Match prizes &amp; trophies</b></td><td>≈ ₹5–10 lakh (indicative)</td><td>Group-stage Man-of-the-Match prizes and trophies are <b>borne by the franchise owner</b>. Amount is not fixed — indicatively ₹5–10 lakh per season.</td></tr>
     <tr><td>Bid registration fee</td><td>₹2,00,000 (one-time)</td><td>Non-refundable, per applicant, to enter the bid process — whether or not a franchise is allotted.</td></tr>
   </table>
   ${pie([
-    { v: 3, label: "League franchise fee — ₹3 Cr (10% ↑/season)", color: "#FF6B00" },
+    { v: 3, label: "League franchise fee — ₹3 Cr (flat, no increase)", color: "#FF6B00" },
     { v: 1, label: "Auction purse — ₹1 Cr (fixed)", color: "#E8B23D" },
     { v: 1, label: "Team operations — ≈ ₹1 Cr", color: "#0D1E44" },
   ])}
-  <p class="dim" style="text-align:center">Year-1 outlay ≈ ₹5 Cr — the pie shows the split of a season's commitment.</p>
+  <p class="dim" style="text-align:center">Season outlay ≈ ₹5 Cr (plus MoM prizes ≈ ₹5–10 lakh) — the pie shows the split of a season's commitment.</p>
+  <div class="note"><b>5-year lock-in:</b> the franchise <b>cannot be sold or transferred for a minimum of 5 years</b>. After 3 years, the owner may add a co-owner holding up to 50%, with the League's prior written consent. A full sale is not permitted before the 5-year lock-in ends.</div>
   <div class="note"><b>Allotment &amp; eligibility:</b> clean legal &amp; financial background, KYC of the applicant entity and promoters, and source-of-funds verification are mandatory. Where 10 or more qualified applicants register, allotment is by competitive bid &amp; auction. The league's decision is final.</div>
   ${foot(3)}
 </div></div>
 
 <!-- 4 · REVENUE MODEL + CONVERSION -->
 <div class="page">${WM}<div class="band"></div><div class="inner">
-  <h2>3 · How a Franchise Earns — Three Streams</h2>
-  <div class="card"><b class="t">① 25% of player registration &amp; Phase-2 revenue</b>Phase-1 registration: ₹299 / ₹399 · Phase-2 (trials &amp; auction eligibility): ₹2,000 / ₹3,000. <b>25% of this revenue pool is distributed equally among the 10 franchises</b> every season. Figures in this document are net of 18% GST (blended Phase-1 ≈ ₹296, Phase-2 ≈ ₹2,119 net).</div>
-  <div class="card"><b class="t">② 50% of league sponsorship revenue</b>Title, associate and partner sponsors pay to reach the league's corporate audience. <b>Half of all central sponsorship revenue is distributed equally among the franchises.</b></div>
-  <div class="card"><b class="t">③ 25% of central media income — from Year 4</b>In early seasons the league invests in broadcast distribution (a league cost, never charged to franchises). Once broadcast turns revenue-positive, 25% of central media income also flows to the franchises.</div>
+  <h2>3 · How a Franchise Earns — Five Streams</h2>
+  <div class="card"><b class="t">① 25% of player registration &amp; Phase-2 revenue — after league operational costs</b>Phase-1: ₹299 / ₹399 · Phase-2 (trials &amp; auction eligibility): ₹2,000 / ₹3,000. <b>25% of this pool is shared equally among the 10 franchises</b> — computed on revenue <b>net of GST and net of the league's actual operational costs</b> (tournament conduct, trials, grounds and other operating expenses, deducted on actuals). Figures in this document are net of 18% GST but shown before operational-cost deduction — actual payouts will be lower to that extent. <span style="color:#B3261E">#</span></div>
+  <div class="card"><b class="t">② 40% of league sponsorship revenue</b>Title, associate and partner sponsors pay to reach the league's corporate audience. <b>40% of central sponsorship revenue is distributed equally among the franchises.</b></div>
+  <div class="card"><b class="t">③ Jersey / T-shirt sponsorship — 100% yours</b>Whatever sponsors your team signs for its own jersey and kit, <b>that revenue belongs entirely to the franchise</b> — the league takes no share. The outlook pages include an illustrative jersey-sponsorship line for each growth path. <span style="color:#B3261E">#</span></div>
+  <div class="card"><b class="t">④ Prize money — 50% of winnings to the owner</b>Winning team prize <b>₹3 Cr</b>: ₹1.5 Cr to the franchise owner, ₹1.5 Cr to the players. Runner-up prize <b>₹2 Cr</b>: ₹1 Cr to the owner, ₹1 Cr to the players. <b>Only the winning and runner-up teams receive this</b> — it is performance-based and is therefore not included in the P&amp;L projections. <span style="color:#B3261E">#</span></div>
+  <div class="card"><b class="t">⑤ 25% of central media income — from Year 4</b>In early seasons the league invests in broadcast distribution (a league cost, never charged to franchises). Once broadcast turns revenue-positive, 25% of central media income also flows to the franchises.</div>
 
-  <h2 style="margin-top:16px">4 · Season 6 — What Conversion Does to Your Share</h2>
-  <p>With <b>2,00,000 Phase-1 registrations</b> and ₹3 Cr sponsorship in Season 6, the per-team share at different Phase-2 conversion rates:</p>
+  <h2 style="margin-top:14px">4 · Season 6 — What Conversion Does to Your Share <span style="color:#B3261E">#</span></h2>
+  <p>With <b>2,00,000 Phase-1 registrations</b>, ₹3 Cr league sponsorship and ₹20 lakh own jersey sponsorship in Season 6, the per-team revenue at different Phase-2 conversion rates:</p>
   <table>
-    <tr><th>Phase-2 conversion</th><th>Phase-2 revenue (net)</th><th>Per-team share</th></tr>
+    <tr><th>Phase-2 conversion</th><th>Phase-2 revenue (net)</th><th>Per-team revenue</th></tr>
     ${conv2L.map((r) => `<tr${r.c === 30 || r.c === 50 || r.c === 60 ? ' class="hl"' : ""}><td><b>${r.c}%</b> of registrations${r.c === 30 ? '<span class="tag">conservative</span>' : r.c === 50 ? '<span class="tag">base case</span>' : r.c === 60 ? '<span class="tag">strong</span>' : ""}</td><td>₹${f2(r.p2)} Cr</td><td><b>₹${f2(r.perTeam)} Cr</b></td></tr>`).join("")}
   </table>
-  <p class="dim">Per-team share = [25% × (Phase-1 + Phase-2 net revenue) + 50% × sponsorship] ÷ 10 teams. Every outlook on the next pages shows the P&amp;L at 30%, 50% and 60% conversion side-by-side.</p>
+  <p class="dim">Per-team revenue = [25% × (Phase-1 + Phase-2 net revenue) + 40% × league sponsorship] ÷ 10 teams + own jersey sponsorship. Registration pool is before league operational-cost deduction (deducted on actuals).</p>
+  ${HASHNOTE}
   ${foot(4)}
 </div></div>
 
-${scenarioPage(5, "A", "Steady Growth", "2 → 3 → 5 → 8 → 10 lakh registrations", A,
-  "Per-team revenue share (₹ Cr, illustrative)",
-  `<div class="note danger"><b>Straight talk:</b> at steady-growth scale the revenue share does not yet cover the ≈ ₹5 Cr annual commitment even at strong conversion — at this scale ownership is a brand, network and early-position play. No assured returns exist in franchise sport — we show this honestly.</div>`)}
+${scenarioPage(5, "A", "Steady Growth", "2 → 3 → 5 → 8 → 10 lakh registrations · jersey ₹20L → ₹1.5 Cr", A,
+  "Per-team revenue (₹ Cr, illustrative)",
+  `<div class="note danger"><b>Straight talk:</b> at steady-growth scale the revenue streams do not yet cover the ≈ ₹5 Cr annual commitment even at strong conversion — at this scale ownership is a brand, network and early-position play. No assured returns exist in franchise sport — we show this honestly.</div>`)}
 
-${scenarioPage(6, "B", "High Growth", "5 → 10 → 15 → 20 → 25 lakh registrations", B,
-  "Per-team revenue share (₹ Cr, illustrative)",
-  `<div class="note">At 50% conversion the franchise turns season-positive from <b>Year 3</b>; at 60%, from <b>Year 2–3</b> — and by Year 5 earns ₹3–4.5 Cr over its annual commitment. <b>Actual results depend entirely on actual registrations, conversion, sponsorship and costs; nothing here is a promise or assurance of any return.</b></div>`)}
+${scenarioPage(6, "B", "High Growth", "5 → 10 → 15 → 20 → 25 lakh registrations · jersey ₹50L → ₹2 Cr", B,
+  "Per-team revenue (₹ Cr, illustrative)",
+  `<div class="note">With jersey sponsorship included, the franchise turns season-positive materially earlier at 50–60% conversion. <b>Actual results depend entirely on actual registrations, conversion, sponsorship, operational costs and the team's own jersey deals; nothing here is a promise or assurance of any return.</b></div>`)}
 
-${scenarioPage(7, "C", "Ultra High Growth", "10 → 20 → 30 → 40 → 50 lakh", C,
-  "Per-team revenue share (₹ Cr, illustrative)",
-  `<div class="note">At ultra scale the franchise is season-positive from <b>Year 2</b> at 50–60% conversion, with Year-5 season profits of ₹15–20 Cr — the full upside of owning a team from the league's early years. <b>Illustrative only; no income or return is promised or assured.</b></div>`)}
+${scenarioPage(7, "C", "Ultra High Growth", "10 → 20 → 30 → 40 → 50 lakh · jersey ₹1 Cr → ₹3 Cr", C,
+  "Per-team revenue (₹ Cr, illustrative)",
+  `<div class="note">At ultra scale the franchise is season-positive early, with the full upside of owning a team from the league's early years — plus 100% of its own jersey sponsorship. <b>Illustrative only; no income or return is promised or assured.</b></div>`)}
 
 <!-- 8 · LEGAL -->
 <div class="page">${WM}<div class="band"></div><div class="inner legal">
-  <h2>7 · Key Terms &amp; Conditions</h2>
+  <h2>8 · Key Terms &amp; Conditions</h2>
   <ol>
     <li><b>Nature of arrangement.</b> A BCPL franchise is a commercial sports-team ownership and revenue-sharing arrangement with BCPL Sports Private Limited ("the League"). It is <b>not</b> a security, deposit, collective investment scheme, partnership, franchise under any statutory franchise law, or financial product, and is not marketed as one.</li>
-    <li><b>No assured returns.</b> All revenue figures, charts and projections in this document are illustrative assumptions only. The League makes <b>no representation, warranty or guarantee of any revenue, profit, break-even timeline or return</b>. Franchise owners may incur losses, including sustained losses across multiple seasons, as the Steady-Growth outlook itself illustrates.</li>
-    <li><b>Fees.</b> (a) The ₹2,00,000 bid registration fee is one-time and non-refundable in all circumstances, including non-allotment. (b) The league franchise fee (₹3 Cr, same for all franchises) is payable <b>every season</b> and increases by 10% per season. (c) The auction purse (currently ₹1 Cr) must be funded in full each season. (d) Team operating costs are the franchise's responsibility and must meet League minimum standards (player accommodation, kit, management). Non-payment of any seasonal amount by its due date is a material breach.</li>
+    <li><b>No assured returns.</b> All revenue figures, charts and projections in this document (marked #) are illustrative assumptions only — the League's own thinking about the future, which may or may not materialise. The League makes <b>no representation, warranty or guarantee of any revenue, profit, break-even timeline or return</b>. Actual results may be higher or lower than shown. Franchise owners may incur losses, including sustained losses across multiple seasons, as the Steady-Growth outlook itself illustrates.</li>
+    <li><b>Fees.</b> (a) The ₹2,00,000 bid registration fee is one-time and non-refundable in all circumstances, including non-allotment. (b) The league franchise fee is <b>₹3 Cr per season, flat and identical for all franchises, with no increment for five seasons</b> (aggregate ₹15 Cr over Seasons 1–5), payable every season. (c) The auction purse (currently ₹1 Cr) must be funded in full each season. (d) Team operating costs are the franchise's responsibility and must meet League minimum standards (player accommodation, kit, management). (e) Group-stage Man-of-the-Match prizes and trophies are borne by the franchise (indicatively ₹5–10 lakh per season; not fixed). Non-payment of any seasonal amount by its due date is a material breach.</li>
+    <li><b>Lock-in &amp; transfer.</b> The franchise is subject to a <b>minimum lock-in of five (5) years</b>, during which it cannot be sold, assigned or transferred in whole. After completion of three (3) years, the owner may induct a co-owner holding up to 50% of the franchise, subject to the League's prior written consent, KYC and verification of the incoming co-owner. Any transfer, pledge or change of control otherwise requires prior written League consent.</li>
     <li><b>Allotment.</b> Where ten or more qualified applications are received for available slots, allotment is by competitive bid/auction. The League's decision on eligibility, allotment, team naming and city assignment is final and binding.</li>
     <li><b>Eligibility &amp; verification.</b> Applicants must pass KYC, background and source-of-funds verification. The League may reject any application without assigning reasons, with no liability other than obligations expressly stated in a signed agreement.</li>
-    <li><b>Revenue share.</b> Pool percentages (25% registration/Phase-2, 50% sponsorship, 25% media) are computed on <b>actually-received</b> central revenue net of applicable taxes (including GST), payment-gateway charges, refunds and statutory deductions, and distributed equally among active, fully-paid-up franchises per the Franchise Agreement. Registration revenue depends on actual participation; sponsorship and media figures depend on third-party contracts that may or may not materialise. No minimum pool size is guaranteed.</li>
+    <li><b>Revenue share.</b> Pool percentages (25% registration/Phase-2, 40% sponsorship, 25% media) are computed on <b>actually-received</b> central revenue net of applicable taxes (including GST), payment-gateway charges, refunds, statutory deductions and — for the registration/Phase-2 pool — <b>the League's operational costs of conducting the tournament, trials and related activities, deducted on actuals</b>, and distributed equally among active, fully-paid-up franchises per the Franchise Agreement. Jersey/kit sponsorship signed by a franchise for its own team belongs 100% to that franchise, subject to League brand and category guidelines. Registration revenue depends on actual participation; sponsorship and media figures depend on third-party contracts that may or may not materialise. No minimum pool size is guaranteed.</li>
+    <li><b>Prize money.</b> The winning team's prize (currently ₹3 Cr) is split ₹1.5 Cr to the franchise owner and ₹1.5 Cr to the players; the runner-up prize (currently ₹2 Cr) is split ₹1 Cr to the owner and ₹1 Cr to the players. Prize money is payable only to the winning and runner-up teams of a season, is subject to change by the League before each season, and is not an assured payment to any franchise.</li>
     <li><b>League standards.</b> The League may prescribe and update minimum standards for player welfare, accommodation, kit, conduct and match operations. Persistent failure to meet standards is a material breach.</li>
     <li><b>Data protection.</b> Any sharing of participant information is limited to aggregated and/or consent-based data, in compliance with the Digital Personal Data Protection Act, 2023 and League privacy policies. Franchises must not use participant data outside the permitted purpose, must not transfer it to any third party, and must delete it on termination.</li>
     <li><b>Branding &amp; IP.</b> Team names incorporating the owner's company name require League approval and must comply with League brand, advertising and content standards. All League IP (name, marks, footage, data, formats) remains the League's property; the franchise receives only a limited, non-transferable seasonal licence.</li>
     <li><b>Conduct &amp; compliance.</b> Franchises, their owners and personnel must comply with applicable law (including anti-corruption, anti-money-laundering and betting/gaming laws), League anti-corruption and conduct codes, and must not engage in conduct harming the League's reputation.</li>
-    <li><b>Term, termination &amp; transfer.</b> Franchise rights are granted per season/term as per the Franchise Agreement. Transfer, sale, pledge or change of control requires prior written League consent. Material breach, non-payment, insolvency or reputational-risk events may lead to suspension or termination; fees already paid are non-refundable on termination for cause.</li>
+    <li><b>Term &amp; termination.</b> Franchise rights are granted per season/term as per the Franchise Agreement. Material breach, non-payment, insolvency or reputational-risk events may lead to suspension or termination; fees already paid are non-refundable on termination for cause.</li>
     <li><b>Force majeure.</b> Seasons may be shortened, relocated or cancelled for events beyond the League's control; the Franchise Agreement sets out the consequences. No consequential-loss claims lie against the League.</li>
     <li><b>Taxes.</b> Each party bears its own taxes. GST and withholding taxes apply as per law on all fees and distributions.</li>
     <li><b>Governing law &amp; disputes.</b> Governed by the laws of India; disputes are subject to arbitration under the Arbitration and Conciliation Act, 1996 (sole arbitrator, seat New Delhi, English language) and the exclusive jurisdiction of the courts at New Delhi.</li>
@@ -259,10 +274,10 @@ ${scenarioPage(7, "C", "Ultra High Growth", "10 → 20 → 30 → 40 → 50 lakh
 
 <!-- 9 · CONFIDENTIALITY + CONTACT -->
 <div class="page">${WM}<div class="band"></div><div class="inner legal">
-  <h2>8 · Confidentiality — Read Before Sharing</h2>
+  <h2>9 · Confidentiality — Read Before Sharing</h2>
   <div class="note danger" style="font-size:12.5px"><b>This document is strictly confidential.</b> It is issued to the named recipient alone, solely to evaluate BCPL franchise participation. <b>You may not share, forward, copy, photograph, publish or disclose this document or its contents to any person whatsoever</b> — not to advisors, associates, media or any third party — without the League's prior written consent. By retaining this document you accept these obligations as binding. Unauthorised disclosure or use may cause the League serious commercial harm and will entitle the League to injunctive relief, damages and any other remedy available in law, and will disqualify the recipient from the franchise process. If you do not agree, delete/return this document immediately.</div>
   <h3>Disclaimer</h3>
-  <p>This document does not constitute financial, legal or tax advice; recipients should take independent professional advice before applying. It is not an offer or solicitation of securities or deposits and no return is promised or assured. All projections are illustrative assumptions; actual outcomes may differ materially. GST and other taxes apply as per law. GST registration of BCPL Sports Private Limited is in progress; statutory details will be provided in the Franchise Agreement. The League reserves the right to modify the franchise programme, fees and terms at any time prior to signing.</p>
+  <p>This document does not constitute financial, legal or tax advice; recipients should take independent professional advice before applying. It is not an offer or solicitation of securities or deposits and no return is promised or assured. All projections marked # are illustrative assumptions only — the League's own estimates of the future, which may or may not materialise; actual outcomes may differ materially, higher or lower. GST and other taxes apply as per law. GST registration of BCPL Sports Private Limited is in progress; statutory details will be provided in the Franchise Agreement. The League reserves the right to modify the franchise programme, fees and terms at any time prior to signing.</p>
   <h3>Contact — Franchise Desk</h3>
   <p style="font-size:14px">Email <b>franchisee@bcplt20.com</b> &nbsp;·&nbsp; Web <b>www.bcplt20.com</b> &nbsp;·&nbsp; Phone <b>+91 83684 44754</b> (Founder's Office)</p>
   <p class="dim">All franchise enquiries are handled directly by the Founder's Office. Please quote your company name and preferred city in your first message.</p>
