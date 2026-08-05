@@ -415,13 +415,8 @@ export async function verifyAadhaarOtp(referenceId: string, otp: string): Promis
       method: "POST",
       headers: verifyHeaders(),
       // Docs contract: { otp, ref_id } — NOT reference_id (that mismatch made
-      // Cashfree 400 every verify, shown to players as "service unavailable").
-      // ref_id comes back numeric from the OTP call — send it back numeric;
-      // some validators 400 on the stringified form.
-      body: JSON.stringify({
-        ref_id: /^\d+$/.test(String(referenceId)) ? Number(referenceId) : String(referenceId),
-        otp: String(otp),
-      }),
+      // Cashfree 400 every verify, shown to players as "service unavailable")
+      body: JSON.stringify({ ref_id: String(referenceId), otp: String(otp) }),
     });
     const data = await res.json() as any;
     if (!res.ok) {
@@ -433,8 +428,9 @@ export async function verifyAadhaarOtp(referenceId: string, otp: string): Promis
       const errText = `${data?.message ?? ""} ${data?.code ?? ""} ${data?.sub_code ?? ""}`.toLowerCase();
       if (errText.includes("otp")) return { valid: false, name: "" };
       // Expired/invalid ref_id ⇒ the player waited too long — a retryable
-      // player-side condition, not a vendor outage.
-      if (errText.includes("ref_id") || errText.includes("expired") || errText.includes("invalid")) {
+      // player-side condition, not a vendor outage. (NOT a bare "invalid"
+      // match: auth errors say "Invalid clientId…" and must stay null.)
+      if (errText.includes("ref_id") || errText.includes("expired")) {
         return { valid: false, name: "" };
       }
       return null;

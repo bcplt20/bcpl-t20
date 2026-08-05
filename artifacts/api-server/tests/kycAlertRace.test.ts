@@ -148,18 +148,22 @@ describe("KYC manual-review alert — exactly once under a verify-otp vs webhook
     await new Promise(r => setTimeout(r, 400));
 
     // DB END-STATE: the Aadhaar transition happened exactly once and the KYC
-    // stayed pending (PAN still needs manual review).
+    // stayed pending (PAN retried by the player, not parked for review).
     const [kyc] = await db.select().from(kycRecordsTable).where(eq(kycRecordsTable.id, kycId));
     expect(kyc!.aadhaarVerified).toBe(true);
     expect(kyc!.status).toBe("pending");
 
-    // DB END-STATE: exactly ONE admin manual-review alert row for this KYC.
-    const logs = await alertLogs();
-    expect(logs.length).toBe(1);
-    expect(logs[0]!.status).toBe("sent");
-    expect(logs[0]!.dedupeKey).toBe("kyc_manual_review_alert_" + regId);
+    // The player-facing path now sends the player to a PAN self-retry.
+    expect(otpRes.body.status).toBe("PAN_RETRY");
 
-    // And exactly ONE alert email actually went out.
-    expect(alerts.count).toBe(1);
+    // Alerts: verify-otp never alerts anymore; only the webhook path may (and
+    // only when IT wins the false→true flip) — so the race yields AT MOST one.
+    const logs = await alertLogs();
+    expect(logs.length).toBeLessThanOrEqual(1);
+    if (logs.length === 1) {
+      expect(logs[0]!.status).toBe("sent");
+      expect(logs[0]!.dedupeKey).toBe("kyc_manual_review_alert_" + regId);
+    }
+    expect(alerts.count).toBe(logs.length);
   });
 });

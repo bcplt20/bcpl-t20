@@ -329,30 +329,13 @@ router.post("/initiate", requireAuth, async (req: AuthRequest, res) => {
   }
 
   if (!aadhaarResult) {
-    // Aadhaar OTP service also unavailable — accept the documents and verify manually.
-    // A paying player must never be blocked by a vendor outage.
-    const kyc = await upsertKyc({ panRef, aadhaarRef: `manual_review_${Date.now()}`, panVerified });
-    // Alert admin once: skip only when this registration is ALREADY sitting in
-    // pending manual review (player retrying while the vendor is still down).
-    // A previously failed/rejected row re-entering review must alert again.
-    const alreadyParked =
-      existingKyc?.status === "pending" &&
-      (existingKyc.aadhaarRef?.startsWith("manual_review") ?? false);
-    if (!alreadyParked) {
-      void alertAdminKycManualReview({
-        registrationId,
-        panVerified,
-        aadhaarVerified: false,
-        reason: panVerified
-          ? "Aadhaar OTP service was unavailable — verify Aadhaar manually"
-          : "Aadhaar OTP service AND PAN auto-verify were unavailable — verify both manually",
-      });
-    }
-    return void res.json({
-      success: true,
-      kycId:   kyc.id,
-      status:  "MANUAL_REVIEW",
-      message: "Documents received ✓. Our team will verify your KYC within 24–48 hours. You will get an SMS + email once verified.",
+    // Aadhaar OTP service hiccup — do NOT park for manual review (unmanageable
+    // at scale, and we hold no document numbers to check against). Save what
+    // already succeeded (a verified PAN stays saved, so a retry never re-bills
+    // it) and tell the player to simply try again.
+    await upsertKyc({ panRef, aadhaarRef: existingKyc?.aadhaarRef ?? `retry_${Date.now()}`, panVerified });
+    return void res.status(503).json({
+      error: "Aadhaar OTP service is busy right now. Please try again in a few minutes — your details are saved and nothing will be charged twice.",
     });
   }
 
@@ -369,8 +352,8 @@ router.post("/initiate", requireAuth, async (req: AuthRequest, res) => {
     return void res.json({
       success: true,
       kycId:   kyc.id,
-      status:  "MANUAL_REVIEW",
-      message: "Aadhaar already verified ✓. Your PAN will be checked by our team within 24–48 hours.",
+      status:  "PAN_RETRY",
+      message: "Aadhaar already verified ✓. PAN verification service was busy — please retry the PAN step in a few minutes. Nothing will be charged twice.",
     });
   }
 
@@ -450,21 +433,13 @@ router.post("/verify-otp", requireAuth, async (req: AuthRequest, res) => {
   // If PAN could not be auto-verified, KYC must stay pending until an admin
   // approves the PAN (admin Verify sets pan_verified=true and completes KYC).
   if (!kyc.panVerified) {
-    console.warn("[KYC] Aadhaar OTP done but PAN pending manual review — KYC stays pending", {
-      kycId: kyc.id, registrationId,
+    console.warn("[KYC] Aadhaar OTP done, PAN still pending — player will retry PAN", {
+      kycId: kyc.id, registrationId, transitioned,
     });
-    if (transitioned) {
-      void alertAdminKycManualReview({
-        registrationId,
-        panVerified: false,
-        aadhaarVerified: true,
-        reason: "Aadhaar verified by OTP; PAN could not be auto-verified — approve PAN manually",
-      });
-    }
     return void res.json({
       success: true,
-      status:  "MANUAL_REVIEW",
-      message: "Aadhaar verified ✓. Your PAN will be checked by our team within 24–48 hours. You will get an SMS + email once your KYC is complete.",
+      status:  "PAN_RETRY",
+      message: "Aadhaar verified ✓. Now retry the PAN step to finish your KYC — it takes a few seconds.",
     });
   }
 
@@ -619,12 +594,10 @@ router.post("/verify-pan", requireAuth, async (req: AuthRequest, res) => {
     });
   }
   if (result.outcome !== "valid") {
-    // Vendor down / not configured — the KYC stays parked for manual review
-    // (admin was already alerted when it was first parked).
-    return void res.json({
-      success: true,
-      status:  "MANUAL_REVIEW",
-      message: "PAN verification service is unavailable right now. Our team will verify your PAN manually within 24–48 hours.",
+    // Vendor down — retryable. Never parks the player; a verified Aadhaar
+    // stays verified and the PAN retry costs nothing until it succeeds.
+    return void res.status(503).json({
+      error: "PAN verification service is busy right now. Please try again in a few minutes — your Aadhaar verification is saved.",
     });
   }
 

@@ -200,6 +200,8 @@ export function Phase2KYC() {
       } else if (result.status === 'verified' || result.status === 'VALID') {
         setKycStatus('verified');
         setTimeout(() => { setLocation('/register/phase2/kyc-approved'); }, 2000);
+      } else if (result.status === 'PAN_RETRY') {
+        setResumeMode('pan');   // Aadhaar already done — only PAN left to retry
       } else {
         setKycStatus('pending');
       }
@@ -276,6 +278,9 @@ export function Phase2KYC() {
         setKycStatus('verified');
         setKycMsg(result.message);
         setTimeout(() => { setLocation('/register/phase2/kyc-approved'); }, 2000);
+      } else if (result.status === 'PAN_RETRY') {
+        setResumeMode('pan');   // Aadhaar verified — finish with a quick PAN retry
+        setKycMsg(result.message);
       } else if (result.status === 'MANUAL_REVIEW') {
         setKycStatus('pending');
         setKycMsg(result.message);
