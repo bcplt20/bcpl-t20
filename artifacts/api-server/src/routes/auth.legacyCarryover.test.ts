@@ -53,7 +53,7 @@ beforeAll(async () => {
       firstName: "Carry", lastName: "Over",
       phone: "91" + PHONE_PAID, // old exports often carry the country code
       email: `carryover.${rand8}@legacy-test.invalid`,
-      trialCity: "Delhi", role: "All Rounder",
+      trialCity: "Bangalore", role: "All Rounder", // old spelling — must normalise
       paymentStatus: "paid", amountPaise: 236000,
     },
     {
@@ -99,7 +99,7 @@ describe("legacy paid carryover login", () => {
     expect(reg.phase1Status).toBe("selected");
     expect(reg.phase2Status).toBe("payment_done");
     expect(reg.role).toBe("ar");
-    expect(reg.trialCity).toBe("Delhi");
+    expect(reg.trialCity).toBe("Bengaluru");
     expect(reg.regNumber).toMatch(/^BCPL-/);
     expect((reg.consents as any)?.legacyCarryover?.legacyRegId).toBe(LEGACY_ID_A);
   });

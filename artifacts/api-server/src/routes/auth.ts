@@ -44,6 +44,21 @@ async function findLegacyPaid(phone: string): Promise<LegacyRegistration | undef
   return rows[0];
 }
 
+/** Legacy exports use old city spellings; the current season's sequences use
+ *  the new ones. Normalise so a carryover Bengaluru player continues the same
+ *  BCPL-BEN-… sequence instead of forking a BAN one. */
+const LEGACY_CITY_ALIASES: Record<string, string> = {
+  "bangalore": "Bengaluru",
+  "gurgaon":   "Gurugram",
+  "new delhi": "Delhi",
+  "bombay":    "Mumbai",
+};
+function normalizeLegacyCity(c: string | null): string | null {
+  const t = (c ?? "").trim();
+  if (!t) return null;
+  return LEGACY_CITY_ALIASES[t.toLowerCase()] ?? t;
+}
+
 function mapLegacyRole(r: string | null): string {
   const s = (r ?? "").toLowerCase();
   if (s.includes("bowl")) return "bowl";
@@ -67,7 +82,7 @@ async function provisionLegacyCarryover(userId: string, legacy: LegacyRegistrati
     const [inserted] = await tx.insert(registrationsTable).values({
     userId,
     role: mapLegacyRole(legacy.role),
-    trialCity: legacy.trialCity,
+    trialCity: normalizeLegacyCity(legacy.trialCity),
     phase1Status: "selected",
     phase2Status: "payment_done",
     consents: { legacyCarryover: {
