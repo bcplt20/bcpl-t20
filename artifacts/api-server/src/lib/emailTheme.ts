@@ -753,7 +753,17 @@ export function SocialBar(): string {
 // Responsive: the contact row is two inline-block cells that stack cleanly on
 // narrow clients (the .bcpl-stack media rule below forces full-width stacking;
 // inline-block already wraps gracefully where media queries are unsupported).
-export const LegalFooter = `
+// Function (not const): the last line carries a per-send timestamp + ref so
+// no two emails end with identical trailing text — Gmail mobile otherwise
+// hides the whole footer behind a "..." (trimmed content) and it renders as a
+// broken, detached block (owner report 5 Aug '26).
+export function LegalFooter(): string {
+  const sentAt = new Date().toLocaleString("en-IN", {
+    timeZone: "Asia/Kolkata", day: "2-digit", month: "short", year: "numeric",
+    hour: "2-digit", minute: "2-digit", hour12: true,
+  });
+  const ref = Math.random().toString(36).slice(2, 8).toUpperCase();
+  return `
   <tr><td style="padding:20px 32px 28px;background:${COLORS.footerBand};border-top:1px solid rgba(255,255,255,0.12);text-align:center;">
     <div style="font-family:${FONT};font-size:14px;color:${COLORS.footerLink};font-weight:800;letter-spacing:.5px;">Bhartiya Corporate Premier League</div>
     <div style="font-family:${FONT};font-size:13px;color:${COLORS.footer};margin-top:4px;">Bhartiya Corporate Premier League</div>
@@ -774,7 +784,11 @@ export const LegalFooter = `
       <a href="${SITE_URL}/register/result" style="color:${COLORS.footerLink};text-decoration:underline;">notification preferences</a>,
       or reply <strong>STOP</strong> to opt out of reminders.
     </div>
+    <div style="font-family:${FONT};font-size:11px;color:${COLORS.footer};opacity:0.7;margin-top:12px;line-height:1.5;">
+      Sent ${sentAt} IST &middot; Ref ${ref}
+    </div>
   </td></tr>`;
+}
 
 /* ── Email shell (outer wrapper + body + footer chrome) ───────────────────── */
 export function EmailShell(body: string): string {
@@ -806,7 +820,7 @@ export function EmailShell(body: string): string {
         ${BrushBottom}
         ${SPONSOR_TOKEN}
         ${SocialBar()}
-        ${LegalFooter}
+        ${LegalFooter()}
       </table>
     </td></tr>
   </table>
