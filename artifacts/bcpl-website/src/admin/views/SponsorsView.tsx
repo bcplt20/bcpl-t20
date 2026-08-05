@@ -39,17 +39,24 @@ function readLegacy(): Sponsor[] {
 const statusColor = (s: string) =>
   s === "active" ? "#10B981" : s === "negotiating" ? "#F59E0B" : "#EF4444";
 
-/** Group sponsors by category, preserving admin array order (a category's
-    position = where it FIRST appears). Each group also records the array
-    indices of its items so per-sponsor move buttons map back to the array. */
-type SponsorGroup = { label: string; items: Sponsor[]; indices: number[] };
+/** Group sponsors into CONTIGUOUS RUNS by category — a new tier starts
+    whenever the category changes from the previous row. This is the honest
+    representation of the array: a non-contiguous category (e.g. [A,B,A])
+    stays as two separate tiers instead of being silently merged, so tier
+    reordering can never rewrite the array or move non-adjacent items.
+    `start` is the array index of the group's first item; because the run is
+    contiguous, item k lives at array index start + k. */
+type SponsorGroup = { label: string; items: Sponsor[]; start: number };
 function groupSponsors(list: Sponsor[]): SponsorGroup[] {
   const groups: SponsorGroup[] = [];
   list.forEach((s, idx) => {
     const label = (s.category || "").trim() || "Uncategorised";
-    const g = groups.find(x => x.label.toLowerCase() === label.toLowerCase());
-    if (g) { g.items.push(s); g.indices.push(idx); }
-    else groups.push({ label, items: [s], indices: [idx] });
+    const last = groups[groups.length - 1];
+    if (last && last.label.toLowerCase() === label.toLowerCase()) {
+      last.items.push(s);
+    } else {
+      groups.push({ label, items: [s], start: idx });
+    }
   });
   return groups;
 }
@@ -221,28 +228,28 @@ export default function SponsorsView() {
     void persist(sponsors.filter(s => s.id !== id));
   }
 
-  /** Reorder — the list order IS the website display order (top = first).
-      The footer strip and /sponsors wall follow this exact order. This moves
-      one sponsor within its own tier group (adjacent same-category sponsor). */
-  function move(idx: number, dir: -1 | 1) {
-    const j = idx + dir;
-    if (j < 0 || j >= sponsors.length) return;
+  /** Swap two sponsors by their exact array indices. Callers pass the two
+      real array positions to swap (never a raw i±1 guess), so a within-tier
+      move can only ever exchange a sponsor with its same-group neighbour and
+      never crosses a category boundary. */
+  function swapAt(a: number, b: number) {
+    if (a < 0 || b < 0 || a >= sponsors.length || b >= sponsors.length || a === b) return;
     const next = [...sponsors];
-    [next[idx], next[j]] = [next[j], next[idx]];
+    [next[a], next[b]] = [next[b], next[a]];
     void persist(next);
   }
 
-  /** Move an entire TIER (all sponsors sharing a category, kept as a
-      contiguous block) up or down relative to the other tiers. The tier
-      order = the order categories first appear in the array, which is the
-      exact display order on the public wall + footer strip. */
+  /** Move an entire TIER (a CONTIGUOUS run of same-category sponsors) up or
+      down by swapping it with the adjacent tier block. Because tiers are
+      contiguous runs, we rebuild the array as tier-block segments in the new
+      order — this can never merge non-adjacent same-category rows. */
   function moveGroup(gi: number, dir: -1 | 1) {
     const groups = groupSponsors(sponsors);
     const j = gi + dir;
     if (j < 0 || j >= groups.length) return;
-    const g = [...groups];
-    [g[gi], g[j]] = [g[j], g[gi]];
-    void persist(g.flatMap(x => x.items));
+    const order = groups.map((_, k) => k);
+    [order[gi], order[j]] = [order[j], order[gi]];
+    void persist(order.flatMap(k => groups[k].items));
   }
 
   const total = sponsors.filter(s => s.status === "active").reduce((acc, s) => {
@@ -478,18 +485,18 @@ export default function SponsorsView() {
             {/* Sponsors within this tier */}
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {group.items.map((s, giIdx) => {
-                const i = group.indices[giIdx];              // array index
+                const i = group.start + giIdx;               // exact array index (run is contiguous)
                 const canUp = giIdx > 0;                     // has a sibling above in this tier
                 const canDown = giIdx < group.items.length - 1;
                 return (
                   <div key={s.id} style={{ background: "#243050", border: "1px solid #33436B", borderRadius: 12, borderLeft: `3px solid ${statusColor(s.status)}`, padding: "12px 14px" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                      {/* Reorder within tier */}
+                      {/* Reorder within tier — swaps with the same-group neighbour only */}
                       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, flexShrink: 0 }}>
-                        <button onClick={() => move(i, -1)} disabled={!canUp} title="Move up within this tier"
+                        <button onClick={() => swapAt(i, i - 1)} disabled={!canUp} title="Move up within this tier"
                           style={{ background: "none", border: "1px solid #33436B", borderRadius: 6, color: !canUp ? "#33436B" : "#C3CEE3", fontSize: 10, cursor: !canUp ? "default" : "pointer", padding: "3px 8px", lineHeight: 1 }}>▲</button>
                         <span style={{ fontSize: 10, fontWeight: 800, color: "#FF6B00" }}>#{giIdx + 1}</span>
-                        <button onClick={() => move(i, 1)} disabled={!canDown} title="Move down within this tier"
+                        <button onClick={() => swapAt(i, i + 1)} disabled={!canDown} title="Move down within this tier"
                           style={{ background: "none", border: "1px solid #33436B", borderRadius: 6, color: !canDown ? "#33436B" : "#C3CEE3", fontSize: 10, cursor: !canDown ? "default" : "pointer", padding: "3px 8px", lineHeight: 1 }}>▼</button>
                       </div>
                       {/* Logo */}

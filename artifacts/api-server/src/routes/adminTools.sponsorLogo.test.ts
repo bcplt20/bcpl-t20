@@ -125,4 +125,25 @@ describe("POST /api/admin-tools/sponsor-logo", () => {
     const res = await fetch(`${base}/api/admin-tools/sponsor-logo`, { method: "POST", body: form });
     expect(res.status).toBe(400);
   });
+
+  it("rejects an oversized-dimension image (DoS guard) with a 400, not a raster", async () => {
+    // Tiny FILE, but declares gigantic dimensions — the classic memory-bomb
+    // vector. The metadata guard must reject BEFORE any rasterisation.
+    const svg = Buffer.from(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="100000" height="100000"><rect width="100000" height="100000" fill="#c00"/></svg>`,
+    );
+    expect(svg.length).toBeLessThan(200); // it really is a tiny file
+
+    const before = uploaded.length;
+    const form = new FormData();
+    form.append("file", new Blob([new Uint8Array(svg)], { type: "image/svg+xml" }), "bomb.svg");
+
+    const res = await fetch(`${base}/api/admin-tools/sponsor-logo`, { method: "POST", body: form });
+    expect(res.status).toBe(400);
+    const body = (await res.json()) as { error: string };
+    expect(body.error).toMatch(/too large/i);
+
+    // nothing was uploaded — the guard fired before putObject
+    expect(uploaded.length).toBe(before);
+  });
 });

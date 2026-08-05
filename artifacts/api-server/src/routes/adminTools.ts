@@ -1072,22 +1072,78 @@ const sponsorLogoUpload = multer({
   limits: { fileSize: SPONSOR_LOGO_MAX_BYTES, files: 1 },
 });
 
-/** Accepted raw upload MIME types (svg is rasterised via sharp density 300). */
+/** Accepted raw upload MIME types (svg is rasterised at a capped density). */
 const SPONSOR_LOGO_MIMES = new Set([
   "image/png", "image/jpeg", "image/jpg", "image/webp", "image/svg+xml",
 ]);
+
+/* DoS guards — a tiny crafted file (esp. SVG) can declare enormous dimensions
+   and blow up memory when rasterised. We reject oversized declared dimensions
+   BEFORE any pixel work, and cap sharp's own decode budget. */
+const MAX_INPUT_PIXELS = 40e6;          // sharp decode ceiling (input side)
+const MAX_LOGO_MEGAPIXELS = 30e6;       // reject width*height above ~30 MP
+const MAX_LOGO_DIMENSION = 10000;       // reject any side > 10000 px
+const SVG_TARGET_LONGEST_SIDE = 2000;   // rasterise SVG to ~2000px longest side
+const SVG_BASE_DENSITY = 72;            // sharp's default SVG density (DPI)
+
+/** Thrown when an image's declared dimensions exceed the DoS guardrails. The
+ *  route maps this to a 400 (not a 500) so a hostile upload is a clean reject. */
+export class ImageTooLargeError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ImageTooLargeError";
+  }
+}
 
 /**
  * The sharp pipeline: flatten transparency onto white, trim the surrounding
  * uniform border (dead space) with a small tolerance, fit within 800×400,
  * add ~40px of white padding, output PNG. trim() throws on single-colour
  * images, so it is wrapped and falls back to the untrimmed image.
+ *
+ * DoS hardening: metadata() is read FIRST and images with absurd declared
+ * dimensions (megapixels/side over the guard) are rejected before any raster
+ * work. For SVG we compute a density that caps the rasterised output at
+ * ~2000px on the longest side (instead of a blind density:300), and every
+ * sharp instance carries limitInputPixels so a decode can never explode.
  * Exported for the vitest contract test.
  */
 export async function processSponsorLogo(input: Buffer, mime: string): Promise<Buffer> {
   const isSvg = mime === "image/svg+xml";
-  // Rasterise SVG at a high density so the vector mark comes out crisp.
-  const base = sharp(input, isSvg ? { density: 300 } : {});
+  const sharpOpts = { limitInputPixels: MAX_INPUT_PIXELS };
+
+  // Read intrinsic dimensions at the DEFAULT density first (no raster yet).
+  // metadata() does not decode pixels, so we lift the pixel limit HERE only —
+  // our explicit dimension guard below rejects oversized declarations with a
+  // friendly message before any raster op (which does carry limitInputPixels).
+  const meta = await sharp(input, { limitInputPixels: false }).metadata();
+  const declW = meta.width ?? 0;
+  const declH = meta.height ?? 0;
+  if (declW <= 0 || declH <= 0) {
+    throw new ImageTooLargeError("Image has no readable dimensions");
+  }
+  if (declW > MAX_LOGO_DIMENSION || declH > MAX_LOGO_DIMENSION) {
+    throw new ImageTooLargeError(`Image too large — each side must be under ${MAX_LOGO_DIMENSION}px (got ${declW}×${declH})`);
+  }
+  if (declW * declH > MAX_LOGO_MEGAPIXELS) {
+    throw new ImageTooLargeError(`Image too large — must be under ${Math.round(MAX_LOGO_MEGAPIXELS / 1e6)} megapixels (got ${(declW * declH / 1e6).toFixed(1)} MP)`);
+  }
+
+  // For SVG, pick a density that renders the longest side to ~2000px. The
+  // metadata above is measured at SVG_BASE_DENSITY, so scale from there and
+  // never enlarge past the base (density is clamped to [1, base*cap]).
+  let base;
+  if (isSvg) {
+    const longest = Math.max(declW, declH);
+    // Density that renders the longest side to ~SVG_TARGET_LONGEST_SIDE px.
+    // Clamped to a sane ceiling so a 1px-declared SVG can't request an absurd
+    // density; the target-side math already bounds the rasterised pixel count.
+    const scaled = Math.round(SVG_BASE_DENSITY * (SVG_TARGET_LONGEST_SIDE / longest));
+    const density = Math.max(1, Math.min(scaled, 2400));
+    base = sharp(input, { ...sharpOpts, density });
+  } else {
+    base = sharp(input, sharpOpts);
+  }
 
   // 1. flatten any transparency onto pure white
   let img = base.flatten({ background: "#ffffff" });
@@ -1129,6 +1185,11 @@ router.post(
     try {
       processed = await processSponsorLogo(file.buffer, file.mimetype);
     } catch (err) {
+      // Dimension-guard rejections surface their own message; everything else
+      // is a generic processing failure. Both are a clean 400 (hostile input).
+      if (err instanceof ImageTooLargeError) {
+        return void res.status(400).json({ error: err.message });
+      }
       return void res.status(400).json({ error: "Could not process image: " + String((err as Error)?.message ?? err).slice(0, 200) });
     }
 
