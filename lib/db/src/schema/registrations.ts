@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, timestamp, jsonb, index } from "drizzle-orm/pg-core";
 import { usersTable } from "./users";
 
 export const registrationsTable = pgTable("registrations", {
@@ -20,6 +20,8 @@ export const registrationsTable = pgTable("registrations", {
   consents:     jsonb("consents").$type<Record<string, unknown>>(),
   createdAt:    timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt:    timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
-});
+}, (t) => [
+  index("registrations_user_id_idx").on(t.userId),
+]);
 
 export type Registration = typeof registrationsTable.$inferSelect;

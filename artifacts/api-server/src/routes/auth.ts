@@ -2,7 +2,7 @@ import { draftOnOtpRequested, draftOnOtpVerified } from "./drafts";
 import { Router } from "express";
 import { db } from "@workspace/db";
 import { usersTable, otpSessionsTable, registrationsTable } from "@workspace/db/schema";
-import { eq, and, gt, gte, isNull } from "drizzle-orm";
+import { eq, and, gt, gte, isNull, lt } from "drizzle-orm";
 import { sendOtp, otpConfigured } from "../lib/sms";
 import { signToken } from "../lib/auth";
 import { requireAuth, type AuthRequest } from "../middlewares/auth";
@@ -87,6 +87,11 @@ router.post("/send-otp", async (req, res) => {
 
   const otp       = generateOtp();
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 min
+
+  // Opportunistic cleanup: drop this phone's rows older than 24h so
+  // otp_sessions stays bounded even at large registration volumes.
+  await db.delete(otpSessionsTable)
+    .where(and(eq(otpSessionsTable.phone, phone), lt(otpSessionsTable.createdAt, new Date(Date.now() - 24 * HOUR_MS))));
 
   await db.insert(otpSessionsTable).values({ phone, otpCode: otp, purpose, expiresAt });
 
