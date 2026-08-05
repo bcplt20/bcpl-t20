@@ -200,7 +200,7 @@ export function buildInvoicePdf(data: InvoicePdfData): Promise<Buffer> {
       doc.fillColor(INK).font("Helvetica").fontSize(9);
       const descTop = y + 8;
       doc.text(itemDesc, pageLeft + 10, descTop, { width: contentWidth - 130 });
-      doc.text(`\u20B9 ${inr(g.base)}`, pageRight - 120, descTop, { width: 110, align: "right" });
+      doc.text(`Rs. ${inr(g.base)}`, pageRight - 120, descTop, { width: 110, align: "right" });
       y = doc.y + 10;
       doc.moveTo(pageLeft, y).lineTo(pageRight, y).lineWidth(0.5).strokeColor(HAIRLINE).stroke();
       y += 6;
@@ -217,18 +217,18 @@ export function buildInvoicePdf(data: InvoicePdfData): Promise<Buffer> {
         y = doc.y + (strong ? 4 : 3);
       };
 
-      taxRow("Taxable Value", `\u20B9 ${inr(g.base)}`);
+      taxRow("Taxable Value", `Rs. ${inr(g.base)}`);
       if (data.igst) {
-        taxRow("IGST @ 18%", `\u20B9 ${inr(g.gst)}`);
+        taxRow("IGST @ 18%", `Rs. ${inr(g.gst)}`);
       } else {
-        taxRow("CGST @ 9%", `\u20B9 ${inr(g.cgst)}`);
-        taxRow("SGST @ 9%", `\u20B9 ${inr(g.sgst)}`);
+        taxRow("CGST @ 9%", `Rs. ${inr(g.cgst)}`);
+        taxRow("SGST @ 9%", `Rs. ${inr(g.sgst)}`);
       }
       // Rule above grand total
       y += 3;
       doc.moveTo(sumLabelX, y).lineTo(pageRight, y).lineWidth(1).strokeColor(ORANGE).stroke();
       y += 8;
-      taxRow("Total Paid (incl. GST)", `\u20B9 ${inr(g.total)}`, { strong: true });
+      taxRow("Total Paid (incl. GST)", `Rs. ${inr(g.total)}`, { strong: true });
 
       y += 24;
 
