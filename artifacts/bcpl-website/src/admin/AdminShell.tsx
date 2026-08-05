@@ -25,6 +25,7 @@ import ContentCalendarView  from "./views/ContentCalendarView";
 import LeaderboardView      from "./views/LeaderboardView";
 import WhatsAppTemplatesView from "./views/WhatsAppTemplatesView";
 import DataExportView       from "./views/DataExportView";
+import LegacyImportView      from "./views/LegacyImportView";
 import AffiliatesView       from "./views/AffiliatesView";
 import VideoReviewView         from "./views/VideoReviewView";
 import Phase1RegistrationsView from "./views/Phase1RegistrationsView";
@@ -95,6 +96,7 @@ const NAV: NavGroup[] = [
   ]},
   { title: "SYSTEM", items: [
     { id:"data_export",     label:"Data Export",        icon:"⊕" },
+    { id:"legacy_import",   label:"Legacy Data Import", icon:"⇪" },
     { id:"api_health",      label:"API Health",         icon:"◉" },
     { id:"audit_trail",     label:"Audit Trail",        icon:"◷" },
     { id:"roles",           label:"Roles & Access",     icon:"◈" },
@@ -146,6 +148,7 @@ function renderView(id: string, navigate: (viewId: string, payload?: AdminNavPay
     case "cms":            return <CMSView />;
     case "sponsors":       return <SponsorsView />;
     case "data_export":    return <DataExportView />;
+    case "legacy_import":  return <LegacyImportView />;
     case "api_health":     return <ApiHealthView />;
     case "audit_trail":    return <AuditTrailView />;
     case "roles":          return <RolesView />;

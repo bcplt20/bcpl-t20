@@ -22,6 +22,7 @@ import {
   kycRecordsTable,
   phase1VideosTable,
   siteSettingsTable,
+  legacyRegistrationsTable,
 } from "@workspace/db/schema";
 import { eq, desc, asc, sql, and, isNotNull, isNull } from "drizzle-orm";
 import { z } from "zod";
@@ -1209,6 +1210,138 @@ router.post(
     res.json({ key, url: getS3Url(key) });
   }),
 );
+
+
+/* ============================================================================
+ * Legacy registrations import — CSV uploads from the old WordPress site.
+ * Kept fully separate from live users/registrations. Idempotent on
+ * (source, legacy_reg_id): re-uploading the same file skips existing rows.
+ * ========================================================================== */
+
+const LEGACY_CSV_MAX_BYTES = 64 * 1024 * 1024; // unpaid export is ~30 MB
+const legacyCsvUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: LEGACY_CSV_MAX_BYTES, files: 1 },
+});
+
+/** Minimal RFC-4180 CSV parser (quotes, embedded commas/newlines). */
+function parseCsv(text: string): string[][] {
+  const rows: string[][] = [];
+  let row: string[] = [], field = "", inQ = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQ) {
+      if (c === '"') {
+        if (text[i + 1] === '"') { field += '"'; i++; }
+        else inQ = false;
+      } else field += c;
+    } else if (c === '"') inQ = true;
+    else if (c === ",") { row.push(field); field = ""; }
+    else if (c === "\n") { row.push(field); field = ""; rows.push(row); row = []; }
+    else if (c !== "\r") field += c;
+  }
+  if (field.length || row.length) { row.push(field); rows.push(row); }
+  return rows.filter(r => r.length > 1 || (r.length === 1 && r[0].trim() !== ""));
+}
+
+function legacyTs(v: string | undefined): Date | null {
+  const t = (v ?? "").trim();
+  if (!t) return null;
+  // Legacy exports are IST wall-clock times without a zone marker.
+  const d = new Date(t.replace(" ", "T") + "+05:30");
+  return isNaN(d.getTime()) ? null : d;
+}
+
+const LEGACY_SOURCES = new Set(["paid", "unpaid"]);
+
+router.post(
+  "/legacy-import",
+  legacyCsvUpload.single("file"),
+  safe("legacy-import", async (req, res) => {
+    const source = String(req.query.source ?? "");
+    if (!LEGACY_SOURCES.has(source)) {
+      return void res.status(400).json({ error: "source must be 'paid' or 'unpaid'" });
+    }
+    const file = (req as Request & { file?: Express.Multer.File }).file;
+    if (!file) return void res.status(400).json({ error: "No file uploaded — send multipart field 'file'" });
+
+    const rows = parseCsv(file.buffer.toString("utf8"));
+    if (rows.length < 2) return void res.status(400).json({ error: "CSV appears empty" });
+    const header = rows[0].map(h => h.trim().toLowerCase());
+    const col = (name: string) => header.indexOf(name.toLowerCase());
+    const iId = col("Registration ID");
+    const iFn = col("First Name"), iLn = col("Last Name"), iPh = col("Mobile Number"), iEm = col("Email");
+    const iDob = col("Date of Birth"), iSt = col("State"), iCity = col("City"), iTc = col("Trial City");
+    const iRole = col("Player Role"), iTs = col("Trial Status"), iPs = col("Payment Status");
+    const iAmt = col("Amount"), iPd = col("Payment Date"), iRef = col("Referral Code"), iUpd = col("Updated Date");
+    if (iId < 0 || iFn < 0 || iPh < 0) {
+      return void res.status(400).json({ error: "CSV header not recognised — expected the legacy export format (Registration ID, First Name, Mobile Number, ...)" });
+    }
+
+    let inserted = 0, skippedDup = 0, badRows = 0;
+    const seen = new Set<number>();
+    type Rec = typeof legacyRegistrationsTable.$inferInsert;
+    const batch: Rec[] = [];
+    const flush = async () => {
+      if (!batch.length) return;
+      const r = await db.insert(legacyRegistrationsTable).values(batch).onConflictDoNothing().returning({ id: legacyRegistrationsTable.id });
+      inserted += r.length;
+      skippedDup += batch.length - r.length;
+      batch.length = 0;
+    };
+
+    for (let i = 1; i < rows.length; i++) {
+      const r = rows[i];
+      const legacyRegId = parseInt((r[iId] ?? "").trim(), 10);
+      const firstName = (r[iFn] ?? "").trim();
+      const phone = (r[iPh] ?? "").trim();
+      if (!Number.isFinite(legacyRegId) || !firstName || !phone) { badRows++; continue; }
+      if (seen.has(legacyRegId)) { skippedDup++; continue; }
+      seen.add(legacyRegId);
+      const amtRaw = (r[iAmt] ?? "").replace(/[^0-9.]/g, "");
+      const amountPaise = amtRaw ? Math.round(parseFloat(amtRaw) * 100) : 0;
+      const dobRaw = (r[iDob] ?? "").trim();
+      batch.push({
+        source,
+        legacyRegId,
+        firstName: firstName.slice(0, 120),
+        lastName: ((r[iLn] ?? "").trim() || null)?.slice(0, 120) ?? null,
+        phone: phone.slice(0, 15),
+        email: ((r[iEm] ?? "").trim().toLowerCase() || null)?.slice(0, 255) ?? null,
+        dob: /^\d{4}-\d{2}-\d{2}$/.test(dobRaw) ? dobRaw : null,
+        state: ((r[iSt] ?? "").trim() || null)?.slice(0, 120) ?? null,
+        city: ((r[iCity] ?? "").trim() || null)?.slice(0, 120) ?? null,
+        trialCity: ((r[iTc] ?? "").trim() || null)?.slice(0, 120) ?? null,
+        role: ((r[iRole] ?? "").trim() || null)?.slice(0, 60) ?? null,
+        trialStatus: ((r[iTs] ?? "").trim() || null)?.slice(0, 40) ?? null,
+        paymentStatus: ((r[iPs] ?? "").trim() || null)?.slice(0, 40) ?? null,
+        amountPaise: Number.isFinite(amountPaise) ? amountPaise : 0,
+        paymentDate: legacyTs(r[iPd]),
+        referralCode: ((r[iRef] ?? "").trim() || null)?.slice(0, 80) ?? null,
+        legacyUpdatedAt: legacyTs(r[iUpd]),
+      });
+      if (batch.length >= 500) await flush();
+    }
+    await flush();
+
+    res.json({ ok: true, source, totalRows: rows.length - 1, inserted, skippedDup, badRows });
+  }),
+);
+
+router.get("/legacy-stats", safe("legacy-stats", async (_req, res) => {
+  const bySource = await db.execute(sql`
+    SELECT source, COUNT(*)::int AS count, COALESCE(SUM(amount_paise),0)::bigint AS amount_paise
+    FROM legacy_registrations GROUP BY source ORDER BY source`);
+  const overlap = await db.execute(sql`
+    SELECT COUNT(DISTINCT l.phone)::int AS c
+    FROM legacy_registrations l JOIN users u ON u.phone = l.phone`);
+  res.json({
+    bySource: (bySource.rows as { source: string; count: number; amount_paise: string }[]).map(r => ({
+      source: r.source, count: r.count, amountPaise: Number(r.amount_paise),
+    })),
+    alreadyOnNewSite: (overlap.rows[0] as { c: number } | undefined)?.c ?? 0,
+  });
+}));
 
 export default router;
 export { financeSummaryHandler };

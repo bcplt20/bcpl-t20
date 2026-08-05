@@ -1,5 +1,6 @@
 export * from "./users";
 export * from "./otp_sessions";
+export * from "./legacy_registrations";
 export * from "./registrations";
 export * from "./phase1_payments";
 export * from "./phase1_videos";
