@@ -31,7 +31,7 @@ const isPaid = (r: Reg) => r.payment?.status === "paid" || r.payment?.status ===
 const P2_PAID_STATUSES = ["payment_done","kyc_done","selected","rejected"];
 const isP2Paid = (r: Reg) => r.phase2Payment?.status === "success" || P2_PAID_STATUSES.includes(r.phase2Status ?? "");
 
-const CITY_COLORS = ["#C2410C","#B45309","#047857","#4F46E5","#1D4ED8","#BE185D"];
+const CITY_COLORS = ["#FF6B00","#F59E0B","#10B981","#6366F1","#3B82F6","#EC4899"];
 
 const sourceData: {name:string,value:number,color:string}[] = [];
 const topInfluencers: {name:string,platform:string,clicks:number,signups:number,conversion:string,revenue:string}[] = [];
@@ -53,8 +53,8 @@ const timeAgo = (d: string) => {
 
 const CustomTooltip = ({ active, payload, label }:any) => {
   if(active&&payload&&payload.length) return (
-    <div style={{ background:"#FFFFFF", border:"1px solid #E2E8F0", borderRadius:10, padding:"10px 16px" }}>
-      <p style={{ color:"#64748B", fontSize:11, margin:"0 0 4px" }}>{label}</p>
+    <div style={{ background:"#0D1526", border:"1px solid #1E293B", borderRadius:10, padding:"10px 16px" }}>
+      <p style={{ color:"#94A3B8", fontSize:11, margin:"0 0 4px" }}>{label}</p>
       {payload.map((p:any)=>(
         <p key={p.name} style={{ color:p.color, fontSize:14, fontWeight:700, margin:"2px 0" }}>
           {p.name==="actual"?"Actual Revenue":p.name==="target"?"Target":p.value.toLocaleString()+" users"}
@@ -88,8 +88,8 @@ export default function DashboardView({ onNavigate, refreshTick = 0 }: { onNavig
   }, [refreshTick, dtab]);
 
   const card:React.CSSProperties = {
-    background:"linear-gradient(135deg,#FFFFFF 0%,#FFFFFF 100%)",
-    border:"1px solid #E2E8F0", borderRadius:16, padding:20,
+    background:"linear-gradient(135deg,#0D1526 0%,#0A1020 100%)",
+    border:"1px solid #1E293B", borderRadius:16, padding:20,
   };
 
   /* ── derived data ── */
@@ -107,13 +107,13 @@ export default function DashboardView({ onNavigate, refreshTick = 0 }: { onNavig
   const activeUsers  = regs.filter(r => now - new Date(r.createdAt).getTime() < 7*24*3600*1000).length;
 
   const metricCards: { label:string; value:string; sub:string; color:string; icon:string; live?:boolean; tab:string; payload?:NavPayload }[] = [
-    { label:"Live Right Now", value:String(regs.filter(r=>now-new Date(r.createdAt).getTime()<3600*1000).length), sub:"registered in last hour", color:"#047857", icon:"🟢", live:true, tab:"users", payload:{ quick:"active" } },
-    { label:"Total Users",    value:totalUsers.toLocaleString(), sub:`${totalRegs} registrations`, color:"#4F46E5", icon:"👥", tab:"users" },
-    { label:"Active Users",   value:activeUsers.toLocaleString(), sub:"registered last 7 days", color:"#1D4ED8", icon:"⚡", tab:"users", payload:{ quick:"active" } },
-    { label:"Phase 1 Paid",   value:paidCount.toLocaleString(), sub:`₹${p1Revenue.toLocaleString()} revenue`, color:"#B45309", icon:"💳", tab:"finance" },
-    { label:"Phase 2 Paid",   value:p2PaidRegs.length.toLocaleString(), sub:`₹${p2Revenue.toLocaleString()} revenue`, color:"#047857", icon:"🎫", tab:"finance" },
-    { label:"Selected",       value:selectedCount.toLocaleString(), sub:"Phase 1 selected players", color:"#C2410C", icon:"🏆", tab:"phase1_regs", payload:{ filter:"selected" } },
-    { label:"Dropped Off",    value:droppedOff.toLocaleString(), sub:"registered, no payment", color:"#DC2626", icon:"❌", tab:"users", payload:{ quick:"no_payment" } },
+    { label:"Live Right Now", value:String(regs.filter(r=>now-new Date(r.createdAt).getTime()<3600*1000).length), sub:"registered in last hour", color:"#10B981", icon:"🟢", live:true, tab:"users", payload:{ quick:"active" } },
+    { label:"Total Users",    value:totalUsers.toLocaleString(), sub:`${totalRegs} registrations`, color:"#6366F1", icon:"👥", tab:"users" },
+    { label:"Active Users",   value:activeUsers.toLocaleString(), sub:"registered last 7 days", color:"#3B82F6", icon:"⚡", tab:"users", payload:{ quick:"active" } },
+    { label:"Phase 1 Paid",   value:paidCount.toLocaleString(), sub:`₹${p1Revenue.toLocaleString()} revenue`, color:"#F59E0B", icon:"💳", tab:"finance" },
+    { label:"Phase 2 Paid",   value:p2PaidRegs.length.toLocaleString(), sub:`₹${p2Revenue.toLocaleString()} revenue`, color:"#10B981", icon:"🎫", tab:"finance" },
+    { label:"Selected",       value:selectedCount.toLocaleString(), sub:"Phase 1 selected players", color:"#FF6B00", icon:"🏆", tab:"phase1_regs", payload:{ filter:"selected" } },
+    { label:"Dropped Off",    value:droppedOff.toLocaleString(), sub:"registered, no payment", color:"#EF4444", icon:"❌", tab:"users", payload:{ quick:"no_payment" } },
   ];
 
   const weekTarget = 5000;
@@ -122,17 +122,17 @@ export default function DashboardView({ onNavigate, refreshTick = 0 }: { onNavig
 
   /* each pending-action card navigates to its admin tab */
   const pendingActions: { icon:string; count:number; label:string; color:string; action:string; tab:string; payload?:NavPayload }[] = [
-    { icon:"🎬", count:videosPending, label:"Videos pending review", color:"#B45309", action:"Review Now", tab:"video_review" },
-    { icon:"✅", count:stats?.kyc.pending ?? 0, label:"KYC approvals pending", color:"#4F46E5", action:"Approve", tab:"phase2_kyc" },
-    { icon:"💳", count:regs.filter(r=>r.payment && r.payment.status==="failed" && !PAID_STATUSES.includes(r.phase1Status)).length, label:"Failed payments to retry", color:"#DC2626", action:"View Failed", tab:"finance" },
-    { icon:"📧", count:selectedCount, label:"Phase 1 selected players", color:"#047857", action:"View Selected", tab:"phase1_regs", payload:{ filter:"selected" } },
+    { icon:"🎬", count:videosPending, label:"Videos pending review", color:"#F59E0B", action:"Review Now", tab:"video_review" },
+    { icon:"✅", count:stats?.kyc.pending ?? 0, label:"KYC approvals pending", color:"#6366F1", action:"Approve", tab:"phase2_kyc" },
+    { icon:"💳", count:regs.filter(r=>r.payment && r.payment.status==="failed" && !PAID_STATUSES.includes(r.phase1Status)).length, label:"Failed payments to retry", color:"#EF4444", action:"View Failed", tab:"finance" },
+    { icon:"📧", count:selectedCount, label:"Phase 1 selected players", color:"#10B981", action:"View Selected", tab:"phase1_regs", payload:{ filter:"selected" } },
   ];
 
   const funnelData = [
-    { name:"Visited",      value:Math.max(totalUsers, totalRegs), color:"#64748B" },
-    { name:"Registered",   value:totalRegs, color:"#C2410C" },
-    { name:"Phase 1 Paid", value:paidCount, color:"#B45309" },
-    { name:"Selected",     value:selectedCount, color:"#047857" },
+    { name:"Visited",      value:Math.max(totalUsers, totalRegs), color:"#334155" },
+    { name:"Registered",   value:totalRegs, color:"#FF6B00" },
+    { name:"Phase 1 Paid", value:paidCount, color:"#F59E0B" },
+    { name:"Selected",     value:selectedCount, color:"#10B981" },
   ];
   const funnelMax = Math.max(1, ...funnelData.map(f=>f.value));
 
@@ -195,7 +195,7 @@ export default function DashboardView({ onNavigate, refreshTick = 0 }: { onNavig
     <div style={{ display:"flex", flexDirection:"column", gap:18 }}>
 
       {err && (
-        <div style={{ padding:"12px 16px", background:"#EF444415", border:"1px solid #EF444444", borderRadius:12, color:"#DC2626", fontSize:13 }}>
+        <div style={{ padding:"12px 16px", background:"#EF444415", border:"1px solid #EF444444", borderRadius:12, color:"#EF4444", fontSize:13 }}>
           Failed to load dashboard data: {err}
         </div>
       )}
@@ -203,7 +203,7 @@ export default function DashboardView({ onNavigate, refreshTick = 0 }: { onNavig
       {/* ── Quick Actions ── */}
       <div style={{ display:"flex", gap:10, flexWrap:"wrap", alignItems:"center", justifyContent:"space-between" }}>
         <div>
-          <div style={{ fontSize:20, fontWeight:800, color:"#1E293B" }}>Dashboard</div>
+          <div style={{ fontSize:20, fontWeight:800, color:"#F1F5F9" }}>Dashboard</div>
           <div style={{ fontSize:12, color:"#64748B", marginTop:2 }}>BCPL T20 Season 5 · Live overview</div>
         </div>
         <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
@@ -214,8 +214,8 @@ export default function DashboardView({ onNavigate, refreshTick = 0 }: { onNavig
                 const rows=regs.map(r=>[r.user?.name??"",r.user?.phone??"",r.user?.email??"",r.trialCity??"",r.role??"",r.phase1Status,isPaid(r)?"Yes":"No"]);
                 const csv=[headers,...rows].map(r=>r.join(",")).join("\n");
                 const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='bcpl_users_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
-              }, style:{ background:"#FFFFFF", color:"#64748B", border:"1px solid #E2E8F0" }},
-            { label:"📊 Full Report",   action:()=>window.print(),  style:{ background:"#FFFFFF", color:"#64748B", border:"1px solid #E2E8F0" }},
+              }, style:{ background:"#1E293B", color:"#94A3B8", border:"1px solid #1E293B" }},
+            { label:"📊 Full Report",   action:()=>window.print(),  style:{ background:"#1E293B", color:"#94A3B8", border:"1px solid #1E293B" }},
           ].map(b=>(
             <button key={b.label} onClick={b.action} style={{ padding:"9px 16px", borderRadius:9, border:"none", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer", ...b.style }}>{b.label}</button>
           ))}
@@ -227,9 +227,9 @@ export default function DashboardView({ onNavigate, refreshTick = 0 }: { onNavig
         {([["overview","Overview"],["ops","Live Operations"],["alerts","Action Required"]] as const).map(([k,l])=>(
           <button key={k} onClick={()=>setDtab(k)}
             style={{ padding:"8px 18px", borderRadius:9, cursor:"pointer", fontSize:12, fontWeight:800,
-              border:"1px solid "+(dtab===k?"#FF6B00":"#E2E8F0"),
+              border:"1px solid "+(dtab===k?"#FF6B00":"#1E293B"),
               background:dtab===k?"#FF6B0022":"transparent",
-              color:dtab===k?"#C2410C":"#64748B" }}>{l}</button>
+              color:dtab===k?"#FF6B00":"#64748B" }}>{l}</button>
         ))}
       </div>
 
@@ -245,9 +245,9 @@ export default function DashboardView({ onNavigate, refreshTick = 0 }: { onNavig
             <div style={{ position:"absolute", top:0, right:0, width:80, height:80, background:`radial-gradient(circle,${m.color}18 0%,transparent 70%)`, borderRadius:"50%" }}/>
             <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:10 }}>
               <span style={{ fontSize:18 }}>{m.icon}</span>
-              {m.live&&<span style={{ display:"flex", alignItems:"center", gap:4 }}><span style={{ width:7, height:7, borderRadius:"50%", background:"#10B981", display:"inline-block", boxShadow:"0 0 6px #10B981" }}/><span style={{ fontSize:10, color:"#047857", fontWeight:700 }}>LIVE</span></span>}
+              {m.live&&<span style={{ display:"flex", alignItems:"center", gap:4 }}><span style={{ width:7, height:7, borderRadius:"50%", background:"#10B981", display:"inline-block", boxShadow:"0 0 6px #10B981" }}/><span style={{ fontSize:10, color:"#10B981", fontWeight:700 }}>LIVE</span></span>}
             </div>
-            <div style={{ fontSize:28, fontWeight:800, color:"#1E293B", letterSpacing:-1 }}>{m.value}</div>
+            <div style={{ fontSize:28, fontWeight:800, color:"#F1F5F9", letterSpacing:-1 }}>{m.value}</div>
             <div style={{ fontSize:12, color:"#64748B", marginTop:2 }}>{m.label}</div>
             <div style={{ fontSize:11, color:m.color, marginTop:6, fontWeight:600 }}>{m.sub}</div>
           </div>
@@ -258,20 +258,20 @@ export default function DashboardView({ onNavigate, refreshTick = 0 }: { onNavig
       <div style={{ ...card, padding:"16px 20px" }}>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 }}>
           <div>
-            <div style={{ fontSize:13, fontWeight:700, color:"#1E293B" }}>🎯 Registration Target</div>
+            <div style={{ fontSize:13, fontWeight:700, color:"#F1F5F9" }}>🎯 Registration Target</div>
             <div style={{ fontSize:11, color:"#64748B", marginTop:2 }}>{weekActual.toLocaleString()} of {weekTarget.toLocaleString()} paid registrations</div>
           </div>
           <div style={{ textAlign:"right" }}>
-            <div style={{ fontSize:24, fontWeight:900, color:targetPct>=100?"#047857":"#FF6B00" }}>{targetPct}%</div>
+            <div style={{ fontSize:24, fontWeight:900, color:targetPct>=100?"#10B981":"#FF6B00" }}>{targetPct}%</div>
             <div style={{ fontSize:10, color:"#475569" }}>{Math.max(0,weekTarget-weekActual)} remaining</div>
           </div>
         </div>
-        <div style={{ height:10, borderRadius:5, background:"#FFFFFF", overflow:"hidden" }}>
+        <div style={{ height:10, borderRadius:5, background:"#1E293B", overflow:"hidden" }}>
           <div style={{ height:"100%", width:`${targetPct}%`, background:`linear-gradient(90deg,#FF6B00,${targetPct>=100?"#10B981":"#F59E0B"})`, borderRadius:5, transition:"width 1s" }}/>
         </div>
         <div style={{ display:"flex", justifyContent:"space-between", marginTop:6 }}>
-          <span style={{ fontSize:10, color:"#64748B" }}>0</span>
-          <span style={{ fontSize:10, color:"#64748B" }}>Target: {weekTarget.toLocaleString()}</span>
+          <span style={{ fontSize:10, color:"#334155" }}>0</span>
+          <span style={{ fontSize:10, color:"#334155" }}>Target: {weekTarget.toLocaleString()}</span>
         </div>
       </div>
 
@@ -286,7 +286,7 @@ export default function DashboardView({ onNavigate, refreshTick = 0 }: { onNavig
                 <span style={{ fontSize:16, fontWeight:900, color:a.color }}>{a.count}</span>
               </div>
             </div>
-            <div style={{ fontSize:12, color:"#475569", marginBottom:8 }}>{a.label}</div>
+            <div style={{ fontSize:12, color:"rgba(255,255,255,.6)", marginBottom:8 }}>{a.label}</div>
             <button onClick={e=>{ e.stopPropagation(); onNavigate?.(a.tab, a.payload); }}
               style={{ padding:"5px 12px", borderRadius:7, border:`1px solid ${a.color}44`, background:a.color+"11", color:a.color, fontSize:11, fontWeight:700, cursor:"pointer" }}>{a.action}</button>
           </div>
@@ -296,25 +296,25 @@ export default function DashboardView({ onNavigate, refreshTick = 0 }: { onNavig
       {/* ── Revenue vs Target chart + Growth chart ── */}
       <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:14 }}>
         <div style={card}>
-          <div style={{ fontSize:14, fontWeight:700, color:"#1E293B", marginBottom:4 }}>Revenue vs Daily Target</div>
+          <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9", marginBottom:4 }}>Revenue vs Daily Target</div>
           <div style={{ fontSize:11, color:"#475569", marginBottom:16 }}>Actual collections vs set targets — last 7 days</div>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={revenueVsTarget}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1E293B"/>
-              <XAxis dataKey="day" stroke="#64748B" tick={{ fill:"#64748B", fontSize:10 }}/>
-              <YAxis stroke="#64748B" tick={{ fill:"#64748B", fontSize:10 }} tickFormatter={v=>`₹${(v/1000).toFixed(0)}k`}/>
+              <XAxis dataKey="day" stroke="#334155" tick={{ fill:"#64748B", fontSize:10 }}/>
+              <YAxis stroke="#334155" tick={{ fill:"#64748B", fontSize:10 }} tickFormatter={v=>`₹${(v/1000).toFixed(0)}k`}/>
               <Tooltip content={<CustomTooltip/>}/>
-              <Bar dataKey="actual" fill="#C2410C" radius={[4,4,0,0]} name="actual"/>
-              <Bar dataKey="target" fill="#1E293B" radius={[4,4,0,0]} name="target" stroke="#64748B" strokeWidth={1}/>
+              <Bar dataKey="actual" fill="#FF6B00" radius={[4,4,0,0]} name="actual"/>
+              <Bar dataKey="target" fill="#1E293B" radius={[4,4,0,0]} name="target" stroke="#334155" strokeWidth={1}/>
             </BarChart>
           </ResponsiveContainer>
         </div>
         <div style={card}>
           <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14 }}>
-            <div style={{ fontSize:14, fontWeight:700, color:"#1E293B" }}>User Registration Growth</div>
+            <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9" }}>User Registration Growth</div>
             <div style={{ display:"flex", gap:5 }}>
               {(["today","week","month"] as const).map(r=>(
-                <button key={r} onClick={()=>setRange(r)} style={{ padding:"5px 12px", borderRadius:7, border:"none", cursor:"pointer", background:range===r?"#FF6B00":"#E2E8F0", color:range===r?"#fff":"#64748B", fontSize:11, fontWeight:700, textTransform:"capitalize" }}>{r}</button>
+                <button key={r} onClick={()=>setRange(r)} style={{ padding:"5px 12px", borderRadius:7, border:"none", cursor:"pointer", background:range===r?"#FF6B00":"#1E293B", color:range===r?"#fff":"#64748B", fontSize:11, fontWeight:700, textTransform:"capitalize" }}>{r}</button>
               ))}
             </div>
           </div>
@@ -322,15 +322,15 @@ export default function DashboardView({ onNavigate, refreshTick = 0 }: { onNavig
             <AreaChart data={userGrowthData[range]}>
               <defs>
                 <linearGradient id="ug" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%"  stopColor="#C2410C" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="#C2410C" stopOpacity={0}/>
+                  <stop offset="5%"  stopColor="#FF6B00" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#FF6B00" stopOpacity={0}/>
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#1E293B"/>
-              <XAxis dataKey="time" stroke="#64748B" tick={{ fill:"#64748B", fontSize:11 }}/>
-              <YAxis stroke="#64748B" tick={{ fill:"#64748B", fontSize:11 }}/>
-              <Tooltip contentStyle={{ background:"#FFFFFF", border:"1px solid #E2E8F0", borderRadius:10 }}/>
-              <Area type="monotone" dataKey="users" stroke="#C2410C" strokeWidth={2.5} fill="url(#ug)" dot={{ fill:"#C2410C", r:3 }} activeDot={{ r:5 }}/>
+              <XAxis dataKey="time" stroke="#334155" tick={{ fill:"#64748B", fontSize:11 }}/>
+              <YAxis stroke="#334155" tick={{ fill:"#64748B", fontSize:11 }}/>
+              <Tooltip contentStyle={{ background:"#0D1526", border:"1px solid #1E293B", borderRadius:10 }}/>
+              <Area type="monotone" dataKey="users" stroke="#FF6B00" strokeWidth={2.5} fill="url(#ug)" dot={{ fill:"#FF6B00", r:3 }} activeDot={{ r:5 }}/>
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -340,18 +340,18 @@ export default function DashboardView({ onNavigate, refreshTick = 0 }: { onNavig
       <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:14 }}>
         {/* Funnel */}
         <div style={card}>
-          <div style={{ fontSize:14, fontWeight:700, color:"#1E293B", marginBottom:16 }}>Registration Funnel</div>
+          <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9", marginBottom:16 }}>Registration Funnel</div>
           {funnelData.map((f,i)=>(
             <div key={f.name} style={{ marginBottom:12 }}>
               <div style={{ display:"flex", justifyContent:"space-between", marginBottom:5 }}>
-                <span style={{ fontSize:12, color:"#64748B" }}>{f.name}</span>
-                <span style={{ fontSize:12, fontWeight:700, color:"#1E293B" }}>{f.value.toLocaleString()}</span>
+                <span style={{ fontSize:12, color:"#94A3B8" }}>{f.name}</span>
+                <span style={{ fontSize:12, fontWeight:700, color:"#F1F5F9" }}>{f.value.toLocaleString()}</span>
               </div>
-              <div style={{ height:6, borderRadius:4, background:"#FFFFFF", overflow:"hidden" }}>
+              <div style={{ height:6, borderRadius:4, background:"#1E293B", overflow:"hidden" }}>
                 <div style={{ height:"100%", borderRadius:4, background:f.color, width:`${(f.value/funnelMax)*100}%`, transition:"width 1s ease" }}/>
               </div>
               {i<funnelData.length-1&&f.value>0&&(
-                <div style={{ fontSize:10, color:"#64748B", marginTop:3 }}>
+                <div style={{ fontSize:10, color:"#334155", marginTop:3 }}>
                   ↓ {Math.round((1-funnelData[i+1].value/f.value)*100)}% dropped
                 </div>
               )}
@@ -361,9 +361,9 @@ export default function DashboardView({ onNavigate, refreshTick = 0 }: { onNavig
 
         {/* Traffic Sources */}
         <div style={card}>
-          <div style={{ fontSize:14, fontWeight:700, color:"#1E293B", marginBottom:12 }}>Traffic Sources</div>
+          <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9", marginBottom:12 }}>Traffic Sources</div>
           {sourceData.length===0 ? (
-            <div style={{ padding:"40px 10px", textAlign:"center", color:"#64748B", fontSize:12 }}>Source tracking not configured yet.</div>
+            <div style={{ padding:"40px 10px", textAlign:"center", color:"#334155", fontSize:12 }}>Source tracking not configured yet.</div>
           ) : (
             <>
               <ResponsiveContainer width="100%" height={150}>
@@ -371,16 +371,16 @@ export default function DashboardView({ onNavigate, refreshTick = 0 }: { onNavig
                   <Pie data={sourceData} cx="50%" cy="50%" innerRadius={38} outerRadius={60} dataKey="value" strokeWidth={0}>
                     {sourceData.map((s,i)=><Cell key={i} fill={s.color}/>)}
                   </Pie>
-                  <Tooltip formatter={(v:any)=>[`${v}%`,""]} contentStyle={{ background:"#FFFFFF", border:"1px solid #E2E8F0", borderRadius:8 }}/>
+                  <Tooltip formatter={(v:any)=>[`${v}%`,""]} contentStyle={{ background:"#0D1526", border:"1px solid #1E293B", borderRadius:8 }}/>
                 </PieChart>
               </ResponsiveContainer>
               {sourceData.map(s=>(
                 <div key={s.name} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:6 }}>
                   <div style={{ display:"flex", alignItems:"center", gap:7 }}>
                     <div style={{ width:8, height:8, borderRadius:2, background:s.color }}/>
-                    <span style={{ fontSize:12, color:"#64748B" }}>{s.name}</span>
+                    <span style={{ fontSize:12, color:"#94A3B8" }}>{s.name}</span>
                   </div>
-                  <span style={{ fontSize:12, fontWeight:700, color:"#1E293B" }}>{s.value}%</span>
+                  <span style={{ fontSize:12, fontWeight:700, color:"#F1F5F9" }}>{s.value}%</span>
                 </div>
               ))}
             </>
@@ -389,22 +389,22 @@ export default function DashboardView({ onNavigate, refreshTick = 0 }: { onNavig
 
         {/* Top Cities */}
         <div style={card}>
-          <div style={{ fontSize:14, fontWeight:700, color:"#1E293B", marginBottom:16 }}>Top Cities</div>
-          {topCities.length===0 && <div style={{ padding:"30px 10px", textAlign:"center", color:"#64748B", fontSize:12 }}>No registrations yet.</div>}
+          <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9", marginBottom:16 }}>Top Cities</div>
+          {topCities.length===0 && <div style={{ padding:"30px 10px", textAlign:"center", color:"#334155", fontSize:12 }}>No registrations yet.</div>}
           <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
             {topCities.map((c,i)=>(
               <div key={c.city}>
                 <div style={{ display:"flex", justifyContent:"space-between", marginBottom:4 }}>
                   <div style={{ display:"flex", alignItems:"center", gap:8 }}>
                     <span style={{ fontSize:12, fontWeight:800, color:c.color }}>#{i+1}</span>
-                    <span style={{ fontSize:12, color:"#64748B" }}>{c.city}</span>
+                    <span style={{ fontSize:12, color:"#94A3B8" }}>{c.city}</span>
                   </div>
                   <div style={{ display:"flex", gap:10 }}>
                     <span style={{ fontSize:11, color:"#64748B" }}>{c.signups} reg</span>
                     <span style={{ fontSize:11, fontWeight:700, color:c.color }}>{c.paid} paid</span>
                   </div>
                 </div>
-                <div style={{ height:4, borderRadius:2, background:"#FFFFFF", overflow:"hidden" }}>
+                <div style={{ height:4, borderRadius:2, background:"#1E293B", overflow:"hidden" }}>
                   <div style={{ height:"100%", width:`${c.pct}%`, background:c.color, borderRadius:2 }}/>
                 </div>
               </div>
@@ -416,12 +416,12 @@ export default function DashboardView({ onNavigate, refreshTick = 0 }: { onNavig
       {/* ── Influencers + Recent Registrations ── */}
       <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:14 }}>
         <div style={card}>
-          <div style={{ fontSize:14, fontWeight:700, color:"#1E293B", marginBottom:16 }}>Top Influencers</div>
-          {topInfluencers.length===0 && <div style={{ padding:"30px 10px", textAlign:"center", color:"#64748B", fontSize:12 }}>Influencer tracking not configured yet.</div>}
+          <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9", marginBottom:16 }}>Top Influencers</div>
+          {topInfluencers.length===0 && <div style={{ padding:"30px 10px", textAlign:"center", color:"#334155", fontSize:12 }}>Influencer tracking not configured yet.</div>}
           {topInfluencers.length>0 && (
           <table style={{ width:"100%", borderCollapse:"collapse" }}>
             <thead>
-              <tr style={{ borderBottom:"1px solid #E2E8F0" }}>
+              <tr style={{ borderBottom:"1px solid #1E293B" }}>
                 {["Influencer","Platform","Conv %","Revenue"].map(h=>(
                   <th key={h} style={{ padding:"6px 8px", textAlign:"left", fontSize:10, color:"#475569", fontWeight:700, textTransform:"uppercase" }}>{h}</th>
                 ))}
@@ -429,15 +429,15 @@ export default function DashboardView({ onNavigate, refreshTick = 0 }: { onNavig
             </thead>
             <tbody>
               {topInfluencers.map(inf=>(
-                <tr key={inf.name} style={{ borderBottom:"1px solid #E2E8F0" }}>
-                  <td style={{ padding:"11px 8px", fontSize:12, fontWeight:600, color:"#1E293B" }}>@{inf.name}</td>
+                <tr key={inf.name} style={{ borderBottom:"1px solid #0F1B2D" }}>
+                  <td style={{ padding:"11px 8px", fontSize:12, fontWeight:600, color:"#F1F5F9" }}>@{inf.name}</td>
                   <td style={{ padding:"11px 8px" }}>
                     <span style={{ fontSize:10, padding:"2px 8px", borderRadius:5,
                       background:(inf.platform==="Instagram"?"#E1306C":inf.platform==="YouTube"?"#FF0000":"#25D366")+"22",
-                      color:inf.platform==="Instagram"?"#BE185D":inf.platform==="YouTube"?"#FF0000":"#25D366", fontWeight:700 }}>{inf.platform}</span>
+                      color:inf.platform==="Instagram"?"#E1306C":inf.platform==="YouTube"?"#FF0000":"#25D366", fontWeight:700 }}>{inf.platform}</span>
                   </td>
-                  <td style={{ padding:"11px 8px", fontSize:13, fontWeight:700, color:"#B45309" }}>{inf.conversion}</td>
-                  <td style={{ padding:"11px 8px", fontSize:13, fontWeight:700, color:"#047857" }}>{inf.revenue}</td>
+                  <td style={{ padding:"11px 8px", fontSize:13, fontWeight:700, color:"#F59E0B" }}>{inf.conversion}</td>
+                  <td style={{ padding:"11px 8px", fontSize:13, fontWeight:700, color:"#10B981" }}>{inf.revenue}</td>
                 </tr>
               ))}
             </tbody>
@@ -447,20 +447,20 @@ export default function DashboardView({ onNavigate, refreshTick = 0 }: { onNavig
 
         <div style={card}>
           <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14 }}>
-            <div style={{ fontSize:14, fontWeight:700, color:"#1E293B" }}>Recent Registrations</div>
-            <span style={{ display:"flex", alignItems:"center", gap:5, fontSize:11, color:"#047857" }}>
+            <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9" }}>Recent Registrations</div>
+            <span style={{ display:"flex", alignItems:"center", gap:5, fontSize:11, color:"#10B981" }}>
               <span style={{ width:7, height:7, borderRadius:"50%", background:"#10B981", display:"inline-block", boxShadow:"0 0 5px #10B981" }}/>
               Live
             </span>
           </div>
-          {liveActivity.length===0 && <div style={{ padding:"30px 10px", textAlign:"center", color:"#64748B", fontSize:12 }}>No registrations yet.</div>}
+          {liveActivity.length===0 && <div style={{ padding:"30px 10px", textAlign:"center", color:"#334155", fontSize:12 }}>No registrations yet.</div>}
           <div style={{ display:"flex", flexDirection:"column", gap:0 }}>
             {liveActivity.map((a,i)=>(
-              <div key={i} style={{ display:"flex", alignItems:"flex-start", gap:12, padding:"10px 0", borderBottom:i<liveActivity.length-1?"1px solid #E2E8F0":"none" }}>
+              <div key={i} style={{ display:"flex", alignItems:"flex-start", gap:12, padding:"10px 0", borderBottom:i<liveActivity.length-1?"1px solid #0F1B2D":"none" }}>
                 <div style={{ width:8, height:8, borderRadius:"50%", background:activityColor[a.type], marginTop:4, flexShrink:0, boxShadow:`0 0 4px ${activityColor[a.type]}` }}/>
                 <div style={{ flex:1 }}>
-                  <div style={{ fontSize:12, color:"#64748B" }}>{a.msg}</div>
-                  <div style={{ fontSize:10, color:"#64748B", marginTop:2 }}>{a.time}</div>
+                  <div style={{ fontSize:12, color:"#94A3B8" }}>{a.msg}</div>
+                  <div style={{ fontSize:10, color:"#334155", marginTop:2 }}>{a.time}</div>
                 </div>
               </div>
             ))}
@@ -473,12 +473,12 @@ export default function DashboardView({ onNavigate, refreshTick = 0 }: { onNavig
       {/* WhatsApp Blast Modal */}
       {blast&&(
         <div style={{ position:"fixed", inset:0, background:"#00000090", display:"flex", alignItems:"center", justifyContent:"center", zIndex:999 }}>
-          <div style={{ background:"#FFFFFF", border:"1px solid #E2E8F0", borderRadius:20, padding:28, width:460 }}>
-            <div style={{ fontSize:18, fontWeight:800, color:"#1E293B", marginBottom:4 }}>📢 WhatsApp Blast</div>
+          <div style={{ background:"#0D1526", border:"1px solid #1E293B", borderRadius:20, padding:28, width:460 }}>
+            <div style={{ fontSize:18, fontWeight:800, color:"#F1F5F9", marginBottom:4 }}>📢 WhatsApp Blast</div>
             <div style={{ fontSize:12, color:"#64748B", marginBottom:20 }}>Send bulk message to filtered users</div>
             <div style={{ marginBottom:12 }}>
               <label style={{ fontSize:11, color:"#64748B", fontWeight:700, display:"block", marginBottom:6 }}>Target Segment</label>
-              <select style={{ width:"100%", padding:"10px 12px", background:"#F5F6F8", border:"1px solid #E2E8F0", borderRadius:9, color:"#1E293B", fontSize:13, outline:"none" }}>
+              <select style={{ width:"100%", padding:"10px 12px", background:"#060B18", border:"1px solid #1E293B", borderRadius:9, color:"#F1F5F9", fontSize:13, outline:"none" }}>
                 {[
                   `All registered users (${totalRegs})`,
                   `Phase 1 paid — no video (${regs.filter(r=>isPaid(r)&&!r.video).length})`,
@@ -490,15 +490,15 @@ export default function DashboardView({ onNavigate, refreshTick = 0 }: { onNavig
             </div>
             <div style={{ marginBottom:12 }}>
               <label style={{ fontSize:11, color:"#64748B", fontWeight:700, display:"block", marginBottom:6 }}>Message</label>
-              <textarea rows={4} placeholder="Type your WhatsApp message…" style={{ width:"100%", padding:"10px 12px", background:"#F5F6F8", border:"1px solid #E2E8F0", borderRadius:9, color:"#1E293B", fontSize:13, outline:"none", resize:"vertical", boxSizing:"border-box" }}/>
+              <textarea rows={4} placeholder="Type your WhatsApp message…" style={{ width:"100%", padding:"10px 12px", background:"#060B18", border:"1px solid #1E293B", borderRadius:9, color:"#F1F5F9", fontSize:13, outline:"none", resize:"vertical", boxSizing:"border-box" }}/>
             </div>
             <div style={{ padding:"10px 14px", background:"#F59E0B11", border:"1px solid #F59E0B33", borderRadius:10, marginBottom:16 }}>
-              <span style={{ fontSize:12, color:"#B45309" }}>⚠️ Sending requires Interakt API setup. Configure in Settings → Integrations.</span>
+              <span style={{ fontSize:12, color:"#F59E0B" }}>⚠️ Sending requires Interakt API setup. Configure in Settings → Integrations.</span>
             </div>
             <div style={{ display:"flex", gap:10 }}>
-              <button onClick={()=>setBlast(false)} style={{ flex:1, padding:"11px 0", borderRadius:10, border:"1px solid #E2E8F0", background:"transparent", color:"#64748B", fontSize:13, cursor:"pointer" }}>Cancel</button>
+              <button onClick={()=>setBlast(false)} style={{ flex:1, padding:"11px 0", borderRadius:10, border:"1px solid #1E293B", background:"transparent", color:"#64748B", fontSize:13, cursor:"pointer" }}>Cancel</button>
               <button disabled title="Interakt API is not configured yet, so sending is disabled"
-                style={{ flex:1, padding:"11px 0", borderRadius:10, border:"1px solid #E2E8F0", background:"#FFFFFF", color:"#475569", fontSize:13, fontWeight:700, cursor:"not-allowed" }}>Send Blast (setup required)</button>
+                style={{ flex:1, padding:"11px 0", borderRadius:10, border:"1px solid #1E293B", background:"#1E293B", color:"#475569", fontSize:13, fontWeight:700, cursor:"not-allowed" }}>Send Blast (setup required)</button>
             </div>
           </div>
         </div>

@@ -84,13 +84,13 @@ type NavPayload = { quick?: string; filter?: string; focusId?: string };
 function RegIdBadge({ regNumber }: { regNumber: string | null }) {
   if (regNumber) {
     return (
-      <span style={{ display:"inline-block", padding:"3px 9px", borderRadius:6, fontSize:11, fontWeight:800, fontFamily:"monospace", background:"#FF6B0018", color:"#C2410C", border:"1px solid #FF6B0040", whiteSpace:"nowrap" }}>
+      <span style={{ display:"inline-block", padding:"3px 9px", borderRadius:6, fontSize:11, fontWeight:800, fontFamily:"monospace", background:"#FF6B0018", color:"#FF9A57", border:"1px solid #FF6B0040", whiteSpace:"nowrap" }}>
         {regNumber}
       </span>
     );
   }
   return (
-    <span title="Registration ID is assigned after Phase 1 payment" style={{ display:"inline-block", padding:"3px 9px", borderRadius:6, fontSize:10, fontWeight:700, background:"#FFFFFF", color:"#64748B", border:"1px solid #E2E8F0", whiteSpace:"nowrap" }}>
+    <span title="Registration ID is assigned after Phase 1 payment" style={{ display:"inline-block", padding:"3px 9px", borderRadius:6, fontSize:10, fontWeight:700, background:"#1E293B", color:"#64748B", border:"1px solid #23324A", whiteSpace:"nowrap" }}>
       Payment pending
     </span>
   );
@@ -152,17 +152,17 @@ export default function UsersView({ onNavigate, initialQuick, refreshTick = 0 }:
   });
 
   const stats = [
-    { label:"Total",         value:filtered.length || 0, color:"#4F46E5", q:"all"            as QuickFilter },
-    { label:"Active",        value:allUsers.filter(u=>u.active).length, color:"#047857", q:"active" as QuickFilter },
-    { label:"Phase 1 Paid",  value:allUsers.filter(u=>u.phase1).length, color:"#B45309", q:"phase1" as QuickFilter },
-    { label:"Phase 2 Paid",  value:allUsers.filter(u=>u.phase2).length, color:"#C2410C", q:"phase2" as QuickFilter },
-    { label:"No Payment",    value:allUsers.filter(u=>!u.phase1&&!u.phase2).length, color:"#DC2626", q:"no_payment" as QuickFilter },
+    { label:"Total",         value:filtered.length || 0, color:"#6366F1", q:"all"            as QuickFilter },
+    { label:"Active",        value:allUsers.filter(u=>u.active).length, color:"#10B981", q:"active" as QuickFilter },
+    { label:"Phase 1 Paid",  value:allUsers.filter(u=>u.phase1).length, color:"#F59E0B", q:"phase1" as QuickFilter },
+    { label:"Phase 2 Paid",  value:allUsers.filter(u=>u.phase2).length, color:"#FF6B00", q:"phase2" as QuickFilter },
+    { label:"No Payment",    value:allUsers.filter(u=>!u.phase1&&!u.phase2).length, color:"#EF4444", q:"no_payment" as QuickFilter },
     { label:"Not Registered",value:allUsers.filter(u=>!u.registered).length, color:"#64748B", q:"not_registered" as QuickFilter },
   ];
 
   const card: React.CSSProperties = {
-    background:"linear-gradient(135deg,#FFFFFF 0%,#FFFFFF 100%)",
-    border:"1px solid #E2E8F0", borderRadius:16, padding:20,
+    background:"linear-gradient(135deg,#0D1526 0%,#0A1020 100%)",
+    border:"1px solid #1E293B", borderRadius:16, padding:20,
   };
 
   return (
@@ -170,7 +170,7 @@ export default function UsersView({ onNavigate, initialQuick, refreshTick = 0 }:
       <div style={{ flex:1, display:"flex", flexDirection:"column", gap:14, minWidth:0 }}>
 
         {err && (
-          <div style={{ padding:"12px 16px", background:"#EF444415", border:"1px solid #EF444444", borderRadius:12, color:"#DC2626", fontSize:13 }}>
+          <div style={{ padding:"12px 16px", background:"#EF444415", border:"1px solid #EF444444", borderRadius:12, color:"#EF4444", fontSize:13 }}>
             Failed to load users: {err}
           </div>
         )}
@@ -179,7 +179,7 @@ export default function UsersView({ onNavigate, initialQuick, refreshTick = 0 }:
         <div style={{ display:"grid", gridTemplateColumns:"repeat(6,1fr)", gap:10 }}>
           {stats.map(s => (
             <div key={s.label} onClick={() => setQuick(s.q)} style={{ ...card, padding:14, cursor:"pointer", borderTop:`3px solid ${s.color}`, opacity:quick===s.q?1:0.65, transition:"all 0.2s" }}>
-              <div style={{ fontSize:20, fontWeight:800, color:"#1E293B" }}>{s.value}</div>
+              <div style={{ fontSize:20, fontWeight:800, color:"#F1F5F9" }}>{s.value}</div>
               <div style={{ fontSize:10, color:"#64748B", marginTop:3 }}>{s.label}</div>
             </div>
           ))}
@@ -193,31 +193,31 @@ export default function UsersView({ onNavigate, initialQuick, refreshTick = 0 }:
               <span style={{ position:"absolute", left:11, top:"50%", transform:"translateY(-50%)", color:"#475569", fontSize:13 }}>🔍</span>
               <input value={search} onChange={e=>setSearch(e.target.value)}
                 placeholder="Search name / phone / email…"
-                style={{ width:"100%", padding:"9px 12px 9px 34px", background:"#F5F6F8", border:"1px solid #E2E8F0", borderRadius:9, color:"#1E293B", fontSize:12, outline:"none", boxSizing:"border-box" }} />
+                style={{ width:"100%", padding:"9px 12px 9px 34px", background:"#060B18", border:"1px solid #1E293B", borderRadius:9, color:"#F1F5F9", fontSize:12, outline:"none", boxSizing:"border-box" }} />
             </div>
 
             {/* State */}
             <select value={state} onChange={e=>{ setState(e.target.value); setCity("All Cities"); }}
-              style={{ padding:"9px 12px", background:"#F5F6F8", border:"1px solid #E2E8F0", borderRadius:9, color:"#1E293B", fontSize:12, outline:"none" }}>
+              style={{ padding:"9px 12px", background:"#060B18", border:"1px solid #1E293B", borderRadius:9, color:"#F1F5F9", fontSize:12, outline:"none" }}>
               {STATES.map(s=><option key={s}>{s}</option>)}
             </select>
 
             {/* City */}
             <select value={city} onChange={e=>setCity(e.target.value)}
-              style={{ padding:"9px 12px", background:"#F5F6F8", border:"1px solid #E2E8F0", borderRadius:9, color:"#1E293B", fontSize:12, outline:"none" }}>
+              style={{ padding:"9px 12px", background:"#060B18", border:"1px solid #1E293B", borderRadius:9, color:"#F1F5F9", fontSize:12, outline:"none" }}>
               {(CITIES[state]||["All Cities"]).map(c=><option key={c}>{c}</option>)}
             </select>
 
             {/* Role */}
             <select value={role} onChange={e=>setRole(e.target.value)}
-              style={{ padding:"9px 12px", background:"#F5F6F8", border:"1px solid #E2E8F0", borderRadius:9, color:"#1E293B", fontSize:12, outline:"none" }}>
+              style={{ padding:"9px 12px", background:"#060B18", border:"1px solid #1E293B", borderRadius:9, color:"#F1F5F9", fontSize:12, outline:"none" }}>
               {["All Roles","Batsman","Bowler","All-rounder","Wicket-keeper"].map(r=><option key={r}>{r}</option>)}
             </select>
 
             <span style={{ fontSize:11, color:"#475569", marginLeft:"auto" }}>{filtered.length} results</span>
             {(search||state!=="All States"||city!=="All Cities"||role!=="All Roles") && (
               <button onClick={()=>{ setSearch(""); setState("All States"); setCity("All Cities"); setRole("All Roles"); }}
-                style={{ padding:"7px 12px", borderRadius:8, border:"1px solid #EF444444", background:"transparent", color:"#DC2626", fontSize:11, cursor:"pointer", fontWeight:700 }}>
+                style={{ padding:"7px 12px", borderRadius:8, border:"1px solid #EF444444", background:"transparent", color:"#EF4444", fontSize:11, cursor:"pointer", fontWeight:700 }}>
                 Clear ✕
               </button>
             )}
@@ -227,7 +227,7 @@ export default function UsersView({ onNavigate, initialQuick, refreshTick = 0 }:
               const rows = filtered.map(u=>[u.regNumber ?? "Payment pending",u.name,u.phone,u.email,u.state,u.city,u.joined,u.phase1?"Yes":"No",u.phase2?"Yes":"No",u.kyc,u.video?"Yes":"No",u.role,u.active?"Yes":"No"]);
               const csv = [headers,...rows].map(r=>r.join(",")).join("\n");
               const a=document.createElement("a");a.href="data:text/csv;charset=utf-8,"+encodeURIComponent(csv);a.download=`bcpl_users_${quick}_${new Date().toISOString().slice(0,10)}.csv`;a.click();
-            }} style={{ padding:"7px 13px", borderRadius:8, border:"1px solid #10B98144", background:"#10B98112", color:"#047857", fontSize:11, cursor:"pointer", fontWeight:700 }}>
+            }} style={{ padding:"7px 13px", borderRadius:8, border:"1px solid #10B98144", background:"#10B98112", color:"#10B981", fontSize:11, cursor:"pointer", fontWeight:700 }}>
               ⬇ Excel
             </button>
             <button onClick={()=>{
@@ -238,7 +238,7 @@ export default function UsersView({ onNavigate, initialQuick, refreshTick = 0 }:
               .header{display:flex;align-items:center;gap:16px;border-bottom:3px solid #FF6B00;padding-bottom:12px;margin-bottom:20px}
               .logo{width:52px;height:52px;border-radius:50%;overflow:hidden;border:2px solid #FF6B00}
               .logo img{width:100%;height:100%;object-fit:cover}
-              h1{margin:0;font-size:18px;color:#C2410C}p{margin:2px 0;font-size:10px;color:#555}
+              h1{margin:0;font-size:18px;color:#FF6B00}p{margin:2px 0;font-size:10px;color:#555}
               table{width:100%;border-collapse:collapse;margin-top:12px}
               th{background:#FF6B00;color:#fff;padding:6px 8px;text-align:left;font-size:9px;text-transform:uppercase}
               td{padding:5px 8px;border-bottom:1px solid #eee;font-size:10px}
@@ -254,7 +254,7 @@ export default function UsersView({ onNavigate, initialQuick, refreshTick = 0 }:
               <table><thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Location</th><th>Role</th><th>Payments</th><th>KYC</th><th>Status</th></tr></thead>
               <tbody>${rows}</tbody></table>
               </body></html>`);w.document.close();setTimeout(()=>w.print(),500);
-            }} style={{ padding:"7px 13px", borderRadius:8, border:"1px solid #6366F144", background:"#6366F112", color:"#4F46E5", fontSize:11, cursor:"pointer", fontWeight:700 }}>
+            }} style={{ padding:"7px 13px", borderRadius:8, border:"1px solid #6366F144", background:"#6366F112", color:"#6366F1", fontSize:11, cursor:"pointer", fontWeight:700 }}>
               🖨 PDF
             </button>
           </div>
@@ -264,9 +264,9 @@ export default function UsersView({ onNavigate, initialQuick, refreshTick = 0 }:
             {(Object.keys(quickLabels) as QuickFilter[]).map(q=>(
               <button key={q} onClick={()=>setQuick(q)} style={{
                 padding:"5px 13px", borderRadius:20, border:"1px solid",
-                borderColor: quick===q?"#FF6B00":"#E2E8F0",
+                borderColor: quick===q?"#FF6B00":"#1E293B",
                 background: quick===q?"#FF6B0022":"transparent",
-                color: quick===q?"#C2410C":"#64748B",
+                color: quick===q?"#FF6B00":"#64748B",
                 fontSize:11, fontWeight:700, cursor:"pointer",
               }}>{quickLabels[q]}</button>
             ))}
@@ -277,7 +277,7 @@ export default function UsersView({ onNavigate, initialQuick, refreshTick = 0 }:
         <div style={{ ...card, padding:0, overflow:"hidden" }}>
           <table style={{ width:"100%", borderCollapse:"collapse" }}>
             <thead>
-              <tr style={{ borderBottom:"1px solid #E2E8F0", background:"#FFFFFF" }}>
+              <tr style={{ borderBottom:"1px solid #1E293B", background:"#060E1C" }}>
                 {["Reg ID","Player","Role","Location","Joined","Phase 1","Phase 2","KYC","Video","Status"].map(h=>(
                   <th key={h} style={{ padding:"11px 14px", textAlign:"left", fontSize:10, color:"#475569", fontWeight:700, textTransform:"uppercase", letterSpacing:.5, whiteSpace:"nowrap" }}>{h}</th>
                 ))}
@@ -286,7 +286,7 @@ export default function UsersView({ onNavigate, initialQuick, refreshTick = 0 }:
             <tbody>
               {filtered.map(u=>(
                 <tr key={u.id} onClick={()=>setSelected(u)} style={{
-                  borderBottom:"1px solid #E2E8F0", cursor:"pointer",
+                  borderBottom:"1px solid #0F1B2D", cursor:"pointer",
                   background:selected?.id===u.id?"#FF6B0010":"transparent",
                   transition:"background 0.15s",
                 }}>
@@ -297,7 +297,7 @@ export default function UsersView({ onNavigate, initialQuick, refreshTick = 0 }:
                     <div style={{ display:"flex", alignItems:"center", gap:10 }}>
                       <div style={{ width:34, height:34, borderRadius:10, background:`hsl(${u.num*37},55%,32%)`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, fontWeight:800, color:"#fff", flexShrink:0 }}>{u.name[0]}</div>
                       <div>
-                        <div style={{ fontSize:13, fontWeight:600, color:"#1E293B" }}>{u.name}</div>
+                        <div style={{ fontSize:13, fontWeight:600, color:"#F1F5F9" }}>{u.name}</div>
                         <div style={{ fontSize:10, color:"#475569" }}>{u.phone}</div>
                       </div>
                     </div>
@@ -306,7 +306,7 @@ export default function UsersView({ onNavigate, initialQuick, refreshTick = 0 }:
                     <span style={{ padding:"3px 8px", borderRadius:5, fontSize:10, fontWeight:700, background:roleColor(u.role)+"22", color:roleColor(u.role) }}>{u.role}</span>
                   </td>
                   <td style={{ padding:"13px 14px" }}>
-                    <div style={{ fontSize:12, color:"#64748B" }}>{u.city}</div>
+                    <div style={{ fontSize:12, color:"#94A3B8" }}>{u.city}</div>
                     <div style={{ fontSize:10, color:"#475569" }}>{u.state}</div>
                   </td>
                   <td style={{ padding:"13px 14px", fontSize:11, color:"#64748B" }}>{u.joined}</td>
@@ -315,9 +315,9 @@ export default function UsersView({ onNavigate, initialQuick, refreshTick = 0 }:
                   <td style={{ padding:"13px 14px" }}>
                     <span style={{ padding:"3px 8px", borderRadius:5, fontSize:10, fontWeight:700, background:kycColor(u.kyc)+"22", color:kycColor(u.kyc) }}>{KYC_LABEL[u.kyc] ?? u.kyc}</span>
                   </td>
-                  <td style={{ padding:"13px 14px" }}>{u.video?(u.videoUrl?<a href={u.videoUrl} target="_blank" rel="noreferrer" title="Watch video in new tab" onClick={e=>e.stopPropagation()} style={{ padding:"3px 10px", borderRadius:5, fontSize:10, fontWeight:700, background:"#3B82F622", color:"#1D4ED8", border:"1px solid #3B82F644", textDecoration:"none", display:"inline-block" }}>🎥 Watch</a>:<span style={{ padding:"3px 10px", borderRadius:5, fontSize:10, fontWeight:700, background:"#3B82F622", color:"#1D4ED8" }}>🎥 Yes</span>):<span style={{ fontSize:11, color:"#64748B" }}>—</span>}</td>
+                  <td style={{ padding:"13px 14px" }}>{u.video?(u.videoUrl?<a href={u.videoUrl} target="_blank" rel="noreferrer" title="Watch video in new tab" onClick={e=>e.stopPropagation()} style={{ padding:"3px 10px", borderRadius:5, fontSize:10, fontWeight:700, background:"#3B82F622", color:"#3B82F6", border:"1px solid #3B82F644", textDecoration:"none", display:"inline-block" }}>🎥 Watch</a>:<span style={{ padding:"3px 10px", borderRadius:5, fontSize:10, fontWeight:700, background:"#3B82F622", color:"#3B82F6" }}>🎥 Yes</span>):<span style={{ fontSize:11, color:"#334155" }}>—</span>}</td>
                   <td style={{ padding:"13px 14px" }}>
-                    <span style={{ display:"flex", alignItems:"center", gap:5, fontSize:11, fontWeight:700, color:u.active?"#047857":"#475569" }}>
+                    <span style={{ display:"flex", alignItems:"center", gap:5, fontSize:11, fontWeight:700, color:u.active?"#10B981":"#475569" }}>
                       <span style={{ width:6, height:6, borderRadius:"50%", background:u.active?"#10B981":"#475569", display:"inline-block" }}/>
                       {u.active?"Active":"Inactive"}
                     </span>
@@ -325,7 +325,7 @@ export default function UsersView({ onNavigate, initialQuick, refreshTick = 0 }:
                 </tr>
               ))}
               {filtered.length===0 && (
-                <tr><td colSpan={10} style={{ padding:"40px", textAlign:"center", color:"#64748B", fontSize:13 }}>
+                <tr><td colSpan={10} style={{ padding:"40px", textAlign:"center", color:"#334155", fontSize:13 }}>
                   {loading ? "Loading users…" : allUsers.length===0 ? "No registrations yet." : "No users match these filters."}
                 </td></tr>
               )}
@@ -340,14 +340,14 @@ export default function UsersView({ onNavigate, initialQuick, refreshTick = 0 }:
           <div style={{ ...card, textAlign:"center" }}>
             <button onClick={()=>setSelected(null)} style={{ float:"right", background:"none", border:"none", color:"#475569", cursor:"pointer", fontSize:18, lineHeight:1 }}>✕</button>
             <div style={{ width:60, height:60, borderRadius:16, background:`hsl(${selected.num*37},55%,32%)`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:26, fontWeight:800, color:"#fff", margin:"24px auto 12px" }}>{selected.name[0]}</div>
-            <div style={{ fontSize:16, fontWeight:700, color:"#1E293B" }}>{selected.name}</div>
+            <div style={{ fontSize:16, fontWeight:700, color:"#F1F5F9" }}>{selected.name}</div>
             <div style={{ fontSize:11, color:"#64748B", marginTop:2 }}>{selected.email}</div>
             <div style={{ fontSize:11, color:"#64748B" }}>{selected.phone}</div>
             <div style={{ marginTop:10 }}>
               <div style={{ fontSize:9, fontWeight:800, color:"#475569", letterSpacing:1, marginBottom:4 }}>REGISTRATION ID</div>
               {selected.regNumber
-                ? <span style={{ display:"inline-block", padding:"3px 10px", borderRadius:6, fontSize:12, fontWeight:800, fontFamily:"monospace", background:"#FF6B0018", color:"#C2410C", border:"1px solid #FF6B0040" }}>{selected.regNumber}</span>
-                : <span style={{ display:"inline-block", padding:"3px 10px", borderRadius:6, fontSize:11, fontWeight:700, background:"#FFFFFF", color:"#64748B", border:"1px solid #E2E8F0" }}>Payment pending</span>}
+                ? <span style={{ display:"inline-block", padding:"3px 10px", borderRadius:6, fontSize:12, fontWeight:800, fontFamily:"monospace", background:"#FF6B0018", color:"#FF9A57", border:"1px solid #FF6B0040" }}>{selected.regNumber}</span>
+                : <span style={{ display:"inline-block", padding:"3px 10px", borderRadius:6, fontSize:11, fontWeight:700, background:"#1E293B", color:"#64748B", border:"1px solid #23324A" }}>Payment pending</span>}
             </div>
             <div onClick={()=>onNavigate?.("phase1_regs",{ focusId:selected.id })} title="Open the full registration record"
               style={{ fontSize:9, color:"#475569", marginTop:6, cursor:"pointer", wordBreak:"break-all", textDecoration:"underline" }}>
@@ -357,9 +357,9 @@ export default function UsersView({ onNavigate, initialQuick, refreshTick = 0 }:
             <div style={{ display:"flex", gap:8, marginTop:12 }}>
               {selected.email ? (
                 <a href={`mailto:${selected.email}?subject=${encodeURIComponent("BCPL T20 — About your registration")}`}
-                  style={{ flex:1, padding:"9px 0", borderRadius:8, border:"none", background:"#FFFFFF", color:"#64748B", fontSize:11, cursor:"pointer", fontWeight:600, textDecoration:"none", textAlign:"center" }}>✉ Message</a>
+                  style={{ flex:1, padding:"9px 0", borderRadius:8, border:"none", background:"#1E293B", color:"#94A3B8", fontSize:11, cursor:"pointer", fontWeight:600, textDecoration:"none", textAlign:"center" }}>✉ Message</a>
               ) : (
-                <button disabled title="No email on record" style={{ flex:1, padding:"9px 0", borderRadius:8, border:"none", background:"#11182B", color:"#64748B", fontSize:11, cursor:"not-allowed", fontWeight:600 }}>✉ Message</button>
+                <button disabled title="No email on record" style={{ flex:1, padding:"9px 0", borderRadius:8, border:"none", background:"#11182B", color:"#334155", fontSize:11, cursor:"not-allowed", fontWeight:600 }}>✉ Message</button>
               )}
               <button onClick={()=>onNavigate?.("phase1_regs",{ focusId:selected.id })}
                 style={{ flex:1, padding:"9px 0", borderRadius:8, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontSize:11, cursor:"pointer", fontWeight:700 }}>Full Profile</button>
@@ -368,9 +368,9 @@ export default function UsersView({ onNavigate, initialQuick, refreshTick = 0 }:
           <div style={{ ...card, padding:16 }}>
             <div style={{ fontSize:11, fontWeight:700, color:"#475569", marginBottom:12, textTransform:"uppercase", letterSpacing:.5 }}>Payment Status</div>
             {[{label:"Phase 1 Fee",done:selected.phase1},{label:"Phase 2 Fee",done:selected.phase2}].map(p=>(
-              <div key={p.label} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"9px 0", borderBottom:"1px solid #E2E8F0" }}>
-                <span style={{ fontSize:12, color:"#64748B" }}>{p.label}</span>
-                <span style={{ padding:"3px 9px", borderRadius:5, fontSize:10, fontWeight:700, background:p.done?"#10B98122":"#EF444422", color:p.done?"#047857":"#EF4444" }}>{p.done?"Paid ✓":"Pending"}</span>
+              <div key={p.label} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"9px 0", borderBottom:"1px solid #0F1B2D" }}>
+                <span style={{ fontSize:12, color:"#94A3B8" }}>{p.label}</span>
+                <span style={{ padding:"3px 9px", borderRadius:5, fontSize:10, fontWeight:700, background:p.done?"#10B98122":"#EF444422", color:p.done?"#10B981":"#EF4444" }}>{p.done?"Paid ✓":"Pending"}</span>
               </div>
             ))}
           </div>
@@ -382,25 +382,25 @@ export default function UsersView({ onNavigate, initialQuick, refreshTick = 0 }:
             {selected.kycId ? (
               <div style={{ display:"flex", gap:8 }}>
                 <button disabled={kycBusy||selected.kyc==="verified"} onClick={()=>updateKyc("verified")}
-                  style={{ flex:1, padding:"8px 0", borderRadius:8, border:"1px solid #10B981", background:"#10B98115", color:"#047857", fontSize:11, cursor:kycBusy||selected.kyc==="verified"?"not-allowed":"pointer", fontWeight:700, opacity:kycBusy||selected.kyc==="verified"?0.5:1 }}>✓ Approve</button>
+                  style={{ flex:1, padding:"8px 0", borderRadius:8, border:"1px solid #10B981", background:"#10B98115", color:"#10B981", fontSize:11, cursor:kycBusy||selected.kyc==="verified"?"not-allowed":"pointer", fontWeight:700, opacity:kycBusy||selected.kyc==="verified"?0.5:1 }}>✓ Approve</button>
                 <button disabled={kycBusy||selected.kyc==="failed"} onClick={()=>updateKyc("failed")}
-                  style={{ flex:1, padding:"8px 0", borderRadius:8, border:"1px solid #EF4444", background:"#EF444415", color:"#DC2626", fontSize:11, cursor:kycBusy||selected.kyc==="failed"?"not-allowed":"pointer", fontWeight:700, opacity:kycBusy||selected.kyc==="failed"?0.5:1 }}>✕ Reject</button>
+                  style={{ flex:1, padding:"8px 0", borderRadius:8, border:"1px solid #EF4444", background:"#EF444415", color:"#EF4444", fontSize:11, cursor:kycBusy||selected.kyc==="failed"?"not-allowed":"pointer", fontWeight:700, opacity:kycBusy||selected.kyc==="failed"?0.5:1 }}>✕ Reject</button>
               </div>
             ) : (
-              <div style={{ fontSize:12, color:"#64748B" }}>KYC not submitted yet</div>
+              <div style={{ fontSize:12, color:"#334155" }}>KYC not submitted yet</div>
             )}
           </div>
           <div style={{ ...card, padding:16 }}>
             <div style={{ fontSize:11, fontWeight:700, color:"#475569", marginBottom:10, textTransform:"uppercase", letterSpacing:.5 }}>Selection Video</div>
             {selected.video && selected.videoUrl
               ? <a href={selected.videoUrl} target="_blank" rel="noreferrer" title="Watch video in new tab"
-                  style={{ background:"#F5F6F8", borderRadius:10, aspectRatio:"16/9", display:"flex", flexDirection:"column", gap:6, alignItems:"center", justifyContent:"center", cursor:"pointer", border:"1px solid #E2E8F0", textDecoration:"none" }}>
+                  style={{ background:"#060B18", borderRadius:10, aspectRatio:"16/9", display:"flex", flexDirection:"column", gap:6, alignItems:"center", justifyContent:"center", cursor:"pointer", border:"1px solid #1E293B", textDecoration:"none" }}>
                   <span style={{ fontSize:32 }}>▶️</span>
-                  <span style={{ fontSize:11, fontWeight:700, color:"#1D4ED8" }}>Watch video</span>
+                  <span style={{ fontSize:11, fontWeight:700, color:"#3B82F6" }}>Watch video</span>
                 </a>
               : selected.video
-              ? <div style={{ padding:"16px", textAlign:"center", color:"#64748B", fontSize:12, background:"#F5F6F8", borderRadius:10, border:"1px solid #E2E8F0" }}>Video submitted — link unavailable</div>
-              : <div style={{ padding:"16px", textAlign:"center", color:"#64748B", fontSize:12, background:"#F5F6F8", borderRadius:10, border:"1px dashed #E2E8F0" }}>No video uploaded</div>}
+              ? <div style={{ padding:"16px", textAlign:"center", color:"#64748B", fontSize:12, background:"#060B18", borderRadius:10, border:"1px solid #1E293B" }}>Video submitted — link unavailable</div>
+              : <div style={{ padding:"16px", textAlign:"center", color:"#334155", fontSize:12, background:"#060B18", borderRadius:10, border:"1px dashed #1E293B" }}>No video uploaded</div>}
           </div>
         </div>
       )}

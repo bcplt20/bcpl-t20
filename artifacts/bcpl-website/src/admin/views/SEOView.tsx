@@ -14,8 +14,8 @@ import {
  */
 
 const card: React.CSSProperties = {
-  background: "#FFFFFF",
-  border: "1px solid #E2E8F0",
+  background: "#0D1526",
+  border: "1px solid #1E293B",
   borderRadius: 14,
   padding: "18px 20px",
 };
@@ -24,9 +24,9 @@ const inputStyle: React.CSSProperties = {
   width: "100%",
   padding: "10px 12px",
   borderRadius: 9,
-  border: "1px solid #E2E8F0",
-  background: "#F5F6F8",
-  color: "#1E293B",
+  border: "1px solid #1E293B",
+  background: "#060B18",
+  color: "#F1F5F9",
   fontSize: 13,
   outline: "none",
   boxSizing: "border-box",
@@ -46,9 +46,9 @@ const orangeBtn: React.CSSProperties = {
 const ghostBtn: React.CSSProperties = {
   padding: "9px 16px",
   borderRadius: 9,
-  border: "1px solid #E2E8F0",
+  border: "1px solid #1E293B",
   background: "transparent",
-  color: "#64748B",
+  color: "#94A3B8",
   fontSize: 12,
   fontWeight: 600,
   cursor: "pointer",
@@ -211,7 +211,7 @@ export default function SEOView() {
       {/* header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 10 }}>
         <div>
-          <div style={{ fontSize: 18, fontWeight: 800, color: "#1E293B" }}>SEO</div>
+          <div style={{ fontSize: 18, fontWeight: 800, color: "#F1F5F9" }}>SEO</div>
           <div style={{ fontSize: 12, color: "#64748B", marginTop: 3 }}>
             Everything here is live data — what you save is what bcplt20.com serves.
           </div>
@@ -222,12 +222,12 @@ export default function SEOView() {
       </div>
 
       {error && (
-        <div style={{ padding: "10px 14px", background: "#EF444415", border: "1px solid #EF4444", borderRadius: 10, color: "#DC2626", fontSize: 12.5 }}>
+        <div style={{ padding: "10px 14px", background: "#EF444415", border: "1px solid #EF4444", borderRadius: 10, color: "#FCA5A5", fontSize: 12.5 }}>
           {error}
         </div>
       )}
       {flash && (
-        <div style={{ padding: "10px 14px", background: "#10B98115", border: "1px solid #10B981", borderRadius: 10, color: "#047857", fontSize: 12.5 }}>
+        <div style={{ padding: "10px 14px", background: "#10B98115", border: "1px solid #10B981", borderRadius: 10, color: "#6EE7B7", fontSize: 12.5 }}>
           ✓ {flash}
         </div>
       )}
@@ -235,10 +235,10 @@ export default function SEOView() {
       {/* overview cards */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12 }}>
         {[
-          { label: "Public pages", value: String(data?.pages.length ?? 0), color: "#C2410C" },
-          { label: "Custom meta set", value: `${customized} of ${data?.pages.length ?? 0}`, color: "#1D4ED8" },
-          { label: "URLs in sitemap", value: String(sitemapUrls), color: "#047857" },
-          { label: "Google verification", value: data?.gscCode ? "Tag live" : "Not set", color: data?.gscCode ? "#047857" : "#F59E0B" },
+          { label: "Public pages", value: String(data?.pages.length ?? 0), color: "#FF6B00" },
+          { label: "Custom meta set", value: `${customized} of ${data?.pages.length ?? 0}`, color: "#3B82F6" },
+          { label: "URLs in sitemap", value: String(sitemapUrls), color: "#10B981" },
+          { label: "Google verification", value: data?.gscCode ? "Tag live" : "Not set", color: data?.gscCode ? "#10B981" : "#F59E0B" },
         ].map((s) => (
           <div key={s.label} style={{ ...card, borderLeft: `3px solid ${s.color}` }}>
             <div style={{ fontSize: 22, fontWeight: 800, color: s.color }}>{s.value}</div>
@@ -251,8 +251,8 @@ export default function SEOView() {
       <div style={{ display: "flex", gap: 8 }}>
         {([["meta", "Meta Tags"], ["sitemap", "Sitemap & Robots"], ["google", "Google Verification"]] as [Tab, string][]).map(([t, label]) => (
           <button key={t} onClick={() => setTab(t)} style={{
-            padding: "9px 18px", borderRadius: 9, border: "1px solid " + (tab === t ? "#FF6B00" : "#E2E8F0"),
-            background: tab === t ? "#FF6B0015" : "transparent", color: tab === t ? "#C2410C" : "#94A3B8",
+            padding: "9px 18px", borderRadius: 9, border: "1px solid " + (tab === t ? "#FF6B00" : "#1E293B"),
+            background: tab === t ? "#FF6B0015" : "transparent", color: tab === t ? "#FF6B00" : "#94A3B8",
             fontSize: 12.5, fontWeight: 700, cursor: "pointer",
           }}>{label}</button>
         ))}
@@ -269,14 +269,14 @@ export default function SEOView() {
                 borderLeft: `2px solid ${selPath === p.path ? "#FF6B00" : "transparent"}`,
                 cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center",
               }}>
-                <span style={{ fontSize: 12.5, color: selPath === p.path ? "#C2410C" : "#94A3B8", fontWeight: selPath === p.path ? 700 : 500 }}>
+                <span style={{ fontSize: 12.5, color: selPath === p.path ? "#FF6B00" : "#94A3B8", fontWeight: selPath === p.path ? 700 : 500 }}>
                   {p.label}
                 </span>
                 {!p.isDefault && <span title="Customized" style={{ width: 7, height: 7, borderRadius: "50%", background: "#3B82F6", flexShrink: 0 }} />}
               </button>
             ))}
-            <div style={{ marginTop: 10, padding: "10px 12px", background: "#F5F6F8", borderRadius: 9, border: "1px solid #E2E8F0", fontSize: 10.5, color: "#475569", lineHeight: 1.6 }}>
-              <span style={{ color: "#1D4ED8" }}>●</span> = custom text saved. Others use the built-in default.
+            <div style={{ marginTop: 10, padding: "10px 12px", background: "#060B18", borderRadius: 9, border: "1px solid #1E293B", fontSize: 10.5, color: "#475569", lineHeight: 1.6 }}>
+              <span style={{ color: "#3B82F6" }}>●</span> = custom text saved. Others use the built-in default.
             </div>
           </div>
 
@@ -284,21 +284,21 @@ export default function SEOView() {
             <div style={card}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
                 <div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "#1E293B" }}>{sel?.label} — meta tags</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>{sel?.label} — meta tags</div>
                   <div style={{ fontSize: 11, color: "#475569", marginTop: 3, fontFamily: "monospace" }}>{origin}{sel?.path === "/" ? "" : sel?.path}</div>
                 </div>
                 {sel && !sel.isDefault && (
-                  <span style={{ fontSize: 10, padding: "3px 10px", borderRadius: 6, background: "#3B82F622", color: "#1D4ED8", fontWeight: 700 }}>CUSTOMIZED</span>
+                  <span style={{ fontSize: 10, padding: "3px 10px", borderRadius: 6, background: "#3B82F622", color: "#60A5FA", fontWeight: 700 }}>CUSTOMIZED</span>
                 )}
               </div>
 
               <label style={{ fontSize: 11, fontWeight: 700, color: "#64748B", display: "block", marginBottom: 6 }}>
-                Page title <span style={{ color: titleLen > 60 ? "#DC2626" : "#475569", fontWeight: 500 }}>({titleLen}/60)</span>
+                Page title <span style={{ color: titleLen > 60 ? "#EF4444" : "#475569", fontWeight: 500 }}>({titleLen}/60)</span>
               </label>
               <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} style={inputStyle} maxLength={120} />
 
               <label style={{ fontSize: 11, fontWeight: 700, color: "#64748B", display: "block", margin: "14px 0 6px" }}>
-                Description <span style={{ color: descLen > 160 ? "#DC2626" : "#475569", fontWeight: 500 }}>({descLen}/160)</span>
+                Description <span style={{ color: descLen > 160 ? "#EF4444" : "#475569", fontWeight: 500 }}>({descLen}/160)</span>
               </label>
               <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} maxLength={320} style={{ ...inputStyle, resize: "vertical", lineHeight: 1.5 }} />
 
@@ -320,9 +320,9 @@ export default function SEOView() {
 
             {/* real, computed checks */}
             <div style={card}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: "#1E293B", marginBottom: 10 }}>Quick checks</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 10 }}>Quick checks</div>
               {checks.map((c) => (
-                <div key={c.label} style={{ display: "flex", alignItems: "center", gap: 8, padding: "5px 0", fontSize: 12, color: c.ok ? "#64748B" : "#FCD34D" }}>
+                <div key={c.label} style={{ display: "flex", alignItems: "center", gap: 8, padding: "5px 0", fontSize: 12, color: c.ok ? "#94A3B8" : "#FCD34D" }}>
                   <span>{c.ok ? "✅" : "⚠️"}</span> {c.label}
                 </div>
               ))}
@@ -330,7 +330,7 @@ export default function SEOView() {
 
             {/* Google preview (renders exactly what's in the form) */}
             <div style={card}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: "#1E293B", marginBottom: 12 }}>Google result preview</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 12 }}>Google result preview</div>
               <div style={{ background: "#fff", borderRadius: 10, padding: "14px 18px" }}>
                 <div style={{ fontSize: 12, color: "#202124" }}>{origin.replace("https://", "")}{sel?.path === "/" ? "" : sel?.path}</div>
                 <div style={{ fontSize: 17, color: "#1a0dab", marginTop: 3, lineHeight: 1.3 }}>{form.title || "(no title)"}</div>
@@ -345,28 +345,28 @@ export default function SEOView() {
       {tab === "sitemap" && data && (
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           <div style={card}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: "#1E293B", marginBottom: 12 }}>Live files</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 12 }}>Live files</div>
             {[
               { key: "sm", label: "Sitemap", url: `${origin}/sitemap.xml`, note: "Auto-updates when team pages are added" },
               { key: "rb", label: "Robots", url: `${origin}/robots.txt`, note: "Allows everything except /admin, points crawlers to the sitemap" },
             ].map((f) => (
               <div key={f.key} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 0", flexWrap: "wrap" }}>
-                <span style={{ fontSize: 12, fontWeight: 700, color: "#64748B", width: 70 }}>{f.label}</span>
-                <code style={{ fontSize: 12, color: "#C2410C", background: "#F5F6F8", padding: "5px 10px", borderRadius: 7, border: "1px solid #E2E8F0" }}>{f.url}</code>
+                <span style={{ fontSize: 12, fontWeight: 700, color: "#94A3B8", width: 70 }}>{f.label}</span>
+                <code style={{ fontSize: 12, color: "#FF8C40", background: "#060B18", padding: "5px 10px", borderRadius: 7, border: "1px solid #1E293B" }}>{f.url}</code>
                 <button onClick={() => copy(f.url, f.key)} style={{ ...ghostBtn, padding: "5px 12px" }}>{copied === f.key ? "Copied ✓" : "Copy"}</button>
-                <a href={f.url} target="_blank" rel="noreferrer" style={{ fontSize: 11.5, color: "#1D4ED8" }}>Open ↗</a>
+                <a href={f.url} target="_blank" rel="noreferrer" style={{ fontSize: 11.5, color: "#3B82F6" }}>Open ↗</a>
                 <span style={{ fontSize: 11, color: "#475569", flexBasis: "100%" }}>{f.note}</span>
               </div>
             ))}
           </div>
 
           <div style={card}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: "#1E293B", marginBottom: 12 }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 12 }}>
               URLs in the sitemap ({sitemapUrls})
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6 }}>
               {[...data.pages.map((p) => p.path), ...data.teamSlugs.map((s) => `/team/${s}`)].map((u) => (
-                <div key={u} style={{ fontSize: 11.5, fontFamily: "monospace", color: "#64748B", padding: "6px 10px", background: "#F5F6F8", borderRadius: 7, border: "1px solid #12203A" }}>
+                <div key={u} style={{ fontSize: 11.5, fontFamily: "monospace", color: "#94A3B8", padding: "6px 10px", background: "#060B18", borderRadius: 7, border: "1px solid #12203A" }}>
                   {u}
                 </div>
               ))}
@@ -374,11 +374,11 @@ export default function SEOView() {
           </div>
 
           <div style={card}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: "#1E293B", marginBottom: 10 }}>Submit the sitemap to Google (one time)</div>
-            <ol style={{ margin: 0, paddingLeft: 18, fontSize: 12.5, color: "#64748B", lineHeight: 2 }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 10 }}>Submit the sitemap to Google (one time)</div>
+            <ol style={{ margin: 0, paddingLeft: 18, fontSize: 12.5, color: "#94A3B8", lineHeight: 2 }}>
               <li>Finish verification first (see the <b>Google Verification</b> tab).</li>
-              <li>Open <a href="https://search.google.com/search-console" target="_blank" rel="noreferrer" style={{ color: "#1D4ED8" }}>Google Search Console</a> → select bcplt20.com.</li>
-              <li>Left menu → <b>Sitemaps</b> → enter <code style={{ color: "#C2410C" }}>sitemap.xml</code> → Submit.</li>
+              <li>Open <a href="https://search.google.com/search-console" target="_blank" rel="noreferrer" style={{ color: "#3B82F6" }}>Google Search Console</a> → select bcplt20.com.</li>
+              <li>Left menu → <b>Sitemaps</b> → enter <code style={{ color: "#FF8C40" }}>sitemap.xml</code> → Submit.</li>
               <li>Google will start crawling within a few days; status shows on the same page.</li>
             </ol>
           </div>
@@ -393,23 +393,23 @@ export default function SEOView() {
           <GscPanel gsc={gsc} loading={gscLoading} error={gscError} onRefresh={() => void loadGsc(true)} />
 
           <div style={{ ...card, borderLeft: `3px solid ${data.gscCode ? "#10B981" : "#F59E0B"}` }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: "#1E293B", marginBottom: 8 }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 8 }}>
               {data.gscCode ? "✅ Verification tag is being served" : "⏳ No verification code set yet"}
             </div>
             {data.gscCode ? (
               <>
-                <div style={{ fontSize: 12, color: "#64748B", lineHeight: 1.7, marginBottom: 10 }}>
+                <div style={{ fontSize: 12, color: "#94A3B8", lineHeight: 1.7, marginBottom: 10 }}>
                   This tag is injected into every page of the live site. Open the site → right-click → View Page Source to see it.
                 </div>
-                <code style={{ display: "block", fontSize: 11.5, color: "#047857", background: "#F5F6F8", padding: "10px 12px", borderRadius: 8, border: "1px solid #E2E8F0", wordBreak: "break-all" }}>
+                <code style={{ display: "block", fontSize: 11.5, color: "#6EE7B7", background: "#060B18", padding: "10px 12px", borderRadius: 8, border: "1px solid #1E293B", wordBreak: "break-all" }}>
                   {`<meta name="google-site-verification" content="${data.gscCode}" />`}
                 </code>
-                <button onClick={() => void handleGscSave(true)} disabled={gscBusy} style={{ ...ghostBtn, marginTop: 12, color: "#DC2626", borderColor: "#7F1D1D" }}>
+                <button onClick={() => void handleGscSave(true)} disabled={gscBusy} style={{ ...ghostBtn, marginTop: 12, color: "#F87171", borderColor: "#7F1D1D" }}>
                   {gscBusy ? "Removing…" : "Remove code"}
                 </button>
               </>
             ) : (
-              <div style={{ fontSize: 12, color: "#64748B", lineHeight: 1.7 }}>
+              <div style={{ fontSize: 12, color: "#94A3B8", lineHeight: 1.7 }}>
                 Paste the meta tag (or just the code) from Google Search Console below. It will be served in the site's HTML so Google can verify you own bcplt20.com.
               </div>
             )}
@@ -432,11 +432,11 @@ export default function SEOView() {
           </div>
 
           <div style={card}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: "#1E293B", marginBottom: 10 }}>How to verify (one time)</div>
-            <ol style={{ margin: 0, paddingLeft: 18, fontSize: 12.5, color: "#64748B", lineHeight: 2 }}>
-              <li>Open <a href="https://search.google.com/search-console" target="_blank" rel="noreferrer" style={{ color: "#1D4ED8" }}>search.google.com/search-console</a> and sign in with the BCPL Google account.</li>
-              <li>Add property → <b>URL prefix</b> → enter <code style={{ color: "#C2410C" }}>https://bcplt20.com</code>.</li>
-              <li>Choose the <b>HTML tag</b> method and copy the whole <code style={{ color: "#C2410C" }}>&lt;meta …&gt;</code> line.</li>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 10 }}>How to verify (one time)</div>
+            <ol style={{ margin: 0, paddingLeft: 18, fontSize: 12.5, color: "#94A3B8", lineHeight: 2 }}>
+              <li>Open <a href="https://search.google.com/search-console" target="_blank" rel="noreferrer" style={{ color: "#3B82F6" }}>search.google.com/search-console</a> and sign in with the BCPL Google account.</li>
+              <li>Add property → <b>URL prefix</b> → enter <code style={{ color: "#FF8C40" }}>https://bcplt20.com</code>.</li>
+              <li>Choose the <b>HTML tag</b> method and copy the whole <code style={{ color: "#FF8C40" }}>&lt;meta …&gt;</code> line.</li>
               <li>Paste it above and click <b>Save & serve tag</b>.</li>
               <li>Deploy the site (the tag must be live on bcplt20.com).</li>
               <li>Back in Search Console, click <b>Verify</b>.</li>
@@ -464,9 +464,9 @@ function StatCard({ label, value, delta, deltaGood, hint }: {
 }) {
   const dc = deltaGood === undefined ? "#94A3B8" : deltaGood ? "#10B981" : "#F87171";
   return (
-    <div style={{ background: "#F5F6F8", border: "1px solid #E2E8F0", borderRadius: 12, padding: "14px 16px", flex: "1 1 150px", minWidth: 140 }}>
+    <div style={{ background: "#060B18", border: "1px solid #1E293B", borderRadius: 12, padding: "14px 16px", flex: "1 1 150px", minWidth: 140 }}>
       <div style={{ fontSize: 10.5, fontWeight: 700, color: "#64748B", letterSpacing: .5, textTransform: "uppercase" }}>{label}</div>
-      <div style={{ fontSize: 24, fontWeight: 800, color: "#1E293B", marginTop: 6, lineHeight: 1 }}>{value}</div>
+      <div style={{ fontSize: 24, fontWeight: 800, color: "#F1F5F9", marginTop: 6, lineHeight: 1 }}>{value}</div>
       {delta !== undefined && (
         <div style={{ fontSize: 11.5, color: dc, marginTop: 6 }}>{delta} <span style={{ color: "#475569" }}>{hint ?? "vs prev 28d"}</span></div>
       )}
@@ -479,8 +479,8 @@ function MiniTable({ title, colLabel, rows }: {
   rows: Array<{ label: string; clicks: number; impressions: number; ctr: number; position: number }>;
 }) {
   return (
-    <div style={{ background: "#F5F6F8", border: "1px solid #E2E8F0", borderRadius: 12, padding: 14, flex: "1 1 360px", minWidth: 300 }}>
-      <div style={{ fontSize: 12.5, fontWeight: 700, color: "#1E293B", marginBottom: 10 }}>{title}</div>
+    <div style={{ background: "#060B18", border: "1px solid #1E293B", borderRadius: 12, padding: 14, flex: "1 1 360px", minWidth: 300 }}>
+      <div style={{ fontSize: 12.5, fontWeight: 700, color: "#F1F5F9", marginBottom: 10 }}>{title}</div>
       {rows.length === 0 ? (
         <div style={{ fontSize: 12, color: "#64748B", padding: "8px 0" }}>No data yet for this period.</div>
       ) : (
@@ -496,9 +496,9 @@ function MiniTable({ title, colLabel, rows }: {
           </thead>
           <tbody>
             {rows.map((r, i) => (
-              <tr key={i} style={{ borderTop: "1px solid #E2E8F0", color: "#1E293B" }}>
+              <tr key={i} style={{ borderTop: "1px solid #1E293B", color: "#CBD5E1" }}>
                 <td style={{ padding: "6px 6px", maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={r.label}>{r.label || "—"}</td>
-                <td style={{ padding: "6px 6px", textAlign: "right", color: "#1E293B", fontWeight: 600 }}>{num(r.clicks)}</td>
+                <td style={{ padding: "6px 6px", textAlign: "right", color: "#F1F5F9", fontWeight: 600 }}>{num(r.clicks)}</td>
                 <td style={{ padding: "6px 6px", textAlign: "right" }}>{num(r.impressions)}</td>
                 <td style={{ padding: "6px 6px", textAlign: "right" }}>{pct(r.ctr)}</td>
                 <td style={{ padding: "6px 6px", textAlign: "right" }}>{pos(r.position)}</td>
@@ -514,12 +514,12 @@ function MiniTable({ title, colLabel, rows }: {
 function GscSetupPanel({ message }: { message: string }) {
   return (
     <div style={{ ...card, borderLeft: "3px solid #F59E0B" }}>
-      <div style={{ fontSize: 13, fontWeight: 700, color: "#1E293B", marginBottom: 6 }}>📊 Search Console data abhi set nahi hui</div>
+      <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 6 }}>📊 Search Console data abhi set nahi hui</div>
       <div style={{ fontSize: 11.5, color: "#64748B", marginBottom: 10 }}>{message}</div>
-      <div style={{ fontSize: 12.5, color: "#1E293B", fontWeight: 600, marginBottom: 6 }}>Setup (ek baar) — 3 steps:</div>
-      <ol style={{ margin: 0, paddingLeft: 18, fontSize: 12.5, color: "#64748B", lineHeight: 1.9 }}>
+      <div style={{ fontSize: 12.5, color: "#CBD5E1", fontWeight: 600, marginBottom: 6 }}>Setup (ek baar) — 3 steps:</div>
+      <ol style={{ margin: 0, paddingLeft: 18, fontSize: 12.5, color: "#94A3B8", lineHeight: 1.9 }}>
         <li>Google Cloud Console me ek <b>Service Account</b> banao aur uski <b>JSON key</b> download karo.</li>
-        <li>Wo poori JSON server ke <code style={{ color: "#C2410C" }}>GSC_SERVICE_ACCOUNT_JSON</code> env variable me daalo (aur zaroorat ho to <code style={{ color: "#C2410C" }}>GSC_SITE_URL</code> = <code style={{ color: "#C2410C" }}>sc-domain:bcplt20.com</code>).</li>
+        <li>Wo poori JSON server ke <code style={{ color: "#FF8C40" }}>GSC_SERVICE_ACCOUNT_JSON</code> env variable me daalo (aur zaroorat ho to <code style={{ color: "#FF8C40" }}>GSC_SITE_URL</code> = <code style={{ color: "#FF8C40" }}>sc-domain:bcplt20.com</code>).</li>
         <li>Search Console → Settings → <b>Users and permissions</b> me service-account ki email ko <b>user</b> ke roop me add karo (Full ya Restricted).</li>
       </ol>
       <div style={{ fontSize: 11, color: "#475569", marginTop: 10 }}>Ye ho jaane ke baad yahan clicks, impressions aur queries apne-aap dikhne lagenge.</div>
@@ -534,7 +534,7 @@ function GscPanel({ gsc, loading, error, onRefresh }: {
     return <div style={{ ...card }}><div style={{ fontSize: 12.5, color: "#64748B" }}>Loading Search Console data…</div></div>;
   }
   if (error) {
-    return <div style={{ ...card, borderLeft: "3px solid #F87171" }}><div style={{ fontSize: 12.5, color: "#DC2626" }}>⚠ {error}</div></div>;
+    return <div style={{ ...card, borderLeft: "3px solid #F87171" }}><div style={{ fontSize: 12.5, color: "#F87171" }}>⚠ {error}</div></div>;
   }
   if (!gsc) return null;
 
@@ -550,7 +550,7 @@ function GscPanel({ gsc, loading, error, onRefresh }: {
     <div style={{ ...card }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12, marginBottom: 12, flexWrap: "wrap" }}>
         <div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: "#1E293B" }}>Google Search traffic</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9" }}>Google Search traffic</div>
           <div style={{ fontSize: 11, color: "#64748B", marginTop: 3 }}>
             {g.range.startDate} → {g.range.endDate} · {g.siteUrl}
             {g.cached ? " · cached" : ""}

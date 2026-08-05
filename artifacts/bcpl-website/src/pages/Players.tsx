@@ -82,7 +82,7 @@ export function Players() {
   const squadEmpty = !loading && !loadErr && allPlayers.length === 0;
 
   return (
-    <div style={{ background:"#F6F3EC", color:"#0C1D33", minHeight: "100vh", fontFamily: "Inter,sans-serif", overflowX: "hidden" }}>
+    <div style={{ background: "var(--bg)", color: "#F0EDE8", minHeight: "100vh", fontFamily: "Inter,sans-serif", overflowX: "hidden" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -91,14 +91,14 @@ export function Players() {
         @media(min-width:1024px) { .wrap { padding: 0 40px; } }
         .slbl { font-family: var(--font-head); font-weight: 800; font-size: 11px; letter-spacing: .15em; color: #FF7A29; text-transform: uppercase; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
         .slbl::before { content: ''; display: inline-block; width: 20px; height: 2px; background: #FF7A29; }
-        .shimmer-gold { background: linear-gradient(90deg,#B8892B,#E8B23D,#B8892B); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 3s linear infinite; }
+        .shimmer-gold { background: linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 3s linear infinite; }
         @keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
         @keyframes fadeSlide { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
-        .player-card { background: #FFFFFF; backdrop-filter: blur(24px); border: 1px solid rgba(12,29,51,0.12); border-radius: 16px; padding: 18px 16px; transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s; animation: fadeSlide 0.4s ease both; }
+        .player-card { background: linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85)); backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 18px 16px; transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s; animation: fadeSlide 0.4s ease both; }
         .player-card:hover { transform: translateY(-4px); border-color: rgba(255,122,41,0.35); box-shadow: 0 14px 40px rgba(0,0,0,0.5); }
-        .filter-input { background: rgba(12,29,51,0.04); border: 1.5px solid rgba(12,29,51,0.12); border-radius: 12px; color: #0C1D33; padding: 10px 16px; font-family: Inter, sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; width: 100%; }
+        .filter-input { background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.1); border-radius: 12px; color: #F8F4EE; padding: 10px 16px; font-family: Inter, sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; width: 100%; }
         .filter-input:focus { border-color: #FF7A29; }
-        .filter-select { background: rgba(12,29,51,0.04); border: 1.5px solid rgba(12,29,51,0.12); border-radius: 12px; color: #0C1D33; padding: 10px 16px; font-family: Inter, sans-serif; font-size: 14px; outline: none; cursor: pointer; appearance: none; -webkit-appearance: none; transition: border-color 0.2s; }
+        .filter-select { background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.1); border-radius: 12px; color: #F8F4EE; padding: 10px 16px; font-family: Inter, sans-serif; font-size: 14px; outline: none; cursor: pointer; appearance: none; -webkit-appearance: none; transition: border-color 0.2s; }
         .filter-select:hover { border-color: rgba(255,122,41,0.5); }
         .player-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
         @media(min-width:640px) { .player-grid { grid-template-columns: repeat(2,1fr); } }
@@ -121,11 +121,11 @@ export function Players() {
           <div className="slbl" style={{ justifyContent: "center" }}>
             {t("The Players", "खिलाड़ी")}
           </div>
-          <h1 style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: "clamp(32px,6vw,64px)", lineHeight: 1.05, color:"#0C1D33", textTransform: "uppercase", marginBottom: 12 }}>
+          <h1 style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: "clamp(32px,6vw,64px)", lineHeight: 1.05, color: "#fff", textTransform: "uppercase", marginBottom: 12 }}>
             {t("SEASON 5", "सीज़न 5")}<br />
             <span className="shimmer-gold">{t("PLAYERS", "खिलाड़ी")}</span>
           </h1>
-          <p style={{ color:"rgba(12,29,51,.60)", fontSize: "clamp(14px,2vw,16px)", lineHeight: 1.7, maxWidth: 480, margin: "0 auto" }}>
+          <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "clamp(14px,2vw,16px)", lineHeight: 1.7, maxWidth: 480, margin: "0 auto" }}>
             {t("Every player, every role, every team — the complete BCPL Season 5 players database.", "हर खिलाड़ी, हर role, हर team — पूरा BCPL Season 5 players database।")}
           </p>
         </div>
@@ -135,7 +135,7 @@ export function Players() {
 
         {/* FILTERS */}
         {!squadEmpty && (
-          <div style={{ background: "#FFFFFF", backdropFilter: "blur(24px)", border: "1px solid rgba(12,29,51,0.12)", borderRadius: 16, padding: "24px 20px", marginBottom: 32 }}>
+          <div style={{ background: "linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85))", backdropFilter: "blur(24px)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "24px 20px", marginBottom: 32 }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 14 }}>
               <input
                 type="text"
@@ -150,9 +150,9 @@ export function Players() {
                   value={filterTeam}
                   onChange={e => setFilterTeam(e.target.value)}
                 >
-                  <option value="All Teams" style={{ background: "#FFFFFF" }}>{t("All Teams", "सभी टीम")}</option>
+                  <option value="All Teams" style={{ background: "#121F2F" }}>{t("All Teams", "सभी टीम")}</option>
                   {teams.map(t => (
-                    <option key={t.id} value={t.name} style={{ background: "#FFFFFF" }}>{t.name}</option>
+                    <option key={t.id} value={t.name} style={{ background: "#121F2F" }}>{t.name}</option>
                   ))}
                 </select>
                 <select
@@ -161,7 +161,7 @@ export function Players() {
                   onChange={e => setFilterRole(e.target.value)}
                 >
                   {uniqueRoles.map(r => (
-                    <option key={r} value={r} style={{ background: "#FFFFFF" }}>{r}</option>
+                    <option key={r} value={r} style={{ background: "#121F2F" }}>{r}</option>
                   ))}
                 </select>
               </div>
@@ -181,7 +181,7 @@ export function Players() {
                     <Skel w={60} h={16} r={6} />
                   </div>
                 </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, paddingTop: 12, borderTop: "1px solid rgba(12,29,51,0.12)" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, paddingTop: 12, borderTop: "1px solid rgba(255,255,255,0.06)" }}>
                   <Skel w={20} h={20} r={10} style={{ flexShrink: 0 }} />
                   <Skel w="50%" h={12} />
                 </div>
@@ -200,11 +200,11 @@ export function Players() {
         {/* EMPTY STATE — squads not announced yet */}
         {squadEmpty && (
           <div style={{ textAlign: "center", padding: "clamp(60px,10vw,100px) 20px" }}>
-            <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}><IcoBat size={40} style={{ color:"rgba(12,29,51,.60)" }} /></div>
-            <h2 style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: "clamp(22px,4vw,36px)", color:"#0C1D33", marginBottom: 12 }}>
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}><IcoBat size={40} style={{ color: "rgba(255,255,255,0.5)" }} /></div>
+            <h2 style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: "clamp(22px,4vw,36px)", color: "#fff", marginBottom: 12 }}>
               {t("Squads Announced After Auction", "Auction के बाद squad announce होंगे")}
             </h2>
-            <p style={{ color: "rgba(12,29,51,.60)", fontSize: 15, maxWidth: 440, margin: "0 auto 28px", lineHeight: 1.7 }}>
+            <p style={{ color: "var(--ink-3)", fontSize: 15, maxWidth: 440, margin: "0 auto 28px", lineHeight: 1.7 }}>
               {t("Season 5 squad rosters will be announced after the players' auction in August 2026. All registered players will appear here once teams are finalised.", "Season 5 की squad lists players' auction के बाद (Aug 2026) announce होंगी। सभी registered players यहाँ दिखेंगे जब teams finalize होंगी।")}
             </p>
             <Link href="/register" className="float-reg-btn" style={{ position: "static", animation: "none", display: "inline-flex", boxShadow: "0 6px 24px rgba(255,122,41,0.35)" }}>
@@ -215,7 +215,7 @@ export function Players() {
 
         {/* NO RESULTS after filter */}
         {!loading && !loadErr && allPlayers.length > 0 && filtered.length === 0 && (
-          <div style={{ textAlign: "center", padding: "60px 0", color: "rgba(12,29,51,.60)", fontFamily: "Inter,sans-serif", fontSize: 15 }}>
+          <div style={{ textAlign: "center", padding: "60px 0", color: "var(--ink-3)", fontFamily: "Inter,sans-serif", fontSize: 15 }}>
             {t("No players match your filters.", "कोई खिलाड़ी आपके filter से match नहीं करता।")}
           </div>
         )}
@@ -224,7 +224,7 @@ export function Players() {
         {filtered.length > 0 && (
           <>
             <div style={{ marginBottom: 20, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
-              <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 13, color:"rgba(12,29,51,.78)" }}>
+              <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 13, color: "rgba(255,255,255,0.6)" }}>
                 {filtered.length} {t(filtered.length === 1 ? "PLAYER" : "PLAYERS", filtered.length === 1 ? "खिलाड़ी" : "खिलाड़ी")}
               </span>
             </div>
@@ -243,20 +243,20 @@ export function Players() {
                         </div>
                       )}
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 15, color:"#0C1D33", marginBottom: 4, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.name}</div>
+                        <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 15, color: "#F8F4EE", marginBottom: 4, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.name}</div>
                         <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
                           <span style={{ background: `${roleColor}22`, border: `1px solid ${roleColor}55`, color: roleColor, fontSize: 10, fontWeight: 800, padding: "2px 8px", borderRadius: 6, fontFamily: "var(--font-head)", letterSpacing: ".06em" }}>{roleNorm.toUpperCase()}</span>
-                          {p.isCaptain && <span style={{ background: "rgba(232,178,61,0.2)", border: "1px solid rgba(232,178,61,0.5)", color:"#B8892B", fontSize: 9, fontWeight: 800, padding: "2px 7px", borderRadius: 100, fontFamily: "var(--font-head)", letterSpacing: ".06em" }}>C</span>}
-                          {p.isViceCaptain && <span style={{ background: "rgba(12,29,51,0.04)", border: "1px solid rgba(12,29,51,0.12)", color:"rgba(12,29,51,.78)", fontSize: 9, fontWeight: 800, padding: "2px 7px", borderRadius: 100, fontFamily: "var(--font-head)", letterSpacing: ".06em" }}>VC</span>}
+                          {p.isCaptain && <span style={{ background: "rgba(232,178,61,0.2)", border: "1px solid rgba(232,178,61,0.5)", color: "#E8B23D", fontSize: 9, fontWeight: 800, padding: "2px 7px", borderRadius: 100, fontFamily: "var(--font-head)", letterSpacing: ".06em" }}>C</span>}
+                          {p.isViceCaptain && <span style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.25)", color: "rgba(255,255,255,0.75)", fontSize: 9, fontWeight: 800, padding: "2px 7px", borderRadius: 100, fontFamily: "var(--font-head)", letterSpacing: ".06em" }}>VC</span>}
                         </div>
                       </div>
                     </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, paddingTop: 12, borderTop: "1px solid rgba(12,29,51,0.12)" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, paddingTop: 12, borderTop: "1px solid rgba(255,255,255,0.06)" }}>
                       <div style={{ width: 20, height: 20, borderRadius: "50%", background: `${p.teamColor}22`, border: `2px solid ${p.teamColor}`, flexShrink: 0 }} />
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontFamily: "var(--font-head)", fontWeight: 700, fontSize: 12, color: p.teamColor, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.teamName}</div>
                       </div>
-                      {p.jerseyNo && <span style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 18, color:"rgba(12,29,51,.60)" }}>#{p.jerseyNo}</span>}
+                      {p.jerseyNo && <span style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 18, color: "rgba(255,255,255,0.25)" }}>#{p.jerseyNo}</span>}
                     </div>
                   </div>
                 );

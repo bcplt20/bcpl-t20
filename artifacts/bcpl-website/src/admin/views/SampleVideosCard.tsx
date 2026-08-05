@@ -115,28 +115,28 @@ export function SampleVideosCard() {
   };
 
   return (
-    <div style={{ background: "linear-gradient(135deg,#FFFFFF,#FFFFFF)", border: "1px solid #E2E8F0", borderRadius: 16, padding: 20 }}>
+    <div style={{ background: "linear-gradient(135deg,#0D1526,#0A1020)", border: "1px solid #1E293B", borderRadius: 16, padding: 20 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8, marginBottom: 4 }}>
         <div>
-          <div style={{ fontSize: 15, fontWeight: 800, color: "#1E293B" }}>🎬 Sample Videos (shown to players)</div>
+          <div style={{ fontSize: 15, fontWeight: 800, color: "#F1F5F9" }}>🎬 Sample Videos (shown to players)</div>
           <div style={{ fontSize: 12, color: "#64748B", marginTop: 2 }}>
             These play on the "Upload Trial Video" page. Upload a video file or paste a video URL for each role.
           </div>
         </div>
-        <button onClick={load} style={{ padding: "8px 14px", borderRadius: 9, border: "1px solid #E2E8F0", background: "transparent", color: "#64748B", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>↺ Reload</button>
+        <button onClick={load} style={{ padding: "8px 14px", borderRadius: 9, border: "1px solid #1E293B", background: "transparent", color: "#64748B", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>↺ Reload</button>
       </div>
 
       {notice && (
-        <div style={{ margin: "10px 0 0", padding: 10, borderRadius: 9, background: "#22C55E15", border: "1px solid #22C55E40", color: "#15803D", fontSize: 12, fontWeight: 600 }}>{notice}</div>
+        <div style={{ margin: "10px 0 0", padding: 10, borderRadius: 9, background: "#22C55E15", border: "1px solid #22C55E40", color: "#22C55E", fontSize: 12, fontWeight: 600 }}>{notice}</div>
       )}
       {err && (
-        <div style={{ margin: "10px 0 0", padding: 10, borderRadius: 9, background: "#EF444415", border: "1px solid #EF444440", color: "#DC2626", fontSize: 12 }}>⚠ {err}</div>
+        <div style={{ margin: "10px 0 0", padding: 10, borderRadius: 9, background: "#EF444415", border: "1px solid #EF444440", color: "#EF4444", fontSize: 12 }}>⚠ {err}</div>
       )}
 
       {loading ? (
         <div style={{ padding: 18, color: "#64748B", fontSize: 13 }}>Loading sample videos…</div>
       ) : data === null ? (
-        <div style={{ padding: 18, color: "#DC2626", fontSize: 13 }}>Could not load — use Reload to try again.</div>
+        <div style={{ padding: 18, color: "#EF4444", fontSize: 13 }}>Could not load — use Reload to try again.</div>
       ) : (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: 12, marginTop: 14 }}>
           {ROLES.map(r => {
@@ -144,12 +144,12 @@ export function SampleVideosCard() {
             const isBusy = busy === r.key;        // this role is being worked on (label)
             const anyBusy = busy !== null;        // block ALL actions while any write runs
             return (
-              <div key={r.key} style={{ border: "1px solid #E2E8F0", borderRadius: 12, padding: 14, background: "#FFFFFF" }}>
+              <div key={r.key} style={{ border: "1px solid #1E293B", borderRadius: 12, padding: 14, background: "#0A1020" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                  <span style={{ fontSize: 13, fontWeight: 800, color: "#1E293B" }}>{r.icon} {r.label}</span>
+                  <span style={{ fontSize: 13, fontWeight: 800, color: "#E2E8F0" }}>{r.icon} {r.label}</span>
                   {entry
-                    ? <span style={{ fontSize: 10, fontWeight: 800, color: "#15803D", background: "#22C55E15", border: "1px solid #22C55E40", padding: "3px 8px", borderRadius: 6 }}>LIVE ✓</span>
-                    : <span style={{ fontSize: 10, fontWeight: 700, color: "#64748B", background: "#64748B15", border: "1px solid #E2E8F055", padding: "3px 8px", borderRadius: 6 }}>NOT SET</span>}
+                    ? <span style={{ fontSize: 10, fontWeight: 800, color: "#22C55E", background: "#22C55E15", border: "1px solid #22C55E40", padding: "3px 8px", borderRadius: 6 }}>LIVE ✓</span>
+                    : <span style={{ fontSize: 10, fontWeight: 700, color: "#64748B", background: "#64748B15", border: "1px solid #33415555", padding: "3px 8px", borderRadius: 6 }}>NOT SET</span>}
                 </div>
 
                 {entry && (
@@ -169,7 +169,7 @@ export function SampleVideosCard() {
                   <button
                     disabled={anyBusy}
                     onClick={() => fileInputs.current[r.key]?.click()}
-                    style={{ padding: "9px 12px", borderRadius: 8, border: "1px solid #3B82F640", background: "#3B82F615", color: "#1D4ED8", fontSize: 12, fontWeight: 700, cursor: anyBusy ? "wait" : "pointer" }}
+                    style={{ padding: "9px 12px", borderRadius: 8, border: "1px solid #3B82F640", background: "#3B82F615", color: "#60A5FA", fontSize: 12, fontWeight: 700, cursor: anyBusy ? "wait" : "pointer" }}
                   >
                     {isBusy ? "Working… (large videos take time)" : (entry ? "⬆ Replace with new video file" : "⬆ Upload video file")}
                   </button>
@@ -179,16 +179,16 @@ export function SampleVideosCard() {
                       onChange={e => setUrlDrafts(d => ({ ...d, [r.key]: e.target.value }))}
                       placeholder="…or paste video URL"
                       disabled={anyBusy}
-                      style={{ flex: 1, minWidth: 0, padding: "8px 10px", borderRadius: 8, border: "1px solid #E2E8F0", background: "#FFFFFF", color: "#1E293B", fontSize: 12 }}
+                      style={{ flex: 1, minWidth: 0, padding: "8px 10px", borderRadius: 8, border: "1px solid #1E293B", background: "#0D1526", color: "#E2E8F0", fontSize: 12 }}
                     />
                     <button disabled={anyBusy || !(urlDrafts[r.key] ?? "").trim()} onClick={() => onSaveUrl(r.key)}
-                      style={{ padding: "8px 12px", borderRadius: 8, border: "1px solid #22C55E40", background: "#22C55E15", color: "#15803D", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                      style={{ padding: "8px 12px", borderRadius: 8, border: "1px solid #22C55E40", background: "#22C55E15", color: "#22C55E", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
                       Save
                     </button>
                   </div>
                   {entry && (
                     <button disabled={anyBusy} onClick={() => onRemove(r.key)}
-                      style={{ padding: "7px 12px", borderRadius: 8, border: "1px solid #EF444430", background: "transparent", color: "#DC2626", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
+                      style={{ padding: "7px 12px", borderRadius: 8, border: "1px solid #EF444430", background: "transparent", color: "#EF4444", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
                       ✕ Remove sample
                     </button>
                   )}

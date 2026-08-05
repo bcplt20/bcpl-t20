@@ -15,50 +15,23 @@ const normTeam = (name: string) => (name || "").trim().toLowerCase();
 const initials = (name: string) =>
   (name || "").split(" ").map(w => w[0]).join("").slice(0, 3).toUpperCase();
 
-/* Number of teams that make the qualification zone (top 4, IPL-style). */
-const QUALIFY_TOP = 4;
-
 /* Circular team badge: logo when available (keeps the colored ring), initials
-   fallback when there is no logo or the image fails to load. On the light
-   theme the badge sits on a clean white disc. */
-function TeamBadge({ name, color, logo, size = 32 }: { name: string; color: string; logo?: string; size?: number }) {
+   fallback when there is no logo or the image fails to load. */
+function TeamBadge({ name, color, logo }: { name: string; color: string; logo?: string }) {
   const [broken, setBroken] = React.useState(false);
   const showLogo = Boolean(logo) && !broken;
   return (
     <span style={{
-      width: size, height: size, borderRadius: "50%",
-      background: showLogo ? "#FFFFFF" : `${color}1F`,
+      width: 30, height: 30, borderRadius: "50%",
+      background: showLogo ? "rgba(255,255,255,0.96)" : `${color}22`,
       border: `2px solid ${color}`, display: "inline-flex", alignItems: "center",
       justifyContent: "center", overflow: "hidden", flexShrink: 0,
-      fontFamily: "var(--font-head)", fontWeight: 800, fontSize: size * 0.34, color,
-      boxShadow: "0 1px 3px rgba(12,29,51,.10)",
+      fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 9, color,
     }}>
       {showLogo
         ? <img loading="lazy" decoding="async" src={logo} alt={name} onError={() => setBroken(true)} style={{ width: "82%", height: "82%", objectFit: "contain" }} />
         : initials(name)}
     </span>
-  );
-}
-
-/* Form guide dots — W (green) / L (red) / N (grey) coloured pills. */
-function FormGuide({ form }: { form: string[] }) {
-  if (!form || form.length === 0) return null;
-  const last5 = form.slice(-5);
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-      {last5.map((r, i) => {
-        const res = (r || "").toUpperCase();
-        const bg = res === "W" ? "#1E9E5A" : res === "L" ? "#E8493F" : "#9AA3B0";
-        return (
-          <span key={i} title={res === "W" ? "Won" : res === "L" ? "Lost" : "No result"} style={{
-            width: 18, height: 18, borderRadius: "50%", background: bg,
-            display: "inline-flex", alignItems: "center", justifyContent: "center",
-            fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 10, color: "#fff",
-            flexShrink: 0,
-          }}>{res}</span>
-        );
-      })}
-    </div>
   );
 }
 
@@ -70,34 +43,31 @@ const CSS = `
 @media(min-width:768px) { .wrap { padding: 0 32px; } }
 .slbl { font-family: var(--font-head); font-weight: 800; font-size: 11px; letter-spacing: .15em; color: #FF7A29; text-transform: uppercase; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
 .slbl::before { content: ''; display: inline-block; width: 20px; height: 2px; background: #FF7A29; }
-.shimmer-gold { background: linear-gradient(90deg,#B8892B,#E8B23D,#B8892B); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 3s linear infinite; }
+.shimmer-gold { background: linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 3s linear infinite; }
 @keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
 
-/* Sticky-team-column table with horizontal scroll on mobile */
+/* Desktop: full table */
 .pts-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
-.pts-table { width: 100%; border-collapse: collapse; min-width: 720px; }
-.pts-header th { padding: 13px 14px; text-align: center; font-family: var(--font-head); font-weight: 700; font-size: 11px; color: #B8892B; text-transform: uppercase; letter-spacing: .1em; white-space: nowrap; background: #FBF8F1; border-bottom: 2px solid rgba(12,29,51,.10); }
-.pts-header th.left { text-align: left; }
-.pts-row { border-bottom: 1px solid rgba(12,29,51,.07); transition: background 0.15s; }
-.pts-row:hover { background: rgba(255,122,41,0.05); }
-.pts-row td { padding: 14px; font-family: Inter, sans-serif; font-size: 15px; color: rgba(12,29,51,.78); text-align: center; white-space: nowrap; }
-.pts-row.qualify td { background: rgba(30,158,90,0.05); }
-.pts-row.qualify:hover td { background: rgba(30,158,90,0.10); }
-.pts-row.qualify-last td { border-bottom: 2px solid rgba(30,158,90,0.55); }
+.pts-table { width: 100%; border-collapse: collapse; min-width: 640px; }
+.pts-header { background: rgba(255,122,41,0.06); }
+.pts-header th { padding: 12px 14px; text-align: left; font-family: var(--font-head); font-weight: 700; font-size: 10px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .1em; white-space: nowrap; }
+.pts-row { border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.15s; }
+.pts-row:hover { background: rgba(255,122,41,0.04); }
+.pts-row td { padding: 14px; font-family: Inter, sans-serif; font-size: 13px; color: rgba(255,255,255,0.6); }
 
-/* Sticky team column (first two cols) for horizontal scroll on mobile */
-.pts-table th.stick, .pts-table td.stick { position: sticky; left: 0; z-index: 2; background: #FFFFFF; }
-.pts-header th.stick { background: #FBF8F1; }
-.pts-row:hover td.stick { background: #FFF6EE; }
-.pts-row.qualify td.stick { background: #F2FAF5; }
-.pts-row.qualify:hover td.stick { background: #EAF7EF; }
-.pts-table th.stick-pos, .pts-table td.stick-pos { left: 0; min-width: 46px; }
-.pts-table th.stick-team, .pts-table td.stick-team { left: 46px; box-shadow: 6px 0 12px -8px rgba(12,29,51,.18); text-align: left !important; }
+/* Mobile: collapsed rows (user's explicit direction) */
+@media(max-width:767px) {
+  .pts-table { display: none; }
+  .pts-mobile { display: block; }
+}
+@media(min-width:768px) {
+  .pts-mobile { display: none; }
+}
+.pts-mobile-row { background: linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85)); backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 16px; margin-bottom: 10px; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s; }
+.pts-mobile-row:hover { border-color: rgba(255,122,41,0.35); }
+.pts-mobile-row.expanded { border-color: rgba(255,122,41,0.5); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
 
-.qz-note { display: inline-flex; align-items: center; gap: 8px; font-family: Inter, sans-serif; font-size: 13px; color: rgba(12,29,51,.60); }
-.qz-swatch { width: 12px; height: 12px; border-radius: 3px; background: rgba(30,158,90,0.55); }
-
-/* Floating register button (unchanged behaviour) */
+/* Floating register button */
 .float-reg-btn { position: fixed; bottom: 28px; right: 28px; z-index: 900; background: linear-gradient(135deg,#FF7A29,#D95E10); border: none; border-radius: 12px; color: #fff; font-family: var(--font-head); font-weight: 900; font-size: 13px; letter-spacing: .06em; cursor: pointer; padding: 14px 22px; text-transform: uppercase; text-decoration: none; display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 32px rgba(255,122,41,0.45); clip-path: polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition: opacity .2s, transform .15s; }
 .float-reg-btn:hover { opacity: .9; transform: translateY(-2px); }
 @media(max-width:1023px){ .float-reg-btn { display:none; } }
@@ -115,31 +85,12 @@ interface TeamRow {
   nr: number;
   nrr: string;
   pts: number;
-  form: string[];
-}
-
-/* Position medallion — gold/silver/bronze for the podium, subtle chip below. */
-function PosBadge({ pos, size = 32 }: { pos: number; size?: number }) {
-  const grad =
-    pos === 1 ? "linear-gradient(135deg,#E8B23D,#FFD873)" :
-    pos === 2 ? "linear-gradient(135deg,#9AA3B0,#CBD2DB)" :
-    pos === 3 ? "linear-gradient(135deg,#B45309,#D97706)" :
-    "rgba(12,29,51,.06)";
-  const ink = pos <= 3 ? "#0C1D33" : "rgba(12,29,51,.55)";
-  return (
-    <div style={{
-      width: size, height: size, borderRadius: "50%", background: grad,
-      display: "flex", alignItems: "center", justifyContent: "center",
-      fontFamily: "var(--font-head)", fontWeight: 900, fontSize: size * 0.4, color: ink,
-      margin: "0 auto", flexShrink: 0,
-      boxShadow: pos <= 3 ? "0 2px 6px rgba(12,29,51,.15)" : "none",
-    }}>{pos}</div>
-  );
 }
 
 export function PointsTable() {
   const { t } = useLang();
   const [tableRows, setTableRows] = useState<TeamRow[]>([]);
+  const [expanded, setExpanded] = useState<number | null>(null);
   const [teamColors, setTeamColors] = useState<Record<string, string>>({});
   const [teamLogos,  setTeamLogos]  = useState<Record<string, string>>({});
 
@@ -171,22 +122,19 @@ export function PointsTable() {
         nr: r.noResult,
         nrr: (r.nrr >= 0 ? "+" : "") + Number(r.nrr).toFixed(3),
         pts: r.points,
-        form: Array.isArray(r.form) ? r.form : [],
       }));
       setTableRows(rows);
     }).catch(() => {});
   }, []);
 
-  const showQualifyLine = tableRows.length > QUALIFY_TOP;
-
   return (
-    <div style={{ background: "var(--bg)", color: "var(--ink-dark)", minHeight: "100vh", fontFamily: "Inter,sans-serif", overflowX: "hidden" }}>
+    <div style={{ background: "var(--bg)", color: "#F0EDE8", minHeight: "100vh", fontFamily: "Inter,sans-serif", overflowX: "hidden" }}>
       <style>{CSS}</style>
       <SiteHeader active="Points Table" />
 
-      {/* HERO — DARK ANCHOR (white text over stadium-navy gradient) */}
-      <section className="on-dark" style={{ background: "linear-gradient(160deg,#0C1D33 0%,#0A1830 55%,#081327 100%)", padding: "clamp(88px,12vh,132px) 0 clamp(40px,6vw,64px)", position: "relative", overflow: "hidden" }}>
-        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 50% at 50% 0%,rgba(255,122,41,0.14) 0%,transparent 70%)", pointerEvents: "none" }} />
+      {/* HERO */}
+      <section style={{ padding: "clamp(48px,6vw,72px) 0 clamp(32px,4vw,48px)", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 50% at 50% 0%,rgba(255,122,41,0.06) 0%,transparent 70%)", pointerEvents: "none" }} />
         <div className="wrap" style={{ position: "relative", zIndex: 1, textAlign: "center" }}>
           <div className="slbl" style={{ justifyContent: "center" }}>
             {t("Season 5 Standings", "सीज़न 5 स्टैंडिंग")}
@@ -195,26 +143,22 @@ export function PointsTable() {
             {t("POINTS", "पॉइंट्स")}<br />
             <span className="shimmer-gold">{t("TABLE", "टेबल")}</span>
           </h1>
-          <p style={{ color: "rgba(255,255,255,0.72)", fontSize: "clamp(16px,2vw,18px)", lineHeight: 1.7, maxWidth: 480, margin: "0 auto" }}>
+          <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "clamp(14px,2vw,16px)", lineHeight: 1.7, maxWidth: 480, margin: "0 auto" }}>
             {t("Live standings update as Season 5 matches are played.", "Season 5 के matches के साथ live standings update होते हैं।")}
           </p>
         </div>
       </section>
 
-      <div className="wrap" style={{ paddingTop: "clamp(40px,6vw,64px)", paddingBottom: 100 }}>
+      <div className="wrap" style={{ paddingBottom: 100 }}>
 
         {/* EMPTY STATE */}
         {tableRows.length === 0 && (
-          <div style={{ textAlign: "center", padding: "clamp(48px,8vw,88px) 24px", background: "#FFFFFF", border: "1px solid rgba(12,29,51,.10)", borderRadius: 20, boxShadow: "0 10px 30px rgba(12,29,51,.08)" }}>
-            <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
-              <span style={{ width: 76, height: 76, borderRadius: "50%", background: "rgba(232,178,61,0.12)", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
-                <IcoTrophy size={38} style={{ color: "#B8892B" }} />
-              </span>
-            </div>
-            <h2 style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: "clamp(24px,4vw,38px)", color: "var(--ink-dark)", textTransform: "uppercase", marginBottom: 12 }}>
+          <div style={{ textAlign: "center", padding: "clamp(60px,10vw,100px) 20px" }}>
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}><IcoTrophy size={40} style={{ color: "var(--gold, #E8B23D)" }} /></div>
+            <h2 style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: "clamp(22px,4vw,36px)", color: "#fff", marginBottom: 12 }}>
               {t("Standings Coming Soon", "Standings जल्द आएंगे")}
             </h2>
-            <p style={{ color: "rgba(12,29,51,.60)", fontSize: 16, maxWidth: 440, margin: "0 auto 28px", lineHeight: 1.7 }}>
+            <p style={{ color: "var(--ink-3)", fontSize: 15, maxWidth: 440, margin: "0 auto 28px", lineHeight: 1.7 }}>
               {t("Season 5 tournament begins Sep 2026. The points table will update here in real time once the first match is played.", "Season 5 टूर्नामेंट Sep 2026 में शुरू होगा। पहले match के बाद points table यहाँ real time में update होगी।")}
             </p>
             <Link href="/register" className="float-reg-btn" style={{ position: "static", animation: "none", display: "inline-flex", boxShadow: "0 6px 24px rgba(255,122,41,0.35)" }}>
@@ -223,60 +167,103 @@ export function PointsTable() {
           </div>
         )}
 
-        {/* IPL-STYLE STANDINGS TABLE */}
+        {/* TABLE — DESKTOP */}
         {tableRows.length > 0 && (
           <>
-            <div style={{ background: "#FFFFFF", border: "1px solid rgba(12,29,51,.10)", borderRadius: 20, overflow: "hidden", boxShadow: "0 10px 30px rgba(12,29,51,.08)", marginBottom: 20 }}>
+            <div style={{ background: "linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85))", backdropFilter: "blur(24px)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, overflow: "hidden", marginBottom: 32 }}>
               <div className="pts-table-wrap">
                 <table className="pts-table">
-                  <thead>
-                    <tr className="pts-header">
-                      <th className="stick stick-pos">#</th>
-                      <th className="left stick stick-team">{t("Team", "टीम")}</th>
-                      <th>{t("P", "P")}</th>
-                      <th>{t("W", "W")}</th>
-                      <th>{t("L", "L")}</th>
-                      <th>{t("NR", "NR")}</th>
-                      <th>{t("NRR", "NRR")}</th>
-                      <th className="left">{t("Form", "फॉर्म")}</th>
-                      <th>{t("Pts", "Pts")}</th>
+                  <thead className="pts-header">
+                    <tr>
+                      <th style={{ textAlign: "center" }}>#</th>
+                      <th>{t("Team", "टीम")}</th>
+                      <th style={{ textAlign: "center" }}>{t("P", "P")}</th>
+                      <th style={{ textAlign: "center" }}>{t("W", "W")}</th>
+                      <th style={{ textAlign: "center" }}>{t("L", "L")}</th>
+                      <th style={{ textAlign: "center" }}>{t("NR", "NR")}</th>
+                      <th style={{ textAlign: "center" }}>{t("NRR", "NRR")}</th>
+                      <th style={{ textAlign: "center" }}>{t("Pts", "Pts")}</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {tableRows.map((row, i) => {
-                      const inZone = row.pos <= QUALIFY_TOP;
-                      const isZoneLast = showQualifyLine && row.pos === QUALIFY_TOP;
-                      return (
-                        <tr key={i} className={`pts-row${inZone ? " qualify" : ""}${isZoneLast ? " qualify-last" : ""}`}>
-                          <td className="stick stick-pos"><PosBadge pos={row.pos} /></td>
-                          <td className="stick stick-team">
-                            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                              <TeamBadge name={row.name} color={color(row.name)} logo={logoOf(row.name)} size={34} />
-                              <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 16, color: "var(--ink-dark)" }}>{row.name}</div>
-                            </div>
-                          </td>
-                          <td>{row.p}</td>
-                          <td style={{ color: "#1E9E5A", fontWeight: 700 }}>{row.w}</td>
-                          <td style={{ color: "#E8493F" }}>{row.l}</td>
-                          <td style={{ color: "rgba(12,29,51,.60)" }}>{row.nr}</td>
-                          <td style={{ fontFamily: "var(--font-head)", fontWeight: 700, color: row.nrr.startsWith("+") ? "#1E9E5A" : "#E8493F" }}>{row.nrr}</td>
-                          <td style={{ textAlign: "left" }}><FormGuide form={row.form} /></td>
-                          <td style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 18, color: "#FF7A29" }}>{row.pts}</td>
-                        </tr>
-                      );
-                    })}
+                    {tableRows.map((row, i) => (
+                      <tr key={i} className="pts-row">
+                        <td style={{ textAlign: "center" }}>
+                          <div style={{
+                            width: 30, height: 30, borderRadius: "50%",
+                            background: row.pos === 1 ? "linear-gradient(135deg,#E8B23D,#FFD700)" : row.pos === 2 ? "linear-gradient(135deg,#9CA3AF,#D1D5DB)" : row.pos === 3 ? "linear-gradient(135deg,#B45309,#D97706)" : "rgba(255,255,255,0.06)",
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                            fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 12,
+                            color: row.pos <= 3 ? "#0E1624" : "rgba(255,255,255,0.4)",
+                            margin: "0 auto"
+                          }}>{row.pos}</div>
+                        </td>
+                        <td>
+                          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                            <TeamBadge name={row.name} color={color(row.name)} logo={logoOf(row.name)} />
+                            <div style={{ fontFamily: "var(--font-head)", fontWeight: 700, fontSize: 14, color: "#fff" }}>{row.name}</div>
+                          </div>
+                        </td>
+                        <td style={{ textAlign: "center", color: "rgba(255,255,255,0.6)" }}>{row.p}</td>
+                        <td style={{ textAlign: "center", color: "#22C55E", fontWeight: 600 }}>{row.w}</td>
+                        <td style={{ textAlign: "center", color: "#E8493F" }}>{row.l}</td>
+                        <td style={{ textAlign: "center", color: "var(--ink-3)" }}>{row.nr}</td>
+                        <td style={{ textAlign: "center", fontFamily: "var(--font-head)", fontWeight: 700, color: row.nrr.startsWith("+") ? "#22C55E" : "#E8493F" }}>{row.nrr}</td>
+                        <td style={{ textAlign: "center", fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 16, color: "#FF7A29" }}>{row.pts}</td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
             </div>
 
-            {/* Qualification zone legend */}
-            {showQualifyLine && (
-              <div className="qz-note" style={{ marginBottom: 8 }}>
-                <span className="qz-swatch" />
-                {t("Top 4 qualify for the playoffs", "टॉप 4 प्लेऑफ़ के लिए क्वालिफ़ाई करते हैं")}
-              </div>
-            )}
+            {/* MOBILE COLLAPSED ROWS (user's explicit direction: "1 Delhi — 12 pts" expand → P/W/L/NRR) */}
+            <div className="pts-mobile">
+              {tableRows.map((row, i) => {
+                const isExpanded = expanded === i;
+                return (
+                  <div key={i} className={`pts-mobile-row ${isExpanded ? "expanded" : ""}`} onClick={() => setExpanded(isExpanded ? null : i)}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 12, flex: 1 }}>
+                        <div style={{
+                          width: 32, height: 32, borderRadius: "50%",
+                          background: row.pos === 1 ? "linear-gradient(135deg,#E8B23D,#FFD700)" : row.pos === 2 ? "linear-gradient(135deg,#9CA3AF,#D1D5DB)" : row.pos === 3 ? "linear-gradient(135deg,#B45309,#D97706)" : "rgba(255,255,255,0.06)",
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                          fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 13,
+                          color: row.pos <= 3 ? "#0E1624" : "rgba(255,255,255,0.4)",
+                          flexShrink: 0
+                        }}>{row.pos}</div>
+                        <TeamBadge name={row.name} color={color(row.name)} logo={logoOf(row.name)} />
+                        <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 15, color: "#fff", flex: 1 }}>{row.name}</div>
+                      </div>
+                      <div style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 18, color: "#FF7A29", flexShrink: 0 }}>
+                        {row.pts} {t("pts", "pts")}
+                      </div>
+                    </div>
+                    {isExpanded && (
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 10, marginTop: 14, paddingTop: 14, borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+                        <div style={{ textAlign: "center" }}>
+                          <div style={{ fontFamily: "var(--font-head)", fontWeight: 700, fontSize: 10, color: "var(--ink-3)", letterSpacing: ".1em", marginBottom: 4 }}>{t("P", "P")}</div>
+                          <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 16, color: "rgba(255,255,255,0.6)" }}>{row.p}</div>
+                        </div>
+                        <div style={{ textAlign: "center" }}>
+                          <div style={{ fontFamily: "var(--font-head)", fontWeight: 700, fontSize: 10, color: "var(--ink-3)", letterSpacing: ".1em", marginBottom: 4 }}>{t("W", "W")}</div>
+                          <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 16, color: "#22C55E" }}>{row.w}</div>
+                        </div>
+                        <div style={{ textAlign: "center" }}>
+                          <div style={{ fontFamily: "var(--font-head)", fontWeight: 700, fontSize: 10, color: "var(--ink-3)", letterSpacing: ".1em", marginBottom: 4 }}>{t("L", "L")}</div>
+                          <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 16, color: "#E8493F" }}>{row.l}</div>
+                        </div>
+                        <div style={{ textAlign: "center" }}>
+                          <div style={{ fontFamily: "var(--font-head)", fontWeight: 700, fontSize: 10, color: "var(--ink-3)", letterSpacing: ".1em", marginBottom: 4 }}>{t("NRR", "NRR")}</div>
+                          <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 14, color: row.nrr.startsWith("+") ? "#22C55E" : "#E8493F" }}>{row.nrr}</div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </>
         )}
 

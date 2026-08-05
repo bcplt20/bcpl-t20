@@ -29,13 +29,13 @@ type AuditResponse = {
 };
 
 const CARD: React.CSSProperties = {
-  background: "linear-gradient(135deg,#FFFFFF,#FFFFFF)",
-  border: "1px solid #E2E8F0", borderRadius: 16, padding: 20,
+  background: "linear-gradient(135deg,#0D1526,#0A1020)",
+  border: "1px solid #1E293B", borderRadius: 16, padding: 20,
 };
 const INP: React.CSSProperties = {
   padding: "8px 10px", borderRadius: 8,
-  border: "1px solid #E2E8F0", background: "#F5F6F8",
-  color: "#1E293B", fontSize: 12, outline: "none", boxSizing: "border-box",
+  border: "1px solid #1E293B", background: "#060B18",
+  color: "#E2E8F0", fontSize: 12, outline: "none", boxSizing: "border-box",
 };
 
 /* Friendly labels for the canonical action strings written by the API. */
@@ -118,7 +118,7 @@ export default function AuditTrailView() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       <div style={CARD}>
-        <div style={{ fontSize: 15, fontWeight: 800, color: "#1E293B", marginBottom: 4 }}>Audit Trail</div>
+        <div style={{ fontSize: 15, fontWeight: 800, color: "#E2E8F0", marginBottom: 4 }}>Audit Trail</div>
         <div style={{ fontSize: 12, color: "#64748B", marginBottom: 16 }}>
           Every admin change to a player's selection status, KYC status, video review, refunds and more — who did it, when, and the before → after value.
         </div>
@@ -151,7 +151,7 @@ export default function AuditTrailView() {
             Apply
           </button>
           <button onClick={resetFilters}
-            style={{ height: 34, padding: "0 14px", borderRadius: 8, border: "1px solid #E2E8F0", background: "#FFFFFF", color: "#64748B", fontWeight: 600, fontSize: 12, cursor: "pointer" }}>
+            style={{ height: 34, padding: "0 14px", borderRadius: 8, border: "1px solid #1E293B", background: "#0D1526", color: "#64748B", fontWeight: 600, fontSize: 12, cursor: "pointer" }}>
             Reset
           </button>
         </div>
@@ -160,7 +160,7 @@ export default function AuditTrailView() {
       <div style={CARD}>
         {loading && <div style={{ fontSize: 13, color: "#64748B", padding: 20, textAlign: "center" }}>Loading audit logs…</div>}
         {error && !loading && (
-          <div style={{ fontSize: 13, color: "#DC2626", padding: 16, background: "#EF444410", borderRadius: 10, border: "1px solid #EF444430" }}>
+          <div style={{ fontSize: 13, color: "#EF4444", padding: 16, background: "#EF444410", borderRadius: 10, border: "1px solid #EF444430" }}>
             ⚠ {error}
           </div>
         )}
@@ -191,21 +191,21 @@ export default function AuditTrailView() {
                   </thead>
                   <tbody>
                     {data.logs.map(log => (
-                      <tr key={log.id} style={{ borderTop: "1px solid #E2E8F0", color: "#1E293B" }}>
-                        <td style={{ padding: "8px 10px", whiteSpace: "nowrap", color: "#64748B" }}>{fmtDate(log.createdAt)}</td>
+                      <tr key={log.id} style={{ borderTop: "1px solid #1E293B", color: "#CBD5E1" }}>
+                        <td style={{ padding: "8px 10px", whiteSpace: "nowrap", color: "#94A3B8" }}>{fmtDate(log.createdAt)}</td>
                         <td style={{ padding: "8px 10px" }}>
-                          <div style={{ color: "#1E293B" }}>{log.actor}</div>
+                          <div style={{ color: "#E2E8F0" }}>{log.actor}</div>
                           {log.actorIp && <div style={{ fontSize: 10, color: "#475569" }}>{log.actorIp}</div>}
                         </td>
                         <td style={{ padding: "8px 10px" }}>
-                          <span style={{ fontSize: 11, fontWeight: 700, color: "#C2410C" }}>{actionLabel(log.action)}</span>
+                          <span style={{ fontSize: 11, fontWeight: 700, color: "#FF6B00" }}>{actionLabel(log.action)}</span>
                           <div style={{ fontSize: 10, color: "#475569" }}>{log.entity}</div>
                         </td>
                         <td style={{ padding: "8px 10px", fontFamily: "monospace", fontSize: 11, color: "#64748B", maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis" }}>
                           {log.entityKey ?? "—"}
                         </td>
-                        <td style={{ padding: "8px 10px", color: "#64748B", maxWidth: 220 }}>{fmtVal(log.oldValue)}</td>
-                        <td style={{ padding: "8px 10px", color: "#047857", maxWidth: 220 }}>{fmtVal(log.newValue)}</td>
+                        <td style={{ padding: "8px 10px", color: "#94A3B8", maxWidth: 220 }}>{fmtVal(log.oldValue)}</td>
+                        <td style={{ padding: "8px 10px", color: "#10B981", maxWidth: 220 }}>{fmtVal(log.newValue)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -216,12 +216,12 @@ export default function AuditTrailView() {
             {data.pages > 1 && (
               <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 10, marginTop: 16 }}>
                 <button disabled={data.page <= 1} onClick={() => setPage(p => Math.max(1, p - 1))}
-                  style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #E2E8F0", background: "#FFFFFF", color: data.page <= 1 ? "#64748B" : "#CBD5E1", fontSize: 12, cursor: data.page <= 1 ? "not-allowed" : "pointer" }}>
+                  style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #1E293B", background: "#0D1526", color: data.page <= 1 ? "#334155" : "#CBD5E1", fontSize: 12, cursor: data.page <= 1 ? "not-allowed" : "pointer" }}>
                   ‹ Prev
                 </button>
                 <span style={{ fontSize: 12, color: "#64748B" }}>{data.page} / {data.pages}</span>
                 <button disabled={data.page >= data.pages} onClick={() => setPage(p => Math.min(data.pages, p + 1))}
-                  style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #E2E8F0", background: "#FFFFFF", color: data.page >= data.pages ? "#64748B" : "#CBD5E1", fontSize: 12, cursor: data.page >= data.pages ? "not-allowed" : "pointer" }}>
+                  style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #1E293B", background: "#0D1526", color: data.page >= data.pages ? "#334155" : "#CBD5E1", fontSize: 12, cursor: data.page >= data.pages ? "not-allowed" : "pointer" }}>
                   Next ›
                 </button>
               </div>

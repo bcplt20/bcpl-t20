@@ -7,21 +7,6 @@ import { getMatches, getPointsTable, getScorecard, getTeams } from '../lib/api';
 import { useLang } from '../lib/i18n';
 import { IcoBat, IcoTrophy, IcoPin, IcoStar } from '../lib/icons';
 
-/* ─── Palette (light premium theme, per token contract) ──────────── */
-const INK       = "#0C1D33";              // primary navy
-const INK2      = "rgba(12,29,51,.78)";   // secondary
-const INK3      = "rgba(12,29,51,.60)";   // muted
-const LINE      = "rgba(12,29,51,.10)";   // card border / hairline
-const LINE_SOFT = "rgba(12,29,51,.07)";
-const CARD_SH   = "0 10px 30px rgba(12,29,51,.08)";
-const ORANGE    = "#FF7A29";
-const GOLD_INK  = "#B8892B";              // darker gold for small text on light
-const GREEN     = "#1E9E5A";
-const RED       = "#E8493F";
-
-/* Number of teams in the playoff qualification zone (IPL-style). */
-const QUALIFY_TOP = 4;
-
 /* ─── Helpers ─────────────────────────────────────────── */
 const initials = (name: string) =>
   (name || "").split(" ").map(w => w[0]).join("").slice(0, 3).toUpperCase();
@@ -40,14 +25,6 @@ const fmtDate = (iso?: string | null) =>
 
 const fmtOv = (overs: number, balls: number) => `${overs ?? 0}.${balls ?? 0}`;
 
-/* Strike rate & economy — derived, purely for display. */
-const strikeRate = (runs: number, balls: number) =>
-  balls > 0 ? ((runs / balls) * 100).toFixed(1) : "0.0";
-const economy = (runs: number, overs: number, balls: number) => {
-  const totalBalls = (overs ?? 0) * 6 + (balls ?? 0);
-  return totalBalls > 0 ? ((runs / totalBalls) * 6).toFixed(2) : "0.00";
-};
-
 type UiStatus = "live" | "upcoming" | "completed" | "abandoned";
 const uiStatus = (s: string): UiStatus =>
   s === "live" || s === "innings2" ? "live"
@@ -56,10 +33,10 @@ const uiStatus = (s: string): UiStatus =>
   : "upcoming";
 
 const STATUS_META: Record<UiStatus, { label: string; color: string }> = {
-  live:      { label: "LIVE",      color: RED },
-  upcoming:  { label: "UPCOMING",  color: "#2563EB" },
-  completed: { label: "RESULT",    color: GREEN },
-  abandoned: { label: "ABANDONED", color: "#7A8598" },
+  live:      { label: "LIVE",      color: "#EF4444" },
+  upcoming:  { label: "UPCOMING",  color: "#60A5FA" },
+  completed: { label: "RESULT",    color: "#22C55E" },
+  abandoned: { label: "ABANDONED", color: "#9CA3AF" },
 };
 
 /* Circular team badge: shows the team logo when available, keeps the colored
@@ -72,37 +49,16 @@ function TeamBadge({ name, color, logo, size, fontSize }: {
   return (
     <span style={{
       width: size, height: size, borderRadius: "50%",
-      background: showLogo ? "#FFFFFF" : `${color}1F`,
+      background: showLogo ? "rgba(255,255,255,0.96)" : `${color}22`,
       border: `2px solid ${color}`, display: "inline-flex", alignItems: "center",
       justifyContent: "center", overflow: "hidden", flexShrink: 0,
       fontFamily: "var(--font-head)", fontWeight: 800, fontSize, color,
-      boxShadow: "0 1px 3px rgba(12,29,51,.10)",
     }}>
       {showLogo
         ? <img loading="lazy" decoding="async" src={logo} alt={name} onError={() => setBroken(true)}
             style={{ width: "82%", height: "82%", objectFit: "contain" }} />
         : initials(name)}
     </span>
-  );
-}
-
-/* Form-guide dots for the points table (W / L / N). */
-function FormGuide({ form }: { form: string[] }) {
-  if (!form || form.length === 0) return null;
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-      {form.slice(-5).map((r, i) => {
-        const res = (r || "").toUpperCase();
-        const bg = res === "W" ? GREEN : res === "L" ? RED : "#9AA3B0";
-        return (
-          <span key={i} title={res === "W" ? "Won" : res === "L" ? "Lost" : "No result"} style={{
-            width: 17, height: 17, borderRadius: "50%", background: bg,
-            display: "inline-flex", alignItems: "center", justifyContent: "center",
-            fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 9, color: "#fff", flexShrink: 0,
-          }}>{res}</span>
-        );
-      })}
-    </div>
   );
 }
 
@@ -168,36 +124,6 @@ export function MatchCenter() {
   const order = (s: string) => { const u = uiStatus(s); return u === "live" ? 0 : u === "upcoming" ? 1 : 2; };
   const sorted = [...matches].sort((a, b) => order(a.status) - order(b.status) || (a.matchNo ?? 0) - (b.matchNo ?? 0));
 
-  /* Score line for a team from an already-loaded scorecard (broadcast strip).
-     Returns e.g. "186/4 (20.0)" or null when the data has not been fetched. */
-  const scoreFor = (matchId: string, teamName: string): string | null => {
-    const data = cards[matchId];
-    if (!data) return null;
-    const inn = (data.scorecards ?? [])
-      .map((sc: any) => sc.innings ?? {})
-      .find((i: any) => normTeam(i.battingTeam) === normTeam(teamName));
-    if (!inn) return null;
-    return `${inn.totalRuns ?? 0}/${inn.totalWickets ?? 0} (${fmtOv(inn.overs, inn.balls)})`;
-  };
-
-  /* ─── Broadcast-style score strip for one team ──────── */
-  const ScoreStrip = ({ team, winner, score, alignEnd }: {
-    team: string; winner?: string; score: string | null; alignEnd?: boolean;
-  }) => {
-    const isWinner = winner === team;
-    return (
-      <div style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", gap: 10, flexDirection: alignEnd ? "row-reverse" : "row" }}>
-        <TeamBadge name={team} color={color(team)} logo={logoOf(team)} size={40} fontSize={12} />
-        <div style={{ minWidth: 0, textAlign: alignEnd ? "right" : "left" }}>
-          <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: "clamp(13px,2.2vw,16px)", color: isWinner ? ORANGE : INK, lineHeight: 1.1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{team}</div>
-          {score
-            ? <div style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: "clamp(18px,3.4vw,24px)", color: INK, lineHeight: 1.15, marginTop: 2 }}>{score}</div>
-            : <div style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: INK3, marginTop: 3 }}>{t("Yet to bat", "अभी बल्लेबाज़ी बाकी")}</div>}
-        </div>
-      </div>
-    );
-  };
-
   /* ─── Scorecard panel for one match ─────────────────── */
   const renderScorecard = (matchId: string) => {
     const data = cards[matchId];
@@ -206,140 +132,107 @@ export function MatchCenter() {
         <SkelRows n={4} />
       </div>
     ) : (
-      <div style={{ padding: "20px 0", textAlign: "center", color: INK3, fontSize: 14 }}>
-        {t("Scorecard not available yet.", "स्कोरकार्ड अभी उपलब्ध नहीं है।")}
+      <div style={{ padding: "20px 0", textAlign: "center", color: "var(--ink-3)", fontSize: 13 }}>
+        Scorecard not available yet.
       </div>
     );
     const scorecards: any[] = data.scorecards ?? [];
     if (scorecards.length === 0) return (
-      <div style={{ padding: "20px 0", textAlign: "center", color: INK3, fontSize: 14 }}>
-        {t("Scorecard will appear here once the match begins.", "मैच शुरू होते ही स्कोरकार्ड यहाँ दिखेगा।")}
+      <div style={{ padding: "20px 0", textAlign: "center", color: "var(--ink-3)", fontSize: 13 }}>
+        Scorecard will appear here once the match begins.
       </div>
     );
-    const thBase = { padding: "8px 8px", color: GOLD_INK, fontWeight: 700, fontSize: 11, fontFamily: "var(--font-head)", letterSpacing: ".06em", textTransform: "uppercase" as const };
     return (
-      <div style={{ display: "flex", flexDirection: "column", gap: 18, paddingTop: 16 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 20, paddingTop: 16 }}>
         {scorecards.map((sc: any, idx: number) => {
           const inn = sc.innings ?? {};
           const bat: any[] = sc.scorecard?.batting ?? [];
           const bowl: any[] = sc.scorecard?.bowling ?? [];
           const fow: any[] = sc.scorecard?.fallOfWickets ?? [];
-          const battedRuns = bat.reduce((s, b) => s + (b.runs ?? 0), 0);
-          const extras = inn.extras ?? 0;
           return (
-            <div key={idx} style={{ background: "#FBF8F1", border: `1px solid ${LINE}`, borderRadius: 14, padding: "16px 16px 14px" }}>
+            <div key={idx} style={{ background: "#0E1420", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: "16px 16px 12px" }}>
               {/* Innings header */}
-              <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", flexWrap: "wrap", gap: 8, marginBottom: 14 }}>
+              <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <span style={{ width: 10, height: 10, borderRadius: "50%", background: color(inn.battingTeam), display: "inline-block" }} />
-                  <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 14, color: INK }}>
-                    {inn.inningsNumber === 1 ? t("1st Innings", "पहली पारी") : t("2nd Innings", "दूसरी पारी")} — {inn.battingTeam}
+                  <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 13, color: "#fff" }}>
+                    {inn.inningsNumber === 1 ? "1st Innings" : "2nd Innings"} — {inn.battingTeam}
                   </span>
                   {inn.status === "live" && (
-                    <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 11, letterSpacing: ".1em", color: RED }}>
-                      <span style={{ width: 6, height: 6, borderRadius: "50%", background: RED, display: "inline-block", animation: "liveBlip 1.2s infinite" }} />LIVE
-                    </span>
+                    <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 11, letterSpacing: ".1em", color: "#EF4444" }}>● LIVE</span>
                   )}
                 </div>
-                <div style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 20, color: INK }}>
+                <div style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 18, color: "#FF7A29" }}>
                   {inn.totalRuns}/{inn.totalWickets}
-                  <span style={{ fontSize: 13, color: INK3, fontWeight: 700 }}> ({fmtOv(inn.overs, inn.balls)} ov)</span>
-                  {inn.target ? <span style={{ fontSize: 13, color: GOLD_INK, fontWeight: 700, marginLeft: 8 }}>{t("Target", "लक्ष्य")} {inn.target}</span> : null}
+                  <span style={{ fontSize: 13, color: "var(--ink-3)", fontWeight: 700 }}> ({fmtOv(inn.overs, inn.balls)} ov)</span>
+                  {inn.target ? <span style={{ fontSize: 13, color: "#E8B23D", fontWeight: 700, marginLeft: 8 }}>Target {inn.target}</span> : null}
                 </div>
               </div>
 
               {/* Batting table */}
               {bat.length > 0 ? (
                 <div className="pts-table-wrap">
-                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 480 }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12, minWidth: 440 }}>
                     <thead>
-                      <tr style={{ borderBottom: `2px solid ${LINE}` }}>
-                        {["Batter", "Dismissal", "R", "B", "4s", "6s", "SR"].map(h => (
-                          <th key={h} style={{ ...thBase, textAlign: h === "Batter" || h === "Dismissal" ? "left" : "right" }}>{h}</th>
+                      <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+                        {["Batter", "Dismissal", "R", "B", "4s", "6s"].map(h => (
+                          <th key={h} style={{ padding: "6px 8px", textAlign: h === "Batter" || h === "Dismissal" ? "left" : "right", color: "var(--ink-3)", fontWeight: 700, fontSize: 10, fontFamily: "var(--font-head)", letterSpacing: ".06em" }}>{h}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody>
                       {bat.map((b: any, i: number) => (
-                        <tr key={i} style={{ borderBottom: `1px solid ${LINE_SOFT}` }}>
-                          <td style={{ padding: "9px 8px", color: INK, fontWeight: 700 }}>{b.name}</td>
-                          <td style={{ padding: "9px 8px", color: INK3, fontSize: 12 }}>{b.dismissal || t("not out", "नाबाद")}</td>
-                          <td style={{ padding: "9px 8px", textAlign: "right", color: b.runs >= 50 ? GOLD_INK : INK, fontWeight: 800 }}>{b.runs}</td>
-                          <td style={{ padding: "9px 8px", textAlign: "right", color: INK2 }}>{b.balls}</td>
-                          <td style={{ padding: "9px 8px", textAlign: "right", color: "#2563EB", fontWeight: 600 }}>{b.fours}</td>
-                          <td style={{ padding: "9px 8px", textAlign: "right", color: GREEN, fontWeight: 600 }}>{b.sixes}</td>
-                          <td style={{ padding: "9px 8px", textAlign: "right", color: INK2 }}>{strikeRate(b.runs, b.balls)}</td>
+                        <tr key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                          <td style={{ padding: "7px 8px", color: b.dismissal ? "rgba(255,255,255,0.55)" : "#fff", fontWeight: b.dismissal ? 400 : 700 }}>{b.name}</td>
+                          <td style={{ padding: "7px 8px", color: "var(--ink-3)", fontSize: 11 }}>{b.dismissal || "not out"}</td>
+                          <td style={{ padding: "7px 8px", textAlign: "right", color: b.runs >= 50 ? "#E8B23D" : "#fff", fontWeight: 800 }}>{b.runs}</td>
+                          <td style={{ padding: "7px 8px", textAlign: "right", color: "rgba(255,255,255,0.5)" }}>{b.balls}</td>
+                          <td style={{ padding: "7px 8px", textAlign: "right", color: "#60A5FA" }}>{b.fours}</td>
+                          <td style={{ padding: "7px 8px", textAlign: "right", color: "#22C55E" }}>{b.sixes}</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
               ) : (
-                <div style={{ fontSize: 13, color: INK3, padding: "8px 0" }}>{t("No deliveries bowled yet.", "अभी तक कोई गेंद नहीं फेंकी गई।")}</div>
-              )}
-
-              {/* Extras & total */}
-              {bat.length > 0 && (
-                <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: 8, marginTop: 10, paddingTop: 10, borderTop: `1px solid ${LINE_SOFT}`, fontSize: 13 }}>
-                  <span style={{ color: INK2 }}>
-                    <span style={{ fontFamily: "var(--font-head)", fontWeight: 700, color: GOLD_INK, letterSpacing: ".04em", textTransform: "uppercase", fontSize: 11 }}>{t("Extras", "अतिरिक्त")} </span>
-                    <span style={{ fontWeight: 700, color: INK }}>{extras}</span>
-                  </span>
-                  <span style={{ color: INK2 }}>
-                    <span style={{ fontFamily: "var(--font-head)", fontWeight: 700, color: GOLD_INK, letterSpacing: ".04em", textTransform: "uppercase", fontSize: 11 }}>{t("Total", "कुल")} </span>
-                    <span style={{ fontFamily: "var(--font-head)", fontWeight: 900, color: INK, fontSize: 15 }}>{inn.totalRuns}/{inn.totalWickets}</span>
-                    <span style={{ color: INK3 }}> ({fmtOv(inn.overs, inn.balls)} ov)</span>
-                  </span>
-                </div>
+                <div style={{ fontSize: 12, color: "var(--ink-3)", padding: "8px 0" }}>No deliveries bowled yet.</div>
               )}
 
               {/* Fall of wickets */}
               {fow.length > 0 && (
-                <div style={{ marginTop: 12 }}>
-                  <div style={{ fontFamily: "var(--font-head)", fontWeight: 700, fontSize: 11, letterSpacing: ".06em", textTransform: "uppercase", color: GOLD_INK, marginBottom: 8 }}>{t("Fall of Wickets", "विकेट पतन")}</div>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                    {fow.map((f: any, i: number) => (
-                      <span key={i} style={{ padding: "4px 10px", background: "rgba(232,73,63,0.07)", border: "1px solid rgba(232,73,63,0.28)", borderRadius: 20, fontSize: 11, color: RED, fontWeight: 600 }}>
-                        {f.wicket}-{f.runs} ({(f.batter || "").split(" ")[0]}, {f.overStr})
-                      </span>
-                    ))}
-                  </div>
+                <div style={{ marginTop: 10, display: "flex", flexWrap: "wrap", gap: 6 }}>
+                  {fow.map((f: any, i: number) => (
+                    <span key={i} style={{ padding: "3px 10px", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)", borderRadius: 20, fontSize: 10, color: "#EF4444" }}>
+                      {f.wicket}-{f.runs} ({(f.batter || "").split(" ")[0]}, {f.overStr})
+                    </span>
+                  ))}
                 </div>
               )}
 
               {/* Bowling table */}
               {bowl.length > 0 && (
-                <div className="pts-table-wrap" style={{ marginTop: 16 }}>
-                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 460 }}>
+                <div className="pts-table-wrap" style={{ marginTop: 14 }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12, minWidth: 400 }}>
                     <thead>
-                      <tr style={{ borderBottom: `2px solid ${LINE}` }}>
-                        {["Bowler", "O", "M", "R", "W", "Econ"].map(h => (
-                          <th key={h} style={{ ...thBase, textAlign: h === "Bowler" ? "left" : "right" }}>{h}</th>
+                      <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+                        {["Bowler", "O", "R", "W", "Wd", "NB"].map(h => (
+                          <th key={h} style={{ padding: "6px 8px", textAlign: h === "Bowler" ? "left" : "right", color: "var(--ink-3)", fontWeight: 700, fontSize: 10, fontFamily: "var(--font-head)", letterSpacing: ".06em" }}>{h}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody>
                       {bowl.map((b: any, i: number) => (
-                        <tr key={i} style={{ borderBottom: `1px solid ${LINE_SOFT}` }}>
-                          <td style={{ padding: "9px 8px", color: INK, fontWeight: 700 }}>{b.name}</td>
-                          <td style={{ padding: "9px 8px", textAlign: "right", color: INK2 }}>{fmtOv(b.overs, b.balls)}</td>
-                          <td style={{ padding: "9px 8px", textAlign: "right", color: INK2 }}>{b.maidens ?? 0}</td>
-                          <td style={{ padding: "9px 8px", textAlign: "right", color: INK, fontWeight: 600 }}>{b.runs}</td>
-                          <td style={{ padding: "9px 8px", textAlign: "right", color: b.wickets > 0 ? RED : INK3, fontWeight: b.wickets > 0 ? 800 : 400 }}>{b.wickets}</td>
-                          <td style={{ padding: "9px 8px", textAlign: "right", color: INK2 }}>{economy(b.runs, b.overs, b.balls)}</td>
+                        <tr key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                          <td style={{ padding: "7px 8px", color: "#fff", fontWeight: 600 }}>{b.name}</td>
+                          <td style={{ padding: "7px 8px", textAlign: "right", color: "rgba(255,255,255,0.6)" }}>{fmtOv(b.overs, b.balls)}</td>
+                          <td style={{ padding: "7px 8px", textAlign: "right", color: "#fff" }}>{b.runs}</td>
+                          <td style={{ padding: "7px 8px", textAlign: "right", color: b.wickets > 0 ? "#EF4444" : "rgba(255,255,255,0.5)", fontWeight: b.wickets > 0 ? 800 : 400 }}>{b.wickets}</td>
+                          <td style={{ padding: "7px 8px", textAlign: "right", color: "var(--ink-3)" }}>{b.wides}</td>
+                          <td style={{ padding: "7px 8px", textAlign: "right", color: "var(--ink-3)" }}>{b.noBalls}</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
-                  {/* Wides / no-balls conceded (kept from API for completeness) */}
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 14, marginTop: 8, fontSize: 12, color: INK3 }}>
-                    {bowl.some((b: any) => (b.wides ?? 0) > 0 || (b.noBalls ?? 0) > 0) && (
-                      <>
-                        <span>{t("Wides", "वाइड")}: <b style={{ color: INK2 }}>{bowl.reduce((s: number, b: any) => s + (b.wides ?? 0), 0)}</b></span>
-                        <span>{t("No-balls", "नो-बॉल")}: <b style={{ color: INK2 }}>{bowl.reduce((s: number, b: any) => s + (b.noBalls ?? 0), 0)}</b></span>
-                      </>
-                    )}
-                  </div>
                 </div>
               )}
             </div>
@@ -349,17 +242,14 @@ export function MatchCenter() {
     );
   };
 
-  const showQualifyLine = points.length > QUALIFY_TOP;
-
   return (
-    <div style={{ background: "var(--bg)", minHeight: "100vh", color: INK, fontFamily: "'Inter',sans-serif", overflowX: "hidden" }}>
+    <div style={{ background: "var(--bg)", minHeight: "100vh", color: "#F0EDE8", fontFamily: "'Inter',sans-serif", overflowX: "hidden" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
 
         @keyframes liveBlip { 0%,100% { opacity:1; } 50% { opacity:0.15; } }
-        @keyframes livePulse { 0% { box-shadow:0 0 0 0 rgba(232,73,63,.45); } 70% { box-shadow:0 0 0 8px rgba(232,73,63,0); } 100% { box-shadow:0 0 0 0 rgba(232,73,63,0); } }
         @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
 
         .wrap { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
@@ -372,43 +262,25 @@ export function MatchCenter() {
         .section-title { font-family: 'Barlow Condensed','Mukta','Montserrat',sans-serif; font-weight: 800; line-height: .95; letter-spacing: .015em; }
         .v3-kicker { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: .22em; color: #E8B23D; text-transform: uppercase; }
 
-        /* Match card — clean white broadcast card on light theme */
-        .match-card { background: #FFFFFF; border: 1px solid rgba(12,29,51,.10); border-radius: 16px; box-shadow: 0 10px 30px rgba(12,29,51,.08); transition: border-color .2s, box-shadow .2s, transform .2s; }
-        .match-card.expandable:hover { border-color: rgba(255,122,41,0.4); box-shadow: 0 16px 40px rgba(12,29,51,.12); transform: translateY(-2px); }
-        .match-card.is-live { border-color: rgba(232,73,63,0.4); }
+        .match-card { background: #121F2F; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; transition: border-color 0.2s; }
+        .match-card.expandable:hover { border-color: rgba(255,122,41,0.35); }
 
-        /* Points table: scrollable on mobile with sticky team column */
+        /* Points table: scrollable on mobile */
         .pts-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
-        .pts-inner { min-width: 720px; }
+        .pts-table-inner { min-width: 520px; }
 
-        .pts-grid { display: grid; grid-template-columns: 46px minmax(180px,1fr) 44px 44px 44px 44px 64px 120px 56px; align-items: center; }
-        .pts-head { background: #FBF8F1; border-bottom: 2px solid rgba(12,29,51,.10); }
-        .pts-head > div { padding: 13px 10px; font-family: 'Barlow Condensed','Montserrat',sans-serif; font-weight: 700; font-size: 11px; color: #B8892B; letter-spacing: .1em; text-transform: uppercase; text-align: center; }
-        .pts-head > div.left { text-align: left; }
-        .pts-row2 { border-bottom: 1px solid rgba(12,29,51,.07); transition: background .15s; }
-        .pts-row2:hover { background: rgba(255,122,41,0.05); }
-        .pts-row2:last-child { border-bottom: none; }
-        .pts-row2 > div { padding: 13px 10px; text-align: center; font-size: 15px; }
-        .pts-row2 > div.left { text-align: left; }
-        .pts-row2.qualify { background: rgba(30,158,90,0.05); }
-        .pts-row2.qualify:hover { background: rgba(30,158,90,0.10); }
-        .pts-row2.qualify-last { border-bottom: 2px solid rgba(30,158,90,0.55); }
+        .pts-row { display: grid; grid-template-columns: 28px 1fr 48px 28px 28px 48px 68px; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.15s; }
+        .pts-row:hover { background: rgba(255,122,41,0.04); }
+        .pts-row:last-child { border-bottom: none; }
 
-        /* Sticky pos + team columns for horizontal scroll */
-        .pts-head > div.stick, .pts-row2 > div.stick { position: sticky; z-index: 2; background: #FFFFFF; }
-        .pts-head > div.stick { background: #FBF8F1; }
-        .pts-row2:hover > div.stick { background: #FFF6EE; }
-        .pts-row2.qualify > div.stick { background: #F2FAF5; }
-        .pts-row2.qualify:hover > div.stick { background: #EAF7EF; }
-        .pts-head > div.stick-pos, .pts-row2 > div.stick-pos { left: 0; }
-        .pts-head > div.stick-team, .pts-row2 > div.stick-team { left: 46px; box-shadow: 6px 0 12px -8px rgba(12,29,51,.18); }
+        .pts-header { display: grid; grid-template-columns: 28px 1fr 48px 28px 28px 48px 68px; align-items: center; gap: 8px; padding: 10px 16px; background: #0E1420; }
       `}</style>
 
       <SiteHeader active="Match Center" />
 
-      {/* HERO — DARK ANCHOR (white text over stadium-navy) */}
-      <section className="on-dark" style={{ background: "linear-gradient(160deg,#0C1D33 0%,#0A1830 55%,#081327 100%)", padding: "clamp(88px,12vh,132px) 0 clamp(40px,6vw,64px)", position: "relative", overflow: "hidden", textAlign: "center" }}>
-        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 50% at 50% 0%,rgba(255,122,41,0.14) 0%,transparent 70%)", pointerEvents: "none", zIndex: 0 }} />
+      {/* HERO */}
+      <section style={{ background: "var(--bg)", padding: "clamp(80px,12vh,130px) 0 clamp(40px,6vw,64px)", position: "relative", overflow: "hidden", textAlign: "center" }}>
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 50% at 50% 0%,rgba(255,122,41,0.06) 0%,transparent 70%)", pointerEvents: "none", zIndex: 0 }} />
         <div className="wrap" style={{ position: "relative", zIndex: 1, animation: "fadeUp 0.7s ease both" }}>
           <div className="v3-kicker" style={{ marginBottom: 16 }}>
             {t("SEASON 5 · 2025–26", "सीज़न 5 · 2025–26")}
@@ -416,24 +288,24 @@ export function MatchCenter() {
           <h1 className="section-title" style={{ fontSize: "clamp(40px, 9vw, 88px)", color: "#fff", textTransform: "uppercase", marginBottom: 16 }}>
             {t("MATCH", "MATCH")} <span style={{ color: "#FF7A29" }}>{t("CENTER", "CENTER")}</span>
           </h1>
-          <p style={{ fontFamily: "Inter, sans-serif", fontSize: "clamp(16px, 1.8vw, 18px)", color: "rgba(255,255,255,0.78)", lineHeight: 1.7, maxWidth: 640, margin: "0 auto" }}>
+          <p style={{ fontFamily: "Inter, sans-serif", fontSize: "clamp(14px, 1.8vw, 16px)", color: "rgba(255,255,255,0.72)", lineHeight: 1.7, maxWidth: 640, margin: "0 auto" }}>
             {t("Live scores, full match scorecards and the Season 5 points table.", "Live scores, पूरे match scorecards और Season 5 points table।")}
           </p>
         </div>
       </section>
 
-      {/* MATCHES — light recessed strip */}
-      <section style={{ padding: "clamp(56px,9vw,110px) 0", background: "var(--bg-deep, #EDE8DC)" }}>
+      {/* MATCHES */}
+      <section style={{ padding: "clamp(56px,9vw,110px) 0", background: "#0E1420" }}>
         <div className="wrap">
           <div className="section-label">Matches</div>
-          <h2 className="section-title" style={{ fontSize: "clamp(22px, 4vw, 36px)", color: INK, marginBottom: 24, textTransform: "uppercase" }}>
+          <h2 className="section-title" style={{ fontSize: "clamp(20px, 4vw, 34px)", color: "#fff", marginBottom: 24, textTransform: "uppercase" }}>
             SEASON 5 MATCHES
           </h2>
 
           {!matchesLoaded && sorted.length === 0 && (
             <div role="status" aria-label={t("Loading…", "लोड हो रहा है…")} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="match-card" style={{ padding: "18px 20px", display: "flex", alignItems: "center", gap: 16 }}>
+                <div key={i} className="match-card" style={{ padding: "16px 18px", display: "flex", alignItems: "center", gap: 16 }}>
                   <Skel w={44} h={44} r={22} style={{ flexShrink: 0 }} />
                   <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
                     <Skel w="45%" h={14} />
@@ -446,66 +318,66 @@ export function MatchCenter() {
           )}
 
           {matchesLoaded && sorted.length === 0 && (
-            <div style={{ textAlign: "center", padding: "clamp(48px,8vw,72px) 24px", background: "#FFFFFF", borderRadius: 20, border: `1px solid ${LINE}`, boxShadow: CARD_SH }}>
-              <div style={{ display: "flex", justifyContent: "center", marginBottom: 18 }}>
-                <span style={{ width: 76, height: 76, borderRadius: "50%", background: "rgba(255,122,41,0.10)", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
-                  <IcoBat size={38} style={{ color: ORANGE }} />
-                </span>
-              </div>
-              <div className="section-title" style={{ fontSize: 26, color: INK, marginBottom: 8, textTransform: "uppercase" }}>
+            <div style={{ textAlign: "center", padding: "48px 20px", background: "#121F2F", borderRadius: 16, border: "1px solid rgba(255,255,255,0.07)" }}>
+              <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><IcoBat size={38} style={{ color: "var(--ink-3)" }} /></div>
+              <div className="section-title" style={{ fontSize: 24, color: "#fff", marginBottom: 8, textTransform: "uppercase" }}>
                 {t("No Matches Scheduled Yet", "अभी कोई matches scheduled नहीं हैं")}
               </div>
-              <p style={{ color: INK3, fontSize: 15, fontFamily: "Inter, sans-serif", maxWidth: 380, margin: "0 auto" }}>
+              <p style={{ color: "var(--ink-3)", fontSize: 14, fontFamily: "Inter, sans-serif", maxWidth: 360, margin: "0 auto" }}>
                 {t("Match fixtures, live scores and results will appear here as soon as they are announced.", "Match fixtures, live scores और results यहाँ दिखेंगे जैसे ही announce होंगे।")}
               </p>
             </div>
           )}
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {sorted.map((m: any) => {
               const st = uiStatus(m.status);
               const meta = STATUS_META[st];
               const expandable = st === "live" || st === "completed";
               const open = openId === m.id;
-              const s1 = scoreFor(m.id, m.team1);
-              const s2 = scoreFor(m.id, m.team2);
               return (
-                <div key={m.id} className={`match-card${expandable ? " expandable" : ""}${st === "live" ? " is-live" : ""}`} style={{ padding: "18px 20px" }}>
+                <div key={m.id} className={`match-card${expandable ? " expandable" : ""}`} style={{ padding: "16px 18px", borderColor: st === "live" ? "rgba(239,68,68,0.35)" : undefined }}>
                   {/* Card header row */}
                   <div
                     onClick={() => expandable && setOpenId(open ? null : m.id)}
                     style={{ cursor: expandable ? "pointer" : "default" }}
                   >
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8, marginBottom: 14 }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                        <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: `${meta.color}14`, border: `1px solid ${meta.color}59`, borderRadius: 20, padding: "4px 11px", animation: st === "live" ? "livePulse 1.6s infinite" : undefined }}>
-                          {st === "live" && <span style={{ width: 6, height: 6, borderRadius: "50%", background: RED, display: "inline-block", animation: "liveBlip 1.2s infinite" }} />}
-                          <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 10, letterSpacing: ".1em", color: meta.color }}>{meta.label}</span>
+                        <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: `${meta.color}18`, border: `1px solid ${meta.color}40`, borderRadius: 20, padding: "3px 10px" }}>
+                          {st === "live" && <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#EF4444", display: "inline-block", animation: "liveBlip 1.2s infinite" }} />}
+                          <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 9, letterSpacing: ".1em", color: meta.color }}>{meta.label}</span>
                         </span>
-                        <span style={{ fontSize: 12, color: INK3 }}>Match {m.matchNo} · Season 5</span>
+                        <span style={{ fontSize: 11, color: "var(--ink-3)" }}>Match {m.matchNo} · Season 5</span>
                       </div>
-                      <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 12, color: INK3 }}>
-                        <IcoPin size={12} style={{ color: INK3 }} /> {m.venue}{m.scheduledAt ? ` · ${fmtDate(m.scheduledAt)}` : ""}
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 11, color: "var(--ink-3)" }}>
+                        <IcoPin size={12} style={{ color: "var(--ink-3)" }} /> {m.venue}{m.scheduledAt ? ` · ${fmtDate(m.scheduledAt)}` : ""}
                       </span>
                     </div>
 
-                    {/* Broadcast score strip */}
-                    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                      <ScoreStrip team={m.team1} winner={m.winner} score={s1} />
-                      <div style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 12, color: "rgba(12,29,51,.30)", flexShrink: 0 }}>VS</div>
-                      <ScoreStrip team={m.team2} winner={m.winner} score={s2} alignEnd />
+                    {/* Teams */}
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 10 }}>
+                        <TeamBadge name={m.team1} color={color(m.team1)} logo={logoOf(m.team1)} size={32} fontSize={10} />
+                        <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: "clamp(12px,2vw,15px)", color: m.winner === m.team1 ? "#FF7A29" : "#fff" }}>{m.team1}</span>
+                      </div>
+                      <div style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 12, color: "rgba(255,255,255,0.25)", flexShrink: 0 }}>VS</div>
+                      <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 10, flexDirection: "row-reverse" }}>
+                        <TeamBadge name={m.team2} color={color(m.team2)} logo={logoOf(m.team2)} size={32} fontSize={10} />
+                        <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: "clamp(12px,2vw,15px)", color: m.winner === m.team2 ? "#FF7A29" : "#fff", textAlign: "right" }}>{m.team2}</span>
+                      </div>
                     </div>
 
                     {/* Result line / expand hint */}
                     {(m.resultDesc || m.playerOfMatch || expandable) && (
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8, marginTop: 14, paddingTop: 12, borderTop: `1px solid ${LINE_SOFT}` }}>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8, marginTop: 12 }}>
                         <div>
-                          {m.resultDesc && <span style={{ fontSize: 15, color: GREEN, fontFamily: "Inter, sans-serif", fontWeight: 700 }}>{m.resultDesc}</span>}
-                          {m.playerOfMatch && <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 12, color: INK3, marginLeft: 10 }}><IcoStar size={12} style={{ color: GOLD_INK }} /> {m.playerOfMatch}</span>}
+                          {m.resultDesc && <span style={{ fontSize: 14, color: "#22C55E", fontFamily: "Inter, sans-serif", fontWeight: 600 }}>{m.resultDesc}</span>}
+                          {m.playerOfMatch && <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 11, color: "var(--ink-3)", marginLeft: 10 }}><IcoStar size={12} style={{ color: "#E8B23D" }} /> {m.playerOfMatch}</span>}
                         </div>
                         {expandable && (
-                          <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 11, letterSpacing: ".08em", color: ORANGE }}>
-                            {open ? t("HIDE SCORECARD ▲", "स्कोरकार्ड छिपाएँ ▲") : t("VIEW SCORECARD ▼", "स्कोरकार्ड देखें ▼")}
+                          <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 10, letterSpacing: ".08em", color: "#FF7A29" }}>
+                            {open ? "HIDE SCORECARD ▲" : "VIEW SCORECARD ▼"}
                           </span>
                         )}
                       </div>
@@ -521,87 +393,50 @@ export function MatchCenter() {
         </div>
       </section>
 
-      {/* POINTS TABLE — light ivory strip, IPL-style */}
+      {/* POINTS TABLE */}
       <section style={{ padding: "clamp(56px,9vw,110px) 0", background: "var(--bg)" }}>
         <div className="wrap">
           <div className="section-label">Standings</div>
-          <h2 className="section-title" style={{ fontSize: "clamp(22px, 4vw, 36px)", color: INK, marginBottom: 24, textTransform: "uppercase" }}>
+          <h2 className="section-title" style={{ fontSize: "clamp(20px, 4vw, 34px)", color: "#fff", marginBottom: 24, textTransform: "uppercase" }}>
             POINTS TABLE — SEASON 5
           </h2>
 
           {points.length === 0 && (
-            <div style={{ textAlign: "center", padding: "clamp(48px,8vw,72px) 24px", background: "#FFFFFF", borderRadius: 20, border: `1px solid ${LINE}`, boxShadow: CARD_SH }}>
-              <div style={{ display: "flex", justifyContent: "center", marginBottom: 18 }}>
-                <span style={{ width: 76, height: 76, borderRadius: "50%", background: "rgba(232,178,61,0.12)", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
-                  <IcoTrophy size={38} style={{ color: GOLD_INK }} />
-                </span>
-              </div>
-              <div className="section-title" style={{ fontSize: 26, color: INK, marginBottom: 8, textTransform: "uppercase" }}>
+            <div style={{ textAlign: "center", padding: "48px 20px", background: "#121F2F", borderRadius: 16, border: "1px solid rgba(255,255,255,0.07)" }}>
+              <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><IcoTrophy size={38} style={{ color: "var(--gold, #E8B23D)" }} /></div>
+              <div className="section-title" style={{ fontSize: 24, color: "#fff", marginBottom: 8, textTransform: "uppercase" }}>
                 {t("Standings Coming Soon", "Standings जल्द आएंगे")}
               </div>
-              <p style={{ color: INK3, fontSize: 15, fontFamily: "Inter, sans-serif", maxWidth: 380, margin: "0 auto" }}>
+              <p style={{ color: "var(--ink-3)", fontSize: 14, fontFamily: "Inter, sans-serif", maxWidth: 360, margin: "0 auto" }}>
                 {t("The points table will update in real time once Season 5 matches begin.", "Season 5 के matches शुरू होते ही points table real time में update होगी।")}
               </p>
             </div>
           )}
 
           {points.length > 0 && (
-            <>
-              <div className="pts-table-wrap" style={{ background: "#FFFFFF", borderRadius: 20, border: `1px solid ${LINE}`, overflow: "hidden", boxShadow: CARD_SH }}>
-                <div className="pts-inner">
-                  <div className="pts-grid pts-head">
-                    <div className="stick stick-pos">#</div>
-                    <div className="left stick stick-team">Team</div>
-                    <div>P</div>
-                    <div>W</div>
-                    <div>L</div>
-                    <div>NR</div>
-                    <div>NRR</div>
-                    <div className="left">Form</div>
-                    <div>Pts</div>
+            <div className="pts-table-wrap" style={{ background: "#121F2F", borderRadius: 16, border: "1px solid rgba(255,255,255,0.07)", overflow: "hidden" }}>
+              <div className="pts-table-inner">
+                <div className="pts-header">
+                  {["#", "Team", "P", "W", "L", "NR", "Pts"].map(h => (
+                    <div key={h} style={{ fontFamily: "var(--font-head)", fontWeight: 700, fontSize: 10, color: "var(--ink-3)", letterSpacing: ".1em", textAlign: h === "Team" ? "left" : "center" }}>{h}</div>
+                  ))}
+                </div>
+                {points.map((row: any, i: number) => (
+                  <div key={row.id ?? i} className="pts-row">
+                    <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 13, color: i === 0 ? "#E8B23D" : i === 1 ? "#9CA3AF" : i === 2 ? "#B45309" : "rgba(255,255,255,0.4)", textAlign: "center" }}>{i + 1}</div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <TeamBadge name={row.team} color={color(row.team)} logo={logoOf(row.team)} size={26} fontSize={8} />
+                      <div style={{ fontFamily: "var(--font-head)", fontWeight: 700, fontSize: 13, color: "#fff" }}>{row.team}</div>
+                    </div>
+                    <div style={{ textAlign: "center", fontSize: 13, color: "rgba(255,255,255,0.6)" }}>{row.played}</div>
+                    <div style={{ textAlign: "center", fontSize: 13, color: "#22C55E", fontWeight: 600 }}>{row.won}</div>
+                    <div style={{ textAlign: "center", fontSize: 13, color: "#E8493F" }}>{row.lost}</div>
+                    <div style={{ textAlign: "center", fontSize: 13, color: "var(--ink-3)" }}>{row.noResult}</div>
+                    <div style={{ textAlign: "center", fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 16, color: "#FF7A29" }}>{row.points}</div>
                   </div>
-                  {points.map((row: any, i: number) => {
-                    const pos = i + 1;
-                    const inZone = pos <= QUALIFY_TOP;
-                    const isZoneLast = showQualifyLine && pos === QUALIFY_TOP;
-                    const nrrNum = Number(row.nrr ?? 0);
-                    const nrrStr = (nrrNum >= 0 ? "+" : "") + nrrNum.toFixed(3);
-                    const posGrad =
-                      pos === 1 ? "linear-gradient(135deg,#E8B23D,#FFD873)" :
-                      pos === 2 ? "linear-gradient(135deg,#9AA3B0,#CBD2DB)" :
-                      pos === 3 ? "linear-gradient(135deg,#B45309,#D97706)" :
-                      "rgba(12,29,51,.06)";
-                    return (
-                      <div key={row.id ?? i} className={`pts-grid pts-row2${inZone ? " qualify" : ""}${isZoneLast ? " qualify-last" : ""}`}>
-                        <div className="stick stick-pos">
-                          <span style={{ width: 30, height: 30, borderRadius: "50%", background: posGrad, display: "inline-flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 12, color: pos <= 3 ? INK : "rgba(12,29,51,.55)", boxShadow: pos <= 3 ? "0 2px 6px rgba(12,29,51,.15)" : "none" }}>{pos}</span>
-                        </div>
-                        <div className="left stick stick-team">
-                          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                            <TeamBadge name={row.team} color={color(row.team)} logo={logoOf(row.team)} size={30} fontSize={9} />
-                            <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 15, color: INK }}>{row.team}</div>
-                          </div>
-                        </div>
-                        <div style={{ color: INK2 }}>{row.played}</div>
-                        <div style={{ color: GREEN, fontWeight: 700 }}>{row.won}</div>
-                        <div style={{ color: RED }}>{row.lost}</div>
-                        <div style={{ color: INK3 }}>{row.noResult}</div>
-                        <div style={{ fontFamily: "var(--font-head)", fontWeight: 700, color: nrrStr.startsWith("+") ? GREEN : RED }}>{nrrStr}</div>
-                        <div className="left"><FormGuide form={Array.isArray(row.form) ? row.form : []} /></div>
-                        <div style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 18, color: ORANGE }}>{row.points}</div>
-                      </div>
-                    );
-                  })}
-                </div>
+                ))}
               </div>
-
-              {showQualifyLine && (
-                <div style={{ display: "inline-flex", alignItems: "center", gap: 8, marginTop: 14, fontSize: 13, color: INK3 }}>
-                  <span style={{ width: 12, height: 12, borderRadius: 3, background: "rgba(30,158,90,0.55)" }} />
-                  {t("Top 4 qualify for the playoffs", "टॉप 4 प्लेऑफ़ के लिए क्वालिफ़ाई करते हैं")}
-                </div>
-              )}
-            </>
+            </div>
           )}
         </div>
       </section>

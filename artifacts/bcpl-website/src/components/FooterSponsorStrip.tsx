@@ -51,7 +51,7 @@ export function FooterSponsorStrip() {
   }
 
   return (
-    <section aria-label="BCPL partners" className="on-dark" style={{ background:"#050B18", borderTop:"1px solid rgba(255,255,255,.06)", padding:"clamp(30px,4.5vw,48px) 0 clamp(26px,4vw,40px)", fontFamily:"Montserrat,Inter,sans-serif" }}>
+    <section aria-label="BCPL partners" style={{ background:"#050B18", borderTop:"1px solid rgba(255,255,255,.06)", padding:"clamp(30px,4.5vw,48px) 0 clamp(26px,4vw,40px)", fontFamily:"Montserrat,Inter,sans-serif" }}>
       <style>{`
         .bcpl-spst-wrap { max-width:1200px; margin:0 auto; padding:0 clamp(16px,4vw,40px); }
         .bcpl-spst-groups { display:flex; flex-wrap:wrap; justify-content:center; align-items:flex-start; gap:clamp(26px,4vw,52px) clamp(30px,5vw,64px); }

@@ -56,13 +56,13 @@ function Badge({ status, map, colorMap }: { status: string; map: Record<string,s
 function RegIdBadge({ regNumber }: { regNumber?: string | null }) {
   if (regNumber) {
     return (
-      <span style={{ display:"inline-block", padding:"3px 9px", borderRadius:6, fontSize:11, fontWeight:800, fontFamily:"monospace", background:"#FF6B0018", color:"#C2410C", border:"1px solid #FF6B0040", whiteSpace:"nowrap" }}>
+      <span style={{ display:"inline-block", padding:"3px 9px", borderRadius:6, fontSize:11, fontWeight:800, fontFamily:"monospace", background:"#FF6B0018", color:"#FF9A57", border:"1px solid #FF6B0040", whiteSpace:"nowrap" }}>
         {regNumber}
       </span>
     );
   }
   return (
-    <span title="Registration ID is assigned after Phase 1 payment" style={{ display:"inline-block", padding:"3px 9px", borderRadius:6, fontSize:10, fontWeight:700, background:"#FFFFFF", color:"#64748B", border:"1px solid #E2E8F0", whiteSpace:"nowrap" }}>
+    <span title="Registration ID is assigned after Phase 1 payment" style={{ display:"inline-block", padding:"3px 9px", borderRadius:6, fontSize:10, fontWeight:700, background:"#1E293B", color:"#64748B", border:"1px solid #23324A", whiteSpace:"nowrap" }}>
       Payment pending
     </span>
   );
@@ -140,8 +140,8 @@ export default function Phase1RegistrationsView({ onNavigate, focusId, initialFi
   };
 
   const card: React.CSSProperties = {
-    background:"linear-gradient(135deg,#FFFFFF,#FFFFFF)",
-    border:"1px solid #E2E8F0", borderRadius:16, padding:20,
+    background:"linear-gradient(135deg,#0D1526,#0A1020)",
+    border:"1px solid #1E293B", borderRadius:16, padding:20,
   };
 
   const displayed = rows.filter(r => {
@@ -156,11 +156,11 @@ export default function Phase1RegistrationsView({ onNavigate, focusId, initialFi
   });
 
   const statCards = stats?.registrations ? [
-    { label:"Total Registrations", value: stats.registrations.total,         color:"#4F46E5" },
-    { label:"Payment Done",        value: stats.registrations.paymentDone,   color:"#1D4ED8" },
-    { label:"Video Submitted",     value: stats.registrations.videoSubmitted, color:"#7C3AED" },
-    { label:"Selected",            value: stats.registrations.selected,       color:"#047857" },
-    { label:"Rejected",            value: stats.registrations.rejected,       color:"#DC2626" },
+    { label:"Total Registrations", value: stats.registrations.total,         color:"#6366F1" },
+    { label:"Payment Done",        value: stats.registrations.paymentDone,   color:"#3B82F6" },
+    { label:"Video Submitted",     value: stats.registrations.videoSubmitted, color:"#A855F7" },
+    { label:"Selected",            value: stats.registrations.selected,       color:"#10B981" },
+    { label:"Rejected",            value: stats.registrations.rejected,       color:"#EF4444" },
   ] : [];
 
   return (
@@ -170,20 +170,20 @@ export default function Phase1RegistrationsView({ onNavigate, focusId, initialFi
       {/* Header */}
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", flexWrap:"wrap", gap:10 }}>
         <div>
-          <div style={{ fontSize:20, fontWeight:800, color:"#1E293B" }}>Phase 1 Registrations</div>
+          <div style={{ fontSize:20, fontWeight:800, color:"#F1F5F9" }}>Phase 1 Registrations</div>
           <div style={{ fontSize:12, color:"#64748B", marginTop:2 }}>
             Manage all Phase 1 registrations — review payments, videos and selection decisions
           </div>
         </div>
-        <button onClick={() => load()} style={{ padding:"9px 16px", borderRadius:9, border:"1px solid #E2E8F0", background:"transparent", color:"#64748B", fontSize:12, fontWeight:700, cursor:"pointer" }}>
+        <button onClick={() => load()} style={{ padding:"9px 16px", borderRadius:9, border:"1px solid #1E293B", background:"transparent", color:"#64748B", fontSize:12, fontWeight:700, cursor:"pointer" }}>
           ↺ Refresh
         </button>
       </div>
 
       {/* Error */}
       {err && (
-        <div style={{ padding:14, borderRadius:10, background:"#EF444415", border:"1px solid #EF444440", color:"#DC2626", fontSize:12 }}>
-          ⚠ {err} — <button onClick={() => load()} style={{ background:"none", border:"none", color:"#DC2626", cursor:"pointer", fontWeight:700, fontSize:12 }}>Retry</button>
+        <div style={{ padding:14, borderRadius:10, background:"#EF444415", border:"1px solid #EF444440", color:"#EF4444", fontSize:12 }}>
+          ⚠ {err} — <button onClick={() => load()} style={{ background:"none", border:"none", color:"#EF4444", cursor:"pointer", fontWeight:700, fontSize:12 }}>Retry</button>
         </div>
       )}
 
@@ -211,7 +211,7 @@ export default function Phase1RegistrationsView({ onNavigate, focusId, initialFi
         <div style={{ display:"flex", gap:4 }}>
           {["all", "pending", "payment_done", "video_submitted", "selected", "rejected"].map(f => (
             <button key={f} onClick={() => setFilter(f)}
-              style={{ padding:"7px 13px", borderRadius:8, border:`1px solid ${filter===f?"#FF6B00":"#E2E8F0"}`, background:filter===f?"#FF6B0022":"transparent", color:filter===f?"#C2410C":"#64748B", fontSize:11, fontWeight:700, cursor:"pointer", whiteSpace:"nowrap" }}>
+              style={{ padding:"7px 13px", borderRadius:8, border:`1px solid ${filter===f?"#FF6B00":"#1E293B"}`, background:filter===f?"#FF6B0022":"transparent", color:filter===f?"#FF6B00":"#64748B", fontSize:11, fontWeight:700, cursor:"pointer", whiteSpace:"nowrap" }}>
               {f === "all" ? "All" : P1_STATUS_LABEL[f] ?? f}
             </button>
           ))}
@@ -219,7 +219,7 @@ export default function Phase1RegistrationsView({ onNavigate, focusId, initialFi
         <div style={{ flex:1 }} />
         {/* Role filter */}
         <select value={roleF} onChange={e => setRoleF(e.target.value)}
-          style={{ padding:"8px 10px", borderRadius:8, border:"1px solid #E2E8F0", background:"#FFFFFF", color:"#64748B", fontSize:12, cursor:"pointer", outline:"none" }}>
+          style={{ padding:"8px 10px", borderRadius:8, border:"1px solid #1E293B", background:"#080E1C", color:"#94A3B8", fontSize:12, cursor:"pointer", outline:"none" }}>
           <option value="all">All Roles</option>
           <option value="bat">Batsman</option>
           <option value="bowl">Bowler</option>
@@ -228,51 +228,51 @@ export default function Phase1RegistrationsView({ onNavigate, focusId, initialFi
         </select>
         {/* City search */}
         <input value={cityQ} onChange={e => setCityQ(e.target.value)} onKeyDown={e => e.key === "Enter" && load()} placeholder="Filter by city…"
-          style={{ padding:"8px 12px", borderRadius:8, border:"1px solid #E2E8F0", background:"#FFFFFF", color:"#1E293B", fontSize:12, outline:"none", width:140 }} />
+          style={{ padding:"8px 12px", borderRadius:8, border:"1px solid #1E293B", background:"#080E1C", color:"#E2E8F0", fontSize:12, outline:"none", width:140 }} />
         {/* Name/phone search */}
         <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search name / phone…"
-          style={{ padding:"8px 12px", borderRadius:8, border:"1px solid #E2E8F0", background:"#FFFFFF", color:"#1E293B", fontSize:12, outline:"none", width:180 }} />
+          style={{ padding:"8px 12px", borderRadius:8, border:"1px solid #1E293B", background:"#080E1C", color:"#E2E8F0", fontSize:12, outline:"none", width:180 }} />
       </div>
 
       {/* Table */}
       <div style={{ ...card, padding:0, overflow:"hidden" }}>
         {loading ? (
-          <div style={{ padding:60, textAlign:"center", color:"#64748B", fontSize:14 }}>Loading registrations…</div>
+          <div style={{ padding:60, textAlign:"center", color:"#334155", fontSize:14 }}>Loading registrations…</div>
         ) : displayed.length === 0 ? (
-          <div style={{ padding:60, textAlign:"center", color:"#64748B", fontSize:14 }}>
+          <div style={{ padding:60, textAlign:"center", color:"#334155", fontSize:14 }}>
             No registrations found{filter !== "all" ? ` with status "${P1_STATUS_LABEL[filter] ?? filter}"` : ""}
           </div>
         ) : (
           <div style={{ overflowX:"auto" }}>
             <table style={{ width:"100%", borderCollapse:"collapse", fontSize:12 }}>
               <thead>
-                <tr style={{ background:"#FFFFFF", borderBottom:"1px solid #E2E8F0" }}>
+                <tr style={{ background:"#080E1C", borderBottom:"1px solid #1E293B" }}>
                   {["Reg ID","Player","Contact","City","Role","Reg Date","Payment","Video","Phase 1 Status","Actions"].map(h => (
-                    <th key={h} style={{ padding:"10px 12px", textAlign:"left", fontSize:10, fontWeight:700, color:"#64748B", letterSpacing:"0.06em", textTransform:"uppercase", whiteSpace:"nowrap" }}>{h}</th>
+                    <th key={h} style={{ padding:"10px 12px", textAlign:"left", fontSize:10, fontWeight:700, color:"#334155", letterSpacing:"0.06em", textTransform:"uppercase", whiteSpace:"nowrap" }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {displayed.map((r, i) => (
                   <tr key={r.id} onClick={() => setDetail(r)} title="Tap for full details"
-                    style={{ borderBottom:"1px solid #E2E8F0", cursor:"pointer", background:detail?.id===r.id?"#FF6B0012":(i%2===0?"transparent":"#FFFFFF") }}>
+                    style={{ borderBottom:"1px solid #0F172A", cursor:"pointer", background:detail?.id===r.id?"#FF6B0012":(i%2===0?"transparent":"#0A111C") }}>
                     {/* Reg ID */}
                     <td style={{ padding:"10px 12px" }}>
                       <RegIdBadge regNumber={r.regNumber} />
                     </td>
                     {/* Player */}
                     <td style={{ padding:"10px 12px" }}>
-                      <div style={{ fontWeight:700, color:"#1E293B" }}>{r.user?.name ?? "—"}</div>
+                      <div style={{ fontWeight:700, color:"#F1F5F9" }}>{r.user?.name ?? "—"}</div>
                     </td>
                     {/* Contact */}
                     <td style={{ padding:"10px 12px" }}>
-                      <div style={{ color:"#64748B" }}>{r.user?.phone ?? "—"}</div>
+                      <div style={{ color:"#94A3B8" }}>{r.user?.phone ?? "—"}</div>
                       <div style={{ fontSize:10, color:"#475569" }}>{r.user?.email ?? "—"}</div>
                     </td>
                     {/* City */}
-                    <td style={{ padding:"10px 12px", color:"#64748B", whiteSpace:"nowrap" }}>{r.trialCity ?? "—"}</td>
+                    <td style={{ padding:"10px 12px", color:"#94A3B8", whiteSpace:"nowrap" }}>{r.trialCity ?? "—"}</td>
                     {/* Role */}
-                    <td style={{ padding:"10px 12px", color:"#64748B", whiteSpace:"nowrap" }}>{ROLE_LABEL[r.role] ?? r.role}</td>
+                    <td style={{ padding:"10px 12px", color:"#94A3B8", whiteSpace:"nowrap" }}>{ROLE_LABEL[r.role] ?? r.role}</td>
                     {/* Reg Date */}
                     <td style={{ padding:"10px 12px", color:"#475569", whiteSpace:"nowrap" }}>{r.createdAt ? new Date(r.createdAt).toLocaleDateString("en-IN", { day:"2-digit", month:"short", year:"numeric" }) : "—"}</td>
                     {/* Payment */}
@@ -282,7 +282,7 @@ export default function Phase1RegistrationsView({ onNavigate, focusId, initialFi
                           <Badge status={r.payment.status} map={{ pending:"Pending", success:"Paid", failed:"Failed" }} colorMap={{ pending:"#F59E0B", success:"#10B981", failed:"#EF4444" }} />
                           {r.payment.status === "success" && <div style={{ fontSize:10, color:"#475569", marginTop:2 }}>₹{r.payment.amount}</div>}
                         </div>
-                      ) : <span style={{ color:"#64748B", fontSize:11 }}>No payment</span>}
+                      ) : <span style={{ color:"#334155", fontSize:11 }}>No payment</span>}
                     </td>
                     {/* Video */}
                     <td style={{ padding:"10px 12px" }}>
@@ -291,10 +291,10 @@ export default function Phase1RegistrationsView({ onNavigate, focusId, initialFi
                           <Badge status={r.video.status} map={{ submitted:"Submitted", reviewed:"Reviewed" }} colorMap={{ submitted:"#A855F7", reviewed:"#10B981" }} />
                           {r.video.s3Url && (
                             <a href={r.video.s3Url} target="_blank" rel="noreferrer" title="Watch video in new tab" onClick={e => e.stopPropagation()}
-                              style={{ fontSize:10, fontWeight:700, color:"#4F46E5", textDecoration:"none", padding:"3px 8px", borderRadius:5, background:"#6366F118", border:"1px solid #6366F140", display:"inline-block", width:"fit-content" }}>▶ Watch</a>
+                              style={{ fontSize:10, fontWeight:700, color:"#6366F1", textDecoration:"none", padding:"3px 8px", borderRadius:5, background:"#6366F118", border:"1px solid #6366F140", display:"inline-block", width:"fit-content" }}>▶ Watch</a>
                           )}
                         </div>
-                      ) : <span style={{ color:"#64748B", fontSize:11 }}>No video</span>}
+                      ) : <span style={{ color:"#334155", fontSize:11 }}>No video</span>}
                     </td>
                     {/* Phase 1 Status */}
                     <td style={{ padding:"10px 12px" }}>
@@ -307,7 +307,7 @@ export default function Phase1RegistrationsView({ onNavigate, focusId, initialFi
                           <button
                             disabled={acting === r.id}
                             onClick={e => { e.stopPropagation(); setPhase1Status(r.id, "selected"); }}
-                            style={{ padding:"5px 10px", borderRadius:6, border:"1px solid #10B98140", background:"#10B98115", color:"#047857", fontSize:10, fontWeight:700, cursor:"pointer", whiteSpace:"nowrap", opacity:acting===r.id?0.5:1 }}>
+                            style={{ padding:"5px 10px", borderRadius:6, border:"1px solid #10B98140", background:"#10B98115", color:"#10B981", fontSize:10, fontWeight:700, cursor:"pointer", whiteSpace:"nowrap", opacity:acting===r.id?0.5:1 }}>
                             ✓ Select
                           </button>
                         )}
@@ -315,7 +315,7 @@ export default function Phase1RegistrationsView({ onNavigate, focusId, initialFi
                           <button
                             disabled={acting === r.id}
                             onClick={e => { e.stopPropagation(); setPhase1Status(r.id, "rejected"); }}
-                            style={{ padding:"5px 10px", borderRadius:6, border:"1px solid #EF444440", background:"#EF444415", color:"#DC2626", fontSize:10, fontWeight:700, cursor:"pointer", whiteSpace:"nowrap", opacity:acting===r.id?0.5:1 }}>
+                            style={{ padding:"5px 10px", borderRadius:6, border:"1px solid #EF444440", background:"#EF444415", color:"#EF4444", fontSize:10, fontWeight:700, cursor:"pointer", whiteSpace:"nowrap", opacity:acting===r.id?0.5:1 }}>
                             ✗ Reject
                           </button>
                         )}
@@ -337,7 +337,7 @@ export default function Phase1RegistrationsView({ onNavigate, focusId, initialFi
         )}
       </div>
 
-      <div style={{ fontSize:11, color:"#64748B", textAlign:"right" }}>
+      <div style={{ fontSize:11, color:"#334155", textAlign:"right" }}>
         {!loading && `${displayed.length} registration${displayed.length !== 1 ? "s" : ""} shown`}
       </div>
     </div>
@@ -353,9 +353,9 @@ export default function Phase1RegistrationsView({ onNavigate, focusId, initialFi
         { label:detail.phase1Status==="selected"?"Selected":detail.phase1Status==="rejected"?"Rejected":"Selection decision", time:null as string | null, done:["selected","rejected"].includes(detail.phase1Status) },
       ];
       const row = (label: string, value: React.ReactNode) => (
-        <div key={label} style={{ display:"flex", justifyContent:"space-between", gap:10, padding:"7px 0", borderBottom:"1px solid #E2E8F0" }}>
+        <div key={label} style={{ display:"flex", justifyContent:"space-between", gap:10, padding:"7px 0", borderBottom:"1px solid #0F172A" }}>
           <span style={{ fontSize:11, color:"#475569", flexShrink:0 }}>{label}</span>
-          <span style={{ fontSize:12, color:"#1E293B", textAlign:"right", wordBreak:"break-word" }}>{value}</span>
+          <span style={{ fontSize:12, color:"#CBD5E1", textAlign:"right", wordBreak:"break-word" }}>{value}</span>
         </div>
       );
       return (
@@ -363,26 +363,26 @@ export default function Phase1RegistrationsView({ onNavigate, focusId, initialFi
           <div style={{ ...card, position:"relative" }}>
             <button onClick={() => setDetail(null)} title="Close"
               style={{ position:"absolute", top:14, right:14, background:"none", border:"none", color:"#475569", cursor:"pointer", fontSize:17, lineHeight:1 }}>✕</button>
-            <div style={{ fontSize:16, fontWeight:800, color:"#1E293B", paddingRight:24 }}>{detail.user?.name ?? "Unknown player"}</div>
+            <div style={{ fontSize:16, fontWeight:800, color:"#F1F5F9", paddingRight:24 }}>{detail.user?.name ?? "Unknown player"}</div>
             <div style={{ fontSize:11, color:"#64748B", marginTop:4 }}>{ROLE_LABEL[detail.role] ?? detail.role} · {detail.trialCity || "—"}</div>
-            <div style={{ marginTop:10, padding:"8px 10px", background:"#FFFFFF", border:"1px solid #E2E8F0", borderRadius:8 }}>
+            <div style={{ marginTop:10, padding:"8px 10px", background:"#080E1C", border:"1px solid #1E293B", borderRadius:8 }}>
               <div style={{ fontSize:9, fontWeight:800, color:"#475569", letterSpacing:1, marginBottom:6 }}>REGISTRATION ID</div>
               <RegIdBadge regNumber={detail.regNumber} />
-              <div style={{ fontSize:9, color:"#64748B", fontFamily:"monospace", wordBreak:"break-all", marginTop:6 }}>Internal: {detail.id}</div>
+              <div style={{ fontSize:9, color:"#334155", fontFamily:"monospace", wordBreak:"break-all", marginTop:6 }}>Internal: {detail.id}</div>
             </div>
             <div style={{ marginTop:10 }}>
               {row("Phone", detail.user?.phone ?? "—")}
-              {row("Email", detail.user?.email ? <a href={`mailto:${detail.user.email}`} style={{ color:"#4F46E5" }}>{detail.user.email}</a> : "—")}
+              {row("Email", detail.user?.email ? <a href={`mailto:${detail.user.email}`} style={{ color:"#6366F1" }}>{detail.user.email}</a> : "—")}
               {row("Phase 1", <Badge status={detail.phase1Status} map={P1_STATUS_LABEL} colorMap={P1_STATUS_COLOR} />)}
-              {row("Phase 2", detail.phase2Status ? <Badge status={detail.phase2Status} map={{ payment_done:"Payment Done", kyc_done:"KYC Done", selected:"Selected", rejected:"Rejected" }} colorMap={{ payment_done:"#3B82F6", kyc_done:"#A855F7", selected:"#10B981", rejected:"#EF4444" }} /> : <span style={{ color:"#64748B" }}>Not started</span>)}
+              {row("Phase 2", detail.phase2Status ? <Badge status={detail.phase2Status} map={{ payment_done:"Payment Done", kyc_done:"KYC Done", selected:"Selected", rejected:"Rejected" }} colorMap={{ payment_done:"#3B82F6", kyc_done:"#A855F7", selected:"#10B981", rejected:"#EF4444" }} /> : <span style={{ color:"#334155" }}>Not started</span>)}
               {row("Payment", detail.payment ? `${detail.payment.status === "success" ? "Paid" : detail.payment.status} · ₹${detail.payment.amount}` : "No payment")}
               {row("Paid at", fmtDT(detail.payment?.paidAt) ?? "—")}
-              {row("Video", detail.video ? (detail.video.s3Url ? <a href={detail.video.s3Url} target="_blank" rel="noreferrer" style={{ color:"#4F46E5" }}>▶ Watch</a> : detail.video.status) : "No video")}
-              {row("KYC", detail.kyc ? <Badge status={detail.kyc.status} map={{ pending:"Pending", verified:"Verified", failed:"Failed" }} colorMap={{ pending:"#F59E0B", verified:"#10B981", failed:"#EF4444" }} /> : <span style={{ color:"#64748B" }}>Not submitted</span>)}
+              {row("Video", detail.video ? (detail.video.s3Url ? <a href={detail.video.s3Url} target="_blank" rel="noreferrer" style={{ color:"#6366F1" }}>▶ Watch</a> : detail.video.status) : "No video")}
+              {row("KYC", detail.kyc ? <Badge status={detail.kyc.status} map={{ pending:"Pending", verified:"Verified", failed:"Failed" }} colorMap={{ pending:"#F59E0B", verified:"#10B981", failed:"#EF4444" }} /> : <span style={{ color:"#334155" }}>Not submitted</span>)}
             </div>
             {detail.kyc && (
               <button onClick={() => onNavigate?.("phase2_kyc")}
-                style={{ width:"100%", marginTop:12, padding:"8px 0", borderRadius:8, border:"1px solid #A855F744", background:"#A855F715", color:"#7C3AED", fontSize:11, fontWeight:700, cursor:"pointer" }}>
+                style={{ width:"100%", marginTop:12, padding:"8px 0", borderRadius:8, border:"1px solid #A855F744", background:"#A855F715", color:"#A855F7", fontSize:11, fontWeight:700, cursor:"pointer" }}>
                 Open in Phase 2 · KYC
               </button>
             )}
@@ -393,11 +393,11 @@ export default function Phase1RegistrationsView({ onNavigate, focusId, initialFi
             {journey.map((s, i) => (
               <div key={s.label} style={{ display:"flex", gap:10, alignItems:"stretch" }}>
                 <div style={{ display:"flex", flexDirection:"column", alignItems:"center", flexShrink:0 }}>
-                  <div style={{ width:10, height:10, borderRadius:"50%", background:s.done?"#10B981":"#E2E8F0", border:`2px solid ${s.done?"#10B981":"#E2E8F0"}`, marginTop:2 }}/>
-                  {i<journey.length-1 && <div style={{ width:2, flex:1, minHeight:14, background:s.done?"#10B98144":"#E2E8F0", marginTop:2, marginBottom:2 }}/>}
+                  <div style={{ width:10, height:10, borderRadius:"50%", background:s.done?"#10B981":"#1E293B", border:`2px solid ${s.done?"#10B981":"#334155"}`, marginTop:2 }}/>
+                  {i<journey.length-1 && <div style={{ width:2, flex:1, minHeight:14, background:s.done?"#10B98144":"#1E293B", marginTop:2, marginBottom:2 }}/>}
                 </div>
                 <div style={{ paddingBottom:i<journey.length-1?12:0 }}>
-                  <div style={{ fontSize:12, fontWeight:600, color:s.done?"#1E293B":"#475569" }}>{s.label}</div>
+                  <div style={{ fontSize:12, fontWeight:600, color:s.done?"#CBD5E1":"#475569" }}>{s.label}</div>
                   {s.time && <div style={{ fontSize:10, color:"#475569", marginTop:2 }}>{s.time}</div>}
                 </div>
               </div>
@@ -409,11 +409,11 @@ export default function Phase1RegistrationsView({ onNavigate, focusId, initialFi
             <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
               {detail.phase1Status !== "selected" && (
                 <button disabled={acting===detail.id} onClick={() => setPhase1Status(detail.id, "selected")}
-                  style={{ flex:1, padding:"8px 0", borderRadius:8, border:"1px solid #10B98140", background:"#10B98115", color:"#047857", fontSize:11, fontWeight:700, cursor:"pointer", opacity:acting===detail.id?0.5:1 }}>✓ Select</button>
+                  style={{ flex:1, padding:"8px 0", borderRadius:8, border:"1px solid #10B98140", background:"#10B98115", color:"#10B981", fontSize:11, fontWeight:700, cursor:"pointer", opacity:acting===detail.id?0.5:1 }}>✓ Select</button>
               )}
               {detail.phase1Status !== "rejected" && (
                 <button disabled={acting===detail.id} onClick={() => setPhase1Status(detail.id, "rejected")}
-                  style={{ flex:1, padding:"8px 0", borderRadius:8, border:"1px solid #EF444440", background:"#EF444415", color:"#DC2626", fontSize:11, fontWeight:700, cursor:"pointer", opacity:acting===detail.id?0.5:1 }}>✗ Reject</button>
+                  style={{ flex:1, padding:"8px 0", borderRadius:8, border:"1px solid #EF444440", background:"#EF444415", color:"#EF4444", fontSize:11, fontWeight:700, cursor:"pointer", opacity:acting===detail.id?0.5:1 }}>✗ Reject</button>
               )}
               {(detail.phase1Status === "selected" || detail.phase1Status === "rejected") && (
                 <button disabled={acting===detail.id} onClick={() => setPhase1Status(detail.id, "pending")}

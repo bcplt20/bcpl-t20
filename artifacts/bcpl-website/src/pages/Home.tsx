@@ -264,7 +264,7 @@ export function Home() {
   },[lang]);
 
   return (
-    <div ref={rootRef} className="home-root" style={{ background:"var(--bg)", color:"var(--ink)", fontFamily:"'Inter',sans-serif", overflowX:"hidden" }}>
+    <div ref={rootRef} className="home-root" style={{ background:"var(--bg)", color:"#F0EDE8", fontFamily:"'Inter',sans-serif", overflowX:"hidden" }}>
       <style>{`
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
         html{scroll-behavior:smooth;}
@@ -426,7 +426,7 @@ export function Home() {
         .vbox{position:relative;width:min(960px,96vw);aspect-ratio:16/9;background:#000;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.14);box-shadow:0 40px 120px rgba(0,0,0,.7);}
 
         /* Sticky mobile CTA */
-        .stick-cta{position:fixed;left:0;right:0;bottom:0;z-index:300;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;padding-bottom:calc(10px + env(safe-area-inset-bottom));background:rgba(246,243,236,.96);backdrop-filter:blur(16px);border-top:1px solid rgba(255,122,41,.35);box-shadow:0 -6px 22px rgba(12,29,51,.10);}
+        .stick-cta{position:fixed;left:0;right:0;bottom:0;z-index:300;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;padding-bottom:calc(10px + env(safe-area-inset-bottom));background:rgba(5,10,20,.97);backdrop-filter:blur(16px);border-top:1px solid rgba(255,122,41,.35);}
         @media(min-width:768px){.stick-cta{display:none;}}
         @media(max-width:767px){.home-root{padding-bottom:76px;}}
 
@@ -450,57 +450,21 @@ export function Home() {
         .road-card .rc-desc{font-size:14px;color:rgba(255,255,255,.78);line-height:1.6;flex:1;}
         .road-card .rc-node{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
 
-        /* ══ SEASON 5 ROADMAP on soft NAVY-TINTED band (light theme) ══ */
-        .sec-roadmap{background:linear-gradient(180deg,#EDF0F6 0%,#E7EBF2 100%) !important;border-top:1px solid rgba(12,29,51,.10);border-bottom:1px solid rgba(12,29,51,.10);}
-        .sec-roadmap h2{color:#0C1D33 !important;}
-        .sec-roadmap .slbl{color:#B8892B;}
-        .sec-roadmap .slbl::before{background:#B8892B;}
-        .sec-roadmap .rm-sub{color:rgba(12,29,51,.70) !important;}
-        /* connector on the tinted band */
-        .sec-roadmap .s5map::before{background:rgba(12,29,51,.14);height:4px;top:32px;}
+        /* ══ SEASON 5 ROADMAP on MID-TONE surface — clearly separated ══ */
+        .sec-roadmap{background:linear-gradient(180deg,#2C4A6B 0%,#24405F 100%) !important;border-top:1px solid rgba(255,255,255,.10);border-bottom:1px solid rgba(255,255,255,.10);}
+        .sec-roadmap .slbl{color:#FFD98A;}
+        .sec-roadmap .slbl::before{background:#FFD98A;}
+        .sec-roadmap .rm-sub{color:rgba(255,255,255,.82) !important;}
+        /* thicker connector on mid surface */
+        .sec-roadmap .s5map::before{background:rgba(255,255,255,.16);height:4px;top:32px;}
         .sec-roadmap .s5map::after{height:4px;top:32px;}
-        .sec-roadmap .s5m-node{background:#FFFFFF;border-color:rgba(12,29,51,.16);box-shadow:0 8px 20px rgba(12,29,51,.10);}
-        .sec-roadmap .s5m-mo{color:#B8892B !important;font-size:clamp(11px,1.4vw,13px);}
-        .sec-roadmap .s5m-lb{color:#0C1D33 !important;font-size:clamp(15px,1.9vw,19px);}
+        .sec-roadmap .s5m-node{background:linear-gradient(165deg,#31527A,#213C59);border-color:rgba(255,255,255,.22);}
+        .sec-roadmap .s5m-mo{color:#FFD98A !important;font-size:clamp(11px,1.4vw,13px);}
+        .sec-roadmap .s5m-lb{font-size:clamp(15px,1.9vw,19px);}
         @media(max-width:639px){
           .sec-roadmap .s5map::before{left:38px;top:20px;bottom:20px;width:4px;height:auto;}
           .sec-roadmap .s5map::after{left:38px;top:20px;bottom:20px;width:4px;height:auto;}
         }
-
-        /* ══════════════════════════════════════════════════════════════
-           LIGHT-THEME SECTION REMAPS — flip the journey/fees/teams/match/
-           faq sections from dark navy to the light premium theme. Child
-           inline colours are overridden with !important where needed. ══ */
-
-        /* Shared: headings/labels on light sections */
-        .sec-journey h2,.sec-fees h2,.sec-teams h2,.sec-mc h2,.sec-faq h2{color:#0C1D33 !important;}
-
-        /* JOURNEY (Road to BCPL) — white step cards on ivory */
-        .sec-journey .road-card{background:#FFFFFF;border:1px solid rgba(12,29,51,.10);box-shadow:0 10px 28px rgba(12,29,51,.08);}
-        .sec-journey .road-card:hover{box-shadow:0 20px 46px rgba(12,29,51,.14);border-color:rgba(12,29,51,.16);}
-        .sec-journey .road::before{opacity:.5;}
-        .sec-journey .rc-title{color:#0C1D33 !important;}
-        .sec-journey .rc-desc{color:rgba(12,29,51,.74) !important;}
-
-        /* FEES — white price cards + journey chips on ivory */
-        .sec-fees .card{background:#FFFFFF !important;border:1px solid rgba(12,29,51,.10) !important;box-shadow:0 10px 30px rgba(12,29,51,.08) !important;}
-        .sec-fees .jour .jc{background:#FFFFFF;border:1px solid rgba(12,29,51,.10);box-shadow:0 8px 24px rgba(12,29,51,.08);}
-        .sec-fees .jour .jc:hover{box-shadow:0 16px 38px rgba(12,29,51,.14);}
-        .sec-fees .jour .ja{color:rgba(184,137,43,.7);}
-        /* row hairlines inside price cards were white — make navy */
-        .sec-fees .card [style*="rgba(255,255,255,.06)"]{border-color:rgba(12,29,51,.08) !important;}
-        /* the "Maximum Total Cost" big numbers were pure white */
-        .sec-fees .card + div .mont[style*="#fff"]{color:#0C1D33 !important;}
-
-        /* TEAMS — light franchise tiles on the recessed strip */
-        .sec-teams .fr-card [class]{}
-        .sec-teams h2{color:#0C1D33 !important;}
-
-        /* MATCH CENTER — light leaderboard/fixtures on ivory */
-        .sec-mc h2{color:#0C1D33 !important;}
-
-        /* FAQ — white accordion cards on ivory */
-        .sec-faq .card{background:#FFFFFF !important;box-shadow:0 8px 24px rgba(12,29,51,.06) !important;}
       `}</style>
 
       {/* ══ SHARED HEADER ══ */}
@@ -613,7 +577,7 @@ export function Home() {
       </section>
 
       {/* ══ 4 · ROAD TO BCPL ══ */}
-      <section id="road" className="rv sec-journey" style={{ padding:"clamp(54px,7vw,88px) 0", background:"var(--bg)", position:"relative", overflow:"hidden" }}>
+      <section id="road" className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"var(--bg)", position:"relative", overflow:"hidden" }}>
         <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 80% 60% at 50% 100%,rgba(255,122,41,.04) 0%,transparent 70%)", pointerEvents:"none" }}/>
         <div className="W" style={{ position:"relative", zIndex:1 }}>
           <div className="slbl">{t("Your Journey","आपका सफर")}</div>
@@ -646,7 +610,7 @@ export function Home() {
                       <span className="mont" style={{ fontSize:13, fontWeight:800, color:"#4ADE80" }}>{t("OPEN NOW","अभी खुला")}</span>
                     </span>
                   )}
-                  {i===3 && <span style={{ fontSize:13, color:"rgba(12,29,51,.66)", alignSelf:"center" }}>{t("only after Phase 1 qualification","सिर्फ Phase 1 qualify करने के बाद")}</span>}
+                  {i===3 && <span style={{ fontSize:13, color:"rgba(255,255,255,.72)", alignSelf:"center" }}>{t("only after Phase 1 qualification","सिर्फ Phase 1 qualify करने के बाद")}</span>}
                 </div>
               </div>
             ))}
@@ -684,7 +648,7 @@ export function Home() {
       </section>
 
       {/* ══ 5 · PRICING — you pay only if you progress ══ */}
-      <section id="fees" className="rv sec-fees" style={{ padding:"clamp(54px,7vw,88px) 0", background:"var(--bg)" }}>
+      <section id="fees" className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"var(--bg)" }}>
         <div className="W">
           <div className="slbl">{t("Pricing","फीस")}</div>
           <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4.2vw,46px)", color:"#fff", textTransform:"uppercase", lineHeight:1.1, marginBottom:6 }}>
@@ -747,8 +711,8 @@ export function Home() {
                 </div>
               </div>
               {[{icon:IcoBat,role:t("Batsman","बल्लेबाज़"),price:inr(fees.phase1.bat)},{icon:IcoBall,role:t("Bowler","गेंदबाज़"),price:inr(fees.phase1.bowl)},{icon:IcoShield,role:t("Wicket-keeper","विकेट-कीपर"),price:inr(fees.phase1.wk)},{icon:IcoStar,role:t("All-Rounder","ऑल-राउंडर"),price:inr(fees.phase1.ar)}].map(r=>(
-                <div key={r.role} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 0", borderBottom:"1px solid rgba(12,29,51,.08)" }}>
-                  <span style={{ display:"inline-flex", alignItems:"center", gap:8, fontSize:15, color:"var(--ink-2)" }}><r.icon size={16} style={{ color:"rgba(12,29,51,.55)" }} />{r.role}</span>
+                <div key={r.role} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 0", borderBottom:"1px solid rgba(255,255,255,.06)" }}>
+                  <span style={{ display:"inline-flex", alignItems:"center", gap:8, fontSize:15, color:"var(--ink-2)" }}><r.icon size={16} style={{ color:"rgba(255,255,255,.6)" }} />{r.role}</span>
                   <span className="mont" style={{ fontWeight:900, fontSize:18, color:"#FF7A29" }}>{r.price}</span>
                 </div>
               ))}
@@ -767,8 +731,8 @@ export function Home() {
                 </div>
               </div>
               {[{icon:IcoBat,role:t("Batsman","बल्लेबाज़"),price:inr(fees.phase2.bat)},{icon:IcoBall,role:t("Bowler","गेंदबाज़"),price:inr(fees.phase2.bowl)},{icon:IcoShield,role:t("Wicket-keeper","विकेट-कीपर"),price:inr(fees.phase2.wk)},{icon:IcoStar,role:t("All-Rounder","ऑल-राउंडर"),price:inr(fees.phase2.ar)}].map(r=>(
-                <div key={r.role} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 0", borderBottom:"1px solid rgba(12,29,51,.08)" }}>
-                  <span style={{ display:"inline-flex", alignItems:"center", gap:8, fontSize:15, color:"var(--ink-2)" }}><r.icon size={16} style={{ color:"rgba(12,29,51,.55)" }} />{r.role}</span>
+                <div key={r.role} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 0", borderBottom:"1px solid rgba(255,255,255,.06)" }}>
+                  <span style={{ display:"inline-flex", alignItems:"center", gap:8, fontSize:15, color:"var(--ink-2)" }}><r.icon size={16} style={{ color:"rgba(255,255,255,.6)" }} />{r.role}</span>
                   <span className="mont" style={{ fontWeight:900, fontSize:18, color:"#E8B23D" }}>{r.price}</span>
                 </div>
               ))}
@@ -796,7 +760,7 @@ export function Home() {
             <div style={{ display:"flex", gap:16, flexWrap:"wrap" }}>
               {[{label:"Bat/Bowl/WK",total:inr(fees.phase1.bat + fees.phase2.bat) + " + GST"},{label:t("All-Rounder","ऑल-राउंडर"),total:inr(fees.phase1.ar + fees.phase2.ar) + " + GST"}].map(x=>(
                 <div key={x.total} style={{ textAlign:"center" }}>
-                  <div className="mont" style={{ fontWeight:900, fontSize:24, color:"#0C1D33" }}>{x.total}</div>
+                  <div className="mont" style={{ fontWeight:900, fontSize:24, color:"#fff" }}>{x.total}</div>
                   <div style={{ fontSize:11, color:"var(--ink-3)" }}>{x.label}</div>
                 </div>
               ))}
@@ -805,8 +769,8 @@ export function Home() {
         </div>
       </section>
 
-      {/* ══ 6 · REAL PLAYERS. REAL AUCTIONS. REAL STADIUMS. — DARK ANCHOR (photography) ══ */}
-      <section className="rv on-dark" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#0E1420", position:"relative", overflow:"hidden" }}>
+      {/* ══ 6 · REAL PLAYERS. REAL AUCTIONS. REAL STADIUMS. ══ */}
+      <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#0E1420", position:"relative", overflow:"hidden" }}>
         <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 70% 60% at 50% 100%,rgba(232,178,61,.04) 0%,transparent 65%)", pointerEvents:"none" }}/>
         <div className="W" style={{ position:"relative", zIndex:1 }}>
           <div className="slbl">{t("Season 4 · On the ground","Season 4 · ज़मीन पर")}</div>
@@ -834,9 +798,9 @@ export function Home() {
         </div>
       </section>
 
-      {/* ══ 7 · REAL PLAYER STORIES — DARK ANCHOR (player photography); renders only with verified players ══ */}
+      {/* ══ 7 · REAL PLAYER STORIES — renders only with verified players ══ */}
       {STORIES.length > 0 && (
-        <section className="rv on-dark" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#0E1420" }}>
+        <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"var(--bg)" }}>
           <div className="W">
             <div className="slbl">{t("Real Stories","असली कहानियाँ")}</div>
             <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4.2vw,46px)", color:"#fff", textTransform:"uppercase", lineHeight:1.1, marginBottom:8 }}>
@@ -872,8 +836,8 @@ export function Home() {
         </section>
       )}
 
-      {/* ══ 8 · SOURAV GANGULY × BCPL — DARK ANCHOR (full-width cinematic photography) ══ */}
-      <section className="rv on-dark" style={{ padding:"clamp(54px,7vw,96px) 0", background:"linear-gradient(180deg,#101A2A,#0C1D33)", position:"relative", overflow:"hidden" }}>
+      {/* ══ 8 · SOURAV GANGULY × BCPL — full-width cinematic ══ */}
+      <section className="rv" style={{ padding:"clamp(54px,7vw,96px) 0", background:"linear-gradient(180deg,#101A2A,var(--bg))", position:"relative", overflow:"hidden" }}>
         <div style={{ position:"absolute", top:"-30%", right:"-15%", width:"55%", height:"160%", background:"radial-gradient(ellipse,rgba(232,178,61,.09) 0%,transparent 65%)", pointerEvents:"none" }}/>
         <div style={{ position:"absolute", bottom:"-40%", left:"-10%", width:"45%", height:"120%", background:"radial-gradient(ellipse,rgba(255,122,41,.05) 0%,transparent 65%)", pointerEvents:"none" }}/>
         <div className="W" style={{ position:"relative", zIndex:1 }}>
@@ -920,7 +884,7 @@ export function Home() {
       </section>
 
       {/* ══ 9 · SEASON 5 FRANCHISES ══ */}
-      <section className="rv sec-teams" style={{ padding:"clamp(54px,7vw,88px) 0", background:"var(--bg-deep)" }}>
+      <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#0E1420" }}>
         <div className="W">
           <div className="slbl">{t("Franchises","फ्रैंचाइज़ी")}</div>
           <div style={{ display:"flex", alignItems:"flex-end", justifyContent:"space-between", gap:16, flexWrap:"wrap", marginBottom:34 }}>
@@ -931,12 +895,12 @@ export function Home() {
             {TEAMS.map(tm=>(
               <div key={tm.name} className="fr-card" role="link" tabIndex={0} aria-label={"View "+tm.name+" squad"}
                 onClick={()=>navigate("/teams")} onKeyDown={e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); navigate("/teams"); } }}
-                style={{ background:`linear-gradient(170deg,${tm.color}14 0%,#FFFFFF 60%)`, borderColor:`${tm.color}40`, boxShadow:"0 10px 26px rgba(12,29,51,.08)" }}
-                onMouseEnter={e=>{ e.currentTarget.style.boxShadow=`0 16px 40px ${tm.color}33`; e.currentTarget.style.borderColor=`${tm.color}80`; }}
-                onMouseLeave={e=>{ e.currentTarget.style.boxShadow="0 10px 26px rgba(12,29,51,.08)"; e.currentTarget.style.borderColor=`${tm.color}40`; }}>
-                <div style={{ position:"absolute", top:-24, right:-24, width:90, height:90, borderRadius:"50%", background:`${tm.color}14`, pointerEvents:"none" }}/>
+                style={{ background:`linear-gradient(170deg,${tm.color}26 0%,#121F2F 55%)`, borderColor:`${tm.color}30` }}
+                onMouseEnter={e=>{ e.currentTarget.style.boxShadow=`0 16px 40px ${tm.color}30`; e.currentTarget.style.borderColor=`${tm.color}70`; }}
+                onMouseLeave={e=>{ e.currentTarget.style.boxShadow=""; e.currentTarget.style.borderColor=`${tm.color}30`; }}>
+                <div style={{ position:"absolute", top:-24, right:-24, width:90, height:90, borderRadius:"50%", background:`${tm.color}12`, pointerEvents:"none" }}/>
                 <TeamLogo slug={tm.slug} name={tm.name} color={tm.color}/>
-                <div className="mont" style={{ fontWeight:800, fontSize:"clamp(12px,1.5vw,14px)", color:"#0C1D33", lineHeight:1.25, marginTop:12 }}>{tm.name}</div>
+                <div className="mont" style={{ fontWeight:800, fontSize:"clamp(12px,1.5vw,14px)", color:"#F1F5F9", lineHeight:1.25, marginTop:12 }}>{tm.name}</div>
                 <div className="mont" style={{ fontSize:10, fontWeight:700, letterSpacing:".1em", color:`${tm.color}CC`, textTransform:"uppercase", marginTop:4 }}>{tm.city}</div>
               </div>
             ))}
@@ -946,8 +910,8 @@ export function Home() {
 
       {/* Sponsors show ONLY in the footer strip (owner call, Jul 2026) — full wall lives at /sponsors. */}
 
-      {/* ══ 10 · THIS IS BCPL — the film — DARK ANCHOR (photography) ══ */}
-      <section className="rv on-dark" style={{ position:"relative", overflow:"hidden", background:"#0C121C" }}>
+      {/* ══ 10 · THIS IS BCPL — the film ══ */}
+      <section className="rv" style={{ position:"relative", overflow:"hidden", background:"#0C121C" }}>
         <img src={BASE + "bcpl-assets/event-stage-trophy.webp"} alt="" aria-hidden="true"
           style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", objectPosition:"center 40%", opacity:.25 }}
           onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
@@ -970,7 +934,7 @@ export function Home() {
       </section>
 
       {/* ══ 11 · MATCH CENTER & LEADERBOARD — always on ══ */}
-      <section className="rv sec-mc" style={{ padding:"clamp(54px,7vw,88px) 0", background:"var(--bg)", position:"relative", overflow:"hidden" }}>
+      <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#0E1420", position:"relative", overflow:"hidden" }}>
         <div style={{ position:"absolute", inset:0, backgroundImage:"linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px)", backgroundSize:"48px 48px", pointerEvents:"none" }}/>
         <div className="W" style={{ position:"relative", zIndex:1 }}>
           <div className="slbl">{t("Live Season","लाइव सीज़न")}</div>
@@ -984,7 +948,7 @@ export function Home() {
                 <Link href="/match-center" style={{ fontSize:12, color:"#FF7A29", textDecoration:"none", fontWeight:700 }}>{t("View all","सभी देखें")} →</Link>
               </div>
               {liveMatches.length === 0 ? (
-                <div className="card on-dark" style={{ padding:"34px 24px", textAlign:"center", borderStyle:"dashed", borderColor:"rgba(255,255,255,.12)" }}>
+                <div className="card" style={{ padding:"34px 24px", textAlign:"center", borderStyle:"dashed", borderColor:"rgba(255,255,255,.12)" }}>
                   <div style={{ display:"flex", justifyContent:"center", marginBottom:10 }}><IcoStadium size={34} style={{ color:"var(--ink-3)" }} /></div>
                   <div className="mont" style={{ fontWeight:800, fontSize:15, color:"#fff", marginBottom:6 }}>{t("Fixtures drop before the season opener","Season से पहले fixtures आएँगे")}</div>
                   <p style={{ fontSize:13, color:"var(--ink-3)", lineHeight:1.6, marginBottom:16 }}>{t("Season 5 matches: Sep – Oct 2027. Register now — you might be playing in one.","Season 5 के मैच: Sep – Oct 2027 । अभी register करें — हो सकता है इनमें आप खेलें।")}</p>
@@ -997,7 +961,7 @@ export function Home() {
                     const t1 = TEAMS.find(x=>x.name===m.team1), t2 = TEAMS.find(x=>x.name===m.team2);
                     const isLive = status==="LIVE";
                     return (
-                      <div key={m.id||m.matchNo} className="on-dark" role="link" tabIndex={0} aria-label="Open Match Center"
+                      <div key={m.id||m.matchNo} role="link" tabIndex={0} aria-label="Open Match Center"
                         onClick={()=>navigate("/match-center")} onKeyDown={e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); navigate("/match-center"); } }} style={{ background:"linear-gradient(135deg,#121F2F,#0E1420)", border:`1px solid ${isLive?"rgba(239,68,68,.35)":"rgba(255,255,255,.07)"}`, borderRadius:14, padding:"14px 16px", cursor:"pointer", transition:"transform .2s,border-color .2s" }}
                         onMouseEnter={e=>{ (e.currentTarget as HTMLElement).style.transform="translateY(-2px)"; }}
                         onMouseLeave={e=>{ (e.currentTarget as HTMLElement).style.transform=""; }}>
@@ -1046,7 +1010,7 @@ export function Home() {
                 <Link href="/points-table" style={{ fontSize:12, color:"#FF7A29", textDecoration:"none", fontWeight:700 }}>{t("Full table","पूरी टेबल")} →</Link>
               </div>
               {liveTable.length === 0 ? (
-                <div className="card on-dark" style={{ padding:"34px 24px", textAlign:"center", borderStyle:"dashed", borderColor:"rgba(255,255,255,.12)" }}>
+                <div className="card" style={{ padding:"34px 24px", textAlign:"center", borderStyle:"dashed", borderColor:"rgba(255,255,255,.12)" }}>
                   <div style={{ display:"flex", justifyContent:"center", marginBottom:10 }}><IcoList size={34} style={{ color:"var(--ink-3)" }} /></div>
                   <div className="mont" style={{ fontWeight:800, fontSize:15, color:"#fff", marginBottom:6 }}>{t("The leaderboard goes live with the first ball","पहली गेंद के साथ leaderboard live होगा")}</div>
                   <p style={{ fontSize:13, color:"var(--ink-3)", lineHeight:1.6, marginBottom:18 }}>{t("10 franchises. One trophy. Standings update ball-by-ball during Season 5.","10 franchises । एक trophy । Season 5 में हर गेंद पर standings update होंगी।")}</p>
@@ -1057,7 +1021,7 @@ export function Home() {
                   </div>
                 </div>
               ) : (
-                <div className="on-dark" style={{ background:"linear-gradient(135deg,#121F2F,#0E1420)", border:"1px solid rgba(255,255,255,.07)", borderRadius:14, overflow:"hidden" }}>
+                <div style={{ background:"linear-gradient(135deg,#121F2F,#0E1420)", border:"1px solid rgba(255,255,255,.07)", borderRadius:14, overflow:"hidden" }}>
                   <div style={{ display:"grid", gridTemplateColumns:"28px 1fr 30px 30px 30px 44px 50px", padding:"10px 14px", borderBottom:"1px solid rgba(255,255,255,.07)" }}>
                     {["#","Team","P","W","L","Pts","NRR"].map(h=>(
                       <div key={h} className="mont" style={{ fontSize:9, fontWeight:800, color:"var(--ink-3)", letterSpacing:".1em", textAlign: h==="Team"?"left":"center" }}>{h}</div>
@@ -1094,14 +1058,14 @@ export function Home() {
       </section>
 
       {/* ══ 12 · FAQ ══ */}
-      <section className="rv sec-faq" style={{ padding:"clamp(54px,7vw,88px) 0", background:"var(--bg)" }}>
+      <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"var(--bg)" }}>
         <div className="W">
           <div className="slbl">FAQ</div>
           <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(22px,4vw,40px)", color:"#fff", textTransform:"uppercase", marginBottom:8 }}>{t("Frequently Asked Questions","अक्सर पूछे जाने वाले सवाल")}</h2>
           <p style={{ fontSize:15, color:"var(--ink-3)", marginBottom:36 }}>{t("Everything you need to know before registering.","रजिस्टर करने से पहले जो भी जानना ज़रूरी है।")}</p>
           <div style={{ display:"flex", flexDirection:"column", gap:10, maxWidth:760 }}>
             {FAQ_ITEMS.map((f,i)=>(
-              <div key={i} className="card" style={{ overflow:"hidden", transition:"border-color .2s", borderColor:faqOpen===i?"rgba(255,122,41,.45)":"rgba(12,29,51,.10)" }}>
+              <div key={i} className="card" style={{ overflow:"hidden", transition:"border-color .2s", borderColor:faqOpen===i?"rgba(255,122,41,.4)":"rgba(255,255,255,.07)" }}>
                 <button type="button" onClick={()=>setFaqOpen(faqOpen===i?null:i)}
                   aria-expanded={faqOpen===i} aria-controls={"faq-a-"+i}
                   style={{ width:"100%", background:"none", border:"none", cursor:"pointer", font:"inherit", color:"inherit", textAlign:"left", padding:"18px 20px", display:"flex", justifyContent:"space-between", alignItems:"center", gap:16 }}>
@@ -1109,9 +1073,9 @@ export function Home() {
                     <span style={{ width:24, height:24, borderRadius:"50%", background:"rgba(255,122,41,.1)", border:"1px solid rgba(255,122,41,.25)", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
                       <span className="mont" style={{ fontSize:10, fontWeight:800, color:"#FF7A29" }}>{i+1}</span>
                     </span>
-                    <span className="mont" style={{ fontWeight:700, fontSize:"clamp(15px,2vw,16px)", color:faqOpen===i?"#D95E10":"#0C1D33" }}>{t(f.qEn,f.qHi)}</span>
+                    <span className="mont" style={{ fontWeight:700, fontSize:"clamp(15px,2vw,16px)", color:faqOpen===i?"#FF9350":"#F1F5F9" }}>{t(f.qEn,f.qHi)}</span>
                   </span>
-                  <span aria-hidden="true" style={{ fontSize:18, color:faqOpen===i?"#FF7A29":"rgba(12,29,51,.4)", flexShrink:0, display:"inline-block", transform:faqOpen===i?"rotate(45deg)":"rotate(0)", transition:"transform .25s" }}>+</span>
+                  <span aria-hidden="true" style={{ fontSize:18, color:faqOpen===i?"#FF7A29":"rgba(255,255,255,.3)", flexShrink:0, display:"inline-block", transform:faqOpen===i?"rotate(45deg)":"rotate(0)", transition:"transform .25s" }}>+</span>
                 </button>
                 {faqOpen===i&&(
                   <div id={"faq-a-"+i} style={{ padding:"0 20px 18px 56px" }}>
@@ -1124,8 +1088,8 @@ export function Home() {
         </div>
       </section>
 
-      {/* ══ 13 · FINAL CTA — DARK ANCHOR (stadium photography) ══ */}
-      <section className="on-dark" style={{ position:"relative", overflow:"hidden", background:"#0C121C" }}>
+      {/* ══ 13 · FINAL CTA ══ */}
+      <section style={{ position:"relative", overflow:"hidden", background:"#0C121C" }}>
         <img src={BASE + "bcpl-assets/stadium-hero.jpg"} alt="" aria-hidden="true"
           style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", objectPosition:"center 60%", opacity:.3 }}
           onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
@@ -1165,8 +1129,8 @@ export function Home() {
       {!authed && (
         <div className="stick-cta">
           <div style={{ minWidth:0, flex:"1 1 auto", overflow:"hidden" }}>
-            <div className="mont" style={{ fontWeight:900, fontSize:13.5, color:"#0C1D33", lineHeight:1.2, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{t("Phase 1 Registration","Phase 1 रजिस्ट्रेशन")}</div>
-            <div style={{ fontSize:11.5, color:"rgba(12,29,51,.70)", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{t("Closes 28 Feb 2027","28 Feb 2027 तक")}</div>
+            <div className="mont" style={{ fontWeight:900, fontSize:13.5, color:"#fff", lineHeight:1.2, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{t("Phase 1 Registration","Phase 1 रजिस्ट्रेशन")}</div>
+            <div style={{ fontSize:11.5, color:"rgba(255,255,255,.72)", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{t("Closes 28 Feb 2027","28 Feb 2027 तक")}</div>
           </div>
           <button className="btn-cta" style={{ fontSize:15, padding:"14px 22px", flex:"0 0 auto", maxWidth:"58%" }} onClick={()=>navigate("/register")}>{t("Register Now","रजिस्टर करें")} →</button>
         </div>

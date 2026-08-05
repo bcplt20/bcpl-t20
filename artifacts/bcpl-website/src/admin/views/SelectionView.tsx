@@ -18,26 +18,26 @@ import {
 } from "../../lib/api";
 
 const card: React.CSSProperties = {
-  background: "linear-gradient(135deg,#FFFFFF,#FFFFFF)",
-  border: "1px solid #E2E8F0", borderRadius: 16, padding: 20,
+  background: "linear-gradient(135deg,#0D1526,#0A1020)",
+  border: "1px solid #1E293B", borderRadius: 16, padding: 20,
 };
 const btn = (bg: string, color = "#fff"): React.CSSProperties => ({
   padding: "9px 16px", borderRadius: 9, border: "none", background: bg, color,
   fontSize: 12.5, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap",
 });
 const ghost: React.CSSProperties = {
-  padding: "7px 12px", borderRadius: 8, border: "1px solid #E2E8F0", background: "transparent",
-  color: "#64748B", fontSize: 12, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap",
+  padding: "7px 12px", borderRadius: 8, border: "1px solid #1E293B", background: "transparent",
+  color: "#94A3B8", fontSize: 12, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap",
 };
 const inp: React.CSSProperties = {
-  padding: "8px 11px", borderRadius: 9, border: "1px solid #E2E8F0",
-  background: "#F5F6F8", color: "#1E293B", fontSize: 13, outline: "none",
+  padding: "8px 11px", borderRadius: 9, border: "1px solid #1E293B",
+  background: "#060B18", color: "#E2E8F0", fontSize: 13, outline: "none",
 };
-const th: React.CSSProperties = { textAlign: "left", padding: "8px 10px", fontSize: 10.5, color: "#64748B", letterSpacing: 0.8, textTransform: "uppercase", borderBottom: "1px solid #E2E8F0", whiteSpace: "nowrap" };
-const td: React.CSSProperties = { padding: "9px 10px", fontSize: 12.5, color: "#1E293B", borderBottom: "1px solid #E2E8F0", verticalAlign: "middle" };
+const th: React.CSSProperties = { textAlign: "left", padding: "8px 10px", fontSize: 10.5, color: "#64748B", letterSpacing: 0.8, textTransform: "uppercase", borderBottom: "1px solid #1E293B", whiteSpace: "nowrap" };
+const td: React.CSSProperties = { padding: "9px 10px", fontSize: 12.5, color: "#CBD5E1", borderBottom: "1px solid #131C2E", verticalAlign: "middle" };
 const chip = (bg: string, c: string): React.CSSProperties => ({ display: "inline-block", padding: "2px 9px", borderRadius: 99, fontSize: 10.5, fontWeight: 700, background: bg, color: c, whiteSpace: "nowrap" });
-const errBox: React.CSSProperties = { background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)", color: "#DC2626", borderRadius: 10, padding: "10px 14px", fontSize: 12.5, marginBottom: 14 };
-const okBox: React.CSSProperties = { background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.25)", color: "#047857", borderRadius: 10, padding: "10px 14px", fontSize: 12.5, marginBottom: 14 };
+const errBox: React.CSSProperties = { background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)", color: "#FCA5A5", borderRadius: 10, padding: "10px 14px", fontSize: 12.5, marginBottom: 14 };
+const okBox: React.CSSProperties = { background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.25)", color: "#6EE7B7", borderRadius: 10, padding: "10px 14px", fontSize: 12.5, marginBottom: 14 };
 
 const roleLabel = (r: string) => ({ bat: "Batsman", bowl: "Bowler", ar: "All-Rounder", wk: "Wicketkeeper" }[r] ?? r);
 const statusChip = (s: string) => {
@@ -178,8 +178,8 @@ export default function SelectionView() {
       <div>
         <div style={{ fontSize: 20, fontWeight: 900, color: "#F8FAFC" }}>Final 600 Selection Engine</div>
         <div style={{ fontSize: 12.5, color: "#64748B", marginTop: 4 }}>
-          Rank-based · zone + role constrained · deterministic. Season <b style={{ color: "#1E293B" }}>{config?.seasonKey}</b> ·
-          Target pool <b style={{ color: "#1E293B" }}>{computedTotal}</b> (config: {config?.totalPool}).
+          Rank-based · zone + role constrained · deterministic. Season <b style={{ color: "#CBD5E1" }}>{config?.seasonKey}</b> ·
+          Target pool <b style={{ color: "#CBD5E1" }}>{computedTotal}</b> (config: {config?.totalPool}).
         </div>
       </div>
 
@@ -189,8 +189,8 @@ export default function SelectionView() {
       {/* ── config summary ── */}
       {config && (
         <div style={card}>
-          <div style={{ fontSize: 13, fontWeight: 800, color: "#1E293B", marginBottom: 10 }}>⚙️ Selection Configuration (read-only — Admin Settings से बदलें)</div>
-          <div style={{ display: "flex", gap: 24, flexWrap: "wrap", fontSize: 12.5, color: "#1E293B" }}>
+          <div style={{ fontSize: 13, fontWeight: 800, color: "#E2E8F0", marginBottom: 10 }}>⚙️ Selection Configuration (read-only — Admin Settings से बदलें)</div>
+          <div style={{ display: "flex", gap: 24, flexWrap: "wrap", fontSize: 12.5, color: "#CBD5E1" }}>
             <div>Per-zone / role: <b>{config.perZoneRoleQuota.bat}/{config.perZoneRoleQuota.bowl}/{config.perZoneRoleQuota.ar}/{config.perZoneRoleQuota.wk}</b> × 5 zones</div>
             <div>Wildcards: <b>{config.wildcardRoleQuota.bat}/{config.wildcardRoleQuota.bowl}/{config.wildcardRoleQuota.ar}/{config.wildcardRoleQuota.wk}</b></div>
             <div>Zone map: <b>{config.zoneMappingVersion}</b></div>
@@ -202,7 +202,7 @@ export default function SelectionView() {
       {/* ── aggregates ── */}
       {agg && (
         <div style={card}>
-          <div style={{ fontSize: 13, fontWeight: 800, color: "#1E293B", marginBottom: 12 }}>📊 Aggregate Overview (SQL — कोई player row load नहीं)</div>
+          <div style={{ fontSize: 13, fontWeight: 800, color: "#E2E8F0", marginBottom: 12 }}>📊 Aggregate Overview (SQL — कोई player row load नहीं)</div>
           <div style={{ display: "flex", gap: 14, flexWrap: "wrap", marginBottom: 16 }}>
             {[
               ["Completed", agg.totals.completed, "#CBD5E1"],
@@ -211,7 +211,7 @@ export default function SelectionView() {
               ["Incomplete", agg.totals.incomplete, "#FBBF24"],
               ["Final pool size", agg.totals.finalPoolSize, "#60A5FA"],
             ].map(([l, v, c]) => (
-              <div key={l as string} style={{ background: "#F5F6F8", border: "1px solid #E2E8F0", borderRadius: 12, padding: "12px 18px", minWidth: 120 }}>
+              <div key={l as string} style={{ background: "#060B18", border: "1px solid #1E293B", borderRadius: 12, padding: "12px 18px", minWidth: 120 }}>
                 <div style={{ fontSize: 22, fontWeight: 900, color: c as string }}>{Number(v).toLocaleString("en-IN")}</div>
                 <div style={{ fontSize: 11, color: "#64748B", marginTop: 2 }}>{l}</div>
               </div>
@@ -227,7 +227,7 @@ export default function SelectionView() {
             <div>
               <div style={{ fontSize: 11.5, color: "#64748B", marginBottom: 6 }}>By zone (eligible)</div>
               <table style={{ width: "100%", borderCollapse: "collapse" }}><tbody>
-                {agg.byZone.map(z => <tr key={z.zone}><td style={{ ...td, color: z.zone === "UNMAPPED" ? "#DC2626" : "#CBD5E1" }}>{z.zone}</td><td style={{ ...td, textAlign: "right", fontWeight: 700 }}>{z.n.toLocaleString("en-IN")}</td></tr>)}
+                {agg.byZone.map(z => <tr key={z.zone}><td style={{ ...td, color: z.zone === "UNMAPPED" ? "#FCA5A5" : "#CBD5E1" }}>{z.zone}</td><td style={{ ...td, textAlign: "right", fontWeight: 700 }}>{z.n.toLocaleString("en-IN")}</td></tr>)}
               </tbody></table>
             </div>
           </div>
@@ -246,7 +246,7 @@ export default function SelectionView() {
 
       {/* ── trial closure + generate ── */}
       <div style={card}>
-        <div style={{ fontSize: 13, fontWeight: 800, color: "#1E293B", marginBottom: 4 }}>🔒 Trial Closure & Generation</div>
+        <div style={{ fontSize: 13, fontWeight: 800, color: "#E2E8F0", marginBottom: 4 }}>🔒 Trial Closure & Generation</div>
         <div style={{ fontSize: 12, color: "#64748B", marginBottom: 12 }}>
           पहले physical trials CLOSE करें (population snapshot freeze) → फिर GENERATE FINAL 600.
         </div>
@@ -256,26 +256,26 @@ export default function SelectionView() {
           {!closed
             ? <button style={btn("#EF4444")} disabled={busy} onClick={doClose}>CLOSE PHYSICAL TRIALS</button>
             : <button style={ghost} disabled={busy} onClick={doReopen}>Reopen trials (invalidate unpublished)</button>}
-          <button style={btn(closed ? "#F59E0B" : "#E2E8F0", closed ? "#FFFFFF" : "#475569")} disabled={busy || !closed} onClick={doGenerate}>GENERATE FINAL 600</button>
+          <button style={btn(closed ? "#F59E0B" : "#1E293B", closed ? "#0A1020" : "#475569")} disabled={busy || !closed} onClick={doGenerate}>GENERATE FINAL 600</button>
         </div>
       </div>
 
       {/* ── batches ── */}
       {batches.length > 0 && (
         <div style={{ ...card, padding: 0, overflowX: "auto" }}>
-          <div style={{ padding: "14px 16px 4px", fontSize: 13, fontWeight: 800, color: "#1E293B" }}>Selection Batches (versions)</div>
+          <div style={{ padding: "14px 16px 4px", fontSize: 13, fontWeight: 800, color: "#E2E8F0" }}>Selection Batches (versions)</div>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead><tr><th style={th}>Version</th><th style={th}>Status</th><th style={th}>Selected</th><th style={th}>Exceptions</th><th style={th}>Generated</th><th style={th}></th></tr></thead>
             <tbody>{batches.map(b => {
               const c = (b.counts ?? {}) as Record<string, any>;
               return (
                 <tr key={b.id} style={{ background: activeBatch?.id === b.id ? "#0B1424" : undefined, cursor: "pointer" }} onClick={() => setActiveBatch(b)}>
-                  <td style={{ ...td, fontWeight: 700, color: "#1E293B" }}>V{b.version}</td>
+                  <td style={{ ...td, fontWeight: 700, color: "#E2E8F0" }}>V{b.version}</td>
                   <td style={td}><span style={statusChip(b.status)}>{b.status}</span></td>
                   <td style={td}>{c.selected ?? "—"}</td>
-                  <td style={{ ...td, color: (b.exceptionReport?.length ?? 0) > 0 ? "#DC2626" : "#64748B" }}>{b.exceptionReport?.length ?? 0}</td>
+                  <td style={{ ...td, color: (b.exceptionReport?.length ?? 0) > 0 ? "#FCA5A5" : "#64748B" }}>{b.exceptionReport?.length ?? 0}</td>
                   <td style={td}>{b.generatedAt ? new Date(b.generatedAt).toLocaleString("en-IN") : "—"}</td>
-                  <td style={td}>{b.status === "failed" && <button style={{ ...ghost, color: "#B45309" }} onClick={e => { e.stopPropagation(); doRetry(b.id); }}>Retry</button>}</td>
+                  <td style={td}>{b.status === "failed" && <button style={{ ...ghost, color: "#FBBF24" }} onClick={e => { e.stopPropagation(); doRetry(b.id); }}>Retry</button>}</td>
                 </tr>
               );
             })}</tbody>
@@ -287,7 +287,7 @@ export default function SelectionView() {
       {activeBatch && (
         <div style={card}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-            <div style={{ fontSize: 14, fontWeight: 800, color: "#1E293B" }}>Batch V{activeBatch.version}</div>
+            <div style={{ fontSize: 14, fontWeight: 800, color: "#E2E8F0" }}>Batch V{activeBatch.version}</div>
             <span style={statusChip(activeBatch.status)}>{activeBatch.status}</span>
             <span style={{ fontSize: 11, color: "#475569" }}>algo {activeBatch.algorithmVersion}</span>
           </div>
@@ -295,8 +295,8 @@ export default function SelectionView() {
           {/* progress */}
           {activeBatch.status === "generating" && (
             <div style={{ marginBottom: 16 }}>
-              <div style={{ fontSize: 12.5, color: "#B45309", marginBottom: 6 }}>⏳ {PROGRESS_LABELS[activeBatch.jobPhase ?? ""] ?? activeBatch.jobPhase} · {activeBatch.jobProgressPct}%</div>
-              <div style={{ height: 8, background: "#E2E8F0", borderRadius: 99 }}>
+              <div style={{ fontSize: 12.5, color: "#FBBF24", marginBottom: 6 }}>⏳ {PROGRESS_LABELS[activeBatch.jobPhase ?? ""] ?? activeBatch.jobPhase} · {activeBatch.jobProgressPct}%</div>
+              <div style={{ height: 8, background: "#131C2E", borderRadius: 99 }}>
                 <div style={{ width: `${activeBatch.jobProgressPct}%`, height: "100%", background: "#F59E0B", borderRadius: 99, transition: "width .4s" }} />
               </div>
             </div>
@@ -310,10 +310,10 @@ export default function SelectionView() {
 
           {/* counts */}
           {activeBatch.status !== "generating" && Object.keys(counts).length > 0 && (
-            <div style={{ display: "flex", gap: 20, flexWrap: "wrap", fontSize: 12.5, color: "#1E293B", marginBottom: 14 }}>
+            <div style={{ display: "flex", gap: 20, flexWrap: "wrap", fontSize: 12.5, color: "#CBD5E1", marginBottom: 14 }}>
               <div>Population: <b>{Number(counts.populationTotal ?? 0).toLocaleString("en-IN")}</b></div>
               <div>Eligible: <b>{Number(counts.eligible ?? 0).toLocaleString("en-IN")}</b></div>
-              <div>Selected: <b style={{ color: "#047857" }}>{counts.selected ?? 0}</b> / {counts.targetTotal ?? computedTotal}</div>
+              <div>Selected: <b style={{ color: "#6EE7B7" }}>{counts.selected ?? 0}</b> / {counts.targetTotal ?? computedTotal}</div>
               {counts.byRole && <div>Roles: {roleLabel("bat")} {counts.byRole.bat} · {roleLabel("bowl")} {counts.byRole.bowl} · AR {counts.byRole.ar} · WK {counts.byRole.wk}</div>}
             </div>
           )}
@@ -325,7 +325,7 @@ export default function SelectionView() {
               {exceptions.map((x: any, i) => (
                 <div key={i} style={{ fontSize: 12, marginBottom: 3 }}>• {x.message ?? `${x.zone} ${x.role}: required ${x.required}, eligible ${x.eligible}, shortfall ${x.shortfall}`}</div>
               ))}
-              <div style={{ fontSize: 11, color: "#64748B", marginTop: 6 }}>इनके लिए authorised admin decision चाहिए।</div>
+              <div style={{ fontSize: 11, color: "#94A3B8", marginTop: 6 }}>इनके लिए authorised admin decision चाहिए।</div>
             </div>
           )}
 
@@ -344,7 +344,7 @@ export default function SelectionView() {
           {/* ── FINAL 600 PREVIEW (cursor pagination) ── */}
           {["preview_ready", "approved", "published"].includes(activeBatch.status) && (
             <div style={{ marginTop: 18 }}>
-              <div style={{ fontSize: 13, fontWeight: 800, color: "#1E293B", marginBottom: 10 }}>🏆 FINAL 600 PREVIEW</div>
+              <div style={{ fontSize: 13, fontWeight: 800, color: "#E2E8F0", marginBottom: 10 }}>🏆 FINAL 600 PREVIEW</div>
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
                 <select style={inp} value={filters.zone} onChange={e => setFilters(f => ({ ...f, zone: e.target.value }))}>
                   <option value="">All zones</option>{["NORTH", "SOUTH", "EAST", "WEST", "CENTRAL"].map(z => <option key={z} value={z}>{z}</option>)}
@@ -364,12 +364,12 @@ export default function SelectionView() {
                   </tr></thead>
                   <tbody>{members.map(m => (
                     <tr key={m.id}>
-                      <td style={{ ...td, fontWeight: 700, color: "#1E293B" }}>{m.overallRank}</td>
+                      <td style={{ ...td, fontWeight: 700, color: "#E2E8F0" }}>{m.overallRank}</td>
                       <td style={td}>{roleLabel(m.role)}</td>
                       <td style={td}>{m.zone}</td>
                       <td style={td}>{m.city ?? "—"}</td>
                       <td style={td}><span style={chip(m.selectionPool === "wildcard" ? "rgba(168,85,247,0.12)" : "rgba(59,130,246,0.12)", m.selectionPool === "wildcard" ? "#C084FC" : "#60A5FA")}>{m.selectionPool}</span></td>
-                      <td style={{ ...td, fontWeight: 700, color: "#047857" }}>{m.rawPhysicalScore}</td>
+                      <td style={{ ...td, fontWeight: 700, color: "#6EE7B7" }}>{m.rawPhysicalScore}</td>
                       <td style={td}>{m.zoneRoleRank ?? "—"}</td>
                       <td style={td}>{(m.derivedMetrics as any)?.rolePercentile ?? "—"}</td>
                     </tr>

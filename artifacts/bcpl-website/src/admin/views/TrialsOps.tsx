@@ -21,27 +21,27 @@ import { fetchTrialOpsDefaults, persistTrialOpsDefaults, LEGACY_TRIAL_STAFF_KEY,
 
 /* ── shared styles (match admin design) ─────────────────────────── */
 const card: React.CSSProperties = {
-  background: "linear-gradient(135deg,#FFFFFF,#FFFFFF)",
-  border: "1px solid #E2E8F0", borderRadius: 16, padding: 20,
+  background: "linear-gradient(135deg,#0D1526,#0A1020)",
+  border: "1px solid #1E293B", borderRadius: 16, padding: 20,
 };
 const inp: React.CSSProperties = {
-  padding: "9px 12px", borderRadius: 9, border: "1px solid #E2E8F0",
-  background: "#F5F6F8", color: "#1E293B", fontSize: 13, outline: "none", boxSizing: "border-box",
+  padding: "9px 12px", borderRadius: 9, border: "1px solid #1E293B",
+  background: "#060B18", color: "#E2E8F0", fontSize: 13, outline: "none", boxSizing: "border-box",
 };
 const btn = (bg: string, color = "#fff"): React.CSSProperties => ({
   padding: "9px 16px", borderRadius: 9, border: "none", background: bg, color,
   fontSize: 12.5, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap",
 });
 const ghost: React.CSSProperties = {
-  padding: "7px 12px", borderRadius: 8, border: "1px solid #E2E8F0", background: "transparent",
-  color: "#64748B", fontSize: 12, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap",
+  padding: "7px 12px", borderRadius: 8, border: "1px solid #1E293B", background: "transparent",
+  color: "#94A3B8", fontSize: 12, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap",
 };
-const th: React.CSSProperties = { textAlign: "left", padding: "8px 10px", fontSize: 10.5, color: "#64748B", letterSpacing: 0.8, textTransform: "uppercase", borderBottom: "1px solid #E2E8F0", whiteSpace: "nowrap" };
-const td: React.CSSProperties = { padding: "9px 10px", fontSize: 12.5, color: "#1E293B", borderBottom: "1px solid #E2E8F0", verticalAlign: "middle" };
+const th: React.CSSProperties = { textAlign: "left", padding: "8px 10px", fontSize: 10.5, color: "#64748B", letterSpacing: 0.8, textTransform: "uppercase", borderBottom: "1px solid #1E293B", whiteSpace: "nowrap" };
+const td: React.CSSProperties = { padding: "9px 10px", fontSize: 12.5, color: "#CBD5E1", borderBottom: "1px solid #131C2E", verticalAlign: "middle" };
 const chip = (bg: string, c: string): React.CSSProperties => ({ display: "inline-block", padding: "2px 9px", borderRadius: 99, fontSize: 10.5, fontWeight: 700, background: bg, color: c, whiteSpace: "nowrap" });
 
-const errBox: React.CSSProperties = { background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)", color: "#DC2626", borderRadius: 10, padding: "10px 14px", fontSize: 12.5, marginBottom: 14 };
-const okBox: React.CSSProperties = { background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.25)", color: "#047857", borderRadius: 10, padding: "10px 14px", fontSize: 12.5, marginBottom: 14 };
+const errBox: React.CSSProperties = { background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)", color: "#FCA5A5", borderRadius: 10, padding: "10px 14px", fontSize: 12.5, marginBottom: 14 };
+const okBox: React.CSSProperties = { background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.25)", color: "#6EE7B7", borderRadius: 10, padding: "10px 14px", fontSize: 12.5, marginBottom: 14 };
 
 type Venue = { id: string; city: string; venue: string; trialDate: string; trialTime: string; reportingTime: string; status: string; address?: string | null; mapsUrl?: string | null };
 
@@ -162,7 +162,7 @@ export function SlotsTab() {
       {/* city funnel overview */}
       {overview.length > 0 && (
         <div style={card}>
-          <div style={{ fontSize: 13, fontWeight: 800, color: "#1E293B", marginBottom: 12 }}>🏙️ Trial Funnel — per City</div>
+          <div style={{ fontSize: 13, fontWeight: 800, color: "#E2E8F0", marginBottom: 12 }}>🏙️ Trial Funnel — per City</div>
           <div style={{ overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead><tr>
@@ -171,13 +171,13 @@ export function SlotsTab() {
               </tr></thead>
               <tbody>{overview.map(c => (
                 <tr key={c.city}>
-                  <td style={{ ...td, fontWeight: 700, color: "#1E293B" }}>{c.city}</td>
+                  <td style={{ ...td, fontWeight: 700, color: "#E2E8F0" }}>{c.city}</td>
                   <td style={td}>{c.eligible}</td>
-                  <td style={td}>{c.allocated}{c.eligible > c.allocated ? <span style={{ color: "#B45309", marginLeft: 6, fontSize: 11 }}>({c.eligible - c.allocated} pending)</span> : null}</td>
+                  <td style={td}>{c.allocated}{c.eligible > c.allocated ? <span style={{ color: "#F59E0B", marginLeft: 6, fontSize: 11 }}>({c.eligible - c.allocated} pending)</span> : null}</td>
                   <td style={td}>{c.openCapacity}</td>
                   <td style={td}>{c.checkedIn}</td>
                   <td style={td}>{c.assessed}</td>
-                  <td style={{ ...td, color: "#047857", fontWeight: 700 }}>{c.finalSelected}</td>
+                  <td style={{ ...td, color: "#6EE7B7", fontWeight: 700 }}>{c.finalSelected}</td>
                 </tr>
               ))}</tbody>
             </table>
@@ -187,13 +187,13 @@ export function SlotsTab() {
 
       {/* auto-allocation runner */}
       <div style={card}>
-        <div style={{ fontSize: 13, fontWeight: 800, color: "#1E293B", marginBottom: 4 }}>⚡ Auto-Allocation</div>
+        <div style={{ fontSize: 13, fontWeight: 800, color: "#E2E8F0", marginBottom: 4 }}>⚡ Auto-Allocation</div>
         <div style={{ fontSize: 12, color: "#64748B", marginBottom: 12 }}>KYC-complete players को उनकी trial city के open batches में capacity के हिसाब से allot करता है (पहले Preview, फिर Confirm)।</div>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
           <input style={{ ...inp, width: 180 }} placeholder="City (blank = all)" value={allocCity} onChange={e => setAllocCity(e.target.value)} />
-          <button style={btn("#E2E8F0", "#CBD5E1")} disabled={running} onClick={() => runAllocation(true)}>{running ? "…" : "Preview"}</button>
+          <button style={btn("#1E293B", "#CBD5E1")} disabled={running} onClick={() => runAllocation(true)}>{running ? "…" : "Preview"}</button>
           {preview && preview.dryRun && preview.totalAllocated > 0 && (
-            <button style={btn("#F59E0B", "#FFFFFF")} disabled={running} onClick={() => runAllocation(false)}>
+            <button style={btn("#F59E0B", "#0A1020")} disabled={running} onClick={() => runAllocation(false)}>
               Confirm — allocate {preview.totalAllocated} players
             </button>
           )}
@@ -204,10 +204,10 @@ export function SlotsTab() {
               <thead><tr><th style={th}>City</th><th style={th}>Eligible</th><th style={th}>{preview.dryRun ? "Will allocate" : "Allocated"}</th><th style={th}>No capacity</th></tr></thead>
               <tbody>{preview.perCity.map(c => (
                 <tr key={c.city}>
-                  <td style={{ ...td, fontWeight: 700, color: "#1E293B" }}>{c.city}</td>
+                  <td style={{ ...td, fontWeight: 700, color: "#E2E8F0" }}>{c.city}</td>
                   <td style={td}>{c.eligible}</td>
-                  <td style={{ ...td, color: "#047857", fontWeight: 700 }}>{c.allocated}</td>
-                  <td style={{ ...td, color: c.unallocated > 0 ? "#DC2626" : "#64748B" }}>{c.unallocated}</td>
+                  <td style={{ ...td, color: "#6EE7B7", fontWeight: 700 }}>{c.allocated}</td>
+                  <td style={{ ...td, color: c.unallocated > 0 ? "#FCA5A5" : "#64748B" }}>{c.unallocated}</td>
                 </tr>
               ))}</tbody>
             </table>
@@ -219,7 +219,7 @@ export function SlotsTab() {
 
       {/* create batch */}
       <div style={card}>
-        <div style={{ fontSize: 13, fontWeight: 800, color: "#1E293B", marginBottom: 12 }}>➕ New Batch / Slot</div>
+        <div style={{ fontSize: 13, fontWeight: 800, color: "#E2E8F0", marginBottom: 12 }}>➕ New Batch / Slot</div>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
           <select style={{ ...inp, width: 260 }} value={venueId} onChange={e => setVenueId(e.target.value)}>
             <option value="">— venue चुनें —</option>
@@ -227,7 +227,7 @@ export function SlotsTab() {
           </select>
           <input style={{ ...inp, width: 160 }} placeholder="Batch name (Batch A)" value={batchName} onChange={e => setBatchName(e.target.value)} />
           <input style={{ ...inp, width: 100 }} type="number" min={1} placeholder="Capacity" value={capacity} onChange={e => setCapacity(e.target.value)} />
-          <button style={btn("#F59E0B", "#FFFFFF")} disabled={creating} onClick={createSlot}>{creating ? "…" : "Create"}</button>
+          <button style={btn("#F59E0B", "#0A1020")} disabled={creating} onClick={createSlot}>{creating ? "…" : "Create"}</button>
         </div>
         <div style={{ fontSize: 11.5, color: "#475569", marginTop: 8 }}>Date/reporting/start time venue से आते हैं — बाद में per-batch बदल सकते हैं।</div>
       </div>
@@ -236,7 +236,7 @@ export function SlotsTab() {
       {cities.length === 0 && <div style={{ ...card, color: "#64748B", textAlign: "center" }}>अभी कोई batch नहीं — ऊपर से बनाएँ।</div>}
       {cities.map(city => (
         <div key={city} style={card}>
-          <div style={{ fontSize: 13, fontWeight: 800, color: "#1E293B", marginBottom: 10 }}>🏟️ {city}</div>
+          <div style={{ fontSize: 13, fontWeight: 800, color: "#E2E8F0", marginBottom: 10 }}>🏟️ {city}</div>
           <div style={{ overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead><tr>
@@ -245,12 +245,12 @@ export function SlotsTab() {
               </tr></thead>
               <tbody>{slots.filter(s => s.slot.city === city).map(({ slot, venueName, assigned, checkedIn }) => (
                 <tr key={slot.id}>
-                  <td style={{ ...td, fontWeight: 700, color: "#1E293B" }}>{slot.batchName}</td>
+                  <td style={{ ...td, fontWeight: 700, color: "#E2E8F0" }}>{slot.batchName}</td>
                   <td style={td}>{venueName ?? "—"}</td>
                   <td style={td}>{slot.slotDate}</td>
                   <td style={td}>{slot.reportingTime}</td>
                   <td style={td}>
-                    <span style={{ color: assigned >= slot.capacity ? "#DC2626" : "#6EE7B7", fontWeight: 700 }}>{assigned}</span>
+                    <span style={{ color: assigned >= slot.capacity ? "#FCA5A5" : "#6EE7B7", fontWeight: 700 }}>{assigned}</span>
                     <span style={{ color: "#475569" }}> / {slot.capacity}</span>
                   </td>
                   <td style={td}>{checkedIn}</td>
@@ -260,7 +260,7 @@ export function SlotsTab() {
                     </select>
                   </td>
                   <td style={td}>
-                    <button style={{ ...ghost, color: assigned > 0 ? "#64748B" : "#FCA5A5", cursor: assigned > 0 ? "not-allowed" : "pointer" }}
+                    <button style={{ ...ghost, color: assigned > 0 ? "#334155" : "#FCA5A5", cursor: assigned > 0 ? "not-allowed" : "pointer" }}
                       title={assigned > 0 ? "Active allocations exist" : "Delete"}
                       disabled={assigned > 0} onClick={() => removeSlot(slot.id)}>✕</button>
                   </td>
@@ -273,7 +273,7 @@ export function SlotsTab() {
 
       {/* venue address (trial pass) */}
       <div style={card}>
-        <div style={{ fontSize: 13, fontWeight: 800, color: "#1E293B", marginBottom: 4 }}>📍 Venue Address (Trial Pass पर दिखेगा)</div>
+        <div style={{ fontSize: 13, fontWeight: 800, color: "#E2E8F0", marginBottom: 4 }}>📍 Venue Address (Trial Pass पर दिखेगा)</div>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 10 }}>
           <select style={{ ...inp, width: 260 }} value={extraVenueId} onChange={e => pickExtraVenue(e.target.value)}>
             <option value="">— venue चुनें —</option>
@@ -281,7 +281,7 @@ export function SlotsTab() {
           </select>
           <input style={{ ...inp, flex: 1, minWidth: 240 }} placeholder="Full address" value={address} onChange={e => setAddress(e.target.value)} disabled={!extraVenueId} />
           <input style={{ ...inp, width: 240 }} placeholder="Google Maps link" value={mapsUrl} onChange={e => setMapsUrl(e.target.value)} disabled={!extraVenueId} />
-          <button style={btn("#E2E8F0", "#CBD5E1")} disabled={!extraVenueId || savingExtras} onClick={saveExtras}>{savingExtras ? "…" : "Save"}</button>
+          <button style={btn("#1E293B", "#CBD5E1")} disabled={!extraVenueId || savingExtras} onClick={saveExtras}>{savingExtras ? "…" : "Save"}</button>
         </div>
       </div>
     </div>
@@ -333,7 +333,7 @@ export function AllocationsTab() {
       <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
         <input style={{ ...inp, width: 240 }} placeholder="Search name / BCPL-ID" value={q} onChange={e => setQ(e.target.value)} onKeyDown={e => e.key === "Enter" && load()} />
         <input style={{ ...inp, width: 160 }} placeholder="City" value={city} onChange={e => setCity(e.target.value)} onKeyDown={e => e.key === "Enter" && load()} />
-        <button style={btn("#E2E8F0", "#CBD5E1")} onClick={load}>Search</button>
+        <button style={btn("#1E293B", "#CBD5E1")} onClick={load}>Search</button>
         <div style={{ marginLeft: "auto", color: "#64748B", fontSize: 12, alignSelf: "center" }}>{rows.length} allocations</div>
       </div>
       <div style={{ ...card, padding: 0, overflowX: "auto" }}>
@@ -345,7 +345,7 @@ export function AllocationsTab() {
             </tr></thead>
             <tbody>{rows.map(r => (
               <tr key={r.alloc.id}>
-                <td style={{ ...td, fontWeight: 700, color: "#1E293B" }}>
+                <td style={{ ...td, fontWeight: 700, color: "#E2E8F0" }}>
                   {r.fullName ?? "—"}<div style={{ fontSize: 10.5, color: "#64748B", fontWeight: 400 }}>{r.regNumber}</div>
                 </td>
                 <td style={td}><span style={roleChip(r.role)}>{roleLabel(r.role)}</span></td>
@@ -369,7 +369,7 @@ export function AllocationsTab() {
                     </select>
                   )}
                 </td>
-                <td style={td}>{r.alloc.status === "allocated" && <button style={{ ...ghost, color: "#DC2626" }} onClick={() => cancel(r.alloc.id)}>Cancel</button>}</td>
+                <td style={td}>{r.alloc.status === "allocated" && <button style={{ ...ghost, color: "#FCA5A5" }} onClick={() => cancel(r.alloc.id)}>Cancel</button>}</td>
               </tr>
             ))}</tbody>
           </table>
@@ -422,7 +422,7 @@ export function CheckinTab() {
   return (
     <div style={{ display: "grid", gap: 16 }}>
       <div style={{ ...card, maxWidth: 640 }}>
-        <div style={{ fontSize: 13, fontWeight: 800, color: "#1E293B", marginBottom: 4 }}>🎫 Gate Check-In</div>
+        <div style={{ fontSize: 13, fontWeight: 800, color: "#E2E8F0", marginBottom: 4 }}>🎫 Gate Check-In</div>
         <div style={{ fontSize: 12, color: "#64748B", marginBottom: 14 }}>QR scanner से scan करें (token अपने-आप paste होगा) या player का BCPL ID टाइप करें।</div>
         <div style={{ display: "grid", gap: 10 }}>
           <input autoFocus style={{ ...inp, fontSize: 15, padding: "13px 14px" }} placeholder="BCPL-TRIAL:token  या  BCPL-DEL-1"
@@ -442,13 +442,13 @@ export function CheckinTab() {
       </div>
 
       <div style={{ ...card, padding: 0, overflowX: "auto" }}>
-        <div style={{ padding: "14px 16px 4px", fontSize: 13, fontWeight: 800, color: "#1E293B" }}>Recent check-ins</div>
+        <div style={{ padding: "14px 16px 4px", fontSize: 13, fontWeight: 800, color: "#E2E8F0" }}>Recent check-ins</div>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead><tr><th style={th}>Time</th><th style={th}>Player</th><th style={th}>Role</th><th style={th}>City</th><th style={th}>Batch</th><th style={th}>Method</th><th style={th}>Staff</th></tr></thead>
           <tbody>{recent.map(r => (
             <tr key={r.checkin.id}>
               <td style={td}>{fmtTime(r.checkin.checkedInAt)}</td>
-              <td style={{ ...td, fontWeight: 700, color: "#1E293B" }}>{r.fullName ?? "—"}<div style={{ fontSize: 10.5, color: "#64748B", fontWeight: 400 }}>{r.regNumber}</div></td>
+              <td style={{ ...td, fontWeight: 700, color: "#E2E8F0" }}>{r.fullName ?? "—"}<div style={{ fontSize: 10.5, color: "#64748B", fontWeight: 400 }}>{r.regNumber}</div></td>
               <td style={td}><span style={roleChip(r.role)}>{roleLabel(r.role)}</span></td>
               <td style={td}>{r.city}</td>
               <td style={td}>{r.batchName ?? "—"}</td>
@@ -547,16 +547,16 @@ export function AssessTab() {
 
       {/* pick player */}
       <div style={card}>
-        <div style={{ fontSize: 13, fontWeight: 800, color: "#1E293B", marginBottom: 12 }}>📋 Physical Assessment — player चुनें</div>
+        <div style={{ fontSize: 13, fontWeight: 800, color: "#E2E8F0", marginBottom: 12 }}>📋 Physical Assessment — player चुनें</div>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
           <input style={{ ...inp, width: 260 }} placeholder="Name / BCPL-ID खोजें" value={q} onChange={e => setQ(e.target.value)} onKeyDown={e => e.key === "Enter" && search()} />
-          <button style={btn("#E2E8F0", "#CBD5E1")} onClick={search}>Search</button>
+          <button style={btn("#1E293B", "#CBD5E1")} onClick={search}>Search</button>
         </div>
         {candidates.length > 0 && !picked && (
           <div style={{ display: "grid", gap: 6, marginTop: 12 }}>
             {candidates.map(c => (
               <button key={c.alloc.id} style={{ ...ghost, textAlign: "left", display: "flex", gap: 10, alignItems: "center" }} onClick={() => pick(c)}>
-                <span style={{ fontWeight: 700, color: "#1E293B" }}>{c.fullName ?? "—"}</span>
+                <span style={{ fontWeight: 700, color: "#E2E8F0" }}>{c.fullName ?? "—"}</span>
                 <span style={{ color: "#64748B", fontSize: 11 }}>{c.regNumber}</span>
                 <span style={roleChip(c.role)}>{roleLabel(c.role)}</span>
                 <span style={{ color: "#64748B", fontSize: 11 }}>{c.alloc.city} · {c.batchName}</span>
@@ -567,9 +567,9 @@ export function AssessTab() {
         )}
 
         {picked && config && (
-          <div style={{ marginTop: 16, borderTop: "1px solid #E2E8F0", paddingTop: 16 }}>
+          <div style={{ marginTop: 16, borderTop: "1px solid #1E293B", paddingTop: 16 }}>
             <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 14, flexWrap: "wrap" }}>
-              <span style={{ fontWeight: 800, color: "#1E293B", fontSize: 14 }}>{picked.fullName}</span>
+              <span style={{ fontWeight: 800, color: "#E2E8F0", fontSize: 14 }}>{picked.fullName}</span>
               <span style={{ color: "#64748B", fontSize: 12 }}>{picked.regNumber}</span>
               <span style={roleChip(picked.role)}>{roleLabel(picked.role)}</span>
               <button style={{ ...ghost, marginLeft: "auto" }} onClick={() => setPicked(null)}>बदलें</button>
@@ -577,7 +577,7 @@ export function AssessTab() {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(170px,1fr))", gap: 10 }}>
               {(config.criteria[normalizeRoleClient(picked.role)] ?? []).map(c => (
                 <label key={c} style={{ display: "grid", gap: 4 }}>
-                  <span style={{ fontSize: 11, color: "#64748B", textTransform: "capitalize" }}>{c.replace(/_/g, " ")}</span>
+                  <span style={{ fontSize: 11, color: "#94A3B8", textTransform: "capitalize" }}>{c.replace(/_/g, " ")}</span>
                   <input style={inp} type="number" min={1} max={10} step={0.5} placeholder="1–10"
                     value={scores[c] ?? ""} onChange={e => setScores(s => ({ ...s, [c]: e.target.value }))} />
                 </label>
@@ -587,7 +587,7 @@ export function AssessTab() {
               value={comments} onChange={e => setComments(e.target.value)} />
             <div style={{ display: "flex", gap: 10, marginTop: 12, flexWrap: "wrap" }}>
               <input style={{ ...inp, width: 200 }} placeholder="Assessor name *" value={assessor} onChange={e => setAssessor(e.target.value)} />
-              <button style={btn("#F59E0B", "#FFFFFF")} disabled={saving} onClick={save}>{saving ? "Saving…" : "Save Assessment"}</button>
+              <button style={btn("#F59E0B", "#0A1020")} disabled={saving} onClick={save}>{saving ? "Saving…" : "Save Assessment"}</button>
             </div>
             <div style={{ fontSize: 11.5, color: "#475569", marginTop: 8 }}>Final score = भरे गए criteria का simple average (equal weights) · AI score से बिल्कुल अलग रहता है।</div>
           </div>
@@ -596,7 +596,7 @@ export function AssessTab() {
 
       {/* assessments list */}
       <div style={{ ...card, padding: 0, overflowX: "auto" }}>
-        <div style={{ padding: "14px 16px 4px", fontSize: 13, fontWeight: 800, color: "#1E293B" }}>Recorded assessments</div>
+        <div style={{ padding: "14px 16px 4px", fontSize: 13, fontWeight: 800, color: "#E2E8F0" }}>Recorded assessments</div>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead><tr>
             <th style={th}>Player</th><th style={th}>Role</th><th style={th}>City · Batch</th><th style={th}>Physical score</th>
@@ -604,10 +604,10 @@ export function AssessTab() {
           </tr></thead>
           <tbody>{list.map(r => (
             <tr key={r.assessment.id}>
-              <td style={{ ...td, fontWeight: 700, color: "#1E293B" }}>{r.fullName ?? "—"}<div style={{ fontSize: 10.5, color: "#64748B", fontWeight: 400 }}>{r.regNumber}</div></td>
+              <td style={{ ...td, fontWeight: 700, color: "#E2E8F0" }}>{r.fullName ?? "—"}<div style={{ fontSize: 10.5, color: "#64748B", fontWeight: 400 }}>{r.regNumber}</div></td>
               <td style={td}><span style={roleChip(r.role)}>{roleLabel(r.role)}</span></td>
               <td style={td}>{r.assessment.city ?? "—"}<div style={{ fontSize: 10.5, color: "#64748B" }}>{r.assessment.batch ?? ""}</div></td>
-              <td style={{ ...td, fontWeight: 800, color: "#B45309", fontSize: 14 }}>{r.assessment.finalScore}<span style={{ fontSize: 10.5, color: "#475569" }}>/100</span></td>
+              <td style={{ ...td, fontWeight: 800, color: "#FBBF24", fontSize: 14 }}>{r.assessment.finalScore}<span style={{ fontSize: 10.5, color: "#475569" }}>/100</span></td>
               <td style={td}>{r.assessment.assessor}</td>
               <td style={td}>
                 <select style={{ ...inp, padding: "5px 8px", fontSize: 11.5 }} value={r.assessment.result} onChange={e => setResult(r.assessment.id, e.target.value)}>

@@ -54,8 +54,8 @@ const STATUS_OPTIONS: Record<ExportDataset, { value: string; label: string }[]> 
   ],
 };
 
-const card: React.CSSProperties = { background: "linear-gradient(135deg,#FFFFFF,#FFFFFF)", border: "1px solid #E2E8F0", borderRadius: 16, padding: 20 };
-const inputStyle: React.CSSProperties = { width: "100%", padding: "9px 12px", background: "#F5F6F8", border: "1px solid #E2E8F0", borderRadius: 10, color: "#1E293B", fontSize: 13, outline: "none" };
+const card: React.CSSProperties = { background: "linear-gradient(135deg,#0D1526,#0A1020)", border: "1px solid #1E293B", borderRadius: 16, padding: 20 };
+const inputStyle: React.CSSProperties = { width: "100%", padding: "9px 12px", background: "#060B18", border: "1px solid #1E293B", borderRadius: 10, color: "#F1F5F9", fontSize: 13, outline: "none" };
 const labelStyle: React.CSSProperties = { fontSize: 11, fontWeight: 700, color: "#475569", display: "block", marginBottom: 7 };
 
 export default function DataExportView() {
@@ -100,14 +100,14 @@ export default function DataExportView() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       <div>
-        <div style={{ fontSize: 20, fontWeight: 800, color: "#1E293B" }}>Data Export</div>
+        <div style={{ fontSize: 20, fontWeight: 800, color: "#F1F5F9" }}>Data Export</div>
         <div style={{ fontSize: 12, color: "#64748B", marginTop: 2 }}>
           Download live data from the database as CSV — opens in Excel / Google Sheets
         </div>
       </div>
 
       {error && (
-        <div style={{ background: "#EF444422", border: "1px solid #EF4444", borderRadius: 10, padding: "10px 14px", color: "#DC2626", fontSize: 13 }}>
+        <div style={{ background: "#EF444422", border: "1px solid #EF4444", borderRadius: 10, padding: "10px 14px", color: "#FCA5A5", fontSize: 13 }}>
           Export failed: {error}
         </div>
       )}
@@ -117,13 +117,13 @@ export default function DataExportView() {
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           {/* Dataset picker */}
           <div style={card}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: "#1E293B", marginBottom: 14 }}>1. Choose Dataset</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 14 }}>1. Choose Dataset</div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 8 }}>
               {DATASETS.map(d => (
                 <button key={d.id} onClick={() => pickDataset(d.id)}
-                  style={{ padding: 12, borderRadius: 10, border: `1px solid ${ds === d.id ? "#FF6B00" : "#E2E8F0"}`, background: ds === d.id ? "#FF6B0018" : "transparent", cursor: "pointer", textAlign: "left" }}>
+                  style={{ padding: 12, borderRadius: 10, border: `1px solid ${ds === d.id ? "#FF6B00" : "#1E293B"}`, background: ds === d.id ? "#FF6B0018" : "transparent", cursor: "pointer", textAlign: "left" }}>
                   <div style={{ fontSize: 20, marginBottom: 6 }}>{d.icon}</div>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: ds === d.id ? "#C2410C" : "#94A3B8" }}>{d.label}</div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: ds === d.id ? "#FF6B00" : "#94A3B8" }}>{d.label}</div>
                   <div style={{ fontSize: 11, color: "#64748B", marginTop: 3 }}>{d.desc}</div>
                 </button>
               ))}
@@ -132,7 +132,7 @@ export default function DataExportView() {
 
           {/* Filters */}
           <div style={card}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: "#1E293B", marginBottom: 14 }}>2. Apply Filters (optional)</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 14 }}>2. Apply Filters (optional)</div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
               <div>
                 <label style={labelStyle}>DATE FROM</label>
@@ -186,14 +186,14 @@ export default function DataExportView() {
         {/* Summary + download */}
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           <div style={card}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: "#1E293B", marginBottom: 10 }}>{selDs.icon} {selDs.label} — columns included</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 10 }}>{selDs.icon} {selDs.label} — columns included</div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
               {selDs.fields.map(f => (
-                <span key={f} style={{ fontSize: 11, color: "#64748B", background: "#FFFFFF66", border: "1px solid #E2E8F0", borderRadius: 6, padding: "3px 8px" }}>{f}</span>
+                <span key={f} style={{ fontSize: 11, color: "#94A3B8", background: "#1E293B66", border: "1px solid #1E293B", borderRadius: 6, padding: "3px 8px" }}>{f}</span>
               ))}
             </div>
             <button onClick={handleExport} disabled={loading}
-              style={{ width: "100%", marginTop: 18, padding: "13px 0", borderRadius: 12, border: "none", background: loading ? "#F1F5F9" : "linear-gradient(135deg,#FF6B00,#FF8C40)", color: "#fff", fontSize: 14, fontWeight: 800, cursor: loading ? "wait" : "pointer" }}>
+              style={{ width: "100%", marginTop: 18, padding: "13px 0", borderRadius: 12, border: "none", background: loading ? "#334155" : "linear-gradient(135deg,#FF6B00,#FF8C40)", color: "#fff", fontSize: 14, fontWeight: 800, cursor: loading ? "wait" : "pointer" }}>
               {loading ? "Preparing CSV…" : "⬇ Download CSV"}
             </button>
             <div style={{ fontSize: 11, color: "#475569", marginTop: 10, textAlign: "center" }}>
@@ -202,13 +202,13 @@ export default function DataExportView() {
           </div>
 
           <div style={card}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: "#1E293B", marginBottom: 10 }}>Downloads (this session)</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 10 }}>Downloads (this session)</div>
             {history.length === 0 ? (
               <div style={{ fontSize: 12, color: "#475569" }}>No downloads yet — pick a dataset and click Download.</div>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {history.map((h, i) => (
-                  <div key={i} style={{ display: "flex", justifyContent: "space-between", gap: 8, fontSize: 12, color: "#64748B", borderBottom: i < history.length - 1 ? "1px solid #E2E8F055" : "none", paddingBottom: 6 }}>
+                  <div key={i} style={{ display: "flex", justifyContent: "space-between", gap: 8, fontSize: 12, color: "#94A3B8", borderBottom: i < history.length - 1 ? "1px solid #1E293B55" : "none", paddingBottom: 6 }}>
                     <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>📄 {h.name}</span>
                     <span style={{ color: "#475569", flexShrink: 0 }}>{h.at}</span>
                   </div>

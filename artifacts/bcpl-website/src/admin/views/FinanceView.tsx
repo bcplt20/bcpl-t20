@@ -22,12 +22,12 @@ const BCPL_ADDR  = "Kriparti Playing11 Private Limited, 2nd Floor Back Side, RZ-
 /* Coarse payment-group presentation — label + pie colour keyed by the group
    code the API returns (payment_group). "unknown" is greyed out. */
 const GROUP_META: Record<string, { label:string; color:string }> = {
-  upi:         { label:"UPI",          color:"#4F46E5" },
-  credit_card: { label:"Credit Card",  color:"#047857" },
+  upi:         { label:"UPI",          color:"#6366F1" },
+  credit_card: { label:"Credit Card",  color:"#10B981" },
   debit_card:  { label:"Debit Card",   color:"#14B8A6" },
-  net_banking: { label:"Net Banking",  color:"#C2410C" },
-  wallet:      { label:"Wallet",       color:"#B45309" },
-  other:       { label:"Other",        color:"#7C3AED" },
+  net_banking: { label:"Net Banking",  color:"#FF6B00" },
+  wallet:      { label:"Wallet",       color:"#F59E0B" },
+  other:       { label:"Other",        color:"#8B5CF6" },
   unknown:     { label:"Unknown",      color:"#475569" },
 };
 const groupMeta = (g:string) => GROUP_META[g] ?? { label:g, color:"#64748B" };
@@ -72,10 +72,10 @@ const regToTxns = (r: ApiReg): Txn[] => {
 const TDS_PRIZES: { player:string; prize:string; tds:string; net:string; pan:string; status:string }[] = [];
 
 const SC: Record<string,{color:string;bg:string;label:string}> = {
-  success:  { color:"#047857", bg:"#10B98122", label:"Success"  },
-  pending:  { color:"#B45309", bg:"#F59E0B22", label:"Pending"  },
-  failed:   { color:"#DC2626", bg:"#EF444422", label:"Failed"   },
-  refunded: { color:"#4F46E5", bg:"#6366F122", label:"Refunded" },
+  success:  { color:"#10B981", bg:"#10B98122", label:"Success"  },
+  pending:  { color:"#F59E0B", bg:"#F59E0B22", label:"Pending"  },
+  failed:   { color:"#EF4444", bg:"#EF444422", label:"Failed"   },
+  refunded: { color:"#6366F1", bg:"#6366F122", label:"Refunded" },
 };
 
 /* ─── Invoice Modal ──────────────────────────────────────────── */
@@ -91,11 +91,11 @@ function InvoiceModal({ txn, onClose }: { txn: Txn; onClose: () => void }) {
 
   return (
     <div style={{ position:"fixed", inset:0, background:"#000000CC", display:"flex", alignItems:"center", justifyContent:"center", zIndex:1000, padding:16 }} onClick={onClose}>
-      <div style={{ background:"#FFFFFF", border:"1px solid #E2E8F0", borderRadius:20, width:"100%", maxWidth:620, maxHeight:"92vh", overflowY:"auto" }} onClick={e=>e.stopPropagation()}>
+      <div style={{ background:"#0D1526", border:"1px solid #1E293B", borderRadius:20, width:"100%", maxWidth:620, maxHeight:"92vh", overflowY:"auto" }} onClick={e=>e.stopPropagation()}>
 
         {/* Top action bar */}
-        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"16px 24px", borderBottom:"1px solid #E2E8F0" }}>
-          <div style={{ fontSize:15, fontWeight:800, color:"#1E293B" }}>📄 GST Tax Invoice</div>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"16px 24px", borderBottom:"1px solid #1E293B" }}>
+          <div style={{ fontSize:15, fontWeight:800, color:"#F1F5F9" }}>📄 GST Tax Invoice</div>
           <div style={{ display:"flex", gap:8 }}>
             <button onClick={()=>{
               const w=window.open("","_blank");if(!w)return;
@@ -120,7 +120,7 @@ function InvoiceModal({ txn, onClose }: { txn: Txn; onClose: () => void }) {
               .tax-box{float:right;width:260px;background:#f8f8f8;border:1px solid #eee;border-radius:8px;padding:12px}
               .tax-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #eee;font-size:10px}
               .total-row{display:flex;justify-content:space-between;padding:8px 0 0;font-weight:900;font-size:14px}
-              .total-row span:last-child{color:#C2410C}
+              .total-row span:last-child{color:#FF6B00}
               .footer{clear:both;margin-top:20px;border-top:2px solid #FF6B00;padding:10px 32px;font-size:8px;color:#666;display:flex;justify-content:space-between}
               @media print{body{} .lh{-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style></head>
               <body>
@@ -179,118 +179,118 @@ function InvoiceModal({ txn, onClose }: { txn: Txn; onClose: () => void }) {
               </div>
               </body></html>`);
               w.document.close();setTimeout(()=>w.print(),500);
-            }} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #E2E8F0", background:"transparent", color:"#64748B", fontSize:12, cursor:"pointer" }}>⬇ PDF</button>
-            <button onClick={onClose} style={{ padding:"6px 12px", borderRadius:8, border:"none", background:"#FFFFFF", color:"#64748B", fontSize:12, cursor:"pointer" }}>✕</button>
+            }} style={{ padding:"6px 14px", borderRadius:8, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontSize:12, cursor:"pointer" }}>⬇ PDF</button>
+            <button onClick={onClose} style={{ padding:"6px 12px", borderRadius:8, border:"none", background:"#1E293B", color:"#64748B", fontSize:12, cursor:"pointer" }}>✕</button>
           </div>
         </div>
 
         {/* Invoice body */}
         <div style={{ padding:"24px 28px" }}>
           {/* Header */}
-          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:24, paddingBottom:20, borderBottom:"1px solid #E2E8F0" }}>
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:24, paddingBottom:20, borderBottom:"1px solid #1E293B" }}>
             <div>
               <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:6 }}>
                 <div style={{ width:36, height:36, borderRadius:9, background:"linear-gradient(135deg,#FF6B00,#C94E0E)", display:"flex", alignItems:"center", justifyContent:"center" }}>
                   <span style={{ fontWeight:900, fontSize:14, color:"#fff" }}>B</span>
                 </div>
                 <div>
-                  <span style={{ fontWeight:900, fontSize:18, color:"#C2410C" }}>BCPL</span>
-                  <span style={{ fontWeight:900, fontSize:18, color:"#1E293B" }}>T20</span>
+                  <span style={{ fontWeight:900, fontSize:18, color:"#FF6B00" }}>BCPL</span>
+                  <span style={{ fontWeight:900, fontSize:18, color:"#F1F5F9" }}>T20</span>
                 </div>
               </div>
               <div style={{ fontSize:12, color:"#64748B" }}>Kriparti Playing11 Pvt. Ltd.</div>
               <div style={{ fontSize:11, color:"#475569", maxWidth:240, marginTop:3, lineHeight:1.5 }}>{BCPL_ADDR}</div>
-              <div style={{ fontSize:11, color:"#475569", marginTop:4 }}>GSTIN: <span style={{ color:"#B45309", fontWeight:700 }}>{BCPL_GSTIN}</span></div>
-              <div style={{ fontSize:11, color:"#475569" }}>HSN: <span style={{ color:"#64748B" }}>999299 — Sports Event Services</span></div>
+              <div style={{ fontSize:11, color:"#475569", marginTop:4 }}>GSTIN: <span style={{ color:"#F59E0B", fontWeight:700 }}>{BCPL_GSTIN}</span></div>
+              <div style={{ fontSize:11, color:"#475569" }}>HSN: <span style={{ color:"#94A3B8" }}>999299 — Sports Event Services</span></div>
             </div>
             <div style={{ textAlign:"right" }}>
               <div style={{ background:"linear-gradient(135deg,#FF6B00,#D95E10)", borderRadius:10, padding:"6px 16px", display:"inline-block", marginBottom:10 }}>
                 <span style={{ fontSize:12, fontWeight:900, color:"#fff", letterSpacing:.5 }}>TAX INVOICE</span>
               </div>
-              <div style={{ fontSize:12, color:"#64748B" }}>Invoice No</div>
-              <div style={{ fontSize:13, fontWeight:800, color:"#1E293B", marginBottom:8 }}>{invoiceNo}</div>
-              <div style={{ fontSize:12, color:"#64748B" }}>Date: {today}</div>
+              <div style={{ fontSize:12, color:"#94A3B8" }}>Invoice No</div>
+              <div style={{ fontSize:13, fontWeight:800, color:"#F1F5F9", marginBottom:8 }}>{invoiceNo}</div>
+              <div style={{ fontSize:12, color:"#94A3B8" }}>Date: {today}</div>
               <div style={{ fontSize:11, color:"#475569", marginTop:4 }}>Place of Supply: All India</div>
             </div>
           </div>
 
           {/* Bill To */}
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:16, marginBottom:20 }}>
-            <div style={{ background:"#F5F6F8", borderRadius:12, padding:"14px 16px", border:"1px solid #E2E8F0" }}>
+            <div style={{ background:"#060B18", borderRadius:12, padding:"14px 16px", border:"1px solid #1E293B" }}>
               <div style={{ fontSize:10, color:"#475569", fontWeight:700, textTransform:"uppercase", letterSpacing:.5, marginBottom:8 }}>Bill To</div>
-              <div style={{ fontSize:15, fontWeight:700, color:"#1E293B" }}>{txn.name}</div>
+              <div style={{ fontSize:15, fontWeight:700, color:"#F1F5F9" }}>{txn.name}</div>
               <div style={{ fontSize:12, color:"#64748B", marginTop:3 }}>{txn.email}</div>
               <div style={{ fontSize:12, color:"#64748B" }}>{txn.phone}</div>
-              {txn.gstin && <div style={{ fontSize:12, color:"#B45309", marginTop:4, fontWeight:600 }}>GSTIN: {txn.gstin}</div>}
+              {txn.gstin && <div style={{ fontSize:12, color:"#F59E0B", marginTop:4, fontWeight:600 }}>GSTIN: {txn.gstin}</div>}
             </div>
-            <div style={{ background:"#F5F6F8", borderRadius:12, padding:"14px 16px", border:"1px solid #E2E8F0" }}>
+            <div style={{ background:"#060B18", borderRadius:12, padding:"14px 16px", border:"1px solid #1E293B" }}>
               <div style={{ fontSize:10, color:"#475569", fontWeight:700, textTransform:"uppercase", letterSpacing:.5, marginBottom:8 }}>Payment Info</div>
-              <div style={{ fontSize:12, color:"#64748B" }}>Method: <span style={{ color:"#1E293B", fontWeight:600 }}>{txn.method}</span></div>
-              <div style={{ fontSize:12, color:"#64748B", marginTop:4 }}>TXN ID: <span style={{ color:"#1E293B", fontWeight:600, fontFamily:"monospace" }}>{txn.id}</span></div>
-              <div style={{ fontSize:12, color:"#64748B", marginTop:4 }}>Time: <span style={{ color:"#1E293B" }}>{txn.time}</span></div>
-              <div style={{ marginTop:8 }}><span style={{ fontSize:10, padding:"3px 10px", borderRadius:6, background:"#10B98122", color:"#047857", fontWeight:700 }}>✓ Payment Confirmed</span></div>
+              <div style={{ fontSize:12, color:"#94A3B8" }}>Method: <span style={{ color:"#F1F5F9", fontWeight:600 }}>{txn.method}</span></div>
+              <div style={{ fontSize:12, color:"#94A3B8", marginTop:4 }}>TXN ID: <span style={{ color:"#F1F5F9", fontWeight:600, fontFamily:"monospace" }}>{txn.id}</span></div>
+              <div style={{ fontSize:12, color:"#94A3B8", marginTop:4 }}>Time: <span style={{ color:"#F1F5F9" }}>{txn.time}</span></div>
+              <div style={{ marginTop:8 }}><span style={{ fontSize:10, padding:"3px 10px", borderRadius:6, background:"#10B98122", color:"#10B981", fontWeight:700 }}>✓ Payment Confirmed</span></div>
             </div>
           </div>
 
           {/* Line Items */}
           <table style={{ width:"100%", borderCollapse:"collapse", marginBottom:16 }}>
             <thead>
-              <tr style={{ background:"#FFFFFF", borderBottom:"1px solid #E2E8F0" }}>
+              <tr style={{ background:"#0A1020", borderBottom:"1px solid #1E293B" }}>
                 {["Description","HSN Code","Rate","Qty","Taxable Amt"].map(h=>(
-                  <th key={h} style={{ padding:"9px 12px", textAlign:h==="Taxable Amt"?"right":"left", fontSize:10, color:"#64748B", fontWeight:700, textTransform:"uppercase" }}>{h}</th>
+                  <th key={h} style={{ padding:"9px 12px", textAlign:h==="Taxable Amt"?"right":"left", fontSize:10, color:"#94A3B8", fontWeight:700, textTransform:"uppercase" }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              <tr style={{ borderBottom:"1px solid #E2E8F0" }}>
-                <td style={{ padding:"13px 12px", fontSize:12, color:"#1E293B", lineHeight:1.5 }}>
+              <tr style={{ borderBottom:"1px solid #1E293B" }}>
+                <td style={{ padding:"13px 12px", fontSize:12, color:"#F1F5F9", lineHeight:1.5 }}>
                   BCPL T20 Season 5 — {txn.type} Registration<br/>
                   <span style={{ fontSize:11, color:"#475569" }}>{txn.type==="Phase 1" ? "Phase 1 Video Assessment & Registration" : "Physical Trial Entry & Franchise Auction Eligibility"}</span>
                 </td>
                 <td style={{ padding:"13px 12px", fontSize:11, color:"#64748B", fontFamily:"monospace" }}>999299</td>
-                <td style={{ padding:"13px 12px", fontSize:12, color:"#64748B" }}>₹{base.toLocaleString()}</td>
-                <td style={{ padding:"13px 12px", fontSize:12, color:"#64748B" }}>1</td>
-                <td style={{ padding:"13px 12px", fontSize:12, color:"#1E293B", textAlign:"right", fontWeight:600 }}>₹{base.toLocaleString()}</td>
+                <td style={{ padding:"13px 12px", fontSize:12, color:"#94A3B8" }}>₹{base.toLocaleString()}</td>
+                <td style={{ padding:"13px 12px", fontSize:12, color:"#94A3B8" }}>1</td>
+                <td style={{ padding:"13px 12px", fontSize:12, color:"#F1F5F9", textAlign:"right", fontWeight:600 }}>₹{base.toLocaleString()}</td>
               </tr>
             </tbody>
           </table>
 
           {/* Tax Breakdown */}
           <div style={{ display:"flex", justifyContent:"flex-end", marginBottom:20 }}>
-            <div style={{ width:280, background:"#F5F6F8", borderRadius:12, padding:"14px 16px", border:"1px solid #E2E8F0" }}>
+            <div style={{ width:280, background:"#060B18", borderRadius:12, padding:"14px 16px", border:"1px solid #1E293B" }}>
               {[
                 { l:"Subtotal (Base)", v:`₹${base.toLocaleString()}`, bold:false },
-                { l:"CGST @ 9%",      v:`₹${cgst.toFixed(2)}`,       bold:false, color:"#4F46E5" },
-                { l:"SGST @ 9%",      v:`₹${sgst.toFixed(2)}`,       bold:false, color:"#4F46E5" },
+                { l:"CGST @ 9%",      v:`₹${cgst.toFixed(2)}`,       bold:false, color:"#6366F1" },
+                { l:"SGST @ 9%",      v:`₹${sgst.toFixed(2)}`,       bold:false, color:"#6366F1" },
               ].map(r=>(
-                <div key={r.l} style={{ display:"flex", justifyContent:"space-between", padding:"5px 0", borderBottom:"1px solid #E2E8F0" }}>
+                <div key={r.l} style={{ display:"flex", justifyContent:"space-between", padding:"5px 0", borderBottom:"1px solid #1E293B" }}>
                   <span style={{ fontSize:12, color:"#64748B" }}>{r.l}</span>
-                  <span style={{ fontSize:12, color:(r as any).color||"#64748B" }}>{r.v}</span>
+                  <span style={{ fontSize:12, color:(r as any).color||"#94A3B8" }}>{r.v}</span>
                 </div>
               ))}
               <div style={{ display:"flex", justifyContent:"space-between", padding:"10px 0 0", marginTop:4, borderTop:"2px solid #FF6B0044" }}>
-                <span style={{ fontSize:14, fontWeight:800, color:"#1E293B" }}>Total</span>
-                <span style={{ fontSize:18, fontWeight:900, color:"#C2410C" }}>₹{total.toLocaleString()}</span>
+                <span style={{ fontSize:14, fontWeight:800, color:"#F1F5F9" }}>Total</span>
+                <span style={{ fontSize:18, fontWeight:900, color:"#FF6B00" }}>₹{total.toLocaleString()}</span>
               </div>
-              <div style={{ fontSize:10, color:"#64748B", marginTop:6, lineHeight:1.5 }}>
+              <div style={{ fontSize:10, color:"#334155", marginTop:6, lineHeight:1.5 }}>
                 Amount in words: <span style={{ color:"#475569" }}>Rupees {total === 353 ? "Three Hundred Fifty Three" : total === 471 ? "Four Hundred Seventy One" : total === 2360 ? "Two Thousand Three Hundred Sixty" : total === 3540 ? "Three Thousand Five Hundred Forty" : total} Only</span>
               </div>
             </div>
           </div>
 
-          <div style={{ padding:"12px 14px", background:"#FFFFFF", borderRadius:10, border:"1px solid #E2E8F0", fontSize:10, color:"#64748B", lineHeight:1.6, marginBottom:20 }}>
+          <div style={{ padding:"12px 14px", background:"#0A1020", borderRadius:10, border:"1px solid #1E293B", fontSize:10, color:"#334155", lineHeight:1.6, marginBottom:20 }}>
             This is a computer-generated invoice and does not require a physical signature. Subject to Gurugram, Haryana jurisdiction.
           </div>
 
           {/* Send Section */}
-          <div style={{ borderTop:"1px solid #E2E8F0", paddingTop:16 }}>
-            <div style={{ fontSize:13, fontWeight:700, color:"#1E293B", marginBottom:10 }}>📧 Send to Player</div>
+          <div style={{ borderTop:"1px solid #1E293B", paddingTop:16 }}>
+            <div style={{ fontSize:13, fontWeight:700, color:"#F1F5F9", marginBottom:10 }}>📧 Send to Player</div>
             {sent
-              ? <div style={{ background:"#10B98122", border:"1px solid #10B98144", borderRadius:10, padding:"12px 16px", color:"#047857", fontWeight:700, textAlign:"center" }}>✅ Invoice sent to {email}</div>
+              ? <div style={{ background:"#10B98122", border:"1px solid #10B98144", borderRadius:10, padding:"12px 16px", color:"#10B981", fontWeight:700, textAlign:"center" }}>✅ Invoice sent to {email}</div>
               : (
                 <>
                   <div style={{ display:"flex", gap:10 }}>
-                    <input value={email} onChange={e=>setEmail(e.target.value)} style={{ flex:1, padding:"10px 14px", background:"#F5F6F8", border:"1px solid #E2E8F0", borderRadius:10, color:"#1E293B", fontSize:13, outline:"none" }}/>
+                    <input value={email} onChange={e=>setEmail(e.target.value)} style={{ flex:1, padding:"10px 14px", background:"#060B18", border:"1px solid #1E293B", borderRadius:10, color:"#F1F5F9", fontSize:13, outline:"none" }}/>
                     <button
                       onClick={async()=>{
                         setLoading(true); setSendErr("");
@@ -307,7 +307,7 @@ function InvoiceModal({ txn, onClose }: { txn: Txn; onClose: () => void }) {
                     </button>
                   </div>
                   {sendErr && (
-                    <div style={{ marginTop:10, background:"#EF444422", border:"1px solid #EF444444", borderRadius:10, padding:"10px 14px", color:"#DC2626", fontSize:12, fontWeight:600 }}>
+                    <div style={{ marginTop:10, background:"#EF444422", border:"1px solid #EF444444", borderRadius:10, padding:"10px 14px", color:"#EF4444", fontSize:12, fontWeight:600 }}>
                       ❌ {sendErr}
                     </div>
                   )}
@@ -327,22 +327,22 @@ function TxnDetailModal({ txn, feeRate, feeIsReal, onOpenInvoice, onOpenReg, onC
   const net = Math.round(txn.amount - gw - gst);
   const sc  = SC[txn.status];
   const row = (l: string, v: React.ReactNode) => (
-    <div key={l} style={{ display:"flex", justifyContent:"space-between", gap:12, padding:"9px 0", borderBottom:"1px solid #E2E8F0" }}>
+    <div key={l} style={{ display:"flex", justifyContent:"space-between", gap:12, padding:"9px 0", borderBottom:"1px solid #1E293B" }}>
       <span style={{ fontSize:12, color:"#64748B", flexShrink:0 }}>{l}</span>
-      <span style={{ fontSize:13, color:"#1E293B", fontWeight:600, textAlign:"right", wordBreak:"break-all" }}>{v}</span>
+      <span style={{ fontSize:13, color:"#F1F5F9", fontWeight:600, textAlign:"right", wordBreak:"break-all" }}>{v}</span>
     </div>
   );
   return (
     <div style={{ position:"fixed", inset:0, background:"#000000CC", display:"flex", alignItems:"center", justifyContent:"center", zIndex:1000, padding:16 }} onClick={onClose}>
-      <div style={{ background:"#FFFFFF", border:"1px solid #E2E8F0", borderRadius:20, width:"100%", maxWidth:480, maxHeight:"92vh", overflowY:"auto" }} onClick={e=>e.stopPropagation()}>
-        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"16px 24px", borderBottom:"1px solid #E2E8F0" }}>
-          <div style={{ fontSize:15, fontWeight:800, color:"#1E293B" }}>💳 Transaction Details</div>
-          <button onClick={onClose} style={{ padding:"6px 12px", borderRadius:8, border:"none", background:"#FFFFFF", color:"#64748B", fontSize:12, cursor:"pointer" }}>✕</button>
+      <div style={{ background:"#0D1526", border:"1px solid #1E293B", borderRadius:20, width:"100%", maxWidth:480, maxHeight:"92vh", overflowY:"auto" }} onClick={e=>e.stopPropagation()}>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"16px 24px", borderBottom:"1px solid #1E293B" }}>
+          <div style={{ fontSize:15, fontWeight:800, color:"#F1F5F9" }}>💳 Transaction Details</div>
+          <button onClick={onClose} style={{ padding:"6px 12px", borderRadius:8, border:"none", background:"#1E293B", color:"#64748B", fontSize:12, cursor:"pointer" }}>✕</button>
         </div>
         <div style={{ padding:"20px 24px" }}>
           <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14, gap:10 }}>
             <div style={{ minWidth:0 }}>
-              <div style={{ fontSize:17, fontWeight:800, color:"#1E293B" }}>{txn.name}</div>
+              <div style={{ fontSize:17, fontWeight:800, color:"#F1F5F9" }}>{txn.name}</div>
               <div style={{ fontSize:12, color:"#64748B", marginTop:2, wordBreak:"break-all" }}>{txn.email || "—"} · {txn.phone || "—"}</div>
             </div>
             <span style={{ padding:"4px 12px", borderRadius:20, fontSize:11, fontWeight:800, background:sc.bg, color:sc.color, flexShrink:0 }}>{sc.label}</span>
@@ -351,22 +351,22 @@ function TxnDetailModal({ txn, feeRate, feeIsReal, onOpenInvoice, onOpenReg, onC
           {row("Phase", txn.type)}
           {row("Method", txn.method)}
           {row("Time", txn.time)}
-          {row("Amount charged", <span style={{ color:"#C2410C", fontWeight:800 }}>₹{txn.amount.toLocaleString()}</span>)}
+          {row("Amount charged", <span style={{ color:"#FF6B00", fontWeight:800 }}>₹{txn.amount.toLocaleString()}</span>)}
           {row("Base (before GST)", `₹${inr(base)}`)}
           {row("CGST @ 9%", `₹${cgst.toFixed(2)}`)}
           {row("SGST @ 9%", `₹${sgst.toFixed(2)}`)}
-          {row(feeIsReal ? `Gateway fee (real ${(feeRate*100).toFixed(2)}%)` : "Gateway fee (2% est.)", <span style={{ color:"#DC2626" }}>-₹{gw}</span>)}
-          {row("Net to BCPL", <span style={{ color:"#047857", fontWeight:800 }}>₹{net}</span>)}
+          {row(feeIsReal ? `Gateway fee (real ${(feeRate*100).toFixed(2)}%)` : "Gateway fee (2% est.)", <span style={{ color:"#EF4444" }}>-₹{gw}</span>)}
+          {row("Net to BCPL", <span style={{ color:"#10B981", fontWeight:800 }}>₹{net}</span>)}
           <div onClick={onOpenReg} title="Open this player's registration"
-            style={{ marginTop:14, padding:"10px 12px", background:"#FFFFFF", border:"1px solid #E2E8F0", borderRadius:10, cursor:"pointer" }}>
+            style={{ marginTop:14, padding:"10px 12px", background:"#080E1C", border:"1px solid #1E293B", borderRadius:10, cursor:"pointer" }}>
             <div style={{ fontSize:9, fontWeight:800, color:"#475569", letterSpacing:1, marginBottom:4 }}>REGISTRATION ID — TAP TO OPEN</div>
-            <div style={{ fontSize:11, color:"#4F46E5", fontFamily:"monospace", wordBreak:"break-all", textDecoration:"underline" }}>{txn.regId}</div>
+            <div style={{ fontSize:11, color:"#6366F1", fontFamily:"monospace", wordBreak:"break-all", textDecoration:"underline" }}>{txn.regId}</div>
           </div>
           <div style={{ display:"flex", gap:10, marginTop:16 }}>
             {txn.status === "success" && (
               <button onClick={onOpenInvoice} style={{ flex:1, padding:"11px 0", borderRadius:10, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontSize:13, fontWeight:700, cursor:"pointer" }}>📄 GST Invoice</button>
             )}
-            <button onClick={onClose} style={{ flex:1, padding:"11px 0", borderRadius:10, border:"1px solid #E2E8F0", background:"transparent", color:"#64748B", fontSize:13, cursor:"pointer" }}>Close</button>
+            <button onClick={onClose} style={{ flex:1, padding:"11px 0", borderRadius:10, border:"1px solid #1E293B", background:"transparent", color:"#64748B", fontSize:13, cursor:"pointer" }}>Close</button>
           </div>
         </div>
       </div>
@@ -490,7 +490,7 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
     return statusOk && searchOk;
   });
 
-  const card: React.CSSProperties = { background:"linear-gradient(135deg,#FFFFFF 0%,#FFFFFF 100%)", border:"1px solid #E2E8F0", borderRadius:16, padding:20 };
+  const card: React.CSSProperties = { background:"linear-gradient(135deg,#0D1526 0%,#0A1020 100%)", border:"1px solid #1E293B", borderRadius:16, padding:20 };
   const TABS: [Tab, string][] = [
     ["overview","📊 Overview"],["pl","💹 P&L Report"],["gst","🏛 GST Compliance"],
     ["invoices","📄 Invoices"],["refunds","↩ Refunds"],["tds","📋 TDS"],
@@ -500,7 +500,7 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
     <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
 
       {loadErr && (
-        <div style={{ padding:"12px 16px", background:"#EF444415", border:"1px solid #EF444444", borderRadius:12, color:"#DC2626", fontSize:13 }}>
+        <div style={{ padding:"12px 16px", background:"#EF444415", border:"1px solid #EF444444", borderRadius:12, color:"#EF4444", fontSize:13 }}>
           Failed to load transactions: {loadErr}
         </div>
       )}
@@ -508,7 +508,7 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
       {/* ── Header ── */}
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
         <div>
-          <div style={{ fontSize:20, fontWeight:800, color:"#1E293B" }}>Finance & GST</div>
+          <div style={{ fontSize:20, fontWeight:800, color:"#F1F5F9" }}>Finance & GST</div>
           <div style={{ fontSize:12, color:"#64748B", marginTop:2 }}>Revenue · P&L · GST Compliance · Invoices · Refunds · TDS</div>
         </div>
         <div style={{ display:"flex", gap:8 }}>
@@ -517,20 +517,20 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
             const rows=TRANSACTIONS.map(t=>{const g=gstFromGross(t.amount);return [t.id,t.name,t.email,t.phone,t.type,g.base,g.gst,t.amount,t.method,t.status,t.time];});
             const csv=[headers,...rows].map(r=>r.join(",")).join("\n");
             const a=document.createElement("a");a.href="data:text/csv;charset=utf-8,"+encodeURIComponent(csv);a.download=`bcpl_finance_${new Date().toISOString().slice(0,10)}.csv`;a.click();
-          }} style={{ padding:"9px 16px", borderRadius:9, border:"1px solid #E2E8F0", background:"transparent", color:"#64748B", fontSize:12, cursor:"pointer" }}>⬇ Export CSV</button>
+          }} style={{ padding:"9px 16px", borderRadius:9, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontSize:12, cursor:"pointer" }}>⬇ Export CSV</button>
           <button onClick={()=>{
             const w=window.open("","_blank");if(!w)return;
-            const rows=TRANSACTIONS.filter(t=>t.status==="success").map(t=>{const g=gstFromGross(t.amount);return`<tr><td>BCPL/25-26/${t.id}</td><td>${t.name}</td><td>${t.email}</td><td>${t.type}</td><td>₹${inr(g.base)}</td><td>₹${inr(g.gst)}</td><td style="font-weight:bold;color:#C2410C">₹${t.amount.toLocaleString()}</td></tr>`;}).join("");
-            w.document.write(`<!DOCTYPE html><html><head><title>BCPL Bulk Invoices</title><style>body{font-family:Arial;font-size:11px;padding:20px}.header{display:flex;align-items:center;gap:16px;border-bottom:3px solid #FF6B00;padding-bottom:12px;margin-bottom:20px}.logo{width:52px;height:52px;border-radius:50%;overflow:hidden;border:2px solid #FF6B00}.logo img{width:100%;height:100%;object-fit:cover}h1{margin:0;font-size:18px;color:#C2410C}p{margin:2px 0;font-size:10px;color:#555}table{width:100%;border-collapse:collapse}th{background:#FF6B00;color:#fff;padding:7px;text-align:left;font-size:10px}td{padding:6px;border-bottom:1px solid #eee;font-size:10px}tr:nth-child(even){background:#FFF5EE}.footer{margin-top:20px;font-size:9px;color:#999;border-top:1px solid #eee;padding-top:10px}@media print{body{padding:0}}</style></head><body>
+            const rows=TRANSACTIONS.filter(t=>t.status==="success").map(t=>{const g=gstFromGross(t.amount);return`<tr><td>BCPL/25-26/${t.id}</td><td>${t.name}</td><td>${t.email}</td><td>${t.type}</td><td>₹${inr(g.base)}</td><td>₹${inr(g.gst)}</td><td style="font-weight:bold;color:#FF6B00">₹${t.amount.toLocaleString()}</td></tr>`;}).join("");
+            w.document.write(`<!DOCTYPE html><html><head><title>BCPL Bulk Invoices</title><style>body{font-family:Arial;font-size:11px;padding:20px}.header{display:flex;align-items:center;gap:16px;border-bottom:3px solid #FF6B00;padding-bottom:12px;margin-bottom:20px}.logo{width:52px;height:52px;border-radius:50%;overflow:hidden;border:2px solid #FF6B00}.logo img{width:100%;height:100%;object-fit:cover}h1{margin:0;font-size:18px;color:#FF6B00}p{margin:2px 0;font-size:10px;color:#555}table{width:100%;border-collapse:collapse}th{background:#FF6B00;color:#fff;padding:7px;text-align:left;font-size:10px}td{padding:6px;border-bottom:1px solid #eee;font-size:10px}tr:nth-child(even){background:#FFF5EE}.footer{margin-top:20px;font-size:9px;color:#999;border-top:1px solid #eee;padding-top:10px}@media print{body{padding:0}}</style></head><body>
             <div class="header"><div class="logo"><img src="${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/bcpl-ball-color.jpg"/></div>
             <div><h1>BCPL T20 — Bulk GST Invoices</h1><p>Kriparti Playing11 Private Limited · GSTIN: ${BCPL_GSTIN}</p><p>Season 5 (2026–27) · Generated: ${new Date().toLocaleDateString("en-IN")}</p></div></div>
             <table><thead><tr><th>Invoice No</th><th>Player</th><th>Email</th><th>Phase</th><th>Base Amt</th><th>GST (18%)</th><th>Total</th></tr></thead><tbody>${rows||"<tr><td colspan=7 style='text-align:center;padding:20px;color:#999'>No successful transactions yet</td></tr>"}</tbody></table>
             <div class="footer">${BCPL_ADDR}</div></body></html>`);w.document.close();setTimeout(()=>w.print(),500);
-          }} style={{ padding:"9px 16px", borderRadius:9, border:"1px solid #E2E8F0", background:"transparent", color:"#64748B", fontSize:12, cursor:"pointer" }}>📄 Bulk Invoices</button>
+          }} style={{ padding:"9px 16px", borderRadius:9, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontSize:12, cursor:"pointer" }}>📄 Bulk Invoices</button>
           <button onClick={()=>{
             const w=window.open("","_blank");if(!w)return;
             const rows=TRANSACTIONS.filter(t=>t.status==="success").map(t=>{const g=gstFromGross(t.amount);return`<tr><td>${t.id}</td><td>${t.name}</td><td>${t.gstin||"B2C"}</td><td>${t.type}</td><td>999299</td><td>18%</td><td>₹${g.base}</td><td>₹${g.cgst}</td><td>₹${g.sgst}</td><td>₹${g.gst}</td></tr>`;}).join("");
-            w.document.write(`<!DOCTYPE html><html><head><title>BCPL GSTR-1</title><style>body{font-family:Arial;font-size:10px;padding:20px}.header{display:flex;align-items:center;gap:16px;border-bottom:3px solid #FF6B00;padding-bottom:12px;margin-bottom:16px}.logo{width:48px;height:48px;border-radius:50%;overflow:hidden;border:2px solid #FF6B00}.logo img{width:100%;height:100%;object-fit:cover}h1{margin:0;font-size:16px;color:#C2410C}p{margin:2px 0;font-size:9px;color:#555}table{width:100%;border-collapse:collapse;font-size:9px}th{background:#FF6B00;color:#fff;padding:5px;text-align:left}td{padding:4px 6px;border-bottom:1px solid #eee}.footer{margin-top:16px;font-size:8px;color:#999}@media print{body{padding:0}}</style></head><body>
+            w.document.write(`<!DOCTYPE html><html><head><title>BCPL GSTR-1</title><style>body{font-family:Arial;font-size:10px;padding:20px}.header{display:flex;align-items:center;gap:16px;border-bottom:3px solid #FF6B00;padding-bottom:12px;margin-bottom:16px}.logo{width:48px;height:48px;border-radius:50%;overflow:hidden;border:2px solid #FF6B00}.logo img{width:100%;height:100%;object-fit:cover}h1{margin:0;font-size:16px;color:#FF6B00}p{margin:2px 0;font-size:9px;color:#555}table{width:100%;border-collapse:collapse;font-size:9px}th{background:#FF6B00;color:#fff;padding:5px;text-align:left}td{padding:4px 6px;border-bottom:1px solid #eee}.footer{margin-top:16px;font-size:8px;color:#999}@media print{body{padding:0}}</style></head><body>
             <div class="header"><div class="logo"><img src="${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/bcpl-ball-color.jpg"/></div>
             <div><h1>GSTR-1 Report — Outward Supply</h1><p>Kriparti Playing11 Private Limited · GSTIN: ${BCPL_GSTIN}</p><p>FY 2026–27 · Filed under Form GSTR-1 · Generated: ${new Date().toLocaleDateString("en-IN")}</p></div></div>
             <table><thead><tr><th>TXN ID</th><th>Customer</th><th>GSTIN/Type</th><th>Description</th><th>HSN</th><th>Rate</th><th>Taxable</th><th>CGST</th><th>SGST</th><th>Total GST</th></tr></thead><tbody>${rows||"<tr><td colspan=10 style='text-align:center;padding:20px;color:#999'>No transactions yet</td></tr>"}</tbody></table>
@@ -542,19 +542,19 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
       {/* ── KPI Cards ── */}
       <div style={{ display:"grid", gridTemplateColumns:"repeat(6,1fr)", gap:10 }}>
         {[
-          { label:"Total Revenue",    value:totalRevenue>0?`₹${(totalRevenue/100000).toFixed(2)}L`:"₹0", sub:`${TRANSACTIONS.filter(t=>t.status==="success").length} paid txns`, color:"#C2410C", delta:"Season 5" },
-          { label:"Net Revenue",      value:netRevenue>0?`₹${(netRevenue/1000).toFixed(1)}k`:"₹0", sub:"After GST & gateway fee",color:"#047857",delta:"After deductions"},
-          { label:"GST Collected",    value:totalGST>0?`₹${(totalGST/1000).toFixed(1)}k`:"₹0",    sub:"18% included in price",    color:"#4F46E5", delta:"FY 26-27" },
-          { label:"Gateway Fees",     value:totalGW>0?`₹${(totalGW/1000).toFixed(1)}k`:"₹0",      sub:feeSub,        color:"#B45309", delta:feeIsReal?"CF real":"CF est." },
-          { label:"Total Refunds",    value:`₹${totalRefunds}`,                  sub:`${REFUNDS.length} refund requests`,color:"#DC2626",delta:REFUNDS.length>0?`-₹${totalRefunds}`:"No refunds"},
-          { label:"Settled to Bank",  value:feeIsReal&&settlement?`₹${(settlement.netSettled/100000).toFixed(2)}L`:"₹0", sub:feeIsReal?`${settlement!.count} settlements`:"Cashfree settlement", color:"#1D4ED8", delta:feeIsReal?"Real":"T+2 days" },
+          { label:"Total Revenue",    value:totalRevenue>0?`₹${(totalRevenue/100000).toFixed(2)}L`:"₹0", sub:`${TRANSACTIONS.filter(t=>t.status==="success").length} paid txns`, color:"#FF6B00", delta:"Season 5" },
+          { label:"Net Revenue",      value:netRevenue>0?`₹${(netRevenue/1000).toFixed(1)}k`:"₹0", sub:"After GST & gateway fee",color:"#10B981",delta:"After deductions"},
+          { label:"GST Collected",    value:totalGST>0?`₹${(totalGST/1000).toFixed(1)}k`:"₹0",    sub:"18% included in price",    color:"#6366F1", delta:"FY 26-27" },
+          { label:"Gateway Fees",     value:totalGW>0?`₹${(totalGW/1000).toFixed(1)}k`:"₹0",      sub:feeSub,        color:"#F59E0B", delta:feeIsReal?"CF real":"CF est." },
+          { label:"Total Refunds",    value:`₹${totalRefunds}`,                  sub:`${REFUNDS.length} refund requests`,color:"#EF4444",delta:REFUNDS.length>0?`-₹${totalRefunds}`:"No refunds"},
+          { label:"Settled to Bank",  value:feeIsReal&&settlement?`₹${(settlement.netSettled/100000).toFixed(2)}L`:"₹0", sub:feeIsReal?`${settlement!.count} settlements`:"Cashfree settlement", color:"#3B82F6", delta:feeIsReal?"Real":"T+2 days" },
         ].map(s=>(
           <div key={s.label} style={{ ...card, padding:"14px 16px", borderTop:`3px solid ${s.color}` }}>
             <div style={{ fontSize:20, fontWeight:800, color:s.color }}>{s.value}</div>
-            <div style={{ fontSize:10, color:"#1E293B", fontWeight:600, marginTop:3 }}>{s.label}</div>
+            <div style={{ fontSize:10, color:"#F1F5F9", fontWeight:600, marginTop:3 }}>{s.label}</div>
             <div style={{ display:"flex", justifyContent:"space-between", marginTop:6 }}>
-              <span style={{ fontSize:9, color:"#64748B" }}>{s.sub}</span>
-              <span style={{ fontSize:10, fontWeight:700, color:s.delta.startsWith("+")?"#047857":s.delta.startsWith("-")?"#EF4444":"#6366F1" }}>{s.delta}</span>
+              <span style={{ fontSize:9, color:"#334155" }}>{s.sub}</span>
+              <span style={{ fontSize:10, fontWeight:700, color:s.delta.startsWith("+")?"#10B981":s.delta.startsWith("-")?"#EF4444":"#6366F1" }}>{s.delta}</span>
             </div>
           </div>
         ))}
@@ -563,7 +563,7 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
       {/* ── Tabs ── */}
       <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
         {TABS.map(([t,l])=>(
-          <button key={t} onClick={()=>setTab(t)} style={{ padding:"8px 16px", borderRadius:10, border:`1px solid ${tab===t?"#FF6B00":"#E2E8F0"}`, background:tab===t?"#FF6B0022":"transparent", color:tab===t?"#C2410C":"#64748B", fontSize:12, fontWeight:700, cursor:"pointer" }}>{l}</button>
+          <button key={t} onClick={()=>setTab(t)} style={{ padding:"8px 16px", borderRadius:10, border:`1px solid ${tab===t?"#FF6B00":"#1E293B"}`, background:tab===t?"#FF6B0022":"transparent", color:tab===t?"#FF6B00":"#64748B", fontSize:12, fontWeight:700, cursor:"pointer" }}>{l}</button>
         ))}
       </div>
 
@@ -572,23 +572,23 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
         <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
           <div style={{ display:"grid", gridTemplateColumns:"2fr 1fr", gap:14 }}>
             <div style={card}>
-              <div style={{ fontSize:14, fontWeight:700, color:"#1E293B", marginBottom:4 }}>Daily Revenue — Last 7 Days</div>
+              <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9", marginBottom:4 }}>Daily Revenue — Last 7 Days</div>
               <div style={{ fontSize:11, color:"#475569", marginBottom:14 }}>Phase 1 vs Phase 2 vs Refunds</div>
               <ResponsiveContainer width="100%" height={220}>
                 <BarChart data={dailyRevenue}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#1E293B"/>
-                  <XAxis dataKey="day" stroke="#64748B" tick={{ fill:"#64748B", fontSize:11 }}/>
-                  <YAxis stroke="#64748B" tick={{ fill:"#64748B", fontSize:10 }} tickFormatter={v=>`₹${(v/1000).toFixed(0)}k`}/>
-                  <Tooltip contentStyle={{ background:"#FFFFFF", border:"1px solid #E2E8F0", borderRadius:8 }} formatter={(v:any,n:string)=>[`₹${Number(v).toLocaleString()}`, n==="p1"?"Phase 1":n==="p2"?"Phase 2":"Refunds"]}/>
-                  <Bar dataKey="p1"      fill="#B45309" radius={[4,4,0,0]} name="p1"/>
-                  <Bar dataKey="p2"      fill="#047857" radius={[4,4,0,0]} name="p2"/>
+                  <XAxis dataKey="day" stroke="#334155" tick={{ fill:"#64748B", fontSize:11 }}/>
+                  <YAxis stroke="#334155" tick={{ fill:"#64748B", fontSize:10 }} tickFormatter={v=>`₹${(v/1000).toFixed(0)}k`}/>
+                  <Tooltip contentStyle={{ background:"#0D1526", border:"1px solid #1E293B", borderRadius:8 }} formatter={(v:any,n:string)=>[`₹${Number(v).toLocaleString()}`, n==="p1"?"Phase 1":n==="p2"?"Phase 2":"Refunds"]}/>
+                  <Bar dataKey="p1"      fill="#F59E0B" radius={[4,4,0,0]} name="p1"/>
+                  <Bar dataKey="p2"      fill="#10B981" radius={[4,4,0,0]} name="p2"/>
                   <Bar dataKey="refunds" fill="#EF444460" radius={[4,4,0,0]} name="refunds"/>
                 </BarChart>
               </ResponsiveContainer>
             </div>
             <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
               <div style={card}>
-                <div style={{ fontSize:14, fontWeight:700, color:"#1E293B", marginBottom:12 }}>Payment Split</div>
+                <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9", marginBottom:12 }}>Payment Split</div>
                 {pieData.length === 0 ? (
                   <div style={{ fontSize:12, color:"#475569", padding:"24px 0", textAlign:"center" }}>No successful payments yet</div>
                 ) : (
@@ -598,22 +598,22 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
                         <Pie data={pieData} cx="50%" cy="50%" innerRadius={30} outerRadius={52} dataKey="value" strokeWidth={0}>
                           {pieData.map((m,i)=><Cell key={i} fill={m.color}/>)}
                         </Pie>
-                        <Tooltip formatter={(v:any,_n:string,p:any)=>[`₹${Number(v).toLocaleString()} · ${p?.payload?.count ?? 0} txns`, p?.payload?.name]} contentStyle={{ background:"#FFFFFF", border:"1px solid #E2E8F0", borderRadius:8 }}/>
+                        <Tooltip formatter={(v:any,_n:string,p:any)=>[`₹${Number(v).toLocaleString()} · ${p?.payload?.count ?? 0} txns`, p?.payload?.name]} contentStyle={{ background:"#0D1526", border:"1px solid #1E293B", borderRadius:8 }}/>
                       </PieChart>
                     </ResponsiveContainer>
                     {pieData.map(m=>(
                       <div key={m.key} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:6, opacity:m.isUnknown?0.6:1 }}>
                         <div style={{ display:"flex", alignItems:"center", gap:6 }}>
                           <div style={{ width:8, height:8, borderRadius:2, background:m.color }}/>
-                          <span style={{ fontSize:11, color:"#64748B" }}>{m.name}</span>
+                          <span style={{ fontSize:11, color:"#94A3B8" }}>{m.name}</span>
                           {m.isUnknown && (
                             <button onClick={runBackfill} disabled={backfilling}
-                              style={{ marginLeft:4, padding:"2px 8px", borderRadius:6, border:"1px solid #E2E8F0", background:"transparent", color:"#64748B", fontSize:10, fontWeight:600, cursor:backfilling?"wait":"pointer" }}>
+                              style={{ marginLeft:4, padding:"2px 8px", borderRadius:6, border:"1px solid #334155", background:"transparent", color:"#94A3B8", fontSize:10, fontWeight:600, cursor:backfilling?"wait":"pointer" }}>
                               {backfilling ? "Working…" : "Backfill from Cashfree"}
                             </button>
                           )}
                         </div>
-                        <span style={{ fontSize:12, fontWeight:700, color:"#1E293B" }}>₹{m.value.toLocaleString()}</span>
+                        <span style={{ fontSize:12, fontWeight:700, color:"#F1F5F9" }}>₹{m.value.toLocaleString()}</span>
                       </div>
                     ))}
                     {backfillMsg && (
@@ -624,19 +624,19 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
               </div>
               <div style={{ ...card, padding:"14px 16px" }}>
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 }}>
-                  <div style={{ fontSize:12, fontWeight:700, color:"#1E293B" }}>Payments on Hold</div>
-                  <span style={{ fontSize:12, fontWeight:800, color:onHoldTotal>0?"#DC2626":"#475569" }}>₹{onHoldTotal.toLocaleString()}</span>
+                  <div style={{ fontSize:12, fontWeight:700, color:"#F1F5F9" }}>Payments on Hold</div>
+                  <span style={{ fontSize:12, fontWeight:800, color:onHoldTotal>0?"#EF4444":"#475569" }}>₹{onHoldTotal.toLocaleString()}</span>
                 </div>
                 {onHoldRows.length === 0 ? (
                   <div style={{ fontSize:11, color:"#475569", padding:"10px 0" }}>No payments on hold</div>
                 ) : (
                   onHoldRows.map(h=>(
-                    <div key={h.phase+h.orderId} style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:10, padding:"8px 0", borderBottom:"1px solid #E2E8F0" }}>
+                    <div key={h.phase+h.orderId} style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:10, padding:"8px 0", borderBottom:"1px solid #1E293B" }}>
                       <div style={{ minWidth:0 }}>
-                        <div style={{ fontSize:11, color:"#1E293B", fontWeight:600, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{h.name ?? h.regNumber ?? "Unknown"}</div>
+                        <div style={{ fontSize:11, color:"#F1F5F9", fontWeight:600, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{h.name ?? h.regNumber ?? "Unknown"}</div>
                         <div style={{ fontSize:10, color:"#475569", fontFamily:"monospace", wordBreak:"break-all" }}>{h.phase} · {h.orderId}</div>
                       </div>
-                      <span style={{ fontSize:12, fontWeight:700, color:"#DC2626", flexShrink:0 }}>₹{h.amount.toLocaleString()}</span>
+                      <span style={{ fontSize:12, fontWeight:700, color:"#EF4444", flexShrink:0 }}>₹{h.amount.toLocaleString()}</span>
                     </div>
                   ))
                 )}
@@ -646,17 +646,17 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
           {/* Transaction log */}
           <div style={card}>
             <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14, flexWrap:"wrap", gap:10 }}>
-              <div style={{ fontSize:14, fontWeight:700, color:"#1E293B" }}>Transaction Log</div>
+              <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9" }}>Transaction Log</div>
               <div style={{ display:"flex", gap:8, flexWrap:"wrap", alignItems:"center" }}>
-                <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search name / TXN…" style={{ padding:"7px 12px", background:"#F5F6F8", border:"1px solid #E2E8F0", borderRadius:9, color:"#1E293B", fontSize:12, outline:"none", width:200 }}/>
+                <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search name / TXN…" style={{ padding:"7px 12px", background:"#060B18", border:"1px solid #1E293B", borderRadius:9, color:"#F1F5F9", fontSize:12, outline:"none", width:200 }}/>
                 {(["all","success","pending","failed","refunded"] as const).map(f=>(
-                  <button key={f} onClick={()=>setTxnFilter(f)} style={{ padding:"5px 12px", borderRadius:7, border:`1px solid ${txnFilter===f?(f==="all"?"#FF6B00":SC[f]?.color||"#C2410C"):"#E2E8F0"}`, background:txnFilter===f?((f==="all"?"#FF6B00":SC[f]?.color||"#C2410C")+"22"):"transparent", color:txnFilter===f?(f==="all"?"#C2410C":SC[f]?.color):"#64748B", fontSize:11, fontWeight:700, cursor:"pointer", textTransform:"capitalize" }}>{f}</button>
+                  <button key={f} onClick={()=>setTxnFilter(f)} style={{ padding:"5px 12px", borderRadius:7, border:`1px solid ${txnFilter===f?(f==="all"?"#FF6B00":SC[f]?.color||"#FF6B00"):"#1E293B"}`, background:txnFilter===f?((f==="all"?"#FF6B00":SC[f]?.color||"#FF6B00")+"22"):"transparent", color:txnFilter===f?(f==="all"?"#FF6B00":SC[f]?.color):"#64748B", fontSize:11, fontWeight:700, cursor:"pointer", textTransform:"capitalize" }}>{f}</button>
                 ))}
               </div>
             </div>
             <table style={{ width:"100%", borderCollapse:"collapse" }}>
               <thead>
-                <tr style={{ borderBottom:"1px solid #E2E8F0" }}>
+                <tr style={{ borderBottom:"1px solid #1E293B" }}>
                   {["Txn ID","Player","Phase","Amount","Gateway Fee","GST","Net","Method","Status","Invoice"].map(h=>(
                     <th key={h} style={{ padding:"8px 10px", textAlign:"left", fontSize:10, color:"#475569", fontWeight:700, textTransform:"uppercase" }}>{h}</th>
                   ))}
@@ -668,29 +668,29 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
                   const gw  = Math.round(t.amount * feeRate);
                   const net = Math.round(t.amount - gw - g.gst);
                   return (
-                    <tr key={t.id} onClick={()=>setTxnDetail(t)} title="Tap for full details" style={{ borderBottom:"1px solid #E2E8F0", cursor:"pointer" }}>
+                    <tr key={t.id} onClick={()=>setTxnDetail(t)} title="Tap for full details" style={{ borderBottom:"1px solid #0F1B2D", cursor:"pointer" }}>
                       <td style={{ padding:"10px 10px", fontFamily:"monospace", fontSize:11, color:"#475569" }}>{t.id}</td>
                       <td style={{ padding:"10px 10px" }}>
-                        <div style={{ fontSize:13, fontWeight:600, color:"#1E293B" }}>{t.name}</div>
+                        <div style={{ fontSize:13, fontWeight:600, color:"#F1F5F9" }}>{t.name}</div>
                         <div style={{ fontSize:10, color:"#475569" }}>{t.phone}</div>
                       </td>
-                      <td style={{ padding:"10px 10px" }}><span style={{ fontSize:11, padding:"2px 8px", borderRadius:4, background:t.type==="Phase 2"?"#10B98122":"#F59E0B22", color:t.type==="Phase 2"?"#047857":"#F59E0B", fontWeight:700 }}>{t.type}</span></td>
-                      <td style={{ padding:"10px 10px", fontSize:14, fontWeight:800, color:"#C2410C" }}>₹{t.amount.toLocaleString()}</td>
-                      <td style={{ padding:"10px 10px", fontSize:11, color:"#DC2626" }}>-₹{gw}</td>
-                      <td style={{ padding:"10px 10px", fontSize:11, color:"#4F46E5" }}>₹{inr(g.gst)}</td>
-                      <td style={{ padding:"10px 10px", fontSize:12, fontWeight:700, color:"#047857" }}>₹{net}</td>
-                      <td style={{ padding:"10px 10px", fontSize:12, color:"#64748B" }}>{t.method}</td>
+                      <td style={{ padding:"10px 10px" }}><span style={{ fontSize:11, padding:"2px 8px", borderRadius:4, background:t.type==="Phase 2"?"#10B98122":"#F59E0B22", color:t.type==="Phase 2"?"#10B981":"#F59E0B", fontWeight:700 }}>{t.type}</span></td>
+                      <td style={{ padding:"10px 10px", fontSize:14, fontWeight:800, color:"#FF6B00" }}>₹{t.amount.toLocaleString()}</td>
+                      <td style={{ padding:"10px 10px", fontSize:11, color:"#EF4444" }}>-₹{gw}</td>
+                      <td style={{ padding:"10px 10px", fontSize:11, color:"#6366F1" }}>₹{inr(g.gst)}</td>
+                      <td style={{ padding:"10px 10px", fontSize:12, fontWeight:700, color:"#10B981" }}>₹{net}</td>
+                      <td style={{ padding:"10px 10px", fontSize:12, color:"#94A3B8" }}>{t.method}</td>
                       <td style={{ padding:"10px 10px" }}><span style={{ padding:"3px 10px", borderRadius:20, fontSize:10, fontWeight:800, background:SC[t.status].bg, color:SC[t.status].color, textTransform:"capitalize" }}>{t.status}</span></td>
                       <td style={{ padding:"10px 10px" }}>
                         {t.status==="success"
-                          ? <button onClick={e=>{ e.stopPropagation(); setInvoice(t); }} style={{ padding:"4px 10px", borderRadius:6, border:"1px solid #FF6B0044", background:"#FF6B0011", color:"#C2410C", fontSize:11, cursor:"pointer", fontWeight:700 }}>📄 GST</button>
-                          : <span style={{ fontSize:10, color:"#64748B" }}>—</span>}
+                          ? <button onClick={e=>{ e.stopPropagation(); setInvoice(t); }} style={{ padding:"4px 10px", borderRadius:6, border:"1px solid #FF6B0044", background:"#FF6B0011", color:"#FF6B00", fontSize:11, cursor:"pointer", fontWeight:700 }}>📄 GST</button>
+                          : <span style={{ fontSize:10, color:"#334155" }}>—</span>}
                       </td>
                     </tr>
                   );
                 })}
                 {filtered.length===0 && (
-                  <tr><td colSpan={10} style={{ padding:"32px 10px", textAlign:"center", color:"#64748B", fontSize:12 }}>No transactions{txnFilter!=="all"?` with status "${txnFilter}"`:" yet"}.</td></tr>
+                  <tr><td colSpan={10} style={{ padding:"32px 10px", textAlign:"center", color:"#334155", fontSize:12 }}>No transactions{txnFilter!=="all"?` with status "${txnFilter}"`:" yet"}.</td></tr>
                 )}
               </tbody>
             </table>
@@ -710,52 +710,52 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
             ].map(s=>(
               <div key={s.l} style={{ ...card, borderTop:`3px solid ${s.c}` }}>
                 <div style={{ fontSize:22, fontWeight:800, color:s.c }}>{s.v}</div>
-                <div style={{ fontSize:12, color:"#1E293B", fontWeight:600, marginTop:4 }}>{s.l}</div>
+                <div style={{ fontSize:12, color:"#F1F5F9", fontWeight:600, marginTop:4 }}>{s.l}</div>
                 <div style={{ fontSize:10, color:"#475569", marginTop:4 }}>{s.sub}</div>
               </div>
             ))}
           </div>
           <div style={{ padding:"10px 14px", borderRadius:10, fontSize:12, display:"flex", alignItems:"center", gap:8,
             background:feeIsReal?"#10B98111":"#F59E0B11", border:`1px solid ${feeIsReal?"#10B98144":"#F59E0B44"}`,
-            color:feeIsReal?"#047857":"#F59E0B" }}>
+            color:feeIsReal?"#10B981":"#F59E0B" }}>
             <span>{feeIsReal?"✓":"ⓘ"}</span>
             <span>{feeLabel}</span>
           </div>
           <div style={{ display:"grid", gridTemplateColumns:"2fr 1fr", gap:14 }}>
             <div style={card}>
-              <div style={{ fontSize:14, fontWeight:700, color:"#1E293B", marginBottom:4 }}>Monthly P&L Summary</div>
+              <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9", marginBottom:4 }}>Monthly P&L Summary</div>
               <div style={{ fontSize:11, color:"#475569", marginBottom:16 }}>Revenue vs costs vs net profit per month</div>
               <ResponsiveContainer width="100%" height={240}>
                 <AreaChart data={monthlyPL}>
                   <defs>
-                    <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#C2410C" stopOpacity={0.3}/><stop offset="95%" stopColor="#C2410C" stopOpacity={0}/></linearGradient>
-                    <linearGradient id="netGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#047857" stopOpacity={0.3}/><stop offset="95%" stopColor="#047857" stopOpacity={0}/></linearGradient>
+                    <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#FF6B00" stopOpacity={0.3}/><stop offset="95%" stopColor="#FF6B00" stopOpacity={0}/></linearGradient>
+                    <linearGradient id="netGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#10B981" stopOpacity={0.3}/><stop offset="95%" stopColor="#10B981" stopOpacity={0}/></linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#1E293B"/>
-                  <XAxis dataKey="month" stroke="#64748B" tick={{ fill:"#64748B", fontSize:11 }}/>
-                  <YAxis stroke="#64748B" tick={{ fill:"#64748B", fontSize:10 }} tickFormatter={v=>`₹${(v/1000).toFixed(0)}k`}/>
-                  <Tooltip contentStyle={{ background:"#FFFFFF", border:"1px solid #E2E8F0", borderRadius:8 }} formatter={(v:any)=>[`₹${Number(v).toLocaleString()}`,""]}/>
-                  <Area type="monotone" dataKey="revenue" stroke="#C2410C" fill="url(#revGrad)" strokeWidth={2} name="Revenue"/>
-                  <Area type="monotone" dataKey="net"     stroke="#047857" fill="url(#netGrad)" strokeWidth={2} name="Net"/>
+                  <XAxis dataKey="month" stroke="#334155" tick={{ fill:"#64748B", fontSize:11 }}/>
+                  <YAxis stroke="#334155" tick={{ fill:"#64748B", fontSize:10 }} tickFormatter={v=>`₹${(v/1000).toFixed(0)}k`}/>
+                  <Tooltip contentStyle={{ background:"#0D1526", border:"1px solid #1E293B", borderRadius:8 }} formatter={(v:any)=>[`₹${Number(v).toLocaleString()}`,""]}/>
+                  <Area type="monotone" dataKey="revenue" stroke="#FF6B00" fill="url(#revGrad)" strokeWidth={2} name="Revenue"/>
+                  <Area type="monotone" dataKey="net"     stroke="#10B981" fill="url(#netGrad)" strokeWidth={2} name="Net"/>
                 </AreaChart>
               </ResponsiveContainer>
             </div>
             <div style={card}>
-              <div style={{ fontSize:14, fontWeight:700, color:"#1E293B", marginBottom:14 }}>Monthly Breakdown</div>
+              <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9", marginBottom:14 }}>Monthly Breakdown</div>
               {monthlyPL.map(m=>(
-                <div key={m.month} style={{ padding:"12px 0", borderBottom:"1px solid #E2E8F0" }}>
+                <div key={m.month} style={{ padding:"12px 0", borderBottom:"1px solid #1E293B" }}>
                   <div style={{ display:"flex", justifyContent:"space-between", marginBottom:6 }}>
-                    <span style={{ fontSize:13, fontWeight:700, color:"#1E293B" }}>{m.month} 2026</span>
-                    <span style={{ fontSize:13, fontWeight:800, color:"#047857" }}>₹{m.net.toLocaleString()}</span>
+                    <span style={{ fontSize:13, fontWeight:700, color:"#F1F5F9" }}>{m.month} 2026</span>
+                    <span style={{ fontSize:13, fontWeight:800, color:"#10B981" }}>₹{m.net.toLocaleString()}</span>
                   </div>
                   <div style={{ display:"flex", gap:12 }}>
-                    <span style={{ fontSize:10, color:"#64748B" }}>Rev: <span style={{ color:"#C2410C" }}>₹{m.revenue.toLocaleString()}</span></span>
-                    <span style={{ fontSize:10, color:"#64748B" }}>GST: <span style={{ color:"#4F46E5" }}>-₹{m.gstPaid.toLocaleString()}</span></span>
-                    <span style={{ fontSize:10, color:"#64748B" }}>GW: <span style={{ color:"#DC2626" }}>-₹{m.gatewayCost.toLocaleString()}</span></span>
+                    <span style={{ fontSize:10, color:"#64748B" }}>Rev: <span style={{ color:"#FF6B00" }}>₹{m.revenue.toLocaleString()}</span></span>
+                    <span style={{ fontSize:10, color:"#64748B" }}>GST: <span style={{ color:"#6366F1" }}>-₹{m.gstPaid.toLocaleString()}</span></span>
+                    <span style={{ fontSize:10, color:"#64748B" }}>GW: <span style={{ color:"#EF4444" }}>-₹{m.gatewayCost.toLocaleString()}</span></span>
                   </div>
                 </div>
               ))}
-              <div style={{ marginTop:12, padding:"10px 12px", background:"#FFFFFF22", border:"1px solid #E2E8F0", borderRadius:10 }}>
+              <div style={{ marginTop:12, padding:"10px 12px", background:"#1E293B22", border:"1px solid #1E293B", borderRadius:10 }}>
                 <div style={{ fontSize:11, color:"#64748B", fontWeight:700 }}>No transactions yet</div>
                 <div style={{ fontSize:10, color:"#475569", marginTop:2 }}>P&L will auto-update as Cashfree payments come in</div>
               </div>
@@ -777,28 +777,28 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
               <div key={s.l} style={{ ...card, borderTop:`3px solid ${s.c}` }}>
                 <div style={{ fontSize:22, fontWeight:800, color:s.c }}>{s.v}</div>
                 <div style={{ fontSize:11, color:"#64748B", marginTop:3 }}>{s.l}</div>
-                <div style={{ fontSize:10, color:"#64748B", marginTop:5 }}>{s.sub}</div>
+                <div style={{ fontSize:10, color:"#334155", marginTop:5 }}>{s.sub}</div>
               </div>
             ))}
           </div>
           <div style={{ display:"grid", gridTemplateColumns:"2fr 1fr", gap:14 }}>
             <div style={card}>
-              <div style={{ fontSize:14, fontWeight:700, color:"#1E293B", marginBottom:4 }}>Monthly GST Collected vs Remitted</div>
+              <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9", marginBottom:4 }}>Monthly GST Collected vs Remitted</div>
               <div style={{ fontSize:11, color:"#475569", marginBottom:16 }}>GSTR-1 compliance tracking</div>
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={gstMonthly}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#1E293B"/>
-                  <XAxis dataKey="month" stroke="#64748B" tick={{ fill:"#64748B", fontSize:11 }}/>
-                  <YAxis stroke="#64748B" tick={{ fill:"#64748B", fontSize:10 }} tickFormatter={v=>`₹${(v/1000).toFixed(0)}k`}/>
-                  <Tooltip contentStyle={{ background:"#FFFFFF", border:"1px solid #E2E8F0", borderRadius:8 }} formatter={(v:any)=>[`₹${Number(v).toLocaleString()}`,""]}/>
-                  <Bar dataKey="collected" fill="#4F46E5" radius={[4,4,0,0]} name="Collected"/>
-                  <Bar dataKey="remitted"  fill="#047857" radius={[4,4,0,0]} name="Remitted"/>
+                  <XAxis dataKey="month" stroke="#334155" tick={{ fill:"#64748B", fontSize:11 }}/>
+                  <YAxis stroke="#334155" tick={{ fill:"#64748B", fontSize:10 }} tickFormatter={v=>`₹${(v/1000).toFixed(0)}k`}/>
+                  <Tooltip contentStyle={{ background:"#0D1526", border:"1px solid #1E293B", borderRadius:8 }} formatter={(v:any)=>[`₹${Number(v).toLocaleString()}`,""]}/>
+                  <Bar dataKey="collected" fill="#6366F1" radius={[4,4,0,0]} name="Collected"/>
+                  <Bar dataKey="remitted"  fill="#10B981" radius={[4,4,0,0]} name="Remitted"/>
                 </BarChart>
               </ResponsiveContainer>
             </div>
             <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
               <div style={card}>
-                <div style={{ fontSize:13, fontWeight:700, color:"#1E293B", marginBottom:14 }}>BCPL GST Registration</div>
+                <div style={{ fontSize:13, fontWeight:700, color:"#F1F5F9", marginBottom:14 }}>BCPL GST Registration</div>
                 {[
                   { l:"Business",    v:"Kriparti Playing11 Pvt. Ltd." },
                   { l:"GSTIN",       v:BCPL_GSTIN },
@@ -807,18 +807,18 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
                   { l:"HSN Code",    v:"999299 — Sports Services" },
                   { l:"GST Rate",    v:"18% (CGST 9% + SGST 9%)" },
                 ].map(r=>(
-                  <div key={r.l} style={{ padding:"8px 0", borderBottom:"1px solid #E2E8F0" }}>
+                  <div key={r.l} style={{ padding:"8px 0", borderBottom:"1px solid #1E293B" }}>
                     <div style={{ fontSize:10, color:"#475569", fontWeight:700 }}>{r.l}</div>
-                    <div style={{ fontSize:12, color:"#1E293B", marginTop:2, fontWeight:600, fontFamily:r.l==="GSTIN"?"monospace":"inherit" }}>{r.v}</div>
+                    <div style={{ fontSize:12, color:"#F1F5F9", marginTop:2, fontWeight:600, fontFamily:r.l==="GSTIN"?"monospace":"inherit" }}>{r.v}</div>
                   </div>
                 ))}
               </div>
               <div style={card}>
-                <div style={{ fontSize:13, fontWeight:700, color:"#1E293B", marginBottom:10 }}>Filing Status</div>
+                <div style={{ fontSize:13, fontWeight:700, color:"#F1F5F9", marginBottom:10 }}>Filing Status</div>
                 {gstMonthly.map(m=>(
-                  <div key={m.month} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"7px 0", borderBottom:"1px solid #E2E8F0" }}>
-                    <span style={{ fontSize:12, color:"#64748B" }}>GSTR-1 {m.month}</span>
-                    <span style={{ fontSize:10, padding:"2px 9px", borderRadius:6, fontWeight:700, background:m.due==="Paid"?"#10B98122":m.due==="Partial"?"#F59E0B22":"#EF444422", color:m.due==="Paid"?"#047857":m.due==="Partial"?"#F59E0B":"#EF4444" }}>{m.due}</span>
+                  <div key={m.month} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"7px 0", borderBottom:"1px solid #1E293B" }}>
+                    <span style={{ fontSize:12, color:"#94A3B8" }}>GSTR-1 {m.month}</span>
+                    <span style={{ fontSize:10, padding:"2px 9px", borderRadius:6, fontWeight:700, background:m.due==="Paid"?"#10B98122":m.due==="Partial"?"#F59E0B22":"#EF444422", color:m.due==="Paid"?"#10B981":m.due==="Partial"?"#F59E0B":"#EF4444" }}>{m.due}</span>
                   </div>
                 ))}
               </div>
@@ -831,16 +831,16 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
       {tab==="invoices"&&(
         <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
           <div style={{ display:"flex", gap:10, alignItems:"center" }}>
-            <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search by player name or TXN ID…" style={{ flex:1, padding:"10px 14px", background:"#FFFFFF", border:"1px solid #E2E8F0", borderRadius:10, color:"#1E293B", fontSize:13, outline:"none" }}/>
+            <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search by player name or TXN ID…" style={{ flex:1, padding:"10px 14px", background:"#0D1526", border:"1px solid #1E293B", borderRadius:10, color:"#F1F5F9", fontSize:13, outline:"none" }}/>
           </div>
           <div style={card}>
             <div style={{ display:"flex", justifyContent:"space-between", marginBottom:14 }}>
-              <div style={{ fontSize:14, fontWeight:700, color:"#1E293B" }}>All GST Invoices</div>
+              <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9" }}>All GST Invoices</div>
               <span style={{ fontSize:11, color:"#64748B" }}>{TRANSACTIONS.filter(t=>t.status==="success").length} invoices generated</span>
             </div>
             <table style={{ width:"100%", borderCollapse:"collapse" }}>
               <thead>
-                <tr style={{ borderBottom:"1px solid #E2E8F0" }}>
+                <tr style={{ borderBottom:"1px solid #1E293B" }}>
                   {["Invoice No","Player","Phase","Base","GST (18%)","GW Fee","Net","Total Charged","Action"].map(h=>(
                     <th key={h} style={{ padding:"8px 10px", textAlign:"left", fontSize:10, color:"#475569", fontWeight:700, textTransform:"uppercase" }}>{h}</th>
                   ))}
@@ -851,26 +851,26 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
                   const g  = gstFromGross(t.amount);
                   const gw = Math.round(t.amount * feeRate);
                   return (
-                    <tr key={t.id} onClick={()=>setTxnDetail(t)} title="Tap for full details" style={{ borderBottom:"1px solid #E2E8F0", cursor:"pointer" }}>
-                      <td style={{ padding:"10px 10px", fontFamily:"monospace", fontSize:11, color:"#4F46E5" }}>BCPL/25-26/{t.id}</td>
-                      <td style={{ padding:"10px 10px", fontSize:13, fontWeight:600, color:"#1E293B" }}>{t.name}</td>
-                      <td style={{ padding:"10px 10px" }}><span style={{ fontSize:11, padding:"2px 8px", borderRadius:4, background:t.type==="Phase 2"?"#10B98122":"#F59E0B22", color:t.type==="Phase 2"?"#047857":"#F59E0B", fontWeight:700 }}>{t.type}</span></td>
-                      <td style={{ padding:"10px 10px", fontSize:12, color:"#64748B" }}>₹{inr(g.base)}</td>
-                      <td style={{ padding:"10px 10px", fontSize:12, color:"#4F46E5" }}>₹{inr(g.gst)}</td>
-                      <td style={{ padding:"10px 10px", fontSize:12, color:"#DC2626" }}>₹{gw}</td>
-                      <td style={{ padding:"10px 10px", fontSize:12, fontWeight:700, color:"#047857" }}>₹{inr(Math.round(t.amount-g.gst-gw))}</td>
-                      <td style={{ padding:"10px 10px", fontSize:13, fontWeight:800, color:"#C2410C" }}>₹{t.amount.toLocaleString()}</td>
+                    <tr key={t.id} onClick={()=>setTxnDetail(t)} title="Tap for full details" style={{ borderBottom:"1px solid #0F1B2D", cursor:"pointer" }}>
+                      <td style={{ padding:"10px 10px", fontFamily:"monospace", fontSize:11, color:"#6366F1" }}>BCPL/25-26/{t.id}</td>
+                      <td style={{ padding:"10px 10px", fontSize:13, fontWeight:600, color:"#F1F5F9" }}>{t.name}</td>
+                      <td style={{ padding:"10px 10px" }}><span style={{ fontSize:11, padding:"2px 8px", borderRadius:4, background:t.type==="Phase 2"?"#10B98122":"#F59E0B22", color:t.type==="Phase 2"?"#10B981":"#F59E0B", fontWeight:700 }}>{t.type}</span></td>
+                      <td style={{ padding:"10px 10px", fontSize:12, color:"#94A3B8" }}>₹{inr(g.base)}</td>
+                      <td style={{ padding:"10px 10px", fontSize:12, color:"#6366F1" }}>₹{inr(g.gst)}</td>
+                      <td style={{ padding:"10px 10px", fontSize:12, color:"#EF4444" }}>₹{gw}</td>
+                      <td style={{ padding:"10px 10px", fontSize:12, fontWeight:700, color:"#10B981" }}>₹{inr(Math.round(t.amount-g.gst-gw))}</td>
+                      <td style={{ padding:"10px 10px", fontSize:13, fontWeight:800, color:"#FF6B00" }}>₹{t.amount.toLocaleString()}</td>
                       <td style={{ padding:"10px 10px" }}>
                         <div style={{ display:"flex", gap:6 }}>
-                          <button onClick={e=>{ e.stopPropagation(); setInvoice(t); }} style={{ padding:"4px 10px", borderRadius:6, border:"1px solid #FF6B0044", background:"#FF6B0011", color:"#C2410C", fontSize:11, cursor:"pointer", fontWeight:700 }}>View</button>
-                          <button onClick={e=>{ e.stopPropagation(); setInvoice(t); }} style={{ padding:"4px 10px", borderRadius:6, border:"1px solid #6366F144", background:"#6366F111", color:"#4F46E5", fontSize:11, cursor:"pointer" }}>Email</button>
+                          <button onClick={e=>{ e.stopPropagation(); setInvoice(t); }} style={{ padding:"4px 10px", borderRadius:6, border:"1px solid #FF6B0044", background:"#FF6B0011", color:"#FF6B00", fontSize:11, cursor:"pointer", fontWeight:700 }}>View</button>
+                          <button onClick={e=>{ e.stopPropagation(); setInvoice(t); }} style={{ padding:"4px 10px", borderRadius:6, border:"1px solid #6366F144", background:"#6366F111", color:"#6366F1", fontSize:11, cursor:"pointer" }}>Email</button>
                         </div>
                       </td>
                     </tr>
                   );
                 })}
                 {TRANSACTIONS.filter(t=>t.status==="success").length===0 && (
-                  <tr><td colSpan={9} style={{ padding:"32px 10px", textAlign:"center", color:"#64748B", fontSize:12 }}>No invoices yet — invoices appear when payments succeed.</td></tr>
+                  <tr><td colSpan={9} style={{ padding:"32px 10px", textAlign:"center", color:"#334155", fontSize:12 }}>No invoices yet — invoices appear when payments succeed.</td></tr>
                 )}
               </tbody>
             </table>
@@ -885,11 +885,11 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
 
       {tab==="tds"&&(
         <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
-          <div style={{ ...card, borderLeft:"3px solid #F59E0B", background:"linear-gradient(135deg,#FFFFFF,#1A1208)" }}>
-            <div style={{ fontSize:13, fontWeight:700, color:"#B45309", marginBottom:6 }}>⚠ TDS on Prize Money (Section 194B — 30%)</div>
+          <div style={{ ...card, borderLeft:"3px solid #F59E0B", background:"linear-gradient(135deg,#0D1526,#1A1208)" }}>
+            <div style={{ fontSize:13, fontWeight:700, color:"#F59E0B", marginBottom:6 }}>⚠ TDS on Prize Money (Section 194B — 30%)</div>
             <div style={{ fontSize:12, color:"#64748B", lineHeight:1.7 }}>
               As per Indian Income Tax Act, TDS @ 30% is applicable on prize money exceeding ₹10,000. BCPL must deduct TDS before disbursing prize amounts and file Form 27Q quarterly.<br/>
-              <strong style={{ color:"#64748B" }}>Next TDS filing due: 31st July 2026 (Q1 FY 2026-27)</strong>
+              <strong style={{ color:"#94A3B8" }}>Next TDS filing due: 31st July 2026 (Q1 FY 2026-27)</strong>
             </div>
           </div>
           <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:12 }}>
@@ -908,11 +908,11 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
           </div>
           <div style={card}>
             <div style={{ display:"flex", justifyContent:"space-between", marginBottom:14 }}>
-              <div style={{ fontSize:14, fontWeight:700, color:"#1E293B" }}>Prize TDS Records</div>
+              <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9" }}>Prize TDS Records</div>
             </div>
             <table style={{ width:"100%", borderCollapse:"collapse" }}>
               <thead>
-                <tr style={{ borderBottom:"1px solid #E2E8F0" }}>
+                <tr style={{ borderBottom:"1px solid #1E293B" }}>
                   {["Player / Entity","PAN","Prize Amount","TDS (30%)","Net Paid","Status"].map(h=>(
                     <th key={h} style={{ padding:"8px 10px", textAlign:"left", fontSize:10, color:"#475569", fontWeight:700, textTransform:"uppercase" }}>{h}</th>
                   ))}
@@ -920,16 +920,16 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
               </thead>
               <tbody>
                 {TDS_PRIZES.length===0 && (
-                  <tr><td colSpan={6} style={{ padding:"32px 10px", textAlign:"center", color:"#64748B", fontSize:12 }}>No prize money disbursed yet — TDS records will appear here.</td></tr>
+                  <tr><td colSpan={6} style={{ padding:"32px 10px", textAlign:"center", color:"#334155", fontSize:12 }}>No prize money disbursed yet — TDS records will appear here.</td></tr>
                 )}
                 {TDS_PRIZES.map((t,i)=>(
-                  <tr key={i} style={{ borderBottom:"1px solid #E2E8F0" }}>
-                    <td style={{ padding:"11px 10px", fontSize:13, fontWeight:600, color:"#1E293B" }}>{t.player}</td>
-                    <td style={{ padding:"11px 10px", fontFamily:"monospace", fontSize:12, color:"#B45309" }}>{t.pan}</td>
-                    <td style={{ padding:"11px 10px", fontSize:13, color:"#C2410C", fontWeight:700 }}>{t.prize}</td>
-                    <td style={{ padding:"11px 10px", fontSize:13, color:"#DC2626", fontWeight:700 }}>{t.tds}</td>
-                    <td style={{ padding:"11px 10px", fontSize:13, color:"#047857", fontWeight:700 }}>{t.net}</td>
-                    <td style={{ padding:"11px 10px" }}><span style={{ fontSize:10, padding:"3px 10px", borderRadius:6, fontWeight:700, background:t.status==="Deducted"?"#10B98122":"#F59E0B22", color:t.status==="Deducted"?"#047857":"#F59E0B" }}>{t.status}</span></td>
+                  <tr key={i} style={{ borderBottom:"1px solid #0F1B2D" }}>
+                    <td style={{ padding:"11px 10px", fontSize:13, fontWeight:600, color:"#F1F5F9" }}>{t.player}</td>
+                    <td style={{ padding:"11px 10px", fontFamily:"monospace", fontSize:12, color:"#F59E0B" }}>{t.pan}</td>
+                    <td style={{ padding:"11px 10px", fontSize:13, color:"#FF6B00", fontWeight:700 }}>{t.prize}</td>
+                    <td style={{ padding:"11px 10px", fontSize:13, color:"#EF4444", fontWeight:700 }}>{t.tds}</td>
+                    <td style={{ padding:"11px 10px", fontSize:13, color:"#10B981", fontWeight:700 }}>{t.net}</td>
+                    <td style={{ padding:"11px 10px" }}><span style={{ fontSize:10, padding:"3px 10px", borderRadius:6, fontWeight:700, background:t.status==="Deducted"?"#10B98122":"#F59E0B22", color:t.status==="Deducted"?"#10B981":"#F59E0B" }}>{t.status}</span></td>
                   </tr>
                 ))}
               </tbody>

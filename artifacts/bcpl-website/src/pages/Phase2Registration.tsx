@@ -107,7 +107,7 @@ export function Phase2Registration() {
   if (loadState === 'not_selected') return (
     <div style={{ background:'var(--bg)', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:16, padding:24, fontFamily:'var(--font-body)', textAlign:'center' }}>
       <div style={{ color:'var(--orange)' }}><IcoBat size={40} /></div>
-      <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:32, color:'var(--ink)', textTransform:'uppercase' }}>{t("Phase 2 Not Accessible Yet", "फेज 2 अभी उपलब्ध नहीं है")}</div>
+      <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:32, color:'#fff', textTransform:'uppercase' }}>{t("Phase 2 Not Accessible Yet", "फेज 2 अभी उपलब्ध नहीं है")}</div>
       <div style={{ fontSize:15, color:'#64748B', maxWidth:400, lineHeight:1.6 }}>{t("Phase 2 is only available after you have qualified through BCPL's Phase 1 evaluation.", "फेज 2 केवल तभी उपलब्ध है जब आप फेज 1 evaluation में qualify कर चुके हों।")}</div>
       <Link href="/register/upload-video" className="btn-cta" style={{ marginTop:16 }}>{t("Go to Video Upload →", "वीडियो अपलोड पर जाएं →")}</Link>
       <style>{`.btn-cta{display:inline-flex;align-items:center;background:linear-gradient(135deg,var(--orange),var(--orange-2));border:none;border-radius:14px;color:#fff;font-family:var(--font-head);font-weight:900;letter-spacing:0.04em;padding:16px 32px;font-size:16px;text-decoration:none;text-transform:uppercase;transition:opacity 0.2s,transform 0.15s;box-shadow:0 6px 24px rgba(255,122,41,0.35);}`}</style>
@@ -128,15 +128,15 @@ export function Phase2Registration() {
         .grid { display: grid; grid-template-columns: 1fr; gap: 32px; }
         @media (min-width: 1024px) { .grid { grid-template-columns: 1.2fr 340px; } }
         
-        .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 24px; box-shadow: 0 10px 30px rgba(12,29,51,0.08); }
+        .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
         .btn-cta { background: linear-gradient(135deg, var(--orange), var(--orange-2)); border: none; border-radius: var(--r); color: #fff; font-family: var(--font-head); font-weight: 800; font-size: 16px; letter-spacing: 0.04em; padding: 16px 32px; cursor: pointer; text-transform: uppercase; transition: opacity 0.2s, transform 0.15s; box-shadow: 0 6px 24px rgba(255,122,41,0.35); width: 100%; display: flex; justify-content: center; align-items: center; }
         .btn-cta:hover { opacity: 0.9; transform: translateY(-2px); }
         .btn-cta:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
         
-        .check-row { display: flex; align-items: flex-start; gap: 16px; cursor: pointer; padding: 20px; border: 1px solid var(--line); background: rgba(12,29,51,0.03); transition: all 0.2s; border-radius: var(--r); margin-bottom: 12px; }
+        .check-row { display: flex; align-items: flex-start; gap: 16px; cursor: pointer; padding: 20px; border: 1px solid var(--line); background: rgba(255,255,255,0.02); transition: all 0.2s; border-radius: var(--r); margin-bottom: 12px; }
         .check-row:hover { border-color: rgba(255,122,41,0.4); background: rgba(255,122,41,0.02); }
         .check-row.checked { border-color: rgba(34,197,94,0.4); background: rgba(34,197,94,0.06); }
-        .cbox { width: 24px; height: 24px; border: 2px solid rgba(12,29,51,0.25); border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.2s; margin-top: 2px; }
+        .cbox { width: 24px; height: 24px; border: 2px solid rgba(255,255,255,0.2); border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.2s; margin-top: 2px; }
         .cbox.checked { background: var(--green); border-color: var(--green); }
         
         .ticket { background: var(--panel); border: 1px solid rgba(232,178,61,0.3); border-radius: var(--r); position: relative; overflow: hidden; }
@@ -145,7 +145,7 @@ export function Phase2Registration() {
         .ticket-dash::before { left:-36px; border-right: 1px solid rgba(232,178,61,0.3); }
         .ticket-dash::after { right:-36px; border-left: 1px solid rgba(232,178,61,0.3); }
         
-        .stick-cta { position: fixed; bottom: 0; left: 0; right: 0; padding: 16px 20px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); background: rgba(246,243,236,0.96); backdrop-filter: blur(12px); border-top: 1px solid rgba(255,122,41,0.45); box-shadow: 0 -8px 28px rgba(12,29,51,0.12); z-index: 1000; }
+        .stick-cta { position: fixed; bottom: 0; left: 0; right: 0; padding: 16px 20px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); background: rgba(3,7,16,0.95); backdrop-filter: blur(12px); border-top: 1px solid rgba(255,122,41,0.3); z-index: 1000; }
         @media (min-width: 768px) { .stick-cta { display: none; } }
       `}</style>
 
@@ -157,17 +157,17 @@ export function Phase2Registration() {
           <span style={{ color: 'var(--green)' }}><IcoCheck size={24} /></span>
           <div style={{ flex: 1 }}>
             <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 16, color: 'var(--green)', letterSpacing: '.06em', textTransform: 'uppercase' }}>{t("PHASE 1 CLEARED", "फेज 1 क्लियर")}</div>
-            <div style={{ fontSize: 13, color: 'rgba(12,29,51,0.66)', marginTop: 2 }}>{t(`Phase 1 Qualified · ${role} · ${city}`, `फेज 1 क्वालिफाइड · ${role} · ${city}`)}</div>
+            <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', marginTop: 2 }}>{t(`Phase 1 Qualified · ${role} · ${city}`, `फेज 1 क्वालिफाइड · ${role} · ${city}`)}</div>
           </div>
         </div>
 
         {/* Title */}
         <div style={{ marginBottom: 40 }}>
           <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 13, letterSpacing: '.12em', color: 'var(--orange)', marginBottom: 8, textTransform: 'uppercase' }}>{t("Phase 2 Onboarding", "फेज 2 ऑनबोर्डिंग")}</div>
-          <h1 style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(28px, 5vw, 48px)', color: 'var(--ink)', textTransform: 'uppercase', lineHeight: 1.05 }}>
+          <h1 style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(28px, 5vw, 48px)', color: '#fff', textTransform: 'uppercase', lineHeight: 1.05 }}>
             {t("PLAYER", "प्लेयर")} <span style={{ color: 'var(--orange)' }}>{t("ONBOARDING", "ऑनबोर्डिंग")}</span>
           </h1>
-          <p style={{ color: 'rgba(12,29,51,0.62)', fontSize: 15, marginTop: 12, maxWidth: 600, lineHeight: 1.6 }}>
+          <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 15, marginTop: 12, maxWidth: 600, lineHeight: 1.6 }}>
             {t("Confirm the declarations below to proceed to Phase 2 payment. Employment & emergency details will be collected during KYC.", "फेज 2 पेमेंट के लिए आगे बढ़ने से पहले नीचे दी गई घोषणाओं की पुष्टि करें। रोज़गार और आपातकालीन जानकारी KYC के दौरान ली जाएगी।")}
           </p>
         </div>
@@ -175,7 +175,7 @@ export function Phase2Registration() {
         <div className="grid">
           <div>
             <div className="card">
-              <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 20, color: 'var(--ink)', textTransform: 'uppercase', marginBottom: 6 }}>{t("Terms & Declaration", "शर्तें और घोषणा")}</div>
+              <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 20, color: '#fff', textTransform: 'uppercase', marginBottom: 6 }}>{t("Terms & Declaration", "शर्तें और घोषणा")}</div>
               <div style={{ color: 'var(--ink-3)', fontSize: 13, marginBottom: 24 }}>{t("Please read and confirm each statement carefully", "कृपया ध्यान से पढ़ें और प्रत्येक कथन की पुष्टि करें")}</div>
               
               <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -187,7 +187,7 @@ export function Phase2Registration() {
                 ].map(({ val, set, text }, idx) => (
                   <div key={idx} className={`check-row ${val ? 'checked' : ''}`} onClick={() => set(!val)}>
                     <div className={`cbox ${val ? 'checked' : ''}`}>{val && <span style={{ color: '#fff', fontSize: 14, fontWeight: 900 }}>✓</span>}</div>
-                    <span style={{ fontSize: 15, color: val ? 'var(--ink)' : 'rgba(12,29,51,0.72)', lineHeight: 1.5 }}>{text}</span>
+                    <span style={{ fontSize: 15, color: val ? '#fff' : 'rgba(255,255,255,0.7)', lineHeight: 1.5 }}>{text}</span>
                   </div>
                 ))}
               </div>
@@ -212,13 +212,13 @@ export function Phase2Registration() {
             <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 13, letterSpacing: '.12em', color: 'var(--ink-3)', marginBottom: 12, textTransform: 'uppercase' }}>{t("Phase 2 Entry Fee", "फेज 2 एंट्री फीस")}</div>
             <div className="ticket">
               <div style={{ background: 'linear-gradient(135deg, var(--orange), var(--orange-2))', padding: '24px' }}>
-                <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 11, letterSpacing: '.18em', color: 'rgba(12,29,51,0.80)', marginBottom: 6, textTransform: 'uppercase' }}>BCPL Season 5</div>
+                <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 11, letterSpacing: '.18em', color: 'rgba(255,255,255,0.8)', marginBottom: 6, textTransform: 'uppercase' }}>BCPL Season 5</div>
                 <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 22, color: '#fff', lineHeight: 1.2, textTransform: 'uppercase' }}>{t("PHASE 2 PHYSICAL TRIAL", "फेज 2 फिजिकल ट्रायल")}</div>
               </div>
               <div style={{ padding: '32px 24px', textAlign: 'center', background: 'var(--panel)' }}>
                 <div style={{ fontFamily: 'var(--font-head)', fontWeight: 700, fontSize: 12, letterSpacing: '.1em', color: 'var(--ink-3)', marginBottom: 8, textTransform: 'uppercase' }}>{t("Entry Fee", "एंट्री फीस")}</div>
                 <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 56, color: 'var(--orange)', lineHeight: 1 }}>₹{p2b.toLocaleString('en-IN')}</div>
-                <div style={{ marginTop: 10, fontSize: 12.5, color: 'rgba(12,29,51,0.62)', fontWeight: 600 }}>
+                <div style={{ marginTop: 10, fontSize: 12.5, color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>
                   {t(`+ ${Math.round(fees.gstRate * 100)}% GST — total payable ₹${withGst(p2b, fees.gstRate).toLocaleString('en-IN')}`,
                      `+ ${Math.round(fees.gstRate * 100)}% GST — कुल payable ₹${withGst(p2b, fees.gstRate).toLocaleString('en-IN')}`)}
                 </div>
@@ -231,9 +231,9 @@ export function Phase2Registration() {
                   [t('Trial City', 'ट्रायल शहर'), city || '—'],
                   [t('Reg. ID', 'रजि. आईडी'), regId ? regId.slice(0,8).toUpperCase() : '—'],
                 ].map(([k,v]) => (
-                  <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid rgba(12,29,51,0.08)', fontSize: 13 }}>
+                  <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: 13 }}>
                     <span style={{ color: 'var(--ink-3)', fontWeight: 600 }}>{k}</span>
-                    <span style={{ color: 'var(--ink)', fontWeight: 700, textAlign: 'right' }}>{v}</span>
+                    <span style={{ color: '#fff', fontWeight: 700, textAlign: 'right' }}>{v}</span>
                   </div>
                 ))}
               </div>

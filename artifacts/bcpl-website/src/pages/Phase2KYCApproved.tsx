@@ -51,7 +51,7 @@ export function Phase2KYCApproved() {
         
         .btn-cta { display: inline-block; background: linear-gradient(135deg, var(--orange), var(--orange-2)); border: none; border-radius: var(--r); color: #fff; font-family: var(--font-head); font-weight: 900; letter-spacing: .06em; cursor: pointer; transition: all .2s; text-decoration: none; padding: 14px 28px; text-transform: uppercase; }
         .btn-cta:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255,122,41,0.3); }
-        .btn-outline { background: transparent; border: 1px solid rgba(12,29,51,0.20); border-radius: var(--r); color: var(--ink-2); font-family: var(--font-head); font-weight: 800; cursor: pointer; transition: all .2s; letter-spacing: .06em; text-transform: uppercase; }
+        .btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.2); border-radius: var(--r); color: rgba(255,255,255,0.8); font-family: var(--font-head); font-weight: 800; cursor: pointer; transition: all .2s; letter-spacing: .06em; text-transform: uppercase; }
         .btn-outline:hover { border-color: var(--orange); color: var(--orange); }
         
         .notice-card { background: var(--panel); border: 1px solid var(--line); padding: 24px; border-radius: var(--r); transition: border-color .2s; height: 100%; display: flex; flex-direction: column; }
@@ -70,7 +70,7 @@ export function Phase2KYCApproved() {
         .notices-grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 48px; }
         @media(min-width: 640px) { .notices-grid { grid-template-columns: repeat(3, 1fr); } }
         
-        .season-cta { background: linear-gradient(135deg, var(--panel), var(--bg-deep)); border: 1px solid rgba(255,122,41,0.3); box-shadow: 0 14px 36px rgba(12,29,51,0.08); padding: 32px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; border-radius: var(--r); }
+        .season-cta { background: linear-gradient(135deg, var(--panel), #0E1420); border: 1px solid rgba(255,122,41,0.3); padding: 32px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; border-radius: var(--r); }
         .season-cta-btn { width: 100%; text-align: center; }
         @media(min-width: 480px) { .season-cta-btn { width: auto; } }
         
@@ -85,14 +85,14 @@ export function Phase2KYCApproved() {
       <SiteHeader />
 
       {/* ── VERIFIED HERO BANNER ── */}
-      <div style={{ background: 'linear-gradient(135deg, var(--bg), rgba(34,197,94,0.10))', borderBottom: '2px solid rgba(34,197,94,0.4)', padding: '60px 0 48px', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ background: 'linear-gradient(135deg, var(--bg), #04140A)', borderBottom: '2px solid rgba(34,197,94,0.4)', padding: '60px 0 48px', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', inset: 0, backgroundImage: `url(${BASE}bcpl-assets/event-teams-a.webp)`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.1, mixBlendMode: 'overlay', pointerEvents: 'none' }} />
         <div className="W" style={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
           <div style={{ color: 'var(--green)', animation: 'verifiedPop .7s cubic-bezier(.34,1.56,.64,1) both', display: 'inline-block', marginBottom: 16 }}><IcoCheck size={72} /></div>
           <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(28px, 6vw, 56px)', color: 'var(--green)', letterSpacing: '.02em', textTransform: 'uppercase', marginBottom: 12, animation: 'fadeUp .5s ease .1s both', lineHeight: 1.1 }}>
             {t("KYC VERIFIED", "KYC वेरीफाइड")}
           </div>
-          <div style={{ fontSize: 16, color: 'var(--ink-2)', maxWidth: 600, margin: '0 auto 24px', lineHeight: 1.6, animation: 'fadeUp .5s ease .2s both' }}>
+          <div style={{ fontSize: 16, color: 'rgba(255,255,255,0.6)', maxWidth: 600, margin: '0 auto 24px', lineHeight: 1.6, animation: 'fadeUp .5s ease .2s both' }}>
             {t("You are officially cleared to participate in BCPL Season 5 Physical Trials. Your franchise journey begins on the ground.", "आप आधिकारिक रूप से BCPL सीजन 5 फिजिकल ट्रायल में भाग लेने के लिए क्लियर हैं। आपका फ्रैंचाइज़ी सफर अब मैदान पर शुरू होता है।")}
           </div>
           <div className="hero-chips" style={{ animation: 'fadeUp .5s ease .3s both' }}>
@@ -109,7 +109,7 @@ export function Phase2KYCApproved() {
       </div>
 
       {/* ── SEASON ROADMAP RAIL ── */}
-      <div style={{ background: 'var(--bg-deep)', borderBottom: '1px solid var(--line)', padding: '24px 0', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+      <div style={{ background: '#0B101A', borderBottom: '1px solid var(--line)', padding: '24px 0', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
         <div className="W">
           <div style={{ fontSize: 11, fontWeight: 900, fontFamily: 'var(--font-head)', letterSpacing: '.16em', color: 'var(--ink-3)', marginBottom: 16, textTransform: 'uppercase' }}>{t("YOUR JOURNEY", "आपका सफर")}</div>
           <div className="roadmap-rail">
@@ -118,17 +118,17 @@ export function Phase2KYCApproved() {
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, minWidth: 64 }}>
                   <div style={{
                     width: 40, height: 40, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, flexShrink: 0,
-                    background: node.done ? 'var(--green)' : node.active ? 'var(--orange)' : 'rgba(12,29,51,0.06)',
-                    border: `2px solid ${node.done ? 'var(--green)' : node.active ? 'var(--orange)' : 'rgba(12,29,51,0.12)'}`,
+                    background: node.done ? 'var(--green)' : node.active ? 'var(--orange)' : 'rgba(255,255,255,0.05)',
+                    border: `2px solid ${node.done ? 'var(--green)' : node.active ? 'var(--orange)' : 'rgba(255,255,255,0.1)'}`,
                     animation: node.active ? 'pulseOrange 2s ease infinite' : 'none',
                     color: node.done ? '#fff' : 'inherit'
                   }}>
                     {node.done ? '✓' : <node.icon size={18} />}
                   </div>
-                  <div className="roadmap-node-label" style={{ color: node.done ? 'var(--green)' : node.active ? 'var(--orange)' : 'rgba(12,29,51,0.45)' }}>{t(node.label, node.label)}</div>
+                  <div className="roadmap-node-label" style={{ color: node.done ? 'var(--green)' : node.active ? 'var(--orange)' : 'rgba(255,255,255,0.3)' }}>{t(node.label, node.label)}</div>
                 </div>
                 {i < ROADMAP.length - 1 && (
-                  <div style={{ flex: 1, height: 2, background: node.done ? 'var(--green)' : 'rgba(12,29,51,0.10)', margin: '0 8px', marginBottom: 20, minWidth: 16 }} />
+                  <div style={{ flex: 1, height: 2, background: node.done ? 'var(--green)' : 'rgba(255,255,255,0.08)', margin: '0 8px', marginBottom: 20, minWidth: 16 }} />
                 )}
               </React.Fragment>
             ))}
@@ -144,7 +144,7 @@ export function Phase2KYCApproved() {
           <div style={{ background: 'var(--panel)', border: '1px solid var(--line)', borderTop: '4px solid var(--orange)', borderRadius: 'var(--r)' }}>
             <div style={{ padding: '24px', borderBottom: '1px solid var(--line)' }}>
               <div style={{ fontSize: 11, fontWeight: 900, fontFamily: 'var(--font-head)', letterSpacing: '.16em', color: 'var(--ink-3)', marginBottom: 8 }}>{t("PLAYER PROFILE", "प्लेयर प्रोफाइल")}</div>
-              <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(28px, 4vw, 36px)', color: 'var(--ink)', textTransform: 'uppercase', lineHeight: 1.1 }}>{playerName}</div>
+              <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(28px, 4vw, 36px)', color: '#fff', textTransform: 'uppercase', lineHeight: 1.1 }}>{playerName}</div>
             </div>
             <div style={{ padding: '24px' }}>
               <div style={{ display: 'flex', gap: 12, marginBottom: 24, flexWrap: 'wrap' }}>
@@ -159,8 +159,8 @@ export function Phase2KYCApproved() {
                 { label: t('KYC Status', 'KYC स्टेटस'), value: t('Verified', 'वेरीफाइड'), green: true },
               ].map(row => (
                 <div key={row.label} className="profile-row">
-                  <div style={{ fontSize: 13, color: 'var(--ink-3)', fontWeight: 600, flexShrink: 0 }}>{row.label}</div>
-                  <div style={{ fontSize: row.mono ? 13 : 14, fontWeight: 700, color: row.green ? 'var(--green)' : 'var(--ink)', fontFamily: row.mono ? 'monospace' : 'inherit', textAlign: 'right', wordBreak: 'break-all', marginLeft: 8 }}>{row.value}</div>
+                  <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', fontWeight: 600, flexShrink: 0 }}>{row.label}</div>
+                  <div style={{ fontSize: row.mono ? 13 : 14, fontWeight: 700, color: row.green ? 'var(--green)' : 'rgba(255,255,255,0.9)', fontFamily: row.mono ? 'monospace' : 'inherit', textAlign: 'right', wordBreak: 'break-all', marginLeft: 8 }}>{row.value}</div>
                 </div>
               ))}
 
@@ -180,20 +180,20 @@ export function Phase2KYCApproved() {
           <div style={{ background: 'var(--panel)', border: '1px solid var(--line)', borderTop: '4px solid var(--gold)', borderRadius: 'var(--r)' }}>
             <div style={{ padding: '24px', borderBottom: '1px solid var(--line)' }}>
               <div style={{ fontSize: 11, fontWeight: 900, fontFamily: 'var(--font-head)', letterSpacing: '.16em', color: 'var(--ink-3)', marginBottom: 8 }}>{t("TRIAL INFORMATION", "ट्रायल की जानकारी")}</div>
-              <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(24px, 3.5vw, 32px)', color: 'var(--ink)', textTransform: 'uppercase', lineHeight: 1.1 }}>{t("Physical Trial Details", "फिजिकल ट्रायल की जानकारी")}</div>
+              <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(24px, 3.5vw, 32px)', color: '#fff', textTransform: 'uppercase', lineHeight: 1.1 }}>{t("Physical Trial Details", "फिजिकल ट्रायल की जानकारी")}</div>
             </div>
             <div style={{ padding: '24px' }}>
               <div style={{ marginBottom: 28 }}>
                 <div style={{ fontSize: 11, fontWeight: 900, fontFamily: 'var(--font-head)', letterSpacing: '.14em', color: 'var(--ink-3)', marginBottom: 8, textTransform: 'uppercase' }}>{t("TRIAL CITY", "ट्रायल शहर")}</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                   <span style={{ color: 'var(--gold)' }}><IcoStadium size={32} /></span>
-                  <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(28px, 5vw, 40px)', color: 'var(--ink)', textTransform: 'uppercase' }}>{playerCity}</div>
+                  <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(28px, 5vw, 40px)', color: '#fff', textTransform: 'uppercase' }}>{playerCity}</div>
                 </div>
               </div>
 
               <div style={{ marginBottom: 28 }}>
                 <div style={{ fontSize: 11, fontWeight: 900, fontFamily: 'var(--font-head)', letterSpacing: '.14em', color: 'var(--ink-3)', marginBottom: 6, textTransform: 'uppercase' }}>{t("TRIAL GROUND", "ट्रायल का मैदान")}</div>
-                <div style={{ fontSize: 15, color: 'var(--ink-3)', fontStyle: 'italic' }}>{t("To be announced", "घोषणा की जाएगी")}</div>
+                <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.5)', fontStyle: 'italic' }}>{t("To be announced", "घोषणा की जाएगी")}</div>
               </div>
 
               <div style={{ background: 'rgba(232,178,61,0.08)', border: '1px solid rgba(232,178,61,0.3)', padding: '24px 20px', marginBottom: 24, borderRadius: '12px' }}>
@@ -201,8 +201,8 @@ export function Phase2KYCApproved() {
                 <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(28px, 6vw, 48px)', color: 'var(--gold)', lineHeight: 1, marginBottom: 12, animation: 'countdownPulse 2s ease infinite', textTransform: 'uppercase' }}>
                   {t("COMING SOON", "जल्द आ रही है")}
                 </div>
-                <div style={{ fontSize: 14, color: 'var(--ink-2)', lineHeight: 1.6, marginBottom: 6 }}>
-                  {t("You'll receive SMS + Email", "आपको SMS + ईमेल मिलेगा")} <strong style={{ color: 'var(--ink)' }}>{t("30 days before", "30 दिन पहले")}</strong> {t("your trial date.", "आपकी ट्रायल की तारीख से।")}
+                <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, marginBottom: 6 }}>
+                  {t("You'll receive SMS + Email", "आपको SMS + ईमेल मिलेगा")} <strong style={{ color: '#fff' }}>{t("30 days before", "30 दिन पहले")}</strong> {t("your trial date.", "आपकी ट्रायल की तारीख से।")}
                 </div>
                 <div style={{ fontSize: 13, color: 'var(--ink-3)' }}>{t("Expected: March–June 2026", "संभावित: मार्च–जून 2026")}</div>
               </div>
@@ -225,8 +225,8 @@ export function Phase2KYCApproved() {
           ].map(card => (
             <div key={card.title} className="notice-card">
               <div style={{ color: card.color, marginBottom: 16 }}><card.icon size={32} /></div>
-              <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 20, color: 'var(--ink)', marginBottom: 12, textTransform: 'uppercase' }}>{card.title}</div>
-              <div style={{ fontSize: 14, color: 'var(--ink-3)', lineHeight: 1.6, marginBottom: 24, flex: 1 }}>{card.body}</div>
+              <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 20, color: '#fff', marginBottom: 12, textTransform: 'uppercase' }}>{card.title}</div>
+              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6, marginBottom: 24, flex: 1 }}>{card.body}</div>
               <button onClick={card.onClick} style={{ background: 'transparent', border: `1px solid ${card.color}40`, color: card.color, padding: '12px 20px', fontSize: 13, fontWeight: 800, fontFamily: 'var(--font-head)', cursor: 'pointer', borderRadius: '10px', letterSpacing: '.06em', transition: 'all .2s', textTransform: 'uppercase' }}>
                 {card.cta}
               </button>
@@ -237,7 +237,7 @@ export function Phase2KYCApproved() {
         {/* ── TRAINING TIPS ── */}
         <div id="training-tips" style={{ background: 'var(--panel)', border: '1px solid rgba(255,122,41,0.3)', borderRadius: 'var(--r)', padding: '32px 24px', marginBottom: 40 }}>
           <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 20, color: 'var(--orange)', letterSpacing: '.06em', marginBottom: 8, textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 10 }}><IcoZap size={22} /> {t("TRAINING TIPS FOR PHYSICAL TRIAL", "फिजिकल ट्रायल के लिए ट्रेनिंग टिप्स")}</div>
-          <div style={{ fontSize: 15, color: 'var(--ink-3)', marginBottom: 28 }}>{t("BCPL evaluators assess these key areas against the standardised role-specific framework (blind to unnecessary personal details). Franchises make purchase decisions only at the auction, not at the trial.", "BCPL evaluators इन प्रमुख क्षेत्रों को standardised role-specific framework के अनुसार आंकते हैं (गैर-ज़रूरी निजी जानकारी के बिना)। फ्रैंचाइज़ी खरीद के फैसले सिर्फ़ ऑक्शन में लेती हैं, ट्रायल में नहीं।")}</div>
+          <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.5)', marginBottom: 28 }}>{t("BCPL evaluators assess these key areas against the standardised role-specific framework (blind to unnecessary personal details). Franchises make purchase decisions only at the auction, not at the trial.", "BCPL evaluators इन प्रमुख क्षेत्रों को standardised role-specific framework के अनुसार आंकते हैं (गैर-ज़रूरी निजी जानकारी के बिना)। फ्रैंचाइज़ी खरीद के फैसले सिर्फ़ ऑक्शन में लेती हैं, ट्रायल में नहीं।")}</div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(240px,1fr))', gap: 16 }}>
             {[
               { icon: IcoZap, title: t('Fitness First', 'पहले फिटनेस'), tip: t('30 min cardio daily. Your stamina matters in the last over as much as the first.', 'रोज़ 30 मिनट कार्डियो। आखिरी ओवर में भी स्टैमिना उतनी ही मायने रखती है।') },
@@ -247,10 +247,10 @@ export function Phase2KYCApproved() {
               { icon: IcoShield, title: t('Strength & Agility', 'स्ट्रेंथ और फुर्ती'), tip: t('Focus on rotational strength (core, shoulders) and lateral movement. Cricket is explosive.', 'कोर और कंधों की ताकत पर ध्यान दें। फुर्ती बहुत जरूरी है।') },
               { icon: IcoBulb, title: t('Nutrition', 'पोषण'), tip: t('High protein, complex carbs 3 hours before trial. Avoid heavy meals on trial day.', 'ट्रायल से 3 घंटे पहले अच्छा भोजन। भारी भोजन से बचें।') },
             ].map(item => (
-              <div key={item.title} style={{ background: 'rgba(12,29,51,0.03)', border: '1px solid var(--line)', borderRadius: '12px', padding: '20px', borderLeft: `4px solid var(--orange)` }}>
+              <div key={item.title} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--line)', borderRadius: '12px', padding: '20px', borderLeft: `4px solid var(--orange)` }}>
                 <div style={{ color: 'var(--orange)', marginBottom: 12 }}><item.icon size={28} /></div>
-                <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 18, color: 'var(--ink)', marginBottom: 8, textTransform: 'uppercase' }}>{item.title}</div>
-                <div style={{ fontSize: 14, color: 'var(--ink-3)', lineHeight: 1.6 }}>{item.tip}</div>
+                <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 18, color: '#fff', marginBottom: 8, textTransform: 'uppercase' }}>{item.title}</div>
+                <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6 }}>{item.tip}</div>
               </div>
             ))}
           </div>
@@ -259,8 +259,8 @@ export function Phase2KYCApproved() {
         {/* Season 5 phase summary */}
         <div className="season-cta">
           <div style={{ flex: 1, minWidth: 240 }}>
-            <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(24px, 4vw, 32px)', color: 'var(--ink)', marginBottom: 8, textTransform: 'uppercase' }}>{t("You're in the top bracket.", "आप टॉप ब्रैकेट में हैं।")}</div>
-            <div style={{ fontSize: 15, color: 'var(--ink-2)', lineHeight: 1.6, maxWidth: 600 }}>{t("Only players who clear Phase 1 video + Phase 2 KYC reach the physical trial. You're one step from the auction floor.", "केवल वही खिलाड़ी जो फेज 1 वीडियो + फेज 2 KYC पास करते हैं, फिजिकल ट्रायल तक पहुंचते हैं। आप ऑक्शन से एक कदम दूर हैं।")}</div>
+            <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(24px, 4vw, 32px)', color: '#fff', marginBottom: 8, textTransform: 'uppercase' }}>{t("You're in the top bracket.", "आप टॉप ब्रैकेट में हैं।")}</div>
+            <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, maxWidth: 600 }}>{t("Only players who clear Phase 1 video + Phase 2 KYC reach the physical trial. You're one step from the auction floor.", "केवल वही खिलाड़ी जो फेज 1 वीडियो + फेज 2 KYC पास करते हैं, फिजिकल ट्रायल तक पहुंचते हैं। आप ऑक्शन से एक कदम दूर हैं।")}</div>
           </div>
           <button className="btn-cta season-cta-btn" onClick={() => { setLocation('/#timeline'); }}>
             {t("VIEW SEASON 5 ROADMAP →", "सीजन 5 रोडमैप देखें →")}

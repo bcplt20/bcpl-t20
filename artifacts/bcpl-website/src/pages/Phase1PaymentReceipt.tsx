@@ -52,7 +52,7 @@ export function Phase1PaymentReceipt() {
   }, []);
 
   return (
-    <div style={{ background:'var(--bg)', minHeight:'100vh', color:'var(--ink)', fontFamily:"'Inter',sans-serif", overflowX:'hidden', paddingBottom:80 }}>
+    <div style={{ background:'#06101E', minHeight:'100vh', color:'#F0EDE8', fontFamily:"'Inter',sans-serif", overflowX:'hidden', paddingBottom:80 }}>
       <style>{`
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
@@ -85,19 +85,18 @@ export function Phase1PaymentReceipt() {
 
         .receipt-row{
           display:flex;justify-content:space-between;align-items:flex-start;
-          padding:11px 0;border-bottom:1px solid rgba(12,29,51,0.08);
+          padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.05);
           font-size:13px;gap:8px;
         }
         .receipt-row:last-child{border-bottom:none}
-        .receipt-label{color:rgba(12,29,51,0.55);font-weight:600;letter-spacing:.04em;flex-shrink:0}
-        .receipt-val{color:#0C1D33;font-weight:700;text-align:right;word-break:break-all}
+        .receipt-label{color:rgba(255,255,255,0.4);font-weight:600;letter-spacing:.04em;flex-shrink:0}
+        .receipt-val{color:#F0EDE8;font-weight:700;text-align:right;word-break:break-all}
 
         .next-steps-grid{display:grid;grid-template-columns:1fr;gap:14px}
         @media(min-width:600px){.next-steps-grid{grid-template-columns:repeat(3,1fr)}}
 
         .next-card{
-          background:#FFFFFF;border:1px solid rgba(12,29,51,0.10);border-radius:12px;
-          box-shadow:0 10px 26px rgba(12,29,51,0.08);
+          background:#0A1727;border:1px solid rgba(255,255,255,0.08);border-radius:12px;
           padding:22px 20px;
           transition:border-color .2s,transform .2s;
         }
@@ -114,7 +113,7 @@ export function Phase1PaymentReceipt() {
         @media(min-width:480px){.share-btn{width:auto}}
         .share-btn:hover{filter:brightness(1.12);transform:translateY(-2px)}
 
-        .barcode-line{display:inline-block;width:2px;margin:0 0.5px;background:rgba(12,29,51,0.80);animation:barcodeScan 2.5s ease-in-out infinite}
+        .barcode-line{display:inline-block;width:2px;margin:0 0.5px;background:rgba(255,255,255,0.85);animation:barcodeScan 2.5s ease-in-out infinite}
 
         .fade-up{animation:fadeUp .5s cubic-bezier(.34,1.56,.64,1) both}
         .fade-up-1{animation-delay:.1s}
@@ -123,18 +122,18 @@ export function Phase1PaymentReceipt() {
         .fade-up-4{animation-delay:.55s}
         .fade-up-5{animation-delay:.7s}
 
-        .ticket-wrap{background:#FFFFFF;border:1px solid rgba(255,122,41,0.35);box-shadow:0 14px 36px rgba(12,29,51,0.10);position:relative;overflow:hidden;width:100%;max-width:100%}
-        .ticket-notch-l{position:absolute;left:-10px;top:50%;transform:translateY(-50%);width:20px;height:20px;border-radius:50%;background:var(--bg);border:1px solid rgba(255,122,41,0.35)}
-        .ticket-notch-r{position:absolute;right:-10px;top:50%;transform:translateY(-50%);width:20px;height:20px;border-radius:50%;background:var(--bg);border:1px solid rgba(255,122,41,0.35)}
+        .ticket-wrap{background:#0A1727;border:1px solid rgba(255,122,41,0.35);position:relative;overflow:hidden;width:100%;max-width:100%}
+        .ticket-notch-l{position:absolute;left:-10px;top:50%;transform:translateY(-50%);width:20px;height:20px;border-radius:50%;background:#06101E;border:1px solid rgba(255,122,41,0.35)}
+        .ticket-notch-r{position:absolute;right:-10px;top:50%;transform:translateY(-50%);width:20px;height:20px;border-radius:50%;background:#06101E;border:1px solid rgba(255,122,41,0.35)}
         @media(max-width:480px){.ticket-notch-l,.ticket-notch-r{display:none}}
 
-        .barcode-wrap{background:#F1EDE3;padding:14px 20px;display:flex;align-items:flex-end;gap:0;border-top:1px solid rgba(12,29,51,0.06);overflow:hidden}
+        .barcode-wrap{background:#060C18;padding:14px 20px;display:flex;align-items:flex-end;gap:0;border-top:1px solid rgba(255,255,255,0.05);overflow:hidden}
       `}</style>
 
       <SiteHeader />
 
       {/* ── HERO ── */}
-      <div style={{ position:'relative', overflow:'hidden', background:'linear-gradient(180deg,var(--bg) 0%,var(--bg-deep) 100%)', paddingTop:60, paddingBottom:56, textAlign:'center' }}>
+      <div style={{ position:'relative', overflow:'hidden', background:'linear-gradient(180deg,#06101E 0%,#060C18 100%)', paddingTop:60, paddingBottom:56, textAlign:'center' }}>
         <div style={{ position:'absolute', top:0, left:'-10%', width:'50%', height:'100%', background:'linear-gradient(135deg,rgba(34,197,94,0.06) 0%,transparent 60%)', transform:'skewX(-8deg)', pointerEvents:'none' }} />
         <div style={{ position:'absolute', top:0, right:'-10%', width:'50%', height:'100%', background:'linear-gradient(225deg,rgba(34,197,94,0.04) 0%,transparent 60%)', transform:'skewX(-8deg)', pointerEvents:'none' }} />
 
@@ -145,19 +144,19 @@ export function Phase1PaymentReceipt() {
           </div>
 
           <h1 className="fade-up fade-up-1" style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:'clamp(30px,6vw,62px)', lineHeight:.95, letterSpacing:'.015em', textTransform:'uppercase', marginBottom:10 }}>
-            <span style={{ color:'#0C1D33', display:'block' }}>{t("ENTRY","ENTRY")}</span>
-            <span style={{ color:'#16A34A', display:'block' }}>{t("CONFIRMED.","CONFIRMED.")}</span>
+            <span style={{ color:'#fff', display:'block' }}>{t("ENTRY","ENTRY")}</span>
+            <span style={{ color:'#22C55E', display:'block' }}>{t("CONFIRMED.","CONFIRMED.")}</span>
           </h1>
           <div className="fade-up fade-up-2" style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:'clamp(14px,3vw,24px)', color:'#FF7A29', letterSpacing:'.08em', textTransform:'uppercase', marginBottom:20 }}>
             {t("YOU'RE IN THE TRIALS.","आप TRIALS में हैं।")}
           </div>
 
           {/* Loading / Error */}
-          {receiptLoading && <div style={{ color:'rgba(12,29,51,0.62)', fontSize:14, marginBottom:20 }}>{t("Confirming payment…","Payment confirm हो रही है…")}</div>}
+          {receiptLoading && <div style={{ color:'rgba(255,255,255,0.5)', fontSize:14, marginBottom:20 }}>{t("Confirming payment…","Payment confirm हो रही है…")}</div>}
           {receiptError && (
             <div style={{ marginBottom:20 }}>
-              <div style={{ color:'#DC2626', fontSize:13, fontWeight:600, marginBottom:10 }}>{receiptError}</div>
-              <button onClick={() => window.location.reload()} style={{ background:'rgba(12,29,51,0.05)', border:'1px solid rgba(12,29,51,0.18)', color:'#0C1D33', borderRadius:10, padding:'8px 18px', fontSize:13, fontWeight:700, cursor:'pointer' }}>{t('Try Again', 'फिर कोशिश करें')}</button>
+              <div style={{ color:'#EF4444', fontSize:13, fontWeight:600, marginBottom:10 }}>{receiptError}</div>
+              <button onClick={() => window.location.reload()} style={{ background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.18)', color:'#fff', borderRadius:10, padding:'8px 18px', fontSize:13, fontWeight:700, cursor:'pointer' }}>{t('Try Again', 'फिर कोशिश करें')}</button>
             </div>
           )}
 
@@ -167,9 +166,9 @@ export function Phase1PaymentReceipt() {
             {[
               { label: playerRole || t('Player','Player'), color:'#3B82F6' },
               { label: playerCity || t('City','City'), color:'#FF7A29' },
-              { label:'BCPL Season 5', color:'#B8892B' },
+              { label:'BCPL Season 5', color:'#E8B23D' },
             ].map(c => (
-              <span key={c.label} style={{ padding:'6px 16px', background:'#FFFFFF', border:`1px solid ${c.color}55`, borderRadius:12, fontSize:12, fontWeight:700, fontFamily:'var(--font-head)', color:c.color, letterSpacing:'.06em' }}>
+              <span key={c.label} style={{ padding:'6px 16px', background:'rgba(255,255,255,0.05)', border:`1px solid ${c.color}44`, borderRadius:12, fontSize:12, fontWeight:700, fontFamily:'var(--font-head)', color:c.color, letterSpacing:'.06em' }}>
                 {c.label}
               </span>
             ))}
@@ -178,8 +177,8 @@ export function Phase1PaymentReceipt() {
 
           {/* Booking ref */}
           {!receiptLoading && (
-          <div className="fade-up fade-up-4" style={{ display:'inline-block', background:'#F1EDE3', border:'1px solid rgba(255,122,41,0.4)', padding:'12px 20px', borderRadius:12, marginBottom:0, maxWidth:'100%', overflow:'hidden' }}>
-            <div style={{ fontSize:9, fontWeight:800, fontFamily:'var(--font-head)', letterSpacing:'.18em', color:'rgba(12,29,51,0.55)', marginBottom:4 }}>{t("REGISTRATION NUMBER","REGISTRATION NUMBER")}</div>
+          <div className="fade-up fade-up-4" style={{ display:'inline-block', background:'#060C18', border:'1px solid rgba(255,122,41,0.4)', padding:'12px 20px', borderRadius:12, marginBottom:0, maxWidth:'100%', overflow:'hidden' }}>
+            <div style={{ fontSize:9, fontWeight:800, fontFamily:'var(--font-head)', letterSpacing:'.18em', color:'rgba(255,255,255,0.35)', marginBottom:4 }}>{t("REGISTRATION NUMBER","REGISTRATION NUMBER")}</div>
             <div style={{ fontFamily:'monospace', fontSize:'clamp(13px,4vw,18px)', fontWeight:700, color:'#FF7A29', letterSpacing:'.12em', wordBreak:'break-all' }}>
               {regNumber || (regId ? regId.slice(0,8).toUpperCase() : '—')}
             </div>
@@ -227,16 +226,16 @@ export function Phase1PaymentReceipt() {
             const taxable = paidAmount ? +(paidAmount / 1.18).toFixed(2) : 0;
             const gst     = paidAmount ? +((paidAmount - taxable) / 2).toFixed(2) : 0;
             return (
-            <div style={{ margin:'0', background:'rgba(255,122,41,0.04)', borderTop:'1px solid rgba(12,29,51,0.08)', padding:'16px 20px' }}>
-              <div style={{ fontFamily:'var(--font-head)', fontWeight:800, fontSize:9, letterSpacing:'.14em', color:'rgba(12,29,51,0.50)', textTransform:'uppercase', marginBottom:10 }}>{t("Payment Breakdown","Payment Breakdown")}</div>
+            <div style={{ margin:'0', background:'rgba(255,122,41,0.04)', borderTop:'1px solid rgba(255,255,255,0.06)', padding:'16px 20px' }}>
+              <div style={{ fontFamily:'var(--font-head)', fontWeight:800, fontSize:9, letterSpacing:'.14em', color:'rgba(255,255,255,0.3)', textTransform:'uppercase', marginBottom:10 }}>{t("Payment Breakdown","Payment Breakdown")}</div>
               {[
                 { label:'Taxable Amount', val: paidAmount ? `₹${taxable.toFixed(2)}` : '—', dim:false },
                 { label:'CGST @ 9%',     val: paidAmount ? `₹${gst.toFixed(2)}`     : '—', dim:true  },
                 { label:'SGST @ 9%',     val: paidAmount ? `₹${gst.toFixed(2)}`     : '—', dim:true  },
               ].map(r => (
-                <div key={r.label} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'5px 0', borderBottom:'1px solid rgba(12,29,51,0.06)' }}>
-                  <span style={{ fontFamily:'Inter,sans-serif', fontSize:12, color: r.dim ? 'rgba(12,29,51,0.50)' : 'rgba(12,29,51,0.66)', fontWeight:600 }}>{r.label}</span>
-                  <span style={{ fontFamily:'Inter,sans-serif', fontSize:12, color: r.dim ? 'rgba(12,29,51,0.50)' : 'rgba(12,29,51,0.72)', fontWeight:700 }}>{r.val}</span>
+                <div key={r.label} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'5px 0', borderBottom:'1px solid rgba(255,255,255,0.04)' }}>
+                  <span style={{ fontFamily:'Inter,sans-serif', fontSize:12, color: r.dim ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.6)', fontWeight:600 }}>{r.label}</span>
+                  <span style={{ fontFamily:'Inter,sans-serif', fontSize:12, color: r.dim ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.7)', fontWeight:700 }}>{r.val}</span>
                 </div>
               ))}
               <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'10px 0 2px', marginTop:6, borderTop:'1px solid rgba(255,122,41,0.3)' }}>
@@ -255,10 +254,10 @@ export function Phase1PaymentReceipt() {
           {/* Phase 2 locked row */}
           <div style={{ padding:'14px 20px', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:8 }}>
             <div>
-              <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:11, letterSpacing:'.14em', color:'rgba(12,29,51,0.62)', textTransform:'uppercase' }}>{t("PHASE 2 STATUS","PHASE 2 STATUS")}</div>
-              <div style={{ fontSize:13, color:'rgba(12,29,51,0.66)', marginTop:3, display:'inline-flex', alignItems:'center', gap:6 }}><IcoLock size={14} /> {t("Locked — You'll be notified when your result is released","Locked — जब आपका result release होगा तब आपको notify किया जाएगा")}</div>
+              <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:11, letterSpacing:'.14em', color:'rgba(255,255,255,0.5)', textTransform:'uppercase' }}>{t("PHASE 2 STATUS","PHASE 2 STATUS")}</div>
+              <div style={{ fontSize:13, color:'rgba(255,255,255,0.6)', marginTop:3, display:'inline-flex', alignItems:'center', gap:6 }}><IcoLock size={14} /> {t("Locked — You'll be notified when your result is released","Locked — जब आपका result release होगा तब आपको notify किया जाएगा")}</div>
             </div>
-            <span style={{ background:'rgba(12,29,51,0.08)', border:'1px solid rgba(12,29,51,0.12)', padding:'5px 12px', borderRadius:12, fontSize:10, fontWeight:800, fontFamily:'var(--font-head)', letterSpacing:'.12em', color:'rgba(12,29,51,0.58)' }}>{t("PENDING","PENDING")}</span>
+            <span style={{ background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', padding:'5px 12px', borderRadius:12, fontSize:10, fontWeight:800, fontFamily:'var(--font-head)', letterSpacing:'.12em', color:'rgba(255,255,255,0.4)' }}>{t("PENDING","PENDING")}</span>
           </div>
 
           {/* Decorative barcode */}
@@ -269,14 +268,14 @@ export function Phase1PaymentReceipt() {
               const delay = (i * 0.04) % 2.5;
               return <div key={i} className="barcode-line" style={{ height:h, animationDelay:`${delay}s` }} />;
             })}
-            <span style={{ marginLeft:'auto', fontFamily:'monospace', fontSize:9, color:'rgba(12,29,51,0.45)', letterSpacing:'.08em', whiteSpace:'nowrap' }}>BCPL-S5-MUM-BAT-7432</span>
+            <span style={{ marginLeft:'auto', fontFamily:'monospace', fontSize:9, color:'rgba(255,255,255,0.25)', letterSpacing:'.08em', whiteSpace:'nowrap' }}>BCPL-S5-MUM-BAT-7432</span>
           </div>
         </div>
       </div>
 
       {/* ── NEXT STEPS ── */}
       <div className="wrap" style={{ marginTop:48 }}>
-        <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:11, letterSpacing:'.2em', color:'rgba(12,29,51,0.50)', marginBottom:20, textTransform:'uppercase' }}>{t("Your Next Steps","आपके अगले Steps")}</div>
+        <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:11, letterSpacing:'.2em', color:'rgba(255,255,255,0.3)', marginBottom:20, textTransform:'uppercase' }}>{t("Your Next Steps","आपके अगले Steps")}</div>
         <div className="next-steps-grid">
           {/* Step 1 */}
           <div className="next-card">
@@ -286,7 +285,7 @@ export function Phase1PaymentReceipt() {
               <span style={{ width:6, height:6, borderRadius:'50%', background:'#FF7A29', display:'inline-block', animation:'liveBlip 1s infinite' }} />
               <span style={{ fontSize:11, fontWeight:700, color:'rgba(255,122,41,0.8)', fontFamily:'var(--font-head)', letterSpacing:'.08em' }}>{t("SUBMIT AS SOON AS POSSIBLE","जल्द से जल्द SUBMIT करें")}</span>
             </div>
-            <p style={{ fontSize:12, color:'rgba(12,29,51,0.60)', lineHeight:1.6, marginBottom:16 }}>{t("Record your 30–60 second cricket trial video. Follow the guidelines for best results.","अपनी 30–60 second की cricket trial video record करें। बेहतर results के लिए guidelines follow करें।")}</p>
+            <p style={{ fontSize:12, color:'rgba(255,255,255,0.45)', lineHeight:1.6, marginBottom:16 }}>{t("Record your 30–60 second cricket trial video. Follow the guidelines for best results.","अपनी 30–60 second की cricket trial video record करें। बेहतर results के लिए guidelines follow करें।")}</p>
             <button className="btn-primary" style={{ width:'100%', padding:'12px', fontSize:12 }}
               onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/upload-video'; }}>
               {t("UPLOAD NOW →","अभी UPLOAD करें →")}
@@ -295,22 +294,22 @@ export function Phase1PaymentReceipt() {
 
           {/* Step 2 */}
           <div className="next-card">
-            <div style={{ color:'#B8892B', marginBottom:12 }}><IcoClock size={28} /></div>
-            <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:14, color:'#B8892B', letterSpacing:'.04em', marginBottom:6, textTransform:'uppercase' }}>{t("Phase 1 Evaluation","Phase 1 Evaluation")}</div>
+            <div style={{ color:'#E8B23D', marginBottom:12 }}><IcoClock size={28} /></div>
+            <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:14, color:'#E8B23D', letterSpacing:'.04em', marginBottom:6, textTransform:'uppercase' }}>{t("Phase 1 Evaluation","Phase 1 Evaluation")}</div>
             <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:12 }}>
-              <span style={{ fontSize:11, fontWeight:700, color:'#B8892B', fontFamily:'var(--font-head)', letterSpacing:'.06em' }}>{t("CRITERIA-BASED ASSESSMENT","CRITERIA-BASED ASSESSMENT")}</span>
+              <span style={{ fontSize:11, fontWeight:700, color:'rgba(232,178,61,0.7)', fontFamily:'var(--font-head)', letterSpacing:'.06em' }}>{t("CRITERIA-BASED ASSESSMENT","CRITERIA-BASED ASSESSMENT")}</span>
             </div>
-            <p style={{ fontSize:12, color:'rgba(12,29,51,0.60)', lineHeight:1.6 }}>{t("Every submission is evaluated against BCPL's Phase 1 assessment criteria. Results announced via your registered email & WhatsApp.","हर submission को BCPL के Phase 1 assessment criteria के against evaluate किया जाता है। Results आपके registered email और WhatsApp पर घोषित होते हैं।")}</p>
+            <p style={{ fontSize:12, color:'rgba(255,255,255,0.45)', lineHeight:1.6 }}>{t("Every submission is evaluated against BCPL's Phase 1 assessment criteria. Results announced via your registered email & WhatsApp.","हर submission को BCPL के Phase 1 assessment criteria के against evaluate किया जाता है। Results आपके registered email और WhatsApp पर घोषित होते हैं।")}</p>
           </div>
 
           {/* Step 3 */}
-          <div className="next-card" style={{ border:'1px solid rgba(12,29,51,0.08)' }}>
-            <div style={{ color:'rgba(12,29,51,0.55)', marginBottom:12 }}><IcoLock size={28} /></div>
-            <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:14, color:'rgba(12,29,51,0.62)', letterSpacing:'.04em', marginBottom:6, textTransform:'uppercase' }}>{t("Phase 2 (If Selected)","Phase 2 (अगर Selected हुए)")}</div>
+          <div className="next-card" style={{ border:'1px solid rgba(255,255,255,0.06)' }}>
+            <div style={{ color:'rgba(255,255,255,0.5)', marginBottom:12 }}><IcoLock size={28} /></div>
+            <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:14, color:'rgba(255,255,255,0.5)', letterSpacing:'.04em', marginBottom:6, textTransform:'uppercase' }}>{t("Phase 2 (If Selected)","Phase 2 (अगर Selected हुए)")}</div>
             <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:12 }}>
-              <span style={{ fontSize:11, fontWeight:700, color:'rgba(12,29,51,0.50)', fontFamily:'var(--font-head)', letterSpacing:'.06em' }}>{t("PHYSICAL TRIAL · LOCKED","PHYSICAL TRIAL · LOCKED")}</span>
+              <span style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.3)', fontFamily:'var(--font-head)', letterSpacing:'.06em' }}>{t("PHYSICAL TRIAL · LOCKED","PHYSICAL TRIAL · LOCKED")}</span>
             </div>
-            <p style={{ fontSize:12, color:'rgba(12,29,51,0.55)', lineHeight:1.6 }}>{t("If you qualify through Phase 1, you'll be invited to the physical ground trial. The Phase 2 fee becomes payable only if you qualify through Phase 1 and choose to proceed.","अगर आप Phase 1 से qualify करते हैं, तो आपको physical ground trial के लिए invite किया जाएगा। Phase 2 fee तभी देनी होती है जब आप Phase 1 से qualify करें और आगे बढ़ने का चुनाव करें।")}</p>
+            <p style={{ fontSize:12, color:'rgba(255,255,255,0.35)', lineHeight:1.6 }}>{t("If you qualify through Phase 1, you'll be invited to the physical ground trial. The Phase 2 fee becomes payable only if you qualify through Phase 1 and choose to proceed.","अगर आप Phase 1 से qualify करते हैं, तो आपको physical ground trial के लिए invite किया जाएगा। Phase 2 fee तभी देनी होती है जब आप Phase 1 से qualify करें और आगे बढ़ने का चुनाव करें।")}</p>
           </div>
         </div>
       </div>
@@ -322,9 +321,9 @@ export function Phase1PaymentReceipt() {
 
       {/* ── SHARE SECTION ── */}
       <div className="wrap" style={{ marginTop:32 }}>
-        <div style={{ background:'#FFFFFF', border:'1px solid rgba(12,29,51,0.10)', borderRadius:12, padding:'28px 20px', textAlign:'center' }}>
-          <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:13, letterSpacing:'.16em', color:'rgba(12,29,51,0.55)', marginBottom:6, textTransform:'uppercase' }}>{t("Share Your Achievement","अपनी Achievement Share करें")}</div>
-          <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:20, color:'#0C1D33', marginBottom:24 }}>{t("Tell the world you're in the trials!","दुनिया को बताएं कि आप trials में हैं!")}</div>
+        <div style={{ background:'#0A1727', border:'1px solid rgba(255,255,255,0.08)', borderRadius:12, padding:'28px 20px', textAlign:'center' }}>
+          <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:13, letterSpacing:'.16em', color:'rgba(255,255,255,0.4)', marginBottom:6, textTransform:'uppercase' }}>{t("Share Your Achievement","अपनी Achievement Share करें")}</div>
+          <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:20, color:'#fff', marginBottom:24 }}>{t("Tell the world you're in the trials!","दुनिया को बताएं कि आप trials में हैं!")}</div>
           <div className="share-btns">
             <button className="share-btn" style={{ background:'#25D366', color:'#fff', display:'inline-flex', alignItems:'center', justifyContent:'center', gap:8 }}
               onClick={() => {

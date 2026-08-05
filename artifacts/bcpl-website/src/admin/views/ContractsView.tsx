@@ -874,7 +874,7 @@ function ContractModal({ c, sigImg, onClose }: { c: Contract; sigImg?: string; o
       .chip{font-size:7.5px;font-weight:700;color:rgba(255,255,255,0.42);
         background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.11);
         border-radius:4px;padding:2px 8px;letter-spacing:.04em;font-family:'Courier New',monospace}
-      .chip-gold{font-size:7.5px;font-weight:800;color:#B45309;
+      .chip-gold{font-size:7.5px;font-weight:800;color:#E8B23D;
         background:rgba(232,178,61,0.1);border:1px solid rgba(232,178,61,0.38);
         border-radius:4px;padding:2px 8px;letter-spacing:.08em;font-family:'Arial',sans-serif}
 
@@ -900,7 +900,7 @@ function ContractModal({ c, sigImg, onClose }: { c: Contract; sigImg?: string; o
       .contract-badge h2{font-size:13.5px;color:#8B3A0A;letter-spacing:.12em;font-weight:900;
         text-transform:uppercase;margin-bottom:5px;font-family:'Arial',sans-serif}
       .contract-badge p{font-size:9.5px;color:#AAA;font-family:'Arial',sans-serif}
-      .contract-badge .ref{font-size:11px;color:#C2410C;font-weight:700;margin-top:7px;
+      .contract-badge .ref{font-size:11px;color:#FF6B00;font-weight:700;margin-top:7px;
         font-family:'Courier New',monospace;letter-spacing:.04em}
 
       /* ── Content ── */
@@ -927,7 +927,7 @@ function ContractModal({ c, sigImg, onClose }: { c: Contract; sigImg?: string; o
         display:flex;justify-content:space-between;align-items:center;
         -webkit-print-color-adjust:exact;print-color-adjust:exact;
         font-family:'Arial',sans-serif;letter-spacing:.03em}
-      .pg-footer strong{color:#B45309}
+      .pg-footer strong{color:#E8B23D}
 
       @media print{
         .watermark{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%)}
@@ -994,26 +994,26 @@ function ContractModal({ c, sigImg, onClose }: { c: Contract; sigImg?: string; o
     setTimeout(()=>w.print(), 800);
   }
 
-  const card:React.CSSProperties={background:"#FFFFFF",border:"1px solid #E2E8F0",borderRadius:20};
+  const card:React.CSSProperties={background:"#0D1526",border:"1px solid #1E293B",borderRadius:20};
 
   return (
     <div style={{position:"fixed",inset:0,background:"#000000CC",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1000,padding:16}} onClick={onClose}>
       <div style={{...card,width:"100%",maxWidth:740,maxHeight:"94vh",display:"flex",flexDirection:"column"}} onClick={e=>e.stopPropagation()}>
         {/* Header */}
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"16px 24px",borderBottom:"1px solid #E2E8F0",flexShrink:0}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"16px 24px",borderBottom:"1px solid #1E293B",flexShrink:0}}>
           <div>
-            <div style={{fontSize:15,fontWeight:800,color:"#1E293B"}}>📜 {cType} Contract</div>
+            <div style={{fontSize:15,fontWeight:800,color:"#F1F5F9"}}>📜 {cType} Contract</div>
             <div style={{fontSize:11,color:"#475569",marginTop:2}}>{c.id} · {c.player} · {c.team}</div>
           </div>
           <div style={{display:"flex",gap:8,alignItems:"center"}}>
             <button onClick={downloadPDF} style={{padding:"7px 14px",borderRadius:8,border:"none",background:"linear-gradient(135deg,#FF6B00,#FF8C40)",color:"#fff",fontSize:12,cursor:"pointer",fontWeight:700}}>⬇ Download PDF</button>
-            <button onClick={onClose} style={{padding:"6px 10px",borderRadius:8,border:"none",background:"#FFFFFF",color:"#64748B",fontSize:12,cursor:"pointer"}}>✕</button>
+            <button onClick={onClose} style={{padding:"6px 10px",borderRadius:8,border:"none",background:"#1E293B",color:"#64748B",fontSize:12,cursor:"pointer"}}>✕</button>
           </div>
         </div>
 
         {/* Body */}
         <div style={{overflowY:"auto",flex:1,padding:"20px 24px"}}>
-          <pre style={{fontFamily:"'Courier New',monospace",fontSize:11,color:"#64748B",lineHeight:1.7,whiteSpace:"pre-wrap",wordWrap:"break-word",margin:0}}>
+          <pre style={{fontFamily:"'Courier New',monospace",fontSize:11,color:"#94A3B8",lineHeight:1.7,whiteSpace:"pre-wrap",wordWrap:"break-word",margin:0}}>
             {contractText}
           </pre>
         </div>
@@ -1087,7 +1087,7 @@ export default function ContractsView() {
     reader.readAsDataURL(file);
   }
   const [genForm,  setGenForm]  = useState({ player:"", phone:"", email:"", team:TEAMS_LIST[0], role:"Batsman", amount:"", date:"", expiry:"", contractType:"Player" });
-  const card:React.CSSProperties={background:"linear-gradient(135deg,#FFFFFF,#FFFFFF)",border:"1px solid #E2E8F0",borderRadius:16,padding:20};
+  const card:React.CSSProperties={background:"linear-gradient(135deg,#0D1526,#0A1020)",border:"1px solid #1E293B",borderRadius:16,padding:20};
 
   const filtered = contracts.filter(c=>
     c.player.toLowerCase().includes(search.toLowerCase())||
@@ -1121,14 +1121,14 @@ export default function ContractsView() {
       {/* Header */}
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
         <div>
-          <div style={{fontSize:20,fontWeight:800,color:"#1E293B"}}>Player Contracts</div>
+          <div style={{fontSize:20,fontWeight:800,color:"#F1F5F9"}}>Player Contracts</div>
           <div style={{fontSize:12,color:"#64748B",marginTop:2}}>Post-auction legal contracts · IPL-standard · GST invoiced · E-sign ready</div>
         </div>
         <div style={{display:"flex",gap:8}}>
           <button onClick={()=>{
             const csv="Contract ID,Player,Team,Role,Value,Status,From,Until\n"+contracts.map(c=>`${c.id},${c.player},${c.team},${c.role},${c.amount},${c.status},${c.date},${c.expiry}`).join('\n');
             const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+csv;a.download='bcpl_contracts.csv';a.click();
-          }} style={{padding:"9px 16px",borderRadius:9,border:"1px solid #E2E8F0",background:"transparent",color:"#64748B",fontSize:12,cursor:"pointer"}}>⬇ Export All</button>
+          }} style={{padding:"9px 16px",borderRadius:9,border:"1px solid #1E293B",background:"transparent",color:"#94A3B8",fontSize:12,cursor:"pointer"}}>⬇ Export All</button>
           <button onClick={()=>setGenOpen(true)} style={{padding:"9px 16px",borderRadius:9,border:"none",background:"linear-gradient(135deg,#FF6B00,#FF8C40)",color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer"}}>+ Generate Contract</button>
         </div>
       </div>
@@ -1136,10 +1136,10 @@ export default function ContractsView() {
       {/* Stats */}
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12}}>
         {[
-          {label:"Total Contracts",       value:contracts.length,                                      color:"#4F46E5"},
-          {label:"Signed",               value:contracts.filter(c=>c.status==="Signed").length,        color:"#047857"},
-          {label:"Pending Signature",    value:contracts.filter(c=>c.status==="Pending").length,       color:"#B45309"},
-          {label:"Total Contract Value", value:fmt(contracts.reduce((a,c)=>a+c.amount,0)||0),          color:"#C2410C"},
+          {label:"Total Contracts",       value:contracts.length,                                      color:"#6366F1"},
+          {label:"Signed",               value:contracts.filter(c=>c.status==="Signed").length,        color:"#10B981"},
+          {label:"Pending Signature",    value:contracts.filter(c=>c.status==="Pending").length,       color:"#F59E0B"},
+          {label:"Total Contract Value", value:fmt(contracts.reduce((a,c)=>a+c.amount,0)||0),          color:"#FF6B00"},
         ].map(s=>(
           <div key={s.label} style={{...card,borderTop:`3px solid ${s.color}`}}>
             <div style={{fontSize:24,fontWeight:800,color:s.color}}>{s.value}</div>
@@ -1149,16 +1149,16 @@ export default function ContractsView() {
       </div>
 
       {/* Founder Signature Upload */}
-      <div style={{...card,padding:"18px 22px",borderLeft:"4px solid #6366F1",background:"linear-gradient(135deg,#6366F110,#FFFFFF)",display:"flex",alignItems:"center",gap:20,flexWrap:"wrap"}}>
+      <div style={{...card,padding:"18px 22px",borderLeft:"4px solid #6366F1",background:"linear-gradient(135deg,#6366F110,#0D1526)",display:"flex",alignItems:"center",gap:20,flexWrap:"wrap"}}>
         <div style={{flex:1,minWidth:200}}>
-          <div style={{fontSize:12,fontWeight:800,color:"#4F46E5",marginBottom:3}}>🖊 Founder Signature</div>
+          <div style={{fontSize:12,fontWeight:800,color:"#6366F1",marginBottom:3}}>🖊 Founder Signature</div>
           <div style={{fontSize:11,color:"#475569"}}>Saved on the server — appears on generated contracts from every device.</div>
-          {sigErr && <div style={{fontSize:11,color:"#DC2626",marginTop:6}}>{sigErr}</div>}
+          {sigErr && <div style={{fontSize:11,color:"#EF4444",marginTop:6}}>{sigErr}</div>}
           {sigLegacy && !sigImg && (
             <div style={{display:"flex",alignItems:"center",gap:10,marginTop:8,flexWrap:"wrap"}}>
-              <span style={{fontSize:11,color:"#B45309"}}>A signature saved in this browser was found — move it to the server?</span>
+              <span style={{fontSize:11,color:"#F59E0B"}}>A signature saved in this browser was found — move it to the server?</span>
               <button disabled={sigBusy} onClick={()=>void processAndSaveSig(sigLegacy)}
-                style={{padding:"4px 10px",borderRadius:6,border:"1px solid #F59E0B60",background:"#F59E0B18",color:"#B45309",fontSize:11,fontWeight:700,cursor:"pointer"}}>
+                style={{padding:"4px 10px",borderRadius:6,border:"1px solid #F59E0B60",background:"#F59E0B18",color:"#F59E0B",fontSize:11,fontWeight:700,cursor:"pointer"}}>
                 {sigBusy ? "Saving…" : "Save to server"}
               </button>
               <button onClick={()=>setSigLegacy("")} style={{background:"none",border:"none",color:"#475569",fontSize:11,cursor:"pointer"}}>Dismiss</button>
@@ -1167,8 +1167,8 @@ export default function ContractsView() {
         </div>
         <div style={{display:"flex",alignItems:"center",gap:16,flexShrink:0}}>
           {sigImg
-            ? <img src={sigImg} alt="Founder signature" style={{height:52,maxWidth:160,objectFit:"contain",background:"#fff",borderRadius:8,padding:"4px 10px",border:"1px solid #E2E8F0"}}/>
-            : <div style={{height:52,width:120,borderRadius:8,border:"1px dashed #E2E8F0",background:"#F5F6F8",display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,color:"#64748B"}}>No signature</div>
+            ? <img src={sigImg} alt="Founder signature" style={{height:52,maxWidth:160,objectFit:"contain",background:"#fff",borderRadius:8,padding:"4px 10px",border:"1px solid #1E293B"}}/>
+            : <div style={{height:52,width:120,borderRadius:8,border:"1px dashed #334155",background:"#060B18",display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,color:"#334155"}}>No signature</div>
           }
           <input ref={sigFileRef} type="file" accept="image/*" style={{display:"none"}} onChange={handleSigUpload}/>
           <div style={{display:"flex",flexDirection:"column",gap:6}}>
@@ -1177,7 +1177,7 @@ export default function ContractsView() {
               {sigBusy ? "Saving…" : "📁 Upload Signature"}
             </button>
             {sigImg && <button disabled={sigBusy} onClick={()=>void removeSig()}
-              style={{background:"none",border:"none",color:"#DC2626",fontSize:11,cursor:"pointer",textAlign:"center"}}>
+              style={{background:"none",border:"none",color:"#EF4444",fontSize:11,cursor:"pointer",textAlign:"center"}}>
               Remove
             </button>}
           </div>
@@ -1185,20 +1185,20 @@ export default function ContractsView() {
       </div>
 
       {/* Company GST Banner */}
-      <div style={{...card,padding:"14px 20px",borderLeft:"4px solid #FF6B00",background:"linear-gradient(135deg,#FF6B0010,#FFFFFF)"}}>
+      <div style={{...card,padding:"14px 20px",borderLeft:"4px solid #FF6B00",background:"linear-gradient(135deg,#FF6B0010,#0D1526)"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:8}}>
           <div>
-            <div style={{fontSize:12,fontWeight:800,color:"#C2410C"}}>{COMPANY.name}</div>
+            <div style={{fontSize:12,fontWeight:800,color:"#FF6B00"}}>{COMPANY.name}</div>
             <div style={{fontSize:11,color:"#475569",marginTop:2}}>{COMPANY.address}</div>
           </div>
           <div style={{display:"flex",gap:16,alignItems:"center"}}>
             <div style={{textAlign:"right"}}>
               <div style={{fontSize:10,color:"#475569"}}>GSTIN</div>
-              <div style={{fontSize:13,fontWeight:800,color:"#B45309",fontFamily:"monospace"}}>{COMPANY.gstin}</div>
+              <div style={{fontSize:13,fontWeight:800,color:"#F59E0B",fontFamily:"monospace"}}>{COMPANY.gstin}</div>
             </div>
             <div style={{textAlign:"right"}}>
               <div style={{fontSize:10,color:"#475569"}}>HSN/SAC</div>
-              <div style={{fontSize:12,fontWeight:700,color:"#64748B"}}>999299</div>
+              <div style={{fontSize:12,fontWeight:700,color:"#94A3B8"}}>999299</div>
             </div>
           </div>
         </div>
@@ -1208,14 +1208,14 @@ export default function ContractsView() {
       <div style={card}>
         <div style={{display:"flex",gap:12,marginBottom:16}}>
           <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search player or team…"
-            style={{flex:1,padding:"9px 14px",borderRadius:9,border:"1px solid #E2E8F0",background:"#F5F6F8",color:"#1E293B",fontSize:13,outline:"none"}}/>
-          <select style={{padding:"9px 14px",borderRadius:9,border:"1px solid #E2E8F0",background:"#F5F6F8",color:"#64748B",fontSize:12,outline:"none",cursor:"pointer"}}>
+            style={{flex:1,padding:"9px 14px",borderRadius:9,border:"1px solid #1E293B",background:"#060B18",color:"#E2E8F0",fontSize:13,outline:"none"}}/>
+          <select style={{padding:"9px 14px",borderRadius:9,border:"1px solid #1E293B",background:"#060B18",color:"#94A3B8",fontSize:12,outline:"none",cursor:"pointer"}}>
             <option>All Statuses</option><option>Signed</option><option>Pending</option><option>Expired</option>
           </select>
         </div>
         <table style={{width:"100%",borderCollapse:"collapse"}}>
           <thead>
-            <tr style={{borderBottom:"1px solid #E2E8F0"}}>
+            <tr style={{borderBottom:"1px solid #1E293B"}}>
               {["Contract ID","Player","Team","Role","Value","Status","Dates","Actions"].map(h=>(
                 <th key={h} style={{padding:"8px 12px",textAlign:"left",fontSize:10,color:"#475569",fontWeight:700,textTransform:"uppercase"}}>{h}</th>
               ))}
@@ -1223,37 +1223,37 @@ export default function ContractsView() {
           </thead>
           <tbody>
             {filtered.map((c,i)=>(
-              <tr key={i} style={{borderBottom:"1px solid #E2E8F0"}}>
+              <tr key={i} style={{borderBottom:"1px solid #0F1B2D"}}>
                 <td style={{padding:"13px 12px",fontSize:11,color:"#475569",fontFamily:"monospace"}}>{c.id}</td>
                 <td style={{padding:"13px 12px"}}>
-                  <div style={{fontSize:13,fontWeight:600,color:"#1E293B"}}>{c.player}</div>
+                  <div style={{fontSize:13,fontWeight:600,color:"#F1F5F9"}}>{c.player}</div>
                   <div style={{fontSize:10,color:"#475569"}}>{c.email}</div>
                 </td>
-                <td style={{padding:"13px 12px",fontSize:12,color:"#64748B"}}>{c.team}</td>
-                <td style={{padding:"13px 12px"}}><span style={{fontSize:10,padding:"2px 7px",borderRadius:5,background:"#FF6B0020",color:"#C2410C",fontWeight:700}}>{c.role}</span></td>
-                <td style={{padding:"13px 12px",fontSize:13,fontWeight:700,color:"#C2410C"}}>{fmt(c.amount)}</td>
+                <td style={{padding:"13px 12px",fontSize:12,color:"#94A3B8"}}>{c.team}</td>
+                <td style={{padding:"13px 12px"}}><span style={{fontSize:10,padding:"2px 7px",borderRadius:5,background:"#FF6B0020",color:"#FF6B00",fontWeight:700}}>{c.role}</span></td>
+                <td style={{padding:"13px 12px",fontSize:13,fontWeight:700,color:"#FF6B00"}}>{fmt(c.amount)}</td>
                 <td style={{padding:"13px 12px"}}>
                   <span style={{fontSize:10,fontWeight:800,padding:"3px 9px",borderRadius:6,background:`${statusColor(c.status)}22`,color:statusColor(c.status)}}>{c.status}</span>
                 </td>
                 <td style={{padding:"13px 12px"}}>
                   <div style={{fontSize:11,color:"#64748B"}}>{c.date}</div>
-                  <div style={{fontSize:10,color:"#64748B"}}>→ {c.expiry}</div>
+                  <div style={{fontSize:10,color:"#334155"}}>→ {c.expiry}</div>
                 </td>
                 <td style={{padding:"13px 12px"}}>
                   <div style={{display:"flex",gap:6}}>
-                    <button onClick={()=>setPreview(c)} style={{padding:"4px 10px",borderRadius:6,border:"1px solid #FF6B0044",background:"#FF6B0011",color:"#C2410C",fontSize:11,cursor:"pointer",fontWeight:700}}>📜 View</button>
+                    <button onClick={()=>setPreview(c)} style={{padding:"4px 10px",borderRadius:6,border:"1px solid #FF6B0044",background:"#FF6B0011",color:"#FF6B00",fontSize:11,cursor:"pointer",fontWeight:700}}>📜 View</button>
                     {c.status==="Pending"&&(
                       <button onClick={()=>setContracts(cs=>cs.map(x=>x.id===c.id?{...x,status:"Signed"}:x))}
-                        style={{padding:"4px 10px",borderRadius:6,border:"none",background:"#10B98122",color:"#047857",fontSize:11,cursor:"pointer",fontWeight:700}}>✓ Mark Signed</button>
+                        style={{padding:"4px 10px",borderRadius:6,border:"none",background:"#10B98122",color:"#10B981",fontSize:11,cursor:"pointer",fontWeight:700}}>✓ Mark Signed</button>
                     )}
                     <button onClick={()=>{ if(confirm(`Delete contract ${c.id} for ${c.player}? This cannot be undone.`)) setContracts(cs=>cs.filter(x=>x.id!==c.id)); }}
-                      style={{padding:"4px 10px",borderRadius:6,border:"1px solid #EF444444",background:"#EF444411",color:"#DC2626",fontSize:11,cursor:"pointer",fontWeight:700}}>🗑</button>
+                      style={{padding:"4px 10px",borderRadius:6,border:"1px solid #EF444444",background:"#EF444411",color:"#EF4444",fontSize:11,cursor:"pointer",fontWeight:700}}>🗑</button>
                   </div>
                 </td>
               </tr>
             ))}
             {filtered.length===0&&(
-              <tr><td colSpan={8} style={{padding:"40px",textAlign:"center",color:"#64748B",fontSize:13}}>
+              <tr><td colSpan={8} style={{padding:"40px",textAlign:"center",color:"#334155",fontSize:13}}>
                 No contracts yet. Click "+ Generate Contract" after the auction to create player contracts.
               </td></tr>
             )}
@@ -1265,7 +1265,7 @@ export default function ContractsView() {
       {genOpen&&(
         <div style={{position:"fixed",inset:0,background:"#00000088",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:16}} onClick={()=>setGenOpen(false)}>
           <div style={{...card,width:"100%",maxWidth:500,padding:28,maxHeight:"92vh",overflowY:"auto"}} onClick={e=>e.stopPropagation()}>
-            <div style={{fontSize:18,fontWeight:800,color:"#1E293B",marginBottom:4}}>+ Generate Contract</div>
+            <div style={{fontSize:18,fontWeight:800,color:"#F1F5F9",marginBottom:4}}>+ Generate Contract</div>
             <div style={{fontSize:12,color:"#64748B",marginBottom:20}}>BCPL official contracts — {COMPANY.name}</div>
             {[
               {label:"Contract Type",    key:"contractType", type:"select", options:["Player","Employee","Brand Ambassador","Coach","Operations Staff"]},
@@ -1288,18 +1288,18 @@ export default function ContractsView() {
                 <label style={{fontSize:11,color:"#64748B",fontWeight:700,marginBottom:5,display:"block",textTransform:"uppercase"}}>{f.label}</label>
                 {f.type==="select" ? (
                   <select value={genForm[f.key as keyof typeof genForm]} onChange={e=>setGenForm(p=>({...p,[f.key]:e.target.value}))}
-                    style={{width:"100%",padding:"9px 12px",borderRadius:9,border:"1px solid #E2E8F0",background:"#F5F6F8",color:"#1E293B",fontSize:13,outline:"none"}}>
+                    style={{width:"100%",padding:"9px 12px",borderRadius:9,border:"1px solid #1E293B",background:"#060B18",color:"#E2E8F0",fontSize:13,outline:"none"}}>
                     {(f.options||[]).map(o=><option key={o}>{o}</option>)}
                   </select>
                 ):(
                   <input type={f.type} value={genForm[f.key as keyof typeof genForm]} onChange={e=>setGenForm(p=>({...p,[f.key]:e.target.value}))}
                     placeholder={f.placeholder}
-                    style={{width:"100%",padding:"9px 12px",borderRadius:9,border:"1px solid #E2E8F0",background:"#F5F6F8",color:"#1E293B",fontSize:13,outline:"none",boxSizing:"border-box"}}/>
+                    style={{width:"100%",padding:"9px 12px",borderRadius:9,border:"1px solid #1E293B",background:"#060B18",color:"#E2E8F0",fontSize:13,outline:"none",boxSizing:"border-box"}}/>
                 )}
               </div>
             ))}
             <div style={{display:"flex",gap:10,marginTop:8}}>
-              <button onClick={()=>setGenOpen(false)} style={{flex:1,padding:"11px",borderRadius:10,border:"1px solid #E2E8F0",background:"transparent",color:"#64748B",fontSize:13,cursor:"pointer"}}>Cancel</button>
+              <button onClick={()=>setGenOpen(false)} style={{flex:1,padding:"11px",borderRadius:10,border:"1px solid #1E293B",background:"transparent",color:"#64748B",fontSize:13,cursor:"pointer"}}>Cancel</button>
               <button onClick={handleGenerate} disabled={!genForm.player.trim()||!genForm.amount||!genForm.date||!genForm.expiry}
                 style={{flex:2,padding:"11px",borderRadius:10,border:"none",background:"linear-gradient(135deg,#FF6B00,#FF8C40)",color:"#fff",fontWeight:700,fontSize:13,cursor:"pointer",
                   opacity:genForm.player.trim()&&genForm.amount&&genForm.date&&genForm.expiry?1:0.5}}>

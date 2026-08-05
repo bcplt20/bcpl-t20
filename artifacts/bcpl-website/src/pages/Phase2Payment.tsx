@@ -94,7 +94,7 @@ export function Phase2Payment() {
   if (loadState === 'not_selected') return (
     <div style={{ background:'var(--bg)', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:16, padding:24, fontFamily:'var(--font-body)', textAlign:'center' }}>
       <div style={{ color:'var(--orange)' }}><IcoBat size={40} /></div>
-      <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:28, color:'var(--ink)', textTransform:'uppercase' }}>{t("Not Eligible for Phase 2", "फेज 2 के लिए पात्र नहीं")}</div>
+      <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:28, color:'#fff', textTransform:'uppercase' }}>{t("Not Eligible for Phase 2", "फेज 2 के लिए पात्र नहीं")}</div>
       <div style={{ fontSize:14, color:'#64748B', maxWidth:360 }}>{t("Phase 2 payment is only available after qualifying in Phase 1.", "फेज 2 पेमेंट केवल फेज 1 qualify करने के बाद उपलब्ध है।")}</div>
       <Link href="/register/upload-video" className="btn-cta" style={{ marginTop:8 }}>{t("Go to Video Upload →", "वीडियो अपलोड पर जाएं →")}</Link>
       <style>{`.btn-cta{display:inline-flex;align-items:center;background:linear-gradient(135deg,var(--orange),var(--orange-2));border:none;border-radius:14px;color:#fff;font-family:var(--font-head);font-weight:900;letter-spacing:0.04em;padding:14px 28px;text-transform:uppercase;text-decoration:none;}`}</style>
@@ -144,10 +144,10 @@ export function Phase2Payment() {
         {/* Title */}
         <div style={{ textAlign: 'center', marginBottom: 40 }}>
           <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 14, letterSpacing: '.18em', color: 'var(--gold)', marginBottom: 12, textTransform: 'uppercase' }}>{t("Secure Your Spot", "अपनी जगह पक्की करें")}</div>
-          <h1 style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(32px, 6vw, 56px)', color: 'var(--ink)', textTransform: 'uppercase', lineHeight: 1.05 }}>
+          <h1 style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(32px, 6vw, 56px)', color: '#fff', textTransform: 'uppercase', lineHeight: 1.05 }}>
             {t("PHASE 2", "फेज 2")} <span style={{ color: 'var(--gold)' }}>{t("ENTRY FEE", "एंट्री फीस")}</span>
           </h1>
-          <p style={{ color: 'rgba(12,29,51,0.62)', fontSize: 16, marginTop: 12, lineHeight: 1.6 }}>
+          <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 16, marginTop: 12, lineHeight: 1.6 }}>
             {t("You've been selected. Now secure your physical trial slot.", "आपको चुना गया है। अब अपनी फिजिकल ट्रायल जगह पक्की करें।")}
           </p>
         </div>
@@ -163,8 +163,8 @@ export function Phase2Payment() {
 
           <div style={{ padding: '36px 32px', textAlign: 'center', background: 'var(--panel)' }}>
             <div style={{ fontFamily: 'var(--font-head)', fontWeight: 700, fontSize: 13, letterSpacing: '.16em', color: 'var(--ink-3)', marginBottom: 12, textTransform: 'uppercase' }}>{t("Total Amount Due", "कुल देय राशि")}</div>
-            <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(56px, 8vw, 72px)', color: 'var(--ink)', lineHeight: 1 }}>₹{amount.toLocaleString('en-IN')}</div>
-            <div style={{ fontSize: 14, color: 'rgba(12,29,51,0.62)', marginTop: 12 }}>{t(`Phase 2 Entry Fee · ${role} · ${city} Trial`, `फेज 2 एंट्री फीस · ${role} · ${city} ट्रायल`)}</div>
+            <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(56px, 8vw, 72px)', color: '#fff', lineHeight: 1 }}>₹{amount.toLocaleString('en-IN')}</div>
+            <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', marginTop: 12 }}>{t(`Phase 2 Entry Fee · ${role} · ${city} Trial`, `फेज 2 एंट्री फीस · ${role} · ${city} ट्रायल`)}</div>
           </div>
 
           <div className="ticket-dash" />
@@ -178,9 +178,9 @@ export function Phase2Payment() {
               [t('Taxable Amount', 'कर योग्य राशि'), `₹${taxBase.toLocaleString('en-IN')}`],
               [t('GST (18%)', 'GST (18%)'), `₹${gst.toLocaleString('en-IN')}`],
             ].map(([k,v]) => (
-              <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid rgba(12,29,51,0.08)', fontSize: 14 }}>
-                <span style={{ color: 'rgba(12,29,51,0.62)', fontWeight: 600 }}>{k}</span>
-                <span style={{ color: 'var(--ink)', fontWeight: 700 }}>{v}</span>
+              <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid rgba(255,255,255,0.06)', fontSize: 14 }}>
+                <span style={{ color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>{k}</span>
+                <span style={{ color: '#fff', fontWeight: 700 }}>{v}</span>
               </div>
             ))}
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px 0 0', fontSize: 16 }}>
@@ -192,11 +192,11 @@ export function Phase2Payment() {
 
         {/* Terms + CTA */}
         <div style={{ marginBottom: 40 }}>
-          <div onClick={() => setAgreed(a => !a)} style={{ display: 'flex', alignItems: 'flex-start', gap: 16, cursor: 'pointer', padding: '20px', background: agreed ? 'rgba(232,178,61,0.10)' : 'rgba(12,29,51,0.03)', border: agreed ? '1px solid rgba(232,178,61,0.5)' : '1px solid var(--line)', borderRadius: 'var(--r)', transition: 'all 0.2s', marginBottom: 24 }}>
-            <div style={{ width: 24, height: 24, border: agreed ? '2px solid var(--gold)' : '2px solid rgba(12,29,51,0.30)', borderRadius: 8, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: agreed ? 'var(--gold)' : 'transparent', transition: 'all 0.2s' }}>
+          <div onClick={() => setAgreed(a => !a)} style={{ display: 'flex', alignItems: 'flex-start', gap: 16, cursor: 'pointer', padding: '20px', background: agreed ? 'rgba(232,178,61,0.08)' : 'rgba(255,255,255,0.02)', border: agreed ? '1px solid rgba(232,178,61,0.5)' : '1px solid var(--line)', borderRadius: 'var(--r)', transition: 'all 0.2s', marginBottom: 24 }}>
+            <div style={{ width: 24, height: 24, border: agreed ? '2px solid var(--gold)' : '2px solid rgba(255,255,255,0.3)', borderRadius: 8, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: agreed ? 'var(--gold)' : 'transparent', transition: 'all 0.2s' }}>
               {agreed && <span style={{ color: '#000', fontSize: 14, fontWeight: 900 }}>✓</span>}
             </div>
-            <span style={{ fontSize: 14, color: agreed ? 'var(--ink)' : 'rgba(12,29,51,0.66)', lineHeight: 1.6 }}>
+            <span style={{ fontSize: 14, color: agreed ? '#fff' : 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>
               {t("I understand this is the Phase 2 physical-trial fee, payable by Phase 1 Qualified players, charged for participation in the Phase 2 physical trial. Payment confirms my trial slot, does not guarantee Auction Pool entry, Player Auction purchase, Team Purchase, a player contract, remuneration or Tournament Participation, and is non-refundable except in the situations listed in the Refund & Cancellation Policy.", "मैं समझता हूं कि यह Phase 2 physical-trial fee है, जो Phase 1 Qualified players देते हैं और Phase 2 physical trial में participation के लिए ली जाती है। Payment मेरी trial जगह पक्की करता है, यह Auction Pool में जगह, Player Auction में purchase, Team Purchase, player contract, remuneration या Tournament Participation की guarantee नहीं देता, और Refund & Cancellation Policy में बताई गई स्थितियों के अलावा refundable नहीं है।")}
             </span>
           </div>

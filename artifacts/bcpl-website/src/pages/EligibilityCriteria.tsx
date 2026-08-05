@@ -36,8 +36,8 @@ export function EligibilityCriteria() {
     .btn-fire{background:linear-gradient(135deg,#FF7A29 0%,#E8611A 60%,#C94E0E 100%);border:none;border-radius:14px;color:#fff;font-family:Montserrat,sans-serif;font-weight:800;cursor:pointer;box-shadow:0 8px 28px rgba(255,122,41,0.45),inset 0 1px 0 rgba(255,255,255,0.2);transition:transform 0.15s,box-shadow 0.2s;letter-spacing:0.02em;animation:pulseGlow 3s ease-in-out infinite;display:inline-flex;align-items:center;justify-content:center;min-height:44px;}
     .btn-fire:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(255,122,41,0.6);}
     .btn-wa{background:linear-gradient(135deg,#25D366,#1BA851);border:none;border-radius:14px;color:#fff;font-weight:700;cursor:pointer;font-family:Montserrat,sans-serif;transition:transform 0.15s;display:inline-flex;align-items:center;justify-content:center;min-height:44px;}
-    .glass-card { background:#FFFFFF; border:1px solid rgba(12,29,51,0.10); border-radius:20px; box-shadow:0 10px 30px rgba(12,29,51,0.08); }
-    .shimmer-gold{background:linear-gradient(90deg,#B8892B,#E8B23D,#B8892B,#C79A2E,#B8892B);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 3s linear infinite;}
+    .glass-card{background:linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85));backdrop-filter:blur(32px);border:1px solid rgba(255,255,255,0.09);border-radius:20px;box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06);}
+    .shimmer-gold{background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D,#F5C842,#E8B23D);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 3s linear infinite;}
     .tag-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,122,41,0.12);border:1px solid rgba(255,122,41,0.3);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:700;font-family:Montserrat,sans-serif;color:#FF7A29;letter-spacing:0.1em;}
     .chip-yes{background:rgba(34,197,94,0.15);border:2px solid rgba(34,197,94,0.5);color:#22C55E;border-radius:10px;padding:8px 20px;font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;cursor:pointer;transition:all 0.2s;min-height:44px;display:inline-flex;align-items:center;justify-content:center;}
     .chip-yes.active{background:rgba(34,197,94,0.3);border-color:#22C55E;box-shadow:0 0 16px rgba(34,197,94,0.4);}
@@ -64,13 +64,13 @@ export function EligibilityCriteria() {
 
   const particles = [
     {top:'15%',left:'8%',color:'#FF7A29',delay:'0s',size:3},
-    {top:'25%',left:'92%',color:'#B8892B',delay:'1.2s',size:4},
-    {top:'55%',left:'5%',color:'#0C1D33',delay:'0.7s',size:3},
+    {top:'25%',left:'92%',color:'#E8B23D',delay:'1.2s',size:4},
+    {top:'55%',left:'5%',color:'#fff',delay:'0.7s',size:3},
     {top:'70%',left:'88%',color:'#FF7A29',delay:'2s',size:3},
-    {top:'40%',left:'50%',color:'#B8892B',delay:'1.5s',size:4},
-    {top:'80%',left:'30%',color:'#0C1D33',delay:'0.3s',size:3},
+    {top:'40%',left:'50%',color:'#E8B23D',delay:'1.5s',size:4},
+    {top:'80%',left:'30%',color:'#fff',delay:'0.3s',size:3},
     {top:'10%',left:'65%',color:'#FF7A29',delay:'2.5s',size:3},
-    {top:'60%',left:'72%',color:'#B8892B',delay:'0.9s',size:4},
+    {top:'60%',left:'72%',color:'#E8B23D',delay:'0.9s',size:4},
   ];
 
   const questions = [
@@ -80,14 +80,14 @@ export function EligibilityCriteria() {
   ];
 
   return (
-    <div style={{background:'#F6F3EC',minHeight:'100vh',fontFamily:'Inter,sans-serif',color:'#0C1D33',paddingBottom:80,overflowX:'hidden'}}>
+    <div style={{background:'#0E1624',minHeight:'100vh',fontFamily:'Inter,sans-serif',color:'#F8F4EE',paddingBottom:80,overflowX:'hidden'}}>
       <style>{css}</style>
 
       <div style={{position:'fixed',inset:0,zIndex:0,pointerEvents:'none',overflow:'hidden'}}>
         <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 80% 60% at 20% 40%, rgba(255,122,41,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 20%, rgba(30,64,175,0.12) 0%, transparent 60%)'}}/>
         <svg style={{position:'absolute',bottom:0,left:0,right:0,width:'100%',opacity:0.07}} viewBox="0 0 1440 400" preserveAspectRatio="none">
-          <path d="M0,400 L0,200 Q360,80 720,80 Q1080,80 1440,200 L1440,400 Z" fill="rgba(12,29,51,0.05)"/>
-          <rect x="680" y="200" width="80" height="200" fill="#FFFFFF"/>
+          <path d="M0,400 L0,200 Q360,80 720,80 Q1080,80 1440,200 L1440,400 Z" fill="#1a2a4a"/>
+          <rect x="680" y="200" width="80" height="200" fill="#15223B"/>
           <line x1="200" y1="0" x2="260" y2="200" stroke="#E8B23D" strokeWidth="3"/>
           <line x1="200" y1="0" x2="140" y2="200" stroke="#E8B23D" strokeWidth="3"/>
           <circle cx="200" cy="0" r="8" fill="#E8B23D"/>
@@ -108,16 +108,16 @@ export function EligibilityCriteria() {
           <div className="wrap">
             <div className="tag-pill" style={{marginBottom:20}}><IcoCheck size={14}/> {t("AM I ELIGIBLE?","क्या मैं ELIGIBLE हूं?")}</div>
             <h1 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(32px,7vw,72px)',lineHeight:1.05,marginBottom:8}}>
-              <span style={{color:'#0C1D33',display:'block'}}>{t("ELIGIBILITY","ELIGIBILITY")}</span>
+              <span style={{color:'#fff',display:'block'}}>{t("ELIGIBILITY","ELIGIBILITY")}</span>
               <span className="shimmer-gold" style={{display:'block'}}>{t("CRITERIA.","CRITERIA.")}</span>
             </h1>
-            <p style={{color:'rgba(12,29,51,.78)',fontSize:'clamp(14px,2vw,16px)',lineHeight:1.7,maxWidth:600,margin:'16px auto 0'}}>
+            <p style={{color:'rgba(255,255,255,0.65)',fontSize:'clamp(14px,2vw,16px)',lineHeight:1.7,maxWidth:600,margin:'16px auto 0'}}>
               {t("BCPL T20 Season 5 is open to working professionals across India. Check your eligibility in seconds.","BCPL T20 Season 5 पूरे भारत के working professionals के लिए खुला है। कुछ ही seconds में अपनी eligibility check करें।")}
             </p>
             <div style={{marginTop:28}}>
               <LegalDocHeader doc="eligibility" />
               {/* Season-5 applicability line — see report: recommend LegalDocHeader carry this centrally */}
-              <p style={{maxWidth:880,margin:'-14px auto 0',fontSize:12.5,color:'rgba(12,29,51,.60)',fontStyle:'italic',lineHeight:1.6}}>
+              <p style={{maxWidth:880,margin:'-14px auto 0',fontSize:12.5,color:'rgba(255,255,255,0.5)',fontStyle:'italic',lineHeight:1.6}}>
                 {t("This document applies to BCPL Season 5 unless expressly stated otherwise.","यह document, जब तक स्पष्ट रूप से अन्यथा न कहा जाए, BCPL Season 5 पर लागू होता है।")}
               </p>
             </div>
@@ -137,7 +137,7 @@ export function EligibilityCriteria() {
                 {en:'Identity is verified via Aadhaar + PAN during Phase 2 KYC; DOB must match your documents.',hi:'पहचान Phase 2 KYC में Aadhaar + PAN से verify होती है; DOB आपके documents से match होनी चाहिए।'},
                 {en:'One registration per person per season. False or misleading information can lead to disqualification without refund.',hi:'एक व्यक्ति एक season में एक registration। झूठी या misleading जानकारी बिना refund के disqualification का कारण बन सकती है।'},
               ].map((k,i)=>(
-                <li key={i} style={{display:'flex',alignItems:'flex-start',color:'rgba(12,29,51,.78)',fontSize:'clamp(13px,2vw,14.5px)',lineHeight:1.7}}>
+                <li key={i} style={{display:'flex',alignItems:'flex-start',color:'rgba(255,255,255,0.8)',fontSize:'clamp(13px,2vw,14.5px)',lineHeight:1.7}}>
                   <OrangeDot/>{t(k.en,k.hi)}
                 </li>
               ))}
@@ -147,14 +147,14 @@ export function EligibilityCriteria() {
           {/* Quick Checker */}
           <div className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:24,animation:'fadeSlide 0.5s ease 0.1s both'}}>
             <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:6}}>
-              <span style={{color:'#B8892B',display:'inline-flex',alignItems:'center'}}><IcoZap size={22}/></span>
-              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#B8892B'}}>{t("Quick Eligibility Checker","Quick Eligibility Checker")}</h2>
+              <span style={{color:'#E8B23D',display:'inline-flex',alignItems:'center'}}><IcoZap size={22}/></span>
+              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#E8B23D'}}>{t("Quick Eligibility Checker","Quick Eligibility Checker")}</h2>
             </div>
-            <p style={{color:'rgba(12,29,51,.60)',fontSize:13,marginBottom:24}}>{t("Answer 3 quick questions to find out if you qualify for Season 5.","3 quick सवालों के जवाब दें और जानें कि आप Season 5 के लिए qualify करते हैं या नहीं।")}</p>
+            <p style={{color:'rgba(255,255,255,0.55)',fontSize:13,marginBottom:24}}>{t("Answer 3 quick questions to find out if you qualify for Season 5.","3 quick सवालों के जवाब दें और जानें कि आप Season 5 के लिए qualify करते हैं या नहीं।")}</p>
             <div style={{display:'flex',flexDirection:'column',gap:16}}>
               {questions.map((q,i)=>(
                 <div key={i} style={{display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'nowrap',gap:10}}>
-                  <span style={{color:'#0C1D33',fontSize:15,fontWeight:600,fontFamily:'Inter,sans-serif'}}>{t(q.labelEn,q.labelHi)}</span>
+                  <span style={{color:'rgba(255,255,255,0.85)',fontSize:15,fontWeight:600,fontFamily:'Inter,sans-serif'}}>{t(q.labelEn,q.labelHi)}</span>
                   <div style={{display:'flex',gap:8}}>
                     <button className={`chip-yes${q.val===true?' active':''}`} onClick={()=>q.setVal(true)}>{t("✓ YES","✓ हां")}</button>
                     <button className={`chip-no${q.val===false?' active':''}`} onClick={()=>q.setVal(false)}>{t("✗ NO","✗ नहीं")}</button>
@@ -168,15 +168,15 @@ export function EligibilityCriteria() {
                   <div style={{background:'rgba(34,197,94,0.12)',border:'2px solid rgba(34,197,94,0.5)',borderRadius:16,padding:'20px 24px',textAlign:'center',animation:'eligiblePulse 2s ease-in-out infinite'}}>
                     <div style={{marginBottom:8,color:'#22C55E',display:'flex',justifyContent:'center'}}><IcoCheck size={34}/></div>
                     <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:20,color:'#22C55E',marginBottom:8}}>{t("You're Eligible!","आप Eligible हैं!")}</div>
-                    <p style={{color:'rgba(12,29,51,.78)',fontSize:14,marginBottom:16}}>{t("You qualify for BCPL T20 Season 5. Secure your spot now!","आप BCPL T20 Season 5 के लिए qualify करते हैं। अभी अपनी जगह पक्की करें!")}</p>
+                    <p style={{color:'rgba(255,255,255,0.7)',fontSize:14,marginBottom:16}}>{t("You qualify for BCPL T20 Season 5. Secure your spot now!","आप BCPL T20 Season 5 के लिए qualify करते हैं। अभी अपनी जगह पक्की करें!")}</p>
                     <Link href="/register" className="btn-fire" style={{padding:'14px 32px',fontSize:15,width:'100%',maxWidth:260,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>{t("Register Now →","अभी Register करें →")}</Link>
                   </div>
                 ) : anyNo ? (
                   <div style={{background:'rgba(232,73,63,0.1)',border:'2px solid rgba(232,73,63,0.4)',borderRadius:16,padding:'20px 24px',textAlign:'center'}}>
                     <div style={{marginBottom:8,color:'#E8493F',display:'flex',justifyContent:'center'}}><IcoX size={34}/></div>
                     <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:18,color:'#E8493F',marginBottom:8}}>{t("Not Eligible for Season 5","Season 5 के लिए Eligible नहीं")}</div>
-                    <p style={{color:'rgba(12,29,51,.78)',fontSize:14,marginBottom:16}}>{t("Based on your answers, you don't qualify this season. We'd love to have you in a future edition!","आपके जवाबों के आधार पर, आप इस season qualify नहीं करते। हमें आपको किसी future edition में देखकर खुशी होगी!")}</p>
-                    <button style={{background:'rgba(12,29,51,0.04)',border:'1px solid rgba(12,29,51,0.12)',borderRadius:12,color:'rgba(12,29,51,.78)',padding:'10px 24px',fontSize:14,cursor:'pointer',fontFamily:'Inter,sans-serif',minHeight:44,width:'100%',maxWidth:280}}>{t("Contact us for future seasons →","Future seasons के लिए हमसे contact करें →")}</button>
+                    <p style={{color:'rgba(255,255,255,0.6)',fontSize:14,marginBottom:16}}>{t("Based on your answers, you don't qualify this season. We'd love to have you in a future edition!","आपके जवाबों के आधार पर, आप इस season qualify नहीं करते। हमें आपको किसी future edition में देखकर खुशी होगी!")}</p>
+                    <button style={{background:'rgba(255,255,255,0.08)',border:'1px solid rgba(255,255,255,0.2)',borderRadius:12,color:'rgba(255,255,255,0.7)',padding:'10px 24px',fontSize:14,cursor:'pointer',fontFamily:'Inter,sans-serif',minHeight:44,width:'100%',maxWidth:280}}>{t("Contact us for future seasons →","Future seasons के लिए हमसे contact करें →")}</button>
                   </div>
                 ) : null}
               </div>
@@ -186,10 +186,10 @@ export function EligibilityCriteria() {
           {/* Section 1 */}
           <div className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:20,animation:'fadeSlide 0.5s ease 0.2s both'}}>
             <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18}}>
-              <span style={{color:'#B8892B',display:'inline-flex',alignItems:'center'}}><IcoUser size={28}/></span>
-              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#0C1D33'}}>{t("1. Professional Status","1. Professional Status")}</h2>
+              <span style={{color:'#E8B23D',display:'inline-flex',alignItems:'center'}}><IcoUser size={28}/></span>
+              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>{t("1. Professional Status","1. Professional Status")}</h2>
             </div>
-            <p style={{color:'rgba(12,29,51,.78)',fontSize:'clamp(14px,2vw,15px)',lineHeight:1.8,marginBottom:16}}>{t("BCPL T20 is designed exclusively for India's working professionals. If you earn a living, you belong on this field.","BCPL T20 खास तौर पर भारत के working professionals के लिए बनाई गई है। अगर आप कमाई करते हैं, तो यह मैदान आपके लिए है।")}</p>
+            <p style={{color:'rgba(255,255,255,0.75)',fontSize:'clamp(14px,2vw,15px)',lineHeight:1.8,marginBottom:16}}>{t("BCPL T20 is designed exclusively for India's working professionals. If you earn a living, you belong on this field.","BCPL T20 खास तौर पर भारत के working professionals के लिए बनाई गई है। अगर आप कमाई करते हैं, तो यह मैदान आपके लिए है।")}</p>
             <div className="elig-2col">
               <div style={{background:'rgba(34,197,94,0.08)',border:'1px solid rgba(34,197,94,0.2)',borderRadius:12,padding:'14px 16px'}}>
                 <div style={{color:'#22C55E',fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:12,letterSpacing:'0.08em',marginBottom:8,display:'flex',alignItems:'center',gap:6}}><IcoCheck size={14}/> {t("ELIGIBLE","ELIGIBLE")}</div>
@@ -201,7 +201,7 @@ export function EligibilityCriteria() {
                   {en:'Farmers & agriculture professionals',hi:'Farmers और agriculture professionals'},
                   {en:'Government & PSU staff',hi:'Government और PSU staff'},
                 ].map((item,i)=>(
-                  <div key={i} style={{display:'flex',alignItems:'flex-start',gap:6,color:'rgba(12,29,51,.78)',fontSize:13,lineHeight:1.6,marginBottom:4}}>
+                  <div key={i} style={{display:'flex',alignItems:'flex-start',gap:6,color:'rgba(255,255,255,0.75)',fontSize:13,lineHeight:1.6,marginBottom:4}}>
                     <span style={{color:'#22C55E',flexShrink:0}}>✓</span>{t(item.en,item.hi)}
                   </div>
                 ))}
@@ -215,7 +215,7 @@ export function EligibilityCriteria() {
                   {en:'Players currently under a first-class / professional cricket contract',hi:'वर्तमान में first-class / professional cricket contract वाले players'},
                   {en:'BCPL staff and officials',hi:'BCPL staff और officials'},
                 ].map((item,i)=>(
-                  <div key={i} style={{display:'flex',alignItems:'flex-start',gap:6,color:'rgba(12,29,51,.78)',fontSize:13,lineHeight:1.6,marginBottom:4}}>
+                  <div key={i} style={{display:'flex',alignItems:'flex-start',gap:6,color:'rgba(255,255,255,0.6)',fontSize:13,lineHeight:1.6,marginBottom:4}}>
                     <span style={{color:'#E8493F',flexShrink:0}}>✗</span>{t(item.en,item.hi)}
                   </div>
                 ))}
@@ -226,17 +226,17 @@ export function EligibilityCriteria() {
           {/* Section 2 */}
           <div className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:20,animation:'fadeSlide 0.5s ease 0.25s both'}}>
             <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18}}>
-              <span style={{color:'#B8892B',display:'inline-flex',alignItems:'center'}}><IcoCalendar size={28}/></span>
-              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#0C1D33'}}>{t("2. Age Requirements","2. Age Requirements")}</h2>
+              <span style={{color:'#E8B23D',display:'inline-flex',alignItems:'center'}}><IcoCalendar size={28}/></span>
+              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>{t("2. Age Requirements","2. Age Requirements")}</h2>
             </div>
             <div style={{display:'flex',gap:20,flexWrap:'wrap',marginBottom:16}}>
               <div style={{background:'linear-gradient(135deg,rgba(255,122,41,0.15),rgba(232,178,61,0.1))',border:'1px solid rgba(255,122,41,0.3)',borderRadius:14,padding:'16px 24px',textAlign:'center',flex:1,minWidth:120}}>
                 <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:36,color:'#FF7A29',lineHeight:1}}>18+</div>
-                <div style={{color:'rgba(12,29,51,.78)',fontSize:13,marginTop:4}}>{t("Minimum Age","Minimum Age")}</div>
+                <div style={{color:'rgba(255,255,255,0.6)',fontSize:13,marginTop:4}}>{t("Minimum Age","Minimum Age")}</div>
               </div>
               <div style={{background:'linear-gradient(135deg,rgba(34,197,94,0.1),rgba(34,197,94,0.05))',border:'1px solid rgba(34,197,94,0.2)',borderRadius:14,padding:'16px 24px',textAlign:'center',flex:1,minWidth:120}}>
                 <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:36,color:'#22C55E',lineHeight:1}}>45</div>
-                <div style={{color:'rgba(12,29,51,.78)',fontSize:13,marginTop:4}}>{t("Maximum Age","Maximum Age")}</div>
+                <div style={{color:'rgba(255,255,255,0.6)',fontSize:13,marginTop:4}}>{t("Maximum Age","Maximum Age")}</div>
               </div>
             </div>
             <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:10}}>
@@ -246,7 +246,7 @@ export function EligibilityCriteria() {
                 {en:'Age verified via government-issued Aadhaar card or PAN card',hi:'Age government-issued Aadhaar card या PAN card से verify होती है'},
                 {en:'Date of birth must match across all submitted documents',hi:'Date of birth सभी submit किए गए documents में एक जैसी होनी चाहिए'},
               ].map((item,i)=>(
-                <li key={i} style={{display:'flex',alignItems:'flex-start',color:'rgba(12,29,51,.78)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
+                <li key={i} style={{display:'flex',alignItems:'flex-start',color:'rgba(255,255,255,0.75)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
                   <OrangeDot/>{t(item.en,item.hi)}
                 </li>
               ))}
@@ -256,10 +256,10 @@ export function EligibilityCriteria() {
           {/* Section 3 */}
           <div className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:20,animation:'fadeSlide 0.5s ease 0.3s both'}}>
             <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18}}>
-              <span style={{color:'#B8892B',display:'inline-flex',alignItems:'center'}}><IcoBat size={28}/></span>
-              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#0C1D33'}}>{t("3. Cricket Experience","3. Cricket Experience")}</h2>
+              <span style={{color:'#E8B23D',display:'inline-flex',alignItems:'center'}}><IcoBat size={28}/></span>
+              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>{t("3. Cricket Experience","3. Cricket Experience")}</h2>
             </div>
-            <p style={{color:'rgba(12,29,51,.78)',fontSize:'clamp(14px,2vw,15px)',lineHeight:1.8,marginBottom:14}}>
+            <p style={{color:'rgba(255,255,255,0.75)',fontSize:'clamp(14px,2vw,15px)',lineHeight:1.8,marginBottom:14}}>
               {t("You don't need a century at Lord's — just a genuine love for the game and the ability to hold your own on a cricket field.","आपको Lord's पर century मारने की ज़रूरत नहीं — बस game के लिए सच्चा प्यार और cricket के मैदान पर खुद को संभालने की क्षमता चाहिए।")}
             </p>
             <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:10}}>
@@ -277,7 +277,7 @@ export function EligibilityCriteria() {
                 {en:'Video must demonstrate batting, bowling, or keeping depending on your role',hi:'Video में आपकी role के हिसाब से batting, bowling या keeping दिखनी चाहिए'},
                 {en:'All-rounders should show at least two skills in the video',hi:'All-rounders को video में कम से कम दो skills दिखानी चाहिए'},
               ].map((item,i)=>(
-                <li key={i} style={{display:'flex',alignItems:'flex-start',color:'rgba(12,29,51,.78)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
+                <li key={i} style={{display:'flex',alignItems:'flex-start',color:'rgba(255,255,255,0.75)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
                   <OrangeDot/>{t(item.en,item.hi)}
                 </li>
               ))}
@@ -287,10 +287,10 @@ export function EligibilityCriteria() {
           {/* Section 4 */}
           <div className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:20,animation:'fadeSlide 0.5s ease 0.35s both'}}>
             <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18}}>
-              <span style={{color:'#B8892B',display:'inline-flex',alignItems:'center'}}><IcoShield size={28}/></span>
-              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#0C1D33'}}>{t("4. Physical Fitness","4. Physical Fitness")}</h2>
+              <span style={{color:'#E8B23D',display:'inline-flex',alignItems:'center'}}><IcoShield size={28}/></span>
+              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>{t("4. Physical Fitness","4. Physical Fitness")}</h2>
             </div>
-            <p style={{color:'rgba(12,29,51,.78)',fontSize:'clamp(14px,2vw,15px)',lineHeight:1.8,marginBottom:14}}>
+            <p style={{color:'rgba(255,255,255,0.75)',fontSize:'clamp(14px,2vw,15px)',lineHeight:1.8,marginBottom:14}}>
               {t("Cricket demands physical capability. BCPL requires all participants to be in a state of health that allows safe participation.","Cricket के लिए physical capability चाहिए। BCPL चाहती है कि सभी participants ऐसी health में हों जो safe participation की इजाज़त दे।")}
             </p>
             <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:10}}>
@@ -301,7 +301,7 @@ export function EligibilityCriteria() {
                 {en:'BCPL may request a fitness certificate from shortlisted/finalist players',hi:'BCPL shortlisted/finalist players से fitness certificate मांग सकती है'},
                 {en:'BCPL is not liable for injuries — players participate at their own risk',hi:'BCPL injuries के लिए ज़िम्मेदार नहीं है — players अपने own risk पर हिस्सा लेते हैं'},
               ].map((item,i)=>(
-                <li key={i} style={{display:'flex',alignItems:'flex-start',color:'rgba(12,29,51,.78)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
+                <li key={i} style={{display:'flex',alignItems:'flex-start',color:'rgba(255,255,255,0.75)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
                   <OrangeDot/>{t(item.en,item.hi)}
                 </li>
               ))}
@@ -311,10 +311,10 @@ export function EligibilityCriteria() {
           {/* Section 5 */}
           <div className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:20,animation:'fadeSlide 0.5s ease 0.4s both'}}>
             <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18}}>
-              <span style={{color:'#B8892B',display:'inline-flex',alignItems:'center'}}><IcoDoc size={28}/></span>
-              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#0C1D33'}}>{t("5. Required Documents","5. Required Documents")}</h2>
+              <span style={{color:'#E8B23D',display:'inline-flex',alignItems:'center'}}><IcoDoc size={28}/></span>
+              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>{t("5. Required Documents","5. Required Documents")}</h2>
             </div>
-            <p style={{color:'rgba(12,29,51,.78)',fontSize:'clamp(14px,2vw,15px)',lineHeight:1.8,marginBottom:18}}>
+            <p style={{color:'rgba(255,255,255,0.75)',fontSize:'clamp(14px,2vw,15px)',lineHeight:1.8,marginBottom:18}}>
               {t("Documents are submitted after shortlisting. Keep these ready before registration so you're prepared when the BCPL team contacts you.","Documents shortlisting के बाद submit होते हैं। इन्हें registration से पहले तैयार रखें ताकि BCPL team के contact करने पर आप तैयार रहें।")}
             </p>
             <div style={{display:'grid',gap:12}}>
@@ -324,11 +324,11 @@ export function EligibilityCriteria() {
                 {icon:IcoDoc,titleEn:'Employment Proof',titleHi:'Employment Proof',descEn:'Offer letter, latest salary slip, or business registration certificate. Freelancers: GST registration or latest ITR.',descHi:'Offer letter, latest salary slip, या business registration certificate। Freelancers: GST registration या latest ITR।'},
                 {icon:IcoVideo,titleEn:'Cricket Video',titleHi:'Cricket Video',descEn:'Uploaded within 15 days of registration via the BCPL portal. 30–60 seconds. Clear footage of your own, current cricket performance in natural light.',descHi:'Registration के 15 दिनों के अंदर BCPL portal से upload होती है। 30–60 seconds। Natural light में आपकी own, current cricket performance की clear footage।'},
               ] as {icon:IcoComp;titleEn:string;titleHi:string;descEn:string;descHi:string}[]).map((item,i)=>(
-                <div key={i} style={{background:'rgba(12,29,51,0.04)',border:'1px solid rgba(12,29,51,0.12)',borderRadius:12,padding:'14px 16px',display:'flex',gap:12}}>
-                  <span style={{flexShrink:0,color:'#B8892B',display:'inline-flex'}}><item.icon size={22}/></span>
+                <div key={i} style={{background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:12,padding:'14px 16px',display:'flex',gap:12}}>
+                  <span style={{flexShrink:0,color:'#E8B23D',display:'inline-flex'}}><item.icon size={22}/></span>
                   <div>
-                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:13,color:'#B8892B',marginBottom:4}}>{t(item.titleEn,item.titleHi)}</div>
-                    <div style={{color:'rgba(12,29,51,.78)',fontSize:13,lineHeight:1.6}}>{t(item.descEn,item.descHi)}</div>
+                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:13,color:'#E8B23D',marginBottom:4}}>{t(item.titleEn,item.titleHi)}</div>
+                    <div style={{color:'rgba(255,255,255,0.7)',fontSize:13,lineHeight:1.6}}>{t(item.descEn,item.descHi)}</div>
                   </div>
                 </div>
               ))}
@@ -362,10 +362,10 @@ export function EligibilityCriteria() {
           {/* Section 6 — Verification, Declarations & Conduct */}
           <div className="glass-card" style={{padding:'clamp(20px,4vw,32px) clamp(16px,4vw,36px)',marginBottom:20,animation:'fadeSlide 0.5s ease 0.45s both'}}>
             <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18}}>
-              <span style={{color:'#B8892B',display:'inline-flex',alignItems:'center'}}><IcoShield size={28}/></span>
-              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#0C1D33'}}>{t("6. Verification, Declarations & Conduct","6. Verification, Declarations और Conduct")}</h2>
+              <span style={{color:'#E8B23D',display:'inline-flex',alignItems:'center'}}><IcoShield size={28}/></span>
+              <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>{t("6. Verification, Declarations & Conduct","6. Verification, Declarations और Conduct")}</h2>
             </div>
-            <p style={{color:'rgba(12,29,51,.78)',fontSize:'clamp(14px,2vw,15px)',lineHeight:1.8,marginBottom:16}}>
+            <p style={{color:'rgba(255,255,255,0.75)',fontSize:'clamp(14px,2vw,15px)',lineHeight:1.8,marginBottom:16}}>
               {t("One registration is permitted per person per season. Participation is subject to accurate declarations, identity and professional verification, and the applicable BCPL rules.","एक व्यक्ति एक season में एक ही registration कर सकता है। भागीदारी सही declarations, identity और professional verification, तथा applicable BCPL rules के अधीन है।")}
             </p>
             <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:10}}>
@@ -377,7 +377,7 @@ export function EligibilityCriteria() {
                 {en:'False or misleading declarations can lead to disqualification at any stage, without refund',hi:'झूठी या misleading declarations किसी भी stage पर disqualification का कारण बन सकती हैं, बिना refund के'},
                 {en:'Qualified players must attend the physical trial in person at their chosen city to be assessed',hi:'Qualified players को assess होने के लिए अपने chosen city में physical trial में खुद उपस्थित होना ज़रूरी है'},
               ].map((item,i)=>(
-                <li key={i} style={{display:'flex',alignItems:'flex-start',color:'rgba(12,29,51,.78)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
+                <li key={i} style={{display:'flex',alignItems:'flex-start',color:'rgba(255,255,255,0.75)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
                   <OrangeDot/>{t(item.en,item.hi)}
                 </li>
               ))}
@@ -394,14 +394,14 @@ export function EligibilityCriteria() {
                   {en:'Breach of the BCPL Code of Conduct',hi:'BCPL Code of Conduct का उल्लंघन'},
                   {en:'BCPL may request additional evidence at any time; failed verification can lead to removal from the process without refund',hi:'BCPL किसी भी समय अतिरिक्त evidence मांग सकता है; verification fail होने पर बिना refund के process से हटाया जा सकता है'},
                 ].map((r,i)=>(
-                  <li key={i} style={{display:'flex',alignItems:'flex-start',gap:8,color:'rgba(12,29,51,.78)',fontSize:'clamp(12.5px,2vw,13.5px)',lineHeight:1.7}}>
+                  <li key={i} style={{display:'flex',alignItems:'flex-start',gap:8,color:'rgba(255,255,255,0.72)',fontSize:'clamp(12.5px,2vw,13.5px)',lineHeight:1.7}}>
                     <span style={{color:'#E8493F',flexShrink:0}}>✕</span>{t(r.en,r.hi)}
                   </li>
                 ))}
               </ul>
             </div>
             <div style={{background:'rgba(255,122,41,0.06)',border:'1px solid rgba(255,122,41,0.2)',borderRadius:12,padding:'14px 18px',marginTop:16}}>
-              <p style={{color:'rgba(12,29,51,.78)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
+              <p style={{color:'rgba(255,255,255,0.7)',fontSize:'clamp(13px,2vw,14px)',lineHeight:1.7}}>
                 {t("All participants must follow the applicable conduct rules throughout registration, assessment and trials.","सभी participants को registration, assessment और trials के दौरान applicable conduct rules का पालन करना ज़रूरी है।")}
                 {' '}
                 <Link href="/code-of-conduct" style={{color:'#FF7A29',fontWeight:700,textDecoration:'underline'}}>{t("Read the Code of Conduct →","Code of Conduct पढ़ें →")}</Link>
@@ -412,7 +412,7 @@ export function EligibilityCriteria() {
           {/* CTA */}
           <div className="glass-card" style={{padding:'clamp(20px,4vw,32px)',textAlign:'center'}}>
             <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(18px,3vw,22px)',marginBottom:8}}>{t("Meet All Criteria?","सभी Criteria पूरे करते हैं?")}</div>
-            <p style={{color:'rgba(12,29,51,.78)',fontSize:14,marginBottom:20}}>{t("Join 10 franchise teams and corporate cricketers from across India. Your stadium moment awaits.","10 franchise teams और पूरे भारत के corporate cricketers के साथ जुड़ें। आपका stadium वाला पल इंतज़ार कर रहा है।")}</p>
+            <p style={{color:'rgba(255,255,255,0.6)',fontSize:14,marginBottom:20}}>{t("Join 10 franchise teams and corporate cricketers from across India. Your stadium moment awaits.","10 franchise teams और पूरे भारत के corporate cricketers के साथ जुड़ें। आपका stadium वाला पल इंतज़ार कर रहा है।")}</p>
             <div style={{display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap'}}>
               <Link href="/register" className="btn-fire" style={{padding:'14px 36px',fontSize:16,flex:'1 1 200px',maxWidth:280,textDecoration:'none',display:'inline-flex',alignItems:'center',justifyContent:'center'}}>{t("Register ₹299 →","Register ₹299 →")}</Link>
               <button className="btn-wa" style={{padding:'14px 24px',fontSize:15,borderRadius:14,flex:'1 1 160px',maxWidth:200,display:'inline-flex',alignItems:'center',justifyContent:'center',gap:8}}><IcoChat size={16}/> {t("Ask on WhatsApp","WhatsApp पर पूछें")}</button>
