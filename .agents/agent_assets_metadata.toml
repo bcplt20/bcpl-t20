@@ -32,3 +32,31 @@ uri = "file://attached_assets/sample-invoice-v2.pdf"
 type = "pdf"
 title = "नया Invoice PDF (sample)"
 description = "Season 5 logo navy chip पर, address और TAX INVOICE अलग-अलग, Rs. amounts साफ़"
+
+[[outputs]]
+id = "Qpz5NWL4am4v0wTvDuvqQ"
+uri = "file://screenshots/result-pass-top.png"
+type = "image"
+title = "Pass result — score 74/100, QUALIFIED, Delhi rank #2/5"
+description = "Pass result — score 74/100, QUALIFIED, Delhi rank #2/5"
+
+[[outputs]]
+id = "boFqQIVlkH4DYOHZWgXcH"
+uri = "file://screenshots/result-pass-breakdown.png"
+type = "image"
+title = "Pass result — 100-point category breakdown + feedback"
+description = "Pass result — 100-point category breakdown + feedback"
+
+[[outputs]]
+id = "l1in0zJW49W5C266re52E"
+uri = "file://screenshots/result-fail-top.png"
+type = "image"
+title = "Fail result — score 58/100, neutral outcome, Delhi rank #4/5"
+description = "Fail result — score 58/100, neutral outcome, Delhi rank #4/5"
+
+[[outputs]]
+id = "kG0Vp_d8xi7_SK-dJb66E"
+uri = "file://screenshots/result-fail-breakdown.png"
+type = "image"
+title = "Fail result — category breakdown + improvement feedback"
+description = "Fail result — category breakdown + improvement feedback"

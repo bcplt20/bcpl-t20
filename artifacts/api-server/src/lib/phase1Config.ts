@@ -43,7 +43,9 @@ export const phase1ConfigBase = z.object({
   // Business rules (backend-owned, never AI-owned)
   minScore:           z.number().int().min(0).max(100).default(80),
   resultReleaseHours: z.number().min(0).max(720).default(48),
-  uploadWindowDays:   z.number().int().min(1).max(60).default(7),
+  // 15 days is the PROMISED player-facing window (site copy, countdown,
+  // legal pages all say 15). 7 was an old internal default — healed below.
+  uploadWindowDays:   z.number().int().min(1).max(60).default(15),
 
   // Video constraints
   videoMinSeconds:    z.number().int().min(5).max(600).default(30),
@@ -84,6 +86,13 @@ function healDeadGeminiModels(cfg: Phase1Config): Phase1Config {
     logger.warn({ stored: out.geminiValidationModel, using: GEMINI_VALIDATION_DEFAULT },
       "phase1Config: stored validation model retired for new API keys; substituting default");
     out.geminiValidationModel = GEMINI_VALIDATION_DEFAULT;
+  }
+  // Heal the old 7-day upload window: every player-facing surface promises
+  // 15 days, so a stored 7 (the pre-Aug'26 default persisted by any PATCH)
+  // silently broke that promise at payment time.
+  if (out.uploadWindowDays === 7) {
+    logger.warn("phase1Config: stored uploadWindowDays=7 (old default) healed to 15 — players are promised a 15-day window");
+    out.uploadWindowDays = 15;
   }
   return out;
 }
