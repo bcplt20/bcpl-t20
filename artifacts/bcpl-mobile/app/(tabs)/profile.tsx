@@ -146,8 +146,8 @@ export default function ProfileScreen() {
                   value={
                     d.trial?.assessmentSubmitted
                       ? 'Assessment done'
-                      : d.trial?.allocated
-                        ? `${d.trial.venue ?? 'Allocated'}${d.trial.slot ? ` · ${d.trial.slot}` : ''}`
+                      : d.trial
+                        ? `${d.trial.venue?.name ?? 'Allocated'}${d.trial.slot?.batch ? ` · ${d.trial.slot.batch}` : ''}`
                         : 'Awaited'
                   }
                   done={!!d.trial?.assessmentSubmitted}

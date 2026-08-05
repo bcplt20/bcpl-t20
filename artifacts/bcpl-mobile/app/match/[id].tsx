@@ -128,9 +128,10 @@ function ScorecardTab({ matchId }: { matchId: string }) {
   return (
     <View style={{ gap: 12 }}>
       {cards.map((sc) => (
-        <Card key={sc.innings}>
+        <Card key={sc.innings.id}>
           <Text style={{ color: c.accent, fontFamily: 'Inter_700Bold', fontSize: 13, marginBottom: 8 }}>
-            INNINGS {sc.innings}
+            INNINGS {sc.innings.inningsNumber}
+            {sc.innings.battingTeam ? ` · ${sc.innings.battingTeam.toUpperCase()}` : ''}
           </Text>
           <View style={styles.scHead}>
             <Text style={[styles.scName, { color: c.mutedForeground, fontSize: 11 }]}>BATTER</Text>
@@ -190,7 +191,13 @@ export default function MatchDetailScreen() {
   const liveQ = useQuery({
     queryKey: ['live', matchId],
     queryFn: () => getLiveMatch(matchId),
-    refetchInterval: (query) => (query.state.data?.status === 'live' ? 10_000 : false),
+    refetchInterval: (query) => {
+      const s = query.state.data?.status;
+      if (s === 'live') return 10_000;
+      if (s === 'completed' || s === 'abandoned') return false;
+      // scheduled / toss etc. — poll lightly so it flips to live automatically
+      return 60_000;
+    },
   });
 
   const live = liveQ.data;

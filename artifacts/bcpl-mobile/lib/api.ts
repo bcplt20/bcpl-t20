@@ -83,9 +83,8 @@ export interface Dashboard {
   phase2Payment?: { status: string; amount: number; paidAt?: string | null } | null;
   kyc?: { status: string; profession?: string | null; verifiedAt?: string | null } | null;
   trial?: {
-    allocated: boolean;
-    venue?: string | null;
-    slot?: string | null;
+    venue?: { name: string; city?: string | null; address?: string | null; mapsUrl?: string | null } | null;
+    slot?: { batch?: string | null; date?: string | null; reportingTime?: string | null; startTime?: string | null } | null;
     checkedInAt?: string | null;
     assessmentSubmitted?: boolean;
     assessmentAt?: string | null;
@@ -166,7 +165,15 @@ export interface ScorecardBowling {
 export interface ScorecardResponse {
   match: Match;
   scorecards: {
-    innings: number;
+    /** full innings row from the server */
+    innings: {
+      id: string;
+      inningsNumber: number;
+      battingTeam?: string | null;
+      bowlingTeam?: string | null;
+      totalRuns?: number;
+      totalWickets?: number;
+    };
     scorecard: {
       batting: ScorecardBatting[];
       bowling: ScorecardBowling[];
