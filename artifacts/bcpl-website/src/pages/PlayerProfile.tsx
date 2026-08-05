@@ -494,7 +494,57 @@ export function PlayerProfile() {
                     {reg && (
                       <button className="btn-ghost" style={{ display: 'inline-flex', alignItems: 'center', gap: 7 }} onClick={() => {
                         const initials = user?.name?.charAt(0).toUpperCase() ?? '?';
-                        const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>BCPL Player ID — ${user?.name}</title><style>body{margin:0;background:#172D48;display:flex;justify-content:center;padding:32px;font-family:'Segoe UI',sans-serif}.card{width:340px;background:linear-gradient(145deg,#223D68,var(--bg));border:1.5px solid rgba(255,122,41,0.45);border-radius:18px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.6)}.stripe{height:4px;background:linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)}.head{background:linear-gradient(135deg,#FF7A29,#C94E0E);padding:14px 20px}.head-title{font-size:10px;font-weight:800;color:rgba(255,255,255,0.9);letter-spacing:.18em}.head-sub{font-size:8px;color:rgba(255,255,255,0.88);margin-top:3px;letter-spacing:.1em}.body{padding:20px 22px 16px}.avatar{width:60px;height:60px;background:linear-gradient(135deg,#FF7A29,#C94E0E);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;margin-bottom:12px;box-shadow:0 4px 20px rgba(255,122,41,0.4)}.name{font-size:20px;font-weight:900;color:#fff;margin-bottom:3px}.role{font-size:11px;font-weight:800;color:#FF7A29;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px}hr{border:none;border-top:1px solid rgba(255,255,255,0.18);margin:12px 0}.row{display:flex;justify-content:space-between;margin-bottom:9px}.label{font-size:9px;font-weight:700;color:var(--ink-3);text-transform:uppercase;letter-spacing:.08em}.val{font-size:11px;font-weight:700;color:rgba(255,255,255,0.88);text-align:right}.ref{font-family:monospace;color:#FF7A29;font-size:11px;font-weight:700}.foot{background:rgba(255,122,41,0.07);border-top:1px solid rgba(255,122,41,0.18);padding:12px 22px;display:flex;justify-content:space-between;align-items:center}.kyc{background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.4);border-radius:6px;padding:4px 11px;font-size:9px;font-weight:800;color:#22C55E;letter-spacing:.08em}.site{font-size:9px;color:rgba(255,255,255,0.25);font-weight:600}@media print{body{padding:0;background:#fff}.card{box-shadow:none}}</style></head><body><div class="card"><div class="stripe"></div><div class="head"><div class="head-title">BHARTIYA CORPORATE PREMIER LEAGUE</div><div class="head-sub">OFFICIAL PLAYER ID CARD · SEASON 5</div></div><div class="body"><div class="avatar">${initials}</div><div class="name">${user?.name}</div><div class="role">${formatRole(reg.role)} · ${reg.trialCity}</div><hr/><div class="row"><span class="label">Email</span><span class="val">${user?.email || '—'}</span></div><div class="row"><span class="label">Phone</span><span class="val">${user?.phone || '—'}</span></div><hr/><div class="row"><span class="label">Registration No.</span><span class="ref">${regId}</span></div><div class="row"><span class="label">KYC Status</span><span class="val" style="color:#22C55E">VERIFIED</span></div></div><div class="foot"><span class="site">bcplt20.com · BCPL Season 5</span><span class="kyc">ID CARD</span></div></div><script>window.onload=function(){window.print();}<\/script></body></html>`;
+                        // Live status values — never hardcode statuses on the ID card.
+                        const p1Pay = data?.phase1Payment;
+                        const p1PayLine = p1Pay && (p1Pay.status === 'paid' || p1Pay.status === 'success' || p1Pay.status === 'captured' || p1Paid)
+                          ? `${fmtAmt(p1Pay.amount)} · ${p1Pay.paidAt ? formatDateShort(p1Pay.paidAt) : 'Paid'}` : '';
+                        const vidDone = Boolean(data?.video?.submitted);
+                        const vidLabel = vidDone ? 'SUBMITTED' : 'PENDING';
+                        const vidColor = vidDone ? '#22C55E' : '#E8B23D';
+                        const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>BCPL Player ID — ${user?.name ?? ''}</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#0E1B33;display:flex;justify-content:center;padding:32px;font-family:'Segoe UI',Arial,sans-serif}
+  .frame{padding:3px;border-radius:22px;background:linear-gradient(135deg,#FF7A29,#E8B23D 40%,#FF7A29 70%,#C94E0E)}
+  .card{width:360px;background:#16274A;border-radius:19px;overflow:hidden;box-shadow:0 12px 48px rgba(0,0,0,0.65);position:relative}
+  .head{background:linear-gradient(135deg,#FF7A29,#C94E0E);padding:16px 22px 14px;position:relative;overflow:hidden}
+  .head:after{content:'';position:absolute;right:-30px;top:-38px;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,0.12)}
+  .head-title{font-size:11px;font-weight:800;color:#FFFFFF;letter-spacing:.18em}
+  .head-sub{font-size:9px;color:#FFE4CF;margin-top:3px;letter-spacing:.14em;font-weight:700}
+  .idbody{padding:20px 22px 14px;position:relative}
+  .wm{position:absolute;right:-14px;bottom:6px;font-size:110px;font-weight:900;color:rgba(255,255,255,0.04);line-height:1;pointer-events:none;font-family:Arial Black,Arial,sans-serif}
+  .toprow{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+  .avatar{width:64px;height:64px;background:linear-gradient(135deg,#FF7A29,#C94E0E);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:#fff;box-shadow:0 4px 20px rgba(255,122,41,0.45);flex-shrink:0}
+  .name{font-size:21px;font-weight:900;color:#FFFFFF;line-height:1.15}
+  .role{font-size:11px;font-weight:800;color:#FFB27A;letter-spacing:.1em;text-transform:uppercase;margin-top:4px}
+  .regchip{display:inline-block;margin-top:7px;background:rgba(232,178,61,0.14);border:1px solid rgba(232,178,61,0.55);border-radius:7px;padding:3px 10px;font-family:Consolas,monospace;font-size:12px;font-weight:800;color:#F5C563;letter-spacing:.05em}
+  .panel{background:#1D3158;border:1px solid rgba(255,255,255,0.14);border-radius:12px;padding:12px 14px;margin-top:10px}
+  .ptitle{font-size:9px;font-weight:800;color:#9FB3D9;text-transform:uppercase;letter-spacing:.14em;margin-bottom:8px}
+  .row{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;gap:10px}
+  .row:last-child{margin-bottom:0}
+  .label{font-size:10px;font-weight:700;color:#9FB3D9;text-transform:uppercase;letter-spacing:.07em;flex-shrink:0}
+  .val{font-size:12px;font-weight:700;color:#FFFFFF;text-align:right;word-break:break-all}
+  .chip{border-radius:6px;padding:3px 10px;font-size:9px;font-weight:800;letter-spacing:.08em}
+  .foot{background:rgba(255,122,41,0.09);border-top:1px solid rgba(255,122,41,0.25);padding:12px 22px;display:flex;justify-content:space-between;align-items:center}
+  .site{font-size:10px;color:#B9C6E0;font-weight:700}
+  .foottag{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.22);border-radius:6px;padding:4px 11px;font-size:9px;font-weight:800;color:#FFFFFF;letter-spacing:.1em}
+  @media print{body{padding:0;background:#fff}.card{box-shadow:none}}
+</style></head><body><div class="frame"><div class="card">
+  <div class="head"><div class="head-title">BHARTIYA CORPORATE PREMIER LEAGUE</div><div class="head-sub">OFFICIAL PLAYER ID CARD · SEASON 5 · 2026–27</div></div>
+  <div class="idbody"><div class="wm">S5</div>
+    <div class="toprow"><div class="avatar">${initials}</div><div><div class="name">${user?.name ?? ''}</div><div class="role">${formatRole(reg.role)} · ${reg.trialCity}</div><div class="regchip">${regId}</div></div></div>
+    <div class="panel"><div class="ptitle">Contact</div>
+      <div class="row"><span class="label">Phone</span><span class="val">${user?.phone || '—'}</span></div>
+      <div class="row"><span class="label">Email</span><span class="val">${user?.email || '—'}</span></div>
+    </div>
+    <div class="panel"><div class="ptitle">Season 5 Status</div>
+      ${p1PayLine ? `<div class="row"><span class="label">Phase 1 Entry</span><span class="chip" style="background:rgba(34,197,94,0.14);border:1px solid rgba(34,197,94,0.5);color:#4ADE80">PAID · ${p1PayLine}</span></div>` : ''}
+      ${p1PayLine ? `<div class="row"><span class="label">Trial Video</span><span class="chip" style="background:${vidDone ? 'rgba(34,197,94,0.14)' : 'rgba(232,178,61,0.14)'};border:1px solid ${vidColor};color:${vidColor}">${vidLabel}</span></div>` : ''}
+      <div class="row"><span class="label">Trial City</span><span class="val">${reg.trialCity}</span></div>
+    </div>
+  </div>
+  <div class="foot"><span class="site">bcplt20.com · #OfficeSeStadiumTak</span><span class="foottag">SEASON 5</span></div>
+</div></div><script>window.onload=function(){window.print();}<\/script></body></html>`;
                         const win = window.open('', '_blank');
                         if(win){ win.document.write(html); win.document.close(); }
                       }}>

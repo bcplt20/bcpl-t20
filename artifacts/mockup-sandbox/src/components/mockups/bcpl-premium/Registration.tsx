@@ -650,7 +650,7 @@ export function Registration() {
                   🏏 &nbsp;PAY ₹{price} · ENTER PHASE 1 TRIALS
                 </button>
                 <div style={{ display:'flex', justifyContent:'center', gap:16, marginTop:12 }}>
-                  {['🔒 Razorpay Secured','256-bit SSL','Kriparti Playing11'].map(t => (
+                  {['🔒 Razorpay Secured','256-bit SSL','Kriparti India'].map(t => (
                     <span key={t} style={{ fontSize:10, color:'rgba(255,255,255,0.25)', fontWeight:600 }}>{t}</span>
                   ))}
                 </div>

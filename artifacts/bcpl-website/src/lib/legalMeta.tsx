@@ -128,7 +128,7 @@ export function LegalDocHeader({ doc }: { doc: LegalDocKey }) {
         <img src={logoSrc} alt="BCPL T20" />
         <div className="legal-letterhead-org">
           <div className="lh-name">Bhartiya Corporate Premier League (BCPL T20)</div>
-          <div className="lh-sub">An initiative of Kriparti Playing11 Private Limited</div>
+          <div className="lh-sub">An initiative of Kriparti India Private Limited</div>
           <div className="lh-meta">bcplt20.com&nbsp;·&nbsp;info@bcplt20.com</div>
         </div>
       </div>

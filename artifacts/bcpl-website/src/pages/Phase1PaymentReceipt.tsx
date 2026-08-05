@@ -63,7 +63,6 @@ export function Phase1PaymentReceipt() {
         @keyframes ringPulse{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,0.5)}50%{box-shadow:0 0 0 18px rgba(34,197,94,0)}}
         @keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
         @keyframes liveBlip{0%,100%{opacity:1}50%{opacity:0.15}}
-        @keyframes barcodeScan{0%{opacity:0.3}50%{opacity:1}100%{opacity:0.3}}
 
         .wrap{max-width:var(--container);margin:0 auto;padding:0 20px}
         @media(min-width:768px){.wrap{padding:0 32px}}
@@ -113,7 +112,6 @@ export function Phase1PaymentReceipt() {
         @media(min-width:480px){.share-btn{width:auto}}
         .share-btn:hover{filter:brightness(1.12);transform:translateY(-2px)}
 
-        .barcode-line{display:inline-block;width:2px;margin:0 0.5px;background:rgba(255,255,255,0.88);animation:barcodeScan 2.5s ease-in-out infinite}
 
         .fade-up{animation:fadeUp .5s cubic-bezier(.34,1.56,.64,1) both}
         .fade-up-1{animation-delay:.1s}
@@ -127,7 +125,6 @@ export function Phase1PaymentReceipt() {
         .ticket-notch-r{position:absolute;right:-10px;top:50%;transform:translateY(-50%);width:20px;height:20px;border-radius:50%;background:#122642;border:1px solid rgba(255,122,41,0.35)}
         @media(max-width:480px){.ticket-notch-l,.ticket-notch-r{display:none}}
 
-        .barcode-wrap{background:#12203C;padding:14px 20px;display:flex;align-items:flex-end;gap:0;border-top:1px solid rgba(255,255,255,0.05);overflow:hidden}
       `}</style>
 
       <SiteHeader />
@@ -260,16 +257,6 @@ export function Phase1PaymentReceipt() {
             <span style={{ background:'rgba(255,255,255,0.18)', border:'1px solid rgba(255,255,255,0.18)', padding:'5px 12px', borderRadius:12, fontSize:10, fontWeight:800, fontFamily:'var(--font-head)', letterSpacing:'.12em', color:'rgba(255,255,255,0.4)' }}>{t("PENDING","PENDING")}</span>
           </div>
 
-          {/* Decorative barcode */}
-          <div className="barcode-wrap">
-            {Array.from({length:52}, (_,i) => {
-              const heights = [24,32,18,38,22,28,14,36,20,30,16,40,26,18,34,22,28,12,38,24,30,16,36,20,26,14,32,24,38,18,28,22,36,14,30,26,18,40,24,32,16,38,22,28,12,36,20,30,16,40,26,18];
-              const h = heights[i % heights.length];
-              const delay = (i * 0.04) % 2.5;
-              return <div key={i} className="barcode-line" style={{ height:h, animationDelay:`${delay}s` }} />;
-            })}
-            <span style={{ marginLeft:'auto', fontFamily:'monospace', fontSize:9, color:'rgba(255,255,255,0.25)', letterSpacing:'.08em', whiteSpace:'nowrap' }}>BCPL-S5-MUM-BAT-7432</span>
-          </div>
         </div>
       </div>
 
@@ -420,14 +407,6 @@ export function Phase1PaymentReceipt() {
                   /* Divider */
                   .dashed{border:none;border-top:2px dashed rgba(255,122,41,0.2);margin:0 20px}
 
-                  /* Barcode */
-                  .barcode-section{
-                    background:#12203C;border-top:1px solid rgba(255,255,255,0.04);
-                    padding:16px 20px;display:flex;align-items:flex-end;gap:1px;
-                    -webkit-print-color-adjust:exact;print-color-adjust:exact;
-                  }
-                  .barcode-bar{display:inline-block;width:2px;margin:0 0.5px;background:rgba(255,255,255,0.88)}
-                  .barcode-text{margin-left:auto;font-family:monospace;font-size:9px;color:rgba(255,255,255,0.25);white-space:nowrap;padding-bottom:2px}
 
                   /* Stamp / Sig block */
                   .sig-block{display:flex;justify-content:flex-end;align-items:center;gap:24px;
@@ -475,7 +454,7 @@ export function Phase1PaymentReceipt() {
                       <div class="header-text">
                         <div class="brand">BCPL — Bhartiya Corporate Premier League</div>
                         <div class="sub">India's Corporate Cricket League · Season 5</div>
-                        <div class="addr">Kriparti Playing11 Pvt. Ltd. &nbsp;·&nbsp; 2nd Floor, RZ-108, Indra Park, Uttam Nagar, New Delhi — 110059</div>
+                        <div class="addr">Kriparti India Pvt. Ltd. &nbsp;·&nbsp; 2nd Floor, RZ-108, Indra Park, Uttam Nagar, New Delhi — 110059</div>
                         <div class="addr">legal@bcplt20.com &nbsp;·&nbsp; www.bcplt20.com &nbsp;·&nbsp; GSTIN: 07AAHCK4053D1ZS</div>
                       </div>
                     </div>
@@ -519,14 +498,6 @@ export function Phase1PaymentReceipt() {
                           <div style="font-size:11px;color:rgba(255,255,255,0.35);font-weight:700">Locked — Pending evaluation</div>
                         </div>
 
-                        <!-- Barcode -->
-                        <div class="barcode-section">
-                          ${Array.from({length:48}, (_,i) => {
-                            const h = [22,32,16,38,20,28,14,36,18,30,24,40,26,16,34,22,28,12,36,22,30,16,34,20,26,14,32,22,38,18,28,20,34,14,30,24,18,40,22,30,16,36,20,28,12,34,20,18][i % 48];
-                            return `<div class="barcode-bar" style="height:${h}px"></div>`;
-                          }).join('')}
-                          <div class="barcode-text">${printRegNo}</div>
-                        </div>
                       </div>
 
                       <!-- Next Steps -->
@@ -559,7 +530,7 @@ export function Phase1PaymentReceipt() {
                       <div class="sig-block">
                         <div class="sig-col">
                           <img src="${sigUrl}" style="height:52px;object-fit:contain;opacity:0.9" alt="Signature"/>
-                          <div class="sig-label">Authorised Signatory<br/><strong style="color:#FF7A29">Kriparti Playing11 Pvt. Ltd.</strong></div>
+                          <div class="sig-label">Authorised Signatory<br/><strong style="color:#FF7A29">Kriparti India Pvt. Ltd.</strong></div>
                         </div>
                         <div class="sig-col">
                           <img src="${stampUrl}" style="height:78px;object-fit:contain;opacity:0.85" alt="BCPL Stamp"/>
@@ -569,7 +540,7 @@ export function Phase1PaymentReceipt() {
 
                       <!-- Note -->
                       <div style="background:#172E4B;border:1px solid rgba(255,255,255,0.18);border-radius:12px;padding:14px 20px;font-size:11px;color:rgba(255,255,255,0.4);line-height:1.7;text-align:center;page-break-inside:avoid">
-                        This is an official digital receipt issued by <strong style="color:rgba(255,255,255,0.88)">Kriparti Playing11 Pvt. Ltd.</strong><br/>
+                        This is an official digital receipt issued by <strong style="color:rgba(255,255,255,0.88)">Kriparti India Pvt. Ltd.</strong><br/>
                         For support: <strong style="color:#FF7A29">legal@bcplt20.com</strong> &nbsp;·&nbsp; <strong style="color:#FF7A29">www.bcplt20.com</strong>
                       </div>
                     </div>
@@ -579,7 +550,7 @@ export function Phase1PaymentReceipt() {
                   <div class="footer">
                     <span>Ref: <strong>${printRegNo}</strong></span>
                     <span><strong>BCPL</strong> — Bhartiya Corporate Premier League · Season 5 · Official Receipt</span>
-                    <span>© 2026 Kriparti Playing11 Pvt. Ltd.</span>
+                    <span>© 2026 Kriparti India Pvt. Ltd.</span>
                   </div>
                 </body></html>`);
                 w.document.close();

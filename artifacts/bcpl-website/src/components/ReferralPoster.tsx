@@ -18,7 +18,7 @@ const W = 1080;
 const H = 1920;
 
 // BCPL palette (matches the site + email templates).
-const NAVY = 'var(--bg)';
+const NAVY = '#1B2E52'; // canvas APIs need a real color — 'var(--bg)' throws on Safari
 const NAVY_2 = '#1F3652';
 const ORANGE = '#FF7A29';
 const ORANGE_HI = '#FF9A57';
@@ -141,7 +141,7 @@ async function buildPoster(name: string, code: string, link: string): Promise<HT
   await QRCode.toCanvas(qrCanvas, link, {
     width: qrSize,
     margin: 1,
-    color: { dark: 'var(--bg)', light: '#ffffff' },
+    color: { dark: '#1B2E52', light: '#ffffff' },
     errorCorrectionLevel: 'M',
   });
   const qrX = (W - qrSize) / 2;
@@ -181,7 +181,7 @@ async function buildPoster(name: string, code: string, link: string): Promise<HT
   ctx.strokeRect(60, bandY, W - 120, 120);
   ctx.fillStyle = WHITE;
   ctx.font = "700 38px 'Montserrat', sans-serif";
-  ctx.fillText('India ki sabse badi corporate cricket league', W / 2, bandY + 74);
+  ctx.fillText('India ki corporate cricket league — Season 5', W / 2, bandY + 74);
 
   return canvas;
 }

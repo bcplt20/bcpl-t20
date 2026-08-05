@@ -90,7 +90,7 @@ export function Terms() {
   // NOTE: Legal entity is stated as "Kriparthi Playing 11 Pvt. Ltd." per the
   // owner-approved spec (matches LEGAL_ENTITY in api-server emailTheme.ts).
   // OWNER / COUNSEL DECISION REQUIRED: GST invoice/receipt templates print
-  // "Kriparti Playing11 Pvt. Ltd." (as on the registered GSTIN). Confirm the
+  // "Kriparti India Pvt. Ltd." (as on the registered GSTIN). Confirm the
   // single correct legal spelling and align all copies.
   const sections: {n:number;icon:React.ReactNode;titleEn:string;titleHi:string;items:string[]}[] = [
     {n:1,icon:<IcoCheck size={24}/>,titleEn:'Introduction, Acceptance & Versioning',titleHi:'परिचय, स्वीकृति और वर्जन',items:[

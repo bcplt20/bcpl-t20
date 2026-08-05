@@ -207,7 +207,7 @@ export function MatchCenter() {
             <div style={{ width: 1, height: 28, background: "rgba(255,255,255,0.12)" }} />
             <div>
               <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 9, letterSpacing: "0.12em", color: "#E8B23D", textTransform: "uppercase" }}>Season 5</div>
-              <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 700, fontSize: 8, letterSpacing: "0.08em", color: "rgba(255,255,255,0.4)", textTransform: "uppercase" }}>Kriparti Playing11</div>
+              <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 700, fontSize: 8, letterSpacing: "0.08em", color: "rgba(255,255,255,0.4)", textTransform: "uppercase" }}>Kriparti India</div>
             </div>
           </div>
 

@@ -128,7 +128,7 @@ export const WEBSITE = "bcplt20.com";
 
 // Legal entity — approved wording per the owner spec.
 // LEGAL ENTITY COPY REVIEW REQUIRED: the GST invoice template (tplInvoice) uses
-// "Kriparti Playing11 Pvt. Ltd." (as printed on the registered GSTIN record).
+// "Kriparti India Pvt. Ltd." (as printed on the registered GSTIN record).
 // That existing statutory wording is intentionally preserved there; the
 // marketing footer uses the spec wording below.
 export const LEGAL_ENTITY = "Kriparthi Playing 11 Pvt. Ltd.";
@@ -670,16 +670,17 @@ export function renderSponsorStrip(list: SponsorRecord[]): string {
       // inline-block cells reflow to multiple rows on narrow clients (and the
       // .bcpl-sponsor media rule forces clean stacking where media queries run)
       // so a long partner list never overflows horizontally (spec §33/§36).
-      return `<td class="bcpl-sponsor" width="150" valign="middle" style="padding:6px 8px;display:inline-block;">${cell}</td>`;
+      // inline-block spans inside a text-align:center container: logos flow in
+      // one line, and when they wrap, the leftover row stays CENTERED (owner
+      // requirement — never left/side-aligned stragglers).
+      return `<span class="bcpl-sponsor" style="display:inline-block;vertical-align:middle;padding:6px 8px;">${cell}</span>`;
     })
     .join("");
 
   return `
     <tr><td style="padding:22px 32px 4px;background:${COLORS.footerBand};text-align:center;">
       <div style="font-family:${FONT};font-size:11px;color:${COLORS.footer};letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;">Official Partners</div>
-      <table role="presentation" cellpadding="0" cellspacing="0" align="center" style="margin:0 auto;">
-        <tr>${tiles}</tr>
-      </table>
+      <div style="text-align:center;">${tiles}</div>
     </td></tr>`;
 }
 
@@ -787,7 +788,7 @@ export function EmailShell(body: string): string {
   @media only screen and (max-width:480px){
     .bcpl-pad{padding-left:20px !important;padding-right:20px !important;}
     .bcpl-stack{display:block !important;width:100% !important;padding:4px 0 !important;}
-    .bcpl-sponsor{display:inline-block !important;width:46% !important;}
+    .bcpl-sponsor{display:inline-block !important;}
     .bcpl-title{font-size:21px !important;}
   }
 </style>

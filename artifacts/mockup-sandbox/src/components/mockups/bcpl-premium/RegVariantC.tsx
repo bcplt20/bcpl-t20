@@ -389,7 +389,7 @@ export function RegVariantC() {
                 <button className="btn-fire" disabled={!agreed} style={{ width:'100%', height:64, fontSize:18, borderRadius:18 }}>
                   🏏 Walk Out to the Pitch — ₹{price}
                 </button>
-                <div style={{ textAlign:'center', marginTop:12, fontSize:11, color:'rgba(255,255,255,0.25)' }}>Powered by Razorpay · 256-bit SSL · Kriparti Playing11 Pvt. Ltd.</div>
+                <div style={{ textAlign:'center', marginTop:12, fontSize:11, color:'rgba(255,255,255,0.25)' }}>Powered by Razorpay · 256-bit SSL · Kriparti India Pvt. Ltd.</div>
               </div>
             </div>
           )}

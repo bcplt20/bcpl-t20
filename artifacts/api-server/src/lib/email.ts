@@ -523,7 +523,7 @@ export function tplInvoice(p: {
         accent: COLORS.gold,
         children: `
           <div style="font-size:10px;color:${COLORS.inkFaint};letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Issued By (Supplier)</div>
-          <div style="font-size:13px;color:${COLORS.ink};font-weight:700;">Kriparti Playing11 Pvt. Ltd.</div>
+          <div style="font-size:13px;color:${COLORS.ink};font-weight:700;">Kriparti India Pvt. Ltd.</div>
           <div style="font-size:11px;color:${COLORS.inkSoft};margin-top:3px;line-height:1.6;">GSTIN: <strong style="color:${COLORS.gold};">${BCPL_GSTIN}</strong><br/>${BCPL_ADDR}</div>`,
       })}
       ${InfoCard({

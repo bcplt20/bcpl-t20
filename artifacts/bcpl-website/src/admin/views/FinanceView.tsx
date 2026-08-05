@@ -16,7 +16,7 @@ import {
 const CF_FEE_ESTIMATE = 0.02;   // fallback estimate when real settlements are unavailable
 const TDS_RATE   = 0.10;   // TDS on prizes
 const BCPL_GSTIN = "07AAHCK4053D1ZS";
-const BCPL_ADDR  = "Kriparti Playing11 Private Limited, 2nd Floor Back Side, RZ-108, Indra Park, Uttam Nagar, West Delhi, Delhi - 110059";
+const BCPL_ADDR  = "Kriparti India Private Limited, 2nd Floor Back Side, RZ-108, Indra Park, Uttam Nagar, West Delhi, Delhi - 110059";
 
 /* ─── Data shapes ─────────────────────────────────────────────── */
 /* Coarse payment-group presentation — label + pie colour keyed by the group
@@ -147,7 +147,7 @@ function InvoiceModal({ txn, onClose }: { txn: Txn; onClose: () => void }) {
                 <div class="bill">
                   <div class="bill-box">
                     <div class="bill-label">Issued By (Supplier)</div>
-                    <strong>Kriparti Playing11 Pvt. Ltd.</strong><br/>
+                    <strong>Kriparti India Pvt. Ltd.</strong><br/>
                     <span style="font-size:10px;color:#555">GSTIN: ${BCPL_GSTIN}<br/>
                     2nd Floor Back Side, RZ-108, Indra Park,<br/>Uttam Nagar, West Delhi - 110059</span>
                   </div>
@@ -174,7 +174,7 @@ function InvoiceModal({ txn, onClose }: { txn: Txn; onClose: () => void }) {
               </div>
               <div class="footer">
                 <span>Invoice: ${iNo} · Verified Payment</span>
-                <span>Kriparti Playing11 Pvt. Ltd. · CIN: U74999DL2019PTC345678</span>
+                <span>Kriparti India Pvt. Ltd. · CIN: U74999DL2019PTC345678</span>
                 <span>legal@bcplt20.com · bcplt20.com</span>
               </div>
               </body></html>`);
@@ -198,7 +198,7 @@ function InvoiceModal({ txn, onClose }: { txn: Txn; onClose: () => void }) {
                   <span style={{ fontWeight:900, fontSize:18, color:"#F1F5F9" }}>T20</span>
                 </div>
               </div>
-              <div style={{ fontSize:12, color:"#A6B3D0" }}>Kriparti Playing11 Pvt. Ltd.</div>
+              <div style={{ fontSize:12, color:"#A6B3D0" }}>Kriparti India Pvt. Ltd.</div>
               <div style={{ fontSize:11, color:"#94A3C4", maxWidth:240, marginTop:3, lineHeight:1.5 }}>{BCPL_ADDR}</div>
               <div style={{ fontSize:11, color:"#94A3C4", marginTop:4 }}>GSTIN: <span style={{ color:"#F59E0B", fontWeight:700 }}>{BCPL_GSTIN}</span></div>
               <div style={{ fontSize:11, color:"#94A3C4" }}>HSN: <span style={{ color:"#C3CEE3" }}>999299 — Sports Event Services</span></div>
@@ -523,7 +523,7 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
             const rows=TRANSACTIONS.filter(t=>t.status==="success").map(t=>{const g=gstFromGross(t.amount);return`<tr><td>BCPL/25-26/${t.id}</td><td>${t.name}</td><td>${t.email}</td><td>${t.type}</td><td>₹${inr(g.base)}</td><td>₹${inr(g.gst)}</td><td style="font-weight:bold;color:#FF6B00">₹${t.amount.toLocaleString()}</td></tr>`;}).join("");
             w.document.write(`<!DOCTYPE html><html><head><title>BCPL Bulk Invoices</title><style>body{font-family:Arial;font-size:11px;padding:20px}.header{display:flex;align-items:center;gap:16px;border-bottom:3px solid #FF6B00;padding-bottom:12px;margin-bottom:20px}.logo{width:52px;height:52px;border-radius:50%;overflow:hidden;border:2px solid #FF6B00}.logo img{width:100%;height:100%;object-fit:cover}h1{margin:0;font-size:18px;color:#FF6B00}p{margin:2px 0;font-size:10px;color:#555}table{width:100%;border-collapse:collapse}th{background:#FF6B00;color:#fff;padding:7px;text-align:left;font-size:10px}td{padding:6px;border-bottom:1px solid #eee;font-size:10px}tr:nth-child(even){background:#FFF5EE}.footer{margin-top:20px;font-size:9px;color:#999;border-top:1px solid #eee;padding-top:10px}@media print{body{padding:0}}</style></head><body>
             <div class="header"><div class="logo"><img src="${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/bcpl-ball-color.jpg"/></div>
-            <div><h1>BCPL T20 — Bulk GST Invoices</h1><p>Kriparti Playing11 Private Limited · GSTIN: ${BCPL_GSTIN}</p><p>Season 5 (2026–27) · Generated: ${new Date().toLocaleDateString("en-IN")}</p></div></div>
+            <div><h1>BCPL T20 — Bulk GST Invoices</h1><p>Kriparti India Private Limited · GSTIN: ${BCPL_GSTIN}</p><p>Season 5 (2026–27) · Generated: ${new Date().toLocaleDateString("en-IN")}</p></div></div>
             <table><thead><tr><th>Invoice No</th><th>Player</th><th>Email</th><th>Phase</th><th>Base Amt</th><th>GST (18%)</th><th>Total</th></tr></thead><tbody>${rows||"<tr><td colspan=7 style='text-align:center;padding:20px;color:#999'>No successful transactions yet</td></tr>"}</tbody></table>
             <div class="footer">${BCPL_ADDR}</div></body></html>`);w.document.close();setTimeout(()=>w.print(),500);
           }} style={{ padding:"9px 16px", borderRadius:9, border:"1px solid #33436B", background:"transparent", color:"#C3CEE3", fontSize:12, cursor:"pointer" }}>📄 Bulk Invoices</button>
@@ -532,7 +532,7 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
             const rows=TRANSACTIONS.filter(t=>t.status==="success").map(t=>{const g=gstFromGross(t.amount);return`<tr><td>${t.id}</td><td>${t.name}</td><td>${t.gstin||"B2C"}</td><td>${t.type}</td><td>999299</td><td>18%</td><td>₹${g.base}</td><td>₹${g.cgst}</td><td>₹${g.sgst}</td><td>₹${g.gst}</td></tr>`;}).join("");
             w.document.write(`<!DOCTYPE html><html><head><title>BCPL GSTR-1</title><style>body{font-family:Arial;font-size:10px;padding:20px}.header{display:flex;align-items:center;gap:16px;border-bottom:3px solid #FF6B00;padding-bottom:12px;margin-bottom:16px}.logo{width:48px;height:48px;border-radius:50%;overflow:hidden;border:2px solid #FF6B00}.logo img{width:100%;height:100%;object-fit:cover}h1{margin:0;font-size:16px;color:#FF6B00}p{margin:2px 0;font-size:9px;color:#555}table{width:100%;border-collapse:collapse;font-size:9px}th{background:#FF6B00;color:#fff;padding:5px;text-align:left}td{padding:4px 6px;border-bottom:1px solid #eee}.footer{margin-top:16px;font-size:8px;color:#999}@media print{body{padding:0}}</style></head><body>
             <div class="header"><div class="logo"><img src="${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/bcpl-ball-color.jpg"/></div>
-            <div><h1>GSTR-1 Report — Outward Supply</h1><p>Kriparti Playing11 Private Limited · GSTIN: ${BCPL_GSTIN}</p><p>FY 2026–27 · Filed under Form GSTR-1 · Generated: ${new Date().toLocaleDateString("en-IN")}</p></div></div>
+            <div><h1>GSTR-1 Report — Outward Supply</h1><p>Kriparti India Private Limited · GSTIN: ${BCPL_GSTIN}</p><p>FY 2026–27 · Filed under Form GSTR-1 · Generated: ${new Date().toLocaleDateString("en-IN")}</p></div></div>
             <table><thead><tr><th>TXN ID</th><th>Customer</th><th>GSTIN/Type</th><th>Description</th><th>HSN</th><th>Rate</th><th>Taxable</th><th>CGST</th><th>SGST</th><th>Total GST</th></tr></thead><tbody>${rows||"<tr><td colspan=10 style='text-align:center;padding:20px;color:#999'>No transactions yet</td></tr>"}</tbody></table>
             <div class="footer">${BCPL_ADDR}</div></body></html>`);w.document.close();setTimeout(()=>w.print(),500);
           }} style={{ padding:"9px 16px", borderRadius:9, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer" }}>📥 GSTR-1 Report</button>
@@ -800,7 +800,7 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
               <div style={card}>
                 <div style={{ fontSize:13, fontWeight:700, color:"#F1F5F9", marginBottom:14 }}>BCPL GST Registration</div>
                 {[
-                  { l:"Business",    v:"Kriparti Playing11 Pvt. Ltd." },
+                  { l:"Business",    v:"Kriparti India Pvt. Ltd." },
                   { l:"GSTIN",       v:BCPL_GSTIN },
                   { l:"Type",        v:"Regular Taxpayer" },
                   { l:"State",       v:"Haryana (07)" },

@@ -95,13 +95,13 @@ export function BrandUsagePolicy() {
       'By using, downloading or viewing any BCPL material, you agree to the terms of this policy',
     ]},
     {n:2,icon:<IcoStar size={24}/>,titleEn:'Ownership of BCPL Intellectual Property',titleHi:'BCPL बौद्धिक संपदा का स्वामित्व',items:[
-      'The BCPL name and the "Bhartiya Corporate Premier League (BCPL T20)" identity are owned or controlled by Kriparti Playing11 Private Limited',
-      'The BCPL T20 logo, the ball device, and all "Season 5" marks and season branding are owned by Kriparti Playing11 Private Limited',
-      'Franchise and team names, team logos, jerseys and associated marks are owned or controlled by Kriparti Playing11 Private Limited',
-      'Taglines and campaign lines, including #OfficeSeStadiumTak, are the property of Kriparti Playing11 Private Limited',
-      'All website content — text, layout, graphics, design, code and imagery on www.bcplt20.com — is owned by Kriparti Playing11 Private Limited',
-      'All BCPL documents and policies (including the Terms & Conditions, Privacy Policy, Eligibility Criteria and rules) are the property of Kriparti Playing11 Private Limited',
-      'All photographs and videos captured at, or produced for, BCPL activities are owned or controlled by Kriparti Playing11 Private Limited',
+      'The BCPL name and the "Bhartiya Corporate Premier League (BCPL T20)" identity are owned or controlled by Kriparti India Private Limited',
+      'The BCPL T20 logo, the ball device, and all "Season 5" marks and season branding are owned by Kriparti India Private Limited',
+      'Franchise and team names, team logos, jerseys and associated marks are owned or controlled by Kriparti India Private Limited',
+      'Taglines and campaign lines, including #OfficeSeStadiumTak, are the property of Kriparti India Private Limited',
+      'All website content — text, layout, graphics, design, code and imagery on www.bcplt20.com — is owned by Kriparti India Private Limited',
+      'All BCPL documents and policies (including the Terms & Conditions, Privacy Policy, Eligibility Criteria and rules) are the property of Kriparti India Private Limited',
+      'All photographs and videos captured at, or produced for, BCPL activities are owned or controlled by Kriparti India Private Limited',
       'These rights are protected under applicable Indian intellectual-property law; no ownership or interest in any of the above passes to you through access or use',
     ]},
     {n:3,icon:<IcoBan size={24}/>,titleEn:'Prohibited Uses',titleHi:'निषिद्ध उपयोग',items:[
@@ -109,14 +109,14 @@ export function BrandUsagePolicy() {
       'You may not copy or republish any BCPL document or policy — including the Terms & Conditions, Privacy Policy, Eligibility Criteria or rules — in whole or in part, on any other website, app or channel',
       'You may not use any BCPL mark, name, logo or content for merchandising or on goods for sale',
       'You may not register or use domain names, social-media handles, account names or business names that are identical or confusingly similar to BCPL marks',
-      'You may not use BCPL logos, photographs, videos, text or documents to train, fine-tune or build artificial-intelligence models or datasets without the prior written consent of Kriparti Playing11 Private Limited',
+      'You may not use BCPL logos, photographs, videos, text or documents to train, fine-tune or build artificial-intelligence models or datasets without the prior written consent of Kriparti India Private Limited',
       'You may not alter, distort, recolour or combine BCPL marks with other logos or content in a way that misrepresents an association with BCPL',
     ]},
     {n:4,icon:<IcoKey size={24}/>,titleEn:'No Implied Licence',titleHi:'कोई निहित लाइसेंस नहीं',items:[
       'Access to www.bcplt20.com does not grant you any licence or right to use BCPL intellectual property beyond ordinary viewing of the website',
       'Viewing or downloading a BCPL document is permitted for your own personal reference only',
       'A personal download does not permit republication, redistribution, commercial use or public display of the document or its contents',
-      'Any use not expressly permitted by this policy requires the prior written permission of Kriparti Playing11 Private Limited',
+      'Any use not expressly permitted by this policy requires the prior written permission of Kriparti India Private Limited',
     ]},
     {n:5,icon:<IcoCamera size={24}/>,titleEn:'Player & Attendee Images',titleHi:'खिलाड़ी और उपस्थित लोगों की छवियां',items:[
       'BCPL may capture and use photographs and videos of players and attendees at registration, trials, auction and tournament activities, in accordance with the BCPL Privacy Policy',
@@ -131,7 +131,7 @@ export function BrandUsagePolicy() {
       'Media use must not imply any endorsement, partnership or official association that has not been agreed in writing',
     ]},
     {n:7,icon:<IcoImage size={24}/>,titleEn:'Sponsors & Partners',titleHi:'प्रायोजक और भागीदार',items:[
-      'Sponsors and partners may use BCPL marks only within the strict terms of their signed written agreement with Kriparti Playing11 Private Limited',
+      'Sponsors and partners may use BCPL marks only within the strict terms of their signed written agreement with Kriparti India Private Limited',
       'BCPL marks provided to a sponsor or partner may be used only for the specific purposes, period and territory set out in that agreement',
       'On expiry or termination of the agreement, the sponsor or partner must stop all use of BCPL marks',
       'Sponsors and partners may not sub-licence or transfer any right to use BCPL marks to a third party without written consent',
@@ -269,8 +269,8 @@ export function BrandUsagePolicy() {
                         "For brand permissions, media assets or to report misuse, contact us at",
                         "ब्रांड अनुमति, मीडिया एसेट्स या दुरुपयोग की रिपोर्ट के लिए संपर्क करें"
                       )} <strong style={{color:'#E8B23D'}}>info@bcplt20.com</strong>{t(
-                        " or write to: Kriparti Playing11 Private Limited, New Delhi, India.",
-                        " या लिखें: Kriparti Playing11 Private Limited, New Delhi, India."
+                        " or write to: Kriparti India Private Limited, New Delhi, India.",
+                        " या लिखें: Kriparti India Private Limited, New Delhi, India."
                       )}
                     </p>
                   </div>
