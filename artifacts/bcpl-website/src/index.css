@@ -156,16 +156,15 @@ body {
 /* Hidden-until-reveal styles apply ONLY once JS confirms the observer
    is live (html.rv-js). Without JS/observer, content stays visible. */
 @keyframes rv-autoshow { to { opacity:1; transform:none; } }
-html.rv-js .rv-up   { opacity:0; transform: translateY(22px); transition: opacity .6s ease, transform .7s cubic-bezier(.22,1,.36,1); animation: rv-autoshow .6s ease 2s forwards; }
-html.rv-js .rv-left { opacity:0; transform: translateX(-24px); transition: opacity .6s ease, transform .7s cubic-bezier(.22,1,.36,1); animation: rv-autoshow .6s ease 2s forwards; }
-html.rv-js .rv-scale{ opacity:0; transform: scale(.94); transition: opacity .6s ease, transform .7s cubic-bezier(.22,1,.36,1); animation: rv-autoshow .6s ease 2s forwards; }
+/* Reveal hiding DISABLED (owner, Aug 2026): content must appear instantly,
+   never fade in late (back-navigation showed a blank navy page). */
 .rv-up.rv-in, .rv-left.rv-in, .rv-scale.rv-in { opacity:1; transform: none; }
 
 /* Instant reveal for content already in the first viewport (no fade-in). */
 .rv-now, .rv-now > * { transition: none !important; transition-delay: 0s !important; opacity: 1 !important; transform: none !important; }
 
 /* Stagger: parent gets .rv-stagger; children fade+rise in sequence. */
-html.rv-js .rv-stagger > * { opacity:0; transform: translateY(16px); transition: opacity .55s ease, transform .6s cubic-bezier(.22,1,.36,1); animation: rv-autoshow .55s ease 2s forwards; }
+/* stagger hiding disabled too */
 .rv-stagger.rv-in > * { opacity:1; transform: none; }
 .rv-stagger.rv-in > *:nth-child(1){ transition-delay:.05s; }
 .rv-stagger.rv-in > *:nth-child(2){ transition-delay:.12s; }

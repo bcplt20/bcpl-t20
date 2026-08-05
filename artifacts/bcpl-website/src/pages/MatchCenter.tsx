@@ -6,6 +6,8 @@ import { Skel, SkelRows } from '../components/Skel';
 import { getMatches, getPointsTable, getScorecard, getTeams } from '../lib/api';
 import { useLang } from '../lib/i18n';
 import { IcoBat, IcoTrophy, IcoPin, IcoStar } from '../lib/icons';
+import { MatchCountdown, stageMeta } from '../components/MatchCard';
+import { BALL_LOGO } from '../lib/teamMeta';
 
 /* ─── Palette (LIGHTENED DARK theme) ─────────────────────────────── */
 const PAGE      = "#1B2E52";              // lightened navy page bg
@@ -75,15 +77,15 @@ function TeamBadge({ name, color, logo, size, fontSize }: {
   return (
     <span style={{
       width: size, height: size, borderRadius: "50%",
-      background: showLogo ? "rgba(255,255,255,0.96)" : `${color}33`,
+      background: "rgba(255,255,255,0.96)",
       border: `2px solid ${color}`, display: "inline-flex", alignItems: "center",
       justifyContent: "center", overflow: "hidden", flexShrink: 0,
       fontFamily: "var(--font-head)", fontWeight: 800, fontSize, color,
     }}>
       {showLogo
-        ? <img loading="lazy" decoding="async" src={logo} alt={name} onError={() => setBroken(true)}
+        ? <img decoding="async" src={logo} alt={name} onError={() => setBroken(true)}
             style={{ width: "82%", height: "82%", objectFit: "contain" }} />
-        : initials(name)}
+        : <img decoding="async" src={BALL_LOGO} alt={name} style={{ width: "82%", height: "82%", objectFit: "contain" }} />}
     </span>
   );
 }
@@ -191,7 +193,7 @@ export function MatchCenter() {
       <div style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", gap: 10, flexDirection: alignEnd ? "row-reverse" : "row" }}>
         <TeamBadge name={team} color={color(team)} logo={logoOf(team)} size={40} fontSize={12} />
         <div style={{ minWidth: 0, textAlign: alignEnd ? "right" : "left" }}>
-          <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: "clamp(13px,2.2vw,16px)", color: isWinner ? ORANGE : TXT, lineHeight: 1.1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{team}</div>
+          <div style={{ fontFamily: "'Montserrat',Inter,sans-serif", fontWeight: 800, fontSize: "clamp(12px,2.1vw,15px)", letterSpacing: ".02em", color: isWinner ? ORANGE : TXT, lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{team}</div>
           {score
             ? <div style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: "clamp(18px,3.4vw,24px)", color: "#fff", lineHeight: 1.15, marginTop: 2 }}>{score}</div>
             : <div style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: TXT3, marginTop: 3 }}>{t("Yet to bat", "अभी बल्लेबाज़ी बाकी")}</div>}
@@ -410,13 +412,13 @@ export function MatchCenter() {
         <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 50% at 50% 0%,rgba(255,122,41,0.10) 0%,transparent 70%)", pointerEvents: "none", zIndex: 0 }} />
         <div className="wrap" style={{ position: "relative", zIndex: 1, animation: "fadeUp 0.7s ease both" }}>
           <div className="v3-kicker" style={{ marginBottom: 16 }}>
-            {t("SEASON 5 · 2025–26", "सीज़न 5 · 2025–26")}
+            {t("SEASON 4 · 2026–27", "सीज़न 4 · 2026–27")}
           </div>
           <h1 className="section-title" style={{ fontSize: "clamp(40px, 9vw, 88px)", color: "#fff", textTransform: "uppercase", marginBottom: 16 }}>
             {t("MATCH", "MATCH")} <span style={{ color: "#FF7A29" }}>{t("CENTER", "CENTER")}</span>
           </h1>
           <p style={{ fontFamily: "Inter, sans-serif", fontSize: "clamp(16px, 1.8vw, 18px)", color: TXT2, lineHeight: 1.7, maxWidth: 640, margin: "0 auto" }}>
-            {t("Live scores, full match scorecards and the Season 5 points table.", "Live scores, पूरे match scorecards और Season 5 points table।")}
+            {t("Live scores, full match scorecards and the Season 4 points table.", "Live scores, पूरे match scorecards और Season 4 points table।")}
           </p>
         </div>
       </section>
@@ -426,7 +428,7 @@ export function MatchCenter() {
         <div className="wrap">
           <div className="section-label">Matches</div>
           <h2 className="section-title" style={{ fontSize: "clamp(22px, 4vw, 36px)", color: "#fff", marginBottom: 24, textTransform: "uppercase" }}>
-            SEASON 5 MATCHES
+            SEASON 4 MATCHES
           </h2>
 
           {!matchesLoaded && sorted.length === 0 && (
@@ -481,7 +483,10 @@ export function MatchCenter() {
                           {st === "live" && <span style={{ width: 6, height: 6, borderRadius: "50%", background: RED, display: "inline-block", animation: "liveBlip 1.2s infinite" }} />}
                           <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 10, letterSpacing: ".1em", color: meta.color }}>{meta.label}</span>
                         </span>
-                        <span style={{ fontSize: 12, color: TXT3 }}>Match {m.matchNo} · Season 5</span>
+                        <span style={{ fontSize: 12, color: TXT3 }}>Match {m.matchNo}</span>
+                        {(() => { const sg = stageMeta(m); return (
+                          <span style={{ background: sg.badge.background, padding: "3px 10px", borderRadius: 100, fontSize: 10, fontFamily: "var(--font-head)", fontWeight: 900, color: sg.badge.color, letterSpacing: ".08em", boxShadow: sg.badge.glow, whiteSpace: "nowrap" }}>{sg.label}</span>
+                        ); })()}
                       </div>
                       <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 12, color: TXT3 }}>
                         <IcoPin size={12} style={{ color: TXT3 }} /> {m.venue}{m.scheduledAt ? ` · ${fmtDate(m.scheduledAt)}` : ""}
@@ -494,6 +499,13 @@ export function MatchCenter() {
                       <div style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 12, color: "rgba(255,255,255,.32)", flexShrink: 0 }}>VS</div>
                       <ScoreStrip team={m.team2} winner={m.winner} score={s2} alignEnd />
                     </div>
+
+                    {/* Countdown for upcoming matches */}
+                    {st === "upcoming" && m.scheduledAt && new Date(m.scheduledAt).getTime() > Date.now() && (
+                      <div style={{ display: "flex", justifyContent: "center", marginTop: 14, paddingTop: 12, borderTop: `1px solid ${LINE_SOFT}` }}>
+                        <MatchCountdown targetDate={m.scheduledAt} />
+                      </div>
+                    )}
 
                     {/* Result line / expand hint */}
                     {(m.resultDesc || m.playerOfMatch || expandable) && (
@@ -525,7 +537,7 @@ export function MatchCenter() {
         <div className="wrap">
           <div className="section-label">Standings</div>
           <h2 className="section-title" style={{ fontSize: "clamp(22px, 4vw, 36px)", color: "#fff", marginBottom: 24, textTransform: "uppercase" }}>
-            POINTS TABLE — SEASON 5
+            POINTS TABLE — SEASON 4
           </h2>
 
           {points.length === 0 && (
@@ -539,7 +551,7 @@ export function MatchCenter() {
                 {t("Standings Coming Soon", "Standings जल्द आएंगे")}
               </div>
               <p style={{ color: TXT3, fontSize: 15, fontFamily: "Inter, sans-serif", maxWidth: 380, margin: "0 auto" }}>
-                {t("The points table will update in real time once Season 5 matches begin.", "Season 5 के matches शुरू होते ही points table real time में update होगी।")}
+                {t("The points table will update in real time once Season 4 matches begin.", "Season 4 के matches शुरू होते ही points table real time में update होगी।")}
               </p>
             </div>
           )}

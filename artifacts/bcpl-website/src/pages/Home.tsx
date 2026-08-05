@@ -181,6 +181,32 @@ export function Home() {
     return ()=>{ if(pollRef.current) clearInterval(pollRef.current); };
   },[]);
 
+  /* Home slider shows just 3 matches: live first, then next upcoming, then recent results. */
+  const homeMatches = React.useMemo(()=>{
+    const order = (s:string)=> (s==="live"||s==="innings2") ? 0 : (s==="completed"||s==="abandoned") ? 2 : 1;
+    return [...liveMatches]
+      .filter((m:any)=>m.status!=="cancelled")
+      .sort((a:any,b:any)=> order(a.status)-order(b.status) || (a.matchNo??0)-(b.matchNo??0))
+      .slice(0,3);
+  },[liveMatches]);
+
+  /* Group A/B zero-filled mini standings for the home teaser (mirrors /points-table). */
+  const homeGroups = React.useMemo(()=>{
+    const grpOf: Record<string,string> = {};
+    liveMatches.forEach((m:any)=>{
+      if (m.stage && m.stage!=="league") return;
+      if (!m.grp) return;
+      grpOf[m.team1] = m.grp; grpOf[m.team2] = m.grp;
+    });
+    const rows: Record<string, any> = {};
+    Object.keys(grpOf).forEach(team=>{ rows[team] = { team, grp: grpOf[team], played:0, won:0, lost:0, points:0, nrr:0 }; });
+    liveTable.forEach((r:any)=>{ if (rows[r.team]) rows[r.team] = { ...rows[r.team], ...r, grp: grpOf[r.team] }; });
+    const sortRows = (a:any,b:any)=> (b.points-a.points) || (Number(b.nrr)-Number(a.nrr)) || a.team.localeCompare(b.team);
+    const A = Object.values(rows).filter((r:any)=>r.grp==="A").sort(sortRows);
+    const B = Object.values(rows).filter((r:any)=>r.grp==="B").sort(sortRows);
+    return (A.length>0 || B.length>0) ? { A, B } : null;
+  },[liveMatches, liveTable]);
+
   /* Video modal: ESC close + Tab focus trap + focus restore to opener */
   useEffect(()=>{
     if(!video) return;
@@ -295,9 +321,13 @@ export function Home() {
         .shim{background:linear-gradient(90deg,#FF7A29,#FFB347,#FF7A29);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradMove 3s ease infinite;}
         .shim-gold{background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradMove 3s ease infinite;}
 
+        .mc-slider{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-bottom:10px;scrollbar-width:thin;}
+        .mc-slider>*{flex:0 0 min(88%,360px);scroll-snap-align:start;}
+        @media(min-width:900px){.mc-slider{flex-direction:column;overflow-x:visible;}.mc-slider>*{flex:none;}}
+
         /* Scroll reveal */
         @keyframes rvAutoShow{to{opacity:1;transform:none;}}
-        html.rv-js .rv{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;animation:rvAutoShow .6s ease 2s forwards;}
+        /* Reveal animations disabled (owner, Aug 2026): sab content ek saath load ho. */
         .rv-in{opacity:1;transform:translateY(0);}
         @media(prefers-reduced-motion:reduce){
           .rv{opacity:1;transform:none;}
@@ -968,9 +998,9 @@ export function Home() {
                   <Link href="/schedule" style={{ fontSize:12, color:"#FF7A29", textDecoration:"none", fontWeight:700 }}>{t("See full schedule","पूरा schedule देखें")} →</Link>
                 </div>
               ) : (
-                <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
-                  {liveMatches.slice(0,5).map((m:any, i:number) => (
-                    <MatchCard key={m.id||m.matchNo} match={m} compact delayIndex={i} />
+                <div className="mc-slider">
+                  {homeMatches.map((m:any, i:number) => (
+                    <div key={m.id||m.matchNo}><MatchCard match={m} compact delayIndex={i} /></div>
                   ))}
                 </div>
               )}
@@ -982,47 +1012,47 @@ export function Home() {
                 <div className="mont" style={{ fontSize:11, fontWeight:800, letterSpacing:".12em", color:"var(--ink-3)", textTransform:"uppercase" }}>{t("Points Table — Season 4","पॉइंट्स टेबल — सीज़न 4")}</div>
                 <Link href="/points-table" style={{ fontSize:12, color:"#FF7A29", textDecoration:"none", fontWeight:700 }}>{t("Full table","पूरी टेबल")} →</Link>
               </div>
-              {liveTable.length === 0 ? (
-                <div className="card" style={{ padding:"34px 24px", textAlign:"center", borderStyle:"dashed", borderColor:"rgba(255,255,255,0.2)" }}>
-                  <div style={{ display:"flex", justifyContent:"center", marginBottom:10 }}><IcoList size={34} style={{ color:"var(--ink-3)" }} /></div>
-                  <div className="mont" style={{ fontWeight:800, fontSize:15, color:"#fff", marginBottom:6 }}>{t("The leaderboard goes live with the first ball","पहली गेंद के साथ leaderboard live होगा")}</div>
-                  <p style={{ fontSize:13, color:"var(--ink-3)", lineHeight:1.6, marginBottom:18 }}>{t("10 franchises. One trophy. Standings update ball-by-ball during Season 4.","10 franchises । एक trophy । Season 4 में हर गेंद पर standings update होंगी।")}</p>
-                  <div style={{ display:"flex", justifyContent:"center", flexWrap:"wrap", gap:8 }}>
-                    {TEAMS.map(tm=>(
-                      <img key={tm.slug} src={`${L}${tm.slug}.png`} alt={tm.name} title={tm.name} style={{ width:30, height:30, objectFit:"contain", opacity:.75 }} onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
-                    ))}
+              {homeGroups ? (
+                <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
+                  {(["A","B"] as const).map(g=>(
+                    <div key={g} style={{ background:"linear-gradient(135deg,#1F3652,#1D2942)", border:"1px solid rgba(255,255,255,0.18)", borderRadius:14, overflow:"hidden" }}>
+                      <div style={{ display:"flex", alignItems:"center", gap:8, padding:"9px 14px", background: g==="A" ? "rgba(14,165,233,0.12)" : "rgba(255,122,41,0.10)", borderBottom:"1px solid rgba(255,255,255,0.12)" }}>
+                        <span className="mont" style={{ fontSize:11, fontWeight:900, letterSpacing:".12em", color: g==="A" ? "#38BDF8" : "#FF9350" }}>{t("GROUP "+g,"ग्रुप "+g)}</span>
+                      </div>
+                      <div style={{ display:"grid", gridTemplateColumns:"24px 1fr 28px 28px 28px 40px", padding:"8px 14px", borderBottom:"1px solid rgba(255,255,255,0.10)" }}>
+                        {["#","Team","P","W","L","Pts"].map(h=>(
+                          <div key={h} className="mont" style={{ fontSize:9, fontWeight:800, color:"var(--ink-3)", letterSpacing:".1em", textAlign: h==="Team"?"left":"center" }}>{h}</div>
+                        ))}
+                      </div>
+                      {homeGroups[g].map((r:any, i:number, arr:any[])=>{
+                        const tm = TEAMS.find(x=>x.name===r.team);
+                        return (
+                          <div key={r.team} style={{ display:"grid", gridTemplateColumns:"24px 1fr 28px 28px 28px 40px", padding:"7px 14px", borderBottom: i<arr.length-1?"1px solid rgba(255,255,255,.04)":"none", background: i<2?"rgba(34,197,94,.05)":"transparent", position:"relative" }}>
+                            {i<2 && <div style={{ position:"absolute", left:0, top:0, bottom:0, width:2, background:"rgba(34,197,94,.55)" }}/>}
+                            <div className="mont" style={{ fontSize:11, fontWeight:900, color: i<2?"#22C55E":"rgba(255,255,255,.4)", textAlign:"center" }}>{i+1}</div>
+                            <div style={{ display:"flex", alignItems:"center", gap:6, minWidth:0 }}>
+                              <img src={L + (tm?.slug||"") + ".png"} alt={r.team} style={{ width:18, height:18, objectFit:"contain", flexShrink:0 }} onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
+                              <span className="mont" style={{ fontSize:11, fontWeight:700, color:"#E2E8F0", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{r.team}</span>
+                            </div>
+                            {[r.played, r.won, r.lost].map((v:any,j:number)=>(
+                              <div key={j} style={{ fontSize:11, color:"#94A3B8", textAlign:"center" }}>{v}</div>
+                            ))}
+                            <div className="mont" style={{ fontSize:13, fontWeight:900, color: i<2?"#FF7A29":"#94A3B8", textAlign:"center" }}>{r.points}</div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ))}
+                  <div style={{ display:"flex", alignItems:"center", gap:6, padding:"2px 4px" }}>
+                    <div style={{ width:10, height:10, background:"rgba(34,197,94,.4)", borderRadius:2, flexShrink:0 }}/>
+                    <span style={{ fontSize:10, color:"var(--ink-3)" }}>{t("Top 2 of each group reach the semi finals","हर group की top 2 टीमें semi final में")}</span>
                   </div>
                 </div>
               ) : (
-                <div style={{ background:"linear-gradient(135deg,#1F3652,#1D2942)", border:"1px solid rgba(255,255,255,0.18)", borderRadius:14, overflow:"hidden" }}>
-                  <div style={{ display:"grid", gridTemplateColumns:"28px 1fr 30px 30px 30px 44px 50px", padding:"10px 14px", borderBottom:"1px solid rgba(255,255,255,0.18)" }}>
-                    {["#","Team","P","W","L","Pts","NRR"].map(h=>(
-                      <div key={h} className="mont" style={{ fontSize:9, fontWeight:800, color:"var(--ink-3)", letterSpacing:".1em", textAlign: h==="Team"?"left":"center" }}>{h}</div>
-                    ))}
-                  </div>
-                  {liveTable.map((r:any, i:number, arr:any[])=>{
-                    const tm = TEAMS.find(x=>x.name===r.team);
-                    const nrr = (r.nrr>=0?"+":"")+Number(r.nrr).toFixed(3);
-                    return (
-                      <div key={r.team} style={{ display:"grid", gridTemplateColumns:"28px 1fr 30px 30px 30px 44px 50px", padding:"9px 14px", borderBottom: i<arr.length-1?"1px solid rgba(255,255,255,.04)":"none", background: i<4?"rgba(255,122,41,.025)":"transparent", position:"relative" }}>
-                        {i<4 && <div style={{ position:"absolute", left:0, top:0, bottom:0, width:2, background:`${tm?.color||"#64748B"}60` }}/>}
-                        <div className="mont" style={{ fontSize:11, fontWeight:900, color: i<3?"#E8B23D":"rgba(255,255,255,.4)", textAlign:"center" }}>{i+1}</div>
-                        <div style={{ display:"flex", alignItems:"center", gap:6, minWidth:0 }}>
-                          <img src={`${L}${tm?.slug||""}.png`} alt={r.team} style={{ width:18, height:18, objectFit:"contain", flexShrink:0 }} onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
-                          <span className="mont" style={{ fontSize:11, fontWeight:700, color: i<4?"#E2E8F0":"#94A3B8", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{r.team}</span>
-                        </div>
-                        {[r.played, r.won, r.lost].map((v:any,j:number)=>(
-                          <div key={j} style={{ fontSize:11, color:"#64748B", textAlign:"center", display:"flex", alignItems:"center", justifyContent:"center" }}>{v}</div>
-                        ))}
-                        <div className="mont" style={{ fontSize:13, fontWeight:900, color: i<4?"#FF7A29":"#94A3B8", textAlign:"center", display:"flex", alignItems:"center", justifyContent:"center" }}>{r.points}</div>
-                        <div className="mont" style={{ fontSize:10, fontWeight:700, color: nrr.startsWith("+")?"#22C55E":"#EF4444", textAlign:"center", display:"flex", alignItems:"center", justifyContent:"center" }}>{nrr}</div>
-                      </div>
-                    );
-                  })}
-                  <div style={{ padding:"9px 14px", background:"rgba(255,122,41,.04)", borderTop:"1px solid rgba(255,122,41,.1)", display:"flex", alignItems:"center", gap:6 }}>
-                    <div style={{ width:10, height:10, background:"rgba(255,122,41,.4)", borderRadius:2, flexShrink:0 }}/>
-                    <span style={{ fontSize:10, color:"var(--ink-3)" }}>{t("Top 4 qualify for playoffs","Top 4 playoffs में जाएँगी")}</span>
-                  </div>
+                <div className="card" style={{ padding:"34px 24px", textAlign:"center", borderStyle:"dashed", borderColor:"rgba(255,255,255,0.2)" }}>
+                  <div style={{ display:"flex", justifyContent:"center", marginBottom:10 }}><IcoList size={34} style={{ color:"var(--ink-3)" }} /></div>
+                  <div className="mont" style={{ fontWeight:800, fontSize:15, color:"#fff", marginBottom:6 }}>{t("The points table goes live with the first ball","पहली गेंद के साथ points table live होगा")}</div>
+                  <p style={{ fontSize:13, color:"var(--ink-3)", lineHeight:1.6, marginBottom:18 }}>{t("10 franchises. One trophy. Standings update ball-by-ball during Season 4.","10 franchises । एक trophy । Season 4 में हर गेंद पर standings update होंगी।")}</p>
                 </div>
               )}
             </div>
