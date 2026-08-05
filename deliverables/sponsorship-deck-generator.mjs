@@ -1,7 +1,7 @@
 import { writeFileSync } from "fs";
 
 /* BCPL Season 4 Sponsorship Deck — v2 (Aug 2026)
-   Landscape A4, IPL-style, photo-rich & colorful. 24 pages.
+   Landscape A4, IPL-style, photo-rich & colorful. 27 pages.
    Owner asked for: more color, charts (bar/"manhattan" style), real images
    (Ganguly, SonyLIV & FanCode logos, jerseys, stadium, auction), bigger fonts,
    a new "Official Drinking Partner" tier, and full requirements detail.
@@ -21,7 +21,8 @@ const LOGO_DARKTXT = `${A}/bcpl-logo-transparent.png`;
 const TEAMS = ["ahmedabad_lions","bengaluru_rockets","chennai_thalaivas","delhi_suryas","hyderabad_hawks","kolkata_tigers","lucknow_nawabs","mumbai_mavericks","punjab_warriors","rajasthan_scorchers"];
 const teamStrip = (h=44) => `<div style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap;align-items:center">${TEAMS.map(t=>`<img src="${A}/logos/${t}.png" style="height:${h}px">`).join("")}</div>`;
 
-const foot = (n) => `<div class="foot"><span>BCPL Season 4 Sponsorship Deck · Aug 2026 · v2</span><span>BCPL Sports Private Limited · Confidential · # figures are projections/estimates, not guarantees</span><span class="pgno">${n}</span></div>`;
+let PGNO = 0;
+const foot = () => `<div class="foot"><span>BCPL Season 4 Sponsorship Deck · Aug 2026 · v3</span><span>BCPL Sports Private Limited · Confidential · # figures are projections/estimates, not guarantees</span><span class="pgno">${++PGNO}</span></div>`;
 
 const HASH = `<p class="hashnote"><b>#</b> Estimate / projection based on the League's own data and assumptions — not a guarantee of any specific reach, viewership or outcome.</p>`;
 
@@ -119,11 +120,11 @@ tr.hl td{background:#FFF1DE;border-top:2px solid #FF6B00;border-bottom:2px solid
 /* "animated" energy look — glowing ball + speed streaks (static, print-safe) */
 .deco{position:absolute;z-index:0;pointer-events:none}
 .ballwrap{position:absolute;z-index:0}
-.ballglow{position:absolute;inset:-46%;border-radius:50%;background:radial-gradient(circle,rgba(255,107,0,0.45) 0%,rgba(232,178,61,0.22) 40%,transparent 70%)}
-.ballimg{position:relative;width:100%;transform:rotate(-18deg);filter:drop-shadow(0 10px 26px rgba(255,107,0,0.5))}
-.trail{position:absolute;height:9px;border-radius:9px;background:linear-gradient(90deg,transparent,rgba(255,107,0,0.75));z-index:0}
-.trail.g{background:linear-gradient(90deg,transparent,rgba(232,178,61,0.7))}
-.trail.b{background:linear-gradient(90deg,transparent,rgba(21,52,107,0.45))}
+.ballglow{position:absolute;inset:-32%;border-radius:50%;background:radial-gradient(circle,rgba(255,107,0,0.16) 0%,rgba(232,178,61,0.08) 40%,transparent 70%)}
+.ballimg{position:relative;width:100%;transform:rotate(-18deg);filter:drop-shadow(0 6px 14px rgba(255,107,0,0.22))}
+.trail{position:absolute;height:9px;border-radius:9px;background:linear-gradient(90deg,transparent,rgba(255,107,0,0.32));z-index:0}
+.trail.g{background:linear-gradient(90deg,transparent,rgba(232,178,61,0.28))}
+.trail.b{background:linear-gradient(90deg,transparent,rgba(21,52,107,0.18))}
 .streak{position:absolute;width:150%;height:120px;transform:rotate(-7deg);background:linear-gradient(90deg,transparent,rgba(255,107,0,0.10),rgba(232,178,61,0.14),transparent);z-index:0}
 .dark .streak,.photo .streak{background:linear-gradient(90deg,transparent,rgba(255,107,0,0.16),rgba(232,178,61,0.18),transparent)}
 .ringlogo{position:absolute;z-index:0;border-radius:50%;border:2.5px dashed rgba(255,107,0,0.30)}
@@ -167,7 +168,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
       </div>
       <p style="font-size:15px;margin-top:4px">Brand Ambassadors: <b class="gold">Sourav Ganguly &amp; Zaheer Khan</b> &nbsp;·&nbsp; Streaming: <b class="gold">SonyLIV &amp; FanCode</b> <span class="hash">#</span></p>
     </div>
-    ${foot("1")}
+    ${foot()}
   </div>
 </div>
 
@@ -184,17 +185,18 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
       <div class="tocline"><span class="n">06</span> The faces — Ganguly &amp; Zaheer <span class="pg">12–13</span></div>
     </div>
     <div>
-      <div class="tocline"><span class="n">07</span> Sponsorship menu &amp; pricing <span class="pg">14–15</span></div>
-      <div class="tocline"><span class="n">08</span> Every tier in detail <span class="pg">16–20</span></div>
-      <div class="tocline"><span class="n">09</span> Deliverables matrix <span class="pg">21</span></div>
-      <div class="tocline"><span class="n">10</span> Included · not included · what we need from you <span class="pg">22–23</span></div>
-      <div class="tocline"><span class="n">11</span> Next steps &amp; contact <span class="pg">24</span></div>
+      <div class="tocline"><span class="n">07</span> Why invest in BCPL — the business case <span class="pg">14–16</span></div>
+      <div class="tocline"><span class="n">08</span> Sponsorship menu &amp; pricing <span class="pg">17–18</span></div>
+      <div class="tocline"><span class="n">09</span> Every tier in detail <span class="pg">19–23</span></div>
+      <div class="tocline"><span class="n">10</span> Deliverables matrix <span class="pg">24</span></div>
+      <div class="tocline"><span class="n">11</span> Included · not included · what we need from you <span class="pg">25–26</span></div>
+      <div class="tocline"><span class="n">12</span> Next steps &amp; contact <span class="pg">27</span></div>
     </div>
   </div>
   <div style="margin-top:26px">${teamStrip(58)}</div>
   <p class="dim" style="text-align:center;margin-top:10px">The 10 franchise teams of BCPL Season 4</p>
   </div>
-  ${foot("2")}
+  ${foot()}
 </div></div>
 
 <!-- P3 · WHAT IS BCPL -->
@@ -212,7 +214,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
   </div>
   ${HASH}
   </div>
-  ${foot("3")}
+  ${foot()}
 </div></div>
 
 <!-- P4 · PHOTO SPREAD: THE SHOW -->
@@ -225,7 +227,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
     <div class="imgcard"><img src="${A}/jerseys.webp"><div class="imgcap">Professional-grade team kits</div></div>
     <div class="imgcard"><img src="${A}/event-panel.webp"><div class="imgcap">League leadership &amp; media panels</div></div>
   </div>
-  ${foot("4")}
+  ${foot()}
 </div></div>
 
 <!-- P5 · LEAGUE IN NUMBERS (chart) -->
@@ -260,7 +262,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
   </div>
   ${HASH}
   </div>
-  ${foot("5")}
+  ${foot()}
 </div></div>
 
 <!-- P6 · SEASON JOURNEY -->
@@ -282,7 +284,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
     <div class="card accb"><b class="t">Owned + earned media</b>League platform and social, plus press coverage (IANS, PTI, Tribune, News18 and more have covered BCPL).</div>
   </div>
   </div>
-  ${foot("6")}
+  ${foot()}
 </div></div>
 
 <!-- P7 · AUCTION PHOTO PAGE -->
@@ -297,7 +299,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
         <div class="card"><b class="t">Trophy moments</b>Presentation ceremonies, awards and the trophy night — the photographs that get shared carry your logo on the backdrop.</div>
       </div>
     </div>
-    ${foot("7")}
+    ${foot()}
   </div>
 </div>
 
@@ -327,7 +329,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
   </div>
   ${HASH}
   </div>
-  ${foot("8")}
+  ${foot()}
 </div></div>
 
 <!-- P9 · AUDIENCE 2 -->
@@ -342,7 +344,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
   </div>
   <div style="margin-top:16px">${teamStrip(52)}</div>
   </div>
-  ${foot("9")}
+  ${foot()}
 </div></div>
 
 <!-- P10 · DIGITAL FOOTPRINT -->
@@ -366,7 +368,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
   </div>
   ${HASH}
   </div>
-  ${foot("10")}
+  ${foot()}
 </div></div>
 
 <!-- P11 · BROADCAST with OTT logos -->
@@ -387,7 +389,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
   </div>
   <div class="note"><b>Straight talk:</b> streaming plans, ad-slot counts and viewership depend on final platform agreements for Season 4 and are marked <span class="hash">#</span>. Exact broadcast deliverables are listed in the sponsorship agreement before signing — no verbal promises.</div>
   </div>
-  ${foot("11")}
+  ${foot()}
 </div></div>
 
 <!-- P12 · GANGULY PHOTO PAGE -->
@@ -399,7 +401,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
       <div class="card"><b class="t">Why it matters to you</b>Former India captain and one of Indian cricket's most trusted leadership voices. Dada fronts BCPL's campaign films, launch content and key season moments — your brand appears in campaigns a standalone brand film could not buy at this cost.</div>
       <div class="card"><b class="t">In his words to the press</b>"BCPL will create new pathways for corporate cricketing talent" — coverage carried by IANS, PTI, Tribune India, News18 and more at the Season 4 auction.</div>
     </div>
-    ${foot("12")}
+    ${foot()}
   </div>
 </div>
 
@@ -415,43 +417,131 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
         <div class="card" style="font-size:11.5px"><b class="t" style="font-size:13px">One honest line</b>Personal appearances by ambassadors at sponsor events are not included in any tier by default — such requests are separate commercial discussions with the League.</div>
       </div>
     </div>
-    ${foot("13")}
+    ${foot()}
   </div>
 </div>
 
+
+<!-- W1 · WHY INVEST — BUSINESS CASE -->
+<div class="page"><div class="band"></div>${streak("58%")}${ballDeco({ size: 110, bottom: "5%", right: "2.5%", opacity: 0.8 })}<div class="inner">
+  <h2><span class="kick">07 · WHY BCPL</span>Why Invest in BCPL — The Business Case</h2>
+  <div class="body">
+  <div class="statrow">
+    <div class="statlight"><div class="n">4+</div><div class="l">Months of live exposure</div></div>
+    <div class="statlight"><div class="n">30+ <span class="hash">#</span></div><div class="l">Match days in Season 4</div></div>
+    <div class="statlight"><div class="n">5</div><div class="l">Season content peaks</div></div>
+    <div class="statlight"><div class="n">200+ <span class="hash">#</span></div><div class="l">Season reels &amp; clips</div></div>
+  </div>
+  <div class="grid2" style="align-items:end">
+    <div>
+      <h3>Brand touchpoint intensity through the season <span class="hash">#</span></h3>
+      ${bars([
+        { label: "Jun–Jul · Registrations", value: 45, display: "Build-up", hash: true, color: "linear-gradient(180deg,#B9C7E6,#5F7BB8)" },
+        { label: "Aug · Trials", value: 60, display: "Rising", hash: true, color: "linear-gradient(180deg,#7FA3E8,#15346B)" },
+        { label: "Sep · Auction", value: 90, display: "Peak 1", hash: true, color: "linear-gradient(180deg,#F7D488,#E8B23D)" },
+        { label: "Oct · League matches", value: 100, display: "Peak 2", hash: true },
+        { label: "Nov · Playoffs &amp; final", value: 85, display: "Peak 3", hash: true, color: "linear-gradient(180deg,#FF9A4D,#C94E0E)" },
+      ], { height: 185 })}
+    </div>
+    <div>
+      <div class="card acc"><b class="t">A season, not a spot</b>A typical ad buy is a burst that ends when the budget does. A BCPL sponsorship keeps your brand in the story for months — registrations, trials, auction, matches, finale — one ticket, five attention peaks.</div>
+      <div class="card accg"><b class="t">Participants remember partners</b>This audience registered, paid and played. Brands attached to something people <i>do</i> earn deeper recall than brands that interrupt something people watch.</div>
+      <div class="card accb"><b class="t">Proof, not promises</b>Every sponsor receives a season-end delivery report — photos, screenshots and counts of executed deliverables against the signed agreement.</div>
+    </div>
+  </div>
+  ${HASH}
+  </div>
+  ${foot()}
+</div></div>
+
+<!-- W2 · MANY SURFACES -->
+<div class="page dark"><div class="inner">
+  <h2><span class="kick">07 · WHY BCPL</span>One Sponsorship, Many Surfaces</h2>
+  <div class="body">
+  <div class="grid2" style="align-items:end;margin-top:6px">
+    <div>
+      <h3>Indicative share of season brand exposure by surface <span class="hash">#</span></h3>
+      ${bars([
+        { label: "On-ground (boards, kits, ceremonies)", value: 35, display: "~35%", hash: true },
+        { label: "Broadcast &amp; streams", value: 30, display: "~30%", hash: true, color: "linear-gradient(180deg,#F7D488,#E8B23D)" },
+        { label: "Social &amp; reels", value: 25, display: "~25%", hash: true, color: "linear-gradient(180deg,#7FA3E8,#15346B)" },
+        { label: "League platform (bcplt20.com)", value: 10, display: "~10%", hash: true, color: "linear-gradient(180deg,#8DE6B8,#189C5C)" },
+      ], { height: 195 })}
+      <p class="dim" style="margin-top:4px;color:rgba(255,255,255,0.6)">Mix varies by tier — Title &amp; Jersey lean broadcast-heavy; Drinking &amp; Timeout lean moment-heavy. <span class="hash">#</span></p>
+    </div>
+    <div>
+      <div class="card"><b class="t">Each surface multiplies the others</b>A boundary board is seen on the ground, again on the stream, again in the highlight reel, again in the fan's repost. One placement, four impressions — that is how league sponsorship compounds.</div>
+      <div class="card"><b class="t">Clips outlive match day</b>Auction moments and match highlights keep circulating for weeks after the game — season branding keeps earning views long after the final ball.</div>
+      <div class="card"><b class="t">Your logo where fans check scores</b>Live scoring and the points table on bcplt20.com are refreshed all season by players, colleagues and families — partner logos sit on the League's most-visited pages.</div>
+    </div>
+  </div>
+  ${HASH}
+  </div>
+  ${foot()}
+</div></div>
+
+<!-- W3 · VALUE EQUATION -->
+<div class="page"><div class="band"></div>${rings(190, "-50px", "-55px")}<div class="inner">
+  <h2><span class="kick">07 · WHY BCPL</span>The Value Equation — Big-League Feel, Sensible Ticket</h2>
+  <div class="body">
+  <div class="grid2" style="align-items:end">
+    <div>
+      <h3>Indicative entry cost of franchise-cricket association <span class="hash">#</span></h3>
+      ${bars([
+        { label: "Top national T20 properties", value: 100, display: "100s of Cr", hash: true, color: "linear-gradient(180deg,#B9C7E6,#5F7BB8)" },
+        { label: "Televised domestic leagues", value: 40, display: "10s of Cr", hash: true, color: "linear-gradient(180deg,#7FA3E8,#15346B)" },
+        { label: "BCPL Season 4 (full menu)", value: 8, display: "₹15 L – 2.5 Cr", color: "linear-gradient(180deg,#FFB25E,#FF6B00)" },
+      ], { height: 190 })}
+      <p class="dim" style="margin-top:4px">Public-domain indicative ranges for comparable property types; BCPL range is this deck's own menu. <span class="hash">#</span></p>
+    </div>
+    <div>
+      <h3>What the journey looks like for a sponsor</h3>
+      <div class="steps" style="flex-direction:column;gap:12px;margin:8px 0 0">
+        <div class="step" style="margin-right:0"><span class="no">1</span><b>Season 4 — get seen</b>Naming, jerseys, broadcast slots, drinks breaks — your brand enters the League's story at today's entry pricing.</div>
+        <div class="step" style="margin-right:0"><span class="no">2</span><b>Season-end — get proof</b>Delivery report with photos, screenshots and counts — you see exactly what ran, where, how often.</div>
+        <div class="step" style="margin-right:0"><span class="no">3</span><b>Season 5 — get first refusal</b>Existing partners hold first right on renewals — as the League's audience grows, early partners keep their position without bidding wars.</div>
+      </div>
+    </div>
+  </div>
+  <div class="note"><b>The early-partner advantage:</b> League properties get costlier as audiences grow. Partners who enter at Season 4 lock category exclusivity and renewal rights now — the sponsors who joined big leagues early are the case studies everyone quotes later.</div>
+  ${HASH}
+  </div>
+  ${foot()}
+</div></div>
+
 <!-- P14 · SPONSORSHIP MENU -->
 <div class="page"><div class="band"></div>${ballDeco({ size: 110, top: "3.5%", right: "3%" })}<div class="inner">
-  <h2><span class="kick">07 · THE MENU</span>Season 4 Sponsorship Opportunities</h2>
+  <h2><span class="kick">08 · THE MENU</span>Season 4 Sponsorship Opportunities</h2>
   <p style="font-size:13px;max-width:900px">All amounts are <b>per season, indicative and negotiable</b>, exclusive of GST. Final pricing depends on category exclusivity, deliverable mix and timing of commitment.</p>
   <div class="body">
   <table>
     <tr><th>Property</th><th>Slots</th><th>Headline rights</th><th>Indicative range</th></tr>
-    <tr class="hl"><td><b>Title Sponsor</b> <span class="tag">FLAGSHIP</span></td><td>1 (exclusive)</td><td>League naming — "<b>&lt;Your Brand&gt; BCPL T20</b>" everywhere: logo lock-up, broadcast graphics, trophy, all League branding</td><td class="price">₹1.5 – 2 Cr</td></tr>
-    <tr><td><b>Powered By / Co-Presenting</b></td><td>2</td><td>"Powered by &lt;Brand&gt;" on broadcast &amp; ground; second-tier logo on all League creatives</td><td class="price">₹50 – 75 L</td></tr>
-    <tr><td><b>Official Jersey Partner</b> — all 10 teams</td><td>1</td><td>Your logo on the playing jersey of <b>all 10 franchise teams</b> — every match, every photo, every clip</td><td class="price">₹80 L – 1 Cr</td></tr>
-    <tr><td><b>Associate Partner</b></td><td>3–4</td><td>"Official &lt;Category&gt; Partner", ground + digital branding</td><td class="price">₹25 – 35 L</td></tr>
-    <tr><td><b>Official Drinking Partner</b> <span class="tag g">NEW</span></td><td>1</td><td>Exclusive beverage rights — pouring rights at venues, drinks-break branding, dugout coolers &amp; bottles in frame</td><td class="price">₹20 – 30 L</td></tr>
-    <tr><td><b>Strategic Timeout Sponsor</b></td><td>1</td><td>Every strategic timeout branded &amp; announced as yours — broadcast sting + ground board + commentary</td><td class="price">₹15 – 25 L</td></tr>
-    <tr><td><b>Official Umpire Partner</b></td><td>1</td><td>Logo on umpire uniforms all season + review-moment mentions</td><td class="price">₹10 – 15 L</td></tr>
+    <tr class="hl"><td><b>Title Sponsor</b> <span class="tag">FLAGSHIP</span></td><td>1 (exclusive)</td><td>League naming — "<b>&lt;Your Brand&gt; BCPL T20</b>" everywhere: logo lock-up, broadcast graphics, trophy, all League branding</td><td class="price">₹2 – 2.5 Cr</td></tr>
+    <tr><td><b>Powered By / Co-Presenting</b></td><td>2</td><td>"Powered by &lt;Brand&gt;" on broadcast &amp; ground; second-tier logo on all League creatives</td><td class="price">₹60 – 90 L</td></tr>
+    <tr><td><b>Official Jersey Partner</b> — all 10 teams</td><td>1</td><td>Your logo on the playing jersey of <b>all 10 franchise teams</b> — every match, every photo, every clip</td><td class="price">₹1 – 1.2 Cr</td></tr>
+    <tr><td><b>Associate Partner</b></td><td>3–4</td><td>"Official &lt;Category&gt; Partner", ground + digital branding</td><td class="price">₹30 – 45 L</td></tr>
+    <tr><td><b>Official Drinking Partner</b> <span class="tag g">NEW</span></td><td>1</td><td>Exclusive beverage rights — pouring rights at venues, drinks-break branding, dugout coolers &amp; bottles in frame</td><td class="price">₹25 – 40 L</td></tr>
+    <tr><td><b>Strategic Timeout Sponsor</b></td><td>1</td><td>Every strategic timeout branded &amp; announced as yours — broadcast sting + ground board + commentary</td><td class="price">₹20 – 30 L</td></tr>
+    <tr><td><b>Official Umpire Partner</b></td><td>1</td><td>Logo on umpire uniforms all season + review-moment mentions</td><td class="price">₹15 – 20 L</td></tr>
   </table>
   <div class="note"><b>Title + Jersey bundle:</b> the Title Sponsor may also take the all-10-team jersey rights as a combined package at preferred pricing — the strongest single brand presence the League can offer. Ask for the bundle quote.</div>
   </div>
-  ${foot("14")}
+  ${foot()}
 </div></div>
 
 <!-- P15 · PRICE LADDER CHART -->
 <div class="page"><div class="band"></div>${streak("16%")}${ballDeco({ size: 140, top: "6%", right: "3%" })}<div class="inner">
-  <h2><span class="kick">07 · THE MENU</span>The Ladder at a Glance</h2>
+  <h2><span class="kick">08 · THE MENU</span>The Ladder at a Glance</h2>
   <div class="body">
   <h3>Indicative investment by tier (upper end of range, ₹)</h3>
   ${bars([
-    { label: "Umpire", value: 15, display: "15 L", color: "linear-gradient(180deg,#B9C7E6,#5F7BB8)" },
-    { label: "Timeout", value: 25, display: "25 L", color: "linear-gradient(180deg,#9FB4E0,#4666A8)" },
-    { label: "Drinking Partner", value: 30, display: "30 L", color: "linear-gradient(180deg,#8DE6B8,#189C5C)" },
-    { label: "Associate", value: 35, display: "35 L", color: "linear-gradient(180deg,#7FA3E8,#15346B)" },
-    { label: "Powered By", value: 75, display: "75 L", color: "linear-gradient(180deg,#F7D488,#E8B23D)" },
-    { label: "Jersey (all 10 teams)", value: 100, display: "1 Cr", color: "linear-gradient(180deg,#FFB25E,#FF6B00)" },
-    { label: "Title", value: 200, display: "2 Cr", color: "linear-gradient(180deg,#FF9A4D,#C94E0E)" },
+    { label: "Umpire", value: 20, display: "20 L", color: "linear-gradient(180deg,#B9C7E6,#5F7BB8)" },
+    { label: "Timeout", value: 30, display: "30 L", color: "linear-gradient(180deg,#9FB4E0,#4666A8)" },
+    { label: "Drinking Partner", value: 40, display: "40 L", color: "linear-gradient(180deg,#8DE6B8,#189C5C)" },
+    { label: "Associate", value: 45, display: "45 L", color: "linear-gradient(180deg,#7FA3E8,#15346B)" },
+    { label: "Powered By", value: 90, display: "90 L", color: "linear-gradient(180deg,#F7D488,#E8B23D)" },
+    { label: "Jersey (all 10 teams)", value: 120, display: "1.2 Cr", color: "linear-gradient(180deg,#FFB25E,#FF6B00)" },
+    { label: "Title", value: 250, display: "2.5 Cr", color: "linear-gradient(180deg,#FF9A4D,#C94E0E)" },
   ], { height: 260 })}
   <div class="grid3" style="margin-top:14px">
     <div class="card acc"><b class="t">Pick by objective</b>Awareness at scale → Title / Jersey. Category presence → Powered By / Associate. Sharp, ownable moments → Drinking Partner / Timeout / Umpire.</div>
@@ -459,12 +549,12 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
     <div class="card accb"><b class="t">Every rupee is written down</b>Each tier's deliverables — placements, counts, sizes, timelines — go into a signed agreement. Nothing stays verbal.</div>
   </div>
   </div>
-  ${foot("15")}
+  ${foot()}
 </div></div>
 
 <!-- P16 · TITLE DETAIL -->
 <div class="page"><div class="band"></div>${rings(190, "-50px", "-55px")}<div class="inner">
-  <h2><span class="kick">08 · TIER DETAIL</span>Title Sponsor — What You Own <span class="dim" style="font-size:14px">(1 exclusive slot · ₹1.5–2 Cr indicative)</span></h2>
+  <h2><span class="kick">09 · TIER DETAIL</span>Title Sponsor — What You Own <span class="dim" style="font-size:14px">(1 exclusive slot · ₹2–2.5 Cr indicative)</span></h2>
   <div class="body">
   <div class="grid2">
     <div>
@@ -486,14 +576,14 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
   </div>
   ${HASH}
   </div>
-  ${foot("16")}
+  ${foot()}
 </div></div>
 
 <!-- P17 · JERSEY (photo) -->
 <div class="page photo">
   <img class="bgimg" src="${A}/jerseys.webp"><div class="shade"></div>
   <div class="inner">
-    <h2><span class="kick">08 · TIER DETAIL</span>Official Jersey Partner — All 10 Teams <span style="font-size:14px;color:rgba(255,255,255,0.7)">(1 slot · ₹80 L – 1 Cr indicative)</span></h2>
+    <h2><span class="kick">09 · TIER DETAIL</span>Official Jersey Partner — All 10 Teams <span style="font-size:14px;color:rgba(255,255,255,0.7)">(1 slot · ₹1 – 1.2 Cr indicative)</span></h2>
     <div class="body" style="display:flex;align-items:flex-end">
       <div class="grid2" style="width:100%">
         <div class="card"><b class="t">The most photographed real estate in cricket</b>Your logo on the chest/sleeve of every playing jersey of all 10 franchise teams — in every ball bowled, every celebration, every player photo, every reel, every broadcast frame, all season.</div>
@@ -502,13 +592,13 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
         <div class="card"><b class="t">Bundle with Title</b>Combined Title + Jersey rights give one brand the League's name <i>and</i> every player's chest — the deepest association available. Combined quote on request.</div>
       </div>
     </div>
-    ${foot("17")}
+    ${foot()}
   </div>
 </div>
 
 <!-- P18 · DRINKING PARTNER (NEW) -->
 <div class="page dark"><div class="inner">
-  <h2><span class="kick">08 · TIER DETAIL</span>Official Drinking Partner <span class="tag g" style="font-size:12px;vertical-align:middle">NEW FOR SEASON 4</span> <span style="font-size:14px;color:rgba(255,255,255,0.65)">(1 slot · ₹20–30 L indicative)</span></h2>
+  <h2><span class="kick">09 · TIER DETAIL</span>Official Drinking Partner <span class="tag g" style="font-size:12px;vertical-align:middle">NEW FOR SEASON 4</span> <span style="font-size:14px;color:rgba(255,255,255,0.65)">(1 slot · ₹25–40 L indicative)</span></h2>
   <div class="body">
   <p style="font-size:15px;max-width:1000px">Cricket runs on drinks breaks. The Official Drinking Partner owns every hydration moment of the season — on the ground, on the stream and in the frame.</p>
   <div class="grid2" style="margin-top:10px">
@@ -520,22 +610,22 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
   <div class="note"><b>Category note:</b> open to water, sports-drink, juice, energy-drink, tea/coffee and similar beverage brands. Alcohol brands can be accommodated only within applicable law and venue policy — surrogate/off-limit advertising is not accepted. One brand holds this slot exclusively.</div>
   ${HASH}
   </div>
-  ${foot("18")}
+  ${foot()}
 </div></div>
 
 <!-- P19 · POWERED BY + ASSOCIATE -->
 <div class="page"><div class="band"></div>${streak("60%")}${ballDeco({ size: 110, bottom: "5%", right: "2.5%", opacity: 0.85 })}<div class="inner">
-  <h2><span class="kick">08 · TIER DETAIL</span>Powered By &amp; Associate Partner</h2>
+  <h2><span class="kick">09 · TIER DETAIL</span>Powered By &amp; Associate Partner</h2>
   <div class="body">
   <div class="grid2">
-    <div class="card acc" style="padding:16px 20px"><b class="t" style="font-size:18px">Powered By / Co-Presenting — 2 slots · ₹50–75 L</b>
+    <div class="card acc" style="padding:16px 20px"><b class="t" style="font-size:18px">Powered By / Co-Presenting — 2 slots · ₹60–90 L</b>
       "Powered by &lt;Brand&gt;" alongside the League name on broadcast graphics, backdrops and creatives<br>
       · Ad slots on SonyLIV/FanCode streams <span class="hash">#</span><br>
       · Boundary boards at every match<br>
       · Logo on bcplt20.com and League creatives<br>
       · Presence in select ambassador content<br>
       · Category exclusivity at this tier · hospitality passes for all match days</div>
-    <div class="card accb" style="padding:16px 20px"><b class="t" style="font-size:18px">Associate Partner — 3–4 slots · ₹25–35 L</b>
+    <div class="card accb" style="padding:16px 20px"><b class="t" style="font-size:18px">Associate Partner — 3–4 slots · ₹30–45 L</b>
       "Official &lt;Category&gt; Partner of BCPL" designation<br>
       · Ground branding at all matches<br>
       · Logo on League digital properties<br>
@@ -553,21 +643,21 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
   </div>
   ${HASH}
   </div>
-  ${foot("19")}
+  ${foot()}
 </div></div>
 
 <!-- P20 · TIMEOUT + UMPIRE -->
 <div class="page"><div class="band"></div>${rings(180, "-45px", "-50px")}${ballDeco({ size: 105, top: "4%", right: "3.5%" })}<div class="inner">
-  <h2><span class="kick">08 · TIER DETAIL</span>Strategic Timeout &amp; Umpire Partner</h2>
+  <h2><span class="kick">09 · TIER DETAIL</span>Strategic Timeout &amp; Umpire Partner</h2>
   <div class="body">
   <div class="grid2">
-    <div class="card acc" style="padding:16px 20px"><b class="t" style="font-size:18px">Strategic Timeout Sponsor — 1 slot · ₹15–25 L</b>
+    <div class="card acc" style="padding:16px 20px"><b class="t" style="font-size:18px">Strategic Timeout Sponsor — 1 slot · ₹20–30 L</b>
       Every strategic timeout in every match announced and branded as yours<br>
       · Broadcast sting + graphic at each timeout <span class="hash">#</span><br>
       · Ground announcement + timeout-board branding<br>
       · Social clips of key timeout moments carry your lock-up<br>
       <span class="dim">High-frequency, high-recall — multiple guaranteed brand moments every single match.</span></div>
-    <div class="card accb" style="padding:16px 20px"><b class="t" style="font-size:18px">Official Umpire Partner — 1 slot · ₹10–15 L</b>
+    <div class="card accb" style="padding:16px 20px"><b class="t" style="font-size:18px">Official Umpire Partner — 1 slot · ₹15–20 L</b>
       Your logo on umpire uniforms in every match of the season<br>
       · In frame during every appeal, review and decision replay<br>
       · "Review presented by &lt;Brand&gt;" broadcast mention <span class="hash">#</span><br>
@@ -577,12 +667,12 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
   <div class="note"><b>Every tier receives:</b> logo on the League partners page, a season-end delivery report with photo/screenshot proof, and a signed sponsorship agreement listing each deliverable — nothing is left verbal.</div>
   ${HASH}
   </div>
-  ${foot("20")}
+  ${foot()}
 </div></div>
 
 <!-- P21 · MATRIX -->
 <div class="page"><div class="band"></div><div class="inner">
-  <h2><span class="kick">09 · AT A GLANCE</span>Deliverables Matrix</h2>
+  <h2><span class="kick">10 · AT A GLANCE</span>Deliverables Matrix</h2>
   <div class="body">
   <table style="font-size:11.4px">
     <tr><th>Deliverable</th><th>Title</th><th>Powered By</th><th>Jersey</th><th>Associate</th><th>Drinking</th><th>Timeout</th><th>Umpire</th></tr>
@@ -603,12 +693,12 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
   </table>
   ${HASH}
   </div>
-  ${foot("21")}
+  ${foot()}
 </div></div>
 
 <!-- P22 · INCLUDED / NOT INCLUDED -->
 <div class="page"><div class="band"></div>${streak("48%")}${ballDeco({ size: 115, bottom: "6%", right: "2.5%", opacity: 0.85 })}<div class="inner">
-  <h2><span class="kick">10 · CLARITY</span>What's Included — and What's Not</h2>
+  <h2><span class="kick">11 · CLARITY</span>What's Included — and What's Not</h2>
   <div class="body">
   <div class="grid2">
     <div>
@@ -632,12 +722,12 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
   </div>
   <div class="note"><b>Payment terms (indicative):</b> 50% on signing · 50% before the first match. Category exclusivity activates only on signing. Early commitment (before September 2026) secures better inventory positions and pricing.</div>
   </div>
-  ${foot("22")}
+  ${foot()}
 </div></div>
 
 <!-- P23 · WHAT WE NEED FROM YOU -->
 <div class="page"><div class="band"></div>${rings(200, "-55px", "-60px")}${ballDeco({ size: 110, top: "4%", right: "3.5%" })}<div class="inner">
-  <h2><span class="kick">10 · CLARITY</span>What We Need From You — Sponsor Checklist</h2>
+  <h2><span class="kick">11 · CLARITY</span>What We Need From You — Sponsor Checklist</h2>
   <div class="body">
   <p style="font-size:14.5px">To deliver your branding cleanly and on time, this is everything the League needs from your side. Nothing more.</p>
   <div class="grid3" style="margin-top:8px">
@@ -650,14 +740,14 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
   </div>
   <div class="note"><b>What you do NOT need to arrange:</b> ground branding production &amp; installation, League social content creation, ambassador content production, platform coordination with SonyLIV/FanCode — all handled by the League.</div>
   </div>
-  ${foot("23")}
+  ${foot()}
 </div></div>
 
 <!-- P24 · NEXT STEPS + CONTACT -->
 <div class="page photo">
   <img class="bgimg" src="${A}/event-teams-a.webp"><div class="shade"></div>
   <div class="inner">
-    <h2><span class="kick">11 · LET'S TALK</span>Why BCPL, and What Happens Next</h2>
+    <h2><span class="kick">12 · LET'S TALK</span>Why BCPL, and What Happens Next</h2>
     <div class="body" style="display:flex;flex-direction:column;justify-content:flex-end">
       <div class="grid3">
         <div class="card"><b class="t">Big-league feel, sensible ticket</b>Franchise-league association — naming, jerseys, broadcast, ambassadors — at a fraction of what top-tier properties cost.</div>
@@ -678,7 +768,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
       </div>
       <p style="color:rgba(255,255,255,0.55);font-size:9.8px;margin-top:10px">This deck is confidential and for the named recipient only. It is an invitation to discuss sponsorship — not an offer, contract or investment product. All figures marked # are the League's own estimates and projections; actual outcomes may differ. Final deliverables, pricing and terms are as per the signed sponsorship agreement only. GST extra as applicable. Logos of streaming platforms are shown to indicate planned distribution partners for Season 4 (#) and remain the property of their respective owners.</p>
     </div>
-    ${foot("24")}
+    ${foot()}
   </div>
 </div>
 
