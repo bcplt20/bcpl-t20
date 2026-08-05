@@ -6,7 +6,8 @@ import { Skel } from '../components/Skel';
 import { getMatches } from '../lib/api';
 import { useLang } from '../lib/i18n';
 import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
-import { IcoBat, IcoPin } from '../lib/icons';
+import { IcoBat } from '../lib/icons';
+import { MatchCard } from '../components/MatchCard';
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap');
@@ -26,40 +27,24 @@ const CSS = `
 @media(min-width:640px){.filter-tabs .filter-tab{width:auto;}}
 .filter-bar{display:flex;flex-direction:column;gap:16px;}
 @media(min-width:768px){.filter-bar{flex-direction:row;align-items:center;justify-content:space-between;}.filter-bar .filter-tabs{margin-bottom:0;}}
-.btn-fire{background:linear-gradient(135deg,#FF7A29 0%,#E8611A 60%,#C94E0E 100%);border:none;border-radius:14px;color:#fff;font-family:var(--font-head);font-weight:800;cursor:pointer;box-shadow:0 8px 28px rgba(255,122,41,0.45),inset 0 1px 0 rgba(255,255,255,0.2);transition:transform 0.15s,box-shadow 0.2s;letter-spacing:0.02em;animation:pulseGlow 3s ease-in-out infinite;}
-.btn-fire:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(255,122,41,0.6);}
-.btn-fire:active{transform:scale(0.97);}
 .glass-card{background:linear-gradient(135deg,rgba(30,55,105,0.9),rgba(23,43,81,0.85));backdrop-filter:blur(32px);border:1px solid rgba(255,255,255,0.18);border-radius:20px;box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.18);}
 .shimmer-gold{background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D,#F5C842,#E8B23D);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 3s linear infinite;}
-.tag-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,122,41,0.12);border:1px solid rgba(255,122,41,0.3);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:700;font-family:var(--font-head);color:#FF7A29;letter-spacing:0.1em;}
-.match-card{transition:transform 0.2s,box-shadow 0.2s;}
-.match-card:hover{transform:translateY(-3px);box-shadow:0 32px 80px rgba(0,0,0,0.6)!important;}
 .filter-tab{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.18);border-radius:10px;color:rgba(255,255,255,0.72);font-family:var(--font-head);font-weight:700;font-size:12px;padding:8px 18px;cursor:pointer;transition:all 0.2s;letter-spacing:0.06em;}
 .filter-tab.active{background:rgba(255,122,41,0.15);border-color:rgba(255,122,41,0.5);color:#FF7A29;}
 .filter-tab:hover:not(.active){background:rgba(255,255,255,0.18);color:rgba(255,255,255,0.88);}
 .team-select{background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.18);border-radius:12px;color:#F8F4EE;padding:10px 16px;font-family:Inter,sans-serif;font-size:14px;outline:none;cursor:pointer;appearance:none;-webkit-appearance:none;width:100%;transition:all 0.25s;}
 @media(min-width:768px){.team-select{width:auto;flex:1;max-width:260px;}}
-@keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-@keyframes pulseGlow{0%,100%{box-shadow:0 0 16px rgba(255,122,41,0.4)}50%{box-shadow:0 0 36px rgba(255,122,41,0.8),0 0 60px rgba(255,122,41,0.3)}}
 @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
 @keyframes scanPulse{0%,100%{opacity:0.03}50%{opacity:0.08}}
 @keyframes liveBlip{0%,100%{opacity:1}50%{opacity:0.2}}
 @keyframes floatParticle{0%{transform:translateY(0) rotate(0deg);opacity:0.4}50%{opacity:0.8}100%{transform:translateY(-80px) rotate(180deg);opacity:0}}
 @keyframes fadeSlide{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-@keyframes borderGlow{0%,100%{border-color:rgba(255,122,41,0.3)}50%{border-color:rgba(255,122,41,0.8)}}
 /* float-reg-btn */
 .float-reg-btn { position:fixed; bottom:28px; right:28px; z-index:900; background:linear-gradient(135deg,#FF7A29,#D95E10); border:none; border-radius:12px; color:#fff; font-family:var(--font-head); font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:14px 22px; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(255,122,41,0.45); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition:opacity .2s,transform .15s; }
 .float-reg-btn:hover { opacity:.9; transform:translateY(-2px); }
 @keyframes floatPulse { 0%,100%{box-shadow:0 8px 32px rgba(255,122,41,0.45),0 0 0 0 rgba(255,122,41,0.4)} 50%{box-shadow:0 8px 40px rgba(255,122,41,0.6),0 0 0 8px rgba(255,122,41,0)} }
 .float-reg-pulse { animation:floatPulse 2.5s ease-in-out infinite; }
 @media(max-width:1023px){ .float-reg-btn { display:none; } }
-
-/* ── MOBILE FIXES ── */
-@media(max-width:639px){
-  .match-row-inner { flex-wrap:wrap; gap:8px; }
-  .match-date-box { width:56px!important; height:62px!important; }
-  .match-date-day { font-size:22px!important; }
-}
 `;
 
 const particles = [
@@ -93,46 +78,11 @@ function AmbientBg() {
   );
 }
 
-type MatchStatus = 'COMPLETED' | 'LIVE' | 'UPCOMING' | 'TBD';
-
-interface Match {
-  day: string;
-  month: string;
-  weekday: string;
-  matchNo: number;
-  teamA: string;
-  teamB: string;
-  status: MatchStatus;
-  venue: string;
-  time: string;
-  result?: string;
-  monthGroup: string;
-  sortKey: string;
-  tag: string;
-}
-
 type ApiMatchRow = {
   id: string; matchNo: number; team1: string; team2: string; venue: string;
   scheduledAt: string | null; status: string; winner: string | null; resultDesc: string | null;
   stage?: string; grp?: string;
 };
-
-function StatusPill({status}: {status: MatchStatus}) {
-  if (status === 'LIVE') return (
-    <span style={{display:'inline-flex',alignItems:'center',gap:6,background:'rgba(232,73,63,0.15)',border:'1px solid rgba(232,73,63,0.4)',borderRadius:100,padding:'4px 12px',fontSize:11,fontFamily:'var(--font-head)',fontWeight:800,color:'#E8493F',letterSpacing:'0.08em'}}>
-      <span style={{width:7,height:7,borderRadius:'50%',background:'#E8493F',animation:'liveBlip 1s ease-in-out infinite',display:'inline-block'}}/>LIVE
-    </span>
-  );
-  if (status === 'COMPLETED') return (
-    <span style={{background:'rgba(34,197,94,0.12)',border:'1px solid rgba(34,197,94,0.3)',borderRadius:100,padding:'4px 12px',fontSize:11,fontFamily:'var(--font-head)',fontWeight:800,color:'#22C55E',letterSpacing:'0.08em',display:'inline-block'}}>FINAL</span>
-  );
-  if (status === 'UPCOMING') return (
-    <span style={{background:'rgba(59,130,246,0.12)',border:'1px solid rgba(59,130,246,0.3)',borderRadius:100,padding:'4px 12px',fontSize:11,fontFamily:'var(--font-head)',fontWeight:800,color:'#60A5FA',letterSpacing:'0.08em',display:'inline-block'}}>UPCOMING</span>
-  );
-  return (
-    <span style={{background:'rgba(232,178,61,0.1)',border:'1px solid rgba(232,178,61,0.25)',borderRadius:100,padding:'4px 12px',fontSize:11,fontFamily:'var(--font-head)',fontWeight:800,color:'#E8B23D',letterSpacing:'0.08em',display:'inline-block'}}>TBD</span>
-  );
-}
 
 export function Schedule() {
   const { t } = useLang();
@@ -147,7 +97,7 @@ export function Schedule() {
       .catch((e: any) => setLoadErr(e?.message || 'Could not load fixtures'));
   }, []);
 
-  const allMatches: Match[] = React.useMemo(() => {
+  const enrichedMatches = React.useMemo(() => {
     if (!apiMatches) return [];
     return apiMatches
       .filter(m => m.status !== 'cancelled')
@@ -155,30 +105,16 @@ export function Schedule() {
         const dt = m.scheduledAt ? new Date(m.scheduledAt) : null;
         const fmt = (opt: Intl.DateTimeFormatOptions) =>
           dt ? dt.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', ...opt }) : '';
-        const status: MatchStatus =
+        const uiStatus = 
           m.status === 'live' ? 'LIVE'
           : (m.status === 'completed' || m.status === 'abandoned') ? 'COMPLETED'
           : dt ? 'UPCOMING' : 'TBD';
+        
         return {
-          day: dt ? fmt({ day: '2-digit' }) : '—',
-          month: dt ? fmt({ month: 'short' }).toUpperCase() : 'TBD',
-          weekday: dt ? fmt({ weekday: 'short' }).toUpperCase() : '',
-          matchNo: m.matchNo,
-          teamA: m.team1,
-          teamB: m.team2,
-          status,
-          venue: m.venue || 'Venue TBA',
-          time: dt ? `${fmt({ hour: 'numeric', minute: '2-digit', hour12: true })} IST` : 'Time TBD',
-          result: m.status === 'abandoned'
-            ? (m.resultDesc || 'Match abandoned — no result')
-            : m.status === 'completed'
-              ? (m.resultDesc || (m.winner ? `${m.winner} won` : undefined))
-              : undefined,
+          ...m,
+          uiStatus,
           monthGroup: dt ? fmt({ month: 'long', year: 'numeric' }).toUpperCase() : 'DATE TO BE ANNOUNCED',
-          sortKey: dt ? dt.toISOString() : '9999-12-31',
-          tag: m.stage === 'semifinal' ? 'SEMI FINAL'
-            : m.stage === 'final' ? 'GRAND FINALE'
-            : m.grp ? `GROUP ${m.grp}` : '',
+          sortKey: dt ? dt.toISOString() : '9999-12-31'
         };
       })
       .sort((a, b) => a.sortKey.localeCompare(b.sortKey));
@@ -186,23 +122,23 @@ export function Schedule() {
 
   const teamOptions = React.useMemo(() => {
     const names = new Set<string>();
-    allMatches.forEach(m => { names.add(m.teamA); names.add(m.teamB); });
+    enrichedMatches.forEach(m => { names.add(m.team1); names.add(m.team2); });
     return ['All Teams', ...Array.from(names).sort()];
-  }, [allMatches]);
+  }, [enrichedMatches]);
 
   const loading = apiMatches === null && !loadErr;
 
-  const filtered = allMatches.filter(m => {
+  const filtered = enrichedMatches.filter(m => {
     const tabOk = activeTab === 'All' ||
-      (activeTab === 'Upcoming' && (m.status === 'UPCOMING' || m.status === 'TBD')) ||
-      (activeTab === 'Completed' && m.status === 'COMPLETED') ||
-      (activeTab === 'Live' && m.status === 'LIVE');
+      (activeTab === 'Upcoming' && (m.uiStatus === 'UPCOMING' || m.uiStatus === 'TBD')) ||
+      (activeTab === 'Completed' && m.uiStatus === 'COMPLETED') ||
+      (activeTab === 'Live' && m.uiStatus === 'LIVE');
     const teamOk = teamFilter === 'All Teams' ||
-      m.teamA === teamFilter || m.teamB === teamFilter;
+      m.team1 === teamFilter || m.team2 === teamFilter;
     return tabOk && teamOk;
   });
 
-  const groups = filtered.reduce<Record<string, Match[]>>((acc, m) => {
+  const groups = filtered.reduce<Record<string, typeof enrichedMatches>>((acc, m) => {
     if (!acc[m.monthGroup]) acc[m.monthGroup] = [];
     acc[m.monthGroup].push(m);
     return acc;
@@ -219,14 +155,14 @@ export function Schedule() {
         <div style={{padding:'clamp(80px,12vh,130px) 0 clamp(32px,5vw,56px)',textAlign:'center',position:'relative'}}>
           <div className="wrap">
             <div className="v3-kicker" style={{marginBottom:16}}>
-              {t("SEASON 5 FIXTURES", "सीज़न 5 फिक्स्चर")}
+              {t("SEASON 4 FIXTURES", "सीज़न 4 फिक्स्चर")}
             </div>
             <h1 className="v3-h" style={{fontSize:'clamp(40px,9vw,88px)',marginBottom:20}}>
-              <span style={{color:'#fff'}}>{t("SEASON 5 ", "सीज़न 5 ")}</span>
+              <span style={{color:'#fff'}}>{t("SEASON 4 ", "सीज़न 4 ")}</span>
               <span className="shimmer-gold">{t("FIXTURES.", "फिक्स्चर।")}</span>
             </h1>
             <p style={{color:'rgba(255,255,255,0.72)',fontSize:'clamp(14px,2vw,16px)',fontFamily:'Inter,sans-serif',lineHeight:1.7,maxWidth:640,margin:'0 auto'}}>
-              {t("Every Season 5 match — dates, venues and results — appears here as soon as it is announced.", "हर Season 5 match — तारीख, venue और result — announce होते ही यहाँ दिखेगा।")}
+              {t("Every Season 4 match — dates, venues and results — appears here as soon as it is announced.", "हर Season 4 match — तारीख, venue और result — announce होते ही यहाँ दिखेगा।")}
             </p>
           </div>
         </div>
@@ -275,26 +211,26 @@ export function Schedule() {
           )}
 
           {/* UPCOMING NOTICE */}
-          {!loading && !loadErr && allMatches.length === 0 && (
+          {!loading && !loadErr && enrichedMatches.length === 0 && (
             <div style={{textAlign:'center',padding:'clamp(60px,10vw,100px) 20px'}}>
               <div style={{display:'flex',justifyContent:'center',marginBottom:20}}><IcoBat size={40} style={{color:'rgba(255,255,255,0.72)'}}/></div>
               <div className="v3-h" style={{fontSize:'clamp(26px,5vw,40px)',color:'#fff',marginBottom:12}}>
                 {t("Fixtures Coming Soon", "Fixtures जल्द आएंगे")}
               </div>
               <p style={{color:'var(--ink-3)',fontSize:15,maxWidth:440,margin:'0 auto 28px',lineHeight:1.7}}>
-                {t("The complete Season 5 fixture list will be published here after the players' auction in August 2026. The tournament begins in September 2026.", "पूरी Season 5 fixture list players' auction (Aug 2026) के बाद यहाँ publish होगी। Tournament Sep 2026 में शुरू होगा।")}
+                {t("The complete Season 4 fixture list will be published here after the players' auction in August 2026. The tournament begins in September 2026.", "पूरी Season 4 fixture list players' auction (Aug 2026) के बाद यहाँ publish होगी। Tournament Sep 2026 में शुरू होगा।")}
               </p>
               <div style={{display:'inline-flex',alignItems:'center',gap:8,background:'rgba(255,122,41,0.1)',border:'1px solid rgba(255,122,41,0.3)',borderRadius:20,padding:'8px 20px'}}>
                 <span style={{width:8,height:8,borderRadius:'50%',background:'#FF7A29',display:'inline-block',animation:'liveBlip 1.2s infinite'}}/>
                 <span style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:12,color:'#FF7A29',letterSpacing:'.08em'}}>
-                  {t("REGISTRATIONS OPEN — SEASON 5", "रजिस्ट्रेशन खुले हैं — सीज़न 5")}
+                  {t("REGISTRATIONS OPEN — SEASON 4", "रजिस्ट्रेशन खुले हैं — सीज़न 4")}
                 </span>
               </div>
             </div>
           )}
 
           {/* MATCH GROUPS */}
-          {!loading && Object.entries(groups).length === 0 && allMatches.length > 0 && (
+          {!loading && Object.entries(groups).length === 0 && enrichedMatches.length > 0 && (
             <div style={{textAlign:'center',padding:'60px 0',color:'var(--ink-3)',fontFamily:'Inter,sans-serif',fontSize:15}}>No matches found for this filter.</div>
           )}
 
@@ -306,59 +242,9 @@ export function Schedule() {
                 <div style={{flex:1,height:1,background:'linear-gradient(90deg,rgba(232,178,61,0.4),transparent)'}}/>
               </div>
 
-              <div style={{display:'flex',flexDirection:'column',gap:12}}>
+              <div style={{display:'flex',flexDirection:'column',gap:16}}>
                 {matches.map((m, i) => (
-                  <div
-                    key={`${m.matchNo}-${i}`}
-                    className="glass-card match-card"
-                    style={{
-                      padding:'16px 16px',
-                      border:'1px solid rgba(255,255,255,0.18)',
-                      animation:`fadeSlide 0.3s ${i*0.05}s ease both`,
-                    }}
-                  >
-                    <div className="match-row-inner" style={{display:'flex',alignItems:'center',gap:12,flexWrap:'wrap'}}>
-                      {/* Date box */}
-                      <div
-                        className="match-date-box"
-                        style={{
-                          width:64,height:70,borderRadius:12,flexShrink:0,
-                          background:'linear-gradient(135deg,rgba(255,122,41,0.25),rgba(232,97,26,0.15))',
-                          border:'1px solid rgba(255,122,41,0.2)',
-                          display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:1
-                        }}
-                      >
-                        <div className="match-date-day" style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:26,color:'#FF7A29',lineHeight:1}}>{m.day}</div>
-                        <div style={{fontSize:11,fontFamily:'var(--font-head)',fontWeight:700,color:'rgba(255,122,41,0.7)',letterSpacing:'0.06em'}}>{m.month}</div>
-                        <div style={{fontSize:12,fontFamily:'Inter,sans-serif',color:'var(--ink-2)'}}>{m.weekday}</div>
-                      </div>
-
-                      {/* Teams */}
-                      <div style={{flex:1,minWidth:120}}>
-                        <div style={{display:'flex',alignItems:'center',gap:8,flexWrap:'wrap',marginBottom:6}}>
-                          <span style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:16,color:'#fff'}}>{m.teamA}</span>
-                          <span style={{color:'var(--ink-3)',fontSize:13,fontFamily:'Inter,sans-serif'}}>vs</span>
-                          <span style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:16,color:'#fff'}}>{m.teamB}</span>
-                        </div>
-                        <div style={{display:'flex',flexWrap:'wrap',gap:8,alignItems:'center'}}>
-                          <span style={{fontSize:12,color:'rgba(255,122,41,0.7)',fontFamily:'var(--font-head)',fontWeight:700}}>Match {m.matchNo}</span>
-                          {m.tag && <span style={{fontSize:11,fontFamily:'var(--font-head)',fontWeight:800,letterSpacing:'0.08em',color:'#E8B23D',background:'rgba(232,178,61,0.12)',border:'1px solid rgba(232,178,61,0.3)',borderRadius:100,padding:'2px 10px'}}>{m.tag}</span>}
-                          <span style={{display:'inline-flex',alignItems:'center',gap:5,fontSize:14,color:'var(--ink-2)',fontFamily:'Inter,sans-serif'}}><IcoPin size={13} style={{color:'var(--ink-3)'}}/> {m.venue}</span>
-                          <span style={{fontSize:14,color:'var(--ink-2)',fontFamily:'Inter,sans-serif'}}>· {m.time}</span>
-                        </div>
-                        {m.result && (
-                          <div style={{marginTop:6}}>
-                            <span style={{fontSize:14,color:'#22C55E',fontFamily:'Inter,sans-serif',fontWeight:600}}>✓ {m.result}</span>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Status */}
-                      <div style={{flexShrink:0}}>
-                        <StatusPill status={m.status}/>
-                      </div>
-                    </div>
-                  </div>
+                  <MatchCard key={m.id || m.matchNo} match={m} delayIndex={i} />
                 ))}
               </div>
             </div>

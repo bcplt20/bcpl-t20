@@ -8,6 +8,7 @@ import { SiteHeader } from "../components/SiteHeader";
 import { useLang } from "../lib/i18n";
 import { FlipCountdown } from "../components/FlipCountdown";
 import { IcoCheck, IcoShield, IcoClock, IcoLock, IcoList, IcoTrophy, IcoPin, IcoBat, IcoBall, IcoStar, IcoFlag, IcoStadium } from "../lib/icons";
+import { MatchCard } from "../components/MatchCard";
 
 const PHASE1_DEADLINE = "2027-02-28T23:59:59+05:30";
 
@@ -963,54 +964,14 @@ export function Home() {
                 <div className="card" style={{ padding:"34px 24px", textAlign:"center", borderStyle:"dashed", borderColor:"rgba(255,255,255,0.2)" }}>
                   <div style={{ display:"flex", justifyContent:"center", marginBottom:10 }}><IcoStadium size={34} style={{ color:"var(--ink-3)" }} /></div>
                   <div className="mont" style={{ fontWeight:800, fontSize:15, color:"#fff", marginBottom:6 }}>{t("Fixtures drop before the season opener","Season से पहले fixtures आएँगे")}</div>
-                  <p style={{ fontSize:13, color:"var(--ink-3)", lineHeight:1.6, marginBottom:16 }}>{t("Season 5 matches: Sep – Oct 2027. Register now — you might be playing in one.","Season 5 के मैच: Sep – Oct 2027 । अभी register करें — हो सकता है इनमें आप खेलें।")}</p>
+                  <p style={{ fontSize:13, color:"var(--ink-3)", lineHeight:1.6, marginBottom:16 }}>{t("Season 4 matches: Sep – Oct 2027. Register now — you might be playing in one.","Season 4 के मैच: Sep – Oct 2027 । अभी register करें — हो सकता है इनमें आप खेलें।")}</p>
                   <Link href="/schedule" style={{ fontSize:12, color:"#FF7A29", textDecoration:"none", fontWeight:700 }}>{t("See full schedule","पूरा schedule देखें")} →</Link>
                 </div>
               ) : (
                 <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
-                  {liveMatches.slice(0,5).map((m:any) => {
-                    const status = m.status==="live"||m.status==="innings2" ? "LIVE" : m.status==="completed"||m.status==="abandoned" ? "RESULT" : "UPCOMING";
-                    const t1 = TEAMS.find(x=>x.name===m.team1), t2 = TEAMS.find(x=>x.name===m.team2);
-                    const isLive = status==="LIVE";
-                    return (
-                      <div key={m.id||m.matchNo} role="link" tabIndex={0} aria-label="Open Match Center"
-                        onClick={()=>navigate("/match-center")} onKeyDown={e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); navigate("/match-center"); } }} style={{ background:"linear-gradient(135deg,#1F3652,#1D2942)", border:`1px solid ${isLive?"rgba(239,68,68,.35)":"rgba(255,255,255,0.18)"}`, borderRadius:14, padding:"14px 16px", cursor:"pointer", transition:"transform .2s,border-color .2s" }}
-                        onMouseEnter={e=>{ (e.currentTarget as HTMLElement).style.transform="translateY(-2px)"; }}
-                        onMouseLeave={e=>{ (e.currentTarget as HTMLElement).style.transform=""; }}>
-                        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:12 }}>
-                          {isLive ? (
-                            <div style={{ display:"inline-flex", alignItems:"center", gap:5, background:"rgba(239,68,68,.15)", border:"1px solid rgba(239,68,68,.35)", borderRadius:20, padding:"2px 10px" }}>
-                              <span style={{ width:6, height:6, borderRadius:"50%", background:"#EF4444", display:"inline-block", animation:"blip 1s infinite" }}/>
-                              <span className="mont" style={{ fontSize:9, fontWeight:800, color:"#EF4444", letterSpacing:".1em" }}>LIVE</span>
-                            </div>
-                          ) : status==="UPCOMING" ? (
-                            <div style={{ display:"inline-flex", background:"rgba(59,130,246,.12)", border:"1px solid rgba(59,130,246,.25)", borderRadius:20, padding:"2px 10px" }}>
-                              <span className="mont" style={{ fontSize:9, fontWeight:800, color:"#60A5FA", letterSpacing:".1em" }}>UPCOMING</span>
-                            </div>
-                          ) : (
-                            <div style={{ display:"inline-flex", background:"rgba(34,197,94,.1)", border:"1px solid rgba(34,197,94,.25)", borderRadius:20, padding:"2px 10px" }}>
-                              <span className="mont" style={{ fontSize:9, fontWeight:800, color:"#22C55E", letterSpacing:".1em" }}>RESULT</span>
-                            </div>
-                          )}
-                          <span style={{ fontSize:10, color:"var(--ink-3)" }}>Match {m.matchNo} · {m.venue}</span>
-                        </div>
-                        <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-                          <div style={{ flex:1, display:"flex", alignItems:"center", gap:8 }}>
-                            <img src={`${L}${t1?.slug||""}.png`} alt={m.team1} style={{ width:28, height:28, objectFit:"contain", flexShrink:0 }} onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
-                            <div className="mont" style={{ fontSize:"clamp(11px,2vw,13px)", fontWeight:800, color: m.winner===m.team1?"#FF7A29":"#E2E8F0" }}>{m.team1.split(" ")[0]}</div>
-                          </div>
-                          <div style={{ textAlign:"center", flexShrink:0 }}>
-                            <div className="mont" style={{ fontSize:12, fontWeight:900, color:"rgba(255,255,255,.25)" }}>VS</div>
-                            {status==="RESULT" && m.winner && <div style={{ fontSize:9, color:"#22C55E", fontWeight:700, marginTop:2 }}>{m.winner.split(" ")[0]} WON</div>}
-                          </div>
-                          <div style={{ flex:1, display:"flex", alignItems:"center", gap:8, flexDirection:"row-reverse" }}>
-                            <img src={`${L}${t2?.slug||""}.png`} alt={m.team2} style={{ width:28, height:28, objectFit:"contain", flexShrink:0 }} onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
-                            <div className="mont" style={{ fontSize:"clamp(11px,2vw,13px)", fontWeight:800, color: m.winner===m.team2?"#FF7A29":"#E2E8F0" }}>{m.team2.split(" ")[0]}</div>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
+                  {liveMatches.slice(0,5).map((m:any, i:number) => (
+                    <MatchCard key={m.id||m.matchNo} match={m} compact delayIndex={i} />
+                  ))}
                 </div>
               )}
             </div>
@@ -1018,14 +979,14 @@ export function Home() {
             {/* ── Leaderboard column ── */}
             <div>
               <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16 }}>
-                <div className="mont" style={{ fontSize:11, fontWeight:800, letterSpacing:".12em", color:"var(--ink-3)", textTransform:"uppercase" }}>{t("Points Table — Season 5","पॉइंट्स टेबल — सीज़न 5")}</div>
+                <div className="mont" style={{ fontSize:11, fontWeight:800, letterSpacing:".12em", color:"var(--ink-3)", textTransform:"uppercase" }}>{t("Points Table — Season 4","पॉइंट्स टेबल — सीज़न 4")}</div>
                 <Link href="/points-table" style={{ fontSize:12, color:"#FF7A29", textDecoration:"none", fontWeight:700 }}>{t("Full table","पूरी टेबल")} →</Link>
               </div>
               {liveTable.length === 0 ? (
                 <div className="card" style={{ padding:"34px 24px", textAlign:"center", borderStyle:"dashed", borderColor:"rgba(255,255,255,0.2)" }}>
                   <div style={{ display:"flex", justifyContent:"center", marginBottom:10 }}><IcoList size={34} style={{ color:"var(--ink-3)" }} /></div>
                   <div className="mont" style={{ fontWeight:800, fontSize:15, color:"#fff", marginBottom:6 }}>{t("The leaderboard goes live with the first ball","पहली गेंद के साथ leaderboard live होगा")}</div>
-                  <p style={{ fontSize:13, color:"var(--ink-3)", lineHeight:1.6, marginBottom:18 }}>{t("10 franchises. One trophy. Standings update ball-by-ball during Season 5.","10 franchises । एक trophy । Season 5 में हर गेंद पर standings update होंगी।")}</p>
+                  <p style={{ fontSize:13, color:"var(--ink-3)", lineHeight:1.6, marginBottom:18 }}>{t("10 franchises. One trophy. Standings update ball-by-ball during Season 4.","10 franchises । एक trophy । Season 4 में हर गेंद पर standings update होंगी।")}</p>
                   <div style={{ display:"flex", justifyContent:"center", flexWrap:"wrap", gap:8 }}>
                     {TEAMS.map(tm=>(
                       <img key={tm.slug} src={`${L}${tm.slug}.png`} alt={tm.name} title={tm.name} style={{ width:30, height:30, objectFit:"contain", opacity:.75 }} onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>

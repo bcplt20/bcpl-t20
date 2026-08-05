@@ -3,7 +3,7 @@ import { Link } from 'wouter';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
-import { getPointsTable, getTeams } from '../lib/api';
+import { getPointsTable, getTeams, getMatches } from '../lib/api';
 import { useLang } from '../lib/i18n';
 import { IcoTrophy } from '../lib/icons';
 
@@ -29,8 +29,8 @@ const normTeam = (name: string) => (name || "").trim().toLowerCase();
 const initials = (name: string) =>
   (name || "").split(" ").map(w => w[0]).join("").slice(0, 3).toUpperCase();
 
-/* Number of teams that make the qualification zone (top 4, IPL-style). */
-const QUALIFY_TOP = 4;
+/* Number of teams that make the qualification zone (top 2 per group). */
+const QUALIFY_TOP = 2;
 
 /* Circular team badge: logo when available (keeps the colored ring), initials
    fallback when there is no logo or the image fails to load. */
@@ -135,23 +135,24 @@ function PosBadge({ pos, size = 32 }: { pos: number; size?: number }) {
   const grad =
     pos === 1 ? "linear-gradient(135deg,#E8B23D,#FFD873)" :
     pos === 2 ? "linear-gradient(135deg,#9AA3B0,#CBD2DB)" :
-    pos === 3 ? "linear-gradient(135deg,#B45309,#D97706)" :
     "rgba(255,255,255,.10)";
-  const ink = pos <= 3 ? "#0C1D33" : TXT3;
+  const ink = pos <= 2 ? "#0C1D33" : TXT3;
   return (
     <div style={{
       width: size, height: size, borderRadius: "50%", background: grad,
       display: "flex", alignItems: "center", justifyContent: "center",
       fontFamily: "var(--font-head)", fontWeight: 900, fontSize: size * 0.4, color: ink,
       margin: "0 auto", flexShrink: 0,
-      boxShadow: pos <= 3 ? "0 2px 6px rgba(0,0,0,.3)" : "none",
+      boxShadow: pos <= 2 ? "0 2px 6px rgba(0,0,0,.3)" : "none",
     }}>{pos}</div>
   );
 }
 
 export function PointsTable() {
   const { t } = useLang();
-  const [tableRows, setTableRows] = useState<TeamRow[]>([]);
+  const [groupA, setGroupA] = useState<TeamRow[]>([]);
+  const [groupB, setGroupB] = useState<TeamRow[]>([]);
+  
   const [teamColors, setTeamColors] = useState<Record<string, string>>({});
   const [teamLogos,  setTeamLogos]  = useState<Record<string, string>>({});
 
@@ -173,23 +174,111 @@ export function PointsTable() {
   const logoOf = (team: string) => teamLogos[normTeam(team)] || "";
 
   useEffect(() => {
-    getPointsTable(5).then(d => {
-      const rows: TeamRow[] = (d.table ?? []).map((r: any, i: number) => ({
-        pos: i + 1,
-        name: r.team,
-        p: r.played,
-        w: r.won,
-        l: r.lost,
-        nr: r.noResult,
-        nrr: (r.nrr >= 0 ? "+" : "") + Number(r.nrr).toFixed(3),
-        pts: r.points,
-        form: Array.isArray(r.form) ? r.form : [],
-      }));
-      setTableRows(rows);
+    Promise.all([getPointsTable(5), getMatches(5)]).then(([ptData, mData]) => {
+      const tableData = ptData.table || [];
+      const matchesData = mData.matches || [];
+      
+      const grpASet = new Set<string>();
+      const grpBSet = new Set<string>();
+      
+      matchesData.forEach((m: any) => {
+        if (!m.stage || m.stage === 'league') {
+          if (m.grp === 'A') {
+            grpASet.add(m.team1);
+            grpASet.add(m.team2);
+          } else if (m.grp === 'B') {
+            grpBSet.add(m.team1);
+            grpBSet.add(m.team2);
+          }
+        }
+      });
+
+      const createRow = (name: string) => {
+        const existing = tableData.find((r: any) => normTeam(r.team) === normTeam(name));
+        if (existing) {
+          return {
+            name: existing.team,
+            p: existing.played, w: existing.won, l: existing.lost, nr: existing.noResult,
+            nrr: (existing.nrr >= 0 ? "+" : "") + Number(existing.nrr).toFixed(3),
+            pts: existing.points, form: Array.isArray(existing.form) ? existing.form : [],
+          };
+        }
+        return {
+          name, p: 0, w: 0, l: 0, nr: 0, nrr: "+0.000", pts: 0, form: []
+        };
+      };
+
+      const sortFn = (a: any, b: any) => {
+        if (a.pts !== b.pts) return b.pts - a.pts;
+        return parseFloat(b.nrr) - parseFloat(a.nrr);
+      };
+
+      const rowsA = Array.from(grpASet).map(createRow).sort(sortFn).map((r, i) => ({ ...r, pos: i + 1 }));
+      const rowsB = Array.from(grpBSet).map(createRow).sort(sortFn).map((r, i) => ({ ...r, pos: i + 1 }));
+
+      setGroupA(rowsA);
+      setGroupB(rowsB);
     }).catch(() => {});
   }, []);
 
-  const showQualifyLine = tableRows.length > QUALIFY_TOP;
+  const renderTable = (title: string, rows: TeamRow[]) => {
+    if (rows.length === 0) return null;
+    
+    const showQualifyLine = rows.length > QUALIFY_TOP;
+
+    return (
+      <div style={{ marginBottom: 40 }}>
+        <h2 style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 24, color: "#fff", marginBottom: 16, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+          {title}
+        </h2>
+        <div style={{ background: PANEL, border: `1px solid ${LINE}`, borderRadius: 20, overflow: "hidden", boxShadow: "0 12px 34px rgba(0,0,0,.28)", marginBottom: 16 }}>
+          <div className="pts-table-wrap">
+            <table className="pts-table">
+              <thead>
+                <tr className="pts-header">
+                  <th className="stick stick-pos">#</th>
+                  <th className="left stick stick-team">{t("Team", "टीम")}</th>
+                  <th>{t("P", "P")}</th>
+                  <th>{t("W", "W")}</th>
+                  <th>{t("L", "L")}</th>
+                  <th>{t("NR", "NR")}</th>
+                  <th>{t("NRR", "NRR")}</th>
+                  <th className="left">{t("Form", "फॉर्म")}</th>
+                  <th>{t("Pts", "Pts")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((row, i) => {
+                  const inZone = row.pos <= QUALIFY_TOP;
+                  const isZoneLast = showQualifyLine && row.pos === QUALIFY_TOP;
+                  return (
+                    <tr key={i} className={`pts-row${inZone ? " qualify" : ""}${isZoneLast ? " qualify-last" : ""}`}>
+                      <td className="stick stick-pos"><PosBadge pos={row.pos} /></td>
+                      <td className="stick stick-team">
+                        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                          <TeamBadge name={row.name} color={color(row.name)} logo={logoOf(row.name)} size={34} />
+                          <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 16, color: "#fff" }}>{row.name}</div>
+                        </div>
+                      </td>
+                      <td>{row.p}</td>
+                      <td style={{ color: GREEN, fontWeight: 700 }}>{row.w}</td>
+                      <td style={{ color: RED }}>{row.l}</td>
+                      <td style={{ color: TXT3 }}>{row.nr}</td>
+                      <td style={{ fontFamily: "var(--font-head)", fontWeight: 700, color: row.nrr.startsWith("+") ? GREEN : RED }}>{row.nrr}</td>
+                      <td style={{ textAlign: "left" }}><FormGuide form={row.form} /></td>
+                      <td style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 18, color: ORANGE }}>{row.pts}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const isEmpty = groupA.length === 0 && groupB.length === 0;
 
   return (
     <div style={{ background: PAGE, color: TXT, minHeight: "100vh", fontFamily: "Inter,sans-serif", overflowX: "hidden" }}>
@@ -201,14 +290,14 @@ export function PointsTable() {
         <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 50% at 50% 0%,rgba(255,122,41,0.10) 0%,transparent 70%)", pointerEvents: "none" }} />
         <div className="wrap" style={{ position: "relative", zIndex: 1, textAlign: "center" }}>
           <div className="slbl" style={{ justifyContent: "center" }}>
-            {t("Season 5 Standings", "सीज़न 5 स्टैंडिंग")}
+            {t("Season 4 Standings", "सीज़न 4 स्टैंडिंग")}
           </div>
           <h1 style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: "clamp(32px,6vw,64px)", lineHeight: 1.05, color: "#fff", textTransform: "uppercase", marginBottom: 12 }}>
             {t("POINTS", "पॉइंट्स")}<br />
             <span className="shimmer-gold">{t("TABLE", "टेबल")}</span>
           </h1>
           <p style={{ color: TXT2, fontSize: "clamp(16px,2vw,18px)", lineHeight: 1.7, maxWidth: 480, margin: "0 auto" }}>
-            {t("Live standings update as Season 5 matches are played.", "Season 5 के matches के साथ live standings update होते हैं।")}
+            {t("Live standings update as Season 4 matches are played.", "Season 4 के matches के साथ live standings update होते हैं।")}
           </p>
         </div>
       </section>
@@ -216,7 +305,7 @@ export function PointsTable() {
       <div className="wrap" style={{ paddingBottom: 100 }}>
 
         {/* EMPTY STATE */}
-        {tableRows.length === 0 && (
+        {isEmpty && (
           <div style={{ textAlign: "center", padding: "clamp(48px,8vw,88px) 24px", background: PANEL, border: `1px solid ${LINE}`, borderRadius: 20, boxShadow: "0 12px 34px rgba(0,0,0,.28)" }}>
             <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
               <span style={{ width: 76, height: 76, borderRadius: "50%", background: "rgba(232,178,61,0.16)", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
@@ -227,68 +316,25 @@ export function PointsTable() {
               {t("Standings Coming Soon", "Standings जल्द आएंगे")}
             </h2>
             <p style={{ color: TXT3, fontSize: 16, maxWidth: 440, margin: "0 auto 28px", lineHeight: 1.7 }}>
-              {t("Season 5 tournament begins Sep 2026. The points table will update here in real time once the first match is played.", "Season 5 टूर्नामेंट Sep 2026 में शुरू होगा। पहले match के बाद points table यहाँ real time में update होगी।")}
+              {t("Season 4 tournament begins Sep 2026. The points table will update here in real time once the first match is played.", "Season 4 टूर्नामेंट Sep 2026 में शुरू होगा। पहले match के बाद points table यहाँ real time में update होगी।")}
             </p>
             <Link href="/register" className="float-reg-btn" style={{ position: "static", animation: "none", display: "inline-flex", boxShadow: "0 6px 24px rgba(255,122,41,0.35)" }}>
-              {t("Register for Season 5 →", "Season 5 के लिए रजिस्टर करें →")}
+              {t("Register for Season 4 →", "Season 4 के लिए रजिस्टर करें →")}
             </Link>
           </div>
         )}
 
         {/* IPL-STYLE STANDINGS TABLE */}
-        {tableRows.length > 0 && (
+        {!isEmpty && (
           <>
-            <div style={{ background: PANEL, border: `1px solid ${LINE}`, borderRadius: 20, overflow: "hidden", boxShadow: "0 12px 34px rgba(0,0,0,.28)", marginBottom: 20 }}>
-              <div className="pts-table-wrap">
-                <table className="pts-table">
-                  <thead>
-                    <tr className="pts-header">
-                      <th className="stick stick-pos">#</th>
-                      <th className="left stick stick-team">{t("Team", "टीम")}</th>
-                      <th>{t("P", "P")}</th>
-                      <th>{t("W", "W")}</th>
-                      <th>{t("L", "L")}</th>
-                      <th>{t("NR", "NR")}</th>
-                      <th>{t("NRR", "NRR")}</th>
-                      <th className="left">{t("Form", "फॉर्म")}</th>
-                      <th>{t("Pts", "Pts")}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {tableRows.map((row, i) => {
-                      const inZone = row.pos <= QUALIFY_TOP;
-                      const isZoneLast = showQualifyLine && row.pos === QUALIFY_TOP;
-                      return (
-                        <tr key={i} className={`pts-row${inZone ? " qualify" : ""}${isZoneLast ? " qualify-last" : ""}`}>
-                          <td className="stick stick-pos"><PosBadge pos={row.pos} /></td>
-                          <td className="stick stick-team">
-                            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                              <TeamBadge name={row.name} color={color(row.name)} logo={logoOf(row.name)} size={34} />
-                              <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 16, color: "#fff" }}>{row.name}</div>
-                            </div>
-                          </td>
-                          <td>{row.p}</td>
-                          <td style={{ color: GREEN, fontWeight: 700 }}>{row.w}</td>
-                          <td style={{ color: RED }}>{row.l}</td>
-                          <td style={{ color: TXT3 }}>{row.nr}</td>
-                          <td style={{ fontFamily: "var(--font-head)", fontWeight: 700, color: row.nrr.startsWith("+") ? GREEN : RED }}>{row.nrr}</td>
-                          <td style={{ textAlign: "left" }}><FormGuide form={row.form} /></td>
-                          <td style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 18, color: ORANGE }}>{row.pts}</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
+            {renderTable("Group A", groupA)}
+            {renderTable("Group B", groupB)}
+            
             {/* Qualification zone legend */}
-            {showQualifyLine && (
-              <div className="qz-note" style={{ marginBottom: 8 }}>
-                <span className="qz-swatch" />
-                {t("Top 4 qualify for the playoffs", "टॉप 4 प्लेऑफ़ के लिए क्वालिफ़ाई करते हैं")}
-              </div>
-            )}
+            <div className="qz-note" style={{ marginBottom: 8 }}>
+              <span className="qz-swatch" />
+              {t("Top 2 from each group qualify for the semi finals", "प्रत्येक ग्रुप से टॉप 2 सेमी फाइनल के लिए क्वालिफाई करेंगे")}
+            </div>
           </>
         )}
 
