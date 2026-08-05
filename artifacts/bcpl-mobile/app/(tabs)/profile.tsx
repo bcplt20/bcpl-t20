@@ -187,6 +187,7 @@ export default function ProfileScreen() {
   if (!token) {
     return (
       <View style={{ flex: 1, backgroundColor: c.background }}>
+        <ScrollView contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 118 : 100 }}>
         <ScreenHeader title="Profile" />
         <View style={styles.loginWrap}>
           <View style={styles.loginIconWrap}>
@@ -214,9 +215,10 @@ export default function ProfileScreen() {
           <View style={{ alignSelf: 'stretch', marginTop: 40, gap: 16 }}>
             <LangSwitch />
             <ContactSupport />
-          <LegalLinks />
+            <LegalLinks />
           </View>
         </View>
+        </ScrollView>
       </View>
     );
   }

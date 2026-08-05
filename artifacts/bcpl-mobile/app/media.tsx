@@ -27,7 +27,14 @@ export default function MediaScreen() {
   const { t } = useLang();
   const [viewer, setViewer] = useState<GalleryItem | null>(null);
 
-  const q = useQuery({ queryKey: ['gallery'], queryFn: getGallery, staleTime: 5 * 60_000 });
+  // presigned viewUrls expire after ~1h — refetch periodically and on focus so links stay fresh
+  const q = useQuery({
+    queryKey: ['gallery'],
+    queryFn: getGallery,
+    staleTime: 5 * 60_000,
+    refetchInterval: 30 * 60_000,
+    refetchOnWindowFocus: true,
+  });
 
   const width = Dimensions.get('window').width;
   const cell = Math.floor((width - 32 - GAP * (COLS - 1)) / COLS);
