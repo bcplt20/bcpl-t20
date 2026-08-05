@@ -67,12 +67,12 @@ export function saveCoAdmins(list: CoAdmin[]) {
 
 /* ─── UI constants ─────────────────────────────── */
 const CARD: React.CSSProperties = {
-  background:"linear-gradient(135deg,#0D1526,#0A1020)",
-  border:"1px solid #1E293B", borderRadius:16, padding:20,
+  background:"linear-gradient(135deg,#2C3A5E,#1F2B49)",
+  border:"1px solid #33436B", borderRadius:16, padding:20,
 };
 const INP: React.CSSProperties = {
   width:"100%", padding:"10px 12px", borderRadius:9,
-  border:"1px solid #1E293B", background:"#060B18",
+  border:"1px solid #33436B", background:"#243050",
   color:"#E2E8F0", fontSize:13, outline:"none", boxSizing:"border-box",
 };
 
@@ -85,11 +85,11 @@ const ROLE_META: Record<string, { label: string; color: string; hint: string }> 
   TRIAL_CITY_MANAGER:  { label:"Trial City Manager",   color:"#06B6D4", hint:"Trials — only assigned cities" },
   CONTENT_TEAM:        { label:"Content Team",         color:"#8B5CF6", hint:"CMS, media, banners, SEO" },
   MATCH_OPERATIONS:    { label:"Match Operations",     color:"#EF4444", hint:"Matches, scoring, teams, auction" },
-  SUPPORT_TEAM:        { label:"Support Team",         color:"#64748B", hint:"Tickets, users (read-first)" },
+  SUPPORT_TEAM:        { label:"Support Team",         color:"#A6B3D0", hint:"Tickets, users (read-first)" },
   FINANCE_TEAM:        { label:"Finance Team",         color:"#22C55E", hint:"Finance, GST, refunds, exports" },
 };
 const roleLabel = (r: string) => ROLE_META[r]?.label ?? r.replace(/_/g, " ");
-const roleColor = (r: string) => ROLE_META[r]?.color ?? "#64748B";
+const roleColor = (r: string) => ROLE_META[r]?.color ?? "#A6B3D0";
 
 function generatePassword() {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789@#!";
@@ -157,7 +157,7 @@ function UserModal({ existing, roles, roleViews, onDone, onClose }: {
         <div style={{ fontSize:17, fontWeight:900, color:"#F1F5F9", marginBottom:4 }}>
           {existing ? "Edit Admin" : "+ Add New Admin"}
         </div>
-        <div style={{ fontSize:12, color:"#64748B", marginBottom:20 }}>
+        <div style={{ fontSize:12, color:"#A6B3D0", marginBottom:20 }}>
           Server account — works from any device. The role decides which sections open.
         </div>
 
@@ -165,11 +165,11 @@ function UserModal({ existing, roles, roleViews, onDone, onClose }: {
 
         <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:14 }}>
           <div>
-            <label style={{ fontSize:10, color:"#64748B", fontWeight:700, display:"block", marginBottom:5, textTransform:"uppercase", letterSpacing:.5 }}>Full Name</label>
+            <label style={{ fontSize:10, color:"#A6B3D0", fontWeight:700, display:"block", marginBottom:5, textTransform:"uppercase", letterSpacing:.5 }}>Full Name</label>
             <input value={name} onChange={e=>{setName(e.target.value);setErr("");}} placeholder="e.g. Rahul Kumar" style={INP}/>
           </div>
           <div>
-            <label style={{ fontSize:10, color:"#64748B", fontWeight:700, display:"block", marginBottom:5, textTransform:"uppercase", letterSpacing:.5 }}>Email (login ID)</label>
+            <label style={{ fontSize:10, color:"#A6B3D0", fontWeight:700, display:"block", marginBottom:5, textTransform:"uppercase", letterSpacing:.5 }}>Email (login ID)</label>
             <input type="email" value={email} disabled={!!existing} onChange={e=>{setEmail(e.target.value);setErr("");}} placeholder="e.g. rahul@bcplt20.com"
               style={{ ...INP, opacity: existing ? 0.5 : 1 }}/>
           </div>
@@ -177,33 +177,33 @@ function UserModal({ existing, roles, roleViews, onDone, onClose }: {
 
         <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:14 }}>
           <div>
-            <label style={{ fontSize:10, color:"#64748B", fontWeight:700, display:"block", marginBottom:5, textTransform:"uppercase", letterSpacing:.5 }}>
+            <label style={{ fontSize:10, color:"#A6B3D0", fontWeight:700, display:"block", marginBottom:5, textTransform:"uppercase", letterSpacing:.5 }}>
               {existing ? "New Password (blank = unchanged)" : "Password"}
             </label>
             <div style={{ position:"relative" }}>
               <input type={showPwd?"text":"password"} value={password} onChange={e=>{setPassword(e.target.value);setErr("");}}
                 placeholder={existing ? "Leave blank to keep current" : ""} style={{ ...INP, paddingRight:90 }}/>
               <div style={{ position:"absolute", right:8, top:"50%", transform:"translateY(-50%)", display:"flex", gap:6 }}>
-                <button type="button" onClick={()=>setShowPwd(s=>!s)} style={{ fontSize:10, color:"#64748B", background:"none", border:"none", cursor:"pointer", padding:0 }}>{showPwd?"Hide":"Show"}</button>
+                <button type="button" onClick={()=>setShowPwd(s=>!s)} style={{ fontSize:10, color:"#A6B3D0", background:"none", border:"none", cursor:"pointer", padding:0 }}>{showPwd?"Hide":"Show"}</button>
                 <button type="button" onClick={()=>setPassword(generatePassword())} style={{ fontSize:10, color:"#FF6B00", background:"none", border:"none", cursor:"pointer", fontWeight:700, padding:0 }}>New</button>
               </div>
             </div>
-            <div style={{ fontSize:10, color:"#334155", marginTop:4 }}>Share the password with the admin directly</div>
+            <div style={{ fontSize:10, color:"#8593B3", marginTop:4 }}>Share the password with the admin directly</div>
           </div>
           <div>
-            <label style={{ fontSize:10, color:"#64748B", fontWeight:700, display:"block", marginBottom:5, textTransform:"uppercase", letterSpacing:.5 }}>Role</label>
+            <label style={{ fontSize:10, color:"#A6B3D0", fontWeight:700, display:"block", marginBottom:5, textTransform:"uppercase", letterSpacing:.5 }}>Role</label>
             <select value={role} onChange={e=>{setRole(e.target.value);setErr("");}} style={INP as React.CSSProperties}>
               {roles.map(r=> <option key={r} value={r}>{roleLabel(r)}</option>)}
             </select>
-            <div style={{ fontSize:10, color:"#334155", marginTop:4 }}>{ROLE_META[role]?.hint ?? ""}</div>
+            <div style={{ fontSize:10, color:"#8593B3", marginTop:4 }}>{ROLE_META[role]?.hint ?? ""}</div>
           </div>
         </div>
 
         {role === "TRIAL_CITY_MANAGER" && (
           <div style={{ marginBottom:14 }}>
-            <label style={{ fontSize:10, color:"#64748B", fontWeight:700, display:"block", marginBottom:5, textTransform:"uppercase", letterSpacing:.5 }}>Assigned Cities (comma-separated)</label>
+            <label style={{ fontSize:10, color:"#A6B3D0", fontWeight:700, display:"block", marginBottom:5, textTransform:"uppercase", letterSpacing:.5 }}>Assigned Cities (comma-separated)</label>
             <input value={cities} onChange={e=>{setCities(e.target.value);setErr("");}} placeholder="e.g. Delhi, Jaipur" style={INP}/>
-            <div style={{ fontSize:10, color:"#334155", marginTop:4 }}>This manager can only see and manage trials in these cities</div>
+            <div style={{ fontSize:10, color:"#8593B3", marginTop:4 }}>This manager can only see and manage trials in these cities</div>
           </div>
         )}
 
@@ -217,22 +217,22 @@ function UserModal({ existing, roles, roleViews, onDone, onClose }: {
         )}
 
         {/* Sections unlocked by this role */}
-        <div style={{ marginBottom:20, background:"#060B18", borderRadius:12, padding:14, border:"1px solid #1E293B" }}>
-          <div style={{ fontSize:10, fontWeight:800, color:"#334155", textTransform:"uppercase", letterSpacing:1, marginBottom:8 }}>
+        <div style={{ marginBottom:20, background:"#243050", borderRadius:12, padding:14, border:"1px solid #33436B" }}>
+          <div style={{ fontSize:10, fontWeight:800, color:"#8593B3", textTransform:"uppercase", letterSpacing:1, marginBottom:8 }}>
             Sections this role opens
           </div>
           <div style={{ display:"flex", flexWrap:"wrap", gap:5 }}>
             {(views.includes("all") ? [{ id:"all" }] : views.map(v=>({ id:v }))).map(v=>(
-              <span key={v.id} style={{ fontSize:10, padding:"3px 9px", borderRadius:6, background:"#1E293B", color:"#94A3B8", fontWeight:600 }}>
+              <span key={v.id} style={{ fontSize:10, padding:"3px 9px", borderRadius:6, background:"#33436B", color:"#C3CEE3", fontWeight:600 }}>
                 {sectionLabel(v.id)}
               </span>
             ))}
-            {views.length === 0 && <span style={{ fontSize:11, color:"#475569" }}>—</span>}
+            {views.length === 0 && <span style={{ fontSize:11, color:"#94A3C4" }}>—</span>}
           </div>
         </div>
 
         <div style={{ display:"flex", gap:10 }}>
-          <button onClick={onClose} style={{ flex:1, padding:12, borderRadius:10, border:"1px solid #1E293B", background:"transparent", color:"#64748B", fontSize:13, cursor:"pointer" }}>Cancel</button>
+          <button onClick={onClose} style={{ flex:1, padding:12, borderRadius:10, border:"1px solid #33436B", background:"transparent", color:"#A6B3D0", fontSize:13, cursor:"pointer" }}>Cancel</button>
           <button onClick={save} disabled={busy}
             style={{ flex:2, padding:12, borderRadius:10, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontWeight:800, fontSize:13, cursor:busy?"wait":"pointer", opacity:busy?0.7:1 }}>
             {busy ? "Saving…" : existing ? "Save Changes" : "Add Admin"}
@@ -297,7 +297,7 @@ export default function AdminSettingsView() {
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
         <div>
           <div style={{ fontSize:20, fontWeight:800, color:"#F1F5F9" }}>Admin Management</div>
-          <div style={{ fontSize:12, color:"#64748B", marginTop:3 }}>Server admin accounts with fixed roles — work from any device</div>
+          <div style={{ fontSize:12, color:"#A6B3D0", marginTop:3 }}>Server admin accounts with fixed roles — work from any device</div>
         </div>
         <button onClick={()=>setModal("add")} style={{ padding:"10px 20px", borderRadius:10, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontSize:13, fontWeight:700, cursor:"pointer" }}>
           + Add Admin
@@ -309,18 +309,18 @@ export default function AdminSettingsView() {
       )}
 
       {/* Owner card */}
-      <div style={{ ...CARD, borderLeft:"4px solid #FF6B00", background:"linear-gradient(135deg,#FF6B0010,#0D1526)" }}>
+      <div style={{ ...CARD, borderLeft:"4px solid #FF6B00", background:"linear-gradient(135deg,#FF6B0010,#2C3A5E)" }}>
         <div style={{ display:"flex", alignItems:"center", gap:14 }}>
           <div style={{ width:44, height:44, borderRadius:"50%", overflow:"hidden", border:"2px solid rgba(255,107,0,.6)", boxShadow:"0 0 14px rgba(255,107,0,.3)", flexShrink:0 }}>
             <img src={import.meta.env.BASE_URL + "bcpl-assets/bcpl-ball-color.jpg"} alt="BCPL" style={{ width:"100%", height:"100%", objectFit:"cover" }}/>
           </div>
           <div style={{ flex:1 }}>
             <div style={{ fontSize:14, fontWeight:900, color:"#FF6B00" }}>Saurabh Jha</div>
-            <div style={{ fontSize:11, color:"#64748B", marginTop:2 }}>saurabhjha@bcplt20.com · owner login (panel password)</div>
+            <div style={{ fontSize:11, color:"#A6B3D0", marginTop:2 }}>saurabhjha@bcplt20.com · owner login (panel password)</div>
             <div style={{ display:"flex", gap:6, marginTop:6, flexWrap:"wrap" }}>
               <span style={{ fontSize:10, padding:"2px 8px", borderRadius:6, background:"#FF6B0020", color:"#FF6B00", fontWeight:800 }}>Owner</span>
               <span style={{ fontSize:10, padding:"2px 8px", borderRadius:6, background:"#10B98120", color:"#10B981", fontWeight:700 }}>Full Access — All Sections</span>
-              <span style={{ fontSize:10, padding:"2px 8px", borderRadius:6, background:"#1E293B", color:"#475569", fontWeight:600 }}>Always available · Cannot be removed</span>
+              <span style={{ fontSize:10, padding:"2px 8px", borderRadius:6, background:"#33436B", color:"#94A3C4", fontWeight:600 }}>Always available · Cannot be removed</span>
             </div>
           </div>
         </div>
@@ -334,7 +334,7 @@ export default function AdminSettingsView() {
               <div style={{ fontSize:12, fontWeight:800, color:"#F59E0B", marginBottom:4 }}>
                 {legacy.length} old browser-stored co-admin login{legacy.length!==1?"s":""} found
               </div>
-              <div style={{ fontSize:11, color:"#64748B", lineHeight:1.6 }}>
+              <div style={{ fontSize:11, color:"#A6B3D0", lineHeight:1.6 }}>
                 {legacy.map(l=>l.email).join(", ")} — these only work in this browser.
                 Create a server account above for each person, then remove the browser logins.
               </div>
@@ -355,18 +355,18 @@ export default function AdminSettingsView() {
         ].map(s=>(
           <div key={s.label} style={{ ...CARD, borderTop:`3px solid ${s.color}`, padding:16 }}>
             <div style={{ fontSize:26, fontWeight:800, color:s.color, lineHeight:1 }}>{s.value}</div>
-            <div style={{ fontSize:11, color:"#64748B", marginTop:5 }}>{s.label}</div>
+            <div style={{ fontSize:11, color:"#A6B3D0", marginTop:5 }}>{s.label}</div>
           </div>
         ))}
       </div>
 
       {/* Account list */}
       {loading ? (
-        <div style={{ ...CARD, textAlign:"center", padding:40, color:"#475569", fontSize:12 }}>Loading admin accounts…</div>
+        <div style={{ ...CARD, textAlign:"center", padding:40, color:"#94A3C4", fontSize:12 }}>Loading admin accounts…</div>
       ) : rows.length === 0 ? (
         <div style={{ ...CARD, textAlign:"center", padding:48 }}>
           <div style={{ fontSize:16, fontWeight:700, color:"#F1F5F9", marginBottom:6 }}>No admin accounts yet</div>
-          <div style={{ fontSize:12, color:"#64748B", marginBottom:20 }}>Click "+ Add Admin" to create a server account with a fixed role</div>
+          <div style={{ fontSize:12, color:"#A6B3D0", marginBottom:20 }}>Click "+ Add Admin" to create a server account with a fixed role</div>
           <button onClick={()=>setModal("add")} style={{ padding:"10px 24px", borderRadius:10, border:"none", background:"linear-gradient(135deg,#FF6B00,#FF8C40)", color:"#fff", fontWeight:700, cursor:"pointer" }}>
             + Add First Admin
           </button>
@@ -381,7 +381,7 @@ export default function AdminSettingsView() {
                 </div>
                 <div style={{ flex:1, minWidth:0 }}>
                   <div style={{ fontSize:14, fontWeight:800, color:"#F1F5F9", lineHeight:1 }}>{u.name}</div>
-                  <div style={{ fontSize:11, color:"#64748B", marginTop:4 }}>{u.email}</div>
+                  <div style={{ fontSize:11, color:"#A6B3D0", marginTop:4 }}>{u.email}</div>
                   <div style={{ marginTop:6, display:"flex", gap:6, flexWrap:"wrap" }}>
                     <span style={{ fontSize:10, padding:"2px 8px", borderRadius:6, background:`${roleColor(u.role)}20`, color:roleColor(u.role), fontWeight:700 }}>{roleLabel(u.role)}</span>
                     {!u.active && <span style={{ fontSize:10, padding:"2px 8px", borderRadius:6, background:"#EF444420", color:"#EF4444", fontWeight:700 }}>Deactivated</span>}
@@ -391,7 +391,7 @@ export default function AdminSettingsView() {
                   </div>
                 </div>
                 <div style={{ display:"flex", gap:6 }}>
-                  <button onClick={()=>setModal(u)} style={{ padding:"5px 11px", borderRadius:7, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontSize:11, cursor:"pointer", fontWeight:600 }}>Edit</button>
+                  <button onClick={()=>setModal(u)} style={{ padding:"5px 11px", borderRadius:7, border:"1px solid #33436B", background:"transparent", color:"#C3CEE3", fontSize:11, cursor:"pointer", fontWeight:600 }}>Edit</button>
                   <button onClick={()=>remove(u)} disabled={busyId===u.id} style={{ padding:"5px 11px", borderRadius:7, border:"1px solid #EF444444", background:"transparent", color:"#EF4444", fontSize:11, cursor:"pointer", fontWeight:600 }}>
                     {busyId===u.id ? "…" : "✕"}
                   </button>
@@ -399,13 +399,13 @@ export default function AdminSettingsView() {
               </div>
               <div style={{ display:"flex", flexWrap:"wrap", gap:4 }}>
                 {(u.permissions.includes("all") ? ["all"] : u.permissions).slice(0, 10).map(pid => (
-                  <span key={pid} style={{ fontSize:9, padding:"2px 7px", borderRadius:5, background:"#1E293B", color:"#64748B", fontWeight:600 }}>{sectionLabel(pid)}</span>
+                  <span key={pid} style={{ fontSize:9, padding:"2px 7px", borderRadius:5, background:"#33436B", color:"#A6B3D0", fontWeight:600 }}>{sectionLabel(pid)}</span>
                 ))}
                 {!u.permissions.includes("all") && u.permissions.length > 10 && (
-                  <span style={{ fontSize:9, padding:"2px 7px", borderRadius:5, background:"#1E293B", color:"#64748B", fontWeight:600 }}>+{u.permissions.length - 10} more</span>
+                  <span style={{ fontSize:9, padding:"2px 7px", borderRadius:5, background:"#33436B", color:"#A6B3D0", fontWeight:600 }}>+{u.permissions.length - 10} more</span>
                 )}
               </div>
-              <div style={{ fontSize:10, color:"#334155" }}>
+              <div style={{ fontSize:10, color:"#8593B3" }}>
                 Last sign-in: {u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString("en-IN", { day:"2-digit", month:"short", hour:"2-digit", minute:"2-digit" }) : "never"}
               </div>
             </div>
@@ -414,9 +414,9 @@ export default function AdminSettingsView() {
       )}
 
       {/* Info banner */}
-      <div style={{ ...CARD, padding:"14px 20px", borderLeft:"4px solid #6366F1", background:"linear-gradient(135deg,#6366F110,#0D1526)" }}>
+      <div style={{ ...CARD, padding:"14px 20px", borderLeft:"4px solid #6366F1", background:"linear-gradient(135deg,#6366F110,#2C3A5E)" }}>
         <div style={{ fontSize:12, fontWeight:700, color:"#6366F1", marginBottom:4 }}>How it works</div>
-        <div style={{ fontSize:11, color:"#475569", lineHeight:1.7 }}>
+        <div style={{ fontSize:11, color:"#94A3C4", lineHeight:1.7 }}>
           Accounts are stored on the server, so people can sign in from any device with their email and password.
           Each role opens a fixed set of sections; a Trial City Manager additionally only sees their assigned cities.
           Deactivate an account to block sign-in without deleting it. At least one Super Admin must always remain.

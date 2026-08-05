@@ -39,7 +39,7 @@ function ChipRow({ options, value, onChange, minWidth }: { options: string[]; va
     <div style={{ display:'flex', flexWrap:'wrap', gap:10, marginTop:8 }}>
       {options.map(o => (
         <button key={o} onClick={() => onChange(value === o ? '' : o)}
-          style={{ padding:'12px 18px', minWidth, borderRadius:'var(--r)', border: value===o ? '2px solid var(--orange)' : '1px solid var(--line)', background: value===o ? 'rgba(255,122,41,0.1)' : 'rgba(255,255,255,0.03)', color: value===o ? 'var(--orange)' : 'rgba(255,255,255,0.6)', fontFamily:'var(--font-body)', fontWeight:600, fontSize:14, cursor:'pointer', textAlign:'center', transition:'all .2s' }}>
+          style={{ padding:'12px 18px', minWidth, borderRadius:'var(--r)', border: value===o ? '2px solid var(--orange)' : '1px solid var(--line)', background: value===o ? 'rgba(255,122,41,0.1)' : 'rgba(255,255,255,0.03)', color: value===o ? 'var(--orange)' : 'rgba(255,255,255,0.88)', fontFamily:'var(--font-body)', fontWeight:600, fontSize:14, cursor:'pointer', textAlign:'center', transition:'all .2s' }}>
           {o}
         </button>
       ))}
@@ -341,7 +341,7 @@ export function Phase2KYC() {
         
         input:focus { border-color: var(--orange) !important; }
         
-        .stick-cta { position: fixed; bottom: 0; left: 0; right: 0; padding: 16px 20px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); background: rgba(3,7,16,0.95); backdrop-filter: blur(12px); border-top: 1px solid rgba(255,122,41,0.3); z-index: 1000; }
+        .stick-cta { position: fixed; bottom: 0; left: 0; right: 0; padding: 16px 20px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); background: rgba(14,26,53,0.95); backdrop-filter: blur(12px); border-top: 1px solid rgba(255,122,41,0.3); z-index: 1000; }
         @media (min-width: 768px) { .stick-cta { display: none; } }
       `}</style>
 
@@ -357,7 +357,7 @@ export function Phase2KYC() {
           <span style={{ color: kycStatus === 'verified' ? 'var(--green)' : 'rgba(255,255,255,0.4)' }}>
             {kycStatus === 'verified' ? t("✓ KYC VERIFIED", "✓ KYC वेरीफाइड") : t("→ KYC PENDING", "→ KYC पेंडिंग")}
           </span>
-          <span style={{ marginLeft: 'auto', fontSize: 12, color: 'rgba(255,255,255,0.5)', display: 'inline-flex', alignItems: 'center', gap: 6 }}><IcoBat size={14} /> {role} · {city}</span>
+          <span style={{ marginLeft: 'auto', fontSize: 12, color: 'rgba(255,255,255,0.72)', display: 'inline-flex', alignItems: 'center', gap: 6 }}><IcoBat size={14} /> {role} · {city}</span>
         </div>
       </div>
 
@@ -367,7 +367,7 @@ export function Phase2KYC() {
           <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(28px, 5vw, 40px)', color: '#fff', textTransform: 'uppercase', letterSpacing: '.02em', marginBottom: 8, lineHeight: 1.1 }}>
             {kycStatus === 'verified' ? t("KYC Verified", "KYC वेरीफाइड") : t("Player Details & KYC", "प्लेयर जानकारी और KYC")}
           </div>
-          <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.5)', marginBottom: 16, lineHeight: 1.6, maxWidth: 600 }}>
+          <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.72)', marginBottom: 16, lineHeight: 1.6, maxWidth: 600 }}>
             {t("Emergency contact and identity verification — required for compliance and franchise contract records.", "आपातकालीन संपर्क और पहचान वेरिफिकेशन — compliance और फ्रैंचाइज़ी कॉन्ट्रैक्ट के लिए आवश्यक।")}
           </div>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', fontSize: 11, fontWeight: 900, fontFamily: 'var(--font-head)', letterSpacing: '.14em', textTransform: 'uppercase',
@@ -390,7 +390,7 @@ export function Phase2KYC() {
           <div style={{ background: 'rgba(34,197,94,0.06)', border: '1px solid rgba(34,197,94,0.3)', padding: '48px 24px', textAlign: 'center', marginBottom: 40, borderRadius: 'var(--r)' }}>
             <div style={{ color: 'var(--green)', marginBottom: 20, animation: 'scaleIn .5s cubic-bezier(.34,1.56,.64,1) both' }}><IcoCheck size={72} /></div>
             <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(24px, 5vw, 36px)', color: 'var(--green)', marginBottom: 12, textTransform: 'uppercase' }}>{t("KYC VERIFICATION COMPLETE", "KYC वेरिफिकेशन पूरा")}</div>
-            <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.6)', marginBottom: 24, lineHeight: 1.6 }}>{kycMsg || t('All documents verified. You are cleared for BCPL Season 5 Physical Trials.', 'सभी दस्तावेज़ वेरीफाई हो गए हैं। आप फिजिकल ट्रायल के लिए क्लियर हैं।')}</div>
+            <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.88)', marginBottom: 24, lineHeight: 1.6 }}>{kycMsg || t('All documents verified. You are cleared for BCPL Season 5 Physical Trials.', 'सभी दस्तावेज़ वेरीफाई हो गए हैं। आप फिजिकल ट्रायल के लिए क्लियर हैं।')}</div>
             <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap', marginBottom: 32 }}>
               {[{ icon: IcoIdCard, label: 'Aadhaar' }, { icon: IcoList, label: 'PAN' }, { icon: IcoUser, label: 'Identity' }].map(c => (
                 <div key={c.label} style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.4)', padding: '10px 24px', fontSize: 14, fontWeight: 800, color: 'var(--green)', fontFamily: 'var(--font-head)', borderRadius: 10, textTransform: 'uppercase', display: 'inline-flex', alignItems: 'center', gap: 8 }}><c.icon size={16} /> {c.label} ✓</div>
@@ -403,7 +403,7 @@ export function Phase2KYC() {
           <div style={{ background: 'rgba(255,122,41,0.06)', border: '1px solid rgba(255,122,41,0.3)', padding: '48px 24px', textAlign: 'center', borderRadius: 'var(--r)', marginBottom: 40 }}>
             <div style={{ color: 'var(--orange)', marginBottom: 20 }}><IcoHourglass size={48} /></div>
             <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(24px, 5vw, 32px)', color: 'var(--orange)', marginBottom: 12, textTransform: 'uppercase' }}>{t("KYC Submitted for Review", "KYC रिव्यू के लिए सबमिट हो गया")}</div>
-            <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.6)', maxWidth: 500, margin: '0 auto', lineHeight: 1.6 }}>{kycMsg || t('Your documents are under review. You will receive an SMS + Email when verified (usually within 24 hours).', 'आपके दस्तावेज़ों की जाँच हो रही है। वेरीफाई होने पर आपको SMS + ईमेल मिलेगा (आमतौर पर 24 घंटे में)।')}</div>
+            <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.88)', maxWidth: 500, margin: '0 auto', lineHeight: 1.6 }}>{kycMsg || t('Your documents are under review. You will receive an SMS + Email when verified (usually within 24 hours).', 'आपके दस्तावेज़ों की जाँच हो रही है। वेरीफाई होने पर आपको SMS + ईमेल मिलेगा (आमतौर पर 24 घंटे में)।')}</div>
           </div>
         ) : aadhaarRefId ? (
           /* ── STEP 2: Aadhaar OTP ── */
@@ -418,7 +418,7 @@ export function Phase2KYC() {
                   {t('PAN will be verified by our team — no action needed from you.', 'PAN हमारी टीम द्वारा वेरीफाई किया जाएगा — आपको कुछ करने की जरूरत नहीं है।')}
                 </div>
               )}
-              <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.6)', maxWidth: 440, margin: '0 auto', lineHeight: 1.6 }}>
+              <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.88)', maxWidth: 440, margin: '0 auto', lineHeight: 1.6 }}>
                 {t("An OTP has been sent to your Aadhaar-linked mobile number. Enter it below to complete verification.", "आपके आधार से जुड़े मोबाइल नंबर पर एक OTP भेजा गया है। वेरिफिकेशन पूरा करने के लिए इसे नीचे दर्ज करें।")}
               </div>
             </div>
@@ -459,7 +459,7 @@ export function Phase2KYC() {
               <div style={{ fontSize: 15, color: panAutoVerified ? 'var(--green)' : 'var(--orange)', fontWeight: 700, marginBottom: 12 }}>
                 {panAutoVerified ? t('✓ PAN already verified — it will not be checked again', '✓ PAN पहले ही वेरीफाइड है — इसे दोबारा चेक नहीं किया जाएगा') : t('PAN is with our team for review — no action needed on PAN', 'PAN हमारी टीम के पास रिव्यू के लिए है — आपको कुछ करने की जरूरत नहीं है')}
               </div>
-              <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.6)', maxWidth: 480, margin: '0 auto', lineHeight: 1.6 }}>
+              <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.88)', maxWidth: 480, margin: '0 auto', lineHeight: 1.6 }}>
                 {t("Only the Aadhaar OTP step is left. For your privacy we never store your Aadhaar number — enter it again to receive a fresh OTP.", "केवल आधार OTP स्टेप बचा है। आपकी गोपनीयता के लिए हम कभी आपका आधार नंबर सेव नहीं करते — नया OTP पाने के लिए इसे दोबारा दर्ज करें।")}
               </div>
             </div>
@@ -494,7 +494,7 @@ export function Phase2KYC() {
               <div style={{ fontSize: 15, color: 'var(--green)', fontWeight: 700, marginBottom: 12 }}>
                 {t('✓ Aadhaar OTP verified', '✓ आधार OTP वेरीफाइड')}
               </div>
-              <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.6)', maxWidth: 480, margin: '0 auto', lineHeight: 1.6 }}>
+              <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.88)', maxWidth: 480, margin: '0 auto', lineHeight: 1.6 }}>
                 {t("Your Aadhaar is verified. Please provide your PAN number to complete the final compliance step.", "आपका आधार वेरीफाइड है। अंतिम स्टेप पूरा करने के लिए कृपया अपना PAN नंबर दें।")}
               </div>
             </div>
@@ -525,7 +525,7 @@ export function Phase2KYC() {
           <div>
             <div className="card">
               <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 22, color: '#fff', marginBottom: 6, textTransform: 'uppercase' }}>{t("1. Player Essentials", "1. प्लेयर की जरूरी जानकारी")}</div>
-              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', marginBottom: 24 }}>{t("Required for match jerseys and on-ground safety.", "मैच जर्सी और मैदान पर सुरक्षा के लिए आवश्यक।")}</div>
+              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.72)', marginBottom: 24 }}>{t("Required for match jerseys and on-ground safety.", "मैच जर्सी और मैदान पर सुरक्षा के लिए आवश्यक।")}</div>
 
               <div className="grid2">
                 <div>
@@ -563,13 +563,13 @@ export function Phase2KYC() {
 
             <div className="card">
               <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 22, color: '#fff', marginBottom: 6, textTransform: 'uppercase' }}>{t("2. Employment Details", "2. रोज़गार की जानकारी")}</div>
-              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', marginBottom: 24 }}>{t("Required to confirm working professional eligibility.", "वर्किंग प्रोफेशनल योग्यता की पुष्टि के लिए आवश्यक।")}</div>
+              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.72)', marginBottom: 24 }}>{t("Required to confirm working professional eligibility.", "वर्किंग प्रोफेशनल योग्यता की पुष्टि के लिए आवश्यक।")}</div>
               
               <label style={lbl}>{t("SELECT YOUR PROFESSION *", "अपना पेशा चुनें *")}</label>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 12, marginTop: 12 }}>
                 {PROFESSIONS.map(p => (
                   <button key={p.id} onClick={() => setProfession(p.id)}
-                    style={{ padding: '16px', borderRadius: '12px', border: profession === p.id ? '2px solid var(--orange)' : '1px solid var(--line)', background: profession === p.id ? 'rgba(255,122,41,0.08)' : 'rgba(255,255,255,0.02)', color: profession === p.id ? 'var(--orange)' : 'rgba(255,255,255,0.7)', fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 14, cursor: 'pointer', textAlign: 'left', transition: 'all .2s', display: 'flex', alignItems: 'center', gap: 12 }}>
+                    style={{ padding: '16px', borderRadius: '12px', border: profession === p.id ? '2px solid var(--orange)' : '1px solid var(--line)', background: profession === p.id ? 'rgba(255,122,41,0.08)' : 'rgba(255,255,255,0.02)', color: profession === p.id ? 'var(--orange)' : 'rgba(255,255,255,0.88)', fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 14, cursor: 'pointer', textAlign: 'left', transition: 'all .2s', display: 'flex', alignItems: 'center', gap: 12 }}>
                     <span style={{ display: 'inline-flex' }}><p.icon size={20} /></span>
                     <span style={{ lineHeight: 1.3 }}>{p.label}</span>
                   </button>
@@ -579,7 +579,7 @@ export function Phase2KYC() {
 
             <div className="card">
               <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 22, color: '#fff', marginBottom: 6, textTransform: 'uppercase' }}>{t("3. Identity Verification", "3. पहचान वेरिफिकेशन")}</div>
-              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', marginBottom: 24 }}>{t("Compliance and franchise record requirements. Aadhaar OTP will be sent.", "Compliance और फ्रैंचाइज़ी रिकॉर्ड के लिए आवश्यक। आधार OTP भेजा जाएगा।")}</div>
+              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.72)', marginBottom: 24 }}>{t("Compliance and franchise record requirements. Aadhaar OTP will be sent.", "Compliance और फ्रैंचाइज़ी रिकॉर्ड के लिए आवश्यक। आधार OTP भेजा जाएगा।")}</div>
 
               <div className="grid2">
                 <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--line)', padding: '24px', borderRadius: 'var(--r)' }}>

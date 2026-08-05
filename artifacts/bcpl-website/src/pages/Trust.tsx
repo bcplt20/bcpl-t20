@@ -10,7 +10,7 @@ import { IcoChat, IcoMail, IcoPhone } from '../lib/icons';
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-body { background:#0E1624; }
+body { background:#1C2B47; }
 .wrap { max-width:1280px; margin:0 auto; padding:0 20px; }
 .desk-nav { display:none; align-items:center; gap:22px; }
 .ham-btn { display:flex; }
@@ -20,7 +20,7 @@ body { background:#0E1624; }
 .btn-fire:hover { transform:translateY(-2px); box-shadow:0 14px 40px rgba(255,122,41,0.6); }
 .btn-fire:active { transform:scale(0.97); }
 .btn-wa { background:linear-gradient(135deg,#25D366,#1BA851); border:none; border-radius:14px; color:#fff; font-weight:700; cursor:pointer; font-family:Montserrat,sans-serif; transition:transform 0.15s; }
-.glass-card { background:linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85)); backdrop-filter:blur(32px); border:1px solid rgba(255,255,255,0.09); border-radius:20px; box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06); }
+.glass-card { background:linear-gradient(135deg,rgba(30,55,105,0.9),rgba(23,43,81,0.85)); backdrop-filter:blur(32px); border:1px solid rgba(255,255,255,0.18); border-radius:20px; box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.18); }
 .shimmer-gold { background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D,#F5C842,#E8B23D); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation:shimmer 3s linear infinite; }
 .tag-pill { display:inline-flex; align-items:center; gap:6px; background:rgba(255,122,41,0.12); border:1px solid rgba(255,122,41,0.3); border-radius:100px; padding:5px 14px; font-size:11px; font-weight:700; font-family:Montserrat,sans-serif; color:#FF7A29; letter-spacing:0.1em; }
 @keyframes gradShift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
@@ -45,7 +45,7 @@ function AmbientBg() {
     <div style={{position:'fixed',inset:0,zIndex:0,pointerEvents:'none',overflow:'hidden'}}>
       <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 80% 60% at 20% 40%, rgba(255,122,41,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 20%, rgba(30,64,175,0.12) 0%, transparent 60%)'}}/>
       <svg style={{position:'absolute',inset:0,width:'100%',height:'100%',opacity:0.07}} viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid slice">
-        <path d="M0,400 Q320,320 640,380 Q960,440 1280,360 L1280,720 L0,720 Z" fill="#1a2a4a"/>
+        <path d="M0,400 Q320,320 640,380 Q960,440 1280,360 L1280,720 L0,720 Z" fill="#273E6E"/>
         <rect x="80" y="100" width="8" height="300" fill="#334"/>
         <rect x="76" y="80" width="16" height="12" fill="#445" rx="2"/>
         <rect x="1192" y="100" width="8" height="300" fill="#334"/>
@@ -73,7 +73,7 @@ export function Trust() {
   const { t } = useLang();
 
   return (
-    <div style={{minHeight:'100vh',background:'#0E1624',fontFamily:'Inter,sans-serif',position:'relative'}}>
+    <div style={{minHeight:'100vh',background:'#1C2B47',fontFamily:'Inter,sans-serif',position:'relative'}}>
       <style>{CSS}</style>
       <AmbientBg/>
       <SiteHeader active="About" />
@@ -88,13 +88,13 @@ export function Trust() {
           <h1 className="shimmer-gold" style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(40px,7vw,80px)',lineHeight:1.05,marginBottom:28,animation:'floatUp 0.7s ease 0.2s both'}}>
             {t("SELECTION WORKS.","चयन प्रक्रिया।")}
           </h1>
-          <p style={{color:'rgba(255,255,255,0.6)',fontSize:18,maxWidth:600,margin:'0 auto',lineHeight:1.7,animation:'floatUp 0.7s ease 0.3s both'}}>
+          <p style={{color:'rgba(255,255,255,0.88)',fontSize:18,maxWidth:600,margin:'0 auto',lineHeight:1.7,animation:'floatUp 0.7s ease 0.3s both'}}>
             {t("A clear, two-phase, role-specific assessment process — from Phase 1 video assessment to the BCPL Auction Pool.","एक स्पष्ट, दो-चरणीय, role-specific assessment process — Phase 1 video assessment से लेकर BCPL Auction Pool तक।")}
           </p>
           <div style={{marginTop:32}}>
             <LegalDocHeader doc="selection" />
             {/* Season-5 applicability line — see report: recommend LegalDocHeader carry this centrally */}
-            <p style={{maxWidth:880,margin:'-14px auto 0',fontSize:12.5,color:'rgba(255,255,255,0.5)',fontStyle:'italic',lineHeight:1.6}}>
+            <p style={{maxWidth:880,margin:'-14px auto 0',fontSize:12.5,color:'rgba(255,255,255,0.72)',fontStyle:'italic',lineHeight:1.6}}>
               {t("This document applies to BCPL Season 5 unless expressly stated otherwise.","यह document, जब तक स्पष्ट रूप से अन्यथा न कहा जाए, BCPL Season 5 पर लागू होता है।")}
             </p>
           </div>
@@ -106,7 +106,7 @@ export function Trust() {
         <div className="wrap" style={{maxWidth:900}}>
           <div className="glass-card" style={{padding:'clamp(28px,5vw,48px)',border:'1px solid rgba(255,122,41,0.15)',animation:'fadeSlide 0.7s ease 0.05s both'}}>
             <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:8}}>{t("The Full Selection Journey — 18 Stages","पूरी चयन यात्रा — 18 चरण")}</h2>
-            <p style={{color:'rgba(255,255,255,0.65)',fontSize:14,lineHeight:1.7,marginBottom:24}}>
+            <p style={{color:'rgba(255,255,255,0.88)',fontSize:14,lineHeight:1.7,marginBottom:24}}>
               {t("Each stage is distinct. Reaching one stage does not automatically move you to the next — advancement depends on the applicable rules for that stage.","हर चरण अलग है। किसी एक चरण तक पहुंचना अपने आप आपको अगले चरण में नहीं ले जाता — advancement उस चरण के applicable rules पर निर्भर करता है।")}
             </p>
             <div style={{display:'grid',gridTemplateColumns:'1fr',gap:10,marginBottom:24}}>
@@ -130,9 +130,9 @@ export function Trust() {
                 {en:'Final contract / squad requirements',hi:'Final contract / squad requirements'},
                 {en:'Tournament Participation',hi:'Tournament Participation'},
               ].map((s,i)=>(
-                <div key={i} style={{display:'flex',alignItems:'center',gap:14,background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:10,padding:'12px 16px'}}>
+                <div key={i} style={{display:'flex',alignItems:'center',gap:14,background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.18)',borderRadius:10,padding:'12px 16px'}}>
                   <span style={{flexShrink:0,width:30,height:30,borderRadius:'50%',background:'linear-gradient(135deg,#FF7A29,#C94E0E)',display:'inline-flex',alignItems:'center',justifyContent:'center',fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:13,color:'#fff'}}>{i+1}</span>
-                  <span style={{color:'rgba(255,255,255,0.82)',fontSize:'clamp(13px,2vw,15px)',lineHeight:1.5}}>{t(s.en,s.hi)}</span>
+                  <span style={{color:'rgba(255,255,255,0.88)',fontSize:'clamp(13px,2vw,15px)',lineHeight:1.5}}>{t(s.en,s.hi)}</span>
                 </div>
               ))}
             </div>
@@ -146,7 +146,7 @@ export function Trust() {
                   {en:'Final 600 / Auction Pool entry does NOT guarantee team purchase.',hi:'Final 600 / Auction Pool entry team purchase की गारंटी नहीं देती।'},
                   {en:'Auction participation does NOT guarantee a contract unless a team purchases you and all requirements are completed.',hi:'Auction में भाग लेना contract की गारंटी नहीं देता, जब तक कोई team आपको purchase न करे और सभी requirements पूरी न हों।'},
                 ].map((r,i)=>(
-                  <li key={i} style={{display:'flex',alignItems:'flex-start',gap:10,color:'rgba(255,255,255,0.78)',fontSize:'clamp(13px,2vw,14.5px)',lineHeight:1.7}}>
+                  <li key={i} style={{display:'flex',alignItems:'flex-start',gap:10,color:'rgba(255,255,255,0.88)',fontSize:'clamp(13px,2vw,14.5px)',lineHeight:1.7}}>
                     <span style={{color:'#EF4444',flexShrink:0,marginTop:2}}>✕</span><span>{t(r.en,r.hi)}</span>
                   </li>
                 ))}
@@ -174,7 +174,7 @@ export function Trust() {
               {t("BCPL may use automated, digital and technology-assisted assessment systems and third-party technology service providers for video validation, scoring, ranking, fraud/integrity checks and administration. The assessment is role-specific and criteria-based. Invalid or unclear footage may require re-upload according to BCPL rules. Your Phase 1 result may include a score and/or ranking where applicable.","BCPL video validation, scoring, ranking, fraud/integrity checks और administration के लिए automated, digital और technology-assisted assessment systems तथा third-party technology service providers का उपयोग कर सकता है। यह assessment role-specific और criteria-based है। Invalid या unclear footage को BCPL rules के अनुसार re-upload करना पड़ सकता है। आपके Phase 1 result में जहां लागू हो score और/या ranking शामिल हो सकती है।")}
             </p>
             <div style={{background:'rgba(255,122,41,0.05)',border:'1px solid rgba(255,122,41,0.2)',borderRadius:12,padding:'14px 18px',marginBottom:24}}>
-              <p style={{color:'rgba(255,255,255,0.62)',fontSize:13.5,lineHeight:1.7}}>
+              <p style={{color:'rgba(255,255,255,0.88)',fontSize:13.5,lineHeight:1.7}}>
                 {t("Payment of Phase 1 or Phase 2 fees does not guarantee qualification, final selection, Auction Pool entry, auction purchase, team allocation, player contract, remuneration or tournament participation. Your Phase 1 result target is within 48 hours of video submission; if a result is not delivered within 15 working days, a full refund applies as published. Qualification to Phase 2 does not guarantee final selection.","Phase 1 या Phase 2 fees का भुगतान qualification, final selection, Auction Pool entry, auction purchase, team allocation, player contract, remuneration या tournament participation की गारंटी नहीं देता। आपके Phase 1 result का target video submission के 48 घंटे के भीतर है; यदि 15 working days के भीतर result नहीं दिया जाता, तो published नीति के अनुसार full refund लागू होता है। Phase 2 के लिए qualification final selection की गारंटी नहीं देता।")}
               </p>
             </div>
@@ -187,7 +187,7 @@ export function Trust() {
               ].map((c,i)=>(
                 <div key={i} style={{background:'rgba(255,122,41,0.05)',border:'1px solid rgba(255,122,41,0.15)',borderRadius:12,padding:'16px 18px'}}>
                   <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:14,color:'#FF7A29',marginBottom:6}}>{t(c.titleEn,c.titleHi)}</div>
-                  <p style={{color:'rgba(255,255,255,0.55)',fontSize:13,lineHeight:1.6}}>{t(c.bodyEn,c.bodyHi)}</p>
+                  <p style={{color:'rgba(255,255,255,0.88)',fontSize:13,lineHeight:1.6}}>{t(c.bodyEn,c.bodyHi)}</p>
                 </div>
               ))}
             </div>
@@ -242,7 +242,7 @@ export function Trust() {
             </p>
             <div style={{background:'rgba(59,130,246,0.08)',border:'1px solid rgba(59,130,246,0.25)',borderRadius:12,padding:'18px 20px'}}>
               <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#3B82F6',marginBottom:10}}>{t("What the Auction Pool means","Auction Pool का मतलब")}</div>
-              <p style={{color:'rgba(255,255,255,0.7)',fontSize:14,lineHeight:1.7}}>
+              <p style={{color:'rgba(255,255,255,0.88)',fontSize:14,lineHeight:1.7}}>
                 {t("Qualification for the BCPL Auction Pool means eligibility to participate in the applicable player-auction process. Auction Pool qualification does not guarantee purchase by a team, a player contract, remuneration, squad selection or tournament participation.","BCPL Auction Pool के लिए qualification का मतलब है applicable player-auction process में भाग लेने की eligibility। Auction Pool qualification किसी team द्वारा purchase, player contract, remuneration, squad selection या tournament participation की गारंटी नहीं देती।")}
               </p>
             </div>
@@ -275,13 +275,13 @@ export function Trust() {
               ].map((c,i)=>(
                 <div key={i} style={{background:'rgba(232,178,61,0.06)',border:'1px solid rgba(232,178,61,0.2)',borderRadius:12,padding:'14px 18px',display:'flex',alignItems:'flex-start',gap:10}}>
                   <span style={{color:'#E8B23D',flexShrink:0,marginTop:2}}>◆</span>
-                  <span style={{color:'rgba(255,255,255,0.75)',fontSize:13.5,lineHeight:1.6}}>{t(c.en,c.hi)}</span>
+                  <span style={{color:'rgba(255,255,255,0.88)',fontSize:13.5,lineHeight:1.6}}>{t(c.en,c.hi)}</span>
                 </div>
               ))}
             </div>
             <div style={{background:'rgba(59,130,246,0.08)',border:'1px solid rgba(59,130,246,0.25)',borderRadius:12,padding:'18px 20px'}}>
               <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:14,color:'#3B82F6',marginBottom:8}}>{t("The five zones","पांच zones")}</div>
-              <p style={{color:'rgba(255,255,255,0.7)',fontSize:14,lineHeight:1.7}}>
+              <p style={{color:'rgba(255,255,255,0.88)',fontSize:14,lineHeight:1.7}}>
                 {t("BCPL uses a five-zone model for national representation in Season 5. Exact numerical quotas per zone or role are published only once officially approved for the season, and the configuration may change for future seasons. A high score, such as 95 out of 100, does not by itself guarantee inclusion in the Final 600 — final cut-offs emerge only after the applicable national trial population is complete.","BCPL Season 5 में national representation के लिए five-zone model उपयोग करता है। प्रति zone या role exact numerical quotas केवल तब publish किए जाते हैं जब वे season के लिए officially approved हों, और यह configuration भविष्य के seasons के लिए बदल सकती है। कोई high score, जैसे 100 में से 95, अपने आप Final 600 में शामिल होने की गारंटी नहीं देता — final cut-offs applicable national trial population पूरी होने के बाद ही सामने आते हैं।")}
               </p>
             </div>
@@ -323,7 +323,7 @@ export function Trust() {
                   <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:24,color:'#fff'}}>{t("₹3,000 + GST","₹3,000 + GST")}</div>
                 </div>
               </div>
-              <p style={{color:'rgba(255,255,255,0.55)',fontSize:13,marginTop:16,lineHeight:1.6}}>
+              <p style={{color:'rgba(255,255,255,0.88)',fontSize:13,marginTop:16,lineHeight:1.6}}>
                 {t("Payment of Phase 1 or Phase 2 fees does not guarantee qualification, final selection, Auction Pool entry, auction purchase, team allocation, player contract, remuneration or tournament participation.","Phase 1 या Phase 2 fees का भुगतान qualification, final selection, Auction Pool entry, auction purchase, team allocation, player contract, remuneration या tournament participation की गारंटी नहीं देता।")}
               </p>
             </div>
@@ -351,11 +351,11 @@ export function Trust() {
               ].map((r,i)=>(
                 <div key={i} style={{background:'rgba(34,197,94,0.06)',border:'1px solid rgba(34,197,94,0.2)',borderRadius:12,padding:'14px 18px'}}>
                   <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:14,color:'#22C55E',marginBottom:6}}>{r.role}</div>
-                  <p style={{color:'rgba(255,255,255,0.62)',fontSize:13.5,lineHeight:1.7}}>{t(r.en,r.hi)}</p>
+                  <p style={{color:'rgba(255,255,255,0.88)',fontSize:13.5,lineHeight:1.7}}>{t(r.en,r.hi)}</p>
                 </div>
               ))}
             </div>
-            <p style={{color:'rgba(255,255,255,0.62)',fontSize:14,lineHeight:1.8}}>
+            <p style={{color:'rgba(255,255,255,0.88)',fontSize:14,lineHeight:1.8}}>
               {t("If an authorised feeder delivery is clearly unusable, it may be marked \"FEEDER ERROR / RE-BOWL\" and will not count as one of the six valid deliveries. Evaluators cannot grant extra valid balls at their discretion.","यदि कोई authorised feeder delivery स्पष्ट रूप से unusable है, तो उसे \"FEEDER ERROR / RE-BOWL\" mark किया जा सकता है और वह छह valid deliveries में से एक के रूप में count नहीं होगी। Evaluators अपनी discretion पर extra valid balls नहीं दे सकते।")}
             </p>
           </div>
@@ -442,7 +442,7 @@ export function Trust() {
                 ].map((r,i)=>(
                   <li key={i} style={{display:'flex',alignItems:'flex-start',gap:12,marginBottom:10}}>
                     <span style={{color:'#8B5CF6',fontSize:18,flexShrink:0}}>✓</span>
-                    <span style={{color:'rgba(255,255,255,0.7)',fontSize:14,lineHeight:1.7}}>{t(r.en,r.hi)}</span>
+                    <span style={{color:'rgba(255,255,255,0.88)',fontSize:14,lineHeight:1.7}}>{t(r.en,r.hi)}</span>
                   </li>
                 ))}
               </ul>
@@ -459,7 +459,7 @@ export function Trust() {
                 ].map((r,i)=>(
                   <li key={i} style={{display:'flex',alignItems:'flex-start',gap:12,marginBottom:8}}>
                     <span style={{color:'#EF4444',fontSize:18,flexShrink:0}}>✕</span>
-                    <span style={{color:'rgba(255,255,255,0.65)',fontSize:13,lineHeight:1.7}}>{t(r.en,r.hi)}</span>
+                    <span style={{color:'rgba(255,255,255,0.88)',fontSize:13,lineHeight:1.7}}>{t(r.en,r.hi)}</span>
                   </li>
                 ))}
               </ul>
@@ -478,15 +478,15 @@ export function Trust() {
                 <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:12,marginBottom:12}}>
                   <div>
                     <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:14,color:'#FF7A29',letterSpacing:'.08em',textTransform:'uppercase',marginBottom:4}}>{t("PHASE 1 FEE","PHASE 1 FEE")}</div>
-                    <p style={{color:'rgba(255,255,255,0.5)',fontSize:13}}>{t("Video Evaluation","Video Evaluation")}</p>
+                    <p style={{color:'rgba(255,255,255,0.72)',fontSize:13}}>{t("Video Evaluation","Video Evaluation")}</p>
                   </div>
                   <div style={{textAlign:'right'}}>
-                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:32,color:'#fff',lineHeight:1}}>₹299 <span style={{fontSize:13,fontWeight:700,color:'rgba(255,255,255,0.55)'}}>+ GST</span></div>
+                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:32,color:'#fff',lineHeight:1}}>₹299 <span style={{fontSize:13,fontWeight:700,color:'rgba(255,255,255,0.88)'}}>+ GST</span></div>
                     <p style={{color:'var(--ink-3)',fontSize:12,marginTop:4}}>{t("Batsman / Bowler / WK","Batsman / Bowler / WK")}</p>
                   </div>
                 </div>
                 <div style={{textAlign:'right',marginTop:8}}>
-                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:32,color:'#fff',lineHeight:1}}>₹399 <span style={{fontSize:13,fontWeight:700,color:'rgba(255,255,255,0.55)'}}>+ GST</span></div>
+                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:32,color:'#fff',lineHeight:1}}>₹399 <span style={{fontSize:13,fontWeight:700,color:'rgba(255,255,255,0.88)'}}>+ GST</span></div>
                   <p style={{color:'var(--ink-3)',fontSize:12,marginTop:4}}>{t("All-Rounder","All-Rounder")}</p>
                 </div>
               </div>
@@ -494,15 +494,15 @@ export function Trust() {
                 <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:12}}>
                   <div>
                     <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:14,color:'#22C55E',letterSpacing:'.08em',textTransform:'uppercase',marginBottom:4}}>{t("PHASE 2 FEE","PHASE 2 FEE")}</div>
-                    <p style={{color:'rgba(255,255,255,0.5)',fontSize:13}}>{t("Physical Trial — after Phase 1 qualification","Physical Trial — Phase 1 qualify करने के बाद")}</p>
+                    <p style={{color:'rgba(255,255,255,0.72)',fontSize:13}}>{t("Physical Trial — after Phase 1 qualification","Physical Trial — Phase 1 qualify करने के बाद")}</p>
                   </div>
                   <div style={{textAlign:'right'}}>
-                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:28,color:'#fff',lineHeight:1}}>₹2,000 <span style={{fontSize:13,fontWeight:700,color:'rgba(255,255,255,0.55)'}}>+ GST</span></div>
+                    <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:28,color:'#fff',lineHeight:1}}>₹2,000 <span style={{fontSize:13,fontWeight:700,color:'rgba(255,255,255,0.88)'}}>+ GST</span></div>
                     <p style={{color:'var(--ink-3)',fontSize:12,marginTop:4}}>{t("Batsman / Bowler / WK","Batsman / Bowler / WK")}</p>
                   </div>
                 </div>
                 <div style={{textAlign:'right',marginTop:12}}>
-                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:28,color:'#fff',lineHeight:1}}>₹3,000 <span style={{fontSize:13,fontWeight:700,color:'rgba(255,255,255,0.55)'}}>+ GST</span></div>
+                  <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:28,color:'#fff',lineHeight:1}}>₹3,000 <span style={{fontSize:13,fontWeight:700,color:'rgba(255,255,255,0.88)'}}>+ GST</span></div>
                   <p style={{color:'var(--ink-3)',fontSize:12,marginTop:4}}>{t("All-Rounder","All-Rounder")}</p>
                 </div>
               </div>
@@ -512,14 +512,14 @@ export function Trust() {
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
                 <div>
                   <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:36,color:'#fff'}}>₹2,299</div>
-                  <p style={{color:'rgba(255,255,255,0.5)',fontSize:13,marginTop:6}}>{t("Batsman / Bowler / WK","Batsman / Bowler / WK")}</p>
+                  <p style={{color:'rgba(255,255,255,0.72)',fontSize:13,marginTop:6}}>{t("Batsman / Bowler / WK","Batsman / Bowler / WK")}</p>
                 </div>
                 <div>
                   <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:36,color:'#fff'}}>₹3,399</div>
-                  <p style={{color:'rgba(255,255,255,0.5)',fontSize:13,marginTop:6}}>{t("All-Rounder","All-Rounder")}</p>
+                  <p style={{color:'rgba(255,255,255,0.72)',fontSize:13,marginTop:6}}>{t("All-Rounder","All-Rounder")}</p>
                 </div>
               </div>
-              <p style={{color:'rgba(255,255,255,0.55)',fontSize:13,marginTop:20,lineHeight:1.7,fontStyle:'italic'}}>
+              <p style={{color:'rgba(255,255,255,0.88)',fontSize:13,marginTop:20,lineHeight:1.7,fontStyle:'italic'}}>
                 {t("These are the applicable Phase 1 and Phase 2 fees. If you do not qualify Phase 1, no Phase 2 fee becomes payable. Payment of Phase 1 or Phase 2 fees does not guarantee qualification, final selection, Auction Pool entry, auction purchase, team allocation, player contract, remuneration or tournament participation. All fees attract applicable GST as displayed at the time of payment.","ये applicable Phase 1 और Phase 2 fees हैं। यदि आप Phase 1 qualify नहीं करते, तो कोई Phase 2 fee देय नहीं होती। Phase 1 या Phase 2 fees का भुगतान qualification, final selection, Auction Pool entry, auction purchase, team allocation, player contract, remuneration या tournament participation की गारंटी नहीं देता। सभी fees पर payment के समय दिखाई गई applicable GST लागू होती है।")}
               </p>
             </div>
@@ -533,7 +533,7 @@ export function Trust() {
           <div className="glass-card" style={{padding:'clamp(28px,5vw,48px)',border:'1px solid rgba(6,182,212,0.15)',animation:'fadeSlide 0.7s ease 0.7s both',textAlign:'center'}}>
             <div style={{marginBottom:16,color:'#06B6D4',display:'flex',justifyContent:'center'}}><IcoChat size={40}/></div>
             <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(22px,3.5vw,32px)',color:'#fff',marginBottom:12}}>{t("Questions or Concerns?","सवाल या चिंता?")}</h2>
-            <p style={{color:'rgba(255,255,255,0.6)',fontSize:15,lineHeight:1.7,maxWidth:560,margin:'0 auto 28px'}}>
+            <p style={{color:'rgba(255,255,255,0.88)',fontSize:15,lineHeight:1.7,maxWidth:560,margin:'0 auto 28px'}}>
               {t("If you have questions about your evaluation, score, rank, or the selection process — our support team is here to help. We respond within 24 hours.","अगर आपके पास अपने evaluation, score, rank, या selection process के बारे में सवाल हैं — हमारी support team मदद के लिए यहां है। हम 24 घंटे के भीतर जवाब देते हैं।")}
             </p>
             <div style={{display:'flex',flexWrap:'wrap',gap:14,justifyContent:'center',marginBottom:24}}>
@@ -566,7 +566,7 @@ export function Trust() {
           <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(24px,3.5vw,40px)',color:'#fff',marginBottom:12}}>
             {t("Transparent Process. Fair Evaluation.","पारदर्शी Process। Fair Evaluation।")}
           </h2>
-          <p style={{color:'rgba(255,255,255,0.5)',fontSize:15,marginBottom:32}}>{t("Your cricket journey starts here.","आपका cricket सफर यहीं से शुरू होता है।")}</p>
+          <p style={{color:'rgba(255,255,255,0.72)',fontSize:15,marginBottom:32}}>{t("Your cricket journey starts here.","आपका cricket सफर यहीं से शुरू होता है।")}</p>
           <Link href="/register" className="btn-fire" style={{padding:'18px 48px',fontSize:17,textDecoration:'none',display:'inline-block'}}>{t("Register for ₹299 →","₹299 में Register करें →")}</Link>
         </div>
       </section>

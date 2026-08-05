@@ -10,7 +10,7 @@ import {
 function Modal({ onClose, children }: { onClose: () => void; children: React.ReactNode }) {
   return (
     <div style={{ position: "fixed", inset: 0, background: "#00000088", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999 }} onClick={onClose}>
-      <div style={{ background: "#0D1526", border: "1px solid #1E293B", borderRadius: 20, padding: 28, width: 520, maxHeight: "90vh", overflowY: "auto" }} onClick={e => e.stopPropagation()}>
+      <div style={{ background: "#2C3A5E", border: "1px solid #33436B", borderRadius: 20, padding: 28, width: 520, maxHeight: "90vh", overflowY: "auto" }} onClick={e => e.stopPropagation()}>
         {children}
       </div>
     </div>
@@ -19,17 +19,17 @@ function Modal({ onClose, children }: { onClose: () => void; children: React.Rea
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div style={{ marginBottom: 14 }}>
-      <label style={{ fontSize: 11, fontWeight: 700, color: "#475569", display: "block", marginBottom: 7, letterSpacing: .5, textTransform: "uppercase" }}>{label}</label>
+      <label style={{ fontSize: 11, fontWeight: 700, color: "#94A3C4", display: "block", marginBottom: 7, letterSpacing: .5, textTransform: "uppercase" }}>{label}</label>
       {children}
     </div>
   );
 }
-const inp: React.CSSProperties = { width: "100%", padding: "10px 12px", background: "#060B18", border: "1px solid #1E293B", borderRadius: 9, color: "#F1F5F9", fontSize: 13, outline: "none", boxSizing: "border-box" };
-const card: React.CSSProperties = { background: "#0D1526", border: "1px solid #1E293B", borderRadius: 16, padding: 20 };
+const inp: React.CSSProperties = { width: "100%", padding: "10px 12px", background: "#243050", border: "1px solid #33436B", borderRadius: 9, color: "#F1F5F9", fontSize: 13, outline: "none", boxSizing: "border-box" };
+const card: React.CSSProperties = { background: "#2C3A5E", border: "1px solid #33436B", borderRadius: 16, padding: 20 };
 const btnPrimary: React.CSSProperties = { background: "#FF6B00", color: "#fff", border: "none", borderRadius: 9, padding: "10px 18px", fontSize: 13, fontWeight: 800, cursor: "pointer" };
-const btnGhost: React.CSSProperties = { background: "#1E293B", color: "#CBD5E1", border: "none", borderRadius: 9, padding: "10px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer" };
-const th: React.CSSProperties = { textAlign: "left", padding: "10px 12px", fontSize: 10, fontWeight: 800, color: "#475569", letterSpacing: 1, textTransform: "uppercase", borderBottom: "1px solid #1E293B", whiteSpace: "nowrap" };
-const td: React.CSSProperties = { padding: "12px", fontSize: 13, color: "#E2E8F0", borderBottom: "1px solid #14203A", verticalAlign: "middle" };
+const btnGhost: React.CSSProperties = { background: "#33436B", color: "#CBD5E1", border: "none", borderRadius: 9, padding: "10px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer" };
+const th: React.CSSProperties = { textAlign: "left", padding: "10px 12px", fontSize: 10, fontWeight: 800, color: "#94A3C4", letterSpacing: 1, textTransform: "uppercase", borderBottom: "1px solid #33436B", whiteSpace: "nowrap" };
+const td: React.CSSProperties = { padding: "12px", fontSize: 13, color: "#E2E8F0", borderBottom: "1px solid #3A4A72", verticalAlign: "middle" };
 
 function CopyLink({ code }: { code: string }) {
   const [copied, setCopied] = useState(false);
@@ -40,7 +40,7 @@ function CopyLink({ code }: { code: string }) {
         setCopied(true); setTimeout(() => setCopied(false), 1500);
       }}
       title={referralLink(code)}
-      style={{ background: copied ? "#14532D" : "#1E293B", color: copied ? "#4ADE80" : "#93C5FD", border: "none", borderRadius: 7, padding: "5px 10px", fontSize: 11, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
+      style={{ background: copied ? "#14532D" : "#33436B", color: copied ? "#4ADE80" : "#93C5FD", border: "none", borderRadius: 7, padding: "5px 10px", fontSize: 11, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
       {copied ? "✓ Copied" : "🔗 Copy"}
     </button>
   );
@@ -109,7 +109,7 @@ export function PlayerReferralsPanel() {
     finally { setTogglingKey(""); }
   };
 
-  if (loading) return <div style={{ color: "#64748B", padding: 40, fontSize: 14 }}>Loading player referrals…</div>;
+  if (loading) return <div style={{ color: "#A6B3D0", padding: 40, fontSize: 14 }}>Loading player referrals…</div>;
   if (error || !overview) return (
     <div style={{ padding: 40 }}>
       <div style={{ color: "#FCA5A5", fontSize: 14, marginBottom: 14 }}>⚠ {error || "Failed to load"}</div>
@@ -121,8 +121,8 @@ export function PlayerReferralsPanel() {
 
   return (
     <div>
-      <div style={{ fontSize: 12, color: "#64748B", marginBottom: 16 }}>
-        Every player who completes Phase 1 registration automatically gets a personal link (<span style={{ color: "#93C5FD", fontFamily: "monospace" }}>bcplt20.com/r/CODE</span>) on their dashboard &amp; payment receipt. Only <b style={{ color: "#94A3B8" }}>paid</b> friend registrations count toward milestones — free signups can't be farmed.
+      <div style={{ fontSize: 12, color: "#A6B3D0", marginBottom: 16 }}>
+        Every player who completes Phase 1 registration automatically gets a personal link (<span style={{ color: "#93C5FD", fontFamily: "monospace" }}>bcplt20.com/r/CODE</span>) on their dashboard &amp; payment receipt. Only <b style={{ color: "#C3CEE3" }}>paid</b> friend registrations count toward milestones — free signups can't be farmed.
       </div>
 
       {/* Stat cards */}
@@ -134,9 +134,9 @@ export function PlayerReferralsPanel() {
           { label: "Rewards Given", value: String(t.rewardsGiven), sub: `${t.rewardsDue} due — hand out & mark below` },
         ].map(k => (
           <div key={k.label} style={card}>
-            <div style={{ fontSize: 10, fontWeight: 800, color: "#475569", letterSpacing: 1, textTransform: "uppercase", marginBottom: 8 }}>{k.label}</div>
+            <div style={{ fontSize: 10, fontWeight: 800, color: "#94A3C4", letterSpacing: 1, textTransform: "uppercase", marginBottom: 8 }}>{k.label}</div>
             <div style={{ fontSize: 22, fontWeight: 900, color: "#F1F5F9" }}>{k.value}</div>
-            <div style={{ fontSize: 11, color: "#64748B", marginTop: 4 }}>{k.sub}</div>
+            <div style={{ fontSize: 11, color: "#A6B3D0", marginTop: 4 }}>{k.sub}</div>
           </div>
         ))}
       </div>
@@ -146,18 +146,18 @@ export function PlayerReferralsPanel() {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
           <div>
             <div style={{ fontSize: 14, fontWeight: 800, color: "#F1F5F9" }}>🎁 Reward Ladder</div>
-            <div style={{ fontSize: 11, color: "#64748B", marginTop: 3 }}>Players see this ladder on their dashboard. Edits apply instantly to everyone.</div>
+            <div style={{ fontSize: 11, color: "#A6B3D0", marginTop: 3 }}>Players see this ladder on their dashboard. Edits apply instantly to everyone.</div>
           </div>
           <button style={btnPrimary} onClick={() => { setErr(""); setModal({ threshold: "", reward: "" }); }}>+ New Tier</button>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-          {tiers.length === 0 && <div style={{ fontSize: 13, color: "#475569", padding: "14px 0" }}>No tiers yet — add the first milestone (e.g. 5 paid referrals → BCPL cap).</div>}
+          {tiers.length === 0 && <div style={{ fontSize: 13, color: "#94A3C4", padding: "14px 0" }}>No tiers yet — add the first milestone (e.g. 5 paid referrals → BCPL cap).</div>}
           {tiers.map(tier => (
-            <div key={tier.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "9px 12px", borderRadius: 9, background: "#060B18", border: "1px solid #14203A" }}>
+            <div key={tier.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "9px 12px", borderRadius: 9, background: "#243050", border: "1px solid #3A4A72" }}>
               <div style={{ minWidth: 64, fontFamily: "monospace", fontWeight: 800, fontSize: 13, color: "#FF9A57" }}>{tier.threshold} paid</div>
               <div style={{ flex: 1, fontSize: 13, color: "#E2E8F0" }}>{tier.reward}</div>
               <button onClick={() => { setErr(""); setModal({ id: tier.id, threshold: String(tier.threshold), reward: tier.reward }); }}
-                style={{ background: "transparent", color: "#64748B", border: "none", cursor: "pointer", fontSize: 15 }}>✎</button>
+                style={{ background: "transparent", color: "#A6B3D0", border: "none", cursor: "pointer", fontSize: 15 }}>✎</button>
             </div>
           ))}
         </div>
@@ -173,16 +173,16 @@ export function PlayerReferralsPanel() {
           </tr></thead>
           <tbody>
             {overview.players.length === 0 && (
-              <tr><td style={{ ...td, color: "#475569", textAlign: "center", padding: 30 }} colSpan={8}>
+              <tr><td style={{ ...td, color: "#94A3C4", textAlign: "center", padding: 30 }} colSpan={8}>
                 No player referrers yet — links are created automatically when players open their dashboard after paying Phase 1.
               </td></tr>
             )}
             {overview.players.map((p, i) => (
               <tr key={p.code}>
-                <td style={{ ...td, fontWeight: 900, color: i < 3 && p.paid > 0 ? "#FBBF24" : "#475569" }}>{i + 1}</td>
+                <td style={{ ...td, fontWeight: 900, color: i < 3 && p.paid > 0 ? "#FBBF24" : "#94A3C4" }}>{i + 1}</td>
                 <td style={{ ...td, fontWeight: 700 }}>
                   {p.name}
-                  <div style={{ fontSize: 11, color: "#64748B", fontWeight: 400, marginTop: 2 }}>{p.phone || "—"}</div>
+                  <div style={{ fontSize: 11, color: "#A6B3D0", fontWeight: 400, marginTop: 2 }}>{p.phone || "—"}</div>
                 </td>
                 <td style={{ ...td, fontFamily: "monospace", fontWeight: 800, color: "#FF9A57" }}>{p.code}</td>
                 <td style={td}><CopyLink code={p.code} /></td>
@@ -191,7 +191,7 @@ export function PlayerReferralsPanel() {
                 <td style={{ ...td, color: "#4ADE80", fontWeight: 800 }}>{p.paid}</td>
                 <td style={td}>
                   {p.milestones.length === 0 ? (
-                    <span style={{ fontSize: 11, color: "#475569" }}>none yet</span>
+                    <span style={{ fontSize: 11, color: "#94A3C4" }}>none yet</span>
                   ) : (
                     <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                       {p.milestones.map(m => {

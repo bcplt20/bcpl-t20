@@ -65,14 +65,14 @@ const playerToNp = (p: ApiTeamPlayer): NP => ({
 });
 
 /* ─── Small components ───────────────────────────────────────── */
-function Avatar({ url, name, size = 40, color = "#334155" }: { url: string; name: string; size?: number; color?: string }) {
+function Avatar({ url, name, size = 40, color = "#8593B3" }: { url: string; name: string; size?: number; color?: string }) {
   const src = asset(url);
   return src
     ? <img src={src} alt={name} style={{ width: size, height: size, borderRadius: size / 4, objectFit: "cover", border: `2px solid ${color}44`, flexShrink: 0 }} />
     : <div style={{ width: size, height: size, borderRadius: size / 4, background: color + "33", border: `2px solid ${color}55`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: size * 0.38, fontWeight: 900, color, flexShrink: 0 }}>{name?.[0] || "?"}</div>;
 }
 
-function TeamLogo({ url, name, size = 40, color = "#334155" }: { url: string; name: string; size?: number; color?: string }) {
+function TeamLogo({ url, name, size = 40, color = "#8593B3" }: { url: string; name: string; size?: number; color?: string }) {
   const src = asset(url);
   return src
     ? <img src={src} alt={name} style={{ width: size, height: size, borderRadius: size / 4, objectFit: "contain", background: "rgba(255,255,255,0.94)", padding: 3, flexShrink: 0 }} />
@@ -83,15 +83,15 @@ function ImageUpload({ label, value, onChange, size = 64 }: { label: string; val
   const ref = useRef<HTMLInputElement>(null);
   return (
     <div>
-      <label style={{ fontSize: 11, color: "#64748B", fontWeight: 700, display: "block", marginBottom: 6 }}>{label}</label>
+      <label style={{ fontSize: 11, color: "#A6B3D0", fontWeight: 700, display: "block", marginBottom: 6 }}>{label}</label>
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        <div style={{ width: size, height: size, borderRadius: 12, background: "#060B18", border: `2px dashed ${value ? "#FF6B00" : "#1E293B"}`, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", cursor: "pointer", flexShrink: 0 }} onClick={() => ref.current?.click()}>
+        <div style={{ width: size, height: size, borderRadius: 12, background: "#243050", border: `2px dashed ${value ? "#FF6B00" : "#33436B"}`, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", cursor: "pointer", flexShrink: 0 }} onClick={() => ref.current?.click()}>
           {value ? <img src={asset(value)} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <span style={{ fontSize: 22, opacity: .4 }}>📷</span>}
         </div>
         <div>
-          <button onClick={() => ref.current?.click()} style={{ padding: "7px 14px", borderRadius: 8, border: "1px solid #1E293B", background: "transparent", color: "#94A3B8", fontSize: 12, cursor: "pointer", display: "block", marginBottom: 4 }}>{value ? "Change" : "Upload Image"}</button>
+          <button onClick={() => ref.current?.click()} style={{ padding: "7px 14px", borderRadius: 8, border: "1px solid #33436B", background: "transparent", color: "#C3CEE3", fontSize: 12, cursor: "pointer", display: "block", marginBottom: 4 }}>{value ? "Change" : "Upload Image"}</button>
           {value && <button onClick={() => onChange("")} style={{ padding: "4px 10px", borderRadius: 6, border: "none", background: "transparent", color: "#EF4444", fontSize: 11, cursor: "pointer" }}>Remove</button>}
-          <div style={{ fontSize: 10, color: "#334155", marginTop: 2 }}>JPG, PNG, WebP · max 2MB</div>
+          <div style={{ fontSize: 10, color: "#8593B3", marginTop: 2 }}>JPG, PNG, WebP · max 2MB</div>
         </div>
       </div>
       <input ref={ref} type="file" accept="image/jpeg,image/png,image/webp" onChange={e => {
@@ -131,9 +131,9 @@ export default function TeamsView() {
   const [compareA,    setCompareA]    = useState<string>("");
   const [compareB,    setCompareB]    = useState<string>("");
 
-  const card: React.CSSProperties = { background: "linear-gradient(135deg,#0D1526 0%,#0A1020 100%)", border: "1px solid #1E293B", borderRadius: 16, padding: 20 };
-  const inp: React.CSSProperties  = { width: "100%", padding: "9px 12px", background: "#060B18", border: "1px solid #1E293B", borderRadius: 9, color: "#F1F5F9", fontSize: 13, outline: "none", boxSizing: "border-box" };
-  const lbl: React.CSSProperties  = { fontSize: 11, color: "#64748B", fontWeight: 700, display: "block", marginBottom: 5 };
+  const card: React.CSSProperties = { background: "linear-gradient(135deg,#2C3A5E 0%,#1F2B49 100%)", border: "1px solid #33436B", borderRadius: 16, padding: 20 };
+  const inp: React.CSSProperties  = { width: "100%", padding: "9px 12px", background: "#243050", border: "1px solid #33436B", borderRadius: 9, color: "#F1F5F9", fontSize: 13, outline: "none", boxSizing: "border-box" };
+  const lbl: React.CSSProperties  = { fontSize: 11, color: "#A6B3D0", fontWeight: 700, display: "block", marginBottom: 5 };
 
   const flash = (m: string) => { setBanner(m); setTimeout(() => setBanner(""), 6000); };
 
@@ -272,7 +272,7 @@ export default function TeamsView() {
         date: m.scheduledAt ? new Date(m.scheduledAt).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata", day: "2-digit", month: "short" }) : "",
       }));
 
-  const resColor = (r: string) => r === "W" ? "#10B981" : r === "L" ? "#EF4444" : "#94A3B8";
+  const resColor = (r: string) => r === "W" ? "#10B981" : r === "L" ? "#EF4444" : "#C3CEE3";
 
   /* ── Player form fields (add + edit) ── */
   const PlayerFormFields = (
@@ -316,16 +316,16 @@ export default function TeamsView() {
           </label>
           <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
             <input type="checkbox" checked={np.isViceCaptain} onChange={e => setNp(p => ({ ...p, isViceCaptain: e.target.checked }))} style={{ width: 16, height: 16 }} />
-            <span style={{ fontSize: 12, color: "#94A3B8", fontWeight: 700 }}>🏅 Vice-Captain</span>
+            <span style={{ fontSize: 12, color: "#C3CEE3", fontWeight: 700 }}>🏅 Vice-Captain</span>
           </label>
         </div>
       </div>
-      <div style={{ fontSize: 12, fontWeight: 700, color: "#475569", margin: "16px 0 10px", textTransform: "uppercase", letterSpacing: .5 }}>⚡ Last Season Scorecard (optional)</div>
+      <div style={{ fontSize: 12, fontWeight: 700, color: "#94A3C4", margin: "16px 0 10px", textTransform: "uppercase", letterSpacing: .5 }}>⚡ Last Season Scorecard (optional)</div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 9 }}>
         {[{ l: "Matches", k: "matches" }, { l: "Runs", k: "runs" }, { l: "Bat Avg", k: "avg" }, { l: "Strike Rate", k: "sr" }, { l: "Fours", k: "fours" }, { l: "Sixes", k: "sixes" }, { l: "Fifties", k: "fifties" }, { l: "Centuries", k: "centuries" }, { l: "Wickets", k: "wickets" }, { l: "Economy", k: "economy" }, { l: "Best Bowl", k: "bestBowl" }, { l: "Best Bat", k: "bestBat" }].map(f => (
           <div key={f.k}>
-            <label style={{ fontSize: 10, color: "#475569", fontWeight: 700, display: "block", marginBottom: 4 }}>{f.l}</label>
-            <input value={(np as any)[f.k]} onChange={e => setNp(p => ({ ...p, [f.k]: e.target.value }))} placeholder="0" style={{ width: "100%", padding: "7px 9px", background: "#060B18", border: "1px solid #1E293B", borderRadius: 8, color: "#F1F5F9", fontSize: 12, outline: "none", boxSizing: "border-box" }} />
+            <label style={{ fontSize: 10, color: "#94A3C4", fontWeight: 700, display: "block", marginBottom: 4 }}>{f.l}</label>
+            <input value={(np as any)[f.k]} onChange={e => setNp(p => ({ ...p, [f.k]: e.target.value }))} placeholder="0" style={{ width: "100%", padding: "7px 9px", background: "#243050", border: "1px solid #33436B", borderRadius: 8, color: "#F1F5F9", fontSize: 12, outline: "none", boxSizing: "border-box" }} />
           </div>
         ))}
       </div>
@@ -334,7 +334,7 @@ export default function TeamsView() {
 
   const modalShell = (width: number, children: React.ReactNode) => (
     <div style={{ position: "fixed", inset: 0, background: "#00000088", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999 }}>
-      <div style={{ background: "#0D1526", border: "1px solid #1E293B", borderRadius: 20, padding: 28, width, maxHeight: "92vh", overflowY: "auto" }}>{children}</div>
+      <div style={{ background: "#2C3A5E", border: "1px solid #33436B", borderRadius: 20, padding: 28, width, maxHeight: "92vh", overflowY: "auto" }}>{children}</div>
     </div>
   );
 
@@ -349,10 +349,10 @@ export default function TeamsView() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div>
               <div style={{ fontSize: 18, fontWeight: 800, color: "#F1F5F9" }}>BCPL Teams</div>
-              <div style={{ fontSize: 11, color: "#64748B", marginTop: 2 }}>{teams.length} franchise teams · Season {SEASON}</div>
+              <div style={{ fontSize: 11, color: "#A6B3D0", marginTop: 2 }}>{teams.length} franchise teams · Season {SEASON}</div>
             </div>
             <div style={{ display: "flex", gap: 8 }}>
-              <button onClick={() => setShowCompare(true)} style={{ padding: "7px 12px", borderRadius: 9, border: "1px solid #1E293B", background: "transparent", color: "#94A3B8", fontSize: 11, cursor: "pointer" }}>⚔ Compare</button>
+              <button onClick={() => setShowCompare(true)} style={{ padding: "7px 12px", borderRadius: 9, border: "1px solid #33436B", background: "transparent", color: "#C3CEE3", fontSize: 11, cursor: "pointer" }}>⚔ Compare</button>
               <button onClick={() => { setModalErr(""); setShowAddTeam(true); }} style={{ padding: "8px 16px", borderRadius: 9, border: "none", background: "linear-gradient(135deg,#FF6B00,#FF8C40)", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>+ Add Team</button>
             </div>
           </div>
@@ -366,25 +366,25 @@ export default function TeamsView() {
             ].map(s => (
               <div key={s.l} style={{ ...card, padding: "12px 14px", textAlign: "center", borderTop: `2px solid ${s.c}` }}>
                 <div style={{ fontSize: 20, fontWeight: 800, color: s.c }}>{s.v}</div>
-                <div style={{ fontSize: 10, color: "#475569", marginTop: 2 }}>{s.l}</div>
+                <div style={{ fontSize: 10, color: "#94A3C4", marginTop: 2 }}>{s.l}</div>
               </div>
             ))}
           </div>
 
           {/* Points Table (live) */}
           <div style={{ ...card, padding: 0, overflow: "hidden" }}>
-            <div style={{ padding: "12px 14px", background: "#060E1C", borderBottom: "1px solid #1E293B", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ padding: "12px 14px", background: "#243050", borderBottom: "1px solid #33436B", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <span style={{ fontSize: 12, fontWeight: 800, color: "#F1F5F9" }}>Points Table</span>
-              <span style={{ fontSize: 10, color: "#475569" }}>Season {SEASON} · auto-updates from match results</span>
+              <span style={{ fontSize: 10, color: "#94A3C4" }}>Season {SEASON} · auto-updates from match results</span>
             </div>
             {loading ? (
-              <div style={{ padding: 24, textAlign: "center", color: "#64748B", fontSize: 12 }}>Loading…</div>
+              <div style={{ padding: 24, textAlign: "center", color: "#A6B3D0", fontSize: 12 }}>Loading…</div>
             ) : (
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
-                  <tr style={{ background: "#060E1C", borderBottom: "1px solid #1E293B" }}>
+                  <tr style={{ background: "#243050", borderBottom: "1px solid #33436B" }}>
                     {["#", "Team", "M", "W", "L", "NRR", "Pts", ""].map(h => (
-                      <th key={h} style={{ padding: "8px 8px", textAlign: h === "Team" ? "left" : "center", fontSize: 10, color: "#475569", fontWeight: 700, textTransform: "uppercase" }}>{h}</th>
+                      <th key={h} style={{ padding: "8px 8px", textAlign: h === "Team" ? "left" : "center", fontSize: 10, color: "#94A3C4", fontWeight: 700, textTransform: "uppercase" }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -393,12 +393,12 @@ export default function TeamsView() {
                     const p = pts(t.name);
                     return (
                       <tr key={t.id} onClick={() => { setSelTeamId(t.id); setDetailTab("squad"); loadSquad(t); }} style={{
-                        borderBottom: "1px solid #0F1B2D", cursor: "pointer",
+                        borderBottom: "1px solid #3A4A72", cursor: "pointer",
                         background: selTeamId === t.id ? `${t.color}18` : "transparent", transition: "background .15s",
                         borderLeft: selTeamId === t.id ? `3px solid ${t.color}` : "3px solid transparent",
                       }}>
                         <td style={{ padding: "10px 8px", textAlign: "center" }}>
-                          <span style={{ fontSize: p.played > 0 && i < 3 ? 16 : 13, fontWeight: 800, color: p.played > 0 ? (i === 0 ? "#FFD700" : i === 1 ? "#C0C0C0" : i === 2 ? "#CD7F32" : "#334155") : "#334155" }}>
+                          <span style={{ fontSize: p.played > 0 && i < 3 ? 16 : 13, fontWeight: 800, color: p.played > 0 ? (i === 0 ? "#FFD700" : i === 1 ? "#C0C0C0" : i === 2 ? "#CD7F32" : "#8593B3") : "#8593B3" }}>
                             {p.played > 0 ? (i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : i + 1) : i + 1}
                           </span>
                         </td>
@@ -407,17 +407,17 @@ export default function TeamsView() {
                             <TeamLogo url={t.logoUrl} name={t.name} size={26} color={t.color} />
                             <div>
                               <div style={{ fontSize: 12, fontWeight: 700, color: "#F1F5F9", lineHeight: 1.2 }}>{t.name}</div>
-                              <div style={{ fontSize: 9, color: "#475569" }}>{t.city}{t.playerCount ? ` · ${t.playerCount}P` : ""}</div>
+                              <div style={{ fontSize: 9, color: "#94A3C4" }}>{t.city}{t.playerCount ? ` · ${t.playerCount}P` : ""}</div>
                             </div>
                           </div>
                         </td>
-                        <td style={{ padding: "10px 8px", textAlign: "center", fontSize: 12, color: "#94A3B8" }}>{p.played}</td>
+                        <td style={{ padding: "10px 8px", textAlign: "center", fontSize: 12, color: "#C3CEE3" }}>{p.played}</td>
                         <td style={{ padding: "10px 8px", textAlign: "center", fontSize: 13, fontWeight: 800, color: "#10B981" }}>{p.won}</td>
                         <td style={{ padding: "10px 8px", textAlign: "center", fontSize: 13, color: "#EF4444", fontWeight: 600 }}>{p.lost}</td>
                         <td style={{ padding: "10px 8px", textAlign: "center", fontSize: 11, color: num(p.nrr) >= 0 ? "#10B981" : "#EF4444", fontWeight: 700 }}>{Number(num(p.nrr)).toFixed(2)}</td>
                         <td style={{ padding: "10px 8px", textAlign: "center", fontSize: 15, fontWeight: 800, color: "#FF6B00" }}>{p.points}</td>
                         <td style={{ padding: "10px 8px", textAlign: "center" }}>
-                          <button onClick={e => { e.stopPropagation(); setModalErr(""); setEditTeam({ id: t.id, name: t.name, city: t.city, captain: t.captain, coach: t.coach, owner: t.owner, homeGround: t.homeGround, color: t.color, secondColor: t.secondColor, logoUrl: t.logoUrl, titlesWon: String(t.titlesWon) }); }} style={{ padding: "3px 8px", borderRadius: 6, border: "1px solid #1E293B", background: "transparent", color: "#64748B", fontSize: 10, cursor: "pointer" }}>✏</button>
+                          <button onClick={e => { e.stopPropagation(); setModalErr(""); setEditTeam({ id: t.id, name: t.name, city: t.city, captain: t.captain, coach: t.coach, owner: t.owner, homeGround: t.homeGround, color: t.color, secondColor: t.secondColor, logoUrl: t.logoUrl, titlesWon: String(t.titlesWon) }); }} style={{ padding: "3px 8px", borderRadius: 6, border: "1px solid #33436B", background: "transparent", color: "#A6B3D0", fontSize: 10, cursor: "pointer" }}>✏</button>
                         </td>
                       </tr>
                     );
@@ -426,15 +426,15 @@ export default function TeamsView() {
               </table>
             )}
           </div>
-          <div style={{ fontSize: 10, color: "#475569", lineHeight: 1.5 }}>League has not started yet — standings fill in automatically as match results are entered in Match Management.</div>
+          <div style={{ fontSize: 10, color: "#94A3C4", lineHeight: 1.5 }}>League has not started yet — standings fill in automatically as match results are entered in Match Management.</div>
         </div>
 
         {/* ── RIGHT: Team Detail ── */}
         {!selTeam && (
           <div style={{ flex: 1, ...card, display: "flex", alignItems: "center", justifyContent: "center", minHeight: 320 }}>
-            <div style={{ textAlign: "center", color: "#475569" }}>
+            <div style={{ textAlign: "center", color: "#94A3C4" }}>
               <div style={{ fontSize: 40, marginBottom: 10 }}>🏏</div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: "#64748B" }}>Select a team to manage its squad & info</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: "#A6B3D0" }}>Select a team to manage its squad & info</div>
               <div style={{ fontSize: 12, marginTop: 4 }}>Everything you change here appears on the public website instantly.</div>
             </div>
           </div>
@@ -442,18 +442,18 @@ export default function TeamsView() {
         {selTeam && (
           <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 14, minWidth: 0 }}>
             {/* Team Banner */}
-            <div style={{ borderRadius: 16, overflow: "hidden", border: "1px solid #1E293B" }}>
-              <div style={{ background: `linear-gradient(135deg,${selTeam.color}44 0%,${selTeam.secondColor}22 100%)`, padding: "20px 22px", borderBottom: "1px solid #1E293B" }}>
+            <div style={{ borderRadius: 16, overflow: "hidden", border: "1px solid #33436B" }}>
+              <div style={{ background: `linear-gradient(135deg,${selTeam.color}44 0%,${selTeam.secondColor}22 100%)`, padding: "20px 22px", borderBottom: "1px solid #33436B" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
                     <TeamLogo url={selTeam.logoUrl} name={selTeam.name} size={68} color={selTeam.color} />
                     <div>
                       <div style={{ fontSize: 22, fontWeight: 900, color: "#F1F5F9", lineHeight: 1.1 }}>{selTeam.name}</div>
-                      <div style={{ fontSize: 12, color: "rgba(255,255,255,.5)", marginTop: 4 }}>
+                      <div style={{ fontSize: 12, color: "rgba(255,255,255,0.9)", marginTop: 4 }}>
                         📍 {selTeam.city || "City TBD"}{selTeam.homeGround ? <> &nbsp;·&nbsp; 🏟 {selTeam.homeGround}</> : null}
                       </div>
                       {(selTeam.coach || selTeam.owner) && (
-                        <div style={{ fontSize: 11, color: "rgba(255,255,255,.4)", marginTop: 3 }}>
+                        <div style={{ fontSize: 11, color: "rgba(255,255,255,0.9)", marginTop: 3 }}>
                           {selTeam.coach ? <>👤 Coach: {selTeam.coach}</> : null}{selTeam.coach && selTeam.owner ? <> &nbsp;·&nbsp; </> : null}{selTeam.owner ? <>🏢 Owner: {selTeam.owner}</> : null}
                         </div>
                       )}
@@ -461,18 +461,18 @@ export default function TeamsView() {
                         {selTeam.titlesWon > 0 && (
                           <span style={{ fontSize: 10, padding: "2px 10px", borderRadius: 6, background: "#FFD70022", border: "1px solid #FFD70044", color: "#FFD700", fontWeight: 700 }}>🏆 {selTeam.titlesWon} Title{selTeam.titlesWon > 1 ? "s" : ""}</span>
                         )}
-                        <span style={{ fontSize: 10, padding: "2px 10px", borderRadius: 6, background: "rgba(255,255,255,.06)", color: "rgba(255,255,255,.4)", fontWeight: 600 }}>{selSquad.length} Players</span>
+                        <span style={{ fontSize: 10, padding: "2px 10px", borderRadius: 6, background: "rgba(255,255,255,0.18)", color: "rgba(255,255,255,0.9)", fontWeight: 600 }}>{selSquad.length} Players</span>
                       </div>
                     </div>
                   </div>
                   <div style={{ display: "flex", gap: 8 }}>
-                    <button onClick={() => { setModalErr(""); setEditTeam({ id: selTeam.id, name: selTeam.name, city: selTeam.city, captain: selTeam.captain, coach: selTeam.coach, owner: selTeam.owner, homeGround: selTeam.homeGround, color: selTeam.color, secondColor: selTeam.secondColor, logoUrl: selTeam.logoUrl, titlesWon: String(selTeam.titlesWon) }); }} style={{ padding: "7px 14px", borderRadius: 8, border: "1px solid rgba(255,255,255,.15)", background: "rgba(255,255,255,.06)", color: "#94A3B8", fontSize: 12, cursor: "pointer" }}>✏️ Edit</button>
-                    <button onClick={() => setSelTeamId(null)} style={{ padding: "7px 10px", borderRadius: 8, border: "none", background: "rgba(255,255,255,.06)", color: "#64748B", fontSize: 12, cursor: "pointer" }}>✕</button>
+                    <button onClick={() => { setModalErr(""); setEditTeam({ id: selTeam.id, name: selTeam.name, city: selTeam.city, captain: selTeam.captain, coach: selTeam.coach, owner: selTeam.owner, homeGround: selTeam.homeGround, color: selTeam.color, secondColor: selTeam.secondColor, logoUrl: selTeam.logoUrl, titlesWon: String(selTeam.titlesWon) }); }} style={{ padding: "7px 14px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.18)", background: "rgba(255,255,255,0.18)", color: "#C3CEE3", fontSize: 12, cursor: "pointer" }}>✏️ Edit</button>
+                    <button onClick={() => setSelTeamId(null)} style={{ padding: "7px 10px", borderRadius: 8, border: "none", background: "rgba(255,255,255,0.18)", color: "#A6B3D0", fontSize: 12, cursor: "pointer" }}>✕</button>
                   </div>
                 </div>
               </div>
               {/* Stats row (live from points table) */}
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", background: "#060B18" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", background: "#243050" }}>
                 {(() => {
                   const p = pts(selTeam.name);
                   const rank = sorted.findIndex(t => t.id === selTeam.id) + 1;
@@ -483,9 +483,9 @@ export default function TeamsView() {
                     { l: "Points", v: p.points, c: "#FF6B00" },
                     { l: "Rank",   v: `#${rank}`, c: "#F59E0B" },
                   ].map((s, i) => (
-                    <div key={s.l} style={{ textAlign: "center", padding: "14px 8px", borderRight: i < 4 ? "1px solid #1E293B" : "none" }}>
+                    <div key={s.l} style={{ textAlign: "center", padding: "14px 8px", borderRight: i < 4 ? "1px solid #33436B" : "none" }}>
                       <div style={{ fontSize: 22, fontWeight: 900, color: s.c }}>{s.v}</div>
-                      <div style={{ fontSize: 10, color: "#475569", marginTop: 3 }}>{s.l}</div>
+                      <div style={{ fontSize: 10, color: "#94A3C4", marginTop: 3 }}>{s.l}</div>
                     </div>
                   ));
                 })()}
@@ -495,7 +495,7 @@ export default function TeamsView() {
             {/* Sub-tabs */}
             <div style={{ display: "flex", gap: 6 }}>
               {([["squad", "👥 Squad"], ["stats", "📊 Analytics"], ["history", "📋 Match History"]] as const).map(([t, l]) => (
-                <button key={t} onClick={() => setDetailTab(t)} style={{ padding: "8px 18px", borderRadius: 10, border: `1px solid ${detailTab === t ? selTeam.color : "#1E293B"}`, background: detailTab === t ? selTeam.color + "22" : "transparent", color: detailTab === t ? selTeam.color : "#64748B", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>{l}</button>
+                <button key={t} onClick={() => setDetailTab(t)} style={{ padding: "8px 18px", borderRadius: 10, border: `1px solid ${detailTab === t ? selTeam.color : "#33436B"}`, background: detailTab === t ? selTeam.color + "22" : "transparent", color: detailTab === t ? selTeam.color : "#A6B3D0", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>{l}</button>
               ))}
             </div>
 
@@ -505,7 +505,7 @@ export default function TeamsView() {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
                   <div>
                     <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9" }}>Squad</div>
-                    <div style={{ fontSize: 11, color: "#64748B", marginTop: 2 }}>
+                    <div style={{ fontSize: 11, color: "#A6B3D0", marginTop: 2 }}>
                       {selSquad.length} players &nbsp;·&nbsp;
                       {selSquad.filter(p => p.role === "Batsman").length} Bat &nbsp;
                       {selSquad.filter(p => p.role === "Bowler").length} Bowl &nbsp;
@@ -517,13 +517,13 @@ export default function TeamsView() {
                 </div>
 
                 {squadBusy && selSquad.length === 0
-                  ? <div style={{ textAlign: "center", padding: "30px 0", color: "#64748B", fontSize: 12 }}>Loading squad…</div>
+                  ? <div style={{ textAlign: "center", padding: "30px 0", color: "#A6B3D0", fontSize: 12 }}>Loading squad…</div>
                   : selSquad.length === 0
                     ? (
-                      <div style={{ textAlign: "center", padding: "48px 0", color: "#334155" }}>
+                      <div style={{ textAlign: "center", padding: "48px 0", color: "#8593B3" }}>
                         <div style={{ fontSize: 44, marginBottom: 12 }}>👥</div>
-                        <div style={{ fontSize: 14, color: "#475569", fontWeight: 600 }}>No players in this squad yet</div>
-                        <div style={{ fontSize: 12, color: "#334155", marginTop: 4 }}>Squads form after the auction — add players here as they are picked.</div>
+                        <div style={{ fontSize: 14, color: "#94A3C4", fontWeight: 600 }}>No players in this squad yet</div>
+                        <div style={{ fontSize: 12, color: "#8593B3", marginTop: 4 }}>Squads form after the auction — add players here as they are picked.</div>
                         <button onClick={() => { setModalErr(""); setNp(EMPTY_NP); setPlayerModal({ mode: "add" }); }} style={{ marginTop: 14, padding: "10px 22px", borderRadius: 10, border: "none", background: "#FF6B0022", color: "#FF6B00", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>+ Add First Player</button>
                       </div>
                     )
@@ -532,21 +532,21 @@ export default function TeamsView() {
                         {selSquad.map(p => {
                           const s = ls(p);
                           return (
-                            <div key={p.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", background: "#060B18", borderRadius: 12, border: "1px solid #1E293B", transition: "border-color .15s" }}
+                            <div key={p.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", background: "#243050", borderRadius: 12, border: "1px solid #33436B", transition: "border-color .15s" }}
                               onMouseEnter={e => e.currentTarget.style.borderColor = `${selTeam.color}55`}
-                              onMouseLeave={e => e.currentTarget.style.borderColor = "#1E293B"}>
+                              onMouseLeave={e => e.currentTarget.style.borderColor = "#33436B"}>
                               <Avatar url={p.photoUrl} name={p.name} size={44} color={roleColor(p.role)} />
                               <div style={{ flex: 1, minWidth: 0 }}>
                                 <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
                                   <span style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9" }}>{p.name}</span>
                                   {p.isCaptain && <span style={{ fontSize: 10, background: "#FFD70022", border: "1px solid #FFD70044", color: "#FFD700", fontWeight: 700, padding: "1px 7px", borderRadius: 5 }}>👑 C</span>}
-                                  {p.isViceCaptain && <span style={{ fontSize: 10, background: "rgba(255,255,255,.06)", color: "#94A3B8", fontWeight: 700, padding: "1px 7px", borderRadius: 5 }}>VC</span>}
-                                  {p.jerseyNo && <span style={{ fontSize: 10, color: "#334155", background: "#1E293B", padding: "1px 6px", borderRadius: 5 }}>#{p.jerseyNo}</span>}
+                                  {p.isViceCaptain && <span style={{ fontSize: 10, background: "rgba(255,255,255,0.18)", color: "#C3CEE3", fontWeight: 700, padding: "1px 7px", borderRadius: 5 }}>VC</span>}
+                                  {p.jerseyNo && <span style={{ fontSize: 10, color: "#8593B3", background: "#33436B", padding: "1px 6px", borderRadius: 5 }}>#{p.jerseyNo}</span>}
                                   {p.nationality === "Overseas" && <span style={{ fontSize: 9, background: "#3B82F622", color: "#3B82F6", fontWeight: 700, padding: "1px 7px", borderRadius: 5 }}>🌍 OS</span>}
                                 </div>
                                 <div style={{ display: "flex", gap: 6, marginTop: 4, flexWrap: "wrap" }}>
                                   <span style={{ fontSize: 10, padding: "2px 8px", borderRadius: 5, background: roleColor(p.role) + "22", color: roleColor(p.role), fontWeight: 700 }}>{roleEmoji(p.role)} {p.role}</span>
-                                  {(p.state || p.age) && <span style={{ fontSize: 10, color: "#475569" }}>{p.state}{p.state && p.age ? " · " : ""}{p.age ? `${p.age}y` : ""}</span>}
+                                  {(p.state || p.age) && <span style={{ fontSize: 10, color: "#94A3C4" }}>{p.state}{p.state && p.age ? " · " : ""}{p.age ? `${p.age}y` : ""}</span>}
                                   {p.auctionPrice && <span style={{ fontSize: 10, color: "#E8B23D", fontWeight: 700 }}>🏷 {p.auctionPrice}</span>}
                                 </div>
                               </div>
@@ -554,13 +554,13 @@ export default function TeamsView() {
                                 {[{ l: "R", v: s.runs, c: "#FF6B00" }, { l: "W", v: s.wickets, c: "#EF4444" }, { l: "Avg", v: s.avg, c: "#F59E0B" }, { l: "SR", v: s.sr, c: "#3B82F6" }].map(x => (
                                   <div key={x.l} style={{ textAlign: "center", minWidth: 32 }}>
                                     <div style={{ fontSize: 13, fontWeight: 800, color: x.c }}>{x.v || 0}</div>
-                                    <div style={{ fontSize: 9, color: "#475569" }}>{x.l}</div>
+                                    <div style={{ fontSize: 9, color: "#94A3C4" }}>{x.l}</div>
                                   </div>
                                 ))}
                               </div>
                               <div style={{ display: "flex", gap: 6 }}>
-                                <button onClick={() => setViewPlayer(p)} style={{ padding: "5px 10px", borderRadius: 7, border: "1px solid #1E293B", background: "transparent", color: "#94A3B8", fontSize: 11, cursor: "pointer" }}>Card</button>
-                                <button onClick={() => { setModalErr(""); setNp(playerToNp(p)); setPlayerModal({ mode: "edit", playerId: p.id }); }} style={{ padding: "5px 10px", borderRadius: 7, border: "1px solid #1E293B", background: "transparent", color: "#94A3B8", fontSize: 11, cursor: "pointer" }}>Edit</button>
+                                <button onClick={() => setViewPlayer(p)} style={{ padding: "5px 10px", borderRadius: 7, border: "1px solid #33436B", background: "transparent", color: "#C3CEE3", fontSize: 11, cursor: "pointer" }}>Card</button>
+                                <button onClick={() => { setModalErr(""); setNp(playerToNp(p)); setPlayerModal({ mode: "edit", playerId: p.id }); }} style={{ padding: "5px 10px", borderRadius: 7, border: "1px solid #33436B", background: "transparent", color: "#C3CEE3", fontSize: 11, cursor: "pointer" }}>Edit</button>
                                 <button onClick={() => removePlayer(p)} style={{ padding: "5px 8px", borderRadius: 7, border: "none", background: "#EF444422", color: "#EF4444", fontSize: 11, cursor: "pointer" }}>✕</button>
                               </div>
                             </div>
@@ -578,7 +578,7 @@ export default function TeamsView() {
               return (
                 <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                   {!a
-                    ? <div style={{ ...card, textAlign: "center", padding: "40px 0", color: "#475569" }}>No players yet — add players to see analytics.</div>
+                    ? <div style={{ ...card, textAlign: "center", padding: "40px 0", color: "#94A3C4" }}>No players yet — add players to see analytics.</div>
                     : (
                       <>
                         <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 12 }}>
@@ -593,7 +593,7 @@ export default function TeamsView() {
                             <div key={s.l} style={{ ...card, borderTop: `3px solid ${s.c}`, padding: "16px" }}>
                               <div style={{ fontSize: 20, marginBottom: 6 }}>{s.icon}</div>
                               <div style={{ fontSize: 24, fontWeight: 800, color: s.c }}>{s.v}</div>
-                              <div style={{ fontSize: 11, color: "#64748B", marginTop: 3 }}>{s.l}</div>
+                              <div style={{ fontSize: 11, color: "#A6B3D0", marginTop: 3 }}>{s.l}</div>
                             </div>
                           ))}
                         </div>
@@ -607,10 +607,10 @@ export default function TeamsView() {
                           ].map(r => (
                             <div key={r.role} style={{ marginBottom: 12 }}>
                               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                                <span style={{ fontSize: 12, color: "#94A3B8" }}>{roleEmoji(r.role)} {r.role}</span>
+                                <span style={{ fontSize: 12, color: "#C3CEE3" }}>{roleEmoji(r.role)} {r.role}</span>
                                 <span style={{ fontSize: 12, fontWeight: 700, color: r.color }}>{r.count}/{r.ideal} ideal</span>
                               </div>
-                              <div style={{ height: 8, borderRadius: 4, background: "#1E293B", overflow: "hidden" }}>
+                              <div style={{ height: 8, borderRadius: 4, background: "#33436B", overflow: "hidden" }}>
                                 <div style={{ height: "100%", width: `${Math.min((r.count / r.ideal) * 100, 100)}%`, background: r.color, borderRadius: 4, transition: "width .5s" }} />
                               </div>
                             </div>
@@ -630,28 +630,28 @@ export default function TeamsView() {
                 <div style={card}>
                   <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 16 }}>Match Results</div>
                   {hist.length === 0
-                    ? <div style={{ textAlign: "center", padding: "36px 0", color: "#475569", fontSize: 13 }}>No completed matches yet — results will appear here automatically once matches are played.</div>
+                    ? <div style={{ textAlign: "center", padding: "36px 0", color: "#94A3C4", fontSize: 13 }}>No completed matches yet — results will appear here automatically once matches are played.</div>
                     : (
                       <>
                         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                           {hist.map((m, i) => (
-                            <div key={i} style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 16px", background: "#060B18", borderRadius: 12, border: `1px solid ${resColor(m.result)}30` }}>
+                            <div key={i} style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 16px", background: "#243050", borderRadius: 12, border: `1px solid ${resColor(m.result)}30` }}>
                               <div style={{ width: 40, height: 40, borderRadius: 10, background: resColor(m.result) + "22", border: `2px solid ${resColor(m.result)}44`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                                 <span style={{ fontSize: m.result === "NR" ? 12 : 16, fontWeight: 900, color: resColor(m.result) }}>{m.result}</span>
                               </div>
                               <div style={{ flex: 1 }}>
                                 <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9" }}>vs {m.opponent}</div>
-                                {m.desc && <div style={{ fontSize: 11, color: "#475569", marginTop: 2 }}>{m.desc}</div>}
+                                {m.desc && <div style={{ fontSize: 11, color: "#94A3C4", marginTop: 2 }}>{m.desc}</div>}
                               </div>
                               <div style={{ textAlign: "right" }}>
-                                <div style={{ fontSize: 11, color: "#475569" }}>{m.date}</div>
+                                <div style={{ fontSize: 11, color: "#94A3C4" }}>{m.date}</div>
                                 <div style={{ fontSize: 11, fontWeight: 700, color: resColor(m.result), marginTop: 2 }}>{m.result === "W" ? "Victory" : m.result === "L" ? "Defeat" : "No Result"}</div>
                               </div>
                             </div>
                           ))}
                         </div>
-                        <div style={{ marginTop: 16, padding: "12px 14px", background: "#060B18", borderRadius: 10, border: "1px solid #1E293B" }}>
-                          <div style={{ fontSize: 11, color: "#64748B", marginBottom: 8 }}>Form Guide (Last 5)</div>
+                        <div style={{ marginTop: 16, padding: "12px 14px", background: "#243050", borderRadius: 10, border: "1px solid #33436B" }}>
+                          <div style={{ fontSize: 11, color: "#A6B3D0", marginBottom: 8 }}>Form Guide (Last 5)</div>
                           <div style={{ display: "flex", gap: 6 }}>
                             {hist.slice(0, 5).map((m, i) => (
                               <div key={i} style={{ width: 32, height: 32, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", background: resColor(m.result) + "30", border: `2px solid ${resColor(m.result)}60` }}>
@@ -684,7 +684,7 @@ export default function TeamsView() {
           </div>
           {modalErr && <div style={{ marginTop: 12, padding: "8px 12px", borderRadius: 8, background: "#EF444422", color: "#F87171", fontSize: 12, fontWeight: 600 }}>⚠ {modalErr}</div>}
           <div style={{ display: "flex", gap: 10, marginTop: 20 }}>
-            <button onClick={() => setShowAddTeam(false)} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: "1px solid #1E293B", background: "transparent", color: "#64748B", fontSize: 13, cursor: "pointer" }}>Cancel</button>
+            <button onClick={() => setShowAddTeam(false)} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: "1px solid #33436B", background: "transparent", color: "#A6B3D0", fontSize: 13, cursor: "pointer" }}>Cancel</button>
             <button disabled={modalBusy} onClick={submitAddTeam} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: "none", background: "linear-gradient(135deg,#FF6B00,#FF8C40)", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", opacity: modalBusy ? .6 : 1 }}>{modalBusy ? "Creating…" : "Create Team"}</button>
           </div>
         </>
@@ -710,7 +710,7 @@ export default function TeamsView() {
           {modalErr && <div style={{ marginTop: 12, padding: "8px 12px", borderRadius: 8, background: "#EF444422", color: "#F87171", fontSize: 12, fontWeight: 600 }}>⚠ {modalErr}</div>}
           <div style={{ display: "flex", gap: 10, marginTop: 20 }}>
             <button onClick={submitDeleteTeam} disabled={modalBusy} style={{ padding: "11px 16px", borderRadius: 10, border: "none", background: "#EF444422", color: "#EF4444", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>🗑 Delete</button>
-            <button onClick={() => setEditTeam(null)} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: "1px solid #1E293B", background: "transparent", color: "#64748B", fontSize: 13, cursor: "pointer" }}>Cancel</button>
+            <button onClick={() => setEditTeam(null)} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: "1px solid #33436B", background: "transparent", color: "#A6B3D0", fontSize: 13, cursor: "pointer" }}>Cancel</button>
             <button disabled={modalBusy} onClick={submitEditTeam} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: "none", background: "linear-gradient(135deg,#FF6B00,#FF8C40)", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", opacity: modalBusy ? .6 : 1 }}>{modalBusy ? "Saving…" : "Save Changes"}</button>
           </div>
         </>
@@ -720,11 +720,11 @@ export default function TeamsView() {
       {playerModal && selTeam && modalShell(560, (
         <>
           <div style={{ fontSize: 18, fontWeight: 800, color: "#F1F5F9", marginBottom: 4 }}>{playerModal.mode === "add" ? "➕ Add Player" : "✏️ Edit Player"} — {selTeam.name}</div>
-          <div style={{ fontSize: 11, color: "#64748B", marginBottom: 16 }}>Player will appear on the team's public page immediately after saving.</div>
+          <div style={{ fontSize: 11, color: "#A6B3D0", marginBottom: 16 }}>Player will appear on the team's public page immediately after saving.</div>
           {PlayerFormFields}
           {modalErr && <div style={{ marginTop: 12, padding: "8px 12px", borderRadius: 8, background: "#EF444422", color: "#F87171", fontSize: 12, fontWeight: 600 }}>⚠ {modalErr}</div>}
           <div style={{ display: "flex", gap: 10, marginTop: 20 }}>
-            <button onClick={() => { setPlayerModal(null); setNp(EMPTY_NP); }} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: "1px solid #1E293B", background: "transparent", color: "#64748B", fontSize: 13, cursor: "pointer" }}>Cancel</button>
+            <button onClick={() => { setPlayerModal(null); setNp(EMPTY_NP); }} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: "1px solid #33436B", background: "transparent", color: "#A6B3D0", fontSize: 13, cursor: "pointer" }}>Cancel</button>
             <button disabled={modalBusy} onClick={submitPlayer} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: "none", background: `linear-gradient(135deg,${selTeam.color},${selTeam.secondColor})`, color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", opacity: modalBusy ? .6 : 1 }}>{modalBusy ? "Saving…" : playerModal.mode === "add" ? "Add Player" : "Save Changes"}</button>
           </div>
         </>
@@ -743,34 +743,34 @@ export default function TeamsView() {
               </div>
               <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 6, flexWrap: "wrap" }}>
                 <span style={{ fontSize: 11, padding: "3px 10px", borderRadius: 6, background: roleColor(viewPlayer.role) + "22", color: roleColor(viewPlayer.role), fontWeight: 700 }}>{roleEmoji(viewPlayer.role)} {viewPlayer.role}</span>
-                {viewPlayer.jerseyNo && <span style={{ fontSize: 11, padding: "3px 10px", borderRadius: 6, background: "#1E293B", color: "#94A3B8" }}>#{viewPlayer.jerseyNo}</span>}
+                {viewPlayer.jerseyNo && <span style={{ fontSize: 11, padding: "3px 10px", borderRadius: 6, background: "#33436B", color: "#C3CEE3" }}>#{viewPlayer.jerseyNo}</span>}
                 {viewPlayer.auctionPrice && <span style={{ fontSize: 11, padding: "3px 10px", borderRadius: 6, background: "#E8B23D22", color: "#E8B23D", fontWeight: 700 }}>🏷 {viewPlayer.auctionPrice}</span>}
               </div>
-              <div style={{ fontSize: 11, color: "#475569", marginTop: 6 }}>
+              <div style={{ fontSize: 11, color: "#94A3C4", marginTop: 6 }}>
                 {[viewPlayer.state, viewPlayer.age ? `${viewPlayer.age}y` : "", viewPlayer.battingStyle, viewPlayer.bowlingStyle].filter(Boolean).join(" · ")}
               </div>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 8, marginBottom: 14 }}>
               {[
-                { l: "Mat",  v: s.matches, c: "#94A3B8" },
+                { l: "Mat",  v: s.matches, c: "#C3CEE3" },
                 { l: "Runs", v: s.runs,    c: "#FF6B00" },
                 { l: "Avg",  v: s.avg,     c: "#F59E0B" },
                 { l: "SR",   v: s.sr,      c: "#3B82F6" },
                 { l: "50s",  v: s.fifties, c: "#10B981" },
                 { l: "100s", v: s.centuries, c: "#FFD700" },
                 { l: "Wkts", v: s.wickets, c: "#EF4444" },
-                { l: "Eco",  v: s.economy, c: "#64748B" },
+                { l: "Eco",  v: s.economy, c: "#A6B3D0" },
               ].map(x => (
-                <div key={x.l} style={{ textAlign: "center", padding: "10px 6px", background: "#060B18", borderRadius: 10, border: "1px solid #1E293B" }}>
+                <div key={x.l} style={{ textAlign: "center", padding: "10px 6px", background: "#243050", borderRadius: 10, border: "1px solid #33436B" }}>
                   <div style={{ fontSize: 18, fontWeight: 800, color: x.c }}>{x.v || 0}</div>
-                  <div style={{ fontSize: 9, color: "#475569", marginTop: 2 }}>{x.l}</div>
+                  <div style={{ fontSize: 9, color: "#94A3C4", marginTop: 2 }}>{x.l}</div>
                 </div>
               ))}
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
               {[{ l: "Best Batting", v: s.bestBat, c: "#FF6B00" }, { l: "Best Bowling", v: s.bestBowl, c: "#EF4444" }].map(x => (
-                <div key={x.l} style={{ padding: "10px 12px", background: "#060B18", borderRadius: 10, border: `1px solid ${x.c}33` }}>
-                  <div style={{ fontSize: 10, color: "#475569", fontWeight: 700, marginBottom: 3 }}>{x.l}</div>
+                <div key={x.l} style={{ padding: "10px 12px", background: "#243050", borderRadius: 10, border: `1px solid ${x.c}33` }}>
+                  <div style={{ fontSize: 10, color: "#94A3C4", fontWeight: 700, marginBottom: 3 }}>{x.l}</div>
                   <div style={{ fontSize: 16, fontWeight: 800, color: x.c }}>{x.v || "—"}</div>
                 </div>
               ))}
@@ -808,7 +808,7 @@ export default function TeamsView() {
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: 10, alignItems: "center", marginBottom: 8 }}>
                   <div style={{ textAlign: "center" }}><TeamLogo url={tA.logoUrl} name={tA.name} size={48} color={tA.color} /><div style={{ fontSize: 12, fontWeight: 700, color: tA.color, marginTop: 4 }}>{tA.name}</div></div>
-                  <div style={{ fontSize: 16, fontWeight: 900, color: "#334155" }}>VS</div>
+                  <div style={{ fontSize: 16, fontWeight: 900, color: "#8593B3" }}>VS</div>
                   <div style={{ textAlign: "center" }}><TeamLogo url={tB.logoUrl} name={tB.name} size={48} color={tB.color} /><div style={{ fontSize: 12, fontWeight: 700, color: tB.color, marginTop: 4 }}>{tB.name}</div></div>
                 </div>
                 {[
@@ -819,16 +819,16 @@ export default function TeamsView() {
                   ["Total Wickets (last szn)", aA?.totalWickets ?? 0, aB?.totalWickets ?? 0],
                   ["Total Sixes (last szn)", aA?.totalSixes ?? 0, aB?.totalSixes ?? 0],
                 ].map(([l, a, b]: any) => (
-                  <div key={l} style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: 10, padding: "10px 12px", background: "#060B18", borderRadius: 10, border: "1px solid #1E293B", alignItems: "center" }}>
-                    <div style={{ textAlign: "center", fontSize: 16, fontWeight: 800, color: a >= b ? "#10B981" : "#64748B" }}>{a}</div>
-                    <div style={{ fontSize: 10, color: "#475569", fontWeight: 700, textTransform: "uppercase", minWidth: 130, textAlign: "center" }}>{l}</div>
-                    <div style={{ textAlign: "center", fontSize: 16, fontWeight: 800, color: b >= a ? "#10B981" : "#64748B" }}>{b}</div>
+                  <div key={l} style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: 10, padding: "10px 12px", background: "#243050", borderRadius: 10, border: "1px solid #33436B", alignItems: "center" }}>
+                    <div style={{ textAlign: "center", fontSize: 16, fontWeight: 800, color: a >= b ? "#10B981" : "#A6B3D0" }}>{a}</div>
+                    <div style={{ fontSize: 10, color: "#94A3C4", fontWeight: 700, textTransform: "uppercase", minWidth: 130, textAlign: "center" }}>{l}</div>
+                    <div style={{ textAlign: "center", fontSize: 16, fontWeight: 800, color: b >= a ? "#10B981" : "#A6B3D0" }}>{b}</div>
                   </div>
                 ))}
               </div>
-            ) : <div style={{ textAlign: "center", padding: "24px 0", color: "#475569", fontSize: 12 }}>Select two teams to compare.</div>}
+            ) : <div style={{ textAlign: "center", padding: "24px 0", color: "#94A3C4", fontSize: 12 }}>Select two teams to compare.</div>}
             <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 16 }}>
-              <button onClick={() => setShowCompare(false)} style={{ padding: "9px 20px", borderRadius: 8, border: "1px solid #1E293B", background: "transparent", color: "#64748B", fontSize: 12, cursor: "pointer" }}>Close</button>
+              <button onClick={() => setShowCompare(false)} style={{ padding: "9px 20px", borderRadius: 8, border: "1px solid #33436B", background: "transparent", color: "#A6B3D0", fontSize: 12, cursor: "pointer" }}>Close</button>
             </div>
           </>
         ));

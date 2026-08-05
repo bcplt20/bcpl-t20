@@ -81,7 +81,7 @@ const CSS = `
   @media(min-width:768px){.sh-W{padding:0 32px;}}
   @media(min-width:1280px){.sh-W{padding:0 48px;}}
 
-  .sh-link{font-family:'Barlow Condensed','Mukta',sans-serif;font-weight:700;font-size:15.5px;letter-spacing:.09em;color:rgba(255,255,255,.62);text-decoration:none;text-transform:uppercase;transition:color .2s;white-space:nowrap;padding:6px 2px;}
+  .sh-link{font-family:'Barlow Condensed','Mukta',sans-serif;font-weight:700;font-size:15.5px;letter-spacing:.09em;color:rgba(255,255,255,0.88);text-decoration:none;text-transform:uppercase;transition:color .2s;white-space:nowrap;padding:6px 2px;}
   .sh-link:hover{color:#fff;}
   .sh-link-active{color:#FF7A29;}
   .sh-link-active:hover{color:#FF7A29;}
@@ -116,22 +116,22 @@ const CSS = `
   .sh-cta:hover{opacity:.92;transform:translateY(-1px);}
 
   .sh-ghost{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.18);border-radius:var(--r,14px);color:#fff;font-family:'Barlow Condensed','Mukta',sans-serif;font-weight:800;letter-spacing:.07em;cursor:pointer;text-transform:uppercase;text-decoration:none;white-space:nowrap;transition:border-color .2s,background .2s;}
-  .sh-ghost:hover{border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.09);}
+  .sh-ghost:hover{border-color:rgba(255,255,255,.4);background:rgba(255,255,255,0.18);}
   /* When a contextual CTA is present, MY BCPL only fits from 1280px up
      (the avatar still links to the profile below that width). */
   .sh-mybcpl{display:none;}
   @media(min-width:1280px){.sh-mybcpl{display:inline-flex;}}
 
-  .sh-lang{display:inline-flex;align-items:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:2px;gap:2px;flex-shrink:0;}
-  .sh-lang button{border:none;background:transparent;color:rgba(255,255,255,.5);font-family:'Inter','Mukta',sans-serif;font-weight:700;font-size:11px;letter-spacing:.04em;padding:6px 10px;border-radius:7px;cursor:pointer;transition:background .2s,color .2s;line-height:1;}
+  .sh-lang{display:inline-flex;align-items:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,0.2);border-radius:9px;padding:2px;gap:2px;flex-shrink:0;}
+  .sh-lang button{border:none;background:transparent;color:rgba(255,255,255,0.72);font-family:'Inter','Mukta',sans-serif;font-weight:700;font-size:11px;letter-spacing:.04em;padding:6px 10px;border-radius:7px;cursor:pointer;transition:background .2s,color .2s;line-height:1;}
   .sh-lang button.on{background:rgba(255,122,41,.16);color:#FF7A29;}
 
-  .sh-mob{position:fixed;inset:0;background:rgba(4,10,20,.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);z-index:1500;display:flex;flex-direction:column;padding:16px 28px calc(28px + env(safe-area-inset-bottom,0px));overflow-y:auto;animation:shMobIn .22s ease;}
+  .sh-mob{position:fixed;inset:0;background:rgba(16,31,57,.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);z-index:1500;display:flex;flex-direction:column;padding:16px 28px calc(28px + env(safe-area-inset-bottom,0px));overflow-y:auto;animation:shMobIn .22s ease;}
   @keyframes shMobIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
-  .sh-moblink{padding:13px 0;border-bottom:1px solid rgba(255,255,255,.06);font-family:'Barlow Condensed','Mukta',sans-serif;font-weight:800;font-size:24px;letter-spacing:.05em;color:rgba(255,255,255,.85);text-transform:uppercase;cursor:pointer;text-decoration:none;display:block;}
+  .sh-moblink{padding:13px 0;border-bottom:1px solid rgba(255,255,255,0.18);font-family:'Barlow Condensed','Mukta',sans-serif;font-weight:800;font-size:24px;letter-spacing:.05em;color:rgba(255,255,255,0.88);text-transform:uppercase;cursor:pointer;text-decoration:none;display:block;}
   .sh-moblink:active,.sh-moblink:hover{color:#FF7A29;}
   .sh-mobsupport{display:flex;gap:12px;margin-top:18px;}
-  .sh-mobsupport a{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px;border:1px solid rgba(255,255,255,.14);border-radius:12px;color:rgba(255,255,255,.75);font-family:'Inter','Mukta',sans-serif;font-weight:600;font-size:14px;text-decoration:none;background:rgba(255,255,255,.03);}
+  .sh-mobsupport a{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px;border:1px solid rgba(255,255,255,0.2);border-radius:12px;color:rgba(255,255,255,0.88);font-family:'Inter','Mukta',sans-serif;font-weight:600;font-size:14px;text-decoration:none;background:rgba(255,255,255,.03);}
 
   .sh-ham{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;background:none;border:none;cursor:pointer;width:44px;height:44px;padding:10px;flex-shrink:0;}
   .sh-ham span{width:22px;height:2px;background:#fff;display:block;border-radius:2px;}
@@ -210,10 +210,10 @@ export function SiteHeader({ active }: { active?: string }) {
 
       <nav style={{
         position: "sticky", top: 0, zIndex: 200,
-        background: scrolled ? "rgba(4,11,22,.88)" : "transparent",
+        background: scrolled ? "rgba(16,32,59,.88)" : "transparent",
         backdropFilter: scrolled ? "blur(18px) saturate(1.5)" : "none",
         WebkitBackdropFilter: scrolled ? "blur(18px) saturate(1.5)" : "none",
-        borderBottom: scrolled ? "1px solid rgba(255,255,255,.08)" : "1px solid transparent",
+        borderBottom: scrolled ? "1px solid rgba(255,255,255,0.18)" : "1px solid transparent",
         boxShadow: scrolled ? "0 8px 32px rgba(0,0,0,.35)" : "none",
         transition: "background .3s, border-color .3s, box-shadow .3s",
       }}>
@@ -299,7 +299,7 @@ export function SiteHeader({ active }: { active?: string }) {
             </Link>
           ))}
 
-          <div style={{ padding: "14px 0", borderBottom: "1px solid rgba(255,255,255,.06)" }}>
+          <div style={{ padding: "14px 0", borderBottom: "1px solid rgba(255,255,255,0.18)" }}>
             <NavUser variant="mobile" onNavigate={() => setMenuOpen(false)} />
           </div>
 

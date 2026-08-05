@@ -115,15 +115,15 @@ export function SampleVideosCard() {
   };
 
   return (
-    <div style={{ background: "linear-gradient(135deg,#0D1526,#0A1020)", border: "1px solid #1E293B", borderRadius: 16, padding: 20 }}>
+    <div style={{ background: "linear-gradient(135deg,#2C3A5E,#1F2B49)", border: "1px solid #33436B", borderRadius: 16, padding: 20 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8, marginBottom: 4 }}>
         <div>
           <div style={{ fontSize: 15, fontWeight: 800, color: "#F1F5F9" }}>🎬 Sample Videos (shown to players)</div>
-          <div style={{ fontSize: 12, color: "#64748B", marginTop: 2 }}>
+          <div style={{ fontSize: 12, color: "#A6B3D0", marginTop: 2 }}>
             These play on the "Upload Trial Video" page. Upload a video file or paste a video URL for each role.
           </div>
         </div>
-        <button onClick={load} style={{ padding: "8px 14px", borderRadius: 9, border: "1px solid #1E293B", background: "transparent", color: "#64748B", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>↺ Reload</button>
+        <button onClick={load} style={{ padding: "8px 14px", borderRadius: 9, border: "1px solid #33436B", background: "transparent", color: "#A6B3D0", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>↺ Reload</button>
       </div>
 
       {notice && (
@@ -134,7 +134,7 @@ export function SampleVideosCard() {
       )}
 
       {loading ? (
-        <div style={{ padding: 18, color: "#64748B", fontSize: 13 }}>Loading sample videos…</div>
+        <div style={{ padding: 18, color: "#A6B3D0", fontSize: 13 }}>Loading sample videos…</div>
       ) : data === null ? (
         <div style={{ padding: 18, color: "#EF4444", fontSize: 13 }}>Could not load — use Reload to try again.</div>
       ) : (
@@ -144,18 +144,18 @@ export function SampleVideosCard() {
             const isBusy = busy === r.key;        // this role is being worked on (label)
             const anyBusy = busy !== null;        // block ALL actions while any write runs
             return (
-              <div key={r.key} style={{ border: "1px solid #1E293B", borderRadius: 12, padding: 14, background: "#0A1020" }}>
+              <div key={r.key} style={{ border: "1px solid #33436B", borderRadius: 12, padding: 14, background: "#1F2B49" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
                   <span style={{ fontSize: 13, fontWeight: 800, color: "#E2E8F0" }}>{r.icon} {r.label}</span>
                   {entry
                     ? <span style={{ fontSize: 10, fontWeight: 800, color: "#22C55E", background: "#22C55E15", border: "1px solid #22C55E40", padding: "3px 8px", borderRadius: 6 }}>LIVE ✓</span>
-                    : <span style={{ fontSize: 10, fontWeight: 700, color: "#64748B", background: "#64748B15", border: "1px solid #33415555", padding: "3px 8px", borderRadius: 6 }}>NOT SET</span>}
+                    : <span style={{ fontSize: 10, fontWeight: 700, color: "#A6B3D0", background: "#A6B3D015", border: "1px solid #8593B355", padding: "3px 8px", borderRadius: 6 }}>NOT SET</span>}
                 </div>
 
                 {entry && (
                   <div style={{ marginBottom: 10 }}>
                     <video src={entry.url} controls preload="metadata" style={{ width: "100%", maxHeight: 130, background: "#000", borderRadius: 8, display: "block" }} />
-                    <div style={{ fontSize: 10, color: "#64748B", marginTop: 4, wordBreak: "break-all" }}>{entry.label || entry.url}</div>
+                    <div style={{ fontSize: 10, color: "#A6B3D0", marginTop: 4, wordBreak: "break-all" }}>{entry.label || entry.url}</div>
                   </div>
                 )}
 
@@ -179,7 +179,7 @@ export function SampleVideosCard() {
                       onChange={e => setUrlDrafts(d => ({ ...d, [r.key]: e.target.value }))}
                       placeholder="…or paste video URL"
                       disabled={anyBusy}
-                      style={{ flex: 1, minWidth: 0, padding: "8px 10px", borderRadius: 8, border: "1px solid #1E293B", background: "#0D1526", color: "#E2E8F0", fontSize: 12 }}
+                      style={{ flex: 1, minWidth: 0, padding: "8px 10px", borderRadius: 8, border: "1px solid #33436B", background: "#2C3A5E", color: "#E2E8F0", fontSize: 12 }}
                     />
                     <button disabled={anyBusy || !(urlDrafts[r.key] ?? "").trim()} onClick={() => onSaveUrl(r.key)}
                       style={{ padding: "8px 12px", borderRadius: 8, border: "1px solid #22C55E40", background: "#22C55E15", color: "#22C55E", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>

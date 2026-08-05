@@ -20,7 +20,7 @@ const ROLE_META: Record<string, { label: string; color: string; req: string; tip
 };
 
 const SAMPLE_VIDEOS = [
-  { role:'Batsman',       color:'#3B82F6', gradient:'linear-gradient(135deg,#12274C 0%,#1a3a6e 50%,#0d2a52 100%)', duration:'1:52', description:'Cover drive · Pull shot · Sweep shot · Footwork', what:'Watch how to demonstrate 3+ strokes clearly on camera — stance, backlift, and follow-through all visible.', ytSearch:'cricket batting trial video technique showcase', badge:'Most Selected', badgeColor:'#3B82F6' },
+  { role:'Batsman',       color:'#3B82F6', gradient:'linear-gradient(135deg,#203C6E 0%,#25477E 50%,#1D4172 100%)', duration:'1:52', description:'Cover drive · Pull shot · Sweep shot · Footwork', what:'Watch how to demonstrate 3+ strokes clearly on camera — stance, backlift, and follow-through all visible.', ytSearch:'cricket batting trial video technique showcase', badge:'Most Selected', badgeColor:'#3B82F6' },
   { role:'Bowler',        color:'#8B5CF6', gradient:'linear-gradient(135deg,#1a0a44 0%,#3a1a6e 50%,#2a0d52 100%)', duration:'1:48', description:'Outswinger · Yorker · Change of pace · Run-up', what:'Full run-up visible, delivery stride, ball release — your action, seam position, and variation are assessed against the criteria.', ytSearch:'cricket bowling trial video technique fast medium spin', badge:'High Demand', badgeColor:'#8B5CF6' },
   { role:'Wicket-Keeper', color:'#06B6D4', gradient:'linear-gradient(135deg,#041f2e 0%,#0a3d4f 50%,#062a3a 100%)', duration:'1:55', description:'Standing up · Stumpings · Catches · Wide takes', what:'Film at chest height from mid-off angle — glove positioning, quick release, and agility are key scoring factors.', ytSearch:'cricket wicket keeper trial video stumping catch technique', badge:'Rare Role', badgeColor:'#06B6D4' },
   { role:'All-Rounder',   color:'#E8B23D', gradient:'linear-gradient(135deg,#2e1f04 0%,#4f3a0a 50%,#3a2a06 100%)', duration:'2:00', description:'1 min batting · 1 min bowling · Clear transitions', what:'Split exactly 50-50. Use a visible title card between segments. The criteria look for equal competence in both skills.', ytSearch:'cricket all rounder trial video batting bowling showcase', badge:'Top Auction', badgeColor:'#E8B23D' },
@@ -432,7 +432,7 @@ export function Phase1VideoUpload() {
             <Link href="/register/result" style={{ flex:1, minWidth:160, display:'block', background:'var(--green)', color:'#fff', textDecoration:'none', padding:'14px 24px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:15, letterSpacing:'.06em', textTransform:'uppercase' }}>
               {t('CHECK MY STATUS', 'मेरा स्टेटस देखें')} →
             </Link>
-            <Link href="/" style={{ flex:1, minWidth:160, display:'block', background:'rgba(255,255,255,0.06)', border:'1px solid var(--line)', color:'var(--ink-2)', textDecoration:'none', padding:'14px 24px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:15, letterSpacing:'.06em', textTransform:'uppercase' }}>
+            <Link href="/" style={{ flex:1, minWidth:160, display:'block', background:'rgba(255,255,255,0.18)', border:'1px solid var(--line)', color:'var(--ink-2)', textDecoration:'none', padding:'14px 24px', borderRadius:'var(--r)', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:15, letterSpacing:'.06em', textTransform:'uppercase' }}>
               {t('GO HOME', 'होम पर जाएं')}
             </Link>
           </div>
@@ -478,14 +478,14 @@ export function Phase1VideoUpload() {
         .col-left{flex:1;min-width:0}
         .col-right{flex:1;min-width:0}
         
-        .progress-bar{height:8px;background:rgba(255,255,255,0.08);border-radius:4px;overflow:hidden;margin-top:12px;}
+        .progress-bar{height:8px;background:rgba(255,255,255,0.18);border-radius:4px;overflow:hidden;margin-top:12px;}
         .progress-fill{height:100%;background:linear-gradient(90deg,var(--orange),var(--gold));border-radius:4px;transition:width .3s ease;animation:progressPulse 1.5s ease infinite;}
       `}</style>
 
       <SiteHeader />
 
       {/* ── PAGE HEADER ── */}
-      <div style={{ background:'linear-gradient(180deg,#0B121E 0%,var(--bg) 100%)', borderBottom:'1px solid rgba(255,255,255,0.06)', paddingTop:40, paddingBottom:36 }}>
+      <div style={{ background:'linear-gradient(180deg,#182741 0%,var(--bg) 100%)', borderBottom:'1px solid rgba(255,255,255,0.18)', paddingTop:40, paddingBottom:36 }}>
         <div className="W">
           <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', flexWrap:'wrap', gap:16 }}>
             <div style={{ flex:1, minWidth:0 }}>
@@ -504,7 +504,7 @@ export function Phase1VideoUpload() {
                 <div style={{ display:'flex', gap:6, justifyContent:'center' }}>
                   {([[cd.d, t('DAYS','दिन')], [cd.h, t('HRS','घंटे')], [cd.m, t('MIN','मिनट')], [cd.s, t('SEC','सेकंड')]] as [number, string][]).map(([v, lbl], i) => (
                     <div key={i} style={{ textAlign:'center', minWidth:46 }}>
-                      <div style={{ background:'rgba(0,0,0,0.35)', border:'1px solid ' + (cd.urgent ? 'rgba(239,68,68,0.35)' : 'rgba(255,255,255,0.1)'), borderRadius:8, padding:'8px 6px', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:22, lineHeight:1, color: cd.urgent ? 'var(--red)' : 'var(--ink)', fontVariantNumeric:'tabular-nums' }}>
+                      <div style={{ background:'rgba(0,0,0,0.35)', border:'1px solid ' + (cd.urgent ? 'rgba(239,68,68,0.35)' : 'rgba(255,255,255,0.18)'), borderRadius:8, padding:'8px 6px', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:22, lineHeight:1, color: cd.urgent ? 'var(--red)' : 'var(--ink)', fontVariantNumeric:'tabular-nums' }}>
                         {String(v).padStart(2, '0')}
                       </div>
                       <div style={{ fontSize:9, fontWeight:800, letterSpacing:'.12em', color:'var(--ink-3)', marginTop:4, textTransform:'uppercase' }}>{lbl}</div>
@@ -518,7 +518,7 @@ export function Phase1VideoUpload() {
           {/* ── DIGITAL PLAYER CARD ── */}
           <div style={{ marginTop:28, maxWidth:520, background:'linear-gradient(145deg,rgba(255,255,255,0.05),rgba(255,255,255,0.015))', border:'1px solid var(--line)', borderRadius:'var(--r)', overflow:'hidden' }}>
             <div style={{ background:'linear-gradient(135deg,var(--orange),var(--orange-2))', padding:'10px 18px', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-              <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:11, letterSpacing:'.2em', color:'rgba(255,255,255,0.85)' }}>BCPL · {t('SEASON 5', 'सीज़न 5')}</span>
+              <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:11, letterSpacing:'.2em', color:'rgba(255,255,255,0.88)' }}>BCPL · {t('SEASON 5', 'सीज़न 5')}</span>
               <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:11, letterSpacing:'.14em', color:'#fff', background:'rgba(0,0,0,0.25)', padding:'3px 10px', borderRadius:12 }}>{t('OFFICIAL PLAYER CARD', 'आधिकारिक प्लेयर कार्ड')}</span>
             </div>
             <div style={{ padding:'16px 18px' }}>
@@ -532,7 +532,7 @@ export function Phase1VideoUpload() {
                   <div style={{ fontFamily:'monospace', fontWeight:700, fontSize:16, color:'var(--gold)', letterSpacing:'.04em' }}>{regNumber ?? shortRegId}</div>
                 </div>
               </div>
-              <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:10, borderTop:'1px solid rgba(255,255,255,0.06)', paddingTop:12 }}>
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:10, borderTop:'1px solid rgba(255,255,255,0.18)', paddingTop:12 }}>
                 <div>
                   <div style={{ fontSize:9, fontWeight:800, letterSpacing:'.14em', color:'var(--ink-3)', marginBottom:3 }}>{t('ROLE', 'भूमिका')}</div>
                   <div style={{ fontSize:13, fontWeight:700, color:'#60A5FA' }}>{roleMeta.label}</div>

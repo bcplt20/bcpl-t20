@@ -11,7 +11,7 @@ import { BASE as API_BASE } from '../lib/adminHttp';
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-body { background:#0E1624; }
+body { background:#1C2B47; }
 .wrap { max-width:1200px; margin:0 auto; padding:0 20px; }
 @media(min-width:768px){ .wrap{padding:0 32px} }
 @media(min-width:1280px){ .wrap{padding:0 48px} }
@@ -19,7 +19,7 @@ body { background:#0E1624; }
 .v3-h { font-family:'Barlow Condensed','Mukta','Montserrat',sans-serif; font-weight:800; text-transform:uppercase; line-height:.95; letter-spacing:.015em; }
 .shimmer-gold { background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D,#F5C842,#E8B23D); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation:shimmer 3s linear infinite; }
 .tag-pill { display:inline-flex; align-items:center; gap:6px; background:rgba(255,122,41,0.12); border:1px solid rgba(255,122,41,0.3); border-radius:100px; padding:5px 14px; font-size:11px; font-weight:700; font-family:var(--font-head); color:#FF7A29; letter-spacing:0.1em; }
-.glass-card { background:linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85)); backdrop-filter:blur(32px); border:1px solid rgba(255,255,255,0.09); border-radius:20px; box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06); }
+.glass-card { background:linear-gradient(135deg,rgba(30,55,105,0.9),rgba(23,43,81,0.85)); backdrop-filter:blur(32px); border:1px solid rgba(255,255,255,0.18); border-radius:20px; box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.18); }
 @keyframes pulseGlow { 0%,100%{box-shadow:0 0 16px rgba(255,122,41,0.4)} 50%{box-shadow:0 0 36px rgba(255,122,41,0.8),0 0 60px rgba(255,122,41,0.3)} }
 @keyframes shimmer { 0%{background-position:-200% center} 100%{background-position:200% center} }
 @keyframes scanPulse { 0%,100%{opacity:0.03} 50%{opacity:0.08} }
@@ -30,12 +30,12 @@ body { background:#0E1624; }
 .photo-masonry { columns:2 160px; column-gap:12px; }
 @media(min-width:640px){ .photo-masonry { columns:3 220px; column-gap:14px; } }
 @media(min-width:1024px){ .photo-masonry { columns:4 260px; column-gap:16px; } }
-.photo-card { position:relative; border-radius:14px; overflow:hidden; cursor:zoom-in; break-inside:avoid; margin-bottom:14px; border:1px solid rgba(255,255,255,0.07); background:#121F2F; }
+.photo-card { position:relative; border-radius:14px; overflow:hidden; cursor:zoom-in; break-inside:avoid; margin-bottom:14px; border:1px solid rgba(255,255,255,0.18); background:#1F3652; }
 .photo-card img { width:100%; height:auto; display:block; transition:transform .3s ease; }
 .photo-card:hover img { transform:scale(1.04); }
 .photo-card .photo-overlay { position:absolute; inset:0; background:linear-gradient(0deg,rgba(0,0,0,0.6) 0%,transparent 45%); opacity:0; transition:opacity .25s; display:flex; align-items:flex-end; padding:12px; }
 .photo-card:hover .photo-overlay { opacity:1; }
-.lb-btn { background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); border-radius:12px; color:#fff; cursor:pointer; font-size:20px; line-height:1; padding:12px 16px; transition:background .2s; }
+.lb-btn { background:rgba(255,255,255,0.18); border:1px solid rgba(255,255,255,0.2); border-radius:12px; color:#fff; cursor:pointer; font-size:20px; line-height:1; padding:12px 16px; transition:background .2s; }
 .lb-btn:hover { background:rgba(255,255,255,0.18); }
 .load-more-btn { background:rgba(255,122,41,0.1); border:1.5px solid rgba(255,122,41,0.45); border-radius:14px; color:#FF7A29; font-family:var(--font-head); font-weight:800; font-size:14px; letter-spacing:.05em; padding:14px 40px; cursor:pointer; transition:all .2s; }
 .load-more-btn:hover { background:rgba(255,122,41,0.2); transform:translateY(-2px); }
@@ -178,7 +178,7 @@ export function Photos() {
   }, [lbAlbum === null]);
 
   return (
-    <div style={{minHeight:'100vh',background:'#0E1624',fontFamily:'Inter,sans-serif',position:'relative'}}>
+    <div style={{minHeight:'100vh',background:'#1C2B47',fontFamily:'Inter,sans-serif',position:'relative'}}>
       <style>{CSS}</style>
       <AmbientBg/>
       <SiteHeader active="Photos" />
@@ -288,7 +288,7 @@ export function Photos() {
             <h3 className="v3-h" style={{fontSize:'clamp(20px,3vw,28px)',color:'#fff',marginBottom:10}}>
               {t("Auction Videos","Auction Videos")} <span className="shimmer-gold">{t("Are Live","आ गई हैं")}</span>
             </h3>
-            <p style={{color:'rgba(255,255,255,0.5)',fontSize:14,lineHeight:1.7,maxWidth:460,margin:'0 auto 22px',fontFamily:'Inter,sans-serif'}}>
+            <p style={{color:'rgba(255,255,255,0.72)',fontSize:14,lineHeight:1.7,maxWidth:460,margin:'0 auto 22px',fontFamily:'Inter,sans-serif'}}>
               {t("Watch the full Season 4 auction stream and official clips from the auction floor on the videos page.","Season 4 auction का पूरा stream और auction floor की official clips videos page पर देखिए।")}
             </p>
             <div style={{display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap'}}>
@@ -308,7 +308,7 @@ export function Photos() {
       {/* LIGHTBOX */}
       {lightbox !== null && lbSection && lbSection.photos[lightbox.idx] && (
         <div onClick={() => setLightbox(null)}
-          style={{position:'fixed',inset:0,zIndex:2000,background:'rgba(3,7,15,0.94)',display:'flex',alignItems:'center',justifyContent:'center',animation:'lbFade .2s ease both',padding:'clamp(8px,3vw,32px)'}}>
+          style={{position:'fixed',inset:0,zIndex:2000,background:'rgba(14,27,52,0.94)',display:'flex',alignItems:'center',justifyContent:'center',animation:'lbFade .2s ease both',padding:'clamp(8px,3vw,32px)'}}>
           <img loading="lazy" decoding="async" src={lbSection.fullUrl(lbSection.photos[lightbox.idx].f)} alt={t(lbSection.title[0], lbSection.title[1])}
             onClick={e => e.stopPropagation()}
             style={{maxWidth:'100%',maxHeight:'92vh',borderRadius:10,boxShadow:'0 30px 90px rgba(0,0,0,0.8)',objectFit:'contain'}} />
@@ -318,7 +318,7 @@ export function Photos() {
             style={{position:'absolute',left:10,top:'50%',transform:'translateY(-50%)'}}>‹</button>
           <button className="lb-btn" aria-label="Next" onClick={e => { e.stopPropagation(); setLightbox(lb => lb ? { ...lb, idx: (lb.idx + 1) % lbSection.photos.length } : lb); }}
             style={{position:'absolute',right:10,top:'50%',transform:'translateY(-50%)'}}>›</button>
-          <div style={{position:'absolute',bottom:18,left:'50%',transform:'translateX(-50%)',fontFamily:'var(--font-head)',fontWeight:800,fontSize:12,color:'rgba(255,255,255,0.6)',letterSpacing:'.1em'}}>
+          <div style={{position:'absolute',bottom:18,left:'50%',transform:'translateX(-50%)',fontFamily:'var(--font-head)',fontWeight:800,fontSize:12,color:'rgba(255,255,255,0.88)',letterSpacing:'.1em'}}>
             {t(lbSection.title[0], lbSection.title[1])} · {lightbox.idx + 1} / {lbSection.photos.length}
           </div>
         </div>
@@ -330,7 +330,7 @@ export function Photos() {
         const n = lbAlbumData.items.length;
         return (
           <div onClick={() => setLbAlbum(null)}
-            style={{position:'fixed',inset:0,zIndex:2000,background:'rgba(3,7,15,0.94)',display:'flex',alignItems:'center',justifyContent:'center',animation:'lbFade .2s ease both',padding:'clamp(8px,3vw,32px)'}}>
+            style={{position:'fixed',inset:0,zIndex:2000,background:'rgba(14,27,52,0.94)',display:'flex',alignItems:'center',justifyContent:'center',animation:'lbFade .2s ease both',padding:'clamp(8px,3vw,32px)'}}>
             {item.kind === 'photo' ? (
               <img loading="lazy" decoding="async" src={item.viewUrl} alt={item.name} onClick={e => e.stopPropagation()}
                 style={{maxWidth:'100%',maxHeight:'92vh',borderRadius:10,boxShadow:'0 30px 90px rgba(0,0,0,0.8)',objectFit:'contain'}} />
@@ -344,7 +344,7 @@ export function Photos() {
               style={{position:'absolute',left:10,top:'50%',transform:'translateY(-50%)'}}>‹</button>
             <button className="lb-btn" aria-label="Next" onClick={e => { e.stopPropagation(); setLbAlbum(lb => lb ? { ...lb, idx: (lb.idx + 1) % n } : lb); }}
               style={{position:'absolute',right:10,top:'50%',transform:'translateY(-50%)'}}>›</button>
-            <div style={{position:'absolute',bottom:18,left:'50%',transform:'translateX(-50%)',fontFamily:'var(--font-head)',fontWeight:800,fontSize:12,color:'rgba(255,255,255,0.6)',letterSpacing:'.1em'}}>
+            <div style={{position:'absolute',bottom:18,left:'50%',transform:'translateX(-50%)',fontFamily:'var(--font-head)',fontWeight:800,fontSize:12,color:'rgba(255,255,255,0.88)',letterSpacing:'.1em'}}>
               {lbAlbumData.name} · {lbAlbum.idx + 1} / {n}
             </div>
           </div>

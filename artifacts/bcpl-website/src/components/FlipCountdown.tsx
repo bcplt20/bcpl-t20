@@ -104,7 +104,7 @@ export function FlipCountdown({ target, size = "lg" }: { target: string; size?: 
             <span style={{ display: "inline-flex" }}>
               {g.ds.map((dg, di) => <Digit key={g.ds.length - di} value={dg} em={1.15} />)}
             </span>
-            <span style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,.5)", letterSpacing: ".08em", textTransform: "uppercase" }}>{g.label}</span>
+            <span style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.72)", letterSpacing: ".08em", textTransform: "uppercase" }}>{g.label}</span>
           </span>
         ))}
       </span>
@@ -116,11 +116,11 @@ export function FlipCountdown({ target, size = "lg" }: { target: string; size?: 
       {groups.map((g, gi) => (
         <div key={gi} style={{ display: "flex", alignItems: "center", gap: "clamp(8px,1.6vw,14px)" }}>
           <div style={{
-            background: "rgba(5,11,22,.82)", border: "1px solid rgba(255,255,255,.09)",
+            background: "rgba(17,32,59,.82)", border: "1px solid rgba(255,255,255,0.18)",
             borderTop: "2px solid rgba(255,122,41,.55)",
             borderRadius: "var(--r,14px)", padding: "clamp(10px,1.8vw,16px) clamp(12px,2.2vw,22px)",
             backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)",
-            boxShadow: "0 12px 40px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06)",
+            boxShadow: "0 12px 40px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,0.18)",
             minWidth: "clamp(64px,10vw,96px)",
           }}>
             <div style={{

@@ -138,7 +138,7 @@ export default function SponsorsView() {
   }
 
   const card: React.CSSProperties = {
-    background: "#0D1526", border: "1px solid #1E293B", borderRadius: 16, padding: "20px 22px",
+    background: "#2C3A5E", border: "1px solid #33436B", borderRadius: 16, padding: "20px 22px",
   };
 
   function resetForm() {
@@ -215,7 +215,7 @@ export default function SponsorsView() {
   if (!loaded) {
     return (
       <div style={{ padding: 28, fontFamily: "'Inter', sans-serif" }}>
-        <div style={{ ...card, textAlign: "center", padding: 40, color: "#475569" }}>Loading sponsors…</div>
+        <div style={{ ...card, textAlign: "center", padding: 40, color: "#94A3C4" }}>Loading sponsors…</div>
       </div>
     );
   }
@@ -239,7 +239,7 @@ export default function SponsorsView() {
             <div style={{ color: "#10B981", fontSize: 13, fontWeight: 800, marginBottom: 4 }}>
               Found {legacy.length} sponsor{legacy.length > 1 ? "s" : ""} saved in this browser (old version)
             </div>
-            <div style={{ color: "#64748B", fontSize: 12 }}>
+            <div style={{ color: "#A6B3D0", fontSize: 12 }}>
               They are not on the server yet, so they don't show on the website. Import them once to publish.
               {legacy.some(s => (s.logo || "").startsWith("data:")) && " (Logos need re-uploading after import.)"}
             </div>
@@ -262,7 +262,7 @@ export default function SponsorsView() {
           <div key={i} style={{ ...card, borderLeft: `3px solid ${s.color}` }}>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <div>
-                <div style={{ fontSize: 10, fontWeight: 700, color: "#475569", letterSpacing: 0.5, textTransform: "uppercase" }}>{s.label}</div>
+                <div style={{ fontSize: 10, fontWeight: 700, color: "#94A3C4", letterSpacing: 0.5, textTransform: "uppercase" }}>{s.label}</div>
                 <div style={{ fontSize: 24, fontWeight: 900, color: "#E2E8F0", margin: "6px 0 0" }}>{s.value}</div>
               </div>
               <div style={{ fontSize: 26 }}>{s.icon}</div>
@@ -285,7 +285,7 @@ export default function SponsorsView() {
       {/* Toolbar */}
       <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 12, marginBottom: 14 }}>
         {saving && <span style={{ color: "#F59E0B", fontSize: 12, fontWeight: 700 }}>Saving…</span>}
-        {!saving && loaded && !loadErr && <span style={{ color: "#334155", fontSize: 11 }}>✓ Synced — list order = website order (▲▼ to rearrange, #1 shows first)</span>}
+        {!saving && loaded && !loadErr && <span style={{ color: "#8593B3", fontSize: 11 }}>✓ Synced — list order = website order (▲▼ to rearrange, #1 shows first)</span>}
         <button onClick={() => { resetForm(); setShowAdd(s => !s); }}
           style={{ padding: "9px 20px", borderRadius: 10, border: "none", background: "linear-gradient(135deg, #FF6B00, #FF8C40)", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
           {showAdd && !editId ? "✕ Cancel" : "+ Add Sponsor"}
@@ -302,7 +302,7 @@ export default function SponsorsView() {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14, marginBottom: 14 }}>
             {/* Company Name — known list + custom */}
             <div style={{ gridColumn: "1 / -1" }}>
-              <label style={{ fontSize: 10, fontWeight: 700, color: "#475569", letterSpacing: 0.5 }}>COMPANY NAME *</label>
+              <label style={{ fontSize: 10, fontWeight: 700, color: "#94A3C4", letterSpacing: 0.5 }}>COMPANY NAME *</label>
               <select value={nameMode} onChange={e => {
                   const v = e.target.value;
                   setNameMode(v);
@@ -320,7 +320,7 @@ export default function SponsorsView() {
 
             {/* Category — free text */}
             <div>
-              <label style={{ fontSize: 10, fontWeight: 700, color: "#475569", letterSpacing: 0.5 }}>CATEGORY (custom)</label>
+              <label style={{ fontSize: 10, fontWeight: 700, color: "#94A3C4", letterSpacing: 0.5 }}>CATEGORY (custom)</label>
               <input value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
                 placeholder="Title / Powered By / Co-Sponsor…" style={inp} list="cat-list" />
               <datalist id="cat-list">
@@ -332,28 +332,28 @@ export default function SponsorsView() {
 
             {/* Amount */}
             <div>
-              <label style={{ fontSize: 10, fontWeight: 700, color: "#475569", letterSpacing: 0.5 }}>AMOUNT (private — admin only)</label>
+              <label style={{ fontSize: 10, fontWeight: 700, color: "#94A3C4", letterSpacing: 0.5 }}>AMOUNT (private — admin only)</label>
               <input value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))}
                 placeholder="e.g. ₹5L" style={inp} />
             </div>
 
             {/* Website */}
             <div>
-              <label style={{ fontSize: 10, fontWeight: 700, color: "#475569", letterSpacing: 0.5 }}>WEBSITE URL</label>
+              <label style={{ fontSize: 10, fontWeight: 700, color: "#94A3C4", letterSpacing: 0.5 }}>WEBSITE URL</label>
               <input value={form.website} onChange={e => setForm(f => ({ ...f, website: e.target.value }))}
                 placeholder="https://company.com" type="url" style={inp} />
             </div>
 
             {/* Contract Until */}
             <div>
-              <label style={{ fontSize: 10, fontWeight: 700, color: "#475569", letterSpacing: 0.5 }}>CONTRACT UNTIL</label>
+              <label style={{ fontSize: 10, fontWeight: 700, color: "#94A3C4", letterSpacing: 0.5 }}>CONTRACT UNTIL</label>
               <input value={form.contract} onChange={e => setForm(f => ({ ...f, contract: e.target.value }))}
                 type="date" style={{ ...inp, colorScheme: "dark" }} />
             </div>
 
             {/* Status */}
             <div>
-              <label style={{ fontSize: 10, fontWeight: 700, color: "#475569", letterSpacing: 0.5 }}>STATUS</label>
+              <label style={{ fontSize: 10, fontWeight: 700, color: "#94A3C4", letterSpacing: 0.5 }}>STATUS</label>
               <select value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value as Sponsor["status"] }))} style={inp as any}>
                 <option value="active">Active (shows on website)</option>
                 <option value="negotiating">Negotiating (hidden)</option>
@@ -364,18 +364,18 @@ export default function SponsorsView() {
 
           {/* Logo Upload */}
           <div style={{ marginBottom: 16 }}>
-            <label style={{ fontSize: 10, fontWeight: 700, color: "#475569", letterSpacing: 0.5, display: "block", marginBottom: 6 }}>SPONSOR LOGO</label>
+            <label style={{ fontSize: 10, fontWeight: 700, color: "#94A3C4", letterSpacing: 0.5, display: "block", marginBottom: 6 }}>SPONSOR LOGO</label>
             <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
               {form.logo ? (
                 <img src={logoDisplay(form.logo)} alt="logo preview"
-                  style={{ width: 64, height: 64, objectFit: "contain", borderRadius: 10, border: "1px solid #1E293B", background: "#fff", padding: 4 }} />
+                  style={{ width: 64, height: 64, objectFit: "contain", borderRadius: 10, border: "1px solid #33436B", background: "#fff", padding: 4 }} />
               ) : (
-                <div style={{ width: 64, height: 64, borderRadius: 10, border: "1px dashed #334155", background: "#080E1C", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, color: "#334155" }}>🖼</div>
+                <div style={{ width: 64, height: 64, borderRadius: 10, border: "1px dashed #8593B3", background: "#1F2B49", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, color: "#8593B3" }}>🖼</div>
               )}
               <div>
                 <input ref={fileRef} type="file" accept="image/*" style={{ display: "none" }} onChange={e => void handleLogoUpload(e)} />
                 <button onClick={() => fileRef.current?.click()} disabled={uploading}
-                  style={{ padding: "7px 16px", borderRadius: 8, border: "1px solid #1E293B", background: "#1E293B", color: "#94A3B8", fontSize: 12, cursor: uploading ? "wait" : "pointer", fontWeight: 600, marginBottom: 4, display: "block" }}>
+                  style={{ padding: "7px 16px", borderRadius: 8, border: "1px solid #33436B", background: "#33436B", color: "#C3CEE3", fontSize: 12, cursor: uploading ? "wait" : "pointer", fontWeight: 600, marginBottom: 4, display: "block" }}>
                   {uploading ? "⏳ Uploading…" : "📁 Upload Logo"}
                 </button>
                 {form.logo && !uploading && (
@@ -388,9 +388,9 @@ export default function SponsorsView() {
 
           <div style={{ display: "flex", gap: 10 }}>
             <button onClick={resetForm}
-              style={{ padding: "9px 22px", borderRadius: 8, border: "1px solid #1E293B", background: "transparent", color: "#64748B", fontSize: 13, cursor: "pointer" }}>Cancel</button>
+              style={{ padding: "9px 22px", borderRadius: 8, border: "1px solid #33436B", background: "transparent", color: "#A6B3D0", fontSize: 13, cursor: "pointer" }}>Cancel</button>
             <button onClick={handleSave} disabled={!form.name.trim() || uploading}
-              style={{ padding: "9px 22px", borderRadius: 8, border: "none", background: form.name.trim() ? "linear-gradient(135deg, #FF6B00, #FF8C40)" : "#1E293B", color: form.name.trim() ? "#fff" : "#475569", fontWeight: 700, fontSize: 13, cursor: "pointer" }}>
+              style={{ padding: "9px 22px", borderRadius: 8, border: "none", background: form.name.trim() ? "linear-gradient(135deg, #FF6B00, #FF8C40)" : "#33436B", color: form.name.trim() ? "#fff" : "#94A3C4", fontWeight: 700, fontSize: 13, cursor: "pointer" }}>
               {editId ? "✓ Save Changes" : "✓ Add Sponsor"}
             </button>
           </div>
@@ -400,7 +400,7 @@ export default function SponsorsView() {
       {/* Sponsor Cards */}
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         {sponsors.length === 0 && !loadErr && (
-          <div style={{ ...card, textAlign: "center", padding: 40, color: "#334155" }}>
+          <div style={{ ...card, textAlign: "center", padding: 40, color: "#8593B3" }}>
             No sponsors yet. Click "+ Add Sponsor" to add your first sponsor.
           </div>
         )}
@@ -410,13 +410,13 @@ export default function SponsorsView() {
               {/* Rank + reorder (top of the list shows first on the website) */}
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, flexShrink: 0 }}>
                 <button onClick={() => move(i, -1)} disabled={i === 0} title="Move up — shows earlier on the website"
-                  style={{ background: "none", border: "1px solid #1E293B", borderRadius: 6, color: i === 0 ? "#1E293B" : "#94A3B8", fontSize: 10, cursor: i === 0 ? "default" : "pointer", padding: "3px 8px", lineHeight: 1 }}>▲</button>
+                  style={{ background: "none", border: "1px solid #33436B", borderRadius: 6, color: i === 0 ? "#33436B" : "#C3CEE3", fontSize: 10, cursor: i === 0 ? "default" : "pointer", padding: "3px 8px", lineHeight: 1 }}>▲</button>
                 <span style={{ fontSize: 10, fontWeight: 800, color: "#FF6B00" }}>#{i + 1}</span>
                 <button onClick={() => move(i, 1)} disabled={i === sponsors.length - 1} title="Move down"
-                  style={{ background: "none", border: "1px solid #1E293B", borderRadius: 6, color: i === sponsors.length - 1 ? "#1E293B" : "#94A3B8", fontSize: 10, cursor: i === sponsors.length - 1 ? "default" : "pointer", padding: "3px 8px", lineHeight: 1 }}>▼</button>
+                  style={{ background: "none", border: "1px solid #33436B", borderRadius: 6, color: i === sponsors.length - 1 ? "#33436B" : "#C3CEE3", fontSize: 10, cursor: i === sponsors.length - 1 ? "default" : "pointer", padding: "3px 8px", lineHeight: 1 }}>▼</button>
               </div>
               {/* Logo */}
-              <div style={{ width: 52, height: 52, borderRadius: 12, background: "#060B18", border: "1.5px solid #1E293B", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", flexShrink: 0 }}>
+              <div style={{ width: 52, height: 52, borderRadius: 12, background: "#243050", border: "1.5px solid #33436B", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", flexShrink: 0 }}>
                 {s.logo
                   ? <img src={logoDisplay(s.logo)} alt={s.name} style={{ width: "100%", height: "100%", objectFit: "contain", padding: 4 }} />
                   : <span style={{ fontSize: 22 }}>🤝</span>}
@@ -441,7 +441,7 @@ export default function SponsorsView() {
                     </span>
                   )}
                 </div>
-                <div style={{ fontSize: 11, color: "#475569", marginTop: 4, display: "flex", gap: 12, flexWrap: "wrap" }}>
+                <div style={{ fontSize: 11, color: "#94A3C4", marginTop: 4, display: "flex", gap: 12, flexWrap: "wrap" }}>
                   {s.website && <span>🌐 {s.website.replace(/^https?:\/\//, "")}</span>}
                   {s.contract && <span>📅 Until {new Date(s.contract).toLocaleDateString("en-IN", { day:"2-digit", month:"short", year:"numeric" })}</span>}
                   <span>📍 {s.visibility}</span>
@@ -454,7 +454,7 @@ export default function SponsorsView() {
 
               <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
                 <button onClick={() => handleEdit(s)}
-                  style={{ background: "none", border: "1px solid #1E293B", borderRadius: 7, padding: "5px 12px", color: "#64748B", fontSize: 11, cursor: "pointer" }}>✏ Edit</button>
+                  style={{ background: "none", border: "1px solid #33436B", borderRadius: 7, padding: "5px 12px", color: "#A6B3D0", fontSize: 11, cursor: "pointer" }}>✏ Edit</button>
                 <button onClick={() => handleDelete(s.id, s.name)}
                   style={{ background: "none", border: "1px solid #EF444440", borderRadius: 7, padding: "5px 10px", color: "#EF4444", fontSize: 11, cursor: "pointer" }}>🗑</button>
               </div>
@@ -468,6 +468,6 @@ export default function SponsorsView() {
 
 const inp: React.CSSProperties = {
   width: "100%", marginTop: 5, padding: "9px 10px", borderRadius: 8,
-  border: "1px solid #1E293B", background: "#080E1C", color: "#E2E8F0",
+  border: "1px solid #33436B", background: "#1F2B49", color: "#E2E8F0",
   fontSize: 12, outline: "none", boxSizing: "border-box",
 };

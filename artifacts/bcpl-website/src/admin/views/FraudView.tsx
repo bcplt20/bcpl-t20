@@ -31,7 +31,7 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 function Badge({ status }: { status: string }) {
-  const color = STATUS_COLOR[status] ?? "#64748B";
+  const color = STATUS_COLOR[status] ?? "#A6B3D0";
   return (
     <span style={{
       display: "inline-block", padding: "3px 9px", borderRadius: 6,
@@ -108,8 +108,8 @@ export default function FraudView() {
   };
 
   const card: React.CSSProperties = {
-    background: "linear-gradient(135deg,#0D1526,#0A1020)",
-    border: "1px solid #1E293B", borderRadius: 16, padding: 20,
+    background: "linear-gradient(135deg,#2C3A5E,#1F2B49)",
+    border: "1px solid #33436B", borderRadius: 16, padding: 20,
   };
 
   const shown = flags.filter(f =>
@@ -127,9 +127,9 @@ export default function FraudView() {
 
   const chip = (active: boolean): React.CSSProperties => ({
     padding: "7px 13px", borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap",
-    border: "1px solid " + (active ? "#FF6B00" : "#1E293B"),
+    border: "1px solid " + (active ? "#FF6B00" : "#33436B"),
     background: active ? "#FF6B0022" : "transparent",
-    color: active ? "#FF6B00" : "#64748B",
+    color: active ? "#FF6B00" : "#A6B3D0",
   });
 
   return (
@@ -139,12 +139,12 @@ export default function FraudView() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 10 }}>
         <div>
           <div style={{ fontSize: 20, fontWeight: 800, color: "#F1F5F9" }}>Fraud Detection</div>
-          <div style={{ fontSize: 12, color: "#64748B", marginTop: 2 }}>
+          <div style={{ fontSize: 12, color: "#A6B3D0", marginTop: 2 }}>
             Duplicate video / Aadhaar-ref / PAN-ref findings — every flag needs manual review, nothing is automatic
           </div>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
-          <button onClick={() => load()} style={{ padding: "9px 16px", borderRadius: 9, border: "1px solid #1E293B", background: "transparent", color: "#64748B", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+          <button onClick={() => load()} style={{ padding: "9px 16px", borderRadius: 9, border: "1px solid #33436B", background: "transparent", color: "#A6B3D0", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
             ↺ Refresh
           </button>
           <button onClick={runScan} disabled={scanning}
@@ -171,7 +171,7 @@ export default function FraudView() {
           <div key={s.label} style={{ ...card, borderTop: "3px solid " + s.color, padding: 16, cursor: "pointer" }}
             onClick={() => setStatusF(s.f)}>
             <div style={{ fontSize: 26, fontWeight: 900, color: s.color }}>{loading ? "…" : s.value}</div>
-            <div style={{ fontSize: 10, color: "#64748B", marginTop: 4, lineHeight: 1.3 }}>{s.label}</div>
+            <div style={{ fontSize: 10, color: "#A6B3D0", marginTop: 4, lineHeight: 1.3 }}>{s.label}</div>
           </div>
         ))}
       </div>
@@ -185,7 +185,7 @@ export default function FraudView() {
             </button>
           ))}
         </div>
-        <div style={{ width: 1, height: 22, background: "#1E293B" }} />
+        <div style={{ width: 1, height: 22, background: "#33436B" }} />
         <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
           {["all", "duplicate_video", "duplicate_aadhaar", "duplicate_pan"].map(t => (
             <button key={t} onClick={() => setTypeF(t)} style={chip(typeF === t)}>
@@ -199,9 +199,9 @@ export default function FraudView() {
       <div style={{ display: "grid", gridTemplateColumns: sel ? "1fr 340px" : "1fr", gap: 12 }}>
         <div style={{ ...card, padding: 0, overflow: "hidden" }}>
           {loading ? (
-            <div style={{ padding: 60, textAlign: "center", color: "#334155", fontSize: 14 }}>Loading fraud findings…</div>
+            <div style={{ padding: 60, textAlign: "center", color: "#8593B3", fontSize: 14 }}>Loading fraud findings…</div>
           ) : shown.length === 0 ? (
-            <div style={{ padding: 60, textAlign: "center", color: "#334155", fontSize: 14 }}>
+            <div style={{ padding: 60, textAlign: "center", color: "#8593B3", fontSize: 14 }}>
               {flags.length === 0
                 ? "No findings yet — run a duplicate scan to check all registrations."
                 : "No findings match the current filters."}
@@ -210,9 +210,9 @@ export default function FraudView() {
             <div style={{ overflowX: "auto" }}>
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
                 <thead>
-                  <tr style={{ background: "#080E1C", borderBottom: "1px solid #1E293B" }}>
+                  <tr style={{ background: "#1F2B49", borderBottom: "1px solid #33436B" }}>
                     {["Player", "Reg #", "City", "Type", "Matched With", "Status", "Flagged On"].map(h => (
-                      <th key={h} style={{ padding: "10px 12px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#334155", letterSpacing: "0.06em", textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
+                      <th key={h} style={{ padding: "10px 12px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#8593B3", letterSpacing: "0.06em", textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -220,19 +220,19 @@ export default function FraudView() {
                   {shown.map((f, i) => (
                     <tr key={f.id}
                       onClick={() => setSel(sel?.id === f.id ? null : f)}
-                      style={{ borderBottom: "1px solid #0F172A", background: sel?.id === f.id ? "#FF6B0008" : i % 2 === 0 ? "transparent" : "#0A111C", cursor: "pointer" }}>
+                      style={{ borderBottom: "1px solid #3A4A72", background: sel?.id === f.id ? "#FF6B0008" : i % 2 === 0 ? "transparent" : "#283860", cursor: "pointer" }}>
                       <td style={{ padding: "10px 12px" }}>
                         <div style={{ fontWeight: 700, color: "#F1F5F9" }}>{f.player}</div>
-                        <div style={{ fontSize: 10, color: "#475569", marginTop: 1 }}>{f.phone || "—"}</div>
+                        <div style={{ fontSize: 10, color: "#94A3C4", marginTop: 1 }}>{f.phone || "—"}</div>
                       </td>
-                      <td style={{ padding: "10px 12px", color: "#94A3B8", whiteSpace: "nowrap" }}>{f.regNumber ?? "—"}</td>
-                      <td style={{ padding: "10px 12px", color: "#94A3B8", whiteSpace: "nowrap" }}>{f.trialCity || "—"}</td>
-                      <td style={{ padding: "10px 12px", color: "#94A3B8", whiteSpace: "nowrap" }}>{TYPE_LABEL[f.type] ?? f.type}</td>
-                      <td style={{ padding: "10px 12px", color: "#94A3B8" }}>
+                      <td style={{ padding: "10px 12px", color: "#C3CEE3", whiteSpace: "nowrap" }}>{f.regNumber ?? "—"}</td>
+                      <td style={{ padding: "10px 12px", color: "#C3CEE3", whiteSpace: "nowrap" }}>{f.trialCity || "—"}</td>
+                      <td style={{ padding: "10px 12px", color: "#C3CEE3", whiteSpace: "nowrap" }}>{TYPE_LABEL[f.type] ?? f.type}</td>
+                      <td style={{ padding: "10px 12px", color: "#C3CEE3" }}>
                         {evidenceOf(f).matched.length} other registration{evidenceOf(f).matched.length === 1 ? "" : "s"}
                       </td>
                       <td style={{ padding: "10px 12px" }}><Badge status={f.status} /></td>
-                      <td style={{ padding: "10px 12px", color: "#475569", whiteSpace: "nowrap" }}>
+                      <td style={{ padding: "10px 12px", color: "#94A3C4", whiteSpace: "nowrap" }}>
                         {f.createdAt ? new Date(f.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short" }) : "—"}
                       </td>
                     </tr>
@@ -250,25 +250,25 @@ export default function FraudView() {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
                 <div>
                   <div style={{ fontSize: 15, fontWeight: 800, color: "#F1F5F9" }}>{sel.player}</div>
-                  <div style={{ fontSize: 11, color: "#475569", marginTop: 2 }}>{sel.regNumber ?? "—"} · {sel.trialCity || "—"}</div>
+                  <div style={{ fontSize: 11, color: "#94A3C4", marginTop: 2 }}>{sel.regNumber ?? "—"} · {sel.trialCity || "—"}</div>
                 </div>
-                <button onClick={() => setSel(null)} style={{ background: "none", border: "none", color: "#334155", cursor: "pointer", fontSize: 18, padding: 4 }}>×</button>
+                <button onClick={() => setSel(null)} style={{ background: "none", border: "none", color: "#8593B3", cursor: "pointer", fontSize: 18, padding: 4 }}>×</button>
               </div>
 
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", padding: "7px 0", borderBottom: "1px solid #0F172A" }}>
-                  <span style={{ fontSize: 11, color: "#475569", fontWeight: 600 }}>Type</span>
-                  <span style={{ fontSize: 11, color: "#94A3B8" }}>{TYPE_LABEL[sel.type] ?? sel.type}</span>
+                <div style={{ display: "flex", justifyContent: "space-between", padding: "7px 0", borderBottom: "1px solid #3A4A72" }}>
+                  <span style={{ fontSize: 11, color: "#94A3C4", fontWeight: 600 }}>Type</span>
+                  <span style={{ fontSize: 11, color: "#C3CEE3" }}>{TYPE_LABEL[sel.type] ?? sel.type}</span>
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between", padding: "7px 0", borderBottom: "1px solid #0F172A" }}>
-                  <span style={{ fontSize: 11, color: "#475569", fontWeight: 600 }}>Status</span>
+                <div style={{ display: "flex", justifyContent: "space-between", padding: "7px 0", borderBottom: "1px solid #3A4A72" }}>
+                  <span style={{ fontSize: 11, color: "#94A3C4", fontWeight: 600 }}>Status</span>
                   <Badge status={sel.status} />
                 </div>
-                <div style={{ padding: "7px 0", borderBottom: "1px solid #0F172A" }}>
-                  <div style={{ fontSize: 11, color: "#475569", fontWeight: 600, marginBottom: 4 }}>Evidence</div>
-                  <div style={{ fontSize: 11, color: "#94A3B8", wordBreak: "break-all" }}>{evidenceOf(sel).label}</div>
+                <div style={{ padding: "7px 0", borderBottom: "1px solid #3A4A72" }}>
+                  <div style={{ fontSize: 11, color: "#94A3C4", fontWeight: 600, marginBottom: 4 }}>Evidence</div>
+                  <div style={{ fontSize: 11, color: "#C3CEE3", wordBreak: "break-all" }}>{evidenceOf(sel).label}</div>
                   {evidenceOf(sel).matched.length > 0 && (
-                    <div style={{ fontSize: 10, color: "#475569", marginTop: 4 }}>
+                    <div style={{ fontSize: 10, color: "#94A3C4", marginTop: 4 }}>
                       Matched registrations:
                       {evidenceOf(sel).matched.map(m => (
                         <div key={m} style={{ wordBreak: "break-all", marginTop: 2 }}>{m}</div>
@@ -277,17 +277,17 @@ export default function FraudView() {
                   )}
                 </div>
                 {sel.reviewedBy && (
-                  <div style={{ fontSize: 10, color: "#475569" }}>
+                  <div style={{ fontSize: 10, color: "#94A3C4" }}>
                     Last review: {sel.reviewedBy}{sel.reviewedAt ? " · " + new Date(sel.reviewedAt).toLocaleString("en-IN") : ""}
                   </div>
                 )}
               </div>
 
               <div style={{ marginTop: 14 }}>
-                <div style={{ fontSize: 10, fontWeight: 700, color: "#64748B", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 5 }}>Review Note</div>
+                <div style={{ fontSize: 10, fontWeight: 700, color: "#A6B3D0", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 5 }}>Review Note</div>
                 <textarea value={note} onChange={e => setNote(e.target.value)} rows={3}
                   placeholder="Why is this being cleared / blocked?"
-                  style={{ width: "100%", padding: "8px 10px", borderRadius: 8, border: "1px solid #1E293B", background: "#080E1C", color: "#E2E8F0", fontSize: 11, outline: "none", resize: "vertical", boxSizing: "border-box" }} />
+                  style={{ width: "100%", padding: "8px 10px", borderRadius: 8, border: "1px solid #33436B", background: "#1F2B49", color: "#E2E8F0", fontSize: 11, outline: "none", resize: "vertical", boxSizing: "border-box" }} />
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, marginTop: 10 }}>
@@ -305,7 +305,7 @@ export default function FraudView() {
                 </button>
               </div>
 
-              <div style={{ fontSize: 10, color: "#334155", marginTop: 10, lineHeight: 1.5 }}>
+              <div style={{ fontSize: 10, color: "#8593B3", marginTop: 10, lineHeight: 1.5 }}>
                 Blocking here only records the decision for the ops team — the player is not notified and no automatic action is taken.
               </div>
             </div>
@@ -313,7 +313,7 @@ export default function FraudView() {
         )}
       </div>
 
-      <div style={{ fontSize: 11, color: "#334155", textAlign: "right" }}>
+      <div style={{ fontSize: 11, color: "#8593B3", textAlign: "right" }}>
         {!loading && shown.length + " finding" + (shown.length !== 1 ? "s" : "") + " shown"}
       </div>
     </div>

@@ -52,7 +52,7 @@ export function Phase1PaymentReceipt() {
   }, []);
 
   return (
-    <div style={{ background:'#06101E', minHeight:'100vh', color:'#F0EDE8', fontFamily:"'Inter',sans-serif", overflowX:'hidden', paddingBottom:80 }}>
+    <div style={{ background:'#122642', minHeight:'100vh', color:'#F0EDE8', fontFamily:"'Inter',sans-serif", overflowX:'hidden', paddingBottom:80 }}>
       <style>{`
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
@@ -96,7 +96,7 @@ export function Phase1PaymentReceipt() {
         @media(min-width:600px){.next-steps-grid{grid-template-columns:repeat(3,1fr)}}
 
         .next-card{
-          background:#0A1727;border:1px solid rgba(255,255,255,0.08);border-radius:12px;
+          background:#172E4B;border:1px solid rgba(255,255,255,0.18);border-radius:12px;
           padding:22px 20px;
           transition:border-color .2s,transform .2s;
         }
@@ -113,7 +113,7 @@ export function Phase1PaymentReceipt() {
         @media(min-width:480px){.share-btn{width:auto}}
         .share-btn:hover{filter:brightness(1.12);transform:translateY(-2px)}
 
-        .barcode-line{display:inline-block;width:2px;margin:0 0.5px;background:rgba(255,255,255,0.85);animation:barcodeScan 2.5s ease-in-out infinite}
+        .barcode-line{display:inline-block;width:2px;margin:0 0.5px;background:rgba(255,255,255,0.88);animation:barcodeScan 2.5s ease-in-out infinite}
 
         .fade-up{animation:fadeUp .5s cubic-bezier(.34,1.56,.64,1) both}
         .fade-up-1{animation-delay:.1s}
@@ -122,18 +122,18 @@ export function Phase1PaymentReceipt() {
         .fade-up-4{animation-delay:.55s}
         .fade-up-5{animation-delay:.7s}
 
-        .ticket-wrap{background:#0A1727;border:1px solid rgba(255,122,41,0.35);position:relative;overflow:hidden;width:100%;max-width:100%}
-        .ticket-notch-l{position:absolute;left:-10px;top:50%;transform:translateY(-50%);width:20px;height:20px;border-radius:50%;background:#06101E;border:1px solid rgba(255,122,41,0.35)}
-        .ticket-notch-r{position:absolute;right:-10px;top:50%;transform:translateY(-50%);width:20px;height:20px;border-radius:50%;background:#06101E;border:1px solid rgba(255,122,41,0.35)}
+        .ticket-wrap{background:#172E4B;border:1px solid rgba(255,122,41,0.35);position:relative;overflow:hidden;width:100%;max-width:100%}
+        .ticket-notch-l{position:absolute;left:-10px;top:50%;transform:translateY(-50%);width:20px;height:20px;border-radius:50%;background:#122642;border:1px solid rgba(255,122,41,0.35)}
+        .ticket-notch-r{position:absolute;right:-10px;top:50%;transform:translateY(-50%);width:20px;height:20px;border-radius:50%;background:#122642;border:1px solid rgba(255,122,41,0.35)}
         @media(max-width:480px){.ticket-notch-l,.ticket-notch-r{display:none}}
 
-        .barcode-wrap{background:#060C18;padding:14px 20px;display:flex;align-items:flex-end;gap:0;border-top:1px solid rgba(255,255,255,0.05);overflow:hidden}
+        .barcode-wrap{background:#12203C;padding:14px 20px;display:flex;align-items:flex-end;gap:0;border-top:1px solid rgba(255,255,255,0.05);overflow:hidden}
       `}</style>
 
       <SiteHeader />
 
       {/* ── HERO ── */}
-      <div style={{ position:'relative', overflow:'hidden', background:'linear-gradient(180deg,#06101E 0%,#060C18 100%)', paddingTop:60, paddingBottom:56, textAlign:'center' }}>
+      <div style={{ position:'relative', overflow:'hidden', background:'linear-gradient(180deg,#122642 0%,#12203C 100%)', paddingTop:60, paddingBottom:56, textAlign:'center' }}>
         <div style={{ position:'absolute', top:0, left:'-10%', width:'50%', height:'100%', background:'linear-gradient(135deg,rgba(34,197,94,0.06) 0%,transparent 60%)', transform:'skewX(-8deg)', pointerEvents:'none' }} />
         <div style={{ position:'absolute', top:0, right:'-10%', width:'50%', height:'100%', background:'linear-gradient(225deg,rgba(34,197,94,0.04) 0%,transparent 60%)', transform:'skewX(-8deg)', pointerEvents:'none' }} />
 
@@ -152,11 +152,11 @@ export function Phase1PaymentReceipt() {
           </div>
 
           {/* Loading / Error */}
-          {receiptLoading && <div style={{ color:'rgba(255,255,255,0.5)', fontSize:14, marginBottom:20 }}>{t("Confirming payment…","Payment confirm हो रही है…")}</div>}
+          {receiptLoading && <div style={{ color:'rgba(255,255,255,0.72)', fontSize:14, marginBottom:20 }}>{t("Confirming payment…","Payment confirm हो रही है…")}</div>}
           {receiptError && (
             <div style={{ marginBottom:20 }}>
               <div style={{ color:'#EF4444', fontSize:13, fontWeight:600, marginBottom:10 }}>{receiptError}</div>
-              <button onClick={() => window.location.reload()} style={{ background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.18)', color:'#fff', borderRadius:10, padding:'8px 18px', fontSize:13, fontWeight:700, cursor:'pointer' }}>{t('Try Again', 'फिर कोशिश करें')}</button>
+              <button onClick={() => window.location.reload()} style={{ background:'rgba(255,255,255,0.18)', border:'1px solid rgba(255,255,255,0.18)', color:'#fff', borderRadius:10, padding:'8px 18px', fontSize:13, fontWeight:700, cursor:'pointer' }}>{t('Try Again', 'फिर कोशिश करें')}</button>
             </div>
           )}
 
@@ -177,7 +177,7 @@ export function Phase1PaymentReceipt() {
 
           {/* Booking ref */}
           {!receiptLoading && (
-          <div className="fade-up fade-up-4" style={{ display:'inline-block', background:'#060C18', border:'1px solid rgba(255,122,41,0.4)', padding:'12px 20px', borderRadius:12, marginBottom:0, maxWidth:'100%', overflow:'hidden' }}>
+          <div className="fade-up fade-up-4" style={{ display:'inline-block', background:'#12203C', border:'1px solid rgba(255,122,41,0.4)', padding:'12px 20px', borderRadius:12, marginBottom:0, maxWidth:'100%', overflow:'hidden' }}>
             <div style={{ fontSize:9, fontWeight:800, fontFamily:'var(--font-head)', letterSpacing:'.18em', color:'rgba(255,255,255,0.35)', marginBottom:4 }}>{t("REGISTRATION NUMBER","REGISTRATION NUMBER")}</div>
             <div style={{ fontFamily:'monospace', fontSize:'clamp(13px,4vw,18px)', fontWeight:700, color:'#FF7A29', letterSpacing:'.12em', wordBreak:'break-all' }}>
               {regNumber || (regId ? regId.slice(0,8).toUpperCase() : '—')}
@@ -197,9 +197,9 @@ export function Phase1PaymentReceipt() {
           <div style={{ background:'linear-gradient(135deg,#C94E0E,#FF7A29,#E8611A)', padding:'16px 24px', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:12 }}>
             <div>
               <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:13, letterSpacing:'.14em', color:'#fff', textTransform:'uppercase' }}>{t("PHASE 1 TRIAL ENTRY","PHASE 1 TRIAL ENTRY")}</div>
-              <div style={{ fontFamily:'var(--font-head)', fontWeight:700, fontSize:10, letterSpacing:'.12em', color:'rgba(255,255,255,0.75)', marginTop:2 }}>{t("PAYMENT CONFIRMED","PAYMENT CONFIRMED")}</div>
+              <div style={{ fontFamily:'var(--font-head)', fontWeight:700, fontSize:10, letterSpacing:'.12em', color:'rgba(255,255,255,0.88)', marginTop:2 }}>{t("PAYMENT CONFIRMED","PAYMENT CONFIRMED")}</div>
             </div>
-            <div style={{ display:'flex', alignItems:'center', gap:6, background:'rgba(255,255,255,0.15)', padding:'6px 14px', borderRadius:12 }}>
+            <div style={{ display:'flex', alignItems:'center', gap:6, background:'rgba(255,255,255,0.2)', padding:'6px 14px', borderRadius:12 }}>
               <span style={{ width:7, height:7, borderRadius:'50%', background:'#fff', display:'inline-block', animation:'liveBlip 1.2s ease-in-out infinite' }} />
               <span style={{ fontSize:10, fontWeight:900, fontFamily:'var(--font-head)', color:'#fff', letterSpacing:'.1em' }}>{t("CONFIRMED","CONFIRMED")}</span>
             </div>
@@ -226,7 +226,7 @@ export function Phase1PaymentReceipt() {
             const taxable = paidAmount ? +(paidAmount / 1.18).toFixed(2) : 0;
             const gst     = paidAmount ? +((paidAmount - taxable) / 2).toFixed(2) : 0;
             return (
-            <div style={{ margin:'0', background:'rgba(255,122,41,0.04)', borderTop:'1px solid rgba(255,255,255,0.06)', padding:'16px 20px' }}>
+            <div style={{ margin:'0', background:'rgba(255,122,41,0.04)', borderTop:'1px solid rgba(255,255,255,0.18)', padding:'16px 20px' }}>
               <div style={{ fontFamily:'var(--font-head)', fontWeight:800, fontSize:9, letterSpacing:'.14em', color:'rgba(255,255,255,0.3)', textTransform:'uppercase', marginBottom:10 }}>{t("Payment Breakdown","Payment Breakdown")}</div>
               {[
                 { label:'Taxable Amount', val: paidAmount ? `₹${taxable.toFixed(2)}` : '—', dim:false },
@@ -234,8 +234,8 @@ export function Phase1PaymentReceipt() {
                 { label:'SGST @ 9%',     val: paidAmount ? `₹${gst.toFixed(2)}`     : '—', dim:true  },
               ].map(r => (
                 <div key={r.label} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'5px 0', borderBottom:'1px solid rgba(255,255,255,0.04)' }}>
-                  <span style={{ fontFamily:'Inter,sans-serif', fontSize:12, color: r.dim ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.6)', fontWeight:600 }}>{r.label}</span>
-                  <span style={{ fontFamily:'Inter,sans-serif', fontSize:12, color: r.dim ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.7)', fontWeight:700 }}>{r.val}</span>
+                  <span style={{ fontFamily:'Inter,sans-serif', fontSize:12, color: r.dim ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.88)', fontWeight:600 }}>{r.label}</span>
+                  <span style={{ fontFamily:'Inter,sans-serif', fontSize:12, color: r.dim ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.88)', fontWeight:700 }}>{r.val}</span>
                 </div>
               ))}
               <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'10px 0 2px', marginTop:6, borderTop:'1px solid rgba(255,122,41,0.3)' }}>
@@ -254,10 +254,10 @@ export function Phase1PaymentReceipt() {
           {/* Phase 2 locked row */}
           <div style={{ padding:'14px 20px', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:8 }}>
             <div>
-              <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:11, letterSpacing:'.14em', color:'rgba(255,255,255,0.5)', textTransform:'uppercase' }}>{t("PHASE 2 STATUS","PHASE 2 STATUS")}</div>
-              <div style={{ fontSize:13, color:'rgba(255,255,255,0.6)', marginTop:3, display:'inline-flex', alignItems:'center', gap:6 }}><IcoLock size={14} /> {t("Locked — You'll be notified when your result is released","Locked — जब आपका result release होगा तब आपको notify किया जाएगा")}</div>
+              <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:11, letterSpacing:'.14em', color:'rgba(255,255,255,0.72)', textTransform:'uppercase' }}>{t("PHASE 2 STATUS","PHASE 2 STATUS")}</div>
+              <div style={{ fontSize:13, color:'rgba(255,255,255,0.88)', marginTop:3, display:'inline-flex', alignItems:'center', gap:6 }}><IcoLock size={14} /> {t("Locked — You'll be notified when your result is released","Locked — जब आपका result release होगा तब आपको notify किया जाएगा")}</div>
             </div>
-            <span style={{ background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', padding:'5px 12px', borderRadius:12, fontSize:10, fontWeight:800, fontFamily:'var(--font-head)', letterSpacing:'.12em', color:'rgba(255,255,255,0.4)' }}>{t("PENDING","PENDING")}</span>
+            <span style={{ background:'rgba(255,255,255,0.18)', border:'1px solid rgba(255,255,255,0.18)', padding:'5px 12px', borderRadius:12, fontSize:10, fontWeight:800, fontFamily:'var(--font-head)', letterSpacing:'.12em', color:'rgba(255,255,255,0.4)' }}>{t("PENDING","PENDING")}</span>
           </div>
 
           {/* Decorative barcode */}
@@ -303,9 +303,9 @@ export function Phase1PaymentReceipt() {
           </div>
 
           {/* Step 3 */}
-          <div className="next-card" style={{ border:'1px solid rgba(255,255,255,0.06)' }}>
-            <div style={{ color:'rgba(255,255,255,0.5)', marginBottom:12 }}><IcoLock size={28} /></div>
-            <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:14, color:'rgba(255,255,255,0.5)', letterSpacing:'.04em', marginBottom:6, textTransform:'uppercase' }}>{t("Phase 2 (If Selected)","Phase 2 (अगर Selected हुए)")}</div>
+          <div className="next-card" style={{ border:'1px solid rgba(255,255,255,0.18)' }}>
+            <div style={{ color:'rgba(255,255,255,0.72)', marginBottom:12 }}><IcoLock size={28} /></div>
+            <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:14, color:'rgba(255,255,255,0.72)', letterSpacing:'.04em', marginBottom:6, textTransform:'uppercase' }}>{t("Phase 2 (If Selected)","Phase 2 (अगर Selected हुए)")}</div>
             <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:12 }}>
               <span style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.3)', fontFamily:'var(--font-head)', letterSpacing:'.06em' }}>{t("PHYSICAL TRIAL · LOCKED","PHYSICAL TRIAL · LOCKED")}</span>
             </div>
@@ -321,7 +321,7 @@ export function Phase1PaymentReceipt() {
 
       {/* ── SHARE SECTION ── */}
       <div className="wrap" style={{ marginTop:32 }}>
-        <div style={{ background:'#0A1727', border:'1px solid rgba(255,255,255,0.08)', borderRadius:12, padding:'28px 20px', textAlign:'center' }}>
+        <div style={{ background:'#172E4B', border:'1px solid rgba(255,255,255,0.18)', borderRadius:12, padding:'28px 20px', textAlign:'center' }}>
           <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:13, letterSpacing:'.16em', color:'rgba(255,255,255,0.4)', marginBottom:6, textTransform:'uppercase' }}>{t("Share Your Achievement","अपनी Achievement Share करें")}</div>
           <div style={{ fontFamily:'var(--font-head)', fontWeight:900, fontSize:20, color:'#fff', marginBottom:24 }}>{t("Tell the world you're in the trials!","दुनिया को बताएं कि आप trials में हैं!")}</div>
           <div className="share-btns">
@@ -336,7 +336,7 @@ export function Phase1PaymentReceipt() {
               onClick={() => window.open('https://www.instagram.com/bcpl.t20', '_blank')}>
               <IcoCamera size={16} /> {t("Share on Instagram","Instagram पर Share करें")}
             </button>
-            <button className="share-btn" style={{ background:'linear-gradient(135deg,#1E3A5F,#0F2040)', border:'1px solid rgba(255,122,41,0.4)', color:'#FF7A29', display:'inline-flex', alignItems:'center', justifyContent:'center', gap:8 }}
+            <button className="share-btn" style={{ background:'linear-gradient(135deg,#284C7B,#1D3563)', border:'1px solid rgba(255,122,41,0.4)', color:'#FF7A29', display:'inline-flex', alignItems:'center', justifyContent:'center', gap:8 }}
               onClick={() => {
                 const logoUrl  = `${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/bcpl-ball-color.jpg`;
                 const sigUrl   = `${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/bcpl-signature.png`;
@@ -350,7 +350,7 @@ export function Phase1PaymentReceipt() {
                 w.document.write(`<!DOCTYPE html><html><head><title>BCPL Registration Receipt — ${printRegNo}</title>
                 <style>
                   *{box-sizing:border-box;margin:0;padding:0}
-                  body{font-family:'Arial',sans-serif;background:#06101E;color:#F0EDE8;min-height:100vh;position:relative;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+                  body{font-family:'Arial',sans-serif;background:#122642;color:#F0EDE8;min-height:100vh;position:relative;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 
                   /* Watermark */
                   body::before{
@@ -371,11 +371,11 @@ export function Phase1PaymentReceipt() {
                     padding:28px 36px;display:flex;align-items:center;gap:20px;
                     -webkit-print-color-adjust:exact;print-color-adjust:exact;
                   }
-                  .logo-circle{width:72px;height:72px;border-radius:50%;overflow:hidden;border:3px solid rgba(255,255,255,0.5);background:#fff;flex-shrink:0}
+                  .logo-circle{width:72px;height:72px;border-radius:50%;overflow:hidden;border:3px solid rgba(255,255,255,0.72);background:#fff;flex-shrink:0}
                   .logo-circle img{width:100%;height:100%;object-fit:cover;display:block}
                   .header-text .brand{font-size:22px;font-weight:900;color:#fff;letter-spacing:.06em;line-height:1}
-                  .header-text .sub{font-size:10px;color:rgba(255,255,255,0.85);letter-spacing:.12em;margin-top:4px;font-weight:700;text-transform:uppercase}
-                  .header-text .addr{font-size:8.5px;color:rgba(255,255,255,0.65);margin-top:5px}
+                  .header-text .sub{font-size:10px;color:rgba(255,255,255,0.88);letter-spacing:.12em;margin-top:4px;font-weight:700;text-transform:uppercase}
+                  .header-text .addr{font-size:8.5px;color:rgba(255,255,255,0.88);margin-top:5px}
 
                   /* Gold accent bar */
                   .gold-bar{height:4px;background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D);-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -399,12 +399,12 @@ export function Phase1PaymentReceipt() {
 
                   /* Receipt card */
                   .receipt-card{
-                    background:#0A1727;border:1px solid rgba(255,122,41,0.25);
+                    background:#172E4B;border:1px solid rgba(255,122,41,0.25);
                     border-radius:14px;overflow:hidden;margin-bottom:20px;
                     page-break-inside:avoid;
                   }
                   .receipt-card-header{
-                    background:linear-gradient(135deg,#0F1D35,#0A1727);
+                    background:linear-gradient(135deg,#1C3259,#172E4B);
                     padding:14px 20px;border-bottom:1px solid rgba(255,122,41,0.15);
                     font-size:10px;font-weight:900;color:#FF7A29;letter-spacing:.16em;text-transform:uppercase;
                     display:flex;align-items:center;gap:8px;
@@ -422,11 +422,11 @@ export function Phase1PaymentReceipt() {
 
                   /* Barcode */
                   .barcode-section{
-                    background:#060C18;border-top:1px solid rgba(255,255,255,0.04);
+                    background:#12203C;border-top:1px solid rgba(255,255,255,0.04);
                     padding:16px 20px;display:flex;align-items:flex-end;gap:1px;
                     -webkit-print-color-adjust:exact;print-color-adjust:exact;
                   }
-                  .barcode-bar{display:inline-block;width:2px;margin:0 0.5px;background:rgba(255,255,255,0.8)}
+                  .barcode-bar{display:inline-block;width:2px;margin:0 0.5px;background:rgba(255,255,255,0.88)}
                   .barcode-text{margin-left:auto;font-family:monospace;font-size:9px;color:rgba(255,255,255,0.25);white-space:nowrap;padding-bottom:2px}
 
                   /* Stamp / Sig block */
@@ -435,11 +435,11 @@ export function Phase1PaymentReceipt() {
                   .sig-col{text-align:center}
                   .sig-col img{display:block;margin:0 auto 6px}
                   .sig-col .sig-label{font-size:8.5px;color:rgba(255,255,255,0.35);
-                    border-top:1px solid rgba(255,255,255,0.12);padding-top:5px;line-height:1.5}
+                    border-top:1px solid rgba(255,255,255,0.2);padding-top:5px;line-height:1.5}
 
                   /* Next steps */
                   .steps-card{
-                    background:#0A1727;border:1px solid rgba(255,255,255,0.07);
+                    background:#172E4B;border:1px solid rgba(255,255,255,0.18);
                     border-radius:14px;padding:20px;margin-bottom:20px;
                     page-break-inside:avoid;
                   }
@@ -452,7 +452,7 @@ export function Phase1PaymentReceipt() {
 
                   /* Footer */
                   .footer{
-                    background:#040C18;border-top:2px solid #FF7A29;
+                    background:#10223D;border-top:2px solid #FF7A29;
                     padding:12px 36px;display:flex;justify-content:space-between;align-items:center;
                     font-size:9px;color:rgba(255,255,255,0.3);
                     margin-top:8px;
@@ -462,9 +462,9 @@ export function Phase1PaymentReceipt() {
                   .footer strong{color:#FF7A29}
 
                   @media print{
-                    body{background:#06101E}
+                    body{background:#122642}
                     .page{padding-bottom:20px}
-                    @page{margin:6mm 8mm;background:#06101E}
+                    @page{margin:6mm 8mm;background:#122642}
                   }
                 </style></head>
                 <body>
@@ -568,8 +568,8 @@ export function Phase1PaymentReceipt() {
                       </div>
 
                       <!-- Note -->
-                      <div style="background:#0A1727;border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px 20px;font-size:11px;color:rgba(255,255,255,0.4);line-height:1.7;text-align:center;page-break-inside:avoid">
-                        This is an official digital receipt issued by <strong style="color:rgba(255,255,255,0.65)">Kriparti Playing11 Pvt. Ltd.</strong><br/>
+                      <div style="background:#172E4B;border:1px solid rgba(255,255,255,0.18);border-radius:12px;padding:14px 20px;font-size:11px;color:rgba(255,255,255,0.4);line-height:1.7;text-align:center;page-break-inside:avoid">
+                        This is an official digital receipt issued by <strong style="color:rgba(255,255,255,0.88)">Kriparti Playing11 Pvt. Ltd.</strong><br/>
                         For support: <strong style="color:#FF7A29">legal@bcplt20.com</strong> &nbsp;·&nbsp; <strong style="color:#FF7A29">www.bcplt20.com</strong>
                       </div>
                     </div>

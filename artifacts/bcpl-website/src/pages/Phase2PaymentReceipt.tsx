@@ -103,7 +103,7 @@ export function Phase2PaymentReceipt() {
             {t("PHYSICAL TRIAL SLOT", "फिजिकल ट्रायल जगह")}<br/>
             <span style={{ background: 'linear-gradient(90deg, var(--gold), #FFD700, var(--gold))', backgroundSize: '200% auto', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', animation: 'shimmerAnim 2.5s linear infinite', display: 'inline-block' }}>{t("SECURED.", "पक्की हो गई।")}</span>
           </h1>
-          <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 'clamp(14px, 3vw, 20px)', color: 'rgba(255,255,255,0.5)', marginTop: 16, letterSpacing: '.1em', textTransform: 'uppercase', animation: 'fadeUp 0.5s 0.3s ease both' }}>
+          <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 'clamp(14px, 3vw, 20px)', color: 'rgba(255,255,255,0.72)', marginTop: 16, letterSpacing: '.1em', textTransform: 'uppercase', animation: 'fadeUp 0.5s 0.3s ease both' }}>
             {t("SEE YOU ON THE GROUND.", "मैदान पर मिलते हैं।")}
           </div>
         </div>
@@ -125,8 +125,8 @@ export function Phase2PaymentReceipt() {
               [t('Registration No.', 'रजिस्ट्रेशन नं.'), regId.slice(0,8).toUpperCase()],
               [t('Payment Date', 'पेमेंट की तारीख'), paidAt],
             ].map(([k,v]) => (
-              <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid rgba(255,255,255,0.06)', fontSize: 14 }}>
-                <span style={{ color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>{k}</span>
+              <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid rgba(255,255,255,0.18)', fontSize: 14 }}>
+                <span style={{ color: 'rgba(255,255,255,0.72)', fontWeight: 600 }}>{k}</span>
                 <span style={{ color: '#fff', fontWeight: 700 }}>{v}</span>
               </div>
             ))}
@@ -140,8 +140,8 @@ export function Phase2PaymentReceipt() {
               { label: 'SGST @ 9%', val: `₹${halfGst.toLocaleString('en-IN')}`, dim: true },
             ].map(r => (
               <div key={r.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0' }}>
-                <span style={{ fontSize: 13, color: r.dim ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.6)', fontWeight: 600 }}>{r.label}</span>
-                <span style={{ fontSize: 13, color: r.dim ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.8)', fontWeight: 700 }}>{r.val}</span>
+                <span style={{ fontSize: 13, color: r.dim ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.88)', fontWeight: 600 }}>{r.label}</span>
+                <span style={{ fontSize: 13, color: r.dim ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.88)', fontWeight: 700 }}>{r.val}</span>
               </div>
             ))}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0 0', marginTop: 12, borderTop: '1px solid rgba(232,178,61,0.3)' }}>
@@ -156,7 +156,7 @@ export function Phase2PaymentReceipt() {
             <span style={{ color: 'var(--gold)' }}><IcoList size={32} /></span>
             <div style={{ flex: 1, minWidth: 200 }}>
               <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 14, color: 'var(--gold)', letterSpacing: '.1em', textTransform: 'uppercase' }}>{t("NEXT STEP", "अगला कदम")}</div>
-              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)', marginTop: 4 }}>{t("Complete KYC verification — Aadhaar + PAN required", "KYC पूरा करें — आधार और पैन जरूरी")}</div>
+              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.88)', marginTop: 4 }}>{t("Complete KYC verification — Aadhaar + PAN required", "KYC पूरा करें — आधार और पैन जरूरी")}</div>
             </div>
             <Link href="/register/phase2/kyc" className="btn-kyc">{t("COMPLETE KYC →", "KYC पूरा करें →")}</Link>
           </div>
@@ -174,7 +174,7 @@ export function Phase2PaymentReceipt() {
               <div key={title} className="next-card" style={{ borderTopColor: topColor }}>
                 <div style={{ color: topColor, marginBottom: 16 }}><Icon size={32} /></div>
                 <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 20, color: '#fff', marginBottom: 8, textTransform: 'uppercase' }}>{title}</div>
-                <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6, marginBottom: cta ? 20 : 0 }}>{desc}</div>
+                <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.72)', lineHeight: 1.6, marginBottom: cta ? 20 : 0 }}>{desc}</div>
                 {cta && href && (
                   <Link href={href} style={{ background: 'transparent', border: `1px solid ${ctaColor}60`, borderRadius: 'var(--r)', color: ctaColor, fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 13, letterSpacing: '.08em', cursor: 'pointer', padding: '10px 20px', textDecoration: 'none', display: 'inline-block', textTransform: 'uppercase' }}>
                     {cta}

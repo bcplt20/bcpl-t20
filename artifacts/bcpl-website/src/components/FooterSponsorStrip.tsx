@@ -51,7 +51,7 @@ export function FooterSponsorStrip() {
   }
 
   return (
-    <section aria-label="BCPL partners" style={{ background:"#050B18", borderTop:"1px solid rgba(255,255,255,.06)", padding:"clamp(30px,4.5vw,48px) 0 clamp(26px,4vw,40px)", fontFamily:"Montserrat,Inter,sans-serif" }}>
+    <section aria-label="BCPL partners" style={{ background:"#111F3C", borderTop:"1px solid rgba(255,255,255,0.18)", padding:"clamp(30px,4.5vw,48px) 0 clamp(26px,4vw,40px)", fontFamily:"Montserrat,Inter,sans-serif" }}>
       <style>{`
         .bcpl-spst-wrap { max-width:1200px; margin:0 auto; padding:0 clamp(16px,4vw,40px); }
         .bcpl-spst-groups { display:flex; flex-wrap:wrap; justify-content:center; align-items:flex-start; gap:clamp(26px,4vw,52px) clamp(30px,5vw,64px); }
@@ -73,7 +73,7 @@ export function FooterSponsorStrip() {
                   {g.items.map((s, i) => {
                     const inner = s.logo
                       ? <img src={s.logo} alt={s.name + " logo"} loading="lazy" style={{ height:h, maxWidth:big?170:120, objectFit:"contain", display:"block" }}/>
-                      : <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:big?17:13, color:"#121E36", whiteSpace:"nowrap", maxWidth:big?220:160, overflow:"hidden", textOverflow:"ellipsis" }}>{s.name}</span>;
+                      : <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:big?17:13, color:"#1E325A", whiteSpace:"nowrap", maxWidth:big?220:160, overflow:"hidden", textOverflow:"ellipsis" }}>{s.name}</span>;
                     return s.website
                       ? <a key={i} className="bcpl-spst-chip" href={s.website} target="_blank" rel="noopener noreferrer" title={s.name} style={{ minHeight:big?66:50 }}>{inner}</a>
                       : <div key={i} className="bcpl-spst-chip" title={s.name} style={{ minHeight:big?66:50 }}>{inner}</div>;

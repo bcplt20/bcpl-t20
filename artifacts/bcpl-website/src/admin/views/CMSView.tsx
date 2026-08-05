@@ -141,22 +141,22 @@ export default function CMSView() {
 
   /* ── styles ── */
   const card: React.CSSProperties = {
-    background: "linear-gradient(135deg,#0D1526,#0A1020)",
-    border: "1px solid #1E293B", borderRadius: 16, padding: 20,
+    background: "linear-gradient(135deg,#2C3A5E,#1F2B49)",
+    border: "1px solid #33436B", borderRadius: 16, padding: 20,
   };
   const inp: React.CSSProperties = {
-    padding: "9px 12px", borderRadius: 8, border: "1px solid #1E293B",
-    background: "#080E1C", color: "#E2E8F0", fontSize: 12, outline: "none", width: "100%",
+    padding: "9px 12px", borderRadius: 8, border: "1px solid #33436B",
+    background: "#1F2B49", color: "#E2E8F0", fontSize: 12, outline: "none", width: "100%",
   };
   const lbl: React.CSSProperties = {
-    fontSize: 10, fontWeight: 700, color: "#64748B", textTransform: "uppercase",
+    fontSize: 10, fontWeight: 700, color: "#A6B3D0", textTransform: "uppercase",
     letterSpacing: "0.06em", marginBottom: 5, display: "block",
   };
   const sectionTitle: React.CSSProperties = { fontSize: 14, fontWeight: 800, color: "#F1F5F9", marginBottom: 4 };
-  const sectionSub: React.CSSProperties = { fontSize: 11, color: "#64748B", marginBottom: 14 };
+  const sectionSub: React.CSSProperties = { fontSize: 11, color: "#A6B3D0", marginBottom: 14 };
   const smallBtn: React.CSSProperties = {
-    padding: "7px 12px", borderRadius: 8, border: "1px solid #1E293B", background: "transparent",
-    color: "#94A3B8", fontSize: 11, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap",
+    padding: "7px 12px", borderRadius: 8, border: "1px solid #33436B", background: "transparent",
+    color: "#C3CEE3", fontSize: 11, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap",
   };
 
   const numField = (key: "phase1FeeStandard" | "phase1FeeAllRounder" | "phase2FeeStandard" | "phase2FeeAllRounder", label: string) => (
@@ -173,7 +173,7 @@ export default function CMSView() {
   );
 
   if (loading) {
-    return <div style={{ padding: 60, textAlign: "center", color: "#334155", fontSize: 14 }}>Loading homepage configuration…</div>;
+    return <div style={{ padding: 60, textAlign: "center", color: "#8593B3", fontSize: 14 }}>Loading homepage configuration…</div>;
   }
 
   return (
@@ -184,7 +184,7 @@ export default function CMSView() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 10 }}>
         <div>
           <div style={{ fontSize: 20, fontWeight: 800, color: "#F1F5F9" }}>Content Management · Homepage</div>
-          <div style={{ fontSize: 12, color: "#64748B", marginTop: 2 }}>
+          <div style={{ fontSize: 12, color: "#A6B3D0", marginTop: 2 }}>
             Server-backed homepage configuration — editable by Content team
           </div>
         </div>
@@ -226,12 +226,12 @@ export default function CMSView() {
                   {uploading === s.field ? "Uploading…" : "Upload"}
                 </button>
               </div>
-              <div style={{ fontSize: 10, color: "#334155", marginTop: 4 }}>
+              <div style={{ fontSize: 10, color: "#8593B3", marginTop: 4 }}>
                 {s.hint}
                 {cfg[s.field] ? (
                   <>
                     {" · "}
-                    <a href={cfg[s.field]} target="_blank" rel="noreferrer" style={{ color: "#64748B" }}>preview current</a>
+                    <a href={cfg[s.field]} target="_blank" rel="noreferrer" style={{ color: "#A6B3D0" }}>preview current</a>
                   </>
                 ) : null}
               </div>
@@ -259,9 +259,9 @@ export default function CMSView() {
                   <button key={s.value} onClick={() => setCfg(c => ({ ...c, registrationStatus: s.value }))}
                     style={{
                       padding: "8px 14px", borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: "pointer",
-                      border: "1px solid " + (active ? s.color : "#1E293B"),
+                      border: "1px solid " + (active ? s.color : "#33436B"),
                       background: active ? s.color + "22" : "transparent",
-                      color: active ? s.color : "#64748B",
+                      color: active ? s.color : "#A6B3D0",
                     }}>
                     {s.label}
                   </button>

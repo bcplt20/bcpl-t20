@@ -21,9 +21,9 @@ const IcoCheck  = ico(<path d="M4.5 12.5 10 18 19.5 7" />);
 
 const CSS = `
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-body { background:#0E1624; }
+body { background:#1C2B47; }
 .tp-wrap { width:100%; max-width:720px; margin:0 auto; padding:0 20px; }
-.tp-card { width:100%; max-width:100%; background:linear-gradient(135deg,rgba(15,34,71,0.95),rgba(10,22,46,0.9)); border:1px solid rgba(232,178,61,0.35); border-radius:24px; overflow:hidden; box-shadow:0 24px 64px rgba(0,0,0,0.5); }
+.tp-card { width:100%; max-width:100%; background:linear-gradient(135deg,rgba(30,55,105,0.95),rgba(23,43,81,0.9)); border:1px solid rgba(232,178,61,0.35); border-radius:24px; overflow:hidden; box-shadow:0 24px 64px rgba(0,0,0,0.5); }
 .tp-head { background:linear-gradient(135deg,#E8B23D,#F5C842); padding:18px 24px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
 .tp-status { display:flex; align-items:center; justify-content:center; gap:8px; padding:12px 16px; font-family:var(--font-head); font-weight:800; font-size:14px; letter-spacing:0.08em; text-transform:uppercase; }
 .tp-status.await { background:rgba(232,178,61,0.14); color:#F1C765; border-bottom:1px solid rgba(232,178,61,0.3); }
@@ -31,27 +31,27 @@ body { background:#0E1624; }
 .tp-status.done  { background:rgba(34,197,94,0.18);  color:#5EE38B; border-bottom:1px solid rgba(34,197,94,0.38); }
 .tp-qrbox { background:#fff; border-radius:16px; padding:16px; display:inline-block; max-width:100%; box-shadow:0 8px 26px rgba(0,0,0,0.35); }
 .tp-qrbox img { width:clamp(150px,44vw,184px); height:clamp(150px,44vw,184px); max-width:100%; display:block; }
-.tp-row { display:flex; justify-content:space-between; gap:14px; padding:12px 0; border-bottom:1px dashed rgba(255,255,255,0.12); }
+.tp-row { display:flex; justify-content:space-between; gap:14px; padding:12px 0; border-bottom:1px dashed rgba(255,255,255,0.2); }
 .tp-lbl { font-family:var(--font-body); font-weight:700; font-size:13px; color:rgba(255,255,255,0.72); letter-spacing:0.06em; text-transform:uppercase; }
 .tp-val { font-family:var(--font-body); font-weight:700; font-size:15px; color:#fff; text-align:right; }
 .tp-print-btn { display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg,#FF6B00,#FF8C40); color:#fff; border:none; border-radius:12px; padding:14px 28px; font-family:var(--font-head); font-weight:800; font-size:16px; letter-spacing:0.06em; cursor:pointer; box-shadow:0 8px 24px rgba(255,122,41,0.3); transition:transform .14s ease, filter .2s ease; }
 .tp-print-btn:hover { filter:brightness(1.08); transform:translateY(-2px); }
 .tp-maps { display:inline-flex; align-items:center; gap:6px; color:#9AD5FF; font-family:var(--font-body); font-weight:600; font-size:14px; text-decoration:none; }
 /* perforated ticket divider */
-.tp-perf { position:relative; height:0; border-top:2px dashed rgba(255,255,255,0.14); margin:0 24px; }
-.tp-perf::before, .tp-perf::after { content:''; position:absolute; top:-12px; width:24px; height:24px; border-radius:50%; background:#0E1624; border:1px solid rgba(232,178,61,0.25); }
+.tp-perf { position:relative; height:0; border-top:2px dashed rgba(255,255,255,0.2); margin:0 24px; }
+.tp-perf::before, .tp-perf::after { content:''; position:absolute; top:-12px; width:24px; height:24px; border-radius:50%; background:#1C2B47; border:1px solid rgba(232,178,61,0.25); }
 .tp-perf::before { left:-36px; }
 .tp-perf::after  { right:-36px; }
 /* journey indicator */
 .tp-journey { display:flex; align-items:flex-start; padding:18px 20px 20px; gap:0; }
 .tp-jstep { flex:1; display:flex; flex-direction:column; align-items:center; gap:7px; position:relative; min-width:0; }
-.tp-jdot { width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:#121F2F; border:2px solid rgba(255,255,255,0.14); color:var(--ink-3); position:relative; z-index:1; }
+.tp-jdot { width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:#1F3652; border:2px solid rgba(255,255,255,0.2); color:var(--ink-3); position:relative; z-index:1; }
 .tp-jdot.done   { background:#22C55E; border-color:#22C55E; color:#fff; }
 .tp-jdot.active { border-color:#E8B23D; color:#E8B23D; box-shadow:0 0 0 4px rgba(232,178,61,0.15); }
-.tp-jlbl { font-family:var(--font-body); font-weight:700; font-size:9.5px; letter-spacing:0.01em; text-transform:uppercase; color:rgba(255,255,255,0.7); text-align:center; line-height:1.3; max-width:100%; overflow-wrap:anywhere; word-break:break-word; padding:0 2px; }
+.tp-jlbl { font-family:var(--font-body); font-weight:700; font-size:9.5px; letter-spacing:0.01em; text-transform:uppercase; color:rgba(255,255,255,0.88); text-align:center; line-height:1.3; max-width:100%; overflow-wrap:anywhere; word-break:break-word; padding:0 2px; }
 @media(min-width:420px){ .tp-jlbl { font-size:11px; letter-spacing:0.02em; } }
 .tp-jlbl.done { color:#5EE38B; } .tp-jlbl.active { color:#F1C765; }
-.tp-jline { position:absolute; top:12px; left:calc(50% + 15px); right:calc(-50% + 15px); height:2px; background:rgba(255,255,255,0.1); }
+.tp-jline { position:absolute; top:12px; left:calc(50% + 15px); right:calc(-50% + 15px); height:2px; background:rgba(255,255,255,0.18); }
 .tp-jline.done { background:rgba(34,197,94,0.55); }
 @media print {
   /* Keep the pass COLORFUL in print — force browsers to keep backgrounds. */
@@ -60,7 +60,7 @@ body { background:#0E1624; }
   .no-print { display:none !important; }
   .tp-page { padding:0 !important; }
   .tp-wrap { max-width:100% !important; padding:0 !important; }
-  .tp-card { box-shadow:none !important; border-radius:12px !important; background:linear-gradient(135deg,#0F2247,#0A162E) !important; border:2px solid #E8B23D !important; page-break-inside:avoid; }
+  .tp-card { box-shadow:none !important; border-radius:12px !important; background:linear-gradient(135deg,#1E3769,#172B51) !important; border:2px solid #E8B23D !important; page-break-inside:avoid; }
   .tp-perf::before, .tp-perf::after { background:#fff !important; }
   .tp-jdot.done { background:#22C55E !important; border-color:#22C55E !important; color:#fff !important; }
   .tp-jdot.active { border-color:#E8B23D !important; color:#E8B23D !important; }
@@ -96,7 +96,7 @@ export function TrialPass() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0E1624', fontFamily: 'var(--font-body)' }}>
+    <div style={{ minHeight: '100vh', background: '#1C2B47', fontFamily: 'var(--font-body)' }}>
       <style>{CSS}</style>
       <div className="no-print"><SiteHeader /></div>
 
@@ -104,8 +104,8 @@ export function TrialPass() {
         <div className="tp-wrap">
 
           {state === 'loading' && (
-            <div role="status" aria-label={t('Loading…', 'लोड हो रहा है…')} className="tp-card" style={{ padding: 0, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.12)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '18px 20px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+            <div role="status" aria-label={t('Loading…', 'लोड हो रहा है…')} className="tp-card" style={{ padding: 0, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.2)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '18px 20px', borderBottom: '1px solid rgba(255,255,255,0.18)' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   <Skel w={120} h={18} />
                   <Skel w={80} h={12} />
@@ -122,14 +122,14 @@ export function TrialPass() {
           )}
 
           {state === 'noauth' && (
-            <div className="tp-card" style={{ padding: 40, textAlign: 'center', border: '1px solid rgba(255,255,255,0.12)' }}>
+            <div className="tp-card" style={{ padding: 40, textAlign: 'center', border: '1px solid rgba(255,255,255,0.2)' }}>
               <div style={{ display: 'inline-flex', width: 64, height: 64, borderRadius: '50%', background: 'rgba(232,178,61,0.1)', border: '1px solid rgba(232,178,61,0.3)', alignItems: 'center', justifyContent: 'center', color: '#E8B23D', marginBottom: 16 }}>
                 <IcoLock size={26} />
               </div>
               <div style={{ font: '800 20px var(--font-head)', color: '#fff', marginBottom: 8 }}>
                 {t('Login required', 'लॉगिन ज़रूरी है')}
               </div>
-              <p style={{ color: 'rgba(255,255,255,0.78)', fontSize: 15, lineHeight: 1.6, marginBottom: 22 }}>
+              <p style={{ color: 'rgba(255,255,255,0.88)', fontSize: 15, lineHeight: 1.6, marginBottom: 22 }}>
                 {t('Please log in to view your Trial Pass.', 'अपना ट्रायल पास देखने के लिए लॉगिन करें।')}
               </p>
               <button className="tp-print-btn" onClick={() => openLoginModal()}>
@@ -139,14 +139,14 @@ export function TrialPass() {
           )}
 
           {state === 'nopass' && (
-            <div className="tp-card" style={{ padding: 40, textAlign: 'center', border: '1px solid rgba(255,255,255,0.12)' }}>
+            <div className="tp-card" style={{ padding: 40, textAlign: 'center', border: '1px solid rgba(255,255,255,0.2)' }}>
               <div style={{ display: 'inline-flex', width: 64, height: 64, borderRadius: '50%', background: 'rgba(232,178,61,0.1)', border: '1px solid rgba(232,178,61,0.3)', alignItems: 'center', justifyContent: 'center', color: '#E8B23D', marginBottom: 16 }}>
                 <IcoTicket size={26} />
               </div>
               <div style={{ font: '800 20px var(--font-head)', color: '#fff', marginBottom: 8 }}>
                 {t('Trial pass not ready yet', 'ट्रायल पास अभी तैयार नहीं है')}
               </div>
-              <p style={{ color: 'rgba(255,255,255,0.78)', fontSize: 15, lineHeight: 1.65, marginBottom: 22 }}>
+              <p style={{ color: 'rgba(255,255,255,0.88)', fontSize: 15, lineHeight: 1.65, marginBottom: 22 }}>
                 {t(
                   'Your trial slot has not been allocated yet. Complete Phase 2 (payment + KYC) if pending — slot details will appear here once allocated, and we will notify you.',
                   'आपका ट्रायल स्लॉट अभी allocate नहीं हुआ है। अगर Phase 2 (payment + KYC) बाकी है तो पहले पूरा करें — slot मिलते ही यहाँ details दिखेंगी और आपको सूचना भी भेजी जाएगी।'
@@ -169,10 +169,10 @@ export function TrialPass() {
               <div className="tp-card">
                 <div className="tp-head">
                   <div>
-                    <div style={{ font: '900 17px var(--font-head)', color: '#121828', letterSpacing: '0.04em' }}>BCPL T20</div>
-                    <div style={{ font: '700 13px var(--font-body)', color: 'rgba(10,16,32,0.75)', letterSpacing: '0.1em' }}>PHYSICAL TRIAL PASS</div>
+                    <div style={{ font: '900 17px var(--font-head)', color: '#212C49', letterSpacing: '0.04em' }}>BCPL T20</div>
+                    <div style={{ font: '700 13px var(--font-body)', color: 'rgba(22,35,68,0.75)', letterSpacing: '0.1em' }}>PHYSICAL TRIAL PASS</div>
                   </div>
-                  <div style={{ font: '800 14px var(--font-head)', color: '#121828', background: 'rgba(255,255,255,0.5)', borderRadius: 8, padding: '7px 13px', letterSpacing: '0.02em' }}>
+                  <div style={{ font: '800 14px var(--font-head)', color: '#212C49', background: 'rgba(255,255,255,0.72)', borderRadius: 8, padding: '7px 13px', letterSpacing: '0.02em' }}>
                     {data.player.regNumber ?? '—'}
                   </div>
                 </div>
@@ -193,7 +193,7 @@ export function TrialPass() {
                       <div className="tp-qrbox" style={data.assessmentSubmitted ? { opacity: 0.55 } : undefined}>
                         <img src={data.qrDataUrl} alt="Trial pass QR" />
                       </div>
-                      <div style={{ font: '600 13px var(--font-body)', color: 'rgba(255,255,255,0.75)', marginTop: 10, maxWidth: 200, lineHeight: 1.4 }} className="tp-note">
+                      <div style={{ font: '600 13px var(--font-body)', color: 'rgba(255,255,255,0.88)', marginTop: 10, maxWidth: 200, lineHeight: 1.4 }} className="tp-note">
                         {data.assessmentSubmitted
                           ? t('Check-in complete — QR no longer needed', 'चेक-इन पूरा — अब QR की ज़रूरत नहीं')
                           : t('Show this QR at the venue gate', 'गेट पर यह QR दिखाएँ')}
@@ -245,14 +245,14 @@ export function TrialPass() {
                 </div>
 
                 {data.assessmentSubmitted ? (
-                  <div className="tp-note" style={{ margin: '0 24px 24px', background: 'rgba(34,197,94,0.09)', border: '1px solid rgba(34,197,94,0.28)', borderRadius: 12, padding: '13px 16px', font: '500 13.5px var(--font-body)', color: 'rgba(255,255,255,0.78)', lineHeight: 1.65 }}>
+                  <div className="tp-note" style={{ margin: '0 24px 24px', background: 'rgba(34,197,94,0.09)', border: '1px solid rgba(34,197,94,0.28)', borderRadius: 12, padding: '13px 16px', font: '500 13.5px var(--font-body)', color: 'rgba(255,255,255,0.88)', lineHeight: 1.65 }}>
                     {t(
                       'Your physical trial assessment has been recorded. Results will be announced after trials conclude across all cities — you will be notified by SMS + email. No further action is needed.',
                       'आपका फिजिकल ट्रायल असेसमेंट रिकॉर्ड हो गया है। सभी शहरों के ट्रायल पूरे होने के बाद रिज़ल्ट की घोषणा होगी — आपको SMS + ईमेल से सूचना मिलेगी। अभी आपको कुछ और करने की ज़रूरत नहीं है।'
                     )}
                   </div>
                 ) : (
-                  <div className="tp-note" style={{ margin: '0 24px 24px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: '13px 16px', font: '500 13.5px var(--font-body)', color: 'rgba(255,255,255,0.78)', lineHeight: 1.65 }}>
+                  <div className="tp-note" style={{ margin: '0 24px 24px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.18)', borderRadius: 12, padding: '13px 16px', font: '500 13.5px var(--font-body)', color: 'rgba(255,255,255,0.88)', lineHeight: 1.65 }}>
                     {t(
                       'Carry your original Aadhaar card. Reach 30 minutes before your reporting time. Cricket kit optional — kit is available at the venue.',
                       'अपना original आधार कार्ड साथ लाएँ। Reporting time से 30 मिनट पहले पहुँचें। क्रिकेट किट optional है — venue पर किट उपलब्ध है।'

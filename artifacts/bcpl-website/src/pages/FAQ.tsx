@@ -12,7 +12,7 @@ import { StickyRegisterCTA } from "../components/StickyRegisterCTA";
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-body { background:#0E1624; }
+body { background:#1C2B47; }
 .wrap { max-width:1200px; margin:0 auto; padding:0 20px; }
 @media(min-width:1280px){ .wrap{padding:0 48px} }
 .v3-kicker { font-family:Inter,sans-serif; font-weight:700; font-size:12px; letter-spacing:.22em; color:#E8B23D; text-transform:uppercase; }
@@ -25,10 +25,10 @@ body { background:#0E1624; }
 .btn-fire:hover { transform:translateY(-2px); box-shadow:0 14px 40px rgba(255,122,41,0.6); }
 .btn-fire:active { transform:scale(0.97); }
 .btn-wa { background:linear-gradient(135deg,#25D366,#1BA851); border:none; border-radius:14px; color:#fff; font-weight:700; cursor:pointer; font-family:var(--font-head); transition:transform 0.15s; }
-.glass-card { background:linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85)); backdrop-filter:blur(32px); border:1px solid rgba(255,255,255,0.09); border-radius:20px; box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06); }
+.glass-card { background:linear-gradient(135deg,rgba(30,55,105,0.9),rgba(23,43,81,0.85)); backdrop-filter:blur(32px); border:1px solid rgba(255,255,255,0.18); border-radius:20px; box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.18); }
 .shimmer-gold { background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D,#F5C842,#E8B23D); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation:shimmer 3s linear infinite; }
 .tag-pill { display:inline-flex; align-items:center; gap:6px; background:rgba(255,122,41,0.12); border:1px solid rgba(255,122,41,0.3); border-radius:100px; padding:5px 14px; font-size:11px; font-weight:700; font-family:var(--font-head); color:#FF7A29; letter-spacing:0.1em; }
-.inp { width:100%; background:rgba(255,255,255,0.04); border:1.5px solid rgba(255,255,255,0.1); border-radius:14px; color:#F8F4EE; padding:15px 18px; font-family:Inter,sans-serif; font-size:16px; outline:none; transition:all 0.25s; appearance:none; }
+.inp { width:100%; background:rgba(255,255,255,0.04); border:1.5px solid rgba(255,255,255,0.18); border-radius:14px; color:#F8F4EE; padding:15px 18px; font-family:Inter,sans-serif; font-size:16px; outline:none; transition:all 0.25s; appearance:none; }
 .inp:focus { border-color:#FF7A29; background:rgba(255,122,41,0.06); box-shadow:0 0 0 4px rgba(255,122,41,0.12); }
 .inp::placeholder { color:rgba(255,255,255,0.28); }
 @keyframes gradShift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
@@ -149,7 +149,7 @@ function AmbientBg() {
     <div style={{position:'fixed',inset:0,zIndex:0,pointerEvents:'none',overflow:'hidden'}}>
       <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 80% 60% at 20% 40%, rgba(255,122,41,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 20%, rgba(30,64,175,0.12) 0%, transparent 60%)'}}/>
       <svg style={{position:'absolute',inset:0,width:'100%',height:'100%',opacity:0.07}} viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid slice">
-        <path d="M0,400 Q320,320 640,380 Q960,440 1280,360 L1280,720 L0,720 Z" fill="#1a2a4a"/>
+        <path d="M0,400 Q320,320 640,380 Q960,440 1280,360 L1280,720 L0,720 Z" fill="#273E6E"/>
         <rect x="80" y="100" width="8" height="300" fill="#334"/>
         <rect x="76" y="80" width="16" height="12" fill="#445" rx="2"/>
         <rect x="1192" y="100" width="8" height="300" fill="#334"/>
@@ -178,14 +178,14 @@ function AccordionItem({qEn,qHi,aEn,aHi,open,onToggle,lang,linkTo,linkLabel}: {q
   const a = lang==='hi' ? aHi : aEn;
   const more = lang==='hi' ? 'और पढ़ें' : 'Learn more';
   return (
-    <div className="glass-card" style={{marginBottom:12,overflow:'hidden',border:open?'1px solid rgba(255,122,41,0.4)':'1px solid rgba(255,255,255,0.09)',transition:'border 0.2s',borderLeft:open?'3px solid #FF7A29':'1px solid rgba(255,255,255,0.09)'}}>
+    <div className="glass-card" style={{marginBottom:12,overflow:'hidden',border:open?'1px solid rgba(255,122,41,0.4)':'1px solid rgba(255,255,255,0.18)',transition:'border 0.2s',borderLeft:open?'3px solid #FF7A29':'1px solid rgba(255,255,255,0.18)'}}>
       <button onClick={onToggle} style={{width:'100%',background:'none',border:'none',padding:'20px 24px',display:'flex',alignItems:'center',justifyContent:'space-between',cursor:'pointer',gap:16,textAlign:'left'}}>
         <span style={{fontFamily:'var(--font-head)',fontWeight:700,fontSize:15,color:open?'#FF7A29':'rgba(255,255,255,0.88)',transition:'color 0.2s',lineHeight:1.4}}>{q}</span>
-        <span style={{flexShrink:0,width:28,height:28,borderRadius:'50%',background:open?'rgba(255,122,41,0.2)':'rgba(255,255,255,0.06)',display:'flex',alignItems:'center',justifyContent:'center',color:open?'#FF7A29':'rgba(255,255,255,0.5)',fontSize:18,transition:'all 0.25s',transform:open?'rotate(45deg)':''}}>+</span>
+        <span style={{flexShrink:0,width:28,height:28,borderRadius:'50%',background:open?'rgba(255,122,41,0.2)':'rgba(255,255,255,0.18)',display:'flex',alignItems:'center',justifyContent:'center',color:open?'#FF7A29':'rgba(255,255,255,0.72)',fontSize:18,transition:'all 0.25s',transform:open?'rotate(45deg)':''}}>+</span>
       </button>
       {open && (
         <div style={{padding:'0 24px 20px',animation:'expandIn 0.3s ease'}}>
-          <p style={{color:'rgba(255,255,255,0.68)',fontSize:14,lineHeight:1.8,fontFamily:'Inter,sans-serif'}}>{a}</p>
+          <p style={{color:'rgba(255,255,255,0.88)',fontSize:14,lineHeight:1.8,fontFamily:'Inter,sans-serif'}}>{a}</p>
           {linkTo && linkLabel && (
             <Link href={linkTo} style={{display:'inline-flex',alignItems:'center',gap:6,marginTop:12,color:'#FF7A29',fontFamily:'var(--font-head)',fontWeight:700,fontSize:13,textDecoration:'none'}}>
               {more}: {linkLabel} &rarr;
@@ -229,7 +229,7 @@ export function FAQ() {
   });
 
   return (
-    <div style={{minHeight:'100vh',background:'#0E1624',fontFamily:'Inter,sans-serif',position:'relative'}}>
+    <div style={{minHeight:'100vh',background:'#1C2B47',fontFamily:'Inter,sans-serif',position:'relative'}}>
       <style>{CSS}</style>
       <AmbientBg/>
       <SiteHeader active="FAQ" />
@@ -248,7 +248,7 @@ export function FAQ() {
           <div style={{marginTop:32}}>
             <LegalDocHeader doc="faq" />
             {/* Season-5 applicability line — see report: recommend LegalDocHeader carry this centrally */}
-            <p style={{maxWidth:880,margin:'-14px auto 0',fontSize:12.5,color:'rgba(255,255,255,0.5)',fontStyle:'italic',lineHeight:1.6}}>
+            <p style={{maxWidth:880,margin:'-14px auto 0',fontSize:12.5,color:'rgba(255,255,255,0.72)',fontStyle:'italic',lineHeight:1.6}}>
               {t("This document applies to BCPL Season 5 unless expressly stated otherwise.","यह document, जब तक स्पष्ट रूप से अन्यथा न कहा जाए, BCPL Season 5 पर लागू होता है।")}
             </p>
           </div>
@@ -278,9 +278,9 @@ export function FAQ() {
         <div className="wrap">
           <div style={{display:'flex',gap:10,flexWrap:'wrap',justifyContent:'center'}}>
             {CATS.map(c=>(
-              <button key={c} onClick={()=>{ setCat(c); setOpenIdx(null); }} style={{padding:'10px 22px',borderRadius:100,border:`1.5px solid ${cat===c?'#FF7A29':'rgba(255,255,255,0.12)'}`,background:cat===c?'rgba(255,122,41,0.15)':'rgba(255,255,255,0.04)',color:cat===c?'#FF7A29':'rgba(255,255,255,0.6)',fontFamily:'var(--font-head)',fontWeight:700,fontSize:13,cursor:'pointer',transition:'all 0.2s',letterSpacing:'0.04em'}}>
+              <button key={c} onClick={()=>{ setCat(c); setOpenIdx(null); }} style={{padding:'10px 22px',borderRadius:100,border:`1.5px solid ${cat===c?'#FF7A29':'rgba(255,255,255,0.2)'}`,background:cat===c?'rgba(255,122,41,0.15)':'rgba(255,255,255,0.04)',color:cat===c?'#FF7A29':'rgba(255,255,255,0.88)',fontFamily:'var(--font-head)',fontWeight:700,fontSize:13,cursor:'pointer',transition:'all 0.2s',letterSpacing:'0.04em'}}>
                 {c}
-                <span style={{marginLeft:8,background:'rgba(255,255,255,0.1)',borderRadius:100,padding:'2px 8px',fontSize:11,color:'var(--ink-3)'}}>
+                <span style={{marginLeft:8,background:'rgba(255,255,255,0.18)',borderRadius:100,padding:'2px 8px',fontSize:11,color:'var(--ink-3)'}}>
                   {c==='All'?faqItems.length:faqItems.filter(f=>f.cat===c).length}
                 </span>
               </button>
@@ -294,7 +294,7 @@ export function FAQ() {
         <div className="wrap" style={{maxWidth:860,margin:'0 auto'}}>
           {filtered.length===0 ? (
             <div style={{textAlign:'center',padding:'60px 20px'}}>
-              <div style={{color:'rgba(255,255,255,0.5)',fontSize:16,fontFamily:'Inter,sans-serif'}}>{t("No questions found. Try a different search term.","कोई सवाल नहीं मिला। दूसरा search term try करें।")}</div>
+              <div style={{color:'rgba(255,255,255,0.72)',fontSize:16,fontFamily:'Inter,sans-serif'}}>{t("No questions found. Try a different search term.","कोई सवाल नहीं मिला। दूसरा search term try करें।")}</div>
             </div>
           ) : filtered.map((f,i)=>(
             <AccordionItem
@@ -318,7 +318,7 @@ export function FAQ() {
         <div className="wrap">
           <div className="glass-card" style={{padding:'clamp(20px,5vw,48px) clamp(16px,4vw,48px)',textAlign:'center',maxWidth:720,margin:'0 auto',border:'1px solid rgba(232,178,61,0.2)'}}>
             <h2 className="v3-h" style={{fontSize:30,color:'#fff',marginBottom:8}}>{t("Still Have Questions?","अभी भी सवाल हैं?")}</h2>
-            <p style={{color:'rgba(255,255,255,0.55)',fontSize:15,marginBottom:32,lineHeight:1.6}}>{t("Our support team is here for you. We'll respond within 2 hours on WhatsApp.","हमारी support team आपके लिए यहां है। हम WhatsApp पर 2 घंटे में जवाब देंगे।")}</p>
+            <p style={{color:'rgba(255,255,255,0.88)',fontSize:15,marginBottom:32,lineHeight:1.6}}>{t("Our support team is here for you. We'll respond within 2 hours on WhatsApp.","हमारी support team आपके लिए यहां है। हम WhatsApp पर 2 घंटे में जवाब देंगे।")}</p>
             <div style={{display:'flex',gap:14,justifyContent:'center',flexWrap:'wrap'}}>
               <a href="https://wa.me/919151346555" target="_blank" rel="noopener noreferrer" className="btn-wa" style={{padding:'14px 28px',fontSize:15,borderRadius:14,textDecoration:'none',display:'inline-flex',alignItems:'center',gap:8}}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>

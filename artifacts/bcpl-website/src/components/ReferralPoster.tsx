@@ -19,7 +19,7 @@ const H = 1920;
 
 // BCPL palette (matches the site + email templates).
 const NAVY = 'var(--bg)';
-const NAVY_2 = '#121F2F';
+const NAVY_2 = '#1F3652';
 const ORANGE = '#FF7A29';
 const ORANGE_HI = '#FF9A57';
 const GOLD = '#E8B23D';
@@ -80,9 +80,9 @@ async function buildPoster(name: string, code: string, link: string): Promise<HT
 
   // ── Background: deep navy with a soft orange glow top + subtle vignette ──
   const bg = ctx.createLinearGradient(0, 0, 0, H);
-  bg.addColorStop(0, '#132236');
+  bg.addColorStop(0, '#20395A');
   bg.addColorStop(0.55, NAVY);
-  bg.addColorStop(1, '#0C1017');
+  bg.addColorStop(1, '#1D2637');
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, W, H);
 
@@ -118,7 +118,7 @@ async function buildPoster(name: string, code: string, link: string): Promise<HT
   ctx.fillText('S E A S O N   5   ·   R E F E R   &   E A R N', W / 2, 360);
 
   // ── Player name ──
-  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  ctx.fillStyle = 'rgba(255,255,255,0.88)';
   ctx.font = "600 40px 'Montserrat', sans-serif";
   ctx.fillText('Invited by', W / 2, 470);
 
@@ -163,7 +163,7 @@ async function buildPoster(name: string, code: string, link: string): Promise<HT
   ctx.drawImage(qrCanvas, qrX, qrY, qrSize, qrSize);
 
   // ── "SCAN OR VISIT" hint ──
-  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.fillStyle = 'rgba(255,255,255,0.72)';
   ctx.font = "700 32px 'Montserrat', sans-serif";
   ctx.fillText('SCAN KARO YA VISIT KARO', W / 2, qrY + qrSize + 90);
 
@@ -302,9 +302,9 @@ export function ReferralPosterButton({ name, code, link }: Props) {
             <button style={posterBtn} onClick={share}><IcoChat size={15} style={{ color: 'currentColor' }} /> WhatsApp par share karo</button>
             <button
               style={{
-                background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.14)',
-                color: 'rgba(255,255,255,0.8)',
+                background: 'rgba(255,255,255,0.18)',
+                border: '1px solid rgba(255,255,255,0.2)',
+                color: 'rgba(255,255,255,0.88)',
                 borderRadius: 10,
                 padding: '11px 18px',
                 fontFamily: 'Montserrat,sans-serif',

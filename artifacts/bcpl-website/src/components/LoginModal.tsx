@@ -117,7 +117,7 @@ export function LoginModal() {
       display:'flex', alignItems:'center', justifyContent:'center', padding:16,
     }}>
       <div style={{
-        background:'#121F2F', border:'1px solid rgba(255,255,255,0.1)',
+        background:'#1F3652', border:'1px solid rgba(255,255,255,0.18)',
         borderRadius:20, padding:'32px 28px', width:'100%', maxWidth:380,
         boxShadow:'0 24px 80px rgba(0,0,0,0.65)', position:'relative',
         animation:'fadeUp .25s ease both',
@@ -152,21 +152,21 @@ export function LoginModal() {
           <>
             <label style={{ fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:10, color:'var(--ink-3)', letterSpacing:'.1em', textTransform:'uppercase', display:'block', marginBottom:8 }}>Mobile Number</label>
             <div style={{ display:'flex', gap:10, marginBottom:18 }}>
-              <div style={{ background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.12)', borderRadius:10, padding:'12px 14px', fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:14, color:'rgba(255,255,255,0.5)', flexShrink:0 }}>+91</div>
+              <div style={{ background:'rgba(255,255,255,0.18)', border:'1px solid rgba(255,255,255,0.2)', borderRadius:10, padding:'12px 14px', fontFamily:'Montserrat,sans-serif', fontWeight:700, fontSize:14, color:'rgba(255,255,255,0.72)', flexShrink:0 }}>+91</div>
               <input
                 type="tel" maxLength={10} value={phone}
                 onChange={e => setPhone(e.target.value.replace(/\D/g, ''))}
                 onKeyDown={e => e.key === 'Enter' && phone.length === 10 && handleSendOtp()}
                 placeholder="10-digit mobile"
                 autoFocus
-                style={{ flex:1, background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.12)', borderRadius:10, padding:'12px 14px', fontFamily:'Inter,sans-serif', fontSize:15, color:'#fff', outline:'none', letterSpacing:'.06em' }}
+                style={{ flex:1, background:'rgba(255,255,255,0.18)', border:'1px solid rgba(255,255,255,0.2)', borderRadius:10, padding:'12px 14px', fontFamily:'Inter,sans-serif', fontSize:15, color:'#fff', outline:'none', letterSpacing:'.06em' }}
               />
             </div>
             {errMsg && <div style={{ color:'#F87171', fontFamily:'Inter,sans-serif', fontSize:12, marginBottom:12 }}>{errMsg}</div>}
             <button
               disabled={phone.length !== 10 || sending}
               onClick={handleSendOtp}
-              style={{ width:'100%', background: phone.length === 10 ? 'linear-gradient(135deg,#FF7A29,#D95E10)' : 'rgba(255,255,255,0.08)', border:'none', borderRadius:12, color: phone.length === 10 ? '#fff' : 'rgba(255,255,255,0.3)', fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, letterSpacing:'.06em', padding:'14px', cursor: phone.length === 10 ? 'pointer' : 'not-allowed', textTransform:'uppercase', transition:'all .2s' }}
+              style={{ width:'100%', background: phone.length === 10 ? 'linear-gradient(135deg,#FF7A29,#D95E10)' : 'rgba(255,255,255,0.18)', border:'none', borderRadius:12, color: phone.length === 10 ? '#fff' : 'rgba(255,255,255,0.3)', fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, letterSpacing:'.06em', padding:'14px', cursor: phone.length === 10 ? 'pointer' : 'not-allowed', textTransform:'uppercase', transition:'all .2s' }}
             >
               {sending ? 'Sending…' : 'Send OTP →'}
             </button>
@@ -191,13 +191,13 @@ export function LoginModal() {
               onKeyDown={e => e.key === 'Enter' && otp.length === 6 && handleVerifyOtp()}
               placeholder="6-digit OTP"
               autoFocus
-              style={{ width:'100%', background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.12)', borderRadius:10, padding:'14px', fontFamily:'Montserrat,sans-serif', fontSize:24, color:'#FF7A29', outline:'none', letterSpacing:'.3em', textAlign:'center', marginBottom:16, boxSizing:'border-box' }}
+              style={{ width:'100%', background:'rgba(255,255,255,0.18)', border:'1px solid rgba(255,255,255,0.2)', borderRadius:10, padding:'14px', fontFamily:'Montserrat,sans-serif', fontSize:24, color:'#FF7A29', outline:'none', letterSpacing:'.3em', textAlign:'center', marginBottom:16, boxSizing:'border-box' }}
             />
             {errMsg && <div style={{ color:'#F87171', fontFamily:'Inter,sans-serif', fontSize:12, marginBottom:12 }}>{errMsg}</div>}
             <button
               disabled={otp.length !== 6 || verifying}
               onClick={handleVerifyOtp}
-              style={{ width:'100%', background: otp.length === 6 ? 'linear-gradient(135deg,#22C55E,#16A34A)' : 'rgba(255,255,255,0.08)', border:'none', borderRadius:12, color: otp.length === 6 ? '#fff' : 'rgba(255,255,255,0.3)', fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, letterSpacing:'.06em', padding:'14px', cursor: otp.length === 6 ? 'pointer' : 'not-allowed', textTransform:'uppercase', transition:'all .2s', marginBottom:12 }}
+              style={{ width:'100%', background: otp.length === 6 ? 'linear-gradient(135deg,#22C55E,#16A34A)' : 'rgba(255,255,255,0.18)', border:'none', borderRadius:12, color: otp.length === 6 ? '#fff' : 'rgba(255,255,255,0.3)', fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:14, letterSpacing:'.06em', padding:'14px', cursor: otp.length === 6 ? 'pointer' : 'not-allowed', textTransform:'uppercase', transition:'all .2s', marginBottom:12 }}
             >
               {verifying ? 'Verifying…' : '✓ Verify & Login'}
             </button>

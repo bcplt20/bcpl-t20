@@ -26,7 +26,7 @@ function TeamCard({ t }: { t: CardTeam }) {
   return (
     <Link href={`/team/${t.slug}`} style={{ textDecoration: "none", color: "inherit", display: "block" }}>
       <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
-        style={{ background: "#121F2F", border: `1.5px solid ${hov ? t.color : "rgba(255,255,255,0.07)"}`, borderRadius: 12, borderTop: `3px solid ${t.color}`, padding: "20px 18px", transition: "all 0.25s", boxShadow: hov ? `0 12px 40px ${t.color}22,0 0 0 1px ${t.color}33` : "none", cursor: "pointer", position: "relative", overflow: "hidden" }}>
+        style={{ background: "#1F3652", border: `1.5px solid ${hov ? t.color : "rgba(255,255,255,0.18)"}`, borderRadius: 12, borderTop: `3px solid ${t.color}`, padding: "20px 18px", transition: "all 0.25s", boxShadow: hov ? `0 12px 40px ${t.color}22,0 0 0 1px ${t.color}33` : "none", cursor: "pointer", position: "relative", overflow: "hidden" }}>
         {/* Watermark logo */}
         {t.logo && <img loading="lazy" decoding="async" src={t.logo} alt={t.name} style={{ position: "absolute", right: "-6%", bottom: "-6%", width: "72%", height: "72%", objectFit: "contain", opacity: 0.055, pointerEvents: "none", transition: "opacity 0.3s", filter: "grayscale(20%)" }} />}
 
@@ -144,7 +144,7 @@ export function Teams() {
             <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#FF7A29", flexShrink: 0 }} />
             <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 13, color: "#FF7A29" }}>SEASON 5</span>
             <span style={{ color: "var(--ink-3)", fontSize: 12 }}>·</span>
-            <span style={{ fontFamily: "Inter,sans-serif", fontSize: 13, color: "rgba(255,255,255,0.6)" }}>
+            <span style={{ fontFamily: "Inter,sans-serif", fontSize: 13, color: "rgba(255,255,255,0.88)" }}>
               {t(`${SEASON.teams} franchise teams · Squads announced after auction in Aug 2026 · Tournament begins Sep 2026`, `${SEASON.teams} franchise teams · Auction (Aug 2026) के बाद squads announce होंगे · Tournament Sep 2026 में शुरू होगा`)}
             </span>
           </div>
@@ -157,7 +157,7 @@ export function Teams() {
           <div className="wrap">
             <div role="status" aria-label={t("Loading…", "लोड हो रहा है…")} className="teams-grid">
               {Array.from({ length: 10 }).map((_, i) => (
-                <div key={i} style={{ background: "var(--panel)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, padding: 20, display: "flex", alignItems: "center", gap: 16 }}>
+                <div key={i} style={{ background: "var(--panel)", border: "1px solid rgba(255,255,255,0.18)", borderRadius: 14, padding: 20, display: "flex", alignItems: "center", gap: 16 }}>
                   <Skel w={64} h={64} r={16} style={{ flexShrink: 0 }} />
                   <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
                     <Skel w="75%" h={16} />
@@ -214,7 +214,7 @@ export function Teams() {
       {/* CTA */}
       <section style={{ padding: "0 0 80px" }}>
         <div className="wrap">
-          <div style={{ background: "#121F2F", border: "1px solid rgba(255,122,41,0.2)", borderRadius: 12, borderTop: "3px solid #FF7A29", padding: "clamp(32px,5vw,52px)", textAlign: "center" }}>
+          <div style={{ background: "#1F3652", border: "1px solid rgba(255,122,41,0.2)", borderRadius: 12, borderTop: "3px solid #FF7A29", padding: "clamp(32px,5vw,52px)", textAlign: "center" }}>
             <h2 style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: "clamp(20px,3.5vw,36px)", color: "#fff", marginBottom: 10, textTransform: "uppercase" }}>
               {t("Want to play for one of these franchises?", "इनमें से किसी franchise के लिए खेलना चाहते हैं?")}
             </h2>

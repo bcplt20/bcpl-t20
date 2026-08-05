@@ -134,7 +134,7 @@ export function Phase2Payment() {
         
         .card-box { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 24px; margin-bottom: 32px; }
         
-        .stick-cta { position: fixed; bottom: 0; left: 0; right: 0; padding: 16px 20px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); background: rgba(3,7,16,0.95); backdrop-filter: blur(12px); border-top: 1px solid rgba(232,178,61,0.3); z-index: 1000; }
+        .stick-cta { position: fixed; bottom: 0; left: 0; right: 0; padding: 16px 20px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); background: rgba(14,26,53,0.95); backdrop-filter: blur(12px); border-top: 1px solid rgba(232,178,61,0.3); z-index: 1000; }
         @media (min-width: 768px) { .stick-cta { display: none; } }
       `}</style>
 
@@ -147,7 +147,7 @@ export function Phase2Payment() {
           <h1 style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(32px, 6vw, 56px)', color: '#fff', textTransform: 'uppercase', lineHeight: 1.05 }}>
             {t("PHASE 2", "फेज 2")} <span style={{ color: 'var(--gold)' }}>{t("ENTRY FEE", "एंट्री फीस")}</span>
           </h1>
-          <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 16, marginTop: 12, lineHeight: 1.6 }}>
+          <p style={{ color: 'rgba(255,255,255,0.72)', fontSize: 16, marginTop: 12, lineHeight: 1.6 }}>
             {t("You've been selected. Now secure your physical trial slot.", "आपको चुना गया है। अब अपनी फिजिकल ट्रायल जगह पक्की करें।")}
           </p>
         </div>
@@ -164,7 +164,7 @@ export function Phase2Payment() {
           <div style={{ padding: '36px 32px', textAlign: 'center', background: 'var(--panel)' }}>
             <div style={{ fontFamily: 'var(--font-head)', fontWeight: 700, fontSize: 13, letterSpacing: '.16em', color: 'var(--ink-3)', marginBottom: 12, textTransform: 'uppercase' }}>{t("Total Amount Due", "कुल देय राशि")}</div>
             <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(56px, 8vw, 72px)', color: '#fff', lineHeight: 1 }}>₹{amount.toLocaleString('en-IN')}</div>
-            <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', marginTop: 12 }}>{t(`Phase 2 Entry Fee · ${role} · ${city} Trial`, `फेज 2 एंट्री फीस · ${role} · ${city} ट्रायल`)}</div>
+            <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.72)', marginTop: 12 }}>{t(`Phase 2 Entry Fee · ${role} · ${city} Trial`, `फेज 2 एंट्री फीस · ${role} · ${city} ट्रायल`)}</div>
           </div>
 
           <div className="ticket-dash" />
@@ -178,8 +178,8 @@ export function Phase2Payment() {
               [t('Taxable Amount', 'कर योग्य राशि'), `₹${taxBase.toLocaleString('en-IN')}`],
               [t('GST (18%)', 'GST (18%)'), `₹${gst.toLocaleString('en-IN')}`],
             ].map(([k,v]) => (
-              <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid rgba(255,255,255,0.06)', fontSize: 14 }}>
-                <span style={{ color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>{k}</span>
+              <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid rgba(255,255,255,0.18)', fontSize: 14 }}>
+                <span style={{ color: 'rgba(255,255,255,0.72)', fontWeight: 600 }}>{k}</span>
                 <span style={{ color: '#fff', fontWeight: 700 }}>{v}</span>
               </div>
             ))}
@@ -196,7 +196,7 @@ export function Phase2Payment() {
             <div style={{ width: 24, height: 24, border: agreed ? '2px solid var(--gold)' : '2px solid rgba(255,255,255,0.3)', borderRadius: 8, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: agreed ? 'var(--gold)' : 'transparent', transition: 'all 0.2s' }}>
               {agreed && <span style={{ color: '#000', fontSize: 14, fontWeight: 900 }}>✓</span>}
             </div>
-            <span style={{ fontSize: 14, color: agreed ? '#fff' : 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>
+            <span style={{ fontSize: 14, color: agreed ? '#fff' : 'rgba(255,255,255,0.88)', lineHeight: 1.6 }}>
               {t("I understand this is the Phase 2 physical-trial fee, payable by Phase 1 Qualified players, charged for participation in the Phase 2 physical trial. Payment confirms my trial slot, does not guarantee Auction Pool entry, Player Auction purchase, Team Purchase, a player contract, remuneration or Tournament Participation, and is non-refundable except in the situations listed in the Refund & Cancellation Policy.", "मैं समझता हूं कि यह Phase 2 physical-trial fee है, जो Phase 1 Qualified players देते हैं और Phase 2 physical trial में participation के लिए ली जाती है। Payment मेरी trial जगह पक्की करता है, यह Auction Pool में जगह, Player Auction में purchase, Team Purchase, player contract, remuneration या Tournament Participation की guarantee नहीं देता, और Refund & Cancellation Policy में बताई गई स्थितियों के अलावा refundable नहीं है।")}
             </span>
           </div>

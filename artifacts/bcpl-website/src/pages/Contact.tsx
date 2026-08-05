@@ -9,7 +9,7 @@ import { IcoChat, IcoMail, IcoPhone, IcoCheck, IcoInfo, IcoPin, IcoClock } from 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-body { background:#0E1624; }
+body { background:#1C2B47; }
 .wrap { max-width:1200px; margin:0 auto; padding:0 20px; }
 .desk-nav { display:none; align-items:center; gap:22px; }
 .ham-btn { display:flex; }
@@ -22,10 +22,10 @@ body { background:#0E1624; }
 .btn-fire:hover { transform:translateY(-2px); box-shadow:0 14px 40px rgba(255,122,41,0.6); }
 .btn-fire:active { transform:scale(0.97); }
 .btn-wa { background:linear-gradient(135deg,#25D366,#1BA851); border:none; border-radius:14px; color:#fff; font-weight:700; cursor:pointer; font-family:var(--font-head); transition:transform 0.15s; }
-.glass-card { background:linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85)); backdrop-filter:blur(32px); border:1px solid rgba(255,255,255,0.09); border-radius:20px; box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06); }
+.glass-card { background:linear-gradient(135deg,rgba(30,55,105,0.9),rgba(23,43,81,0.85)); backdrop-filter:blur(32px); border:1px solid rgba(255,255,255,0.18); border-radius:20px; box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.18); }
 .shimmer-gold { background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D,#F5C842,#E8B23D); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation:shimmer 3s linear infinite; }
 .tag-pill { display:inline-flex; align-items:center; gap:6px; background:rgba(255,122,41,0.12); border:1px solid rgba(255,122,41,0.3); border-radius:100px; padding:5px 14px; font-size:11px; font-weight:700; font-family:var(--font-head); color:#FF7A29; letter-spacing:0.1em; }
-.inp { width:100%; background:rgba(255,255,255,0.04); border:1.5px solid rgba(255,255,255,0.1); border-radius:14px; color:#F8F4EE; padding:15px 18px; font-family:Inter,sans-serif; font-size:16px; outline:none; transition:all 0.25s; appearance:none; }
+.inp { width:100%; background:rgba(255,255,255,0.04); border:1.5px solid rgba(255,255,255,0.18); border-radius:14px; color:#F8F4EE; padding:15px 18px; font-family:Inter,sans-serif; font-size:16px; outline:none; transition:all 0.25s; appearance:none; }
 .inp:focus { border-color:#FF7A29; background:rgba(255,122,41,0.06); box-shadow:0 0 0 4px rgba(255,122,41,0.12); }
 .inp::placeholder { color:rgba(255,255,255,0.28); }
 .lbl { font-size:12px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-3); margin-bottom:8px; display:block; }
@@ -46,7 +46,7 @@ function AmbientBg() {
     <div style={{position:'fixed',inset:0,zIndex:0,pointerEvents:'none',overflow:'hidden'}}>
       <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 80% 60% at 20% 40%, rgba(255,122,41,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 20%, rgba(30,64,175,0.12) 0%, transparent 60%)'}}/>
       <svg style={{position:'absolute',inset:0,width:'100%',height:'100%',opacity:0.07}} viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid slice">
-        <path d="M0,400 Q320,320 640,380 Q960,440 1280,360 L1280,720 L0,720 Z" fill="#1a2a4a"/>
+        <path d="M0,400 Q320,320 640,380 Q960,440 1280,360 L1280,720 L0,720 Z" fill="#273E6E"/>
         <rect x="80" y="100" width="8" height="300" fill="#334"/>
         <rect x="76" y="80" width="16" height="12" fill="#445" rx="2"/>
         <rect x="1192" y="100" width="8" height="300" fill="#334"/>
@@ -112,7 +112,7 @@ export function Contact() {
   }
 
   return (
-    <div style={{minHeight:'100vh',background:'#0E1624',fontFamily:'Inter,sans-serif',position:'relative'}}>
+    <div style={{minHeight:'100vh',background:'#1C2B47',fontFamily:'Inter,sans-serif',position:'relative'}}>
       <style>{CSS}</style>
       <AmbientBg/>
       <SiteHeader active="Contact" />
@@ -139,7 +139,7 @@ export function Contact() {
             <div className="glass-card contact-method-card" style={{padding:'36px 28px',border:'1px solid rgba(37,211,102,0.25)',boxShadow:'0 0 40px rgba(37,211,102,0.06)',animation:'fadeSlide 0.6s ease 0.1s both'}}>
               <div style={{marginBottom:16,color:'#25D366',display:'flex'}}><IcoChat size={40}/></div>
               <div style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:20,color:'#fff',marginBottom:8}}>WhatsApp</div>
-              <div style={{color:'rgba(255,255,255,0.55)',fontSize:14,lineHeight:1.6,marginBottom:8}}>{t("Fastest response.","सबसे तेज़ जवाब।")}</div>
+              <div style={{color:'rgba(255,255,255,0.88)',fontSize:14,lineHeight:1.6,marginBottom:8}}>{t("Fastest response.","सबसे तेज़ जवाब।")}</div>
               <div style={{color:'#25D366',fontSize:13,fontWeight:600,marginBottom:24}}>{t("Reply within 2 hours","2 घंटे में जवाब")}</div>
               <a href="https://wa.me/919151346555" target="_blank" rel="noopener noreferrer" style={{textDecoration:'none'}}>
                 <button style={{width:'100%',height:48,borderRadius:14,background:'linear-gradient(135deg,#25D366,#1BA851)',border:'none',color:'#fff',fontFamily:'var(--font-head)',fontWeight:800,fontSize:15,cursor:'pointer',transition:'transform 0.15s'}}>
@@ -195,13 +195,13 @@ export function Contact() {
             <div className="glass-card" style={{padding:'clamp(20px,5vw,40px)',animation:'fadeSlide 0.7s ease 0.2s both'}}>
               <div className="tag-pill" style={{marginBottom:20}}>{t("SEND A MESSAGE","संदेश भेजें")}</div>
               <h2 className="v3-h" style={{fontSize:30,color:'#fff',marginBottom:8}}>{t("Drop Us a Line","हमें लिखें")}</h2>
-              <p style={{color:'rgba(255,255,255,0.5)',fontSize:14,marginBottom:32,lineHeight:1.6}}>{t("Fill out the form and our team will get back to you within 24 hours.","Form भरें और हमारी team 24 घंटे में आपसे संपर्क करेगी।")}</p>
+              <p style={{color:'rgba(255,255,255,0.72)',fontSize:14,marginBottom:32,lineHeight:1.6}}>{t("Fill out the form and our team will get back to you within 24 hours.","Form भरें और हमारी team 24 घंटे में आपसे संपर्क करेगी।")}</p>
 
               {sent ? (
                 <div style={{textAlign:'center',padding:'40px 20px'}}>
                   <div style={{marginBottom:16,color:'#22C55E',display:'flex',justifyContent:'center'}}><IcoCheck size={44}/></div>
                   <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:20,color:'#22C55E',marginBottom:8}}>{t("Opening your email…","आपका email खुल रहा है…")}</div>
-                  <div style={{color:'rgba(255,255,255,0.6)',fontSize:14}}>{t("Your email app should open with the details pre-filled. Just review and send it to support@bcplt20.com.","आपका email app details के साथ खुलना चाहिए। बस review करके support@bcplt20.com पर भेज दें।")}</div>
+                  <div style={{color:'rgba(255,255,255,0.88)',fontSize:14}}>{t("Your email app should open with the details pre-filled. Just review and send it to support@bcplt20.com.","आपका email app details के साथ खुलना चाहिए। बस review करके support@bcplt20.com पर भेज दें।")}</div>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit}>
@@ -262,7 +262,7 @@ export function Contact() {
               <div className="glass-card" style={{padding:'32px',animation:'fadeSlide 0.7s ease 0.35s both'}}>
                 <div style={{marginBottom:12,color:'#FF7A29',display:'flex'}}><IcoInfo size={32}/></div>
                 <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:18,color:'#fff',marginBottom:8}}>{t("Common Questions?","आम सवाल?")}</div>
-                <p style={{color:'rgba(255,255,255,0.55)',fontSize:14,marginBottom:20,lineHeight:1.6}}>{t("Quick answers to the most frequent queries:","सबसे frequent queries के quick answers:")}</p>
+                <p style={{color:'rgba(255,255,255,0.88)',fontSize:14,marginBottom:20,lineHeight:1.6}}>{t("Quick answers to the most frequent queries:","सबसे frequent queries के quick answers:")}</p>
                 <div style={{display:'flex',flexWrap:'wrap',gap:8,marginBottom:20}}>
                   {[t("Refund policy","Refund policy"),t("Eligibility","पात्रता"),t("Video format","Video format"),t("Results timeline","Result timeline")].map((chip,idx)=>(
                     <span key={idx} style={{background:'rgba(255,122,41,0.1)',border:'1px solid rgba(255,122,41,0.25)',borderRadius:100,padding:'6px 14px',fontSize:12,color:'#FF7A29',fontFamily:'var(--font-head)',fontWeight:700,cursor:'pointer'}}>
@@ -276,10 +276,10 @@ export function Contact() {
               </div>
 
               <div className="glass-card" style={{padding:'28px',animation:'fadeSlide 0.7s ease 0.45s both'}}>
-                <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:15,color:'rgba(255,255,255,0.7)',marginBottom:16,display:'flex',alignItems:'center',gap:8}}><IcoPin size={16}/> Find Us</div>
-                <div style={{color:'rgba(255,255,255,0.5)',fontSize:13,lineHeight:1.8}}>
+                <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:15,color:'rgba(255,255,255,0.88)',marginBottom:16,display:'flex',alignItems:'center',gap:8}}><IcoPin size={16}/> Find Us</div>
+                <div style={{color:'rgba(255,255,255,0.72)',fontSize:13,lineHeight:1.8}}>
                   <div>Kriparthi Playing 11 Pvt. Ltd.</div>
-                  <div style={{color:'rgba(255,255,255,0.55)'}}>{t("Operating BCPL — Bhartiya Corporate Premier League","BCPL — Bhartiya Corporate Premier League का संचालन")}</div>
+                  <div style={{color:'rgba(255,255,255,0.88)'}}>{t("Operating BCPL — Bhartiya Corporate Premier League","BCPL — Bhartiya Corporate Premier League का संचालन")}</div>
                   <div style={{color:'#FF7A29',fontWeight:600}}>www.bcplt20.com</div>
                   <div style={{color:'#06B6D4',fontWeight:600,marginTop:6}}>support@bcplt20.com</div>
                   {/* OWNER / COUNSEL DECISION REQUIRED: registered office address & CIN are not verifiable in the codebase.
@@ -288,12 +288,12 @@ export function Contact() {
               </div>
 
               <div className="glass-card" style={{padding:'28px',animation:'fadeSlide 0.7s ease 0.55s both'}}>
-                <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:15,color:'rgba(255,255,255,0.7)',marginBottom:16,display:'flex',alignItems:'center',gap:8}}><IcoClock size={16}/> Support Hours</div>
+                <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:15,color:'rgba(255,255,255,0.88)',marginBottom:16,display:'flex',alignItems:'center',gap:8}}><IcoClock size={16}/> Support Hours</div>
                 <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
                   {[['Mon–Fri','10AM–7PM'],['Saturday','10AM–5PM'],['Sunday','Closed']].map(([d,h])=>(
                     <div key={d}>
                       <div style={{color:'var(--ink-3)',fontSize:11,fontFamily:'var(--font-head)',fontWeight:700}}>{d}</div>
-                      <div style={{color:'rgba(255,255,255,0.75)',fontSize:13,fontWeight:600}}>{h}</div>
+                      <div style={{color:'rgba(255,255,255,0.88)',fontSize:13,fontWeight:600}}>{h}</div>
                     </div>
                   ))}
                 </div>

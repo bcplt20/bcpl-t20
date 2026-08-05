@@ -238,22 +238,22 @@ function ProfileBackfillModal({ t, onClose, onDone }: {
   const chip = (val: string, active: boolean, onClick: () => void) => (
     <button key={val} type="button" onClick={onClick}
       style={{ padding: '8px 14px', borderRadius: 10, cursor: 'pointer', fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 13,
-        border: `1px solid ${active ? 'var(--orange)' : 'rgba(255,255,255,0.15)'}`,
+        border: `1px solid ${active ? 'var(--orange)' : 'rgba(255,255,255,0.2)'}`,
         background: active ? 'rgba(255,122,41,0.15)' : 'rgba(255,255,255,0.04)',
-        color: active ? 'var(--orange)' : 'rgba(255,255,255,0.7)' }}>
+        color: active ? 'var(--orange)' : 'rgba(255,255,255,0.88)' }}>
       {val}
     </button>
   );
-  const inputStyle: React.CSSProperties = { width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.04)', color: 'var(--ink)', fontSize: 14, fontFamily: 'var(--font-body)', boxSizing: 'border-box' };
-  const label = (s: string) => <div style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.5)', margin: '14px 0 6px', textTransform: 'uppercase', letterSpacing: '.06em' }}>{s}</div>;
+  const inputStyle: React.CSSProperties = { width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.04)', color: 'var(--ink)', fontSize: 14, fontFamily: 'var(--font-body)', boxSizing: 'border-box' };
+  const label = (s: string) => <div style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.72)', margin: '14px 0 6px', textTransform: 'uppercase', letterSpacing: '.06em' }}>{s}</div>;
 
   return (
     <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-      <div onClick={e => e.stopPropagation()} style={{ background: 'var(--panel, #0A1727)', border: '1px solid var(--line, rgba(255,255,255,0.1))', borderRadius: 'var(--r, 16px)', padding: 24, maxWidth: 440, width: '100%', maxHeight: '90vh', overflowY: 'auto' }}>
+      <div onClick={e => e.stopPropagation()} style={{ background: 'var(--panel, #172E4B)', border: '1px solid var(--line, rgba(255,255,255,0.18))', borderRadius: 'var(--r, 16px)', padding: 24, maxWidth: 440, width: '100%', maxHeight: '90vh', overflowY: 'auto' }}>
         <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 18, color: 'var(--gold)', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
           <IcoList size={18} /> {t('Complete your details', 'बाकी जानकारी भरें')}
         </div>
-        <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', marginBottom: 8, lineHeight: 1.5 }}>
+        <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.88)', marginBottom: 8, lineHeight: 1.5 }}>
           {t('Only the fields below are still needed.', 'सिर्फ़ नीचे दी गई जानकारी बाकी है।')}
         </div>
 
@@ -375,7 +375,7 @@ export function PlayerProfile() {
         
         .btn-orange { background: linear-gradient(135deg, var(--orange), var(--orange-2)); border: none; border-radius: var(--r); color: #fff; font-family: var(--font-head); font-weight: 900; letter-spacing: .06em; cursor: pointer; padding: 16px 32px; font-size: 16px; transition: all .2s; text-transform: uppercase; text-decoration: none; display: inline-block; box-shadow: 0 6px 20px rgba(255,122,41,0.3); }
         .btn-orange:hover { filter: brightness(1.1); transform: translateY(-2px); }
-        .btn-ghost { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.18); border-radius: var(--r); color: rgba(255,255,255,0.82); font-family: var(--font-head); font-weight: 800; cursor: pointer; padding: 12px 20px; font-size: 14px; letter-spacing: .05em; transition: all .2s; text-transform: uppercase; }
+        .btn-ghost { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.18); border-radius: var(--r); color: rgba(255,255,255,0.88); font-family: var(--font-head); font-weight: 800; cursor: pointer; padding: 12px 20px; font-size: 14px; letter-spacing: .05em; transition: all .2s; text-transform: uppercase; }
         .btn-ghost:hover { border-color: var(--orange); color: var(--orange); background: rgba(255,122,41,0.05); }
         
         .grid2 { display: grid; grid-template-columns: 1fr; gap: 16px; }
@@ -391,7 +391,7 @@ export function PlayerProfile() {
         @keyframes pulseGreen { 0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); } 50% { box-shadow: 0 0 0 12px rgba(34,197,94,0); } }
         @keyframes pulseOrange { 0%,100% { box-shadow: 0 0 0 0 rgba(255,122,41,0.4); } 50% { box-shadow: 0 0 0 12px rgba(255,122,41,0); } }
         
-        .mob-bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000; display: flex; background: rgba(3,7,16,0.95); backdrop-filter: blur(12px); border-top: 1px solid rgba(255,255,255,0.08); padding-bottom: env(safe-area-inset-bottom); }
+        .mob-bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000; display: flex; background: rgba(14,26,53,0.95); backdrop-filter: blur(12px); border-top: 1px solid rgba(255,255,255,0.18); padding-bottom: env(safe-area-inset-bottom); }
         @media (min-width: 768px) { .mob-bottom-nav { display: none; } }
         .mob-tab-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 12px 0; background: transparent; border: none; color: var(--ink-3); font-family: var(--font-body); cursor: pointer; transition: color 0.2s; }
         .mob-tab-btn.active { color: var(--orange); }
@@ -419,7 +419,7 @@ export function PlayerProfile() {
                 <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 15, color: 'var(--gold)', marginBottom: 4 }}>
                   {t('A few details are still pending', 'कुछ ज़रूरी जानकारी बाकी है')}
                 </div>
-                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', lineHeight: 1.5 }}>
+                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.88)', lineHeight: 1.5 }}>
                   {t(
                     'Please add your T-shirt size and emergency contact — these are needed for the trial.',
                     'कृपया अपनी टी-शर्ट साइज़ और इमरजेंसी कॉन्टैक्ट जानकारी भरें — ट्रायल के लिए यह ज़रूरी है।',
@@ -445,7 +445,7 @@ export function PlayerProfile() {
               
               <div className={`mob-tab-content ${activeTab === 'card' || activeTab === 'home' ? 'active' : ''}`}>
                 {/* ── HERO CARD ── */}
-                <div className="card" style={{ background: 'linear-gradient(135deg, #121F2F, #0E1520)', borderTop: '4px solid var(--orange)', marginBottom: 24, animation: 'fadeUp .5s ease both' }}>
+                <div className="card" style={{ background: 'linear-gradient(135deg, #1F3652, #1D2B42)', borderTop: '4px solid var(--orange)', marginBottom: 24, animation: 'fadeUp .5s ease both' }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap' }}>
                     <div style={{ width: 72, height: 72, borderRadius: '50%', background: 'linear-gradient(135deg, var(--orange), var(--gold))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 32, color: '#fff', flexShrink: 0, animation: step === 'trial_wait' || step === 'trial_scheduled' ? 'pulseGreen 2s ease infinite' : step === 'p2_register' ? 'pulseOrange 2s ease infinite' : 'none' }}>
                       {user?.name?.charAt(0).toUpperCase() ?? '?'}
@@ -472,7 +472,7 @@ export function PlayerProfile() {
                         </div>
                       )}
 
-                      <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', fontSize: 14.5, color: 'rgba(255,255,255,0.78)', fontWeight: 600, alignItems: 'center' }}>
+                      <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', fontSize: 14.5, color: 'rgba(255,255,255,0.88)', fontWeight: 600, alignItems: 'center' }}>
                         {reg && <>
                           <span>{formatRole(reg.role)}</span>
                           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}><IcoPin size={14} /> {reg.trialCity}</span>
@@ -494,7 +494,7 @@ export function PlayerProfile() {
                     {reg && (
                       <button className="btn-ghost" style={{ display: 'inline-flex', alignItems: 'center', gap: 7 }} onClick={() => {
                         const initials = user?.name?.charAt(0).toUpperCase() ?? '?';
-                        const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>BCPL Player ID — ${user?.name}</title><style>body{margin:0;background:#0B1624;display:flex;justify-content:center;padding:32px;font-family:'Segoe UI',sans-serif}.card{width:340px;background:linear-gradient(145deg,#152744,var(--bg));border:1.5px solid rgba(255,122,41,0.45);border-radius:18px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.6)}.stripe{height:4px;background:linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)}.head{background:linear-gradient(135deg,#FF7A29,#C94E0E);padding:14px 20px}.head-title{font-size:10px;font-weight:800;color:rgba(255,255,255,0.9);letter-spacing:.18em}.head-sub{font-size:8px;color:rgba(255,255,255,0.65);margin-top:3px;letter-spacing:.1em}.body{padding:20px 22px 16px}.avatar{width:60px;height:60px;background:linear-gradient(135deg,#FF7A29,#C94E0E);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;margin-bottom:12px;box-shadow:0 4px 20px rgba(255,122,41,0.4)}.name{font-size:20px;font-weight:900;color:#fff;margin-bottom:3px}.role{font-size:11px;font-weight:800;color:#FF7A29;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px}hr{border:none;border-top:1px solid rgba(255,255,255,0.08);margin:12px 0}.row{display:flex;justify-content:space-between;margin-bottom:9px}.label{font-size:9px;font-weight:700;color:var(--ink-3);text-transform:uppercase;letter-spacing:.08em}.val{font-size:11px;font-weight:700;color:rgba(255,255,255,0.8);text-align:right}.ref{font-family:monospace;color:#FF7A29;font-size:11px;font-weight:700}.foot{background:rgba(255,122,41,0.07);border-top:1px solid rgba(255,122,41,0.18);padding:12px 22px;display:flex;justify-content:space-between;align-items:center}.kyc{background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.4);border-radius:6px;padding:4px 11px;font-size:9px;font-weight:800;color:#22C55E;letter-spacing:.08em}.site{font-size:9px;color:rgba(255,255,255,0.25);font-weight:600}@media print{body{padding:0;background:#fff}.card{box-shadow:none}}</style></head><body><div class="card"><div class="stripe"></div><div class="head"><div class="head-title">BHARTIYA CORPORATE PREMIER LEAGUE</div><div class="head-sub">OFFICIAL PLAYER ID CARD · SEASON 5</div></div><div class="body"><div class="avatar">${initials}</div><div class="name">${user?.name}</div><div class="role">${formatRole(reg.role)} · ${reg.trialCity}</div><hr/><div class="row"><span class="label">Email</span><span class="val">${user?.email || '—'}</span></div><div class="row"><span class="label">Phone</span><span class="val">${user?.phone || '—'}</span></div><hr/><div class="row"><span class="label">Registration No.</span><span class="ref">${regId}</span></div><div class="row"><span class="label">KYC Status</span><span class="val" style="color:#22C55E">VERIFIED</span></div></div><div class="foot"><span class="site">bcplt20.com · BCPL Season 5</span><span class="kyc">ID CARD</span></div></div><script>window.onload=function(){window.print();}<\/script></body></html>`;
+                        const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>BCPL Player ID — ${user?.name}</title><style>body{margin:0;background:#172D48;display:flex;justify-content:center;padding:32px;font-family:'Segoe UI',sans-serif}.card{width:340px;background:linear-gradient(145deg,#223D68,var(--bg));border:1.5px solid rgba(255,122,41,0.45);border-radius:18px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.6)}.stripe{height:4px;background:linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)}.head{background:linear-gradient(135deg,#FF7A29,#C94E0E);padding:14px 20px}.head-title{font-size:10px;font-weight:800;color:rgba(255,255,255,0.9);letter-spacing:.18em}.head-sub{font-size:8px;color:rgba(255,255,255,0.88);margin-top:3px;letter-spacing:.1em}.body{padding:20px 22px 16px}.avatar{width:60px;height:60px;background:linear-gradient(135deg,#FF7A29,#C94E0E);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;margin-bottom:12px;box-shadow:0 4px 20px rgba(255,122,41,0.4)}.name{font-size:20px;font-weight:900;color:#fff;margin-bottom:3px}.role{font-size:11px;font-weight:800;color:#FF7A29;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px}hr{border:none;border-top:1px solid rgba(255,255,255,0.18);margin:12px 0}.row{display:flex;justify-content:space-between;margin-bottom:9px}.label{font-size:9px;font-weight:700;color:var(--ink-3);text-transform:uppercase;letter-spacing:.08em}.val{font-size:11px;font-weight:700;color:rgba(255,255,255,0.88);text-align:right}.ref{font-family:monospace;color:#FF7A29;font-size:11px;font-weight:700}.foot{background:rgba(255,122,41,0.07);border-top:1px solid rgba(255,122,41,0.18);padding:12px 22px;display:flex;justify-content:space-between;align-items:center}.kyc{background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.4);border-radius:6px;padding:4px 11px;font-size:9px;font-weight:800;color:#22C55E;letter-spacing:.08em}.site{font-size:9px;color:rgba(255,255,255,0.25);font-weight:600}@media print{body{padding:0;background:#fff}.card{box-shadow:none}}</style></head><body><div class="card"><div class="stripe"></div><div class="head"><div class="head-title">BHARTIYA CORPORATE PREMIER LEAGUE</div><div class="head-sub">OFFICIAL PLAYER ID CARD · SEASON 5</div></div><div class="body"><div class="avatar">${initials}</div><div class="name">${user?.name}</div><div class="role">${formatRole(reg.role)} · ${reg.trialCity}</div><hr/><div class="row"><span class="label">Email</span><span class="val">${user?.email || '—'}</span></div><div class="row"><span class="label">Phone</span><span class="val">${user?.phone || '—'}</span></div><hr/><div class="row"><span class="label">Registration No.</span><span class="ref">${regId}</span></div><div class="row"><span class="label">KYC Status</span><span class="val" style="color:#22C55E">VERIFIED</span></div></div><div class="foot"><span class="site">bcplt20.com · BCPL Season 5</span><span class="kyc">ID CARD</span></div></div><script>window.onload=function(){window.print();}<\/script></body></html>`;
                         const win = window.open('', '_blank');
                         if(win){ win.document.write(html); win.document.close(); }
                       }}>
@@ -521,7 +521,7 @@ export function PlayerProfile() {
                         </div>
                       ))}
                     </div>
-                    <div style={{ padding: '14px 16px', background: 'rgba(255,122,41,0.08)', border: '1px solid rgba(255,122,41,0.28)', borderRadius: 12, fontSize: 15, color: 'rgba(255,255,255,0.82)', lineHeight: 1.6, marginBottom: 16 }}>
+                    <div style={{ padding: '14px 16px', background: 'rgba(255,122,41,0.08)', border: '1px solid rgba(255,122,41,0.28)', borderRadius: 12, fontSize: 15, color: 'rgba(255,255,255,0.88)', lineHeight: 1.6, marginBottom: 16 }}>
                       {t("You haven't registered for Season 5 yet. Register now to start your BCPL journey.", "आपने अभी तक सीजन 5 के लिए रजिस्टर नहीं किया है। अपना BCPL सफर शुरू करने के लिए अभी रजिस्टर करें।")}
                     </div>
                     <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
@@ -549,7 +549,7 @@ export function PlayerProfile() {
                           </div>
                         </div>
                         {data.phase1Payment && <div style={{ fontSize: 26, fontWeight: 800, color: '#fff', fontFamily: 'var(--font-head)', lineHeight: 1.1 }}>{fmtAmt(data.phase1Payment.amount)}</div>}
-                        {data.phase1Payment?.paidAt && <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.68)', marginTop: 5 }}>{formatDateShort(data.phase1Payment.paidAt)}</div>}
+                        {data.phase1Payment?.paidAt && <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.88)', marginTop: 5 }}>{formatDateShort(data.phase1Payment.paidAt)}</div>}
                       </div>
 
                       {/* Trial Video */}
@@ -562,7 +562,7 @@ export function PlayerProfile() {
                               : t('Not Uploaded', 'अपलोड नहीं हुआ')}
                           </div>
                         </div>
-                        {data.video?.submittedAt && <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.68)', marginTop: 5 }}>{t("Submitted", "सबमिट किया")} {formatDateShort(data.video.submittedAt)}</div>}
+                        {data.video?.submittedAt && <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.88)', marginTop: 5 }}>{t("Submitted", "सबमिट किया")} {formatDateShort(data.video.submittedAt)}</div>}
                         {!data.video?.submitted && (
                           <button onClick={() => { setLocation('/register/upload-video'); }}
                             style={{ marginTop: 10, padding: '9px 16px', fontSize: 13, fontWeight: 800, fontFamily: 'var(--font-head)', letterSpacing: '.04em', background: 'rgba(255,122,41,0.12)', border: '1px solid rgba(255,122,41,0.45)', color: 'var(--orange)', borderRadius: '9px', cursor: 'pointer', textTransform: 'uppercase' }}>
@@ -581,7 +581,7 @@ export function PlayerProfile() {
                             </div>
                           </div>
                           {data.phase2Payment && <div style={{ fontSize: 26, fontWeight: 800, color: '#fff', fontFamily: 'var(--font-head)', lineHeight: 1.1 }}>{fmtAmt(data.phase2Payment.amount)}</div>}
-                          {data.phase2Payment?.paidAt && <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.68)', marginTop: 5 }}>{formatDateShort(data.phase2Payment.paidAt)}</div>}
+                          {data.phase2Payment?.paidAt && <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.88)', marginTop: 5 }}>{formatDateShort(data.phase2Payment.paidAt)}</div>}
                           {!data.phase2Payment && !p2Paid && (
                             <button onClick={() => { setLocation('/register/phase2'); }}
                               style={{ marginTop: 10, padding: '9px 16px', fontSize: 13, fontWeight: 800, fontFamily: 'var(--font-head)', letterSpacing: '.04em', background: 'rgba(255,122,41,0.12)', border: '1px solid rgba(255,122,41,0.45)', color: 'var(--orange)', borderRadius: '9px', cursor: 'pointer', textTransform: 'uppercase' }}>
@@ -600,7 +600,7 @@ export function PlayerProfile() {
                               {data.kyc?.status === 'verified' ? t('✓ Verified', '✓ वेरीफाइड') : data.kyc?.status === 'pending' ? t('In Review', 'रिव्यू में') : t('Pending', 'पेंडिंग')}
                             </div>
                           </div>
-                          {data.kyc?.submittedAt && <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.68)', marginTop: 5 }}>{t("Submitted", "सबमिट किया")} {formatDateShort(data.kyc.submittedAt)}</div>}
+                          {data.kyc?.submittedAt && <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.88)', marginTop: 5 }}>{t("Submitted", "सबमिट किया")} {formatDateShort(data.kyc.submittedAt)}</div>}
                           {(!data.kyc || data.kyc.status === 'failed') && (
                             <button onClick={() => { setLocation('/register/phase2/kyc'); }}
                               style={{ marginTop: 10, padding: '9px 16px', fontSize: 13, fontWeight: 800, fontFamily: 'var(--font-head)', letterSpacing: '.04em', background: 'rgba(255,122,41,0.12)', border: '1px solid rgba(255,122,41,0.45)', color: 'var(--orange)', borderRadius: '9px', cursor: 'pointer', textTransform: 'uppercase' }}>
@@ -625,12 +625,12 @@ export function PlayerProfile() {
               <div className={`mob-tab-content ${activeTab === 'home' ? 'active' : ''}`}>
                 {/* ── STATUS BANNER ── */}
                 {ban && (
-                  <div className="card feature-card" style={{ background: `linear-gradient(160deg, ${ban.bg}, rgba(18,41,74,0.9) 90%)`, border: `1px solid ${ban.color}55`, borderTop: `4px solid ${ban.color}`, boxShadow: `0 18px 44px rgba(0,0,0,0.32), 0 0 0 1px ${ban.color}12`, animation: 'fadeUp .5s .15s ease both', marginBottom: 24, padding: '32px 24px' }}>
+                  <div className="card feature-card" style={{ background: `linear-gradient(160deg, ${ban.bg}, rgba(32,63,108,0.9) 90%)`, border: `1px solid ${ban.color}55`, borderTop: `4px solid ${ban.color}`, boxShadow: `0 18px 44px rgba(0,0,0,0.32), 0 0 0 1px ${ban.color}12`, animation: 'fadeUp .5s .15s ease both', marginBottom: 24, padding: '32px 24px' }}>
                     <div style={{ display: 'flex', gap: 20, alignItems: 'flex-start', flexWrap: 'wrap' }}>
                       <div style={{ color: ban.color, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 60, height: 60, borderRadius: 14, background: `${ban.color}1A`, border: `1px solid ${ban.color}40`, flexShrink: 0 }}>{ban.icon}</div>
                       <div style={{ flex: 1, minWidth: 200 }}>
                         <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(22px, 3.2vw, 30px)', color: ban.color, marginBottom: 12, textTransform: 'uppercase', lineHeight: 1.1 }}>{ban.title}</div>
-                        <div style={{ fontSize: 16, color: 'rgba(255,255,255,0.82)', lineHeight: 1.6, marginBottom: ban.cta ? 24 : 0 }}>{ban.body}</div>
+                        <div style={{ fontSize: 16, color: 'rgba(255,255,255,0.88)', lineHeight: 1.6, marginBottom: ban.cta ? 24 : 0 }}>{ban.body}</div>
                         {ban.cta && ban.ctaPath && (
                           <button className="btn-orange" onClick={() => { setLocation(ban.ctaPath!); }}>
                             {ban.cta}
@@ -647,7 +647,7 @@ export function PlayerProfile() {
                           { label: t('Trial Date', 'ट्रायल तारीख़'), value: trial.slot?.date ? formatDateShort(trial.slot.date) : '—' },
                           { label: t('Assessment', 'असेसमेंट'), value: t('Recorded', 'रिकॉर्ड हो गया') + (trial.assessmentAt ? ` · ${formatDateShort(trial.assessmentAt)}` : ''), green: true },
                         ].map((row: any) => (
-                          <div key={row.label} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 10, padding: '11px 14px' }}>
+                          <div key={row.label} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.18)', borderRadius: 10, padding: '11px 14px' }}>
                             <div style={{ fontSize: 12, fontWeight: 800, fontFamily: 'var(--font-head)', color: 'rgba(255,255,255,0.72)', letterSpacing: '.06em', textTransform: 'uppercase', marginBottom: 5 }}>{row.label}</div>
                             <div style={{ fontSize: 15, fontWeight: 700, color: row.green ? 'var(--green)' : '#fff', fontFamily: row.mono ? 'monospace' : 'inherit', display: 'flex', alignItems: 'center', gap: 5 }}>
                               {row.green && <IcoCheck size={13} />}{row.value}
@@ -667,7 +667,7 @@ export function PlayerProfile() {
                       <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 22, color: 'var(--gold)', marginBottom: 6, letterSpacing: '.04em', textTransform: 'uppercase' }}>
                         {t("YOUR PHASE 1 RESULT IS READY", "आपका फेज 1 परिणाम तैयार है")}
                       </div>
-                      <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.82)', lineHeight: 1.55 }}>
+                      <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.88)', lineHeight: 1.55 }}>
                         {t("Your full 100-point scorecard from BCPL's Phase 1 evaluation is waiting.", "BCPL के Phase 1 evaluation से आपका पूरा 100-पॉइंट स्कोरकार्ड तैयार है।")}
                       </div>
                     </div>
@@ -697,7 +697,7 @@ export function PlayerProfile() {
                       <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 14, position: 'relative', zIndex: 1 }}>
                         <div style={{ width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, flexShrink: 0,
                           background: n.state === 'done' ? 'var(--green)' : 'var(--bg)',
-                          border: n.state === 'done' ? '2px solid var(--green)' : n.state === 'active' ? '3px solid var(--orange)' : '2px solid rgba(255,255,255,0.1)',
+                          border: n.state === 'done' ? '2px solid var(--green)' : n.state === 'active' ? '3px solid var(--orange)' : '2px solid rgba(255,255,255,0.18)',
                           color: n.state === 'done' ? '#fff' : n.state === 'active' ? 'var(--orange)' : 'rgba(255,255,255,0.3)',
                           boxShadow: n.state === 'active' ? '0 0 0 4px rgba(255,122,41,0.15)' : 'none'
                         }}>
@@ -772,7 +772,7 @@ export function PlayerProfile() {
                       ))}
                     </div>
                     {venue.notes && (
-                      <div style={{ marginTop: 20, padding: '16px', background: 'rgba(232,178,61,0.1)', border: '1px solid rgba(232,178,61,0.25)', borderRadius: '12px', fontSize: 15, color: 'rgba(255,255,255,0.82)', lineHeight: 1.6 }}>
+                      <div style={{ marginTop: 20, padding: '16px', background: 'rgba(232,178,61,0.1)', border: '1px solid rgba(232,178,61,0.25)', borderRadius: '12px', fontSize: 15, color: 'rgba(255,255,255,0.88)', lineHeight: 1.6 }}>
                         {venue.notes}
                       </div>
                     )}

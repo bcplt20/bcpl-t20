@@ -37,7 +37,7 @@ function useMyReferral(retryIfIneligible = false): Extract<MyReferral, { eligibl
 }
 
 const cardStyle: React.CSSProperties = {
-  background: '#121F2F', border: '1px solid rgba(255,255,255,0.08)',
+  background: '#1F3652', border: '1px solid rgba(255,255,255,0.18)',
   borderRadius: 14, padding: '22px 20px', marginBottom: 18,
 };
 const secLabel: React.CSSProperties = {
@@ -45,7 +45,7 @@ const secLabel: React.CSSProperties = {
   color: 'var(--ink-3)', letterSpacing: '.1em',
 };
 const linkBox: React.CSSProperties = {
-  flex: 1, minWidth: 200, background: '#0F1929', border: '1px dashed rgba(255,122,41,0.45)',
+  flex: 1, minWidth: 200, background: '#1C2F4C', border: '1px dashed rgba(255,122,41,0.45)',
   borderRadius: 10, padding: '11px 14px', fontFamily: 'monospace', fontSize: 13,
   color: '#FF9A57', fontWeight: 700, overflowWrap: 'anywhere',
 };
@@ -64,9 +64,9 @@ function CopyBtn({ text }: { text: string }) {
         setCopied(true); setTimeout(() => setCopied(false), 1500);
       }}
       style={{
-        background: copied ? 'rgba(34,197,94,0.15)' : 'rgba(255,255,255,0.06)',
-        border: copied ? '1px solid rgba(34,197,94,0.5)' : '1px solid rgba(255,255,255,0.14)',
-        color: copied ? '#4ADE80' : 'rgba(255,255,255,0.75)',
+        background: copied ? 'rgba(34,197,94,0.15)' : 'rgba(255,255,255,0.18)',
+        border: copied ? '1px solid rgba(34,197,94,0.5)' : '1px solid rgba(255,255,255,0.2)',
+        color: copied ? '#4ADE80' : 'rgba(255,255,255,0.88)',
         borderRadius: 10, padding: '11px 16px', fontFamily: 'Montserrat,sans-serif',
         fontWeight: 800, fontSize: 12, letterSpacing: '.04em', cursor: 'pointer',
         display: 'inline-flex', alignItems: 'center', gap: 6,
@@ -103,7 +103,7 @@ export function ReferralCard() {
       <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 'clamp(17px,2.6vw,21px)', color: '#fff', marginBottom: 4 }}>
         Bring your friends, win BCPL rewards <IcoGift size={20} style={{ color: '#FF9A57' }} />
       </div>
-      <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6, marginBottom: 16 }}>
+      <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.72)', lineHeight: 1.6, marginBottom: 16 }}>
         Share your personal link. When a friend completes their Phase 1 registration, you move up the reward ladder.
       </p>
 
@@ -130,7 +130,7 @@ export function ReferralCard() {
           { label: 'Paid Referrals', value: data.paid, sub: 'completed Phase 1 registration' },
           { label: 'Your Rank', value: data.rank ? `#${data.rank}` : '—', sub: data.rank ? 'on the referrer leaderboard' : 'first paid referral unlocks rank' },
         ].map(s => (
-          <div key={s.label} style={{ background: '#0F1929', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 10, padding: '14px 16px' }}>
+          <div key={s.label} style={{ background: '#1C2F4C', border: '1px solid rgba(255,255,255,0.18)', borderRadius: 10, padding: '14px 16px' }}>
             <div style={{ fontSize: 10, fontWeight: 700, fontFamily: 'Montserrat,sans-serif', color: 'var(--ink-3)', letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 6 }}>{s.label}</div>
             <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 24, color: '#fff' }}>{s.value}</div>
             <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 3 }}>{s.sub}</div>
@@ -142,14 +142,14 @@ export function ReferralCard() {
       {next && (
         <div style={{ marginBottom: 18 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, flexWrap: 'wrap', marginBottom: 8 }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.55)' }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.88)' }}>
               Next reward: <span style={{ color: '#FF9A57' }}>{next.reward}</span>
             </div>
             <div style={{ fontSize: 12, fontWeight: 800, color: '#FF9A57', fontFamily: 'Montserrat,sans-serif' }}>
               {data.paid}/{next.threshold} paid
             </div>
           </div>
-          <div style={{ height: 8, borderRadius: 6, background: 'rgba(255,255,255,0.07)', overflow: 'hidden' }}>
+          <div style={{ height: 8, borderRadius: 6, background: 'rgba(255,255,255,0.18)', overflow: 'hidden' }}>
             <div style={{ width: `${pct}%`, height: '100%', borderRadius: 6, background: 'linear-gradient(90deg,#FF7A29,#E8B23D)', transition: 'width .6s ease' }} />
           </div>
         </div>
@@ -162,7 +162,7 @@ export function ReferralCard() {
           <div key={t.threshold} style={{
             display: 'flex', alignItems: 'center', gap: 12, padding: '9px 12px', borderRadius: 9,
             background: t.reached ? 'rgba(34,197,94,0.07)' : 'rgba(255,255,255,0.03)',
-            border: t.reached ? '1px solid rgba(34,197,94,0.25)' : '1px solid rgba(255,255,255,0.06)',
+            border: t.reached ? '1px solid rgba(34,197,94,0.25)' : '1px solid rgba(255,255,255,0.18)',
           }}>
             <div style={{
               minWidth: 34, textAlign: 'center', fontFamily: 'Montserrat,sans-serif', fontWeight: 900,
@@ -170,7 +170,7 @@ export function ReferralCard() {
             }}>
               {t.reached ? '✓' : t.threshold}
             </div>
-            <div style={{ flex: 1, fontSize: 13, color: t.reached ? '#D1FAE5' : 'rgba(255,255,255,0.6)', fontWeight: t.reached ? 600 : 400 }}>
+            <div style={{ flex: 1, fontSize: 13, color: t.reached ? '#D1FAE5' : 'rgba(255,255,255,0.88)', fontWeight: t.reached ? 600 : 400 }}>
               <span style={{ color: 'var(--ink-3)', fontWeight: 700, fontSize: 11, marginRight: 8 }}>{t.threshold} PAID →</span>
               {t.reward}
             </div>
@@ -224,7 +224,7 @@ export function ReferralShareBanner() {
   const tease = data.tiers.slice(0, 3);
   return (
     <div style={{
-      background: 'linear-gradient(135deg,#1A0F04,#121F2F)', border: '1px solid rgba(255,122,41,0.4)',
+      background: 'linear-gradient(135deg,#1A0F04,#1F3652)', border: '1px solid rgba(255,122,41,0.4)',
       borderRadius: 12, padding: '28px 20px', textAlign: 'center',
     }}>
       <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 13, letterSpacing: '.16em', color: '#FF9A57', marginBottom: 6, textTransform: 'uppercase' }}>
@@ -233,7 +233,7 @@ export function ReferralShareBanner() {
       <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 20, color: '#fff', marginBottom: 8 }}>
         Apni team banao — rewards jeeto!
       </div>
-      <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.55)', lineHeight: 1.6, maxWidth: 520, margin: '0 auto 18px' }}>
+      <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.88)', lineHeight: 1.6, maxWidth: 520, margin: '0 auto 18px' }}>
         Your personal referral link is ready. Every friend who completes Phase 1 registration takes you up the reward ladder{tease.length > 0 ? ` — ${tease.map(t => `${t.threshold} = ${t.reward.replace(/^[^\w₹']*/, '').split(' — ')[0]}`).join(' · ')} …` : '.'}
       </p>
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center', alignItems: 'stretch', maxWidth: 640, margin: '0 auto 14px' }}>

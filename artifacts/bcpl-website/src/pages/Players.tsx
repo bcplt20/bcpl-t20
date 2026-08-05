@@ -94,11 +94,11 @@ export function Players() {
         .shimmer-gold { background: linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 3s linear infinite; }
         @keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
         @keyframes fadeSlide { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
-        .player-card { background: linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85)); backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 18px 16px; transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s; animation: fadeSlide 0.4s ease both; }
+        .player-card { background: linear-gradient(135deg,rgba(30,55,105,0.9),rgba(23,43,81,0.85)); backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.18); border-radius: 16px; padding: 18px 16px; transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s; animation: fadeSlide 0.4s ease both; }
         .player-card:hover { transform: translateY(-4px); border-color: rgba(255,122,41,0.35); box-shadow: 0 14px 40px rgba(0,0,0,0.5); }
-        .filter-input { background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.1); border-radius: 12px; color: #F8F4EE; padding: 10px 16px; font-family: Inter, sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; width: 100%; }
+        .filter-input { background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.18); border-radius: 12px; color: #F8F4EE; padding: 10px 16px; font-family: Inter, sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; width: 100%; }
         .filter-input:focus { border-color: #FF7A29; }
-        .filter-select { background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.1); border-radius: 12px; color: #F8F4EE; padding: 10px 16px; font-family: Inter, sans-serif; font-size: 14px; outline: none; cursor: pointer; appearance: none; -webkit-appearance: none; transition: border-color 0.2s; }
+        .filter-select { background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.18); border-radius: 12px; color: #F8F4EE; padding: 10px 16px; font-family: Inter, sans-serif; font-size: 14px; outline: none; cursor: pointer; appearance: none; -webkit-appearance: none; transition: border-color 0.2s; }
         .filter-select:hover { border-color: rgba(255,122,41,0.5); }
         .player-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
         @media(min-width:640px) { .player-grid { grid-template-columns: repeat(2,1fr); } }
@@ -125,7 +125,7 @@ export function Players() {
             {t("SEASON 5", "सीज़न 5")}<br />
             <span className="shimmer-gold">{t("PLAYERS", "खिलाड़ी")}</span>
           </h1>
-          <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "clamp(14px,2vw,16px)", lineHeight: 1.7, maxWidth: 480, margin: "0 auto" }}>
+          <p style={{ color: "rgba(255,255,255,0.72)", fontSize: "clamp(14px,2vw,16px)", lineHeight: 1.7, maxWidth: 480, margin: "0 auto" }}>
             {t("Every player, every role, every team — the complete BCPL Season 5 players database.", "हर खिलाड़ी, हर role, हर team — पूरा BCPL Season 5 players database।")}
           </p>
         </div>
@@ -135,7 +135,7 @@ export function Players() {
 
         {/* FILTERS */}
         {!squadEmpty && (
-          <div style={{ background: "linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85))", backdropFilter: "blur(24px)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "24px 20px", marginBottom: 32 }}>
+          <div style={{ background: "linear-gradient(135deg,rgba(30,55,105,0.9),rgba(23,43,81,0.85))", backdropFilter: "blur(24px)", border: "1px solid rgba(255,255,255,0.18)", borderRadius: 16, padding: "24px 20px", marginBottom: 32 }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 14 }}>
               <input
                 type="text"
@@ -150,9 +150,9 @@ export function Players() {
                   value={filterTeam}
                   onChange={e => setFilterTeam(e.target.value)}
                 >
-                  <option value="All Teams" style={{ background: "#121F2F" }}>{t("All Teams", "सभी टीम")}</option>
+                  <option value="All Teams" style={{ background: "#1F3652" }}>{t("All Teams", "सभी टीम")}</option>
                   {teams.map(t => (
-                    <option key={t.id} value={t.name} style={{ background: "#121F2F" }}>{t.name}</option>
+                    <option key={t.id} value={t.name} style={{ background: "#1F3652" }}>{t.name}</option>
                   ))}
                 </select>
                 <select
@@ -161,7 +161,7 @@ export function Players() {
                   onChange={e => setFilterRole(e.target.value)}
                 >
                   {uniqueRoles.map(r => (
-                    <option key={r} value={r} style={{ background: "#121F2F" }}>{r}</option>
+                    <option key={r} value={r} style={{ background: "#1F3652" }}>{r}</option>
                   ))}
                 </select>
               </div>
@@ -181,7 +181,7 @@ export function Players() {
                     <Skel w={60} h={16} r={6} />
                   </div>
                 </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, paddingTop: 12, borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, paddingTop: 12, borderTop: "1px solid rgba(255,255,255,0.18)" }}>
                   <Skel w={20} h={20} r={10} style={{ flexShrink: 0 }} />
                   <Skel w="50%" h={12} />
                 </div>
@@ -200,7 +200,7 @@ export function Players() {
         {/* EMPTY STATE — squads not announced yet */}
         {squadEmpty && (
           <div style={{ textAlign: "center", padding: "clamp(60px,10vw,100px) 20px" }}>
-            <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}><IcoBat size={40} style={{ color: "rgba(255,255,255,0.5)" }} /></div>
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}><IcoBat size={40} style={{ color: "rgba(255,255,255,0.72)" }} /></div>
             <h2 style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: "clamp(22px,4vw,36px)", color: "#fff", marginBottom: 12 }}>
               {t("Squads Announced After Auction", "Auction के बाद squad announce होंगे")}
             </h2>
@@ -224,7 +224,7 @@ export function Players() {
         {filtered.length > 0 && (
           <>
             <div style={{ marginBottom: 20, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
-              <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 13, color: "rgba(255,255,255,0.6)" }}>
+              <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 13, color: "rgba(255,255,255,0.88)" }}>
                 {filtered.length} {t(filtered.length === 1 ? "PLAYER" : "PLAYERS", filtered.length === 1 ? "खिलाड़ी" : "खिलाड़ी")}
               </span>
             </div>
@@ -247,11 +247,11 @@ export function Players() {
                         <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
                           <span style={{ background: `${roleColor}22`, border: `1px solid ${roleColor}55`, color: roleColor, fontSize: 10, fontWeight: 800, padding: "2px 8px", borderRadius: 6, fontFamily: "var(--font-head)", letterSpacing: ".06em" }}>{roleNorm.toUpperCase()}</span>
                           {p.isCaptain && <span style={{ background: "rgba(232,178,61,0.2)", border: "1px solid rgba(232,178,61,0.5)", color: "#E8B23D", fontSize: 9, fontWeight: 800, padding: "2px 7px", borderRadius: 100, fontFamily: "var(--font-head)", letterSpacing: ".06em" }}>C</span>}
-                          {p.isViceCaptain && <span style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.25)", color: "rgba(255,255,255,0.75)", fontSize: 9, fontWeight: 800, padding: "2px 7px", borderRadius: 100, fontFamily: "var(--font-head)", letterSpacing: ".06em" }}>VC</span>}
+                          {p.isViceCaptain && <span style={{ background: "rgba(255,255,255,0.18)", border: "1px solid rgba(255,255,255,0.25)", color: "rgba(255,255,255,0.88)", fontSize: 9, fontWeight: 800, padding: "2px 7px", borderRadius: 100, fontFamily: "var(--font-head)", letterSpacing: ".06em" }}>VC</span>}
                         </div>
                       </div>
                     </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, paddingTop: 12, borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, paddingTop: 12, borderTop: "1px solid rgba(255,255,255,0.18)" }}>
                       <div style={{ width: 20, height: 20, borderRadius: "50%", background: `${p.teamColor}22`, border: `2px solid ${p.teamColor}`, flexShrink: 0 }} />
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontFamily: "var(--font-head)", fontWeight: 700, fontSize: 12, color: p.teamColor, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.teamName}</div>

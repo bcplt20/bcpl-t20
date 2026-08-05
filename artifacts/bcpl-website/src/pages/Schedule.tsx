@@ -29,15 +29,15 @@ const CSS = `
 .btn-fire{background:linear-gradient(135deg,#FF7A29 0%,#E8611A 60%,#C94E0E 100%);border:none;border-radius:14px;color:#fff;font-family:var(--font-head);font-weight:800;cursor:pointer;box-shadow:0 8px 28px rgba(255,122,41,0.45),inset 0 1px 0 rgba(255,255,255,0.2);transition:transform 0.15s,box-shadow 0.2s;letter-spacing:0.02em;animation:pulseGlow 3s ease-in-out infinite;}
 .btn-fire:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(255,122,41,0.6);}
 .btn-fire:active{transform:scale(0.97);}
-.glass-card{background:linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85));backdrop-filter:blur(32px);border:1px solid rgba(255,255,255,0.09);border-radius:20px;box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06);}
+.glass-card{background:linear-gradient(135deg,rgba(30,55,105,0.9),rgba(23,43,81,0.85));backdrop-filter:blur(32px);border:1px solid rgba(255,255,255,0.18);border-radius:20px;box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.18);}
 .shimmer-gold{background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D,#F5C842,#E8B23D);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 3s linear infinite;}
 .tag-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,122,41,0.12);border:1px solid rgba(255,122,41,0.3);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:700;font-family:var(--font-head);color:#FF7A29;letter-spacing:0.1em;}
 .match-card{transition:transform 0.2s,box-shadow 0.2s;}
 .match-card:hover{transform:translateY(-3px);box-shadow:0 32px 80px rgba(0,0,0,0.6)!important;}
-.filter-tab{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;color:rgba(255,255,255,0.5);font-family:var(--font-head);font-weight:700;font-size:12px;padding:8px 18px;cursor:pointer;transition:all 0.2s;letter-spacing:0.06em;}
+.filter-tab{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.18);border-radius:10px;color:rgba(255,255,255,0.72);font-family:var(--font-head);font-weight:700;font-size:12px;padding:8px 18px;cursor:pointer;transition:all 0.2s;letter-spacing:0.06em;}
 .filter-tab.active{background:rgba(255,122,41,0.15);border-color:rgba(255,122,41,0.5);color:#FF7A29;}
-.filter-tab:hover:not(.active){background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.8);}
-.team-select{background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.1);border-radius:12px;color:#F8F4EE;padding:10px 16px;font-family:Inter,sans-serif;font-size:14px;outline:none;cursor:pointer;appearance:none;-webkit-appearance:none;width:100%;transition:all 0.25s;}
+.filter-tab:hover:not(.active){background:rgba(255,255,255,0.18);color:rgba(255,255,255,0.88);}
+.team-select{background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.18);border-radius:12px;color:#F8F4EE;padding:10px 16px;font-family:Inter,sans-serif;font-size:14px;outline:none;cursor:pointer;appearance:none;-webkit-appearance:none;width:100%;transition:all 0.25s;}
 @media(min-width:768px){.team-select{width:auto;flex:1;max-width:260px;}}
 @keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 @keyframes pulseGlow{0%,100%{box-shadow:0 0 16px rgba(255,122,41,0.4)}50%{box-shadow:0 0 36px rgba(255,122,41,0.8),0 0 60px rgba(255,122,41,0.3)}}
@@ -78,7 +78,7 @@ function AmbientBg() {
     <div style={{position:'fixed',inset:0,zIndex:0,pointerEvents:'none',overflow:'hidden'}}>
       <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 80% 60% at 20% 40%, rgba(255,122,41,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 20%, rgba(30,64,175,0.12) 0%, transparent 60%)'}}/>
       <svg style={{position:'absolute',inset:0,width:'100%',height:'100%',opacity:0.07}} viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid slice">
-        <path d="M0,600 Q320,480 640,500 Q960,520 1280,480 L1280,720 L0,720 Z" fill="#1a2a4a"/>
+        <path d="M0,600 Q320,480 640,500 Q960,520 1280,480 L1280,720 L0,720 Z" fill="#273E6E"/>
         <rect x="80" y="60" width="8" height="200" fill="#334"/>
         <rect x="60" y="58" width="48" height="6" fill="#334"/>
         <rect x="1192" y="60" width="8" height="200" fill="#334"/>
@@ -204,7 +204,7 @@ export function Schedule() {
   }, {});
 
   return (
-    <div style={{background:'#0E1624',color:'#fff',minHeight:'100vh',overflowX:'hidden',fontFamily:'Inter,sans-serif'}}>
+    <div style={{background:'#1C2B47',color:'#fff',minHeight:'100vh',overflowX:'hidden',fontFamily:'Inter,sans-serif'}}>
       <style>{CSS}</style>
       <AmbientBg/>
       <div style={{position:'relative',zIndex:10}}>
@@ -241,7 +241,7 @@ export function Schedule() {
                 onChange={e=>setTeamFilter(e.target.value)}
                 className="team-select"
               >
-                {teamOptions.map(t=><option key={t} value={t} style={{background:'#121E30'}}>{t}</option>)}
+                {teamOptions.map(t=><option key={t} value={t} style={{background:'#1F3453'}}>{t}</option>)}
               </select>
             </div>
           </div>
@@ -250,7 +250,7 @@ export function Schedule() {
           {loading && (
             <div role="status" aria-label={t('Loading…', 'लोड हो रहा है…')} style={{display:'flex',flexDirection:'column',gap:12}}>
               {Array.from({length:3}).map((_,i)=>(
-                <div key={i} className="glass-card" style={{padding:'16px 16px',border:'1px solid rgba(255,255,255,0.09)',borderRadius:14,display:'flex',alignItems:'center',gap:16}}>
+                <div key={i} className="glass-card" style={{padding:'16px 16px',border:'1px solid rgba(255,255,255,0.18)',borderRadius:14,display:'flex',alignItems:'center',gap:16}}>
                   <Skel w={44} h={44} r={22} style={{flexShrink:0}}/>
                   <div style={{flex:1,display:'flex',flexDirection:'column',gap:10}}>
                     <Skel w="45%" h={14}/>
@@ -272,7 +272,7 @@ export function Schedule() {
           {/* UPCOMING NOTICE */}
           {!loading && !loadErr && allMatches.length === 0 && (
             <div style={{textAlign:'center',padding:'clamp(60px,10vw,100px) 20px'}}>
-              <div style={{display:'flex',justifyContent:'center',marginBottom:20}}><IcoBat size={40} style={{color:'rgba(255,255,255,0.5)'}}/></div>
+              <div style={{display:'flex',justifyContent:'center',marginBottom:20}}><IcoBat size={40} style={{color:'rgba(255,255,255,0.72)'}}/></div>
               <div className="v3-h" style={{fontSize:'clamp(26px,5vw,40px)',color:'#fff',marginBottom:12}}>
                 {t("Fixtures Coming Soon", "Fixtures जल्द आएंगे")}
               </div>
@@ -308,7 +308,7 @@ export function Schedule() {
                     className="glass-card match-card"
                     style={{
                       padding:'16px 16px',
-                      border:'1px solid rgba(255,255,255,0.09)',
+                      border:'1px solid rgba(255,255,255,0.18)',
                       animation:`fadeSlide 0.3s ${i*0.05}s ease both`,
                     }}
                   >

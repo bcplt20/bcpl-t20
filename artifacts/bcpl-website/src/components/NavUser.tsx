@@ -43,7 +43,7 @@ export function NavUser({ variant = 'desktop', onNavigate }: {
           onClick={() => { onNavigate?.(); openLoginModal(); }}
           style={{ background:'none', border:'none', cursor:'pointer', width:40, height:44, display:'inline-flex', alignItems:'center', justifyContent:'center', padding:0, flexShrink:0 }}
         >
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.75)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.88)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <circle cx="12" cy="8" r="4" />
             <path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5" />
           </svg>
@@ -69,7 +69,7 @@ export function NavUser({ variant = 'desktop', onNavigate }: {
       <span
         onClick={() => { onNavigate?.(); openLoginModal(); }}
         style={mobile
-          ? { color:'#FF7A29', fontWeight:700, fontSize:18, fontFamily:'Montserrat,sans-serif', padding:'14px 0', borderBottom:'1px solid rgba(255,255,255,0.07)', display:'flex', alignItems:'center', gap:8, cursor:'pointer' }
+          ? { color:'#FF7A29', fontWeight:700, fontSize:18, fontFamily:'Montserrat,sans-serif', padding:'14px 0', borderBottom:'1px solid rgba(255,255,255,0.18)', display:'flex', alignItems:'center', gap:8, cursor:'pointer' }
           : { color:'#FF7A29', fontWeight:700, fontSize:13, fontFamily:'Inter,sans-serif', cursor:'pointer' }}
       >{mobile ? <><IcoKey size={14} style={{ color:'#FF7A29' }} /> Login</> : 'Login'}</span>
     );
@@ -95,7 +95,7 @@ export function NavUser({ variant = 'desktop', onNavigate }: {
       onClick={onNavigate}
       title={user.name}
       style={mobile
-        ? { display:'flex', alignItems:'center', gap:10, color:'#FF7A29', fontWeight:700, fontSize:18, fontFamily:'Montserrat,sans-serif', padding:'14px 0', borderBottom:'1px solid rgba(255,255,255,0.07)', textDecoration:'none' }
+        ? { display:'flex', alignItems:'center', gap:10, color:'#FF7A29', fontWeight:700, fontSize:18, fontFamily:'Montserrat,sans-serif', padding:'14px 0', borderBottom:'1px solid rgba(255,255,255,0.18)', textDecoration:'none' }
         : { display:'inline-flex', alignItems:'center', gap:7, textDecoration:'none' }}
     >
       {avatar}
@@ -111,8 +111,8 @@ export function NavUser({ variant = 'desktop', onNavigate }: {
           onNavigate?.();
           window.location.assign(import.meta.env.BASE_URL || '/');
         }}
-        style={{ display:'flex', alignItems:'center', gap:8, color:'rgba(255,255,255,0.55)', fontWeight:700, fontSize:18, fontFamily:'Montserrat,sans-serif', padding:'14px 0', borderBottom:'1px solid rgba(255,255,255,0.07)', cursor:'pointer' }}
-      ><IcoOut size={14} style={{ color:'rgba(255,255,255,0.55)' }} /> Sign Out</span>
+        style={{ display:'flex', alignItems:'center', gap:8, color:'rgba(255,255,255,0.88)', fontWeight:700, fontSize:18, fontFamily:'Montserrat,sans-serif', padding:'14px 0', borderBottom:'1px solid rgba(255,255,255,0.18)', cursor:'pointer' }}
+      ><IcoOut size={14} style={{ color:'rgba(255,255,255,0.88)' }} /> Sign Out</span>
     )}
     </>
   );

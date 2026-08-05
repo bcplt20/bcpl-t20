@@ -9,15 +9,15 @@
 
 :root {
   /* surfaces — lifted ~15% from the old near-black navy for premium depth */
-  --bg:      #0C1D33;                 /* page background          */
-  --bg-deep: #071023;                 /* footer / recessed areas  */
-  --panel:   #12294A;                 /* raised cards             */
-  --panel-2: #16315A;                 /* lighter card top-light   */
-  --line:    rgba(255,255,255,.12);   /* hairline borders         */
+  --bg:      #1B2E52;                 /* page background          */
+  --bg-deep: #142447;                 /* footer / recessed areas  */
+  --panel:   #24396B;                 /* raised cards             */
+  --panel-2: #25477C;                 /* lighter card top-light   */
+  --line:    rgba(255,255,255,0.2);   /* hairline borders         */
 
   /* premium gradients — reused across sections & cards */
-  --grad-page: radial-gradient(ellipse 120% 90% at 50% -10%, #143059 0%, var(--bg) 55%, var(--bg-deep) 100%);
-  --grad-card: linear-gradient(165deg, var(--panel-2) 0%, var(--panel) 60%, #0F2545 100%);
+  --grad-page: radial-gradient(ellipse 120% 90% at 50% -10%, #23477A 0%, var(--bg) 55%, var(--bg-deep) 100%);
+  --grad-card: linear-gradient(165deg, var(--panel-2) 0%, var(--panel) 60%, #1D3B67 100%);
   --grad-cta:  linear-gradient(135deg, #FF8A3D 0%, #FF7A29 45%, #D95E10 100%);
 
   /* brand */
@@ -29,7 +29,7 @@
 
   /* ink (on dark surfaces) */
   --ink:   #FFFFFF;
-  --ink-2: rgba(255,255,255,.86);   /* raised from .80 for readable secondary text */
+  --ink-2: rgba(255,255,255,0.88);   /* raised from .80 for readable secondary text */
   --ink-3: rgba(255,255,255,.72);   /* raised from .58 — important secondary info floor */
 
   /* ── LIGHT / MID SURFACE SYSTEM (spec §4 C/D) ─────────────────────
@@ -37,14 +37,14 @@
      whole site. Use via .sec-light / .sec-mid section wrappers. */
   --surface-light:   #F4F1EA;              /* warm off-white               */
   --surface-light-2: #EAE5DA;              /* faint warm shade / dividers  */
-  --surface-mid:     #24405F;              /* desaturated steel-blue       */
-  --surface-mid-2:   #2C4A6B;              /* mid-tone top-light           */
+  --surface-mid:     #2D5076;              /* desaturated steel-blue       */
+  --surface-mid-2:   #305074;              /* mid-tone top-light           */
 
   /* ink on LIGHT surfaces */
-  --ink-dark:   #0C1D33;                   /* deep navy — primary          */
-  --ink-dark-2: rgba(12,29,51,.78);        /* secondary, readable          */
-  --ink-dark-3: rgba(12,29,51,.60);        /* genuinely muted only         */
-  --line-dark:  rgba(12,29,51,.14);        /* hairline on light            */
+  --ink-dark:   #1B2E52;                   /* deep navy — primary          */
+  --ink-dark-2: rgba(25,52,86,.78);        /* secondary, readable          */
+  --ink-dark-3: rgba(25,52,86,.60);        /* genuinely muted only         */
+  --line-dark:  rgba(25,52,86,.14);        /* hairline on light            */
 
   /* geometry */
   --r: 14px;                          /* the ONE corner radius    */
@@ -105,7 +105,7 @@ body {
 .v3-card {
   position: relative;
   background: var(--grad-card);
-  border: 1px solid rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,0.2);
   border-radius: var(--r);
   box-shadow: 0 10px 30px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.05);
   backdrop-filter: blur(6px);
@@ -116,12 +116,12 @@ body {
   content: '';
   position: absolute; inset: 0;
   border-radius: inherit;
-  background: linear-gradient(180deg, rgba(255,255,255,.06) 0%, transparent 28%);
+  background: linear-gradient(180deg, rgba(255,255,255,0.18) 0%, transparent 28%);
   pointer-events: none;
 }
 .v3-card--hover:hover {
   transform: translateY(-3px);
-  box-shadow: 0 20px 48px rgba(0,0,0,.46), inset 0 1px 0 rgba(255,255,255,.07);
+  box-shadow: 0 20px 48px rgba(0,0,0,.46), inset 0 1px 0 rgba(255,255,255,0.18);
   border-color: rgba(255,255,255,.18);
 }
 
@@ -203,7 +203,7 @@ html.rv-js .rv-stagger > * { opacity:0; transform: translateY(16px); transition:
 .v3-card--feature {
   background: var(--grad-card);
   border: 1px solid rgba(232,178,61,.24);
-  box-shadow: 0 18px 44px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.08);
+  box-shadow: 0 18px 44px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,0.18);
 }
 .v3-card--feature::before {
   background: linear-gradient(180deg, rgba(232,178,61,.10) 0%, transparent 30%);
@@ -211,7 +211,7 @@ html.rv-js .rv-stagger > * { opacity:0; transform: translateY(16px); transition:
 /* INFO: minimal — flat surface, thin border, no glass blur, no shadow. */
 .v3-card--info {
   background: rgba(255,255,255,.03);
-  border: 1px solid rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,0.18);
   box-shadow: none;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
@@ -220,13 +220,13 @@ html.rv-js .rv-stagger > * { opacity:0; transform: translateY(16px); transition:
 
 /* Card variants living on a LIGHT surface flip to light tokens. */
 .sec-light .v3-card,
-.sec-light .v3-card--feature { background: #FFFFFF; border-color: var(--line-dark); box-shadow: 0 12px 30px rgba(12,29,51,.12); backdrop-filter: none; -webkit-backdrop-filter: none; }
+.sec-light .v3-card--feature { background: #FFFFFF; border-color: var(--line-dark); box-shadow: 0 12px 30px rgba(25,52,86,.12); backdrop-filter: none; -webkit-backdrop-filter: none; }
 .sec-light .v3-card::before,
-.sec-light .v3-card--feature::before { background: linear-gradient(180deg, rgba(12,29,51,.03) 0%, transparent 30%); }
+.sec-light .v3-card--feature::before { background: linear-gradient(180deg, rgba(25,52,86,.03) 0%, transparent 30%); }
 .sec-light .v3-card--info { background: #FBF9F4; border-color: var(--line-dark); box-shadow: none; }
 
 /* ── skeleton loaders (premium shimmer) ──────────────────────────── */
-.skel { position:relative; overflow:hidden; background:rgba(255,255,255,0.06); border-radius:10px; }
-.skel::after { content:""; position:absolute; inset:0; transform:translateX(-100%); background:linear-gradient(90deg,transparent,rgba(255,255,255,0.09),transparent); animation:skel-sweep 1.4s infinite; }
+.skel { position:relative; overflow:hidden; background:rgba(255,255,255,0.18); border-radius:10px; }
+.skel::after { content:""; position:absolute; inset:0; transform:translateX(-100%); background:linear-gradient(90deg,transparent,rgba(255,255,255,0.18),transparent); animation:skel-sweep 1.4s infinite; }
 @keyframes skel-sweep { 100% { transform:translateX(100%); } }
 @media (prefers-reduced-motion: reduce) { .skel::after { animation:none; } }

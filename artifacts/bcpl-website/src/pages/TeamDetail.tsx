@@ -95,7 +95,7 @@ export function TeamDetail() {
   ] : [];
 
   return (
-    <div style={{background:'#0E1624',color:'#fff',minHeight:'100vh',overflowX:'hidden',fontFamily:'Inter,sans-serif'}}>
+    <div style={{background:'#1C2B47',color:'#fff',minHeight:'100vh',overflowX:'hidden',fontFamily:'Inter,sans-serif'}}>
       <style>{`
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
         .wrap{max-width:1280px;margin:0 auto;padding:0 16px;}
@@ -143,7 +143,7 @@ export function TeamDetail() {
       <div style={{position:'fixed',inset:0,zIndex:0,pointerEvents:'none',overflow:'hidden'}}>
         <div style={{position:'absolute',inset:0,background:`radial-gradient(ellipse 70% 60% at 30% 30%, ${ACCENT}1A 0%, transparent 60%), radial-gradient(ellipse 50% 40% at 80% 70%, rgba(255,122,41,0.07) 0%, transparent 60%)`}}/>
         <svg style={{position:'absolute',bottom:0,left:0,width:'100%',opacity:0.07}} viewBox="0 0 1280 320" preserveAspectRatio="xMidYMax meet">
-          <path d="M0,280 Q320,160 640,200 Q960,240 1280,180 L1280,320 L0,320 Z" fill="#1E3A5F"/>
+          <path d="M0,280 Q320,160 640,200 Q960,240 1280,180 L1280,320 L0,320 Z" fill="#284C7B"/>
           <rect x="80" y="60" width="8" height="200" fill="#2D4F7A"/>
           <rect x="70" y="50" width="28" height="12" fill="#2D4F7A"/>
           <rect x="1190" y="60" width="8" height="200" fill="#2D4F7A"/>
@@ -171,7 +171,7 @@ export function TeamDetail() {
             </div>
             <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(240px,1fr))',gap:16}}>
               {Array.from({length:6}).map((_,i)=>(
-                <div key={i} style={{background:'var(--panel)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:14,padding:16,display:'flex',alignItems:'center',gap:14}}>
+                <div key={i} style={{background:'var(--panel)',border:'1px solid rgba(255,255,255,0.18)',borderRadius:14,padding:16,display:'flex',alignItems:'center',gap:14}}>
                   <Skel w={48} h={48} r={24} style={{flexShrink:0}}/>
                   <div style={{flex:1,display:'flex',flexDirection:'column',gap:8}}>
                     <Skel w="70%" h={14}/>
@@ -187,11 +187,11 @@ export function TeamDetail() {
         {!loading && (notFound || (!team && loadErr)) && (
           <div style={{minHeight:'50vh',display:'flex',alignItems:'center',justifyContent:'center',padding:'0 20px'}}>
             <div style={{textAlign:'center',maxWidth:420}}>
-              <div style={{display:'flex',justifyContent:'center',marginBottom:16}}><IcoBat size={40} style={{color:'rgba(255,255,255,0.5)'}}/></div>
+              <div style={{display:'flex',justifyContent:'center',marginBottom:16}}><IcoBat size={40} style={{color:'rgba(255,255,255,0.72)'}}/></div>
               <h1 style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:24,color:'#fff',marginBottom:10}}>
                 {notFound ? 'Team not found' : 'Could not load team'}
               </h1>
-              <p style={{color:'rgba(255,255,255,0.5)',fontSize:14,lineHeight:1.7,marginBottom:24,fontFamily:'Inter,sans-serif'}}>
+              <p style={{color:'rgba(255,255,255,0.72)',fontSize:14,lineHeight:1.7,marginBottom:24,fontFamily:'Inter,sans-serif'}}>
                 {notFound ? 'This team does not exist or may have been removed.' : 'Something went wrong — please refresh the page to try again.'}
               </p>
               <Link href="/teams" className="btn-fire" style={{padding:'13px 28px',fontSize:14,borderRadius:12,textDecoration:'none',display:'inline-block'}}>← All Teams</Link>
@@ -239,7 +239,7 @@ export function TeamDetail() {
             )}
 
             {/* TAB BAR */}
-            <div style={{position:'sticky',top:'var(--sh-h, 64px)',zIndex:100,background:'rgba(6,14,28,0.97)',backdropFilter:'blur(20px)',borderBottom:'1px solid rgba(255,255,255,0.07)',marginBottom:40}}>
+            <div style={{position:'sticky',top:'var(--sh-h, 64px)',zIndex:100,background:'rgba(18,35,64,0.97)',backdropFilter:'blur(20px)',borderBottom:'1px solid rgba(255,255,255,0.18)',marginBottom:40}}>
               <div className="wrap">
                 <div style={{display:'flex',gap:0}}>
                   {tabs.map((t,i)=>(
@@ -258,10 +258,10 @@ export function TeamDetail() {
               {tab===0&&(
                 players.length === 0
                   ? (
-                    <div style={{background:'linear-gradient(135deg,rgba(15,34,71,0.92),rgba(10,22,46,0.88))',backdropFilter:'blur(24px)',border:`1px solid ${ACCENT}30`,borderRadius:20,padding:'clamp(36px,6vw,64px) 24px',textAlign:'center'}}>
+                    <div style={{background:'linear-gradient(135deg,rgba(30,55,105,0.92),rgba(23,43,81,0.88))',backdropFilter:'blur(24px)',border:`1px solid ${ACCENT}30`,borderRadius:20,padding:'clamp(36px,6vw,64px) 24px',textAlign:'center'}}>
                       <div style={{display:'flex',justifyContent:'center',marginBottom:16}}><IcoUsers size={38} style={{color:ACCENT}}/></div>
                       <h2 style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:'clamp(18px,3vw,26px)',color:'#fff',marginBottom:10}}>SQUAD ANNOUNCED AFTER THE AUCTION</h2>
-                      <p style={{color:'rgba(255,255,255,0.5)',fontSize:14,lineHeight:1.7,maxWidth:440,margin:'0 auto 24px',fontFamily:'Inter,sans-serif'}}>
+                      <p style={{color:'rgba(255,255,255,0.72)',fontSize:14,lineHeight:1.7,maxWidth:440,margin:'0 auto 24px',fontFamily:'Inter,sans-serif'}}>
                         The {team.name} squad will be finalised at the BCPL Season 5 players' auction in August 2026. Register now for your chance to be picked.
                       </p>
                       <Link href="/register" className="btn-fire" style={{padding:'13px 28px',fontSize:14,borderRadius:12,textDecoration:'none',display:'inline-flex',alignItems:'center',gap:8}}><IcoBat size={15} style={{color:'currentColor'}}/> Register for Phase 1 →</Link>
@@ -273,7 +273,7 @@ export function TeamDetail() {
                         const roleAb = ROLE_ABBR[p.role] || p.role;
                         const rc = ROLE_COLORS[roleAb] || ACCENT;
                         return (
-                          <div key={p.id} style={{background:'linear-gradient(135deg,rgba(15,34,71,0.92),rgba(10,22,46,0.88))',backdropFilter:'blur(24px)',border:`1px solid ${ACCENT}2E`,borderRadius:16,padding:'18px 16px',display:'flex',alignItems:'center',gap:14,animation:`fadeSlide 0.4s ease ${i*0.05}s both`,transition:'border-color 0.2s',boxShadow:'0 8px 32px rgba(0,0,0,0.3)'}}>
+                          <div key={p.id} style={{background:'linear-gradient(135deg,rgba(30,55,105,0.92),rgba(23,43,81,0.88))',backdropFilter:'blur(24px)',border:`1px solid ${ACCENT}2E`,borderRadius:16,padding:'18px 16px',display:'flex',alignItems:'center',gap:14,animation:`fadeSlide 0.4s ease ${i*0.05}s both`,transition:'border-color 0.2s',boxShadow:'0 8px 32px rgba(0,0,0,0.3)'}}>
                             {p.photoUrl
                               ? <img loading="lazy" decoding="async" src={asset(p.photoUrl)} alt={p.name} style={{width:44,height:44,borderRadius:'50%',objectFit:'cover',border:`2px solid ${ACCENT}55`,flexShrink:0}}/>
                               : <div style={{width:44,height:44,borderRadius:'50%',background:`linear-gradient(135deg,${ACCENT}33,${ACCENT}11)`,border:`2px solid ${ACCENT}55`,display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'var(--font-head)',fontWeight:900,fontSize:16,color:ACCENT,flexShrink:0}}>
@@ -283,7 +283,7 @@ export function TeamDetail() {
                               <div style={{display:'flex',alignItems:'center',gap:6,flexWrap:'wrap'}}>
                                 <span style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:14,color:'#F8F4EE',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{p.name}</span>
                                 {p.isCaptain&&<span style={{background:'rgba(232,178,61,0.2)',border:'1px solid rgba(232,178,61,0.5)',color:'#E8B23D',fontSize:9,fontWeight:800,padding:'2px 7px',borderRadius:100,fontFamily:'var(--font-head)',letterSpacing:'0.06em',flexShrink:0}}>C</span>}
-                                {p.isViceCaptain&&<span style={{background:'rgba(255,255,255,0.1)',border:'1px solid rgba(255,255,255,0.25)',color:'rgba(255,255,255,0.75)',fontSize:9,fontWeight:800,padding:'2px 7px',borderRadius:100,fontFamily:'var(--font-head)',letterSpacing:'0.06em',flexShrink:0}}>VC</span>}
+                                {p.isViceCaptain&&<span style={{background:'rgba(255,255,255,0.18)',border:'1px solid rgba(255,255,255,0.25)',color:'rgba(255,255,255,0.88)',fontSize:9,fontWeight:800,padding:'2px 7px',borderRadius:100,fontFamily:'var(--font-head)',letterSpacing:'0.06em',flexShrink:0}}>VC</span>}
                               </div>
                               <div style={{display:'flex',gap:6,marginTop:6,alignItems:'center',flexWrap:'wrap'}}>
                                 <span style={{background:`${rc}22`,border:`1px solid ${rc}55`,color:rc,fontSize:10,fontWeight:800,padding:'2px 8px',borderRadius:6,fontFamily:'var(--font-head)',letterSpacing:'0.06em'}}>{roleAb}</span>
@@ -302,10 +302,10 @@ export function TeamDetail() {
               {tab===1&&(
                 results.length === 0
                   ? (
-                    <div style={{background:'linear-gradient(135deg,rgba(15,34,71,0.92),rgba(10,22,46,0.88))',backdropFilter:'blur(24px)',border:`1px solid ${ACCENT}30`,borderRadius:20,padding:'clamp(36px,6vw,64px) 24px',textAlign:'center'}}>
+                    <div style={{background:'linear-gradient(135deg,rgba(30,55,105,0.92),rgba(23,43,81,0.88))',backdropFilter:'blur(24px)',border:`1px solid ${ACCENT}30`,borderRadius:20,padding:'clamp(36px,6vw,64px) 24px',textAlign:'center'}}>
                       <div style={{display:'flex',justifyContent:'center',marginBottom:16}}><IcoList size={38} style={{color:ACCENT}}/></div>
                       <h2 style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:'clamp(18px,3vw,26px)',color:'#fff',marginBottom:10}}>NO MATCHES PLAYED YET</h2>
-                      <p style={{color:'rgba(255,255,255,0.5)',fontSize:14,lineHeight:1.7,maxWidth:440,margin:'0 auto',fontFamily:'Inter,sans-serif'}}>
+                      <p style={{color:'rgba(255,255,255,0.72)',fontSize:14,lineHeight:1.7,maxWidth:440,margin:'0 auto',fontFamily:'Inter,sans-serif'}}>
                         The Season 5 tournament begins in September 2026. Match results will appear here once the league is underway.
                       </p>
                     </div>
@@ -313,15 +313,15 @@ export function TeamDetail() {
                   : (
                     <div style={{display:'flex',flexDirection:'column',gap:12}}>
                       {results.map((r,i)=>(
-                        <div key={i} style={{background:'linear-gradient(135deg,rgba(15,34,71,0.92),rgba(10,22,46,0.88))',backdropFilter:'blur(24px)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:16,padding:'18px 16px',borderLeft:`4px solid ${r.nr?'#94A3B8':r.won?'#22C55E':'#E8493F'}`,animation:`fadeSlide 0.4s ease ${i*0.06}s both`,display:'flex',flexWrap:'wrap',gap:12,alignItems:'center'}}>
+                        <div key={i} style={{background:'linear-gradient(135deg,rgba(30,55,105,0.92),rgba(23,43,81,0.88))',backdropFilter:'blur(24px)',border:'1px solid rgba(255,255,255,0.18)',borderRadius:16,padding:'18px 16px',borderLeft:`4px solid ${r.nr?'#94A3B8':r.won?'#22C55E':'#E8493F'}`,animation:`fadeSlide 0.4s ease ${i*0.06}s both`,display:'flex',flexWrap:'wrap',gap:12,alignItems:'center'}}>
                           <div style={{minWidth:70}}>
-                            <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:12,color:'rgba(255,255,255,0.5)',marginBottom:2}}>{r.date}</div>
+                            <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:12,color:'rgba(255,255,255,0.72)',marginBottom:2}}>{r.date}</div>
                             <div style={{fontFamily:'Inter,sans-serif',fontSize:11,color:'var(--ink-3)'}}>{r.venue}</div>
                             <div style={{fontFamily:'var(--font-head)',fontSize:10,color:'rgba(255,122,41,0.7)',fontWeight:700,marginTop:2}}>Match {r.matchNo}</div>
                           </div>
                           <div style={{flex:1,display:'flex',alignItems:'center',gap:10,justifyContent:'center',flexWrap:'wrap',minWidth:160}}>
                             <div style={{textAlign:'center'}}>
-                              <div style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:15,color:'rgba(255,255,255,0.85)'}}>vs {r.opponent}</div>
+                              <div style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:15,color:'rgba(255,255,255,0.88)'}}>vs {r.opponent}</div>
                               {r.desc && <div style={{fontFamily:'Inter,sans-serif',fontSize:11,color:'var(--ink-3)',marginTop:3}}>{r.desc}</div>}
                             </div>
                             <div style={{padding:'6px 12px',borderRadius:8,background:r.nr?'rgba(148,163,184,0.15)':r.won?'rgba(34,197,94,0.15)':'rgba(232,73,63,0.15)',border:`1px solid ${r.nr?'rgba(148,163,184,0.4)':r.won?'rgba(34,197,94,0.4)':'rgba(232,73,63,0.4)'}`,fontFamily:'var(--font-head)',fontWeight:900,fontSize:11,color:r.nr?'#94A3B8':r.won?'#22C55E':'#E8493F',letterSpacing:'0.08em'}}>
@@ -339,15 +339,15 @@ export function TeamDetail() {
                 <div>
                   <div className="about-grid" style={{display:'grid',gridTemplateColumns:'1fr',gap:14,marginBottom:28}}>
                     {aboutInfo.map((a,i)=>(
-                      <div key={i} style={{background:'linear-gradient(135deg,rgba(15,34,71,0.92),rgba(10,22,46,0.88))',backdropFilter:'blur(24px)',border:`1px solid ${ACCENT}26`,borderRadius:16,padding:'20px 22px',animation:`fadeSlide 0.4s ease ${i*0.07}s both`}}>
+                      <div key={i} style={{background:'linear-gradient(135deg,rgba(30,55,105,0.92),rgba(23,43,81,0.88))',backdropFilter:'blur(24px)',border:`1px solid ${ACCENT}26`,borderRadius:16,padding:'20px 22px',animation:`fadeSlide 0.4s ease ${i*0.07}s both`}}>
                         <div style={{color:'var(--ink-3)',fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',fontFamily:'var(--font-head)',marginBottom:8}}>{a.label}</div>
                         <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:15,color:'#F8F4EE'}}>{a.value}</div>
                       </div>
                     ))}
                   </div>
-                  <div style={{background:'linear-gradient(135deg,rgba(15,34,71,0.92),rgba(10,22,46,0.88))',backdropFilter:'blur(24px)',border:`1px solid ${ACCENT}26`,borderRadius:16,padding:'24px 22px'}}>
+                  <div style={{background:'linear-gradient(135deg,rgba(30,55,105,0.92),rgba(23,43,81,0.88))',backdropFilter:'blur(24px)',border:`1px solid ${ACCENT}26`,borderRadius:16,padding:'24px 22px'}}>
                     <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:15,color:'#F8F4EE',marginBottom:12}}>About the Franchise</div>
-                    <p style={{color:'rgba(255,255,255,0.6)',fontSize:14,lineHeight:1.8,fontFamily:'Inter,sans-serif'}}>
+                    <p style={{color:'rgba(255,255,255,0.88)',fontSize:14,lineHeight:1.8,fontFamily:'Inter,sans-serif'}}>
                       {team.name} {team.city ? `represent ${team.city} as ` : 'are '}one of the ten franchises of BCPL Season 5 — India's corporate cricket league. {players.length > 0 ? `The squad currently has ${players.length} player${players.length > 1 ? 's' : ''}.` : "The squad will be finalised at the players' auction in August 2026."} The tournament begins in September 2026.
                     </p>
                   </div>
@@ -359,17 +359,17 @@ export function TeamDetail() {
             {/* BOTTOM CTA */}
             <section style={{padding:'0 0 80px'}}>
               <div className="wrap">
-                <div style={{background:`linear-gradient(135deg,${ACCENT}14,rgba(255,122,41,0.06),rgba(15,34,71,0.92))`,backdropFilter:'blur(32px)',border:`1px solid ${ACCENT}30`,borderRadius:24,padding:'clamp(28px,4vw,48px) clamp(20px,3vw,32px)',textAlign:'center'}}>
+                <div style={{background:`linear-gradient(135deg,${ACCENT}14,rgba(255,122,41,0.06),rgba(30,55,105,0.92))`,backdropFilter:'blur(32px)',border:`1px solid ${ACCENT}30`,borderRadius:24,padding:'clamp(28px,4vw,48px) clamp(20px,3vw,32px)',textAlign:'center'}}>
                   <div className="tag-pill" style={{marginBottom:16,borderColor:`${ACCENT}55`,color:ACCENT,background:`${ACCENT}18`,display:'inline-flex',alignItems:'center',gap:6}}><IcoBat size={14} style={{color:ACCENT}}/> SEASON 5 TRIALS OPEN</div>
                   <h2 style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:'clamp(18px,4vw,34px)',color:'#fff',marginBottom:12}}>
                     WANT TO PLAY FOR {team.name.toUpperCase()}?
                   </h2>
-                  <p style={{color:'rgba(255,255,255,0.55)',fontSize:15,lineHeight:1.7,maxWidth:460,margin:'0 auto 28px',fontFamily:'Inter,sans-serif'}}>
+                  <p style={{color:'rgba(255,255,255,0.88)',fontSize:15,lineHeight:1.7,maxWidth:460,margin:'0 auto 28px',fontFamily:'Inter,sans-serif'}}>
                     Register today and get your shot at representing {team.city || 'your city'} on the BCPL stage. All roles open — Bat, Bowl, WK, All-Rounder.
                   </p>
                   <div className="cta-buttons" style={{display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap'}}>
                     <Link href="/register" className="btn-fire" style={{padding:'16px 32px',fontSize:15,borderRadius:14,textDecoration:'none',display:'inline-flex',alignItems:'center',gap:8}}><IcoBat size={16} style={{color:'currentColor'}}/> Register for Phase 1 →</Link>
-                    <Link href="/teams" style={{padding:'16px 24px',fontSize:15,borderRadius:14,background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.15)',color:'rgba(255,255,255,0.8)',fontFamily:'var(--font-head)',fontWeight:700,textDecoration:'none',display:'inline-flex',alignItems:'center'}}>← All Teams</Link>
+                    <Link href="/teams" style={{padding:'16px 24px',fontSize:15,borderRadius:14,background:'rgba(255,255,255,0.18)',border:'1px solid rgba(255,255,255,0.2)',color:'rgba(255,255,255,0.88)',fontFamily:'var(--font-head)',fontWeight:700,textDecoration:'none',display:'inline-flex',alignItems:'center'}}>← All Teams</Link>
                   </div>
                 </div>
               </div>

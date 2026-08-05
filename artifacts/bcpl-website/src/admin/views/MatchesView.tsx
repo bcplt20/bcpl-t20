@@ -30,7 +30,7 @@ const statusLabel = (s: string) =>
   : s.toUpperCase();
 
 const groupColor = (g: Group) => g === "live" ? "#EF4444" : g === "scheduled" ? "#3B82F6" : "#10B981";
-const statusColor = (s: string) => s === "abandoned" ? "#94A3B8" : groupColor(grp(s));
+const statusColor = (s: string) => s === "abandoned" ? "#C3CEE3" : groupColor(grp(s));
 const statusBg    = (s: string) => statusColor(s) + "22";
 
 const fmtDate = (iso: string | null) => iso
@@ -226,8 +226,8 @@ export default function MatchesView({ onOpenScoring }: { onOpenScoring?: () => v
     } finally { setResultSaving(false); }
   };
 
-  const card: React.CSSProperties = { background: "linear-gradient(135deg,#0D1526 0%,#0A1020 100%)", border: "1px solid #1E293B", borderRadius: 16, padding: 20 };
-  const inputStyle: React.CSSProperties = { width: "100%", padding: "10px 12px", background: "#060B18", border: "1px solid #1E293B", borderRadius: 9, color: "#F1F5F9", fontSize: 13, outline: "none", boxSizing: "border-box" };
+  const card: React.CSSProperties = { background: "linear-gradient(135deg,#2C3A5E 0%,#1F2B49 100%)", border: "1px solid #33436B", borderRadius: 16, padding: 20 };
+  const inputStyle: React.CSSProperties = { width: "100%", padding: "10px 12px", background: "#243050", border: "1px solid #33436B", borderRadius: 9, color: "#F1F5F9", fontSize: 13, outline: "none", boxSizing: "border-box" };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -236,14 +236,14 @@ export default function MatchesView({ onOpenScoring }: { onOpenScoring?: () => v
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div>
           <div style={{ fontSize: 20, fontWeight: 800, color: "#F1F5F9" }}>Match Management</div>
-          <div style={{ fontSize: 12, color: "#64748B", marginTop: 2 }}>Schedule, track and manage all BCPL fixtures — changes appear on the website instantly</div>
+          <div style={{ fontSize: 12, color: "#A6B3D0", marginTop: 2 }}>Schedule, track and manage all BCPL fixtures — changes appear on the website instantly</div>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
           <button onClick={() => { setLoading(true); reload(); }} title="Refresh"
-            style={{ padding: "10px 14px", borderRadius: 10, border: "1px solid #334155", background: "transparent", color: "#94A3B8", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
+            style={{ padding: "10px 14px", borderRadius: 10, border: "1px solid #8593B3", background: "transparent", color: "#C3CEE3", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
             ⟳ Refresh
           </button>
-          <button onClick={() => setShowBulk(true)} style={{ padding: "10px 18px", borderRadius: 10, border: "1px solid #334155", background: "transparent", color: "#94A3B8", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
+          <button onClick={() => setShowBulk(true)} style={{ padding: "10px 18px", borderRadius: 10, border: "1px solid #8593B3", background: "transparent", color: "#C3CEE3", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
             📊 Bulk Upload via CSV
           </button>
           <button onClick={() => { setAddErr(""); setShowAdd(true); }} style={{ padding: "10px 20px", borderRadius: 10, border: "none", background: "linear-gradient(135deg,#FF6B00,#FF8C40)", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
@@ -268,7 +268,7 @@ export default function MatchesView({ onOpenScoring }: { onOpenScoring?: () => v
             <span style={{ fontSize: 28 }}>{s.icon}</span>
             <div>
               <div style={{ fontSize: 28, fontWeight: 800, color: "#F1F5F9" }}>{s.value}</div>
-              <div style={{ fontSize: 11, color: "#64748B" }}>{s.label}</div>
+              <div style={{ fontSize: 11, color: "#A6B3D0" }}>{s.label}</div>
             </div>
           </div>
         ))}
@@ -279,9 +279,9 @@ export default function MatchesView({ onOpenScoring }: { onOpenScoring?: () => v
         {(["all", "live", "scheduled", "completed"] as const).map(f => (
           <button key={f} onClick={() => setFilter(f)} style={{
             padding: "8px 18px", borderRadius: 8, border: "1px solid",
-            borderColor: filter === f ? groupColor(f === "all" ? "scheduled" : f) : "#1E293B",
+            borderColor: filter === f ? groupColor(f === "all" ? "scheduled" : f) : "#33436B",
             background: filter === f ? groupColor(f === "all" ? "scheduled" : f) + "22" : "transparent",
-            color: filter === f ? groupColor(f === "all" ? "scheduled" : f) : "#64748B",
+            color: filter === f ? groupColor(f === "all" ? "scheduled" : f) : "#A6B3D0",
             fontSize: 12, fontWeight: 700, cursor: "pointer", textTransform: "capitalize",
           }}>
             {f === "live" && "● "}{f === "all" ? "All Matches" : f.charAt(0).toUpperCase() + f.slice(1)}
@@ -290,12 +290,12 @@ export default function MatchesView({ onOpenScoring }: { onOpenScoring?: () => v
       </div>
 
       {/* Loading / empty */}
-      {loading && <div style={{ ...card, textAlign: "center", color: "#64748B", fontSize: 13 }}>Loading matches…</div>}
+      {loading && <div style={{ ...card, textAlign: "center", color: "#A6B3D0", fontSize: 13 }}>Loading matches…</div>}
       {!loading && matches.length === 0 && !loadErr && (
         <div style={{ ...card, textAlign: "center", padding: 40 }}>
           <div style={{ fontSize: 34, marginBottom: 10 }}>🏏</div>
           <div style={{ fontSize: 15, fontWeight: 700, color: "#F1F5F9" }}>No matches scheduled yet</div>
-          <div style={{ fontSize: 12, color: "#64748B", marginTop: 6 }}>Use "+ Add Match" to schedule the first fixture — it will appear on the website's Match Center immediately.</div>
+          <div style={{ fontSize: 12, color: "#A6B3D0", marginTop: 6 }}>Use "+ Add Match" to schedule the first fixture — it will appear on the website's Match Center immediately.</div>
         </div>
       )}
 
@@ -312,9 +312,9 @@ export default function MatchesView({ onOpenScoring }: { onOpenScoring?: () => v
                 <span style={{ display: "block", padding: "4px 14px", borderRadius: 20, fontSize: 10, fontWeight: 800, background: statusBg(m.status), color: statusColor(m.status), marginBottom: 8, textTransform: "uppercase" }}>
                   {statusLabel(m.status)}
                 </span>
-                <div style={{ fontSize: 20, color: "#334155", fontWeight: 800 }}>VS</div>
-                <div style={{ fontSize: 12, color: "#64748B", marginTop: 6 }}>Match #{m.matchNo} · {fmtDate(m.scheduledAt)}{fmtTime(m.scheduledAt) ? ` · ${fmtTime(m.scheduledAt)}` : ""}</div>
-                <div style={{ fontSize: 10, color: "#334155", marginTop: 2 }}>📍 {m.venue}</div>
+                <div style={{ fontSize: 20, color: "#8593B3", fontWeight: 800 }}>VS</div>
+                <div style={{ fontSize: 12, color: "#A6B3D0", marginTop: 6 }}>Match #{m.matchNo} · {fmtDate(m.scheduledAt)}{fmtTime(m.scheduledAt) ? ` · ${fmtTime(m.scheduledAt)}` : ""}</div>
+                <div style={{ fontSize: 10, color: "#8593B3", marginTop: 2 }}>📍 {m.venue}</div>
                 {m.tossWinner && <div style={{ fontSize: 10, color: "#F59E0B", marginTop: 4 }}>🪙 {m.tossWinner} won toss, chose to {m.tossDecision}</div>}
               </div>
               <div style={{ flex: 1, textAlign: "center" }}>
@@ -327,7 +327,7 @@ export default function MatchesView({ onOpenScoring }: { onOpenScoring?: () => v
                   </button>
                 )}
                 {grp(m.status) !== "completed" && (
-                  <button onClick={() => openResult(m)} style={{ padding: "7px 14px", borderRadius: 7, border: "1px solid #1E293B", background: "transparent", color: "#94A3B8", fontSize: 11, cursor: "pointer" }}>
+                  <button onClick={() => openResult(m)} style={{ padding: "7px 14px", borderRadius: 7, border: "1px solid #33436B", background: "transparent", color: "#C3CEE3", fontSize: 11, cursor: "pointer" }}>
                     🏆 Enter Result
                   </button>
                 )}
@@ -342,9 +342,9 @@ export default function MatchesView({ onOpenScoring }: { onOpenScoring?: () => v
               </div>
             </div>
             {(m.winner || m.resultDesc) && grp(m.status) === "completed" && (
-              <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid #0F1B2D", display: "flex", gap: 18, flexWrap: "wrap" }}>
+              <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid #3A4A72", display: "flex", gap: 18, flexWrap: "wrap" }}>
                 {m.winner && <span style={{ fontSize: 12, color: "#10B981", fontWeight: 700 }}>🏆 {m.resultDesc || `Winner: ${m.winner}`}</span>}
-                {!m.winner && m.resultDesc && <span style={{ fontSize: 12, color: "#94A3B8", fontWeight: 600 }}>{m.resultDesc}</span>}
+                {!m.winner && m.resultDesc && <span style={{ fontSize: 12, color: "#C3CEE3", fontWeight: 600 }}>{m.resultDesc}</span>}
                 {m.playerOfMatch && <span style={{ fontSize: 12, color: "#F59E0B", fontWeight: 600 }}>⭐ Player of the Match: {m.playerOfMatch}</span>}
               </div>
             )}
@@ -355,13 +355,13 @@ export default function MatchesView({ onOpenScoring }: { onOpenScoring?: () => v
       {/* Add Match Modal */}
       {showAdd && (
         <div style={{ position: "fixed", inset: 0, background: "#00000088", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999 }}>
-          <div style={{ background: "#0D1526", border: "1px solid #1E293B", borderRadius: 20, padding: 28, width: 480 }}>
+          <div style={{ background: "#2C3A5E", border: "1px solid #33436B", borderRadius: 20, padding: 28, width: 480 }}>
             <div style={{ fontSize: 18, fontWeight: 800, color: "#F1F5F9", marginBottom: 4 }}>🏏 Schedule New Match</div>
-            <div style={{ fontSize: 11, color: "#64748B", marginBottom: 18 }}>Match #{nextMatchNo} · Season {SEASON} · will appear on the website immediately</div>
+            <div style={{ fontSize: 11, color: "#A6B3D0", marginBottom: 18 }}>Match #{nextMatchNo} · Season {SEASON} · will appear on the website immediately</div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
               {([{ label: "Team 1", key: "team1", type: "select", opts: TEAMS }, { label: "Team 2", key: "team2", type: "select", opts: TEAMS }, { label: "Match Date", key: "date", type: "date" }, { label: "Time (IST)", key: "time", type: "time" }] as any[]).map(f => (
                 <div key={f.key}>
-                  <label style={{ fontSize: 11, color: "#64748B", fontWeight: 700, display: "block", marginBottom: 6 }}>{f.label}</label>
+                  <label style={{ fontSize: 11, color: "#A6B3D0", fontWeight: 700, display: "block", marginBottom: 6 }}>{f.label}</label>
                   {f.type === "select"
                     ? <select value={(form as any)[f.key]} onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))} style={inputStyle}>{f.opts.map((o: string) => <option key={o}>{o}</option>)}</select>
                     : <input type={f.type} value={(form as any)[f.key]} onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))} style={inputStyle} />}
@@ -369,13 +369,13 @@ export default function MatchesView({ onOpenScoring }: { onOpenScoring?: () => v
               ))}
             </div>
             <div style={{ marginTop: 14 }}>
-              <label style={{ fontSize: 11, color: "#64748B", fontWeight: 700, display: "block", marginBottom: 6 }}>Venue (pick from list or type your own)</label>
+              <label style={{ fontSize: 11, color: "#A6B3D0", fontWeight: 700, display: "block", marginBottom: 6 }}>Venue (pick from list or type your own)</label>
               <input list="bcpl-venues" value={form.venue} onChange={e => setForm(p => ({ ...p, venue: e.target.value }))} style={inputStyle} placeholder="e.g. Feroz Shah Kotla, Delhi" />
               <datalist id="bcpl-venues">{VENUES.map(v => <option key={v} value={v} />)}</datalist>
             </div>
             {addErr && <div style={{ marginTop: 12, padding: "8px 12px", borderRadius: 8, background: "#EF444422", color: "#F87171", fontSize: 12, fontWeight: 600 }}>⚠ {addErr}</div>}
             <div style={{ display: "flex", gap: 10, marginTop: 20 }}>
-              <button onClick={() => setShowAdd(false)} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: "1px solid #1E293B", background: "transparent", color: "#64748B", fontSize: 13, cursor: "pointer" }}>Cancel</button>
+              <button onClick={() => setShowAdd(false)} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: "1px solid #33436B", background: "transparent", color: "#A6B3D0", fontSize: 13, cursor: "pointer" }}>Cancel</button>
               <button disabled={saving} onClick={submitAdd} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: "none", background: "linear-gradient(135deg,#FF6B00,#FF8C40)", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", opacity: saving ? 0.6 : 1 }}>
                 {saving ? "Scheduling…" : "Schedule Match"}
               </button>
@@ -387,11 +387,11 @@ export default function MatchesView({ onOpenScoring }: { onOpenScoring?: () => v
       {/* Enter Result Modal */}
       {resultFor && (
         <div style={{ position: "fixed", inset: 0, background: "#00000088", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999 }}>
-          <div style={{ background: "#0D1526", border: "1px solid #1E293B", borderRadius: 20, padding: 28, width: 480 }}>
+          <div style={{ background: "#2C3A5E", border: "1px solid #33436B", borderRadius: 20, padding: 28, width: 480 }}>
             <div style={{ fontSize: 18, fontWeight: 800, color: "#F1F5F9", marginBottom: 4 }}>🏆 Match Result</div>
-            <div style={{ fontSize: 12, color: "#64748B", marginBottom: 18 }}>Match #{resultFor.matchNo} — {resultFor.team1} vs {resultFor.team2}<br />Saving the result also updates the points table automatically.</div>
+            <div style={{ fontSize: 12, color: "#A6B3D0", marginBottom: 18 }}>Match #{resultFor.matchNo} — {resultFor.team1} vs {resultFor.team2}<br />Saving the result also updates the points table automatically.</div>
 
-            <label style={{ fontSize: 11, color: "#64748B", fontWeight: 700, display: "block", marginBottom: 6 }}>Winner</label>
+            <label style={{ fontSize: 11, color: "#A6B3D0", fontWeight: 700, display: "block", marginBottom: 6 }}>Winner</label>
             <select value={resultForm.outcome} onChange={e => setResultForm(p => ({ ...p, outcome: e.target.value }))} style={inputStyle}>
               <option value="">— Select —</option>
               <option value={resultFor.team1}>{resultFor.team1}</option>
@@ -399,20 +399,20 @@ export default function MatchesView({ onOpenScoring }: { onOpenScoring?: () => v
               <option value="__nr__">No Result (washed out / abandoned)</option>
             </select>
 
-            <label style={{ fontSize: 11, color: "#64748B", fontWeight: 700, display: "block", margin: "14px 0 6px" }}>Result description (shown on website)</label>
+            <label style={{ fontSize: 11, color: "#A6B3D0", fontWeight: 700, display: "block", margin: "14px 0 6px" }}>Result description (shown on website)</label>
             <input value={resultForm.resultDesc} onChange={e => setResultForm(p => ({ ...p, resultDesc: e.target.value }))} style={inputStyle}
               placeholder={resultForm.outcome && resultForm.outcome !== "__nr__" ? `e.g. ${resultForm.outcome} won by 14 runs` : "e.g. Match abandoned due to rain"} />
 
             {resultForm.outcome !== "__nr__" && (
               <>
-                <label style={{ fontSize: 11, color: "#64748B", fontWeight: 700, display: "block", margin: "14px 0 6px" }}>Player of the Match (optional)</label>
+                <label style={{ fontSize: 11, color: "#A6B3D0", fontWeight: 700, display: "block", margin: "14px 0 6px" }}>Player of the Match (optional)</label>
                 <input value={resultForm.playerOfMatch} onChange={e => setResultForm(p => ({ ...p, playerOfMatch: e.target.value }))} style={inputStyle} placeholder="Player name" />
               </>
             )}
 
             {resultErr && <div style={{ marginTop: 12, padding: "8px 12px", borderRadius: 8, background: "#EF444422", color: "#F87171", fontSize: 12, fontWeight: 600 }}>⚠ {resultErr}</div>}
             <div style={{ display: "flex", gap: 10, marginTop: 20 }}>
-              <button onClick={() => setResultFor(null)} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: "1px solid #1E293B", background: "transparent", color: "#64748B", fontSize: 13, cursor: "pointer" }}>Cancel</button>
+              <button onClick={() => setResultFor(null)} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: "1px solid #33436B", background: "transparent", color: "#A6B3D0", fontSize: 13, cursor: "pointer" }}>Cancel</button>
               <button disabled={resultSaving} onClick={submitResult} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: "none", background: "linear-gradient(135deg,#10B981,#34D399)", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", opacity: resultSaving ? 0.6 : 1 }}>
                 {resultSaving ? "Saving…" : "Save Result"}
               </button>
@@ -424,14 +424,14 @@ export default function MatchesView({ onOpenScoring }: { onOpenScoring?: () => v
       {/* Bulk Upload Modal */}
       {showBulk && (
         <div style={{ position: "fixed", inset: 0, background: "#00000088", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999 }}>
-          <div style={{ background: "#0D1526", border: "1px solid #1E293B", borderRadius: 20, padding: 28, width: 640, maxHeight: "90vh", overflowY: "auto" }}>
+          <div style={{ background: "#2C3A5E", border: "1px solid #33436B", borderRadius: 20, padding: 28, width: 640, maxHeight: "90vh", overflowY: "auto" }}>
             <div style={{ fontSize: 18, fontWeight: 800, color: "#F1F5F9", marginBottom: 4 }}>📊 Bulk Fixture Upload</div>
-            <div style={{ fontSize: 12, color: "#64748B", marginBottom: 20 }}>Upload a CSV file with your complete fixture schedule — every row becomes a real match on the website</div>
+            <div style={{ fontSize: 12, color: "#A6B3D0", marginBottom: 20 }}>Upload a CSV file with your complete fixture schedule — every row becomes a real match on the website</div>
 
-            <div style={{ background: "#060B18", borderRadius: 10, padding: "14px 16px", border: "1px solid #1E293B", marginBottom: 16 }}>
+            <div style={{ background: "#243050", borderRadius: 10, padding: "14px 16px", border: "1px solid #33436B", marginBottom: 16 }}>
               <div style={{ fontSize: 11, fontWeight: 700, color: "#F59E0B", marginBottom: 8 }}>📋 Required CSV Format (Date as YYYY-MM-DD, Time as HH:MM):</div>
-              <pre style={{ fontSize: 11, color: "#64748B", margin: 0, fontFamily: "monospace", lineHeight: 1.6 }}>Team 1,Team 2,Date,Time,Venue{"\n"}Rajasthan Scorchers,Punjab Warriors,2026-08-01,18:00,SMS Jaipur{"\n"}Mumbai Mavericks,Kolkata Tigers,2026-08-02,16:00,Wankhede Mumbai</pre>
-              <button onClick={() => { const a = document.createElement("a"); a.href = "data:text/plain," + encodeURIComponent(SAMPLE_CSV); a.download = "bcpl_fixture_template.csv"; a.click(); }} style={{ marginTop: 10, padding: "6px 14px", borderRadius: 7, border: "1px solid #334155", background: "transparent", color: "#64748B", fontSize: 11, cursor: "pointer" }}>
+              <pre style={{ fontSize: 11, color: "#A6B3D0", margin: 0, fontFamily: "monospace", lineHeight: 1.6 }}>Team 1,Team 2,Date,Time,Venue{"\n"}Rajasthan Scorchers,Punjab Warriors,2026-08-01,18:00,SMS Jaipur{"\n"}Mumbai Mavericks,Kolkata Tigers,2026-08-02,16:00,Wankhede Mumbai</pre>
+              <button onClick={() => { const a = document.createElement("a"); a.href = "data:text/plain," + encodeURIComponent(SAMPLE_CSV); a.download = "bcpl_fixture_template.csv"; a.click(); }} style={{ marginTop: 10, padding: "6px 14px", borderRadius: 7, border: "1px solid #8593B3", background: "transparent", color: "#A6B3D0", fontSize: 11, cursor: "pointer" }}>
                 ⬇ Download Template
               </button>
             </div>
@@ -440,17 +440,17 @@ export default function MatchesView({ onOpenScoring }: { onOpenScoring?: () => v
               onDragOver={e => e.preventDefault()}
               onDrop={e => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) handleFile(f); }}
               onClick={() => fileRef.current?.click()}
-              style={{ background: "#060B18", borderRadius: 12, border: "2px dashed #334155", padding: "32px", textAlign: "center", cursor: "pointer", marginBottom: 14 }}
+              style={{ background: "#243050", borderRadius: 12, border: "2px dashed #8593B3", padding: "32px", textAlign: "center", cursor: "pointer", marginBottom: 14 }}
               onMouseEnter={e => (e.currentTarget.style.borderColor = "#FF6B00")}
-              onMouseLeave={e => (e.currentTarget.style.borderColor = "#334155")}>
+              onMouseLeave={e => (e.currentTarget.style.borderColor = "#8593B3")}>
               <div style={{ fontSize: 32, marginBottom: 8 }}>📂</div>
-              <div style={{ fontSize: 14, color: "#94A3B8", fontWeight: 600 }}>Drag & drop your .CSV file here</div>
-              <div style={{ fontSize: 12, color: "#475569", marginTop: 4 }}>or click to browse</div>
+              <div style={{ fontSize: 14, color: "#C3CEE3", fontWeight: 600 }}>Drag & drop your .CSV file here</div>
+              <div style={{ fontSize: 12, color: "#94A3C4", marginTop: 4 }}>or click to browse</div>
               <input ref={fileRef} type="file" accept=".csv,.txt" style={{ display: "none" }} onChange={e => { if (e.target.files?.[0]) handleFile(e.target.files[0]); }} />
             </div>
 
             <div style={{ marginBottom: 14 }}>
-              <label style={{ fontSize: 11, color: "#64748B", fontWeight: 700, display: "block", marginBottom: 6 }}>OR Paste CSV Text Directly:</label>
+              <label style={{ fontSize: 11, color: "#A6B3D0", fontWeight: 700, display: "block", marginBottom: 6 }}>OR Paste CSV Text Directly:</label>
               <textarea value={csvText} onChange={e => { setCsvText(e.target.value); setBulkPreview(parseCsv(e.target.value)); }} rows={5}
                 placeholder={"Team 1,Team 2,Date,Time,Venue\nRajasthan Scorchers,Punjab Warriors,2026-08-01,18:00,SMS Jaipur"}
                 style={{ ...inputStyle, resize: "vertical", fontFamily: "monospace", fontSize: 12 }} />
@@ -461,7 +461,7 @@ export default function MatchesView({ onOpenScoring }: { onOpenScoring?: () => v
                 <div style={{ fontSize: 12, fontWeight: 700, color: "#10B981", marginBottom: 10 }}>✓ {bulkPreview.length} matches detected — Preview:</div>
                 <div style={{ maxHeight: 180, overflowY: "auto", display: "flex", flexDirection: "column", gap: 6 }}>
                   {bulkPreview.map((m, i) => (
-                    <div key={i} style={{ display: "flex", gap: 12, padding: "10px 12px", background: "#060B18", borderRadius: 8, border: "1px solid #1E293B", fontSize: 12, color: "#94A3B8" }}>
+                    <div key={i} style={{ display: "flex", gap: 12, padding: "10px 12px", background: "#243050", borderRadius: 8, border: "1px solid #33436B", fontSize: 12, color: "#C3CEE3" }}>
                       <span style={{ color: "#F1F5F9", fontWeight: 600 }}>{m.team1}</span>
                       <span style={{ color: "#FF6B00", fontWeight: 800 }}>vs</span>
                       <span style={{ color: "#F1F5F9", fontWeight: 600 }}>{m.team2}</span>
@@ -474,9 +474,9 @@ export default function MatchesView({ onOpenScoring }: { onOpenScoring?: () => v
             )}
 
             <div style={{ display: "flex", gap: 10 }}>
-              <button onClick={() => { setShowBulk(false); setBulkPreview([]); setCsvText(""); }} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: "1px solid #1E293B", background: "transparent", color: "#64748B", fontSize: 13, cursor: "pointer" }}>Cancel</button>
+              <button onClick={() => { setShowBulk(false); setBulkPreview([]); setCsvText(""); }} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: "1px solid #33436B", background: "transparent", color: "#A6B3D0", fontSize: 13, cursor: "pointer" }}>Cancel</button>
               <button disabled={bulkPreview.length === 0 || bulkBusy} onClick={importBulk}
-                style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: "none", background: bulkPreview.length > 0 ? "linear-gradient(135deg,#FF6B00,#FF8C40)" : "#1E293B", color: bulkPreview.length > 0 ? "#fff" : "#475569", fontSize: 13, fontWeight: 700, cursor: bulkPreview.length > 0 && !bulkBusy ? "pointer" : "not-allowed" }}>
+                style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: "none", background: bulkPreview.length > 0 ? "linear-gradient(135deg,#FF6B00,#FF8C40)" : "#33436B", color: bulkPreview.length > 0 ? "#fff" : "#94A3C4", fontSize: 13, fontWeight: 700, cursor: bulkPreview.length > 0 && !bulkBusy ? "pointer" : "not-allowed" }}>
                 {bulkBusy ? "Importing…" : `Import ${bulkPreview.length > 0 ? `${bulkPreview.length} Matches` : ""}`}
               </button>
             </div>

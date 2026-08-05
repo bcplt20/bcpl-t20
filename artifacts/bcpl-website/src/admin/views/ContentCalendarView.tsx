@@ -14,16 +14,16 @@ const PLATFORM_ICON: Record<string, string> = {
 const POST_TYPES = ["Post", "Reel", "Story", "Video", "Poster", "Announcement"];
 
 const STATUS_META: Record<PlannedPost["status"], { label: string; color: string }> = {
-  draft: { label: "Draft", color: "#94A3B8" },
+  draft: { label: "Draft", color: "#C3CEE3" },
   planned: { label: "Planned", color: "#3B82F6" },
   posted: { label: "Posted", color: "#22C55E" },
 };
 
-const card: React.CSSProperties = { background: "linear-gradient(135deg,#0D1526,#0A1020)", border: "1px solid #1E293B", borderRadius: 16, padding: 20 };
-const inputStyle: React.CSSProperties = { width: "100%", padding: "9px 12px", background: "#060B18", border: "1px solid #1E293B", borderRadius: 10, color: "#F1F5F9", fontSize: 13, outline: "none" };
-const labelStyle: React.CSSProperties = { fontSize: 11, fontWeight: 700, color: "#64748B", display: "block", marginBottom: 6 };
+const card: React.CSSProperties = { background: "linear-gradient(135deg,#2C3A5E,#1F2B49)", border: "1px solid #33436B", borderRadius: 16, padding: 20 };
+const inputStyle: React.CSSProperties = { width: "100%", padding: "9px 12px", background: "#243050", border: "1px solid #33436B", borderRadius: 10, color: "#F1F5F9", fontSize: 13, outline: "none" };
+const labelStyle: React.CSSProperties = { fontSize: 11, fontWeight: 700, color: "#A6B3D0", display: "block", marginBottom: 6 };
 const btnPrimary: React.CSSProperties = { padding: "10px 18px", borderRadius: 10, border: "none", background: "linear-gradient(135deg,#FF6B00,#FF8C40)", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer" };
-const btnGhost: React.CSSProperties = { padding: "10px 18px", borderRadius: 10, border: "1px solid #1E293B", background: "transparent", color: "#64748B", fontSize: 13, cursor: "pointer" };
+const btnGhost: React.CSSProperties = { padding: "10px 18px", borderRadius: 10, border: "1px solid #33436B", background: "transparent", color: "#A6B3D0", fontSize: 13, cursor: "pointer" };
 
 function ymOf(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
@@ -157,7 +157,7 @@ export default function ContentCalendarView() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
         <div>
           <div style={{ fontSize: 20, fontWeight: 800, color: "#F1F5F9" }}>Content Calendar</div>
-          <div style={{ fontSize: 12, color: "#64748B", marginTop: 2 }}>
+          <div style={{ fontSize: 12, color: "#A6B3D0", marginTop: 2 }}>
             Plan social posts for the team — saved in the database. Nothing publishes automatically.
           </div>
         </div>
@@ -181,16 +181,16 @@ export default function ContentCalendarView() {
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: 6 }}>
             {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(d => (
-              <div key={d} style={{ fontSize: 10, fontWeight: 700, color: "#475569", textAlign: "center", padding: "4px 0" }}>{d}</div>
+              <div key={d} style={{ fontSize: 10, fontWeight: 700, color: "#94A3C4", textAlign: "center", padding: "4px 0" }}>{d}</div>
             ))}
             {cells.map((c, i) => c === null ? <div key={`b${i}`} /> : (
               <div key={c.date} onClick={() => setForm(emptyForm(c.date))}
                 style={{
                   minHeight: 74, borderRadius: 10, padding: 6, cursor: "pointer",
-                  border: `1px solid ${c.date === today ? "#FF6B00" : "#1E293B"}`,
-                  background: c.date === today ? "#FF6B0010" : "#060B18",
+                  border: `1px solid ${c.date === today ? "#FF6B00" : "#33436B"}`,
+                  background: c.date === today ? "#FF6B0010" : "#243050",
                 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: c.date === today ? "#FF6B00" : "#64748B", marginBottom: 4 }}>{c.day}</div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: c.date === today ? "#FF6B00" : "#A6B3D0", marginBottom: 4 }}>{c.day}</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
                   {(byDate.get(c.date) ?? []).slice(0, 3).map(p => (
                     <div key={p.id} onClick={e => { e.stopPropagation(); openEdit(p); }} title={p.caption}
@@ -199,33 +199,33 @@ export default function ContentCalendarView() {
                     </div>
                   ))}
                   {(byDate.get(c.date)?.length ?? 0) > 3 && (
-                    <div style={{ fontSize: 9, color: "#475569" }}>+{byDate.get(c.date)!.length - 3} more</div>
+                    <div style={{ fontSize: 9, color: "#94A3C4" }}>+{byDate.get(c.date)!.length - 3} more</div>
                   )}
                 </div>
               </div>
             ))}
           </div>
-          {loading && <div style={{ fontSize: 12, color: "#64748B", marginTop: 10, textAlign: "center" }}>Loading posts…</div>}
+          {loading && <div style={{ fontSize: 12, color: "#A6B3D0", marginTop: 10, textAlign: "center" }}>Loading posts…</div>}
         </div>
 
         {/* Upcoming */}
         <div style={card}>
           <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 12 }}>Upcoming (not posted yet)</div>
           {upcoming.length === 0 ? (
-            <div style={{ fontSize: 12, color: "#475569" }}>Nothing planned ahead. Click a date on the calendar to plan a post.</div>
+            <div style={{ fontSize: 12, color: "#94A3C4" }}>Nothing planned ahead. Click a date on the calendar to plan a post.</div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {upcoming.map(p => (
-                <div key={p.id} style={{ border: "1px solid #1E293B", borderRadius: 10, padding: 10, cursor: "pointer" }} onClick={() => openEdit(p)}>
+                <div key={p.id} style={{ border: "1px solid #33436B", borderRadius: 10, padding: 10, cursor: "pointer" }} onClick={() => openEdit(p)}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4, gap: 8 }}>
-                    <span style={{ fontSize: 11, fontWeight: 700, color: "#94A3B8" }}>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: "#C3CEE3" }}>
                       {PLATFORM_ICON[p.platform] ?? "📣"} {p.platform} · {p.postType}
                     </span>
                     <span style={{ fontSize: 10, fontWeight: 700, color: STATUS_META[p.status].color }}>{STATUS_META[p.status].label}</span>
                   </div>
-                  <div style={{ fontSize: 11, color: "#64748B", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.caption}</div>
+                  <div style={{ fontSize: 11, color: "#A6B3D0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.caption}</div>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 6 }}>
-                    <span style={{ fontSize: 10, color: "#475569" }}>
+                    <span style={{ fontSize: 10, color: "#94A3C4" }}>
                       {new Date(p.postDate + "T00:00:00").toLocaleDateString("en-IN", { day: "2-digit", month: "short" })}{p.postTime ? ` · ${p.postTime}` : ""}
                     </span>
                     <button onClick={e => { e.stopPropagation(); void markPosted(p); }}
@@ -243,7 +243,7 @@ export default function ContentCalendarView() {
       {/* Editor modal */}
       {form && (
         <div style={{ position: "fixed", inset: 0, background: "#00000088", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999, padding: 16 }}>
-          <div style={{ background: "#0D1526", border: "1px solid #1E293B", borderRadius: 20, padding: 28, width: 520, maxWidth: "94vw", maxHeight: "92vh", overflow: "auto" }}>
+          <div style={{ background: "#2C3A5E", border: "1px solid #33436B", borderRadius: 20, padding: 28, width: 520, maxWidth: "94vw", maxHeight: "92vh", overflow: "auto" }}>
             <div style={{ fontSize: 18, fontWeight: 800, color: "#F1F5F9", marginBottom: 18 }}>
               {form.id ? "Edit Planned Post" : "Plan a Post"}
             </div>
@@ -277,7 +277,7 @@ export default function ContentCalendarView() {
             <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
               {(Object.keys(STATUS_META) as PlannedPost["status"][]).map(s => (
                 <button key={s} onClick={() => setForm(f => f && { ...f, status: s })}
-                  style={{ flex: 1, padding: "9px 0", borderRadius: 9, border: `1px solid ${form.status === s ? STATUS_META[s].color : "#1E293B"}`, background: form.status === s ? `${STATUS_META[s].color}1A` : "transparent", color: form.status === s ? STATUS_META[s].color : "#64748B", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                  style={{ flex: 1, padding: "9px 0", borderRadius: 9, border: `1px solid ${form.status === s ? STATUS_META[s].color : "#33436B"}`, background: form.status === s ? `${STATUS_META[s].color}1A` : "transparent", color: form.status === s ? STATUS_META[s].color : "#A6B3D0", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
                   {STATUS_META[s].label}
                 </button>
               ))}

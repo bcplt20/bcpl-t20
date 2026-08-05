@@ -39,7 +39,7 @@ export function Sponsors() {
   const [sent,setSent]=React.useState(false);
 
   return (
-    <div style={{background:'#0E1624',color:'#fff',minHeight:'100vh',overflowX:'hidden',fontFamily:'Inter,sans-serif'}}>
+    <div style={{background:'#1C2B47',color:'#fff',minHeight:'100vh',overflowX:'hidden',fontFamily:'Inter,sans-serif'}}>
       <style>{`
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
         .wrap{max-width:1200px;margin:0 auto;padding:0 20px;}
@@ -57,7 +57,7 @@ export function Sponsors() {
         .btn-wa{background:linear-gradient(135deg,#25D366,#1BA851);border:none;border-radius:14px;color:#fff;font-weight:700;cursor:pointer;font-family:var(--font-head);transition:transform 0.15s;}
         .shimmer-gold{background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D,#F5C842,#E8B23D);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 3s linear infinite;}
         .tag-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,122,41,0.12);border:1px solid rgba(255,122,41,0.3);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:700;font-family:var(--font-head);color:#FF7A29;letter-spacing:0.1em;}
-        .inp{width:100%;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.1);border-radius:14px;color:#F8F4EE;padding:15px 18px;font-family:Inter,sans-serif;font-size:16px;outline:none;transition:all 0.25s;appearance:none;}
+        .inp{width:100%;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.18);border-radius:14px;color:#F8F4EE;padding:15px 18px;font-family:Inter,sans-serif;font-size:16px;outline:none;transition:all 0.25s;appearance:none;}
         .inp:focus{border-color:#FF7A29;background:rgba(255,122,41,0.06);box-shadow:0 0 0 4px rgba(255,122,41,0.12);}
         .inp::placeholder{color:rgba(255,255,255,0.28);}
         .lbl{font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-3);margin-bottom:8px;display:block;font-family:var(--font-head);}
@@ -83,7 +83,7 @@ export function Sponsors() {
       <div style={{position:'fixed',inset:0,zIndex:0,pointerEvents:'none',overflow:'hidden'}}>
         <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 80% 60% at 20% 40%, rgba(255,122,41,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 20%, rgba(30,64,175,0.12) 0%, transparent 60%)'}}/>
         <svg style={{position:'absolute',bottom:0,left:0,width:'100%',opacity:0.07}} viewBox="0 0 1280 320" preserveAspectRatio="xMidYMax meet">
-          <path d="M0,280 Q320,160 640,200 Q960,240 1280,180 L1280,320 L0,320 Z" fill="#1E3A5F"/>
+          <path d="M0,280 Q320,160 640,200 Q960,240 1280,180 L1280,320 L0,320 Z" fill="#284C7B"/>
           <rect x="80" y="60" width="8" height="200" fill="#2D4F7A"/>
           <rect x="70" y="50" width="28" height="12" fill="#2D4F7A"/>
           <rect x="1190" y="60" width="8" height="200" fill="#2D4F7A"/>
@@ -127,14 +127,14 @@ export function Sponsors() {
             </div>
             <div style={{display:'grid',gridTemplateColumns:'1fr',gap:20}}>
               {SPONSOR_TIERS.map((tier,i)=>(
-                <div key={tier.labelEn} style={{background:'linear-gradient(135deg,rgba(15,34,71,0.92),rgba(10,22,46,0.88))',backdropFilter:'blur(24px)',border:`1.5px dashed ${tier.color}55`,borderRadius:20,padding:'28px 24px',display:'flex',alignItems:'center',gap:20,flexWrap:'wrap'}}>
+                <div key={tier.labelEn} style={{background:'linear-gradient(135deg,rgba(30,55,105,0.92),rgba(23,43,81,0.88))',backdropFilter:'blur(24px)',border:`1.5px dashed ${tier.color}55`,borderRadius:20,padding:'28px 24px',display:'flex',alignItems:'center',gap:20,flexWrap:'wrap'}}>
                   <div style={{width:60,height:60,borderRadius:'50%',background:`${tier.color}15`,border:`2px dashed ${tier.color}44`,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}><IcoUsers size={26} style={{color:tier.color}}/></div>
                   <div style={{flex:1,minWidth:200}}>
                     <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:8,flexWrap:'wrap'}}>
                       <span style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:14,color:tier.color,letterSpacing:'0.1em'}}>{t(tier.labelEn,tier.labelHi)}</span>
-                      <span style={{background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.1)',color:'var(--ink-3)',fontSize:9,fontWeight:700,padding:'2px 8px',borderRadius:100,fontFamily:'var(--font-head)'}}>{t("SLOT AVAILABLE","SLOT AVAILABLE")}</span>
+                      <span style={{background:'rgba(255,255,255,0.18)',border:'1px solid rgba(255,255,255,0.18)',color:'var(--ink-3)',fontSize:9,fontWeight:700,padding:'2px 8px',borderRadius:100,fontFamily:'var(--font-head)'}}>{t("SLOT AVAILABLE","SLOT AVAILABLE")}</span>
                     </div>
-                    <p style={{color:'rgba(255,255,255,0.5)',fontSize:13,lineHeight:1.6,fontFamily:'Inter,sans-serif',margin:0}}>{t(tier.descEn,tier.descHi)}</p>
+                    <p style={{color:'rgba(255,255,255,0.72)',fontSize:13,lineHeight:1.6,fontFamily:'Inter,sans-serif',margin:0}}>{t(tier.descEn,tier.descHi)}</p>
                   </div>
                 </div>
               ))}
@@ -145,11 +145,11 @@ export function Sponsors() {
         {/* BECOME A SPONSOR */}
         <section style={{padding:'0 0 80px'}}>
           <div className="wrap">
-            <div style={{background:'linear-gradient(135deg,rgba(15,34,71,0.96),rgba(10,22,46,0.92))',backdropFilter:'blur(32px)',border:'1px solid rgba(255,122,41,0.2)',borderRadius:24,padding:'48px 32px',animation:'borderGlow 3s ease-in-out infinite'}}>
+            <div style={{background:'linear-gradient(135deg,rgba(30,55,105,0.96),rgba(23,43,81,0.92))',backdropFilter:'blur(32px)',border:'1px solid rgba(255,122,41,0.2)',borderRadius:24,padding:'48px 32px',animation:'borderGlow 3s ease-in-out infinite'}}>
               <div style={{textAlign:'center',marginBottom:40}}>
                 <div className="v3-kicker" style={{marginBottom:16}}>{t("PARTNER WITH US","हमारे साथ PARTNER करें")}</div>
                 <h2 className="v3-h" style={{fontSize:'clamp(26px,4vw,44px)',color:'#fff',marginBottom:12}}>{t("Become a Sponsor","Sponsor बनें")}</h2>
-                <p style={{color:'rgba(255,255,255,0.5)',fontSize:15,lineHeight:1.7,maxWidth:480,margin:'0 auto',fontFamily:'Inter,sans-serif'}}>
+                <p style={{color:'rgba(255,255,255,0.72)',fontSize:15,lineHeight:1.7,maxWidth:480,margin:'0 auto',fontFamily:'Inter,sans-serif'}}>
                   {t("Reach an engaged national audience of working-professional cricketers. Be part of India's corporate cricket movement.","Working-professional cricketers की एक engaged national audience तक पहुंचें। भारत के corporate cricket movement का हिस्सा बनें।")}
                 </p>
               </div>
@@ -174,7 +174,7 @@ export function Sponsors() {
                 <div style={{textAlign:'center',padding:'40px 20px'}}>
                   <div style={{display:'flex',justifyContent:'center',marginBottom:16}}><IcoCheck size={40} style={{color:'#22C55E'}}/></div>
                   <h3 style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:22,color:'#22C55E',marginBottom:8}}>{t("Enquiry Sent!","Enquiry भेज दी गई!")}</h3>
-                  <p style={{color:'rgba(255,255,255,0.55)',fontFamily:'Inter,sans-serif'}}>{t("Our partnerships team will reach out to you within 48 hours.","हमारी partnerships team 48 hours के अंदर आपसे contact करेगी।")}</p>
+                  <p style={{color:'rgba(255,255,255,0.88)',fontFamily:'Inter,sans-serif'}}>{t("Our partnerships team will reach out to you within 48 hours.","हमारी partnerships team 48 hours के अंदर आपसे contact करेगी।")}</p>
                 </div>
               ):(
                 <div>

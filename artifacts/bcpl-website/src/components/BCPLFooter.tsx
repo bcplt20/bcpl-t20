@@ -86,22 +86,22 @@ export function BCPLFooter() {
           <div style={{ display:"flex", gap:10, justifyContent:"center", marginBottom:18, flexWrap:"wrap" }}>
             {SOCIAL.map(s=>(
               <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" title={s.label} className="bcpl-soc"
-                style={{ width:38, height:38, borderRadius:9, background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.08)", display:"flex", alignItems:"center", justifyContent:"center", textDecoration:"none", color:"rgba(255,255,255,.6)", flexShrink:0, transition:"border-color .2s,background .2s" }}>
+                style={{ width:38, height:38, borderRadius:9, background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,0.18)", display:"flex", alignItems:"center", justifyContent:"center", textDecoration:"none", color:"rgba(255,255,255,0.88)", flexShrink:0, transition:"border-color .2s,background .2s" }}>
                 <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d={s.path}/></svg>
               </a>
             ))}
           </div>
 
           <div className="bcpl-foot-bottom">
-            <p style={{ fontSize:11, color:"rgba(255,255,255,.2)", fontWeight:600 }}>© 2026–27 BCPL — Bhartiya Corporate Premier League · All Rights Reserved.</p>
+            <p style={{ fontSize:11, color:"rgba(255,255,255,.72)", fontWeight:600 }}>© 2026–27 BCPL — Bhartiya Corporate Premier League · All Rights Reserved.</p>
             <div className="bcpl-foot-legal">
-              <Link href="/privacy"  style={{ fontSize:11, color:"rgba(255,255,255,.2)", textDecoration:"none" }} className="bcpl-foot-link">Privacy Policy</Link>
-              <span style={{ color:"rgba(255,255,255,.1)", fontSize:10 }}>|</span>
-              <Link href="/terms"    style={{ fontSize:11, color:"rgba(255,255,255,.2)", textDecoration:"none" }} className="bcpl-foot-link">Terms</Link>
-              <span style={{ color:"rgba(255,255,255,.1)", fontSize:10 }}>|</span>
-              <Link href="/refunds"  style={{ fontSize:11, color:"rgba(255,255,255,.2)", textDecoration:"none" }} className="bcpl-foot-link">Refund Policy</Link>
-              <span style={{ color:"rgba(255,255,255,.1)", fontSize:10 }}>|</span>
-              <span style={{ fontSize:11, color:"rgba(255,255,255,.15)" }}>Made in India</span>
+              <Link href="/privacy"  style={{ fontSize:11, color:"rgba(255,255,255,.72)", textDecoration:"none" }} className="bcpl-foot-link">Privacy Policy</Link>
+              <span style={{ color:"rgba(255,255,255,0.18)", fontSize:10 }}>|</span>
+              <Link href="/terms"    style={{ fontSize:11, color:"rgba(255,255,255,.72)", textDecoration:"none" }} className="bcpl-foot-link">Terms</Link>
+              <span style={{ color:"rgba(255,255,255,0.18)", fontSize:10 }}>|</span>
+              <Link href="/refunds"  style={{ fontSize:11, color:"rgba(255,255,255,.72)", textDecoration:"none" }} className="bcpl-foot-link">Refund Policy</Link>
+              <span style={{ color:"rgba(255,255,255,0.18)", fontSize:10 }}>|</span>
+              <span style={{ fontSize:11, color:"rgba(255,255,255,.72)" }}>Made in India</span>
             </div>
           </div>
         </div>

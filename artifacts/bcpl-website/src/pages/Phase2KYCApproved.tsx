@@ -51,7 +51,7 @@ export function Phase2KYCApproved() {
         
         .btn-cta { display: inline-block; background: linear-gradient(135deg, var(--orange), var(--orange-2)); border: none; border-radius: var(--r); color: #fff; font-family: var(--font-head); font-weight: 900; letter-spacing: .06em; cursor: pointer; transition: all .2s; text-decoration: none; padding: 14px 28px; text-transform: uppercase; }
         .btn-cta:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255,122,41,0.3); }
-        .btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.2); border-radius: var(--r); color: rgba(255,255,255,0.8); font-family: var(--font-head); font-weight: 800; cursor: pointer; transition: all .2s; letter-spacing: .06em; text-transform: uppercase; }
+        .btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.2); border-radius: var(--r); color: rgba(255,255,255,0.88); font-family: var(--font-head); font-weight: 800; cursor: pointer; transition: all .2s; letter-spacing: .06em; text-transform: uppercase; }
         .btn-outline:hover { border-color: var(--orange); color: var(--orange); }
         
         .notice-card { background: var(--panel); border: 1px solid var(--line); padding: 24px; border-radius: var(--r); transition: border-color .2s; height: 100%; display: flex; flex-direction: column; }
@@ -70,7 +70,7 @@ export function Phase2KYCApproved() {
         .notices-grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 48px; }
         @media(min-width: 640px) { .notices-grid { grid-template-columns: repeat(3, 1fr); } }
         
-        .season-cta { background: linear-gradient(135deg, var(--panel), #0E1420); border: 1px solid rgba(255,122,41,0.3); padding: 32px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; border-radius: var(--r); }
+        .season-cta { background: linear-gradient(135deg, var(--panel), #1D2942); border: 1px solid rgba(255,122,41,0.3); padding: 32px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; border-radius: var(--r); }
         .season-cta-btn { width: 100%; text-align: center; }
         @media(min-width: 480px) { .season-cta-btn { width: auto; } }
         
@@ -92,7 +92,7 @@ export function Phase2KYCApproved() {
           <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(28px, 6vw, 56px)', color: 'var(--green)', letterSpacing: '.02em', textTransform: 'uppercase', marginBottom: 12, animation: 'fadeUp .5s ease .1s both', lineHeight: 1.1 }}>
             {t("KYC VERIFIED", "KYC वेरीफाइड")}
           </div>
-          <div style={{ fontSize: 16, color: 'rgba(255,255,255,0.6)', maxWidth: 600, margin: '0 auto 24px', lineHeight: 1.6, animation: 'fadeUp .5s ease .2s both' }}>
+          <div style={{ fontSize: 16, color: 'rgba(255,255,255,0.88)', maxWidth: 600, margin: '0 auto 24px', lineHeight: 1.6, animation: 'fadeUp .5s ease .2s both' }}>
             {t("You are officially cleared to participate in BCPL Season 5 Physical Trials. Your franchise journey begins on the ground.", "आप आधिकारिक रूप से BCPL सीजन 5 फिजिकल ट्रायल में भाग लेने के लिए क्लियर हैं। आपका फ्रैंचाइज़ी सफर अब मैदान पर शुरू होता है।")}
           </div>
           <div className="hero-chips" style={{ animation: 'fadeUp .5s ease .3s both' }}>
@@ -109,7 +109,7 @@ export function Phase2KYCApproved() {
       </div>
 
       {/* ── SEASON ROADMAP RAIL ── */}
-      <div style={{ background: '#0B101A', borderBottom: '1px solid var(--line)', padding: '24px 0', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+      <div style={{ background: '#16223C', borderBottom: '1px solid var(--line)', padding: '24px 0', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
         <div className="W">
           <div style={{ fontSize: 11, fontWeight: 900, fontFamily: 'var(--font-head)', letterSpacing: '.16em', color: 'var(--ink-3)', marginBottom: 16, textTransform: 'uppercase' }}>{t("YOUR JOURNEY", "आपका सफर")}</div>
           <div className="roadmap-rail">
@@ -119,7 +119,7 @@ export function Phase2KYCApproved() {
                   <div style={{
                     width: 40, height: 40, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, flexShrink: 0,
                     background: node.done ? 'var(--green)' : node.active ? 'var(--orange)' : 'rgba(255,255,255,0.05)',
-                    border: `2px solid ${node.done ? 'var(--green)' : node.active ? 'var(--orange)' : 'rgba(255,255,255,0.1)'}`,
+                    border: `2px solid ${node.done ? 'var(--green)' : node.active ? 'var(--orange)' : 'rgba(255,255,255,0.18)'}`,
                     animation: node.active ? 'pulseOrange 2s ease infinite' : 'none',
                     color: node.done ? '#fff' : 'inherit'
                   }}>
@@ -128,7 +128,7 @@ export function Phase2KYCApproved() {
                   <div className="roadmap-node-label" style={{ color: node.done ? 'var(--green)' : node.active ? 'var(--orange)' : 'rgba(255,255,255,0.3)' }}>{t(node.label, node.label)}</div>
                 </div>
                 {i < ROADMAP.length - 1 && (
-                  <div style={{ flex: 1, height: 2, background: node.done ? 'var(--green)' : 'rgba(255,255,255,0.08)', margin: '0 8px', marginBottom: 20, minWidth: 16 }} />
+                  <div style={{ flex: 1, height: 2, background: node.done ? 'var(--green)' : 'rgba(255,255,255,0.18)', margin: '0 8px', marginBottom: 20, minWidth: 16 }} />
                 )}
               </React.Fragment>
             ))}
@@ -159,7 +159,7 @@ export function Phase2KYCApproved() {
                 { label: t('KYC Status', 'KYC स्टेटस'), value: t('Verified', 'वेरीफाइड'), green: true },
               ].map(row => (
                 <div key={row.label} className="profile-row">
-                  <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', fontWeight: 600, flexShrink: 0 }}>{row.label}</div>
+                  <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.72)', fontWeight: 600, flexShrink: 0 }}>{row.label}</div>
                   <div style={{ fontSize: row.mono ? 13 : 14, fontWeight: 700, color: row.green ? 'var(--green)' : 'rgba(255,255,255,0.9)', fontFamily: row.mono ? 'monospace' : 'inherit', textAlign: 'right', wordBreak: 'break-all', marginLeft: 8 }}>{row.value}</div>
                 </div>
               ))}
@@ -167,7 +167,7 @@ export function Phase2KYCApproved() {
               <button className="btn-outline" style={{ width: '100%', padding: '16px', marginTop: 24, fontSize: 14, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }} onClick={() => {
                 const logoUrl = `${window.location.origin}${BASE}bcpl-assets/bcpl-logo-white.png`;
                 const initials = playerName.split(' ').map((w:string)=>w[0]).join('').toUpperCase().slice(0,2);
-                const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>BCPL Player ID — ${playerName}</title><style>body{margin:0;background:#0B1624;display:flex;justify-content:center;padding:32px;font-family:'Segoe UI',sans-serif}.card{width:340px;background:linear-gradient(145deg,#152744,var(--bg));border:1.5px solid rgba(255,122,41,0.45);border-radius:18px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.6)}.stripe{height:4px;background:linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)}.head{background:linear-gradient(135deg,#FF7A29,#C94E0E);padding:14px 20px}.head-title{font-size:10px;font-weight:800;color:rgba(255,255,255,0.9);letter-spacing:.18em}.head-sub{font-size:8px;color:rgba(255,255,255,0.65);margin-top:3px;letter-spacing:.1em}.body{padding:20px 22px 16px}.avatar{width:60px;height:60px;background:linear-gradient(135deg,#FF7A29,#C94E0E);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;margin-bottom:12px;box-shadow:0 4px 20px rgba(255,122,41,0.4)}.name{font-size:20px;font-weight:900;color:#fff;margin-bottom:3px}.role{font-size:11px;font-weight:800;color:#FF7A29;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px}hr{border:none;border-top:1px solid rgba(255,255,255,0.08);margin:12px 0}.row{display:flex;justify-content:space-between;margin-bottom:9px}.label{font-size:9px;font-weight:700;color:var(--ink-3);text-transform:uppercase;letter-spacing:.08em}.val{font-size:11px;font-weight:700;color:rgba(255,255,255,0.8);text-align:right}.ref{font-family:monospace;color:#FF7A29;font-size:11px;font-weight:700}.foot{background:rgba(255,122,41,0.07);border-top:1px solid rgba(255,122,41,0.18);padding:12px 22px;display:flex;justify-content:space-between;align-items:center}.kyc{background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.4);border-radius:6px;padding:4px 11px;font-size:9px;font-weight:800;color:#22C55E;letter-spacing:.08em}.site{font-size:9px;color:rgba(255,255,255,0.25);font-weight:600}@media print{body{padding:0;background:#fff}.card{box-shadow:none}}</style></head><body><div class="card"><div class="stripe"></div><div class="head"><div class="head-title">BHARTIYA CORPORATE PREMIER LEAGUE</div><div class="head-sub">OFFICIAL PLAYER ID CARD · SEASON 5 · 2026–27</div></div><div class="body"><div class="avatar">${initials}</div><div class="name">${playerName}</div><div class="role">${playerRole} · ${playerCity}</div><hr/><div class="row"><span class="label">Email</span><span class="val">${playerEmail}</span></div><div class="row"><span class="label">Phone</span><span class="val">${playerPhone}</span></div><hr/><div class="row"><span class="label">Registration No.</span><span class="ref">${regIdShort}</span></div><div class="row"><span class="label">KYC Status</span><span class="val" style="color:#22C55E">✓ Verified</span></div></div><div class="foot"><span class="site">bcplt20.com · BCPL Season 5</span><span class="kyc">KYC ✓ VERIFIED</span></div></div><script>window.onload=function(){window.print();}<\/script></body></html>`;
+                const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>BCPL Player ID — ${playerName}</title><style>body{margin:0;background:#172D48;display:flex;justify-content:center;padding:32px;font-family:'Segoe UI',sans-serif}.card{width:340px;background:linear-gradient(145deg,#223D68,var(--bg));border:1.5px solid rgba(255,122,41,0.45);border-radius:18px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.6)}.stripe{height:4px;background:linear-gradient(90deg,#FF7A29,#E8B23D,#FF7A29)}.head{background:linear-gradient(135deg,#FF7A29,#C94E0E);padding:14px 20px}.head-title{font-size:10px;font-weight:800;color:rgba(255,255,255,0.9);letter-spacing:.18em}.head-sub{font-size:8px;color:rgba(255,255,255,0.88);margin-top:3px;letter-spacing:.1em}.body{padding:20px 22px 16px}.avatar{width:60px;height:60px;background:linear-gradient(135deg,#FF7A29,#C94E0E);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;margin-bottom:12px;box-shadow:0 4px 20px rgba(255,122,41,0.4)}.name{font-size:20px;font-weight:900;color:#fff;margin-bottom:3px}.role{font-size:11px;font-weight:800;color:#FF7A29;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px}hr{border:none;border-top:1px solid rgba(255,255,255,0.18);margin:12px 0}.row{display:flex;justify-content:space-between;margin-bottom:9px}.label{font-size:9px;font-weight:700;color:var(--ink-3);text-transform:uppercase;letter-spacing:.08em}.val{font-size:11px;font-weight:700;color:rgba(255,255,255,0.88);text-align:right}.ref{font-family:monospace;color:#FF7A29;font-size:11px;font-weight:700}.foot{background:rgba(255,122,41,0.07);border-top:1px solid rgba(255,122,41,0.18);padding:12px 22px;display:flex;justify-content:space-between;align-items:center}.kyc{background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.4);border-radius:6px;padding:4px 11px;font-size:9px;font-weight:800;color:#22C55E;letter-spacing:.08em}.site{font-size:9px;color:rgba(255,255,255,0.25);font-weight:600}@media print{body{padding:0;background:#fff}.card{box-shadow:none}}</style></head><body><div class="card"><div class="stripe"></div><div class="head"><div class="head-title">BHARTIYA CORPORATE PREMIER LEAGUE</div><div class="head-sub">OFFICIAL PLAYER ID CARD · SEASON 5 · 2026–27</div></div><div class="body"><div class="avatar">${initials}</div><div class="name">${playerName}</div><div class="role">${playerRole} · ${playerCity}</div><hr/><div class="row"><span class="label">Email</span><span class="val">${playerEmail}</span></div><div class="row"><span class="label">Phone</span><span class="val">${playerPhone}</span></div><hr/><div class="row"><span class="label">Registration No.</span><span class="ref">${regIdShort}</span></div><div class="row"><span class="label">KYC Status</span><span class="val" style="color:#22C55E">✓ Verified</span></div></div><div class="foot"><span class="site">bcplt20.com · BCPL Season 5</span><span class="kyc">KYC ✓ VERIFIED</span></div></div><script>window.onload=function(){window.print();}<\/script></body></html>`;
                 const win = window.open('', '_blank');
                 if(win){ win.document.write(html); win.document.close(); }
               }}>
@@ -193,7 +193,7 @@ export function Phase2KYCApproved() {
 
               <div style={{ marginBottom: 28 }}>
                 <div style={{ fontSize: 11, fontWeight: 900, fontFamily: 'var(--font-head)', letterSpacing: '.14em', color: 'var(--ink-3)', marginBottom: 6, textTransform: 'uppercase' }}>{t("TRIAL GROUND", "ट्रायल का मैदान")}</div>
-                <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.5)', fontStyle: 'italic' }}>{t("To be announced", "घोषणा की जाएगी")}</div>
+                <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.72)', fontStyle: 'italic' }}>{t("To be announced", "घोषणा की जाएगी")}</div>
               </div>
 
               <div style={{ background: 'rgba(232,178,61,0.08)', border: '1px solid rgba(232,178,61,0.3)', padding: '24px 20px', marginBottom: 24, borderRadius: '12px' }}>
@@ -201,7 +201,7 @@ export function Phase2KYCApproved() {
                 <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(28px, 6vw, 48px)', color: 'var(--gold)', lineHeight: 1, marginBottom: 12, animation: 'countdownPulse 2s ease infinite', textTransform: 'uppercase' }}>
                   {t("COMING SOON", "जल्द आ रही है")}
                 </div>
-                <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, marginBottom: 6 }}>
+                <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.88)', lineHeight: 1.6, marginBottom: 6 }}>
                   {t("You'll receive SMS + Email", "आपको SMS + ईमेल मिलेगा")} <strong style={{ color: '#fff' }}>{t("30 days before", "30 दिन पहले")}</strong> {t("your trial date.", "आपकी ट्रायल की तारीख से।")}
                 </div>
                 <div style={{ fontSize: 13, color: 'var(--ink-3)' }}>{t("Expected: March–June 2026", "संभावित: मार्च–जून 2026")}</div>
@@ -226,7 +226,7 @@ export function Phase2KYCApproved() {
             <div key={card.title} className="notice-card">
               <div style={{ color: card.color, marginBottom: 16 }}><card.icon size={32} /></div>
               <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 20, color: '#fff', marginBottom: 12, textTransform: 'uppercase' }}>{card.title}</div>
-              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6, marginBottom: 24, flex: 1 }}>{card.body}</div>
+              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.72)', lineHeight: 1.6, marginBottom: 24, flex: 1 }}>{card.body}</div>
               <button onClick={card.onClick} style={{ background: 'transparent', border: `1px solid ${card.color}40`, color: card.color, padding: '12px 20px', fontSize: 13, fontWeight: 800, fontFamily: 'var(--font-head)', cursor: 'pointer', borderRadius: '10px', letterSpacing: '.06em', transition: 'all .2s', textTransform: 'uppercase' }}>
                 {card.cta}
               </button>
@@ -237,7 +237,7 @@ export function Phase2KYCApproved() {
         {/* ── TRAINING TIPS ── */}
         <div id="training-tips" style={{ background: 'var(--panel)', border: '1px solid rgba(255,122,41,0.3)', borderRadius: 'var(--r)', padding: '32px 24px', marginBottom: 40 }}>
           <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 20, color: 'var(--orange)', letterSpacing: '.06em', marginBottom: 8, textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 10 }}><IcoZap size={22} /> {t("TRAINING TIPS FOR PHYSICAL TRIAL", "फिजिकल ट्रायल के लिए ट्रेनिंग टिप्स")}</div>
-          <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.5)', marginBottom: 28 }}>{t("BCPL evaluators assess these key areas against the standardised role-specific framework (blind to unnecessary personal details). Franchises make purchase decisions only at the auction, not at the trial.", "BCPL evaluators इन प्रमुख क्षेत्रों को standardised role-specific framework के अनुसार आंकते हैं (गैर-ज़रूरी निजी जानकारी के बिना)। फ्रैंचाइज़ी खरीद के फैसले सिर्फ़ ऑक्शन में लेती हैं, ट्रायल में नहीं।")}</div>
+          <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.72)', marginBottom: 28 }}>{t("BCPL evaluators assess these key areas against the standardised role-specific framework (blind to unnecessary personal details). Franchises make purchase decisions only at the auction, not at the trial.", "BCPL evaluators इन प्रमुख क्षेत्रों को standardised role-specific framework के अनुसार आंकते हैं (गैर-ज़रूरी निजी जानकारी के बिना)। फ्रैंचाइज़ी खरीद के फैसले सिर्फ़ ऑक्शन में लेती हैं, ट्रायल में नहीं।")}</div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(240px,1fr))', gap: 16 }}>
             {[
               { icon: IcoZap, title: t('Fitness First', 'पहले फिटनेस'), tip: t('30 min cardio daily. Your stamina matters in the last over as much as the first.', 'रोज़ 30 मिनट कार्डियो। आखिरी ओवर में भी स्टैमिना उतनी ही मायने रखती है।') },
@@ -250,7 +250,7 @@ export function Phase2KYCApproved() {
               <div key={item.title} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--line)', borderRadius: '12px', padding: '20px', borderLeft: `4px solid var(--orange)` }}>
                 <div style={{ color: 'var(--orange)', marginBottom: 12 }}><item.icon size={28} /></div>
                 <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 18, color: '#fff', marginBottom: 8, textTransform: 'uppercase' }}>{item.title}</div>
-                <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6 }}>{item.tip}</div>
+                <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.72)', lineHeight: 1.6 }}>{item.tip}</div>
               </div>
             ))}
           </div>
@@ -260,7 +260,7 @@ export function Phase2KYCApproved() {
         <div className="season-cta">
           <div style={{ flex: 1, minWidth: 240 }}>
             <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(24px, 4vw, 32px)', color: '#fff', marginBottom: 8, textTransform: 'uppercase' }}>{t("You're in the top bracket.", "आप टॉप ब्रैकेट में हैं।")}</div>
-            <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, maxWidth: 600 }}>{t("Only players who clear Phase 1 video + Phase 2 KYC reach the physical trial. You're one step from the auction floor.", "केवल वही खिलाड़ी जो फेज 1 वीडियो + फेज 2 KYC पास करते हैं, फिजिकल ट्रायल तक पहुंचते हैं। आप ऑक्शन से एक कदम दूर हैं।")}</div>
+            <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.88)', lineHeight: 1.6, maxWidth: 600 }}>{t("Only players who clear Phase 1 video + Phase 2 KYC reach the physical trial. You're one step from the auction floor.", "केवल वही खिलाड़ी जो फेज 1 वीडियो + फेज 2 KYC पास करते हैं, फिजिकल ट्रायल तक पहुंचते हैं। आप ऑक्शन से एक कदम दूर हैं।")}</div>
           </div>
           <button className="btn-cta season-cta-btn" onClick={() => { setLocation('/#timeline'); }}>
             {t("VIEW SEASON 5 ROADMAP →", "सीजन 5 रोडमैप देखें →")}

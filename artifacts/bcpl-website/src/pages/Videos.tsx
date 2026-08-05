@@ -10,7 +10,7 @@ import { IcoBell } from '../lib/icons';
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-body { background:#0E1624; }
+body { background:#1C2B47; }
 .wrap { max-width:1200px; margin:0 auto; padding:0 20px; }
 .desk-nav { display:none; align-items:center; gap:22px; }
 .ham-btn { display:flex; }
@@ -19,7 +19,7 @@ body { background:#0E1624; }
 @media(min-width:1024px){ .desk-nav{display:flex!important;} .ham-btn{display:none!important;} }
 .v3-kicker { font-family:Inter,sans-serif; font-weight:700; font-size:12px; letter-spacing:.22em; color:#E8B23D; text-transform:uppercase; }
 .v3-h { font-family:'Barlow Condensed','Mukta','Montserrat',sans-serif; font-weight:800; text-transform:uppercase; line-height:.95; letter-spacing:.015em; }
-.glass-card { background:linear-gradient(135deg,rgba(15,34,71,0.9),rgba(10,22,46,0.85)); backdrop-filter:blur(32px); border:1px solid rgba(255,255,255,0.09); border-radius:20px; box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06); }
+.glass-card { background:linear-gradient(135deg,rgba(30,55,105,0.9),rgba(23,43,81,0.85)); backdrop-filter:blur(32px); border:1px solid rgba(255,255,255,0.18); border-radius:20px; box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.18); }
 .shimmer-gold { background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D,#F5C842,#E8B23D); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation:shimmer 3s linear infinite; }
 .tag-pill { display:inline-flex; align-items:center; gap:6px; background:rgba(255,122,41,0.12); border:1px solid rgba(255,122,41,0.3); border-radius:100px; padding:5px 14px; font-size:11px; font-weight:700; font-family:var(--font-head); color:#FF7A29; letter-spacing:0.1em; }
 @keyframes pulseGlow { 0%,100%{box-shadow:0 0 16px rgba(255,122,41,0.4)} 50%{box-shadow:0 0 36px rgba(255,122,41,0.8),0 0 60px rgba(255,122,41,0.3)} }
@@ -35,7 +35,7 @@ body { background:#0E1624; }
 .play-btn { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:44px; height:44px; border-radius:50%; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; transition:all 0.2s; backdrop-filter:blur(4px); border:1.5px solid rgba(255,255,255,0.2); }
 .video-card { cursor:pointer; transition:transform 0.2s; }
 .video-card:hover { transform:translateY(-4px); }
-.lb-btn { background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); border-radius:12px; color:#fff; cursor:pointer; font-size:20px; line-height:1; padding:12px 16px; transition:background .2s; }
+.lb-btn { background:rgba(255,255,255,0.18); border:1px solid rgba(255,255,255,0.2); border-radius:12px; color:#fff; cursor:pointer; font-size:20px; line-height:1; padding:12px 16px; transition:background .2s; }
 .lb-btn:hover { background:rgba(255,255,255,0.18); }
 /* float-reg-btn */
 .float-reg-btn { position:fixed; bottom:28px; right:28px; z-index:900; background:linear-gradient(135deg,#FF7A29,#D95E10); border:none; border-radius:12px; color:#fff; font-family:var(--font-head); font-weight:900; font-size:13px; letter-spacing:.06em; cursor:pointer; padding:14px 22px; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(255,122,41,0.45); clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%); transition:opacity .2s,transform .15s; }
@@ -104,7 +104,7 @@ export function Videos() {
   const openClip = (c: AuctionClip) => setModal({ kind: 'file', src: clipUrl(c.file), loop: c.loop });
 
   return (
-    <div style={{minHeight:'100vh',background:'#0E1624',fontFamily:'Inter,sans-serif',position:'relative'}}>
+    <div style={{minHeight:'100vh',background:'#1C2B47',fontFamily:'Inter,sans-serif',position:'relative'}}>
       <style>{CSS}</style>
       <AmbientBg/>
       <SiteHeader active="Videos" />
@@ -140,10 +140,10 @@ export function Videos() {
 
           {/* Featured: full auction stream (YouTube) */}
           <div className="feat-card" onClick={() => setModal({ kind: 'yt', id: AUCTION_STREAM.ytId })}
-            style={{aspectRatio:'16/9',maxHeight:520,width:'100%',background:'#121F2F',marginBottom:14}}>
+            style={{aspectRatio:'16/9',maxHeight:520,width:'100%',background:'#1F3652',marginBottom:14}}>
             <img src={clipUrl('auc-clip-01.jpg')} alt={t("BCPL Season 4 auction full stream","BCPL Season 4 auction का पूरा stream")}
               style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',opacity:0.85}} loading="eager" decoding="async"/>
-            <div style={{position:'absolute',inset:0,background:'linear-gradient(0deg,rgba(3,7,15,0.85) 0%,transparent 55%)'}}/>
+            <div style={{position:'absolute',inset:0,background:'linear-gradient(0deg,rgba(14,27,52,0.85) 0%,transparent 55%)'}}/>
             <PlayButton size={64}/>
             <div style={{position:'absolute',top:14,left:14,display:'flex',gap:8,flexWrap:'wrap'}}>
               <span style={{background:'#8B5CF6cc',backdropFilter:'blur(4px)',borderRadius:100,padding:'4px 12px',fontSize:10,fontFamily:'var(--font-head)',fontWeight:700,color:'#fff',letterSpacing:'0.06em'}}>{t("SEASON 4 AUCTION","SEASON 4 AUCTION")}</span>
@@ -153,7 +153,7 @@ export function Videos() {
               <div style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:'clamp(17px,2.6vw,26px)',color:'#fff',lineHeight:1.3}}>
                 {t("BCPL Season 4 Auction — Full Live Stream","BCPL Season 4 Auction — पूरा Live Stream")}
               </div>
-              <div style={{fontFamily:'Inter,sans-serif',fontSize:13,color:'rgba(255,255,255,0.6)',marginTop:4}}>
+              <div style={{fontFamily:'Inter,sans-serif',fontSize:13,color:'rgba(255,255,255,0.88)',marginTop:4}}>
                 {t("Every player, every bid — watch the complete auction","हर player, हर बोली — पूरा auction देखिए")}
               </div>
             </div>
@@ -161,7 +161,7 @@ export function Videos() {
           </div>
           <div style={{textAlign:'right'}}>
             <a href={`https://youtu.be/${AUCTION_STREAM.ytId}`} target="_blank" rel="noopener noreferrer"
-              style={{color:'rgba(255,255,255,0.55)',fontSize:13,fontFamily:'Inter,sans-serif',textDecoration:'none'}}>
+              style={{color:'rgba(255,255,255,0.88)',fontSize:13,fontFamily:'Inter,sans-serif',textDecoration:'none'}}>
               {t("Watch on YouTube ↗","YouTube पर देखें ↗")}
             </a>
           </div>
@@ -182,7 +182,7 @@ export function Videos() {
           <div className="video-grid">
             {AUCTION_CLIPS.map((c,i)=>(
               <div key={c.file} className="video-card" style={{animation:`fadeSlide 0.5s ease ${(i%3)*0.1}s both`}} onClick={()=>openClip(c)}>
-                <div className="video-thumb" style={{aspectRatio:'16/9',background:'#121F2F',marginBottom:12}}>
+                <div className="video-thumb" style={{aspectRatio:'16/9',background:'#1F3652',marginBottom:12}}>
                   <img src={clipUrl(c.poster)} alt={t(c.title, c.titleHi)} loading={i < 3 ? 'eager' : 'lazy'} decoding="async"
                     style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover'}}/>
                   <PlayButton size={44}/>
@@ -215,7 +215,7 @@ export function Videos() {
               <a href="https://www.youtube.com/@bcplt20league" target="_blank" rel="noopener noreferrer" style={{padding:'14px 36px',borderRadius:14,background:'#FF0000',border:'none',color:'#fff',fontFamily:'var(--font-head)',fontWeight:800,fontSize:15,cursor:'pointer',display:'flex',alignItems:'center',gap:8,letterSpacing:'0.02em',textDecoration:'none'}}>
                 <span>▶</span> {t("Subscribe","Subscribe")}
               </a>
-              <a href="https://www.youtube.com/@bcplt20league?sub_confirmation=1" target="_blank" rel="noopener noreferrer" style={{padding:'14px 28px',borderRadius:14,background:'rgba(255,255,255,0.06)',border:'1.5px solid rgba(255,255,255,0.15)',color:'rgba(255,255,255,0.7)',fontFamily:'var(--font-head)',fontWeight:700,fontSize:15,cursor:'pointer',textDecoration:'none',display:'inline-flex',alignItems:'center',gap:8}}>
+              <a href="https://www.youtube.com/@bcplt20league?sub_confirmation=1" target="_blank" rel="noopener noreferrer" style={{padding:'14px 28px',borderRadius:14,background:'rgba(255,255,255,0.18)',border:'1.5px solid rgba(255,255,255,0.2)',color:'rgba(255,255,255,0.88)',fontFamily:'var(--font-head)',fontWeight:700,fontSize:15,cursor:'pointer',textDecoration:'none',display:'inline-flex',alignItems:'center',gap:8}}>
                 <IcoBell size={16} style={{color:'currentColor'}}/> {t("Enable Alerts","Alerts चालू करें")}
               </a>
             </div>
@@ -226,7 +226,7 @@ export function Videos() {
       {/* VIDEO MODAL */}
       {modal && (
         <div onClick={() => setModal(null)}
-          style={{position:'fixed',inset:0,zIndex:2000,background:'rgba(3,7,15,0.94)',display:'flex',alignItems:'center',justifyContent:'center',animation:'lbFade .2s ease both',padding:'clamp(8px,3vw,32px)'}}>
+          style={{position:'fixed',inset:0,zIndex:2000,background:'rgba(14,27,52,0.94)',display:'flex',alignItems:'center',justifyContent:'center',animation:'lbFade .2s ease both',padding:'clamp(8px,3vw,32px)'}}>
           <div onClick={e => e.stopPropagation()}
             style={{width:'min(1100px,96vw)',aspectRatio:'16/9',background:'#000',borderRadius:12,overflow:'hidden',boxShadow:'0 30px 90px rgba(0,0,0,0.8)'}}>
             {modal.kind === 'yt' ? (

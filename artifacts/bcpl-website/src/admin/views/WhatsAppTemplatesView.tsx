@@ -10,17 +10,17 @@ import {
 
 const CATEGORIES = ["Utility", "Marketing", "Authentication"];
 const STATUS_META: Record<WaTemplate["status"], { label: string; color: string }> = {
-  draft: { label: "Draft", color: "#94A3B8" },
+  draft: { label: "Draft", color: "#C3CEE3" },
   submitted: { label: "Submitted", color: "#F59E0B" },
   approved: { label: "Approved", color: "#22C55E" },
   rejected: { label: "Rejected", color: "#EF4444" },
 };
 
-const card: React.CSSProperties = { background: "linear-gradient(135deg,#0D1526,#0A1020)", border: "1px solid #1E293B", borderRadius: 16, padding: 20 };
-const inputStyle: React.CSSProperties = { width: "100%", padding: "9px 12px", background: "#060B18", border: "1px solid #1E293B", borderRadius: 10, color: "#F1F5F9", fontSize: 13, outline: "none" };
-const labelStyle: React.CSSProperties = { fontSize: 11, fontWeight: 700, color: "#64748B", display: "block", marginBottom: 6 };
+const card: React.CSSProperties = { background: "linear-gradient(135deg,#2C3A5E,#1F2B49)", border: "1px solid #33436B", borderRadius: 16, padding: 20 };
+const inputStyle: React.CSSProperties = { width: "100%", padding: "9px 12px", background: "#243050", border: "1px solid #33436B", borderRadius: 10, color: "#F1F5F9", fontSize: 13, outline: "none" };
+const labelStyle: React.CSSProperties = { fontSize: 11, fontWeight: 700, color: "#A6B3D0", display: "block", marginBottom: 6 };
 const btnPrimary: React.CSSProperties = { padding: "10px 18px", borderRadius: 10, border: "none", background: "linear-gradient(135deg,#FF6B00,#FF8C40)", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer" };
-const btnGhost: React.CSSProperties = { padding: "10px 18px", borderRadius: 10, border: "1px solid #1E293B", background: "transparent", color: "#64748B", fontSize: 13, cursor: "pointer" };
+const btnGhost: React.CSSProperties = { padding: "10px 18px", borderRadius: 10, border: "1px solid #33436B", background: "transparent", color: "#A6B3D0", fontSize: 13, cursor: "pointer" };
 
 type Form = {
   id: string | null;
@@ -157,7 +157,7 @@ export default function WhatsAppTemplatesView() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
         <div>
           <div style={{ fontSize: 20, fontWeight: 800, color: "#F1F5F9" }}>WhatsApp Templates</div>
-          <div style={{ fontSize: 12, color: "#64748B", marginTop: 2 }}>
+          <div style={{ fontSize: 12, color: "#A6B3D0", marginTop: 2 }}>
             Your saved template registry. Status is what you record after checking Interakt — it is not auto-synced.
           </div>
         </div>
@@ -173,7 +173,7 @@ export default function WhatsAppTemplatesView() {
         ].map(s => (
           <div key={s.label} style={{ ...card, padding: 16 }}>
             <div style={{ fontSize: 24, fontWeight: 800, color: s.color }}>{s.value}</div>
-            <div style={{ fontSize: 11, color: "#64748B", marginTop: 4 }}>{s.label}</div>
+            <div style={{ fontSize: 11, color: "#A6B3D0", marginTop: 4 }}>{s.label}</div>
           </div>
         ))}
       </div>
@@ -189,9 +189,9 @@ export default function WhatsAppTemplatesView() {
         {/* Template list */}
         <div style={{ ...card, padding: 12 }}>
           {loading ? (
-            <div style={{ fontSize: 12, color: "#64748B", padding: 12 }}>Loading…</div>
+            <div style={{ fontSize: 12, color: "#A6B3D0", padding: 12 }}>Loading…</div>
           ) : templates.length === 0 ? (
-            <div style={{ fontSize: 12, color: "#475569", padding: 12 }}>No templates saved yet.</div>
+            <div style={{ fontSize: 12, color: "#94A3C4", padding: 12 }}>No templates saved yet.</div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
               {templates.map(t => (
@@ -201,7 +201,7 @@ export default function WhatsAppTemplatesView() {
                     <span style={{ fontSize: 12, fontWeight: 700, color: form?.id === t.id ? "#FF8C40" : "#CBD5E1", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{t.name}</span>
                     <span style={{ fontSize: 9, fontWeight: 800, color: STATUS_META[t.status].color, flexShrink: 0 }}>{STATUS_META[t.status].label.toUpperCase()}</span>
                   </div>
-                  <div style={{ fontSize: 10, color: "#475569", marginTop: 3 }}>
+                  <div style={{ fontSize: 10, color: "#94A3C4", marginTop: 3 }}>
                     {t.category}{t.usedInCode ? " · ⚙ used by website code" : ""}
                   </div>
                 </div>
@@ -258,7 +258,7 @@ export default function WhatsAppTemplatesView() {
                   </button>
                 </div>
                 {form.varNames.length === 0 ? (
-                  <div style={{ fontSize: 12, color: "#475569" }}>No variables — the message is fixed text.</div>
+                  <div style={{ fontSize: 12, color: "#94A3C4" }}>No variables — the message is fixed text.</div>
                 ) : (
                   <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                     {form.varNames.map((v, i) => (
@@ -266,7 +266,7 @@ export default function WhatsAppTemplatesView() {
                         <span style={{ fontSize: 12, color: "#FF8C40", fontFamily: "monospace", fontWeight: 700 }}>{`{{${i + 1}}}`}</span>
                         <input value={v} onChange={e => setVar(i, "varNames", e.target.value)} placeholder="variable name (e.g. name)" style={inputStyle} />
                         <input value={form.sampleValues[i] ?? ""} onChange={e => setVar(i, "sampleValues", e.target.value)} placeholder="sample value" style={inputStyle} />
-                        <button onClick={() => removeVar(i)} style={{ background: "none", border: "none", color: "#64748B", cursor: "pointer", fontSize: 14 }}>✕</button>
+                        <button onClick={() => removeVar(i)} style={{ background: "none", border: "none", color: "#A6B3D0", cursor: "pointer", fontSize: 14 }}>✕</button>
                       </div>
                     ))}
                   </div>
@@ -288,7 +288,7 @@ export default function WhatsAppTemplatesView() {
             {/* Live preview */}
             <div style={card}>
               <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 12 }}>Preview (with sample values)</div>
-              <div style={{ background: "#0B141A", borderRadius: 14, padding: 18 }}>
+              <div style={{ background: "#283860", borderRadius: 14, padding: 18 }}>
                 <div style={{ maxWidth: 420, background: "#005C4B", borderRadius: "4px 14px 14px 14px", padding: "10px 12px", color: "#E9EDEF", fontSize: 13, lineHeight: 1.5, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
                   {preview || <span style={{ color: "#8696A0" }}>Type a message body above…</span>}
                   <div style={{ fontSize: 10, color: "#8696A0", textAlign: "right", marginTop: 4 }}>
@@ -302,7 +302,7 @@ export default function WhatsAppTemplatesView() {
           <div style={{ ...card, textAlign: "center", padding: 48 }}>
             <div style={{ fontSize: 36, marginBottom: 12 }}>💬</div>
             <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 6 }}>Select a template to view or edit</div>
-            <div style={{ fontSize: 12, color: "#64748B" }}>
+            <div style={{ fontSize: 12, color: "#A6B3D0" }}>
               The 7 pre-loaded templates are the ones the website sends automatically (receipts, reminders, selection results).
             </div>
           </div>

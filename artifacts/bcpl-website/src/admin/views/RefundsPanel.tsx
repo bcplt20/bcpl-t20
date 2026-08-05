@@ -10,8 +10,8 @@ import {
 } from "../../lib/api";
 import type { RefundRow, RefundCandidate } from "../../lib/api";
 
-const card: React.CSSProperties = { background:"linear-gradient(135deg,#0D1526 0%,#0A1020 100%)", border:"1px solid #1E293B", borderRadius:16, padding:20 };
-const INP: React.CSSProperties = { width:"100%", padding:"9px 12px", borderRadius:9, border:"1px solid #1E293B", background:"#060B18", color:"#E2E8F0", fontSize:12, outline:"none", boxSizing:"border-box" };
+const card: React.CSSProperties = { background:"linear-gradient(135deg,#2C3A5E 0%,#1F2B49 100%)", border:"1px solid #33436B", borderRadius:16, padding:20 };
+const INP: React.CSSProperties = { width:"100%", padding:"9px 12px", borderRadius:9, border:"1px solid #33436B", background:"#243050", color:"#E2E8F0", fontSize:12, outline:"none", boxSizing:"border-box" };
 
 const REASON_LABELS: Record<string, string> = {
   duplicate_payment:   "Duplicate payment",
@@ -120,7 +120,7 @@ export default function RefundsPanel({ refreshTick = 0 }: { refreshTick?: number
         ].map(s=>(
           <div key={s.l} style={{ ...card, borderTop:`3px solid ${s.c}`, padding:16 }}>
             <div style={{ fontSize:22, fontWeight:800, color:s.c }}>{s.v}</div>
-            <div style={{ fontSize:11, color:"#64748B", marginTop:4 }}>{s.l}</div>
+            <div style={{ fontSize:11, color:"#A6B3D0", marginTop:4 }}>{s.l}</div>
           </div>
         ))}
       </div>
@@ -133,15 +133,15 @@ export default function RefundsPanel({ refreshTick = 0 }: { refreshTick?: number
       {candidates.length > 0 && (
         <div style={{ ...card, borderLeft:"4px solid #F59E0B" }}>
           <div style={{ fontSize:13, fontWeight:800, color:"#F59E0B", marginBottom:4 }}>Possible duplicate payments</div>
-          <div style={{ fontSize:11, color:"#64748B", marginBottom:12 }}>
+          <div style={{ fontSize:11, color:"#A6B3D0", marginBottom:12 }}>
             These registrations have more than one successful payment for the same phase. Refunds are never created automatically — review and raise one if genuine.
           </div>
           <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
             {candidates.map(c => (
-              <div key={`${c.registrationId}-${c.phase}`} style={{ display:"flex", alignItems:"center", gap:12, padding:"10px 14px", background:"#060B18", borderRadius:10, border:"1px solid #1E293B", flexWrap:"wrap" }}>
+              <div key={`${c.registrationId}-${c.phase}`} style={{ display:"flex", alignItems:"center", gap:12, padding:"10px 14px", background:"#243050", borderRadius:10, border:"1px solid #33436B", flexWrap:"wrap" }}>
                 <span style={{ fontFamily:"monospace", fontSize:12, color:"#F1F5F9", fontWeight:700 }}>{c.regNumber ?? c.registrationId.slice(0,8)}</span>
-                <span style={{ fontSize:12, color:"#94A3B8" }}>{c.playerName ?? "—"}</span>
-                <span style={{ fontSize:11, color:"#64748B" }}>Phase {c.phase} · {c.payments} payments · {rupees(c.total)}</span>
+                <span style={{ fontSize:12, color:"#C3CEE3" }}>{c.playerName ?? "—"}</span>
+                <span style={{ fontSize:11, color:"#A6B3D0" }}>Phase {c.phase} · {c.payments} payments · {rupees(c.total)}</span>
                 {c.hasRefund
                   ? <span style={{ fontSize:10, fontWeight:800, color:"#10B981" }}>Refund already raised</span>
                   : <button onClick={()=>{ setForm(f=>({ ...f, regNumber: c.regNumber ?? "", phase: String(c.phase), reason:"duplicate_payment" })); setFormOpen(true); }}
@@ -172,31 +172,31 @@ export default function RefundsPanel({ refreshTick = 0 }: { refreshTick?: number
 
         {/* Create form */}
         {formOpen && (
-          <div style={{ background:"#060B18", border:"1px solid #1E293B", borderRadius:12, padding:16, marginBottom:14 }}>
+          <div style={{ background:"#243050", border:"1px solid #33436B", borderRadius:12, padding:16, marginBottom:14 }}>
             <div style={{ display:"grid", gridTemplateColumns:"1.2fr .6fr 1.2fr .8fr", gap:10, marginBottom:10 }}>
               <div>
-                <label style={{ fontSize:10, color:"#64748B", fontWeight:700, display:"block", marginBottom:5 }}>PLAYER ID</label>
+                <label style={{ fontSize:10, color:"#A6B3D0", fontWeight:700, display:"block", marginBottom:5 }}>PLAYER ID</label>
                 <input value={form.regNumber} onChange={e=>{ setForm(f=>({...f,regNumber:e.target.value})); setFormErr(""); }} placeholder="BCPL-DEL-1" style={INP}/>
               </div>
               <div>
-                <label style={{ fontSize:10, color:"#64748B", fontWeight:700, display:"block", marginBottom:5 }}>PHASE</label>
+                <label style={{ fontSize:10, color:"#A6B3D0", fontWeight:700, display:"block", marginBottom:5 }}>PHASE</label>
                 <select value={form.phase} onChange={e=>setForm(f=>({...f,phase:e.target.value}))} style={INP as React.CSSProperties}>
                   <option value="1">Phase 1</option><option value="2">Phase 2</option>
                 </select>
               </div>
               <div>
-                <label style={{ fontSize:10, color:"#64748B", fontWeight:700, display:"block", marginBottom:5 }}>REASON</label>
+                <label style={{ fontSize:10, color:"#A6B3D0", fontWeight:700, display:"block", marginBottom:5 }}>REASON</label>
                 <select value={form.reason} onChange={e=>setForm(f=>({...f,reason:e.target.value}))} style={INP as React.CSSProperties}>
                   {reasons.map(r=> <option key={r} value={r}>{REASON_LABELS[r] ?? r}</option>)}
                 </select>
               </div>
               <div>
-                <label style={{ fontSize:10, color:"#64748B", fontWeight:700, display:"block", marginBottom:5 }}>AMOUNT (₹, blank = full)</label>
+                <label style={{ fontSize:10, color:"#A6B3D0", fontWeight:700, display:"block", marginBottom:5 }}>AMOUNT (₹, blank = full)</label>
                 <input value={form.amount} onChange={e=>{ setForm(f=>({...f,amount:e.target.value})); setFormErr(""); }} placeholder="auto" style={INP}/>
               </div>
             </div>
             <div style={{ marginBottom:10 }}>
-              <label style={{ fontSize:10, color:"#64748B", fontWeight:700, display:"block", marginBottom:5 }}>NOTE (optional)</label>
+              <label style={{ fontSize:10, color:"#A6B3D0", fontWeight:700, display:"block", marginBottom:5 }}>NOTE (optional)</label>
               <input value={form.note} onChange={e=>setForm(f=>({...f,note:e.target.value}))} placeholder="Why is this refund being raised?" style={INP}/>
             </div>
             {formErr && <div style={{ fontSize:11, color:"#EF4444", marginBottom:10 }}>{formErr}</div>}
@@ -210,30 +210,30 @@ export default function RefundsPanel({ refreshTick = 0 }: { refreshTick?: number
         {/* Rows */}
         <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
           {loading && rows.length===0 && (
-            <div style={{ padding:"28px 16px", textAlign:"center", color:"#334155", fontSize:12 }}>Loading…</div>
+            <div style={{ padding:"28px 16px", textAlign:"center", color:"#8593B3", fontSize:12 }}>Loading…</div>
           )}
           {!loading && filtered.length===0 && (
-            <div style={{ padding:"36px 16px", textAlign:"center", color:"#334155", fontSize:12, background:"#060B18", borderRadius:12, border:"1px dashed #1E293B" }}>
+            <div style={{ padding:"36px 16px", textAlign:"center", color:"#8593B3", fontSize:12, background:"#243050", borderRadius:12, border:"1px dashed #33436B" }}>
               No refund requests{filter!=="all" ? ` with status "${STATUS_META[filter]?.label ?? filter}"` : " yet"}.
             </div>
           )}
           {filtered.map(({ refund: r, regNumber, playerName, phone }) => {
-            const meta = STATUS_META[r.status] ?? { label:r.status, color:"#64748B" };
+            const meta = STATUS_META[r.status] ?? { label:r.status, color:"#A6B3D0" };
             const busy = busyId === r.id;
             return (
-              <div key={r.id} style={{ padding:16, background:"#060B18", borderRadius:12, border:`1px solid ${r.status==="requested" ? "#F59E0B30" : "#1E293B"}` }}>
+              <div key={r.id} style={{ padding:16, background:"#243050", borderRadius:12, border:`1px solid ${r.status==="requested" ? "#F59E0B30" : "#33436B"}` }}>
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:10, flexWrap:"wrap" }}>
                   <div style={{ minWidth:0 }}>
                     <div style={{ display:"flex", alignItems:"center", gap:10, flexWrap:"wrap" }}>
                       <span style={{ fontSize:13, fontWeight:700, color:"#F1F5F9" }}>{playerName ?? "Unknown player"}</span>
-                      <span style={{ fontFamily:"monospace", fontSize:11, color:"#475569" }}>{regNumber ?? r.registrationId.slice(0,8)}</span>
-                      <span style={{ fontSize:10, color:"#64748B" }}>{phone ?? ""}</span>
+                      <span style={{ fontFamily:"monospace", fontSize:11, color:"#94A3C4" }}>{regNumber ?? r.registrationId.slice(0,8)}</span>
+                      <span style={{ fontSize:10, color:"#A6B3D0" }}>{phone ?? ""}</span>
                     </div>
-                    <div style={{ fontSize:11, color:"#64748B", marginTop:6 }}>
+                    <div style={{ fontSize:11, color:"#A6B3D0", marginTop:6 }}>
                       Phase {r.phase} · {REASON_LABELS[r.reason] ?? r.reason}
                       {r.reasonNote ? <> · “{r.reasonNote}”</> : null}
                     </div>
-                    <div style={{ fontSize:10, color:"#334155", marginTop:4 }}>
+                    <div style={{ fontSize:10, color:"#8593B3", marginTop:4 }}>
                       Raised {when(r.createdAt)}{r.requestedBy ? ` by ${r.requestedBy}` : ""}
                       {r.decidedAt ? <> · decided {when(r.decidedAt)}{r.decidedBy ? ` by ${r.decidedBy}` : ""}</> : null}
                       {r.processedAt ? <> · processed {when(r.processedAt)}{r.refundRef ? ` · ref ${r.refundRef}` : ""}</> : null}

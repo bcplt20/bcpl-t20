@@ -62,14 +62,14 @@ const ROLE_LABEL: Record<string, string> = {
 
 /* Stage 6 — employment verification status colours */
 const EMP_STATUS_COLOR: Record<string, string> = {
-  pending: "#64748B", verified: "#10B981", failed: "#EF4444", more_information_required: "#F59E0B",
+  pending: "#A6B3D0", verified: "#10B981", failed: "#EF4444", more_information_required: "#F59E0B",
 };
 const EMP_STATUS_LABEL: Record<string, string> = {
   pending: "Pending", verified: "Verified", failed: "Failed", more_information_required: "More Info Needed",
 };
 
 function StatusBadge({ status }: { status: string }) {
-  const color = KYC_STATUS_COLOR[status] ?? "#64748B";
+  const color = KYC_STATUS_COLOR[status] ?? "#A6B3D0";
   return (
     <span style={{
       display:"inline-block", padding:"3px 9px", borderRadius:6,
@@ -166,8 +166,8 @@ export default function Phase2KYCView({ refreshTick = 0 }: { refreshTick?: numbe
   };
 
   const card: React.CSSProperties = {
-    background:"linear-gradient(135deg,#0D1526,#0A1020)",
-    border:"1px solid #1E293B", borderRadius:16, padding:20,
+    background:"linear-gradient(135deg,#2C3A5E,#1F2B49)",
+    border:"1px solid #33436B", borderRadius:16, padding:20,
   };
 
   const displayed = rows.filter(r => {
@@ -185,11 +185,11 @@ export default function Phase2KYCView({ refreshTick = 0 }: { refreshTick?: numbe
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", flexWrap:"wrap", gap:10 }}>
         <div>
           <div style={{ fontSize:20, fontWeight:800, color:"#F1F5F9" }}>Phase 2 · KYC Management</div>
-          <div style={{ fontSize:12, color:"#64748B", marginTop:2 }}>
+          <div style={{ fontSize:12, color:"#A6B3D0", marginTop:2 }}>
             Review and approve KYC submissions from Phase 2 selected players
           </div>
         </div>
-        <button onClick={() => load()} style={{ padding:"9px 16px", borderRadius:9, border:"1px solid #1E293B", background:"transparent", color:"#64748B", fontSize:12, fontWeight:700, cursor:"pointer" }}>
+        <button onClick={() => load()} style={{ padding:"9px 16px", borderRadius:9, border:"1px solid #33436B", background:"transparent", color:"#A6B3D0", fontSize:12, fontWeight:700, cursor:"pointer" }}>
           ↺ Refresh
         </button>
       </div>
@@ -216,7 +216,7 @@ export default function Phase2KYCView({ refreshTick = 0 }: { refreshTick?: numbe
                 s.label === "Verified" ? "verified" : "failed"
               )}>
               <div style={{ fontSize:26, fontWeight:900, color:s.color }}>{loading ? "…" : s.value}</div>
-              <div style={{ fontSize:10, color:"#64748B", marginTop:4, lineHeight:1.3 }}>{s.label}</div>
+              <div style={{ fontSize:10, color:"#A6B3D0", marginTop:4, lineHeight:1.3 }}>{s.label}</div>
             </div>
           ))}
         </div>
@@ -227,14 +227,14 @@ export default function Phase2KYCView({ refreshTick = 0 }: { refreshTick?: numbe
         <div style={{ display:"flex", gap:4 }}>
           {["all", "pending", "verified", "failed"].map(f => (
             <button key={f} onClick={() => setFilter(f)}
-              style={{ padding:"7px 13px", borderRadius:8, border:`1px solid ${filter===f?"#FF6B00":"#1E293B"}`, background:filter===f?"#FF6B0022":"transparent", color:filter===f?"#FF6B00":"#64748B", fontSize:11, fontWeight:700, cursor:"pointer", whiteSpace:"nowrap", textTransform:"capitalize" }}>
+              style={{ padding:"7px 13px", borderRadius:8, border:`1px solid ${filter===f?"#FF6B00":"#33436B"}`, background:filter===f?"#FF6B0022":"transparent", color:filter===f?"#FF6B00":"#A6B3D0", fontSize:11, fontWeight:700, cursor:"pointer", whiteSpace:"nowrap", textTransform:"capitalize" }}>
               {f === "all" ? "All" : KYC_STATUS_LABEL[f] ?? f}
             </button>
           ))}
         </div>
         <div style={{ flex:1 }} />
         <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search player / phone…"
-          style={{ padding:"8px 12px", borderRadius:8, border:"1px solid #1E293B", background:"#080E1C", color:"#E2E8F0", fontSize:12, outline:"none", width:200 }} />
+          style={{ padding:"8px 12px", borderRadius:8, border:"1px solid #33436B", background:"#1F2B49", color:"#E2E8F0", fontSize:12, outline:"none", width:200 }} />
       </div>
 
       {/* Main content: table + detail panel */}
@@ -243,18 +243,18 @@ export default function Phase2KYCView({ refreshTick = 0 }: { refreshTick?: numbe
         {/* Table */}
         <div style={{ ...card, padding:0, overflow:"hidden" }}>
           {loading ? (
-            <div style={{ padding:60, textAlign:"center", color:"#334155", fontSize:14 }}>Loading KYC records…</div>
+            <div style={{ padding:60, textAlign:"center", color:"#8593B3", fontSize:14 }}>Loading KYC records…</div>
           ) : displayed.length === 0 ? (
-            <div style={{ padding:60, textAlign:"center", color:"#334155", fontSize:14 }}>
+            <div style={{ padding:60, textAlign:"center", color:"#8593B3", fontSize:14 }}>
               No KYC records found{filter !== "all" ? ` with status "${KYC_STATUS_LABEL[filter] ?? filter}"` : ""}
             </div>
           ) : (
             <div style={{ overflowX:"auto" }}>
               <table style={{ width:"100%", borderCollapse:"collapse", fontSize:12 }}>
                 <thead>
-                  <tr style={{ background:"#080E1C", borderBottom:"1px solid #1E293B" }}>
+                  <tr style={{ background:"#1F2B49", borderBottom:"1px solid #33436B" }}>
                     {["Player","Phone / Email","City","Role","Profession","KYC Status","Submitted","Actions"].map(h => (
-                      <th key={h} style={{ padding:"10px 12px", textAlign:"left", fontSize:10, fontWeight:700, color:"#334155", letterSpacing:"0.06em", textTransform:"uppercase", whiteSpace:"nowrap" }}>{h}</th>
+                      <th key={h} style={{ padding:"10px 12px", textAlign:"left", fontSize:10, fontWeight:700, color:"#8593B3", letterSpacing:"0.06em", textTransform:"uppercase", whiteSpace:"nowrap" }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -262,23 +262,23 @@ export default function Phase2KYCView({ refreshTick = 0 }: { refreshTick?: numbe
                   {displayed.map((r, i) => (
                     <tr key={r.id}
                       onClick={() => setDetail(detail?.id === r.id ? null : r)}
-                      style={{ borderBottom:"1px solid #0F172A", background: detail?.id === r.id ? "#FF6B0008" : i%2===0?"transparent":"#0A111C", cursor:"pointer" }}>
+                      style={{ borderBottom:"1px solid #3A4A72", background: detail?.id === r.id ? "#FF6B0008" : i%2===0?"transparent":"#283860", cursor:"pointer" }}>
                       {/* Player */}
                       <td style={{ padding:"10px 12px" }}>
                         <div style={{ fontWeight:700, color:"#F1F5F9" }}>{r.player}</div>
-                        <div style={{ fontSize:10, color:"#475569", marginTop:1 }}>{r.id.slice(0,8)}…</div>
+                        <div style={{ fontSize:10, color:"#94A3C4", marginTop:1 }}>{r.id.slice(0,8)}…</div>
                       </td>
                       {/* Contact */}
                       <td style={{ padding:"10px 12px" }}>
-                        <div style={{ color:"#94A3B8" }}>{r.phone}</div>
-                        <div style={{ fontSize:10, color:"#475569" }}>{r.email}</div>
+                        <div style={{ color:"#C3CEE3" }}>{r.phone}</div>
+                        <div style={{ fontSize:10, color:"#94A3C4" }}>{r.email}</div>
                       </td>
                       {/* City */}
-                      <td style={{ padding:"10px 12px", color:"#94A3B8", whiteSpace:"nowrap" }}>{r.trialCity || "—"}</td>
+                      <td style={{ padding:"10px 12px", color:"#C3CEE3", whiteSpace:"nowrap" }}>{r.trialCity || "—"}</td>
                       {/* Role */}
-                      <td style={{ padding:"10px 12px", color:"#94A3B8", whiteSpace:"nowrap" }}>{ROLE_LABEL[r.role] ?? r.role}</td>
+                      <td style={{ padding:"10px 12px", color:"#C3CEE3", whiteSpace:"nowrap" }}>{ROLE_LABEL[r.role] ?? r.role}</td>
                       {/* Profession */}
-                      <td style={{ padding:"10px 12px", color:"#94A3B8" }}>{r.profession ?? "—"}</td>
+                      <td style={{ padding:"10px 12px", color:"#C3CEE3" }}>{r.profession ?? "—"}</td>
                       {/* KYC Status */}
                       <td style={{ padding:"10px 12px" }}>
                         <StatusBadge status={r.status} />
@@ -288,13 +288,13 @@ export default function Phase2KYCView({ refreshTick = 0 }: { refreshTick?: numbe
                           </div>
                         )}
                         {r.employmentStatus && r.employmentStatus !== "verified" && (
-                          <div style={{ fontSize:9, marginTop:3, fontWeight:700, whiteSpace:"nowrap", color: EMP_STATUS_COLOR[r.employmentStatus] ?? "#64748B" }}>
+                          <div style={{ fontSize:9, marginTop:3, fontWeight:700, whiteSpace:"nowrap", color: EMP_STATUS_COLOR[r.employmentStatus] ?? "#A6B3D0" }}>
                             EMP: {EMP_STATUS_LABEL[r.employmentStatus] ?? r.employmentStatus}
                           </div>
                         )}
                       </td>
                       {/* Submitted */}
-                      <td style={{ padding:"10px 12px", color:"#475569", whiteSpace:"nowrap" }}>
+                      <td style={{ padding:"10px 12px", color:"#94A3C4", whiteSpace:"nowrap" }}>
                         {r.createdAt ? new Date(r.createdAt).toLocaleDateString("en-IN", { day:"2-digit", month:"short" }) : "—"}
                       </td>
                       {/* Actions */}
@@ -314,7 +314,7 @@ export default function Phase2KYCView({ refreshTick = 0 }: { refreshTick?: numbe
                           )}
                           {r.status !== "pending" && (
                             <button disabled={acting===r.id} onClick={e=>{e.stopPropagation();updateStatus(r.id,"pending");}}
-                              style={{ padding:"5px 10px", borderRadius:6, border:"1px solid #64748B40", background:"#64748B15", color:"#64748B", fontSize:10, fontWeight:700, cursor:"pointer", opacity:acting===r.id?0.5:1 }}>
+                              style={{ padding:"5px 10px", borderRadius:6, border:"1px solid #A6B3D040", background:"#A6B3D015", color:"#A6B3D0", fontSize:10, fontWeight:700, cursor:"pointer", opacity:acting===r.id?0.5:1 }}>
                               ↺
                             </button>
                           )}
@@ -335,9 +335,9 @@ export default function Phase2KYCView({ refreshTick = 0 }: { refreshTick?: numbe
               <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:16 }}>
                 <div>
                   <div style={{ fontSize:15, fontWeight:800, color:"#F1F5F9" }}>{detail.player}</div>
-                  <div style={{ fontSize:11, color:"#475569", marginTop:2 }}>{ROLE_LABEL[detail.role] ?? detail.role} · {detail.trialCity || "—"}</div>
+                  <div style={{ fontSize:11, color:"#94A3C4", marginTop:2 }}>{ROLE_LABEL[detail.role] ?? detail.role} · {detail.trialCity || "—"}</div>
                 </div>
-                <button onClick={() => setDetail(null)} style={{ background:"none", border:"none", color:"#334155", cursor:"pointer", fontSize:18, padding:4 }}>×</button>
+                <button onClick={() => setDetail(null)} style={{ background:"none", border:"none", color:"#8593B3", cursor:"pointer", fontSize:18, padding:4 }}>×</button>
               </div>
 
               <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
@@ -362,37 +362,37 @@ export default function Phase2KYCView({ refreshTick = 0 }: { refreshTick?: numbe
                   { label:"Emp. Category", value: detail.employmentCategory ?? "Not set" },
                   { label:"Emp. Reference", value: detail.employmentReference ?? "—" },
                 ].map(item => (
-                  <div key={item.label} style={{ display:"flex", justifyContent:"space-between", padding:"8px 0", borderBottom:"1px solid #0F172A" }}>
-                    <span style={{ fontSize:11, color:"#475569", fontWeight:600 }}>{item.label}</span>
-                    <span style={{ fontSize:11, color:"#94A3B8", maxWidth:160, textAlign:"right", wordBreak:"break-all" }}>{item.value}</span>
+                  <div key={item.label} style={{ display:"flex", justifyContent:"space-between", padding:"8px 0", borderBottom:"1px solid #3A4A72" }}>
+                    <span style={{ fontSize:11, color:"#94A3C4", fontWeight:600 }}>{item.label}</span>
+                    <span style={{ fontSize:11, color:"#C3CEE3", maxWidth:160, textAlign:"right", wordBreak:"break-all" }}>{item.value}</span>
                   </div>
                 ))}
                 <div style={{ display:"flex", justifyContent:"space-between", padding:"8px 0" }}>
-                  <span style={{ fontSize:11, color:"#475569", fontWeight:600 }}>KYC Status</span>
+                  <span style={{ fontSize:11, color:"#94A3C4", fontWeight:600 }}>KYC Status</span>
                   <StatusBadge status={detail.status} />
                 </div>
                 {detail.verifiedAt && (
-                  <div style={{ fontSize:10, color:"#475569" }}>
+                  <div style={{ fontSize:10, color:"#94A3C4" }}>
                     Verified: {new Date(detail.verifiedAt).toLocaleString("en-IN")}
                   </div>
                 )}
               </div>
 
               {/* Stage 6 — Employment verification */}
-              <div style={{ marginTop:16, paddingTop:14, borderTop:"1px solid #1E293B" }}>
+              <div style={{ marginTop:16, paddingTop:14, borderTop:"1px solid #33436B" }}>
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 }}>
                   <span style={{ fontSize:12, fontWeight:800, color:"#F1F5F9" }}>Employment Verification</span>
                   <span style={{
                     display:"inline-block", padding:"3px 9px", borderRadius:6, fontSize:10, fontWeight:800, whiteSpace:"nowrap",
-                    background:(EMP_STATUS_COLOR[detail.employmentStatus ?? "pending"] ?? "#64748B") + "22",
-                    color: EMP_STATUS_COLOR[detail.employmentStatus ?? "pending"] ?? "#64748B",
-                    border:"1px solid " + (EMP_STATUS_COLOR[detail.employmentStatus ?? "pending"] ?? "#64748B") + "44",
+                    background:(EMP_STATUS_COLOR[detail.employmentStatus ?? "pending"] ?? "#A6B3D0") + "22",
+                    color: EMP_STATUS_COLOR[detail.employmentStatus ?? "pending"] ?? "#A6B3D0",
+                    border:"1px solid " + (EMP_STATUS_COLOR[detail.employmentStatus ?? "pending"] ?? "#A6B3D0") + "44",
                   }}>
                     {EMP_STATUS_LABEL[detail.employmentStatus ?? "pending"] ?? detail.employmentStatus}
                   </span>
                 </div>
                 {detail.employmentVerifiedAt && (
-                  <div style={{ fontSize:10, color:"#475569", marginBottom:8 }}>
+                  <div style={{ fontSize:10, color:"#94A3C4", marginBottom:8 }}>
                     Verified: {new Date(detail.employmentVerifiedAt).toLocaleString("en-IN")}{detail.employmentMethod ? " · via " + detail.employmentMethod : ""}
                   </div>
                 )}
@@ -401,9 +401,9 @@ export default function Phase2KYCView({ refreshTick = 0 }: { refreshTick?: numbe
                 )}
                 <div style={{ display:"flex", gap:6, marginBottom:8 }}>
                   <input value={empMethod} onChange={e => setEmpMethod(e.target.value)} placeholder="Method (HR call, document…)"
-                    style={{ flex:1, padding:"7px 10px", borderRadius:7, border:"1px solid #1E293B", background:"#080E1C", color:"#E2E8F0", fontSize:11, outline:"none", minWidth:0 }} />
+                    style={{ flex:1, padding:"7px 10px", borderRadius:7, border:"1px solid #33436B", background:"#1F2B49", color:"#E2E8F0", fontSize:11, outline:"none", minWidth:0 }} />
                   <input value={empRef} onChange={e => setEmpRef(e.target.value)} placeholder="Reference"
-                    style={{ flex:1, padding:"7px 10px", borderRadius:7, border:"1px solid #1E293B", background:"#080E1C", color:"#E2E8F0", fontSize:11, outline:"none", minWidth:0 }} />
+                    style={{ flex:1, padding:"7px 10px", borderRadius:7, border:"1px solid #33436B", background:"#1F2B49", color:"#E2E8F0", fontSize:11, outline:"none", minWidth:0 }} />
                 </div>
                 <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:6 }}>
                   <button disabled={acting===detail.id} onClick={() => setEmployment(detail.id, "verified")}
@@ -419,7 +419,7 @@ export default function Phase2KYCView({ refreshTick = 0 }: { refreshTick?: numbe
                     Need More Info
                   </button>
                   <button disabled={acting===detail.id} onClick={() => setEmployment(detail.id, "pending")}
-                    style={{ padding:"8px 6px", borderRadius:8, border:"1px solid #64748B40", background:"#64748B15", color:"#64748B", fontWeight:700, fontSize:11, cursor:"pointer", opacity:acting===detail.id?0.5:1 }}>
+                    style={{ padding:"8px 6px", borderRadius:8, border:"1px solid #A6B3D040", background:"#A6B3D015", color:"#A6B3D0", fontWeight:700, fontSize:11, cursor:"pointer", opacity:acting===detail.id?0.5:1 }}>
                     Reset Pending
                   </button>
                 </div>
@@ -440,7 +440,7 @@ export default function Phase2KYCView({ refreshTick = 0 }: { refreshTick?: numbe
         )}
       </div>
 
-      <div style={{ fontSize:11, color:"#334155", textAlign:"right" }}>
+      <div style={{ fontSize:11, color:"#8593B3", textAlign:"right" }}>
         {!loading && `${displayed.length} KYC record${displayed.length !== 1 ? "s" : ""} shown`}
       </div>
     </div>

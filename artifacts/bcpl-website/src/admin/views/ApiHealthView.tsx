@@ -14,7 +14,7 @@ type Health = {
   integrations: HealthIntegration[]; jobs: HealthJob[]; queues: Record<string, number>;
 };
 
-const card: React.CSSProperties = { background:"linear-gradient(135deg,#0D1526 0%,#0A1020 100%)", border:"1px solid #1E293B", borderRadius:16, padding:20 };
+const card: React.CSSProperties = { background:"linear-gradient(135deg,#2C3A5E 0%,#1F2B49 100%)", border:"1px solid #33436B", borderRadius:16, padding:20 };
 
 function ago(iso: string | null | undefined): string {
   if (!iso) return "no activity recorded";
@@ -105,7 +105,7 @@ function AiControlsCard() {
   const statusLabel = !cfg ? "" : !cfg.aiEnabled
     ? "OFF — videos wait in the queue, nothing is scored"
     : cfg.testMode ? "TEST MODE — pipeline runs with mock scores (no Gemini cost)" : "LIVE — real AI scoring is active";
-  const statusColor = !cfg ? "#64748B" : !cfg.aiEnabled ? "#EF4444" : cfg.testMode ? "#F59E0B" : "#10B981";
+  const statusColor = !cfg ? "#A6B3D0" : !cfg.aiEnabled ? "#EF4444" : cfg.testMode ? "#F59E0B" : "#10B981";
 
   return (
     <div style={{ ...card, borderTop: `3px solid ${statusColor}` }}>
@@ -122,29 +122,29 @@ function AiControlsCard() {
           {cfgErr}
         </div>
       )}
-      {!cfg && !cfgErr && <div style={{ fontSize:12, color:"#475569", padding:"14px 0" }}>Loading AI config…</div>}
+      {!cfg && !cfgErr && <div style={{ fontSize:12, color:"#94A3C4", padding:"14px 0" }}>Loading AI config…</div>}
       {cfg && (
         <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
           {AI_SWITCHES.map((s) => {
             const on = Boolean(cfg[s.key]);
             const onColor = s.key === "testMode" ? "#F59E0B" : "#10B981";
             return (
-              <div key={s.key} style={{ display:"flex", alignItems:"center", gap:14, padding:"10px 14px", background:"#060B18", borderRadius:10, border:"1px solid #1E293B" }}>
+              <div key={s.key} style={{ display:"flex", alignItems:"center", gap:14, padding:"10px 14px", background:"#243050", borderRadius:10, border:"1px solid #33436B" }}>
                 <div style={{ flex:1, minWidth:200 }}>
                   <div style={{ fontSize:12, fontWeight:700, color:"#E2E8F0" }}>{s.label}</div>
-                  <div style={{ fontSize:11, color:"#64748B", marginTop:2 }}>{s.desc}</div>
+                  <div style={{ fontSize:11, color:"#A6B3D0", marginTop:2 }}>{s.desc}</div>
                 </div>
                 <button onClick={() => flip(s.key)} disabled={savingKey !== null} aria-label={`${s.label}: ${on ? "on" : "off"}`}
-                  style={{ width:52, height:28, borderRadius:999, border:`1px solid ${on ? `${onColor}60` : "#334155"}`,
-                    background: on ? `${onColor}30` : "#1E293B", position:"relative",
+                  style={{ width:52, height:28, borderRadius:999, border:`1px solid ${on ? `${onColor}60` : "#8593B3"}`,
+                    background: on ? `${onColor}30` : "#33436B", position:"relative",
                     cursor: savingKey ? "wait" : "pointer", flexShrink:0, opacity: savingKey === s.key ? 0.6 : 1, transition:"all .15s" }}>
                   <span style={{ position:"absolute", top:3, left: on ? 27 : 3, width:20, height:20, borderRadius:"50%",
-                    background: on ? onColor : "#64748B", transition:"left .15s" }}/>
+                    background: on ? onColor : "#A6B3D0", transition:"left .15s" }}/>
                 </button>
               </div>
             );
           })}
-          <div style={{ fontSize:10, color:"#334155", marginTop:2 }}>
+          <div style={{ fontSize:10, color:"#8593B3", marginTop:2 }}>
             Models: {cfg.geminiPrimaryModel} (scoring) · {cfg.geminiValidationModel} (validity check) · Result window: {cfg.resultReleaseHours} hr
             {live ? " · Gemini API key must be configured on the server (see integrations below)." : ""}
             {" "}If a server kill-switch environment variable is set, a switch snaps back to the forced value.
@@ -187,14 +187,14 @@ export default function ApiHealthView() {
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:12 }}>
         <div>
           <div style={{ fontSize:20, fontWeight:800, color:"#F1F5F9" }}>API Health</div>
-          <div style={{ fontSize:12, color:"#64748B", marginTop:3 }}>
+          <div style={{ fontSize:12, color:"#A6B3D0", marginTop:3 }}>
             Third-party integrations, background jobs and the AI evaluation queue
             {data ? <> · server up {fmtUptime(data.uptimeSec)} · checked {ago(data.checkedAt)}</> : null}
           </div>
         </div>
         <div style={{ display:"flex", gap:8 }}>
           <button onClick={()=>load(false)} disabled={loading||probing}
-            style={{ padding:"9px 16px", borderRadius:10, border:"1px solid #1E293B", background:"transparent", color:"#94A3B8", fontSize:12, fontWeight:700, cursor:"pointer" }}>
+            style={{ padding:"9px 16px", borderRadius:10, border:"1px solid #33436B", background:"transparent", color:"#C3CEE3", fontSize:12, fontWeight:700, cursor:"pointer" }}>
             ↻ Refresh
           </button>
           <button onClick={()=>load(true)} disabled={loading||probing}
@@ -214,7 +214,7 @@ export default function ApiHealthView() {
       <AiControlsCard />
 
       {loading && !data && (
-        <div style={{ ...card, textAlign:"center", color:"#475569", fontSize:12, padding:40 }}>Loading health data…</div>
+        <div style={{ ...card, textAlign:"center", color:"#94A3C4", fontSize:12, padding:40 }}>Loading health data…</div>
       )}
 
       {data && (
@@ -234,7 +234,7 @@ export default function ApiHealthView() {
                       {it.configured ? "● Configured" : "○ Not configured"}
                     </span>
                   </div>
-                  <div style={{ fontSize:11, color:"#64748B" }}>Last activity: <span style={{ color:"#94A3B8" }}>{ago(it.lastActivityAt)}</span></div>
+                  <div style={{ fontSize:11, color:"#A6B3D0" }}>Last activity: <span style={{ color:"#C3CEE3" }}>{ago(it.lastActivityAt)}</span></div>
                   {it.probe && (
                     <div style={{ fontSize:11, padding:"6px 10px", borderRadius:8,
                       background: it.probe.ok ? "#10B98112" : "#EF444412",
@@ -243,7 +243,7 @@ export default function ApiHealthView() {
                       Live probe: {it.probe.ok ? "OK" : "FAILED"} — {it.probe.note}
                     </div>
                   )}
-                  <div style={{ fontSize:10, color:"#334155" }}>{it.note}</div>
+                  <div style={{ fontSize:10, color:"#8593B3" }}>{it.note}</div>
                 </div>
               );
             })}
@@ -253,7 +253,7 @@ export default function ApiHealthView() {
           <div style={card}>
             <div style={{ fontSize:14, fontWeight:800, color:"#F1F5F9", marginBottom:12 }}>Background Jobs</div>
             {data.jobs.length === 0 && (
-              <div style={{ fontSize:12, color:"#475569", padding:"18px 0" }}>
+              <div style={{ fontSize:12, color:"#94A3C4", padding:"18px 0" }}>
                 No job runs recorded yet since the server started ({fmtUptime(data.uptimeSec)} ago). Heartbeats appear after the first tick.
               </div>
             )}
@@ -261,12 +261,12 @@ export default function ApiHealthView() {
               {data.jobs.map(j => {
                 const bad = Boolean(j.lastError) || jobStale(j);
                 return (
-                  <div key={j.id} style={{ display:"flex", alignItems:"center", gap:12, padding:"10px 14px", background:"#060B18", borderRadius:10, border:`1px solid ${bad ? "#EF444440" : "#1E293B"}`, flexWrap:"wrap" }}>
+                  <div key={j.id} style={{ display:"flex", alignItems:"center", gap:12, padding:"10px 14px", background:"#243050", borderRadius:10, border:`1px solid ${bad ? "#EF444440" : "#33436B"}`, flexWrap:"wrap" }}>
                     <span style={{ width:8, height:8, borderRadius:"50%", background: bad ? "#EF4444" : "#10B981", flexShrink:0 }}/>
                     <span style={{ fontSize:12, fontWeight:700, color:"#E2E8F0", minWidth:150 }}>{j.id}</span>
-                    <span style={{ fontSize:11, color:"#64748B" }}>{fmtInterval(j.intervalMs)}</span>
-                    <span style={{ fontSize:11, color:"#64748B" }}>last run: <span style={{ color:"#94A3B8" }}>{ago(j.lastRunAt)}</span></span>
-                    <span style={{ fontSize:11, color:"#64748B" }}>runs: {j.runs} · fails: {j.fails}</span>
+                    <span style={{ fontSize:11, color:"#A6B3D0" }}>{fmtInterval(j.intervalMs)}</span>
+                    <span style={{ fontSize:11, color:"#A6B3D0" }}>last run: <span style={{ color:"#C3CEE3" }}>{ago(j.lastRunAt)}</span></span>
+                    <span style={{ fontSize:11, color:"#A6B3D0" }}>runs: {j.runs} · fails: {j.fails}</span>
                     {jobStale(j) && <span style={{ fontSize:10, fontWeight:800, color:"#F59E0B" }}>STALE — overdue</span>}
                     {j.lastError && <span style={{ fontSize:10, color:"#EF4444", flexBasis:"100%" }}>Last error: {j.lastError}</span>}
                   </div>
@@ -279,13 +279,13 @@ export default function ApiHealthView() {
           <div style={card}>
             <div style={{ fontSize:14, fontWeight:800, color:"#F1F5F9", marginBottom:12 }}>AI Evaluation Queue</div>
             {queues.length === 0 ? (
-              <div style={{ fontSize:12, color:"#475569" }}>No evaluations in the pipeline.</div>
+              <div style={{ fontSize:12, color:"#94A3C4" }}>No evaluations in the pipeline.</div>
             ) : (
               <div style={{ display:"flex", gap:10, flexWrap:"wrap" }}>
                 {queues.map(q => (
-                  <div key={q.label} style={{ padding:"10px 18px", background:"#060B18", borderRadius:10, border:"1px solid #1E293B", textAlign:"center" }}>
+                  <div key={q.label} style={{ padding:"10px 18px", background:"#243050", borderRadius:10, border:"1px solid #33436B", textAlign:"center" }}>
                     <div style={{ fontSize:20, fontWeight:800, color:"#E2E8F0", lineHeight:1 }}>{q.count}</div>
-                    <div style={{ fontSize:10, color:"#64748B", marginTop:5, textTransform:"capitalize" }}>{q.label.replace(/_/g," ")}</div>
+                    <div style={{ fontSize:10, color:"#A6B3D0", marginTop:5, textTransform:"capitalize" }}>{q.label.replace(/_/g," ")}</div>
                   </div>
                 ))}
               </div>

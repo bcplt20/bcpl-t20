@@ -21,9 +21,9 @@ const ALLOWED = new Set([...IMAGE_ACCEPT.split(","), ...VIDEO_ACCEPT.split(",")]
 
 type UploadState = { id: string; name: string; pct: number; error?: string; done?: boolean };
 
-const card: React.CSSProperties = { background: "linear-gradient(135deg,#0D1526,#0A1020)", border: "1px solid #1E293B", borderRadius: 16, padding: 20 };
+const card: React.CSSProperties = { background: "linear-gradient(135deg,#2C3A5E,#1F2B49)", border: "1px solid #33436B", borderRadius: 16, padding: 20 };
 const btnPrimary: React.CSSProperties = { padding: "10px 18px", borderRadius: 10, border: "none", background: "linear-gradient(135deg,#FF6B00,#FF8C40)", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer" };
-const btnGhost: React.CSSProperties = { padding: "10px 18px", borderRadius: 10, border: "1px solid #1E293B", background: "transparent", color: "#64748B", fontSize: 13, cursor: "pointer" };
+const btnGhost: React.CSSProperties = { padding: "10px 18px", borderRadius: 10, border: "1px solid #33436B", background: "transparent", color: "#A6B3D0", fontSize: 13, cursor: "pointer" };
 
 const KIND_META: Record<MediaFolder["kind"], { icon: string; label: string }> = {
   photo: { icon: "📸", label: "Photos" },
@@ -190,7 +190,7 @@ export default function MediaView() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
         <div>
           <div style={{ fontSize: 20, fontWeight: 800, color: "#F1F5F9" }}>Media Library</div>
-          <div style={{ fontSize: 12, color: "#64748B", marginTop: 2 }}>
+          <div style={{ fontSize: 12, color: "#A6B3D0", marginTop: 2 }}>
             Match photos & videos stored in the BCPL S3 bucket — previews use 1-hour signed links
           </div>
         </div>
@@ -212,20 +212,20 @@ export default function MediaView() {
           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9" }}>Uploads</div>
             {activeUploads.every(u => u.error) && (
-              <button onClick={() => setUploads([])} style={{ background: "none", border: "none", color: "#64748B", cursor: "pointer", fontSize: 12 }}>Clear</button>
+              <button onClick={() => setUploads([])} style={{ background: "none", border: "none", color: "#A6B3D0", cursor: "pointer", fontSize: 12 }}>Clear</button>
             )}
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {uploads.map(u => (
               <div key={u.id}>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: u.error ? "#FCA5A5" : "#94A3B8", marginBottom: 4 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: u.error ? "#FCA5A5" : "#C3CEE3", marginBottom: 4 }}>
                   <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{u.name}</span>
                   <span>{u.error ? "failed" : u.done ? "done ✓" : `${u.pct}%`}</span>
                 </div>
                 {u.error ? (
                   <div style={{ fontSize: 11, color: "#FCA5A5" }}>{u.error}</div>
                 ) : (
-                  <div style={{ height: 5, borderRadius: 3, background: "#1E293B", overflow: "hidden" }}>
+                  <div style={{ height: 5, borderRadius: 3, background: "#33436B", overflow: "hidden" }}>
                     <div style={{ height: "100%", width: `${u.pct}%`, background: u.done ? "#22C55E" : "linear-gradient(90deg,#FF6B00,#FF8C40)", transition: "width .2s" }} />
                   </div>
                 )}
@@ -238,12 +238,12 @@ export default function MediaView() {
       {!openFolder ? (
         /* ── Folder grid ─────────────────────────────────────────── */
         loading ? (
-          <div style={{ ...card, textAlign: "center", color: "#64748B", fontSize: 13 }}>Loading folders…</div>
+          <div style={{ ...card, textAlign: "center", color: "#A6B3D0", fontSize: 13 }}>Loading folders…</div>
         ) : folders.length === 0 ? (
           <div style={{ ...card, textAlign: "center", padding: 48 }}>
             <div style={{ fontSize: 40, marginBottom: 12 }}>🗂</div>
             <div style={{ fontSize: 15, fontWeight: 700, color: "#F1F5F9", marginBottom: 6 }}>No folders yet</div>
-            <div style={{ fontSize: 13, color: "#64748B", marginBottom: 18 }}>Create a folder (e.g. "Delhi Trials — Day 1") and upload match photos or videos.</div>
+            <div style={{ fontSize: 13, color: "#A6B3D0", marginBottom: 18 }}>Create a folder (e.g. "Delhi Trials — Day 1") and upload match photos or videos.</div>
             <button onClick={() => setNewFolderOpen(true)} style={btnPrimary}>+ Create First Folder</button>
           </div>
         ) : (
@@ -251,15 +251,15 @@ export default function MediaView() {
             {folders.map(f => (
               <div key={f.id} style={{ ...card, padding: 18, cursor: "pointer", position: "relative" }} onClick={() => void openFolderView(f)}>
                 <button onClick={e => { e.stopPropagation(); void removeFolder(f); }} title="Delete folder"
-                  style={{ position: "absolute", top: 10, right: 10, background: "none", border: "none", color: "#475569", cursor: "pointer", fontSize: 14 }}>🗑</button>
+                  style={{ position: "absolute", top: 10, right: 10, background: "none", border: "none", color: "#94A3C4", cursor: "pointer", fontSize: 14 }}>🗑</button>
                 <div style={{ fontSize: 30, marginBottom: 10 }}>{KIND_META[f.kind]?.icon ?? "📁"}</div>
                 <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 4, paddingRight: 20 }}>{f.name}</div>
-                <div style={{ fontSize: 12, color: "#64748B", marginBottom: 10 }}>
+                <div style={{ fontSize: 12, color: "#A6B3D0", marginBottom: 10 }}>
                   {f.fileCount} file{f.fileCount === 1 ? "" : "s"} · {formatBytes(f.totalBytes)}
                 </div>
                 <button onClick={e => { e.stopPropagation(); void togglePublic(f); }}
                   title={f.isPublic ? "Hide from public website Gallery" : "Show on public website Gallery"}
-                  style={{ padding: "5px 12px", borderRadius: 100, border: `1px solid ${f.isPublic ? "#22C55E" : "#1E293B"}`, background: f.isPublic ? "#22C55E22" : "transparent", color: f.isPublic ? "#4ADE80" : "#64748B", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
+                  style={{ padding: "5px 12px", borderRadius: 100, border: `1px solid ${f.isPublic ? "#22C55E" : "#33436B"}`, background: f.isPublic ? "#22C55E22" : "transparent", color: f.isPublic ? "#4ADE80" : "#A6B3D0", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
                   {f.isPublic ? "🌐 Public" : "🔒 Private"}
                 </button>
               </div>
@@ -287,30 +287,30 @@ export default function MediaView() {
             onDragOver={e => { e.preventDefault(); setDragOver(true); }}
             onDragLeave={() => setDragOver(false)}
             onDrop={e => { e.preventDefault(); setDragOver(false); void handleFiles(e.dataTransfer.files); }}
-            style={{ ...card, border: dragOver ? "2px dashed #FF6B00" : "1px solid #1E293B", minHeight: 220 }}>
+            style={{ ...card, border: dragOver ? "2px dashed #FF6B00" : "1px solid #33436B", minHeight: 220 }}>
             {filesLoading ? (
-              <div style={{ textAlign: "center", color: "#64748B", fontSize: 13, padding: 40 }}>Loading files…</div>
+              <div style={{ textAlign: "center", color: "#A6B3D0", fontSize: 13, padding: 40 }}>Loading files…</div>
             ) : files.length === 0 ? (
               <div style={{ textAlign: "center", padding: 40 }}>
                 <div style={{ fontSize: 36, marginBottom: 10 }}>☁</div>
-                <div style={{ fontSize: 13, color: "#94A3B8", fontWeight: 600 }}>Drag & drop files here, or click Upload Files</div>
-                <div style={{ fontSize: 12, color: "#475569", marginTop: 4 }}>
+                <div style={{ fontSize: 13, color: "#C3CEE3", fontWeight: 600 }}>Drag & drop files here, or click Upload Files</div>
+                <div style={{ fontSize: 12, color: "#94A3C4", marginTop: 4 }}>
                   Photos up to 25 MB (JPG/PNG/WebP/GIF) · Videos up to 500 MB (MP4/MOV/WebM)
                 </div>
               </div>
             ) : (
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(160px,1fr))", gap: 12 }}>
                 {files.map(f => (
-                  <div key={f.id} style={{ borderRadius: 12, overflow: "hidden", border: "1px solid #1E293B", background: "#060B18", cursor: "pointer", position: "relative" }}
+                  <div key={f.id} style={{ borderRadius: 12, overflow: "hidden", border: "1px solid #33436B", background: "#243050", cursor: "pointer", position: "relative" }}
                     onClick={() => setPreview(f)}>
                     {f.kind === "photo" ? (
-                      <img src={f.viewUrl} alt={f.name} loading="lazy" onError={() => handleMediaError(f)} style={{ width: "100%", height: 110, objectFit: "cover", display: "block", background: "#0A1020" }} />
+                      <img src={f.viewUrl} alt={f.name} loading="lazy" onError={() => handleMediaError(f)} style={{ width: "100%", height: 110, objectFit: "cover", display: "block", background: "#1F2B49" }} />
                     ) : (
-                      <div style={{ width: "100%", height: 110, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 34, background: "#0A1020" }}>🎬</div>
+                      <div style={{ width: "100%", height: 110, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 34, background: "#1F2B49" }}>🎬</div>
                     )}
                     <div style={{ padding: "8px 10px" }}>
-                      <div style={{ fontSize: 11, color: "#94A3B8", fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{f.name}</div>
-                      <div style={{ fontSize: 10, color: "#475569", marginTop: 2 }}>{formatBytes(f.sizeBytes)}</div>
+                      <div style={{ fontSize: 11, color: "#C3CEE3", fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{f.name}</div>
+                      <div style={{ fontSize: 10, color: "#94A3C4", marginTop: 2 }}>{formatBytes(f.sizeBytes)}</div>
                     </div>
                   </div>
                 ))}
@@ -323,17 +323,17 @@ export default function MediaView() {
       {/* New folder modal */}
       {newFolderOpen && (
         <div style={{ position: "fixed", inset: 0, background: "#00000088", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999 }}>
-          <div style={{ background: "#0D1526", border: "1px solid #1E293B", borderRadius: 20, padding: 28, width: 440, maxWidth: "92vw" }}>
+          <div style={{ background: "#2C3A5E", border: "1px solid #33436B", borderRadius: 20, padding: 28, width: 440, maxWidth: "92vw" }}>
             <div style={{ fontSize: 18, fontWeight: 800, color: "#F1F5F9", marginBottom: 16 }}>New Folder</div>
-            <label style={{ fontSize: 11, color: "#64748B", fontWeight: 700, display: "block", marginBottom: 6 }}>FOLDER NAME</label>
+            <label style={{ fontSize: 11, color: "#A6B3D0", fontWeight: 700, display: "block", marginBottom: 6 }}>FOLDER NAME</label>
             <input value={newFolderName} onChange={e => setNewFolderName(e.target.value)} onKeyDown={e => e.key === "Enter" && void createFolder()}
               placeholder='e.g. "Delhi Trials — Day 1"' autoFocus
-              style={{ width: "100%", padding: "10px 14px", background: "#060B18", border: "1px solid #1E293B", borderRadius: 10, color: "#F1F5F9", fontSize: 13, outline: "none", marginBottom: 16 }} />
-            <label style={{ fontSize: 11, color: "#64748B", fontWeight: 700, display: "block", marginBottom: 6 }}>CONTENT TYPE</label>
+              style={{ width: "100%", padding: "10px 14px", background: "#243050", border: "1px solid #33436B", borderRadius: 10, color: "#F1F5F9", fontSize: 13, outline: "none", marginBottom: 16 }} />
+            <label style={{ fontSize: 11, color: "#A6B3D0", fontWeight: 700, display: "block", marginBottom: 6 }}>CONTENT TYPE</label>
             <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
               {(["photo", "video", "mixed"] as const).map(t => (
                 <button key={t} onClick={() => setNewFolderKind(t)}
-                  style={{ flex: 1, padding: "9px 0", borderRadius: 9, border: `1px solid ${newFolderKind === t ? "#FF6B00" : "#1E293B"}`, background: newFolderKind === t ? "#FF6B0022" : "transparent", color: newFolderKind === t ? "#FF6B00" : "#64748B", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                  style={{ flex: 1, padding: "9px 0", borderRadius: 9, border: `1px solid ${newFolderKind === t ? "#FF6B00" : "#33436B"}`, background: newFolderKind === t ? "#FF6B0022" : "transparent", color: newFolderKind === t ? "#FF6B00" : "#A6B3D0", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
                   {KIND_META[t].icon} {KIND_META[t].label}
                 </button>
               ))}
@@ -353,10 +353,10 @@ export default function MediaView() {
       {preview && (
         <div onClick={() => setPreview(null)}
           style={{ position: "fixed", inset: 0, background: "#000000CC", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999, padding: 20 }}>
-          <div onClick={e => e.stopPropagation()} style={{ background: "#0D1526", border: "1px solid #1E293B", borderRadius: 20, padding: 20, maxWidth: "min(880px,94vw)", maxHeight: "92vh", display: "flex", flexDirection: "column", gap: 12 }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: "#2C3A5E", border: "1px solid #33436B", borderRadius: 20, padding: 20, maxWidth: "min(880px,94vw)", maxHeight: "92vh", display: "flex", flexDirection: "column", gap: 12 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
               <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{preview.name}</div>
-              <button onClick={() => setPreview(null)} style={{ background: "none", border: "none", color: "#64748B", cursor: "pointer", fontSize: 18 }}>✕</button>
+              <button onClick={() => setPreview(null)} style={{ background: "none", border: "none", color: "#A6B3D0", cursor: "pointer", fontSize: 18 }}>✕</button>
             </div>
             <div style={{ overflow: "auto", display: "flex", justifyContent: "center" }}>
               {preview.kind === "photo" ? (
@@ -366,7 +366,7 @@ export default function MediaView() {
               )}
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-              <div style={{ fontSize: 12, color: "#64748B" }}>
+              <div style={{ fontSize: 12, color: "#A6B3D0" }}>
                 {formatBytes(preview.sizeBytes)} · uploaded {new Date(preview.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
               </div>
               <div style={{ display: "flex", gap: 8 }}>

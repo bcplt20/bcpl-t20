@@ -13,10 +13,10 @@ const TEAMS = [
   { name:'Punjab Warriors',     city:'Chandigarh', color:'#DC2626', bg:'#1A0606', logo:`${L}punjab_warriors.png`,     abbr:'PW', bid:'₹4,50,000' },
   { name:'Kolkata Tigers',      city:'Kolkata',    color:'#F97316', bg:'#1A0A04', logo:`${L}kolkata_tigers.png`,      abbr:'KT', bid:'₹6,25,000' },
   { name:'Lucknow Nawabs',      city:'Lucknow',    color:'#F59E0B', bg:'#1A1204', logo:`${L}lucknow_nawabs.png`,      abbr:'LN', bid:'₹7,00,000' },
-  { name:'Mumbai Mavericks',    city:'Mumbai',     color:'#3B82F6', bg:'#0C1622', logo:`${L}mumbai_mavericks.png`,    abbr:'MM', bid:'₹8,50,000' },
+  { name:'Mumbai Mavericks',    city:'Mumbai',     color:'#3B82F6', bg:'#192D46', logo:`${L}mumbai_mavericks.png`,    abbr:'MM', bid:'₹8,50,000' },
   { name:'Hyderabad Hawks',     city:'Hyderabad',  color:'#10B981', bg:'#041A10', logo:`${L}hyderabad_hawks.png`,     abbr:'HH', bid:'₹5,25,000' },
-  { name:'Delhi Suryas',        city:'Delhi',      color:'#6366F1', bg:'#101222', logo:`${L}delhi_suryas.png`,        abbr:'DS', bid:'₹9,00,000' },
-  { name:'Chennai Thalaivas',   city:'Chennai',    color:'#2563EB', bg:'#0C1322', logo:`${L}chennai_thalaivas.png`,   abbr:'CT', bid:'₹6,75,000' },
+  { name:'Delhi Suryas',        city:'Delhi',      color:'#6366F1', bg:'#202343', logo:`${L}delhi_suryas.png`,        abbr:'DS', bid:'₹9,00,000' },
+  { name:'Chennai Thalaivas',   city:'Chennai',    color:'#2563EB', bg:'#192746', logo:`${L}chennai_thalaivas.png`,   abbr:'CT', bid:'₹6,75,000' },
   { name:'Ahmedabad Lions',     city:'Ahmedabad',  color:'#B91C1C', bg:'#1A0404', logo:`${L}ahmedabad_lions.png`,     abbr:'AL', bid:'₹7,50,000' },
   { name:'Bengaluru Rockets',   city:'Bengaluru',  color:'#EF4444', bg:'#1A0606', logo:`${L}bengaluru_rockets.png`,   abbr:'BR', bid:'₹8,00,000' },
 ];
@@ -46,9 +46,9 @@ export function TeamSelected() {
         .btn-white { background: #fff; border: none; border-radius: var(--r); color: #000; font-family: var(--font-head); font-weight: 900; letter-spacing: .06em; cursor: pointer; transition: all .2s; text-transform: uppercase; padding: 16px 32px; font-size: 15px; box-shadow: 0 8px 24px rgba(255,255,255,0.2); }
         .btn-white:hover { filter: brightness(0.9); transform: translateY(-2px); }
         .btn-outline { background: transparent; border: 2px solid rgba(255,255,255,0.3); border-radius: var(--r); color: #fff; font-family: var(--font-head); font-weight: 800; cursor: pointer; transition: all .2s; padding: 16px 32px; font-size: 15px; text-transform: uppercase; letter-spacing: .04em; }
-        .btn-outline:hover { border-color: #fff; background: rgba(255,255,255,0.1); }
+        .btn-outline:hover { border-color: #fff; background: rgba(255,255,255,0.18); }
         
-        .team-pill { padding: 8px 16px; border-radius: 20px; font-family: var(--font-head); font-weight: 800; font-size: 12px; cursor: pointer; transition: all .2s; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.6); letter-spacing: .06em; white-space: nowrap; text-transform: uppercase; }
+        .team-pill { padding: 8px 16px; border-radius: 20px; font-family: var(--font-head); font-weight: 800; font-size: 12px; cursor: pointer; transition: all .2s; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.88); letter-spacing: .06em; white-space: nowrap; text-transform: uppercase; }
         .team-pill:hover { border-color: rgba(255,255,255,0.4); color: #fff; }
         .team-pill.active { background: #fff; color: #000; border-color: #fff; box-shadow: 0 4px 12px rgba(255,255,255,0.2); }
         
@@ -57,7 +57,7 @@ export function TeamSelected() {
         @keyframes trophyBounce { 0%,100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-10px) scale(1.05); } }
         @keyframes liveBlip { 0%,100% { opacity: 1; } 50% { opacity: 0.2; } }
         
-        .shimmer-white { background: linear-gradient(90deg, #fff, rgba(255,255,255,0.5), #fff, rgba(255,255,255,0.5), #fff); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmerWhite 3s linear infinite; }
+        .shimmer-white { background: linear-gradient(90deg, #fff, rgba(255,255,255,0.72), #fff, rgba(255,255,255,0.72), #fff); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmerWhite 3s linear infinite; }
         @keyframes shimmerWhite { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
         
         .next-card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 24px; transition: transform 0.2s; }
@@ -105,7 +105,7 @@ export function TeamSelected() {
               <span style={{ color: team.color, transition: 'color 0.5s' }}>{t("SIGNED!", "साइन कर लिया गया है!")}</span>
             </h1>
 
-            <p style={{ fontFamily: 'var(--font-body)', fontSize: 'clamp(15px, 2.5vw, 18px)', color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, maxWidth: 600, margin: '0 auto 16px', animation: 'fadeUp 0.5s 0.2s ease both' }}>
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: 'clamp(15px, 2.5vw, 18px)', color: 'rgba(255,255,255,0.88)', lineHeight: 1.6, maxWidth: 600, margin: '0 auto 16px', animation: 'fadeUp 0.5s 0.2s ease both' }}>
               {t("Congratulations!", "बधाई हो!")} <strong style={{ color: '#fff' }}>{t(team.name, team.name)}</strong> {t("has selected you in the BCPL Season 5 Franchise Auction.", "ने आपको BCPL सीजन 5 फ्रैंचाइज़ी ऑक्शन में चुना है।")}
             </p>
             <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 13, color: 'var(--ink-3)', letterSpacing: '.14em', marginBottom: 40, textTransform: 'uppercase', animation: 'fadeUp 0.5s 0.3s ease both' }}>
@@ -127,7 +127,7 @@ export function TeamSelected() {
               <div style={{ flex: 1, minWidth: 180 }}>
                 <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 11, color: team.color, letterSpacing: '.14em', marginBottom: 6, textTransform: 'uppercase', transition: 'color 0.5s' }}>{t("FRANCHISE CONTRACT · SEASON 5", "फ्रैंचाइज़ी कॉन्ट्रैक्ट · सीजन 5")}</div>
                 <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(20px, 4vw, 28px)', color: '#fff', marginBottom: 4, textTransform: 'uppercase' }}>{t(team.name, team.name)}</div>
-                <div style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'rgba(255,255,255,0.6)' }}>{t(team.city, team.city)} · {t("Corporate T20 Franchise", "कॉर्पोरेट टी20 फ्रैंचाइज़ी")}</div>
+                <div style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'rgba(255,255,255,0.88)' }}>{t(team.city, team.city)} · {t("Corporate T20 Franchise", "कॉर्पोरेट टी20 फ्रैंचाइज़ी")}</div>
               </div>
               <div style={{ textAlign: 'right' }}>
                 <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 11, color: 'var(--ink-3)', letterSpacing: '.12em', marginBottom: 4, textTransform: 'uppercase' }}>{t("CONTRACT VALUE", "कॉन्ट्रैक्ट की कीमत")}</div>
@@ -177,7 +177,7 @@ export function TeamSelected() {
         {/* WHAT HAPPENS NEXT */}
         <div style={{ marginBottom: 40 }}>
           <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(24px, 4vw, 32px)', color: '#fff', marginBottom: 8, textTransform: 'uppercase' }}>{t("What Happens Next?", "आगे क्या होगा?")}</div>
-          <div style={{ fontFamily: 'var(--font-body)', fontSize: 15, color: 'rgba(255,255,255,0.5)', marginBottom: 24 }}>{t("Your franchise will contact you within 24 hours.", "आपकी फ्रैंचाइज़ी 24 घंटे के भीतर आपसे संपर्क करेगी।")}</div>
+          <div style={{ fontFamily: 'var(--font-body)', fontSize: 15, color: 'rgba(255,255,255,0.72)', marginBottom: 24 }}>{t("Your franchise will contact you within 24 hours.", "आपकी फ्रैंचाइज़ी 24 घंटे के भीतर आपसे संपर्क करेगी।")}</div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(260px,1fr))', gap: 16 }}>
             {[
               { icon:IcoPhone, title: t('Franchise WhatsApp', 'फ्रैंचाइज़ी WhatsApp'), body: t(`You'll be added to the official ${team.name} team WhatsApp group within 24 hours of the auction close.`, `ऑक्शन समाप्त होने के 24 घंटे के भीतर आपको आधिकारिक ${team.name} टीम WhatsApp ग्रुप में जोड़ दिया जाएगा।`) },
@@ -188,7 +188,7 @@ export function TeamSelected() {
               <div key={card.title} className="next-card">
                 <div style={{ marginBottom: 16, color: team.color }}><card.icon size={34} style={{ color: team.color }} /></div>
                 <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 18, color: '#fff', marginBottom: 10, textTransform: 'uppercase' }}>{card.title}</div>
-                <div style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>{card.body}</div>
+                <div style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'rgba(255,255,255,0.88)', lineHeight: 1.6 }}>{card.body}</div>
               </div>
             ))}
           </div>
@@ -200,7 +200,7 @@ export function TeamSelected() {
           <div style={{ position: 'relative', zIndex: 1 }}>
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}><IcoStar size={40} style={{ color: team.color }} /></div>
             <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 'clamp(20px, 3vw, 28px)', color: '#fff', marginBottom: 8, textTransform: 'uppercase' }}>{t("Share Your Milestone", "अपनी उपलब्धि साझा करें")}</div>
-            <div style={{ fontFamily: 'var(--font-body)', fontSize: 15, color: 'rgba(255,255,255,0.6)', marginBottom: 32 }}>{t("You made it from office to stadium. Let the world know.", "आपने ऑफिस से स्टेडियम तक का सफर तय किया है। दुनिया को बताएं।")}</div>
+            <div style={{ fontFamily: 'var(--font-body)', fontSize: 15, color: 'rgba(255,255,255,0.88)', marginBottom: 32 }}>{t("You made it from office to stadium. Let the world know.", "आपने ऑफिस से स्टेडियम तक का सफर तय किया है। दुनिया को बताएं।")}</div>
             <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
               {[{ icon: IcoChat, label: 'WhatsApp' }, { icon: null, label: 'Twitter/X' }, { icon: IcoCamera, label: 'Instagram' }].map(btn => (
                 <button key={btn.label} className="btn-outline" style={{ padding: '14px 24px', fontSize: 14, letterSpacing: '.06em', display: 'inline-flex', alignItems: 'center', gap: 8 }}>{btn.icon && <btn.icon size={16} style={{ color: 'currentColor' }} />}{btn.label}</button>

@@ -125,7 +125,7 @@ async function downloadShareCard(r: MyResult, roleLabel: string, qualified: bool
   } catch { /* fallback fonts are fine */ }
 
   const g = ctx.createLinearGradient(0, 0, W, H);
-  g.addColorStop(0, '#13233A'); g.addColorStop(1, 'var(--bg)');
+  g.addColorStop(0, '#1F395E'); g.addColorStop(1, 'var(--bg)');
   ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
 
   const rg = ctx.createRadialGradient(W / 2, 640, 80, W / 2, 640, 620);
@@ -140,7 +140,7 @@ async function downloadShareCard(r: MyResult, roleLabel: string, qualified: bool
   ctx.textAlign = 'center';
   ctx.fillStyle = '#E8B23D'; ctx.font = '800 46px "Barlow Condensed", sans-serif';
   ctx.fillText('BCPL • SEASON 5', W / 2, 160);
-  ctx.fillStyle = 'rgba(255,255,255,0.55)'; ctx.font = '700 30px Inter, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.88)'; ctx.font = '700 30px Inter, sans-serif';
   ctx.fillText('PHASE 1 — VIDEO TRIAL ASSESSMENT', W / 2, 215);
 
   const name = (r.name || '').toUpperCase();
@@ -151,7 +151,7 @@ async function downloadShareCard(r: MyResult, roleLabel: string, qualified: bool
 
   ctx.fillStyle = '#E8B23D'; ctx.font = '900 300px "Barlow Condensed", sans-serif';
   ctx.fillText(String(r.total ?? 0), W / 2, 790);
-  ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.font = '800 44px "Barlow Condensed", sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.72)'; ctx.font = '800 44px "Barlow Condensed", sans-serif';
   ctx.fillText('/ 100  BCPL SCORE', W / 2, 865);
 
   ctx.fillStyle = '#FFFFFF'; ctx.font = '800 46px "Barlow Condensed", sans-serif';
@@ -165,9 +165,9 @@ async function downloadShareCard(r: MyResult, roleLabel: string, qualified: bool
     ctx.fillStyle = '#22C55E'; ctx.font = '900 42px "Barlow Condensed", sans-serif';
     ctx.fillText('✓ QUALIFIED FOR PHASE 2', W / 2, 1147);
   } else {
-    ctx.fillStyle = 'rgba(255,255,255,0.08)'; rr(ctx, W / 2 - 300, 1085, 600, 92, 46); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.18)'; rr(ctx, W / 2 - 300, 1085, 600, 92, 46); ctx.fill();
     ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 3; rr(ctx, W / 2 - 300, 1085, 600, 92, 46); ctx.stroke();
-    ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.font = '900 42px "Barlow Condensed", sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.88)'; ctx.font = '900 42px "Barlow Condensed", sans-serif';
     ctx.fillText('SEASON 5 TRIALIST', W / 2, 1147);
   }
 
@@ -314,7 +314,7 @@ export function Phase1Result() {
         .rwrap{max-width:680px;margin:0 auto;padding:0 20px}
         @media(min-width:768px){.rwrap{padding:0 32px}}
         
-        .btn-gold{background:linear-gradient(135deg,var(--gold),#C4901E);border:none;border-radius:var(--r);color:#101828;font-family:'Barlow Condensed',sans-serif;font-weight:900;fontSize:16px;letter-spacing:.08em;cursor:pointer;transition:transform .15s,filter .2s;text-transform:uppercase;display:inline-flex;align-items:center;justify-content:center;}
+        .btn-gold{background:linear-gradient(135deg,var(--gold),#C4901E);border:none;border-radius:var(--r);color:#1E2D4B;font-family:'Barlow Condensed',sans-serif;font-weight:900;fontSize:16px;letter-spacing:.08em;cursor:pointer;transition:transform .15s,filter .2s;text-transform:uppercase;display:inline-flex;align-items:center;justify-content:center;}
         .btn-gold:hover{filter:brightness(1.1);transform:translateY(-2px)}
         .btn-orange{background:linear-gradient(135deg,var(--orange),var(--orange-2));border:none;border-radius:var(--r);color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:900;fontSize:16px;letter-spacing:.08em;cursor:pointer;transition:transform .15s,filter .2s;text-transform:uppercase;display:inline-flex;align-items:center;justify-content:center;}
         .btn-orange:hover{filter:brightness(1.12);transform:translateY(-2px)}
@@ -444,7 +444,7 @@ export function Phase1Result() {
 
       {/* ── REVEAL FLASH ── */}
       {flash && (
-        <div style={{ position:'fixed', inset:0, zIndex:70, pointerEvents:'none', background:'radial-gradient(circle at 50% 38%, rgba(255,236,170,0.95) 0%, rgba(232,178,61,0.55) 30%, rgba(6,16,30,0) 70%)', animation:'flashOut .95s ease forwards' }} />
+        <div style={{ position:'fixed', inset:0, zIndex:70, pointerEvents:'none', background:'radial-gradient(circle at 50% 38%, rgba(255,236,170,0.95) 0%, rgba(232,178,61,0.55) 30%, rgba(18,38,66,0) 70%)', animation:'flashOut .95s ease forwards' }} />
       )}
 
       {/* ── CONFETTI (qualified only) ── */}
@@ -484,7 +484,7 @@ export function Phase1Result() {
 
               {/* identity */}
               <div style={{ textAlign:'center', position:'relative' }}>
-                <div style={{ width:100, height:100, borderRadius:'50%', margin:'0 auto 16px', background: qualified ? 'linear-gradient(135deg,var(--orange),var(--gold))' : 'linear-gradient(135deg,#3B82F6,#1E40AF)', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:36, color:'#fff', border:'4px solid rgba(255,255,255,0.1)', boxShadow: qualified ? '0 12px 40px rgba(255,122,41,0.35)' : 'none' }}>
+                <div style={{ width:100, height:100, borderRadius:'50%', margin:'0 auto 16px', background: qualified ? 'linear-gradient(135deg,var(--orange),var(--gold))' : 'linear-gradient(135deg,#3B82F6,#1E40AF)', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:36, color:'#fff', border:'4px solid rgba(255,255,255,0.18)', boxShadow: qualified ? '0 12px 40px rgba(255,122,41,0.35)' : 'none' }}>
                   {initials}
                 </div>
                 <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:'clamp(28px,6vw,36px)', color:'var(--ink)', textTransform:'uppercase', letterSpacing:'.02em', marginBottom:10 }}>
@@ -495,7 +495,7 @@ export function Phase1Result() {
                     {roleLabel}
                   </span>
                   {r.trialCity && (
-                    <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:13, letterSpacing:'.08em', color:'var(--ink-2)', background:'rgba(255,255,255,0.06)', border:'1px solid var(--line)', borderRadius:20, padding:'6px 16px', textTransform:'uppercase' }}>
+                    <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:13, letterSpacing:'.08em', color:'var(--ink-2)', background:'rgba(255,255,255,0.18)', border:'1px solid var(--line)', borderRadius:20, padding:'6px 16px', textTransform:'uppercase' }}>
                       {r.trialCity}
                     </span>
                   )}
@@ -551,7 +551,7 @@ export function Phase1Result() {
                     <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid var(--line)', padding:'10px 18px', borderRadius:16, display:'flex', alignItems:'center', gap:10 }}>
                       <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:12, letterSpacing:'.1em', color:'var(--ink-3)', textTransform:'uppercase' }}>{(r.trialCity || t('CITY', 'शहर'))} {t('RANK — ALL ROLES', 'रैंक — सभी रोल')}</span>
                       <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:18, color:'var(--ink)', fontVariantNumeric:'tabular-nums' }}>#{r.cityRank}{r.cityCount ? <span style={{ color:'var(--ink-3)', fontWeight:700, fontSize:13 }}> / {r.cityCount}</span> : null}</span>
-                      {showPct && <span style={{ background:'rgba(255,255,255,0.1)', color:'var(--ink)', fontSize:11, fontWeight:700, padding:'3px 8px', borderRadius:8 }}>TOP {pct}%</span>}
+                      {showPct && <span style={{ background:'rgba(255,255,255,0.18)', color:'var(--ink)', fontSize:11, fontWeight:700, padding:'3px 8px', borderRadius:8 }}>TOP {pct}%</span>}
                     </div>
                   )}
                   {r.roleRank && showRole && (
@@ -662,7 +662,7 @@ export function Phase1Result() {
                 <div key={b.key} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'18px 24px', borderBottom: i < arr.length - 1 ? '1px solid var(--line)' : 'none' }}>
                   <div style={{ fontFamily:"'Inter',sans-serif", fontSize:14, fontWeight:600, color:'var(--ink-2)' }}>{critLabel(b.key, role, t)}</div>
                   <div style={{ display:'flex', alignItems:'center', gap:12 }}>
-                    <div style={{ width:60, height:6, background:'rgba(255,255,255,0.08)', borderRadius:3, overflow:'hidden' }}>
+                    <div style={{ width:60, height:6, background:'rgba(255,255,255,0.18)', borderRadius:3, overflow:'hidden' }}>
                       <div style={{ height:'100%', background: qualified ? 'var(--gold)' : 'var(--ink-3)', width: barsOn ? `${(b.score / b.max) * 100}%` : '0%', transition:'width 1s cubic-bezier(.34,1.56,.64,1) .8s' }} />
                     </div>
                     <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:16, color:'var(--ink)', width:40, textAlign:'right' }}>

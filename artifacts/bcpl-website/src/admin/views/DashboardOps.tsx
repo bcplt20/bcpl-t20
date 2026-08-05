@@ -27,20 +27,20 @@ const ROLE_LABELS: Record<string, string> = {
 const roleLabel = (r: string) => ROLE_LABELS[r.toLowerCase()] ?? (r.charAt(0).toUpperCase() + r.slice(1));
 
 const card: React.CSSProperties = {
-  background: "linear-gradient(135deg,#0D1526 0%,#0A1020 100%)",
-  border: "1px solid #1E293B", borderRadius: 16, padding: 20,
+  background: "linear-gradient(135deg,#2C3A5E 0%,#1F2B49 100%)",
+  border: "1px solid #33436B", borderRadius: 16, padding: 20,
 };
 const selStyle: React.CSSProperties = {
-  padding: "8px 12px", background: "#060B18", border: "1px solid #1E293B",
+  padding: "8px 12px", background: "#243050", border: "1px solid #33436B",
   borderRadius: 9, color: "#F1F5F9", fontSize: 12, outline: "none",
 };
 const thStyle: React.CSSProperties = {
-  textAlign: "right", padding: "8px 10px", color: "#64748B", fontSize: 10.5,
-  letterSpacing: ".07em", textTransform: "uppercase", borderBottom: "1px solid #1E293B",
+  textAlign: "right", padding: "8px 10px", color: "#A6B3D0", fontSize: 10.5,
+  letterSpacing: ".07em", textTransform: "uppercase", borderBottom: "1px solid #33436B",
 };
 const tdStyle: React.CSSProperties = {
-  textAlign: "right", padding: "8px 10px", color: "#94A3B8",
-  borderBottom: "1px solid #131C2E", fontVariantNumeric: "tabular-nums",
+  textAlign: "right", padding: "8px 10px", color: "#C3CEE3",
+  borderBottom: "1px solid #3A4A72", fontVariantNumeric: "tabular-nums",
 };
 
 function useOps(refreshTick: number) {
@@ -63,7 +63,7 @@ export function OpsTab({ onNavigate, refreshTick = 0 }: TabProps) {
   const [role, setRole] = useState("all");
 
   if (err) return <div style={{ ...card, color: "#FCA5A5", fontSize: 13 }}>Failed to load operations data: {err}</div>;
-  if (!data) return <div style={{ ...card, color: "#475569", fontSize: 13 }}>Loading operations…</div>;
+  if (!data) return <div style={{ ...card, color: "#94A3C4", fontSize: 13 }}>Loading operations…</div>;
 
   const cities = [...new Set(data.matrix.map(m => m.city || "Unknown"))].sort();
   const roles = [...new Set(data.matrix.map(m => roleLabel(m.role)))].sort();
@@ -105,7 +105,7 @@ export function OpsTab({ onNavigate, refreshTick = 0 }: TabProps) {
     { label: "AI Scoring Now", value: aiProcessing, color: "#EC4899", tab: "selection" },
     { label: "AI Completed", value: aiCompleted, color: "#14B8A6", tab: "selection" },
     { label: "P1 Qualified", value: qualified, color: "#FF6B00", tab: "phase1_regs", payload: { filter: "selected" } },
-    { label: "Not Shortlisted", value: notShortlisted, color: "#64748B", tab: "phase1_regs", payload: { filter: "rejected" } },
+    { label: "Not Shortlisted", value: notShortlisted, color: "#A6B3D0", tab: "phase1_regs", payload: { filter: "rejected" } },
     { label: "P2 Payment Pending", value: p2Pending, color: "#F59E0B", tab: "finance" },
     { label: "Phase 2 Paid", value: p2Paid, color: "#10B981", tab: "finance" },
     { label: "KYC Complete", value: kycComplete, color: "#22C55E", tab: "phase2_kyc" },
@@ -143,9 +143,9 @@ export function OpsTab({ onNavigate, refreshTick = 0 }: TabProps) {
   }).sort((a, b) => b.regs - a.regs);
 
   const stat = (label: string, value: string) => (
-    <div key={label} style={{ flex: "1 1 120px", background: "#060B18", border: "1px solid #1E293B", borderRadius: 10, padding: "10px 14px" }}>
+    <div key={label} style={{ flex: "1 1 120px", background: "#243050", border: "1px solid #33436B", borderRadius: 10, padding: "10px 14px" }}>
       <div style={{ fontSize: 18, fontWeight: 800, color: "#F1F5F9" }}>{value}</div>
-      <div style={{ fontSize: 10.5, color: "#64748B", marginTop: 2 }}>{label}</div>
+      <div style={{ fontSize: 10.5, color: "#A6B3D0", marginTop: 2 }}>{label}</div>
     </div>
   );
 
@@ -161,7 +161,7 @@ export function OpsTab({ onNavigate, refreshTick = 0 }: TabProps) {
           <option value="all">All roles</option>
           {roles.map(r => <option key={r} value={r}>{r}</option>)}
         </select>
-        <span style={{ fontSize: 11, color: "#475569" }}>Filters apply to KPI cards, funnel and city table instantly.</span>
+        <span style={{ fontSize: 11, color: "#94A3C4" }}>Filters apply to KPI cards, funnel and city table instantly.</span>
       </div>
 
       {/* KPI grid */}
@@ -170,7 +170,7 @@ export function OpsTab({ onNavigate, refreshTick = 0 }: TabProps) {
           <div key={k.label} onClick={() => onNavigate?.(k.tab, k.payload)} title="Open details"
             style={{ ...card, padding: "14px 16px", borderLeft: "3px solid " + k.color, cursor: "pointer" }}>
             <div style={{ fontSize: 24, fontWeight: 800, color: "#F1F5F9", letterSpacing: -0.5 }}>{k.value.toLocaleString()}</div>
-            <div style={{ fontSize: 11, color: "#64748B", marginTop: 3 }}>{k.label}</div>
+            <div style={{ fontSize: 11, color: "#A6B3D0", marginTop: 3 }}>{k.label}</div>
           </div>
         ))}
       </div>
@@ -179,18 +179,18 @@ export function OpsTab({ onNavigate, refreshTick = 0 }: TabProps) {
         {/* funnel */}
         <div style={card}>
           <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>Player Funnel</div>
-          <div style={{ fontSize: 11, color: "#475569", marginBottom: 14 }}>Registration → trial check-in, end to end.</div>
+          <div style={{ fontSize: 11, color: "#94A3C4", marginBottom: 14 }}>Registration → trial check-in, end to end.</div>
           {funnel.map((f, i) => (
             <div key={f.name} style={{ marginBottom: 12 }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
-                <span style={{ fontSize: 12, color: "#94A3B8" }}>{f.name}</span>
+                <span style={{ fontSize: 12, color: "#C3CEE3" }}>{f.name}</span>
                 <span style={{ fontSize: 12, fontWeight: 700, color: "#F1F5F9" }}>{f.value.toLocaleString()}</span>
               </div>
-              <div style={{ height: 7, borderRadius: 4, background: "#1E293B", overflow: "hidden" }}>
+              <div style={{ height: 7, borderRadius: 4, background: "#33436B", overflow: "hidden" }}>
                 <div style={{ height: "100%", borderRadius: 4, background: f.color, width: ((f.value / funnelMax) * 100) + "%", transition: "width .6s ease" }} />
               </div>
               {i < funnel.length - 1 && f.value > 0 && (
-                <div style={{ fontSize: 10, color: "#334155", marginTop: 3 }}>
+                <div style={{ fontSize: 10, color: "#8593B3", marginTop: 3 }}>
                   ↓ {Math.round((1 - funnel[i + 1].value / f.value) * 100)}% drop
                 </div>
               )}
@@ -201,7 +201,7 @@ export function OpsTab({ onNavigate, refreshTick = 0 }: TabProps) {
         {/* AI operations */}
         <div style={card}>
           <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 4 }}>AI Operations</div>
-          <div style={{ fontSize: 11, color: "#475569", marginBottom: 14 }}>All cities — the AI pipeline runs on the full queue.</div>
+          <div style={{ fontSize: 11, color: "#94A3C4", marginBottom: 14 }}>All cities — the AI pipeline runs on the full queue.</div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 14 }}>
             {stat("In queue", String(aiQueued))}
             {stat("Scoring now", String(aiProcessing))}
@@ -222,7 +222,7 @@ export function OpsTab({ onNavigate, refreshTick = 0 }: TabProps) {
       {/* city operations table */}
       <div style={card}>
         <div style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", marginBottom: 12 }}>City Operations</div>
-        {cityRows.length === 0 && <div style={{ color: "#475569", fontSize: 13 }}>No registrations yet.</div>}
+        {cityRows.length === 0 && <div style={{ color: "#94A3C4", fontSize: 13 }}>No registrations yet.</div>}
         {cityRows.length > 0 && (
           <div style={{ overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12.5 }}>
@@ -259,14 +259,14 @@ const SEV_LABEL: Record<OpsAlert["severity"], string> = { critical: "CRITICAL", 
 export function AlertsTab({ onNavigate, refreshTick = 0 }: TabProps) {
   const { data, err } = useOps(refreshTick);
   if (err) return <div style={{ ...card, color: "#FCA5A5", fontSize: 13 }}>Failed to load alerts: {err}</div>;
-  if (!data) return <div style={{ ...card, color: "#475569", fontSize: 13 }}>Checking for issues…</div>;
+  if (!data) return <div style={{ ...card, color: "#94A3C4", fontSize: 13 }}>Checking for issues…</div>;
 
   const alerts = [...data.alerts].sort((a, b) => SEV_ORDER[a.severity] - SEV_ORDER[b.severity]);
   if (alerts.length === 0) {
     return (
       <div style={{ ...card, textAlign: "center", padding: "48px 20px" }}>
         <div style={{ fontSize: 17, fontWeight: 800, color: "#10B981" }}>All clear</div>
-        <div style={{ fontSize: 12.5, color: "#64748B", marginTop: 6 }}>Nothing needs your attention right now. This panel re-checks automatically.</div>
+        <div style={{ fontSize: 12.5, color: "#A6B3D0", marginTop: 6 }}>Nothing needs your attention right now. This panel re-checks automatically.</div>
       </div>
     );
   }
@@ -282,7 +282,7 @@ export function AlertsTab({ onNavigate, refreshTick = 0 }: TabProps) {
             <div style={{ fontSize: 13, fontWeight: 700, color: "#E2E8F0" }}>{a.label}</div>
             <div style={{ fontSize: 10.5, fontWeight: 800, color: SEV_COLOR[a.severity], letterSpacing: ".08em", marginTop: 3 }}>{SEV_LABEL[a.severity]}</div>
           </div>
-          <span style={{ fontSize: 12, color: "#475569" }}>Open →</span>
+          <span style={{ fontSize: 12, color: "#94A3C4" }}>Open →</span>
         </div>
       ))}
     </div>

@@ -18,23 +18,23 @@ import {
 } from "../../lib/api";
 
 const card: React.CSSProperties = {
-  background: "linear-gradient(135deg,#0D1526,#0A1020)",
-  border: "1px solid #1E293B", borderRadius: 16, padding: 20,
+  background: "linear-gradient(135deg,#2C3A5E,#1F2B49)",
+  border: "1px solid #33436B", borderRadius: 16, padding: 20,
 };
 const btn = (bg: string, color = "#fff"): React.CSSProperties => ({
   padding: "9px 16px", borderRadius: 9, border: "none", background: bg, color,
   fontSize: 12.5, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap",
 });
 const ghost: React.CSSProperties = {
-  padding: "7px 12px", borderRadius: 8, border: "1px solid #1E293B", background: "transparent",
-  color: "#94A3B8", fontSize: 12, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap",
+  padding: "7px 12px", borderRadius: 8, border: "1px solid #33436B", background: "transparent",
+  color: "#C3CEE3", fontSize: 12, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap",
 };
 const inp: React.CSSProperties = {
-  padding: "8px 11px", borderRadius: 9, border: "1px solid #1E293B",
-  background: "#060B18", color: "#E2E8F0", fontSize: 13, outline: "none",
+  padding: "8px 11px", borderRadius: 9, border: "1px solid #33436B",
+  background: "#243050", color: "#E2E8F0", fontSize: 13, outline: "none",
 };
-const th: React.CSSProperties = { textAlign: "left", padding: "8px 10px", fontSize: 10.5, color: "#64748B", letterSpacing: 0.8, textTransform: "uppercase", borderBottom: "1px solid #1E293B", whiteSpace: "nowrap" };
-const td: React.CSSProperties = { padding: "9px 10px", fontSize: 12.5, color: "#CBD5E1", borderBottom: "1px solid #131C2E", verticalAlign: "middle" };
+const th: React.CSSProperties = { textAlign: "left", padding: "8px 10px", fontSize: 10.5, color: "#A6B3D0", letterSpacing: 0.8, textTransform: "uppercase", borderBottom: "1px solid #33436B", whiteSpace: "nowrap" };
+const td: React.CSSProperties = { padding: "9px 10px", fontSize: 12.5, color: "#CBD5E1", borderBottom: "1px solid #3A4A72", verticalAlign: "middle" };
 const chip = (bg: string, c: string): React.CSSProperties => ({ display: "inline-block", padding: "2px 9px", borderRadius: 99, fontSize: 10.5, fontWeight: 700, background: bg, color: c, whiteSpace: "nowrap" });
 const errBox: React.CSSProperties = { background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)", color: "#FCA5A5", borderRadius: 10, padding: "10px 14px", fontSize: 12.5, marginBottom: 14 };
 const okBox: React.CSSProperties = { background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.25)", color: "#6EE7B7", borderRadius: 10, padding: "10px 14px", fontSize: 12.5, marginBottom: 14 };
@@ -42,15 +42,15 @@ const okBox: React.CSSProperties = { background: "rgba(16,185,129,0.08)", border
 const roleLabel = (r: string) => ({ bat: "Batsman", bowl: "Bowler", ar: "All-Rounder", wk: "Wicketkeeper" }[r] ?? r);
 const statusChip = (s: string) => {
   const m: Record<string, [string, string]> = {
-    draft: ["rgba(100,116,139,0.15)", "#94A3B8"],
+    draft: ["rgba(100,116,139,0.15)", "#C3CEE3"],
     generating: ["rgba(245,158,11,0.12)", "#FBBF24"],
     preview_ready: ["rgba(59,130,246,0.12)", "#60A5FA"],
     approved: ["rgba(168,85,247,0.12)", "#C084FC"],
     published: ["rgba(16,185,129,0.12)", "#6EE7B7"],
     failed: ["rgba(239,68,68,0.12)", "#FCA5A5"],
-    invalidated: ["rgba(100,116,139,0.15)", "#64748B"],
+    invalidated: ["rgba(100,116,139,0.15)", "#A6B3D0"],
   };
-  const [bg, c] = m[s] ?? ["rgba(100,116,139,0.15)", "#94A3B8"];
+  const [bg, c] = m[s] ?? ["rgba(100,116,139,0.15)", "#C3CEE3"];
   return chip(bg, c);
 };
 const PROGRESS_LABELS: Record<string, string> = {
@@ -168,7 +168,7 @@ export default function SelectionView() {
     wrap(async () => { await adminPublishSelection(id); await loadTop(); const b = (await adminGetSelectionBatch(id)).batch; setActiveBatch(b); }, "Batch published (status only — no notifications)");
   };
 
-  if (loading) return <div style={{ color: "#64748B", padding: 40, textAlign: "center" }}>Loading Final 600 engine…</div>;
+  if (loading) return <div style={{ color: "#A6B3D0", padding: 40, textAlign: "center" }}>Loading Final 600 engine…</div>;
 
   const counts = (activeBatch?.counts ?? {}) as Record<string, any>;
   const exceptions = activeBatch?.exceptionReport ?? [];
@@ -177,7 +177,7 @@ export default function SelectionView() {
     <div style={{ display: "grid", gap: 18, maxWidth: 1200 }}>
       <div>
         <div style={{ fontSize: 20, fontWeight: 900, color: "#F8FAFC" }}>Final 600 Selection Engine</div>
-        <div style={{ fontSize: 12.5, color: "#64748B", marginTop: 4 }}>
+        <div style={{ fontSize: 12.5, color: "#A6B3D0", marginTop: 4 }}>
           Rank-based · zone + role constrained · deterministic. Season <b style={{ color: "#CBD5E1" }}>{config?.seasonKey}</b> ·
           Target pool <b style={{ color: "#CBD5E1" }}>{computedTotal}</b> (config: {config?.totalPool}).
         </div>
@@ -207,25 +207,25 @@ export default function SelectionView() {
             {[
               ["Completed", agg.totals.completed, "#CBD5E1"],
               ["Eligible", agg.totals.eligible, "#6EE7B7"],
-              ["Not selected", agg.totals.notSelected, "#94A3B8"],
+              ["Not selected", agg.totals.notSelected, "#C3CEE3"],
               ["Incomplete", agg.totals.incomplete, "#FBBF24"],
               ["Final pool size", agg.totals.finalPoolSize, "#60A5FA"],
             ].map(([l, v, c]) => (
-              <div key={l as string} style={{ background: "#060B18", border: "1px solid #1E293B", borderRadius: 12, padding: "12px 18px", minWidth: 120 }}>
+              <div key={l as string} style={{ background: "#243050", border: "1px solid #33436B", borderRadius: 12, padding: "12px 18px", minWidth: 120 }}>
                 <div style={{ fontSize: 22, fontWeight: 900, color: c as string }}>{Number(v).toLocaleString("en-IN")}</div>
-                <div style={{ fontSize: 11, color: "#64748B", marginTop: 2 }}>{l}</div>
+                <div style={{ fontSize: 11, color: "#A6B3D0", marginTop: 2 }}>{l}</div>
               </div>
             ))}
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
             <div>
-              <div style={{ fontSize: 11.5, color: "#64748B", marginBottom: 6 }}>By role (eligible)</div>
+              <div style={{ fontSize: 11.5, color: "#A6B3D0", marginBottom: 6 }}>By role (eligible)</div>
               <table style={{ width: "100%", borderCollapse: "collapse" }}><tbody>
                 {agg.byRole.map(r => <tr key={r.role}><td style={td}>{roleLabel(r.role)}</td><td style={{ ...td, textAlign: "right", fontWeight: 700 }}>{r.n.toLocaleString("en-IN")}</td></tr>)}
               </tbody></table>
             </div>
             <div>
-              <div style={{ fontSize: 11.5, color: "#64748B", marginBottom: 6 }}>By zone (eligible)</div>
+              <div style={{ fontSize: 11.5, color: "#A6B3D0", marginBottom: 6 }}>By zone (eligible)</div>
               <table style={{ width: "100%", borderCollapse: "collapse" }}><tbody>
                 {agg.byZone.map(z => <tr key={z.zone}><td style={{ ...td, color: z.zone === "UNMAPPED" ? "#FCA5A5" : "#CBD5E1" }}>{z.zone}</td><td style={{ ...td, textAlign: "right", fontWeight: 700 }}>{z.n.toLocaleString("en-IN")}</td></tr>)}
               </tbody></table>
@@ -233,7 +233,7 @@ export default function SelectionView() {
           </div>
           {/* score distribution */}
           <div style={{ marginTop: 16 }}>
-            <div style={{ fontSize: 11.5, color: "#64748B", marginBottom: 6 }}>Score distribution (0–100, width 5)</div>
+            <div style={{ fontSize: 11.5, color: "#A6B3D0", marginBottom: 6 }}>Score distribution (0–100, width 5)</div>
             <div style={{ display: "flex", gap: 2, alignItems: "flex-end", height: 60 }}>
               {agg.scoreBuckets.map(b => {
                 const max = Math.max(1, ...agg.scoreBuckets.map(x => x.n));
@@ -247,16 +247,16 @@ export default function SelectionView() {
       {/* ── trial closure + generate ── */}
       <div style={card}>
         <div style={{ fontSize: 13, fontWeight: 800, color: "#E2E8F0", marginBottom: 4 }}>🔒 Trial Closure & Generation</div>
-        <div style={{ fontSize: 12, color: "#64748B", marginBottom: 12 }}>
+        <div style={{ fontSize: 12, color: "#A6B3D0", marginBottom: 12 }}>
           पहले physical trials CLOSE करें (population snapshot freeze) → फिर GENERATE FINAL 600.
         </div>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
           <span style={statusChip(closed ? "published" : "draft")}>{closed ? "TRIALS CLOSED" : "TRIALS OPEN"}</span>
-          {agg?.closure.snapshotAt && <span style={{ fontSize: 11.5, color: "#64748B" }}>Snapshot: {new Date(agg.closure.snapshotAt).toLocaleString("en-IN")}</span>}
+          {agg?.closure.snapshotAt && <span style={{ fontSize: 11.5, color: "#A6B3D0" }}>Snapshot: {new Date(agg.closure.snapshotAt).toLocaleString("en-IN")}</span>}
           {!closed
             ? <button style={btn("#EF4444")} disabled={busy} onClick={doClose}>CLOSE PHYSICAL TRIALS</button>
             : <button style={ghost} disabled={busy} onClick={doReopen}>Reopen trials (invalidate unpublished)</button>}
-          <button style={btn(closed ? "#F59E0B" : "#1E293B", closed ? "#0A1020" : "#475569")} disabled={busy || !closed} onClick={doGenerate}>GENERATE FINAL 600</button>
+          <button style={btn(closed ? "#F59E0B" : "#33436B", closed ? "#1F2B49" : "#94A3C4")} disabled={busy || !closed} onClick={doGenerate}>GENERATE FINAL 600</button>
         </div>
       </div>
 
@@ -269,11 +269,11 @@ export default function SelectionView() {
             <tbody>{batches.map(b => {
               const c = (b.counts ?? {}) as Record<string, any>;
               return (
-                <tr key={b.id} style={{ background: activeBatch?.id === b.id ? "#0B1424" : undefined, cursor: "pointer" }} onClick={() => setActiveBatch(b)}>
+                <tr key={b.id} style={{ background: activeBatch?.id === b.id ? "#283860" : undefined, cursor: "pointer" }} onClick={() => setActiveBatch(b)}>
                   <td style={{ ...td, fontWeight: 700, color: "#E2E8F0" }}>V{b.version}</td>
                   <td style={td}><span style={statusChip(b.status)}>{b.status}</span></td>
                   <td style={td}>{c.selected ?? "—"}</td>
-                  <td style={{ ...td, color: (b.exceptionReport?.length ?? 0) > 0 ? "#FCA5A5" : "#64748B" }}>{b.exceptionReport?.length ?? 0}</td>
+                  <td style={{ ...td, color: (b.exceptionReport?.length ?? 0) > 0 ? "#FCA5A5" : "#A6B3D0" }}>{b.exceptionReport?.length ?? 0}</td>
                   <td style={td}>{b.generatedAt ? new Date(b.generatedAt).toLocaleString("en-IN") : "—"}</td>
                   <td style={td}>{b.status === "failed" && <button style={{ ...ghost, color: "#FBBF24" }} onClick={e => { e.stopPropagation(); doRetry(b.id); }}>Retry</button>}</td>
                 </tr>
@@ -289,14 +289,14 @@ export default function SelectionView() {
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
             <div style={{ fontSize: 14, fontWeight: 800, color: "#E2E8F0" }}>Batch V{activeBatch.version}</div>
             <span style={statusChip(activeBatch.status)}>{activeBatch.status}</span>
-            <span style={{ fontSize: 11, color: "#475569" }}>algo {activeBatch.algorithmVersion}</span>
+            <span style={{ fontSize: 11, color: "#94A3C4" }}>algo {activeBatch.algorithmVersion}</span>
           </div>
 
           {/* progress */}
           {activeBatch.status === "generating" && (
             <div style={{ marginBottom: 16 }}>
               <div style={{ fontSize: 12.5, color: "#FBBF24", marginBottom: 6 }}>⏳ {PROGRESS_LABELS[activeBatch.jobPhase ?? ""] ?? activeBatch.jobPhase} · {activeBatch.jobProgressPct}%</div>
-              <div style={{ height: 8, background: "#131C2E", borderRadius: 99 }}>
+              <div style={{ height: 8, background: "#3A4A72", borderRadius: 99 }}>
                 <div style={{ width: `${activeBatch.jobProgressPct}%`, height: "100%", background: "#F59E0B", borderRadius: 99, transition: "width .4s" }} />
               </div>
             </div>
@@ -325,7 +325,7 @@ export default function SelectionView() {
               {exceptions.map((x: any, i) => (
                 <div key={i} style={{ fontSize: 12, marginBottom: 3 }}>• {x.message ?? `${x.zone} ${x.role}: required ${x.required}, eligible ${x.eligible}, shortfall ${x.shortfall}`}</div>
               ))}
-              <div style={{ fontSize: 11, color: "#94A3B8", marginTop: 6 }}>इनके लिए authorised admin decision चाहिए।</div>
+              <div style={{ fontSize: 11, color: "#C3CEE3", marginTop: 6 }}>इनके लिए authorised admin decision चाहिए।</div>
             </div>
           )}
 
@@ -336,7 +336,7 @@ export default function SelectionView() {
           {activeBatch.status === "approved" && (
             <div style={{ display: "flex", gap: 10 }}>
               <button style={btn("#10B981")} disabled={busy} onClick={() => doPublish(activeBatch.id)}>PUBLISH RESULTS</button>
-              <span style={{ fontSize: 11.5, color: "#64748B", alignSelf: "center" }}>Publish सिर्फ status flip करता है — players को notification अभी नहीं।</span>
+              <span style={{ fontSize: 11.5, color: "#A6B3D0", alignSelf: "center" }}>Publish सिर्फ status flip करता है — players को notification अभी नहीं।</span>
             </div>
           )}
           {activeBatch.status === "published" && <div style={okBox}>✅ Published on {activeBatch.publishedAt ? new Date(activeBatch.publishedAt).toLocaleString("en-IN") : ""} · {activeBatch.publishedBy}</div>}
@@ -376,7 +376,7 @@ export default function SelectionView() {
                   ))}</tbody>
                 </table>
               </div>
-              {members.length === 0 && <div style={{ color: "#64748B", padding: 20, textAlign: "center", fontSize: 12.5 }}>इन filters के लिए कोई member नहीं।</div>}
+              {members.length === 0 && <div style={{ color: "#A6B3D0", padding: 20, textAlign: "center", fontSize: 12.5 }}>इन filters के लिए कोई member नहीं।</div>}
               {hasMore && <button style={{ ...ghost, marginTop: 12 }} disabled={busy} onClick={() => activeBatch && loadMembers(activeBatch.id, false)}>और load करें →</button>}
             </div>
           )}

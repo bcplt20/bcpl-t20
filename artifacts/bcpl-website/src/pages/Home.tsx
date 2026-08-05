@@ -285,12 +285,12 @@ export function Home() {
         .btn-cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#FF8A3D 0%,#FF7A29 45%,#D95E10 100%);border:none;border-radius:14px;color:#fff;font-family:var(--font-head);font-weight:900;font-size:14px;letter-spacing:.04em;cursor:pointer;padding:14px 28px;min-height:48px;text-transform:uppercase;text-decoration:none;transition:filter .2s,transform .14s,box-shadow .2s;box-shadow:0 8px 26px rgba(255,122,41,.4),inset 0 1px 0 rgba(255,255,255,.22);}
         .btn-cta:hover{filter:brightness(1.08);transform:translateY(-2px);box-shadow:0 12px 34px rgba(255,122,41,.52),inset 0 1px 0 rgba(255,255,255,.28);}
         .btn-cta:active{transform:scale(.98);}
-        .btn-ghost{display:inline-flex;align-items:center;gap:8px;background:rgba(6,12,24,.4);border:1.5px solid rgba(255,255,255,.28);border-radius:14px;color:rgba(255,255,255,.9);font-family:var(--font-head);font-weight:700;font-size:14px;cursor:pointer;padding:13px 26px;text-transform:uppercase;transition:border-color .2s,color .2s;text-decoration:none;backdrop-filter:blur(6px);}
+        .btn-ghost{display:inline-flex;align-items:center;gap:8px;background:rgba(18,32,60,.4);border:1.5px solid rgba(255,255,255,.28);border-radius:14px;color:rgba(255,255,255,.9);font-family:var(--font-head);font-weight:700;font-size:14px;cursor:pointer;padding:13px 26px;text-transform:uppercase;transition:border-color .2s,color .2s;text-decoration:none;backdrop-filter:blur(6px);}
         .btn-ghost:hover{border-color:#E8B23D;color:#E8B23D;}
 
         .slbl{font-family:var(--font-head);font-weight:800;font-size:11px;letter-spacing:.15em;color:#FF7A29;text-transform:uppercase;display:flex;align-items:center;gap:10px;margin-bottom:14px;}
         .slbl::before{content:'';display:inline-block;width:20px;height:2px;background:#FF7A29;}
-        .card{background:linear-gradient(165deg,#16315A 0%,#12294A 60%,#0F2545 100%);border:1px solid rgba(255,255,255,.12);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.05);}
+        .card{background:linear-gradient(165deg,#25477C 0%,#24396B 60%,#1D3B67 100%);border:1px solid rgba(255,255,255,0.2);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.05);}
         .shim{background:linear-gradient(90deg,#FF7A29,#FFB347,#FF7A29);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradMove 3s ease infinite;}
         .shim-gold{background:linear-gradient(90deg,#E8B23D,#FFD700,#E8B23D);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradMove 3s ease infinite;}
 
@@ -325,7 +325,7 @@ export function Home() {
         @keyframes statIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
         /* League strip ticker */
-        .tick-wrap{overflow:hidden;background:linear-gradient(90deg,#121F2F,#15263E 50%,#121F2F);border-top:1px solid rgba(232,178,61,.28);border-bottom:1px solid rgba(232,178,61,.28);position:relative;mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);}
+        .tick-wrap{overflow:hidden;background:linear-gradient(90deg,#1F3652,#213C62 50%,#1F3652);border-top:1px solid rgba(232,178,61,.28);border-bottom:1px solid rgba(232,178,61,.28);position:relative;mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);}
         .tick{display:flex;width:max-content;animation:tickMove 46s linear infinite;}
         .tick:hover{animation-play-state:paused;}
         .tick-item{display:inline-flex;align-items:center;gap:16px;padding:13px 0 13px 16px;white-space:nowrap;}
@@ -339,7 +339,7 @@ export function Home() {
         /* Road */
         .road{display:grid;grid-template-columns:1fr;gap:12px;position:relative;padding:4px 0 8px;}
         @media(min-width:640px){.road{grid-template-columns:repeat(2,1fr);gap:14px;}}
-        .road-card{position:relative;border-radius:16px;padding:22px 20px 20px;background:linear-gradient(165deg,#183259 0%,#12294A 60%,#0F2242 100%);border:1px solid rgba(255,255,255,.12);box-shadow:0 10px 28px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.05);transition:transform .28s cubic-bezier(.22,1,.36,1),border-color .28s,box-shadow .28s;display:flex;flex-direction:column;}
+        .road-card{position:relative;border-radius:16px;padding:22px 20px 20px;background:linear-gradient(165deg,#26487C 0%,#24396B 60%,#1D3864 100%);border:1px solid rgba(255,255,255,0.2);box-shadow:0 10px 28px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.05);transition:transform .28s cubic-bezier(.22,1,.36,1),border-color .28s,box-shadow .28s;display:flex;flex-direction:column;}
         .road-card:hover{transform:translateY(-3px);box-shadow:0 20px 46px rgba(0,0,0,.5);border-color:rgba(255,255,255,.18);}
         @media(min-width:1150px){
           .road{grid-template-columns:repeat(4,1fr);gap:16px;}
@@ -349,11 +349,11 @@ export function Home() {
         /* Season 5 roadmap — premium animated timeline (spec §6) */
         .s5map{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:36px;}
         /* connector rail (base) + drawing line that animates on reveal */
-        .s5map::before{content:'';position:absolute;top:33px;left:9%;right:9%;height:3px;border-radius:3px;background:rgba(255,255,255,.10);}
+        .s5map::before{content:'';position:absolute;top:33px;left:9%;right:9%;height:3px;border-radius:3px;background:rgba(255,255,255,0.18);}
         .s5map::after{content:'';position:absolute;top:33px;left:9%;right:9%;height:3px;border-radius:3px;background:linear-gradient(90deg,#FF7A29,#E8B23D 55%,#22C55E);transform:scaleX(0);transform-origin:left;transition:transform 1.5s cubic-bezier(.22,1,.36,1) .15s;box-shadow:0 0 14px rgba(232,178,61,.4);}
         .s5map.rv-in::after{transform:scaleX(1);}
         .s5m{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;z-index:1;}
-        .s5m-node{width:66px;height:66px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;z-index:2;flex-shrink:0;background:linear-gradient(165deg,#183259,#0F2242);border:2px solid rgba(255,255,255,.14);box-shadow:0 10px 26px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.06);transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s,border-color .3s;}
+        .s5m-node{width:66px;height:66px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;z-index:2;flex-shrink:0;background:linear-gradient(165deg,#26487C,#1D3864);border:2px solid rgba(255,255,255,0.2);box-shadow:0 10px 26px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,0.18);transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s,border-color .3s;}
         .s5m:hover .s5m-node{transform:translateY(-4px) scale(1.04);}
         .s5m-node.live{border-color:var(--nc,#FF7A29);box-shadow:0 0 0 4px color-mix(in srgb,var(--nc,#FF7A29) 18%,transparent),0 12px 30px rgba(0,0,0,.45);animation:s5pulse 2.4s ease-in-out infinite;}
         @keyframes s5pulse{0%,100%{box-shadow:0 0 0 4px color-mix(in srgb,var(--nc,#FF7A29) 18%,transparent),0 12px 30px rgba(0,0,0,.45);}50%{box-shadow:0 0 0 10px color-mix(in srgb,var(--nc,#FF7A29) 0%,transparent),0 12px 30px rgba(0,0,0,.45);}}
@@ -363,7 +363,7 @@ export function Home() {
         .s5m-lb{font-family:var(--font-head);font-weight:900;font-size:clamp(13px,1.7vw,17px);letter-spacing:.04em;color:#fff;text-transform:uppercase;line-height:1.05;}
         @media(max-width:639px){
           .s5map{grid-template-columns:1fr;gap:0;margin-top:22px;padding-left:6px;}
-          .s5map::before{top:20px;bottom:20px;left:38px;right:auto;width:3px;height:auto;background:rgba(255,255,255,.10);}
+          .s5map::before{top:20px;bottom:20px;left:38px;right:auto;width:3px;height:auto;background:rgba(255,255,255,0.18);}
           .s5map::after{top:20px;bottom:20px;left:38px;right:auto;width:3px;height:auto;background:linear-gradient(180deg,#FF7A29,#E8B23D 55%,#22C55E);transform-origin:top;transform:scaleY(0);}
           .s5map.rv-in::after{transform:scaleY(1);}
           .s5m{flex-direction:row;text-align:left;gap:16px;padding:12px 0;align-items:center;}
@@ -373,7 +373,7 @@ export function Home() {
 
         /* Pricing journey chips */
         .jour{display:flex;align-items:stretch;gap:10px;flex-wrap:wrap;margin-bottom:28px;}
-        .jour .jc{flex:1 1 180px;background:linear-gradient(165deg,#183259 0%,#12294A 60%,#0F2242 100%);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:16px 18px;position:relative;box-shadow:0 8px 24px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.05);transition:transform .28s cubic-bezier(.22,1,.36,1),box-shadow .28s;}
+        .jour .jc{flex:1 1 180px;background:linear-gradient(165deg,#26487C 0%,#24396B 60%,#1D3864 100%);border:1px solid rgba(255,255,255,0.2);border-radius:14px;padding:16px 18px;position:relative;box-shadow:0 8px 24px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.05);transition:transform .28s cubic-bezier(.22,1,.36,1),box-shadow .28s;}
         .jour .jc:hover{transform:translateY(-3px);box-shadow:0 16px 38px rgba(0,0,0,.42);}
         .jour .ja{align-self:center;color:rgba(232,178,61,.65);font-size:18px;flex:0 0 auto;}
         @media(max-width:639px){.jour .ja{display:none;}}
@@ -386,24 +386,24 @@ export function Home() {
         /* Numbers */
         .num-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
         @media(min-width:768px){.num-grid{grid-template-columns:repeat(3,1fr);}}
-        .num-cell{background:linear-gradient(165deg,#183259 0%,#12294A 60%,#0F2242 100%);border:1px solid rgba(232,178,61,.18);border-radius:16px;padding:clamp(24px,3vw,34px) clamp(18px,2.4vw,28px);text-align:center;box-shadow:0 10px 28px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.05);transition:transform .28s cubic-bezier(.22,1,.36,1),box-shadow .28s,border-color .28s;}
+        .num-cell{background:linear-gradient(165deg,#26487C 0%,#24396B 60%,#1D3864 100%);border:1px solid rgba(232,178,61,.18);border-radius:16px;padding:clamp(24px,3vw,34px) clamp(18px,2.4vw,28px);text-align:center;box-shadow:0 10px 28px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.05);transition:transform .28s cubic-bezier(.22,1,.36,1),box-shadow .28s,border-color .28s;}
         .num-cell:hover{transform:translateY(-3px);box-shadow:0 18px 42px rgba(0,0,0,.44);border-color:rgba(232,178,61,.32);}
 
         /* Real proof gallery */
         .proof-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
         @media(min-width:768px){.proof-grid{grid-template-columns:repeat(4,1fr);gap:12px;}}
-        .proof-tile{position:relative;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.08);aspect-ratio:4/3;background:#121F2F;}
+        .proof-tile{position:relative;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,0.18);aspect-ratio:4/3;background:#1F3652;}
         .proof-tile.wide{grid-column:span 2;}
         .proof-tile img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease;}
         .proof-tile:hover img{transform:scale(1.05);}
         .proof-cap{position:absolute;left:10px;bottom:10px;right:10px;display:inline-flex;align-items:center;gap:6px;}
-        .proof-cap span{background:rgba(5,10,20,.78);backdrop-filter:blur(6px);border:1px solid rgba(232,178,61,.3);border-radius:8px;padding:5px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;color:#F0EDE8;letter-spacing:.04em;}
+        .proof-cap span{background:rgba(17,30,57,.78);backdrop-filter:blur(6px);border:1px solid rgba(232,178,61,.3);border-radius:8px;padding:5px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;color:#F0EDE8;letter-spacing:.04em;}
 
         /* Teams */
         .team-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
         @media(min-width:560px){.team-grid{grid-template-columns:repeat(3,1fr);}}
         @media(min-width:900px){.team-grid{grid-template-columns:repeat(5,1fr);}}
-        .fr-card{position:relative;border-radius:18px;padding:22px 14px 18px;text-align:center;cursor:pointer;overflow:hidden;border:1px solid rgba(255,255,255,.08);transition:transform .25s,box-shadow .25s,border-color .25s;}
+        .fr-card{position:relative;border-radius:18px;padding:22px 14px 18px;text-align:center;cursor:pointer;overflow:hidden;border:1px solid rgba(255,255,255,0.18);transition:transform .25s,box-shadow .25s,border-color .25s;}
         .fr-card:hover{transform:translateY(-5px);}
 
         /* Match center */
@@ -422,43 +422,43 @@ export function Home() {
         .amb-proof .mont{font-size:11px;font-weight:700;color:#E8B23D;}
 
         /* Video modal */
-        .vmask{position:fixed;inset:0;z-index:400;background:rgba(2,6,14,.92);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:20px;}
-        .vbox{position:relative;width:min(960px,96vw);aspect-ratio:16/9;background:#000;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.14);box-shadow:0 40px 120px rgba(0,0,0,.7);}
+        .vmask{position:fixed;inset:0;z-index:400;background:rgba(13,26,52,.92);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:20px;}
+        .vbox{position:relative;width:min(960px,96vw);aspect-ratio:16/9;background:#000;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,0.2);box-shadow:0 40px 120px rgba(0,0,0,.7);}
 
         /* Sticky mobile CTA */
-        .stick-cta{position:fixed;left:0;right:0;bottom:0;z-index:300;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;padding-bottom:calc(10px + env(safe-area-inset-bottom));background:rgba(5,10,20,.97);backdrop-filter:blur(16px);border-top:1px solid rgba(255,122,41,.35);}
+        .stick-cta{position:fixed;left:0;right:0;bottom:0;z-index:300;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;padding-bottom:calc(10px + env(safe-area-inset-bottom));background:rgba(17,30,57,.97);backdrop-filter:blur(16px);border-top:1px solid rgba(255,122,41,.35);}
         @media(min-width:768px){.stick-cta{display:none;}}
         @media(max-width:767px){.home-root{padding-bottom:76px;}}
 
         /* ══ LIGHT-SURFACE SECTION ("BCPL so far" numbers) — spec §4D ══
            Warm off-white panel that resets the eye. Every child colour is
            remapped to deep-navy so nothing reads dark-on-light. */
-        .sec-numbers{background:linear-gradient(180deg,#F4F1EA 0%,#EAE5DA 100%);color:#0C1D33;border-top:1px solid rgba(12,29,51,.08);border-bottom:1px solid rgba(12,29,51,.08);}
+        .sec-numbers{background:linear-gradient(180deg,#F4F1EA 0%,#EAE5DA 100%);color:#1B2E52;border-top:1px solid rgba(25,52,86,.08);border-bottom:1px solid rgba(25,52,86,.08);}
         .sec-numbers .slbl{color:#C24E12;}
         .sec-numbers .slbl::before{background:#C24E12;}
-        .sec-numbers h2{color:#0C1D33 !important;}
-        .sec-numbers .sec-sub{color:rgba(12,29,51,.66) !important;}
-        .sec-numbers .num-cell{background:#FFFFFF;border:1px solid rgba(12,29,51,.10);box-shadow:0 10px 26px rgba(12,29,51,.10),inset 0 1px 0 rgba(255,255,255,.6);}
-        .sec-numbers .num-cell:hover{box-shadow:0 16px 36px rgba(12,29,51,.16);border-color:rgba(200,131,45,.4);}
+        .sec-numbers h2{color:#1B2E52 !important;}
+        .sec-numbers .sec-sub{color:rgba(25,52,86,.66) !important;}
+        .sec-numbers .num-cell{background:#FFFFFF;border:1px solid rgba(25,52,86,.10);box-shadow:0 10px 26px rgba(25,52,86,.10),inset 0 1px 0 rgba(255,255,255,0.88);}
+        .sec-numbers .num-cell:hover{box-shadow:0 16px 36px rgba(25,52,86,.16);border-color:rgba(200,131,45,.4);}
         .sec-numbers .num-n{color:#B4791F !important;}     /* deep gold — reads on white */
-        .sec-numbers .num-l{color:rgba(12,29,51,.66) !important;}
+        .sec-numbers .num-l{color:rgba(25,52,86,.66) !important;}
 
         /* ══ JOURNEY — bigger, more major (spec §16-18) ══ */
         .road-card .rc-num{font-family:var(--font-head);font-weight:900;font-size:34px;line-height:1;}
         .road-card .rc-title{font-family:var(--font-head);font-weight:900;font-size:clamp(19px,2.4vw,22px);color:#fff;margin-bottom:8px;letter-spacing:.01em;line-height:1.05;}
         .road-card .rc-date{font-family:var(--font-head);font-size:12px;font-weight:800;letter-spacing:.05em;}
-        .road-card .rc-desc{font-size:14px;color:rgba(255,255,255,.78);line-height:1.6;flex:1;}
+        .road-card .rc-desc{font-size:14px;color:rgba(255,255,255,0.88);line-height:1.6;flex:1;}
         .road-card .rc-node{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
 
         /* ══ SEASON 5 ROADMAP on MID-TONE surface — clearly separated ══ */
-        .sec-roadmap{background:linear-gradient(180deg,#2C4A6B 0%,#24405F 100%) !important;border-top:1px solid rgba(255,255,255,.10);border-bottom:1px solid rgba(255,255,255,.10);}
+        .sec-roadmap{background:linear-gradient(180deg,#305074 0%,#2D5076 100%) !important;border-top:1px solid rgba(255,255,255,0.18);border-bottom:1px solid rgba(255,255,255,0.18);}
         .sec-roadmap .slbl{color:#FFD98A;}
         .sec-roadmap .slbl::before{background:#FFD98A;}
-        .sec-roadmap .rm-sub{color:rgba(255,255,255,.82) !important;}
+        .sec-roadmap .rm-sub{color:rgba(255,255,255,0.88) !important;}
         /* thicker connector on mid surface */
         .sec-roadmap .s5map::before{background:rgba(255,255,255,.16);height:4px;top:32px;}
         .sec-roadmap .s5map::after{height:4px;top:32px;}
-        .sec-roadmap .s5m-node{background:linear-gradient(165deg,#31527A,#213C59);border-color:rgba(255,255,255,.22);}
+        .sec-roadmap .s5m-node{background:linear-gradient(165deg,#31527A,#2C5077);border-color:rgba(255,255,255,.22);}
         .sec-roadmap .s5m-mo{color:#FFD98A !important;font-size:clamp(11px,1.4vw,13px);}
         .sec-roadmap .s5m-lb{font-size:clamp(15px,1.9vw,19px);}
         @media(max-width:639px){
@@ -471,16 +471,16 @@ export function Home() {
       <SiteHeader active="Home" />
 
       {/* ══ 1 · CINEMATIC HERO — the dream first ══ */}
-      <section style={{ position:"relative", overflow:"hidden", background:"#0C121C" }}>
+      <section style={{ position:"relative", overflow:"hidden", background:"#16223C" }}>
         <img src={BASE + "bcpl-assets/stadium-hero.jpg"} alt="" aria-hidden="true" className="hero-bg"
           onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
         <HeroVideo/>
         {/* Floodlight glows */}
         <div className="hero-flood" style={{ top:"-20%", left:"5%", width:"40%", height:"60%", background:"radial-gradient(ellipse,rgba(232,178,61,.14) 0%,transparent 65%)" }}/>
-        <div className="hero-flood" style={{ top:"-25%", right:"18%", width:"45%", height:"65%", background:"radial-gradient(ellipse,rgba(255,255,255,.08) 0%,transparent 65%)", animationDelay:"3.5s" }}/>
+        <div className="hero-flood" style={{ top:"-25%", right:"18%", width:"45%", height:"65%", background:"radial-gradient(ellipse,rgba(255,255,255,0.18) 0%,transparent 65%)", animationDelay:"3.5s" }}/>
         {/* Readability overlays */}
-        <div style={{ position:"absolute", inset:0, background:"linear-gradient(90deg,rgba(4,10,20,.94) 0%,rgba(4,10,20,.72) 45%,rgba(4,10,20,.30) 100%)" }}/>
-        <div style={{ position:"absolute", inset:0, background:"linear-gradient(0deg,rgba(4,10,20,.92) 0%,transparent 32%)" }}/>
+        <div style={{ position:"absolute", inset:0, background:"linear-gradient(90deg,rgba(16,31,57,.94) 0%,rgba(16,31,57,.72) 45%,rgba(16,31,57,.30) 100%)" }}/>
+        <div style={{ position:"absolute", inset:0, background:"linear-gradient(0deg,rgba(16,31,57,.92) 0%,transparent 32%)" }}/>
         <img src={BASE + "bcpl-assets/hero-athlete-a.webp"} alt="BCPL player in Season 5 kit" className="hero-ganguly"
           onError={e=>{(e.currentTarget as HTMLImageElement).src = BASE + "bcpl-assets/ganguly_shoot.jpg";}}/>
 
@@ -492,7 +492,7 @@ export function Home() {
             </div>
 
             {/* Kicker */}
-            <div className="mont" style={{ fontWeight:800, fontSize:"clamp(12px,1.8vw,15px)", letterSpacing:".2em", color:"rgba(255,255,255,.6)", textTransform:"uppercase", marginBottom:14 }}>
+            <div className="mont" style={{ fontWeight:800, fontSize:"clamp(12px,1.8vw,15px)", letterSpacing:".2em", color:"rgba(255,255,255,0.88)", textTransform:"uppercase", marginBottom:14 }}>
               {t("From Office to Stadium","ऑफिस से स्टेडियम तक")}
             </div>
 
@@ -537,7 +537,7 @@ export function Home() {
             <div style={{ display:"inline-flex", alignItems:"center", gap:10, background:"rgba(255,122,41,.1)", border:"1px solid rgba(255,122,41,.3)", borderRadius:20, padding:"8px 16px", flexWrap:"wrap", maxWidth:"100%" }}>
               <span className="mont" style={{ fontSize:11, fontWeight:800, color:"#FFB347", letterSpacing:".06em", textTransform:"uppercase" }}>{t("Phase 1 closes in","Phase 1 बंद होने में")}</span>
               <FlipCountdown target={PHASE1_DEADLINE} size="sm" />
-              <span className="mont" style={{ fontSize:11, fontWeight:800, color:"rgba(255,255,255,.55)", letterSpacing:".06em" }}>· 28 Feb 2027</span>
+              <span className="mont" style={{ fontSize:11, fontWeight:800, color:"rgba(255,255,255,0.88)", letterSpacing:".06em" }}>· 28 Feb 2027</span>
             </div>
           </div>
         </div>
@@ -711,8 +711,8 @@ export function Home() {
                 </div>
               </div>
               {[{icon:IcoBat,role:t("Batsman","बल्लेबाज़"),price:inr(fees.phase1.bat)},{icon:IcoBall,role:t("Bowler","गेंदबाज़"),price:inr(fees.phase1.bowl)},{icon:IcoShield,role:t("Wicket-keeper","विकेट-कीपर"),price:inr(fees.phase1.wk)},{icon:IcoStar,role:t("All-Rounder","ऑल-राउंडर"),price:inr(fees.phase1.ar)}].map(r=>(
-                <div key={r.role} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 0", borderBottom:"1px solid rgba(255,255,255,.06)" }}>
-                  <span style={{ display:"inline-flex", alignItems:"center", gap:8, fontSize:15, color:"var(--ink-2)" }}><r.icon size={16} style={{ color:"rgba(255,255,255,.6)" }} />{r.role}</span>
+                <div key={r.role} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 0", borderBottom:"1px solid rgba(255,255,255,0.18)" }}>
+                  <span style={{ display:"inline-flex", alignItems:"center", gap:8, fontSize:15, color:"var(--ink-2)" }}><r.icon size={16} style={{ color:"rgba(255,255,255,0.88)" }} />{r.role}</span>
                   <span className="mont" style={{ fontWeight:900, fontSize:18, color:"#FF7A29" }}>{r.price}</span>
                 </div>
               ))}
@@ -726,13 +726,13 @@ export function Home() {
                   <div className="mont" style={{ fontWeight:900, fontSize:16, color:"#E8B23D" }}>Phase 2</div>
                   <div style={{ fontSize:12, color:"var(--ink-3)" }}>{t("Physical trial — after Phase 1 qualification","Physical trial — Phase 1 qualify करने के बाद")}</div>
                 </div>
-                <div style={{ marginLeft:"auto", background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.1)", borderRadius:8, padding:"3px 10px" }}>
+                <div style={{ marginLeft:"auto", background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,0.18)", borderRadius:8, padding:"3px 10px" }}>
                   <span className="mont" style={{ fontSize:10, fontWeight:800, color:"var(--ink-3)" }}>{t("IF SELECTED","SELECT होने पर")}</span>
                 </div>
               </div>
               {[{icon:IcoBat,role:t("Batsman","बल्लेबाज़"),price:inr(fees.phase2.bat)},{icon:IcoBall,role:t("Bowler","गेंदबाज़"),price:inr(fees.phase2.bowl)},{icon:IcoShield,role:t("Wicket-keeper","विकेट-कीपर"),price:inr(fees.phase2.wk)},{icon:IcoStar,role:t("All-Rounder","ऑल-राउंडर"),price:inr(fees.phase2.ar)}].map(r=>(
-                <div key={r.role} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 0", borderBottom:"1px solid rgba(255,255,255,.06)" }}>
-                  <span style={{ display:"inline-flex", alignItems:"center", gap:8, fontSize:15, color:"var(--ink-2)" }}><r.icon size={16} style={{ color:"rgba(255,255,255,.6)" }} />{r.role}</span>
+                <div key={r.role} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 0", borderBottom:"1px solid rgba(255,255,255,0.18)" }}>
+                  <span style={{ display:"inline-flex", alignItems:"center", gap:8, fontSize:15, color:"var(--ink-2)" }}><r.icon size={16} style={{ color:"rgba(255,255,255,0.88)" }} />{r.role}</span>
                   <span className="mont" style={{ fontWeight:900, fontSize:18, color:"#E8B23D" }}>{r.price}</span>
                 </div>
               ))}
@@ -770,7 +770,7 @@ export function Home() {
       </section>
 
       {/* ══ 6 · REAL PLAYERS. REAL AUCTIONS. REAL STADIUMS. ══ */}
-      <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#0E1420", position:"relative", overflow:"hidden" }}>
+      <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#1D2942", position:"relative", overflow:"hidden" }}>
         <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 70% 60% at 50% 100%,rgba(232,178,61,.04) 0%,transparent 65%)", pointerEvents:"none" }}/>
         <div className="W" style={{ position:"relative", zIndex:1 }}>
           <div className="slbl">{t("Season 4 · On the ground","Season 4 · ज़मीन पर")}</div>
@@ -813,10 +813,10 @@ export function Home() {
             <div className="story-grid">
               {STORIES.map(s=>(
                 <div key={s.name} className="card" style={{ overflow:"hidden" }}>
-                  <div style={{ position:"relative", aspectRatio:"4/3", background:"#142438" }}>
+                  <div style={{ position:"relative", aspectRatio:"4/3", background:"#213B5C" }}>
                     <img src={s.photo} alt={s.name} style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover" }}
                       onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
-                    <div style={{ position:"absolute", inset:0, background:"linear-gradient(0deg,rgba(4,10,20,.75) 0%,transparent 50%)" }}/>
+                    <div style={{ position:"absolute", inset:0, background:"linear-gradient(0deg,rgba(16,31,57,.75) 0%,transparent 50%)" }}/>
                     <div style={{ position:"absolute", left:14, bottom:12 }}>
                       <div className="mont" style={{ fontWeight:900, fontSize:17, color:"#fff" }}>{s.name}</div>
                       <div className="mont" style={{ fontSize:11, fontWeight:700, color:"#E8B23D" }}>{s.profession} → {s.season} Player</div>
@@ -824,7 +824,7 @@ export function Home() {
                   </div>
                   <div style={{ padding:"14px 16px 16px" }}>
                     <div className="mont" style={{ display:"inline-flex", alignItems:"center", gap:6, fontSize:11, fontWeight:800, letterSpacing:".08em", color:"var(--ink-3)", textTransform:"uppercase", marginBottom:8 }}><IcoPin size={14} style={{ color:"var(--ink-3)" }} />{s.city} → {s.team}</div>
-                    <p style={{ fontSize:13, color:"rgba(255,255,255,.6)", lineHeight:1.65, fontStyle:"italic" }}>"{t(s.quoteEn, s.quoteHi)}"</p>
+                    <p style={{ fontSize:13, color:"rgba(255,255,255,0.88)", lineHeight:1.65, fontStyle:"italic" }}>"{t(s.quoteEn, s.quoteHi)}"</p>
                     {s.videoUrl && (
                       <button className="btn-ghost" style={{ fontSize:11, padding:"9px 16px", marginTop:12 }} onClick={()=>showVideo(s.videoUrl!)}>▶ {t("Watch the story","कहानी देखें")}</button>
                     )}
@@ -837,18 +837,18 @@ export function Home() {
       )}
 
       {/* ══ 8 · SOURAV GANGULY × BCPL — full-width cinematic ══ */}
-      <section className="rv" style={{ padding:"clamp(54px,7vw,96px) 0", background:"linear-gradient(180deg,#101A2A,var(--bg))", position:"relative", overflow:"hidden" }}>
+      <section className="rv" style={{ padding:"clamp(54px,7vw,96px) 0", background:"linear-gradient(180deg,#1D304D,var(--bg))", position:"relative", overflow:"hidden" }}>
         <div style={{ position:"absolute", top:"-30%", right:"-15%", width:"55%", height:"160%", background:"radial-gradient(ellipse,rgba(232,178,61,.09) 0%,transparent 65%)", pointerEvents:"none" }}/>
         <div style={{ position:"absolute", bottom:"-40%", left:"-10%", width:"45%", height:"120%", background:"radial-gradient(ellipse,rgba(255,122,41,.05) 0%,transparent 65%)", pointerEvents:"none" }}/>
         <div className="W" style={{ position:"relative", zIndex:1 }}>
           <div className="amb-wrap">
             {/* Photo */}
-            <div style={{ position:"relative", borderRadius:24, overflow:"hidden", border:"1px solid rgba(232,178,61,.35)", boxShadow:"0 30px 80px rgba(0,0,0,.55)", background:"linear-gradient(180deg,#101c2e,#121F2F)" }}>
+            <div style={{ position:"relative", borderRadius:24, overflow:"hidden", border:"1px solid rgba(232,178,61,.35)", boxShadow:"0 30px 80px rgba(0,0,0,.55)", background:"linear-gradient(180deg,#1D3252,#1F3652)" }}>
               <img src={BASE + "bcpl-assets/ambassador-b.webp"} alt="Sourav Ganguly — BCPL Brand Ambassador"
                 style={{ width:"100%", height:"auto", display:"block", filter:"contrast(1.05)" }}
                 onError={e=>{(e.currentTarget as HTMLImageElement).src = BASE + "bcpl-assets/ganguly_2.jpg";}}/>
-              <div style={{ position:"absolute", inset:0, background:"linear-gradient(0deg,rgba(4,10,20,.55) 0%,transparent 40%)" }}/>
-              <div style={{ position:"absolute", left:16, bottom:14, display:"inline-flex", alignItems:"center", gap:8, background:"rgba(5,10,20,.75)", backdropFilter:"blur(8px)", border:"1px solid rgba(232,178,61,.4)", borderRadius:10, padding:"7px 14px" }}>
+              <div style={{ position:"absolute", inset:0, background:"linear-gradient(0deg,rgba(16,31,57,.55) 0%,transparent 40%)" }}/>
+              <div style={{ position:"absolute", left:16, bottom:14, display:"inline-flex", alignItems:"center", gap:8, background:"rgba(17,30,57,.75)", backdropFilter:"blur(8px)", border:"1px solid rgba(232,178,61,.4)", borderRadius:10, padding:"7px 14px" }}>
                 <IcoBat size={13} style={{ color:"#E8B23D" }} />
                 <span className="mont" style={{ fontSize:10, fontWeight:900, color:"#E8B23D", letterSpacing:".14em", textTransform:"uppercase" }}>{t("Official Brand Ambassador","आधिकारिक ब्रांड एंबेसडर")}</span>
               </div>
@@ -862,7 +862,7 @@ export function Home() {
               </h2>
               <div style={{ position:"relative", maxWidth:500, marginBottom:20 }}>
                 <span aria-hidden="true" className="mont" style={{ position:"absolute", top:-26, left:-8, fontSize:72, fontWeight:900, color:"rgba(232,178,61,.18)", lineHeight:1, userSelect:"none" }}>“</span>
-                <p style={{ position:"relative", fontSize:"clamp(17px,2.4vw,24px)", color:"rgba(255,255,255,.82)", lineHeight:1.55, fontStyle:"italic", borderLeft:"3px solid #E8B23D", paddingLeft:18 }}>
+                <p style={{ position:"relative", fontSize:"clamp(17px,2.4vw,24px)", color:"rgba(255,255,255,0.88)", lineHeight:1.55, fontStyle:"italic", borderLeft:"3px solid #E8B23D", paddingLeft:18 }}>
                   {t("A platform built to discover India's hidden cricketing talent.","भारत की छिपी हुई क्रिकेट प्रतिभा को खोजने के लिए बना platform।")}
                 </p>
               </div>
@@ -884,7 +884,7 @@ export function Home() {
       </section>
 
       {/* ══ 9 · SEASON 5 FRANCHISES ══ */}
-      <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#0E1420" }}>
+      <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#1D2942" }}>
         <div className="W">
           <div className="slbl">{t("Franchises","फ्रैंचाइज़ी")}</div>
           <div style={{ display:"flex", alignItems:"flex-end", justifyContent:"space-between", gap:16, flexWrap:"wrap", marginBottom:34 }}>
@@ -895,7 +895,7 @@ export function Home() {
             {TEAMS.map(tm=>(
               <div key={tm.name} className="fr-card" role="link" tabIndex={0} aria-label={"View "+tm.name+" squad"}
                 onClick={()=>navigate("/teams")} onKeyDown={e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); navigate("/teams"); } }}
-                style={{ background:`linear-gradient(170deg,${tm.color}26 0%,#121F2F 55%)`, borderColor:`${tm.color}30` }}
+                style={{ background:`linear-gradient(170deg,${tm.color}26 0%,#1F3652 55%)`, borderColor:`${tm.color}30` }}
                 onMouseEnter={e=>{ e.currentTarget.style.boxShadow=`0 16px 40px ${tm.color}30`; e.currentTarget.style.borderColor=`${tm.color}70`; }}
                 onMouseLeave={e=>{ e.currentTarget.style.boxShadow=""; e.currentTarget.style.borderColor=`${tm.color}30`; }}>
                 <div style={{ position:"absolute", top:-24, right:-24, width:90, height:90, borderRadius:"50%", background:`${tm.color}12`, pointerEvents:"none" }}/>
@@ -911,30 +911,30 @@ export function Home() {
       {/* Sponsors show ONLY in the footer strip (owner call, Jul 2026) — full wall lives at /sponsors. */}
 
       {/* ══ 10 · THIS IS BCPL — the film ══ */}
-      <section className="rv" style={{ position:"relative", overflow:"hidden", background:"#0C121C" }}>
+      <section className="rv" style={{ position:"relative", overflow:"hidden", background:"#16223C" }}>
         <img src={BASE + "bcpl-assets/event-stage-trophy.webp"} alt="" aria-hidden="true"
           style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", objectPosition:"center 40%", opacity:.25 }}
           onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
-        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 75% 90% at 50% 50%,rgba(4,10,20,.55) 0%,rgba(4,10,20,.96) 100%)" }}/>
+        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 75% 90% at 50% 50%,rgba(16,31,57,.55) 0%,rgba(16,31,57,.96) 100%)" }}/>
         <div className="W" style={{ position:"relative", zIndex:1, textAlign:"center", padding:"clamp(64px,9vw,110px) 20px" }}>
           <div className="slbl" style={{ justifyContent:"center" }}>{t("This is BCPL","यही है BCPL")}</div>
           <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(26px,4.8vw,54px)", color:"#fff", textTransform:"uppercase", lineHeight:1.08, marginBottom:16, textShadow:"0 4px 30px rgba(0,0,0,.6)" }}>
             {t("This is not just cricket.","यह सिर्फ क्रिकेट नहीं है।")}<br/>
             <span className="shim-gold">{t("This is your second chance.","यह आपका दूसरा मौका है।")}</span>
           </h2>
-          <p style={{ fontSize:"clamp(15px,1.9vw,16px)", color:"rgba(255,255,255,.78)", lineHeight:1.75, maxWidth:620, margin:"0 auto 34px" }}>
+          <p style={{ fontSize:"clamp(15px,1.9vw,16px)", color:"rgba(255,255,255,0.88)", lineHeight:1.75, maxWidth:620, margin:"0 auto 34px" }}>
             {t("Office → kit bag → trial → selection → auction hammer → jersey → stadium. A real pathway from working professional to professional-style cricket.",
                "ऑफिस → किट बैग → ट्रायल → सिलेक्शन → ऑक्शन का हथौड़ा → जर्सी → स्टेडियम। Working professional से professional-style cricket तक का असली रास्ता।")}
           </p>
           <button type="button" className="play-btn" aria-label={t("Play the BCPL story video","BCPL की कहानी का video चलाएँ")} onClick={()=>openVideo("story")}>▶</button>
-          <div className="mont" style={{ marginTop:18, fontSize:11, fontWeight:800, letterSpacing:".16em", color:"rgba(255,255,255,.5)", textTransform:"uppercase" }}>
+          <div className="mont" style={{ marginTop:18, fontSize:11, fontWeight:800, letterSpacing:".16em", color:"rgba(255,255,255,0.72)", textTransform:"uppercase" }}>
             {t("Watch the BCPL story · 30 sec","BCPL की कहानी देखें · 30 sec")}
           </div>
         </div>
       </section>
 
       {/* ══ 11 · MATCH CENTER & LEADERBOARD — always on ══ */}
-      <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#0E1420", position:"relative", overflow:"hidden" }}>
+      <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"#1D2942", position:"relative", overflow:"hidden" }}>
         <div style={{ position:"absolute", inset:0, backgroundImage:"linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px)", backgroundSize:"48px 48px", pointerEvents:"none" }}/>
         <div className="W" style={{ position:"relative", zIndex:1 }}>
           <div className="slbl">{t("Live Season","लाइव सीज़न")}</div>
@@ -948,7 +948,7 @@ export function Home() {
                 <Link href="/match-center" style={{ fontSize:12, color:"#FF7A29", textDecoration:"none", fontWeight:700 }}>{t("View all","सभी देखें")} →</Link>
               </div>
               {liveMatches.length === 0 ? (
-                <div className="card" style={{ padding:"34px 24px", textAlign:"center", borderStyle:"dashed", borderColor:"rgba(255,255,255,.12)" }}>
+                <div className="card" style={{ padding:"34px 24px", textAlign:"center", borderStyle:"dashed", borderColor:"rgba(255,255,255,0.2)" }}>
                   <div style={{ display:"flex", justifyContent:"center", marginBottom:10 }}><IcoStadium size={34} style={{ color:"var(--ink-3)" }} /></div>
                   <div className="mont" style={{ fontWeight:800, fontSize:15, color:"#fff", marginBottom:6 }}>{t("Fixtures drop before the season opener","Season से पहले fixtures आएँगे")}</div>
                   <p style={{ fontSize:13, color:"var(--ink-3)", lineHeight:1.6, marginBottom:16 }}>{t("Season 5 matches: Sep – Oct 2027. Register now — you might be playing in one.","Season 5 के मैच: Sep – Oct 2027 । अभी register करें — हो सकता है इनमें आप खेलें।")}</p>
@@ -962,7 +962,7 @@ export function Home() {
                     const isLive = status==="LIVE";
                     return (
                       <div key={m.id||m.matchNo} role="link" tabIndex={0} aria-label="Open Match Center"
-                        onClick={()=>navigate("/match-center")} onKeyDown={e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); navigate("/match-center"); } }} style={{ background:"linear-gradient(135deg,#121F2F,#0E1420)", border:`1px solid ${isLive?"rgba(239,68,68,.35)":"rgba(255,255,255,.07)"}`, borderRadius:14, padding:"14px 16px", cursor:"pointer", transition:"transform .2s,border-color .2s" }}
+                        onClick={()=>navigate("/match-center")} onKeyDown={e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); navigate("/match-center"); } }} style={{ background:"linear-gradient(135deg,#1F3652,#1D2942)", border:`1px solid ${isLive?"rgba(239,68,68,.35)":"rgba(255,255,255,0.18)"}`, borderRadius:14, padding:"14px 16px", cursor:"pointer", transition:"transform .2s,border-color .2s" }}
                         onMouseEnter={e=>{ (e.currentTarget as HTMLElement).style.transform="translateY(-2px)"; }}
                         onMouseLeave={e=>{ (e.currentTarget as HTMLElement).style.transform=""; }}>
                         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:12 }}>
@@ -1010,7 +1010,7 @@ export function Home() {
                 <Link href="/points-table" style={{ fontSize:12, color:"#FF7A29", textDecoration:"none", fontWeight:700 }}>{t("Full table","पूरी टेबल")} →</Link>
               </div>
               {liveTable.length === 0 ? (
-                <div className="card" style={{ padding:"34px 24px", textAlign:"center", borderStyle:"dashed", borderColor:"rgba(255,255,255,.12)" }}>
+                <div className="card" style={{ padding:"34px 24px", textAlign:"center", borderStyle:"dashed", borderColor:"rgba(255,255,255,0.2)" }}>
                   <div style={{ display:"flex", justifyContent:"center", marginBottom:10 }}><IcoList size={34} style={{ color:"var(--ink-3)" }} /></div>
                   <div className="mont" style={{ fontWeight:800, fontSize:15, color:"#fff", marginBottom:6 }}>{t("The leaderboard goes live with the first ball","पहली गेंद के साथ leaderboard live होगा")}</div>
                   <p style={{ fontSize:13, color:"var(--ink-3)", lineHeight:1.6, marginBottom:18 }}>{t("10 franchises. One trophy. Standings update ball-by-ball during Season 5.","10 franchises । एक trophy । Season 5 में हर गेंद पर standings update होंगी।")}</p>
@@ -1021,8 +1021,8 @@ export function Home() {
                   </div>
                 </div>
               ) : (
-                <div style={{ background:"linear-gradient(135deg,#121F2F,#0E1420)", border:"1px solid rgba(255,255,255,.07)", borderRadius:14, overflow:"hidden" }}>
-                  <div style={{ display:"grid", gridTemplateColumns:"28px 1fr 30px 30px 30px 44px 50px", padding:"10px 14px", borderBottom:"1px solid rgba(255,255,255,.07)" }}>
+                <div style={{ background:"linear-gradient(135deg,#1F3652,#1D2942)", border:"1px solid rgba(255,255,255,0.18)", borderRadius:14, overflow:"hidden" }}>
+                  <div style={{ display:"grid", gridTemplateColumns:"28px 1fr 30px 30px 30px 44px 50px", padding:"10px 14px", borderBottom:"1px solid rgba(255,255,255,0.18)" }}>
                     {["#","Team","P","W","L","Pts","NRR"].map(h=>(
                       <div key={h} className="mont" style={{ fontSize:9, fontWeight:800, color:"var(--ink-3)", letterSpacing:".1em", textAlign: h==="Team"?"left":"center" }}>{h}</div>
                     ))}
@@ -1065,7 +1065,7 @@ export function Home() {
           <p style={{ fontSize:15, color:"var(--ink-3)", marginBottom:36 }}>{t("Everything you need to know before registering.","रजिस्टर करने से पहले जो भी जानना ज़रूरी है।")}</p>
           <div style={{ display:"flex", flexDirection:"column", gap:10, maxWidth:760 }}>
             {FAQ_ITEMS.map((f,i)=>(
-              <div key={i} className="card" style={{ overflow:"hidden", transition:"border-color .2s", borderColor:faqOpen===i?"rgba(255,122,41,.4)":"rgba(255,255,255,.07)" }}>
+              <div key={i} className="card" style={{ overflow:"hidden", transition:"border-color .2s", borderColor:faqOpen===i?"rgba(255,122,41,.4)":"rgba(255,255,255,0.18)" }}>
                 <button type="button" onClick={()=>setFaqOpen(faqOpen===i?null:i)}
                   aria-expanded={faqOpen===i} aria-controls={"faq-a-"+i}
                   style={{ width:"100%", background:"none", border:"none", cursor:"pointer", font:"inherit", color:"inherit", textAlign:"left", padding:"18px 20px", display:"flex", justifyContent:"space-between", alignItems:"center", gap:16 }}>
@@ -1089,11 +1089,11 @@ export function Home() {
       </section>
 
       {/* ══ 13 · FINAL CTA ══ */}
-      <section style={{ position:"relative", overflow:"hidden", background:"#0C121C" }}>
+      <section style={{ position:"relative", overflow:"hidden", background:"#16223C" }}>
         <img src={BASE + "bcpl-assets/stadium-hero.jpg"} alt="" aria-hidden="true"
           style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", objectPosition:"center 60%", opacity:.3 }}
           onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
-        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 70% 80% at 50% 50%,rgba(4,10,20,.55) 0%,rgba(4,10,20,.92) 100%)" }}/>
+        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 70% 80% at 50% 50%,rgba(16,31,57,.55) 0%,rgba(16,31,57,.92) 100%)" }}/>
         <div className="W" style={{ textAlign:"center", position:"relative", zIndex:1, padding:"clamp(64px,9vw,110px) 20px" }}>
           <div style={{ display:"inline-flex", alignItems:"center", gap:8, background:"rgba(255,122,41,.12)", border:"1px solid rgba(255,122,41,.35)", borderRadius:20, padding:"6px 16px", marginBottom:24, backdropFilter:"blur(6px)" }}>
             <span style={{ width:7, height:7, borderRadius:"50%", background:"#22C55E", display:"inline-block", animation:"blip 1.2s infinite" }}/>
@@ -1102,7 +1102,7 @@ export function Home() {
           <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(30px,5.4vw,64px)", color:"#fff", textTransform:"uppercase", lineHeight:1.04, marginBottom:14, textShadow:"0 4px 30px rgba(0,0,0,.6)" }}>
             {t("The floodlights","फ्लडलाइट्स आपका")}<br/>{t("are waiting.","इंतज़ार कर रही हैं।")}
           </h2>
-          <p style={{ fontSize:"clamp(14px,2vw,17px)", color:"rgba(255,255,255,.6)", lineHeight:1.7, maxWidth:520, margin:"0 auto 30px" }}>
+          <p style={{ fontSize:"clamp(14px,2vw,17px)", color:"rgba(255,255,255,0.88)", lineHeight:1.7, maxWidth:520, margin:"0 auto 30px" }}>
             {t("Join 2.5 lakh+ working professionals already on the road to BCPL Season 5.","2.5 लाख+ working professionals BCPL Season 5 के रास्ते पर निकल चुके हैं — अब आपकी बारी।")}
           </p>
 
@@ -1149,7 +1149,7 @@ export function Home() {
             )}
           </div>
           <button type="button" aria-label={t("Close video","Video बंद करें")} onClick={()=>setVideo(null)}
-            style={{ position:"fixed", top:18, right:18, width:42, height:42, borderRadius:"50%", background:"rgba(255,255,255,.1)", border:"1px solid rgba(255,255,255,.25)", color:"#fff", fontSize:18, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", backdropFilter:"blur(6px)" }}>✕</button>
+            style={{ position:"fixed", top:18, right:18, width:42, height:42, borderRadius:"50%", background:"rgba(255,255,255,0.18)", border:"1px solid rgba(255,255,255,.25)", color:"#fff", fontSize:18, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", backdropFilter:"blur(6px)" }}>✕</button>
         </div>
       )}
     </div>

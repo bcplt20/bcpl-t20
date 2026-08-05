@@ -36,12 +36,12 @@ export function SponsorWall() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(200px,1fr))', gap: 16 }}>
           {sponsors.map((s, i) => {
             const card = (
-              <div style={{ background: 'linear-gradient(135deg,rgba(15,34,71,0.92),rgba(10,22,46,0.88))', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 16, padding: '22px 18px', textAlign: 'center', height: '100%', transition: 'border-color .2s' }}>
+              <div style={{ background: 'linear-gradient(135deg,rgba(30,55,105,0.92),rgba(23,43,81,0.88))', border: '1px solid rgba(255,255,255,0.18)', borderRadius: 16, padding: '22px 18px', textAlign: 'center', height: '100%', transition: 'border-color .2s' }}>
                 <div style={{ width: 88, height: 88, borderRadius: 14, background: '#fff', margin: '0 auto 14px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', padding: 8 }}>
                   {s.logo
                     ? <img src={s.logo} alt={s.name + ' logo'} loading="lazy"
                         style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', display: 'block' }} />
-                    : <span style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 30, color: '#121E36' }}>
+                    : <span style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 30, color: '#1E325A' }}>
                         {s.name.charAt(0).toUpperCase()}
                       </span>}
                 </div>
