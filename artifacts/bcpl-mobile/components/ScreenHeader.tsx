@@ -15,12 +15,19 @@ export function ScreenHeader({ title, subtitle, subtitleColor }: { title: string
   const topInset = Platform.OS === 'web' ? 67 : insets.top;
   return (
     <LinearGradient
-      colors={['#0B1736', '#142445', '#1B2E52']}
+      colors={['#050914', '#0A1128', '#121F3D']}
       locations={[0, 0.4, 1]}
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 1 }}
       style={[styles.wrap, { paddingTop: topInset + 12 }]}
     >
+      <LinearGradient
+        colors={['rgba(255,107,0,0.15)', 'transparent']}
+        start={{x: 1, y: 0}}
+        end={{x: 0, y: 1}}
+        style={StyleSheet.absoluteFill}
+        pointerEvents="none"
+      />
       {/* decorative ball, bleeding off the right edge */}
       <Image source={BALL} style={styles.bigBall} contentFit="contain" />
       
@@ -33,7 +40,7 @@ export function ScreenHeader({ title, subtitle, subtitleColor }: { title: string
         </View>
         <Text style={[styles.title, { color: c.foreground }]}>{title}</Text>
         {subtitle ? (
-          <Text style={[styles.sub, { color: subtitleColor ?? c.mutedForeground }, subtitleColor ? { fontFamily: 'Inter_700Bold' } : null]}>
+          <Text style={[styles.sub, { color: subtitleColor ?? c.mutedForeground }, subtitleColor ? { fontFamily: 'Inter_800ExtraBold' } : null]}>
             {subtitle}
           </Text>
         ) : null}
@@ -49,29 +56,29 @@ export function ScreenHeader({ title, subtitle, subtitleColor }: { title: string
 }
 
 const styles = StyleSheet.create({
-  wrap: { overflow: 'hidden', paddingBottom: 16 },
+  wrap: { overflow: 'hidden', paddingBottom: 24, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.05)' },
   content: { paddingHorizontal: 20 },
   bigBall: {
     position: 'absolute',
     right: -40,
-    top: -10,
-    width: 150,
-    height: 150,
-    opacity: 0.08,
+    top: -20,
+    width: 180,
+    height: 180,
+    opacity: 0.15,
     transform: [{ rotate: '-18deg' }],
   },
-  brandRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 12 },
-  logo: { width: 140, height: 38 },
+  brandRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 16 },
+  logo: { width: 150, height: 42 },
   seasonPill: {
-    backgroundColor: 'rgba(232,178,61,0.12)',
-    borderColor: 'rgba(232,178,61,0.4)',
+    backgroundColor: 'rgba(232,178,61,0.15)',
+    borderColor: 'rgba(232,178,61,0.5)',
     borderWidth: 1,
     borderRadius: 20,
-    paddingHorizontal: 10,
-    paddingVertical: 3,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
   },
-  seasonTxt: { color: '#E8B23D', fontSize: 9.5, fontFamily: 'Inter_700Bold', letterSpacing: 1.2 },
-  title: { fontSize: 28, fontFamily: 'Inter_700Bold', letterSpacing: -0.5 },
-  sub: { fontSize: 13.5, marginTop: 4, fontFamily: 'Inter_400Regular' },
-  underline: { height: 3, borderRadius: 3, width: 100, marginTop: 14, opacity: 0.9 },
+  seasonTxt: { color: '#E8B23D', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.5 },
+  title: { fontSize: 32, fontFamily: 'Inter_800ExtraBold', letterSpacing: -0.5 },
+  sub: { fontSize: 15, marginTop: 6, fontFamily: 'Inter_600SemiBold', letterSpacing: 0.2 },
+  underline: { height: 4, borderRadius: 2, width: 80, marginTop: 20, opacity: 0.9 },
 });

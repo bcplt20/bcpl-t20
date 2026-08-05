@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   ActivityIndicator,
+  Animated,
   Pressable,
   StyleSheet,
   Text,
   View,
+  type StyleProp,
   type ViewStyle,
 } from 'react-native';
 import { useColors } from '@/hooks/useColors';
@@ -14,7 +16,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
 import { SITE_ASSETS } from '@/lib/api';
 
-export function Card({ children, style }: { children: React.ReactNode; style?: ViewStyle }) {
+export function Card({ children, style }: { children: React.ReactNode; style?: StyleProp<ViewStyle> }) {
   const c = useColors();
   return (
     <View style={[styles.cardShadow, style]}>
@@ -51,11 +53,23 @@ export function Badge({
   tone?: 'live' | 'gold' | 'muted' | 'success';
 }) {
   const c = useColors();
+  const pulse = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    if (tone === 'live') {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(pulse, { toValue: 0.3, duration: 800, useNativeDriver: true }),
+          Animated.timing(pulse, { toValue: 1, duration: 800, useNativeDriver: true }),
+        ])
+      ).start();
+    }
+  }, [tone, pulse]);
   
   if (tone === 'live') {
     return (
       <View style={[styles.badgeBase, { backgroundColor: 'rgba(255, 59, 48, 0.15)', borderColor: 'rgba(255, 59, 48, 0.4)', shadowColor: c.destructive, shadowOpacity: 0.3, shadowRadius: 6, shadowOffset: { width: 0, height: 0 }, elevation: 2 }]}>
-        <View style={[styles.liveDot, { backgroundColor: c.destructive }]} />
+        <Animated.View style={[styles.liveDot, { backgroundColor: c.destructive, opacity: pulse }]} />
         <Text style={[styles.badgeText, { color: '#FF7B7B' }]}>{label.toUpperCase()}</Text>
       </View>
     );

@@ -21,20 +21,20 @@ import { Badge, Card, ErrorView, LoadingView } from '@/components/ui';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { LinearGradient } from 'expo-linear-gradient';
 
-function StatusRow({ label, value, done }: { label: string; value: string; done?: boolean }) {
+function StatusRow({ label, value, done, isCurrent }: { label: string; value: string; done?: boolean; isCurrent?: boolean }) {
   const c = useColors();
   return (
     <View style={styles.statusRow}>
-      <View style={[styles.statusIconWrap, done && { backgroundColor: 'rgba(49, 197, 107, 0.15)' }]}>
+      <View style={[styles.statusIconWrap, done && { backgroundColor: 'rgba(49, 197, 107, 0.2)' }, isCurrent && !done && { backgroundColor: 'rgba(232, 178, 61, 0.2)' }]}>
         <Feather
-          name={done ? 'check-circle' : 'circle'}
+          name={done ? 'check-circle' : isCurrent ? 'clock' : 'circle'}
           size={18}
-          color={done ? c.success : 'rgba(255,255,255,0.2)'}
+          color={done ? c.success : isCurrent ? c.accent : 'rgba(255,255,255,0.2)'}
         />
       </View>
-      <Text style={{ color: c.foreground, fontSize: 14, flex: 1, fontFamily: 'Inter_600SemiBold' }}>{label}</Text>
-      <View style={[styles.statusValuePill, done && { backgroundColor: 'rgba(49, 197, 107, 0.1)', borderColor: 'rgba(49, 197, 107, 0.3)' }]}>
-        <Text style={{ color: done ? c.success : c.mutedForeground, fontSize: 12, fontFamily: 'Inter_600SemiBold', textTransform: 'capitalize' }}>
+      <Text style={{ color: done || isCurrent ? c.foreground : c.mutedForeground, fontSize: 14.5, flex: 1, fontFamily: 'Inter_700Bold' }}>{label}</Text>
+      <View style={[styles.statusValuePill, done && { backgroundColor: 'rgba(49, 197, 107, 0.15)', borderColor: 'rgba(49, 197, 107, 0.4)' }, isCurrent && !done && { backgroundColor: 'rgba(232, 178, 61, 0.15)', borderColor: 'rgba(232, 178, 61, 0.4)' }]}>
+        <Text style={{ color: done ? c.success : isCurrent ? c.accent : c.mutedForeground, fontSize: 12, fontFamily: 'Inter_700Bold', textTransform: 'uppercase', letterSpacing: 0.5 }}>
           {value}
         </Text>
       </View>
@@ -57,7 +57,7 @@ function LangSwitch() {
   return (
     <Card>
       <Text style={[styles.cardTitle, { color: c.foreground }]}>{t('Language', 'भाषा')}</Text>
-      <View style={{ flexDirection: 'row', gap: 10 }}>
+      <View style={{ flexDirection: 'row', gap: 12, marginTop: 12 }}>
         {opts.map((o) => {
           const isActive = lang === o.value;
           return (
@@ -68,15 +68,19 @@ function LangSwitch() {
                 styles.langBtn,
                 {
                   borderColor: isActive ? c.primary : 'rgba(255,255,255,0.1)',
-                  backgroundColor: isActive ? 'rgba(255,107,0,0.12)' : 'rgba(255,255,255,0.03)',
                   opacity: pressed ? 0.8 : 1,
                 },
               ]}
               testID={`lang-${o.value}`}
             >
+              {isActive ? (
+                <LinearGradient colors={['#FF6B00', '#D95A00']} style={StyleSheet.absoluteFill} />
+              ) : (
+                <LinearGradient colors={['rgba(255,255,255,0.05)', 'rgba(255,255,255,0.02)']} style={StyleSheet.absoluteFill} />
+              )}
               <Text
                 style={{
-                  color: isActive ? c.primary : c.mutedForeground,
+                  color: isActive ? '#fff' : c.mutedForeground,
                   fontFamily: isActive ? 'Inter_700Bold' : 'Inter_600SemiBold',
                   fontSize: 14,
                 }}
@@ -109,7 +113,7 @@ function LegalLinks() {
   const { t } = useLang();
   return (
     <Card>
-      <Text style={[styles.cardTitle, { color: c.foreground }]}>{t('Rules & policies', 'नियम और नीतियाँ')}</Text>
+      <Text style={[styles.cardTitle, { color: c.foreground, marginBottom: 12 }]}>{t('Rules & policies', 'नियम और नीतियाँ')}</Text>
       <View>
         {LEGAL_LINKS.map((l, i) => (
           <Pressable
@@ -117,12 +121,12 @@ function LegalLinks() {
             onPress={() => WebBrowser.openBrowserAsync(`https://bcplt20.com${l.path}`)}
             style={({ pressed }) => [
               styles.supportRow,
-              i > 0 && { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: c.border },
+              i > 0 && { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: 'rgba(255,255,255,0.1)' },
               { opacity: pressed ? 0.7 : 1 },
             ]}
             testID={`legal-${l.path.slice(1)}`}
           >
-            <Text style={{ color: c.foreground, fontSize: 13.5, fontFamily: 'Inter_500Medium', flex: 1 }}>
+            <Text style={{ color: c.secondaryForeground, fontSize: 14, fontFamily: 'Inter_600SemiBold', flex: 1 }}>
               {t(l.en, l.hi)}
             </Text>
             <Feather name="chevron-right" size={16} color={c.mutedForeground} />
@@ -143,7 +147,7 @@ function ContactSupport() {
   ];
   return (
     <Card>
-      <Text style={[styles.cardTitle, { color: c.foreground }]}>{t('Contact & support', 'संपर्क और सहायता')}</Text>
+      <Text style={[styles.cardTitle, { color: c.foreground, marginBottom: 12 }]}>{t('Contact & support', 'संपर्क और सहायता')}</Text>
       <View style={{ gap: 4 }}>
         {rows.map((r, i) => (
           <Pressable
@@ -152,16 +156,16 @@ function ContactSupport() {
             style={({ pressed }) => [
               styles.supportRow,
               { opacity: pressed ? 0.7 : 1 },
-              i > 0 && { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: 'rgba(255,255,255,0.06)' }
+              i > 0 && { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: 'rgba(255,255,255,0.08)' }
             ]}
             testID={`support-${r.icon}`}
           >
             <View style={styles.supportIcon}>
-              <Feather name={r.icon} size={18} color="#FF6B00" />
+              <Feather name={r.icon} size={18} color="#E8B23D" />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={{ color: c.foreground, fontFamily: 'Inter_600SemiBold', fontSize: 14 }}>{r.label}</Text>
-              <Text style={{ color: c.mutedForeground, fontSize: 12, marginTop: 2 }}>{r.sub}</Text>
+              <Text style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 15 }}>{r.label}</Text>
+              <Text style={{ color: c.mutedForeground, fontSize: 13, marginTop: 4, fontFamily: 'Inter_500Medium' }}>{r.sub}</Text>
             </View>
             <Feather name="chevron-right" size={18} color={c.mutedForeground} />
           </Pressable>
@@ -188,16 +192,17 @@ export default function ProfileScreen() {
   if (!token) {
     return (
       <View style={{ flex: 1, backgroundColor: c.background }}>
-        <ScrollView contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 118 : 100 }}>
+        <ScrollView contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 118 : 120 }}>
         <ScreenHeader title="Profile" />
         <View style={styles.loginWrap}>
           <View style={styles.loginIconWrap}>
-            <Feather name="user" size={44} color={c.accent} />
+            <LinearGradient colors={['rgba(255,107,0,0.2)', 'rgba(255,107,0,0.05)']} style={StyleSheet.absoluteFill} />
+            <Feather name="user" size={44} color={c.primary} />
           </View>
-          <Text style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 20, marginTop: 24, textAlign: 'center' }}>
+          <Text style={{ color: c.foreground, fontFamily: 'Inter_800ExtraBold', fontSize: 24, marginTop: 24, textAlign: 'center' }}>
             {t('Log in to your BCPL account', 'अपने BCPL अकाउंट में लॉगिन करें')}
           </Text>
-          <Text style={{ color: c.mutedForeground, textAlign: 'center', marginTop: 10, fontSize: 14, lineHeight: 22 }}>
+          <Text style={{ color: c.mutedForeground, textAlign: 'center', marginTop: 12, fontSize: 15, lineHeight: 24, fontFamily: 'Inter_500Medium' }}>
             {t('Use the same phone number you registered with on bcplt20.com — you will log in via OTP', 'वही फ़ोन नंबर इस्तेमाल करें जिससे आपने bcplt20.com पर रजिस्टर किया था — OTP से लॉगिन होगा')}
           </Text>
           <Pressable
@@ -207,9 +212,9 @@ export default function ProfileScreen() {
           >
             <LinearGradient
               colors={['#FF6B00', '#D95A00']}
-              style={[StyleSheet.absoluteFill, { borderRadius: 14 }]}
+              style={[StyleSheet.absoluteFill, { borderRadius: 16 }]}
             />
-            <Text style={{ color: '#fff', fontFamily: 'Inter_700Bold', fontSize: 16 }}>
+            <Text style={{ color: '#fff', fontFamily: 'Inter_800ExtraBold', fontSize: 16, letterSpacing: 0.5 }}>
               Login with OTP
             </Text>
           </Pressable>
@@ -230,26 +235,27 @@ export default function ProfileScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: c.background }}>
       <ScrollView
-        contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 118 : 100 }}
+        contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 118 : 120 }}
         refreshControl={
           <RefreshControl refreshing={dashQ.isRefetching} onRefresh={() => dashQ.refetch()} tintColor={c.primary} />
         }
       >
         <ScreenHeader title={user?.name ?? 'Player'} subtitle={user?.phone} />
-        <View style={{ paddingHorizontal: 16, gap: 16, paddingTop: 10 }}>
+        <View style={{ paddingHorizontal: 16, gap: 16, paddingTop: 16 }}>
           {dashQ.isLoading ? (
             <LoadingView />
           ) : dashQ.isError ? (
             <ErrorView onRetry={() => dashQ.refetch()} />
           ) : !d?.registered ? (
-            <Card style={{ alignItems: 'center', paddingVertical: 36 }}>
-              <View style={[styles.loginIconWrap, { backgroundColor: 'rgba(232, 178, 61, 0.1)' }]}>
-                <Feather name="edit-3" size={32} color={c.accent} />
+            <Card style={{ alignItems: 'center', paddingVertical: 40 }}>
+              <View style={[styles.loginIconWrap, { backgroundColor: 'transparent', borderColor: 'rgba(232, 178, 61, 0.3)' }]}>
+                <LinearGradient colors={['rgba(232,178,61,0.2)', 'rgba(232,178,61,0.05)']} style={StyleSheet.absoluteFill} />
+                <Feather name="edit-3" size={36} color={c.accent} />
               </View>
-              <Text style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 18, marginTop: 20, textAlign: 'center' }}>
+              <Text style={{ color: c.foreground, fontFamily: 'Inter_800ExtraBold', fontSize: 20, marginTop: 24, textAlign: 'center' }}>
                 {t("Register for this season on bcplt20.com", 'इस सीज़न की रजिस्ट्रेशन bcplt20.com पर करें')}
               </Text>
-              <Text style={{ color: c.mutedForeground, fontSize: 13.5, marginTop: 8, textAlign: 'center', lineHeight: 20 }}>
+              <Text style={{ color: c.mutedForeground, fontSize: 14, marginTop: 10, textAlign: 'center', lineHeight: 22, fontFamily: 'Inter_500Medium' }}>
                 {t('Your dashboard will appear here once registration is complete', 'रजिस्ट्रेशन पूरी होते ही आपका डैशबोर्ड यहाँ दिखेगा')}
               </Text>
               <Pressable
@@ -259,67 +265,72 @@ export default function ProfileScreen() {
               >
                 <LinearGradient
                   colors={['#FF6B00', '#D95A00']}
-                  style={[StyleSheet.absoluteFill, { borderRadius: 12 }]}
+                  style={[StyleSheet.absoluteFill, { borderRadius: 14 }]}
                 />
                 <Feather name="edit-3" size={16} color="#fff" />
-                <Text style={{ color: '#fff', fontFamily: 'Inter_700Bold', fontSize: 14, letterSpacing: 0.5 }}>{t('Register now', 'रजिस्टर करें')}</Text>
+                <Text style={{ color: '#fff', fontFamily: 'Inter_800ExtraBold', fontSize: 15, letterSpacing: 0.5 }}>{t('Register now', 'रजिस्टर करें')}</Text>
               </Pressable>
             </Card>
           ) : (
             <>
-              <Card>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <View>
-                    <Text style={{ color: c.mutedForeground, fontSize: 11, fontFamily: 'Inter_600SemiBold', letterSpacing: 0.5 }}>REGISTRATION NO.</Text>
-                    <Text style={{ color: c.accent, fontFamily: 'Inter_700Bold', fontSize: 24, marginTop: 4, letterSpacing: -0.5 }}>
-                      {reg?.regNumber ?? '—'}
-                    </Text>
+              <Card style={{ padding: 0 }}>
+                <LinearGradient colors={['rgba(255,255,255,0.05)', 'transparent']} style={{ padding: 20 }}>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <View>
+                      <Text style={{ color: c.mutedForeground, fontSize: 11, fontFamily: 'Inter_700Bold', letterSpacing: 1 }}>REGISTRATION NO.</Text>
+                      <Text style={{ color: c.accent, fontFamily: 'Inter_800ExtraBold', fontSize: 28, marginTop: 6, letterSpacing: -0.5 }}>
+                        {reg?.regNumber ?? '—'}
+                      </Text>
+                    </View>
+                    {reg?.role ? <Badge label={reg.role} tone="gold" /> : null}
                   </View>
-                  {reg?.role ? <Badge label={reg.role} tone="gold" /> : null}
-                </View>
-                {reg?.trialCity ? (
-                  <View style={{ marginTop: 16, paddingTop: 16, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: 'rgba(255,255,255,0.1)', flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                    <Feather name="map-pin" size={14} color={c.mutedForeground} />
-                    <Text style={{ color: c.foreground, fontSize: 13, fontFamily: 'Inter_500Medium' }}>
-                      Trial city: <Text style={{ fontFamily: 'Inter_700Bold' }}>{reg.trialCity}</Text>
-                    </Text>
-                  </View>
-                ) : null}
+                  {reg?.trialCity ? (
+                    <View style={{ marginTop: 20, paddingTop: 16, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: 'rgba(255,255,255,0.1)', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                      <Feather name="map-pin" size={16} color={c.primary} />
+                      <Text style={{ color: c.foreground, fontSize: 14, fontFamily: 'Inter_500Medium' }}>
+                        Trial city: <Text style={{ fontFamily: 'Inter_800ExtraBold' }}>{reg.trialCity}</Text>
+                      </Text>
+                    </View>
+                  ) : null}
+                </LinearGradient>
               </Card>
 
               <Card style={{ padding: 0 }}>
-                <View style={{ padding: 16, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(255,255,255,0.06)' }}>
+                <View style={{ padding: 20, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(255,255,255,0.1)' }}>
                   <Text style={[styles.cardTitle, { color: c.foreground }]}>{t('Your season journey', 'आपका सीज़न सफ़र')}</Text>
                 </View>
-                <View style={{ padding: 16, paddingVertical: 8 }}>
+                <View style={{ padding: 20, paddingVertical: 12 }}>
                   <StatusRow
                     label="Phase 1 — Registration"
                     value={niceStatus(reg?.phase1Status)}
                     done={['selected', 'video_submitted', 'payment_done'].includes(reg?.phase1Status ?? '')}
+                    isCurrent={!['selected', 'video_submitted', 'payment_done'].includes(reg?.phase1Status ?? '')}
                   />
                   <StatusRow
                     label="Trial video"
                     value={d.video?.submitted ? 'Submitted' : 'Pending'}
                     done={!!d.video?.submitted}
+                    isCurrent={['video_submitted', 'payment_done'].includes(reg?.phase1Status ?? '') && !d.video?.submitted}
                   />
                   {!d.video?.submitted && ['video_submitted', 'payment_done'].includes(reg?.phase1Status ?? '') ? (
                     <Pressable
                       onPress={() => Linking.openURL('https://bcplt20.com/dashboard')}
-                      style={({ pressed }) => [styles.linkBtn, { opacity: pressed ? 0.8 : 1, marginTop: 8, marginBottom: 12 }]}
+                      style={({ pressed }) => [styles.linkBtn, { opacity: pressed ? 0.8 : 1, marginTop: 8, marginBottom: 16 }]}
                       testID="upload-video-cta"
                     >
                       <LinearGradient
                         colors={['#FF6B00', '#D95A00']}
-                        style={[StyleSheet.absoluteFill, { borderRadius: 12 }]}
+                        style={[StyleSheet.absoluteFill, { borderRadius: 14 }]}
                       />
-                      <Feather name="video" size={16} color="#fff" />
-                      <Text style={{ color: '#fff', fontFamily: 'Inter_700Bold', fontSize: 14 }}>{t('Upload trial video', 'ट्रायल वीडियो अपलोड करें')}</Text>
+                      <Feather name="video" size={18} color="#fff" />
+                      <Text style={{ color: '#fff', fontFamily: 'Inter_800ExtraBold', fontSize: 15 }}>{t('Upload trial video', 'ट्रायल वीडियो अपलोड करें')}</Text>
                     </Pressable>
                   ) : null}
                   <StatusRow
                     label="Phase 2 — KYC"
                     value={niceStatus(d.kyc?.status ?? reg?.phase2Status)}
                     done={(d.kyc?.status ?? '') === 'approved'}
+                    isCurrent={!!d.video?.submitted && (d.kyc?.status ?? '') !== 'approved'}
                   />
                   <StatusRow
                     label="Physical trial"
@@ -331,16 +342,17 @@ export default function ProfileScreen() {
                           : 'Awaited'
                     }
                     done={!!d.trial?.assessmentSubmitted}
+                    isCurrent={(d.kyc?.status ?? '') === 'approved' && !d.trial?.assessmentSubmitted}
                   />
                 </View>
               </Card>
 
               {(d.phase1Payment || d.phase2Payment) && (
                 <Card style={{ padding: 0 }}>
-                  <View style={{ padding: 16, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(255,255,255,0.06)' }}>
+                  <View style={{ padding: 20, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(255,255,255,0.1)' }}>
                     <Text style={[styles.cardTitle, { color: c.foreground }]}>Payments</Text>
                   </View>
-                  <View style={{ padding: 16, paddingVertical: 8 }}>
+                  <View style={{ padding: 20, paddingVertical: 12 }}>
                     {d.phase1Payment ? (
                       <StatusRow
                         label={`Phase 1 — ₹${d.phase1Payment.amount}`}
@@ -369,12 +381,12 @@ export default function ProfileScreen() {
             onPress={() => logout()}
             style={({ pressed }) => [
               styles.logoutBtn,
-              { backgroundColor: 'rgba(239, 68, 68, 0.1)', borderColor: 'rgba(239, 68, 68, 0.3)', opacity: pressed ? 0.7 : 1 },
+              { backgroundColor: 'rgba(255, 59, 48, 0.1)', borderColor: 'rgba(255, 59, 48, 0.3)', opacity: pressed ? 0.7 : 1 },
             ]}
             testID="logout-button"
           >
             <Feather name="log-out" size={18} color={c.destructive} />
-            <Text style={{ color: c.destructive, fontFamily: 'Inter_700Bold', fontSize: 14.5 }}>Logout</Text>
+            <Text style={{ color: c.destructive, fontFamily: 'Inter_800ExtraBold', fontSize: 15 }}>Logout</Text>
           </Pressable>
         </View>
       </ScrollView>
@@ -383,17 +395,17 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  supportRow: { flexDirection: 'row', alignItems: 'center', gap: 14, paddingVertical: 14 },
-  supportIcon: { width: 38, height: 38, borderRadius: 19, backgroundColor: 'rgba(255,107,0,0.15)', alignItems: 'center', justifyContent: 'center' },
+  supportRow: { flexDirection: 'row', alignItems: 'center', gap: 16, paddingVertical: 16 },
+  supportIcon: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(232, 178, 61, 0.15)', alignItems: 'center', justifyContent: 'center' },
   linkBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 10,
-    borderRadius: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    marginTop: 20,
+    gap: 12,
+    borderRadius: 14,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    marginTop: 24,
     alignSelf: 'stretch',
     overflow: 'hidden',
   },
@@ -405,35 +417,41 @@ const styles = StyleSheet.create({
     paddingBottom: 120,
   },
   loginIconWrap: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 88,
+    height: 88,
+    borderRadius: 44,
     backgroundColor: 'rgba(255,255,255,0.05)',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
+    borderWidth: 2,
+    borderColor: 'rgba(255,107,0,0.3)',
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
   },
   loginBtn: {
-    marginTop: 32,
-    borderRadius: 14,
+    marginTop: 36,
+    borderRadius: 16,
     paddingHorizontal: 40,
-    paddingVertical: 16,
+    paddingVertical: 18,
     alignSelf: 'stretch',
     alignItems: 'center',
     overflow: 'hidden',
+    shadowColor: '#FF6B00',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 8,
   },
-  cardTitle: { fontFamily: 'Inter_700Bold', fontSize: 16, letterSpacing: -0.2 },
+  cardTitle: { fontFamily: 'Inter_800ExtraBold', fontSize: 18, letterSpacing: -0.2 },
   statusRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    paddingVertical: 12,
+    gap: 14,
+    paddingVertical: 14,
   },
   statusIconWrap: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -441,16 +459,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.1)',
     borderRadius: 20,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    backgroundColor: 'rgba(255,255,255,0.03)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: 'rgba(255,255,255,0.05)',
   },
   langBtn: {
     flex: 1,
     borderWidth: 1,
-    borderRadius: 12,
-    paddingVertical: 12,
+    borderRadius: 14,
+    paddingVertical: 14,
     alignItems: 'center',
+    overflow: 'hidden',
   },
   logoutBtn: {
     flexDirection: 'row',
@@ -458,8 +477,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 10,
     borderWidth: 1,
-    borderRadius: 14,
-    paddingVertical: 16,
+    borderRadius: 16,
+    paddingVertical: 18,
     marginTop: 8,
     marginBottom: 20,
   },

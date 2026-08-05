@@ -20,7 +20,7 @@ import { getGallery, type GalleryItem } from '@/lib/api';
 import { Card, ErrorView, LoadingView } from '@/components/ui';
 import { LinearGradient } from 'expo-linear-gradient';
 
-const GAP = 8;
+const GAP = 12;
 const COLS = 3;
 
 export default function MediaScreen() {
@@ -43,12 +43,12 @@ export default function MediaScreen() {
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: c.background }}
-      contentContainerStyle={{ padding: 16, paddingBottom: Platform.OS === 'web' ? 60 : 40 }}
+      contentContainerStyle={{ padding: 16, paddingBottom: Platform.OS === 'web' ? 118 : 120, paddingTop: 20 }}
     >
-      <Text style={{ color: '#E8B23D', fontFamily: 'Inter_700Bold', fontSize: 10.5, letterSpacing: 2 }}>
+      <Text style={{ color: '#E8B23D', fontFamily: 'Inter_800ExtraBold', fontSize: 11, letterSpacing: 2 }}>
         {t('GALLERY', 'गैलरी')}
       </Text>
-      <Text style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 22, marginTop: 3 }}>
+      <Text style={{ color: c.foreground, fontFamily: 'Inter_800ExtraBold', fontSize: 26, marginTop: 6 }}>
         {t('Photos & Videos', 'फ़ोटो और वीडियो')}
       </Text>
 
@@ -57,45 +57,48 @@ export default function MediaScreen() {
       ) : q.isError ? (
         <ErrorView onRetry={() => q.refetch()} />
       ) : (q.data?.albums?.length ?? 0) === 0 ? (
-        <Card style={{ alignItems: 'center', paddingVertical: 36, marginTop: 16 }}>
-          <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: 'rgba(255,255,255,0.03)', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
-            <Feather name="camera" size={24} color={c.mutedForeground} />
+        <Card style={{ alignItems: 'center', paddingVertical: 48, marginTop: 24 }}>
+          <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: 'rgba(255,255,255,0.05)', alignItems: 'center', justifyContent: 'center', marginBottom: 20, borderWidth: 2, borderColor: 'rgba(255,255,255,0.1)' }}>
+            <Feather name="camera" size={32} color={c.mutedForeground} />
           </View>
-          <Text style={{ color: c.mutedForeground, fontSize: 14, textAlign: 'center', fontFamily: 'Inter_500Medium' }}>
+          <Text style={{ color: c.mutedForeground, fontSize: 15, textAlign: 'center', fontFamily: 'Inter_600SemiBold' }}>
             {t('Season 5 photos & videos will appear here soon', 'सीज़न 5 की फ़ोटो और वीडियो जल्द यहाँ दिखेंगी')}
           </Text>
         </Card>
       ) : (
         q.data!.albums.map((album) => (
-          <View key={album.id} style={{ marginTop: 24 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-              <Text style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 18, letterSpacing: -0.3 }}>
+          <View key={album.id} style={{ marginTop: 32 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+              <Text style={{ color: c.foreground, fontFamily: 'Inter_800ExtraBold', fontSize: 20, letterSpacing: -0.3 }}>
                 {album.name}
               </Text>
-              <Text style={{ color: c.mutedForeground, fontSize: 12, fontFamily: 'Inter_600SemiBold' }}>
-                {album.items.length} {t('Items', 'आइटम')}
-              </Text>
+              <View style={{ backgroundColor: 'rgba(255,255,255,0.08)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 }}>
+                <Text style={{ color: c.mutedForeground, fontSize: 12, fontFamily: 'Inter_700Bold' }}>
+                  {album.items.length} {t('Items', 'आइटम')}
+                </Text>
+              </View>
             </View>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: GAP }}>
               {album.items.map((item) => (
                 <Pressable
                   key={item.id}
                   onPress={() => (item.kind === 'video' ? WebBrowser.openBrowserAsync(item.viewUrl) : setViewer(item))}
-                  style={({ pressed }) => ({ opacity: pressed ? 0.85 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] })}
+                  style={({ pressed }) => ({ opacity: pressed ? 0.85 : 1, transform: [{ scale: pressed ? 0.96 : 1 }] })}
                   testID={`media-${item.id}`}
                 >
-                  <View style={{ width: cell, height: cell, borderRadius: 12, overflow: 'hidden', backgroundColor: 'rgba(255,255,255,0.04)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' }}>
+                  <View style={{ width: cell, height: cell, borderRadius: 16, overflow: 'hidden', backgroundColor: 'rgba(255,255,255,0.05)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }}>
                     {item.kind === 'photo' ? (
                       <Image source={{ uri: item.viewUrl }} style={{ width: '100%', height: '100%' }} contentFit="cover" transition={200} />
                     ) : (
                       <View style={{ flex: 1 }}>
+                        <Image source={{ uri: item.viewUrl }} style={[StyleSheet.absoluteFill, { opacity: 0.5 }]} contentFit="cover" blurRadius={10} />
                         <LinearGradient
-                          colors={['rgba(27,46,82,0.6)', 'rgba(36,57,107,0.3)']}
+                          colors={['rgba(7,12,26,0.6)', 'rgba(18,31,61,0.4)']}
                           style={StyleSheet.absoluteFill}
                         />
                         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                           <View style={styles.playCircle}>
-                            <Feather name="play" size={18} color="#fff" style={{ marginLeft: 2 }} />
+                            <Feather name="play" size={20} color="#fff" style={{ marginLeft: 3 }} />
                           </View>
                         </View>
                       </View>
@@ -111,14 +114,14 @@ export default function MediaScreen() {
       {/* Season 4 videos live on the website */}
       <Pressable
         onPress={() => WebBrowser.openBrowserAsync('https://bcplt20.com/videos')}
-        style={({ pressed }) => [styles.videosBtn, { borderColor: c.border, opacity: pressed ? 0.8 : 1 }]}
+        style={({ pressed }) => [styles.videosBtn, { borderColor: 'rgba(232, 178, 61, 0.3)', opacity: pressed ? 0.8 : 1 }]}
         testID="videos-link"
       >
-        <Feather name="film" size={16} color="#FF6B00" />
-        <Text style={{ color: c.foreground, fontFamily: 'Inter_600SemiBold', fontSize: 13.5, flex: 1 }}>
+        <Feather name="film" size={18} color="#FF6B00" />
+        <Text style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 14.5, flex: 1 }}>
           {t('Season 4 auction videos & highlights', 'सीज़न 4 ऑक्शन वीडियो और हाइलाइट्स')}
         </Text>
-        <Feather name="external-link" size={15} color={c.mutedForeground} />
+        <Feather name="external-link" size={16} color={c.mutedForeground} />
       </Pressable>
 
       {/* full-screen photo viewer */}
@@ -128,7 +131,9 @@ export default function MediaScreen() {
             <Image source={{ uri: viewer.viewUrl }} style={{ width: '100%', height: '80%' }} contentFit="contain" />
           ) : null}
           <View style={styles.viewerClose}>
-            <Feather name="x" size={22} color="#fff" />
+            <View style={{ backgroundColor: 'rgba(0,0,0,0.5)', padding: 12, borderRadius: 24 }}>
+              <Feather name="x" size={24} color="#fff" />
+            </View>
           </View>
         </Pressable>
       </Modal>
@@ -138,28 +143,33 @@ export default function MediaScreen() {
 
 const styles = StyleSheet.create({
   playCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255,107,0,0.85)',
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: 'rgba(255,107,0,0.9)',
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: '#FF6B00',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 8,
+    elevation: 4,
   },
   videosBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 12,
     borderWidth: 1,
-    borderRadius: 14,
-    padding: 14,
-    marginTop: 22,
-    backgroundColor: 'rgba(255,255,255,0.04)',
+    borderRadius: 16,
+    padding: 18,
+    marginTop: 32,
+    backgroundColor: 'rgba(232, 178, 61, 0.05)',
   },
   viewerWrap: {
     flex: 1,
-    backgroundColor: 'rgba(4,10,24,0.96)',
+    backgroundColor: 'rgba(4,10,24,0.98)',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  viewerClose: { position: 'absolute', top: 54, right: 20 },
+  viewerClose: { position: 'absolute', top: Platform.OS === 'ios' ? 60 : 40, right: 20 },
 });

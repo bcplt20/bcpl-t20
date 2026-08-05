@@ -30,24 +30,26 @@ export default function NewsDetailScreen() {
         <View>
           <Image
             source={{ uri: `${SITE_ASSETS}/bcpl-assets/news/${article.image}` }}
-            style={{ width: '100%', height: 280 }}
+            style={{ width: '100%', height: 320 }}
             contentFit="cover"
             transition={200}
           />
           <LinearGradient
             colors={['transparent', c.background]}
-            style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 100 }}
+            style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 160 }}
           />
         </View>
         <View style={{ padding: 20, paddingTop: 0 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-            <Text style={{ color: c.accent, fontSize: 12, fontFamily: 'Inter_700Bold', letterSpacing: 0.5 }}>
-              {article.tag.toUpperCase()}
-            </Text>
-            <Text style={{ color: c.mutedForeground, fontSize: 13 }}>• {article.date}</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+            <View style={{ backgroundColor: '#FF6B00', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 }}>
+              <Text style={{ color: '#fff', fontSize: 11, fontFamily: 'Inter_800ExtraBold', letterSpacing: 0.5 }}>
+                {article.tag.toUpperCase()}
+              </Text>
+            </View>
+            <Text style={{ color: c.mutedForeground, fontSize: 13, fontFamily: 'Inter_600SemiBold' }}>{article.date}</Text>
           </View>
           <Text style={[styles.title, { color: c.foreground }]}>{article.title}</Text>
-          <View style={{ height: 3, width: 40, backgroundColor: c.primary, marginBottom: 20, borderRadius: 2 }} />
+          <LinearGradient colors={['#FF6B00', '#E8B23D']} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={{ height: 4, width: 60, marginBottom: 24, borderRadius: 2 }} />
           
           {article.paragraphs.map((p, i) => (
             <Text key={i} style={[styles.para, { color: c.secondaryForeground }]}>
@@ -56,8 +58,8 @@ export default function NewsDetailScreen() {
           ))}
 
           {article.press.length > 0 ? (
-            <Card style={{ marginTop: 24 }}>
-              <Text style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 15, marginBottom: 10 }}>
+            <Card style={{ marginTop: 32 }}>
+              <Text style={{ color: c.foreground, fontFamily: 'Inter_800ExtraBold', fontSize: 16, marginBottom: 16 }}>
                 Press coverage
               </Text>
               {article.press.map((p) => (
@@ -68,9 +70,9 @@ export default function NewsDetailScreen() {
                   testID={`press-${p.label}`}
                 >
                   <View style={styles.pressIcon}>
-                    <Feather name="external-link" size={14} color={c.accent} />
+                    <Feather name="external-link" size={16} color="#E8B23D" />
                   </View>
-                  <Text style={{ color: c.accent, fontSize: 14, fontFamily: 'Inter_600SemiBold', flex: 1 }}>
+                  <Text style={{ color: c.accent, fontSize: 15, fontFamily: 'Inter_700Bold', flex: 1 }}>
                     {p.label}
                   </Text>
                 </Pressable>
@@ -85,31 +87,31 @@ export default function NewsDetailScreen() {
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 26,
-    fontFamily: 'Inter_700Bold',
-    lineHeight: 32,
-    marginBottom: 16,
+    fontSize: 28,
+    fontFamily: 'Inter_800ExtraBold',
+    lineHeight: 36,
+    marginBottom: 20,
     letterSpacing: -0.5,
   },
   para: { 
     fontSize: 16, 
-    lineHeight: 26, 
-    marginBottom: 16,
-    fontFamily: 'Inter_400Regular'
+    lineHeight: 28, 
+    marginBottom: 20,
+    fontFamily: 'Inter_500Medium'
   },
   pressRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    paddingVertical: 10,
+    gap: 16,
+    paddingVertical: 12,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: 'rgba(255,255,255,0.1)',
   },
   pressIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: 'rgba(232, 178, 61, 0.1)',
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(232, 178, 61, 0.15)',
     alignItems: 'center',
     justifyContent: 'center',
   }

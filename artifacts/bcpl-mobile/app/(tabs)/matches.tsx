@@ -4,6 +4,7 @@ import {
   Platform,
   Pressable,
   RefreshControl,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -15,6 +16,7 @@ import { EmptyView, ErrorView, LoadingView } from '@/components/ui';
 import { MatchCard } from '@/components/MatchCard';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { useLang } from '@/context/LanguageContext';
+import { LinearGradient } from 'expo-linear-gradient';
 
 type Filter = 'all' | 'live' | 'upcoming' | 'results';
 const FILTERS: { key: Filter; label: string }[] = [
@@ -49,34 +51,40 @@ export default function MatchesScreen() {
     <View style={{ flex: 1, backgroundColor: c.background }}>
       <ScreenHeader title="Matches" subtitle={t('Season 5 schedule & results', 'सीज़न 5 शेड्यूल और नतीजे')} />
       <View style={styles.filters}>
-        {FILTERS.map((f) => {
-          const isActive = filter === f.key;
-          return (
-            <Pressable
-              key={f.key}
-              onPress={() => setFilter(f.key)}
-              testID={`filter-${f.key}`}
-              style={[
-                styles.chip,
-                {
-                  backgroundColor: isActive ? c.primary : 'rgba(255,255,255,0.06)',
-                  borderColor: isActive ? c.primary : 'rgba(255,255,255,0.1)',
-                },
-              ]}
-            >
-              <Text
-                style={{
-                  color: isActive ? c.primaryForeground : c.mutedForeground,
-                  fontFamily: isActive ? 'Inter_700Bold' : 'Inter_600SemiBold',
-                  fontSize: 13,
-                  letterSpacing: 0.3,
-                }}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, gap: 10, paddingBottom: 16, paddingTop: 10 }}>
+          {FILTERS.map((f) => {
+            const isActive = filter === f.key;
+            return (
+              <Pressable
+                key={f.key}
+                onPress={() => setFilter(f.key)}
+                testID={`filter-${f.key}`}
+                style={[
+                  styles.chip,
+                  {
+                    borderColor: isActive ? c.primary : 'rgba(255,255,255,0.1)',
+                  },
+                ]}
               >
-                {f.label}
-              </Text>
-            </Pressable>
-          );
-        })}
+                {isActive ? (
+                  <LinearGradient colors={['#FF6B00', '#D95A00']} style={StyleSheet.absoluteFill} />
+                ) : (
+                  <LinearGradient colors={['rgba(255,255,255,0.05)', 'rgba(255,255,255,0.02)']} style={StyleSheet.absoluteFill} />
+                )}
+                <Text
+                  style={{
+                    color: isActive ? '#fff' : c.mutedForeground,
+                    fontFamily: isActive ? 'Inter_700Bold' : 'Inter_600SemiBold',
+                    fontSize: 14,
+                    letterSpacing: 0.3,
+                  }}
+                >
+                  {f.label}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </ScrollView>
       </View>
       {q.isLoading ? (
         <LoadingView />
@@ -92,7 +100,7 @@ export default function MatchesScreen() {
           scrollEnabled={filtered.length > 0}
           contentContainerStyle={{
             paddingHorizontal: 16,
-            paddingBottom: Platform.OS === 'web' ? 118 : 100,
+            paddingBottom: Platform.OS === 'web' ? 118 : 120,
             paddingTop: 8,
           }}
           refreshControl={
@@ -106,16 +114,14 @@ export default function MatchesScreen() {
 
 const styles = StyleSheet.create({
   filters: {
-    flexDirection: 'row',
-    gap: 10,
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    paddingTop: 4,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: 'rgba(255,255,255,0.06)',
   },
   chip: {
     borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: 18,
+    paddingVertical: 10,
     borderWidth: 1,
+    overflow: 'hidden',
   },
 });

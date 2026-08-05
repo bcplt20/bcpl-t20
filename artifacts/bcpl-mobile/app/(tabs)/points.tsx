@@ -19,21 +19,21 @@ import { LinearGradient } from 'expo-linear-gradient';
 function GroupTable({ title, rows, qualify }: { title: string; rows: PointsRow[]; qualify: number }) {
   const c = useColors();
   return (
-    <View style={{ marginBottom: 24 }}>
+    <View style={{ marginBottom: 28 }}>
       <View style={styles.groupHead}>
         <LinearGradient
-          colors={['rgba(255, 107, 0, 0.2)', 'rgba(255, 107, 0, 0.05)']}
+          colors={['rgba(255, 107, 0, 0.3)', 'rgba(255, 107, 0, 0.05)']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.groupChip}
         >
-          <Text style={{ color: '#FF6B00', fontFamily: 'Inter_700Bold', fontSize: 13, letterSpacing: 1.5 }}>{title}</Text>
+          <Text style={{ color: '#FF6B00', fontFamily: 'Inter_800ExtraBold', fontSize: 13, letterSpacing: 1.5 }}>{title}</Text>
         </LinearGradient>
       </View>
       <Card style={{ paddingHorizontal: 0, paddingVertical: 0, overflow: 'hidden' }}>
         <View style={[styles.row, styles.headRow, { backgroundColor: 'rgba(255,255,255,0.03)' }]}>
           <Text style={[styles.pos, { color: c.mutedForeground, fontSize: 11 }]}>#</Text>
-          <Text style={[styles.team, { color: c.mutedForeground, fontSize: 11, fontFamily: 'Inter_600SemiBold', letterSpacing: 0.5 }]}>TEAM</Text>
+          <Text style={[styles.team, { color: c.mutedForeground, fontSize: 11, fontFamily: 'Inter_700Bold', letterSpacing: 0.5 }]}>TEAM</Text>
           <Text style={[styles.num, { color: c.mutedForeground, fontSize: 11 }]}>P</Text>
           <Text style={[styles.num, { color: c.mutedForeground, fontSize: 11 }]}>W</Text>
           <Text style={[styles.num, { color: c.mutedForeground, fontSize: 11 }]}>L</Text>
@@ -45,24 +45,35 @@ function GroupTable({ title, rows, qualify }: { title: string; rows: PointsRow[]
             key={t.team}
             style={[
               styles.row,
-              { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: c.border },
-              i < qualify && { backgroundColor: 'rgba(232,178,61,0.08)' },
+              { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: 'rgba(255,255,255,0.06)' },
+              i < qualify && { backgroundColor: 'rgba(49,197,107,0.06)' },
+              i >= qualify && i % 2 === 1 && { backgroundColor: 'rgba(255,255,255,0.015)' }
             ]}
           >
-            <Text style={[styles.pos, { color: i < qualify ? c.accent : c.mutedForeground }]}>{i + 1}</Text>
+            <View style={{ width: 22, alignItems: 'center' }}>
+              {i === 0 ? (
+                <View style={[styles.medal, { backgroundColor: '#FFD700' }]}><Text style={styles.medalText}>1</Text></View>
+              ) : i === 1 ? (
+                <View style={[styles.medal, { backgroundColor: '#C0C0C0' }]}><Text style={styles.medalText}>2</Text></View>
+              ) : i === 2 ? (
+                <View style={[styles.medal, { backgroundColor: '#CD7F32' }]}><Text style={styles.medalText}>3</Text></View>
+              ) : (
+                <Text style={[styles.pos, { color: c.mutedForeground, width: 'auto' }]}>{i + 1}</Text>
+              )}
+            </View>
             <View style={[styles.team, { flexDirection: 'row', alignItems: 'center', gap: 10 }]}>
               <TeamLogo name={t.team} size={28} />
-              <Text style={{ color: c.foreground, fontFamily: 'Inter_600SemiBold', fontSize: 13.5, flex: 1 }} numberOfLines={1}>
+              <Text style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 13.5, flex: 1 }} numberOfLines={1}>
                 {t.team}
               </Text>
             </View>
             <Text style={[styles.num, { color: c.foreground }]}>{t.played}</Text>
-            <Text style={[styles.num, { color: c.foreground }]}>{t.won}</Text>
-            <Text style={[styles.num, { color: c.foreground }]}>{t.lost}</Text>
-            <Text style={[styles.nrr, { color: c.mutedForeground }]}>
+            <Text style={[styles.num, { color: c.success, fontFamily: 'Inter_600SemiBold' }]}>{t.won}</Text>
+            <Text style={[styles.num, { color: c.destructive, fontFamily: 'Inter_600SemiBold' }]}>{t.lost}</Text>
+            <Text style={[styles.nrr, { color: typeof t.nrr === 'number' && t.nrr > 0 ? c.success : c.mutedForeground }]}>
               {typeof t.nrr === 'number' ? (t.nrr > 0 ? `+${t.nrr.toFixed(2)}` : t.nrr.toFixed(2)) : t.nrr}
             </Text>
-            <Text style={[styles.pts, { color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 14 }]}>{t.points}</Text>
+            <Text style={[styles.pts, { color: c.foreground, fontFamily: 'Inter_800ExtraBold', fontSize: 14 }]}>{t.points}</Text>
           </View>
         ))}
       </Card>
@@ -94,13 +105,13 @@ export default function PointsScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: c.background }}>
       <ScrollView
-        contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 118 : 100 }}
+        contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 118 : 120 }}
         refreshControl={
           <RefreshControl refreshing={q.isRefetching} onRefresh={() => { q.refetch(); matchesQ.refetch(); }} tintColor={c.primary} />
         }
       >
         <ScreenHeader title="Points Table" subtitle={t('Season 5 standings', 'सीज़न 5 अंक तालिका')} />
-        <View style={{ paddingHorizontal: 16, paddingTop: 16 }}>
+        <View style={{ paddingHorizontal: 16, paddingTop: 20 }}>
           {q.isLoading ? (
             <LoadingView />
           ) : q.isError ? (
@@ -145,9 +156,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 6,
   },
-  pos: { width: 22, fontFamily: 'Inter_700Bold', fontSize: 13 },
-  team: { flex: 1 },
+  pos: { width: 22, fontFamily: 'Inter_700Bold', fontSize: 13, textAlign: 'center' },
+  medal: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  medalText: { color: '#000', fontFamily: 'Inter_800ExtraBold', fontSize: 11 },
+  team: { flex: 1, paddingLeft: 8 },
   num: { width: 26, textAlign: 'center', fontSize: 13, fontFamily: 'Inter_500Medium' },
-  nrr: { width: 50, textAlign: 'right', fontSize: 12, fontFamily: 'Inter_500Medium' },
+  nrr: { width: 50, textAlign: 'right', fontSize: 12, fontFamily: 'Inter_600SemiBold' },
   pts: { width: 36, textAlign: 'right', fontSize: 13 },
 });

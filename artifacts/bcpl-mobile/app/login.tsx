@@ -83,10 +83,10 @@ export default function LoginScreen() {
       >
         <View style={styles.iconWrap}>
           <LinearGradient
-            colors={['rgba(255,107,0,0.15)', 'rgba(255,107,0,0.05)']}
-            style={[StyleSheet.absoluteFill, { borderRadius: 36 }]}
+            colors={['rgba(255,107,0,0.2)', 'rgba(255,107,0,0.05)']}
+            style={[StyleSheet.absoluteFill, { borderRadius: 40 }]}
           />
-          <Feather name="smartphone" size={32} color={c.accent} />
+          <Feather name="smartphone" size={36} color={c.primary} />
         </View>
         <Text style={[styles.title, { color: c.foreground }]}>
           {step === 'phone' ? t('Log in with OTP', 'OTP से लॉगिन करें') : t('Enter OTP', 'OTP डालें')}
@@ -98,9 +98,9 @@ export default function LoginScreen() {
         </Text>
 
         {step === 'phone' ? (
-          <View style={[styles.inputRow, { borderColor: 'rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.03)' }]}>
-            <Text style={{ color: c.mutedForeground, fontFamily: 'Inter_600SemiBold', fontSize: 16 }}>+91</Text>
-            <View style={{ width: 1, height: 24, backgroundColor: 'rgba(255,255,255,0.1)' }} />
+          <View style={[styles.inputRow, { borderColor: 'rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.05)' }]}>
+            <Text style={{ color: c.mutedForeground, fontFamily: 'Inter_700Bold', fontSize: 16 }}>+91</Text>
+            <View style={{ width: 1, height: 24, backgroundColor: 'rgba(255,255,255,0.15)' }} />
             <TextInput
               value={phone}
               onChangeText={(t) => setPhone(t.replace(/\D/g, '').slice(0, 10))}
@@ -114,16 +114,16 @@ export default function LoginScreen() {
             />
           </View>
         ) : (
-          <View style={[styles.inputRow, { borderColor: 'rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.03)' }]}>
+          <View style={[styles.inputRow, { borderColor: 'rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.05)' }]}>
             <Feather name="key" size={20} color={c.mutedForeground} />
-            <View style={{ width: 1, height: 24, backgroundColor: 'rgba(255,255,255,0.1)' }} />
+            <View style={{ width: 1, height: 24, backgroundColor: 'rgba(255,255,255,0.15)' }} />
             <TextInput
               value={otp}
               onChangeText={(t) => setOtp(t.replace(/\D/g, '').slice(0, 6))}
               keyboardType="number-pad"
               placeholder="OTP"
               placeholderTextColor={c.mutedForeground}
-              style={[styles.input, { color: c.foreground, letterSpacing: 8 }]}
+              style={[styles.input, { color: c.foreground, letterSpacing: 12, textAlign: 'center' }]}
               maxLength={6}
               testID="otp-input"
               autoFocus
@@ -133,13 +133,13 @@ export default function LoginScreen() {
 
         {error ? (
           <View style={styles.alertBox}>
-            <Feather name="alert-circle" size={16} color={c.destructive} />
-            <Text style={{ color: c.destructive, fontSize: 13, flex: 1, fontFamily: 'Inter_500Medium' }}>{error}</Text>
+            <Feather name="alert-circle" size={18} color={c.destructive} />
+            <Text style={{ color: c.destructive, fontSize: 14, flex: 1, fontFamily: 'Inter_600SemiBold' }}>{error}</Text>
           </View>
         ) : info && step === 'otp' ? (
-          <View style={[styles.alertBox, { backgroundColor: 'rgba(49, 197, 107, 0.1)' }]}>
-            <Feather name="check-circle" size={16} color={c.success} />
-            <Text style={{ color: c.success, fontSize: 13, flex: 1, fontFamily: 'Inter_500Medium' }}>{info}</Text>
+          <View style={[styles.alertBox, { backgroundColor: 'rgba(49, 197, 107, 0.15)' }]}>
+            <Feather name="check-circle" size={18} color={c.success} />
+            <Text style={{ color: c.success, fontSize: 14, flex: 1, fontFamily: 'Inter_600SemiBold' }}>{info}</Text>
           </View>
         ) : null}
 
@@ -154,20 +154,20 @@ export default function LoginScreen() {
         >
           <LinearGradient
             colors={['#FF6B00', '#D95A00']}
-            style={[StyleSheet.absoluteFill, { borderRadius: 14 }]}
+            style={[StyleSheet.absoluteFill, { borderRadius: 16 }]}
           />
           {busy ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={{ color: '#fff', fontFamily: 'Inter_700Bold', fontSize: 16 }}>
+            <Text style={{ color: '#fff', fontFamily: 'Inter_800ExtraBold', fontSize: 16, letterSpacing: 0.5 }}>
               {step === 'phone' ? 'Send OTP' : 'Verify & Login'}
             </Text>
           )}
         </Pressable>
 
         {step === 'otp' ? (
-          <Pressable onPress={() => { setStep('phone'); setOtp(''); setError(null); }} testID="change-number" style={{ padding: 12 }}>
-            <Text style={{ color: c.accent, fontSize: 14, marginTop: 8, fontFamily: 'Inter_600SemiBold' }}>
+          <Pressable onPress={() => { setStep('phone'); setOtp(''); setError(null); }} testID="change-number" style={{ padding: 16, marginTop: 12 }}>
+            <Text style={{ color: c.accent, fontSize: 15, fontFamily: 'Inter_700Bold' }}>
               {t('Change number', 'नंबर बदलें')}
             </Text>
           </Pressable>
@@ -186,46 +186,51 @@ const styles = StyleSheet.create({
     paddingVertical: 40,
   },
   iconWrap: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 24,
-    borderWidth: 1,
-    borderColor: 'rgba(255,107,0,0.2)',
+    marginBottom: 32,
+    borderWidth: 2,
+    borderColor: 'rgba(255,107,0,0.3)',
   },
-  title: { fontSize: 26, fontFamily: 'Inter_700Bold', letterSpacing: -0.5 },
-  sub: { fontSize: 14, marginTop: 8, textAlign: 'center', lineHeight: 22, paddingHorizontal: 20 },
+  title: { fontSize: 28, fontFamily: 'Inter_800ExtraBold', letterSpacing: -0.5 },
+  sub: { fontSize: 15, marginTop: 12, textAlign: 'center', lineHeight: 24, paddingHorizontal: 20, fontFamily: 'Inter_500Medium' },
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    borderWidth: 1,
+    gap: 16,
+    borderWidth: 2,
     borderRadius: 16,
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
+    marginTop: 40,
+    width: '100%',
+    height: 64,
+  },
+  input: { flex: 1, fontSize: 18, fontFamily: 'Inter_700Bold' },
+  btn: {
     marginTop: 32,
+    borderRadius: 16,
     width: '100%',
     height: 60,
-  },
-  input: { flex: 1, fontSize: 18, fontFamily: 'Inter_600SemiBold' },
-  btn: {
-    marginTop: 24,
-    borderRadius: 14,
-    width: '100%',
-    height: 56,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
+    shadowColor: '#FF6B00',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 8,
   },
   alertBox: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 10,
-    backgroundColor: 'rgba(239, 68, 68, 0.1)',
-    padding: 12,
-    borderRadius: 10,
-    marginTop: 16,
+    gap: 12,
+    backgroundColor: 'rgba(255, 59, 48, 0.15)',
+    padding: 16,
+    borderRadius: 12,
+    marginTop: 24,
     width: '100%',
   },
 });

@@ -8,6 +8,7 @@ import { NEWS_ARTICLES } from '@/data/news';
 import { Card } from '@/components/ui';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { useLang } from '@/context/LanguageContext';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function NewsScreen() {
   const c = useColors();
@@ -21,11 +22,11 @@ export default function NewsScreen() {
         keyExtractor={(n) => n.slug}
         ListHeaderComponent={<ScreenHeader title="News" subtitle={t('Latest league updates', 'लीग की ताज़ा खबरें')} />}
         scrollEnabled={NEWS_ARTICLES.length > 0}
-        contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 118 : 100 }}
+        contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 118 : 120, paddingTop: 10 }}
         renderItem={({ item: n }) => (
           <Pressable
             onPress={() => router.push(`/news/${n.slug}`)}
-            style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1, paddingHorizontal: 16, transform: [{ scale: pressed ? 0.98 : 1 }] })}
+            style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1, paddingHorizontal: 16, transform: [{ scale: pressed ? 0.97 : 1 }] })}
             testID={`news-${n.slug}`}
           >
             <Card style={{ marginBottom: 16, padding: 0, overflow: 'hidden' }}>
@@ -35,12 +36,15 @@ export default function NewsScreen() {
                 contentFit="cover"
                 transition={150}
               />
-              <View style={{ padding: 18 }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                  <Text style={{ color: c.accent, fontSize: 11, fontFamily: 'Inter_700Bold', letterSpacing: 0.5 }}>
-                    {n.tag.toUpperCase()}
-                  </Text>
-                  <Text style={{ color: c.mutedForeground, fontSize: 12 }}>• {n.date}</Text>
+              <LinearGradient colors={['transparent', 'rgba(18,31,61,1)']} style={{position: 'absolute', top: 120, left: 0, right: 0, height: 80}} pointerEvents="none" />
+              <View style={{ padding: 20, paddingTop: 16 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                  <View style={{ backgroundColor: '#FF6B00', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 4 }}>
+                    <Text style={{ color: '#fff', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 0.5 }}>
+                      {n.tag.toUpperCase()}
+                    </Text>
+                  </View>
+                  <Text style={{ color: c.mutedForeground, fontSize: 12, fontFamily: 'Inter_600SemiBold' }}>{n.date}</Text>
                 </View>
                 <Text style={[styles.title, { color: c.foreground }]} numberOfLines={3}>
                   {n.title}
@@ -55,5 +59,5 @@ export default function NewsScreen() {
 }
 
 const styles = StyleSheet.create({
-  title: { fontSize: 18, fontFamily: 'Inter_700Bold', lineHeight: 24, letterSpacing: -0.2 },
+  title: { fontSize: 20, fontFamily: 'Inter_800ExtraBold', lineHeight: 28, letterSpacing: -0.5 },
 });

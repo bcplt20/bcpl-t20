@@ -299,10 +299,10 @@ export default function RegisterScreen() {
     >
       <LinearGradient
         colors={['#FF6B00', '#D95A00']}
-        style={[StyleSheet.absoluteFill, { borderRadius: 14 }]}
+        style={[StyleSheet.absoluteFill, { borderRadius: 16 }]}
       />
       {busy ? <ActivityIndicator color="#fff" /> : (
-        <Text style={{ color: '#fff', fontFamily: 'Inter_700Bold', fontSize: 16 }}>{label}</Text>
+        <Text style={{ color: '#fff', fontFamily: 'Inter_800ExtraBold', fontSize: 16, letterSpacing: 0.5 }}>{label}</Text>
       )}
     </Pressable>
   );
@@ -321,32 +321,32 @@ export default function RegisterScreen() {
       contentContainerStyle={{ padding: 20, paddingBottom: Platform.OS === 'web' ? 60 : 40 }}
       keyboardShouldPersistTaps="handled"
     >
-      <Text style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 26, letterSpacing: -0.5 }}>{stepTitle[step]}</Text>
-      <Text style={{ color: c.mutedForeground, fontSize: 14, marginTop: 6, marginBottom: 20, fontFamily: 'Inter_500Medium' }}>
+      <Text style={{ color: c.foreground, fontFamily: 'Inter_800ExtraBold', fontSize: 28, letterSpacing: -0.5 }}>{stepTitle[step]}</Text>
+      <Text style={{ color: c.mutedForeground, fontSize: 15, marginTop: 8, marginBottom: 24, fontFamily: 'Inter_500Medium' }}>
         {t('BCPL Season 5 — Phase 1 registration', 'BCPL सीज़न 5 — फेज़ 1 रजिस्ट्रेशन')}
       </Text>
 
       {error ? (
         <View style={styles.alertBox}>
-          <Feather name="alert-circle" size={16} color={c.destructive} />
-          <Text style={{ color: c.destructive, fontSize: 13, flex: 1, fontFamily: 'Inter_500Medium' }}>{error}</Text>
+          <Feather name="alert-circle" size={18} color={c.destructive} />
+          <Text style={{ color: c.destructive, fontSize: 14, flex: 1, fontFamily: 'Inter_600SemiBold' }}>{error}</Text>
         </View>
       ) : null}
       
       {info ? (
-        <View style={[styles.alertBox, { backgroundColor: 'rgba(49, 197, 107, 0.1)' }]}>
-          <Feather name="check-circle" size={16} color={c.success} />
-          <Text style={{ color: c.success, fontSize: 13, flex: 1, fontFamily: 'Inter_500Medium' }}>{info}</Text>
+        <View style={[styles.alertBox, { backgroundColor: 'rgba(49, 197, 107, 0.15)' }]}>
+          <Feather name="check-circle" size={18} color={c.success} />
+          <Text style={{ color: c.success, fontSize: 14, flex: 1, fontFamily: 'Inter_600SemiBold' }}>{info}</Text>
         </View>
       ) : null}
 
       {step === 'account' ? (
-        <View style={{ gap: 12 }}>
+        <View style={{ gap: 16 }}>
         <Card>
-          <Text style={{ color: '#E8B23D', fontFamily: 'Inter_700Bold', fontSize: 10.5, letterSpacing: 2 }}>
+          <Text style={{ color: '#E8B23D', fontFamily: 'Inter_800ExtraBold', fontSize: 11, letterSpacing: 2 }}>
             {t('YOUR JOURNEY', 'आपका सफ़र')}
           </Text>
-          <Text style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 16, marginTop: 4, marginBottom: 10 }}>
+          <Text style={{ color: c.foreground, fontFamily: 'Inter_800ExtraBold', fontSize: 18, marginTop: 6, marginBottom: 16 }}>
             {t('From office to stadium — how it works', 'ऑफिस से स्टेडियम तक — पूरा process')}
           </Text>
           {[
@@ -359,18 +359,18 @@ export default function RegisterScreen() {
           ].map((s, i, arr) => (
             <View key={s.n} style={{ flexDirection: 'row', gap: 16, marginTop: i === 0 ? 8 : 0 }}>
               <View style={{ alignItems: 'center' }}>
-                <View style={[styles.stepDot, i === 0 ? { backgroundColor: '#FF6B00', borderColor: 'rgba(255,107,0,0.3)' } : { backgroundColor: 'rgba(255,107,0,0.1)', borderColor: 'rgba(255,107,0,0.15)' }]}>
-                  <Text style={{ color: i === 0 ? '#fff' : '#FF6B00', fontFamily: 'Inter_700Bold', fontSize: 13 }}>{s.n}</Text>
+                <View style={[styles.stepDot, i === 0 ? { backgroundColor: '#FF6B00', borderColor: 'rgba(255,107,0,0.4)' } : { backgroundColor: 'rgba(255,107,0,0.1)', borderColor: 'rgba(255,107,0,0.2)' }]}>
+                  <Text style={{ color: i === 0 ? '#fff' : '#FF6B00', fontFamily: 'Inter_800ExtraBold', fontSize: 13 }}>{s.n}</Text>
                 </View>
                 {i < arr.length - 1 ? <View style={styles.stepLine} /> : null}
               </View>
-              <View style={{ flex: 1, paddingBottom: i < arr.length - 1 ? 22 : 0 }}>
-                <Text style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 14.5 }}>{t(s.en, s.hi)}</Text>
-                <Text style={{ color: c.mutedForeground, fontSize: 12.5, lineHeight: 18, marginTop: 2, fontFamily: 'Inter_500Medium' }}>{t(s.den, s.dhi)}</Text>
+              <View style={{ flex: 1, paddingBottom: i < arr.length - 1 ? 24 : 0 }}>
+                <Text style={{ color: c.foreground, fontFamily: 'Inter_800ExtraBold', fontSize: 15 }}>{t(s.en, s.hi)}</Text>
+                <Text style={{ color: c.mutedForeground, fontSize: 13, lineHeight: 20, marginTop: 4, fontFamily: 'Inter_500Medium' }}>{t(s.den, s.dhi)}</Text>
               </View>
             </View>
           ))}
-          <Text style={{ color: c.mutedForeground, fontSize: 11, lineHeight: 16, marginTop: 12 }}>
+          <Text style={{ color: c.secondaryForeground, fontSize: 12, lineHeight: 18, marginTop: 16, fontFamily: 'Inter_500Medium' }}>
             {t(
               'Phase 2 fee applies only after Phase 1 qualification. Fees cover participation only — see bcplt20.com/refunds and bcplt20.com/eligibility for full rules.',
               'फेज़ 2 की फ़ीस सिर्फ़ फेज़ 1 क्वालिफ़ाई करने के बाद लगती है। फ़ीस केवल भागीदारी के लिए है — पूरे नियम bcplt20.com/refunds और bcplt20.com/eligibility पर देखें।',
@@ -381,7 +381,7 @@ export default function RegisterScreen() {
           {input({ value: name, onChange: setName, placeholder: t('Full name', 'पूरा नाम') })}
           {input({ value: email, onChange: setEmail, placeholder: t('Email', 'ईमेल'), keyboard: 'email-address' })}
           {input({ value: phone, onChange: (v) => setPhone(v.replace(/\D/g, '')), placeholder: t('Mobile number (10 digits)', 'मोबाइल नंबर (10 अंक)'), keyboard: 'number-pad', maxLength: 10 })}
-          <View style={{ marginTop: 12 }}>
+          <View style={{ marginTop: 16 }}>
             {primaryBtn(t('Send OTP', 'OTP भेजें'), onSendOtp, 'reg-send-otp')}
           </View>
         </Card>
@@ -391,23 +391,25 @@ export default function RegisterScreen() {
       {step === 'otp' ? (
         <Card>
           <View style={{ alignItems: 'center', marginBottom: 24, marginTop: 12 }}>
-            <Feather name="mail" size={32} color={c.accent} style={{ marginBottom: 16 }} />
-            <Text style={{ color: c.foreground, fontSize: 16, fontFamily: 'Inter_600SemiBold', textAlign: 'center' }}>
+            <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: 'rgba(255,107,0,0.15)', alignItems: 'center', justifyContent: 'center', marginBottom: 16, borderWidth: 2, borderColor: 'rgba(255,107,0,0.3)' }}>
+              <Feather name="mail" size={28} color={c.primary} />
+            </View>
+            <Text style={{ color: c.foreground, fontSize: 18, fontFamily: 'Inter_700Bold', textAlign: 'center' }}>
               {t(`OTP sent to +91 ${phone}`, `+91 ${phone} पर OTP भेजा गया`)}
             </Text>
           </View>
           {input({ value: otp, onChange: (v) => setOtp(v.replace(/\D/g, '')), placeholder: 'Enter OTP', keyboard: 'number-pad', maxLength: 6 })}
-          <View style={{ marginTop: 12 }}>
+          <View style={{ marginTop: 16 }}>
             {primaryBtn(t('Verify & continue', 'वेरिफ़ाई करें'), onVerifyOtp, 'reg-verify-otp')}
           </View>
-          <Pressable onPress={() => { setStep('account'); setOtp(''); }} style={{ marginTop: 20, alignSelf: 'center' }}>
-            <Text style={{ color: c.accent, fontSize: 14, fontFamily: 'Inter_600SemiBold' }}>{t('Change details', 'जानकारी बदलें')}</Text>
+          <Pressable onPress={() => { setStep('account'); setOtp(''); }} style={{ marginTop: 24, alignSelf: 'center', padding: 8 }}>
+            <Text style={{ color: c.accent, fontSize: 15, fontFamily: 'Inter_700Bold' }}>{t('Change details', 'जानकारी बदलें')}</Text>
           </Pressable>
         </Card>
       ) : null}
 
       {step === 'details' ? (
-        <View style={{ gap: 16 }}>
+        <View style={{ gap: 20 }}>
           <Card>
             <Text style={[styles.label, { color: c.foreground }]}>{t('Your playing role', 'आपका रोल')}</Text>
             <View style={styles.chipWrap}>
@@ -418,27 +420,27 @@ export default function RegisterScreen() {
                     key={r.id}
                     onPress={() => setRole(r.id)}
                     style={[styles.chip, {
-                      borderColor: isActive ? c.primary : 'rgba(255,255,255,0.08)',
-                      backgroundColor: isActive ? 'rgba(255,107,0,0.1)' : 'rgba(255,255,255,0.02)',
+                      borderColor: isActive ? c.primary : 'rgba(255,255,255,0.1)',
+                      backgroundColor: isActive ? 'rgba(255,107,0,0.15)' : 'rgba(255,255,255,0.03)',
                     }]}
                     testID={`role-${r.id}`}
                   >
                     {isActive ? (
                       <LinearGradient
-                        colors={['rgba(255,107,0,0.15)', 'rgba(255,107,0,0)']}
+                        colors={['rgba(255,107,0,0.2)', 'rgba(255,107,0,0)']}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 0, y: 1 }}
                         style={StyleSheet.absoluteFill}
                       />
                     ) : null}
-                    <Text style={{ color: isActive ? c.primary : c.foreground, fontFamily: isActive ? 'Inter_700Bold' : 'Inter_600SemiBold', fontSize: 15 }}>
+                    <Text style={{ color: isActive ? '#fff' : c.foreground, fontFamily: isActive ? 'Inter_800ExtraBold' : 'Inter_600SemiBold', fontSize: 16 }}>
                       {t(r.en, r.hi)}
                     </Text>
-                    <Text style={{ color: isActive ? c.foreground : c.mutedForeground, fontSize: 12.5, marginTop: 6, fontFamily: 'Inter_500Medium' }}>₹{r.fee} <Text style={{ fontSize: 10.5 }}>+ GST</Text></Text>
+                    <Text style={{ color: isActive ? '#fff' : c.mutedForeground, fontSize: 13, marginTop: 6, fontFamily: 'Inter_600SemiBold' }}>₹{r.fee} <Text style={{ fontSize: 11 }}>+ GST</Text></Text>
                     
                     {isActive && (
-                      <View style={{ position: 'absolute', top: -8, right: -8, width: 24, height: 24, borderRadius: 12, backgroundColor: c.primary, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: c.card }}>
-                        <Feather name="check" size={14} color="#fff" />
+                      <View style={{ position: 'absolute', top: -10, right: -10, width: 28, height: 28, borderRadius: 14, backgroundColor: c.primary, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: c.card, shadowColor: c.primary, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.5, shadowRadius: 8, elevation: 4 }}>
+                        <Feather name="check" size={16} color="#fff" />
                       </View>
                     )}
                   </Pressable>
@@ -457,11 +459,11 @@ export default function RegisterScreen() {
                     key={ct}
                     onPress={() => setCity(ct)}
                     style={[styles.cityChip, {
-                      borderColor: isActive ? c.primary : 'rgba(255,255,255,0.1)',
-                      backgroundColor: isActive ? 'rgba(255,107,0,0.12)' : 'transparent',
+                      borderColor: isActive ? c.primary : 'rgba(255,255,255,0.15)',
+                      backgroundColor: isActive ? 'rgba(255,107,0,0.15)' : 'transparent',
                     }]}
                   >
-                    <Text style={{ color: isActive ? c.primary : c.foreground, fontSize: 13, fontFamily: isActive ? 'Inter_700Bold' : 'Inter_500Medium' }}>{ct}</Text>
+                    <Text style={{ color: isActive ? '#fff' : c.foreground, fontSize: 14, fontFamily: isActive ? 'Inter_700Bold' : 'Inter_500Medium' }}>{ct}</Text>
                   </Pressable>
                 );
               })}
@@ -471,7 +473,7 @@ export default function RegisterScreen() {
           <Card>
             <Text style={[styles.label, { color: c.foreground }]}>{t('Date of birth (18–45 years)', 'जन्मतिथि (18–45 वर्ष)')}</Text>
             {input({ value: dob, onChange: setDob, placeholder: 'YYYY-MM-DD', maxLength: 10 })}
-            <View style={{ marginTop: 12 }}>
+            <View style={{ marginTop: 16 }}>
               {primaryBtn(t('Continue to payment', 'पेमेंट पर जाएँ'), onSubmitDetails, 'reg-details')}
             </View>
           </Card>
@@ -480,27 +482,27 @@ export default function RegisterScreen() {
 
       {step === 'pay' ? (
         <Card style={{ padding: 0 }}>
-          <View style={{ alignItems: 'center', paddingVertical: 32, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(255,255,255,0.1)' }}>
-            <Text style={{ color: c.mutedForeground, fontSize: 14, fontFamily: 'Inter_600SemiBold', letterSpacing: 0.5 }}>{t('Phase 1 registration fee', 'फेज़ 1 रजिस्ट्रेशन फ़ीस')}</Text>
-            <Text style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 44, marginTop: 12 }}>₹{grossFee || '—'}</Text>
-            {fee ? <Text style={{ color: c.mutedForeground, fontSize: 13, marginTop: 4, fontFamily: 'Inter_500Medium' }}>₹{fee} + 18% GST</Text> : null}
+          <View style={{ alignItems: 'center', paddingVertical: 40, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(255,255,255,0.1)' }}>
+            <Text style={{ color: c.mutedForeground, fontSize: 15, fontFamily: 'Inter_700Bold', letterSpacing: 0.5 }}>{t('Phase 1 registration fee', 'फेज़ 1 रजिस्ट्रेशन फ़ीस')}</Text>
+            <Text style={{ color: c.foreground, fontFamily: 'Inter_800ExtraBold', fontSize: 52, marginTop: 16 }}>₹{grossFee || '—'}</Text>
+            {fee ? <Text style={{ color: c.accent, fontSize: 14, marginTop: 6, fontFamily: 'Inter_600SemiBold' }}>₹{fee} + 18% GST</Text> : null}
           </View>
 
-          <View style={{ padding: 20 }}>
+          <View style={{ padding: 24 }}>
             <Pressable onPress={() => setAgreed(!agreed)} style={styles.checkRow} testID="reg-consent">
-              <Feather name={agreed ? 'check-square' : 'square'} size={22} color={agreed ? c.primary : c.mutedForeground} />
-              <Text style={{ color: c.foreground, fontSize: 13.5, flex: 1, lineHeight: 20 }}>
+              <Feather name={agreed ? 'check-square' : 'square'} size={24} color={agreed ? c.primary : c.mutedForeground} />
+              <Text style={{ color: c.foreground, fontSize: 14.5, flex: 1, lineHeight: 22, fontFamily: 'Inter_500Medium' }}>
                 {t('I accept the BCPL Terms & Conditions and Privacy Policy (bcplt20.com/terms)', 'मैं BCPL के नियम व शर्तें और प्राइवेसी पॉलिसी स्वीकार करता/करती हूँ (bcplt20.com/terms)')}
               </Text>
             </Pressable>
             <Pressable onPress={() => setMarketingOptIn(!marketingOptIn)} style={styles.checkRow}>
-              <Feather name={marketingOptIn ? 'check-square' : 'square'} size={22} color={marketingOptIn ? c.primary : c.mutedForeground} />
-              <Text style={{ color: c.mutedForeground, fontSize: 13.5, flex: 1, lineHeight: 20 }}>
+              <Feather name={marketingOptIn ? 'check-square' : 'square'} size={24} color={marketingOptIn ? c.primary : c.mutedForeground} />
+              <Text style={{ color: c.secondaryForeground, fontSize: 14.5, flex: 1, lineHeight: 22, fontFamily: 'Inter_500Medium' }}>
                 {t('Send me updates on WhatsApp/SMS (optional)', 'मुझे WhatsApp/SMS पर अपडेट भेजें (वैकल्पिक)')}
               </Text>
             </Pressable>
 
-            <View style={{ marginTop: 24 }}>
+            <View style={{ marginTop: 32 }}>
               {primaryBtn(t('Pay securely with Cashfree', 'Cashfree से सुरक्षित पेमेंट करें'), onPay, 'reg-pay')}
             </View>
 
@@ -508,10 +510,10 @@ export default function RegisterScreen() {
               <Pressable
                 onPress={onVerifyPayment}
                 disabled={busy}
-                style={({ pressed }) => [styles.btn, { backgroundColor: 'transparent', borderWidth: 1, borderColor: c.accent, opacity: busy || pressed ? 0.7 : 1, marginTop: 16 }]}
+                style={({ pressed }) => [styles.btn, { backgroundColor: 'transparent', borderWidth: 2, borderColor: c.accent, opacity: busy || pressed ? 0.7 : 1, marginTop: 16, shadowOpacity: 0, elevation: 0 }]}
                 testID="reg-verify-pay"
               >
-                <Text style={{ color: c.accent, fontFamily: 'Inter_600SemiBold', fontSize: 14 }}>
+                <Text style={{ color: c.accent, fontFamily: 'Inter_800ExtraBold', fontSize: 15 }}>
                   {t('I have paid — verify payment', 'पेमेंट कर दी — वेरिफ़ाई करें')}
                 </Text>
               </Pressable>
@@ -521,31 +523,31 @@ export default function RegisterScreen() {
       ) : null}
 
       {step === 'done' ? (
-        <Card style={{ alignItems: 'center', paddingVertical: 48 }}>
-          <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: 'rgba(49, 197, 107, 0.1)', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
-            <Feather name="check" size={40} color="#2ECC71" />
+        <Card style={{ alignItems: 'center', paddingVertical: 56 }}>
+          <View style={{ width: 96, height: 96, borderRadius: 48, backgroundColor: 'rgba(49, 197, 107, 0.15)', alignItems: 'center', justifyContent: 'center', marginBottom: 24, borderWidth: 2, borderColor: 'rgba(49, 197, 107, 0.3)' }}>
+            <Feather name="check" size={48} color="#2ECC71" />
           </View>
-          <Text style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 24 }}>
+          <Text style={{ color: c.foreground, fontFamily: 'Inter_800ExtraBold', fontSize: 28 }}>
             {t('You are registered!', 'आप रजिस्टर्ड हैं!')}
           </Text>
           {regNumber ? (
-            <View style={{ marginTop: 24, paddingVertical: 12, paddingHorizontal: 24, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }}>
-              <Text style={{ color: c.mutedForeground, fontSize: 12, textAlign: 'center', fontFamily: 'Inter_600SemiBold', marginBottom: 4, letterSpacing: 0.5 }}>REGISTRATION NO.</Text>
-              <Text style={{ color: c.accent, fontFamily: 'Inter_700Bold', fontSize: 24 }}>{regNumber}</Text>
+            <View style={{ marginTop: 32, paddingVertical: 16, paddingHorizontal: 32, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)' }}>
+              <Text style={{ color: c.mutedForeground, fontSize: 13, textAlign: 'center', fontFamily: 'Inter_700Bold', marginBottom: 6, letterSpacing: 0.5 }}>REGISTRATION NO.</Text>
+              <Text style={{ color: c.accent, fontFamily: 'Inter_800ExtraBold', fontSize: 32 }}>{regNumber}</Text>
             </View>
           ) : null}
-          <Text style={{ color: c.mutedForeground, fontSize: 14, marginTop: 24, textAlign: 'center', lineHeight: 22, paddingHorizontal: 20 }}>
+          <Text style={{ color: c.mutedForeground, fontSize: 15, marginTop: 32, textAlign: 'center', lineHeight: 24, paddingHorizontal: 20, fontFamily: 'Inter_500Medium' }}>
             {t('Next step: upload your 30–60 sec trial video from your dashboard', 'अगला कदम: अपने डैशबोर्ड से 30–60 सेकंड का ट्रायल वीडियो अपलोड करें')}
           </Text>
           <Pressable
             onPress={() => router.replace('/profile')}
-            style={({ pressed }) => [styles.btn, { opacity: pressed ? 0.8 : 1, marginTop: 32, paddingHorizontal: 40 }]}
+            style={({ pressed }) => [styles.btn, { opacity: pressed ? 0.8 : 1, marginTop: 40, paddingHorizontal: 48 }]}
           >
             <LinearGradient
               colors={['#FF6B00', '#D95A00']}
-              style={[StyleSheet.absoluteFill, { borderRadius: 14 }]}
+              style={[StyleSheet.absoluteFill, { borderRadius: 16 }]}
             />
-            <Text style={{ color: '#fff', fontFamily: 'Inter_700Bold', fontSize: 16 }}>{t('Go to profile', 'प्रोफ़ाइल देखें')}</Text>
+            <Text style={{ color: '#fff', fontFamily: 'Inter_800ExtraBold', fontSize: 16, letterSpacing: 0.5 }}>{t('Go to profile', 'प्रोफ़ाइल देखें')}</Text>
           </Pressable>
         </Card>
       ) : null}
@@ -555,52 +557,57 @@ export default function RegisterScreen() {
 
 const styles = StyleSheet.create({
   stepDot: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     backgroundColor: '#FF6B00',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: 'rgba(255,107,0,0.2)',
+    borderColor: 'rgba(255,107,0,0.3)',
   },
   stepLine: { width: 2, flex: 1, backgroundColor: 'rgba(255,107,0,0.2)', marginVertical: 4 },
   inputWrap: {
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: 'rgba(255,255,255,0.1)',
-    backgroundColor: 'rgba(255,255,255,0.03)',
-    borderRadius: 14,
-    marginBottom: 12,
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    borderRadius: 16,
+    marginBottom: 16,
   },
   input: {
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingVertical: 18,
     fontSize: 16,
-    fontFamily: 'Inter_500Medium',
+    fontFamily: 'Inter_600SemiBold',
   },
   btn: {
-    borderRadius: 14,
-    paddingVertical: 16,
+    borderRadius: 16,
+    paddingVertical: 18,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
+    shadowColor: '#FF6B00',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 8,
   },
   alertBox: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 10,
-    backgroundColor: 'rgba(239, 68, 68, 0.1)',
-    padding: 14,
-    borderRadius: 12,
-    marginBottom: 16,
+    gap: 12,
+    backgroundColor: 'rgba(255, 59, 48, 0.15)',
+    padding: 16,
+    borderRadius: 14,
+    marginBottom: 20,
   },
-  label: { fontFamily: 'Inter_700Bold', fontSize: 15, marginBottom: 14 },
-  chipWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
+  label: { fontFamily: 'Inter_800ExtraBold', fontSize: 16, marginBottom: 16 },
+  chipWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 14 },
   chip: {
-    borderWidth: 1,
+    borderWidth: 2,
     borderRadius: 16,
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingVertical: 20,
     alignItems: 'center',
     minWidth: '46%',
     flexGrow: 1,
@@ -609,8 +616,8 @@ const styles = StyleSheet.create({
   cityChip: {
     borderWidth: 1,
     borderRadius: 20,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
   },
-  checkRow: { flexDirection: 'row', gap: 14, alignItems: 'flex-start', marginBottom: 16 },
+  checkRow: { flexDirection: 'row', gap: 16, alignItems: 'flex-start', marginBottom: 20 },
 });
