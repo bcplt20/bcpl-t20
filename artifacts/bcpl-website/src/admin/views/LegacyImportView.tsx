@@ -77,7 +77,7 @@ export default function LegacyImportView() {
                 <div key={s.source} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 10, padding: "12px 18px" }}>
                   <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: ".1em", color: srcMeta[s.source as "paid" | "unpaid"]?.color ?? "#fff" }}>{s.source.toUpperCase()}</div>
                   <div style={{ fontSize: 22, fontWeight: 900, color: "#fff" }}>{s.count.toLocaleString("en-IN")}</div>
-                  {s.amountPaise > 0 && <div style={small}>{fmtInr(s.amountPaise)} collected (old site)</div>}
+                  {s.amountPaise > 0 && <div style={small}>{fmtInr(s.amountPaise)} {s.source === 'paid' ? 'collected (old site)' : 'to be collected'}</div>}
                 </div>
               ))}
               {stats.bySource.length > 0 && (
