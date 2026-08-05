@@ -191,6 +191,39 @@ NGINXBLOCK
   echo "✏️  [EDIT 5] ho gaya (/assets/ 1-year cache)"; CHANGED=1
 fi
 
+# ── [EDIT 6] legacy CSV import — badi file (64M) allow karo ──
+if grep -q "location /api/admin-tools/legacy-import" "$CONF"; then
+  echo "⏭  [EDIT 6] pehle se laga hai"
+else
+  LEGACYBLK=$(mktemp)
+  cat > "$LEGACYBLK" <<'NGINXBLOCK'
+    # Legacy CSV import (admin only) — unpaid export ~30-35MB, isliye
+    # yahan 64M allow; parse/insert me time lagta hai isliye timeout lamba
+    location /api/admin-tools/legacy-import {
+        proxy_pass         http://127.0.0.1:4000;
+        proxy_http_version 1.1;
+        proxy_set_header   Host $host;
+        proxy_set_header   X-Real-IP $remote_addr;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto $scheme;
+        proxy_read_timeout 300s;
+        proxy_request_buffering on;
+        client_max_body_size 64M;
+    }
+
+NGINXBLOCK
+  awk -v bf="$LEGACYBLK" '
+    /location[[:space:]]+\/api\// && !done { while ((getline l < bf) > 0) print l; done=1 }
+    { print }
+  ' "$CONF" > "$CONF.tmp"
+  rm -f "$LEGACYBLK"
+  if ! grep -q "location /api/admin-tools/legacy-import" "$CONF.tmp"; then
+    rm -f "$CONF.tmp"; restore; echo "❌ location /api/ block nahi mila [EDIT 6] ke liye. Ye bhejo:  cat $CONF"; exit 1
+  fi
+  mv "$CONF.tmp" "$CONF"
+  echo "✏️  [EDIT 6] ho gaya (legacy import 64M)"; CHANGED=1
+fi
+
 # ── Test + reload ────────────────────────────────────────────
 if [ "$CHANGED" -eq 0 ]; then
   rm -f "$BACKUP"
