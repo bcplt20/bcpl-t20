@@ -114,7 +114,33 @@ tr.hl td{background:#FFF1DE;border-top:2px solid #FF6B00;border-bottom:2px solid
 .tocline{display:flex;align-items:baseline;gap:12px;font-size:16.5px;padding:7px 0;border-bottom:1px dashed #D9CFBB}
 .tocline .n{font-weight:900;color:#FF6B00;width:34px;font-size:15px}
 .tocline .pg{margin-left:auto;color:#8a8f9c;font-size:13px;font-weight:700}
+/* "animated" energy look — glowing ball + speed streaks (static, print-safe) */
+.deco{position:absolute;z-index:0;pointer-events:none}
+.ballwrap{position:absolute;z-index:0}
+.ballglow{position:absolute;inset:-46%;border-radius:50%;background:radial-gradient(circle,rgba(255,107,0,0.45) 0%,rgba(232,178,61,0.22) 40%,transparent 70%)}
+.ballimg{position:relative;width:100%;transform:rotate(-18deg);filter:drop-shadow(0 10px 26px rgba(255,107,0,0.5))}
+.trail{position:absolute;height:9px;border-radius:9px;background:linear-gradient(90deg,transparent,rgba(255,107,0,0.75));z-index:0}
+.trail.g{background:linear-gradient(90deg,transparent,rgba(232,178,61,0.7))}
+.trail.b{background:linear-gradient(90deg,transparent,rgba(21,52,107,0.45))}
+.streak{position:absolute;width:150%;height:120px;transform:rotate(-7deg);background:linear-gradient(90deg,transparent,rgba(255,107,0,0.10),rgba(232,178,61,0.14),transparent);z-index:0}
+.dark .streak,.photo .streak{background:linear-gradient(90deg,transparent,rgba(255,107,0,0.16),rgba(232,178,61,0.18),transparent)}
+.ringlogo{position:absolute;z-index:0;border-radius:50%;border:2.5px dashed rgba(255,107,0,0.30)}
 `;
+
+/* Glowing "in-motion" BCPL ball with speed trails. side: 'right'|'left' */
+const BALL = `${A}/bcpl-ball-transparent.png`;
+function ballDeco({ size = 190, top = null, bottom = "6%", right = "3%", left = null, opacity = 1 } = {}) {
+  const pos = `${top !== null ? `top:${top};` : `bottom:${bottom};`}${left !== null ? `left:${left};` : `right:${right};`}`;
+  return `<div class="ballwrap" style="width:${size}px;height:${size}px;${pos}opacity:${opacity}">
+    <div class="ballglow"></div>
+    <div class="trail" style="width:${size * 1.5}px;right:${size * 0.75}px;top:34%"></div>
+    <div class="trail g" style="width:${size * 1.1}px;right:${size * 0.8}px;top:50%"></div>
+    <div class="trail b" style="width:${size * 0.8}px;right:${size * 0.7}px;top:66%"></div>
+    <img class="ballimg" src="${BALL}">
+  </div>`;
+}
+const streak = (top = "30%") => `<div class="streak" style="top:${top};left:-20%"></div>`;
+const rings = (size, top, right) => `<div class="ringlogo" style="width:${size}px;height:${size}px;top:${top};right:${right}"></div><div class="ringlogo" style="width:${size*0.7}px;height:${size*0.7}px;top:calc(${top} + ${size*0.15}px);right:calc(${right} + ${size*0.15}px);border-color:rgba(232,178,61,0.35)"></div>`;
 
 const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</style></head><body>
 
@@ -144,7 +170,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
 </div>
 
 <!-- P2 · CONTENTS -->
-<div class="page"><div class="band"></div><div class="inner">
+<div class="page"><div class="band"></div>${streak("60%")}${ballDeco({ size: 150, bottom: "5%", right: "3%" })}<div class="inner">
   <h2><span class="kick">SEASON 4 · SPONSORSHIP DECK</span>What's Inside</h2>
   <div class="body"><div class="grid2" style="margin-top:10px;column-gap:50px">
     <div>
@@ -170,10 +196,10 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
 </div></div>
 
 <!-- P3 · WHAT IS BCPL -->
-<div class="page"><div class="band"></div><div class="inner">
+<div class="page"><div class="band"></div>${rings(220, "-60px", "-70px")}${ballDeco({ size: 130, top: "4%", right: "3.5%" })}<div class="inner">
   <h2><span class="kick">01 · THE LEAGUE</span>What is BCPL?</h2>
   <div class="body">
-  <p style="font-size:15.5px;max-width:1050px">The <b>Bhartiya Corporate Premier League</b> is a structured T20 franchise league for India's working professionals. Players register online, clear KYC and physical trials, enter a <b>live player auction</b>, and play a full tournament — live digital scoring, professional umpires, match-day production, points table — run centrally by the League.</p>
+  <p style="font-size:15.5px;max-width:920px">The <b>Bhartiya Corporate Premier League</b> is a structured T20 franchise league for India's working professionals. Players register online, clear KYC and physical trials, enter a <b>live player auction</b>, and play a full tournament — live digital scoring, professional umpires, match-day production, points table — run centrally by the League.</p>
   <div class="grid3" style="margin-top:12px">
     <div class="card acc"><b class="t">A league, not a one-day event</b>Group stage → knockouts → final. 10 franchise teams, a player auction with a defined purse — the complete franchise-league format, season after season.</div>
     <div class="card accg"><b class="t">Season 4 — the biggest yet</b>Three seasons completed. Season 4 opens October 2026 with <b>2.5 Lakh+ registrations</b> already recorded on the League's own platform.</div>
@@ -201,7 +227,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
 </div></div>
 
 <!-- P5 · LEAGUE IN NUMBERS (chart) -->
-<div class="page"><div class="band"></div><div class="inner">
+<div class="page"><div class="band"></div>${streak("55%")}${ballDeco({ size: 120, bottom: "5%", right: "2.5%", opacity: 0.9 })}<div class="inner">
   <h2><span class="kick">01 · THE LEAGUE</span>The League in Numbers</h2>
   <div class="body">
   <div class="statrow">
@@ -236,7 +262,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
 </div></div>
 
 <!-- P6 · SEASON JOURNEY -->
-<div class="page"><div class="band"></div><div class="inner">
+<div class="page"><div class="band"></div>${streak("40%")}${ballDeco({ size: 150, top: "5%", right: "3%" })}<div class="inner">
   <h2><span class="kick">02 · THE SEASON</span>How a BCPL Season Runs</h2>
   <div class="body">
   <p style="font-size:15px">Sponsors don't get one match-day — they ride a <b>multi-month story</b> the audience follows stage by stage:</p>
@@ -274,7 +300,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
 </div>
 
 <!-- P8 · AUDIENCE -->
-<div class="page"><div class="band"></div><div class="inner">
+<div class="page"><div class="band"></div>${rings(200, "-55px", "-60px")}${ballDeco({ size: 115, top: "4.5%", right: "3.5%" })}<div class="inner">
   <h2><span class="kick">03 · THE AUDIENCE</span>The Audience Your Brand Meets</h2>
   <div class="body">
   <div class="statrow">
@@ -318,7 +344,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
 </div></div>
 
 <!-- P10 · DIGITAL FOOTPRINT -->
-<div class="page"><div class="band"></div><div class="inner">
+<div class="page"><div class="band"></div>${streak("20%")}${ballDeco({ size: 130, bottom: "6%", right: "3%", opacity: 0.9 })}<div class="inner">
   <h2><span class="kick">04 · DIGITAL</span>Digital Footprint — The Numbers</h2>
   <div class="body">
   <div class="grid2" style="align-items:end">
@@ -392,9 +418,9 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
 </div>
 
 <!-- P14 · SPONSORSHIP MENU -->
-<div class="page"><div class="band"></div><div class="inner">
+<div class="page"><div class="band"></div>${ballDeco({ size: 110, top: "3.5%", right: "3%" })}<div class="inner">
   <h2><span class="kick">07 · THE MENU</span>Season 4 Sponsorship Opportunities</h2>
-  <p style="font-size:13px">All amounts are <b>per season, indicative and negotiable</b>, exclusive of GST. Final pricing depends on category exclusivity, deliverable mix and timing of commitment.</p>
+  <p style="font-size:13px;max-width:900px">All amounts are <b>per season, indicative and negotiable</b>, exclusive of GST. Final pricing depends on category exclusivity, deliverable mix and timing of commitment.</p>
   <div class="body">
   <table>
     <tr><th>Property</th><th>Slots</th><th>Headline rights</th><th>Indicative range</th></tr>
@@ -412,7 +438,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
 </div></div>
 
 <!-- P15 · PRICE LADDER CHART -->
-<div class="page"><div class="band"></div><div class="inner">
+<div class="page"><div class="band"></div>${streak("16%")}${ballDeco({ size: 140, top: "6%", right: "3%" })}<div class="inner">
   <h2><span class="kick">07 · THE MENU</span>The Ladder at a Glance</h2>
   <div class="body">
   <h3>Indicative investment by tier (upper end of range, ₹)</h3>
@@ -435,7 +461,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
 </div></div>
 
 <!-- P16 · TITLE DETAIL -->
-<div class="page"><div class="band"></div><div class="inner">
+<div class="page"><div class="band"></div>${rings(190, "-50px", "-55px")}<div class="inner">
   <h2><span class="kick">08 · TIER DETAIL</span>Title Sponsor — What You Own <span class="dim" style="font-size:14px">(1 exclusive slot · ₹1.5–2 Cr indicative)</span></h2>
   <div class="body">
   <div class="grid2">
@@ -496,7 +522,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
 </div></div>
 
 <!-- P19 · POWERED BY + ASSOCIATE -->
-<div class="page"><div class="band"></div><div class="inner">
+<div class="page"><div class="band"></div>${streak("60%")}${ballDeco({ size: 110, bottom: "5%", right: "2.5%", opacity: 0.85 })}<div class="inner">
   <h2><span class="kick">08 · TIER DETAIL</span>Powered By &amp; Associate Partner</h2>
   <div class="body">
   <div class="grid2">
@@ -529,7 +555,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
 </div></div>
 
 <!-- P20 · TIMEOUT + UMPIRE -->
-<div class="page"><div class="band"></div><div class="inner">
+<div class="page"><div class="band"></div>${rings(180, "-45px", "-50px")}${ballDeco({ size: 105, top: "4%", right: "3.5%" })}<div class="inner">
   <h2><span class="kick">08 · TIER DETAIL</span>Strategic Timeout &amp; Umpire Partner</h2>
   <div class="body">
   <div class="grid2">
@@ -579,7 +605,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
 </div></div>
 
 <!-- P22 · INCLUDED / NOT INCLUDED -->
-<div class="page"><div class="band"></div><div class="inner">
+<div class="page"><div class="band"></div>${streak("48%")}${ballDeco({ size: 115, bottom: "6%", right: "2.5%", opacity: 0.85 })}<div class="inner">
   <h2><span class="kick">10 · CLARITY</span>What's Included — and What's Not</h2>
   <div class="body">
   <div class="grid2">
@@ -608,7 +634,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</st
 </div></div>
 
 <!-- P23 · WHAT WE NEED FROM YOU -->
-<div class="page"><div class="band"></div><div class="inner">
+<div class="page"><div class="band"></div>${rings(200, "-55px", "-60px")}${ballDeco({ size: 110, top: "4%", right: "3.5%" })}<div class="inner">
   <h2><span class="kick">10 · CLARITY</span>What We Need From You — Sponsor Checklist</h2>
   <div class="body">
   <p style="font-size:14.5px">To deliver your branding cleanly and on time, this is everything the League needs from your side. Nothing more.</p>
