@@ -363,6 +363,11 @@ router.post("/phase2/create", requireAuth, async (req: AuthRequest, res) => {
   if (!rows[0]) return void res.status(404).json({ error: "Registration not found" });
   const { reg, user } = rows[0];
   if (reg.phase1Status !== "selected") return void res.status(400).json({ error: "Not selected for Phase 2" });
+  // Phase-2 fee already settled (normal payment OR legacy-paid carryover
+  // waiver) — never create another payable order for this registration.
+  if (reg.phase2Status && !["pending", "payment_pending"].includes(reg.phase2Status)) {
+    return void res.status(409).json({ error: "Phase 2 payment is already complete for this registration." });
+  }
 
   // Record accepted declarations at payment initiation (consent audit).
   if (parsed.data.declarations) {

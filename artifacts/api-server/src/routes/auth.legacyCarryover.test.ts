@@ -19,6 +19,7 @@ import {
 } from "@workspace/db/schema";
 import { eq, inArray } from "drizzle-orm";
 import authRouter from "./auth";
+import paymentRouter from "./payment";
 
 const rand8 = String(crypto.randomInt(10_000_000, 99_999_999));
 const PHONE_PAID   = `96${rand8}`;  // format-valid; OTP rows inserted directly, no SMS ever sent
@@ -73,6 +74,7 @@ beforeAll(async () => {
   const app = express();
   app.use(express.json());
   app.use("/api/auth", authRouter);
+  app.use("/api/payment", paymentRouter);
   await new Promise<void>((r) => { server = app.listen(0, () => r()); });
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
 });
@@ -157,6 +159,20 @@ describe("legacy paid carryover login", () => {
     expect(reg.phase2Status).toBe("payment_done");   // Phase-2 fee waived
     expect(reg.regNumber).toMatch(/^BCPL-/);         // number assigned, shown on trial pass
     expect((reg.consents as any)?.legacyCarryover?.upgradedExisting).toBe(true);
+  });
+
+  it("carryover registration can NEVER create a payable Phase-2 order (no double billing)", async () => {
+    const otp = await seedOtp(PHONE_PAID);
+    const { body } = await verify(PHONE_PAID, otp);
+    const [user] = await db.select().from(usersTable).where(eq(usersTable.phone, PHONE_PAID));
+    const [reg] = await db.select({ id: registrationsTable.id }).from(registrationsTable)
+      .where(eq(registrationsTable.userId, user.id));
+    const r = await fetch(base + "/api/payment/phase2/create", {
+      method: "POST",
+      headers: { "content-type": "application/json", authorization: "Bearer " + body.token },
+      body: JSON.stringify({ registrationId: reg.id }),
+    });
+    expect(r.status).toBe(409); // phase2 already payment_done — waived, not billable
   });
 
   it("unpaid legacy phone still gets 404 on login", async () => {
