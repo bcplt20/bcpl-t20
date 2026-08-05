@@ -55,8 +55,13 @@ function deriveStep(data: any): Step {
     return 'trial_wait';
   }
   if (p1 === 'rejected')                                            return 'rejected';
-  if (!data.video?.submitted)                                       return 'upload_video';
-  if (p1 !== 'selected')                                            return 'under_review';
+  /* Phase-1 'selected' outranks a missing video row: Season-4 carryover
+     accounts are provisioned already-selected with no video — they must
+     land on the Phase-2 steps, never back on "upload video". */
+  if (p1 !== 'selected') {
+    if (!data.video?.submitted)                                     return 'upload_video';
+    return 'under_review';
+  }
   if (!p2)                                                          return 'p2_register';
   if (p2 === 'payment_done' && (!kyc || kyc === 'failed'))          return 'p2_kyc';
   if (p2 === 'payment_done' && kyc === 'pending')                   return 'p2_kyc_pending';
