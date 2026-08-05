@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   ActivityIndicator,
   Linking,
@@ -45,6 +46,12 @@ const ROLES: { id: PlayerRole; en: string; hi: string; fee: number }[] = [
 
 type Step = 'account' | 'otp' | 'details' | 'pay' | 'done';
 
+// Server phase1Status vocabulary: 'pending' = registered but unpaid;
+// 'payment_done' and later stages mean the fee is already paid.
+const isUnpaidStatus = (s?: string | null) => !s || s === 'pending';
+
+const ORDER_KEY = 'bcpl_pending_phase1_order_v1';
+
 export default function RegisterScreen() {
   const c = useColors();
   const router = useRouter();
@@ -77,6 +84,37 @@ export default function RegisterScreen() {
   const [regNumber, setRegNumber] = useState('');
 
   const grossFee = useMemo(() => Math.round(fee * 1.18), [fee]);
+
+  // Logged-in users: sync with server status on mount and recover any
+  // pending Cashfree order (app may have been backgrounded during checkout).
+  useEffect(() => {
+    if (!token) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const [st, savedOrder] = await Promise.all([
+          getRegisterStatus(token),
+          AsyncStorage.getItem(ORDER_KEY),
+        ]);
+        if (cancelled) return;
+        if (st.registered && st.registrationId) {
+          setRegistrationId(st.registrationId);
+          if (isUnpaidStatus(st.phase1Status)) {
+            setFee(st.fees?.phase1 ?? 299);
+            if (savedOrder) setOrderId(savedOrder);
+            setStep('pay');
+          } else {
+            setRegNumber(st.regNumber ?? '');
+            setStep('done');
+            AsyncStorage.removeItem(ORDER_KEY).catch(() => {});
+          }
+        }
+      } catch {
+        // best-effort — user can proceed through the normal steps
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [token]);
 
   const fail = (e: unknown, fallback: string) =>
     setError(e instanceof Error ? e.message : fallback);
@@ -128,12 +166,12 @@ export default function RegisterScreen() {
         const st = await getRegisterStatus(r.token);
         if (st.registered && st.registrationId) {
           setRegistrationId(st.registrationId);
-          if (st.phase1Status && st.phase1Status !== 'pending_payment' && st.phase1Status !== 'created') {
-            setRegNumber(st.regNumber ?? '');
-            setStep('done');
-          } else {
+          if (isUnpaidStatus(st.phase1Status)) {
             setFee(st.fees?.phase1 ?? (st.role === 'ar' ? 399 : 299));
             setStep('pay');
+          } else {
+            setRegNumber(st.regNumber ?? '');
+            setStep('done');
           }
           return;
         }
@@ -167,8 +205,13 @@ export default function RegisterScreen() {
           const st = await getRegisterStatus(token);
           if (st.registered && st.registrationId) {
             setRegistrationId(st.registrationId);
-            setFee(st.fees?.phase1 ?? 299);
-            setStep('pay');
+            if (isUnpaidStatus(st.phase1Status)) {
+              setFee(st.fees?.phase1 ?? 299);
+              setStep('pay');
+            } else {
+              setRegNumber(st.regNumber ?? '');
+              setStep('done');
+            }
             return;
           }
         } catch { /* fall through */ }
@@ -195,6 +238,7 @@ export default function RegisterScreen() {
         marketingOptIn,
       });
       setOrderId(pay.orderId);
+      await AsyncStorage.setItem(ORDER_KEY, pay.orderId).catch(() => {});
       // Cashfree hosted checkout (opens in browser)
       await Linking.openURL(`https://payments.cashfree.com/order/#${pay.paymentSessionId}`);
     } catch (e) {
@@ -213,6 +257,7 @@ export default function RegisterScreen() {
       if (r.success) {
         setRegNumber(r.regNumber ?? '');
         setStep('done');
+        AsyncStorage.removeItem(ORDER_KEY).catch(() => {});
       }
     } catch (e) {
       if (e instanceof ApiError && e.status === 400) {
