@@ -60,3 +60,10 @@ uri = "file://screenshots/result-fail-breakdown.png"
 type = "image"
 title = "Fail result — category breakdown + improvement feedback"
 description = "Fail result — category breakdown + improvement feedback"
+
+[[outputs]]
+id = "Vl0gOYLESjOXlWxVlt29z"
+uri = "file://screenshots/bcpl-gmail-avatar.png"
+type = "image"
+title = "BCPL Gmail Profile Photo (512x512)"
+description = "Google Workspace (info@bcplt20.com) की profile photo के लिए तैयार square logo"

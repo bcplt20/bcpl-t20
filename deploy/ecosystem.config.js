@@ -68,6 +68,9 @@ module.exports = {
         // Admin alert inbox (lockdown + KYC manual-review alerts)
         ADMIN_ALERT_EMAIL:    env("ADMIN_ALERT_EMAIL"),
 
+        // ── Gemini (Phase 1 AI evaluation) ──────────────────
+        GEMINI_API_KEY:        env("GEMINI_API_KEY"),
+
         // ── SMS (MSG91 — OTP + notifications) ───────────────
         MSG91_AUTH_KEY:        env("MSG91_AUTH_KEY"),
         MSG91_OTP_TEMPLATE_ID: env("MSG91_OTP_TEMPLATE_ID"),
