@@ -48,7 +48,7 @@ function CountUpStat({ value, style }: { value: string; style?: any }) {
       const eased = 1 - Math.pow(1 - p, 3);
       setN(Math.round(target * eased));
       if (p >= 1) clearInterval(id);
-    }, 40);
+    }, 80);
     return () => clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
@@ -223,9 +223,9 @@ export default function HomeScreen() {
               </View>
               <View style={{ flex: 1, paddingRight: 10 }}>
                 <Text style={{ color: '#fff', fontFamily: 'Inter_700Bold', fontSize: 16 }}>{t('Photos & Videos', 'फ़ोटो और वीडियो')}</Text>
-                <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 12, marginTop: 2, fontFamily: 'Inter_500Medium' }}>{t('Auction, shoots & matchday gallery', 'ऑक्शन, शूट और मैच की गैलरी')}</Text>
+                <Text style={{ color: 'rgba(255,255,255,0.82)', fontSize: 12, marginTop: 2, fontFamily: 'Inter_500Medium' }}>{t('Auction, shoots & matchday gallery', 'ऑक्शन, शूट और मैच की गैलरी')}</Text>
               </View>
-              <Feather name="chevron-right" size={20} color="rgba(255,255,255,0.5)" />
+              <Feather name="chevron-right" size={20} color="rgba(255,255,255,0.82)" />
             </LinearGradient>
           </Pressable>
         </View>
@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     alignSelf: 'flex-start',
   },
-  cdLabel: { color: 'rgba(255,255,255,0.75)', fontSize: 10.5, fontFamily: 'Inter_500Medium' },
+  cdLabel: { color: 'rgba(255,255,255,0.82)', fontSize: 10.5, fontFamily: 'Inter_500Medium' },
   cdTime: { color: '#E8B23D', fontSize: 11.5, fontFamily: 'Inter_700Bold', fontVariant: ['tabular-nums'] },
   statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
   statBox: {

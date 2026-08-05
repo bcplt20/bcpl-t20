@@ -303,8 +303,8 @@ export default function ProfileScreen() {
                   <StatusRow
                     label="Phase 1 — Registration"
                     value={niceStatus(reg?.phase1Status)}
-                    done={['selected', 'video_submitted', 'payment_done'].includes(reg?.phase1Status ?? '')}
-                    isCurrent={!['selected', 'video_submitted', 'payment_done'].includes(reg?.phase1Status ?? '')}
+                    done={['selected', 'rejected', 'video_submitted', 'payment_done'].includes(reg?.phase1Status ?? '')}
+                    isCurrent={!['selected', 'rejected', 'video_submitted', 'payment_done'].includes(reg?.phase1Status ?? '')}
                   />
                   <StatusRow
                     label="Trial video"
