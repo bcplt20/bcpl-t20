@@ -7,6 +7,8 @@
  * duplicated from marketing.ts for the same reason.
  */
 import { Router, type Request, type Response } from "express";
+import multer from "multer";
+import sharp from "sharp";
 import { db } from "@workspace/db";
 import {
   mediaFoldersTable,
@@ -24,7 +26,7 @@ import {
 import { eq, desc, asc, sql, and, isNotNull, isNull } from "drizzle-orm";
 import { z } from "zod";
 import { requireAdmin } from "../middlewares/adminAuth";
-import { getUploadPresignedUrl, getDownloadPresignedUrl, getS3Url, deleteObject } from "../lib/s3";
+import { getUploadPresignedUrl, getDownloadPresignedUrl, getS3Url, deleteObject, putObject } from "../lib/s3";
 import { hasCashfreeCredentials, listOrderPayments, extractPaymentMethod } from "../lib/cashfree";
 import { runVideoValidations } from "../lib/videoValidation";
 import { runAiValidityChecks } from "../lib/aiPipeline";
@@ -1055,6 +1057,97 @@ router.get("/email-preview/:template", safe("email-preview", async (req, res) =>
   res.setHeader("Cache-Control", "no-store");
   res.send(banner + html);
 }));
+
+/* ────────────────────────────────────────────────────────────────────────────
+ * Sponsor logo processing — every uploaded logo is normalised to a clean mark
+ * on a WHITE background (IPL-quality sponsor wall). The admin uploads the raw
+ * file (any of png/jpg/webp/svg); the SERVER does the sharp pipeline so the
+ * stored asset is always presentation-ready. The old presign path (SponsorsView
+ * → /api/settings/admin/upload-url purpose="cms") stays untouched as a fallback.
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+const SPONSOR_LOGO_MAX_BYTES = 8 * 1024 * 1024; // 8 MB raw upload
+const sponsorLogoUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: SPONSOR_LOGO_MAX_BYTES, files: 1 },
+});
+
+/** Accepted raw upload MIME types (svg is rasterised via sharp density 300). */
+const SPONSOR_LOGO_MIMES = new Set([
+  "image/png", "image/jpeg", "image/jpg", "image/webp", "image/svg+xml",
+]);
+
+/**
+ * The sharp pipeline: flatten transparency onto white, trim the surrounding
+ * uniform border (dead space) with a small tolerance, fit within 800×400,
+ * add ~40px of white padding, output PNG. trim() throws on single-colour
+ * images, so it is wrapped and falls back to the untrimmed image.
+ * Exported for the vitest contract test.
+ */
+export async function processSponsorLogo(input: Buffer, mime: string): Promise<Buffer> {
+  const isSvg = mime === "image/svg+xml";
+  // Rasterise SVG at a high density so the vector mark comes out crisp.
+  const base = sharp(input, isSvg ? { density: 300 } : {});
+
+  // 1. flatten any transparency onto pure white
+  let img = base.flatten({ background: "#ffffff" });
+
+  // 2. trim the uniform border to crop dead space (guarded — trim() throws
+  //    on a single-colour image, in which case we keep the flattened image).
+  try {
+    const trimmed = await img.trim({ threshold: 10 }).toBuffer();
+    img = sharp(trimmed);
+  } catch {
+    // single-colour / nothing to trim — re-open the flattened bytes untrimmed
+    img = sharp(await base.flatten({ background: "#ffffff" }).toBuffer());
+  }
+
+  // 3. resize to fit within 800×400 (never enlarge small marks)
+  // 4. extend 40px of white padding on all sides
+  // 5. output PNG
+  return img
+    .resize({ width: 800, height: 400, fit: "inside", withoutEnlargement: true })
+    .extend({ top: 40, bottom: 40, left: 40, right: 40, background: "#ffffff" })
+    .flatten({ background: "#ffffff" })
+    .png()
+    .toBuffer();
+}
+
+router.post(
+  "/sponsor-logo",
+  sponsorLogoUpload.single("file"),
+  safe("sponsor-logo", async (req, res) => {
+    const file = (req as Request & { file?: Express.Multer.File }).file;
+    if (!file) {
+      return void res.status(400).json({ error: "No file uploaded — send multipart field 'file'" });
+    }
+    if (!SPONSOR_LOGO_MIMES.has(file.mimetype)) {
+      return void res.status(400).json({ error: "Unsupported image type — use png, jpg, jpeg, webp or svg" });
+    }
+
+    let processed: Buffer;
+    try {
+      processed = await processSponsorLogo(file.buffer, file.mimetype);
+    } catch (err) {
+      return void res.status(400).json({ error: "Could not process image: " + String((err as Error)?.message ?? err).slice(0, 200) });
+    }
+
+    if (!process.env.AWS_ACCESS_KEY_ID) {
+      return void res.status(503).json({ error: "S3 storage is not configured on this server (AWS keys missing)" });
+    }
+
+    const base = (file.originalname || "sponsor").toLowerCase().replace(/\.[a-z0-9]+$/i, "");
+    const slug = (base.split("").map(c => (/[a-z0-9]/.test(c) ? c : "-")).join("").replace(/-+/g, "-").replace(/^-|-$/g, "") || "logo").slice(0, 40);
+    const key = `cms/sponsor-${Date.now()}-${slug}.png`;
+
+    await putObject(key, processed, "image/png");
+
+    // url is the plain S3 https URL — matches exactly what SponsorsView stores
+    // in sponsor.logo, so the /api/sponsors/logo?key= redirect + the public
+    // extractCmsKey() presign path keep working.
+    res.json({ key, url: getS3Url(key) });
+  }),
+);
 
 export default router;
 export { financeSummaryHandler };

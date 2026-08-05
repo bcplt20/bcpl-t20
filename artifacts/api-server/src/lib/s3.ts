@@ -37,6 +37,17 @@ export function getS3Url(key: string): string {
   return `https://${BUCKET}.s3.${REGION}.amazonaws.com/${key}`;
 }
 
+/** Server-side buffer upload (used when the API processes bytes itself, e.g.
+ *  the sponsor-logo pipeline) — same client/creds/bucket as the presign path.
+ *  Without AWS creds it is a no-op stub so dev/tests don't hit real AWS. */
+export async function putObject(key: string, body: Buffer, contentType: string): Promise<void> {
+  if (!process.env.AWS_ACCESS_KEY_ID) {
+    console.warn("[S3-STUB] putObject for", key);
+    return;
+  }
+  await getS3().send(new PutObjectCommand({ Bucket: BUCKET, Key: key, Body: body, ContentType: contentType }));
+}
+
 /** HEAD an object after a direct browser upload — verifies it exists and
  *  captures size/type/etag so the server never trusts client-declared metadata. */
 export async function headS3Object(key: string): Promise<{ exists: boolean; sizeBytes: number; contentType: string | null; etag: string | null }> {

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { fetchSponsorsAdmin, saveSponsorsAdmin, type Sponsor } from "../api/sponsorsApi";
 import { adminGetSampleUploadUrl } from "../../lib/api";
-import { BASE } from "../../lib/adminHttp";
+import { BASE, adminUpload } from "../../lib/adminHttp";
 
 /* The S3 bucket blocks public reads, so raw bucket URLs 403 in the browser
    (blank logos). Render through the API's presign-redirect route instead;
@@ -38,6 +38,21 @@ function readLegacy(): Sponsor[] {
 
 const statusColor = (s: string) =>
   s === "active" ? "#10B981" : s === "negotiating" ? "#F59E0B" : "#EF4444";
+
+/** Group sponsors by category, preserving admin array order (a category's
+    position = where it FIRST appears). Each group also records the array
+    indices of its items so per-sponsor move buttons map back to the array. */
+type SponsorGroup = { label: string; items: Sponsor[]; indices: number[] };
+function groupSponsors(list: Sponsor[]): SponsorGroup[] {
+  const groups: SponsorGroup[] = [];
+  list.forEach((s, idx) => {
+    const label = (s.category || "").trim() || "Uncategorised";
+    const g = groups.find(x => x.label.toLowerCase() === label.toLowerCase());
+    if (g) { g.items.push(s); g.indices.push(idx); }
+    else groups.push({ label, items: [s], indices: [idx] });
+  });
+  return groups;
+}
 
 export default function SponsorsView() {
   const [sponsors,  setSponsors]  = useState<Sponsor[]>([]);
@@ -148,8 +163,10 @@ export default function SponsorsView() {
     setShowAdd(false);
   }
 
-  /** Logo goes to S3 (public cms/ prefix) — the stored value is a plain URL
-      that works on the public site. Base64 in the DB is rejected by the API. */
+  /** Logo goes through the processing endpoint (auto-cleaned onto a white
+      background, then stored on S3). Stored value is a plain URL/key that
+      works on the public site. If the processing endpoint is unavailable we
+      fall back to the legacy presign→PUT path so uploads never fully break. */
   async function handleLogoUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (fileRef.current) fileRef.current.value = "";
@@ -158,12 +175,22 @@ export default function SponsorsView() {
     if (file.size > 3 * 1024 * 1024) { alert("Logo must be under 3 MB."); return; }
     setUploading(true);
     try {
-      const { presignedUrl, publicUrl } = await adminGetSampleUploadUrl(file.type, "cms");
-      const put = await fetch(presignedUrl, { method: "PUT", body: file, headers: { "Content-Type": file.type } });
-      if (!put.ok) throw new Error("Upload failed (" + put.status + ")");
-      setForm(f => ({ ...f, logo: publicUrl }));
+      const form = new FormData();
+      form.append("file", file);
+      const { url } = await adminUpload<{ key: string; url: string }>("/admin-tools/sponsor-logo", form);
+      if (!url) throw new Error("No URL returned by processing endpoint");
+      setForm(f => ({ ...f, logo: url }));
     } catch (err) {
-      alert("Logo upload failed: " + (err instanceof Error ? err.message : "unknown error"));
+      // Fallback: legacy presign → PUT (no white-background processing).
+      try {
+        const { presignedUrl, publicUrl } = await adminGetSampleUploadUrl(file.type, "cms");
+        const put = await fetch(presignedUrl, { method: "PUT", body: file, headers: { "Content-Type": file.type } });
+        if (!put.ok) throw new Error("Upload failed (" + put.status + ")");
+        setForm(f => ({ ...f, logo: publicUrl }));
+        alert("Logo processing was unavailable, so the raw logo was uploaded without white-background cleanup.");
+      } catch (err2) {
+        alert("Logo upload failed: " + (err2 instanceof Error ? err2.message : (err instanceof Error ? err.message : "unknown error")));
+      }
     } finally {
       setUploading(false);
     }
@@ -195,13 +222,27 @@ export default function SponsorsView() {
   }
 
   /** Reorder — the list order IS the website display order (top = first).
-      The footer strip and /sponsors wall follow this exact order. */
+      The footer strip and /sponsors wall follow this exact order. This moves
+      one sponsor within its own tier group (adjacent same-category sponsor). */
   function move(idx: number, dir: -1 | 1) {
     const j = idx + dir;
     if (j < 0 || j >= sponsors.length) return;
     const next = [...sponsors];
     [next[idx], next[j]] = [next[j], next[idx]];
     void persist(next);
+  }
+
+  /** Move an entire TIER (all sponsors sharing a category, kept as a
+      contiguous block) up or down relative to the other tiers. The tier
+      order = the order categories first appear in the array, which is the
+      exact display order on the public wall + footer strip. */
+  function moveGroup(gi: number, dir: -1 | 1) {
+    const groups = groupSponsors(sponsors);
+    const j = gi + dir;
+    if (j < 0 || j >= groups.length) return;
+    const g = [...groups];
+    [g[gi], g[j]] = [g[j], g[gi]];
+    void persist(g.flatMap(x => x.items));
   }
 
   const total = sponsors.filter(s => s.status === "active").reduce((acc, s) => {
@@ -285,7 +326,7 @@ export default function SponsorsView() {
       {/* Toolbar */}
       <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 12, marginBottom: 14 }}>
         {saving && <span style={{ color: "#F59E0B", fontSize: 12, fontWeight: 700 }}>Saving…</span>}
-        {!saving && loaded && !loadErr && <span style={{ color: "#8593B3", fontSize: 11 }}>✓ Synced — list order = website order (▲▼ to rearrange, #1 shows first)</span>}
+        {!saving && loaded && !loadErr && <span style={{ color: "#8593B3", fontSize: 11 }}>✓ Synced — tier order = website order (Tier 1 shows first & biggest)</span>}
         <button onClick={() => { resetForm(); setShowAdd(s => !s); }}
           style={{ padding: "9px 20px", borderRadius: 10, border: "none", background: "linear-gradient(135deg, #FF6B00, #FF8C40)", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
           {showAdd && !editId ? "✕ Cancel" : "+ Add Sponsor"}
@@ -324,7 +365,7 @@ export default function SponsorsView() {
               <input value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
                 placeholder="Title / Powered By / Co-Sponsor…" style={inp} list="cat-list" />
               <datalist id="cat-list">
-                {["Title Sponsor","Powered By","Co-Sponsor","Associate Sponsor","Kit Sponsor","Ground Sponsor","Digital Partner"].map(c => (
+                {["Title Sponsor","Powered By","Co-Sponsor","Associate Sponsor","Kit Sponsor","Ground Sponsor","Digital Partner","Outdoor Partner","Consultant Partner"].map(c => (
                   <option key={c} value={c} />
                 ))}
               </datalist>
@@ -376,13 +417,16 @@ export default function SponsorsView() {
                 <input ref={fileRef} type="file" accept="image/*" style={{ display: "none" }} onChange={e => void handleLogoUpload(e)} />
                 <button onClick={() => fileRef.current?.click()} disabled={uploading}
                   style={{ padding: "7px 16px", borderRadius: 8, border: "1px solid #33436B", background: "#33436B", color: "#C3CEE3", fontSize: 12, cursor: uploading ? "wait" : "pointer", fontWeight: 600, marginBottom: 4, display: "block" }}>
-                  {uploading ? "⏳ Uploading…" : "📁 Upload Logo"}
+                  {uploading ? "⏳ Processing logo…" : "📁 Upload Logo"}
                 </button>
                 {form.logo && !uploading && (
                   <button onClick={() => setForm(f => ({ ...f, logo: "" }))}
                     style={{ background: "none", border: "none", color: "#EF4444", fontSize: 11, cursor: "pointer" }}>Remove</button>
                 )}
               </div>
+            </div>
+            <div style={{ fontSize: 11, color: "#8593B3", marginTop: 8 }}>
+              ℹ Logos are auto-cleaned and placed onto a white background for a consistent look on the site.
             </div>
           </div>
 
@@ -397,67 +441,97 @@ export default function SponsorsView() {
         </div>
       )}
 
-      {/* Sponsor Cards */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      {/* Tier hint */}
+      {sponsors.length > 0 && (
+        <div style={{ ...card, borderColor: "#E8B23D40", background: "#2C3A5E", marginBottom: 14, padding: "12px 16px", color: "#C3CEE3", fontSize: 12, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+          <span style={{ color: "#E8B23D", fontWeight: 800 }}>🏆 Tier hierarchy</span>
+          <span>Tiers are shown top → bottom exactly as they appear on the website. Use the ⬆⬇ on each tier heading to reorder whole tiers, and ▲▼ inside a tier to reorder sponsors within it. Tier 1 = biggest logos.</span>
+        </div>
+      )}
+
+      {/* Sponsor Cards — grouped into TIERS (category = tier) */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
         {sponsors.length === 0 && !loadErr && (
           <div style={{ ...card, textAlign: "center", padding: 40, color: "#8593B3" }}>
             No sponsors yet. Click "+ Add Sponsor" to add your first sponsor.
           </div>
         )}
-        {sponsors.map((s, i) => (
-          <div key={s.id} style={{ ...card, borderLeft: `3px solid ${statusColor(s.status)}` }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-              {/* Rank + reorder (top of the list shows first on the website) */}
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, flexShrink: 0 }}>
-                <button onClick={() => move(i, -1)} disabled={i === 0} title="Move up — shows earlier on the website"
-                  style={{ background: "none", border: "1px solid #33436B", borderRadius: 6, color: i === 0 ? "#33436B" : "#C3CEE3", fontSize: 10, cursor: i === 0 ? "default" : "pointer", padding: "3px 8px", lineHeight: 1 }}>▲</button>
-                <span style={{ fontSize: 10, fontWeight: 800, color: "#FF6B00" }}>#{i + 1}</span>
-                <button onClick={() => move(i, 1)} disabled={i === sponsors.length - 1} title="Move down"
-                  style={{ background: "none", border: "1px solid #33436B", borderRadius: 6, color: i === sponsors.length - 1 ? "#33436B" : "#C3CEE3", fontSize: 10, cursor: i === sponsors.length - 1 ? "default" : "pointer", padding: "3px 8px", lineHeight: 1 }}>▼</button>
-              </div>
-              {/* Logo */}
-              <div style={{ width: 52, height: 52, borderRadius: 12, background: "#243050", border: "1.5px solid #33436B", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", flexShrink: 0 }}>
-                {s.logo
-                  ? <img src={logoDisplay(s.logo)} alt={s.name} style={{ width: "100%", height: "100%", objectFit: "contain", padding: 4 }} />
-                  : <span style={{ fontSize: 22 }}>🤝</span>}
-              </div>
 
-              {/* Info */}
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-                  {/* Name — clickable if website exists */}
-                  {s.website
-                    ? <a href={s.website} target="_blank" rel="noopener noreferrer"
-                        style={{ fontSize: 14, fontWeight: 800, color: "#E2E8F0", textDecoration: "none" }}
-                        onMouseEnter={e => (e.currentTarget.style.color = "#FF6B00")}
-                        onMouseLeave={e => (e.currentTarget.style.color = "#E2E8F0")}>
-                        {s.name} ↗
-                      </a>
-                    : <span style={{ fontSize: 14, fontWeight: 800, color: "#E2E8F0" }}>{s.name}</span>}
-
-                  {s.category && (
-                    <span style={{ background: "#FF6B0018", border: "1px solid #FF6B0030", color: "#FF6B00", borderRadius: 6, padding: "2px 8px", fontSize: 10, fontWeight: 800 }}>
-                      {s.category}
-                    </span>
-                  )}
-                </div>
-                <div style={{ fontSize: 11, color: "#94A3C4", marginTop: 4, display: "flex", gap: 12, flexWrap: "wrap" }}>
-                  {s.website && <span>🌐 {s.website.replace(/^https?:\/\//, "")}</span>}
-                  {s.contract && <span>📅 Until {new Date(s.contract).toLocaleDateString("en-IN", { day:"2-digit", month:"short", year:"numeric" })}</span>}
-                  <span>📍 {s.visibility}</span>
-                </div>
-              </div>
-
-              <span style={{ background: statusColor(s.status) + "20", color: statusColor(s.status), padding: "3px 10px", borderRadius: 8, fontSize: 10, fontWeight: 700, textTransform: "capitalize", flexShrink: 0 }}>
-                {s.status}
+        {groupSponsors(sponsors).map((group, gi, allGroups) => (
+          <div key={group.label} style={{ ...card, padding: "16px 18px", borderColor: gi === 0 ? "#E8B23D55" : "#33436B" }}>
+            {/* Tier heading + whole-tier move controls */}
+            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14, paddingBottom: 12, borderBottom: "1px solid #33436B" }}>
+              <span style={{ fontSize: 11, fontWeight: 900, letterSpacing: "0.12em", textTransform: "uppercase", color: gi === 0 ? "#E8B23D" : "#94A3C4" }}>
+                Tier {gi + 1}
               </span>
-
-              <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
-                <button onClick={() => handleEdit(s)}
-                  style={{ background: "none", border: "1px solid #33436B", borderRadius: 7, padding: "5px 12px", color: "#A6B3D0", fontSize: 11, cursor: "pointer" }}>✏ Edit</button>
-                <button onClick={() => handleDelete(s.id, s.name)}
-                  style={{ background: "none", border: "1px solid #EF444440", borderRadius: 7, padding: "5px 10px", color: "#EF4444", fontSize: 11, cursor: "pointer" }}>🗑</button>
+              <span style={{ fontSize: 15, fontWeight: 900, color: "#E2E8F0" }}>{group.label}</span>
+              <span style={{ fontSize: 11, color: "#8593B3" }}>· {group.items.length} sponsor{group.items.length > 1 ? "s" : ""}</span>
+              <div style={{ marginLeft: "auto", display: "flex", gap: 6, alignItems: "center" }}>
+                <span style={{ fontSize: 10, color: "#8593B3" }}>Move tier</span>
+                <button onClick={() => moveGroup(gi, -1)} disabled={gi === 0} title="Move this whole tier up"
+                  style={{ background: "none", border: "1px solid #33436B", borderRadius: 6, color: gi === 0 ? "#33436B" : "#E8B23D", fontSize: 12, cursor: gi === 0 ? "default" : "pointer", padding: "4px 10px", lineHeight: 1, fontWeight: 800 }}>⬆</button>
+                <button onClick={() => moveGroup(gi, 1)} disabled={gi === allGroups.length - 1} title="Move this whole tier down"
+                  style={{ background: "none", border: "1px solid #33436B", borderRadius: 6, color: gi === allGroups.length - 1 ? "#33436B" : "#E8B23D", fontSize: 12, cursor: gi === allGroups.length - 1 ? "default" : "pointer", padding: "4px 10px", lineHeight: 1, fontWeight: 800 }}>⬇</button>
               </div>
+            </div>
+
+            {/* Sponsors within this tier */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {group.items.map((s, giIdx) => {
+                const i = group.indices[giIdx];              // array index
+                const canUp = giIdx > 0;                     // has a sibling above in this tier
+                const canDown = giIdx < group.items.length - 1;
+                return (
+                  <div key={s.id} style={{ background: "#243050", border: "1px solid #33436B", borderRadius: 12, borderLeft: `3px solid ${statusColor(s.status)}`, padding: "12px 14px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                      {/* Reorder within tier */}
+                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, flexShrink: 0 }}>
+                        <button onClick={() => move(i, -1)} disabled={!canUp} title="Move up within this tier"
+                          style={{ background: "none", border: "1px solid #33436B", borderRadius: 6, color: !canUp ? "#33436B" : "#C3CEE3", fontSize: 10, cursor: !canUp ? "default" : "pointer", padding: "3px 8px", lineHeight: 1 }}>▲</button>
+                        <span style={{ fontSize: 10, fontWeight: 800, color: "#FF6B00" }}>#{giIdx + 1}</span>
+                        <button onClick={() => move(i, 1)} disabled={!canDown} title="Move down within this tier"
+                          style={{ background: "none", border: "1px solid #33436B", borderRadius: 6, color: !canDown ? "#33436B" : "#C3CEE3", fontSize: 10, cursor: !canDown ? "default" : "pointer", padding: "3px 8px", lineHeight: 1 }}>▼</button>
+                      </div>
+                      {/* Logo */}
+                      <div style={{ width: 52, height: 52, borderRadius: 12, background: "#fff", border: "1.5px solid #33436B", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", flexShrink: 0 }}>
+                        {s.logo
+                          ? <img src={logoDisplay(s.logo)} alt={s.name} style={{ width: "100%", height: "100%", objectFit: "contain", padding: 4 }} />
+                          : <span style={{ fontSize: 22 }}>🤝</span>}
+                      </div>
+
+                      {/* Info */}
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                          {s.website
+                            ? <a href={s.website} target="_blank" rel="noopener noreferrer"
+                                style={{ fontSize: 14, fontWeight: 800, color: "#E2E8F0", textDecoration: "none" }}
+                                onMouseEnter={e => (e.currentTarget.style.color = "#FF6B00")}
+                                onMouseLeave={e => (e.currentTarget.style.color = "#E2E8F0")}>
+                                {s.name} ↗
+                              </a>
+                            : <span style={{ fontSize: 14, fontWeight: 800, color: "#E2E8F0" }}>{s.name}</span>}
+                        </div>
+                        <div style={{ fontSize: 11, color: "#94A3C4", marginTop: 4, display: "flex", gap: 12, flexWrap: "wrap" }}>
+                          {s.website && <span>🌐 {s.website.replace(/^https?:\/\//, "")}</span>}
+                          {s.contract && <span>📅 Until {new Date(s.contract).toLocaleDateString("en-IN", { day:"2-digit", month:"short", year:"numeric" })}</span>}
+                          <span>📍 {s.visibility}</span>
+                        </div>
+                      </div>
+
+                      <span style={{ background: statusColor(s.status) + "20", color: statusColor(s.status), padding: "3px 10px", borderRadius: 8, fontSize: 10, fontWeight: 700, textTransform: "capitalize", flexShrink: 0 }}>
+                        {s.status}
+                      </span>
+
+                      <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+                        <button onClick={() => handleEdit(s)}
+                          style={{ background: "none", border: "1px solid #33436B", borderRadius: 7, padding: "5px 12px", color: "#A6B3D0", fontSize: 11, cursor: "pointer" }}>✏ Edit</button>
+                        <button onClick={() => handleDelete(s.id, s.name)}
+                          style={{ background: "none", border: "1px solid #EF444440", borderRadius: 7, padding: "5px 10px", color: "#EF4444", fontSize: 11, cursor: "pointer" }}>🗑</button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         ))}

@@ -3,10 +3,28 @@ import { useLang } from '../lib/i18n';
 import { getPublicSponsors, type PublicSponsor } from '../lib/api';
 
 /**
- * Public sponsor wall — shows the ACTIVE sponsors managed from the admin
- * panel (Sponsors view). Renders nothing while loading or when no sponsor
- * is published, so pages look unchanged until the owner adds sponsors.
+ * Public sponsor wall — IPL-style TIER hierarchy of the ACTIVE sponsors
+ * managed from the admin panel (Sponsors view). Sponsors are grouped by
+ * category in the admin's array order (first appearance wins), so the tier
+ * order is exactly what the owner set. Tier 1 = biggest, centered card(s);
+ * lower tiers get progressively smaller rows. Tier labels are rendered
+ * as-is from the admin-typed category strings (already English labels).
+ *
+ * Renders nothing while loading or when no sponsor is published, so pages
+ * look unchanged until the owner adds sponsors.
  */
+type Group = { label: string; items: PublicSponsor[] };
+
+function groupByTier(list: PublicSponsor[]): Group[] {
+  const groups: Group[] = [];
+  for (const s of list) {
+    const label = (s.category || '').trim() || 'Partners';
+    const g = groups.find(x => x.label.toLowerCase() === label.toLowerCase());
+    if (g) g.items.push(s); else groups.push({ label, items: [s] });
+  }
+  return groups;
+}
+
 export function SponsorWall() {
   const { t } = useLang();
   const [sponsors, setSponsors] = React.useState<PublicSponsor[] | null>(null);
@@ -21,10 +39,40 @@ export function SponsorWall() {
 
   if (!sponsors || sponsors.length === 0) return null;
 
+  const groups = groupByTier(sponsors);
+
+  const chip = (s: PublicSponsor, logoH: number, key: React.Key) => {
+    const inner = (
+      <div className="bcpl-sw-chip" style={{ padding: `${Math.round(logoH * 0.28)}px ${Math.round(logoH * 0.42)}px` }}>
+        {s.logo
+          ? <img src={s.logo} alt={s.name + ' logo'} loading="lazy"
+              style={{ height: logoH, maxWidth: logoH * 3.2, objectFit: 'contain', display: 'block' }} />
+          : <span style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: Math.round(logoH * 0.4), color: '#1E325A', whiteSpace: 'nowrap' }}>
+              {s.name}
+            </span>}
+      </div>
+    );
+    return s.website
+      ? <a key={key} href={s.website} target="_blank" rel="noopener noreferrer" title={s.name} style={{ textDecoration: 'none', display: 'block' }}>{inner}</a>
+      : <div key={key} title={s.name}>{inner}</div>;
+  };
+
   return (
     <section style={{ padding: '0 0 64px' }}>
+      <style>{`
+        .bcpl-sw-chip {
+          background:#fff; border-radius:16px; display:flex; align-items:center; justify-content:center;
+          box-shadow:0 6px 20px rgba(0,0,0,0.25); transition:transform .18s, box-shadow .18s;
+        }
+        a:hover > .bcpl-sw-chip, div:hover > .bcpl-sw-chip { transform:translateY(-4px); box-shadow:0 12px 28px rgba(0,0,0,0.32); }
+        .bcpl-sw-tierlabel {
+          font-family:'Barlow Condensed',Montserrat,sans-serif; font-weight:800; letter-spacing:.16em;
+          text-transform:uppercase; color:#E8B23D; text-align:center; margin-bottom:14px;
+        }
+        .bcpl-sw-row { display:flex; flex-wrap:wrap; justify-content:center; align-items:center; }
+      `}</style>
       <div className="wrap">
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
+        <div style={{ textAlign: 'center', marginBottom: 36 }}>
           <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 'clamp(20px,3.5vw,32px)', color: '#fff', textTransform: 'uppercase', marginBottom: 8 }}>
             {t('Our Sponsors & Partners', 'हमारे Sponsors & Partners')}
           </div>
@@ -33,31 +81,23 @@ export function SponsorWall() {
           </p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(200px,1fr))', gap: 16 }}>
-          {sponsors.map((s, i) => {
-            const card = (
-              <div style={{ background: 'linear-gradient(135deg,rgba(30,55,105,0.92),rgba(23,43,81,0.88))', border: '1px solid rgba(255,255,255,0.18)', borderRadius: 16, padding: '22px 18px', textAlign: 'center', height: '100%', transition: 'border-color .2s' }}>
-                <div style={{ width: 88, height: 88, borderRadius: 14, background: '#fff', margin: '0 auto 14px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', padding: 8 }}>
-                  {s.logo
-                    ? <img src={s.logo} alt={s.name + ' logo'} loading="lazy"
-                        style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', display: 'block' }} />
-                    : <span style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 30, color: '#1E325A' }}>
-                        {s.name.charAt(0).toUpperCase()}
-                      </span>}
-                </div>
-                <div style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: 14, color: '#fff', marginBottom: 6, lineHeight: 1.3 }}>{s.name}</div>
-                {s.category && (
-                  <span style={{ display: 'inline-block', background: 'rgba(232,178,61,0.1)', border: '1px solid rgba(232,178,61,0.35)', color: '#E8B23D', borderRadius: 100, padding: '3px 12px', fontSize: 10, fontWeight: 800, fontFamily: 'Montserrat,sans-serif', letterSpacing: '.06em', textTransform: 'uppercase' }}>
-                    {s.category}
-                  </span>
-                )}
+        {groups.map((g, gi) => {
+          // Tier 1 = largest, Tier 2 = medium, remaining = small.
+          const logoH = gi === 0 ? 90 : gi === 1 ? 56 : 40;
+          const gap = gi === 0 ? 28 : gi === 1 ? 22 : 16;
+          const labelSize = gi === 0 ? 14 : gi === 1 ? 12 : 11;
+          const marginTop = gi === 0 ? 0 : gi === 1 ? 44 : 34;
+          return (
+            <div key={g.label} style={{ marginTop }}>
+              <div className="bcpl-sw-tierlabel" style={{ fontSize: labelSize, opacity: gi === 0 ? 1 : 0.85 }}>
+                {g.label}
               </div>
-            );
-            return s.website
-              ? <a key={i} href={s.website} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', display: 'block' }}>{card}</a>
-              : <div key={i}>{card}</div>;
-          })}
-        </div>
+              <div className="bcpl-sw-row" style={{ gap }}>
+                {g.items.map((s, i) => chip(s, logoH, i))}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </section>
   );

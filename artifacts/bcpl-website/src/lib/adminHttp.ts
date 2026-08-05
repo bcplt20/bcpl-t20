@@ -74,3 +74,29 @@ export async function adminReq<T = unknown>(
   }
   return res.json() as Promise<T>;
 }
+
+/**
+ * Canonical admin MULTIPART upload: same auth headers, token renewal and
+ * error shape as adminReq, but sends a FormData body. We must NOT set
+ * Content-Type ourselves — the browser adds the multipart boundary — so
+ * we pass json=false to adminHeaders (token header only, no JSON header).
+ *
+ * Do NOT re-implement admin auth in the calling module; always route
+ * multipart uploads through here.
+ */
+export async function adminUpload<T = unknown>(
+  path: string,
+  form: FormData,
+): Promise<T> {
+  const res = await fetch(`${BASE}/api${path}`, {
+    method: "POST",
+    headers: adminHeaders(false),
+    body: form,
+  });
+  captureRenewedToken(res);
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: res.statusText }));
+    throw new Error((err as { error?: string }).error ?? res.statusText);
+  }
+  return res.json() as Promise<T>;
+}
