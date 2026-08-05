@@ -95,13 +95,13 @@ export function BrandUsagePolicy() {
       'By using, downloading or viewing any BCPL material, you agree to the terms of this policy',
     ]},
     {n:2,icon:<IcoStar size={24}/>,titleEn:'Ownership of BCPL Intellectual Property',titleHi:'BCPL बौद्धिक संपदा का स्वामित्व',items:[
-      'The BCPL name and the "Bhartiya Corporate Premier League (BCPL T20)" identity are the exclusive property of Kriparti Playing11 Private Limited',
+      'The BCPL name and the "Bhartiya Corporate Premier League (BCPL T20)" identity are owned or controlled by Kriparti Playing11 Private Limited',
       'The BCPL T20 logo, the ball device, and all "Season 5" marks and season branding are owned by Kriparti Playing11 Private Limited',
       'Franchise and team names, team logos, jerseys and associated marks are owned or controlled by Kriparti Playing11 Private Limited',
       'Taglines and campaign lines, including #OfficeSeStadiumTak, are the property of Kriparti Playing11 Private Limited',
       'All website content — text, layout, graphics, design, code and imagery on www.bcplt20.com — is owned by Kriparti Playing11 Private Limited',
       'All BCPL documents and policies (including the Terms & Conditions, Privacy Policy, Eligibility Criteria and rules) are the property of Kriparti Playing11 Private Limited',
-      'All photographs and videos captured at, or produced for, BCPL activities are the exclusive property of Kriparti Playing11 Private Limited',
+      'All photographs and videos captured at, or produced for, BCPL activities are owned or controlled by Kriparti Playing11 Private Limited',
       'These rights are protected under applicable Indian intellectual-property law; no ownership or interest in any of the above passes to you through access or use',
     ]},
     {n:3,icon:<IcoBan size={24}/>,titleEn:'Prohibited Uses',titleHi:'निषिद्ध उपयोग',items:[

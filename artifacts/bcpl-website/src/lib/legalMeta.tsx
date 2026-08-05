@@ -72,12 +72,16 @@ const printCss = `
   .legal-letterhead-org .lh-sub  { font-size: 10px; color: #444 !important; }
   .legal-letterhead-org .lh-meta { font-size: 10px; color: #444 !important; }
 
-  /* ── Diagonal repeating watermark ── */
+  /* Keep page content above the watermark without negative stacking
+     (negative z-index on fixed elements is unreliable in print engines). */
+  main, .wrap, .glass-card, .legal-doc-header { position: relative; z-index: 1; }
+
+  /* ── Diagonal watermark (fixed → repeats on every printed page) ── */
   .legal-watermark {
     display: block !important;
     position: fixed; top: 50%; left: 50%;
     transform: translate(-50%, -50%) rotate(-30deg);
-    width: 70%; z-index: -1; opacity: 0.07;
+    width: 70%; z-index: 0; opacity: 0.07;
     pointer-events: none;
     -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
   }
