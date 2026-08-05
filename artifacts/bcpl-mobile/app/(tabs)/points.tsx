@@ -10,7 +10,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useColors } from '@/hooks/useColors';
 import { getPointsTable } from '@/lib/api';
-import { Card, EmptyView, ErrorView, LoadingView, TeamDot } from '@/components/ui';
+import { Card, EmptyView, ErrorView, LoadingView, TeamLogo } from '@/components/ui';
 import { ScreenHeader } from '@/components/ScreenHeader';
 
 export default function PointsScreen() {
@@ -56,7 +56,7 @@ export default function PointsScreen() {
                 >
                   <Text style={[styles.pos, { color: i < 4 ? c.accent : c.mutedForeground }]}>{i + 1}</Text>
                   <View style={[styles.team, { flexDirection: 'row', alignItems: 'center', gap: 8 }]}>
-                    <TeamDot name={t.team} size={26} />
+                    <TeamLogo name={t.team} size={26} />
                     <Text style={{ color: c.foreground, fontFamily: 'Inter_600SemiBold', fontSize: 12.5, flex: 1 }} numberOfLines={1}>
                       {t.team}
                     </Text>

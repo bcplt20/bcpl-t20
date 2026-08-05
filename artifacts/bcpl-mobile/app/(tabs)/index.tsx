@@ -15,7 +15,7 @@ import { useColors } from '@/hooks/useColors';
 import { useAuth } from '@/context/AuthContext';
 import { getMatches, getPointsTable, SITE_ASSETS, type Match } from '@/lib/api';
 import { NEWS_ARTICLES } from '@/data/news';
-import { Badge, Card } from '@/components/ui';
+import { Badge, Card, TeamLogo } from '@/components/ui';
 import { MatchCard } from '@/components/MatchCard';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { Feather } from '@expo/vector-icons';
@@ -66,9 +66,27 @@ export default function HomeScreen() {
         }
       >
         <ScreenHeader
-          title={user ? `नमस्ते, ${user.name.split(' ')[0]}` : 'BCPL T20'}
-          subtitle="Bhartiya Corporate Premier League · Season 4"
+          title={user ? `नमस्ते, ${user.name.split(' ')[0]}` : 'Bhartiya Corporate Premier League'}
+          subtitle={user ? 'Bhartiya Corporate Premier League' : 'India का corporate cricket महाकुंभ'}
         />
+
+        {/* Hero banner */}
+        <View style={{ paddingHorizontal: 16, paddingTop: 10 }}>
+          <View style={styles.hero}>
+            <Image
+              source={{ uri: `${SITE_ASSETS}/bcpl-assets/stadium-hero.jpg` }}
+              style={StyleSheet.absoluteFill}
+              contentFit="cover"
+              transition={200}
+            />
+            <View style={styles.heroShade} />
+            <View style={{ padding: 16 }}>
+              <Text style={styles.heroKick}>SEASON 4 · OCTOBER 2026</Text>
+              <Text style={styles.heroTitle}>10 teams. एक trophy.</Text>
+              <Text style={styles.heroSub}>Live scores, points table और news — सब यहीं</Text>
+            </View>
+          </View>
+        </View>
 
         {anyLive ? (
           <View style={{ paddingHorizontal: 16, marginBottom: 4 }}>
@@ -107,6 +125,7 @@ export default function HomeScreen() {
               {topTeams.map((t, i) => (
                 <View key={t.team} style={[styles.pointsRow, i > 0 && { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: c.border }]}>
                   <Text style={[styles.pos, { color: c.accent }]}>{i + 1}</Text>
+                  <TeamLogo name={t.team} size={26} />
                   <Text style={[styles.teamName, { color: c.foreground }]} numberOfLines={1}>
                     {t.team}
                   </Text>
@@ -166,6 +185,24 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   sectionTitle: { fontSize: 17, fontFamily: 'Inter_700Bold' },
+  hero: {
+    borderRadius: 16,
+    overflow: 'hidden',
+    minHeight: 132,
+    justifyContent: 'flex-end',
+  },
+  heroShade: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(9,19,44,0.55)',
+  },
+  heroKick: {
+    color: '#E8B23D',
+    fontFamily: 'Inter_700Bold',
+    fontSize: 10.5,
+    letterSpacing: 2,
+  },
+  heroTitle: { color: '#FFFFFF', fontFamily: 'Inter_700Bold', fontSize: 21, marginTop: 3 },
+  heroSub: { color: 'rgba(255,255,255,0.85)', fontSize: 12.5, marginTop: 3, fontFamily: 'Inter_400Regular' },
   pointsRow: {
     flexDirection: 'row',
     alignItems: 'center',

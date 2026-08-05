@@ -17,7 +17,7 @@ import {
   type LiveInnings,
   type LiveMatch,
 } from '@/lib/api';
-import { Badge, Card, ErrorView, LoadingView, TeamDot } from '@/components/ui';
+import { Badge, Card, ErrorView, LoadingView, TeamLogo } from '@/components/ui';
 
 function oversStr(inn: LiveInnings): string {
   return `${inn.overs}.${inn.balls}`;
@@ -28,7 +28,7 @@ function InningsScore({ inn }: { inn: LiveInnings }) {
   return (
     <View style={styles.innRow}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 }}>
-        <TeamDot name={inn.battingTeam} size={28} />
+        <TeamLogo name={inn.battingTeam} size={28} />
         <Text style={{ color: c.foreground, fontFamily: 'Inter_600SemiBold', fontSize: 13.5, flex: 1 }} numberOfLines={1}>
           {inn.battingTeam}
         </Text>

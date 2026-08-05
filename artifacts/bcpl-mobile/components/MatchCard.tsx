@@ -4,7 +4,7 @@ import { useColors } from '@/hooks/useColors';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { Platform } from 'react-native';
-import { Badge, Card, TeamDot } from '@/components/ui';
+import { Badge, Card, TeamLogo } from '@/components/ui';
 import type { Match } from '@/lib/api';
 
 function fmtDate(iso?: string | null): string {
@@ -46,14 +46,16 @@ export function MatchCard({ match }: { match: Match }) {
         </View>
         <View style={styles.teamsRow}>
           <View style={styles.team}>
-            <TeamDot name={match.team1} />
+            <TeamLogo name={match.team1} size={48} />
             <Text style={[styles.teamName, { color: c.foreground }]} numberOfLines={2}>
               {match.team1}
             </Text>
           </View>
-          <Text style={[styles.vs, { color: c.accent }]}>VS</Text>
+          <View style={[styles.vsChip, { borderColor: c.border }]}>
+            <Text style={[styles.vs, { color: c.accent }]}>VS</Text>
+          </View>
           <View style={styles.team}>
-            <TeamDot name={match.team2} />
+            <TeamLogo name={match.team2} size={48} />
             <Text style={[styles.teamName, { color: c.foreground }]} numberOfLines={2}>
               {match.team2}
             </Text>
@@ -87,6 +89,16 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_600SemiBold',
     textAlign: 'center',
   },
-  vs: { fontSize: 12, fontFamily: 'Inter_700Bold', marginHorizontal: 8 },
+  vs: { fontSize: 11, fontFamily: 'Inter_700Bold' },
+  vsChip: {
+    borderWidth: 1,
+    borderRadius: 999,
+    width: 34,
+    height: 34,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 8,
+    backgroundColor: 'rgba(232,178,61,0.08)',
+  },
   foot: { fontSize: 12, marginTop: 10, textAlign: 'center' },
 });

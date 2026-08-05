@@ -94,6 +94,28 @@ export function EmptyView({ icon, text }: { icon: keyof typeof Feather.glyphMap;
   );
 }
 
+/** Real team logo from the League site, with monogram fallback while loading/on error. */
+import { Image } from 'expo-image';
+import { SITE_ASSETS } from '@/lib/api';
+
+function teamSlug(name: string): string {
+  return name.trim().toLowerCase().replace(/\s+/g, '_');
+}
+
+export function TeamLogo({ name, size = 44 }: { name: string; size?: number }) {
+  const [failed, setFailed] = React.useState(false);
+  if (failed) return <TeamDot name={name} size={size} />;
+  return (
+    <Image
+      source={{ uri: `${SITE_ASSETS}/bcpl-assets/logos/${teamSlug(name)}.png` }}
+      style={{ width: size, height: size }}
+      contentFit="contain"
+      transition={150}
+      onError={() => setFailed(true)}
+    />
+  );
+}
+
 /** Round team monogram from the team name, colored deterministically. */
 const TEAM_COLORS = ['#FF6B00', '#3B82F6', '#31C56B', '#A855F7', '#E8B23D', '#EC4899', '#14B8A6', '#F97316', '#8B5CF6', '#0EA5E9'];
 export function TeamDot({ name, size = 34 }: { name: string; size?: number }) {
