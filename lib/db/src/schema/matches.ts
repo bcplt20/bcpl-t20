@@ -8,6 +8,10 @@ export const matchesTable = pgTable("matches", {
   team1:        varchar("team1", { length: 80 }).notNull(),
   team2:        varchar("team2", { length: 80 }).notNull(),
   venue:        varchar("venue",  { length: 150 }).notNull(),
+  // stage: league | semifinal | final
+  stage:        varchar("stage", { length: 20 }).default("league").notNull(),
+  // group letter for league stage, e.g. "A" / "B" ("" = none)
+  grp:          varchar("grp", { length: 20 }).default("").notNull(),
   scheduledAt:  timestamp("scheduled_at", { withTimezone: true }),
   // toss
   tossWinner:   varchar("toss_winner",   { length: 80 }),

@@ -108,11 +108,13 @@ interface Match {
   result?: string;
   monthGroup: string;
   sortKey: string;
+  tag: string;
 }
 
 type ApiMatchRow = {
   id: string; matchNo: number; team1: string; team2: string; venue: string;
   scheduledAt: string | null; status: string; winner: string | null; resultDesc: string | null;
+  stage?: string; grp?: string;
 };
 
 function StatusPill({status}: {status: MatchStatus}) {
@@ -174,6 +176,9 @@ export function Schedule() {
               : undefined,
           monthGroup: dt ? fmt({ month: 'long', year: 'numeric' }).toUpperCase() : 'DATE TO BE ANNOUNCED',
           sortKey: dt ? dt.toISOString() : '9999-12-31',
+          tag: m.stage === 'semifinal' ? 'SEMI FINAL'
+            : m.stage === 'final' ? 'GRAND FINALE'
+            : m.grp ? `GROUP ${m.grp}` : '',
         };
       })
       .sort((a, b) => a.sortKey.localeCompare(b.sortKey));

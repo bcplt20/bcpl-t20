@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { getMatches, createMatch, updateMatchStatus, recordMatchResult } from "../../lib/api";
+import { getMatches, createMatch, bulkCreateMatches, updateMatchStatus, recordMatchResult } from "../../lib/api";
 import { adminDeleteMatch } from "../api/matchesApi";
 
 const TEAMS = ["Rajasthan Scorchers","Punjab Warriors","Kolkata Tigers","Lucknow Nawabs","Mumbai Mavericks","Hyderabad Hawks","Delhi Suryas","Chennai Thalaivas","Ahmedabad Lions","Bengaluru Rockets"];
@@ -40,12 +40,13 @@ const fmtTime = (iso: string | null) => iso
   ? new Date(iso).toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit", hour12: true })
   : "";
 
-type CsvRow = { team1: string; team2: string; date: string; time: string; venue: string };
+type CsvRow = { team1: string; team2: string; date: string; time: string; venue: string; group: string; stage: string };
 
-const SAMPLE_CSV = `Team 1,Team 2,Date,Time,Venue
-Rajasthan Scorchers,Punjab Warriors,2026-08-01,18:00,SMS Jaipur
-Mumbai Mavericks,Kolkata Tigers,2026-08-02,16:00,Wankhede Mumbai
-Lucknow Nawabs,Delhi Suryas,2026-08-03,18:00,Ekana Lucknow`;
+const SAMPLE_CSV = `Team 1,Team 2,Date,Time,Venue,Group,Stage
+Rajasthan Scorchers,Punjab Warriors,2026-08-01,18:00,SMS Jaipur,A,league
+Mumbai Mavericks,Kolkata Tigers,2026-08-02,16:00,Wankhede Mumbai,B,league
+Group A (1st),Group B (2nd),2026-08-10,19:30,SMS Jaipur,,semifinal
+Winner SF1,Winner SF2,2026-08-12,19:30,SMS Jaipur,,final`;
 
 export default function MatchesView({ onOpenScoring }: { onOpenScoring?: () => void }) {
   const [matches,     setMatches]     = useState<ApiMatch[]>([]);
@@ -113,7 +114,10 @@ export default function MatchesView({ onOpenScoring }: { onOpenScoring?: () => v
   const parseCsv = (text: string): CsvRow[] =>
     text.trim().split("\n").slice(1).filter(l => l.trim()).map(l => {
       const p = l.split(",").map(s => s.trim());
-      return { team1: p[0] || "", team2: p[1] || "", date: p[2] || "", time: p[3] || "18:00", venue: p[4] || "" };
+      return {
+        team1: p[0] || "", team2: p[1] || "", date: p[2] || "", time: p[3] || "18:00", venue: p[4] || "",
+        group: (p[5] || "").toUpperCase(), stage: (p[6] || "league").toLowerCase(),
+      };
     });
 
   const handleFile = (file: File) => {
@@ -128,25 +132,24 @@ export default function MatchesView({ onOpenScoring }: { onOpenScoring?: () => v
 
   const importBulk = async () => {
     setBulkBusy(true);
-    let ok = 0; let firstErr = "";
-    let no = nextMatchNo;
-    for (const row of bulkPreview) {
-      try {
+    try {
+      let no = nextMatchNo;
+      const rows = bulkPreview.map(row => {
         if (!row.team1 || !row.team2 || !row.date) throw new Error(`Row "${row.team1} vs ${row.team2}": team names and date are required`);
         if (row.team1 === row.team2) throw new Error(`Row "${row.team1}": both teams are the same`);
+        const stage = ["league", "semifinal", "final"].includes(row.stage) ? row.stage as "league" | "semifinal" | "final" : "league";
         const scheduledAt = new Date(`${row.date}T${row.time || "18:00"}:00+05:30`).toISOString();
         if (isNaN(new Date(scheduledAt).getTime())) throw new Error(`Row "${row.team1} vs ${row.team2}": invalid date/time`);
-        await createMatch({ matchNo: no, season: SEASON, team1: row.team1, team2: row.team2, venue: row.venue || "TBD", scheduledAt });
-        no++; ok++;
-      } catch (e: any) {
-        if (!firstErr) firstErr = e?.message || "import failed";
-      }
-    }
-    setBulkBusy(false);
-    setShowBulk(false); setBulkPreview([]); setCsvText("");
-    await reload();
-    if (firstErr) setLoadErr(`Imported ${ok} of ${bulkPreview.length} matches. First error: ${firstErr}`);
-    else flash(`Imported ${ok} matches — all are now visible on the website`);
+        return { matchNo: no++, season: SEASON, team1: row.team1, team2: row.team2, venue: row.venue || "TBD", scheduledAt, stage, grp: row.group };
+      });
+      // All-or-nothing: server inserts every row in one transaction.
+      const r = await bulkCreateMatches(rows);
+      setShowBulk(false); setBulkPreview([]); setCsvText("");
+      await reload();
+      flash(`Imported ${r.count} matches — all are now visible on the website`);
+    } catch (e: any) {
+      setLoadErr(e?.message || "Bulk import failed — nothing was imported");
+    } finally { setBulkBusy(false); }
   };
 
   /* ── Cancel scheduled match ── */

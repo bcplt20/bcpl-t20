@@ -9,3 +9,9 @@ description: How PM2 env baking + env-file corruption causes site-wide 502s; cra
 - **`pm2 save` only when healthy:** a save during a crash-loop overwrites `dump.pm2` — the best recovery source for lost env values — with the broken env. deploy.sh/fix-env.sh therefore gate save on healthz 200 ×3 (covers both cluster workers). `dump.pm2.bak` holds the previous save; check it before declaring a key lost.
 - **Recovery:** repair `.env.production` → `set -o allexport; source .env.production; set +o allexport` → `pm2 reload deploy/ecosystem.config.js --update-env` → healthz 200 → `pm2 save`. `ecosystem.config.js` self-loads `.env.production` as fallback, so a bare `pm2 start` can't wipe secrets.
 - JWT_SECRET lives ONLY on EC2 (`.env.production` + timestamped backups), not in Replit secrets. If truly lost, rotating it logs every player out — owner decision, never automatic.
+
+
+## Ecosystem env WHITELIST trap (Aug 2026)
+Rule: deploy/ecosystem.config.js passes ONLY the keys explicitly listed in its `env:{}` map — a key present in .env.production but missing from that map NEVER reaches the app (pm2 env shows 0), no matter how many times deploy runs.
+**Why:** GEMINI_API_KEY sat correctly in .env.production for days while the prod probe said "not configured"; root cause was the missing whitelist line.
+**How to apply:** any new secret/env var the API needs must ALSO be added to ecosystem.config.js env map, in the same commit.

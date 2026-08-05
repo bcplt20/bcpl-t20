@@ -194,11 +194,19 @@ export const getLiveScore = (matchId: string) =>
 export const getScorecard = (matchId: string) =>
   req<any>("GET", `/matches/${matchId}/scorecard`);
 
-export const createMatch = (data: {
+export type NewMatchInput = {
   matchNo: number; season?: number;
   team1: string; team2: string;
   venue: string; scheduledAt?: string;
-}) => adminReq<{ match: any }>("POST", "/matches/admin/matches", data);
+  stage?: "league" | "semifinal" | "final"; grp?: string;
+};
+
+export const createMatch = (data: NewMatchInput) =>
+  adminReq<{ match: any }>("POST", "/matches/admin/matches", data);
+
+/** Import a whole schedule at once — all-or-nothing on the server. */
+export const bulkCreateMatches = (matches: NewMatchInput[]) =>
+  adminReq<{ count: number }>("POST", "/matches/admin/matches/bulk", { matches });
 
 export const recordToss = (matchId: string, data: {
   tossWinner: string; tossDecision: "bat" | "field";

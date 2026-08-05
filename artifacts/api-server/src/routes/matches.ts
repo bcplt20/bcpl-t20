@@ -208,17 +208,20 @@ router.get("/:id/scorecard", async (req, res) => {
 
 /* ─── Admin routes ───────────────────────────────────── */
 
+const matchCreateBody = z.object({
+  matchNo:     z.number().int().positive(),
+  season:      z.number().int().default(5),
+  team1:       z.string().min(2).max(80),
+  team2:       z.string().min(2).max(80),
+  venue:       z.string().min(2).max(150),
+  scheduledAt: z.string().datetime().optional(),
+  stage:       z.enum(["league", "semifinal", "final"]).default("league"),
+  grp:         z.string().trim().max(20).default(""),
+});
+
 // POST /api/admin/matches
 router.post("/admin/matches", requireAdmin, async (req, res) => {
-  const schema = z.object({
-    matchNo:     z.number().int().positive(),
-    season:      z.number().int().default(5),
-    team1:       z.string().min(2).max(80),
-    team2:       z.string().min(2).max(80),
-    venue:       z.string().min(2).max(150),
-    scheduledAt: z.string().datetime().optional(),
-  });
-  const parsed = schema.safeParse(req.body);
+  const parsed = matchCreateBody.safeParse(req.body);
   if (!parsed.success) return void res.status(400).json({ error: parsed.error.issues[0].message });
 
   const [match] = await db.insert(matchesTable).values({
@@ -228,6 +231,52 @@ router.post("/admin/matches", requireAdmin, async (req, res) => {
   }).returning();
 
   res.json({ success: true, match });
+});
+
+// POST /api/admin/matches/bulk — import a whole schedule in one transaction.
+// All rows are validated first; if any row fails, nothing is inserted.
+router.post("/admin/matches/bulk", requireAdmin, async (req, res) => {
+  const schema = z.object({ matches: z.array(matchCreateBody).min(1).max(200) });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) {
+    const iss = parsed.error.issues[0];
+    return void res.status(400).json({ error: `${iss.path.join(".")}: ${iss.message}` });
+  }
+  const rows = parsed.data.matches;
+
+  // duplicate matchNo within the payload?
+  const seen = new Set<string>();
+  for (const r of rows) {
+    const key = `${r.season}:${r.matchNo}`;
+    if (seen.has(key)) {
+      return void res.status(400).json({ error: `Duplicate matchNo ${r.matchNo} for season ${r.season} in payload` });
+    }
+    seen.add(key);
+  }
+
+  // matchNo already in DB for that season?
+  const seasons = [...new Set(rows.map((r) => r.season))];
+  const existing = await db
+    .select({ matchNo: matchesTable.matchNo, season: matchesTable.season })
+    .from(matchesTable)
+    .where(inArray(matchesTable.season, seasons));
+  const taken = new Set(existing.map((m) => `${m.season}:${m.matchNo}`));
+  const clash = rows.find((r) => taken.has(`${r.season}:${r.matchNo}`));
+  if (clash) {
+    return void res.status(409).json({
+      error: `Match #${clash.matchNo} already exists for season ${clash.season} — delete it first or renumber`,
+    });
+  }
+
+  const inserted = await db.transaction(async (tx) =>
+    tx.insert(matchesTable).values(rows.map((r) => ({
+      ...r,
+      scheduledAt: r.scheduledAt ? new Date(r.scheduledAt) : undefined,
+      status: "scheduled",
+    }))).returning(),
+  );
+
+  res.json({ success: true, count: inserted.length, matches: inserted });
 });
 
 // PUT /api/admin/matches/:id/toss

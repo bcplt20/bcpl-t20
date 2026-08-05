@@ -407,7 +407,7 @@ async function buildJsonLd(reqPath: string): Promise<string> {
         .select()
         .from(matchesTable)
         .where(and(eq(matchesTable.season, 5), ne(matchesTable.status, "abandoned")))
-        .orderBy(asc(matchesTable.matchNo))
+        .orderBy(asc(matchesTable.scheduledAt), asc(matchesTable.matchNo))
         .limit(20);
       for (const m of matches) {
         objects.push(sportsEventLd(m, SITE_ORIGIN));
