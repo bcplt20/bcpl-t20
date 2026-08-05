@@ -198,7 +198,7 @@ export function tplVideoReminder(name: string, daysLeft: number) {
         accent: COLORS.amber,
         children: `
           <div style="font-size:10px;color:${COLORS.inkFaint};letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">Video Requirements</div>
-          <div style="font-size:13px;color:${COLORS.inkSoft};line-height:1.9;">Duration: 30–60 seconds<br/>Format: MP4, MOV, AVI or WEBM<br/>Content: skills for your selected role — see instructions on the upload page<br/>Good lighting and a clear frame — no filters or editing</div>`,
+          <div style="font-size:13px;color:${COLORS.inkSoft};line-height:1.9;">Duration: 30–60 seconds<br/>Format: MP4, MOV, AVI or WEBM<br/>Content: skills for your registered role — see instructions on the upload page<br/>Good lighting and a clear frame — no filters or editing</div>`,
       })}
       ${PrimaryCTA("UPLOAD VIDEO", `${SITE_URL}/register/upload-video`, COLORS.amber)}
     `),
@@ -247,7 +247,7 @@ export function tplPhase1ResultReady(name: string) {
 // ── Template 7: Phase 1 Qualified (sent on first view of the result) ─────────
 export function tplPhase1Selected(name: string) {
   return {
-    subject: "Congratulations — You Have Cleared BCPL Phase 1",
+    subject: "BCPL T20 — Phase 1 Cleared, Phase 2 Awaits",
     htmlContent: EmailShell(`
       ${HeroStatus({ iconUrl: ICONS.trophy(COLORS.green), ring: COLORS.green, titleColor: COLORS.green, title: "PHASE 1 CLEARED", subtitle: "Next Milestone — Phase 2 Physical Trials" })}
       ${StepProgress(2)}
