@@ -13,26 +13,32 @@ import { getMatches, getPointsTable, type PointsRow } from '@/lib/api';
 import { Card, EmptyView, ErrorView, LoadingView, TeamLogo } from '@/components/ui';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { useLang } from '@/context/LanguageContext';
+import { LinearGradient } from 'expo-linear-gradient';
 
 /** One group's standings table (mirrors website's Group A / Group B split). */
 function GroupTable({ title, rows, qualify }: { title: string; rows: PointsRow[]; qualify: number }) {
   const c = useColors();
   return (
-    <View style={{ marginBottom: 14 }}>
+    <View style={{ marginBottom: 24 }}>
       <View style={styles.groupHead}>
-        <View style={[styles.groupChip, { backgroundColor: 'rgba(255,107,0,0.12)', borderColor: 'rgba(255,107,0,0.45)' }]}>
-          <Text style={{ color: '#FF6B00', fontFamily: 'Inter_700Bold', fontSize: 12, letterSpacing: 1 }}>{title}</Text>
-        </View>
+        <LinearGradient
+          colors={['rgba(255, 107, 0, 0.2)', 'rgba(255, 107, 0, 0.05)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.groupChip}
+        >
+          <Text style={{ color: '#FF6B00', fontFamily: 'Inter_700Bold', fontSize: 13, letterSpacing: 1.5 }}>{title}</Text>
+        </LinearGradient>
       </View>
-      <Card style={{ paddingHorizontal: 0, paddingVertical: 4 }}>
-        <View style={[styles.row, styles.headRow]}>
-          <Text style={[styles.pos, { color: c.mutedForeground }]}>#</Text>
-          <Text style={[styles.team, { color: c.mutedForeground, fontSize: 11 }]}>TEAM</Text>
-          <Text style={[styles.num, { color: c.mutedForeground }]}>P</Text>
-          <Text style={[styles.num, { color: c.mutedForeground }]}>W</Text>
-          <Text style={[styles.num, { color: c.mutedForeground }]}>L</Text>
-          <Text style={[styles.nrr, { color: c.mutedForeground }]}>NRR</Text>
-          <Text style={[styles.pts, { color: c.mutedForeground }]}>PTS</Text>
+      <Card style={{ paddingHorizontal: 0, paddingVertical: 0, overflow: 'hidden' }}>
+        <View style={[styles.row, styles.headRow, { backgroundColor: 'rgba(255,255,255,0.03)' }]}>
+          <Text style={[styles.pos, { color: c.mutedForeground, fontSize: 11 }]}>#</Text>
+          <Text style={[styles.team, { color: c.mutedForeground, fontSize: 11, fontFamily: 'Inter_600SemiBold', letterSpacing: 0.5 }]}>TEAM</Text>
+          <Text style={[styles.num, { color: c.mutedForeground, fontSize: 11 }]}>P</Text>
+          <Text style={[styles.num, { color: c.mutedForeground, fontSize: 11 }]}>W</Text>
+          <Text style={[styles.num, { color: c.mutedForeground, fontSize: 11 }]}>L</Text>
+          <Text style={[styles.nrr, { color: c.mutedForeground, fontSize: 11 }]}>NRR</Text>
+          <Text style={[styles.pts, { color: c.mutedForeground, fontSize: 11 }]}>PTS</Text>
         </View>
         {rows.map((t, i) => (
           <View
@@ -40,13 +46,13 @@ function GroupTable({ title, rows, qualify }: { title: string; rows: PointsRow[]
             style={[
               styles.row,
               { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: c.border },
-              i < qualify && { backgroundColor: 'rgba(232,178,61,0.06)' },
+              i < qualify && { backgroundColor: 'rgba(232,178,61,0.08)' },
             ]}
           >
             <Text style={[styles.pos, { color: i < qualify ? c.accent : c.mutedForeground }]}>{i + 1}</Text>
-            <View style={[styles.team, { flexDirection: 'row', alignItems: 'center', gap: 8 }]}>
-              <TeamLogo name={t.team} size={26} />
-              <Text style={{ color: c.foreground, fontFamily: 'Inter_600SemiBold', fontSize: 12.5, flex: 1 }} numberOfLines={1}>
+            <View style={[styles.team, { flexDirection: 'row', alignItems: 'center', gap: 10 }]}>
+              <TeamLogo name={t.team} size={28} />
+              <Text style={{ color: c.foreground, fontFamily: 'Inter_600SemiBold', fontSize: 13.5, flex: 1 }} numberOfLines={1}>
                 {t.team}
               </Text>
             </View>
@@ -54,9 +60,9 @@ function GroupTable({ title, rows, qualify }: { title: string; rows: PointsRow[]
             <Text style={[styles.num, { color: c.foreground }]}>{t.won}</Text>
             <Text style={[styles.num, { color: c.foreground }]}>{t.lost}</Text>
             <Text style={[styles.nrr, { color: c.mutedForeground }]}>
-              {typeof t.nrr === 'number' ? t.nrr.toFixed(2) : t.nrr}
+              {typeof t.nrr === 'number' ? (t.nrr > 0 ? `+${t.nrr.toFixed(2)}` : t.nrr.toFixed(2)) : t.nrr}
             </Text>
-            <Text style={[styles.pts, { color: c.foreground, fontFamily: 'Inter_700Bold' }]}>{t.points}</Text>
+            <Text style={[styles.pts, { color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 14 }]}>{t.points}</Text>
           </View>
         ))}
       </Card>
@@ -94,7 +100,7 @@ export default function PointsScreen() {
         }
       >
         <ScreenHeader title="Points Table" subtitle={t('Season 5 standings', 'सीज़न 5 अंक तालिका')} />
-        <View style={{ paddingHorizontal: 16, paddingTop: 12 }}>
+        <View style={{ paddingHorizontal: 16, paddingTop: 16 }}>
           {q.isLoading ? (
             <LoadingView />
           ) : q.isError ? (
@@ -105,14 +111,14 @@ export default function PointsScreen() {
             <>
               <GroupTable title="GROUP A" rows={groupA} qualify={2} />
               <GroupTable title="GROUP B" rows={groupB} qualify={2} />
-              <Text style={{ color: c.mutedForeground, fontSize: 11, paddingHorizontal: 4, paddingBottom: 6 }}>
+              <Text style={{ color: c.mutedForeground, fontSize: 12, paddingHorizontal: 4, paddingBottom: 6, textAlign: 'center' }}>
                 {t('Top 2 teams from each group qualify for the playoffs', 'हर ग्रुप की टॉप 2 टीमें प्लेऑफ़ में जाती हैं')}
               </Text>
             </>
           ) : (
             <>
               <GroupTable title="STANDINGS" rows={table} qualify={4} />
-              <Text style={{ color: c.mutedForeground, fontSize: 11, paddingHorizontal: 4, paddingBottom: 6 }}>
+              <Text style={{ color: c.mutedForeground, fontSize: 12, paddingHorizontal: 4, paddingBottom: 6, textAlign: 'center' }}>
                 {t('Top 4 teams qualify for the playoffs', 'टॉप 4 टीमें प्लेऑफ़ में जाती हैं')}
               </Text>
             </>
@@ -127,20 +133,21 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: 14,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
   },
-  headRow: { paddingVertical: 6 },
-  groupHead: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
+  headRow: { paddingVertical: 10 },
+  groupHead: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
   groupChip: {
     borderWidth: 1,
+    borderColor: 'rgba(255, 107, 0, 0.4)',
     borderRadius: 20,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
+    paddingHorizontal: 16,
+    paddingVertical: 6,
   },
-  pos: { width: 20, fontFamily: 'Inter_700Bold', fontSize: 12 },
+  pos: { width: 22, fontFamily: 'Inter_700Bold', fontSize: 13 },
   team: { flex: 1 },
-  num: { width: 24, textAlign: 'center', fontSize: 12 },
-  nrr: { width: 44, textAlign: 'right', fontSize: 11 },
-  pts: { width: 36, textAlign: 'right', fontSize: 12.5 },
+  num: { width: 26, textAlign: 'center', fontSize: 13, fontFamily: 'Inter_500Medium' },
+  nrr: { width: 50, textAlign: 'right', fontSize: 12, fontFamily: 'Inter_500Medium' },
+  pts: { width: 36, textAlign: 'right', fontSize: 13 },
 });

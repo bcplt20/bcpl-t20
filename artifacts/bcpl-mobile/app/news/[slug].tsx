@@ -8,6 +8,7 @@ import { useLang } from '@/context/LanguageContext';
 import { SITE_ASSETS } from '@/lib/api';
 import { NEWS_ARTICLES } from '@/data/news';
 import { Card, EmptyView } from '@/components/ui';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function NewsDetailScreen() {
   const c = useColors();
@@ -26,17 +27,28 @@ export default function NewsDetailScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: c.background }}>
       <ScrollView contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 60 : 30 }}>
-        <Image
-          source={{ uri: `${SITE_ASSETS}/bcpl-assets/news/${article.image}` }}
-          style={{ width: '100%', height: 220 }}
-          contentFit="cover"
-          transition={200}
-        />
-        <View style={{ padding: 16 }}>
-          <Text style={{ color: c.accent, fontSize: 11.5, fontFamily: 'Inter_700Bold' }}>
-            {article.tag.toUpperCase()} · {article.date}
-          </Text>
+        <View>
+          <Image
+            source={{ uri: `${SITE_ASSETS}/bcpl-assets/news/${article.image}` }}
+            style={{ width: '100%', height: 280 }}
+            contentFit="cover"
+            transition={200}
+          />
+          <LinearGradient
+            colors={['transparent', c.background]}
+            style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 100 }}
+          />
+        </View>
+        <View style={{ padding: 20, paddingTop: 0 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+            <Text style={{ color: c.accent, fontSize: 12, fontFamily: 'Inter_700Bold', letterSpacing: 0.5 }}>
+              {article.tag.toUpperCase()}
+            </Text>
+            <Text style={{ color: c.mutedForeground, fontSize: 13 }}>• {article.date}</Text>
+          </View>
           <Text style={[styles.title, { color: c.foreground }]}>{article.title}</Text>
+          <View style={{ height: 3, width: 40, backgroundColor: c.primary, marginBottom: 20, borderRadius: 2 }} />
+          
           {article.paragraphs.map((p, i) => (
             <Text key={i} style={[styles.para, { color: c.secondaryForeground }]}>
               {p}
@@ -44,8 +56,8 @@ export default function NewsDetailScreen() {
           ))}
 
           {article.press.length > 0 ? (
-            <Card style={{ marginTop: 16 }}>
-              <Text style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 14, marginBottom: 6 }}>
+            <Card style={{ marginTop: 24 }}>
+              <Text style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 15, marginBottom: 10 }}>
                 Press coverage
               </Text>
               {article.press.map((p) => (
@@ -55,8 +67,10 @@ export default function NewsDetailScreen() {
                   style={({ pressed }) => [styles.pressRow, { opacity: pressed ? 0.7 : 1 }]}
                   testID={`press-${p.label}`}
                 >
-                  <Feather name="external-link" size={14} color={c.accent} />
-                  <Text style={{ color: c.accent, fontSize: 13.5, fontFamily: 'Inter_600SemiBold' }}>
+                  <View style={styles.pressIcon}>
+                    <Feather name="external-link" size={14} color={c.accent} />
+                  </View>
+                  <Text style={{ color: c.accent, fontSize: 14, fontFamily: 'Inter_600SemiBold', flex: 1 }}>
                     {p.label}
                   </Text>
                 </Pressable>
@@ -71,17 +85,32 @@ export default function NewsDetailScreen() {
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 20,
+    fontSize: 26,
     fontFamily: 'Inter_700Bold',
-    lineHeight: 27,
-    marginTop: 6,
-    marginBottom: 12,
+    lineHeight: 32,
+    marginBottom: 16,
+    letterSpacing: -0.5,
   },
-  para: { fontSize: 14.5, lineHeight: 23, marginBottom: 12 },
+  para: { 
+    fontSize: 16, 
+    lineHeight: 26, 
+    marginBottom: 16,
+    fontFamily: 'Inter_400Regular'
+  },
   pressRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    paddingVertical: 7,
+    gap: 12,
+    paddingVertical: 10,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: 'rgba(255,255,255,0.1)',
   },
+  pressIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(232, 178, 61, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  }
 });

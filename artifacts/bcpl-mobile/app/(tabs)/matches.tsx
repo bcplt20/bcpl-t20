@@ -49,29 +49,34 @@ export default function MatchesScreen() {
     <View style={{ flex: 1, backgroundColor: c.background }}>
       <ScreenHeader title="Matches" subtitle={t('Season 5 schedule & results', 'सीज़न 5 शेड्यूल और नतीजे')} />
       <View style={styles.filters}>
-        {FILTERS.map((f) => (
-          <Pressable
-            key={f.key}
-            onPress={() => setFilter(f.key)}
-            testID={`filter-${f.key}`}
-            style={[
-              styles.chip,
-              {
-                backgroundColor: filter === f.key ? c.primary : c.muted,
-              },
-            ]}
-          >
-            <Text
-              style={{
-                color: filter === f.key ? c.primaryForeground : c.mutedForeground,
-                fontFamily: 'Inter_600SemiBold',
-                fontSize: 12.5,
-              }}
+        {FILTERS.map((f) => {
+          const isActive = filter === f.key;
+          return (
+            <Pressable
+              key={f.key}
+              onPress={() => setFilter(f.key)}
+              testID={`filter-${f.key}`}
+              style={[
+                styles.chip,
+                {
+                  backgroundColor: isActive ? c.primary : 'rgba(255,255,255,0.06)',
+                  borderColor: isActive ? c.primary : 'rgba(255,255,255,0.1)',
+                },
+              ]}
             >
-              {f.label}
-            </Text>
-          </Pressable>
-        ))}
+              <Text
+                style={{
+                  color: isActive ? c.primaryForeground : c.mutedForeground,
+                  fontFamily: isActive ? 'Inter_700Bold' : 'Inter_600SemiBold',
+                  fontSize: 13,
+                  letterSpacing: 0.3,
+                }}
+              >
+                {f.label}
+              </Text>
+            </Pressable>
+          );
+        })}
       </View>
       {q.isLoading ? (
         <LoadingView />
@@ -88,6 +93,7 @@ export default function MatchesScreen() {
           contentContainerStyle={{
             paddingHorizontal: 16,
             paddingBottom: Platform.OS === 'web' ? 118 : 100,
+            paddingTop: 8,
           }}
           refreshControl={
             <RefreshControl refreshing={q.isRefetching} onRefresh={() => q.refetch()} tintColor={c.primary} />
@@ -101,13 +107,15 @@ export default function MatchesScreen() {
 const styles = StyleSheet.create({
   filters: {
     flexDirection: 'row',
-    gap: 8,
+    gap: 10,
     paddingHorizontal: 16,
     paddingBottom: 12,
+    paddingTop: 4,
   },
   chip: {
     borderRadius: 20,
-    paddingHorizontal: 14,
-    paddingVertical: 7,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderWidth: 1,
   },
 });

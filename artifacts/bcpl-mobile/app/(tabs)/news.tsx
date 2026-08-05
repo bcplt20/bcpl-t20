@@ -25,20 +25,23 @@ export default function NewsScreen() {
         renderItem={({ item: n }) => (
           <Pressable
             onPress={() => router.push(`/news/${n.slug}`)}
-            style={({ pressed }) => ({ opacity: pressed ? 0.85 : 1, paddingHorizontal: 16 })}
+            style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1, paddingHorizontal: 16, transform: [{ scale: pressed ? 0.98 : 1 }] })}
             testID={`news-${n.slug}`}
           >
-            <Card style={{ marginBottom: 12, padding: 0, overflow: 'hidden' }}>
+            <Card style={{ marginBottom: 16, padding: 0, overflow: 'hidden' }}>
               <Image
                 source={{ uri: `${SITE_ASSETS}/bcpl-assets/news/${n.image}` }}
-                style={{ width: '100%', height: 170 }}
+                style={{ width: '100%', height: 200 }}
                 contentFit="cover"
                 transition={150}
               />
-              <View style={{ padding: 14 }}>
-                <Text style={{ color: c.accent, fontSize: 11, fontFamily: 'Inter_600SemiBold' }}>
-                  {n.tag.toUpperCase()} · {n.date}
-                </Text>
+              <View style={{ padding: 18 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                  <Text style={{ color: c.accent, fontSize: 11, fontFamily: 'Inter_700Bold', letterSpacing: 0.5 }}>
+                    {n.tag.toUpperCase()}
+                  </Text>
+                  <Text style={{ color: c.mutedForeground, fontSize: 12 }}>• {n.date}</Text>
+                </View>
                 <Text style={[styles.title, { color: c.foreground }]} numberOfLines={3}>
                   {n.title}
                 </Text>
@@ -52,5 +55,5 @@ export default function NewsScreen() {
 }
 
 const styles = StyleSheet.create({
-  title: { fontSize: 15.5, fontFamily: 'Inter_700Bold', marginTop: 5, lineHeight: 21 },
+  title: { fontSize: 18, fontFamily: 'Inter_700Bold', lineHeight: 24, letterSpacing: -0.2 },
 });

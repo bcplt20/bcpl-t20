@@ -20,6 +20,7 @@ import { Badge, Card, TeamLogo } from '@/components/ui';
 import { MatchCard } from '@/components/MatchCard';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { Feather } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
 function pickFeatured(matches: Match[]): Match[] {
   const live = matches.filter((m) => m.status === 'live');
@@ -69,7 +70,8 @@ export default function HomeScreen() {
       >
         <ScreenHeader
           title={user ? t(`Hello, ${user.name.split(' ')[0]}`, `नमस्ते, ${user.name.split(' ')[0]}`) : 'Bhartiya Corporate Premier League'}
-          subtitle={user ? 'Bhartiya Corporate Premier League' : t("India's corporate cricket championship", 'भारत का कॉर्पोरेट क्रिकेट महाकुंभ')}
+          subtitle="Office से Stadium तक"
+          subtitleColor="#FF6B00"
         />
 
         {/* Register hero banner */}
@@ -82,47 +84,50 @@ export default function HomeScreen() {
                 contentFit="cover"
                 transition={200}
               />
+              {/* deep navy → transparent shade so text stays crisp */}
               <View style={styles.heroShade} />
+              <View style={styles.heroShadeLeft} />
+              {/* gold hairline frame for a premium feel */}
+              <View pointerEvents="none" style={styles.heroFrame} />
               <Image
-                source={require('../../assets/images/ganguly.jpg')}
+                source={require('../../assets/images/ganguly-cutout.png')}
                 style={styles.heroGanguly}
-                contentFit="cover"
-                contentPosition="top"
+                contentFit="contain"
+                contentPosition="bottom right"
               />
-              <View style={{ padding: 16, paddingRight: 118 }}>
+              <View style={{ padding: 18, paddingRight: 140, minHeight: 168, justifyContent: 'center' }}>
                 <Text style={styles.heroKick}>SEASON 5 · {t('REGISTRATIONS OPEN', 'रजिस्ट्रेशन शुरू')}</Text>
-                <Text style={styles.heroTitle}>{t('Register Now', 'अभी रजिस्टर करें')}</Text>
-                <Text style={styles.heroSub}>
-                  {t('Phase 1 — ₹299 + GST (Batsman/Bowler/WK) · ₹399 + GST (All-Rounder)', 'फेज़ 1 — ₹299 + GST (बल्लेबाज़/गेंदबाज़/WK) · ₹399 + GST (ऑलराउंडर)')}
-                </Text>
+                <Text style={styles.heroFee}>₹299<Text style={styles.heroFeeGst}> +GST</Text></Text>
+                <Text style={styles.heroFeeSub}>{t('Batsman · Bowler · Wicketkeeper', 'बल्लेबाज़ · गेंदबाज़ · विकेटकीपर')}</Text>
+                <Text style={styles.heroFeeSub}>₹399 +GST · {t('All-Rounder', 'ऑलराउंडर')}</Text>
                 <View style={styles.heroCta}>
-                  <Text style={styles.heroCtaTxt}>{t('Register in the app →', 'ऐप से रजिस्टर करें →')}</Text>
+                  <Text style={styles.heroCtaTxt}>{t('Register Now', 'अभी रजिस्टर करें')}</Text>
                 </View>
-                <Text style={styles.heroContact}>
-                  {t('Help: WhatsApp +91 91513 46555 · support@bcplt20.com', 'मदद: WhatsApp +91 91513 46555 · support@bcplt20.com')}
-                </Text>
               </View>
             </View>
           </Pressable>
         </View>
 
         {anyLive ? (
-          <View style={{ paddingHorizontal: 16, marginBottom: 4 }}>
+          <View style={{ paddingHorizontal: 16, marginBottom: 4, marginTop: 12 }}>
             <Badge label="Match live now" tone="live" />
           </View>
         ) : null}
 
-        <View style={{ paddingHorizontal: 16, paddingTop: 8 }}>
+        <View style={{ paddingHorizontal: 16, paddingTop: 14 }}>
           {featured.length > 0 ? (
             featured.map((m) => <MatchCard key={m.id} match={m} />)
           ) : matchesQ.isLoading ? (
-            <Card style={{ alignItems: 'center', paddingVertical: 28 }}>
-              <Text style={{ color: c.mutedForeground }}>Loading matches…</Text>
+            <Card style={{ alignItems: 'center', paddingVertical: 40 }}>
+              <Text style={{ color: c.mutedForeground, fontFamily: 'Inter_500Medium' }}>Loading matches…</Text>
             </Card>
           ) : (
-            <Card style={{ alignItems: 'center', paddingVertical: 28 }}>
-              <Feather name="calendar" size={26} color={c.mutedForeground} />
-              <Text style={{ color: c.mutedForeground, marginTop: 8, textAlign: 'center' }}>
+            <Card style={{ alignItems: 'center', paddingVertical: 40 }}>
+              <View style={styles.iconCircle}>
+                <Feather name="calendar" size={28} color={c.mutedForeground} />
+              </View>
+              <Text style={{ color: c.foreground, fontFamily: 'Inter_600SemiBold', fontSize: 16, marginTop: 16 }}>Schedule</Text>
+              <Text style={{ color: c.mutedForeground, marginTop: 6, textAlign: 'center', fontSize: 13, lineHeight: 20 }}>
                 {t('Season 5 schedule coming soon — October 2026', 'सीज़न 5 का शेड्यूल जल्द आ रहा है — अक्टूबर 2026')}
               </Text>
             </Card>
@@ -130,59 +135,72 @@ export default function HomeScreen() {
         </View>
 
         {topTeams.length > 0 ? (
-          <View style={{ paddingHorizontal: 16, marginTop: 14 }}>
+          <View style={{ paddingHorizontal: 16, marginTop: 24 }}>
             <View style={styles.sectionRow}>
-              <Text style={[styles.sectionTitle, { color: c.foreground }]}>Points Table</Text>
-              <Pressable onPress={() => router.push('/points')} testID="see-points">
+              <View>
+                <Text style={[styles.sectionTitle, { color: c.foreground }]}>Points Table</Text>
+                <Text style={{ color: c.mutedForeground, fontSize: 12, marginTop: 2 }}>Season 5 Standings</Text>
+              </View>
+              <Pressable onPress={() => router.push('/points')} testID="see-points" style={styles.seeAllBtn}>
                 <Text style={{ color: c.accent, fontFamily: 'Inter_600SemiBold', fontSize: 13 }}>
-                  {t('Full table →', 'पूरी टेबल →')}
+                  {t('Full table', 'पूरी टेबल')}
                 </Text>
+                <Feather name="chevron-right" size={14} color={c.accent} />
               </Pressable>
             </View>
-            <Card>
+            <Card style={{ padding: 0, overflow: 'hidden' }}>
               {topTeams.map((t, i) => (
                 <View key={t.team} style={[styles.pointsRow, i > 0 && { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: c.border }]}>
-                  <Text style={[styles.pos, { color: c.accent }]}>{i + 1}</Text>
-                  <TeamLogo name={t.team} size={26} />
+                  <Text style={[styles.pos, { color: i === 0 ? c.accent : c.mutedForeground }]}>{i + 1}</Text>
+                  <TeamLogo name={t.team} size={28} />
                   <Text style={[styles.teamName, { color: c.foreground }]} numberOfLines={1}>
                     {t.team}
                   </Text>
-                  <Text style={{ color: c.mutedForeground, fontSize: 12 }}>{t.played} M</Text>
-                  <Text style={[styles.pts, { color: c.foreground }]}>{t.points} pts</Text>
+                  <Text style={{ color: c.mutedForeground, fontSize: 12.5, width: 36, textAlign: 'center' }}>{t.played} M</Text>
+                  <View style={styles.ptsPill}>
+                    <Text style={[styles.pts, { color: c.foreground }]}>{t.points}</Text>
+                  </View>
                 </View>
               ))}
             </Card>
           </View>
         ) : null}
 
-        <View style={{ paddingHorizontal: 16, marginTop: 14 }}>
+        <View style={{ paddingHorizontal: 16, marginTop: 32 }}>
           <View style={styles.sectionRow}>
-            <Text style={[styles.sectionTitle, { color: c.foreground }]}>Latest News</Text>
-            <Pressable onPress={() => router.push('/news')} testID="see-news">
+            <View>
+              <Text style={[styles.sectionTitle, { color: c.foreground }]}>Latest News</Text>
+              <Text style={{ color: c.mutedForeground, fontSize: 12, marginTop: 2 }}>League Updates</Text>
+            </View>
+            <Pressable onPress={() => router.push('/news')} testID="see-news" style={styles.seeAllBtn}>
               <Text style={{ color: c.accent, fontFamily: 'Inter_600SemiBold', fontSize: 13 }}>
-                {t('All news →', 'सारी खबरें →')}
+                {t('All news', 'सारी खबरें')}
               </Text>
+              <Feather name="chevron-right" size={14} color={c.accent} />
             </Pressable>
           </View>
           {latestNews.map((n) => (
             <Pressable
               key={n.slug}
               onPress={() => router.push(`/news/${n.slug}`)}
-              style={({ pressed }) => ({ opacity: pressed ? 0.85 : 1 })}
+              style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] })}
               testID={`home-news-${n.slug}`}
             >
-              <Card style={{ marginBottom: 10, flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+              <Card style={styles.newsCard}>
                 <Image
                   source={{ uri: `${SITE_ASSETS}/bcpl-assets/news/${n.image}` }}
-                  style={{ width: 68, height: 68, borderRadius: 10 }}
+                  style={styles.newsImage}
                   contentFit="cover"
                   transition={150}
                 />
-                <View style={{ flex: 1 }}>
-                  <Text style={{ color: c.accent, fontSize: 11, fontFamily: 'Inter_600SemiBold' }}>
-                    {n.tag.toUpperCase()} · {n.date}
-                  </Text>
-                  <Text style={{ color: c.foreground, fontFamily: 'Inter_600SemiBold', fontSize: 13.5, marginTop: 3 }} numberOfLines={2}>
+                <View style={styles.newsContent}>
+                  <View style={styles.newsTagRow}>
+                    <Text style={{ color: c.accent, fontSize: 10, fontFamily: 'Inter_700Bold', letterSpacing: 0.5 }}>
+                      {n.tag.toUpperCase()}
+                    </Text>
+                    <Text style={{ color: c.mutedForeground, fontSize: 11 }}>• {n.date}</Text>
+                  </View>
+                  <Text style={{ color: c.foreground, fontFamily: 'Inter_600SemiBold', fontSize: 14, marginTop: 6, lineHeight: 20 }} numberOfLines={2}>
                     {n.title}
                   </Text>
                 </View>
@@ -200,9 +218,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 14,
   },
-  sectionTitle: { fontSize: 17, fontFamily: 'Inter_700Bold' },
+  sectionTitle: { fontSize: 20, fontFamily: 'Inter_700Bold', letterSpacing: -0.3 },
+  seeAllBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+    backgroundColor: 'rgba(232,178,61,0.1)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+  },
   hero: {
     borderRadius: 16,
     overflow: 'hidden',
@@ -221,32 +248,87 @@ const styles = StyleSheet.create({
   },
   heroTitle: { color: '#FFFFFF', fontFamily: 'Inter_700Bold', fontSize: 21, marginTop: 3 },
   heroSub: { color: 'rgba(255,255,255,0.85)', fontSize: 12.5, marginTop: 3, fontFamily: 'Inter_400Regular' },
+  heroShadeLeft: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'transparent',
+    borderLeftWidth: 200,
+    borderLeftColor: 'rgba(9,19,44,0.35)',
+  },
+  heroFrame: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(232,178,61,0.45)',
+  },
   heroGanguly: {
     position: 'absolute',
-    right: -8,
+    right: -6,
     bottom: 0,
-    width: 112,
-    height: '100%',
-    opacity: 0.55,
-    borderTopLeftRadius: 60,
+    width: 150,
+    height: '96%',
   },
+  heroFee: { color: '#FFFFFF', fontFamily: 'Inter_700Bold', fontSize: 34, marginTop: 6, lineHeight: 38 },
+  heroFeeGst: { color: '#E8B23D', fontSize: 16, fontFamily: 'Inter_700Bold' },
+  heroFeeSub: { color: 'rgba(255,255,255,0.85)', fontSize: 12, marginTop: 2, fontFamily: 'Inter_500Medium' },
   heroCta: {
     alignSelf: 'flex-start',
     backgroundColor: '#FF6B00',
-    borderRadius: 20,
-    paddingHorizontal: 14,
-    paddingVertical: 7,
-    marginTop: 10,
+    borderRadius: 22,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    marginTop: 12,
+    shadowColor: '#FF6B00',
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 6,
   },
-  heroCtaTxt: { color: '#fff', fontFamily: 'Inter_700Bold', fontSize: 13 },
-  heroContact: { color: 'rgba(255,255,255,0.65)', fontSize: 10.5, marginTop: 9, fontFamily: 'Inter_400Regular' },
+  heroCtaTxt: { color: '#fff', fontFamily: 'Inter_700Bold', fontSize: 14, letterSpacing: 0.3 },
   pointsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
-    paddingVertical: 9,
+    gap: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
   },
-  pos: { width: 18, fontFamily: 'Inter_700Bold', fontSize: 13 },
-  teamName: { flex: 1, fontFamily: 'Inter_600SemiBold', fontSize: 13.5 },
-  pts: { fontFamily: 'Inter_700Bold', fontSize: 13, width: 52, textAlign: 'right' },
+  pos: { width: 16, fontFamily: 'Inter_700Bold', fontSize: 14 },
+  teamName: { flex: 1, fontFamily: 'Inter_600SemiBold', fontSize: 14 },
+  ptsPill: {
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  pts: { fontFamily: 'Inter_700Bold', fontSize: 14 },
+  newsCard: {
+    marginBottom: 12,
+    flexDirection: 'row',
+    padding: 0,
+    overflow: 'hidden',
+    alignItems: 'stretch',
+  },
+  newsImage: {
+    width: 100,
+    height: '100%',
+  },
+  newsContent: {
+    flex: 1,
+    padding: 14,
+    justifyContent: 'center',
+  },
+  newsTagRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  iconCircle: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: 'rgba(255,255,255,0.03)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.06)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });

@@ -11,23 +11,26 @@ import { useColors } from '@/hooks/useColors';
 import { useLang } from '@/context/LanguageContext';
 import { Feather } from '@expo/vector-icons';
 import colors from '@/constants/colors';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export function Card({ children, style }: { children: React.ReactNode; style?: ViewStyle }) {
   const c = useColors();
   return (
-    <View
-      style={[
-        {
-          backgroundColor: c.card,
-          borderRadius: colors.radius,
-          borderWidth: StyleSheet.hairlineWidth,
-          borderColor: c.border,
-          padding: 14,
-        },
-        style,
-      ]}
-    >
-      {children}
+    <View style={[styles.cardShadow, style]}>
+      <LinearGradient
+        colors={[c.card, '#1E325F']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+        style={[
+          styles.cardGradient,
+          {
+            borderRadius: colors.radius,
+            borderColor: 'rgba(255,255,255,0.1)',
+          },
+        ]}
+      >
+        {children}
+      </LinearGradient>
     </View>
   );
 }
@@ -40,11 +43,35 @@ export function Badge({
   tone?: 'live' | 'gold' | 'muted' | 'success';
 }) {
   const c = useColors();
-  const bg =
-    tone === 'live' ? c.destructive : tone === 'gold' ? c.accent : tone === 'success' ? c.success : c.muted;
-  const fg = tone === 'gold' ? c.accentForeground : '#FFFFFF';
+  
+  if (tone === 'live') {
+    return (
+      <View style={[styles.badgeBase, { backgroundColor: 'rgba(239, 68, 68, 0.15)', borderColor: 'rgba(239, 68, 68, 0.4)' }]}>
+        <View style={[styles.liveDot, { backgroundColor: c.destructive }]} />
+        <Text style={[styles.badgeText, { color: '#FF7B7B' }]}>{label.toUpperCase()}</Text>
+      </View>
+    );
+  }
+
+  if (tone === 'gold') {
+    return (
+      <LinearGradient
+        colors={['#E8B23D', '#D49A25']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={[styles.badgeBase, { borderWidth: 0 }]}
+      >
+        <Text style={[styles.badgeText, { color: '#0D1E44' }]}>{label.toUpperCase()}</Text>
+      </LinearGradient>
+    );
+  }
+
+  const bg = tone === 'success' ? 'rgba(49, 197, 107, 0.15)' : 'rgba(31, 50, 96, 0.6)';
+  const border = tone === 'success' ? 'rgba(49, 197, 107, 0.3)' : 'rgba(255,255,255,0.1)';
+  const fg = tone === 'success' ? c.success : c.mutedForeground;
+
   return (
-    <View style={[styles.badge, { backgroundColor: bg }]}>
+    <View style={[styles.badgeBase, { backgroundColor: bg, borderColor: border }]}>
       <Text style={[styles.badgeText, { color: fg }]}>{label.toUpperCase()}</Text>
     </View>
   );
@@ -64,8 +91,10 @@ export function ErrorView({ message, onRetry }: { message?: string; onRetry?: ()
   const { t } = useLang();
   return (
     <View style={styles.center}>
-      <Feather name="wifi-off" size={30} color={c.mutedForeground} />
-      <Text style={{ color: c.mutedForeground, marginTop: 10, textAlign: 'center', paddingHorizontal: 32 }}>
+      <View style={styles.iconCircle}>
+        <Feather name="wifi-off" size={26} color={c.accent} />
+      </View>
+      <Text style={{ color: c.mutedForeground, marginTop: 14, textAlign: 'center', paddingHorizontal: 40, fontSize: 14, lineHeight: 20 }}>
         {message ?? t('Something went wrong — check your internet and try again', 'कुछ गड़बड़ हो गई — इंटरनेट जाँच कर फिर कोशिश करें')}
       </Text>
       {onRetry ? (
@@ -73,11 +102,11 @@ export function ErrorView({ message, onRetry }: { message?: string; onRetry?: ()
           onPress={onRetry}
           style={({ pressed }) => [
             styles.retryBtn,
-            { backgroundColor: c.primary, opacity: pressed ? 0.8 : 1 },
+            { backgroundColor: 'rgba(255,107,0,0.15)', borderColor: 'rgba(255,107,0,0.4)', opacity: pressed ? 0.8 : 1 },
           ]}
           testID="retry-button"
         >
-          <Text style={{ color: c.primaryForeground, fontFamily: 'Inter_600SemiBold' }}>Retry</Text>
+          <Text style={{ color: c.primary, fontFamily: 'Inter_600SemiBold', fontSize: 13 }}>Retry</Text>
         </Pressable>
       ) : null}
     </View>
@@ -88,8 +117,10 @@ export function EmptyView({ icon, text }: { icon: keyof typeof Feather.glyphMap;
   const c = useColors();
   return (
     <View style={styles.center}>
-      <Feather name={icon} size={30} color={c.mutedForeground} />
-      <Text style={{ color: c.mutedForeground, marginTop: 10, textAlign: 'center', paddingHorizontal: 32 }}>
+      <View style={styles.iconCircle}>
+        <Feather name={icon} size={28} color={c.mutedForeground} />
+      </View>
+      <Text style={{ color: c.mutedForeground, marginTop: 16, textAlign: 'center', paddingHorizontal: 40, fontSize: 14, fontFamily: 'Inter_500Medium' }}>
         {text}
       </Text>
     </View>
@@ -108,13 +139,15 @@ export function TeamLogo({ name, size = 44 }: { name: string; size?: number }) {
   const [failed, setFailed] = React.useState(false);
   if (failed) return <TeamDot name={name} size={size} />;
   return (
-    <Image
-      source={{ uri: `${SITE_ASSETS}/bcpl-assets/logos/${teamSlug(name)}.png` }}
-      style={{ width: size, height: size }}
-      contentFit="contain"
-      transition={150}
-      onError={() => setFailed(true)}
-    />
+    <View style={[styles.logoContainer, { width: size, height: size, borderRadius: size / 2 }]}>
+      <Image
+        source={{ uri: `${SITE_ASSETS}/bcpl-assets/logos/${teamSlug(name)}.png` }}
+        style={{ width: size * 0.85, height: size * 0.85 }}
+        contentFit="contain"
+        transition={150}
+        onError={() => setFailed(true)}
+      />
+    </View>
   );
 }
 
@@ -140,6 +173,8 @@ export function TeamDot({ name, size = 34 }: { name: string; size?: number }) {
         backgroundColor: bg,
         alignItems: 'center',
         justifyContent: 'center',
+        borderWidth: 1.5,
+        borderColor: 'rgba(255,255,255,0.1)',
       }}
     >
       <Text style={{ color: '#fff', fontFamily: 'Inter_700Bold', fontSize: size * 0.36 }}>{initials}</Text>
@@ -148,16 +183,38 @@ export function TeamDot({ name, size = 34 }: { name: string; size?: number }) {
 }
 
 const styles = StyleSheet.create({
-  badge: {
-    borderRadius: 6,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
+  cardShadow: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+  cardGradient: {
+    borderWidth: 1,
+    padding: 16,
+    overflow: 'hidden',
+  },
+  badgeBase: {
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
     alignSelf: 'flex-start',
+    borderWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 5,
+  },
+  liveDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
   },
   badgeText: {
     fontSize: 10,
     fontFamily: 'Inter_700Bold',
-    letterSpacing: 0.6,
+    letterSpacing: 0.8,
   },
   center: {
     flex: 1,
@@ -165,10 +222,28 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 60,
   },
+  iconCircle: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: 'rgba(255,255,255,0.03)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.06)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   retryBtn: {
-    marginTop: 14,
-    borderRadius: 10,
+    marginTop: 18,
+    borderRadius: 20,
     paddingHorizontal: 22,
     paddingVertical: 10,
+    borderWidth: 1,
+  },
+  logoContainer: {
+    backgroundColor: 'rgba(255,255,255,0.03)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
