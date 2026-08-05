@@ -291,7 +291,11 @@ async function processScoring(evalRow: EvalRow, cfg: Phase1Config, mode: "real" 
         strongestArea: display.strongestArea,
         improvementArea: display.improvementArea,
         result,
-        resultReleaseAt: new Date(Date.now() + cfg.resultReleaseHours * 60 * 60 * 1000),
+        // Test mode (owner, 5 Aug '26): release IMMEDIATELY so the pass mark
+        // can be checked end-to-end without waiting out the production delay.
+        resultReleaseAt: cfg.testMode
+          ? new Date()
+          : new Date(Date.now() + cfg.resultReleaseHours * 60 * 60 * 1000),
         promptVersion: cfg.promptVersion,
         rubricVersion: cfg.rubricVersion,
         assessmentVersion: cfg.assessmentVersion,
