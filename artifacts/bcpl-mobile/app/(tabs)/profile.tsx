@@ -25,7 +25,7 @@ function StatusRow({ label, value, done, isCurrent }: { label: string; value: st
   const c = useColors();
   return (
     <View style={styles.statusRow}>
-      <View style={[styles.statusIconWrap, done && { backgroundColor: 'rgba(49, 197, 107, 0.2)' }, isCurrent && !done && { backgroundColor: 'rgba(232, 178, 61, 0.2)' }]}>
+      <View style={[styles.statusIconWrap, done && { backgroundColor: 'rgba(49, 197, 107, 0.2)' }, isCurrent && !done && { backgroundColor: 'rgba(0, 229, 255, 0.2)' }]}>
         <Feather
           name={done ? 'check-circle' : isCurrent ? 'clock' : 'circle'}
           size={18}
@@ -33,7 +33,7 @@ function StatusRow({ label, value, done, isCurrent }: { label: string; value: st
         />
       </View>
       <Text style={{ color: done || isCurrent ? c.foreground : c.mutedForeground, fontSize: 14.5, flex: 1, fontFamily: 'Inter_700Bold' }}>{label}</Text>
-      <View style={[styles.statusValuePill, done && { backgroundColor: 'rgba(49, 197, 107, 0.15)', borderColor: 'rgba(49, 197, 107, 0.4)' }, isCurrent && !done && { backgroundColor: 'rgba(232, 178, 61, 0.15)', borderColor: 'rgba(232, 178, 61, 0.4)' }]}>
+      <View style={[styles.statusValuePill, done && { backgroundColor: 'rgba(49, 197, 107, 0.15)', borderColor: 'rgba(49, 197, 107, 0.4)' }, isCurrent && !done && { backgroundColor: 'rgba(0, 229, 255, 0.15)', borderColor: 'rgba(0, 229, 255, 0.4)' }]}>
         <Text style={{ color: done ? c.success : isCurrent ? c.accent : c.mutedForeground, fontSize: 12, fontFamily: 'Inter_700Bold', textTransform: 'uppercase', letterSpacing: 0.5 }}>
           {value}
         </Text>
@@ -74,7 +74,7 @@ function LangSwitch() {
               testID={`lang-${o.value}`}
             >
               {isActive ? (
-                <LinearGradient colors={['#FF6B00', '#D95A00']} style={StyleSheet.absoluteFill} />
+                <LinearGradient colors={['#FF1A75', '#D10056']} style={StyleSheet.absoluteFill} />
               ) : (
                 <LinearGradient colors={['rgba(255,255,255,0.05)', 'rgba(255,255,255,0.02)']} style={StyleSheet.absoluteFill} />
               )}
@@ -161,7 +161,7 @@ function ContactSupport() {
             testID={`support-${r.icon}`}
           >
             <View style={styles.supportIcon}>
-              <Feather name={r.icon} size={18} color="#E8B23D" />
+              <Feather name={r.icon} size={18} color="#00E5FF" />
             </View>
             <View style={{ flex: 1 }}>
               <Text style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 15 }}>{r.label}</Text>
@@ -196,7 +196,7 @@ export default function ProfileScreen() {
         <ScreenHeader title="Profile" />
         <View style={styles.loginWrap}>
           <View style={styles.loginIconWrap}>
-            <LinearGradient colors={['rgba(255,107,0,0.2)', 'rgba(255,107,0,0.05)']} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={['rgba(255, 26, 117,0.2)', 'rgba(255, 26, 117,0.05)']} style={StyleSheet.absoluteFill} />
             <Feather name="user" size={44} color={c.primary} />
           </View>
           <Text style={{ color: c.foreground, fontFamily: 'Inter_800ExtraBold', fontSize: 24, marginTop: 24, textAlign: 'center' }}>
@@ -211,7 +211,7 @@ export default function ProfileScreen() {
             testID="login-button"
           >
             <LinearGradient
-              colors={['#FF6B00', '#D95A00']}
+              colors={['#FF1A75', '#D10056']}
               style={[StyleSheet.absoluteFill, { borderRadius: 16 }]}
             />
             <Text style={{ color: '#fff', fontFamily: 'Inter_800ExtraBold', fontSize: 16, letterSpacing: 0.5 }}>
@@ -248,8 +248,8 @@ export default function ProfileScreen() {
             <ErrorView onRetry={() => dashQ.refetch()} />
           ) : !d?.registered ? (
             <Card style={{ alignItems: 'center', paddingVertical: 40 }}>
-              <View style={[styles.loginIconWrap, { backgroundColor: 'transparent', borderColor: 'rgba(232, 178, 61, 0.3)' }]}>
-                <LinearGradient colors={['rgba(232,178,61,0.2)', 'rgba(232,178,61,0.05)']} style={StyleSheet.absoluteFill} />
+              <View style={[styles.loginIconWrap, { backgroundColor: 'transparent', borderColor: 'rgba(0, 229, 255, 0.3)' }]}>
+                <LinearGradient colors={['rgba(0, 229, 255,0.2)', 'rgba(0, 229, 255,0.05)']} style={StyleSheet.absoluteFill} />
                 <Feather name="edit-3" size={36} color={c.accent} />
               </View>
               <Text style={{ color: c.foreground, fontFamily: 'Inter_800ExtraBold', fontSize: 20, marginTop: 24, textAlign: 'center' }}>
@@ -264,7 +264,7 @@ export default function ProfileScreen() {
                 testID="register-cta"
               >
                 <LinearGradient
-                  colors={['#FF6B00', '#D95A00']}
+                  colors={['#FF1A75', '#D10056']}
                   style={[StyleSheet.absoluteFill, { borderRadius: 14 }]}
                 />
                 <Feather name="edit-3" size={16} color="#fff" />
@@ -319,7 +319,7 @@ export default function ProfileScreen() {
                       testID="upload-video-cta"
                     >
                       <LinearGradient
-                        colors={['#FF6B00', '#D95A00']}
+                        colors={['#FF1A75', '#D10056']}
                         style={[StyleSheet.absoluteFill, { borderRadius: 14 }]}
                       />
                       <Feather name="video" size={18} color="#fff" />
@@ -396,7 +396,7 @@ export default function ProfileScreen() {
 
 const styles = StyleSheet.create({
   supportRow: { flexDirection: 'row', alignItems: 'center', gap: 16, paddingVertical: 16 },
-  supportIcon: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(232, 178, 61, 0.15)', alignItems: 'center', justifyContent: 'center' },
+  supportIcon: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(0, 229, 255, 0.15)', alignItems: 'center', justifyContent: 'center' },
   linkBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -422,7 +422,7 @@ const styles = StyleSheet.create({
     borderRadius: 44,
     backgroundColor: 'rgba(255,255,255,0.05)',
     borderWidth: 2,
-    borderColor: 'rgba(255,107,0,0.3)',
+    borderColor: 'rgba(255, 26, 117,0.3)',
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
@@ -435,7 +435,7 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     alignItems: 'center',
     overflow: 'hidden',
-    shadowColor: '#FF6B00',
+    shadowColor: '#FF1A75',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
     shadowRadius: 16,

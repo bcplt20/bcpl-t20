@@ -102,7 +102,7 @@ export function MatchCard({ match }: { match: Match }) {
           <View style={styles.vsContainer}>
             <LinearGradient colors={['transparent', c.border, 'transparent']} style={styles.vsLineVert} />
             <LinearGradient
-              colors={['#E8B23D', '#FF6B00']}
+              colors={['#FF1A75', '#8A2BE2']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.vsChip}
@@ -196,13 +196,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: -4,
-    shadowColor: '#FF6B00',
+    shadowColor: '#FF1A75',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 8,
     elevation: 4,
     borderWidth: 2,
-    borderColor: '#121F3D',
+    borderColor: '#161124',
     zIndex: 2,
   },
   footContainer: {

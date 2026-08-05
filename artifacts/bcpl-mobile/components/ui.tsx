@@ -21,7 +21,7 @@ export function Card({ children, style }: { children: React.ReactNode; style?: S
   return (
     <View style={[styles.cardShadow, style]}>
       <LinearGradient
-        colors={[c.card, '#0B152A']}
+        colors={[c.card, '#0F0B18']}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
         style={[
@@ -78,12 +78,12 @@ export function Badge({
   if (tone === 'gold') {
     return (
       <LinearGradient
-        colors={['#E8B23D', '#D49A25']}
+        colors={['#00E5FF', '#00B3CC']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={[styles.badgeBase, { borderWidth: 0, shadowColor: '#E8B23D', shadowOpacity: 0.3, shadowRadius: 6, shadowOffset: { width: 0, height: 0 }, elevation: 2 }]}
+        style={[styles.badgeBase, { borderWidth: 0, shadowColor: '#00E5FF', shadowOpacity: 0.3, shadowRadius: 6, shadowOffset: { width: 0, height: 0 }, elevation: 2 }]}
       >
-        <Text style={[styles.badgeText, { color: '#0D1E44' }]}>{label.toUpperCase()}</Text>
+        <Text style={[styles.badgeText, { color: '#000000' }]}>{label.toUpperCase()}</Text>
       </LinearGradient>
     );
   }
@@ -124,7 +124,7 @@ export function ErrorView({ message, onRetry }: { message?: string; onRetry?: ()
           onPress={onRetry}
           style={({ pressed }) => [
             styles.retryBtn,
-            { backgroundColor: 'rgba(255,107,0,0.15)', borderColor: 'rgba(255,107,0,0.4)', opacity: pressed ? 0.8 : 1 },
+            { backgroundColor: 'rgba(255, 26, 117,0.15)', borderColor: 'rgba(255, 26, 117,0.4)', opacity: pressed ? 0.8 : 1 },
           ]}
           testID="retry-button"
         >
@@ -174,7 +174,7 @@ export function TeamLogo({ name, size = 44, glow = false }: { name: string; size
   return inner;
 }
 
-const TEAM_COLORS = ['#FF6B00', '#3B82F6', '#31C56B', '#A855F7', '#E8B23D', '#EC4899', '#14B8A6', '#F97316', '#8B5CF6', '#0EA5E9'];
+const TEAM_COLORS = ['#FF1A75', '#3B82F6', '#31C56B', '#A855F7', '#00E5FF', '#EC4899', '#14B8A6', '#F97316', '#8B5CF6', '#0EA5E9'];
 export function TeamDot({ name, size = 34, glow = false }: { name: string; size?: number; glow?: boolean }) {
   let hash = 0;
   for (let i = 0; i < name.length; i++) hash = (hash * 31 + name.charCodeAt(i)) | 0;

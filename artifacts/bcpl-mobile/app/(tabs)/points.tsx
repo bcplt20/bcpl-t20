@@ -22,12 +22,12 @@ function GroupTable({ title, rows, qualify }: { title: string; rows: PointsRow[]
     <View style={{ marginBottom: 28 }}>
       <View style={styles.groupHead}>
         <LinearGradient
-          colors={['rgba(255, 107, 0, 0.3)', 'rgba(255, 107, 0, 0.05)']}
+          colors={['rgba(255, 26, 117, 0.3)', 'rgba(255, 26, 117, 0.05)']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.groupChip}
         >
-          <Text style={{ color: '#FF6B00', fontFamily: 'Inter_800ExtraBold', fontSize: 13, letterSpacing: 1.5 }}>{title}</Text>
+          <Text style={{ color: '#FF1A75', fontFamily: 'Inter_800ExtraBold', fontSize: 13, letterSpacing: 1.5 }}>{title}</Text>
         </LinearGradient>
       </View>
       <Card style={{ paddingHorizontal: 0, paddingVertical: 0, overflow: 'hidden' }}>
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
   groupHead: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
   groupChip: {
     borderWidth: 1,
-    borderColor: 'rgba(255, 107, 0, 0.4)',
+    borderColor: 'rgba(255, 26, 117, 0.4)',
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 6,

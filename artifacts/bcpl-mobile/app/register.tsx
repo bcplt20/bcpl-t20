@@ -298,7 +298,7 @@ export default function RegisterScreen() {
       testID={testID}
     >
       <LinearGradient
-        colors={['#FF6B00', '#D95A00']}
+        colors={['#FF1A75', '#D10056']}
         style={[StyleSheet.absoluteFill, { borderRadius: 16 }]}
       />
       {busy ? <ActivityIndicator color="#fff" /> : (
@@ -343,7 +343,7 @@ export default function RegisterScreen() {
       {step === 'account' ? (
         <View style={{ gap: 16 }}>
         <Card>
-          <Text style={{ color: '#E8B23D', fontFamily: 'Inter_800ExtraBold', fontSize: 11, letterSpacing: 2 }}>
+          <Text style={{ color: '#00E5FF', fontFamily: 'Inter_800ExtraBold', fontSize: 11, letterSpacing: 2 }}>
             {t('YOUR JOURNEY', 'आपका सफ़र')}
           </Text>
           <Text style={{ color: c.foreground, fontFamily: 'Inter_800ExtraBold', fontSize: 18, marginTop: 6, marginBottom: 16 }}>
@@ -359,8 +359,8 @@ export default function RegisterScreen() {
           ].map((s, i, arr) => (
             <View key={s.n} style={{ flexDirection: 'row', gap: 16, marginTop: i === 0 ? 8 : 0 }}>
               <View style={{ alignItems: 'center' }}>
-                <View style={[styles.stepDot, i === 0 ? { backgroundColor: '#FF6B00', borderColor: 'rgba(255,107,0,0.4)' } : { backgroundColor: 'rgba(255,107,0,0.1)', borderColor: 'rgba(255,107,0,0.2)' }]}>
-                  <Text style={{ color: i === 0 ? '#fff' : '#FF6B00', fontFamily: 'Inter_800ExtraBold', fontSize: 13 }}>{s.n}</Text>
+                <View style={[styles.stepDot, i === 0 ? { backgroundColor: '#FF1A75', borderColor: 'rgba(255,26,117,0.4)' } : { backgroundColor: 'rgba(255,26,117,0.1)', borderColor: 'rgba(255,26,117,0.2)' }]}>
+                  <Text style={{ color: i === 0 ? '#fff' : '#FF1A75', fontFamily: 'Inter_800ExtraBold', fontSize: 13 }}>{s.n}</Text>
                 </View>
                 {i < arr.length - 1 ? <View style={styles.stepLine} /> : null}
               </View>
@@ -391,7 +391,7 @@ export default function RegisterScreen() {
       {step === 'otp' ? (
         <Card>
           <View style={{ alignItems: 'center', marginBottom: 24, marginTop: 12 }}>
-            <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: 'rgba(255,107,0,0.15)', alignItems: 'center', justifyContent: 'center', marginBottom: 16, borderWidth: 2, borderColor: 'rgba(255,107,0,0.3)' }}>
+            <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: 'rgba(255,26,117,0.15)', alignItems: 'center', justifyContent: 'center', marginBottom: 16, borderWidth: 2, borderColor: 'rgba(255,26,117,0.3)' }}>
               <Feather name="mail" size={28} color={c.primary} />
             </View>
             <Text style={{ color: c.foreground, fontSize: 18, fontFamily: 'Inter_700Bold', textAlign: 'center' }}>
@@ -421,13 +421,13 @@ export default function RegisterScreen() {
                     onPress={() => setRole(r.id)}
                     style={[styles.chip, {
                       borderColor: isActive ? c.primary : 'rgba(255,255,255,0.1)',
-                      backgroundColor: isActive ? 'rgba(255,107,0,0.15)' : 'rgba(255,255,255,0.03)',
+                      backgroundColor: isActive ? 'rgba(255,26,117,0.15)' : 'rgba(255,255,255,0.03)',
                     }]}
                     testID={`role-${r.id}`}
                   >
                     {isActive ? (
                       <LinearGradient
-                        colors={['rgba(255,107,0,0.2)', 'rgba(255,107,0,0)']}
+                        colors={['rgba(255,26,117,0.2)', 'rgba(255,26,117,0)']}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 0, y: 1 }}
                         style={StyleSheet.absoluteFill}
@@ -460,7 +460,7 @@ export default function RegisterScreen() {
                     onPress={() => setCity(ct)}
                     style={[styles.cityChip, {
                       borderColor: isActive ? c.primary : 'rgba(255,255,255,0.15)',
-                      backgroundColor: isActive ? 'rgba(255,107,0,0.15)' : 'transparent',
+                      backgroundColor: isActive ? 'rgba(255,26,117,0.15)' : 'transparent',
                     }]}
                   >
                     <Text style={{ color: isActive ? '#fff' : c.foreground, fontSize: 14, fontFamily: isActive ? 'Inter_700Bold' : 'Inter_500Medium' }}>{ct}</Text>
@@ -544,7 +544,7 @@ export default function RegisterScreen() {
             style={({ pressed }) => [styles.btn, { opacity: pressed ? 0.8 : 1, marginTop: 40, paddingHorizontal: 48 }]}
           >
             <LinearGradient
-              colors={['#FF6B00', '#D95A00']}
+              colors={['#FF1A75', '#D10056']}
               style={[StyleSheet.absoluteFill, { borderRadius: 16 }]}
             />
             <Text style={{ color: '#fff', fontFamily: 'Inter_800ExtraBold', fontSize: 16, letterSpacing: 0.5 }}>{t('Go to profile', 'प्रोफ़ाइल देखें')}</Text>
@@ -560,13 +560,13 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#FF6B00',
+    backgroundColor: '#FF1A75',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: 'rgba(255,107,0,0.3)',
+    borderColor: 'rgba(255,26,117,0.3)',
   },
-  stepLine: { width: 2, flex: 1, backgroundColor: 'rgba(255,107,0,0.2)', marginVertical: 4 },
+  stepLine: { width: 2, flex: 1, backgroundColor: 'rgba(255,26,117,0.2)', marginVertical: 4 },
   inputWrap: {
     borderWidth: 2,
     borderColor: 'rgba(255,255,255,0.1)',
@@ -586,7 +586,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
-    shadowColor: '#FF6B00',
+    shadowColor: '#FF1A75',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
     shadowRadius: 16,

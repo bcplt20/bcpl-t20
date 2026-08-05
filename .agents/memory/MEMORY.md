@@ -52,4 +52,4 @@
 - [Chromium PDF bloat](pdf-size-compression.md) — --print-to-pdf re-encodes images lossless (20MB+); shrink via pymupdf per-xref JPEG swap, never rewrite_images+garbage (kills gradients)
 - [Mobile in-app registration](mobile-registration.md) — app replicates web Phase-1 flow; Cashfree HOSTED checkout URL #sessionId + app-driven verify; consent versions hardcoded in sync with legalMeta
 - [Sponsor tiers & logos](sponsor-tiers.md) — sponsors array order = tier hierarchy (contiguous runs); logo uploads auto-processed to white PNG via admin-tools endpoint with sharp DoS guards
-- [Mobile app design system](mobile-app-design.md) — Aug'26: owner wants Dream11-grade vibrancy (deep navy #070C1A bg, glowing cards, floating pill tab bar); ALL external links must open in-app (expo-web-browser); reg countdown pinned to 2027-02-28
+- [Mobile app design system](mobile-app-design.md) — Aug'26: app palette = midnight violet + hot pink/cyan (NOT website navy — owner rejected it twice); ALL external links must open in-app (expo-web-browser); reg countdown pinned to 2027-02-28

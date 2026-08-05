@@ -83,7 +83,7 @@ export default function LoginScreen() {
       >
         <View style={styles.iconWrap}>
           <LinearGradient
-            colors={['rgba(255,107,0,0.2)', 'rgba(255,107,0,0.05)']}
+            colors={['rgba(255,26,117,0.2)', 'rgba(255,26,117,0.05)']}
             style={[StyleSheet.absoluteFill, { borderRadius: 40 }]}
           />
           <Feather name="smartphone" size={36} color={c.primary} />
@@ -153,7 +153,7 @@ export default function LoginScreen() {
           testID="submit-button"
         >
           <LinearGradient
-            colors={['#FF6B00', '#D95A00']}
+            colors={['#FF1A75', '#D10056']}
             style={[StyleSheet.absoluteFill, { borderRadius: 16 }]}
           />
           {busy ? (
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 32,
     borderWidth: 2,
-    borderColor: 'rgba(255,107,0,0.3)',
+    borderColor: 'rgba(255,26,117,0.3)',
   },
   title: { fontSize: 28, fontFamily: 'Inter_800ExtraBold', letterSpacing: -0.5 },
   sub: { fontSize: 15, marginTop: 12, textAlign: 'center', lineHeight: 24, paddingHorizontal: 20, fontFamily: 'Inter_500Medium' },
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
-    shadowColor: '#FF6B00',
+    shadowColor: '#FF1A75',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
     shadowRadius: 16,

@@ -89,7 +89,7 @@ function UpcomingPanel({ live }: { live: LiveMatch }) {
         <View style={styles.vsContainer}>
           <LinearGradient colors={['transparent', c.border, 'transparent']} style={styles.vsLineVert} />
           <LinearGradient
-            colors={['#E8B23D', '#FF6B00']}
+            colors={['#00E5FF', '#FF1A75']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.vsChip}
@@ -122,7 +122,7 @@ function UpcomingPanel({ live }: { live: LiveMatch }) {
               { v: parts.m, l: t('MIN', 'मिनट') },
               { v: parts.s, l: t('SEC', 'सेकंड') },
             ].map((u) => (
-              <View key={u.l} style={[styles.cdBox, { borderColor: 'rgba(232,178,61,0.4)', backgroundColor: 'rgba(232,178,61,0.1)' }]}>
+              <View key={u.l} style={[styles.cdBox, { borderColor: 'rgba(0, 229, 255,0.4)', backgroundColor: 'rgba(0, 229, 255,0.1)' }]}>
                 <Text style={{ color: c.foreground, fontFamily: 'Inter_800ExtraBold', fontSize: 26 }}>{pad2(u.v)}</Text>
                 <Text style={{ color: c.accent, fontSize: 11, letterSpacing: 1, fontFamily: 'Inter_700Bold', marginTop: 4 }}>{u.l}</Text>
               </View>
@@ -141,10 +141,10 @@ function UpcomingPanel({ live }: { live: LiveMatch }) {
       ) : null}
 
       <LinearGradient
-        colors={['rgba(255,107,0,0.2)', 'rgba(255,107,0,0.05)']}
+        colors={['rgba(255, 26, 117,0.2)', 'rgba(255, 26, 117,0.05)']}
         style={styles.livePill}
       >
-        <Text style={{ color: '#FF6B00', fontFamily: 'Inter_700Bold', fontSize: 14, textAlign: 'center', lineHeight: 20 }}>
+        <Text style={{ color: '#FF1A75', fontFamily: 'Inter_700Bold', fontSize: 14, textAlign: 'center', lineHeight: 20 }}>
           {t('Live score and ball-by-ball updates will appear here once the match begins', 'मैच शुरू होते ही लाइव स्कोर और बॉल-बाय-बॉल अपडेट यहीं दिखेंगे')}
         </Text>
       </LinearGradient>
@@ -357,7 +357,7 @@ export default function MatchDetailScreen() {
                   testID={`tab-${t}`}
                 >
                   {tab === t ? (
-                    <LinearGradient colors={['#FF6B00', '#D95A00']} style={StyleSheet.absoluteFill} />
+                    <LinearGradient colors={['#FF1A75', '#D10056']} style={StyleSheet.absoluteFill} />
                   ) : null}
                   <Text
                     style={{
@@ -439,13 +439,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginVertical: 4,
-    shadowColor: '#FF6B00',
+    shadowColor: '#FF1A75',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 8,
     elevation: 4,
     borderWidth: 2,
-    borderColor: '#121F3D',
+    borderColor: '#161124',
     zIndex: 2,
   },
   logoWrap: {
@@ -468,7 +468,7 @@ const styles = StyleSheet.create({
   },
   livePill: {
     borderWidth: 1,
-    borderColor: 'rgba(255, 107, 0, 0.4)',
+    borderColor: 'rgba(255, 26, 117, 0.4)',
     borderRadius: 14,
     paddingHorizontal: 24,
     paddingVertical: 16,

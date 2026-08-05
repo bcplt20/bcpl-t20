@@ -33,7 +33,7 @@ function TabIcon({ name, focused, color, feather }: { name: string; focused: boo
         ]}
       >
         <LinearGradient
-          colors={['rgba(255, 107, 0, 0.4)', 'transparent']}
+          colors={['rgba(255, 26, 117, 0.4)', 'transparent']}
           style={StyleSheet.absoluteFill}
         />
       </Animated.View>
@@ -72,7 +72,7 @@ export default function TabLayout() {
           right: 20,
           height: 64,
           borderRadius: 32,
-          backgroundColor: isIOS ? 'transparent' : 'rgba(22, 36, 69, 0.95)',
+          backgroundColor: isIOS ? 'transparent' : 'rgba(22, 17, 36, 0.95)',
           borderWidth: 1,
           borderColor: 'rgba(255,255,255,0.1)',
           elevation: 10,
@@ -87,7 +87,7 @@ export default function TabLayout() {
             <BlurView intensity={80} tint="dark" style={[StyleSheet.absoluteFill, { borderRadius: 32, overflow: 'hidden' }]} />
           ) : (
             <LinearGradient
-              colors={['rgba(22,36,69,0.95)', 'rgba(15,25,46,0.95)']}
+              colors={['rgba(22, 17, 36,0.95)', 'rgba(11, 8, 19,0.95)']}
               style={[StyleSheet.absoluteFill, { borderRadius: 32 }]}
             />
           ),

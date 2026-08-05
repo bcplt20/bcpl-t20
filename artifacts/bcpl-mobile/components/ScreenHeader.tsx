@@ -15,14 +15,14 @@ export function ScreenHeader({ title, subtitle, subtitleColor }: { title: string
   const topInset = Platform.OS === 'web' ? 67 : insets.top;
   return (
     <LinearGradient
-      colors={['#050914', '#0A1128', '#121F3D']}
+      colors={['#06030A', '#0B0813', '#161124']}
       locations={[0, 0.4, 1]}
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 1 }}
       style={[styles.wrap, { paddingTop: topInset + 12 }]}
     >
       <LinearGradient
-        colors={['rgba(255,107,0,0.15)', 'transparent']}
+        colors={['rgba(0,229,255,0.15)', 'transparent']}
         start={{x: 1, y: 0}}
         end={{x: 0, y: 1}}
         style={StyleSheet.absoluteFill}
@@ -45,7 +45,7 @@ export function ScreenHeader({ title, subtitle, subtitleColor }: { title: string
           </Text>
         ) : null}
         <LinearGradient
-          colors={['#FF6B00', '#E8B23D', 'transparent']}
+          colors={['#FF1A75', '#00E5FF', 'transparent']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.underline}
@@ -70,14 +70,14 @@ const styles = StyleSheet.create({
   brandRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 16 },
   logo: { width: 150, height: 42 },
   seasonPill: {
-    backgroundColor: 'rgba(232,178,61,0.15)',
-    borderColor: 'rgba(232,178,61,0.5)',
+    backgroundColor: 'rgba(0,229,255,0.15)',
+    borderColor: 'rgba(0,229,255,0.5)',
     borderWidth: 1,
     borderRadius: 20,
     paddingHorizontal: 12,
     paddingVertical: 4,
   },
-  seasonTxt: { color: '#E8B23D', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.5 },
+  seasonTxt: { color: '#00E5FF', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.5 },
   title: { fontSize: 32, fontFamily: 'Inter_800ExtraBold', letterSpacing: -0.5 },
   sub: { fontSize: 15, marginTop: 6, fontFamily: 'Inter_600SemiBold', letterSpacing: 0.2 },
   underline: { height: 4, borderRadius: 2, width: 80, marginTop: 20, opacity: 0.9 },

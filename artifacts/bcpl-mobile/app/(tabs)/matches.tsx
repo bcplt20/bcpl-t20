@@ -67,7 +67,7 @@ export default function MatchesScreen() {
                 ]}
               >
                 {isActive ? (
-                  <LinearGradient colors={['#FF6B00', '#D95A00']} style={StyleSheet.absoluteFill} />
+                  <LinearGradient colors={['#FF1A75', '#D10056']} style={StyleSheet.absoluteFill} />
                 ) : (
                   <LinearGradient colors={['rgba(255,255,255,0.05)', 'rgba(255,255,255,0.02)']} style={StyleSheet.absoluteFill} />
                 )}

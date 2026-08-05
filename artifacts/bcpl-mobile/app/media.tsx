@@ -44,7 +44,7 @@ export default function MediaScreen() {
       style={{ flex: 1, backgroundColor: c.background }}
       contentContainerStyle={{ padding: 16, paddingBottom: Platform.OS === 'web' ? 118 : 120, paddingTop: 20 }}
     >
-      <Text style={{ color: '#E8B23D', fontFamily: 'Inter_800ExtraBold', fontSize: 11, letterSpacing: 2 }}>
+      <Text style={{ color: '#00E5FF', fontFamily: 'Inter_800ExtraBold', fontSize: 11, letterSpacing: 2 }}>
         {t('GALLERY', 'गैलरी')}
       </Text>
       <Text style={{ color: c.foreground, fontFamily: 'Inter_800ExtraBold', fontSize: 26, marginTop: 6 }}>
@@ -92,7 +92,7 @@ export default function MediaScreen() {
                       <View style={{ flex: 1 }}>
                         <Image source={{ uri: item.viewUrl }} style={[StyleSheet.absoluteFill, { opacity: 0.5 }]} contentFit="cover" blurRadius={10} />
                         <LinearGradient
-                          colors={['rgba(7,12,26,0.6)', 'rgba(18,31,61,0.4)']}
+                          colors={['rgba(11,8,19,0.6)', 'rgba(22,17,36,0.4)']}
                           style={StyleSheet.absoluteFill}
                         />
                         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -113,10 +113,10 @@ export default function MediaScreen() {
       {/* Season 4 videos live on the website */}
       <Pressable
         onPress={() => WebBrowser.openBrowserAsync('https://bcplt20.com/videos')}
-        style={({ pressed }) => [styles.videosBtn, { borderColor: 'rgba(232, 178, 61, 0.3)', opacity: pressed ? 0.8 : 1 }]}
+        style={({ pressed }) => [styles.videosBtn, { borderColor: 'rgba(0, 229, 255, 0.3)', opacity: pressed ? 0.8 : 1 }]}
         testID="videos-link"
       >
-        <Feather name="film" size={18} color="#FF6B00" />
+        <Feather name="film" size={18} color="#00E5FF" />
         <Text style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 14.5, flex: 1 }}>
           {t('Season 4 auction videos & highlights', 'सीज़न 4 ऑक्शन वीडियो और हाइलाइट्स')}
         </Text>
@@ -145,10 +145,10 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: 'rgba(255,107,0,0.9)',
+    backgroundColor: 'rgba(255,26,117,0.9)',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#FF6B00',
+    shadowColor: '#FF1A75',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.5,
     shadowRadius: 8,
@@ -162,11 +162,11 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 18,
     marginTop: 32,
-    backgroundColor: 'rgba(232, 178, 61, 0.05)',
+    backgroundColor: 'rgba(0, 229, 255, 0.05)',
   },
   viewerWrap: {
     flex: 1,
-    backgroundColor: 'rgba(4,10,24,0.98)',
+    backgroundColor: 'rgba(11,8,19,0.98)',
     alignItems: 'center',
     justifyContent: 'center',
   },

@@ -36,10 +36,10 @@ export default function NewsScreen() {
                 contentFit="cover"
                 transition={150}
               />
-              <LinearGradient colors={['transparent', 'rgba(18,31,61,1)']} style={{position: 'absolute', top: 120, left: 0, right: 0, height: 80}} pointerEvents="none" />
+              <LinearGradient colors={['transparent', 'rgba(22, 17, 36,1)']} style={{position: 'absolute', top: 120, left: 0, right: 0, height: 80}} pointerEvents="none" />
               <View style={{ padding: 20, paddingTop: 16 }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-                  <View style={{ backgroundColor: '#FF6B00', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 4 }}>
+                  <View style={{ backgroundColor: '#FF1A75', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 4 }}>
                     <Text style={{ color: '#fff', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 0.5 }}>
                       {n.tag.toUpperCase()}
                     </Text>

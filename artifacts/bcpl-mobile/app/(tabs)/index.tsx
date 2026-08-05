@@ -82,7 +82,7 @@ function RegCountdown() {
   const two = (x: number) => String(x).padStart(2, '0');
   return (
     <View style={styles.cdWrap}>
-      <Feather name="clock" size={12} color="#E8B23D" />
+      <Feather name="clock" size={12} color="#00E5FF" />
       <Text style={styles.cdLabel}>{t('Registration closes in', 'रजिस्ट्रेशन बंद होने में')}</Text>
       <Text style={styles.cdTime}>
         {d}d {two(h)}:{two(mi)}:{two(s)}
@@ -128,7 +128,7 @@ export default function HomeScreen() {
         <ScreenHeader
           title={user ? t(`Hello, ${user.name.split(' ')[0]}`, `नमस्ते, ${user.name.split(' ')[0]}`) : 'Bhartiya Corporate Premier League'}
           subtitle="#OfficeSeStadiumTak"
-          subtitleColor="#FF6B00"
+          subtitleColor="#FF1A75"
         />
 
         {/* Register hero banner */}
@@ -142,14 +142,14 @@ export default function HomeScreen() {
                 transition={200}
               />
               <LinearGradient
-                colors={['#070C1A', 'rgba(7,12,26,0.85)', 'rgba(7,12,26,0.3)']}
+                colors={['#0B0813', 'rgba(11, 8, 19,0.85)', 'rgba(11, 8, 19,0.3)']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={StyleSheet.absoluteFill}
               />
               {/* Vibrant purple/maroon accent */}
               <LinearGradient
-                colors={['rgba(255,107,0,0)', 'rgba(255,107,0,0.2)', 'rgba(168,85,247,0.3)']}
+                colors={['rgba(255, 26, 117,0)', 'rgba(255, 26, 117,0.2)', 'rgba(168,85,247,0.3)']}
                 start={{ x: 0.3, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={StyleSheet.absoluteFill}
@@ -161,7 +161,7 @@ export default function HomeScreen() {
                 contentPosition="bottom right"
               />
               <LinearGradient
-                colors={['transparent', 'rgba(7,12,26,0.95)']}
+                colors={['transparent', 'rgba(11, 8, 19,0.95)']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0, y: 1 }}
                 style={[StyleSheet.absoluteFill, { top: '60%' }]}
@@ -181,7 +181,7 @@ export default function HomeScreen() {
                 
                 <View style={{ marginTop: 18 }}>
                   <LinearGradient
-                    colors={['#FF8A00', '#E55900']}
+                    colors={['#FF1A75', '#D10056']}
                     style={styles.heroCta}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
@@ -204,7 +204,7 @@ export default function HomeScreen() {
             testID="home-media"
           >
             <LinearGradient
-              colors={['#1A2950', '#121F3D']}
+              colors={['#241838', '#161124']}
               style={[styles.mediaLinkCard, { borderColor: 'rgba(255,255,255,0.08)' }]}
               start={{x: 0, y: 0}}
               end={{x: 1, y: 1}}
@@ -216,7 +216,7 @@ export default function HomeScreen() {
               />
               <View style={styles.mediaIconWrapper}>
                 <LinearGradient
-                  colors={['#FF6B00', '#D95A00']}
+                  colors={['#FF1A75', '#D10056']}
                   style={StyleSheet.absoluteFill}
                 />
                 <Feather name="play-circle" size={20} color="#fff" />
@@ -233,9 +233,9 @@ export default function HomeScreen() {
         {/* BCPL so far — league in numbers */}
         <View style={{ paddingHorizontal: 16, marginTop: 32 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
-            <View style={{ width: 4, height: 24, backgroundColor: '#E8B23D', borderRadius: 2, marginRight: 12 }} />
+            <View style={{ width: 4, height: 24, backgroundColor: '#00E5FF', borderRadius: 2, marginRight: 12 }} />
             <View>
-              <Text style={{ color: '#E8B23D', fontFamily: 'Inter_700Bold', fontSize: 10.5, letterSpacing: 2 }}>
+              <Text style={{ color: '#00E5FF', fontFamily: 'Inter_700Bold', fontSize: 10.5, letterSpacing: 2 }}>
                 {t('BCPL SO FAR', 'अब तक BCPL')}
               </Text>
               <Text style={[styles.sectionTitle, { color: c.foreground }]}>
@@ -327,8 +327,8 @@ export default function HomeScreen() {
                     {t.team}
                   </Text>
                   <Text style={{ color: c.mutedForeground, fontSize: 12.5, width: 36, textAlign: 'center', fontFamily: 'Inter_500Medium' }}>{t.played}</Text>
-                  <View style={[styles.ptsPill, i === 0 && { backgroundColor: 'rgba(232,178,61,0.2)' }]}>
-                    <Text style={[styles.pts, { color: i === 0 ? '#E8B23D' : c.foreground }]}>{t.points}</Text>
+                  <View style={[styles.ptsPill, i === 0 && { backgroundColor: 'rgba(0, 229, 255,0.2)' }]}>
+                    <Text style={[styles.pts, { color: i === 0 ? '#00E5FF' : c.foreground }]}>{t.points}</Text>
                   </View>
                 </View>
               ))}
@@ -395,8 +395,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
     marginTop: 12,
-    backgroundColor: 'rgba(7,12,26,0.6)',
-    borderColor: 'rgba(232,178,61,0.4)',
+    backgroundColor: 'rgba(11, 8, 19,0.6)',
+    borderColor: 'rgba(0, 229, 255,0.4)',
     borderWidth: 1,
     borderRadius: 999,
     paddingHorizontal: 12,
@@ -404,14 +404,14 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   cdLabel: { color: 'rgba(255,255,255,0.82)', fontSize: 10.5, fontFamily: 'Inter_500Medium' },
-  cdTime: { color: '#E8B23D', fontSize: 11.5, fontFamily: 'Inter_700Bold', fontVariant: ['tabular-nums'] },
+  cdTime: { color: '#00E5FF', fontSize: 11.5, fontFamily: 'Inter_700Bold', fontVariant: ['tabular-nums'] },
   statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
   statBox: {
     flexBasis: '46%',
     flexGrow: 1,
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.06)',
-    backgroundColor: '#121F3D',
+    backgroundColor: '#161124',
     borderRadius: 16,
     padding: 16,
     shadowColor: '#000',
@@ -461,7 +461,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 2,
-    backgroundColor: 'rgba(232,178,61,0.15)',
+    backgroundColor: 'rgba(0, 229, 255,0.15)',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
@@ -469,25 +469,25 @@ const styles = StyleSheet.create({
   hero: {
     borderRadius: 20,
     overflow: 'hidden',
-    backgroundColor: '#070C1A',
+    backgroundColor: '#0B0813',
     elevation: 8,
-    shadowColor: '#FF6B00',
+    shadowColor: '#FF1A75',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.25,
     shadowRadius: 20,
   },
   heroKickBadge: {
-    backgroundColor: 'rgba(232,178,61,0.15)',
+    backgroundColor: 'rgba(0, 229, 255,0.15)',
     paddingHorizontal: 8,
     paddingVertical: 5,
     borderRadius: 6,
     alignSelf: 'flex-start',
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: 'rgba(232,178,61,0.4)',
+    borderColor: 'rgba(0, 229, 255,0.4)',
   },
   heroKick: {
-    color: '#E8B23D',
+    color: '#00E5FF',
     fontFamily: 'Inter_700Bold',
     fontSize: 9.5,
     letterSpacing: 2,
@@ -496,7 +496,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: 'rgba(232,178,61,0.3)',
+    borderColor: 'rgba(0, 229, 255,0.3)',
   },
   heroGanguly: {
     position: 'absolute',
@@ -506,7 +506,7 @@ const styles = StyleSheet.create({
     height: '105%',
   },
   heroFee: { color: '#FFFFFF', fontFamily: 'Inter_800ExtraBold', fontSize: 36, lineHeight: 40 },
-  heroFeeGst: { color: '#E8B23D', fontSize: 18, fontFamily: 'Inter_700Bold' },
+  heroFeeGst: { color: '#00E5FF', fontSize: 18, fontFamily: 'Inter_700Bold' },
   heroFeeSub: { color: 'rgba(255,255,255,0.85)', fontSize: 12, marginTop: 4, fontFamily: 'Inter_600SemiBold' },
   heroFeeDivider: { height: 1, backgroundColor: 'rgba(255,255,255,0.2)', width: 40, marginVertical: 10 },
   heroCta: {
@@ -516,7 +516,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     paddingHorizontal: 22,
     paddingVertical: 12,
-    shadowColor: '#FF6B00',
+    shadowColor: '#FF1A75',
     shadowOpacity: 0.5,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 4 },
@@ -579,7 +579,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   newsTagPill: {
-    backgroundColor: '#FF6B00',
+    backgroundColor: '#FF1A75',
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,

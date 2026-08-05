@@ -2,24 +2,24 @@ import { useColorScheme } from 'react-native';
 
 const palette = {
   text: '#FFFFFF',
-  tint: '#FF6B00',
-  background: '#070C1A',
+  tint: '#FF1A75', // Hot Pink
+  background: '#0B0813', // Midnight Violet/Black
   foreground: '#FFFFFF',
-  card: '#121F3D',
+  card: '#161124',
   cardForeground: '#FFFFFF',
-  primary: '#FF6B00',
+  primary: '#FF1A75',
   primaryForeground: '#FFFFFF',
-  secondary: '#1A2950',
-  secondaryForeground: '#E9EDF7',
-  muted: '#1F3260',
-  mutedForeground: '#9BA9C8',
-  accent: '#E8B23D',
-  accentForeground: '#0D1E44',
-  destructive: '#FF3B30',
+  secondary: '#241838',
+  secondaryForeground: '#E1D9F0',
+  muted: '#1E1530',
+  mutedForeground: '#9E93B3',
+  accent: '#00E5FF', // Cyan
+  accentForeground: '#000000',
+  destructive: '#FF3333',
   destructiveForeground: '#FFFFFF',
-  success: '#31C56B',
-  border: '#273A66',
-  input: '#273A66',
+  success: '#00E676',
+  border: '#2C2244',
+  input: '#2C2244',
   radius: 16,
 };
 
