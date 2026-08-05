@@ -155,11 +155,14 @@ router.get("/:id/live", async (req, res) => {
     .where(eq(inningsTable.matchId, match.id))
     .orderBy(asc(inningsTable.inningsNumber));
 
-  // Last 6 deliveries for commentary
-  const latest = await db.select().from(deliveriesTable)
-    .where(eq(deliveriesTable.inningsId, innings[innings.length - 1]?.id ?? ""))
-    .orderBy(desc(deliveriesTable.createdAt))
-    .limit(6);
+  // Last 6 deliveries for commentary (skip DB call when no innings yet — "" is not a valid uuid)
+  const lastInningsId = innings[innings.length - 1]?.id;
+  const latest = lastInningsId
+    ? await db.select().from(deliveriesTable)
+        .where(eq(deliveriesTable.inningsId, lastInningsId))
+        .orderBy(desc(deliveriesTable.createdAt))
+        .limit(6)
+    : [];
 
   res.json({
     matchId:   match.id,
