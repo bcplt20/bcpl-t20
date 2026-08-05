@@ -72,22 +72,38 @@ export default function HomeScreen() {
           subtitle={user ? 'Bhartiya Corporate Premier League' : t("India's corporate cricket championship", 'भारत का कॉर्पोरेट क्रिकेट महाकुंभ')}
         />
 
-        {/* Hero banner */}
+        {/* Register hero banner */}
         <View style={{ paddingHorizontal: 16, paddingTop: 10 }}>
-          <View style={styles.hero}>
-            <Image
-              source={{ uri: `${SITE_ASSETS}/bcpl-assets/stadium-hero.jpg` }}
-              style={StyleSheet.absoluteFill}
-              contentFit="cover"
-              transition={200}
-            />
-            <View style={styles.heroShade} />
-            <View style={{ padding: 16 }}>
-              <Text style={styles.heroKick}>SEASON 5 · OCTOBER 2026</Text>
-              <Text style={styles.heroTitle}>{t('10 teams. One trophy.', '10 टीमें। एक ट्रॉफी।')}</Text>
-              <Text style={styles.heroSub}>{t('Live scores, points table & news — all in one place', 'लाइव स्कोर, पॉइंट्स टेबल और खबरें — सब यहीं')}</Text>
+          <Pressable onPress={() => router.push('/register')} testID="hero-register">
+            <View style={styles.hero}>
+              <Image
+                source={{ uri: `${SITE_ASSETS}/bcpl-assets/stadium-hero.jpg` }}
+                style={StyleSheet.absoluteFill}
+                contentFit="cover"
+                transition={200}
+              />
+              <View style={styles.heroShade} />
+              <Image
+                source={require('../../assets/images/ganguly.jpg')}
+                style={styles.heroGanguly}
+                contentFit="cover"
+                contentPosition="top"
+              />
+              <View style={{ padding: 16, paddingRight: 118 }}>
+                <Text style={styles.heroKick}>SEASON 5 · {t('REGISTRATIONS OPEN', 'रजिस्ट्रेशन शुरू')}</Text>
+                <Text style={styles.heroTitle}>{t('Register Now', 'अभी रजिस्टर करें')}</Text>
+                <Text style={styles.heroSub}>
+                  {t('Phase 1 — ₹299 + GST (Batsman/Bowler/WK) · ₹399 + GST (All-Rounder)', 'फेज़ 1 — ₹299 + GST (बल्लेबाज़/गेंदबाज़/WK) · ₹399 + GST (ऑलराउंडर)')}
+                </Text>
+                <View style={styles.heroCta}>
+                  <Text style={styles.heroCtaTxt}>{t('Register in the app →', 'ऐप से रजिस्टर करें →')}</Text>
+                </View>
+                <Text style={styles.heroContact}>
+                  {t('Help: WhatsApp +91 91513 46555 · support@bcplt20.com', 'मदद: WhatsApp +91 91513 46555 · support@bcplt20.com')}
+                </Text>
+              </View>
             </View>
-          </View>
+          </Pressable>
         </View>
 
         {anyLive ? (
@@ -205,6 +221,25 @@ const styles = StyleSheet.create({
   },
   heroTitle: { color: '#FFFFFF', fontFamily: 'Inter_700Bold', fontSize: 21, marginTop: 3 },
   heroSub: { color: 'rgba(255,255,255,0.85)', fontSize: 12.5, marginTop: 3, fontFamily: 'Inter_400Regular' },
+  heroGanguly: {
+    position: 'absolute',
+    right: -8,
+    bottom: 0,
+    width: 112,
+    height: '100%',
+    opacity: 0.55,
+    borderTopLeftRadius: 60,
+  },
+  heroCta: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#FF6B00',
+    borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    marginTop: 10,
+  },
+  heroCtaTxt: { color: '#fff', fontFamily: 'Inter_700Bold', fontSize: 13 },
+  heroContact: { color: 'rgba(255,255,255,0.65)', fontSize: 10.5, marginTop: 9, fontFamily: 'Inter_400Regular' },
   pointsRow: {
     flexDirection: 'row',
     alignItems: 'center',

@@ -152,11 +152,11 @@ export default function ProfileScreen() {
                 {t('Your dashboard will appear here once registration is complete', 'रजिस्ट्रेशन पूरी होते ही आपका डैशबोर्ड यहाँ दिखेगा')}
               </Text>
               <Pressable
-                onPress={() => Linking.openURL('https://bcplt20.com/register')}
+                onPress={() => router.push('/register')}
                 style={({ pressed }) => [styles.linkBtn, { backgroundColor: '#FF6B00', opacity: pressed ? 0.8 : 1 }]}
                 testID="register-cta"
               >
-                <Feather name="external-link" size={15} color="#fff" />
+                <Feather name="edit-3" size={15} color="#fff" />
                 <Text style={{ color: '#fff', fontFamily: 'Inter_700Bold', fontSize: 13.5 }}>{t('Register now', 'रजिस्टर करें')}</Text>
               </Pressable>
             </Card>

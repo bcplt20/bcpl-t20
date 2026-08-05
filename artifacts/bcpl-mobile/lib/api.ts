@@ -52,15 +52,63 @@ export interface AuthUser {
   email?: string | null;
 }
 
-export function sendOtp(phone: string): Promise<{ success: boolean; message: string; devOtp?: string }> {
-  return apiFetch('/auth/send-otp', { method: 'POST', body: { phone, purpose: 'login' } });
+export function sendOtp(
+  phone: string,
+  purpose: 'login' | 'register' = 'login',
+): Promise<{ success: boolean; message: string; devOtp?: string }> {
+  return apiFetch('/auth/send-otp', { method: 'POST', body: { phone, purpose } });
 }
 
 export function verifyOtp(
   phone: string,
   otp: string,
+  extra?: { purpose?: 'login' | 'register'; name?: string; email?: string },
 ): Promise<{ success: boolean; token: string; user: AuthUser }> {
-  return apiFetch('/auth/verify-otp', { method: 'POST', body: { phone, otp, purpose: 'login' } });
+  return apiFetch('/auth/verify-otp', {
+    method: 'POST',
+    body: { phone, otp, purpose: extra?.purpose ?? 'login', name: extra?.name, email: extra?.email },
+  });
+}
+
+// ── Registration (Phase 1) ───────────────────────────────────────────────────
+export type PlayerRole = 'bat' | 'bowl' | 'wk' | 'ar';
+
+export interface RegisterStatus {
+  registered: boolean;
+  registrationId?: string;
+  regNumber?: string | null;
+  role?: string | null;
+  trialCity?: string | null;
+  phase1Status?: string | null;
+  phase2Status?: string | null;
+  videoDeadline?: string | null;
+  fees?: { phase1: number; phase2: number };
+}
+
+export function getRegisterStatus(token: string): Promise<RegisterStatus> {
+  return apiFetch('/register/status', { token });
+}
+
+export function registerPhase1(
+  token: string,
+  body: { role: PlayerRole; trialCity: string; dob: string },
+): Promise<{ success: boolean; registrationId: string; role: string; trialCity: string; phase1Fee: number; videoDeadline: string }> {
+  return apiFetch('/register/phase1', { method: 'POST', body, token });
+}
+
+export function createPhase1Payment(
+  token: string,
+  registrationId: string,
+  consent: { termsVersion: string; privacyVersion: string; marketingOptIn: boolean },
+): Promise<{ success: boolean; orderId: string; paymentSessionId: string; amount: number }> {
+  return apiFetch('/payment/phase1/create', { method: 'POST', body: { registrationId, consent }, token });
+}
+
+export function verifyPhase1Payment(
+  token: string,
+  orderId: string,
+): Promise<{ success: boolean; registrationId?: string; regNumber?: string; status?: string }> {
+  return apiFetch('/payment/phase1/verify', { method: 'POST', body: { orderId }, token });
 }
 
 // ── Dashboard ────────────────────────────────────────────────────────────────
