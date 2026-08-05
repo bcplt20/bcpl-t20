@@ -13,6 +13,10 @@ import {
   SuccessBanner,
   ScoreCardPanel,
   StatusCard,
+  StepProgress,
+  TicketBlock,
+  CountdownBand,
+  VenueCard,
   PrimaryCTA,
   NoteBox,
   hydrateSponsors,
@@ -105,14 +109,19 @@ export function tplPhase1Receipt(name: string, role: string, amount: number, reg
     subject: "BCPL T20 Season 5 — Registration Confirmed",
     htmlContent: EmailShell(`
       ${HeroStatus({ iconUrl: ICONS.check(COLORS.green), ring: COLORS.green, titleColor: COLORS.green, title: "REGISTRATION CONFIRMED", subtitle: "BCPL Season 5 · Phase 1 Trials", iconAlt: "Registration confirmed" })}
+      ${StepProgress(0)}
       ${SuccessBanner("You are registered for Phase 1 Trials", "Your payment has been received and your place in BCPL Season 5 Phase 1 is secured.")}
-      ${Greeting(name, ["Welcome to BCPL Season 5. Here are your registration details."])}
-      ${KeyValueTable([
-        ["Registration No.", `<span style="font-family:monospace;">${esc(regNo)}</span>`],
-        ["Role", `<span style="color:${COLORS.orange};">${esc(formatRole(role))}</span>`],
-        ["Trial City", esc(city)],
-        ["Amount Paid", `<span style="color:${COLORS.green};font-size:18px;">&#8377;${esc(amount)}</span>`],
-      ])}
+      ${Greeting(name, ["Welcome to BCPL Season 5. Here is your registration receipt."])}
+      ${TicketBlock({
+        title: "Phase 1 Registration Receipt",
+        amount: `&#8377;${esc(amount)}`,
+        accent: COLORS.green,
+        rows: [
+          ["Registration No.", `<span style="font-family:monospace;">${esc(regNo)}</span>`],
+          ["Role", `<span style="color:${COLORS.orange};">${esc(formatRole(role))}</span>`],
+          ["Trial City", esc(city)],
+        ],
+      })}
       ${InfoCard({
         accent: COLORS.orange,
         children: `
@@ -132,6 +141,7 @@ export function tplVideoSubmitted(name: string) {
     subject: "BCPL T20 — Video Received",
     htmlContent: EmailShell(`
       ${HeroStatus({ iconUrl: ICONS.video(COLORS.blue), ring: COLORS.blue, titleColor: COLORS.blue, title: "VIDEO RECEIVED", subtitle: "Your Phase 1 trial video has been submitted successfully." })}
+      ${StepProgress(1)}
       ${Greeting(name, [
         "We have successfully received your BCPL Season 5 Phase 1 trial video.",
         "Your submission will now proceed through BCPL's Phase 1 assessment process.",
@@ -157,6 +167,8 @@ export function tplVideoReminder(name: string, daysLeft: number) {
       subject: "BCPL T20 — Final Day to Upload Your Trial Video",
       htmlContent: EmailShell(`
         ${HeroStatus({ iconUrl: ICONS.alert(COLORS.red), ring: COLORS.red, titleColor: COLORS.red, title: "FINAL DAY", subtitle: "Only 1 day left to upload your trial video." })}
+        ${StepProgress(1)}
+        ${CountdownBand({ big: "Aaj Aakhri Din", caption: "Your upload window closes in less than 24 hours. Aaj hi upload karein.", accent: COLORS.red })}
         ${Greeting(name, [
           "Your video upload window closes in less than 24 hours.",
           "If you do not upload before the deadline, your trial slot expires and no further extension will be granted.",
@@ -176,6 +188,8 @@ export function tplVideoReminder(name: string, daysLeft: number) {
     subject: `BCPL T20 — ${daysLeft} Days Left to Upload Your Trial Video`,
     htmlContent: EmailShell(`
       ${HeroStatus({ iconUrl: ICONS.clock(COLORS.amber), ring: COLORS.amber, titleColor: COLORS.amber, title: `${daysLeft} DAYS LEFT`, subtitle: "Upload your Phase 1 trial video." })}
+      ${StepProgress(1)}
+      ${CountdownBand({ big: `${daysLeft} Din Baaki`, caption: `Only ${daysLeft} days left to upload your trial video. Paise pehle hi ho chuke — bas video upload karna baaki hai.`, accent: COLORS.amber })}
       ${Greeting(name, [
         "Your payment is confirmed, but your trial video has not been uploaded yet.",
         `You have <strong>${daysLeft} more days</strong> to upload. After the deadline your trial slot expires and uploads are no longer accepted.`,
@@ -236,6 +250,8 @@ export function tplPhase1Selected(name: string) {
     subject: "Congratulations — You Have Cleared BCPL Phase 1",
     htmlContent: EmailShell(`
       ${HeroStatus({ iconUrl: ICONS.trophy(COLORS.green), ring: COLORS.green, titleColor: COLORS.green, title: "PHASE 1 CLEARED", subtitle: "Next Milestone — Phase 2 Physical Trials" })}
+      ${StepProgress(2)}
+      ${SuccessBanner("Phase 1 cleared — you have qualified for Phase 2", "Your detailed score card and city ranking are ready in your Player Dashboard.")}
       ${Greeting(name, [
         "Your Phase 1 video assessment is complete and <strong>you have qualified for Phase 2 Physical Trials.</strong>",
         "Your detailed score card and city ranking are waiting in your Player Dashboard.",
@@ -257,11 +273,30 @@ export function tplPhase2Receipt(name: string, amount: number, regNo?: string) {
     subject: "BCPL T20 — Phase 2 Payment Confirmed",
     htmlContent: EmailShell(`
       ${HeroStatus({ iconUrl: ICONS.check(COLORS.gold), ring: COLORS.gold, titleColor: COLORS.gold, title: "PHASE 2 PAYMENT CONFIRMED", subtitle: "BCPL Season 5 · Physical Trials" })}
+      ${StepProgress(3)}
+      ${SuccessBanner("Phase 2 payment received", "Your place in the Phase 2 Physical Trials is being finalised. Complete KYC to confirm your slot.", COLORS.gold)}
       ${Greeting(name, [
-        `Your Phase 2 payment of <strong style="color:${COLORS.green};">&#8377;${esc(amount)}</strong> has been received.`,
-        "Please complete your KYC to confirm your trial slot. Your trial venue and date will be announced soon.",
+        "Your Phase 2 payment has been received. Here is your receipt.",
       ])}
-      ${regNo ? KeyValueTable([["Player ID", `<span style="font-family:monospace;">${esc(regNo)}</span>`]]) : ""}
+      ${TicketBlock({
+        title: "Phase 2 Payment Receipt",
+        amount: `&#8377;${esc(amount)}`,
+        accent: COLORS.gold,
+        rows: regNo
+          ? [
+              ["Player ID", `<span style="font-family:monospace;">${esc(regNo)}</span>`],
+              ["Stage", "Phase 2 — Physical Trials"],
+            ]
+          : [["Stage", "Phase 2 — Physical Trials"]],
+      })}
+      ${InfoCard({
+        accent: COLORS.orange,
+        children: `
+          <div style="font-family:inherit;font-size:15px;color:${COLORS.ink};font-weight:700;margin-bottom:6px;">Next Step — Complete Your KYC</div>
+          <p style="font-size:13px;color:${COLORS.inkSoft};margin:0 0 6px;line-height:1.6;">Complete Aadhaar and PAN verification to confirm your Phase 2 trial slot. Your trial venue and date will be announced soon.</p>
+          <p style="font-size:12px;color:${COLORS.inkFaint};margin:0;">Verification is usually completed within 24–48 hours.</p>`,
+      })}
+      ${PrimaryCTA("COMPLETE KYC", `${SITE_URL}/register/phase2`, COLORS.gold)}
       ${NextSteps([
         { title: "Complete KYC", body: "Aadhaar and PAN verification." },
         { title: "Await Venue & Date", body: "You will be notified once your trial city schedule is confirmed." },
@@ -278,13 +313,14 @@ export function tplTrialVenueAnnounced(name: string, city: string, venue: string
     subject: `BCPL T20 — Phase 2 Trial Details for ${city}`,
     htmlContent: EmailShell(`
       ${HeroStatus({ iconUrl: ICONS.pin(COLORS.gold), ring: COLORS.gold, titleColor: COLORS.gold, title: "TRIAL VENUE ANNOUNCED", subtitle: `${esc(city)} — Phase 2 Physical Trials` })}
+      ${StepProgress(4)}
       ${Greeting(name, ["Your Phase 2 trial details are confirmed. Please arrive on time."])}
-      ${KeyValueTable([
-        ["Venue", esc(venue)],
-        ["Trial Date", `<span style="color:${COLORS.gold};">${esc(date)}</span>`],
-        ["Trial Time", esc(time)],
-        ["Reporting Time", `<span style="color:${COLORS.green};">${esc(reportingTime)}</span> <span style="font-weight:400;color:${COLORS.inkFaint};font-size:12px;">(30 min before trial)</span>`],
-        ["City", esc(city)],
+      ${VenueCard([
+        { label: "Venue", value: esc(venue) },
+        { label: "City", value: esc(city) },
+        { label: "Date", value: esc(date), color: COLORS.gold },
+        { label: "Trial Time", value: esc(time) },
+        { label: "Reporting", value: `<span style="color:${COLORS.green};">${esc(reportingTime)}</span> <span style="font-weight:400;color:${COLORS.inkFaint};font-size:12px;">(30 min before trial)</span>` },
       ])}
       ${InfoCard({
         accent: COLORS.gold,
@@ -537,12 +573,15 @@ export function tplTrialPass(name: string, venue: string, city: string, date: st
     subject: `BCPL T20 — Your Trial Pass Is Ready (${city})`,
     htmlContent: EmailShell(`
       ${HeroStatus({ iconUrl: ICONS.ticket(COLORS.green), ring: COLORS.green, titleColor: COLORS.green, title: "TRIAL PASS READY", subtitle: `${esc(city)} — Physical Trials` })}
+      ${StepProgress(4)}
+      ${SuccessBanner("Your trial slot is confirmed", "Your digital Trial Pass with QR code is ready on the website.", COLORS.green)}
       ${Greeting(name, ["Your physical trial slot is confirmed. Your digital Trial Pass (with QR code) is now available on the website."])}
-      ${KeyValueTable([
-        ["Venue", esc(venue)],
-        ["Date", `<span style="color:${COLORS.gold};">${esc(date)}</span>`],
-        ["Reporting Time", `<span style="color:${COLORS.green};">${esc(reportingTime)}</span>`],
-        ["Batch", esc(batch)],
+      ${VenueCard([
+        { label: "Venue", value: esc(venue) },
+        { label: "City", value: esc(city) },
+        { label: "Date", value: esc(date), color: COLORS.gold },
+        { label: "Reporting", value: `<span style="color:${COLORS.green};">${esc(reportingTime)}</span>` },
+        { label: "Batch", value: esc(batch) },
       ])}
       ${NoteBox("Show the QR code on your Trial Pass at the venue gate for check-in. Please carry your original Aadhaar card.")}
       ${PrimaryCTA("VIEW MY TRIAL PASS", `${SITE_URL}/trial-pass`, COLORS.green)}

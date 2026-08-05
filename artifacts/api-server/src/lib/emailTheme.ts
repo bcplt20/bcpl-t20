@@ -20,26 +20,28 @@ import { db } from "@workspace/db";
 import { siteSettingsTable } from "@workspace/db/schema";
 import { eq } from "drizzle-orm";
 
-/* ── Brand palette ────────────────────────────────────────────────────────── */
+/* ── Brand palette (lightened dark-navy — matches the new website theme) ───── */
 export const COLORS = {
-  outer: "#040C18",       // premium dark outer background
-  surface: "#0A1727",     // slightly lighter content surface
-  card: "#0E1E33",        // card surface (a touch lighter for separation)
-  ink: "#F4F1EC",         // high-contrast body text
-  inkSoft: "#C4CDDA",     // secondary but still readable (never ultra-low opacity)
-  inkFaint: "#8A97A8",    // metadata — kept above WCAG-ish contrast on dark
+  outer: "#101B30",       // lightened navy outer background (was near-black)
+  header: "#16223C",      // deep navy header band (spec: BCPL ball on #16223C)
+  surface: "#16264A",     // content surface panels
+  card: "#1B2E52",        // primary body card surface (spec navy #1B2E52)
+  ink: "#F4F6FA",         // high-contrast body text (~white .96)
+  inkSoft: "#D3DAE8",     // secondary body text (white ~.92, readable)
+  inkFaint: "#9AA6BD",    // metadata — kept above WCAG-ish contrast on navy
   // Footer text floor (spec §35): footer copy must stay clearly readable on the
-  // dark outer surface — kept at / above the #A8B3C5 contrast target so it never
+  // navy outer surface — kept at / above the #A8B3C5 contrast target so it never
   // visually disappears the way the old near-#8A97A8 footer did.
-  footer: "#B4BECC",      // readable footer body / metadata (>= #A8B3C5 target)
-  footerLink: "#DDE4EE",  // footer links — brighter so they read + tap clearly
-  gold: "#E8B23D",        // premium emphasis
+  footer: "#B7C1D2",      // readable footer body / metadata (>= #A8B3C5 target)
+  footerLink: "#E2E8F2",  // footer links — brighter so they read + tap clearly
+  gold: "#E8B23D",        // premium emphasis / secondary links
   orange: "#FF7A29",      // primary accent / CTA
   green: "#22C55E",
   blue: "#3B82F6",
   amber: "#F59E0B",
   red: "#EF4444",
-  line: "rgba(255,255,255,0.10)",
+  // Hairline border per spec: rgba(255,255,255,.16)
+  line: "rgba(255,255,255,0.16)",
 };
 
 const FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif";
@@ -59,6 +61,11 @@ export const PUBLIC_API_BASE =
   "https://bcplt20.com";
 
 export const LOGO_URL = `${SITE_URL}/bcpl-assets/bcpl-logo-white.png`;
+
+// Header ball logo — the site serves this exact path from
+// artifacts/bcpl-website/public/bcpl-assets/bcpl-ball-clean.png, reachable at
+// SITE_URL + "/bcpl-assets/bcpl-ball-clean.png" (same pattern as LOGO_URL).
+export const BALL_LOGO_URL = `${PUBLIC_API_BASE}/bcpl-assets/bcpl-ball-transparent.png`;
 
 // Official social URLs. SINGLE source of truth — never guess a missing one.
 // (These are the verified URLs already present in the historical email.ts.)
@@ -185,11 +192,18 @@ export function medallion(iconUrl: string, ring = COLORS.gold, alt = ""): string
 }
 
 /* ── Header ───────────────────────────────────────────────────────────────── */
+// Deep navy band (#16223C) with the BCPL ball logo centered, a "BCPL T20 ·
+// SEASON 5" wordmark beneath it, and a thin gold rule under the whole band.
+// Table-based (Outlook-safe) so the logo/wordmark stay centered and the gold
+// hairline renders as a real border, not a dropped CSS gradient.
 export const Header = `
-  <tr><td style="padding:28px 32px 20px;background:${COLORS.outer};border-bottom:3px solid ${COLORS.orange};text-align:center;">
-    <img src="${LOGO_URL}" alt="BCPL T20" height="50" style="height:50px;width:auto;display:block;margin:0 auto 10px;" />
-    <div style="display:inline-block;background:rgba(232,178,61,0.12);border:1px solid rgba(232,178,61,0.40);border-radius:20px;padding:5px 16px;">
-      <span style="font-family:${FONT};font-weight:800;font-size:10px;color:${COLORS.gold};letter-spacing:2px;">SEASON 5 &nbsp;&middot;&nbsp; ${HASHTAG}</span>
+  <tr><td style="padding:30px 32px 22px;background:${COLORS.header};border-bottom:2px solid ${COLORS.gold};text-align:center;">
+    <img src="${BALL_LOGO_URL}" alt="BCPL T20" width="64" height="64" style="width:64px;height:64px;display:block;margin:0 auto 12px;border:0;" />
+    <div style="font-family:${FONT};font-weight:900;font-size:19px;color:${COLORS.ink};letter-spacing:2px;line-height:1;">BCPL&nbsp;T20</div>
+    <div style="margin-top:8px;">
+      <span style="display:inline-block;background:rgba(232,178,61,0.14);border:1px solid rgba(232,178,61,0.45);border-radius:20px;padding:5px 16px;">
+        <span style="font-family:${FONT};font-weight:800;font-size:10px;color:${COLORS.gold};letter-spacing:2px;">SEASON 5 &nbsp;&middot;&nbsp; ${HASHTAG}</span>
+      </span>
     </div>
   </td></tr>`;
 
@@ -247,13 +261,13 @@ export function KeyValueTable(rows: Array<[string, string]>): string {
   const trs = rows
     .map(
       ([k, v], i) => `
-      <tr${i % 2 ? ` style="background:rgba(255,255,255,0.03);"` : ""}>
-        <td style="padding:11px 12px;font-family:${FONT};font-size:12px;color:${COLORS.inkFaint};width:42%;vertical-align:top;">${k}</td>
-        <td style="padding:11px 12px;font-family:${FONT};font-size:14px;color:${COLORS.ink};font-weight:700;word-break:break-word;">${v}</td>
+      <tr>
+        <td style="padding:12px 16px;${i ? `border-top:1px solid ${COLORS.line};` : ""}font-family:${FONT};font-size:12px;letter-spacing:.3px;color:${COLORS.inkFaint};width:42%;vertical-align:top;">${k}</td>
+        <td style="padding:12px 16px;${i ? `border-top:1px solid ${COLORS.line};` : ""}font-family:${FONT};font-size:14px;color:${COLORS.ink};font-weight:700;word-break:break-word;vertical-align:top;">${v}</td>
       </tr>`,
     )
     .join("");
-  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-bottom:18px;background:${COLORS.surface};border-radius:12px;overflow:hidden;">${trs}</table>`;
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate;margin-bottom:18px;background:${COLORS.surface};border:1px solid ${COLORS.line};border-radius:12px;overflow:hidden;">${trs}</table>`;
 }
 
 /* ── Numbered "what happens next" steps ───────────────────────────────────── */
@@ -322,7 +336,7 @@ export function Timeline(
           <table role="presentation" cellpadding="0" cellspacing="0"><tr>
             <td width="34" height="34" align="center" valign="middle" style="width:34px;height:34px;">
               <div style="width:26px;height:26px;line-height:26px;border-radius:50%;${fill}text-align:center;">
-                <span style="font-family:${FONT};font-size:11px;font-weight:800;color:${state === "todo" ? dot : "#04121F"};">${num}</span>
+                <span style="font-family:${FONT};font-size:11px;font-weight:800;color:${state === "todo" ? dot : "#101B30"};">${num}</span>
               </div>
             </td>
           </tr></table>
@@ -342,13 +356,21 @@ export function Timeline(
     </div>`;
 }
 
-/* ── Success banner (premium confirmation ribbon) ─────────────────────────── */
+/* ── Success banner (one-line status strip — green check for payments) ────── */
+// A premium confirmation strip: a coloured left rail, a tick-mark chip, an
+// uppercase "Confirmed" eyebrow, the title, and a supporting subtitle. Used as
+// the single status strip spec calls for at the top of receipt-style emails.
 export function SuccessBanner(title: string, subtitle: string, accent = COLORS.green): string {
   return `
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate;background:linear-gradient(0deg,${COLORS.surface},${COLORS.surface});border:1px solid ${accent};border-radius:12px;margin-bottom:18px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate;background:${COLORS.surface};border:1px solid ${accent};border-radius:12px;margin-bottom:18px;">
       <tr>
         <td width="6" style="background:${accent};border-radius:12px 0 0 12px;">&nbsp;</td>
-        <td style="padding:16px 20px;">
+        <td width="52" valign="middle" align="center" style="padding:16px 0 16px 16px;">
+          <div style="width:34px;height:34px;line-height:34px;border-radius:50%;background:${accent};text-align:center;">
+            <span style="font-family:${FONT};font-size:17px;font-weight:900;color:#101B30;">&#10003;</span>
+          </div>
+        </td>
+        <td style="padding:16px 20px 16px 12px;">
           <div style="font-family:${FONT};font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:${accent};font-weight:800;margin-bottom:4px;">Confirmed</div>
           <div style="font-family:${FONT};font-size:16px;color:${COLORS.ink};font-weight:800;line-height:1.3;">${title}</div>
           <div style="font-family:${FONT};font-size:13px;color:${COLORS.inkSoft};line-height:1.5;margin-top:4px;">${subtitle}</div>
@@ -387,13 +409,22 @@ export function ScoreCardPanel(opts: {
     </table>`;
 }
 
-/* ── Primary CTA ──────────────────────────────────────────────────────────── */
+/* ── Primary CTA (bulletproof button — Gmail/Apple Mail/Outlook) ──────────── */
 export function PrimaryCTA(text: string, href: string, color = COLORS.orange): string {
-  // Bulletproof-ish button: padded anchor centered in a table cell.
+  // Bulletproof button: MSO VML round-rect fallback for Outlook (which drops
+  // border-radius + padding on anchors), a padded anchor everywhere else.
   return `
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:6px 0 18px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:8px 0 18px;">
       <tr><td align="center">
-        <a href="${href}" style="display:inline-block;background:${color};color:#ffffff;text-decoration:none;font-family:${FONT};font-weight:800;font-size:15px;letter-spacing:.4px;padding:15px 34px;border-radius:10px;mso-padding-alt:15px 34px;">${text}</a>
+        <!--[if mso]>
+        <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${href}" style="height:50px;v-text-anchor:middle;width:280px;" arcsize="20%" strokecolor="${color}" fillcolor="${color}">
+          <w:anchorlock/>
+          <center style="color:#ffffff;font-family:${FONT};font-size:15px;font-weight:800;letter-spacing:.4px;">${text}</center>
+        </v:roundrect>
+        <![endif]-->
+        <!--[if !mso]><!-- -->
+        <a href="${href}" style="display:inline-block;background:${color};color:#ffffff;text-decoration:none;font-family:${FONT};font-weight:800;font-size:15px;letter-spacing:.4px;padding:15px 36px;border-radius:10px;mso-padding-alt:0;">${text}</a>
+        <!--<![endif]-->
       </td></tr>
     </table>`;
 }
@@ -404,6 +435,126 @@ export function NoteBox(text: string, accent = COLORS.line): string {
     <div style="background:rgba(255,255,255,0.03);border:1px solid ${accent};border-radius:10px;padding:14px 16px;margin-bottom:18px;">
       <p style="font-family:${FONT};font-size:13px;color:${COLORS.inkSoft};margin:0;line-height:1.6;">${text}</p>
     </div>`;
+}
+
+/* ── Step-progress bar (Register → Video → Result → Phase 2 → Trials) ─────── */
+// Table-based horizontal stepper. The five lifecycle stages render as numbered
+// nodes joined by a thin rule; the `current` stage (0-based index) is
+// highlighted in orange, everything before it reads as done (gold), everything
+// after as upcoming (muted). Used across templates to give players a single
+// consistent "where am I in the journey" map. No emoji — pure styled cells.
+const STEP_LABELS = ["Register", "Video", "Result", "Phase 2", "Trials"] as const;
+export function StepProgress(current: number): string {
+  const cells = STEP_LABELS.map((label, i) => {
+    const state = i < current ? "done" : i === current ? "active" : "todo";
+    const nodeBg =
+      state === "active" ? COLORS.orange : state === "done" ? COLORS.gold : "transparent";
+    const nodeBorder =
+      state === "active" ? COLORS.orange : state === "done" ? COLORS.gold : COLORS.inkFaint;
+    const numColor = state === "todo" ? COLORS.inkFaint : "#101B30";
+    const labelColor =
+      state === "active" ? COLORS.orange : state === "done" ? COLORS.gold : COLORS.inkFaint;
+    const num = String(i + 1);
+    const connector =
+      i < STEP_LABELS.length - 1
+        ? `<td width="18" valign="middle" style="padding:0 1px 18px;"><div style="height:2px;background:${
+            i < current ? COLORS.gold : COLORS.line
+          };line-height:2px;font-size:0;">&nbsp;</div></td>`
+        : "";
+    return `
+      <td align="center" valign="top" style="padding:0;">
+        <div style="width:26px;height:26px;line-height:26px;border-radius:50%;background:${nodeBg};border:2px solid ${nodeBorder};margin:0 auto;text-align:center;">
+          <span style="font-family:${FONT};font-size:11px;font-weight:800;color:${numColor};">${num}</span>
+        </div>
+        <div style="font-family:${FONT};font-size:9px;letter-spacing:.5px;text-transform:uppercase;color:${labelColor};font-weight:700;margin-top:6px;">${label}</div>
+      </td>${connector}`;
+  }).join("");
+  return `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;background:${COLORS.surface};border:1px solid ${COLORS.line};border-radius:12px;margin-bottom:18px;">
+      <tr><td style="padding:18px 16px 14px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;"><tr>${cells}</tr></table>
+      </td></tr>
+    </table>`;
+}
+
+/* ── Ticket block (receipt-style stub — amount, order id, GST breakdown) ───── */
+// A premium boarding-pass / ticket-stub surface for payment receipts. A gold
+// header strip carries the title; the amount sits large; optional detail rows
+// (order id, GST breakdown as passed in) render as label/value pairs. A dashed
+// separator + notch styling gives the "torn ticket" feel without images.
+export function TicketBlock(opts: {
+  title: string;
+  amount: string;
+  rows?: Array<[string, string]>;
+  accent?: string;
+}): string {
+  const accent = opts.accent ?? COLORS.green;
+  const rows = (opts.rows ?? [])
+    .map(
+      ([k, v], i) => `
+      <tr>
+        <td style="padding:9px 0;${i ? `border-top:1px dashed ${COLORS.line};` : ""}font-family:${FONT};font-size:12px;color:${COLORS.inkFaint};">${k}</td>
+        <td align="right" style="padding:9px 0;${i ? `border-top:1px dashed ${COLORS.line};` : ""}font-family:${FONT};font-size:13px;font-weight:700;color:${COLORS.ink};word-break:break-word;">${v}</td>
+      </tr>`,
+    )
+    .join("");
+  return `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate;background:${COLORS.surface};border:1px solid ${COLORS.line};border-radius:14px;margin-bottom:18px;overflow:hidden;">
+      <tr><td style="padding:0;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+          <td style="padding:14px 22px;background:rgba(232,178,61,0.12);border-bottom:2px dashed ${COLORS.line};">
+            <div style="font-family:${FONT};font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:${COLORS.gold};font-weight:800;">${opts.title}</div>
+          </td>
+        </tr></table>
+      </td></tr>
+      <tr><td style="padding:18px 22px 6px;text-align:center;">
+        <div style="font-family:${FONT};font-size:11px;letter-spacing:1px;text-transform:uppercase;color:${COLORS.inkFaint};margin-bottom:4px;">Amount Paid</div>
+        <div style="font-family:${FONT};font-size:32px;line-height:1.1;font-weight:900;color:${accent};letter-spacing:-.5px;">${opts.amount}</div>
+      </td></tr>
+      ${rows ? `<tr><td style="padding:8px 22px 18px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">${rows}</table></td></tr>` : ""}
+    </table>`;
+}
+
+/* ── Countdown band (urgency strip for reminders — "5 din baaki" style) ────── */
+export function CountdownBand(opts: {
+  big: string;
+  caption: string;
+  accent?: string;
+}): string {
+  const accent = opts.accent ?? COLORS.amber;
+  return `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate;background:${COLORS.surface};border:1px solid ${accent};border-radius:12px;margin-bottom:18px;">
+      <tr>
+        <td width="6" style="background:${accent};">&nbsp;</td>
+        <td style="padding:16px 20px;text-align:center;">
+          <div style="font-family:${FONT};font-size:26px;line-height:1.1;font-weight:900;color:${accent};letter-spacing:-.3px;">${opts.big}</div>
+          <div style="font-family:${FONT};font-size:13px;color:${COLORS.inkSoft};margin-top:5px;line-height:1.5;">${opts.caption}</div>
+        </td>
+        <td width="6" style="background:${accent};">&nbsp;</td>
+      </tr>
+    </table>`;
+}
+
+/* ── Venue card (date / time / address rows for the trial venue email) ─────── */
+export function VenueCard(rows: Array<{ label: string; value: string; color?: string }>): string {
+  const trs = rows
+    .map(
+      (r, i) => `
+      <tr>
+        <td width="120" valign="top" style="padding:12px 14px;${i ? `border-top:1px solid ${COLORS.line};` : ""}font-family:${FONT};font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:${COLORS.inkFaint};font-weight:700;">${r.label}</td>
+        <td valign="top" style="padding:12px 14px;${i ? `border-top:1px solid ${COLORS.line};` : ""}font-family:${FONT};font-size:14px;color:${r.color ?? COLORS.ink};font-weight:700;line-height:1.5;word-break:break-word;">${r.value}</td>
+      </tr>`,
+    )
+    .join("");
+  return `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate;background:${COLORS.surface};border:1px solid rgba(232,178,61,0.30);border-radius:14px;margin-bottom:18px;overflow:hidden;">
+      <tr><td style="padding:14px 22px;background:rgba(232,178,61,0.12);border-bottom:2px solid rgba(232,178,61,0.30);">
+        <div style="font-family:${FONT};font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:${COLORS.gold};font-weight:800;">Trial Venue &amp; Schedule</div>
+      </td></tr>
+      <tr><td style="padding:4px 8px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">${trs}</table>
+      </td></tr>
+    </table>`;
 }
 
 /* ── Sponsor strip (dynamic) ──────────────────────────────────────────────── */
@@ -559,6 +710,11 @@ export const LegalFooter = `
     </div>
     <div style="font-family:${FONT};font-size:13px;color:${COLORS.footer};margin-top:14px;line-height:1.6;">
       This is a transactional message related to your BCPL Season 5 registration.
+    </div>
+    <div style="font-family:${FONT};font-size:12px;color:${COLORS.footer};margin-top:10px;line-height:1.6;">
+      Manage how we reach you from your
+      <a href="${SITE_URL}/register/result" style="color:${COLORS.footerLink};text-decoration:underline;">notification preferences</a>,
+      or reply <strong>STOP</strong> to opt out of reminders.
     </div>
   </td></tr>`;
 
