@@ -37,19 +37,36 @@ body { background:#1C2B47; }
 
 type Job = {
   title: string; titleHi: string;
-  dept: 'TECH' | 'MARKETING' | 'SOCIAL MEDIA';
+  dept: 'OPERATIONS' | 'TECH' | 'MARKETING' | 'SOCIAL MEDIA';
   type: string; typeHi: string;
   doing: [string, string][];  // what you'll do [en, hi]
   quals: [string, string][];  // what we look for [en, hi]
 };
 
 const DEPT_COLOR: Record<Job['dept'], { bg: string; border: string; color: string }> = {
+  'OPERATIONS':   { bg: 'rgba(49,197,107,0.14)',  border: 'rgba(49,197,107,0.5)', color: '#6EE7A0' },
   'TECH':         { bg: 'rgba(59,130,246,0.15)',  border: 'rgba(96,165,250,0.5)', color: '#93C5FD' },
   'MARKETING':    { bg: 'rgba(232,178,61,0.14)',  border: 'rgba(232,178,61,0.5)', color: '#FFD873' },
   'SOCIAL MEDIA': { bg: 'rgba(244,114,182,0.14)', border: 'rgba(244,114,182,0.5)', color: '#F9A8D4' },
 };
 
 const JOBS: Job[] = [
+  {
+    title: 'Project Manager', titleHi: 'Project Manager',
+    dept: 'OPERATIONS', type: 'Full-time · Delhi NCR', typeHi: 'Full-time · Delhi NCR',
+    doing: [
+      ['Run the whole team day-to-day — assign work, set deadlines, remove blockers across tech, marketing and social', 'पूरी team का day-to-day संचालन — काम बाँटना, deadlines तय करना, tech/marketing/social की रुकावटें हटाना'],
+      ['Track that every person and campaign is delivering — weekly reviews, clear reports to the founder', 'हर व्यक्ति और campaign की delivery track करना — weekly reviews, founder को साफ़ reports'],
+      ['Own the season calendar — registrations, trials, auction, match days — so nothing slips', 'Season का पूरा calendar own करना — registrations, trials, auction, match days — कुछ भी miss न हो'],
+      ['Flag hiring needs early — where the team is overloaded and where a new hire pays for itself', 'Hiring की ज़रूरत पहले भाँपना — कहाँ team overloaded है और कहाँ नई hire ज़रूरी है'],
+    ],
+    quals: [
+      ['4+ years managing cross-functional teams or projects (sports/events/startups a plus)', 'Cross-functional teams/projects manage करने का 4+ साल अनुभव (sports/events/startup plus)'],
+      ['Strong with planning tools, timelines and written status reporting', 'Planning tools, timelines और written status reporting में मज़बूत'],
+      ['Comfortable being the single point of accountability for delivery', 'Delivery की अकेली ज़िम्मेदारी लेने में सहज'],
+      ['Hindi + English fluency; calm under match-day pressure', 'Hindi + English दोनों में fluent; match-day pressure में शांत'],
+    ],
+  },
   {
     title: 'Full-Stack Developer', titleHi: 'Full-Stack Developer',
     dept: 'TECH', type: 'Full-time · Delhi NCR / Hybrid', typeHi: 'Full-time · Delhi NCR / Hybrid',
@@ -137,6 +154,7 @@ const JOBS: Job[] = [
 export default function Careers() {
   const { t } = useLang();
   const depts: { key: Job['dept']; en: string; hi: string; blurb: string; blurbHi: string }[] = [
+    { key: 'OPERATIONS', en: 'Operations & Management', hi: 'Operations & Management', blurb: 'Keep the whole league machine running on time — people, plans and delivery.', blurbHi: 'पूरी league की machine को समय पर चलाइए — लोग, plans और delivery।' },
     { key: 'TECH', en: 'Technology', hi: 'Technology', blurb: 'Build and run the platform behind every registration, payment and live score.', blurbHi: 'हर registration, payment और live score के पीछे का platform बनाएँ और चलाएँ।' },
     { key: 'MARKETING', en: 'Marketing', hi: 'Marketing', blurb: 'Take BCPL to every corporate cricketer in India.', blurbHi: 'BCPL को भारत के हर corporate cricketer तक पहुँचाएँ।' },
     { key: 'SOCIAL MEDIA', en: 'Social Media', hi: 'Social Media', blurb: 'Tell the league\u2019s story every single day.', blurbHi: 'League की कहानी हर दिन दुनिया को दिखाएँ।' },
