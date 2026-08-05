@@ -1254,10 +1254,33 @@ function legacyTs(v: string | undefined): Date | null {
 
 const LEGACY_SOURCES = new Set(["paid", "unpaid"]);
 
+/** Map multer errors (esp. LIMIT_FILE_SIZE) to a clean 400 instead of a 500. */
+function legacyCsvUploadGuard(req: Request, res: Response, next: (err?: unknown) => void) {
+  legacyCsvUpload.single("file")(req, res, (err: unknown) => {
+    if (err) {
+      const code = (err as { code?: string })?.code;
+      const msg = code === "LIMIT_FILE_SIZE"
+        ? `File too large — the limit is ${Math.round(LEGACY_CSV_MAX_BYTES / 1024 / 1024)} MB. Split the CSV and upload in parts.`
+        : "Upload failed: " + String((err as Error)?.message ?? err).slice(0, 200);
+      return void res.status(400).json({ error: msg });
+    }
+    next();
+  });
+}
+
+/** Only one legacy import at a time — protects the small prod instance from
+ *  two concurrent 30MB parses. */
+let legacyImportRunning = false;
+
 router.post(
   "/legacy-import",
-  legacyCsvUpload.single("file"),
+  legacyCsvUploadGuard,
   safe("legacy-import", async (req, res) => {
+    if (legacyImportRunning) {
+      return void res.status(409).json({ error: "Another import is already running — wait for it to finish, then retry" });
+    }
+    legacyImportRunning = true;
+    try {
     const source = String(req.query.source ?? "");
     if (!LEGACY_SOURCES.has(source)) {
       return void res.status(400).json({ error: "source must be 'paid' or 'unpaid'" });
@@ -1325,6 +1348,9 @@ router.post(
     await flush();
 
     res.json({ ok: true, source, totalRows: rows.length - 1, inserted, skippedDup, badRows });
+    } finally {
+      legacyImportRunning = false;
+    }
   }),
 );
 
