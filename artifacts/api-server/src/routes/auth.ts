@@ -1,8 +1,9 @@
 import { draftOnOtpRequested, draftOnOtpVerified } from "./drafts";
 import { Router } from "express";
 import { db } from "@workspace/db";
-import { usersTable, otpSessionsTable, registrationsTable } from "@workspace/db/schema";
-import { eq, and, gt, gte, isNull, lt } from "drizzle-orm";
+import { usersTable, otpSessionsTable, registrationsTable, legacyRegistrationsTable, type LegacyRegistration } from "@workspace/db/schema";
+import { eq, and, gt, gte, isNull, lt, sql } from "drizzle-orm";
+import { assignRegNumber } from "./register";
 import { sendOtp, otpConfigured } from "../lib/sms";
 import { signToken } from "../lib/auth";
 import { requireAuth, type AuthRequest } from "../middlewares/auth";
@@ -25,6 +26,52 @@ function clientIp(req: { headers: Record<string, unknown>; ip?: string }): strin
     if (parts.length) return parts[parts.length - 1];
   }
   return req.ip ?? "unknown";
+}
+
+
+/* ── Season-4 paid carryover ─────────────────────────────────────────────
+ * Old-site PAID players were promised trials for TWO seasons on the same
+ * payment. When such a phone logs in (OTP as usual), we auto-provision a
+ * Season-5 account + registration that lands directly on the Phase-2 card:
+ * phase1 carried over, phase2 fee treated as already paid — only KYC left.
+ * Unpaid legacy rows get nothing: they must register afresh. */
+async function findLegacyPaid(phone: string): Promise<LegacyRegistration | undefined> {
+  const rows = await db.select().from(legacyRegistrationsTable)
+    .where(and(
+      eq(legacyRegistrationsTable.source, "paid"),
+      sql`right(regexp_replace(${legacyRegistrationsTable.phone}, '\\D', '', 'g'), 10) = ${phone}`,
+    )).limit(1);
+  return rows[0];
+}
+
+function mapLegacyRole(r: string | null): string {
+  const s = (r ?? "").toLowerCase();
+  if (s.includes("bowl")) return "bowl";
+  if (s.includes("wicket") || s.includes("keeper") || s === "wk") return "wk";
+  if (s.includes("all")) return "ar";
+  return "bat";
+}
+
+/** Create the carryover registration (idempotent: skipped if the user already
+ *  has one). phase1Status "selected" + phase2Status "payment_done" is the
+ *  exact state the normal flow reaches after Phase-2 payment — so the
+ *  existing KYC gate and trial-pass gate work unchanged. */
+async function provisionLegacyCarryover(userId: string, legacy: LegacyRegistration): Promise<void> {
+  const [existing] = await db.select({ id: registrationsTable.id }).from(registrationsTable)
+    .where(eq(registrationsTable.userId, userId)).limit(1);
+  if (existing) return;
+  const [reg] = await db.insert(registrationsTable).values({
+    userId,
+    role: mapLegacyRole(legacy.role),
+    trialCity: legacy.trialCity,
+    phase1Status: "selected",
+    phase2Status: "payment_done",
+    consents: { legacyCarryover: {
+      source: legacy.source, legacyRegId: legacy.legacyRegId,
+      amountPaise: legacy.amountPaise, at: new Date().toISOString(),
+    } },
+  }).returning({ id: registrationsTable.id });
+  if (reg) await assignRegNumber(reg.id); // paid players carry a reg number
 }
 
 // POST /api/auth/send-otp
@@ -62,10 +109,14 @@ router.post("/send-otp", async (req, res) => {
     });
   }
   if (purpose === "login" && !existingReg) {
-    return void res.status(404).json({
-      error: "No registration found for this number. Please register first.",
-      code:  "NOT_REGISTERED",
-    });
+    const legacy = await findLegacyPaid(phone);
+    if (!legacy) {
+      return void res.status(404).json({
+        error: "No registration found for this number. Please register first.",
+        code:  "NOT_REGISTERED",
+      });
+    }
+    // Season-4 paid player — let the OTP go out; verify-otp provisions the account.
   }
 
   // ── Abuse guard 2: per-phone resend cooldown + hourly cap (SMS cost / bombing) ──
@@ -167,8 +218,26 @@ router.post("/verify-otp", async (req, res) => {
   // Find or create user
   let [user] = await db.select().from(usersTable).where(eq(usersTable.phone, phone)).limit(1);
 
+  if (!user && purpose === "login") {
+    const legacy = await findLegacyPaid(phone);
+    if (!legacy) return void res.status(404).json({ error: "No account found. Please register first." });
+    const fullName = [legacy.firstName, legacy.lastName].filter(Boolean).join(" ").trim().slice(0, 100) || "BCPL Player";
+    let legacyEmail = legacy.email;
+    if (legacyEmail) {
+      const clash = await db.select({ id: usersTable.id }).from(usersTable)
+        .where(eq(usersTable.email, legacyEmail)).limit(1);
+      if (clash.length > 0) legacyEmail = null; // email taken on the new site — use placeholder
+    }
+    [user] = await db.insert(usersTable).values({
+      name: fullName,
+      phone,
+      email: legacyEmail ?? "player" + phone + "@legacy.bcplt20.com",
+      isVerified: true,
+    }).returning();
+    await provisionLegacyCarryover(user.id, legacy);
+  }
+
   if (!user) {
-    if (purpose === "login") return void res.status(404).json({ error: "No account found. Please register first." });
     if (!name || !email) return void res.status(400).json({ error: "Name and email are required for registration." });
 
     const existing = await db.select().from(usersTable).where(eq(usersTable.email, email)).limit(1);
@@ -177,6 +246,14 @@ router.post("/verify-otp", async (req, res) => {
     [user] = await db.insert(usersTable).values({ name, phone, email, isVerified: true }).returning();
   } else {
     await db.update(usersTable).set({ isVerified: true, updatedAt: new Date() }).where(eq(usersTable.id, user.id));
+    if (purpose === "login") {
+      const [reg] = await db.select({ id: registrationsTable.id }).from(registrationsTable)
+        .where(eq(registrationsTable.userId, user.id)).limit(1);
+      if (!reg) {
+        const legacy = await findLegacyPaid(phone);
+        if (legacy) await provisionLegacyCarryover(user.id, legacy);
+      }
+    }
   }
 
   // Draft autosave journey hook — the ONLY path that marks a draft's mobile verified.
