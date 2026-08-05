@@ -20,39 +20,45 @@ import { db } from "@workspace/db";
 import { siteSettingsTable } from "@workspace/db/schema";
 import { eq } from "drizzle-orm";
 
-/* ── Brand palette (LIGHT premium restyle — round 2) ────────────────────────
- * Owner feedback: emails read too dark / words hard to read. Dark navy is now
- * ONLY the bookends (header band + footer). The BODY is light and airy:
- *   - outer page background #EEF1F7 (soft blue-grey)
- *   - main card pure white #FFFFFF with a soft #E3E8F2 border + rounded corners
- *   - text navy ink #16223C (secondary #5A6B8C), hairlines #E3E8F2
- * Orange #FF7A29 stays the primary CTA (white text); gold #E8B23D for accents.
- * Success strips use a soft green tint (#EAF9F0 / #16A34A); urgency bands use
- * soft amber/red tints. The look targets Apple / Amazon / IPL receipt polish. */
+/* ── Brand palette (DARK MID-NAVY premium restyle — round 3) ─────────────────
+ * Owner REJECTED the white/light theme. The original was very dark navy; the
+ * owner wants that lightened by ~50% into a rich mid-navy that reads like an
+ * official IPL / big-brand email. We adopt the site's V3 lightened-navy family:
+ *   - outer page background #1B2E52 (deep mid-navy behind the card)
+ *   - main card #24396B (rich mid-navy) with rgba-white ~0.16 hairlines
+ *   - inner panels / steps use #2A4070 / #33477A for gentle elevation
+ *   - deep navy #16223C bookends (header band + footer) with the white logo
+ * Text is MORE visible than before: primary near-white #F4F7FC (>=.92 white),
+ * secondary #C7D2E8, metadata #9FAFD0. Gold accent #E8B23D and orange CTA
+ * #FF7A29 (white text) stay. Success green #4ADE80 on rgba(34,197,94,.14);
+ * amber/red urgency are BRIGHT text on translucent dark tints (never pale
+ * pastels that assume a white card). Targets IPL / premium-brand receipt polish. */
 export const COLORS = {
-  outer: "#EEF1F7",       // soft page background behind the card
+  outer: "#1B2E52",       // deep mid-navy page background behind the card
   header: "#16223C",      // deep navy header band (bookend)
   footerBand: "#16223C",  // deep navy footer band (bookend)
-  surface: "#F5F7FB",     // light inner panel surface (info/status/steps)
-  card: "#FFFFFF",         // primary body card surface — pure white
-  ink: "#16223C",         // primary navy ink (high contrast on white)
-  inkSoft: "#5A6B8C",      // secondary body text (readable navy-grey)
-  inkFaint: "#8592AC",     // metadata / eyebrows
-  // Footer sits on the navy band, so it keeps light text.
-  footer: "#B7C1D2",       // readable footer body / metadata on navy
-  footerLink: "#E2E8F2",   // footer links — brighter on navy
-  gold: "#B8860B",         // premium gold that stays readable on white
+  surface: "#2A4070",     // inner panel surface (info/status/steps) — elevated navy
+  card: "#24396B",         // primary body card surface — rich mid-navy
+  ink: "#F4F7FC",         // primary near-white text (>= .92 white equivalent)
+  inkSoft: "#C7D2E8",      // secondary body text (readable light-blue-grey)
+  inkFaint: "#9FAFD0",     // metadata / eyebrows
+  // Footer sits on the deep navy band, so it keeps light text.
+  footer: "#C7D2E8",       // readable footer body / metadata on navy
+  footerLink: "#E8EEF9",   // footer links — brighter on navy
+  gold: "#E8B23D",         // premium gold accent (readable on navy)
   goldSoft: "#E8B23D",     // brighter gold for use ON the dark header band
-  orange: "#FF7A29",       // primary accent / CTA
-  green: "#16A34A",        // success text (readable on white)
-  greenTint: "#EAF9F0",    // success strip background tint
-  blue: "#2563EB",
-  amber: "#B45309",        // amber text readable on white
-  amberTint: "#FEF6E7",    // amber urgency tint
-  red: "#DC2626",          // red text readable on white
-  redTint: "#FDECEC",      // red urgency tint
-  // Hairline border on the light theme.
-  line: "#E3E8F2",
+  orange: "#FF7A29",       // primary accent / CTA (white text)
+  green: "#4ADE80",        // success text (bright green on navy)
+  greenTint: "rgba(34,197,94,0.14)", // success strip tint on navy
+  blue: "#7CB0FF",         // info accent (bright blue on navy)
+  amber: "#FBBF24",        // amber urgency text (bright on navy)
+  amberTint: "rgba(251,191,36,0.14)", // amber urgency tint on navy
+  red: "#FF6B6B",          // red urgency text (bright on navy)
+  redTint: "rgba(255,107,107,0.14)",  // red urgency tint on navy
+  // Hairline border on the navy theme (rgba-white ~0.16).
+  line: "rgba(255,255,255,0.16)",
+  // Elevated inner panel for steps / nested rows (subtle lift over the card).
+  panel: "#33477A",
 };
 
 const FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif";
@@ -81,6 +87,14 @@ export const LOGO_URL = `${SITE_URL}/bcpl-assets/bcpl-logo-white.png`;
 // dynamic ball logo already used). Its native ratio is 1600x469, so at a 48px
 // display height the width is ~164px.
 export const SITE_LOGO_URL = `${PUBLIC_API_BASE}/bcpl-assets/bcpl-logo-white.png`;
+
+// Brand-book brush-stroke ("dhabba") splash-art strips. Two 1200px-wide hosted
+// PNGs frame every email: orange strokes on navy directly under the header
+// band, green strokes on navy directly above the footer band. Full-width
+// <img> in a plain <td> (no background-image tricks) so Gmail/Outlook render
+// them reliably. Deployed from bcpl-website/public/bcpl-assets/.
+export const BRUSH_TOP_URL = `${PUBLIC_API_BASE}/bcpl-assets/email-brush-top.png`;
+export const BRUSH_BOTTOM_URL = `${PUBLIC_API_BASE}/bcpl-assets/email-brush-bottom.png`;
 
 // Official social URLs. SINGLE source of truth — never guess a missing one.
 // (These are the verified URLs already present in the historical email.ts.)
@@ -207,8 +221,8 @@ export function medallion(iconUrl: string, ring = COLORS.gold, alt = ""): string
 }
 
 /* ── Header ───────────────────────────────────────────────────────────────── */
-// Deep navy band (#16223C — the ONLY dark band at the top now) carrying the
-// FULL website logo image (the same white wordmark SiteHeader shows on navy)
+// Deep navy band (#16223C — the darkest bookend, framing the mid-navy card)
+// carrying the FULL website logo image (the white wordmark SiteHeader shows)
 // and, below it, the identical "SEASON 5" gold pill the site uses. The old
 // "BCPL T20" font-text wordmark is removed per owner feedback. A thin gold rule
 // closes the band. Table-based (Outlook-safe) so everything stays centered.
@@ -220,6 +234,23 @@ export const Header = `
         <span style="font-family:${FONT};font-weight:800;font-size:10px;color:${COLORS.goldSoft};letter-spacing:2.5px;">SEASON 5 &nbsp;&middot;&nbsp; ${HASHTAG}</span>
       </span>
     </div>
+  </td></tr>`;
+
+/* ── Brand-book brush strips ("dhabba" splash art) ────────────────────────── */
+// Full-width brush-stroke splash-art strips from the brand book. A plain,
+// Gmail/Outlook-safe <img> in a full-width <td> — NO background-image tricks.
+// The source PNGs are painted on the SAME navy as the surrounding bands so the
+// strips blend seamlessly into the framed layout. The top strip (orange
+// strokes) sits directly under the header band; the bottom strip (green
+// strokes) sits directly above the footer band.
+export const BrushTop = `
+  <tr><td style="padding:0;font-size:0;line-height:0;background:${COLORS.header};">
+    <img src="${BRUSH_TOP_URL}" alt="" width="600" style="display:block;width:100%;max-width:600px;height:auto;border:0;" />
+  </td></tr>`;
+
+export const BrushBottom = `
+  <tr><td style="padding:0;font-size:0;line-height:0;background:${COLORS.footerBand};">
+    <img src="${BRUSH_BOTTOM_URL}" alt="" width="600" style="display:block;width:100%;max-width:600px;height:auto;border:0;" />
   </td></tr>`;
 
 /* ── Hero status ──────────────────────────────────────────────────────────── */
@@ -470,7 +501,7 @@ export function StepProgress(current: number): string {
   const cells = STEP_LABELS.map((label, i) => {
     const state = i < current ? "done" : i === current ? "active" : "todo";
     const nodeBg =
-      state === "active" ? COLORS.orange : state === "done" ? COLORS.goldSoft : "#FFFFFF";
+      state === "active" ? COLORS.orange : state === "done" ? COLORS.goldSoft : COLORS.panel;
     const nodeBorder =
       state === "active" ? COLORS.orange : state === "done" ? COLORS.goldSoft : COLORS.inkFaint;
     const numColor = state === "todo" ? COLORS.inkFaint : "#FFFFFF";
@@ -522,7 +553,7 @@ export function TicketBlock(opts: {
     )
     .join("");
   return `
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate;background:#FFFFFF;border:1px solid ${COLORS.line};border-radius:14px;margin-bottom:18px;overflow:hidden;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate;background:${COLORS.surface};border:1px solid ${COLORS.line};border-radius:14px;margin-bottom:18px;overflow:hidden;">
       <tr><td style="padding:0;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
           <td style="padding:14px 22px;background:rgba(232,178,61,0.10);border-bottom:2px dashed ${COLORS.line};">
@@ -750,8 +781,8 @@ export function EmailShell(body: string): string {
 <html lang="en"><head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<meta name="color-scheme" content="light"/>
-<meta name="supported-color-schemes" content="light"/>
+<meta name="color-scheme" content="dark"/>
+<meta name="supported-color-schemes" content="dark"/>
 <style>
   @media only screen and (max-width:480px){
     .bcpl-pad{padding-left:20px !important;padding-right:20px !important;}
@@ -767,9 +798,11 @@ export function EmailShell(body: string): string {
     <tr><td align="center" style="padding:24px 12px;">
       <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px;background:${COLORS.card};border-radius:14px;overflow:hidden;border:1px solid ${COLORS.line};">
         ${Header}
+        ${BrushTop}
         <tr><td class="bcpl-pad" style="padding:28px 32px;background:${COLORS.card};">
           ${body}
         </td></tr>
+        ${BrushBottom}
         ${SPONSOR_TOKEN}
         ${SocialBar()}
         ${LegalFooter}

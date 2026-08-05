@@ -114,36 +114,45 @@ export function buildInvoicePdf(data: InvoicePdfData): Promise<Buffer> {
       const pageRight = doc.page.width - doc.page.margins.right;
       const contentWidth = pageRight - pageLeft;
 
-      // ── Header band: logo (optional) + supplier block + TAX INVOICE title ──
+      // ── Header band ───────────────────────────────────────────────────
+      // Row 1: Season 5 logo on a navy chip (the wordmark is white, so it
+      // needs the brand navy behind it to be visible on paper) at left,
+      // "TAX INVOICE" + HSN/GST info right-aligned.
+      // Row 2 (below the logo): supplier legal name, GSTIN and address in a
+      // fixed-width left column that can never collide with the right column.
       const headerTop = doc.y;
       const logo = loadLogo();
-      let textX = pageLeft;
       if (logo) {
         try {
-          doc.image(logo, pageLeft, headerTop, { fit: [64, 64] });
-          textX = pageLeft + 78;
+          // Navy chip 168x48, logo (ratio ~3.4:1) centred inside with padding.
+          doc.roundedRect(pageLeft, headerTop, 168, 48, 8).fill(NAVY);
+          doc.image(logo, pageLeft + 12, headerTop + 7, { fit: [144, 34] });
         } catch {
           // Unreadable/corrupt image — skip silently, never throw.
-          textX = pageLeft;
         }
       }
 
-      doc.fillColor(NAVY).font("Helvetica-Bold").fontSize(15).text(BCPL_LEGAL_NAME, textX, headerTop, { width: 320 });
-      doc.moveDown(0.15);
-      doc.font("Helvetica").fontSize(8.5).fillColor(INK_SOFT);
-      doc.text(`GSTIN: ${BCPL_GSTIN}`, textX, doc.y, { width: 320 });
-      doc.text(BCPL_ADDR_LINES, textX, doc.y, { width: 320 });
-
-      // Right-aligned TAX INVOICE title
+      // Right column (fixed): title + tax meta, right-aligned.
       doc.font("Helvetica-Bold").fontSize(20).fillColor(ORANGE);
-      doc.text("TAX INVOICE", pageRight - 200, headerTop, { width: 200, align: "right" });
+      doc.text("TAX INVOICE", pageRight - 220, headerTop + 2, { width: 220, align: "right" });
       doc.font("Helvetica").fontSize(8).fillColor(INK_FAINT);
-      doc.text(`HSN/SAC: ${BCPL_HSN} — ${BCPL_HSN_DESC}`, pageRight - 220, headerTop + 26, { width: 220, align: "right" });
+      doc.text(`HSN/SAC: ${BCPL_HSN} — ${BCPL_HSN_DESC}`, pageRight - 220, headerTop + 28, { width: 220, align: "right" });
       const gstLabel = data.igst ? "GST 18% (IGST 18%)" : "GST 18% (CGST 9% + SGST 9%)";
       doc.text(gstLabel, pageRight - 220, doc.y, { width: 220, align: "right" });
+      const rightColBottom = doc.y;
+
+      // Left column BELOW the logo chip — width capped so it stays clear of
+      // the right column (right column occupies the last 220pt).
+      const supplierW = contentWidth - 236;
+      const supplierTop = headerTop + 60;
+      doc.fillColor(NAVY).font("Helvetica-Bold").fontSize(13).text(BCPL_LEGAL_NAME, pageLeft, supplierTop, { width: supplierW });
+      doc.moveDown(0.15);
+      doc.font("Helvetica").fontSize(8.5).fillColor(INK_SOFT);
+      doc.text(`GSTIN: ${BCPL_GSTIN}`, pageLeft, doc.y, { width: supplierW });
+      doc.text(BCPL_ADDR_LINES, pageLeft, doc.y, { width: supplierW });
 
       // Hairline under header
-      let y = Math.max(doc.y, headerTop + 70) + 12;
+      let y = Math.max(doc.y, rightColBottom, headerTop + 70) + 12;
       doc.moveTo(pageLeft, y).lineTo(pageRight, y).lineWidth(1).strokeColor(ORANGE).stroke();
       y += 16;
 
