@@ -376,7 +376,7 @@ export function Phase1VideoUpload() {
               <p style={{ color:'var(--ink-2)', fontSize:14, marginBottom:8, lineHeight:1.7 }}>
                 {userName ? userName + ', ' : ''}{t('your Phase 1 submission is going through BCPL\'s evaluation process.', 'आपका Phase 1 सबमिशन BCPL की evaluation process से गुज़र रहा है।')}
               </p>
-              <p style={{ color:'var(--ink-3)', fontSize:13, marginBottom:28 }}>{t('Result will be sent via Email, SMS and WhatsApp ', 'परिणाम ईमेल, SMS और WhatsApp के माध्यम से ')}<strong style={{ color:'var(--ink)' }}>{t('within 48 hours', '48 घंटों')}</strong>{t('.', ' के भीतर भेजा जाएगा।')}</p>
+              <p style={{ color:'var(--ink-3)', fontSize:13, marginBottom:28 }}>{t('Result will be sent via Email, SMS and WhatsApp ', 'परिणाम ईमेल, SMS और WhatsApp के माध्यम से ')}<strong style={{ color:'var(--ink)' }}>{t('within 15 days', '15 दिनों')}</strong>{t('.', ' के भीतर भेजा जाएगा।')}</p>
             </>
           )}
           <div style={{ display:'flex', flexDirection:'column', gap:12, alignItems:'center' }}>
@@ -415,7 +415,7 @@ export function Phase1VideoUpload() {
             {userName ? t(`Well done, ${userName}! `, `शाबाश, ${userName}! `) : ''}{t('Your trial video has been received successfully.', 'आपका ट्रायल वीडियो सफलतापूर्वक प्राप्त हो गया है।')}
           </p>
           <p style={{ color:'var(--ink-3)', fontSize:13, marginBottom:28, lineHeight:1.7 }}>
-            {t('Your video is evaluated against BCPL\'s Phase 1 assessment criteria ', 'आपका वीडियो BCPL के Phase 1 assessment criteria के अनुसार ')}<strong style={{ color:'var(--ink)' }}>{t('within 48 hours', '48 घंटों')}</strong>{t('.', ' के भीतर evaluate किया जाता है।')}<br />
+            {t('Your video is evaluated against BCPL\'s Phase 1 assessment criteria ', 'आपका वीडियो BCPL के Phase 1 assessment criteria के अनुसार ')}<strong style={{ color:'var(--ink)' }}>{t('within 15 days', '15 दिनों')}</strong>{t('.', ' के भीतर evaluate किया जाता है।')}<br />
             {t('Result will arrive on ', 'परिणाम ')}<strong style={{ color:'var(--orange)' }}>{t('Email + SMS + WhatsApp', 'ईमेल + SMS + WhatsApp')}</strong>{t('.', ' पर आएगा।')}
           </p>
           <div style={{ background:'rgba(34,197,94,0.06)', border:'1px solid rgba(34,197,94,0.2)', borderRadius:'var(--r)', padding:16, marginBottom:24 }}>
@@ -425,7 +425,7 @@ export function Phase1VideoUpload() {
             </div>
             <div style={{ display:'flex', justifyContent:'space-between', padding:'8px 0' }}>
               <span style={{ color:'var(--ink-3)', fontSize:13, fontWeight:600 }}>{t('Expected Result', 'अपेक्षित परिणाम')}</span>
-              <span style={{ color:'var(--orange)', fontWeight:800, fontSize:13 }}>{t('Within 48 Hours', '48 घंटों के भीतर')}</span>
+              <span style={{ color:'var(--orange)', fontWeight:800, fontSize:13 }}>{t('Within 15 Days', '15 दिनों के भीतर')}</span>
             </div>
           </div>
           <div style={{ display:'flex', gap:12, flexWrap:'wrap', justifyContent:'center' }}>

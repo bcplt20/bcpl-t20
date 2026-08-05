@@ -179,7 +179,7 @@ function getBannerConfig(step: Step, data: any, venue: any, t: any) {
     under_review: {
       color:'var(--gold)', bg:'rgba(232,178,61,0.08)', icon:<IcoSearch size={40} />,
       title: t('Video Under Evaluation', 'वीडियो evaluation में है'),
-      body: t('Your Phase 1 submission goes through BCPL\'s evaluation process against the Phase 1 assessment criteria. Your result is typically released within 48 hours. You will receive an SMS + Email with the result.', 'आपका Phase 1 submission BCPL के Phase 1 assessment criteria पर evaluate किया जा रहा है। आपका result आमतौर पर 48 घंटे में release होता है। आपको परिणाम के साथ एक SMS + ईमेल मिलेगा।'),
+      body: t('Your Phase 1 submission goes through BCPL\'s evaluation process against the Phase 1 assessment criteria. Your result will be shared within 15 days. You will receive an SMS + Email with the result.', 'आपका Phase 1 submission BCPL के Phase 1 assessment criteria पर evaluate किया जा रहा है। आपका result 15 दिनों के भीतर share किया जाएगा। आपको परिणाम के साथ एक SMS + ईमेल मिलेगा।'),
     },
     rejected: {
       color:'var(--gold)', bg:'rgba(232,178,61,0.08)', icon:<IcoFlag size={40} />,

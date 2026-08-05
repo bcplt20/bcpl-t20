@@ -85,7 +85,7 @@ export function CorporateCricket() {
           <LpBullets items={[
             <><strong style={{ color: '#fff' }}>Register online</strong> and choose your playing role — Batsman, Bowler, Wicket-Keeper or All-Rounder.</>,
             <><strong style={{ color: '#fff' }}>Submit a 30–60 second video</strong> of your own current cricket performance within 15 days of registering.</>,
-            <><strong style={{ color: '#fff' }}>Get your Phase 1 result within 48 hours</strong> of your video submission — the assessment is evaluation-based.</>,
+            <><strong style={{ color: '#fff' }}>Get your Phase 1 result within 15 days</strong> of your video submission — the assessment is evaluation-based.</>,
             <><strong style={{ color: '#fff' }}>Advance to the physical trial (Phase 2)</strong> if you are shortlisted and choose to proceed — a standardised, role-specific trial scored out of 100.</>,
             <><strong style={{ color: '#fff' }}>Enter the auction pool</strong> if you qualify, where franchise squads are formed.</>,
           ]} />
@@ -133,7 +133,7 @@ export function CorporateCricket() {
       faqs={CORPORATE_CRICKET_FAQS}
       faqHeading="Corporate cricket — common questions"
       finalCtaTitle={<>Ready to take your shot at corporate cricket?</>}
-      finalCtaSub="Register in about five minutes, upload your video, and get your Phase 1 result within 48 hours."
+      finalCtaSub="Register in about five minutes, upload your video, and get your Phase 1 result within 15 days."
     />
   );
 }

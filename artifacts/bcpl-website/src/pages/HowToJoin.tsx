@@ -6,7 +6,7 @@ import { HOW_TO_JOIN_FAQS } from './landing/landingData';
 
 /**
  * /how-to-join — SEO landing page for "how to join corporate cricket league
- * india". A step-by-step guide: register → video (30–60s) → result within 48h
+ * india". A step-by-step guide: register → video (30–60s) → result within 15 days
  * → physical trials → auction/teams. All process facts are from the FAQ page.
  */
 export function HowToJoin() {
@@ -36,10 +36,10 @@ export function HowToJoin() {
     },
     {
       n: '3',
-      title: 'Get your result within 48 hours',
+      title: 'Get your result within 15 days',
       body: (
         <p className="lp-p" style={{ marginBottom: 0 }}>
-          Your video is assessed under BCPL's role-specific Phase 1 framework, and your result target is within 48 hours
+          Your video is assessed under BCPL's role-specific Phase 1 framework, and your result is shared within 15 days
           of submission. The process is evaluation-based, and your result may include a score and/or ranking where
           applicable. This first phase is entirely video-based — there is no travel involved yet.
         </p>
@@ -137,7 +137,7 @@ export function HowToJoin() {
       intro={
         <p className="lp-p" style={{ fontSize: 'clamp(15px,2.2vw,18px)' }}>
           Joining BCPL is a clear, five-step process: register online, submit a 30–60 second cricket video, get your
-          result within 48 hours, attend a physical trial if you advance, and then the auction and team stage. Here is
+          result within 15 days, attend a physical trial if you advance, and then the auction and team stage. Here is
           exactly how each step works.
         </p>
       }
@@ -145,7 +145,7 @@ export function HowToJoin() {
       faqs={HOW_TO_JOIN_FAQS}
       faqHeading="How to join — common questions"
       finalCtaTitle={<>Start step one now</>}
-      finalCtaSub="Registration takes about five minutes. Get your video in within 15 days and your result within 48 hours."
+      finalCtaSub="Registration takes about five minutes. Get your video in within 15 days and your result within 15 days."
     />
   );
 }

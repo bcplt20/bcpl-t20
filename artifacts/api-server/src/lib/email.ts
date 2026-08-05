@@ -47,7 +47,7 @@ export function adminAlertRecipient(): string | null {
 /** Configured Phase 1 result window, human copy. Kept in sync with the
  *  phase1Config resultReleaseHours default (48h) — fixes the old
  *  "Expected Result BySoon" bug by always rendering a real window. */
-const RESULT_WINDOW = "Within 48 Hours";
+const RESULT_WINDOW = "Within 15 Days";
 
 /** One PDF/document attachment for Brevo — content is base64-encoded bytes. */
 export interface EmailAttachment {
@@ -160,7 +160,7 @@ export function tplPhase1Receipt(name: string, role: string, amount: number, reg
           <p style="font-size:12px;color:${COLORS.inkFaint};margin:0;">Deadline: 15 days from registration &nbsp;·&nbsp; Late uploads are not accepted.</p>`,
       })}
       ${PrimaryCTA("UPLOAD VIDEO", `${SITE_URL}/register/upload-video`)}
-      ${NoteBox("Video: 30–60 seconds of batting, bowling or fielding. Sign in with the same phone number used during registration. Your Phase 1 result is typically released within 48 hours of video submission.")}
+      ${NoteBox("Video: 30–60 seconds of batting, bowling or fielding. Sign in with the same phone number used during registration. Your Phase 1 result will be shared within 15 days of video submission.")}
     `),
   };
 }
@@ -179,7 +179,7 @@ export function tplVideoSubmitted(name: string) {
       ${Timeline([
         { title: "Submission Received", body: "Your trial video has been securely received.", state: "done" },
         { title: "Assessment In Progress", body: "Your submission is evaluated against the applicable BCPL Phase 1 assessment criteria.", state: "active" },
-        { title: "Result Within 48 Hours", body: "Once your result is ready, we will notify you on the channels registered with your BCPL account — Email, SMS and WhatsApp.", state: "todo" },
+        { title: "Result Within 15 Days", body: "Once your result is ready, we will notify you on the channels registered with your BCPL account — Email, SMS and WhatsApp.", state: "todo" },
       ])}
       ${StatusCard([
         { label: "Current Status", value: "Under Review", color: COLORS.blue },

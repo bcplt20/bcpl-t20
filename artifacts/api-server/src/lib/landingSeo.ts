@@ -10,7 +10,7 @@
  *
  * The FAQ text here is kept in sync with the matching page component in
  * artifacts/bcpl-website/src/pages/. Every fact is drawn from the site's FAQ
- * page (48-hour result target, 30–60 second video, evaluation-based process)
+ * page (result within 15 days, 30–60 second video, evaluation-based process)
  * — no invented numbers, no banned wording.
  */
 
@@ -40,7 +40,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "How does the process work?",
-        a: "You register online and choose your playing role, then upload a 30–60 second cricket skills video within 15 days. Your submission is assessed under BCPL's role-specific Phase 1 framework and your result target is within 48 hours of video submission. Players who advance can choose to attend a physical trial in Phase 2.",
+        a: "You register online and choose your playing role, then upload a 30–60 second cricket skills video within 15 days. Your submission is assessed under BCPL's role-specific Phase 1 framework and your result is shared within 15 days of video submission. Players who advance can choose to attend a physical trial in Phase 2.",
       },
       {
         q: "Do I need to be a trained cricketer?",
@@ -62,7 +62,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "How do Delhi corporate employees join?",
-        a: "Register online, choose your playing role and select your nearest trial city during registration. You then upload a 30–60 second cricket skills video within 15 days. Your result target is within 48 hours of video submission.",
+        a: "Register online, choose your playing role and select your nearest trial city during registration. You then upload a 30–60 second cricket skills video within 15 days. Your result is shared within 15 days of video submission.",
       },
       {
         q: "Where are the Delhi trials held?",
@@ -74,7 +74,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "What happens after I submit my video?",
-        a: "Your video is assessed under BCPL's role-specific Phase 1 framework and you receive a result within 48 hours. Players who advance can choose to proceed to the Phase 2 physical trial in their region.",
+        a: "Your video is assessed under BCPL's role-specific Phase 1 framework and you receive a result within 15 days. Players who advance can choose to proceed to the Phase 2 physical trial in their region.",
       },
     ],
   },
@@ -92,7 +92,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "How soon do I get my Phase 1 result?",
-        a: "Your video is assessed under BCPL's role-specific Phase 1 framework and your result target is within 48 hours of video submission. The process is evaluation-based; results may include a score and/or ranking where applicable.",
+        a: "Your video is assessed under BCPL's role-specific Phase 1 framework and your result is shared within 15 days of video submission. The process is evaluation-based; results may include a score and/or ranking where applicable.",
       },
       {
         q: "What happens if I advance to the next phase?",
@@ -126,7 +126,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "How does the process work for a group from one office?",
-        a: "Everyone registers individually, uploads their 30–60 second video within 15 days and receives a Phase 1 result within 48 hours. Colleagues who advance can each choose to proceed to the Phase 2 physical trial in their nearest trial city.",
+        a: "Everyone registers individually, uploads their 30–60 second video within 15 days and receives a Phase 1 result within 15 days. Colleagues who advance can each choose to proceed to the Phase 2 physical trial in their nearest trial city.",
       },
     ],
   },

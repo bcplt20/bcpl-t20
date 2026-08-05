@@ -40,7 +40,7 @@ export function CorporateCricketDelhi() {
             <><strong style={{ color: '#fff' }}>Register online</strong> and pick your playing role — Batsman, Bowler, Wicket-Keeper or All-Rounder.</>,
             <><strong style={{ color: '#fff' }}>Select your nearest trial city</strong> during registration so your physical-trial venue is convenient for you.</>,
             <><strong style={{ color: '#fff' }}>Upload a 30–60 second cricket video</strong> within 15 days of registering, showing your own current performance.</>,
-            <><strong style={{ color: '#fff' }}>Receive your Phase 1 result within 48 hours</strong> of submitting your video.</>,
+            <><strong style={{ color: '#fff' }}>Receive your Phase 1 result within 15 days</strong> of submitting your video.</>,
           ]} />
           <p className="lp-p">
             The whole registration takes about five minutes. Because it is online, a group of colleagues from the same
@@ -100,7 +100,7 @@ export function CorporateCricketDelhi() {
           </p>
           <p className="lp-p">
             Because everything up to the physical trial happens online, the format fits around a demanding Delhi work
-            schedule. You register when it suits you, film your video over a weekend, and get your result within 48 hours.
+            schedule. You register when it suits you, film your video over a weekend, and get your result within 15 days.
             There is no need to attend anything in person until Phase 2 — and even then, choosing your nearest trial city
             keeps the travel within the region. It is a realistic way for a busy professional to test their cricket
             against a consistent, published standard rather than an informal weekend match.
@@ -114,7 +114,7 @@ export function CorporateCricketDelhi() {
         <>
           <p className="lp-p">
             Once your video is in, it is assessed under BCPL's role-specific Phase 1 framework and you receive a result
-            within 48 hours. Players who advance can choose to proceed to the Phase 2 physical trial in the Delhi-NCR
+            within 15 days. Players who advance can choose to proceed to the Phase 2 physical trial in the Delhi-NCR
             region. From there, players who qualify enter the auction pool through which franchise squads are formed.
           </p>
           <p className="lp-p">
@@ -143,7 +143,7 @@ export function CorporateCricketDelhi() {
       faqs={DELHI_FAQS}
       faqHeading="Delhi-NCR corporate cricket — common questions"
       finalCtaTitle={<>Working in Delhi-NCR? Take the field.</>}
-      finalCtaSub="Register online in about five minutes, pick your nearest trial city, and get your Phase 1 result within 48 hours."
+      finalCtaSub="Register online in about five minutes, pick your nearest trial city, and get your Phase 1 result within 15 days."
     />
   );
 }

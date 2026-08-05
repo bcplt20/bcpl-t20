@@ -63,7 +63,7 @@ const PROOF = [
 const ROAD = (f: FeeConfig) => [
   { icon:"reg", en:"Register",         hi:"रजिस्टर",        date:"Oct '26 – Feb '27", fee: inr(f.phase1.bat) + " / " + inr(f.phase1.ar) + " + GST", descEn:"Pick your role, pay online — done in 5 minutes.",                                                       descHi:"Role चुनें, online payment करें — 5 मिनट में हो गया।",                                        color:"#FF7A29", live:true },
   { icon:"video", en:"Video Trial",      hi:"वीडियो ट्रायल",  date:"Within 15 days",    fee:null,                                                      descEn:"Upload a 30–60 second cricket clip from any ground in India.",                                          descHi:"किसी भी मैदान से 30–60 second की cricket clip upload करें।",                                       color:"#FF9350" },
-  { icon:"result", en:"Phase 1 Result",   hi:"फेज़ 1 रिज़ल्ट", date:"Within 48 hours",   fee:null,                                                      descEn:"Your video is evaluated against BCPL's Phase 1 assessment criteria.",                                   descHi:"आपका video BCPL के Phase 1 assessment criteria पर evaluate होता है।",                          color:"#E8B23D" },
+  { icon:"result", en:"Phase 1 Result",   hi:"फेज़ 1 रिज़ल्ट", date:"Within 15 days",   fee:null,                                                      descEn:"Your video is evaluated against BCPL's Phase 1 assessment criteria.",                                   descHi:"आपका video BCPL के Phase 1 assessment criteria पर evaluate होता है।",                          color:"#E8B23D" },
   { icon:"trophy", en:"Phase 2 & Beyond", hi:"फेज़ 2 और आगे",  date:"Mar – Oct '27",     fee: inr(f.phase2.bat) + " / " + inr(f.phase2.ar) + " + GST", descEn:"After Phase 1 qualification — physical trial in your city, the live franchise auction, then Season 5 under the floodlights.", descHi:"Phase 1 qualify करने के बाद — आपके शहर में physical trial, live franchise auction, फिर floodlights के नीचे Season 5।", color:"#F0C860" },
 ];
 
@@ -108,8 +108,8 @@ const FAQS = (f: FeeConfig) => [
     aEn:"The Phase 2 fee is payable only if you qualify and choose to proceed. Maximum total cost is " + inr(f.phase1.bat + f.phase2.bat) + "–" + inr(f.phase1.ar + f.phase2.ar) + " + GST for your entire BCPL journey — registration to franchise auction.",
     aHi:"Phase 2 fee सिर्फ तभी देनी होती है जब आप qualify करें और आगे बढ़ना चुनें। पूरे BCPL सफर की अधिकतम कुल लागत " + inr(f.phase1.bat + f.phase2.bat) + "–" + inr(f.phase1.ar + f.phase2.ar) + " + GST है — registration से लेकर auction तक।" },
   { qEn:"Who reviews my Phase 1 video?",         qHi:"मेरा Phase 1 video कौन देखता है?",
-    aEn:"Your video is evaluated against BCPL's Phase 1 assessment criteria. Results are released within 48 hours of submission.",
-    aHi:"आपका video BCPL के Phase 1 assessment criteria पर evaluate होता है। Result submission के 48 घंटे के भीतर SMS/email से मिलता है।" },
+    aEn:"Your video is evaluated against BCPL's Phase 1 assessment criteria. Results are shared within 15 days of submission.",
+    aHi:"आपका video BCPL के Phase 1 assessment criteria पर evaluate होता है। Result submission के 15 दिनों के भीतर SMS/email से मिलता है।" },
   { qEn:"Which cities have physical trials?",    qHi:"Physical trials किन शहरों में होंगे?",
     aEn:"Cities across India including Mumbai, Delhi, Bengaluru, Hyderabad, Chennai, Kolkata, Ahmedabad, Jaipur, Lucknow, Pune, Surat, Nagpur, Indore, Bhopal, Patna, Kochi, and many more.",
     aHi:"भारत भर के शहर — Mumbai, Delhi, Bengaluru, Hyderabad, Chennai, Kolkata, Ahmedabad, Jaipur, Lucknow, Pune, Surat, Nagpur, Indore, Bhopal, Patna, Kochi और भी कई।" },
@@ -700,7 +700,7 @@ export function Home() {
             {[
               { icon:IcoCheck,  en:"Transparent Fee Structure",           hi:"पारदर्शी Fee Structure" },
               { icon:IcoShield, en:"Phase 2 only after Phase 1 qualification", hi:"Phase 2 सिर्फ Phase 1 qualify करने के बाद" },
-              { icon:IcoClock,  en:"Result within 48 hours",             hi:"48 घंटे में result" },
+              { icon:IcoClock,  en:"Result within 15 days",              hi:"15 दिनों में result" },
               { icon:IcoLock,   en:"Secure payment via Cashfree",        hi:"Cashfree से सुरक्षित payment" },
             ].map(g=>(
               <div key={g.en} style={{ display:"flex", alignItems:"center", gap:7, background:"rgba(34,197,94,.07)", border:"1px solid rgba(34,197,94,.22)", borderRadius:10, padding:"7px 13px" }}>

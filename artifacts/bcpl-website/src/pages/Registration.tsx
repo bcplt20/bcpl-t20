@@ -26,7 +26,7 @@ import { IcoBat, IcoBall, IcoShield, IcoStar, IcoPen, IcoVideo, IcoClock, IcoSta
   │  → Register + Pay ₹299 (Bat/Bowl/WK) or ₹399 (All-Rounder)    │
   │  → Upload your 30–60 second trial video                        │
   │  → Video evaluated against BCPL's Phase 1 criteria             │
-  │  → Result within 48 hours                                      │
+  │  → Result within 15 days                                      │
   │                                                                 │
   │ PHASE 2 (Physical Trial) — only if selected                    │
   │  → Physical trial at your trial city                           │
@@ -826,7 +826,7 @@ export function Registration() {
                         <div style={{ fontSize:15, fontWeight:800, color:'#A855F7', fontFamily:'Montserrat,sans-serif' }}>{t('Video Under Review', 'Video Review में है')}</div>
                         <div style={{ fontSize:12, color:'rgba(255,255,255,0.72)', marginTop:8, lineHeight:1.7 }}>
                           {t("Your Phase 1 submission is going through BCPL's evaluation process.", "आपकी Phase 1 submission BCPL के evaluation process से गुज़र रही है।")}<br/>
-                          {t('Result will be shared via', 'Result भेजा जाएगा')} <strong style={{color:'rgba(255,255,255,0.88)'}}>{t('SMS + Email', 'SMS + Email')}</strong> {t('within 48 hours.', '48 घंटे के अंदर।')}
+                          {t('Result will be shared via', 'Result भेजा जाएगा')} <strong style={{color:'rgba(255,255,255,0.88)'}}>{t('SMS + Email', 'SMS + Email')}</strong> {t('within 15 days.', '15 दिनों के अंदर।')}
                         </div>
                       </div>
                     )}

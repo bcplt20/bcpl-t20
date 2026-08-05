@@ -74,7 +74,7 @@ const PAGE_DEFAULTS: PageMetaDefault[] = [
   /* ─── SEO keyword landing pages (non-brand search intent) ───────────── */
   { path: "/corporate-cricket", label: "Corporate Cricket Guide", title: "Corporate Cricket in India: What is BCPL?", description: "Corporate cricket explained: a T20 league for working professionals. Who plays, the format, the season timeline and how to register for BCPL." },
   { path: "/corporate-cricket-tournament-delhi", label: "Delhi-NCR Guide", title: "Corporate Cricket Tournament in Delhi-NCR | BCPL", description: "A corporate cricket tournament for Delhi-NCR working professionals. How Delhi corporate employees join, trials in the region and how to register." },
-  { path: "/how-to-join",   label: "How to Join Guide", title: "How to Join a Corporate Cricket League in India", description: "Step-by-step guide: register, submit a 30–60s video, get a result in 48h, attend physical trials and enter the auction. Join BCPL." },
+  { path: "/how-to-join",   label: "How to Join Guide", title: "How to Join a Corporate Cricket League in India", description: "Step-by-step guide: register, submit a 30–60s video, get a result within 15 days, attend physical trials and enter the auction. Join BCPL." },
   { path: "/office-cricket-team", label: "Office Cricket Team Guide", title: "Office Cricket Team Tournament | Join BCPL", description: "Bring your office cricket team to BCPL. How colleagues join individually, the teamwork and fitness angle, and how registration works." },
 ];
 

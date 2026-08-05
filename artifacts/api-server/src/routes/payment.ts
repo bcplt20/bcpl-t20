@@ -322,11 +322,14 @@ router.post("/phase1/verify", requireAuth, async (req: AuthRequest, res) => {
   // Fire notifications async — only if this call confirmed the payment
   // (skips duplicates when the webhook already confirmed & notified)
   if (flipped[0]) {
-    // Upload window starts NOW (payment success), not at registration time.
+    // Owner rule (5 Aug '26): the upload window is anchored at REGISTRATION
+    // time (players are promised 15 days from registration), so payment must
+    // never shorten or reset it — only backfill legacy rows missing one.
     const cfg = await getPhase1Config();
-    const videoDeadline = new Date(Date.now() + cfg.uploadWindowDays * 24 * 60 * 60 * 1000);
-    await db.update(registrationsTable).set({ videoDeadline, updatedAt: new Date() })
-      .where(eq(registrationsTable.id, reg.id));
+    await db.execute(sql`UPDATE registrations
+      SET video_deadline = COALESCE(video_deadline, created_at + make_interval(days => ${cfg.uploadWindowDays})),
+          updated_at = now()
+      WHERE id = ${reg.id}`);
     notifyPhase1Success(user, { id: reg.id, role: reg.role, trialCity: reg.trialCity, regNumber }, parseInt(pay.amount), cfg.uploadWindowDays, { txnId: pay.cashfreeOrderId || pay.id, paidAt: pay.paidAt ?? new Date() });
   }
 
@@ -516,11 +519,13 @@ router.post("/webhook", async (req, res) => {
           // (avoids duplicates when the redirect /verify flow already notified)
           if (flipped[0]) {
             const regNumber = await assignRegNumber(updated[0].registrationId);
-            // Upload window starts at payment success (mirror of the /verify path)
+            // Registration-anchored window (mirror of the /verify path):
+            // only backfill a missing deadline, never reset it at payment.
             const cfg = await getPhase1Config();
-            await db.update(registrationsTable)
-              .set({ videoDeadline: new Date(Date.now() + cfg.uploadWindowDays * 24 * 60 * 60 * 1000), updatedAt: new Date() })
-              .where(eq(registrationsTable.id, updated[0].registrationId));
+            await db.execute(sql`UPDATE registrations
+              SET video_deadline = COALESCE(video_deadline, created_at + make_interval(days => ${cfg.uploadWindowDays})),
+                  updated_at = now()
+              WHERE id = ${updated[0].registrationId}`);
             const rows = await db.select({ pay: phase1PaymentsTable, reg: registrationsTable, user: usersTable })
               .from(phase1PaymentsTable)
               .innerJoin(registrationsTable, eq(phase1PaymentsTable.registrationId, registrationsTable.id))

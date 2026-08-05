@@ -125,7 +125,7 @@ export function Terms() {
       'You must upload a 30–60 second cricket video showing your own, current performance within the applicable upload window shown in your dashboard',
       'Videos that are incomplete, invalid, corrupted, inaccessible, unclear or non-compliant may require re-upload under BCPL rules; late uploads may be rejected according to the applicable process',
       'Manipulated, edited-to-deceive or impersonated videos lead to disqualification',
-      'Phase 1 results are targeted within 48 hours of video submission; a Phase 1 score/rank, where shown, does not by itself guarantee advancement, and Phase 1 Qualified does not equal Auction Pool qualification',
+      'Phase 1 results are shared within 15 days of video submission; a Phase 1 score/rank, where shown, does not by itself guarantee advancement, and Phase 1 Qualified does not equal Auction Pool qualification',
     ]},
     {n:5,icon:<span style={{fontSize:24,lineHeight:1}}>🤖</span>,titleEn:'Assessment Methodology & Technology-Assisted Evaluation',titleHi:'असेसमेंट पद्धति और तकनीक-सहायित मूल्यांकन',items:[
       'BCPL may use a combination of authorised personnel, coaches, software, automated systems, artificial-intelligence-assisted tools and third-party service providers to support assessment and administration',

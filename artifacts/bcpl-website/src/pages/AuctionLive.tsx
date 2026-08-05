@@ -25,8 +25,8 @@ const STEPS = [
   {
     n: '02',
     en: 'Phase 1 result', hi: 'Phase 1 का result',
-    dEn: 'Your video is evaluated against BCPL\u2019s Phase 1 assessment criteria. Result within 48 hours of review.',
-    dHi: 'आपका video BCPL के Phase 1 assessment criteria पर evaluate होता है। Review के 48 घंटे में result।',
+    dEn: 'Your video is evaluated against BCPL\u2019s Phase 1 assessment criteria. Result within 15 days of submission.',
+    dHi: 'आपका video BCPL के Phase 1 assessment criteria पर evaluate होता है। Submission के 15 दिनों के भीतर result।',
     color: '#E8B23D',
   },
   {

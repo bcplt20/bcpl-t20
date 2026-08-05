@@ -101,7 +101,7 @@ export function faqPageLd(siteOrigin: string): Record<string, unknown> {
     },
     {
       q: "What is Phase 1?",
-      a: "Phase 1 is a video-based assessment stage. After registering, you upload a 30–60 second cricket skills video within 15 days. Your submission is assessed under BCPL's role-specific Phase 1 framework, and your result target is within 48 hours of video submission.",
+      a: "Phase 1 is a video-based assessment stage. After registering, you upload a 30–60 second cricket skills video within 15 days. Your submission is assessed under BCPL's role-specific Phase 1 framework, and your result is shared within 15 days of video submission.",
     },
     {
       q: "How much does Phase 1 cost by role?",

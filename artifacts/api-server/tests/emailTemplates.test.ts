@@ -122,7 +122,7 @@ describe('the "Expected Result BySoon" bug is gone', () => {
   });
   it("shows a real expected window", () => {
     expect(vs.html).toContain("Expected Result");
-    expect(vs.html).toContain("Within 48 Hours");
+    expect(vs.html).toContain("Within 15 Days");
   });
 });
 
@@ -283,11 +283,11 @@ describe("premium upgrades", () => {
     expect(r.html).toContain("secured");
   });
 
-  it("video received email uses a stylized timeline (received -> review -> 48h)", () => {
+  it("video received email uses a stylized timeline (received -> review -> 15 days)", () => {
     const r = rendered.find((x) => x.key === "video_submitted")!;
     expect(r.html).toContain("Submission Received");
     expect(r.html).toContain("Assessment In Progress");
-    expect(r.html).toContain("Result Within 48 Hours");
+    expect(r.html).toContain("Result Within 15 Days");
   });
 
   it("result ready email uses a premium score-card panel and stays outcome-neutral", () => {
