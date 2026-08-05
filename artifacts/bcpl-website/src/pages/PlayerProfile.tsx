@@ -8,7 +8,7 @@ import { ReferralCard } from '../components/ReferralCard';
 import { clearSession, getSession } from '../lib/auth';
 import { useLang } from '../lib/i18n';
 import { formatRole, formatDateLong, formatDateShort, formatTime, formatBatch } from '../lib/format';
-import { IcoHome, IcoRoute, IcoCard, IcoUser, IcoHeadset, IcoOut, IcoTicket, IcoDoc, IcoCheck, IcoSearch, IcoStar, IcoVideo, IcoIdCard, IcoClock, IcoPin, IcoFlag, IcoTrophy, IcoPen, IcoList } from '../lib/icons';
+import { IcoHome, IcoRoute, IcoCard, IcoUser, IcoOut, IcoTicket, IcoDoc, IcoCheck, IcoSearch, IcoStar, IcoVideo, IcoIdCard, IcoClock, IcoPin, IcoFlag, IcoTrophy, IcoPen, IcoList, IcoGift} from '../lib/icons';
 
 const BASE = import.meta.env.BASE_URL;
 
@@ -912,7 +912,7 @@ export function PlayerProfile() {
           { id: 'journey', icon: <IcoRoute size={21} />, label: t('Journey', 'सफर') },
           { id: 'card', icon: <IcoCard size={21} />, label: t('Card', 'कार्ड') },
           { id: 'profile', icon: <IcoUser size={21} />, label: t('Profile', 'प्रोफाइल') },
-          { id: 'support', icon: <IcoHeadset size={21} />, label: t('Support', 'सपोर्ट') },
+          { id: 'support', icon: <IcoGift size={21} />, label: t('Refer & Earn', 'रेफर करें') },
         ].map(tb => (
           <button key={tb.id} className={`mob-tab-btn ${activeTab === tb.id ? 'active' : ''}`} onClick={() => setActiveTab(tb.id as any)}>
             {tb.icon}
