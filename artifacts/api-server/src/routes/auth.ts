@@ -57,10 +57,14 @@ function mapLegacyRole(r: string | null): string {
  *  exact state the normal flow reaches after Phase-2 payment — so the
  *  existing KYC gate and trial-pass gate work unchanged. */
 async function provisionLegacyCarryover(userId: string, legacy: LegacyRegistration): Promise<void> {
-  const [existing] = await db.select({ id: registrationsTable.id }).from(registrationsTable)
-    .where(eq(registrationsTable.userId, userId)).limit(1);
-  if (existing) return;
-  const [reg] = await db.insert(registrationsTable).values({
+  const reg = await db.transaction(async (tx) => {
+    // Per-user advisory lock: concurrent verify-otp calls serialise here, so
+    // the recheck below makes provisioning exactly-once.
+    await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtext(${"bcpl_legacy_carry_" + userId}))`);
+    const [existing] = await tx.select({ id: registrationsTable.id }).from(registrationsTable)
+      .where(eq(registrationsTable.userId, userId)).limit(1);
+    if (existing) return null;
+    const [inserted] = await tx.insert(registrationsTable).values({
     userId,
     role: mapLegacyRole(legacy.role),
     trialCity: legacy.trialCity,
@@ -70,7 +74,9 @@ async function provisionLegacyCarryover(userId: string, legacy: LegacyRegistrati
       source: legacy.source, legacyRegId: legacy.legacyRegId,
       amountPaise: legacy.amountPaise, at: new Date().toISOString(),
     } },
-  }).returning({ id: registrationsTable.id });
+    }).returning({ id: registrationsTable.id });
+    return inserted ?? null;
+  });
   if (reg) await assignRegNumber(reg.id); // paid players carry a reg number
 }
 
@@ -211,8 +217,12 @@ router.post("/verify-otp", async (req, res) => {
     return void res.status(400).json({ error: "Invalid or expired OTP" });
   }
 
-  // Mark OTP used
-  await db.update(otpSessionsTable).set({ usedAt: new Date() }).where(eq(otpSessionsTable.id, session.id));
+  // Mark OTP used — atomic: a concurrent request racing on the same session
+  // loses here (usedAt already set) and gets the same "invalid" rejection.
+  const consumed = await db.update(otpSessionsTable).set({ usedAt: new Date() })
+    .where(and(eq(otpSessionsTable.id, session.id), isNull(otpSessionsTable.usedAt)))
+    .returning({ id: otpSessionsTable.id });
+  if (consumed.length === 0) return void res.status(400).json({ error: "Invalid or expired OTP" });
   clearOtpVerifyFails(phone);
 
   // Find or create user
@@ -228,12 +238,18 @@ router.post("/verify-otp", async (req, res) => {
         .where(eq(usersTable.email, legacyEmail)).limit(1);
       if (clash.length > 0) legacyEmail = null; // email taken on the new site — use placeholder
     }
-    [user] = await db.insert(usersTable).values({
-      name: fullName,
-      phone,
-      email: legacyEmail ?? "player" + phone + "@legacy.bcplt20.com",
-      isVerified: true,
-    }).returning();
+    try {
+      [user] = await db.insert(usersTable).values({
+        name: fullName,
+        phone,
+        email: legacyEmail ?? "player" + phone + "@legacy.bcplt20.com",
+        isVerified: true,
+      }).returning();
+    } catch (e) {
+      // Concurrent first-login won the insert (unique phone/email) — reuse its row.
+      [user] = await db.select().from(usersTable).where(eq(usersTable.phone, phone)).limit(1);
+      if (!user) throw e;
+    }
     await provisionLegacyCarryover(user.id, legacy);
   }
 

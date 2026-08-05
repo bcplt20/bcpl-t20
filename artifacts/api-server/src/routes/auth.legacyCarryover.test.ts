@@ -114,6 +114,17 @@ describe("legacy paid carryover login", () => {
     expect(regs.length).toBe(1);
   });
 
+  it("concurrent logins with one OTP: exactly one succeeds, no duplicate rows", async () => {
+    const otp = await seedOtp(PHONE_PAID);
+    const results = await Promise.all([verify(PHONE_PAID, otp), verify(PHONE_PAID, otp)]);
+    const oks = results.filter((r) => r.status === 200);
+    expect(oks.length).toBe(1);
+    const [user] = await db.select().from(usersTable).where(eq(usersTable.phone, PHONE_PAID));
+    const regs = await db.select({ id: registrationsTable.id }).from(registrationsTable)
+      .where(eq(registrationsTable.userId, user.id));
+    expect(regs.length).toBe(1);
+  });
+
   it("unpaid legacy phone still gets 404 on login", async () => {
     const otp = await seedOtp(PHONE_UNPAID);
     const { status } = await verify(PHONE_UNPAID, otp);
