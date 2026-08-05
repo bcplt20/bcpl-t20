@@ -49,11 +49,19 @@ export function organizationLd(siteOrigin: string): Record<string, unknown> {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "BCPL T20 — Bhartiya Corporate Premier League",
-    alternateName: "BCPL T20",
+    alternateName: [
+      "BCPL T20",
+      "BCPL",
+      "Bhartiya Corporate Premier League",
+      "Corporate Premier League",
+      "Corporate Cricket League",
+    ],
     url: siteOrigin,
     logo: `${siteOrigin}/bcpl-assets/bcpl-logo-color.jpg`,
     description:
-      "India's corporate T20 cricket league for working professionals — 10 franchise teams competing across the season.",
+      "BCPL (Bhartiya Corporate Premier League) is India's corporate T20 cricket league for working professionals — 10 franchise teams competing across the season.",
+    slogan: "#OfficeSeStadiumTak",
+    knowsAbout: ["corporate cricket", "T20 cricket", "cricket trials for working professionals"],
     sameAs: ["https://twitter.com/BCPLT20League"],
     contactPoint: [
       {
