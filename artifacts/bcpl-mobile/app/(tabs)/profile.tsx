@@ -145,7 +145,7 @@ export default function ProfileScreen() {
                   value={d.video?.submitted ? 'Submitted' : 'Pending'}
                   done={!!d.video?.submitted}
                 />
-                {!d.video?.submitted && ['selected', 'video_submitted', 'payment_done'].includes(reg?.phase1Status ?? '') ? (
+                {!d.video?.submitted && ['video_submitted', 'payment_done'].includes(reg?.phase1Status ?? '') ? (
                   <Pressable
                     onPress={() => Linking.openURL('https://bcplt20.com/dashboard')}
                     style={({ pressed }) => [styles.linkBtn, { backgroundColor: '#FF6B00', opacity: pressed ? 0.8 : 1 }]}

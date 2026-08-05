@@ -72,6 +72,7 @@ export default function PointsScreen() {
   // Derive Group A / Group B membership from the match schedule (same as website)
   const groupOf = new Map<string, string>();
   for (const m of matchesQ.data?.matches ?? []) {
+    if (m.stage && m.stage !== 'league') continue; // playoffs carry no group meaning
     const g = (m.grp ?? '').toUpperCase();
     if (g === 'A' || g === 'B') {
       if (!groupOf.has(m.team1)) groupOf.set(m.team1, g);
@@ -80,7 +81,7 @@ export default function PointsScreen() {
   }
   const groupA = table.filter((t) => groupOf.get(t.team) === 'A');
   const groupB = table.filter((t) => groupOf.get(t.team) === 'B');
-  const grouped = groupA.length > 0 && groupB.length > 0;
+  const grouped = groupA.length > 0 || groupB.length > 0;
 
   return (
     <View style={{ flex: 1, backgroundColor: c.background }}>
