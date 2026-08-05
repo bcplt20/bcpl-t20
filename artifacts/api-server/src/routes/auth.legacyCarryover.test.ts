@@ -23,8 +23,10 @@ import authRouter from "./auth";
 const rand8 = String(crypto.randomInt(10_000_000, 99_999_999));
 const PHONE_PAID   = `96${rand8}`;  // format-valid; OTP rows inserted directly, no SMS ever sent
 const PHONE_UNPAID = `97${rand8}`;
+const PHONE_REREG  = `98${rand8}`; // legacy paid AND already registered fresh this season
 const LEGACY_ID_A = crypto.randomInt(90_000_000, 99_999_999);
 const LEGACY_ID_B = LEGACY_ID_A + 1;
+const LEGACY_ID_C = LEGACY_ID_A + 2;
 
 let server: Server;
 let base = "";
@@ -57,6 +59,12 @@ beforeAll(async () => {
       paymentStatus: "paid", amountPaise: 236000,
     },
     {
+      source: "paid", legacyRegId: LEGACY_ID_C,
+      firstName: "Already", lastName: "Registered",
+      phone: PHONE_REREG, trialCity: "Delhi", role: "Batsman",
+      paymentStatus: "paid", amountPaise: 236000,
+    },
+    {
       source: "unpaid", legacyRegId: LEGACY_ID_B,
       firstName: "Never", lastName: "Paid",
       phone: PHONE_UNPAID, amountPaise: 0,
@@ -71,15 +79,15 @@ beforeAll(async () => {
 
 afterAll(async () => {
   const users = await db.select({ id: usersTable.id }).from(usersTable)
-    .where(inArray(usersTable.phone, [PHONE_PAID, PHONE_UNPAID]));
+    .where(inArray(usersTable.phone, [PHONE_PAID, PHONE_UNPAID, PHONE_REREG]));
   const ids = users.map((u) => u.id);
   if (ids.length) {
     await db.delete(registrationsTable).where(inArray(registrationsTable.userId, ids));
     await db.delete(usersTable).where(inArray(usersTable.id, ids));
   }
-  await db.delete(otpSessionsTable).where(inArray(otpSessionsTable.phone, [PHONE_PAID, PHONE_UNPAID]));
+  await db.delete(otpSessionsTable).where(inArray(otpSessionsTable.phone, [PHONE_PAID, PHONE_UNPAID, PHONE_REREG]));
   await db.delete(legacyRegistrationsTable)
-    .where(inArray(legacyRegistrationsTable.legacyRegId, [LEGACY_ID_A, LEGACY_ID_B]));
+    .where(inArray(legacyRegistrationsTable.legacyRegId, [LEGACY_ID_A, LEGACY_ID_B, LEGACY_ID_C]));
   await new Promise<void>((r) => server.close(() => r()));
 });
 
@@ -123,6 +131,32 @@ describe("legacy paid carryover login", () => {
     const regs = await db.select({ id: registrationsTable.id }).from(registrationsTable)
       .where(eq(registrationsTable.userId, user.id));
     expect(regs.length).toBe(1);
+  });
+
+  it("upgrades an existing fresh-season registration in place (fees waived, reg number assigned)", async () => {
+    // Player registered THIS season before carryover login shipped: user +
+    // registration stuck at payment_pending, no reg number yet.
+    const [user] = await db.insert(usersTable).values({
+      name: "Already Registered", phone: PHONE_REREG,
+      email: `rereg.${rand8}@legacy-test.invalid`, isVerified: true,
+    }).returning();
+    await db.insert(registrationsTable).values({
+      userId: user.id, role: "bat", trialCity: "Delhi",
+      phase1Status: "payment_pending",
+    });
+
+    const otp = await seedOtp(PHONE_REREG);
+    const { status } = await verify(PHONE_REREG, otp);
+    expect(status).toBe(200);
+
+    const regs = await db.select().from(registrationsTable)
+      .where(eq(registrationsTable.userId, user.id));
+    expect(regs.length).toBe(1); // upgraded in place, never duplicated
+    const reg = regs[0];
+    expect(reg.phase1Status).toBe("selected");       // no video-upload step
+    expect(reg.phase2Status).toBe("payment_done");   // Phase-2 fee waived
+    expect(reg.regNumber).toMatch(/^BCPL-/);         // number assigned, shown on trial pass
+    expect((reg.consents as any)?.legacyCarryover?.upgradedExisting).toBe(true);
   });
 
   it("unpaid legacy phone still gets 404 on login", async () => {

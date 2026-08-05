@@ -76,9 +76,37 @@ async function provisionLegacyCarryover(userId: string, legacy: LegacyRegistrati
     // Per-user advisory lock: concurrent verify-otp calls serialise here, so
     // the recheck below makes provisioning exactly-once.
     await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtext(${"bcpl_legacy_carry_" + userId}))`);
-    const [existing] = await tx.select({ id: registrationsTable.id }).from(registrationsTable)
+    const [existing] = await tx.select({
+      id: registrationsTable.id,
+      phase1Status: registrationsTable.phase1Status,
+      phase2Status: registrationsTable.phase2Status,
+      regNumber: registrationsTable.regNumber,
+    }).from(registrationsTable)
       .where(eq(registrationsTable.userId, userId)).limit(1);
-    if (existing) return null;
+    if (existing) {
+      // The player ALSO registered fresh this season (e.g. before the
+      // carryover login shipped). The 2-season promise still applies:
+      // upgrade the existing registration in place instead of leaving them
+      // stuck at payment/video steps — but never touch a reg that is already
+      // past Phase 1 evaluation (qualified/not_shortlisted/rejected/selected).
+      const upgradeable = ["pending", "payment_pending", "payment_done", "video_submitted"];
+      if (existing.phase1Status !== "selected" && upgradeable.includes(existing.phase1Status)) {
+        const p2Early = !existing.phase2Status || ["pending", "payment_pending"].includes(existing.phase2Status);
+        await tx.execute(sql`
+          UPDATE registrations
+          SET phase1_status = 'selected',
+              phase2_status = CASE WHEN ${p2Early} THEN 'payment_done' ELSE phase2_status END,
+              consents = COALESCE(consents, '{}'::jsonb) || jsonb_build_object('legacyCarryover', ${JSON.stringify({
+                source: legacy.source, legacyRegId: legacy.legacyRegId,
+                amountPaise: legacy.amountPaise, upgradedExisting: true, at: new Date().toISOString(),
+              })}::jsonb),
+              updated_at = NOW()
+          WHERE id = ${existing.id}
+        `);
+        if (!existing.regNumber) return { id: existing.id }; // assign a number below
+      }
+      return null;
+    }
     const [inserted] = await tx.insert(registrationsTable).values({
     userId,
     role: mapLegacyRole(legacy.role),
@@ -278,12 +306,11 @@ router.post("/verify-otp", async (req, res) => {
   } else {
     await db.update(usersTable).set({ isVerified: true, updatedAt: new Date() }).where(eq(usersTable.id, user.id));
     if (purpose === "login") {
-      const [reg] = await db.select({ id: registrationsTable.id }).from(registrationsTable)
-        .where(eq(registrationsTable.userId, user.id)).limit(1);
-      if (!reg) {
-        const legacy = await findLegacyPaid(phone);
-        if (legacy) await provisionLegacyCarryover(user.id, legacy);
-      }
+      // Always check legacy-paid: provisionLegacyCarryover creates the reg
+      // when missing AND upgrades an existing fresh-season reg in place
+      // (fees waived per the 2-season promise). Idempotent + advisory-locked.
+      const legacy = await findLegacyPaid(phone);
+      if (legacy) await provisionLegacyCarryover(user.id, legacy);
     }
   }
 
