@@ -25,7 +25,7 @@ export async function adminGetPhase1AiConfig(): Promise<Phase1AiConfig> {
 }
 
 export async function adminPatchPhase1AiConfig(
-  patch: Partial<Pick<Phase1AiConfig, "aiEnabled" | "resultReleaseEnabled" | "realNotificationsEnabled" | "testMode">>,
+  patch: Partial<Pick<Phase1AiConfig, "aiEnabled" | "resultReleaseEnabled" | "realNotificationsEnabled" | "testMode" | "minScore">>,
 ): Promise<Phase1AiConfig> {
   const r = await adminReq<ConfigResponse>("PATCH", "/admin-tools/phase1/config", patch);
   return r.config;

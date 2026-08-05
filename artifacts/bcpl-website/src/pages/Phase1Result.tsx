@@ -504,7 +504,7 @@ export function Phase1Result() {
                 {/* status band */}
                 <div style={{ display:'inline-block', fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:14, letterSpacing:'.14em', color:statusColor, background: qualified ? 'rgba(34,197,94,0.1)' : 'rgba(255,255,255,0.04)', border:'1px solid ' + (qualified ? 'rgba(34,197,94,0.4)' : 'var(--line)'), borderRadius:12, padding:'10px 20px', marginBottom:32, textTransform:'uppercase' }}>
                   {qualified
-                    ? '✓ ' + t('PHASE 1 QUALIFIED — SELECTED FOR PHASE 2', 'PHASE 1 क्वालिफाइड — PHASE 2 के लिए चयनित')
+                    ? '✓ ' + t('PHASE 1 QUALIFIED FOR PHASE 2', 'PHASE 1 क्वालिफाइड — PHASE 2 के लिए योग्य')
                     : '✓ ' + t('PHASE 1 ASSESSMENT COMPLETE', 'PHASE 1 मूल्यांकन पूरा')}
                 </div>
 

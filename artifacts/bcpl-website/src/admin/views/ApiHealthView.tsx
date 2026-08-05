@@ -73,6 +73,58 @@ const AI_SWITCHES: Array<{
     confirmOn: "Turn ON real notifications? Players will receive actual messages." },
 ];
 
+/** Pass-mark editor — qualification threshold out of 100 (backend `minScore`). */
+function PassMarkRow({ cfg, busy, onSaved, onErr }: {
+  cfg: Phase1AiConfig; busy: boolean;
+  onSaved: (c: Phase1AiConfig) => void; onErr: (m: string) => void;
+}) {
+  const [val, setVal] = useState<string>(String(cfg.minScore));
+  const [saving, setSaving] = useState(false);
+  useEffect(() => { setVal(String(cfg.minScore)); }, [cfg.minScore]);
+
+  const save = async (n: number) => {
+    if (!Number.isInteger(n) || n < 0 || n > 100) { onErr("Pass mark must be a whole number between 0 and 100."); return; }
+    if (n === cfg.minScore) return;
+    if (!window.confirm(`Set the Phase 1 pass mark to ${n} / 100? Players scoring ${n} or above will qualify for Phase 2.`)) { setVal(String(cfg.minScore)); return; }
+    setSaving(true);
+    try { onSaved(await adminPatchPhase1AiConfig({ minScore: n })); }
+    catch (e) { onErr(e instanceof Error ? e.message : "Could not save the pass mark"); setVal(String(cfg.minScore)); }
+    finally { setSaving(false); }
+  };
+
+  return (
+    <div style={{ display:"flex", alignItems:"center", gap:14, padding:"10px 14px", background:"#243050", borderRadius:10, border:"1px solid #33436B", flexWrap:"wrap" }}>
+      <div style={{ flex:1, minWidth:200 }}>
+        <div style={{ fontSize:12, fontWeight:700, color:"#E2E8F0" }}>Pass Mark (out of 100)</div>
+        <div style={{ fontSize:11, color:"#A6B3D0", marginTop:2 }}>
+          Players scoring <b style={{ color:"#E8B23D" }}>{cfg.minScore}+</b> qualify for Phase 2. Business rule — the AI never decides this.
+        </div>
+      </div>
+      <div style={{ display:"flex", alignItems:"center", gap:6, flexWrap:"wrap" }}>
+        {[50, 60, 70, 80].map((n) => (
+          <button key={n} onClick={() => save(n)} disabled={busy || saving}
+            style={{ padding:"6px 12px", borderRadius:8, fontSize:12, fontWeight:800, cursor: busy || saving ? "wait" : "pointer",
+              border:`1px solid ${cfg.minScore === n ? "#E8B23D" : "#33436B"}`,
+              background: cfg.minScore === n ? "#E8B23D25" : "#1B2440",
+              color: cfg.minScore === n ? "#E8B23D" : "#A6B3D0" }}>
+            {n}
+          </button>
+        ))}
+        <input type="number" min={0} max={100} value={val} disabled={busy || saving}
+          onChange={(e) => setVal(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter") save(Number(val)); }}
+          style={{ width:64, padding:"6px 8px", borderRadius:8, border:"1px solid #33436B", background:"#1B2440", color:"#E2E8F0", fontSize:12, fontWeight:700 }} />
+        <button onClick={() => save(Number(val))} disabled={busy || saving || Number(val) === cfg.minScore}
+          style={{ padding:"6px 12px", borderRadius:8, fontSize:12, fontWeight:800, border:"1px solid #10B98160",
+            background: Number(val) === cfg.minScore ? "#33436B" : "#10B98125", color: Number(val) === cfg.minScore ? "#8593B3" : "#10B981",
+            cursor: busy || saving ? "wait" : "pointer" }}>
+          {saving ? "Saving…" : "Save"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function AiControlsCard() {
   const [cfg, setCfg] = useState<Phase1AiConfig | null>(null);
   const [cfgErr, setCfgErr] = useState("");
@@ -144,6 +196,7 @@ function AiControlsCard() {
               </div>
             );
           })}
+          <PassMarkRow cfg={cfg} busy={savingKey !== null} onSaved={(c) => { setCfg(c); setCfgErr(""); }} onErr={(m) => setCfgErr(m)} />
           <div style={{ fontSize:10, color:"#8593B3", marginTop:2 }}>
             Models: {cfg.geminiPrimaryModel} (scoring) · {cfg.geminiValidationModel} (validity check) · Result window: {cfg.resultReleaseHours} hr
             {live ? " · Gemini API key must be configured on the server (see integrations below)." : ""}
