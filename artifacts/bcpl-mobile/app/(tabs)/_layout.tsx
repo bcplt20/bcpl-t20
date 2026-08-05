@@ -1,88 +1,123 @@
-import React from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Animated, Platform, StyleSheet, View } from 'react-native';
 import { useColors } from '@/hooks/useColors';
 import { Feather } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
-import { isLiquidGlassAvailable } from 'expo-glass-effect';
 import { Tabs } from 'expo-router';
-import { Icon, Label, NativeTabs } from 'expo-router/unstable-native-tabs';
-import { SymbolView } from 'expo-symbols';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 
-function NativeTabLayout() {
-  return (
-    <NativeTabs>
-      <NativeTabs.Trigger name="index">
-        <Icon sf={{ default: 'house', selected: 'house.fill' }} />
-        <Label>Home</Label>
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="matches">
-        <Icon sf={{ default: 'sportscourt', selected: 'sportscourt.fill' }} />
-        <Label>Matches</Label>
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="points">
-        <Icon sf={{ default: 'list.number', selected: 'list.number' }} />
-        <Label>Points</Label>
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="news">
-        <Icon sf={{ default: 'newspaper', selected: 'newspaper.fill' }} />
-        <Label>News</Label>
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="profile">
-        <Icon sf={{ default: 'person.crop.circle', selected: 'person.crop.circle.fill' }} />
-        <Label>Profile</Label>
-      </NativeTabs.Trigger>
-    </NativeTabs>
-  );
-}
+function TabIcon({ name, focused, color, feather }: { name: string; focused: boolean; color: string; feather: keyof typeof Feather.glyphMap }) {
+  const c = useColors();
+  const scale = useRef(new Animated.Value(focused ? 1 : 0)).current;
 
-function ClassicTabLayout() {
-  const colors = useColors();
-  const isIOS = Platform.OS === 'ios';
-  const isWeb = Platform.OS === 'web';
-
-  const icon =
-    (feather: keyof typeof Feather.glyphMap, sf: string) =>
-    ({ color }: { color: string }) =>
-      isIOS ? (
-        <SymbolView name={sf as never} tintColor={color} size={24} />
-      ) : (
-        <Feather name={feather} size={22} color={color} />
-      );
+  useEffect(() => {
+    Animated.spring(scale, {
+      toValue: focused ? 1 : 0,
+      useNativeDriver: true,
+      friction: 6,
+      tension: 40,
+    }).start();
+  }, [focused]);
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.mutedForeground,
-        headerShown: false,
-        tabBarStyle: {
-          position: 'absolute',
-          backgroundColor: isIOS ? 'transparent' : colors.background,
-          borderTopWidth: isWeb ? 1 : StyleSheet.hairlineWidth,
-          borderTopColor: colors.border,
-          elevation: 0,
-          ...(isWeb ? { height: 84 } : {}),
-        },
-        tabBarBackground: () =>
-          isIOS ? (
-            <BlurView intensity={100} tint="dark" style={StyleSheet.absoluteFill} />
-          ) : (
-            <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.background }]} />
-          ),
-      }}
-    >
-      <Tabs.Screen name="index" options={{ title: 'Home', tabBarIcon: icon('home', 'house') }} />
-      <Tabs.Screen name="matches" options={{ title: 'Matches', tabBarIcon: icon('calendar', 'sportscourt') }} />
-      <Tabs.Screen name="points" options={{ title: 'Points', tabBarIcon: icon('bar-chart-2', 'list.number') }} />
-      <Tabs.Screen name="news" options={{ title: 'News', tabBarIcon: icon('file-text', 'newspaper') }} />
-      <Tabs.Screen name="profile" options={{ title: 'Profile', tabBarIcon: icon('user', 'person.crop.circle') }} />
-    </Tabs>
+    <View style={styles.iconContainer}>
+      <Animated.View
+        style={[
+          StyleSheet.absoluteFill,
+          styles.activeGlow,
+          {
+            opacity: scale,
+            transform: [{ scale: scale.interpolate({ inputRange: [0, 1], outputRange: [0.5, 1] }) }],
+          },
+        ]}
+      >
+        <LinearGradient
+          colors={['rgba(255, 107, 0, 0.4)', 'transparent']}
+          style={StyleSheet.absoluteFill}
+        />
+      </Animated.View>
+      <Feather name={feather} size={22} color={focused ? c.primary : c.mutedForeground} />
+      <Animated.View
+        style={[
+          styles.activeDot,
+          {
+            backgroundColor: c.primary,
+            opacity: scale,
+            transform: [{ scale: scale.interpolate({ inputRange: [0, 1], outputRange: [0, 1] }) }, { translateY: 4 }],
+          },
+        ]}
+      />
+    </View>
   );
 }
 
 export default function TabLayout() {
-  if (isLiquidGlassAvailable()) {
-    return <NativeTabLayout />;
-  }
-  return <ClassicTabLayout />;
+  const c = useColors();
+  const insets = useSafeAreaInsets();
+  const isIOS = Platform.OS === 'ios';
+  const isWeb = Platform.OS === 'web';
+
+  const bottomPadding = isWeb ? 20 : Math.max(20, insets.bottom + 8);
+
+  return (
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarShowLabel: false,
+        tabBarStyle: {
+          position: 'absolute',
+          bottom: bottomPadding,
+          left: 20,
+          right: 20,
+          height: 64,
+          borderRadius: 32,
+          backgroundColor: isIOS ? 'transparent' : 'rgba(22, 36, 69, 0.95)',
+          borderWidth: 1,
+          borderColor: 'rgba(255,255,255,0.1)',
+          elevation: 10,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 8 },
+          shadowOpacity: 0.3,
+          shadowRadius: 16,
+          paddingBottom: 0, // override default padding
+        },
+        tabBarBackground: () =>
+          isIOS ? (
+            <BlurView intensity={80} tint="dark" style={[StyleSheet.absoluteFill, { borderRadius: 32, overflow: 'hidden' }]} />
+          ) : (
+            <LinearGradient
+              colors={['rgba(22,36,69,0.95)', 'rgba(15,25,46,0.95)']}
+              style={[StyleSheet.absoluteFill, { borderRadius: 32 }]}
+            />
+          ),
+      }}
+    >
+      <Tabs.Screen name="index" options={{ title: 'Home', tabBarIcon: (props) => <TabIcon feather="home" {...props} name="Home" /> }} />
+      <Tabs.Screen name="matches" options={{ title: 'Matches', tabBarIcon: (props) => <TabIcon feather="calendar" {...props} name="Matches" /> }} />
+      <Tabs.Screen name="points" options={{ title: 'Points', tabBarIcon: (props) => <TabIcon feather="bar-chart-2" {...props} name="Points" /> }} />
+      <Tabs.Screen name="news" options={{ title: 'News', tabBarIcon: (props) => <TabIcon feather="file-text" {...props} name="News" /> }} />
+      <Tabs.Screen name="profile" options={{ title: 'Profile', tabBarIcon: (props) => <TabIcon feather="user" {...props} name="Profile" /> }} />
+    </Tabs>
+  );
 }
+
+const styles = StyleSheet.create({
+  iconContainer: {
+    width: 48,
+    height: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  activeGlow: {
+    borderRadius: 24,
+    overflow: 'hidden',
+  },
+  activeDot: {
+    position: 'absolute',
+    bottom: 2,
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+  },
+});

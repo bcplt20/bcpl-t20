@@ -10,25 +10,33 @@ import {
 import { useColors } from '@/hooks/useColors';
 import { useLang } from '@/context/LanguageContext';
 import { Feather } from '@expo/vector-icons';
-import colors from '@/constants/colors';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Image } from 'expo-image';
+import { SITE_ASSETS } from '@/lib/api';
 
 export function Card({ children, style }: { children: React.ReactNode; style?: ViewStyle }) {
   const c = useColors();
   return (
     <View style={[styles.cardShadow, style]}>
       <LinearGradient
-        colors={[c.card, '#1E325F']}
+        colors={[c.card, '#0B152A']}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
         style={[
           styles.cardGradient,
           {
-            borderRadius: colors.radius,
-            borderColor: 'rgba(255,255,255,0.1)',
+            borderRadius: c.radius,
+            borderColor: 'rgba(255,255,255,0.08)',
           },
         ]}
       >
+        <LinearGradient
+          colors={['rgba(255,255,255,0.03)', 'transparent']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={StyleSheet.absoluteFill}
+          pointerEvents="none"
+        />
         {children}
       </LinearGradient>
     </View>
@@ -46,7 +54,7 @@ export function Badge({
   
   if (tone === 'live') {
     return (
-      <View style={[styles.badgeBase, { backgroundColor: 'rgba(239, 68, 68, 0.15)', borderColor: 'rgba(239, 68, 68, 0.4)' }]}>
+      <View style={[styles.badgeBase, { backgroundColor: 'rgba(255, 59, 48, 0.15)', borderColor: 'rgba(255, 59, 48, 0.4)', shadowColor: c.destructive, shadowOpacity: 0.3, shadowRadius: 6, shadowOffset: { width: 0, height: 0 }, elevation: 2 }]}>
         <View style={[styles.liveDot, { backgroundColor: c.destructive }]} />
         <Text style={[styles.badgeText, { color: '#FF7B7B' }]}>{label.toUpperCase()}</Text>
       </View>
@@ -59,16 +67,16 @@ export function Badge({
         colors={['#E8B23D', '#D49A25']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={[styles.badgeBase, { borderWidth: 0 }]}
+        style={[styles.badgeBase, { borderWidth: 0, shadowColor: '#E8B23D', shadowOpacity: 0.3, shadowRadius: 6, shadowOffset: { width: 0, height: 0 }, elevation: 2 }]}
       >
         <Text style={[styles.badgeText, { color: '#0D1E44' }]}>{label.toUpperCase()}</Text>
       </LinearGradient>
     );
   }
 
-  const bg = tone === 'success' ? 'rgba(49, 197, 107, 0.15)' : 'rgba(31, 50, 96, 0.6)';
+  const bg = tone === 'success' ? 'rgba(49, 197, 107, 0.15)' : 'rgba(255,255,255,0.05)';
   const border = tone === 'success' ? 'rgba(49, 197, 107, 0.3)' : 'rgba(255,255,255,0.1)';
-  const fg = tone === 'success' ? c.success : c.mutedForeground;
+  const fg = tone === 'success' ? c.success : c.foreground;
 
   return (
     <View style={[styles.badgeBase, { backgroundColor: bg, borderColor: border }]}>
@@ -127,19 +135,18 @@ export function EmptyView({ icon, text }: { icon: keyof typeof Feather.glyphMap;
   );
 }
 
-/** Real team logo from the League site, with monogram fallback while loading/on error. */
-import { Image } from 'expo-image';
-import { SITE_ASSETS } from '@/lib/api';
-
 function teamSlug(name: string): string {
   return name.trim().toLowerCase().replace(/\s+/g, '_');
 }
 
-export function TeamLogo({ name, size = 44 }: { name: string; size?: number }) {
+export function TeamLogo({ name, size = 44, glow = false }: { name: string; size?: number; glow?: boolean }) {
   const [failed, setFailed] = React.useState(false);
-  if (failed) return <TeamDot name={name} size={size} />;
-  return (
-    <View style={[styles.logoContainer, { width: size, height: size, borderRadius: size / 2 }]}>
+  const c = useColors();
+  
+  const inner = failed ? (
+    <TeamDot name={name} size={size} glow={glow} />
+  ) : (
+    <View style={[styles.logoContainer, { width: size, height: size, borderRadius: size / 2 }, glow && styles.glow]}>
       <Image
         source={{ uri: `${SITE_ASSETS}/bcpl-assets/logos/${teamSlug(name)}.png` }}
         style={{ width: size * 0.85, height: size * 0.85 }}
@@ -149,11 +156,12 @@ export function TeamLogo({ name, size = 44 }: { name: string; size?: number }) {
       />
     </View>
   );
+
+  return inner;
 }
 
-/** Round team monogram from the team name, colored deterministically. */
 const TEAM_COLORS = ['#FF6B00', '#3B82F6', '#31C56B', '#A855F7', '#E8B23D', '#EC4899', '#14B8A6', '#F97316', '#8B5CF6', '#0EA5E9'];
-export function TeamDot({ name, size = 34 }: { name: string; size?: number }) {
+export function TeamDot({ name, size = 34, glow = false }: { name: string; size?: number; glow?: boolean }) {
   let hash = 0;
   for (let i = 0; i < name.length; i++) hash = (hash * 31 + name.charCodeAt(i)) | 0;
   const bg = TEAM_COLORS[Math.abs(hash) % TEAM_COLORS.length];
@@ -166,16 +174,25 @@ export function TeamDot({ name, size = 34 }: { name: string; size?: number }) {
     .toUpperCase();
   return (
     <View
-      style={{
-        width: size,
-        height: size,
-        borderRadius: size / 2,
-        backgroundColor: bg,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderWidth: 1.5,
-        borderColor: 'rgba(255,255,255,0.1)',
-      }}
+      style={[
+        {
+          width: size,
+          height: size,
+          borderRadius: size / 2,
+          backgroundColor: bg,
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderWidth: 2,
+          borderColor: 'rgba(255,255,255,0.2)',
+        },
+        glow && {
+          shadowColor: bg,
+          shadowOffset: { width: 0, height: 0 },
+          shadowOpacity: 0.6,
+          shadowRadius: 10,
+          elevation: 4,
+        }
+      ]}
     >
       <Text style={{ color: '#fff', fontFamily: 'Inter_700Bold', fontSize: size * 0.36 }}>{initials}</Text>
     </View>
@@ -185,10 +202,10 @@ export function TeamDot({ name, size = 34 }: { name: string; size?: number }) {
 const styles = StyleSheet.create({
   cardShadow: {
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 8,
   },
   cardGradient: {
     borderWidth: 1,
@@ -240,10 +257,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   logoContainer: {
-    backgroundColor: 'rgba(255,255,255,0.03)',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.9)',
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
   },
+  glow: {
+    shadowColor: '#FFFFFF',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+    elevation: 4,
+  }
 });
