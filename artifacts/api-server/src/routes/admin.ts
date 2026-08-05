@@ -38,7 +38,8 @@ import { adminUsersTable, auditLogsTable } from "@workspace/db/schema";
 import { verifyPassword, signAdminToken, publicAdmin, permissionsForRole } from "./adminUsers";
 import { writeAudit } from "../lib/audit";
 import { markKycVerified, notifyKycRejected } from "./kyc";
-import { sendEmail, adminAlertRecipient, tplPhase1ResultReady, tplTrialVenueAnnounced, tplInvoice, tplAdminLoginLockdown } from "../lib/email";
+import { sendEmail, adminAlertRecipient, tplPhase1ResultReady, tplTrialVenueAnnounced, tplInvoice, tplAdminLoginLockdown, tplPhase1Receipt, tplVideoSubmitted, tplPhase1Selected } from "../lib/email";
+import { createHash } from "crypto";
 import { sendSms, adminAlertPhone } from "../lib/sms";
 import { logNotifications } from "../lib/notify";
 import { gstFromGross } from "../lib/gst";
@@ -388,6 +389,94 @@ router.get("/registrations", async (req, res) => {
 });
 
 /* ─── PUT /api/admin/registrations/:id/phase1-status ───────────── */
+/* ─── PUT /api/admin/users/:id/email ──────────────────────────────
+   Support flow (owner, 5 Aug '26): a player mistyped their email at
+   registration (phone is OTP-verified, email is not) and proves identity
+   to support. Admin corrects the email here; the endpoint then re-sends
+   the milestone emails the player MISSED on the wrong address, based on
+   the registration's current state (receipt / video confirmation /
+   result-ready / qualified). Reserve-first dedupe on notification_logs
+   (keyed per new-email hash) means saving the same email twice never
+   double-sends, while a later correction to a different address does. */
+router.put("/users/:id/email", async (req, res) => {
+  try {
+    const id = String(req.params.id);
+    const raw = (req.body as { email?: string } | undefined)?.email;
+    const email = typeof raw === "string" ? raw.trim().toLowerCase() : "";
+    if (email.length > 255 || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+      res.status(400).json({ error: "Enter a valid email address" });
+      return;
+    }
+    const [userRow] = await db.select().from(usersTable).where(eq(usersTable.id, id)).limit(1);
+    if (!userRow) { res.status(404).json({ error: "User not found" }); return; }
+    if (userRow.email.toLowerCase() === email) {
+      res.json({ success: true, changed: false, resent: [] });
+      return;
+    }
+    const [dupe] = await db.select({ id: usersTable.id }).from(usersTable)
+      .where(eq(usersTable.email, email)).limit(1);
+    if (dupe && dupe.id !== id) {
+      res.status(409).json({ error: "Another account already uses this email" });
+      return;
+    }
+    await db.update(usersTable).set({ email, updatedAt: new Date() }).where(eq(usersTable.id, id));
+    void writeAudit(req, {
+      action: "user.email_change", entity: "users", entityKey: id,
+      oldValue: { email: userRow.email }, newValue: { email },
+    });
+
+    // Re-send missed milestone emails to the corrected address.
+    const resent: string[] = [];
+    const [reg] = await db.select().from(registrationsTable)
+      .where(eq(registrationsTable.userId, id))
+      .orderBy(desc(registrationsTable.createdAt)).limit(1);
+    if (reg) {
+      const suffix = createHash("sha1").update(email).digest("hex").slice(0, 8);
+      const tasks: { key: string; template: string; make: () => { subject: string; htmlContent: string } }[] = [];
+      const [pay] = await db.select().from(phase1PaymentsTable)
+        .where(and(eq(phase1PaymentsTable.registrationId, reg.id),
+          inArray(phase1PaymentsTable.status, ["success", "paid"])))
+        .orderBy(desc(phase1PaymentsTable.createdAt)).limit(1);
+      if (pay) tasks.push({
+        key: `echg_p1_receipt_${reg.id}_${suffix}`, template: "phase1_receipt",
+        make: () => tplPhase1Receipt(userRow.name, reg.role, Number(pay.amount), reg.regNumber ?? "", reg.trialCity ?? ""),
+      });
+      const [vid] = await db.select({ id: phase1VideosTable.id }).from(phase1VideosTable)
+        .where(and(eq(phase1VideosTable.registrationId, reg.id), eq(phase1VideosTable.status, "submitted"))).limit(1);
+      if (vid) tasks.push({
+        key: `echg_video_ok_${reg.id}_${suffix}`, template: "video_submitted",
+        make: () => tplVideoSubmitted(userRow.name),
+      });
+      if (reg.phase1Status === "selected" || reg.phase1Status === "rejected") {
+        tasks.push({
+          key: `echg_result_ready_${reg.id}_${suffix}`, template: "phase1_result_ready",
+          make: () => tplPhase1ResultReady(userRow.name),
+        });
+        if (reg.phase1Status === "selected") tasks.push({
+          key: `echg_p1_qualified_${reg.id}_${suffix}`, template: "phase1_selected",
+          make: () => tplPhase1Selected(userRow.name),
+        });
+      }
+      for (const t of tasks) {
+        // Reserve-first: the insert that wins the unique dedupe_key is the
+        // only one that ever sends (same pattern as the reminder sweeps).
+        const reserved = await db.insert(notificationLogsTable)
+          .values({ userId: id, type: "email", template: t.template + "_echg", dedupeKey: t.key })
+          .onConflictDoNothing()
+          .returning({ id: notificationLogsTable.id });
+        if (reserved.length === 0) continue;
+        const { subject, htmlContent } = t.make();
+        const r = await sendEmail({ to: email, toName: userRow.name, subject, htmlContent });
+        if (r.ok) resent.push(t.template);
+      }
+    }
+    res.json({ success: true, changed: true, resent });
+  } catch (err) {
+    console.error("PUT /users/:id/email error:", err);
+    res.status(500).json({ error: "Failed to update email" });
+  }
+});
+
 router.put("/registrations/:id/phase1-status", async (req, res) => {
   try {
     const { id } = req.params;

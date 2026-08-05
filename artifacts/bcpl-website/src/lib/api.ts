@@ -412,6 +412,11 @@ export const adminUpdateKycStatus = (id: string, status: string) =>
     "PUT", `/admin/kyc/${id}/status`, { status }
   );
 
+export const adminUpdateUserEmail = (userId: string, email: string) =>
+  adminReq<{ success: boolean; changed: boolean; resent: string[] }>(
+    "PUT", `/admin/users/${userId}/email`, { email }
+  );
+
 /* ─── Auth token helpers ───────────────────────────────── */
 
 export function saveAuthToken(token: string, user: any): void {

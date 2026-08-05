@@ -574,7 +574,8 @@ export function PlayerProfile() {
   .foot{background:rgba(255,122,41,0.09);border-top:1px solid rgba(255,122,41,0.25);padding:12px 22px;display:flex;justify-content:space-between;align-items:center}
   .site{font-size:10px;color:#B9C6E0;font-weight:700}
   .foottag{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.22);border-radius:6px;padding:4px 11px;font-size:9px;font-weight:800;color:#FFFFFF;letter-spacing:.1em}
-  @media print{body{padding:0;background:#fff}.card{box-shadow:none}}
+  *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;color-adjust:exact !important}
+  @media print{body{padding:0;background:#0F1B33}.card{box-shadow:none}}
 </style></head><body><div class="frame"><div class="card">
   <div class="head"><div class="head-title">BHARTIYA CORPORATE PREMIER LEAGUE</div><div class="head-sub">OFFICIAL PLAYER ID CARD · SEASON 5 · 2026–27</div></div>
   <div class="idbody"><div class="wm">S5</div>
@@ -634,6 +635,25 @@ export function PlayerProfile() {
                 {reg && (
                   <div className="card" style={{ marginBottom: 24, animation: 'fadeUp .5s .1s ease both' }}>
                     <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 13, color: 'var(--ink-3)', letterSpacing: '.12em', marginBottom: 20, textTransform: 'uppercase' }}>{t("REGISTRATION SUMMARY", "रजिस्ट्रेशन सारांश")}</div>
+
+                    {/* My account details — owner req 5 Aug '26: player must see the
+                        phone & email we have on file (wrong email = missed mails). */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 18 }}>
+                      {[
+                        { label: t('Name', 'नाम'), value: user?.name || '—' },
+                        { label: t('Phone', 'फोन'), value: user?.phone || '—' },
+                        { label: t('Email', 'ईमेल'), value: user?.email || '—' },
+                        { label: t('Player ID', 'प्लेयर ID'), value: reg.regNumber || '—' },
+                      ].map(row => (
+                        <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, background: 'rgba(255,255,255,0.02)', border: '1px solid var(--line)', borderRadius: 12, padding: '11px 16px' }}>
+                          <span style={{ fontSize: 12.5, fontWeight: 800, fontFamily: 'var(--font-head)', color: 'rgba(255,255,255,0.72)', textTransform: 'uppercase', letterSpacing: '.06em', flexShrink: 0, alignSelf: 'center' }}>{row.label}</span>
+                          <span style={{ fontSize: 14, fontWeight: 700, color: '#fff', wordBreak: 'break-all', textAlign: 'right' }}>{row.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.6)', marginTop: -8, marginBottom: 18, lineHeight: 1.5 }}>
+                      {t('Email or phone wrong? Contact support with your ID proof and we will correct it.', 'Email या phone गलत है? अपने ID proof के साथ support से संपर्क करें, हम ठीक कर देंगे।')}
+                    </div>
                     
                     <div className="grid2">
                       {/* Phase 1 Payment */}

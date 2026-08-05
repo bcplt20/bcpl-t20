@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { adminGetRegistrations, adminUpdateKycStatus } from "../../lib/api";
+import { adminGetRegistrations, adminUpdateKycStatus, adminUpdateUserEmail } from "../../lib/api";
 
 const STATES = ["All States","Rajasthan","Gujarat","Maharashtra","Delhi","Punjab","UP","Karnataka","Bihar","Kerala","MP","Haryana","West Bengal","Tamil Nadu","Telangana"];
 const CITIES: Record<string,string[]> = {
@@ -33,7 +33,7 @@ const ROLE_LABEL: Record<string,string> = {
 
 const PAID_STATUSES = ["payment_done","video_submitted","selected","rejected"];
 
-type UserRow = { id:string; regNumber:string|null; num:number; name:string; phone:string; email:string; state:string; city:string; joined:string; phase1:boolean; phase2:boolean; active:boolean; kyc:string; kycId:string|null; video:boolean; videoUrl:string|null; registered:boolean; role:string };
+type UserRow = { id:string; userId:string|null; regNumber:string|null; num:number; name:string; phone:string; email:string; state:string; city:string; joined:string; phase1:boolean; phase2:boolean; active:boolean; kyc:string; kycId:string|null; video:boolean; videoUrl:string|null; registered:boolean; role:string };
 
 type ApiReg = {
   id:string; regNumber?:string|null; role:string; trialCity:string; phase1Status:string; phase2Status:string|null; createdAt:string;
@@ -48,6 +48,7 @@ const toRow = (r: ApiReg, i: number): UserRow => {
   const paid1 = r.payment?.status === "paid" || PAID_STATUSES.includes(r.phase1Status);
   return {
     id: r.id,
+    userId: r.user?.id ?? null,
     regNumber: r.regNumber ?? null,
     num: i + 1,
     name: r.user?.name ?? "Unknown",
@@ -129,6 +130,33 @@ export default function UsersView({ onNavigate, initialQuick, refreshTick = 0 }:
       alert("KYC update failed: " + e.message);
     } finally {
       setKycBusy(false);
+    }
+  };
+
+  // Owner 5 Aug '26 support flow: correct a mistyped email; backend
+  // re-sends the milestone emails the player missed on the wrong address.
+  const [emailEdit, setEmailEdit] = useState("");
+  const [emailEditing, setEmailEditing] = useState(false);
+  const [emailBusy, setEmailBusy] = useState(false);
+  const saveEmail = async () => {
+    if (!selected?.userId) return;
+    const next = emailEdit.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(next)) { alert("Enter a valid email address"); return; }
+    if (next === selected.email.toLowerCase()) { setEmailEditing(false); return; }
+    if (!confirm(`Change email?\n\nOld: ${selected.email || "—"}\nNew: ${next}\n\nMissed milestone emails (receipt / video / result) will be re-sent to the new address automatically.`)) return;
+    setEmailBusy(true);
+    try {
+      const r = await adminUpdateUserEmail(selected.userId, next);
+      setAllUsers(prev => prev.map(u => u.userId === selected.userId ? { ...u, email: next } : u));
+      setSelected(s => s ? { ...s, email: next } : s);
+      setEmailEditing(false);
+      alert(r.resent.length
+        ? `Email updated. Re-sent ${r.resent.length} missed email(s): ${r.resent.join(", ")}`
+        : "Email updated. No missed emails to re-send.");
+    } catch (e: any) {
+      alert("Email update failed: " + e.message);
+    } finally {
+      setEmailBusy(false);
     }
   };
 
@@ -341,7 +369,26 @@ export default function UsersView({ onNavigate, initialQuick, refreshTick = 0 }:
             <button onClick={()=>setSelected(null)} style={{ float:"right", background:"none", border:"none", color:"#94A3C4", cursor:"pointer", fontSize:18, lineHeight:1 }}>✕</button>
             <div style={{ width:60, height:60, borderRadius:16, background:`hsl(${selected.num*37},55%,32%)`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:26, fontWeight:800, color:"#fff", margin:"24px auto 12px" }}>{selected.name[0]}</div>
             <div style={{ fontSize:16, fontWeight:700, color:"#F1F5F9" }}>{selected.name}</div>
-            <div style={{ fontSize:11, color:"#A6B3D0", marginTop:2 }}>{selected.email}</div>
+            {emailEditing ? (
+              <div style={{ display:"flex", gap:6, marginTop:4, alignItems:"center" }}>
+                <input value={emailEdit} onChange={e=>setEmailEdit(e.target.value)} disabled={emailBusy}
+                  placeholder="new@email.com"
+                  style={{ flex:1, minWidth:0, padding:"6px 8px", background:"#243050", border:"1px solid #33436B", borderRadius:7, color:"#F1F5F9", fontSize:11, outline:"none" }} />
+                <button disabled={emailBusy} onClick={saveEmail}
+                  style={{ padding:"6px 10px", borderRadius:7, border:"1px solid #10B981", background:"#10B98115", color:"#10B981", fontSize:11, fontWeight:700, cursor:emailBusy?"wait":"pointer" }}>{emailBusy?"…":"Save"}</button>
+                <button disabled={emailBusy} onClick={()=>setEmailEditing(false)}
+                  style={{ padding:"6px 8px", borderRadius:7, border:"1px solid #3E4E76", background:"transparent", color:"#A6B3D0", fontSize:11, cursor:"pointer" }}>✕</button>
+              </div>
+            ) : (
+              <div style={{ fontSize:11, color:"#A6B3D0", marginTop:2, display:"flex", alignItems:"center", gap:6 }}>
+                <span style={{ wordBreak:"break-all" }}>{selected.email || "—"}</span>
+                {selected.userId && (
+                  <button title="Correct a mistyped email (support flow) — missed emails are re-sent automatically"
+                    onClick={()=>{ setEmailEdit(selected.email); setEmailEditing(true); }}
+                    style={{ padding:"2px 7px", borderRadius:5, border:"1px solid #3E4E76", background:"#24305080", color:"#A6B3D0", fontSize:10, cursor:"pointer", fontWeight:700 }}>✎ Edit</button>
+                )}
+              </div>
+            )}
             <div style={{ fontSize:11, color:"#A6B3D0" }}>{selected.phone}</div>
             <div style={{ marginTop:10 }}>
               <div style={{ fontSize:9, fontWeight:800, color:"#94A3C4", letterSpacing:1, marginBottom:4 }}>REGISTRATION ID</div>
