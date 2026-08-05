@@ -415,8 +415,13 @@ export async function verifyAadhaarOtp(referenceId: string, otp: string): Promis
       method: "POST",
       headers: verifyHeaders(),
       // Docs contract: { otp, ref_id } — NOT reference_id (that mismatch made
-      // Cashfree 400 every verify, shown to players as "service unavailable")
-      body: JSON.stringify({ ref_id: String(referenceId), otp }),
+      // Cashfree 400 every verify, shown to players as "service unavailable").
+      // ref_id comes back numeric from the OTP call — send it back numeric;
+      // some validators 400 on the stringified form.
+      body: JSON.stringify({
+        ref_id: /^\d+$/.test(String(referenceId)) ? Number(referenceId) : String(referenceId),
+        otp: String(otp),
+      }),
     });
     const data = await res.json() as any;
     if (!res.ok) {
@@ -425,8 +430,13 @@ export async function verifyAadhaarOtp(referenceId: string, otp: string): Promis
       console.error("[CF] verifyAadhaarOtp failed:", { http: res.status, status: data?.status, code: data?.code, sub_code: data?.sub_code, type: data?.type, message: data?.message });
       // A wrong/expired OTP comes back as an error response — that is the
       // player's problem to retry, not a vendor outage.
-      const errText = `${data?.message ?? ""} ${data?.code ?? ""}`.toLowerCase();
+      const errText = `${data?.message ?? ""} ${data?.code ?? ""} ${data?.sub_code ?? ""}`.toLowerCase();
       if (errText.includes("otp")) return { valid: false, name: "" };
+      // Expired/invalid ref_id ⇒ the player waited too long — a retryable
+      // player-side condition, not a vendor outage.
+      if (errText.includes("ref_id") || errText.includes("expired") || errText.includes("invalid")) {
+        return { valid: false, name: "" };
+      }
       return null;
     }
     // Docs: 200 → { status: "VALID", name, dob, address, ... }
