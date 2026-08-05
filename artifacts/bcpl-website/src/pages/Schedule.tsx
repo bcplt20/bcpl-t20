@@ -342,6 +342,7 @@ export function Schedule() {
                         </div>
                         <div style={{display:'flex',flexWrap:'wrap',gap:8,alignItems:'center'}}>
                           <span style={{fontSize:12,color:'rgba(255,122,41,0.7)',fontFamily:'var(--font-head)',fontWeight:700}}>Match {m.matchNo}</span>
+                          {m.tag && <span style={{fontSize:11,fontFamily:'var(--font-head)',fontWeight:800,letterSpacing:'0.08em',color:'#E8B23D',background:'rgba(232,178,61,0.12)',border:'1px solid rgba(232,178,61,0.3)',borderRadius:100,padding:'2px 10px'}}>{m.tag}</span>}
                           <span style={{display:'inline-flex',alignItems:'center',gap:5,fontSize:14,color:'var(--ink-2)',fontFamily:'Inter,sans-serif'}}><IcoPin size={13} style={{color:'var(--ink-3)'}}/> {m.venue}</span>
                           <span style={{fontSize:14,color:'var(--ink-2)',fontFamily:'Inter,sans-serif'}}>· {m.time}</span>
                         </div>

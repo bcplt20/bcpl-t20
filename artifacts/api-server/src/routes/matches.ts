@@ -217,7 +217,7 @@ const matchCreateBody = z.object({
   scheduledAt: z.string().datetime().optional(),
   stage:       z.enum(["league", "semifinal", "final"]).default("league"),
   grp:         z.string().trim().max(20).default(""),
-});
+}).refine((m) => m.team1.trim() !== m.team2.trim(), { message: "team1 and team2 cannot be the same" });
 
 // POST /api/admin/matches
 router.post("/admin/matches", requireAdmin, async (req, res) => {
@@ -268,15 +268,21 @@ router.post("/admin/matches/bulk", requireAdmin, async (req, res) => {
     });
   }
 
-  const inserted = await db.transaction(async (tx) =>
-    tx.insert(matchesTable).values(rows.map((r) => ({
-      ...r,
-      scheduledAt: r.scheduledAt ? new Date(r.scheduledAt) : undefined,
-      status: "scheduled",
-    }))).returning(),
-  );
-
-  res.json({ success: true, count: inserted.length, matches: inserted });
+  try {
+    const inserted = await db.transaction(async (tx) =>
+      tx.insert(matchesTable).values(rows.map((r) => ({
+        ...r,
+        scheduledAt: r.scheduledAt ? new Date(r.scheduledAt) : undefined,
+        status: "scheduled",
+      }))).returning(),
+    );
+    res.json({ success: true, count: inserted.length, matches: inserted });
+  } catch (e) {
+    if (pgCauseOf(e)?.code === "23505") {
+      return void res.status(409).json({ error: "A match number in this import already exists for the season — nothing was imported" });
+    }
+    throw e;
+  }
 });
 
 // PUT /api/admin/matches/:id/toss
