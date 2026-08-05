@@ -4,16 +4,23 @@ import { SEASON } from "../../lib/season";
 
 /* ─── Company Details (from GST Registration Certificate) ──── */
 const COMPANY = {
-  name:    "Bhartiya Corporate Premier League Pvt. Ltd.",
+  name:    "BCPL Sports Private Limited",
   brand:   "Bhartiya Corporate Premier League",
-  gstin:   "07AAHCK4053D1ZS",
+  gstin:   "",   // pending — owner will provide the real GST number; NEVER print a placeholder GSTIN
   address: "2nd Floor Back Side, RZ-108, Indra Park, Uttam Nagar, West Delhi, Delhi — 110059",
-  email:   "legal@bcplt20.com",
-  phone:   "+91-11-XXXX-XXXX",
+  email:   "info@bcplt20.com",
+  phone:   "+91 91513 46555",
   directors: ["Saurabh Jha", "Arti Jha"],
-  cin:     "U74999DL2019PTC345678",
+  cin:     "",   // pending — company incorporation in progress
   season:  "Season 5 (2026–27)",
 };
+
+/* "CIN: … · GSTIN: …" — only the identifiers that actually exist; empty string when none yet. */
+const COMPANY_IDS = [
+  COMPANY.cin   ? `CIN: ${COMPANY.cin}`     : "",
+  COMPANY.gstin ? `GSTIN: ${COMPANY.gstin}` : "",
+].filter(Boolean).join(" · ");
+const GSTIN_OR_PENDING = COMPANY.gstin || "To be updated (GST registration in progress)";
 
 const TEAMS_LIST = ["Mumbai Mavericks","Delhi Suryas","Bengaluru Rockets","Hyderabad Hawks","Chennai Thalaivas","Kolkata Tigers","Lucknow Nawabs","Punjab Warriors","Ahmedabad Lions","Rajasthan Scorchers"];
 
@@ -46,7 +53,7 @@ ${COMPANY.season} · Contract Ref: ${c.id}
 THIS EMPLOYMENT CONTRACT ("Agreement") is entered into on ${today} by and between:
 
 EMPLOYER: ${COMPANY.name}
-CIN: ${COMPANY.cin} · GSTIN: ${COMPANY.gstin}
+${COMPANY_IDS}
 ${COMPANY.address}
 (hereinafter "the Company")
 
@@ -120,8 +127,7 @@ PRINCIPAL:
 ${COMPANY.name}
 (Operating brand: Bhartiya Corporate Premier League — BCPL)
 Registered under the Companies Act, 2013
-CIN: ${COMPANY.cin}
-GSTIN: ${COMPANY.gstin}
+${COMPANY_IDS}
 Registered Office: ${COMPANY.address}
 (hereinafter referred to as "BCPL" or "the Company")
 
@@ -385,8 +391,7 @@ SCHEDULE B — CONTRACT PARTICULARS
 │ Agreement Start            │ ${today}                                  │
 │ Agreement End              │ ${expiry}                                 │
 │ Season                     │ BCPL ${COMPANY.season}                   │
-│ GSTIN (Company)            │ ${COMPANY.gstin}                         │
-│ CIN (Company)              │ ${COMPANY.cin}                           │
+│ GSTIN (Company)            │ ${GSTIN_OR_PENDING}                      │
 └────────────────────────────┴──────────────────────────────────────────┘
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -432,7 +437,7 @@ ${COMPANY.season} · Contract Ref: ${c.id}
 THIS COACHING AGREEMENT ("Agreement") is made on ${today} between:
 
 ORGANIZATION: ${COMPANY.name}
-CIN: ${COMPANY.cin} · GSTIN: ${COMPANY.gstin}
+${COMPANY_IDS}
 ${COMPANY.address}
 (hereinafter "the Company" or "BCPL")
 
@@ -504,7 +509,7 @@ ${COMPANY.season} · Contract Ref: ${c.id}
 THIS SERVICE AGREEMENT ("Agreement") is entered into on ${today} by and between:
 
 PRINCIPAL: ${COMPANY.name}
-CIN: ${COMPANY.cin} · GSTIN: ${COMPANY.gstin}
+${COMPANY_IDS}
 ${COMPANY.address}
 (hereinafter "the Company")
 
@@ -581,8 +586,7 @@ THIS PLAYER PARTICIPATION CONTRACT ("Agreement") is entered into on ${today} ("E
 PARTY A — THE LEAGUE OPERATOR:
 ${COMPANY.name}
 Registered under Companies Act, 2013
-CIN: ${COMPANY.cin}
-GSTIN: ${COMPANY.gstin}
+${COMPANY_IDS}
 Registered Address: ${COMPANY.address}
 (hereinafter referred to as "the Company" or "BCPL")
 
@@ -760,7 +764,7 @@ SCHEDULE A — KEY DETAILS
 SCHEDULE B — COMPANY GST DETAILS
 
 Legal Name:   ${COMPANY.name}
-GSTIN:        ${COMPANY.gstin}
+GSTIN:        ${GSTIN_OR_PENDING}
 Address:      ${COMPANY.address}
 HSN/SAC Code: 999299 — Sports Event Services
 Tax Invoice:  CGST 9% + SGST 9% = 18% GST on applicable fees
@@ -844,6 +848,17 @@ function ContractModal({ c, sigImg, onClose }: { c: Contract; sigImg?: string; o
     const w = window.open("", "_blank");
     if (!w) return;
     const cType = c.contractType || "Player";
+    const esc = (t: string) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    // Split the plain-text contract into blocks: heavy-rule separators (━━━) become
+    // printed dividers, and each CLAUSE/SCHEDULE/heading starts a new block. Short
+    // blocks refuse to break across pages, so headings never get cut in half.
+    const sectionsHtml = contractText
+      .split(/\n?[━─]{8,}\n?/)
+      .flatMap(chunk => chunk.split(/\n(?=(?:CLAUSE|SCHEDULE|ANNEXURE|RECITALS|SIGNATURES|IN WITNESS)\b)/))
+      .map(chunk => chunk.replace(/^\n+|\n+$/g, ""))
+      .filter(chunk => chunk.length > 0)
+      .map(chunk => `<div class="sec${chunk.length < 1400 ? " keep" : ""}"><pre>${esc(chunk)}</pre></div>`)
+      .join('<div class="rule"></div>');
     w.document.write(`<!DOCTYPE html><html><head><title>${c.id} — BCPL ${cType} Contract</title>
     <style>
       *{box-sizing:border-box;margin:0;padding:0}
@@ -867,14 +882,14 @@ function ContractModal({ c, sigImg, onClose }: { c: Contract; sigImg?: string; o
       .lh-right{flex:1}
       .lh-company{font-size:11px;font-weight:900;color:#FFFFFF;letter-spacing:.07em;
         margin-bottom:5px;font-family:'Arial',sans-serif;text-transform:uppercase}
-      .lh-tagline{font-size:8px;color:rgba(255,255,255,0.45);font-family:'Arial',sans-serif;
+      .lh-tagline{font-size:9px;color:rgba(255,255,255,0.6);font-family:'Arial',sans-serif;
         letter-spacing:.12em;text-transform:uppercase;margin-bottom:5px}
-      .lh-contact{font-size:8.5px;color:rgba(255,255,255,0.48);margin-top:2px;font-family:'Arial',sans-serif}
+      .lh-contact{font-size:9.5px;color:rgba(255,255,255,0.7);margin-top:2px;font-family:'Arial',sans-serif}
       .lh-chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px;align-items:center}
-      .chip{font-size:7.5px;font-weight:700;color:rgba(255,255,255,0.42);
+      .chip{font-size:9px;font-weight:700;color:rgba(255,255,255,0.72);
         background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.11);
         border-radius:4px;padding:2px 8px;letter-spacing:.04em;font-family:'Courier New',monospace}
-      .chip-gold{font-size:7.5px;font-weight:800;color:#E8B23D;
+      .chip-gold{font-size:9px;font-weight:800;color:#E8B23D;
         background:rgba(232,178,61,0.1);border:1px solid rgba(232,178,61,0.38);
         border-radius:4px;padding:2px 8px;letter-spacing:.08em;font-family:'Arial',sans-serif}
 
@@ -906,6 +921,8 @@ function ContractModal({ c, sigImg, onClose }: { c: Contract; sigImg?: string; o
       /* ── Content ── */
       pre{white-space:pre-wrap;word-wrap:break-word;
         font-family:'Georgia',serif;font-size:11px;line-height:1.88;color:#1a1a1a}
+      .sec{position:relative;z-index:1}
+      .rule{border-top:1.2px solid #C9BBA6;margin:20px auto;width:58%}
 
       /* ── Signature block ── */
       .sig-block{margin-top:38px;border-top:1.5px solid #E2D4C4;padding-top:26px;display:flex;gap:40px}
@@ -923,7 +940,7 @@ function ContractModal({ c, sigImg, onClose }: { c: Contract; sigImg?: string; o
         margin-top:40px;
         background:linear-gradient(120deg,#060F25,#0D1E44);
         border-top:3px solid #FF6B00;padding:10px 36px;
-        font-size:7.5px;color:rgba(255,255,255,0.4);
+        font-size:8.5px;color:rgba(255,255,255,0.65);
         display:flex;justify-content:space-between;align-items:center;
         -webkit-print-color-adjust:exact;print-color-adjust:exact;
         font-family:'Arial',sans-serif;letter-spacing:.03em}
@@ -931,13 +948,16 @@ function ContractModal({ c, sigImg, onClose }: { c: Contract; sigImg?: string; o
 
       @media print{
         .watermark{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%)}
-        @page{margin:14mm 16mm 20mm 16mm;size:A4}
+        @page{margin:12mm 14mm 16mm 14mm;size:A4}
         body{margin:0}
         pre{page-break-inside:auto;orphans:4;widows:4}
+        .sec.keep{page-break-inside:avoid}
+        .rule{page-break-after:avoid}
         .contract-badge{page-break-inside:avoid}
-        .sig-block{page-break-inside:avoid;page-break-before:avoid}
-        .pg-footer{position:fixed;bottom:0;left:0;right:0;margin-top:0}
-        .body{padding-bottom:70px}
+        .sig-block{page-break-inside:avoid}
+        /* footer flows at the very end of the document — a per-page fixed footer
+           overlaps body text in Chrome's print engine, so we deliberately avoid it */
+        .pg-footer{page-break-inside:avoid}
         .lh{page-break-inside:avoid}
       }
     </style></head>
@@ -950,13 +970,13 @@ function ContractModal({ c, sigImg, onClose }: { c: Contract; sigImg?: string; o
         <img src="${logoUrl}" class="lh-logo" alt="BCPL Logo"/>
         <div class="lh-divider"></div>
         <div class="lh-right">
-          <div class="lh-company">Bhartiya Corporate Premier League Pvt. Ltd.</div>
+          <div class="lh-company">${COMPANY.name}</div>
           <div class="lh-tagline">India's Premier Corporate T20 Cricket League</div>
           <div class="lh-contact">${COMPANY.address}</div>
-          <div class="lh-contact">✉ legal@bcplt20.com &nbsp;·&nbsp; 🌐 www.bcplt20.com &nbsp;·&nbsp; ☎ ${COMPANY.phone}</div>
+          <div class="lh-contact">✉ ${COMPANY.email} &nbsp;·&nbsp; 🌐 www.bcplt20.com &nbsp;·&nbsp; ☎ ${COMPANY.phone}</div>
           <div class="lh-chips">
-            <span class="chip">GSTIN: ${COMPANY.gstin}</span>
-            <span class="chip">CIN: ${COMPANY.cin}</span>
+            ${COMPANY.gstin ? `<span class="chip">GSTIN: ${COMPANY.gstin}</span>` : ""}
+            ${COMPANY.cin ? `<span class="chip">CIN: ${COMPANY.cin}</span>` : ""}
             <span class="chip-gold">🏆 SEASON 5 · 2026–27</span>
           </div>
         </div>
@@ -967,10 +987,10 @@ function ContractModal({ c, sigImg, onClose }: { c: Contract; sigImg?: string; o
       <div class="body">
         <div class="contract-badge">
           <h2>🏏 ${cType} Contract — ${COMPANY.season}</h2>
-          <p>This is an official legally binding document issued under the authority of Bhartiya Corporate Premier League Pvt. Ltd.</p>
+          <p>This is an official legally binding document issued under the authority of ${COMPANY.name}.</p>
           <div class="ref">Ref: ${c.id} &nbsp;&nbsp;·&nbsp;&nbsp; Party: ${c.player} &nbsp;&nbsp;·&nbsp;&nbsp; ${c.team}</div>
         </div>
-        <pre>${contractText.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}</pre>
+        ${sectionsHtml}
 
         <div class="sig-block">
           <div class="sig-line">
@@ -979,15 +999,15 @@ function ContractModal({ c, sigImg, onClose }: { c: Contract; sigImg?: string; o
             <img src="${stampUrl}" class="stamp-img" alt="BCPL Stamp"/>
             <div class="line"></div>
             <div class="name">Saurabh Jha</div>
-            <div class="desig">Founder &amp; Director — Bhartiya Corporate Premier League Pvt. Ltd.</div>
+            <div class="desig">Founder &amp; Director — ${COMPANY.name}</div>
           </div>
         </div>
       </div>
 
       <div class="pg-footer">
         <span>Ref: <strong>${c.id}</strong> &nbsp;·&nbsp; ${cType} Contract</span>
-        <span><strong>BCPL</strong> — Bhartiya Corporate Premier League Pvt. Ltd. &nbsp;·&nbsp; STRICTLY CONFIDENTIAL</span>
-        <span>legal@bcplt20.com &nbsp;·&nbsp; bcplt20.com</span>
+        <span><strong>BCPL</strong> — ${COMPANY.name} &nbsp;·&nbsp; STRICTLY CONFIDENTIAL</span>
+        <span>${COMPANY.email} &nbsp;·&nbsp; bcplt20.com</span>
       </div>
     </body></html>`);
     w.document.close();
@@ -1194,7 +1214,7 @@ export default function ContractsView() {
           <div style={{display:"flex",gap:16,alignItems:"center"}}>
             <div style={{textAlign:"right"}}>
               <div style={{fontSize:10,color:"#94A3C4"}}>GSTIN</div>
-              <div style={{fontSize:13,fontWeight:800,color:"#F59E0B",fontFamily:"monospace"}}>{COMPANY.gstin}</div>
+              <div style={{fontSize:13,fontWeight:800,color:"#F59E0B",fontFamily:"monospace"}}>{COMPANY.gstin || "GST pending"}</div>
             </div>
             <div style={{textAlign:"right"}}>
               <div style={{fontSize:10,color:"#94A3C4"}}>HSN/SAC</div>

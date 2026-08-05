@@ -272,9 +272,9 @@ export default function UsersView({ onNavigate, initialQuick, refreshTick = 0 }:
               td{padding:5px 8px;border-bottom:1px solid #eee;font-size:10px}
               tr:nth-child(even){background:#FFF5EE}
               .footer{margin-top:20px;font-size:9px;color:#999;border-top:1px solid #eee;padding-top:10px}
-              @media print{body{padding:0}}</style></head><body>
+              @media print{@page{size:A4 landscape;margin:8mm} body{padding:0} thead{display:table-header-group} tr{page-break-inside:avoid} .footer{page-break-inside:avoid} th{-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style></head><body>
               <div class="header">
-                <div class="logo"><img src="/bcpl-website/bcpl-assets/bcpl-ball-color.jpg"/></div>
+                <div class="logo"><img src="${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/bcpl-ball-color.jpg"/></div>
                 <div><h1>BCPL — Player Report</h1>
                 <p>Bhartiya Corporate Premier League · Season 5 (2026–27)</p>
                 <p>Filter: ${quickLabels[quick]}${state!=="All States"?" · "+state:""}${city!=="All Cities"?" · "+city:""} · ${filtered.length} players · Generated: ${new Date().toLocaleDateString("en-IN")}</p></div>

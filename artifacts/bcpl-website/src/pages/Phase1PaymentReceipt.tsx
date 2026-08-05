@@ -443,7 +443,7 @@ export function Phase1PaymentReceipt() {
                   @media print{
                     body{background:#122642}
                     .page{padding-bottom:20px}
-                    @page{margin:6mm 8mm;background:#122642}
+                    @page{size:A4;margin:6mm 8mm;background:#122642}
                   }
                 </style></head>
                 <body>
@@ -455,7 +455,7 @@ export function Phase1PaymentReceipt() {
                         <div class="brand">BCPL — Bhartiya Corporate Premier League</div>
                         <div class="sub">India's Corporate Cricket League · Season 5</div>
                         <div class="addr">Kriparti India Pvt. Ltd. &nbsp;·&nbsp; 2nd Floor, RZ-108, Indra Park, Uttam Nagar, New Delhi — 110059</div>
-                        <div class="addr">legal@bcplt20.com &nbsp;·&nbsp; www.bcplt20.com &nbsp;·&nbsp; GSTIN: 07AAHCK4053D1ZS</div>
+                        <div class="addr">info@bcplt20.com &nbsp;·&nbsp; www.bcplt20.com &nbsp;·&nbsp; GSTIN: 07AAHCK4053D1ZS</div>
                       </div>
                     </div>
                     <div class="gold-bar"></div>
@@ -541,7 +541,7 @@ export function Phase1PaymentReceipt() {
                       <!-- Note -->
                       <div style="background:#172E4B;border:1px solid rgba(255,255,255,0.18);border-radius:12px;padding:14px 20px;font-size:11px;color:rgba(255,255,255,0.4);line-height:1.7;text-align:center;page-break-inside:avoid">
                         This is an official digital receipt issued by <strong style="color:rgba(255,255,255,0.88)">Kriparti India Pvt. Ltd.</strong><br/>
-                        For support: <strong style="color:#FF7A29">legal@bcplt20.com</strong> &nbsp;·&nbsp; <strong style="color:#FF7A29">www.bcplt20.com</strong>
+                        For support: <strong style="color:#FF7A29">info@bcplt20.com</strong> &nbsp;·&nbsp; <strong style="color:#FF7A29">www.bcplt20.com</strong>
                       </div>
                     </div>
                   </div>
