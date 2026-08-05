@@ -362,13 +362,25 @@ export function Home() {
         .s5m-mo{font-family:var(--font-head);font-weight:800;font-size:clamp(10px,1.3vw,12px);letter-spacing:.12em;color:var(--ink-3);text-transform:uppercase;}
         .s5m-lb{font-family:var(--font-head);font-weight:900;font-size:clamp(13px,1.7vw,17px);letter-spacing:.04em;color:#fff;text-transform:uppercase;line-height:1.05;}
         @media(max-width:639px){
-          .s5map{grid-template-columns:1fr;gap:0;margin-top:22px;padding-left:6px;}
-          .s5map::before{top:20px;bottom:20px;left:38px;right:auto;width:3px;height:auto;background:rgba(255,255,255,0.18);}
-          .s5map::after{top:20px;bottom:20px;left:38px;right:auto;width:3px;height:auto;background:linear-gradient(180deg,#FF7A29,#E8B23D 55%,#22C55E);transform-origin:top;transform:scaleY(0);}
-          .s5map.rv-in::after{transform:scaleY(1);}
-          .s5m{flex-direction:row;text-align:left;gap:16px;padding:12px 0;align-items:center;}
-          .s5m-node{width:56px;height:56px;}
-          .s5m-txt{display:flex;flex-direction:column;gap:3px;}
+          .s5map{grid-template-columns:1fr;gap:12px;margin-top:22px;padding-left:0;}
+          /* full-width step cards instead of a left-hugging rail — fills the screen evenly */
+          .s5map::before,.s5map::after{display:none;}
+          .s5m{flex-direction:row;text-align:left;gap:14px;padding:13px 14px;align-items:center;
+               background:linear-gradient(150deg,rgba(255,255,255,0.055),rgba(255,255,255,0.015));
+               border:1px solid rgba(255,255,255,0.14);border-left:3px solid var(--nc,#FF7A29);
+               border-radius:14px;box-shadow:0 8px 22px rgba(0,0,0,.28);}
+          /* short connector between cards, colored per step */
+          .s5m:not(:last-child)::after{content:'';position:absolute;left:41px;bottom:-13px;width:3px;height:14px;border-radius:3px;
+               background:linear-gradient(180deg,var(--nc,#FF7A29),rgba(255,255,255,0.25));z-index:0;}
+          .s5m-node{width:54px;height:54px;}
+          .s5m-txt{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0;align-items:flex-start;text-align:left;}
+          .s5m-mo{color:var(--nc,#E8B23D);opacity:.95;}
+          .s5m-lb{font-size:16px;}
+          /* step counter on the right keeps the card balanced */
+          .s5map{counter-reset:s5step;}
+          .s5m::before{counter-increment:s5step;content:"0" counter(s5step);
+               font-family:var(--font-head);font-weight:900;font-size:22px;line-height:1;
+               color:rgba(255,255,255,0.14);flex:0 0 auto;order:3;}
         }
 
         /* Pricing journey chips */
@@ -624,7 +636,7 @@ export function Home() {
       </section>
 
       {/* ══ 4b · SEASON 5 ROADMAP — premium animated timeline (spec §6) ══ */}
-      <section className="sec-roadmap" aria-label={t("Season 5 roadmap","Season 5 का roadmap")} style={{ padding:"clamp(56px,7vw,92px) 0", position:"relative", overflow:"hidden" }}>
+      <section id="roadmap" className="sec-roadmap" aria-label={t("Season 5 roadmap","Season 5 का roadmap")} style={{ padding:"clamp(56px,7vw,92px) 0", position:"relative", overflow:"hidden" }}>
         <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 70% 60% at 50% 0%,rgba(255,217,138,.08) 0%,transparent 65%)", pointerEvents:"none" }}/>
         <div className="W rv" style={{ position:"relative", zIndex:1 }}>
           <div className="slbl" style={{ justifyContent:"center" }}>{t("Season 5 Roadmap","Season 5 का roadmap")}</div>
