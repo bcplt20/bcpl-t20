@@ -1289,6 +1289,9 @@ router.post(
     if (!file) return void res.status(400).json({ error: "No file uploaded — send multipart field 'file'" });
 
     const rows = parseCsv(file.buffer.toString("utf8"));
+    // Release the 30MB+ raw buffer before the insert loop — keeps peak memory
+    // well under PM2's restart limit on the small prod instance.
+    (file as { buffer: Buffer | null }).buffer = null;
     if (rows.length < 2) return void res.status(400).json({ error: "CSV appears empty" });
     const header = rows[0].map(h => h.trim().toLowerCase());
     const col = (name: string) => header.indexOf(name.toLowerCase());

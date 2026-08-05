@@ -95,7 +95,10 @@ module.exports = {
       error_file:  "/home/ubuntu/logs/bcpl-api-error.log",
       out_file:    "/home/ubuntu/logs/bcpl-api-out.log",
       log_date_format: "YYYY-MM-DD HH:mm:ss",
-      max_memory_restart: "500M",
+      // 30MB+ legacy CSV import needs headroom while parsing — t3.medium has
+      // 4GB, so 1200M x2 instances is safe. 500M was killing the worker
+      // mid-import (nginx then shows Bad Gateway).
+      max_memory_restart: "1200M",
       restart_delay: 3000,
     },
   ],
