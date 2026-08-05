@@ -18,3 +18,10 @@ id = "x9sdBizYpMUyFCCqWdUgO"
 uri = "file://screenshots/after-home-mobile.jpg"
 type = "image"
 title = "अब — Homepage (mobile)"
+
+[[outputs]]
+id = "mrfcXKu04TMa0ZYCuZiuE"
+uri = "file://attached_assets/sample-invoice.pdf"
+type = "pdf"
+title = "Sample GST Invoice (PDF)"
+description = "यह invoice PDF अब payment confirmation email के साथ attach होकर जाएगा — असली GST breakup के साथ।"
