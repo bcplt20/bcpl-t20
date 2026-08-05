@@ -80,7 +80,7 @@ export const LOGO_URL = `${SITE_URL}/bcpl-assets/bcpl-logo-white.png`;
 // asset is served from PUBLIC_API_BASE + "/bcpl-assets/..." (same pattern the
 // dynamic ball logo already used). Its native ratio is 1600x469, so at a 48px
 // display height the width is ~164px.
-export const SITE_LOGO_URL = `${PUBLIC_API_BASE}/bcpl-assets/bcpl-logo.png`;
+export const SITE_LOGO_URL = `${PUBLIC_API_BASE}/bcpl-assets/bcpl-logo-white.png`;
 
 // Official social URLs. SINGLE source of truth — never guess a missing one.
 // (These are the verified URLs already present in the historical email.ts.)
