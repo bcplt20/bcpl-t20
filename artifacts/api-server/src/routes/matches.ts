@@ -167,6 +167,7 @@ router.get("/:id/live", async (req, res) => {
     team1:     match.team1,
     team2:     match.team2,
     venue:     match.venue,
+    scheduledAt: match.scheduledAt,
     status:    match.status,
     winner:    match.winner,
     resultDesc:match.resultDesc,

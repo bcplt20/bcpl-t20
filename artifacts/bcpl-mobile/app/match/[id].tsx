@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Platform,
   Pressable,
@@ -43,6 +43,90 @@ function InningsScore({ inn }: { inn: LiveInnings }) {
   );
 }
 
+function pad2(n: number) {
+  return n < 10 ? `0${n}` : String(n);
+}
+
+/** Live ticking countdown to match start + friendly "coming up" panel. */
+function UpcomingPanel({ live }: { live: LiveMatch }) {
+  const c = useColors();
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => {
+    const t = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, []);
+
+  const startAt = live.scheduledAt ? new Date(live.scheduledAt).getTime() : null;
+  const diff = startAt ? startAt - now : null;
+  const parts =
+    diff !== null && diff > 0
+      ? {
+          d: Math.floor(diff / 86_400_000),
+          h: Math.floor((diff % 86_400_000) / 3_600_000),
+          m: Math.floor((diff % 3_600_000) / 60_000),
+          s: Math.floor((diff % 60_000) / 1000),
+        }
+      : null;
+
+  return (
+    <View style={{ alignItems: 'center', paddingVertical: 14, gap: 12 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+        <View style={{ alignItems: 'center', gap: 6, width: 108 }}>
+          <TeamLogo name={live.team1} size={54} />
+          <Text style={{ color: c.foreground, fontFamily: 'Inter_600SemiBold', fontSize: 12, textAlign: 'center' }} numberOfLines={2}>
+            {live.team1}
+          </Text>
+        </View>
+        <View style={styles.vsChip}>
+          <Text style={{ color: '#E8B23D', fontFamily: 'Inter_700Bold', fontSize: 13 }}>VS</Text>
+        </View>
+        <View style={{ alignItems: 'center', gap: 6, width: 108 }}>
+          <TeamLogo name={live.team2} size={54} />
+          <Text style={{ color: c.foreground, fontFamily: 'Inter_600SemiBold', fontSize: 12, textAlign: 'center' }} numberOfLines={2}>
+            {live.team2}
+          </Text>
+        </View>
+      </View>
+
+      {parts ? (
+        <>
+          <Text style={{ color: c.mutedForeground, fontSize: 11.5, letterSpacing: 1.5, fontFamily: 'Inter_600SemiBold' }}>
+            MATCH शुरू होने में
+          </Text>
+          <View style={{ flexDirection: 'row', gap: 8 }}>
+            {[
+              { v: parts.d, l: 'DIN' },
+              { v: parts.h, l: 'GHANTE' },
+              { v: parts.m, l: 'MIN' },
+              { v: parts.s, l: 'SEC' },
+            ].map((u) => (
+              <View key={u.l} style={[styles.cdBox, { borderColor: 'rgba(232,178,61,0.45)', backgroundColor: 'rgba(232,178,61,0.08)' }]}>
+                <Text style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 22 }}>{pad2(u.v)}</Text>
+                <Text style={{ color: c.mutedForeground, fontSize: 9, letterSpacing: 1 }}>{u.l}</Text>
+              </View>
+            ))}
+          </View>
+        </>
+      ) : null}
+
+      {live.scheduledAt ? (
+        <Text style={{ color: c.mutedForeground, fontSize: 12.5 }}>
+          {new Date(live.scheduledAt).toLocaleString('en-IN', {
+            weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', hour12: true,
+          })}
+          {live.venue ? ` · ${live.venue}` : ''}
+        </Text>
+      ) : null}
+
+      <View style={[styles.livePill, { borderColor: 'rgba(255,107,0,0.5)', backgroundColor: 'rgba(255,107,0,0.10)' }]}>
+        <Text style={{ color: '#FF6B00', fontFamily: 'Inter_600SemiBold', fontSize: 12 }}>
+          Match शुरू होते ही live score और ball-by-ball updates यहीं दिखेंगे
+        </Text>
+      </View>
+    </View>
+  );
+}
+
 function LiveTab({ live }: { live: LiveMatch }) {
   const c = useColors();
   const chasing = live.innings.find((i) => i.number === 2);
@@ -52,9 +136,7 @@ function LiveTab({ live }: { live: LiveMatch }) {
     <View style={{ gap: 12 }}>
       <Card>
         {live.innings.length === 0 ? (
-          <Text style={{ color: c.mutedForeground, textAlign: 'center', paddingVertical: 10 }}>
-            Match जल्द शुरू होगा
-          </Text>
+          <UpcomingPanel live={live} />
         ) : (
           live.innings.map((inn) => <InningsScore key={inn.number} inn={inn} />)
         )}
@@ -291,6 +373,29 @@ const styles = StyleSheet.create({
     borderRadius: 13,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  vsChip: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: 1.5,
+    borderColor: 'rgba(232,178,61,0.6)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cdBox: {
+    width: 62,
+    borderWidth: 1,
+    borderRadius: 12,
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
+  livePill: {
+    borderWidth: 1,
+    borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    marginTop: 2,
   },
   scHead: { flexDirection: 'row', alignItems: 'center', paddingBottom: 5 },
   scRow: {

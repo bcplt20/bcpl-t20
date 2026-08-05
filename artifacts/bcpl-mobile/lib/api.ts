@@ -134,6 +134,7 @@ export interface LiveMatch {
   team1: string;
   team2: string;
   venue?: string | null;
+  scheduledAt?: string | null;
   status: string;
   winner?: string | null;
   resultDesc?: string | null;

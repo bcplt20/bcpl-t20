@@ -6,6 +6,7 @@ import { Image } from 'expo-image';
 import { useColors } from '@/hooks/useColors';
 
 const BALL = require('../assets/images/bcpl-ball.png');
+const LOGO_WHITE = require('../assets/images/bcpl-logo-white.png');
 
 /** Shared branded top header for tab screens (tabs have headerShown:false). */
 export function ScreenHeader({ title, subtitle }: { title: string; subtitle?: string }) {
@@ -19,15 +20,12 @@ export function ScreenHeader({ title, subtitle }: { title: string; subtitle?: st
       end={{ x: 1, y: 1 }}
       style={[styles.wrap, { paddingTop: topInset + 8 }]}
     >
-      {/* decorative glowing ball, bleeding off the right edge */}
+      {/* decorative ball, bleeding off the right edge */}
       <Image source={BALL} style={styles.bigBall} contentFit="contain" />
       <View style={styles.brandRow}>
-        <Image source={BALL} style={styles.smallBall} contentFit="contain" />
-        <Text style={styles.brand}>
-          BCPL <Text style={{ color: '#FF6B00' }}>T20</Text>
-        </Text>
+        <Image source={LOGO_WHITE} style={styles.logo} contentFit="contain" />
         <View style={styles.seasonPill}>
-          <Text style={styles.seasonTxt}>SEASON 4</Text>
+          <Text style={styles.seasonTxt}>SEASON 5</Text>
         </View>
       </View>
       <Text style={[styles.title, { color: c.foreground }]}>{title}</Text>
@@ -50,12 +48,11 @@ const styles = StyleSheet.create({
     top: -6,
     width: 130,
     height: 130,
-    opacity: 0.16,
+    opacity: 0.14,
     transform: [{ rotate: '-18deg' }],
   },
-  brandRow: { flexDirection: 'row', alignItems: 'center', gap: 7, marginBottom: 8 },
-  smallBall: { width: 26, height: 26 },
-  brand: { color: '#FFFFFF', fontFamily: 'Inter_700Bold', fontSize: 15, letterSpacing: 1 },
+  brandRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 10 },
+  logo: { width: 148, height: 40 },
   seasonPill: {
     backgroundColor: 'rgba(232,178,61,0.16)',
     borderColor: 'rgba(232,178,61,0.55)',
@@ -63,7 +60,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 9,
     paddingVertical: 2,
-    marginLeft: 2,
   },
   seasonTxt: { color: '#E8B23D', fontSize: 9.5, fontFamily: 'Inter_700Bold', letterSpacing: 1 },
   title: { fontSize: 26, fontFamily: 'Inter_700Bold' },

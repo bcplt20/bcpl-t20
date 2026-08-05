@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Linking,
   Platform,
   Pressable,
   RefreshControl,
@@ -104,6 +105,14 @@ export default function ProfileScreen() {
               <Text style={{ color: c.mutedForeground, fontSize: 12.5, marginTop: 4, textAlign: 'center' }}>
                 Registration पूरी होते ही आपका dashboard यहाँ दिखेगा
               </Text>
+              <Pressable
+                onPress={() => Linking.openURL('https://bcplt20.com/register')}
+                style={({ pressed }) => [styles.linkBtn, { backgroundColor: '#FF6B00', opacity: pressed ? 0.8 : 1 }]}
+                testID="register-cta"
+              >
+                <Feather name="external-link" size={15} color="#fff" />
+                <Text style={{ color: '#fff', fontFamily: 'Inter_700Bold', fontSize: 13.5 }}>Register करें</Text>
+              </Pressable>
             </Card>
           ) : (
             <>
@@ -136,6 +145,16 @@ export default function ProfileScreen() {
                   value={d.video?.submitted ? 'Submitted' : 'Pending'}
                   done={!!d.video?.submitted}
                 />
+                {!d.video?.submitted && ['selected', 'video_submitted', 'payment_done'].includes(reg?.phase1Status ?? '') ? (
+                  <Pressable
+                    onPress={() => Linking.openURL('https://bcplt20.com/dashboard')}
+                    style={({ pressed }) => [styles.linkBtn, { backgroundColor: '#FF6B00', opacity: pressed ? 0.8 : 1 }]}
+                    testID="upload-video-cta"
+                  >
+                    <Feather name="video" size={15} color="#fff" />
+                    <Text style={{ color: '#fff', fontFamily: 'Inter_700Bold', fontSize: 13.5 }}>Trial video upload करें</Text>
+                  </Pressable>
+                ) : null}
                 <StatusRow
                   label="Phase 2 — KYC"
                   value={niceStatus(d.kyc?.status ?? reg?.phase2Status)}
@@ -194,6 +213,17 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
+  linkBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    borderRadius: 12,
+    paddingVertical: 11,
+    paddingHorizontal: 18,
+    marginTop: 12,
+    alignSelf: 'stretch',
+  },
   loginWrap: {
     flex: 1,
     alignItems: 'center',

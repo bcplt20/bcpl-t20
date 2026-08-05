@@ -45,7 +45,7 @@ export default function MatchesScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: c.background }}>
-      <ScreenHeader title="Matches" subtitle="Season 4 schedule & results" />
+      <ScreenHeader title="Matches" subtitle="Season 5 schedule & results" />
       <View style={styles.filters}>
         {FILTERS.map((f) => (
           <Pressable

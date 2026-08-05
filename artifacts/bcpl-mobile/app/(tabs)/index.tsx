@@ -81,7 +81,7 @@ export default function HomeScreen() {
             />
             <View style={styles.heroShade} />
             <View style={{ padding: 16 }}>
-              <Text style={styles.heroKick}>SEASON 4 · OCTOBER 2026</Text>
+              <Text style={styles.heroKick}>SEASON 5 · OCTOBER 2026</Text>
               <Text style={styles.heroTitle}>10 teams. एक trophy.</Text>
               <Text style={styles.heroSub}>Live scores, points table और news — सब यहीं</Text>
             </View>
@@ -105,7 +105,7 @@ export default function HomeScreen() {
             <Card style={{ alignItems: 'center', paddingVertical: 28 }}>
               <Feather name="calendar" size={26} color={c.mutedForeground} />
               <Text style={{ color: c.mutedForeground, marginTop: 8, textAlign: 'center' }}>
-                Season 4 schedule जल्द आ रहा है — October 2026
+                Season 5 schedule जल्द आ रहा है — October 2026
               </Text>
             </Card>
           )}
