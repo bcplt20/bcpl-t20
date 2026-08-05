@@ -38,7 +38,7 @@ import { adminUsersTable, auditLogsTable } from "@workspace/db/schema";
 import { verifyPassword, signAdminToken, publicAdmin, permissionsForRole } from "./adminUsers";
 import { writeAudit } from "../lib/audit";
 import { markKycVerified, notifyKycRejected } from "./kyc";
-import { sendEmail, adminAlertRecipient, tplPhase1ResultReady, tplTrialVenueAnnounced, tplInvoice, tplAdminLoginLockdown, tplPhase1Receipt, tplVideoSubmitted, tplPhase1Selected } from "../lib/email";
+import { sendEmail, adminAlertRecipient, tplPhase1ResultReady, tplTrialVenueAnnounced, tplInvoice, tplAdminLoginLockdown, tplPhase1Receipt, tplVideoSubmitted, tplPhase1Selected, tplPhase2Receipt, tplKycComplete, tplKycRejected } from "../lib/email";
 import { createHash } from "crypto";
 import { sendSms, adminAlertPhone } from "../lib/sms";
 import { logNotifications } from "../lib/notify";
@@ -455,6 +455,40 @@ router.put("/users/:id/email", requireRole("SUPPORT_TEAM"), async (req, res) => 
         if (reg.phase1Status === "selected") tasks.push({
           key: `echg_p1_qualified_${reg.id}_${suffix}`, template: "phase1_selected",
           make: () => tplPhase1Selected(userRow.name),
+        });
+      }
+      // Later milestones the player may ALREADY have reached (owner rule:
+      // only re-send what was missed — never anything about pending
+      // payments or future steps).
+      const [p2pay] = await db.select().from(phase2PaymentsTable)
+        .where(and(eq(phase2PaymentsTable.registrationId, reg.id),
+          inArray(phase2PaymentsTable.status, ["success", "paid"])))
+        .orderBy(desc(phase2PaymentsTable.createdAt)).limit(1);
+      if (p2pay) tasks.push({
+        key: `echg_p2_receipt_${reg.id}_${suffix}`, template: "phase2_receipt",
+        make: () => tplPhase2Receipt(userRow.name, Number(p2pay.amount), reg.regNumber ?? undefined),
+      });
+      const [kyc] = await db.select({ status: kycRecordsTable.status })
+        .from(kycRecordsTable)
+        .where(eq(kycRecordsTable.registrationId, reg.id))
+        .orderBy(desc(kycRecordsTable.createdAt)).limit(1);
+      if (kyc?.status === "verified") tasks.push({
+        key: `echg_kyc_ok_${reg.id}_${suffix}`, template: "kyc_complete",
+        make: () => tplKycComplete(userRow.name, reg.trialCity ?? ""),
+      });
+      if (kyc?.status === "failed") tasks.push({
+        key: `echg_kyc_failed_${reg.id}_${suffix}`, template: "kyc_rejected",
+        make: () => tplKycRejected(userRow.name),
+      });
+      // Trial venue announcement — only if the player is actually in Phase 2
+      // and the venue for their city has been announced.
+      if (["payment_done", "kyc_done", "selected"].includes(reg.phase2Status ?? "") && reg.trialCity) {
+        const [venue] = await db.select().from(trialVenuesTable)
+          .where(and(ilike(trialVenuesTable.city, reg.trialCity), isNotNull(trialVenuesTable.announcedAt)))
+          .orderBy(desc(trialVenuesTable.announcedAt)).limit(1);
+        if (venue) tasks.push({
+          key: `echg_venue_${reg.id}_${suffix}`, template: "trial_venue_announced",
+          make: () => tplTrialVenueAnnounced(userRow.name, venue.city, venue.venue, venue.trialDate, venue.trialTime, venue.reportingTime),
         });
       }
       for (const t of tasks) {
