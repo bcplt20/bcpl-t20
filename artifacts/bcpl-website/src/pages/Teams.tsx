@@ -10,8 +10,10 @@ import { SEASON } from '../lib/season';
 
 /* Canonical display order (Group A = first 5, Group B = last 5) */
 const CANON_ORDER = [
-  "Rajasthan Scorchers", "Punjab Warriors", "Kolkata Tigers", "Lucknow Nawabs", "Mumbai Mavericks",
-  "Hyderabad Hawks", "Delhi Suryas", "Chennai Thalaivas", "Ahmedabad Lions", "Bengaluru Rockets",
+  // Group A (must match the season's match schedule grouping)
+  "Rajasthan Scorchers", "Mumbai Mavericks", "Chennai Thalaivas", "Hyderabad Hawks", "Ahmedabad Lions",
+  // Group B
+  "Delhi Suryas", "Punjab Warriors", "Kolkata Tigers", "Lucknow Nawabs", "Bengaluru Rockets",
 ];
 
 const asset = (url: string) =>
