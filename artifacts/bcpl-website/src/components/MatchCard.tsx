@@ -13,6 +13,7 @@ export function MatchCountdown({ targetDate, compact }: { targetDate: string, co
       const diff = target - Date.now();
       if (diff <= 0) {
         setTimeLeft(null);
+        clearInterval(interval);
         return;
       }
       setTimeLeft({
@@ -23,8 +24,8 @@ export function MatchCountdown({ targetDate, compact }: { targetDate: string, co
       });
     };
     
-    tick();
     const interval = setInterval(tick, 1000);
+    tick();
     return () => clearInterval(interval);
   }, [targetDate]);
 

@@ -106,7 +106,7 @@ export function Schedule() {
         const fmt = (opt: Intl.DateTimeFormatOptions) =>
           dt ? dt.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', ...opt }) : '';
         const uiStatus = 
-          m.status === 'live' ? 'LIVE'
+          (m.status === 'live' || m.status === 'innings2') ? 'LIVE'
           : (m.status === 'completed' || m.status === 'abandoned') ? 'COMPLETED'
           : dt ? 'UPCOMING' : 'TBD';
         
