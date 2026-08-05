@@ -398,7 +398,7 @@ router.get("/registrations", async (req, res) => {
    result-ready / qualified). Reserve-first dedupe on notification_logs
    (keyed per new-email hash) means saving the same email twice never
    double-sends, while a later correction to a different address does. */
-router.put("/users/:id/email", async (req, res) => {
+router.put("/users/:id/email", requireRole("SUPPORT_TEAM"), async (req, res) => {
   try {
     const id = String(req.params.id);
     const raw = (req.body as { email?: string } | undefined)?.email;
