@@ -341,6 +341,42 @@ export default function RegisterScreen() {
       ) : null}
 
       {step === 'account' ? (
+        <View style={{ gap: 12 }}>
+        <Card>
+          <Text style={{ color: '#E8B23D', fontFamily: 'Inter_700Bold', fontSize: 10.5, letterSpacing: 2 }}>
+            {t('YOUR JOURNEY', 'आपका सफ़र')}
+          </Text>
+          <Text style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 16, marginTop: 4, marginBottom: 10 }}>
+            {t('From office to stadium — how it works', 'ऑफिस से स्टेडियम तक — पूरा process')}
+          </Text>
+          {[
+            { n: '1', en: 'Register', hi: 'रजिस्टर करें', den: 'Fill the form + pay the entry fee', dhi: 'फॉर्म भरें + एंट्री फ़ीस दें' },
+            { n: '2', en: 'Upload video', hi: 'वीडियो अपलोड करें', den: '30–60 sec cricket clip from any ground', dhi: 'किसी भी मैदान से 30–60 सेकंड की क्रिकेट क्लिप' },
+            { n: '3', en: 'Phase 1 result', hi: 'फेज़ 1 रिज़ल्ट', den: "Video evaluated on BCPL's Phase 1 criteria — result within 15 days", dhi: 'वीडियो BCPL के फेज़ 1 मापदंड पर परखा जाता है — 15 दिनों में रिज़ल्ट' },
+            { n: '4', en: 'Physical trial', hi: 'फिज़िकल ट्रायल', den: 'At your trial city — after Phase 1 qualification (₹2,000 / ₹3,000)', dhi: 'आपके ट्रायल शहर में — फेज़ 1 क्वालिफ़ाई करने के बाद (₹2,000 / ₹3,000)' },
+            { n: '5', en: 'Auction', hi: 'ऑक्शन', den: 'Franchises bid on you', dhi: 'फ्रैंचाइज़ी आप पर बोली लगाती हैं' },
+            { n: '6', en: 'Play BCPL', hi: 'BCPL खेलें', den: 'Represent your franchise under floodlights', dhi: 'फ्लडलाइट्स में अपनी फ्रैंचाइज़ी के लिए खेलें' },
+          ].map((s, i, arr) => (
+            <View key={s.n} style={{ flexDirection: 'row', gap: 12 }}>
+              <View style={{ alignItems: 'center' }}>
+                <View style={styles.stepDot}>
+                  <Text style={{ color: '#fff', fontFamily: 'Inter_700Bold', fontSize: 12 }}>{s.n}</Text>
+                </View>
+                {i < arr.length - 1 ? <View style={styles.stepLine} /> : null}
+              </View>
+              <View style={{ flex: 1, paddingBottom: i < arr.length - 1 ? 14 : 0 }}>
+                <Text style={{ color: c.foreground, fontFamily: 'Inter_600SemiBold', fontSize: 13.5 }}>{t(s.en, s.hi)}</Text>
+                <Text style={{ color: c.mutedForeground, fontSize: 12, lineHeight: 17, marginTop: 1 }}>{t(s.den, s.dhi)}</Text>
+              </View>
+            </View>
+          ))}
+          <Text style={{ color: c.mutedForeground, fontSize: 11, lineHeight: 16, marginTop: 12 }}>
+            {t(
+              'Phase 2 fee applies only after Phase 1 qualification. Fees cover participation only — see bcplt20.com/refunds and bcplt20.com/eligibility for full rules.',
+              'फेज़ 2 की फ़ीस सिर्फ़ फेज़ 1 क्वालिफ़ाई करने के बाद लगती है। फ़ीस केवल भागीदारी के लिए है — पूरे नियम bcplt20.com/refunds और bcplt20.com/eligibility पर देखें।',
+            )}
+          </Text>
+        </Card>
         <Card>
           {input({ value: name, onChange: setName, placeholder: t('Full name', 'पूरा नाम') })}
           {input({ value: email, onChange: setEmail, placeholder: t('Email', 'ईमेल'), keyboard: 'email-address' })}
@@ -349,6 +385,7 @@ export default function RegisterScreen() {
             {primaryBtn(t('Send OTP', 'OTP भेजें'), onSendOtp, 'reg-send-otp')}
           </View>
         </Card>
+        </View>
       ) : null}
 
       {step === 'otp' ? (
@@ -503,6 +540,15 @@ export default function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
+  stepDot: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#FF6B00',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  stepLine: { width: 2, flex: 1, backgroundColor: 'rgba(232,178,61,0.35)', marginVertical: 2 },
   inputWrap: {
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.1)',

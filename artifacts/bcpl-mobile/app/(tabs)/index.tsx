@@ -70,7 +70,7 @@ export default function HomeScreen() {
       >
         <ScreenHeader
           title={user ? t(`Hello, ${user.name.split(' ')[0]}`, `नमस्ते, ${user.name.split(' ')[0]}`) : 'Bhartiya Corporate Premier League'}
-          subtitle="Office से Stadium तक"
+          subtitle="#OfficeSeStadiumTak"
           subtitleColor="#FF6B00"
         />
 
@@ -84,9 +84,13 @@ export default function HomeScreen() {
                 contentFit="cover"
                 transition={200}
               />
-              {/* deep navy → transparent shade so text stays crisp */}
-              <View style={styles.heroShade} />
-              <View style={styles.heroShadeLeft} />
+              {/* smooth navy → transparent shade so text stays crisp */}
+              <LinearGradient
+                colors={['rgba(9,19,44,0.92)', 'rgba(9,19,44,0.72)', 'rgba(9,19,44,0.25)']}
+                start={{ x: 0, y: 0.5 }}
+                end={{ x: 1, y: 0.5 }}
+                style={StyleSheet.absoluteFill}
+              />
               {/* gold hairline frame for a premium feel */}
               <View pointerEvents="none" style={styles.heroFrame} />
               <Image
@@ -106,6 +110,51 @@ export default function HomeScreen() {
               </View>
             </View>
           </Pressable>
+        </View>
+
+        {/* Photos & Videos quick link */}
+        <View style={{ paddingHorizontal: 16, marginTop: 18 }}>
+          <Pressable
+            onPress={() => router.push('/media')}
+            style={({ pressed }) => ({ opacity: pressed ? 0.85 : 1 })}
+            testID="home-media"
+          >
+            <Card style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+              <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,107,0,0.14)', alignItems: 'center', justifyContent: 'center' }}>
+                <Feather name="image" size={19} color="#FF6B00" />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 15 }}>{t('Photos & Videos', 'फ़ोटो और वीडियो')}</Text>
+                <Text style={{ color: c.mutedForeground, fontSize: 12, marginTop: 1 }}>{t('Auction, shoots & matchday gallery', 'ऑक्शन, शूट और मैच की गैलरी')}</Text>
+              </View>
+              <Feather name="chevron-right" size={18} color={c.mutedForeground} />
+            </Card>
+          </Pressable>
+        </View>
+
+        {/* BCPL so far — league in numbers */}
+        <View style={{ paddingHorizontal: 16, marginTop: 18 }}>
+          <Text style={{ color: '#E8B23D', fontFamily: 'Inter_700Bold', fontSize: 10.5, letterSpacing: 2 }}>
+            {t('BCPL SO FAR', 'अब तक BCPL')}
+          </Text>
+          <Text style={[styles.sectionTitle, { color: c.foreground, marginTop: 3 }]}>
+            {t('The league in numbers', 'आँकड़ों में लीग')}
+          </Text>
+          <View style={styles.statsGrid}>
+            {[
+              { v: '2,50,000+', l: t('Working professionals joined', 'वर्किंग प्रोफ़ेशनल्स जुड़े') },
+              { v: '400+', l: t('Players auctioned', 'खिलाड़ी ऑक्शन हुए') },
+              { v: '₹14 Cr+', l: t('Prize money distributed', 'प्राइज़ मनी बाँटी गई') },
+              { v: '4', l: t('Seasons completed', 'सीज़न पूरे हुए') },
+              { v: '50+', l: t('Trial cities', 'ट्रायल शहर') },
+              { v: '10', l: t('Franchises', 'फ्रैंचाइज़ी') },
+            ].map((s) => (
+              <View key={s.v + s.l} style={[styles.statBox, { borderColor: c.border }]}>
+                <Text style={{ color: '#FF6B00', fontFamily: 'Inter_700Bold', fontSize: 19 }}>{s.v}</Text>
+                <Text style={{ color: c.mutedForeground, fontSize: 11, marginTop: 3, lineHeight: 15 }}>{s.l}</Text>
+              </View>
+            ))}
+          </View>
         </View>
 
         {anyLive ? (
@@ -149,6 +198,17 @@ export default function HomeScreen() {
               </Pressable>
             </View>
             <Card style={{ padding: 0, overflow: 'hidden' }}>
+              <View style={[styles.pointsRow, { paddingVertical: 8, backgroundColor: 'rgba(255,255,255,0.04)' }]}>
+                <Text style={[styles.pos, { color: c.mutedForeground, fontSize: 10.5 }]}>#</Text>
+                <View style={{ width: 28 }} />
+                <Text style={[styles.teamName, { color: c.mutedForeground, fontSize: 10.5, fontFamily: 'Inter_700Bold', letterSpacing: 1 }]}>TEAM</Text>
+                <Text style={{ color: c.mutedForeground, fontSize: 10.5, width: 36, textAlign: 'center', fontFamily: 'Inter_700Bold', letterSpacing: 1 }}>
+                  {t('MAT', 'मैच')}
+                </Text>
+                <Text style={{ color: c.mutedForeground, fontSize: 10.5, width: 44, textAlign: 'center', fontFamily: 'Inter_700Bold', letterSpacing: 1 }}>
+                  {t('PTS', 'अंक')}
+                </Text>
+              </View>
               {topTeams.map((t, i) => (
                 <View key={t.team} style={[styles.pointsRow, i > 0 && { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: c.border }]}>
                   <Text style={[styles.pos, { color: i === 0 ? c.accent : c.mutedForeground }]}>{i + 1}</Text>
@@ -156,7 +216,7 @@ export default function HomeScreen() {
                   <Text style={[styles.teamName, { color: c.foreground }]} numberOfLines={1}>
                     {t.team}
                   </Text>
-                  <Text style={{ color: c.mutedForeground, fontSize: 12.5, width: 36, textAlign: 'center' }}>{t.played} M</Text>
+                  <Text style={{ color: c.mutedForeground, fontSize: 12.5, width: 36, textAlign: 'center' }}>{t.played}</Text>
                   <View style={styles.ptsPill}>
                     <Text style={[styles.pts, { color: c.foreground }]}>{t.points}</Text>
                   </View>
@@ -214,6 +274,16 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 12 },
+  statBox: {
+    flexBasis: '30%',
+    flexGrow: 1,
+    borderWidth: 1,
+    borderRadius: 14,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    backgroundColor: 'rgba(255,255,255,0.04)',
+  },
   sectionRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -248,12 +318,6 @@ const styles = StyleSheet.create({
   },
   heroTitle: { color: '#FFFFFF', fontFamily: 'Inter_700Bold', fontSize: 21, marginTop: 3 },
   heroSub: { color: 'rgba(255,255,255,0.85)', fontSize: 12.5, marginTop: 3, fontFamily: 'Inter_400Regular' },
-  heroShadeLeft: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'transparent',
-    borderLeftWidth: 200,
-    borderLeftColor: 'rgba(9,19,44,0.35)',
-  },
   heroFrame: {
     ...StyleSheet.absoluteFillObject,
     borderRadius: 16,

@@ -90,6 +90,48 @@ function LangSwitch() {
   );
 }
 
+const LEGAL_LINKS: { en: string; hi: string; path: string }[] = [
+  { en: 'How Selection Works', hi: 'चयन प्रक्रिया', path: '/trust' },
+  { en: 'Eligibility Criteria', hi: 'योग्यता मानदंड', path: '/eligibility' },
+  { en: 'Physical Trial Rules', hi: 'फिज़िकल ट्रायल नियम', path: '/trial-rules' },
+  { en: 'Cricket Rulebook', hi: 'क्रिकेट रूलबुक', path: '/cricket-rulebook' },
+  { en: 'Code of Conduct', hi: 'आचार संहिता', path: '/code-of-conduct' },
+  { en: 'FAQ', hi: 'सामान्य प्रश्न', path: '/faq' },
+  { en: 'Terms & Conditions', hi: 'नियम और शर्तें', path: '/terms' },
+  { en: 'Privacy Policy', hi: 'प्राइवेसी पॉलिसी', path: '/privacy' },
+  { en: 'Refund & Cancellation Policy', hi: 'रिफंड और कैंसिलेशन पॉलिसी', path: '/refunds' },
+  { en: 'Brand & Logo Usage', hi: 'ब्रांड और लोगो उपयोग नीति', path: '/brand-usage' },
+];
+
+function LegalLinks() {
+  const c = useColors();
+  const { t } = useLang();
+  return (
+    <Card>
+      <Text style={[styles.cardTitle, { color: c.foreground }]}>{t('Rules & policies', 'नियम और नीतियाँ')}</Text>
+      <View>
+        {LEGAL_LINKS.map((l, i) => (
+          <Pressable
+            key={l.path}
+            onPress={() => Linking.openURL(`https://bcplt20.com${l.path}`)}
+            style={({ pressed }) => [
+              styles.supportRow,
+              i > 0 && { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: c.border },
+              { opacity: pressed ? 0.7 : 1 },
+            ]}
+            testID={`legal-${l.path.slice(1)}`}
+          >
+            <Text style={{ color: c.foreground, fontSize: 13.5, fontFamily: 'Inter_500Medium', flex: 1 }}>
+              {t(l.en, l.hi)}
+            </Text>
+            <Feather name="chevron-right" size={16} color={c.mutedForeground} />
+          </Pressable>
+        ))}
+      </View>
+    </Card>
+  );
+}
+
 function ContactSupport() {
   const c = useColors();
   const { t } = useLang();
@@ -172,6 +214,7 @@ export default function ProfileScreen() {
           <View style={{ alignSelf: 'stretch', marginTop: 40, gap: 16 }}>
             <LangSwitch />
             <ContactSupport />
+          <LegalLinks />
           </View>
         </View>
       </View>
@@ -317,6 +360,7 @@ export default function ProfileScreen() {
 
           <LangSwitch />
           <ContactSupport />
+          <LegalLinks />
 
           <Pressable
             onPress={() => logout()}

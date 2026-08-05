@@ -143,6 +143,24 @@ export function getDashboard(token: string): Promise<Dashboard> {
   return apiFetch('/user/dashboard', { token });
 }
 
+// ── Gallery / media ──────────────────────────────────────────────────────────
+export interface GalleryItem {
+  id: string;
+  name: string;
+  kind: 'photo' | 'video';
+  sizeBytes?: number;
+  viewUrl: string;
+}
+export interface GalleryAlbum {
+  id: string;
+  name: string;
+  kind?: string;
+  items: GalleryItem[];
+}
+export function getGallery(): Promise<{ albums: GalleryAlbum[] }> {
+  return apiFetch('/gallery');
+}
+
 // ── Match center ─────────────────────────────────────────────────────────────
 export interface Match {
   id: string;
