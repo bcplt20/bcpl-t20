@@ -25,6 +25,7 @@ import { EligibilityCriteria } from '@/pages/EligibilityCriteria';
 import { Privacy }             from '@/pages/Privacy';
 import { Refunds }             from '@/pages/Refunds';
 import { Terms }               from '@/pages/Terms';
+import { BrandUsagePolicy }    from '@/pages/BrandUsagePolicy';
 import { Registration }        from '@/pages/Registration';
 import { ReferralRedirect }    from '@/pages/ReferralRedirect';
 import { Phase1PaymentReceipt } from '@/pages/Phase1PaymentReceipt';
@@ -104,6 +105,7 @@ function Router() {
         <Route path="/trust"            component={Trust} />
         <Route path="/refunds"          component={Refunds} />
         <Route path="/terms"            component={Terms} />
+        <Route path="/brand-usage"      component={BrandUsagePolicy} />
 
         {/* Referral links: bcplt20.com/r/CODE → tracked redirect to /register */}
         <Route path="/r/:code" component={ReferralRedirect} />

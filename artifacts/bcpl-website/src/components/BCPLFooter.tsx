@@ -17,7 +17,7 @@ const COLS: { title: string; links: [string, string][] }[] = [
   { title: "League",  links: [["About BCPL","/about"],["Teams","/teams"],["Players","/players"],["Match Center","/match-center"],["Schedule","/schedule"],["Points Table","/points-table"],["Sponsors","/sponsors"]] },
   { title: "Players", links: [["Register — Phase 1","/register"],["Player Login","__login"],["How Selection Works","/trust"],["Eligibility Criteria","/eligibility"],["Physical Trial Rules","/trial-rules"],["Cricket Rulebook","/cricket-rulebook"],["Code of Conduct","/code-of-conduct"],["FAQ","/faq"]] },
   { title: "Media",   links: [["Photo Gallery","/photos"],["Videos","/videos"],["Contact Us","/contact"]] },
-  { title: "Legal",   links: [["Privacy Policy","/privacy"],["Terms & Conditions","/terms"],["Refund Policy","/refunds"]] },
+  { title: "Legal",   links: [["Privacy Policy","/privacy"],["Terms & Conditions","/terms"],["Refund Policy","/refunds"],["Brand & Logo Usage","/brand-usage"]] },
 ];
 
 const lnk: React.CSSProperties = { fontSize:13, color:"var(--ink-3)", textDecoration:"none", display:"block" };
@@ -100,6 +100,8 @@ export function BCPLFooter() {
               <Link href="/terms"    style={{ fontSize:11, color:"rgba(255,255,255,.72)", textDecoration:"none" }} className="bcpl-foot-link">Terms</Link>
               <span style={{ color:"rgba(255,255,255,0.18)", fontSize:10 }}>|</span>
               <Link href="/refunds"  style={{ fontSize:11, color:"rgba(255,255,255,.72)", textDecoration:"none" }} className="bcpl-foot-link">Refund Policy</Link>
+              <span style={{ color:"rgba(255,255,255,0.18)", fontSize:10 }}>|</span>
+              <Link href="/brand-usage" style={{ fontSize:11, color:"rgba(255,255,255,.72)", textDecoration:"none" }} className="bcpl-foot-link">Brand & Logo Usage</Link>
               <span style={{ color:"rgba(255,255,255,0.18)", fontSize:10 }}>|</span>
               <span style={{ fontSize:11, color:"rgba(255,255,255,.72)" }}>Made in India</span>
             </div>
