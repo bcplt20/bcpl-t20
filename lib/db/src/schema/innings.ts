@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, integer, timestamp, json } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, integer, timestamp, json, index } from "drizzle-orm/pg-core";
 import { matchesTable } from "./matches";
 
 /** One innings within a match */
@@ -22,7 +22,9 @@ export const inningsTable = pgTable("innings", {
   status:        varchar("status", { length: 20 }).default("live").notNull(),
   createdAt:     timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt:     timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
-});
+}, (t) => [
+  index("innings_match_id_idx").on(t.matchId),
+]);
 
 export type Innings    = typeof inningsTable.$inferSelect;
 export type NewInnings = typeof inningsTable.$inferInsert;

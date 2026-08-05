@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, timestamp, index } from "drizzle-orm/pg-core";
 
 export const otpSessionsTable = pgTable("otp_sessions", {
   id:        uuid("id").primaryKey().defaultRandom(),
@@ -8,6 +8,8 @@ export const otpSessionsTable = pgTable("otp_sessions", {
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
   usedAt:    timestamp("used_at",    { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-});
+}, (t) => [
+  index("otp_sessions_phone_idx").on(t.phone, t.purpose),
+]);
 
 export type OtpSession = typeof otpSessionsTable.$inferSelect;

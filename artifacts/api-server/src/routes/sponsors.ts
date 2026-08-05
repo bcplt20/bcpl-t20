@@ -60,7 +60,7 @@ router.get("/", async (_req, res) => {
     })));
 
   /* Admin edits must show up on the site immediately — never cache. */
-  res.setHeader("Cache-Control", "no-store");
+  res.setHeader("Cache-Control", "public, max-age=60");
   return res.json({ sponsors });
 });
 

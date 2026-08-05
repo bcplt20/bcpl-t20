@@ -50,6 +50,7 @@ async function buildScorecard(inningsId: string) {
   // Fall of wickets
   const fow: { wicket: number; batter: string; runs: number; overStr: string }[] = [];
   let totalWicketsNow = 0;
+  let runningTotal = 0; // cumulative team runs, avoids per-wicket DB reads
 
   for (const d of deliveries) {
     // Batting
@@ -83,12 +84,13 @@ async function buildScorecard(inningsId: string) {
       bowl.wickets++;
     }
 
+    runningTotal += d.totalRuns;
+
     // FoW
     if (d.isWicket) {
       totalWicketsNow++;
-      const innsRow = await db.select().from(inningsTable).where(eq(inningsTable.id, inningsId)).limit(1);
       fow.push({ wicket: totalWicketsNow, batter: d.dismissedBatter || d.batterName,
-        runs: innsRow[0]?.totalRuns ?? 0, overStr: `${d.overNumber}.${d.ballInOver}` });
+        runs: runningTotal, overStr: `${d.overNumber}.${d.ballInOver}` });
     }
   }
 

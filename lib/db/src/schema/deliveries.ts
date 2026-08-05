@@ -1,4 +1,4 @@
-import { pgTable, uuid, integer, varchar, boolean, text, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, uuid, integer, varchar, boolean, text, timestamp, index } from "drizzle-orm/pg-core";
 import { inningsTable } from "./innings";
 
 /**
@@ -28,7 +28,9 @@ export const deliveriesTable = pgTable("deliveries", {
   // Commentary
   commentary:      text("commentary"),
   createdAt:       timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-});
+}, (t) => [
+  index("deliveries_innings_id_idx").on(t.inningsId),
+]);
 
 export type Delivery    = typeof deliveriesTable.$inferSelect;
 export type NewDelivery = typeof deliveriesTable.$inferInsert;

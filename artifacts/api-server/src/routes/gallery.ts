@@ -44,7 +44,7 @@ router.get("/", async (_req, res) => {
   const nonEmpty = albums.filter(a => a.items.length > 0);
 
   /* Presigned links are short-lived, so the site must always re-fetch. */
-  res.setHeader("Cache-Control", "no-store");
+  res.setHeader("Cache-Control", "public, max-age=60");
   return res.json({ albums: nonEmpty });
 });
 
