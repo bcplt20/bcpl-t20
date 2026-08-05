@@ -11,6 +11,7 @@ import {
   View,
 } from 'react-native';
 import { Image } from 'expo-image';
+import * as WebBrowser from 'expo-web-browser';
 import { Feather } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
 import { useColors } from '@/hooks/useColors';
@@ -79,7 +80,7 @@ export default function MediaScreen() {
               {album.items.map((item) => (
                 <Pressable
                   key={item.id}
-                  onPress={() => (item.kind === 'video' ? Linking.openURL(item.viewUrl) : setViewer(item))}
+                  onPress={() => (item.kind === 'video' ? WebBrowser.openBrowserAsync(item.viewUrl) : setViewer(item))}
                   style={({ pressed }) => ({ opacity: pressed ? 0.85 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] })}
                   testID={`media-${item.id}`}
                 >
@@ -109,7 +110,7 @@ export default function MediaScreen() {
 
       {/* Season 4 videos live on the website */}
       <Pressable
-        onPress={() => Linking.openURL('https://bcplt20.com/videos')}
+        onPress={() => WebBrowser.openBrowserAsync('https://bcplt20.com/videos')}
         style={({ pressed }) => [styles.videosBtn, { borderColor: c.border, opacity: pressed ? 0.8 : 1 }]}
         testID="videos-link"
       >

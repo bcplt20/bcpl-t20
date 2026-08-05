@@ -34,6 +34,63 @@ function pickFeatured(matches: Match[]): Match[] {
   return [...upcoming.slice(0, 1), ...recent.slice(0, 1)];
 }
 
+/** Counts a stat value up from 0 the first time it appears (e.g. "2,50,000+", "₹14 Cr+"). */
+function CountUpStat({ value, style }: { value: string; style?: any }) {
+  const m = value.match(/^([^\d]*)([\d,]+)(.*)$/);
+  const target = m ? parseInt(m[2].replace(/,/g, ''), 10) : 0;
+  const [n, setN] = React.useState(m ? 0 : target);
+  React.useEffect(() => {
+    if (!m || target <= 0) return;
+    const dur = 1200;
+    const start = Date.now();
+    const id = setInterval(() => {
+      const p = Math.min(1, (Date.now() - start) / dur);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setN(Math.round(target * eased));
+      if (p >= 1) clearInterval(id);
+    }, 40);
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+  if (!m) return <Text style={style}>{value}</Text>;
+  const grouped = n.toLocaleString('en-IN');
+  return (
+    <Text style={style}>
+      {m[1]}
+      {grouped}
+      {m[3]}
+    </Text>
+  );
+}
+
+/** Live countdown to registration close. Keep in sync with the website's Season-5 window (Oct '26 – Feb '27). */
+const REG_CLOSE_AT = new Date('2027-02-28T23:59:59+05:30').getTime();
+
+function RegCountdown() {
+  const { t } = useLang();
+  const [now, setNow] = React.useState(() => Date.now());
+  React.useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const left = REG_CLOSE_AT - now;
+  if (left <= 0) return null;
+  const d = Math.floor(left / 86_400_000);
+  const h = Math.floor((left % 86_400_000) / 3_600_000);
+  const mi = Math.floor((left % 3_600_000) / 60_000);
+  const s = Math.floor((left % 60_000) / 1000);
+  const two = (x: number) => String(x).padStart(2, '0');
+  return (
+    <View style={styles.cdWrap}>
+      <Feather name="clock" size={12} color="#E8B23D" />
+      <Text style={styles.cdLabel}>{t('Registration closes in', 'रजिस्ट्रेशन बंद होने में')}</Text>
+      <Text style={styles.cdTime}>
+        {d}d {two(h)}:{two(mi)}:{two(s)}
+      </Text>
+    </View>
+  );
+}
+
 export default function HomeScreen() {
   const c = useColors();
   const router = useRouter();
@@ -132,6 +189,7 @@ export default function HomeScreen() {
                     <Feather name="arrow-right" size={16} color="#fff" style={{ marginLeft: 6 }} />
                   </LinearGradient>
                 </View>
+                <RegCountdown />
               </View>
             </View>
           </Pressable>
@@ -193,7 +251,7 @@ export default function HomeScreen() {
                 <View style={styles.statIconBox}>
                   <Feather name={s.icon as any} size={14} color="#FF6B00" />
                 </View>
-                <Text style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 18, marginTop: 10 }}>{s.v}</Text>
+                <CountUpStat value={s.v} style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 18, marginTop: 10 }} />
                 <Text style={{ color: c.mutedForeground, fontFamily: 'Inter_500Medium', fontSize: 11, marginTop: 4, lineHeight: 16 }}>{s.l}</Text>
               </View>
             ))}
@@ -317,6 +375,21 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  cdWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 12,
+    backgroundColor: 'rgba(9,19,44,0.55)',
+    borderColor: 'rgba(232,178,61,0.35)',
+    borderWidth: 1,
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    alignSelf: 'flex-start',
+  },
+  cdLabel: { color: 'rgba(255,255,255,0.75)', fontSize: 10.5, fontFamily: 'Inter_500Medium' },
+  cdTime: { color: '#E8B23D', fontSize: 11.5, fontFamily: 'Inter_700Bold', fontVariant: ['tabular-nums'] },
   statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
   statBox: {
     flexBasis: '46%',
@@ -456,11 +529,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 0,
     overflow: 'hidden',
-    alignItems: 'stretch',
+    alignItems: 'center',
+    minHeight: 96,
   },
   newsImage: {
-    width: 100,
-    height: '100%',
+    width: 108,
+    height: 96,
   },
   newsContent: {
     flex: 1,

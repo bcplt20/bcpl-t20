@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
+import * as WebBrowser from 'expo-web-browser';
 import { Feather } from '@expo/vector-icons';
 import { useColors } from '@/hooks/useColors';
 import { useAuth } from '@/context/AuthContext';
@@ -113,7 +114,7 @@ function LegalLinks() {
         {LEGAL_LINKS.map((l, i) => (
           <Pressable
             key={l.path}
-            onPress={() => Linking.openURL(`https://bcplt20.com${l.path}`)}
+            onPress={() => WebBrowser.openBrowserAsync(`https://bcplt20.com${l.path}`)}
             style={({ pressed }) => [
               styles.supportRow,
               i > 0 && { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: c.border },
