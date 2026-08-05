@@ -278,7 +278,7 @@ export function Contact() {
               <div className="glass-card" style={{padding:'28px',animation:'fadeSlide 0.7s ease 0.45s both'}}>
                 <div style={{fontFamily:'var(--font-head)',fontWeight:800,fontSize:15,color:'rgba(255,255,255,0.88)',marginBottom:16,display:'flex',alignItems:'center',gap:8}}><IcoPin size={16}/> Find Us</div>
                 <div style={{color:'rgba(255,255,255,0.72)',fontSize:13,lineHeight:1.8}}>
-                  <div>Kriparthi Playing 11 Pvt. Ltd.</div>
+                  <div>Kriparti India Pvt. Ltd.</div>
                   <div style={{color:'rgba(255,255,255,0.88)'}}>{t("Operating BCPL — Bhartiya Corporate Premier League","BCPL — Bhartiya Corporate Premier League का संचालन")}</div>
                   <div style={{color:'#FF7A29',fontWeight:600}}>www.bcplt20.com</div>
                   <div style={{color:'#06B6D4',fontWeight:600,marginTop:6}}>support@bcplt20.com</div>

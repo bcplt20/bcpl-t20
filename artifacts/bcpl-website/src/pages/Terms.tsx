@@ -87,7 +87,7 @@ export function Terms() {
     {top:'60%',left:'72%',color:'#E8B23D',delay:'0.9s',size:4},
   ];
 
-  // NOTE: Legal entity is stated as "Kriparthi Playing 11 Pvt. Ltd." per the
+  // NOTE: Legal entity is stated as "Kriparti India Pvt. Ltd." per the
   // owner-approved spec (matches LEGAL_ENTITY in api-server emailTheme.ts).
   // OWNER / COUNSEL DECISION REQUIRED: GST invoice/receipt templates print
   // "Kriparti India Pvt. Ltd." (as on the registered GSTIN). Confirm the
@@ -95,7 +95,7 @@ export function Terms() {
   const sections: {n:number;icon:React.ReactNode;titleEn:string;titleHi:string;items:string[]}[] = [
     {n:1,icon:<IcoCheck size={24}/>,titleEn:'Introduction, Acceptance & Versioning',titleHi:'परिचय, स्वीकृति और वर्जन',items:[
       'These Terms & Conditions govern your registration for and participation in the Bhartiya Corporate Premier League (BCPL) Season 5 on www.bcplt20.com',
-      'BCPL is operated by the legal entity Kriparthi Playing 11 Pvt. Ltd. ("BCPL", "we", "us"); www.bcplt20.com is the official platform',
+      'BCPL is operated by the legal entity Kriparti India Pvt. Ltd. ("BCPL", "we", "us"); www.bcplt20.com is the official platform',
       'These Terms apply to BCPL Season 5 unless expressly stated otherwise',
       'By registering, you accept these Terms & Conditions, the Privacy Notice, the Refund & Cancellation Policy and the Eligibility Criteria; together these form the agreement between you and BCPL',
       'These Terms are versioned; the document version you accept and the acceptance time are recorded with your registration',
@@ -160,7 +160,7 @@ export function Terms() {
     ]},
     {n:9,icon:<span style={{fontSize:24,lineHeight:1}}>©</span>,titleEn:'Intellectual Property, Image & Publicity',titleHi:'बौद्धिक संपदा, छवि और प्रचार',items:[
       'BCPL owns all match footage, broadcast content, highlight reels and official photographs',
-      'BCPL name, logo, team names and all associated marks are trademarks of BCPL / Kriparthi Playing 11 Pvt. Ltd.; unauthorised commercial use is prohibited and actionable',
+      'BCPL name, logo, team names and all associated marks are trademarks of BCPL / Kriparti India Pvt. Ltd.; unauthorised commercial use is prohibited and actionable',
       'By registering and participating, you grant BCPL permission to capture and use photographs, video, audio and broadcast coverage of you at BCPL registration, trials, auction and tournament activities for BCPL promotion, media and archival purposes',
       'You grant BCPL a licence to use your submitted trial video and related content for assessment, integrity, operational and reasonable promotional purposes connected with BCPL',
       'Players may share their own personal performance clips on social media for personal promotion, but may not license or sell BCPL content without explicit written consent',
@@ -310,8 +310,8 @@ export function Terms() {
                         "Contact our legal team at",
                         "हमारी legal team से संपर्क करें"
                       )} <strong style={{color:'#E8B23D'}}>support@bcplt20.com</strong>{t(
-                        " or write to: Kriparthi Playing 11 Pvt. Ltd., New Delhi, India.",
-                        " या लिखें: Kriparthi Playing 11 Pvt. Ltd., New Delhi, India."
+                        " or write to: Kriparti India Pvt. Ltd., New Delhi, India.",
+                        " या लिखें: Kriparti India Pvt. Ltd., New Delhi, India."
                       )}
                     </p>
                   </div>

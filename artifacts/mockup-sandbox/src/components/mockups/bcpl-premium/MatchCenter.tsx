@@ -456,7 +456,7 @@ export function MatchCenter() {
               </div>
               <div style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 12, color: "#E8B23D", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 12 }}>#OfficeSeStadiumtak</div>
               <div style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: "rgba(255,255,255,0.35)", lineHeight: 1.6 }}>
-                India's biggest corporate cricket league.<br />Season 5 · Kriparti Playing 11 Pvt. Ltd.
+                India's biggest corporate cricket league.<br />Season 5 · Kriparti India Pvt. Ltd.
               </div>
             </div>
 
@@ -478,7 +478,7 @@ export function MatchCenter() {
 
           <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", padding: "20px 0", display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
             <span style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: "rgba(255,255,255,0.25)" }}>
-              Season 5 · Kriparti Playing 11 Pvt. Ltd. · © 2025 · All Rights Reserved
+              Season 5 · Kriparti India Pvt. Ltd. · © 2025 · All Rights Reserved
             </span>
             <span style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800, fontSize: 11, letterSpacing: "0.1em", color: "#FF7A29" }}>#OfficeSeStadiumtak</span>
           </div>

@@ -47,7 +47,7 @@ const SECTIONS: Section[] = [
     n: 2, icon: IcoDoc, title: 'Definitions',
     blocks: [
       { kind: 'ul', items: [
-        'BCPL / we / us — the league operated by the legal entity Kriparthi Playing 11 Pvt. Ltd.',
+        'BCPL / we / us — the league operated by the legal entity Kriparti India Pvt. Ltd.',
         'Phase 1 fee — the role-based registration fee for the Phase 1 video-trial process, plus applicable GST.',
         'Phase 2 fee — the role-based physical-trial fee, plus applicable GST, payable only by players who are Phase 1 Qualified and choose to proceed.',
         'Video / submission — the prescribed Phase 1 trial video uploaded within the applicable upload window.',

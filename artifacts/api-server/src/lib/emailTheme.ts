@@ -131,7 +131,7 @@ export const WEBSITE = "bcplt20.com";
 // "Kriparti India Pvt. Ltd." (as printed on the registered GSTIN record).
 // That existing statutory wording is intentionally preserved there; the
 // marketing footer uses the spec wording below.
-export const LEGAL_ENTITY = "Kriparthi Playing 11 Pvt. Ltd.";
+export const LEGAL_ENTITY = "Kriparti India Pvt. Ltd.";
 export const HASHTAG = "#OfficeSeStadiumTak";
 
 /* ── Role formatting (SINGLE source of truth) ─────────────────────────────── */
@@ -673,7 +673,7 @@ export function renderSponsorStrip(list: SponsorRecord[]): string {
       // inline-block spans inside a text-align:center container: logos flow in
       // one line, and when they wrap, the leftover row stays CENTERED (owner
       // requirement — never left/side-aligned stragglers).
-      return `<span class="bcpl-sponsor" style="display:inline-block;vertical-align:middle;padding:6px 8px;">${cell}</span>`;
+      return `<div class="bcpl-sponsor" style="display:inline-block;vertical-align:middle;padding:6px 8px;">${cell}</div>`;
     })
     .join("");
 

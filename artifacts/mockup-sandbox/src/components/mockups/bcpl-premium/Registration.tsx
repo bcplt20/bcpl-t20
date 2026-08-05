@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 /*
   BCPL T20 — Bhartiya Corporate Premier League
   World's largest corporate cricket league for working professionals
-  Run by Kriparti Playing 11 Pvt. Ltd. | Brand Ambassador: Sourav Ganguly
+  Run by Kriparti India Pvt. Ltd. | Brand Ambassador: Sourav Ganguly
   ₹6 Cr Season 5 Prize Pool | 10 Franchise Teams | 21 Trial Cities
 
   TRIAL JOURNEY:

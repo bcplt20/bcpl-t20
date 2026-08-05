@@ -9,7 +9,7 @@
  * LEGAL ENTITY COPY REVIEW REQUIRED: the statutory supplier name below is
  * retained exactly as printed on the registered GSTIN record ("Kriparti
  * India Private Limited"), which differs from the marketing footer entity
- * ("Kriparthi Playing 11 Pvt. Ltd."). Do not "correct" a GST invoice name.
+ * ("Kriparti India Pvt. Ltd."). Do not "correct" a GST invoice name.
  */
 export const BCPL_LEGAL_NAME = "Kriparti India Private Limited";
 export const BCPL_GSTIN = "07AAHCK4053D1ZS";

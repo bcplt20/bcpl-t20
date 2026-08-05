@@ -841,7 +841,7 @@ export function Home() {
                 <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:900, fontSize:24, color:"#fff" }}>T20</span>
               </div>
               <div style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:11, color:"#E8B23D", letterSpacing:".12em", textTransform:"uppercase", marginBottom:10 }}>#OfficeSeStadiumtak</div>
-              <div style={{ fontFamily:"Inter,sans-serif", fontSize:13, color:"rgba(255,255,255,0.3)", lineHeight:1.6 }}>India's biggest corporate cricket league.<br/>Season 5 · Kriparti Playing 11 Pvt. Ltd.</div>
+              <div style={{ fontFamily:"Inter,sans-serif", fontSize:13, color:"rgba(255,255,255,0.3)", lineHeight:1.6 }}>India's biggest corporate cricket league.<br/>Season 5 · Kriparti India Pvt. Ltd.</div>
             </div>
             {[
               { header:"League",  links:["About","Teams","Sponsors","Schedule"] },
@@ -857,7 +857,7 @@ export function Home() {
             ))}
           </div>
           <div style={{ borderTop:"1px solid rgba(255,255,255,0.06)", padding:"20px 0", display:"flex", flexWrap:"wrap", justifyContent:"space-between", alignItems:"center", gap:12 }}>
-            <span style={{ fontFamily:"Inter,sans-serif", fontSize:12, color:"rgba(255,255,255,0.22)" }}>Season 5 · Kriparti Playing 11 Pvt. Ltd. · © 2026 · All Rights Reserved</span>
+            <span style={{ fontFamily:"Inter,sans-serif", fontSize:12, color:"rgba(255,255,255,0.22)" }}>Season 5 · Kriparti India Pvt. Ltd. · © 2026 · All Rights Reserved</span>
             <span style={{ fontFamily:"Montserrat,sans-serif", fontWeight:800, fontSize:11, letterSpacing:".1em", color:"#FF7A29" }}>#OfficeSeStadiumtak</span>
           </div>
         </div>

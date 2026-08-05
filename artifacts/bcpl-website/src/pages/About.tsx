@@ -275,7 +275,7 @@ export function About() {
             <div className="v3-h" style={{fontSize:'clamp(24px,3.5vw,34px)',color:'#fff',marginBottom:6,textTransform:'none'}}>Saurabh Jha</div>
             <div style={{fontFamily:'var(--font-head)',fontWeight:700,fontSize:14,color:'#FF7A29',letterSpacing:'.06em',marginBottom:20}}>{t("Founder & Chairman","संस्थापक और अध्यक्ष")}</div>
             <p style={{color:'rgba(255,255,255,0.88)',fontSize:15,lineHeight:1.8,maxWidth:620}}>
-              {t("Founder of the Bhartiya Corporate Premier League, operated by Kriparthi Playing 11 Pvt. Ltd. Saurabh built BCPL to give every working professional a real, fair shot at professional-grade cricket.","Bhartiya Corporate Premier League के संस्थापक, जो Kriparthi Playing 11 Pvt. Ltd. द्वारा संचालित है। Saurabh ने BCPL को इसलिए बनाया ताकि हर working professional को professional-grade cricket का एक असली, निष्पक्ष मौका मिले।")}
+              {t("Founder of the Bhartiya Corporate Premier League, operated by Kriparti India Pvt. Ltd. Saurabh built BCPL to give every working professional a real, fair shot at professional-grade cricket.","Bhartiya Corporate Premier League के संस्थापक, जो Kriparti India Pvt. Ltd. द्वारा संचालित है। Saurabh ने BCPL को इसलिए बनाया ताकि हर working professional को professional-grade cricket का एक असली, निष्पक्ष मौका मिले।")}
             </p>
           </div>
 
@@ -305,7 +305,7 @@ export function About() {
           <div className="glass-card" style={{padding:'clamp(20px,5vw,48px) clamp(16px,4vw,48px)',maxWidth:860,margin:'0 auto',border:'1px solid rgba(232,178,61,0.25)',animation:'borderGlow 3s ease infinite'}}>
             <div style={{display:'flex',flexWrap:'wrap',gap:32,alignItems:'center',marginBottom:32}}>
               <div style={{flex:1,minWidth:200}}>
-                <div style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:22,color:'#fff',marginBottom:8}}>Kriparthi Playing 11 Pvt. Ltd.</div>
+                <div style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:22,color:'#fff',marginBottom:8}}>Kriparti India Pvt. Ltd.</div>
                 <div style={{color:'var(--ink-3)',fontSize:13,fontFamily:'Inter,sans-serif'}}>Operating the Bhartiya Corporate Premier League · India</div>
               </div>
               <div style={{display:'flex',gap:20,flexWrap:'wrap'}}>

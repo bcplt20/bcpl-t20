@@ -235,7 +235,7 @@ export function Phase2KYC() {
             <div style={{ background:'rgba(255,255,255,0.02)', border:'1px solid rgba(255,255,255,0.06)', padding:'14px 20px', display:'flex', alignItems:'center', gap:12, marginBottom:24 }}>
               <span style={{ fontSize:24 }}>🔒</span>
               <div style={{ fontSize:12, color:'rgba(255,255,255,0.45)', lineHeight:1.6 }}>
-                <strong style={{ color:'rgba(255,255,255,0.7)' }}>Privacy Assured.</strong> Your documents are encrypted at rest and in transit (AES-256). We never share with third parties. Stored in compliance with the IT Act, 2000. Used exclusively for BCCI compliance and Kriparti Playing 11 records.
+                <strong style={{ color:'rgba(255,255,255,0.7)' }}>Privacy Assured.</strong> Your documents are encrypted at rest and in transit (AES-256). We never share with third parties. Stored in compliance with the IT Act, 2000. Used exclusively for BCCI compliance and Kriparti India records.
               </div>
             </div>
 
@@ -283,7 +283,7 @@ export function Phase2KYC() {
             </div>
           </div>
           <div style={{ borderTop:'1px solid rgba(255,255,255,0.05)', paddingTop:14, fontSize:11, color:'rgba(255,255,255,0.25)', display:'flex', justifyContent:'space-between', flexWrap:'wrap', gap:8 }}>
-            <span>Season 5 · Kriparti Playing 11 Pvt. Ltd.</span>
+            <span>Season 5 · Kriparti India Pvt. Ltd.</span>
             <span>© 2025 BCPL T20. All Rights Reserved.</span>
           </div>
         </div>
