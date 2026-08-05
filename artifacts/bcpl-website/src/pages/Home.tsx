@@ -192,15 +192,21 @@ export function Home() {
 
   /* Group A/B zero-filled mini standings for the home teaser (mirrors /points-table). */
   const homeGroups = React.useMemo(()=>{
-    const grpOf: Record<string,string> = {};
+    const norm = (n:string)=> (n||"").trim().toLowerCase();
+    const grpOf: Record<string,string> = {};   // normalized name -> group (first assignment wins)
+    const nameOf: Record<string,string> = {};  // normalized name -> display name
     liveMatches.forEach((m:any)=>{
       if (m.stage && m.stage!=="league") return;
       if (!m.grp) return;
-      grpOf[m.team1] = m.grp; grpOf[m.team2] = m.grp;
+      [m.team1, m.team2].forEach((team:string)=>{
+        const k = norm(team);
+        if (!k) return;
+        if (!grpOf[k]) { grpOf[k] = m.grp; nameOf[k] = team; }
+      });
     });
     const rows: Record<string, any> = {};
-    Object.keys(grpOf).forEach(team=>{ rows[team] = { team, grp: grpOf[team], played:0, won:0, lost:0, points:0, nrr:0 }; });
-    liveTable.forEach((r:any)=>{ if (rows[r.team]) rows[r.team] = { ...rows[r.team], ...r, grp: grpOf[r.team] }; });
+    Object.keys(grpOf).forEach(k=>{ rows[k] = { team: nameOf[k], grp: grpOf[k], played:0, won:0, lost:0, points:0, nrr:0 }; });
+    liveTable.forEach((r:any)=>{ const k = norm(r.team); if (rows[k]) rows[k] = { ...rows[k], ...r, team: rows[k].team, grp: grpOf[k] }; });
     const sortRows = (a:any,b:any)=> (b.points-a.points) || (Number(b.nrr)-Number(a.nrr)) || a.team.localeCompare(b.team);
     const A = Object.values(rows).filter((r:any)=>r.grp==="A").sort(sortRows);
     const B = Object.values(rows).filter((r:any)=>r.grp==="B").sort(sortRows);
