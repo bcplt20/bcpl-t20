@@ -848,7 +848,8 @@ function ContractModal({ c, sigImg, onClose }: { c: Contract; sigImg?: string; o
     const w = window.open("", "_blank");
     if (!w) return;
     const cType = c.contractType || "Player";
-    const esc = (t: string) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    const esc = (t: string) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    const eId = esc(c.id), ePlayer = esc(c.player), eTeam = esc(c.team), eType = esc(cType);
     // Split the plain-text contract into blocks: heavy-rule separators (━━━) become
     // printed dividers, and each CLAUSE/SCHEDULE/heading starts a new block. Short
     // blocks refuse to break across pages, so headings never get cut in half.
@@ -859,7 +860,7 @@ function ContractModal({ c, sigImg, onClose }: { c: Contract; sigImg?: string; o
       .filter(chunk => chunk.length > 0)
       .map(chunk => `<div class="sec${chunk.length < 1400 ? " keep" : ""}"><pre>${esc(chunk)}</pre></div>`)
       .join('<div class="rule"></div>');
-    w.document.write(`<!DOCTYPE html><html><head><title>${c.id} — BCPL ${cType} Contract</title>
+    w.document.write(`<!DOCTYPE html><html><head><title>${eId} — BCPL ${eType} Contract</title>
     <style>
       *{box-sizing:border-box;margin:0;padding:0}
       body{font-family:'Georgia',serif;font-size:11.5px;line-height:1.82;color:#1a1a1a;background:#fff;position:relative}
@@ -982,13 +983,13 @@ function ContractModal({ c, sigImg, onClose }: { c: Contract; sigImg?: string; o
         </div>
       </div>
       <div class="accent-bar"></div>
-      <div class="doc-title">OFFICIAL LEGAL DOCUMENT — ${cType.toUpperCase()} CONTRACT &nbsp;·&nbsp; ${COMPANY.season.toUpperCase()}</div>
+      <div class="doc-title">OFFICIAL LEGAL DOCUMENT — ${eType.toUpperCase()} CONTRACT &nbsp;·&nbsp; ${COMPANY.season.toUpperCase()}</div>
 
       <div class="body">
         <div class="contract-badge">
-          <h2>🏏 ${cType} Contract — ${COMPANY.season}</h2>
+          <h2>🏏 ${eType} Contract — ${COMPANY.season}</h2>
           <p>This is an official legally binding document issued under the authority of ${COMPANY.name}.</p>
-          <div class="ref">Ref: ${c.id} &nbsp;&nbsp;·&nbsp;&nbsp; Party: ${c.player} &nbsp;&nbsp;·&nbsp;&nbsp; ${c.team}</div>
+          <div class="ref">Ref: ${eId} &nbsp;&nbsp;·&nbsp;&nbsp; Party: ${ePlayer} &nbsp;&nbsp;·&nbsp;&nbsp; ${eTeam}</div>
         </div>
         ${sectionsHtml}
 
@@ -1005,7 +1006,7 @@ function ContractModal({ c, sigImg, onClose }: { c: Contract; sigImg?: string; o
       </div>
 
       <div class="pg-footer">
-        <span>Ref: <strong>${c.id}</strong> &nbsp;·&nbsp; ${cType} Contract</span>
+        <span>Ref: <strong>${eId}</strong> &nbsp;·&nbsp; ${eType} Contract</span>
         <span><strong>BCPL</strong> — ${COMPANY.name} &nbsp;·&nbsp; STRICTLY CONFIDENTIAL</span>
         <span>${COMPANY.email} &nbsp;·&nbsp; bcplt20.com</span>
       </div>
