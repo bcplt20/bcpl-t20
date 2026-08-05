@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link } from "wouter";
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
@@ -23,9 +23,6 @@ const ORANGE    = "#FF7A29";
 const GOLD      = "#E8B23D";
 const GREEN     = "#31C56B";
 const RED       = "#F26158";
-
-/* Number of teams in the playoff qualification zone (IPL-style). */
-const QUALIFY_TOP = 4;
 
 /* ─── Helpers ─────────────────────────────────────────── */
 const initials = (name: string) =>
@@ -350,7 +347,28 @@ export function MatchCenter() {
     );
   };
 
-  const showQualifyLine = points.length > QUALIFY_TOP;
+  /* Group A/B zero-filled standings (mirrors Home teaser & /points-table). */
+  const groups = useMemo(() => {
+    const normG = (n: string) => (n || "").trim().toLowerCase();
+    const grpOf: Record<string, string> = {};   // normalized name -> group (first assignment wins)
+    const nameOf: Record<string, string> = {};  // normalized name -> display name
+    matches.forEach((m: any) => {
+      if (m.stage && m.stage !== "league") return;
+      if (!m.grp) return;
+      [m.team1, m.team2].forEach((team: string) => {
+        const k = normG(team);
+        if (!k) return;
+        if (!grpOf[k]) { grpOf[k] = m.grp; nameOf[k] = team; }
+      });
+    });
+    const rows: Record<string, any> = {};
+    Object.keys(grpOf).forEach(k => { rows[k] = { team: nameOf[k], grp: grpOf[k], played: 0, won: 0, lost: 0, noResult: 0, points: 0, nrr: 0, form: [] }; });
+    points.forEach((r: any) => { const k = normG(r.team); if (rows[k]) rows[k] = { ...rows[k], ...r, team: rows[k].team, grp: grpOf[k] }; });
+    const sortRows = (a: any, b: any) => (b.points - a.points) || (Number(b.nrr) - Number(a.nrr)) || a.team.localeCompare(b.team);
+    const A = Object.values(rows).filter((r: any) => r.grp === "A").sort(sortRows);
+    const B = Object.values(rows).filter((r: any) => r.grp === "B").sort(sortRows);
+    return (A.length > 0 || B.length > 0) ? { A, B } : null;
+  }, [matches, points]);
 
   return (
     <div style={{ background: PAGE, minHeight: "100vh", color: TXT, fontFamily: "'Inter',sans-serif", overflowX: "hidden" }}>
@@ -540,7 +558,7 @@ export function MatchCenter() {
             POINTS TABLE — SEASON 4
           </h2>
 
-          {points.length === 0 && (
+          {!groups && (
             <div style={{ textAlign: "center", padding: "clamp(48px,8vw,72px) 24px", background: PANEL, borderRadius: 20, border: `1px solid ${LINE}`, boxShadow: "0 12px 34px rgba(0,0,0,.28)" }}>
               <div style={{ display: "flex", justifyContent: "center", marginBottom: 18 }}>
                 <span style={{ width: 76, height: 76, borderRadius: "50%", background: "rgba(232,178,61,0.16)", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
@@ -556,8 +574,11 @@ export function MatchCenter() {
             </div>
           )}
 
-          {points.length > 0 && (
-            <>
+          {groups && (["A", "B"] as const).map(g => groups[g].length === 0 ? null : (
+            <div key={g} style={{ marginBottom: 30 }}>
+              <div style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 17, letterSpacing: ".12em", color: GOLD, marginBottom: 12, textTransform: "uppercase" }}>
+                {t(`Group ${g}`, `ग्रुप ${g}`)}
+              </div>
               <div className="pts-table-wrap" style={{ background: PANEL, borderRadius: 20, border: `1px solid ${LINE}`, overflow: "hidden", boxShadow: "0 12px 34px rgba(0,0,0,.28)" }}>
                 <div className="pts-inner">
                   <div className="pts-grid pts-head">
@@ -571,21 +592,20 @@ export function MatchCenter() {
                     <div className="left">Form</div>
                     <div>Pts</div>
                   </div>
-                  {points.map((row: any, i: number) => {
+                  {groups[g].map((row: any, i: number, arr: any[]) => {
                     const pos = i + 1;
-                    const inZone = pos <= QUALIFY_TOP;
-                    const isZoneLast = showQualifyLine && pos === QUALIFY_TOP;
+                    const inZone = pos <= 2;
+                    const isZoneLast = pos === 2 && arr.length > 2;
                     const nrrNum = Number(row.nrr ?? 0);
                     const nrrStr = (nrrNum >= 0 ? "+" : "") + nrrNum.toFixed(3);
                     const posGrad =
                       pos === 1 ? "linear-gradient(135deg,#E8B23D,#FFD873)" :
                       pos === 2 ? "linear-gradient(135deg,#9AA3B0,#CBD2DB)" :
-                      pos === 3 ? "linear-gradient(135deg,#B45309,#D97706)" :
                       "rgba(255,255,255,.10)";
                     return (
-                      <div key={row.id ?? i} className={`pts-grid pts-row2${inZone ? " qualify" : ""}${isZoneLast ? " qualify-last" : ""}`}>
+                      <div key={row.team} className={`pts-grid pts-row2${inZone ? " qualify" : ""}${isZoneLast ? " qualify-last" : ""}`}>
                         <div className="stick stick-pos">
-                          <span style={{ width: 30, height: 30, borderRadius: "50%", background: posGrad, display: "inline-flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 12, color: pos <= 3 ? "#0C1D33" : TXT3, boxShadow: pos <= 3 ? "0 2px 6px rgba(0,0,0,.3)" : "none" }}>{pos}</span>
+                          <span style={{ width: 30, height: 30, borderRadius: "50%", background: posGrad, display: "inline-flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 12, color: pos <= 2 ? "#0C1D33" : TXT3, boxShadow: pos <= 2 ? "0 2px 6px rgba(0,0,0,.3)" : "none" }}>{pos}</span>
                         </div>
                         <div className="left stick stick-team">
                           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -605,14 +625,14 @@ export function MatchCenter() {
                   })}
                 </div>
               </div>
+            </div>
+          ))}
 
-              {showQualifyLine && (
-                <div style={{ display: "inline-flex", alignItems: "center", gap: 8, marginTop: 14, fontSize: 13, color: TXT3 }}>
-                  <span style={{ width: 12, height: 12, borderRadius: 3, background: "rgba(49,197,107,0.6)" }} />
-                  {t("Top 4 qualify for the playoffs", "टॉप 4 प्लेऑफ़ के लिए क्वालिफ़ाई करते हैं")}
-                </div>
-              )}
-            </>
+          {groups && (
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, marginTop: 2, fontSize: 13, color: TXT3 }}>
+              <span style={{ width: 12, height: 12, borderRadius: 3, background: "rgba(49,197,107,0.6)" }} />
+              {t("Top 2 of each group reach the semi finals", "हर group की top 2 टीमें semi final में")}
+            </div>
           )}
         </div>
       </section>
