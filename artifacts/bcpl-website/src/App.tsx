@@ -43,6 +43,10 @@ import { PlayerProfile }       from '@/pages/PlayerProfile';
 import { TrialPass }            from '@/pages/TrialPass';
 import { Players }             from '@/pages/Players';
 import { Trust }               from '@/pages/Trust';
+import { CorporateCricket }      from '@/pages/CorporateCricket';
+import { CorporateCricketDelhi } from '@/pages/CorporateCricketDelhi';
+import { HowToJoin }             from '@/pages/HowToJoin';
+import { OfficeCricketTeam }     from '@/pages/OfficeCricketTeam';
 import AdminPanel              from '@/admin/AdminPanel';
 
 // Staff trial-ops app — lazy: field staff only, keeps jsqr etc out of the main bundle
@@ -91,6 +95,12 @@ function Router() {
         <Route path="/contact"     component={Contact} />
         <Route path="/schedule"    component={Schedule} />
         <Route path="/points-table" component={PointsTable} />
+
+        {/* SEO keyword landing pages (non-brand search intent) */}
+        <Route path="/corporate-cricket"                 component={CorporateCricket} />
+        <Route path="/corporate-cricket-tournament-delhi" component={CorporateCricketDelhi} />
+        <Route path="/how-to-join"                       component={HowToJoin} />
+        <Route path="/office-cricket-team"               component={OfficeCricketTeam} />
 
         {/* Team detail */}
         <Route path="/team/:slug"  component={TeamDetail} />

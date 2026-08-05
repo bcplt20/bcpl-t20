@@ -25,3 +25,10 @@ uri = "file://attached_assets/sample-invoice.pdf"
 type = "pdf"
 title = "Sample GST Invoice (PDF)"
 description = "यह invoice PDF अब payment confirmation email के साथ attach होकर जाएगा — असली GST breakup के साथ।"
+
+[[outputs]]
+id = "Neblhd_mLtTuyj9Dwgb4A"
+uri = "file://attached_assets/sample-invoice-v2.pdf"
+type = "pdf"
+title = "नया Invoice PDF (sample)"
+description = "Season 5 logo navy chip पर, address और TAX INVOICE अलग-अलग, Rs. amounts साफ़"

@@ -17,6 +17,7 @@ const COLS: { title: string; links: [string, string][] }[] = [
   { title: "League",  links: [["About BCPL","/about"],["Teams","/teams"],["Players","/players"],["Match Center","/match-center"],["Schedule","/schedule"],["Points Table","/points-table"],["Sponsors","/sponsors"]] },
   { title: "Players", links: [["Register — Phase 1","/register"],["Player Login","__login"],["How Selection Works","/trust"],["Eligibility Criteria","/eligibility"],["Physical Trial Rules","/trial-rules"],["Cricket Rulebook","/cricket-rulebook"],["Code of Conduct","/code-of-conduct"],["FAQ","/faq"]] },
   { title: "Media",   links: [["Photo Gallery","/photos"],["Videos","/videos"],["Contact Us","/contact"]] },
+  { title: "Guides",  links: [["Corporate Cricket in India","/corporate-cricket"],["Corporate Cricket Tournament Delhi","/corporate-cricket-tournament-delhi"],["How to Join","/how-to-join"],["Office Cricket Team","/office-cricket-team"]] },
   { title: "Legal",   links: [["Privacy Policy","/privacy"],["Terms & Conditions","/terms"],["Refund Policy","/refunds"],["Brand & Logo Usage","/brand-usage"]] },
 ];
 
@@ -31,8 +32,9 @@ export function BCPLFooter() {
     <footer style={{ background:"var(--bg-deep)", borderTop:"1px solid rgba(255,255,255,.05)", padding:"clamp(36px,5vw,56px) 0 20px", fontFamily:"Montserrat,Inter,sans-serif" }}>
       <style>{`
         .bcpl-foot-wrap { max-width:1200px; margin:0 auto; padding:0 clamp(16px,4vw,40px); }
-        .bcpl-foot-cols { display:grid; grid-template-columns:240px repeat(4,1fr); gap:36px; margin-bottom:36px; }
-        @media(max-width:1000px){ .bcpl-foot-cols{grid-template-columns:1fr 1fr 1fr 1fr;} .bcpl-foot-brand{grid-column:1/-1;} }
+        .bcpl-foot-cols { display:grid; grid-template-columns:220px repeat(5,1fr); gap:28px; margin-bottom:36px; }
+        @media(max-width:1200px){ .bcpl-foot-cols{grid-template-columns:1fr 1fr 1fr 1fr 1fr;} .bcpl-foot-brand{grid-column:1/-1;} }
+        @media(max-width:1000px){ .bcpl-foot-cols{grid-template-columns:1fr 1fr 1fr;} .bcpl-foot-brand{grid-column:1/-1;} }
         @media(max-width:640px){ .bcpl-foot-cols{grid-template-columns:1fr 1fr;} .bcpl-foot-brand{grid-column:1/-1;} }
         .bcpl-foot-link:hover{ color:#FF7A29!important; }
         .bcpl-soc:hover{ border-color:#FF7A29!important; background:rgba(255,122,41,.12)!important; }

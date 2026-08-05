@@ -31,6 +31,7 @@ import { requireAdmin } from "../middlewares/adminAuth";
 import { logger } from "../lib/logger";
 import { z } from "zod";
 import { organizationLd, faqPageLd, sportsEventLd, renderJsonLd } from "../lib/jsonLd";
+import { LANDING_PAGES, breadcrumbLd, landingFaqLd } from "../lib/landingSeo";
 import { fetchGscSummary, type GscSummaryResult } from "../lib/gsc";
 
 const router = Router();
@@ -70,6 +71,11 @@ const PAGE_DEFAULTS: PageMetaDefault[] = [
   { path: "/privacy",       label: "Privacy Policy",  title: "Privacy Policy | BCPL T20", description: "How BCPL T20 collects, uses and protects your personal information." },
   { path: "/refunds",       label: "Refund Policy",   title: "Refund Policy | BCPL T20", description: "BCPL T20 registration fee refund rules for Phase 1 and Phase 2." },
   { path: "/terms",         label: "Terms & Conditions", title: "Terms & Conditions | BCPL T20", description: "Terms and conditions for participating in BCPL T20 Season 5." },
+  /* ─── SEO keyword landing pages (non-brand search intent) ───────────── */
+  { path: "/corporate-cricket", label: "Corporate Cricket Guide", title: "Corporate Cricket in India: What is BCPL T20?", description: "Corporate cricket explained: a T20 league for working professionals. Who plays, the format, the season timeline and how to register for BCPL T20." },
+  { path: "/corporate-cricket-tournament-delhi", label: "Delhi-NCR Guide", title: "Corporate Cricket Tournament in Delhi-NCR | BCPL T20", description: "A corporate cricket tournament for Delhi-NCR working professionals. How Delhi corporate employees join, trials in the region and how to register." },
+  { path: "/how-to-join",   label: "How to Join Guide", title: "How to Join a Corporate Cricket League in India", description: "Step-by-step guide: register, submit a 30–60s video, get a result in 48h, attend physical trials and enter the auction. Join BCPL T20." },
+  { path: "/office-cricket-team", label: "Office Cricket Team Guide", title: "Office Cricket Team Tournament | Join BCPL T20", description: "Bring your office cricket team to BCPL T20. How colleagues join individually, the teamwork and fitness angle, and how registration works." },
 ];
 
 const KNOWN_PATHS = new Set(PAGE_DEFAULTS.map((p) => p.path));
@@ -385,6 +391,14 @@ async function buildJsonLd(reqPath: string): Promise<string> {
 
   if (reqPath === "/faq") {
     objects.push(faqPageLd(SITE_ORIGIN));
+  }
+
+  // SEO keyword landing pages: BreadcrumbList (Home → page) + FAQPage built
+  // from the same Q/A text the page renders.
+  const landing = LANDING_PAGES.find((p) => p.path === reqPath);
+  if (landing) {
+    objects.push(breadcrumbLd(landing, SITE_ORIGIN));
+    objects.push(landingFaqLd(landing, SITE_ORIGIN));
   }
 
   if (reqPath === "/match-center" || reqPath === "/schedule") {
