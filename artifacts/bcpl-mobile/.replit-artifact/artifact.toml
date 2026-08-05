@@ -1,0 +1,24 @@
+kind = "mobile"
+previewPath = "/mobile/"
+title = "BCPL T20 Mobile App"
+description = "Mobile companion app for the Bhartiya Corporate Premier League (BCPL) T20 cricket league. Players log in with phone OTP to see their registration/KYC dashboard, live match center with scores, schedule, points table, and league news."
+version = "1.0.0"
+id = "artifacts/bcpl-mobile"
+router = "expo-domain"
+
+[[services]]
+name = "expo"
+ensurePreviewReachable = "/status"
+paths = [ "/mobile/" ]
+localPort = 21290
+
+[services.development]
+run = "pnpm --filter @workspace/bcpl-mobile run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/bcpl-mobile", "run", "build" ]
+run = [ "pnpm", "--filter", "@workspace/bcpl-mobile", "run", "serve" ]
+
+[services.env]
+PORT = "21290"
+BASE_PATH = "/mobile/"

@@ -72,5 +72,12 @@ description = "Google Workspace (info@bcplt20.com) की profile photo के �
 id = "0oHNtTYNs_b785k8iYVvs"
 uri = "file://deliverables/BCPL-Franchise-Prospectus.pdf"
 type = "pdf"
-title = "BCPL Franchise Prospectus (6 pages)"
-description = "Franchise ownership prospectus — 5-season illustrative projections, revenue model, investment structure, and legal terms & conditions. WhatsApp/email-ready."
+title = "BCPL Franchise Prospectus v5 (16 पेज)"
+description = "Premium franchise prospectus — contents, league at a glance, process timeline, responsibility matrix, risk factors, 2-page FAQ, acknowledgment slip"
+
+[[outputs]]
+id = "he7l54eQ2LD6U9arys6TK"
+uri = "file://deliverables/BCPL-Season4-Sponsorship-Deck.pdf"
+type = "pdf"
+title = "BCPL Season 4 Sponsorship Deck (13 slides)"
+description = "IPL-style partner deck — Title, Powered By, Jersey (10 teams), Associate, Timeout, Umpire tiers with realistic pricing, audience & broadcast benefits, deliverables matrix"

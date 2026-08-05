@@ -48,4 +48,5 @@
 - [Legal consent capture](legal-consent-capture.md) — consents jsonb only via atomic recordConsentKey merge (never JS-merge); EVERY pay entry point (incl. resume) needs consent UI+payload; LEGAL_APPROVAL_PENDING flag gates go-live
 - [Match cards & reveal ban](match-cards-ui.md) — one shared colorful MatchCard (logos, stage badges, countdown, useTeamMeta cache); reveal/scroll-fade animations banned site-wide; visible branding = Season 4
 - [Scalability audit Aug'26](scale-audit-2026.md) — indexes/N+1/cache fixed; next bottlenecks = polling + per-process rate limits; ~300–800 concurrent as-is
+- [Season-4 paid carryover](legacy-carryover.md) — legacy paid phones OTP-login straight to Phase-2 KYC (both fees waived, 2-season promise); metrics on phase1Status='selected' must expect no payment rows
 - [Sponsor tiers & logos](sponsor-tiers.md) — sponsors array order = tier hierarchy (contiguous runs); logo uploads auto-processed to white PNG via admin-tools endpoint with sharp DoS guards
