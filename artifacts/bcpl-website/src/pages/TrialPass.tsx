@@ -169,7 +169,7 @@ export function TrialPass() {
               <div className="tp-card">
                 <div className="tp-head">
                   <div>
-                    <div style={{ font: '900 17px var(--font-head)', color: '#212C49', letterSpacing: '0.04em' }}>BCPL T20</div>
+                    <div style={{ font: '900 17px var(--font-head)', color: '#212C49', letterSpacing: '0.04em' }}>BCPL</div>
                     <div style={{ font: '700 13px var(--font-body)', color: 'rgba(22,35,68,0.75)', letterSpacing: '0.1em' }}>PHYSICAL TRIAL PASS</div>
                   </div>
                   <div style={{ font: '800 14px var(--font-head)', color: '#212C49', background: 'rgba(255,255,255,0.72)', borderRadius: 8, padding: '7px 13px', letterSpacing: '0.02em' }}>

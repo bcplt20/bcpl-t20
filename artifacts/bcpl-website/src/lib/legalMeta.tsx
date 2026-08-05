@@ -125,9 +125,9 @@ export function LegalDocHeader({ doc }: { doc: LegalDocKey }) {
 
       {/* ── PRINT-ONLY: letterhead band ── */}
       <div className="legal-print-only legal-letterhead" aria-hidden="true">
-        <img src={logoSrc} alt="BCPL T20" />
+        <img src={logoSrc} alt="BCPL" />
         <div className="legal-letterhead-org">
-          <div className="lh-name">Bhartiya Corporate Premier League (BCPL T20)</div>
+          <div className="lh-name">Bhartiya Corporate Premier League (BCPL)</div>
           <div className="lh-sub">An initiative of Kriparti India Private Limited</div>
           <div className="lh-meta">bcplt20.com&nbsp;·&nbsp;info@bcplt20.com</div>
         </div>
@@ -135,7 +135,7 @@ export function LegalDocHeader({ doc }: { doc: LegalDocKey }) {
 
       {/* ── PRINT-ONLY: fixed footer (repeats on every page) ── */}
       <div className="legal-print-only legal-print-footer" aria-hidden="true">
-        © BCPL T20 — Official document. Unauthorized reproduction, copying or republication is prohibited.
+        © BCPL — Official document. Unauthorized reproduction, copying or republication is prohibited.
         &nbsp;·&nbsp; v{meta.version} · {t(lastUpdatedEn, lastUpdatedHi)}
       </div>
 

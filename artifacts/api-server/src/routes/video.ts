@@ -240,7 +240,7 @@ router.post("/confirm", requireAuth, async (req: AuthRequest, res) => {
       void (async () => {
         const [em, sm, wa] = await Promise.all([
           sendEmail({ to: user.email, toName: user.name, ...email }),
-          sendSms(user.phone, "BCPL T20: Your trial video has been received! It will now go through BCPL's Phase 1 evaluation. We'll notify you when your result is ready. -BCPL T20", { smsType: "video_submitted", smsFlowVars: [user.name] }),
+          sendSms(user.phone, "BCPL: Your trial video has been received! It will now go through BCPL's Phase 1 evaluation. We'll notify you when your result is ready. -BCPL", { smsType: "video_submitted", smsFlowVars: [user.name] }),
           sendWhatsApp({ phone: user.phone, templateName: WA.VIDEO_SUBMITTED, bodyValues: [user.name] }),
         ]);
         await logNotifications(user.id, "video_submitted", { email: em, sms: sm, whatsapp: wa });
@@ -376,8 +376,8 @@ export async function sendVideoReminders(opts?: { dryRun?: boolean }): Promise<n
 
     const email = tplVideoReminder(user.name, daysLeft);
     const smsText = isMid
-      ? "BCPL T20: Only " + daysLeft + " days left to upload your trial video! Login at bcplt20.com to upload. -BCPL T20"
-      : "BCPL T20 URGENT: Only 1 day left! Upload your trial video NOW before your window closes. bcplt20.com -BCPL T20";
+      ? "BCPL: Only " + daysLeft + " days left to upload your trial video! Login at bcplt20.com to upload. -BCPL"
+      : "BCPL URGENT: Only 1 day left! Upload your trial video NOW before your window closes. bcplt20.com -BCPL";
     // The reserve-first row above (email/video_reminder_dN) is the dedupe
     // authority; here we record the REAL per-channel outcome so a failed
     // reminder is never mislabelled as sent in the logs.

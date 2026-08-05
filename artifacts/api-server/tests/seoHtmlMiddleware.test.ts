@@ -158,7 +158,7 @@ describe("seoHtmlMiddleware — saved SEO settings are served in HTML", () => {
     expect(org).toBeTruthy();
     expect(org!.url).toBe("https://bcplt20.com");
     expect(org!.logo).toContain("bcpl-logo-color.jpg");
-    expect(org!.name).toMatch(/BCPL/);
+    expect(org!.name).toMatch(/Bhartiya Corporate Premier League/);
   });
 });
 
@@ -167,7 +167,7 @@ describe("seoHtmlMiddleware — default fallback when nothing saved", () => {
     // /faq has no override saved (only /about is) → its PAGE_DEFAULTS win.
     const res = await request(app).get("/faq");
     expect(res.status).toBe(200);
-    expect(res.text).toContain("<title>BCPL T20 FAQ");
+    expect(res.text).toContain("<title>BCPL FAQ");
     expect(res.text).toMatch(/name="description" content="Answers to common BCPL/);
     expect(res.text).not.toContain("DEFAULT TITLE PLACEHOLDER");
     expect(res.text).not.toContain("default description placeholder");

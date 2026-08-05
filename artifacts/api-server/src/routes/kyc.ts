@@ -90,7 +90,7 @@ export async function markKycVerified(kycId: string, registrationId: string, use
     void (async () => {
       const [em, sm, wa] = await Promise.all([
         sendEmail({ to: user.email, toName: user.name, ...email }),
-        sendSms(user.phone, `BCPL T20: KYC verified! Trial city: ${reg.trialCity ?? "TBD"}. We will notify you when trial venue is announced. -BCPL T20`, { smsType: "kyc_complete", smsFlowVars: [reg.trialCity ?? "TBD"] }),
+        sendSms(user.phone, `BCPL: KYC verified! Trial city: ${reg.trialCity ?? "TBD"}. We will notify you when trial venue is announced. -BCPL`, { smsType: "kyc_complete", smsFlowVars: [reg.trialCity ?? "TBD"] }),
         sendWhatsApp({ phone: user.phone, templateName: WA.KYC_COMPLETE, bodyValues: [user.name, reg.trialCity ?? "TBD"] }),
       ]);
       await logNotifications(user.id, "kyc_complete", { email: em, sms: sm, whatsapp: wa });
@@ -112,7 +112,7 @@ export async function notifyKycRejected(registrationId: string, userId: string, 
   }
   const email = tplKycRejected(user.name, reason);
   const dedupe = "kyc_rejected_" + registrationId;
-  const smsMsg = "BCPL T20: Your KYC could not be verified and needs re-submission. Please login at bcplt20.com and re-submit your KYC details. -BCPL T20";
+  const smsMsg = "BCPL: Your KYC could not be verified and needs re-submission. Please login at bcplt20.com and re-submit your KYC details. -BCPL";
   const [em, sm, wa] = await Promise.all([
     sendEmail({ to: user.email, toName: user.name, ...email }, { outboxMeta: { userId, template: "kyc_rejected", dedupeKey: dedupe + "_email" } }),
     sendSms(user.phone, smsMsg, { smsType: "kyc_rejected", smsFlowVars: [user.name], outboxMeta: { userId, template: "kyc_rejected", dedupeKey: dedupe + "_sms" } }),

@@ -95,7 +95,7 @@ async function notifyPhase1Success(
 ) {
   const regNo = reg.regNumber ?? reg.id.slice(0, 8).toUpperCase();
   const email = tplPhase1Receipt(user.name, reg.role, amount, regNo, reg.trialCity ?? "TBD");
-  const smsMsg = "Welcome to BCPL T20 Season 5! Registered as " + formatRole(reg.role) + ". Reg No: " + regNo + ". Upload trial video within " + windowDays + " days. #OfficeSeStadiumtak";
+  const smsMsg = "Welcome to BCPL Season 5! Registered as " + formatRole(reg.role) + ". Reg No: " + regNo + ". Upload trial video within " + windowDays + " days. #OfficeSeStadiumtak";
 
   // Best-effort GST invoice PDF attachment from the REAL gross amount paid.
   // A PDF failure must NEVER block the receipt — on error we send without it.
@@ -136,7 +136,7 @@ async function notifyPhase2Success(
 
   const [em, sm, wa] = await Promise.all([
     sendEmail({ to: user.email, toName: user.name, ...email, ...(attachments ? { attachments } : {}) }),
-    sendSms(user.phone, `BCPL T20: Phase 2 payment of ₹${amount} confirmed!${idLine} Please complete your KYC. -BCPL T20`, { smsType: "phase2_receipt", smsFlowVars: [`₹${amount}`, regNo ?? ""] }),
+    sendSms(user.phone, `BCPL: Phase 2 payment of ₹${amount} confirmed!${idLine} Please complete your KYC. -BCPL`, { smsType: "phase2_receipt", smsFlowVars: [`₹${amount}`, regNo ?? ""] }),
     sendWhatsApp({ phone: user.phone, templateName: WA.PHASE2_RECEIPT, bodyValues: [user.name, `₹${amount}`] }),
   ]);
   await logNotifications(user.id, "phase2_receipt", { email: em, sms: sm, whatsapp: wa });

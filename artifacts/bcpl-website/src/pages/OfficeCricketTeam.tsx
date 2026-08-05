@@ -114,10 +114,10 @@ export function OfficeCricketTeam() {
     <LandingLayout
       active="About"
       kicker="For office groups & colleagues"
-      h1={<>Bring Your <span className="shimmer-gold">Office Cricket Team</span> to BCPL T20</>}
+      h1={<>Bring Your <span className="shimmer-gold">Office Cricket Team</span> to BCPL</>}
       intro={
         <p className="lp-p" style={{ fontSize: 'clamp(15px,2.2vw,18px)' }}>
-          Turn the office WhatsApp group into a real cricket campaign. BCPL T20 is a corporate cricket league where
+          Turn the office WhatsApp group into a real cricket campaign. BCPL is a corporate cricket league where
           colleagues from the same company can take part together — great for teamwork and fitness. Registration is
           individual, so here is exactly how a group from one office joins.
         </p>

@@ -711,7 +711,7 @@ function campaignHtml(bodyText: string): string {
   <div style="padding:28px 32px;">${paragraphs}</div>
   <div style="padding:18px 32px 22px;background:#040C18;border-top:1px solid rgba(255,255,255,0.06);text-align:center;">
     <p style="color:rgba(255,255,255,0.25);font-size:10px;margin:0;line-height:1.7;">
-      BCPL T20 · Kriparti India Pvt. Ltd.<br/>India's Corporate Cricket League · bcplt20.com
+      BCPL · Kriparti India Pvt. Ltd.<br/>India's Corporate Cricket League · bcplt20.com
     </p>
   </div>
 </div>`;

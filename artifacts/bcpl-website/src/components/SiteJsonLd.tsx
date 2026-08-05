@@ -26,8 +26,8 @@ function organizationLd() {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "BCPL T20 — Bhartiya Corporate Premier League",
-    alternateName: "BCPL T20",
+    name: "Bhartiya Corporate Premier League",
+    alternateName: "BCPL",
     url: SITE_ORIGIN,
     logo: `${SITE_ORIGIN}/bcpl-assets/bcpl-logo-color.jpg`,
     description:
@@ -63,7 +63,7 @@ function faqPageLd(fees: FeeConfig) {
     { q: "What happens at the physical trial?", a: "Phase 2 is a physical, standardised cricket trial conducted at authorised venues. You are assessed against a role-specific 100-point framework using the applicable attempt rules for your role." },
     { q: "Does Auction Pool qualification guarantee a team?", a: "No. Qualification for the BCPL Auction Pool means eligibility to participate in the applicable player-auction process. Auction Pool qualification does not guarantee purchase by a team, a player contract, remuneration, squad selection or tournament participation." },
     { q: "What payment methods are accepted?", a: "We accept all major UPI apps (GPay, PhonePe, Paytm, etc.), debit and credit cards (Visa, Mastercard, RuPay), net banking from 50+ banks, and popular wallets. All payments are processed securely via Cashfree." },
-    { q: "When is BCPL Season 5?", a: "Video trials run from July–August 2025. Physical trials take place August–September 2025. The main BCPL T20 season (matches) runs September–November 2025. The finale is expected in late November 2025." },
+    { q: "When is BCPL Season 5?", a: "Video trials run from July–August 2025. Physical trials take place August–September 2025. The main BCPL season (matches) runs September–November 2025. The finale is expected in late November 2025." },
   ];
 
   return {
@@ -88,12 +88,12 @@ function sportsEventLd(m: any) {
   const obj: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "SportsEvent",
-    name: `${m.team1} vs ${m.team2} — BCPL T20 Season ${m.season}`,
+    name: `${m.team1} vs ${m.team2} — BCPL Season ${m.season}`,
     sport: "Cricket",
     eventStatus: eventStatusFor(String(m.status)),
     eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
     url: `${SITE_ORIGIN}/match-center`,
-    organizer: { "@type": "Organization", name: "BCPL T20 — Bhartiya Corporate Premier League", url: SITE_ORIGIN },
+    organizer: { "@type": "Organization", name: "Bhartiya Corporate Premier League", url: SITE_ORIGIN },
     competitor: [
       { "@type": "SportsTeam", name: m.team1 },
       { "@type": "SportsTeam", name: m.team2 },

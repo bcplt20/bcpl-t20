@@ -40,7 +40,7 @@ function buildContractText(c: Contract): string {
 function buildEmployeeContract(c: Contract): string {
   const today = new Date(c.date||Date.now()).toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"});
   const expiry = new Date(c.expiry||Date.now()).toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"});
-  return `BCPL T20 — EMPLOYMENT CONTRACT
+  return `BCPL — EMPLOYMENT CONTRACT
 ${COMPANY.season} · Contract Ref: ${c.id}
 
 THIS EMPLOYMENT CONTRACT ("Agreement") is entered into on ${today} by and between:
@@ -61,7 +61,7 @@ The Company appoints the Employee in the role of ${c.role} effective ${today}.
 Duration: ${today} to ${expiry}.
 
 CLAUSE 2 — DUTIES & RESPONSIBILITIES
-The Employee shall perform all duties as assigned by the management related to the BCPL T20 Season 5 operations, including but not limited to coordination, execution, reporting, and any other tasks directed by the designated manager.
+The Employee shall perform all duties as assigned by the management related to the BCPL Season 5 operations, including but not limited to coordination, execution, reporting, and any other tasks directed by the designated manager.
 
 CLAUSE 3 — COMPENSATION
 Fixed Monthly Remuneration: ₹${c.amount.toLocaleString("en-IN")} (${numberToWords(c.amount)} Rupees).
@@ -426,7 +426,7 @@ Subject to Delhi High Court jurisdiction.`;
 function buildCoachContract(c: Contract): string {
   const today = new Date(c.date||Date.now()).toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"});
   const expiry = new Date(c.expiry||Date.now()).toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"});
-  return `BCPL T20 — COACHING SERVICES AGREEMENT
+  return `BCPL — COACHING SERVICES AGREEMENT
 ${COMPANY.season} · Contract Ref: ${c.id}
 
 THIS COACHING AGREEMENT ("Agreement") is made on ${today} between:
@@ -444,13 +444,13 @@ Franchise / Assignment: ${c.team}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 CLAUSE 1 — ENGAGEMENT
-BCPL engages the Coach as ${c.role} for the franchise team ${c.team} for BCPL T20 ${COMPANY.season}.
+BCPL engages the Coach as ${c.role} for the franchise team ${c.team} for BCPL ${COMPANY.season}.
 Contract Period: ${today} to ${expiry}.
 
 CLAUSE 2 — DUTIES & RESPONSIBILITIES
 The Coach shall:
 a) Conduct regular training sessions, fitness drills, and skill clinics for the squad
-b) Develop and implement the team's tactical approach for BCPL T20
+b) Develop and implement the team's tactical approach for BCPL
 c) Manage on-field strategy during matches, including batting order and field placements
 d) Mentor players in their individual and collective performance
 e) Attend all team meetings, selection panels, and BCPL coaching conferences
@@ -498,7 +498,7 @@ Date:              ${today}`;
 function buildOperationsContract(c: Contract): string {
   const today = new Date(c.date||Date.now()).toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"});
   const expiry = new Date(c.expiry||Date.now()).toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"});
-  return `BCPL T20 — SERVICE AGREEMENT (OPERATIONS & TOURNAMENT STAFF)
+  return `BCPL — SERVICE AGREEMENT (OPERATIONS & TOURNAMENT STAFF)
 ${COMPANY.season} · Contract Ref: ${c.id}
 
 THIS SERVICE AGREEMENT ("Agreement") is entered into on ${today} by and between:
@@ -516,7 +516,7 @@ Assigned Event/Team: ${c.team}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 CLAUSE 1 — SCOPE OF SERVICES
-The Staff Member is engaged to provide operational support services for BCPL T20 ${COMPANY.season} in the capacity of ${c.role}.
+The Staff Member is engaged to provide operational support services for BCPL ${COMPANY.season} in the capacity of ${c.role}.
 Engagement Period: ${today} to ${expiry}.
 
 CLAUSE 2 — RESPONSIBILITIES
@@ -571,7 +571,7 @@ function buildPlayerContract(c: Contract): string {
   const today = new Date(c.date||Date.now()).toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"});
   const expiry = new Date(c.expiry||Date.now()).toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"});
   const amtWords = numberToWords(c.amount);
-  return `BCPL T20 — PLAYER PARTICIPATION CONTRACT
+  return `BCPL — PLAYER PARTICIPATION CONTRACT
 ${COMPANY.season}
 
 Contract Reference: ${c.id}
@@ -600,7 +600,7 @@ Both collectively referred to as "the Parties".
 
 RECITALS
 
-WHEREAS, the Company operates the Bhartiya Corporate Premier League (BCPL T20), a professional Twenty-20 cricket tournament open to working professionals across India;
+WHEREAS, the Company operates the Bhartiya Corporate Premier League (BCPL), a professional Twenty-20 cricket tournament open to working professionals across India;
 
 WHEREAS, the Player has successfully completed Phase 1 online screening, uploaded a performance video, and cleared the Phase 2 physical trial conducted by authorised BCPL scouts;
 

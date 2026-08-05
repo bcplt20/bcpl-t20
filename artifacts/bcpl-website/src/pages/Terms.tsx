@@ -319,7 +319,7 @@ export function Terms() {
               </div>
 
               <div className="glass-card" style={{padding:'clamp(24px,4vw,36px)',textAlign:'center'}}>
-                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(19px,3vw,23px)',marginBottom:10,lineHeight:1.2}}>{t("Ready to Join BCPL T20?","BCPL T20 join करने के लिए तैयार हैं?")}</div>
+                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(19px,3vw,23px)',marginBottom:10,lineHeight:1.2}}>{t("Ready to Join BCPL?","BCPL join करने के लिए तैयार हैं?")}</div>
                 <p style={{color:'rgba(255,255,255,0.88)',fontSize:14,marginBottom:22,lineHeight:1.6}}>
                   {t(
                     "By registering, you accept these terms. See you on the field!",

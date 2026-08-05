@@ -30,7 +30,7 @@ import {
 } from "./emailTheme";
 
 const API_KEY    = process.env.BREVO_API_KEY;
-const FROM_NAME  = "BCPL T20";
+const FROM_NAME  = "Bhartiya Corporate Premier League";
 
 /**
  * Single source of truth for where admin alert emails go
@@ -132,7 +132,7 @@ export function tplPhase1Receipt(name: string, role: string, amount: number, reg
   // GST-inclusive) — never hardcoded tax numbers.
   const g = gstFromGross(amount);
   return {
-    subject: "BCPL T20 Season 5 — Registration Confirmed",
+    subject: "Bhartiya Corporate Premier League Season 5 — Registration Confirmed",
     htmlContent: EmailShell(`
       ${HeroStatus({ iconUrl: ICONS.check(COLORS.green), ring: COLORS.green, titleColor: COLORS.green, title: "REGISTRATION CONFIRMED", subtitle: "BCPL Season 5 · Phase 1 Trials", iconAlt: "Registration confirmed" })}
       ${StepProgress(0)}
@@ -168,7 +168,7 @@ export function tplPhase1Receipt(name: string, role: string, amount: number, reg
 // ── Template 2: Video Submitted (redesigned per spec §11) ─────────────────────
 export function tplVideoSubmitted(name: string) {
   return {
-    subject: "BCPL T20 — Video Received",
+    subject: "Bhartiya Corporate Premier League — Video Received",
     htmlContent: EmailShell(`
       ${HeroStatus({ iconUrl: ICONS.video(COLORS.blue), ring: COLORS.blue, titleColor: COLORS.blue, title: "VIDEO RECEIVED", subtitle: "Your Phase 1 trial video has been submitted successfully." })}
       ${StepProgress(1)}
@@ -194,7 +194,7 @@ export function tplVideoSubmitted(name: string) {
 export function tplVideoReminder(name: string, daysLeft: number) {
   if (daysLeft <= 1) {
     return {
-      subject: "BCPL T20 — Final Day to Upload Your Trial Video",
+      subject: "Bhartiya Corporate Premier League — Final Day to Upload Your Trial Video",
       htmlContent: EmailShell(`
         ${HeroStatus({ iconUrl: ICONS.alert(COLORS.red), ring: COLORS.red, titleColor: COLORS.red, title: "FINAL DAY", subtitle: "Only 1 day left to upload your trial video." })}
         ${StepProgress(1)}
@@ -215,7 +215,7 @@ export function tplVideoReminder(name: string, daysLeft: number) {
     };
   }
   return {
-    subject: `BCPL T20 — ${daysLeft} Days Left to Upload Your Trial Video`,
+    subject: `Bhartiya Corporate Premier League — ${daysLeft} Days Left to Upload Your Trial Video`,
     htmlContent: EmailShell(`
       ${HeroStatus({ iconUrl: ICONS.clock(COLORS.amber), ring: COLORS.amber, titleColor: COLORS.amber, title: `${daysLeft} DAYS LEFT`, subtitle: "Upload your Phase 1 trial video." })}
       ${StepProgress(1)}
@@ -238,7 +238,7 @@ export function tplVideoReminder(name: string, daysLeft: number) {
 // ── Template 3c: Video re-upload required (validation failed) ────────────────
 export function tplVideoReuploadRequired(name: string, reasonLine: string) {
   return {
-    subject: "BCPL T20 — A New Video Upload Is Needed",
+    subject: "Bhartiya Corporate Premier League — A New Video Upload Is Needed",
     htmlContent: EmailShell(`
       ${HeroStatus({ iconUrl: ICONS.video(COLORS.amber), ring: COLORS.amber, titleColor: COLORS.amber, title: "NEW UPLOAD NEEDED", subtitle: "We could not accept your Phase 1 trial video." })}
       ${Greeting(name, ["We were unable to accept your Phase 1 trial video."])}
@@ -277,7 +277,7 @@ export function tplPhase1ResultReady(name: string) {
 // ── Template 7: Phase 1 Qualified (sent on first view of the result) ─────────
 export function tplPhase1Selected(name: string) {
   return {
-    subject: "BCPL T20 — Phase 1 Cleared, Phase 2 Awaits",
+    subject: "Bhartiya Corporate Premier League — Phase 1 Cleared, Phase 2 Awaits",
     htmlContent: EmailShell(`
       ${HeroStatus({ iconUrl: ICONS.trophy(COLORS.green), ring: COLORS.green, titleColor: COLORS.green, title: "PHASE 1 CLEARED", subtitle: "Next Milestone — Phase 2 Physical Trials" })}
       ${StepProgress(2)}
@@ -303,7 +303,7 @@ export function tplPhase2Receipt(name: string, amount: number, regNo?: string) {
   // GST-inclusive) — never hardcoded tax numbers.
   const g = gstFromGross(amount);
   return {
-    subject: "BCPL T20 — Phase 2 Payment Confirmed",
+    subject: "Bhartiya Corporate Premier League — Phase 2 Payment Confirmed",
     htmlContent: EmailShell(`
       ${HeroStatus({ iconUrl: ICONS.check(COLORS.gold), ring: COLORS.gold, titleColor: COLORS.gold, title: "PHASE 2 PAYMENT CONFIRMED", subtitle: "BCPL Season 5 · Physical Trials" })}
       ${StepProgress(3)}
@@ -347,7 +347,7 @@ export function tplPhase2Receipt(name: string, amount: number, regNo?: string) {
 // ── Template 9: Trial Venue Announced (Phase 2) ────────────────────────────────
 export function tplTrialVenueAnnounced(name: string, city: string, venue: string, date: string, time: string, reportingTime: string) {
   return {
-    subject: `BCPL T20 — Phase 2 Trial Details for ${city}`,
+    subject: `Bhartiya Corporate Premier League — Phase 2 Trial Details for ${city}`,
     htmlContent: EmailShell(`
       ${HeroStatus({ iconUrl: ICONS.pin(COLORS.gold), ring: COLORS.gold, titleColor: COLORS.gold, title: "TRIAL VENUE ANNOUNCED", subtitle: `${esc(city)} — Phase 2 Physical Trials` })}
       ${StepProgress(4)}
@@ -363,7 +363,7 @@ export function tplTrialVenueAnnounced(name: string, city: string, venue: string
         accent: COLORS.gold,
         children: `
           <div style="font-size:10px;color:${COLORS.inkFaint};letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">What to Bring</div>
-          <div style="font-size:13px;color:${COLORS.inkSoft};line-height:1.9;">Aadhaar Card (original)<br/>PAN Card (original)<br/>Your cricket kit (optional — kit available on site)<br/>Water bottle and light refreshments<br/>BCPL T20 jersey (if received)</div>`,
+          <div style="font-size:13px;color:${COLORS.inkSoft};line-height:1.9;">Aadhaar Card (original)<br/>PAN Card (original)<br/>Your cricket kit (optional — kit available on site)<br/>Water bottle and light refreshments<br/>Bhartiya Corporate Premier League jersey (if received)</div>`,
       })}
       ${NoteBox("Late arrivals may not be accommodated. Please reach 30 minutes before the trial time.", COLORS.red)}
       ${PrimaryCTA("VIEW VENUE DETAILS", `${SITE_URL}/register/result`, COLORS.gold)}
@@ -394,7 +394,7 @@ export function tplTrialCompleted(p: { firstName: string; roleLabel: string; tri
 // ── Template 10: KYC Complete ──────────────────────────────────────────────────
 export function tplKycComplete(name: string, city: string) {
   return {
-    subject: "BCPL T20 — KYC Verified",
+    subject: "Bhartiya Corporate Premier League — KYC Verified",
     htmlContent: EmailShell(`
       ${HeroStatus({ iconUrl: ICONS.check(COLORS.green), ring: COLORS.green, titleColor: COLORS.green, title: "KYC VERIFIED", subtitle: "Your identity verification is complete." })}
       ${Greeting(name, [
@@ -413,7 +413,7 @@ export function tplKycComplete(name: string, city: string) {
 // ── Template 10b: KYC Rejected — resubmission guidance ───────────────────────
 export function tplKycRejected(name: string, reason?: string) {
   return {
-    subject: "BCPL T20 — Action Needed: Your KYC Could Not Be Verified",
+    subject: "Bhartiya Corporate Premier League — Action Needed: Your KYC Could Not Be Verified",
     htmlContent: EmailShell(`
       ${HeroStatus({ iconUrl: ICONS.alert(COLORS.red), ring: COLORS.red, titleColor: COLORS.red, title: "KYC NOT VERIFIED", subtitle: "Your KYC has been marked for re-submission." })}
       ${Greeting(name, ["We were unable to verify your KYC and it has been marked for re-submission."])}
@@ -515,7 +515,7 @@ export function tplInvoice(p: {
       <td align="right" style="padding:${strong ? "12px 0 0" : "8px 0"};${strong ? `border-top:2px solid rgba(255,122,41,0.35);` : `border-bottom:1px solid ${COLORS.line};`}font-family:inherit;font-size:${strong ? 16 : 12}px;color:${strong ? COLORS.orange : COLORS.ink};font-weight:${strong ? 900 : 600};">${v}</td>
     </tr>`;
   return {
-    subject: `BCPL T20 — Tax Invoice ${p.invoiceNo}`,
+    subject: `Bhartiya Corporate Premier League — Tax Invoice ${p.invoiceNo}`,
     htmlContent: EmailShell(`
       ${HeroStatus({ iconUrl: ICONS.doc(COLORS.orange), ring: COLORS.orange, titleColor: COLORS.orange, title: "TAX INVOICE", subtitle: `Invoice No: ${esc(p.invoiceNo)} · ${esc(dateStr)}` })}
       <p style="font-family:inherit;font-size:11px;color:${COLORS.inkFaint};text-align:center;margin:0 0 18px;">HSN/SAC: 999299 — Sports Event Services · GST 18% (CGST 9% + SGST 9%)</p>
@@ -534,7 +534,7 @@ export function tplInvoice(p: {
           <div style="font-size:11px;color:${COLORS.inkSoft};margin-top:3px;">TXN ID: <span style="font-family:monospace;">${esc(p.txnId)}</span> · Method: Cashfree</div>`,
       })}
       <div style="background:${COLORS.surface};border:1px solid ${COLORS.line};border-radius:12px;padding:16px 18px;margin-bottom:16px;">
-        <div style="font-family:inherit;font-size:12px;color:${COLORS.ink};font-weight:700;margin-bottom:2px;">BCPL T20 Season 5 — Phase ${p.phase} Registration</div>
+        <div style="font-family:inherit;font-size:12px;color:${COLORS.ink};font-weight:700;margin-bottom:2px;">Bhartiya Corporate Premier League Season 5 — Phase ${p.phase} Registration</div>
         <div style="font-family:inherit;font-size:11px;color:${COLORS.inkFaint};margin-bottom:12px;">${desc}</div>
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
           ${row("Taxable Value (Base)", `&#8377;${inr(base)}`)}
@@ -552,12 +552,12 @@ export function tplInvoice(p: {
 export function tplPhase1PaymentReminder(name: string, city: string, urgent: boolean) {
   return {
     subject: urgent
-      ? "Your BCPL T20 registration is still incomplete"
-      : "Complete your BCPL T20 registration — payment pending",
+      ? "Your Bhartiya Corporate Premier League registration is still incomplete"
+      : "Complete your Bhartiya Corporate Premier League registration — payment pending",
     htmlContent: EmailShell(`
-      ${HeroStatus({ iconUrl: ICONS.clock(COLORS.orange), ring: COLORS.orange, titleColor: COLORS.orange, title: "PAYMENT PENDING", subtitle: "Your BCPL T20 registration is not complete yet." })}
+      ${HeroStatus({ iconUrl: ICONS.clock(COLORS.orange), ring: COLORS.orange, titleColor: COLORS.orange, title: "PAYMENT PENDING", subtitle: "Your Bhartiya Corporate Premier League registration is not complete yet." })}
       ${Greeting(name, [
-        `Your BCPL T20 Season 5 registration${city ? ` for <strong>${esc(city)}</strong>` : ""} is saved, but the Phase 1 payment is still pending.`,
+        `Your Bhartiya Corporate Premier League Season 5 registration${city ? ` for <strong>${esc(city)}</strong>` : ""} is saved, but the Phase 1 payment is still pending.`,
         "Complete the payment to receive your Player ID and start your 15-day video window.",
       ])}
       ${NoteBox("Sign in with your registered phone number — your details are already filled in.")}
@@ -602,7 +602,7 @@ export function tplReferralMilestone(name: string, paidCount: number, reward: st
 // ── Template: Trial Pass Allocated ───────────────────────────────────────────
 export function tplTrialPass(name: string, venue: string, city: string, date: string, reportingTime: string, batch: string) {
   return {
-    subject: `BCPL T20 — Your Trial Pass Is Ready (${city})`,
+    subject: `Bhartiya Corporate Premier League — Your Trial Pass Is Ready (${city})`,
     htmlContent: EmailShell(`
       ${HeroStatus({ iconUrl: ICONS.ticket(COLORS.green), ring: COLORS.green, titleColor: COLORS.green, title: "TRIAL PASS READY", subtitle: `${esc(city)} — Physical Trials` })}
       ${StepProgress(4)}

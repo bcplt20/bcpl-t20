@@ -175,8 +175,8 @@ async function deliver(c: Candidate, phase: 1 | 2): Promise<boolean> {
     ? tplPhase1PaymentReminder(c.name, c.city ?? "", c.bucket === "h72")
     : tplPhase2PaymentReminder(c.name);
   const smsText = phase === 1
-    ? "BCPL T20: Your registration is saved but Phase 1 payment is pending. Complete it at bcplt20.com to get your Player ID. -BCPL T20"
-    : "BCPL T20: Phase 1 cleared! Your Phase 2 payment is pending. Complete it at bcplt20.com to continue to KYC and trials. -BCPL T20";
+    ? "BCPL: Your registration is saved but Phase 1 payment is pending. Complete it at bcplt20.com to get your Player ID. -BCPL"
+    : "BCPL: Phase 1 cleared! Your Phase 2 payment is pending. Complete it at bcplt20.com to continue to KYC and trials. -BCPL";
 
   const [em, sm] = await Promise.allSettled([
     sendEmail({ to: c.email, toName: c.name, subject: email.subject, htmlContent: email.htmlContent }),

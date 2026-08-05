@@ -181,7 +181,7 @@ async function processRelease(evalRow: EvalRow, cfg: Phase1Config, out: ReleaseR
       // §82: the release notification is outcome-neutral — the result itself
       // (and the §83 congratulations, on first view) live in the dashboard.
       const email = tplPhase1ResultReady(row.name);
-      const sms = "BCPL T20: Hi " + row.name + ", your Phase 1 result is now available. View it in your Player Dashboard at bcplt20.com -BCPL T20";
+      const sms = "BCPL: Hi " + row.name + ", your Phase 1 result is now available. View it in your Player Dashboard at bcplt20.com -BCPL";
       const results = await Promise.allSettled([
         sendEmail({ to: row.email, toName: row.name, ...email }),
         sendSms(row.phone, sms),

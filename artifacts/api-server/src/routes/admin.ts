@@ -200,7 +200,7 @@ router.post("/session", async (req, res) => {
         const mm = String(lockedUntil.getMinutes()).padStart(2, "0");
         const smsMsg =
           `BCPL ALERT: Admin login locked after ${globalLoginFails.fails} failed attempts. ` +
-          `Locked until ${hh}:${mm}. Possible attack in progress. - BCPL T20`;
+          `Locked until ${hh}:${mm}. Possible attack in progress. - BCPL`;
         sendSms(alertPhone, smsMsg)
           .then(r => { if (!r.ok) console.error("[ADMIN][ALERT] lockdown alert SMS failed", r.error ?? "(skipped)"); })
           .catch(e => console.error("[ADMIN][ALERT] lockdown alert SMS failed", e));
@@ -448,7 +448,7 @@ router.put("/registrations/:id/phase1-status", async (req, res) => {
           .returning({ id: notificationLogsTable.id });
         if (reserved.length > 0) {
           const tpl = tplPhase1ResultReady(name);
-          const smsMsg = "BCPL T20: Hi " + name + ", your Phase 1 result is now available. View it in your Player Dashboard at bcplt20.com -BCPL T20";
+          const smsMsg = "BCPL: Hi " + name + ", your Phase 1 result is now available. View it in your Player Dashboard at bcplt20.com -BCPL";
           // Don't await — fire and forget
           sendEmail({ to: email, toName: name, subject: tpl.subject, htmlContent: tpl.htmlContent })
             .catch(e => console.error("[admin] email failed", e));
@@ -765,7 +765,7 @@ router.post("/trial-venues/:id/announce", async (req, res) => {
       );
       const emailRes = await sendEmail({ to: user.email, toName: user.name, subject: tpl.subject, htmlContent: tpl.htmlContent });
       if (emailRes.ok || emailRes.skipped) {
-        await sendSms(user.phone, `BCPL T20 Season 5: Your Phase 2 trial is confirmed! Venue: ${venueRow.venue}, ${venueRow.city} on ${venueRow.trialDate} at ${venueRow.trialTime}. Reporting: ${venueRow.reportingTime}. - BCPL T20`).catch(() => {});
+        await sendSms(user.phone, `BCPL Season 5: Your Phase 2 trial is confirmed! Venue: ${venueRow.venue}, ${venueRow.city} on ${venueRow.trialDate} at ${venueRow.trialTime}. Reporting: ${venueRow.reportingTime}. - BCPL`).catch(() => {});
         sent++;
       }
     }

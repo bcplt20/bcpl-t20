@@ -373,7 +373,7 @@ export async function failVideoForReupload(
   const email = tplVideoReuploadRequired(row.user.name, reasonLine);
   await Promise.allSettled([
     sendEmail({ to: row.user.email, toName: row.user.name, ...email }),
-    sendSms(row.user.phone, "BCPL T20: We could not accept your trial video. " + reasonLine + " Upload again at bcplt20.com -BCPL T20"),
+    sendSms(row.user.phone, "BCPL: We could not accept your trial video. " + reasonLine + " Upload again at bcplt20.com -BCPL"),
   ]);
   return true;
 }

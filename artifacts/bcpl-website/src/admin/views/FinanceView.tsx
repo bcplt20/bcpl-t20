@@ -126,7 +126,7 @@ function InvoiceModal({ txn, onClose }: { txn: Txn; onClose: () => void }) {
               <body>
               <div class="lh">
                 <div class="logo"><img src="${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/bcpl-ball-color.jpg"/></div>
-                <div><div class="lh-title">BCPL T20 — Bhartiya Corporate Premier League</div>
+                <div><div class="lh-title">Bhartiya Corporate Premier League</div>
                 <div class="lh-sub">2nd Floor Back Side, RZ-108, Indra Park, Uttam Nagar, West Delhi — 110059</div></div>
               </div>
               <div class="body">
@@ -160,7 +160,7 @@ function InvoiceModal({ txn, onClose }: { txn: Txn; onClose: () => void }) {
                 <table>
                   <thead><tr><th>Description</th><th>HSN</th><th>Rate</th><th>Qty</th><th>Taxable Amount</th></tr></thead>
                   <tbody>
-                    <tr><td>BCPL T20 Season 5 — ${txn.type} Registration<br/><span style="font-size:9px;color:#888">${txn.type==="Phase 1"?"Phase 1 Video Assessment &amp; Registration":"Physical Trial Entry &amp; Franchise Auction Eligibility"}</span></td>
+                    <tr><td>BCPL Season 5 — ${txn.type} Registration<br/><span style="font-size:9px;color:#888">${txn.type==="Phase 1"?"Phase 1 Video Assessment &amp; Registration":"Physical Trial Entry &amp; Franchise Auction Eligibility"}</span></td>
                     <td>999299</td><td>₹${base.toLocaleString()}</td><td>1</td><td>₹${base.toLocaleString()}</td></tr>
                   </tbody>
                 </table>
@@ -244,7 +244,7 @@ function InvoiceModal({ txn, onClose }: { txn: Txn; onClose: () => void }) {
             <tbody>
               <tr style={{ borderBottom:"1px solid #33436B" }}>
                 <td style={{ padding:"13px 12px", fontSize:12, color:"#F1F5F9", lineHeight:1.5 }}>
-                  BCPL T20 Season 5 — {txn.type} Registration<br/>
+                  BCPL Season 5 — {txn.type} Registration<br/>
                   <span style={{ fontSize:11, color:"#94A3C4" }}>{txn.type==="Phase 1" ? "Phase 1 Video Assessment & Registration" : "Physical Trial Entry & Franchise Auction Eligibility"}</span>
                 </td>
                 <td style={{ padding:"13px 12px", fontSize:11, color:"#A6B3D0", fontFamily:"monospace" }}>999299</td>
@@ -523,7 +523,7 @@ export default function FinanceView({ onNavigate, refreshTick = 0 }: { onNavigat
             const rows=TRANSACTIONS.filter(t=>t.status==="success").map(t=>{const g=gstFromGross(t.amount);return`<tr><td>BCPL/25-26/${t.id}</td><td>${t.name}</td><td>${t.email}</td><td>${t.type}</td><td>₹${inr(g.base)}</td><td>₹${inr(g.gst)}</td><td style="font-weight:bold;color:#FF6B00">₹${t.amount.toLocaleString()}</td></tr>`;}).join("");
             w.document.write(`<!DOCTYPE html><html><head><title>BCPL Bulk Invoices</title><style>body{font-family:Arial;font-size:11px;padding:20px}.header{display:flex;align-items:center;gap:16px;border-bottom:3px solid #FF6B00;padding-bottom:12px;margin-bottom:20px}.logo{width:52px;height:52px;border-radius:50%;overflow:hidden;border:2px solid #FF6B00}.logo img{width:100%;height:100%;object-fit:cover}h1{margin:0;font-size:18px;color:#FF6B00}p{margin:2px 0;font-size:10px;color:#555}table{width:100%;border-collapse:collapse}th{background:#FF6B00;color:#fff;padding:7px;text-align:left;font-size:10px}td{padding:6px;border-bottom:1px solid #eee;font-size:10px}tr:nth-child(even){background:#FFF5EE}.footer{margin-top:20px;font-size:9px;color:#999;border-top:1px solid #eee;padding-top:10px}@media print{body{padding:0}}</style></head><body>
             <div class="header"><div class="logo"><img src="${window.location.origin}${import.meta.env.BASE_URL}bcpl-assets/bcpl-ball-color.jpg"/></div>
-            <div><h1>BCPL T20 — Bulk GST Invoices</h1><p>Kriparti India Private Limited · GSTIN: ${BCPL_GSTIN}</p><p>Season 5 (2026–27) · Generated: ${new Date().toLocaleDateString("en-IN")}</p></div></div>
+            <div><h1>BCPL — Bulk GST Invoices</h1><p>Kriparti India Private Limited · GSTIN: ${BCPL_GSTIN}</p><p>Season 5 (2026–27) · Generated: ${new Date().toLocaleDateString("en-IN")}</p></div></div>
             <table><thead><tr><th>Invoice No</th><th>Player</th><th>Email</th><th>Phase</th><th>Base Amt</th><th>GST (18%)</th><th>Total</th></tr></thead><tbody>${rows||"<tr><td colspan=7 style='text-align:center;padding:20px;color:#999'>No successful transactions yet</td></tr>"}</tbody></table>
             <div class="footer">${BCPL_ADDR}</div></body></html>`);w.document.close();setTimeout(()=>w.print(),500);
           }} style={{ padding:"9px 16px", borderRadius:9, border:"1px solid #33436B", background:"transparent", color:"#C3CEE3", fontSize:12, cursor:"pointer" }}>📄 Bulk Invoices</button>

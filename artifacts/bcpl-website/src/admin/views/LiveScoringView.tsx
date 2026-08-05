@@ -598,7 +598,7 @@ export default function LiveScoringView() {
                 <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:12, flexWrap:"wrap", gap:8 }}>
                   <div style={{ display:"flex", alignItems:"center", gap:8 }}>
                     <span style={PILL(group.color)}>{m.status==="live"?"🔴 LIVE":m.status==="scheduled"?"📅 UPCOMING":"✅ RESULT"}</span>
-                    <span style={{ fontSize:11, color:"#94A3C4" }}>Match {m.matchNo} · BCPL T20 Season 5</span>
+                    <span style={{ fontSize:11, color:"#94A3C4" }}>Match {m.matchNo} · BCPL Season 5</span>
                   </div>
                   <span style={{ fontSize:11, color:"#94A3C4" }}>📍 {m.venue} · {m.date}</span>
                 </div>

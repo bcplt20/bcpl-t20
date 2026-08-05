@@ -17,7 +17,7 @@ export function CorporateCricketDelhi() {
         <>
           <p className="lp-p">
             Delhi-NCR is one of the busiest professional hubs in the country, and it is full of working professionals who
-            grew up playing cricket and never quite stopped loving it. BCPL T20 is a corporate cricket league built exactly
+            grew up playing cricket and never quite stopped loving it. BCPL is a corporate cricket league built exactly
             for them: a structured, franchise-style T20 competition open to working professionals, with Delhi-NCR as one of
             its trial regions.
           </p>
@@ -134,7 +134,7 @@ export function CorporateCricketDelhi() {
       h1={<>Corporate Cricket Tournament in <span className="shimmer-gold">Delhi-NCR</span></>}
       intro={
         <p className="lp-p" style={{ fontSize: 'clamp(15px,2.2vw,18px)' }}>
-          A corporate cricket tournament for Delhi-NCR working professionals. BCPL T20 lets office employees across
+          A corporate cricket tournament for Delhi-NCR working professionals. BCPL lets office employees across
           Delhi, Gurugram, Noida, Ghaziabad and Faridabad register online, submit a short cricket video and, if they
           advance, attend a physical trial in the region.
         </p>

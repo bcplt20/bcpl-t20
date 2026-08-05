@@ -77,7 +77,7 @@ export function HowToJoin() {
       body: (
         <>
           <p className="lp-p">
-            BCPL T20 is a corporate cricket league for working professionals across India. Before registering, it helps
+            BCPL is a corporate cricket league for working professionals across India. Before registering, it helps
             to know the basics so the process runs smoothly:
           </p>
           <LpBullets items={[
@@ -136,7 +136,7 @@ export function HowToJoin() {
       h1={<>How to Join a <span className="shimmer-gold">Corporate Cricket League</span> in India</>}
       intro={
         <p className="lp-p" style={{ fontSize: 'clamp(15px,2.2vw,18px)' }}>
-          Joining BCPL T20 is a clear, five-step process: register online, submit a 30–60 second cricket video, get your
+          Joining BCPL is a clear, five-step process: register online, submit a 30–60 second cricket video, get your
           result within 48 hours, attend a physical trial if you advance, and then the auction and team stage. Here is
           exactly how each step works.
         </p>

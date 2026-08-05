@@ -247,7 +247,7 @@ export default function UsersView({ onNavigate, initialQuick, refreshTick = 0 }:
               @media print{body{padding:0}}</style></head><body>
               <div class="header">
                 <div class="logo"><img src="/bcpl-website/bcpl-assets/bcpl-ball-color.jpg"/></div>
-                <div><h1>BCPL T20 — Player Report</h1>
+                <div><h1>BCPL — Player Report</h1>
                 <p>Bhartiya Corporate Premier League · Season 5 (2026–27)</p>
                 <p>Filter: ${quickLabels[quick]}${state!=="All States"?" · "+state:""}${city!=="All Cities"?" · "+city:""} · ${filtered.length} players · Generated: ${new Date().toLocaleDateString("en-IN")}</p></div>
               </div>
@@ -356,7 +356,7 @@ export default function UsersView({ onNavigate, initialQuick, refreshTick = 0 }:
             <span style={{ display:"inline-block", margin:"10px 0 4px", padding:"3px 10px", borderRadius:5, fontSize:11, fontWeight:700, background:roleColor(selected.role)+"22", color:roleColor(selected.role) }}>{selected.role}</span>
             <div style={{ display:"flex", gap:8, marginTop:12 }}>
               {selected.email ? (
-                <a href={`mailto:${selected.email}?subject=${encodeURIComponent("BCPL T20 — About your registration")}`}
+                <a href={`mailto:${selected.email}?subject=${encodeURIComponent("BCPL — About your registration")}`}
                   style={{ flex:1, padding:"9px 0", borderRadius:8, border:"none", background:"#33436B", color:"#C3CEE3", fontSize:11, cursor:"pointer", fontWeight:600, textDecoration:"none", textAlign:"center" }}>✉ Message</a>
               ) : (
                 <button disabled title="No email on record" style={{ flex:1, padding:"9px 0", borderRadius:8, border:"none", background:"#2C3A5E", color:"#8593B3", fontSize:11, cursor:"not-allowed", fontWeight:600 }}>✉ Message</button>

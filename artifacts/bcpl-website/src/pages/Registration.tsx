@@ -15,9 +15,9 @@ import { useFees, withGst } from '../lib/fees';
 import { IcoBat, IcoBall, IcoShield, IcoStar, IcoPen, IcoVideo, IcoClock, IcoStadium, IcoScale, IcoTrophy, IcoCheck, IcoSearch, IcoPin, IcoLock, IcoRupee, IcoList, IcoHourglass, IcoInfo, IcoChat, IcoWarn } from '../lib/icons';
 
 /*
-  BCPL T20 — Bhartiya Corporate Premier League
+  Bhartiya Corporate Premier League
   India's corporate cricket league for working professionals
-  Run by BCPL T20 Pvt. Ltd. | Brand Ambassador: Sourav Ganguly
+  Run by BCPL Pvt. Ltd. | Brand Ambassador: Sourav Ganguly
   ₹15 Cr+ Season 5 Prize Pool | 10 Franchise Teams | 50+ Trial Cities
 
   TRIAL JOURNEY:

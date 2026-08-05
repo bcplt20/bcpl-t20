@@ -109,7 +109,7 @@ async function buildPoster(name: string, code: string, link: string): Promise<HT
   } else {
     ctx.fillStyle = WHITE;
     ctx.font = "900 92px 'Barlow Condensed', sans-serif";
-    ctx.fillText('BCPL T20', W / 2, 220);
+    ctx.fillText('BCPL', W / 2, 220);
   }
 
   // ── Eyebrow ──

@@ -50,7 +50,7 @@ export const getMyReferral = () => playerReq<MyReferral>("/referral/me");
 /** Prefilled WhatsApp share (Hinglish — players share with colleagues). */
 export function whatsAppShareUrl(link: string): string {
   const msg =
-    "🏏 Maine BCPL T20 Season 5 ke liye register kar liya hai — India ki sabse badi corporate cricket league!\n\n" +
+    "🏏 Maine BCPL Season 5 ke liye register kar liya hai — India ki sabse badi corporate cricket league!\n\n" +
     "Tum bhi apna cricket talent dikhao. Mere personal link se register karo 👇\n" + link;
   return `https://wa.me/?text=${encodeURIComponent(msg)}`;
 }

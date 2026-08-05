@@ -33,7 +33,7 @@ export function buildValidityPrompt(args: {
 }): string {
   const role = ROLE_LABELS[args.roleKey];
   return [
-    "You are a video intake validator for a professional cricket trial (BCPL T20 Phase 1).",
+    "You are a video intake validator for a professional cricket trial (BCPL Phase 1).",
     "Your ONLY job is to judge whether this video can be reliably used to assess the candidate's cricket skills.",
     "",
     "Candidate (pseudonymous): " + args.candidateId,
@@ -102,7 +102,7 @@ export function buildScoringPrompt(args: {
 }): string {
   const role = ROLE_LABELS[args.roleKey];
   const lines: string[] = [
-    "You are an elite cricket talent scout scoring a BCPL T20 Phase 1 trial video.",
+    "You are an elite cricket talent scout scoring a BCPL Phase 1 trial video.",
     "Score STRICTLY from visible evidence. This is a professional selection — be rigorous and consistent.",
     "",
     "Candidate (pseudonymous): " + args.candidateId,

@@ -1,5 +1,5 @@
 /**
- * BCPL T20 — Master transactional email design system.
+ * Bhartiya Corporate Premier League — Master transactional email design system.
  *
  * ONE source of truth for every transactional email component. Every template
  * in lib/email.ts is built from these email-safe, table-based, inline-CSS
@@ -82,7 +82,7 @@ export const LOGO_URL = `${SITE_URL}/bcpl-assets/bcpl-logo-white.png`;
 // Full website header logo — the SAME asset SiteHeader renders on the dark
 // navy band (artifacts/bcpl-website/public/bcpl-assets/bcpl-logo-white.png, a
 // transparent-background white wordmark). Owner explicitly asked for the full
-// website logo in emails and to drop the "BCPL T20" font-text wordmark. The
+// website logo in emails and to drop the "Bhartiya Corporate Premier League" font-text wordmark. The
 // asset is served from PUBLIC_API_BASE + "/bcpl-assets/..." (same pattern the
 // dynamic ball logo already used). Its native ratio is 1600x469, so at a 48px
 // display height the width is ~164px.
@@ -224,7 +224,7 @@ export function medallion(iconUrl: string, ring = COLORS.gold, alt = ""): string
 // Deep navy band (#16223C — the darkest bookend, framing the mid-navy card)
 // carrying the FULL website logo image (the white wordmark SiteHeader shows)
 // and, below it, the identical "SEASON 5" gold pill the site uses. The old
-// "BCPL T20" font-text wordmark is removed per owner feedback. A thin gold rule
+// "Bhartiya Corporate Premier League" font-text wordmark is removed per owner feedback. A thin gold rule
 // closes the band. Table-based (Outlook-safe) so everything stays centered.
 export const Header = `
   <tr><td style="padding:28px 32px 22px;background:${COLORS.header};border-bottom:2px solid ${COLORS.goldSoft};text-align:center;">
@@ -755,7 +755,7 @@ export function SocialBar(): string {
 // inline-block already wraps gracefully where media queries are unsupported).
 export const LegalFooter = `
   <tr><td style="padding:20px 32px 28px;background:${COLORS.footerBand};border-top:1px solid rgba(255,255,255,0.12);text-align:center;">
-    <div style="font-family:${FONT};font-size:14px;color:${COLORS.footerLink};font-weight:800;letter-spacing:.5px;">BCPL T20</div>
+    <div style="font-family:${FONT};font-size:14px;color:${COLORS.footerLink};font-weight:800;letter-spacing:.5px;">Bhartiya Corporate Premier League</div>
     <div style="font-family:${FONT};font-size:13px;color:${COLORS.footer};margin-top:4px;">Bhartiya Corporate Premier League</div>
     <div style="font-family:${FONT};font-size:13px;color:${COLORS.footer};margin-top:8px;line-height:1.7;">An initiative of ${LEGAL_ENTITY}</div>
     <div style="margin-top:12px;line-height:1;">
@@ -794,7 +794,7 @@ export function EmailShell(body: string): string {
 </style>
 </head>
 <body style="margin:0;padding:0;background:${COLORS.outer};">
-  <div style="display:none;max-height:0;overflow:hidden;opacity:0;">BCPL T20 Season 5 — ${HASHTAG}</div>
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Bhartiya Corporate Premier League Season 5 — ${HASHTAG}</div>
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${COLORS.outer};">
     <tr><td align="center" style="padding:24px 12px;">
       <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px;background:${COLORS.card};border-radius:14px;overflow:hidden;border:1px solid ${COLORS.line};">

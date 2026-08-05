@@ -204,7 +204,7 @@ export default function DashboardView({ onNavigate, refreshTick = 0 }: { onNavig
       <div style={{ display:"flex", gap:10, flexWrap:"wrap", alignItems:"center", justifyContent:"space-between" }}>
         <div>
           <div style={{ fontSize:20, fontWeight:800, color:"#F1F5F9" }}>Dashboard</div>
-          <div style={{ fontSize:12, color:"#A6B3D0", marginTop:2 }}>BCPL T20 Season 5 · Live overview</div>
+          <div style={{ fontSize:12, color:"#A6B3D0", marginTop:2 }}>BCPL Season 5 · Live overview</div>
         </div>
         <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
           {[

@@ -172,14 +172,14 @@ const CODE_TEMPLATES: Array<{
   {
     name: "bcpl_phase1_receipt",
     category: "Utility",
-    body: "Hi {{1}}, your BCPL T20 Phase-1 registration is confirmed! Role: {{2}}, Trial City: {{3}}. Amount paid: Rs.{{4}}. Next step: upload your trial video at bcplt20.com - BCPL T20",
+    body: "Hi {{1}}, your BCPL Phase-1 registration is confirmed! Role: {{2}}, Trial City: {{3}}. Amount paid: Rs.{{4}}. Next step: upload your trial video at bcplt20.com - BCPL",
     varNames: ["name", "role", "trial_city", "amount"],
     sampleValues: ["Rahul Sharma", "Batsman", "Delhi", "599"],
   },
   {
     name: "bcpl_video_reminder",
     category: "Utility",
-    body: "Hi {{1}}, only {{2}} days left to upload your BCPL T20 trial video! Login at bcplt20.com and upload now. - BCPL T20",
+    body: "Hi {{1}}, only {{2}} days left to upload your BCPL trial video! Login at bcplt20.com and upload now. - BCPL",
     varNames: ["name", "days_left"],
     sampleValues: ["Rahul Sharma", "5"],
   },
@@ -190,7 +190,7 @@ const CODE_TEMPLATES: Array<{
     // OWNER / COUNSEL DECISION REQUIRED: this is a provider-registered WhatsApp
     // template body — the wording change must be re-approved with the WhatsApp
     // provider before it takes effect on live sends.
-    body: "Hi {{1}}, your BCPL T20 trial video has been received! Your Phase 1 assessment will be completed within 15 working days. - BCPL T20",
+    body: "Hi {{1}}, your BCPL trial video has been received! Your Phase 1 assessment will be completed within 15 working days. - BCPL",
     varNames: ["name"],
     sampleValues: ["Rahul Sharma"],
   },
@@ -200,7 +200,7 @@ const CODE_TEMPLATES: Array<{
     // COPY COMPLIANCE: replaced ambiguous "SELECTED" with the precise stage name
     // "Phase 1 Qualified". OWNER / COUNSEL DECISION REQUIRED: provider-registered
     // WhatsApp template body — re-approve wording with the provider before live use.
-    body: "Congratulations {{1}}! You are Phase 1 Qualified in the BCPL T20 trials. Login at bcplt20.com to complete your Phase-2 registration. - BCPL T20",
+    body: "Congratulations {{1}}! You are Phase 1 Qualified in the BCPL trials. Login at bcplt20.com to complete your Phase-2 registration. - BCPL",
     varNames: ["name"],
     sampleValues: ["Rahul Sharma"],
   },
@@ -210,21 +210,21 @@ const CODE_TEMPLATES: Array<{
     // COPY COMPLIANCE: replaced ambiguous "not selected" with the precise stage
     // outcome "did not qualify for Phase 1". OWNER / COUNSEL DECISION REQUIRED:
     // provider-registered WhatsApp template body — re-approve with the provider.
-    body: "Hi {{1}}, thank you for participating in the BCPL T20 Phase-1 trials. You did not qualify for Phase 1 this time. Keep practicing! - BCPL T20",
+    body: "Hi {{1}}, thank you for participating in the BCPL Phase-1 trials. You did not qualify for Phase 1 this time. Keep practicing! - BCPL",
     varNames: ["name"],
     sampleValues: ["Rahul Sharma"],
   },
   {
     name: "bcpl_phase2_receipt",
     category: "Utility",
-    body: "Hi {{1}}, your BCPL T20 Phase-2 payment of Rs.{{2}} is confirmed! Complete your KYC at bcplt20.com to finish your registration. - BCPL T20",
+    body: "Hi {{1}}, your BCPL Phase-2 payment of Rs.{{2}} is confirmed! Complete your KYC at bcplt20.com to finish your registration. - BCPL",
     varNames: ["name", "amount"],
     sampleValues: ["Rahul Sharma", "2999"],
   },
   {
     name: "bcpl_kyc_complete",
     category: "Utility",
-    body: "Hi {{1}}, your BCPL T20 KYC is complete! You are all set for the {{2}} trials. See you on the ground! - BCPL T20",
+    body: "Hi {{1}}, your BCPL KYC is complete! You are all set for the {{2}} trials. See you on the ground! - BCPL",
     varNames: ["name", "trial_city"],
     sampleValues: ["Rahul Sharma", "Delhi"],
   },

@@ -198,7 +198,7 @@ describe("shell structure integrity", () => {
     expect(html).toContain("#OfficeSeStadiumTak");
     expect(html).toContain(SPONSOR_TOKEN);
     expect(html).toContain("Follow BCPL");
-    expect(html).toContain("Kriparthi Playing 11 Pvt. Ltd.");
+    expect(html).toContain("Kriparti India Pvt. Ltd.");
   });
 
   it("footer is responsive (stack hook + media query)", () => {

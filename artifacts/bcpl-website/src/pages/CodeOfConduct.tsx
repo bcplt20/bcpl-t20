@@ -95,7 +95,7 @@ export function CodeOfConduct() {
             </h1>
             <p style={{color:'var(--ink-3)',fontSize:12,marginTop:16,fontFamily:'Inter,sans-serif'}}>यह दस्तावेज़ English में मान्य है · This document is authoritative in English.</p>
             <p style={{color:'rgba(255,255,255,0.88)',fontSize:'clamp(14px,2vw,16px)',lineHeight:1.7,maxWidth:600,margin:'16px auto 0'}}>
-              BCPL T20 expects high standards of sportsmanship, professionalism and integrity from all participants. These standards apply during registration, trials, the auction and the tournament, in every trial city.
+              BCPL expects high standards of sportsmanship, professionalism and integrity from all participants. These standards apply during registration, trials, the auction and the tournament, in every trial city.
             </p>
           </div>
         </section>
@@ -188,7 +188,7 @@ export function CodeOfConduct() {
               <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>3. Off-Field Conduct</h2>
             </div>
             <p style={{color:'rgba(255,255,255,0.88)',fontSize:'clamp(14px,2vw,15px)',lineHeight:1.8,marginBottom:14}}>
-              Players represent BCPL T20 and the corporate cricket community beyond the boundary ropes. Professional conduct is expected in all public and digital spaces.
+              Players represent BCPL and the corporate cricket community beyond the boundary ropes. Professional conduct is expected in all public and digital spaces.
             </p>
             <div style={{display:'grid',gap:12}}>
               {([
@@ -244,7 +244,7 @@ export function CodeOfConduct() {
               <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>5. Anti-Doping Policy</h2>
             </div>
             <p style={{color:'rgba(255,255,255,0.88)',fontSize:'clamp(14px,2vw,15px)',lineHeight:1.8,marginBottom:14}}>
-              BCPL T20 follows recognised anti-doping principles aligned with WADA guidelines, in both letter and spirit. A clean sport is a fair sport.
+              BCPL follows recognised anti-doping principles aligned with WADA guidelines, in both letter and spirit. A clean sport is a fair sport.
             </p>
             <ul style={{listStyle:'none',display:'flex',flexDirection:'column',gap:10}}>
               {[
@@ -362,7 +362,7 @@ export function CodeOfConduct() {
             <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(18px,3vw,22px)',marginBottom:8}}>
               Ready to Play by the Rules?
             </div>
-            <p style={{color:'rgba(255,255,255,0.88)',fontSize:14,marginBottom:20}}>Register for BCPL T20 Season 5 and be part of the corporate cricket community.</p>
+            <p style={{color:'rgba(255,255,255,0.88)',fontSize:14,marginBottom:20}}>Register for BCPL Season 5 and be part of the corporate cricket community.</p>
             <Link href="/register" className="btn-fire" style={{padding:'14px 36px',fontSize:16,width:'100%',maxWidth:300,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register for Phase 1 →</Link>
           </div>
         </div>

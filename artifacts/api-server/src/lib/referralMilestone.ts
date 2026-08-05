@@ -90,8 +90,8 @@ export async function notifyReferralMilestone(input: MilestoneNotifyInput): Prom
     // ── Send on every channel we support, gated exactly like other senders ──
     const email = tplReferralMilestone(user.name, input.threshold, input.reward);
     const smsMsg =
-      `BCPL T20: Congrats ${user.name}! ${input.threshold} of your referred players have paid — ` +
-      `you have unlocked a referral reward: ${input.reward}. Our team will reach out. -BCPL T20`;
+      `BCPL: Congrats ${user.name}! ${input.threshold} of your referred players have paid — ` +
+      `you have unlocked a referral reward: ${input.reward}. Our team will reach out. -BCPL`;
 
     const [emRes, smRes, waRes] = await Promise.allSettled([
       user.email

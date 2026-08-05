@@ -23,7 +23,7 @@ export function CorporateCricket() {
             rules, one assessment framework and one competitive season.
           </p>
           <p className="lp-p">
-            BCPL T20 (the Bhartiya Corporate Premier League) is a corporate cricket league of exactly this kind. It runs a
+            BCPL (the Bhartiya Corporate Premier League) is a corporate cricket league of exactly this kind. It runs a
             franchise-style T20 competition in which working professionals from across India can register, be assessed on
             their cricket skills through a clear, evaluation-based process, and go on to play competitive matches. The idea
             is simple: give working professionals a real, fair route back onto a cricket field — from the office to the
@@ -39,7 +39,7 @@ export function CorporateCricket() {
           <p className="lp-p">
             The whole point of corporate cricket is that you do not need to be a professional cricketer to take part. What
             matters is that you are a working professional with some cricket experience and a genuine appetite to compete.
-            In BCPL T20 that includes:
+            In BCPL that includes:
           </p>
           <LpBullets items={[
             'Salaried employees from any sector or industry',
@@ -62,7 +62,7 @@ export function CorporateCricket() {
       body: (
         <>
           <p className="lp-p">
-            BCPL T20 is played in the T20 format — the fast, high-energy version of the game that most Indian fans grew up
+            BCPL is played in the T20 format — the fast, high-energy version of the game that most Indian fans grew up
             watching. Teams are franchise squads, and players who progress through the assessment stages can enter an
             auction pool through which those franchise squads are formed. It is the closest a working professional can
             realistically get to the franchise-cricket experience: proper grounds, a structured competition and a season
@@ -121,10 +121,10 @@ export function CorporateCricket() {
     <LandingLayout
       active="About"
       kicker="Corporate Cricket in India"
-      h1={<>Corporate Cricket in India: <span className="shimmer-gold">What is BCPL T20?</span></>}
+      h1={<>Corporate Cricket in India: <span className="shimmer-gold">What is BCPL?</span></>}
       intro={
         <p className="lp-p" style={{ fontSize: 'clamp(15px,2.2vw,18px)' }}>
-          Corporate cricket is competitive cricket for working professionals. BCPL T20 is a franchise-style T20
+          Corporate cricket is competitive cricket for working professionals. BCPL is a franchise-style T20
           corporate cricket league where salaried employees, business owners and freelancers across India can register,
           be assessed and play. Here is what it is, who plays and how the season works.
         </p>

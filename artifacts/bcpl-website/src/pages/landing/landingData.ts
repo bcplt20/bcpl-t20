@@ -19,10 +19,10 @@ export interface LandingFaq {
 export const CORPORATE_CRICKET_FAQS: LandingFaq[] = [
   {
     q: "What is a corporate cricket league?",
-    a: "A corporate cricket league is an organised cricket competition for working professionals rather than full-time cricketers. BCPL T20 runs a franchise-style T20 league where salaried employees, business owners, freelancers and other working professionals across India can register, be assessed on their cricket skills and play competitive matches.",
+    a: "A corporate cricket league is an organised cricket competition for working professionals rather than full-time cricketers. BCPL runs a franchise-style T20 league where salaried employees, business owners, freelancers and other working professionals across India can register, be assessed on their cricket skills and play competitive matches.",
   },
   {
-    q: "Who can play in BCPL T20?",
+    q: "Who can play in BCPL?",
     a: "Any working professional aged 18 to 45 years (as on the date of registration) can register — salaried employees, self-employed individuals, freelancers or business owners. You must be currently employed or actively running a business, and not currently under a first-class or professional cricket contract.",
   },
   {
@@ -34,7 +34,7 @@ export const CORPORATE_CRICKET_FAQS: LandingFaq[] = [
     a: "No formal training is required. Basic cricket experience and genuine passion for the game are enough. The Phase 1 assessment is evaluation-based and looks at your role-specific skills shown in your video.",
   },
   {
-    q: "When does the BCPL T20 season take place?",
+    q: "When does the BCPL season take place?",
     a: "The season runs in phases: online registration and video assessment, followed by physical trials, then the auction and the T20 matches. Registration typically opens ahead of the season so working professionals have time to register and submit their video.",
   },
 ];
@@ -42,7 +42,7 @@ export const CORPORATE_CRICKET_FAQS: LandingFaq[] = [
 export const DELHI_FAQS: LandingFaq[] = [
   {
     q: "Is there a corporate cricket tournament in Delhi-NCR?",
-    a: "Yes. BCPL T20 is a corporate cricket league open to working professionals, and Delhi-NCR is one of the trial regions. Delhi corporate employees can register online, submit a cricket video and, if they advance, attend a physical trial at an authorised venue in the region.",
+    a: "Yes. BCPL is a corporate cricket league open to working professionals, and Delhi-NCR is one of the trial regions. Delhi corporate employees can register online, submit a cricket video and, if they advance, attend a physical trial at an authorised venue in the region.",
   },
   {
     q: "How do Delhi corporate employees join?",
@@ -88,7 +88,7 @@ export const HOW_TO_JOIN_FAQS: LandingFaq[] = [
 export const OFFICE_TEAM_FAQS: LandingFaq[] = [
   {
     q: "Can my office colleagues and I join together?",
-    a: "Yes. Colleagues from the same company can all register for BCPL T20. Registration is individual — each person registers, chooses their role and submits their own cricket video — but there is nothing stopping a whole office group from taking part in the same season.",
+    a: "Yes. Colleagues from the same company can all register for BCPL. Registration is individual — each person registers, chooses their role and submits their own cricket video — but there is nothing stopping a whole office group from taking part in the same season.",
   },
   {
     q: "Do we register as a team or individually?",

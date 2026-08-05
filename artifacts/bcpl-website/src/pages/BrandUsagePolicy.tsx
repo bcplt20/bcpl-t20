@@ -89,14 +89,14 @@ export function BrandUsagePolicy() {
 
   const sections: {n:number;icon:React.ReactNode;titleEn:string;titleHi:string;items:string[]}[] = [
     {n:1,icon:<IcoTarget size={24}/>,titleEn:'Purpose & Scope',titleHi:'उद्देश्य और दायरा',items:[
-      'This Brand, Photo & Logo Usage Policy governs how the intellectual property of the Bhartiya Corporate Premier League (BCPL T20) may and may not be used by any person or organisation',
+      'This Brand, Photo & Logo Usage Policy governs how the intellectual property of the Bhartiya Corporate Premier League (BCPL) may and may not be used by any person or organisation',
       'It applies to all visitors, players, attendees, media, sponsors, partners and third parties who access www.bcplt20.com, attend BCPL events, or otherwise come into contact with BCPL materials',
       'This policy forms part of, and should be read together with, the BCPL Terms & Conditions, Privacy Policy, Eligibility Criteria and published rules',
       'By using, downloading or viewing any BCPL material, you agree to the terms of this policy',
     ]},
     {n:2,icon:<IcoStar size={24}/>,titleEn:'Ownership of BCPL Intellectual Property',titleHi:'BCPL बौद्धिक संपदा का स्वामित्व',items:[
-      'The BCPL name and the "Bhartiya Corporate Premier League (BCPL T20)" identity are owned or controlled by Kriparti India Private Limited',
-      'The BCPL T20 logo, the ball device, and all "Season 5" marks and season branding are owned by Kriparti India Private Limited',
+      'The BCPL name and the "Bhartiya Corporate Premier League (BCPL)" identity are owned or controlled by Kriparti India Private Limited',
+      'The BCPL logo, the ball device, and all "Season 5" marks and season branding are owned by Kriparti India Private Limited',
       'Franchise and team names, team logos, jerseys and associated marks are owned or controlled by Kriparti India Private Limited',
       'Taglines and campaign lines, including #OfficeSeStadiumTak, are the property of Kriparti India Private Limited',
       'All website content — text, layout, graphics, design, code and imagery on www.bcplt20.com — is owned by Kriparti India Private Limited',
@@ -125,7 +125,7 @@ export function BrandUsagePolicy() {
       'Requests relating to the use of a specific image should be directed to info@bcplt20.com and are handled under the BCPL Privacy Policy',
     ]},
     {n:6,icon:<IcoMegaphone size={24}/>,titleEn:'Media & Press Use',titleHi:'मीडिया और प्रेस उपयोग',items:[
-      'Genuine media and press may use short, factual quotations about BCPL, with clear attribution to the Bhartiya Corporate Premier League (BCPL T20)',
+      'Genuine media and press may use short, factual quotations about BCPL, with clear attribution to the Bhartiya Corporate Premier League (BCPL)',
       'Any use beyond short factual quotation — including reproduction of logos, photographs, footage or substantial text — requires prior written permission',
       'To request media permissions or official assets, contact info@bcplt20.com before publication',
       'Media use must not imply any endorsement, partnership or official association that has not been agreed in writing',
@@ -278,7 +278,7 @@ export function BrandUsagePolicy() {
               </div>
 
               <div className="glass-card" style={{padding:'clamp(24px,4vw,36px)',textAlign:'center'}}>
-                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(19px,3vw,23px)',marginBottom:10,lineHeight:1.2}}>{t("Ready to Join BCPL T20?","BCPL T20 join करने के लिए तैयार हैं?")}</div>
+                <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(19px,3vw,23px)',marginBottom:10,lineHeight:1.2}}>{t("Ready to Join BCPL?","BCPL join करने के लिए तैयार हैं?")}</div>
                 <p style={{color:'rgba(255,255,255,0.88)',fontSize:14,marginBottom:22,lineHeight:1.6}}>
                   {t(
                     "Respecting the BCPL brand keeps the league fair for everyone. See you on the field!",

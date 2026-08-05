@@ -112,7 +112,7 @@ export function EligibilityCriteria() {
               <span className="shimmer-gold" style={{display:'block'}}>{t("CRITERIA.","CRITERIA.")}</span>
             </h1>
             <p style={{color:'rgba(255,255,255,0.88)',fontSize:'clamp(14px,2vw,16px)',lineHeight:1.7,maxWidth:600,margin:'16px auto 0'}}>
-              {t("BCPL T20 Season 5 is open to working professionals across India. Check your eligibility in seconds.","BCPL T20 Season 5 पूरे भारत के working professionals के लिए खुला है। कुछ ही seconds में अपनी eligibility check करें।")}
+              {t("BCPL Season 5 is open to working professionals across India. Check your eligibility in seconds.","BCPL Season 5 पूरे भारत के working professionals के लिए खुला है। कुछ ही seconds में अपनी eligibility check करें।")}
             </p>
             <div style={{marginTop:28}}>
               <LegalDocHeader doc="eligibility" />
@@ -168,7 +168,7 @@ export function EligibilityCriteria() {
                   <div style={{background:'rgba(34,197,94,0.12)',border:'2px solid rgba(34,197,94,0.5)',borderRadius:16,padding:'20px 24px',textAlign:'center',animation:'eligiblePulse 2s ease-in-out infinite'}}>
                     <div style={{marginBottom:8,color:'#22C55E',display:'flex',justifyContent:'center'}}><IcoCheck size={34}/></div>
                     <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:20,color:'#22C55E',marginBottom:8}}>{t("You're Eligible!","आप Eligible हैं!")}</div>
-                    <p style={{color:'rgba(255,255,255,0.88)',fontSize:14,marginBottom:16}}>{t("You qualify for BCPL T20 Season 5. Secure your spot now!","आप BCPL T20 Season 5 के लिए qualify करते हैं। अभी अपनी जगह पक्की करें!")}</p>
+                    <p style={{color:'rgba(255,255,255,0.88)',fontSize:14,marginBottom:16}}>{t("You qualify for BCPL Season 5. Secure your spot now!","आप BCPL Season 5 के लिए qualify करते हैं। अभी अपनी जगह पक्की करें!")}</p>
                     <Link href="/register" className="btn-fire" style={{padding:'14px 32px',fontSize:15,width:'100%',maxWidth:260,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>{t("Register Now →","अभी Register करें →")}</Link>
                   </div>
                 ) : anyNo ? (
@@ -189,7 +189,7 @@ export function EligibilityCriteria() {
               <span style={{color:'#E8B23D',display:'inline-flex',alignItems:'center'}}><IcoUser size={28}/></span>
               <h2 style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:'clamp(16px,3vw,20px)',color:'#fff'}}>{t("1. Professional Status","1. Professional Status")}</h2>
             </div>
-            <p style={{color:'rgba(255,255,255,0.88)',fontSize:'clamp(14px,2vw,15px)',lineHeight:1.8,marginBottom:16}}>{t("BCPL T20 is designed exclusively for India's working professionals. If you earn a living, you belong on this field.","BCPL T20 खास तौर पर भारत के working professionals के लिए बनाई गई है। अगर आप कमाई करते हैं, तो यह मैदान आपके लिए है।")}</p>
+            <p style={{color:'rgba(255,255,255,0.88)',fontSize:'clamp(14px,2vw,15px)',lineHeight:1.8,marginBottom:16}}>{t("BCPL is designed exclusively for India's working professionals. If you earn a living, you belong on this field.","BCPL खास तौर पर भारत के working professionals के लिए बनाई गई है। अगर आप कमाई करते हैं, तो यह मैदान आपके लिए है।")}</p>
             <div className="elig-2col">
               <div style={{background:'rgba(34,197,94,0.08)',border:'1px solid rgba(34,197,94,0.2)',borderRadius:12,padding:'14px 16px'}}>
                 <div style={{color:'#22C55E',fontFamily:'Montserrat,sans-serif',fontWeight:700,fontSize:12,letterSpacing:'0.08em',marginBottom:8,display:'flex',alignItems:'center',gap:6}}><IcoCheck size={14}/> {t("ELIGIBLE","ELIGIBLE")}</div>

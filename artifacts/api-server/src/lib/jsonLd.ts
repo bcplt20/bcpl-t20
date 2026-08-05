@@ -48,9 +48,9 @@ export function organizationLd(siteOrigin: string): Record<string, unknown> {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "BCPL T20 — Bhartiya Corporate Premier League",
+    name: "Bhartiya Corporate Premier League",
     alternateName: [
-      "BCPL T20",
+      "BCPL",
       "BCPL",
       "Bhartiya Corporate Premier League",
       "Corporate Premier League",
@@ -129,7 +129,7 @@ export function faqPageLd(siteOrigin: string): Record<string, unknown> {
     },
     {
       q: "When is BCPL Season 5?",
-      a: "Video trials run from July–August 2025. Physical trials take place August–September 2025. The main BCPL T20 season (matches) runs September–November 2025. The finale is expected in late November 2025.",
+      a: "Video trials run from July–August 2025. Physical trials take place August–September 2025. The main BCPL season (matches) runs September–November 2025. The finale is expected in late November 2025.",
     },
   ];
 
@@ -165,7 +165,7 @@ function eventStatusFor(status: string): string {
 }
 
 export function sportsEventLd(match: Match, siteOrigin: string): Record<string, unknown> {
-  const name = `${match.team1} vs ${match.team2} — BCPL T20 Season ${match.season}`;
+  const name = `${match.team1} vs ${match.team2} — BCPL Season ${match.season}`;
   const obj: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "SportsEvent",
@@ -176,7 +176,7 @@ export function sportsEventLd(match: Match, siteOrigin: string): Record<string, 
     url: `${siteOrigin}/match-center`,
     organizer: {
       "@type": "Organization",
-      name: "BCPL T20 — Bhartiya Corporate Premier League",
+      name: "Bhartiya Corporate Premier League",
       url: siteOrigin,
     },
     competitor: [

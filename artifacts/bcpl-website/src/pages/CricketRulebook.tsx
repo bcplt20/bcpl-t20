@@ -204,7 +204,7 @@ export function CricketRulebook() {
             <p style={{color:'rgba(255,255,255,0.72)',fontSize:13,fontWeight:600,letterSpacing:'0.05em',marginTop:16,fontFamily:'Montserrat,sans-serif'}}>Tournament Cricket Rules — Season 5</p>
             <p style={{color:'var(--ink-3)',fontSize:12,marginTop:6,fontFamily:'Inter,sans-serif'}}>यह दस्तावेज़ English में मान्य है · This document is authoritative in English.</p>
             <p style={{color:'rgba(255,255,255,0.88)',fontSize:'clamp(14px,2vw,16px)',lineHeight:1.7,maxWidth:600,margin:'16px auto 0'}}>
-              The BCPL T20 tournament cricket rulebook. These rules govern competition matches and apply to players, team managers and officials at all match venues.
+              The BCPL tournament cricket rulebook. These rules govern competition matches and apply to players, team managers and officials at all match venues.
             </p>
           </div>
         </section>
@@ -310,7 +310,7 @@ export function CricketRulebook() {
 
           <div className="glass-card" style={{padding:'clamp(20px,4vw,32px)',textAlign:'center'}}>
             <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:900,fontSize:'clamp(18px,3vw,22px)',marginBottom:8}}>Ready to Play?</div>
-            <p style={{color:'rgba(255,255,255,0.88)',fontSize:14,marginBottom:20}}>Register for BCPL T20 Season 5 — where corporate professionals become cricket legends.</p>
+            <p style={{color:'rgba(255,255,255,0.88)',fontSize:14,marginBottom:20}}>Register for BCPL Season 5 — where corporate professionals become cricket legends.</p>
             <Link href="/register" className="btn-fire" style={{padding:'14px 36px',fontSize:16,width:'100%',maxWidth:300,textDecoration:'none',display:'flex',alignItems:'center',justifyContent:'center'}}>Register for Phase 1 →</Link>
           </div>
         </div>
