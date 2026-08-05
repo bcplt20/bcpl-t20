@@ -67,3 +67,10 @@ uri = "file://screenshots/bcpl-gmail-avatar.png"
 type = "image"
 title = "BCPL Gmail Profile Photo (512x512)"
 description = "Google Workspace (info@bcplt20.com) की profile photo के लिए तैयार square logo"
+
+[[outputs]]
+id = "0oHNtTYNs_b785k8iYVvs"
+uri = "file://deliverables/BCPL-Franchise-Prospectus.pdf"
+type = "pdf"
+title = "BCPL Franchise Prospectus (6 pages)"
+description = "Franchise ownership prospectus — 5-season illustrative projections, revenue model, investment structure, and legal terms & conditions. WhatsApp/email-ready."

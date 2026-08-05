@@ -18,6 +18,8 @@ body { background:#1C2B47; }
 .job-dept { display:inline-flex; align-items:center; border-radius:100px; padding:4px 13px; font-size:10.5px; font-weight:900; font-family:'Montserrat',Inter,sans-serif; letter-spacing:.12em; text-transform:uppercase; }
 .job-title { font-family:'Montserrat',Inter,sans-serif; font-weight:800; font-size:clamp(17px,2.4vw,21px); color:#fff; margin:12px 0 4px; }
 .job-meta { font-size:12.5px; color:rgba(255,255,255,0.6); font-family:Inter,sans-serif; font-weight:600; }
+.job-salary { display:inline-block; background:rgba(49,197,107,0.12); border:1px solid rgba(49,197,107,0.45); color:#6EE7A0; font-weight:800; font-size:13px; border-radius:8px; padding:5px 12px; margin:6px 0 4px; font-family:Inter,sans-serif; }
+.job-salary-note { font-weight:600; font-size:11px; color:rgba(255,255,255,0.55); }
 .job-sub { font-family:'Montserrat',Inter,sans-serif; font-weight:900; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:rgba(255,255,255,0.55); margin:16px 0 8px; }
 .job-li { font-size:14px; line-height:1.7; color:rgba(255,255,255,0.82); font-family:Inter,sans-serif; padding-left:18px; position:relative; margin-bottom:6px; }
 .job-li::before { content:''; position:absolute; left:2px; top:9px; width:6px; height:6px; border-radius:50%; background:#FF7A29; }
@@ -39,6 +41,8 @@ type Job = {
   title: string; titleHi: string;
   dept: 'OPERATIONS' | 'TECH' | 'MARKETING' | 'SOCIAL MEDIA';
   type: string; typeHi: string;
+  /** Market-aligned monthly salary band (Delhi NCR) */
+  salary: string;
   doing: [string, string][];  // what you'll do [en, hi]
   quals: [string, string][];  // what we look for [en, hi]
 };
@@ -54,6 +58,7 @@ const JOBS: Job[] = [
   {
     title: 'Project Manager', titleHi: 'Project Manager',
     dept: 'OPERATIONS', type: 'Full-time · Delhi NCR', typeHi: 'Full-time · Delhi NCR',
+    salary: '₹70,000 – ₹1,00,000 / month',
     doing: [
       ['Run the whole team day-to-day — assign work, set deadlines, remove blockers across tech, marketing and social', 'पूरी team का day-to-day संचालन — काम बाँटना, deadlines तय करना, tech/marketing/social की रुकावटें हटाना'],
       ['Track that every person and campaign is delivering — weekly reviews, clear reports to the founder', 'हर व्यक्ति और campaign की delivery track करना — weekly reviews, founder को साफ़ reports'],
@@ -70,6 +75,7 @@ const JOBS: Job[] = [
   {
     title: 'Full-Stack Developer', titleHi: 'Full-Stack Developer',
     dept: 'TECH', type: 'Full-time · Delhi NCR / Hybrid', typeHi: 'Full-time · Delhi NCR / Hybrid',
+    salary: '₹60,000 – ₹1,00,000 / month',
     doing: [
       ['Own bcplt20.com end-to-end — registrations, payments, live scoring and the admin panel', 'bcplt20.com की पूरी ज़िम्मेदारी — registrations, payments, live scoring और admin panel'],
       ['Ship features fast during the season and keep the platform stable on match days', 'Season के दौरान तेज़ी से features ship करें और match days पर platform stable रखें'],
@@ -85,6 +91,7 @@ const JOBS: Job[] = [
   {
     title: 'UI/UX Designer', titleHi: 'UI/UX Designer',
     dept: 'TECH', type: 'Full-time / Contract · Remote friendly', typeHi: 'Full-time / Contract · Remote friendly',
+    salary: '₹40,000 – ₹65,000 / month',
     doing: [
       ['Design the fan-facing website, player flows and match-day screens', 'Fan-facing website, player flows और match-day screens design करें'],
       ['Build a consistent BCPL design language across web, social and print', 'Web, social और print पर एक consistent BCPL design language बनाएं'],
@@ -98,6 +105,7 @@ const JOBS: Job[] = [
   {
     title: 'Marketing Manager', titleHi: 'Marketing Manager',
     dept: 'MARKETING', type: 'Full-time · Delhi NCR', typeHi: 'Full-time · Delhi NCR',
+    salary: '₹50,000 – ₹80,000 / month',
     doing: [
       ['Own the season\u2019s registration targets and the campaigns that hit them', 'Season के registration targets और उन्हें पूरा करने वाले campaigns की ज़िम्मेदारी'],
       ['Run corporate outreach — HR heads, office cricket teams, company sports days', 'Corporate outreach चलाएं — HR heads, office cricket teams, company sports days'],
@@ -112,6 +120,7 @@ const JOBS: Job[] = [
   {
     title: 'Performance Marketing Executive', titleHi: 'Performance Marketing Executive',
     dept: 'MARKETING', type: 'Full-time · Delhi NCR / Hybrid', typeHi: 'Full-time · Delhi NCR / Hybrid',
+    salary: '₹30,000 – ₹50,000 / month',
     doing: [
       ['Run Meta & Google campaigns that bring player registrations at the lowest cost', 'Meta व Google campaigns चलाएं जो सबसे कम cost पर player registrations लाएं'],
       ['Own tracking — pixels, UTMs, GA4 — and report what\u2019s working weekly', 'Tracking की ज़िम्मेदारी — pixels, UTMs, GA4 — और हर हफ़्ते report करें क्या काम कर रहा है'],
@@ -125,6 +134,7 @@ const JOBS: Job[] = [
   {
     title: 'Social Media Manager', titleHi: 'Social Media Manager',
     dept: 'SOCIAL MEDIA', type: 'Full-time · Delhi NCR / Hybrid', typeHi: 'Full-time · Delhi NCR / Hybrid',
+    salary: '₹30,000 – ₹50,000 / month',
     doing: [
       ['Run BCPL\u2019s Instagram, YouTube and X — calendar, posting, community', 'BCPL के Instagram, YouTube और X चलाएं — calendar, posting, community'],
       ['Cover match days live — scores, moments, player stories', 'Match days को live cover करें — scores, moments, player stories'],
@@ -139,6 +149,7 @@ const JOBS: Job[] = [
   {
     title: 'Video Editor & Graphic Designer', titleHi: 'Video Editor & Graphic Designer',
     dept: 'SOCIAL MEDIA', type: 'Full-time · Delhi NCR', typeHi: 'Full-time · Delhi NCR',
+    salary: '₹25,000 – ₹45,000 / month',
     doing: [
       ['Cut match highlights, reels and player features within hours of play', 'खेल के कुछ ही घंटों में match highlights, reels और player features तैयार करें'],
       ['Design posters, creatives and sponsor deliverables for every fixture', 'हर fixture के posters, creatives और sponsor deliverables design करें'],
@@ -216,6 +227,7 @@ export default function Careers() {
                       <span className="job-dept" style={{ background: c.bg, border: `1px solid ${c.border}`, color: c.color }}>{j.dept}</span>
                       <h3 className="job-title">{t(j.title, j.titleHi)}</h3>
                       <div className="job-meta">{t(j.type, j.typeHi)}</div>
+                      <div className="job-salary">💰 {j.salary} <span className="job-salary-note">{t('(based on experience — market-aligned)', '(experience के अनुसार — market rate)')}</span></div>
                       <div className="job-sub">{t('What you\u2019ll do', 'आप क्या करेंगे')}</div>
                       <div>
                         {j.doing.map(([en, hi]) => <div key={en} className="job-li do">{t(en, hi)}</div>)}
