@@ -55,7 +55,7 @@ TRUNCATE TABLE
 RESTART IDENTITY CASCADE;
 
 -- Points table wapas zero par (agar test match data se badla ho)
-UPDATE points_table SET played=0, won=0, lost=0, no_result=0, points=0, nrr=0, form='[]'
+UPDATE points_table SET played=0, won=0, lost=0, no_result=0, points=0, nrr=0, form=NULL
 WHERE played <> 0 OR points <> 0;
 
 COMMIT;
