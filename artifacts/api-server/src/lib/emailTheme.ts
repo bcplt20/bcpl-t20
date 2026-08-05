@@ -123,7 +123,10 @@ export const SOCIAL: {
 // artifacts/bcpl-website/public/email-icons → https://bcplt20.com/email-icons.
 export const EMAIL_ICON_BASE = `${PUBLIC_API_BASE}/email-icons`;
 
-export const FROM_EMAIL = process.env.BREVO_FROM_EMAIL || "info@bcplt20.com";
+export const FROM_EMAIL = process.env.BREVO_FROM_EMAIL || "noreply@bcplt20.com";
+/** Reply-to / human contact address shown in email footers — never the
+ *  unmonitored noreply sender. */
+export const CONTACT_EMAIL = process.env.BCPL_CONTACT_EMAIL || "info@bcplt20.com";
 export const WEBSITE = "bcplt20.com";
 
 // Legal entity — approved wording per the owner spec.
@@ -770,7 +773,7 @@ export function LegalFooter(): string {
     <div style="font-family:${FONT};font-size:13px;color:${COLORS.footer};margin-top:8px;line-height:1.7;">An initiative of ${LEGAL_ENTITY}</div>
     <div style="margin-top:12px;line-height:1;">
       <span class="bcpl-stack" style="display:inline-block;padding:4px 12px;">
-        <a href="mailto:${FROM_EMAIL}" style="font-family:${FONT};font-size:14px;color:${COLORS.footerLink};text-decoration:underline;">${FROM_EMAIL}</a>
+        <a href="mailto:${CONTACT_EMAIL}" style="font-family:${FONT};font-size:14px;color:${COLORS.footerLink};text-decoration:underline;">${CONTACT_EMAIL}</a>
       </span>
       <span class="bcpl-stack" style="display:inline-block;padding:4px 12px;">
         <a href="https://${WEBSITE}" style="font-family:${FONT};font-size:14px;color:${COLORS.footerLink};text-decoration:underline;">${WEBSITE}</a>
