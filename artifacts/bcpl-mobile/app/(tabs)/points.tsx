@@ -12,6 +12,7 @@ import { useColors } from '@/hooks/useColors';
 import { getMatches, getPointsTable, type PointsRow } from '@/lib/api';
 import { Card, EmptyView, ErrorView, LoadingView, TeamLogo } from '@/components/ui';
 import { ScreenHeader } from '@/components/ScreenHeader';
+import { useLang } from '@/context/LanguageContext';
 
 /** One group's standings table (mirrors website's Group A / Group B split). */
 function GroupTable({ title, rows, qualify }: { title: string; rows: PointsRow[]; qualify: number }) {
@@ -65,6 +66,7 @@ function GroupTable({ title, rows, qualify }: { title: string; rows: PointsRow[]
 
 export default function PointsScreen() {
   const c = useColors();
+  const { t } = useLang();
   const q = useQuery({ queryKey: ['points'], queryFn: getPointsTable, refetchInterval: 120_000 });
   const matchesQ = useQuery({ queryKey: ['matches'], queryFn: getMatches });
   const table = q.data?.table ?? [];
@@ -91,27 +93,27 @@ export default function PointsScreen() {
           <RefreshControl refreshing={q.isRefetching} onRefresh={() => { q.refetch(); matchesQ.refetch(); }} tintColor={c.primary} />
         }
       >
-        <ScreenHeader title="Points Table" subtitle="Season 5 standings" />
+        <ScreenHeader title="Points Table" subtitle={t('Season 5 standings', 'सीज़न 5 अंक तालिका')} />
         <View style={{ paddingHorizontal: 16, paddingTop: 12 }}>
           {q.isLoading ? (
             <LoadingView />
           ) : q.isError ? (
             <ErrorView onRetry={() => q.refetch()} />
           ) : table.length === 0 ? (
-            <EmptyView icon="bar-chart-2" text="Points table Season 5 शुरू होते ही यहाँ दिखेगी" />
+            <EmptyView icon="bar-chart-2" text={t('Points table will appear once Season 5 begins', 'पॉइंट्स टेबल सीज़न 5 शुरू होते ही यहाँ दिखेगी')} />
           ) : grouped ? (
             <>
               <GroupTable title="GROUP A" rows={groupA} qualify={2} />
               <GroupTable title="GROUP B" rows={groupB} qualify={2} />
               <Text style={{ color: c.mutedForeground, fontSize: 11, paddingHorizontal: 4, paddingBottom: 6 }}>
-                हर group की top 2 teams playoffs में जाती हैं
+                {t('Top 2 teams from each group qualify for the playoffs', 'हर ग्रुप की टॉप 2 टीमें प्लेऑफ़ में जाती हैं')}
               </Text>
             </>
           ) : (
             <>
               <GroupTable title="STANDINGS" rows={table} qualify={4} />
               <Text style={{ color: c.mutedForeground, fontSize: 11, paddingHorizontal: 4, paddingBottom: 6 }}>
-                Top 4 teams playoffs में जाती हैं
+                {t('Top 4 teams qualify for the playoffs', 'टॉप 4 टीमें प्लेऑफ़ में जाती हैं')}
               </Text>
             </>
           )}

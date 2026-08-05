@@ -7,9 +7,11 @@ import { SITE_ASSETS } from '@/lib/api';
 import { NEWS_ARTICLES } from '@/data/news';
 import { Card } from '@/components/ui';
 import { ScreenHeader } from '@/components/ScreenHeader';
+import { useLang } from '@/context/LanguageContext';
 
 export default function NewsScreen() {
   const c = useColors();
+  const { t } = useLang();
   const router = useRouter();
 
   return (
@@ -17,7 +19,7 @@ export default function NewsScreen() {
       <FlatList
         data={NEWS_ARTICLES}
         keyExtractor={(n) => n.slug}
-        ListHeaderComponent={<ScreenHeader title="News" subtitle="League की ताज़ा खबरें" />}
+        ListHeaderComponent={<ScreenHeader title="News" subtitle={t('Latest league updates', 'लीग की ताज़ा खबरें')} />}
         scrollEnabled={NEWS_ARTICLES.length > 0}
         contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 118 : 100 }}
         renderItem={({ item: n }) => (

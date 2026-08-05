@@ -11,6 +11,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 import { useColors } from '@/hooks/useColors';
+import { useLang } from '@/context/LanguageContext';
 import {
   getLiveMatch,
   getScorecard,
@@ -50,6 +51,7 @@ function pad2(n: number) {
 /** Live ticking countdown to match start + friendly "coming up" panel. */
 function UpcomingPanel({ live }: { live: LiveMatch }) {
   const c = useColors();
+  const { t } = useLang();
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
     const t = setInterval(() => setNow(Date.now()), 1000);
@@ -91,14 +93,14 @@ function UpcomingPanel({ live }: { live: LiveMatch }) {
       {parts ? (
         <>
           <Text style={{ color: c.mutedForeground, fontSize: 11.5, letterSpacing: 1.5, fontFamily: 'Inter_600SemiBold' }}>
-            MATCH शुरू होने में
+            {t('MATCH STARTS IN', 'मैच शुरू होने में')}
           </Text>
           <View style={{ flexDirection: 'row', gap: 8 }}>
             {[
-              { v: parts.d, l: 'DIN' },
-              { v: parts.h, l: 'GHANTE' },
-              { v: parts.m, l: 'MIN' },
-              { v: parts.s, l: 'SEC' },
+              { v: parts.d, l: t('DAYS', 'दिन') },
+              { v: parts.h, l: t('HRS', 'घंटे') },
+              { v: parts.m, l: t('MIN', 'मिनट') },
+              { v: parts.s, l: t('SEC', 'सेकंड') },
             ].map((u) => (
               <View key={u.l} style={[styles.cdBox, { borderColor: 'rgba(232,178,61,0.45)', backgroundColor: 'rgba(232,178,61,0.08)' }]}>
                 <Text style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 22 }}>{pad2(u.v)}</Text>
@@ -120,7 +122,7 @@ function UpcomingPanel({ live }: { live: LiveMatch }) {
 
       <View style={[styles.livePill, { borderColor: 'rgba(255,107,0,0.5)', backgroundColor: 'rgba(255,107,0,0.10)' }]}>
         <Text style={{ color: '#FF6B00', fontFamily: 'Inter_600SemiBold', fontSize: 12 }}>
-          Match शुरू होते ही live score और ball-by-ball updates यहीं दिखेंगे
+          {t('Live score and ball-by-ball updates will appear here once the match begins', 'मैच शुरू होते ही लाइव स्कोर और बॉल-बाय-बॉल अपडेट यहीं दिखेंगे')}
         </Text>
       </View>
     </View>
@@ -190,6 +192,7 @@ function LiveTab({ live }: { live: LiveMatch }) {
 
 function ScorecardTab({ matchId }: { matchId: string }) {
   const c = useColors();
+  const { t } = useLang();
   const q = useQuery({
     queryKey: ['scorecard', matchId],
     queryFn: () => getScorecard(matchId),
@@ -202,7 +205,7 @@ function ScorecardTab({ matchId }: { matchId: string }) {
     return (
       <Card>
         <Text style={{ color: c.mutedForeground, textAlign: 'center', paddingVertical: 10 }}>
-          Scorecard match शुरू होने के बाद दिखेगा
+          {t('Scorecard will appear after the match begins', 'स्कोरकार्ड मैच शुरू होने के बाद दिखेगा')}
         </Text>
       </Card>
     );

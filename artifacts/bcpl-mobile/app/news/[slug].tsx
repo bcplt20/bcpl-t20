@@ -4,19 +4,21 @@ import { useLocalSearchParams } from 'expo-router';
 import { Image } from 'expo-image';
 import { Feather } from '@expo/vector-icons';
 import { useColors } from '@/hooks/useColors';
+import { useLang } from '@/context/LanguageContext';
 import { SITE_ASSETS } from '@/lib/api';
 import { NEWS_ARTICLES } from '@/data/news';
 import { Card, EmptyView } from '@/components/ui';
 
 export default function NewsDetailScreen() {
   const c = useColors();
+  const { t } = useLang();
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const article = NEWS_ARTICLES.find((n) => n.slug === String(slug));
 
   if (!article) {
     return (
       <View style={{ flex: 1, backgroundColor: c.background }}>
-        <EmptyView icon="file-text" text="Article नहीं मिला" />
+        <EmptyView icon="file-text" text={t('Article not found', 'लेख नहीं मिला')} />
       </View>
     );
   }

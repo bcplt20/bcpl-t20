@@ -14,6 +14,7 @@ import { getMatches, type Match } from '@/lib/api';
 import { EmptyView, ErrorView, LoadingView } from '@/components/ui';
 import { MatchCard } from '@/components/MatchCard';
 import { ScreenHeader } from '@/components/ScreenHeader';
+import { useLang } from '@/context/LanguageContext';
 
 type Filter = 'all' | 'live' | 'upcoming' | 'results';
 const FILTERS: { key: Filter; label: string }[] = [
@@ -25,6 +26,7 @@ const FILTERS: { key: Filter; label: string }[] = [
 
 export default function MatchesScreen() {
   const c = useColors();
+  const { t } = useLang();
   const [filter, setFilter] = useState<Filter>('all');
 
   const q = useQuery({ queryKey: ['matches'], queryFn: getMatches, refetchInterval: 60_000 });
@@ -45,7 +47,7 @@ export default function MatchesScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: c.background }}>
-      <ScreenHeader title="Matches" subtitle="Season 5 schedule & results" />
+      <ScreenHeader title="Matches" subtitle={t('Season 5 schedule & results', 'सीज़न 5 शेड्यूल और नतीजे')} />
       <View style={styles.filters}>
         {FILTERS.map((f) => (
           <Pressable
@@ -76,7 +78,7 @@ export default function MatchesScreen() {
       ) : q.isError ? (
         <ErrorView onRetry={() => q.refetch()} />
       ) : filtered.length === 0 ? (
-        <EmptyView icon="calendar" text="अभी इस section में कोई match नहीं है" />
+        <EmptyView icon="calendar" text={t('No matches in this section yet', 'अभी इस सेक्शन में कोई मैच नहीं है')} />
       ) : (
         <FlatList
           data={filtered}

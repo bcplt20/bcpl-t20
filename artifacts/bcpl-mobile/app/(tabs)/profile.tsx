@@ -14,6 +14,7 @@ import { useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { useColors } from '@/hooks/useColors';
 import { useAuth } from '@/context/AuthContext';
+import { useLang, type Lang } from '@/context/LanguageContext';
 import { getDashboard } from '@/lib/api';
 import { Badge, Card, ErrorView, LoadingView } from '@/components/ui';
 import { ScreenHeader } from '@/components/ScreenHeader';
@@ -40,10 +41,52 @@ function niceStatus(s?: string | null): string {
   return s.replace(/_/g, ' ').replace(/\b\w/g, (m) => m.toUpperCase());
 }
 
+function LangSwitch() {
+  const c = useColors();
+  const { lang, setLang, t } = useLang();
+  const opts: { value: Lang; label: string }[] = [
+    { value: 'en', label: 'English' },
+    { value: 'hi', label: 'हिंदी' },
+  ];
+  return (
+    <Card>
+      <Text style={[styles.cardTitle, { color: c.foreground }]}>{t('Language', 'भाषा')}</Text>
+      <View style={{ flexDirection: 'row', gap: 8 }}>
+        {opts.map((o) => (
+          <Pressable
+            key={o.value}
+            onPress={() => setLang(o.value)}
+            style={({ pressed }) => [
+              styles.langBtn,
+              {
+                borderColor: lang === o.value ? '#FF6B00' : c.border,
+                backgroundColor: lang === o.value ? 'rgba(255,107,0,0.12)' : 'transparent',
+                opacity: pressed ? 0.8 : 1,
+              },
+            ]}
+            testID={`lang-${o.value}`}
+          >
+            <Text
+              style={{
+                color: lang === o.value ? '#FF6B00' : c.foreground,
+                fontFamily: 'Inter_600SemiBold',
+                fontSize: 13.5,
+              }}
+            >
+              {o.label}
+            </Text>
+          </Pressable>
+        ))}
+      </View>
+    </Card>
+  );
+}
+
 export default function ProfileScreen() {
   const c = useColors();
   const router = useRouter();
   const { token, user, ready, logout } = useAuth();
+  const { t } = useLang();
 
   const dashQ = useQuery({
     queryKey: ['dashboard', token],
@@ -60,10 +103,10 @@ export default function ProfileScreen() {
         <View style={styles.loginWrap}>
           <Feather name="user" size={40} color={c.mutedForeground} />
           <Text style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 18, marginTop: 14 }}>
-            अपने BCPL account में login करें
+            {t('Log in to your BCPL account', 'अपने BCPL अकाउंट में लॉगिन करें')}
           </Text>
           <Text style={{ color: c.mutedForeground, textAlign: 'center', marginTop: 6, fontSize: 13.5, lineHeight: 20 }}>
-            वही phone number use करें जिससे आपने bcplt20.com पर register किया था — OTP से login होगा
+            {t('Use the same phone number you registered with on bcplt20.com — you will log in via OTP', 'वही फ़ोन नंबर इस्तेमाल करें जिससे आपने bcplt20.com पर रजिस्टर किया था — OTP से लॉगिन होगा')}
           </Text>
           <Pressable
             onPress={() => router.push('/login')}
@@ -74,6 +117,9 @@ export default function ProfileScreen() {
               Login with OTP
             </Text>
           </Pressable>
+          <View style={{ alignSelf: 'stretch', marginTop: 26 }}>
+            <LangSwitch />
+          </View>
         </View>
       </View>
     );
@@ -100,10 +146,10 @@ export default function ProfileScreen() {
             <Card style={{ alignItems: 'center', paddingVertical: 26 }}>
               <Feather name="edit-3" size={26} color={c.accent} />
               <Text style={{ color: c.foreground, fontFamily: 'Inter_600SemiBold', marginTop: 10, textAlign: 'center' }}>
-                इस season की registration bcplt20.com पर करें
+                {t("Register for this season on bcplt20.com", 'इस सीज़न की रजिस्ट्रेशन bcplt20.com पर करें')}
               </Text>
               <Text style={{ color: c.mutedForeground, fontSize: 12.5, marginTop: 4, textAlign: 'center' }}>
-                Registration पूरी होते ही आपका dashboard यहाँ दिखेगा
+                {t('Your dashboard will appear here once registration is complete', 'रजिस्ट्रेशन पूरी होते ही आपका डैशबोर्ड यहाँ दिखेगा')}
               </Text>
               <Pressable
                 onPress={() => Linking.openURL('https://bcplt20.com/register')}
@@ -111,7 +157,7 @@ export default function ProfileScreen() {
                 testID="register-cta"
               >
                 <Feather name="external-link" size={15} color="#fff" />
-                <Text style={{ color: '#fff', fontFamily: 'Inter_700Bold', fontSize: 13.5 }}>Register करें</Text>
+                <Text style={{ color: '#fff', fontFamily: 'Inter_700Bold', fontSize: 13.5 }}>{t('Register now', 'रजिस्टर करें')}</Text>
               </Pressable>
             </Card>
           ) : (
@@ -134,7 +180,7 @@ export default function ProfileScreen() {
               </Card>
 
               <Card>
-                <Text style={[styles.cardTitle, { color: c.foreground }]}>आपका season journey</Text>
+                <Text style={[styles.cardTitle, { color: c.foreground }]}>{t('Your season journey', 'आपका सीज़न सफ़र')}</Text>
                 <StatusRow
                   label="Phase 1 — Registration"
                   value={niceStatus(reg?.phase1Status)}
@@ -152,7 +198,7 @@ export default function ProfileScreen() {
                     testID="upload-video-cta"
                   >
                     <Feather name="video" size={15} color="#fff" />
-                    <Text style={{ color: '#fff', fontFamily: 'Inter_700Bold', fontSize: 13.5 }}>Trial video upload करें</Text>
+                    <Text style={{ color: '#fff', fontFamily: 'Inter_700Bold', fontSize: 13.5 }}>{t('Upload trial video', 'ट्रायल वीडियो अपलोड करें')}</Text>
                   </Pressable>
                 ) : null}
                 <StatusRow
@@ -194,6 +240,8 @@ export default function ProfileScreen() {
               )}
             </>
           )}
+
+          <LangSwitch />
 
           <Pressable
             onPress={() => logout()}
@@ -243,6 +291,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
     paddingVertical: 8,
+  },
+  langBtn: {
+    flex: 1,
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingVertical: 10,
+    alignItems: 'center',
   },
   logoutBtn: {
     flexDirection: 'row',

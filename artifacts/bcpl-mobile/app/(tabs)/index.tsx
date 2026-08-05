@@ -13,6 +13,7 @@ import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import { useColors } from '@/hooks/useColors';
 import { useAuth } from '@/context/AuthContext';
+import { useLang } from '@/context/LanguageContext';
 import { getMatches, getPointsTable, SITE_ASSETS, type Match } from '@/lib/api';
 import { NEWS_ARTICLES } from '@/data/news';
 import { Badge, Card, TeamLogo } from '@/components/ui';
@@ -36,6 +37,7 @@ export default function HomeScreen() {
   const c = useColors();
   const router = useRouter();
   const { user } = useAuth();
+  const { t } = useLang();
 
   const matchesQ = useQuery({
     queryKey: ['matches'],
@@ -66,8 +68,8 @@ export default function HomeScreen() {
         }
       >
         <ScreenHeader
-          title={user ? `नमस्ते, ${user.name.split(' ')[0]}` : 'Bhartiya Corporate Premier League'}
-          subtitle={user ? 'Bhartiya Corporate Premier League' : 'India का corporate cricket महाकुंभ'}
+          title={user ? t(`Hello, ${user.name.split(' ')[0]}`, `नमस्ते, ${user.name.split(' ')[0]}`) : 'Bhartiya Corporate Premier League'}
+          subtitle={user ? 'Bhartiya Corporate Premier League' : t("India's corporate cricket championship", 'भारत का कॉर्पोरेट क्रिकेट महाकुंभ')}
         />
 
         {/* Hero banner */}
@@ -82,8 +84,8 @@ export default function HomeScreen() {
             <View style={styles.heroShade} />
             <View style={{ padding: 16 }}>
               <Text style={styles.heroKick}>SEASON 5 · OCTOBER 2026</Text>
-              <Text style={styles.heroTitle}>10 teams. एक trophy.</Text>
-              <Text style={styles.heroSub}>Live scores, points table और news — सब यहीं</Text>
+              <Text style={styles.heroTitle}>{t('10 teams. One trophy.', '10 टीमें। एक ट्रॉफी।')}</Text>
+              <Text style={styles.heroSub}>{t('Live scores, points table & news — all in one place', 'लाइव स्कोर, पॉइंट्स टेबल और खबरें — सब यहीं')}</Text>
             </View>
           </View>
         </View>
@@ -105,7 +107,7 @@ export default function HomeScreen() {
             <Card style={{ alignItems: 'center', paddingVertical: 28 }}>
               <Feather name="calendar" size={26} color={c.mutedForeground} />
               <Text style={{ color: c.mutedForeground, marginTop: 8, textAlign: 'center' }}>
-                Season 5 schedule जल्द आ रहा है — October 2026
+                {t('Season 5 schedule coming soon — October 2026', 'सीज़न 5 का शेड्यूल जल्द आ रहा है — अक्टूबर 2026')}
               </Text>
             </Card>
           )}
@@ -117,7 +119,7 @@ export default function HomeScreen() {
               <Text style={[styles.sectionTitle, { color: c.foreground }]}>Points Table</Text>
               <Pressable onPress={() => router.push('/points')} testID="see-points">
                 <Text style={{ color: c.accent, fontFamily: 'Inter_600SemiBold', fontSize: 13 }}>
-                  पूरी table →
+                  {t('Full table →', 'पूरी टेबल →')}
                 </Text>
               </Pressable>
             </View>
@@ -142,7 +144,7 @@ export default function HomeScreen() {
             <Text style={[styles.sectionTitle, { color: c.foreground }]}>Latest News</Text>
             <Pressable onPress={() => router.push('/news')} testID="see-news">
               <Text style={{ color: c.accent, fontFamily: 'Inter_600SemiBold', fontSize: 13 }}>
-                सारी news →
+                {t('All news →', 'सारी खबरें →')}
               </Text>
             </Pressable>
           </View>

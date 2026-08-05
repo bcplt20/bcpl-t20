@@ -8,6 +8,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { useColors } from '@/hooks/useColors';
+import { useLang } from '@/context/LanguageContext';
 import { Feather } from '@expo/vector-icons';
 import colors from '@/constants/colors';
 
@@ -60,11 +61,12 @@ export function LoadingView() {
 
 export function ErrorView({ message, onRetry }: { message?: string; onRetry?: () => void }) {
   const c = useColors();
+  const { t } = useLang();
   return (
     <View style={styles.center}>
       <Feather name="wifi-off" size={30} color={c.mutedForeground} />
       <Text style={{ color: c.mutedForeground, marginTop: 10, textAlign: 'center', paddingHorizontal: 32 }}>
-        {message ?? 'कुछ गड़बड़ हो गई — internet check करके फिर कोशिश करें'}
+        {message ?? t('Something went wrong — check your internet and try again', 'कुछ गड़बड़ हो गई — इंटरनेट जाँच कर फिर कोशिश करें')}
       </Text>
       {onRetry ? (
         <Pressable

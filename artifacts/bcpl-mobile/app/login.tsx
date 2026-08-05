@@ -14,12 +14,14 @@ import { Feather } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useColors } from '@/hooks/useColors';
 import { useAuth } from '@/context/AuthContext';
+import { useLang } from '@/context/LanguageContext';
 import { ApiError, sendOtp, verifyOtp } from '@/lib/api';
 
 export default function LoginScreen() {
   const c = useColors();
   const router = useRouter();
   const { login } = useAuth();
+  const { t } = useLang();
 
   const [step, setStep] = useState<'phone' | 'otp'>('phone');
   const [phone, setPhone] = useState<string>('');
@@ -32,20 +34,20 @@ export default function LoginScreen() {
     setError(null);
     const clean = phone.replace(/\D/g, '');
     if (clean.length !== 10) {
-      setError('10 अंकों का mobile number डालें');
+      setError(t('Enter a 10-digit mobile number', '10 अंकों का मोबाइल नंबर डालें'));
       return;
     }
     setBusy(true);
     try {
       const r = await sendOtp(clean);
-      setInfo(r.devOtp ? `Dev OTP: ${r.devOtp}` : 'OTP आपके number पर भेज दिया गया है');
+      setInfo(r.devOtp ? `Dev OTP: ${r.devOtp}` : t('OTP has been sent to your number', 'OTP आपके नंबर पर भेज दिया गया है'));
       setStep('otp');
       if (Platform.OS !== 'web') Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (e) {
       if (e instanceof ApiError && e.code === 'NOT_REGISTERED') {
-        setError('यह number registered नहीं है — पहले bcplt20.com पर register करें');
+        setError(t('This number is not registered — register first on bcplt20.com', 'यह नंबर रजिस्टर्ड नहीं है — पहले bcplt20.com पर रजिस्टर करें'));
       } else {
-        setError(e instanceof Error ? e.message : 'OTP भेजने में दिक्कत हुई');
+        setError(e instanceof Error ? e.message : t('Could not send OTP, please try again', 'OTP भेजने में दिक्कत हुई'));
       }
     } finally {
       setBusy(false);
@@ -55,7 +57,7 @@ export default function LoginScreen() {
   const handleVerify = async () => {
     setError(null);
     if (otp.replace(/\D/g, '').length < 4) {
-      setError('OTP डालें');
+      setError(t('Enter the OTP', 'OTP डालें'));
       return;
     }
     setBusy(true);
@@ -65,7 +67,7 @@ export default function LoginScreen() {
       if (Platform.OS !== 'web') Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       router.back();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'OTP गलत है, फिर कोशिश करें');
+      setError(e instanceof Error ? e.message : t('Incorrect OTP, please try again', 'OTP गलत है, फिर कोशिश करें'));
     } finally {
       setBusy(false);
     }
@@ -82,12 +84,12 @@ export default function LoginScreen() {
           <Feather name="smartphone" size={26} color={c.accent} />
         </View>
         <Text style={[styles.title, { color: c.foreground }]}>
-          {step === 'phone' ? 'OTP से login करें' : 'OTP डालें'}
+          {step === 'phone' ? t('Log in with OTP', 'OTP से लॉगिन करें') : t('Enter OTP', 'OTP डालें')}
         </Text>
         <Text style={[styles.sub, { color: c.mutedForeground }]}>
           {step === 'phone'
-            ? 'वही number जिससे BCPL registration की थी'
-            : `+91 ${phone} पर भेजा गया OTP डालें`}
+            ? t('The same number you used for BCPL registration', 'वही नंबर जिससे BCPL रजिस्ट्रेशन की थी')
+            : t(`Enter the OTP sent to +91 ${phone}`, `+91 ${phone} पर भेजा गया OTP डालें`)}
         </Text>
 
         {step === 'phone' ? (
@@ -149,7 +151,7 @@ export default function LoginScreen() {
         {step === 'otp' ? (
           <Pressable onPress={() => { setStep('phone'); setOtp(''); setError(null); }} testID="change-number">
             <Text style={{ color: c.accent, fontSize: 13, marginTop: 16, fontFamily: 'Inter_600SemiBold' }}>
-              Number बदलें
+              {t('Change number', 'नंबर बदलें')}
             </Text>
           </Pressable>
         ) : null}
