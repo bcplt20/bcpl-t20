@@ -487,6 +487,13 @@ router.post("/avatar/confirm", requireAuth, async (req: AuthRequest, res) => {
   if (!head.exists) {
     return void res.status(400).json({ error: "Upload not found — please try again" });
   }
+  // The presign only binds ContentType, not size — re-validate the actual
+  // stored object so a forged declaration can never be confirmed.
+  const okType = (AVATAR_IMAGE_TYPES as readonly string[]).includes(head.contentType ?? "");
+  const okSize = head.sizeBytes > 0 && head.sizeBytes <= MAX_AVATAR_BYTES;
+  if (!okType || !okSize) {
+    return void res.status(400).json({ error: "Unsupported image (use JPEG/PNG/WebP up to 5 MB)" });
+  }
   await db.update(usersTable)
     .set({ avatar: "photo", updatedAt: new Date() })
     .where(eq(usersTable.id, req.user!.userId));
