@@ -263,14 +263,23 @@ export function kycVerifyPan(token: string, data: { registrationId: string; panN
 }
 
 // ── Dashboard ────────────────────────────────────────────────────────────────
+export interface Avatar {
+  kind: 'preset' | 'photo';
+  preset?: string;
+  viewUrl?: string;
+}
+
 export interface Dashboard {
   user: AuthUser;
+  avatar?: Avatar | null;
   registered: boolean;
   registration?: {
     id: string;
     regNumber?: string | null;
     role?: string | null;
     trialCity?: string | null;
+    dob?: string | null;
+    age?: number | null;
     phase1Status?: string | null;
     phase2Status?: string | null;
     videoDeadline?: string | null;
@@ -292,6 +301,29 @@ export interface Dashboard {
 
 export function getDashboard(token: string): Promise<Dashboard> {
   return apiFetch('/user/dashboard', { token });
+}
+
+// ── Profile avatar ─────────────────────────────────────────────────────────
+export function setAvatarPreset(token: string, preset: string): Promise<{ success: boolean; avatar: Avatar | null }> {
+  return apiFetch('/user/avatar', { method: 'POST', token, body: { preset } });
+}
+
+export function getAvatarUploadUrl(
+  token: string,
+  contentType: string,
+  sizeBytes: number,
+): Promise<{ success: boolean; presignedUrl: string; s3Key: string }> {
+  return apiFetch('/user/avatar/upload-url', { method: 'POST', token, body: { contentType, sizeBytes } });
+}
+
+export function confirmAvatarUpload(token: string): Promise<{ success: boolean; avatar: Avatar | null }> {
+  return apiFetch('/user/avatar/confirm', { method: 'POST', token });
+}
+
+/** Upload the picked image bytes to the presigned S3 URL (PUT). */
+export async function putToPresignedUrl(url: string, blob: Blob, contentType: string): Promise<void> {
+  const res = await fetch(url, { method: 'PUT', headers: { 'Content-Type': contentType }, body: blob });
+  if (!res.ok) throw new ApiError(`Upload failed (${res.status})`, res.status);
 }
 
 // ── Gallery / media ──────────────────────────────────────────────────────────

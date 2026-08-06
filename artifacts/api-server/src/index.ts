@@ -21,6 +21,7 @@ import { ensureTrialOpsTables } from "./routes/staffTrials";
 import { ensureSelectionTables } from "./lib/selectionMigrations";
 import { ensureAdminUsersTable } from "./routes/adminUsers";
 import { ensureRefundsTables } from "./routes/refunds";
+import { ensureUserAvatarColumn } from "./routes/user";
 import { ensureFraudTables } from "./routes/fraud";
 import { recordJobRun } from "./lib/heartbeat";
 import { reconcileAbandonedPayments } from "./lib/reconcilePayments";
@@ -58,6 +59,7 @@ async function start() {
       await ensureAdminUsersTable(); // Stage 5 server-side RBAC
       await ensureFraudTables(); // Stage 6 fraud flag extensions
       await ensureRefundsTables(); // Stage 5 finance refunds
+      await ensureUserAvatarColumn(); // profile avatar (preset id or uploaded photo)
       logger.info("startup migrations ensured");
       break;
     } catch (e) {

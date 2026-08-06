@@ -12,8 +12,55 @@ import { and, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import { requireAuth, type AuthRequest } from "../middlewares/auth";
 import { pgCauseOf } from "../lib/pgErrors";
+import { computeAgeYears } from "../lib/age";
+import { getUploadPresignedUrl, getDownloadPresignedUrl, headS3Object } from "../lib/s3";
+import { logger } from "../lib/logger";
 
 const router = Router();
+
+/**
+ * Idempotent boot-time migration: users.avatar column. Follows the repo
+ * convention (raw ADD COLUMN IF NOT EXISTS from the api-server boot sequence)
+ * and serialises concurrent boots under an xact-scoped advisory lock so racing
+ * instances never collide on the DDL (see ensure-ddl-race).
+ */
+export async function ensureUserAvatarColumn(): Promise<void> {
+  await db.transaction(async (tx) => {
+    await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtext('bcpl:user_avatar:ddl'))`);
+    await tx.execute(sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar varchar(60)`);
+  });
+}
+
+// Fixed preset avatar ids the client can pick from (colored icon circles).
+// Keep in sync with bcpl-mobile lib/avatars.ts AVATAR_PRESETS.
+const AVATAR_PRESETS = [
+  "bat", "ball", "helmet", "trophy", "star", "shield", "flame", "target",
+] as const;
+
+// Deterministic private key for an uploaded avatar photo.
+function avatarS3Key(userId: string): string {
+  return `media/avatars/${userId}.jpg`;
+}
+
+/** Resolve a user's stored avatar value into a client-facing payload. */
+async function avatarPayload(
+  userId: string,
+  avatar: string | null | undefined,
+): Promise<{ kind: "preset" | "photo"; preset?: string; viewUrl?: string } | null> {
+  if (!avatar) return null;
+  if (avatar.startsWith("preset:")) {
+    return { kind: "preset", preset: avatar.slice("preset:".length) };
+  }
+  if (avatar === "photo") {
+    try {
+      const viewUrl = await getDownloadPresignedUrl(avatarS3Key(userId), 3600);
+      return { kind: "photo", viewUrl };
+    } catch {
+      return null; // never let a bad key break the dashboard
+    }
+  }
+  return null;
+}
 
 /**
  * Single-cursor registration selector (Task #3 — KYC status divergence).
@@ -163,8 +210,10 @@ router.get("/dashboard", requireAuth, async (req: AuthRequest, res) => {
 
   const reg = await pickUserRegistration(user.id);
 
+  const avatar = await avatarPayload(user.id, user.avatar);
+
   if (!reg) {
-    return void res.json({ user: { id: user.id, name: user.name, phone: user.phone, email: user.email }, registered: false });
+    return void res.json({ user: { id: user.id, name: user.name, phone: user.phone, email: user.email }, avatar, registered: false });
   }
 
   const [p1Pay] = await db.select().from(phase1PaymentsTable)
@@ -188,14 +237,22 @@ router.get("/dashboard", requireAuth, async (req: AuthRequest, res) => {
 
   const now = new Date();
 
+  // DOB is stored on the users row (YYYY-MM-DD date). Surface it plus a
+  // server-computed whole-year age so the app can render "23 years".
+  const dob = user.dob ?? null;
+  const age = dob ? computeAgeYears(dob) : null;
+
   res.json({
     user:           { id: user.id, name: user.name, phone: user.phone, email: user.email },
+    avatar,
     registered:     true,
     registration:   {
       id:            reg.id,
       regNumber:     reg.regNumber,
       role:          reg.role,
       trialCity:     reg.trialCity,
+      dob,
+      age,
       phase1Status:  reg.phase1Status,
       phase2Status:  reg.phase2Status,
       videoDeadline: reg.videoDeadline,
@@ -376,6 +433,65 @@ router.get("/trial-venue", requireAuth, async (req: AuthRequest, res) => {
       announcedAt:   venue.announcedAt,
     },
   });
+});
+
+// ── Profile avatar ────────────────────────────────────────────────────────
+// Players can pick a preset icon avatar OR upload a photo. Uploads reuse the
+// existing S3 presign machinery; the object lives in the PRIVATE bucket under
+// media/avatars/<userId>.jpg and is only ever served via a short-lived
+// presigned viewUrl (bucket blocks public reads), exactly like the media
+// library. The users.avatar column stores "preset:<id>" or "photo".
+
+const AVATAR_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
+const MAX_AVATAR_BYTES = 5 * 1024 * 1024; // 5 MB
+
+// POST /api/user/avatar — set a preset avatar.
+router.post("/avatar", requireAuth, async (req: AuthRequest, res) => {
+  const parsed = z.object({
+    preset: z.enum(AVATAR_PRESETS),
+  }).safeParse(req.body);
+  if (!parsed.success) {
+    return void res.status(400).json({ error: "Invalid avatar preset" });
+  }
+  const value = `preset:${parsed.data.preset}`;
+  await db.update(usersTable)
+    .set({ avatar: value, updatedAt: new Date() })
+    .where(eq(usersTable.id, req.user!.userId));
+  const avatar = await avatarPayload(req.user!.userId, value);
+  res.json({ success: true, avatar });
+});
+
+// POST /api/user/avatar/upload-url — presign a PUT for an uploaded photo.
+router.post("/avatar/upload-url", requireAuth, async (req: AuthRequest, res) => {
+  const parsed = z.object({
+    contentType: z.enum(AVATAR_IMAGE_TYPES),
+    sizeBytes:   z.number().int().positive().max(MAX_AVATAR_BYTES),
+  }).safeParse(req.body);
+  if (!parsed.success) {
+    return void res.status(400).json({ error: "Unsupported image (use JPEG/PNG/WebP up to 5 MB)" });
+  }
+  const s3Key = avatarS3Key(req.user!.userId);
+  try {
+    const presignedUrl = await getUploadPresignedUrl(s3Key, parsed.data.contentType);
+    res.json({ success: true, presignedUrl, s3Key });
+  } catch (e) {
+    logger.error({ err: e }, "avatar presign failed");
+    res.status(502).json({ error: "Could not start upload — please try again" });
+  }
+});
+
+// POST /api/user/avatar/confirm — verify the uploaded object then persist.
+router.post("/avatar/confirm", requireAuth, async (req: AuthRequest, res) => {
+  const s3Key = avatarS3Key(req.user!.userId);
+  const head = await headS3Object(s3Key);
+  if (!head.exists) {
+    return void res.status(400).json({ error: "Upload not found — please try again" });
+  }
+  await db.update(usersTable)
+    .set({ avatar: "photo", updatedAt: new Date() })
+    .where(eq(usersTable.id, req.user!.userId));
+  const avatar = await avatarPayload(req.user!.userId, "photo");
+  res.json({ success: true, avatar });
 });
 
 export default router;

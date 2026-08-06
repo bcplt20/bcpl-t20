@@ -27,6 +27,7 @@ import {
 } from '@/lib/api';
 import { Card, ScreenBackground, GlassAppBar, useAppBarHeight } from '@/components/ui';
 import { LinearGradient } from 'expo-linear-gradient';
+import { computeAge } from '@/lib/age';
 
 const CITIES = [
   'Mumbai', 'Delhi', 'Bengaluru', 'Hyderabad', 'Pune', 'Chennai', 'Kolkata', 'Ahmedabad',
@@ -115,6 +116,7 @@ export default function RegisterScreen() {
   const [doneStatus, setDoneStatus] = useState<string>('payment_done');
 
   const grossFee = useMemo(() => Math.round(fee * 1.18), [fee]);
+  const dobAge = useMemo(() => computeAge(dob), [dob]);
 
   // While a logged-in user's server status is being fetched on first mount, we
   // must NOT render a wizard step (it would flash before being replaced by the
@@ -474,9 +476,9 @@ export default function RegisterScreen() {
           {input({ value: phone, onChange: (v) => setPhone(v.replace(/\D/g, '')), placeholder: '9876543210', keyboard: 'number-pad', maxLength: 10 })}
           <Text style={[styles.label, { color: c.ink, marginTop: 12 }]}>{t('Date of Birth (18–45 yrs) *', 'जन्म तिथि (18–45 साल) *')}</Text>
           {input({ value: dob, onChange: setDob, placeholder: 'YYYY-MM-DD', maxLength: 10, keyboard: 'number-pad' })}
-          {dob && /^\d{4}-\d{2}-\d{2}$/.test(dob) ? (
+          {dobAge != null ? (
             <Text style={{ color: c.mint, fontSize: 12, marginTop: 6, fontFamily: 'PlusJakartaSans_700Bold', letterSpacing: 0.5 }}>
-              {t('AGE ELIGIBILITY — CONFIRMED', 'AGE ELIGIBILITY — CONFIRMED')}
+              {t(`AGE ${dobAge} — ELIGIBLE`, `उम्र ${dobAge} — योग्य`)}
             </Text>
           ) : null}
           <View style={{ marginTop: 16 }}>
@@ -602,7 +604,7 @@ export default function RegisterScreen() {
               { l: t('PLAYER NAME', 'PLAYER NAME'), v: name || '—' },
               { l: t('ROLE', 'ROLE'), v: role ? t(ROLES.find((r) => r.id === role)?.en ?? '', ROLES.find((r) => r.id === role)?.hi ?? '') : '—' },
               { l: t('TRIAL CITY', 'TRIAL CITY'), v: city || '—' },
-              { l: t('AGE ELIGIBILITY', 'AGE ELIGIBILITY'), v: /^\d{4}-\d{2}-\d{2}$/.test(dob) ? t('Eligible (18–45)', 'Eligible (18–45)') : '—' },
+              { l: t('AGE', 'उम्र'), v: dobAge != null ? t(`${dobAge} years (Eligible 18–45)`, `${dobAge} वर्ष (योग्य 18–45)`) : '—' },
               { l: t('SEASON', 'SEASON'), v: '5 · 2025–26' },
             ].map((row) => (
               <View key={row.l} style={{ paddingVertical: 10, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: c.line }}>
@@ -651,6 +653,26 @@ export default function RegisterScreen() {
                 {t('I agree to the BCPL Terms & Conditions, Privacy Notice, Refund & Cancellation Policy and Eligibility Criteria. I understand the Phase 1 fee does not guarantee qualification or selection and is non-refundable after successful payment, including if I do not upload my video. (bcplt20.com)', 'मैं BCPL Terms & Conditions, Privacy Notice, Refund & Cancellation Policy और Eligibility Criteria से सहमत हूँ। मैं समझता हूँ कि Phase 1 fee qualification या selection की guarantee नहीं देता और सफल भुगतान के बाद non-refundable है — भले ही मैं अपना video upload न करूँ। (bcplt20.com)')}
               </Text>
             </Pressable>
+            {/* Tappable links to the in-app legal pages referenced above. */}
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 10, marginLeft: 36 }}>
+              {([
+                { label: t('Terms', 'Terms'), slug: 'terms' },
+                { label: t('Privacy', 'Privacy'), slug: 'privacy' },
+                { label: t('Refunds', 'Refunds'), slug: 'refunds' },
+                { label: t('Eligibility', 'Eligibility'), slug: 'eligibility' },
+              ] as const).map((lnk) => (
+                <Pressable
+                  key={lnk.slug}
+                  onPress={() => router.push(`/pages/${lnk.slug}`)}
+                  hitSlop={6}
+                  testID={`reg-legal-${lnk.slug}`}
+                >
+                  <Text style={{ color: c.getAccentText(c.cyan), fontSize: 12.5, fontFamily: 'PlusJakartaSans_700Bold', textDecorationLine: 'underline' }}>
+                    {lnk.label}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
             {/* Optional marketing consent — never gates payment (website parity) */}
             <Pressable onPress={() => setMarketingOptIn(!marketingOptIn)} style={styles.checkRow}>
               <Feather name={marketingOptIn ? 'check-square' : 'square'} size={24} color={marketingOptIn ? c.magenta : c.sub} />

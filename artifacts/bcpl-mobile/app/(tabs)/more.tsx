@@ -21,6 +21,7 @@ import { Image } from 'expo-image';
 import { useTheme } from '@/context/ThemeContext';
 import { Badge, Card, ErrorView, LoadingView, GlassAppBar, ScreenBackground, GradientTag, useAppBarHeight, useBottomNavHeight } from '@/components/ui';
 import { ScreenHeader } from '@/components/ScreenHeader';
+import { AvatarCircle } from '@/components/AvatarCircle';
 import { LinearGradient } from 'expo-linear-gradient';
 
 function StatusRow({ label, value, done, isCurrent }: { label: string; value: string; done?: boolean; isCurrent?: boolean }) {
@@ -416,11 +417,16 @@ export default function ProfileScreen() {
               <Card style={{ padding: 0 }}>
                 <LinearGradient colors={['rgba(255,255,255,0.05)', 'transparent']} style={{ padding: 20 }}>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <View>
-                      <Text style={{ color: c.sub, fontSize: 11, fontFamily: 'PlusJakartaSans_700Bold', letterSpacing: 1 }}>REGISTRATION NO.</Text>
-                      <Text style={{ color: c.cyan, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 28, marginTop: 6, letterSpacing: -0.5 }}>
-                        {reg?.regNumber ?? '—'}
-                      </Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, flex: 1 }}>
+                      <Pressable onPress={() => router.push('/profile')} testID="more-avatar" hitSlop={6}>
+                        <AvatarCircle avatar={d?.avatar} size={52} />
+                      </Pressable>
+                      <View>
+                        <Text style={{ color: c.sub, fontSize: 11, fontFamily: 'PlusJakartaSans_700Bold', letterSpacing: 1 }}>REGISTRATION NO.</Text>
+                        <Text style={{ color: c.cyan, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 24, marginTop: 6, letterSpacing: -0.5 }}>
+                          {reg?.regNumber ?? '—'}
+                        </Text>
+                      </View>
                     </View>
                     {reg?.role ? <GradientTag label={reg.role} color={c.amber} /> : null}
                   </View>
