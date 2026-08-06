@@ -165,7 +165,7 @@ function buildSteps(d: Dashboard, t: (en: string, hi: string) => string) {
     { title: t('Phase 1 Review', 'फेज 1 रिव्यू'), icon: 'search', colors: ['#FF3DA6', '#FF6FA6'], done: trialStage || resultOut },
     { title: t('Phase 1 Result', 'फेज 1 रिज़ल्ट'), icon: 'award', colors: ['#FF3DA6', '#FF8A3D'], done: trialStage || resultOut },
     { title: t('Phase 2 Payment', 'फेज 2 पेमेंट'), icon: 'credit-card', colors: ['#00DCF5', '#4B6BFF'], done: trialStage || p2After },
-    { title: t('KYC Verification', 'KYC वेरिफिकेशन'), icon: 'shield', colors: ['#00DCF5', '#4B6BFF'], done: trialStage },
+    { title: t('KYC Verification', 'KYC वेरिफिकेशन'), icon: 'shield', colors: ['#00DCF5', '#4B6BFF'], done: trialStage || kycDone(kyc) },
     { title: t('Trial Venue & Pass', 'ट्रायल वेन्यू व पास'), icon: 'map-pin', colors: ['#16E0A3', '#00B8D9'], done: !!trial || postTrial },
     { title: t('Venue Check-In', 'वेन्यू चेक-इन'), icon: 'log-in', colors: ['#16E0A3', '#00B8D9'], done: !!trial?.checkedInAt || postTrial },
     { title: t('Physical Trial', 'फिजिकल ट्रायल'), icon: 'activity', colors: ['#16E0A3', '#00B8D9'], done: !!trial?.assessmentSubmitted || postTrial },
@@ -223,7 +223,7 @@ function StepChip({ step, isLast }: { step: ReturnType<typeof buildSteps>[number
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 8 }}>
             <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: step.state === 'done' ? c.mint : step.state === 'current' ? c.violet : c.sub }} />
             <Text style={{ color: step.state === 'todo' ? c.sub : c.ink, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 13 }}>
-              {step.state === 'done' ? t('Done', 'पूरा') : step.state === 'current' ? t('In progress', 'चल रहा है') : t('Upcoming', 'आगे')}
+              {step.state === 'done' ? t('Done', 'पूरा') : step.state === 'current' ? t('In progress', 'चल रहा है') : t('Pending', 'लंबित')}
             </Text>
           </View>
         </View>
@@ -703,7 +703,7 @@ function VideoTrialCard({
         /* ── Not started / open state ── */
         <View style={{ marginTop: 14 }}>
           <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 14 }}>
-            {t('Upload your 30–60 second trial video', '30–60 सेकंड का ट्रायल वीडियो अपलोड करें')}
+            {t('Upload your 30–90 second trial video', '30–90 सेकंड का ट्रायल वीडियो अपलोड करें')}
           </Text>
           <Text style={{ color: c.sub, fontSize: 13, marginTop: 8, lineHeight: 20, fontFamily: 'PlusJakartaSans_500Medium' }}>
             {t(

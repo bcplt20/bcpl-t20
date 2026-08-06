@@ -105,7 +105,7 @@ export function Privacy() {
       'Duplicate-payment and technical-error records — to identify and process refunds where the policy provides for them',
     ]},
     {n:3,icon:<IcoVideo size={24}/>,titleEn:'Assessment Data (Phase 1 & Phase 2)',titleHi:'असेसमेंट डेटा (फेज 1 और फेज 2)',items:[
-      'Phase 1 cricket videos (30–60 seconds) — to assess your cricket performance for the video-based Phase 1 stage',
+      'Phase 1 cricket videos (30–90 seconds) — to assess your cricket performance for the video-based Phase 1 stage',
       'Video validation data (integrity, authenticity and technical checks) — to confirm the video represents the registered player and meets upload rules',
       'Phase 1 scoring and ranking — to determine qualification to Phase 2 under the applicable framework',
       'Phase 2 physical-trial scoring — recorded digitally against the applicable role-specific rubric during your venue trial',

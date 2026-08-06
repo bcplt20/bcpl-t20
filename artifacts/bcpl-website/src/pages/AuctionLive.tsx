@@ -18,8 +18,8 @@ const STEPS = [
   {
     n: '01',
     en: 'Register & upload your video', hi: 'Register करें और video upload करें',
-    dEn: 'Pick your role, register for Phase 1 and upload a 30–60 second cricket clip from any ground.',
-    dHi: 'अपना role चुनें, Phase 1 के लिए register करें और किसी भी मैदान से 30–60 second की cricket clip upload करें।',
+    dEn: 'Pick your role, register for Phase 1 and upload a 30–90 second cricket clip from any ground.',
+    dHi: 'अपना role चुनें, Phase 1 के लिए register करें और किसी भी मैदान से 30–90 second की cricket clip upload करें।',
     color: '#FF7A29',
   },
   {

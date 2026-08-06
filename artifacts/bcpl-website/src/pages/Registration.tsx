@@ -24,7 +24,7 @@ import { IcoBat, IcoBall, IcoShield, IcoStar, IcoPen, IcoVideo, IcoClock, IcoSta
   ┌─────────────────────────────────────────────────────────────────┐
   │ PHASE 1 (Video Trial)                                           │
   │  → Register + Pay ₹299 (Bat/Bowl/WK) or ₹399 (All-Rounder)    │
-  │  → Upload your 30–60 second trial video                        │
+  │  → Upload your 30–90 second trial video                        │
   │  → Video evaluated against BCPL's Phase 1 criteria             │
   │  → Result within 15 days                                      │
   │                                                                 │

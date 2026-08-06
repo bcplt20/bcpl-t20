@@ -6,7 +6,7 @@ import { HOW_TO_JOIN_FAQS } from './landing/landingData';
 
 /**
  * /how-to-join — SEO landing page for "how to join corporate cricket league
- * india". A step-by-step guide: register → video (30–60s) → result within 15 days
+ * india". A step-by-step guide: register → video (30–90s) → result within 15 days
  * → physical trials → auction/teams. All process facts are from the FAQ page.
  */
 export function HowToJoin() {
@@ -25,10 +25,10 @@ export function HowToJoin() {
     },
     {
       n: '2',
-      title: 'Submit your 30–60 second video',
+      title: 'Submit your 30–90 second video',
       body: (
         <p className="lp-p" style={{ marginBottom: 0 }}>
-          Within 15 days of registering, upload a 30–60 second cricket skills video. It should show your own current
+          Within 15 days of registering, upload a 30–90 second cricket skills video. It should show your own current
           cricket performance for your chosen role — batting, bowling or keeping. All-rounders should show at least two
           skills. This is the single most important step, so give yourself time to film it well.
         </p>
@@ -136,7 +136,7 @@ export function HowToJoin() {
       h1={<>How to Join a <span className="shimmer-gold">Corporate Cricket League</span> in India</>}
       intro={
         <p className="lp-p" style={{ fontSize: 'clamp(15px,2.2vw,18px)' }}>
-          Joining BCPL is a clear, five-step process: register online, submit a 30–60 second cricket video, get your
+          Joining BCPL is a clear, five-step process: register online, submit a 30–90 second cricket video, get your
           result within 15 days, attend a physical trial if you advance, and then the auction and team stage. Here is
           exactly how each step works.
         </p>

@@ -34,7 +34,7 @@ export function RegistrationHero() {
       <View style={{ paddingHorizontal: 24, paddingBottom: 24, gap: 16 }}>
         {[
           { n: '1', icon: 'edit-3', en: 'Register & Pay', hi: 'रजिस्टर और पे', den: 'Phase 1 entry fee', dhi: 'फेज 1 एंट्री फीस', color: ['#FF3DA6', '#FF1A75'] },
-          { n: '2', icon: 'video', en: 'Video Trial', hi: 'वीडियो ट्रायल', den: '30-60s skills clip', dhi: '30-60s स्किल्स क्लिप', color: ['#5B2BF0', '#9B2FF0'] },
+          { n: '2', icon: 'video', en: 'Video Trial', hi: 'वीडियो ट्रायल', den: '30-90s skills clip', dhi: '30-90s स्किल्स क्लिप', color: ['#5B2BF0', '#9B2FF0'] },
           { n: '3', icon: 'activity', en: 'Physical Trial', hi: 'फिज़िकल ट्रायल', den: 'Standardized assessment', dhi: 'स्टैण्डर्ड असेसमेंट', color: ['#00E5FF', '#00B3FF'] },
           { n: '4', icon: 'users', en: 'Player Auction', hi: 'ऑक्शन', den: 'Franchise bidding', dhi: 'फ्रैंचाइज़ी बिडिंग', color: ['#FFC53D', '#FF8A3D'] },
           { n: '5', icon: 'star', en: 'BCPL Season 5', hi: 'BCPL खेलें', den: 'Corporate T20 League', dhi: 'कॉर्पोरेट T20 लीग', color: ['#B6FF3C', '#16E0A3'] },

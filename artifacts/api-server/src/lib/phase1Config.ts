@@ -49,7 +49,7 @@ export const phase1ConfigBase = z.object({
 
   // Video constraints
   videoMinSeconds:    z.number().int().min(5).max(600).default(30),
-  videoMaxSeconds:    z.number().int().min(10).max(900).default(60),
+  videoMaxSeconds:    z.number().int().min(10).max(900).default(90),
   maxVideoFileSizeMb: z.number().int().min(10).max(2048).default(200),
   maxReuploads:       z.number().int().min(0).max(10).default(2),
 
@@ -304,7 +304,7 @@ export type Phase1Instructions = z.infer<typeof instructionsSchema>;
 export const DEFAULT_INSTRUCTIONS: Phase1Instructions = {
   bat: {
     en: [
-      "Upload 30–60 seconds of footage.",
+      "Upload 30–90 seconds of footage.",
       "Show multiple genuine batting shots.",
       "Keep your full body visible where possible.",
       "Bat and ball should be visible.",
@@ -314,7 +314,7 @@ export const DEFAULT_INSTRUCTIONS: Phase1Instructions = {
       "Show enough deliveries to evaluate technique.",
     ],
     hi: [
-      "30–60 सेकंड का वीडियो अपलोड करें।",
+      "30–90 सेकंड का वीडियो अपलोड करें।",
       "कई असली बैटिंग शॉट दिखाएं।",
       "जहाँ हो सके पूरा शरीर दिखे।",
       "बैट और बॉल साफ़ दिखने चाहिए।",
@@ -326,7 +326,7 @@ export const DEFAULT_INSTRUCTIONS: Phase1Instructions = {
   },
   bowl: {
     en: [
-      "Upload 30–60 seconds of footage.",
+      "Upload 30–90 seconds of footage.",
       "Show multiple complete bowling deliveries.",
       "Show your run-up, bowling action and release.",
       "Keep your full body visible where possible.",
@@ -334,7 +334,7 @@ export const DEFAULT_INSTRUCTIONS: Phase1Instructions = {
       "Avoid excessive cuts and filters.",
     ],
     hi: [
-      "30–60 सेकंड का वीडियो अपलोड करें।",
+      "30–90 सेकंड का वीडियो अपलोड करें।",
       "कई पूरी गेंदबाज़ी डिलीवरी दिखाएं।",
       "रन-अप, बॉलिंग एक्शन और रिलीज़ दिखाएं।",
       "जहाँ हो सके पूरा शरीर दिखे।",
@@ -344,7 +344,7 @@ export const DEFAULT_INSTRUCTIONS: Phase1Instructions = {
   },
   ar: {
     en: [
-      "Upload 30–60 seconds of footage.",
+      "Upload 30–90 seconds of footage.",
       "Your video MUST show both batting AND bowling.",
       "Show multiple batting shots and complete bowling deliveries.",
       "Keep your full body visible where possible.",
@@ -352,7 +352,7 @@ export const DEFAULT_INSTRUCTIONS: Phase1Instructions = {
       "Avoid excessive edits and filters.",
     ],
     hi: [
-      "30–60 सेकंड का वीडियो अपलोड करें।",
+      "30–90 सेकंड का वीडियो अपलोड करें।",
       "वीडियो में बैटिंग और बॉलिंग दोनों ज़रूर दिखें।",
       "कई बैटिंग शॉट और पूरी बॉलिंग डिलीवरी दिखाएं।",
       "जहाँ हो सके पूरा शरीर दिखे।",
@@ -362,7 +362,7 @@ export const DEFAULT_INSTRUCTIONS: Phase1Instructions = {
   },
   wk: {
     en: [
-      "Upload 30–60 seconds of footage.",
+      "Upload 30–90 seconds of footage.",
       "Show meaningful wicketkeeping actions — receiving, movement, keeping technique.",
       "Include stumping / catch actions where available.",
       "Include batting evidence where required by BCPL policy.",
@@ -370,7 +370,7 @@ export const DEFAULT_INSTRUCTIONS: Phase1Instructions = {
       "Use normal-speed, stable footage.",
     ],
     hi: [
-      "30–60 सेकंड का वीडियो अपलोड करें।",
+      "30–90 सेकंड का वीडियो अपलोड करें।",
       "विकेटकीपिंग की असली एक्शन दिखाएं — कैच लेना, मूवमेंट, तकनीक।",
       "स्टंपिंग / कैच के मौक़े हों तो ज़रूर दिखाएं।",
       "BCPL नियम के अनुसार बैटिंग भी दिखाएं।",

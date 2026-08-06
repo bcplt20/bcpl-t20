@@ -272,7 +272,7 @@ export function Phase1PaymentReceipt() {
               <span style={{ width:6, height:6, borderRadius:'50%', background:'#FF7A29', display:'inline-block', animation:'liveBlip 1s infinite' }} />
               <span style={{ fontSize:11, fontWeight:700, color:'rgba(255,122,41,0.8)', fontFamily:'var(--font-head)', letterSpacing:'.08em' }}>{t("SUBMIT AS SOON AS POSSIBLE","जल्द से जल्द SUBMIT करें")}</span>
             </div>
-            <p style={{ fontSize:12, color:'rgba(255,255,255,0.45)', lineHeight:1.6, marginBottom:16 }}>{t("Record your 30–60 second cricket trial video. Follow the guidelines for best results.","अपनी 30–60 second की cricket trial video record करें। बेहतर results के लिए guidelines follow करें।")}</p>
+            <p style={{ fontSize:12, color:'rgba(255,255,255,0.45)', lineHeight:1.6, marginBottom:16 }}>{t("Record your 30–90 second cricket trial video. Follow the guidelines for best results.","अपनी 30–90 second की cricket trial video record करें। बेहतर results के लिए guidelines follow करें।")}</p>
             <button className="btn-primary" style={{ width:'100%', padding:'12px', fontSize:12 }}
               onClick={() => { window.location.href = import.meta.env.BASE_URL + 'register/upload-video'; }}>
               {t("UPLOAD NOW →","अभी UPLOAD करें →")}
@@ -507,7 +507,7 @@ export function Phase1PaymentReceipt() {
                           <div class="step-num">1</div>
                           <div>
                             <div class="step-label">Upload Your Trial Video</div>
-                            <div class="step-desc">Record a 30–60 second cricket video and upload it via bcplt20.com within 15 days of registration.</div>
+                            <div class="step-desc">Record a 30–90 second cricket video and upload it via bcplt20.com within 15 days of registration.</div>
                           </div>
                         </div>
                         <div class="step-row">

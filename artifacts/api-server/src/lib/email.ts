@@ -156,11 +156,11 @@ export function tplPhase1Receipt(name: string, role: string, amount: number, reg
         accent: COLORS.orange,
         children: `
           <div style="font-family:inherit;font-size:15px;color:${COLORS.ink};font-weight:700;margin-bottom:6px;">Next Step — Upload Your Trial Video</div>
-          <p style="font-size:13px;color:${COLORS.inkSoft};margin:0 0 6px;line-height:1.6;">You have <strong>15 days</strong> to upload a 30–60 second trial video. Sign in with your registered phone number any time to upload.</p>
+          <p style="font-size:13px;color:${COLORS.inkSoft};margin:0 0 6px;line-height:1.6;">You have <strong>15 days</strong> to upload a 30–90 second trial video. Sign in with your registered phone number any time to upload.</p>
           <p style="font-size:12px;color:${COLORS.inkFaint};margin:0;">Deadline: 15 days from registration &nbsp;·&nbsp; Late uploads are not accepted.</p>`,
       })}
       ${PrimaryCTA("UPLOAD VIDEO", `${SITE_URL}/register/upload-video`)}
-      ${NoteBox("Video: 30–60 seconds of batting, bowling or fielding. Sign in with the same phone number used during registration. Your Phase 1 result will be shared within 15 days of video submission.")}
+      ${NoteBox("Video: 30–90 seconds of batting, bowling or fielding. Sign in with the same phone number used during registration. Your Phase 1 result will be shared within 15 days of video submission.")}
     `),
   };
 }
@@ -207,7 +207,7 @@ export function tplVideoReminder(name: string, daysLeft: number) {
           accent: COLORS.red,
           children: `
             <div style="font-size:15px;color:${COLORS.ink};font-weight:700;margin-bottom:4px;">Do not miss your chance</div>
-            <p style="font-size:13px;color:${COLORS.inkSoft};margin:0;line-height:1.6;">You have already paid. Upload your 30–60 second skill video now — it takes less than 5 minutes.</p>`,
+            <p style="font-size:13px;color:${COLORS.inkSoft};margin:0;line-height:1.6;">You have already paid. Upload your 30–90 second skill video now — it takes less than 5 minutes.</p>`,
         })}
         ${PrimaryCTA("UPLOAD VIDEO", `${SITE_URL}/register/upload-video`, COLORS.red)}
         ${NoteBox("This is your final reminder.")}
@@ -228,7 +228,7 @@ export function tplVideoReminder(name: string, daysLeft: number) {
         accent: COLORS.amber,
         children: `
           <div style="font-size:10px;color:${COLORS.inkFaint};letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">Video Requirements</div>
-          <div style="font-size:13px;color:${COLORS.inkSoft};line-height:1.9;">Duration: 30–60 seconds<br/>Format: MP4, MOV, AVI or WEBM<br/>Content: skills for your registered role — see instructions on the upload page<br/>Good lighting and a clear frame — no filters or editing</div>`,
+          <div style="font-size:13px;color:${COLORS.inkSoft};line-height:1.9;">Duration: 30–90 seconds<br/>Format: MP4, MOV, AVI or WEBM<br/>Content: skills for your registered role — see instructions on the upload page<br/>Good lighting and a clear frame — no filters or editing</div>`,
       })}
       ${PrimaryCTA("UPLOAD VIDEO", `${SITE_URL}/register/upload-video`, COLORS.amber)}
     `),

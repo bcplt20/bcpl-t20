@@ -69,6 +69,8 @@ function isKycDone(kycStatus?: string | null, phase2Status?: string | null): boo
 function LangSwitch() {
   const c = useColors();
   const { lang, setLang, t } = useLang();
+  const { token } = useAuth();
+  const router = useRouter();
   const opts: { value: Lang; label: string }[] = [
     { value: 'en', label: 'English' },
     { value: 'hi', label: 'हिंदी' },
@@ -79,7 +81,23 @@ function LangSwitch() {
       <View style={{ padding: 20, paddingBottom: 16 }}>
         <Text style={[styles.cardTitle, { color: c.ink }]}>{t('Preferences', 'प्राथमिकता')}</Text>
       </View>
-      <View style={{ padding: 20, paddingTop: 0 }}>
+      {token ? (
+        <Pressable
+          onPress={() => router.push('/profile')}
+          style={({ pressed }) => [styles.prefRow, { borderTopColor: c.line, opacity: pressed ? 0.7 : 1 }]}
+          testID="profile-row"
+        >
+          <View style={[styles.prefIcon, { backgroundColor: c.card2, borderColor: c.line }]}>
+            <Feather name="user" size={18} color={c.getAccentText(c.magenta)} />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 15 }}>{t('Profile', 'प्रोफ़ाइल')}</Text>
+            <Text style={{ color: c.sub, fontSize: 13, marginTop: 2, fontFamily: 'PlusJakartaSans_500Medium' }}>{t('Your registered player details', 'आपकी रजिस्टर्ड खिलाड़ी जानकारी')}</Text>
+          </View>
+          <Feather name="chevron-right" size={18} color={c.sub} />
+        </Pressable>
+      ) : null}
+      <View style={{ padding: 20, paddingTop: 20 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
           <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 16 }}>
             {t('App Theme', 'ऐप थीम')}
@@ -491,7 +509,7 @@ export default function ProfileScreen() {
                           ? 'Under review'
                           : (d.kyc?.status ?? reg?.phase2Status)
                             ? niceStatus(d.kyc?.status ?? reg?.phase2Status)
-                            : 'Awaited' // never a bare dash — future step reads "Awaited" like Physical trial
+                            : 'Pending' // KYC not yet started → 'Pending' (owner rule)
                     }
                     done={isKycDone(d.kyc?.status, reg?.phase2Status)}
                     isCurrent={!!d.video?.submitted && !isKycDone(d.kyc?.status, reg?.phase2Status)}
@@ -561,6 +579,8 @@ export default function ProfileScreen() {
 
 const styles = StyleSheet.create({
   supportRow: { flexDirection: 'row', alignItems: 'center', gap: 16, paddingVertical: 16 },
+  prefRow: { flexDirection: 'row', alignItems: 'center', gap: 14, paddingHorizontal: 20, paddingVertical: 16, borderTopWidth: StyleSheet.hairlineWidth },
+  prefIcon: { width: 40, height: 40, borderRadius: 20, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
   supportIcon: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(0, 229, 255, 0.15)', alignItems: 'center', justifyContent: 'center' },
   linkBtn: {
     flexDirection: 'row',

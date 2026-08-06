@@ -39,7 +39,7 @@ export function CorporateCricketDelhi() {
           <LpBullets items={[
             <><strong style={{ color: '#fff' }}>Register online</strong> and pick your playing role — Batsman, Bowler, Wicket-Keeper or All-Rounder.</>,
             <><strong style={{ color: '#fff' }}>Select your nearest trial city</strong> during registration so your physical-trial venue is convenient for you.</>,
-            <><strong style={{ color: '#fff' }}>Upload a 30–60 second cricket video</strong> within 15 days of registering, showing your own current performance.</>,
+            <><strong style={{ color: '#fff' }}>Upload a 30–90 second cricket video</strong> within 15 days of registering, showing your own current performance.</>,
             <><strong style={{ color: '#fff' }}>Receive your Phase 1 result within 15 days</strong> of submitting your video.</>,
           ]} />
           <p className="lp-p">

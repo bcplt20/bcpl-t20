@@ -31,7 +31,7 @@ type UploadState = 'loading' | 'not_registered' | 'deadline_passed' | 'already_u
 // Friendly copy for server-side validation failure reasons (GET /video/status → reuploadReason)
 const REUPLOAD_COPY: Record<string, { en: string; hi: string }> = {
   VIDEO_TOO_SHORT:   { en: 'Your video was too short. Please upload at least 30 seconds of cricket footage.', hi: 'आपका वीडियो बहुत छोटा था। कृपया कम से कम 30 सेकंड की क्रिकेट फुटेज अपलोड करें।' },
-  VIDEO_TOO_LONG:    { en: 'Your video was longer than the 60-second limit. Please upload a shorter video.', hi: 'आपका वीडियो 60 सेकंड की सीमा से लंबा था। कृपया छोटा वीडियो अपलोड करें।' },
+  VIDEO_TOO_LONG:    { en: 'Your video was longer than the 90-second limit. Please upload a shorter video.', hi: 'आपका वीडियो 90 सेकंड की सीमा से लंबा था। कृपया छोटा वीडियो अपलोड करें।' },
   CORRUPTED_VIDEO:   { en: 'We could not read your video file. Please record again in MP4 or MOV format.', hi: 'हम आपकी वीडियो फ़ाइल नहीं पढ़ सके। कृपया MP4 या MOV फॉर्मेट में दोबारा रिकॉर्ड करें।' },
   REUPLOAD_REQUIRED: { en: 'We could not process your last upload. Please upload a new video.', hi: 'हम आपका पिछला अपलोड प्रोसेस नहीं कर सके। कृपया नया वीडियो अपलोड करें।' },
   // AI validity (pass zero) reasons — §17 approved copy

@@ -116,6 +116,11 @@ export default function RegisterScreen() {
 
   const grossFee = useMemo(() => Math.round(fee * 1.18), [fee]);
 
+  // While a logged-in user's server status is being fetched on first mount, we
+  // must NOT render a wizard step (it would flash before being replaced by the
+  // resumed pay/done step). Start "hydrating" only when a token exists.
+  const [hydrating, setHydrating] = useState<boolean>(!!token);
+
   // Sync with the server's registration status. Resume rules (owner-mandated):
   //  • a returning registered-but-UNPAID user lands DIRECTLY on the pay step —
   //    role/city/dob are NEVER re-asked.
@@ -161,9 +166,12 @@ export default function RegisterScreen() {
 
   // On mount: recover any registered state (incl. after an app relaunch during
   // checkout). Jump an early-step logged-in user straight to their real step.
+  // We keep `hydrating` true until this first fetch settles so no wizard step
+  // flashes before the resumed pay/done step is set.
   useEffect(() => {
-    if (!token) return;
-    syncStatus({ allowJumpFromEarly: true });
+    if (!token) { setHydrating(false); return; }
+    setHydrating(true);
+    syncStatus({ allowJumpFromEarly: true }).finally(() => setHydrating(false));
   }, [token, syncStatus]);
 
   // On focus (e.g. returning from the payment WebView / receipt): re-check
@@ -421,12 +429,17 @@ export default function RegisterScreen() {
     <View style={{ flex: 1, backgroundColor: c.bg }}>
       <ScreenBackground />
       <GlassAppBar title="Register" back={true} />
+      {hydrating ? (
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: appBarHeight }}>
+          <ActivityIndicator size="large" color={c.magenta} />
+        </View>
+      ) : (
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ padding: 20, paddingTop: appBarHeight, paddingBottom: Platform.OS === 'web' ? 60 : 40 }}
         keyboardShouldPersistTaps="handled"
       >
-      <StepProgressBar step={step} />
+      {step !== 'done' ? <StepProgressBar step={step} /> : null}
       <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 28, letterSpacing: -0.5 }}>{stepTitle[step]}</Text>
       <Text style={{ color: c.sub, fontSize: 15, marginTop: 8, marginBottom: 24, fontFamily: 'PlusJakartaSans_500Medium' }}>
         {stepSub[step]}
@@ -696,50 +709,75 @@ export default function RegisterScreen() {
               <Text style={{ color: c.getAccentText(c.cyan), fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 32 }}>{regNumber}</Text>
             </View>
           ) : null}
-          <Text style={{ color: c.sub, fontSize: 15, marginTop: 28, textAlign: 'center', lineHeight: 24, paddingHorizontal: 20, fontFamily: 'PlusJakartaSans_500Medium' }}>
-            {t('Next step: upload your 30–60 second trial video — right here in the app.', 'अगला कदम: अपना 30–60 सेकंड का ट्रायल वीडियो अपलोड करें — यहीं ऐप में।')}
-          </Text>
+          {/* Trial city (available for resuming users via syncStatus) */}
+          {city ? (
+            <View style={{ marginTop: 20, alignItems: 'center' }}>
+              <Text style={{ color: c.sub, fontSize: 12, fontFamily: 'PlusJakartaSans_700Bold', letterSpacing: 0.5, marginBottom: 4 }}>{t('TRIAL CITY', 'TRIAL CITY')}</Text>
+              <Text style={{ color: c.ink, fontSize: 16, fontFamily: 'PlusJakartaSans_700Bold' }}>{city}</Text>
+            </View>
+          ) : null}
 
-          {/* Video guidelines so the player knows exactly what to record before
-              they head to the in-app upload screen (mirrors website copy). */}
-          <View style={{ width: '100%', marginTop: 26, padding: 16, backgroundColor: c.card2, borderRadius: 16, borderWidth: 1, borderColor: c.line }}>
-            <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 15, marginBottom: 12 }}>
-              {t('Video guidelines', 'वीडियो दिशानिर्देश')}
-            </Text>
-            {[
-              { en: 'Record a 30–60 second clip clearly showing your cricket skills.', hi: '30–60 सेकंड का clip रिकॉर्ड करें जिसमें आपकी क्रिकेट स्किल्स साफ़ दिखें।' },
-              { en: 'Shoot horizontally in good light with a stable camera.', hi: 'अच्छी रोशनी में स्थिर कैमरे से हॉरिजॉन्टल शूट करें।' },
-              { en: 'No editing or background music — raw footage of your own play only.', hi: 'कोई एडिटिंग या म्यूजिक नहीं — केवल आपके अपने खेल की मूल फुटेज।' },
-              { en: 'MP4 / MOV / AVI / WebM, up to 200 MB.', hi: 'MP4 / MOV / AVI / WebM, अधिकतम 200 MB.' },
-              { en: 'Upload within your deadline window shown on the upload screen.', hi: 'अपलोड स्क्रीन पर दिखाई गई समय-सीमा के भीतर अपलोड करें।' },
-            ].map((item, i) => (
-              <View key={i} style={{ flexDirection: 'row', gap: 8, alignItems: 'flex-start', marginBottom: 8 }}>
-                <Feather name="check" size={14} color="#2ECC71" style={{ marginTop: 2 }} />
-                <Text style={{ color: c.sub, fontSize: 12.5, lineHeight: 19, fontFamily: 'PlusJakartaSans_500Medium', flex: 1 }}>{t(item.en, item.hi)}</Text>
+          {doneStatus === 'payment_done' ? (
+            <>
+              {/* Only a just-paid player who still owes a video sees the upload
+                  prompt + guidelines. Fully-registered/advanced players do not. */}
+              <Text style={{ color: c.sub, fontSize: 15, marginTop: 28, textAlign: 'center', lineHeight: 24, paddingHorizontal: 20, fontFamily: 'PlusJakartaSans_500Medium' }}>
+                {t('Next step: upload your 30–90 second trial video — right here in the app.', 'अगला कदम: अपना 30–90 सेकंड का ट्रायल वीडियो अपलोड करें — यहीं ऐप में।')}
+              </Text>
+
+              <View style={{ width: '100%', marginTop: 26, padding: 16, backgroundColor: c.card2, borderRadius: 16, borderWidth: 1, borderColor: c.line }}>
+                <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 15, marginBottom: 12 }}>
+                  {t('Video guidelines', 'वीडियो दिशानिर्देश')}
+                </Text>
+                {[
+                  { en: 'Record a 30–90 second clip clearly showing your cricket skills.', hi: '30–90 सेकंड का clip रिकॉर्ड करें जिसमें आपकी क्रिकेट स्किल्स साफ़ दिखें।' },
+                  { en: 'Shoot horizontally in good light with a stable camera.', hi: 'अच्छी रोशनी में स्थिर कैमरे से हॉरिजॉन्टल शूट करें।' },
+                  { en: 'No editing or background music — raw footage of your own play only.', hi: 'कोई एडिटिंग या म्यूजिक नहीं — केवल आपके अपने खेल की मूल फुटेज।' },
+                  { en: 'MP4 / MOV / AVI / WebM, up to 200 MB.', hi: 'MP4 / MOV / AVI / WebM, अधिकतम 200 MB.' },
+                  { en: 'Upload within your deadline window shown on the upload screen.', hi: 'अपलोड स्क्रीन पर दिखाई गई समय-सीमा के भीतर अपलोड करें।' },
+                ].map((item, i) => (
+                  <View key={i} style={{ flexDirection: 'row', gap: 8, alignItems: 'flex-start', marginBottom: 8 }}>
+                    <Feather name="check" size={14} color="#2ECC71" style={{ marginTop: 2 }} />
+                    <Text style={{ color: c.sub, fontSize: 12.5, lineHeight: 19, fontFamily: 'PlusJakartaSans_500Medium', flex: 1 }}>{t(item.en, item.hi)}</Text>
+                  </View>
+                ))}
               </View>
-            ))}
-          </View>
 
-          <Pressable
-            onPress={() => router.replace(doneStatus === 'payment_done' ? '/upload-video' : '/journey')}
-            style={({ pressed }) => [styles.btn, { opacity: pressed ? 0.8 : 1, marginTop: 28, paddingHorizontal: 40 }]}
-          >
-            <LinearGradient
-              colors={['#FF1A75', '#D10056']}
-              style={[StyleSheet.absoluteFill, { borderRadius: 16 }]}
-            />
-            <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, letterSpacing: 0.5 }}>
-              {doneStatus === 'payment_done'
-                ? t('Upload trial video', 'ट्रायल वीडियो अपलोड करें')
-                : t('Continue your journey', 'अपना सफ़र जारी रखें')}
-            </Text>
-          </Pressable>
+              <Pressable
+                onPress={() => router.replace('/upload-video')}
+                style={({ pressed }) => [styles.btn, { opacity: pressed ? 0.8 : 1, marginTop: 28, paddingHorizontal: 40 }]}
+              >
+                <LinearGradient colors={['#FF1A75', '#D10056']} style={[StyleSheet.absoluteFill, { borderRadius: 16 }]} />
+                <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, letterSpacing: 0.5 }}>
+                  {t('Upload trial video', 'ट्रायल वीडियो अपलोड करें')}
+                </Text>
+              </Pressable>
+            </>
+          ) : (
+            <>
+              {/* Fully-registered / advanced (incl. carryover 'selected'): no
+                  video-guidelines / upload prompt — status + Journey link only. */}
+              <Text style={{ color: c.sub, fontSize: 15, marginTop: 24, textAlign: 'center', lineHeight: 24, paddingHorizontal: 20, fontFamily: 'PlusJakartaSans_500Medium' }}>
+                {t('Your registration is complete. Track your status and next steps in My Journey.', 'आपका रजिस्ट्रेशन पूरा हो गया है। अपना status और अगले कदम My Journey में देखें।')}
+              </Text>
+              <Pressable
+                onPress={() => router.replace('/journey')}
+                style={({ pressed }) => [styles.btn, { opacity: pressed ? 0.8 : 1, marginTop: 28, paddingHorizontal: 40 }]}
+              >
+                <LinearGradient colors={['#FF1A75', '#D10056']} style={[StyleSheet.absoluteFill, { borderRadius: 16 }]} />
+                <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, letterSpacing: 0.5 }}>
+                  {t('Go to My Journey', 'My Journey पर जाएं')}
+                </Text>
+              </Pressable>
+            </>
+          )}
           <Pressable onPress={() => router.replace('/journey')} style={{ marginTop: 16 }}>
             <Text style={{ color: c.sub, fontSize: 14, fontFamily: 'PlusJakartaSans_700Bold' }}>{t('View my journey', 'मेरा सफ़र देखें')}</Text>
           </Pressable>
         </Card>
       ) : null}
     </ScrollView>
+      )}
 
       {/* ── Registered Player Login modal (from step 1) ── */}
       <Modal visible={showLogin} transparent animationType="fade" onRequestClose={() => setShowLogin(false)}>

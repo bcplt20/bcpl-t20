@@ -40,7 +40,7 @@ export function OfficeCricketTeam() {
           </p>
           <LpBullets items={[
             <>Each colleague <strong style={{ color: '#fff' }}>registers on their own</strong> and picks their playing role — Batsman, Bowler, Wicket-Keeper or All-Rounder.</>,
-            <>Everyone uploads their own <strong style={{ color: '#fff' }}>30–60 second cricket video</strong> within 15 days of registering.</>,
+            <>Everyone uploads their own <strong style={{ color: '#fff' }}>30–90 second cricket video</strong> within 15 days of registering.</>,
             <>Each person gets an <strong style={{ color: '#fff' }}>individual Phase 1 result within 15 days</strong> of their submission.</>,
             <>Colleagues who advance can each <strong style={{ color: '#fff' }}>choose to proceed to the Phase 2 physical trial</strong> in their nearest trial city.</>,
           ]} />

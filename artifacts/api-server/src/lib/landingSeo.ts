@@ -10,7 +10,7 @@
  *
  * The FAQ text here is kept in sync with the matching page component in
  * artifacts/bcpl-website/src/pages/. Every fact is drawn from the site's FAQ
- * page (result within 15 days, 30–60 second video, evaluation-based process)
+ * page (result within 15 days, 30–90 second video, evaluation-based process)
  * — no invented numbers, no banned wording.
  */
 
@@ -40,7 +40,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "How does the process work?",
-        a: "You register online and choose your playing role, then upload a 30–60 second cricket skills video within 15 days. Your submission is assessed under BCPL's role-specific Phase 1 framework and your result is shared within 15 days of video submission. Players who advance can choose to attend a physical trial in Phase 2.",
+        a: "You register online and choose your playing role, then upload a 30–90 second cricket skills video within 15 days. Your submission is assessed under BCPL's role-specific Phase 1 framework and your result is shared within 15 days of video submission. Players who advance can choose to attend a physical trial in Phase 2.",
       },
       {
         q: "Do I need to be a trained cricketer?",
@@ -62,7 +62,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "How do Delhi corporate employees join?",
-        a: "Register online, choose your playing role and select your nearest trial city during registration. You then upload a 30–60 second cricket skills video within 15 days. Your result is shared within 15 days of video submission.",
+        a: "Register online, choose your playing role and select your nearest trial city during registration. You then upload a 30–90 second cricket skills video within 15 days. Your result is shared within 15 days of video submission.",
       },
       {
         q: "Where are the Delhi trials held?",
@@ -84,11 +84,11 @@ export const LANDING_PAGES: LandingPage[] = [
     faqs: [
       {
         q: "How do I join the corporate cricket league?",
-        a: "Visit the registration page, fill the form, choose your playing role (Batsman, Bowler, Wicket-Keeper or All-Rounder) and select your nearest trial city. After registering you upload a 30–60 second cricket skills video within 15 days. The registration itself takes about 5 minutes.",
+        a: "Visit the registration page, fill the form, choose your playing role (Batsman, Bowler, Wicket-Keeper or All-Rounder) and select your nearest trial city. After registering you upload a 30–90 second cricket skills video within 15 days. The registration itself takes about 5 minutes.",
       },
       {
         q: "How long is the trial video and when is it due?",
-        a: "The trial video is 30–60 seconds long and must be uploaded within 15 days of registration. It should show your own current cricket performance for your chosen role — batting, bowling or keeping. All-rounders should show at least two skills.",
+        a: "The trial video is 30–90 seconds long and must be uploaded within 15 days of registration. It should show your own current cricket performance for your chosen role — batting, bowling or keeping. All-rounders should show at least two skills.",
       },
       {
         q: "How soon do I get my Phase 1 result?",
@@ -114,7 +114,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "Do we register as a team or individually?",
-        a: "Registration is individual. Each working professional registers on their own, submits a 30–60 second cricket video and is assessed under the role-specific Phase 1 framework. This keeps the assessment fair while still letting an entire office group take part.",
+        a: "Registration is individual. Each working professional registers on their own, submits a 30–90 second cricket video and is assessed under the role-specific Phase 1 framework. This keeps the assessment fair while still letting an entire office group take part.",
       },
       {
         q: "Is this good for company team-building and fitness?",
@@ -126,7 +126,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "How does the process work for a group from one office?",
-        a: "Everyone registers individually, uploads their 30–60 second video within 15 days and receives a Phase 1 result within 15 days. Colleagues who advance can each choose to proceed to the Phase 2 physical trial in their nearest trial city.",
+        a: "Everyone registers individually, uploads their 30–90 second video within 15 days and receives a Phase 1 result within 15 days. Colleagues who advance can each choose to proceed to the Phase 2 physical trial in their nearest trial city.",
       },
     ],
   },

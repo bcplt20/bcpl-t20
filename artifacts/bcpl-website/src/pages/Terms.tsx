@@ -122,7 +122,7 @@ export function Terms() {
     ]},
     {n:4,icon:<IcoVideo size={24}/>,titleEn:'Phase 1 — Video Trial & Assessment',titleHi:'फेज 1 — वीडियो ट्रायल और असेसमेंट',items:[
       'Phase 1 is a video-based cricket assessment; the fee provides participation in and access to the Phase 1 process for your selected playing role',
-      'You must upload a 30–60 second cricket video showing your own, current performance within the applicable upload window shown in your dashboard',
+      'You must upload a 30–90 second cricket video showing your own, current performance within the applicable upload window shown in your dashboard',
       'Videos that are incomplete, invalid, corrupted, inaccessible, unclear or non-compliant may require re-upload under BCPL rules; late uploads may be rejected according to the applicable process',
       'Manipulated, edited-to-deceive or impersonated videos lead to disqualification',
       'Phase 1 results are shared within 15 days of video submission; a Phase 1 score/rank, where shown, does not by itself guarantee advancement, and Phase 1 Qualified does not equal Auction Pool qualification',

@@ -178,7 +178,7 @@ function getBannerConfig(step: Step, data: any, venue: any, t: any) {
     upload_video: {
       color:'var(--orange)', bg:'rgba(255,122,41,0.08)', icon:<IcoVideo size={40} />,
       title: t('Upload Your Trial Video', 'अपना ट्रायल वीडियो अपलोड करें'),
-      body: t(`Hi ${name}! Your Phase 1 registration is done. Upload your 30–60 second trial video before ${dl} for Phase 1 evaluation.`, `नमस्ते ${name}! आपका फेज 1 रजिस्ट्रेशन हो गया है। Phase 1 evaluation के लिए ${dl} से पहले अपना 30–60 सेकंड का ट्रायल वीडियो अपलोड करें।`),
+      body: t(`Hi ${name}! Your Phase 1 registration is done. Upload your 30–90 second trial video before ${dl} for Phase 1 evaluation.`, `नमस्ते ${name}! आपका फेज 1 रजिस्ट्रेशन हो गया है। Phase 1 evaluation के लिए ${dl} से पहले अपना 30–90 सेकंड का ट्रायल वीडियो अपलोड करें।`),
       cta: t('UPLOAD VIDEO →', 'वीडियो अपलोड करें →'), ctaPath:'/register/upload-video',
     },
     under_review: {

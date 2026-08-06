@@ -87,7 +87,7 @@ function HeaderCountdown() {
             transform: [{ scale: pulse.interpolate({ inputRange: [0, 1], outputRange: [0.8, 1.2] }) }]
           }} />
           <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 8, textTransform: 'uppercase', letterSpacing: 0.8 }} numberOfLines={1}>
-            {t('REGISTRATION ENDS IN', 'रजिस्ट्रेशन बंद होने में')}
+            {t('REGISTRATION CLOSES IN', 'रजिस्ट्रेशन बंद होने में')}
           </Text>
         </View>
         <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 12, letterSpacing: 0.3, fontVariant: ['tabular-nums'], marginTop: 1 }} numberOfLines={1}>

@@ -32,8 +32,8 @@ const OK_CODECS = new Set(["h264", "hevc", "h265", "vp8", "vp9", "av1"]);
 const OK_CONTAINER_HINTS = ["mp4", "mov", "webm", "matroska"];
 /** Longest edge above this → downscale during (later) transcode stage. */
 const MAX_EDGE_PX = 3840;
-/** Container-rounding slack on the 30–60 s rule — ffprobe is authoritative
- *  but a 29.96 s clip must not bounce (spec wording targets whole seconds). */
+/** Container-rounding slack on the configured min/max duration rule — ffprobe
+ *  is authoritative but a 29.96 s clip must not bounce (spec targets whole s). */
 const DURATION_SLACK_SEC = 1;
 /** 'validating' rows untouched this long are presumed crashed and retried. */
 const STALE_VALIDATING_MIN = 15;
