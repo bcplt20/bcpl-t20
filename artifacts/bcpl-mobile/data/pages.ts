@@ -120,7 +120,6 @@ export const NATIVE_PAGES: Record<string, { title: string; content: PageBlock[] 
       { type: 'p', text: "or write to: Kriparti India Pvt. Ltd., New Delhi, India.", hi: "या लिखें: Kriparti India Pvt. Ltd., New Delhi, India." },
       { type: 'heading', text: "Ready to Join BCPL?", hi: "BCPL join करने के लिए तैयार हैं?" },
       { type: 'p', text: "By registering, you accept these terms. See you on the field!", hi: "रजिस्टर करके आप ये शर्तें स्वीकार करते हैं। मैदान में मिलेंगे!" },
-      { type: 'heading', text: "REGISTER NOW →", hi: "अभी रजिस्टर करें →" },
     ]
   },
   'privacy': {
@@ -129,7 +128,6 @@ export const NATIVE_PAGES: Record<string, { title: string; content: PageBlock[] 
       { type: 'p', text: "Your privacy matters to us. This notice explains what data we collect, why we collect it, and who processes it.", hi: "आपकी गोपनीयता हमारे लिए महत्वपूर्ण है। यह notice बताता है कि हम क्या डेटा लेते हैं, क्यों लेते हैं और कौन इसे process करता है।" },
       { type: 'p', text: "This document applies to BCPL Season 5 unless expressly stated otherwise.", hi: "यह document, जब तक स्पष्ट रूप से अन्यथा न कहा जाए, BCPL Season 5 पर लागू होता है।" },
       { type: 'heading', text: "Contents", hi: "विषय-सूची" },
-      { type: 'heading', text: "Key Points", hi: "मुख्य बातें" },
       { type: 'heading', text: "Our Privacy Commitment", hi: "हमारी प्रतिबद्धता" },
       { type: 'p', text: "We do not sell, rent or trade your personal data to third parties.", hi: "हम आपका personal data तीसरे पक्ष को बेचते, किराए पर देते या trade नहीं करते।" },
       { type: 'p', text: "Your information is processed to run the BCPL registration and assessment process and to meet legal requirements.", hi: "आपकी जानकारी BCPL registration व assessment process चलाने और कानूनी आवश्यकताएं पूरी करने के लिए process की जाती है।" },
@@ -137,7 +135,6 @@ export const NATIVE_PAGES: Record<string, { title: string; content: PageBlock[] 
       { type: 'p', text: "For all privacy-related queries, requests, or complaints, contact us at", hi: "सभी privacy से जुड़े सवालों के लिए संपर्क करें" },
       { type: 'p', text: "We acknowledge all requests within 2 business days and resolve within 7.", hi: "हम 2 business days में acknowledgement और 7 में समाधान देते हैं।" },
       { type: 'heading', text: "Your Data Is Safe With Us", hi: "आपका डेटा हमारे पास सुरक्षित है" },
-      { type: 'heading', text: "REGISTER NOW →", hi: "अभी रजिस्टर करें →" },
     ]
   },
   'brand-usage': {
@@ -150,7 +147,6 @@ export const NATIVE_PAGES: Record<string, { title: string; content: PageBlock[] 
       { type: 'p', text: "or write to: Kriparti India Private Limited, New Delhi, India.", hi: "या लिखें: Kriparti India Private Limited, New Delhi, India." },
       { type: 'heading', text: "Ready to Join BCPL?", hi: "BCPL join करने के लिए तैयार हैं?" },
       { type: 'p', text: "Respecting the BCPL brand keeps the league fair for everyone. See you on the field!", hi: "BCPL ब्रांड का सम्मान लीग को सबके लिए निष्पक्ष रखता है। मैदान में मिलेंगे!" },
-      { type: 'heading', text: "REGISTER NOW →", hi: "अभी रजिस्टर करें →" },
     ]
   },
   'trial-rules': {
@@ -210,7 +206,6 @@ export const NATIVE_PAGES: Record<string, { title: string; content: PageBlock[] 
     title: "Code of Conduct",
     content: [
       { type: 'p', text: "BCPL expects high standards of sportsmanship, professionalism and integrity from all participants. These standards apply during registration, trials, the auction and the tournament, in every trial city." },
-      { type: 'heading', text: "Key Points" },
       { type: 'heading', text: "1. Spirit of the Game" },
       { type: 'p', text: "Cricket is more than a sport — it is a gentleman's game built on centuries of honour, respect, and fair play. Every BCPL participant is expected to uphold and embody these values at all times, both on and off the field." },
       { type: 'heading', text: "2. On-Field Conduct" },
@@ -235,12 +230,8 @@ export const NATIVE_PAGES: Record<string, { title: string; content: PageBlock[] 
     title: "Eligibility Criteria",
     content: [
       { type: 'heading', text: "AM I ELIGIBLE?", hi: "क्या मैं ELIGIBLE हूं?" },
-      { type: 'p', text: "CRITERIA.", hi: "CRITERIA." },
       { type: 'p', text: "BCPL Season 5 is open to working professionals across India. Check your eligibility in seconds.", hi: "BCPL Season 5 पूरे भारत के working professionals के लिए खुला है। कुछ ही seconds में अपनी eligibility check करें।" },
       { type: 'p', text: "This document applies to BCPL Season 5 unless expressly stated otherwise.", hi: "यह document, जब तक स्पष्ट रूप से अन्यथा न कहा जाए, BCPL Season 5 पर लागू होता है।" },
-      { type: 'heading', text: "Key Points", hi: "मुख्य बातें" },
-      { type: 'heading', text: "✓ YES", hi: "✓ हां" },
-      { type: 'heading', text: "You qualify for BCPL Season 5. Secure your spot now!", hi: "आप BCPL Season 5 के लिए qualify करते हैं। अभी अपनी जगह पक्की करें!" },
       { type: 'heading', text: "1. Professional Status", hi: "1. Professional Status" },
       { type: 'p', text: "BCPL is designed exclusively for India's working professionals. If you earn a living, you belong on this field.", hi: "BCPL खास तौर पर भारत के working professionals के लिए बनाई गई है। अगर आप कमाई करते हैं, तो यह मैदान आपके लिए है।" },
       { type: 'heading', text: "2. Age Requirements", hi: "2. Age Requirements" },
@@ -257,11 +248,9 @@ export const NATIVE_PAGES: Record<string, { title: string; content: PageBlock[] 
       { type: 'p', text: "One registration is permitted per person per season. Participation is subject to accurate declarations, identity and professional verification, and the applicable BCPL rules.", hi: "एक व्यक्ति एक season में एक ही registration कर सकता है। भागीदारी सही declarations, identity और professional verification, तथा applicable BCPL rules के अधीन है।" },
       { type: 'heading', text: "Disqualification Grounds & Verification", hi: "अयोग्यता के कारण और सत्यापन" },
       { type: 'p', text: "All participants must follow the applicable conduct rules throughout registration, assessment and trials.", hi: "सभी participants को registration, assessment और trials के दौरान applicable conduct rules का पालन करना ज़रूरी है।" },
-      { type: 'heading', text: "Read the Code of Conduct →", hi: "Code of Conduct पढ़ें →" },
       { type: 'heading', text: "Meet All Criteria?", hi: "सभी Criteria पूरे करते हैं?" },
       { type: 'p', text: "Join 10 franchise teams and corporate cricketers from across India. Your stadium moment awaits.", hi: "10 franchise teams और पूरे भारत के corporate cricketers के साथ जुड़ें। आपका stadium वाला पल इंतज़ार कर रहा है।" },
       { type: 'heading', text: "Ask on WhatsApp", hi: "WhatsApp पर पूछें" },
-      { type: 'heading', text: "REGISTER NOW →", hi: "अभी REGISTER करें →" },
     ]
   },
   'trust': {
@@ -294,7 +283,6 @@ export const NATIVE_PAGES: Record<string, { title: string; content: PageBlock[] 
       { type: 'p', text: "Only eligible Phase 1 qualified players may proceed to Phase 2. Phase 2 requires the applicable role-based Phase 2 fee plus applicable GST as displayed at the time of payment, together with the required declarations and verification. Phase 2 is a physical, standardised cricket trial conducted at authorised venues.", hi: "केवल eligible Phase 1 qualified players ही Phase 2 में आगे बढ़ सकते हैं। Phase 2 के लिए applicable role-based Phase 2 fee plus applicable GST (जैसा payment के समय दिखाया गया हो) के साथ आवश्यक declarations और verification चाहिए। Phase 2 authorised venues पर आयोजित एक physical, standardised cricket trial है।" },
       { type: 'p', text: "BCPL seeks to use the same published role-specific assessment framework, scoring structure and applicable attempt rules across authorised Phase 2 venues. This is a standardised assessment framework — it does not promise that every pitch, weather, environmental condition or feeder delivery will be physically identical.", hi: "BCPL authorised Phase 2 venues पर same published role-specific assessment framework, scoring structure और applicable attempt rules उपयोग करने का प्रयास करता है। यह एक standardised assessment framework है — यह वादा नहीं करता कि हर pitch, weather, environmental condition या feeder delivery physically identical होगी।" },
       { type: 'p', text: "Each role is assessed against a role-specific 100-point framework. The detailed category weights are published once BCPL finalises the season rubric. Full attempt rules are set out in the Phase 2 Physical Trial Rules.", hi: "हर role का मूल्यांकन एक role-specific 100-point framework पर होता है। Detailed category weights तब publish किए जाते हैं जब BCPL season rubric finalise कर देता है। पूरे attempt rules Phase 2 Physical Trial Rules में दिए गए हैं।" },
-      { type: 'heading', text: "View Phase 2 Physical Trial Rules →", hi: "Phase 2 Physical Trial Rules देखें →" },
       { type: 'heading', text: "Phase 2 Fee Structure", hi: "Phase 2 Fee Structure" },
       { type: 'heading', text: "Batsman / Bowler / WK", hi: "Batsman / Bowler / WK" },
       { type: 'heading', text: "₹2,000 + GST", hi: "₹2,000 + GST" },
