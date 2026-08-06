@@ -25,3 +25,6 @@ Older rows store display strings ("Batsman", "All-Rounder"); newer rows store ke
 New status-dependent logic MUST use the canonical literals already in the codebase.
 **Why:** a next-action endpoint written with invented statuses (`video_uploaded`, `kyc_approved`) silently misrouted real users — the canonical values are `video_submitted` (phase1) and `kyc_done` (phase2); kyc_records.status is `pending|verified|failed` (NOT rejected). Cost a failed review round.
 **How to apply:** before writing any `status ===` branch, `grep -rh "<column>" src | grep -o "'[a-z_]*'"` to extract the real vocabulary; tests/nextAction.test.ts locks the journey matrix.
+
+## Multi-registration cursor
+Users can hold MULTIPLE registrations rows (legacy carryover, abandoned retries). Any `LIMIT 1` by userId without ORDER BY picks an arbitrary row → wrong KYC/journey status. Always route through `pickUserRegistration()` in user.ts (ranks all terminal phase2 statuses above payment_done, tie-break newest). Regression suite: tests/registrationCursor.test.ts.

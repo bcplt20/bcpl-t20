@@ -3,7 +3,7 @@ import { Animated, Platform, StyleSheet, View, Pressable, Text } from 'react-nat
 import { useColors } from '@/hooks/useColors';
 import { Feather } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
-import Svg, { Path, Rect, Circle, Defs, LinearGradient as SvgLinearGradient, Stop, G } from 'react-native-svg';
+import Svg, { Path, Rect, Circle, Defs, LinearGradient as SvgLinearGradient, RadialGradient as SvgRadialGradient, Stop, G, Ellipse } from 'react-native-svg';
 import { Tabs, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -83,26 +83,117 @@ const TabIcon = ({ name, active, size = 26, color, c }: { name: string, active: 
   );
 }
 
+const getSeamPathLeft = () => {
+  let d = `M 27 0`;
+  for(let i=1; i<=20; i++) {
+    const t = i/20;
+    const y = t * 54;
+    const x = 27 - 12 * Math.sin(t * Math.PI);
+    d += ` L ${x} ${y}`;
+  }
+  return d;
+}
+
+const getSeamPathRight = () => {
+  let d = `M 27 0`;
+  for(let i=1; i<=20; i++) {
+    const t = i/20;
+    const y = t * 54;
+    const x = 27 + 12 * Math.sin(t * Math.PI);
+    d += ` L ${x} ${y}`;
+  }
+  return d;
+}
+
+const generateStitches = () => {
+  const elements = [];
+  const ticks = 18;
+  for (let i = 1; i < ticks; i++) {
+    const t = i / ticks;
+    const y = t * 54;
+    const dx = 12 * Math.sin(t * Math.PI);
+    const lx = 27 - dx;
+    const rx = 27 + dx;
+    
+    const ddx = -12 * Math.PI * Math.cos(t * Math.PI);
+    const ddy = 54;
+    const mag = Math.sqrt(ddx*ddx + ddy*ddy);
+    const nxL = ddy / mag;
+    const nyL = -ddx / mag;
+    
+    const tickLen = 2.5;
+    
+    elements.push(
+      <Path 
+        key={`l-${i}`} 
+        d={`M ${lx - nxL * tickLen} ${y - nyL * tickLen} L ${lx + nxL * tickLen} ${y + nyL * tickLen}`} 
+        stroke="#FFD700" 
+        strokeWidth="1.2" 
+        strokeLinecap="round"
+        opacity="0.85" 
+      />
+    );
+    
+    const ddxR = 12 * Math.PI * Math.cos(t * Math.PI);
+    const magR = Math.sqrt(ddxR*ddxR + ddy*ddy);
+    const nxR = ddy / magR;
+    const nyR = -ddxR / magR;
+    
+    elements.push(
+      <Path 
+        key={`r-${i}`} 
+        d={`M ${rx - nxR * tickLen} ${y - nyR * tickLen} L ${rx + nxR * tickLen} ${y + nyR * tickLen}`} 
+        stroke="#FFD700" 
+        strokeWidth="1.2" 
+        strokeLinecap="round"
+        opacity="0.85" 
+      />
+    );
+  }
+  return elements;
+};
+
 function RegisterFabButton({ onPress }: { onPress: () => void }) {
   const { t } = useLang();
   const c = useColors();
   const anim = useRef(new Animated.Value(0)).current;
+  const rotateAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    const loop = Animated.loop(
+    const pulse = Animated.loop(
       Animated.sequence([
         Animated.timing(anim, { toValue: 1, duration: 1500, useNativeDriver: true }),
         Animated.timing(anim, { toValue: 0, duration: 1500, useNativeDriver: true })
       ])
     );
-    loop.start();
-    return () => loop.stop();
-  }, [anim]);
+    pulse.start();
+    
+    const rotate = Animated.loop(
+      Animated.timing(rotateAnim, {
+        toValue: 1,
+        duration: 8000,
+        useNativeDriver: true,
+      })
+    );
+    rotate.start();
+
+    return () => {
+      pulse.stop();
+      rotate.stop();
+    };
+  }, [anim, rotateAnim]);
+
+  const spin = rotateAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg']
+  });
 
   return (
     <View style={{ width: 84, height: 64, alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 6 }}>
       <Pressable
         onPress={onPress}
+        accessibilityRole="button"
+        accessibilityLabel="Register"
         style={({pressed}) => ({
           position: 'absolute',
           top: -24,
@@ -113,6 +204,16 @@ function RegisterFabButton({ onPress }: { onPress: () => void }) {
           transform: [{ scale: pressed ? 0.95 : 1 }]
         })}
       >
+        <Svg width={60} height={16} viewBox="0 0 60 16" style={{ position: 'absolute', bottom: -4, zIndex: 0 }}>
+          <Defs>
+            <SvgRadialGradient id="pitchShadow" cx="50%" cy="50%" r="50%">
+              <Stop offset="0%" stopColor="#E2C275" stopOpacity="0.4" />
+              <Stop offset="100%" stopColor="#E2C275" stopOpacity="0" />
+            </SvgRadialGradient>
+          </Defs>
+          <Ellipse cx="30" cy="8" rx="30" ry="8" fill="url(#pitchShadow)" />
+        </Svg>
+
         <Animated.View style={{
           position: 'absolute',
           width: 58,
@@ -120,8 +221,10 @@ function RegisterFabButton({ onPress }: { onPress: () => void }) {
           borderRadius: 29,
           backgroundColor: '#FF3DA6',
           opacity: anim.interpolate({ inputRange: [0, 1], outputRange: [0.1, 0.35] }),
-          transform: [{ scale: anim.interpolate({ inputRange: [0, 1], outputRange: [1, 1.25] }) }]
+          transform: [{ scale: anim.interpolate({ inputRange: [0, 1], outputRange: [1, 1.25] }) }],
+          zIndex: 1
         }} />
+
         <View style={{
           width: 54,
           height: 54,
@@ -129,26 +232,44 @@ function RegisterFabButton({ onPress }: { onPress: () => void }) {
           alignItems: 'center',
           justifyContent: 'center',
           shadowColor: '#FF3DA6',
-          shadowOffset: { width: 0, height: 8 },
+          shadowOffset: { width: 0, height: 6 },
           shadowOpacity: c.isDark ? 0.6 : 0.4,
-          shadowRadius: 12,
+          shadowRadius: 10,
           elevation: 8,
-          backgroundColor: c.isDark ? '#160934' : '#2D196E',
+          backgroundColor: '#160934',
           borderWidth: 1.5,
           borderColor: 'rgba(255, 61, 166, 0.8)',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          zIndex: 2
         }}>
-          <LinearGradient
-            colors={['rgba(255, 61, 166, 0.3)', 'transparent']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={StyleSheet.absoluteFill}
-          />
-          {/* subtle seam lines for cricket ball look */}
-          <View style={{ position: 'absolute', left: 16, top: -5, bottom: -5, width: 2, backgroundColor: '#FF3DA6', opacity: 0.3, transform: [{ rotate: '20deg' }] }} />
-          <View style={{ position: 'absolute', right: 16, top: -5, bottom: -5, width: 2, backgroundColor: '#FF3DA6', opacity: 0.3, transform: [{ rotate: '-20deg' }] }} />
+          <Svg width={54} height={54} style={StyleSheet.absoluteFill}>
+            <Defs>
+              <SvgRadialGradient id="ballGlow" cx="35%" cy="30%" r="65%">
+                <Stop offset="0%" stopColor="#7C5CFF" stopOpacity="1" />
+                <Stop offset="50%" stopColor="#2B125C" stopOpacity="1" />
+                <Stop offset="100%" stopColor="#120524" stopOpacity="1" />
+              </SvgRadialGradient>
+            </Defs>
+            <Circle cx="27" cy="27" r="27" fill="url(#ballGlow)" />
+          </Svg>
           
-          <Feather name="zap" size={24} color="#FFF" style={{ zIndex: 2 }} />
+          <Animated.View style={{ position: 'absolute', width: 54, height: 54, transform: [{ rotate: spin }] }}>
+            <Svg width={54} height={54}>
+              <Path d={getSeamPathLeft()} fill="none" stroke="#D4AF37" strokeWidth="0.8" opacity="0.6" />
+              <Path d={getSeamPathRight()} fill="none" stroke="#D4AF37" strokeWidth="0.8" opacity="0.6" />
+              {generateStitches()}
+            </Svg>
+          </Animated.View>
+
+          <Svg width={54} height={54} style={{ position: 'absolute', top: 0, left: 0 }}>
+            <G transform="translate(17, 18)">
+              <Rect x="3" y="0" width="6" height="1.5" rx="0.5" fill="#FFD700" />
+              <Rect x="11" y="0" width="6" height="1.5" rx="0.5" fill="#FFD700" />
+              <Rect x="3" y="3" width="2" height="14" rx="1" fill="#FFD700" />
+              <Rect x="9" y="3" width="2" height="14" rx="1" fill="#FFD700" />
+              <Rect x="15" y="3" width="2" height="14" rx="1" fill="#FFD700" />
+            </G>
+          </Svg>
         </View>
       </Pressable>
       <Text style={{ color: c.magenta, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 10, letterSpacing: 0.3, zIndex: 3 }}>
