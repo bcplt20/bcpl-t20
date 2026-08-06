@@ -76,6 +76,12 @@ function isPhase1Paid(d: Dashboard): boolean {
 const P2_TRIAL_STAGE = ['kyc_done', 'kyc_approved']; // KYC cleared, trial pending
 const P2_POST_TRIAL = ['trial_cleared', 'auction_shortlisted', 'team_signed'];
 
+/* KYC record statuses that mean "KYC is done". Historic vocab tolerance:
+   some rows carry 'approved' instead of the canonical 'verified'. */
+const KYC_DONE_STATUSES = ['verified', 'approved'];
+const kycDone = (status: string | null | undefined): boolean =>
+  !!status && KYC_DONE_STATUSES.includes(status);
+
 type JourneyStep =
   | 'not_registered'
   | 'pay_phase1'
@@ -105,7 +111,7 @@ function deriveStep(d: Dashboard): JourneyStep {
   const trial = d.trial ?? null;
   const postTrial = P2_POST_TRIAL.includes(p2 ?? '');
 
-  if (trial || postTrial || P2_TRIAL_STAGE.includes(p2 ?? '') || kyc === 'verified') {
+  if (trial || postTrial || P2_TRIAL_STAGE.includes(p2 ?? '') || kycDone(kyc)) {
     if (trial?.assessmentSubmitted || postTrial) return 'trial_completed';
     if (trial?.checkedInAt) return 'trial_checked_in';
     if (trial) return 'trial_scheduled';
@@ -147,7 +153,7 @@ function buildSteps(d: Dashboard, t: (en: string, hi: string) => string) {
   const kyc = d.kyc?.status ?? null;
   const trial = d.trial ?? null;
   const postTrial = P2_POST_TRIAL.includes(p2 ?? '');
-  const trialStage = !!trial || postTrial || P2_TRIAL_STAGE.includes(p2 ?? '') || kyc === 'verified';
+  const trialStage = !!trial || postTrial || P2_TRIAL_STAGE.includes(p2 ?? '') || kycDone(kyc);
   const p1After = impliesPaidFromPhase1(p1);
   const p2After = ['payment_done', ...P2_TRIAL_STAGE, ...P2_POST_TRIAL].includes(p2 ?? '');
   const resultOut = p1 === 'selected' || p1 === 'rejected';
@@ -370,7 +376,7 @@ function JourneyBody({ d }: { d: Dashboard }) {
         <Card style={{ marginTop: 12 }}>
           <Text style={[styles.detailTitle, { color: c.ink }]}>{t('KYC status', 'KYC स्थिति')}</Text>
           <DetailRow label={t('Status', 'स्थिति')} value={
-            d.kyc.status === 'verified' ? t('Verified', 'सत्यापित')
+            kycDone(d.kyc.status) ? t('Verified', 'सत्यापित')
               : d.kyc.status === 'failed' ? t('Needs re-submission', 'दोबारा सबमिट करें')
                 : t('Under review', 'समीक्षा में')
           } />

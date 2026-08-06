@@ -85,35 +85,64 @@ router.get("/checkout", (req, res) => {
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>BCPL — Secure Payment</title>
 <style>
-  html,body{height:100%;margin:0;background:#0b0b12;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+  html,body{height:100%;margin:0;background:#F6F4FF;color:#1B1440;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
   .wrap{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;text-align:center}
-  .spinner{width:38px;height:38px;border:3px solid rgba(255,255,255,.2);border-top-color:#FF1A75;border-radius:50%;animation:spin 1s linear infinite}
+  .spinner{width:38px;height:38px;border:3px solid rgba(123,66,246,.2);border-top-color:#7B42F6;border-radius:50%;animation:spin 1s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
-  .err{color:#ff6b6b;font-size:14px;max-width:320px}
+  #msg{font-size:14.5px;color:#3A2E63;max-width:340px;line-height:1.45}
+  .err{color:#C2185B !important;font-weight:600}
+  .hint{font-size:12.5px;color:#7A6FA6;max-width:320px;margin-top:-4px}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="spinner" id="sp"></div>
-  <div id="msg">Redirecting to secure Cashfree checkout…</div>
+  <div id="msg">Loading secure Cashfree checkout…</div>
+  <div class="hint" id="hint"></div>
 </div>
 <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
 <script>
   (function () {
     var sessionId = ${sessionJson};
     var mode = ${modeJson};
-    function fail(text) {
+    var done = false; // set true once a redirect/checkout begins so the watchdog stands down
+    function notify(reason) {
+      try {
+        if (window.ReactNativeWebView && window.ReactNativeWebView.postMessage) {
+          window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'bcpl_checkout_failed', reason: String(reason || 'unknown') }));
+        }
+      } catch (e) {}
+    }
+    function fail(text, reason) {
+      if (done) return;
       var sp = document.getElementById('sp'); if (sp) sp.style.display = 'none';
       var m = document.getElementById('msg');
       if (m) { m.className = 'err'; m.textContent = text; }
+      var h = document.getElementById('hint');
+      if (h) h.textContent = 'Please go back and tap Try again.';
+      notify(reason);
     }
+    // Watchdog: if nothing has redirected within ~12s the page would otherwise
+    // sit silently — surface a clear error and signal the app instead.
+    var watchdog = setTimeout(function () {
+      fail('Secure checkout is taking too long to load. Please check your connection and try again.', 'timeout');
+    }, 12000);
+    // A redirect/unload means the SDK handed off to the gateway — success path.
+    window.addEventListener('pagehide', function () { done = true; clearTimeout(watchdog); });
+    window.addEventListener('beforeunload', function () { done = true; clearTimeout(watchdog); });
     try {
-      if (typeof Cashfree !== 'function') { fail('Payment SDK failed to load. Please check your connection and try again.'); return; }
+      if (typeof Cashfree !== 'function') {
+        clearTimeout(watchdog);
+        fail('Payment could not load. Please check your connection and try again.', 'sdk_not_loaded');
+        return;
+      }
       var cashfree = Cashfree({ mode: mode });
       cashfree.checkout({ paymentSessionId: sessionId, redirectTarget: '_self' })
-        .then(function (r) { if (r && r.error) fail(r.error.message || 'Payment could not be started.'); })
-        .catch(function (e) { fail((e && e.message) || 'Payment could not be started.'); });
-    } catch (e) { fail((e && e.message) || 'Payment could not be started.'); }
+        .then(function (r) {
+          if (r && r.error) { clearTimeout(watchdog); fail(r.error.message || 'Payment could not be started.', 'checkout_error'); }
+        })
+        .catch(function (e) { clearTimeout(watchdog); fail((e && e.message) || 'Payment could not be started.', 'checkout_exception'); });
+    } catch (e) { clearTimeout(watchdog); fail((e && e.message) || 'Payment could not be started.', 'checkout_throw'); }
   })();
 </script>
 </body>

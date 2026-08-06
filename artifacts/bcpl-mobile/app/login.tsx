@@ -34,6 +34,18 @@ export default function LoginScreen() {
   const [busy, setBusy] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
+  // Resend cooldown (mirrors the website login modal's 30s resend timer).
+  const [resendTimer, setResendTimer] = useState<number>(0);
+
+  const startResendTimer = () => {
+    setResendTimer(30);
+    const iv = setInterval(() => {
+      setResendTimer((n) => {
+        if (n <= 1) { clearInterval(iv); return 0; }
+        return n - 1;
+      });
+    }, 1000);
+  };
 
   const handleSend = async () => {
     setError(null);
@@ -47,6 +59,7 @@ export default function LoginScreen() {
       const r = await sendOtp(clean);
       setInfo(r.devOtp ? `Dev OTP: ${r.devOtp}` : t('OTP has been sent to your number', 'OTP आपके नंबर पर भेज दिया गया है'));
       setStep('otp');
+      startResendTimer();
       if (Platform.OS !== 'web') Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (e) {
       if (e instanceof ApiError && e.code === 'NOT_REGISTERED') {
@@ -54,6 +67,23 @@ export default function LoginScreen() {
       } else {
         setError(e instanceof Error ? e.message : t('Could not send OTP, please try again', 'OTP भेजने में दिक्कत हुई'));
       }
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleResend = async () => {
+    if (resendTimer > 0 || busy) return;
+    setError(null);
+    const clean = phone.replace(/\D/g, '');
+    if (clean.length !== 10) return;
+    setBusy(true);
+    try {
+      const r = await sendOtp(clean);
+      setInfo(r.devOtp ? `Dev OTP: ${r.devOtp}` : t('OTP has been sent to your number', 'OTP आपके नंबर पर भेज दिया गया है'));
+      startResendTimer();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : t('Could not resend OTP, please try again', 'OTP दोबारा भेजने में दिक्कत हुई'));
     } finally {
       setBusy(false);
     }
@@ -91,12 +121,12 @@ export default function LoginScreen() {
           <Image source={require('../assets/images/bcpl-ball-clean.png')} style={{ width: 50, height: 50 }} contentFit="contain" />
         </View>
         <Text style={[styles.title, { color: c.ink }]}>
-          {step === 'phone' ? t('Log in with OTP', 'OTP से लॉगिन करें') : t('Enter OTP', 'OTP डालें')}
+          {t('Player Login', 'Player Login')}
         </Text>
         <Text style={[styles.sub, { color: c.sub }]}>
           {step === 'phone'
-            ? t('The same number you used for BCPL registration', 'वही नंबर जिससे BCPL रजिस्ट्रेशन की थी')
-            : t(`Enter the OTP sent to +91 ${phone}`, `+91 ${phone} पर भेजा गया OTP डालें`)}
+            ? t('Enter your registered mobile number', 'अपना registered mobile number डालें')
+            : t(`OTP sent to +91 ${phone}`, `OTP भेजा गया +91 ${phone}`)}
         </Text>
 
         {step === 'phone' ? (
@@ -107,9 +137,9 @@ export default function LoginScreen() {
               value={phone}
               onChangeText={(t) => setPhone(t.replace(/\D/g, '').slice(0, 10))}
               keyboardType="number-pad"
-              placeholder="Mobile number"
+              placeholder={t('10-digit number', '10 अंकों का नंबर')}
               placeholderTextColor={c.sub}
-              style={[styles.input, { color: c.ink }]}
+              style={[styles.input, { color: c.ink, letterSpacing: 0 }]}
               maxLength={10}
               testID="phone-input"
               autoFocus
@@ -162,18 +192,32 @@ export default function LoginScreen() {
             <ActivityIndicator color="#fff" />
           ) : (
             <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, letterSpacing: 0.5 }}>
-              {step === 'phone' ? 'Send OTP' : 'Verify & Login'}
+              {step === 'phone' ? t('Send OTP →', 'OTP भेजें →') : t('Verify & Login', 'Verify करें & Login')}
             </Text>
           )}
         </Pressable>
 
         {step === 'otp' ? (
-          <Pressable onPress={() => { setStep('phone'); setOtp(''); setError(null); }} testID="change-number" style={{ padding: 16, marginTop: 12 }}>
-            <Text style={{ color: c.cyan, fontSize: 15, fontFamily: 'PlusJakartaSans_700Bold' }}>
-              {t('Change number', 'नंबर बदलें')}
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginTop: 16 }}>
+            <Pressable onPress={() => { setStep('phone'); setOtp(''); setError(null); }} testID="change-number" style={{ paddingVertical: 12 }}>
+              <Text style={{ color: c.cyan, fontSize: 15, fontFamily: 'PlusJakartaSans_700Bold' }}>
+                {t('← Change number', '← नंबर बदलें')}
+              </Text>
+            </Pressable>
+            <Pressable onPress={handleResend} disabled={resendTimer > 0 || busy} testID="resend-otp" style={{ paddingVertical: 12 }}>
+              <Text style={{ color: resendTimer > 0 ? c.sub : c.cyan, fontSize: 15, fontFamily: 'PlusJakartaSans_700Bold' }}>
+                {resendTimer > 0 ? t(`Resend in ${resendTimer}s`, `${resendTimer}s में दोबारा भेजें`) : t('Resend OTP', 'OTP दोबारा भेजें')}
+              </Text>
+            </Pressable>
+          </View>
+        ) : (
+          <Pressable onPress={() => router.push('/register')} testID="go-register" style={{ padding: 16, marginTop: 16 }}>
+            <Text style={{ color: c.sub, fontSize: 14, fontFamily: 'PlusJakartaSans_500Medium' }}>
+              {t('New player? ', 'नया player? ')}
+              <Text style={{ color: c.getAccentText(c.magenta), fontFamily: 'PlusJakartaSans_700Bold' }}>{t('Register here →', 'यहाँ Register करें →')}</Text>
             </Text>
           </Pressable>
-        ) : null}
+        )}
       </KeyboardAwareScrollViewCompat>
     </View>
   );

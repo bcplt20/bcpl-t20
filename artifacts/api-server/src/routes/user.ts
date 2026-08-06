@@ -8,12 +8,61 @@ import {
   trialAllocationsTable, trialSlotsTable, trialVenuesTable,
   trialCheckinsTable, trialEvaluationsTable,
 } from "@workspace/db/schema";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import { requireAuth, type AuthRequest } from "../middlewares/auth";
 import { pgCauseOf } from "../lib/pgErrors";
 
 const router = Router();
+
+/**
+ * Single-cursor registration selector (Task #3 — KYC status divergence).
+ *
+ * A user can have MORE THAN ONE registration row (historic re-registrations —
+ * nothing enforced one-per-user at the DB level). The old `.where(userId)
+ * .limit(1)` here had NO ORDER BY, so Postgres could return an ARBITRARY row —
+ * often an older, non-KYC registration — making the app show "KYC pending"
+ * while the website (tested at a different moment / picking a different row)
+ * showed it done.
+ *
+ * Fix: deterministically pick the SAME single registration everywhere — the
+ * one that has progressed FURTHEST through the journey, tie-broken by the
+ * newest createdAt. This guarantees a completed-KYC registration always wins
+ * over an abandoned older one, and every user.ts route agrees on one cursor.
+ *
+ * Ranking (higher = further along):
+ *   phase2: selected/kyc_done/payment_done > pending > null
+ *   phase1: selected > video_submitted > payment_done > rejected > pending
+ * The rank is computed in SQL so the DB does the ordering (index-friendly).
+ */
+async function pickUserRegistration(userId: string) {
+  const rows = await db.select().from(registrationsTable)
+    .where(eq(registrationsTable.userId, userId))
+    .orderBy(
+      sql`(
+        CASE ${registrationsTable.phase2Status}
+          WHEN 'selected'     THEN 5
+          WHEN 'kyc_done'     THEN 4
+          WHEN 'payment_done' THEN 3
+          WHEN 'rejected'     THEN 2
+          WHEN 'pending'      THEN 1
+          ELSE 0
+        END
+      ) DESC`,
+      sql`(
+        CASE ${registrationsTable.phase1Status}
+          WHEN 'selected'        THEN 4
+          WHEN 'video_submitted' THEN 3
+          WHEN 'payment_done'    THEN 2
+          WHEN 'rejected'        THEN 1
+          ELSE 0
+        END
+      ) DESC`,
+      sql`${registrationsTable.createdAt} DESC`,
+    )
+    .limit(1);
+  return rows[0];
+}
 
 // ── Task #32: KYC-done but profile still missing T-shirt size / emergency
 // contact (players who completed KYC BEFORE these fields were collected on the
@@ -28,7 +77,8 @@ function profileIncomplete(p: { tshirtSize?: string | null; emergencyName?: stri
 /** KYC is "done" once the record is verified (or the registration reached the
  *  kyc_done phase). Only then do we nudge for the missing profile fields. */
 function kycIsDone(kyc: { status: string } | null | undefined, phase2Status: string | null | undefined): boolean {
-  return kyc?.status === "verified" || phase2Status === "kyc_done";
+  // Historic vocab tolerance: some rows carry 'approved' instead of 'verified'.
+  return kyc?.status === "verified" || kyc?.status === "approved" || phase2Status === "kyc_done";
 }
 
 // Validate the backfill payload with the SAME rules as kycInitiateSchema
@@ -106,8 +156,7 @@ router.get("/dashboard", requireAuth, async (req: AuthRequest, res) => {
 
   if (!user) return void res.status(404).json({ error: "User not found" });
 
-  const [reg] = await db.select().from(registrationsTable)
-    .where(eq(registrationsTable.userId, user.id)).limit(1);
+  const reg = await pickUserRegistration(user.id);
 
   if (!reg) {
     return void res.json({ user: { id: user.id, name: user.name, phone: user.phone, email: user.email }, registered: false });
@@ -170,8 +219,7 @@ router.get("/dashboard", requireAuth, async (req: AuthRequest, res) => {
  * label + path. CTAs must never be derived from frontend-cached state.
  */
 router.get("/next-action", requireAuth, async (req: AuthRequest, res) => {
-  const [reg] = await db.select().from(registrationsTable)
-    .where(eq(registrationsTable.userId, req.user!.userId)).limit(1);
+  const reg = await pickUserRegistration(req.user!.userId);
 
   if (!reg) return void res.json({ action: "REGISTER" });
 
@@ -223,8 +271,7 @@ router.get("/next-action", requireAuth, async (req: AuthRequest, res) => {
 // Tells the dashboard whether to show the "please add your missing details"
 // nudge: true only when KYC is done AND the T-shirt/emergency fields are blank.
 router.get("/profile-completion", requireAuth, async (req: AuthRequest, res) => {
-  const [reg] = await db.select().from(registrationsTable)
-    .where(eq(registrationsTable.userId, req.user!.userId)).limit(1);
+  const reg = await pickUserRegistration(req.user!.userId);
   if (!reg) return void res.json({ kycDone: false, profileComplete: true, needsBackfill: false });
 
   const [kyc] = await db.select().from(kycRecordsTable)
@@ -259,8 +306,7 @@ router.post("/profile-backfill", requireAuth, async (req: AuthRequest, res) => {
     return void res.status(400).json({ error: parsed.error.issues[0].message });
   }
 
-  const [reg] = await db.select().from(registrationsTable)
-    .where(eq(registrationsTable.userId, req.user!.userId)).limit(1);
+  const reg = await pickUserRegistration(req.user!.userId);
   if (!reg) return void res.status(404).json({ error: "Registration not found" });
 
   const [kyc] = await db.select().from(kycRecordsTable)
@@ -294,8 +340,7 @@ router.get("/trial-venue", requireAuth, async (req: AuthRequest, res) => {
   const { trialVenuesTable } = await import("@workspace/db/schema");
   const { and, isNotNull } = await import("drizzle-orm");
 
-  const [reg] = await db.select().from(registrationsTable)
-    .where(eq(registrationsTable.userId, req.user!.userId)).limit(1);
+  const reg = await pickUserRegistration(req.user!.userId);
 
   if (!reg) return void res.json({ found: false });
 

@@ -19,6 +19,10 @@ import { Feather } from '@expo/vector-icons';
 function HeaderCountdown() {
   const c = useColors();
   const { t } = useLang();
+  // Very narrow phones (<=360px): drop the text prefix so the ticking
+  // time never truncates — owner wants the full time always visible.
+  const { width: winW } = useWindowDimensions();
+  const showPrefix = winW > 360;
   const [now, setNow] = React.useState(() => Date.now());
   const pulse = React.useRef(new Animated.Value(0)).current;
 
@@ -57,7 +61,9 @@ function HeaderCountdown() {
       shadowOffset: { width: 0, height: 2 },
       elevation: 4,
       backgroundColor: c.isDark ? '#2D196E' : '#E0D4FF',
-      maxWidth: 100, // prevent wrapping issues on 320px
+      // Once the prefix is dropped the chip is time-only and must never shrink,
+      // otherwise the ticking seconds get ellipsized on 320px screens.
+      flexShrink: showPrefix ? 1 : 0,
     }}>
       <LinearGradient 
         colors={['#7C5CFF', '#FF3DA6']} 
@@ -69,20 +75,22 @@ function HeaderCountdown() {
         borderRadius: 9,
         paddingHorizontal: 8,
         paddingVertical: 5,
+        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
       }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}>
-          <Animated.View style={{
-            width: 4, height: 4, borderRadius: 2, backgroundColor: '#FF3DA6', marginRight: 4,
-            opacity: pulse.interpolate({ inputRange: [0, 1], outputRange: [0.3, 1] }),
-            transform: [{ scale: pulse.interpolate({ inputRange: [0, 1], outputRange: [0.8, 1.2] }) }]
-          }} />
-          <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 8, letterSpacing: 0.5, textTransform: 'uppercase' }} numberOfLines={1}>
-            {t('Reg Closes In', 'रजिस्ट्रेशन बंद')}
+        <Animated.View style={{
+          width: 4, height: 4, borderRadius: 2, backgroundColor: '#FF3DA6', marginRight: 6,
+          opacity: pulse.interpolate({ inputRange: [0, 1], outputRange: [0.3, 1] }),
+          transform: [{ scale: pulse.interpolate({ inputRange: [0, 1], outputRange: [0.8, 1.2] }) }]
+        }} />
+        {/* Prefix shrinks/ellipsizes first; the ticking time must always stay fully visible. */}
+        {showPrefix && (
+          <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 9, textTransform: 'uppercase', letterSpacing: 0.2, flexShrink: 1 }} numberOfLines={1}>
+            {t('REG CLOSES', 'रजिस्ट्रेशन बंद')} ·{' '}
           </Text>
-        </View>
-        <Text style={{ color: c.ink, fontFamily: 'SpaceGrotesk_700Bold', fontSize: 13, fontVariant: ['tabular-nums'] }}>
+        )}
+        <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 11, letterSpacing: 0.2, fontVariant: ['tabular-nums'], flexShrink: 0 }} numberOfLines={1}>
           {d}d {pad(h)}:{pad(m)}:{pad(s)}
         </Text>
       </View>
@@ -386,7 +394,7 @@ export function Season5Lockup() {
     const loop = Animated.loop(
       Animated.timing(anim, {
         toValue: 1,
-        duration: 3500,
+        duration: 2500,
         useNativeDriver: false,
       })
     );
@@ -394,13 +402,18 @@ export function Season5Lockup() {
     return () => loop.stop();
   }, [anim]);
 
-  const sweep = anim.interpolate({
+  const translateX = anim.interpolate({
     inputRange: [0, 0.4, 1],
-    outputRange: ['-100%', '200%', '200%']
+    outputRange: [-40, 100, 100]
+  });
+
+  const pulseGlow = anim.interpolate({
+    inputRange: [0, 0.5, 1],
+    outputRange: [0.1, 0.8, 0.1]
   });
 
   return (
-    <View style={{
+    <Animated.View style={{
       borderRadius: 6,
       overflow: 'hidden',
       paddingHorizontal: 8,
@@ -409,8 +422,8 @@ export function Season5Lockup() {
       borderWidth: 1,
       borderColor: '#B8860B', // Gold border
       shadowColor: '#EAC375',
-      shadowOpacity: c.isDark ? 0.3 : 0.4,
-      shadowRadius: 6,
+      shadowOpacity: pulseGlow,
+      shadowRadius: 8,
       shadowOffset: { width: 0, height: 0 },
       justifyContent: 'center',
       alignItems: 'center',
@@ -430,12 +443,12 @@ export function Season5Lockup() {
       <Animated.View style={{
         position: 'absolute',
         top: 0, bottom: 0, width: 25,
-        left: sweep,
-        backgroundColor: 'rgba(255, 255, 255, 0.3)',
-        transform: [{ skewX: '-25deg' }],
+        left: 0,
+        transform: [{ translateX }, { skewX: '-25deg' }],
+        backgroundColor: 'rgba(255, 255, 255, 0.4)',
         zIndex: 2,
       }} />
-    </View>
+    </Animated.View>
   );
 }
 

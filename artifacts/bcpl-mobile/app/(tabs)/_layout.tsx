@@ -21,37 +21,43 @@ const TabIcon = ({ name, active, size = 26, color, c }: { name: string, active: 
         </SvgLinearGradient>
       </Defs>
       {name === 'home' && (
-        <Path 
-          d="M3 10L12 3l9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V10z" 
-          stroke={active ? `url(#${gradientId})` : color} 
-          strokeWidth={active ? 2.5 : 2} 
-          strokeLinecap="round" 
-          strokeLinejoin="round" 
-          fill={active ? `url(#${gradientId})` : 'none'} 
-          fillOpacity={active ? 0.2 : 0} 
-        />
+        <G>
+          <Path 
+            d="M3 9.5L12 2l9 7.5V20a2 2 0 0 1-2 2h-4v-7a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v7H5a2 2 0 0 1-2-2V9.5z" 
+            stroke={active ? `url(#${gradientId})` : color} 
+            strokeWidth={active ? 2.5 : 2} 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
+            fill={active ? `url(#${gradientId})` : 'none'} 
+            fillOpacity={active ? 0.2 : 0} 
+          />
+          {active && (
+            <Path d="M9 22v-5M15 22v-5M12 22v-5" stroke={`url(#${gradientId})`} strokeWidth="1.5" strokeLinecap="round" />
+          )}
+        </G>
       )}
       {name === 'matches' && (
         <G>
-          <Rect x="3" y="4" width="18" height="18" rx="2" ry="2" 
+          <Rect x="3" y="5" width="18" height="17" rx="3" ry="3" 
             stroke={active ? `url(#${gradientId})` : color} 
             strokeWidth={active ? 2.5 : 2} 
             strokeLinecap="round" strokeLinejoin="round"
             fill={active ? `url(#${gradientId})` : 'none'} fillOpacity={active ? 0.15 : 0}
           />
           <Path d="M16 2v4M8 2v4M3 10h18" stroke={active ? `url(#${gradientId})` : color} strokeWidth={active ? 2.5 : 2} strokeLinecap="round" strokeLinejoin="round" />
-          {active && <Rect x="7" y="14" width="4" height="4" rx="1" fill={`url(#${gradientId})`} />}
+          {active && <Circle cx="12" cy="15.5" r="2.5" fill={`url(#${gradientId})`} />}
         </G>
       )}
       {name === 'media' && (
         <G>
-          <Circle cx="12" cy="12" r="10" 
+          <Path 
+            d="M 12 3 L 19.8 7.5 L 19.8 16.5 L 12 21 L 4.2 16.5 L 4.2 7.5 Z" 
             stroke={active ? `url(#${gradientId})` : color} 
             strokeWidth={active ? 2.5 : 2} 
             strokeLinecap="round" strokeLinejoin="round"
             fill={active ? `url(#${gradientId})` : 'none'} fillOpacity={active ? 0.15 : 0}
           />
-          <Path d="M10 8l6 4-6 4V8z" 
+          <Path d="M10 8.5l5.5 3.5-5.5 3.5v-7z" 
             stroke={active ? `url(#${gradientId})` : color} 
             strokeWidth={active ? 2.5 : 2} 
             strokeLinecap="round" strokeLinejoin="round"
@@ -61,12 +67,16 @@ const TabIcon = ({ name, active, size = 26, color, c }: { name: string, active: 
       )}
       {name === 'more' && (
         <G>
-          <Path d="M3 12h18M3 6h18M3 18h12" 
+          <Path d="M4 7h16M4 12h16M4 17h10" 
             stroke={active ? `url(#${gradientId})` : color} 
             strokeWidth={active ? 2.5 : 2} 
             strokeLinecap="round" strokeLinejoin="round"
           />
-          {active && <Circle cx="19" cy="18" r="2" fill={`url(#${gradientId})`} />}
+          {active && (
+            <G fill={`url(#${gradientId})`}>
+              <Circle cx="18" cy="17" r="2" />
+            </G>
+          )}
         </G>
       )}
     </Svg>

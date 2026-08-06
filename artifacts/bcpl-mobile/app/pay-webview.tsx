@@ -108,13 +108,40 @@ export default function PayWebViewScreen() {
     }
   }, [runVerify]);
 
-  // Fallback signal posted by the app-return page itself.
+  // Show the in-app failure card (never leave a blank/dark WebView). Guarded so
+  // a stray fail signal after we've already handed off to verify cannot override.
+  const showFailure = useCallback((msg: string) => {
+    if (handledRef.current) return;
+    handledRef.current = true;
+    setFailMsg(msg);
+    setScreen('failed');
+    handledRef.current = false; // allow retry from the failed screen
+  }, []);
+
+  // Fallback signal posted by the app-return page itself, plus the checkout
+  // page's own failure signal (SDK never loaded / watchdog timeout / error).
   const onMessage = useCallback((event: { nativeEvent: { data: string } }) => {
     try {
       const msg = JSON.parse(event.nativeEvent.data);
-      if (msg?.type === 'bcpl_payment_return') runVerify();
+      if (msg?.type === 'bcpl_payment_return') { runVerify(); return; }
+      if (msg?.type === 'bcpl_checkout_failed') {
+        showFailure(t('Secure checkout could not load. Please check your connection and try again.', 'सुरक्षित चेकआउट लोड नहीं हो पाया। कृपया अपना कनेक्शन जाँचें और फिर कोशिश करें।'));
+      }
     } catch { /* ignore non-JSON messages from the SDK */ }
-  }, [runVerify]);
+  }, [runVerify, showFailure, t]);
+
+  // WebView-level load errors (network drop, HTTP error on the checkout page):
+  // never leave a blank screen — surface the same in-app failure card.
+  const onWebViewError = useCallback(() => {
+    showFailure(t('Secure checkout could not load. Please check your connection and try again.', 'सुरक्षित चेकआउट लोड नहीं हो पाया। कृपया अपना कनेक्शन जाँचें और फिर कोशिश करें।'));
+  }, [showFailure, t]);
+
+  const onWebViewHttpError = useCallback((event: { nativeEvent?: { url?: string } }) => {
+    // Ignore HTTP errors that fire on the intercepted return URL (we cancel it).
+    const url = event?.nativeEvent?.url ?? '';
+    if (url.includes(RETURN_MARKER)) return;
+    showFailure(t('Secure checkout could not load. Please check your connection and try again.', 'सुरक्षित चेकआउट लोड नहीं हो पाया। कृपया अपना कनेक्शन जाँचें और फिर कोशिश करें।'));
+  }, [showFailure, t]);
 
   // Android hardware back: while on the checkout page, going back cancels the
   // payment and returns to the pay step cleanly (no trapped/stuck screen).
@@ -133,8 +160,8 @@ export default function PayWebViewScreen() {
   const retry = useCallback(() => router.back(), [router]); // back to pay step to start a fresh order
 
   const injectedJS = useMemo(
-    // Keep the WebView background dark to avoid a white flash before the SDK loads.
-    () => "document.documentElement.style.background='#0b0b12';true;",
+    // Match the light checkout chrome (avoids a dark flash + a silently-dark page).
+    () => "document.documentElement.style.background='#F6F4FF';true;",
     [],
   );
 
@@ -158,7 +185,8 @@ export default function PayWebViewScreen() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#0b0b12' }}>
+    <View style={{ flex: 1, backgroundColor: c.bg }}>
+      <ScreenBackground />
       <GlassAppBar title={t('Secure Payment', 'सुरक्षित भुगतान')} back />
 
       {screen === 'checkout' ? (
@@ -169,58 +197,64 @@ export default function PayWebViewScreen() {
             onShouldStartLoadWithRequest={onShouldStart}
             onNavigationStateChange={onNavChange}
             onMessage={onMessage}
+            onError={onWebViewError}
+            onHttpError={onWebViewHttpError}
             onLoadStart={() => setLoading(true)}
             onLoadEnd={() => setLoading(false)}
             injectedJavaScriptBeforeContentLoaded={injectedJS}
-            style={{ flex: 1, backgroundColor: '#0b0b12' }}
+            style={{ flex: 1, backgroundColor: '#F6F4FF' }}
             javaScriptEnabled
             domStorageEnabled
+            sharedCookiesEnabled={Platform.OS === 'ios'}
+            setSupportMultipleWindows={false}
             startInLoadingState={false}
             testID="pay-webview"
           />
           {loading ? (
-            <View style={[StyleSheet.absoluteFill, { top: appBarHeight, alignItems: 'center', justifyContent: 'center', backgroundColor: '#0b0b12' }]} pointerEvents="none">
-              <ActivityIndicator color="#FF3DA6" size="large" />
-              <Text style={{ color: '#fff', marginTop: 14, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 13.5 }}>
+            <View style={[StyleSheet.absoluteFill, { top: appBarHeight, alignItems: 'center', justifyContent: 'center', backgroundColor: '#F6F4FF' }]} pointerEvents="none">
+              <ActivityIndicator color="#7B42F6" size="large" />
+              <Text style={{ color: '#3A2E63', marginTop: 14, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 13.5 }}>
                 {t('Loading secure checkout…', 'सुरक्षित चेकआउट लोड हो रहा है…')}
               </Text>
             </View>
           ) : null}
-          <Pressable onPress={cancel} style={styles.cancelBar} testID="pay-cancel">
-            <Feather name="x" size={15} color="#fff" />
-            <Text style={{ color: '#fff', fontFamily: 'PlusJakartaSans_700Bold', fontSize: 13 }}>{t('Cancel payment', 'भुगतान रद्द करें')}</Text>
+          <Pressable onPress={cancel} style={[styles.cancelBar, { backgroundColor: c.glass, borderTopColor: c.line }]} testID="pay-cancel">
+            <Feather name="x" size={15} color={c.sub} />
+            <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 13 }}>{t('Cancel payment', 'भुगतान रद्द करें')}</Text>
           </Pressable>
         </View>
       ) : screen === 'verifying' ? (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, paddingTop: appBarHeight, backgroundColor: '#0b0b12' }}>
-          <ActivityIndicator color="#16E0A3" size="large" />
-          <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 20, marginTop: 18, textAlign: 'center' }}>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, paddingTop: appBarHeight }}>
+          <ActivityIndicator color={c.mint} size="large" />
+          <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 20, marginTop: 18, textAlign: 'center' }}>
             {t('Confirming your payment…', 'आपके भुगतान की पुष्टि हो रही है…')}
           </Text>
-          <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13, marginTop: 10, textAlign: 'center', fontFamily: 'PlusJakartaSans_500Medium' }}>
+          <Text style={{ color: c.sub, fontSize: 13, marginTop: 10, textAlign: 'center', fontFamily: 'PlusJakartaSans_500Medium' }}>
             {t('Please wait — do not close the app.', 'कृपया प्रतीक्षा करें — ऐप बंद न करें।')}
           </Text>
         </View>
       ) : (
-        /* failed */
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, paddingTop: appBarHeight, backgroundColor: '#0b0b12' }}>
-          <View style={{ width: 72, height: 72, borderRadius: 36, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,90,110,0.16)', borderWidth: 1, borderColor: 'rgba(255,90,110,0.4)' }}>
-            <Feather name="x" size={38} color="#FF5A6E" />
+        /* failed — in-app error card, never a blank/dark screen */
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, paddingTop: appBarHeight }}>
+          <View style={[styles.card, { backgroundColor: c.card, borderColor: c.line }]}>
+            <View style={{ width: 72, height: 72, borderRadius: 36, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,90,110,0.16)', borderWidth: 1, borderColor: 'rgba(255,90,110,0.4)' }}>
+              <Feather name="x" size={38} color="#FF5A6E" />
+            </View>
+            <Text style={{ color: c.coral, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 22, marginTop: 18, textAlign: 'center' }}>
+              {t('Payment could not be completed', 'भुगतान पूरा नहीं हो पाया')}
+            </Text>
+            <Text style={{ color: c.sub, fontSize: 13.5, marginTop: 12, textAlign: 'center', lineHeight: 21, fontFamily: 'PlusJakartaSans_500Medium', maxWidth: 360 }}>
+              {failMsg || t('Your payment did not go through. No worries — you can try again.', 'आपका भुगतान पूरा नहीं हुआ। कोई बात नहीं — आप फिर कोशिश कर सकते हैं।')}
+            </Text>
+            <Pressable onPress={retry} style={({ pressed }) => [styles.btn, { marginTop: 24, opacity: pressed ? 0.85 : 1 }]} testID="pay-retry">
+              <LinearGradient colors={['#FF1A75', '#D10056']} style={[StyleSheet.absoluteFill, { borderRadius: 14 }]} />
+              <Feather name="refresh-cw" size={16} color="#fff" />
+              <Text style={styles.btnText}>{t('Try again', 'फिर से कोशिश करें')}</Text>
+            </Pressable>
+            <Pressable onPress={cancel} style={{ marginTop: 16 }} testID="pay-goback">
+              <Text style={{ color: c.sub, fontSize: 13.5, fontFamily: 'PlusJakartaSans_700Bold' }}>{t('Cancel', 'रद्द करें')}</Text>
+            </Pressable>
           </View>
-          <Text style={{ color: '#FF5A6E', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 22, marginTop: 18, textAlign: 'center' }}>
-            {t('Payment नहीं हो पाया', 'Payment नहीं हो पाया')}
-          </Text>
-          <Text style={{ color: 'rgba(255,255,255,0.78)', fontSize: 13.5, marginTop: 12, textAlign: 'center', lineHeight: 21, fontFamily: 'PlusJakartaSans_500Medium', maxWidth: 360 }}>
-            {failMsg || t('Your payment did not go through. No worries — you can try again.', 'आपका भुगतान पूरा नहीं हुआ। कोई बात नहीं — आप फिर कोशिश कर सकते हैं।')}
-          </Text>
-          <Pressable onPress={retry} style={({ pressed }) => [styles.btn, { marginTop: 24, opacity: pressed ? 0.85 : 1 }]} testID="pay-retry">
-            <LinearGradient colors={['#FF1A75', '#D10056']} style={[StyleSheet.absoluteFill, { borderRadius: 14 }]} />
-            <Feather name="refresh-cw" size={16} color="#fff" />
-            <Text style={styles.btnText}>{t('Retry payment', 'फिर से भुगतान करें')}</Text>
-          </Pressable>
-          <Pressable onPress={cancel} style={{ marginTop: 16 }} testID="pay-goback">
-            <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13.5, fontFamily: 'PlusJakartaSans_700Bold' }}>{t('Go back', 'वापस जाएँ')}</Text>
-          </Pressable>
         </View>
       )}
     </View>
@@ -236,7 +270,11 @@ const styles = StyleSheet.create({
   cancelBar: {
     position: 'absolute', bottom: 0, left: 0, right: 0,
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
-    paddingVertical: 14, backgroundColor: 'rgba(11,11,18,0.92)',
-    borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: 'rgba(255,255,255,0.12)',
+    paddingVertical: 14,
+    borderTopWidth: StyleSheet.hairlineWidth,
+  },
+  card: {
+    width: '100%', maxWidth: 400, alignItems: 'center',
+    borderRadius: 20, borderWidth: 1, paddingVertical: 30, paddingHorizontal: 22,
   },
 });

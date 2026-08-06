@@ -85,9 +85,9 @@ function RegCountdown() {
   return (
     <View style={[styles.cdWrap, { backgroundColor: c.card2, borderColor: c.line }]}>
       <Feather name="clock" size={12} color={c.getAccentText(c.cyan)} />
-      <Text style={[styles.cdLabel, { color: c.sub }]}>{t('Registration closes in', 'रजिस्ट्रेशन बंद होने में')}</Text>
-      <Text style={[styles.cdTime, { color: c.getAccentText(c.cyan) }]}>
-        {d}d {two(h)}:{two(mi)}:{two(s)}
+      <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 11 }} numberOfLines={1}>
+        <Text style={{ color: c.sub, fontSize: 10, textTransform: 'uppercase' }}>{t('REG CLOSES IN', 'रजिस्ट्रेशन बंद होने में')} · </Text>
+        <Text style={{ color: c.getAccentText(c.cyan), fontVariant: ['tabular-nums'] }}>{d}d {two(h)}:{two(mi)}:{two(s)}</Text>
       </Text>
     </View>
   );

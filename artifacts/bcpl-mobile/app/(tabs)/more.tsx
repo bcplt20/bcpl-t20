@@ -31,11 +31,16 @@ function StatusRow({ label, value, done, isCurrent }: { label: string; value: st
         <Feather
           name={done ? 'check-circle' : isCurrent ? 'clock' : 'circle'}
           size={18}
-          color={done ? c.mint : isCurrent ? c.cyan : 'rgba(255,255,255,0.2)'}
+          color={done ? c.mint : isCurrent ? c.cyan : (c.isDark ? 'rgba(255,255,255,0.2)' : 'rgba(124, 92, 255, 0.4)')}
         />
       </View>
       <Text style={{ color: done || isCurrent ? c.ink : c.sub, fontSize: 14.5, flex: 1, fontFamily: 'PlusJakartaSans_700Bold' }}>{label}</Text>
-      <View style={[styles.statusValuePill, done && { backgroundColor: 'rgba(49, 197, 107, 0.15)', borderColor: 'rgba(49, 197, 107, 0.4)' }, isCurrent && !done && { backgroundColor: 'rgba(0, 229, 255, 0.15)', borderColor: 'rgba(0, 229, 255, 0.4)' }]}>
+      <View style={[
+        styles.statusValuePill,
+        { backgroundColor: c.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(124, 92, 255, 0.05)', borderColor: c.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(124, 92, 255, 0.2)' },
+        done && { backgroundColor: 'rgba(49, 197, 107, 0.15)', borderColor: 'rgba(49, 197, 107, 0.4)' },
+        isCurrent && !done && { backgroundColor: 'rgba(0, 229, 255, 0.15)', borderColor: 'rgba(0, 229, 255, 0.4)' }
+      ]}>
         <Text style={{ color: done ? c.mint : isCurrent ? c.cyan : c.sub, fontSize: 12, fontFamily: 'PlusJakartaSans_700Bold', textTransform: 'uppercase', letterSpacing: 0.5 }}>
           {value}
         </Text>
@@ -47,6 +52,18 @@ function StatusRow({ label, value, done, isCurrent }: { label: string; value: st
 function niceStatus(s?: string | null): string {
   if (!s) return '—';
   return s.replace(/_/g, ' ').replace(/\b\w/g, (m) => m.toUpperCase());
+}
+
+/* KYC-done detection. kyc_records.status is canonically 'verified' (historic
+   rows may carry 'approved') — the old code here only checked 'approved', so a
+   real 'verified' user wrongly showed KYC as still awaited. Also treat any
+   phase2Status that is past KYC as done. */
+const KYC_DONE_STATUSES = ['verified', 'approved'];
+const P2_PAST_KYC = ['kyc_done', 'kyc_approved', 'trial_cleared', 'auction_shortlisted', 'team_signed'];
+function isKycDone(kycStatus?: string | null, phase2Status?: string | null): boolean {
+  if (kycStatus && KYC_DONE_STATUSES.includes(kycStatus)) return true;
+  if (phase2Status && P2_PAST_KYC.includes(phase2Status)) return true;
+  return false;
 }
 
 function LangSwitch() {
@@ -458,9 +475,9 @@ export default function ProfileScreen() {
                   ) : null}
                   <StatusRow
                     label="Phase 2 — KYC"
-                    value={niceStatus(d.kyc?.status ?? reg?.phase2Status)}
-                    done={(d.kyc?.status ?? '') === 'approved'}
-                    isCurrent={!!d.video?.submitted && (d.kyc?.status ?? '') !== 'approved'}
+                    value={isKycDone(d.kyc?.status, reg?.phase2Status) ? 'Verified' : niceStatus(d.kyc?.status ?? reg?.phase2Status)}
+                    done={isKycDone(d.kyc?.status, reg?.phase2Status)}
+                    isCurrent={!!d.video?.submitted && !isKycDone(d.kyc?.status, reg?.phase2Status)}
                   />
                   <StatusRow
                     label="Physical trial"
@@ -472,7 +489,7 @@ export default function ProfileScreen() {
                           : 'Awaited'
                     }
                     done={!!d.trial?.assessmentSubmitted}
-                    isCurrent={(d.kyc?.status ?? '') === 'approved' && !d.trial?.assessmentSubmitted}
+                    isCurrent={isKycDone(d.kyc?.status, reg?.phase2Status) && !d.trial?.assessmentSubmitted}
                   />
                 </View>
               </Card>
@@ -604,11 +621,9 @@ const styles = StyleSheet.create({
   },
   statusValuePill: {
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
     borderRadius: 20,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    backgroundColor: 'rgba(255,255,255,0.05)',
   },
   langBtn: {
     flex: 1,

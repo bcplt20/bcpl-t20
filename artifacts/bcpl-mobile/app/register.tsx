@@ -36,14 +36,21 @@ const CITIES = [
 // Keep in sync with website legalMeta.tsx CONSENT_VERSIONS
 const CONSENT = { termsVersion: '2.1', privacyVersion: '2.1' };
 
-const ROLES: { id: PlayerRole; en: string; hi: string; fee: number }[] = [
-  { id: 'bat', en: 'Batsman', hi: 'बल्लेबाज़', fee: 299 },
-  { id: 'bowl', en: 'Bowler', hi: 'गेंदबाज़', fee: 299 },
-  { id: 'wk', en: 'Wicketkeeper', hi: 'विकेटकीपर', fee: 299 },
-  { id: 'ar', en: 'All-Rounder', hi: 'ऑलराउंडर', fee: 399 },
+// Role labels + fees mirror the website ROLES config (Batsman / Bowler /
+// Wicket-Keeper / All-Rounder; phase-2 trial fee shown per role).
+const ROLES: { id: PlayerRole; en: string; hi: string; fee: number; phase2: number }[] = [
+  { id: 'bat', en: 'Batsman', hi: 'बल्लेबाज़', fee: 299, phase2: 2000 },
+  { id: 'bowl', en: 'Bowler', hi: 'गेंदबाज़', fee: 299, phase2: 2000 },
+  { id: 'wk', en: 'Wicket-Keeper', hi: 'विकेटकीपर', fee: 299, phase2: 2000 },
+  { id: 'ar', en: 'All-Rounder', hi: 'ऑलराउंडर', fee: 399, phase2: 3000 },
 ];
 
-type Step = 'account' | 'otp' | 'details' | 'pay' | 'done';
+// Step order mirrors the website register wizard (Your Details → Your Role →
+// Trial City → Confirm & Pay). OTP is a native adaptation of the website's
+// login modal, inserted right after the details step (website verifies the
+// phone the same way via its OTP modal). DOB is collected in the details step
+// alongside name/email/phone — exactly as the website's "Your Details" step.
+type Step = 'account' | 'otp' | 'role' | 'city' | 'pay' | 'done';
 
 // Server phase1Status vocabulary: 'pending' = registered but unpaid;
 // 'payment_done' and later stages mean the fee is already paid.
@@ -60,7 +67,7 @@ export default function RegisterScreen() {
   const { token, user, login } = useAuth();
   const appBarHeight = useAppBarHeight();
 
-  const [step, setStep] = useState<Step>(token ? 'details' : 'account');
+  const [step, setStep] = useState<Step>(token ? 'role' : 'account');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
@@ -102,6 +109,19 @@ export default function RegisterScreen() {
       const st = await getRegisterStatus(token);
       if (!st.registered || !st.registrationId) return;
       setRegistrationId(st.registrationId);
+      // Hydrate the Confirm & Pay summary for resuming users — their details
+      // live on the server, not in this screen's local state.
+      if (st.role) {
+        const roleMap: Record<string, PlayerRole> = {
+          bat: 'bat', batsman: 'bat', bowl: 'bowl', bowler: 'bowl',
+          wk: 'wk', wicketkeeper: 'wk', wicket_keeper: 'wk',
+          ar: 'ar', all_rounder: 'ar', allrounder: 'ar',
+        };
+        const rk = roleMap[st.role] ?? null;
+        if (rk) setRole((prev) => prev ?? rk);
+      }
+      if (st.trialCity) setCity((prev) => prev || st.trialCity!);
+      if (user?.name) setName((prev) => prev || user.name);
       if (isUnpaidStatus(st.phase1Status)) {
         setFee(st.fees?.phase1 ?? 299);
         // Only pull an early-step user forward to pay on the very first sync;
@@ -117,7 +137,7 @@ export default function RegisterScreen() {
     } catch {
       // best-effort — user can proceed through the normal steps
     }
-  }, [token]);
+  }, [token, user?.name]);
 
   // On mount: recover any registered state (incl. after an app relaunch during
   // checkout). Jump an early-step logged-in user straight to their real step.
@@ -140,9 +160,10 @@ export default function RegisterScreen() {
   /* ── step 1: account / OTP ── */
   const onSendOtp = async () => {
     setError(''); setInfo('');
-    if (!/^\d{10}$/.test(phone)) return setError(t('Enter a 10-digit mobile number', '10 अंकों का मोबाइल नंबर डालें'));
     if (name.trim().length < 3) return setError(t('Enter your full name', 'अपना पूरा नाम डालें'));
     if (!/^\S+@\S+\.\S+$/.test(email.trim())) return setError(t('Enter a valid email', 'सही ईमेल डालें'));
+    if (!/^\d{10}$/.test(phone)) return setError(t('Enter a 10-digit mobile number', '10 अंकों का मोबाइल नंबर डालें'));
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dob)) return setError(t('Enter date of birth as YYYY-MM-DD', 'जन्मतिथि YYYY-MM-DD में डालें'));
     setBusy(true);
     try {
       const r = await sendOtp(phone, 'register');
@@ -197,7 +218,7 @@ export default function RegisterScreen() {
       } catch {
         // status check is best-effort
       }
-      setStep('details');
+      setStep('role');
     } catch (e) {
       fail(e, t('Incorrect OTP, please try again', 'OTP गलत है, फिर कोशिश करें'));
     } finally {
@@ -205,7 +226,14 @@ export default function RegisterScreen() {
     }
   };
 
-  /* ── step 2: details ── */
+  /* ── step: role → city ── */
+  const onSelectRole = () => {
+    setError('');
+    if (!role) return setError(t('Choose your playing role', 'अपना रोल चुनें'));
+    setStep('city');
+  };
+
+  /* ── step: city → register + pay ── */
   const onSubmitDetails = async () => {
     setError('');
     if (!role) return setError(t('Choose your playing role', 'अपना रोल चुनें'));
@@ -310,12 +338,24 @@ export default function RegisterScreen() {
     </Pressable>
   );
 
+  // Section headings mirror the website register wizard exactly.
   const stepTitle: Record<Step, string> = {
-    account: t('Create your account', 'अपना अकाउंट बनाएँ'),
+    account: t('Your Details', 'आपकी Details'),
     otp: t('Enter OTP', 'OTP डालें'),
-    details: t('Playing details', 'खेल की जानकारी'),
-    pay: t('Phase 1 fee', 'फेज़ 1 फ़ीस'),
+    role: t('Your Role', 'आपकी Role'),
+    city: t('Trial City', 'Trial City'),
+    pay: t('Confirm & Pay', 'Confirm करें & Pay करें'),
     done: t('Registration complete!', 'रजिस्ट्रेशन पूरी!'),
+  };
+
+  // Sub-copy under each heading — same wording as the website's step intros.
+  const stepSub: Record<Step, string> = {
+    account: t('As per Aadhaar / PAN — used for franchise records', 'Aadhaar / PAN के अनुसार — franchise records के लिए'),
+    otp: t('Verify your mobile number to continue', 'आगे बढ़ने के लिए अपना mobile number verify करें'),
+    role: t('Your video is assessed against role-specific criteria. Every role brings equal value to the game.', 'आपका video role-specific criteria पर assess होता है। हर role game में बराबर value लाती है।'),
+    city: t('Choose the city nearest to your home or workplace.', 'अपने घर या workplace के सबसे नज़दीक वाला शहर चुनें।'),
+    pay: t('Phase 1 entry fee. Phase 2 fee is payable only if you qualify and choose to proceed.', 'Phase 1 entry fee। Phase 2 fee तभी देनी है जब आप qualify करें और आगे बढ़ना चुनें।'),
+    done: t('BCPL Season 5 — Phase 1 registration', 'BCPL सीज़न 5 — फेज़ 1 रजिस्ट्रेशन'),
   };
 
   return (
@@ -330,7 +370,7 @@ export default function RegisterScreen() {
       <StepProgressBar step={step} />
       <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 28, letterSpacing: -0.5 }}>{stepTitle[step]}</Text>
       <Text style={{ color: c.sub, fontSize: 15, marginTop: 8, marginBottom: 24, fontFamily: 'PlusJakartaSans_500Medium' }}>
-        {t('BCPL Season 5 — Phase 1 registration', 'BCPL सीज़न 5 — फेज़ 1 रजिस्ट्रेशन')}
+        {stepSub[step]}
       </Text>
 
       {error ? (
@@ -351,9 +391,17 @@ export default function RegisterScreen() {
         <View style={{ gap: 16 }}>
         <RegistrationHero />
         <Card>
-          {input({ value: name, onChange: setName, placeholder: t('Full name', 'पूरा नाम') })}
-          {input({ value: email, onChange: setEmail, placeholder: t('Email', 'ईमेल'), keyboard: 'email-address' })}
-          {input({ value: phone, onChange: (v) => setPhone(v.replace(/\D/g, '')), placeholder: t('Mobile number (10 digits)', 'मोबाइल नंबर (10 अंक)'), keyboard: 'number-pad', maxLength: 10 })}
+          <Text style={[styles.label, { color: c.ink }]}>{t('Full Name *', 'पूरा नाम *')}</Text>
+          {input({ value: name, onChange: setName, placeholder: t('e.g. Rahul Kumar Sharma', 'जैसे Rahul Kumar Sharma') })}
+          <Text style={{ color: c.sub, fontSize: 12, marginTop: 6, marginBottom: 4, fontFamily: 'PlusJakartaSans_500Medium' }}>
+            {t('Name as per PAN card and Aadhaar card', 'PAN card और Aadhaar card के अनुसार नाम')}
+          </Text>
+          <Text style={[styles.label, { color: c.ink, marginTop: 12 }]}>{t('Email *', 'Email *')}</Text>
+          {input({ value: email, onChange: setEmail, placeholder: 'you@example.com', keyboard: 'email-address' })}
+          <Text style={[styles.label, { color: c.ink, marginTop: 12 }]}>{t('Phone *', 'Phone *')}</Text>
+          {input({ value: phone, onChange: (v) => setPhone(v.replace(/\D/g, '')), placeholder: t('10-digit number', '10 अंकों का नंबर'), keyboard: 'number-pad', maxLength: 10 })}
+          <Text style={[styles.label, { color: c.ink, marginTop: 12 }]}>{t('Date of Birth (18–45 yrs) *', 'जन्म तिथि (18–45 साल) *')}</Text>
+          {input({ value: dob, onChange: setDob, placeholder: 'YYYY-MM-DD', maxLength: 10, keyboard: 'number-pad' })}
           <View style={{ marginTop: 16 }}>
             {primaryBtn(t('Send OTP', 'OTP भेजें'), onSendOtp, 'reg-send-otp')}
           </View>
@@ -381,10 +429,9 @@ export default function RegisterScreen() {
         </Card>
       ) : null}
 
-      {step === 'details' ? (
+      {step === 'role' ? (
         <View style={{ gap: 20 }}>
           <Card>
-            <Text style={[styles.label, { color: c.ink }]}>{t('Your playing role', 'आपका रोल')}</Text>
             <View style={styles.chipWrap}>
               {ROLES.map((r) => {
                 const isActive = role === r.id;
@@ -409,8 +456,11 @@ export default function RegisterScreen() {
                     <Text style={{ color: isActive ? c.getAccentText(c.magenta) : c.ink, fontFamily: isActive ? 'Inter_800ExtraBold' : 'Inter_600SemiBold', fontSize: 16 }}>
                       {t(r.en, r.hi)}
                     </Text>
-                    <Text style={{ color: isActive ? c.getAccentText(c.magenta) : c.sub, fontSize: 13, marginTop: 6, fontFamily: 'PlusJakartaSans_600SemiBold' }}>₹{r.fee} <Text style={{ fontSize: 11 }}>+ GST</Text></Text>
-                    
+                    <Text style={{ color: isActive ? c.getAccentText(c.magenta) : c.sub, fontSize: 13, marginTop: 6, fontFamily: 'PlusJakartaSans_600SemiBold' }}>₹{r.fee} <Text style={{ fontSize: 11 }}>{t('+ GST · PHASE 1', '+ GST · PHASE 1')}</Text></Text>
+                    <Text style={{ color: isActive ? c.getAccentText(c.magenta) : c.sub, fontSize: 12, marginTop: 4, fontFamily: 'PlusJakartaSans_500Medium' }}>
+                      {t('Phase 2 Trial Fee ₹', 'Phase 2 Trial Fee ₹')}{r.phase2.toLocaleString()}{t(' + GST — after Phase 1 qualification.', ' + GST — Phase 1 qualification के बाद।')}
+                    </Text>
+
                     {isActive && (
                       <View style={{ position: 'absolute', top: -10, right: -10, width: 28, height: 28, borderRadius: 14, backgroundColor: c.magenta, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: c.card, shadowColor: c.magenta, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.5, shadowRadius: 8, elevation: 4 }}>
                         <Feather name="check" size={16} color="#fff" />
@@ -420,10 +470,19 @@ export default function RegisterScreen() {
                 );
               })}
             </View>
+            <View style={{ marginTop: 16 }}>
+              {primaryBtn(t('Continue', 'आगे बढ़ें'), onSelectRole, 'reg-role')}
+            </View>
+            <Pressable onPress={() => { setStep('account'); setError(''); }} style={{ marginTop: 14, alignSelf: 'center', padding: 8 }}>
+              <Text style={{ color: c.cyan, fontSize: 14, fontFamily: 'PlusJakartaSans_700Bold' }}>{t('← Back', '← वापस')}</Text>
+            </Pressable>
           </Card>
+        </View>
+      ) : null}
 
+      {step === 'city' ? (
+        <View style={{ gap: 20 }}>
           <Card>
-            <Text style={[styles.label, { color: c.ink }]}>{t('Trial city', 'ट्रायल शहर')}</Text>
             <View style={styles.chipWrap}>
               {CITIES.map((ct) => {
                 const isActive = city === ct;
@@ -441,41 +500,91 @@ export default function RegisterScreen() {
                 );
               })}
             </View>
-          </Card>
-
-          <Card>
-            <Text style={[styles.label, { color: c.ink }]}>{t('Date of birth (18–45 years)', 'जन्मतिथि (18–45 वर्ष)')}</Text>
-            {input({ value: dob, onChange: setDob, placeholder: 'YYYY-MM-DD', maxLength: 10 })}
+            {city ? (
+              <Text style={{ color: c.sub, fontSize: 12, marginTop: 12, fontFamily: 'PlusJakartaSans_500Medium', lineHeight: 18 }}>
+                {t('If selected in Phase 1, your physical trial will be held in this city', 'अगर Phase 1 में select हुए, तो आपका physical trial इसी शहर में होगा')}
+              </Text>
+            ) : null}
+            {/* DOB is normally collected in the Your Details step; a returning
+                logged-in player who lands here without one still needs it. */}
+            {!/^\d{4}-\d{2}-\d{2}$/.test(dob) ? (
+              <View style={{ marginTop: 16 }}>
+                <Text style={[styles.label, { color: c.ink }]}>{t('Date of Birth (18–45 yrs) *', 'जन्म तिथि (18–45 साल) *')}</Text>
+                {input({ value: dob, onChange: setDob, placeholder: 'YYYY-MM-DD', maxLength: 10, keyboard: 'number-pad' })}
+              </View>
+            ) : null}
             <View style={{ marginTop: 16 }}>
               {primaryBtn(t('Continue to payment', 'पेमेंट पर जाएँ'), onSubmitDetails, 'reg-details')}
             </View>
+            <Pressable onPress={() => { setStep('role'); setError(''); }} style={{ marginTop: 14, alignSelf: 'center', padding: 8 }}>
+              <Text style={{ color: c.cyan, fontSize: 14, fontFamily: 'PlusJakartaSans_700Bold' }}>{t('← Back', '← वापस')}</Text>
+            </Pressable>
           </Card>
         </View>
       ) : null}
 
       {step === 'pay' ? (
         <Card style={{ padding: 0 }}>
-          <View style={{ alignItems: 'center', paddingVertical: 40, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: c.line }}>
-            <Text style={{ color: c.sub, fontSize: 15, fontFamily: 'PlusJakartaSans_700Bold', letterSpacing: 0.5 }}>{t('Phase 1 registration fee', 'फेज़ 1 रजिस्ट्रेशन फ़ीस')}</Text>
-            <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 52, marginTop: 16 }}>₹{grossFee || '—'}</Text>
-            {fee ? <Text style={{ color: c.cyan, fontSize: 14, marginTop: 6, fontFamily: 'PlusJakartaSans_600SemiBold' }}>₹{fee} + 18% GST</Text> : null}
+          {/* Ticket header — PHASE 1 TRIAL ENTRY (mirrors website ticket) */}
+          <View style={{ alignItems: 'center', paddingVertical: 32, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: c.line }}>
+            <Text style={{ color: c.sub, fontSize: 12, fontFamily: 'PlusJakartaSans_700Bold', letterSpacing: 1.4 }}>{t('PHASE 1 TRIAL ENTRY', 'PHASE 1 TRIAL ENTRY')}</Text>
+            <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 52, marginTop: 12 }}>₹{grossFee || '—'}</Text>
+            {fee ? <Text style={{ color: c.getAccentText(c.cyan), fontSize: 14, marginTop: 6, fontFamily: 'PlusJakartaSans_600SemiBold' }}>₹{fee} + 18% GST</Text> : null}
+          </View>
+
+          {/* Player info summary (website ticket rows) */}
+          <View style={{ paddingHorizontal: 24, paddingTop: 16 }}>
+            {[
+              { l: t('PLAYER NAME', 'PLAYER NAME'), v: name || '—' },
+              { l: t('ROLE', 'ROLE'), v: role ? t(ROLES.find((r) => r.id === role)?.en ?? '', ROLES.find((r) => r.id === role)?.hi ?? '') : '—' },
+              { l: t('TRIAL CITY', 'TRIAL CITY'), v: city || '—' },
+              { l: t('SEASON', 'SEASON'), v: '5 · 2025–26' },
+            ].map((row) => (
+              <View key={row.l} style={{ paddingVertical: 10, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: c.line }}>
+                <Text style={{ color: c.sub, fontSize: 10, fontFamily: 'PlusJakartaSans_700Bold', letterSpacing: 1.2, marginBottom: 4 }}>{row.l}</Text>
+                <Text style={{ color: c.ink, fontSize: 14, fontFamily: 'PlusJakartaSans_600SemiBold' }}>{row.v}</Text>
+              </View>
+            ))}
           </View>
 
           <View style={{ padding: 24 }}>
+            {/* Required acceptance — mirrors the website's Terms/Privacy/Refund/
+                Eligibility + non-refundable consent copy. */}
             <Pressable onPress={() => setAgreed(!agreed)} style={styles.checkRow} testID="reg-consent">
               <Feather name={agreed ? 'check-square' : 'square'} size={24} color={agreed ? c.magenta : c.sub} />
-              <Text style={{ color: c.ink, fontSize: 14.5, flex: 1, lineHeight: 22, fontFamily: 'PlusJakartaSans_500Medium' }}>
-                {t('I accept the BCPL Terms & Conditions and Privacy Policy (bcplt20.com/terms)', 'मैं BCPL के नियम व शर्तें और प्राइवेसी पॉलिसी स्वीकार करता/करती हूँ (bcplt20.com/terms)')}
+              <Text style={{ color: c.ink, fontSize: 13.5, flex: 1, lineHeight: 21, fontFamily: 'PlusJakartaSans_500Medium' }}>
+                {t('I agree to the BCPL Terms & Conditions, Privacy Notice, Refund & Cancellation Policy and Eligibility Criteria. I understand the Phase 1 fee does not guarantee qualification or selection and is non-refundable after successful payment, including if I do not upload my video. (bcplt20.com)', 'मैं BCPL Terms & Conditions, Privacy Notice, Refund & Cancellation Policy और Eligibility Criteria से सहमत हूँ। मैं समझता हूँ कि Phase 1 fee qualification या selection की guarantee नहीं देता और सफल भुगतान के बाद non-refundable है — भले ही मैं अपना video upload न करूँ। (bcplt20.com)')}
               </Text>
             </Pressable>
+            {/* Optional marketing consent — never gates payment (website parity) */}
             <Pressable onPress={() => setMarketingOptIn(!marketingOptIn)} style={styles.checkRow}>
               <Feather name={marketingOptIn ? 'check-square' : 'square'} size={24} color={marketingOptIn ? c.magenta : c.sub} />
-              <Text style={{ color: c.sub, fontSize: 14.5, flex: 1, lineHeight: 22, fontFamily: 'PlusJakartaSans_500Medium' }}>
-                {t('Send me updates on WhatsApp/SMS (optional)', 'मुझे WhatsApp/SMS पर अपडेट भेजें (वैकल्पिक)')}
+              <Text style={{ color: c.sub, fontSize: 13.5, flex: 1, lineHeight: 21, fontFamily: 'PlusJakartaSans_500Medium' }}>
+                {t('Optional: send me BCPL updates and offers by SMS/WhatsApp/email. I can opt out anytime.', 'Optional: मुझे SMS/WhatsApp/email से BCPL updates और offers भेजें। मैं कभी भी opt out कर सकता/सकती हूँ।')}
               </Text>
             </Pressable>
 
-            <View style={{ marginTop: 32 }}>
+            {/* GST breakdown (website "Confirm & Pay" summary) */}
+            <View style={{ marginTop: 20, padding: 16, borderRadius: 12, borderWidth: 1, borderColor: c.line, backgroundColor: c.card2 }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 }}>
+                <Text style={{ color: c.sub, fontSize: 14, fontFamily: 'PlusJakartaSans_500Medium' }}>{t('Registration Fee', 'Registration Fee')}</Text>
+                <Text style={{ color: c.ink, fontSize: 14, fontFamily: 'PlusJakartaSans_700Bold' }}>₹{fee || '—'}</Text>
+              </View>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10, paddingBottom: 10, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: c.line }}>
+                <Text style={{ color: c.sub, fontSize: 14, fontFamily: 'PlusJakartaSans_500Medium' }}>GST (18%)</Text>
+                <Text style={{ color: c.sub, fontSize: 14, fontFamily: 'PlusJakartaSans_500Medium' }}>₹{fee ? grossFee - fee : '—'}</Text>
+              </View>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Text style={{ color: c.getAccentText(c.magenta), fontSize: 14, fontFamily: 'BricolageGrotesque_800ExtraBold' }}>{t('Total Payable', 'कुल Payable')}</Text>
+                <Text style={{ color: c.getAccentText(c.magenta), fontSize: 16, fontFamily: 'BricolageGrotesque_800ExtraBold' }}>₹{grossFee || '—'}</Text>
+              </View>
+            </View>
+
+            <Text style={{ color: c.sub, fontSize: 11.5, marginTop: 12, lineHeight: 17, fontFamily: 'PlusJakartaSans_500Medium' }}>
+              {t('Payment of the Phase 1 fee gives you evaluation access — it does not guarantee selection, Auction Pool entry or tournament participation.', 'Phase 1 fee का भुगतान evaluation access देता है — यह selection, Auction Pool में जगह या tournament participation की guarantee नहीं है।')}
+            </Text>
+
+            <View style={{ marginTop: 24 }}>
               {primaryBtn(t('Pay securely with Cashfree', 'Cashfree से सुरक्षित पेमेंट करें'), onPay, 'reg-pay')}
             </View>
             <Text style={{ color: c.sub, fontSize: 12, marginTop: 14, textAlign: 'center', fontFamily: 'PlusJakartaSans_500Medium', lineHeight: 18 }}>

@@ -59,9 +59,9 @@ export function RegistrationHero() {
   );
 }
 
-export function StepProgressBar({ step }: { step: 'account' | 'otp' | 'details' | 'pay' | 'done' }) {
+export function StepProgressBar({ step }: { step: 'account' | 'otp' | 'role' | 'city' | 'pay' | 'done' }) {
   const c = useColors();
-  const steps = ['account', 'otp', 'details', 'pay', 'done'];
+  const steps = ['account', 'otp', 'role', 'city', 'pay', 'done'];
   const idx = steps.indexOf(step);
   
   return (

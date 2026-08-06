@@ -118,8 +118,10 @@ export default function KycScreen() {
       // auction_shortlisted, team_signed) OR a verified KYC record means the
       // KYC step is already behind them.
       const p2Done = ['kyc_done', 'kyc_approved', 'trial_cleared', 'auction_shortlisted', 'team_signed'].includes(reg.phase2Status ?? '');
+      // Historic vocab tolerance: treat 'approved' the same as 'verified'.
+      const kycRecordDone = d.kyc?.status === 'verified' || d.kyc?.status === 'approved';
       if (reg.phase2Status !== 'payment_done') {
-        if (p2Done || d.kyc?.status === 'verified') { setLoadState('already_done'); return; }
+        if (p2Done || kycRecordDone) { setLoadState('already_done'); return; }
         setLoadState('not_eligible'); return;
       }
       const rid = reg.id;
@@ -140,7 +142,7 @@ export default function KycScreen() {
           if (!prog.aadhaarVerified) { setResumeMode('aadhaar'); setPanAutoVerified(prog.panVerified !== false); }
           else if (!prog.panVerified) { setResumeMode('pan'); }
           else { setKycStatus('pending'); }
-        } else if (prog.hasKyc && prog.status === 'verified') {
+        } else if (prog.hasKyc && (prog.status === 'verified' || prog.status === 'approved')) {
           setKycStatus('verified');
         }
       } catch { /* fresh KYC */ }
