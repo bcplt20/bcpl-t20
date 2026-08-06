@@ -475,7 +475,13 @@ export default function ProfileScreen() {
                   ) : null}
                   <StatusRow
                     label="Phase 2 — KYC"
-                    value={isKycDone(d.kyc?.status, reg?.phase2Status) ? 'Verified' : niceStatus(d.kyc?.status ?? reg?.phase2Status)}
+                    value={
+                      isKycDone(d.kyc?.status, reg?.phase2Status)
+                        ? 'Verified'
+                        : (d.kyc?.status ?? reg?.phase2Status)
+                          ? niceStatus(d.kyc?.status ?? reg?.phase2Status)
+                          : 'Awaited' // never a bare dash — future step reads "Awaited" like Physical trial
+                    }
                     done={isKycDone(d.kyc?.status, reg?.phase2Status)}
                     isCurrent={!!d.video?.submitted && !isKycDone(d.kyc?.status, reg?.phase2Status)}
                   />

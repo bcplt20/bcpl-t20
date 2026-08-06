@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   ActivityIndicator,
+  Modal,
   Platform,
   Pressable,
   ScrollView,
@@ -45,12 +46,12 @@ const ROLES: { id: PlayerRole; en: string; hi: string; fee: number; phase2: numb
   { id: 'ar', en: 'All-Rounder', hi: 'ऑलराउंडर', fee: 399, phase2: 3000 },
 ];
 
-// Step order mirrors the website register wizard (Your Details → Your Role →
-// Trial City → Confirm & Pay). OTP is a native adaptation of the website's
-// login modal, inserted right after the details step (website verifies the
-// phone the same way via its OTP modal). DOB is collected in the details step
-// alongside name/email/phone — exactly as the website's "Your Details" step.
-type Step = 'account' | 'otp' | 'role' | 'city' | 'pay' | 'done';
+// Step order is IDENTICAL to the website register wizard:
+//   1 Your Details (name/email/phone/DOB) → 2 Your Role → 3 Trial City →
+//   4 Confirm & Pay.  There is NO separate OTP step — exactly like the website,
+//   phone verification happens in an OTP modal AT PAYMENT time (see showPayOtp).
+//   'done' is the app-only success screen shown after payment verifies.
+type Step = 'details' | 'role' | 'city' | 'pay' | 'done';
 
 // Server phase1Status vocabulary: 'pending' = registered but unpaid;
 // 'payment_done' and later stages mean the fee is already paid.
@@ -67,17 +68,36 @@ export default function RegisterScreen() {
   const { token, user, login } = useAuth();
   const appBarHeight = useAppBarHeight();
 
-  const [step, setStep] = useState<Step>(token ? 'role' : 'account');
+  const [step, setStep] = useState<Step>('details');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
 
-  // account step
+  // details step
   const [name, setName] = useState(user?.name ?? '');
   const [email, setEmail] = useState(user?.email ?? '');
   const [phone, setPhone] = useState(user?.phone?.replace(/^\+?91/, '') ?? '');
-  const [otp, setOtp] = useState('');
-  const [otpPurpose, setOtpPurpose] = useState<'register' | 'login'>('register');
+
+  // Registered-player login modal (mirrors the website's "Registered Player
+  // Login" modal reachable from step 1).
+  const [showLogin, setShowLogin] = useState(false);
+  const [loginStep, setLoginStep] = useState<'phone' | 'otp'>('phone');
+  const [loginPhone, setLoginPhone] = useState('');
+  const [loginOtp, setLoginOtp] = useState('');
+  const [loginBusy, setLoginBusy] = useState(false);
+  const [loginError, setLoginError] = useState('');
+  const [loginInfo, setLoginInfo] = useState('');
+
+  // Pay-time OTP modal (mirrors the website's showPayOtp flow): when an
+  // unauthenticated player taps Pay, verify their phone here, then register+pay.
+  const [showPayOtp, setShowPayOtp] = useState(false);
+  const [payOtpStep, setPayOtpStep] = useState<'phone' | 'otp'>('phone');
+  const [payOtp, setPayOtp] = useState('');
+  const [payOtpBusy, setPayOtpBusy] = useState(false);
+  const [payOtpError, setPayOtpError] = useState('');
+  const [payOtpInfo, setPayOtpInfo] = useState('');
+  const [payOtpTimer, setPayOtpTimer] = useState(0);
+  const [payOtpAlreadyReg, setPayOtpAlreadyReg] = useState(false);
 
   // details step
   const [role, setRole] = useState<PlayerRole | null>(null);
@@ -157,139 +177,165 @@ export default function RegisterScreen() {
   const fail = (e: unknown, fallback: string) =>
     setError(e instanceof Error ? e.message : fallback);
 
-  /* ── step 1: account / OTP ── */
-  const onSendOtp = async () => {
-    setError(''); setInfo('');
+  /* ── STEP 1 → 2: Your Details → Your Role ──
+     Website has NO OTP here — just validates the fields and advances. */
+  const onSubmitDetails = () => {
+    setError('');
     if (name.trim().length < 3) return setError(t('Enter your full name', 'अपना पूरा नाम डालें'));
     if (!/^\S+@\S+\.\S+$/.test(email.trim())) return setError(t('Enter a valid email', 'सही ईमेल डालें'));
     if (!/^\d{10}$/.test(phone)) return setError(t('Enter a 10-digit mobile number', '10 अंकों का मोबाइल नंबर डालें'));
     if (!/^\d{4}-\d{2}-\d{2}$/.test(dob)) return setError(t('Enter date of birth as YYYY-MM-DD', 'जन्मतिथि YYYY-MM-DD में डालें'));
-    setBusy(true);
-    try {
-      const r = await sendOtp(phone, 'register');
-      setOtpPurpose('register');
-      setInfo(r.devOtp ? `Dev OTP: ${r.devOtp}` : t('OTP has been sent to your number', 'OTP आपके नंबर पर भेज दिया गया है'));
-      setStep('otp');
-    } catch (e) {
-      if (e instanceof ApiError && e.status === 409) {
-        // account already exists — fall back to login OTP
-        try {
-          const r2 = await sendOtp(phone, 'login');
-          setOtpPurpose('login');
-          setInfo(r2.devOtp ? `Dev OTP: ${r2.devOtp}` : t('You already have an account — OTP sent for login', 'आपका अकाउंट पहले से है — लॉगिन OTP भेजा गया है'));
-          setStep('otp');
-        } catch (e2) {
-          fail(e2, t('Could not send OTP', 'OTP भेजने में दिक्कत हुई'));
-        }
-      } else {
-        fail(e, t('Could not send OTP', 'OTP भेजने में दिक्कत हुई'));
-      }
-    } finally {
-      setBusy(false);
-    }
+    setStep('role');
   };
 
-  const onVerifyOtp = async () => {
-    setError('');
-    if (!otp.trim()) return setError(t('Enter the OTP', 'OTP डालें'));
-    setBusy(true);
-    try {
-      const r = await verifyOtp(phone, otp.trim(), {
-        purpose: otpPurpose,
-        name: name.trim(),
-        email: email.trim(),
-      });
-      await login(r.token, r.user);
-      // If they already registered, jump straight to the right step
-      try {
-        const st = await getRegisterStatus(r.token);
-        if (st.registered && st.registrationId) {
-          setRegistrationId(st.registrationId);
-          if (isUnpaidStatus(st.phase1Status)) {
-            setFee(st.fees?.phase1 ?? (st.role === 'ar' ? 399 : 299));
-            setStep('pay');
-          } else {
-            setRegNumber(st.regNumber ?? '');
-            setDoneStatus(st.phase1Status || 'payment_done');
-            setStep('done');
-          }
-          return;
-        }
-      } catch {
-        // status check is best-effort
-      }
-      setStep('role');
-    } catch (e) {
-      fail(e, t('Incorrect OTP, please try again', 'OTP गलत है, फिर कोशिश करें'));
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  /* ── step: role → city ── */
+  /* ── STEP 2 → 3: Your Role → Trial City ── */
   const onSelectRole = () => {
     setError('');
     if (!role) return setError(t('Choose your playing role', 'अपना रोल चुनें'));
     setStep('city');
   };
 
-  /* ── step: city → register + pay ── */
-  const onSubmitDetails = async () => {
+  /* ── STEP 3 → 4: Trial City → Confirm & Pay ── */
+  const onSelectCity = () => {
     setError('');
-    if (!role) return setError(t('Choose your playing role', 'अपना रोल चुनें'));
     if (!city) return setError(t('Choose your trial city', 'ट्रायल शहर चुनें'));
     if (!/^\d{4}-\d{2}-\d{2}$/.test(dob)) return setError(t('Enter date of birth as YYYY-MM-DD', 'जन्मतिथि YYYY-MM-DD में डालें'));
-    if (!token) return setStep('account');
-    setBusy(true);
+    // Fee is derived from the selected role; a resuming server user keeps the
+    // server-supplied fee (set in syncStatus), so only default when unset.
+    setFee((prev) => prev || (ROLES.find((r) => r.id === role)?.fee ?? 299));
+    setStep('pay');
+  };
+
+  /* ── Registered Player Login modal (from step 1) ── */
+  const onLoginSendOtp = async () => {
+    setLoginError(''); setLoginInfo('');
+    if (!/^\d{10}$/.test(loginPhone)) return setLoginError(t('Enter a 10-digit mobile number', '10 अंकों का मोबाइल नंबर डालें'));
+    setLoginBusy(true);
     try {
-      const r = await registerPhase1(token, { role, trialCity: city, dob });
-      setRegistrationId(r.registrationId);
-      setFee(r.phase1Fee);
-      setStep('pay');
+      const r = await sendOtp(loginPhone, 'login');
+      setLoginInfo(r.devOtp ? `Dev OTP: ${r.devOtp}` : t('OTP sent to your number', 'OTP आपके नंबर पर भेज दिया गया'));
+      setLoginStep('otp');
     } catch (e) {
-      if (e instanceof ApiError && e.status === 409) {
-        try {
-          const st = await getRegisterStatus(token);
-          if (st.registered && st.registrationId) {
-            setRegistrationId(st.registrationId);
-            if (isUnpaidStatus(st.phase1Status)) {
-              setFee(st.fees?.phase1 ?? 299);
-              setStep('pay');
-            } else {
-              setRegNumber(st.regNumber ?? '');
-              setDoneStatus(st.phase1Status || 'payment_done');
-              setStep('done');
-            }
-            return;
-          }
-        } catch { /* fall through */ }
-      }
-      if (e instanceof ApiError && e.code === 'AGE_INELIGIBLE') {
-        setError(t('Age must be between 18 and 45 for BCPL trials', 'BCPL ट्रायल के लिए उम्र 18 से 45 के बीच होनी चाहिए'));
-      } else {
-        fail(e, t('Registration failed, please try again', 'रजिस्ट्रेशन में दिक्कत हुई, फिर कोशिश करें'));
-      }
-    } finally {
-      setBusy(false);
+      setLoginError(e instanceof Error ? e.message : t('Failed to send OTP', 'OTP भेजने में विफल'));
+    } finally { setLoginBusy(false); }
+  };
+
+  const onLoginVerifyOtp = async () => {
+    setLoginError('');
+    if (!/^\d{4,6}$/.test(loginOtp.trim())) return setLoginError(t('Enter the OTP', 'OTP डालें'));
+    setLoginBusy(true);
+    try {
+      const r = await verifyOtp(loginPhone, loginOtp.trim(), { purpose: 'login' });
+      await login(r.token, r.user);
+      setShowLogin(false);
+      // Refresh status → routes a registered player to pay/done automatically.
+      await syncStatus({ allowJumpFromEarly: true });
+    } catch (e) {
+      setLoginError(e instanceof Error ? e.message : t('Invalid OTP. Please try again.', 'गलत OTP। कृपया दोबारा कोशिश करें।'));
+    } finally { setLoginBusy(false); }
+  };
+
+  /* ── STEP 4: Confirm & Pay ──
+     If not authenticated, first verify the phone via the pay-OTP modal (website
+     parity), then register + create the order + open the in-app checkout. */
+  const onPay = () => {
+    setError('');
+    if (!agreed) return setError(t('Please accept the Terms & Privacy Policy', 'कृपया नियम व प्राइवेसी पॉलिसी स्वीकार करें'));
+    if (!token) {
+      setShowPayOtp(true); setPayOtpStep('phone'); setPayOtp(''); setPayOtpError(''); setPayOtpAlreadyReg(false);
+      return;
+    }
+    doRegisterAndPay(token);
+  };
+
+  const startPayOtpTimer = () => {
+    setPayOtpTimer(30);
+    const iv = setInterval(() => {
+      setPayOtpTimer((n) => { if (n <= 1) { clearInterval(iv); return 0; } return n - 1; });
+    }, 1000);
+  };
+
+  const onPayOtpSend = async () => {
+    setPayOtpError(''); setPayOtpInfo(''); setPayOtpAlreadyReg(false);
+    if (!/^\d{10}$/.test(phone)) return setPayOtpError(t('Enter a 10-digit mobile number', '10 अंकों का मोबाइल नंबर डालें'));
+    setPayOtpBusy(true);
+    try {
+      const r = await sendOtp(phone, 'register');
+      setPayOtpInfo(r.devOtp ? `Dev OTP: ${r.devOtp}` : t('OTP sent to your number', 'OTP आपके नंबर पर भेज दिया गया'));
+      setPayOtpStep('otp');
+      startPayOtpTimer();
+    } catch (e) {
+      // Number already registered — no OTP was sent; guide the player to login.
+      if (e instanceof ApiError && e.status === 409) setPayOtpAlreadyReg(true);
+      setPayOtpError(e instanceof Error ? e.message : t('Failed to send OTP', 'OTP भेजने में विफल'));
+    } finally { setPayOtpBusy(false); }
+  };
+
+  const onPayOtpResend = async () => {
+    if (payOtpTimer > 0 || payOtpBusy) return;
+    setPayOtpError('');
+    setPayOtpBusy(true);
+    try {
+      const r = await sendOtp(phone, 'register');
+      setPayOtpInfo(r.devOtp ? `Dev OTP: ${r.devOtp}` : t('OTP sent to your number', 'OTP आपके नंबर पर भेज दिया गया'));
+      startPayOtpTimer();
+    } catch (e) {
+      setPayOtpError(e instanceof Error ? e.message : t('Failed to resend OTP', 'OTP दोबारा भेजने में विफल'));
+    } finally { setPayOtpBusy(false); }
+  };
+
+  const onPayOtpVerify = async () => {
+    setPayOtpError('');
+    if (!/^\d{4,6}$/.test(payOtp.trim())) return setPayOtpError(t('Enter the OTP', 'OTP डालें'));
+    setPayOtpBusy(true);
+    try {
+      const r = await verifyOtp(phone, payOtp.trim(), { purpose: 'register', name: name.trim(), email: email.trim() });
+      await login(r.token, r.user);
+      setShowPayOtp(false);
+      setPayOtpBusy(false);
+      doRegisterAndPay(r.token);
+    } catch (e) {
+      setPayOtpError(e instanceof Error ? e.message : t('Invalid OTP. Please try again.', 'गलत OTP। कृपया दोबारा कोशिश करें।'));
+      setPayOtpBusy(false);
     }
   };
 
-  /* ── step 3: payment ── */
-  // Creates the Cashfree order, then opens the IN-APP checkout WebView. The
-  // WebView intercepts the return URL, verifies the payment, and routes to the
-  // in-app receipt (which sends the player on to the video-upload step). No
-  // external browser / website is ever involved.
-  const onPay = async () => {
+  // Register (if needed) then create the Cashfree order and open the IN-APP
+  // checkout WebView. The WebView intercepts the return URL, verifies, and
+  // routes to the in-app receipt. Mirrors the website's doRegisterAndPay.
+  const doRegisterAndPay = async (authToken: string) => {
     setError('');
-    if (!agreed) return setError(t('Please accept the Terms & Privacy Policy', 'कृपया नियम व प्राइवेसी पॉलिसी स्वीकार करें'));
-    if (!token || !registrationId) return;
     setBusy(true);
     try {
-      const pay = await createPhase1Payment(token, registrationId, {
-        ...CONSENT,
-        marketingOptIn,
-      });
-      // Persist the order so a relaunch mid-checkout can still resolve status.
+      let regId = registrationId;
+      if (!regId) {
+        try {
+          const r = await registerPhase1(authToken, { role: role!, trialCity: city, dob });
+          regId = r.registrationId;
+          setRegistrationId(r.registrationId);
+          setFee(r.phase1Fee);
+        } catch (e) {
+          if (e instanceof ApiError && e.code === 'AGE_INELIGIBLE') {
+            setError(t('Age must be between 18 and 45 for BCPL trials', 'BCPL ट्रायल के लिए उम्र 18 से 45 के बीच होनी चाहिए'));
+            return;
+          }
+          // Already registered — resolve the existing registration id.
+          if (e instanceof ApiError && e.status === 409) {
+            const st = await getRegisterStatus(authToken);
+            if (st.registered && st.registrationId) {
+              regId = st.registrationId;
+              setRegistrationId(st.registrationId);
+              if (!isUnpaidStatus(st.phase1Status)) {
+                setRegNumber(st.regNumber ?? '');
+                setDoneStatus(st.phase1Status || 'payment_done');
+                setStep('done');
+                return;
+              }
+            } else { throw e; }
+          } else { throw e; }
+        }
+      }
+      const pay = await createPhase1Payment(authToken, regId, { ...CONSENT, marketingOptIn });
       await AsyncStorage.setItem(ORDER_KEY, pay.orderId).catch(() => {});
       if (!pay.checkoutUrl) {
         return setError(t('Could not start payment — please update the app and try again', 'पेमेंट शुरू नहीं हो पाई — कृपया ऐप अपडेट करके फिर कोशिश करें'));
@@ -338,10 +384,24 @@ export default function RegisterScreen() {
     </Pressable>
   );
 
+  // Button for modals — uses each modal's own busy flag (not the wizard's).
+  const modalBtn = (label: string, onPress: () => void, isBusy: boolean, testID: string) => (
+    <Pressable
+      onPress={onPress}
+      disabled={isBusy}
+      style={({ pressed }) => [styles.btn, { opacity: isBusy || pressed ? 0.7 : 1 }]}
+      testID={testID}
+    >
+      <LinearGradient colors={['#FF1A75', '#D10056']} style={[StyleSheet.absoluteFill, { borderRadius: 16 }]} />
+      {isBusy ? <ActivityIndicator color="#fff" /> : (
+        <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, letterSpacing: 0.5 }}>{label}</Text>
+      )}
+    </Pressable>
+  );
+
   // Section headings mirror the website register wizard exactly.
   const stepTitle: Record<Step, string> = {
-    account: t('Your Details', 'आपकी Details'),
-    otp: t('Enter OTP', 'OTP डालें'),
+    details: t('Your Details', 'आपकी Details'),
     role: t('Your Role', 'आपकी Role'),
     city: t('Trial City', 'Trial City'),
     pay: t('Confirm & Pay', 'Confirm करें & Pay करें'),
@@ -350,10 +410,9 @@ export default function RegisterScreen() {
 
   // Sub-copy under each heading — same wording as the website's step intros.
   const stepSub: Record<Step, string> = {
-    account: t('As per Aadhaar / PAN — used for franchise records', 'Aadhaar / PAN के अनुसार — franchise records के लिए'),
-    otp: t('Verify your mobile number to continue', 'आगे बढ़ने के लिए अपना mobile number verify करें'),
+    details: t('As per Aadhaar / PAN — used for franchise records', 'Aadhaar / PAN के अनुसार — franchise records के लिए'),
     role: t('Your video is assessed against role-specific criteria. Every role brings equal value to the game.', 'आपका video role-specific criteria पर assess होता है। हर role game में बराबर value लाती है।'),
-    city: t('Choose the city nearest to your home or workplace.', 'अपने घर या workplace के सबसे नज़दीक वाला शहर चुनें।'),
+    city: t('Cities across India. Choose the city nearest to your home or workplace.', 'पूरे भारत में cities। अपने घर या workplace के सबसे नज़दीक वाला शहर चुनें।'),
     pay: t('Phase 1 entry fee. Phase 2 fee is payable only if you qualify and choose to proceed.', 'Phase 1 entry fee। Phase 2 fee तभी देनी है जब आप qualify करें और आगे बढ़ना चुनें।'),
     done: t('BCPL Season 5 — Phase 1 registration', 'BCPL सीज़न 5 — फेज़ 1 रजिस्ट्रेशन'),
   };
@@ -387,7 +446,7 @@ export default function RegisterScreen() {
         </View>
       ) : null}
 
-      {step === 'account' ? (
+      {step === 'details' ? (
         <View style={{ gap: 16 }}>
         <RegistrationHero />
         <Card>
@@ -399,34 +458,26 @@ export default function RegisterScreen() {
           <Text style={[styles.label, { color: c.ink, marginTop: 12 }]}>{t('Email *', 'Email *')}</Text>
           {input({ value: email, onChange: setEmail, placeholder: 'you@example.com', keyboard: 'email-address' })}
           <Text style={[styles.label, { color: c.ink, marginTop: 12 }]}>{t('Phone *', 'Phone *')}</Text>
-          {input({ value: phone, onChange: (v) => setPhone(v.replace(/\D/g, '')), placeholder: t('10-digit number', '10 अंकों का नंबर'), keyboard: 'number-pad', maxLength: 10 })}
+          {input({ value: phone, onChange: (v) => setPhone(v.replace(/\D/g, '')), placeholder: '9876543210', keyboard: 'number-pad', maxLength: 10 })}
           <Text style={[styles.label, { color: c.ink, marginTop: 12 }]}>{t('Date of Birth (18–45 yrs) *', 'जन्म तिथि (18–45 साल) *')}</Text>
           {input({ value: dob, onChange: setDob, placeholder: 'YYYY-MM-DD', maxLength: 10, keyboard: 'number-pad' })}
-          <View style={{ marginTop: 16 }}>
-            {primaryBtn(t('Send OTP', 'OTP भेजें'), onSendOtp, 'reg-send-otp')}
-          </View>
-        </Card>
-        </View>
-      ) : null}
-
-      {step === 'otp' ? (
-        <Card>
-          <View style={{ alignItems: 'center', marginBottom: 24, marginTop: 12 }}>
-            <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: 'rgba(255,26,117,0.15)', alignItems: 'center', justifyContent: 'center', marginBottom: 16, borderWidth: 2, borderColor: 'rgba(255,26,117,0.3)' }}>
-              <Feather name="mail" size={28} color={c.magenta} />
-            </View>
-            <Text style={{ color: c.ink, fontSize: 18, fontFamily: 'PlusJakartaSans_700Bold', textAlign: 'center' }}>
-              {t(`OTP sent to +91 ${phone}`, `+91 ${phone} पर OTP भेजा गया`)}
+          {dob && /^\d{4}-\d{2}-\d{2}$/.test(dob) ? (
+            <Text style={{ color: c.mint, fontSize: 12, marginTop: 6, fontFamily: 'PlusJakartaSans_700Bold', letterSpacing: 0.5 }}>
+              {t('AGE ELIGIBILITY — CONFIRMED', 'AGE ELIGIBILITY — CONFIRMED')}
             </Text>
-          </View>
-          {input({ value: otp, onChange: (v) => setOtp(v.replace(/\D/g, '')), placeholder: 'Enter OTP', keyboard: 'number-pad', maxLength: 6 })}
+          ) : null}
           <View style={{ marginTop: 16 }}>
-            {primaryBtn(t('Verify & continue', 'वेरिफ़ाई करें'), onVerifyOtp, 'reg-verify-otp')}
+            {primaryBtn(t('Continue', 'आगे बढ़ें'), onSubmitDetails, 'reg-details')}
           </View>
-          <Pressable onPress={() => { setStep('account'); setOtp(''); }} style={{ marginTop: 24, alignSelf: 'center', padding: 8 }}>
-            <Text style={{ color: c.cyan, fontSize: 15, fontFamily: 'PlusJakartaSans_700Bold' }}>{t('Change details', 'जानकारी बदलें')}</Text>
-          </Pressable>
         </Card>
+        {/* Registered Player Login — website parity (opens the login modal) */}
+        <Pressable onPress={() => { setShowLogin(true); setLoginStep('phone'); setLoginError(''); setLoginInfo(''); setLoginPhone(phone); }} style={{ alignSelf: 'center', padding: 8 }} testID="reg-open-login">
+          <Text style={{ color: c.sub, fontSize: 14, fontFamily: 'PlusJakartaSans_500Medium' }}>
+            {t('Already registered? ', 'पहले से registered? ')}
+            <Text style={{ color: c.getAccentText(c.magenta), fontFamily: 'PlusJakartaSans_700Bold' }}>{t('Player Login →', 'Player Login →')}</Text>
+          </Text>
+        </Pressable>
+        </View>
       ) : null}
 
       {step === 'role' ? (
@@ -473,7 +524,7 @@ export default function RegisterScreen() {
             <View style={{ marginTop: 16 }}>
               {primaryBtn(t('Continue', 'आगे बढ़ें'), onSelectRole, 'reg-role')}
             </View>
-            <Pressable onPress={() => { setStep('account'); setError(''); }} style={{ marginTop: 14, alignSelf: 'center', padding: 8 }}>
+            <Pressable onPress={() => { setStep('details'); setError(''); }} style={{ marginTop: 14, alignSelf: 'center', padding: 8 }}>
               <Text style={{ color: c.cyan, fontSize: 14, fontFamily: 'PlusJakartaSans_700Bold' }}>{t('← Back', '← वापस')}</Text>
             </Pressable>
           </Card>
@@ -514,7 +565,7 @@ export default function RegisterScreen() {
               </View>
             ) : null}
             <View style={{ marginTop: 16 }}>
-              {primaryBtn(t('Continue to payment', 'पेमेंट पर जाएँ'), onSubmitDetails, 'reg-details')}
+              {primaryBtn(t('Continue', 'आगे बढ़ें'), onSelectCity, 'reg-city')}
             </View>
             <Pressable onPress={() => { setStep('role'); setError(''); }} style={{ marginTop: 14, alignSelf: 'center', padding: 8 }}>
               <Text style={{ color: c.cyan, fontSize: 14, fontFamily: 'PlusJakartaSans_700Bold' }}>{t('← Back', '← वापस')}</Text>
@@ -538,6 +589,7 @@ export default function RegisterScreen() {
               { l: t('PLAYER NAME', 'PLAYER NAME'), v: name || '—' },
               { l: t('ROLE', 'ROLE'), v: role ? t(ROLES.find((r) => r.id === role)?.en ?? '', ROLES.find((r) => r.id === role)?.hi ?? '') : '—' },
               { l: t('TRIAL CITY', 'TRIAL CITY'), v: city || '—' },
+              { l: t('AGE ELIGIBILITY', 'AGE ELIGIBILITY'), v: /^\d{4}-\d{2}-\d{2}$/.test(dob) ? t('Eligible (18–45)', 'Eligible (18–45)') : '—' },
               { l: t('SEASON', 'SEASON'), v: '5 · 2025–26' },
             ].map((row) => (
               <View key={row.l} style={{ paddingVertical: 10, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: c.line }}>
@@ -547,7 +599,37 @@ export default function RegisterScreen() {
             ))}
           </View>
 
-          <View style={{ padding: 24 }}>
+          {/* WHAT YOU GET — mirrors the website ticket inclusions list */}
+          <View style={{ paddingHorizontal: 24, paddingTop: 16 }}>
+            <Text style={{ color: c.sub, fontSize: 10, fontFamily: 'PlusJakartaSans_700Bold', letterSpacing: 1.2, marginBottom: 10 }}>{t('WHAT YOU GET', 'आपको क्या मिलेगा')}</Text>
+            {[
+              t('Criteria-based video assessment', 'Criteria-based video assessment'),
+              t('Selection results announced promptly', 'Selection results जल्दी घोषित'),
+              t('Zero auction / tournament fee', 'कोई auction / tournament fee नहीं'),
+              t('Transparent result process', 'पारदर्शी result process'),
+              t('Phase 2 invite after Phase 1 qualification', 'Phase 1 qualify करने पर Phase 2 invite'),
+            ].map((item) => (
+              <View key={item} style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 8, marginBottom: 8 }}>
+                <Feather name="check" size={15} color={c.mint} style={{ marginTop: 2 }} />
+                <Text style={{ color: c.ink, fontSize: 13, flex: 1, lineHeight: 19, fontFamily: 'PlusJakartaSans_500Medium' }}>{item}</Text>
+              </View>
+            ))}
+          </View>
+
+          {/* Phase 2 teaser (website ticket) */}
+          <View style={{ paddingHorizontal: 24, paddingTop: 8, paddingBottom: 16 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8, padding: 14, borderRadius: 12, backgroundColor: 'rgba(232,178,61,0.08)', borderWidth: 1, borderColor: 'rgba(232,178,61,0.25)' }}>
+              <View style={{ flex: 1 }}>
+                <Text style={{ color: '#C99A1E', fontSize: 9.5, fontFamily: 'PlusJakartaSans_700Bold', letterSpacing: 1.2, marginBottom: 3 }}>{t('PHASE 2 — AFTER PHASE 1 QUALIFICATION', 'PHASE 2 — PHASE 1 QUALIFY के बाद')}</Text>
+                <Text style={{ color: c.sub, fontSize: 11.5, fontFamily: 'PlusJakartaSans_500Medium', lineHeight: 16 }}>
+                  {t('Physical trial at ', 'Physical trial ')}{city || t('your city', 'आपके शहर')}{t(' — payable only after Phase 1 qualification', ' में — Phase 1 qualify करने के बाद ही payable')}
+                </Text>
+              </View>
+              <Text style={{ color: '#C99A1E', fontSize: 18, fontFamily: 'BricolageGrotesque_800ExtraBold' }}>₹{(ROLES.find((r) => r.id === role)?.phase2 ?? 2000).toLocaleString()}</Text>
+            </View>
+          </View>
+
+          <View style={{ padding: 24, paddingTop: 0 }}>
             {/* Required acceptance — mirrors the website's Terms/Privacy/Refund/
                 Eligibility + non-refundable consent copy. */}
             <Pressable onPress={() => setAgreed(!agreed)} style={styles.checkRow} testID="reg-consent">
@@ -585,7 +667,13 @@ export default function RegisterScreen() {
             </Text>
 
             <View style={{ marginTop: 24 }}>
-              {primaryBtn(t('Pay securely with Cashfree', 'Cashfree से सुरक्षित पेमेंट करें'), onPay, 'reg-pay')}
+              {primaryBtn(
+                grossFee
+                  ? t(`Pay ₹${grossFee} securely · Enter Phase 1`, `₹${grossFee} Pay करें · Phase 1 में जाएं`)
+                  : t('Pay securely with Cashfree', 'Cashfree से सुरक्षित पेमेंट करें'),
+                onPay,
+                'reg-pay',
+              )}
             </View>
             <Text style={{ color: c.sub, fontSize: 12, marginTop: 14, textAlign: 'center', fontFamily: 'PlusJakartaSans_500Medium', lineHeight: 18 }}>
               {t('Payment opens securely inside the app. Cards, UPI & netbanking supported.', 'भुगतान ऐप के अंदर ही सुरक्षित रूप से खुलेगा। कार्ड, UPI और नेटबैंकिंग सपोर्टेड।')}
@@ -652,6 +740,88 @@ export default function RegisterScreen() {
         </Card>
       ) : null}
     </ScrollView>
+
+      {/* ── Registered Player Login modal (from step 1) ── */}
+      <Modal visible={showLogin} transparent animationType="fade" onRequestClose={() => setShowLogin(false)}>
+        <View style={styles.modalScrim}>
+          <View style={[styles.modalCard, { backgroundColor: c.card, borderColor: c.line }]}>
+            <Pressable onPress={() => setShowLogin(false)} style={styles.modalClose} testID="login-close">
+              <Feather name="x" size={20} color={c.sub} />
+            </Pressable>
+            <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 20 }}>{t('Registered Player Login', 'Registered Player Login')}</Text>
+            <Text style={{ color: c.sub, fontSize: 13, marginTop: 6, marginBottom: 18, fontFamily: 'PlusJakartaSans_500Medium' }}>{t('Enter your registered mobile number to continue.', 'आगे बढ़ने के लिए अपना registered mobile number डालें।')}</Text>
+            {loginError ? <Text style={{ color: c.coral, fontSize: 13, marginBottom: 10, fontFamily: 'PlusJakartaSans_600SemiBold' }}>{loginError}</Text> : null}
+            {loginInfo ? <Text style={{ color: c.mint, fontSize: 13, marginBottom: 10, fontFamily: 'PlusJakartaSans_600SemiBold' }}>{loginInfo}</Text> : null}
+            {loginStep === 'phone' ? (
+              <>
+                <Text style={[styles.label, { color: c.ink }]}>{t('Mobile Number', 'Mobile Number')}</Text>
+                {input({ value: loginPhone, onChange: (v) => setLoginPhone(v.replace(/\D/g, '')), placeholder: t('10-digit number', '10 अंकों का नंबर'), keyboard: 'number-pad', maxLength: 10 })}
+                <View style={{ marginTop: 16 }}>
+                  {modalBtn(loginBusy ? t('Sending…', 'भेज रहे हैं…') : t('Send OTP →', 'OTP भेजें →'), onLoginSendOtp, loginBusy, 'login-send-otp')}
+                </View>
+              </>
+            ) : (
+              <>
+                <Text style={[styles.label, { color: c.ink }]}>{t('Enter OTP', 'OTP डालें')}</Text>
+                {input({ value: loginOtp, onChange: (v) => setLoginOtp(v.replace(/\D/g, '')), placeholder: t('6-digit OTP', '6 अंकों का OTP'), keyboard: 'number-pad', maxLength: 6 })}
+                <View style={{ marginTop: 16 }}>
+                  {modalBtn(loginBusy ? t('Verifying…', 'Verify कर रहे हैं…') : t('Verify & Login →', 'Verify करें & Login →'), onLoginVerifyOtp, loginBusy, 'login-verify-otp')}
+                </View>
+                <Pressable onPress={() => { setLoginStep('phone'); setLoginError(''); }} style={{ marginTop: 14, alignSelf: 'center', padding: 8 }}>
+                  <Text style={{ color: c.cyan, fontSize: 14, fontFamily: 'PlusJakartaSans_700Bold' }}>{t('← Change Number', '← Number बदलें')}</Text>
+                </Pressable>
+              </>
+            )}
+          </View>
+        </View>
+      </Modal>
+
+      {/* ── Pay-time OTP modal (website showPayOtp parity) ── */}
+      <Modal visible={showPayOtp} transparent animationType="fade" onRequestClose={() => setShowPayOtp(false)}>
+        <View style={styles.modalScrim}>
+          <View style={[styles.modalCard, { backgroundColor: c.card, borderColor: c.line }]}>
+            <Pressable onPress={() => setShowPayOtp(false)} style={styles.modalClose} testID="payotp-close">
+              <Feather name="x" size={20} color={c.sub} />
+            </Pressable>
+            <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 20 }}>{t('Verify Your Number', 'अपना Number Verify करें')}</Text>
+            <Text style={{ color: c.sub, fontSize: 13, marginTop: 6, marginBottom: 18, fontFamily: 'PlusJakartaSans_500Medium' }}>{t('We will send an OTP to confirm it is you before payment.', 'Payment से पहले यह confirm करने के लिए हम आपको OTP भेजेंगे।')}</Text>
+            {payOtpError ? <Text style={{ color: c.coral, fontSize: 13, marginBottom: 10, fontFamily: 'PlusJakartaSans_600SemiBold' }}>{payOtpError}</Text> : null}
+            {payOtpInfo ? <Text style={{ color: c.mint, fontSize: 13, marginBottom: 10, fontFamily: 'PlusJakartaSans_600SemiBold' }}>{payOtpInfo}</Text> : null}
+            {payOtpAlreadyReg ? (
+              <Pressable onPress={() => { setShowPayOtp(false); setShowLogin(true); setLoginStep('phone'); setLoginPhone(phone); setLoginError(''); }} style={{ marginBottom: 12 }} testID="payotp-goto-login">
+                <Text style={{ color: c.getAccentText(c.magenta), fontSize: 13.5, fontFamily: 'PlusJakartaSans_700Bold' }}>{t('This number is already registered — Player Login →', 'यह number पहले से registered है — Player Login →')}</Text>
+              </Pressable>
+            ) : null}
+            {payOtpStep === 'phone' ? (
+              <>
+                <Text style={[styles.label, { color: c.ink }]}>{t('Mobile Number', 'Mobile Number')}</Text>
+                {input({ value: phone, onChange: (v) => setPhone(v.replace(/\D/g, '')), placeholder: t('10-digit number', '10 अंकों का नंबर'), keyboard: 'number-pad', maxLength: 10 })}
+                <View style={{ marginTop: 16 }}>
+                  {modalBtn(payOtpBusy ? t('Sending…', 'भेज रहे हैं…') : t('Send OTP →', 'OTP भेजें →'), onPayOtpSend, payOtpBusy, 'payotp-send')}
+                </View>
+              </>
+            ) : (
+              <>
+                <Text style={[styles.label, { color: c.ink }]}>{t('Enter OTP', 'OTP डालें')}</Text>
+                {input({ value: payOtp, onChange: (v) => setPayOtp(v.replace(/\D/g, '')), placeholder: t('6-digit OTP', '6 अंकों का OTP'), keyboard: 'number-pad', maxLength: 6 })}
+                <View style={{ marginTop: 16 }}>
+                  {modalBtn(payOtpBusy ? t('Verifying…', 'Verify कर रहे हैं…') : t('Verify & Pay →', 'Verify करें & Pay करें →'), onPayOtpVerify, payOtpBusy, 'payotp-verify')}
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 14 }}>
+                  <Pressable onPress={() => { setPayOtpStep('phone'); setPayOtpError(''); }} style={{ padding: 8 }}>
+                    <Text style={{ color: c.cyan, fontSize: 14, fontFamily: 'PlusJakartaSans_700Bold' }}>{t('← Back', '← वापस')}</Text>
+                  </Pressable>
+                  <Pressable onPress={onPayOtpResend} disabled={payOtpTimer > 0 || payOtpBusy} style={{ padding: 8 }} testID="payotp-resend">
+                    <Text style={{ color: payOtpTimer > 0 ? c.sub : c.cyan, fontSize: 14, fontFamily: 'PlusJakartaSans_700Bold' }}>
+                      {payOtpTimer > 0 ? t(`Resend in ${payOtpTimer}s`, `${payOtpTimer}s में दोबारा`) : t('Resend OTP', 'OTP दोबारा भेजें')}
+                    </Text>
+                  </Pressable>
+                </View>
+              </>
+            )}
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -719,4 +889,23 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   checkRow: { flexDirection: 'row', gap: 16, alignItems: 'flex-start', marginBottom: 20 },
+  modalScrim: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  modalCard: {
+    borderRadius: 24,
+    borderWidth: 1,
+    padding: 24,
+    paddingTop: 40,
+  },
+  modalClose: {
+    position: 'absolute',
+    top: 14,
+    right: 14,
+    padding: 8,
+    zIndex: 2,
+  },
 });

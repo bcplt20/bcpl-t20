@@ -29,14 +29,42 @@ describe("cashfreeMode", () => {
 
 describe("hostedCheckoutUrl", () => {
   it("builds an absolute /api/payment/checkout URL carrying session + mode", () => {
-    const url = hostedCheckoutUrl("session_ABC-123.def");
+    const url = hostedCheckoutUrl("session_ABC-123.def", "https://dev.example.com");
     expect(url).toMatch(/^https?:\/\/.+\/api\/payment\/checkout\?/);
     expect(url).toContain("session=session_ABC-123.def");
     expect(url).toContain(`mode=${cashfreeMode()}`);
   });
 
+  it("uses the caller's own origin (never a stale API_URL host)", () => {
+    const url = hostedCheckoutUrl("session_x", "https://player.bcplt20.com");
+    expect(url.startsWith("https://player.bcplt20.com/api/payment/checkout?")).toBe(true);
+  });
+
   it("does NOT use the broken legacy hosted-order URL", () => {
-    expect(hostedCheckoutUrl("session_x")).not.toContain("payments.cashfree.com/order");
+    expect(hostedCheckoutUrl("session_x", "https://dev.example.com")).not.toContain("payments.cashfree.com/order");
+  });
+});
+
+describe("apiOriginFor", () => {
+  it("prefers the caller's forwarded host + proto (Replit proxy)", async () => {
+    const { apiOriginFor } = await import("../src/routes/payment");
+    const req: any = {
+      headers: { "x-forwarded-host": "dbf252d7.sisko.replit.dev", "x-forwarded-proto": "https" },
+      get: () => undefined,
+    };
+    expect(apiOriginFor(req)).toBe("https://dbf252d7.sisko.replit.dev");
+  });
+
+  it("falls back to the Host header when no forwarded headers exist", async () => {
+    const { apiOriginFor } = await import("../src/routes/payment");
+    const req: any = { headers: {}, get: (h: string) => (h === "host" ? "player.bcplt20.com" : undefined) };
+    expect(apiOriginFor(req)).toBe("https://player.bcplt20.com");
+  });
+
+  it("uses http for localhost hosts", async () => {
+    const { apiOriginFor } = await import("../src/routes/payment");
+    const req: any = { headers: {}, get: (h: string) => (h === "host" ? "localhost:8080" : undefined) };
+    expect(apiOriginFor(req)).toBe("http://localhost:8080");
   });
 });
 

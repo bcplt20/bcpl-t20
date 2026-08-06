@@ -59,18 +59,27 @@ export function RegistrationHero() {
   );
 }
 
-export function StepProgressBar({ step }: { step: 'account' | 'otp' | 'role' | 'city' | 'pay' | 'done' }) {
+// Website shows a 4-node "Step X of 4" indicator (Details → Role → City → Pay).
+// 'done' is an app-only success screen and is treated as "all steps complete".
+export function StepProgressBar({ step }: { step: 'details' | 'role' | 'city' | 'pay' | 'done' }) {
   const c = useColors();
-  const steps = ['account', 'otp', 'role', 'city', 'pay', 'done'];
-  const idx = steps.indexOf(step);
-  
+  const { t } = useLang();
+  const steps = ['details', 'role', 'city', 'pay'];
+  const idx = step === 'done' ? steps.length - 1 : steps.indexOf(step);
+  const shown = Math.min(idx + 1, steps.length);
+
   return (
-    <View style={{ flexDirection: 'row', gap: 4, marginBottom: 24 }}>
-      {steps.map((s, i) => (
-        <View key={s} style={{ flex: 1, height: 4, borderRadius: 2, backgroundColor: i <= idx ? 'transparent' : c.line, overflow: 'hidden' }}>
-          {i <= idx && <LinearGradient colors={['#5B2BF0', '#FF3DA6']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={StyleSheet.absoluteFill} />}
-        </View>
-      ))}
+    <View style={{ marginBottom: 24 }}>
+      <View style={{ flexDirection: 'row', gap: 4, marginBottom: 8 }}>
+        {steps.map((s, i) => (
+          <View key={s} style={{ flex: 1, height: 4, borderRadius: 2, backgroundColor: i <= idx ? 'transparent' : c.line, overflow: 'hidden' }}>
+            {i <= idx && <LinearGradient colors={['#5B2BF0', '#FF3DA6']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={StyleSheet.absoluteFill} />}
+          </View>
+        ))}
+      </View>
+      <Text style={{ color: c.sub, fontSize: 11, fontFamily: 'PlusJakartaSans_700Bold', letterSpacing: 1, textTransform: 'uppercase' }}>
+        {t(`Step ${shown} of 4`, `Step ${shown} / 4`)}
+      </Text>
     </View>
   );
 }

@@ -55,6 +55,31 @@ const SITE_URL = process.env.SITE_URL || "https://elite-user-experience.replit.a
 const API_URL  = process.env.API_URL  || "https://elite-user-experience.replit.app";
 
 /**
+ * Absolute API origin for URLs we hand back to a client (checkout page, native
+ * return URL). CRITICAL: this must be a host the CLIENT can actually reach.
+ *
+ * A stale/misconfigured API_URL env (e.g. pointing at a retired deployment)
+ * makes the mobile checkout WebView load a 404 host and fail INSTANTLY. So we
+ * prefer the host the request actually came in on (dev domain, prod domain or a
+ * custom domain all work), and only fall back to API_URL when we cannot read a
+ * trustworthy host header. Express sits behind the Replit proxy, so honour
+ * x-forwarded-proto/host first.
+ */
+export function apiOriginFor(req: Request): string {
+  const xfHost  = (req.headers["x-forwarded-host"] as string | undefined)?.split(",")[0]?.trim();
+  const host    = xfHost || req.get("host") || "";
+  // Only accept a plausible host (avoids header-injection into our own URLs).
+  if (host && /^[A-Za-z0-9.\-:]{1,255}$/.test(host)) {
+    const xfProto = (req.headers["x-forwarded-proto"] as string | undefined)?.split(",")[0]?.trim();
+    const proto   = xfProto === "http" || xfProto === "https"
+      ? xfProto
+      : (host.startsWith("localhost") || host.startsWith("127.") ? "http" : "https");
+    return `${proto}://${host}`;
+  }
+  return API_URL.replace(/\/$/, "");
+}
+
+/**
  * Hosted Cashfree checkout page (mobile app / any non-SDK client).
  *
  * The mobile app cannot run the Cashfree JS SDK natively and there is NO valid
@@ -151,10 +176,12 @@ router.get("/checkout", (req, res) => {
 
 /**
  * Absolute URL to the hosted checkout page above, for the given session.
- * Built from API_URL so it is correct in both dev (Replit) and prod.
+ * Built from the CALLER's own origin (see apiOriginFor) so the WebView always
+ * loads a host it can reach — dev domain, prod domain or a custom domain — and
+ * never a stale API_URL that 404s and fails the checkout instantly.
  */
-export function hostedCheckoutUrl(paymentSessionId: string): string {
-  const base = API_URL.replace(/\/$/, "");
+export function hostedCheckoutUrl(paymentSessionId: string, origin: string): string {
+  const base = origin.replace(/\/$/, "");
   return `${base}/api/payment/checkout?session=${encodeURIComponent(paymentSessionId)}&mode=${cashfreeMode()}`;
 }
 
@@ -204,9 +231,11 @@ router.get("/app-return", (req, res) => {
  * at our own `/app-return` terminal page (intercepted by the WebView); for the
  * website we keep the existing receipt pages.
  */
-function paymentReturnUrl(platform: "app" | "web" | undefined, phase: 1 | 2, orderId: string): string {
+function paymentReturnUrl(platform: "app" | "web" | undefined, phase: 1 | 2, orderId: string, origin: string): string {
   if (platform === "app") {
-    const base = API_URL.replace(/\/$/, "");
+    // Return to the SAME origin the app is talking to, so the WebView's
+    // interception URL matches and the retired API_URL host is never used.
+    const base = origin.replace(/\/$/, "");
     return `${base}/api/payment/app-return?orderId=${encodeURIComponent(orderId)}&phase=${phase}`;
   }
   return phase === 1
@@ -385,6 +414,7 @@ router.post("/phase1/create", requireAuth, async (req: AuthRequest, res) => {
 
   const amount  = Math.round(feeFor(reg.role).phase1 * 1.18); // base + 18% GST
   const orderId = `p1_${reg.id.slice(0, 8)}_${Date.now()}`;
+  const origin  = apiOriginFor(req);
 
   const order = await createOrder({
     orderId,
@@ -392,7 +422,7 @@ router.post("/phase1/create", requireAuth, async (req: AuthRequest, res) => {
     customerName:  user.name,
     customerEmail: user.email,
     customerPhone: user.phone,
-    returnUrl:  paymentReturnUrl(parsed.data.platform, 1, orderId),
+    returnUrl:  paymentReturnUrl(parsed.data.platform, 1, orderId, origin),
     notifyUrl:  `${API_URL}/api/payment/webhook`,
   });
 
@@ -415,7 +445,7 @@ router.post("/phase1/create", requireAuth, async (req: AuthRequest, res) => {
     paymentSessionId: order.payment_session_id,
     amount,
     cashfreeMode: cashfreeMode(),
-    checkoutUrl: hostedCheckoutUrl(order.payment_session_id),
+    checkoutUrl: hostedCheckoutUrl(order.payment_session_id, origin),
   });
 });
 
@@ -570,6 +600,7 @@ router.post("/phase2/create", requireAuth, async (req: AuthRequest, res) => {
 
   const amount  = Math.round(feeFor(reg.role).phase2 * 1.18); // base + 18% GST
   const orderId = `p2_${reg.id.slice(0, 8)}_${Date.now()}`;
+  const origin  = apiOriginFor(req);
 
   const order = await createOrder({
     orderId,
@@ -577,7 +608,7 @@ router.post("/phase2/create", requireAuth, async (req: AuthRequest, res) => {
     customerName:  user.name,
     customerEmail: user.email,
     customerPhone: user.phone,
-    returnUrl: paymentReturnUrl(parsed.data.platform, 2, orderId),
+    returnUrl: paymentReturnUrl(parsed.data.platform, 2, orderId, origin),
     notifyUrl: `${API_URL}/api/payment/webhook`,
   });
 
@@ -596,7 +627,7 @@ router.post("/phase2/create", requireAuth, async (req: AuthRequest, res) => {
     paymentSessionId: order.payment_session_id,
     amount,
     cashfreeMode: cashfreeMode(),
-    checkoutUrl: hostedCheckoutUrl(order.payment_session_id),
+    checkoutUrl: hostedCheckoutUrl(order.payment_session_id, origin),
   });
 });
 
