@@ -13,7 +13,7 @@ export default function NativePageScreen() {
   const c = useColors();
   const { t } = useLang();
   const { slug } = useLocalSearchParams<{ slug: string }>();
-  const page = NATIVE_PAGES[slug];
+  const page = NATIVE_PAGES[slug as string];
   const appBarHeight = useAppBarHeight();
   const bottomNavHeight = useBottomNavHeight();
 
@@ -37,21 +37,11 @@ export default function NativePageScreen() {
   for (let i = 0; i < page.content.length; i++) {
     const block = page.content[i];
     
-    // Fee table heuristic
-    if (block.type === 'heading' && (block.text === 'Batsman / Bowler / WK' || block.text === 'All-Rounder')) {
-      const nextBlock = page.content[i + 1];
-      if (nextBlock && nextBlock.type === 'heading' && nextBlock.text.includes('₹')) {
-        currentSection.blocks.push({ type: 'fee-row', label: block, value: nextBlock });
-        i++; // skip next
-        continue;
-      }
-    }
-    
     if (block.type === 'heading') {
       if (currentSection.title || currentSection.blocks.length > 0) {
         sections.push(currentSection);
       }
-      currentSection = { title: block.hi ? t(block.text, block.hi) : block.text, blocks: [] };
+      currentSection = { title: block.hi ? t(block.text || '', block.hi) : block.text || null, blocks: [] };
     } else {
       currentSection.blocks.push(block);
     }
@@ -77,7 +67,6 @@ export default function NativePageScreen() {
 
         {sections.map((sec, sIdx) => {
           if (isFaq && sec.title) {
-            // FAQ renders as Accordions
             return (
               <AccordionItem 
                 key={sIdx} 
@@ -104,20 +93,50 @@ export default function NativePageScreen() {
                 
                 <View>
                   {sec.blocks.map((block, i) => {
-                    if (block.type === 'fee-row') {
+                    const txt = block.hi ? t(block.text, block.hi) : block.text;
+                    
+                    if (block.type === 'stats') {
                       return (
-                        <View key={i} style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: c.line }}>
-                          <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 15 }}>
-                            {block.label.hi ? t(block.label.text, block.label.hi) : block.label.text}
-                          </Text>
-                          <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16 }}>
-                            {block.value.hi ? t(block.value.text, block.value.hi) : block.value.text}
+                        <View key={i} style={{ flexDirection: 'row', gap: 12, marginBottom: 16 }}>
+                          {block.items?.map((item: any, idx: number) => (
+                            <View key={idx} style={{ flex: 1, backgroundColor: c.card2, borderRadius: 12, padding: 12, borderWidth: 1, borderColor: item.color }}>
+                              <Text style={{ color: item.color, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 18, marginBottom: 4 }}>{item.v}</Text>
+                              <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 11 }}>{item.l}</Text>
+                            </View>
+                          ))}
+                        </View>
+                      );
+                    }
+                    
+                    if (block.type === 'callout') {
+                      return (
+                        <View key={i} style={{ backgroundColor: 'rgba(255, 122, 41, 0.1)', borderWidth: 1, borderColor: 'rgba(255, 122, 41, 0.3)', borderRadius: 12, padding: 16, marginBottom: 16, flexDirection: 'row', gap: 12 }}>
+                          <Feather name="info" size={20} color="#FF7A29" />
+                          <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 14, flex: 1, lineHeight: 22 }}>
+                            {txt}
                           </Text>
                         </View>
                       );
                     }
                     
-                    const txt = block.hi ? t(block.text, block.hi) : block.text;
+                    if (block.type === 'steps') {
+                      return (
+                        <View key={i} style={{ marginTop: 8 }}>
+                          {block.items?.map((item: any, idx: number) => (
+                            <View key={idx} style={{ flexDirection: 'row', gap: 16, marginBottom: 16 }}>
+                              <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: c.isDark ? '#2D196E' : '#E0D4FF', alignItems: 'center', justifyContent: 'center' }}>
+                                <Text style={{ color: c.magenta, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 14 }}>{idx + 1}</Text>
+                              </View>
+                              <View style={{ flex: 1, justifyContent: 'center' }}>
+                                <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 15 }}>
+                                  {t(item.en, item.hi)}
+                                </Text>
+                              </View>
+                            </View>
+                          ))}
+                        </View>
+                      );
+                    }
                     
                     if (block.type === 'li') {
                       return (
@@ -135,9 +154,6 @@ export default function NativePageScreen() {
                       </Text>
                     );
                   })}
-                  {sec.blocks.length === 0 && !sec.title && (
-                    <Text style={[styles.p, { color: c.sub }]}>No content</Text>
-                  )}
                 </View>
               </View>
             </Card>
