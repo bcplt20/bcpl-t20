@@ -65,11 +65,27 @@ const API_URL  = process.env.API_URL  || "https://elite-user-experience.replit.a
  * trustworthy host header. Express sits behind the Replit proxy, so honour
  * x-forwarded-proto/host first.
  */
+/**
+ * Host allowlist: the checkout URL carries the Cashfree payment_session_id, so
+ * we must NEVER build it from an arbitrary client-supplied Host/X-Forwarded-Host
+ * (a hostile Host header would hand the session to an attacker's domain).
+ * Trust only our own domains; anything else falls back to canonical API_URL.
+ */
+function isTrustedHost(host: string): boolean {
+  const bare = host.replace(/:\d+$/, "").toLowerCase();
+  if (bare === "localhost" || bare.startsWith("127.")) return true;
+  if (bare === "bcplt20.com" || bare.endsWith(".bcplt20.com")) return true;
+  if (bare.endsWith(".replit.dev") || bare.endsWith(".replit.app") || bare.endsWith(".repl.co")) return true;
+  // Optional extra domains (comma-separated), e.g. a future custom domain.
+  const extra = (process.env.TRUSTED_API_HOSTS || "").split(",").map((h) => h.trim().toLowerCase()).filter(Boolean);
+  return extra.some((h) => bare === h || bare.endsWith(`.${h}`));
+}
+
 export function apiOriginFor(req: Request): string {
   const xfHost  = (req.headers["x-forwarded-host"] as string | undefined)?.split(",")[0]?.trim();
   const host    = xfHost || req.get("host") || "";
-  // Only accept a plausible host (avoids header-injection into our own URLs).
-  if (host && /^[A-Za-z0-9.\-:]{1,255}$/.test(host)) {
+  // Shape check (no CRLF/injection) AND authority check (our domains only).
+  if (host && /^[A-Za-z0-9.\-:]{1,255}$/.test(host) && isTrustedHost(host)) {
     const xfProto = (req.headers["x-forwarded-proto"] as string | undefined)?.split(",")[0]?.trim();
     const proto   = xfProto === "http" || xfProto === "https"
       ? xfProto

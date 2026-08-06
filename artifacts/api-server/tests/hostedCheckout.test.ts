@@ -66,6 +66,29 @@ describe("apiOriginFor", () => {
     const req: any = { headers: {}, get: (h: string) => (h === "host" ? "localhost:8080" : undefined) };
     expect(apiOriginFor(req)).toBe("http://localhost:8080");
   });
+
+  it("REJECTS a hostile Host header (payment-session disclosure) → canonical API_URL", async () => {
+    const { apiOriginFor } = await import("../src/routes/payment");
+    const req: any = { headers: {}, get: (h: string) => (h === "host" ? "attacker.example.com" : undefined) };
+    const origin = apiOriginFor(req);
+    expect(origin).not.toContain("attacker");
+    expect(origin).toMatch(/^https:\/\//);
+  });
+
+  it("REJECTS a hostile X-Forwarded-Host even when Host is trusted", async () => {
+    const { apiOriginFor } = await import("../src/routes/payment");
+    const req: any = {
+      headers: { "x-forwarded-host": "evil.attacker.io", "x-forwarded-proto": "https" },
+      get: (h: string) => (h === "host" ? "bcplt20.com" : undefined),
+    };
+    expect(apiOriginFor(req)).not.toContain("attacker");
+  });
+
+  it("does not allow suffix tricks like notbcplt20.com", async () => {
+    const { apiOriginFor } = await import("../src/routes/payment");
+    const req: any = { headers: {}, get: (h: string) => (h === "host" ? "notbcplt20.com" : undefined) };
+    expect(apiOriginFor(req)).not.toContain("notbcplt20");
+  });
 });
 
 describe("GET /api/payment/checkout", () => {
