@@ -1,9 +1,11 @@
 ---
 name: Mobile app design system
-description: Owner-approved direction for bcpl-mobile UI and link behavior
+description: Owner-approved direction for bcpl-mobile UI, themes, and link behavior
 ---
-- Owner REJECTED navy+orange in the app twice ("outdated/नकली, website से color मत उठाओ"). App palette is now midnight-violet #0B0813 / cards #161124 with hot-pink #FF1A75 + electric-cyan #00E5FF accents (hooks/useColors.ts is the source). NEVER repaint the app in website navy/gold; website keeps its own LIGHTENED navy V3.
-- **Rule:** no link in the app may open the external browser. Use WebBrowser.openBrowserAsync (in-app sheet) for website/legal/media links; wa.me/tel/mailto stay via Linking.
-- **Why:** owner said twice "कोई भी link website पर लेकर न जाए".
-- Registration countdown chip on home hero counts to REG_CLOSE_AT (2027-02-28 IST) in app/(tabs)/index.tsx — keep in sync with the real Season-5 window.
-- Count-up stats animation is owner-requested; entrance reveal/scroll-fade still banned.
+- App design source of truth = OWNER'S OWN HTML mockup at attached_assets/bcpl-app-ui-v4_1785973344504.html ("v4"). He rejected two agent-invented palettes before this (website navy, then plain pink/cyan). Any future restyle must start from this file, not from taste.
+- v4 system: violet #7C5CFF / magenta #FF3DA6 / cyan #00DCF5 / lime #B6FF3C accents; primary gradient #5B2BF0→#9B2FF0→#FF3DA6; TWO user-togglable themes — "stadium" dark (bg #101433) and light "daylight" (bg #F4F1FD), persisted in AsyncStorage; fonts Bricolage Grotesque (display) / Plus Jakarta Sans (body) / Space Grotesk (numbers); floating tab bar with center gradient Register FAB; team-color-washed vs-cards.
+- Mockup's CONTENT is fake (company teams, "register your team", 160 teams) — always keep real BCPL copy/data; only copy the design.
+- **Why:** owner said "जरूरी नहीं app का color website जैसा हो" and supplied his own design after rejecting mine.
+- **Rule:** no link may open the external browser — WebBrowser.openBrowserAsync for web/legal/media links; wa.me/tel/mailto via Linking.
+- Reg countdown chip counts to 2027-02-28 IST; count-up stats OK; entrance reveal/scroll-fade still banned; no emojis.
+- RN-web trap: `{str && <X/>}` with empty-string renders a text node inside View → "Unexpected text node" error; use `!!str &&`.
