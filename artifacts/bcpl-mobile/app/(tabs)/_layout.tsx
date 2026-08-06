@@ -220,6 +220,14 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
             <Pressable
               key={route.key}
               onPress={onPress}
+              accessibilityRole="tab"
+              accessibilityState={{ selected: isFocused }}
+              accessibilityLabel={
+                route.name === 'index' ? t('Home', 'होम') :
+                route.name === 'matches' ? t('Matches', 'मैच') :
+                route.name === 'media' ? t('Videos', 'वीडियो') :
+                t('Menu', 'मेनू')
+              }
               style={{ flex: 1, alignItems: 'center', justifyContent: 'center', height: barHeight }}
             >
               <View style={{ 
