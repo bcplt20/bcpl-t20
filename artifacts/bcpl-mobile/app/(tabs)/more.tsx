@@ -16,7 +16,8 @@ import { Feather } from '@expo/vector-icons';
 import { useColors } from '@/hooks/useColors';
 import { useAuth } from '@/context/AuthContext';
 import { useLang, type Lang } from '@/context/LanguageContext';
-import { getDashboard } from '@/lib/api';
+import { getDashboard, getSponsors, type Sponsor } from '@/lib/api';
+import { Image } from 'expo-image';
 import { useTheme } from '@/context/ThemeContext';
 import { Badge, Card, ErrorView, LoadingView, GlassAppBar, ScreenBackground, GradientTag } from '@/components/ui';
 import { ScreenHeader } from '@/components/ScreenHeader';
@@ -114,48 +115,77 @@ function LangSwitch() {
   );
 }
 
-const LEGAL_LINKS: { en: string; hi: string; path: string }[] = [
-  { en: 'How Selection Works', hi: 'चयन प्रक्रिया', path: '/trust' },
-  { en: 'Eligibility Criteria', hi: 'योग्यता मानदंड', path: '/eligibility' },
-  { en: 'Physical Trial Rules', hi: 'फिज़िकल ट्रायल नियम', path: '/trial-rules' },
-  { en: 'Cricket Rulebook', hi: 'क्रिकेट रूलबुक', path: '/cricket-rulebook' },
-  { en: 'Code of Conduct', hi: 'आचार संहिता', path: '/code-of-conduct' },
-  { en: 'FAQ', hi: 'सामान्य प्रश्न', path: '/faq' },
-  { en: 'Terms & Conditions', hi: 'नियम और शर्तें', path: '/terms' },
-  { en: 'Privacy Policy', hi: 'प्राइवेसी पॉलिसी', path: '/privacy' },
-  { en: 'Refund & Cancellation Policy', hi: 'रिफंड और कैंसिलेशन पॉलिसी', path: '/refunds' },
-  { en: 'Brand & Logo Usage', hi: 'ब्रांड और लोगो उपयोग नीति', path: '/brand-usage' },
+const MENU_SECTIONS = [
+  {
+    title: 'League',
+    hi: 'लीग',
+    items: [
+      { en: 'Schedule', hi: 'शेड्यूल', icon: 'calendar', path: '/matches' },
+      { en: 'Points Table', hi: 'अंक तालिका', icon: 'bar-chart-2', path: '/points' },
+    ]
+  },
+  {
+    title: 'Media',
+    hi: 'मीडिया',
+    items: [
+      { en: 'News', hi: 'ताज़ा खबरें', icon: 'file-text', path: '/news' },
+      { en: 'Photos & Videos', hi: 'फ़ोटो और वीडियो', icon: 'image', path: '/media' },
+    ]
+  },
+  {
+    title: 'Rulebook & Policies',
+    hi: 'नियम और नीतियाँ',
+    items: [
+      { en: 'How Selection Works', hi: 'चयन प्रक्रिया', icon: 'crosshair', path: '/pages/trust' },
+      { en: 'Eligibility Criteria', hi: 'योग्यता मानदंड', icon: 'check-square', path: '/pages/eligibility' },
+      { en: 'Physical Trial Rules', hi: 'फिज़िकल ट्रायल नियम', icon: 'activity', path: '/pages/trial-rules' },
+      { en: 'Cricket Rulebook', hi: 'क्रिकेट रूलबुक', icon: 'book-open', path: '/pages/cricket-rulebook' },
+      { en: 'Code of Conduct', hi: 'आचार संहिता', icon: 'shield', path: '/pages/code-of-conduct' },
+      { en: 'Terms & Conditions', hi: 'नियम और शर्तें', icon: 'file', path: '/pages/terms' },
+      { en: 'Privacy Policy', hi: 'प्राइवेसी पॉलिसी', icon: 'lock', path: '/pages/privacy' },
+      { en: 'Refund Policy', hi: 'रिफंड पॉलिसी', icon: 'refresh-ccw', path: '/pages/refunds' },
+      { en: 'Brand Usage', hi: 'ब्रांड उपयोग', icon: 'hexagon', path: '/pages/brand-usage' },
+    ]
+  }
 ];
 
-function LegalLinks() {
+function MoreMenu() {
   const c = useColors();
   const { t } = useLang();
+  const router = useRouter();
+
   return (
-    <Card padding={0} border={true}>
-      <View style={{ padding: 20, paddingBottom: 12 }}>
-        <Text style={[styles.cardTitle, { color: c.ink, marginBottom: 12 }]}>{t('Rules & policies', 'नियम और नीतियाँ')}</Text>
-      </View>
-      <View>
-        {LEGAL_LINKS.map((l, i) => (
-          <Pressable
-            key={l.path}
-            onPress={() => WebBrowser.openBrowserAsync(`https://bcplt20.com${l.path}`)}
-            style={({ pressed }) => [
-              styles.supportRow,
-              { paddingHorizontal: 20 },
-              i > 0 && { borderTopWidth: 1, borderTopColor: c.line },
-              { opacity: pressed ? 0.7 : 1 },
-            ]}
-            testID={`legal-${l.path.slice(1)}`}
-          >
-            <Text style={{ color: c.sub, fontSize: 14, fontFamily: 'PlusJakartaSans_600SemiBold', flex: 1 }}>
-              {t(l.en, l.hi)}
-            </Text>
-            <Feather name="chevron-right" size={16} color={c.sub} />
-          </Pressable>
-        ))}
-      </View>
-    </Card>
+    <View style={{ gap: 16 }}>
+      {MENU_SECTIONS.map((sec) => (
+        <Card key={sec.title} padding={0} border={true}>
+          <View style={{ padding: 20, paddingBottom: 8 }}>
+            <Text style={[styles.cardTitle, { color: c.ink }]}>{t(sec.title, sec.hi)}</Text>
+          </View>
+          <View>
+            {sec.items.map((l, i) => (
+              <Pressable
+                key={l.path}
+                onPress={() => router.push(l.path as any)}
+                style={({ pressed }) => [
+                  styles.supportRow,
+                  { paddingHorizontal: 20 },
+                  i > 0 && { borderTopWidth: 1, borderTopColor: c.line },
+                  { opacity: pressed ? 0.7 : 1 },
+                ]}
+              >
+                <View style={[styles.supportIcon, { backgroundColor: c.card2, borderWidth: 1, borderColor: c.line }]}>
+                  <Feather name={l.icon as any} size={18} color={c.getAccentText(c.cyan)} />
+                </View>
+                <Text style={{ color: c.sub, fontSize: 15, fontFamily: 'PlusJakartaSans_600SemiBold', flex: 1, marginLeft: 16 }}>
+                  {t(l.en, l.hi)}
+                </Text>
+                <Feather name="chevron-right" size={16} color={c.sub} />
+              </Pressable>
+            ))}
+          </View>
+        </Card>
+      ))}
+    </View>
   );
 }
 
@@ -193,6 +223,30 @@ function ContactSupport() {
               <Text style={{ color: c.sub, fontSize: 13, marginTop: 4, fontFamily: 'PlusJakartaSans_500Medium' }}>{r.sub}</Text>
             </View>
             <Feather name="chevron-right" size={18} color={c.sub} />
+          </Pressable>
+        ))}
+      </View>
+    </Card>
+  );
+}
+
+function SponsorStrip() {
+  const c = useColors();
+  const q = useQuery({ queryKey: ['sponsors'], queryFn: getSponsors });
+
+  if (q.isLoading || !q.data || q.data.sponsors.length === 0) return null;
+
+  return (
+    <Card padding={0} border={true}>
+      <View style={{ padding: 20, paddingBottom: 12 }}>
+        <Text style={[styles.cardTitle, { color: c.ink, marginBottom: 12 }]}>Our Sponsors</Text>
+      </View>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 16, paddingHorizontal: 20, paddingBottom: 20 }}>
+        {q.data.sponsors.map((s) => (
+          <Pressable key={s.id} onPress={() => s.url && Linking.openURL(s.url)}>
+            <View style={{ backgroundColor: c.card2, borderRadius: 12, padding: 12, borderWidth: 1, borderColor: c.line }}>
+              <Image source={{ uri: `https://bcplt20.com${s.logo}` }} style={{ width: 80, height: 40 }} contentFit="contain" />
+            </View>
           </Pressable>
         ))}
       </View>
@@ -246,8 +300,9 @@ export default function ProfileScreen() {
           </Pressable>
           <View style={{ alignSelf: 'stretch', marginTop: 40, gap: 16 }}>
             <LangSwitch />
+            <MoreMenu />
             <ContactSupport />
-            <LegalLinks />
+            <SponsorStrip />
           </View>
         </View>
         </ScrollView>
@@ -401,8 +456,9 @@ export default function ProfileScreen() {
           )}
 
           <LangSwitch />
+          <MoreMenu />
           <ContactSupport />
-          <LegalLinks />
+          <SponsorStrip />
 
           <Pressable
             onPress={() => logout()}

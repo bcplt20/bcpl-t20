@@ -1,14 +1,44 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { FlatList, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import { useColors } from '@/hooks/useColors';
 import { SITE_ASSETS } from '@/lib/api';
-import { NEWS_ARTICLES } from '@/data/news';
-import { Card } from '@/components/ui';
+import { NEWS_ARTICLES, type NewsArticle } from '@/data/news';
+import { Card, GradientTag } from '@/components/ui';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { useLang } from '@/context/LanguageContext';
 import { LinearGradient } from 'expo-linear-gradient';
+
+const NewsCard = memo(({ n, onPress }: { n: NewsArticle, onPress: () => void }) => {
+  const c = useColors();
+  return (
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1, paddingHorizontal: 16, transform: [{ scale: pressed ? 0.98 : 1 }] })}
+      testID={`news-${n.slug}`}
+    >
+      <Card border={true} padding={0} style={{ marginBottom: 16, overflow: 'hidden' }}>
+        <Image
+          source={{ uri: `${SITE_ASSETS}/bcpl-assets/news/${n.image}` }}
+          style={{ width: '100%', height: 200 }}
+          contentFit="cover"
+          transition={150}
+        />
+        <LinearGradient colors={['transparent', c.card]} style={{position: 'absolute', top: 120, left: 0, right: 0, height: 80}} pointerEvents="none" />
+        <View style={{ padding: 20, paddingTop: 16 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+            <GradientTag label={n.tag} color={c.magenta} />
+            <Text style={{ color: c.sub, fontSize: 12, fontFamily: 'PlusJakartaSans_600SemiBold' }}>{n.date}</Text>
+          </View>
+          <Text style={[styles.title, { color: c.ink }]} numberOfLines={3}>
+            {n.title}
+          </Text>
+        </View>
+      </Card>
+    </Pressable>
+  );
+}, (prev, next) => prev.n.slug === next.n.slug);
 
 export default function NewsScreen() {
   const c = useColors();
@@ -23,35 +53,11 @@ export default function NewsScreen() {
         ListHeaderComponent={<ScreenHeader title="News" subtitle={t('Latest league updates', 'लीग की ताज़ा खबरें')} />}
         scrollEnabled={NEWS_ARTICLES.length > 0}
         contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 118 : 120, paddingTop: 10 }}
+        windowSize={5}
+        initialNumToRender={5}
+        maxToRenderPerBatch={5}
         renderItem={({ item: n }) => (
-          <Pressable
-            onPress={() => router.push(`/news/${n.slug}`)}
-            style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1, paddingHorizontal: 16, transform: [{ scale: pressed ? 0.97 : 1 }] })}
-            testID={`news-${n.slug}`}
-          >
-            <Card style={{ marginBottom: 16, padding: 0, overflow: 'hidden' }}>
-              <Image
-                source={{ uri: `${SITE_ASSETS}/bcpl-assets/news/${n.image}` }}
-                style={{ width: '100%', height: 200 }}
-                contentFit="cover"
-                transition={150}
-              />
-              <LinearGradient colors={['transparent', 'rgba(22, 17, 36,1)']} style={{position: 'absolute', top: 120, left: 0, right: 0, height: 80}} pointerEvents="none" />
-              <View style={{ padding: 20, paddingTop: 16 }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-                  <View style={{ backgroundColor: '#FF1A75', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 4 }}>
-                    <Text style={{ color: '#fff', fontSize: 10, fontFamily: 'BricolageGrotesque_800ExtraBold', letterSpacing: 0.5 }}>
-                      {n.tag.toUpperCase()}
-                    </Text>
-                  </View>
-                  <Text style={{ color: c.sub, fontSize: 12, fontFamily: 'PlusJakartaSans_600SemiBold' }}>{n.date}</Text>
-                </View>
-                <Text style={[styles.title, { color: c.ink }]} numberOfLines={3}>
-                  {n.title}
-                </Text>
-              </View>
-            </Card>
-          </Pressable>
+          <NewsCard n={n} onPress={() => router.push(`/news/${n.slug}` as any)} />
         )}
       />
     </View>

@@ -10,13 +10,13 @@ interface ThemeContextType {
 }
 
 const ThemeContext = createContext<ThemeContextType>({
-  theme: 'stadium',
+  theme: 'light',
   setTheme: () => {},
   toggleTheme: () => {},
 });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>('stadium');
+  const [theme, setThemeState] = useState<Theme>('light');
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {

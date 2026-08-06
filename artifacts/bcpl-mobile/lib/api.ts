@@ -287,5 +287,42 @@ export function getTeams(): Promise<{ teams: Team[] }> {
   return apiFetch('/teams');
 }
 
+export interface AppBanner {
+  id: string;
+  title: string;
+  subtitle?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+  accent?: string;
+  order: number;
+}
+
+export function getAppBanners(): Promise<{ banners: AppBanner[] }> {
+  return apiFetch('/app-banners');
+}
+
+export interface VideoItem {
+  id: string;
+  title: string;
+  youtubeId?: string;
+  url?: string;
+}
+
+export function getVideos(): Promise<{ videos: VideoItem[] }> {
+  return apiFetch('/videos');
+}
+
+export interface Sponsor {
+  id: string;
+  name: string;
+  logo: string;
+  url?: string;
+  tier: 'title' | 'powered' | 'associate' | 'partner';
+}
+
+export function getSponsors(): Promise<{ sponsors: Sponsor[] }> {
+  return apiFetch('/sponsors');
+}
+
 // Public site assets (news images etc.) always come from the live site.
 export const SITE_ASSETS = 'https://bcplt20.com';

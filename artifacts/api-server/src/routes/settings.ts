@@ -20,6 +20,7 @@ import { logger } from "../lib/logger";
 import { writeAudit } from "../lib/audit";
 import { validateRubricsOverrideValue } from "./staffTrials";
 import { selectionConfigSchema } from "../lib/selectionConfig";
+import { appBannersSchema } from "../lib/appBanners";
 import { z } from "zod";
 
 const router = Router();
@@ -31,6 +32,7 @@ const WRITABLE_KEYS = new Set([
   "sample_videos",
   "homepage_config",
   "sponsors",
+  "app_banners",
   "founder_signature",
   "trial_ops_defaults",
   "trial_rubrics_v1",
@@ -43,6 +45,10 @@ const KEY_ROLES: Record<string, string[]> = {
   /* sponsors: full records (amounts, contract dates) are admin-only; the
      public site reads a sanitized list via GET /api/sponsors instead. */
   sponsors: ["CONTENT_TEAM"],
+  /* Mobile-app promo banners (APP_BANNERS) — managed by the same team that
+     owns site content / sponsors. The mobile app reads active banners via the
+     public GET /api/app-banners endpoint; the raw list is admin-only here. */
+  app_banners: ["CONTENT_TEAM"],
   /* founder_signature is stamped on generated contracts; the contracts
      section belongs to MATCH_OPERATIONS (+ SUPER_ADMIN). Never public. */
   founder_signature: ["MATCH_OPERATIONS"],
@@ -217,6 +223,13 @@ router.put("/admin/:key", requireAdmin, async (req, res) => {
       return void res.status(400).json({ error: "Invalid sponsors value — " + first });
     }
     /* jsonb column is typed Record<string,unknown>; an array is valid jsonb. */
+    value = parsed.data as unknown as Record<string, unknown>;
+  } else if (key === "app_banners") {
+    const parsed = appBannersSchema.safeParse(req.body?.value);
+    if (!parsed.success) {
+      const first = parsed.error.issues.slice(0, 3).map(i => (i.path.join(".") || "value") + ": " + i.message).join("; ");
+      return void res.status(400).json({ error: "Invalid app_banners value — " + first });
+    }
     value = parsed.data as unknown as Record<string, unknown>;
   } else if (key === "founder_signature") {
     const parsed = founderSignatureSchema.safeParse(req.body?.value);

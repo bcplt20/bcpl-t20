@@ -10,12 +10,12 @@ import {
   View,
 } from 'react-native';
 import { Image } from 'expo-image';
-import * as WebBrowser from 'expo-web-browser';
 import { Feather } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
+import { WebView } from 'react-native-webview';
 import { useColors } from '@/hooks/useColors';
 import { useLang } from '@/context/LanguageContext';
-import { getGallery, type GalleryItem } from '@/lib/api';
+import { getGallery, getVideos, type GalleryItem, type VideoItem } from '@/lib/api';
 import { Card, ErrorView, LoadingView, GlassAppBar, ScreenBackground } from '@/components/ui';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -36,8 +36,16 @@ export default function MediaScreen() {
     refetchOnWindowFocus: true,
   });
 
+  const vq = useQuery({
+    queryKey: ['videos'],
+    queryFn: getVideos,
+    staleTime: 5 * 60_000,
+  });
+
   const width = Dimensions.get('window').width;
   const cell = Math.floor((width - 32 - GAP * (COLS - 1)) / COLS);
+
+  const [activeVideo, setActiveVideo] = useState<VideoItem | null>(null);
 
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
@@ -83,7 +91,7 @@ export default function MediaScreen() {
               {album.items.map((item) => (
                 <Pressable
                   key={item.id}
-                  onPress={() => (item.kind === 'video' ? WebBrowser.openBrowserAsync(item.viewUrl) : setViewer(item))}
+                  onPress={() => (item.kind === 'video' ? setActiveVideo({ id: item.id, title: 'Video', url: item.viewUrl }) : setViewer(item))}
                   style={({ pressed }) => ({ opacity: pressed ? 0.85 : 1, transform: [{ scale: pressed ? 0.96 : 1 }] })}
                   testID={`media-${item.id}`}
                 >
@@ -112,18 +120,59 @@ export default function MediaScreen() {
         ))
       )}
 
-      {/* Season 4 videos live on the website */}
-      <Pressable
-        onPress={() => WebBrowser.openBrowserAsync('https://bcplt20.com/videos')}
-        style={({ pressed }) => [styles.videosBtn, { borderColor: 'rgba(0, 229, 255, 0.3)', opacity: pressed ? 0.8 : 1 }]}
-        testID="videos-link"
-      >
-        <Feather name="film" size={18} color="#00E5FF" />
-        <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 14.5, flex: 1 }}>
-          {t('Season 4 auction videos & highlights', 'सीज़न 4 ऑक्शन वीडियो और हाइलाइट्स')}
-        </Text>
-        <Feather name="external-link" size={16} color={c.sub} />
-      </Pressable>
+      {vq.data?.videos && vq.data.videos.length > 0 ? (
+        <View style={{ marginTop: 40 }}>
+          <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 22, marginBottom: 16 }}>
+            {t('Videos', 'वीडियो')}
+          </Text>
+          {vq.data.videos.map((v) => (
+            <Card key={v.id} padding={0} border={true} style={{ marginBottom: 16, overflow: 'hidden' }}>
+              <Pressable
+                onPress={() => setActiveVideo(v)}
+                style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1 })}
+              >
+                <View style={{ height: 180, backgroundColor: c.card2, alignItems: 'center', justifyContent: 'center' }}>
+                  {v.youtubeId ? (
+                    <Image source={{ uri: `https://img.youtube.com/vi/${v.youtubeId}/hqdefault.jpg` }} style={StyleSheet.absoluteFill} contentFit="cover" />
+                  ) : null}
+                  <LinearGradient colors={['rgba(0,0,0,0.2)', 'rgba(0,0,0,0.6)']} style={StyleSheet.absoluteFill} />
+                  <View style={styles.playCircle}>
+                    <Feather name="play" size={24} color="#fff" style={{ marginLeft: 4 }} />
+                  </View>
+                </View>
+                <View style={{ padding: 16 }}>
+                  <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 16 }}>{v.title}</Text>
+                </View>
+              </Pressable>
+            </Card>
+          ))}
+        </View>
+      ) : null}
+
+      <Modal visible={!!activeVideo} transparent animationType="fade" onRequestClose={() => setActiveVideo(null)}>
+        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.95)', justifyContent: 'center' }}>
+          <Pressable style={{ position: 'absolute', top: Platform.OS === 'ios' ? 60 : 40, right: 20, zIndex: 10, padding: 12 }} onPress={() => setActiveVideo(null)}>
+            <View style={{ backgroundColor: 'rgba(255,255,255,0.2)', padding: 8, borderRadius: 20 }}>
+              <Feather name="x" size={24} color="#fff" />
+            </View>
+          </Pressable>
+          {activeVideo?.youtubeId ? (
+            <WebView
+              source={{ uri: `https://www.youtube.com/embed/${activeVideo.youtubeId}?autoplay=1&rel=0` }}
+              style={{ width: Dimensions.get('window').width, height: (Dimensions.get('window').width * 9) / 16 }}
+              allowsInlineMediaPlayback
+              mediaPlaybackRequiresUserAction={false}
+            />
+          ) : activeVideo?.url ? (
+             <WebView
+              source={{ uri: activeVideo.url }}
+              style={{ width: Dimensions.get('window').width, height: (Dimensions.get('window').width * 9) / 16 }}
+              allowsInlineMediaPlayback
+              mediaPlaybackRequiresUserAction={false}
+            />
+          ) : null}
+        </View>
+      </Modal>
 
       {/* full-screen photo viewer */}
       <Modal visible={!!viewer} transparent animationType="fade" onRequestClose={() => setViewer(null)}>

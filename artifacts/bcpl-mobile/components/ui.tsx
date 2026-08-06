@@ -25,11 +25,6 @@ export function Card({ children, style, padding = 16, border = true }: { childre
       borderWidth: border ? 1 : 0,
       borderColor: border ? c.line : 'transparent',
       padding: padding as any,
-      shadowColor: c.isDark ? '#000' : '#2D196E',
-      shadowOffset: { width: 0, height: 10 },
-      shadowOpacity: c.isDark ? 0.34 : 0.09,
-      shadowRadius: 26,
-      elevation: 8,
     }, style]}>
       {children}
     </View>
@@ -268,7 +263,7 @@ export function TeamDot({ name, size = 34, glow = false }: { name: string; size?
 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-export function ScreenBackground() {
+export const ScreenBackground = React.memo(() => {
   const c = useColors();
   return (
     <View style={[StyleSheet.absoluteFill, { backgroundColor: c.bg, pointerEvents: 'none' }]}>
@@ -277,7 +272,7 @@ export function ScreenBackground() {
       <View style={{ position: 'absolute', bottom: -100, left: '30%', width: 500, height: 500, borderRadius: 250, backgroundColor: c.mesh2 }} />
     </View>
   );
-}
+});
 
 export function GlassAppBar({ title, right }: { title?: string, right?: React.ReactNode }) {
   const c = useColors();
@@ -300,12 +295,19 @@ export function GlassAppBar({ title, right }: { title?: string, right?: React.Re
         <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 24, color: c.ink, letterSpacing: -0.5 }}>{title}</Text>
       ) : (
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-          <LinearGradient colors={['#5B2BF0', '#9B2FF0', '#FF3DA6']} start={{x:0, y:0}} end={{x:1, y:1}} style={{ width: 36, height: 36, borderRadius: 10, alignItems: 'center', justifyContent: 'center' }}>
-            <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, color: '#fff' }}>B</Text>
-          </LinearGradient>
+          <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: c.card2, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.line, overflow: 'hidden' }}>
+            <Image
+              source={require('../assets/images/bcpl-ball-clean.png')}
+              style={{ width: 28, height: 28 }}
+              contentFit="contain"
+            />
+          </View>
           <View>
-            <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 18, color: c.ink, lineHeight: 20 }}>BCPL</Text>
-            <Text style={{ fontFamily: 'PlusJakartaSans_700Bold', fontSize: 10, color: c.sub, letterSpacing: 1.2 }}>SEASON 5</Text>
+            <Image 
+              source={c.isDark ? require('../assets/images/bcpl-logo-dark.png') : require('../assets/images/bcpl-logo-light.png')}
+              style={{ width: 80, height: 24 }}
+              contentFit="contain"
+            />
           </View>
         </View>
       )}

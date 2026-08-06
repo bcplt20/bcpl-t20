@@ -12,6 +12,7 @@ import SelectionView        from "./views/SelectionView";
 import MediaView            from "./views/MediaView";
 import SponsorsView         from "./views/SponsorsView";
 import BannersView          from "./views/BannersView";
+import AppBannersView       from "./views/AppBannersView";
 import CMSView              from "./views/CMSView";
 import RolesView            from "./views/RolesView";
 import LiveScoringView      from "./views/LiveScoringView";
@@ -91,6 +92,7 @@ const NAV: NavGroup[] = [
   { title: "CONTENT", items: [
     { id:"media",        label:"Photos & Videos",   icon:"▨" },
     { id:"banners",      label:"Banners",           icon:"▤" },
+    { id:"app_banners",  label:"App Banners",       icon:"▤" },
     { id:"cms",          label:"CMS / Pages",       icon:"≡" },
     { id:"sponsors",     label:"Sponsors",          icon:"⊟" },
   ]},
@@ -145,6 +147,7 @@ function renderView(id: string, navigate: (viewId: string, payload?: AdminNavPay
     case "support":        return <SupportView />;
     case "media":          return <MediaView />;
     case "banners":        return <BannersView />;
+    case "app_banners":    return <AppBannersView />;
     case "cms":            return <CMSView />;
     case "sponsors":       return <SponsorsView />;
     case "data_export":    return <DataExportView />;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import {
   Platform,
   Pressable,
@@ -7,6 +7,8 @@ import {
   StyleSheet,
   Text,
   View,
+  FlatList,
+  Dimensions,
 } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
@@ -14,7 +16,7 @@ import { Image } from 'expo-image';
 import { useColors } from '@/hooks/useColors';
 import { useAuth } from '@/context/AuthContext';
 import { useLang } from '@/context/LanguageContext';
-import { getMatches, getPointsTable, SITE_ASSETS, type Match } from '@/lib/api';
+import { getMatches, getPointsTable, SITE_ASSETS, getAppBanners, type Match, type AppBanner } from '@/lib/api';
 import { NEWS_ARTICLES } from '@/data/news';
 import { Card, TeamLogo, GlassAppBar, ScreenBackground, SectionHeader } from '@/components/ui';
 import { MatchCard } from '@/components/MatchCard';
@@ -92,6 +94,115 @@ function RegCountdown() {
   );
 }
 
+const HARDCODED_BANNERS: AppBanner[] = [
+  { id: '1', title: '₹299 +GST', subtitle: 'Batsman · Bowler · Wicketkeeper', ctaLabel: 'Register Now', ctaHref: '/register', accent: '#5B2BF0', order: 1 },
+  { id: '2', title: '₹1 Crore+', subtitle: 'Prize pool for Season 5', ctaLabel: 'Learn More', ctaHref: '/trust', accent: '#FF1A75', order: 2 },
+  { id: '3', title: 'Man of the Series', subtitle: 'Wins a luxury car this season', ctaLabel: 'Rulebook', ctaHref: '/cricket-rulebook', accent: '#00E5FF', order: 3 },
+  { id: '4', title: 'From office to stadium', subtitle: 'League stats & numbers', ctaLabel: 'About Us', ctaHref: '/trust', accent: '#FF8A3D', order: 4 },
+];
+
+function BannerCarousel({ banners }: { banners: AppBanner[] }) {
+  const c = useColors();
+  const router = useRouter();
+  const { t } = useLang();
+  const width = Dimensions.get('window').width - 32;
+  const [index, setIndex] = useState(0);
+  const scrollRef = useRef<FlatList>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    startTimer();
+    return () => stopTimer();
+  }, [banners.length]);
+
+  const startTimer = () => {
+    stopTimer();
+    timerRef.current = setInterval(() => {
+      setIndex((prev) => {
+        const next = (prev + 1) % banners.length;
+        scrollRef.current?.scrollToIndex({ index: next, animated: true });
+        return next;
+      });
+    }, 4500);
+  };
+
+  const stopTimer = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+  };
+
+  const handleScroll = (e: any) => {
+    const x = e.nativeEvent.contentOffset.x;
+    const newIdx = Math.round(x / width);
+    if (newIdx !== index && newIdx >= 0 && newIdx < banners.length) {
+      setIndex(newIdx);
+    }
+  };
+
+  return (
+    <View style={{ paddingHorizontal: 16, paddingTop: 12 }}>
+      <FlatList
+        ref={scrollRef}
+        data={banners}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+        onTouchStart={stopTimer}
+        onTouchEnd={startTimer}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <Pressable onPress={() => item.ctaHref && router.push(item.ctaHref as any)} style={{ width }}>
+            <Card padding={0} style={{ overflow: 'hidden', height: 200, marginRight: 0 }}>
+              <LinearGradient colors={[c.card2, c.card]} style={StyleSheet.absoluteFill} />
+              
+              {/* Diagonal stroke accents */}
+              <LinearGradient 
+                colors={[`${item.accent}40`, 'transparent']}
+                start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+                style={{ position: 'absolute', top: -50, right: -50, width: 150, height: 300, transform: [{ rotate: '45deg' }] }}
+              />
+              <LinearGradient 
+                colors={[`${item.accent}20`, 'transparent']}
+                start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }}
+                style={{ position: 'absolute', bottom: -50, left: -50, width: 150, height: 300, transform: [{ rotate: '45deg' }] }}
+              />
+              
+              <View style={{ padding: 24, flex: 1, justifyContent: 'center' }}>
+                {item.id === '1' && (
+                  <View style={[styles.heroKickBadge, { backgroundColor: c.card2, borderColor: c.line }]}>
+                    <Text style={[styles.heroKick, { color: c.getAccentText(c.cyan) }]}>SEASON 5 · {t('REGISTRATIONS OPEN', 'रजिस्ट्रेशन शुरू')}</Text>
+                  </View>
+                )}
+                
+                <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 32, lineHeight: 36 }}>
+                  {item.title}
+                </Text>
+                {item.subtitle ? (
+                  <Text style={{ color: c.sub, fontSize: 13, marginTop: 8, fontFamily: 'PlusJakartaSans_600SemiBold' }}>
+                    {item.subtitle}
+                  </Text>
+                ) : null}
+
+                {item.id === '1' ? (
+                  <View style={{ marginTop: 'auto' }}>
+                    <RegCountdown />
+                  </View>
+                ) : null}
+              </View>
+            </Card>
+          </Pressable>
+        )}
+      />
+      <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 6, marginTop: 12 }}>
+        {banners.map((_, i) => (
+          <View key={i} style={{ width: i === index ? 16 : 6, height: 6, borderRadius: 3, backgroundColor: i === index ? c.magenta : c.line }} />
+        ))}
+      </View>
+    </View>
+  );
+}
+
 export default function HomeScreen() {
   const c = useColors();
   const router = useRouter();
@@ -129,91 +240,8 @@ export default function HomeScreen() {
         }
       >
 
-        {/* Register hero banner */}
-        <View style={{ paddingHorizontal: 16, paddingTop: 12 }}>
-          <Pressable onPress={() => router.push('/register')} testID="hero-register" style={({ pressed }) => ({ opacity: pressed ? 0.95 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] })}>
-            <Card padding={0}>
-              <Image
-                source={{ uri: `${SITE_ASSETS}/bcpl-assets/stadium-hero.jpg` }}
-                style={[StyleSheet.absoluteFill, { opacity: 0.8 }]}
-                contentFit="cover"
-                transition={200}
-              />
-              <LinearGradient
-                colors={[c.card, 'transparent', c.card]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={StyleSheet.absoluteFill}
-              />
-              <Image
-                source={require('../../assets/images/ganguly-cutout.png')}
-                style={styles.heroGanguly}
-                contentFit="contain"
-                contentPosition="bottom right"
-              />
-              <View pointerEvents="none" style={styles.heroFrame} />
-              
-              <View style={{ padding: 22, paddingRight: 155, minHeight: 224, justifyContent: 'center' }}>
-                <View style={[styles.heroKickBadge, { backgroundColor: c.card2, borderColor: c.line }]}>
-                  <Text style={[styles.heroKick, { color: c.getAccentText(c.cyan) }]}>SEASON 5 · {t('REGISTRATIONS OPEN', 'रजिस्ट्रेशन शुरू')}</Text>
-                </View>
-                <Text style={[styles.heroFee, { color: c.ink }]}>₹299<Text style={[styles.heroFeeGst, { color: c.cyan }]}> +GST</Text></Text>
-                <Text style={[styles.heroFeeSub, { color: c.sub }]}>{t('Batsman · Bowler · Wicketkeeper', 'बल्लेबाज़ · गेंदबाज़ · विकेटकीपर')}</Text>
-                
-                <View style={[styles.heroFeeDivider, { backgroundColor: c.line }]} />
-                
-                <Text style={[styles.heroFeeSub, { color: c.sub }]}>₹399 +GST · {t('All-Rounder', 'ऑलराउंडर')}</Text>
-                
-                <View style={{ marginTop: 18 }}>
-                  <LinearGradient
-                    colors={['#5B2BF0', '#9B2FF0', '#FF3DA6']}
-                    style={styles.heroCta}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                  >
-                    <Text style={styles.heroCtaTxt}>{t('Register Now', 'अभी रजिस्टर करें')}</Text>
-                    <Feather name="arrow-right" size={16} color="#fff" style={{ marginLeft: 6 }} />
-                  </LinearGradient>
-                </View>
-                <RegCountdown />
-              </View>
-            </Card>
-          </Pressable>
-        </View>
+        <BannerCarousel banners={HARDCODED_BANNERS} />
 
-        {/* Photos & Videos quick link */}
-        <View style={{ paddingHorizontal: 16, marginTop: 24 }}>
-          <Pressable
-            onPress={() => router.push('/media')}
-            style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] })}
-            testID="home-media"
-          >
-            <LinearGradient
-              colors={['#241838', '#161124']}
-              style={[styles.mediaLinkCard, { borderColor: 'rgba(255,255,255,0.08)' }]}
-              start={{x: 0, y: 0}}
-              end={{x: 1, y: 1}}
-            >
-              <Image 
-                source={{ uri: `${SITE_ASSETS}/bcpl-assets/stadium-hero.jpg` }}
-                style={[StyleSheet.absoluteFill, { opacity: 0.15 }]} 
-                contentFit="cover" 
-              />
-              <View style={styles.mediaIconWrapper}>
-                <LinearGradient
-                  colors={['#FF1A75', '#D10056']}
-                  style={StyleSheet.absoluteFill}
-                />
-                <Feather name="play-circle" size={20} color="#fff" />
-              </View>
-              <View style={{ flex: 1, paddingRight: 10 }}>
-                <Text style={{ color: '#fff', fontFamily: 'PlusJakartaSans_700Bold', fontSize: 16 }}>{t('Photos & Videos', 'फ़ोटो और वीडियो')}</Text>
-                <Text style={{ color: 'rgba(255,255,255,0.82)', fontSize: 12, marginTop: 2, fontFamily: 'PlusJakartaSans_500Medium' }}>{t('Auction, shoots & matchday gallery', 'ऑक्शन, शूट और मैच की गैलरी')}</Text>
-              </View>
-              <Feather name="chevron-right" size={20} color="rgba(255,255,255,0.82)" />
-            </LinearGradient>
-          </Pressable>
-        </View>
 
         {/* BCPL so far — league in numbers */}
         <View style={{ paddingHorizontal: 16, marginTop: 32 }}>

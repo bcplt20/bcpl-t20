@@ -4,6 +4,7 @@ import { useColors } from '@/hooks/useColors';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { Badge, Card, TeamLogo, getTeamColor, GradientTag } from '@/components/ui';
+import { Image } from 'expo-image';
 import type { Match } from '@/lib/api';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -54,11 +55,13 @@ function MatchCountdown({ scheduledAt }: { scheduledAt?: string | null }) {
   );
 }
 
-export function MatchCard({ match }: { match: Match }) {
+export const MatchCard = React.memo(({ match }: { match: Match }) => {
   const c = useColors();
   const router = useRouter();
   const isLive = match.status === 'live';
   const isDone = match.status === 'completed';
+
+  const stageColor = match.stage?.toLowerCase().includes('final') ? c.magenta : c.cyan;
 
   return (
     <Pressable
@@ -69,25 +72,26 @@ export function MatchCard({ match }: { match: Match }) {
       }}
       style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] })}
     >
-      <Card style={[styles.card, { padding: 0, overflow: 'hidden' }]}>
+      <Card style={[styles.card, { padding: 0, overflow: 'hidden' }]} border={true} padding={0}>
+        <Image source={require('../assets/images/bcpl-ball-clean.png')} style={{ position: 'absolute', width: 140, height: 140, top: '50%', left: '50%', transform: [{ translateX: -70 }, { translateY: -70 }], opacity: c.isDark ? 0.05 : 0.03 }} contentFit="contain" pointerEvents="none" />
         <LinearGradient
-          colors={[`${getTeamColor(match.team1)}22`, 'transparent']}
+          colors={[`${getTeamColor(match.team1)}15`, 'transparent']}
           start={{ x: 0, y: 0.5 }}
-          end={{ x: 0.4, y: 0.5 }}
+          end={{ x: 0.5, y: 0.5 }}
           style={StyleSheet.absoluteFill}
           pointerEvents="none"
         />
         <LinearGradient
-          colors={[`${getTeamColor(match.team2)}22`, 'transparent']}
+          colors={[`${getTeamColor(match.team2)}15`, 'transparent']}
           start={{ x: 1, y: 0.5 }}
-          end={{ x: 0.6, y: 0.5 }}
+          end={{ x: 0.5, y: 0.5 }}
           style={StyleSheet.absoluteFill}
           pointerEvents="none"
         />
         <View style={{ padding: 16 }}>
           <View style={styles.topRow}>
             <View style={{ flexDirection: 'row', gap: 6 }}>
-              {!!match.stage && <GradientTag label={match.stage} color={c.cyan} />}
+              {!!match.stage && <GradientTag label={match.stage} color={stageColor} />}
               {!!match.grp && <GradientTag label={`Group ${match.grp}`} color={c.lime} />}
               {!match.stage && !match.grp && <GradientTag label={`Match ${match.matchNo}`} color={c.violet} />}
             </View>
@@ -137,7 +141,7 @@ export function MatchCard({ match }: { match: Match }) {
       </Card>
     </Pressable>
   );
-}
+}, (prev, next) => prev.match.id === next.match.id && prev.match.status === next.match.status);
 
 const styles = StyleSheet.create({
   card: { marginBottom: 16, paddingBottom: 0 },

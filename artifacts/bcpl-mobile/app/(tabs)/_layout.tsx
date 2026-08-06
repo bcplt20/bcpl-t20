@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, Platform, StyleSheet, View, Pressable } from 'react-native';
+import { Animated, Platform, StyleSheet, View, Pressable, Dimensions } from 'react-native';
 import { useColors } from '@/hooks/useColors';
 import { Feather } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
@@ -72,8 +72,8 @@ export default function TabLayout() {
         tabBarStyle: {
           position: 'absolute',
           bottom: bottomPadding,
-          left: 20,
-          right: 20,
+          left: (Dimensions.get('window').width - 392) / 2,
+          width: 392,
           height: 68,
           borderRadius: 34,
           backgroundColor: c.glass,
@@ -94,7 +94,7 @@ export default function TabLayout() {
       <Tabs.Screen name="index" options={{ title: 'Home', tabBarIcon: (props) => <TabIcon feather="home" {...props} name="Home" /> }} />
       <Tabs.Screen name="matches" options={{ title: 'Matches', tabBarIcon: (props) => <TabIcon feather="calendar" {...props} name="Matches" /> }} />
       <Tabs.Screen 
-        name="news" 
+        name="register-fab" 
         options={{ 
           title: 'Register', 
           tabBarIcon: () => <FabTab />,
@@ -107,7 +107,11 @@ export default function TabLayout() {
         })}
       />
       <Tabs.Screen name="points" options={{ title: 'Points', tabBarIcon: (props) => <TabIcon feather="bar-chart-2" {...props} name="Points" /> }} />
-      <Tabs.Screen name="profile" options={{ title: 'Profile', tabBarIcon: (props) => <TabIcon feather="user" {...props} name="Profile" /> }} />
+      <Tabs.Screen name="media" options={{ title: 'Media', tabBarIcon: (props) => <TabIcon feather="play-circle" {...props} name="Media" /> }} />
+      <Tabs.Screen name="more" options={{ title: 'More', tabBarIcon: (props) => <TabIcon feather="menu" {...props} name="More" /> }} />
+      
+      {/* Hide the old news tab, we can move it to a Stack if we want, or keep it hidden in Tabs */}
+      <Tabs.Screen name="news" options={{ href: null }} />
     </Tabs>
   );
 }

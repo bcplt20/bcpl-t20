@@ -543,7 +543,7 @@ export default function RegisterScreen() {
             {t('Next step: upload your 30–60 sec trial video from your dashboard', 'अगला कदम: अपने डैशबोर्ड से 30–60 सेकंड का ट्रायल वीडियो अपलोड करें')}
           </Text>
           <Pressable
-            onPress={() => router.replace('/profile')}
+            onPress={() => router.replace('/more')}
             style={({ pressed }) => [styles.btn, { opacity: pressed ? 0.8 : 1, marginTop: 40, paddingHorizontal: 48 }]}
           >
             <LinearGradient
