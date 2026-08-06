@@ -193,16 +193,16 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
       <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
         {routes.map((route: any, index: number) => {
           const { options } = descriptors[route.key];
-          const isFocused = state.index === index;
-          
+          // state.index refers to the FULL route list — compare by key, not the
+          // filtered array's index, or focus highlights the wrong tab.
+          const isFocused = state.routes[state.index]?.key === route.key;
+
           if (route.name === 'register-fab') {
             return <RegisterFabButton key={route.key} onPress={() => router.push('/register')} />;
           }
-          
-          let iconName: keyof typeof Feather.glyphMap = 'home';
-          if (route.name === 'matches') iconName = 'calendar';
-          if (route.name === 'media') iconName = 'play-circle';
-          if (route.name === 'more') iconName = 'menu';
+
+          // TabIcon draws by route name: 'home' | 'matches' | 'media' | 'more'
+          const iconName = route.name === 'index' ? 'home' : route.name;
 
           const onPress = () => {
             const event = navigation.emit({

@@ -17,6 +17,13 @@ import { sendWhatsApp, WA } from "../lib/whatsapp";
 import { logNotifications } from "../lib/notify";
 import { writeAudit } from "../lib/audit";
 import { FEES, assignRegNumber } from "./register";
+import { normalizeRole } from "../lib/phase1Roles";
+
+// Historic registrations carry long role names ('batsman', 'wicketkeeper'…);
+// FEES is keyed by short codes — always resolve through normalizeRole.
+function feeFor(role: string | null | undefined): { phase1: number; phase2: number } {
+  return FEES[role ?? ""] ?? FEES[normalizeRole(role)] ?? FEES.bat;
+}
 import { isAgeEligible, AGE_INELIGIBLE_MESSAGE } from "../lib/age";
 import { getPhase1Config } from "../lib/phase1Config";
 import { z } from "zod";
@@ -347,7 +354,7 @@ router.post("/phase1/create", requireAuth, async (req: AuthRequest, res) => {
     });
   }
 
-  const amount  = Math.round(FEES[reg.role].phase1 * 1.18); // base + 18% GST
+  const amount  = Math.round(feeFor(reg.role).phase1 * 1.18); // base + 18% GST
   const orderId = `p1_${reg.id.slice(0, 8)}_${Date.now()}`;
 
   const order = await createOrder({
@@ -532,7 +539,7 @@ router.post("/phase2/create", requireAuth, async (req: AuthRequest, res) => {
     });
   }
 
-  const amount  = Math.round(FEES[reg.role].phase2 * 1.18); // base + 18% GST
+  const amount  = Math.round(feeFor(reg.role).phase2 * 1.18); // base + 18% GST
   const orderId = `p2_${reg.id.slice(0, 8)}_${Date.now()}`;
 
   const order = await createOrder({
