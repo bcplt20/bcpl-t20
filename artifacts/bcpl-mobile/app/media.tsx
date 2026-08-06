@@ -16,7 +16,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useColors } from '@/hooks/useColors';
 import { useLang } from '@/context/LanguageContext';
 import { getGallery, type GalleryItem } from '@/lib/api';
-import { Card, ErrorView, LoadingView } from '@/components/ui';
+import { Card, ErrorView, LoadingView, GlassAppBar, ScreenBackground } from '@/components/ui';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const GAP = 12;
@@ -40,14 +40,16 @@ export default function MediaScreen() {
   const cell = Math.floor((width - 32 - GAP * (COLS - 1)) / COLS);
 
   return (
-    <ScrollView
-      style={{ flex: 1, backgroundColor: c.background }}
-      contentContainerStyle={{ padding: 16, paddingBottom: Platform.OS === 'web' ? 118 : 120, paddingTop: 20 }}
-    >
-      <Text style={{ color: '#00E5FF', fontFamily: 'Inter_800ExtraBold', fontSize: 11, letterSpacing: 2 }}>
+    <View style={{ flex: 1, backgroundColor: c.bg }}>
+      <ScreenBackground />
+      <GlassAppBar title="Photos & Videos" />
+      <ScrollView
+        contentContainerStyle={{ padding: 16, paddingBottom: Platform.OS === 'web' ? 118 : 120, paddingTop: 100 }}
+      >
+      <Text style={{ color: '#00E5FF', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 11, letterSpacing: 2 }}>
         {t('GALLERY', 'गैलरी')}
       </Text>
-      <Text style={{ color: c.foreground, fontFamily: 'Inter_800ExtraBold', fontSize: 26, marginTop: 6 }}>
+      <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 26, marginTop: 6 }}>
         {t('Photos & Videos', 'फ़ोटो और वीडियो')}
       </Text>
 
@@ -58,9 +60,9 @@ export default function MediaScreen() {
       ) : (q.data?.albums?.length ?? 0) === 0 ? (
         <Card style={{ alignItems: 'center', paddingVertical: 48, marginTop: 24 }}>
           <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: 'rgba(255,255,255,0.05)', alignItems: 'center', justifyContent: 'center', marginBottom: 20, borderWidth: 2, borderColor: 'rgba(255,255,255,0.1)' }}>
-            <Feather name="camera" size={32} color={c.mutedForeground} />
+            <Feather name="camera" size={32} color={c.sub} />
           </View>
-          <Text style={{ color: c.mutedForeground, fontSize: 15, textAlign: 'center', fontFamily: 'Inter_600SemiBold' }}>
+          <Text style={{ color: c.sub, fontSize: 15, textAlign: 'center', fontFamily: 'PlusJakartaSans_600SemiBold' }}>
             {t('Season 5 photos & videos will appear here soon', 'सीज़न 5 की फ़ोटो और वीडियो जल्द यहाँ दिखेंगी')}
           </Text>
         </Card>
@@ -68,11 +70,11 @@ export default function MediaScreen() {
         q.data!.albums.map((album) => (
           <View key={album.id} style={{ marginTop: 32 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-              <Text style={{ color: c.foreground, fontFamily: 'Inter_800ExtraBold', fontSize: 20, letterSpacing: -0.3 }}>
+              <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 20, letterSpacing: -0.3 }}>
                 {album.name}
               </Text>
               <View style={{ backgroundColor: 'rgba(255,255,255,0.08)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 }}>
-                <Text style={{ color: c.mutedForeground, fontSize: 12, fontFamily: 'Inter_700Bold' }}>
+                <Text style={{ color: c.sub, fontSize: 12, fontFamily: 'PlusJakartaSans_700Bold' }}>
                   {album.items.length} {t('Items', 'आइटम')}
                 </Text>
               </View>
@@ -117,10 +119,10 @@ export default function MediaScreen() {
         testID="videos-link"
       >
         <Feather name="film" size={18} color="#00E5FF" />
-        <Text style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 14.5, flex: 1 }}>
+        <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 14.5, flex: 1 }}>
           {t('Season 4 auction videos & highlights', 'सीज़न 4 ऑक्शन वीडियो और हाइलाइट्स')}
         </Text>
-        <Feather name="external-link" size={16} color={c.mutedForeground} />
+        <Feather name="external-link" size={16} color={c.sub} />
       </Pressable>
 
       {/* full-screen photo viewer */}
@@ -137,6 +139,7 @@ export default function MediaScreen() {
         </Pressable>
       </Modal>
     </ScrollView>
+    </View>
   );
 }
 

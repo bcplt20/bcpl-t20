@@ -16,31 +16,80 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
 import { SITE_ASSETS } from '@/lib/api';
 
-export function Card({ children, style }: { children: React.ReactNode; style?: StyleProp<ViewStyle> }) {
+export function Card({ children, style, padding = 16, border = true }: { children: React.ReactNode; style?: StyleProp<ViewStyle>; padding?: number | string; border?: boolean }) {
   const c = useColors();
   return (
-    <View style={[styles.cardShadow, style]}>
-      <LinearGradient
-        colors={[c.card, '#0F0B18']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
-        style={[
-          styles.cardGradient,
-          {
-            borderRadius: c.radius,
-            borderColor: 'rgba(255,255,255,0.08)',
-          },
-        ]}
-      >
+    <View style={[{
+      backgroundColor: c.card,
+      borderRadius: 22,
+      borderWidth: border ? 1 : 0,
+      borderColor: border ? c.line : 'transparent',
+      padding: padding as any,
+      shadowColor: c.isDark ? '#000' : '#2D196E',
+      shadowOffset: { width: 0, height: 10 },
+      shadowOpacity: c.isDark ? 0.34 : 0.09,
+      shadowRadius: 26,
+      elevation: 8,
+    }, style]}>
+      {children}
+    </View>
+  );
+}
+
+export function SectionHeader({ title, onSeeAll }: { title: string; onSeeAll?: () => void }) {
+  const c = useColors();
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
         <LinearGradient
-          colors={['rgba(255,255,255,0.03)', 'transparent']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={StyleSheet.absoluteFill}
-          pointerEvents="none"
+          colors={['#5B2BF0', '#9B2FF0', '#FF3DA6']}
+          start={{x:0, y:0}} end={{x:0, y:1}}
+          style={{ width: 5, height: 24, borderRadius: 3 }}
         />
-        {children}
-      </LinearGradient>
+        <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 20, color: c.ink, letterSpacing: -0.5 }}>
+          {title}
+        </Text>
+      </View>
+      {onSeeAll && (
+        <Pressable onPress={onSeeAll} style={({pressed}) => ({ opacity: pressed ? 0.7 : 1 })}>
+          <Text style={{ fontFamily: 'PlusJakartaSans_700Bold', fontSize: 13, color: c.getAccentText(c.cyan) }}>See all</Text>
+        </Pressable>
+      )}
+    </View>
+  );
+}
+
+export function GradientTag({ label, color, dot }: { label: string; color: string; dot?: boolean }) {
+  const c = useColors();
+  const pulse = useRef(new Animated.Value(1)).current;
+  
+  useEffect(() => {
+    if (dot) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(pulse, { toValue: 0.3, duration: 800, useNativeDriver: true }),
+          Animated.timing(pulse, { toValue: 1, duration: 800, useNativeDriver: true }),
+        ])
+      ).start();
+    }
+  }, [dot, pulse]);
+
+  // Map literal colors to gradients roughly based on mockup
+  let grads = [color, color];
+  if (color === '#FF3DA6') grads = ['#FF3DA6', '#9B2FF0'];
+  if (color === '#00DCF5') grads = ['#00DCF5', '#4B6BFF'];
+  if (color === '#FFC53D') grads = ['#FFD34D', '#FF7A3D'];
+  if (color === '#16E0A3') grads = ['#16E0A3', '#00B8D9'];
+  if (color === '#B6FF3C') grads = ['#B6FF3C', '#16E0A3'];
+  
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: c.card2, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4, borderWidth: 1, borderColor: c.line, alignSelf: 'flex-start', gap: 6 }}>
+      {dot && (
+        <Animated.View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: color, opacity: pulse, shadowColor: color, shadowOpacity: 0.8, shadowRadius: 4, shadowOffset: { width:0, height:0 } }} />
+      )}
+      <Text style={{ fontFamily: 'PlusJakartaSans_700Bold', fontSize: 10, letterSpacing: 0.8, textTransform: 'uppercase' }}>
+        <Text style={{ color: c.getAccentText(color) }}>{label}</Text>
+      </Text>
     </View>
   );
 }
@@ -68,8 +117,8 @@ export function Badge({
   
   if (tone === 'live') {
     return (
-      <View style={[styles.badgeBase, { backgroundColor: 'rgba(255, 59, 48, 0.15)', borderColor: 'rgba(255, 59, 48, 0.4)', shadowColor: c.destructive, shadowOpacity: 0.3, shadowRadius: 6, shadowOffset: { width: 0, height: 0 }, elevation: 2 }]}>
-        <Animated.View style={[styles.liveDot, { backgroundColor: c.destructive, opacity: pulse }]} />
+      <View style={[styles.badgeBase, { backgroundColor: 'rgba(255, 59, 48, 0.15)', borderColor: 'rgba(255, 59, 48, 0.4)', shadowColor: c.coral, shadowOpacity: 0.3, shadowRadius: 6, shadowOffset: { width: 0, height: 0 }, elevation: 2 }]}>
+        <Animated.View style={[styles.liveDot, { backgroundColor: c.coral, opacity: pulse }]} />
         <Text style={[styles.badgeText, { color: '#FF7B7B' }]}>{label.toUpperCase()}</Text>
       </View>
     );
@@ -90,7 +139,7 @@ export function Badge({
 
   const bg = tone === 'success' ? 'rgba(49, 197, 107, 0.15)' : 'rgba(255,255,255,0.05)';
   const border = tone === 'success' ? 'rgba(49, 197, 107, 0.3)' : 'rgba(255,255,255,0.1)';
-  const fg = tone === 'success' ? c.success : c.foreground;
+  const fg = tone === 'success' ? c.mint : c.ink;
 
   return (
     <View style={[styles.badgeBase, { backgroundColor: bg, borderColor: border }]}>
@@ -103,7 +152,7 @@ export function LoadingView() {
   const c = useColors();
   return (
     <View style={styles.center}>
-      <ActivityIndicator size="large" color={c.primary} />
+      <ActivityIndicator size="large" color={c.magenta} />
     </View>
   );
 }
@@ -114,9 +163,9 @@ export function ErrorView({ message, onRetry }: { message?: string; onRetry?: ()
   return (
     <View style={styles.center}>
       <View style={styles.iconCircle}>
-        <Feather name="wifi-off" size={26} color={c.accent} />
+        <Feather name="wifi-off" size={26} color={c.cyan} />
       </View>
-      <Text style={{ color: c.mutedForeground, marginTop: 14, textAlign: 'center', paddingHorizontal: 40, fontSize: 14, lineHeight: 20 }}>
+      <Text style={{ color: c.sub, marginTop: 14, textAlign: 'center', paddingHorizontal: 40, fontSize: 14, lineHeight: 20 }}>
         {message ?? t('Something went wrong — check your internet and try again', 'कुछ गड़बड़ हो गई — इंटरनेट जाँच कर फिर कोशिश करें')}
       </Text>
       {onRetry ? (
@@ -128,7 +177,7 @@ export function ErrorView({ message, onRetry }: { message?: string; onRetry?: ()
           ]}
           testID="retry-button"
         >
-          <Text style={{ color: c.primary, fontFamily: 'Inter_600SemiBold', fontSize: 13 }}>Retry</Text>
+          <Text style={{ color: c.magenta, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 13 }}>Retry</Text>
         </Pressable>
       ) : null}
     </View>
@@ -140,9 +189,9 @@ export function EmptyView({ icon, text }: { icon: keyof typeof Feather.glyphMap;
   return (
     <View style={styles.center}>
       <View style={styles.iconCircle}>
-        <Feather name={icon} size={28} color={c.mutedForeground} />
+        <Feather name={icon} size={28} color={c.sub} />
       </View>
-      <Text style={{ color: c.mutedForeground, marginTop: 16, textAlign: 'center', paddingHorizontal: 40, fontSize: 14, fontFamily: 'Inter_500Medium' }}>
+      <Text style={{ color: c.sub, marginTop: 16, textAlign: 'center', paddingHorizontal: 40, fontSize: 14, fontFamily: 'PlusJakartaSans_500Medium' }}>
         {text}
       </Text>
     </View>
@@ -174,11 +223,15 @@ export function TeamLogo({ name, size = 44, glow = false }: { name: string; size
   return inner;
 }
 
-const TEAM_COLORS = ['#FF1A75', '#3B82F6', '#31C56B', '#A855F7', '#00E5FF', '#EC4899', '#14B8A6', '#F97316', '#8B5CF6', '#0EA5E9'];
-export function TeamDot({ name, size = 34, glow = false }: { name: string; size?: number; glow?: boolean }) {
+const TEAM_COLORS = ['#7C5CFF', '#FF3DA6', '#00DCF5', '#B6FF3C', '#FF8A3D', '#FFC53D', '#16E0A3', '#FF5A6E'];
+export function getTeamColor(name: string) {
   let hash = 0;
   for (let i = 0; i < name.length; i++) hash = (hash * 31 + name.charCodeAt(i)) | 0;
-  const bg = TEAM_COLORS[Math.abs(hash) % TEAM_COLORS.length];
+  return TEAM_COLORS[Math.abs(hash) % TEAM_COLORS.length];
+}
+
+export function TeamDot({ name, size = 34, glow = false }: { name: string; size?: number; glow?: boolean }) {
+  const bg = getTeamColor(name);
   const initials = name
     .split(/\s+/)
     .map((w) => w[0])
@@ -208,7 +261,55 @@ export function TeamDot({ name, size = 34, glow = false }: { name: string; size?
         }
       ]}
     >
-      <Text style={{ color: '#fff', fontFamily: 'Inter_700Bold', fontSize: size * 0.36 }}>{initials}</Text>
+      <Text style={{ color: '#fff', fontFamily: 'PlusJakartaSans_700Bold', fontSize: size * 0.36 }}>{initials}</Text>
+    </View>
+  );
+}
+
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+export function ScreenBackground() {
+  const c = useColors();
+  return (
+    <View style={[StyleSheet.absoluteFill, { backgroundColor: c.bg, pointerEvents: 'none' }]}>
+      <View style={{ position: 'absolute', top: -100, left: -100, width: 600, height: 600, borderRadius: 300, backgroundColor: c.mesh3 }} />
+      <View style={{ position: 'absolute', top: -50, right: -100, width: 500, height: 500, borderRadius: 250, backgroundColor: c.mesh1 }} />
+      <View style={{ position: 'absolute', bottom: -100, left: '30%', width: 500, height: 500, borderRadius: 250, backgroundColor: c.mesh2 }} />
+    </View>
+  );
+}
+
+export function GlassAppBar({ title, right }: { title?: string, right?: React.ReactNode }) {
+  const c = useColors();
+  const insets = useSafeAreaInsets();
+  return (
+    <View style={{
+      position: 'absolute', top: 0, left: 0, right: 0,
+      paddingTop: insets.top,
+      paddingHorizontal: 20,
+      paddingBottom: 12,
+      backgroundColor: c.glass,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      borderBottomWidth: 1,
+      borderBottomColor: c.line,
+      zIndex: 100,
+    }}>
+      {title ? (
+        <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 24, color: c.ink, letterSpacing: -0.5 }}>{title}</Text>
+      ) : (
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+          <LinearGradient colors={['#5B2BF0', '#9B2FF0', '#FF3DA6']} start={{x:0, y:0}} end={{x:1, y:1}} style={{ width: 36, height: 36, borderRadius: 10, alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, color: '#fff' }}>B</Text>
+          </LinearGradient>
+          <View>
+            <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 18, color: c.ink, lineHeight: 20 }}>BCPL</Text>
+            <Text style={{ fontFamily: 'PlusJakartaSans_700Bold', fontSize: 10, color: c.sub, letterSpacing: 1.2 }}>SEASON 5</Text>
+          </View>
+        </View>
+      )}
+      {right}
     </View>
   );
 }
@@ -244,7 +345,7 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     fontSize: 10,
-    fontFamily: 'Inter_700Bold',
+    fontFamily: 'PlusJakartaSans_700Bold',
     letterSpacing: 0.8,
   },
   center: {

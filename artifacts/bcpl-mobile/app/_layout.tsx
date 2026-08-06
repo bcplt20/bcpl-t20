@@ -7,14 +7,22 @@ import { StatusBar } from 'expo-status-bar';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { AuthProvider } from '@/context/AuthContext';
 import { LanguageProvider } from '@/context/LanguageContext';
-import colors from '@/constants/colors';
+import { ThemeProvider, useTheme } from '@/context/ThemeContext';
+import { THEMES } from '@/hooks/useColors';
 import {
-  Inter_400Regular,
-  Inter_500Medium,
-  Inter_600SemiBold,
-  Inter_700Bold,
   useFonts,
-} from '@expo-google-fonts/inter';
+  BricolageGrotesque_700Bold,
+  BricolageGrotesque_800ExtraBold,
+} from '@expo-google-fonts/bricolage-grotesque';
+import {
+  PlusJakartaSans_400Regular,
+  PlusJakartaSans_500Medium,
+  PlusJakartaSans_600SemiBold,
+  PlusJakartaSans_700Bold,
+} from '@expo-google-fonts/plus-jakarta-sans';
+import {
+  SpaceGrotesk_700Bold,
+} from '@expo-google-fonts/space-grotesk';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 
@@ -24,36 +32,43 @@ SplashScreen.preventAutoHideAsync();
 const queryClient = new QueryClient();
 
 function RootLayoutNav() {
-  const c = colors.light;
+  const { theme } = useTheme();
+  const c = THEMES[theme];
   return (
-    <Stack
-      screenOptions={{
-        headerBackTitle: 'Back',
-        headerStyle: { backgroundColor: c.background },
-        headerTintColor: c.foreground,
-        headerTitleStyle: { fontFamily: 'Inter_600SemiBold' },
-        contentStyle: { backgroundColor: c.background },
-      }}
-    >
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen
-        name="login"
-        options={{ presentation: 'modal', title: 'Login', headerShown: true }}
-      />
-      <Stack.Screen name="register" options={{ title: 'Register' }} />
-      <Stack.Screen name="media" options={{ title: 'Photos & Videos' }} />
-      <Stack.Screen name="match/[id]" options={{ title: 'Match Center' }} />
-      <Stack.Screen name="news/[slug]" options={{ title: 'News' }} />
-    </Stack>
+    <>
+      <StatusBar style={theme === 'stadium' ? 'light' : 'dark'} />
+      <Stack
+        screenOptions={{
+          headerBackTitle: 'Back',
+          headerStyle: { backgroundColor: c.bg },
+          headerTintColor: c.ink,
+          headerTitleStyle: { fontFamily: 'PlusJakartaSans_600SemiBold' },
+          contentStyle: { backgroundColor: c.bg },
+        }}
+      >
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="login"
+          options={{ presentation: 'modal', title: 'Login', headerShown: false }}
+        />
+        <Stack.Screen name="register" options={{ title: 'Register', headerShown: false }} />
+        <Stack.Screen name="media" options={{ title: 'Photos & Videos', headerShown: false }} />
+        <Stack.Screen name="match/[id]" options={{ title: 'Match Center', headerShown: false }} />
+        <Stack.Screen name="news/[slug]" options={{ title: 'News', headerShown: false }} />
+      </Stack>
+    </>
   );
 }
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
-    Inter_400Regular,
-    Inter_500Medium,
-    Inter_600SemiBold,
-    Inter_700Bold,
+    BricolageGrotesque_700Bold,
+    BricolageGrotesque_800ExtraBold,
+    PlusJakartaSans_400Regular,
+    PlusJakartaSans_500Medium,
+    PlusJakartaSans_600SemiBold,
+    PlusJakartaSans_700Bold,
+    SpaceGrotesk_700Bold,
   });
 
   useEffect(() => {
@@ -68,16 +83,17 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <ErrorBoundary>
         <QueryClientProvider client={queryClient}>
-          <LanguageProvider>
-          <AuthProvider>
-            <GestureHandlerRootView>
-              <KeyboardProvider>
-                <StatusBar style="light" />
-                <RootLayoutNav />
-              </KeyboardProvider>
-            </GestureHandlerRootView>
-          </AuthProvider>
-          </LanguageProvider>
+          <ThemeProvider>
+            <LanguageProvider>
+              <AuthProvider>
+                <GestureHandlerRootView>
+                  <KeyboardProvider>
+                    <RootLayoutNav />
+                  </KeyboardProvider>
+                </GestureHandlerRootView>
+              </AuthProvider>
+            </LanguageProvider>
+          </ThemeProvider>
         </QueryClientProvider>
       </ErrorBoundary>
     </SafeAreaProvider>

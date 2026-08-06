@@ -10,7 +10,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useColors } from '@/hooks/useColors';
 import { getMatches, getPointsTable, type PointsRow } from '@/lib/api';
-import { Card, EmptyView, ErrorView, LoadingView, TeamLogo } from '@/components/ui';
+import { Card, EmptyView, ErrorView, LoadingView, TeamLogo, GlassAppBar, ScreenBackground } from '@/components/ui';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { useLang } from '@/context/LanguageContext';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -22,58 +22,57 @@ function GroupTable({ title, rows, qualify }: { title: string; rows: PointsRow[]
     <View style={{ marginBottom: 28 }}>
       <View style={styles.groupHead}>
         <LinearGradient
-          colors={['rgba(255, 26, 117, 0.3)', 'rgba(255, 26, 117, 0.05)']}
+          colors={[`${c.cyan}33`, `${c.cyan}05`]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
-          style={styles.groupChip}
+          style={[styles.groupChip, { borderColor: c.getAccentText(c.cyan) }]}
         >
-          <Text style={{ color: '#FF1A75', fontFamily: 'Inter_800ExtraBold', fontSize: 13, letterSpacing: 1.5 }}>{title}</Text>
+          <Text style={{ color: c.getAccentText(c.cyan), fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 13, letterSpacing: 1.5 }}>{title}</Text>
         </LinearGradient>
       </View>
-      <Card style={{ paddingHorizontal: 0, paddingVertical: 0, overflow: 'hidden' }}>
-        <View style={[styles.row, styles.headRow, { backgroundColor: 'rgba(255,255,255,0.03)' }]}>
-          <Text style={[styles.pos, { color: c.mutedForeground, fontSize: 11 }]}>#</Text>
-          <Text style={[styles.team, { color: c.mutedForeground, fontSize: 11, fontFamily: 'Inter_700Bold', letterSpacing: 0.5 }]}>TEAM</Text>
-          <Text style={[styles.num, { color: c.mutedForeground, fontSize: 11 }]}>P</Text>
-          <Text style={[styles.num, { color: c.mutedForeground, fontSize: 11 }]}>W</Text>
-          <Text style={[styles.num, { color: c.mutedForeground, fontSize: 11 }]}>L</Text>
-          <Text style={[styles.nrr, { color: c.mutedForeground, fontSize: 11 }]}>NRR</Text>
-          <Text style={[styles.pts, { color: c.mutedForeground, fontSize: 11 }]}>PTS</Text>
+      <Card padding={0} border={true}>
+        <View style={[styles.row, styles.headRow, { backgroundColor: c.card2, borderBottomWidth: 1, borderBottomColor: c.line }]}>
+          <Text style={[styles.pos, { color: c.sub, fontSize: 11 }]}>#</Text>
+          <Text style={[styles.team, { color: c.sub, fontSize: 11, fontFamily: 'PlusJakartaSans_700Bold', letterSpacing: 0.5 }]}>TEAM</Text>
+          <Text style={[styles.num, { color: c.sub, fontSize: 11 }]}>P</Text>
+          <Text style={[styles.num, { color: c.sub, fontSize: 11 }]}>W</Text>
+          <Text style={[styles.num, { color: c.sub, fontSize: 11 }]}>L</Text>
+          <Text style={[styles.nrr, { color: c.sub, fontSize: 11 }]}>NRR</Text>
+          <Text style={[styles.pts, { color: c.sub, fontSize: 11 }]}>PTS</Text>
         </View>
         {rows.map((t, i) => (
           <View
             key={t.team}
             style={[
               styles.row,
-              { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: 'rgba(255,255,255,0.06)' },
-              i < qualify && { backgroundColor: 'rgba(49,197,107,0.06)' },
-              i >= qualify && i % 2 === 1 && { backgroundColor: 'rgba(255,255,255,0.015)' }
+              { borderTopWidth: i === 0 ? 0 : 1, borderTopColor: c.line },
+              i < qualify && { backgroundColor: `${c.mint}10` },
             ]}
           >
             <View style={{ width: 22, alignItems: 'center' }}>
               {i === 0 ? (
-                <View style={[styles.medal, { backgroundColor: '#FFD700' }]}><Text style={styles.medalText}>1</Text></View>
+                <View style={[styles.medal, { backgroundColor: '#FFC53D' }]}><Text style={[styles.medalText, { color: c.card }]}>1</Text></View>
               ) : i === 1 ? (
-                <View style={[styles.medal, { backgroundColor: '#C0C0C0' }]}><Text style={styles.medalText}>2</Text></View>
+                <View style={[styles.medal, { backgroundColor: '#9E9BD1' }]}><Text style={[styles.medalText, { color: c.card }]}>2</Text></View>
               ) : i === 2 ? (
-                <View style={[styles.medal, { backgroundColor: '#CD7F32' }]}><Text style={styles.medalText}>3</Text></View>
+                <View style={[styles.medal, { backgroundColor: '#FF8A3D' }]}><Text style={[styles.medalText, { color: c.card }]}>3</Text></View>
               ) : (
-                <Text style={[styles.pos, { color: c.mutedForeground, width: 'auto' }]}>{i + 1}</Text>
+                <Text style={[styles.pos, { color: c.sub, width: 'auto' }]}>{i + 1}</Text>
               )}
             </View>
             <View style={[styles.team, { flexDirection: 'row', alignItems: 'center', gap: 10 }]}>
               <TeamLogo name={t.team} size={28} />
-              <Text style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 13.5, flex: 1 }} numberOfLines={1}>
+              <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 13.5, flex: 1 }} numberOfLines={1}>
                 {t.team}
               </Text>
             </View>
-            <Text style={[styles.num, { color: c.foreground }]}>{t.played}</Text>
-            <Text style={[styles.num, { color: c.success, fontFamily: 'Inter_600SemiBold' }]}>{t.won}</Text>
-            <Text style={[styles.num, { color: c.destructive, fontFamily: 'Inter_600SemiBold' }]}>{t.lost}</Text>
-            <Text style={[styles.nrr, { color: typeof t.nrr === 'number' && t.nrr > 0 ? c.success : c.mutedForeground }]}>
+            <Text style={[styles.num, { color: c.ink }]}>{t.played}</Text>
+            <Text style={[styles.num, { color: c.getAccentText(c.mint), fontFamily: 'PlusJakartaSans_600SemiBold' }]}>{t.won}</Text>
+            <Text style={[styles.num, { color: c.getAccentText(c.coral), fontFamily: 'PlusJakartaSans_600SemiBold' }]}>{t.lost}</Text>
+            <Text style={[styles.nrr, { color: typeof t.nrr === 'number' && t.nrr > 0 ? c.getAccentText(c.mint) : c.sub }]}>
               {typeof t.nrr === 'number' ? (t.nrr > 0 ? `+${t.nrr.toFixed(2)}` : t.nrr.toFixed(2)) : t.nrr}
             </Text>
-            <Text style={[styles.pts, { color: c.foreground, fontFamily: 'Inter_800ExtraBold', fontSize: 14 }]}>{t.points}</Text>
+            <Text style={[styles.pts, { color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 14 }]}>{t.points}</Text>
           </View>
         ))}
       </Card>
@@ -103,14 +102,15 @@ export default function PointsScreen() {
   const grouped = groupA.length > 0 || groupB.length > 0;
 
   return (
-    <View style={{ flex: 1, backgroundColor: c.background }}>
+    <View style={{ flex: 1, backgroundColor: c.bg }}>
+      <ScreenBackground />
+      <GlassAppBar title="Points Table" />
       <ScrollView
-        contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 118 : 120 }}
+        contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 118 : 120, paddingTop: 100 }}
         refreshControl={
-          <RefreshControl refreshing={q.isRefetching} onRefresh={() => { q.refetch(); matchesQ.refetch(); }} tintColor={c.primary} />
+          <RefreshControl refreshing={q.isRefetching} onRefresh={() => { q.refetch(); matchesQ.refetch(); }} tintColor={c.magenta} />
         }
       >
-        <ScreenHeader title="Points Table" subtitle={t('Season 5 standings', 'सीज़न 5 अंक तालिका')} />
         <View style={{ paddingHorizontal: 16, paddingTop: 20 }}>
           {q.isLoading ? (
             <LoadingView />
@@ -122,14 +122,14 @@ export default function PointsScreen() {
             <>
               <GroupTable title="GROUP A" rows={groupA} qualify={2} />
               <GroupTable title="GROUP B" rows={groupB} qualify={2} />
-              <Text style={{ color: c.mutedForeground, fontSize: 12, paddingHorizontal: 4, paddingBottom: 6, textAlign: 'center' }}>
+              <Text style={{ color: c.sub, fontSize: 12, paddingHorizontal: 4, paddingBottom: 6, textAlign: 'center' }}>
                 {t('Top 2 teams from each group qualify for the playoffs', 'हर ग्रुप की टॉप 2 टीमें प्लेऑफ़ में जाती हैं')}
               </Text>
             </>
           ) : (
             <>
               <GroupTable title="STANDINGS" rows={table} qualify={4} />
-              <Text style={{ color: c.mutedForeground, fontSize: 12, paddingHorizontal: 4, paddingBottom: 6, textAlign: 'center' }}>
+              <Text style={{ color: c.sub, fontSize: 12, paddingHorizontal: 4, paddingBottom: 6, textAlign: 'center' }}>
                 {t('Top 4 teams qualify for the playoffs', 'टॉप 4 टीमें प्लेऑफ़ में जाती हैं')}
               </Text>
             </>
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 6,
   },
-  pos: { width: 22, fontFamily: 'Inter_700Bold', fontSize: 13, textAlign: 'center' },
+  pos: { width: 22, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 13, textAlign: 'center' },
   medal: {
     width: 20,
     height: 20,
@@ -164,9 +164,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  medalText: { color: '#000', fontFamily: 'Inter_800ExtraBold', fontSize: 11 },
+  medalText: { color: '#000', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 11 },
   team: { flex: 1, paddingLeft: 8 },
-  num: { width: 26, textAlign: 'center', fontSize: 13, fontFamily: 'Inter_500Medium' },
-  nrr: { width: 50, textAlign: 'right', fontSize: 12, fontFamily: 'Inter_600SemiBold' },
+  num: { width: 26, textAlign: 'center', fontSize: 13, fontFamily: 'PlusJakartaSans_500Medium' },
+  nrr: { width: 50, textAlign: 'right', fontSize: 12, fontFamily: 'PlusJakartaSans_600SemiBold' },
   pts: { width: 36, textAlign: 'right', fontSize: 13 },
 });

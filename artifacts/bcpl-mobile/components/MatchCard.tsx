@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View, Platform } from 'react-native';
 import { useColors } from '@/hooks/useColors';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
-import { Badge, Card, TeamLogo } from '@/components/ui';
+import { Badge, Card, TeamLogo, getTeamColor, GradientTag } from '@/components/ui';
 import type { Match } from '@/lib/api';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -38,13 +38,18 @@ function MatchCountdown({ scheduledAt }: { scheduledAt?: string | null }) {
   const remainingHours = hours % 24;
 
   let text = '';
-  if (days > 0) text = `In ${days}d ${remainingHours}h`;
-  else if (hours > 0) text = `In ${hours}h`;
-  else text = `Starting soon`;
+  if (days > 0) {
+    text = `IN ${days}D ${String(remainingHours).padStart(2,'0')}H`;
+  } else if (hours > 0) {
+    const mins = Math.floor((diff % 3600000) / 60000);
+    text = `${String(hours).padStart(2,'0')}:${String(mins).padStart(2,'0')}`;
+  } else {
+    text = `SOON`;
+  }
 
   return (
-    <View style={styles.countdownPill}>
-      <Text style={styles.countdownText}>{text}</Text>
+    <View style={[styles.countdownPill, { borderColor: c.line, backgroundColor: c.card2 }]}>
+      <Text style={[styles.countdownText, { color: c.ink }]}>{text}</Text>
     </View>
   );
 }
@@ -64,70 +69,70 @@ export function MatchCard({ match }: { match: Match }) {
       }}
       style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] })}
     >
-      <Card style={[styles.card, isLive && { borderColor: 'rgba(255,59,48,0.4)', borderWidth: 1 }]}>
-        {isLive && (
-          <LinearGradient
-            colors={['rgba(255, 59, 48, 0.15)', 'transparent']}
-            style={StyleSheet.absoluteFill}
-            start={{ x: 0.5, y: 0 }}
-            end={{ x: 0.5, y: 0.8 }}
-            pointerEvents="none"
-          />
-        )}
-        <View style={styles.topRow}>
-          <Text style={[styles.meta, { color: c.mutedForeground }]}>
-            Match {match.matchNo}
-            {match.stage ? ` · ${match.stage}` : ''}
-            {match.grp ? ` · Group ${match.grp}` : ''}
-          </Text>
-          {isLive ? (
-            <Badge label="Live" tone="live" />
-          ) : isDone ? (
-            <Badge label="Result" tone="gold" />
-          ) : (
-            <MatchCountdown scheduledAt={match.scheduledAt} />
-          )}
-        </View>
-        <View style={styles.teamsRow}>
-          <View style={styles.team}>
-            <View style={styles.logoWrap}>
-              <LinearGradient colors={['rgba(255,255,255,0.1)', 'transparent']} style={styles.logoGlow} />
-              <TeamLogo name={match.team1} size={60} glow={true} />
+      <Card style={[styles.card, { padding: 0, overflow: 'hidden' }]}>
+        <LinearGradient
+          colors={[`${getTeamColor(match.team1)}22`, 'transparent']}
+          start={{ x: 0, y: 0.5 }}
+          end={{ x: 0.4, y: 0.5 }}
+          style={StyleSheet.absoluteFill}
+          pointerEvents="none"
+        />
+        <LinearGradient
+          colors={[`${getTeamColor(match.team2)}22`, 'transparent']}
+          start={{ x: 1, y: 0.5 }}
+          end={{ x: 0.6, y: 0.5 }}
+          style={StyleSheet.absoluteFill}
+          pointerEvents="none"
+        />
+        <View style={{ padding: 16 }}>
+          <View style={styles.topRow}>
+            <View style={{ flexDirection: 'row', gap: 6 }}>
+              {match.stage && <GradientTag label={match.stage} color={c.cyan} />}
+              {match.grp && <GradientTag label={`Group ${match.grp}`} color={c.lime} />}
+              {!match.stage && !match.grp && <GradientTag label={`Match ${match.matchNo}`} color={c.violet} />}
             </View>
-            <Text style={[styles.teamName, { color: c.foreground }]} numberOfLines={2}>
-              {match.team1}
-            </Text>
+            {isLive ? (
+              <GradientTag label="Live" color={c.coral} dot={true} />
+            ) : isDone ? (
+              <GradientTag label="Result" color={c.sub} />
+            ) : (
+              <MatchCountdown scheduledAt={match.scheduledAt} />
+            )}
+          </View>
+          <View style={styles.teamsRow}>
+            <View style={styles.team}>
+              <View style={styles.logoWrap}>
+                <TeamLogo name={match.team1} size={64} glow={true} />
+              </View>
+              <Text style={[styles.teamName, { color: c.ink }]} numberOfLines={2}>
+                {match.team1}
+              </Text>
+            </View>
+            
+            <View style={styles.vsContainer}>
+              <LinearGradient colors={['transparent', c.line, 'transparent']} style={styles.vsLineVert} />
+              <View style={[styles.vsChip, { backgroundColor: c.card2, borderColor: c.line }]}>
+                <Text style={[styles.vs, { color: c.sub }]}>VS</Text>
+              </View>
+              <LinearGradient colors={['transparent', c.line, 'transparent']} style={styles.vsLineVert} />
+            </View>
+  
+            <View style={styles.team}>
+              <View style={styles.logoWrap}>
+                <TeamLogo name={match.team2} size={64} glow={true} />
+              </View>
+              <Text style={[styles.teamName, { color: c.ink }]} numberOfLines={2}>
+                {match.team2}
+              </Text>
+            </View>
           </View>
           
-          <View style={styles.vsContainer}>
-            <LinearGradient colors={['transparent', c.border, 'transparent']} style={styles.vsLineVert} />
-            <LinearGradient
-              colors={['#FF1A75', '#8A2BE2']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.vsChip}
-            >
-              <Text style={styles.vs}>VS</Text>
-            </LinearGradient>
-            <LinearGradient colors={['transparent', c.border, 'transparent']} style={styles.vsLineVert} />
-          </View>
-
-          <View style={styles.team}>
-            <View style={styles.logoWrap}>
-              <LinearGradient colors={['rgba(255,255,255,0.1)', 'transparent']} style={styles.logoGlow} />
-              <TeamLogo name={match.team2} size={60} glow={true} />
-            </View>
-            <Text style={[styles.teamName, { color: c.foreground }]} numberOfLines={2}>
-              {match.team2}
+          <View style={styles.footContainer}>
+            <LinearGradient colors={['transparent', c.line, 'transparent']} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.footDivider} />
+            <Text style={[styles.foot, { color: isDone && match.resultDesc ? c.magenta : c.sub }]} numberOfLines={1}>
+              {isDone && match.resultDesc ? match.resultDesc : `${fmtDate(match.scheduledAt)}${match.venue ? ` · ${match.venue}` : ''}`}
             </Text>
           </View>
-        </View>
-        
-        <View style={styles.footContainer}>
-          <LinearGradient colors={['transparent', 'rgba(255,255,255,0.1)', 'transparent']} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.footDivider} />
-          <Text style={[styles.foot, { color: isDone && match.resultDesc ? c.accent : c.secondaryForeground }]} numberOfLines={1}>
-            {isDone && match.resultDesc ? match.resultDesc : `${fmtDate(match.scheduledAt)}${match.venue ? ` · ${match.venue}` : ''}`}
-          </Text>
         </View>
       </Card>
     </Pressable>
@@ -142,18 +147,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
-  meta: { fontSize: 11, fontFamily: 'Inter_700Bold', letterSpacing: 0.5, textTransform: 'uppercase' },
+  meta: { fontSize: 11, fontFamily: 'PlusJakartaSans_700Bold', letterSpacing: 0.5, textTransform: 'uppercase' },
   countdownPill: {
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    borderRadius: 12,
-    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 8,
     paddingVertical: 4,
   },
   countdownText: {
-    color: '#E2E8F0',
     fontSize: 10,
-    fontFamily: 'Inter_600SemiBold',
-    letterSpacing: 0.5,
+    fontFamily: 'SpaceGrotesk_700Bold',
+    letterSpacing: 1,
   },
   teamsRow: {
     flexDirection: 'row',
@@ -174,7 +178,7 @@ const styles = StyleSheet.create({
   },
   teamName: {
     fontSize: 14,
-    fontFamily: 'Inter_700Bold',
+    fontFamily: 'PlusJakartaSans_700Bold',
     textAlign: 'center',
     lineHeight: 18,
   },
@@ -188,7 +192,7 @@ const styles = StyleSheet.create({
     height: 1,
     flex: 1,
   },
-  vs: { fontSize: 13, fontFamily: 'Inter_800ExtraBold', color: '#fff', textShadowColor: 'rgba(0,0,0,0.5)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 2 },
+  vs: { fontSize: 13, fontFamily: 'BricolageGrotesque_800ExtraBold' },
   vsChip: {
     borderRadius: 20,
     width: 40,
@@ -196,13 +200,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: -4,
-    shadowColor: '#FF1A75',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 8,
-    elevation: 4,
-    borderWidth: 2,
-    borderColor: '#161124',
+    borderWidth: 1,
     zIndex: 2,
   },
   footContainer: {
@@ -215,5 +213,5 @@ const styles = StyleSheet.create({
     width: '100%',
     marginBottom: 12,
   },
-  foot: { fontSize: 13, textAlign: 'center', fontFamily: 'Inter_600SemiBold', letterSpacing: 0.2 },
+  foot: { fontSize: 13, textAlign: 'center', fontFamily: 'PlusJakartaSans_600SemiBold', letterSpacing: 0.2 },
 });

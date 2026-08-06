@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, Platform, StyleSheet, View } from 'react-native';
+import { Animated, Platform, StyleSheet, View, Pressable } from 'react-native';
 import { useColors } from '@/hooks/useColors';
 import { Feather } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
-import { Tabs } from 'expo-router';
+import { Tabs, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -33,21 +33,26 @@ function TabIcon({ name, focused, color, feather }: { name: string; focused: boo
         ]}
       >
         <LinearGradient
-          colors={['rgba(255, 26, 117, 0.4)', 'transparent']}
+          colors={[c.mesh3, 'transparent']}
           style={StyleSheet.absoluteFill}
         />
       </Animated.View>
-      <Feather name={feather} size={22} color={focused ? c.primary : c.mutedForeground} />
-      <Animated.View
-        style={[
-          styles.activeDot,
-          {
-            backgroundColor: c.primary,
-            opacity: scale,
-            transform: [{ scale: scale.interpolate({ inputRange: [0, 1], outputRange: [0, 1] }) }, { translateY: 4 }],
-          },
-        ]}
-      />
+      <Feather name={feather} size={22} color={focused ? c.ink : c.sub} />
+    </View>
+  );
+}
+
+function FabTab() {
+  return (
+    <View style={{ top: -14, alignItems: 'center', justifyContent: 'center' }}>
+      <LinearGradient
+        colors={['#5B2BF0', '#9B2FF0', '#FF3DA6']}
+        style={{ width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', shadowColor: '#9B2FF0', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.4, shadowRadius: 10, elevation: 6 }}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      >
+        <Feather name="plus" size={24} color="#fff" />
+      </LinearGradient>
     </View>
   );
 }
@@ -55,9 +60,8 @@ function TabIcon({ name, focused, color, feather }: { name: string; focused: boo
 export default function TabLayout() {
   const c = useColors();
   const insets = useSafeAreaInsets();
-  const isIOS = Platform.OS === 'ios';
+  const router = useRouter();
   const isWeb = Platform.OS === 'web';
-
   const bottomPadding = isWeb ? 20 : Math.max(20, insets.bottom + 8);
 
   return (
@@ -70,33 +74,39 @@ export default function TabLayout() {
           bottom: bottomPadding,
           left: 20,
           right: 20,
-          height: 64,
-          borderRadius: 32,
-          backgroundColor: isIOS ? 'transparent' : 'rgba(22, 17, 36, 0.95)',
+          height: 68,
+          borderRadius: 34,
+          backgroundColor: c.glass,
           borderWidth: 1,
-          borderColor: 'rgba(255,255,255,0.1)',
+          borderColor: c.line,
           elevation: 10,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 8 },
-          shadowOpacity: 0.3,
-          shadowRadius: 16,
-          paddingBottom: 0, // override default padding
+          shadowColor: c.isDark ? '#000' : '#2D196E',
+          shadowOffset: { width: 0, height: 10 },
+          shadowOpacity: c.isDark ? 0.34 : 0.09,
+          shadowRadius: 26,
+          paddingBottom: 0,
         },
-        tabBarBackground: () =>
-          isIOS ? (
-            <BlurView intensity={80} tint="dark" style={[StyleSheet.absoluteFill, { borderRadius: 32, overflow: 'hidden' }]} />
-          ) : (
-            <LinearGradient
-              colors={['rgba(22, 17, 36,0.95)', 'rgba(11, 8, 19,0.95)']}
-              style={[StyleSheet.absoluteFill, { borderRadius: 32 }]}
-            />
-          ),
+        tabBarBackground: () => (
+          <BlurView intensity={80} tint={c.isDark ? 'dark' : 'light'} style={[StyleSheet.absoluteFill, { borderRadius: 34, overflow: 'hidden' }]} />
+        ),
       }}
     >
       <Tabs.Screen name="index" options={{ title: 'Home', tabBarIcon: (props) => <TabIcon feather="home" {...props} name="Home" /> }} />
       <Tabs.Screen name="matches" options={{ title: 'Matches', tabBarIcon: (props) => <TabIcon feather="calendar" {...props} name="Matches" /> }} />
+      <Tabs.Screen 
+        name="news" 
+        options={{ 
+          title: 'Register', 
+          tabBarIcon: () => <FabTab />,
+        }}
+        listeners={() => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            router.push('/register');
+          },
+        })}
+      />
       <Tabs.Screen name="points" options={{ title: 'Points', tabBarIcon: (props) => <TabIcon feather="bar-chart-2" {...props} name="Points" /> }} />
-      <Tabs.Screen name="news" options={{ title: 'News', tabBarIcon: (props) => <TabIcon feather="file-text" {...props} name="News" /> }} />
       <Tabs.Screen name="profile" options={{ title: 'Profile', tabBarIcon: (props) => <TabIcon feather="user" {...props} name="Profile" /> }} />
     </Tabs>
   );
@@ -108,16 +118,10 @@ const styles = StyleSheet.create({
     height: 48,
     alignItems: 'center',
     justifyContent: 'center',
+    top: 4,
   },
   activeGlow: {
     borderRadius: 24,
     overflow: 'hidden',
-  },
-  activeDot: {
-    position: 'absolute',
-    bottom: 2,
-    width: 4,
-    height: 4,
-    borderRadius: 2,
   },
 });

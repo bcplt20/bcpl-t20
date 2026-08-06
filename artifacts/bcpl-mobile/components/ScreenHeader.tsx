@@ -38,9 +38,9 @@ export function ScreenHeader({ title, subtitle, subtitleColor }: { title: string
             <Text style={styles.seasonTxt}>SEASON 5</Text>
           </View>
         </View>
-        <Text style={[styles.title, { color: c.foreground }]}>{title}</Text>
+        <Text style={[styles.title, { color: c.ink }]}>{title}</Text>
         {subtitle ? (
-          <Text style={[styles.sub, { color: subtitleColor ?? c.mutedForeground }, subtitleColor ? { fontFamily: 'Inter_800ExtraBold' } : null]}>
+          <Text style={[styles.sub, { color: subtitleColor ?? c.sub }, subtitleColor ? { fontFamily: 'BricolageGrotesque_800ExtraBold' } : null]}>
             {subtitle}
           </Text>
         ) : null}
@@ -77,8 +77,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 4,
   },
-  seasonTxt: { color: '#00E5FF', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1.5 },
-  title: { fontSize: 32, fontFamily: 'Inter_800ExtraBold', letterSpacing: -0.5 },
-  sub: { fontSize: 15, marginTop: 6, fontFamily: 'Inter_600SemiBold', letterSpacing: 0.2 },
+  seasonTxt: { color: '#00E5FF', fontSize: 10, fontFamily: 'BricolageGrotesque_800ExtraBold', letterSpacing: 1.5 },
+  title: { fontSize: 32, fontFamily: 'BricolageGrotesque_800ExtraBold', letterSpacing: -0.5 },
+  sub: { fontSize: 15, marginTop: 6, fontFamily: 'PlusJakartaSans_600SemiBold', letterSpacing: 0.2 },
   underline: { height: 4, borderRadius: 2, width: 80, marginTop: 20, opacity: 0.9 },
 });

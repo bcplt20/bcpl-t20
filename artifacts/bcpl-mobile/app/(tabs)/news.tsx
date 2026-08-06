@@ -16,7 +16,7 @@ export default function NewsScreen() {
   const router = useRouter();
 
   return (
-    <View style={{ flex: 1, backgroundColor: c.background }}>
+    <View style={{ flex: 1, backgroundColor: c.bg }}>
       <FlatList
         data={NEWS_ARTICLES}
         keyExtractor={(n) => n.slug}
@@ -40,13 +40,13 @@ export default function NewsScreen() {
               <View style={{ padding: 20, paddingTop: 16 }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 }}>
                   <View style={{ backgroundColor: '#FF1A75', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 4 }}>
-                    <Text style={{ color: '#fff', fontSize: 10, fontFamily: 'Inter_800ExtraBold', letterSpacing: 0.5 }}>
+                    <Text style={{ color: '#fff', fontSize: 10, fontFamily: 'BricolageGrotesque_800ExtraBold', letterSpacing: 0.5 }}>
                       {n.tag.toUpperCase()}
                     </Text>
                   </View>
-                  <Text style={{ color: c.mutedForeground, fontSize: 12, fontFamily: 'Inter_600SemiBold' }}>{n.date}</Text>
+                  <Text style={{ color: c.sub, fontSize: 12, fontFamily: 'PlusJakartaSans_600SemiBold' }}>{n.date}</Text>
                 </View>
-                <Text style={[styles.title, { color: c.foreground }]} numberOfLines={3}>
+                <Text style={[styles.title, { color: c.ink }]} numberOfLines={3}>
                   {n.title}
                 </Text>
               </View>
@@ -59,5 +59,5 @@ export default function NewsScreen() {
 }
 
 const styles = StyleSheet.create({
-  title: { fontSize: 20, fontFamily: 'Inter_800ExtraBold', lineHeight: 28, letterSpacing: -0.5 },
+  title: { fontSize: 20, fontFamily: 'BricolageGrotesque_800ExtraBold', lineHeight: 28, letterSpacing: -0.5 },
 });

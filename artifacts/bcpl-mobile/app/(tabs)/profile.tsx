@@ -17,7 +17,8 @@ import { useColors } from '@/hooks/useColors';
 import { useAuth } from '@/context/AuthContext';
 import { useLang, type Lang } from '@/context/LanguageContext';
 import { getDashboard } from '@/lib/api';
-import { Badge, Card, ErrorView, LoadingView } from '@/components/ui';
+import { useTheme } from '@/context/ThemeContext';
+import { Badge, Card, ErrorView, LoadingView, GlassAppBar, ScreenBackground, GradientTag } from '@/components/ui';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -29,12 +30,12 @@ function StatusRow({ label, value, done, isCurrent }: { label: string; value: st
         <Feather
           name={done ? 'check-circle' : isCurrent ? 'clock' : 'circle'}
           size={18}
-          color={done ? c.success : isCurrent ? c.accent : 'rgba(255,255,255,0.2)'}
+          color={done ? c.mint : isCurrent ? c.cyan : 'rgba(255,255,255,0.2)'}
         />
       </View>
-      <Text style={{ color: done || isCurrent ? c.foreground : c.mutedForeground, fontSize: 14.5, flex: 1, fontFamily: 'Inter_700Bold' }}>{label}</Text>
+      <Text style={{ color: done || isCurrent ? c.ink : c.sub, fontSize: 14.5, flex: 1, fontFamily: 'PlusJakartaSans_700Bold' }}>{label}</Text>
       <View style={[styles.statusValuePill, done && { backgroundColor: 'rgba(49, 197, 107, 0.15)', borderColor: 'rgba(49, 197, 107, 0.4)' }, isCurrent && !done && { backgroundColor: 'rgba(0, 229, 255, 0.15)', borderColor: 'rgba(0, 229, 255, 0.4)' }]}>
-        <Text style={{ color: done ? c.success : isCurrent ? c.accent : c.mutedForeground, fontSize: 12, fontFamily: 'Inter_700Bold', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+        <Text style={{ color: done ? c.mint : isCurrent ? c.cyan : c.sub, fontSize: 12, fontFamily: 'PlusJakartaSans_700Bold', textTransform: 'uppercase', letterSpacing: 0.5 }}>
           {value}
         </Text>
       </View>
@@ -54,9 +55,30 @@ function LangSwitch() {
     { value: 'en', label: 'English' },
     { value: 'hi', label: 'हिंदी' },
   ];
+  const { theme, toggleTheme } = useTheme();
   return (
-    <Card>
-      <Text style={[styles.cardTitle, { color: c.foreground }]}>{t('Language', 'भाषा')}</Text>
+    <Card padding={0} border={true}>
+      <View style={{ padding: 20, paddingBottom: 16 }}>
+        <Text style={[styles.cardTitle, { color: c.ink }]}>{t('Preferences', 'प्राथमिकता')}</Text>
+      </View>
+      <View style={{ padding: 20, paddingTop: 0 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+          <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 16 }}>
+            {t('App Theme', 'ऐप थीम')}
+          </Text>
+          <Pressable
+            onPress={toggleTheme}
+            style={{ flexDirection: 'row', backgroundColor: c.card2, borderRadius: 20, padding: 4, borderWidth: 1, borderColor: c.line }}
+          >
+            <View style={{ paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, backgroundColor: theme === 'stadium' ? c.card : 'transparent' }}>
+              <Feather name="moon" size={14} color={theme === 'stadium' ? c.cyan : c.sub} />
+            </View>
+            <View style={{ paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, backgroundColor: theme === 'light' ? c.card : 'transparent' }}>
+              <Feather name="sun" size={14} color={theme === 'light' ? c.orange : c.sub} />
+            </View>
+          </Pressable>
+        </View>
+        <Text style={[styles.cardTitle, { color: c.ink, marginBottom: 12, fontSize: 16 }]}>{t('Language', 'भाषा')}</Text>
       <View style={{ flexDirection: 'row', gap: 12, marginTop: 12 }}>
         {opts.map((o) => {
           const isActive = lang === o.value;
@@ -67,21 +89,17 @@ function LangSwitch() {
               style={({ pressed }) => [
                 styles.langBtn,
                 {
-                  borderColor: isActive ? c.primary : 'rgba(255,255,255,0.1)',
+                  borderColor: isActive ? c.violet : c.line,
+                  backgroundColor: isActive ? c.card2 : 'transparent',
                   opacity: pressed ? 0.8 : 1,
                 },
               ]}
               testID={`lang-${o.value}`}
             >
-              {isActive ? (
-                <LinearGradient colors={['#FF1A75', '#D10056']} style={StyleSheet.absoluteFill} />
-              ) : (
-                <LinearGradient colors={['rgba(255,255,255,0.05)', 'rgba(255,255,255,0.02)']} style={StyleSheet.absoluteFill} />
-              )}
               <Text
                 style={{
-                  color: isActive ? '#fff' : c.mutedForeground,
-                  fontFamily: isActive ? 'Inter_700Bold' : 'Inter_600SemiBold',
+                  color: isActive ? c.violet : c.sub,
+                  fontFamily: isActive ? 'PlusJakartaSans_700Bold' : 'PlusJakartaSans_600SemiBold',
                   fontSize: 14,
                 }}
               >
@@ -90,6 +108,7 @@ function LangSwitch() {
             </Pressable>
           );
         })}
+      </View>
       </View>
     </Card>
   );
@@ -112,8 +131,10 @@ function LegalLinks() {
   const c = useColors();
   const { t } = useLang();
   return (
-    <Card>
-      <Text style={[styles.cardTitle, { color: c.foreground, marginBottom: 12 }]}>{t('Rules & policies', 'नियम और नीतियाँ')}</Text>
+    <Card padding={0} border={true}>
+      <View style={{ padding: 20, paddingBottom: 12 }}>
+        <Text style={[styles.cardTitle, { color: c.ink, marginBottom: 12 }]}>{t('Rules & policies', 'नियम और नीतियाँ')}</Text>
+      </View>
       <View>
         {LEGAL_LINKS.map((l, i) => (
           <Pressable
@@ -121,15 +142,16 @@ function LegalLinks() {
             onPress={() => WebBrowser.openBrowserAsync(`https://bcplt20.com${l.path}`)}
             style={({ pressed }) => [
               styles.supportRow,
-              i > 0 && { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: 'rgba(255,255,255,0.1)' },
+              { paddingHorizontal: 20 },
+              i > 0 && { borderTopWidth: 1, borderTopColor: c.line },
               { opacity: pressed ? 0.7 : 1 },
             ]}
             testID={`legal-${l.path.slice(1)}`}
           >
-            <Text style={{ color: c.secondaryForeground, fontSize: 14, fontFamily: 'Inter_600SemiBold', flex: 1 }}>
+            <Text style={{ color: c.sub, fontSize: 14, fontFamily: 'PlusJakartaSans_600SemiBold', flex: 1 }}>
               {t(l.en, l.hi)}
             </Text>
-            <Feather name="chevron-right" size={16} color={c.mutedForeground} />
+            <Feather name="chevron-right" size={16} color={c.sub} />
           </Pressable>
         ))}
       </View>
@@ -141,13 +163,15 @@ function ContactSupport() {
   const c = useColors();
   const { t } = useLang();
   const rows = [
-    { icon: 'message-circle' as const, label: t('WhatsApp support', 'WhatsApp सपोर्ट'), sub: '+91 91513 46555', url: 'https://wa.me/919151346555' },
-    { icon: 'phone' as const, label: t('Call us', 'कॉल करें'), sub: '+91 91513 46555', url: 'tel:+919151346555' },
-    { icon: 'mail' as const, label: t('Email', 'ईमेल'), sub: 'support@bcplt20.com', url: 'mailto:support@bcplt20.com' },
+    { icon: 'message-circle' as const, label: t('WhatsApp support', 'WhatsApp सपोर्ट'), sub: '+91 91513 46555', url: 'https://wa.me/919151346555', color: c.mint },
+    { icon: 'phone' as const, label: t('Call us', 'कॉल करें'), sub: '+91 91513 46555', url: 'tel:+919151346555', color: c.orange },
+    { icon: 'mail' as const, label: t('Email', 'ईमेल'), sub: 'support@bcplt20.com', url: 'mailto:support@bcplt20.com', color: c.cyan },
   ];
   return (
-    <Card>
-      <Text style={[styles.cardTitle, { color: c.foreground, marginBottom: 12 }]}>{t('Contact & support', 'संपर्क और सहायता')}</Text>
+    <Card padding={0} border={true}>
+      <View style={{ padding: 20, paddingBottom: 12 }}>
+        <Text style={[styles.cardTitle, { color: c.ink, marginBottom: 12 }]}>{t('Contact & support', 'संपर्क और सहायता')}</Text>
+      </View>
       <View style={{ gap: 4 }}>
         {rows.map((r, i) => (
           <Pressable
@@ -155,19 +179,20 @@ function ContactSupport() {
             onPress={() => Linking.openURL(r.url)}
             style={({ pressed }) => [
               styles.supportRow,
+              { paddingHorizontal: 20 },
               { opacity: pressed ? 0.7 : 1 },
-              i > 0 && { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: 'rgba(255,255,255,0.08)' }
+              i > 0 && { borderTopWidth: 1, borderTopColor: c.line }
             ]}
             testID={`support-${r.icon}`}
           >
-            <View style={styles.supportIcon}>
-              <Feather name={r.icon} size={18} color="#00E5FF" />
+            <View style={[styles.supportIcon, { backgroundColor: `${r.color}20` }]}>
+              <Feather name={r.icon} size={18} color={c.getAccentText(r.color)} />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={{ color: c.foreground, fontFamily: 'Inter_700Bold', fontSize: 15 }}>{r.label}</Text>
-              <Text style={{ color: c.mutedForeground, fontSize: 13, marginTop: 4, fontFamily: 'Inter_500Medium' }}>{r.sub}</Text>
+              <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 15 }}>{r.label}</Text>
+              <Text style={{ color: c.sub, fontSize: 13, marginTop: 4, fontFamily: 'PlusJakartaSans_500Medium' }}>{r.sub}</Text>
             </View>
-            <Feather name="chevron-right" size={18} color={c.mutedForeground} />
+            <Feather name="chevron-right" size={18} color={c.sub} />
           </Pressable>
         ))}
       </View>
@@ -191,18 +216,19 @@ export default function ProfileScreen() {
 
   if (!token) {
     return (
-      <View style={{ flex: 1, backgroundColor: c.background }}>
-        <ScrollView contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 118 : 120 }}>
-        <ScreenHeader title="Profile" />
+      <View style={{ flex: 1, backgroundColor: c.bg }}>
+        <ScreenBackground />
+      <GlassAppBar title="Profile" />
+      <ScrollView contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 118 : 120, paddingTop: 100 }}>
         <View style={styles.loginWrap}>
           <View style={styles.loginIconWrap}>
             <LinearGradient colors={['rgba(255, 26, 117,0.2)', 'rgba(255, 26, 117,0.05)']} style={StyleSheet.absoluteFill} />
-            <Feather name="user" size={44} color={c.primary} />
+            <Feather name="user" size={44} color={c.magenta} />
           </View>
-          <Text style={{ color: c.foreground, fontFamily: 'Inter_800ExtraBold', fontSize: 24, marginTop: 24, textAlign: 'center' }}>
+          <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 24, marginTop: 24, textAlign: 'center' }}>
             {t('Log in to your BCPL account', 'अपने BCPL अकाउंट में लॉगिन करें')}
           </Text>
-          <Text style={{ color: c.mutedForeground, textAlign: 'center', marginTop: 12, fontSize: 15, lineHeight: 24, fontFamily: 'Inter_500Medium' }}>
+          <Text style={{ color: c.sub, textAlign: 'center', marginTop: 12, fontSize: 15, lineHeight: 24, fontFamily: 'PlusJakartaSans_500Medium' }}>
             {t('Use the same phone number you registered with on bcplt20.com — you will log in via OTP', 'वही फ़ोन नंबर इस्तेमाल करें जिससे आपने bcplt20.com पर रजिस्टर किया था — OTP से लॉगिन होगा')}
           </Text>
           <Pressable
@@ -214,7 +240,7 @@ export default function ProfileScreen() {
               colors={['#FF1A75', '#D10056']}
               style={[StyleSheet.absoluteFill, { borderRadius: 16 }]}
             />
-            <Text style={{ color: '#fff', fontFamily: 'Inter_800ExtraBold', fontSize: 16, letterSpacing: 0.5 }}>
+            <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, letterSpacing: 0.5 }}>
               Login with OTP
             </Text>
           </Pressable>
@@ -233,14 +259,15 @@ export default function ProfileScreen() {
   const reg = d?.registration;
 
   return (
-    <View style={{ flex: 1, backgroundColor: c.background }}>
+    <View style={{ flex: 1, backgroundColor: c.bg }}>
+      <ScreenBackground />
+      <GlassAppBar title={user?.name ?? 'Player'} />
       <ScrollView
-        contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 118 : 120 }}
+        contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 118 : 120, paddingTop: 100 }}
         refreshControl={
-          <RefreshControl refreshing={dashQ.isRefetching} onRefresh={() => dashQ.refetch()} tintColor={c.primary} />
+          <RefreshControl refreshing={dashQ.isRefetching} onRefresh={() => dashQ.refetch()} tintColor={c.violet} />
         }
       >
-        <ScreenHeader title={user?.name ?? 'Player'} subtitle={user?.phone} />
         <View style={{ paddingHorizontal: 16, gap: 16, paddingTop: 16 }}>
           {dashQ.isLoading ? (
             <LoadingView />
@@ -250,12 +277,12 @@ export default function ProfileScreen() {
             <Card style={{ alignItems: 'center', paddingVertical: 40 }}>
               <View style={[styles.loginIconWrap, { backgroundColor: 'transparent', borderColor: 'rgba(0, 229, 255, 0.3)' }]}>
                 <LinearGradient colors={['rgba(0, 229, 255,0.2)', 'rgba(0, 229, 255,0.05)']} style={StyleSheet.absoluteFill} />
-                <Feather name="edit-3" size={36} color={c.accent} />
+                <Feather name="edit-3" size={36} color={c.cyan} />
               </View>
-              <Text style={{ color: c.foreground, fontFamily: 'Inter_800ExtraBold', fontSize: 20, marginTop: 24, textAlign: 'center' }}>
+              <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 20, marginTop: 24, textAlign: 'center' }}>
                 {t("Register for this season on bcplt20.com", 'इस सीज़न की रजिस्ट्रेशन bcplt20.com पर करें')}
               </Text>
-              <Text style={{ color: c.mutedForeground, fontSize: 14, marginTop: 10, textAlign: 'center', lineHeight: 22, fontFamily: 'Inter_500Medium' }}>
+              <Text style={{ color: c.sub, fontSize: 14, marginTop: 10, textAlign: 'center', lineHeight: 22, fontFamily: 'PlusJakartaSans_500Medium' }}>
                 {t('Your dashboard will appear here once registration is complete', 'रजिस्ट्रेशन पूरी होते ही आपका डैशबोर्ड यहाँ दिखेगा')}
               </Text>
               <Pressable
@@ -268,7 +295,7 @@ export default function ProfileScreen() {
                   style={[StyleSheet.absoluteFill, { borderRadius: 14 }]}
                 />
                 <Feather name="edit-3" size={16} color="#fff" />
-                <Text style={{ color: '#fff', fontFamily: 'Inter_800ExtraBold', fontSize: 15, letterSpacing: 0.5 }}>{t('Register now', 'रजिस्टर करें')}</Text>
+                <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 15, letterSpacing: 0.5 }}>{t('Register now', 'रजिस्टर करें')}</Text>
               </Pressable>
             </Card>
           ) : (
@@ -277,18 +304,18 @@ export default function ProfileScreen() {
                 <LinearGradient colors={['rgba(255,255,255,0.05)', 'transparent']} style={{ padding: 20 }}>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                     <View>
-                      <Text style={{ color: c.mutedForeground, fontSize: 11, fontFamily: 'Inter_700Bold', letterSpacing: 1 }}>REGISTRATION NO.</Text>
-                      <Text style={{ color: c.accent, fontFamily: 'Inter_800ExtraBold', fontSize: 28, marginTop: 6, letterSpacing: -0.5 }}>
+                      <Text style={{ color: c.sub, fontSize: 11, fontFamily: 'PlusJakartaSans_700Bold', letterSpacing: 1 }}>REGISTRATION NO.</Text>
+                      <Text style={{ color: c.cyan, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 28, marginTop: 6, letterSpacing: -0.5 }}>
                         {reg?.regNumber ?? '—'}
                       </Text>
                     </View>
-                    {reg?.role ? <Badge label={reg.role} tone="gold" /> : null}
+                    {reg?.role ? <GradientTag label={reg.role} color={c.amber} /> : null}
                   </View>
                   {reg?.trialCity ? (
                     <View style={{ marginTop: 20, paddingTop: 16, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: 'rgba(255,255,255,0.1)', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                      <Feather name="map-pin" size={16} color={c.primary} />
-                      <Text style={{ color: c.foreground, fontSize: 14, fontFamily: 'Inter_500Medium' }}>
-                        Trial city: <Text style={{ fontFamily: 'Inter_800ExtraBold' }}>{reg.trialCity}</Text>
+                      <Feather name="map-pin" size={16} color={c.magenta} />
+                      <Text style={{ color: c.ink, fontSize: 14, fontFamily: 'PlusJakartaSans_500Medium' }}>
+                        Trial city: <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold' }}>{reg.trialCity}</Text>
                       </Text>
                     </View>
                   ) : null}
@@ -297,7 +324,7 @@ export default function ProfileScreen() {
 
               <Card style={{ padding: 0 }}>
                 <View style={{ padding: 20, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(255,255,255,0.1)' }}>
-                  <Text style={[styles.cardTitle, { color: c.foreground }]}>{t('Your season journey', 'आपका सीज़न सफ़र')}</Text>
+                  <Text style={[styles.cardTitle, { color: c.ink }]}>{t('Your season journey', 'आपका सीज़न सफ़र')}</Text>
                 </View>
                 <View style={{ padding: 20, paddingVertical: 12 }}>
                   <StatusRow
@@ -323,7 +350,7 @@ export default function ProfileScreen() {
                         style={[StyleSheet.absoluteFill, { borderRadius: 14 }]}
                       />
                       <Feather name="video" size={18} color="#fff" />
-                      <Text style={{ color: '#fff', fontFamily: 'Inter_800ExtraBold', fontSize: 15 }}>{t('Upload trial video', 'ट्रायल वीडियो अपलोड करें')}</Text>
+                      <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 15 }}>{t('Upload trial video', 'ट्रायल वीडियो अपलोड करें')}</Text>
                     </Pressable>
                   ) : null}
                   <StatusRow
@@ -350,7 +377,7 @@ export default function ProfileScreen() {
               {(d.phase1Payment || d.phase2Payment) && (
                 <Card style={{ padding: 0 }}>
                   <View style={{ padding: 20, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(255,255,255,0.1)' }}>
-                    <Text style={[styles.cardTitle, { color: c.foreground }]}>Payments</Text>
+                    <Text style={[styles.cardTitle, { color: c.ink }]}>Payments</Text>
                   </View>
                   <View style={{ padding: 20, paddingVertical: 12 }}>
                     {d.phase1Payment ? (
@@ -385,8 +412,8 @@ export default function ProfileScreen() {
             ]}
             testID="logout-button"
           >
-            <Feather name="log-out" size={18} color={c.destructive} />
-            <Text style={{ color: c.destructive, fontFamily: 'Inter_800ExtraBold', fontSize: 15 }}>Logout</Text>
+            <Feather name="log-out" size={18} color={c.coral} />
+            <Text style={{ color: c.coral, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 15 }}>Logout</Text>
           </Pressable>
         </View>
       </ScrollView>
@@ -441,7 +468,7 @@ const styles = StyleSheet.create({
     shadowRadius: 16,
     elevation: 8,
   },
-  cardTitle: { fontFamily: 'Inter_800ExtraBold', fontSize: 18, letterSpacing: -0.2 },
+  cardTitle: { fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 18, letterSpacing: -0.2 },
   statusRow: {
     flexDirection: 'row',
     alignItems: 'center',

@@ -12,7 +12,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useColors } from '@/hooks/useColors';
 import { getMatches, type Match } from '@/lib/api';
-import { EmptyView, ErrorView, LoadingView } from '@/components/ui';
+import { EmptyView, ErrorView, LoadingView, GlassAppBar, ScreenBackground } from '@/components/ui';
 import { MatchCard } from '@/components/MatchCard';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { useLang } from '@/context/LanguageContext';
@@ -48,9 +48,10 @@ export default function MatchesScreen() {
     });
 
   return (
-    <View style={{ flex: 1, backgroundColor: c.background }}>
-      <ScreenHeader title="Matches" subtitle={t('Season 5 schedule & results', 'सीज़न 5 शेड्यूल और नतीजे')} />
-      <View style={styles.filters}>
+    <View style={{ flex: 1, backgroundColor: c.bg }}>
+      <ScreenBackground />
+      <GlassAppBar title="Matches" />
+      <View style={[styles.filters, { marginTop: 100, borderBottomColor: c.line }]}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, gap: 10, paddingBottom: 16, paddingTop: 10 }}>
           {FILTERS.map((f) => {
             const isActive = filter === f.key;
@@ -62,19 +63,19 @@ export default function MatchesScreen() {
                 style={[
                   styles.chip,
                   {
-                    borderColor: isActive ? c.primary : 'rgba(255,255,255,0.1)',
+                    borderColor: isActive ? c.magenta : 'rgba(255,255,255,0.1)',
                   },
                 ]}
               >
                 {isActive ? (
-                  <LinearGradient colors={['#FF1A75', '#D10056']} style={StyleSheet.absoluteFill} />
+                  <LinearGradient colors={['#5B2BF0', '#9B2FF0']} style={StyleSheet.absoluteFill} />
                 ) : (
-                  <LinearGradient colors={['rgba(255,255,255,0.05)', 'rgba(255,255,255,0.02)']} style={StyleSheet.absoluteFill} />
+                  <View style={[StyleSheet.absoluteFill, { backgroundColor: c.card2 }]} />
                 )}
                 <Text
                   style={{
-                    color: isActive ? '#fff' : c.mutedForeground,
-                    fontFamily: isActive ? 'Inter_700Bold' : 'Inter_600SemiBold',
+                    color: isActive ? '#fff' : c.sub,
+                    fontFamily: isActive ? 'PlusJakartaSans_700Bold' : 'PlusJakartaSans_600SemiBold',
                     fontSize: 14,
                     letterSpacing: 0.3,
                   }}
@@ -104,7 +105,7 @@ export default function MatchesScreen() {
             paddingTop: 8,
           }}
           refreshControl={
-            <RefreshControl refreshing={q.isRefetching} onRefresh={() => q.refetch()} tintColor={c.primary} />
+            <RefreshControl refreshing={q.isRefetching} onRefresh={() => q.refetch()} tintColor={c.magenta} />
           }
         />
       )}

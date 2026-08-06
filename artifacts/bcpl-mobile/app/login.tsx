@@ -17,6 +17,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useLang } from '@/context/LanguageContext';
 import { ApiError, sendOtp, verifyOtp } from '@/lib/api';
 import { LinearGradient } from 'expo-linear-gradient';
+import { ScreenBackground } from '@/components/ui';
 
 export default function LoginScreen() {
   const c = useColors();
@@ -75,7 +76,8 @@ export default function LoginScreen() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: c.background }}>
+    <View style={{ flex: 1, backgroundColor: c.bg }}>
+      <ScreenBackground />
       <KeyboardAwareScrollViewCompat
         contentContainerStyle={styles.wrap}
         bottomOffset={40}
@@ -83,47 +85,47 @@ export default function LoginScreen() {
       >
         <View style={styles.iconWrap}>
           <LinearGradient
-            colors={['rgba(255,26,117,0.2)', 'rgba(255,26,117,0.05)']}
+            colors={['#5B2BF0', '#FF3DA6']}
             style={[StyleSheet.absoluteFill, { borderRadius: 40 }]}
           />
-          <Feather name="smartphone" size={36} color={c.primary} />
+          <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 32, color: '#fff' }}>B</Text>
         </View>
-        <Text style={[styles.title, { color: c.foreground }]}>
+        <Text style={[styles.title, { color: c.ink }]}>
           {step === 'phone' ? t('Log in with OTP', 'OTP से लॉगिन करें') : t('Enter OTP', 'OTP डालें')}
         </Text>
-        <Text style={[styles.sub, { color: c.mutedForeground }]}>
+        <Text style={[styles.sub, { color: c.sub }]}>
           {step === 'phone'
             ? t('The same number you used for BCPL registration', 'वही नंबर जिससे BCPL रजिस्ट्रेशन की थी')
             : t(`Enter the OTP sent to +91 ${phone}`, `+91 ${phone} पर भेजा गया OTP डालें`)}
         </Text>
 
         {step === 'phone' ? (
-          <View style={[styles.inputRow, { borderColor: 'rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.05)' }]}>
-            <Text style={{ color: c.mutedForeground, fontFamily: 'Inter_700Bold', fontSize: 16 }}>+91</Text>
-            <View style={{ width: 1, height: 24, backgroundColor: 'rgba(255,255,255,0.15)' }} />
+          <View style={[styles.inputRow, { borderColor: c.line, backgroundColor: c.card2 }]}>
+            <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 16 }}>+91</Text>
+            <View style={{ width: 1, height: 24, backgroundColor: c.line }} />
             <TextInput
               value={phone}
               onChangeText={(t) => setPhone(t.replace(/\D/g, '').slice(0, 10))}
               keyboardType="number-pad"
               placeholder="Mobile number"
-              placeholderTextColor={c.mutedForeground}
-              style={[styles.input, { color: c.foreground }]}
+              placeholderTextColor={c.sub}
+              style={[styles.input, { color: c.ink }]}
               maxLength={10}
               testID="phone-input"
               autoFocus
             />
           </View>
         ) : (
-          <View style={[styles.inputRow, { borderColor: 'rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.05)' }]}>
-            <Feather name="key" size={20} color={c.mutedForeground} />
-            <View style={{ width: 1, height: 24, backgroundColor: 'rgba(255,255,255,0.15)' }} />
+          <View style={[styles.inputRow, { borderColor: c.line, backgroundColor: c.card2 }]}>
+            <Feather name="key" size={20} color={c.sub} />
+            <View style={{ width: 1, height: 24, backgroundColor: c.line }} />
             <TextInput
               value={otp}
               onChangeText={(t) => setOtp(t.replace(/\D/g, '').slice(0, 6))}
               keyboardType="number-pad"
               placeholder="OTP"
-              placeholderTextColor={c.mutedForeground}
-              style={[styles.input, { color: c.foreground, letterSpacing: 12, textAlign: 'center' }]}
+              placeholderTextColor={c.sub}
+              style={[styles.input, { color: c.ink, letterSpacing: 12, textAlign: 'center' }]}
               maxLength={6}
               testID="otp-input"
               autoFocus
@@ -133,13 +135,13 @@ export default function LoginScreen() {
 
         {error ? (
           <View style={styles.alertBox}>
-            <Feather name="alert-circle" size={18} color={c.destructive} />
-            <Text style={{ color: c.destructive, fontSize: 14, flex: 1, fontFamily: 'Inter_600SemiBold' }}>{error}</Text>
+            <Feather name="alert-circle" size={18} color={c.coral} />
+            <Text style={{ color: c.coral, fontSize: 14, flex: 1, fontFamily: 'PlusJakartaSans_600SemiBold' }}>{error}</Text>
           </View>
         ) : info && step === 'otp' ? (
           <View style={[styles.alertBox, { backgroundColor: 'rgba(49, 197, 107, 0.15)' }]}>
-            <Feather name="check-circle" size={18} color={c.success} />
-            <Text style={{ color: c.success, fontSize: 14, flex: 1, fontFamily: 'Inter_600SemiBold' }}>{info}</Text>
+            <Feather name="check-circle" size={18} color={c.mint} />
+            <Text style={{ color: c.mint, fontSize: 14, flex: 1, fontFamily: 'PlusJakartaSans_600SemiBold' }}>{info}</Text>
           </View>
         ) : null}
 
@@ -159,7 +161,7 @@ export default function LoginScreen() {
           {busy ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={{ color: '#fff', fontFamily: 'Inter_800ExtraBold', fontSize: 16, letterSpacing: 0.5 }}>
+            <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, letterSpacing: 0.5 }}>
               {step === 'phone' ? 'Send OTP' : 'Verify & Login'}
             </Text>
           )}
@@ -167,7 +169,7 @@ export default function LoginScreen() {
 
         {step === 'otp' ? (
           <Pressable onPress={() => { setStep('phone'); setOtp(''); setError(null); }} testID="change-number" style={{ padding: 16, marginTop: 12 }}>
-            <Text style={{ color: c.accent, fontSize: 15, fontFamily: 'Inter_700Bold' }}>
+            <Text style={{ color: c.cyan, fontSize: 15, fontFamily: 'PlusJakartaSans_700Bold' }}>
               {t('Change number', 'नंबर बदलें')}
             </Text>
           </Pressable>
@@ -195,8 +197,8 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'rgba(255,26,117,0.3)',
   },
-  title: { fontSize: 28, fontFamily: 'Inter_800ExtraBold', letterSpacing: -0.5 },
-  sub: { fontSize: 15, marginTop: 12, textAlign: 'center', lineHeight: 24, paddingHorizontal: 20, fontFamily: 'Inter_500Medium' },
+  title: { fontSize: 28, fontFamily: 'BricolageGrotesque_800ExtraBold', letterSpacing: -0.5 },
+  sub: { fontSize: 15, marginTop: 12, textAlign: 'center', lineHeight: 24, paddingHorizontal: 20, fontFamily: 'PlusJakartaSans_500Medium' },
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -208,7 +210,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 64,
   },
-  input: { flex: 1, fontSize: 18, fontFamily: 'Inter_700Bold' },
+  input: { flex: 1, fontSize: 18, fontFamily: 'PlusJakartaSans_700Bold' },
   btn: {
     marginTop: 32,
     borderRadius: 16,
