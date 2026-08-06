@@ -19,7 +19,7 @@ import { useLang, type Lang } from '@/context/LanguageContext';
 import { getDashboard, getSponsors, type Sponsor } from '@/lib/api';
 import { Image } from 'expo-image';
 import { useTheme } from '@/context/ThemeContext';
-import { Badge, Card, ErrorView, LoadingView, GlassAppBar, ScreenBackground, GradientTag } from '@/components/ui';
+import { Badge, Card, ErrorView, LoadingView, GlassAppBar, ScreenBackground, GradientTag, useAppBarHeight, useBottomNavHeight } from '@/components/ui';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -115,37 +115,26 @@ function LangSwitch() {
   );
 }
 
-const MENU_SECTIONS = [
+import { AccordionItem, LegalGrid, IconRow } from '@/components/MoreSections';
+
+const FAQ_ITEMS = [
   {
-    title: 'League',
-    hi: 'लीग',
-    items: [
-      { en: 'Schedule', hi: 'शेड्यूल', icon: 'calendar', path: '/matches' },
-      { en: 'Points Table', hi: 'अंक तालिका', icon: 'bar-chart-2', path: '/points' },
-    ]
+    enTitle: "Can I register from any city?",
+    hiTitle: "क्या मैं किसी भी शहर से register कर सकता हूं?",
+    enBody: "Yes! We have trial cities across India. Simply select your nearest city during the registration process.",
+    hiBody: "हां! हमारे पास पूरे भारत में trial cities हैं। Registration process के दौरान अपना nearest city select करें।"
   },
   {
-    title: 'Media',
-    hi: 'मीडिया',
-    items: [
-      { en: 'News', hi: 'ताज़ा खबरें', icon: 'file-text', path: '/news' },
-      { en: 'Photos & Videos', hi: 'फ़ोटो और वीडियो', icon: 'image', path: '/media' },
-    ]
+    enTitle: "Is the Phase 1 fee refundable?",
+    hiTitle: "क्या Phase 1 fee refundable है?",
+    enBody: "No. Once a Phase 1 payment is successfully completed, the fee is non-refundable.",
+    hiBody: "नहीं। एक बार Phase 1 payment सफलतापूर्वक पूरा हो जाने पर fee non-refundable है।"
   },
   {
-    title: 'Rulebook & Policies',
-    hi: 'नियम और नीतियाँ',
-    items: [
-      { en: 'How Selection Works', hi: 'चयन प्रक्रिया', icon: 'crosshair', path: '/pages/trust' },
-      { en: 'Eligibility Criteria', hi: 'योग्यता मानदंड', icon: 'check-square', path: '/pages/eligibility' },
-      { en: 'Physical Trial Rules', hi: 'फिज़िकल ट्रायल नियम', icon: 'activity', path: '/pages/trial-rules' },
-      { en: 'Cricket Rulebook', hi: 'क्रिकेट रूलबुक', icon: 'book-open', path: '/pages/cricket-rulebook' },
-      { en: 'Code of Conduct', hi: 'आचार संहिता', icon: 'shield', path: '/pages/code-of-conduct' },
-      { en: 'Terms & Conditions', hi: 'नियम और शर्तें', icon: 'file', path: '/pages/terms' },
-      { en: 'Privacy Policy', hi: 'प्राइवेसी पॉलिसी', icon: 'lock', path: '/pages/privacy' },
-      { en: 'Refund Policy', hi: 'रिफंड पॉलिसी', icon: 'refresh-ccw', path: '/pages/refunds' },
-      { en: 'Brand Usage', hi: 'ब्रांड उपयोग', icon: 'hexagon', path: '/pages/brand-usage' },
-    ]
+    enTitle: "Do humans manually watch every video?",
+    hiTitle: "क्या हर video को इंसान manually देखते हैं?",
+    enBody: "Not necessarily. BCPL may use automated, digital and technology-assisted assessment systems.",
+    hiBody: "ज़रूरी नहीं। BCPL automated, digital और technology-assisted assessment systems का उपयोग कर सकता है।"
   }
 ];
 
@@ -155,36 +144,57 @@ function MoreMenu() {
   const router = useRouter();
 
   return (
-    <View style={{ gap: 16 }}>
-      {MENU_SECTIONS.map((sec) => (
-        <Card key={sec.title} padding={0} border={true}>
-          <View style={{ padding: 20, paddingBottom: 8 }}>
-            <Text style={[styles.cardTitle, { color: c.ink }]}>{t(sec.title, sec.hi)}</Text>
-          </View>
-          <View>
-            {sec.items.map((l, i) => (
-              <Pressable
-                key={l.path}
-                onPress={() => router.push(l.path as any)}
-                style={({ pressed }) => [
-                  styles.supportRow,
-                  { paddingHorizontal: 20 },
-                  i > 0 && { borderTopWidth: 1, borderTopColor: c.line },
-                  { opacity: pressed ? 0.7 : 1 },
-                ]}
-              >
-                <View style={[styles.supportIcon, { backgroundColor: c.card2, borderWidth: 1, borderColor: c.line }]}>
-                  <Feather name={l.icon as any} size={18} color={c.getAccentText(c.cyan)} />
-                </View>
-                <Text style={{ color: c.sub, fontSize: 15, fontFamily: 'PlusJakartaSans_600SemiBold', flex: 1, marginLeft: 16 }}>
-                  {t(l.en, l.hi)}
-                </Text>
-                <Feather name="chevron-right" size={16} color={c.sub} />
-              </Pressable>
-            ))}
-          </View>
+    <View style={{ gap: 24 }}>
+      <View>
+        <Text style={[styles.cardTitle, { color: c.ink, marginBottom: 12 }]}>{t('League & Rules', 'लीग और नियम')}</Text>
+        <Card padding={16} border={true}>
+          <IconRow 
+            icon="calendar" title={t('Schedule', 'शेड्यूल')} subtitle={t('Upcoming matches', 'आने वाले मैच')}
+            colors={['#5B2BF0', '#9B2FF0']} onPress={() => router.push('/matches')} 
+          />
+          <View style={{ height: 1, backgroundColor: c.line, marginVertical: 4 }} />
+          <IconRow 
+            icon="crosshair" title={t('How Selection Works', 'चयन प्रक्रिया')} subtitle={t('The 18 stages', '18 चरण')}
+            colors={['#FF3DA6', '#FF1A75']} onPress={() => router.push('/pages/trust')} 
+          />
+          <View style={{ height: 1, backgroundColor: c.line, marginVertical: 4 }} />
+          <IconRow 
+            icon="activity" title={t('Trial Rules', 'ट्रायल नियम')} subtitle={t('Phase 2 physical', 'फेज 2 फिजिकल')}
+            colors={['#FF8A00', '#FF3D00']} onPress={() => router.push('/pages/trial-rules')} 
+          />
+          <View style={{ height: 1, backgroundColor: c.line, marginVertical: 4 }} />
+          <IconRow 
+            icon="shield" title={t('Code of Conduct', 'आचार संहिता')} subtitle={t('Player standards', 'खिलाड़ी मानक')}
+            colors={['#00E5FF', '#00B3FF']} onPress={() => router.push('/pages/code-of-conduct')} 
+          />
+          <View style={{ height: 1, backgroundColor: c.line, marginVertical: 4 }} />
+          <IconRow 
+            icon="check-square" title={t('Eligibility Criteria', 'योग्यता मानदंड')} subtitle={t('Who can play', 'कौन खेल सकता है')}
+            colors={['#00FF87', '#00C853']} onPress={() => router.push('/pages/eligibility')} 
+          />
+          <View style={{ height: 1, backgroundColor: c.line, marginVertical: 4 }} />
+          <IconRow 
+            icon="book-open" title={t('Cricket Rulebook', 'क्रिकेट रूलबुक')} subtitle={t('Tournament rules', 'टूर्नामेंट नियम')}
+            colors={['#9B2FF0', '#5B2BF0']} onPress={() => router.push('/pages/cricket-rulebook')} 
+          />
         </Card>
-      ))}
+      </View>
+
+      <View>
+        <Text style={[styles.cardTitle, { color: c.ink, marginBottom: 12 }]}>{t('Quick Answers', 'त्वरित उत्तर')}</Text>
+        <Text style={{ color: c.sub, fontSize: 13, marginBottom: 16, fontFamily: 'PlusJakartaSans_500Medium' }}>TAP TO OPEN</Text>
+        {FAQ_ITEMS.map((item, i) => (
+          <AccordionItem key={i} title={t(item.enTitle, item.hiTitle)} body={t(item.enBody, item.hiBody)} />
+        ))}
+        <Pressable onPress={() => router.push('/pages/faq')} style={{ marginTop: 8, padding: 12, alignItems: 'center' }}>
+          <Text style={{ color: c.magenta, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 15 }}>{t('View all FAQs', 'सभी FAQ देखें')} →</Text>
+        </Pressable>
+      </View>
+
+      <View>
+        <Text style={[styles.cardTitle, { color: c.ink, marginBottom: 4 }]}>{t('Legal', 'कानूनी')}</Text>
+        <LegalGrid />
+      </View>
     </View>
   );
 }
@@ -259,6 +269,9 @@ export default function ProfileScreen() {
   const router = useRouter();
   const { token, user, ready, logout } = useAuth();
   const { t } = useLang();
+  
+  const appBarHeight = useAppBarHeight();
+  const bottomNavHeight = useBottomNavHeight();
 
   const dashQ = useQuery({
     queryKey: ['dashboard', token],
@@ -273,7 +286,7 @@ export default function ProfileScreen() {
       <View style={{ flex: 1, backgroundColor: c.bg }}>
         <ScreenBackground />
       <GlassAppBar title={t('More', 'अन्य')} />
-      <ScrollView contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 118 : 120, paddingTop: 100 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: bottomNavHeight, paddingTop: appBarHeight }}>
         <View style={styles.loginWrap}>
           <View style={styles.loginIconWrap}>
             <LinearGradient colors={['rgba(255, 26, 117,0.2)', 'rgba(255, 26, 117,0.05)']} style={StyleSheet.absoluteFill} />
@@ -318,7 +331,7 @@ export default function ProfileScreen() {
       <ScreenBackground />
       <GlassAppBar title={user?.name ?? 'Player'} />
       <ScrollView
-        contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 118 : 120, paddingTop: 100 }}
+        contentContainerStyle={{ paddingBottom: bottomNavHeight, paddingTop: appBarHeight }}
         refreshControl={
           <RefreshControl refreshing={dashQ.isRefetching} onRefresh={() => dashQ.refetch()} tintColor={c.violet} />
         }

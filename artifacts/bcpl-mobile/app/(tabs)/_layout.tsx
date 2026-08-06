@@ -72,8 +72,8 @@ export default function TabLayout() {
         tabBarStyle: {
           position: 'absolute',
           bottom: bottomPadding,
-          left: Math.max((Dimensions.get('window').width - 392) / 2, 12),
-          width: Math.min(392, Dimensions.get('window').width - 24),
+          left: 12,
+          right: 12,
           height: 68,
           borderRadius: 34,
           backgroundColor: c.glass,
@@ -107,10 +107,9 @@ export default function TabLayout() {
         })}
       />
       <Tabs.Screen name="points" options={{ title: 'Points', tabBarIcon: (props) => <TabIcon feather="bar-chart-2" {...props} name="Points" /> }} />
-      <Tabs.Screen name="media" options={{ title: 'Media', tabBarIcon: (props) => <TabIcon feather="play-circle" {...props} name="Media" /> }} />
       <Tabs.Screen name="more" options={{ title: 'More', tabBarIcon: (props) => <TabIcon feather="menu" {...props} name="More" /> }} />
       
-      {/* Hide the old news tab, we can move it to a Stack if we want, or keep it hidden in Tabs */}
+      <Tabs.Screen name="media" options={{ href: null }} />
       <Tabs.Screen name="news" options={{ href: null }} />
     </Tabs>
   );

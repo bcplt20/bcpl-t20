@@ -26,7 +26,7 @@ import {
   verifyPhase1Payment,
   type PlayerRole,
 } from '@/lib/api';
-import { Card, ScreenBackground, GlassAppBar } from '@/components/ui';
+import { Card, ScreenBackground, GlassAppBar, useAppBarHeight } from '@/components/ui';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const CITIES = [
@@ -53,11 +53,14 @@ const isUnpaidStatus = (s?: string | null) => !s || s === 'pending';
 
 const ORDER_KEY = 'bcpl_pending_phase1_order_v1';
 
+import { RegistrationHero, StepProgressBar } from '@/components/RegistrationVisuals';
+
 export default function RegisterScreen() {
   const c = useColors();
   const router = useRouter();
   const { t } = useLang();
   const { token, user, login } = useAuth();
+  const appBarHeight = useAppBarHeight();
 
   const [step, setStep] = useState<Step>(token ? 'details' : 'account');
   const [busy, setBusy] = useState(false);
@@ -321,9 +324,10 @@ export default function RegisterScreen() {
       <GlassAppBar title="Register" />
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ padding: 20, paddingTop: 100, paddingBottom: Platform.OS === 'web' ? 60 : 40 }}
+        contentContainerStyle={{ padding: 20, paddingTop: appBarHeight, paddingBottom: Platform.OS === 'web' ? 60 : 40 }}
         keyboardShouldPersistTaps="handled"
       >
+      <StepProgressBar step={step} />
       <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 28, letterSpacing: -0.5 }}>{stepTitle[step]}</Text>
       <Text style={{ color: c.sub, fontSize: 15, marginTop: 8, marginBottom: 24, fontFamily: 'PlusJakartaSans_500Medium' }}>
         {t('BCPL Season 5 — Phase 1 registration', 'BCPL सीज़न 5 — फेज़ 1 रजिस्ट्रेशन')}
@@ -345,41 +349,7 @@ export default function RegisterScreen() {
 
       {step === 'account' ? (
         <View style={{ gap: 16 }}>
-        <Card>
-          <Text style={{ color: '#00E5FF', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 11, letterSpacing: 2 }}>
-            {t('YOUR JOURNEY', 'आपका सफ़र')}
-          </Text>
-          <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 18, marginTop: 6, marginBottom: 16 }}>
-            {t('From office to stadium — how it works', 'ऑफिस से स्टेडियम तक — पूरा process')}
-          </Text>
-          {[
-            { n: '1', en: 'Register', hi: 'रजिस्टर करें', den: 'Fill the form + pay the entry fee', dhi: 'फॉर्म भरें + एंट्री फ़ीस दें' },
-            { n: '2', en: 'Upload video', hi: 'वीडियो अपलोड करें', den: '30–60 sec cricket clip from any ground', dhi: 'किसी भी मैदान से 30–60 सेकंड की क्रिकेट क्लिप' },
-            { n: '3', en: 'Phase 1 result', hi: 'फेज़ 1 रिज़ल्ट', den: "Video evaluated on BCPL's Phase 1 criteria — result within 15 days", dhi: 'वीडियो BCPL के फेज़ 1 मापदंड पर परखा जाता है — 15 दिनों में रिज़ल्ट' },
-            { n: '4', en: 'Physical trial', hi: 'फिज़िकल ट्रायल', den: 'At your trial city — after Phase 1 qualification (₹2,000 / ₹3,000)', dhi: 'आपके ट्रायल शहर में — फेज़ 1 क्वालिफ़ाई करने के बाद (₹2,000 / ₹3,000)' },
-            { n: '5', en: 'Auction', hi: 'ऑक्शन', den: 'Franchises bid on you', dhi: 'फ्रैंचाइज़ी आप पर बोली लगाती हैं' },
-            { n: '6', en: 'Play BCPL', hi: 'BCPL खेलें', den: 'Represent your franchise under floodlights', dhi: 'फ्लडलाइट्स में अपनी फ्रैंचाइज़ी के लिए खेलें' },
-          ].map((s, i, arr) => (
-            <View key={s.n} style={{ flexDirection: 'row', gap: 16, marginTop: i === 0 ? 8 : 0 }}>
-              <View style={{ alignItems: 'center' }}>
-                <View style={[styles.stepDot, i === 0 ? { backgroundColor: '#FF1A75', borderColor: 'rgba(255,26,117,0.4)' } : { backgroundColor: 'rgba(255,26,117,0.1)', borderColor: 'rgba(255,26,117,0.2)' }]}>
-                  <Text style={{ color: i === 0 ? '#fff' : '#FF1A75', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 13 }}>{s.n}</Text>
-                </View>
-                {i < arr.length - 1 ? <View style={styles.stepLine} /> : null}
-              </View>
-              <View style={{ flex: 1, paddingBottom: i < arr.length - 1 ? 24 : 0 }}>
-                <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 15 }}>{t(s.en, s.hi)}</Text>
-                <Text style={{ color: c.sub, fontSize: 13, lineHeight: 20, marginTop: 4, fontFamily: 'PlusJakartaSans_500Medium' }}>{t(s.den, s.dhi)}</Text>
-              </View>
-            </View>
-          ))}
-          <Text style={{ color: c.sub, fontSize: 12, lineHeight: 18, marginTop: 16, fontFamily: 'PlusJakartaSans_500Medium' }}>
-            {t(
-              'Phase 2 fee applies only after Phase 1 qualification. Fees cover participation only — see bcplt20.com/refunds and bcplt20.com/eligibility for full rules.',
-              'फेज़ 2 की फ़ीस सिर्फ़ फेज़ 1 क्वालिफ़ाई करने के बाद लगती है। फ़ीस केवल भागीदारी के लिए है — पूरे नियम bcplt20.com/refunds और bcplt20.com/eligibility पर देखें।',
-            )}
-          </Text>
-        </Card>
+        <RegistrationHero />
         <Card>
           {input({ value: name, onChange: setName, placeholder: t('Full name', 'पूरा नाम') })}
           {input({ value: email, onChange: setEmail, placeholder: t('Email', 'ईमेल'), keyboard: 'email-address' })}

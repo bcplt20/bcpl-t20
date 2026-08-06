@@ -51,6 +51,7 @@ export const ALL_SECTIONS = [
   { id:"media",           label:"Photos & Videos",       group:"Content"   },
   { id:"banners",         label:"Banners",               group:"Content"   },
   { id:"app_banners",     label:"App Banners",           group:"Content"   },
+  { id:"app_media",       label:"App Media",             group:"Content"   },
   { id:"cms",             label:"CMS / Pages",           group:"Content"   },
   { id:"sponsors",        label:"Sponsors",              group:"Sponsors"  },
   { id:"data_export",     label:"Data Export",           group:"Tools"     },

@@ -12,7 +12,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useColors } from '@/hooks/useColors';
 import { getMatches, type Match } from '@/lib/api';
-import { EmptyView, ErrorView, LoadingView, GlassAppBar, ScreenBackground } from '@/components/ui';
+import { EmptyView, ErrorView, LoadingView, GlassAppBar, ScreenBackground, useAppBarHeight, useBottomNavHeight } from '@/components/ui';
 import { MatchCard } from '@/components/MatchCard';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { useLang } from '@/context/LanguageContext';
@@ -30,6 +30,9 @@ export default function MatchesScreen() {
   const c = useColors();
   const { t } = useLang();
   const [filter, setFilter] = useState<Filter>('all');
+  
+  const appBarHeight = useAppBarHeight();
+  const bottomNavHeight = useBottomNavHeight();
 
   const q = useQuery({ queryKey: ['matches'], queryFn: getMatches, refetchInterval: 60_000 });
   const all = q.data?.matches ?? [];
@@ -51,7 +54,7 @@ export default function MatchesScreen() {
     <View style={{ flex: 1, backgroundColor: c.bg }}>
       <ScreenBackground />
       <GlassAppBar title="Matches" />
-      <View style={[styles.filters, { marginTop: 100, borderBottomColor: c.line }]}>
+      <View style={[styles.filters, { marginTop: appBarHeight, borderBottomColor: c.line }]}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, gap: 10, paddingBottom: 16, paddingTop: 10 }}>
           {FILTERS.map((f) => {
             const isActive = filter === f.key;
@@ -101,7 +104,7 @@ export default function MatchesScreen() {
           scrollEnabled={filtered.length > 0}
           contentContainerStyle={{
             paddingHorizontal: 16,
-            paddingBottom: Platform.OS === 'web' ? 118 : 120,
+            paddingBottom: bottomNavHeight,
             paddingTop: 8,
           }}
           refreshControl={

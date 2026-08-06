@@ -18,7 +18,7 @@ import {
   type LiveInnings,
   type LiveMatch,
 } from '@/lib/api';
-import { Badge, Card, ErrorView, LoadingView, TeamLogo, GlassAppBar, ScreenBackground, getTeamColor, GradientTag } from '@/components/ui';
+import { Badge, Card, ErrorView, LoadingView, TeamLogo, GlassAppBar, ScreenBackground, getTeamColor, GradientTag, useAppBarHeight, useBottomNavHeight } from '@/components/ui';
 import { LinearGradient } from 'expo-linear-gradient';
 
 function oversStr(inn: LiveInnings): string {
@@ -323,6 +323,8 @@ export default function MatchDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const matchId = String(id);
   const [tab, setTab] = useState<'live' | 'scorecard'>('live');
+  
+  const appBarHeight = useAppBarHeight();
 
   const liveQ = useQuery({
     queryKey: ['live', matchId],
@@ -344,7 +346,7 @@ export default function MatchDetailScreen() {
       <ScreenBackground />
       <GlassAppBar title="Match Center" />
       <ScrollView
-        contentContainerStyle={{ padding: 16, paddingBottom: Platform.OS === 'web' ? 60 : 30, paddingTop: 100 }}
+        contentContainerStyle={{ padding: 16, paddingBottom: Platform.OS === 'web' ? 60 : 30, paddingTop: appBarHeight }}
         refreshControl={
           <RefreshControl refreshing={liveQ.isRefetching} onRefresh={() => liveQ.refetch()} tintColor={c.magenta} />
         }

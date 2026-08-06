@@ -7,7 +7,7 @@ import { useColors } from '@/hooks/useColors';
 import { useLang } from '@/context/LanguageContext';
 import { SITE_ASSETS } from '@/lib/api';
 import { NEWS_ARTICLES } from '@/data/news';
-import { Card, EmptyView, ScreenBackground, GlassAppBar, GradientTag } from '@/components/ui';
+import { Card, EmptyView, ScreenBackground, GlassAppBar, GradientTag, useAppBarHeight } from '@/components/ui';
 import { LinearGradient } from 'expo-linear-gradient';
 
 export default function NewsDetailScreen() {
@@ -15,6 +15,7 @@ export default function NewsDetailScreen() {
   const { t } = useLang();
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const article = NEWS_ARTICLES.find((n) => n.slug === String(slug));
+  const appBarHeight = useAppBarHeight();
 
   if (!article) {
     return (
@@ -28,7 +29,7 @@ export default function NewsDetailScreen() {
     <View style={{ flex: 1, backgroundColor: c.bg }}>
       <ScreenBackground />
       <GlassAppBar title="News" />
-      <ScrollView contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 60 : 30, paddingTop: 100 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 60 : 30, paddingTop: appBarHeight }}>
         <View>
           <Image
             source={{ uri: `${SITE_ASSETS}/bcpl-assets/news/${article.image}` }}

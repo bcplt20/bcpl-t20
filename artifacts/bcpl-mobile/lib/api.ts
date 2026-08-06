@@ -158,6 +158,21 @@ export interface GalleryAlbum {
   kind?: string;
   items: GalleryItem[];
 }
+export type AppMediaItem = {
+  id: string;
+  kind: 'photo' | 'video' | 'short';
+  title?: string;
+  url?: string;
+  youtubeId?: string;
+  thumbUrl?: string;
+  viewUrl?: string;
+  order: number;
+};
+
+export function getAppMedia(): Promise<{ items: AppMediaItem[] }> {
+  return apiFetch('/app-media');
+}
+
 export function getGallery(): Promise<{ albums: GalleryAlbum[] }> {
   return apiFetch('/gallery');
 }

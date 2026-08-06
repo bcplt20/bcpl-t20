@@ -10,7 +10,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useColors } from '@/hooks/useColors';
 import { getMatches, getPointsTable, type PointsRow } from '@/lib/api';
-import { Card, EmptyView, ErrorView, LoadingView, TeamLogo, GlassAppBar, ScreenBackground } from '@/components/ui';
+import { Card, EmptyView, ErrorView, LoadingView, TeamLogo, GlassAppBar, ScreenBackground, useAppBarHeight, useBottomNavHeight } from '@/components/ui';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { useLang } from '@/context/LanguageContext';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -83,6 +83,9 @@ function GroupTable({ title, rows, qualify }: { title: string; rows: PointsRow[]
 export default function PointsScreen() {
   const c = useColors();
   const { t } = useLang();
+  const appBarHeight = useAppBarHeight();
+  const bottomNavHeight = useBottomNavHeight();
+  
   const q = useQuery({ queryKey: ['points'], queryFn: getPointsTable, refetchInterval: 120_000 });
   const matchesQ = useQuery({ queryKey: ['matches'], queryFn: getMatches });
   const table = q.data?.table ?? [];
@@ -106,7 +109,7 @@ export default function PointsScreen() {
       <ScreenBackground />
       <GlassAppBar title="Points Table" />
       <ScrollView
-        contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 118 : 120, paddingTop: 100 }}
+        contentContainerStyle={{ paddingBottom: bottomNavHeight, paddingTop: appBarHeight }}
         refreshControl={
           <RefreshControl refreshing={q.isRefetching} onRefresh={() => { q.refetch(); matchesQ.refetch(); }} tintColor={c.magenta} />
         }

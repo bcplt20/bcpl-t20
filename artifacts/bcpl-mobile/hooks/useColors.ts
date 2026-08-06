@@ -3,12 +3,12 @@ import { useTheme } from '@/context/ThemeContext';
 export const THEMES = {
   stadium: {
     bg: '#101433',
-    card: '#1A1F49',
-    card2: '#222859',
+    card: '#1E2454',
+    card2: '#262D63',
     ink: '#F3F2FF',
     sub: '#9E9BD1',
-    line: 'rgba(255,255,255,0.10)',
-    raise: '#262C63',
+    line: 'rgba(255,255,255,0.15)',
+    raise: '#2A316E',
     glass: 'rgba(16,20,51,0.86)',
     mesh1: 'rgba(255,61,166,0.30)',
     mesh2: 'rgba(0,220,245,0.20)',

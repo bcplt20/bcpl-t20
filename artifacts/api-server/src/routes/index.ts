@@ -15,6 +15,7 @@ import settingsRouter from "./settings";
 import sponsorsRouter from "./sponsors";
 import galleryRouter  from "./gallery";
 import appBannersRouter from "./appBanners";
+import appMediaRouter  from "./appMedia";
 import videosRouter   from "./videos";
 import feesRouter     from "./fees";
 import adminRouter    from "./admin";
@@ -53,6 +54,7 @@ router.use("/teams",         teamsRouter);
 router.use("/sponsors",      sponsorsRouter); // public sanitized sponsor list
 router.use("/gallery",       galleryRouter);  // public match photos/videos (admin-opted folders)
 router.use("/app-banners",   appBannersRouter); // public mobile-app promo banners
+router.use("/app-media",     appMediaRouter); // public mobile-app curated photos & videos
 router.use("/videos",        videosRouter);   // public season-4 auction videos/highlights
 router.use("/fees",          feesRouter);     // public fee configuration
 router.use("/settings",      settingsRouter);

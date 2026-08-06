@@ -18,7 +18,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useLang } from '@/context/LanguageContext';
 import { getMatches, getPointsTable, SITE_ASSETS, getAppBanners, type Match, type AppBanner } from '@/lib/api';
 import { NEWS_ARTICLES } from '@/data/news';
-import { Card, TeamLogo, GlassAppBar, ScreenBackground, SectionHeader } from '@/components/ui';
+import { Card, TeamLogo, GlassAppBar, ScreenBackground, SectionHeader, useAppBarHeight, useBottomNavHeight } from '@/components/ui';
 import { MatchCard } from '@/components/MatchCard';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { Feather } from '@expo/vector-icons';
@@ -217,6 +217,9 @@ export default function HomeScreen() {
   const router = useRouter();
   const { user } = useAuth();
   const { t } = useLang();
+  
+  const appBarHeight = useAppBarHeight();
+  const bottomNavHeight = useBottomNavHeight();
 
   const bannersQ = useQuery({ queryKey: ['app-banners'], queryFn: getAppBanners, staleTime: 5 * 60 * 1000 });
 
@@ -238,7 +241,7 @@ export default function HomeScreen() {
       <ScreenBackground />
       <GlassAppBar />
       <ScrollView
-        contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 118 : 100, paddingTop: 100 }}
+        contentContainerStyle={{ paddingBottom: bottomNavHeight, paddingTop: appBarHeight }}
         refreshControl={
           <RefreshControl
             refreshing={matchesQ.isRefetching}

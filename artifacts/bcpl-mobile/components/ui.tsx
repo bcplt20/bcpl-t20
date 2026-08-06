@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import {
   ActivityIndicator,
   Animated,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -226,6 +227,19 @@ export function getTeamColor(name: string) {
 }
 
 export function TeamDot({ name, size = 34, glow = false }: { name: string; size?: number; glow?: boolean }) {
+  const c = useColors();
+  if (name.includes('Group') || name.includes('TBD') || name.includes('Winner')) {
+    return (
+      <View style={[{ width: size, height: size, borderRadius: size / 2, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', shadowColor: '#fff', shadowOpacity: glow ? 0.3 : 0, shadowRadius: glow ? 8 : 0, shadowOffset: { width: 0, height: 0 }, elevation: glow ? 4 : 0 }]}>
+        <Image
+          source={require('../assets/images/bcpl-ball-clean.png')}
+          style={{ width: size * 0.7, height: size * 0.7 }}
+          contentFit="contain"
+        />
+      </View>
+    );
+  }
+
   const bg = getTeamColor(name);
   const initials = name
     .split(/\s+/)
@@ -274,15 +288,81 @@ export const ScreenBackground = React.memo(() => {
   );
 });
 
+export const APP_BAR_CONTENT_HEIGHT = 64;
+
+export function useAppBarHeight() {
+  const insets = useSafeAreaInsets();
+  return insets.top + APP_BAR_CONTENT_HEIGHT;
+}
+
+export function useBottomNavHeight() {
+  const insets = useSafeAreaInsets();
+  const isWeb = Platform.OS === 'web';
+  const bottomPadding = isWeb ? 20 : Math.max(20, insets.bottom + 8);
+  return bottomPadding + 68 + 24; // 24px extra breathing room
+}
+
+export function Season5Lockup() {
+  const c = useColors();
+  const [anim] = React.useState(() => new Animated.Value(0));
+
+  React.useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(anim, {
+          toValue: 1,
+          duration: 2500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(anim, {
+          toValue: 0,
+          duration: 2500,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, [anim]);
+
+  return (
+    <View style={{
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: c.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 8,
+      marginLeft: 12,
+      borderWidth: 1,
+      borderColor: c.line,
+      overflow: 'hidden'
+    }}>
+      <Animated.View style={{
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: c.magenta,
+        opacity: anim.interpolate({ inputRange: [0, 0.5, 1], outputRange: [0, 0.15, 0] })
+      }} />
+      <Text style={{
+        fontFamily: 'BricolageGrotesque_800ExtraBold',
+        fontSize: 11,
+        color: c.ink,
+        letterSpacing: 0.5,
+      }}>
+        SEASON 5
+      </Text>
+    </View>
+  );
+}
+
 export function GlassAppBar({ title, right }: { title?: string, right?: React.ReactNode }) {
   const c = useColors();
   const insets = useSafeAreaInsets();
+  
   return (
     <View style={{
       position: 'absolute', top: 0, left: 0, right: 0,
       paddingTop: insets.top,
-      paddingHorizontal: 20,
-      paddingBottom: 12,
+      height: insets.top + APP_BAR_CONTENT_HEIGHT,
+      paddingHorizontal: 16,
       backgroundColor: c.glass,
       flexDirection: 'row',
       alignItems: 'center',
@@ -292,14 +372,15 @@ export function GlassAppBar({ title, right }: { title?: string, right?: React.Re
       zIndex: 100,
     }}>
       {title ? (
-        <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 24, color: c.ink, letterSpacing: -0.5 }}>{title}</Text>
+        <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 22, color: c.ink, letterSpacing: -0.5 }}>{title}</Text>
       ) : (
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Image
             source={c.isDark ? require('../assets/images/bcpl-logo-dark.png') : require('../assets/images/bcpl-logo-light.png')}
-            style={{ width: 120, height: 36 }}
+            style={{ width: 160, height: 44 }}
             contentFit="contain"
           />
+          <Season5Lockup />
         </View>
       )}
       {right}

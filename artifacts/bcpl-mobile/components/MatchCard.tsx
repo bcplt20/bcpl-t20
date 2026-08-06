@@ -73,16 +73,15 @@ export const MatchCard = React.memo(({ match }: { match: Match }) => {
       style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] })}
     >
       <Card style={[styles.card, { padding: 0, overflow: 'hidden' }]} border={true} padding={0}>
-        <Image source={require('../assets/images/bcpl-ball-clean.png')} style={{ position: 'absolute', width: 140, height: 140, top: '50%', left: '50%', transform: [{ translateX: -70 }, { translateY: -70 }], opacity: c.isDark ? 0.05 : 0.03 }} contentFit="contain" pointerEvents="none" />
         <LinearGradient
-          colors={[`${getTeamColor(match.team1)}15`, 'transparent']}
+          colors={[`${getTeamColor(match.team1)}${c.isDark ? '40' : '20'}`, 'transparent']}
           start={{ x: 0, y: 0.5 }}
           end={{ x: 0.5, y: 0.5 }}
           style={StyleSheet.absoluteFill}
           pointerEvents="none"
         />
         <LinearGradient
-          colors={[`${getTeamColor(match.team2)}15`, 'transparent']}
+          colors={[`${getTeamColor(match.team2)}${c.isDark ? '40' : '20'}`, 'transparent']}
           start={{ x: 1, y: 0.5 }}
           end={{ x: 0.5, y: 0.5 }}
           style={StyleSheet.absoluteFill}
@@ -91,7 +90,7 @@ export const MatchCard = React.memo(({ match }: { match: Match }) => {
         <View style={{ padding: 16 }}>
           <View style={styles.topRow}>
             <View style={{ flexDirection: 'row', gap: 6 }}>
-              {!!match.stage && <GradientTag label={match.stage} color={stageColor} />}
+              {!!match.stage && <GradientTag label={match.stage} color={match.stage.toLowerCase().includes('final') ? '#FF3DA6' : c.cyan} />}
               {!!match.grp && <GradientTag label={`Group ${match.grp}`} color={c.lime} />}
               {!match.stage && !match.grp && <GradientTag label={`Match ${match.matchNo}`} color={c.violet} />}
             </View>
@@ -114,11 +113,11 @@ export const MatchCard = React.memo(({ match }: { match: Match }) => {
             </View>
             
             <View style={styles.vsContainer}>
-              <LinearGradient colors={['transparent', c.line, 'transparent']} style={styles.vsLineVert} />
-              <View style={[styles.vsChip, { backgroundColor: c.card2, borderColor: c.line }]}>
-                <Text style={[styles.vs, { color: c.sub }]}>VS</Text>
+              <View style={[styles.vsChip, { backgroundColor: c.card, borderColor: 'transparent', shadowColor: c.cyan, shadowOpacity: c.isDark ? 0.4 : 0.2, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 4 }]}>
+                <LinearGradient colors={[c.cyan, c.violet]} style={[StyleSheet.absoluteFill, { borderRadius: 20, opacity: 0.15 }]} />
+                <View style={{ position: 'absolute', top: 1, left: 1, right: 1, bottom: 1, backgroundColor: c.card, borderRadius: 19 }} />
+                <Text style={[styles.vs, { color: c.cyan, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 13, letterSpacing: 0.5 }]}>VS</Text>
               </View>
-              <LinearGradient colors={['transparent', c.line, 'transparent']} style={styles.vsLineVert} />
             </View>
   
             <View style={styles.team}>

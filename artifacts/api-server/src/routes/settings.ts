@@ -21,6 +21,7 @@ import { writeAudit } from "../lib/audit";
 import { validateRubricsOverrideValue } from "./staffTrials";
 import { selectionConfigSchema } from "../lib/selectionConfig";
 import { appBannersSchema } from "../lib/appBanners";
+import { appMediaSchema } from "../lib/appMedia";
 import { z } from "zod";
 
 const router = Router();
@@ -33,6 +34,7 @@ const WRITABLE_KEYS = new Set([
   "homepage_config",
   "sponsors",
   "app_banners",
+  "app_media",
   "founder_signature",
   "trial_ops_defaults",
   "trial_rubrics_v1",
@@ -49,6 +51,10 @@ const KEY_ROLES: Record<string, string[]> = {
      owns site content / sponsors. The mobile app reads active banners via the
      public GET /api/app-banners endpoint; the raw list is admin-only here. */
   app_banners: ["CONTENT_TEAM"],
+  /* Mobile-app curated Photos & Videos tab (APP_MEDIA) — owner-posted items
+     only, separate from the website gallery. Same content-team ownership;
+     the app reads active items via GET /api/app-media. */
+  app_media: ["CONTENT_TEAM"],
   /* founder_signature is stamped on generated contracts; the contracts
      section belongs to MATCH_OPERATIONS (+ SUPER_ADMIN). Never public. */
   founder_signature: ["MATCH_OPERATIONS"],
@@ -229,6 +235,13 @@ router.put("/admin/:key", requireAdmin, async (req, res) => {
     if (!parsed.success) {
       const first = parsed.error.issues.slice(0, 3).map(i => (i.path.join(".") || "value") + ": " + i.message).join("; ");
       return void res.status(400).json({ error: "Invalid app_banners value — " + first });
+    }
+    value = parsed.data as unknown as Record<string, unknown>;
+  } else if (key === "app_media") {
+    const parsed = appMediaSchema.safeParse(req.body?.value);
+    if (!parsed.success) {
+      const first = parsed.error.issues.slice(0, 3).map(i => (i.path.join(".") || "value") + ": " + i.message).join("; ");
+      return void res.status(400).json({ error: "Invalid app_media value — " + first });
     }
     value = parsed.data as unknown as Record<string, unknown>;
   } else if (key === "founder_signature") {

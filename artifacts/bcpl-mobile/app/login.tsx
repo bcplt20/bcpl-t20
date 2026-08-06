@@ -8,6 +8,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { Image } from 'expo-image';
 import { KeyboardAwareScrollViewCompat } from '@/components/KeyboardAwareScrollViewCompat';
 import { useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
@@ -83,12 +84,8 @@ export default function LoginScreen() {
         bottomOffset={40}
         keyboardShouldPersistTaps="handled"
       >
-        <View style={styles.iconWrap}>
-          <LinearGradient
-            colors={['#5B2BF0', '#FF3DA6']}
-            style={[StyleSheet.absoluteFill, { borderRadius: 40 }]}
-          />
-          <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 32, color: '#fff' }}>B</Text>
+        <View style={[styles.iconWrap, { backgroundColor: '#fff' }]}>
+          <Image source={require('../assets/images/bcpl-ball-clean.png')} style={{ width: 50, height: 50 }} contentFit="contain" />
         </View>
         <Text style={[styles.title, { color: c.ink }]}>
           {step === 'phone' ? t('Log in with OTP', 'OTP से लॉगिन करें') : t('Enter OTP', 'OTP डालें')}
