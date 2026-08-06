@@ -22,6 +22,7 @@ import { useTheme } from '@/context/ThemeContext';
 import { Badge, Card, ErrorView, LoadingView, GlassAppBar, ScreenBackground, GradientTag, useAppBarHeight, useBottomNavHeight } from '@/components/ui';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { AvatarCircle } from '@/components/AvatarCircle';
+import { roleLabel } from '@/lib/roleLabel';
 import { LinearGradient } from 'expo-linear-gradient';
 
 function StatusRow({ label, value, done, isCurrent }: { label: string; value: string; done?: boolean; isCurrent?: boolean }) {
@@ -314,7 +315,7 @@ export default function ProfileScreen() {
   const c = useColors();
   const router = useRouter();
   const { token, user, ready, logout } = useAuth();
-  const { t } = useLang();
+  const { t, lang } = useLang();
   
   const appBarHeight = useAppBarHeight();
   const bottomNavHeight = useBottomNavHeight();
@@ -428,7 +429,7 @@ export default function ProfileScreen() {
                         </Text>
                       </View>
                     </View>
-                    {reg?.role ? <GradientTag label={reg.role} color={c.amber} /> : null}
+                    {reg?.role ? <GradientTag label={roleLabel(reg.role, lang)} color={c.amber} /> : null}
                   </View>
                   {reg?.trialCity ? (
                     <View style={{ marginTop: 20, paddingTop: 16, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: 'rgba(255,255,255,0.1)', flexDirection: 'row', alignItems: 'center', gap: 10 }}>

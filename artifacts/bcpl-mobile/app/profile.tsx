@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ActivityIndicator, Alert, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Feather } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -13,9 +13,13 @@ import {
   getAvatarUploadUrl,
   confirmAvatarUpload,
   putToPresignedUrl,
+  patchDob,
+  ApiError,
   type Avatar,
 } from '@/lib/api';
 import { AVATAR_PRESETS } from '@/lib/avatars';
+import { roleLabel } from '@/lib/roleLabel';
+import { computeAge } from '@/lib/age';
 import { AvatarCircle } from '@/components/AvatarCircle';
 import {
   Card,
@@ -33,12 +37,18 @@ import {
 export default function ProfileDetailsScreen() {
   const c = useColors();
   const { token, user, ready } = useAuth();
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const appBarHeight = useAppBarHeight();
   const qc = useQueryClient();
 
   const [showChooser, setShowChooser] = useState(false);
   const [savingAvatar, setSavingAvatar] = useState(false);
+
+  // DOB backfill (legacy users with no dob → age shows "—").
+  const [showDobForm, setShowDobForm] = useState(false);
+  const [dobInput, setDobInput] = useState('');
+  const [savingDob, setSavingDob] = useState(false);
+  const [dobError, setDobError] = useState('');
 
   const dashQ = useQuery({
     queryKey: ['dashboard', token],
@@ -107,18 +117,45 @@ export default function ProfileDetailsScreen() {
     }
   };
 
-  const ageValue =
-    reg?.age != null
-      ? t(`${reg.age} years`, `${reg.age} वर्ष`)
-      : '—';
+  const onSaveDob = async () => {
+    if (!token) return;
+    const dob = dobInput.trim();
+    // Client-side validation mirrors register.tsx (YYYY-MM-DD + real date + age).
+    const age = computeAge(dob);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dob) || age == null) {
+      setDobError(t('Enter a valid date as YYYY-MM-DD.', 'YYYY-MM-DD के रूप में मान्य तारीख़ दर्ज करें।'));
+      return;
+    }
+    if (age < 18 || age > 45) {
+      setDobError(t('Player eligibility is 18–45 years.', 'खिलाड़ी की योग्यता 18–45 वर्ष है।'));
+      return;
+    }
+    setSavingDob(true);
+    setDobError('');
+    try {
+      await patchDob(token, dob);
+      await dashQ.refetch(); // age now resolves from the server
+      setShowDobForm(false);
+      setDobInput('');
+    } catch (e) {
+      const msg = e instanceof ApiError ? e.message : t('Could not save. Please try again.', 'सहेजा नहीं जा सका। कृपया फिर कोशिश करें।');
+      setDobError(msg);
+    } finally {
+      setSavingDob(false);
+    }
+  };
 
+  const ageMissing = reg == null || reg.age == null;
+  const ageValue = !ageMissing ? t(`${reg!.age} years`, `${reg!.age} वर्ष`) : '—';
+
+  // The Age row is rendered specially (backfill action/form) so it is not part
+  // of the generic rows list below.
   const rows: { icon: React.ComponentProps<typeof Feather>['name']; label: string; value: string }[] = [
     { icon: 'user', label: t('Full Name', 'पूरा नाम'), value: user?.name || '—' },
     { icon: 'phone', label: t('Phone', 'फ़ोन'), value: user?.phone ? `+91 ${user.phone.replace(/^\+?91/, '')}` : '—' },
     { icon: 'mail', label: t('Email', 'ईमेल'), value: user?.email || t('Not provided', 'नहीं दिया गया') },
-    { icon: 'gift', label: t('Age', 'उम्र'), value: ageValue },
     { icon: 'hash', label: t('Registration No.', 'रजिस्ट्रेशन नं.'), value: reg?.regNumber || '—' },
-    { icon: 'award', label: t('Role', 'रोल'), value: reg?.role || '—' },
+    { icon: 'award', label: t('Role', 'रोल'), value: roleLabel(reg?.role, lang) },
     { icon: 'map-pin', label: t('Trial City', 'ट्रायल शहर'), value: reg?.trialCity || '—' },
     { icon: 'calendar', label: t('Season', 'सीज़न'), value: '5 · 2025–26' },
   ];
@@ -166,12 +203,89 @@ export default function ProfileDetailsScreen() {
                 <Text style={[styles.cardTitle, { color: c.ink }]}>{t('Your details', 'आपकी जानकारी')}</Text>
               </View>
               <View style={{ paddingHorizontal: 20, paddingBottom: 12 }}>
-                {rows.map((row, i) => (
+                {/* Age row — special: backfill action/form when dob is missing. */}
+                <View style={styles.detailRow}>
+                  <View style={[styles.detailIcon, { backgroundColor: c.card2, borderColor: c.line }]}>
+                    <Feather name="gift" size={16} color={c.getAccentText(c.magenta)} />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ color: c.sub, fontSize: 12, fontFamily: 'PlusJakartaSans_700Bold', letterSpacing: 0.4, marginBottom: 3 }}>
+                      {t('Age', 'उम्र')}
+                    </Text>
+                    {!ageMissing ? (
+                      <Text style={{ color: c.ink, fontSize: 15, fontFamily: 'PlusJakartaSans_600SemiBold' }}>
+                        {ageValue}
+                      </Text>
+                    ) : !showDobForm ? (
+                      <Pressable onPress={() => { setShowDobForm(true); setDobError(''); }} hitSlop={6} testID="profile-add-dob">
+                        <Text style={{ color: c.getAccentText(c.cyan), fontSize: 15, fontFamily: 'PlusJakartaSans_700Bold', textDecorationLine: 'underline' }}>
+                          {t('Add date of birth', 'जन्मतिथि जोड़ें')}
+                        </Text>
+                      </Pressable>
+                    ) : (
+                      <View>
+                        <TextInput
+                          value={dobInput}
+                          onChangeText={(v) => { setDobInput(v); if (dobError) setDobError(''); }}
+                          placeholder="YYYY-MM-DD"
+                          placeholderTextColor={c.sub}
+                          keyboardType="number-pad"
+                          maxLength={10}
+                          editable={!savingDob}
+                          testID="profile-dob-input"
+                          style={{
+                            color: c.ink,
+                            fontSize: 15,
+                            fontFamily: 'PlusJakartaSans_600SemiBold',
+                            borderWidth: 1,
+                            borderColor: dobError ? c.magenta : c.line,
+                            borderRadius: 10,
+                            paddingHorizontal: 12,
+                            paddingVertical: 10,
+                            backgroundColor: c.card2,
+                          }}
+                        />
+                        {dobError ? (
+                          <Text style={{ color: c.magenta, fontSize: 12, marginTop: 6, fontFamily: 'PlusJakartaSans_600SemiBold' }}>
+                            {dobError}
+                          </Text>
+                        ) : null}
+                        <View style={{ flexDirection: 'row', gap: 10, marginTop: 10 }}>
+                          <Pressable
+                            onPress={onSaveDob}
+                            disabled={savingDob}
+                            style={({ pressed }) => [styles.dobSaveBtn, { opacity: pressed || savingDob ? 0.7 : 1 }]}
+                            testID="profile-dob-save"
+                          >
+                            <LinearGradient colors={['#FF1A75', '#D10056']} style={[StyleSheet.absoluteFill, { borderRadius: 10 }]} />
+                            {savingDob ? (
+                              <ActivityIndicator color="#fff" size="small" />
+                            ) : (
+                              <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 14 }}>
+                                {t('Save', 'सहेजें')}
+                              </Text>
+                            )}
+                          </Pressable>
+                          <Pressable
+                            onPress={() => { setShowDobForm(false); setDobError(''); setDobInput(''); }}
+                            disabled={savingDob}
+                            style={({ pressed }) => [styles.dobCancelBtn, { borderColor: c.line, opacity: pressed ? 0.7 : 1 }]}
+                          >
+                            <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 14 }}>
+                              {t('Cancel', 'रद्द करें')}
+                            </Text>
+                          </Pressable>
+                        </View>
+                      </View>
+                    )}
+                  </View>
+                </View>
+                {rows.map((row) => (
                   <View
                     key={row.label}
                     style={[
                       styles.detailRow,
-                      i > 0 && { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: c.line },
+                      { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: c.line },
                     ]}
                   >
                     <View style={[styles.detailIcon, { backgroundColor: c.card2, borderColor: c.line }]}>
@@ -270,6 +384,23 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dobSaveBtn: {
+    minWidth: 92,
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 10,
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dobCancelBtn: {
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 10,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',

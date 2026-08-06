@@ -43,8 +43,8 @@ const CONSENT = { termsVersion: '2.1', privacyVersion: '2.1' };
 const ROLES: { id: PlayerRole; en: string; hi: string; fee: number; phase2: number }[] = [
   { id: 'bat', en: 'Batsman', hi: 'बल्लेबाज़', fee: 299, phase2: 2000 },
   { id: 'bowl', en: 'Bowler', hi: 'गेंदबाज़', fee: 299, phase2: 2000 },
-  { id: 'wk', en: 'Wicket-Keeper', hi: 'विकेटकीपर', fee: 299, phase2: 2000 },
-  { id: 'ar', en: 'All-Rounder', hi: 'ऑलराउंडर', fee: 399, phase2: 3000 },
+  { id: 'wk', en: 'Wicket Keeper', hi: 'विकेट कीपर', fee: 299, phase2: 2000 },
+  { id: 'ar', en: 'All-Rounder', hi: 'ऑल-राउंडर', fee: 399, phase2: 3000 },
 ];
 
 // Step order is IDENTICAL to the website register wizard:

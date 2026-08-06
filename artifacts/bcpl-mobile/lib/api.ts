@@ -100,6 +100,12 @@ export function registerPhase1(
   return apiFetch('/register/phase1', { method: 'POST', body, token });
 }
 
+/** Backfill date of birth for legacy users who registered before DOB capture.
+ *  Server validates YYYY-MM-DD + 18–45 eligibility; throws ApiError otherwise. */
+export function patchDob(token: string, dob: string): Promise<{ success: boolean }> {
+  return apiFetch('/register/dob', { method: 'PATCH', body: { dob }, token });
+}
+
 export function createPhase1Payment(
   token: string,
   registrationId: string,

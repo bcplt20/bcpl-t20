@@ -15,6 +15,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useColors } from '@/hooks/useColors';
 import { useAuth } from '@/context/AuthContext';
 import { useLang } from '@/context/LanguageContext';
+import { roleLabel, canonicalRole } from '@/lib/roleLabel';
 import { queryClient } from '@/lib/queryClient';
 import {
   ApiError,
@@ -181,7 +182,9 @@ export default function UploadVideoScreen() {
   const minSec = constraints?.videoMinSeconds ?? 30;
   const maxSec = constraints?.videoMaxSeconds ?? 60;
   const maxMb = constraints?.maxVideoFileSizeMb ?? 200;
-  const roleMeta = ROLE_META[role] ?? ROLE_META.bat;
+  // Historic long role codes (e.g. wicketkeeper_batsman) must resolve to the
+  // right instructional meta, not silently fall back to Batsman.
+  const roleMeta = ROLE_META[canonicalRole(role)] ?? ROLE_META.bat;
 
   const pickVideo = useCallback(async () => {
     setFileErr('');
@@ -469,7 +472,7 @@ export default function UploadVideoScreen() {
             </Text>
             <Card>
               <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16 }}>
-                {t(`For ${roleMeta.label}`, `${roleMeta.label} के लिए`)}
+                {t(`For ${roleLabel(role, 'en')}`, `${roleLabel(role, 'hi')} के लिए`)}
               </Text>
               <Text style={{ color: c.magenta, fontSize: 13.5, fontFamily: 'PlusJakartaSans_700Bold', marginTop: 8 }}>
                 {t(roleMeta.req.en, roleMeta.req.hi)}
