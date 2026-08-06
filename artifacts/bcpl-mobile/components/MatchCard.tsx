@@ -87,8 +87,8 @@ export function MatchCard({ match }: { match: Match }) {
         <View style={{ padding: 16 }}>
           <View style={styles.topRow}>
             <View style={{ flexDirection: 'row', gap: 6 }}>
-              {match.stage && <GradientTag label={match.stage} color={c.cyan} />}
-              {match.grp && <GradientTag label={`Group ${match.grp}`} color={c.lime} />}
+              {!!match.stage && <GradientTag label={match.stage} color={c.cyan} />}
+              {!!match.grp && <GradientTag label={`Group ${match.grp}`} color={c.lime} />}
               {!match.stage && !match.grp && <GradientTag label={`Match ${match.matchNo}`} color={c.violet} />}
             </View>
             {isLive ? (
