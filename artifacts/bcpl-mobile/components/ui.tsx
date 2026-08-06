@@ -297,7 +297,7 @@ export function GlassAppBar({ title, right }: { title?: string, right?: React.Re
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Image
             source={c.isDark ? require('../assets/images/bcpl-logo-dark.png') : require('../assets/images/bcpl-logo-light.png')}
-            style={{ width: 128, height: 38 }}
+            style={{ width: 120, height: 36 }}
             contentFit="contain"
           />
         </View>

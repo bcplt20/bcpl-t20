@@ -24,36 +24,60 @@ export default function NativePageScreen() {
     );
   }
 
+  const sections: { title: string | null; blocks: any[] }[] = [];
+  let currentSection: { title: string | null; blocks: any[] } = { title: null, blocks: [] };
+  
+  for (const block of page.content) {
+    if (block.type === 'heading') {
+      if (currentSection.title || currentSection.blocks.length > 0) {
+        sections.push(currentSection);
+      }
+      currentSection = { title: block.hi ? t(block.text, block.hi) : block.text, blocks: [] };
+    } else {
+      currentSection.blocks.push(block);
+    }
+  }
+  if (currentSection.title || currentSection.blocks.length > 0) {
+    sections.push(currentSection);
+  }
+
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
       <ScreenBackground />
       <GlassAppBar title={page.title} />
-      <ScrollView contentContainerStyle={{ padding: 20, paddingTop: 100, paddingBottom: 60 }}>
-        <Card padding={24} border={true}>
-          {page.content.map((block, i) => {
-            const txt = block.hi ? t(block.text, block.hi) : block.text;
-            if (block.type === 'heading') {
-              return (
-                <Text key={i} style={[styles.heading, { color: c.ink, marginTop: i === 0 ? 0 : 24 }]}>
-                  {txt}
+      <ScrollView contentContainerStyle={{ padding: 16, paddingTop: 100, paddingBottom: 60, gap: 16 }}>
+        {sections.map((sec, sIdx) => (
+          <Card key={sIdx} padding={20} border={true}>
+            {sec.title && (
+              <View style={{ borderBottomWidth: 1, borderBottomColor: c.line, paddingBottom: 12, marginBottom: 16 }}>
+                <Text style={[styles.heading, { color: c.ink, marginBottom: 0 }]}>
+                  {sec.title}
                 </Text>
-              );
-            }
-            if (block.type === 'li') {
-              return (
-                <View key={i} style={styles.li}>
-                  <Text style={[styles.bullet, { color: c.magenta }]}>•</Text>
-                  <Text style={[styles.p, { color: c.sub }]}>{txt}</Text>
-                </View>
-              );
-            }
-            return (
-              <Text key={i} style={[styles.p, { color: c.sub }]}>
-                {txt}
-              </Text>
-            );
-          })}
-        </Card>
+              </View>
+            )}
+            <View>
+              {sec.blocks.map((block, i) => {
+                const txt = block.hi ? t(block.text, block.hi) : block.text;
+                if (block.type === 'li') {
+                  return (
+                    <View key={i} style={styles.li}>
+                      <Text style={[styles.bullet, { color: c.magenta }]}>•</Text>
+                      <Text style={[styles.p, { color: c.sub }]}>{txt}</Text>
+                    </View>
+                  );
+                }
+                return (
+                  <Text key={i} style={[styles.p, { color: c.sub }]}>
+                    {txt}
+                  </Text>
+                );
+              })}
+              {sec.blocks.length === 0 && !sec.title && (
+                <Text style={[styles.p, { color: c.sub }]}>No content</Text>
+              )}
+            </View>
+          </Card>
+        ))}
       </ScrollView>
     </View>
   );
