@@ -436,10 +436,10 @@ export default function RegisterScreen() {
                         style={StyleSheet.absoluteFill}
                       />
                     ) : null}
-                    <Text style={{ color: isActive ? '#fff' : c.ink, fontFamily: isActive ? 'Inter_800ExtraBold' : 'Inter_600SemiBold', fontSize: 16 }}>
+                    <Text style={{ color: isActive ? c.getAccentText(c.magenta) : c.ink, fontFamily: isActive ? 'Inter_800ExtraBold' : 'Inter_600SemiBold', fontSize: 16 }}>
                       {t(r.en, r.hi)}
                     </Text>
-                    <Text style={{ color: isActive ? '#fff' : c.sub, fontSize: 13, marginTop: 6, fontFamily: 'PlusJakartaSans_600SemiBold' }}>₹{r.fee} <Text style={{ fontSize: 11 }}>+ GST</Text></Text>
+                    <Text style={{ color: isActive ? c.getAccentText(c.magenta) : c.sub, fontSize: 13, marginTop: 6, fontFamily: 'PlusJakartaSans_600SemiBold' }}>₹{r.fee} <Text style={{ fontSize: 11 }}>+ GST</Text></Text>
                     
                     {isActive && (
                       <View style={{ position: 'absolute', top: -10, right: -10, width: 28, height: 28, borderRadius: 14, backgroundColor: c.magenta, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: c.card, shadowColor: c.magenta, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.5, shadowRadius: 8, elevation: 4 }}>
@@ -466,7 +466,7 @@ export default function RegisterScreen() {
                       backgroundColor: isActive ? 'rgba(255,26,117,0.15)' : 'transparent',
                     }]}
                   >
-                    <Text style={{ color: isActive ? '#fff' : c.ink, fontSize: 14, fontFamily: isActive ? 'Inter_700Bold' : 'Inter_500Medium' }}>{ct}</Text>
+                    <Text style={{ color: isActive ? c.getAccentText(c.magenta) : c.ink, fontSize: 14, fontFamily: isActive ? 'Inter_700Bold' : 'Inter_500Medium' }}>{ct}</Text>
                   </Pressable>
                 );
               })}

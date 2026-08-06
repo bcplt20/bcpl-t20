@@ -37,9 +37,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setTheme(theme === 'stadium' ? 'light' : 'stadium');
   };
 
-  if (!loaded) return null;
-
-  return (
+    return (
     <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>
       {children}
     </ThemeContext.Provider>

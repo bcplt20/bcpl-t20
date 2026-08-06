@@ -36,7 +36,7 @@ export function Card({ children, style, padding = 16, border = true }: { childre
   );
 }
 
-export function SectionHeader({ title, onSeeAll }: { title: string; onSeeAll?: () => void }) {
+export function SectionHeader({ title, onSeeAll, seeAllLabel, seeAllTestID }: { title: string; onSeeAll?: () => void; seeAllLabel?: string; seeAllTestID?: string }) {
   const c = useColors();
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
@@ -51,8 +51,8 @@ export function SectionHeader({ title, onSeeAll }: { title: string; onSeeAll?: (
         </Text>
       </View>
       {onSeeAll && (
-        <Pressable onPress={onSeeAll} style={({pressed}) => ({ opacity: pressed ? 0.7 : 1 })}>
-          <Text style={{ fontFamily: 'PlusJakartaSans_700Bold', fontSize: 13, color: c.getAccentText(c.cyan) }}>See all</Text>
+        <Pressable onPress={onSeeAll} testID={seeAllTestID} style={({pressed}) => ({ opacity: pressed ? 0.7 : 1 })}>
+          <Text style={{ fontFamily: 'PlusJakartaSans_700Bold', fontSize: 13, color: c.getAccentText(c.cyan) }}>{seeAllLabel ?? 'See all'}</Text>
         </Pressable>
       )}
     </View>

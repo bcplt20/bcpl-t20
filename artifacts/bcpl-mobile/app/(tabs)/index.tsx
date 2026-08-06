@@ -239,7 +239,7 @@ export default function HomeScreen() {
         </View>
 
         <View style={{ paddingHorizontal: 16, paddingTop: 32 }}>
-          <SectionHeader title={t('Match Center', 'मैच सेंटर')} onSeeAll={() => router.push('/matches')} />
+          <SectionHeader title={t('Match Center', 'मैच सेंटर')} onSeeAll={() => router.push('/matches')} seeAllLabel={t('See all', 'सभी देखें')} seeAllTestID="see-matches" />
           {featured.length > 0 ? (
             featured.map((m) => <MatchCard key={m.id} match={m} />)
           ) : matchesQ.isLoading ? (
@@ -261,7 +261,7 @@ export default function HomeScreen() {
 
         {topTeams.length > 0 ? (
           <View style={{ paddingHorizontal: 16, marginTop: 32 }}>
-            <SectionHeader title={t('Points Table', 'अंक तालिका')} onSeeAll={() => router.push('/points')} />
+            <SectionHeader title={t('Points Table', 'अंक तालिका')} onSeeAll={() => router.push('/points')} seeAllLabel={t('See all', 'सभी देखें')} seeAllTestID="see-points" />
             <Card padding={0} border={true}>
               <View style={[styles.pointsRow, { paddingVertical: 10, backgroundColor: c.card2, borderBottomWidth: 1, borderBottomColor: c.line }]}>
                 <Text style={[styles.pos, { color: c.sub, fontSize: 10.5 }]}>#</Text>
@@ -298,7 +298,7 @@ export default function HomeScreen() {
         ) : null}
 
         <View style={{ paddingHorizontal: 16, marginTop: 32 }}>
-          <SectionHeader title={t('Latest News', 'ताज़ा खबरें')} onSeeAll={() => router.push('/news')} />
+          <SectionHeader title={t('Latest News', 'ताज़ा खबरें')} onSeeAll={() => router.push('/news')} seeAllLabel={t('See all', 'सभी देखें')} seeAllTestID="see-news" />
           {latestNews.map((n) => (
             <Pressable
               key={n.slug}
