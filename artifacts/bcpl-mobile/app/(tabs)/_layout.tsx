@@ -103,8 +103,8 @@ export default function TabLayout() {
         ),
       }}
     >
-      <Tabs.Screen name="index" options={{ title: 'Home', tabBarIcon: (props) => <TabIcon feather="home" {...props} name="Home" />, tabBarItemStyle: { flex: 1.5, alignItems: 'center', justifyContent: 'center' } }} />
-      <Tabs.Screen name="matches" options={{ title: 'Matches', tabBarIcon: (props) => <TabIcon feather="calendar" {...props} name="Matches" />, tabBarItemStyle: { flex: 1.5, alignItems: 'center', justifyContent: 'center' } }} />
+      <Tabs.Screen name="index" options={{ title: 'Home', tabBarIcon: (props) => <TabIcon feather="home" {...props} name="Home" />, tabBarItemStyle: { flex: 1, alignItems: 'center', justifyContent: 'center' } }} />
+      <Tabs.Screen name="matches" options={{ title: 'Matches', tabBarIcon: (props) => <TabIcon feather="calendar" {...props} name="Matches" />, tabBarItemStyle: { flex: 1, alignItems: 'center', justifyContent: 'center' } }} />
       <Tabs.Screen 
         name="register-fab" 
         options={{ 
@@ -119,9 +119,9 @@ export default function TabLayout() {
           },
         })}
       />
-      <Tabs.Screen name="points" options={{ title: 'Points', tabBarIcon: (props) => <TabIcon feather="bar-chart-2" {...props} name="Points" />, tabBarItemStyle: { flex: 1, alignItems: 'center', justifyContent: 'center' } }} />
       <Tabs.Screen name="media" options={{ title: 'Media', tabBarIcon: (props) => <TabIcon feather="play-circle" {...props} name="Media" />, tabBarItemStyle: { flex: 1, alignItems: 'center', justifyContent: 'center' } }} />
       <Tabs.Screen name="more" options={{ title: 'More', tabBarIcon: (props) => <TabIcon feather="menu" {...props} name="More" />, tabBarItemStyle: { flex: 1, alignItems: 'center', justifyContent: 'center' } }} />
+      <Tabs.Screen name="points" options={{ href: null }} />
       
       <Tabs.Screen name="news" options={{ href: null }} />
     </Tabs>

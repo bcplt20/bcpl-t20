@@ -159,6 +159,11 @@ function MoreMenu() {
           />
           <View style={{ height: 1, backgroundColor: c.line, marginVertical: 4 }} />
           <IconRow 
+            icon="bar-chart-2" title={t('Points Table', 'पॉइंट्स टेबल')} subtitle={t('Group A & B standings', 'ग्रुप A और B की स्थिति')}
+            colors={['#00DCF5', '#5B2BF0']} onPress={() => router.push('/points')} 
+          />
+          <View style={{ height: 1, backgroundColor: c.line, marginVertical: 4 }} />
+          <IconRow 
             icon="crosshair" title={t('How Selection Works', 'चयन प्रक्रिया')} subtitle={t('The 18 stages', '18 चरण')}
             colors={['#FF3DA6', '#FF1A75']} onPress={() => router.push('/pages/trust')} 
           />
