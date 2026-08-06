@@ -86,6 +86,9 @@ export default function RegisterScreen() {
   const [agreed, setAgreed] = useState(false);
   const [marketingOptIn, setMarketingOptIn] = useState(false);
   const [regNumber, setRegNumber] = useState('');
+  // phase1Status at the time the done step was reached — legacy carryover users
+  // ('selected') should be routed to Journey/Phase 2, not the video upload screen.
+  const [doneStatus, setDoneStatus] = useState<string>('payment_done');
 
   const grossFee = useMemo(() => Math.round(fee * 1.18), [fee]);
 
@@ -109,6 +112,7 @@ export default function RegisterScreen() {
             setStep('pay');
           } else {
             setRegNumber(st.regNumber ?? '');
+            setDoneStatus(st.phase1Status || 'payment_done');
             setStep('done');
             AsyncStorage.removeItem(ORDER_KEY).catch(() => {});
           }
@@ -175,6 +179,7 @@ export default function RegisterScreen() {
             setStep('pay');
           } else {
             setRegNumber(st.regNumber ?? '');
+            setDoneStatus(st.phase1Status || 'payment_done');
             setStep('done');
           }
           return;
@@ -214,6 +219,7 @@ export default function RegisterScreen() {
               setStep('pay');
             } else {
               setRegNumber(st.regNumber ?? '');
+              setDoneStatus(st.phase1Status || 'payment_done');
               setStep('done');
             }
             return;
@@ -541,14 +547,18 @@ export default function RegisterScreen() {
           </View>
 
           <Pressable
-            onPress={() => router.replace('/upload-video')}
+            onPress={() => router.replace(doneStatus === 'payment_done' ? '/upload-video' : '/journey')}
             style={({ pressed }) => [styles.btn, { opacity: pressed ? 0.8 : 1, marginTop: 28, paddingHorizontal: 40 }]}
           >
             <LinearGradient
               colors={['#FF1A75', '#D10056']}
               style={[StyleSheet.absoluteFill, { borderRadius: 16 }]}
             />
-            <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, letterSpacing: 0.5 }}>{t('Upload trial video', 'ट्रायल वीडियो अपलोड करें')}</Text>
+            <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, letterSpacing: 0.5 }}>
+              {doneStatus === 'payment_done'
+                ? t('Upload trial video', 'ट्रायल वीडियो अपलोड करें')
+                : t('Continue your journey', 'अपना सफ़र जारी रखें')}
+            </Text>
           </Pressable>
           <Pressable onPress={() => router.replace('/journey')} style={{ marginTop: 16 }}>
             <Text style={{ color: c.sub, fontSize: 14, fontFamily: 'PlusJakartaSans_700Bold' }}>{t('View my journey', 'मेरा सफ़र देखें')}</Text>

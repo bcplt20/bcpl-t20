@@ -359,15 +359,24 @@ router.post("/phase1/verify", requireAuth, async (req: AuthRequest, res) => {
   const parsed = schema.safeParse(req.body);
   if (!parsed.success) return void res.status(400).json({ error: "orderId required" });
 
+  // Ownership guard — the order must belong to the authenticated user's
+  // registration BEFORE any provider lookup or mutation (IDOR protection).
+  const [ownedP1] = await db.select({ amount: phase1PaymentsTable.amount })
+    .from(phase1PaymentsTable)
+    .innerJoin(registrationsTable, eq(phase1PaymentsTable.registrationId, registrationsTable.id))
+    .where(and(
+      eq(phase1PaymentsTable.cashfreeOrderId, parsed.data.orderId),
+      eq(registrationsTable.userId, String(req.user!.userId)),
+    )).limit(1);
+  if (!ownedP1) return void res.status(404).json({ error: "Record not found" });
+
   const status = await getPaymentStatus(parsed.data.orderId);
   if (!status || status.status !== "SUCCESS") {
     return void res.status(400).json({ success: false, status: status?.status || "UNKNOWN" });
   }
 
   // Amount integrity guard — must pass BEFORE the payment is recorded as success.
-  const [expectedP1] = await db.select({ amount: phase1PaymentsTable.amount })
-    .from(phase1PaymentsTable)
-    .where(eq(phase1PaymentsTable.cashfreeOrderId, parsed.data.orderId)).limit(1);
+  const expectedP1 = ownedP1;
   if (expectedP1 && paymentAmountMismatch(status, expectedP1.amount)) {
     await flagP1AmountMismatch(parsed.data.orderId, status, expectedP1.amount);
     return void res.status(409).json({
@@ -501,15 +510,24 @@ router.post("/phase2/verify", requireAuth, async (req: AuthRequest, res) => {
   const parsed = schema.safeParse(req.body);
   if (!parsed.success) return void res.status(400).json({ error: "orderId required" });
 
+  // Ownership guard — the order must belong to the authenticated user's
+  // registration BEFORE any provider lookup or mutation (IDOR protection).
+  const [owned] = await db.select({ amount: phase2PaymentsTable.amount })
+    .from(phase2PaymentsTable)
+    .innerJoin(registrationsTable, eq(phase2PaymentsTable.registrationId, registrationsTable.id))
+    .where(and(
+      eq(phase2PaymentsTable.cashfreeOrderId, parsed.data.orderId),
+      eq(registrationsTable.userId, String(req.user!.userId)),
+    )).limit(1);
+  if (!owned) return void res.status(404).json({ error: "Record not found" });
+
   const status = await getPaymentStatus(parsed.data.orderId);
   if (!status || status.status !== "SUCCESS") {
     return void res.status(400).json({ success: false, status: status?.status || "UNKNOWN" });
   }
 
   // Amount integrity guard — must pass BEFORE the payment is recorded as success.
-  const [expectedP2] = await db.select({ amount: phase2PaymentsTable.amount })
-    .from(phase2PaymentsTable)
-    .where(eq(phase2PaymentsTable.cashfreeOrderId, parsed.data.orderId)).limit(1);
+  const expectedP2 = owned;
   if (expectedP2 && paymentAmountMismatch(status, expectedP2.amount)) {
     await flagP2AmountMismatch(parsed.data.orderId, status, expectedP2.amount);
     return void res.status(409).json({
