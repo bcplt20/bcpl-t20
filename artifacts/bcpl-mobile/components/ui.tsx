@@ -294,21 +294,12 @@ export function GlassAppBar({ title, right }: { title?: string, right?: React.Re
       {title ? (
         <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 24, color: c.ink, letterSpacing: -0.5 }}>{title}</Text>
       ) : (
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-          <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: c.card2, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.line, overflow: 'hidden' }}>
-            <Image
-              source={require('../assets/images/bcpl-ball-clean.png')}
-              style={{ width: 28, height: 28 }}
-              contentFit="contain"
-            />
-          </View>
-          <View>
-            <Image 
-              source={c.isDark ? require('../assets/images/bcpl-logo-dark.png') : require('../assets/images/bcpl-logo-light.png')}
-              style={{ width: 80, height: 24 }}
-              contentFit="contain"
-            />
-          </View>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Image
+            source={c.isDark ? require('../assets/images/bcpl-logo-dark.png') : require('../assets/images/bcpl-logo-light.png')}
+            style={{ width: 128, height: 38 }}
+            contentFit="contain"
+          />
         </View>
       )}
       {right}
