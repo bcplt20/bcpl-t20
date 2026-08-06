@@ -101,6 +101,15 @@ const HARDCODED_BANNERS: AppBanner[] = [
   { id: '4', title: 'From office to stadium', subtitle: 'League stats & numbers', ctaLabel: 'About Us', ctaHref: '/trust', accent: '#FF8A3D', order: 4 },
 ];
 
+
+const ACCENT_HEX: Record<string, string> = {
+  violet: '#7C5CFF', magenta: '#FF3DA6', cyan: '#00DCF5', lime: '#B6FF3C', amber: '#FFC53D',
+};
+function accentHex(a?: string): string {
+  if (!a) return '#7C5CFF';
+  return a.startsWith('#') ? a : ACCENT_HEX[a] || '#7C5CFF';
+}
+
 function BannerCarousel({ banners }: { banners: AppBanner[] }) {
   const c = useColors();
   const router = useRouter();
@@ -158,18 +167,18 @@ function BannerCarousel({ banners }: { banners: AppBanner[] }) {
               
               {/* Diagonal stroke accents */}
               <LinearGradient 
-                colors={[`${item.accent}40`, 'transparent']}
+                colors={[`${accentHex(item.accent)}40`, 'transparent']}
                 start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
                 style={{ position: 'absolute', top: -50, right: -50, width: 150, height: 300, transform: [{ rotate: '45deg' }] }}
               />
               <LinearGradient 
-                colors={[`${item.accent}20`, 'transparent']}
+                colors={[`${accentHex(item.accent)}20`, 'transparent']}
                 start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }}
                 style={{ position: 'absolute', bottom: -50, left: -50, width: 150, height: 300, transform: [{ rotate: '45deg' }] }}
               />
               
               <View style={{ padding: 24, flex: 1, justifyContent: 'center' }}>
-                {item.id === '1' && (
+                {item.ctaHref === '/register' && (
                   <View style={[styles.heroKickBadge, { backgroundColor: c.card2, borderColor: c.line }]}>
                     <Text style={[styles.heroKick, { color: c.getAccentText(c.cyan) }]}>SEASON 5 · {t('REGISTRATIONS OPEN', 'रजिस्ट्रेशन शुरू')}</Text>
                   </View>
@@ -184,7 +193,7 @@ function BannerCarousel({ banners }: { banners: AppBanner[] }) {
                   </Text>
                 ) : null}
 
-                {item.id === '1' ? (
+                {item.ctaHref === '/register' ? (
                   <View style={{ marginTop: 'auto' }}>
                     <RegCountdown />
                   </View>
