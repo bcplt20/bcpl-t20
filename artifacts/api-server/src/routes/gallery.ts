@@ -52,7 +52,6 @@ router.get("/", async (_req, res) => {
     id: a.id,
     name: a.name,
     kind: a.kind,
-    photos: a.photos,
     items: a.photos.map((p, i) => ({
       id: `${a.id}-${i + 1}`,
       name: `${a.name} ${i + 1}`,

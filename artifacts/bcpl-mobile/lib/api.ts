@@ -150,6 +150,7 @@ export interface GalleryItem {
   kind: 'photo' | 'video';
   sizeBytes?: number;
   viewUrl: string;
+  thumbUrl?: string;
 }
 export interface GalleryAlbum {
   id: string;

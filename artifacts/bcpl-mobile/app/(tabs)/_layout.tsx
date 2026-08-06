@@ -72,8 +72,8 @@ export default function TabLayout() {
         tabBarStyle: {
           position: 'absolute',
           bottom: bottomPadding,
-          left: (Dimensions.get('window').width - 392) / 2,
-          width: 392,
+          left: Math.max((Dimensions.get('window').width - 392) / 2, 12),
+          width: Math.min(392, Dimensions.get('window').width - 24),
           height: 68,
           borderRadius: 34,
           backgroundColor: c.glass,

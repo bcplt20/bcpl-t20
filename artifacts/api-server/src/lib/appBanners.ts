@@ -56,7 +56,7 @@ export const DEFAULT_APP_BANNERS: AppBanner[] = [
   {
     id: "b3",
     title: "Man of the Series wins a luxury car",
-    subtitle: "Season 5's biggest individual prize",
+    subtitle: "Man of the Series prize for Season 5",
     accent: "magenta",
     active: true,
     order: 3,

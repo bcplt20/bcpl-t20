@@ -101,10 +101,10 @@ export default function MediaScreen() {
                 >
                   <View style={{ width: cell, height: cell, borderRadius: 16, overflow: 'hidden', backgroundColor: c.card2, borderWidth: 1, borderColor: c.line }}>
                     {item.kind === 'photo' ? (
-                      <Image source={{ uri: item.viewUrl }} style={{ width: '100%', height: '100%' }} contentFit="cover" transition={200} />
+                      <Image source={{ uri: item.thumbUrl || item.viewUrl }} style={{ width: '100%', height: '100%' }} contentFit="cover" transition={200} />
                     ) : (
                       <View style={{ flex: 1 }}>
-                        <Image source={{ uri: item.viewUrl }} style={[StyleSheet.absoluteFill, { opacity: 0.5 }]} contentFit="cover" blurRadius={10} />
+                        <Image source={{ uri: item.thumbUrl || item.viewUrl }} style={[StyleSheet.absoluteFill, { opacity: 0.5 }]} contentFit="cover" blurRadius={10} />
                         <LinearGradient
                           colors={['rgba(11,8,19,0.6)', 'rgba(22,17,36,0.4)']}
                           style={StyleSheet.absoluteFill}

@@ -209,6 +209,8 @@ export default function HomeScreen() {
   const { user } = useAuth();
   const { t } = useLang();
 
+  const bannersQ = useQuery({ queryKey: ['app-banners'], queryFn: getAppBanners, staleTime: 5 * 60 * 1000 });
+
   const matchesQ = useQuery({
     queryKey: ['matches'],
     queryFn: getMatches,
@@ -240,7 +242,7 @@ export default function HomeScreen() {
         }
       >
 
-        <BannerCarousel banners={HARDCODED_BANNERS} />
+        <BannerCarousel banners={bannersQ.data?.banners?.length ? bannersQ.data.banners : HARDCODED_BANNERS} />
 
 
         {/* BCPL so far — league in numbers */}
