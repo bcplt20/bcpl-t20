@@ -31,7 +31,8 @@ const router = Router();
  * over an abandoned older one, and every user.ts route agrees on one cursor.
  *
  * Ranking (higher = further along):
- *   phase2: selected/kyc_done/payment_done > pending > null
+ *   phase2: team_signed > auction_shortlisted > trial_cleared > selected >
+ *           kyc_approved > kyc_done > payment_done > rejected > pending > null
  *   phase1: selected > video_submitted > payment_done > rejected > pending
  * The rank is computed in SQL so the DB does the ordering (index-friendly).
  */
@@ -41,11 +42,15 @@ async function pickUserRegistration(userId: string) {
     .orderBy(
       sql`(
         CASE ${registrationsTable.phase2Status}
-          WHEN 'selected'     THEN 5
-          WHEN 'kyc_done'     THEN 4
-          WHEN 'payment_done' THEN 3
-          WHEN 'rejected'     THEN 2
-          WHEN 'pending'      THEN 1
+          WHEN 'team_signed'         THEN 9
+          WHEN 'auction_shortlisted' THEN 8
+          WHEN 'trial_cleared'       THEN 7
+          WHEN 'selected'            THEN 6
+          WHEN 'kyc_approved'        THEN 5
+          WHEN 'kyc_done'            THEN 4
+          WHEN 'payment_done'        THEN 3
+          WHEN 'rejected'            THEN 2
+          WHEN 'pending'             THEN 1
           ELSE 0
         END
       ) DESC`,
