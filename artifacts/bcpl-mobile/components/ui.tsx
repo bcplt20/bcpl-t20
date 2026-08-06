@@ -6,6 +6,7 @@ import {
   Pressable,
   StyleSheet,
   Text,
+  useWindowDimensions,
   View,
   type StyleProp,
   type ViewStyle,
@@ -402,11 +403,11 @@ export function Season5Lockup() {
 
   return (
     <View style={{
-      borderRadius: 12,
+      borderRadius: 10,
       overflow: 'hidden',
       padding: 1.5,
-      width: 76,
-      height: 20,
+      width: 62,
+      height: 17,
       justifyContent: 'center',
       alignItems: 'center',
       shadowColor: '#00E5FF',
@@ -460,9 +461,9 @@ export function Season5Lockup() {
 
         <Text style={{
           fontFamily: 'BricolageGrotesque_800ExtraBold',
-          fontSize: 9,
+          fontSize: 7.5,
           color: c.isDark ? '#FFF' : '#000',
-          letterSpacing: 0.5,
+          letterSpacing: 0.4,
           zIndex: 3,
           backgroundColor: 'transparent'
         }}>
@@ -479,6 +480,10 @@ export function GlassAppBar({ title, right, back }: { title?: string, right?: Re
   const c = useColors();
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { width: winW } = useWindowDimensions();
+  // Logo + badge + timer must fit on 320px screens: shrink logo adaptively.
+  const logoW = Math.max(118, Math.min(168, winW - 204));
+  const logoH = Math.round(logoW * (40 / 168));
   
   return (
     <View style={{
@@ -506,14 +511,14 @@ export function GlassAppBar({ title, right, back }: { title?: string, right?: Re
         {title ? (
           <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 22, color: c.ink, letterSpacing: -0.5 }}>{title}</Text>
         ) : (
-          <View style={{ justifyContent: 'center', height: APP_BAR_CONTENT_HEIGHT, paddingTop: 4 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'flex-end', height: APP_BAR_CONTENT_HEIGHT, paddingBottom: (APP_BAR_CONTENT_HEIGHT - 40) / 2 }}>
             <Image
               source={c.isDark ? require('../assets/images/bcpl-logo-dark.png') : require('../assets/images/bcpl-logo-light.png')}
-              style={{ width: 130, height: 26, alignSelf: 'flex-start' }}
+              style={{ width: logoW, height: logoH }}
               contentFit="contain"
               contentPosition="left"
             />
-            <View style={{ marginTop: 2, marginLeft: 4 }}>
+            <View style={{ marginLeft: 6, marginBottom: 3 }}>
               <Season5Lockup />
             </View>
           </View>
