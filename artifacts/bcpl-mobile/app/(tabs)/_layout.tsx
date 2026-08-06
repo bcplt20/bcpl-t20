@@ -51,12 +51,12 @@ function FabTab() {
     <View style={{ top: -16, alignItems: 'center', justifyContent: 'center' }}>
       <LinearGradient
         colors={['#FF3DA6', '#9B2FF0', '#5B2BF0']}
-        style={{ paddingHorizontal: 14, paddingVertical: 12, borderRadius: 24, flexDirection: 'row', alignItems: 'center', shadowColor: '#FF3DA6', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.4, shadowRadius: 10, elevation: 6, gap: 6 }}
+        style={{ paddingHorizontal: 12, paddingVertical: 11, borderRadius: 22, maxWidth: 112, flexDirection: 'row', alignItems: 'center', shadowColor: '#FF3DA6', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.4, shadowRadius: 10, elevation: 6, gap: 6 }}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       >
         <Feather name="edit-3" size={14} color="#fff" />
-        <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 13, letterSpacing: 0.5 }}>
+        <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 12, letterSpacing: 0.4 }}>
           {t('Register', 'रजिस्टर')}
         </Text>
       </LinearGradient>
@@ -110,7 +110,7 @@ export default function TabLayout() {
         options={{ 
           title: 'Register', 
           tabBarIcon: () => <FabTab />,
-          tabBarItemStyle: { flex: 0, width: 104, alignItems: 'center', justifyContent: 'center' }
+          tabBarItemStyle: { flex: 0, width: 120, alignItems: 'center', justifyContent: 'center' }
         }}
         listeners={() => ({
           tabPress: (e) => {
