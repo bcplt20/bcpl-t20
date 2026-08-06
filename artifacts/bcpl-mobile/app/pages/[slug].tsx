@@ -13,28 +13,8 @@ import { Feather } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
 
-function AmbientPulse({ children, style, min = 0.5, max = 1, duration = 2000 }: any) {
-  const anim = React.useRef(new Animated.Value(0)).current;
-  React.useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(anim, { toValue: 1, duration, useNativeDriver: false }),
-        Animated.timing(anim, { toValue: 0, duration, useNativeDriver: false })
-      ])
-    ).start();
-  }, [anim, duration]);
-  const opacity = anim.interpolate({ inputRange: [0, 1], outputRange: [min, max] });
-  return <Animated.View style={[style, { opacity }]}>{children}</Animated.View>;
-}
-
-function AmbientShimmerBorder({ children, style, colors, innerBg, borderRadius = 12 }: any) {
-  const anim = React.useRef(new Animated.Value(0)).current;
-  React.useEffect(() => {
-    Animated.loop(
-      Animated.timing(anim, { toValue: 1, duration: 4000, useNativeDriver: false })
-    ).start();
-  }, [anim]);
-  const spin = anim.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
+function AmbientShimmerBorder({ children, style, colors, innerBg, borderRadius = 12, sharedAnim }: any) {
+  const spin = sharedAnim ? sharedAnim.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] }) : '0deg';
   return (
     <View style={[{ position: 'relative', overflow: 'hidden', borderRadius }, style]}>
       <Animated.View style={{ position: 'absolute', top: '-50%', left: '-50%', right: '-50%', bottom: '-50%', transform: [{ rotate: spin }] }}>
@@ -51,12 +31,14 @@ function HeroMesh({ title }: { title: string }) {
   const c = useColors();
   const anim = React.useRef(new Animated.Value(0)).current;
   React.useEffect(() => {
-    Animated.loop(
+    const loop = Animated.loop(
       Animated.sequence([
         Animated.timing(anim, { toValue: 1, duration: 4000, useNativeDriver: false }),
         Animated.timing(anim, { toValue: 0, duration: 4000, useNativeDriver: false })
       ])
-    ).start();
+    );
+    loop.start();
+    return () => loop.stop();
   }, [anim]);
 
   const translateY = anim.interpolate({ inputRange: [0, 1], outputRange: [-10, 10] });
@@ -82,6 +64,15 @@ export default function NativePageScreen() {
   const page = NATIVE_PAGES[slug as string];
   const appBarHeight = useAppBarHeight();
   const bottomNavHeight = useBottomNavHeight();
+  
+  const sharedShimmer = React.useRef(new Animated.Value(0)).current;
+  React.useEffect(() => {
+    const loop = Animated.loop(
+      Animated.timing(sharedShimmer, { toValue: 1, duration: 4000, useNativeDriver: false })
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [sharedShimmer]);
 
   if (!page) {
     return (
@@ -173,7 +164,7 @@ export default function NativePageScreen() {
                       return (
                         <View key={i} style={{ flexDirection: 'row', gap: 12, marginBottom: 16 }}>
                           {block.items?.map((item: any, idx: number) => (
-                            <AmbientShimmerBorder key={idx} style={{ flex: 1 }} colors={[item.color, c.card2, item.color]} innerBg={c.card2} borderRadius={12}>
+                            <AmbientShimmerBorder sharedAnim={sharedShimmer} key={idx} style={{ flex: 1 }} colors={[item.color, c.card2, item.color]} innerBg={c.card2} borderRadius={12}>
                               <View style={{ padding: 12, alignItems: 'center' }}>
                                 <Text style={{ color: item.color, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: item.v.length > 6 ? 13 : 18, marginBottom: 4 }} numberOfLines={1} adjustsFontSizeToFit>{item.v}</Text>
                                 <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 11, textAlign: 'center' }}>{item.l}</Text>
@@ -297,9 +288,7 @@ export default function NativePageScreen() {
                       return (
                         <View key={i} style={[styles.li]}>
                           <View style={{ marginTop: 4, marginRight: 12, width: 16, height: 16, borderRadius: 8, backgroundColor: c.isDark ? 'rgba(0,229,255,0.1)' : 'rgba(0,151,167,0.1)', alignItems: 'center', justifyContent: 'center' }}>
-                            <AmbientPulse min={0.4} max={1} duration={1500}>
-                              <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: c.cyan }} />
-                            </AmbientPulse>
+                            <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: c.cyan }} />
                           </View>
                           <Text style={[styles.p, { color: c.sub, marginBottom: 0 }]}>{txt}</Text>
                         </View>
