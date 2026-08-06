@@ -605,7 +605,7 @@ export default function RegisterScreen() {
               { l: t('ROLE', 'ROLE'), v: role ? t(ROLES.find((r) => r.id === role)?.en ?? '', ROLES.find((r) => r.id === role)?.hi ?? '') : '—' },
               { l: t('TRIAL CITY', 'TRIAL CITY'), v: city || '—' },
               { l: t('AGE', 'उम्र'), v: dobAge != null ? t(`${dobAge} years (Eligible 18–45)`, `${dobAge} वर्ष (योग्य 18–45)`) : '—' },
-              { l: t('SEASON', 'SEASON'), v: '5 · 2025–26' },
+              { l: t('SEASON', 'SEASON'), v: '5 · 2026–27' },
             ].map((row) => (
               <View key={row.l} style={{ paddingVertical: 10, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: c.line }}>
                 <Text style={{ color: c.sub, fontSize: 10, fontFamily: 'PlusJakartaSans_700Bold', letterSpacing: 1.2, marginBottom: 4 }}>{row.l}</Text>

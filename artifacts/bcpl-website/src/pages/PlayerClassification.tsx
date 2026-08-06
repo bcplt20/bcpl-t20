@@ -43,13 +43,22 @@ export function PlayerClassification() {
   const [stepIndex, setStepIndex] = useState(0);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [carryover, setCarryover] = useState(false);
   const hydrated = useRef(false);
+
+  const goUpload = () => window.location.assign(import.meta.env.BASE_URL + 'register/upload-video');
+  const goDashboard = () => window.location.assign(import.meta.env.BASE_URL + 'profile');
+  // Carryover players never upload a video — send them to their dashboard.
+  const goNext = (isCarryover: boolean) => (isCarryover ? goDashboard() : goUpload());
 
   useEffect(() => {
     (async () => {
       try {
         const r = await getClassification();
         setRoleRaw(r.role ?? 'bat');
+        setCarryover(r.carryover === true);
+        // ONE-TIME: if it's already set, this screen isn't editable — move on.
+        if (r.complete) { goNext(r.carryover === true); return; }
         if (!hydrated.current && r.classification) {
           hydrated.current = true;
           const v = r.classification;
@@ -83,8 +92,6 @@ export function PlayerClassification() {
   const battingValid = !needsBatting || (!!battingHand && !!battingPosition);
   const bowlingValid = !needsBowling || (!!bowlingArm && !!bowlingType);
 
-  const goUpload = () => window.location.assign(import.meta.env.BASE_URL + 'register/upload-video');
-
   const onContinue = async () => {
     setError('');
     if (currentStep === 'batting' && !battingValid) {
@@ -111,8 +118,10 @@ export function PlayerClassification() {
     setSaving(true);
     try {
       await saveClassification(payload);
-      goUpload();
+      goNext(carryover);
     } catch (e: any) {
+      // One-time guard: already set → just move on to the next step.
+      if (e?.code === 'CLASSIFICATION_ALREADY_SET') { goNext(carryover); return; }
       setError(e?.message ?? t('Could not save. Please try again.', 'सहेजा नहीं जा सका। कृपया फिर कोशिश करें।'));
       setSaving(false);
     }

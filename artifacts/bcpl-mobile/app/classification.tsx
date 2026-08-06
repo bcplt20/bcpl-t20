@@ -44,9 +44,18 @@ export default function ClassificationScreen() {
   });
 
   const role = canonicalRole(clsQ.data?.role);
+  const carryover = clsQ.data?.carryover === true;
   const needsBatting = role === 'bat' || role === 'wk' || role === 'ar';
   const needsBowling = role === 'bowl' || role === 'ar';
   const twoStep = needsBatting && needsBowling; // all-rounders only
+
+  // Playing style is ONE-TIME. If it's already set, this screen is not
+  // editable — send carryover players back to their journey, everyone else
+  // on to the video upload (their normal next step).
+  React.useEffect(() => {
+    if (!clsQ.data?.complete) return;
+    router.replace(carryover ? '/journey' : '/upload-video');
+  }, [clsQ.data?.complete, carryover, router]);
 
   const [battingHand, setBattingHand] = useState<BattingHand | null>(null);
   const [battingPosition, setBattingPosition] = useState<BattingPosition | null>(null);
@@ -120,11 +129,18 @@ export default function ClassificationScreen() {
     setSaving(true);
     try {
       const r = await saveClassification(token, buildPayload());
-      qc.setQueryData(['classification', token], { role: r.role, classification: r.classification, complete: r.complete });
+      qc.setQueryData(['classification', token], { role: r.role, classification: r.classification, complete: r.complete, carryover });
       // Refresh dashboard so upload-video / profile reflect completion.
       await qc.invalidateQueries({ queryKey: ['dashboard', token] });
-      router.replace('/upload-video');
+      // Carryover players never upload a video — return them to their journey.
+      router.replace(carryover ? '/journey' : '/upload-video');
     } catch (e) {
+      // One-time guard: if the server says it's already set, route onward.
+      if (e instanceof ApiError && e.code === 'CLASSIFICATION_ALREADY_SET') {
+        await qc.invalidateQueries({ queryKey: ['dashboard', token] });
+        router.replace(carryover ? '/journey' : '/upload-video');
+        return;
+      }
       setError(e instanceof ApiError ? e.message : t('Could not save. Please try again.', 'सहेजा नहीं जा सका। कृपया फिर कोशिश करें।'));
     } finally {
       setSaving(false);

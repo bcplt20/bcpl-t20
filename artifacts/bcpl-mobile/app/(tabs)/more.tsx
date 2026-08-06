@@ -481,32 +481,38 @@ export default function ProfileScreen() {
                     done={['selected', 'rejected', 'video_submitted', 'payment_done'].includes(reg?.phase1Status ?? '')}
                     isCurrent={!['selected', 'rejected', 'video_submitted', 'payment_done'].includes(reg?.phase1Status ?? '')}
                   />
-                  <StatusRow
-                    label="Trial video"
-                    value={
-                      reg?.phase1Status === 'selected'
-                        ? 'Selected' // qualified (incl. legacy carryover — video round cleared)
-                        : reg?.phase1Status === 'rejected'
-                          ? 'Not selected'
-                          : d.video?.submitted ? 'Submitted' : 'Pending'
-                    }
-                    done={!!d.video?.submitted || reg?.phase1Status === 'selected'}
-                    isCurrent={['video_submitted', 'payment_done'].includes(reg?.phase1Status ?? '') && !d.video?.submitted}
-                  />
-                  {!d.video?.submitted && ['video_submitted', 'payment_done'].includes(reg?.phase1Status ?? '') ? (
-                    <Pressable
-                      onPress={() => router.push('/upload-video')}
-                      style={({ pressed }) => [styles.linkBtn, { opacity: pressed ? 0.8 : 1, marginTop: 8, marginBottom: 16 }]}
-                      testID="upload-video-cta"
-                    >
-                      <LinearGradient
-                        colors={['#FF1A75', '#D10056']}
-                        style={[StyleSheet.absoluteFill, { borderRadius: 14 }]}
+                  {/* Legacy PAID carryover players skip the skill video entirely —
+                      never show the trial-video row or an upload CTA to them. */}
+                  {reg?.carryover === true ? null : (
+                    <>
+                      <StatusRow
+                        label="Trial video"
+                        value={
+                          reg?.phase1Status === 'selected'
+                            ? 'Selected' // qualified (video round cleared)
+                            : reg?.phase1Status === 'rejected'
+                              ? 'Not selected'
+                              : d.video?.submitted ? 'Submitted' : 'Pending'
+                        }
+                        done={!!d.video?.submitted || reg?.phase1Status === 'selected'}
+                        isCurrent={['video_submitted', 'payment_done'].includes(reg?.phase1Status ?? '') && !d.video?.submitted}
                       />
-                      <Feather name="video" size={18} color="#fff" />
-                      <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 15 }}>{t('Upload trial video', 'ट्रायल वीडियो अपलोड करें')}</Text>
-                    </Pressable>
-                  ) : null}
+                      {!d.video?.submitted && ['video_submitted', 'payment_done'].includes(reg?.phase1Status ?? '') ? (
+                        <Pressable
+                          onPress={() => router.push('/upload-video')}
+                          style={({ pressed }) => [styles.linkBtn, { opacity: pressed ? 0.8 : 1, marginTop: 8, marginBottom: 16 }]}
+                          testID="upload-video-cta"
+                        >
+                          <LinearGradient
+                            colors={['#FF1A75', '#D10056']}
+                            style={[StyleSheet.absoluteFill, { borderRadius: 14 }]}
+                          />
+                          <Feather name="video" size={18} color="#fff" />
+                          <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 15 }}>{t('Upload trial video', 'ट्रायल वीडियो अपलोड करें')}</Text>
+                        </Pressable>
+                      ) : null}
+                    </>
+                  )}
                   <StatusRow
                     label="Phase 2 — KYC"
                     value={

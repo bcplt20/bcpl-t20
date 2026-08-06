@@ -157,6 +157,10 @@ export default function UploadVideoScreen() {
     const d = dq.data;
     const reg = d.registration;
     if (!d.registered || !reg) { setPhase('not_registered'); return; }
+    // Legacy PAID carryover players skip Phase-1 payment AND the skill video
+    // entirely (straight to Phase-2 KYC). They must NEVER see any video-upload
+    // UI — send them back to their journey.
+    if (reg.carryover === true) { router.replace('/journey'); return; }
     const p1 = reg.phase1Status ?? '';
     // Must have paid Phase 1 before uploading (mirrors website guard: 'pending' → blocked).
     const paid = (d.phase1Payment && ['success', 'paid'].includes(d.phase1Payment.status))

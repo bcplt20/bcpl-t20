@@ -150,6 +150,9 @@ export default function ProfileDetailsScreen() {
 
   const ageMissing = reg == null || reg.age == null;
   const ageValue = !ageMissing ? t(`${reg!.age} years`, `${reg!.age} वर्ष`) : '—';
+  // DOB backfill is ONE-TIME and only offered to legacy paid carryover players
+  // whose dob is still null (new registrants always provide dob at sign-up).
+  const canAddDob = ageMissing && reg?.carryover === true && !reg?.dob;
 
   // The Age row is rendered specially (backfill action/form) so it is not part
   // of the generic rows list below.
@@ -160,7 +163,7 @@ export default function ProfileDetailsScreen() {
     { icon: 'hash', label: t('Registration No.', 'रजिस्ट्रेशन नं.'), value: reg?.regNumber || '—' },
     { icon: 'award', label: t('Role', 'रोल'), value: roleLabel(reg?.role, lang) },
     { icon: 'map-pin', label: t('Trial City', 'ट्रायल शहर'), value: reg?.trialCity || '—' },
-    { icon: 'calendar', label: t('Season', 'सीज़न'), value: '5 · 2025–26' },
+    { icon: 'calendar', label: t('Season', 'सीज़न'), value: '5 · 2026–27' },
   ];
 
   return (
@@ -216,6 +219,10 @@ export default function ProfileDetailsScreen() {
                       {t('Age', 'उम्र')}
                     </Text>
                     {!ageMissing ? (
+                      <Text style={{ color: c.ink, fontSize: 15, fontFamily: 'PlusJakartaSans_600SemiBold' }}>
+                        {ageValue}
+                      </Text>
+                    ) : !canAddDob ? (
                       <Text style={{ color: c.ink, fontSize: 15, fontFamily: 'PlusJakartaSans_600SemiBold' }}>
                         {ageValue}
                       </Text>
@@ -307,7 +314,10 @@ export default function ProfileDetailsScreen() {
               </View>
             </Card>
 
-            {/* Playing style (classification) */}
+            {/* Playing style (classification) — ONE-TIME. Only legacy paid
+                carryover players who have NOT set it yet get a one-time "Add"
+                link; everyone else sees it read-only (they set it once inside
+                the registration → video flow). */}
             {reg ? (() => {
               const cls = reg.classification ?? null;
               const bat = cls ? battingSummary(reg.role, cls, lang) : null;
@@ -315,15 +325,18 @@ export default function ProfileDetailsScreen() {
               const lines: { label: string; value: string }[] = [];
               if (bat) lines.push({ label: t('Batting', 'बल्लेबाज़ी'), value: bat });
               if (bowl) lines.push({ label: t('Bowling', 'गेंदबाज़ी'), value: bowl });
+              const canAdd = reg.carryover === true && lines.length === 0;
               return (
                 <Card style={{ padding: 0, marginTop: 16 }}>
                   <View style={{ padding: 20, paddingBottom: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Text style={[styles.cardTitle, { color: c.ink }]}>{t('Playing style', 'खेल शैली')}</Text>
-                    <Pressable onPress={() => router.push('/classification')} hitSlop={8} testID="profile-edit-classification">
-                      <Text style={{ color: c.getAccentText(c.cyan), fontSize: 13, fontFamily: 'PlusJakartaSans_700Bold', textDecorationLine: 'underline' }}>
-                        {lines.length ? t('Edit', 'बदलें') : t('Add', 'जोड़ें')}
-                      </Text>
-                    </Pressable>
+                    {canAdd ? (
+                      <Pressable onPress={() => router.push('/classification')} hitSlop={8} testID="profile-add-classification">
+                        <Text style={{ color: c.getAccentText(c.cyan), fontSize: 13, fontFamily: 'PlusJakartaSans_700Bold', textDecorationLine: 'underline' }}>
+                          {t('Add', 'जोड़ें')}
+                        </Text>
+                      </Pressable>
+                    ) : null}
                   </View>
                   <View style={{ paddingHorizontal: 20, paddingBottom: 12 }}>
                     {lines.length ? lines.map((ln, i) => (

@@ -77,6 +77,7 @@ export const getDashboard = () =>
       id: string; role: string; trialCity: string;
       classification?: ClassificationValue | null;
       classificationComplete?: boolean;
+      carryover?: boolean;
       phase1Status: string; phase2Status: string | null;
       videoDeadline: string | null; deadlineExpired: boolean; createdAt: string; regNumber?: string | null;
     };
@@ -107,7 +108,7 @@ export interface ClassificationValue {
 }
 
 export const getClassification = () =>
-  req<{ role: string; classification: ClassificationValue | null; complete: boolean }>(
+  req<{ role: string; classification: ClassificationValue | null; complete: boolean; carryover: boolean }>(
     "GET", "/user/classification"
   );
 

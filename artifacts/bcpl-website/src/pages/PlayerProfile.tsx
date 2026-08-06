@@ -85,7 +85,22 @@ function journeyNodes(data: any) {
   const p2After   = ['payment_done', ...P2_TRIAL_STAGE, ...P2_POST_TRIAL].includes(p2 ?? '');
   const resultOut = p1 === 'selected' || p1 === 'rejected';
 
-  const defs: { en: string; hi: string; done: boolean }[] = [
+  // Legacy PAID carryover players skip Phase-1 payment, the skill video and the
+  // Phase-1 review/result entirely — straight to Phase-2 KYC. Their journey
+  // never shows any video step.
+  const carryover = reg?.carryover === true;
+
+  const defs: { en: string; hi: string; done: boolean }[] = carryover
+    ? [
+        { en: 'Registration',       hi: 'रजिस्ट्रेशन',         done: !!data?.registered },
+        { en: 'Phase 2 Payment',    hi: 'फेज 2 पेमेंट',        done: trialStage || p2After },
+        { en: 'KYC Verification',   hi: 'KYC वेरिफिकेशन',     done: trialStage },
+        { en: 'Trial Venue & Pass', hi: 'ट्रायल वेन्यू & पास', done: !!trial || postTrial },
+        { en: 'Venue Check-In',     hi: 'वेन्यू चेक-इन',       done: !!trial?.checkedInAt || postTrial },
+        { en: 'Physical Trial',     hi: 'फिजिकल ट्रायल',      done: !!trial?.assessmentSubmitted || postTrial },
+        { en: 'Final Result',       hi: 'फाइनल रिज़ल्ट',       done: false },
+      ]
+    : [
     { en: 'Registration',       hi: 'रजिस्ट्रेशन',         done: !!data?.registered },
     { en: 'Phase 1 Payment',    hi: 'फेज 1 पेमेंट',        done: trialStage || p1After },
     { en: 'Video Upload',       hi: 'वीडियो अपलोड',       done: trialStage || !!data?.video?.submitted || ['video_submitted', 'selected', 'rejected'].includes(p1) },
@@ -390,6 +405,9 @@ export function PlayerProfile() {
   // and old/manual registrations may lack a payment row entirely while the
   // registration status already proves payment — trust either signal.
   const paidish = (s: unknown) => ['paid', 'success', 'captured'].includes(String(s ?? '').toLowerCase());
+  // Legacy PAID carryover players skip Phase-1 payment AND the skill video —
+  // never show any Phase-1 / video UI to them.
+  const carryover = reg?.carryover === true;
   const p1Paid = paidish(data?.phase1Payment?.status) || ['payment_done','video_submitted','selected','rejected'].includes(reg?.phase1Status ?? '');
   const p2Paid = paidish(data?.phase2Payment?.status) || ['payment_done','kyc_done','kyc_approved','trial_cleared','auction_shortlisted','team_signed'].includes(reg?.phase2Status ?? '');
 
@@ -665,9 +683,20 @@ export function PlayerProfile() {
                     <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.6)', marginTop: -8, marginBottom: 18, lineHeight: 1.5 }}>
                       {t('Email or phone wrong? Contact support with your ID proof and we will correct it.', 'Email या phone गलत है? अपने ID proof के साथ support से संपर्क करें, हम ठीक कर देंगे।')}
                     </div>
+                    {/* Playing style is ONE-TIME. Only legacy carryover players who
+                        have NOT set it yet get a one-time "Add playing style"
+                        link; everyone else sees the saved values read-only above. */}
+                    {carryover && !reg.classificationComplete && (
+                      <button onClick={() => { setLocation('/register/classification'); }}
+                        style={{ marginTop: -6, marginBottom: 18, padding: '9px 16px', fontSize: 13, fontWeight: 800, fontFamily: 'var(--font-head)', letterSpacing: '.04em', background: 'rgba(0,220,245,0.10)', border: '1px solid rgba(0,220,245,0.4)', color: 'var(--cyan, #00DCF5)', borderRadius: '9px', cursor: 'pointer', textTransform: 'uppercase' }}>
+                        {t('+ Add playing style', '+ खेल शैली जोड़ें')}
+                      </button>
+                    )}
                     
                     <div className="grid2">
-                      {/* Phase 1 Payment */}
+                      {/* Phase 1 Payment + Trial Video — hidden entirely for
+                          legacy carryover players (they skip Phase 1). */}
+                      {!carryover && (
                       <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '12px', padding: '16px', border: '1px solid var(--line)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                           <div style={{ fontSize: 12.5, fontWeight: 800, fontFamily: 'var(--font-head)', color: 'rgba(255,255,255,0.72)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t("Phase 1 Payment", "फेज 1 पेमेंट")}</div>
@@ -678,8 +707,10 @@ export function PlayerProfile() {
                         {data.phase1Payment && <div style={{ fontSize: 26, fontWeight: 800, color: '#fff', fontFamily: 'var(--font-head)', lineHeight: 1.1 }}>{fmtAmt(data.phase1Payment.amount)}</div>}
                         {data.phase1Payment?.paidAt && <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.88)', marginTop: 5 }}>{formatDateShort(data.phase1Payment.paidAt)}</div>}
                       </div>
+                      )}
 
                       {/* Trial Video */}
+                      {!carryover && (
                       <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '12px', padding: '16px', border: '1px solid var(--line)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                           <div style={{ fontSize: 12.5, fontWeight: 800, fontFamily: 'var(--font-head)', color: 'rgba(255,255,255,0.72)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t("Trial Video", "ट्रायल वीडियो")}</div>
@@ -697,6 +728,7 @@ export function PlayerProfile() {
                           </button>
                         )}
                       </div>
+                      )}
 
                       {/* Phase 2 Payment */}
                       {(reg.phase1Status === 'selected' || data.phase2Payment || p2Paid) && (

@@ -288,6 +288,7 @@ export interface Dashboard {
     age?: number | null;
     classification?: ClassificationValue | null;
     classificationComplete?: boolean;
+    carryover?: boolean;
     phase1Status?: string | null;
     phase2Status?: string | null;
     videoDeadline?: string | null;
@@ -320,7 +321,7 @@ export interface ClassificationValue {
   bowlingType?: 'fast' | 'fast_medium' | 'medium_fast' | 'medium_pace' | 'off_spin' | 'leg_spin' | 'orthodox_spin' | 'wrist_spin';
 }
 
-export function getClassification(token: string): Promise<{ role: string; classification: ClassificationValue | null; complete: boolean }> {
+export function getClassification(token: string): Promise<{ role: string; classification: ClassificationValue | null; complete: boolean; carryover: boolean }> {
   return apiFetch('/user/classification', { token });
 }
 

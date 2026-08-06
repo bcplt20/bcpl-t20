@@ -18,6 +18,7 @@ import { eq } from "drizzle-orm";
 import { signToken } from "../lib/auth";
 import userRouter, { ensureRegistrationClassificationColumn } from "./user";
 import videoRouter from "./video";
+import registerRouter from "./register";
 
 const suffix = crypto.randomBytes(5).toString("hex");
 const rand9 = String(crypto.randomInt(100_000_000, 999_999_999));
@@ -59,6 +60,15 @@ async function uploadUrl(token: string, registrationId: string) {
   return { status: res.status, body: (await res.json()) as any };
 }
 
+async function patchDob(token: string, dob: string) {
+  const res = await fetch(`${base}/api/register/dob`, {
+    method: "PATCH",
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ dob }),
+  });
+  return { status: res.status, body: (await res.json()) as any };
+}
+
 let bat: Ctx, bowl: Ctx, wk: Ctx, ar: Ctx;
 
 beforeAll(async () => {
@@ -67,6 +77,7 @@ beforeAll(async () => {
   app.use(express.json());
   app.use("/api/user", userRouter);
   app.use("/api/video", videoRouter);
+  app.use("/api/register", registerRouter);
   server = app.listen(0);
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
 
@@ -87,13 +98,6 @@ afterAll(async () => {
 });
 
 describe("POST /api/user/classification — validation matrix", () => {
-  it("bat: valid batting classification saves", async () => {
-    const r = await postClassification(bat.token, { battingHand: "right", battingPosition: "opener" });
-    expect(r.status).toBe(200);
-    expect(r.body.complete).toBe(true);
-    expect(r.body.classification.battingHand).toBe("right");
-  });
-
   it("bat: missing required batting position is rejected", async () => {
     const r = await postClassification(bat.token, { battingHand: "left" });
     expect(r.status).toBe(400);
@@ -105,10 +109,12 @@ describe("POST /api/user/classification — validation matrix", () => {
     expect(r.status).toBe(400);
   });
 
-  it("bowl: valid right-arm off_spin saves", async () => {
-    const r = await postClassification(bowl.token, { bowlingArm: "right", bowlingType: "off_spin" });
+  it("bat: valid batting classification saves (fresh player)", async () => {
+    const p = await makePlayer("bat", 22);
+    const r = await postClassification(p.token, { battingHand: "right", battingPosition: "opener" });
     expect(r.status).toBe(200);
     expect(r.body.complete).toBe(true);
+    expect(r.body.classification.battingHand).toBe("right");
   });
 
   it("bowl: wrong-arm bowling type (leg_spin on left arm) is rejected", async () => {
@@ -116,14 +122,21 @@ describe("POST /api/user/classification — validation matrix", () => {
     expect(r.status).toBe(400);
   });
 
-  it("bowl: left-arm wrist_spin (chinaman) is valid", async () => {
-    const r = await postClassification(bowl.token, { bowlingArm: "left", bowlingType: "wrist_spin" });
-    expect(r.status).toBe(200);
-  });
-
   it("bowl: missing bowling type is rejected", async () => {
     const r = await postClassification(bowl.token, { bowlingArm: "right" });
     expect(r.status).toBe(400);
+  });
+
+  it("bowl: valid right-arm off_spin saves", async () => {
+    const r = await postClassification(bowl.token, { bowlingArm: "right", bowlingType: "off_spin" });
+    expect(r.status).toBe(200);
+    expect(r.body.complete).toBe(true);
+  });
+
+  it("bowl: left-arm wrist_spin (chinaman) is valid (fresh player)", async () => {
+    const p = await makePlayer("bowl", 20);
+    const r = await postClassification(p.token, { bowlingArm: "left", bowlingType: "wrist_spin" });
+    expect(r.status).toBe(200);
   });
 
   it("wk: batting required, optional battingStyle accepted", async () => {
@@ -132,8 +145,9 @@ describe("POST /api/user/classification — validation matrix", () => {
     expect(r.body.classification.battingStyle).toBe("anchor");
   });
 
-  it("wk: valid without optional battingStyle", async () => {
-    const r = await postClassification(wk.token, { battingHand: "left", battingPosition: "top_order" });
+  it("wk: valid without optional battingStyle (fresh player)", async () => {
+    const p = await makePlayer("wk", 21);
+    const r = await postClassification(p.token, { battingHand: "left", battingPosition: "top_order" });
     expect(r.status).toBe(200);
   });
 
@@ -168,5 +182,36 @@ describe("skill-video upload gate", () => {
     expect(ok.status).toBe(200);
     expect(ok.body.success).toBe(true);
     expect(typeof ok.body.presignedUrl).toBe("string");
+  });
+});
+
+describe("classification is one-time (immutable after first save)", () => {
+  it("second POST returns 409 CLASSIFICATION_ALREADY_SET", async () => {
+    const p = await makePlayer("bat", 7);
+    const first = await postClassification(p.token, { battingHand: "right", battingPosition: "opener" });
+    expect(first.status).toBe(200);
+
+    const second = await postClassification(p.token, { battingHand: "left", battingPosition: "finisher" });
+    expect(second.status).toBe(409);
+    expect(second.body.code).toBe("CLASSIFICATION_ALREADY_SET");
+
+    // The stored value is unchanged (first save wins).
+    const got = await fetch(`${base}/api/user/classification`, { headers: { Authorization: `Bearer ${p.token}` } });
+    const body = (await got.json()) as any;
+    expect(body.classification.battingHand).toBe("right");
+    expect(body.classification.battingPosition).toBe("opener");
+  });
+});
+
+describe("DOB backfill is one-time", () => {
+  it("first PATCH sets dob; a second PATCH returns 409 DOB_ALREADY_SET", async () => {
+    const p = await makePlayer("bat", 8);
+    const first = await patchDob(p.token, "1995-01-01");
+    expect(first.status).toBe(200);
+    expect(first.body.success).toBe(true);
+
+    const second = await patchDob(p.token, "1990-06-15");
+    expect(second.status).toBe(409);
+    expect(second.body.code).toBe("DOB_ALREADY_SET");
   });
 });

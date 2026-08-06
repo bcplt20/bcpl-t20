@@ -5,7 +5,7 @@ import { SiteHeader } from '../components/SiteHeader';
 import { SkelRows } from '../components/Skel';
 import {
   getRegistrationStatus, getMe, getUploadUrl, confirmVideoUpload, getSiteSetting,
-  getVideoInstructions, getVideoStatus, getClassification, type VideoConstraints,
+  getVideoInstructions, getVideoStatus, getClassification, getDashboard, type VideoConstraints,
   type SampleVideos, type SampleVideoEntry, type SampleVideoRole,
 } from '../lib/api';
 import { useLang } from '@/lib/i18n';
@@ -129,11 +129,20 @@ export function Phase1VideoUpload() {
   useEffect(() => {
     (async () => {
       try {
-        const [regData, meData, vidData] = await Promise.allSettled([
+        const [regData, meData, vidData, dashData] = await Promise.allSettled([
           getRegistrationStatus(),
           getMe(),
           getVideoStatus(),
+          getDashboard(),
         ]);
+
+        // Legacy PAID carryover players skip Phase-1 payment AND the skill
+        // video entirely — they must NEVER see any video-upload UI. Send them
+        // to their dashboard.
+        if (dashData.status === 'fulfilled' && dashData.value.registration?.carryover === true) {
+          window.location.replace(import.meta.env.BASE_URL + 'profile');
+          return;
+        }
 
         if (meData.status === 'fulfilled') setUserName(meData.value.user.name);
         if (vidData.status === 'fulfilled') {

@@ -8,7 +8,7 @@ import {
   trialAllocationsTable, trialSlotsTable, trialVenuesTable,
   trialCheckinsTable, trialEvaluationsTable,
 } from "@workspace/db/schema";
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
 import { requireAuth, type AuthRequest } from "../middlewares/auth";
 import { pgCauseOf } from "../lib/pgErrors";
@@ -16,6 +16,7 @@ import { computeAgeYears } from "../lib/age";
 import { getUploadPresignedUrl, getDownloadPresignedUrl, headS3Object } from "../lib/s3";
 import { logger } from "../lib/logger";
 import { classificationSchemaFor, isClassificationComplete } from "../lib/classification";
+import { isLegacyCarryover } from "../lib/carryover";
 
 const router = Router();
 
@@ -267,6 +268,7 @@ router.get("/dashboard", requireAuth, async (req: AuthRequest, res) => {
       age,
       classification: reg.classification ?? null,
       classificationComplete: isClassificationComplete(reg.role, reg.classification),
+      carryover:     isLegacyCarryover(reg.consents),
       phase1Status:  reg.phase1Status,
       phase2Status:  reg.phase2Status,
       videoDeadline: reg.videoDeadline,
@@ -527,23 +529,36 @@ router.get("/classification", requireAuth, async (req: AuthRequest, res) => {
     role: reg.role,
     classification: reg.classification ?? null,
     complete: isClassificationComplete(reg.role, reg.classification),
+    carryover: isLegacyCarryover(reg.consents),
   });
 });
 
-// POST /api/user/classification — validate per role + persist. Idempotent
-// (overwrite allowed; harmless after a video already exists).
+// POST /api/user/classification — validate per role + persist. ONE-TIME ONLY:
+// once a classification exists it is immutable via self-service (409). The
+// first save is the only save, for every player.
 router.post("/classification", requireAuth, async (req: AuthRequest, res) => {
   const reg = await pickUserRegistration(req.user!.userId);
   if (!reg) return void res.status(404).json({ error: "Registration not found" });
+
+  // Already set → reject. Guards both an accidental re-submit and any client
+  // that still surfaces an edit control.
+  if (reg.classification != null && isClassificationComplete(reg.role, reg.classification)) {
+    return void res.status(409).json({ error: "Your playing style is already set and can't be changed.", code: "CLASSIFICATION_ALREADY_SET" });
+  }
 
   const parsed = classificationSchemaFor(reg.role).safeParse(req.body);
   if (!parsed.success) {
     return void res.status(400).json({ error: parsed.error.issues[0]?.message ?? "Invalid classification", code: "INVALID_CLASSIFICATION" });
   }
 
-  await db.update(registrationsTable)
+  // Serialise concurrent first-saves under the row so exactly one wins.
+  const updated = await db.update(registrationsTable)
     .set({ classification: parsed.data as Record<string, unknown>, updatedAt: new Date() })
-    .where(eq(registrationsTable.id, reg.id));
+    .where(and(eq(registrationsTable.id, reg.id), isNull(registrationsTable.classification)))
+    .returning({ id: registrationsTable.id });
+  if (updated.length === 0) {
+    return void res.status(409).json({ error: "Your playing style is already set and can't be changed.", code: "CLASSIFICATION_ALREADY_SET" });
+  }
 
   res.json({
     success: true,

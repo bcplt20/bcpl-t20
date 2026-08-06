@@ -1060,7 +1060,7 @@ export function Registration() {
                         { l:t('ROLE', 'ROLE'), v:role ? t(role.label, role.labelHi) : '—' },
                         { l:t('TRIAL CITY', 'TRIAL CITY'), v:city || '—' },
                         { l:t('AGE ELIGIBILITY', 'AGE ELIGIBILITY'), v:dob && dobValid ? t('✓ Eligible (18–45)', '✓ Eligible (18–45)') : '—' },
-                        { l:t('SEASON', 'SEASON'), v:'5 · 2025–26' },
+                        { l:t('SEASON', 'SEASON'), v:'5 · 2026–27' },
                       ].map(row => (
                         <div key={row.l} style={{ padding:'10px 0', borderBottom:'1px solid rgba(255,255,255,0.05)' }}>
                           <div style={{ fontSize:9, fontWeight:700, fontFamily:'Montserrat,sans-serif', letterSpacing:'.14em', color:'var(--ink-3)', marginBottom:4 }}>{row.l}</div>

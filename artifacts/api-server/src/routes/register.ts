@@ -231,9 +231,15 @@ router.patch("/dob", requireAuth, async (req: AuthRequest, res) => {
   if (!isAgeEligible(parsed.data.dob)) {
     return void res.status(403).json({ error: AGE_INELIGIBLE_MESSAGE, code: "AGE_INELIGIBLE" });
   }
-  await db.update(usersTable)
+  // One-time only: DOB may be set exactly once (when currently NULL). A DOB
+  // that already exists is immutable via self-service — reject a second write.
+  const result = await db.update(usersTable)
     .set({ dob: parsed.data.dob, updatedAt: new Date() })
-    .where(eq(usersTable.id, req.user!.userId));
+    .where(and(eq(usersTable.id, req.user!.userId), isNull(usersTable.dob)))
+    .returning({ id: usersTable.id });
+  if (result.length === 0) {
+    return void res.status(409).json({ error: "Date of birth is already set and can't be changed.", code: "DOB_ALREADY_SET" });
+  }
   res.json({ success: true });
 });
 

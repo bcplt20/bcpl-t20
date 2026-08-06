@@ -158,7 +158,22 @@ function buildSteps(d: Dashboard, t: (en: string, hi: string) => string) {
   const p2After = ['payment_done', ...P2_TRIAL_STAGE, ...P2_POST_TRIAL].includes(p2 ?? '');
   const resultOut = p1 === 'selected' || p1 === 'rejected';
 
-  const defs: { title: string; icon: keyof typeof Feather.glyphMap; colors: readonly [string, string]; done: boolean }[] = [
+  // Legacy PAID carryover players skip Phase-1 payment, the skill video and
+  // the Phase-1 review/result entirely — they go straight to Phase-2 KYC.
+  // Their journey: Registration → KYC → Trial pass → … (no video anywhere).
+  const carryover = reg?.carryover === true;
+
+  const defs: { title: string; icon: keyof typeof Feather.glyphMap; colors: readonly [string, string]; done: boolean }[] = carryover
+    ? [
+        { title: t('Registration', 'रजिस्ट्रेशन'), icon: 'user-check', colors: ['#5B2BF0', '#9B2FF0'], done: !!d.registered },
+        { title: t('Phase 2 Payment', 'फेज 2 पेमेंट'), icon: 'credit-card', colors: ['#00DCF5', '#4B6BFF'], done: trialStage || p2After },
+        { title: t('KYC Verification', 'KYC वेरिफिकेशन'), icon: 'shield', colors: ['#00DCF5', '#4B6BFF'], done: trialStage || kycDone(kyc) },
+        { title: t('Trial Venue & Pass', 'ट्रायल वेन्यू व पास'), icon: 'map-pin', colors: ['#16E0A3', '#00B8D9'], done: !!trial || postTrial },
+        { title: t('Venue Check-In', 'वेन्यू चेक-इन'), icon: 'log-in', colors: ['#16E0A3', '#00B8D9'], done: !!trial?.checkedInAt || postTrial },
+        { title: t('Physical Trial', 'फिजिकल ट्रायल'), icon: 'activity', colors: ['#16E0A3', '#00B8D9'], done: !!trial?.assessmentSubmitted || postTrial },
+        { title: t('Final Result', 'फाइनल रिज़ल्ट'), icon: 'target', colors: ['#FFC53D', '#FF7A3D'], done: false },
+      ]
+    : [
     { title: t('Registration', 'रजिस्ट्रेशन'), icon: 'user-check', colors: ['#5B2BF0', '#9B2FF0'], done: !!d.registered },
     { title: t('Phase 1 Payment', 'फेज 1 पेमेंट'), icon: 'credit-card', colors: ['#6B2BF0', '#9B2FF0'], done: trialStage || p1After },
     { title: t('Video Upload', 'वीडियो अपलोड'), icon: 'video', colors: ['#9B2FF0', '#FF3DA6'], done: trialStage || !!d.video?.submitted || ['video_submitted', 'selected', 'rejected'].includes(p1) },
