@@ -66,13 +66,25 @@ export default function NativePageScreen() {
         </View>
 
         {sections.map((sec, sIdx) => {
-          if (isFaq && sec.title) {
+          if (isFaq) {
             return (
-              <AccordionItem 
-                key={sIdx} 
-                title={sec.title} 
-                body={sec.blocks.map(b => b.hi ? t(b.text, b.hi) : b.text).join('\n\n')} 
-              />
+              <View key={sIdx} style={{ gap: 8 }}>
+                {sec.title && (
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: sIdx === 0 ? 0 : 12, marginBottom: 4 }}>
+                    <LinearGradient colors={['#FF3DA6', '#5B2BF0']} style={{ width: 20, height: 3, borderRadius: 2 }} />
+                    <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 13, letterSpacing: 1, color: c.magenta, textTransform: 'uppercase' }}>
+                      {sec.title}
+                    </Text>
+                  </View>
+                )}
+                {sec.blocks.map((b, bi) => (
+                  <AccordionItem
+                    key={bi}
+                    title={b.hi ? t(b.text, b.hi) : b.text}
+                    body={b.answer?.hi ? t(b.answer.text, b.answer.hi) : (b.answer?.text || '')}
+                  />
+                ))}
+              </View>
             );
           }
 
@@ -109,12 +121,27 @@ export default function NativePageScreen() {
                     }
                     
                     if (block.type === 'callout') {
+                      const tone = block.icon || 'info';
+                      const toneMap: Record<string, { bg: string; bd: string; fg: string; icon: any }> = {
+                        info: { bg: c.isDark ? 'rgba(0,220,245,0.10)' : 'rgba(0,151,167,0.10)', bd: c.isDark ? 'rgba(0,220,245,0.30)' : 'rgba(0,151,167,0.30)', fg: c.isDark ? c.cyan : '#0097A7', icon: 'info' },
+                        success: { bg: 'rgba(22,224,163,0.10)', bd: 'rgba(22,224,163,0.35)', fg: c.mint, icon: 'check-circle' },
+                        warn: { bg: 'rgba(255,90,110,0.10)', bd: 'rgba(255,90,110,0.35)', fg: c.coral, icon: 'alert-triangle' },
+                        gold: { bg: 'rgba(255,197,61,0.10)', bd: 'rgba(255,197,61,0.35)', fg: c.amber, icon: 'star' },
+                      };
+                      const tn = toneMap[tone] || toneMap.info;
                       return (
-                        <View key={i} style={{ backgroundColor: 'rgba(255, 122, 41, 0.1)', borderWidth: 1, borderColor: 'rgba(255, 122, 41, 0.3)', borderRadius: 12, padding: 16, marginBottom: 16, flexDirection: 'row', gap: 12 }}>
-                          <Feather name="info" size={20} color="#FF7A29" />
-                          <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 14, flex: 1, lineHeight: 22 }}>
-                            {txt}
-                          </Text>
+                        <View key={i} style={{ backgroundColor: tn.bg, borderWidth: 1, borderColor: tn.bd, borderLeftWidth: 4, borderLeftColor: tn.fg, borderRadius: 12, padding: 16, marginBottom: 16, flexDirection: 'row', gap: 12 }}>
+                          <Feather name={tn.icon} size={20} color={tn.fg} style={{ marginTop: 1 }} />
+                          <View style={{ flex: 1 }}>
+                            {block.label?.text && (
+                              <Text style={{ color: tn.fg, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 13, marginBottom: 6 }}>
+                                {block.label.hi ? t(block.label.text, block.label.hi) : block.label.text}
+                              </Text>
+                            )}
+                            <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 14, lineHeight: 22 }}>
+                              {txt}
+                            </Text>
+                          </View>
                         </View>
                       );
                     }
@@ -128,12 +155,62 @@ export default function NativePageScreen() {
                                 <Text style={{ color: c.magenta, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 14 }}>{idx + 1}</Text>
                               </View>
                               <View style={{ flex: 1, justifyContent: 'center' }}>
-                                <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 15 }}>
+                                <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 15, lineHeight: 21 }}>
                                   {t(item.en, item.hi)}
                                 </Text>
+                                {item.descEn && (
+                                  <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 13, lineHeight: 20, marginTop: 3 }}>
+                                    {t(item.descEn, item.descHi)}
+                                  </Text>
+                                )}
                               </View>
                             </View>
                           ))}
+                        </View>
+                      );
+                    }
+
+                    if (block.type === 'ticks') {
+                      const neg = block.icon === 'x';
+                      const dotColor = neg ? c.coral : c.mint;
+                      return (
+                        <View key={i} style={{ marginBottom: 8 }}>
+                          {block.items?.map((item: any, idx: number) => (
+                            <View key={idx} style={styles.li}>
+                              <View style={{ marginTop: 2, marginRight: 10, width: 18, height: 18, borderRadius: 9, backgroundColor: neg ? 'rgba(255,90,110,0.12)' : 'rgba(22,224,163,0.14)', alignItems: 'center', justifyContent: 'center' }}>
+                                <Feather name={neg ? 'x' : 'check'} size={11} color={dotColor} />
+                              </View>
+                              <Text style={[styles.p, { color: c.sub, marginBottom: 0 }]}>
+                                {item.hi ? t(item.en, item.hi) : item.en}
+                              </Text>
+                            </View>
+                          ))}
+                        </View>
+                      );
+                    }
+
+                    if (block.type === 'table') {
+                      return (
+                        <View key={i} style={{ borderWidth: 1, borderColor: c.line, borderRadius: 12, overflow: 'hidden', marginBottom: 16 }}>
+                          {block.rows?.map((row: any, idx: number) => {
+                            const accent = row.color || (idx % 2 === 0 ? c.violet : c.magenta);
+                            return (
+                              <View key={idx} style={{ flexDirection: 'row', borderTopWidth: idx === 0 ? 0 : 1, borderTopColor: c.line, backgroundColor: idx % 2 === 0 ? c.card2 : 'transparent' }}>
+                                <View style={{ width: 96, padding: 12, borderRightWidth: 1, borderRightColor: c.line, backgroundColor: 'transparent', justifyContent: 'flex-start' }}>
+                                  <View style={{ alignSelf: 'flex-start', backgroundColor: accent, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 }}>
+                                    <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 11 }} numberOfLines={2}>
+                                      {row.k?.hi ? t(row.k.en, row.k.hi) : (row.k?.en || row.k)}
+                                    </Text>
+                                  </View>
+                                </View>
+                                <View style={{ flex: 1, padding: 12, justifyContent: 'center' }}>
+                                  <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 13, lineHeight: 20 }}>
+                                    {row.v?.hi ? t(row.v.en, row.v.hi) : (row.v?.en || row.v)}
+                                  </Text>
+                                </View>
+                              </View>
+                            );
+                          })}
                         </View>
                       );
                     }

@@ -50,7 +50,7 @@ export default function NewsScreen() {
       <FlatList
         data={NEWS_ARTICLES}
         keyExtractor={(n) => n.slug}
-        ListHeaderComponent={<ScreenHeader title="News" subtitle={t('Latest league updates', 'लीग की ताज़ा खबरें')} />}
+        ListHeaderComponent={<ScreenHeader title="News" subtitle={t('Latest league updates', 'लीग की ताज़ा खबरें')} back={true} />}
         scrollEnabled={NEWS_ARTICLES.length > 0}
         contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 118 : 120, paddingTop: 10 }}
         windowSize={5}

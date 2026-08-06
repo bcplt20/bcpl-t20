@@ -101,7 +101,7 @@ export default function PointsScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
       <ScreenBackground />
-      <GlassAppBar title="Points Table" />
+      <GlassAppBar title="Points Table" back={true} />
       <ScrollView
         contentContainerStyle={{ paddingBottom: bottomNavHeight, paddingTop: appBarHeight }}
         refreshControl={

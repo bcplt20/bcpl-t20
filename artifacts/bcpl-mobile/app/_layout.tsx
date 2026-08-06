@@ -23,6 +23,7 @@ import {
 import {
   SpaceGrotesk_700Bold,
 } from '@expo-google-fonts/space-grotesk';
+import { Feather, Ionicons } from '@expo/vector-icons';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 
@@ -72,6 +73,8 @@ export default function RootLayout() {
     PlusJakartaSans_600SemiBold,
     PlusJakartaSans_700Bold,
     SpaceGrotesk_700Bold,
+    ...Feather.font,
+    ...Ionicons.font,
   });
 
   useEffect(() => {

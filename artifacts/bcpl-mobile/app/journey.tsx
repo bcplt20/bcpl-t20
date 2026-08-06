@@ -1,5 +1,6 @@
 import React from 'react';
 import { Linking, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
@@ -32,9 +33,39 @@ function fmtDate(iso?: string | null): string | null {
   return d.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: 'numeric', month: 'short', year: 'numeric' });
 }
 
-/* Compliant paid-check: legacy "paid" alongside "success" (see api-field-traps). */
+/*
+ * Canonical paid vocabulary emitted by the API server. The server writes
+ * "success" on Cashfree verify + webhook (payment.ts); older reconciliation
+ * wrote "paid". The authoritative server list is PAID_STATUSES =
+ * ["success", "paid"] (marketing.ts). Never invent new status strings here.
+ */
+const PAID_PAYMENT_STATUSES = ['success', 'paid'];
 function isPaid(status?: string | null): boolean {
-  return status === 'success' || status === 'paid';
+  return !!status && PAID_PAYMENT_STATUSES.includes(status);
+}
+
+/*
+ * phase1Status values that a registration can ONLY reach after paying (the
+ * flow is pending → payment_done → video_submitted → selected | rejected).
+ * Legacy carryover users are provisioned straight to phase1Status "selected"
+ * with NO phase1 payment row (auth.ts provisionLegacyCarryover) — their fees
+ * are waived, so paid-ness must be inferred from phase1Status, not a payment
+ * row. Only "pending" / "payment_pending" imply the user has not paid yet.
+ */
+const UNPAID_PHASE1_STATUSES = ['pending', 'payment_pending', ''];
+function impliesPaidFromPhase1(phase1Status?: string | null): boolean {
+  const s = phase1Status ?? '';
+  return !UNPAID_PHASE1_STATUSES.includes(s);
+}
+
+/**
+ * A user is genuinely paid for Phase 1 if the payment row is in a paid state
+ * OR the phase1Status has advanced past the unpaid states (covers legacy
+ * carryover users who have no payment row). This guarantees a genuinely-paid
+ * player never sees "payment pending".
+ */
+function isPhase1Paid(d: Dashboard): boolean {
+  return isPaid(d.phase1Payment?.status) || impliesPaidFromPhase1(d.registration?.phase1Status);
 }
 
 /**
@@ -48,10 +79,10 @@ function buildSteps(d: Dashboard, t: (en: string, hi: string) => string) {
   const p2 = reg?.phase2Status ?? '';
   const kycStatus = d.kyc?.status ?? '';
   const videoSubmitted = !!d.video?.submitted;
-  const p1Paid = isPaid(d.phase1Payment?.status);
+  const p1Paid = isPhase1Paid(d);
 
   // 1. Registered & Paid
-  const paidDone = p1Paid || p1 !== 'pending';
+  const paidDone = p1Paid;
   // 2. Video Trial
   const videoDone = videoSubmitted || ['video_submitted', 'selected', 'rejected'].includes(p1);
   // 3. Phase 1 Results
@@ -287,9 +318,13 @@ function JourneyBody({ d, openWeb }: { d: Dashboard; openWeb: (url: string) => v
 
   const videoSubmitted = !!d.video?.submitted;
   const p1 = reg.phase1Status ?? 'pending';
-  const showVideoCta = !videoSubmitted && ['payment_done', 'video_submitted'].includes(p1);
-  const deadline = fmtDate(reg.videoDeadline);
-  const deadlineExpired = !!reg.deadlineExpired;
+  const p1Paid = isPhase1Paid(d);
+  /* Phase-1 result already decided → the video window is over, don't show. */
+  const resultDecided = p1 === 'selected' || p1 === 'rejected';
+  /* Website parity: the video step appears whenever the user is genuinely
+     paid and Phase-1 evaluation has not yet concluded. Deadline/submission
+     states are handled inside the card. */
+  const showVideoStep = p1Paid && !resultDecided;
 
   const kycStatus = d.kyc?.status ?? '';
   const p2 = reg.phase2Status ?? '';
@@ -325,36 +360,18 @@ function JourneyBody({ d, openWeb }: { d: Dashboard; openWeb: (url: string) => v
         ))}
       </View>
 
-      {/* Video upload hand-off — native upload is NOT built here (separate task) */}
-      {showVideoCta ? (
-        <Card style={{ marginTop: 8 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-            <Feather name="video" size={18} color={c.magenta} />
-            <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 15 }}>{t('Video Trial', 'वीडियो ट्रायल')}</Text>
-          </View>
-          <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 14 }}>
-            {t('Video upload अभी website पर करें', 'Video upload अभी website पर करें')}
-          </Text>
-          <Text style={{ color: c.sub, fontSize: 13, marginTop: 8, lineHeight: 20, fontFamily: 'PlusJakartaSans_500Medium' }}>
-            {t(
-              'Record a 30–60 second clip and upload it on bcplt20.com within your 15-day window.',
-              '30–60 सेकंड का clip record करके अपनी 15-दिन की window में bcplt20.com पर upload करें।',
-            )}
-          </Text>
-          {deadline ? (
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 12 }}>
-              <Feather name="clock" size={14} color={deadlineExpired ? c.coral : c.amber} />
-              <Text style={{ color: deadlineExpired ? c.coral : c.getAccentText(c.amber), fontFamily: 'PlusJakartaSans_700Bold', fontSize: 13 }}>
-                {deadlineExpired ? t('Upload window closed', 'अपलोड window बंद') : `${t('Upload by', 'अपलोड करें')} ${deadline}`}
-              </Text>
-            </View>
-          ) : null}
-          <Pressable onPress={() => openWeb(WEB_VIDEO_UPLOAD)} style={({ pressed }) => [styles.linkBtn, { opacity: pressed ? 0.85 : 1 }]} testID="journey-video-upload">
-            <LinearGradient colors={['#FF1A75', '#D10056']} style={[StyleSheet.absoluteFill, { borderRadius: 14 }]} />
-            <Feather name="external-link" size={16} color="#fff" />
-            <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 14 }}>{t('Open upload page', 'अपलोड पेज खोलें')}</Text>
-          </Pressable>
-        </Card>
+      {/* Video trial — rich, website-parity card with live countdown.
+          Native in-app upload is owned by a separate task; the CTA hands off
+          to the authenticated website upload page as today. */}
+      {showVideoStep ? (
+        <VideoTrialCard
+          deadlineIso={reg.videoDeadline ?? null}
+          deadlineExpired={!!reg.deadlineExpired}
+          videoSubmitted={videoSubmitted}
+          videoStatus={d.video?.status ?? null}
+          submittedAt={d.video?.submittedAt ?? null}
+          openWeb={openWeb}
+        />
       ) : null}
 
       {/* KYC hand-off (website form is authenticated; we link out) */}
@@ -411,7 +428,12 @@ function JourneyBody({ d, openWeb }: { d: Dashboard; openWeb: (url: string) => v
           {d.phase1Payment ? (
             <DetailRow
               label={`${t('Phase 1', 'फेज 1')} · ₹${d.phase1Payment.amount}`}
-              value={`${isPaid(d.phase1Payment.status) ? t('Paid', 'भुगतान') : t('Pending', 'बाकी')}${fmtDate(d.phase1Payment.paidAt) ? ` · ${fmtDate(d.phase1Payment.paidAt)}` : ''}`}
+              value={`${isPaid(d.phase1Payment.status) || impliesPaidFromPhase1(reg.phase1Status) ? t('Paid', 'भुगतान') : t('Pending', 'बाकी')}${fmtDate(d.phase1Payment.paidAt) ? ` · ${fmtDate(d.phase1Payment.paidAt)}` : ''}`}
+            />
+          ) : impliesPaidFromPhase1(reg.phase1Status) ? (
+            <DetailRow
+              label={t('Phase 1', 'फेज 1')}
+              value={t('Fees waived (carryover)', 'फीस माफ (कैरीओवर)')}
             />
           ) : null}
           {d.phase2Payment ? (
@@ -423,6 +445,188 @@ function JourneyBody({ d, openWeb }: { d: Dashboard; openWeb: (url: string) => v
         </Card>
       ) : null}
     </View>
+  );
+}
+
+type Countdown = { d: number; h: number; m: number; s: number; expired: boolean; urgent: boolean };
+
+/**
+ * Live countdown to the upload deadline — ticks every second. Mirrors the
+ * website's useCountdown (Phase1VideoUpload.tsx). Returns null when there is
+ * no deadline to count towards.
+ */
+function useCountdown(deadlineIso: string | null): Countdown | null {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!deadlineIso) return;
+    const iv = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(iv);
+  }, [deadlineIso]);
+  if (!deadlineIso) return null;
+  const target = new Date(deadlineIso).getTime();
+  if (isNaN(target)) return null;
+  const ms = target - now;
+  if (ms <= 0) return { d: 0, h: 0, m: 0, s: 0, expired: true, urgent: true };
+  return {
+    d: Math.floor(ms / 86400000),
+    h: Math.floor(ms / 3600000) % 24,
+    m: Math.floor(ms / 60000) % 60,
+    s: Math.floor(ms / 1000) % 60,
+    expired: false,
+    urgent: ms < 24 * 3600000,
+  };
+}
+
+const pad2 = (n: number) => String(n).padStart(2, '0');
+
+/**
+ * Premium video-trial card: status chips, a live ticking countdown to the
+ * upload deadline, a slim progress bar for the 15-day window, and a prominent
+ * hand-off CTA to the website upload page. States: not-started, submitted and
+ * deadline-passed.
+ */
+function VideoTrialCard({
+  deadlineIso,
+  deadlineExpired,
+  videoSubmitted,
+  videoStatus,
+  submittedAt,
+  openWeb,
+}: {
+  deadlineIso: string | null;
+  deadlineExpired: boolean;
+  videoSubmitted: boolean;
+  videoStatus: string | null;
+  submittedAt: string | null;
+  openWeb: (url: string) => void;
+}) {
+  const c = useColors();
+  const { t } = useLang();
+  const cd = useCountdown(deadlineIso);
+
+  // Deadline is passed if the server said so, or the live countdown ran out.
+  const passed = !videoSubmitted && (deadlineExpired || !!cd?.expired);
+  const urgent = !!cd?.urgent && !passed && !videoSubmitted;
+
+  // 15-day window progress (fraction of time already elapsed).
+  const windowMs = 15 * 86400000;
+  let elapsedFrac = 0;
+  if (deadlineIso) {
+    const target = new Date(deadlineIso).getTime();
+    if (!isNaN(target)) {
+      const remaining = Math.max(0, target - Date.now());
+      elapsedFrac = Math.min(1, Math.max(0, 1 - remaining / windowMs));
+    }
+  }
+  if (passed) elapsedFrac = 1;
+
+  const chip = videoSubmitted
+    ? { label: t('Submitted', 'सबमिट हो गया'), color: c.mint, bg: 'rgba(22,224,163,0.14)' }
+    : passed
+      ? { label: t('Window closed', 'window बंद'), color: c.coral, bg: 'rgba(255,90,110,0.14)' }
+      : urgent
+        ? { label: t('Closing soon', 'जल्द बंद'), color: c.coral, bg: 'rgba(255,90,110,0.14)' }
+        : { label: t('Open', 'खुला'), color: c.getAccentText(c.amber), bg: 'rgba(255,197,61,0.14)' };
+
+  const barColor = passed ? c.coral : urgent ? c.coral : c.magenta;
+  const countdownColor = passed || urgent ? c.coral : c.getAccentText(c.amber);
+
+  return (
+    <Card style={{ marginTop: 8 }}>
+      {/* Header + status chip */}
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+        <Feather name="video" size={18} color={c.magenta} />
+        <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 15, flex: 1 }}>
+          {t('Video Trial', 'वीडियो ट्रायल')}
+        </Text>
+        <View style={{ backgroundColor: chip.bg, borderRadius: 999, paddingHorizontal: 10, paddingVertical: 4 }}>
+          <Text style={{ color: chip.color, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 10, letterSpacing: 0.5 }}>
+            {chip.label.toUpperCase()}
+          </Text>
+        </View>
+      </View>
+
+      {videoSubmitted ? (
+        /* ── Submitted state ── */
+        <View style={{ marginTop: 14 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Feather name="check-circle" size={16} color={c.mint} />
+            <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 14 }}>
+              {t('Your video is in.', 'आपका वीडियो जमा हो गया।')}
+            </Text>
+          </View>
+          <Text style={{ color: c.sub, fontSize: 13, marginTop: 8, lineHeight: 20, fontFamily: 'PlusJakartaSans_500Medium' }}>
+            {t(
+              'Your Phase 1 submission is going through evaluation. Result within 15 days via SMS, WhatsApp and email.',
+              'आपका फेज 1 सबमिशन मूल्यांकन में है। परिणाम 15 दिनों के भीतर SMS, WhatsApp और ईमेल से मिलेगा।',
+            )}
+          </Text>
+          {fmtDate(submittedAt) ? (
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 12 }}>
+              <Feather name="upload" size={14} color={c.mint} />
+              <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 13 }}>
+                {t('Uploaded on', 'अपलोड तिथि')} {fmtDate(submittedAt)}
+              </Text>
+            </View>
+          ) : null}
+        </View>
+      ) : passed ? (
+        /* ── Deadline passed state ── */
+        <View style={{ marginTop: 14 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Feather name="alert-triangle" size={16} color={c.coral} />
+            <Text style={{ color: c.coral, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 14 }}>
+              {t('Upload window closed', 'अपलोड window बंद')}
+            </Text>
+          </View>
+          <Text style={{ color: c.sub, fontSize: 13, marginTop: 8, lineHeight: 20, fontFamily: 'PlusJakartaSans_500Medium' }}>
+            {t(
+              'Your 15-day video window has expired and late submissions cannot be accepted for Phase 1 review.',
+              'आपकी 15-दिन की वीडियो window समाप्त हो गई है और फेज 1 समीक्षा के लिए देर से सबमिशन स्वीकार नहीं होते।',
+            )}
+          </Text>
+        </View>
+      ) : (
+        /* ── Not started / open state ── */
+        <View style={{ marginTop: 14 }}>
+          <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 14 }}>
+            {t('Upload your 30–60 second trial video', '30–60 सेकंड का ट्रायल वीडियो अपलोड करें')}
+          </Text>
+          <Text style={{ color: c.sub, fontSize: 13, marginTop: 8, lineHeight: 20, fontFamily: 'PlusJakartaSans_500Medium' }}>
+            {t(
+              'Record a clear clip of your skills and upload it on bcplt20.com within your window.',
+              'अपनी स्किल्स का साफ clip record करके अपनी window के भीतर bcplt20.com पर upload करें।',
+            )}
+          </Text>
+
+          {/* Live countdown */}
+          {cd ? (
+            <View style={{ marginTop: 16 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                <Feather name="clock" size={14} color={countdownColor} />
+                <Text style={{ color: countdownColor, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 12.5, letterSpacing: 0.3 }}>
+                  {cd.d > 0
+                    ? `${cd.d} ${cd.d === 1 ? t('day', 'दिन') : t('days', 'दिन')} ${pad2(cd.h)}:${pad2(cd.m)}:${pad2(cd.s)} ${t('left to upload', 'अपलोड बाकी')}`
+                    : `${pad2(cd.h)}:${pad2(cd.m)}:${pad2(cd.s)} ${t('left to upload', 'अपलोड बाकी')}`}
+                </Text>
+              </View>
+              {/* window progress bar */}
+              <View style={{ height: 6, borderRadius: 3, backgroundColor: c.card2, overflow: 'hidden' }}>
+                <View style={{ width: `${Math.round(elapsedFrac * 100)}%`, height: '100%', borderRadius: 3, backgroundColor: barColor }} />
+              </View>
+            </View>
+          ) : null}
+
+          <Pressable onPress={() => openWeb(WEB_VIDEO_UPLOAD)} style={({ pressed }) => [styles.linkBtn, { opacity: pressed ? 0.85 : 1 }]} testID="journey-video-upload">
+            <LinearGradient colors={['#FF1A75', '#D10056']} style={[StyleSheet.absoluteFill, { borderRadius: 14 }]} />
+            <Feather name="external-link" size={16} color="#fff" />
+            <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 14 }}>
+              {t('Open upload page', 'अपलोड पेज खोलें')}
+            </Text>
+          </Pressable>
+        </View>
+      )}
+    </Card>
   );
 }
 

@@ -10,6 +10,7 @@ import {
   FlatList,
   Dimensions,
 } from 'react-native';
+import { REG_CLOSE_AT } from '@/lib/season';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
@@ -65,9 +66,6 @@ function CountUpStat({ value, style }: { value: string; style?: any }) {
     </Text>
   );
 }
-
-/** Live countdown to registration close. Keep in sync with the website's Season-5 window (Oct '26 – Feb '27). */
-const REG_CLOSE_AT = new Date('2027-02-28T23:59:59+05:30').getTime();
 
 function RegCountdown() {
   const c = useColors();

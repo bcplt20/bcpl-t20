@@ -4,14 +4,18 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
 import { useColors } from '@/hooks/useColors';
+import { Feather } from '@expo/vector-icons';
+import { Pressable } from 'react-native';
+import { useRouter } from 'expo-router';
 
 const BALL = require('../assets/images/bcpl-ball.png');
 const LOGO_WHITE = require('../assets/images/bcpl-logo-white.png');
 
 /** Shared branded top header for tab screens (tabs have headerShown:false). */
-export function ScreenHeader({ title, subtitle, subtitleColor }: { title: string; subtitle?: string; subtitleColor?: string }) {
+export function ScreenHeader({ title, subtitle, subtitleColor, back }: { title: string; subtitle?: string; subtitleColor?: string, back?: boolean }) {
   const insets = useSafeAreaInsets();
   const c = useColors();
+  const router = useRouter();
   const topInset = Platform.OS === 'web' ? 67 : insets.top;
   return (
     <LinearGradient
@@ -33,6 +37,14 @@ export function ScreenHeader({ title, subtitle, subtitleColor }: { title: string
       
       <View style={styles.content}>
         <View style={styles.brandRow}>
+          {back && (
+            <Pressable 
+              onPress={() => router.canGoBack() ? router.back() : router.push('/')}
+              style={({pressed}) => ({ width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.1)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)', opacity: pressed ? 0.7 : 1 })}
+            >
+              <Feather name="chevron-left" size={20} color="#FFF" />
+            </Pressable>
+          )}
           <Image source={LOGO_WHITE} style={styles.logo} contentFit="contain" />
           <View style={styles.seasonPill}>
             <Text style={styles.seasonTxt}>SEASON 5</Text>

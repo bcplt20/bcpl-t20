@@ -12,7 +12,40 @@ import {
 } from 'react-native';
 import { useColors } from '@/hooks/useColors';
 import { useLang } from '@/context/LanguageContext';
+import { REG_CLOSE_AT } from '@/lib/season';
 import { Feather } from '@expo/vector-icons';
+
+function HeaderCountdown() {
+  const c = useColors();
+  const { t } = useLang();
+  const [now, setNow] = React.useState(() => Date.now());
+
+  React.useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const left = REG_CLOSE_AT - now;
+  if (left <= 0) return null;
+
+  const d = Math.floor(left / 86400000);
+  const h = Math.floor((left % 86400000) / 3600000);
+  const m = Math.floor((left % 3600000) / 60000);
+  const s = Math.floor((left % 60000) / 1000);
+
+  const pad = (n: number) => n.toString().padStart(2, '0');
+
+  return (
+    <View style={{ alignItems: 'flex-end', justifyContent: 'center' }}>
+      <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 9, letterSpacing: 0.5, textTransform: 'uppercase', marginBottom: 2 }}>
+        {t('Reg Closes In', 'रजिस्ट्रेशन बंद')}
+      </Text>
+      <Text style={{ color: c.cyan, fontFamily: 'SpaceGrotesk_700Bold', fontSize: 13, fontVariant: ['tabular-nums'] }}>
+        {d}d {pad(h)}:{pad(m)}:{pad(s)}
+      </Text>
+    </View>
+  );
+}
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
 import { SITE_ASSETS } from '@/lib/api';
@@ -310,53 +343,61 @@ export function Season5Lockup() {
     Animated.loop(
       Animated.timing(anim, {
         toValue: 1,
-        duration: 3500,
+        duration: 4000,
         useNativeDriver: false,
       })
     ).start();
   }, [anim]);
 
-  const leftPos = anim.interpolate({ inputRange: [0, 1], outputRange: ['-100%', '200%'] });
+  const sweep = anim.interpolate({
+    inputRange: [0, 0.4, 0.6, 1],
+    outputRange: ['-100%', '200%', '200%', '200%']
+  });
+  
+  const scale = anim.interpolate({
+    inputRange: [0, 0.2, 0.4, 1],
+    outputRange: [1, 1.05, 1, 1]
+  });
 
   return (
-    <View style={{
+    <Animated.View style={{
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: c.isDark ? '#1E1A33' : '#F8F4FF',
-      paddingHorizontal: 10,
-      paddingVertical: 5,
-      borderRadius: 12,
-      marginLeft: 12,
-      borderWidth: 1,
+      backgroundColor: c.isDark ? '#161124' : '#FFF',
+      paddingHorizontal: 8,
+      paddingVertical: 3,
+      borderRadius: 10,
+      borderWidth: 1.5,
       borderColor: c.magenta,
-      shadowColor: c.magenta,
-      shadowOpacity: c.isDark ? 0.3 : 0.1,
-      shadowRadius: 6,
-      shadowOffset: { width: 0, height: 2 },
-      elevation: 4,
-      overflow: 'hidden'
+      shadowColor: '#FF3DA6',
+      shadowOpacity: c.isDark ? 0.6 : 0.3,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 0 },
+      elevation: 6,
+      overflow: 'hidden',
+      transform: [{ scale }]
     }}>
       <Animated.View style={{
         position: 'absolute',
         top: 0,
         bottom: 0,
-        width: '50%',
-        left: leftPos,
-        backgroundColor: 'rgba(255,255,255,0.4)',
-        transform: [{ skewX: '-20deg' }],
+        width: '80%',
+        left: sweep,
+        backgroundColor: 'rgba(255, 255, 255, 0.6)',
+        transform: [{ skewX: '-25deg' }],
         zIndex: 2,
       }} />
       <LinearGradient colors={['#FF3DA6', '#9B2FF0']} style={[StyleSheet.absoluteFill, { opacity: 0.15 }]} />
       <Text style={{
         fontFamily: 'BricolageGrotesque_800ExtraBold',
-        fontSize: 11,
+        fontSize: 9,
         color: c.ink,
-        letterSpacing: 0.8,
+        letterSpacing: 0.5,
         zIndex: 3
       }}>
         SEASON 5
       </Text>
-    </View>
+    </Animated.View>
   );
 }
 
@@ -393,17 +434,19 @@ export function GlassAppBar({ title, right, back }: { title?: string, right?: Re
         {title ? (
           <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 22, color: c.ink, letterSpacing: -0.5 }}>{title}</Text>
         ) : (
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{ position: 'relative', justifyContent: 'center', height: 44, width: 140 }}>
             <Image
               source={c.isDark ? require('../assets/images/bcpl-logo-dark.png') : require('../assets/images/bcpl-logo-light.png')}
-              style={{ width: 160, height: 44 }}
+              style={{ width: 140, height: 38 }}
               contentFit="contain"
             />
-            <Season5Lockup />
+            <View style={{ position: 'absolute', bottom: -6, left: 16 }}>
+              <Season5Lockup />
+            </View>
           </View>
         )}
       </View>
-      {right}
+      {right || (!title && <HeaderCountdown />)}
     </View>
   );
 }
