@@ -208,9 +208,27 @@ export const NATIVE_PAGES: Record<string, NativePage> = {
       { type: 'p', text: "BCPL Season 5 is open to working professionals across India. Check your eligibility in seconds.", hi: "BCPL Season 5 पूरे भारत के working professionals के लिए खुला है। कुछ ही seconds में अपनी eligibility check करें।" },
       { type: 'stats', items: [
      { v: "18-45", l: "Years Old", color: "#FF7A29" },
-     { v: "Professional", l: "Working status", color: "#16E0A3" },
+     { v: "Working", l: "Professional", color: "#16E0A3" },
      { v: "Basic", l: "Cricket Exp", color: "#9B2FF0" }
-  ]}
+  ]},
+      { type: 'heading', text: "Core Requirements", hi: "मुख्य आवश्यकताएँ" },
+      { type: 'li', text: "You must be aged 18–45 (as on the registration date) and a working professional.", hi: "आपकी उम्र 18–45 (registration की तारीख़ पर) होनी चाहिए और आप working professional होने चाहिए।" },
+      { type: 'li', text: "Salaried, self-employed, freelancers, business owners, gig/delivery workers, farmers and government/PSU staff are all welcome.", hi: "Salaried, self-employed, freelancers, business owners, gig/delivery workers, farmers और government/PSU staff सभी का स्वागत है।" },
+      { type: 'li', text: "You must not currently be under a first-class / professional cricket contract.", hi: "आप वर्तमान में first-class / professional cricket contract में नहीं होने चाहिए।" },
+      { type: 'li', text: "Identity is verified via Aadhaar + PAN during Phase 2 KYC; DOB must match your documents.", hi: "पहचान Phase 2 KYC में Aadhaar + PAN से verify होती है; DOB आपके documents से match होनी चाहिए।" },
+      { type: 'li', text: "One registration per person per season. False or misleading information can lead to disqualification without refund.", hi: "एक व्यक्ति एक season में एक registration। झूठी या misleading जानकारी बिना refund के disqualification का कारण बन सकती है।" },
+      { type: 'heading', text: "Who Can Register", hi: "कौन register कर सकता है" },
+      { type: 'li', text: "Salaried employees (any sector)", hi: "Salaried employees (किसी भी sector में)" },
+      { type: 'li', text: "Self-employed professionals & freelancers", hi: "Self-employed professionals और freelancers" },
+      { type: 'li', text: "Business owners & entrepreneurs", hi: "Business owners और entrepreneurs" },
+      { type: 'li', text: "Gig / delivery / logistics workers", hi: "Gig / delivery / logistics workers" },
+      { type: 'li', text: "Farmers & agriculture professionals", hi: "Farmers और agriculture professionals" },
+      { type: 'li', text: "Government / PSU employees", hi: "Government / PSU कर्मचारी" },
+      { type: 'callout', text: "Basic cricket experience is enough — tennis-ball, corporate, club or school/college cricket all count. You do not need a professional cricket background.", hi: "Basic cricket experience काफ़ी है — tennis-ball, corporate, club या school/college cricket सब मान्य हैं। Professional cricket background ज़रूरी नहीं है।" },
+      { type: 'heading', text: "Documents Needed Later", hi: "बाद में लगने वाले documents" },
+      { type: 'li', text: "Aadhaar card (for Phase 2 KYC)", hi: "Aadhaar card (Phase 2 KYC के लिए)" },
+      { type: 'li', text: "PAN card (for Phase 2 KYC)", hi: "PAN card (Phase 2 KYC के लिए)" },
+      { type: 'li', text: "A 30–60 second cricket video for Phase 1 assessment", hi: "Phase 1 assessment के लिए 30–60 second का cricket video" }
     ]
   },
   'terms': {
