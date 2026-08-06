@@ -446,8 +446,11 @@ export function GlassAppBar({ title, right, back }: { title?: string, right?: Re
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { width: winW } = useWindowDimensions();
-  // Logo + badge + timer must fit on 320px screens: shrink logo adaptively.
-  const logoW = Math.max(118, Math.min(168, winW - 204));
+  // We need to fit: padding (32) + back (optional, ~48) + Timer (~100) + Gap (12)
+  // Max width for the left lockup = winW - 144 (or 192 with back)
+  const maxLeftW = winW - (back ? 192 : 144);
+  // Season 5 pill is ~62px. Logo will take the rest.
+  const logoW = Math.max(90, Math.min(130, maxLeftW - 68)); 
   const logoH = Math.round(logoW * (40 / 168));
   
   return (
@@ -455,44 +458,50 @@ export function GlassAppBar({ title, right, back }: { title?: string, right?: Re
       position: 'absolute', top: 0, left: 0, right: 0,
       paddingTop: insets.top,
       height: insets.top + APP_BAR_CONTENT_HEIGHT,
-      paddingHorizontal: 16,
       backgroundColor: c.bg,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
       borderBottomWidth: 1,
       borderBottomColor: c.line,
       zIndex: 100,
+      alignItems: 'center',
     }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        {back && (
-          <Pressable 
-            onPress={() => router.canGoBack() ? router.back() : router.push('/')}
-            style={({pressed}) => ({ width: 36, height: 36, borderRadius: 18, backgroundColor: c.card2, alignItems: 'center', justifyContent: 'center', marginRight: 12, borderWidth: 1, borderColor: c.line, opacity: pressed ? 0.7 : 1 })}
-          >
-            <Feather name="chevron-left" size={20} color={c.ink} />
-          </Pressable>
-        )}
-        {title ? (
-          <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 22, color: c.ink, letterSpacing: -0.5 }} numberOfLines={1}>{title}</Text>
-        ) : (
-          <View style={{ justifyContent: 'center', alignItems: 'flex-start', height: APP_BAR_CONTENT_HEIGHT }}>
-            {/* Light logo asset has more transparent padding than the dark one:
-                give it a taller box (no scale transforms — they visually overflow
-                the layout box and overlap the SEASON 5 pill below). */}
-            <Image
-              source={c.isDark ? require('../assets/images/bcpl-logo-dark.png') : require('../assets/images/bcpl-logo-light.png')}
-              style={{ width: c.isDark ? logoW : Math.round(logoW * 1.15), height: c.isDark ? logoH : Math.round(logoH * 1.15) }}
-              contentFit="contain"
-              contentPosition="left center"
-            />
-            <View style={{ marginTop: 4 }}>
-              <Season5Lockup />
+      <View style={{ 
+        width: '100%', 
+        maxWidth: 768, 
+        height: APP_BAR_CONTENT_HEIGHT,
+        paddingHorizontal: 16, 
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        justifyContent: 'space-between' 
+      }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          {back && (
+            <Pressable 
+              onPress={() => router.canGoBack() ? router.back() : router.push('/')}
+              style={({pressed}) => ({ width: 36, height: 36, borderRadius: 18, backgroundColor: c.card2, alignItems: 'center', justifyContent: 'center', marginRight: 12, borderWidth: 1, borderColor: c.line, opacity: pressed ? 0.7 : 1 })}
+            >
+              <Feather name="chevron-left" size={20} color={c.ink} />
+            </Pressable>
+          )}
+          {title ? (
+            <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 22, color: c.ink, letterSpacing: -0.5 }} numberOfLines={1}>{title}</Text>
+          ) : (
+            <View style={{ flexDirection: 'row', alignItems: 'center', height: APP_BAR_CONTENT_HEIGHT }}>
+              <View style={{ width: c.isDark ? logoW : Math.round(logoW * 1.15), height: c.isDark ? logoH : Math.round(logoH * 1.15), justifyContent: 'center' }}>
+                <Image
+                  source={c.isDark ? require('../assets/images/bcpl-logo-dark.png') : require('../assets/images/bcpl-logo-light.png')}
+                  style={{ width: '100%', height: '100%' }}
+                  contentFit="contain"
+                  contentPosition="left center"
+                />
+              </View>
+              <View style={{ marginLeft: c.isDark ? 8 : 2 }}>
+                <Season5Lockup />
+              </View>
             </View>
-          </View>
-        )}
+          )}
+        </View>
+        {right || (!title && <HeaderCountdown />)}
       </View>
-      {right || (!title && <HeaderCountdown />)}
     </View>
   );
 }

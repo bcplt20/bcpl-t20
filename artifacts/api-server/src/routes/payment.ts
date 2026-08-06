@@ -123,6 +123,62 @@ export function hostedCheckoutUrl(paymentSessionId: string): string {
 }
 
 /**
+ * Terminal return page for the NATIVE APP checkout WebView.
+ *
+ * When a payment order is created with `platform:"app"`, Cashfree redirects the
+ * in-app WebView here after the user finishes (or abandons) payment. The mobile
+ * app intercepts this URL (`onShouldStartLoadWithRequest`) BEFORE it renders,
+ * reads `orderId`+`phase`, and calls the matching verify endpoint itself — so
+ * the player NEVER sees a website page. This page is only a tiny fallback shown
+ * for the split-second before the app cancels the navigation (and if a user
+ * somehow lands here in a real browser).
+ *
+ * GET /api/payment/app-return?orderId=<id>&phase=<1|2>
+ */
+router.get("/app-return", (req, res) => {
+  const orderId = typeof req.query.orderId === "string" ? req.query.orderId : "";
+  const phase = req.query.phase === "2" ? "2" : "1";
+  // Shape-validate the orderId before echoing (XSS hardening). Our order ids are
+  // like `p1_<8hex>_<ms>` / `p2_...`.
+  const safeOrder = /^[A-Za-z0-9_.-]{1,80}$/.test(orderId) ? orderId : "";
+  res.status(200).type("html").send(`<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BCPL — Payment</title>
+<style>html,body{height:100%;margin:0;background:#0b0b12;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}.wrap{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center}.spinner{width:34px;height:34px;border:3px solid rgba(255,255,255,.2);border-top-color:#16E0A3;border-radius:50%;animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}</style>
+</head><body>
+<div class="wrap" data-bcpl-app-return="1" data-order-id="${safeOrder}" data-phase="${phase}">
+  <div class="spinner"></div>
+  <div>Confirming your payment…</div>
+</div>
+<script>
+  // Best-effort signal to any WebView still listening (interception is the
+  // primary mechanism; this is a belt-and-braces fallback).
+  try {
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'bcpl_payment_return', orderId: ${JSON.stringify(safeOrder)}, phase: ${JSON.stringify(phase)} }));
+    }
+  } catch (e) {}
+</script>
+</body></html>`);
+});
+
+/**
+ * Return URL for a create-order call. For the native app we point Cashfree back
+ * at our own `/app-return` terminal page (intercepted by the WebView); for the
+ * website we keep the existing receipt pages.
+ */
+function paymentReturnUrl(platform: "app" | "web" | undefined, phase: 1 | 2, orderId: string): string {
+  if (platform === "app") {
+    const base = API_URL.replace(/\/$/, "");
+    return `${base}/api/payment/app-return?orderId=${encodeURIComponent(orderId)}&phase=${phase}`;
+  }
+  return phase === 1
+    ? `${SITE_URL}/register/payment-receipt?orderId=${orderId}`
+    : `${SITE_URL}/register/phase2/payment-receipt?orderId=${orderId}`;
+}
+
+/**
  * Build the GST invoice PDF as an email attachment from the REAL gross amount
  * paid. Uses the SAME invoice-number scheme as the admin invoice route
  * (`BCPL/25-26/<txnId>`) so the PDF matches the emailed HTML invoice exactly.
@@ -248,6 +304,9 @@ router.post("/phase1/create", requireAuth, async (req: AuthRequest, res) => {
       privacyVersion: z.string().min(1).max(20),
       marketingOptIn: z.boolean(),
     }).optional(),
+    // Native app clients send platform:"app" so Cashfree returns to our own
+    // in-app-intercepted terminal page instead of the website receipt.
+    platform: z.enum(["app", "web"]).optional(),
   });
   const parsed = schema.safeParse(req.body);
   if (!parsed.success) return void res.status(400).json({ error: "Invalid registrationId" });
@@ -297,7 +356,7 @@ router.post("/phase1/create", requireAuth, async (req: AuthRequest, res) => {
     customerName:  user.name,
     customerEmail: user.email,
     customerPhone: user.phone,
-    returnUrl:  `${SITE_URL}/register/payment-receipt?orderId=${orderId}`,
+    returnUrl:  paymentReturnUrl(parsed.data.platform, 1, orderId),
     notifyUrl:  `${API_URL}/api/payment/webhook`,
   });
 
@@ -441,6 +500,7 @@ router.post("/phase2/create", requireAuth, async (req: AuthRequest, res) => {
       version: z.string().min(1).max(20),
       items:   z.array(z.string().min(1).max(300)).min(1).max(8),
     }).optional(),
+    platform: z.enum(["app", "web"]).optional(),
   });
   const parsed = schema.safeParse(req.body);
   if (!parsed.success) return void res.status(400).json({ error: "Invalid registrationId" });
@@ -481,7 +541,7 @@ router.post("/phase2/create", requireAuth, async (req: AuthRequest, res) => {
     customerName:  user.name,
     customerEmail: user.email,
     customerPhone: user.phone,
-    returnUrl: `${SITE_URL}/register/phase2/payment-receipt?orderId=${orderId}`,
+    returnUrl: paymentReturnUrl(parsed.data.platform, 2, orderId),
     notifyUrl: `${API_URL}/api/payment/webhook`,
   });
 

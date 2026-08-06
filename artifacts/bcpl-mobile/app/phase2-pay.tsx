@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
-  Linking,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -10,17 +9,15 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import { useColors } from '@/hooks/useColors';
 import { useAuth } from '@/context/AuthContext';
 import { useLang } from '@/context/LanguageContext';
-import { queryClient } from '@/lib/queryClient';
 import {
   ApiError,
   createPhase2Payment,
   getDashboard,
-  verifyPhase2Payment,
 } from '@/lib/api';
 import {
   Card,
@@ -69,8 +66,6 @@ export default function Phase2PayScreen() {
   const [checks, setChecks] = useState<boolean[]>([false, false, false, false]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
-  const [orderId, setOrderId] = useState('');
-  const [awaitingVerify, setAwaitingVerify] = useState(false);
 
   const dq = useQuery({
     queryKey: ['dashboard', token],
@@ -78,9 +73,15 @@ export default function Phase2PayScreen() {
     enabled: !!token,
   });
 
-  useEffect(() => {
-    AsyncStorage.getItem(ORDER_KEY).then((v) => { if (v) { setOrderId(v); setAwaitingVerify(true); } }).catch(() => {});
-  }, []);
+  // On focus (e.g. returning from the payment WebView / receipt): refetch so a
+  // just-paid user immediately sees the "Phase 2 fee paid" state, never the pay
+  // button again.
+  useFocusEffect(
+    useCallback(() => {
+      if (token) dq.refetch();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [token]),
+  );
 
   useEffect(() => {
     if (!dq.data) return;
@@ -96,6 +97,9 @@ export default function Phase2PayScreen() {
 
   const canProceed = checks.every(Boolean);
 
+  // Create the Phase-2 order, then open the IN-APP checkout WebView. The
+  // WebView intercepts the return URL, verifies, and routes to the in-app
+  // receipt (which sends the player on to KYC). No external browser is used.
   const onPay = useCallback(async () => {
     setError('');
     if (!canProceed) { setError(t('Please confirm all declarations to continue.', 'जारी रखने के लिए कृपया सभी घोषणाओं की पुष्टि करें।')); return; }
@@ -106,45 +110,16 @@ export default function Phase2PayScreen() {
         version: P2_DECL_VERSION,
         items: P2_DECL.map((d) => d.en),
       });
-      setOrderId(pay.orderId);
       await AsyncStorage.setItem(ORDER_KEY, pay.orderId).catch(() => {});
       if (!pay.checkoutUrl) {
         setError(t('Could not start payment — please update the app and try again', 'पेमेंट शुरू नहीं हो पाई — कृपया ऐप अपडेट करके फिर कोशिश करें'));
         return;
       }
-      // Payments open the hosted Cashfree checkout (allowed handoff).
-      await Linking.openURL(pay.checkoutUrl);
-      setAwaitingVerify(true);
+      router.push({ pathname: '/pay-webview', params: { checkoutUrl: pay.checkoutUrl, orderId: pay.orderId, phase: '2' } });
     } catch (e: any) {
       setError(e instanceof ApiError ? e.message : t('Could not start payment', 'पेमेंट शुरू नहीं हो पाई'));
     } finally { setBusy(false); }
-  }, [canProceed, token, regId, t]);
-
-  const onVerify = useCallback(async () => {
-    setError('');
-    if (!token || !orderId) return;
-    setBusy(true);
-    try {
-      const r = await verifyPhase2Payment(token, orderId);
-      if (r.success) {
-        await AsyncStorage.removeItem(ORDER_KEY).catch(() => {});
-        queryClient.invalidateQueries({ queryKey: ['dashboard', token] });
-        setLoadState('already_paid');
-      } else {
-        setError(t('Payment not completed yet — finish it in the browser, then tap again', 'पेमेंट अभी पूरी नहीं हुई — ब्राउज़र में पूरी करके फिर दबाएँ'));
-      }
-    } catch (e: any) {
-      if (e instanceof ApiError && e.status === 400) {
-        setError(t('Payment not completed yet — finish it in the browser, then tap again', 'पेमेंट अभी पूरी नहीं हुई — ब्राउज़र में पूरी करके फिर दबाएँ'));
-      } else if (e instanceof ApiError && e.status === 409) {
-        // Already reconciled/paid.
-        queryClient.invalidateQueries({ queryKey: ['dashboard', token] });
-        setLoadState('already_paid');
-      } else {
-        setError(e instanceof ApiError ? e.message : t('Could not verify payment', 'पेमेंट वेरिफ़ाई नहीं हो पाई'));
-      }
-    } finally { setBusy(false); }
-  }, [token, orderId, t]);
+  }, [canProceed, token, regId, t, router]);
 
   if (!ready) return <LoadingView />;
 
@@ -260,13 +235,9 @@ export default function Phase2PayScreen() {
           <LinearGradient colors={['#FF1A75', '#D10056']} style={[StyleSheet.absoluteFill, { borderRadius: 14 }]} />
           <Text style={styles.btnText}>{busy ? t('Starting payment…', 'पेमेंट शुरू हो रही है…') : t('Proceed to Phase 2 payment', 'फेज 2 पेमेंट के लिए आगे बढ़ें')}</Text>
         </Pressable>
-
-        {awaitingVerify ? (
-          <Pressable onPress={onVerify} disabled={busy} style={({ pressed }) => [styles.btnOutline, { borderColor: c.mint, marginTop: 14, opacity: busy ? 0.5 : pressed ? 0.8 : 1 }]} testID="phase2-verify">
-            <Feather name="refresh-cw" size={16} color={c.mint} />
-            <Text style={{ color: c.mint, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 14 }}>{t("I've paid — verify now", 'मैंने भुगतान कर दिया — अभी वेरिफाई करें')}</Text>
-          </Pressable>
-        ) : null}
+        <Text style={{ color: c.sub, fontSize: 12, marginTop: 14, textAlign: 'center', fontFamily: 'PlusJakartaSans_500Medium', lineHeight: 18 }}>
+          {t('Payment opens securely inside the app.', 'भुगतान ऐप के अंदर ही सुरक्षित रूप से खुलेगा।')}
+        </Text>
       </ScrollView>
     </View>
   );

@@ -3,10 +3,75 @@ import { Animated, Platform, StyleSheet, View, Pressable, Text } from 'react-nat
 import { useColors } from '@/hooks/useColors';
 import { Feather } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
+import Svg, { Path, Rect, Circle, Defs, LinearGradient as SvgLinearGradient, Stop, G } from 'react-native-svg';
 import { Tabs, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLang } from '@/context/LanguageContext';
+
+
+const TabIcon = ({ name, active, size = 26, color, c }: { name: string, active: boolean, size?: number, color: string, c: any }) => {
+  const gradientId = `grad-${name}`;
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Defs>
+        <SvgLinearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
+          <Stop offset="0" stopColor={c.cyan} />
+          <Stop offset="1" stopColor={c.magenta} />
+        </SvgLinearGradient>
+      </Defs>
+      {name === 'home' && (
+        <Path 
+          d="M3 10L12 3l9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V10z" 
+          stroke={active ? `url(#${gradientId})` : color} 
+          strokeWidth={active ? 2.5 : 2} 
+          strokeLinecap="round" 
+          strokeLinejoin="round" 
+          fill={active ? `url(#${gradientId})` : 'none'} 
+          fillOpacity={active ? 0.2 : 0} 
+        />
+      )}
+      {name === 'matches' && (
+        <G>
+          <Rect x="3" y="4" width="18" height="18" rx="2" ry="2" 
+            stroke={active ? `url(#${gradientId})` : color} 
+            strokeWidth={active ? 2.5 : 2} 
+            strokeLinecap="round" strokeLinejoin="round"
+            fill={active ? `url(#${gradientId})` : 'none'} fillOpacity={active ? 0.15 : 0}
+          />
+          <Path d="M16 2v4M8 2v4M3 10h18" stroke={active ? `url(#${gradientId})` : color} strokeWidth={active ? 2.5 : 2} strokeLinecap="round" strokeLinejoin="round" />
+          {active && <Rect x="7" y="14" width="4" height="4" rx="1" fill={`url(#${gradientId})`} />}
+        </G>
+      )}
+      {name === 'media' && (
+        <G>
+          <Circle cx="12" cy="12" r="10" 
+            stroke={active ? `url(#${gradientId})` : color} 
+            strokeWidth={active ? 2.5 : 2} 
+            strokeLinecap="round" strokeLinejoin="round"
+            fill={active ? `url(#${gradientId})` : 'none'} fillOpacity={active ? 0.15 : 0}
+          />
+          <Path d="M10 8l6 4-6 4V8z" 
+            stroke={active ? `url(#${gradientId})` : color} 
+            strokeWidth={active ? 2.5 : 2} 
+            strokeLinecap="round" strokeLinejoin="round"
+            fill={active ? `url(#${gradientId})` : 'none'} 
+          />
+        </G>
+      )}
+      {name === 'more' && (
+        <G>
+          <Path d="M3 12h18M3 6h18M3 18h12" 
+            stroke={active ? `url(#${gradientId})` : color} 
+            strokeWidth={active ? 2.5 : 2} 
+            strokeLinecap="round" strokeLinejoin="round"
+          />
+          {active && <Circle cx="19" cy="18" r="2" fill={`url(#${gradientId})`} />}
+        </G>
+      )}
+    </Svg>
+  );
+}
 
 function RegisterFabButton({ onPress }: { onPress: () => void }) {
   const { t } = useLang();
@@ -99,17 +164,31 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
     <View style={{
       position: 'absolute',
       bottom: bottomPadding,
-      left: 16,
-      right: 16,
-      height: barHeight,
-      borderRadius: 34,
-      elevation: 10,
-      shadowColor: c.isDark ? '#000' : '#2D196E',
-      shadowOffset: { width: 0, height: 12 },
-      shadowOpacity: c.isDark ? 0.4 : 0.08,
-      shadowRadius: 30,
+      left: 0,
+      right: 0,
+      alignItems: 'center',
+      pointerEvents: 'box-none',
     }}>
-      <BlurView intensity={c.isDark ? 50 : 80} tint={c.isDark ? 'dark' : 'light'} style={[StyleSheet.absoluteFill, { borderRadius: 34, overflow: 'hidden', borderWidth: 1, borderColor: c.line, backgroundColor: c.isDark ? 'rgba(11, 8, 19, 0.7)' : 'rgba(255, 255, 255, 0.8)' }]} />
+      <View style={{
+        width: '100%',
+        maxWidth: 440,
+        paddingHorizontal: 16,
+        pointerEvents: 'auto',
+      }}>
+        <View style={{
+          height: barHeight,
+          borderRadius: 34,
+          elevation: 8,
+          shadowColor: c.isDark ? '#000' : '#2D196E',
+          shadowOffset: { width: 0, height: 12 },
+          shadowOpacity: c.isDark ? 0.4 : 0.08,
+          shadowRadius: 30,
+          backgroundColor: Platform.OS === 'android' ? (c.isDark ? '#120D1E' : '#FFFFFF') : (c.isDark ? 'rgba(11, 8, 19, 0.7)' : 'rgba(255, 255, 255, 0.8)'),
+        }}>
+      {Platform.OS !== 'android' && (
+            <BlurView intensity={c.isDark ? 50 : 80} tint={c.isDark ? 'dark' : 'light'} style={[StyleSheet.absoluteFill, { borderRadius: 34, overflow: 'hidden' }]} />
+          )}
+          <View style={[StyleSheet.absoluteFill, { borderRadius: 34, borderWidth: 1, borderColor: c.line }]} pointerEvents="none" />
       
       <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
         {routes.map((route: any, index: number) => {
@@ -146,16 +225,16 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
               <View style={{ 
                 alignItems: 'center', 
                 justifyContent: 'center',
-                backgroundColor: isFocused ? (c.isDark ? 'rgba(0, 229, 255, 0.12)' : 'rgba(0, 151, 167, 0.1)') : 'transparent',
                 paddingHorizontal: 16,
                 paddingVertical: 8,
-                borderRadius: 20
               }}>
-                <Feather name={iconName} size={22} color={isFocused ? c.cyan : c.sub} style={isFocused && { opacity: 0.9 }} />
+                <TabIcon name={iconName} active={isFocused} color={c.sub} c={c} size={24} />
               </View>
             </Pressable>
           );
         })}
+      </View>
+        </View>
       </View>
     </View>
   );

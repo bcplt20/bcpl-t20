@@ -1,8 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   ActivityIndicator,
-  Linking,
   Platform,
   Pressable,
   ScrollView,
@@ -12,7 +11,7 @@ import {
   View,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { useColors } from '@/hooks/useColors';
 import { useAuth } from '@/context/AuthContext';
 import { useLang } from '@/context/LanguageContext';
@@ -23,7 +22,6 @@ import {
   registerPhase1,
   sendOtp,
   verifyOtp,
-  verifyPhase1Payment,
   type PlayerRole,
 } from '@/lib/api';
 import { Card, ScreenBackground, GlassAppBar, useAppBarHeight } from '@/components/ui';
@@ -82,7 +80,6 @@ export default function RegisterScreen() {
   // pay step
   const [registrationId, setRegistrationId] = useState('');
   const [fee, setFee] = useState(0);
-  const [orderId, setOrderId] = useState('');
   const [agreed, setAgreed] = useState(false);
   const [marketingOptIn, setMarketingOptIn] = useState(false);
   const [regNumber, setRegNumber] = useState('');
@@ -92,37 +89,50 @@ export default function RegisterScreen() {
 
   const grossFee = useMemo(() => Math.round(fee * 1.18), [fee]);
 
-  // Logged-in users: sync with server status on mount and recover any
-  // pending Cashfree order (app may have been backgrounded during checkout).
+  // Sync with the server's registration status. Resume rules (owner-mandated):
+  //  • a returning registered-but-UNPAID user lands DIRECTLY on the pay step —
+  //    role/city/dob are NEVER re-asked.
+  //  • a PAID user lands on the done step (back can never resurface pay).
+  // `keepManualStep` lets an in-progress account/otp/details user keep their
+  // step (and typed details) — we only auto-jump when the server proves they
+  // are already registered.
+  const syncStatus = useCallback(async (opts?: { allowJumpFromEarly?: boolean }) => {
+    if (!token) return;
+    try {
+      const st = await getRegisterStatus(token);
+      if (!st.registered || !st.registrationId) return;
+      setRegistrationId(st.registrationId);
+      if (isUnpaidStatus(st.phase1Status)) {
+        setFee(st.fees?.phase1 ?? 299);
+        // Only pull an early-step user forward to pay on the very first sync;
+        // do not yank them backwards from done→pay on a later refetch.
+        setStep((prev) => (prev === 'done' ? prev : (opts?.allowJumpFromEarly || prev === 'pay' ? 'pay' : prev)));
+      } else {
+        // Paid (or legacy carryover) — land on done and forget any stale order.
+        setRegNumber(st.regNumber ?? '');
+        setDoneStatus(st.phase1Status || 'payment_done');
+        setStep('done');
+        AsyncStorage.removeItem(ORDER_KEY).catch(() => {});
+      }
+    } catch {
+      // best-effort — user can proceed through the normal steps
+    }
+  }, [token]);
+
+  // On mount: recover any registered state (incl. after an app relaunch during
+  // checkout). Jump an early-step logged-in user straight to their real step.
   useEffect(() => {
     if (!token) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const [st, savedOrder] = await Promise.all([
-          getRegisterStatus(token),
-          AsyncStorage.getItem(ORDER_KEY),
-        ]);
-        if (cancelled) return;
-        if (st.registered && st.registrationId) {
-          setRegistrationId(st.registrationId);
-          if (isUnpaidStatus(st.phase1Status)) {
-            setFee(st.fees?.phase1 ?? 299);
-            if (savedOrder) setOrderId(savedOrder);
-            setStep('pay');
-          } else {
-            setRegNumber(st.regNumber ?? '');
-            setDoneStatus(st.phase1Status || 'payment_done');
-            setStep('done');
-            AsyncStorage.removeItem(ORDER_KEY).catch(() => {});
-          }
-        }
-      } catch {
-        // best-effort — user can proceed through the normal steps
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [token]);
+    syncStatus({ allowJumpFromEarly: true });
+  }, [token, syncStatus]);
+
+  // On focus (e.g. returning from the payment WebView / receipt): re-check
+  // status so a just-paid user can never see the pay button again.
+  useFocusEffect(
+    useCallback(() => {
+      if (token) syncStatus();
+    }, [token, syncStatus]),
+  );
 
   const fail = (e: unknown, fallback: string) =>
     setError(e instanceof Error ? e.message : fallback);
@@ -237,6 +247,10 @@ export default function RegisterScreen() {
   };
 
   /* ── step 3: payment ── */
+  // Creates the Cashfree order, then opens the IN-APP checkout WebView. The
+  // WebView intercepts the return URL, verifies the payment, and routes to the
+  // in-app receipt (which sends the player on to the video-upload step). No
+  // external browser / website is ever involved.
   const onPay = async () => {
     setError('');
     if (!agreed) return setError(t('Please accept the Terms & Privacy Policy', 'कृपया नियम व प्राइवेसी पॉलिसी स्वीकार करें'));
@@ -247,41 +261,14 @@ export default function RegisterScreen() {
         ...CONSENT,
         marketingOptIn,
       });
-      setOrderId(pay.orderId);
+      // Persist the order so a relaunch mid-checkout can still resolve status.
       await AsyncStorage.setItem(ORDER_KEY, pay.orderId).catch(() => {});
-      // Open the server-hosted Cashfree checkout page in the browser. It loads
-      // the v3 SDK and opens the session with the mode that matches the order's
-      // Cashfree environment (dev api-server may be sandbox; prod is production).
-      // The legacy `payments.cashfree.com/order/#<sessionId>` URL does NOT work
-      // with v3 sessions and is what made Cashfree show an error from the app.
       if (!pay.checkoutUrl) {
         return setError(t('Could not start payment — please update the app and try again', 'पेमेंट शुरू नहीं हो पाई — कृपया ऐप अपडेट करके फिर कोशिश करें'));
       }
-      await Linking.openURL(pay.checkoutUrl);
+      router.push({ pathname: '/pay-webview', params: { checkoutUrl: pay.checkoutUrl, orderId: pay.orderId, phase: '1' } });
     } catch (e) {
       fail(e, t('Could not start payment', 'पेमेंट शुरू नहीं हो पाई'));
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const onVerifyPayment = async () => {
-    setError('');
-    if (!token || !orderId) return;
-    setBusy(true);
-    try {
-      const r = await verifyPhase1Payment(token, orderId);
-      if (r.success) {
-        setRegNumber(r.regNumber ?? '');
-        setStep('done');
-        AsyncStorage.removeItem(ORDER_KEY).catch(() => {});
-      }
-    } catch (e) {
-      if (e instanceof ApiError && e.status === 400) {
-        setError(t('Payment not completed yet — finish it in the browser, then tap again', 'पेमेंट अभी पूरी नहीं हुई — ब्राउज़र में पूरी करके फिर दबाएँ'));
-      } else {
-        fail(e, t('Could not verify payment', 'पेमेंट वेरिफ़ाई नहीं हो पाई'));
-      }
     } finally {
       setBusy(false);
     }
@@ -491,19 +478,9 @@ export default function RegisterScreen() {
             <View style={{ marginTop: 32 }}>
               {primaryBtn(t('Pay securely with Cashfree', 'Cashfree से सुरक्षित पेमेंट करें'), onPay, 'reg-pay')}
             </View>
-
-            {orderId ? (
-              <Pressable
-                onPress={onVerifyPayment}
-                disabled={busy}
-                style={({ pressed }) => [styles.btn, { backgroundColor: 'transparent', borderWidth: 2, borderColor: c.cyan, opacity: busy || pressed ? 0.7 : 1, marginTop: 16, shadowOpacity: 0, elevation: 0 }]}
-                testID="reg-verify-pay"
-              >
-                <Text style={{ color: c.cyan, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 15 }}>
-                  {t('I have paid — verify payment', 'पेमेंट कर दी — वेरिफ़ाई करें')}
-                </Text>
-              </Pressable>
-            ) : null}
+            <Text style={{ color: c.sub, fontSize: 12, marginTop: 14, textAlign: 'center', fontFamily: 'PlusJakartaSans_500Medium', lineHeight: 18 }}>
+              {t('Payment opens securely inside the app. Cards, UPI & netbanking supported.', 'भुगतान ऐप के अंदर ही सुरक्षित रूप से खुलेगा। कार्ड, UPI और नेटबैंकिंग सपोर्टेड।')}
+            </Text>
           </View>
         </Card>
       ) : null}

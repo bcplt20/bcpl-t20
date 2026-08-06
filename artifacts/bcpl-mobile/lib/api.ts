@@ -10,6 +10,10 @@ const BASE =
     ? `https://${process.env.EXPO_PUBLIC_DOMAIN}`
     : 'https://bcplt20.com');
 
+/** Absolute API origin (no /api suffix) — exported so the payment WebView can
+ *  build/recognise the checkout + return URLs. */
+export const API_ORIGIN = BASE;
+
 export class ApiError extends Error {
   status: number;
   code?: string;
@@ -110,7 +114,9 @@ export function createPhase1Payment(
   /** Server-hosted checkout page URL — open this in the browser (runs the v3 SDK). */
   checkoutUrl?: string;
 }> {
-  return apiFetch('/payment/phase1/create', { method: 'POST', body: { registrationId, consent }, token });
+  // platform:"app" → Cashfree returns to our own in-app-intercepted terminal
+  // page (never the website receipt). The WebView catches it and verifies.
+  return apiFetch('/payment/phase1/create', { method: 'POST', body: { registrationId, consent, platform: 'app' }, token });
 }
 
 export function verifyPhase1Payment(
@@ -133,7 +139,7 @@ export function createPhase2Payment(
   cashfreeMode?: 'production' | 'sandbox';
   checkoutUrl?: string;
 }> {
-  return apiFetch('/payment/phase2/create', { method: 'POST', body: { registrationId, declarations }, token });
+  return apiFetch('/payment/phase2/create', { method: 'POST', body: { registrationId, declarations, platform: 'app' }, token });
 }
 
 export function verifyPhase2Payment(

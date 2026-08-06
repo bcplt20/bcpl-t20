@@ -111,7 +111,7 @@ export default function NativePageScreen() {
     <View style={{ flex: 1, backgroundColor: c.bg }}>
       <ScreenBackground />
       <GlassAppBar title={page.titleHi ? t(page.title, page.titleHi) : page.title} back={true} />
-      <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: bottomNavHeight, gap: 16 }}>
+      <ScrollView contentContainerStyle={{ alignSelf: 'center', width: '100%', maxWidth: 768, padding: 16, paddingBottom: bottomNavHeight, gap: 16 }}>
         <View style={{ height: appBarHeight - 16 }} />
         {/* Rich Hero Header */}
         <HeroMesh title={page.titleHi ? t(page.title, page.titleHi) : page.title} />
