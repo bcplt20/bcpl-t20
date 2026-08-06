@@ -40,14 +40,14 @@ export function ScreenHeader({ title, subtitle, subtitleColor, back }: { title: 
           {back && (
             <Pressable 
               onPress={() => router.canGoBack() ? router.back() : router.push('/')}
-              style={({pressed}) => ({ width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.1)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)', opacity: pressed ? 0.7 : 1 })}
+              style={({pressed}) => ({ width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.1)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)', opacity: pressed ? 0.7 : 1, flexShrink: 0 })}
             >
               <Feather name="chevron-left" size={20} color="#FFF" />
             </Pressable>
           )}
-          <Image source={LOGO_WHITE} style={styles.logo} contentFit="contain" />
-          <View style={styles.seasonPill}>
-            <Text style={styles.seasonTxt}>SEASON 5</Text>
+          <Image source={LOGO_WHITE} style={[styles.logo, back && { maxWidth: 120, height: 36, flexShrink: 1 }]} contentFit="contain" />
+          <View style={[styles.seasonPill, { flexShrink: 1, minWidth: 0 }]}>
+            <Text style={styles.seasonTxt} numberOfLines={1} adjustsFontSizeToFit>SEASON 5</Text>
           </View>
         </View>
         <Text style={[styles.title, { color: c.ink }]}>{title}</Text>

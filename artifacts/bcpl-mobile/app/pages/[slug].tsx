@@ -53,7 +53,7 @@ export default function NativePageScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
       <ScreenBackground />
-      <GlassAppBar title={page.title} back={true} />
+      <GlassAppBar title={page.titleHi ? t(page.title, page.titleHi) : page.title} back={true} />
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: bottomNavHeight, gap: 16 }}>
         <View style={{ height: appBarHeight - 16 }} />
         
@@ -61,7 +61,7 @@ export default function NativePageScreen() {
         <View style={{ marginBottom: 8, marginTop: 16 }}>
           <LinearGradient colors={['#FF3DA6', '#5B2BF0']} style={{ width: 48, height: 4, borderRadius: 2, marginBottom: 12 }} />
           <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 32, color: c.ink, letterSpacing: -1, lineHeight: 38 }}>
-            {page.title}
+            {page.titleHi ? t(page.title, page.titleHi) : page.title}
           </Text>
         </View>
 
