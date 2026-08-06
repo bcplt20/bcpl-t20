@@ -5,7 +5,7 @@ import { SiteHeader } from '../components/SiteHeader';
 import { SkelRows } from '../components/Skel';
 import {
   getRegistrationStatus, getMe, getUploadUrl, confirmVideoUpload, getSiteSetting,
-  getVideoInstructions, getVideoStatus, type VideoConstraints,
+  getVideoInstructions, getVideoStatus, getClassification, type VideoConstraints,
   type SampleVideos, type SampleVideoEntry, type SampleVideoRole,
 } from '../lib/api';
 import { useLang } from '@/lib/i18n';
@@ -173,6 +173,16 @@ export function Phase1VideoUpload() {
           setUploadState('deadline_passed'); return;
         }
 
+        // Players must set their playing style before a NEW upload. Reached
+        // only when no video exists yet — never blocks an already-uploaded one.
+        try {
+          const cls = await getClassification();
+          if (!cls.complete) {
+            window.location.replace(import.meta.env.BASE_URL + 'register/classification');
+            return;
+          }
+        } catch { /* if the check fails, fall through — the server still gates the presign */ }
+
         setUploadState('idle');
       } catch {
         setUploadState('not_registered');
@@ -279,6 +289,12 @@ export function Phase1VideoUpload() {
       setProgress(100);
       setUploadState('success');
     } catch (e: any) {
+      // Defensive: server gates the presign on missing playing style — route
+      // the player to set it rather than showing a dead-end error.
+      if (e?.code === 'CLASSIFICATION_REQUIRED') {
+        window.location.assign(import.meta.env.BASE_URL + 'register/classification');
+        return;
+      }
       setErrMsg(e?.message ?? t('Upload failed. Please try again.', 'अपलोड विफल रहा। कृपया पुनः प्रयास करें।'));
       setUploadState('file_selected');
     }

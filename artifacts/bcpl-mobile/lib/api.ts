@@ -286,6 +286,8 @@ export interface Dashboard {
     trialCity?: string | null;
     dob?: string | null;
     age?: number | null;
+    classification?: ClassificationValue | null;
+    classificationComplete?: boolean;
     phase1Status?: string | null;
     phase2Status?: string | null;
     videoDeadline?: string | null;
@@ -307,6 +309,26 @@ export interface Dashboard {
 
 export function getDashboard(token: string): Promise<Dashboard> {
   return apiFetch('/user/dashboard', { token });
+}
+
+// ── Player classification (playing style) ───────────────────────────────────
+export interface ClassificationValue {
+  battingHand?: 'right' | 'left';
+  battingPosition?: 'opener' | 'top_order' | 'middle_order' | 'lower_middle_order' | 'finisher';
+  battingStyle?: 'anchor' | 'aggressive' | 'power_hitter' | 'defensive';
+  bowlingArm?: 'right' | 'left';
+  bowlingType?: 'fast' | 'fast_medium' | 'medium_fast' | 'medium_pace' | 'off_spin' | 'leg_spin' | 'orthodox_spin' | 'wrist_spin';
+}
+
+export function getClassification(token: string): Promise<{ role: string; classification: ClassificationValue | null; complete: boolean }> {
+  return apiFetch('/user/classification', { token });
+}
+
+export function saveClassification(
+  token: string,
+  classification: ClassificationValue,
+): Promise<{ success: boolean; role: string; classification: ClassificationValue; complete: boolean }> {
+  return apiFetch('/user/classification', { method: 'POST', token, body: classification });
 }
 
 // ── Profile avatar ─────────────────────────────────────────────────────────

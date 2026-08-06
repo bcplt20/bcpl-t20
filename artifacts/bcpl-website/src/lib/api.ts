@@ -75,6 +75,8 @@ export const getDashboard = () =>
     registered:    boolean;
     registration?: {
       id: string; role: string; trialCity: string;
+      classification?: ClassificationValue | null;
+      classificationComplete?: boolean;
       phase1Status: string; phase2Status: string | null;
       videoDeadline: string | null; deadlineExpired: boolean; createdAt: string; regNumber?: string | null;
     };
@@ -94,6 +96,25 @@ export const getDashboard = () =>
       assessmentAt: string | null;
     } | null;
   }>("GET", "/user/dashboard");
+
+/* ─── Player classification (playing style) ─── */
+export interface ClassificationValue {
+  battingHand?: "right" | "left";
+  battingPosition?: "opener" | "top_order" | "middle_order" | "lower_middle_order" | "finisher";
+  battingStyle?: "anchor" | "aggressive" | "power_hitter" | "defensive";
+  bowlingArm?: "right" | "left";
+  bowlingType?: "fast" | "fast_medium" | "medium_fast" | "medium_pace" | "off_spin" | "leg_spin" | "orthodox_spin" | "wrist_spin";
+}
+
+export const getClassification = () =>
+  req<{ role: string; classification: ClassificationValue | null; complete: boolean }>(
+    "GET", "/user/classification"
+  );
+
+export const saveClassification = (classification: ClassificationValue) =>
+  req<{ success: boolean; role: string; classification: ClassificationValue; complete: boolean }>(
+    "POST", "/user/classification", classification
+  );
 
 /* ─── Task #32: KYC-done profile backfill (T-shirt / emergency contact) ─── */
 export const getProfileCompletion = () =>

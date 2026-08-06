@@ -15,8 +15,20 @@ import { pgCauseOf } from "../lib/pgErrors";
 import { computeAgeYears } from "../lib/age";
 import { getUploadPresignedUrl, getDownloadPresignedUrl, headS3Object } from "../lib/s3";
 import { logger } from "../lib/logger";
+import { classificationSchemaFor, isClassificationComplete } from "../lib/classification";
 
 const router = Router();
+
+/**
+ * Idempotent boot-time migration: registrations.classification column (player
+ * playing-style). Serialised under an xact-scoped advisory lock (ensure-ddl-race).
+ */
+export async function ensureRegistrationClassificationColumn(): Promise<void> {
+  await db.transaction(async (tx) => {
+    await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtext('bcpl:reg_classification:ddl'))`);
+    await tx.execute(sql`ALTER TABLE registrations ADD COLUMN IF NOT EXISTS classification jsonb`);
+  });
+}
 
 /**
  * Idempotent boot-time migration: users.avatar column. Follows the repo
@@ -253,6 +265,8 @@ router.get("/dashboard", requireAuth, async (req: AuthRequest, res) => {
       trialCity:     reg.trialCity,
       dob,
       age,
+      classification: reg.classification ?? null,
+      classificationComplete: isClassificationComplete(reg.role, reg.classification),
       phase1Status:  reg.phase1Status,
       phase2Status:  reg.phase2Status,
       videoDeadline: reg.videoDeadline,
@@ -499,6 +513,44 @@ router.post("/avatar/confirm", requireAuth, async (req: AuthRequest, res) => {
     .where(eq(usersTable.id, req.user!.userId));
   const avatar = await avatarPayload(req.user!.userId, "photo");
   res.json({ success: true, avatar });
+});
+
+// ── Player classification (playing style) ──────────────────────────────────
+// Stored on the registration; role-shaped and validated in lib/classification.
+// Set before the skill-video upload (the upload route gates on it).
+
+// GET /api/user/classification — current classification for the player.
+router.get("/classification", requireAuth, async (req: AuthRequest, res) => {
+  const reg = await pickUserRegistration(req.user!.userId);
+  if (!reg) return void res.status(404).json({ error: "Registration not found" });
+  res.json({
+    role: reg.role,
+    classification: reg.classification ?? null,
+    complete: isClassificationComplete(reg.role, reg.classification),
+  });
+});
+
+// POST /api/user/classification — validate per role + persist. Idempotent
+// (overwrite allowed; harmless after a video already exists).
+router.post("/classification", requireAuth, async (req: AuthRequest, res) => {
+  const reg = await pickUserRegistration(req.user!.userId);
+  if (!reg) return void res.status(404).json({ error: "Registration not found" });
+
+  const parsed = classificationSchemaFor(reg.role).safeParse(req.body);
+  if (!parsed.success) {
+    return void res.status(400).json({ error: parsed.error.issues[0]?.message ?? "Invalid classification", code: "INVALID_CLASSIFICATION" });
+  }
+
+  await db.update(registrationsTable)
+    .set({ classification: parsed.data as Record<string, unknown>, updatedAt: new Date() })
+    .where(eq(registrationsTable.id, reg.id));
+
+  res.json({
+    success: true,
+    role: reg.role,
+    classification: parsed.data,
+    complete: true,
+  });
 });
 
 export default router;

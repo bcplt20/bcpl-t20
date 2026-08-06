@@ -163,11 +163,19 @@ export default function UploadVideoScreen() {
       || ['payment_done', 'video_submitted', 'selected', 'rejected'].includes(p1);
     if (!paid) { setPhase('not_registered'); return; }
 
+    const alreadyUploaded = d.video?.submitted || ['video_submitted', 'selected', 'rejected'].includes(p1);
+    // Players must set their playing style before a NEW upload. Skip this
+    // redirect once a video already exists (the gate never blocks past uploads).
+    if (!alreadyUploaded && reg.classificationComplete === false) {
+      router.replace('/classification');
+      return;
+    }
+
     setRegId(reg.id);
     setRole(reg.role ?? 'bat');
     setDeadline(reg.videoDeadline ?? null);
 
-    if (d.video?.submitted || ['video_submitted', 'selected', 'rejected'].includes(p1)) {
+    if (alreadyUploaded) {
       setReuploadReason(d.video?.status && d.video.status !== 'pending' && d.video.status !== 'approved' ? d.video.status : null);
       setPhase('already_uploaded');
       return;
@@ -257,11 +265,17 @@ export default function UploadVideoScreen() {
       queryClient.invalidateQueries({ queryKey: ['dashboard', token] });
       setPhase('success');
     } catch (e: any) {
+      // Defensive: if the server gates on missing playing style, route the
+      // player to set it rather than showing a dead-end error.
+      if (e instanceof ApiError && e.code === 'CLASSIFICATION_REQUIRED') {
+        router.replace('/classification');
+        return;
+      }
       const msg = e instanceof ApiError ? e.message : (e?.message ?? t('Upload failed. Please try again.', 'अपलोड विफल रहा। कृपया पुनः प्रयास करें।'));
       setErrMsg(msg);
       setPhase('file_selected');
     }
-  }, [picked, regId, token, t]);
+  }, [picked, regId, token, t, router]);
 
   if (!ready) return <LoadingView />;
 

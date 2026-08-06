@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ActivityIndicator, Alert, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as ImagePicker from 'expo-image-picker';
@@ -19,6 +20,7 @@ import {
 } from '@/lib/api';
 import { AVATAR_PRESETS } from '@/lib/avatars';
 import { roleLabel } from '@/lib/roleLabel';
+import { battingSummary, bowlingSummary } from '@/lib/classification';
 import { computeAge } from '@/lib/age';
 import { AvatarCircle } from '@/components/AvatarCircle';
 import {
@@ -40,6 +42,7 @@ export default function ProfileDetailsScreen() {
   const { t, lang } = useLang();
   const appBarHeight = useAppBarHeight();
   const qc = useQueryClient();
+  const router = useRouter();
 
   const [showChooser, setShowChooser] = useState(false);
   const [savingAvatar, setSavingAvatar] = useState(false);
@@ -303,6 +306,52 @@ export default function ProfileDetailsScreen() {
                 ))}
               </View>
             </Card>
+
+            {/* Playing style (classification) */}
+            {reg ? (() => {
+              const cls = reg.classification ?? null;
+              const bat = cls ? battingSummary(reg.role, cls, lang) : null;
+              const bowl = cls ? bowlingSummary(cls, lang) : null;
+              const lines: { label: string; value: string }[] = [];
+              if (bat) lines.push({ label: t('Batting', 'बल्लेबाज़ी'), value: bat });
+              if (bowl) lines.push({ label: t('Bowling', 'गेंदबाज़ी'), value: bowl });
+              return (
+                <Card style={{ padding: 0, marginTop: 16 }}>
+                  <View style={{ padding: 20, paddingBottom: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Text style={[styles.cardTitle, { color: c.ink }]}>{t('Playing style', 'खेल शैली')}</Text>
+                    <Pressable onPress={() => router.push('/classification')} hitSlop={8} testID="profile-edit-classification">
+                      <Text style={{ color: c.getAccentText(c.cyan), fontSize: 13, fontFamily: 'PlusJakartaSans_700Bold', textDecorationLine: 'underline' }}>
+                        {lines.length ? t('Edit', 'बदलें') : t('Add', 'जोड़ें')}
+                      </Text>
+                    </Pressable>
+                  </View>
+                  <View style={{ paddingHorizontal: 20, paddingBottom: 12 }}>
+                    {lines.length ? lines.map((ln, i) => (
+                      <View
+                        key={ln.label}
+                        style={[styles.detailRow, i > 0 ? { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: c.line } : null]}
+                      >
+                        <View style={[styles.detailIcon, { backgroundColor: c.card2, borderColor: c.line }]}>
+                          <Feather name="activity" size={16} color={c.getAccentText(c.magenta)} />
+                        </View>
+                        <View style={{ flex: 1 }}>
+                          <Text style={{ color: c.sub, fontSize: 12, fontFamily: 'PlusJakartaSans_700Bold', letterSpacing: 0.4, marginBottom: 3 }}>
+                            {ln.label}
+                          </Text>
+                          <Text style={{ color: c.ink, fontSize: 15, fontFamily: 'PlusJakartaSans_600SemiBold' }}>
+                            {ln.value}
+                          </Text>
+                        </View>
+                      </View>
+                    )) : (
+                      <Text style={{ color: c.sub, fontSize: 14, fontFamily: 'PlusJakartaSans_500Medium', paddingBottom: 12 }}>
+                        {t('Not set yet.', 'अभी सेट नहीं है।')}
+                      </Text>
+                    )}
+                  </View>
+                </Card>
+              );
+            })() : null}
           </>
         )}
       </ScrollView>

@@ -9,6 +9,7 @@ type Reg = {
   id: string;
   regNumber?: string | null;
   role: string;
+  classificationLabel?: string;
   trialCity: string;
   phase1Status: string;
   phase2Status: string | null;
@@ -247,7 +248,7 @@ export default function Phase1RegistrationsView({ onNavigate, focusId, initialFi
             <table style={{ width:"100%", borderCollapse:"collapse", fontSize:12 }}>
               <thead>
                 <tr style={{ background:"#1F2B49", borderBottom:"1px solid #33436B" }}>
-                  {["Reg ID","Player","Contact","City","Role","Reg Date","Payment","Video","Phase 1 Status","Actions"].map(h => (
+                  {["Reg ID","Player","Contact","City","Role","Playing Style","Reg Date","Payment","Video","Phase 1 Status","Actions"].map(h => (
                     <th key={h} style={{ padding:"10px 12px", textAlign:"left", fontSize:10, fontWeight:700, color:"#8593B3", letterSpacing:"0.06em", textTransform:"uppercase", whiteSpace:"nowrap" }}>{h}</th>
                   ))}
                 </tr>
@@ -273,6 +274,8 @@ export default function Phase1RegistrationsView({ onNavigate, focusId, initialFi
                     <td style={{ padding:"10px 12px", color:"#C3CEE3", whiteSpace:"nowrap" }}>{r.trialCity ?? "—"}</td>
                     {/* Role */}
                     <td style={{ padding:"10px 12px", color:"#C3CEE3", whiteSpace:"nowrap" }}>{ROLE_LABEL[r.role] ?? r.role}</td>
+                    {/* Playing Style (classification) */}
+                    <td style={{ padding:"10px 12px", color:"#94A3C4", whiteSpace:"nowrap", fontSize:12 }}>{r.classificationLabel && r.classificationLabel !== "—" ? r.classificationLabel : "—"}</td>
                     {/* Reg Date */}
                     <td style={{ padding:"10px 12px", color:"#94A3C4", whiteSpace:"nowrap" }}>{r.createdAt ? new Date(r.createdAt).toLocaleDateString("en-IN", { day:"2-digit", month:"short", year:"numeric" }) : "—"}</td>
                     {/* Payment */}

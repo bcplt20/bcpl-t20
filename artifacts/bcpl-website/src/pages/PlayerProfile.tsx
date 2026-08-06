@@ -8,6 +8,7 @@ import { ReferralCard } from '../components/ReferralCard';
 import { clearSession, getSession } from '../lib/auth';
 import { useLang } from '../lib/i18n';
 import { formatRole, formatDateLong, formatDateShort, formatTime, formatBatch } from '../lib/format';
+import { battingSummary, bowlingSummary } from '../lib/classification';
 import { IcoHome, IcoRoute, IcoCard, IcoUser, IcoOut, IcoTicket, IcoDoc, IcoCheck, IcoSearch, IcoStar, IcoVideo, IcoIdCard, IcoClock, IcoPin, IcoFlag, IcoTrophy, IcoPen, IcoList, IcoGift} from '../lib/icons';
 
 const BASE = import.meta.env.BASE_URL;
@@ -354,7 +355,7 @@ export function PlayerProfile() {
   const [activeTab, setActiveTab] = useState<'home' | 'journey' | 'card' | 'profile' | 'support'>('home');
 
   const [, setLocation] = useLocation();
-  const { t } = useLang();
+  const { t, lang } = useLang();
 
   useEffect(() => {
     const session = getSession();
@@ -649,6 +650,11 @@ export function PlayerProfile() {
                         { label: t('Phone', 'फोन'), value: user?.phone || '—' },
                         { label: t('Email', 'ईमेल'), value: user?.email || '—' },
                         { label: t('Player ID', 'प्लेयर ID'), value: reg.regNumber || '—' },
+                        { label: t('Role', 'रोल'), value: formatRole(reg.role, lang) },
+                        ...(reg.classification && battingSummary(reg.role, reg.classification, lang)
+                          ? [{ label: t('Batting', 'बल्लेबाज़ी'), value: battingSummary(reg.role, reg.classification, lang) as string }] : []),
+                        ...(reg.classification && bowlingSummary(reg.classification, lang)
+                          ? [{ label: t('Bowling', 'गेंदबाज़ी'), value: bowlingSummary(reg.classification, lang) as string }] : []),
                       ].map(row => (
                         <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, background: 'rgba(255,255,255,0.02)', border: '1px solid var(--line)', borderRadius: 12, padding: '11px 16px' }}>
                           <span style={{ fontSize: 12.5, fontWeight: 800, fontFamily: 'var(--font-head)', color: 'rgba(255,255,255,0.72)', textTransform: 'uppercase', letterSpacing: '.06em', flexShrink: 0, alignSelf: 'center' }}>{row.label}</span>

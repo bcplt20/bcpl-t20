@@ -65,6 +65,7 @@ function RootLayoutNav() {
         <Stack.Screen name="pay-receipt" options={{ title: 'Receipt', headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="kyc" options={{ title: 'KYC', headerShown: false }} />
         <Stack.Screen name="profile" options={{ title: 'Profile', headerShown: false }} />
+        <Stack.Screen name="classification" options={{ title: 'Playing Style', headerShown: false }} />
       </Stack>
     </>
   );

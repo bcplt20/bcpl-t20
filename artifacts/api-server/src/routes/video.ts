@@ -14,6 +14,7 @@ import { sendWhatsApp, WA } from "../lib/whatsapp";
 import { logNotifications } from "../lib/notify";
 import { logger } from "../lib/logger";
 import { normalizeRole, ROLE_LABELS } from "../lib/phase1Roles";
+import { isClassificationComplete } from "../lib/classification";
 import { z } from "zod";
 
 const router = Router();
@@ -61,6 +62,11 @@ router.post("/upload-url", requireAuth, async (req: AuthRequest, res) => {
   }
   if (reg.videoDeadline && reg.videoDeadline < new Date()) {
     return void res.status(400).json({ error: "Video upload deadline has passed" });
+  }
+  // Players must classify their playing style before uploading a skill video.
+  // Existing videos are unaffected — this only gates NEW upload presigns.
+  if (!isClassificationComplete(reg.role, reg.classification)) {
+    return void res.status(403).json({ error: "Add your playing style before uploading your video", code: "CLASSIFICATION_REQUIRED" });
   }
 
   // Advisory check for fast UX feedback — /confirm re-checks atomically.
@@ -115,6 +121,9 @@ router.post("/confirm", requireAuth, async (req: AuthRequest, res) => {
   }
   if (reg.videoDeadline && reg.videoDeadline < new Date()) {
     return void res.status(400).json({ error: "Video upload deadline has passed" });
+  }
+  if (!isClassificationComplete(reg.role, reg.classification)) {
+    return void res.status(403).json({ error: "Add your playing style before uploading your video", code: "CLASSIFICATION_REQUIRED" });
   }
 
   // The key must be one WE issued for this exact user + registration.

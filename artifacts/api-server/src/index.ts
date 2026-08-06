@@ -21,7 +21,7 @@ import { ensureTrialOpsTables } from "./routes/staffTrials";
 import { ensureSelectionTables } from "./lib/selectionMigrations";
 import { ensureAdminUsersTable } from "./routes/adminUsers";
 import { ensureRefundsTables } from "./routes/refunds";
-import { ensureUserAvatarColumn } from "./routes/user";
+import { ensureUserAvatarColumn, ensureRegistrationClassificationColumn } from "./routes/user";
 import { ensureFraudTables } from "./routes/fraud";
 import { recordJobRun } from "./lib/heartbeat";
 import { reconcileAbandonedPayments } from "./lib/reconcilePayments";
@@ -60,6 +60,7 @@ async function start() {
       await ensureFraudTables(); // Stage 6 fraud flag extensions
       await ensureRefundsTables(); // Stage 5 finance refunds
       await ensureUserAvatarColumn(); // profile avatar (preset id or uploaded photo)
+      await ensureRegistrationClassificationColumn(); // player playing-style classification
       logger.info("startup migrations ensured");
       break;
     } catch (e) {

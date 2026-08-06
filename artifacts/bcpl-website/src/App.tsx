@@ -33,6 +33,7 @@ import { Registration }        from '@/pages/Registration';
 import { ReferralRedirect }    from '@/pages/ReferralRedirect';
 import { Phase1PaymentReceipt } from '@/pages/Phase1PaymentReceipt';
 import { Phase1VideoUpload }   from '@/pages/Phase1VideoUpload';
+import { PlayerClassification } from '@/pages/PlayerClassification';
 import { Phase1Result }        from '@/pages/Phase1Result';
 import { Phase2Registration }  from '@/pages/Phase2Registration';
 import { Phase2Payment }       from '@/pages/Phase2Payment';
@@ -129,6 +130,7 @@ function Router() {
         {/* Registration & player flow */}
         <Route path="/register"                       component={Registration} />
         <Route path="/register/payment-receipt"       component={Phase1PaymentReceipt} />
+        <Route path="/register/classification"        component={PlayerClassification} />
         <Route path="/register/upload-video"          component={Phase1VideoUpload} />
         <Route path="/register/result"                component={Phase1Result} />
         <Route path="/register/phase2"                component={Phase2Registration} />

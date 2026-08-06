@@ -18,6 +18,11 @@ export const registrationsTable = pgTable("registrations", {
    * Written by payment create endpoints; versions come from the website's
    * legalMeta CONSENT_VERSIONS. */
   consents:     jsonb("consents").$type<Record<string, unknown>>(),
+  /* Player classification (playing style), role-shaped. See
+   * api-server src/lib/classification.ts for the validated shape:
+   * batting: { battingHand, battingPosition, battingStyle? }
+   * bowling: { bowlingArm, bowlingType }. Set before the skill video upload. */
+  classification: jsonb("classification").$type<Record<string, unknown>>(),
   createdAt:    timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt:    timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 }, (t) => [

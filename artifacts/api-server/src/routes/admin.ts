@@ -34,6 +34,7 @@ import { sendVideoReminders } from "./video";
 import { sendPaymentReminders, remindersEnabled } from "../lib/reminders";
 import { requireAdmin, requireRole, trialCityScope } from "../middlewares/adminAuth";
 import { getDownloadPresignedUrl } from "../lib/s3";
+import { compactLabelEn } from "../lib/classification";
 import { adminUsersTable, auditLogsTable } from "@workspace/db/schema";
 import { verifyPassword, signAdminToken, publicAdmin, permissionsForRole } from "./adminUsers";
 import { writeAudit } from "../lib/audit";
@@ -366,6 +367,8 @@ router.get("/registrations", async (req, res) => {
         userId:       r.reg.userId,
         role:         r.reg.role,
         trialCity:    r.reg.trialCity,
+        classification:      r.reg.classification ?? null,
+        classificationLabel: compactLabelEn(r.reg.role, r.reg.classification),
         phase1Status: r.reg.phase1Status,
         phase2Status: r.reg.phase2Status,
         videoDeadline:r.reg.videoDeadline,
