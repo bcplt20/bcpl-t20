@@ -23,3 +23,5 @@ Routes call `void writeAudit(...)` and respond immediately; a test querying the 
 
 ## Audit/report artifacts
 `threat_model.md` + `SECURITY_AUDIT_REPORT.md` live at repo root; master security prompt is in `attached_assets/Pasted--BCPL-COMPLETE-SECURITY-*.txt` (sections A–BP, 20-item output list). Load/stress/backup/monitoring items are OPEN and need the owner's EC2/AWS access — never fabricate those numbers.
+
+- Payment verify endpoints (any /verify taking an orderId) MUST join the order to the authenticated user BEFORE any provider lookup or mutation — both phase1 & phase2 verifies shipped without this once (IDOR). Test recipe: tests/paymentVerifyOwnership pattern (foreign token → 404, rows untouched).
