@@ -8,7 +8,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 import { useColors } from '@/hooks/useColors';
 import { useLang } from '@/context/LanguageContext';
@@ -17,6 +17,7 @@ import {
   getScorecard,
   type LiveInnings,
   type LiveMatch,
+  type Match,
 } from '@/lib/api';
 import { Badge, Card, ErrorView, LoadingView, TeamLogo, GlassAppBar, ScreenBackground, getTeamColor, GradientTag, useAppBarHeight, useBottomNavHeight } from '@/components/ui';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -323,12 +324,35 @@ export default function MatchDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const matchId = String(id);
   const [tab, setTab] = useState<'live' | 'scorecard'>('live');
+  const queryClient = useQueryClient();
   
   const appBarHeight = useAppBarHeight();
+
+  const initialMatch = React.useMemo(() => {
+    const schedule = queryClient.getQueryData<{ matches: Match[] }>(['matches']);
+    if (schedule?.matches) {
+      return schedule.matches.find(m => m.id === matchId);
+    }
+    return undefined;
+  }, [matchId, queryClient]);
 
   const liveQ = useQuery({
     queryKey: ['live', matchId],
     queryFn: () => getLiveMatch(matchId),
+    initialData: initialMatch ? {
+      id: initialMatch.id,
+      matchNo: initialMatch.matchNo,
+      status: initialMatch.status,
+      team1: initialMatch.team1,
+      team2: initialMatch.team2,
+      toss: (initialMatch as any).toss ?? null,
+      resultDesc: initialMatch.resultDesc,
+      scheduledAt: initialMatch.scheduledAt,
+      venue: initialMatch.venue,
+      stage: initialMatch.stage,
+      grp: initialMatch.grp,
+      events: [],
+    } as any : undefined,
     refetchInterval: (query) => {
       const s = query.state.data?.status;
       if (s === 'live') return 10_000;
@@ -344,13 +368,14 @@ export default function MatchDetailScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
       <ScreenBackground />
-      <GlassAppBar title="Match Center" />
+      <GlassAppBar title="Match Center" back={true} />
       <ScrollView
-        contentContainerStyle={{ padding: 16, paddingBottom: Platform.OS === 'web' ? 60 : 30, paddingTop: appBarHeight }}
+        contentContainerStyle={{ padding: 16, paddingBottom: Platform.OS === 'web' ? 60 : 30 }}
         refreshControl={
-          <RefreshControl refreshing={liveQ.isRefetching} onRefresh={() => liveQ.refetch()} tintColor={c.magenta} />
+          <RefreshControl refreshing={liveQ.isRefetching} onRefresh={() => liveQ.refetch()} tintColor={c.magenta} progressViewOffset={appBarHeight} />
         }
       >
+        <View style={{ height: appBarHeight - 16 }} />
         {liveQ.isLoading ? (
           <LoadingView />
         ) : liveQ.isError ? (

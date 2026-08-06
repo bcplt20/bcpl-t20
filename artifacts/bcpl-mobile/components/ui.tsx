@@ -304,48 +304,55 @@ export function useBottomNavHeight() {
 
 export function Season5Lockup() {
   const c = useColors();
-  const [anim] = React.useState(() => new Animated.Value(0));
+  const anim = useRef(new Animated.Value(0)).current;
 
-  React.useEffect(() => {
+  useEffect(() => {
     Animated.loop(
-      Animated.sequence([
-        Animated.timing(anim, {
-          toValue: 1,
-          duration: 2500,
-          useNativeDriver: true,
-        }),
-        Animated.timing(anim, {
-          toValue: 0,
-          duration: 2500,
-          useNativeDriver: true,
-        }),
-      ])
+      Animated.timing(anim, {
+        toValue: 1,
+        duration: 3500,
+        useNativeDriver: false,
+      })
     ).start();
   }, [anim]);
+
+  const leftPos = anim.interpolate({ inputRange: [0, 1], outputRange: ['-100%', '200%'] });
 
   return (
     <View style={{
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: c.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
-      paddingHorizontal: 8,
-      paddingVertical: 4,
-      borderRadius: 8,
+      backgroundColor: c.isDark ? '#1E1A33' : '#F8F4FF',
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      borderRadius: 12,
       marginLeft: 12,
       borderWidth: 1,
-      borderColor: c.line,
+      borderColor: c.magenta,
+      shadowColor: c.magenta,
+      shadowOpacity: c.isDark ? 0.3 : 0.1,
+      shadowRadius: 6,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: 4,
       overflow: 'hidden'
     }}>
       <Animated.View style={{
-        ...StyleSheet.absoluteFillObject,
-        backgroundColor: c.magenta,
-        opacity: anim.interpolate({ inputRange: [0, 0.5, 1], outputRange: [0, 0.15, 0] })
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        width: '50%',
+        left: leftPos,
+        backgroundColor: 'rgba(255,255,255,0.4)',
+        transform: [{ skewX: '-20deg' }],
+        zIndex: 2,
       }} />
+      <LinearGradient colors={['#FF3DA6', '#9B2FF0']} style={[StyleSheet.absoluteFill, { opacity: 0.15 }]} />
       <Text style={{
         fontFamily: 'BricolageGrotesque_800ExtraBold',
         fontSize: 11,
         color: c.ink,
-        letterSpacing: 0.5,
+        letterSpacing: 0.8,
+        zIndex: 3
       }}>
         SEASON 5
       </Text>
@@ -353,9 +360,12 @@ export function Season5Lockup() {
   );
 }
 
-export function GlassAppBar({ title, right }: { title?: string, right?: React.ReactNode }) {
+import { useRouter } from 'expo-router';
+
+export function GlassAppBar({ title, right, back }: { title?: string, right?: React.ReactNode, back?: boolean }) {
   const c = useColors();
   const insets = useSafeAreaInsets();
+  const router = useRouter();
   
   return (
     <View style={{
@@ -371,20 +381,63 @@ export function GlassAppBar({ title, right }: { title?: string, right?: React.Re
       borderBottomColor: c.line,
       zIndex: 100,
     }}>
-      {title ? (
-        <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 22, color: c.ink, letterSpacing: -0.5 }}>{title}</Text>
-      ) : (
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Image
-            source={c.isDark ? require('../assets/images/bcpl-logo-dark.png') : require('../assets/images/bcpl-logo-light.png')}
-            style={{ width: 160, height: 44 }}
-            contentFit="contain"
-          />
-          <Season5Lockup />
-        </View>
-      )}
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        {back && (
+          <Pressable 
+            onPress={() => router.canGoBack() ? router.back() : router.push('/')}
+            style={({pressed}) => ({ width: 36, height: 36, borderRadius: 18, backgroundColor: c.card2, alignItems: 'center', justifyContent: 'center', marginRight: 12, borderWidth: 1, borderColor: c.line, opacity: pressed ? 0.7 : 1 })}
+          >
+            <Feather name="chevron-left" size={20} color={c.ink} />
+          </Pressable>
+        )}
+        {title ? (
+          <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 22, color: c.ink, letterSpacing: -0.5 }}>{title}</Text>
+        ) : (
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Image
+              source={c.isDark ? require('../assets/images/bcpl-logo-dark.png') : require('../assets/images/bcpl-logo-light.png')}
+              style={{ width: 160, height: 44 }}
+              contentFit="contain"
+            />
+            <Season5Lockup />
+          </View>
+        )}
+      </View>
       {right}
     </View>
+  );
+}
+
+/**
+ * Glass chevron back chip — floats over a hero/header and calls router.back().
+ * Used on pushed stack pages (teams, team detail, journey) that have no tab bar.
+ */
+export function BackChip({ onPress, testID }: { onPress: () => void; testID?: string }) {
+  const c = useColors();
+  const insets = useSafeAreaInsets();
+  return (
+    <Pressable
+      onPress={onPress}
+      testID={testID ?? 'back-chip'}
+      hitSlop={10}
+      style={({ pressed }) => ({
+        position: 'absolute',
+        top: insets.top + 12,
+        left: 16,
+        zIndex: 200,
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: c.glass,
+        borderWidth: 1,
+        borderColor: c.line,
+        alignItems: 'center',
+        justifyContent: 'center',
+        opacity: pressed ? 0.7 : 1,
+      })}
+    >
+      <Feather name="chevron-left" size={22} color={c.ink} />
+    </Pressable>
   );
 }
 

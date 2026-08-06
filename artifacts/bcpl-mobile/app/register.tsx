@@ -321,7 +321,7 @@ export default function RegisterScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
       <ScreenBackground />
-      <GlassAppBar title="Register" />
+      <GlassAppBar title="Register" back={true} />
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ padding: 20, paddingTop: appBarHeight, paddingBottom: Platform.OS === 'web' ? 60 : 40 }}

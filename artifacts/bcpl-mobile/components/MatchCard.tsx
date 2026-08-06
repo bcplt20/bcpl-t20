@@ -74,19 +74,27 @@ export const MatchCard = React.memo(({ match }: { match: Match }) => {
     >
       <Card style={[styles.card, { padding: 0, overflow: 'hidden' }]} border={true} padding={0}>
         <LinearGradient
-          colors={[`${getTeamColor(match.team1)}${c.isDark ? '40' : '20'}`, 'transparent']}
+          colors={[`${getTeamColor(match.team1)}${c.isDark ? '60' : '25'}`, 'transparent']}
           start={{ x: 0, y: 0.5 }}
           end={{ x: 0.5, y: 0.5 }}
           style={StyleSheet.absoluteFill}
           pointerEvents="none"
         />
         <LinearGradient
-          colors={[`${getTeamColor(match.team2)}${c.isDark ? '40' : '20'}`, 'transparent']}
+          colors={[`${getTeamColor(match.team2)}${c.isDark ? '60' : '25'}`, 'transparent']}
           start={{ x: 1, y: 0.5 }}
           end={{ x: 0.5, y: 0.5 }}
           style={StyleSheet.absoluteFill}
           pointerEvents="none"
         />
+        {/* subtle sheen */ c.isDark && (
+          <LinearGradient
+            colors={['rgba(255,255,255,0.1)', 'transparent', 'transparent']}
+            start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }}
+            style={StyleSheet.absoluteFill}
+            pointerEvents="none"
+          />
+        )}
         <View style={{ padding: 16 }}>
           <View style={styles.topRow}>
             <View style={{ flexDirection: 'row', gap: 6 }}>

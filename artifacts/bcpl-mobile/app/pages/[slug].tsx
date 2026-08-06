@@ -21,7 +21,7 @@ export default function NativePageScreen() {
     return (
       <View style={{ flex: 1, backgroundColor: c.bg }}>
         <ScreenBackground />
-        <GlassAppBar title="Not Found" />
+        <GlassAppBar title="Not Found" back={true} />
         <View style={{ flex: 1, paddingTop: appBarHeight }}>
           <EmptyView icon="file-text" text={t('Page not found', 'पेज नहीं मिला')} />
         </View>
@@ -63,8 +63,9 @@ export default function NativePageScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
       <ScreenBackground />
-      <GlassAppBar title={page.title} />
-      <ScrollView contentContainerStyle={{ padding: 16, paddingTop: appBarHeight, paddingBottom: bottomNavHeight, gap: 16 }}>
+      <GlassAppBar title={page.title} back={true} />
+      <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: bottomNavHeight, gap: 16 }}>
+        <View style={{ height: appBarHeight - 16 }} />
         
         {/* Vibrant Hero Header */}
         <View style={{ marginBottom: 8, marginTop: 16 }}>

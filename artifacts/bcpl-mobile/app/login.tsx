@@ -18,13 +18,15 @@ import { useAuth } from '@/context/AuthContext';
 import { useLang } from '@/context/LanguageContext';
 import { ApiError, sendOtp, verifyOtp } from '@/lib/api';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ScreenBackground } from '@/components/ui';
+import { ScreenBackground, GlassAppBar, useAppBarHeight } from '@/components/ui';
 
 export default function LoginScreen() {
   const c = useColors();
   const router = useRouter();
   const { login } = useAuth();
   const { t } = useLang();
+  
+  const appBarHeight = useAppBarHeight();
 
   const [step, setStep] = useState<'phone' | 'otp'>('phone');
   const [phone, setPhone] = useState<string>('');
@@ -79,8 +81,9 @@ export default function LoginScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
       <ScreenBackground />
+      <GlassAppBar title="Login" back={true} />
       <KeyboardAwareScrollViewCompat
-        contentContainerStyle={styles.wrap}
+        contentContainerStyle={[styles.wrap, { paddingTop: appBarHeight + 20 }]}
         bottomOffset={40}
         keyboardShouldPersistTaps="handled"
       >

@@ -315,6 +315,11 @@ export default function AppMediaView() {
               <>
                 <div style={{ gridColumn: "1 / -1" }}>
                   <label style={{ ...lbl, display: "block", marginBottom: 6 }}>PHOTO</label>
+                  {/* App renders photos in a square grid cell (cropped to fill),
+                      so a square source keeps the whole photo in frame. */}
+                  <div style={{ fontSize: 11, color: "#8593B3", marginBottom: 8, lineHeight: 1.5 }}>
+                    Recommended: square <strong style={{ color: "#C3CEE3" }}>1080 × 1080 px (1:1)</strong> — the app crops photos to a square grid tile. Under 25 MB.
+                  </div>
                   <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
                     <input ref={fileRef} type="file" accept="image/*" style={{ display: "none" }} onChange={e => void handlePhotoUpload(e)} />
                     <button onClick={() => fileRef.current?.click()} disabled={uploading}

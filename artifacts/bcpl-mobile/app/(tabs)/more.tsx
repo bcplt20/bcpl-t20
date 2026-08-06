@@ -154,6 +154,11 @@ function MoreMenu() {
           />
           <View style={{ height: 1, backgroundColor: c.line, marginVertical: 4 }} />
           <IconRow 
+            icon="shield" title={t('Teams', 'टीमें')} subtitle={t('All 10 franchises & squads', 'सभी 10 फ्रैंचाइज़ी और टीमें')}
+            colors={['#7C5CFF', '#FF3DA6']} onPress={() => router.push('/teams')} 
+          />
+          <View style={{ height: 1, backgroundColor: c.line, marginVertical: 4 }} />
+          <IconRow 
             icon="crosshair" title={t('How Selection Works', 'चयन प्रक्रिया')} subtitle={t('The 18 stages', '18 चरण')}
             colors={['#FF3DA6', '#FF1A75']} onPress={() => router.push('/pages/trust')} 
           />
@@ -390,6 +395,31 @@ export default function ProfileScreen() {
                 </LinearGradient>
               </Card>
 
+              <Pressable
+                onPress={() => router.push('/journey')}
+                style={({ pressed }) => [styles.journeyCta, { opacity: pressed ? 0.9 : 1 }]}
+                testID="my-journey-cta"
+              >
+                <LinearGradient
+                  colors={['#5B2BF0', '#9B2FF0', '#FF3DA6']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={[StyleSheet.absoluteFill, { borderRadius: 18 }]}
+                />
+                <View style={styles.journeyCtaIcon}>
+                  <Feather name="map" size={20} color="#fff" />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16 }}>
+                    {t('My Journey', 'मेरा सफ़र')}
+                  </Text>
+                  <Text style={{ color: 'rgba(255,255,255,0.85)', fontFamily: 'PlusJakartaSans_500Medium', fontSize: 12.5, marginTop: 2 }}>
+                    {t('Your full season timeline & status', 'आपकी पूरी सीज़न टाइमलाइन और स्थिति')}
+                  </Text>
+                </View>
+                <Feather name="chevron-right" size={20} color="rgba(255,255,255,0.9)" />
+              </Pressable>
+
               <Card style={{ padding: 0 }}>
                 <View style={{ padding: 20, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(255,255,255,0.1)' }}>
                   <Text style={[styles.cardTitle, { color: c.ink }]}>{t('Your season journey', 'आपका सीज़न सफ़र')}</Text>
@@ -509,8 +539,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 32,
-    paddingBottom: 120,
+    paddingHorizontal: 16,
+    paddingTop: 16,
   },
   loginIconWrap: {
     width: 88,
@@ -538,6 +568,22 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   cardTitle: { fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 18, letterSpacing: -0.2 },
+  journeyCta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+    borderRadius: 18,
+    padding: 16,
+    overflow: 'hidden',
+  },
+  journeyCtaIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(255,255,255,0.18)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   statusRow: {
     flexDirection: 'row',
     alignItems: 'center',

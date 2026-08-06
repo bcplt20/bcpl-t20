@@ -7,6 +7,9 @@ import { Tabs, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 
+import { useLang } from '@/context/LanguageContext';
+import { Text } from 'react-native';
+
 function TabIcon({ name, focused, color, feather }: { name: string; focused: boolean; color: string; feather: keyof typeof Feather.glyphMap }) {
   const c = useColors();
   const scale = useRef(new Animated.Value(focused ? 1 : 0)).current;
@@ -43,15 +46,19 @@ function TabIcon({ name, focused, color, feather }: { name: string; focused: boo
 }
 
 function FabTab() {
+  const { t } = useLang();
   return (
-    <View style={{ top: -14, alignItems: 'center', justifyContent: 'center' }}>
+    <View style={{ top: -16, alignItems: 'center', justifyContent: 'center' }}>
       <LinearGradient
-        colors={['#5B2BF0', '#9B2FF0', '#FF3DA6']}
-        style={{ width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', shadowColor: '#9B2FF0', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.4, shadowRadius: 10, elevation: 6 }}
+        colors={['#FF3DA6', '#9B2FF0', '#5B2BF0']}
+        style={{ paddingHorizontal: 14, paddingVertical: 12, borderRadius: 24, flexDirection: 'row', alignItems: 'center', shadowColor: '#FF3DA6', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.4, shadowRadius: 10, elevation: 6, gap: 6 }}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       >
-        <Feather name="plus" size={24} color="#fff" />
+        <Feather name="edit-3" size={14} color="#fff" />
+        <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 13, letterSpacing: 0.5 }}>
+          {t('Register', 'रजिस्टर')}
+        </Text>
       </LinearGradient>
     </View>
   );
@@ -86,18 +93,24 @@ export default function TabLayout() {
           shadowRadius: 26,
           paddingBottom: 0,
         },
+        tabBarItemStyle: {
+          height: 68,
+          alignItems: 'center',
+          justifyContent: 'center',
+        },
         tabBarBackground: () => (
           <BlurView intensity={80} tint={c.isDark ? 'dark' : 'light'} style={[StyleSheet.absoluteFill, { borderRadius: 34, overflow: 'hidden' }]} />
         ),
       }}
     >
-      <Tabs.Screen name="index" options={{ title: 'Home', tabBarIcon: (props) => <TabIcon feather="home" {...props} name="Home" /> }} />
-      <Tabs.Screen name="matches" options={{ title: 'Matches', tabBarIcon: (props) => <TabIcon feather="calendar" {...props} name="Matches" /> }} />
+      <Tabs.Screen name="index" options={{ title: 'Home', tabBarIcon: (props) => <TabIcon feather="home" {...props} name="Home" />, tabBarItemStyle: { flex: 1.5, alignItems: 'center', justifyContent: 'center' } }} />
+      <Tabs.Screen name="matches" options={{ title: 'Matches', tabBarIcon: (props) => <TabIcon feather="calendar" {...props} name="Matches" />, tabBarItemStyle: { flex: 1.5, alignItems: 'center', justifyContent: 'center' } }} />
       <Tabs.Screen 
         name="register-fab" 
         options={{ 
           title: 'Register', 
           tabBarIcon: () => <FabTab />,
+          tabBarItemStyle: { flex: 0, width: 104, alignItems: 'center', justifyContent: 'center' }
         }}
         listeners={() => ({
           tabPress: (e) => {
@@ -106,9 +119,9 @@ export default function TabLayout() {
           },
         })}
       />
-      <Tabs.Screen name="points" options={{ title: 'Points', tabBarIcon: (props) => <TabIcon feather="bar-chart-2" {...props} name="Points" /> }} />
-      <Tabs.Screen name="media" options={{ title: 'Media', tabBarIcon: (props) => <TabIcon feather="play-circle" {...props} name="Media" /> }} />
-      <Tabs.Screen name="more" options={{ title: 'More', tabBarIcon: (props) => <TabIcon feather="menu" {...props} name="More" /> }} />
+      <Tabs.Screen name="points" options={{ title: 'Points', tabBarIcon: (props) => <TabIcon feather="bar-chart-2" {...props} name="Points" />, tabBarItemStyle: { flex: 1, alignItems: 'center', justifyContent: 'center' } }} />
+      <Tabs.Screen name="media" options={{ title: 'Media', tabBarIcon: (props) => <TabIcon feather="play-circle" {...props} name="Media" />, tabBarItemStyle: { flex: 1, alignItems: 'center', justifyContent: 'center' } }} />
+      <Tabs.Screen name="more" options={{ title: 'More', tabBarIcon: (props) => <TabIcon feather="menu" {...props} name="More" />, tabBarItemStyle: { flex: 1, alignItems: 'center', justifyContent: 'center' } }} />
       
       <Tabs.Screen name="news" options={{ href: null }} />
     </Tabs>
@@ -117,11 +130,10 @@ export default function TabLayout() {
 
 const styles = StyleSheet.create({
   iconContainer: {
-    width: 48,
-    height: 48,
+    width: 40,
+    height: 40,
     alignItems: 'center',
     justifyContent: 'center',
-    top: 4,
   },
   activeGlow: {
     borderRadius: 24,

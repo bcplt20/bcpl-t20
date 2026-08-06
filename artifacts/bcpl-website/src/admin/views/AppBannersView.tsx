@@ -204,6 +204,15 @@ export default function AppBannersView() {
             {editId ? "✏ Edit Banner" : "New Banner"}
           </div>
 
+          {/* Recommended image size — the app renders each banner in a full-width
+              card 200px tall (screen width − 32px margins). At ~2× device pixel
+              density that is roughly 16:9, so a 1200×675 px (16:9) image fills it
+              crisply on every phone. */}
+          <div style={{ background: "#1F2B49", border: "1px solid #33436B", borderRadius: 8, padding: "10px 12px", marginBottom: 16, fontSize: 12, color: "#C3CEE3", lineHeight: 1.6 }}>
+            <span style={{ fontWeight: 700, color: "#F59E0B" }}>Recommended banner image size: 1200 × 675 px (16:9).</span>{" "}
+            The app shows each banner in a full-width card ~200px tall. Use a 16:9 image so it stays sharp on all phones; keep important text/logos inside the centre-safe area (avoid the outer ~10% edges).
+          </div>
+
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
             <div style={{ gridColumn: "1 / -1" }}>
               <label style={lbl}>TITLE *</label>

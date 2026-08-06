@@ -151,8 +151,27 @@ export const NATIVE_PAGES: Record<string, { title: string; content: PageBlock[] 
   },
   'trial-rules': {
     title: "Physical Trial Rules",
-    content: [
-    ]
+        content: [
+
+  { type: 'heading', text: "Purpose & Scope" },
+  { type: 'p', text: "This document outlines the standard rules and protocols for BCPL Season 5 physical trials (Phase 2)." },
+  { type: 'heading', text: "Before You Arrive" },
+  { type: 'li', text: "Ensure your Phase 2 payment is complete." },
+  { type: 'li', text: "Bring government-issued photo ID (Aadhaar/PAN)." },
+  { type: 'li', text: "Wear appropriate cricket attire (whites or proper athletic wear)." },
+  { type: 'heading', text: "Check-in, QR Pass & ID" },
+  { type: 'p', text: "You must present your trial QR code at the registration desk. No QR code, no entry." },
+  { type: 'heading', text: "Reporting, Late Arrival & Wristband" },
+  { type: 'p', text: "Report at least 30 minutes before your slot. Late arrivals may forfeit their attempt without refund." },
+  { type: 'heading', text: "The Six-Attempt Rule" },
+  { type: 'li', text: "Batsman: 6 deliveries to showcase technique and power." },
+  { type: 'li', text: "Bowler: 6 deliveries to demonstrate pace, spin, and accuracy." },
+  { type: 'li', text: "All-Rounder: 6 deliveries batting + 6 deliveries bowling." },
+  { type: 'li', text: "Wicketkeeper: 6 deliveries batting + standardized keeping assessment." },
+  { type: 'heading', text: "Standardised Assessment" },
+  { type: 'p', text: "Trials are assessed digitally by official BCPL coaches on a standardized 100-point rubric." },
+
+]
   },
   'refunds': {
     title: "Refund Policy",
@@ -199,59 +218,62 @@ export const NATIVE_PAGES: Record<string, { title: string; content: PageBlock[] 
   },
   'cricket-rulebook': {
     title: "Cricket Rulebook",
-    content: [
-    ]
+        content: [
+
+  { type: 'heading', text: "Cricket Rulebook" },
+  { type: 'p', text: "This document governs tournament matches. (Trial rules are separate)." },
+  { type: 'heading', text: "Match Format" },
+  { type: 'li', text: "Standard T20 format (20 overs per side)." },
+  { type: 'li', text: "Maximum 4 overs per bowler." },
+  { type: 'heading', text: "Powerplay" },
+  { type: 'li', text: "First 6 overs: Maximum 2 fielders outside the 30-yard circle." },
+  { type: 'li', text: "Overs 7-20: Maximum 5 fielders outside the circle." },
+  { type: 'heading', text: "Free Hit" },
+  { type: 'p', text: "All no-balls (front foot or height) result in a free hit on the next delivery." },
+  { type: 'heading', text: "Tie-Breakers" },
+  { type: 'p', text: "In the event of a tied match, a Super Over will determine the winner." }
+
+]
   },
   'code-of-conduct': {
     title: "Code of Conduct",
-    content: [
-      { type: 'p', text: "BCPL expects high standards of sportsmanship, professionalism and integrity from all participants. These standards apply during registration, trials, the auction and the tournament, in every trial city." },
-      { type: 'heading', text: "1. Spirit of the Game" },
-      { type: 'p', text: "Cricket is more than a sport — it is a gentleman's game built on centuries of honour, respect, and fair play. Every BCPL participant is expected to uphold and embody these values at all times, both on and off the field." },
-      { type: 'heading', text: "2. On-Field Conduct" },
-      { type: 'p', text: "Player behaviour during match hours — from warm-ups through to post-match — is held to strict conduct standards. The following behaviours are strictly prohibited:" },
-      { type: 'p', text: "Positive play, encouraging teammates, and constructive communication are always welcome." },
-      { type: 'heading', text: "3. Off-Field Conduct" },
-      { type: 'p', text: "Players represent BCPL and the corporate cricket community beyond the boundary ropes. Professional conduct is expected in all public and digital spaces." },
-      { type: 'heading', text: "4. Prohibited Conduct" },
-      { type: 'p', text: "The following are treated as violations of this Code at any stage — registration, physical trials, the auction and the tournament:" },
-      { type: 'heading', text: "5. Anti-Doping Policy" },
-      { type: 'p', text: "BCPL follows recognised anti-doping principles aligned with WADA guidelines, in both letter and spirit. A clean sport is a fair sport." },
-      { type: 'heading', text: "6. Safeguarding, Integrity & Wider Obligations" },
-      { type: 'p', text: "Beyond match play, all participants owe the following standards throughout registration, trials, the auction and the tournament:" },
-      { type: 'heading', text: "7. Fair Disciplinary Process" },
-      { type: 'p', text: "These are BCPL's own internal conduct levels and process. BCPL does not claim ICC disciplinary jurisdiction; its levels are inspired by recognised cricket conduct frameworks. Where a violation is alleged, BCPL follows a fair, proportionate process:" },
-      { type: 'p', text: "Depending on severity, sanctions may include: a warning; invalidation of an affected score or attempt; removal from a venue; cancellation of a trial; disqualification from the current process; suspension; a ban from current and/or future BCPL participation; forfeiture where applicable; and reporting to the appropriate authorities where required by law. BCPL does not impose arbitrary monetary fines." },
-      { type: 'p', text: "Sanctions escalate with severity through the following BCPL internal levels. The level applied depends on the severity, intent and context of the violation." },
-      { type: 'p', text: "A confirmed Level 3 or Level 4 violation may result in disqualification or a season ban following the fair disciplinary process. Fee treatment in such cases follows the applicable Refund & Cancellation Policy. Participants may raise concerns through the published BCPL grievance process." },
-    ]
+        content: [
+
+  { type: 'heading', text: "Code of Conduct" },
+  { type: 'p', text: "BCPL expects high standards of sportsmanship, professionalism and integrity from all participants." },
+  { type: 'heading', text: "1. Spirit of the Game" },
+  { type: 'li', text: "Play hard but play fair — results matter, but integrity matters more." },
+  { type: 'li', text: "Respect your opponents, teammates, umpires, and spectators." },
+  { type: 'li', text: "Accept all decisions gracefully, whether in your favour or against." },
+  { type: 'heading', text: "2. Anti-Corruption" },
+  { type: 'li', text: "No betting on BCPL matches." },
+  { type: 'li', text: "No sharing of inside information." },
+  { type: 'heading', text: "3. Zero Tolerance Policy" },
+  { type: 'p', text: "Abuse, violence, and discrimination will result in immediate expulsion from the league without refund." }
+
+]
   },
   'eligibility': {
     title: "Eligibility Criteria",
     content: [
-      { type: 'heading', text: "AM I ELIGIBLE?", hi: "क्या मैं ELIGIBLE हूं?" },
-      { type: 'p', text: "BCPL Season 5 is open to working professionals across India. Check your eligibility in seconds.", hi: "BCPL Season 5 पूरे भारत के working professionals के लिए खुला है। कुछ ही seconds में अपनी eligibility check करें।" },
-      { type: 'p', text: "This document applies to BCPL Season 5 unless expressly stated otherwise.", hi: "यह document, जब तक स्पष्ट रूप से अन्यथा न कहा जाए, BCPL Season 5 पर लागू होता है।" },
-      { type: 'heading', text: "1. Professional Status", hi: "1. Professional Status" },
-      { type: 'p', text: "BCPL is designed exclusively for India's working professionals. If you earn a living, you belong on this field.", hi: "BCPL खास तौर पर भारत के working professionals के लिए बनाई गई है। अगर आप कमाई करते हैं, तो यह मैदान आपके लिए है।" },
-      { type: 'heading', text: "2. Age Requirements", hi: "2. Age Requirements" },
-      { type: 'heading', text: "Minimum Age", hi: "Minimum Age" },
-      { type: 'heading', text: "Maximum Age", hi: "Maximum Age" },
-      { type: 'heading', text: "3. Cricket Experience", hi: "3. Cricket Experience" },
-      { type: 'p', text: "You don't need a century at Lord's — just a genuine love for the game and the ability to hold your own on a cricket field.", hi: "आपको Lord's पर century मारने की ज़रूरत नहीं — बस game के लिए सच्चा प्यार और cricket के मैदान पर खुद को संभालने की क्षमता चाहिए।" },
-      { type: 'heading', text: "4. Physical Fitness", hi: "4. Physical Fitness" },
-      { type: 'p', text: "Cricket demands physical capability. BCPL requires all participants to be in a state of health that allows safe participation.", hi: "Cricket के लिए physical capability चाहिए। BCPL चाहती है कि सभी participants ऐसी health में हों जो safe participation की इजाज़त दे।" },
-      { type: 'heading', text: "5. Required Documents", hi: "5. Required Documents" },
-      { type: 'p', text: "Documents are submitted after shortlisting. Keep these ready before registration so you're prepared when the BCPL team contacts you.", hi: "Documents shortlisting के बाद submit होते हैं। इन्हें registration से पहले तैयार रखें ताकि BCPL team के contact करने पर आप तैयार रहें।" },
-      { type: 'heading', text: "Registration Journey", hi: "Registration Journey" },
-      { type: 'heading', text: "6. Verification, Declarations & Conduct", hi: "6. Verification, Declarations और Conduct" },
-      { type: 'p', text: "One registration is permitted per person per season. Participation is subject to accurate declarations, identity and professional verification, and the applicable BCPL rules.", hi: "एक व्यक्ति एक season में एक ही registration कर सकता है। भागीदारी सही declarations, identity और professional verification, तथा applicable BCPL rules के अधीन है।" },
-      { type: 'heading', text: "Disqualification Grounds & Verification", hi: "अयोग्यता के कारण और सत्यापन" },
-      { type: 'p', text: "All participants must follow the applicable conduct rules throughout registration, assessment and trials.", hi: "सभी participants को registration, assessment और trials के दौरान applicable conduct rules का पालन करना ज़रूरी है।" },
-      { type: 'heading', text: "Meet All Criteria?", hi: "सभी Criteria पूरे करते हैं?" },
-      { type: 'p', text: "Join 10 franchise teams and corporate cricketers from across India. Your stadium moment awaits.", hi: "10 franchise teams और पूरे भारत के corporate cricketers के साथ जुड़ें। आपका stadium वाला पल इंतज़ार कर रहा है।" },
-      { type: 'heading', text: "Ask on WhatsApp", hi: "WhatsApp पर पूछें" },
-    ]
+
+  { type: 'heading', text: "AM I ELIGIBLE?", hi: "क्या मैं ELIGIBLE हूं?" },
+  { type: 'p', text: "BCPL Season 5 is open to working professionals across India." },
+  { type: 'heading', text: "1. Professional Status" },
+  { type: 'li', text: "Salaried employees (any sector)", hi: "Salaried employees (किसी भी sector में)" },
+  { type: 'li', text: "Self-employed professionals & freelancers", hi: "Self-employed professionals और freelancers" },
+  { type: 'li', text: "Business owners & entrepreneurs", hi: "Business owners और entrepreneurs" },
+  { type: 'li', text: "Gig / delivery / logistics workers", hi: "Gig / delivery / logistics workers" },
+  { type: 'li', text: "Farmers & agriculture professionals", hi: "Farmers और agriculture professionals" },
+  { type: 'li', text: "Government & PSU staff", hi: "Government और PSU staff" },
+  { type: 'heading', text: "2. Age Requirements" },
+  { type: 'p', text: "Minimum age: 18 years on the date of registration. Maximum age: 45 years on the date of registration." },
+  { type: 'heading', text: "3. Cricket Experience" },
+  { type: 'p', text: "You must NOT currently be under a first-class or professional cricket contract." },
+  { type: 'heading', text: "4. Physical Fitness" },
+  { type: 'p', text: "Must be medically fit to participate in outdoor cricket activities." }
+
+]
   },
   'trust': {
     title: "How Selection Works",

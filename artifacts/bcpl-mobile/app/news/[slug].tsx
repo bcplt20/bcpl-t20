@@ -28,7 +28,7 @@ export default function NewsDetailScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
       <ScreenBackground />
-      <GlassAppBar title="News" />
+      <GlassAppBar title="News" back={true} />
       <ScrollView contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 60 : 30, paddingTop: appBarHeight }}>
         <View>
           <Image

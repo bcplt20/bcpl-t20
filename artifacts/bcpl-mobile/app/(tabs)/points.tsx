@@ -50,15 +50,9 @@ function GroupTable({ title, rows, qualify }: { title: string; rows: PointsRow[]
             ]}
           >
             <View style={{ width: 22, alignItems: 'center' }}>
-              {i === 0 ? (
-                <View style={[styles.medal, { backgroundColor: '#FFC53D' }]}><Text style={[styles.medalText, { color: c.card }]}>1</Text></View>
-              ) : i === 1 ? (
-                <View style={[styles.medal, { backgroundColor: '#9E9BD1' }]}><Text style={[styles.medalText, { color: c.card }]}>2</Text></View>
-              ) : i === 2 ? (
-                <View style={[styles.medal, { backgroundColor: '#FF8A3D' }]}><Text style={[styles.medalText, { color: c.card }]}>3</Text></View>
-              ) : (
-                <Text style={[styles.pos, { color: c.sub, width: 'auto' }]}>{i + 1}</Text>
-              )}
+              <View style={[styles.medal, { backgroundColor: i < qualify ? c.mint : c.card2, borderWidth: i >= qualify ? 1 : 0, borderColor: c.line }]}>
+                <Text style={[styles.medalText, { color: i < qualify ? '#000' : c.sub }]}>{i + 1}</Text>
+              </View>
             </View>
             <View style={[styles.team, { flexDirection: 'row', alignItems: 'center', gap: 10 }]}>
               <TeamLogo name={t.team} size={28} />

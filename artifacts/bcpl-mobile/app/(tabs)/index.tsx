@@ -16,9 +16,10 @@ import { Image } from 'expo-image';
 import { useColors } from '@/hooks/useColors';
 import { useAuth } from '@/context/AuthContext';
 import { useLang } from '@/context/LanguageContext';
-import { getMatches, getPointsTable, SITE_ASSETS, getAppBanners, type Match, type AppBanner } from '@/lib/api';
+import { getMatches, getPointsTable, getTeams, SITE_ASSETS, getAppBanners, type Match, type AppBanner, type Team } from '@/lib/api';
 import { NEWS_ARTICLES } from '@/data/news';
 import { Card, TeamLogo, GlassAppBar, ScreenBackground, SectionHeader, useAppBarHeight, useBottomNavHeight } from '@/components/ui';
+import { teamLogoUri } from '@/app/teams';
 import { MatchCard } from '@/components/MatchCard';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { Feather } from '@expo/vector-icons';
@@ -212,10 +213,83 @@ function BannerCarousel({ banners }: { banners: AppBanner[] }) {
   );
 }
 
+const TEAMS_CANON_ORDER = [
+  'Rajasthan Scorchers', 'Mumbai Mavericks', 'Chennai Thalaivas', 'Hyderabad Hawks', 'Ahmedabad Lions',
+  'Delhi Suryas', 'Punjab Warriors', 'Kolkata Tigers', 'Lucknow Nawabs', 'Bengaluru Rockets',
+];
+
+function TeamsStrip() {
+  const c = useColors();
+  const router = useRouter();
+  const { t } = useLang();
+  const q = useQuery({ queryKey: ['teams'], queryFn: getTeams });
+
+  const teams = React.useMemo(() => {
+    const list = [...(q.data?.teams ?? [])];
+    list.sort((a, b) => {
+      const ia = TEAMS_CANON_ORDER.indexOf(a.name);
+      const ib = TEAMS_CANON_ORDER.indexOf(b.name);
+      return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib) || a.name.localeCompare(b.name);
+    });
+    return list;
+  }, [q.data]);
+
+  if (q.isLoading || teams.length === 0) return null;
+
+  return (
+    <View style={{ marginTop: 32 }}>
+      <View style={{ paddingHorizontal: 16 }}>
+        <SectionHeader title={t('Teams', 'टीमें')} onSeeAll={() => router.push('/teams')} seeAllLabel={t('See all', 'सभी देखें')} seeAllTestID="see-teams" />
+      </View>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, gap: 12 }}>
+        {teams.map((team: Team) => {
+          const accent = team.color || c.violet;
+          const second = team.secondColor || accent;
+          const logo = teamLogoUri(team.logoUrl);
+          return (
+            <Pressable
+              key={team.id}
+              onPress={() => router.push(`/team/${team.slug}`)}
+              testID={`home-team-${team.slug}`}
+              style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] })}
+            >
+              <View style={{ width: 128, borderRadius: 18, borderWidth: 1, borderColor: c.line, backgroundColor: c.card, overflow: 'hidden', padding: 14, alignItems: 'center' }}>
+                <LinearGradient
+                  colors={[`${accent}33`, `${second}10`, 'transparent']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 0, y: 1 }}
+                  style={StyleSheet.absoluteFill}
+                />
+                <View style={{ width: 56, height: 56, borderRadius: 16, backgroundColor: 'rgba(255,255,255,0.96)', borderWidth: 2, borderColor: `${accent}66`, alignItems: 'center', justifyContent: 'center' }}>
+                  {logo ? (
+                    <Image source={{ uri: logo }} style={{ width: '84%', height: '84%' }} contentFit="contain" />
+                  ) : (
+                    <Text style={{ color: accent, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 18 }}>
+                      {team.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join('')}
+                    </Text>
+                  )}
+                </View>
+                <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 12.5, marginTop: 12, textAlign: 'center' }} numberOfLines={2}>
+                  {team.name}
+                </Text>
+                {team.city ? (
+                  <Text style={{ color: c.getAccentText(accent), fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 10, letterSpacing: 0.5, textTransform: 'uppercase', marginTop: 4 }} numberOfLines={1}>
+                    {team.city}
+                  </Text>
+                ) : null}
+              </View>
+            </Pressable>
+          );
+        })}
+      </ScrollView>
+    </View>
+  );
+}
+
 export default function HomeScreen() {
   const c = useColors();
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const { t } = useLang();
   
   const appBarHeight = useAppBarHeight();
@@ -241,7 +315,7 @@ export default function HomeScreen() {
       <ScreenBackground />
       <GlassAppBar />
       <ScrollView
-        contentContainerStyle={{ paddingBottom: bottomNavHeight, paddingTop: appBarHeight }}
+        contentContainerStyle={{ paddingBottom: bottomNavHeight }}
         refreshControl={
           <RefreshControl
             refreshing={matchesQ.isRefetching}
@@ -250,11 +324,37 @@ export default function HomeScreen() {
               pointsQ.refetch();
             }}
             tintColor={c.magenta}
+            progressViewOffset={appBarHeight}
           />
         }
       >
+        <View style={{ height: appBarHeight }} />
 
         <BannerCarousel banners={bannersQ.data?.banners?.length ? bannersQ.data.banners : HARDCODED_BANNERS} />
+
+        {token ? (
+          <View style={{ paddingHorizontal: 16, marginTop: 16 }}>
+            <Pressable
+              onPress={() => router.push('/journey')}
+              testID="home-my-journey"
+              style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1, borderRadius: 18, overflow: 'hidden' })}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16, borderRadius: 18, overflow: 'hidden' }}>
+                <LinearGradient colors={['#5B2BF0', '#9B2FF0', '#FF3DA6']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFill} />
+                <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255,255,255,0.18)', alignItems: 'center', justifyContent: 'center' }}>
+                  <Feather name="map" size={20} color="#fff" />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16 }}>{t('My Journey', 'मेरा सफ़र')}</Text>
+                  <Text style={{ color: 'rgba(255,255,255,0.85)', fontFamily: 'PlusJakartaSans_500Medium', fontSize: 12.5, marginTop: 2 }}>
+                    {t('Track your season status & next steps', 'अपनी सीज़न स्थिति और अगले कदम देखें')}
+                  </Text>
+                </View>
+                <Feather name="chevron-right" size={20} color="rgba(255,255,255,0.9)" />
+              </View>
+            </Pressable>
+          </View>
+        ) : null}
 
 
         {/* BCPL so far — league in numbers */}
@@ -262,19 +362,20 @@ export default function HomeScreen() {
           <SectionHeader title={t('The league in numbers', 'आँकड़ों में लीग')} />
           <View style={styles.statsGrid}>
             {[
-              { v: '2,50,000+', l: t('Working professionals joined', 'वर्किंग प्रोफ़ेशनल्स जुड़े'), icon: 'users', color: c.violet },
-              { v: '400+', l: t('Players auctioned', 'खिलाड़ी ऑक्शन हुए'), icon: 'award', color: c.mint },
-              { v: '₹14 Cr+', l: t('Prize money distributed', 'प्राइज़ मनी बाँटी गई'), icon: 'dollar-sign', color: c.lime },
-              { v: '4', l: t('Seasons completed', 'सीज़न पूरे हुए'), icon: 'calendar', color: c.magenta },
-              { v: '50+', l: t('Trial cities', 'ट्रायल शहर'), icon: 'map-pin', color: c.orange },
-              { v: '10', l: t('Franchises', 'फ्रैंचाइज़ी'), icon: 'shield', color: c.cyan },
+              { v: '2,50,000+', l: t('Working professionals joined', 'वर्किंग प्रोफ़ेशनल्स जुड़े'), icon: 'users', color: ['#5B2BF0', '#9B2FF0'] },
+              { v: '400+', l: t('Players auctioned', 'खिलाड़ी ऑक्शन हुए'), icon: 'award', color: ['#16E0A3', '#00B8D9'] },
+              { v: '₹14 Cr+', l: t('Prize money distributed', 'प्राइज़ मनी बाँटी गई'), icon: 'dollar-sign', color: ['#B6FF3C', '#16E0A3'] },
+              { v: '4', l: t('Seasons completed', 'सीज़न पूरे हुए'), icon: 'calendar', color: ['#FF3DA6', '#FF1A75'] },
+              { v: '50+', l: t('Trial cities', 'ट्रायल शहर'), icon: 'map-pin', color: ['#FFC53D', '#FF8A3D'] },
+              { v: '10', l: t('Franchises', 'फ्रैंचाइज़ी'), icon: 'shield', color: ['#00E5FF', '#00B3FF'] },
             ].map((s) => (
-              <View key={s.v + s.l} style={[styles.statBox, { backgroundColor: c.card, borderColor: c.line, shadowColor: c.isDark ? '#000' : '#2D196E', shadowOpacity: c.isDark ? 0.34 : 0.09 }]}>
-                <View style={[styles.statIconBox, { backgroundColor: `${s.color}20` }]}>
-                  <Feather name={s.icon as any} size={14} color={c.getAccentText(s.color)} />
-                </View>
-                <CountUpStat value={s.v} style={{ color: c.ink, fontFamily: 'SpaceGrotesk_700Bold', fontSize: 20, marginTop: 10 }} />
-                <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 12, marginTop: 4, lineHeight: 16 }}>{s.l}</Text>
+              <View key={s.v + s.l} style={[styles.statBox, { backgroundColor: c.card2, borderColor: s.color[0], borderWidth: 1, shadowColor: s.color[0], shadowOpacity: c.isDark ? 0.34 : 0.09, shadowRadius: 10, elevation: 4 }]}>
+                <LinearGradient colors={s.color as [string, string]} style={[StyleSheet.absoluteFill, { opacity: c.isDark ? 0.08 : 0.04, borderRadius: 19 }]} />
+                <LinearGradient colors={s.color as [string, string]} style={styles.statIconBox}>
+                  <Feather name={s.icon as any} size={16} color="#fff" />
+                </LinearGradient>
+                <CountUpStat value={s.v} style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 24, marginTop: 12 }} />
+                <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 13, marginTop: 4, lineHeight: 18 }}>{s.l}</Text>
               </View>
             ))}
           </View>
@@ -339,6 +440,8 @@ export default function HomeScreen() {
           </View>
         ) : null}
 
+        <TeamsStrip />
+
         <View style={{ paddingHorizontal: 16, marginTop: 32 }}>
           <SectionHeader title={t('Latest News', 'ताज़ा खबरें')} onSeeAll={() => router.push('/news')} seeAllLabel={t('See all', 'सभी देखें')} seeAllTestID="see-news" />
           {latestNews.map((n) => (
@@ -398,22 +501,14 @@ const styles = StyleSheet.create({
   statBox: {
     flexBasis: '46%',
     flexGrow: 1,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.06)',
-    backgroundColor: '#161124',
-    borderRadius: 16,
-    padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 12,
-    elevation: 4,
+    borderRadius: 20,
+    padding: 20,
     overflow: 'hidden',
   },
   statIconBox: {
-    width: 28,
-    height: 28,
-    borderRadius: 8,
+    width: 36,
+    height: 36,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },

@@ -55,6 +55,9 @@ function RootLayoutNav() {
         <Stack.Screen name="pages/[slug]" options={{ headerShown: false }} />
         <Stack.Screen name="match/[id]" options={{ title: 'Match Center', headerShown: false }} />
         <Stack.Screen name="news/[slug]" options={{ title: 'News', headerShown: false }} />
+        <Stack.Screen name="teams" options={{ title: 'Teams', headerShown: false }} />
+        <Stack.Screen name="team/[id]" options={{ title: 'Team', headerShown: false }} />
+        <Stack.Screen name="journey" options={{ title: 'My Journey', headerShown: false }} />
       </Stack>
     </>
   );

@@ -295,12 +295,38 @@ export interface Team {
   secondColor?: string | null;
   logoUrl?: string | null;
   captain?: string | null;
+  coach?: string | null;
+  owner?: string | null;
   homeGround?: string | null;
+  titlesWon?: number;
   playerCount?: number;
 }
 
 export function getTeams(): Promise<{ teams: Team[] }> {
   return apiFetch('/teams');
+}
+
+/** A squad player on a franchise team (admin-managed; purely API-driven). */
+export interface TeamPlayer {
+  id: string;
+  teamId: string;
+  name: string;
+  role: string; // Batsman | Bowler | All-rounder | Wicket-keeper
+  age?: number | null;
+  state?: string | null;
+  photoUrl?: string | null;
+  battingStyle?: string | null;
+  bowlingStyle?: string | null;
+  jerseyNo?: string | null;
+  nationality?: string | null;
+  isCaptain?: boolean;
+  isViceCaptain?: boolean;
+  auctionPrice?: string | null;
+}
+
+/** Team detail + full squad. Accepts slug or uuid. */
+export function getTeamDetail(slugOrId: string): Promise<{ team: Team; players: TeamPlayer[] }> {
+  return apiFetch(`/teams/${slugOrId}`);
 }
 
 export interface AppBanner {
