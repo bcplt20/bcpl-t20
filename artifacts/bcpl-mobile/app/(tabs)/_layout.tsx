@@ -107,9 +107,9 @@ export default function TabLayout() {
         })}
       />
       <Tabs.Screen name="points" options={{ title: 'Points', tabBarIcon: (props) => <TabIcon feather="bar-chart-2" {...props} name="Points" /> }} />
+      <Tabs.Screen name="media" options={{ title: 'Media', tabBarIcon: (props) => <TabIcon feather="play-circle" {...props} name="Media" /> }} />
       <Tabs.Screen name="more" options={{ title: 'More', tabBarIcon: (props) => <TabIcon feather="menu" {...props} name="More" /> }} />
       
-      <Tabs.Screen name="media" options={{ href: null }} />
       <Tabs.Screen name="news" options={{ href: null }} />
     </Tabs>
   );
