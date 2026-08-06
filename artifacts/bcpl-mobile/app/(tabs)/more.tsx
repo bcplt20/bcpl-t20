@@ -358,10 +358,10 @@ export default function ProfileScreen() {
                 <Feather name="edit-3" size={36} color={c.cyan} />
               </View>
               <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 20, marginTop: 24, textAlign: 'center' }}>
-                {t("Register for this season on bcplt20.com", 'इस सीज़न की रजिस्ट्रेशन bcplt20.com पर करें')}
+                {t('Register for BCPL Season 5', 'BCPL सीज़न 5 के लिए रजिस्टर करें')}
               </Text>
               <Text style={{ color: c.sub, fontSize: 14, marginTop: 10, textAlign: 'center', lineHeight: 22, fontFamily: 'PlusJakartaSans_500Medium' }}>
-                {t('Your dashboard will appear here once registration is complete', 'रजिस्ट्रेशन पूरी होते ही आपका डैशबोर्ड यहाँ दिखेगा')}
+                {t('Register right here in the app — your dashboard will appear once registration is complete', 'यहीं ऐप में रजिस्टर करें — रजिस्ट्रेशन पूरी होते ही आपका डैशबोर्ड यहाँ दिखेगा')}
               </Text>
               <Pressable
                 onPress={() => router.push('/register')}
@@ -444,7 +444,7 @@ export default function ProfileScreen() {
                   />
                   {!d.video?.submitted && ['video_submitted', 'payment_done'].includes(reg?.phase1Status ?? '') ? (
                     <Pressable
-                      onPress={() => Linking.openURL('https://bcplt20.com/dashboard')}
+                      onPress={() => router.push('/upload-video')}
                       style={({ pressed }) => [styles.linkBtn, { opacity: pressed ? 0.8 : 1, marginTop: 8, marginBottom: 16 }]}
                       testID="upload-video-cta"
                     >

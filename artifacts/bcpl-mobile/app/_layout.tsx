@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from '@/lib/queryClient';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -31,8 +32,6 @@ import * as SplashScreen from 'expo-splash-screen';
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
-const queryClient = new QueryClient();
-
 function RootLayoutNav() {
   const { theme } = useTheme();
   const c = THEMES[theme];
@@ -60,6 +59,9 @@ function RootLayoutNav() {
         <Stack.Screen name="teams" options={{ title: 'Teams', headerShown: false }} />
         <Stack.Screen name="team/[id]" options={{ title: 'Team', headerShown: false }} />
         <Stack.Screen name="journey" options={{ title: 'My Journey', headerShown: false }} />
+        <Stack.Screen name="upload-video" options={{ title: 'Upload Video', headerShown: false }} />
+        <Stack.Screen name="phase2-pay" options={{ title: 'Phase 2', headerShown: false }} />
+        <Stack.Screen name="kyc" options={{ title: 'KYC', headerShown: false }} />
       </Stack>
     </>
   );

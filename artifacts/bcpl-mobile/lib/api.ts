@@ -120,6 +120,142 @@ export function verifyPhase1Payment(
   return apiFetch('/payment/phase1/verify', { method: 'POST', body: { orderId }, token });
 }
 
+// ── Phase 2 payment ───────────────────────────────────────────────────────────
+export function createPhase2Payment(
+  token: string,
+  registrationId: string,
+  declarations?: { version: string; items: string[] },
+): Promise<{
+  success: boolean;
+  orderId: string;
+  paymentSessionId: string;
+  amount: number;
+  cashfreeMode?: 'production' | 'sandbox';
+  checkoutUrl?: string;
+}> {
+  return apiFetch('/payment/phase2/create', { method: 'POST', body: { registrationId, declarations }, token });
+}
+
+export function verifyPhase2Payment(
+  token: string,
+  orderId: string,
+): Promise<{ success: boolean; status?: string }> {
+  return apiFetch('/payment/phase2/verify', { method: 'POST', body: { orderId }, token });
+}
+
+// ── Video Upload (Phase 1) ────────────────────────────────────────────────────
+// Endpoints + shapes mirror the website (bcpl-website/src/lib/api.ts) exactly so
+// the native in-app upload uses the same server flow: presigned S3 PUT + confirm.
+
+export type VideoConstraints = {
+  videoMinSeconds: number;
+  videoMaxSeconds: number;
+  maxVideoFileSizeMb: number;
+  maxReuploads: number;
+  maxAttempts: number;
+  allowedFormats: string[];
+};
+
+export function getVideoInstructions(token: string): Promise<{
+  role: string | null;
+  roleKey: 'bat' | 'bowl' | 'ar' | 'wk' | null;
+  instructions: { en: string[]; hi: string[] } | null;
+  constraints: VideoConstraints;
+}> {
+  return apiFetch('/video/instructions', { token });
+}
+
+export function getVideoStatus(token: string): Promise<{
+  registered: boolean;
+  phase1Status?: string;
+  videoDeadline?: string | null;
+  deadlineExpired?: boolean;
+  videoSubmitted?: boolean;
+  submittedAt?: string | null;
+  attemptsUsed?: number;
+  maxAttempts?: number;
+  canReupload?: boolean;
+  latestVideoStatus?: string | null;
+  reuploadReason?: string | null;
+}> {
+  return apiFetch('/video/status', { token });
+}
+
+export function getVideoUploadUrl(
+  token: string,
+  registrationId: string,
+  contentType: string,
+  sizeBytes?: number,
+): Promise<{ success: boolean; presignedUrl: string; s3Key: string; maxSizeMb?: number }> {
+  return apiFetch('/video/upload-url', { method: 'POST', body: { registrationId, contentType, sizeBytes }, token });
+}
+
+export function confirmVideoUpload(
+  token: string,
+  registrationId: string,
+  s3Key: string,
+  declarationAccepted: boolean,
+  durationSeconds?: number,
+): Promise<{ success: boolean; message: string; attemptsUsed?: number; maxAttempts?: number; reuploadsLeft?: number }> {
+  return apiFetch('/video/confirm', { method: 'POST', body: { registrationId, s3Key, declarationAccepted, durationSeconds }, token });
+}
+
+// ── KYC (Phase 2) ─────────────────────────────────────────────────────────────
+// Same endpoints + statuses as the website KYC page.
+
+export interface KycInitiateBody {
+  registrationId: string;
+  profession: string;
+  aadhaarNumber: string;
+  panNumber: string;
+  tshirtSize?: string;
+  emergencyName?: string;
+  emergencyRelation?: string;
+  emergencyPhone?: string;
+  bloodGroup?: string;
+}
+
+export function initiateKyc(token: string, data: KycInitiateBody): Promise<{
+  success: boolean; kycId: string; status: string; message: string;
+  aadhaarRefId?: string; panVerified?: boolean;
+}> {
+  return apiFetch('/kyc/initiate', { method: 'POST', body: data, token });
+}
+
+export function verifyKycOtp(token: string, data: { registrationId: string; aadhaarRefId: string; otp: string }): Promise<{
+  success: boolean; status: string; message: string;
+}> {
+  return apiFetch('/kyc/verify-otp', { method: 'POST', body: data, token });
+}
+
+export function getKycProgress(token: string, registrationId: string): Promise<{
+  hasKyc: boolean;
+  status?: string;
+  panVerified?: boolean;
+  aadhaarVerified?: boolean;
+  aadhaarParked?: boolean;
+  profession?: string;
+  profile?: {
+    tshirtSize?: string | null; emergencyName?: string | null;
+    emergencyRelation?: string | null; emergencyPhone?: string | null;
+    bloodGroup?: string | null;
+  } | null;
+}> {
+  return apiFetch(`/kyc/progress/${registrationId}`, { token });
+}
+
+export function kycAadhaarOtp(token: string, data: { registrationId: string; aadhaarNumber: string }): Promise<{
+  success: boolean; status: string; aadhaarRefId?: string; panVerified?: boolean; message: string;
+}> {
+  return apiFetch('/kyc/aadhaar-otp', { method: 'POST', body: data, token });
+}
+
+export function kycVerifyPan(token: string, data: { registrationId: string; panNumber: string }): Promise<{
+  success: boolean; status: string; message: string;
+}> {
+  return apiFetch('/kyc/verify-pan', { method: 'POST', body: data, token });
+}
+
 // ── Dashboard ────────────────────────────────────────────────────────────────
 export interface Dashboard {
   user: AuthUser;
@@ -344,6 +480,7 @@ export interface AppBanner {
   subtitle?: string;
   ctaLabel?: string;
   ctaHref?: string;
+  imageUrl?: string;
   accent?: string;
   order: number;
 }

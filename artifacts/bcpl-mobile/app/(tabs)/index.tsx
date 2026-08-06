@@ -159,23 +159,39 @@ function BannerCarousel({ banners }: { banners: AppBanner[] }) {
         onTouchStart={stopTimer}
         onTouchEnd={startTimer}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
+        renderItem={({ item }) => {
+          const hasImage = !!item.imageUrl;
+          return (
           <Pressable onPress={() => item.ctaHref && router.push(item.ctaHref as any)} style={{ width }}>
             <Card padding={0} style={{ overflow: 'hidden', height: 200, marginRight: 0 }}>
-              <LinearGradient colors={[c.card2, c.card]} style={StyleSheet.absoluteFill} />
-              
-              {/* Diagonal stroke accents */}
-              <LinearGradient 
-                colors={[`${accentHex(item.accent)}40`, 'transparent']}
-                start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-                style={{ position: 'absolute', top: -50, right: -50, width: 150, height: 300, transform: [{ rotate: '45deg' }] }}
-              />
-              <LinearGradient 
-                colors={[`${accentHex(item.accent)}20`, 'transparent']}
-                start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }}
-                style={{ position: 'absolute', bottom: -50, left: -50, width: 150, height: 300, transform: [{ rotate: '45deg' }] }}
-              />
-              
+              {hasImage ? (
+                <>
+                  {/* Real banner image fills the card; dark scrim keeps text legible */}
+                  <Image source={{ uri: item.imageUrl }} style={StyleSheet.absoluteFill} contentFit="cover" transition={200} />
+                  <LinearGradient
+                    colors={['rgba(0,0,0,0.15)', 'rgba(0,0,0,0.55)', 'rgba(0,0,0,0.8)']}
+                    start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }}
+                    style={StyleSheet.absoluteFill}
+                  />
+                </>
+              ) : (
+                <>
+                  <LinearGradient colors={[c.card2, c.card]} style={StyleSheet.absoluteFill} />
+
+                  {/* Diagonal stroke accents */}
+                  <LinearGradient
+                    colors={[`${accentHex(item.accent)}40`, 'transparent']}
+                    start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+                    style={{ position: 'absolute', top: -50, right: -50, width: 150, height: 300, transform: [{ rotate: '45deg' }] }}
+                  />
+                  <LinearGradient
+                    colors={[`${accentHex(item.accent)}20`, 'transparent']}
+                    start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }}
+                    style={{ position: 'absolute', bottom: -50, left: -50, width: 150, height: 300, transform: [{ rotate: '45deg' }] }}
+                  />
+                </>
+              )}
+
               <View style={{ padding: 24, flex: 1, justifyContent: 'center' }}>
                 {item.ctaHref === '/register' && (
                   <View style={[styles.heroKickBadge, { backgroundColor: c.card2, borderColor: c.line }]}>
@@ -183,11 +199,11 @@ function BannerCarousel({ banners }: { banners: AppBanner[] }) {
                   </View>
                 )}
                 
-                <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 32, lineHeight: 36 }}>
+                <Text style={{ color: hasImage ? '#FFFFFF' : c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 32, lineHeight: 36 }}>
                   {item.title}
                 </Text>
                 {item.subtitle ? (
-                  <Text style={{ color: c.sub, fontSize: 13, marginTop: 8, fontFamily: 'PlusJakartaSans_600SemiBold' }}>
+                  <Text style={{ color: hasImage ? 'rgba(255,255,255,0.9)' : c.sub, fontSize: 13, marginTop: 8, fontFamily: 'PlusJakartaSans_600SemiBold' }}>
                     {item.subtitle}
                   </Text>
                 ) : null}
@@ -200,7 +216,8 @@ function BannerCarousel({ banners }: { banners: AppBanner[] }) {
               </View>
             </Card>
           </Pressable>
-        )}
+          );
+        }}
       />
       <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 6, marginTop: 12 }}>
         {banners.map((_, i) => (

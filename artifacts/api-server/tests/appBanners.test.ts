@@ -94,6 +94,14 @@ describe("app_banners admin write (role-gated, validated)", () => {
     expect(res.status).toBe(400);
   });
 
+  it("non-URL imageUrl is rejected", async () => {
+    const res = await request(app)
+      .put("/api/settings/admin/app_banners")
+      .set("x-bcpl-admin-token", contentToken)
+      .send({ value: { banners: [{ id: "x1", title: "Hi", imageUrl: "not-a-url", active: true, order: 1 }] } });
+    expect(res.status).toBe(400);
+  });
+
   it("CONTENT_TEAM can save banners (round-trips)", async () => {
     const res = await request(app)
       .put("/api/settings/admin/app_banners")
@@ -101,7 +109,7 @@ describe("app_banners admin write (role-gated, validated)", () => {
       .send({ value: { banners: [
         { id: "a", title: "Second active", accent: "amber", active: true, order: 2 },
         { id: "b", title: "Hidden", accent: "cyan", active: false, order: 3 },
-        { id: "c", title: "First active", ctaLabel: "Go", ctaHref: "/register", accent: "violet", active: true, order: 1 },
+        { id: "c", title: "First active", ctaLabel: "Go", ctaHref: "/register", imageUrl: "https://bcpl-trial-videos.s3.ap-south-1.amazonaws.com/cms/banner-1.png", accent: "violet", active: true, order: 1 },
       ] } });
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
@@ -115,6 +123,8 @@ describe("GET /api/app-banners (after admin save)", () => {
     expect(res.body.banners).toHaveLength(2); // hidden one dropped
     expect(res.body.banners.map((b: { id: string }) => b.id)).toEqual(["c", "a"]);
     expect(res.body.banners[0].ctaHref).toBe("/register");
+    // optional imageUrl round-trips to the app
+    expect(res.body.banners[0].imageUrl).toBe("https://bcpl-trial-videos.s3.ap-south-1.amazonaws.com/cms/banner-1.png");
     // inactive banner never leaks
     expect(JSON.stringify(res.body)).not.toContain("Hidden");
   });

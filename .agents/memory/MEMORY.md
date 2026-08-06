@@ -52,4 +52,6 @@
 - [Chromium PDF bloat](pdf-size-compression.md) — --print-to-pdf re-encodes images lossless (20MB+); shrink via pymupdf per-xref JPEG swap, never rewrite_images+garbage (kills gradients)
 - [Mobile in-app registration](mobile-registration.md) — app replicates web Phase-1 flow; Cashfree HOSTED checkout URL #sessionId + app-driven verify; consent versions hardcoded in sync with legalMeta
 - [Sponsor tiers & logos](sponsor-tiers.md) — sponsors array order = tier hierarchy (contiguous runs); logo uploads auto-processed to white PNG via admin-tools endpoint with sharp DoS guards
+- [Expo Android fonts](expo-android-fonts.md) — Android tofu icons = icon font not preloaded; add ...Feather.font/...Ionicons.font to root useFonts
+- [Journey gating parity](journey-parity.md) — mobile Journey must copy website's single-cursor deriveStep verbatim; bcpl_mobile_auth_v1 injection recipe for Expo-web auth tests
 - [Mobile app design system](mobile-app-design.md) — owner-supplied v4 HTML mockup is the design source of truth (violet/magenta/cyan, stadium+daylight themes); links open in-app; never invent palettes for this app

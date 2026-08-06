@@ -516,18 +516,42 @@ export default function RegisterScreen() {
               <Text style={{ color: c.getAccentText(c.cyan), fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 32 }}>{regNumber}</Text>
             </View>
           ) : null}
-          <Text style={{ color: c.sub, fontSize: 15, marginTop: 32, textAlign: 'center', lineHeight: 24, paddingHorizontal: 20, fontFamily: 'PlusJakartaSans_500Medium' }}>
-            {t('Next step: upload your 30–60 sec trial video from your dashboard', 'अगला कदम: अपने डैशबोर्ड से 30–60 सेकंड का ट्रायल वीडियो अपलोड करें')}
+          <Text style={{ color: c.sub, fontSize: 15, marginTop: 28, textAlign: 'center', lineHeight: 24, paddingHorizontal: 20, fontFamily: 'PlusJakartaSans_500Medium' }}>
+            {t('Next step: upload your 30–60 second trial video — right here in the app.', 'अगला कदम: अपना 30–60 सेकंड का ट्रायल वीडियो अपलोड करें — यहीं ऐप में।')}
           </Text>
+
+          {/* Video guidelines so the player knows exactly what to record before
+              they head to the in-app upload screen (mirrors website copy). */}
+          <View style={{ width: '100%', marginTop: 26, padding: 16, backgroundColor: c.card2, borderRadius: 16, borderWidth: 1, borderColor: c.line }}>
+            <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 15, marginBottom: 12 }}>
+              {t('Video guidelines', 'वीडियो दिशानिर्देश')}
+            </Text>
+            {[
+              { en: 'Record a 30–60 second clip clearly showing your cricket skills.', hi: '30–60 सेकंड का clip रिकॉर्ड करें जिसमें आपकी क्रिकेट स्किल्स साफ़ दिखें।' },
+              { en: 'Shoot horizontally in good light with a stable camera.', hi: 'अच्छी रोशनी में स्थिर कैमरे से हॉरिजॉन्टल शूट करें।' },
+              { en: 'No editing or background music — raw footage of your own play only.', hi: 'कोई एडिटिंग या म्यूजिक नहीं — केवल आपके अपने खेल की मूल फुटेज।' },
+              { en: 'MP4 / MOV / AVI / WebM, up to 200 MB.', hi: 'MP4 / MOV / AVI / WebM, अधिकतम 200 MB.' },
+              { en: 'Upload within your deadline window shown on the upload screen.', hi: 'अपलोड स्क्रीन पर दिखाई गई समय-सीमा के भीतर अपलोड करें।' },
+            ].map((item, i) => (
+              <View key={i} style={{ flexDirection: 'row', gap: 8, alignItems: 'flex-start', marginBottom: 8 }}>
+                <Feather name="check" size={14} color="#2ECC71" style={{ marginTop: 2 }} />
+                <Text style={{ color: c.sub, fontSize: 12.5, lineHeight: 19, fontFamily: 'PlusJakartaSans_500Medium', flex: 1 }}>{t(item.en, item.hi)}</Text>
+              </View>
+            ))}
+          </View>
+
           <Pressable
-            onPress={() => router.replace('/more')}
-            style={({ pressed }) => [styles.btn, { opacity: pressed ? 0.8 : 1, marginTop: 40, paddingHorizontal: 48 }]}
+            onPress={() => router.replace('/upload-video')}
+            style={({ pressed }) => [styles.btn, { opacity: pressed ? 0.8 : 1, marginTop: 28, paddingHorizontal: 40 }]}
           >
             <LinearGradient
               colors={['#FF1A75', '#D10056']}
               style={[StyleSheet.absoluteFill, { borderRadius: 16 }]}
             />
-            <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, letterSpacing: 0.5 }}>{t('Go to profile', 'प्रोफ़ाइल देखें')}</Text>
+            <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, letterSpacing: 0.5 }}>{t('Upload trial video', 'ट्रायल वीडियो अपलोड करें')}</Text>
+          </Pressable>
+          <Pressable onPress={() => router.replace('/journey')} style={{ marginTop: 16 }}>
+            <Text style={{ color: c.sub, fontSize: 14, fontFamily: 'PlusJakartaSans_700Bold' }}>{t('View my journey', 'मेरा सफ़र देखें')}</Text>
           </Pressable>
         </Card>
       ) : null}

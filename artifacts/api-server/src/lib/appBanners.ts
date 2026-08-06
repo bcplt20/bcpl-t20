@@ -20,6 +20,7 @@ export const appBannerSchema = z.object({
   subtitle: z.string().max(300).optional(),
   ctaLabel: z.string().max(60).optional(),
   ctaHref: z.string().max(300).optional(),
+  imageUrl: z.string().url().max(600).optional(),
   accent: z.enum(BANNER_ACCENTS).optional(),
   active: z.boolean(),
   order: z.number().int().min(0).max(9999),

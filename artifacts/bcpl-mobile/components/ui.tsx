@@ -20,17 +20,21 @@ function HeaderCountdown() {
   const c = useColors();
   const { t } = useLang();
   const [now, setNow] = React.useState(() => Date.now());
-  const pulse = useRef(new Animated.Value(0)).current;
+  const pulse = React.useRef(new Animated.Value(0)).current;
 
   React.useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
-    Animated.loop(
+    const loop = Animated.loop(
       Animated.sequence([
         Animated.timing(pulse, { toValue: 1, duration: 800, useNativeDriver: false }),
         Animated.timing(pulse, { toValue: 0, duration: 800, useNativeDriver: false }),
       ])
-    ).start();
-    return () => clearInterval(id);
+    );
+    loop.start();
+    return () => {
+      clearInterval(id);
+      loop.stop();
+    };
   }, []);
 
   const left = REG_CLOSE_AT - now;
@@ -45,38 +49,40 @@ function HeaderCountdown() {
 
   return (
     <View style={{
-      borderRadius: 8,
+      borderRadius: 10,
       padding: 1,
-      shadowColor: '#00E5FF',
-      shadowOpacity: 0.15,
+      shadowColor: '#9B2FF0',
+      shadowOpacity: c.isDark ? 0.4 : 0.15,
       shadowRadius: 6,
-      shadowOffset: { width: 0, height: 0 },
-      elevation: 3,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: 4,
+      backgroundColor: c.isDark ? '#2D196E' : '#E0D4FF',
+      maxWidth: 100, // prevent wrapping issues on 320px
     }}>
       <LinearGradient 
-        colors={['#00E5FF', '#FF3DA6']} 
+        colors={['#7C5CFF', '#FF3DA6']} 
         start={{x: 0, y: 0}} end={{x: 1, y: 1}} 
-        style={[StyleSheet.absoluteFill, { borderRadius: 8 }]} 
+        style={[StyleSheet.absoluteFill, { borderRadius: 10, opacity: c.isDark ? 0.6 : 0.8 }]} 
       />
       <View style={{
-        backgroundColor: c.isDark ? '#0B0813' : '#FFF',
-        borderRadius: 7,
+        backgroundColor: c.isDark ? '#0B0813' : '#FFFFFF',
+        borderRadius: 9,
         paddingHorizontal: 8,
-        paddingVertical: 4,
-        alignItems: 'flex-end',
+        paddingVertical: 5,
+        alignItems: 'center',
         justifyContent: 'center',
       }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}>
           <Animated.View style={{
-            width: 4, height: 4, borderRadius: 2, backgroundColor: '#00E5FF', marginRight: 4,
+            width: 4, height: 4, borderRadius: 2, backgroundColor: '#FF3DA6', marginRight: 4,
             opacity: pulse.interpolate({ inputRange: [0, 1], outputRange: [0.3, 1] }),
             transform: [{ scale: pulse.interpolate({ inputRange: [0, 1], outputRange: [0.8, 1.2] }) }]
           }} />
-          <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 8, letterSpacing: 0.5, textTransform: 'uppercase' }}>
+          <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 8, letterSpacing: 0.5, textTransform: 'uppercase' }} numberOfLines={1}>
             {t('Reg Closes In', 'रजिस्ट्रेशन बंद')}
           </Text>
         </View>
-        <Text style={{ color: c.cyan, fontFamily: 'SpaceGrotesk_700Bold', fontSize: 12, fontVariant: ['tabular-nums'] }}>
+        <Text style={{ color: c.ink, fontFamily: 'SpaceGrotesk_700Bold', fontSize: 13, fontVariant: ['tabular-nums'] }}>
           {d}d {pad(h)}:{pad(m)}:{pad(s)}
         </Text>
       </View>
@@ -358,7 +364,7 @@ export const ScreenBackground = React.memo(() => {
   );
 });
 
-export const APP_BAR_CONTENT_HEIGHT = 64;
+export const APP_BAR_CONTENT_HEIGHT = 72;
 
 export function useAppBarHeight() {
   const insets = useSafeAreaInsets();
@@ -374,102 +380,61 @@ export function useBottomNavHeight() {
 
 export function Season5Lockup() {
   const c = useColors();
-  const anim = useRef(new Animated.Value(0)).current;
+  const anim = React.useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
-    Animated.loop(
+  React.useEffect(() => {
+    const loop = Animated.loop(
       Animated.timing(anim, {
         toValue: 1,
-        duration: 3000,
+        duration: 3500,
         useNativeDriver: false,
       })
-    ).start();
+    );
+    loop.start();
+    return () => loop.stop();
   }, [anim]);
 
-  const spin = anim.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '360deg']
-  });
-
   const sweep = anim.interpolate({
-    inputRange: [0, 0.5, 1],
+    inputRange: [0, 0.4, 1],
     outputRange: ['-100%', '200%', '200%']
-  });
-  
-  const pulse = anim.interpolate({
-    inputRange: [0, 0.5, 1],
-    outputRange: [0.1, 0.4, 0.1]
   });
 
   return (
     <View style={{
-      borderRadius: 10,
+      borderRadius: 6,
       overflow: 'hidden',
-      padding: 1.5,
-      width: 62,
-      height: 17,
+      paddingHorizontal: 8,
+      paddingVertical: 3,
+      backgroundColor: c.isDark ? '#2D196E' : '#2D196E', // Keep dark rich violet background
+      borderWidth: 1,
+      borderColor: '#B8860B', // Gold border
+      shadowColor: '#EAC375',
+      shadowOpacity: c.isDark ? 0.3 : 0.4,
+      shadowRadius: 6,
+      shadowOffset: { width: 0, height: 0 },
       justifyContent: 'center',
       alignItems: 'center',
-      shadowColor: '#00E5FF',
-      shadowOpacity: c.isDark ? 0.6 : 0.3,
-      shadowRadius: 8,
-      shadowOffset: { width: 0, height: 0 },
-      elevation: 6,
+      flexDirection: 'row',
     }}>
-      {/* Rotating gradient background for the conic border effect */}
+      <Text style={{
+        fontFamily: 'BricolageGrotesque_800ExtraBold',
+        fontSize: 10,
+        color: '#EAC375', // Gold text
+        letterSpacing: 1,
+        zIndex: 3,
+      }}>
+        SEASON 5
+      </Text>
+
+      {/* Metallic Sheen Sweep */}
       <Animated.View style={{
         position: 'absolute',
-        width: 150,
-        height: 150,
-        transform: [{ rotate: spin }],
-      }}>
-        <LinearGradient 
-          colors={['#00E5FF', '#FF3DA6', '#9B2FF0', '#00E5FF']}
-          start={{x: 0, y: 0}} end={{x: 1, y: 1}}
-          style={StyleSheet.absoluteFill}
-        />
-      </Animated.View>
-
-      {/* Inner pill cut-out */}
-      <View style={{
-        backgroundColor: c.isDark ? '#0B0813' : '#FFFFFF',
-        borderRadius: 10.5,
-        width: '100%',
-        height: '100%',
-        justifyContent: 'center',
-        alignItems: 'center',
-        overflow: 'hidden',
-      }}>
-        {/* Inner glow pulsing */}
-        <Animated.View style={{
-          position: 'absolute',
-          width: '100%',
-          height: '100%',
-          backgroundColor: '#00E5FF',
-          opacity: pulse,
-        }} />
-        
-        {/* Shimmer sweep */}
-        <Animated.View style={{
-          position: 'absolute',
-          top: 0, bottom: 0, width: 20,
-          left: sweep,
-          backgroundColor: 'rgba(255, 255, 255, 0.6)',
-          transform: [{ skewX: '-25deg' }],
-          zIndex: 2,
-        }} />
-
-        <Text style={{
-          fontFamily: 'BricolageGrotesque_800ExtraBold',
-          fontSize: 7.5,
-          color: c.isDark ? '#FFF' : '#000',
-          letterSpacing: 0.4,
-          zIndex: 3,
-          backgroundColor: 'transparent'
-        }}>
-          SEASON 5
-        </Text>
-      </View>
+        top: 0, bottom: 0, width: 25,
+        left: sweep,
+        backgroundColor: 'rgba(255, 255, 255, 0.3)',
+        transform: [{ skewX: '-25deg' }],
+        zIndex: 2,
+      }} />
     </View>
   );
 }
@@ -509,16 +474,19 @@ export function GlassAppBar({ title, right, back }: { title?: string, right?: Re
           </Pressable>
         )}
         {title ? (
-          <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 22, color: c.ink, letterSpacing: -0.5 }}>{title}</Text>
+          <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 22, color: c.ink, letterSpacing: -0.5 }} numberOfLines={1}>{title}</Text>
         ) : (
-          <View style={{ flexDirection: 'row', alignItems: 'flex-end', height: APP_BAR_CONTENT_HEIGHT, paddingBottom: (APP_BAR_CONTENT_HEIGHT - 40) / 2 }}>
+          <View style={{ justifyContent: 'center', alignItems: 'flex-start', height: APP_BAR_CONTENT_HEIGHT }}>
+            {/* Light logo asset has more transparent padding than the dark one:
+                give it a taller box (no scale transforms — they visually overflow
+                the layout box and overlap the SEASON 5 pill below). */}
             <Image
               source={c.isDark ? require('../assets/images/bcpl-logo-dark.png') : require('../assets/images/bcpl-logo-light.png')}
-              style={{ width: logoW, height: logoH }}
+              style={{ width: c.isDark ? logoW : Math.round(logoW * 1.15), height: c.isDark ? logoH : Math.round(logoH * 1.15) }}
               contentFit="contain"
-              contentPosition="left"
+              contentPosition="left center"
             />
-            <View style={{ marginLeft: 6, marginBottom: 3 }}>
+            <View style={{ marginTop: 4 }}>
               <Season5Lockup />
             </View>
           </View>

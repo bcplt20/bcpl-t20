@@ -3,6 +3,7 @@ import {
   fetchAppBannersAdmin, saveAppBannersAdmin,
   BANNER_ACCENTS, type AppBanner, type BannerAccent,
 } from "../api/appBannersApi";
+import { adminGetSampleUploadUrl } from "../../lib/api";
 
 /* App promo banners live on the SERVER (site_settings key "app_banners") so
    the mobile app reads them via GET /api/app-banners. This view lists / adds /
@@ -22,12 +23,13 @@ type Form = {
   subtitle: string;
   ctaLabel: string;
   ctaHref: string;
+  imageUrl: string;
   accent: BannerAccent;
   active: boolean;
 };
 
 const EMPTY_FORM: Form = {
-  title: "", subtitle: "", ctaLabel: "", ctaHref: "", accent: "violet", active: true,
+  title: "", subtitle: "", ctaLabel: "", ctaHref: "", imageUrl: "", accent: "violet", active: true,
 };
 
 const inp: React.CSSProperties = {
@@ -45,6 +47,8 @@ export default function AppBannersView() {
   const [showAdd, setShowAdd] = useState(false);
   const [editId,  setEditId]  = useState<string | null>(null);
   const [form,    setForm]    = useState<Form>(EMPTY_FORM);
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   async function load() {
     setLoadErr("");
@@ -100,7 +104,30 @@ export default function AppBannersView() {
     if (f.subtitle.trim()) b.subtitle = f.subtitle.trim();
     if (f.ctaLabel.trim()) b.ctaLabel = f.ctaLabel.trim();
     if (f.ctaHref.trim())  b.ctaHref  = f.ctaHref.trim();
+    if (f.imageUrl.trim()) b.imageUrl = f.imageUrl.trim();
     return b;
+  }
+
+  /* Banner image reuses the existing admin S3 upload flow (presigned PUT → the
+     stored value is a public S3 URL the app can load directly, same as sponsor
+     logos). Objects land under the "cms/" prefix. */
+  async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (fileRef.current) fileRef.current.value = "";
+    if (!file) return;
+    if (!file.type.startsWith("image/")) { alert("Please choose an image file."); return; }
+    if (file.size > 3 * 1024 * 1024) { alert("Image must be under 3 MB."); return; }
+    setUploading(true);
+    try {
+      const { presignedUrl, publicUrl } = await adminGetSampleUploadUrl(file.type, "cms");
+      const put = await fetch(presignedUrl, { method: "PUT", body: file, headers: { "Content-Type": file.type } });
+      if (!put.ok) throw new Error("Upload failed (" + put.status + ")");
+      setForm(f => ({ ...f, imageUrl: publicUrl }));
+    } catch (err) {
+      alert("Image upload failed: " + (err instanceof Error ? err.message : "unknown error"));
+    } finally {
+      setUploading(false);
+    }
   }
 
   function handleSave() {
@@ -120,6 +147,7 @@ export default function AppBannersView() {
       subtitle: b.subtitle ?? "",
       ctaLabel: b.ctaLabel ?? "",
       ctaHref: b.ctaHref ?? "",
+      imageUrl: b.imageUrl ?? "",
       accent: b.accent ?? "violet",
       active: b.active,
     });
@@ -213,6 +241,26 @@ export default function AppBannersView() {
             The app shows each banner in a full-width card ~200px tall. Use a 16:9 image so it stays sharp on all phones; keep important text/logos inside the centre-safe area (avoid the outer ~10% edges).
           </div>
 
+          {/* Banner image (optional) — reuses the admin S3 upload flow */}
+          <div style={{ marginBottom: 16 }}>
+            <label style={lbl}>BANNER IMAGE (OPTIONAL)</label>
+            <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 6 }}>
+              <input ref={fileRef} type="file" accept="image/*" onChange={handleImageUpload} style={{ display: "none" }} />
+              <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading}
+                style={{ padding: "8px 16px", borderRadius: 8, border: "1px solid #33436B", background: "#33436B", color: "#C3CEE3", fontSize: 12, cursor: uploading ? "wait" : "pointer", fontWeight: 600, flexShrink: 0 }}>
+                {uploading ? "Uploading…" : (form.imageUrl ? "Replace Image" : "Upload Image")}
+              </button>
+              {form.imageUrl && !uploading && (
+                <img src={form.imageUrl} alt="Banner preview"
+                  style={{ width: 96, height: 54, objectFit: "cover", borderRadius: 8, border: "1px solid #33436B", flexShrink: 0 }} />
+              )}
+              {form.imageUrl && !uploading && (
+                <button type="button" onClick={() => setForm(f => ({ ...f, imageUrl: "" }))}
+                  style={{ background: "none", border: "1px solid #EF444440", borderRadius: 7, padding: "5px 12px", color: "#EF4444", fontSize: 11, cursor: "pointer", flexShrink: 0 }}>Remove</button>
+              )}
+            </div>
+          </div>
+
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
             <div style={{ gridColumn: "1 / -1" }}>
               <label style={lbl}>TITLE *</label>
@@ -282,8 +330,13 @@ export default function AppBannersView() {
                     style={{ background: "none", border: "1px solid #33436B", borderRadius: 6, color: i === banners.length - 1 ? "#33436B" : "#C3CEE3", fontSize: 10, cursor: i === banners.length - 1 ? "default" : "pointer", padding: "3px 8px", lineHeight: 1 }}>▼</button>
                 </div>
 
-                {/* Accent swatch */}
-                <div style={{ width: 40, height: 40, borderRadius: 10, background: hex, flexShrink: 0 }} />
+                {/* Image thumbnail (or accent swatch fallback) */}
+                {b.imageUrl ? (
+                  <img src={b.imageUrl} alt=""
+                    style={{ width: 64, height: 40, objectFit: "cover", borderRadius: 8, border: `1px solid ${hex}`, flexShrink: 0 }} />
+                ) : (
+                  <div style={{ width: 40, height: 40, borderRadius: 10, background: hex, flexShrink: 0 }} />
+                )}
 
                 {/* Info */}
                 <div style={{ flex: 1, minWidth: 0 }}>

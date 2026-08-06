@@ -1,15 +1,15 @@
 import React from 'react';
-import { Linking, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useRouter } from 'expo-router';
-import * as WebBrowser from 'expo-web-browser';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
 import { useColors } from '@/hooks/useColors';
 import { useAuth } from '@/context/AuthContext';
 import { useLang } from '@/context/LanguageContext';
-import { getDashboard, SITE_ASSETS, type Dashboard } from '@/lib/api';
+import { getDashboard, type Dashboard } from '@/lib/api';
 import {
   BackChip,
   Card,
@@ -19,10 +19,6 @@ import {
   useAppBarHeight,
   useBottomNavHeight,
 } from '@/components/ui';
-
-/* Website pages we hand off to (open in the in-app browser). */
-const WEB_VIDEO_UPLOAD = `${SITE_ASSETS}/register/upload-video`;
-const WEB_KYC = `${SITE_ASSETS}/register/phase2/kyc`;
 
 type StepState = 'done' | 'current' | 'todo';
 
@@ -82,6 +78,7 @@ const P2_POST_TRIAL = ['trial_cleared', 'auction_shortlisted', 'team_signed'];
 
 type JourneyStep =
   | 'not_registered'
+  | 'pay_phase1'
   | 'upload_video'
   | 'under_review'
   | 'rejected'
@@ -119,6 +116,15 @@ function deriveStep(d: Dashboard): JourneyStep {
      are provisioned already-selected with no video — they must land on the
      Phase-2 steps, never back on "upload video". */
   if (p1 !== 'selected') {
+    /* BUG FIX: a registered-but-UNPAID player (phase1Status 'pending' / empty,
+       no paid payment row) must be told to PAY Phase 1 — never to upload a
+       video. The website enforces this via its upload-video page guard
+       (phase1Status === 'pending' → "must pay first"); mirror it here by
+       gating the upload step behind genuine paid-ness. isPhase1Paid() also
+       returns true for legacy carryover (phase1Status advanced past pending
+       with no payment row), so that path still flows through to the video/
+       Phase-2 steps below unchanged. */
+    if (!isPhase1Paid(d)) return 'pay_phase1';
     if (!d.video?.submitted) return 'upload_video';
     return 'under_review';
   }
@@ -234,8 +240,17 @@ export default function JourneyScreen() {
     enabled: !!token,
   });
 
-  const openWeb = (url: string) =>
-    WebBrowser.openBrowserAsync(url).catch(() => Linking.openURL(url));
+  // BUG FIX (data freshness): refetch the dashboard whenever this screen
+  // regains focus — e.g. after completing KYC/video/payment on another screen,
+  // or after the owner changed their status on the website and came back to the
+  // app. Combined with clearing the query cache on login/logout, the journey
+  // never shows a stale step.
+  const refetch = q.refetch;
+  useFocusEffect(
+    useCallback(() => {
+      if (token) refetch();
+    }, [token, refetch]),
+  );
 
   if (!ready) return <LoadingView />;
 
@@ -282,22 +297,26 @@ export default function JourneyScreen() {
             <Card style={{ alignItems: 'center', paddingVertical: 36 }}>
               <Feather name="edit-3" size={28} color={c.cyan} />
               <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 18, marginTop: 16, textAlign: 'center', paddingHorizontal: 24 }}>
-                {t('Register for this season on bcplt20.com', 'इस सीज़न की रजिस्ट्रेशन bcplt20.com पर करें')}
+                {t('Register for BCPL Season 5', 'BCPL सीज़न 5 के लिए रजिस्टर करें')}
               </Text>
               <Text style={{ color: c.sub, fontSize: 13, marginTop: 8, textAlign: 'center', lineHeight: 20, fontFamily: 'PlusJakartaSans_500Medium', paddingHorizontal: 24 }}>
-                {t('Your journey will appear here once registration is complete.', 'रजिस्ट्रेशन पूरी होते ही आपका सफ़र यहाँ दिखेगा।')}
+                {t('Register right here in the app — your journey will appear once you complete it.', 'यहीं ऐप में रजिस्टर करें — पूरा करते ही आपका सफ़र यहाँ दिखेगा।')}
               </Text>
+              <Pressable onPress={() => router.push('/register')} style={({ pressed }) => [styles.primaryBtn, { opacity: pressed ? 0.85 : 1 }]} testID="journey-register">
+                <LinearGradient colors={['#FF1A75', '#D10056']} style={[StyleSheet.absoluteFill, { borderRadius: 14 }]} />
+                <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 15 }}>{t('Register now', 'अभी रजिस्टर करें')}</Text>
+              </Pressable>
             </Card>
           </View>
         ) : (
-          <JourneyBody d={d} openWeb={openWeb} />
+          <JourneyBody d={d} />
         )}
       </ScrollView>
     </View>
   );
 }
 
-function JourneyBody({ d, openWeb }: { d: Dashboard; openWeb: (url: string) => void }) {
+function JourneyBody({ d }: { d: Dashboard }) {
   const c = useColors();
   const { t } = useLang();
   const steps = buildSteps(d, t);
@@ -337,7 +356,7 @@ function JourneyBody({ d, openWeb }: { d: Dashboard; openWeb: (url: string) => v
 
       {/* Next action — single derived-step banner (mirrors website getBannerConfig).
           For the video step this is the rich VideoTrialCard with a live countdown. */}
-      <NextActionBanner step={step} d={d} openWeb={openWeb} />
+      <NextActionBanner step={step} d={d} />
 
       {/* Step timeline (11-node MY BCPL JOURNEY, website parity) */}
       <View style={{ marginTop: 20, marginBottom: 8 }}>
@@ -410,9 +429,10 @@ function JourneyBody({ d, openWeb }: { d: Dashboard; openWeb: (url: string) => v
  * Native in-app video upload / KYC forms are owned by separate tasks; the
  * CTAs hand off to the authenticated website pages, exactly as today.
  */
-function NextActionBanner({ step, d, openWeb }: { step: JourneyStep; d: Dashboard; openWeb: (url: string) => void }) {
+function NextActionBanner({ step, d }: { step: JourneyStep; d: Dashboard }) {
   const c = useColors();
   const { t } = useLang();
+  const router = useRouter();
   const reg = d.registration;
   const name = d.user?.name ?? '';
   const city = reg?.trialCity ?? '';
@@ -425,7 +445,6 @@ function NextActionBanner({ step, d, openWeb }: { step: JourneyStep; d: Dashboar
         deadlineExpired={!!reg?.deadlineExpired}
         videoSubmitted={!!d.video?.submitted}
         submittedAt={d.video?.submittedAt ?? null}
-        openWeb={openWeb}
       />
     );
   }
@@ -438,6 +457,8 @@ function NextActionBanner({ step, d, openWeb }: { step: JourneyStep; d: Dashboar
     cta?: string;
     onPress?: () => void;
     ctaColors?: readonly [string, string];
+    /** Whether the CTA navigates in-app (arrow) vs. opens a browser (external-link). */
+    inApp?: boolean;
   };
 
   const banners: Record<Exclude<JourneyStep, 'upload_video'>, Banner> = {
@@ -445,9 +466,21 @@ function NextActionBanner({ step, d, openWeb }: { step: JourneyStep; d: Dashboar
       accent: c.magenta, icon: 'edit-3',
       title: t('Register for BCPL Season 5', 'BCPL सीज़न 5 के लिए रजिस्टर करें'),
       body: t('Start your BCPL journey — register as a player and pay the Phase 1 fee to get started.', 'अपना BCPL सफ़र शुरू करें — खिलाड़ी के रूप में रजिस्टर करें और शुरू करने के लिए फेज 1 फीस भरें।'),
-      cta: t('Register on bcplt20.com', 'bcplt20.com पर रजिस्टर करें'),
-      onPress: () => openWeb(`${SITE_ASSETS}/register`),
+      cta: t('Register now', 'अभी रजिस्टर करें'),
+      onPress: () => router.push('/register'),
       ctaColors: ['#FF1A75', '#D10056'],
+      inApp: true,
+    },
+    pay_phase1: {
+      // BUG FIX: unpaid players must be told to PAY Phase 1 — never to upload a
+      // video. This is the ONLY next action for a registered-but-unpaid player.
+      accent: c.magenta, icon: 'credit-card',
+      title: t('Complete Your Phase 1 Payment', 'अपना फेज 1 भुगतान पूरा करें'),
+      body: t(`${name || 'Player'}, your registration is saved but the Phase 1 fee is still pending. Pay the Phase 1 fee to unlock your trial video upload and continue your BCPL journey.`, `${name || 'खिलाड़ी'}, आपकी रजिस्ट्रेशन सेव है लेकिन फेज 1 फीस अभी बाकी है। ट्रायल वीडियो अपलोड अनलॉक करने और अपना BCPL सफ़र जारी रखने के लिए फेज 1 फीस भरें।`),
+      cta: t('PAY Phase 1 fee', 'फेज 1 फीस भरें'),
+      onPress: () => router.push('/register'),
+      ctaColors: ['#FF1A75', '#D10056'],
+      inApp: true,
     },
     under_review: {
       accent: c.getAccentText(c.amber), icon: 'search',
@@ -463,17 +496,19 @@ function NextActionBanner({ step, d, openWeb }: { step: JourneyStep; d: Dashboar
       accent: c.mint, icon: 'star',
       title: t('Congratulations! Selected for Phase 2', 'बधाई हो! फेज 2 के लिए चुने गए'),
       body: t(`${name}, you've cleared Phase 1 evaluation. Complete Phase 2 registration and pay the trial fee to secure your spot at the ${city} physical trial.`, `${name}, आपने फेज 1 evaluation पास कर लिया है। फेज 2 रजिस्ट्रेशन पूरा करें और ${city} फिजिकल ट्रायल में अपनी जगह पक्की करने के लिए ट्रायल फीस भरें।`),
-      cta: t('Continue Phase 2 on bcplt20.com', 'bcplt20.com पर फेज 2 जारी रखें'),
-      onPress: () => openWeb(`${SITE_ASSETS}/register/phase2`),
+      cta: t('Continue to Phase 2', 'फेज 2 के लिए आगे बढ़ें'),
+      onPress: () => router.push('/phase2-pay'),
       ctaColors: ['#16E0A3', '#00B8D9'],
+      inApp: true,
     },
     p2_kyc: {
       accent: c.cyan, icon: 'shield',
       title: t('Complete Your KYC', 'अपना KYC पूरा करें'),
       body: t(`Phase 2 payment done. One last step — complete your KYC (Aadhaar + PAN verification) to confirm your trial slot in ${city}.`, `फेज 2 पेमेंट हो गया। एक आख़िरी कदम — ${city} में अपने ट्रायल स्लॉट की पुष्टि के लिए अपना KYC (आधार + PAN वेरिफ़िकेशन) पूरा करें।`),
-      cta: t('Complete KYC on bcplt20.com', 'bcplt20.com पर KYC पूरा करें'),
-      onPress: () => openWeb(WEB_KYC),
+      cta: t('Complete KYC now', 'अभी KYC पूरा करें'),
+      onPress: () => router.push('/kyc'),
       ctaColors: ['#00B3FF', '#0077C8'],
+      inApp: true,
     },
     p2_kyc_pending: {
       accent: c.getAccentText(c.amber), icon: 'clock',
@@ -515,7 +550,7 @@ function NextActionBanner({ step, d, openWeb }: { step: JourneyStep; d: Dashboar
       {b.cta && b.onPress ? (
         <Pressable onPress={b.onPress} style={({ pressed }) => [styles.linkBtn, { opacity: pressed ? 0.85 : 1 }]} testID={`journey-cta-${step}`}>
           <LinearGradient colors={b.ctaColors ?? (['#FF1A75', '#D10056'] as const)} style={[StyleSheet.absoluteFill, { borderRadius: 14 }]} />
-          <Feather name="external-link" size={16} color="#fff" />
+          <Feather name={b.inApp ? 'arrow-right' : 'external-link'} size={16} color="#fff" />
           <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 14 }}>{b.cta}</Text>
         </Pressable>
       ) : null}
@@ -565,16 +600,15 @@ function VideoTrialCard({
   deadlineExpired,
   videoSubmitted,
   submittedAt,
-  openWeb,
 }: {
   deadlineIso: string | null;
   deadlineExpired: boolean;
   videoSubmitted: boolean;
   submittedAt: string | null;
-  openWeb: (url: string) => void;
 }) {
   const c = useColors();
   const { t } = useLang();
+  const router = useRouter();
   const cd = useCountdown(deadlineIso);
 
   // Deadline is passed if the server said so, or the live countdown ran out.
@@ -667,8 +701,8 @@ function VideoTrialCard({
           </Text>
           <Text style={{ color: c.sub, fontSize: 13, marginTop: 8, lineHeight: 20, fontFamily: 'PlusJakartaSans_500Medium' }}>
             {t(
-              'Record a clear clip of your skills and upload it on bcplt20.com within your window.',
-              'अपनी स्किल्स का साफ clip record करके अपनी window के भीतर bcplt20.com पर upload करें।',
+              'Record a clear clip of your skills and upload it right here in the app within your window.',
+              'अपनी स्किल्स का साफ clip record करके अपनी window के भीतर यहीं ऐप में अपलोड करें।',
             )}
           </Text>
 
@@ -690,11 +724,11 @@ function VideoTrialCard({
             </View>
           ) : null}
 
-          <Pressable onPress={() => openWeb(WEB_VIDEO_UPLOAD)} style={({ pressed }) => [styles.linkBtn, { opacity: pressed ? 0.85 : 1 }]} testID="journey-video-upload">
+          <Pressable onPress={() => router.push('/upload-video')} style={({ pressed }) => [styles.linkBtn, { opacity: pressed ? 0.85 : 1 }]} testID="journey-video-upload">
             <LinearGradient colors={['#FF1A75', '#D10056']} style={[StyleSheet.absoluteFill, { borderRadius: 14 }]} />
-            <Feather name="external-link" size={16} color="#fff" />
+            <Feather name="upload" size={16} color="#fff" />
             <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 14 }}>
-              {t('Open upload page', 'अपलोड पेज खोलें')}
+              {t('Upload trial video', 'ट्रायल वीडियो अपलोड करें')}
             </Text>
           </Pressable>
         </View>

@@ -20,6 +20,7 @@ export type AppBanner = {
   subtitle?: string;
   ctaLabel?: string;
   ctaHref?: string;
+  imageUrl?: string;
   accent?: BannerAccent;
   active: boolean;
   order: number;

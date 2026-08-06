@@ -1,14 +1,10 @@
-import React, { useEffect, useRef } from 'react';
-import { Animated, Platform, StyleSheet, View, Pressable, Text } from 'react-native';
-import { useColors } from '@/hooks/useColors';
-import { Feather } from '@expo/vector-icons';
-import { BlurView } from 'expo-blur';
-import { Tabs, useRouter } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useLang } from '@/context/LanguageContext';
+const fs = require('fs');
+const file = 'artifacts/bcpl-mobile/app/(tabs)/_layout.tsx';
+let content = fs.readFileSync(file, 'utf8');
 
-function RegisterFabButton({ onPress }: { onPress: () => void }) {
+const oldTabBar = /function RegisterFabButton.*?export default function TabLayout/s;
+
+const newTabBar = `function RegisterFabButton({ onPress }: { onPress: () => void }) {
   const { t } = useLang();
   const c = useColors();
   const anim = useRef(new Animated.Value(0)).current;
@@ -161,19 +157,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
   );
 }
 
-export default function TabLayout() {
-  return (
-    <Tabs
-      screenOptions={{ headerShown: false }}
-      tabBar={(props) => <CustomTabBar {...props} />}
-    >
-      <Tabs.Screen name="index" />
-      <Tabs.Screen name="matches" />
-      <Tabs.Screen name="register-fab" />
-      <Tabs.Screen name="media" />
-      <Tabs.Screen name="more" />
-      <Tabs.Screen name="points" options={{ href: null }} />
-      <Tabs.Screen name="news" options={{ href: null }} />
-    </Tabs>
-  );
-}
+export default function TabLayout`;
+
+content = content.replace(oldTabBar, newTabBar);
+fs.writeFileSync(file, content);
