@@ -26,6 +26,7 @@ export default function MediaScreen() {
   const c = useColors();
   const { t } = useLang();
   const [viewer, setViewer] = useState<GalleryItem | null>(null);
+  const [expanded, setExpanded] = React.useState<Record<string, boolean>>({});
 
   // presigned viewUrls expire after ~1h — refetch periodically and on focus so links stay fresh
   const q = useQuery({
@@ -67,7 +68,7 @@ export default function MediaScreen() {
         <ErrorView onRetry={() => q.refetch()} />
       ) : (q.data?.albums?.length ?? 0) === 0 ? (
         <Card style={{ alignItems: 'center', paddingVertical: 48, marginTop: 24 }}>
-          <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: 'rgba(255,255,255,0.05)', alignItems: 'center', justifyContent: 'center', marginBottom: 20, borderWidth: 2, borderColor: 'rgba(255,255,255,0.1)' }}>
+          <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: c.card2, alignItems: 'center', justifyContent: 'center', marginBottom: 20, borderWidth: 2, borderColor: c.line }}>
             <Feather name="camera" size={32} color={c.sub} />
           </View>
           <Text style={{ color: c.sub, fontSize: 15, textAlign: 'center', fontFamily: 'PlusJakartaSans_600SemiBold' }}>
@@ -75,27 +76,30 @@ export default function MediaScreen() {
           </Text>
         </Card>
       ) : (
-        q.data!.albums.map((album) => (
+        q.data!.albums.map((album) => {
+          const isOpen = expanded[album.id];
+          const items = isOpen ? album.items : album.items.slice(0, 24);
+          return (
           <View key={album.id} style={{ marginTop: 32 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
               <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 20, letterSpacing: -0.3 }}>
                 {album.name}
               </Text>
-              <View style={{ backgroundColor: 'rgba(255,255,255,0.08)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 }}>
+              <View style={{ backgroundColor: c.card2, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 }}>
                 <Text style={{ color: c.sub, fontSize: 12, fontFamily: 'PlusJakartaSans_700Bold' }}>
                   {album.items.length} {t('Items', 'आइटम')}
                 </Text>
               </View>
             </View>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: GAP }}>
-              {album.items.map((item) => (
+              {items.map((item) => (
                 <Pressable
                   key={item.id}
                   onPress={() => (item.kind === 'video' ? setActiveVideo({ id: item.id, title: 'Video', url: item.viewUrl }) : setViewer(item))}
                   style={({ pressed }) => ({ opacity: pressed ? 0.85 : 1, transform: [{ scale: pressed ? 0.96 : 1 }] })}
                   testID={`media-${item.id}`}
                 >
-                  <View style={{ width: cell, height: cell, borderRadius: 16, overflow: 'hidden', backgroundColor: 'rgba(255,255,255,0.05)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }}>
+                  <View style={{ width: cell, height: cell, borderRadius: 16, overflow: 'hidden', backgroundColor: c.card2, borderWidth: 1, borderColor: c.line }}>
                     {item.kind === 'photo' ? (
                       <Image source={{ uri: item.viewUrl }} style={{ width: '100%', height: '100%' }} contentFit="cover" transition={200} />
                     ) : (
@@ -116,8 +120,22 @@ export default function MediaScreen() {
                 </Pressable>
               ))}
             </View>
+            {!isOpen && album.items.length > 24 ? (
+              <Pressable
+                onPress={() => setExpanded((e) => ({ ...e, [album.id]: true }))}
+                style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1, marginTop: 12 })}
+                testID={`media-viewall-${album.id}`}
+              >
+                <View style={{ borderRadius: 14, borderWidth: 1, borderColor: c.line, backgroundColor: c.card2, paddingVertical: 12, alignItems: 'center' }}>
+                  <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 13 }}>
+                    {t('View all', 'सभी देखें')} ({album.items.length})
+                  </Text>
+                </View>
+              </Pressable>
+            ) : null}
           </View>
-        ))
+        );
+        })
       )}
 
       {vq.data?.videos && vq.data.videos.length > 0 ? (

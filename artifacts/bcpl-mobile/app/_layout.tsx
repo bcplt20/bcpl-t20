@@ -52,7 +52,6 @@ function RootLayoutNav() {
           options={{ presentation: 'modal', title: 'Login', headerShown: false }}
         />
         <Stack.Screen name="register" options={{ title: 'Register', headerShown: false }} />
-        <Stack.Screen name="media" options={{ title: 'Photos & Videos', headerShown: false }} />
         <Stack.Screen name="match/[id]" options={{ title: 'Match Center', headerShown: false }} />
         <Stack.Screen name="news/[slug]" options={{ title: 'News', headerShown: false }} />
       </Stack>

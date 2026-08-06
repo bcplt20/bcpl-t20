@@ -272,7 +272,7 @@ export default function ProfileScreen() {
     return (
       <View style={{ flex: 1, backgroundColor: c.bg }}>
         <ScreenBackground />
-      <GlassAppBar title="Profile" />
+      <GlassAppBar title={t('More', 'अन्य')} />
       <ScrollView contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 118 : 120, paddingTop: 100 }}>
         <View style={styles.loginWrap}>
           <View style={styles.loginIconWrap}>
