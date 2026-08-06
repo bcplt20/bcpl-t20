@@ -24,6 +24,7 @@ import {
   SpaceGrotesk_700Bold,
 } from '@expo-google-fonts/space-grotesk';
 import { Feather, Ionicons } from '@expo/vector-icons';
+import * as Font from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 
@@ -77,6 +78,28 @@ export default function RootLayout() {
     ...Ionicons.font,
   });
 
+  // Android (Expo Go over the network): a one-shot font load can fail and leave
+  // icon glyphs as tofu boxes. Retry the icon fonts a few times before rendering.
+  const [retriedOk, setRetriedOk] = React.useState(false);
+  useEffect(() => {
+    if (!fontError) return;
+    console.warn('[fonts] initial load failed, retrying icon fonts:', fontError);
+    let cancelled = false;
+    (async () => {
+      for (let i = 0; i < 3 && !cancelled; i++) {
+        try {
+          await Font.loadAsync({ ...Feather.font, ...Ionicons.font });
+          if (!cancelled) setRetriedOk(true);
+          return;
+        } catch (e) {
+          console.warn(`[fonts] retry ${i + 1} failed:`, e);
+          await new Promise((r) => setTimeout(r, 800 * (i + 1)));
+        }
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [fontError]);
+
   useEffect(() => {
     if (fontsLoaded || fontError) {
       SplashScreen.hideAsync();
@@ -84,6 +107,7 @@ export default function RootLayout() {
   }, [fontsLoaded, fontError]);
 
   if (!fontsLoaded && !fontError) return null;
+  void retriedOk; // re-render trigger once icon fonts finally load
 
   return (
     <SafeAreaProvider>
