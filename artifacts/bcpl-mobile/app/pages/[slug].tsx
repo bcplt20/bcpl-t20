@@ -100,7 +100,7 @@ export default function NativePageScreen() {
                         <View key={i} style={{ flexDirection: 'row', gap: 12, marginBottom: 16 }}>
                           {block.items?.map((item: any, idx: number) => (
                             <View key={idx} style={{ flex: 1, backgroundColor: c.card2, borderRadius: 12, padding: 12, borderWidth: 1, borderColor: item.color }}>
-                              <Text style={{ color: item.color, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 18, marginBottom: 4 }}>{item.v}</Text>
+                              <Text style={{ color: item.color, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 17, marginBottom: 4 }} numberOfLines={1} adjustsFontSizeToFit>{item.v}</Text>
                               <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 11 }}>{item.l}</Text>
                             </View>
                           ))}
