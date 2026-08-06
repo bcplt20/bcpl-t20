@@ -423,7 +423,7 @@ export const NATIVE_PAGES: Record<string, NativePage> = {
       
     ]
   },
-  'selection': {
+  'trust': {
     title: "How Selection Works",
     content: [
       { type: 'callout', text: "A clear, two-phase, role-specific assessment process — from Phase 1 video assessment to the BCPL Auction Pool.", hi: "एक स्पष्ट, दो-चरणीय, role-specific assessment process — Phase 1 video assessment से लेकर BCPL Auction Pool तक।" },
