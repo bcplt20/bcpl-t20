@@ -251,7 +251,7 @@ function TeamsStrip() {
               testID={`home-team-${team.slug}`}
               style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] })}
             >
-              <View style={{ width: 128, borderRadius: 18, borderWidth: 1, borderColor: c.line, backgroundColor: c.card, overflow: 'hidden', padding: 14, alignItems: 'center' }}>
+              <View style={{ width: 128, height: 168, borderRadius: 18, borderWidth: 1, borderColor: c.line, backgroundColor: c.card, overflow: 'hidden', padding: 14, alignItems: 'center' }}>
                 <LinearGradient
                   colors={[`${accent}33`, `${second}10`, 'transparent']}
                   start={{ x: 0, y: 0 }}

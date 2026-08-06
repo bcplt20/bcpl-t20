@@ -486,7 +486,7 @@ export function GlassAppBar({ title, right, back }: { title?: string, right?: Re
       paddingTop: insets.top,
       height: insets.top + APP_BAR_CONTENT_HEIGHT,
       paddingHorizontal: 16,
-      backgroundColor: c.glass,
+      backgroundColor: c.bg,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
