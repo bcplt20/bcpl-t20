@@ -94,6 +94,14 @@ function healDeadGeminiModels(cfg: Phase1Config): Phase1Config {
     logger.warn("phase1Config: stored uploadWindowDays=7 (old default) healed to 15 — players are promised a 15-day window");
     out.uploadWindowDays = 15;
   }
+  // Heal the old 60-second video cap: owner changed the rule to 30–90s
+  // (Aug'26). Every player-facing surface now says 90, so a stored 60 (the
+  // pre-change default persisted by any PATCH) would silently keep rejecting
+  // 61–90s uploads at validation time.
+  if (out.videoMaxSeconds === 60) {
+    logger.warn("phase1Config: stored videoMaxSeconds=60 (old default) healed to 90 — players are promised 30–90 seconds");
+    out.videoMaxSeconds = 90;
+  }
   return out;
 }
 

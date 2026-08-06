@@ -101,6 +101,18 @@ describe("phase1 config: retired Gemini model self-heal", () => {
     expect(row["minScore"]).toBe(prevMinScore);
   });
 
+  it("heals a stored videoMaxSeconds=60 (old default) to the promised 90", async () => {
+    await writeRaw({ ...base, videoMaxSeconds: 60 });
+    const cfg = await getPhase1Config();
+    expect(cfg.videoMaxSeconds).toBe(90);
+  });
+
+  it("preserves an intentional non-60 videoMaxSeconds override", async () => {
+    await writeRaw({ ...base, videoMaxSeconds: 120 });
+    const cfg = await getPhase1Config();
+    expect(cfg.videoMaxSeconds).toBe(120);
+  });
+
   it("env override still wins over healing (explicit ops kill switch)", async () => {
     await writeRaw({ ...base, geminiPrimaryModel: "gemini-2.5-flash" });
     process.env["GEMINI_PRIMARY_MODEL"] = "gemini-9.9-test";
