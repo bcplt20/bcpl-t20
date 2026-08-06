@@ -1,6 +1,7 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, Pressable } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
+import * as WebBrowser from 'expo-web-browser';
 import { useColors } from '@/hooks/useColors';
 import { useLang } from '@/context/LanguageContext';
 import { NATIVE_PAGES } from '@/data/pages';
@@ -236,6 +237,39 @@ export default function NativePageScreen() {
             </Card>
           );
         })}
+        
+        {/* WEBSITE CTA FOOTER */}
+        <Pressable 
+          onPress={() => WebBrowser.openBrowserAsync('https://bcplt20.com')}
+          style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] })}
+        >
+          <LinearGradient 
+            colors={c.isDark ? ['#161124', '#0B0813'] : ['#F4F0FF', '#FFFFFF']}
+            start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+            style={{ 
+              borderRadius: 16, padding: 20, marginTop: 12, marginBottom: 12,
+              borderWidth: 1, borderColor: c.isDark ? '#2D234A' : '#E8E2FF',
+              flexDirection: 'row', alignItems: 'center', gap: 16,
+              shadowColor: c.magenta, shadowOpacity: c.isDark ? 0.1 : 0.05, shadowRadius: 10, shadowOffset: {width: 0, height: 4}, elevation: 3
+            }}
+          >
+            <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: c.isDark ? 'rgba(0, 229, 255, 0.1)' : 'rgba(0, 151, 167, 0.1)', alignItems: 'center', justifyContent: 'center' }}>
+              <Feather name="globe" size={20} color={c.cyan} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontFamily: 'PlusJakartaSans_500Medium', fontSize: 13, color: c.sub, marginBottom: 2 }}>
+                {t('For more information, visit our website', 'और अधिक जानकारी के लिए हमारी website पर जाएँ')}
+              </Text>
+              <Text style={{ fontFamily: 'SpaceGrotesk_700Bold', fontSize: 16, color: c.ink }}>
+                www.bcplt20.com
+              </Text>
+            </View>
+            <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: c.card2, alignItems: 'center', justifyContent: 'center' }}>
+              <Feather name="arrow-right" size={16} color={c.magenta} />
+            </View>
+          </LinearGradient>
+        </Pressable>
+
       </ScrollView>
     </View>
   );

@@ -166,17 +166,18 @@ function UpcomingPanel({ live }: { live: LiveMatch }) {
 
 function LiveTab({ live }: { live: LiveMatch }) {
   const c = useColors();
-  const chasing = live.innings.find((i) => i.number === 2);
+  const innings = live.innings ?? [];
+  const chasing = innings.find((i) => i.number === 2);
   const target = chasing?.target;
 
   return (
     <View style={{ gap: 16 }}>
-      {live.innings.length === 0 ? (
+      {innings.length === 0 ? (
         <UpcomingPanel live={live} />
       ) : (
         <Card>
           <View style={{ gap: 16 }}>
-            {live.innings.map((inn) => <InningsScore key={inn.number} inn={inn} />)}
+            {innings.map((inn) => <InningsScore key={inn.number} inn={inn} />)}
           </View>
           {live.status === 'completed' && live.resultDesc ? (
             <View style={{ marginTop: 20, paddingTop: 20, borderTopWidth: 1, borderTopColor: c.line }}>
@@ -194,14 +195,14 @@ function LiveTab({ live }: { live: LiveMatch }) {
         </Card>
       )}
 
-      {live.recentDeliveries.length > 0 ? (
+      {(live.recentDeliveries ?? []).length > 0 ? (
         <Card padding={0} border={true}>
           <View style={{ padding: 20, borderBottomWidth: 1, borderBottomColor: c.line }}>
             <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 18 }}>
               Recent Balls
             </Text>
           </View>
-          {live.recentDeliveries.map((d, i) => (
+          {(live.recentDeliveries ?? []).map((d, i) => (
             <View key={i} style={[styles.ballRow, i > 0 && { borderTopWidth: 1, borderTopColor: c.line }]}>
               <View
                 style={[

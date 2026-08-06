@@ -243,8 +243,15 @@ export default function RegisterScreen() {
       });
       setOrderId(pay.orderId);
       await AsyncStorage.setItem(ORDER_KEY, pay.orderId).catch(() => {});
-      // Cashfree hosted checkout (opens in browser)
-      await Linking.openURL(`https://payments.cashfree.com/order/#${pay.paymentSessionId}`);
+      // Open the server-hosted Cashfree checkout page in the browser. It loads
+      // the v3 SDK and opens the session with the mode that matches the order's
+      // Cashfree environment (dev api-server may be sandbox; prod is production).
+      // The legacy `payments.cashfree.com/order/#<sessionId>` URL does NOT work
+      // with v3 sessions and is what made Cashfree show an error from the app.
+      if (!pay.checkoutUrl) {
+        return setError(t('Could not start payment — please update the app and try again', 'पेमेंट शुरू नहीं हो पाई — कृपया ऐप अपडेट करके फिर कोशिश करें'));
+      }
+      await Linking.openURL(pay.checkoutUrl);
     } catch (e) {
       fail(e, t('Could not start payment', 'पेमेंट शुरू नहीं हो पाई'));
     } finally {

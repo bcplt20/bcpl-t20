@@ -9,7 +9,7 @@ import {
 } from "@workspace/db/schema";
 import { eq, and, or, isNull, sql } from "drizzle-orm";
 import { requireAuth, type AuthRequest } from "../middlewares/auth";
-import { createOrder, getPaymentStatus, extractPaymentMethod } from "../lib/cashfree";
+import { createOrder, getPaymentStatus, extractPaymentMethod, cashfreeMode } from "../lib/cashfree";
 import { sendEmail, tplPhase1Receipt, tplPhase2Receipt } from "../lib/email";
 import { buildInvoicePdf } from "../lib/invoicePdf";
 import { sendSms } from "../lib/sms";
@@ -46,6 +46,81 @@ export async function ensurePaymentMethodColumns(): Promise<void> {
 
 const SITE_URL = process.env.SITE_URL || "https://elite-user-experience.replit.app/bcpl-website";
 const API_URL  = process.env.API_URL  || "https://elite-user-experience.replit.app";
+
+/**
+ * Hosted Cashfree checkout page (mobile app / any non-SDK client).
+ *
+ * The mobile app cannot run the Cashfree JS SDK natively and there is NO valid
+ * plain hosted URL for a v3 (`x-api-version: 2023-08-01`) payment session — the
+ * legacy `https://payments.cashfree.com/order/#<sessionId>` format does NOT
+ * work with v3 sessions and is exactly why Cashfree showed an error when the
+ * order came from the app. Instead we serve a tiny page that loads the v3 SDK
+ * and calls `cashfree.checkout({ paymentSessionId, redirectTarget:'_self' })`
+ * with the `mode` that matches the environment the order was created in
+ * (dev api-server → could be sandbox; prod → production). Cashfree then
+ * redirects the browser to the server-set return_url on completion.
+ *
+ * GET /api/payment/checkout?session=<paymentSessionId>&mode=<production|sandbox>
+ */
+router.get("/checkout", (req, res) => {
+  const rawSession = typeof req.query.session === "string" ? req.query.session : "";
+  const rawMode = req.query.mode === "sandbox" ? "sandbox" : "production";
+  // Validate the session id shape before echoing into HTML (XSS hardening).
+  if (!/^[A-Za-z0-9_.-]{1,300}$/.test(rawSession)) {
+    return void res.status(400).type("html").send("<!doctype html><meta charset=utf-8><p>Invalid payment session.</p>");
+  }
+  const sessionJson = JSON.stringify(rawSession);
+  const modeJson = JSON.stringify(rawMode);
+  res.status(200).type("html").send(`<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>BCPL — Secure Payment</title>
+<style>
+  html,body{height:100%;margin:0;background:#0b0b12;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+  .wrap{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;text-align:center}
+  .spinner{width:38px;height:38px;border:3px solid rgba(255,255,255,.2);border-top-color:#FF1A75;border-radius:50%;animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .err{color:#ff6b6b;font-size:14px;max-width:320px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="spinner" id="sp"></div>
+  <div id="msg">Redirecting to secure Cashfree checkout…</div>
+</div>
+<script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+<script>
+  (function () {
+    var sessionId = ${sessionJson};
+    var mode = ${modeJson};
+    function fail(text) {
+      var sp = document.getElementById('sp'); if (sp) sp.style.display = 'none';
+      var m = document.getElementById('msg');
+      if (m) { m.className = 'err'; m.textContent = text; }
+    }
+    try {
+      if (typeof Cashfree !== 'function') { fail('Payment SDK failed to load. Please check your connection and try again.'); return; }
+      var cashfree = Cashfree({ mode: mode });
+      cashfree.checkout({ paymentSessionId: sessionId, redirectTarget: '_self' })
+        .then(function (r) { if (r && r.error) fail(r.error.message || 'Payment could not be started.'); })
+        .catch(function (e) { fail((e && e.message) || 'Payment could not be started.'); });
+    } catch (e) { fail((e && e.message) || 'Payment could not be started.'); }
+  })();
+</script>
+</body>
+</html>`);
+});
+
+/**
+ * Absolute URL to the hosted checkout page above, for the given session.
+ * Built from API_URL so it is correct in both dev (Replit) and prod.
+ */
+export function hostedCheckoutUrl(paymentSessionId: string): string {
+  const base = API_URL.replace(/\/$/, "");
+  return `${base}/api/payment/checkout?session=${encodeURIComponent(paymentSessionId)}&mode=${cashfreeMode()}`;
+}
 
 /**
  * Build the GST invoice PDF as an email attachment from the REAL gross amount
@@ -237,7 +312,16 @@ router.post("/phase1/create", requireAuth, async (req: AuthRequest, res) => {
 
   await draftOnPaymentEvent(reg.id, "INITIATED"); // draft journey
 
-  res.json({ success: true, orderId, paymentSessionId: order.payment_session_id, amount });
+  // `checkoutUrl` + `cashfreeMode` let non-SDK clients (the mobile app) open a
+  // hosted checkout page that runs the v3 SDK with the correct environment mode.
+  res.json({
+    success: true,
+    orderId,
+    paymentSessionId: order.payment_session_id,
+    amount,
+    cashfreeMode: cashfreeMode(),
+    checkoutUrl: hostedCheckoutUrl(order.payment_session_id),
+  });
 });
 
 // ── Payment integrity (spec F): amount / currency validation ────────────────────
@@ -401,7 +485,14 @@ router.post("/phase2/create", requireAuth, async (req: AuthRequest, res) => {
     status:          "pending",
   });
 
-  res.json({ success: true, orderId, paymentSessionId: order.payment_session_id, amount });
+  res.json({
+    success: true,
+    orderId,
+    paymentSessionId: order.payment_session_id,
+    amount,
+    cashfreeMode: cashfreeMode(),
+    checkoutUrl: hostedCheckoutUrl(order.payment_session_id),
+  });
 });
 
 // POST /api/payment/phase2/verify

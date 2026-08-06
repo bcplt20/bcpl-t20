@@ -19,9 +19,16 @@ function HeaderCountdown() {
   const c = useColors();
   const { t } = useLang();
   const [now, setNow] = React.useState(() => Date.now());
+  const pulse = useRef(new Animated.Value(0)).current;
 
   React.useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulse, { toValue: 1, duration: 800, useNativeDriver: false }),
+        Animated.timing(pulse, { toValue: 0, duration: 800, useNativeDriver: false }),
+      ])
+    ).start();
     return () => clearInterval(id);
   }, []);
 
@@ -36,13 +43,42 @@ function HeaderCountdown() {
   const pad = (n: number) => n.toString().padStart(2, '0');
 
   return (
-    <View style={{ alignItems: 'flex-end', justifyContent: 'center' }}>
-      <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 9, letterSpacing: 0.5, textTransform: 'uppercase', marginBottom: 2 }}>
-        {t('Reg Closes In', 'रजिस्ट्रेशन बंद')}
-      </Text>
-      <Text style={{ color: c.cyan, fontFamily: 'SpaceGrotesk_700Bold', fontSize: 13, fontVariant: ['tabular-nums'] }}>
-        {d}d {pad(h)}:{pad(m)}:{pad(s)}
-      </Text>
+    <View style={{
+      borderRadius: 8,
+      padding: 1,
+      shadowColor: '#00E5FF',
+      shadowOpacity: 0.15,
+      shadowRadius: 6,
+      shadowOffset: { width: 0, height: 0 },
+      elevation: 3,
+    }}>
+      <LinearGradient 
+        colors={['#00E5FF', '#FF3DA6']} 
+        start={{x: 0, y: 0}} end={{x: 1, y: 1}} 
+        style={[StyleSheet.absoluteFill, { borderRadius: 8 }]} 
+      />
+      <View style={{
+        backgroundColor: c.isDark ? '#0B0813' : '#FFF',
+        borderRadius: 7,
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        alignItems: 'flex-end',
+        justifyContent: 'center',
+      }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}>
+          <Animated.View style={{
+            width: 4, height: 4, borderRadius: 2, backgroundColor: '#00E5FF', marginRight: 4,
+            opacity: pulse.interpolate({ inputRange: [0, 1], outputRange: [0.3, 1] }),
+            transform: [{ scale: pulse.interpolate({ inputRange: [0, 1], outputRange: [0.8, 1.2] }) }]
+          }} />
+          <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 8, letterSpacing: 0.5, textTransform: 'uppercase' }}>
+            {t('Reg Closes In', 'रजिस्ट्रेशन बंद')}
+          </Text>
+        </View>
+        <Text style={{ color: c.cyan, fontFamily: 'SpaceGrotesk_700Bold', fontSize: 12, fontVariant: ['tabular-nums'] }}>
+          {d}d {pad(h)}:{pad(m)}:{pad(s)}
+        </Text>
+      </View>
     </View>
   );
 }
@@ -343,61 +379,97 @@ export function Season5Lockup() {
     Animated.loop(
       Animated.timing(anim, {
         toValue: 1,
-        duration: 4000,
+        duration: 3000,
         useNativeDriver: false,
       })
     ).start();
   }, [anim]);
 
+  const spin = anim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg']
+  });
+
   const sweep = anim.interpolate({
-    inputRange: [0, 0.4, 0.6, 1],
-    outputRange: ['-100%', '200%', '200%', '200%']
+    inputRange: [0, 0.5, 1],
+    outputRange: ['-100%', '200%', '200%']
   });
   
-  const scale = anim.interpolate({
-    inputRange: [0, 0.2, 0.4, 1],
-    outputRange: [1, 1.05, 1, 1]
+  const pulse = anim.interpolate({
+    inputRange: [0, 0.5, 1],
+    outputRange: [0.1, 0.4, 0.1]
   });
 
   return (
-    <Animated.View style={{
-      flexDirection: 'row',
+    <View style={{
+      borderRadius: 12,
+      overflow: 'hidden',
+      padding: 1.5,
+      width: 76,
+      height: 20,
+      justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: c.isDark ? '#161124' : '#FFF',
-      paddingHorizontal: 8,
-      paddingVertical: 3,
-      borderRadius: 10,
-      borderWidth: 1.5,
-      borderColor: c.magenta,
-      shadowColor: '#FF3DA6',
+      shadowColor: '#00E5FF',
       shadowOpacity: c.isDark ? 0.6 : 0.3,
       shadowRadius: 8,
       shadowOffset: { width: 0, height: 0 },
       elevation: 6,
-      overflow: 'hidden',
-      transform: [{ scale }]
     }}>
+      {/* Rotating gradient background for the conic border effect */}
       <Animated.View style={{
         position: 'absolute',
-        top: 0,
-        bottom: 0,
-        width: '80%',
-        left: sweep,
-        backgroundColor: 'rgba(255, 255, 255, 0.6)',
-        transform: [{ skewX: '-25deg' }],
-        zIndex: 2,
-      }} />
-      <LinearGradient colors={['#FF3DA6', '#9B2FF0']} style={[StyleSheet.absoluteFill, { opacity: 0.15 }]} />
-      <Text style={{
-        fontFamily: 'BricolageGrotesque_800ExtraBold',
-        fontSize: 9,
-        color: c.ink,
-        letterSpacing: 0.5,
-        zIndex: 3
+        width: 150,
+        height: 150,
+        transform: [{ rotate: spin }],
       }}>
-        SEASON 5
-      </Text>
-    </Animated.View>
+        <LinearGradient 
+          colors={['#00E5FF', '#FF3DA6', '#9B2FF0', '#00E5FF']}
+          start={{x: 0, y: 0}} end={{x: 1, y: 1}}
+          style={StyleSheet.absoluteFill}
+        />
+      </Animated.View>
+
+      {/* Inner pill cut-out */}
+      <View style={{
+        backgroundColor: c.isDark ? '#0B0813' : '#FFFFFF',
+        borderRadius: 10.5,
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        overflow: 'hidden',
+      }}>
+        {/* Inner glow pulsing */}
+        <Animated.View style={{
+          position: 'absolute',
+          width: '100%',
+          height: '100%',
+          backgroundColor: '#00E5FF',
+          opacity: pulse,
+        }} />
+        
+        {/* Shimmer sweep */}
+        <Animated.View style={{
+          position: 'absolute',
+          top: 0, bottom: 0, width: 20,
+          left: sweep,
+          backgroundColor: 'rgba(255, 255, 255, 0.6)',
+          transform: [{ skewX: '-25deg' }],
+          zIndex: 2,
+        }} />
+
+        <Text style={{
+          fontFamily: 'BricolageGrotesque_800ExtraBold',
+          fontSize: 9,
+          color: c.isDark ? '#FFF' : '#000',
+          letterSpacing: 0.5,
+          zIndex: 3,
+          backgroundColor: 'transparent'
+        }}>
+          SEASON 5
+        </Text>
+      </View>
+    </View>
   );
 }
 
@@ -434,13 +506,14 @@ export function GlassAppBar({ title, right, back }: { title?: string, right?: Re
         {title ? (
           <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 22, color: c.ink, letterSpacing: -0.5 }}>{title}</Text>
         ) : (
-          <View style={{ position: 'relative', justifyContent: 'center', height: 44, width: 140 }}>
+          <View style={{ justifyContent: 'center', height: APP_BAR_CONTENT_HEIGHT, paddingTop: 4 }}>
             <Image
               source={c.isDark ? require('../assets/images/bcpl-logo-dark.png') : require('../assets/images/bcpl-logo-light.png')}
-              style={{ width: 140, height: 38 }}
+              style={{ width: 130, height: 26, alignSelf: 'flex-start' }}
               contentFit="contain"
+              contentPosition="left"
             />
-            <View style={{ position: 'absolute', bottom: -6, left: 16 }}>
+            <View style={{ marginTop: 2, marginLeft: 4 }}>
               <Season5Lockup />
             </View>
           </View>

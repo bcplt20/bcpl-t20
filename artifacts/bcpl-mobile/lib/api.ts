@@ -100,7 +100,16 @@ export function createPhase1Payment(
   token: string,
   registrationId: string,
   consent: { termsVersion: string; privacyVersion: string; marketingOptIn: boolean },
-): Promise<{ success: boolean; orderId: string; paymentSessionId: string; amount: number }> {
+): Promise<{
+  success: boolean;
+  orderId: string;
+  paymentSessionId: string;
+  amount: number;
+  /** JS-SDK mode matching the order's Cashfree environment: 'production' | 'sandbox'. */
+  cashfreeMode?: 'production' | 'sandbox';
+  /** Server-hosted checkout page URL — open this in the browser (runs the v3 SDK). */
+  checkoutUrl?: string;
+}> {
   return apiFetch('/payment/phase1/create', { method: 'POST', body: { registrationId, consent }, token });
 }
 

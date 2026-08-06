@@ -29,6 +29,20 @@ const cfHeaders = () => ({
   "Content-Type": "application/json",
 });
 
+/**
+ * The Cashfree JS-SDK `mode` that matches the environment a session was created
+ * in. A session created against sandbox.cashfree.com can ONLY be opened with
+ * `mode:'sandbox'`; a production session ONLY with `mode:'production'`. Opening
+ * a session on the wrong host is the classic "Cashfree shows an error" cause.
+ *
+ * The website hardcodes `mode:'production'` because the live api-server always
+ * runs CASHFREE_ENV=PROD; the mobile app can point at a dev api-server where
+ * CASHFREE_ENV may differ, so it must be told the real mode.
+ */
+export type CashfreeMode = "production" | "sandbox";
+export const cashfreeMode = (): CashfreeMode =>
+  CF_ENV === "PROD" ? "production" : "sandbox";
+
 export async function createOrder(p: CreateOrderParams): Promise<CashfreeOrder | null> {
   if (!APP_ID || !SECRET) {
     console.warn("[CF-STUB] createOrder:", p.orderId, "₹" + p.amount);
