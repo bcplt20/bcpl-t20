@@ -6,9 +6,74 @@ import { useColors } from '@/hooks/useColors';
 import { useLang } from '@/context/LanguageContext';
 import { NATIVE_PAGES } from '@/data/pages';
 import { Card, EmptyView, GlassAppBar, ScreenBackground, useAppBarHeight, useBottomNavHeight } from '@/components/ui';
+import { Animated } from 'react-native';
+import { Image } from 'expo-image';
 import { AccordionItem } from '@/components/MoreSections';
 import { Feather } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+
+
+function AmbientPulse({ children, style, min = 0.5, max = 1, duration = 2000 }: any) {
+  const anim = React.useRef(new Animated.Value(0)).current;
+  React.useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(anim, { toValue: 1, duration, useNativeDriver: false }),
+        Animated.timing(anim, { toValue: 0, duration, useNativeDriver: false })
+      ])
+    ).start();
+  }, [anim, duration]);
+  const opacity = anim.interpolate({ inputRange: [0, 1], outputRange: [min, max] });
+  return <Animated.View style={[style, { opacity }]}>{children}</Animated.View>;
+}
+
+function AmbientShimmerBorder({ children, style, colors, innerBg, borderRadius = 12 }: any) {
+  const anim = React.useRef(new Animated.Value(0)).current;
+  React.useEffect(() => {
+    Animated.loop(
+      Animated.timing(anim, { toValue: 1, duration: 4000, useNativeDriver: false })
+    ).start();
+  }, [anim]);
+  const spin = anim.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
+  return (
+    <View style={[{ position: 'relative', overflow: 'hidden', borderRadius }, style]}>
+      <Animated.View style={{ position: 'absolute', top: '-50%', left: '-50%', right: '-50%', bottom: '-50%', transform: [{ rotate: spin }] }}>
+        <LinearGradient colors={colors} start={{x:0, y:0}} end={{x:1, y:1}} style={StyleSheet.absoluteFill} />
+      </Animated.View>
+      <View style={{ margin: 1, flex: 1, borderRadius: borderRadius - 1, backgroundColor: innerBg, overflow: 'hidden' }}>
+        {children}
+      </View>
+    </View>
+  );
+}
+
+function HeroMesh({ title }: { title: string }) {
+  const c = useColors();
+  const anim = React.useRef(new Animated.Value(0)).current;
+  React.useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(anim, { toValue: 1, duration: 4000, useNativeDriver: false }),
+        Animated.timing(anim, { toValue: 0, duration: 4000, useNativeDriver: false })
+      ])
+    ).start();
+  }, [anim]);
+
+  const translateY = anim.interpolate({ inputRange: [0, 1], outputRange: [-10, 10] });
+  const scale = anim.interpolate({ inputRange: [0, 1], outputRange: [0.95, 1.05] });
+
+  return (
+    <View style={{ marginBottom: 16, marginTop: 4, position: 'relative', overflow: 'hidden', borderRadius: 24, padding: 24, borderWidth: 1, borderColor: c.line, backgroundColor: c.card }}>
+      <Image source={require('../../assets/images/bcpl-ball.png')} style={{ position: 'absolute', right: -60, top: -40, width: 220, height: 220, opacity: c.isDark ? 0.08 : 0.04, transform: [{ rotate: '-15deg' }] }} contentFit="contain" />
+      <Animated.View style={{ position: 'absolute', top: -30, left: -30, width: 150, height: 150, borderRadius: 75, backgroundColor: '#FF3DA6', opacity: c.isDark ? 0.2 : 0.1, transform: [{ translateY }, { scale }] }} />
+      <Animated.View style={{ position: 'absolute', bottom: -40, right: 20, width: 180, height: 180, borderRadius: 90, backgroundColor: '#00E5FF', opacity: c.isDark ? 0.15 : 0.08, transform: [{ translateY: anim.interpolate({ inputRange: [0, 1], outputRange: [10, -10] }) }, { scale }] }} />
+      <LinearGradient colors={['#FF3DA6', '#5B2BF0']} style={{ width: 48, height: 4, borderRadius: 2, marginBottom: 16 }} />
+      <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 34, color: c.ink, letterSpacing: -1, lineHeight: 40 }}>
+        {title}
+      </Text>
+    </View>
+  );
+}
 
 export default function NativePageScreen() {
   const c = useColors();
@@ -57,14 +122,9 @@ export default function NativePageScreen() {
       <GlassAppBar title={page.titleHi ? t(page.title, page.titleHi) : page.title} back={true} />
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: bottomNavHeight, gap: 16 }}>
         <View style={{ height: appBarHeight - 16 }} />
-        
-        {/* Vibrant Hero Header */}
-        <View style={{ marginBottom: 8, marginTop: 16 }}>
-          <LinearGradient colors={['#FF3DA6', '#5B2BF0']} style={{ width: 48, height: 4, borderRadius: 2, marginBottom: 12 }} />
-          <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 32, color: c.ink, letterSpacing: -1, lineHeight: 38 }}>
-            {page.titleHi ? t(page.title, page.titleHi) : page.title}
-          </Text>
-        </View>
+        {/* Rich Hero Header */}
+        <HeroMesh title={page.titleHi ? t(page.title, page.titleHi) : page.title} />
+
 
         {sections.map((sec, sIdx) => {
           if (isFaq) {
@@ -97,7 +157,8 @@ export default function NativePageScreen() {
               
               <View style={{ padding: 20, paddingLeft: 24 }}>
                 {sec.title && (
-                  <View style={{ borderBottomWidth: 1, borderBottomColor: c.line, paddingBottom: 12, marginBottom: 16 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, borderBottomWidth: 1, borderBottomColor: c.line, paddingBottom: 12, marginBottom: 16 }}>
+                    <LinearGradient colors={['#FF3DA6', '#5B2BF0']} style={{ width: 4, height: '100%', borderRadius: 2 }} />
                     <Text style={[styles.heading, { color: c.ink, marginBottom: 0 }]}>
                       {sec.title}
                     </Text>
@@ -112,10 +173,12 @@ export default function NativePageScreen() {
                       return (
                         <View key={i} style={{ flexDirection: 'row', gap: 12, marginBottom: 16 }}>
                           {block.items?.map((item: any, idx: number) => (
-                            <View key={idx} style={{ flex: 1, backgroundColor: c.card2, borderRadius: 12, padding: 12, borderWidth: 1, borderColor: item.color }}>
-                              <Text style={{ color: item.color, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 17, marginBottom: 4 }} numberOfLines={1} adjustsFontSizeToFit>{item.v}</Text>
-                              <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 11 }}>{item.l}</Text>
-                            </View>
+                            <AmbientShimmerBorder key={idx} style={{ flex: 1 }} colors={[item.color, c.card2, item.color]} innerBg={c.card2} borderRadius={12}>
+                              <View style={{ padding: 12, alignItems: 'center' }}>
+                                <Text style={{ color: item.color, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: item.v.length > 6 ? 13 : 18, marginBottom: 4 }} numberOfLines={1} adjustsFontSizeToFit>{item.v}</Text>
+                                <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 11, textAlign: 'center' }}>{item.l}</Text>
+                              </View>
+                            </AmbientShimmerBorder>
                           ))}
                         </View>
                       );
@@ -124,16 +187,19 @@ export default function NativePageScreen() {
                     if (block.type === 'callout') {
                       const tone = block.icon || 'info';
                       const toneMap: Record<string, { bg: string; bd: string; fg: string; icon: any }> = {
-                        info: { bg: c.isDark ? 'rgba(0,220,245,0.10)' : 'rgba(0,151,167,0.10)', bd: c.isDark ? 'rgba(0,220,245,0.30)' : 'rgba(0,151,167,0.30)', fg: c.isDark ? c.cyan : '#0097A7', icon: 'info' },
-                        success: { bg: 'rgba(22,224,163,0.10)', bd: 'rgba(22,224,163,0.35)', fg: c.mint, icon: 'check-circle' },
-                        warn: { bg: 'rgba(255,90,110,0.10)', bd: 'rgba(255,90,110,0.35)', fg: c.coral, icon: 'alert-triangle' },
-                        gold: { bg: 'rgba(255,197,61,0.10)', bd: 'rgba(255,197,61,0.35)', fg: c.amber, icon: 'star' },
+                        info: { bg: c.isDark ? 'rgba(0,220,245,0.08)' : 'rgba(0,151,167,0.06)', bd: c.isDark ? 'rgba(0,220,245,0.20)' : 'rgba(0,151,167,0.20)', fg: c.isDark ? c.cyan : '#0097A7', icon: 'info' },
+                        success: { bg: 'rgba(22,224,163,0.08)', bd: 'rgba(22,224,163,0.20)', fg: c.mint, icon: 'check-circle' },
+                        warn: { bg: 'rgba(255,90,110,0.08)', bd: 'rgba(255,90,110,0.20)', fg: c.coral, icon: 'alert-triangle' },
+                        gold: { bg: 'rgba(255,197,61,0.08)', bd: 'rgba(255,197,61,0.20)', fg: c.amber, icon: 'star' },
                       };
                       const tn = toneMap[tone] || toneMap.info;
                       return (
-                        <View key={i} style={{ backgroundColor: tn.bg, borderWidth: 1, borderColor: tn.bd, borderLeftWidth: 4, borderLeftColor: tn.fg, borderRadius: 12, padding: 16, marginBottom: 16, flexDirection: 'row', gap: 12 }}>
-                          <Feather name={tn.icon} size={20} color={tn.fg} style={{ marginTop: 1 }} />
-                          <View style={{ flex: 1 }}>
+                        <View key={i} style={{ backgroundColor: tn.bg, borderWidth: 1, borderColor: tn.bd, borderRadius: 16, padding: 16, marginBottom: 16, flexDirection: 'row', gap: 16, overflow: 'hidden' }}>
+                          <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: 'transparent', alignItems: 'center', justifyContent: 'center' }}>
+                             <LinearGradient colors={[tn.fg, 'transparent']} style={[StyleSheet.absoluteFill, { opacity: 0.2, borderRadius: 18 }]} />
+                             <Feather name={tn.icon} size={20} color={tn.fg} />
+                          </View>
+                          <View style={{ flex: 1, justifyContent: 'center' }}>
                             {block.label?.text && (
                               <Text style={{ color: tn.fg, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 13, marginBottom: 6 }}>
                                 {block.label.hi ? t(block.label.text, block.label.hi) : block.label.text}
@@ -149,24 +215,33 @@ export default function NativePageScreen() {
                     
                     if (block.type === 'steps') {
                       return (
-                        <View key={i} style={{ marginTop: 8 }}>
-                          {block.items?.map((item: any, idx: number) => (
-                            <View key={idx} style={{ flexDirection: 'row', gap: 16, marginBottom: 16 }}>
-                              <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: c.isDark ? '#2D196E' : '#E0D4FF', alignItems: 'center', justifyContent: 'center' }}>
-                                <Text style={{ color: c.magenta, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 14 }}>{idx + 1}</Text>
-                              </View>
-                              <View style={{ flex: 1, justifyContent: 'center' }}>
-                                <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 15, lineHeight: 21 }}>
-                                  {t(item.en, item.hi)}
-                                </Text>
-                                {item.descEn && (
-                                  <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 13, lineHeight: 20, marginTop: 3 }}>
-                                    {t(item.descEn, item.descHi)}
-                                  </Text>
+                        <View key={i} style={{ marginTop: 8, marginBottom: 16 }}>
+                          {block.items?.map((item: any, idx: number) => {
+                            const isLast = idx === (block.items?.length || 0) - 1;
+                            return (
+                              <View key={idx} style={{ flexDirection: 'row', gap: 16, marginBottom: isLast ? 0 : 20, position: 'relative' }}>
+                                {!isLast && (
+                                  <View style={{ position: 'absolute', left: 15, top: 32, bottom: -20, width: 2, overflow: 'hidden', borderRadius: 1 }}>
+                                    <LinearGradient colors={[c.cyan, c.magenta]} style={StyleSheet.absoluteFill} />
+                                  </View>
                                 )}
+                                <View style={{ width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center', backgroundColor: c.card2, borderWidth: 1, borderColor: c.line, shadowColor: c.cyan, shadowOpacity: c.isDark ? 0.3 : 0.1, shadowRadius: 4, elevation: 2 }}>
+                                  <LinearGradient colors={[c.cyan, c.magenta]} style={[StyleSheet.absoluteFill, { opacity: 0.1, borderRadius: 16 }]} />
+                                  <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 14 }}>{idx + 1}</Text>
+                                </View>
+                                <View style={{ flex: 1, paddingTop: 4 }}>
+                                  <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 15, lineHeight: 21 }}>
+                                    {t(item.en, item.hi)}
+                                  </Text>
+                                  {item.descEn && (
+                                    <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 13, lineHeight: 20, marginTop: 4 }}>
+                                      {t(item.descEn, item.descHi)}
+                                    </Text>
+                                  )}
+                                </View>
                               </View>
-                            </View>
-                          ))}
+                            );
+                          })}
                         </View>
                       );
                     }
@@ -174,12 +249,13 @@ export default function NativePageScreen() {
                     if (block.type === 'ticks') {
                       const neg = block.icon === 'x';
                       const dotColor = neg ? c.coral : c.mint;
+                      const dotBg = neg ? 'rgba(255,90,110,0.12)' : 'rgba(22,224,163,0.14)';
                       return (
-                        <View key={i} style={{ marginBottom: 8 }}>
+                        <View key={i} style={{ marginBottom: 12 }}>
                           {block.items?.map((item: any, idx: number) => (
-                            <View key={idx} style={styles.li}>
-                              <View style={{ marginTop: 2, marginRight: 10, width: 18, height: 18, borderRadius: 9, backgroundColor: neg ? 'rgba(255,90,110,0.12)' : 'rgba(22,224,163,0.14)', alignItems: 'center', justifyContent: 'center' }}>
-                                <Feather name={neg ? 'x' : 'check'} size={11} color={dotColor} />
+                            <View key={idx} style={[styles.li, { alignItems: 'center' }]}>
+                              <View style={{ marginRight: 12, width: 22, height: 22, borderRadius: 11, backgroundColor: dotBg, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: `${dotColor}33` }}>
+                                <Feather name={neg ? 'x' : 'check'} size={12} color={dotColor} />
                               </View>
                               <Text style={[styles.p, { color: c.sub, marginBottom: 0 }]}>
                                 {item.hi ? t(item.en, item.hi) : item.en}
@@ -192,20 +268,21 @@ export default function NativePageScreen() {
 
                     if (block.type === 'table') {
                       return (
-                        <View key={i} style={{ borderWidth: 1, borderColor: c.line, borderRadius: 12, overflow: 'hidden', marginBottom: 16 }}>
+                        <View key={i} style={{ borderWidth: 1, borderColor: c.line, borderRadius: 16, overflow: 'hidden', marginBottom: 20, backgroundColor: c.card2 }}>
                           {block.rows?.map((row: any, idx: number) => {
                             const accent = row.color || (idx % 2 === 0 ? c.violet : c.magenta);
                             return (
-                              <View key={idx} style={{ flexDirection: 'row', borderTopWidth: idx === 0 ? 0 : 1, borderTopColor: c.line, backgroundColor: idx % 2 === 0 ? c.card2 : 'transparent' }}>
-                                <View style={{ width: 96, padding: 12, borderRightWidth: 1, borderRightColor: c.line, backgroundColor: 'transparent', justifyContent: 'flex-start' }}>
-                                  <View style={{ alignSelf: 'flex-start', backgroundColor: accent, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 }}>
-                                    <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 11 }} numberOfLines={2}>
+                              <View key={idx} style={{ flexDirection: 'row', borderTopWidth: idx === 0 ? 0 : 1, borderTopColor: c.line }}>
+                                <View style={{ width: 100, borderRightWidth: 1, borderRightColor: c.line }}>
+                                  <LinearGradient colors={[accent, 'transparent']} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={[StyleSheet.absoluteFill, { opacity: 0.1 }]} />
+                                  <View style={{ padding: 14, flex: 1, justifyContent: 'center' }}>
+                                    <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 12, letterSpacing: 0.5 }}>
                                       {row.k?.hi ? t(row.k.en, row.k.hi) : (row.k?.en || row.k)}
                                     </Text>
                                   </View>
                                 </View>
-                                <View style={{ flex: 1, padding: 12, justifyContent: 'center' }}>
-                                  <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 13, lineHeight: 20 }}>
+                                <View style={{ flex: 1, padding: 14, justifyContent: 'center' }}>
+                                  <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 14, lineHeight: 22 }}>
                                     {row.v?.hi ? t(row.v.en, row.v.hi) : (row.v?.en || row.v)}
                                   </Text>
                                 </View>
@@ -218,21 +295,23 @@ export default function NativePageScreen() {
                     
                     if (block.type === 'li') {
                       return (
-                        <View key={i} style={styles.li}>
-                          <View style={{ marginTop: 2, marginRight: 10, width: 16, height: 16, borderRadius: 8, backgroundColor: c.isDark ? 'rgba(0,220,245,0.1)' : 'rgba(0,151,167,0.1)', alignItems: 'center', justifyContent: 'center' }}>
-                            <Feather name="check" size={10} color={c.cyan} />
+                        <View key={i} style={[styles.li]}>
+                          <View style={{ marginTop: 4, marginRight: 12, width: 16, height: 16, borderRadius: 8, backgroundColor: c.isDark ? 'rgba(0,229,255,0.1)' : 'rgba(0,151,167,0.1)', alignItems: 'center', justifyContent: 'center' }}>
+                            <AmbientPulse min={0.4} max={1} duration={1500}>
+                              <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: c.cyan }} />
+                            </AmbientPulse>
                           </View>
-                          <Text style={[styles.p, { color: c.sub }]}>{txt}</Text>
+                          <Text style={[styles.p, { color: c.sub, marginBottom: 0 }]}>{txt}</Text>
                         </View>
                       );
                     }
+                    
                     return (
                       <Text key={i} style={[styles.p, { color: c.sub }]}>
                         {txt}
                       </Text>
                     );
-                  })}
-                </View>
+                  })}</View>
               </View>
             </Card>
           );
