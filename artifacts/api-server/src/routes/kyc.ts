@@ -319,8 +319,17 @@ router.post("/initiate", requireAuth, async (req: AuthRequest, res) => {
   }
 
   // valid → auto-verified. service_error / not_configured → accept but flag for manual review.
-  const panVerified = panResult.outcome === "valid";
-  const panRef = panVerified ? panResult.referenceId : `manual_review_${Date.now()}`;
+  // DEV EXCEPTION: CF_VERIFY creds are prod-only, so in non-production
+  // `not_configured` is the NORMAL state — without this, every dev/phone-test
+  // KYC parks in "Under Review" forever. Never applies in production.
+  const devStubVerified = panResult.outcome === "not_configured" && process.env.NODE_ENV !== "production";
+  const panVerified = panResult.outcome === "valid" || devStubVerified;
+  if (devStubVerified) console.warn("[KYC][DEV-STUB] PAN auto-verified (verification suite not configured, non-prod)");
+  const panRef = panResult.outcome === "valid"
+    ? panResult.referenceId
+    : devStubVerified
+      ? `dev_stub_${Date.now()}`
+      : `manual_review_${Date.now()}`;
   if (!panVerified) {
     console.warn("[KYC] PAN auto-verify unavailable — flagged for manual review", {
       registrationId, reason: panResult.outcome,

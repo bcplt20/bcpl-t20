@@ -447,16 +447,25 @@ export default function ProfileScreen() {
                   <Text style={[styles.cardTitle, { color: c.ink }]}>{t('Your season journey', 'आपका सीज़न सफ़र')}</Text>
                 </View>
                 <View style={{ padding: 20, paddingVertical: 12 }}>
+                  {/* Owner rule: "Registration" is not a selection — once the player
+                      is registered (paid or legacy carryover) it simply reads DONE.
+                      Selection lives on the Trial video row. */}
                   <StatusRow
                     label="Phase 1 — Registration"
-                    value={niceStatus(reg?.phase1Status)}
+                    value={['selected', 'rejected', 'video_submitted', 'payment_done'].includes(reg?.phase1Status ?? '') ? 'Done' : 'Pending'}
                     done={['selected', 'rejected', 'video_submitted', 'payment_done'].includes(reg?.phase1Status ?? '')}
                     isCurrent={!['selected', 'rejected', 'video_submitted', 'payment_done'].includes(reg?.phase1Status ?? '')}
                   />
                   <StatusRow
                     label="Trial video"
-                    value={d.video?.submitted ? 'Submitted' : 'Pending'}
-                    done={!!d.video?.submitted}
+                    value={
+                      reg?.phase1Status === 'selected'
+                        ? 'Selected' // qualified (incl. legacy carryover — video round cleared)
+                        : reg?.phase1Status === 'rejected'
+                          ? 'Not selected'
+                          : d.video?.submitted ? 'Submitted' : 'Pending'
+                    }
+                    done={!!d.video?.submitted || reg?.phase1Status === 'selected'}
                     isCurrent={['video_submitted', 'payment_done'].includes(reg?.phase1Status ?? '') && !d.video?.submitted}
                   />
                   {!d.video?.submitted && ['video_submitted', 'payment_done'].includes(reg?.phase1Status ?? '') ? (
@@ -477,10 +486,12 @@ export default function ProfileScreen() {
                     label="Phase 2 — KYC"
                     value={
                       isKycDone(d.kyc?.status, reg?.phase2Status)
-                        ? 'Verified'
-                        : (d.kyc?.status ?? reg?.phase2Status)
-                          ? niceStatus(d.kyc?.status ?? reg?.phase2Status)
-                          : 'Awaited' // never a bare dash — future step reads "Awaited" like Physical trial
+                        ? 'Complete'
+                        : d.kyc?.status === 'pending'
+                          ? 'Under review'
+                          : (d.kyc?.status ?? reg?.phase2Status)
+                            ? niceStatus(d.kyc?.status ?? reg?.phase2Status)
+                            : 'Awaited' // never a bare dash — future step reads "Awaited" like Physical trial
                     }
                     done={isKycDone(d.kyc?.status, reg?.phase2Status)}
                     isCurrent={!!d.video?.submitted && !isKycDone(d.kyc?.status, reg?.phase2Status)}

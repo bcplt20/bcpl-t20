@@ -70,27 +70,27 @@ function HeaderCountdown() {
         start={{x: 0, y: 0}} end={{x: 1, y: 1}} 
         style={[StyleSheet.absoluteFill, { borderRadius: 10, opacity: c.isDark ? 0.6 : 0.8 }]} 
       />
+      {/* Owner-approved layout: ONE box — small label line on top,
+          the ticking time on ONE line below it. Time never wraps/truncates. */}
       <View style={{
         backgroundColor: c.isDark ? '#0B0813' : '#FFFFFF',
         borderRadius: 9,
-        paddingHorizontal: 8,
-        paddingVertical: 5,
-        flexDirection: 'row',
+        paddingHorizontal: 10,
+        paddingVertical: 4,
         alignItems: 'center',
         justifyContent: 'center',
       }}>
-        <Animated.View style={{
-          width: 4, height: 4, borderRadius: 2, backgroundColor: '#FF3DA6', marginRight: 6,
-          opacity: pulse.interpolate({ inputRange: [0, 1], outputRange: [0.3, 1] }),
-          transform: [{ scale: pulse.interpolate({ inputRange: [0, 1], outputRange: [0.8, 1.2] }) }]
-        }} />
-        {/* Prefix shrinks/ellipsizes first; the ticking time must always stay fully visible. */}
-        {showPrefix && (
-          <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 9, textTransform: 'uppercase', letterSpacing: 0.2, flexShrink: 1 }} numberOfLines={1}>
-            {t('REG CLOSES', 'रजिस्ट्रेशन बंद')} ·{' '}
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Animated.View style={{
+            width: 4, height: 4, borderRadius: 2, backgroundColor: '#FF3DA6', marginRight: 5,
+            opacity: pulse.interpolate({ inputRange: [0, 1], outputRange: [0.3, 1] }),
+            transform: [{ scale: pulse.interpolate({ inputRange: [0, 1], outputRange: [0.8, 1.2] }) }]
+          }} />
+          <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 8, textTransform: 'uppercase', letterSpacing: 0.8 }} numberOfLines={1}>
+            {t('REGISTRATION ENDS IN', 'रजिस्ट्रेशन बंद होने में')}
           </Text>
-        )}
-        <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 11, letterSpacing: 0.2, fontVariant: ['tabular-nums'], flexShrink: 0 }} numberOfLines={1}>
+        </View>
+        <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 12, letterSpacing: 0.3, fontVariant: ['tabular-nums'], marginTop: 1 }} numberOfLines={1}>
           {d}d {pad(h)}:{pad(m)}:{pad(s)}
         </Text>
       </View>

@@ -20,3 +20,9 @@ description: KYC (PAN/Aadhaar) verification env split, stub mode, and how vendor
 - **createOrder is NOT stubbed when CASHFREE_APP_ID/SECRET_KEY are set — and they ARE set in dev.** A "stub exists in code" grep is not proof: my age-gate test (2026-07-23) created a REAL pending order in production Cashfree. Never call /payment/*/create in tests; check the runtime key-gating, not code presence.
 
 Mobile checkout: v3 payment_session_id does NOT work with the legacy payments.cashfree.com/order/#<id> hosted URL — app must open the api-server /api/payment/checkout?session=... page (loads v3 JS SDK, mode from CASHFREE_ENV). Website uses the SDK directly.
+
+## Checkout URL origin
+Checkout/return URLs carry the payment_session_id — build origin via `apiOriginFor(req)` in payment.ts (trusted-host allowlist: bcplt20.com, replit domains, localhost, TRUSTED_API_HOSTS env). Never trust raw Host/X-Forwarded-Host (session disclosure) and never hardcode API_URL alone (stale env → instant WebView 404 = "payment could not be completed" on device).
+
+## Dev Cashfree danger
+Dev workspace has CASHFREE_ENV=PROD with REAL prod creds → completing a checkout from a device against dev = REAL money. For phone testing set CASHFREE_ENV=TEST + sandbox creds.
