@@ -99,7 +99,22 @@ function LangSwitch() {
           <Feather name="chevron-right" size={18} color={c.sub} />
         </Pressable>
       ) : null}
-      <View style={{ padding: 20, paddingTop: 20 }}>
+
+      <Pressable
+        onPress={() => router.push('/about')}
+        style={({ pressed }) => [styles.prefRow, { borderTopWidth: token ? 0 : 1, borderTopColor: c.line, opacity: pressed ? 0.7 : 1 }]}
+      >
+        <View style={[styles.prefIcon, { backgroundColor: c.card2, borderColor: c.line }]}>
+          <Feather name="info" size={18} color={c.cyan} />
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 15 }}>{t('About BCPL', 'BCPL के बारे में')}</Text>
+          <Text style={{ color: c.sub, fontSize: 13, marginTop: 2, fontFamily: 'PlusJakartaSans_500Medium' }}>{t('Our journey and mission', 'हमारा सफर और मिशन')}</Text>
+        </View>
+        <Feather name="chevron-right" size={18} color={c.sub} />
+      </Pressable>
+
+      <View style={{ padding: 20, paddingTop: 20, borderTopWidth: 1, borderTopColor: c.line }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
           <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 16 }}>
             {t('App Theme', 'ऐप थीम')}

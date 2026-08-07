@@ -67,6 +67,7 @@ function RootLayoutNav() {
         <Stack.Screen name="pay-webview" options={{ title: 'Payment', headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="pay-receipt" options={{ title: 'Receipt', headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="kyc" options={{ title: 'KYC', headerShown: false }} />
+        <Stack.Screen name="about" options={{ title: 'About', headerShown: false }} />
         <Stack.Screen name="profile" options={{ title: 'Profile', headerShown: false }} />
         <Stack.Screen name="classification" options={{ title: 'Playing Style', headerShown: false }} />
         <Stack.Screen name="scorer/index" options={{ title: 'Scorer', headerShown: false }} />
