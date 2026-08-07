@@ -88,7 +88,12 @@ router.post("/chat", optionalAuth, async (req: AuthRequest, res) => {
   if (!aiAvailable()) return void res.status(503).json({ error: "AI helper is not available right now", code: "AI_UNAVAILABLE" });
   const uid = req.user?.userId ?? null;
   // Logged-in: per-user limits. Guests: tighter per-IP limits.
-  const rk = uid ?? "ip:" + (req.headers["x-forwarded-for"]?.toString().split(",")[0]?.trim() || req.ip || "?");
+  // Behind nginx the LAST x-forwarded-for entry is the proxy-appended real
+  // client IP; earlier hops are client-controlled (spoofable) — same as auth.ts.
+  const xff = req.headers["x-forwarded-for"];
+  const xffStr = Array.isArray(xff) ? xff[xff.length - 1] : xff;
+  const clientIp = xffStr?.split(",").map((s) => s.trim()).filter(Boolean).pop() || req.ip || "?";
+  const rk = uid ?? "ip:" + clientIp;
   const [perMin, perDay] = uid ? [6, 60] : [4, 20];
   if (!allow("c1:" + rk, perMin, 60_000) || !allow("c2:" + rk, perDay, 24 * 3_600_000)) {
     return void res.status(429).json({ error: "Too many messages — please wait a minute", code: "RATE_LIMITED" });

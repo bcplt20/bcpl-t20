@@ -95,13 +95,20 @@ newsRouter.get("/:slug", async (req, res) => {
 /* ── admin CRUD ─────────────────────────────────────────────────────────── */
 adminNewsRouter.use(requireAdmin, requireRole("CONTENT_TEAM", "MATCH_OPERATIONS"));
 
-const pressSchema = z.array(z.object({ label: z.string().trim().min(1).max(120), url: z.string().trim().url().max(500) })).max(10);
+// press/image links: HTTPS only (never javascript:/data: — rendered as hrefs
+// on the website and passed to Linking.openURL in the app).
+const httpsUrl = z.string().trim().url().max(500).refine((u) => u.startsWith("https://"), "URL must start with https://");
+const pressSchema = z.array(z.object({ label: z.string().trim().min(1).max(120), url: httpsUrl })).max(10);
 const articleBody = z.object({
   slug: z.string().trim().min(3).max(160).regex(/^[a-z0-9-]+$/, "slug: lowercase letters, digits, hyphens only"),
   tag: z.string().trim().min(1).max(60).default("News"),
   title: z.string().trim().min(4).max(300),
   titleHi: z.string().trim().max(300).default(""),
-  image: z.string().trim().max(600).default(""),
+  // Either a full https URL or a plain filename served from bcpl-assets/news/.
+  image: z.string().trim().max(600).refine(
+    (v) => v === "" || v.startsWith("https://") || /^[A-Za-z0-9._-]+$/.test(v),
+    "Image must be an https:// URL or a plain filename",
+  ).default(""),
   paragraphs: z.array(z.string().trim().min(1).max(4000)).min(1).max(30),
   paragraphsHi: z.array(z.string().trim().min(1).max(4000)).max(30).default([]),
   press: pressSchema.default([]),
