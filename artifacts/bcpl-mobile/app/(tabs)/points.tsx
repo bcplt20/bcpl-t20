@@ -93,11 +93,12 @@ export default function PointsScreen() {
       <ScreenBackground />
       <GlassAppBar title="Points Table" back={true} />
       <ScrollView
-        contentContainerStyle={{ paddingBottom: bottomNavHeight, paddingTop: appBarHeight }}
+        contentContainerStyle={{ paddingBottom: bottomNavHeight }}
         refreshControl={
-          <RefreshControl refreshing={q.isRefetching} onRefresh={() => { q.refetch(); matchesQ.refetch(); }} tintColor={c.magenta} />
+          <RefreshControl refreshing={q.isRefetching} onRefresh={() => { q.refetch(); matchesQ.refetch(); }} tintColor={c.magenta} progressViewOffset={appBarHeight} />
         }
       >
+        <View style={{ height: appBarHeight }} />
         <View style={{ paddingHorizontal: 16, paddingTop: 20 }}>
           {q.isLoading ? (
             <LoadingView />

@@ -450,8 +450,18 @@ export async function putToPresignedUrl(url: string, blob: Blob, contentType: st
 
 // ── Profile Backfill ──────────────────────────────────────────────────────────
 export interface ProfileCompletionRes {
+  kycDone: boolean;
+  profileComplete: boolean;
   needsBackfill: boolean;
-  missingFields: string[];
+  have: {
+    tshirtSize?: string | null;
+    trouserSize?: string | null;
+    shoeSize?: string | null;
+    helmetSize?: string | null;
+    emergencyName?: string | null;
+    emergencyPhone?: string | null;
+    bloodGroup?: string | null;
+  };
 }
 
 export function getProfileCompletion(token: string): Promise<ProfileCompletionRes> {

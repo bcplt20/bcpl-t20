@@ -17,7 +17,7 @@ import { Image } from 'expo-image';
 import { useColors } from '@/hooks/useColors';
 import { useAuth } from '@/context/AuthContext';
 import { useLang } from '@/context/LanguageContext';
-import { getDashboard, getMatches, getPointsTable, getTeams, SITE_ASSETS, getAppBanners, getAppMedia, type Match, type AppBanner, type Team, type PublicSponsor, getPublicSponsors, getTeamGroup, type AppMediaItem } from '@/lib/api';
+import { getDashboard, getMatches, getPointsTable, getTeams, SITE_ASSETS, getAppBanners, getAppMedia, type Match, type AppBanner, type Team, getSponsors, getTeamGroup, type AppMediaItem } from '@/lib/api';
 import * as WebBrowser from 'expo-web-browser';
 import { NEWS_ARTICLES } from '@/data/news';
 import { Card, TeamLogo, GlassAppBar, ScreenBackground, SectionHeader, useAppBarHeight, useBottomNavHeight } from '@/components/ui';
@@ -181,7 +181,7 @@ function BannerCarousel({ banners }: { banners: AppBanner[] }) {
               {hasImage ? (
                 <>
                   {/* Real banner image fills the card; dark scrim keeps text legible */}
-                  <Image source={{ uri: item.imageUrl }} style={StyleSheet.absoluteFill} contentFit="cover" transition={200} />
+                  <Image source={{ uri: item.imageUrl }} style={StyleSheet.absoluteFill} contentFit="cover" cachePolicy="memory-disk" transition={200} />
                   <LinearGradient
                     colors={['rgba(0,0,0,0.15)', 'rgba(0,0,0,0.55)', 'rgba(0,0,0,0.8)']}
                     start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }}
@@ -214,7 +214,7 @@ function BannerCarousel({ banners }: { banners: AppBanner[] }) {
                   <Image
                     source={require('../../assets/images/bcpl-ball-clean.png')}
                     style={{ position: 'absolute', right: -34, bottom: -34, width: 150, height: 150, opacity: 0.28 }}
-                    contentFit="contain"
+                    contentFit="contain" cachePolicy="memory-disk"
                   />
                 </>
               )}
@@ -290,7 +290,7 @@ function HomeMediaSection({ media }: { media: AppMediaItem[] }) {
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, gap: 12, paddingBottom: 16 }}>
           {photos.map(p => (
             <Pressable key={p.id} onPress={() => router.navigate('/media')} style={({pressed}) => ({ opacity: pressed ? 0.9 : 1 })}>
-              <Image source={{ uri: p.thumbUrl || p.url }} style={{ width: 140, height: 140, borderRadius: 16, backgroundColor: c.card2, borderWidth: 1, borderColor: c.line }} contentFit="cover" transition={150} />
+              <Image source={{ uri: p.thumbUrl || p.url }} style={{ width: 140, height: 140, borderRadius: 16, backgroundColor: c.card2, borderWidth: 1, borderColor: c.line }} contentFit="cover" cachePolicy="memory-disk" transition={150} />
             </Pressable>
           ))}
         </ScrollView>
@@ -301,7 +301,7 @@ function HomeMediaSection({ media }: { media: AppMediaItem[] }) {
           {videos.map(v => (
             <Pressable key={v.id} onPress={() => router.navigate('/media')} style={({pressed}) => ({ opacity: pressed ? 0.9 : 1, width: 220 })}>
               <View style={{ width: '100%', aspectRatio: 16/9, borderRadius: 16, overflow: 'hidden', backgroundColor: c.card2, borderWidth: 1, borderColor: c.line }}>
-                <Image source={{ uri: v.thumbUrl }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+                <Image source={{ uri: v.thumbUrl }} style={{ width: '100%', height: '100%' }} contentFit="cover" cachePolicy="memory-disk" />
                 <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.2)' }}>
                   <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.9)', justifyContent: 'center', alignItems: 'center' }}>
                     <Feather name="play" size={20} color="#000" style={{ marginLeft: 2 }} />
@@ -363,7 +363,7 @@ function TeamsStrip() {
                 />
                 <View style={{ width: 88, height: 88, alignItems: 'center', justifyContent: 'center' }}>
                   {logo ? (
-                    <Image source={{ uri: logo }} style={{ width: '100%', height: '100%' }} contentFit="contain" />
+                    <Image source={{ uri: logo }} style={{ width: '100%', height: '100%' }} contentFit="contain" cachePolicy="memory-disk" />
                   ) : (
                     <View style={{ width: '100%', height: '100%', borderRadius: 44, backgroundColor: accent, alignItems: 'center', justifyContent: 'center' }}>
                       <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 32 }}>
@@ -485,7 +485,7 @@ export default function HomeScreen() {
     refetchInterval: 60_000,
   });
   const pointsQ = useQuery({ queryKey: ['points'], queryFn: getPointsTable });
-  const sponsorsQ = useQuery({ queryKey: ['sponsors'], queryFn: getPublicSponsors });
+  const sponsorsQ = useQuery({ queryKey: ['sponsors'], queryFn: getSponsors });
   const mediaQ = useQuery({ queryKey: ['app-media'], queryFn: getAppMedia, staleTime: 60000 });
 
   const matches = matchesQ.data?.matches ?? [];
@@ -505,14 +505,29 @@ export default function HomeScreen() {
   // Group sponsors by tier
   const sponsorGroups = React.useMemo(() => {
     if (!sponsorsQ.data?.sponsors) return [];
-    const groups: { label: string; items: PublicSponsor[] }[] = [];
-    for (const s of sponsorsQ.data.sponsors) {
-      const label = (s.category || '').trim() || 'Partners';
-      const g = groups.find((x) => x.label.toLowerCase() === label.toLowerCase());
-      if (g) g.items.push(s);
-      else groups.push({ label, items: [s] });
-    }
-    return groups;
+    
+    // Website canonical tier order:
+    const tierOrder = ['title', 'powered', 'associate', 'partner'];
+    const labelMap: Record<string, string> = {
+      'title': 'Title Sponsor',
+      'powered': 'Powered By',
+      'associate': 'Associate Sponsors',
+      'partner': 'Partners'
+    };
+
+    const grouped = sponsorsQ.data.sponsors.reduce((acc, s) => {
+      const t = s.tier || 'partner';
+      if (!acc[t]) acc[t] = [];
+      acc[t].push(s);
+      return acc;
+    }, {} as Record<string, typeof sponsorsQ.data.sponsors>);
+
+    return tierOrder
+      .filter(t => grouped[t] && grouped[t].length > 0)
+      .map(t => ({
+        label: labelMap[t],
+        items: grouped[t]
+      }));
   }, [sponsorsQ.data?.sponsors]);
 
   return (
@@ -522,7 +537,7 @@ export default function HomeScreen() {
       <ScrollView
         bounces={false}
         overScrollMode="never"
-        contentContainerStyle={{ paddingTop: appBarHeight + 16, paddingBottom: bottomNavHeight }}
+        contentContainerStyle={{ paddingBottom: bottomNavHeight }}
         refreshControl={
           <RefreshControl
             refreshing={matchesQ.isRefetching}
@@ -536,6 +551,7 @@ export default function HomeScreen() {
           />
         }
       >
+        <View style={{ height: appBarHeight + 16 }} />
         <ProfileBackfillCard />
 
         <BannerCarousel banners={bannersQ.data?.banners?.length ? bannersQ.data.banners : HARDCODED_BANNERS} />
@@ -729,7 +745,7 @@ export default function HomeScreen() {
                 <Image
                   source={{ uri: `${SITE_ASSETS}/bcpl-assets/news/${n.image}` }}
                   style={styles.newsImage}
-                  contentFit="cover"
+                  contentFit="cover" cachePolicy="memory-disk"
                   transition={150}
                 />
                 <LinearGradient colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.6)']} style={styles.newsImageShade} pointerEvents="none" />
@@ -767,15 +783,15 @@ export default function HomeScreen() {
                       const inner = (
                         <View style={{ backgroundColor: '#1B2E52', borderRadius: 12, paddingHorizontal: logoH * 0.4, paddingVertical: logoH * 0.3, borderWidth: 1, borderColor: c.line }}>
                           {s.logo ? (
-                            <Image source={{ uri: s.logo }} style={{ height: logoH, width: logoH * 3, maxWidth: 200 }} contentFit="contain" />
+                            <Image source={{ uri: s.logo }} style={{ height: logoH, width: logoH * 3, maxWidth: 200 }} contentFit="contain" cachePolicy="memory-disk" />
                           ) : (
                             <Text style={{ fontFamily: 'PlusJakartaSans_700Bold', fontSize: logoH * 0.4, color: '#FFFFFF' }}>{s.name}</Text>
                           )}
                         </View>
                       );
-                      if (s.website) {
+                      if (s.url) {
                         return (
-                          <Pressable key={i} onPress={() => WebBrowser.openBrowserAsync(s.website)} style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] })}>
+                          <Pressable key={i} onPress={() => WebBrowser.openBrowserAsync(s.url!)} style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] })}>
                             {inner}
                           </Pressable>
                         );

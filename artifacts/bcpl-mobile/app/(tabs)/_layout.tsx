@@ -103,7 +103,7 @@ function RegisterFabButton({ onPress }: { onPress: () => void }) {
           borderWidth: 1.5,
           borderColor: 'rgba(255, 61, 166, 0.8)',
           overflow: 'hidden',
-          zIndex: 2
+          zIndex: 2,
         }}>
           <LinearGradient
             colors={['#7C5CFF', '#FF3DA6']}
@@ -111,19 +111,11 @@ function RegisterFabButton({ onPress }: { onPress: () => void }) {
             end={{ x: 1, y: 1 }}
             style={StyleSheet.absoluteFill}
           />
-          
-          <Svg width={26} height={26} viewBox="0 0 24 24" style={{ marginLeft: 2, zIndex: 10 }}>
-            <Path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h5" fill="none" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-            <Path d="M14 2v6h6v4" fill="none" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-            <Path d="M8 12h4" fill="none" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-            <Path d="M8 16h2" fill="none" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-            <Path d="M19.5 7.5a2.121 2.121 0 0 1 3 3L14 19l-4 1 1-4 8.5-8.5z" fill="#FFFFFF" fillOpacity="0.2" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-            <Circle cx="10" cy="20" r="2.5" fill="#00DCF5" stroke="#000000" strokeOpacity="0.2" strokeWidth="1" />
-          </Svg>
+          <Feather name="file-text" size={22} color="#FFFFFF" style={{ zIndex: 10 }} />
         </View>
       </Pressable>
-      <Text style={{ color: c.magenta, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 10, letterSpacing: 0.3, zIndex: 3 }}>
-        {t('Register', 'रजिस्टर')}
+      <Text style={{ color: c.magenta, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 9.5, letterSpacing: 0.3, zIndex: 3, textAlign: 'center', lineHeight: 11 }}>
+        {t('REGISTER\nNOW', 'रजिस्टर\nकरें')}
       </Text>
     </View>
   );
@@ -142,19 +134,17 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
   const routes = state.routes.filter((r: any) => !['points', 'news', 'media'].includes(r.name));
 
   return (
-    <View style={{
+    <View pointerEvents="box-none" style={{
       position: 'absolute',
       bottom: bottomPadding,
       left: 0,
       right: 0,
       alignItems: 'center',
-      pointerEvents: 'box-none',
     }}>
-      <View style={{
+      <View pointerEvents="auto" style={{
         width: '100%',
         maxWidth: 440,
         paddingHorizontal: 16,
-        pointerEvents: 'auto',
       }}>
         <View style={{
           height: barHeight,

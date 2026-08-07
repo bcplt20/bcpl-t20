@@ -294,7 +294,7 @@ export function TeamLogo({ name, size = 44, glow = false }: { name: string; size
       <Image
         source={{ uri: `${SITE_ASSETS}/bcpl-assets/logos/${teamSlug(name)}.png` }}
         style={{ width: '100%', height: '100%' }}
-        contentFit="contain"
+        contentFit="contain" cachePolicy="memory-disk"
         transition={150}
         onError={() => setFailed(true)}
       />
@@ -319,7 +319,7 @@ export function TeamDot({ name, size = 34, glow = false }: { name: string; size?
         <Image
           source={require('../assets/images/bcpl-ball-clean.png')}
           style={{ width: '100%', height: '100%' }}
-          contentFit="contain"
+          contentFit="contain" cachePolicy="memory-disk"
         />
       </View>
     );
@@ -365,7 +365,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 export const ScreenBackground = React.memo(() => {
   const c = useColors();
   return (
-    <View style={[StyleSheet.absoluteFill, { backgroundColor: c.bg, pointerEvents: 'none' }]}>
+    <View pointerEvents="none" style={[StyleSheet.absoluteFill, { backgroundColor: c.bg }]}>
       <View style={{ position: 'absolute', top: -100, left: -100, width: 600, height: 600, borderRadius: 300, backgroundColor: c.mesh3 }} />
       <View style={{ position: 'absolute', top: -50, right: -100, width: 500, height: 500, borderRadius: 250, backgroundColor: c.mesh1 }} />
       <View style={{ position: 'absolute', bottom: -100, left: '30%', width: 500, height: 500, borderRadius: 250, backgroundColor: c.mesh2 }} />
@@ -504,7 +504,7 @@ export function GlassAppBar({ title, right, back }: { title?: string, right?: Re
                 <Image
                   source={c.isDark ? require('../assets/images/bcpl-logo-dark.png') : require('../assets/images/bcpl-logo-light.png')}
                   style={{ width: '100%', height: '100%' }}
-                  contentFit="contain"
+                  contentFit="contain" cachePolicy="memory-disk"
                   contentPosition="left center"
                 />
               </View>

@@ -372,7 +372,8 @@ export default function ProfileScreen() {
       <View style={{ flex: 1, backgroundColor: c.bg }}>
         <ScreenBackground />
       <GlassAppBar title={t('More', 'अन्य')} />
-      <ScrollView contentContainerStyle={{ paddingBottom: bottomNavHeight, paddingTop: appBarHeight }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: bottomNavHeight }}>
+        <View style={{ height: appBarHeight }} />
         <View style={styles.loginWrap}>
           <View style={styles.loginIconWrap}>
             <LinearGradient colors={['rgba(255, 26, 117,0.2)', 'rgba(255, 26, 117,0.05)']} style={StyleSheet.absoluteFill} />
@@ -417,11 +418,12 @@ export default function ProfileScreen() {
       <ScreenBackground />
       <GlassAppBar title={user?.name ?? 'Player'} />
       <ScrollView
-        contentContainerStyle={{ paddingBottom: bottomNavHeight, paddingTop: appBarHeight }}
+        contentContainerStyle={{ paddingBottom: bottomNavHeight }}
         refreshControl={
-          <RefreshControl refreshing={dashQ.isRefetching} onRefresh={() => dashQ.refetch()} tintColor={c.violet} />
+          <RefreshControl refreshing={dashQ.isRefetching} onRefresh={() => dashQ.refetch()} tintColor={c.violet} progressViewOffset={appBarHeight} />
         }
       >
+        <View style={{ height: appBarHeight }} />
         <View style={{ paddingHorizontal: 16, gap: 16, paddingTop: 16 }}>
           {dashQ.isLoading ? (
             <LoadingView />

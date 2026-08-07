@@ -34,11 +34,12 @@ export default function ScorerHome() {
       <ScreenBackground />
       <GlassAppBar title={t('Scorer', 'स्कोरर')} />
       <ScrollView
-        contentContainerStyle={{ paddingBottom: bottomNavHeight, paddingTop: appBarHeight }}
+        contentContainerStyle={{ paddingBottom: bottomNavHeight }}
         refreshControl={
-          token ? <RefreshControl refreshing={query.isRefetching} onRefresh={() => query.refetch()} tintColor={c.violet} /> : undefined
+          token ? <RefreshControl refreshing={query.isRefetching} onRefresh={() => query.refetch()} tintColor={c.violet} progressViewOffset={appBarHeight} /> : undefined
         }
       >
+        <View style={{ height: appBarHeight }} />
         <View style={{ padding: 16, gap: 16 }}>
           {!token ? (
             <Card style={{ alignItems: 'center', paddingVertical: 40, marginTop: 32 }}>

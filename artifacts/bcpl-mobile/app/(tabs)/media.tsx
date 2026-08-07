@@ -60,8 +60,9 @@ export default function MediaScreen() {
       <ScreenBackground />
       <GlassAppBar title={t('Photos & Videos', 'फ़ोटो और वीडियो')} />
       <ScrollView
-        contentContainerStyle={{ padding: 16, paddingBottom: bottomNavHeight, paddingTop: appBarHeight }}
+        contentContainerStyle={{ padding: 16, paddingBottom: bottomNavHeight, paddingTop: 0 }}
       >
+        <View style={{ height: appBarHeight }} />
         {q.isLoading ? (
           <LoadingView />
         ) : q.isError ? (

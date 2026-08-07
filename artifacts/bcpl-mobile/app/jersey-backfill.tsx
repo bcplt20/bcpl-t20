@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, ScrollView, Text, StyleSheet, Pressable, TextInput, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useQueryClient } from '@tanstack/react-query';
@@ -66,7 +66,7 @@ export default function JerseyBackfillScreen() {
   const [helmet, setHelmet] = useState('');
   
   const [ecName, setEcName] = useState('');
-  const [ecRel, setEcRel] = useState('');
+  const [ecRel, setEcRel] = useState('Friend');
   const [ecPhone, setEcPhone] = useState('');
   const [ecPhoneErr, setEcPhoneErr] = useState('');
 
@@ -79,14 +79,24 @@ export default function JerseyBackfillScreen() {
     enabled: !!token,
   });
 
-  const needsEc = q.data?.missingFields?.includes('emergencyPhone') || q.data?.missingFields?.includes('emergencyName');
+  useEffect(() => {
+    if (q.data?.have) {
+      if (q.data.have.tshirtSize) setTshirt(q.data.have.tshirtSize);
+      if (q.data.have.trouserSize) setTrouser(q.data.have.trouserSize);
+      if (q.data.have.shoeSize) setShoe(q.data.have.shoeSize);
+      if (q.data.have.helmetSize) setHelmet(q.data.have.helmetSize);
+      if (q.data.have.emergencyName) setEcName(q.data.have.emergencyName);
+      if (q.data.have.emergencyPhone) setEcPhone(q.data.have.emergencyPhone);
+    }
+  }, [q.data]);
 
-  const emergencyOk = !needsEc || !!(ecName.trim() && ecRel && /^\d{10}$/.test(ecPhone));
+  // The schema requires emergencyName and emergencyPhone unconditionally.
+  const emergencyOk = !!(ecName.trim() && ecRel && /^\d{10}$/.test(ecPhone));
   const canSubmit = !!tshirt && !!trouser && !!shoe && !!helmet && emergencyOk && !ecPhoneErr;
 
   const handleSubmit = async () => {
     if (!token) return;
-    if (needsEc && !/^\d{10}$/.test(ecPhone)) { setEcPhoneErr(t('Enter a 10-digit mobile number', '10 अंकों का मोबाइल नंबर डालें')); return; }
+    if (!/^\d{10}$/.test(ecPhone)) { setEcPhoneErr(t('Enter a 10-digit mobile number', '10 अंकों का मोबाइल नंबर डालें')); return; }
     if (!canSubmit) {
       setSubmitErr(t('Please complete jersey details and required fields.', 'कृपया जर्सी डिटेल्स और आवश्यक जानकारी पूरा करें।'));
       return;
@@ -100,85 +110,78 @@ export default function JerseyBackfillScreen() {
         trouserSize: trouser,
         shoeSize: shoe,
         helmetSize: helmet,
-        ...(needsEc ? {
-          emergencyName: ecName.trim(),
-          emergencyRelation: ecRel,
-          emergencyPhone: ecPhone,
-        } : {}),
+        emergencyName: ecName.trim(),
+        emergencyRelation: ecRel,
+        emergencyPhone: ecPhone,
       });
-      // Invalidate queries so dashboard/profile know we're done
-      qc.invalidateQueries({ queryKey: ['profileCompletion', token] });
-      qc.invalidateQueries({ queryKey: ['dashboard', token] });
-      router.back();
-    } catch (e: any) {
-      setSubmitErr(e instanceof ApiError ? e.message : t('Submission failed. Please try again.', 'सबमिशन विफल रहा। कृपया पुनः प्रयास करें।'));
+      qc.invalidateQueries({ queryKey: ['profileCompletion'] });
+      qc.invalidateQueries({ queryKey: ['dashboard'] });
+      
+      if (router.canGoBack()) {
+        router.back();
+      } else {
+        router.replace('/journey');
+      }
+    } catch (err: any) {
+      if (err instanceof ApiError) {
+        setSubmitErr(err.message || 'Verification failed');
+      } else {
+        setSubmitErr('Network error. Try again.');
+      }
     } finally {
       setSubmitting(false);
     }
   };
 
   if (q.isLoading) {
-    return (
-      <View style={{ flex: 1, backgroundColor: c.bg }}>
-        <ScreenBackground />
-        <GlassAppBar title={t('Jersey Sizes', 'जर्सी साइज़')} back />
-        <LoadingView />
-      </View>
-    );
+    return <View style={{ flex: 1, backgroundColor: c.bg }}><ScreenBackground /><GlassAppBar title={t('Complete Profile', 'प्रोफाइल पूरी करें')} back={true} /><LoadingView /></View>;
   }
 
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
       <ScreenBackground />
-      <GlassAppBar title={t('Jersey Sizes', 'जर्सी साइज़')} back />
+      <GlassAppBar title={t('Complete Profile', 'प्रोफाइल पूरी करें')} back={true} />
       
-      <ScrollView contentContainerStyle={{ padding: 20, paddingTop: appBarHeight + 12, paddingBottom: 80 }} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
-        <Card>
-          <View style={{ marginBottom: 16 }}>
-            <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 17 }}>
-              {t('Jersey Details', 'जर्सी डिटेल्स')}
-            </Text>
-            <Text style={{ color: c.sub, fontSize: 12.5, marginTop: 4, lineHeight: 18, fontFamily: 'PlusJakartaSans_500Medium' }}>
-              {t('These jersey details are not for trials — no kit is provided at trials. If you are picked into a team through the auction, having your sizes on file makes jersey preparation easy. Please fill your sizes accordingly.', 'ये jersey details trials के लिए नहीं हैं — trials में kit नहीं दी जाती। अगर auction के ज़रिए आप किसी team में चुने जाते हैं, तो आपकी sizes पहले से हमारे पास होने से jersey बनवाना आसान रहेगा। इसी हिसाब से अपनी सही sizes भरें।')}
-            </Text>
-          </View>
+      <ScrollView contentContainerStyle={{ paddingTop: appBarHeight + 16, paddingBottom: 60, paddingHorizontal: 16 }}>
+        <Text style={{ color: c.ink, fontSize: 24, fontFamily: 'BricolageGrotesque_800ExtraBold', marginBottom: 8 }}>
+          {t('A Few More Details', 'कुछ और जानकारी')}
+        </Text>
+        <Text style={{ color: c.sub, fontSize: 15, fontFamily: 'PlusJakartaSans_500Medium', marginBottom: 24, lineHeight: 22 }}>
+          {t('We need your jersey sizing and emergency contact to finalize your player profile.', 'आपकी प्लेयर प्रोफाइल को अंतिम रूप देने के लिए हमें आपकी जर्सी साइज और आपातकालीन संपर्क की आवश्यकता है।')}
+        </Text>
 
-          <Label c={c} text={t('T-SHIRT SIZE *', 'टी-शर्ट साइज़ *')} />
+        <Card style={{ padding: 20 }}>
+          <Text style={{ color: c.ink, fontSize: 16, fontFamily: 'BricolageGrotesque_700Bold', marginBottom: 16 }}>{t('Team Kit Sizing', 'टीम किट साइज')}</Text>
+          
+          <Label c={c} text={t('T-SHIRT SIZE *', 'टी-शर्ट साइज *')} />
           <ChipRow options={TSHIRT_OPTS} value={tshirt} onChange={setTshirt} c={c} />
-          <View style={{ height: 18 }} />
+          <View style={{ height: 16 }} />
           
-          <Label c={c} text={t('TROUSER SIZE *', 'ट्राउज़र साइज़ *')} />
-          <ChipRow options={['28', '30', '32', '34', '36', '38', '40', '42', '44']} value={trouser} onChange={setTrouser} c={c} />
-          <View style={{ height: 18 }} />
+          <Label c={c} text={t('TROUSER SIZE *', 'ट्राउज़र साइज *')} />
+          <TextField c={c} value={trouser} onChange={setTrouser} placeholder="e.g. 32, 34" keyboard="number-pad" maxLength={3} />
+          <View style={{ height: 16 }} />
           
-          <Label c={c} text={t('SHOE SIZE (UK) *', 'जूते का साइज़ (UK) *')} />
-          <ChipRow options={['4', '5', '6', '7', '8', '9', '10', '11', '12']} value={shoe} onChange={setShoe} c={c} />
-          <View style={{ height: 18 }} />
+          <Label c={c} text={t('SHOE SIZE (UK) *', 'जूते का साइज (UK) *')} />
+          <TextField c={c} value={shoe} onChange={setShoe} placeholder="e.g. 8, 9, 10" keyboard="number-pad" maxLength={2} />
+          <View style={{ height: 16 }} />
           
-          <Label c={c} text={t('HELMET SIZE *', 'हेलमेट साइज़ *')} />
+          <Label c={c} text={t('HELMET SIZE *', 'हेलमेट साइज *')} />
           <ChipRow options={['S', 'M', 'L', 'XL']} value={helmet} onChange={setHelmet} c={c} />
 
-          {needsEc ? (
-            <>
-              <View style={{ height: 22, marginTop: 6, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: c.line }} />
-              
-              <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 15, marginBottom: 14 }}>
-                {t('Emergency contact', 'आपातकालीन संपर्क')}
-              </Text>
-              
-              <Label c={c} text={t('CONTACT PERSON NAME *', 'संपर्क व्यक्ति का नाम *')} />
-              <TextField c={c} value={ecName} onChange={setEcName} placeholder={t('Full name', 'पूरा नाम')} />
-              <View style={{ height: 16 }} />
-              
-              <Label c={c} text={t('RELATION *', 'रिश्ता *')} />
-              <ChipRow options={RELATION_OPTS} value={ecRel} onChange={setEcRel} c={c} />
-              <View style={{ height: 16 }} />
-              
-              <Label c={c} text={t('EMERGENCY MOBILE NUMBER *', 'आपातकालीन मोबाइल नंबर *')} />
-              <TextField c={c} value={ecPhone} onChange={(v: string) => { setEcPhone(v.replace(/\D/g, '').slice(0, 10)); setEcPhoneErr(''); }} placeholder={t('10-digit number', '10 अंकों का नंबर')} keyboard="number-pad" maxLength={10} err={!!ecPhoneErr} />
-              {ecPhoneErr ? <ErrLine c={c} text={ecPhoneErr} /> : null}
-            </>
-          ) : null}
+          <View style={{ height: 32 }} />
+          <Text style={{ color: c.ink, fontSize: 16, fontFamily: 'BricolageGrotesque_700Bold', marginBottom: 16 }}>{t('Emergency Contact', 'आपातकालीन संपर्क')}</Text>
+          
+          <Label c={c} text={t('CONTACT NAME *', 'संपर्क का नाम *')} />
+          <TextField c={c} value={ecName} onChange={setEcName} placeholder={t('Full Name', 'पूरा नाम')} />
+          <View style={{ height: 16 }} />
+          
+          <Label c={c} text={t('RELATION *', 'रिश्ता *')} />
+          <ChipRow options={RELATION_OPTS} value={ecRel} onChange={setEcRel} c={c} />
+          <View style={{ height: 16 }} />
+          
+          <Label c={c} text={t('EMERGENCY MOBILE NUMBER *', 'आपातकालीन मोबाइल नंबर *')} />
+          <TextField c={c} value={ecPhone} onChange={(v: string) => { setEcPhone(v.replace(/\D/g, '').slice(0, 10)); setEcPhoneErr(''); }} placeholder={t('10-digit number', '10 अंकों का नंबर')} keyboard="number-pad" maxLength={10} err={!!ecPhoneErr} />
+          {ecPhoneErr ? <ErrLine c={c} text={ecPhoneErr} /> : null}
 
           {submitErr ? <ErrLine c={c} text={submitErr} /> : null}
           

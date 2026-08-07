@@ -376,29 +376,6 @@ function JourneyBody({ d }: { d: Dashboard }) {
         </LinearGradient>
       </Card>
 
-      {/* BCPL AI — assistant entry (answers journey questions) */}
-      <Pressable
-        onPress={() => router.push('/assistant')}
-        style={({ pressed }) => ({ opacity: pressed ? 0.85 : 1, marginBottom: 16 })}
-        testID="journey-assistant"
-      >
-        <Card style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14 }}>
-          <View style={{ width: 38, height: 38, borderRadius: 19, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
-            <LinearGradient colors={['#7C5CFF', '#FF3DA6']} style={StyleSheet.absoluteFill} />
-            <Ionicons name="sparkles" size={18} color="#fff" />
-          </View>
-          <View style={{ flex: 1 }}>
-            <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 15 }}>
-              {t('Ask BCPL AI', 'BCPL AI से पूछें')}
-            </Text>
-            <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 12, marginTop: 2 }}>
-              {t('Questions about payment, video, result or trial', 'Payment, video, result या trial के सवाल')}
-            </Text>
-          </View>
-          <Feather name="chevron-right" size={18} color={c.sub} />
-        </Card>
-      </Pressable>
-
       {/* Next action — single derived-step banner (mirrors website getBannerConfig).
           For the video step this is the rich VideoTrialCard with a live countdown. */}
       <NextActionBanner step={step} d={d} />

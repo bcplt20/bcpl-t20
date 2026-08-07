@@ -41,20 +41,12 @@ function FloatingAiButton() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const segments = useSegments();
-  const [kbVisible, setKbVisible] = React.useState(false);
-
-  React.useEffect(() => {
-    const showSub = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow', () => setKbVisible(true));
-    const hideSub = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide', () => setKbVisible(false));
-    return () => { showSub.remove(); hideSub.remove(); };
-  }, []);
-
-  if (kbVisible) return null;
 
   // If we are in the tabs group, float above the bottom tab bar.
-  // The tab bar is roughly 60px tall + bottom inset.
-  const inTabs = segments[0] === '(tabs)';
-  const bottomMargin = inTabs ? (60 + insets.bottom + 24) : Math.max(insets.bottom + 24, 32);
+  // The tab bar is strictly 68px tall.
+  const inTabs = !segments[0] || segments[0] === '(tabs)';
+  // Position deterministically: 68 (tabbar) + 16 (gap) + safeArea
+  const bottomMargin = inTabs ? 68 + insets.bottom + 16 : insets.bottom + 16;
 
   return (
     <Pressable

@@ -71,6 +71,7 @@ export default function RegisterScreen() {
   const appBarHeight = useAppBarHeight();
 
   const [step, setStep] = useState<Step>('details');
+  const [checkingStatus, setCheckingStatus] = useState(!!token);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
@@ -487,12 +488,14 @@ export default function RegisterScreen() {
           </View>
         </Card>
         {/* Registered Player Login — website parity (opens the login modal) */}
-        <Pressable onPress={() => { setShowLogin(true); setLoginStep('phone'); setLoginError(''); setLoginInfo(''); setLoginPhone(phone); }} style={{ alignSelf: 'center', padding: 8 }} testID="reg-open-login">
-          <Text style={{ color: c.sub, fontSize: 14, fontFamily: 'PlusJakartaSans_500Medium' }}>
-            {t('Already registered? ', 'पहले से registered? ')}
-            <Text style={{ color: c.getAccentText(c.magenta), fontFamily: 'PlusJakartaSans_700Bold' }}>{t('Player Login →', 'Player Login →')}</Text>
-          </Text>
-        </Pressable>
+        {!token && (
+          <Pressable onPress={() => { setShowLogin(true); setLoginStep('phone'); setLoginError(''); setLoginInfo(''); setLoginPhone(phone); }} style={{ alignSelf: 'center', padding: 8 }} testID="reg-open-login">
+            <Text style={{ color: c.sub, fontSize: 14, fontFamily: 'PlusJakartaSans_500Medium' }}>
+              {t('Already registered? ', 'पहले से registered? ')}
+              <Text style={{ color: c.getAccentText(c.magenta), fontFamily: 'PlusJakartaSans_700Bold' }}>{t('Player Login →', 'Player Login →')}</Text>
+            </Text>
+          </Pressable>
+        )}
         </View>
       ) : null}
 
@@ -751,83 +754,32 @@ export default function RegisterScreen() {
       ) : null}
 
       {step === 'done' ? (
-        <Card style={{ alignItems: 'center', paddingVertical: 56 }}>
-          <View style={{ width: 96, height: 96, borderRadius: 48, backgroundColor: 'rgba(49, 197, 107, 0.15)', alignItems: 'center', justifyContent: 'center', marginBottom: 24, borderWidth: 2, borderColor: 'rgba(49, 197, 107, 0.3)' }}>
-            <Feather name="check" size={48} color="#2ECC71" />
+        <Card style={{ alignItems: 'center', paddingVertical: 48, paddingHorizontal: 20 }}>
+          <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: 'rgba(0, 220, 245, 0.15)', alignItems: 'center', justifyContent: 'center', marginBottom: 20, borderWidth: 2, borderColor: 'rgba(0, 220, 245, 0.3)' }}>
+            <Feather name="shield" size={40} color="#00DCF5" />
           </View>
-          <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 28 }}>
-            {t('You are registered!', 'आप रजिस्टर्ड हैं!')}
+          <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 24, textAlign: 'center', marginBottom: 8 }}>
+            {t('Already Registered', 'आप पहले से registered हैं')}
           </Text>
-          {regNumber ? (
-            <View style={{ marginTop: 32, paddingVertical: 16, paddingHorizontal: 32, backgroundColor: c.card2, borderRadius: 16, borderWidth: 1, borderColor: c.line }}>
-              <Text style={{ color: c.sub, fontSize: 13, textAlign: 'center', fontFamily: 'PlusJakartaSans_700Bold', marginBottom: 6, letterSpacing: 0.5 }}>REGISTRATION NO.</Text>
-              <Text style={{ color: c.getAccentText(c.cyan), fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 32 }}>{regNumber}</Text>
-            </View>
-          ) : null}
-          {/* Trial city (available for resuming users via syncStatus) */}
-          {city ? (
-            <View style={{ marginTop: 20, alignItems: 'center' }}>
-              <Text style={{ color: c.sub, fontSize: 12, fontFamily: 'PlusJakartaSans_700Bold', letterSpacing: 0.5, marginBottom: 4 }}>{t('TRIAL CITY', 'TRIAL CITY')}</Text>
-              <Text style={{ color: c.ink, fontSize: 16, fontFamily: 'PlusJakartaSans_700Bold' }}>{city}</Text>
+          <Text style={{ color: c.sub, fontSize: 15, textAlign: 'center', fontFamily: 'PlusJakartaSans_500Medium', marginBottom: 28, paddingHorizontal: 16, lineHeight: 22 }}>
+            {t(`Welcome back, ${user?.name || 'Player'}! Your registration is secure.`, `वापसी पर स्वागत है, ${user?.name || 'Player'}! आपका रजिस्ट्रेशन सुरक्षित है।`)}
+          </Text>
+
+          {regNumber || registrationId ? (
+            <View style={{ marginBottom: 32, paddingVertical: 16, paddingHorizontal: 32, backgroundColor: c.card2, borderRadius: 16, borderWidth: 1, borderColor: c.line, minWidth: '80%' }}>
+              <Text style={{ color: c.sub, fontSize: 11.5, textAlign: 'center', fontFamily: 'PlusJakartaSans_700Bold', marginBottom: 6, letterSpacing: 0.8 }}>REGISTRATION ID</Text>
+              <Text style={{ color: c.getAccentText(c.cyan), fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 28, textAlign: 'center' }}>{regNumber || registrationId}</Text>
             </View>
           ) : null}
 
-          {doneStatus === 'payment_done' ? (
-            <>
-              {/* Only a just-paid player who still owes a video sees the upload
-                  prompt + guidelines. Fully-registered/advanced players do not. */}
-              <Text style={{ color: c.sub, fontSize: 15, marginTop: 28, textAlign: 'center', lineHeight: 24, paddingHorizontal: 20, fontFamily: 'PlusJakartaSans_500Medium' }}>
-                {t('Next step: upload your 30–90 second trial video — right here in the app.', 'अगला कदम: अपना 30–90 सेकंड का ट्रायल वीडियो अपलोड करें — यहीं ऐप में।')}
-              </Text>
-
-              <View style={{ width: '100%', marginTop: 26, padding: 16, backgroundColor: c.card2, borderRadius: 16, borderWidth: 1, borderColor: c.line }}>
-                <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 15, marginBottom: 12 }}>
-                  {t('Video guidelines', 'वीडियो दिशानिर्देश')}
-                </Text>
-                {[
-                  { en: 'Record a 30–90 second clip clearly showing your cricket skills.', hi: '30–90 सेकंड का clip रिकॉर्ड करें जिसमें आपकी क्रिकेट स्किल्स साफ़ दिखें।' },
-                  { en: 'Shoot horizontally in good light with a stable camera.', hi: 'अच्छी रोशनी में स्थिर कैमरे से हॉरिजॉन्टल शूट करें।' },
-                  { en: 'No editing or background music — raw footage of your own play only.', hi: 'कोई एडिटिंग या म्यूजिक नहीं — केवल आपके अपने खेल की मूल फुटेज।' },
-                  { en: 'MP4 / MOV / AVI / WebM, up to 200 MB.', hi: 'MP4 / MOV / AVI / WebM, अधिकतम 200 MB.' },
-                  { en: 'Upload within your deadline window shown on the upload screen.', hi: 'अपलोड स्क्रीन पर दिखाई गई समय-सीमा के भीतर अपलोड करें।' },
-                ].map((item, i) => (
-                  <View key={i} style={{ flexDirection: 'row', gap: 8, alignItems: 'flex-start', marginBottom: 8 }}>
-                    <Feather name="check" size={14} color="#2ECC71" style={{ marginTop: 2 }} />
-                    <Text style={{ color: c.sub, fontSize: 12.5, lineHeight: 19, fontFamily: 'PlusJakartaSans_500Medium', flex: 1 }}>{t(item.en, item.hi)}</Text>
-                  </View>
-                ))}
-              </View>
-
-              <Pressable
-                onPress={() => router.replace('/upload-video')}
-                style={({ pressed }) => [styles.btn, { opacity: pressed ? 0.8 : 1, marginTop: 28, paddingHorizontal: 40 }]}
-              >
-                <LinearGradient colors={['#FF1A75', '#D10056']} style={[StyleSheet.absoluteFill, { borderRadius: 16 }]} />
-                <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, letterSpacing: 0.5 }}>
-                  {t('Upload trial video', 'ट्रायल वीडियो अपलोड करें')}
-                </Text>
-              </Pressable>
-            </>
-          ) : (
-            <>
-              {/* Fully-registered / advanced (incl. carryover 'selected'): no
-                  video-guidelines / upload prompt — status + Journey link only. */}
-              <Text style={{ color: c.sub, fontSize: 15, marginTop: 24, textAlign: 'center', lineHeight: 24, paddingHorizontal: 20, fontFamily: 'PlusJakartaSans_500Medium' }}>
-                {t('Your registration is complete. Track your status and next steps in My Journey.', 'आपका रजिस्ट्रेशन पूरा हो गया है। अपना status और अगले कदम My Journey में देखें।')}
-              </Text>
-              <Pressable
-                onPress={() => router.replace('/journey')}
-                style={({ pressed }) => [styles.btn, { opacity: pressed ? 0.8 : 1, marginTop: 28, paddingHorizontal: 40 }]}
-              >
-                <LinearGradient colors={['#FF1A75', '#D10056']} style={[StyleSheet.absoluteFill, { borderRadius: 16 }]} />
-                <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, letterSpacing: 0.5 }}>
-                  {t('Go to My Journey', 'My Journey पर जाएं')}
-                </Text>
-              </Pressable>
-            </>
-          )}
-          <Pressable onPress={() => router.replace('/journey')} style={{ marginTop: 16 }}>
-            <Text style={{ color: c.sub, fontSize: 14, fontFamily: 'PlusJakartaSans_700Bold' }}>{t('View my journey', 'मेरा सफ़र देखें')}</Text>
+          <Pressable
+            onPress={() => router.replace('/journey')}
+            style={({ pressed }) => [styles.btn, { opacity: pressed ? 0.8 : 1, width: '100%' }]}
+          >
+            <LinearGradient colors={['#7C5CFF', '#00DCF5']} start={{x:0, y:0}} end={{x:1, y:1}} style={[StyleSheet.absoluteFill, { borderRadius: 16 }]} />
+            <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, letterSpacing: 0.5 }}>
+              {t('Go to My Dashboard', 'My Dashboard पर जाएं')}
+            </Text>
           </Pressable>
         </Card>
       ) : null}
