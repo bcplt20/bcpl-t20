@@ -7,7 +7,7 @@ import { useColors } from '@/hooks/useColors';
 import { useAuth } from '@/context/AuthContext';
 import { useLang } from '@/context/LanguageContext';
 import { saveProfileBackfill, getProfileCompletion, ApiError } from '@/lib/api';
-import { ScreenBackground, GlassAppBar, Card, LoadingView } from '@/components/ui';
+import { ScreenBackground, GlassAppBar, Card, LoadingView, useAppBarHeight } from '@/components/ui';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const TSHIRT_OPTS = ['S', 'M', 'L', 'XL', 'XXL'];
@@ -58,6 +58,7 @@ export default function JerseyBackfillScreen() {
   const { token } = useAuth();
   const router = useRouter();
   const qc = useQueryClient();
+  const appBarHeight = useAppBarHeight();
 
   const [tshirt, setTshirt] = useState('');
   const [trouser, setTrouser] = useState('');
@@ -131,7 +132,7 @@ export default function JerseyBackfillScreen() {
       <ScreenBackground />
       <GlassAppBar title={t('Jersey Sizes', 'जर्सी साइज़')} back />
       
-      <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 60 }} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={{ padding: 20, paddingTop: appBarHeight + 12, paddingBottom: 80 }} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         <Card>
           <View style={{ marginBottom: 16 }}>
             <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 17 }}>

@@ -319,3 +319,38 @@ uri = "file://screenshots/demo-app-vote2.jpg"
 type = "image"
 title = "App — Fan Voting"
 description = "बिना login सीधे vote — एक phone एक vote।"
+
+[[outputs]]
+id = "MSaj53DFnYLU3HQqp2SSp"
+uri = "file://screenshots/final-web-mvp-stats.jpg"
+type = "image"
+title = "Website — MVP Top 15 + Season Leaders (Cricbuzz-style)"
+description = "Website — MVP Top 15 + Season Leaders (Cricbuzz-style)"
+
+[[outputs]]
+id = "uPdCrBVj-D9HLNdW4egXS"
+uri = "file://screenshots/final-app-mvp.jpg"
+type = "image"
+title = "App — MVP Race (Top 15 + Stats tab)"
+description = "App — MVP Race (Top 15 + Stats tab)"
+
+[[outputs]]
+id = "NMbQn2bXUzk48HJ7x6Oct"
+uri = "file://screenshots/final-app-home.jpg"
+type = "image"
+title = "App — Home (Media strip, नया polish)"
+description = "App — Home (Media strip, नया polish)"
+
+[[outputs]]
+id = "GvVJaxeQu6GNpCC1Xf85l"
+uri = "file://screenshots/final-app-points.jpg"
+type = "image"
+title = "App — Points Table (Group A/B, गोल कोने)"
+description = "App — Points Table (Group A/B, गोल कोने)"
+
+[[outputs]]
+id = "uHvoPMvyB1WfZE6Tsgp3m"
+uri = "file://screenshots/final-app-ai.jpg"
+type = "image"
+title = "App — BCPL AI (नए quick chips)"
+description = "App — BCPL AI (नए quick chips)"
