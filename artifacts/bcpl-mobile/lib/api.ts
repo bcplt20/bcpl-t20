@@ -348,6 +348,21 @@ export function getMyResult(token: string): Promise<Phase1Result> {
   return apiFetch('/results/me', { token });
 }
 
+// ── Trial pass (digital QR pass for the physical trial) ─────────────────────
+export interface TrialPassData {
+  player: { name: string; regNumber: string | null; role: string | null; city: string | null };
+  venue: { name: string; city: string | null; address: string | null; mapsUrl: string | null } | null;
+  slot: { batch: string | null; date: string | null; reportingTime: string | null; startTime: string | null } | null;
+  checkedInAt: string | null;
+  assessmentSubmitted: boolean;
+  assessmentAt: string | null;
+  qrDataUrl: string;
+}
+
+export function getTrialPass(token: string): Promise<TrialPassData> {
+  return apiFetch('/user/trial-pass', { token });
+}
+
 // ── Player classification (playing style) ───────────────────────────────────
 export interface ClassificationValue {
   battingHand?: 'right' | 'left';
