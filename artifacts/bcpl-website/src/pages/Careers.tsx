@@ -358,7 +358,7 @@ export default function Careers() {
             ))}
           </div>
           <p className="cr-sec-sub" style={{ marginTop: 16 }}>
-            {t('Shortlisted candidates typically hear from us within 10 working days.', 'Shortlist हुए candidates को आम तौर पर 10 working days में जवाब मिलता है।')}
+            {t('Our team reviews every application and reaches out to shortlisted candidates.', 'हमारी team हर application देखती है और shortlist हुए candidates से संपर्क करती है।')}
           </p>
         </div>
       </section>
@@ -401,8 +401,8 @@ export default function Careers() {
           <div className="job-card" style={{ textAlign: 'center' }}>
             <h3 className="job-title" style={{ marginTop: 0 }}>{t('How to apply', 'Apply कैसे करें')}</h3>
             <p style={{ fontSize: 14.5, lineHeight: 1.75, color: 'rgba(255,255,255,0.8)', fontFamily: 'Inter,sans-serif', maxWidth: 640, margin: '0 auto 16px' }}>
-              {t(`Email your resume (and portfolio, if applicable) to ${APPLY_EMAIL} with the role name in the subject line. Shortlisted candidates will hear from us within 10 working days.`,
-                 `अपना resume (और portfolio, अगर हो) ${APPLY_EMAIL} पर भेजें — subject में role का नाम लिखें। Shortlist हुए candidates को 10 working days में जवाब मिलेगा।`)}
+              {t(`Email your resume (and portfolio, if applicable) to ${APPLY_EMAIL} with the role name in the subject line. Our team reviews every application and contacts shortlisted candidates.`,
+                 `अपना resume (और portfolio, अगर हो) ${APPLY_EMAIL} पर भेजें — subject में role का नाम लिखें। हमारी team हर application देखती है और shortlist हुए candidates से संपर्क करती है।`)}
             </p>
             <a className="apply-btn" href={`mailto:${APPLY_EMAIL}?subject=Job Application — BCPL`}>{APPLY_EMAIL}</a>
           </div>
