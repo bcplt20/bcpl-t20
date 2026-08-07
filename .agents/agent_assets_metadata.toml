@@ -221,3 +221,10 @@ uri = "file://screenshots/app-home-new.jpg"
 type = "image"
 title = "App — नया Home"
 description = "Declutter के बाद home — Fan Voting/MVP cards, floating AI button, नया tab bar।"
+
+[[outputs]]
+id = "rV6qB0cFR-DX-uz0tAPFi"
+uri = "file://screenshots/app-home-sponsors-names.jpg"
+type = "image"
+title = "App — Home पर Sponsors + floating AI button"
+description = "Home के सबसे नीचे tier-wise sponsors (tap करने पर उनकी website खुलती है), और AI button अब tab bar के ऊपर साफ़ float करता है।"

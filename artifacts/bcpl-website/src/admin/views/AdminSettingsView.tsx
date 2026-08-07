@@ -37,6 +37,7 @@ export const ALL_SECTIONS = [
   { id:"content_cal",     label:"Content Calendar",      group:"Growth"    },
   { id:"matches",         label:"Matches",               group:"League"    },
   { id:"live_scoring",    label:"Live Scoring",          group:"League"    },
+  { id:"mvp_points",      label:"MVP Points",            group:"League"    },
   { id:"teams",           label:"Teams",                 group:"League"    },
   { id:"selection",       label:"Selection",             group:"League"    },
   { id:"auction",         label:"Live Auction",          group:"League"    },

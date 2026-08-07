@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, ScrollView, Text, StyleSheet, Pressable } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
-import { Feather } from '@expo/vector-icons';
+import { Feather, Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useColors } from '@/hooks/useColors';
 import { useLang } from '@/context/LanguageContext';
@@ -11,7 +11,7 @@ import { ScreenBackground, GlassAppBar, Card, useAppBarHeight, useBottomNavHeigh
 function PointsHelp() {
   const c = useColors();
   const { t } = useLang();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
 
   if (!open) {
     return (
@@ -24,44 +24,74 @@ function PointsHelp() {
     );
   }
 
-  const Rule = ({ l, v }: { l: string; v: string }) => (
-    <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4 }}>
-      <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 13 }}>{l}</Text>
-      <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 13 }}>{v}</Text>
+  const Rule = ({ l, v, color }: { l: string; v: string; color: string }) => (
+    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: `${color}10`, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 8 }}>
+      <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 13 }}>{l}</Text>
+      <View style={{ backgroundColor: color, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 }}>
+        <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 14 }}>{v}</Text>
+      </View>
     </View>
   );
 
   return (
-    <Card style={{ marginHorizontal: 16, marginTop: 16, marginBottom: 24, gap: 12 }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
-        <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16 }}>
+    <View style={{ marginHorizontal: 16, marginTop: 16, marginBottom: 32, gap: 16 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 18 }}>
           {t('Points System', 'पॉइंट्स सिस्टम')}
         </Text>
-        <Pressable onPress={() => setOpen(false)} hitSlop={10}>
-          <Feather name="x" size={20} color={c.sub} />
+        <Pressable onPress={() => setOpen(false)} hitSlop={10} style={{ backgroundColor: c.card2, padding: 6, borderRadius: 16 }}>
+          <Feather name="chevron-up" size={20} color={c.sub} />
         </Pressable>
       </View>
-      <View style={{ gap: 4 }}>
-        <Rule l={t('Every Run', 'हर रन')} v="+1" />
-        <Rule l={t('Every Four', 'हर चौका')} v="+1" />
-        <Rule l={t('Every Six', 'हर छक्का')} v="+2" />
-        <Rule l={t('30 / 50 / 100 Runs', '30 / 50 / 100 रन')} v="+4 / +8 / +16" />
-        <Rule l={t('Duck (0 runs)', 'डक (0 रन)')} v="−2" />
-      </View>
-      <View style={{ height: 1, backgroundColor: c.line }} />
-      <View style={{ gap: 4 }}>
-        <Rule l={t('Every Wicket', 'हर विकेट')} v="+25" />
-        <Rule l={t('Bowled / LBW Bonus', 'बोल्ड / LBW बोनस')} v="+8" />
-        <Rule l={t('3 / 4 / 5 Wickets', '3 / 4 / 5 विकेट')} v="+4 / +8 / +16" />
-        <Rule l={t('Maiden Over', 'मेडन ओवर')} v="+12" />
-      </View>
-      <View style={{ height: 1, backgroundColor: c.line }} />
-      <View style={{ gap: 4 }}>
-        <Rule l={t('Catch', 'कैच')} v="+8" />
-        <Rule l={t('Stumping', 'स्टंपिंग')} v="+12" />
-        <Rule l={t('Run Out (Direct / Assist)', 'रन आउट (डायरेक्ट / असिस्ट)')} v="+12 / +6" />
-      </View>
-    </Card>
+
+      {/* Batting */}
+      <Card padding={16} style={{ borderColor: `${c.coral}30`, borderWidth: 1 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+          <View style={{ backgroundColor: c.coral, width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center' }}>
+            <Ionicons name="baseball" size={16} color="#fff" />
+          </View>
+          <Text style={{ color: c.coral, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, textTransform: 'uppercase', letterSpacing: 0.5 }}>{t('Batting', 'बल्लेबाज़ी')}</Text>
+        </View>
+        <View style={{ gap: 8 }}>
+          <Rule l={t('Every Run', 'हर रन')} v="+1" color={c.coral} />
+          <Rule l={t('Every Four', 'हर चौका')} v="+1" color={c.coral} />
+          <Rule l={t('Every Six', 'हर छक्का')} v="+2" color={c.coral} />
+          <Rule l={t('30 / 50 / 100 Runs', '30 / 50 / 100 रन')} v="+4 / +8 / +16" color={c.coral} />
+          <Rule l={t('Duck (0 runs)', 'डक (0 रन)')} v="−2" color="#EF4444" />
+        </View>
+      </Card>
+
+      {/* Bowling */}
+      <Card padding={16} style={{ borderColor: `${c.violet}30`, borderWidth: 1 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+          <View style={{ backgroundColor: c.violet, width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center' }}>
+            <Ionicons name="baseball-outline" size={16} color="#fff" />
+          </View>
+          <Text style={{ color: c.violet, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, textTransform: 'uppercase', letterSpacing: 0.5 }}>{t('Bowling', 'गेंदबाज़ी')}</Text>
+        </View>
+        <View style={{ gap: 8 }}>
+          <Rule l={t('Every Wicket', 'हर विकेट')} v="+25" color={c.violet} />
+          <Rule l={t('Bowled / LBW Bonus', 'बोल्ड / LBW बोनस')} v="+8" color={c.violet} />
+          <Rule l={t('3 / 4 / 5 Wickets', '3 / 4 / 5 विकेट')} v="+4 / +8 / +16" color={c.violet} />
+          <Rule l={t('Maiden Over', 'मेडन ओवर')} v="+12" color={c.violet} />
+        </View>
+      </Card>
+
+      {/* Fielding */}
+      <Card padding={16} style={{ borderColor: `${c.cyan}30`, borderWidth: 1 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+          <View style={{ backgroundColor: c.cyan, width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center' }}>
+            <Ionicons name="hand-left" size={16} color="#fff" />
+          </View>
+          <Text style={{ color: c.cyan, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, textTransform: 'uppercase', letterSpacing: 0.5 }}>{t('Fielding', 'फील्डिंग')}</Text>
+        </View>
+        <View style={{ gap: 8 }}>
+          <Rule l={t('Catch', 'कैच')} v="+8" color={c.cyan} />
+          <Rule l={t('Stumping', 'स्टंपिंग')} v="+12" color={c.cyan} />
+          <Rule l={t('Run Out (Direct / Assist)', 'रन आउट (डायरेक्ट / असिस्ट)')} v="+12 / +6" color={c.cyan} />
+        </View>
+      </Card>
+    </View>
   );
 }
 

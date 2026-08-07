@@ -32,7 +32,7 @@ function MatchCountdown({ scheduledAt }: { scheduledAt?: string | null }) {
 
   if (!scheduledAt) return null;
   const diff = new Date(scheduledAt).getTime() - now;
-  if (diff <= 0 || diff > 7 * 86400000) return null; // Don't show if > 7 days or past
+  if (diff <= 0) return null;
 
   const hours = Math.floor(diff / 3600000);
   const days = Math.floor(hours / 24);
@@ -43,14 +43,17 @@ function MatchCountdown({ scheduledAt }: { scheduledAt?: string | null }) {
     text = `IN ${days}D ${String(remainingHours).padStart(2,'0')}H`;
   } else if (hours > 0) {
     const mins = Math.floor((diff % 3600000) / 60000);
-    text = `${String(hours).padStart(2,'0')}:${String(mins).padStart(2,'0')}`;
+    const secs = Math.floor((diff % 60000) / 1000);
+    text = `${String(hours).padStart(2,'0')}:${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
   } else {
-    text = `SOON`;
+    const mins = Math.floor((diff % 3600000) / 60000);
+    const secs = Math.floor((diff % 60000) / 1000);
+    text = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
   }
 
   return (
-    <View style={[styles.countdownPill, { backgroundColor: c.card2, opacity: 0.8 }]}>
-      <Text style={[styles.countdownText, { color: c.ink }]}>{text}</Text>
+    <View style={[styles.countdownPill, { backgroundColor: c.card2 }]}>
+      <Text style={[styles.countdownText, { color: c.cyan }]}>{text}</Text>
     </View>
   );
 }
@@ -74,14 +77,14 @@ export const MatchCard = React.memo(({ match }: { match: Match }) => {
     >
       <Card style={[styles.card, { padding: 0, overflow: 'hidden' }]} border={true} padding={0}>
         <LinearGradient
-          colors={[`${getTeamColor(match.team1)}${c.isDark ? '60' : '25'}`, 'transparent']}
+          colors={[`${getTeamColor(match.team1)}${c.isDark ? '40' : '05'}`, 'transparent']}
           start={{ x: 0, y: 0.5 }}
           end={{ x: 0.5, y: 0.5 }}
           style={StyleSheet.absoluteFill}
           pointerEvents="none"
         />
         <LinearGradient
-          colors={[`${getTeamColor(match.team2)}${c.isDark ? '60' : '25'}`, 'transparent']}
+          colors={[`${getTeamColor(match.team2)}${c.isDark ? '40' : '05'}`, 'transparent']}
           start={{ x: 1, y: 0.5 }}
           end={{ x: 0.5, y: 0.5 }}
           style={StyleSheet.absoluteFill}

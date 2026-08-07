@@ -102,12 +102,21 @@ function UpcomingPanel({ live }: { live: LiveMatch }) {
           </Text>
         </View>
         
-        <View style={[styles.vsContainer, { flex: 1, paddingHorizontal: 10 }]}>
-          <LinearGradient colors={['transparent', c.line, 'transparent']} style={styles.vsLineVert} />
-          <View style={[styles.vsChip, { backgroundColor: c.card2, borderColor: c.line }]}>
-            <Text style={[styles.vsText, { color: c.sub }]}>VS</Text>
+        <View style={[styles.vsContainer, { flex: 1, paddingHorizontal: 10, flexDirection: 'column', gap: 8 }]}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <LinearGradient colors={['transparent', c.line, 'transparent']} style={styles.vsLineVert} />
+            <View style={[styles.vsChip, { backgroundColor: c.card2, borderColor: c.line }]}>
+              <Text style={[styles.vsText, { color: c.sub }]}>VS</Text>
+            </View>
+            <LinearGradient colors={['transparent', c.line, 'transparent']} style={styles.vsLineVert} />
           </View>
-          <LinearGradient colors={['transparent', c.line, 'transparent']} style={styles.vsLineVert} />
+          {parts ? (
+            <View style={{ backgroundColor: `${c.cyan}15`, paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12, borderWidth: 1, borderColor: `${c.cyan}40` }}>
+              <Text style={{ color: c.cyan, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 14, letterSpacing: 0.5, fontVariant: ['tabular-nums'] }}>
+                {parts.d > 0 ? `${parts.d}D ${pad2(parts.h)}H` : `${pad2(parts.h)}:${pad2(parts.m)}:${pad2(parts.s)}`}
+              </Text>
+            </View>
+          ) : null}
         </View>
 
         <View style={{ alignItems: 'center', gap: 12, width: 110 }}>
@@ -120,27 +129,6 @@ function UpcomingPanel({ live }: { live: LiveMatch }) {
           </Text>
         </View>
       </View>
-
-      {parts ? (
-        <>
-          <Text style={{ color: c.sub, fontSize: 13, letterSpacing: 1.5, fontFamily: 'PlusJakartaSans_700Bold', marginTop: 12 }}>
-            {t('MATCH STARTS IN', 'मैच शुरू होने में')}
-          </Text>
-          <View style={{ flexDirection: 'row', gap: 12 }}>
-            {[
-              { v: parts.d, l: t('DAYS', 'दिन') },
-              { v: parts.h, l: t('HRS', 'घंटे') },
-              { v: parts.m, l: t('MIN', 'मिनट') },
-              { v: parts.s, l: t('SEC', 'सेकंड') },
-            ].map((u) => (
-              <View key={u.l} style={[styles.cdBox, { borderColor: 'rgba(0, 229, 255,0.4)', backgroundColor: 'rgba(0, 229, 255,0.1)' }]}>
-                <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 26 }}>{pad2(u.v)}</Text>
-                <Text style={{ color: c.cyan, fontSize: 11, letterSpacing: 1, fontFamily: 'PlusJakartaSans_700Bold', marginTop: 4 }}>{u.l}</Text>
-              </View>
-            ))}
-          </View>
-        </>
-      ) : null}
 
       {live.scheduledAt ? (
         <Text style={{ color: c.sub, fontSize: 14, fontFamily: 'PlusJakartaSans_600SemiBold', marginTop: 8 }}>

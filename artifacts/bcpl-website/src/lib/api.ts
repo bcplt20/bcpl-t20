@@ -1025,3 +1025,32 @@ export const adminDeletePollOption = (id: string, optId: string) =>
   adminReq<{ success: boolean }>("DELETE", `/admin/polls/${id}/options/${optId}`);
 export const adminGetPollResults = (id: string) =>
   adminReq<{ pollId: string; slug: string; status: string; totalVotes: number; results: AdminPollResult[] }>("GET", `/admin/polls/${id}/results`);
+
+/* ─── Admin: MVP / Fantasy points config (adminReq / session token) ─── */
+export type MvpPointsConfig = {
+  batting: {
+    run: number; fourBonus: number; sixBonus: number;
+    milestone30: number; milestone50: number; milestone100: number; duck: number;
+  };
+  bowling: {
+    wicket: number; bowledLbwBonus: number;
+    haul3: number; haul4: number; haul5: number; maidenOver: number;
+  };
+  fielding: {
+    catch: number; threeCatchBonus: number;
+    stumping: number; directRunout: number; assistedRunout: number;
+  };
+};
+
+/** Shipped Dream11-style defaults (owner's spec) — kept in sync with the server. */
+export const DEFAULT_MVP_POINTS_CONFIG: MvpPointsConfig = {
+  batting:  { run: 1, fourBonus: 1, sixBonus: 2, milestone30: 4, milestone50: 8, milestone100: 16, duck: -2 },
+  bowling:  { wicket: 25, bowledLbwBonus: 8, haul3: 4, haul4: 8, haul5: 16, maidenOver: 12 },
+  fielding: { catch: 8, threeCatchBonus: 4, stumping: 12, directRunout: 12, assistedRunout: 6 },
+};
+
+export const adminGetMvpPointsConfig = () =>
+  adminReq<{ key: string; value: MvpPointsConfig | null; updatedAt: string | null }>(
+    "GET", "/settings/admin/mvp_points_config");
+export const adminPutMvpPointsConfig = (value: MvpPointsConfig) =>
+  adminReq<{ success: boolean }>("PUT", "/settings/admin/mvp_points_config", { value });

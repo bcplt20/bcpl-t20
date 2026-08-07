@@ -18,6 +18,7 @@ import AppMediaView         from "./views/AppMediaView";
 import CMSView              from "./views/CMSView";
 import RolesView            from "./views/RolesView";
 import LiveScoringView      from "./views/LiveScoringView";
+import MvpPointsView        from "./views/MvpPointsView";
 import PollsView            from "./views/PollsView";
 // 15 New Views
 import PlayerProfilesView   from "./views/PlayerProfilesView";
@@ -81,6 +82,7 @@ const NAV: NavGroup[] = [
   { title: "COMPETITION", items: [
     { id:"matches",      label:"Matches",           icon:"◐" },
     { id:"live_scoring", label:"Live Scoring",      icon:"●" },
+    { id:"mvp_points",   label:"MVP Points",        icon:"★" },
   ]},
   { title: "FINANCE", items: [
     { id:"finance",      label:"Finance & GST",     icon:"◈" },
@@ -141,6 +143,7 @@ function renderView(id: string, navigate: (viewId: string, payload?: AdminNavPay
     case "news":           return <NewsView />;
     case "matches":        return <MatchesView onOpenScoring={() => navigate("live_scoring")} />;
     case "live_scoring":   return <LiveScoringView />;
+    case "mvp_points":     return <MvpPointsView />;
     case "teams":          return <TeamsView />;
     case "selection":      return <SelectionView />;
     case "auction":        return <AuctionView />;

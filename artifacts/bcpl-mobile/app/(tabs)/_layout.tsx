@@ -9,24 +9,38 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLang } from '@/context/LanguageContext';
 
-const TabIcon = ({ name, active, size = 26, color, c }: { name: string, active: boolean, size?: number, color: string, c: any }) => {
+const TabIcon = ({ name, active, size = 22, color, c }: { name: string, active: boolean, size?: number, color: string, c: any }) => {
   let iconName: any = 'home-outline';
+  let label = 'Home';
   
-  if (name === 'home') iconName = active ? 'home' : 'home-outline';
-  if (name === 'matches') iconName = active ? 'calendar' : 'calendar-outline';
-  if (name === 'scorer') iconName = active ? 'trophy' : 'trophy-outline';
-  if (name === 'more') iconName = active ? 'menu' : 'menu-outline';
-
-  if (active) {
-    return (
-      <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-        <View style={{ position: 'absolute', width: size * 1.6, height: size * 1.6, borderRadius: size * 0.8, backgroundColor: c.magenta, opacity: 0.15 }} />
-        <Ionicons name={iconName} size={size} color={c.magenta} />
-      </View>
-    );
+  if (name === 'home') {
+    iconName = active ? 'home' : 'home-outline';
+    label = 'Home';
+  } else if (name === 'matches') {
+    iconName = active ? 'calendar' : 'calendar-outline';
+    label = 'Schedule';
+  } else if (name === 'scorer') {
+    iconName = active ? 'reader' : 'reader-outline';
+    label = 'Scoring';
+  } else if (name === 'media') {
+    iconName = active ? 'images' : 'images-outline';
+    label = 'Photos';
+  } else if (name === 'more') {
+    iconName = active ? 'menu' : 'menu-outline';
+    label = 'Menu';
   }
 
-  return <Ionicons name={iconName} size={size} color={color} />;
+  const textColor = active ? c.magenta : color;
+
+  return (
+    <View style={{ alignItems: 'center', justifyContent: 'center', gap: 4, width: 60 }}>
+      {active && <View style={{ position: 'absolute', width: size * 1.6, height: size * 1.6, borderRadius: size * 0.8, backgroundColor: c.magenta, opacity: 0.1, top: -4 }} />}
+      <Ionicons name={iconName} size={size} color={textColor} />
+      <Text style={{ color: textColor, fontFamily: active ? 'PlusJakartaSans_700Bold' : 'PlusJakartaSans_600SemiBold', fontSize: 10, textAlign: 'center' }}>
+        {label}
+      </Text>
+    </View>
+  );
 }
 
 function RegisterFabButton({ onPress }: { onPress: () => void }) {
@@ -125,7 +139,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
   const bottomPadding = isWeb ? 20 : Math.max(20, insets.bottom + 8);
   const barHeight = 68;
 
-  const routes = state.routes.filter((r: any) => !['points', 'news'].includes(r.name));
+  const routes = state.routes.filter((r: any) => !['points', 'news', 'media'].includes(r.name));
 
   return (
     <View style={{
@@ -191,7 +205,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
               accessibilityState={{ selected: isFocused }}
               accessibilityLabel={
                 route.name === 'index' ? t('Home', 'होम') :
-                route.name === 'matches' ? t('Matches', 'मैच') :
+                route.name === 'matches' ? t('Schedule', 'शेड्यूल') :
                 route.name === 'scorer' ? t('Scoring', 'स्कोरिंग') :
                 t('Menu', 'मेनू')
               }
@@ -200,10 +214,10 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
               <View style={{ 
                 alignItems: 'center', 
                 justifyContent: 'center',
-                paddingHorizontal: 16,
-                paddingVertical: 8,
+                paddingHorizontal: 4,
+                paddingVertical: 4,
               }}>
-                <TabIcon name={iconName} active={isFocused} color={c.sub} c={c} size={24} />
+                <TabIcon name={iconName} active={isFocused} color={c.sub} c={c} size={22} />
               </View>
             </Pressable>
           );

@@ -46,58 +46,118 @@ function RankBadge({ rank }: { rank: number }) {
   );
 }
 
-/* Fantasy scoring rules (owner-provided). */
-function PointsRules() {
+/* ── Points infographic: three colourful category cards, each rule a chip
+   with the value in a bold badge. Always visible under the leaderboard. ── */
+type PointRule = { en: string; hi: string; val: number };
+type PointCat = { titleEn: string; titleHi: string; icon: string; accent: string; soft: string; rules: PointRule[] };
+
+const POINT_CATS: PointCat[] = [
+  {
+    titleEn: "Batting", titleHi: "बैटिंग", icon: "🏏",
+    accent: "#FF6B3D", soft: "rgba(255,107,61,",
+    rules: [
+      { en: "Each run", hi: "हर run", val: 1 },
+      { en: "Four (boundary)", hi: "चौका (four)", val: 1 },
+      { en: "Six", hi: "छक्का (six)", val: 2 },
+      { en: "30 runs", hi: "30 run", val: 4 },
+      { en: "Fifty (50)", hi: "अर्धशतक (50)", val: 8 },
+      { en: "Century (100)", hi: "शतक (100)", val: 16 },
+      { en: "Duck (out on 0)", hi: "डक (0 पर out)", val: -2 },
+    ],
+  },
+  {
+    titleEn: "Bowling", titleHi: "बॉलिंग", icon: "🎯",
+    accent: "#7B8CFF", soft: "rgba(123,140,255,",
+    rules: [
+      { en: "Each wicket", hi: "हर wicket", val: 25 },
+      { en: "Bowled / LBW bonus", hi: "Bowled / LBW bonus", val: 8 },
+      { en: "3 wickets", hi: "3 wicket", val: 4 },
+      { en: "4 wickets", hi: "4 wicket", val: 8 },
+      { en: "5 wickets", hi: "5 wicket", val: 16 },
+      { en: "Maiden over", hi: "Maiden over", val: 12 },
+    ],
+  },
+  {
+    titleEn: "Fielding", titleHi: "फील्डिंग", icon: "🧤",
+    accent: "#3ED6A6", soft: "rgba(62,214,166,",
+    rules: [
+      { en: "Catch", hi: "कैच (catch)", val: 8 },
+      { en: "3 catches bonus", hi: "3 catch bonus", val: 4 },
+      { en: "Stumping", hi: "स्टंपिंग", val: 12 },
+      { en: "Run-out (direct)", hi: "रन-आउट (direct)", val: 12 },
+      { en: "Run-out (assist)", hi: "रन-आउट (assist)", val: 6 },
+    ],
+  },
+];
+
+function PointsInfographic() {
   const { t } = useLang();
-  const [open, setOpen] = useState(false);
-  const Row = ({ en, hi }: { en: string; hi: string }) => (
-    <li style={{ padding: "5px 0", borderBottom: "1px solid rgba(255,255,255,.07)", fontSize: 13.5, color: TXT2 }}>{t(en, hi)}</li>
-  );
   return (
-    <div style={{ background: PANEL, border: `1px solid ${LINE}`, borderRadius: 16, marginTop: 24, overflow: "hidden" }}>
-      <button type="button" onClick={() => setOpen(o => !o)}
-        style={{ width: "100%", textAlign: "left", padding: "16px 20px", background: "transparent", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-        <span style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 17, color: "#fff" }}>
-          {t("Points कैसे मिलते हैं", "Points कैसे मिलते हैं")}
-        </span>
-        <span style={{ color: ORANGE, fontSize: 20, fontWeight: 800, transform: open ? "rotate(45deg)" : "none", transition: "transform .2s" }}>+</span>
-      </button>
-      {open && (
-        <div style={{ padding: "4px 20px 18px", display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
-          <div>
-            <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 12, letterSpacing: ".08em", color: GOLD, textTransform: "uppercase", margin: "8px 0" }}>{t("Batting", "बैटिंग")}</div>
-            <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
-              <Row en="Each run: +1" hi="प्रत्येक रन: +1" />
-              <Row en="Each four: +1 (bonus)" hi="प्रत्येक चौका: +1 (बोनस)" />
-              <Row en="Each six: +2 (bonus)" hi="प्रत्येक छक्का: +2 (बोनस)" />
-              <Row en="30 runs: +4" hi="30 रन: +4" />
-              <Row en="Half-century (50): +8" hi="अर्धशतक (50): +8" />
-              <Row en="Century (100): +16" hi="शतक (100): +16" />
-              <Row en="Duck (out on 0): −2" hi="डक (0 पर आउट): −2" />
-            </ul>
-          </div>
-          <div>
-            <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 12, letterSpacing: ".08em", color: GOLD, textTransform: "uppercase", margin: "8px 0" }}>{t("Bowling", "बॉलिंग")}</div>
-            <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
-              <Row en="Each wicket: +25" hi="प्रत्येक विकेट: +25" />
-              <Row en="Bowled / LBW bonus: +8" hi="बोल्ड / LBW बोनस: +8" />
-              <Row en="3 wickets: +4" hi="3 विकेट: +4" />
-              <Row en="4 wickets: +8" hi="4 विकेट: +8" />
-              <Row en="5 wickets: +16" hi="5 विकेट: +16" />
-              <Row en="Maiden over: +12" hi="मेडन ओवर: +12" />
-            </ul>
-          </div>
-          <div>
-            <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 12, letterSpacing: ".08em", color: GOLD, textTransform: "uppercase", margin: "8px 0" }}>{t("Fielding", "फील्डिंग")}</div>
-            <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
-              <Row en="Catch: +8" hi="कैच: +8" />
-              <Row en="Stumping: +12" hi="स्टंपिंग: +12" />
-              <Row en="Run-out (direct): +12" hi="रन-आउट (डायरेक्ट): +12" />
-              <Row en="Run-out (assist): +6" hi="रन-आउट (असिस्ट): +6" />
-            </ul>
-          </div>
+    <div style={{ marginTop: 40 }}>
+      <div style={{ textAlign: "center", marginBottom: 22 }}>
+        <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 12, letterSpacing: ".14em", color: ORANGE, textTransform: "uppercase", marginBottom: 8 }}>
+          {t("Scoring Guide", "स्कोरिंग गाइड")}
         </div>
-      )}
+        <h2 style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: "clamp(22px,4vw,34px)", color: "#fff" }}>
+          {t("Points कैसे मिलते हैं", "Points कैसे मिलते हैं")}
+        </h2>
+      </div>
+
+      <div style={{ display: "grid", gap: 18, gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
+        {POINT_CATS.map(cat => (
+          <div key={cat.titleEn} style={{
+            background: PANEL, borderRadius: 18, overflow: "hidden",
+            border: `1px solid ${cat.soft}.35)`,
+            boxShadow: `0 12px 30px rgba(0,0,0,.28)`,
+          }}>
+            {/* Card header with accent band */}
+            <div style={{
+              display: "flex", alignItems: "center", gap: 12, padding: "16px 18px",
+              background: `linear-gradient(100deg, ${cat.soft}.28) 0%, ${cat.soft}.06) 60%, transparent 100%)`,
+              borderBottom: `2px solid ${cat.soft}.5)`,
+            }}>
+              <span style={{
+                width: 42, height: 42, borderRadius: 12, flexShrink: 0,
+                display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 22,
+                background: `${cat.soft}.16)`, border: `1px solid ${cat.soft}.4)`,
+              }}>{cat.icon}</span>
+              <span style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 19, color: "#fff", letterSpacing: ".01em" }}>
+                {t(cat.titleEn, cat.titleHi)}
+              </span>
+            </div>
+
+            {/* Rule chips */}
+            <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 9 }}>
+              {cat.rules.map(r => {
+                const neg = r.val < 0;
+                return (
+                  <div key={r.en} style={{
+                    display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12,
+                    padding: "10px 12px", borderRadius: 11,
+                    background: `${cat.soft}.06)`,
+                    border: `1px solid ${cat.soft}.18)`,
+                  }}>
+                    <span style={{ fontSize: 14, fontWeight: 600, color: TXT, lineHeight: 1.3 }}>
+                      {t(r.en, r.hi)}
+                    </span>
+                    <span style={{
+                      flexShrink: 0, minWidth: 46, textAlign: "center",
+                      fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 15,
+                      fontVariantNumeric: "tabular-nums",
+                      padding: "5px 10px", borderRadius: 100,
+                      color: neg ? "#FF7A7A" : "#0E1A33",
+                      background: neg ? "rgba(255,90,90,.16)" : cat.accent,
+                      border: neg ? "1px solid rgba(255,90,90,.5)" : "none",
+                    }}>
+                      {neg ? "−" : "+"}{Math.abs(r.val)}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -250,7 +310,7 @@ export function MVP() {
           </div>
         )}
 
-        <PointsRules />
+        <PointsInfographic />
 
         <div style={{ textAlign: "center", marginTop: 34 }}>
           <Link href="/vote" style={{ color: ORANGE, textDecoration: "none", fontWeight: 700, fontSize: 14 }}>

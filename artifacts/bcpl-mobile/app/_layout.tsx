@@ -54,7 +54,7 @@ function FloatingAiButton() {
   // If we are in the tabs group, float above the bottom tab bar.
   // The tab bar is roughly 60px tall + bottom inset.
   const inTabs = segments[0] === '(tabs)';
-  const bottomMargin = inTabs ? (60 + insets.bottom + 16) : Math.max(insets.bottom + 16, 24);
+  const bottomMargin = inTabs ? (60 + insets.bottom + 24) : Math.max(insets.bottom + 24, 32);
 
   return (
     <Pressable
@@ -70,15 +70,15 @@ function FloatingAiButton() {
         justifyContent: 'center',
         zIndex: 9999,
         transform: [{ scale: pressed ? 0.95 : 1 }],
-        shadowColor: c.cyan,
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.4,
-        shadowRadius: 8,
-        elevation: 8,
+        shadowColor: c.violet,
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.5,
+        shadowRadius: 12,
+        elevation: 10,
       })}
     >
-      <LinearGradient colors={['#5B2BF0', '#00DCF5']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ ...StyleSheet.absoluteFillObject, borderRadius: 28 }} />
-      <Feather name="message-circle" size={26} color="#fff" />
+      <LinearGradient colors={['#7C5CFF', '#00DCF5']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ ...StyleSheet.absoluteFillObject, borderRadius: 28 }} />
+      <Ionicons name="sparkles" size={26} color="#fff" />
     </Pressable>
   );
 }
