@@ -24,7 +24,7 @@ const { default: app } = await import("../src/app");
 const { db } = await import("@workspace/db");
 const {
   usersTable, registrationsTable, phase1PaymentsTable, phase2PaymentsTable,
-  phase1VideosTable, kycRecordsTable, registrationDraftsTable,
+  phase1VideosTable, kycRecordsTable, registrationDraftsTable, phase1EvaluationsTable,
 } = await import("@workspace/db/schema");
 const { signAdminToken } = await import("../src/routes/adminUsers");
 
@@ -106,6 +106,8 @@ beforeAll(async () => {
 
 afterAll(async () => {
   if (regIds.length) {
+    // dev API server's background pipeline may create evaluations for our registrations
+    await db.delete(phase1EvaluationsTable).where(inArray(phase1EvaluationsTable.registrationId, regIds));
     await db.delete(kycRecordsTable).where(inArray(kycRecordsTable.registrationId, regIds));
     await db.delete(phase1VideosTable).where(inArray(phase1VideosTable.registrationId, regIds));
     await db.delete(phase1PaymentsTable).where(inArray(phase1PaymentsTable.registrationId, regIds));
