@@ -183,6 +183,15 @@ function MoreMenu() {
   return (
     <View style={{ gap: 24 }}>
       <View>
+        <Card padding={16} border={true}>
+          <IconRow 
+            icon="watch" title={t('Scorer', 'स्कोरर')} subtitle={t('Score your local matches', 'अपना मैच स्कोर करें')}
+            colors={['#5B2BF0', '#00DCF5']} onPress={() => router.push('/scorer')} 
+          />
+        </Card>
+      </View>
+
+      <View>
         <Text style={[styles.cardTitle, { color: c.ink, marginBottom: 12 }]}>{t('League & Rules', 'लीग और नियम')}</Text>
         <Card padding={16} border={true}>
           <IconRow 

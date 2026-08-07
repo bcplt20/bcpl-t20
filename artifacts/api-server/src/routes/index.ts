@@ -34,6 +34,7 @@ import referralProgramRouter from "./referralProgram";
 import { adminSelectionRouter } from "./selection";
 import aiRouter, { adminAiRouter } from "./ai";
 import { newsRouter, adminNewsRouter } from "./news";
+import communityRouter from "./community";
 
 const router: IRouter = Router();
 
@@ -51,6 +52,7 @@ router.use("/results",       resultsRouter);
 // League
 router.use("/matches",       matchesRouter);
 router.use("/scoring",       scoringRouter);
+router.use("/community",     communityRouter); // community scorer (any logged-in user)
 router.use("/points-table",  pointsRouter);
 router.use("/teams",         teamsRouter);
 router.use("/sponsors",      sponsorsRouter); // public sanitized sponsor list

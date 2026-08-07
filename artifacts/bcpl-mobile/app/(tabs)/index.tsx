@@ -514,6 +514,31 @@ export default function HomeScreen() {
           </Pressable>
         </View>
 
+        {/* Community Scorer */}
+        <View style={{ paddingHorizontal: 16, marginTop: 12 }}>
+          <Pressable
+            onPress={() => router.push('/scorer')}
+            testID="home-scorer"
+            style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1 })}
+          >
+            <Card style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14 }}>
+              <View style={{ width: 42, height: 42, borderRadius: 21, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
+                <LinearGradient colors={['#5B2BF0', '#00DCF5']} style={StyleSheet.absoluteFill} />
+                <Ionicons name="stopwatch" size={20} color="#fff" />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 15 }}>
+                  {t('Community Scorer', 'कम्युनिटी स्कोरर')}
+                </Text>
+                <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 12, marginTop: 2 }}>
+                  {t('Score your local matches — free for everyone', 'अपने लोकल मैच स्कोर करें — सबके लिए फ्री')}
+                </Text>
+              </View>
+              <Feather name="chevron-right" size={18} color={c.sub} />
+            </Card>
+          </Pressable>
+        </View>
+
         {/* BCPL so far — league in numbers */}
         <View style={{ paddingHorizontal: 16, marginTop: 32 }}>
           <SectionHeader title={t('The league in numbers', 'आँकड़ों में लीग')} />

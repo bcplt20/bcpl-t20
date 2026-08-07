@@ -69,6 +69,9 @@ function RootLayoutNav() {
         <Stack.Screen name="kyc" options={{ title: 'KYC', headerShown: false }} />
         <Stack.Screen name="profile" options={{ title: 'Profile', headerShown: false }} />
         <Stack.Screen name="classification" options={{ title: 'Playing Style', headerShown: false }} />
+        <Stack.Screen name="scorer/index" options={{ title: 'Scorer', headerShown: false }} />
+        <Stack.Screen name="scorer/new" options={{ title: 'New Match', headerShown: false }} />
+        <Stack.Screen name="scorer/[id]" options={{ title: 'Scoring', headerShown: false }} />
       </Stack>
     </>
   );
