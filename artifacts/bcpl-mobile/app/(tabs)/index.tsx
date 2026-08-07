@@ -69,7 +69,7 @@ function CountUpStat({ value, style }: { value: string; style?: any }) {
   );
 }
 
-function RegCountdown() {
+const RegCountdown = React.memo(() => {
   const c = useColors();
   const { t } = useLang();
   const [now, setNow] = React.useState(() => Date.now());
@@ -93,7 +93,7 @@ function RegCountdown() {
       </Text>
     </View>
   );
-}
+});
 
 const HARDCODED_BANNERS: AppBanner[] = [
   { id: '1', title: '₹299 +GST', subtitle: 'Batsman · Bowler · Wicketkeeper', ctaLabel: 'Register Now', ctaHref: '/register', accent: '#5B2BF0', order: 1 },
@@ -123,7 +123,7 @@ function bannerGradient(a?: string): [string, string, string] {
   }
 }
 
-function BannerCarousel({ banners }: { banners: AppBanner[] }) {
+export const BannerCarousel = React.memo(({ banners }: { banners: AppBanner[] }) => {
   const c = useColors();
   const router = useRouter();
   const { t } = useLang();
@@ -264,7 +264,7 @@ function BannerCarousel({ banners }: { banners: AppBanner[] }) {
       </View>
     </View>
   );
-}
+});
 
 const TEAMS_CANON_ORDER = [
   'Rajasthan Scorchers', 'Mumbai Mavericks', 'Chennai Thalaivas', 'Hyderabad Hawks', 'Ahmedabad Lions',

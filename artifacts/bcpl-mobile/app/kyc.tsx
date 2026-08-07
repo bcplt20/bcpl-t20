@@ -468,7 +468,7 @@ export default function KycScreen() {
               <Label c={c} text={t('T-SHIRT SIZE *', 'टी-शर्ट साइज़ *')} />
               <ChipRow options={TSHIRT_OPTS} value={tshirt} onChange={setTshirt} c={c} />
               <View style={{ height: 18 }} />
-              <Label c={c} text={t('TROUSER SIZE *', 'ट्राउज़र साइज़ *')} />
+              <Label c={c} text={t('TROUSER (WAIST INCHES) *', 'ट्राउज़र (कमर इंच) *')} />
               <ChipRow options={['28', '30', '32', '34', '36', '38', '40', '42', '44']} value={trouser} onChange={setTrouser} c={c} />
               <View style={{ height: 18 }} />
               <Label c={c} text={t('SHOE SIZE (UK) *', 'जूते का साइज़ (UK) *')} />

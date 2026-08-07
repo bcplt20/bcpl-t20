@@ -11,6 +11,9 @@ import { ScreenBackground, GlassAppBar, Card, LoadingView, useAppBarHeight } fro
 import { LinearGradient } from 'expo-linear-gradient';
 
 const TSHIRT_OPTS = ['S', 'M', 'L', 'XL', 'XXL'];
+const TROUSER_OPTS = ['28', '30', '32', '34', '36', '38', '40', '42', '44'];
+const SHOE_OPTS = ['4', '5', '6', '7', '8', '9', '10', '11', '12'];
+const HELMET_OPTS = ['S', 'M', 'L', 'XL'];
 const RELATION_OPTS = ['Father', 'Mother', 'Spouse', 'Friend', 'Other'];
 
 function Label({ c, text }: { c: any; text: string }) {
@@ -157,16 +160,16 @@ export default function JerseyBackfillScreen() {
           <ChipRow options={TSHIRT_OPTS} value={tshirt} onChange={setTshirt} c={c} />
           <View style={{ height: 16 }} />
           
-          <Label c={c} text={t('TROUSER SIZE *', 'ट्राउज़र साइज *')} />
-          <TextField c={c} value={trouser} onChange={setTrouser} placeholder="e.g. 32, 34" keyboard="number-pad" maxLength={3} />
+          <Label c={c} text={t('TROUSER (WAIST INCHES) *', 'ट्राउज़र (कमर इंच) *')} />
+          <ChipRow options={TROUSER_OPTS} value={trouser} onChange={setTrouser} c={c} />
           <View style={{ height: 16 }} />
           
           <Label c={c} text={t('SHOE SIZE (UK) *', 'जूते का साइज (UK) *')} />
-          <TextField c={c} value={shoe} onChange={setShoe} placeholder="e.g. 8, 9, 10" keyboard="number-pad" maxLength={2} />
+          <ChipRow options={SHOE_OPTS} value={shoe} onChange={setShoe} c={c} />
           <View style={{ height: 16 }} />
           
           <Label c={c} text={t('HELMET SIZE *', 'हेलमेट साइज *')} />
-          <ChipRow options={['S', 'M', 'L', 'XL']} value={helmet} onChange={setHelmet} c={c} />
+          <ChipRow options={HELMET_OPTS} value={helmet} onChange={setHelmet} c={c} />
 
           <View style={{ height: 32 }} />
           <Text style={{ color: c.ink, fontSize: 16, fontFamily: 'BricolageGrotesque_700Bold', marginBottom: 16 }}>{t('Emergency Contact', 'आपातकालीन संपर्क')}</Text>
