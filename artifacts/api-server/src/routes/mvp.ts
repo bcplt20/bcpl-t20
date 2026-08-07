@@ -22,6 +22,7 @@ import { and, eq, inArray } from "drizzle-orm";
 import { logger } from "../lib/logger";
 import {
   computeMvpPoints, resolveMvpConfig, type ScoredDelivery, type PlayerAggregate,
+  type MvpPointsConfig,
 } from "../lib/mvpPoints";
 
 const router = Router();
@@ -33,6 +34,7 @@ type CacheEntry = {
   computedAt: number;
   players: PlayerAggregate[];
   finalists: [string, string] | null;
+  config: MvpPointsConfig;
 };
 const CACHE_TTL_MS = 60_000;
 const cache = new Map<number, CacheEntry>();
@@ -115,7 +117,7 @@ async function buildLeaderboard(season: number): Promise<CacheEntry> {
     }
   }
 
-  const entry: CacheEntry = { computedAt: Date.now(), players, finalists };
+  const entry: CacheEntry = { computedAt: Date.now(), players, finalists, config };
   cache.set(season, entry);
   return entry;
 }
@@ -129,7 +131,7 @@ router.get("/leaderboard", async (req, res) => {
     const eligibleOnly = String(req.query.eligibleOnly ?? "") === "1"
       || String(req.query.eligibleOnly ?? "").toLowerCase() === "true";
 
-    const { players, finalists } = await buildLeaderboard(season);
+    const { players, finalists, config } = await buildLeaderboard(season);
     const finalTeams = new Set(finalists ?? []);
 
     // players[] arrives sorted by points desc (from computeMvpPoints).
@@ -166,6 +168,9 @@ router.get("/leaderboard", async (req, res) => {
       season,
       leaderboard: ranked,
       finalists,
+      // Live scoring config so public "how points work" guides never go stale
+      // after an admin edits mvp_points_config.
+      pointsConfig: config,
       note: finalists
         ? "Man of the Series (car prize) eligibility is limited to players whose team plays the final. Eligible players are ranked first; non-eligible players follow and are not valid for the car."
         : "No final scheduled yet — Man of the Series eligibility is not decided. finalEligible is false for all players.",

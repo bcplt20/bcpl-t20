@@ -979,6 +979,8 @@ export type MvpLeaderboard = {
   leaderboard: MvpEntry[];
   finalists: [string, string] | null;
   note: string;
+  /** Live fantasy-point rule table from admin settings (absent on older servers). */
+  pointsConfig?: MvpPointsConfig;
 };
 export const getMvpLeaderboard = (eligibleOnly = false) =>
   req<MvpLeaderboard>("GET", `/mvp/leaderboard${eligibleOnly ? "?eligibleOnly=1" : ""}`);

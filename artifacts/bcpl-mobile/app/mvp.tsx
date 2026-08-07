@@ -5,10 +5,16 @@ import { Feather, Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useColors } from '@/hooks/useColors';
 import { useLang } from '@/context/LanguageContext';
-import { getMvpLeaderboard, type MvpPlayer } from '@/lib/api';
+import { getMvpLeaderboard, type MvpPlayer, type MvpPointsConfig } from '@/lib/api';
 import { ScreenBackground, GlassAppBar, Card, useAppBarHeight, useBottomNavHeight, LoadingView, ErrorView, TeamDot } from '@/components/ui';
 
-function PointsHelp() {
+const DEFAULT_CFG: MvpPointsConfig = {
+  batting: { run: 1, fourBonus: 1, sixBonus: 2, milestone30: 4, milestone50: 8, milestone100: 16, duck: -2 },
+  bowling: { wicket: 25, bowledLbwBonus: 8, haul3: 4, haul4: 8, haul5: 16, maidenOver: 12 },
+  fielding: { catch: 8, threeCatchBonus: 4, stumping: 12, directRunout: 12, assistedRunout: 6 },
+};
+
+function PointsHelp({ config = DEFAULT_CFG }: { config?: MvpPointsConfig }) {
   const c = useColors();
   const { t } = useLang();
   const [open, setOpen] = useState(true);
@@ -53,11 +59,11 @@ function PointsHelp() {
           <Text style={{ color: c.coral, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, textTransform: 'uppercase', letterSpacing: 0.5 }}>{t('Batting', 'बल्लेबाज़ी')}</Text>
         </View>
         <View style={{ gap: 8 }}>
-          <Rule l={t('Every Run', 'हर रन')} v="+1" color={c.coral} />
-          <Rule l={t('Every Four', 'हर चौका')} v="+1" color={c.coral} />
-          <Rule l={t('Every Six', 'हर छक्का')} v="+2" color={c.coral} />
-          <Rule l={t('30 / 50 / 100 Runs', '30 / 50 / 100 रन')} v="+4 / +8 / +16" color={c.coral} />
-          <Rule l={t('Duck (0 runs)', 'डक (0 रन)')} v="−2" color="#EF4444" />
+          <Rule l={t('Every Run', 'हर रन')} v={`+${config.batting.run}`} color={c.coral} />
+          <Rule l={t('Every Four', 'हर चौका')} v={`+${config.batting.fourBonus}`} color={c.coral} />
+          <Rule l={t('Every Six', 'हर छक्का')} v={`+${config.batting.sixBonus}`} color={c.coral} />
+          <Rule l={t('30 / 50 / 100 Runs', '30 / 50 / 100 रन')} v={`+${config.batting.milestone30} / +${config.batting.milestone50} / +${config.batting.milestone100}`} color={c.coral} />
+          <Rule l={t('Duck (0 runs)', 'डक (0 रन)')} v={`${config.batting.duck}`} color="#EF4444" />
         </View>
       </Card>
 
@@ -70,10 +76,10 @@ function PointsHelp() {
           <Text style={{ color: c.violet, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, textTransform: 'uppercase', letterSpacing: 0.5 }}>{t('Bowling', 'गेंदबाज़ी')}</Text>
         </View>
         <View style={{ gap: 8 }}>
-          <Rule l={t('Every Wicket', 'हर विकेट')} v="+25" color={c.violet} />
-          <Rule l={t('Bowled / LBW Bonus', 'बोल्ड / LBW बोनस')} v="+8" color={c.violet} />
-          <Rule l={t('3 / 4 / 5 Wickets', '3 / 4 / 5 विकेट')} v="+4 / +8 / +16" color={c.violet} />
-          <Rule l={t('Maiden Over', 'मेडन ओवर')} v="+12" color={c.violet} />
+          <Rule l={t('Every Wicket', 'हर विकेट')} v={`+${config.bowling.wicket}`} color={c.violet} />
+          <Rule l={t('Bowled / LBW Bonus', 'बोल्ड / LBW बोनस')} v={`+${config.bowling.bowledLbwBonus}`} color={c.violet} />
+          <Rule l={t('3 / 4 / 5 Wickets', '3 / 4 / 5 विकेट')} v={`+${config.bowling.haul3} / +${config.bowling.haul4} / +${config.bowling.haul5}`} color={c.violet} />
+          <Rule l={t('Maiden Over', 'मेडन ओवर')} v={`+${config.bowling.maidenOver}`} color={c.violet} />
         </View>
       </Card>
 
@@ -86,9 +92,9 @@ function PointsHelp() {
           <Text style={{ color: c.cyan, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, textTransform: 'uppercase', letterSpacing: 0.5 }}>{t('Fielding', 'फील्डिंग')}</Text>
         </View>
         <View style={{ gap: 8 }}>
-          <Rule l={t('Catch', 'कैच')} v="+8" color={c.cyan} />
-          <Rule l={t('Stumping', 'स्टंपिंग')} v="+12" color={c.cyan} />
-          <Rule l={t('Run Out (Direct / Assist)', 'रन आउट (डायरेक्ट / असिस्ट)')} v="+12 / +6" color={c.cyan} />
+          <Rule l={t('Catch', 'कैच')} v={`+${config.fielding.catch}`} color={c.cyan} />
+          <Rule l={t('Stumping', 'स्टंपिंग')} v={`+${config.fielding.stumping}`} color={c.cyan} />
+          <Rule l={t('Run Out (Direct / Assist)', 'रन आउट (डायरेक्ट / असिस्ट)')} v={`+${config.fielding.directRunout} / +${config.fielding.assistedRunout}`} color={c.cyan} />
         </View>
       </Card>
     </View>
@@ -203,7 +209,7 @@ export default function MvpScreen() {
               </View>
             )}
 
-            <PointsHelp />
+            <PointsHelp config={q.data?.pointsConfig} />
           </View>
         )}
       </ScrollView>

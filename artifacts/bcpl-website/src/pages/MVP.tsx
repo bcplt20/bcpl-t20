@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { BCPLFooter } from "../components/BCPLFooter";
 import { SiteHeader } from "../components/SiteHeader";
-import { getMvpLeaderboard, type MvpEntry } from "../lib/api";
+import { getMvpLeaderboard, DEFAULT_MVP_POINTS_CONFIG, type MvpEntry, type MvpPointsConfig } from "../lib/api";
 import { useLang } from "../lib/i18n";
 import { IcoTrophy } from "../lib/icons";
 
@@ -47,51 +47,62 @@ function RankBadge({ rank }: { rank: number }) {
 }
 
 /* ── Points infographic: three colourful category cards, each rule a chip
-   with the value in a bold badge. Always visible under the leaderboard. ── */
-type PointRule = { en: string; hi: string; val: number };
-type PointCat = { titleEn: string; titleHi: string; icon: string; accent: string; soft: string; rules: PointRule[] };
+   with the value in a bold badge. Always visible under the leaderboard.
+   Values come LIVE from the leaderboard's pointsConfig (admin-editable),
+   with a fallback to the shipped defaults so the guide never goes stale. ── */
+type PointRule = { en: string; hi: string; section: keyof MvpPointsConfig; key: string };
+type PointCat = {
+  titleEn: string; titleHi: string; icon: string; accent: string; soft: string;
+  rules: PointRule[];
+};
 
 const POINT_CATS: PointCat[] = [
   {
     titleEn: "Batting", titleHi: "बैटिंग", icon: "🏏",
     accent: "#FF6B3D", soft: "rgba(255,107,61,",
     rules: [
-      { en: "Each run", hi: "हर run", val: 1 },
-      { en: "Four (boundary)", hi: "चौका (four)", val: 1 },
-      { en: "Six", hi: "छक्का (six)", val: 2 },
-      { en: "30 runs", hi: "30 run", val: 4 },
-      { en: "Fifty (50)", hi: "अर्धशतक (50)", val: 8 },
-      { en: "Century (100)", hi: "शतक (100)", val: 16 },
-      { en: "Duck (out on 0)", hi: "डक (0 पर out)", val: -2 },
+      { en: "Each run", hi: "हर run", section: "batting", key: "run" },
+      { en: "Four (boundary)", hi: "चौका (four)", section: "batting", key: "fourBonus" },
+      { en: "Six", hi: "छक्का (six)", section: "batting", key: "sixBonus" },
+      { en: "30 runs", hi: "30 run", section: "batting", key: "milestone30" },
+      { en: "Fifty (50)", hi: "अर्धशतक (50)", section: "batting", key: "milestone50" },
+      { en: "Century (100)", hi: "शतक (100)", section: "batting", key: "milestone100" },
+      { en: "Duck (out on 0)", hi: "डक (0 पर out)", section: "batting", key: "duck" },
     ],
   },
   {
     titleEn: "Bowling", titleHi: "बॉलिंग", icon: "🎯",
     accent: "#7B8CFF", soft: "rgba(123,140,255,",
     rules: [
-      { en: "Each wicket", hi: "हर wicket", val: 25 },
-      { en: "Bowled / LBW bonus", hi: "Bowled / LBW bonus", val: 8 },
-      { en: "3 wickets", hi: "3 wicket", val: 4 },
-      { en: "4 wickets", hi: "4 wicket", val: 8 },
-      { en: "5 wickets", hi: "5 wicket", val: 16 },
-      { en: "Maiden over", hi: "Maiden over", val: 12 },
+      { en: "Each wicket", hi: "हर wicket", section: "bowling", key: "wicket" },
+      { en: "Bowled / LBW bonus", hi: "Bowled / LBW bonus", section: "bowling", key: "bowledLbwBonus" },
+      { en: "3 wickets", hi: "3 wicket", section: "bowling", key: "haul3" },
+      { en: "4 wickets", hi: "4 wicket", section: "bowling", key: "haul4" },
+      { en: "5 wickets", hi: "5 wicket", section: "bowling", key: "haul5" },
+      { en: "Maiden over", hi: "Maiden over", section: "bowling", key: "maidenOver" },
     ],
   },
   {
     titleEn: "Fielding", titleHi: "फील्डिंग", icon: "🧤",
     accent: "#3ED6A6", soft: "rgba(62,214,166,",
     rules: [
-      { en: "Catch", hi: "कैच (catch)", val: 8 },
-      { en: "3 catches bonus", hi: "3 catch bonus", val: 4 },
-      { en: "Stumping", hi: "स्टंपिंग", val: 12 },
-      { en: "Run-out (direct)", hi: "रन-आउट (direct)", val: 12 },
-      { en: "Run-out (assist)", hi: "रन-आउट (assist)", val: 6 },
+      { en: "Catch", hi: "कैच (catch)", section: "fielding", key: "catch" },
+      { en: "3 catches bonus", hi: "3 catch bonus", section: "fielding", key: "threeCatchBonus" },
+      { en: "Stumping", hi: "स्टंपिंग", section: "fielding", key: "stumping" },
+      { en: "Run-out (direct)", hi: "रन-आउट (direct)", section: "fielding", key: "directRunout" },
+      { en: "Run-out (assist)", hi: "रन-आउट (assist)", section: "fielding", key: "assistedRunout" },
     ],
   },
 ];
 
-function PointsInfographic() {
+function PointsInfographic({ config }: { config?: MvpPointsConfig }) {
   const { t } = useLang();
+  const cfg = config ?? DEFAULT_MVP_POINTS_CONFIG;
+  const valueOf = (section: keyof MvpPointsConfig, key: string): number => {
+    const live = (cfg[section] as Record<string, number>)?.[key];
+    if (typeof live === "number" && Number.isFinite(live)) return live;
+    return (DEFAULT_MVP_POINTS_CONFIG[section] as Record<string, number>)[key];
+  };
   return (
     <div style={{ marginTop: 40 }}>
       <div style={{ textAlign: "center", marginBottom: 22 }}>
@@ -129,7 +140,8 @@ function PointsInfographic() {
             {/* Rule chips */}
             <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 9 }}>
               {cat.rules.map(r => {
-                const neg = r.val < 0;
+                const val = valueOf(r.section, r.key);
+                const neg = val < 0;
                 return (
                   <div key={r.en} style={{
                     display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12,
@@ -149,7 +161,7 @@ function PointsInfographic() {
                       background: neg ? "rgba(255,90,90,.16)" : cat.accent,
                       border: neg ? "1px solid rgba(255,90,90,.5)" : "none",
                     }}>
-                      {neg ? "−" : "+"}{Math.abs(r.val)}
+                      {neg ? "−" : "+"}{Math.abs(val)}
                     </span>
                   </div>
                 );
@@ -165,7 +177,7 @@ function PointsInfographic() {
 export function MVP() {
   const { t } = useLang();
   const [eligibleOnly, setEligibleOnly] = useState(false);
-  const [data, setData] = useState<{ rows: MvpEntry[]; finalists: [string, string] | null; note: string } | null>(null);
+  const [data, setData] = useState<{ rows: MvpEntry[]; finalists: [string, string] | null; note: string; pointsConfig?: MvpPointsConfig } | null>(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState(false);
 
@@ -177,7 +189,7 @@ export function MVP() {
     setLoading(true);
     setErr(false);
     getMvpLeaderboard(eligibleOnly)
-      .then(r => setData({ rows: r.leaderboard || [], finalists: r.finalists, note: r.note }))
+      .then(r => setData({ rows: r.leaderboard || [], finalists: r.finalists, note: r.note, pointsConfig: r.pointsConfig }))
       .catch(() => setErr(true))
       .finally(() => setLoading(false));
   }, [eligibleOnly]);
@@ -310,7 +322,7 @@ export function MVP() {
           </div>
         )}
 
-        <PointsInfographic />
+        <PointsInfographic config={data?.pointsConfig} />
 
         <div style={{ textAlign: "center", marginTop: 34 }}>
           <Link href="/vote" style={{ color: ORANGE, textDecoration: "none", fontWeight: 700, fontSize: 14 }}>

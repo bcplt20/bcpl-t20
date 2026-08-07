@@ -529,6 +529,12 @@ export function votePoll(id: string, optionId: string, deviceId: string, token?:
 }
 
 // ── MVP ────────────────────────────────────────────────────────────
+export interface MvpPointsConfig {
+  batting: { run: number; fourBonus: number; sixBonus: number; milestone30: number; milestone50: number; milestone100: number; duck: number; };
+  bowling: { wicket: number; bowledLbwBonus: number; haul3: number; haul4: number; haul5: number; maidenOver: number; };
+  fielding: { catch: number; threeCatchBonus: number; stumping: number; directRunout: number; assistedRunout: number; };
+}
+
 export interface MvpPlayer {
   rank: number;
   name: string;
@@ -546,6 +552,7 @@ export interface MvpLeaderboard {
   leaderboard: MvpPlayer[];
   finalists: string | null;
   note: string | null;
+  pointsConfig?: MvpPointsConfig;
 }
 
 export function getMvpLeaderboard(eligibleOnly?: boolean): Promise<MvpLeaderboard> {
