@@ -62,3 +62,10 @@ COMMIT;
 -- Jaanch (optional): nayi tables + columns dikhni chahiye
 --   psql "$DATABASE_URL" -c "\dt community_match_officials community_team_verifications"
 --   psql "$DATABASE_URL" -c "\d community_matches" | grep team_._verified
+
+-- Media columns (Phase 3) — repeated here because the phase3 file sorts
+-- alphabetically before phase1 (tables may not exist when it runs).
+ALTER TABLE community_profiles ADD COLUMN IF NOT EXISTS photo_key varchar(300);
+ALTER TABLE community_profiles ADD COLUMN IF NOT EXISTS cover_key varchar(300);
+ALTER TABLE community_teams ADD COLUMN IF NOT EXISTS logo_key  varchar(300);
+ALTER TABLE community_teams ADD COLUMN IF NOT EXISTS cover_key varchar(300);

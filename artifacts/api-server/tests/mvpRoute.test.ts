@@ -129,6 +129,28 @@ describe("GET /api/mvp/leaderboard", () => {
     expect(r.body.note).toMatch(/car prize/i);
   });
 
+  it("default view auto re-ranks: finalist-team players FIRST even with fewer points", async () => {
+    // With a final scheduled, Kohli (TEAM_A, eligible, 15 pts) must outrank
+    // Bumrah (TEAM_B, NOT eligible, 33 pts from a wicket) in the DEFAULT view —
+    // eligible rows are grouped ahead, then non-eligible, each points-desc.
+    const r = await request(app).get(`/api/mvp/leaderboard?season=${SEASON}`);
+    expect(r.status).toBe(200);
+    const board: Array<{ name: string; rank: number; finalEligible: boolean; points: number }> = r.body.leaderboard;
+    const kohli = board.find(p => p.name === "Kohli")!;
+    const bumrah = board.find(p => p.name === "Bumrah")!;
+    expect(bumrah.points).toBeGreaterThan(kohli.points); // Bumrah has more points…
+    expect(kohli.rank).toBeLessThan(bumrah.rank);         // …yet Kohli ranks higher (eligible first)
+    // eligible block precedes the non-eligible block
+    const firstIneligibleIdx = board.findIndex(p => !p.finalEligible);
+    const lastEligibleIdx = board.map(p => p.finalEligible).lastIndexOf(true);
+    if (firstIneligibleIdx !== -1) expect(lastEligibleIdx).toBeLessThan(firstIneligibleIdx);
+    // ranks contiguous 1..n across both groups
+    board.forEach((p, i) => expect(p.rank).toBe(i + 1));
+    // note explains the ordering + car ineligibility
+    expect(r.body.note).toMatch(/ranked first/i);
+    expect(r.body.note).toMatch(/not valid for the car/i);
+  });
+
   it("eligibleOnly=1 filters to finalist-team players only", async () => {
     const r = await request(app).get(`/api/mvp/leaderboard?season=${SEASON}&eligibleOnly=1`);
     expect(r.status).toBe(200);

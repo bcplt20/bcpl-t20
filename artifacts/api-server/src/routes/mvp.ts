@@ -132,8 +132,8 @@ router.get("/leaderboard", async (req, res) => {
     const { players, finalists } = await buildLeaderboard(season);
     const finalTeams = new Set(finalists ?? []);
 
-    let rows = players.map((p, idx) => ({
-      rank: idx + 1,
+    // players[] arrives sorted by points desc (from computeMvpPoints).
+    let rows = players.map((p) => ({
       playerId: `${p.team}::${p.name}`, // deliveries carry names, not ids
       name: p.name,
       team: p.team,
@@ -146,16 +146,28 @@ router.get("/leaderboard", async (req, res) => {
       finalEligible: finalists ? finalTeams.has(p.team) : false,
     }));
 
-    if (eligibleOnly) rows = rows.filter(r => r.finalEligible);
-    // re-rank after filtering so ranks are contiguous within the returned set
-    rows = rows.slice(0, limit).map((r, idx) => ({ ...r, rank: idx + 1 }));
+    if (eligibleOnly) {
+      // Restrict to finalist-team players only.
+      rows = rows.filter(r => r.finalEligible);
+    } else if (finalists) {
+      // Default view once a final exists: eligible players FIRST (points desc),
+      // then the rest (points desc), with rank numbers continuing across both
+      // groups. Each row keeps finalEligible so UIs can flag non-eligible rows
+      // as "not valid for the car". Stable partition preserves points ordering.
+      rows = [
+        ...rows.filter(r => r.finalEligible),
+        ...rows.filter(r => !r.finalEligible),
+      ];
+    }
+    // Assign contiguous ranks 1..n over the (possibly re-ordered/filtered) set.
+    const ranked = rows.slice(0, limit).map((r, idx) => ({ rank: idx + 1, ...r }));
 
     res.json({
       season,
-      leaderboard: rows,
+      leaderboard: ranked,
       finalists,
       note: finalists
-        ? "Man of the Series (car prize) eligibility is limited to players whose team plays the final."
+        ? "Man of the Series (car prize) eligibility is limited to players whose team plays the final. Eligible players are ranked first; non-eligible players follow and are not valid for the car."
         : "No final scheduled yet — Man of the Series eligibility is not decided. finalEligible is false for all players.",
     });
   } catch (e) {

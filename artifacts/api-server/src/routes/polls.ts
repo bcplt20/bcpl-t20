@@ -1,10 +1,15 @@
 /**
  * Fan Voting (IPL-style polls) — website + mobile app.
  *
- * Public (player auth required only to vote):
+ * Public (voting is anonymous-friendly — no login required):
  *   GET  /api/polls                 open + recently-closed polls (+counts if allowed)
  *   GET  /api/polls/:slug           one poll by slug (+counts if allowed)
- *   POST /api/polls/:id/vote        cast one vote (player auth; one per user per poll)
+ *   POST /api/polls/:id/vote        cast one vote. Body { optionId, deviceId? }.
+ *                                   Dedupe key = 'user:<id>' when a valid Bearer
+ *                                   token is present, else 'device:<deviceId>'.
+ *                                   One vote per (poll, voter_key) → 409 on dup.
+ *                                   Anti-abuse: hashed-IP soft cap per poll +
+ *                                   short-window rate limit keyed by IP+device.
  *
  * Admin (x-bcpl-admin-token, CONTENT_TEAM or SUPER_ADMIN):
  *   POST   /api/admin/polls                     create poll (+options)
@@ -29,9 +34,10 @@ import { Router } from "express";
 import { db } from "@workspace/db";
 import { sql } from "drizzle-orm";
 import { z } from "zod";
-import { requireAuth, type AuthRequest } from "../middlewares/auth";
+import { optionalAuth, type AuthRequest } from "../middlewares/auth";
 import { requireAdmin, requireRole } from "../middlewares/adminAuth";
 import { logger } from "../lib/logger";
+import { createHash } from "node:crypto";
 
 const publicRouter = Router();
 const adminRouter = Router();
@@ -72,11 +78,30 @@ async function ensureTables(): Promise<void> {
       id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
       poll_id uuid NOT NULL REFERENCES fan_polls(id) ON DELETE CASCADE,
       option_id uuid NOT NULL REFERENCES fan_poll_options(id) ON DELETE CASCADE,
-      user_id uuid NOT NULL,
-      created_at timestamptz NOT NULL DEFAULT now(),
-      UNIQUE (poll_id, user_id)
+      user_id uuid,
+      voter_key text NOT NULL DEFAULT '',
+      ip_hash text,
+      created_at timestamptz NOT NULL DEFAULT now()
     )`);
+    // ── In-place migration for dev DBs that predate anonymous voting ────────
+    // Older schema had user_id NOT NULL + UNIQUE(poll_id,user_id). We move to a
+    // voter_key ('user:<id>' | 'device:<uuid>') keyed uniqueness so guests can
+    // vote once per device. All steps are idempotent.
+    await tx.execute(sql`ALTER TABLE fan_poll_votes ADD COLUMN IF NOT EXISTS voter_key text NOT NULL DEFAULT ''`);
+    await tx.execute(sql`ALTER TABLE fan_poll_votes ADD COLUMN IF NOT EXISTS ip_hash text`);
+    await tx.execute(sql`ALTER TABLE fan_poll_votes ALTER COLUMN user_id DROP NOT NULL`);
+    // Backfill voter_key for any legacy rows that were user-authored.
+    await tx.execute(sql`
+      UPDATE fan_poll_votes SET voter_key = 'user:' || user_id::text
+      WHERE (voter_key IS NULL OR voter_key = '') AND user_id IS NOT NULL`);
+    // Drop the old user-only unique constraint if it still exists.
+    await tx.execute(sql`ALTER TABLE fan_poll_votes DROP CONSTRAINT IF EXISTS fan_poll_votes_poll_id_user_id_key`);
+    // New uniqueness: one vote per (poll, voter_key).
+    await tx.execute(sql`
+      CREATE UNIQUE INDEX IF NOT EXISTS fan_poll_votes_poll_voter_key_uidx
+      ON fan_poll_votes (poll_id, voter_key)`);
     await tx.execute(sql`CREATE INDEX IF NOT EXISTS fan_poll_votes_option_idx ON fan_poll_votes (option_id)`);
+    await tx.execute(sql`CREATE INDEX IF NOT EXISTS fan_poll_votes_poll_ip_idx ON fan_poll_votes (poll_id, ip_hash)`);
   });
   ready = true;
 }
@@ -150,18 +175,41 @@ function publicOptions(opts: Array<OptionRow & { votes: number }>, showCounts: b
   };
 }
 
-/* ── light per-user vote rate-limit (in-memory) ─────────────────────────── */
+/* ── anti-abuse for anonymous voting ────────────────────────────────────── */
+
+// Short-window rate limit, keyed by IP + deviceId (NOT userId — votes are
+// anonymous). Prevents rapid-fire spamming from one device/network.
 const VOTE_WINDOW_MS = 10_000;
-const VOTE_MAX = 5; // max vote attempts per user per window
+const VOTE_MAX = 5; // max vote attempts per (ip+device) per window
 const voteHits = new Map<string, { count: number; resetAt: number }>();
 /** Test hook — reset the vote rate-limiter. */
 export function __resetVoteRateLimit(): void { voteHits.clear(); }
-function voteRateLimited(userId: string): boolean {
+function voteRateLimited(key: string): boolean {
   const now = Date.now();
-  const e = voteHits.get(userId);
-  if (!e || e.resetAt < now) { voteHits.set(userId, { count: 1, resetAt: now + VOTE_WINDOW_MS }); return false; }
+  const e = voteHits.get(key);
+  if (!e || e.resetAt < now) { voteHits.set(key, { count: 1, resetAt: now + VOTE_WINDOW_MS }); return false; }
   e.count += 1;
   return e.count > VOTE_MAX;
+}
+
+// Soft per-IP-per-poll cap. Shared networks (offices, colleges) legitimately
+// produce many votes, so this is a generous soft cap (NOT a hard unique on IP).
+const IP_VOTES_PER_POLL_CAP = 20;
+
+/** Real client IP behind nginx (last x-forwarded-for entry is proxy-appended). */
+function clientIp(req: { headers: Record<string, unknown>; ip?: string }): string {
+  const xff = req.headers["x-forwarded-for"];
+  const raw = Array.isArray(xff) ? xff[xff.length - 1] : xff;
+  if (typeof raw === "string" && raw.trim()) {
+    const parts = raw.split(",").map((s) => s.trim()).filter(Boolean);
+    if (parts.length) return parts[parts.length - 1];
+  }
+  return req.ip ?? "unknown";
+}
+
+/** Hash the IP before storing it — we never persist raw client IPs. */
+function hashIp(ip: string): string {
+  return createHash("sha256").update(`bcpl:poll-ip:${ip}`).digest("hex");
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -213,18 +261,33 @@ publicRouter.get("/:slug", async (req, res) => {
   }
 });
 
-/** POST /api/polls/:id/vote — one vote per user per poll. */
-publicRouter.post("/:id/vote", requireAuth, async (req: AuthRequest, res) => {
-  const parsed = z.object({ optionId: z.string().uuid() }).safeParse(req.body);
+/** POST /api/polls/:id/vote — anonymous-friendly. One vote per (poll, voter):
+ *  voter = the logged-in player if a valid Bearer token is present, else the
+ *  client-generated persistent deviceId. Body: { optionId, deviceId? }. */
+publicRouter.post("/:id/vote", optionalAuth, async (req: AuthRequest, res) => {
+  const parsed = z.object({
+    optionId: z.string().uuid(),
+    deviceId: z.string().uuid().optional(),
+  }).safeParse(req.body);
   if (!parsed.success) return void res.status(400).json({ error: "optionId (uuid) is required" });
   const optionId = parsed.data.optionId;
-  const userId = req.user!.userId;
+
+  // Prefer the authed player; otherwise fall back to the anonymous device id.
+  const userId = req.user?.userId ?? null;
+  const deviceId = parsed.data.deviceId ?? null;
+  if (!userId && !deviceId) {
+    return void res.status(400).json({ error: "deviceId (uuid) is required to vote as a guest" });
+  }
+  const voterKey = userId ? `user:${userId}` : `device:${deviceId}`;
+  const ipHash = hashIp(clientIp(req));
+
   try {
     await ensureTables();
     const id = String(req.params.id);
     if (!/^[0-9a-f-]{36}$/i.test(id)) return void res.status(404).json({ error: "Poll not found" });
 
-    if (voteRateLimited(userId)) {
+    // Short-window spam guard, keyed by IP + device/voter (not userId).
+    if (voteRateLimited(`${ipHash}:${voterKey}`)) {
       return void res.status(429).json({ error: "You're voting too fast — please slow down." });
     }
 
@@ -236,14 +299,21 @@ publicRouter.post("/:id/vote", requireAuth, async (req: AuthRequest, res) => {
         sql`SELECT * FROM fan_poll_options WHERE id = ${optionId} AND poll_id = ${id}`,
       ));
       if (!opt) return { code: 400 as const, errMsg: "That option does not belong to this poll." };
-      // One vote per user per poll (UNIQUE(poll_id,user_id)); friendly 409.
+      // One vote per (poll, voter_key); friendly 409.
       const [existing] = rows<{ id: string }>(await tx.execute(
-        sql`SELECT id FROM fan_poll_votes WHERE poll_id = ${id} AND user_id = ${userId} FOR UPDATE`,
+        sql`SELECT id FROM fan_poll_votes WHERE poll_id = ${id} AND voter_key = ${voterKey} FOR UPDATE`,
       ));
       if (existing) return { code: 409 as const, errMsg: "You've already voted in this poll." };
+      // Soft per-IP-per-poll cap (shared networks allowed, but capped).
+      const [{ n }] = rows<{ n: string }>(await tx.execute(
+        sql`SELECT count(*) n FROM fan_poll_votes WHERE poll_id = ${id} AND ip_hash = ${ipHash}`,
+      ));
+      if (Number(n) >= IP_VOTES_PER_POLL_CAP) {
+        return { code: 429 as const, errMsg: "बहुत सारे votes इस network से — please try later." };
+      }
       await tx.execute(sql`
-        INSERT INTO fan_poll_votes (poll_id, option_id, user_id)
-        VALUES (${id}, ${optionId}, ${userId})`);
+        INSERT INTO fan_poll_votes (poll_id, option_id, user_id, voter_key, ip_hash)
+        VALUES (${id}, ${optionId}, ${userId}, ${voterKey}, ${ipHash})`);
       return { poll: p };
     });
     if ("errMsg" in out) return void res.status(out.code as number).json({ error: out.errMsg });

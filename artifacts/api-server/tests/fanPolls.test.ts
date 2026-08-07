@@ -1,8 +1,9 @@
 /**
  * Fan Voting (polls) — src/routes/polls.ts, mounted at /api/polls (public) and
  * /api/admin/polls (admin CONTENT_TEAM). Covers admin CRUD + open/close, public
- * listing with result-visibility gating, one-vote-per-user (409), window/status
- * enforcement, results, no-PII, and role gating.
+ * listing with result-visibility gating, ANONYMOUS device-based voting (one vote
+ * per device/user per poll → 409), missing-deviceId rejection, per-IP soft cap,
+ * window/status enforcement, results, no-PII, and role gating.
  */
 import { describe, it, expect, beforeAll } from "vitest";
 import request from "supertest";
@@ -36,6 +37,9 @@ async function makeVoter() {
   return { token: jwt.sign({ userId: id, phone }, JWT_SECRET), userId: id };
 }
 const auth = (t: string) => ({ Authorization: `Bearer ${t}` });
+const newDevice = () => randomUUID();
+// distinct source IP per call so per-IP cap tests don't collide across cases
+const fromIp = (ip: string) => ({ "x-forwarded-for": ip });
 
 function uslug(base: string) { return `${base}-${suffix}-${seq++}`; }
 
@@ -140,34 +144,86 @@ describe("fan polls — voting", () => {
     return { pollId: r.body.poll.id, optionId: r.body.options[0].id, optionId2: r.body.options[1].id };
   }
 
-  it("requires auth", async () => {
+  it("anonymous vote works WITHOUT auth when a deviceId is supplied", async () => {
+    __resetVoteRateLimit();
     const { pollId, optionId } = await freshOpenPoll();
-    const r = await request(app).post(`/api/polls/${pollId}/vote`).send({ optionId });
-    expect(r.status).toBe(401);
+    const r = await request(app).post(`/api/polls/${pollId}/vote`).set(fromIp("11.0.0.1"))
+      .send({ optionId, deviceId: newDevice() });
+    expect(r.status).toBe(200);
+    expect(r.body.totalVotes).toBe(1);
   });
 
-  it("one vote per user; duplicate → 409, counts update, no voter PII", async () => {
+  it("guest with no auth AND no deviceId → 400", async () => {
+    __resetVoteRateLimit();
+    const { pollId, optionId } = await freshOpenPoll();
+    const r = await request(app).post(`/api/polls/${pollId}/vote`).set(fromIp("11.0.0.2")).send({ optionId });
+    expect(r.status).toBe(400);
+  });
+
+  it("deviceId must be a uuid", async () => {
+    __resetVoteRateLimit();
+    const { pollId, optionId } = await freshOpenPoll();
+    const r = await request(app).post(`/api/polls/${pollId}/vote`).set(fromIp("11.0.0.3"))
+      .send({ optionId, deviceId: "not-a-uuid" });
+    expect(r.status).toBe(400);
+  });
+
+  it("one vote per device; duplicate deviceId → 409, no voter PII", async () => {
+    __resetVoteRateLimit();
+    const { pollId, optionId } = await freshOpenPoll();
+    const device = newDevice();
+
+    const v1 = await request(app).post(`/api/polls/${pollId}/vote`).set(fromIp("11.0.1.1"))
+      .send({ optionId, deviceId: device });
+    expect(v1.status).toBe(200);
+    expect(v1.body.totalVotes).toBe(1);
+    // no PII: neither the deviceId nor any ip should surface in the response
+    expect(JSON.stringify(v1.body)).not.toContain(device);
+    expect(JSON.stringify(v1.body)).not.toContain("11.0.1.1");
+
+    const v2 = await request(app).post(`/api/polls/${pollId}/vote`).set(fromIp("11.0.1.2"))
+      .send({ optionId, deviceId: device });
+    expect(v2.status).toBe(409);
+  });
+
+  it("authed player: one vote per user; duplicate → 409 (token preferred over device)", async () => {
     __resetVoteRateLimit();
     const { pollId, optionId } = await freshOpenPoll();
     const voter = await makeVoter();
 
-    const v1 = await request(app).post(`/api/polls/${pollId}/vote`).set(auth(voter.token)).send({ optionId });
+    const v1 = await request(app).post(`/api/polls/${pollId}/vote`).set(auth(voter.token)).set(fromIp("11.0.2.1"))
+      .send({ optionId, deviceId: newDevice() });
     expect(v1.status).toBe(200);
-    expect(v1.body.totalVotes).toBe(1);
-    // no PII: response must not contain the voter's id
     expect(JSON.stringify(v1.body)).not.toContain(voter.userId);
 
-    const v2 = await request(app).post(`/api/polls/${pollId}/vote`).set(auth(voter.token)).send({ optionId });
+    // same user, DIFFERENT device → still deduped by user:<id>
+    const v2 = await request(app).post(`/api/polls/${pollId}/vote`).set(auth(voter.token)).set(fromIp("11.0.2.2"))
+      .send({ optionId, deviceId: newDevice() });
     expect(v2.status).toBe(409);
+  });
+
+  it("soft per-IP-per-poll cap → 429 once exceeded", async () => {
+    __resetVoteRateLimit();
+    const { pollId, optionId } = await freshOpenPoll();
+    const ip = "11.9.9.9";
+    let capped = false;
+    // 20 distinct devices from one IP are allowed; the 21st is capped.
+    for (let i = 0; i < 21; i++) {
+      __resetVoteRateLimit(); // isolate from the short-window spam guard
+      const r = await request(app).post(`/api/polls/${pollId}/vote`).set(fromIp(ip))
+        .send({ optionId, deviceId: newDevice() });
+      if (r.status === 429) { capped = true; break; }
+      expect(r.status).toBe(200);
+    }
+    expect(capped).toBe(true);
   });
 
   it("rejects an option that belongs to another poll", async () => {
     __resetVoteRateLimit();
     const a = await freshOpenPoll();
     const b = await freshOpenPoll();
-    const voter = await makeVoter();
-    const r = await request(app).post(`/api/polls/${a.pollId}/vote`).set(auth(voter.token))
-      .send({ optionId: b.optionId });
+    const r = await request(app).post(`/api/polls/${a.pollId}/vote`).set(fromIp("11.3.0.1"))
+      .send({ optionId: b.optionId, deviceId: newDevice() });
     expect(r.status).toBe(400);
   });
 
@@ -175,8 +231,8 @@ describe("fan polls — voting", () => {
     __resetVoteRateLimit();
     const { pollId, optionId } = await freshOpenPoll();
     await request(app).patch(`/api/admin/polls/${pollId}`).set(adminHdr(contentToken)).send({ status: "closed" });
-    const voter = await makeVoter();
-    const r = await request(app).post(`/api/polls/${pollId}/vote`).set(auth(voter.token)).send({ optionId });
+    const r = await request(app).post(`/api/polls/${pollId}/vote`).set(fromIp("11.4.0.1"))
+      .send({ optionId, deviceId: newDevice() });
     expect(r.status).toBe(400);
   });
 
@@ -188,19 +244,21 @@ describe("fan polls — voting", () => {
       slug: uslug("window"), titleEn: "Windowed", status: "open", closesAt: past,
       options: [{ label: "One" }],
     });
-    const voter = await makeVoter();
-    const v = await request(app).post(`/api/polls/${r.body.poll.id}/vote`).set(auth(voter.token))
-      .send({ optionId: r.body.options[0].id });
+    const v = await request(app).post(`/api/polls/${r.body.poll.id}/vote`).set(fromIp("11.5.0.1"))
+      .send({ optionId: r.body.options[0].id, deviceId: newDevice() });
     expect(v.status).toBe(400);
   });
 
-  it("admin results show counts + percentages + total", async () => {
+  it("admin results show counts + percentages + total (mixed authed + anon)", async () => {
     __resetVoteRateLimit();
     const { pollId, optionId, optionId2 } = await freshOpenPoll();
-    const v1 = await makeVoter(), v2 = await makeVoter(), v3 = await makeVoter();
-    await request(app).post(`/api/polls/${pollId}/vote`).set(auth(v1.token)).send({ optionId });
-    await request(app).post(`/api/polls/${pollId}/vote`).set(auth(v2.token)).send({ optionId });
-    await request(app).post(`/api/polls/${pollId}/vote`).set(auth(v3.token)).send({ optionId: optionId2 });
+    const v1 = await makeVoter();
+    await request(app).post(`/api/polls/${pollId}/vote`).set(auth(v1.token)).set(fromIp("11.6.0.1"))
+      .send({ optionId, deviceId: newDevice() });
+    await request(app).post(`/api/polls/${pollId}/vote`).set(fromIp("11.6.0.2"))
+      .send({ optionId, deviceId: newDevice() });
+    await request(app).post(`/api/polls/${pollId}/vote`).set(fromIp("11.6.0.3"))
+      .send({ optionId: optionId2, deviceId: newDevice() });
 
     const res = await request(app).get(`/api/admin/polls/${pollId}/results`).set(adminHdr(contentToken));
     expect(res.status).toBe(200);

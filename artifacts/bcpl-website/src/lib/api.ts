@@ -964,8 +964,8 @@ export const getPolls = () => req<{ polls: Poll[] }>("GET", "/polls");
 export const getPoll = (slug: string) =>
   req<{ poll: Poll }>("GET", `/polls/${encodeURIComponent(slug)}`);
 /** Cast a vote. Throws Error with .status (401/400/409/429) + .code on failure. */
-export const castPollVote = (pollId: string, optionId: string) =>
-  req<VoteResult>("POST", `/polls/${pollId}/vote`, { optionId });
+export const castPollVote = (pollId: string, optionId: string, deviceId: string) =>
+  req<VoteResult>("POST", `/polls/${pollId}/vote`, { optionId, deviceId });
 
 /* ─── MVP / Fantasy Leaderboard (public) ────────────── */
 export type MvpBreakdown = { batting: number; bowling: number; fielding: number };

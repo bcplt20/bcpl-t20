@@ -65,14 +65,14 @@ function PointsHelp() {
   );
 }
 
-function PlayerRow({ p, i }: { p: MvpPlayer; i: number }) {
+function PlayerRow({ p, finalistsExist }: { p: MvpPlayer; finalistsExist: boolean }) {
   const c = useColors();
   const { t } = useLang();
   
   return (
     <Card padding={16} style={{ marginBottom: 12, flexDirection: 'row', alignItems: 'center', gap: 12, ...(p.finalEligible ? { borderColor: c.magenta, borderWidth: 1 } : {}) }}>
       <View style={{ width: 32, alignItems: 'center' }}>
-        <Text style={{ color: i < 3 ? c.amber : c.sub, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: i < 3 ? 24 : 18 }}>
+        <Text style={{ color: p.rank <= 3 ? c.amber : c.sub, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: p.rank <= 3 ? 24 : 18 }}>
           #{p.rank}
         </Text>
       </View>
@@ -90,6 +90,11 @@ function PlayerRow({ p, i }: { p: MvpPlayer; i: number }) {
           <Text style={{ color: c.sub, fontSize: 11, fontFamily: 'PlusJakartaSans_600SemiBold' }}>W: <Text style={{ color: c.ink }}>{p.wickets}</Text></Text>
           <Text style={{ color: c.sub, fontSize: 11, fontFamily: 'PlusJakartaSans_600SemiBold' }}>C: <Text style={{ color: c.ink }}>{p.catches}</Text></Text>
         </View>
+        {finalistsExist && !p.finalEligible && (
+          <View style={{ marginTop: 6, backgroundColor: `${c.sub}15`, paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4, alignSelf: 'flex-start' }}>
+            <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 10 }}>{t('Not valid for Car', 'Car के लिए valid नहीं')}</Text>
+          </View>
+        )}
       </View>
       <View style={{ alignItems: 'flex-end', justifyContent: 'center' }}>
         <Text style={{ color: p.finalEligible ? c.magenta : c.cyan, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 24 }}>
@@ -155,8 +160,8 @@ export default function MvpScreen() {
               </View>
             )}
             
-            {q.data?.leaderboard.map((p, i) => (
-              <PlayerRow key={`${p.name}-${p.team}`} p={p} i={i} />
+            {q.data?.leaderboard.map((p) => (
+              <PlayerRow key={`${p.name}-${p.team}`} p={p} finalistsExist={!!q.data?.finalists} />
             ))}
             
             {q.data?.leaderboard.length === 0 && (

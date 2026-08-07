@@ -3,9 +3,25 @@ import { Link } from "wouter";
 import { BCPLFooter } from "../components/BCPLFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { getPolls, castPollVote, type Poll, type PollOption } from "../lib/api";
-import { openLoginModal } from "../lib/auth";
 import { useLang } from "../lib/i18n";
 import { IcoTrophy } from "../lib/icons";
+
+/* Persistent per-device id — one vote per phone/device (no login required). */
+const DEVICE_KEY = "bcpl_device_v1";
+function getDeviceId(): string {
+  try {
+    let id = localStorage.getItem(DEVICE_KEY);
+    if (!id) {
+      id = typeof crypto !== "undefined" && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `dev-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      localStorage.setItem(DEVICE_KEY, id);
+    }
+    return id;
+  } catch {
+    return `dev-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  }
+}
 
 /* ─── Palette (LIGHTENED DARK theme, matches PointsTable/MVP) ── */
 const PAGE   = "#1B2E52";
@@ -55,7 +71,7 @@ function PollCard({ poll }: { poll: Poll }) {
     if (ui.busyOptionId || ui.votedOptionId || closed) return;
     setUi(s => ({ ...s, busyOptionId: optionId, msg: null }));
     try {
-      const res = await castPollVote(poll.id, optionId);
+      const res = await castPollVote(poll.id, optionId, getDeviceId());
       setUi(s => ({
         ...s,
         busyOptionId: null,
@@ -66,11 +82,6 @@ function PollCard({ poll }: { poll: Poll }) {
       }));
     } catch (e) {
       const err = e as Error & { status?: number };
-      if (err.status === 401) {
-        setUi(s => ({ ...s, busyOptionId: null }));
-        openLoginModal();
-        return;
-      }
       let text = err.message || t("Could not record your vote.", "आपका वोट दर्ज नहीं हो सका।");
       if (err.status === 409) {
         text = t("You've already voted in this poll.", "आप इस पोल में पहले ही वोट कर चुके हैं।");
@@ -79,6 +90,9 @@ function PollCard({ poll }: { poll: Poll }) {
       }
       if (err.status === 400) {
         text = t("This poll is closed for voting.", "यह पोल वोटिंग के लिए बंद है।");
+      }
+      if (err.status === 429) {
+        text = err.message || t("Too many votes from this network.", "बहुत सारे votes इस network से।");
       }
       setUi(s => ({ ...s, busyOptionId: null, msg: { kind: "error", text } }));
     }
@@ -213,8 +227,8 @@ export function Vote() {
             {t("Your Vote, Your League", "आपका वोट, आपकी लीग")}
           </h1>
           <p style={{ color: TXT2, fontSize: "clamp(14px,2vw,17px)", maxWidth: 560, margin: "0 auto", lineHeight: 1.7 }}>
-            {t("Pick your favourites across the season. One vote per poll — sign in to make it count.",
-               "पूरे सीज़न में अपने पसंदीदा चुनें। हर पोल में एक वोट — गिनती के लिए साइन इन करें।")}
+            {t("Pick your favourites across the season. Voting is open to everyone — one vote per phone, no sign-in needed.",
+               "पूरे सीज़न में अपने पसंदीदा चुनें। वोटिंग सबके लिए खुली है — हर फ़ोन से एक वोट, साइन-इन ज़रूरी नहीं।")}
           </p>
         </div>
       </section>

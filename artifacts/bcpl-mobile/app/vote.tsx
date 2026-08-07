@@ -10,6 +10,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useLang } from '@/context/LanguageContext';
 import { getPolls, votePoll, type Poll, type PollOption, ApiError } from '@/lib/api';
 import { ScreenBackground, GlassAppBar, Card, useAppBarHeight, useBottomNavHeight, LoadingView, ErrorView } from '@/components/ui';
+import { useDeviceId } from '@/hooks/useDeviceId';
 
 function PollOptionRow({ opt, poll, handleVote, voteMut, showResults }: any) {
   const c = useColors();
@@ -81,19 +82,18 @@ function PollOptionRow({ opt, poll, handleVote, voteMut, showResults }: any) {
   );
 }
 
-function PollCard({ poll }: { poll: Poll }) {
+function PollCard({ poll, deviceId }: { poll: Poll, deviceId: string | null }) {
   const c = useColors();
   const { t } = useLang();
   const { token } = useAuth();
-  const router = useRouter();
   const qc = useQueryClient();
 
   const [votingFor, setVotingFor] = useState<string | null>(null);
 
   const voteMut = useMutation({
     mutationFn: (optionId: string) => {
-      if (!token) throw new Error('not_logged_in');
-      return votePoll(poll.id, optionId, token).then(res => ({ ...res, optionId }));
+      if (!deviceId) throw new Error('wait_device');
+      return votePoll(poll.id, optionId, deviceId, token).then(res => ({ ...res, optionId }));
     },
     onSuccess: (data) => {
       qc.setQueryData(['polls', token], (old: any) => {
@@ -108,12 +108,12 @@ function PollCard({ poll }: { poll: Poll }) {
       });
     },
     onError: (err: any) => {
-      if (err.message === 'not_logged_in') {
-        router.push('/login');
-      } else if (err instanceof ApiError && err.status === 409) {
+      if (err instanceof ApiError && err.status === 409) {
         Alert.alert(t('Already Voted', 'आप vote कर चुके हैं'), t('You have already voted in this poll.', 'आप इस पोल में पहले ही वोट कर चुके हैं।'));
         qc.invalidateQueries({ queryKey: ['polls', token] });
-      } else {
+      } else if (err instanceof ApiError && err.status === 429) {
+        Alert.alert(t('Too Many Requests', 'बहुत अधिक प्रयास'), t('You are voting too fast. Please try again later.', 'आप बहुत तेज़ी से वोट कर रहे हैं। कृपया बाद में प्रयास करें।'));
+      } else if (err.message !== 'wait_device') {
         Alert.alert(t('Error', 'त्रुटि'), err.message || t('Could not cast vote.', 'वोट नहीं डाला जा सका।'));
       }
     },
@@ -121,11 +121,7 @@ function PollCard({ poll }: { poll: Poll }) {
   });
 
   const handleVote = (optionId: string) => {
-    if (!poll.votingOpen || poll.hasVoted || voteMut.isPending) return;
-    if (!token) {
-      router.push('/login');
-      return;
-    }
+    if (!poll.votingOpen || poll.hasVoted || voteMut.isPending || !deviceId) return;
     setVotingFor(optionId);
     voteMut.mutate(optionId);
   };
@@ -180,6 +176,7 @@ export default function VoteScreen() {
   const c = useColors();
   const { t } = useLang();
   const { token, ready } = useAuth();
+  const deviceId = useDeviceId();
   const appBarHeight = useAppBarHeight();
   const bottomNavHeight = useBottomNavHeight();
 
@@ -215,7 +212,7 @@ export default function VoteScreen() {
               {t('HAVE YOUR SAY', 'अपनी राय दें')}
             </Text>
             {q.data?.polls.map((poll) => (
-              <PollCard key={poll.id} poll={poll} />
+              <PollCard key={poll.id} poll={poll} deviceId={deviceId} />
             ))}
           </View>
         )}

@@ -233,6 +233,7 @@ export function MVP() {
                         <span style={{ display: "inline-flex", alignItems: "center", gap: 8, fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 15, color: "#fff" }}>
                           {r.name}
                           {r.finalEligible && <span style={{ fontSize: 10, fontWeight: 800, color: GOLD, background: "rgba(232,178,61,.16)", border: `1px solid rgba(232,178,61,.4)`, borderRadius: 100, padding: "2px 7px", letterSpacing: ".05em" }}>{t("FINALIST", "फाइनलिस्ट")}</span>}
+                          {hasFinalists && !r.finalEligible && <span style={{ fontSize: 10, fontWeight: 700, color: TXT3, background: "rgba(255,255,255,.05)", border: `1px solid ${LINE}`, borderRadius: 100, padding: "2px 7px", letterSpacing: ".03em", whiteSpace: "nowrap" }}>{t("Not valid for car", "Car के लिए valid नहीं")}</span>}
                         </span>
                       </td>
                       <td className="left" style={{ color: TXT3 }}>{r.team}</td>

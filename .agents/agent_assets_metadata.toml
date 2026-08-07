@@ -186,3 +186,38 @@ uri = "file://screenshots/web-kyc-jersey.png"
 type = "image"
 title = "Website — Jersey Details form"
 description = "Website Phase-2 KYC page: jersey size section with disclaimer, emergency contact, employment, identity verification."
+
+[[outputs]]
+id = "f0rmHZO31kpimAaH8ByqL"
+uri = "file://screenshots/app-vote.jpg"
+type = "image"
+title = "App — Fan Voting"
+description = "App में voting screen — poll options, tap करके vote।"
+
+[[outputs]]
+id = "D6DLqJuWdmEyU0UjEID-9"
+uri = "file://screenshots/app-mvp.jpg"
+type = "image"
+title = "App — MVP Race (Car)"
+description = "App का MVP leaderboard — All Players / Car Race (Finalists) toggle।"
+
+[[outputs]]
+id = "68Rx6xoFe4z0hrA7EVOcg"
+uri = "file://screenshots/web-vote.jpg"
+type = "image"
+title = "Website — Fan Voting page (/vote)"
+description = "Website का voting page — live percent bars के साथ।"
+
+[[outputs]]
+id = "_9P9vgJGwzSTQeUzMRiU3"
+uri = "file://screenshots/web-mvp.jpg"
+type = "image"
+title = "Website — MVP Leaderboard (/mvp)"
+description = "Website का MVP page — Car race strip + points नियम।"
+
+[[outputs]]
+id = "IQpVnobsZMXC9KxLoir5d"
+uri = "file://screenshots/app-home-new.jpg"
+type = "image"
+title = "App — नया Home"
+description = "Declutter के बाद home — Fan Voting/MVP cards, floating AI button, नया tab bar।"

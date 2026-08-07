@@ -512,8 +512,8 @@ export function getPolls(token?: string): Promise<{ polls: Poll[] }> {
   return apiFetch('/polls', { token });
 }
 
-export function votePoll(id: string, optionId: string, token: string): Promise<{ success: boolean; totalVotes: number; options: PollOption[] }> {
-  return apiFetch(`/polls/${id}/vote`, { method: 'POST', body: { optionId }, token });
+export function votePoll(id: string, optionId: string, deviceId: string, token?: string | null): Promise<{ success: boolean; totalVotes: number; options: PollOption[] }> {
+  return apiFetch(`/polls/${id}/vote`, { method: 'POST', body: { optionId, deviceId }, token: token || undefined });
 }
 
 // ── MVP ────────────────────────────────────────────────────────────
