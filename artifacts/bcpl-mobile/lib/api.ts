@@ -462,7 +462,81 @@ export function getGallery(): Promise<{ albums: GalleryAlbum[] }> {
   return apiFetch('/gallery');
 }
 
-// ── Community Scorer ─────────────────────────────────────────────────────────
+// ── Community Scorer (Profiles & Teams) ──────────────────────────────────────
+export interface CommunityProfile {
+  userId: string;
+  displayName: string;
+  role: string; // batsman|bowler|all_rounder|wicket_keeper
+  battingStyle: string; // right|left
+  bowlingStyle?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CommunityProfileStats {
+  batting: { matches: number; innings: number; runs: number; balls: number; fours: number; sixes: number; strikeRate: number };
+  bowling: { matches: number; innings: number; wickets: number; balls: number; overs: number; runsConceded: number; economy: number };
+}
+
+export interface CommunityTeam {
+  id: string;
+  ownerUserId: string;
+  name: string;
+  shortName: string;
+  createdAt: string;
+}
+
+export interface CommunityTeamMember {
+  id: string;
+  teamId: string;
+  userId?: string | null;
+  phone?: string | null;
+  name: string;
+  role: string;
+  addedAt: string;
+}
+
+export function communityGetProfile(token: string): Promise<{ profile: CommunityProfile | null }> {
+  return apiFetch('/community/profile', { token });
+}
+
+export function communityUpdateProfile(token: string, data: { displayName: string; role: string; battingStyle: string; bowlingStyle?: string }): Promise<{ success: boolean; profile: CommunityProfile }> {
+  return apiFetch('/community/profile', { method: 'PUT', body: data, token });
+}
+
+export function communityGetProfileStats(token: string): Promise<{ stats: CommunityProfileStats }> {
+  return apiFetch('/community/profile/stats', { token });
+}
+
+export function communityMyTeams(token: string): Promise<{ teams: CommunityTeam[] }> {
+  return apiFetch('/community/teams/mine', { token });
+}
+
+export function communityCreateTeam(token: string, data: { name: string; shortName: string }): Promise<{ success: boolean; team: CommunityTeam }> {
+  return apiFetch('/community/teams', { method: 'POST', body: data, token });
+}
+
+export function communityGetTeam(token: string, id: string): Promise<{ team: CommunityTeam; members: CommunityTeamMember[] }> {
+  return apiFetch(`/community/teams/${id}`, { token });
+}
+
+export function communityUpdateTeam(token: string, id: string, data: { name?: string; shortName?: string }): Promise<{ success: boolean; team: CommunityTeam }> {
+  return apiFetch(`/community/teams/${id}`, { method: 'PATCH', body: data, token });
+}
+
+export function communityDeleteTeam(token: string, id: string): Promise<{ success: boolean }> {
+  return apiFetch(`/community/teams/${id}`, { method: 'DELETE', token });
+}
+
+export function communityAddMember(token: string, teamId: string, data: { name: string; phone?: string; role?: string }): Promise<{ success: boolean; member: CommunityTeamMember }> {
+  return apiFetch(`/community/teams/${teamId}/members`, { method: 'POST', body: data, token });
+}
+
+export function communityRemoveMember(token: string, teamId: string, memberId: string): Promise<{ success: boolean }> {
+  return apiFetch(`/community/teams/${teamId}/members/${memberId}`, { method: 'DELETE', token });
+}
+
+// ── Community Scorer (Matches) ───────────────────────────────────────────────
 export interface CommunityMatch {
   id: string;
   team1: string;
@@ -472,6 +546,8 @@ export interface CommunityMatch {
   playersPerSide: number;
   status: 'live' | 'innings2' | 'completed';
   resultDesc?: string | null;
+  teamAId?: string | null;
+  teamBId?: string | null;
   createdAt: string;
 }
 
@@ -489,12 +565,12 @@ export interface CommunityBatting {
   balls: number;
   fours: number;
   sixes: number;
-  out: boolean;
+  out: boolean | string;
 }
 
 export interface CommunityBowling {
   name: string;
-  overs: number;
+  overs: number | string;
   runs: number;
   wickets: number;
 }
@@ -515,7 +591,13 @@ export interface CommunityInnings {
   recentBalls: CommunityRecentBall[];
 }
 
-export function communityCreateMatch(token: string, data: { team1: string, team2: string, venue?: string, oversLimit: number, playersPerSide?: number, battingFirst: 'team1'|'team2' }): Promise<{ match: CommunityMatch }> {
+export interface CommunityRosterMember {
+  id: string;
+  name: string;
+  role: string;
+}
+
+export function communityCreateMatch(token: string, data: { team1?: string, team2?: string, teamAId?: string, teamBId?: string, venue?: string, oversLimit: number, playersPerSide?: number, battingFirst: 'team1'|'team2' }): Promise<{ match: CommunityMatch }> {
   return apiFetch('/community/matches', { method: 'POST', body: data, token });
 }
 
@@ -523,11 +605,11 @@ export function communityMyMatches(token: string): Promise<{ matches: CommunityM
   return apiFetch('/community/matches/mine', { token });
 }
 
-export function communityScorecard(id: string): Promise<{ match: CommunityMatch; innings: CommunityInnings[] }> {
+export function communityScorecard(id: string): Promise<{ match: CommunityMatch; innings: CommunityInnings[]; rosters?: { teamA: CommunityRosterMember[]; teamB: CommunityRosterMember[] } }> {
   return apiFetch(`/community/matches/${id}`);
 }
 
-export function communityBall(token: string, id: string, data: { type: 'run'|'wide'|'noball'|'bye'|'legbye'|'wicket', runs: number, batterName: string, bowlerName: string, dismissalType?: string, dismissedBatter?: string, fielderName?: string }): Promise<{ inningsTotal: { runs: number, wickets: number, overs: number, balls: number }, inningsComplete: boolean, commentary: string }> {
+export function communityBall(token: string, id: string, data: { type: 'run'|'wide'|'noball'|'bye'|'legbye'|'wicket', runs: number, batterName: string, bowlerName: string, dismissalType?: string, dismissedBatter?: string, fielderName?: string, strikerMemberId?: string, bowlerMemberId?: string }): Promise<{ inningsTotal: { runs: number, wickets: number, overs: number, balls: number }, inningsComplete: boolean, commentary: string }> {
   return apiFetch(`/community/matches/${id}/ball`, { method: 'POST', body: data, token });
 }
 

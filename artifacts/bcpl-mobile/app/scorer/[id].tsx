@@ -36,8 +36,11 @@ export default function ScoringScreen() {
 
   // State: Players on strike
   const [striker, setStriker] = useState('Batter 1');
+  const [strikerId, setStrikerId] = useState<string | undefined>(undefined);
   const [nonStriker, setNonStriker] = useState('Batter 2');
+  const [nonStrikerId, setNonStrikerId] = useState<string | undefined>(undefined);
   const [bowler, setBowler] = useState('Bowler 1');
+  const [bowlerId, setBowlerId] = useState<string | undefined>(undefined);
   
   // Modals state
   const [outModal, setOutModal] = useState(false);
@@ -47,16 +50,22 @@ export default function ScoringScreen() {
   // Prompt Modals
   const [newBowlerModal, setNewBowlerModal] = useState(false);
   const [newBowlerName, setNewBowlerName] = useState('');
+  const [newBowlerId, setNewBowlerId] = useState<string | undefined>(undefined);
   const [newBatterTarget, setNewBatterTarget] = useState<'striker' | 'nonStriker' | null>(null);
   const [newBatterName, setNewBatterName] = useState('');
+  const [newBatterId, setNewBatterId] = useState<string | undefined>(undefined);
   const [renameTarget, setRenameTarget] = useState<'striker' | 'nonStriker' | 'bowler' | null>(null);
   const [renameName, setRenameName] = useState('');
+  const [renameMemberId, setRenameMemberId] = useState<string | undefined>(undefined);
 
   // Setup UI State
   const [setupInnings, setSetupInnings] = useState(0);
   const [setupS, setSetupS] = useState('Batter 1');
+  const [setupSId, setSetupSId] = useState<string | undefined>(undefined);
   const [setupNs, setSetupNs] = useState('Batter 2');
+  const [setupNsId, setSetupNsId] = useState<string | undefined>(undefined);
   const [setupB, setSetupB] = useState('Bowler 1');
+  const [setupBId, setSetupBId] = useState<string | undefined>(undefined);
 
   // Run out details
   const [dismissalType, setDismissalType] = useState('');
@@ -65,13 +74,13 @@ export default function ScoringScreen() {
   const [toastMsg, setToastMsg] = useState('');
   
   const [queuedBowlerPrompt, setQueuedBowlerPrompt] = useState(false);
-  const historyRef = React.useRef<{ striker: string; nonStriker: string; bowler: string }[]>([]);
+  const historyRef = React.useRef<{ striker: string; strikerId?: string; nonStriker: string; nonStrikerId?: string; bowler: string; bowlerId?: string }[]>([]);
 
   useEffect(() => {
-    if (renameTarget === 'striker') setRenameName(striker);
-    else if (renameTarget === 'nonStriker') setRenameName(nonStriker);
-    else if (renameTarget === 'bowler') setRenameName(bowler);
-  }, [renameTarget, striker, nonStriker, bowler]);
+    if (renameTarget === 'striker') { setRenameName(striker); setRenameMemberId(strikerId); }
+    else if (renameTarget === 'nonStriker') { setRenameName(nonStriker); setRenameMemberId(nonStrikerId); }
+    else if (renameTarget === 'bowler') { setRenameName(bowler); setRenameMemberId(bowlerId); }
+  }, [renameTarget, striker, strikerId, nonStriker, nonStrikerId, bowler, bowlerId]);
 
   const mineQ = useQuery({
     queryKey: ['community-mine'],
@@ -89,7 +98,7 @@ export default function ScoringScreen() {
     mutationFn: (data: any) => communityBall(token as string, matchId, data),
     onMutate: () => {
       // Snapshot state BEFORE mutation goes out
-      return { snapshot: { striker, nonStriker, bowler } };
+      return { snapshot: { striker, strikerId, nonStriker, nonStrikerId, bowler, bowlerId } };
     },
     onSuccess: (data, variables: any, context) => {
       if (context?.snapshot) {
@@ -121,7 +130,9 @@ export default function ScoringScreen() {
       }
 
       let nextStriker = striker;
+      let nextStrikerId = strikerId;
       let nextNonStriker = nonStriker;
+      let nextNonStrikerId = nonStrikerId;
       let emptySlot: 'striker' | 'nonStriker' | null = null;
 
       if (variables.type === 'wicket') {
@@ -129,16 +140,21 @@ export default function ScoringScreen() {
       }
 
       if (isSwap) {
-        const temp = nextStriker;
+        const tempN = nextStriker;
+        const tempId = nextStrikerId;
         nextStriker = nextNonStriker;
-        nextNonStriker = temp;
+        nextStrikerId = nextNonStrikerId;
+        nextNonStriker = tempN;
+        nextNonStrikerId = tempId;
         
         if (emptySlot === 'striker') emptySlot = 'nonStriker';
         else if (emptySlot === 'nonStriker') emptySlot = 'striker';
       }
 
       setStriker(nextStriker);
+      setStrikerId(nextStrikerId);
       setNonStriker(nextNonStriker);
+      setNonStrikerId(nextNonStrikerId);
 
       if (variables.type === 'wicket') {
         setNewBatterTarget(emptySlot);
@@ -161,8 +177,11 @@ export default function ScoringScreen() {
       const last = historyRef.current.pop();
       if (last) {
         setStriker(last.striker);
+        setStrikerId(last.strikerId);
         setNonStriker(last.nonStriker);
+        setNonStrikerId(last.nonStrikerId);
         setBowler(last.bowler);
+        setBowlerId(last.bowlerId);
       }
     },
   });
@@ -182,7 +201,9 @@ export default function ScoringScreen() {
       type,
       runs,
       batterName: striker,
+      strikerMemberId: strikerId,
       bowlerName: bowler,
+      bowlerMemberId: bowlerId,
       ...extraData,
     });
   };
@@ -234,7 +255,23 @@ export default function ScoringScreen() {
     return `${name} ${Math.floor(data.overs)}.${Math.round((data.overs % 1) * 10)}-0-${data.runs}-${data.wickets}`;
   };
 
-  const BatterSuggestions = ({ onSelect, exclude = [] }: { onSelect: (n: string) => void, exclude?: string[] }) => {
+  const BatterSuggestions = ({ onSelect, exclude = [] }: { onSelect: (n: string, id?: string) => void, exclude?: string[] }) => {
+    if (q.data?.rosters) {
+      const isTeamA = activeInnings?.battingTeam === match?.team1;
+      const roster = isTeamA ? q.data.rosters.teamA : q.data.rosters.teamB;
+      const available = roster.filter(m => !exclude.includes(m.name));
+      if (!available.length) return null;
+      return (
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 }}>
+          {available.map(m => (
+            <Pressable key={m.id} onPress={() => onSelect(m.name, m.id)} style={[styles.chip, { backgroundColor: c.card2 }]}>
+              <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold' }}>{m.name}</Text>
+              {m.role ? <Text style={{ color: c.sub, fontSize: 10, fontFamily: 'PlusJakartaSans_500Medium' }}>{m.role}</Text> : null}
+            </Pressable>
+          ))}
+        </View>
+      );
+    }
     const list = activeInnings?.batting?.map(b => b.name).filter(n => !exclude.includes(n)) || [];
     const unique = Array.from(new Set(list));
     if (!unique.length) return null;
@@ -249,7 +286,23 @@ export default function ScoringScreen() {
     );
   };
 
-  const BowlerSuggestions = ({ onSelect, exclude = [] }: { onSelect: (n: string) => void, exclude?: string[] }) => {
+  const BowlerSuggestions = ({ onSelect, exclude = [] }: { onSelect: (n: string, id?: string) => void, exclude?: string[] }) => {
+    if (q.data?.rosters) {
+      const isTeamA = activeInnings?.bowlingTeam === match?.team1;
+      const roster = isTeamA ? q.data.rosters.teamA : q.data.rosters.teamB;
+      const available = roster.filter(m => !exclude.includes(m.name));
+      if (!available.length) return null;
+      return (
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 }}>
+          {available.map(m => (
+            <Pressable key={m.id} onPress={() => onSelect(m.name, m.id)} style={[styles.chip, { backgroundColor: c.card2 }]}>
+              <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold' }}>{m.name}</Text>
+              {m.role ? <Text style={{ color: c.sub, fontSize: 10, fontFamily: 'PlusJakartaSans_500Medium' }}>{m.role}</Text> : null}
+            </Pressable>
+          ))}
+        </View>
+      );
+    }
     const list = activeInnings?.bowling?.map(b => b.name).filter(n => !exclude.includes(n)) || [];
     const unique = Array.from(new Set(list));
     if (!unique.length) return null;
@@ -378,15 +431,21 @@ export default function ScoringScreen() {
               {t('Start Innings', 'पारी शुरू करें')}
             </Text>
             <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', marginBottom: 4 }}>{t('Striker', 'स्ट्राइकर')}</Text>
-            <TextInput value={setupS} onChangeText={setSetupS} style={[styles.inputChip, { backgroundColor: c.card, color: c.ink, borderColor: c.line, marginBottom: 12, textAlign: 'left' }]} />
+            <TextInput value={setupS} onChangeText={(v) => { setSetupS(v); setSetupSId(undefined); }} style={[styles.inputChip, { backgroundColor: c.card, color: c.ink, borderColor: c.line, marginBottom: 4, textAlign: 'left' }]} />
+            <BatterSuggestions onSelect={(n, id) => { setSetupS(n); setSetupSId(id); }} exclude={[setupNs]} />
             
+            <View style={{ height: 12 }} />
             <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', marginBottom: 4 }}>{t('Non-Striker', 'नॉन-स्ट्राइकर')}</Text>
-            <TextInput value={setupNs} onChangeText={setSetupNs} style={[styles.inputChip, { backgroundColor: c.card, color: c.ink, borderColor: c.line, marginBottom: 12, textAlign: 'left' }]} />
+            <TextInput value={setupNs} onChangeText={(v) => { setSetupNs(v); setSetupNsId(undefined); }} style={[styles.inputChip, { backgroundColor: c.card, color: c.ink, borderColor: c.line, marginBottom: 4, textAlign: 'left' }]} />
+            <BatterSuggestions onSelect={(n, id) => { setSetupNs(n); setSetupNsId(id); }} exclude={[setupS]} />
             
+            <View style={{ height: 12 }} />
             <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', marginBottom: 4 }}>{t('Bowler', 'गेंदबाज़')}</Text>
-            <TextInput value={setupB} onChangeText={setSetupB} style={[styles.inputChip, { backgroundColor: c.card, color: c.ink, borderColor: c.line, marginBottom: 24, textAlign: 'left' }]} />
+            <TextInput value={setupB} onChangeText={(v) => { setSetupB(v); setSetupBId(undefined); }} style={[styles.inputChip, { backgroundColor: c.card, color: c.ink, borderColor: c.line, marginBottom: 4, textAlign: 'left' }]} />
+            <BowlerSuggestions onSelect={(n, id) => { setSetupB(n); setSetupBId(id); }} />
             
-            <Pressable onPress={() => { setStriker(setupS); setNonStriker(setupNs); setBowler(setupB); setSetupInnings(activeInnings.inningsNumber); }} style={{ borderRadius: 12, overflow: 'hidden' }}>
+            <View style={{ height: 24 }} />
+            <Pressable onPress={() => { setStriker(setupS); setStrikerId(setupSId); setNonStriker(setupNs); setNonStrikerId(setupNsId); setBowler(setupB); setBowlerId(setupBId); setSetupInnings(activeInnings.inningsNumber); }} style={{ borderRadius: 12, overflow: 'hidden' }}>
               <LinearGradient colors={['#00DCF5', '#5B2BF0']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ padding: 16, alignItems: 'center' }}>
                 <Text style={{ color: '#fff', fontFamily: 'PlusJakartaSans_700Bold', fontSize: 16 }}>
                   {t('Start Scoring', 'Scoring शुरू करें')}
@@ -402,7 +461,7 @@ export default function ScoringScreen() {
                 <Text style={{ color: c.sub, fontSize: 10, fontFamily: 'PlusJakartaSans_600SemiBold' }}>{t('Striker', 'स्ट्राइकर')}</Text>
                 <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold' }} numberOfLines={1}>{striker}</Text>
               </Pressable>
-              <Pressable onPress={() => { const s = striker; setStriker(nonStriker); setNonStriker(s); }} style={{ justifyContent: 'center', padding: 8 }}>
+              <Pressable onPress={() => { const s = striker; const sId = strikerId; setStriker(nonStriker); setStrikerId(nonStrikerId); setNonStriker(s); setNonStrikerId(sId); }} style={{ justifyContent: 'center', padding: 8 }}>
                 <Feather name="repeat" size={16} color={c.sub} />
               </Pressable>
               <Pressable onPress={() => setRenameTarget('nonStriker')} style={[styles.chip, { flex: 1, backgroundColor: c.card2 }]}>
@@ -557,14 +616,14 @@ export default function ScoringScreen() {
             </Text>
             <TextInput
               value={renameName}
-              onChangeText={setRenameName}
+              onChangeText={(v) => { setRenameName(v); setRenameMemberId(undefined); }}
               style={[styles.inputChip, { backgroundColor: c.card, color: c.ink, borderColor: c.line, textAlign: 'left', marginBottom: 8 }]}
             />
             
             {renameTarget === 'striker' || renameTarget === 'nonStriker' ? (
-              <BatterSuggestions onSelect={setRenameName} />
+              <BatterSuggestions onSelect={(n, id) => { setRenameName(n); setRenameMemberId(id); }} exclude={[renameTarget === 'striker' ? nonStriker : striker]} />
             ) : (
-              <BowlerSuggestions onSelect={setRenameName} />
+              <BowlerSuggestions onSelect={(n, id) => { setRenameName(n); setRenameMemberId(id); }} />
             )}
 
             <View style={{ flexDirection: 'row', gap: 12, marginTop: 24 }}>
@@ -573,9 +632,9 @@ export default function ScoringScreen() {
               </Pressable>
               <Pressable
                 onPress={() => {
-                  if (renameTarget === 'striker') setStriker(renameName || 'Batter');
-                  else if (renameTarget === 'nonStriker') setNonStriker(renameName || 'Batter');
-                  else if (renameTarget === 'bowler') setBowler(renameName || 'Bowler');
+                  if (renameTarget === 'striker') { setStriker(renameName || 'Batter'); setStrikerId(renameMemberId); }
+                  else if (renameTarget === 'nonStriker') { setNonStriker(renameName || 'Batter'); setNonStrikerId(renameMemberId); }
+                  else if (renameTarget === 'bowler') { setBowler(renameName || 'Bowler'); setBowlerId(renameMemberId); }
                   setRenameTarget(null);
                 }}
                 style={[styles.modalBtn, { backgroundColor: c.cyan }]}
@@ -596,19 +655,20 @@ export default function ScoringScreen() {
             </Text>
             <TextInput
               value={newBatterName}
-              onChangeText={setNewBatterName}
+              onChangeText={(v) => { setNewBatterName(v); setNewBatterId(undefined); }}
               style={[styles.inputChip, { backgroundColor: c.card, color: c.ink, borderColor: c.line, textAlign: 'left', marginBottom: 8 }]}
             />
             
-            <BatterSuggestions onSelect={setNewBatterName} exclude={[striker, nonStriker]} />
+            <BatterSuggestions onSelect={(n, id) => { setNewBatterName(n); setNewBatterId(id); }} exclude={[striker, nonStriker]} />
 
             <View style={{ flexDirection: 'row', gap: 12, marginTop: 24 }}>
               <Pressable
                 onPress={() => {
-                  if (newBatterTarget === 'striker') setStriker(newBatterName || 'Batter');
-                  else setNonStriker(newBatterName || 'Batter');
+                  if (newBatterTarget === 'striker') { setStriker(newBatterName || 'Batter'); setStrikerId(newBatterId); }
+                  else { setNonStriker(newBatterName || 'Batter'); setNonStrikerId(newBatterId); }
                   setNewBatterTarget(null);
                   setNewBatterName('');
+                  setNewBatterId(undefined);
                   if (queuedBowlerPrompt) {
                     setQueuedBowlerPrompt(false);
                     setNewBowlerModal(true);
@@ -632,21 +692,25 @@ export default function ScoringScreen() {
             </Text>
             <TextInput
               value={newBowlerName}
-              onChangeText={setNewBowlerName}
+              onChangeText={(v) => { setNewBowlerName(v); setNewBowlerId(undefined); }}
               style={[styles.inputChip, { backgroundColor: c.card, color: c.ink, borderColor: c.line, textAlign: 'left', marginBottom: 8 }]}
             />
             
-            <BowlerSuggestions onSelect={setNewBowlerName} exclude={[bowler]} />
+            <BowlerSuggestions onSelect={(n, id) => { setNewBowlerName(n); setNewBowlerId(id); }} exclude={[bowler]} />
 
             <View style={{ flexDirection: 'row', gap: 12, marginTop: 24 }}>
-              <Pressable onPress={() => { setNewBowlerModal(false); setNewBowlerName(''); }} style={[styles.modalBtn, { backgroundColor: c.card2 }]}>
+              <Pressable onPress={() => { setNewBowlerModal(false); setNewBowlerName(''); setNewBowlerId(undefined); }} style={[styles.modalBtn, { backgroundColor: c.card2 }]}>
                 <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold' }}>{t('Keep same', 'वही जारी रखें')}</Text>
               </Pressable>
               <Pressable
                 onPress={() => {
-                  setBowler(newBowlerName || bowler);
+                  if (newBowlerName) {
+                    setBowler(newBowlerName);
+                    setBowlerId(newBowlerId);
+                  }
                   setNewBowlerModal(false);
                   setNewBowlerName('');
+                  setNewBowlerId(undefined);
                 }}
                 style={[styles.modalBtn, { backgroundColor: c.cyan }]}
               >

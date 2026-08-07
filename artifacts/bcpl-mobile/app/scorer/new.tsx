@@ -6,9 +6,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from '@/context/AuthContext';
 import { useLang } from '@/context/LanguageContext';
 import { useColors } from '@/hooks/useColors';
-import { communityCreateMatch } from '@/lib/api';
+import { communityCreateMatch, communityMyTeams } from '@/lib/api';
 import { GlassAppBar, ScreenBackground, Card, useAppBarHeight, useBottomNavHeight, LoadingView } from '@/components/ui';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 
 const OVERS_PRESETS = [5, 8, 10, 12, 15, 20];
 
@@ -24,11 +24,19 @@ export default function NewMatchScreen() {
 
   const [team1, setTeam1] = useState('');
   const [team2, setTeam2] = useState('');
+  const [teamAId, setTeamAId] = useState<string | undefined>(undefined);
+  const [teamBId, setTeamBId] = useState<string | undefined>(undefined);
   const [venue, setVenue] = useState('');
   const [oversLimit, setOversLimit] = useState(10);
   const [customOvers, setCustomOvers] = useState('');
   const [battingFirst, setBattingFirst] = useState<'team1' | 'team2'>('team1');
   const [errorMsg, setErrorMsg] = useState('');
+
+  const teamsQ = useQuery({
+    queryKey: ['community-teams'],
+    queryFn: () => communityMyTeams(token as string),
+    enabled: !!token,
+  });
 
   const createMut = useMutation({
     mutationFn: (data: any) => communityCreateMatch(token as string, data),
@@ -41,7 +49,7 @@ export default function NewMatchScreen() {
     },
   });
 
-  if (!ready) {
+  if (!ready || (token && teamsQ.isLoading)) {
     return <View style={{ flex: 1, backgroundColor: c.bg }}><ScreenBackground /><GlassAppBar title={t('New Match', 'नया मैच')} /><LoadingView /></View>;
   }
 
@@ -52,8 +60,11 @@ export default function NewMatchScreen() {
 
   const handleStart = () => {
     setErrorMsg('');
-    if (!team1.trim() || !team2.trim()) {
-      setErrorMsg(t('Enter both team names', 'दोनों टीमों के नाम दर्ज करें'));
+    const t1 = team1.trim() || teamsQ.data?.teams.find(t => t.id === teamAId)?.name;
+    const t2 = team2.trim() || teamsQ.data?.teams.find(t => t.id === teamBId)?.name;
+    
+    if (!t1 || !t2) {
+      setErrorMsg(t('Enter or select both team names', 'दोनों टीमों के नाम दर्ज करें या चुनें'));
       return;
     }
     const finalOvers = customOvers ? parseInt(customOvers, 10) : oversLimit;
@@ -63,13 +74,17 @@ export default function NewMatchScreen() {
     }
 
     createMut.mutate({
-      team1: team1.trim(),
-      team2: team2.trim(),
+      team1: team1.trim() || undefined,
+      team2: team2.trim() || undefined,
+      teamAId,
+      teamBId,
       venue: venue.trim() || undefined,
       oversLimit: finalOvers,
       battingFirst,
     });
   };
+
+  const teams = teamsQ.data?.teams || [];
 
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
@@ -82,27 +97,82 @@ export default function NewMatchScreen() {
           <Card padding={20} style={{ gap: 16 }}>
             <View>
               <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 14, marginBottom: 8 }}>
-                {t('Team A Name', 'Team A नाम')}
+                {t('Team A', 'Team A')}
               </Text>
-              <TextInput
-                value={team1}
-                onChangeText={setTeam1}
-                placeholder={t('e.g. Blue Stars', 'जैसे Blue Stars')}
-                placeholderTextColor={c.sub}
-                style={[styles.input, { backgroundColor: c.card2, color: c.ink, borderColor: c.line }]}
-              />
+              
+              {teams.length > 0 && (
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, marginBottom: 12 }}>
+                  {teams.filter(t => t.id !== teamBId).map(team => (
+                    <Pressable
+                      key={team.id}
+                      onPress={() => { setTeamAId(team.id); setTeam1(''); }}
+                      style={[styles.chip, { backgroundColor: teamAId === team.id ? c.cyan : c.card2, borderColor: teamAId === team.id ? c.cyan : c.line, borderWidth: 1 }]}
+                    >
+                      <Text style={{ color: teamAId === team.id ? c.bg : c.ink, fontFamily: 'PlusJakartaSans_600SemiBold' }}>
+                        {team.name}
+                      </Text>
+                    </Pressable>
+                  ))}
+                </ScrollView>
+              )}
+              
+              {!teamAId && (
+                <TextInput
+                  value={team1}
+                  onChangeText={setTeam1}
+                  placeholder={t('e.g. Blue Stars', 'जैसे Blue Stars')}
+                  placeholderTextColor={c.sub}
+                  style={[styles.input, { backgroundColor: c.card2, color: c.ink, borderColor: c.line }]}
+                />
+              )}
+              {teamAId && (
+                <Pressable onPress={() => setTeamAId(undefined)}>
+                  <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 13, marginTop: 4 }}>
+                    {t('Clear selection', 'चयन हटाएं')}
+                  </Text>
+                </Pressable>
+              )}
             </View>
+
+            <View style={{ height: 1, backgroundColor: c.line, marginVertical: 4 }} />
+
             <View>
               <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 14, marginBottom: 8 }}>
-                {t('Team B Name', 'Team B नाम')}
+                {t('Team B', 'Team B')}
               </Text>
-              <TextInput
-                value={team2}
-                onChangeText={setTeam2}
-                placeholder={t('e.g. Red Stars', 'जैसे Red Stars')}
-                placeholderTextColor={c.sub}
-                style={[styles.input, { backgroundColor: c.card2, color: c.ink, borderColor: c.line }]}
-              />
+              
+              {teams.length > 0 && (
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, marginBottom: 12 }}>
+                  {teams.filter(t => t.id !== teamAId).map(team => (
+                    <Pressable
+                      key={team.id}
+                      onPress={() => { setTeamBId(team.id); setTeam2(''); }}
+                      style={[styles.chip, { backgroundColor: teamBId === team.id ? c.violet : c.card2, borderColor: teamBId === team.id ? c.violet : c.line, borderWidth: 1 }]}
+                    >
+                      <Text style={{ color: teamBId === team.id ? '#fff' : c.ink, fontFamily: 'PlusJakartaSans_600SemiBold' }}>
+                        {team.name}
+                      </Text>
+                    </Pressable>
+                  ))}
+                </ScrollView>
+              )}
+
+              {!teamBId && (
+                <TextInput
+                  value={team2}
+                  onChangeText={setTeam2}
+                  placeholder={t('e.g. Red Stars', 'जैसे Red Stars')}
+                  placeholderTextColor={c.sub}
+                  style={[styles.input, { backgroundColor: c.card2, color: c.ink, borderColor: c.line }]}
+                />
+              )}
+              {teamBId && (
+                <Pressable onPress={() => setTeamBId(undefined)}>
+                  <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 13, marginTop: 4 }}>
+                    {t('Clear selection', 'चयन हटाएं')}
+                  </Text>
+                </Pressable>
+              )}
             </View>
           </Card>
 
@@ -117,7 +187,7 @@ export default function NewMatchScreen() {
                 style={[{ flex: 1, padding: 16, borderRadius: 12, borderWidth: 2, alignItems: 'center' }, battingFirst === 'team1' ? { borderColor: c.magenta, backgroundColor: `${c.magenta}10` } : { borderColor: c.line, backgroundColor: c.card2 }]}
               >
                 <Text style={{ color: battingFirst === 'team1' ? c.magenta : c.sub, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 15 }} numberOfLines={1}>
-                  {team1 || 'Team A'}
+                  {team1 || (teamAId ? teams.find(t=>t.id===teamAId)?.name : 'Team A')}
                 </Text>
               </Pressable>
               <Pressable
@@ -125,7 +195,7 @@ export default function NewMatchScreen() {
                 style={[{ flex: 1, padding: 16, borderRadius: 12, borderWidth: 2, alignItems: 'center' }, battingFirst === 'team2' ? { borderColor: c.violet, backgroundColor: `${c.violet}10` } : { borderColor: c.line, backgroundColor: c.card2 }]}
               >
                 <Text style={{ color: battingFirst === 'team2' ? c.violet : c.sub, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 15 }} numberOfLines={1}>
-                  {team2 || 'Team B'}
+                  {team2 || (teamBId ? teams.find(t=>t.id===teamBId)?.name : 'Team B')}
                 </Text>
               </Pressable>
             </View>
@@ -205,4 +275,9 @@ const styles = StyleSheet.create({
     fontFamily: 'PlusJakartaSans_600SemiBold',
     fontSize: 16,
   },
+  chip: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 20,
+  }
 });

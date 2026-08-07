@@ -76,6 +76,31 @@ export default function ScorerHome() {
                 </LinearGradient>
               </Pressable>
 
+              <View style={{ flexDirection: 'row', gap: 12, marginTop: 16 }}>
+                <Pressable
+                  onPress={() => router.push('/scorer/profile')}
+                  style={({ pressed }) => [{ flex: 1, borderRadius: 16, overflow: 'hidden', opacity: pressed ? 0.8 : 1 }]}
+                >
+                  <LinearGradient colors={[`${c.violet}20`, `${c.magenta}20`]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ padding: 16, alignItems: 'center', borderWidth: 1, borderColor: `${c.violet}40`, borderRadius: 16 }}>
+                    <Feather name="user" size={24} color={c.violet} style={{ marginBottom: 8 }} />
+                    <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 14 }}>
+                      {t('My Profile', 'मेरी प्रोफ़ाइल')}
+                    </Text>
+                  </LinearGradient>
+                </Pressable>
+                <Pressable
+                  onPress={() => router.push('/scorer/teams')}
+                  style={({ pressed }) => [{ flex: 1, borderRadius: 16, overflow: 'hidden', opacity: pressed ? 0.8 : 1 }]}
+                >
+                  <LinearGradient colors={[`${c.cyan}20`, `${c.violet}20`]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ padding: 16, alignItems: 'center', borderWidth: 1, borderColor: `${c.cyan}40`, borderRadius: 16 }}>
+                    <Feather name="shield" size={24} color={c.cyan} style={{ marginBottom: 8 }} />
+                    <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 14 }}>
+                      {t('My Teams', 'मेरी टीमें')}
+                    </Text>
+                  </LinearGradient>
+                </Pressable>
+              </View>
+
               <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 18, marginTop: 24 }}>
                 {t('My Matches', 'मेरे मैच')}
               </Text>

@@ -129,6 +129,7 @@ export default function AssistantScreen() {
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }} keyboardVerticalOffset={0}>
         <ScrollView
           ref={scrollRef}
+          style={{ flex: 1 }}
           contentContainerStyle={{ padding: 16, paddingTop: appBarHeight + 12, paddingBottom: 16 }}
           onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: true })}
         >
@@ -155,7 +156,7 @@ export default function AssistantScreen() {
           ) : null}
         </ScrollView>
 
-        <View style={{ flexDirection: 'row', gap: 8, padding: 12, borderTopWidth: 1, borderTopColor: c.line, backgroundColor: c.bg }}>
+        <View style={{ flexDirection: 'row', alignItems: 'stretch', gap: 8, padding: 12, borderTopWidth: 1, borderTopColor: c.line, backgroundColor: c.bg, flexGrow: 0, flexShrink: 0 }}>
           <TextInput
             value={input}
             onChangeText={setInput}
@@ -178,7 +179,7 @@ export default function AssistantScreen() {
             }}
           />
           <Pressable onPress={send} disabled={busy || !input.trim()} style={{ borderRadius: 14, overflow: 'hidden', opacity: busy || !input.trim() ? 0.5 : 1 }}>
-            <LinearGradient colors={['#7C5CFF', '#FF3DA6']} style={{ paddingHorizontal: 16, height: '100%', alignItems: 'center', justifyContent: 'center' }}>
+            <LinearGradient colors={['#7C5CFF', '#FF3DA6']} style={{ paddingHorizontal: 16, minHeight: 44, flex: 1, alignItems: 'center', justifyContent: 'center' }}>
               <Feather name="send" size={18} color="#fff" />
             </LinearGradient>
           </Pressable>

@@ -22,7 +22,7 @@ import { Router } from "express";
 import { db } from "@workspace/db";
 import { sql } from "drizzle-orm";
 import { z } from "zod";
-import { requireAuth, type AuthRequest } from "../middlewares/auth";
+import { requireAuth, optionalAuth, type AuthRequest } from "../middlewares/auth";
 import { logger } from "../lib/logger";
 
 const router = Router();
@@ -85,6 +85,49 @@ async function ensureTables(): Promise<void> {
       created_at timestamptz NOT NULL DEFAULT now()
     )`);
     await tx.execute(sql`CREATE INDEX IF NOT EXISTS community_deliveries_innings_idx ON community_deliveries (innings_id, created_at DESC)`);
+
+    /* ── Phase 1: cricket profiles ──────────────────────────────────────── */
+    await tx.execute(sql`CREATE TABLE IF NOT EXISTS community_profiles (
+      user_id uuid PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+      display_name varchar(80) NOT NULL,
+      role varchar(16) NOT NULL,
+      batting_style varchar(8) NOT NULL,
+      bowling_style varchar(80),
+      created_at timestamptz NOT NULL DEFAULT now(),
+      updated_at timestamptz NOT NULL DEFAULT now()
+    )`);
+
+    /* ── Phase 1: teams + members ───────────────────────────────────────── */
+    await tx.execute(sql`CREATE TABLE IF NOT EXISTS community_teams (
+      id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+      owner_user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      name varchar(40) NOT NULL,
+      short_name varchar(5) NOT NULL,
+      created_at timestamptz NOT NULL DEFAULT now()
+    )`);
+    await tx.execute(sql`CREATE INDEX IF NOT EXISTS community_teams_owner_idx ON community_teams (owner_user_id, created_at DESC)`);
+    await tx.execute(sql`CREATE TABLE IF NOT EXISTS community_team_members (
+      id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+      team_id uuid NOT NULL REFERENCES community_teams(id) ON DELETE CASCADE,
+      user_id uuid REFERENCES users(id) ON DELETE SET NULL,
+      phone varchar(15),
+      name varchar(80) NOT NULL,
+      role varchar(24) NOT NULL DEFAULT '',
+      added_at timestamptz NOT NULL DEFAULT now()
+    )`);
+    await tx.execute(sql`CREATE INDEX IF NOT EXISTS community_team_members_team_idx ON community_team_members (team_id, added_at ASC)`);
+    await tx.execute(sql`CREATE INDEX IF NOT EXISTS community_team_members_phone_idx ON community_team_members (phone)`);
+    await tx.execute(sql`CREATE INDEX IF NOT EXISTS community_team_members_user_idx ON community_team_members (user_id)`);
+    await tx.execute(sql`CREATE UNIQUE INDEX IF NOT EXISTS community_team_members_team_phone_uq
+      ON community_team_members (team_id, phone) WHERE phone IS NOT NULL`);
+    await tx.execute(sql`CREATE UNIQUE INDEX IF NOT EXISTS community_team_members_team_user_uq
+      ON community_team_members (team_id, user_id) WHERE user_id IS NOT NULL`);
+
+    /* ── Phase 1: roster-linked matches (nullable, backward compatible) ──── */
+    await tx.execute(sql`ALTER TABLE community_matches ADD COLUMN IF NOT EXISTS team_a_id uuid REFERENCES community_teams(id)`);
+    await tx.execute(sql`ALTER TABLE community_matches ADD COLUMN IF NOT EXISTS team_b_id uuid REFERENCES community_teams(id)`);
+    await tx.execute(sql`ALTER TABLE community_deliveries ADD COLUMN IF NOT EXISTS striker_member_id uuid REFERENCES community_team_members(id)`);
+    await tx.execute(sql`ALTER TABLE community_deliveries ADD COLUMN IF NOT EXISTS bowler_member_id uuid REFERENCES community_team_members(id)`);
   });
   ready = true;
 }
@@ -93,6 +136,7 @@ async function ensureTables(): Promise<void> {
 type MatchRow = {
   id: string; owner_user_id: string; team1: string; team2: string; venue: string;
   overs_limit: number; players_per_side: number; status: string; result_desc: string;
+  team_a_id: string | null; team_b_id: string | null;
   created_at: string; updated_at: string;
 };
 type InnRow = {
@@ -105,14 +149,77 @@ type DelRow = {
   batter_name: string; bowler_name: string; runs_off_bat: number; extras_runs: number;
   extra_type: string | null; total_runs: number; is_wicket: boolean; dismissal_type: string | null;
   dismissed_batter: string | null; fielder_name: string | null; commentary: string; created_at: string;
+  striker_member_id: string | null; bowler_member_id: string | null;
+};
+type ProfileRow = {
+  user_id: string; display_name: string; role: string; batting_style: string;
+  bowling_style: string | null; created_at: string; updated_at: string;
+};
+type TeamRow = {
+  id: string; owner_user_id: string; name: string; short_name: string; created_at: string;
+};
+type MemberRow = {
+  id: string; team_id: string; user_id: string | null; phone: string | null;
+  name: string; role: string; added_at: string;
 };
 const rows = <T,>(out: unknown): T[] => ((out as { rows: T[] }).rows ?? []);
+
+function profileApi(p: ProfileRow) {
+  return {
+    userId: p.user_id, displayName: p.display_name, role: p.role,
+    battingStyle: p.batting_style, bowlingStyle: p.bowling_style,
+    createdAt: p.created_at, updatedAt: p.updated_at,
+  };
+}
+function teamApi(t: TeamRow) {
+  return {
+    id: t.id, ownerUserId: t.owner_user_id, name: t.name,
+    shortName: t.short_name, createdAt: t.created_at,
+  };
+}
+/**
+ * Member → API shape. `phone` is PII: it is ONLY included when
+ * `includePhone` is true (i.e. the requester is the team owner). Otherwise the
+ * phone field is omitted entirely from the response.
+ */
+function memberApi(mm: MemberRow, includePhone = false) {
+  const base = {
+    id: mm.id, teamId: mm.team_id, userId: mm.user_id,
+    name: mm.name, role: mm.role, addedAt: mm.added_at,
+  };
+  return includePhone ? { ...base, phone: mm.phone } : base;
+}
+
+/**
+ * Backfill: when a user (identified by phone) is known, link any team-member
+ * rows that were added by phone before the user existed. Cheap idempotent hook
+ * — call from the community profile PUT, NOT from the auth/OTP routes.
+ * Must be called with a db/tx handle that exposes `.execute`.
+ */
+export async function linkPhoneToTeams(
+  dbc: Pick<typeof db, "execute">,
+  userId: string,
+  phone: string | null | undefined,
+): Promise<void> {
+  if (!phone) return;
+  const p = String(phone).trim();
+  if (!p) return;
+  await dbc.execute(sql`
+    UPDATE community_team_members m
+    SET user_id = ${userId}
+    WHERE m.phone = ${p} AND m.user_id IS NULL
+      AND NOT EXISTS (
+        SELECT 1 FROM community_team_members x
+        WHERE x.team_id = m.team_id AND x.user_id = ${userId}
+      )`);
+}
 
 function matchApi(m: MatchRow) {
   return {
     id: m.id, team1: m.team1, team2: m.team2, venue: m.venue,
     oversLimit: m.overs_limit, playersPerSide: m.players_per_side,
     status: m.status, resultDesc: m.result_desc, createdAt: m.created_at,
+    teamAId: m.team_a_id ?? null, teamBId: m.team_b_id ?? null,
   };
 }
 function innApi(i: InnRow) {
@@ -136,32 +243,51 @@ async function loadOwnedMatch(req: AuthRequest): Promise<{ match?: MatchRow; err
 /* ── create match ───────────────────────────────────────────────────────── */
 router.post("/matches", requireAuth, async (req: AuthRequest, res) => {
   const schema = z.object({
-    team1: z.string().trim().min(1).max(80),
-    team2: z.string().trim().min(1).max(80),
+    team1: z.string().trim().min(1).max(80).optional(),
+    team2: z.string().trim().min(1).max(80).optional(),
     venue: z.string().trim().max(120).default(""),
     oversLimit: z.number().int().min(1).max(50),
     playersPerSide: z.number().int().min(2).max(11).default(11),
     battingFirst: z.enum(["team1", "team2"]).default("team1"),
+    teamAId: z.string().uuid().optional(),
+    teamBId: z.string().uuid().optional(),
   });
   const parsed = schema.safeParse(req.body);
   if (!parsed.success) return void res.status(400).json({ error: parsed.error.issues[0].message });
   const d = parsed.data;
-  if (d.team1.toLowerCase() === d.team2.toLowerCase()) {
-    return void res.status(400).json({ error: "Team names must be different" });
-  }
   try {
     await ensureTables();
+
+    /* Team-name defaults: when a linked team is picked and no explicit name is
+       given, the team name becomes the display name (names stay source of truth). */
+    let team1 = d.team1, team2 = d.team2;
+    const teamAId = d.teamAId ?? null, teamBId = d.teamBId ?? null;
+    if (teamAId) {
+      const [ta] = rows<{ name: string }>(await db.execute(sql`SELECT name FROM community_teams WHERE id = ${teamAId}`));
+      if (!ta) return void res.status(400).json({ error: "teamAId not found" });
+      if (!team1) team1 = ta.name;
+    }
+    if (teamBId) {
+      const [tb] = rows<{ name: string }>(await db.execute(sql`SELECT name FROM community_teams WHERE id = ${teamBId}`));
+      if (!tb) return void res.status(400).json({ error: "teamBId not found" });
+      if (!team2) team2 = tb.name;
+    }
+    if (!team1 || !team2) return void res.status(400).json({ error: "team1 and team2 are required (or pick linked teams)" });
+    if (team1.toLowerCase() === team2.toLowerCase()) {
+      return void res.status(400).json({ error: "Team names must be different" });
+    }
+
     // gentle abuse guard: max 30 matches per scorer per day
     const [cnt] = rows<{ n: string }>(await db.execute(
       sql`SELECT count(*) n FROM community_matches WHERE owner_user_id = ${req.user!.userId} AND created_at > now() - interval '1 day'`,
     ));
     if (Number(cnt?.n ?? 0) >= 30) return void res.status(429).json({ error: "Daily match limit reached" });
 
-    const battingTeam = d.battingFirst === "team1" ? d.team1 : d.team2;
-    const bowlingTeam = d.battingFirst === "team1" ? d.team2 : d.team1;
+    const battingTeam = d.battingFirst === "team1" ? team1 : team2;
+    const bowlingTeam = d.battingFirst === "team1" ? team2 : team1;
     const [m] = rows<MatchRow>(await db.execute(sql`
-      INSERT INTO community_matches (owner_user_id, team1, team2, venue, overs_limit, players_per_side)
-      VALUES (${req.user!.userId}, ${d.team1}, ${d.team2}, ${d.venue}, ${d.oversLimit}, ${d.playersPerSide})
+      INSERT INTO community_matches (owner_user_id, team1, team2, venue, overs_limit, players_per_side, team_a_id, team_b_id)
+      VALUES (${req.user!.userId}, ${team1}, ${team2}, ${d.venue}, ${d.oversLimit}, ${d.playersPerSide}, ${teamAId}, ${teamBId})
       RETURNING *`));
     await db.execute(sql`
       INSERT INTO community_innings (match_id, innings_number, batting_team, bowling_team)
@@ -240,7 +366,20 @@ router.get("/matches/:id", async (req, res) => {
         })),
       });
     }
-    res.json({ match: matchApi(m), innings });
+    /* Roster chips: when teams are linked, expose full rosters so the app can
+       render member chips. Names remain the display source of truth. */
+    const rosters: Record<"teamA" | "teamB", { id: string; name: string; role: string }[]> = { teamA: [], teamB: [] };
+    for (const [key, teamId] of [["teamA", m.team_a_id], ["teamB", m.team_b_id]] as const) {
+      if (!teamId) continue;
+      const mems = rows<MemberRow>(await db.execute(
+        sql`SELECT * FROM community_team_members WHERE team_id = ${teamId} ORDER BY added_at ASC`,
+      ));
+      rosters[key] = mems.map((mm) => ({ id: mm.id, name: mm.name, role: mm.role }));
+    }
+    res.json({
+      match: matchApi(m), innings,
+      rosters: (m.team_a_id || m.team_b_id) ? rosters : undefined,
+    });
   } catch (e) {
     logger.warn({ err: e }, "community scorecard failed");
     res.status(500).json({ error: "Could not load scorecard" });
@@ -256,6 +395,8 @@ const ballSchema = z.object({
   dismissalType: z.enum(["bowled", "caught", "lbw", "run_out", "stumped", "hit_wicket", "caught_and_bowled", "retired_hurt"]).optional(),
   dismissedBatter: z.string().trim().max(80).optional(),
   fielderName: z.string().trim().max(80).optional(),
+  strikerMemberId: z.string().uuid().optional(),
+  bowlerMemberId: z.string().uuid().optional(),
 });
 
 router.post("/matches/:id/ball", requireAuth, async (req: AuthRequest, res) => {
@@ -276,6 +417,31 @@ router.post("/matches/:id/ball", requireAuth, async (req: AuthRequest, res) => {
         sql`SELECT * FROM community_innings WHERE match_id = ${m!.id} AND status = 'live' ORDER BY innings_number DESC LIMIT 1 FOR UPDATE`,
       ));
       if (!inn) return { errMsg: "No live innings — end/start innings first" };
+
+      /* Roster linkage (member ids power stats):
+         - member ids are only accepted when the match has linked teams;
+         - the striker must belong to the CURRENT batting side and the bowler
+           to the bowling side of the active innings.
+         team1 ↔ team_a_id, team2 ↔ team_b_id; the innings' batting_team name
+         resolves which side is batting. */
+      const strikerMemberId = d.strikerMemberId ?? null;
+      const bowlerMemberId = d.bowlerMemberId ?? null;
+      if ((strikerMemberId || bowlerMemberId) && !(m!.team_a_id && m!.team_b_id)) {
+        return { errMsg: "Member ids require both teams to be linked to the match" };
+      }
+      if (strikerMemberId || bowlerMemberId) {
+        const battingTeamId = inn.batting_team === m!.team1 ? m!.team_a_id : m!.team_b_id;
+        const bowlingTeamId = inn.batting_team === m!.team1 ? m!.team_b_id : m!.team_a_id;
+        for (const [mid, side] of [[strikerMemberId, battingTeamId], [bowlerMemberId, bowlingTeamId]] as const) {
+          if (!mid) continue;
+          const [mem] = rows<{ team_id: string }>(await tx.execute(
+            sql`SELECT team_id FROM community_team_members WHERE id = ${mid}`,
+          ));
+          if (!mem || mem.team_id !== side) {
+            return { errMsg: "Member does not belong to the correct side for this ball" };
+          }
+        }
+      }
 
       const isWide = d.type === "wide", isNB = d.type === "noball";
       const isBye = d.type === "bye", isLB = d.type === "legbye";
@@ -306,11 +472,12 @@ router.post("/matches/:id/ball", requireAuth, async (req: AuthRequest, res) => {
       await tx.execute(sql`
         INSERT INTO community_deliveries (innings_id, over_number, ball_in_over, delivery_in_over,
           batter_name, bowler_name, runs_off_bat, extras_runs, extra_type, total_runs,
-          is_wicket, dismissal_type, dismissed_batter, fielder_name, commentary)
+          is_wicket, dismissal_type, dismissed_batter, fielder_name, commentary,
+          striker_member_id, bowler_member_id)
         VALUES (${inn.id}, ${inn.overs}, ${newBalls || inn.balls}, ${deliveryInOver},
           ${d.batterName}, ${d.bowlerName}, ${runsOffBat}, ${extrasRuns}, ${extraType}, ${totalRunsD},
           ${isWicket}, ${d.dismissalType ?? null}, ${isWicket ? (d.dismissedBatter || d.batterName) : null},
-          ${d.fielderName ?? null}, ${commentary})`);
+          ${d.fielderName ?? null}, ${commentary}, ${strikerMemberId}, ${bowlerMemberId})`);
 
       const newTotal = inn.total_runs + totalRunsD;
       const newWkts = inn.total_wickets + (countsAsWicket ? 1 : 0);
@@ -473,3 +640,345 @@ async function finalizeResult(dbc: Pick<typeof db, "execute">, matchId: string):
   }
   return desc;
 }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Phase 1 — cricket platform (profiles, teams, roster-linked stats)
+   Patterns mirror the scorer above: ensureTables() first, zod validation,
+   requireAuth, mutations inside db.transaction with the row locked FOR UPDATE,
+   camelCase JSON responses.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── cricket profile ────────────────────────────────────────────────────── */
+router.get("/profile", requireAuth, async (req: AuthRequest, res) => {
+  try {
+    await ensureTables();
+    const [p] = rows<ProfileRow>(await db.execute(
+      sql`SELECT * FROM community_profiles WHERE user_id = ${req.user!.userId}`,
+    ));
+    if (!p) return void res.status(404).json({ error: "No profile yet" });
+    res.json({ profile: profileApi(p) });
+  } catch (e) {
+    logger.warn({ err: e }, "community profile get failed");
+    res.status(500).json({ error: "Could not load profile" });
+  }
+});
+
+router.put("/profile", requireAuth, async (req: AuthRequest, res) => {
+  const schema = z.object({
+    displayName: z.string().trim().min(1).max(80),
+    role: z.enum(["batsman", "bowler", "all_rounder", "wicket_keeper"]),
+    battingStyle: z.enum(["right", "left"]),
+    bowlingStyle: z.string().trim().max(80).nullish(),
+  });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) return void res.status(400).json({ error: parsed.error.issues[0].message });
+  const d = parsed.data;
+  try {
+    await ensureTables();
+    const bowlingStyle = d.bowlingStyle && d.bowlingStyle.length ? d.bowlingStyle : null;
+    const p = await db.transaction(async (tx) => {
+      const [row] = rows<ProfileRow>(await tx.execute(sql`
+        INSERT INTO community_profiles (user_id, display_name, role, batting_style, bowling_style, updated_at)
+        VALUES (${req.user!.userId}, ${d.displayName}, ${d.role}, ${d.battingStyle}, ${bowlingStyle}, now())
+        ON CONFLICT (user_id) DO UPDATE SET
+          display_name = EXCLUDED.display_name, role = EXCLUDED.role,
+          batting_style = EXCLUDED.batting_style, bowling_style = EXCLUDED.bowling_style,
+          updated_at = now()
+        RETURNING *`));
+      // cheap hook: link any pending team-member rows for this user's phone
+      await linkPhoneToTeams(tx, req.user!.userId, req.user!.phone);
+      return row;
+    });
+    res.json({ success: true, profile: profileApi(p) });
+  } catch (e) {
+    logger.warn({ err: e }, "community profile put failed");
+    res.status(500).json({ error: "Could not save profile" });
+  }
+});
+
+/* ── profile stats (aggregated over roster-linked deliveries) ───────────── */
+router.get("/profile/stats", requireAuth, async (req: AuthRequest, res) => {
+  try {
+    await ensureTables();
+    const uid = req.user!.userId;
+    // Batting: deliveries where this user is the striker (via member linkage).
+    // WD/NB don't count as balls faced; byes/leg-byes do (no bat runs though).
+    const [bat] = rows<{
+      matches: string; innings: string; runs: string; balls: string; fours: string; sixes: string;
+    }>(await db.execute(sql`
+      SELECT
+        count(DISTINCT i.match_id)                                             AS matches,
+        count(DISTINCT d.innings_id)                                           AS innings,
+        coalesce(sum(d.runs_off_bat), 0)                                       AS runs,
+        coalesce(sum(CASE WHEN d.extra_type IS NULL OR d.extra_type IN ('bye','leg_bye') THEN 1 ELSE 0 END), 0) AS balls,
+        coalesce(sum(CASE WHEN d.runs_off_bat = 4 THEN 1 ELSE 0 END), 0)       AS fours,
+        coalesce(sum(CASE WHEN d.runs_off_bat = 6 THEN 1 ELSE 0 END), 0)       AS sixes
+      FROM community_deliveries d
+      JOIN community_innings i ON i.id = d.innings_id
+      JOIN community_team_members mm ON mm.id = d.striker_member_id
+      WHERE mm.user_id = ${uid}`));
+    // Bowling: deliveries where this user is the bowler.
+    const [bowl] = rows<{
+      matches: string; innings: string; balls: string; conceded: string; wickets: string;
+    }>(await db.execute(sql`
+      SELECT
+        count(DISTINCT i.match_id)                                             AS matches,
+        count(DISTINCT d.innings_id)                                           AS innings,
+        coalesce(sum(CASE WHEN d.extra_type IN ('wide','no_ball') THEN 0 ELSE 1 END), 0) AS balls,
+        coalesce(sum(d.runs_off_bat + CASE WHEN d.extra_type IN ('wide','no_ball') THEN d.extras_runs ELSE 0 END), 0) AS conceded,
+        coalesce(sum(CASE WHEN d.is_wicket AND d.dismissal_type NOT IN ('run_out','retired_hurt') THEN 1 ELSE 0 END), 0) AS wickets
+      FROM community_deliveries d
+      JOIN community_innings i ON i.id = d.innings_id
+      JOIN community_team_members mm ON mm.id = d.bowler_member_id
+      WHERE mm.user_id = ${uid}`));
+
+    const runs = Number(bat?.runs ?? 0), ballsFaced = Number(bat?.balls ?? 0);
+    const bBalls = Number(bowl?.balls ?? 0), conceded = Number(bowl?.conceded ?? 0);
+    const strikeRate = ballsFaced > 0 ? Math.round((runs / ballsFaced) * 10000) / 100 : 0;
+    const oversBowled = Math.floor(bBalls / 6) + (bBalls % 6) / 10;
+    const economy = bBalls > 0 ? Math.round((conceded / (bBalls / 6)) * 100) / 100 : 0;
+
+    res.json({
+      stats: {
+        batting: {
+          matches: Number(bat?.matches ?? 0),
+          innings: Number(bat?.innings ?? 0),
+          runs,
+          balls: ballsFaced,
+          fours: Number(bat?.fours ?? 0),
+          sixes: Number(bat?.sixes ?? 0),
+          strikeRate,
+        },
+        bowling: {
+          matches: Number(bowl?.matches ?? 0),
+          innings: Number(bowl?.innings ?? 0),
+          wickets: Number(bowl?.wickets ?? 0),
+          balls: bBalls,
+          overs: oversBowled,
+          runsConceded: conceded,
+          economy,
+        },
+      },
+    });
+  } catch (e) {
+    logger.warn({ err: e }, "community profile stats failed");
+    res.status(500).json({ error: "Could not load stats" });
+  }
+});
+
+/* ── teams ──────────────────────────────────────────────────────────────── */
+router.post("/teams", requireAuth, async (req: AuthRequest, res) => {
+  const schema = z.object({
+    name: z.string().trim().min(1).max(40),
+    shortName: z.string().trim().min(1).max(5),
+  });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) return void res.status(400).json({ error: parsed.error.issues[0].message });
+  const d = parsed.data;
+  try {
+    await ensureTables();
+    const out = await db.transaction(async (tx) => {
+      /* Serialise concurrent creates for THIS owner so count+insert is atomic
+         (advisory lock keyed on the owner id — released at tx end). */
+      await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtext('bcpl:community_teams:' || ${req.user!.userId}))`);
+      const [cnt] = rows<{ n: string }>(await tx.execute(
+        sql`SELECT count(*) n FROM community_teams WHERE owner_user_id = ${req.user!.userId}`,
+      ));
+      if (Number(cnt?.n ?? 0) >= 20) return { errMsg: "Team limit reached (20 per user)" };
+      const [t] = rows<TeamRow>(await tx.execute(sql`
+        INSERT INTO community_teams (owner_user_id, name, short_name)
+        VALUES (${req.user!.userId}, ${d.name}, ${d.shortName})
+        RETURNING *`));
+      return { team: t };
+    });
+    if ("errMsg" in out) return void res.status(400).json({ error: out.errMsg });
+    res.json({ success: true, team: teamApi(out.team) });
+  } catch (e) {
+    logger.warn({ err: e }, "community team create failed");
+    res.status(500).json({ error: "Could not create team" });
+  }
+});
+
+router.get("/teams/mine", requireAuth, async (req: AuthRequest, res) => {
+  try {
+    await ensureTables();
+    const list = rows<TeamRow>(await db.execute(sql`
+      SELECT DISTINCT t.* FROM community_teams t
+      LEFT JOIN community_team_members m ON m.team_id = t.id
+      WHERE t.owner_user_id = ${req.user!.userId} OR m.user_id = ${req.user!.userId}
+      ORDER BY t.created_at DESC LIMIT 100`));
+    res.json({ teams: list.map(teamApi) });
+  } catch (e) {
+    logger.warn({ err: e }, "community teams mine failed");
+    res.status(500).json({ error: "Could not load teams" });
+  }
+});
+
+/* Public read, but PII-aware: optionalAuth attaches req.user when a valid token
+   is present so we can reveal phones ONLY to the team owner. */
+router.get("/teams/:id", optionalAuth, async (req: AuthRequest, res) => {
+  try {
+    await ensureTables();
+    const id = String(req.params.id);
+    if (!/^[0-9a-f-]{36}$/i.test(id)) return void res.status(404).json({ error: "Team not found" });
+    const [t] = rows<TeamRow>(await db.execute(sql`SELECT * FROM community_teams WHERE id = ${id}`));
+    if (!t) return void res.status(404).json({ error: "Team not found" });
+    const mems = rows<MemberRow>(await db.execute(
+      sql`SELECT * FROM community_team_members WHERE team_id = ${id} ORDER BY added_at ASC`,
+    ));
+    const isOwner = req.user?.userId === t.owner_user_id;
+    res.json({ team: teamApi(t), members: mems.map((mm) => memberApi(mm, isOwner)) });
+  } catch (e) {
+    logger.warn({ err: e }, "community team get failed");
+    res.status(500).json({ error: "Could not load team" });
+  }
+});
+
+async function loadOwnedTeam(req: AuthRequest): Promise<{ team?: TeamRow; err?: { code: number; msg: string } }> {
+  await ensureTables();
+  const id = String(req.params.id);
+  if (!/^[0-9a-f-]{36}$/i.test(id)) return { err: { code: 404, msg: "Team not found" } };
+  const [t] = rows<TeamRow>(await db.execute(sql`SELECT * FROM community_teams WHERE id = ${id}`));
+  if (!t) return { err: { code: 404, msg: "Team not found" } };
+  if (t.owner_user_id !== req.user!.userId) return { err: { code: 403, msg: "Only the team owner can do that" } };
+  return { team: t };
+}
+
+router.post("/teams/:id/members", requireAuth, async (req: AuthRequest, res) => {
+  const schema = z.object({
+    name: z.string().trim().min(1).max(80),
+    phone: z.string().trim().min(4).max(15).optional(),
+    role: z.string().trim().max(24).default(""),
+  });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) return void res.status(400).json({ error: parsed.error.issues[0].message });
+  const d = parsed.data;
+  try {
+    const { team: t, err } = await loadOwnedTeam(req);
+    if (err) return void res.status(err.code).json({ error: err.msg });
+    const out = await db.transaction(async (tx) => {
+      await tx.execute(sql`SELECT id FROM community_teams WHERE id = ${t!.id} FOR UPDATE`);
+      const [cnt] = rows<{ n: string }>(await tx.execute(
+        sql`SELECT count(*) n FROM community_team_members WHERE team_id = ${t!.id}`,
+      ));
+      if (Number(cnt?.n ?? 0) >= 25) return { errMsg: "Member limit reached (25 per team)" };
+
+      // Auto-link: if the phone matches a users row, set user_id and prefer
+      // that user's community_profile display_name (if any).
+      let userId: string | null = null;
+      let name = d.name;
+      const phone = d.phone ?? null;
+      if (phone) {
+        const [u] = rows<{ id: string }>(await tx.execute(
+          sql`SELECT id FROM users WHERE phone = ${phone}`,
+        ));
+        if (u) {
+          userId = u.id;
+          const [prof] = rows<{ display_name: string }>(await tx.execute(
+            sql`SELECT display_name FROM community_profiles WHERE user_id = ${u.id}`,
+          ));
+          if (prof?.display_name) name = prof.display_name;
+        }
+      }
+      // uniqueness guards (mirror the partial unique indexes)
+      if (phone) {
+        const [dup] = rows<{ id: string }>(await tx.execute(
+          sql`SELECT id FROM community_team_members WHERE team_id = ${t!.id} AND phone = ${phone}`,
+        ));
+        if (dup) return { errMsg: "That phone is already on the team" };
+      }
+      if (userId) {
+        const [dup] = rows<{ id: string }>(await tx.execute(
+          sql`SELECT id FROM community_team_members WHERE team_id = ${t!.id} AND user_id = ${userId}`,
+        ));
+        if (dup) return { errMsg: "That player is already on the team" };
+      }
+      const [mm] = rows<MemberRow>(await tx.execute(sql`
+        INSERT INTO community_team_members (team_id, user_id, phone, name, role)
+        VALUES (${t!.id}, ${userId}, ${phone}, ${name}, ${d.role})
+        RETURNING *`));
+      return { member: mm };
+    });
+    if ("errMsg" in out) return void res.status(400).json({ error: out.errMsg });
+    // owner-only endpoint → phone is safe to echo back
+    res.json({ success: true, member: memberApi(out.member, true) });
+  } catch (e) {
+    logger.warn({ err: e }, "community add member failed");
+    res.status(500).json({ error: "Could not add member" });
+  }
+});
+
+router.delete("/teams/:id/members/:memberId", requireAuth, async (req: AuthRequest, res) => {
+  try {
+    const { team: t, err } = await loadOwnedTeam(req);
+    if (err) return void res.status(err.code).json({ error: err.msg });
+    const memberId = String(req.params.memberId);
+    if (!/^[0-9a-f-]{36}$/i.test(memberId)) return void res.status(404).json({ error: "Member not found" });
+    const out = await db.transaction(async (tx) => {
+      await tx.execute(sql`SELECT id FROM community_teams WHERE id = ${t!.id} FOR UPDATE`);
+      const [mm] = rows<MemberRow>(await tx.execute(
+        sql`SELECT * FROM community_team_members WHERE id = ${memberId} AND team_id = ${t!.id} FOR UPDATE`,
+      ));
+      if (!mm) return "Member not found";
+      await tx.execute(sql`DELETE FROM community_team_members WHERE id = ${memberId}`);
+      return null;
+    });
+    if (out) return void res.status(404).json({ error: out });
+    res.json({ success: true });
+  } catch (e) {
+    logger.warn({ err: e }, "community remove member failed");
+    res.status(500).json({ error: "Could not remove member" });
+  }
+});
+
+router.patch("/teams/:id", requireAuth, async (req: AuthRequest, res) => {
+  const schema = z.object({
+    name: z.string().trim().min(1).max(40).optional(),
+    shortName: z.string().trim().min(1).max(5).optional(),
+  });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) return void res.status(400).json({ error: parsed.error.issues[0].message });
+  const d = parsed.data;
+  if (d.name === undefined && d.shortName === undefined) {
+    return void res.status(400).json({ error: "Nothing to update" });
+  }
+  try {
+    const { team: t, err } = await loadOwnedTeam(req);
+    if (err) return void res.status(err.code).json({ error: err.msg });
+    const updated = await db.transaction(async (tx) => {
+      await tx.execute(sql`SELECT id FROM community_teams WHERE id = ${t!.id} FOR UPDATE`);
+      const [row] = rows<TeamRow>(await tx.execute(sql`
+        UPDATE community_teams SET
+          name = ${d.name ?? t!.name},
+          short_name = ${d.shortName ?? t!.short_name}
+        WHERE id = ${t!.id}
+        RETURNING *`));
+      return row;
+    });
+    res.json({ success: true, team: teamApi(updated) });
+  } catch (e) {
+    logger.warn({ err: e }, "community team rename failed");
+    res.status(500).json({ error: "Could not update team" });
+  }
+});
+
+router.delete("/teams/:id", requireAuth, async (req: AuthRequest, res) => {
+  try {
+    const { team: t, err } = await loadOwnedTeam(req);
+    if (err) return void res.status(err.code).json({ error: err.msg });
+    const out = await db.transaction(async (tx) => {
+      await tx.execute(sql`SELECT id FROM community_teams WHERE id = ${t!.id} FOR UPDATE`);
+      const [ref] = rows<{ n: string }>(await tx.execute(
+        sql`SELECT count(*) n FROM community_matches WHERE team_a_id = ${t!.id} OR team_b_id = ${t!.id}`,
+      ));
+      if (Number(ref?.n ?? 0) > 0) return "Team is used by a match and cannot be deleted";
+      await tx.execute(sql`DELETE FROM community_teams WHERE id = ${t!.id}`);
+      return null;
+    });
+    if (out) return void res.status(400).json({ error: out });
+    res.json({ success: true });
+  } catch (e) {
+    logger.warn({ err: e }, "community team delete failed");
+    res.status(500).json({ error: "Could not delete team" });
+  }
+});
