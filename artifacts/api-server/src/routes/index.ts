@@ -35,6 +35,8 @@ import { adminSelectionRouter } from "./selection";
 import aiRouter, { adminAiRouter } from "./ai";
 import { newsRouter, adminNewsRouter } from "./news";
 import communityRouter from "./community";
+import mvpRouter from "./mvp";
+import { fanPollsRouter, adminFanPollsRouter } from "./polls";
 
 const router: IRouter = Router();
 
@@ -53,6 +55,8 @@ router.use("/results",       resultsRouter);
 router.use("/matches",       matchesRouter);
 router.use("/scoring",       scoringRouter);
 router.use("/community",     communityRouter); // community scorer (any logged-in user)
+router.use("/mvp",           mvpRouter);       // official-match MVP/fantasy leaderboard
+router.use("/polls",         fanPollsRouter);  // fan voting (public + player-auth votes)
 router.use("/points-table",  pointsRouter);
 router.use("/teams",         teamsRouter);
 router.use("/sponsors",      sponsorsRouter); // public sanitized sponsor list
@@ -74,6 +78,7 @@ router.use("/admin/finance", adminFinanceRouter); // finance read-model (payment
 router.use("/admin/selection", adminSelectionRouter); // Final 600 selection engine
 router.use("/admin/ai",      adminAiRouter); // AI match-report drafting
 router.use("/admin/news",    adminNewsRouter); // news CRUD + AI article drafts
+router.use("/admin/polls",   adminFanPollsRouter); // fan voting admin (CONTENT_TEAM)
 router.use("/admin",         adminRouter);
 router.use("/ai",            aiRouter);      // BCPL AI chat + feedback
 router.use("/news",          newsRouter);    // public news articles

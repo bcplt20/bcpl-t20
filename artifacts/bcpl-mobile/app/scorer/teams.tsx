@@ -45,11 +45,11 @@ export default function ScorerTeamsScreen() {
   });
 
   if (!ready || q.isLoading) {
-    return <View style={{ flex: 1, backgroundColor: c.bg }}><ScreenBackground /><GlassAppBar title={t('My Teams', 'मेरी टीमें')} /><LoadingView /></View>;
+    return <View style={{ flex: 1, backgroundColor: c.bg }}><ScreenBackground /><GlassAppBar title={t('My Teams', 'मेरी टीमें')} back={true} /><LoadingView /></View>;
   }
 
   if (q.isError) {
-    return <View style={{ flex: 1, backgroundColor: c.bg }}><ScreenBackground /><GlassAppBar title={t('My Teams', 'मेरी टीमें')} /><ErrorView onRetry={() => q.refetch()} /></View>;
+    return <View style={{ flex: 1, backgroundColor: c.bg }}><ScreenBackground /><GlassAppBar title={t('My Teams', 'मेरी टीमें')} back={true} /><ErrorView onRetry={() => q.refetch()} /></View>;
   }
 
   const teams = q.data?.teams || [];
@@ -57,7 +57,7 @@ export default function ScorerTeamsScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
       <ScreenBackground />
-      <GlassAppBar title={t('My Teams', 'मेरी टीमें')} />
+      <GlassAppBar title={t('My Teams', 'मेरी टीमें')} back={true} />
       
       <ScrollView contentContainerStyle={{ paddingBottom: bottomNavHeight + 40, paddingTop: appBarHeight }}>
         <View style={{ padding: 16, gap: 16 }}>

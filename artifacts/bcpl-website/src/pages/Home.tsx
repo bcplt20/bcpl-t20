@@ -963,6 +963,42 @@ export function Home() {
         </div>
       </section>
 
+      {/* ══ Fan Voting + MVP Leaderboard teasers ══ */}
+      <section className="rv" style={{ padding:"clamp(54px,7vw,88px) 0", background:"var(--bg)" }}>
+        <div className="W">
+          <div className="slbl">{t("Get Involved","जुड़ें")}</div>
+          <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4vw,44px)", color:"#fff", textTransform:"uppercase", marginBottom:34 }}>
+            {t("Vote & Track the MVPs","वोट करें और MVP देखें")}
+          </h2>
+          <div style={{ display:"grid", gap:20, gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))" }}>
+            {/* Fan Voting teaser */}
+            <Link href="/vote" style={{ textDecoration:"none", display:"block" }}>
+              <div style={{ position:"relative", overflow:"hidden", height:"100%", background:"linear-gradient(170deg,rgba(255,122,41,.22),#1F3652 60%)", border:"1px solid rgba(255,122,41,.3)", borderRadius:18, padding:"26px 24px", boxShadow:"0 12px 34px rgba(0,0,0,.28)" }}>
+                <div style={{ position:"absolute", top:-24, right:-24, width:110, height:110, borderRadius:"50%", background:"rgba(255,122,41,.12)", pointerEvents:"none" }}/>
+                <div className="mont" style={{ fontWeight:800, fontSize:11, letterSpacing:".12em", color:"#FF7A29", textTransform:"uppercase", marginBottom:10 }}>{t("Fan Voting","फैन वोटिंग")}</div>
+                <h3 className="mont" style={{ fontWeight:900, fontSize:"clamp(20px,3vw,28px)", color:"#fff", lineHeight:1.15, marginBottom:12 }}>{t("Pick your favourites","अपने पसंदीदा चुनें")}</h3>
+                <p style={{ color:"rgba(255,255,255,0.85)", fontSize:15, lineHeight:1.65, marginBottom:18 }}>
+                  {t("Cast your vote in IPL-style fan polls across the season. One vote per poll.","पूरे सीज़न में IPL-स्टाइल फैन पोल में वोट करें। हर पोल में एक वोट।")}
+                </p>
+                <span className="mont" style={{ fontWeight:800, fontSize:13, color:"#FF7A29" }}>{t("Vote now","अभी वोट करें")} →</span>
+              </div>
+            </Link>
+            {/* MVP Leaderboard teaser */}
+            <Link href="/mvp" style={{ textDecoration:"none", display:"block" }}>
+              <div style={{ position:"relative", overflow:"hidden", height:"100%", background:"linear-gradient(170deg,rgba(232,178,61,.22),#1F3652 60%)", border:"1px solid rgba(232,178,61,.32)", borderRadius:18, padding:"26px 24px", boxShadow:"0 12px 34px rgba(0,0,0,.28)" }}>
+                <div style={{ position:"absolute", top:-24, right:-24, width:110, height:110, borderRadius:"50%", background:"rgba(232,178,61,.12)", pointerEvents:"none" }}/>
+                <div className="mont" style={{ fontWeight:800, fontSize:11, letterSpacing:".12em", color:"#E8B23D", textTransform:"uppercase", marginBottom:10 }}>{t("MVP Leaderboard","MVP लीडरबोर्ड")}</div>
+                <h3 className="mont" style={{ fontWeight:900, fontSize:"clamp(20px,3vw,28px)", color:"#fff", lineHeight:1.15, marginBottom:12 }}>{t("Who's leading the race?","रेस में कौन आगे?")}</h3>
+                <p style={{ color:"rgba(255,255,255,0.85)", fontSize:15, lineHeight:1.65, marginBottom:18 }}>
+                  {t("Fantasy points from every official match — batting, bowling and fielding combined.","हर ऑफिशियल मैच से फैंटेसी पॉइंट्स — बैटिंग, बॉलिंग और फील्डिंग का मेल।")}
+                </p>
+                <span className="mont" style={{ fontWeight:800, fontSize:13, color:"#E8B23D" }}>{t("View leaderboard","लीडरबोर्ड देखें")} →</span>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Sponsors show ONLY in the footer strip (owner call, Jul 2026) — full wall lives at /sponsors. */}
 
       {/* ══ 10 · THIS IS BCPL — the film ══ */}

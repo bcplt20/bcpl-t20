@@ -2,7 +2,7 @@ import React from 'react';
 import { View, ScrollView, Text, Image, StyleSheet, Linking, Pressable } from 'react-native';
 import { useColors } from '@/hooks/useColors';
 import { useLang } from '@/context/LanguageContext';
-import { ScreenBackground, GlassAppBar } from '@/components/ui';
+import { ScreenBackground, GlassAppBar, useAppBarHeight } from '@/components/ui';
 import { Feather } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -40,24 +40,25 @@ const STEPS = [
 export default function AboutScreen() {
   const { t } = useLang();
   const c = useColors();
+  const appBarHeight = useAppBarHeight();
   
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
       <ScreenBackground />
       <GlassAppBar title={t('About BCPL', 'BCPL के बारे में')} back />
       
-      <ScrollView contentContainerStyle={{ paddingBottom: 60 }} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={{ paddingTop: appBarHeight + 16, paddingBottom: 60 }} showsVerticalScrollIndicator={false}>
         
         {/* Hero */}
         <View style={{ padding: 24, paddingTop: 32, alignItems: 'center' }}>
           <Image source={require('../assets/images/bcpl-ball.png')} style={{ width: 120, height: 120, marginBottom: 24 }} resizeMode="contain" />
-          <Text style={{ color: c.getAccentText(c.amber), fontFamily: 'Inter_700Bold', fontSize: 11, letterSpacing: 2.2, textTransform: 'uppercase', marginBottom: 12 }}>
+          <Text style={{ color: c.getAccentText(c.violet), fontFamily: 'Inter_700Bold', fontSize: 11, letterSpacing: 2.2, textTransform: 'uppercase', marginBottom: 12 }}>
             {t('OUR STORY', 'हमारी कहानी')}
           </Text>
           <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 32, textAlign: 'center', lineHeight: 36, marginBottom: 16 }}>
             {t('WHERE OFFICES', 'जहां ऑफिसें')}
             {'\n'}
-            <Text style={{ color: c.amber }}>{t('MEET STADIUMS.', 'स्टेडियम बनती हैं।')}</Text>
+            <Text style={{ color: c.getAccentText(c.magenta) }}>{t('MEET STADIUMS.', 'स्टेडियम बनती हैं।')}</Text>
           </Text>
           <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 14, textAlign: 'center', lineHeight: 22, maxWidth: 300 }}>
             {t("India's corporate cricket league. Turning working professionals into franchise cricketers since 2023.", "भारत की कॉर्पोरेट क्रिकेट लीग। 2023 से working professionals को franchise cricketers बना रहे हैं।")}
@@ -66,12 +67,12 @@ export default function AboutScreen() {
 
         {/* Mission */}
         <View style={{ paddingHorizontal: 20, marginBottom: 32 }}>
-          <LinearGradient colors={['rgba(255,122,41,0.15)', 'rgba(255,122,41,0.05)']} style={{ padding: 24, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,122,41,0.2)' }}>
-            <Feather name="zap" size={24} color={c.amber} style={{ marginBottom: 12 }} />
+          <LinearGradient colors={['rgba(255,61,166,0.15)', 'rgba(255,61,166,0.05)']} style={{ padding: 24, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,61,166,0.2)' }}>
+            <Feather name="zap" size={24} color={c.getAccentText(c.magenta)} style={{ marginBottom: 12 }} />
             <Text style={{ color: c.ink, fontFamily: 'Inter_500Medium', fontSize: 15, lineHeight: 24, fontStyle: 'italic' }}>
               "{t("Every working professional who watched IPL and thought 'I could have played' deserves a real shot. Millions stopped competitive cricket when work took over. BCPL exists to give them the stage they never got.", "हर working professional जो IPL देखते हुए सोचता है 'मैं भी खेल सकता था' — उसे एक असली मौका मिलना चाहिए। लाखों लोगों ने काम की वजह से competitive cricket छोड़ दी। BCPL उन्हें वो stage देने के लिए है जो उन्हें कभी नहीं मिला।")}"
             </Text>
-            <Text style={{ color: c.amber, fontFamily: 'Inter_700Bold', fontSize: 11, letterSpacing: 1, marginTop: 16, textTransform: 'uppercase' }}>
+            <Text style={{ color: c.getAccentText(c.magenta), fontFamily: 'Inter_700Bold', fontSize: 11, letterSpacing: 1, marginTop: 16, textTransform: 'uppercase' }}>
               — {t('BCPL FOUNDING MISSION', 'BCPL की स्थापना मिशन')}
             </Text>
           </LinearGradient>
@@ -83,16 +84,16 @@ export default function AboutScreen() {
             {t('WHY BCPL', 'क्यों BCPL')}
           </Text>
           <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 24, marginBottom: 20, textAlign: 'center' }}>
-            {t('How We Are ', 'हम कैसे ')}<Text style={{ color: c.cyan }}>{t('Different', 'अलग हैं')}</Text>
+            {t('How We Are ', 'हम कैसे ')}<Text style={{ color: c.getAccentText(c.cyan) }}>{t('Different', 'अलग हैं')}</Text>
           </Text>
           <View style={{ gap: 12 }}>
             {HOW_WE_HELP.map((item, i) => (
               <View key={i} style={{ backgroundColor: c.card2, borderRadius: 16, padding: 20, borderWidth: 1, borderColor: c.line }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 10 }}>
                   <View style={{ width: 32, height: 32, borderRadius: 8, backgroundColor: 'rgba(0,220,245,0.1)', alignItems: 'center', justifyContent: 'center' }}>
-                    <Feather name={item.icon as any} size={16} color={c.cyan} />
+                    <Feather name={item.icon as any} size={16} color={c.getAccentText(c.cyan)} />
                   </View>
-                  <Text style={{ color: c.cyan, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 15 }}>{t(item.titleEn, item.titleHi)}</Text>
+                  <Text style={{ color: c.getAccentText(c.cyan), fontFamily: 'PlusJakartaSans_700Bold', fontSize: 15 }}>{t(item.titleEn, item.titleHi)}</Text>
                 </View>
                 <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 13, lineHeight: 20 }}>
                   {t(item.bodyEn, item.bodyHi)}
@@ -107,7 +108,7 @@ export default function AboutScreen() {
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
             {STATS.map((s, i) => (
               <View key={i} style={{ flex: 1, minWidth: '45%', backgroundColor: c.card, borderRadius: 16, padding: 20, borderWidth: 1, borderColor: c.line, alignItems: 'center' }}>
-                <Text style={{ color: c.amber, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 28, marginBottom: 4 }}>{s.num}</Text>
+                <Text style={{ color: c.getAccentText(c.violet), fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 28, marginBottom: 4 }}>{s.num}</Text>
                 <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 14, marginBottom: 4 }}>{t(s.labelEn, s.labelHi)}</Text>
                 <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 11, textAlign: 'center', lineHeight: 15 }}>{t(s.subEn, s.subHi)}</Text>
               </View>
@@ -123,8 +124,8 @@ export default function AboutScreen() {
           <View style={{ gap: 16 }}>
             {STEPS.map((s, i) => (
               <View key={s.n} style={{ flexDirection: 'row', gap: 16, backgroundColor: c.card2, padding: 16, borderRadius: 16, borderWidth: 1, borderColor: c.line }}>
-                <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,122,41,0.1)', borderWidth: 1, borderColor: 'rgba(255,122,41,0.3)', alignItems: 'center', justifyContent: 'center' }}>
-                  <Text style={{ color: c.amber, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16 }}>{s.n}</Text>
+                <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,61,166,0.1)', borderWidth: 1, borderColor: 'rgba(255,61,166,0.3)', alignItems: 'center', justifyContent: 'center' }}>
+                  <Text style={{ color: c.getAccentText(c.magenta), fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16 }}>{s.n}</Text>
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 15, marginBottom: 4 }}>{t(s.title, s.titleHi)}</Text>
@@ -141,15 +142,15 @@ export default function AboutScreen() {
             {t('OUR JOURNEY', 'हमारा सफर')}
           </Text>
           <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 24, marginBottom: 24, textAlign: 'center' }}>
-            {t('Five Seasons of ', 'पाँच Seasons की ')}<Text style={{ color: c.amber }}>{t('Legacy', 'विरासत')}</Text>
+            {t('Five Seasons of ', 'पाँच Seasons की ')}<Text style={{ color: c.getAccentText(c.violet) }}>{t('Legacy', 'विरासत')}</Text>
           </Text>
           
           <View style={{ paddingLeft: 8 }}>
             {TIMELINE.map((tm, i) => (
               <View key={i} style={{ flexDirection: 'row', marginBottom: i === TIMELINE.length - 1 ? 0 : 20 }}>
                 <View style={{ width: 2, backgroundColor: c.line, position: 'absolute', left: 24, top: 48, bottom: -20, display: i === TIMELINE.length - 1 ? 'none' : 'flex' }} />
-                <View style={{ width: 50, height: 50, borderRadius: 25, backgroundColor: c.card, borderWidth: 2, borderColor: c.amber, alignItems: 'center', justifyContent: 'center', zIndex: 1, marginRight: 16 }}>
-                  <Text style={{ color: c.amber, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 12 }}>{tm.year.split('–')[0]}</Text>
+                <View style={{ width: 50, height: 50, borderRadius: 25, backgroundColor: c.card, borderWidth: 2, borderColor: c.getAccentText(c.violet), alignItems: 'center', justifyContent: 'center', zIndex: 1, marginRight: 16 }}>
+                  <Text style={{ color: c.getAccentText(c.violet), fontFamily: 'PlusJakartaSans_700Bold', fontSize: 12 }}>{tm.year.split('–')[0]}</Text>
                 </View>
                 <View style={{ flex: 1, backgroundColor: c.card2, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: c.line, marginTop: 4 }}>
                   <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 13, lineHeight: 20 }}>

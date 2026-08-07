@@ -306,28 +306,30 @@ function TeamsStrip() {
             >
               <View style={{ width: 128, height: 168, borderRadius: 18, borderWidth: 1, borderColor: c.line, backgroundColor: c.card, overflow: 'hidden', padding: 14, alignItems: 'center' }}>
                 <LinearGradient
-                  colors={[`${accent}33`, `${second}10`, 'transparent']}
+                  colors={[`${accent}1A`, `${second}05`, 'transparent']}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 0, y: 1 }}
                   style={StyleSheet.absoluteFill}
                 />
-                <View style={{ width: 56, height: 56, borderRadius: 16, backgroundColor: 'rgba(255,255,255,0.96)', borderWidth: 2, borderColor: `${accent}66`, alignItems: 'center', justifyContent: 'center' }}>
+                <View style={{ width: 68, height: 68, alignItems: 'center', justifyContent: 'center' }}>
                   {logo ? (
-                    <Image source={{ uri: logo }} style={{ width: '84%', height: '84%' }} contentFit="contain" />
+                    <Image source={{ uri: logo }} style={{ width: '100%', height: '100%' }} contentFit="contain" />
                   ) : (
-                    <Text style={{ color: accent, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 18 }}>
-                      {team.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join('')}
-                    </Text>
+                    <View style={{ width: '100%', height: '100%', borderRadius: 34, backgroundColor: accent, alignItems: 'center', justifyContent: 'center' }}>
+                      <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 24 }}>
+                        {team.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join('')}
+                      </Text>
+                    </View>
                   )}
                 </View>
-                <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 12.5, marginTop: 12, textAlign: 'center' }} numberOfLines={2}>
-                  {team.name}
-                </Text>
-                {team.city ? (
-                  <Text style={{ color: c.getAccentText(accent), fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 10, letterSpacing: 0.5, textTransform: 'uppercase', marginTop: 4 }} numberOfLines={1}>
-                    {team.city}
+                <View style={{ flex: 1, justifyContent: 'center', marginTop: 10 }}>
+                  <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 11, textAlign: 'center', letterSpacing: 0.5, textTransform: 'uppercase' }} numberOfLines={1}>
+                    {team.name.split(' ')[0]}
                   </Text>
-                ) : null}
+                  <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 15, textAlign: 'center', marginTop: 2 }} numberOfLines={1}>
+                    {team.name.split(' ').slice(1).join(' ')}
+                  </Text>
+                </View>
               </View>
             </Pressable>
           );
@@ -445,7 +447,9 @@ export default function HomeScreen() {
       <ScreenBackground />
       <GlassAppBar />
       <ScrollView
-        contentContainerStyle={{ paddingBottom: bottomNavHeight }}
+        bounces={false}
+        overScrollMode="never"
+        contentContainerStyle={{ paddingTop: appBarHeight + 16, paddingBottom: bottomNavHeight }}
         refreshControl={
           <RefreshControl
             refreshing={matchesQ.isRefetching}
@@ -459,8 +463,6 @@ export default function HomeScreen() {
           />
         }
       >
-        <View style={{ height: appBarHeight }} />
-        
         <ProfileBackfillCard />
 
         <BannerCarousel banners={bannersQ.data?.banners?.length ? bannersQ.data.banners : HARDCODED_BANNERS} />
@@ -491,55 +493,27 @@ export default function HomeScreen() {
           </View>
         ) : null}
 
-        {/* BCPL AI — official assistant, open to guests too */}
-        <View style={{ paddingHorizontal: 16, marginTop: 16 }}>
-          <Pressable
-            onPress={() => router.push('/assistant')}
-            testID="home-bcpl-ai"
-            style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1 })}
+        {/* Action pairs: Fan Voting & MVP */}
+        <View style={{ paddingHorizontal: 16, marginTop: 24, flexDirection: 'row', gap: 12 }}>
+          <Pressable 
+            onPress={() => router.push('/vote')} 
+            style={({ pressed }) => ({ flex: 1, backgroundColor: c.card, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: c.line, opacity: pressed ? 0.9 : 1 })}
           >
-            <Card style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14 }}>
-              <View style={{ width: 42, height: 42, borderRadius: 21, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
-                <LinearGradient colors={['#7C5CFF', '#FF3DA6']} style={StyleSheet.absoluteFill} />
-                <Ionicons name="sparkles" size={20} color="#fff" />
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 15 }}>
-                  {t('Ask BCPL AI', 'BCPL AI से पूछें')}
-                </Text>
-                <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 12, marginTop: 2 }}>
-                  {token
-                    ? t('Payment, video, result or trial — ask anything', 'Payment, video, result या trial — कुछ भी पूछें')
-                    : t('Registration, fees, trials — ask anything', 'Registration, fees, trials — कुछ भी पूछें')}
-                </Text>
-              </View>
-              <Feather name="chevron-right" size={18} color={c.sub} />
-            </Card>
+            <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(124,92,255,0.1)', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
+              <Feather name="heart" size={16} color={c.getAccentText(c.violet)} />
+            </View>
+            <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, marginBottom: 2 }}>{t('Fan Voting', 'फैन वोटिंग')}</Text>
+            <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 11 }}>{t('Have your say', 'अपनी राय दें')}</Text>
           </Pressable>
-        </View>
-
-        {/* Community Scorer */}
-        <View style={{ paddingHorizontal: 16, marginTop: 12 }}>
-          <Pressable
-            onPress={() => router.push('/scorer')}
-            testID="home-scorer"
-            style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1 })}
+          <Pressable 
+            onPress={() => router.push('/mvp')} 
+            style={({ pressed }) => ({ flex: 1, backgroundColor: c.card, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: c.line, opacity: pressed ? 0.9 : 1 })}
           >
-            <Card style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14 }}>
-              <View style={{ width: 42, height: 42, borderRadius: 21, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
-                <LinearGradient colors={['#5B2BF0', '#00DCF5']} style={StyleSheet.absoluteFill} />
-                <Ionicons name="stopwatch" size={20} color="#fff" />
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 15 }}>
-                  {t('Community Scorer', 'कम्युनिटी स्कोरर')}
-                </Text>
-                <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 12, marginTop: 2 }}>
-                  {t('Score your local matches — free for everyone', 'अपने लोकल मैच स्कोर करें — सबके लिए फ्री')}
-                </Text>
-              </View>
-              <Feather name="chevron-right" size={18} color={c.sub} />
-            </Card>
+            <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,197,61,0.1)', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
+              <Feather name="star" size={16} color={c.getAccentText(c.amber)} />
+            </View>
+            <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, marginBottom: 2 }}>{t('MVP Race', 'MVP रेस')}</Text>
+            <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 11 }}>{t('Car leaderboard', 'कार लीडरबोर्ड')}</Text>
           </Pressable>
         </View>
 
@@ -568,7 +542,7 @@ export default function HomeScreen() {
         </View>
 
         <View style={{ paddingHorizontal: 16, paddingTop: 32 }}>
-          <SectionHeader title={t('Match Center', 'मैच सेंटर')} onSeeAll={() => router.push('/matches')} seeAllLabel={t('See all', 'सभी देखें')} seeAllTestID="see-matches" />
+          <SectionHeader title={t('Match Center', 'मैच सेंटर')} onSeeAll={() => router.navigate('/matches')} seeAllLabel={t('See all', 'सभी देखें')} seeAllTestID="see-matches" />
           {featured.length > 0 ? (
             featured.map((m) => <MatchCard key={m.id} match={m} />)
           ) : matchesQ.isLoading ? (
@@ -590,7 +564,7 @@ export default function HomeScreen() {
 
         {topTeams.length > 0 ? (
           <View style={{ paddingHorizontal: 16, marginTop: 32 }}>
-            <SectionHeader title={t('Points Table', 'अंक तालिका')} onSeeAll={() => router.push('/points')} seeAllLabel={t('See all', 'सभी देखें')} seeAllTestID="see-points" />
+            <SectionHeader title={t('Points Table', 'अंक तालिका')} onSeeAll={() => router.navigate('/points')} seeAllLabel={t('See all', 'सभी देखें')} seeAllTestID="see-points" />
             <Card padding={0} border={true}>
               <View style={[styles.pointsRow, { paddingVertical: 10, backgroundColor: c.card2, borderBottomWidth: 1, borderBottomColor: c.line }]}>
                 <Text style={[styles.pos, { color: c.sub, fontSize: 10.5 }]}>#</Text>
@@ -629,7 +603,7 @@ export default function HomeScreen() {
         <TeamsStrip />
 
         <View style={{ paddingHorizontal: 16, marginTop: 32 }}>
-          <SectionHeader title={t('Latest News', 'ताज़ा खबरें')} onSeeAll={() => router.push('/news')} seeAllLabel={t('See all', 'सभी देखें')} seeAllTestID="see-news" />
+          <SectionHeader title={t('Latest News', 'ताज़ा खबरें')} onSeeAll={() => router.navigate('/news')} seeAllLabel={t('See all', 'सभी देखें')} seeAllTestID="see-news" />
           {latestNews.map((n) => (
             <Pressable
               key={n.slug}

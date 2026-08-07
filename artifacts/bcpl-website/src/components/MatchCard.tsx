@@ -69,22 +69,21 @@ export function MatchCountdown({ targetDate, compact }: { targetDate: string, co
   );
 }
 
-/* Team logo badge — white circle with team-color ring. Falls back to the BCPL
-   ball logo (semis/final placeholders & missing logos), never to bare initials. */
+/* Team logo badge — transparent logo on a subtle team-color radial backdrop
+   (no white disc). Falls back to the BCPL ball logo (semis/final placeholders
+   & missing logos), never to bare initials. */
 export function TeamLogoBadge({ team, color, logo, size }: { team: string; color: string; logo: string; size: number }) {
   const [broken, setBroken] = useState(false);
   const src = (!logo || broken) ? BALL_LOGO : logo;
   return (
     <span style={{
-      width: size, height: size, borderRadius: '50%', flexShrink: 0,
-      background: 'rgba(255,255,255,0.97)',
-      border: `2.5px solid ${color}`,
-      boxShadow: `0 4px 14px rgba(0,0,0,0.35), 0 0 0 3px ${color}22`,
-      display: 'inline-flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden'
+      width: size, height: size, flexShrink: 0,
+      background: `radial-gradient(circle at 50% 45%, ${color}33 0%, transparent 72%)`,
+      display: 'inline-flex', alignItems: 'center', justifyContent: 'center'
     }}>
       <img src={src} alt={team} decoding="async"
         onError={() => setBroken(true)}
-        style={{ width: '84%', height: '84%', objectFit: 'contain' }} />
+        style={{ width: '100%', height: '100%', objectFit: 'contain', filter: 'drop-shadow(0 3px 8px rgba(0,0,0,0.45))' }} />
     </span>
   );
 }

@@ -484,6 +484,63 @@ export function getGallery(): Promise<{ albums: GalleryAlbum[] }> {
   return apiFetch('/gallery');
 }
 
+// ── Polls ──────────────────────────────────────────────────────────
+export interface PollOption {
+  id: string;
+  label: string;
+  imageUrl?: string;
+  teamName?: string;
+  votes?: number;
+  percent?: number;
+}
+export interface Poll {
+  id: string;
+  slug: string;
+  titleEn: string;
+  titleHi: string;
+  category: string;
+  status: string;
+  votingOpen: boolean;
+  showLiveResults: boolean;
+  totalVotes: number;
+  options: PollOption[];
+  hasVoted?: boolean;
+  votedOptionId?: string;
+}
+
+export function getPolls(token?: string): Promise<{ polls: Poll[] }> {
+  return apiFetch('/polls', { token });
+}
+
+export function votePoll(id: string, optionId: string, token: string): Promise<{ success: boolean; poll: Poll }> {
+  return apiFetch(`/polls/${id}/vote`, { method: 'POST', body: { optionId }, token });
+}
+
+// ── MVP ────────────────────────────────────────────────────────────
+export interface MvpPlayer {
+  rank: number;
+  name: string;
+  team: string;
+  matches: number;
+  runs: number;
+  wickets: number;
+  catches: number;
+  points: number;
+  breakdown: any;
+  finalEligible: boolean;
+}
+
+export interface MvpLeaderboard {
+  leaderboard: MvpPlayer[];
+  finalists: string | null;
+  note: string | null;
+}
+
+export function getMvpLeaderboard(eligibleOnly?: boolean): Promise<MvpLeaderboard> {
+  const q = eligibleOnly ? '?eligibleOnly=1' : '';
+  return apiFetch(`/mvp/leaderboard${q}`);
+}
+
 // ── Community Scorer (Profiles & Teams) ──────────────────────────────────────
 export interface CommunityProfile {
   userId: string;
@@ -491,6 +548,8 @@ export interface CommunityProfile {
   role: string; // batsman|bowler|all_rounder|wicket_keeper
   battingStyle: string; // right|left
   bowlingStyle?: string | null;
+  photoUrl?: string | null;
+  coverUrl?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -505,6 +564,8 @@ export interface CommunityTeam {
   ownerUserId: string;
   name: string;
   shortName: string;
+  logoUrl?: string | null;
+  coverUrl?: string | null;
   createdAt: string;
 }
 
@@ -522,12 +583,28 @@ export function communityGetProfile(token: string): Promise<{ profile: Community
   return apiFetch('/community/profile', { token });
 }
 
-export function communityUpdateProfile(token: string, data: { displayName: string; role: string; battingStyle: string; bowlingStyle?: string }): Promise<{ success: boolean; profile: CommunityProfile }> {
+export function communityUpdateProfile(token: string, data: { displayName: string; role: string; battingStyle: string; bowlingStyle: string }): Promise<{ success: boolean; profile: CommunityProfile }> {
   return apiFetch('/community/profile', { method: 'PUT', body: data, token });
 }
 
 export function communityGetProfileStats(token: string): Promise<{ stats: CommunityProfileStats }> {
   return apiFetch('/community/profile/stats', { token });
+}
+
+export function communityProfileMediaPresign(token: string, slot: 'photo' | 'cover', contentType: string, sizeBytes: number): Promise<{ success: boolean; presignedUrl: string; s3Key: string }> {
+  return apiFetch(`/community/profile/media/${slot}/presign`, { method: 'POST', token, body: { contentType, sizeBytes } });
+}
+
+export function communityProfileMediaConfirm(token: string, slot: 'photo' | 'cover', s3Key: string): Promise<{ success: boolean; profile: CommunityProfile }> {
+  return apiFetch(`/community/profile/media/${slot}/confirm`, { method: 'POST', token, body: { s3Key } });
+}
+
+export function communityTeamMediaPresign(token: string, teamId: string, slot: 'logo' | 'cover', contentType: string, sizeBytes: number): Promise<{ success: boolean; presignedUrl: string; s3Key: string }> {
+  return apiFetch(`/community/teams/${teamId}/media/${slot}/presign`, { method: 'POST', token, body: { contentType, sizeBytes } });
+}
+
+export function communityTeamMediaConfirm(token: string, teamId: string, slot: 'logo' | 'cover', s3Key: string): Promise<{ success: boolean; team: CommunityTeam }> {
+  return apiFetch(`/community/teams/${teamId}/media/${slot}/confirm`, { method: 'POST', token, body: { s3Key } });
 }
 
 export function communityMyTeams(token: string): Promise<{ teams: CommunityTeam[] }> {

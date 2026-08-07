@@ -172,3 +172,17 @@ uri = "file://screenshots/appstore/final/store-10.png"
 type = "image"
 title = "Screen 10/10"
 description = "Real Stakes. Real Rewards."
+
+[[outputs]]
+id = "m3nFNe1pS8nkp6yN3d0H9"
+uri = "file://screenshots/app-kyc-top.jpg"
+type = "image"
+title = "App — Jersey Details form"
+description = "Mobile app KYC screen: T-shirt/Trouser/Shoe/Helmet size pickers with the not-for-trials disclaimer."
+
+[[outputs]]
+id = "aYh2SNnzvEzMpEskIVafd"
+uri = "file://screenshots/web-kyc-jersey.png"
+type = "image"
+title = "Website — Jersey Details form"
+description = "Website Phase-2 KYC page: jersey size section with disclaimer, emergency contact, employment, identity verification."

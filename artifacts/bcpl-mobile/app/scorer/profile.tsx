@@ -9,6 +9,9 @@ import { useLang } from '@/context/LanguageContext';
 import { useColors } from '@/hooks/useColors';
 import { communityGetProfile, communityUpdateProfile, communityGetProfileStats } from '@/lib/api';
 import { GlassAppBar, ScreenBackground, Card, useAppBarHeight, useBottomNavHeight, ErrorView, LoadingView } from '@/components/ui';
+import * as ImagePicker from 'expo-image-picker';
+import { Image } from 'expo-image';
+import { putToPresignedUrl, communityProfileMediaPresign, communityProfileMediaConfirm } from '@/lib/api';
 
 export default function ScorerProfileScreen() {
   const router = useRouter();
@@ -60,23 +63,52 @@ export default function ScorerProfileScreen() {
   });
 
   if (!ready || profileQ.isLoading) {
-    return <View style={{ flex: 1, backgroundColor: c.bg }}><ScreenBackground /><GlassAppBar title={t('My Profile', 'मेरी प्रोफ़ाइल')} /><LoadingView /></View>;
+    return <View style={{ flex: 1, backgroundColor: c.bg }}><ScreenBackground /><GlassAppBar title={t('My Profile', 'मेरी प्रोफ़ाइल')} back={true} /><LoadingView /></View>;
   }
 
   if (profileQ.isError && (profileQ.error as any).status !== 404) {
-    return <View style={{ flex: 1, backgroundColor: c.bg }}><ScreenBackground /><GlassAppBar title={t('My Profile', 'मेरी प्रोफ़ाइल')} /><ErrorView onRetry={() => profileQ.refetch()} /></View>;
+    return <View style={{ flex: 1, backgroundColor: c.bg }}><ScreenBackground /><GlassAppBar title={t('My Profile', 'मेरी प्रोफ़ाइल')} back={true} /><ErrorView onRetry={() => profileQ.refetch()} /></View>;
   }
 
   const profile = profileQ.data?.profile;
   const needsCreation = !profile || (profileQ.isError && (profileQ.error as any).status === 404);
 
+  const [uploading, setUploading] = useState<'photo' | 'cover' | null>(null);
+
+  const handleMediaUpload = async (slot: 'photo' | 'cover') => {
+    if (!token) return;
+    try {
+      const res = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        allowsEditing: true,
+        aspect: slot === 'photo' ? [1, 1] : [16, 9],
+        quality: 0.8,
+      });
+      if (res.canceled || !res.assets[0]) return;
+      const asset = res.assets[0];
+      setUploading(slot);
+      
+      const response = await fetch(asset.uri);
+      const blob = await response.blob();
+      
+      const { presignedUrl, s3Key } = await communityProfileMediaPresign(token, slot, blob.type || 'image/jpeg', blob.size);
+      await putToPresignedUrl(presignedUrl, blob, blob.type || 'image/jpeg');
+      await communityProfileMediaConfirm(token, slot, s3Key);
+      queryClient.invalidateQueries({ queryKey: ['communityProfile', token] });
+    } catch (e: any) {
+      alert(e.message || 'Upload failed');
+    } finally {
+      setUploading(null);
+    }
+  };
+
   const handleSave = () => {
-    if (!displayName.trim()) return alert(t('Display name is required', 'नाम दर्ज करें'));
+    if (!displayName.trim() || !bowlingStyle.trim()) return alert(t('Display name and bowling style are required', 'नाम और गेंदबाज़ी शैली दर्ज करें'));
     updateMut.mutate({
       displayName: displayName.trim(),
       role,
       battingStyle,
-      bowlingStyle: bowlingStyle.trim() || undefined,
+      bowlingStyle: bowlingStyle.trim(),
     });
   };
 
@@ -97,7 +129,7 @@ export default function ScorerProfileScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
       <ScreenBackground />
-      <GlassAppBar title={t('Cricket Profile', 'क्रिकेट प्रोफ़ाइल')} />
+      <GlassAppBar title={t('Cricket Profile', 'क्रिकेट प्रोफ़ाइल')} back={true} />
       
       <ScrollView contentContainerStyle={{ paddingBottom: bottomNavHeight + 40, paddingTop: appBarHeight }}>
         
@@ -166,12 +198,12 @@ export default function ScorerProfileScreen() {
 
               <View>
                 <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 14, marginBottom: 8 }}>
-                  {t('Bowling Style (Optional)', 'गेंदबाज़ी शैली (वैकल्पिक)')}
+                  {t('Bowling Style', 'गेंदबाज़ी शैली')}
                 </Text>
                 <TextInput
                   value={bowlingStyle}
                   onChangeText={setBowlingStyle}
-                  placeholder={t('e.g. Right-arm fast', 'जैसे दायां हाथ तेज़')}
+                  placeholder={t('e.g. Right-arm fast, Off-spin, None', 'जैसे दायां हाथ तेज़, ऑफ़-स्पिन, कोई नहीं')}
                   placeholderTextColor={c.sub}
                   style={[styles.input, { backgroundColor: c.card2, color: c.ink, borderColor: c.line }]}
                 />
@@ -199,12 +231,39 @@ export default function ScorerProfileScreen() {
           <View style={{ padding: 16, gap: 24 }}>
             {/* VIEW MODE */}
             <Card padding={0} style={{ overflow: 'hidden' }}>
-              <LinearGradient colors={[`${c.violet}20`, 'transparent']} style={{ padding: 24, alignItems: 'center' }}>
-                <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: c.violet, alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
-                  <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 32 }}>
-                    {profile?.displayName.charAt(0).toUpperCase()}
-                  </Text>
-                </View>
+              <Pressable onPress={() => handleMediaUpload('cover')} style={{ height: 120, backgroundColor: c.card2, position: 'relative' }}>
+                {profile?.coverUrl ? (
+                  <Image source={{ uri: profile.coverUrl }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+                ) : (
+                  <LinearGradient colors={[`${c.violet}20`, `${c.violet}10`]} style={{ ...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center' }}>
+                    <Feather name="camera" size={24} color={c.sub} />
+                  </LinearGradient>
+                )}
+                {uploading === 'cover' && (
+                  <View style={{ ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.5)', alignItems: 'center', justifyContent: 'center' }}>
+                    <ActivityIndicator color="#fff" />
+                  </View>
+                )}
+              </Pressable>
+              
+              <View style={{ alignItems: 'center', marginTop: -40 }}>
+                <Pressable onPress={() => handleMediaUpload('photo')} style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: c.violet, borderWidth: 4, borderColor: c.card, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                  {profile?.photoUrl ? (
+                    <Image source={{ uri: profile.photoUrl }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+                  ) : (
+                    <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 32 }}>
+                      {profile?.displayName.charAt(0).toUpperCase()}
+                    </Text>
+                  )}
+                  {uploading === 'photo' && (
+                    <View style={{ ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.5)', alignItems: 'center', justifyContent: 'center' }}>
+                      <ActivityIndicator color="#fff" />
+                    </View>
+                  )}
+                </Pressable>
+              </View>
+
+              <View style={{ padding: 24, paddingTop: 16, alignItems: 'center' }}>
                 <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 24, marginBottom: 4 }}>
                   {profile?.displayName}
                 </Text>
@@ -212,12 +271,12 @@ export default function ScorerProfileScreen() {
                   {profile?.role.replace('_', ' ')} · {profile?.battingStyle} Hand Bat
                   {profile?.bowlingStyle ? ` · ${profile.bowlingStyle}` : ''}
                 </Text>
-                <Pressable onPress={() => setIsEditing(true)} style={{ marginTop: 16, paddingHorizontal: 20, paddingVertical: 8, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.1)', borderWidth: 1, borderColor: c.line }}>
+                <Pressable onPress={() => setIsEditing(true)} style={{ marginTop: 16, paddingHorizontal: 20, paddingVertical: 8, borderRadius: 20, backgroundColor: c.card2, borderWidth: 1, borderColor: c.line }}>
                   <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 13 }}>
                     {t('Edit Profile', 'प्रोफ़ाइल एडिट करें')}
                   </Text>
                 </Pressable>
-              </LinearGradient>
+              </View>
             </Card>
 
             {statsQ.isLoading ? (

@@ -944,3 +944,84 @@ export const adminApproveSelection = (id: string) =>
   adminReq<{ ok: boolean; batchId: string; status: string }>("POST", `/admin/selection/batches/${id}/approve`);
 export const adminPublishSelection = (id: string) =>
   adminReq<{ ok: boolean; batchId: string; status: string; note: string }>("POST", `/admin/selection/batches/${id}/publish`);
+
+/* ─── Fan Voting (public polls) ─────────────────────── */
+export type PollOption = {
+  id: string; pollId: string; label: string; imageUrl: string | null;
+  teamName: string | null; sortOrder: number;
+  votes?: number; percent?: number;
+};
+export type Poll = {
+  id: string; slug: string; titleEn: string; titleHi: string;
+  category: string; status: string;
+  opensAt: string | null; closesAt: string | null;
+  showLiveResults: boolean; createdAt: string; updatedAt: string;
+  votingOpen: boolean; totalVotes: number | null; options: PollOption[];
+};
+export type VoteResult = { success: boolean; totalVotes: number | null; options: PollOption[] };
+
+export const getPolls = () => req<{ polls: Poll[] }>("GET", "/polls");
+export const getPoll = (slug: string) =>
+  req<{ poll: Poll }>("GET", `/polls/${encodeURIComponent(slug)}`);
+/** Cast a vote. Throws Error with .status (401/400/409/429) + .code on failure. */
+export const castPollVote = (pollId: string, optionId: string) =>
+  req<VoteResult>("POST", `/polls/${pollId}/vote`, { optionId });
+
+/* ─── MVP / Fantasy Leaderboard (public) ────────────── */
+export type MvpBreakdown = { batting: number; bowling: number; fielding: number };
+export type MvpEntry = {
+  rank: number; playerId: string; name: string; team: string;
+  matches: number; runs: number; wickets: number; catches: number;
+  points: number; breakdown: MvpBreakdown; finalEligible: boolean;
+};
+export type MvpLeaderboard = {
+  season: number;
+  leaderboard: MvpEntry[];
+  finalists: [string, string] | null;
+  note: string;
+};
+export const getMvpLeaderboard = (eligibleOnly = false) =>
+  req<MvpLeaderboard>("GET", `/mvp/leaderboard${eligibleOnly ? "?eligibleOnly=1" : ""}`);
+
+/* ─── Admin: Fan Voting management (adminReq / session token) ─── */
+export type AdminPollListItem = Omit<Poll, "votingOpen" | "options"> & { totalVotes: number };
+export type AdminPollResult = {
+  optionId: string; label: string; teamName: string | null; votes: number; percent: number;
+};
+export type AdminPollDetail = {
+  poll: Omit<Poll, "votingOpen" | "totalVotes" | "options">;
+  totalVotes: number;
+  options: (PollOption & { votes: number; percent: number })[];
+};
+export type AdminPollOptionInput = {
+  label: string; imageUrl?: string | null; teamName?: string | null; sortOrder?: number;
+};
+export type AdminCreatePollInput = {
+  slug: string; titleEn: string; titleHi?: string;
+  category?: string; status?: string;
+  opensAt?: string | null; closesAt?: string | null;
+  showLiveResults?: boolean; options?: AdminPollOptionInput[];
+};
+export type AdminPatchPollInput = Partial<{
+  titleEn: string; titleHi: string; category: string; status: string;
+  opensAt: string | null; closesAt: string | null; showLiveResults: boolean;
+}>;
+
+export const adminListPolls = () =>
+  adminReq<{ polls: AdminPollListItem[] }>("GET", "/admin/polls");
+export const adminGetPoll = (id: string) =>
+  adminReq<AdminPollDetail>("GET", `/admin/polls/${id}`);
+export const adminCreatePoll = (body: AdminCreatePollInput) =>
+  adminReq<{ success: boolean; poll: AdminPollListItem; options: PollOption[] }>("POST", "/admin/polls", body);
+export const adminPatchPoll = (id: string, body: AdminPatchPollInput) =>
+  adminReq<{ success: boolean; poll: AdminPollListItem }>("PATCH", `/admin/polls/${id}`, body);
+export const adminDeletePoll = (id: string) =>
+  adminReq<{ success: boolean }>("DELETE", `/admin/polls/${id}`);
+export const adminAddPollOption = (id: string, body: AdminPollOptionInput) =>
+  adminReq<{ success: boolean; option: PollOption }>("POST", `/admin/polls/${id}/options`, body);
+export const adminPatchPollOption = (id: string, optId: string, body: Partial<AdminPollOptionInput>) =>
+  adminReq<{ success: boolean; option: PollOption }>("PATCH", `/admin/polls/${id}/options/${optId}`, body);
+export const adminDeletePollOption = (id: string, optId: string) =>
+  adminReq<{ success: boolean }>("DELETE", `/admin/polls/${id}/options/${optId}`);
+export const adminGetPollResults = (id: string) =>
+  adminReq<{ pollId: string; slug: string; status: string; totalVotes: number; results: AdminPollResult[] }>("GET", `/admin/polls/${id}/results`);

@@ -74,15 +74,15 @@ function TeamBadge({ name, color, logo, size, fontSize }: {
   return (
     <span style={{
       width: size, height: size, borderRadius: "50%",
-      background: "rgba(255,255,255,0.96)",
-      border: `2px solid ${color}`, display: "inline-flex", alignItems: "center",
+      background: `radial-gradient(circle at 50% 45%, ${color}33 0%, transparent 72%)`,
+      display: "inline-flex", alignItems: "center",
       justifyContent: "center", overflow: "hidden", flexShrink: 0,
       fontFamily: "var(--font-head)", fontWeight: 800, fontSize, color,
     }}>
       {showLogo
         ? <img decoding="async" src={logo} alt={name} onError={() => setBroken(true)}
-            style={{ width: "82%", height: "82%", objectFit: "contain" }} />
-        : <img decoding="async" src={BALL_LOGO} alt={name} style={{ width: "82%", height: "82%", objectFit: "contain" }} />}
+            style={{ width: "100%", height: "100%", objectFit: "contain", filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.4))" }} />
+        : <img decoding="async" src={BALL_LOGO} alt={name} style={{ width: "100%", height: "100%", objectFit: "contain", filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.4))" }} />}
     </span>
   );
 }

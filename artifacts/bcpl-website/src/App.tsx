@@ -53,6 +53,8 @@ import { CorporateCricketDelhi } from '@/pages/CorporateCricketDelhi';
 import { HowToJoin }             from '@/pages/HowToJoin';
 import { OfficeCricketTeam }     from '@/pages/OfficeCricketTeam';
 import { Scorecard }             from '@/pages/Scorecard';
+import { Vote }                   from '@/pages/Vote';
+import { MVP }                    from '@/pages/MVP';
 import AdminPanel              from '@/admin/AdminPanel';
 
 // Staff trial-ops app — lazy: field staff only, keeps jsqr etc out of the main bundle
@@ -104,6 +106,8 @@ function Router() {
         <Route path="/contact"     component={Contact} />
         <Route path="/schedule"    component={Schedule} />
         <Route path="/points-table" component={PointsTable} />
+        <Route path="/vote"        component={Vote} />
+        <Route path="/mvp"         component={MVP} />
 
         {/* SEO keyword landing pages (non-brand search intent) */}
         <Route path="/corporate-cricket"                 component={CorporateCricket} />

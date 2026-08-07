@@ -207,8 +207,8 @@ export function TeamDetail() {
               <div className="wrap" style={{textAlign:'center',position:'relative',zIndex:2}}>
                 <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:12,marginBottom:16}}>
                   {team.logoUrl
-                    ? <div style={{width:84,height:84,background:'rgba(255,255,255,0.96)',borderRadius:22,padding:8,display:'flex',alignItems:'center',justifyContent:'center',boxShadow:`0 12px 44px ${ACCENT}55`,border:`2px solid ${ACCENT}66`}}>
-                        <img src={asset(team.logoUrl)} alt={team.name} style={{width:'92%',height:'92%',objectFit:'contain'}}/>
+                    ? <div style={{width:96,height:96,background:`radial-gradient(circle at 50% 45%, ${ACCENT}40 0%, transparent 72%)`,borderRadius:22,padding:6,display:'flex',alignItems:'center',justifyContent:'center'}}>
+                        <img src={asset(team.logoUrl)} alt={team.name} style={{width:'100%',height:'100%',objectFit:'contain',filter:'drop-shadow(0 6px 16px rgba(0,0,0,0.5))'}}/>
                       </div>
                     : <IcoBat size={40} style={{color:ACCENT}}/>}
                 </div>

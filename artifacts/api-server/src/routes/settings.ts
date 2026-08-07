@@ -22,6 +22,7 @@ import { validateRubricsOverrideValue } from "./staffTrials";
 import { selectionConfigSchema } from "../lib/selectionConfig";
 import { appBannersSchema } from "../lib/appBanners";
 import { appMediaSchema } from "../lib/appMedia";
+import { mvpPointsConfigSchema } from "../lib/mvpPoints";
 import { z } from "zod";
 
 const router = Router();
@@ -39,6 +40,7 @@ const WRITABLE_KEYS = new Set([
   "trial_ops_defaults",
   "trial_rubrics_v1",
   "selection_config",
+  "mvp_points_config",
 ]);
 /** Per-key role restriction (SUPER_ADMIN always allowed). */
 const KEY_ROLES: Record<string, string[]> = {
@@ -67,6 +69,10 @@ const KEY_ROLES: Record<string, string[]> = {
      quotas, tie-breaker order, zone mapping). Top-role only — SUPER_ADMIN is
      always allowed by the gate below; no other role may change selection math. */
   selection_config: [],
+  /* Dream11-style MVP / fantasy point table for the official-match leaderboard
+     (GET /api/mvp/leaderboard reads it). Match-operations owns scoring rules;
+     SUPER_ADMIN always allowed by the gate below. Never public. */
+  mvp_points_config: ["MATCH_OPERATIONS"],
 };
 
 /* ── ensure table exists (idempotent, runs at boot) ── */
@@ -271,6 +277,13 @@ router.put("/admin/:key", requireAdmin, async (req, res) => {
     if (!parsed.success) {
       const first = parsed.error.issues.slice(0, 3).map(i => (i.path.join(".") || "value") + ": " + i.message).join("; ");
       return void res.status(400).json({ error: "Invalid selection_config value — " + first });
+    }
+    value = parsed.data as unknown as Record<string, unknown>;
+  } else if (key === "mvp_points_config") {
+    const parsed = mvpPointsConfigSchema.safeParse(req.body?.value);
+    if (!parsed.success) {
+      const first = parsed.error.issues.slice(0, 3).map(i => (i.path.join(".") || "value") + ": " + i.message).join("; ");
+      return void res.status(400).json({ error: "Invalid mvp_points_config value — " + first });
     }
     value = parsed.data as unknown as Record<string, unknown>;
   } else {

@@ -7,8 +7,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from '@/context/AuthContext';
 import { useLang } from '@/context/LanguageContext';
 import { useColors } from '@/hooks/useColors';
-import { communityGetTeam, communityUpdateTeam, communityAddMember, communityRemoveMember, communityDeleteTeam } from '@/lib/api';
-import { GlassAppBar, ScreenBackground, Card, useAppBarHeight, useBottomNavHeight, ErrorView, LoadingView } from '@/components/ui';
+import { communityGetTeam, communityUpdateTeam, communityAddMember, communityRemoveMember, communityDeleteTeam, communityTeamMediaPresign, communityTeamMediaConfirm, putToPresignedUrl } from '@/lib/api';
+import { GlassAppBar, ScreenBackground, Card, useAppBarHeight, useBottomNavHeight, ErrorView, LoadingView, TeamDot } from '@/components/ui';
+import * as ImagePicker from 'expo-image-picker';
+import { Image } from 'expo-image';
 
 export default function ScorerTeamDetailScreen() {
   const { id } = useLocalSearchParams();
@@ -76,11 +78,11 @@ export default function ScorerTeamDetailScreen() {
   });
 
   if (!ready || q.isLoading) {
-    return <View style={{ flex: 1, backgroundColor: c.bg }}><ScreenBackground /><GlassAppBar title={t('Team', 'टीम')} /><LoadingView /></View>;
+    return <View style={{ flex: 1, backgroundColor: c.bg }}><ScreenBackground /><GlassAppBar title={t('Team', 'टीम')} back={true} /><LoadingView /></View>;
   }
 
   if (q.isError) {
-    return <View style={{ flex: 1, backgroundColor: c.bg }}><ScreenBackground /><GlassAppBar title={t('Team', 'टीम')} /><ErrorView onRetry={() => q.refetch()} /></View>;
+    return <View style={{ flex: 1, backgroundColor: c.bg }}><ScreenBackground /><GlassAppBar title={t('Team', 'टीम')} back={true} /><ErrorView onRetry={() => q.refetch()} /></View>;
   }
 
   const team = q.data?.team;
@@ -99,21 +101,78 @@ export default function ScorerTeamDetailScreen() {
     ]);
   };
 
+  const [uploading, setUploading] = useState<'logo' | 'cover' | null>(null);
+
+  const handleMediaUpload = async (slot: 'logo' | 'cover') => {
+    if (!token || !isOwner) return;
+    try {
+      const res = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        allowsEditing: true,
+        aspect: slot === 'logo' ? [1, 1] : [16, 9],
+        quality: 0.8,
+      });
+      if (res.canceled || !res.assets[0]) return;
+      const asset = res.assets[0];
+      setUploading(slot);
+      
+      const response = await fetch(asset.uri);
+      const blob = await response.blob();
+      
+      const { presignedUrl, s3Key } = await communityTeamMediaPresign(token, teamId, slot, blob.type || 'image/jpeg', blob.size);
+      await putToPresignedUrl(presignedUrl, blob, blob.type || 'image/jpeg');
+      await communityTeamMediaConfirm(token, teamId, slot, s3Key);
+      queryClient.invalidateQueries({ queryKey: ['communityTeam', token, teamId] });
+      queryClient.invalidateQueries({ queryKey: ['communityTeams', token] });
+    } catch (e: any) {
+      alert(e.message || 'Upload failed');
+    } finally {
+      setUploading(null);
+    }
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
       <ScreenBackground />
-      <GlassAppBar title={team?.shortName || t('Team', 'टीम')} />
+      <GlassAppBar title={team?.shortName || t('Team', 'टीम')} back={true} />
       
       <ScrollView contentContainerStyle={{ paddingBottom: bottomNavHeight + 40, paddingTop: appBarHeight }}>
         <View style={{ padding: 16, gap: 16 }}>
           
           <Card padding={0} style={{ overflow: 'hidden' }}>
-            <LinearGradient colors={[`${c.cyan}20`, 'transparent']} style={{ padding: 24, alignItems: 'center' }}>
-              <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: c.cyan, alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
-                <Text style={{ color: c.bg, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 32 }}>
-                  {team?.shortName}
-                </Text>
+              <Pressable onPress={() => handleMediaUpload('cover')} style={{ height: 120, backgroundColor: c.card2, position: 'relative' }}>
+                {team?.coverUrl ? (
+                  <Image source={{ uri: team.coverUrl }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+                ) : (
+                  <LinearGradient colors={[`${c.cyan}20`, `${c.cyan}10`]} style={{ ...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center' }}>
+                    <Feather name="camera" size={24} color={c.sub} />
+                  </LinearGradient>
+                )}
+                {uploading === 'cover' && (
+                  <View style={{ ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.5)', alignItems: 'center', justifyContent: 'center' }}>
+                    <ActivityIndicator color="#fff" />
+                  </View>
+                )}
+              </Pressable>
+              
+              <View style={{ alignItems: 'center', marginTop: -40 }}>
+                <Pressable onPress={() => handleMediaUpload('logo')} style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: c.cyan, borderWidth: 4, borderColor: c.card, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                  {team?.logoUrl ? (
+                    <Image source={{ uri: team.logoUrl }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+                  ) : (
+                    <Text style={{ color: c.bg, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 32 }}>
+                      {team?.shortName}
+                    </Text>
+                  )}
+                  {uploading === 'logo' && (
+                    <View style={{ ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.5)', alignItems: 'center', justifyContent: 'center' }}>
+                      <ActivityIndicator color="#fff" />
+                    </View>
+                  )}
+                </Pressable>
               </View>
+
+              <View style={{ padding: 24, paddingTop: 16, alignItems: 'center' }}>
               <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 24, marginBottom: 4 }}>
                 {team?.name}
               </Text>
@@ -122,19 +181,19 @@ export default function ScorerTeamDetailScreen() {
               </Text>
               {isOwner && (
                 <View style={{ flexDirection: 'row', gap: 12, marginTop: 16 }}>
-                  <Pressable onPress={handleEditOpen} style={{ paddingHorizontal: 20, paddingVertical: 8, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.1)', borderWidth: 1, borderColor: c.line }}>
+                  <Pressable onPress={handleEditOpen} style={{ paddingHorizontal: 20, paddingVertical: 8, borderRadius: 20, backgroundColor: c.card2, borderWidth: 1, borderColor: c.line }}>
                     <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 13 }}>
                       {t('Edit', 'एडिट')}
                     </Text>
                   </Pressable>
-                  <Pressable onPress={confirmDelete} style={{ paddingHorizontal: 20, paddingVertical: 8, borderRadius: 20, backgroundColor: `${c.coral}20`, borderWidth: 1, borderColor: c.coral }}>
+                  <Pressable onPress={confirmDelete} style={{ paddingHorizontal: 20, paddingVertical: 8, borderRadius: 20, backgroundColor: `${c.coral}15`, borderWidth: 1, borderColor: c.coral }}>
                     <Text style={{ color: c.coral, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 13 }}>
                       {t('Delete', 'डिलीट')}
                     </Text>
                   </Pressable>
                 </View>
               )}
-            </LinearGradient>
+              </View>
           </Card>
 
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 16 }}>

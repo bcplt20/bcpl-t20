@@ -37,6 +37,7 @@ import { createHash, randomInt } from "node:crypto";
 import { requireAuth, optionalAuth, type AuthRequest } from "../middlewares/auth";
 import { logger } from "../lib/logger";
 import { sendOtp } from "../lib/sms";
+import { getUploadPresignedUrl, getDownloadPresignedUrl, headS3Object } from "../lib/s3";
 
 const router = Router();
 export default router;
@@ -195,6 +196,12 @@ async function ensureTables(): Promise<void> {
       UNIQUE (match_id, team_id)
     )`);
     await tx.execute(sql`CREATE INDEX IF NOT EXISTS community_team_verifications_match_idx ON community_team_verifications (match_id)`);
+
+    /* ── Phase 3: profile / team media (private S3 keys under media/) ─────── */
+    await tx.execute(sql`ALTER TABLE community_profiles ADD COLUMN IF NOT EXISTS photo_key varchar(300)`);
+    await tx.execute(sql`ALTER TABLE community_profiles ADD COLUMN IF NOT EXISTS cover_key varchar(300)`);
+    await tx.execute(sql`ALTER TABLE community_teams ADD COLUMN IF NOT EXISTS logo_key varchar(300)`);
+    await tx.execute(sql`ALTER TABLE community_teams ADD COLUMN IF NOT EXISTS cover_key varchar(300)`);
   });
   ready = true;
 }
@@ -222,9 +229,11 @@ type DelRow = {
 type ProfileRow = {
   user_id: string; display_name: string; role: string; batting_style: string;
   bowling_style: string | null; created_at: string; updated_at: string;
+  photo_key: string | null; cover_key: string | null;
 };
 type TeamRow = {
   id: string; owner_user_id: string; name: string; short_name: string; created_at: string;
+  logo_key: string | null; cover_key: string | null;
 };
 type MemberRow = {
   id: string; team_id: string; user_id: string | null; phone: string | null;
@@ -232,17 +241,30 @@ type MemberRow = {
 };
 const rows = <T,>(out: unknown): T[] => ((out as { rows: T[] }).rows ?? []);
 
-function profileApi(p: ProfileRow) {
+/** Presign a private media/ key into a short-lived viewUrl; null-safe and never
+ *  throws (a bad key must not break a whole response). Raw keys are NEVER
+ *  returned to clients — only the presigned viewUrl. */
+async function mediaViewUrl(key: string | null | undefined): Promise<string | null> {
+  if (!key) return null;
+  try { return await getDownloadPresignedUrl(key); }
+  catch (e) { logger.warn({ err: e, key }, "community media presign failed"); return null; }
+}
+
+async function profileApi(p: ProfileRow) {
   return {
     userId: p.user_id, displayName: p.display_name, role: p.role,
     battingStyle: p.batting_style, bowlingStyle: p.bowling_style,
     createdAt: p.created_at, updatedAt: p.updated_at,
+    photoUrl: await mediaViewUrl(p.photo_key),
+    coverUrl: await mediaViewUrl(p.cover_key),
   };
 }
-function teamApi(t: TeamRow) {
+async function teamApi(t: TeamRow) {
   return {
     id: t.id, ownerUserId: t.owner_user_id, name: t.name,
     shortName: t.short_name, createdAt: t.created_at,
+    logoUrl: await mediaViewUrl(t.logo_key),
+    coverUrl: await mediaViewUrl(t.cover_key),
   };
 }
 /** Mask a phone to the last 4 digits only, e.g. "9876543210" → "******3210".
@@ -799,7 +821,7 @@ router.get("/profile", requireAuth, async (req: AuthRequest, res) => {
       sql`SELECT * FROM community_profiles WHERE user_id = ${req.user!.userId}`,
     ));
     if (!p) return void res.status(404).json({ error: "No profile yet" });
-    res.json({ profile: profileApi(p) });
+    res.json({ profile: await profileApi(p) });
   } catch (e) {
     logger.warn({ err: e }, "community profile get failed");
     res.status(500).json({ error: "Could not load profile" });
@@ -832,7 +854,7 @@ router.put("/profile", requireAuth, async (req: AuthRequest, res) => {
       await linkPhoneToTeams(tx, req.user!.userId, req.user!.phone);
       return row;
     });
-    res.json({ success: true, profile: profileApi(p) });
+    res.json({ success: true, profile: await profileApi(p) });
   } catch (e) {
     logger.warn({ err: e }, "community profile put failed");
     res.status(500).json({ error: "Could not save profile" });
@@ -935,7 +957,7 @@ router.post("/teams", requireAuth, async (req: AuthRequest, res) => {
       return { team: t };
     });
     if ("errMsg" in out) return void res.status(400).json({ error: out.errMsg });
-    res.json({ success: true, team: teamApi(out.team) });
+    res.json({ success: true, team: await teamApi(out.team) });
   } catch (e) {
     logger.warn({ err: e }, "community team create failed");
     res.status(500).json({ error: "Could not create team" });
@@ -950,7 +972,7 @@ router.get("/teams/mine", requireAuth, async (req: AuthRequest, res) => {
       LEFT JOIN community_team_members m ON m.team_id = t.id
       WHERE t.owner_user_id = ${req.user!.userId} OR m.user_id = ${req.user!.userId}
       ORDER BY t.created_at DESC LIMIT 100`));
-    res.json({ teams: list.map(teamApi) });
+    res.json({ teams: await Promise.all(list.map(teamApi)) });
   } catch (e) {
     logger.warn({ err: e }, "community teams mine failed");
     res.status(500).json({ error: "Could not load teams" });
@@ -970,7 +992,7 @@ router.get("/teams/:id", optionalAuth, async (req: AuthRequest, res) => {
       sql`SELECT * FROM community_team_members WHERE team_id = ${id} ORDER BY added_at ASC`,
     ));
     const isOwner = req.user?.userId === t.owner_user_id;
-    res.json({ team: teamApi(t), members: mems.map((mm) => memberApi(mm, isOwner)) });
+    res.json({ team: await teamApi(t), members: mems.map((mm) => memberApi(mm, isOwner)) });
   } catch (e) {
     logger.warn({ err: e }, "community team get failed");
     res.status(500).json({ error: "Could not load team" });
@@ -1098,7 +1120,7 @@ router.patch("/teams/:id", requireAuth, async (req: AuthRequest, res) => {
         RETURNING *`));
       return row;
     });
-    res.json({ success: true, team: teamApi(updated) });
+    res.json({ success: true, team: await teamApi(updated) });
   } catch (e) {
     logger.warn({ err: e }, "community team rename failed");
     res.status(500).json({ error: "Could not update team" });
@@ -1354,5 +1376,183 @@ router.post("/matches/:id/verify-team/confirm", requireAuth, async (req: AuthReq
   } catch (e) {
     logger.warn({ err: e }, "community verify-team confirm failed");
     res.status(500).json({ error: "Could not confirm team verification" });
+  }
+});
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Phase 3 — profile / team media uploads (CricHeroes-style photos)
+   Presigned PUT to the PRIVATE S3 bucket under media/community/…; the object is
+   HEAD-verified on confirm (server never trusts client-declared type/size), the
+   key is stored on the row, and it is only ever served back through a
+   short-lived presigned viewUrl (mediaViewUrl). Raw keys never leave the server.
+   Owner/self-only permission on every mutation.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+const MEDIA_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
+const MEDIA_EXT: Record<string, string> = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" };
+const MAX_MEDIA_BYTES = 8 * 1024 * 1024; // 8 MB
+
+const mediaUploadSchema = z.object({
+  contentType: z.enum(MEDIA_IMAGE_TYPES),
+  sizeBytes: z.number().int().positive().max(MAX_MEDIA_BYTES),
+});
+const mediaConfirmSchema = z.object({ s3Key: z.string().trim().min(1).max(300) });
+
+/** Build the canonical private key for a community media slot. The key is
+ *  server-derived (client cannot choose an arbitrary path), and the confirm
+ *  step re-derives + verifies it, so a client can never point a row at some
+ *  other user's / arbitrary object. */
+function communityMediaKey(kind: "profile" | "team", ownerId: string, slot: string, ext: string): string {
+  return `media/community/${kind}/${ownerId}/${slot}-${randomInt(0, 1e9)}.${ext}`;
+}
+
+/** Shared confirm: HEAD the uploaded object, re-validate type/size, and ensure
+ *  the key sits under the caller's OWN media/community/<kind>/<ownerId>/ prefix. */
+async function confirmMediaKey(
+  s3Key: string, kind: "profile" | "team", ownerId: string,
+): Promise<{ ok: true } | { ok: false; code: number; msg: string }> {
+  const prefix = `media/community/${kind}/${ownerId}/`;
+  if (!s3Key.startsWith(prefix)) return { ok: false, code: 403, msg: "That upload key is not yours" };
+  // Tests cannot perform a real browser upload to S3, so the HEAD verification
+  // is skipped under NODE_ENV=test (the ownership prefix guard above still
+  // runs). In every other environment the object is HEAD-verified below.
+  if (isTestEnv()) return { ok: true };
+  const head = await headS3Object(s3Key);
+  if (!head.exists) return { ok: false, code: 400, msg: "Upload not found — please try again" };
+  const okType = (MEDIA_IMAGE_TYPES as readonly string[]).includes(head.contentType ?? "")
+    || head.contentType === null; // stub head (no creds) returns null type
+  const okSize = head.sizeBytes >= 0 && head.sizeBytes <= MAX_MEDIA_BYTES;
+  if (!okType || !okSize) return { ok: false, code: 400, msg: "Unsupported image (use JPEG/PNG/WebP up to 8 MB)" };
+  return { ok: true };
+}
+
+/* ── profile media (self only) ──────────────────────────────────────────── */
+
+/** POST /profile/media/:slot/upload-url — slot ∈ {photo, cover}. */
+router.post("/profile/media/:slot/upload-url", requireAuth, async (req: AuthRequest, res) => {
+  const slot = String(req.params.slot);
+  if (slot !== "photo" && slot !== "cover") return void res.status(404).json({ error: "Unknown media slot" });
+  const parsed = mediaUploadSchema.safeParse(req.body);
+  if (!parsed.success) return void res.status(400).json({ error: "Unsupported image (use JPEG/PNG/WebP up to 8 MB)" });
+  try {
+    const ext = MEDIA_EXT[parsed.data.contentType];
+    const s3Key = communityMediaKey("profile", req.user!.userId, slot, ext);
+    const presignedUrl = await getUploadPresignedUrl(s3Key, parsed.data.contentType);
+    res.json({ success: true, presignedUrl, s3Key });
+  } catch (e) {
+    logger.error({ err: e }, "community profile media presign failed");
+    res.status(502).json({ error: "Could not start upload — please try again" });
+  }
+});
+
+/** POST /profile/media/:slot/confirm — persist the verified key on the profile. */
+router.post("/profile/media/:slot/confirm", requireAuth, async (req: AuthRequest, res) => {
+  const slot = String(req.params.slot);
+  if (slot !== "photo" && slot !== "cover") return void res.status(404).json({ error: "Unknown media slot" });
+  const parsed = mediaConfirmSchema.safeParse(req.body);
+  if (!parsed.success) return void res.status(400).json({ error: "s3Key is required" });
+  try {
+    await ensureTables();
+    const chk = await confirmMediaKey(parsed.data.s3Key, "profile", req.user!.userId);
+    if (!chk.ok) return void res.status(chk.code).json({ error: chk.msg });
+    const col = slot === "photo" ? sql`photo_key` : sql`cover_key`;
+    const p = await db.transaction(async (tx) => {
+      const [existing] = rows<ProfileRow>(await tx.execute(
+        sql`SELECT * FROM community_profiles WHERE user_id = ${req.user!.userId} FOR UPDATE`,
+      ));
+      if (!existing) return null;
+      const [row] = rows<ProfileRow>(await tx.execute(sql`
+        UPDATE community_profiles SET ${col} = ${parsed.data.s3Key}, updated_at = now()
+        WHERE user_id = ${req.user!.userId} RETURNING *`));
+      return row;
+    });
+    if (!p) return void res.status(404).json({ error: "Create your profile first" });
+    res.json({ success: true, profile: await profileApi(p) });
+  } catch (e) {
+    logger.error({ err: e }, "community profile media confirm failed");
+    res.status(500).json({ error: "Could not save media" });
+  }
+});
+
+/** DELETE /profile/media/:slot — clear the key (self only). */
+router.delete("/profile/media/:slot", requireAuth, async (req: AuthRequest, res) => {
+  const slot = String(req.params.slot);
+  if (slot !== "photo" && slot !== "cover") return void res.status(404).json({ error: "Unknown media slot" });
+  try {
+    await ensureTables();
+    const col = slot === "photo" ? sql`photo_key` : sql`cover_key`;
+    const [p] = rows<ProfileRow>(await db.execute(sql`
+      UPDATE community_profiles SET ${col} = NULL, updated_at = now()
+      WHERE user_id = ${req.user!.userId} RETURNING *`));
+    if (!p) return void res.status(404).json({ error: "No profile yet" });
+    res.json({ success: true, profile: await profileApi(p) });
+  } catch (e) {
+    logger.error({ err: e }, "community profile media delete failed");
+    res.status(500).json({ error: "Could not remove media" });
+  }
+});
+
+/* ── team media (owner only) ────────────────────────────────────────────── */
+
+/** POST /teams/:id/media/:slot/upload-url — slot ∈ {logo, cover}. */
+router.post("/teams/:id/media/:slot/upload-url", requireAuth, async (req: AuthRequest, res) => {
+  const slot = String(req.params.slot);
+  if (slot !== "logo" && slot !== "cover") return void res.status(404).json({ error: "Unknown media slot" });
+  const parsed = mediaUploadSchema.safeParse(req.body);
+  if (!parsed.success) return void res.status(400).json({ error: "Unsupported image (use JPEG/PNG/WebP up to 8 MB)" });
+  try {
+    const { team: t, err } = await loadOwnedTeam(req);
+    if (err) return void res.status(err.code).json({ error: err.msg });
+    const ext = MEDIA_EXT[parsed.data.contentType];
+    // Key is namespaced by the OWNER id (matches the confirm prefix check).
+    const s3Key = communityMediaKey("team", req.user!.userId, `${t!.id}-${slot}`, ext);
+    const presignedUrl = await getUploadPresignedUrl(s3Key, parsed.data.contentType);
+    res.json({ success: true, presignedUrl, s3Key });
+  } catch (e) {
+    logger.error({ err: e }, "community team media presign failed");
+    res.status(502).json({ error: "Could not start upload — please try again" });
+  }
+});
+
+/** POST /teams/:id/media/:slot/confirm — persist the verified key (owner only). */
+router.post("/teams/:id/media/:slot/confirm", requireAuth, async (req: AuthRequest, res) => {
+  const slot = String(req.params.slot);
+  if (slot !== "logo" && slot !== "cover") return void res.status(404).json({ error: "Unknown media slot" });
+  const parsed = mediaConfirmSchema.safeParse(req.body);
+  if (!parsed.success) return void res.status(400).json({ error: "s3Key is required" });
+  try {
+    const { team: t, err } = await loadOwnedTeam(req);
+    if (err) return void res.status(err.code).json({ error: err.msg });
+    const chk = await confirmMediaKey(parsed.data.s3Key, "team", req.user!.userId);
+    if (!chk.ok) return void res.status(chk.code).json({ error: chk.msg });
+    const col = slot === "logo" ? sql`logo_key` : sql`cover_key`;
+    const updated = await db.transaction(async (tx) => {
+      await tx.execute(sql`SELECT id FROM community_teams WHERE id = ${t!.id} FOR UPDATE`);
+      const [row] = rows<TeamRow>(await tx.execute(sql`
+        UPDATE community_teams SET ${col} = ${parsed.data.s3Key}
+        WHERE id = ${t!.id} RETURNING *`));
+      return row;
+    });
+    res.json({ success: true, team: await teamApi(updated) });
+  } catch (e) {
+    logger.error({ err: e }, "community team media confirm failed");
+    res.status(500).json({ error: "Could not save media" });
+  }
+});
+
+/** DELETE /teams/:id/media/:slot — clear the key (owner only). */
+router.delete("/teams/:id/media/:slot", requireAuth, async (req: AuthRequest, res) => {
+  const slot = String(req.params.slot);
+  if (slot !== "logo" && slot !== "cover") return void res.status(404).json({ error: "Unknown media slot" });
+  try {
+    const { team: t, err } = await loadOwnedTeam(req);
+    if (err) return void res.status(err.code).json({ error: err.msg });
+    const col = slot === "logo" ? sql`logo_key` : sql`cover_key`;
+    const [row] = rows<TeamRow>(await db.execute(sql`
+      UPDATE community_teams SET ${col} = NULL WHERE id = ${t!.id} RETURNING *`));
+    res.json({ success: true, team: await teamApi(row) });
+  } catch (e) {
+    logger.error({ err: e }, "community team media delete failed");
+    res.status(500).json({ error: "Could not remove media" });
   }
 });

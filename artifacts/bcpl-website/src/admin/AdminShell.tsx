@@ -18,6 +18,7 @@ import AppMediaView         from "./views/AppMediaView";
 import CMSView              from "./views/CMSView";
 import RolesView            from "./views/RolesView";
 import LiveScoringView      from "./views/LiveScoringView";
+import PollsView            from "./views/PollsView";
 // 15 New Views
 import PlayerProfilesView   from "./views/PlayerProfilesView";
 import TrialCitiesView      from "./views/TrialCitiesView";
@@ -100,6 +101,7 @@ const NAV: NavGroup[] = [
     { id:"app_banners",  label:"App Banners",       icon:"▤" },
     { id:"app_media",    label:"App Media",         icon:"▨" },
     { id:"cms",          label:"CMS / Pages",       icon:"≡" },
+    { id:"polls",        label:"Fan Voting",        icon:"☑" },
     { id:"sponsors",     label:"Sponsors",          icon:"⊟" },
   ]},
   { title: "SYSTEM", items: [
@@ -158,6 +160,7 @@ function renderView(id: string, navigate: (viewId: string, payload?: AdminNavPay
     case "app_banners":    return <AppBannersView />;
     case "app_media":      return <AppMediaView />;
     case "cms":            return <CMSView />;
+    case "polls":          return <PollsView />;
     case "sponsors":       return <SponsorsView />;
     case "data_export":    return <DataExportView />;
     case "legacy_import":  return <LegacyImportView />;

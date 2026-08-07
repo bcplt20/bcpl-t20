@@ -711,6 +711,94 @@ describe("auth guards", () => {
   });
 });
 
+// ── 8. profile / team media uploads (Phase 3) ────────────────────────────────────
+describe("community media uploads", () => {
+  async function createProfile(token: string) {
+    const r = await request(app).put("/api/community/profile").set(auth(token))
+      .send({ displayName: "Media Player", role: "batsman", battingStyle: "right" });
+    expect(r.status).toBe(200);
+    return r;
+  }
+
+  it("profile photo: presign → confirm stores key, response exposes photoUrl (never raw key)", async () => {
+    const { token } = await makeUser();
+    await createProfile(token);
+
+    const presign = await request(app).post("/api/community/profile/media/photo/upload-url").set(auth(token))
+      .send({ contentType: "image/jpeg", sizeBytes: 12345 });
+    expect(presign.status).toBe(200);
+    expect(presign.body.s3Key).toMatch(/^media\/community\/profile\//);
+    expect(presign.body.presignedUrl).toBeTruthy();
+
+    const confirm = await request(app).post("/api/community/profile/media/photo/confirm").set(auth(token))
+      .send({ s3Key: presign.body.s3Key });
+    expect(confirm.status).toBe(200);
+    // viewUrl exposed; raw storage key never returned
+    expect(confirm.body.profile.photoUrl).toBeTruthy();
+    expect(confirm.body.profile).not.toHaveProperty("photoKey");
+    expect(JSON.stringify(confirm.body.profile)).not.toContain("photo_key");
+
+    // GET profile also returns the viewUrl
+    const get = await request(app).get("/api/community/profile").set(auth(token));
+    expect(get.body.profile.photoUrl).toBeTruthy();
+  });
+
+  it("profile cover slot works; unknown slot 404; confirm rejects another user's key", async () => {
+    const a = await makeUser();
+    const b = await makeUser();
+    await createProfile(a.token);
+    await createProfile(b.token);
+
+    const bad = await request(app).post("/api/community/profile/media/banner/upload-url").set(auth(a.token))
+      .send({ contentType: "image/png", sizeBytes: 100 });
+    expect(bad.status).toBe(404);
+
+    const presignA = await request(app).post("/api/community/profile/media/cover/upload-url").set(auth(a.token))
+      .send({ contentType: "image/png", sizeBytes: 500 });
+    // B cannot confirm A's key (prefix guard → 403)
+    const steal = await request(app).post("/api/community/profile/media/cover/confirm").set(auth(b.token))
+      .send({ s3Key: presignA.body.s3Key });
+    expect(steal.status).toBe(403);
+
+    // delete clears it
+    await request(app).post("/api/community/profile/media/cover/confirm").set(auth(a.token))
+      .send({ s3Key: presignA.body.s3Key });
+    const del = await request(app).delete("/api/community/profile/media/cover").set(auth(a.token));
+    expect(del.status).toBe(200);
+    expect(del.body.profile.coverUrl).toBeNull();
+  });
+
+  it("team logo/cover: owner-only presign+confirm; response exposes logoUrl (never raw key)", async () => {
+    const owner = await makeUser();
+    const teamId = await createTeam(owner.token, { name: "Media XI", shortName: "MXI" });
+
+    const presign = await request(app).post(`/api/community/teams/${teamId}/media/logo/upload-url`).set(auth(owner.token))
+      .send({ contentType: "image/webp", sizeBytes: 2048 });
+    expect(presign.status).toBe(200);
+    expect(presign.body.s3Key).toMatch(/^media\/community\/team\//);
+
+    const confirm = await request(app).post(`/api/community/teams/${teamId}/media/logo/confirm`).set(auth(owner.token))
+      .send({ s3Key: presign.body.s3Key });
+    expect(confirm.status).toBe(200);
+    expect(confirm.body.team.logoUrl).toBeTruthy();
+    expect(confirm.body.team).not.toHaveProperty("logoKey");
+    expect(JSON.stringify(confirm.body.team)).not.toContain("logo_key");
+
+    // public team GET exposes logoUrl too
+    const pub = await request(app).get(`/api/community/teams/${teamId}`);
+    expect(pub.body.team.logoUrl).toBeTruthy();
+  });
+
+  it("team media rejects a non-owner", async () => {
+    const owner = await makeUser();
+    const stranger = await makeUser();
+    const teamId = await createTeam(owner.token, { name: "Owned XI", shortName: "OXI" });
+    const r = await request(app).post(`/api/community/teams/${teamId}/media/logo/upload-url`).set(auth(stranger.token))
+      .send({ contentType: "image/jpeg", sizeBytes: 100 });
+    expect(r.status).toBe(403);
+  });
+});
+
 // keep eq import referenced (used for potential cleanup helpers / lint)
 void eq;
 void usersTable;

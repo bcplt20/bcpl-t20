@@ -27,6 +27,8 @@ const LINKS: NavItem[] = [
   { key: "Players",   en: "Players",   hi: "खिलाड़ी",    href: "/players" },
   { key: "Trials",    en: "Trials",    hi: "ट्रायल्स",   href: "/trust" },
   { key: "Matches",   en: "Matches",   hi: "मैच",        href: "/match-center" },
+  { key: "Vote",      en: "Vote",      hi: "वोट",        href: "/vote" },
+  { key: "MVP",       en: "MVP",       hi: "MVP",        href: "/mvp" },
   { key: "Auction",   en: "Auction",   hi: "ऑक्शन",      href: "/auction/live" },
   { key: "Media",     en: "Media",     hi: "मीडिया",     href: "/photos" },
   { key: "About",     en: "About",     hi: "परिचय",      href: "/about" },
@@ -40,6 +42,8 @@ const MOB_LINKS: NavItem[] = [
   { key: "Trials",    en: "Trials",       hi: "ट्रायल्स",       href: "/trust" },
   { key: "Matches",   en: "Match Centre", hi: "मैच सेंटर",      href: "/match-center" },
   { key: "Standings", en: "Standings",    hi: "अंक तालिका",     href: "/points-table" },
+  { key: "Vote",      en: "Fan Voting",   hi: "फैन वोटिंग",     href: "/vote" },
+  { key: "MVP",       en: "MVP Leaderboard", hi: "MVP लीडरबोर्ड", href: "/mvp" },
   { key: "Auction",   en: "Auction",      hi: "ऑक्शन",          href: "/auction/live" },
   { key: "News",      en: "News",         hi: "न्यूज़",          href: "/news" },
   { key: "Photos",    en: "Photos",       hi: "फ़ोटो",          href: "/photos" },
@@ -55,6 +59,7 @@ const ACTIVE_MAP: Record<string, string> = {
   "Photos": "Media", "Videos": "Media", "Media": "Media", "News": "Media",
   "Trust": "Trials", "Trials": "Trials",
   "About": "About", "Contact": "Contact", "Auction": "Auction",
+  "Vote": "Vote", "MVP": "MVP",
 };
 
 const WHATSAPP_URL = "https://wa.me/919151346555";

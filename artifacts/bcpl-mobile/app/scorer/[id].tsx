@@ -280,11 +280,11 @@ export default function ScoringScreen() {
   const canScore = isOwner || isOfficial;
 
   if (!ready || q.isLoading || (token && (mineQ.isLoading || officialsQ.isLoading))) {
-    return <View style={{ flex: 1, backgroundColor: c.bg }}><ScreenBackground /><GlassAppBar title={t('Scorer', 'स्कोरर')} /><LoadingView /></View>;
+    return <View style={{ flex: 1, backgroundColor: c.bg }}><ScreenBackground /><GlassAppBar title={t('Scorer', 'स्कोरर')} back={true} /><LoadingView /></View>;
   }
 
   if (q.isError) {
-    return <View style={{ flex: 1, backgroundColor: c.bg }}><ScreenBackground /><GlassAppBar title={t('Scorer', 'स्कोरर')} /><ErrorView onRetry={() => q.refetch()} /></View>;
+    return <View style={{ flex: 1, backgroundColor: c.bg }}><ScreenBackground /><GlassAppBar title={t('Scorer', 'स्कोरर')} back={true} /><ErrorView onRetry={() => q.refetch()} /></View>;
   }
 
   const match = q.data?.match;
@@ -407,6 +407,7 @@ export default function ScoringScreen() {
       <ScreenBackground />
       <GlassAppBar
         title={t('Scorer', 'स्कोरर')}
+        back={true}
         right={isOwner ? (
           <Pressable onPress={() => setOfficialsModal(true)} style={{ padding: 8 }}>
             <Feather name="settings" size={22} color={c.ink} />

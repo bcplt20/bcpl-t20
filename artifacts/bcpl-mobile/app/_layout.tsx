@@ -26,11 +26,44 @@ import {
 } from '@expo-google-fonts/space-grotesk';
 import { Feather, Ionicons } from '@expo/vector-icons';
 import * as Font from 'expo-font';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import { StyleSheet, Pressable } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
+
+function FloatingAiButton() {
+  const { theme } = useTheme();
+  const c = THEMES[theme];
+  const router = useRouter();
+  return (
+    <Pressable
+      onPress={() => router.push('/assistant')}
+      style={({ pressed }) => ({
+        position: 'absolute',
+        bottom: 96,
+        right: 20,
+        width: 52,
+        height: 52,
+        borderRadius: 26,
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 9999,
+        transform: [{ scale: pressed ? 0.95 : 1 }],
+        shadowColor: c.cyan,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.4,
+        shadowRadius: 8,
+        elevation: 8,
+      })}
+    >
+      <LinearGradient colors={['#5B2BF0', '#00DCF5']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ ...StyleSheet.absoluteFillObject, borderRadius: 26 }} />
+      <Feather name="message-circle" size={24} color="#fff" />
+    </Pressable>
+  );
+}
 
 function RootLayoutNav() {
   const { theme } = useTheme();
@@ -64,6 +97,8 @@ function RootLayoutNav() {
         <Stack.Screen name="result" options={{ title: 'Phase 1 Result', headerShown: false }} />
         <Stack.Screen name="trial-pass" options={{ title: 'Trial Pass', headerShown: false }} />
         <Stack.Screen name="assistant" options={{ title: 'BCPL AI', headerShown: false }} />
+        <Stack.Screen name="vote" options={{ title: 'Fan Voting', headerShown: false }} />
+        <Stack.Screen name="mvp" options={{ title: 'MVP Race', headerShown: false }} />
         <Stack.Screen name="pay-webview" options={{ title: 'Payment', headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="pay-receipt" options={{ title: 'Receipt', headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="kyc" options={{ title: 'KYC', headerShown: false }} />
@@ -71,10 +106,10 @@ function RootLayoutNav() {
         <Stack.Screen name="jersey-backfill" options={{ title: 'Jersey Backfill', headerShown: false }} />
         <Stack.Screen name="profile" options={{ title: 'Profile', headerShown: false }} />
         <Stack.Screen name="classification" options={{ title: 'Playing Style', headerShown: false }} />
-        <Stack.Screen name="scorer/index" options={{ title: 'Scorer', headerShown: false }} />
         <Stack.Screen name="scorer/new" options={{ title: 'New Match', headerShown: false }} />
         <Stack.Screen name="scorer/[id]" options={{ title: 'Scoring', headerShown: false }} />
       </Stack>
+      <FloatingAiButton />
     </>
   );
 }

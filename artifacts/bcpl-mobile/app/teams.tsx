@@ -68,11 +68,13 @@ function TeamCard({ team, group }: { team: Team; group: string }) {
         ) : null}
 
         <View style={{ padding: 16 }}>
-          <View style={[styles.logoBadge, { borderColor: `${accent}66`, shadowColor: accent }]}>
+          <View style={styles.logoBadge}>
             {logo ? (
-              <Image source={{ uri: logo }} style={{ width: '84%', height: '84%' }} contentFit="contain" />
+              <Image source={{ uri: logo }} style={{ width: '100%', height: '100%' }} contentFit="contain" />
             ) : (
-              <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, color: accent }}>{abbrOf(team.name)}</Text>
+              <View style={{ width: '100%', height: '100%', borderRadius: 32, backgroundColor: accent, alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 22, color: '#fff' }}>{abbrOf(team.name)}</Text>
+              </View>
             )}
           </View>
           <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, marginTop: 12, letterSpacing: -0.3 }} numberOfLines={2}>
@@ -163,16 +165,9 @@ export default function TeamsScreen() {
 
 const styles = StyleSheet.create({
   logoBadge: {
-    width: 52,
-    height: 52,
-    borderRadius: 14,
-    backgroundColor: 'rgba(255,255,255,0.96)',
-    borderWidth: 2,
+    width: 64,
+    height: 64,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 10,
-    elevation: 4,
   },
 });

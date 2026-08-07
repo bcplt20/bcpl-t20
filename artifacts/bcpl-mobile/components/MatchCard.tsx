@@ -49,7 +49,7 @@ function MatchCountdown({ scheduledAt }: { scheduledAt?: string | null }) {
   }
 
   return (
-    <View style={[styles.countdownPill, { borderColor: c.line, backgroundColor: c.card2 }]}>
+    <View style={[styles.countdownPill, { backgroundColor: c.card2, opacity: 0.8 }]}>
       <Text style={[styles.countdownText, { color: c.ink }]}>{text}</Text>
     </View>
   );
@@ -106,9 +106,7 @@ export const MatchCard = React.memo(({ match }: { match: Match }) => {
               <GradientTag label="Live" color={c.coral} dot={true} />
             ) : isDone ? (
               <GradientTag label="Result" color={c.sub} />
-            ) : (
-              <MatchCountdown scheduledAt={match.scheduledAt} />
-            )}
+            ) : null}
           </View>
           <View style={styles.teamsRow}>
             <View style={styles.team}>
@@ -126,6 +124,7 @@ export const MatchCard = React.memo(({ match }: { match: Match }) => {
                 <View style={{ position: 'absolute', top: 1, left: 1, right: 1, bottom: 1, backgroundColor: c.card, borderRadius: 19 }} />
                 <Text style={[styles.vs, { color: c.cyan, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 13, letterSpacing: 0.5 }]}>VS</Text>
               </View>
+              {!isLive && !isDone ? <MatchCountdown scheduledAt={match.scheduledAt} /> : null}
             </View>
   
             <View style={styles.team}>
@@ -194,7 +193,7 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   vsContainer: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     alignItems: 'center',
     width: 70,
     justifyContent: 'center',
@@ -206,13 +205,13 @@ const styles = StyleSheet.create({
   vs: { fontSize: 13, fontFamily: 'BricolageGrotesque_800ExtraBold' },
   vsChip: {
     borderRadius: 20,
-    width: 40,
-    height: 40,
+    width: 32,
+    height: 32,
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: -4,
     borderWidth: 1,
     zIndex: 2,
+    overflow: 'hidden',
   },
   footContainer: {
     marginTop: 20,

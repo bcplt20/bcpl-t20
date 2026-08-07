@@ -211,17 +211,27 @@ function MoreMenu() {
         <Card padding={16} border={true}>
           <IconRow 
             icon="calendar" title={t('Schedule', 'शेड्यूल')} subtitle={t('Upcoming matches', 'आने वाले मैच')}
-            colors={['#5B2BF0', '#9B2FF0']} onPress={() => router.push('/matches')} 
+            colors={['#5B2BF0', '#9B2FF0']} onPress={() => router.navigate('/matches')} 
           />
           <View style={{ height: 1, backgroundColor: c.line, marginVertical: 4 }} />
           <IconRow 
             icon="shield" title={t('Teams', 'टीमें')} subtitle={t('All 10 franchises & squads', 'सभी 10 फ्रैंचाइज़ी और टीमें')}
-            colors={['#7C5CFF', '#FF3DA6']} onPress={() => router.push('/teams')} 
+            colors={['#7C5CFF', '#FF3DA6']} onPress={() => router.navigate('/teams')} 
           />
           <View style={{ height: 1, backgroundColor: c.line, marginVertical: 4 }} />
           <IconRow 
             icon="bar-chart-2" title={t('Points Table', 'पॉइंट्स टेबल')} subtitle={t('Group A & B standings', 'ग्रुप A और B की स्थिति')}
-            colors={['#00DCF5', '#5B2BF0']} onPress={() => router.push('/points')} 
+            colors={['#00DCF5', '#5B2BF0']} onPress={() => router.navigate('/points')} 
+          />
+          <View style={{ height: 1, backgroundColor: c.line, marginVertical: 4 }} />
+          <IconRow 
+            icon="star" title={t('MVP Race', 'MVP रेस')} subtitle={t('Car leaderboard', 'कार लीडरबोर्ड')}
+            colors={['#FFC53D', '#FF8A3D']} onPress={() => router.push('/mvp')} 
+          />
+          <View style={{ height: 1, backgroundColor: c.line, marginVertical: 4 }} />
+          <IconRow 
+            icon="heart" title={t('Fan Voting', 'फैन वोटिंग')} subtitle={t('Have your say', 'अपनी राय दें')}
+            colors={['#7C5CFF', '#00DCF5']} onPress={() => router.push('/vote')} 
           />
           <View style={{ height: 1, backgroundColor: c.line, marginVertical: 4 }} />
           <IconRow 

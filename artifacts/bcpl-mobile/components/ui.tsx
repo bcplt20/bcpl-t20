@@ -289,10 +289,10 @@ export function TeamLogo({ name, size = 44, glow = false }: { name: string; size
   const inner = failed ? (
     <TeamDot name={name} size={size} glow={glow} />
   ) : (
-    <View style={[styles.logoContainer, { width: size, height: size, borderRadius: size / 2 }, glow && styles.glow]}>
+    <View style={[{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }, glow && styles.glow]}>
       <Image
         source={{ uri: `${SITE_ASSETS}/bcpl-assets/logos/${teamSlug(name)}.png` }}
-        style={{ width: size * 0.85, height: size * 0.85 }}
+        style={{ width: '100%', height: '100%' }}
         contentFit="contain"
         transition={150}
         onError={() => setFailed(true)}
@@ -314,10 +314,10 @@ export function TeamDot({ name, size = 34, glow = false }: { name: string; size?
   const c = useColors();
   if (name.includes('Group') || name.includes('TBD') || name.includes('Winner')) {
     return (
-      <View style={[{ width: size, height: size, borderRadius: size / 2, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', shadowColor: '#fff', shadowOpacity: glow ? 0.3 : 0, shadowRadius: glow ? 8 : 0, shadowOffset: { width: 0, height: 0 }, elevation: glow ? 4 : 0 }]}>
+      <View style={[{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }, glow && styles.glow]}>
         <Image
           source={require('../assets/images/bcpl-ball-clean.png')}
-          style={{ width: size * 0.7, height: size * 0.7 }}
+          style={{ width: '100%', height: '100%' }}
           contentFit="contain"
         />
       </View>
@@ -489,7 +489,7 @@ export function GlassAppBar({ title, right, back }: { title?: string, right?: Re
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           {back && (
             <Pressable 
-              onPress={() => router.canGoBack() ? router.back() : router.push('/')}
+              onPress={() => router.canGoBack() ? router.back() : router.replace('/')}
               style={({pressed}) => ({ width: 36, height: 36, borderRadius: 18, backgroundColor: c.card2, alignItems: 'center', justifyContent: 'center', marginRight: 12, borderWidth: 1, borderColor: c.line, opacity: pressed ? 0.7 : 1 })}
             >
               <Feather name="chevron-left" size={20} color={c.ink} />

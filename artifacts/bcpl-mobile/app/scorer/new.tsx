@@ -50,7 +50,7 @@ export default function NewMatchScreen() {
   });
 
   if (!ready || (token && teamsQ.isLoading)) {
-    return <View style={{ flex: 1, backgroundColor: c.bg }}><ScreenBackground /><GlassAppBar title={t('New Match', 'नया मैच')} /><LoadingView /></View>;
+    return <View style={{ flex: 1, backgroundColor: c.bg }}><ScreenBackground /><GlassAppBar title={t('New Match', 'नया मैच')} back={true} /><LoadingView /></View>;
   }
 
   if (!token) {
@@ -89,7 +89,7 @@ export default function NewMatchScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
       <ScreenBackground />
-      <GlassAppBar title={t('New Match', 'नया मैच')} />
+      <GlassAppBar title={t('New Match', 'नया मैच')} back={true} />
       <ScrollView contentContainerStyle={{ paddingBottom: bottomNavHeight + 100, paddingTop: appBarHeight }}>
         <View style={{ padding: 16, gap: 24 }}>
           

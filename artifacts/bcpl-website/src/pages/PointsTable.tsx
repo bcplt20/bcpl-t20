@@ -40,13 +40,13 @@ function TeamBadge({ name, color, logo, size = 32 }: { name: string; color: stri
   return (
     <span style={{
       width: size, height: size, borderRadius: "50%",
-      background: showLogo ? "rgba(255,255,255,0.96)" : `${color}33`,
-      border: `2px solid ${color}`, display: "inline-flex", alignItems: "center",
+      background: showLogo ? `radial-gradient(circle at 50% 45%, ${color}33 0%, transparent 72%)` : `${color}33`,
+      border: showLogo ? "none" : `2px solid ${color}`, display: "inline-flex", alignItems: "center",
       justifyContent: "center", overflow: "hidden", flexShrink: 0,
       fontFamily: "var(--font-head)", fontWeight: 800, fontSize: size * 0.34, color,
     }}>
       {showLogo
-        ? <img loading="lazy" decoding="async" src={logo} alt={name} onError={() => setBroken(true)} style={{ width: "82%", height: "82%", objectFit: "contain" }} />
+        ? <img loading="lazy" decoding="async" src={logo} alt={name} onError={() => setBroken(true)} style={{ width: "100%", height: "100%", objectFit: "contain", filter: "drop-shadow(0 2px 5px rgba(0,0,0,0.4))" }} />
         : initials(name)}
     </span>
   );

@@ -34,9 +34,9 @@ function TeamCard({ t }: { t: CardTeam }) {
 
         {/* Top row: logo badge + name */}
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16, position: "relative", zIndex: 1 }}>
-          <div style={{ width: 52, height: 52, background: "rgba(255,255,255,0.96)", borderRadius: 14, border: `2px solid ${t.color}55`, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: `0 6px 20px ${t.color}44` }}>
+          <div style={{ width: 56, height: 56, background: `radial-gradient(circle at 50% 45%, ${t.color}33 0%, transparent 72%)`, borderRadius: 14, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
             {t.logo
-              ? <img loading="lazy" decoding="async" src={t.logo} alt={t.name} style={{ width: "87%", height: "87%", objectFit: "contain" }} />
+              ? <img loading="lazy" decoding="async" src={t.logo} alt={t.name} style={{ width: "100%", height: "100%", objectFit: "contain", filter: `drop-shadow(0 3px 8px rgba(0,0,0,0.4))` }} />
               : <span style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 16, color: t.color }}>{t.abbr}</span>}
           </div>
           <div>
@@ -128,9 +128,9 @@ export function Teams() {
           {teams && (
             <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 10, marginBottom: 0 }}>
               {teams.map(tm => (
-                <Link key={tm.slug} href={`/team/${tm.slug}`} style={{ width: 48, height: 48, background: "rgba(255,255,255,0.96)", borderRadius: 14, padding: 5, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: `0 4px 16px ${tm.color}44`, border: `2px solid ${tm.color}55`, textDecoration: "none" }}>
+                <Link key={tm.slug} href={`/team/${tm.slug}`} style={{ width: 52, height: 52, background: `radial-gradient(circle at 50% 45%, ${tm.color}33 0%, transparent 72%)`, borderRadius: 14, padding: 4, display: "flex", alignItems: "center", justifyContent: "center", textDecoration: "none" }}>
                   {tm.logo
-                    ? <img loading="lazy" decoding="async" src={tm.logo} alt={tm.abbr} style={{ width: "88%", height: "88%", objectFit: "contain" }} />
+                    ? <img loading="lazy" decoding="async" src={tm.logo} alt={tm.abbr} style={{ width: "100%", height: "100%", objectFit: "contain", filter: `drop-shadow(0 3px 7px rgba(0,0,0,0.4))` }} />
                     : <span style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 13, color: tm.color }}>{tm.abbr}</span>}
                 </Link>
               ))}

@@ -14,7 +14,7 @@ const TabIcon = ({ name, active, size = 26, color, c }: { name: string, active: 
   
   if (name === 'home') iconName = active ? 'home' : 'home-outline';
   if (name === 'matches') iconName = active ? 'calendar' : 'calendar-outline';
-  if (name === 'media') iconName = active ? 'play-circle' : 'play-circle-outline';
+  if (name === 'scorer') iconName = active ? 'trophy' : 'trophy-outline';
   if (name === 'more') iconName = active ? 'menu' : 'menu-outline';
 
   if (active) {
@@ -192,7 +192,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
               accessibilityLabel={
                 route.name === 'index' ? t('Home', 'होम') :
                 route.name === 'matches' ? t('Matches', 'मैच') :
-                route.name === 'media' ? t('Videos', 'वीडियो') :
+                route.name === 'scorer' ? t('Scoring', 'स्कोरिंग') :
                 t('Menu', 'मेनू')
               }
               style={{ flex: 1, alignItems: 'center', justifyContent: 'center', height: barHeight }}
@@ -224,8 +224,9 @@ export default function TabLayout() {
       <Tabs.Screen name="index" />
       <Tabs.Screen name="matches" />
       <Tabs.Screen name="register-fab" />
-      <Tabs.Screen name="media" />
+      <Tabs.Screen name="scorer" />
       <Tabs.Screen name="more" />
+      <Tabs.Screen name="media" options={{ href: null }} />
       <Tabs.Screen name="points" options={{ href: null }} />
       <Tabs.Screen name="news" options={{ href: null }} />
     </Tabs>
