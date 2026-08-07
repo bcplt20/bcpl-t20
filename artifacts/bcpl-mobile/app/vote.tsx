@@ -93,13 +93,17 @@ function PollCard({ poll }: { poll: Poll }) {
   const voteMut = useMutation({
     mutationFn: (optionId: string) => {
       if (!token) throw new Error('not_logged_in');
-      return votePoll(poll.id, optionId, token);
+      return votePoll(poll.id, optionId, token).then(res => ({ ...res, optionId }));
     },
     onSuccess: (data) => {
       qc.setQueryData(['polls', token], (old: any) => {
         if (!old) return old;
         return {
-          polls: old.polls.map((p: Poll) => p.id === poll.id ? data.poll : p)
+          polls: old.polls.map((p: Poll) => 
+            p.id === poll.id 
+              ? { ...p, hasVoted: true, votedOptionId: data.optionId, totalVotes: data.totalVotes, options: data.options } 
+              : p
+          )
         };
       });
     },

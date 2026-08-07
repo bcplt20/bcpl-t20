@@ -77,6 +77,8 @@ export default function ScorerTeamDetailScreen() {
     onError: (err: any) => alert(err.message || 'Error removing member'),
   });
 
+  const [uploading, setUploading] = useState<'logo' | 'cover' | null>(null);
+
   if (!ready || q.isLoading) {
     return <View style={{ flex: 1, backgroundColor: c.bg }}><ScreenBackground /><GlassAppBar title={t('Team', 'टीम')} back={true} /><LoadingView /></View>;
   }
@@ -100,8 +102,6 @@ export default function ScorerTeamDetailScreen() {
       { text: t('Delete', 'डिलीट करें'), style: 'destructive', onPress: () => delMut.mutate() }
     ]);
   };
-
-  const [uploading, setUploading] = useState<'logo' | 'cover' | null>(null);
 
   const handleMediaUpload = async (slot: 'logo' | 'cover') => {
     if (!token || !isOwner) return;

@@ -62,6 +62,8 @@ export default function ScorerProfileScreen() {
     }
   });
 
+  const [uploading, setUploading] = useState<'photo' | 'cover' | null>(null);
+
   if (!ready || profileQ.isLoading) {
     return <View style={{ flex: 1, backgroundColor: c.bg }}><ScreenBackground /><GlassAppBar title={t('My Profile', 'मेरी प्रोफ़ाइल')} back={true} /><LoadingView /></View>;
   }
@@ -72,8 +74,6 @@ export default function ScorerProfileScreen() {
 
   const profile = profileQ.data?.profile;
   const needsCreation = !profile || (profileQ.isError && (profileQ.error as any).status === 404);
-
-  const [uploading, setUploading] = useState<'photo' | 'cover' | null>(null);
 
   const handleMediaUpload = async (slot: 'photo' | 'cover') => {
     if (!token) return;

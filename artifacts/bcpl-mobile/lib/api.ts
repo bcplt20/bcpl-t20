@@ -512,7 +512,7 @@ export function getPolls(token?: string): Promise<{ polls: Poll[] }> {
   return apiFetch('/polls', { token });
 }
 
-export function votePoll(id: string, optionId: string, token: string): Promise<{ success: boolean; poll: Poll }> {
+export function votePoll(id: string, optionId: string, token: string): Promise<{ success: boolean; totalVotes: number; options: PollOption[] }> {
   return apiFetch(`/polls/${id}/vote`, { method: 'POST', body: { optionId }, token });
 }
 
@@ -592,7 +592,7 @@ export function communityGetProfileStats(token: string): Promise<{ stats: Commun
 }
 
 export function communityProfileMediaPresign(token: string, slot: 'photo' | 'cover', contentType: string, sizeBytes: number): Promise<{ success: boolean; presignedUrl: string; s3Key: string }> {
-  return apiFetch(`/community/profile/media/${slot}/presign`, { method: 'POST', token, body: { contentType, sizeBytes } });
+  return apiFetch(`/community/profile/media/${slot}/upload-url`, { method: 'POST', token, body: { contentType, sizeBytes } });
 }
 
 export function communityProfileMediaConfirm(token: string, slot: 'photo' | 'cover', s3Key: string): Promise<{ success: boolean; profile: CommunityProfile }> {
@@ -600,7 +600,7 @@ export function communityProfileMediaConfirm(token: string, slot: 'photo' | 'cov
 }
 
 export function communityTeamMediaPresign(token: string, teamId: string, slot: 'logo' | 'cover', contentType: string, sizeBytes: number): Promise<{ success: boolean; presignedUrl: string; s3Key: string }> {
-  return apiFetch(`/community/teams/${teamId}/media/${slot}/presign`, { method: 'POST', token, body: { contentType, sizeBytes } });
+  return apiFetch(`/community/teams/${teamId}/media/${slot}/upload-url`, { method: 'POST', token, body: { contentType, sizeBytes } });
 }
 
 export function communityTeamMediaConfirm(token: string, teamId: string, slot: 'logo' | 'cover', s3Key: string): Promise<{ success: boolean; team: CommunityTeam }> {
