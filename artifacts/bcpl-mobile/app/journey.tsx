@@ -5,8 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Image } from 'expo-image';
-import { Feather } from '@expo/vector-icons';
+import { Feather, Ionicons } from '@expo/vector-icons';
 import { useColors } from '@/hooks/useColors';
 import { useAuth } from '@/context/AuthContext';
 import { useLang } from '@/context/LanguageContext';
@@ -386,7 +385,7 @@ function JourneyBody({ d }: { d: Dashboard }) {
         <Card style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14 }}>
           <View style={{ width: 38, height: 38, borderRadius: 19, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
             <LinearGradient colors={['#7C5CFF', '#FF3DA6']} style={StyleSheet.absoluteFill} />
-            <Image source={require('@/assets/images/bcpl-ball-clean.png')} style={{ width: 22, height: 22 }} contentFit="contain" />
+            <Ionicons name="sparkles" size={18} color="#fff" />
           </View>
           <View style={{ flex: 1 }}>
             <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 15 }}>

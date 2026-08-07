@@ -23,7 +23,7 @@ import { Card, TeamLogo, GlassAppBar, ScreenBackground, SectionHeader, useAppBar
 import { teamLogoUri } from '@/app/teams';
 import { MatchCard } from '@/components/MatchCard';
 import { ScreenHeader } from '@/components/ScreenHeader';
-import { Feather } from '@expo/vector-icons';
+import { Feather, Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
 function pickFeatured(matches: Match[]): Match[] {
@@ -497,7 +497,7 @@ export default function HomeScreen() {
             <Card style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14 }}>
               <View style={{ width: 42, height: 42, borderRadius: 21, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
                 <LinearGradient colors={['#7C5CFF', '#FF3DA6']} style={StyleSheet.absoluteFill} />
-                <Image source={require('@/assets/images/bcpl-ball-clean.png')} style={{ width: 24, height: 24 }} contentFit="contain" />
+                <Ionicons name="sparkles" size={20} color="#fff" />
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 15 }}>

@@ -13,7 +13,30 @@ import { aiChat, type AiChatMsg } from "../lib/api";
  * modals 2000) — see the site z-index scale.
  */
 
-const LOGO = `${import.meta.env.BASE_URL}bcpl-assets/bcpl-ball-clean.png`;
+/** Classic "AI sparkle" mark — instantly reads as AI help. */
+function SparkleIcon({ size = 26 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="#fff" aria-hidden="true">
+      <path d="M12 2.5l1.9 5.6 5.6 1.9-5.6 1.9L12 17.5l-1.9-5.6-5.6-1.9 5.6-1.9L12 2.5z" />
+      <path d="M19.5 14.5l.9 2.6 2.6.9-2.6.9-.9 2.6-.9-2.6-2.6-.9 2.6-.9.9-2.6z" opacity="0.9" />
+      <path d="M5 15.5l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7.7-2z" opacity="0.75" />
+    </svg>
+  );
+}
+
+/* Positioning lives in CSS so we can raise everything above the mobile
+   sticky register bar (.srg-bar, z900, visible <1024px for logged-out users
+   — logged-in html gets .bcpl-authed and the bar unmounts). */
+const FAB_CSS = `
+.bcplai-fab{position:fixed;right:18px;bottom:18px;z-index:1000;width:58px;height:58px;border-radius:50%;border:none;cursor:pointer;padding:0;background:linear-gradient(135deg,#7C5CFF,#FF3DA6,#00DCF5);box-shadow:0 10px 28px rgba(124,92,255,0.5);display:flex;align-items:center;justify-content:center;}
+.bcplai-badge{position:fixed;right:12px;bottom:60px;z-index:1000;pointer-events:none;background:linear-gradient(135deg,#7C5CFF,#FF3DA6);color:#fff;font-size:10px;font-weight:900;letter-spacing:1px;padding:3px 8px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,0.35);}
+.bcplai-panel{position:fixed;right:14px;bottom:88px;z-index:1900;width:min(390px,calc(100vw - 28px));height:min(540px,calc(100vh - 130px));display:flex;flex-direction:column;border-radius:20px;overflow:hidden;background:#16264A;border:1px solid rgba(255,255,255,0.14);box-shadow:0 18px 60px rgba(0,0,0,0.55);}
+@media(max-width:1023.98px){
+  html:not(.bcpl-authed) .bcplai-fab{bottom:calc(92px + env(safe-area-inset-bottom,0px));}
+  html:not(.bcpl-authed) .bcplai-badge{bottom:calc(134px + env(safe-area-inset-bottom,0px));}
+  html:not(.bcpl-authed) .bcplai-panel{bottom:calc(162px + env(safe-area-inset-bottom,0px));height:min(540px,calc(100vh - 200px - env(safe-area-inset-bottom,0px)));}
+}
+`;
 
 export default function AiHelper() {
   const { t, lang } = useLang();
@@ -69,50 +92,26 @@ export default function AiHelper() {
 
   return (
     <>
-      {/* Launcher — BCPL ball logo in a gradient ring */}
-      <button
-        aria-label="BCPL AI"
-        onClick={() => setOpen((o) => !o)}
-        style={{
-          position: "fixed", right: 18, bottom: 18, zIndex: 1000,
-          width: 58, height: 58, borderRadius: "50%", border: "none", cursor: "pointer",
-          padding: 0, background: "linear-gradient(135deg,#7C5CFF,#FF3DA6,#00DCF5)",
-          boxShadow: "0 10px 28px rgba(124,92,255,0.5)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-        }}
-      >
+      <style>{FAB_CSS}</style>
+      {/* Launcher — AI sparkle mark on the brand gradient */}
+      <button aria-label="BCPL AI" onClick={() => setOpen((o) => !o)} className="bcplai-fab">
         {open ? (
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
         ) : (
-          <span style={{ width: 50, height: 50, borderRadius: "50%", background: "#101E3C", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <img src={LOGO} alt="" style={{ width: 34, height: 34, objectFit: "contain" }} />
-          </span>
+          <SparkleIcon size={30} />
         )}
       </button>
       {/* "AI" badge on the launcher */}
-      {!open && (
-        <span style={{
-          position: "fixed", right: 12, bottom: 60, zIndex: 1000, pointerEvents: "none",
-          background: "linear-gradient(135deg,#7C5CFF,#FF3DA6)", color: "#fff",
-          fontSize: 10, fontWeight: 900, letterSpacing: 1, padding: "3px 8px", borderRadius: 999,
-          boxShadow: "0 4px 12px rgba(0,0,0,0.35)",
-        }}>AI</span>
-      )}
+      {!open && <span className="bcplai-badge">AI</span>}
 
       {/* Panel */}
       {open && (
-        <div style={{
-          position: "fixed", right: 14, bottom: 88, zIndex: 1900,
-          width: "min(390px, calc(100vw - 28px))", height: "min(540px, calc(100vh - 130px))",
-          display: "flex", flexDirection: "column", borderRadius: 20, overflow: "hidden",
-          background: "#16264A", border: "1px solid rgba(255,255,255,0.14)",
-          boxShadow: "0 18px 60px rgba(0,0,0,0.55)",
-        }}>
+        <div className="bcplai-panel">
           {/* Header */}
           <div style={{ position: "relative", padding: "14px 16px", background: "linear-gradient(120deg,#241a4f 0%,#4a1d62 55%,#7a1653 100%)", borderBottom: "1px solid rgba(255,255,255,0.12)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <span style={{ width: 40, height: 40, borderRadius: "50%", background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                <img src={LOGO} alt="BCPL" style={{ width: 27, height: 27, objectFit: "contain" }} />
+              <span style={{ width: 40, height: 40, borderRadius: "50%", background: "linear-gradient(135deg,#7C5CFF,#FF3DA6)", border: "1px solid rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <SparkleIcon size={22} />
               </span>
               <div>
                 <div style={{ color: "#fff", fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 900, fontSize: 19, letterSpacing: ".06em", lineHeight: 1.1 }}>
@@ -181,8 +180,8 @@ function Bubble({ role, text, dim }: { role: "user" | "assistant"; text: string;
   return (
     <div style={{ display: "flex", gap: 8, alignSelf: user ? "flex-end" : "flex-start", maxWidth: "88%", opacity: dim ? 0.7 : 1 }}>
       {!user && (
-        <span style={{ width: 26, height: 26, borderRadius: "50%", background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, alignSelf: "flex-end" }}>
-          <img src={LOGO} alt="" style={{ width: 17, height: 17, objectFit: "contain" }} />
+        <span style={{ width: 26, height: 26, borderRadius: "50%", background: "linear-gradient(135deg,#7C5CFF,#FF3DA6)", border: "1px solid rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, alignSelf: "flex-end" }}>
+          <SparkleIcon size={15} />
         </span>
       )}
       <div style={{
