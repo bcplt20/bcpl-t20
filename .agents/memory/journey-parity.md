@@ -8,3 +8,5 @@ The website portal (PlayerProfile) derives the player's next action with ONE sin
 **Rule:** any client showing the player journey must copy the website's `deriveStep` branch order and status literals verbatim (paid → upload_video; KYC unreachable before phase1Status='selected'; legacy carryover = selected + fees waived). Never re-model gating as separate booleans.
 
 **Testing recipe (Expo web):** inject localStorage key `bcpl_mobile_auth_v1` = `{token, user:{id,name,phone}}` (mint player JWT, impossible phone) on the Expo dev domain, then open `/journey`. Seed a throwaway user+registration row, delete after.
+
+**Easier since Aug'26:** dev-only route `/dev-login?token=&uid=&name=&phone=&to=/journey` (app/dev-login.tsx, __DEV__+web gated) writes the blob and redirects — lets the plain Screenshot tool capture authed screens without Playwright. A demo player fixture is kept in the dev DB for screenshots (look it up by reg_number prefix BCPL-DEMO / newest demo row).
