@@ -26,10 +26,11 @@ import {
 } from '@expo-google-fonts/space-grotesk';
 import { Feather, Ionicons } from '@expo/vector-icons';
 import * as Font from 'expo-font';
-import { Stack, useRouter } from 'expo-router';
+import { Stack, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { StyleSheet, Pressable } from 'react-native';
+import { StyleSheet, Pressable, Keyboard, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -38,16 +39,33 @@ function FloatingAiButton() {
   const { theme } = useTheme();
   const c = THEMES[theme];
   const router = useRouter();
+  const insets = useSafeAreaInsets();
+  const segments = useSegments();
+  const [kbVisible, setKbVisible] = React.useState(false);
+
+  React.useEffect(() => {
+    const showSub = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow', () => setKbVisible(true));
+    const hideSub = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide', () => setKbVisible(false));
+    return () => { showSub.remove(); hideSub.remove(); };
+  }, []);
+
+  if (kbVisible) return null;
+
+  // If we are in the tabs group, float above the bottom tab bar.
+  // The tab bar is roughly 60px tall + bottom inset.
+  const inTabs = segments[0] === '(tabs)';
+  const bottomMargin = inTabs ? (60 + insets.bottom + 16) : Math.max(insets.bottom + 16, 24);
+
   return (
     <Pressable
       onPress={() => router.push('/assistant')}
       style={({ pressed }) => ({
         position: 'absolute',
-        bottom: 96,
-        right: 20,
-        width: 52,
-        height: 52,
-        borderRadius: 26,
+        bottom: bottomMargin,
+        right: 16,
+        width: 56,
+        height: 56,
+        borderRadius: 28,
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 9999,
@@ -59,8 +77,8 @@ function FloatingAiButton() {
         elevation: 8,
       })}
     >
-      <LinearGradient colors={['#5B2BF0', '#00DCF5']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ ...StyleSheet.absoluteFillObject, borderRadius: 26 }} />
-      <Feather name="message-circle" size={24} color="#fff" />
+      <LinearGradient colors={['#5B2BF0', '#00DCF5']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ ...StyleSheet.absoluteFillObject, borderRadius: 28 }} />
+      <Feather name="message-circle" size={26} color="#fff" />
     </Pressable>
   );
 }

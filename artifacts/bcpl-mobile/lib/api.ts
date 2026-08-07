@@ -320,6 +320,18 @@ export function getDashboard(token: string): Promise<Dashboard> {
   return apiFetch('/user/dashboard', { token });
 }
 
+// ── Sponsors ───────────────────────────────────────────────────────
+export interface PublicSponsor {
+  name: string;
+  category: string;
+  logo: string;
+  website: string;
+}
+
+export function getPublicSponsors(): Promise<{ sponsors: PublicSponsor[] }> {
+  return apiFetch('/sponsors');
+}
+
 // ── Phase 1 result (100-point scorecard) ────────────────────────────────────
 // Mirrors GET /api/results/me (api-server/src/routes/results.ts). Legacy
 // breakdown items may lack `label`, so the screen falls back to a prettified key.

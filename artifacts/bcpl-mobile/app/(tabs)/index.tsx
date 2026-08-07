@@ -17,7 +17,8 @@ import { Image } from 'expo-image';
 import { useColors } from '@/hooks/useColors';
 import { useAuth } from '@/context/AuthContext';
 import { useLang } from '@/context/LanguageContext';
-import { getDashboard, getMatches, getPointsTable, getTeams, SITE_ASSETS, getAppBanners, type Match, type AppBanner, type Team } from '@/lib/api';
+import { getDashboard, getMatches, getPointsTable, getTeams, SITE_ASSETS, getAppBanners, type Match, type AppBanner, type Team, type PublicSponsor, getPublicSponsors } from '@/lib/api';
+import * as WebBrowser from 'expo-web-browser';
 import { NEWS_ARTICLES } from '@/data/news';
 import { Card, TeamLogo, GlassAppBar, ScreenBackground, SectionHeader, useAppBarHeight, useBottomNavHeight } from '@/components/ui';
 import { ProfileBackfillCard } from '@/components/ProfileBackfillCard';
@@ -435,12 +436,26 @@ export default function HomeScreen() {
     refetchInterval: 60_000,
   });
   const pointsQ = useQuery({ queryKey: ['points'], queryFn: getPointsTable });
+  const sponsorsQ = useQuery({ queryKey: ['sponsors'], queryFn: getPublicSponsors });
 
   const matches = matchesQ.data?.matches ?? [];
   const featured = pickFeatured(matches);
   const topTeams = (pointsQ.data?.table ?? []).slice(0, 3);
   const latestNews = NEWS_ARTICLES.slice(0, 2);
   const anyLive = matches.some((m) => m.status === 'live');
+
+  // Group sponsors by tier
+  const sponsorGroups = React.useMemo(() => {
+    if (!sponsorsQ.data?.sponsors) return [];
+    const groups: { label: string; items: PublicSponsor[] }[] = [];
+    for (const s of sponsorsQ.data.sponsors) {
+      const label = (s.category || '').trim() || 'Partners';
+      const g = groups.find((x) => x.label.toLowerCase() === label.toLowerCase());
+      if (g) g.items.push(s);
+      else groups.push({ label, items: [s] });
+    }
+    return groups;
+  }, [sponsorsQ.data?.sponsors]);
 
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
@@ -636,6 +651,44 @@ export default function HomeScreen() {
             </Pressable>
           ))}
         </View>
+
+        {sponsorGroups.length > 0 && (
+          <View style={{ paddingHorizontal: 16, marginTop: 40, marginBottom: 32, alignItems: 'center' }}>
+            <SectionHeader title={t('Our Sponsors', 'हमारे Sponsors')} />
+            {sponsorGroups.map((g, gi) => {
+              const isTop = gi === 0;
+              const logoH = isTop ? 64 : gi === 1 ? 44 : 32;
+              return (
+                <View key={g.label} style={{ marginTop: isTop ? 8 : 24, alignItems: 'center' }}>
+                  <Text style={{ color: c.getAccentText(c.amber), fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: isTop ? 14 : 12, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 12 }}>
+                    {g.label}
+                  </Text>
+                  <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: isTop ? 16 : 12 }}>
+                    {g.items.map((s, i) => {
+                      const inner = (
+                        <View style={{ backgroundColor: '#1B2E52', borderRadius: 12, paddingHorizontal: logoH * 0.4, paddingVertical: logoH * 0.3, borderWidth: 1, borderColor: c.line }}>
+                          {s.logo ? (
+                            <Image source={{ uri: s.logo }} style={{ height: logoH, width: logoH * 3, maxWidth: 200 }} contentFit="contain" />
+                          ) : (
+                            <Text style={{ fontFamily: 'PlusJakartaSans_700Bold', fontSize: logoH * 0.4, color: '#FFFFFF' }}>{s.name}</Text>
+                          )}
+                        </View>
+                      );
+                      if (s.website) {
+                        return (
+                          <Pressable key={i} onPress={() => WebBrowser.openBrowserAsync(s.website)} style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] })}>
+                            {inner}
+                          </Pressable>
+                        );
+                      }
+                      return <View key={i}>{inner}</View>;
+                    })}
+                  </View>
+                </View>
+              );
+            })}
+          </View>
+        )}
       </ScrollView>
     </View>
   );
