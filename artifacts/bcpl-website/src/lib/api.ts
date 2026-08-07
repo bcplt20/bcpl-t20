@@ -216,6 +216,26 @@ export const getLiveScore = (matchId: string) =>
 export const getScorecard = (matchId: string) =>
   req<any>("GET", `/matches/${matchId}/scorecard`);
 
+/* ─── Community scorer — public live scorecard (no auth) ───────────────── */
+export type CommunityScorecard = {
+  match: {
+    id: string; team1: string; team2: string; venue: string;
+    oversLimit: number; playersPerSide?: number;
+    status: "live" | "innings2" | "completed"; resultDesc: string; createdAt: string;
+  };
+  innings: Array<{
+    inningsNumber: number; battingTeam: string; bowlingTeam: string;
+    totalRuns: number; totalWickets: number; overs: number; balls: number;
+    extras: number; target: number | null; status: string;
+    batting: Array<{ name: string; runs: number; balls: number; fours: number; sixes: number; out: string | null }>;
+    bowling: Array<{ name: string; overs: string; runs: number; wickets: number }>;
+    recentBalls: Array<{ over: string; runs: number; isWicket: boolean; extraType: string | null; commentary: string }>;
+  }>;
+};
+
+export const getCommunityScorecard = (matchId: string) =>
+  req<CommunityScorecard>("GET", `/community/matches/${matchId}`);
+
 export type NewMatchInput = {
   matchNo: number; season?: number;
   team1: string; team2: string;

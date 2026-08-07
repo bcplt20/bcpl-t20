@@ -26,7 +26,7 @@ import path from "node:path";
 import { db } from "@workspace/db";
 import { siteSettingsTable, teamsTable, matchesTable } from "@workspace/db/schema";
 import type { Match } from "@workspace/db/schema";
-import { eq, and, asc, ne } from "drizzle-orm";
+import { eq, and, asc, ne, sql } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { logger } from "../lib/logger";
 import { z } from "zod";
@@ -420,6 +420,45 @@ async function buildJsonLd(reqPath: string): Promise<string> {
   return renderJsonLd(objects);
 }
 
+/* ─── Dynamic per-match meta for community live scorecards ───────────────
+   /scorecard/:id is a public, shareable page from the community scorer.
+   The community_* tables are created at runtime by routes/community.ts and
+   are not in the drizzle schema, so we look them up with a cheap raw query
+   (team names only — no innings/deliveries joins). A crawler / share preview
+   then gets "TeamA vs TeamB — Live Scorecard | BCPL T20" instead of the
+   generic SPA default. */
+const SCORECARD_META_RE = /^\/scorecard\/([0-9a-f-]{36})$/i;
+
+interface ScorecardMeta { title: string; description: string; ogImage: string; url: string }
+
+async function scorecardMeta(reqPath: string): Promise<ScorecardMeta | null> {
+  const match = reqPath.match(SCORECARD_META_RE);
+  if (!match) return null;
+  const id = match[1];
+  try {
+    const result = await db.execute(
+      sql`SELECT team1, team2, status, result_desc FROM community_matches WHERE id = ${id}`,
+    );
+    const row = (result as unknown as { rows?: Array<{ team1: string; team2: string; status: string; result_desc: string }> }).rows?.[0];
+    if (!row) return null;
+    const vs = `${row.team1} vs ${row.team2}`;
+    const live = row.status !== "completed";
+    const title = `${vs} — ${live ? "Live Scorecard" : "Scorecard"} | BCPL T20`;
+    const description = row.status === "completed" && row.result_desc
+      ? `${vs}: ${row.result_desc}. Full scorecard on BCPL T20.`
+      : `Follow ${vs} live — ball-by-ball score, batting and bowling on BCPL T20.`;
+    return {
+      title,
+      description,
+      ogImage: DEFAULT_OG_IMAGE,
+      url: `${SITE_ORIGIN}/scorecard/${id}`,
+    };
+  } catch (e) {
+    logger.warn({ err: e }, "seo: community scorecard meta lookup failed");
+    return null;
+  }
+}
+
 export async function seoHtmlMiddleware(req: Request, res: Response, next: NextFunction): Promise<void> {
   if (req.method !== "GET" && req.method !== "HEAD") return next();
   const reqPath = (req.path || "/").replace(/\/+$/, "") || "/";
@@ -437,7 +476,8 @@ export async function seoHtmlMiddleware(req: Request, res: Response, next: NextF
           const m = mergedPage(def, data.overrides);
           return { title: m.title, description: m.description, ogImage: m.ogImage, url: `${SITE_ORIGIN}${def.path === "/" ? "" : def.path}` || SITE_ORIGIN };
         })()
-      : null; // unknown paths (SPA 404, /r/CODE, player flow) keep the built-in defaults
+      : await scorecardMeta(reqPath); // dynamic community scorecard, else null
+    // null → unknown paths (SPA 404, /r/CODE, player flow) keep the built-in defaults
     // Organization JSON-LD is site-wide; FAQPage/SportsEvent are added per
     // path. Unknown paths still get Organization so the knowledge panel works.
     const jsonLd = await buildJsonLd(reqPath);

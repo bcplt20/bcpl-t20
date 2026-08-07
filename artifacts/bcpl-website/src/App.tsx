@@ -52,6 +52,7 @@ import { CorporateCricket }      from '@/pages/CorporateCricket';
 import { CorporateCricketDelhi } from '@/pages/CorporateCricketDelhi';
 import { HowToJoin }             from '@/pages/HowToJoin';
 import { OfficeCricketTeam }     from '@/pages/OfficeCricketTeam';
+import { Scorecard }             from '@/pages/Scorecard';
 import AdminPanel              from '@/admin/AdminPanel';
 
 // Staff trial-ops app — lazy: field staff only, keeps jsqr etc out of the main bundle
@@ -109,6 +110,9 @@ function Router() {
         <Route path="/corporate-cricket-tournament-delhi" component={CorporateCricketDelhi} />
         <Route path="/how-to-join"                       component={HowToJoin} />
         <Route path="/office-cricket-team"               component={OfficeCricketTeam} />
+
+        {/* Community scorer — public live scorecard (shareable, no login) */}
+        <Route path="/scorecard/:id" component={Scorecard} />
 
         {/* Team detail */}
         <Route path="/team/:slug"  component={TeamDetail} />

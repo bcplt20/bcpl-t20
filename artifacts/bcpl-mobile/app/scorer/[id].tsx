@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Pressable, ScrollView, TextInput, Modal, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView, TextInput, Modal, ActivityIndicator, Share } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
+import { Feather, Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/context/AuthContext';
 import { useLang } from '@/context/LanguageContext';
 import { useColors } from '@/hooks/useColors';
@@ -33,19 +34,44 @@ export default function ScoringScreen() {
   const appBarHeight = useAppBarHeight();
   const bottomNavHeight = useBottomNavHeight();
 
-  const [batterName, setBatterName] = useState('Batter 1');
-  const [bowlerName, setBowlerName] = useState('Bowler 1');
+  // State: Players on strike
+  const [striker, setStriker] = useState('Batter 1');
+  const [nonStriker, setNonStriker] = useState('Batter 2');
+  const [bowler, setBowler] = useState('Bowler 1');
   
   // Modals state
   const [outModal, setOutModal] = useState(false);
   const [extraModal, setExtraModal] = useState<{ type: 'wide' | 'noball' | 'bye' | 'legbye' } | null>(null);
   const [moreModal, setMoreModal] = useState(false);
   
+  // Prompt Modals
+  const [newBowlerModal, setNewBowlerModal] = useState(false);
+  const [newBowlerName, setNewBowlerName] = useState('');
+  const [newBatterTarget, setNewBatterTarget] = useState<'striker' | 'nonStriker' | null>(null);
+  const [newBatterName, setNewBatterName] = useState('');
+  const [renameTarget, setRenameTarget] = useState<'striker' | 'nonStriker' | 'bowler' | null>(null);
+  const [renameName, setRenameName] = useState('');
+
+  // Setup UI State
+  const [setupInnings, setSetupInnings] = useState(0);
+  const [setupS, setSetupS] = useState('Batter 1');
+  const [setupNs, setSetupNs] = useState('Batter 2');
+  const [setupB, setSetupB] = useState('Bowler 1');
+
   // Run out details
   const [dismissalType, setDismissalType] = useState('');
   const [runOutRuns, setRunOutRuns] = useState(0);
 
   const [toastMsg, setToastMsg] = useState('');
+  
+  const [queuedBowlerPrompt, setQueuedBowlerPrompt] = useState(false);
+  const historyRef = React.useRef<{ striker: string; nonStriker: string; bowler: string }[]>([]);
+
+  useEffect(() => {
+    if (renameTarget === 'striker') setRenameName(striker);
+    else if (renameTarget === 'nonStriker') setRenameName(nonStriker);
+    else if (renameTarget === 'bowler') setRenameName(bowler);
+  }, [renameTarget, striker, nonStriker, bowler]);
 
   const mineQ = useQuery({
     queryKey: ['community-mine'],
@@ -61,14 +87,67 @@ export default function ScoringScreen() {
 
   const ballMut = useMutation({
     mutationFn: (data: any) => communityBall(token as string, matchId, data),
-    onSuccess: (data) => {
+    onMutate: () => {
+      // Snapshot state BEFORE mutation goes out
+      return { snapshot: { striker, nonStriker, bowler } };
+    },
+    onSuccess: (data, variables: any, context) => {
+      if (context?.snapshot) {
+        historyRef.current.push(context.snapshot);
+      }
+      
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
       queryClient.invalidateQueries({ queryKey: ['community-scorecard', matchId] });
       setToastMsg(data.commentary);
       setTimeout(() => setToastMsg(''), 3000);
+      
       setOutModal(false);
       setExtraModal(null);
       setMoreModal(false);
+
+      // Determine runs ran by batter for swap logic
+      let runsRan = variables.runs;
+      if (variables.type === 'wicket' && variables.dismissalType === 'run_out') {
+        runsRan = variables.runs;
+      } else if (variables.type === 'wicket') {
+        runsRan = 0;
+      }
+      
+      let isSwap = runsRan % 2 !== 0;
+      const overCompleted = data.inningsTotal.balls === 0 && !data.inningsComplete;
+      
+      if (overCompleted) {
+        isSwap = !isSwap; // swap again at over end
+      }
+
+      let nextStriker = striker;
+      let nextNonStriker = nonStriker;
+      let emptySlot: 'striker' | 'nonStriker' | null = null;
+
+      if (variables.type === 'wicket') {
+        emptySlot = 'striker'; // striker faced ball and was dismissed (in basic assumption)
+      }
+
+      if (isSwap) {
+        const temp = nextStriker;
+        nextStriker = nextNonStriker;
+        nextNonStriker = temp;
+        
+        if (emptySlot === 'striker') emptySlot = 'nonStriker';
+        else if (emptySlot === 'nonStriker') emptySlot = 'striker';
+      }
+
+      setStriker(nextStriker);
+      setNonStriker(nextNonStriker);
+
+      if (variables.type === 'wicket') {
+        setNewBatterTarget(emptySlot);
+        if (overCompleted) {
+          setQueuedBowlerPrompt(true);
+        }
+      } else if (overCompleted) {
+        setNewBowlerModal(true);
+      }
     },
     onError: (err: any) => {
       alert(err.message || 'Error scoring ball');
@@ -77,7 +156,15 @@ export default function ScoringScreen() {
 
   const undoMut = useMutation({
     mutationFn: () => communityUndo(token as string, matchId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['community-scorecard', matchId] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['community-scorecard', matchId] });
+      const last = historyRef.current.pop();
+      if (last) {
+        setStriker(last.striker);
+        setNonStriker(last.nonStriker);
+        setBowler(last.bowler);
+      }
+    },
   });
 
   const inningsEndMut = useMutation({
@@ -94,8 +181,8 @@ export default function ScoringScreen() {
     ballMut.mutate({
       type,
       runs,
-      batterName,
-      bowlerName,
+      batterName: striker,
+      bowlerName: bowler,
       ...extraData,
     });
   };
@@ -113,11 +200,11 @@ export default function ScoringScreen() {
   const match = q.data?.match;
   const innings = q.data?.innings || [];
   
-  // API returns innings ascending, so the active one is the last element
   const activeInnings = innings.length > 0 ? innings[innings.length - 1] : undefined;
-  
   const isMatchComplete = match?.status === 'completed';
   const showPad = isOwner && activeInnings?.status === 'live';
+
+  const needsSetup = showPad && activeInnings && activeInnings.balls === 0 && activeInnings.totalRuns === 0 && activeInnings.totalWickets === 0 && setupInnings !== activeInnings.inningsNumber;
 
   const canStartInnings2 = isOwner && (
     (match?.status === 'innings2' && innings.length === 1) ||
@@ -126,6 +213,56 @@ export default function ScoringScreen() {
 
   const hasSecondInningsBalls = innings.length === 2 && (innings[1].balls > 0 || innings[1].totalRuns > 0 || (innings[1].recentBalls && innings[1].recentBalls.length > 0));
   const canFinishMatch = isOwner && hasSecondInningsBalls && !isMatchComplete;
+
+  const shareMatch = () => {
+    const url = `https://bcplt20.com/scorecard/${matchId}`;
+    const msg = `${match?.team1} vs ${match?.team2} — live score ${t('view:', 'देखें:')} ${url}`;
+    Share.share({ message: msg });
+  };
+
+  const strikerData = activeInnings?.batting?.find(b => b.name === striker);
+  const nonStrikerData = activeInnings?.batting?.find(b => b.name === nonStriker);
+  const bowlerData = activeInnings?.bowling?.find(b => b.name === bowler);
+
+  const formatBatter = (name: string, data: any, isStriker: boolean) => {
+    if (!data) return `${name}${isStriker ? '*' : ''} 0(0)`;
+    return `${name}${isStriker ? '*' : ''} ${data.runs}(${data.balls})`;
+  };
+
+  const formatBowler = (name: string, data: any) => {
+    if (!data) return `${name} 0.0-0-0-0`;
+    return `${name} ${Math.floor(data.overs)}.${Math.round((data.overs % 1) * 10)}-0-${data.runs}-${data.wickets}`;
+  };
+
+  const BatterSuggestions = ({ onSelect, exclude = [] }: { onSelect: (n: string) => void, exclude?: string[] }) => {
+    const list = activeInnings?.batting?.map(b => b.name).filter(n => !exclude.includes(n)) || [];
+    const unique = Array.from(new Set(list));
+    if (!unique.length) return null;
+    return (
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 }}>
+        {unique.map(n => (
+          <Pressable key={n} onPress={() => onSelect(n)} style={[styles.chip, { backgroundColor: c.card2 }]}>
+            <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold' }}>{n}</Text>
+          </Pressable>
+        ))}
+      </View>
+    );
+  };
+
+  const BowlerSuggestions = ({ onSelect, exclude = [] }: { onSelect: (n: string) => void, exclude?: string[] }) => {
+    const list = activeInnings?.bowling?.map(b => b.name).filter(n => !exclude.includes(n)) || [];
+    const unique = Array.from(new Set(list));
+    if (!unique.length) return null;
+    return (
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 }}>
+        {unique.map(n => (
+          <Pressable key={n} onPress={() => onSelect(n)} style={[styles.chip, { backgroundColor: c.card2 }]}>
+            <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold' }}>{n}</Text>
+          </Pressable>
+        ))}
+      </View>
+    );
+  };
 
   const renderPadBtn = (label: string, onPress: () => void, color?: string, outline?: boolean, flex?: number) => (
     <Pressable
@@ -151,7 +288,10 @@ export default function ScoringScreen() {
         
         {/* SCORE HEADER */}
         {activeInnings ? (
-          <View style={{ padding: 16, alignItems: 'center' }}>
+          <View style={{ padding: 16, alignItems: 'center', position: 'relative' }}>
+            <Pressable onPress={shareMatch} style={({pressed}) => [{ position: 'absolute', right: 16, top: 0, padding: 8, opacity: pressed ? 0.6 : 1 }]}>
+              <Ionicons name="share-social" size={24} color={c.ink} />
+            </Pressable>
             <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 14 }}>
               {activeInnings.battingTeam} {t('Batting', 'बल्लेबाज़ी')}
             </Text>
@@ -161,6 +301,20 @@ export default function ScoringScreen() {
             <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 20 }}>
               {t('Overs:', 'ओवर्स:')} {activeInnings.overs}.{activeInnings.balls} <Text style={{ color: c.sub }}>/ {match?.oversLimit}</Text>
             </Text>
+            
+            {/* Player inline stats */}
+            <View style={{ flexDirection: 'row', gap: 16, marginTop: 12 }}>
+              <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 15 }}>
+                {formatBatter(striker, strikerData, true)}
+              </Text>
+              <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 15 }}>
+                {formatBatter(nonStriker, nonStrikerData, false)}
+              </Text>
+            </View>
+            <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 14, marginTop: 4 }}>
+              {formatBowler(bowler, bowlerData)}
+            </Text>
+
             {activeInnings.target && (
               <View style={{ marginTop: 8, backgroundColor: `${c.magenta}20`, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 }}>
                 <Text style={{ color: c.magenta, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 14 }}>
@@ -189,12 +343,18 @@ export default function ScoringScreen() {
         )}
 
         {isMatchComplete && match?.resultDesc && (
-          <View style={{ paddingHorizontal: 16, marginBottom: 16 }}>
+          <View style={{ paddingHorizontal: 16, marginBottom: 16, gap: 12 }}>
             <LinearGradient colors={['#5B2BF0', '#FF3DA6']} start={{x:0,y:0}} end={{x:1,y:1}} style={{ padding: 20, borderRadius: 16, alignItems: 'center' }}>
               <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 20, textAlign: 'center' }}>
                 {match.resultDesc}
               </Text>
             </LinearGradient>
+            <Pressable onPress={shareMatch} style={{ backgroundColor: c.card2, padding: 16, borderRadius: 16, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: 8 }}>
+              <Ionicons name="share-social" size={20} color={c.ink} />
+              <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 16 }}>
+                {t('Share Result', 'परिणाम शेयर करें')}
+              </Text>
+            </Pressable>
           </View>
         )}
 
@@ -211,34 +371,54 @@ export default function ScoringScreen() {
           </View>
         )}
 
-        {/* INPUT CHIPS */}
-        {showPad && (
-          <View style={{ paddingHorizontal: 16, flexDirection: 'row', gap: 12, marginBottom: 16 }}>
-            <View style={{ flex: 1 }}>
-              <Text style={{ color: c.sub, fontSize: 12, fontFamily: 'PlusJakartaSans_600SemiBold', marginBottom: 4 }}>
-                {t('Batter', 'बल्लेबाज़')}
-              </Text>
-              <TextInput
-                value={batterName}
-                onChangeText={setBatterName}
-                style={[styles.inputChip, { backgroundColor: c.card, color: c.ink, borderColor: c.line }]}
-              />
+        {/* INNINGS SETUP CARD */}
+        {needsSetup ? (
+          <Card style={{ marginHorizontal: 16, marginBottom: 16, padding: 20 }}>
+            <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 20, marginBottom: 16 }}>
+              {t('Start Innings', 'पारी शुरू करें')}
+            </Text>
+            <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', marginBottom: 4 }}>{t('Striker', 'स्ट्राइकर')}</Text>
+            <TextInput value={setupS} onChangeText={setSetupS} style={[styles.inputChip, { backgroundColor: c.card, color: c.ink, borderColor: c.line, marginBottom: 12, textAlign: 'left' }]} />
+            
+            <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', marginBottom: 4 }}>{t('Non-Striker', 'नॉन-स्ट्राइकर')}</Text>
+            <TextInput value={setupNs} onChangeText={setSetupNs} style={[styles.inputChip, { backgroundColor: c.card, color: c.ink, borderColor: c.line, marginBottom: 12, textAlign: 'left' }]} />
+            
+            <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', marginBottom: 4 }}>{t('Bowler', 'गेंदबाज़')}</Text>
+            <TextInput value={setupB} onChangeText={setSetupB} style={[styles.inputChip, { backgroundColor: c.card, color: c.ink, borderColor: c.line, marginBottom: 24, textAlign: 'left' }]} />
+            
+            <Pressable onPress={() => { setStriker(setupS); setNonStriker(setupNs); setBowler(setupB); setSetupInnings(activeInnings.inningsNumber); }} style={{ borderRadius: 12, overflow: 'hidden' }}>
+              <LinearGradient colors={['#00DCF5', '#5B2BF0']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ padding: 16, alignItems: 'center' }}>
+                <Text style={{ color: '#fff', fontFamily: 'PlusJakartaSans_700Bold', fontSize: 16 }}>
+                  {t('Start Scoring', 'Scoring शुरू करें')}
+                </Text>
+              </LinearGradient>
+            </Pressable>
+          </Card>
+        ) : (
+          /* INPUT CHIPS */
+          showPad && (
+            <View style={{ flexDirection: 'row', gap: 8, paddingHorizontal: 16, marginBottom: 16 }}>
+              <Pressable onPress={() => setRenameTarget('striker')} style={[styles.chip, { flex: 1, backgroundColor: c.card2 }]}>
+                <Text style={{ color: c.sub, fontSize: 10, fontFamily: 'PlusJakartaSans_600SemiBold' }}>{t('Striker', 'स्ट्राइकर')}</Text>
+                <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold' }} numberOfLines={1}>{striker}</Text>
+              </Pressable>
+              <Pressable onPress={() => { const s = striker; setStriker(nonStriker); setNonStriker(s); }} style={{ justifyContent: 'center', padding: 8 }}>
+                <Feather name="repeat" size={16} color={c.sub} />
+              </Pressable>
+              <Pressable onPress={() => setRenameTarget('nonStriker')} style={[styles.chip, { flex: 1, backgroundColor: c.card2 }]}>
+                <Text style={{ color: c.sub, fontSize: 10, fontFamily: 'PlusJakartaSans_600SemiBold' }}>{t('Non-Striker', 'नॉन-स्ट्राइकर')}</Text>
+                <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold' }} numberOfLines={1}>{nonStriker}</Text>
+              </Pressable>
+              <Pressable onPress={() => setRenameTarget('bowler')} style={[styles.chip, { flex: 1, backgroundColor: c.card2 }]}>
+                <Text style={{ color: c.sub, fontSize: 10, fontFamily: 'PlusJakartaSans_600SemiBold' }}>{t('Bowler', 'गेंदबाज़')}</Text>
+                <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold' }} numberOfLines={1}>{bowler}</Text>
+              </Pressable>
             </View>
-            <View style={{ flex: 1 }}>
-              <Text style={{ color: c.sub, fontSize: 12, fontFamily: 'PlusJakartaSans_600SemiBold', marginBottom: 4 }}>
-                {t('Bowler', 'गेंदबाज़')}
-              </Text>
-              <TextInput
-                value={bowlerName}
-                onChangeText={setBowlerName}
-                style={[styles.inputChip, { backgroundColor: c.card, color: c.ink, borderColor: c.line }]}
-              />
-            </View>
-          </View>
+          )
         )}
 
         {/* GIANT PAD */}
-        {showPad && (
+        {showPad && !needsSetup && (
           <View style={{ paddingHorizontal: 16, marginBottom: 16 }}>
             {toastMsg ? (
               <Text style={{ color: c.cyan, fontFamily: 'PlusJakartaSans_600SemiBold', textAlign: 'center', marginBottom: 8 }}>
@@ -368,6 +548,115 @@ export default function ScoringScreen() {
 
       </ScrollView>
 
+      {/* RENAME MODAL */}
+      <Modal visible={!!renameTarget} transparent animationType="fade">
+        <View style={styles.modalBg}>
+          <View style={[styles.modalCard, { backgroundColor: c.bg, borderColor: c.line, borderWidth: 1 }]}>
+            <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 20, marginBottom: 16 }}>
+              {t('Change Name', 'नाम बदलें')}
+            </Text>
+            <TextInput
+              value={renameName}
+              onChangeText={setRenameName}
+              style={[styles.inputChip, { backgroundColor: c.card, color: c.ink, borderColor: c.line, textAlign: 'left', marginBottom: 8 }]}
+            />
+            
+            {renameTarget === 'striker' || renameTarget === 'nonStriker' ? (
+              <BatterSuggestions onSelect={setRenameName} />
+            ) : (
+              <BowlerSuggestions onSelect={setRenameName} />
+            )}
+
+            <View style={{ flexDirection: 'row', gap: 12, marginTop: 24 }}>
+              <Pressable onPress={() => setRenameTarget(null)} style={[styles.modalBtn, { backgroundColor: c.card2 }]}>
+                <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold' }}>{t('Cancel', 'रद्द करें')}</Text>
+              </Pressable>
+              <Pressable
+                onPress={() => {
+                  if (renameTarget === 'striker') setStriker(renameName || 'Batter');
+                  else if (renameTarget === 'nonStriker') setNonStriker(renameName || 'Batter');
+                  else if (renameTarget === 'bowler') setBowler(renameName || 'Bowler');
+                  setRenameTarget(null);
+                }}
+                style={[styles.modalBtn, { backgroundColor: c.cyan }]}
+              >
+                <Text style={{ color: c.bg, fontFamily: 'PlusJakartaSans_700Bold' }}>{t('Save', 'सेव करें')}</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* NEW BATTER MODAL */}
+      <Modal visible={!!newBatterTarget} transparent animationType="slide">
+        <View style={styles.modalBg}>
+          <View style={[styles.modalCard, { backgroundColor: c.bg, borderColor: c.line, borderWidth: 1 }]}>
+            <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 20, marginBottom: 16 }}>
+              {t('New batter?', 'नया batter कौन?')}
+            </Text>
+            <TextInput
+              value={newBatterName}
+              onChangeText={setNewBatterName}
+              style={[styles.inputChip, { backgroundColor: c.card, color: c.ink, borderColor: c.line, textAlign: 'left', marginBottom: 8 }]}
+            />
+            
+            <BatterSuggestions onSelect={setNewBatterName} exclude={[striker, nonStriker]} />
+
+            <View style={{ flexDirection: 'row', gap: 12, marginTop: 24 }}>
+              <Pressable
+                onPress={() => {
+                  if (newBatterTarget === 'striker') setStriker(newBatterName || 'Batter');
+                  else setNonStriker(newBatterName || 'Batter');
+                  setNewBatterTarget(null);
+                  setNewBatterName('');
+                  if (queuedBowlerPrompt) {
+                    setQueuedBowlerPrompt(false);
+                    setNewBowlerModal(true);
+                  }
+                }}
+                style={[styles.modalBtn, { backgroundColor: c.cyan }]}
+              >
+                <Text style={{ color: c.bg, fontFamily: 'PlusJakartaSans_700Bold' }}>{t('Confirm', 'पुष्टि करें')}</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* NEW BOWLER MODAL */}
+      <Modal visible={newBowlerModal} transparent animationType="slide">
+        <View style={styles.modalBg}>
+          <View style={[styles.modalCard, { backgroundColor: c.bg, borderColor: c.line, borderWidth: 1 }]}>
+            <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 20, marginBottom: 16 }}>
+              {t('New over — who bowls?', 'नया over — bowler कौन?')}
+            </Text>
+            <TextInput
+              value={newBowlerName}
+              onChangeText={setNewBowlerName}
+              style={[styles.inputChip, { backgroundColor: c.card, color: c.ink, borderColor: c.line, textAlign: 'left', marginBottom: 8 }]}
+            />
+            
+            <BowlerSuggestions onSelect={setNewBowlerName} exclude={[bowler]} />
+
+            <View style={{ flexDirection: 'row', gap: 12, marginTop: 24 }}>
+              <Pressable onPress={() => { setNewBowlerModal(false); setNewBowlerName(''); }} style={[styles.modalBtn, { backgroundColor: c.card2 }]}>
+                <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold' }}>{t('Keep same', 'वही जारी रखें')}</Text>
+              </Pressable>
+              <Pressable
+                onPress={() => {
+                  setBowler(newBowlerName || bowler);
+                  setNewBowlerModal(false);
+                  setNewBowlerName('');
+                }}
+                style={[styles.modalBtn, { backgroundColor: c.cyan }]}
+              >
+                <Text style={{ color: c.bg, fontFamily: 'PlusJakartaSans_700Bold' }}>{t('Confirm', 'पुष्टि करें')}</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
       {/* OUT MODAL */}
       <Modal visible={outModal} transparent animationType="slide">
         <View style={styles.modalBg}>
@@ -437,7 +726,7 @@ export default function ScoringScreen() {
               {t('Extra runs ran? (Tap to send)', 'कितने अतिरिक्त रन दौड़े? (भेजने के लिए दबाएं)')}
             </Text>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'center' }}>
-              {[0, 1, 2, 3, 4].map(r => (
+              {(extraModal?.type === 'bye' || extraModal?.type === 'legbye' ? [1, 2, 3, 4] : [0, 1, 2, 3, 4]).map(r => (
                 <Pressable
                   key={r}
                   onPress={() => { handleScore(extraModal!.type, r); }}

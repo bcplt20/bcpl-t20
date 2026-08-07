@@ -324,11 +324,11 @@ router.post("/matches/:id/ball", requireAuth, async (req: AuthRequest, res) => {
         WHERE id = ${inn.id}`);
       if (complete) {
         await tx.execute(sql`UPDATE community_matches SET status = ${inn.innings_number === 1 ? "innings2" : "completed"}, updated_at = now() WHERE id = ${m!.id}`);
+        if (inn.innings_number === 2) await finalizeResult(tx, m!.id);
       }
       return { inn, newTotal, newWkts, newOvers, finalBalls, complete, commentary };
     });
     if ("errMsg" in result) return void res.status(400).json({ error: result.errMsg });
-    if (result.complete && result.inn.innings_number === 2) await finalizeResult(m!.id);
 
     res.json({
       success: true,
@@ -438,24 +438,27 @@ router.post("/matches/:id/finish", requireAuth, async (req: AuthRequest, res) =>
       }
       await tx.execute(sql`UPDATE community_innings SET status = 'completed', updated_at = now() WHERE match_id = ${m!.id} AND status = 'live'`);
       await tx.execute(sql`UPDATE community_matches SET status = 'completed', updated_at = now() WHERE id = ${m!.id}`);
-      return {};
+      if (abandon) {
+        await tx.execute(sql`UPDATE community_matches SET result_desc = 'Match abandoned' WHERE id = ${m!.id}`);
+        return { resultDesc: "Match abandoned" };
+      }
+      return { resultDesc: await finalizeResult(tx, m!.id) };
     });
     if ("errMsg" in out) return void res.status(400).json({ error: out.errMsg });
-    const resultDesc = abandon
-      ? await (async () => { await db.execute(sql`UPDATE community_matches SET result_desc = 'Match abandoned' WHERE id = ${m!.id}`); return "Match abandoned"; })()
-      : await finalizeResult(m!.id);
-    res.json({ success: true, resultDesc });
+    res.json({ success: true, resultDesc: out.resultDesc });
   } catch (e) {
     logger.warn({ err: e }, "community finish failed");
     res.status(500).json({ error: "Could not finish match" });
   }
 });
 
-async function finalizeResult(matchId: string): Promise<string> {
-  const inns = rows<InnRow>(await db.execute(
+/* Must be called INSIDE the transaction that holds the match-row lock, so an
+   interleaved undo can never reopen the innings between commit and result. */
+async function finalizeResult(dbc: Pick<typeof db, "execute">, matchId: string): Promise<string> {
+  const inns = rows<InnRow>(await dbc.execute(
     sql`SELECT * FROM community_innings WHERE match_id = ${matchId} ORDER BY innings_number ASC`,
   ));
-  const [m] = rows<MatchRow>(await db.execute(sql`SELECT * FROM community_matches WHERE id = ${matchId}`));
+  const [m] = rows<MatchRow>(await dbc.execute(sql`SELECT * FROM community_matches WHERE id = ${matchId}`));
   let desc = "";
   if (inns.length === 2 && m) {
     const [i1, i2] = inns;
@@ -466,7 +469,7 @@ async function finalizeResult(matchId: string): Promise<string> {
     } else {
       desc = "Match tied";
     }
-    await db.execute(sql`UPDATE community_matches SET result_desc = ${desc} WHERE id = ${matchId}`);
+    await dbc.execute(sql`UPDATE community_matches SET result_desc = ${desc} WHERE id = ${matchId}`);
   }
   return desc;
 }
