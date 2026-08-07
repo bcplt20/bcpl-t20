@@ -55,4 +55,5 @@
 - [Expo Android fonts](expo-android-fonts.md) — Android tofu icons = icon font not preloaded; add ...Feather.font/...Ionicons.font to root useFonts
 - [Journey gating parity](journey-parity.md) — mobile Journey must copy website's single-cursor deriveStep verbatim; bcpl_mobile_auth_v1 injection recipe for Expo-web auth tests
 - [Community scorer](community-scorer.md) — any-user scorer: match-row FOR UPDATE tx on every mutation; retired_hurt ≠ wicket; byes not on bowler; active innings = last array element
+- [Fan voting & MVP engine](voting-mvp.md) — polls + auto fantasy points from official scorecards; car prize only for finalist-team players (stage='final'); vote response has no poll object
 - [Mobile app design system](mobile-app-design.md) — owner-supplied v4 HTML mockup is the design source of truth (violet/magenta/cyan, stadium+daylight themes); links open in-app; never invent palettes for this app
