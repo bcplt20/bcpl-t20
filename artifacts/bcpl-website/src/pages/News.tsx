@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { useLang } from '../lib/i18n';
 import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
 import { NEWS_ARTICLES } from '../data/newsArticles';
+import { getNews, type ApiNewsArticle } from '../lib/api';
 
 const BASE = import.meta.env.BASE_URL;
 const IMG = BASE + 'bcpl-assets/news/';
@@ -27,8 +28,46 @@ body { background:#1C2B47; }
 .press-chip:hover { background:rgba(232,178,61,0.22); transform:translateY(-1px); }
 `;
 
+/** Unified article shape: admin-published (API) articles + static archive. */
+type DisplayArticle = {
+  slug: string; tag: string; title: string; titleHi: string;
+  date: string; imageSrc: string;
+  paragraphs: string[]; paragraphsHi?: string[];
+  press: Array<{ label: string; url: string }>;
+};
+
+function fmtNewsDate(iso: string | null): string {
+  if (!iso) return '';
+  try {
+    return new Date(iso).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: 'numeric', month: 'long', year: 'numeric' });
+  } catch { return ''; }
+}
+
 export default function News() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
+  const [apiArticles, setApiArticles] = useState<ApiNewsArticle[]>([]);
+
+  // Admin-published articles load on top of the static archive; if the API
+  // hiccups the archive still renders (no error state needed).
+  useEffect(() => {
+    getNews().then(r => setApiArticles(r.articles)).catch(() => {});
+  }, []);
+
+  const articles: DisplayArticle[] = [
+    ...apiArticles.map(a => ({
+      slug: a.slug, tag: a.tag, title: a.title, titleHi: a.titleHi || a.title,
+      date: fmtNewsDate(a.publishedAt),
+      imageSrc: a.image ? (a.image.startsWith('http') ? a.image : IMG + a.image) : '',
+      paragraphs: a.paragraphs, paragraphsHi: a.paragraphsHi,
+      press: a.press,
+    })),
+    ...NEWS_ARTICLES.filter(s => !apiArticles.some(a => a.slug === s.slug)).map(s => ({
+      slug: s.slug, tag: s.tag, title: s.title, titleHi: s.titleHi,
+      date: s.date, imageSrc: IMG + s.image,
+      paragraphs: s.paragraphs, paragraphsHi: undefined as string[] | undefined,
+      press: s.press,
+    })),
+  ];
 
   return (
     <div style={{ minHeight: '100vh', background: '#1C2B47', color: '#fff' }}>
@@ -52,16 +91,16 @@ export default function News() {
       {/* Articles */}
       <section style={{ padding: '10px 0 clamp(60px,8vw,100px)' }}>
         <div className="wrap" style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(28px,4vw,44px)' }}>
-          {NEWS_ARTICLES.map(a => (
+          {articles.map(a => (
             <article key={a.slug} className="news-card">
-              <img className="news-hero-img" src={IMG + a.image} alt={a.title} loading="lazy" decoding="async" />
+              {a.imageSrc ? <img className="news-hero-img" src={a.imageSrc} alt={a.title} loading="lazy" decoding="async" /> : null}
               <div style={{ padding: 'clamp(18px,3.5vw,32px)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
                   <span className="news-tag">{a.tag}</span>
-                  <span className="news-date">{a.date}</span>
+                  {a.date ? <span className="news-date">{a.date}</span> : null}
                 </div>
                 <h2 className="news-title">{t(a.title, a.titleHi)}</h2>
-                {a.paragraphs.map((p, i) => <p key={i} className="news-p">{p}</p>)}
+                {(lang === 'hi' && a.paragraphsHi && a.paragraphsHi.length ? a.paragraphsHi : a.paragraphs).map((p, i) => <p key={i} className="news-p">{p}</p>)}
 
                 {a.press.length > 0 && (
                   <div style={{ marginTop: 18, paddingTop: 16, borderTop: '1px solid rgba(255,255,255,0.12)' }}>

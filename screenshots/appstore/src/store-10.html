@@ -1,0 +1,63 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="base.css">
+<style>
+  .headline { top: 235px; left: 70px; right: 70px; text-align: center; }
+  .h1 { font-size: 128px; }
+  .subline { font-size: 40px; }
+
+  .phone-wrap { width: 630px; top: 900px; left: 45px; transform: perspective(2400px) rotateY(11deg) rotate(-2deg); }
+  .phone { width: 630px; }
+  .phone .inner { height: 1290px; }
+  .rim-glow { width: 750px; height: 1330px; top: 920px; left: 0px;
+    background: radial-gradient(circle, rgba(255,143,42,0.6), rgba(124,92,255,0.4), transparent 70%); }
+
+  .ganguly { width: 540px; bottom: 0; right: 40px; }
+  .floor { width: 420px; bottom: 30px; right: 60px; }
+
+  .stroke.a { width: 1500px; height: 150px; top: 700px; left: -150px; transform: rotate(-16deg); }
+  .stroke.b { width: 1200px; height: 120px; top: 2280px; left: -180px; transform: rotate(-16deg); opacity:0.78; }
+  .stroke.c { width: 900px; height: 110px; top: 660px; left: 520px; transform: rotate(-16deg); opacity:0.7; }
+
+  .ball { width: 220px; height: 220px; top: 760px; left: 120px; transform: rotate(14deg); }
+  .ball-trail { width: 350px; height: 350px; top: 700px; left: 60px; }
+
+  /* four reward chips in the lower-left band, right edge kept clear of Ganguly */
+  .chip { background: rgba(20,28,58,0.55); }
+  .chip.c1 { top: 2230px; left: 70px; max-width: 290px; }
+  .chip.c2 { top: 2230px; left: 380px; max-width: 290px; }
+  .chip.c3 { top: 2470px; left: 70px; max-width: 290px; }
+  .chip.pill.c4 { top: 2490px; left: 380px; }
+  .chip.c2 .chip-big { font-size: 48px; }
+  .chip.c3 .chip-big { font-size: 44px; }
+  .chip.pill.c4 .lbl { font-size: 28px; }
+</style></head>
+<body><div class="stage">
+  <div class="bg-base"></div><div class="mesh"></div>
+  <div class="strokes">
+    <div class="stroke s-magenta a"></div>
+    <div class="stroke s-violet b"></div>
+    <div class="stroke s-cyan c"></div>
+  </div>
+  <div class="ball-trail"></div><div class="ball"></div>
+  <div class="vignette"></div><div class="grain"></div>
+
+  <div class="logo"><img src="assets/bcpl-logo-white.png"></div>
+
+  <div class="headline">
+    <div class="eyebrow">Rewards &amp; Recognition</div>
+    <div class="h1">Real Stakes.<br>Real <span class="accent">Rewards.</span></div>
+    <div class="subline">Winning team prize ₹6 करोड़<br>Auction में players को ₹2 लाख से ₹20 लाख तक</div>
+  </div>
+
+  <div class="rim-glow"></div>
+  <div class="phone-wrap"><div class="phone"><div class="inner"><div class="screen">
+    <div class="notch"></div><img src="assets/app-home.jpg"><div class="glare"></div>
+  </div></div></div></div>
+
+  <div class="chip c1"><div class="chip-top">Winning Team</div><div class="chip-big">&#8377;6 Cr</div><div class="chip-sub">Season 5 prize</div></div>
+  <div class="chip c2"><div class="chip-top">Auction Pay</div><div class="chip-big">&#8377;2&ndash;20 L</div><div class="chip-sub">Per player range</div></div>
+  <div class="chip c3"><div class="chip-top">Man of the Series</div><div class="chip-big">Luxury Car</div><div class="chip-sub">Season reward</div></div>
+  <div class="chip pill c4"><span class="dot" style="background:#39e05c"></span><span class="lbl">&#8377;14 Cr+</span></div>
+
+  <div class="floor"></div>
+  <div class="ganguly"><img src="assets/ganguly-hand-point-trim.png"></div>
+</div></body></html>

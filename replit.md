@@ -33,6 +33,7 @@ _Populate as you build — non-obvious choices a reader couldn't infer from the 
 _Describe the high-level user-facing capabilities of this app once they exist._
 
 ## User preferences
+- Every change the owner requests must be applied in BOTH the website AND the mobile app, unless he explicitly says one place only.
 
 - Communicate in simple Hinglish (Roman script); the user is non-technical — avoid jargon, give short numbered steps.
 - For anything on the production EC2 server, give browser-based instructions (AWS Console → EC2 → Connect → EC2 Instance Connect), not SSH/.pem workflows.

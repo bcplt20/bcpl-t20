@@ -81,3 +81,94 @@ uri = "file://deliverables/BCPL-Season4-Sponsorship-Deck.pdf"
 type = "pdf"
 title = "BCPL Season 4 Sponsorship Deck — v3 (27 pages, 7.5 MB)"
 description = "नई pricing (+25%, round figures), glow कम, 3 नए 'Why invest' chart pages, भरा हुआ last page।"
+
+[[outputs]]
+id = "hnVQLDyl3t5x01FzdwfKR"
+uri = "file://screenshots/reminder-email.png"
+type = "image"
+title = "Payment reminder email — पूरा body"
+description = "24 घंटे बाद जाने वाला Phase 1 payment reminder email"
+
+[[outputs]]
+id = "T08S9Sf4GMS30rzcy7__E"
+uri = "file://screenshots/reminder-email-footer.png"
+type = "image"
+title = "Footer fix के बाद email"
+description = "Duplicate line हटी, Ref+time ऊपर जुड़ा — Gmail अब footer नहीं काटेगा"
+
+[[outputs]]
+id = "4tuUyeROltSvMLRJIigRf"
+uri = "file://screenshots/appstore/final/store-1.png"
+type = "image"
+title = "Screen 1/10"
+description = "Home — From Office to Stadium"
+
+[[outputs]]
+id = "Lu7Mne5lArEanpeqtntbs"
+uri = "file://screenshots/appstore/final/store-2.png"
+type = "image"
+title = "Screen 2/10"
+description = "Register in Minutes"
+
+[[outputs]]
+id = "Nhpz6SQ0BmlGlsg2egyS6"
+uri = "file://screenshots/appstore/final/store-3.png"
+type = "image"
+title = "Screen 3/10"
+description = "Show Your Skills (video trial)"
+
+[[outputs]]
+id = "yj3wVOEsNFYKXXtRPeaox"
+uri = "file://screenshots/appstore/final/store-4.png"
+type = "image"
+title = "Screen 4/10"
+description = "Your Official Scorecard — Sourav Ganguly 78/100"
+
+[[outputs]]
+id = "zIgoI0p1r8T_TOYfBGHBp"
+uri = "file://screenshots/appstore/final/store-5.png"
+type = "image"
+title = "Screen 5/10"
+description = "On to Phase 2 — qualified"
+
+[[outputs]]
+id = "CxuScl_RHz_C9lfCylHqA"
+uri = "file://screenshots/expo-go-qr.png"
+type = "image"
+title = "Expo Go QR code"
+description = "Expo Go app से scan करें — BCPL app आपके phone पर खुल जाएगा"
+
+[[outputs]]
+id = "2SxGBTd4EL3A7WNXrqJKK"
+uri = "file://screenshots/appstore/final/store-6.png"
+type = "image"
+title = "Screen 6/10"
+description = "Your Trial Pass — QR"
+
+[[outputs]]
+id = "XpXkYq2BprMwzrs40vs27"
+uri = "file://screenshots/appstore/final/store-7.png"
+type = "image"
+title = "Screen 7/10"
+description = "The Road to Auction"
+
+[[outputs]]
+id = "XoOO9lYcbCUgza1JH7omK"
+uri = "file://screenshots/appstore/final/store-8.png"
+type = "image"
+title = "Screen 8/10"
+description = "Live Matches & Scores"
+
+[[outputs]]
+id = "7ssU0j4idTkQIxfxHAcmO"
+uri = "file://screenshots/appstore/final/store-9.png"
+type = "image"
+title = "Screen 9/10"
+description = "10 Franchises. One Dream."
+
+[[outputs]]
+id = "MT8Q-C-T2eMUXgBx7aiMC"
+uri = "file://screenshots/appstore/final/store-10.png"
+type = "image"
+title = "Screen 10/10"
+description = "Real Stakes. Real Rewards."

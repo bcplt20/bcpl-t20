@@ -365,8 +365,20 @@ export function getTrialPass(token: string): Promise<TrialPassData> {
 
 // ── AI helper (player chat + technique feedback) ────────────────────────────
 export interface AiChatMsg { role: 'user' | 'assistant'; text: string }
-export function aiChat(token: string, messages: AiChatMsg[]): Promise<{ reply: string }> {
-  return apiFetch('/ai/chat', { method: 'POST', body: { messages }, token });
+// token optional — guests get general answers, logged-in players get personalised ones.
+export function aiChat(token: string | null | undefined, messages: AiChatMsg[]): Promise<{ reply: string }> {
+  return apiFetch('/ai/chat', { method: 'POST', body: { messages }, ...(token ? { token } : {}) });
+}
+
+// ── Public news articles (DB-backed, merged with the static archive) ────────
+export interface ApiNewsArticle {
+  id: string; slug: string; tag: string; title: string; titleHi: string;
+  image: string; paragraphs: string[]; paragraphsHi: string[];
+  press: { label: string; url: string }[];
+  published: boolean; publishedAt: string | null; updatedAt: string;
+}
+export function getNewsArticles(): Promise<{ articles: ApiNewsArticle[] }> {
+  return apiFetch('/news');
 }
 export interface AiTip { en: string; hi: string }
 export function getAiFeedback(token: string): Promise<{ tips: AiTip[] }> {

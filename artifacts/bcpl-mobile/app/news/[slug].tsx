@@ -5,16 +5,18 @@ import { Image } from 'expo-image';
 import { Feather } from '@expo/vector-icons';
 import { useColors } from '@/hooks/useColors';
 import { useLang } from '@/context/LanguageContext';
-import { SITE_ASSETS } from '@/lib/api';
-import { NEWS_ARTICLES } from '@/data/news';
+import { useQuery } from '@tanstack/react-query';
+import { getNewsArticles } from '@/lib/api';
+import { mergeNews } from '@/lib/newsMerge';
 import { Card, EmptyView, ScreenBackground, GlassAppBar, GradientTag, useAppBarHeight } from '@/components/ui';
 import { LinearGradient } from 'expo-linear-gradient';
 
 export default function NewsDetailScreen() {
   const c = useColors();
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const { slug } = useLocalSearchParams<{ slug: string }>();
-  const article = NEWS_ARTICLES.find((n) => n.slug === String(slug));
+  const apiQ = useQuery({ queryKey: ['news'], queryFn: getNewsArticles, staleTime: 5 * 60 * 1000, retry: false });
+  const article = mergeNews(apiQ.data?.articles).find((n) => n.slug === String(slug));
   const appBarHeight = useAppBarHeight();
 
   if (!article) {
@@ -30,26 +32,28 @@ export default function NewsDetailScreen() {
       <ScreenBackground />
       <GlassAppBar title="News" back={true} />
       <ScrollView contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 60 : 30, paddingTop: appBarHeight }}>
-        <View>
-          <Image
-            source={{ uri: `${SITE_ASSETS}/bcpl-assets/news/${article.image}` }}
-            style={{ width: '100%', height: 320 }}
-            contentFit="cover"
-            transition={200}
-          />
-          <LinearGradient
-            colors={['transparent', c.bg]}
-            style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 160 }}
-          />
-        </View>
+        {article.imageUri ? (
+          <View>
+            <Image
+              source={{ uri: article.imageUri }}
+              style={{ width: '100%', height: 320 }}
+              contentFit="cover"
+              transition={200}
+            />
+            <LinearGradient
+              colors={['transparent', c.bg]}
+              style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 160 }}
+            />
+          </View>
+        ) : null}
         <View style={{ padding: 20, paddingTop: 0 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 16 }}>
             <GradientTag label={article.tag} color={c.magenta} />
             <Text style={{ color: c.sub, fontSize: 13, fontFamily: 'PlusJakartaSans_600SemiBold' }}>{article.date}</Text>
           </View>
-          <Text style={[styles.title, { color: c.ink }]}>{article.title}</Text>
-          
-          {article.paragraphs.map((p, i) => (
+          <Text style={[styles.title, { color: c.ink }]}>{lang === 'hi' ? article.titleHi || article.title : article.title}</Text>
+
+          {(lang === 'hi' && article.paragraphsHi?.length ? article.paragraphsHi : article.paragraphs).map((p, i) => (
             <Text key={i} style={[styles.para, { color: c.ink }]}>
               {p}
             </Text>

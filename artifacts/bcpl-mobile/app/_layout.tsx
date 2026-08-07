@@ -63,7 +63,7 @@ function RootLayoutNav() {
         <Stack.Screen name="phase2-pay" options={{ title: 'Phase 2', headerShown: false }} />
         <Stack.Screen name="result" options={{ title: 'Phase 1 Result', headerShown: false }} />
         <Stack.Screen name="trial-pass" options={{ title: 'Trial Pass', headerShown: false }} />
-        <Stack.Screen name="assistant" options={{ title: 'BCPL Helper', headerShown: false }} />
+        <Stack.Screen name="assistant" options={{ title: 'BCPL AI', headerShown: false }} />
         <Stack.Screen name="pay-webview" options={{ title: 'Payment', headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="pay-receipt" options={{ title: 'Receipt', headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="kyc" options={{ title: 'KYC', headerShown: false }} />

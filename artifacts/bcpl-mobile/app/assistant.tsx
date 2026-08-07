@@ -22,9 +22,10 @@ import {
 } from '@/components/ui';
 
 /**
- * BCPL HELPER — AI assistant chat for logged-in players.
- * Answers grounded in the player's own journey status via POST /api/ai/chat.
- * Compliance-safe copy is enforced server-side; the client just renders.
+ * BCPL AI — official assistant chat, open to guests AND logged-in players.
+ * Logged-in: answers grounded in the player's own journey status.
+ * Guests: general answers (fees, journey, rules) — server prompts them to
+ * log in for anything personal. Compliance-safe copy enforced server-side.
  */
 
 function Bubble({ role, text, dim }: { role: 'user' | 'assistant'; text: string; dim?: boolean }) {
@@ -73,22 +74,9 @@ export default function AssistantScreen() {
   const Header = (
     <>
       <ScreenBackground />
-      <GlassAppBar title={t('BCPL Helper', 'BCPL सहायक')} back={true} />
+      <GlassAppBar title="BCPL AI" back={true} />
     </>
   );
-
-  if (!token) {
-    return (
-      <View style={{ flex: 1, backgroundColor: c.bg }}>{Header}
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, paddingTop: appBarHeight }}>
-          <Feather name="lock" size={28} color={c.magenta} />
-          <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 18, marginTop: 16, textAlign: 'center' }}>
-            {t('Log in to use the BCPL Helper', 'BCPL सहायक के लिए लॉगिन करें')}
-          </Text>
-        </View>
-      </View>
-    );
-  }
 
   const send = async () => {
     const text = input.trim();
@@ -107,7 +95,7 @@ export default function AssistantScreen() {
         status === 429
           ? t('Please wait a minute before sending more messages.', 'थोड़ी देर रुकें, फिर message भेजें।')
           : status === 503
-            ? t('The helper is not available right now.', 'सहायक अभी उपलब्ध नहीं है।')
+            ? t('BCPL AI is not available right now.', 'BCPL AI अभी उपलब्ध नहीं है।')
             : t('Could not get an answer — try again.', 'जवाब नहीं मिल पाया — दोबारा try करें।'),
       );
     } finally {
@@ -116,16 +104,25 @@ export default function AssistantScreen() {
     }
   };
 
-  const hello =
-    lang === 'hi'
-      ? 'नमस्ते! मैं BCPL Helper हूँ। Payment, video, result, KYC या trial के बारे में कुछ भी पूछें।'
-      : "Hi! I'm BCPL Helper. Ask me anything about your payment, video, result, KYC or trial.";
+  const hello = token
+    ? (lang === 'hi'
+        ? 'नमस्ते! मैं BCPL AI हूँ। Payment, video, result, KYC या trial के बारे में कुछ भी पूछें।'
+        : "Hi! I'm BCPL AI. Ask me anything about your payment, video, result, KYC or trial.")
+    : (lang === 'hi'
+        ? 'नमस्ते! मैं BCPL AI हूँ। BCPL, registration, fees या trials के बारे में कुछ भी पूछें। अपने payment/result के लिए पहले login करें।'
+        : "Hi! I'm BCPL AI. Ask me anything about BCPL, registration, fees or trials. For your own payment/result, please log in first.");
 
-  const suggestions: Array<[string, string]> = [
-    ['What is my current status?', 'मेरा अभी का status क्या है?'],
-    ['When is my trial?', 'मेरा trial कब है?'],
-    ['How do I upload my video?', 'Video कैसे upload करूँ?'],
-  ];
+  const suggestions: Array<[string, string]> = token
+    ? [
+        ['What is my current status?', 'मेरा अभी का status क्या है?'],
+        ['When is my trial?', 'मेरा trial कब है?'],
+        ['How do I upload my video?', 'Video कैसे upload करूँ?'],
+      ]
+    : [
+        ['How do I register?', 'Registration कैसे करूँ?'],
+        ['What is the entry fee?', 'Entry fee कितनी है?'],
+        ['How do trials work?', 'Trials कैसे होते हैं?'],
+      ];
 
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>{Header}

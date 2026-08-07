@@ -33,6 +33,7 @@ import adminFinanceRouter from "./adminFinance";
 import referralProgramRouter from "./referralProgram";
 import { adminSelectionRouter } from "./selection";
 import aiRouter, { adminAiRouter } from "./ai";
+import { newsRouter, adminNewsRouter } from "./news";
 
 const router: IRouter = Router();
 
@@ -70,8 +71,10 @@ router.use("/admin/drafts",  adminDraftsRouter); // incomplete-registration draf
 router.use("/admin/finance", adminFinanceRouter); // finance read-model (payment split + on-hold)
 router.use("/admin/selection", adminSelectionRouter); // Final 600 selection engine
 router.use("/admin/ai",      adminAiRouter); // AI match-report drafting
+router.use("/admin/news",    adminNewsRouter); // news CRUD + AI article drafts
 router.use("/admin",         adminRouter);
-router.use("/ai",            aiRouter);      // player AI helper chat + feedback
+router.use("/ai",            aiRouter);      // BCPL AI chat + feedback
+router.use("/news",          newsRouter);    // public news articles
 // Marketing / referrals (public click+attribute, admin analytics & campaigns)
 router.use("/marketing",     marketingRouter);
 // SEO (public meta for the site + admin editors)

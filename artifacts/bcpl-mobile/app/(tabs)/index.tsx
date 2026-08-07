@@ -487,6 +487,32 @@ export default function HomeScreen() {
           </View>
         ) : null}
 
+        {/* BCPL AI — official assistant, open to guests too */}
+        <View style={{ paddingHorizontal: 16, marginTop: 16 }}>
+          <Pressable
+            onPress={() => router.push('/assistant')}
+            testID="home-bcpl-ai"
+            style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1 })}
+          >
+            <Card style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14 }}>
+              <View style={{ width: 42, height: 42, borderRadius: 21, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
+                <LinearGradient colors={['#7C5CFF', '#FF3DA6']} style={StyleSheet.absoluteFill} />
+                <Image source={require('@/assets/images/bcpl-ball-clean.png')} style={{ width: 24, height: 24 }} contentFit="contain" />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 15 }}>
+                  {t('Ask BCPL AI', 'BCPL AI से पूछें')}
+                </Text>
+                <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 12, marginTop: 2 }}>
+                  {token
+                    ? t('Payment, video, result or trial — ask anything', 'Payment, video, result या trial — कुछ भी पूछें')
+                    : t('Registration, fees, trials — ask anything', 'Registration, fees, trials — कुछ भी पूछें')}
+                </Text>
+              </View>
+              <Feather name="chevron-right" size={18} color={c.sub} />
+            </Card>
+          </Pressable>
+        </View>
 
         {/* BCPL so far — league in numbers */}
         <View style={{ paddingHorizontal: 16, marginTop: 32 }}>

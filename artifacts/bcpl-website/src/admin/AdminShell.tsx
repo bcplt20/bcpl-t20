@@ -25,6 +25,7 @@ import AuctionView          from "./views/AuctionView";
 import ContractsView        from "./views/ContractsView";
 import SupportView          from "./views/SupportView";
 import ContentCalendarView  from "./views/ContentCalendarView";
+import NewsView             from "./views/NewsView";
 import LeaderboardView      from "./views/LeaderboardView";
 import WhatsAppTemplatesView from "./views/WhatsAppTemplatesView";
 import DataExportView       from "./views/DataExportView";
@@ -88,6 +89,7 @@ const NAV: NavGroup[] = [
     { id:"seo",          label:"SEO Manager",       icon:"⌖" },
     { id:"affiliates",   label:"Agents & Affiliates",icon:"⊟" },
     { id:"content_cal",  label:"Content Calendar",  icon:"▤" },
+    { id:"news",         label:"News Articles",     icon:"📰" },
   ]},
   { title: "COMMUNICATION", items: [
     { id:"whatsapp_tpl", label:"WhatsApp Templates",icon:"◎" },
@@ -134,6 +136,7 @@ function renderView(id: string, navigate: (viewId: string, payload?: AdminNavPay
     case "seo":            return <SEOView />;
     case "affiliates":     return <AffiliatesView />;
     case "content_cal":    return <ContentCalendarView />;
+    case "news":           return <NewsView />;
     case "matches":        return <MatchesView onOpenScoring={() => navigate("live_scoring")} />;
     case "live_scoring":   return <LiveScoringView />;
     case "teams":          return <TeamsView />;

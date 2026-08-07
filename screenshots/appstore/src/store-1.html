@@ -1,0 +1,58 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="base.css">
+<style>
+  .headline { top: 235px; left: 70px; right: 70px; text-align: center; }
+  .h1 { font-size: 150px; }
+  .subline { font-size: 44px; }
+
+  /* Phone LEFT, tilted for 3D, fully inside */
+  .phone-wrap { width: 630px; top: 900px; left: 45px; transform: perspective(2400px) rotateY(11deg) rotate(-2deg); }
+  .phone { width: 630px; }
+  .phone .inner { height: 1290px; }
+  .rim-glow { width: 750px; height: 1330px; top: 920px; left: 0px;
+    background: radial-gradient(circle, rgba(124,92,255,0.7), rgba(255,61,166,0.35), transparent 70%); }
+
+  /* Ganguly RIGHT, full figure inside canvas, hand points left toward phone */
+  .ganguly { width: 540px; bottom: 0; right: 40px; }
+  .floor { width: 420px; bottom: 30px; right: 60px; }
+
+  .stroke.a { width: 1500px; height: 150px; top: 640px; left: -120px; transform: rotate(-18deg); }
+  .stroke.b { width: 1300px; height: 130px; top: 2060px; left: 160px; transform: rotate(-18deg); opacity:0.8; }
+  .stroke.c { width: 900px; height: 105px; top: 300px; left: 500px; transform: rotate(-18deg); opacity:0.7; }
+
+  .ball { width: 250px; height: 250px; top: 760px; left: 120px; transform: rotate(14deg); }
+  .ball-trail { width: 400px; height: 400px; top: 700px; left: 60px; }
+
+  /* chips: lower-left empty band only — clear of phone UI and Ganguly */
+  .chip.c1 { top: 2300px; left: 70px; }
+  .chip.pill.c2 { top: 2560px; left: 70px; }
+</style></head>
+<body><div class="stage">
+  <div class="bg-base"></div><div class="mesh"></div>
+  <div class="strokes">
+    <div class="stroke s-blue a"></div>
+    <div class="stroke s-orange b"></div>
+    <div class="stroke s-green c"></div>
+  </div>
+  <div class="ball-trail"></div><div class="ball"></div>
+  <div class="vignette"></div><div class="grain"></div>
+
+  <div class="logo"><img src="assets/bcpl-logo-white.png"></div>
+
+  <div class="headline">
+    <div class="eyebrow">Bhartiya Corporate Premier League</div>
+    <div class="h1">From Office<br>to <span class="accent">Stadium</span></div>
+    <div class="subline">अपने cricket सपने की शुरुआत करें<br>Winning prize ₹6 करोड़ · Auction ₹2–20 लाख</div>
+    <div class="hashtag">#OfficeSeStadiumTak</div>
+  </div>
+
+  <div class="rim-glow"></div>
+  <div class="phone-wrap"><div class="phone"><div class="inner"><div class="screen">
+    <div class="notch"></div><img src="assets/app-home.jpg"><div class="glare"></div>
+  </div></div></div></div>
+
+  <div class="chip c1"><div class="chip-top">Winning Prize</div><div class="chip-big">&#8377;6 Cr</div><div class="chip-sub">Season 5 champions</div></div>
+  <div class="chip pill c2"><span class="dot" style="background:#39e05c"></span><span class="lbl">2,50,000+ joined</span></div>
+
+  <div class="floor"></div>
+  <div class="ganguly"><img src="assets/ganguly-hand-point-trim.png"></div>
+</div></body></html>

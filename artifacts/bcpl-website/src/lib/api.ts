@@ -829,6 +829,15 @@ export const aiChat = (messages: AiChatMsg[]) =>
 export type AiTip = { en: string; hi: string };
 export const getAiFeedback = () => req<{ tips: AiTip[] }>("GET", "/ai/feedback");
 
+/* ─── Public news articles (DB-backed, admin-managed) ────────────────────── */
+export type ApiNewsArticle = {
+  id: string; slug: string; tag: string; title: string; titleHi: string;
+  image: string; paragraphs: string[]; paragraphsHi: string[];
+  press: Array<{ label: string; url: string }>;
+  published: boolean; publishedAt: string | null; updatedAt: string;
+};
+export const getNews = () => req<{ articles: ApiNewsArticle[] }>("GET", "/news");
+
 /* ─── Final 600 Selection Engine (admin) ──────────────────────────── */
 export type SelectionRoleQuota = { bat: number; bowl: number; ar: number; wk: number };
 export interface SelectionConfigDTO {

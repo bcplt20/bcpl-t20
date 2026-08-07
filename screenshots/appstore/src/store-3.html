@@ -1,0 +1,54 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="base.css">
+<style>
+  .headline { top: 240px; left: 90px; right: 90px; text-align: center; }
+  .h1 { font-size: 150px; }
+  .subline { font-size: 46px; }
+
+  .phone-wrap { width: 660px; top: 850px; left: 45px; transform: perspective(2400px) rotateY(11deg) rotate(-2deg); }
+  .phone { width: 660px; }
+  .phone .inner { height: 1360px; }
+  .rim-glow { width: 780px; height: 1400px; top: 870px; left: 0px;
+    background: radial-gradient(circle, rgba(0,220,245,0.6), rgba(124,92,255,0.35), transparent 70%); }
+
+  .ganguly { width: 540px; bottom: 0; right: 40px; }
+  .floor { width: 420px; bottom: 30px; right: 60px; }
+
+  .stroke.a { width: 1500px; height: 150px; top: 700px; left: -140px; transform: rotate(-16deg); }
+  .stroke.b { width: 1200px; height: 120px; top: 2260px; left: -200px; transform: rotate(-16deg); opacity:0.78; }
+  .stroke.c { width: 900px; height: 110px; top: 640px; left: 520px; transform: rotate(-16deg); opacity:0.7; }
+
+  .ball { width: 230px; height: 230px; top: 740px; left: 120px; transform: rotate(14deg); }
+  .ball-trail { width: 360px; height: 360px; top: 690px; left: 70px; }
+
+  .chip.c1 { top: 2300px; left: 70px; }
+  .chip.pill.c2 { top: 2560px; left: 70px; }
+</style></head>
+<body><div class="stage">
+  <div class="bg-base"></div><div class="mesh"></div>
+  <div class="strokes">
+    <div class="stroke s-cyan a"></div>
+    <div class="stroke s-violet b"></div>
+    <div class="stroke s-magenta c"></div>
+  </div>
+  <div class="ball-trail"></div><div class="ball"></div>
+  <div class="vignette"></div><div class="grain"></div>
+
+  <div class="logo"><img src="assets/bcpl-logo-white.png"></div>
+
+  <div class="headline">
+    <div class="eyebrow">Video Trial</div>
+    <div class="h1">Show Your<br><span class="accent">Skills</span></div>
+    <div class="subline">30–90 second का video upload करें — घर बैठे trial</div>
+  </div>
+
+  <div class="rim-glow"></div>
+  <div class="phone-wrap"><div class="phone"><div class="inner"><div class="screen">
+    <div class="notch"></div><img src="assets/app-upload.jpg"><div class="glare"></div>
+  </div></div></div></div>
+
+  <div class="chip c1"><div class="chip-top">Trial Video</div><div class="chip-big">30–90 sec</div><div class="chip-sub">Batting &middot; Bowling &middot; Fielding</div></div>
+  <div class="chip pill c2"><span class="dot" style="background:#00DCF5"></span><span class="lbl">Film &middot; Upload &middot; Submit</span></div>
+
+  <div class="floor"></div>
+  <div class="ganguly"><img src="assets/ganguly-hand-point-trim.png"></div>
+</div></body></html>
