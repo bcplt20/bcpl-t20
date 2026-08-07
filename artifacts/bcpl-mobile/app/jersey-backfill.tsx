@@ -78,7 +78,7 @@ export default function JerseyBackfillScreen() {
     enabled: !!token,
   });
 
-  const needsEc = q.data?.missingFields.includes('emergencyPhone') || q.data?.missingFields.includes('emergencyName');
+  const needsEc = q.data?.missingFields?.includes('emergencyPhone') || q.data?.missingFields?.includes('emergencyName');
 
   const emergencyOk = !needsEc || !!(ecName.trim() && ecRel && /^\d{10}$/.test(ecPhone));
   const canSubmit = !!tshirt && !!trouser && !!shoe && !!helmet && emergencyOk && !ecPhoneErr;
