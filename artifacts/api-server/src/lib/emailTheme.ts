@@ -769,7 +769,7 @@ export function LegalFooter(): string {
   return `
   <tr><td style="padding:20px 32px 28px;background:${COLORS.footerBand};border-top:1px solid rgba(255,255,255,0.12);text-align:center;">
     <div style="font-family:${FONT};font-size:14px;color:${COLORS.footerLink};font-weight:800;letter-spacing:.5px;">Bhartiya Corporate Premier League</div>
-    <div style="font-family:${FONT};font-size:13px;color:${COLORS.footer};margin-top:4px;">Bhartiya Corporate Premier League</div>
+    <div style="font-family:${FONT};font-size:11px;color:${COLORS.footer};opacity:0.75;margin-top:4px;">Ref ${ref} &middot; ${sentAt} IST</div>
     <div style="font-family:${FONT};font-size:13px;color:${COLORS.footer};margin-top:8px;line-height:1.7;">An initiative of ${LEGAL_ENTITY}</div>
     <div style="margin-top:12px;line-height:1;">
       <span class="bcpl-stack" style="display:inline-block;padding:4px 12px;">
