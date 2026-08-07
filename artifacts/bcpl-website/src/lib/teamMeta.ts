@@ -11,6 +11,26 @@ const asset = (url: string) =>
 
 const norm = (name: string) => (name || "").trim().toLowerCase();
 
+/* ── Team → group mapping (single source of truth for the whole site).
+   Mirrors the Teams page grouping (CANON_ORDER: first 5 = Group A, last 5 =
+   Group B), which itself matches the season's match-schedule grouping. Keep
+   this in sync with src/pages/Teams.tsx CANON_ORDER. */
+export const GROUP_A_TEAMS = [
+  "Rajasthan Scorchers", "Mumbai Mavericks", "Chennai Thalaivas", "Hyderabad Hawks", "Ahmedabad Lions",
+];
+export const GROUP_B_TEAMS = [
+  "Delhi Suryas", "Punjab Warriors", "Kolkata Tigers", "Lucknow Nawabs", "Bengaluru Rockets",
+];
+
+const GROUP_MAP: Record<string, "A" | "B"> = {};
+GROUP_A_TEAMS.forEach(n => { GROUP_MAP[norm(n)] = "A"; });
+GROUP_B_TEAMS.forEach(n => { GROUP_MAP[norm(n)] = "B"; });
+
+/** Returns "A" | "B" for a known team, or null when the team's group is unknown. */
+export function groupOf(name: string): "A" | "B" | null {
+  return GROUP_MAP[norm(name)] ?? null;
+}
+
 export type TeamMeta = { colors: Record<string, string>; logos: Record<string, string> };
 
 let cache: TeamMeta | null = null;

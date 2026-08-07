@@ -10,6 +10,7 @@ import { useLang } from "../lib/i18n";
 import { FlipCountdown } from "../components/FlipCountdown";
 import { IcoCheck, IcoShield, IcoClock, IcoLock, IcoList, IcoTrophy, IcoPin, IcoBat, IcoBall, IcoStar, IcoFlag, IcoStadium } from "../lib/icons";
 import { MatchCard } from "../components/MatchCard";
+import { groupOf } from "../lib/teamMeta";
 
 const PHASE1_DEADLINE = "2027-02-28T23:59:59+05:30";
 
@@ -194,24 +195,34 @@ export function Home() {
   /* Group A/B zero-filled mini standings for the home teaser (mirrors /points-table). */
   const homeGroups = React.useMemo(()=>{
     const norm = (n:string)=> (n||"").trim().toLowerCase();
-    const grpOf: Record<string,string> = {};   // normalized name -> group (first assignment wins)
+    const grpOf: Record<string,string> = {};   // normalized name -> group
     const nameOf: Record<string,string> = {};  // normalized name -> display name
+    /* Canonical site mapping (Teams page / teamMeta groupOf) is the source of
+       truth. Seed from the standings + known franchise list so every team lands
+       in its proper group. Match `grp` is only a fallback for unknown teams. */
+    const place = (team:string, mGrp?:string)=>{
+      const k = norm(team);
+      if (!k) return;
+      const canon = groupOf(team);
+      const g = canon ?? (mGrp === "A" || mGrp === "B" ? mGrp : undefined);
+      if (!g) return;
+      if (!grpOf[k]) { grpOf[k] = g; nameOf[k] = team; }
+    };
+    TEAMS.forEach(tm=> place(tm.name));
+    liveTable.forEach((r:any)=> place(r.team));
     liveMatches.forEach((m:any)=>{
       if (m.stage && m.stage!=="league") return;
-      if (!m.grp) return;
-      [m.team1, m.team2].forEach((team:string)=>{
-        const k = norm(team);
-        if (!k) return;
-        if (!grpOf[k]) { grpOf[k] = m.grp; nameOf[k] = team; }
-      });
+      [m.team1, m.team2].forEach((team:string)=> place(team, m.grp));
     });
     const rows: Record<string, any> = {};
     Object.keys(grpOf).forEach(k=>{ rows[k] = { team: nameOf[k], grp: grpOf[k], played:0, won:0, lost:0, points:0, nrr:0 }; });
-    liveTable.forEach((r:any)=>{ const k = norm(r.team); if (rows[k]) rows[k] = { ...rows[k], ...r, team: rows[k].team, grp: grpOf[k] }; });
+    let hasStandings = false;
+    liveTable.forEach((r:any)=>{ const k = norm(r.team); if (rows[k]) { rows[k] = { ...rows[k], ...r, team: rows[k].team, grp: grpOf[k] }; hasStandings = true; } });
     const sortRows = (a:any,b:any)=> (b.points-a.points) || (Number(b.nrr)-Number(a.nrr)) || a.team.localeCompare(b.team);
     const A = Object.values(rows).filter((r:any)=>r.grp==="A").sort(sortRows);
     const B = Object.values(rows).filter((r:any)=>r.grp==="B").sort(sortRows);
-    return (A.length>0 || B.length>0) ? { A, B } : null;
+    /* Keep the "coming soon" empty state until there are real standings. */
+    return (hasStandings && (A.length>0 || B.length>0)) ? { A, B } : null;
   },[liveMatches, liveTable]);
 
   /* Video modal: ESC close + Tab focus trap + focus restore to opener */

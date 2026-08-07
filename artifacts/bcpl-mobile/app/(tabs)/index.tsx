@@ -17,7 +17,7 @@ import { Image } from 'expo-image';
 import { useColors } from '@/hooks/useColors';
 import { useAuth } from '@/context/AuthContext';
 import { useLang } from '@/context/LanguageContext';
-import { getDashboard, getMatches, getPointsTable, getTeams, SITE_ASSETS, getAppBanners, type Match, type AppBanner, type Team, type PublicSponsor, getPublicSponsors } from '@/lib/api';
+import { getDashboard, getMatches, getPointsTable, getTeams, SITE_ASSETS, getAppBanners, type Match, type AppBanner, type Team, type PublicSponsor, getPublicSponsors, getTeamGroup } from '@/lib/api';
 import * as WebBrowser from 'expo-web-browser';
 import { NEWS_ARTICLES } from '@/data/news';
 import { Card, TeamLogo, GlassAppBar, ScreenBackground, SectionHeader, useAppBarHeight, useBottomNavHeight } from '@/components/ui';
@@ -440,7 +440,15 @@ export default function HomeScreen() {
 
   const matches = matchesQ.data?.matches ?? [];
   const featured = pickFeatured(matches);
-  const topTeams = (pointsQ.data?.table ?? []).slice(0, 3);
+  
+  const allPoints = pointsQ.data?.table ?? [];
+  const groupA = allPoints.filter(t => getTeamGroup(t.team) === 'A');
+  const groupB = allPoints.filter(t => getTeamGroup(t.team) === 'B');
+  
+  // If grouped, pick top 2 of each; otherwise top 3 overall
+  const isGrouped = groupA.length > 0 || groupB.length > 0;
+  const topTeams = isGrouped ? [] : allPoints.slice(0, 3);
+  
   const latestNews = NEWS_ARTICLES.slice(0, 2);
   const anyLive = matches.some((m) => m.status === 'live');
 
@@ -577,7 +585,7 @@ export default function HomeScreen() {
           )}
         </View>
 
-        {topTeams.length > 0 ? (
+        {(isGrouped || topTeams.length > 0) ? (
           <View style={{ paddingHorizontal: 16, marginTop: 32 }}>
             <SectionHeader title={t('Points Table', 'अंक तालिका')} onSeeAll={() => router.navigate('/points')} seeAllLabel={t('See all', 'सभी देखें')} seeAllTestID="see-points" />
             <Card padding={0} border={true}>
@@ -592,25 +600,64 @@ export default function HomeScreen() {
                   {t('PTS', 'अंक')}
                 </Text>
               </View>
-              {topTeams.map((t, i) => (
-                <View key={t.team} style={[styles.pointsRow, i > 0 && { borderTopWidth: 1, borderTopColor: c.line }]}>
-                  {i < 3 ? (
-                    <View style={[styles.medal, { backgroundColor: i === 0 ? '#FFC53D' : i === 1 ? '#9E9BD1' : '#FF8A3D' }]}>
-                      <Text style={[styles.medalText, { color: c.card }]}>{i + 1}</Text>
-                    </View>
-                  ) : (
-                    <Text style={[styles.pos, { color: c.sub }]}>{i + 1}</Text>
-                  )}
-                  <TeamLogo name={t.team} size={36} />
-                  <Text style={[styles.teamName, { color: c.ink }]} numberOfLines={1}>
-                    {t.team}
-                  </Text>
-                  <Text style={{ color: c.sub, fontSize: 12.5, width: 36, textAlign: 'center', fontFamily: 'PlusJakartaSans_500Medium' }}>{t.played}</Text>
-                  <View style={[styles.ptsPill, i === 0 && { backgroundColor: `${c.amber}22` }]}>
-                    <Text style={[styles.pts, { color: i === 0 ? c.getAccentText(c.amber) : c.ink }]}>{t.points}</Text>
+
+              {isGrouped ? (
+                <>
+                  <View style={{ backgroundColor: `${c.cyan}10`, paddingVertical: 6, paddingHorizontal: 16, borderBottomWidth: 1, borderBottomColor: c.line }}>
+                    <Text style={{ color: c.getAccentText(c.cyan), fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 11, letterSpacing: 1 }}>GROUP A</Text>
                   </View>
-                </View>
-              ))}
+                  {groupA.slice(0, 2).map((t, i) => (
+                    <View key={t.team} style={[styles.pointsRow, i > 0 && { borderTopWidth: 1, borderTopColor: c.line }]}>
+                      <View style={[styles.medal, { backgroundColor: i === 0 ? '#FFC53D' : '#9E9BD1' }]}>
+                        <Text style={[styles.medalText, { color: c.card }]}>{i + 1}</Text>
+                      </View>
+                      <TeamLogo name={t.team} size={36} />
+                      <Text style={[styles.teamName, { color: c.ink }]} numberOfLines={1}>{t.team}</Text>
+                      <Text style={{ color: c.sub, fontSize: 12.5, width: 36, textAlign: 'center', fontFamily: 'PlusJakartaSans_500Medium' }}>{t.played}</Text>
+                      <View style={[styles.ptsPill, i === 0 && { backgroundColor: `${c.amber}22` }]}>
+                        <Text style={[styles.pts, { color: i === 0 ? c.getAccentText(c.amber) : c.ink }]}>{t.points}</Text>
+                      </View>
+                    </View>
+                  ))}
+                  
+                  <View style={{ backgroundColor: `${c.cyan}10`, paddingVertical: 6, paddingHorizontal: 16, borderBottomWidth: 1, borderBottomColor: c.line, borderTopWidth: 1, borderTopColor: c.line }}>
+                    <Text style={{ color: c.getAccentText(c.cyan), fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 11, letterSpacing: 1 }}>GROUP B</Text>
+                  </View>
+                  {groupB.slice(0, 2).map((t, i) => (
+                    <View key={t.team} style={[styles.pointsRow, i > 0 && { borderTopWidth: 1, borderTopColor: c.line }]}>
+                      <View style={[styles.medal, { backgroundColor: i === 0 ? '#FFC53D' : '#9E9BD1' }]}>
+                        <Text style={[styles.medalText, { color: c.card }]}>{i + 1}</Text>
+                      </View>
+                      <TeamLogo name={t.team} size={36} />
+                      <Text style={[styles.teamName, { color: c.ink }]} numberOfLines={1}>{t.team}</Text>
+                      <Text style={{ color: c.sub, fontSize: 12.5, width: 36, textAlign: 'center', fontFamily: 'PlusJakartaSans_500Medium' }}>{t.played}</Text>
+                      <View style={[styles.ptsPill, i === 0 && { backgroundColor: `${c.amber}22` }]}>
+                        <Text style={[styles.pts, { color: i === 0 ? c.getAccentText(c.amber) : c.ink }]}>{t.points}</Text>
+                      </View>
+                    </View>
+                  ))}
+                </>
+              ) : (
+                topTeams.map((t, i) => (
+                  <View key={t.team} style={[styles.pointsRow, i > 0 && { borderTopWidth: 1, borderTopColor: c.line }]}>
+                    {i < 3 ? (
+                      <View style={[styles.medal, { backgroundColor: i === 0 ? '#FFC53D' : i === 1 ? '#9E9BD1' : '#FF8A3D' }]}>
+                        <Text style={[styles.medalText, { color: c.card }]}>{i + 1}</Text>
+                      </View>
+                    ) : (
+                      <Text style={[styles.pos, { color: c.sub }]}>{i + 1}</Text>
+                    )}
+                    <TeamLogo name={t.team} size={36} />
+                    <Text style={[styles.teamName, { color: c.ink }]} numberOfLines={1}>
+                      {t.team}
+                    </Text>
+                    <Text style={{ color: c.sub, fontSize: 12.5, width: 36, textAlign: 'center', fontFamily: 'PlusJakartaSans_500Medium' }}>{t.played}</Text>
+                    <View style={[styles.ptsPill, i === 0 && { backgroundColor: `${c.amber}22` }]}>
+                      <Text style={[styles.pts, { color: i === 0 ? c.getAccentText(c.amber) : c.ink }]}>{t.points}</Text>
+                    </View>
+                  </View>
+                ))
+              )}
             </Card>
           </View>
         ) : null}

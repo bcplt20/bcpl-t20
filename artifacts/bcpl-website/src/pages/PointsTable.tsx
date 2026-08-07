@@ -6,6 +6,7 @@ import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
 import { getPointsTable, getTeams, getMatches } from '../lib/api';
 import { useLang } from '../lib/i18n';
 import { IcoTrophy } from '../lib/icons';
+import { groupOf } from '../lib/teamMeta';
 
 /* ─── Palette (LIGHTENED DARK theme) ─────────────────────────────── */
 const PAGE      = "#1B2E52";
@@ -178,22 +179,36 @@ export function PointsTable() {
   const logoOf = (team: string) => teamLogos[normTeam(team)] || "";
 
   useEffect(() => {
-    Promise.all([getPointsTable(5), getMatches(5)]).then(([ptData, mData]) => {
+    Promise.all([getPointsTable(5), getMatches(5), getTeams(5)]).then(([ptData, mData, teamData]) => {
       const tableData = ptData.table || [];
       const matchesData = mData.matches || [];
-      
+      const allTeams = teamData.teams || [];
+
       const grpASet = new Set<string>();
       const grpBSet = new Set<string>();
-      
+
+      /* Group each team by the canonical site mapping (Teams page / teamMeta
+         groupOf) — the single source of truth. Seed from the full team list so
+         every franchise appears in its group even before any match is played. */
+      const assign = (name: string) => {
+        const g = groupOf(name);
+        if (g === 'A') grpASet.add(name);
+        else if (g === 'B') grpBSet.add(name);
+      };
+      allTeams.forEach((tm: any) => assign(tm.name));
+      /* Also seed from teams that appear in the points table (in case a team
+         is missing from the teams list but has standings). */
+      tableData.forEach((r: any) => assign(r.team));
+
+      /* Match-schedule grouping is a secondary source: only used for a team the
+         canonical map doesn't know (e.g. a newly-added franchise). */
       matchesData.forEach((m: any) => {
         if (!m.stage || m.stage === 'league') {
-          if (m.grp === 'A') {
-            grpASet.add(m.team1);
-            grpASet.add(m.team2);
-          } else if (m.grp === 'B') {
-            grpBSet.add(m.team1);
-            grpBSet.add(m.team2);
-          }
+          [m.team1, m.team2].forEach((tn: string) => {
+            if (!tn || groupOf(tn)) return; // known teams already placed canonically
+            if (m.grp === 'A') grpASet.add(tn);
+            else if (m.grp === 'B') grpBSet.add(tn);
+          });
         }
       });
 
@@ -232,9 +247,15 @@ export function PointsTable() {
 
     return (
       <div style={{ marginBottom: 40 }}>
-        <h2 style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 24, color: "#fff", marginBottom: 16, textTransform: "uppercase", letterSpacing: "0.05em" }}>
-          {title}
-        </h2>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+          <span style={{ width: 5, height: 26, borderRadius: 3, background: `linear-gradient(180deg, ${ORANGE}, ${GOLD})`, flexShrink: 0 }} />
+          <h2 style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 24, color: "#fff", textTransform: "uppercase", letterSpacing: "0.06em", margin: 0 }}>
+            {title}
+          </h2>
+          <span style={{ fontFamily: "var(--font-head)", fontWeight: 700, fontSize: 12, color: TXT3, letterSpacing: ".06em", textTransform: "uppercase" }}>
+            {rows.length} {t("Teams", "टीमें")}
+          </span>
+        </div>
         <div style={{ background: PANEL, border: `1px solid ${LINE}`, borderRadius: 20, overflow: "hidden", boxShadow: "0 12px 34px rgba(0,0,0,.28)", marginBottom: 16 }}>
           <div className="pts-table-wrap">
             <table className="pts-table">
@@ -331,8 +352,8 @@ export function PointsTable() {
         {/* IPL-STYLE STANDINGS TABLE */}
         {!isEmpty && (
           <>
-            {renderTable("Group A", groupA)}
-            {renderTable("Group B", groupB)}
+            {renderTable(t("Group A", "ग्रुप A"), groupA)}
+            {renderTable(t("Group B", "ग्रुप B"), groupB)}
             
             {/* Qualification zone legend */}
             <div className="qz-note" style={{ marginBottom: 8 }}>

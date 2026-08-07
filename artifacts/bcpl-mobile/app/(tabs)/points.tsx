@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { useColors } from '@/hooks/useColors';
-import { getMatches, getPointsTable, type PointsRow } from '@/lib/api';
+import { getMatches, getPointsTable, getTeamGroup, type PointsRow } from '@/lib/api';
 import { Card, EmptyView, ErrorView, LoadingView, TeamLogo, GlassAppBar, ScreenBackground, useAppBarHeight, useBottomNavHeight } from '@/components/ui';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { useLang } from '@/context/LanguageContext';
@@ -84,18 +84,8 @@ export default function PointsScreen() {
   const matchesQ = useQuery({ queryKey: ['matches'], queryFn: getMatches });
   const table = q.data?.table ?? [];
 
-  // Derive Group A / Group B membership from the match schedule (same as website)
-  const groupOf = new Map<string, string>();
-  for (const m of matchesQ.data?.matches ?? []) {
-    if (m.stage && m.stage !== 'league') continue; // playoffs carry no group meaning
-    const g = (m.grp ?? '').toUpperCase();
-    if (g === 'A' || g === 'B') {
-      if (!groupOf.has(m.team1)) groupOf.set(m.team1, g);
-      if (!groupOf.has(m.team2)) groupOf.set(m.team2, g);
-    }
-  }
-  const groupA = table.filter((t) => groupOf.get(t.team) === 'A');
-  const groupB = table.filter((t) => groupOf.get(t.team) === 'B');
+  const groupA = table.filter((t) => getTeamGroup(t.team) === 'A');
+  const groupB = table.filter((t) => getTeamGroup(t.team) === 'B');
   const grouped = groupA.length > 0 || groupB.length > 0;
 
   return (

@@ -7,7 +7,7 @@ import { getMatches, getPointsTable, getScorecard, getTeams } from '../lib/api';
 import { useLang } from '../lib/i18n';
 import { IcoBat, IcoTrophy, IcoPin, IcoStar } from '../lib/icons';
 import { MatchCountdown, stageMeta } from '../components/MatchCard';
-import { BALL_LOGO } from '../lib/teamMeta';
+import { BALL_LOGO, groupOf } from '../lib/teamMeta';
 
 /* ─── Palette (LIGHTENED DARK theme) ─────────────────────────────── */
 const PAGE      = "#1B2E52";              // lightened navy page bg
@@ -112,6 +112,7 @@ export function MatchCenter() {
   const [points,  setPoints]  = useState<any[]>([]);
   const [teamColors, setTeamColors] = useState<Record<string, string>>({});
   const [teamLogos,  setTeamLogos]  = useState<Record<string, string>>({});
+  const [teamNames,  setTeamNames]  = useState<string[]>([]);
   const [openId,  setOpenId]  = useState<string | null>(null);
   const [cards,   setCards]   = useState<Record<string, any>>({});
   const [loadingCard, setLoadingCard] = useState(false);
@@ -140,6 +141,7 @@ export function MatchCenter() {
       });
       setTeamColors(colorMap);
       setTeamLogos(logoMap);
+      setTeamNames((d.teams ?? []).map((t: any) => t.name).filter(Boolean));
     }).catch(() => {});
   }, []);
 
@@ -346,19 +348,26 @@ export function MatchCenter() {
     );
   };
 
-  /* Group A/B zero-filled standings (mirrors Home teaser & /points-table). */
+  /* Group A/B zero-filled standings (mirrors Home teaser & /points-table).
+     Canonical site mapping (Teams page / teamMeta groupOf) is the source of
+     truth; match `grp` is only a fallback for teams the map doesn't know. */
   const groups = useMemo(() => {
     const normG = (n: string) => (n || "").trim().toLowerCase();
-    const grpOf: Record<string, string> = {};   // normalized name -> group (first assignment wins)
+    const grpOf: Record<string, string> = {};   // normalized name -> group
     const nameOf: Record<string, string> = {};  // normalized name -> display name
+    const place = (team: string, mGrp?: string) => {
+      const k = normG(team);
+      if (!k) return;
+      const canon = groupOf(team);
+      const g = canon ?? (mGrp === "A" || mGrp === "B" ? mGrp : undefined);
+      if (!g) return;
+      if (!grpOf[k]) { grpOf[k] = g; nameOf[k] = team; }
+    };
+    teamNames.forEach(n => place(n));
+    points.forEach((r: any) => place(r.team));
     matches.forEach((m: any) => {
       if (m.stage && m.stage !== "league") return;
-      if (!m.grp) return;
-      [m.team1, m.team2].forEach((team: string) => {
-        const k = normG(team);
-        if (!k) return;
-        if (!grpOf[k]) { grpOf[k] = m.grp; nameOf[k] = team; }
-      });
+      [m.team1, m.team2].forEach((team: string) => place(team, m.grp));
     });
     const rows: Record<string, any> = {};
     Object.keys(grpOf).forEach(k => { rows[k] = { team: nameOf[k], grp: grpOf[k], played: 0, won: 0, lost: 0, noResult: 0, points: 0, nrr: 0, form: [] }; });
@@ -367,7 +376,7 @@ export function MatchCenter() {
     const A = Object.values(rows).filter((r: any) => r.grp === "A").sort(sortRows);
     const B = Object.values(rows).filter((r: any) => r.grp === "B").sort(sortRows);
     return (A.length > 0 || B.length > 0) ? { A, B } : null;
-  }, [matches, points]);
+  }, [matches, points, teamNames]);
 
   return (
     <div style={{ background: PAGE, minHeight: "100vh", color: TXT, fontFamily: "'Inter',sans-serif", overflowX: "hidden" }}>
@@ -575,8 +584,14 @@ export function MatchCenter() {
 
           {groups && (["A", "B"] as const).map(g => groups[g].length === 0 ? null : (
             <div key={g} style={{ marginBottom: 30 }}>
-              <div style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 17, letterSpacing: ".12em", color: GOLD, marginBottom: 12, textTransform: "uppercase" }}>
-                {t(`Group ${g}`, `ग्रुप ${g}`)}
+              <div style={{ display: "flex", alignItems: "center", gap: 11, marginBottom: 12 }}>
+                <span style={{ width: 5, height: 22, borderRadius: 3, background: `linear-gradient(180deg, ${ORANGE}, ${GOLD})`, flexShrink: 0 }} />
+                <span style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 17, letterSpacing: ".12em", color: GOLD, textTransform: "uppercase" }}>
+                  {t(`Group ${g}`, `ग्रुप ${g}`)}
+                </span>
+                <span style={{ fontFamily: "var(--font-head)", fontWeight: 700, fontSize: 11, color: TXT3, letterSpacing: ".06em", textTransform: "uppercase" }}>
+                  {groups[g].length} {t("Teams", "टीमें")}
+                </span>
               </div>
               <div className="pts-table-wrap" style={{ background: PANEL, borderRadius: 20, border: `1px solid ${LINE}`, overflow: "hidden", boxShadow: "0 12px 34px rgba(0,0,0,.28)" }}>
                 <div className="pts-inner">

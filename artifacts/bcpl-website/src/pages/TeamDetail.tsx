@@ -7,6 +7,7 @@ import { getTeamDetail, getPointsTable, getMatches, type ApiTeam, type ApiTeamPl
 import { useLang } from '../lib/i18n';
 import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
 import { IcoBat, IcoWarn, IcoUsers, IcoList } from '../lib/icons';
+import { groupOf } from '../lib/teamMeta';
 
 const asset = (url: string) =>
   !url ? "" : url.startsWith("data:") || url.startsWith("http") ? url : import.meta.env.BASE_URL + url.replace(/^\//, "");
@@ -61,7 +62,13 @@ export function TeamDetail() {
   const ACCENT = team?.color || '#FF7A29';
 
   const row = ptsRows.find(r => r.team === team?.name);
-  const sortedRows = [...ptsRows].sort((a, b) => b.points - a.points || num(b.nrr) - num(a.nrr));
+  /* Rank is computed WITHIN the team's own group (groups A/B), matching the
+     grouped points table — not an overall 1..10 rank. Falls back to all rows
+     when the team's group is unknown. */
+  const myGroup = team ? groupOf(team.name) : null;
+  const sortedRows = [...ptsRows]
+    .filter(r => myGroup ? groupOf(r.team) === myGroup : true)
+    .sort((a, b) => b.points - a.points || num(b.nrr) - num(a.nrr));
   const rank = team ? sortedRows.findIndex(r => r.team === team.name) + 1 : 0;
   const played = row?.played ?? 0;
 
@@ -82,7 +89,7 @@ export function TeamDetail() {
     { label: 'Players', val: String(players.length) },
     { label: 'Record',  val: played > 0 ? `${row!.won}W / ${row!.lost}L` : '—' },
     { label: 'NRR',     val: played > 0 ? `${num(row!.nrr) > 0 ? '+' : ''}${num(row!.nrr).toFixed(2)}` : '—' },
-    { label: 'Rank',    val: played > 0 && rank > 0 ? `#${rank}` : '—' },
+    { label: myGroup ? `Group ${myGroup} Rank` : 'Rank', val: played > 0 && rank > 0 ? `#${rank}` : '—' },
   ];
 
   const aboutInfo = team ? [

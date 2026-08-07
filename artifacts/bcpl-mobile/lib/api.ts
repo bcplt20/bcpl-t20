@@ -560,6 +560,20 @@ export function getMvpLeaderboard(eligibleOnly?: boolean): Promise<MvpLeaderboar
   return apiFetch(`/mvp/leaderboard${q}`);
 }
 
+export const GROUP_A_TEAMS = [
+  'Rajasthan Scorchers', 'Mumbai Mavericks', 'Chennai Thalaivas', 'Hyderabad Hawks', 'Ahmedabad Lions',
+];
+export const GROUP_B_TEAMS = [
+  'Delhi Suryas', 'Punjab Warriors', 'Kolkata Tigers', 'Lucknow Nawabs', 'Bengaluru Rockets',
+];
+
+export function getTeamGroup(name: string): 'A' | 'B' | null {
+  const n = name.trim().toLowerCase();
+  if (GROUP_A_TEAMS.some(t => t.toLowerCase() === n)) return 'A';
+  if (GROUP_B_TEAMS.some(t => t.toLowerCase() === n)) return 'B';
+  return null;
+}
+
 // ── Community Scorer (Profiles & Teams) ──────────────────────────────────────
 export interface CommunityProfile {
   userId: string;

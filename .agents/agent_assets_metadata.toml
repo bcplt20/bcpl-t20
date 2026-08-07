@@ -249,3 +249,17 @@ uri = "file://screenshots/web-mvp-points.jpg"
 type = "image"
 title = "Website — MVP points का नया रंगीन scoring guide"
 description = "Batting (orange), Bowling (blue), Fielding (green) — हर rule के आगे bold points badge।"
+
+[[outputs]]
+id = "9J2YLM0ei5AahYW-msnjW"
+uri = "file://screenshots/web-teams-logos.jpg"
+type = "image"
+title = "Website — Teams: बिना background के बड़े logos"
+description = "White circle हटा, logos ~1.5x बड़े — teams page, match cards, points table, हर जगह।"
+
+[[outputs]]
+id = "qOCbd2Q1daFY6M9_l0692"
+uri = "file://screenshots/app-home-logos.jpg"
+type = "image"
+title = "App — बड़े logos वाला match card"
+description = "App में भी logos बड़े, बिना किसी backing के; VS के नीचे timer।"
